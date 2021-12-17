@@ -530,6 +530,7 @@ type ShallowPropsType = Pick<
   | 'isTapToViewError'
   | 'isTapToViewExpired'
   | 'readStatus'
+  | 'lastSeenHere'
   | 'selectedReaction'
   | 'status'
   | 'text'
@@ -613,6 +614,7 @@ const getShallowPropsForMessage = createSelectorCreator(memoizeByRoot, isEqual)(
       isTapToViewExpired: isMessageTapToView && message.isErased,
       readStatus: message.readStatus ?? ReadStatus.Read,
       selectedReaction,
+      lastSeenHere: message.lastSeenHere,
       status: getMessagePropStatus(message, ourConversationId),
       text: createNonBreakingLastSeparator(message.body),
       textPending: message.bodyPending,

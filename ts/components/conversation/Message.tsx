@@ -5,6 +5,7 @@ import type { RefObject } from 'react';
 import React from 'react';
 import ReactDOM, { createPortal } from 'react-dom';
 import classNames from 'classnames';
+import memoize from "memoizee";
 import { drop, groupBy, orderBy, take, unescape } from 'lodash';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
 import { Manager, Popper, Reference } from 'react-popper';
@@ -186,6 +187,7 @@ export type PropsData = {
   isTapToViewError?: boolean;
 
   readStatus: ReadStatus;
+  lastSeenHere?: string[];
 
   expirationLength?: number;
   expirationTimestamp?: number;
@@ -600,6 +602,13 @@ export class Message extends React.PureComponent<Props, State> {
     );
   }
 
+  private lastSeenHereStr = memoize(
+    (lastSeenHere: string[]) => {
+      const conversations = lastSeenHere.map(id => window.ConversationController.get(id)!.format());
+      return conversations.sort((a, b) => a.id.localeCompare(b.id));
+    }
+  );
+
   public renderMetadata(): JSX.Element | null {
     const {
       attachments,
@@ -617,6 +626,7 @@ export class Message extends React.PureComponent<Props, State> {
       timestamp,
       id,
       showMessageDetail,
+      lastSeenHere,
     } = this.props;
 
     if (collapseMetadata) {
@@ -643,6 +653,7 @@ export class Message extends React.PureComponent<Props, State> {
         isShowingImage={this.isShowingImage()}
         isSticker={isStickerLike}
         isTapToViewExpired={isTapToViewExpired}
+        lastSeenHere={this.lastSeenHereStr(lastSeenHere || [])}
         showMessageDetail={showMessageDetail}
         status={status}
         textPending={textPending}

@@ -5,6 +5,7 @@ import type { FunctionComponent, ReactChild } from 'react';
 import React from 'react';
 import classNames from 'classnames';
 
+import type { ConversationType } from '../../state/ducks/conversations';
 import type { LocalizerType } from '../../types/Util';
 import type { DirectionType, MessageStatusType } from './Message';
 import { ExpireTimer } from './ExpireTimer';
@@ -22,6 +23,7 @@ type PropsType = {
   isShowingImage: boolean;
   isSticker?: boolean;
   isTapToViewExpired?: boolean;
+  lastSeenHere?: ConversationType[];
   showMessageDetail: (id: string) => void;
   status?: MessageStatusType;
   textPending?: boolean;
@@ -40,6 +42,7 @@ export const MessageMetadata: FunctionComponent<PropsType> = props => {
     isShowingImage,
     isSticker,
     isTapToViewExpired,
+    lastSeenHere,
     showMessageDetail,
     status,
     textPending,
@@ -108,6 +111,11 @@ export const MessageMetadata: FunctionComponent<PropsType> = props => {
     }
   }
 
+  let seenBubblesNode = null;
+  if(lastSeenHere) {
+    seenBubblesNode = lastSeenHere.map(c => <img key={c.id} src={c.avatarPath} height={15} style={{marginLeft: '2px', borderRadius:"100px"}}/>)
+  }
+
   return (
     <div
       className={classNames(
@@ -119,6 +127,7 @@ export const MessageMetadata: FunctionComponent<PropsType> = props => {
       )}
     >
       {timestampNode}
+      {seenBubblesNode}
       {expirationLength && expirationTimestamp ? (
         <ExpireTimer
           direction={metadataDirection}
