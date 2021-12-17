@@ -158,6 +158,8 @@ export class MessageReceipts extends Collection<MessageReceiptModel> {
         return;
       }
 
+      const conversationId = message.get('conversationId');
+
       const oldSendStateByConversationId =
         message.get('sendStateByConversationId') || {};
       const oldSendState = getOwn(
@@ -197,7 +199,7 @@ export class MessageReceipts extends Collection<MessageReceiptModel> {
 
         // notify frontend listeners
         const conversation = window.ConversationController.get(
-          message.get('conversationId')
+          conversationId
         );
         const updateLeftPane = conversation
           ? conversation.debouncedUpdateLastMessage
@@ -216,6 +218,9 @@ export class MessageReceipts extends Collection<MessageReceiptModel> {
           window.ConversationController.get(sourceConversationId);
         const recipientUuid = recipient?.get('uuid');
         const deviceId = receipt.get('sourceDevice');
+
+        if(type === MessageReceiptType.Read && recipient && conversationId)
+            recipient.updateLastSeenMessage(message, conversationId);
 
         if (recipientUuid && deviceId) {
           await deleteSentProtoBatcher.add({

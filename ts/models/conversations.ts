@@ -213,6 +213,8 @@ export class ConversationModel extends window.Backbone
   private muteTimer?: NodeJS.Timer;
 
   private isInReduxBatch = false;
+  
+  lastMessagesSeen?: Record<string, {sendAt: number, id: string}>;
 
   override defaults(): Partial<ConversationAttributesType> {
     return {
@@ -1913,6 +1915,31 @@ export class ConversationModel extends window.Backbone
     }
 
     return undefined;
+  }
+  
+  updateLastSeenMessage(message: MessageModel, conversationId: string): void {
+    const receivedAt = message.get('received_at');
+    const lastSeenMap = this.get('lastMessagesSeen') || {};
+    const lastSeenMsg = lastSeenMap[conversationId] || {receivedAt: 0, id: ''};
+    if (lastSeenMsg.receivedAt >= receivedAt)
+        return;
+
+    if (lastSeenMsg.id) {
+      const prevMsg = window.MessageController.getById(lastSeenMsg.id);
+      if(prevMsg) {
+        const prevSeen = prevMsg.get('lastSeenHere') || [];
+        prevMsg.set('lastSeenHere', [...prevSeen].filter(x => x !== this.id));
+        window.Signal.Util.queueUpdateMessage(prevMsg.attributes);
+      }
+    }
+    const prevSeenHereList = message.get('lastSeenHere') || [];
+    message.set('lastSeenHere', [...prevSeenHereList, this.id]);
+
+    window.Signal.Util.queueUpdateMessage(message.attributes);
+    let newMap = {...lastSeenMap};
+    newMap[conversationId] = {receivedAt, id: message.id};
+    this.set('lastMessagesSeen', newMap);
+    window.Signal.Data.updateConversation(this.attributes);
   }
 
   decrementMessageCount(): void {
