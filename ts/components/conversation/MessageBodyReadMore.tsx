@@ -96,6 +96,7 @@ export function MessageBodyReadMore({
     <MessageBody
       bodyRanges={bodyRanges}
       disableLinks={disableLinks}
+      disableMarkdown={hasReadMore}
       direction={direction}
       i18n={i18n}
       onIncreaseTextLength={onIncreaseTextLength}
