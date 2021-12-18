@@ -17,6 +17,7 @@ import {
 } from './AttachmentSection.stories';
 import type { Props } from './MediaGallery';
 import { MediaGallery } from './MediaGallery';
+import { MediaItemType } from '../../../types/MediaItem';
 
 const i18n = setupI18n('en', enMessages);
 
@@ -25,11 +26,16 @@ const story = storiesOf(
   module
 );
 
-const createProps = (overrideProps: Partial<Props> = {}): Props => ({
+export type PartialProps = Omit<Omit<Partial<Props>, 'media'>, 'documents'> & {
+  documents?: Array<MediaItemType>;
+  media?: Array<MediaItemType>;
+};
+
+const createProps = (overrideProps: PartialProps = {}): Props => ({
   i18n,
   onItemClick: action('onItemClick'),
-  documents: overrideProps.documents || [],
-  media: overrideProps.media || [],
+  documents: async () => (overrideProps.documents || []),
+  media: async () => (overrideProps.media || []),
 });
 
 story.add('Populated', () => {

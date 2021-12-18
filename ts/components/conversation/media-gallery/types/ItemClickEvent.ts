@@ -2,10 +2,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { AttachmentType } from '../../../../types/Attachment';
+import { MediaItemType } from '../../../../types/MediaItem';
 import type { Message } from './Message';
 
 export type ItemClickEvent = {
   message: Message;
   attachment: AttachmentType;
   type: 'media' | 'documents';
+  items: MediaItemType[]
 };

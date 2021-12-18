@@ -1660,19 +1660,19 @@ async function getMessagesNeedingUpgrade(
 
 async function getMessagesWithVisualMediaAttachments(
   conversationId: string,
-  { limit }: { limit: number }
+  { limit, offset }: { limit: number, offset?: number }
 ) {
   return channels.getMessagesWithVisualMediaAttachments(conversationId, {
-    limit,
+    limit, offset,
   });
 }
 
 async function getMessagesWithFileAttachments(
   conversationId: string,
-  { limit }: { limit: number }
+  { limit, offset }: { limit: number, offset?: number }
 ) {
   return channels.getMessagesWithFileAttachments(conversationId, {
-    limit,
+    limit, offset,
   });
 }
 

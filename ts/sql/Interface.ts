@@ -561,11 +561,11 @@ export type DataInterface = {
   ) => Promise<Array<MessageType>>;
   getMessagesWithVisualMediaAttachments: (
     conversationId: string,
-    options: { limit: number }
+    options: { limit: number, offset?: number }
   ) => Promise<Array<MessageType>>;
   getMessagesWithFileAttachments: (
     conversationId: string,
-    options: { limit: number }
+    options: { limit: number, offset?: number }
   ) => Promise<Array<MessageType>>;
   getMessageServerGuidsForSpam: (
     conversationId: string
