@@ -17,15 +17,19 @@ import { getMessageTimestamp } from '../../../util/getMessageTimestamp';
 import type { MediaItemType } from '../../../types/MediaItem';
 
 export type Props = {
-  documents: Array<MediaItemType>;
+  documents: (page: number) => Promise<Array<MediaItemType>>;
   i18n: LocalizerType;
-  media: Array<MediaItemType>;
+  media: (page: number) => Promise<Array<MediaItemType>>;
+  pageSize?: number;
 
   onItemClick?: (event: ItemClickEvent) => void;
 };
 
 type State = {
   selectedTab: 'media' | 'documents';
+  page: number;
+  items: Array<MediaItemType>;
+  loading: boolean;
 };
 
 const MONTH_FORMAT = 'MMMM YYYY';
@@ -75,6 +79,9 @@ export class MediaGallery extends React.Component<Props, State> {
     super(props);
     this.state = {
       selectedTab: 'media',
+      page: 0,
+      items: [],
+      loading: true,
     };
   }
 
@@ -86,6 +93,13 @@ export class MediaGallery extends React.Component<Props, State> {
         this.focusRef.current.focus();
       }
     });
+    this.loadMediaItems(null, 0);
+  }
+
+  public override componentDidUpdate(prevProps: Props): void {
+    if(this.props.media !== prevProps.media || this.props.documents !== prevProps.documents){
+      this.loadMediaItems(null, this.state.page);
+    }
   }
 
   public override render(): JSX.Element {
@@ -114,18 +128,53 @@ export class MediaGallery extends React.Component<Props, State> {
     );
   }
 
-  private readonly handleTabSelect = (event: TabSelectEvent): void => {
-    this.setState({ selectedTab: event.type });
+  private readonly loadMediaItems = (selectedTab: State['selectedTab'] | null, page: number): void => {
+    selectedTab = selectedTab || this.state.selectedTab;
+    this.setState({ selectedTab, page, loading: true, items: [] });
+    const { media, documents } = this.props;
+    const loadMediaItems = selectedTab === 'media' ? media : documents;
+    if(!loadMediaItems) {
+      this.setState({ loading: false, items: [] });
+      return;
+    }
+    loadMediaItems(page).then((items) => {
+      this.setState({ loading: false, items });
+    }, () => {
+      this.setState({ loading: false, items: [] });
+    });
   };
 
-  private renderSections() {
-    const { i18n, media, documents, onItemClick } = this.props;
-    const { selectedTab } = this.state;
+  private readonly handleTabSelect = (event: TabSelectEvent): void => {
+    if(event.type !== this.state.selectedTab) {
+      this.loadMediaItems(event.type, 0);
+    }
+  };
 
-    const mediaItems = selectedTab === 'media' ? media : documents;
+  private readonly nextPage = (): void => {
+    if(this.props.pageSize)
+      this.loadMediaItems(null, this.state.page + 1);
+  };
+
+  private readonly prevPage = (): void => {
+    if(this.state.page > 0)
+      this.loadMediaItems(null, this.state.page - 1);
+  };
+
+  private readonly onItemClick = ((event: Omit<ItemClickEvent, 'items'>) => {
+    this.props.onItemClick && this.props.onItemClick({...event, items: this.state.items});
+  });
+
+  private renderSections() {
+    const { i18n, pageSize } = this.props;
+    const { selectedTab, page, items, loading } = this.state;
+
     const type = selectedTab;
 
-    if (!mediaItems || mediaItems.length === 0) {
+    if(loading) {
+      return <EmptyState data-test="EmptyState" label={i18n('loading')} />;
+    }
+
+    if (!items || items.length === 0) {
       const label = (() => {
         switch (type) {
           case 'media':
@@ -139,11 +188,18 @@ export class MediaGallery extends React.Component<Props, State> {
         }
       })();
 
-      return <EmptyState data-test="EmptyState" label={label} />;
+      if(page > 0) {
+        return <div className="module-media-gallery__sections">
+          <button onClick={this.prevPage}>prev</button>
+          <EmptyState data-test="EmptyState" label={label} />
+        </div>;
+      } else {
+        return <EmptyState data-test="EmptyState" label={label} />
+      }
     }
 
     const now = Date.now();
-    const sections = groupMediaItemsByDate(now, mediaItems).map(section => {
+    const sections = groupMediaItemsByDate(now, items).map(section => {
       const first = section.mediaItems[0];
       const { message } = first;
       const date = moment(getMessageTimestamp(message));
@@ -159,11 +215,15 @@ export class MediaGallery extends React.Component<Props, State> {
           i18n={i18n}
           type={type}
           mediaItems={section.mediaItems}
-          onItemClick={onItemClick}
+          onItemClick={this.props.onItemClick && this.onItemClick}
         />
       );
     });
 
-    return <div className="module-media-gallery__sections">{sections}</div>;
+    return <div className="module-media-gallery__sections">
+      {sections}
+      {pageSize && items.length >= pageSize ? <button onClick={this.nextPage}>next</button> : null}
+      {page > 0 ? <button onClick={this.prevPage}>prev</button> : null}
+    </div>;
   }
 }

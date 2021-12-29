@@ -1471,105 +1471,113 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
 
     // We fetch more documents than media as they don’t require to be loaded
     // into memory right away. Revisit this once we have infinite scrolling:
-    const DEFAULT_MEDIA_FETCH_COUNT = 50;
-    const DEFAULT_DOCUMENTS_FETCH_COUNT = 150;
+    const DEFAULT_PAGE_SIZE = 150;
 
     const conversationId = this.model.get('id');
 
-    const getProps = async () => {
-      const rawMedia =
-        await window.Signal.Data.getMessagesWithVisualMediaAttachments(
-          conversationId,
-          {
-            limit: DEFAULT_MEDIA_FETCH_COUNT,
-          }
-        );
-      const rawDocuments =
-        await window.Signal.Data.getMessagesWithFileAttachments(
-          conversationId,
-          {
-            limit: DEFAULT_DOCUMENTS_FETCH_COUNT,
-          }
-        );
-
-      // First we upgrade these messages to ensure that they have thumbnails
-      for (let max = rawMedia.length, i = 0; i < max; i += 1) {
-        const message = rawMedia[i];
-        const { schemaVersion } = message;
-
-        if (
-          schemaVersion &&
-          schemaVersion < Message.VERSION_NEEDED_FOR_DISPLAY
-        ) {
-          // Yep, we really do want to wait for each of these
-          // eslint-disable-next-line no-await-in-loop
-          rawMedia[i] = await upgradeMessageSchema(message);
-          // eslint-disable-next-line no-await-in-loop
-          await window.Signal.Data.saveMessage(rawMedia[i]);
-        }
-      }
-
-      const media: Array<MediaType> = flatten(
-        rawMedia.map(message => {
-          return (message.attachments || []).map(
-            (
-              attachment: AttachmentType,
-              index: number
-            ): MediaType | undefined => {
-              if (
-                !attachment.path ||
-                !attachment.thumbnail ||
-                attachment.pending ||
-                attachment.error
-              ) {
-                return;
-              }
-
-              const { thumbnail } = attachment;
-              return {
-                path: attachment.path,
-                objectURL: getAbsoluteAttachmentPath(attachment.path),
-                thumbnailObjectUrl: thumbnail
-                  ? getAbsoluteAttachmentPath(thumbnail.path)
-                  : undefined,
-                contentType: attachment.contentType,
-                index,
-                attachment,
-                message: {
-                  attachments: message.attachments || [],
-                  conversationId:
-                    window.ConversationController.get(
-                      window.ConversationController.ensureContactIds({
-                        uuid: message.sourceUuid,
-                        e164: message.source,
-                      })
-                    )?.id || message.conversationId,
-                  id: message.id,
-                  received_at: message.received_at,
-                  received_at_ms: Number(message.received_at_ms),
-                  sent_at: message.sent_at,
-                },
-              };
+    const getProps = () => {
+      const loadMedia = async (page: number) => {
+        const rawMedia =
+          await window.Signal.Data.getMessagesWithVisualMediaAttachments(
+            conversationId,
+            {
+              limit: DEFAULT_PAGE_SIZE,
+              offset: DEFAULT_PAGE_SIZE * page,
             }
           );
-        })
-      ).filter(isNotNil);
 
-      // Unlike visual media, only one non-image attachment is supported
-      const documents = rawDocuments
-        .filter(message =>
-          Boolean(message.attachments && message.attachments.length)
-        )
-        .map(message => {
-          const attachments = message.attachments || [];
-          const attachment = attachments[0];
-          return {
-            contentType: attachment.contentType,
-            index: 0,
-            attachment,
-            message,
-          };
-        });
+        // First we upgrade these messages to ensure that they have thumbnails
+        for (let max = rawMedia.length, i = 0; i < max; i += 1) {
+          const message = rawMedia[i];
+          const { schemaVersion } = message;
+
+          if (
+            schemaVersion &&
+            schemaVersion < Message.VERSION_NEEDED_FOR_DISPLAY
+          ) {
+            // Yep, we really do want to wait for each of these
+            // eslint-disable-next-line no-await-in-loop
+            rawMedia[i] = await upgradeMessageSchema(message);
+            // eslint-disable-next-line no-await-in-loop
+            await window.Signal.Data.saveMessage(rawMedia[i]);
+          }
+        }
+
+        const media: Array<MediaType> = flatten(
+          rawMedia.map(message => {
+            return (message.attachments || []).map(
+              (
+                attachment: AttachmentType,
+                index: number
+              ): MediaType | undefined => {
+                if (
+                  !attachment.path ||
+                  !attachment.thumbnail ||
+                  attachment.pending ||
+                  attachment.error
+                ) {
+                  return;
+                }
+
+                const { thumbnail } = attachment;
+                return {
+                  path: attachment.path,
+                  objectURL: getAbsoluteAttachmentPath(attachment.path),
+                  thumbnailObjectUrl: thumbnail
+                    ? getAbsoluteAttachmentPath(thumbnail.path)
+                    : undefined,
+                  contentType: attachment.contentType,
+                  index,
+                  attachment,
+                  message: {
+                    attachments: message.attachments || [],
+                    conversationId:
+                      window.ConversationController.get(
+                        window.ConversationController.ensureContactIds({
+                          uuid: message.sourceUuid,
+                          e164: message.source,
+                        })
+                      )?.id || message.conversationId,
+                    id: message.id,
+                    received_at: message.received_at,
+                    received_at_ms: Number(message.received_at_ms),
+                    sent_at: message.sent_at,
+                  },
+                };
+              }
+            );
+          })
+        ).filter(isNotNil);
+        return media;
+      };
+
+      const loadDocuments = async (page: number) => {
+        const rawDocuments =
+          await window.Signal.Data.getMessagesWithFileAttachments(
+            conversationId,
+            {
+              limit: DEFAULT_PAGE_SIZE,
+              offset: DEFAULT_PAGE_SIZE * page,
+            }
+          );
+
+        // Unlike visual media, only one non-image attachment is supported
+        const documents = rawDocuments
+          .filter(message =>
+            Boolean(message.attachments && message.attachments.length)
+          )
+          .map(message => {
+            const attachments = message.attachments || [];
+            const attachment = attachments[0];
+            return {
+              contentType: attachment.contentType,
+              index: 0,
+              attachment,
+              message,
+            };
+          });
+          return documents;
+      }
 
       const saveAttachment = async ({
         attachment,
@@ -1599,10 +1607,12 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
         message,
         attachment,
         type,
+        items
       }: {
         message: MessageAttributesType;
         attachment: AttachmentType;
         type: 'documents' | 'media';
+        items: MediaItemType[]
       }) => {
         switch (type) {
           case 'documents': {
@@ -1611,6 +1621,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
           }
 
           case 'media': {
+            const media = items as MediaType[];
             const selectedMedia =
               media.find(item => attachment.path === item.path) || media[0];
             this.showLightboxForMedia(selectedMedia, media);
@@ -1623,9 +1634,10 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
       };
 
       return {
-        documents,
-        media,
+        documents: loadDocuments,
+        media: loadMedia,
         onItemClick,
+        pageSize: DEFAULT_PAGE_SIZE,
       };
     };
 
@@ -1661,8 +1673,8 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
     });
     view.headerTitle = window.i18n('allMedia');
 
-    const update = async () => {
-      view.update(await getProps());
+    const update = () => {
+      view.update(getProps());
     };
 
     this.listenBack(view);

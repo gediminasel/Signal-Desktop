@@ -4156,7 +4156,7 @@ async function getMessagesNeedingUpgrade(
 
 async function getMessagesWithVisualMediaAttachments(
   conversationId: string,
-  { limit }: { limit: number }
+  { limit, offset }: { limit: number, offset?: number }
 ): Promise<Array<MessageType>> {
   const db = getInstance();
   const rows: JSONRows = db
@@ -4168,12 +4168,13 @@ async function getMessagesWithVisualMediaAttachments(
         conversationId = $conversationId AND
         hasVisualMediaAttachments = 1
       ORDER BY received_at DESC, sent_at DESC
-      LIMIT $limit;
+      LIMIT $limit OFFSET $offset;
       `
     )
     .all({
       conversationId,
       limit,
+      offset: offset || 0,
     });
 
   return rows.map(row => jsonToObject(row.json));
@@ -4181,7 +4182,7 @@ async function getMessagesWithVisualMediaAttachments(
 
 async function getMessagesWithFileAttachments(
   conversationId: string,
-  { limit }: { limit: number }
+  { limit, offset }: { limit: number, offset?: number }
 ): Promise<Array<MessageType>> {
   const db = getInstance();
   const rows = db
@@ -4193,12 +4194,13 @@ async function getMessagesWithFileAttachments(
         conversationId = $conversationId AND
         hasFileAttachments = 1
       ORDER BY received_at DESC, sent_at DESC
-      LIMIT $limit;
+      LIMIT $limit OFFSET $offset;
       `
     )
     .all({
       conversationId,
       limit,
+      offset: offset || 0,
     });
 
   return map(rows, row => jsonToObject(row.json));

@@ -16,7 +16,7 @@ export type Props = {
   header?: string;
   type: 'media' | 'documents';
   mediaItems: Array<MediaItemType>;
-  onItemClick?: (event: ItemClickEvent) => void;
+  onItemClick?: (event: Omit<ItemClickEvent, 'items'>) => void;
 };
 
 export class AttachmentSection extends React.Component<Props> {
