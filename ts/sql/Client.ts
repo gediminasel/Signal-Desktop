@@ -186,7 +186,7 @@ const dataInterface: ClientInterface = {
 
   createOrUpdateSession,
   createOrUpdateSessions,
-  commitSessionsAndUnprocessed,
+  commitDecryptResult,
   bulkAddSessions,
   removeSessionById,
   removeSessionsByConversation,
@@ -240,6 +240,7 @@ const dataInterface: ClientInterface = {
   getOlderStories,
   getNewerMessagesByConversation,
   getMessageMetricsForConversation,
+  getConversationRangeCenteredOnMessage,
   getLastConversationMessages,
   hasGroupCallHistoryMessage,
   migrateConversationMessages,
@@ -581,9 +582,7 @@ function makeChannel(fnName: string) {
 
       try {
         // Ignoring this error TS2556: Expected 3 arguments, but got 0 or more.
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        return await Server[serverFnName](...args);
+        return await (Server[serverFnName] as Function)(...args);
       } catch (error) {
         if (isCorruptionError(error)) {
           log.error(
@@ -922,11 +921,12 @@ async function createOrUpdateSession(data: SessionType) {
 async function createOrUpdateSessions(array: Array<SessionType>) {
   await channels.createOrUpdateSessions(array);
 }
-async function commitSessionsAndUnprocessed(options: {
+async function commitDecryptResult(options: {
+  senderKeys: Array<SenderKeyType>;
   sessions: Array<SessionType>;
   unprocessed: Array<UnprocessedType>;
 }) {
-  await channels.commitSessionsAndUnprocessed(options);
+  await channels.commitDecryptResult(options);
 }
 async function bulkAddSessions(array: Array<SessionType>) {
   await channels.bulkAddSessions(array);
@@ -1078,7 +1078,11 @@ async function getMessageCount(conversationId?: string) {
 
 async function saveMessage(
   data: MessageType,
-  options: { jobToInsert?: Readonly<StoredJob>; forceSave?: boolean } = {}
+  options: {
+    jobToInsert?: Readonly<StoredJob>;
+    forceSave?: boolean;
+    ourUuid: UUIDStringType;
+  }
 ) {
   const id = await channels.saveMessage(_cleanMessageData(data), {
     ...options,
@@ -1093,7 +1097,7 @@ async function saveMessage(
 
 async function saveMessages(
   arrayOfMessages: Array<MessageType>,
-  options?: { forceSave?: boolean }
+  options: { forceSave?: boolean; ourUuid: UUIDStringType }
 ) {
   await channels.saveMessages(
     arrayOfMessages.map(message => _cleanMessageData(message)),
@@ -1316,6 +1320,23 @@ async function getMessageMetricsForConversation(
 
   return result;
 }
+async function getConversationRangeCenteredOnMessage(options: {
+  conversationId: string;
+  limit?: number;
+  messageId: string;
+  receivedAt: number;
+  sentAt?: number;
+  storyId?: UUIDStringType;
+}) {
+  const result = await channels.getConversationRangeCenteredOnMessage(options);
+
+  return {
+    ...result,
+    older: handleMessageJSON(result.older),
+    newer: handleMessageJSON(result.newer),
+  };
+}
+
 function hasGroupCallHistoryMessage(
   conversationId: string,
   eraId: string

@@ -1,4 +1,4 @@
-// Copyright 2014-2021 Signal Messenger, LLC
+// Copyright 2014-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 // Global Settings, Variables, and Mixins
@@ -43,6 +43,7 @@
 @import './components/CallingPreCallInfo.scss';
 @import './components/CallingScreenSharingController.scss';
 @import './components/CallingSelectPresentingSourcesModal.scss';
+@import './components/CallingToast.scss';
 @import './components/ChatColorPicker.scss';
 @import './components/Checkbox.scss';
 @import './components/CompositionArea.scss';
@@ -70,6 +71,11 @@
 @import './components/Inbox.scss';
 @import './components/IncomingCallBar.scss';
 @import './components/Input.scss';
+@import './components/InstallScreenChoosingDeviceNameStep.scss';
+@import './components/InstallScreenErrorStep.scss';
+@import './components/InstallScreenLinkInProgressStep.scss';
+@import './components/InstallScreenQrCodeNotScannedStep.scss';
+@import './components/InstallScreenSignalLogo.scss';
 @import './components/LeftPaneDialog.scss';
 @import './components/LeftPaneSearchInput.scss';
 @import './components/Lightbox.scss';
@@ -92,7 +98,9 @@
 @import './components/Slider.scss';
 @import './components/SystemMessage.scss';
 @import './components/Tabs.scss';
-@import './components/Toast.scss';
+@import './components/TimelineDateHeader.scss';
+@import './components/TimelineFloatingHeader.scss';
 @import './components/TimelineWarning.scss';
 @import './components/TimelineWarnings.scss';
+@import './components/Toast.scss';
 @import './components/WhatsNew.scss';

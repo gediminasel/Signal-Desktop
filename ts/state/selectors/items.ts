@@ -1,11 +1,11 @@
-// Copyright 2019-2021 Signal Messenger, LLC
+// Copyright 2019-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { createSelector } from 'reselect';
 import { isInteger } from 'lodash';
 
 import { ITEM_NAME as UNIVERSAL_EXPIRE_TIMER_ITEM } from '../../util/universalExpireTimer';
-import type { ConfigMapType } from '../../RemoteConfig';
+import type { ConfigKeyType, ConfigMapType } from '../../RemoteConfig';
 
 import type { StateType } from '../reducer';
 import type { ItemsStateType } from '../ducks/items';
@@ -42,15 +42,20 @@ export const getUniversalExpireTimer = createSelector(
   (state: ItemsStateType): number => state[UNIVERSAL_EXPIRE_TIMER_ITEM] || 0
 );
 
+const isRemoteConfigFlagEnabled = (
+  config: Readonly<ConfigMapType>,
+  key: ConfigKeyType
+): boolean => Boolean(config[key]?.enabled);
+
 const getRemoteConfig = createSelector(
   getItems,
-  (state: ItemsStateType): ConfigMapType | undefined => state.remoteConfig
+  (state: ItemsStateType): ConfigMapType => state.remoteConfig || {}
 );
 
 export const getUsernamesEnabled = createSelector(
   getRemoteConfig,
-  (remoteConfig?: ConfigMapType): boolean =>
-    Boolean(remoteConfig?.['desktop.usernames']?.enabled)
+  (remoteConfig: ConfigMapType): boolean =>
+    isRemoteConfigFlagEnabled(remoteConfig, 'desktop.usernames')
 );
 
 export const getDefaultConversationColor = createSelector(

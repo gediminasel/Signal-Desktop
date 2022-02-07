@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Signal Messenger, LLC
+// Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import * as React from 'react';
@@ -20,7 +20,6 @@ import { ConversationHero } from './ConversationHero';
 import { getDefaultConversation } from '../../test-both/helpers/getDefaultConversation';
 import { getRandomColor } from '../../test-both/helpers/getRandomColor';
 import { LastSeenIndicator } from './LastSeenIndicator';
-import { TimelineLoadingRow } from './TimelineLoadingRow';
 import { TypingBubble } from './TypingBubble';
 import { ContactSpoofingType } from '../../util/contactSpoofing';
 import { ReadStatus } from '../../messages/MessageReadStatus';
@@ -49,6 +48,7 @@ const items: Record<string, TimelineItemType> = {
       }),
       canDeleteForEveryone: false,
       canDownload: true,
+      canReact: true,
       canReply: true,
       conversationColor: 'forest',
       conversationId: 'conversation-id',
@@ -62,6 +62,7 @@ const items: Record<string, TimelineItemType> = {
       text: '🔥',
       timestamp: Date.now(),
     },
+    timestamp: Date.now(),
   },
   'id-2': {
     type: 'message',
@@ -69,6 +70,7 @@ const items: Record<string, TimelineItemType> = {
       author: getDefaultConversation({}),
       canDeleteForEveryone: false,
       canDownload: true,
+      canReact: true,
       canReply: true,
       conversationColor: 'forest',
       conversationId: 'conversation-id',
@@ -82,6 +84,7 @@ const items: Record<string, TimelineItemType> = {
       text: 'Hello there from the new world! http://somewhere.com',
       timestamp: Date.now(),
     },
+    timestamp: Date.now(),
   },
   'id-2.5': {
     type: 'unsupportedMessage',
@@ -95,6 +98,7 @@ const items: Record<string, TimelineItemType> = {
         title: 'Mr. Pig',
       },
     },
+    timestamp: Date.now(),
   },
   'id-3': {
     type: 'message',
@@ -102,6 +106,7 @@ const items: Record<string, TimelineItemType> = {
       author: getDefaultConversation({}),
       canDeleteForEveryone: false,
       canDownload: true,
+      canReact: true,
       canReply: true,
       conversationColor: 'crimson',
       conversationId: 'conversation-id',
@@ -115,6 +120,7 @@ const items: Record<string, TimelineItemType> = {
       text: 'Hello there from the new world!',
       timestamp: Date.now(),
     },
+    timestamp: Date.now(),
   },
   'id-4': {
     type: 'timerNotification',
@@ -124,6 +130,7 @@ const items: Record<string, TimelineItemType> = {
       title: "It's Me",
       type: 'fromMe',
     },
+    timestamp: Date.now(),
   },
   'id-5': {
     type: 'timerNotification',
@@ -133,6 +140,7 @@ const items: Record<string, TimelineItemType> = {
       title: '(202) 555-0000',
       type: 'fromOther',
     },
+    timestamp: Date.now(),
   },
   'id-6': {
     type: 'safetyNumberNotification',
@@ -143,6 +151,7 @@ const items: Record<string, TimelineItemType> = {
       },
       isGroup: true,
     },
+    timestamp: Date.now(),
   },
   'id-7': {
     type: 'verificationNotification',
@@ -151,6 +160,7 @@ const items: Record<string, TimelineItemType> = {
       isLocal: true,
       type: 'markVerified',
     },
+    timestamp: Date.now(),
   },
   'id-8': {
     type: 'groupNotification',
@@ -180,10 +190,12 @@ const items: Record<string, TimelineItemType> = {
         isMe: false,
       }),
     },
+    timestamp: Date.now(),
   },
   'id-9': {
     type: 'resetSessionNotification',
     data: null,
+    timestamp: Date.now(),
   },
   'id-10': {
     type: 'message',
@@ -191,6 +203,7 @@ const items: Record<string, TimelineItemType> = {
       author: getDefaultConversation({}),
       canDeleteForEveryone: false,
       canDownload: true,
+      canReact: true,
       canReply: true,
       conversationColor: 'plum',
       conversationId: 'conversation-id',
@@ -205,6 +218,7 @@ const items: Record<string, TimelineItemType> = {
       text: '🔥',
       timestamp: Date.now(),
     },
+    timestamp: Date.now(),
   },
   'id-11': {
     type: 'message',
@@ -212,6 +226,7 @@ const items: Record<string, TimelineItemType> = {
       author: getDefaultConversation({}),
       canDeleteForEveryone: false,
       canDownload: true,
+      canReact: true,
       canReply: true,
       conversationColor: 'crimson',
       conversationId: 'conversation-id',
@@ -226,6 +241,7 @@ const items: Record<string, TimelineItemType> = {
       text: 'Hello there from the new world! http://somewhere.com',
       timestamp: Date.now(),
     },
+    timestamp: Date.now(),
   },
   'id-12': {
     type: 'message',
@@ -233,6 +249,7 @@ const items: Record<string, TimelineItemType> = {
       author: getDefaultConversation({}),
       canDeleteForEveryone: false,
       canDownload: true,
+      canReact: true,
       canReply: true,
       conversationColor: 'crimson',
       conversationId: 'conversation-id',
@@ -247,6 +264,7 @@ const items: Record<string, TimelineItemType> = {
       text: 'Hello there from the new world! 🔥',
       timestamp: Date.now(),
     },
+    timestamp: Date.now(),
   },
   'id-13': {
     type: 'message',
@@ -254,6 +272,7 @@ const items: Record<string, TimelineItemType> = {
       author: getDefaultConversation({}),
       canDeleteForEveryone: false,
       canDownload: true,
+      canReact: true,
       canReply: true,
       conversationColor: 'crimson',
       conversationId: 'conversation-id',
@@ -268,6 +287,7 @@ const items: Record<string, TimelineItemType> = {
       text: 'Hello there from the new world! And this is multiple lines of text. Lines and lines and lines.',
       timestamp: Date.now(),
     },
+    timestamp: Date.now(),
   },
   'id-14': {
     type: 'message',
@@ -275,6 +295,7 @@ const items: Record<string, TimelineItemType> = {
       author: getDefaultConversation({}),
       canDeleteForEveryone: false,
       canDownload: true,
+      canReact: true,
       canReply: true,
       conversationColor: 'crimson',
       conversationId: 'conversation-id',
@@ -289,10 +310,12 @@ const items: Record<string, TimelineItemType> = {
       text: 'Hello there from the new world! And this is multiple lines of text. Lines and lines and lines.',
       timestamp: Date.now(),
     },
+    timestamp: Date.now(),
   },
   'id-15': {
     type: 'linkNotification',
     data: null,
+    timestamp: Date.now(),
   },
 };
 
@@ -375,14 +398,17 @@ const renderItem = ({
   messageId,
   containerElementRef,
   containerWidthBreakpoint,
+  isOldestTimelineItem,
 }: {
   messageId: string;
   containerElementRef: React.RefObject<HTMLElement>;
   containerWidthBreakpoint: WidthBreakpoint;
+  isOldestTimelineItem: boolean;
 }) => (
   <TimelineItem
     getPreferredBadge={() => undefined}
     id=""
+    isOldestTimelineItem={isOldestTimelineItem}
     isSelected={false}
     renderEmojiPicker={() => <div />}
     renderReactionPicker={() => <div />}
@@ -442,7 +468,6 @@ const renderHeroRow = () => {
   };
   return <Wrapper />;
 };
-const renderLoadingRow = () => <TimelineLoadingRow state="loading" />;
 const renderTypingBubble = () => (
   <TypingBubble
     acceptedMessageRequest
@@ -463,6 +488,7 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
   i18n,
   theme: React.useContext(StorybookThemeContext),
 
+  getTimestampForMessage: Date.now,
   haveNewest: boolean('haveNewest', overrideProps.haveNewest !== false),
   haveOldest: boolean('haveOldest', overrideProps.haveOldest !== false),
   isIncomingMessageRequest: boolean(
@@ -489,7 +515,6 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
   renderItem,
   renderLastSeenIndicator,
   renderHeroRow,
-  renderLoadingRow,
   renderTypingBubble,
   typingContactId: overrideProps.typingContactId,
 

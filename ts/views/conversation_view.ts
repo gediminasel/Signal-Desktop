@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Signal Messenger, LLC
+// Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /* eslint-disable camelcase */
@@ -29,6 +29,7 @@ import type {
   MessageAttributesType as MediaItemMessageType,
 } from '../types/MediaItem';
 import type { MessageModel } from '../models/messages';
+import { getMessageById } from '../messages/getMessageById';
 import { getContactId } from '../messages/helpers';
 import { strictAssert } from '../util/assert';
 import { maybeParseUrl } from '../util/url';
@@ -137,7 +138,7 @@ const {
   upgradeMessageSchema,
 } = window.Signal.Migrations;
 
-const { getMessageById, getMessagesBySentAt } = window.Signal.Data;
+const { getMessagesBySentAt } = window.Signal.Data;
 
 type MessageActionsType = {
   deleteMessage: (messageId: string) => unknown;
@@ -475,7 +476,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
         throw new Error(`markMessageRead: failed to load message ${messageId}`);
       }
 
-      await this.model.markRead(message.received_at);
+      await this.model.markRead(message.get('received_at'));
     };
 
     const createMessageRequestResponseHandler =
@@ -657,7 +658,6 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
 
   async onOutgoingVideoCallInConversation(): Promise<void> {
     log.info('onOutgoingVideoCallInConversation: about to start a video call');
-    const isVideoCall = true;
 
     if (this.model.get('announcementsOnly') && !this.model.areWeAdmin()) {
       showToast(ToastCannotStartGroupCall);
@@ -668,10 +668,10 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
       log.info(
         'onOutgoingVideoCallInConversation: call is deemed "safe". Making call'
       );
-      await window.Signal.Services.calling.startCallingLobby(
-        this.model.id,
-        isVideoCall
-      );
+      window.reduxActions.calling.startCallingLobby({
+        conversationId: this.model.id,
+        isVideoCall: true,
+      });
       log.info('onOutgoingVideoCallInConversation: started the call');
     } else {
       log.info(
@@ -683,16 +683,14 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
   async onOutgoingAudioCallInConversation(): Promise<void> {
     log.info('onOutgoingAudioCallInConversation: about to start an audio call');
 
-    const isVideoCall = false;
-
     if (await this.isCallSafe()) {
       log.info(
         'onOutgoingAudioCallInConversation: call is deemed "safe". Making call'
       );
-      await window.Signal.Services.calling.startCallingLobby(
-        this.model.id,
-        isVideoCall
-      );
+      window.reduxActions.calling.startCallingLobby({
+        conversationId: this.model.id,
+        isVideoCall: false,
+      });
       log.info('onOutgoingAudioCallInConversation: started the call');
     } else {
       log.info(
@@ -966,6 +964,10 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
 
   // TODO DESKTOP-2426
   async processAttachments(files: Array<File>): Promise<void> {
+    if (this.preview) {
+      return;
+    }
+
     const {
       addAttachment,
       addPendingAttachment,
@@ -1195,6 +1197,8 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
   }
 
   async onOpened(messageId: string): Promise<void> {
+    this.model.onOpenStart();
+
     if (messageId) {
       const message = await getMessageById(messageId);
 
@@ -1211,8 +1215,12 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
       await retryPlaceholders.findByConversationAndMarkOpened(this.model.id);
     }
 
-    this.model.loadNewestMessages(undefined, undefined);
-    this.model.updateLastMessage();
+    const loadAndUpdate = async () => {
+      await this.model.loadNewestMessages(undefined, undefined);
+      await this.model.updateLastMessage();
+    };
+
+    loadAndUpdate();
 
     this.focusMessageField();
 
@@ -1243,18 +1251,10 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
   }
 
   async showForwardMessageModal(messageId: string): Promise<void> {
-    const messageFromCache = window.MessageController.getById(messageId);
-    if (!messageFromCache) {
-      log.info('showForwardMessageModal: Fetching message from database');
-    }
-    const found =
-      messageFromCache || (await window.Signal.Data.getMessageById(messageId));
-
-    if (!found) {
+    const message = await getMessageById(messageId);
+    if (!message) {
       throw new Error(`showForwardMessageModal: Message ${messageId} missing!`);
     }
-
-    const message = window.MessageController.register(found.id, found);
     const attachments = getAttachmentsForMessage(message.attributes);
 
     this.forwardMessageModal = new Whisper.ReactWrapperView({
@@ -1474,6 +1474,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
     const DEFAULT_PAGE_SIZE = 150;
 
     const conversationId = this.model.get('id');
+    const ourUuid = window.textsecure.storage.user.getCheckedUuid().toString();
 
     const getProps = () => {
       const loadMedia = async (page: number) => {
@@ -1491,15 +1492,15 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
           const message = rawMedia[i];
           const { schemaVersion } = message;
 
-          if (
-            schemaVersion &&
-            schemaVersion < Message.VERSION_NEEDED_FOR_DISPLAY
-          ) {
-            // Yep, we really do want to wait for each of these
-            // eslint-disable-next-line no-await-in-loop
-            rawMedia[i] = await upgradeMessageSchema(message);
-            // eslint-disable-next-line no-await-in-loop
-            await window.Signal.Data.saveMessage(rawMedia[i]);
+        if (
+          schemaVersion &&
+          schemaVersion < Message.VERSION_NEEDED_FOR_DISPLAY
+        ) {
+          // Yep, we really do want to wait for each of these
+          // eslint-disable-next-line no-await-in-loop
+          rawMedia[i] = await upgradeMessageSchema(message);
+          // eslint-disable-next-line no-await-in-loop
+          await window.Signal.Data.saveMessage(rawMedia[i], { ourUuid });
           }
         }
 
@@ -2677,15 +2678,12 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
 
   async setQuoteMessage(messageId: null | string): Promise<void> {
     const { model } = this;
-    const found = messageId ? await getMessageById(messageId) : undefined;
-    const message = found
-      ? window.MessageController.register(found.id, found)
-      : undefined;
+    const message = messageId ? await getMessageById(messageId) : undefined;
 
     if (
-      found &&
+      message &&
       !canReply(
-        found,
+        message.attributes,
         window.ConversationController.getOurConversationIdOrThrow(),
         findAndFormatContact
       )

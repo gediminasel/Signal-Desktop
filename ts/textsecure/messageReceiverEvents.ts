@@ -15,12 +15,6 @@ import type {
   ModifiedGroupDetails,
 } from './ContactsParser';
 
-export class ReconnectEvent extends Event {
-  constructor() {
-    super('reconnect');
-  }
-}
-
 export class EmptyEvent extends Event {
   constructor() {
     super('empty');
@@ -127,7 +121,7 @@ export class ConfirmableEvent extends Event {
 
 export type DeliveryEventData = Readonly<{
   timestamp: number;
-  envelopeTimestamp?: number;
+  envelopeTimestamp: number;
   source?: string;
   sourceUuid?: string;
   sourceDevice?: number;

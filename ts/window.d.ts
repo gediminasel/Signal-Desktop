@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Signal Messenger, LLC
+// Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 // Captures the globals put in place by preload.js, background.js and others
@@ -111,6 +111,8 @@ import { CI } from './CI';
 import { IPCEventsType, IPCEventsValuesType } from './util/createIPCEvents';
 import { ConversationView } from './views/conversation_view';
 import type { SignalContextType } from './windows/context';
+import { GroupV2Change } from './components/conversation/GroupV2Change';
+import * as GroupChange from './groupChange';
 
 export { Long } from 'long';
 
@@ -158,7 +160,6 @@ declare global {
   interface Window {
     startApp: () => void;
 
-    QRCode: any;
     removeSetupMenuItems: () => unknown;
     showPermissionsPopup: () => Promise<void>;
 
@@ -170,7 +171,6 @@ declare global {
     imageToBlurHash: typeof imageToBlurHash;
     loadImage: any;
     isBehindProxy: () => boolean;
-    isLegacyOS: () => boolean;
     getAutoLaunch: () => Promise<boolean>;
     setAutoLaunch: (value: boolean) => Promise<void>;
 
@@ -190,6 +190,11 @@ declare global {
     baseAttachmentsPath: string;
     baseStickersPath: string;
     baseTempPath: string;
+    crashReports: {
+      getCount: () => Promise<number>;
+      upload: () => Promise<void>;
+      erase: () => Promise<void>;
+    };
     drawAttention: () => void;
     enterKeyboardMode: () => void;
     enterMouseMode: () => void;
@@ -266,6 +271,7 @@ declare global {
     updateTrayIcon: (count: number) => void;
     Backbone: typeof Backbone;
     CI?: CI;
+
     Accessibility: {
       reducedMotionSetting: boolean;
     };
@@ -279,7 +285,9 @@ declare global {
       Services: {
         calling: CallingClass;
         enableStorageService: () => boolean;
-        eraseAllStorageServiceState: () => Promise<void>;
+        eraseAllStorageServiceState: (options?: {
+          keepUnknownFields?: boolean;
+        }) => Promise<void>;
         initializeGroupCredentialFetcher: () => void;
         initializeNetworkObserver: (network: ReduxActions['network']) => void;
         initializeUpdateListener: (updates: ReduxActions['updates']) => void;
@@ -381,9 +389,7 @@ declare global {
         QualifiedAddress: typeof QualifiedAddress;
       };
       Util: typeof Util;
-      GroupChange: {
-        renderChange: (change: unknown, things: unknown) => Array<string>;
-      };
+      GroupChange: typeof GroupChange;
       Components: {
         AttachmentList: typeof AttachmentList;
         ChatColorPicker: typeof ChatColorPicker;
@@ -580,7 +586,6 @@ export type WhisperType = {
   ConversationLoadingScreen: typeof AnyViewClass;
   GroupMemberList: typeof AnyViewClass;
   InboxView: typeof AnyViewClass;
-  InstallView: typeof AnyViewClass;
   KeyVerificationPanelView: typeof AnyViewClass;
   ReactWrapperView: typeof BasicReactWrapperViewClass;
   SafetyNumberChangeDialogView: typeof AnyViewClass;

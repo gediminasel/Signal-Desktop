@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Signal Messenger, LLC
+// Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import * as React from 'react';
@@ -10,6 +10,7 @@ import { storiesOf } from '@storybook/react';
 import type { PropsType } from './LeftPane';
 import { LeftPane, LeftPaneMode } from './LeftPane';
 import { CaptchaDialog } from './CaptchaDialog';
+import { CrashReportDialog } from './CrashReportDialog';
 import type { ConversationType } from '../state/ducks/conversations';
 import { MessageSearchResult } from './conversationList/MessageSearchResult';
 import { setupI18n } from '../util/setupI18n';
@@ -33,6 +34,13 @@ const defaultConversations: Array<ConversationType> = [
     title: 'Marc Barraca',
   }),
 ];
+
+const defaultSearchProps = {
+  searchConversation: undefined,
+  searchDisabled: false,
+  searchTerm: 'hello',
+  startSearchCounter: 0,
+};
 
 const defaultGroups: Array<ConversationType> = [
   getDefaultConversation({
@@ -71,19 +79,19 @@ const pinnedConversations: Array<ConversationType> = [
 ];
 
 const defaultModeSpecificProps = {
+  ...defaultSearchProps,
   mode: LeftPaneMode.Inbox as const,
   pinnedConversations,
   conversations: defaultConversations,
   archivedConversations: defaultArchivedConversations,
   isAboutToSearchInAConversation: false,
-  startSearchCounter: 0,
 };
 
 const emptySearchResultsGroup = { isLoading: false, results: [] };
 
 const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
   cantAddContactToGroup: action('cantAddContactToGroup'),
-  canResizeLeftPane: true,
+  clearConversationSearch: action('clearConversationSearch'),
   clearGroupCreationError: action('clearGroupCreationError'),
   clearSearch: action('clearSearch'),
   closeCantAddContactToGroupModal: action('closeCantAddContactToGroupModal'),
@@ -104,6 +112,7 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
     ['idle', 'required', 'pending'],
     'idle'
   ),
+  crashReportCount: select('challengeReportCount', [0, 1], 0),
   setChallengeStatus: action('setChallengeStatus'),
   renderExpiredBuildDialog: () => <div />,
   renderMainHeader: () => <div />,
@@ -132,6 +141,14 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
       isPending={overrideProps.challengeStatus === 'pending'}
       onContinue={action('onCaptchaContinue')}
       onSkip={action('onCaptchaSkip')}
+    />
+  ),
+  renderCrashReportDialog: () => (
+    <CrashReportDialog
+      i18n={i18n}
+      isPending={false}
+      uploadCrashReports={action('uploadCrashReports')}
+      eraseCrashReports={action('eraseCrashReports')}
     />
   ),
   selectedConversationId: undefined,
@@ -168,12 +185,12 @@ story.add('Inbox: no conversations', () => (
   <LeftPane
     {...useProps({
       modeSpecificProps: {
+        ...defaultSearchProps,
         mode: LeftPaneMode.Inbox,
         pinnedConversations: [],
         conversations: [],
         archivedConversations: [],
         isAboutToSearchInAConversation: false,
-        startSearchCounter: 0,
       },
     })}
   />
@@ -183,12 +200,12 @@ story.add('Inbox: only pinned conversations', () => (
   <LeftPane
     {...useProps({
       modeSpecificProps: {
+        ...defaultSearchProps,
         mode: LeftPaneMode.Inbox,
         pinnedConversations,
         conversations: [],
         archivedConversations: [],
         isAboutToSearchInAConversation: false,
-        startSearchCounter: 0,
       },
     })}
   />
@@ -198,12 +215,12 @@ story.add('Inbox: only non-pinned conversations', () => (
   <LeftPane
     {...useProps({
       modeSpecificProps: {
+        ...defaultSearchProps,
         mode: LeftPaneMode.Inbox,
         pinnedConversations: [],
         conversations: defaultConversations,
         archivedConversations: [],
         isAboutToSearchInAConversation: false,
-        startSearchCounter: 0,
       },
     })}
   />
@@ -213,12 +230,12 @@ story.add('Inbox: only archived conversations', () => (
   <LeftPane
     {...useProps({
       modeSpecificProps: {
+        ...defaultSearchProps,
         mode: LeftPaneMode.Inbox,
         pinnedConversations: [],
         conversations: [],
         archivedConversations: defaultArchivedConversations,
         isAboutToSearchInAConversation: false,
-        startSearchCounter: 0,
       },
     })}
   />
@@ -228,12 +245,12 @@ story.add('Inbox: pinned and archived conversations', () => (
   <LeftPane
     {...useProps({
       modeSpecificProps: {
+        ...defaultSearchProps,
         mode: LeftPaneMode.Inbox,
         pinnedConversations,
         conversations: [],
         archivedConversations: defaultArchivedConversations,
         isAboutToSearchInAConversation: false,
-        startSearchCounter: 0,
       },
     })}
   />
@@ -243,12 +260,12 @@ story.add('Inbox: non-pinned and archived conversations', () => (
   <LeftPane
     {...useProps({
       modeSpecificProps: {
+        ...defaultSearchProps,
         mode: LeftPaneMode.Inbox,
         pinnedConversations: [],
         conversations: defaultConversations,
         archivedConversations: defaultArchivedConversations,
         isAboutToSearchInAConversation: false,
-        startSearchCounter: 0,
       },
     })}
   />
@@ -258,12 +275,12 @@ story.add('Inbox: pinned and non-pinned conversations', () => (
   <LeftPane
     {...useProps({
       modeSpecificProps: {
+        ...defaultSearchProps,
         mode: LeftPaneMode.Inbox,
         pinnedConversations,
         conversations: defaultConversations,
         archivedConversations: [],
         isAboutToSearchInAConversation: false,
-        startSearchCounter: 0,
       },
     })}
   />
@@ -279,11 +296,11 @@ story.add('Search: no results when searching everywhere', () => (
   <LeftPane
     {...useProps({
       modeSpecificProps: {
+        ...defaultSearchProps,
         mode: LeftPaneMode.Search,
         conversationResults: emptySearchResultsGroup,
         contactResults: emptySearchResultsGroup,
         messageResults: emptySearchResultsGroup,
-        searchTerm: 'foo bar',
         primarySendsSms: false,
       },
     })}
@@ -294,11 +311,11 @@ story.add('Search: no results when searching everywhere (SMS)', () => (
   <LeftPane
     {...useProps({
       modeSpecificProps: {
+        ...defaultSearchProps,
         mode: LeftPaneMode.Search,
         conversationResults: emptySearchResultsGroup,
         contactResults: emptySearchResultsGroup,
         messageResults: emptySearchResultsGroup,
-        searchTerm: 'foo bar',
         primarySendsSms: true,
       },
     })}
@@ -309,12 +326,12 @@ story.add('Search: no results when searching in a conversation', () => (
   <LeftPane
     {...useProps({
       modeSpecificProps: {
+        ...defaultSearchProps,
         mode: LeftPaneMode.Search,
         conversationResults: emptySearchResultsGroup,
         contactResults: emptySearchResultsGroup,
         messageResults: emptySearchResultsGroup,
         searchConversationName: 'Bing Bong',
-        searchTerm: 'foo bar',
         primarySendsSms: false,
       },
     })}
@@ -325,11 +342,11 @@ story.add('Search: all results loading', () => (
   <LeftPane
     {...useProps({
       modeSpecificProps: {
+        ...defaultSearchProps,
         mode: LeftPaneMode.Search,
         conversationResults: { isLoading: true },
         contactResults: { isLoading: true },
         messageResults: { isLoading: true },
-        searchTerm: 'foo bar',
         primarySendsSms: false,
       },
     })}
@@ -340,6 +357,7 @@ story.add('Search: some results loading', () => (
   <LeftPane
     {...useProps({
       modeSpecificProps: {
+        ...defaultSearchProps,
         mode: LeftPaneMode.Search,
         conversationResults: {
           isLoading: false,
@@ -347,7 +365,6 @@ story.add('Search: some results loading', () => (
         },
         contactResults: { isLoading: true },
         messageResults: { isLoading: true },
-        searchTerm: 'foo bar',
         primarySendsSms: false,
       },
     })}
@@ -358,6 +375,7 @@ story.add('Search: has conversations and contacts, but not messages', () => (
   <LeftPane
     {...useProps({
       modeSpecificProps: {
+        ...defaultSearchProps,
         mode: LeftPaneMode.Search,
         conversationResults: {
           isLoading: false,
@@ -365,7 +383,6 @@ story.add('Search: has conversations and contacts, but not messages', () => (
         },
         contactResults: { isLoading: false, results: defaultConversations },
         messageResults: { isLoading: false, results: [] },
-        searchTerm: 'foo bar',
         primarySendsSms: false,
       },
     })}
@@ -376,6 +393,7 @@ story.add('Search: all results', () => (
   <LeftPane
     {...useProps({
       modeSpecificProps: {
+        ...defaultSearchProps,
         mode: LeftPaneMode.Search,
         conversationResults: {
           isLoading: false,
@@ -389,7 +407,6 @@ story.add('Search: all results', () => (
             { id: 'msg2', conversationId: 'bar' },
           ],
         },
-        searchTerm: 'foo bar',
         primarySendsSms: false,
       },
     })}
@@ -406,6 +423,7 @@ story.add('Archive: no archived conversations', () => (
         archivedConversations: [],
         searchConversation: undefined,
         searchTerm: '',
+        startSearchCounter: 0,
       },
     })}
   />
@@ -419,6 +437,7 @@ story.add('Archive: archived conversations', () => (
         archivedConversations: defaultConversations,
         searchConversation: undefined,
         searchTerm: '',
+        startSearchCounter: 0,
       },
     })}
   />
@@ -432,6 +451,7 @@ story.add('Archive: searching a conversation', () => (
         archivedConversations: defaultConversations,
         searchConversation: undefined,
         searchTerm: '',
+        startSearchCounter: 0,
       },
     })}
   />
@@ -605,12 +625,13 @@ story.add('Captcha dialog: required', () => (
   <LeftPane
     {...useProps({
       modeSpecificProps: {
+        ...defaultSearchProps,
         mode: LeftPaneMode.Inbox,
         pinnedConversations,
         conversations: defaultConversations,
         archivedConversations: [],
         isAboutToSearchInAConversation: false,
-        startSearchCounter: 0,
+        searchTerm: '',
       },
       challengeStatus: 'required',
     })}
@@ -621,14 +642,34 @@ story.add('Captcha dialog: pending', () => (
   <LeftPane
     {...useProps({
       modeSpecificProps: {
+        ...defaultSearchProps,
         mode: LeftPaneMode.Inbox,
         pinnedConversations,
         conversations: defaultConversations,
         archivedConversations: [],
         isAboutToSearchInAConversation: false,
-        startSearchCounter: 0,
+        searchTerm: '',
       },
       challengeStatus: 'pending',
+    })}
+  />
+));
+
+// Crash report flow
+
+story.add('Crash report dialog', () => (
+  <LeftPane
+    {...useProps({
+      modeSpecificProps: {
+        ...defaultSearchProps,
+        mode: LeftPaneMode.Inbox,
+        pinnedConversations,
+        conversations: defaultConversations,
+        archivedConversations: [],
+        isAboutToSearchInAConversation: false,
+        searchTerm: '',
+      },
+      crashReportCount: 42,
     })}
   />
 ));
@@ -684,6 +725,23 @@ story.add('Group Metadata: Custom Timer', () => (
         isEditingAvatar: false,
         selectedContacts: defaultConversations,
         userAvatarData: [],
+      },
+    })}
+  />
+));
+
+story.add('Searching Conversation', () => (
+  <LeftPane
+    {...useProps({
+      modeSpecificProps: {
+        ...defaultSearchProps,
+        mode: LeftPaneMode.Inbox,
+        pinnedConversations: [],
+        conversations: defaultConversations,
+        archivedConversations: [],
+        isAboutToSearchInAConversation: false,
+        searchConversation: getDefaultConversation(),
+        searchTerm: '',
       },
     })}
   />

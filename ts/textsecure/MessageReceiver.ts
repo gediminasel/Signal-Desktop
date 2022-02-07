@@ -4,7 +4,7 @@
 /* eslint-disable no-bitwise */
 /* eslint-disable camelcase */
 
-import { isNumber, map } from 'lodash';
+import { isNumber } from 'lodash';
 import PQueue from 'p-queue';
 import { v4 as getGuid } from 'uuid';
 
@@ -76,9 +76,9 @@ import type {
   ProcessedEnvelope,
   IRequestHandler,
 } from './Types.d';
-import type { ReconnectEvent, EnvelopeEvent } from './messageReceiverEvents';
 import {
   EmptyEvent,
+  EnvelopeEvent,
   ProgressEvent,
   TypingEvent,
   ErrorEvent,
@@ -105,6 +105,7 @@ import {
   GroupSyncEvent,
 } from './messageReceiverEvents';
 import * as log from '../logging/log';
+import { areArraysMatchingSets } from '../util/areArraysMatchingSets';
 
 const GROUPV1_ID_LENGTH = 16;
 const GROUPV2_ID_LENGTH = 32;
@@ -138,6 +139,7 @@ type CacheAddItemType = {
 };
 
 type LockedStores = {
+  readonly senderKeyStore: SenderKeys;
   readonly sessionStore: Sessions;
   readonly identityKeyStore: IdentityKeys;
   readonly zone?: Zone;
@@ -202,24 +204,20 @@ export default class MessageReceiver
 
     this.incomingQueue = new PQueue({
       concurrency: 1,
-      timeout: 1000 * 60 * 2,
       throwOnTimeout: true,
     });
     this.appQueue = new PQueue({
       concurrency: 1,
-      timeout: 1000 * 60 * 2,
       throwOnTimeout: true,
     });
 
     // All envelopes start in encryptedQueue and progress to decryptedQueue
     this.encryptedQueue = new PQueue({
       concurrency: 1,
-      timeout: 1000 * 60 * 2,
       throwOnTimeout: true,
     });
     this.decryptedQueue = new PQueue({
       concurrency: 1,
-      timeout: 1000 * 60 * 2,
       throwOnTimeout: true,
     });
 
@@ -253,9 +251,11 @@ export default class MessageReceiver
       request.respond(200, 'OK');
 
       if (request.verb === 'PUT' && request.path === '/api/v1/queue/empty') {
-        this.incomingQueue.add(() => {
-          this.onEmpty();
-        });
+        this.incomingQueue.add(
+          createTaskWithTimeout(async () => {
+            this.onEmpty();
+          }, 'incomingQueue/onEmpty')
+        );
       }
       return;
     }
@@ -324,12 +324,19 @@ export default class MessageReceiver
       }
     };
 
-    this.incomingQueue.add(job);
+    this.incomingQueue.add(
+      createTaskWithTimeout(job, 'incomingQueue/websocket')
+    );
   }
 
   public reset(): void {
     // We always process our cache before processing a new websocket message
-    this.incomingQueue.add(async () => this.queueAllCached());
+    this.incomingQueue.add(
+      createTaskWithTimeout(
+        async () => this.queueAllCached(),
+        'incomingQueue/queueAllCached'
+      )
+    );
 
     this.count = 0;
     this.isEmptied = false;
@@ -346,24 +353,29 @@ export default class MessageReceiver
 
   public async drain(): Promise<void> {
     const waitForEncryptedQueue = async () =>
-      this.addToQueue(async () => {
-        log.info('drained');
-      }, TaskType.Decrypted);
+      this.addToQueue(
+        async () => {
+          log.info('drained');
+        },
+        'drain/waitForDecrypted',
+        TaskType.Decrypted
+      );
 
     const waitForIncomingQueue = async () =>
-      this.addToQueue(waitForEncryptedQueue, TaskType.Encrypted);
+      this.addToQueue(
+        waitForEncryptedQueue,
+        'drain/waitForEncrypted',
+        TaskType.Encrypted
+      );
 
-    return this.incomingQueue.add(waitForIncomingQueue);
+    return this.incomingQueue.add(
+      createTaskWithTimeout(waitForIncomingQueue, 'drain/waitForIncoming')
+    );
   }
 
   //
   // EventTarget types
   //
-
-  public override addEventListener(
-    name: 'reconnect',
-    handler: (ev: ReconnectEvent) => void
-  ): void;
 
   public override addEventListener(
     name: 'empty',
@@ -511,7 +523,12 @@ export default class MessageReceiver
   //
 
   private async dispatchAndWait(event: Event): Promise<void> {
-    this.appQueue.add(async () => Promise.all(this.dispatchEvent(event)));
+    this.appQueue.add(
+      createTaskWithTimeout(
+        async () => Promise.all(this.dispatchEvent(event)),
+        'dispatchEvent'
+      )
+    );
   }
 
   private calculateMessageAge(
@@ -545,6 +562,7 @@ export default class MessageReceiver
 
   private async addToQueue<T>(
     task: () => Promise<T>,
+    id: string,
     taskType: TaskType
   ): Promise<T> {
     if (taskType === TaskType.Encrypted) {
@@ -557,7 +575,7 @@ export default class MessageReceiver
         : this.decryptedQueue;
 
     try {
-      return await queue.add(task);
+      return await queue.add(createTaskWithTimeout(task, id));
     } finally {
       this.updateProgress(this.count);
     }
@@ -583,24 +601,34 @@ export default class MessageReceiver
       );
 
       // We don't await here because we don't want this to gate future message processing
-      this.appQueue.add(emitEmpty);
+      this.appQueue.add(createTaskWithTimeout(emitEmpty, 'emitEmpty'));
     };
 
     const waitForEncryptedQueue = async () => {
-      this.addToQueue(waitForDecryptedQueue, TaskType.Decrypted);
+      this.addToQueue(
+        waitForDecryptedQueue,
+        'onEmpty/waitForDecrypted',
+        TaskType.Decrypted
+      );
     };
 
-    const waitForIncomingQueue = () => {
-      this.addToQueue(waitForEncryptedQueue, TaskType.Encrypted);
-
+    const waitForIncomingQueue = async () => {
       // Note: this.count is used in addToQueue
       // Resetting count so everything from the websocket after this starts at zero
       this.count = 0;
+
+      this.addToQueue(
+        waitForEncryptedQueue,
+        'onEmpty/waitForEncrypted',
+        TaskType.Encrypted
+      );
     };
 
     const waitForCacheAddBatcher = async () => {
       await this.decryptAndCacheBatcher.onIdle();
-      this.incomingQueue.add(waitForIncomingQueue);
+      this.incomingQueue.add(
+        createTaskWithTimeout(waitForIncomingQueue, 'onEmpty/waitForIncoming')
+      );
     };
 
     waitForCacheAddBatcher();
@@ -678,9 +706,13 @@ export default class MessageReceiver
         }
 
         // Maintain invariant: encrypted queue => decrypted queue
-        this.addToQueue(async () => {
-          this.queueDecryptedEnvelope(envelope, payloadPlaintext);
-        }, TaskType.Encrypted);
+        this.addToQueue(
+          async () => {
+            this.queueDecryptedEnvelope(envelope, payloadPlaintext);
+          },
+          'queueDecryptedEnvelope',
+          TaskType.Encrypted
+        );
       } else {
         this.queueCachedEnvelope(item, envelope);
       }
@@ -732,7 +764,12 @@ export default class MessageReceiver
     if (this.isEmptied) {
       this.clearRetryTimeout();
       this.retryCachedTimeout = setTimeout(() => {
-        this.incomingQueue.add(async () => this.queueAllCached());
+        this.incomingQueue.add(
+          createTaskWithTimeout(
+            async () => this.queueAllCached(),
+            'queueAllCached'
+          )
+        );
       }, RETRY_TIMEOUT);
     }
   }
@@ -779,6 +816,7 @@ export default class MessageReceiver
 
     try {
       const zone = new Zone('decryptAndCacheBatch', {
+        pendingSenderKeys: true,
         pendingSessions: true,
         pendingUnprocessed: true,
       });
@@ -814,6 +852,10 @@ export default class MessageReceiver
               let stores = storesMap.get(destinationUuid.toString());
               if (!stores) {
                 stores = {
+                  senderKeyStore: new SenderKeys({
+                    ourUuid: destinationUuid,
+                    zone,
+                  }),
                   sessionStore: new Sessions({
                     zone,
                     ourUuid: destinationUuid,
@@ -965,7 +1007,11 @@ export default class MessageReceiver
     );
 
     try {
-      await this.addToQueue(taskWithTimeout, TaskType.Decrypted);
+      await this.addToQueue(
+        taskWithTimeout,
+        'dispatchEvent',
+        TaskType.Decrypted
+      );
     } catch (error) {
       log.error(
         `queueDecryptedEnvelope error handling envelope ${id}:`,
@@ -982,7 +1028,7 @@ export default class MessageReceiver
     let logId = this.getEnvelopeId(envelope);
     log.info(`queueing ${uuidKind} envelope`, logId);
 
-    const task = createTaskWithTimeout(async (): Promise<DecryptResult> => {
+    const task = async (): Promise<DecryptResult> => {
       const unsealedEnvelope = await this.unsealEnvelope(
         stores,
         envelope,
@@ -996,11 +1042,21 @@ export default class MessageReceiver
 
       logId = this.getEnvelopeId(unsealedEnvelope);
 
+      this.addToQueue(
+        async () => this.dispatchEvent(new EnvelopeEvent(unsealedEnvelope)),
+        'dispatchEvent',
+        TaskType.Decrypted
+      );
+
       return this.decryptEnvelope(stores, unsealedEnvelope, uuidKind);
-    }, `MessageReceiver: unseal and decrypt ${logId}`);
+    };
 
     try {
-      return await this.addToQueue(task, TaskType.Encrypted);
+      return await this.addToQueue(
+        task,
+        `MessageReceiver: unseal and decrypt ${logId}`,
+        TaskType.Encrypted
+      );
     } catch (error) {
       const args = [
         'queueEncryptedEnvelope error handling envelope',
@@ -1277,6 +1333,7 @@ export default class MessageReceiver
       new DeliveryEvent(
         {
           timestamp: envelope.timestamp,
+          envelopeTimestamp: envelope.serverTimestamp,
           source: envelope.source,
           sourceUuid: envelope.sourceUuid,
           sourceDevice: envelope.sourceDevice,
@@ -1300,7 +1357,7 @@ export default class MessageReceiver
   }
 
   private async decryptSealedSender(
-    { sessionStore, identityKeyStore, zone }: LockedStores,
+    { senderKeyStore, sessionStore, identityKeyStore, zone }: LockedStores,
     envelope: UnsealedEnvelope,
     ciphertext: Uint8Array
   ): Promise<DecryptSealedSenderResult> {
@@ -1351,7 +1408,6 @@ export default class MessageReceiver
       );
       const sealedSenderIdentifier = certificate.senderUuid();
       const sealedSenderSourceDevice = certificate.senderDeviceId();
-      const senderKeyStore = new SenderKeys({ ourUuid: destinationUuid });
 
       const address = new QualifiedAddress(
         destinationUuid,
@@ -1623,6 +1679,7 @@ export default class MessageReceiver
         // Avoid deadlocks by scheduling processing on decrypted queue
         this.addToQueue(
           async () => this.dispatchEvent(event),
+          'decrypted/dispatchEvent',
           TaskType.Decrypted
         );
       } else {
@@ -1841,8 +1898,11 @@ export default class MessageReceiver
 
     try {
       if (!conversation) {
+        const idForLogging = envelope.groupId
+          ? `groupv2(${envelope.groupId})`
+          : envelope.sourceUuid;
         log.info(
-          `maybeUpdateTimestamp/${timestamp}: No conversation found for identifier ${identifier}`
+          `maybeUpdateTimestamp/${timestamp}: No conversation found for identifier ${idForLogging}`
         );
         return envelope;
       }
@@ -1999,7 +2059,6 @@ export default class MessageReceiver
         Buffer.from(distributionMessage)
       );
     const { destinationUuid } = envelope;
-    const senderKeyStore = new SenderKeys({ ourUuid: destinationUuid });
     const address = new QualifiedAddress(
       destinationUuid,
       Address.create(identifier, sourceDevice)
@@ -2011,7 +2070,7 @@ export default class MessageReceiver
         processSenderKeyDistributionMessage(
           sender,
           senderKeyDistributionMessage,
-          senderKeyStore
+          stores.senderKeyStore
         ),
       stores.zone
     );
@@ -2621,26 +2680,75 @@ export default class MessageReceiver
     envelope: ProcessedEnvelope,
     blocked: Proto.SyncMessage.IBlocked
   ): Promise<void> {
-    log.info('Setting these numbers as blocked:', blocked.numbers);
+    const allIdentifiers = [];
+    let changed = false;
+
     if (blocked.numbers) {
+      const previous = this.storage.get('blocked', []);
+
+      log.info('handleBlocked: Blocking these numbers:', blocked.numbers);
       await this.storage.put('blocked', blocked.numbers);
+
+      if (!areArraysMatchingSets(previous, blocked.numbers)) {
+        changed = true;
+        allIdentifiers.push(...previous);
+        allIdentifiers.push(...blocked.numbers);
+      }
     }
     if (blocked.uuids) {
+      const previous = this.storage.get('blocked-uuids', []);
       const uuids = blocked.uuids.map((uuid, index) => {
         return normalizeUuid(uuid, `handleBlocked.uuids.${index}`);
       });
-      log.info('Setting these uuids as blocked:', uuids);
+      log.info('handleBlocked: Blocking these uuids:', uuids);
       await this.storage.put('blocked-uuids', uuids);
+
+      if (!areArraysMatchingSets(previous, uuids)) {
+        changed = true;
+        allIdentifiers.push(...previous);
+        allIdentifiers.push(...blocked.uuids);
+      }
     }
 
-    const groupIds = map(blocked.groupIds, groupId => Bytes.toBinary(groupId));
-    log.info(
-      'Setting these groups as blocked:',
-      groupIds.map(groupId => `group(${groupId})`)
-    );
-    await this.storage.put('blocked-groups', groupIds);
+    if (blocked.groupIds) {
+      const previous = this.storage.get('blocked-groups', []);
+      const groupV1Ids: Array<string> = [];
+      const groupIds: Array<string> = [];
+
+      blocked.groupIds.forEach(groupId => {
+        if (groupId.byteLength === GROUPV1_ID_LENGTH) {
+          groupV1Ids.push(Bytes.toBinary(groupId));
+          groupIds.push(this.deriveGroupV2FromV1(groupId));
+        } else if (groupId.byteLength === GROUPV2_ID_LENGTH) {
+          groupIds.push(Bytes.toBase64(groupId));
+        } else {
+          log.error('handleBlocked: Received invalid groupId value');
+        }
+      });
+      log.info(
+        'handleBlocked: Blocking these groups - v2:',
+        groupIds.map(groupId => `groupv2(${groupId})`),
+        'v1:',
+        groupV1Ids.map(groupId => `group(${groupId})`)
+      );
+
+      const ids = [...groupIds, ...groupV1Ids];
+      await this.storage.put('blocked-groups', ids);
+
+      if (!areArraysMatchingSets(previous, ids)) {
+        changed = true;
+        allIdentifiers.push(...previous);
+        allIdentifiers.push(...ids);
+      }
+    }
 
     this.removeFromCache(envelope);
+
+    if (changed) {
+      log.info('handleBlocked: Block list changed, forcing re-render.');
+      const uniqueIdentifiers = Array.from(new Set(allIdentifiers));
+      window.ConversationController.forceRerender(uniqueIdentifiers);
+    }
   }
 
   private isBlocked(number: string): boolean {

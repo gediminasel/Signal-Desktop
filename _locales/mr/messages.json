@@ -648,8 +648,8 @@
         }
     },
     "decryptionErrorToast": {
-        "message": " डेस्कटॉपमध्ये डिक्रिप्शन त्रुटी आली",
-        "description": "An error popup when we haven't added an error for decryption error.",
+        "message": "Desktop ran into a decryption error from $name$, device $deviceId$",
+        "description": "An error popup when we haven't added an in-timeline error for decryption error, only for beta/internal users.",
         "placeholders": {
             "name": {
                 "content": "$1",
@@ -1282,7 +1282,7 @@
         }
     },
     "ChangeNumber--notification": {
-        "message": "$sender$ ने त्याचा क्रमांक एका नवीन क्रमांकात बदलला",
+        "message": "$sender$ changed their phone number",
         "description": "Shown in timeline when a member of a conversation changes their phone number",
         "placeholders": {
             "sender": {
@@ -1331,29 +1331,79 @@
         "message": "गोपनीयता शक्य आहे. Signal ते सहज बनवते.",
         "description": "Tagline displayed under 'installWelcome' string on the install page"
     },
-    "linkYourPhone": {
-        "message": "Signal Desktop वर आपला फोन लिंक करा",
-        "description": "Shown on the front page when the application first starts, above the QR code"
-    },
-    "signalSettings": {
-        "message": "Signal सेटिंग",
-        "description": "Used in the guidance to help people find the 'link new device' area of their Signal mobile app"
-    },
     "linkedDevices": {
         "message": "लिंक केलेले डिव्हाईस",
         "description": "Used in the guidance to help people find the 'link new device' area of their Signal mobile app"
-    },
-    "plusButton": {
-        "message": "'+' बटण",
-        "description": "The button used in Signal Android to add a new linked device"
     },
     "linkNewDevice": {
         "message": "नवीन डिव्हाईस जोडा",
         "description": "The menu option shown in Signal iOS to add a new linked device"
     },
-    "LinkScreen__scan-this-code": {
+    "Install__scan-this-code": {
         "message": "तुमच्या फोनवरील Signal ॲपमध्ये हे कोड स्कॅन करा",
-        "description": "Alt text for the QR code on the device link screen"
+        "description": "Title of the device link screen. Also used as alt text for the QR code on the device link screen"
+    },
+    "Install__instructions__1": {
+        "message": "आपल्या फोनवर Signal उघडा",
+        "description": "Instructions on the device link screen"
+    },
+    "Install__instructions__2": {
+        "message": "Tap into $settings$, then tap $linkedDevices$",
+        "description": "Instructions on the device link screen",
+        "placeholders": {
+            "settings": {
+                "content": "$1",
+                "example": "<strong>Settings</strong>"
+            },
+            "linkedDevices": {
+                "content": "$2",
+                "example": "<strong>Linked Devices</strong>"
+            }
+        }
+    },
+    "Install__instructions__2__settings": {
+        "message": "सेटिंग",
+        "description": "Part of the 2nd instruction on the device link screen"
+    },
+    "Install__instructions__3": {
+        "message": "Tap $plusButton$ (Android) or $linkNewDevice$ (iPhone)",
+        "description": "Instructions on the device link screen",
+        "placeholders": {
+            "plusButton": {
+                "content": "$1",
+                "example": "<PlusButton />"
+            },
+            "linkNewDevice": {
+                "content": "$2",
+                "example": "<strong>Link New Device</strong>"
+            }
+        }
+    },
+    "Install__qr-failed": {
+        "message": "The QR code couldn't load. Check your internet and try again. $learnMore$",
+        "description": "Shown on the install screen if the QR code fails to load",
+        "placeholders": {
+            "learnMore": {
+                "content": "$1",
+                "example": "<a>Learn more</a>"
+            }
+        }
+    },
+    "Install__qr-failed__learn-more": {
+        "message": "अधिक जाणा",
+        "description": "Shown on the install screen if the QR code fails to load"
+    },
+    "Install__support-link": {
+        "message": "मदत हवी?",
+        "description": "Shown on the install screen. Link takes users to a support page"
+    },
+    "Install__choose-device-name__description": {
+        "message": "You'll see this name under \"Linked Devices\" on your phone",
+        "description": "The subheader shown on the 'choose device name' screen in the device linking process"
+    },
+    "Install__choose-device-name__placeholder": {
+        "message": "My Computer",
+        "description": "The placeholder for the 'choose device name' input"
     },
     "Preferences--device-name": {
         "message": "डिव्हाईस नाव",
@@ -1371,6 +1421,10 @@
         "message": "संपर्क आणि गट संकलित करत आहे",
         "description": "Shown during initial link while contacts and groups are being pulled from mobile device"
     },
+    "initialSync__subtitle": {
+        "message": "Note: Your chat history will not be synced to this device",
+        "description": "Shown during initial link while contacts and groups are being pulled from mobile device"
+    },
     "installConnectionFailed": {
         "message": "सर्व्हरला कनेक्ट करण्यात अयशस्वी.",
         "description": "Displayed when we can't connect to the server."
@@ -1385,6 +1439,10 @@
     },
     "installErrorHeader": {
         "message": "काहीतरी चुकीचे झाले!",
+        "description": ""
+    },
+    "installUnknownError": {
+        "message": "An unexpected error occurred. Please try again.",
         "description": ""
     },
     "installTryAgain": {
@@ -1418,6 +1476,10 @@
     "calling__return": {
         "message": "कॉलवर परत या",
         "description": "Button label in the call lobby for returning to a call"
+    },
+    "calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
+        "message": "Microphone muted due to the size of the call",
+        "description": "Shown in a call lobby toast if there are a lot of people already on the call"
     },
     "calling__call-is-full": {
         "message": "कॉल पूर्ण आहे",
@@ -6585,6 +6647,22 @@
         "message": "कृपया हाताने/मॅन्युअली बंद करा आणि पुढे चालू ठेवण्यासाठी पुन्हा प्रयत्न/रिट्राय वर क्लिक करा",
         "description": "Second line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
     },
+    "CrashReportDialog__title": {
+        "message": "Application crashed",
+        "description": "A title of the dialog displayed when starting an application after a recent crash"
+    },
+    "CrashReportDialog__body": {
+        "message": "Signal restarted after a crash. You can submit a crash a report to help Signal investigate the issue.",
+        "description": "The body of the dialog displayed when starting an application after a recent crash"
+    },
+    "CrashReportDialog__submit": {
+        "message": "पाठवा",
+        "description": "A button label for submission of the crash reporter data after a recent crash"
+    },
+    "CrashReportDialog__erase": {
+        "message": "Don't Send",
+        "description": "A button label for erasure of the crash reporter data after a recent crash and continuing to start the app"
+    },
     "CustomizingPreferredReactions__title": {
         "message": "प्रतिक्रिया सानुकूलित करा",
         "description": "Shown in the header of the modal for customizing the preferred reactions. Also shown in the tooltip for the button that opens this modal."
@@ -6685,18 +6763,6 @@
         "message": "नवीन काय आहे",
         "description": "Title for the whats new modal"
     },
-    "WhatsNew__v5.24--1": {
-        "message": "आता आपण संग्रहित संभाषणांत शोधू शकता. पुरातन ग्रंथांतून पुढील सूचक स्वत: शोधत (वेगाने) असल्याची कल्पना करा.",
-        "description": "Release notes for v5.24"
-    },
-    "WhatsNew__v5.24--2": {
-        "message": "तुम्ही या आधी स्क्रोल अप केले आणि संदेश पाठवला असेल तर तुमचा संदेश कुठे आहे या बद्दल तुम्हाला आश्चर्य वाटले असेल! आता तुम्ही केव्हाही संदेश पाठवाल तेव्हा तुमच्या हस्तकौशल्याची प्रशंसा तुम्ही करण्यासाठी तुम्हाला तो दिसेल असा तुमच्या नजरेत स्क्रोल होईल.",
-        "description": "Release notes for v5.24"
-    },
-    "WhatsNew__v5.24--3": {
-        "message": "एका संदेशावर प्रतिक्रिया करत आहात का? आता ते आणखी विश्वासार्ह असले पाहिजे, 24 तासांपर्यंत पुन्हा प्रयत्न करता येतो.",
-        "description": "Release notes for v5.24"
-    },
     "WhatsNew__v5.25--1": {
         "message": "Signal निर्विघ्नपणे चालत ठेवण्यासाठी या आवृत्तीत अनेक लहान समन्वय आणि त्रुटी दुरुस्त्या समाविष्ट आहेत.",
         "description": "Release notes for v5.25"
@@ -6712,5 +6778,31 @@
     "WhatsNew__v5.26--2": {
         "message": "तुम्हाला तुमच्या आयुष्यात उजव्या बाजूस अधिक पिक्सेल हवे आहेत, असे वाटते? तुम्ही अवतारांचे चाहते आहात, पण फक्त अवतारांचे आणि इतर कशाचे नाही? तुमच्या कारवर \"सेव्ह द स्क्रीन रिअल इस्टेट\" बंपर स्टिकर आहे का? तुम्ही यापैकी कोणत्याही प्रश्नाचे उत्तर होय किंवा नाही असे दिले असल्यास, या अपडेटमध्ये तुमच्यासाठी काही संकुचित करण्यायोग्य डावी बाजू आहे.",
         "description": "Release notes for v5.26"
+    },
+    "WhatsNew__macos-m1": {
+        "message": "Signal Desktop is now optimized for Apple's M1 chip which is used in their newer computers. If you're on one of those new-fangled devices, the app should be much snappier. If you're not, give a warm welcome to the users that are. Huge thanks to $dennis$ for his hard work here!",
+        "description": "Release note for the macOS M1 release",
+        "placeholders": {
+            "dennis": {
+                "content": "$1",
+                "example": "<a>Dennis Ameling</a>"
+            }
+        }
+    },
+    "WhatsNew__v5.27--1": {
+        "message": "On a long call? Your system should stay awake the whole time, instead of falling asleep while you're in the middle of an important discussion.",
+        "description": "Release notes for v5.27"
+    },
+    "WhatsNew__v5.27--2": {
+        "message": "There are also a number of small tweaks and bug fixes to keep Signal running smoothly, including several calling-related improvements.",
+        "description": "Release notes for v5.27"
+    },
+    "WhatsNew__v5.28--1": {
+        "message": "New year, new initial setup screen. We've redesigned the initial setup screens just in time for 2022.",
+        "description": "Release notes for v5.28"
+    },
+    "WhatsNew__v5.29--1": {
+        "message": "Now, with fewer frantic searches for the loud typist or heavy chewer! In the call lobby, Desktop will now automatically disable audio if there are eight or more people in the call.",
+        "description": "Release notes for v5.28"
     }
 }

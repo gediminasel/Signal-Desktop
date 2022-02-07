@@ -1,4 +1,4 @@
-// Copyright 2018-2021 Signal Messenger, LLC
+// Copyright 2018-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 // Using BEM syntax explained here: https://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/
@@ -2660,13 +2660,18 @@ button.ConversationDetails__action-button {
   height: calc(#{$header-height} + var(--title-bar-drag-area-height));
   width: 100%;
 
-  padding-left: 24px;
-  padding-right: 24px;
+  padding-left: 16px;
+  padding-right: 16px;
   padding-top: var(--title-bar-drag-area-height);
 
   display: flex;
+  justify-content: space-between;
   flex-direction: row;
   align-items: center;
+
+  .module-left-pane--width-narrow & {
+    justify-content: center;
+  }
 
   & > * {
     margin-right: 12px;
@@ -2681,6 +2686,10 @@ button.ConversationDetails__action-button {
 
     &--container {
       position: relative;
+
+      .module-left-pane--width-narrow & {
+        display: none;
+      }
     }
 
     &--badged {
@@ -2693,28 +2702,72 @@ button.ConversationDetails__action-button {
       top: 0;
       right: 0;
     }
-
-    .module-left-pane--width-narrow & {
-      display: none;
-    }
   }
 
   &__compose-icon {
-    $icon: '../images/icons/v2/compose-outline-24.svg';
-
-    width: 24px;
-    height: 24px;
     -webkit-app-region: no-drag;
+    align-items: center;
+    background: none;
+    border-radius: 4px;
+    border: 2px solid transparent;
+    display: flex;
+    height: 32px;
+    justify-content: center;
+    padding: 2px;
+    width: 32px;
 
     @include light-theme {
-      @include color-svg($icon, $color-gray-90);
+      &:hover,
+      &:focus {
+        background: $color-gray-15;
+      }
+      &:active {
+        background: $color-gray-05;
+      }
     }
     @include dark-theme {
-      @include color-svg($icon, $color-gray-02);
+      &:hover,
+      &:focus {
+        background: $color-gray-75;
+      }
+      &:active {
+        background: $color-gray-65;
+      }
     }
 
-    &:focus {
-      @include color-svg($icon, $color-ultramarine);
+    @include keyboard-mode {
+      &:focus {
+        border-color: $color-ultramarine;
+      }
+    }
+    @include dark-keyboard-mode {
+      &:focus {
+        border-color: $color-ultramarine-light;
+      }
+    }
+
+    &::before {
+      $icon: '../images/icons/v2/compose-24.svg';
+      width: 24px;
+      height: 24px;
+      content: '';
+
+      @include light-theme {
+        @include color-svg($icon, $color-gray-75);
+        &:hover,
+        &:active,
+        &:focus {
+          @include color-svg($icon, $color-gray-90);
+        }
+      }
+      @include dark-theme {
+        @include color-svg($icon, $color-gray-15);
+        &:hover,
+        &:active,
+        &:focus {
+          @include color-svg($icon, $color-gray-02);
+        }
+      }
     }
   }
 }
@@ -3223,6 +3276,8 @@ button.module-image__border-overlay:focus {
 }
 
 .module-attachments__close-button {
+  $icon: '../images/icons/v2/x-24.svg';
+
   @include button-reset;
 
   position: absolute;
@@ -3233,11 +3288,17 @@ button.module-image__border-overlay:focus {
   height: 20px;
 
   z-index: $z-index-above-base;
-  @include color-svg('../images/icons/v2/x-24.svg', $color-black);
+
+  @include light-theme {
+    @include color-svg($icon, $color-black);
+  }
+  @include dark-theme {
+    @include color-svg($icon, $color-white);
+  }
 
   @include keyboard-mode {
     &:focus {
-      @include color-svg('../images/icons/v2/x-24.svg', $color-ultramarine);
+      @include color-svg($icon, $color-ultramarine);
     }
   }
 }
@@ -4277,28 +4338,6 @@ button.module-image__border-overlay:focus {
       fill-mode: forwards;
     }
   }
-
-  &__toast {
-    @include button-reset();
-    @include font-body-1-bold;
-    background-color: $color-gray-75;
-    border-radius: 8px;
-    color: $color-white;
-    max-width: 80%;
-    opacity: 1;
-    padding: 12px;
-    position: absolute;
-    text-align: center;
-    top: 12px;
-    transition: top 200ms ease-out, opacity 200ms ease-out;
-    user-select: none;
-    z-index: $z-index-above-above-base;
-
-    &--hidden {
-      opacity: 0;
-      top: 5px;
-    }
-  }
 }
 
 .module-calling-tools {
@@ -4916,25 +4955,19 @@ button.module-image__border-overlay:focus {
           }
 
           &__date {
+            @include font-caption;
             display: inline-block;
             flex-shrink: 0;
+            margin-left: 6px;
+            overflow-x: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
 
-            &__timestamp {
-              flex-shrink: 0;
-              margin-left: 6px;
-
-              @include font-caption;
-
-              overflow-x: hidden;
-              white-space: nowrap;
-              text-overflow: ellipsis;
-
-              @include light-theme {
-                color: $color-gray-60;
-              }
-              @include dark-theme {
-                color: $color-gray-25;
-              }
+            @include light-theme {
+              color: $color-gray-60;
+            }
+            @include dark-theme {
+              color: $color-gray-25;
             }
           }
         }
@@ -5259,6 +5292,12 @@ button.module-image__border-overlay:focus {
   }
 }
 
+.module-left-pane__dialogs {
+  &:first-child {
+    margin-top: 8px;
+  }
+}
+
 .module-left-pane__empty {
   align-items: center;
   display: flex;
@@ -5472,26 +5511,6 @@ button.module-image__border-overlay:focus {
   top: 0;
   z-index: $z-index-above-base;
   cursor: col-resize;
-}
-
-// Module: Timeline Loading Row
-
-.module-timeline-loading-row {
-  height: 48px;
-  padding: 12px;
-
-  display: flex;
-  flex-direction: columns;
-  justify-content: center;
-  align-items: center;
-
-  @include light-theme {
-    color: $color-gray-75;
-  }
-
-  @include dark-theme {
-    color: $color-gray-25;
-  }
 }
 
 // Module: Timeline
@@ -6101,7 +6120,7 @@ button.module-image__border-overlay:focus {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: $z-index-popup;
+    z-index: $z-index-popup-overlay;
   }
 
   &__container {
@@ -6897,41 +6916,6 @@ button.module-image__border-overlay:focus {
   @include emoji-size(48px);
   @include emoji-size(64px);
   @include emoji-size(66px);
-}
-
-// Module: Countdown
-
-.module-countdown {
-  display: block;
-  width: 24px;
-  height: 24px;
-}
-
-// Note: the colors here should match the module-spinner's on-background colors
-.module-countdown__front-path {
-  fill-opacity: 0;
-  stroke-width: 2;
-
-  @include light-theme {
-    stroke: $color-gray-60;
-  }
-
-  @include dark-theme {
-    stroke: $color-gray-25;
-  }
-}
-
-.module-countdown__back-path {
-  fill-opacity: 0;
-  stroke-width: 2;
-
-  @include light-theme {
-    stroke: $color-gray-05;
-  }
-
-  @include dark-theme {
-    stroke: $color-gray-75;
-  }
 }
 
 // Module: CompositionInput

@@ -1,35 +1,35 @@
-// Copyright 2021 Signal Messenger, LLC
+// Copyright 2021-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 .LeftPaneSearchInput {
-  -webkit-app-region: no-drag;
-  display: flex;
-  flex-direction: row;
-  flex-grow: 1;
   position: relative;
+  margin: 0 16px;
+  margin-bottom: 8px;
 
   &__input {
     @include font-body-2;
-    @include rounded-corners;
-    border: none;
+    border: solid 1px transparent;
+    border-radius: 8px;
     height: 28px;
     padding-left: 30px;
     padding-right: 5px;
     width: 100%;
 
     @include light-theme {
-      background-color: $color-gray-05;
+      background-color: $color-black-alpha-08;
       color: $color-gray-90;
-      border: solid 1px $color-gray-02;
+
+      &:placeholder {
+        color: $color-gray-45;
+      }
     }
     @include dark-theme {
+      background-color: $color-white-alpha-12;
       color: $color-gray-05;
-      background-color: $color-gray-95;
-      border: solid 1px $color-gray-80;
-    }
 
-    &:placeholder {
-      color: $color-gray-45;
+      &:placeholder {
+        color: $color-gray-25;
+      }
     }
 
     &:focus {
@@ -55,7 +55,7 @@
     width: 16px;
 
     @include light-theme {
-      @include color-svg('../images/icons/v2/search-16.svg', $color-gray-75);
+      @include color-svg('../images/icons/v2/search-16.svg', $color-gray-45);
     }
     @include dark-theme {
       @include color-svg('../images/icons/v2/search-16.svg', $color-gray-25);
@@ -75,10 +75,10 @@
     top: 3px;
 
     @include light-theme {
-      background-color: $color-gray-15;
+      background-color: $color-gray-25;
     }
     @include dark-theme {
-      background-color: $color-gray-75;
+      background-color: $color-gray-80;
     }
 
     &__x-button {

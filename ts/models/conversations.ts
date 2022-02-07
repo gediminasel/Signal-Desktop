@@ -1,9 +1,11 @@
-// Copyright 2020-2021 Signal Messenger, LLC
+// Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /* eslint-disable camelcase */
 import { compact, isNumber } from 'lodash';
 import { batch as batchDispatch } from 'react-redux';
+import PQueue from 'p-queue';
+
 import type {
   ConversationAttributesType,
   ConversationModelCollectionType,
@@ -104,6 +106,7 @@ import * as log from '../logging/log';
 import * as Errors from '../types/errors';
 import { isMessageUnread } from '../util/isMessageUnread';
 import type { SenderKeyTargetType } from '../util/sendToGroup';
+import { singleProtoJobQueue } from '../jobs/singleProtoJobQueue';
 
 /* eslint-disable more/no-then */
 window.Whisper = window.Whisper || {};
@@ -121,6 +124,7 @@ const {
 } = window.Signal.Migrations;
 const {
   addStickerPackReference,
+  getConversationRangeCenteredOnMessage,
   getOlderMessagesByConversation,
   getMessageMetricsForConversation,
   getMessageById,
@@ -164,11 +168,6 @@ export class ConversationModel extends window.Backbone
   contactCollection?: Backbone.Collection<ConversationModel>;
 
   debouncedUpdateLastMessage?: () => void;
-
-  // backbone ensures this exists
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  id: string;
 
   initialPromise?: Promise<unknown>;
 
@@ -215,6 +214,8 @@ export class ConversationModel extends window.Backbone
   private isInReduxBatch = false;
   
   lastMessagesSeen?: Record<string, {sendAt: number, id: string}>;
+
+  private _activeProfileFetch?: Promise<void>;
 
   override defaults(): Partial<ConversationAttributesType> {
     return {
@@ -882,7 +883,7 @@ export class ConversationModel extends window.Backbone
 
   block({ viaStorageServiceSync = false } = {}): void {
     let blocked = false;
-    const isBlocked = this.isBlocked();
+    const wasBlocked = this.isBlocked();
 
     const uuid = this.get('uuid');
     if (uuid) {
@@ -902,14 +903,19 @@ export class ConversationModel extends window.Backbone
       blocked = true;
     }
 
-    if (!viaStorageServiceSync && !isBlocked && blocked) {
-      this.captureChange('block');
+    if (blocked && !wasBlocked) {
+      // We need to force a props refresh - blocked state is not in backbone attributes
+      this.trigger('change', this, { force: true });
+
+      if (!viaStorageServiceSync) {
+        this.captureChange('block');
+      }
     }
   }
 
   unblock({ viaStorageServiceSync = false } = {}): boolean {
     let unblocked = false;
-    const isBlocked = this.isBlocked();
+    const wasBlocked = this.isBlocked();
 
     const uuid = this.get('uuid');
     if (uuid) {
@@ -929,8 +935,13 @@ export class ConversationModel extends window.Backbone
       unblocked = true;
     }
 
-    if (!viaStorageServiceSync && isBlocked && unblocked) {
-      this.captureChange('unblock');
+    if (unblocked && wasBlocked) {
+      // We need to force a props refresh - blocked state is not in backbone attributes
+      this.trigger('change', this, { force: true });
+
+      if (!viaStorageServiceSync) {
+        this.captureChange('unblock');
+      }
     }
 
     return unblocked;
@@ -1449,15 +1460,15 @@ export class ConversationModel extends window.Backbone
       //   reducer to trust the message set we just fetched for determining if we have
       //   the newest message loaded.
       const unboundedFetch = true;
-      messagesReset(
+      messagesReset({
         conversationId,
-        cleaned.map((messageModel: MessageModel) => ({
+        messages: cleaned.map((messageModel: MessageModel) => ({
           ...messageModel.attributes,
         })),
         metrics,
         scrollToMessageId,
-        unboundedFetch
-      );
+        unboundedFetch,
+      });
     } catch (error) {
       setMessagesLoading(conversationId, false);
       throw error;
@@ -1583,33 +1594,28 @@ export class ConversationModel extends window.Backbone
 
       const receivedAt = message.received_at;
       const sentAt = message.sent_at;
-      const older = await getOlderMessagesByConversation(conversationId, {
-        limit: MESSAGE_LOAD_CHUNK_SIZE,
-        receivedAt,
-        sentAt,
-        messageId,
-      });
-      const newer = await getNewerMessagesByConversation(conversationId, {
-        limit: MESSAGE_LOAD_CHUNK_SIZE,
-        receivedAt,
-        sentAt,
-      });
-      const metrics = await getMessageMetricsForConversation(conversationId);
-
+      const { older, newer, metrics } =
+        await getConversationRangeCenteredOnMessage({
+          conversationId,
+          limit: MESSAGE_LOAD_CHUNK_SIZE,
+          receivedAt,
+          sentAt,
+          messageId,
+        });
       const all = [...older, message, ...newer];
 
       const cleaned: Array<MessageModel> = await this.cleanModels(all);
       const scrollToMessageId =
         options && options.disableScroll ? undefined : messageId;
 
-      messagesReset(
+      messagesReset({
         conversationId,
-        cleaned.map((messageModel: MessageModel) => ({
+        messages: cleaned.map((messageModel: MessageModel) => ({
           ...messageModel.attributes,
         })),
         metrics,
-        scrollToMessageId
-      );
+        scrollToMessageId,
+      });
     } catch (error) {
       setMessagesLoading(conversationId, false);
       throw error;
@@ -1629,6 +1635,7 @@ export class ConversationModel extends window.Backbone
     if (eliminated > 0) {
       log.warn(`cleanModels: Eliminated ${eliminated} messages without an id`);
     }
+    const ourUuid = window.textsecure.storage.user.getCheckedUuid().toString();
 
     let upgraded = 0;
     for (let max = result.length, i = 0; i < max; i += 1) {
@@ -1642,7 +1649,7 @@ export class ConversationModel extends window.Backbone
         const upgradedMessage = await upgradeMessageSchema(attributes);
         message.set(upgradedMessage);
         // eslint-disable-next-line no-await-in-loop
-        await window.Signal.Data.saveMessage(upgradedMessage);
+        await window.Signal.Data.saveMessage(upgradedMessage, { ourUuid });
         upgraded += 1;
       }
     }
@@ -1761,7 +1768,10 @@ export class ConversationModel extends window.Backbone
       id: this.id,
       uuid: this.get('uuid'),
       e164: this.get('e164'),
-      username: this.get('username'),
+
+      // We had previously stored `null` instead of `undefined` in some cases. We should
+      //   be able to remove this `dropNull` once usernames have gone to production.
+      username: dropNull(this.get('username')),
 
       about: this.getAboutText(),
       aboutText: this.get('about'),
@@ -1864,7 +1874,7 @@ export class ConversationModel extends window.Backbone
       this.set('e164', e164);
 
       if (oldValue) {
-        this.addChangeNumberNotification();
+        this.addChangeNumberNotification(oldValue, e164);
       }
 
       window.Signal.Data.updateConversation(this.attributes);
@@ -1982,6 +1992,7 @@ export class ConversationModel extends window.Backbone
     options: { isLocalAction?: boolean } = {}
   ): Promise<void> {
     const { isLocalAction } = options;
+    const ourUuid = window.textsecure.storage.user.getCheckedUuid().toString();
 
     let messages: Array<MessageAttributesType> | undefined;
     do {
@@ -2023,7 +2034,9 @@ export class ConversationModel extends window.Backbone
           const registered = window.MessageController.register(m.id, m);
           const shouldSave = await registered.queueAttachmentDownloads();
           if (shouldSave) {
-            await window.Signal.Data.saveMessage(registered.attributes);
+            await window.Signal.Data.saveMessage(registered.attributes, {
+              ourUuid,
+            });
           }
         })
       );
@@ -2428,12 +2441,6 @@ export class ConversationModel extends window.Backbone
     //   server updates were successful.
     await this.applyMessageRequestResponse(response);
 
-    const ourConversation =
-      window.ConversationController.getOurConversationOrThrow();
-    const sendOptions = await getSendOptions(ourConversation.attributes, {
-      syncMessage: true,
-    });
-
     const groupId = this.getGroupIdBuffer();
 
     if (window.ConversationController.areWePrimaryDevice()) {
@@ -2444,20 +2451,19 @@ export class ConversationModel extends window.Backbone
     }
 
     try {
-      await handleMessageSend(
-        window.textsecure.messaging.syncMessageRequestResponse(
-          {
-            threadE164: this.get('e164'),
-            threadUuid: this.get('uuid'),
-            groupId,
-            type: response,
-          },
-          sendOptions
-        ),
-        { messageIds: [], sendType: 'otherSync' }
+      await singleProtoJobQueue.add(
+        window.textsecure.messaging.getMessageRequestResponseSync({
+          threadE164: this.get('e164'),
+          threadUuid: this.get('uuid'),
+          groupId,
+          type: response,
+        })
       );
-    } catch (result) {
-      this.processSendResponse(result);
+    } catch (error) {
+      log.error(
+        'syncMessageRequestResponse: Failed to queue sync message',
+        Errors.toLogFormat(error)
+      );
     }
   }
 
@@ -2545,10 +2551,10 @@ export class ConversationModel extends window.Backbone
     );
   }
 
-  async _setVerified(
+  private async _setVerified(
     verified: number,
     providedOptions?: VerificationOptions
-  ): Promise<boolean | void> {
+  ): Promise<void> {
     const options = providedOptions || {};
     window._.defaults(options, {
       viaStorageServiceSync: false,
@@ -2569,8 +2575,8 @@ export class ConversationModel extends window.Backbone
 
     const uuid = this.getUuid();
     const beginningVerified = this.get('verified');
-    let keyChange;
-    if (options.viaSyncMessage) {
+    let keyChange = false;
+    if (options.viaSyncMessage || options.viaStorageServiceSync) {
       strictAssert(
         uuid,
         `Sync message didn't update uuid for conversation: ${this.id}`
@@ -2585,10 +2591,7 @@ export class ConversationModel extends window.Backbone
           options.key || undefined
         );
     } else if (uuid) {
-      keyChange = await window.textsecure.storage.protocol.setVerified(
-        uuid,
-        verified
-      );
+      await window.textsecure.storage.protocol.setVerified(uuid, verified);
     } else {
       log.warn(`_setVerified(${this.id}): no uuid to update protocol storage`);
     }
@@ -2604,17 +2607,21 @@ export class ConversationModel extends window.Backbone
       this.captureChange('verified');
     }
 
-    // Three situations result in a verification notice in the conversation:
-    //   1) The message came from an explicit verification in another client (not
-    //      a contact sync)
-    //   2) The verification value received by the contact sync is different
-    //      from what we have on record (and it's not a transition to UNVERIFIED)
-    //   3) Our local verification status is VERIFIED and it hasn't changed,
-    //      but the key did change (Key1/VERIFIED to Key2/VERIFIED - but we don't
-    //      want to show DEFAULT->DEFAULT or UNVERIFIED->UNVERIFIED)
+    const didSomethingChange = keyChange || beginningVerified !== verified;
+    const isExplicitUserAction =
+      !options.viaContactSync && !options.viaStorageServiceSync;
+    const shouldShowFromContactSync =
+      options.viaContactSync && verified !== UNVERIFIED;
     if (
-      !options.viaContactSync ||
-      (beginningVerified !== verified && verified !== UNVERIFIED) ||
+      // The message came from an explicit verification in a client (not a contact sync
+      //   or storage service sync)
+      (didSomethingChange && isExplicitUserAction) ||
+      // The verification value received by the contact sync is different from what we
+      //   have on record (and it's not a transition to UNVERIFIED)
+      (didSomethingChange && shouldShowFromContactSync) ||
+      // Our local verification status is VERIFIED and it hasn't changed, but the key did
+      //   change (Key1/VERIFIED -> Key2/VERIFIED), but we don't want to show DEFAULT ->
+      //   DEFAULT or UNVERIFIED -> UNVERIFIED
       (keyChange && verified === VERIFIED)
     ) {
       await this.addVerifiedChange(this.id, verified === VERIFIED, {
@@ -2624,8 +2631,6 @@ export class ConversationModel extends window.Backbone
     if (!options.viaSyncMessage && uuid) {
       await this.sendVerifySyncMessage(this.get('e164'), uuid, verified);
     }
-
-    return keyChange;
   }
 
   async sendVerifySyncMessage(
@@ -2647,17 +2652,6 @@ export class ConversationModel extends window.Backbone
       return;
     }
 
-    // Because syncVerification sends a (null) message to the target of the verify and
-    //   a sync message to our own devices, we need to send the accessKeys down for both
-    //   contacts. So we merge their sendOptions.
-    const ourConversation =
-      window.ConversationController.getOurConversationOrThrow();
-    const sendOptions = await getSendOptions(ourConversation.attributes, {
-      syncMessage: true,
-    });
-    const contactSendOptions = await getSendOptions(this.attributes);
-    const options = { ...sendOptions, ...contactSendOptions };
-
     const key = await window.textsecure.storage.protocol.loadIdentityKey(
       UUID.checkedLookup(identifier)
     );
@@ -2667,16 +2661,21 @@ export class ConversationModel extends window.Backbone
       );
     }
 
-    await handleMessageSend(
-      window.textsecure.messaging.syncVerification(
-        e164,
-        uuid.toString(),
-        state,
-        key,
-        options
-      ),
-      { messageIds: [], sendType: 'verificationSync' }
-    );
+    try {
+      await singleProtoJobQueue.add(
+        window.textsecure.messaging.getVerificationSync(
+          e164,
+          uuid.toString(),
+          state,
+          key
+        )
+      );
+    } catch (error) {
+      log.error(
+        'sendVerifySyncMessage: Failed to queue sync message',
+        Errors.toLogFormat(error)
+      );
+    }
   }
 
   isVerified(): boolean {
@@ -2870,7 +2869,9 @@ export class ConversationModel extends window.Backbone
       // this type does not fully implement the interface it is expected to
     } as unknown as MessageAttributesType;
 
-    const id = await window.Signal.Data.saveMessage(message);
+    const id = await window.Signal.Data.saveMessage(message, {
+      ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+    });
     const model = window.MessageController.register(
       id,
       new window.Whisper.Message({
@@ -2910,7 +2911,9 @@ export class ConversationModel extends window.Backbone
       // this type does not fully implement the interface it is expected to
     } as unknown as MessageAttributesType;
 
-    const id = await window.Signal.Data.saveMessage(message);
+    const id = await window.Signal.Data.saveMessage(message, {
+      ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+    });
     const model = window.MessageController.register(
       id,
       new window.Whisper.Message({
@@ -2946,7 +2949,9 @@ export class ConversationModel extends window.Backbone
       // this type does not fully implement the interface it is expected to
     } as unknown as MessageAttributesType;
 
-    const id = await window.Signal.Data.saveMessage(message);
+    const id = await window.Signal.Data.saveMessage(message, {
+      ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+    });
     const model = window.MessageController.register(
       id,
       new window.Whisper.Message({
@@ -3002,7 +3007,9 @@ export class ConversationModel extends window.Backbone
       // TODO: DESKTOP-722
     } as unknown as MessageAttributesType;
 
-    const id = await window.Signal.Data.saveMessage(message);
+    const id = await window.Signal.Data.saveMessage(message, {
+      ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+    });
     const model = window.MessageController.register(
       id,
       new window.Whisper.Message({
@@ -3026,7 +3033,8 @@ export class ConversationModel extends window.Backbone
   }
 
   async addCallHistory(
-    callHistoryDetails: CallHistoryDetailsType
+    callHistoryDetails: CallHistoryDetailsType,
+    receivedAtCounter: number | undefined
   ): Promise<void> {
     let timestamp: number;
     let unread: boolean;
@@ -3055,14 +3063,17 @@ export class ConversationModel extends window.Backbone
       conversationId: this.id,
       type: 'call-history',
       sent_at: timestamp,
-      received_at: window.Signal.Util.incrementMessageCounter(),
+      received_at:
+        receivedAtCounter || window.Signal.Util.incrementMessageCounter(),
       received_at_ms: timestamp,
       readStatus: unread ? ReadStatus.Unread : ReadStatus.Read,
       callHistoryDetails: detailsToSave,
       // TODO: DESKTOP-722
     } as unknown as MessageAttributesType;
 
-    const id = await window.Signal.Data.saveMessage(message);
+    const id = await window.Signal.Data.saveMessage(message, {
+      ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+    });
     const model = window.MessageController.register(
       id,
       new window.Whisper.Message({
@@ -3096,12 +3107,15 @@ export class ConversationModel extends window.Backbone
       return false;
     }
 
-    await this.addCallHistory({
-      callMode: CallMode.Group,
-      creatorUuid,
-      eraId,
-      startedTime: Date.now(),
-    });
+    await this.addCallHistory(
+      {
+        callMode: CallMode.Group,
+        creatorUuid,
+        eraId,
+        startedTime: Date.now(),
+      },
+      undefined
+    );
     return true;
   }
 
@@ -3122,7 +3136,9 @@ export class ConversationModel extends window.Backbone
       // TODO: DESKTOP-722
     } as unknown as MessageAttributesType;
 
-    const id = await window.Signal.Data.saveMessage(message);
+    const id = await window.Signal.Data.saveMessage(message, {
+      ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+    });
     const model = window.MessageController.register(
       id,
       new window.Whisper.Message({
@@ -3163,7 +3179,10 @@ export class ConversationModel extends window.Backbone
 
     const id = await window.Signal.Data.saveMessage(
       // TODO: DESKTOP-722
-      message as MessageAttributesType
+      message as MessageAttributesType,
+      {
+        ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+      }
     );
     const model = window.MessageController.register(
       id,
@@ -3235,7 +3254,10 @@ export class ConversationModel extends window.Backbone
     this.set('pendingUniversalTimer', undefined);
   }
 
-  async addChangeNumberNotification(): Promise<void> {
+  async addChangeNumberNotification(
+    oldValue: string,
+    newValue: string
+  ): Promise<void> {
     const sourceUuid = this.getCheckedUuid(
       'Change number notification without uuid'
     );
@@ -3251,7 +3273,7 @@ export class ConversationModel extends window.Backbone
 
     log.info(
       `Conversation ${this.idForLogging()}: adding change number ` +
-        `notification for ${sourceUuid.toString()}`
+        `notification for ${sourceUuid.toString()} from ${oldValue} to ${newValue}`
     );
 
     const convos = [
@@ -3330,10 +3352,6 @@ export class ConversationModel extends window.Backbone
         this.get('e164')!,
         regionCode
       );
-      // TODO: DESKTOP-723
-      // This is valid, but the typing thinks it's a function.
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       if (number.isValidNumber) {
         this.set({ e164: number.e164 });
         return null;
@@ -3984,6 +4002,7 @@ export class ConversationModel extends window.Backbone
         await window.Signal.Data.saveMessage(message.attributes, {
           jobToInsert,
           forceSave: true,
+          ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
         });
       }
     );
@@ -4424,7 +4443,9 @@ export class ConversationModel extends window.Backbone
       // TODO: DESKTOP-722
     } as unknown as MessageAttributesType);
 
-    const id = await window.Signal.Data.saveMessage(model.attributes);
+    const id = await window.Signal.Data.saveMessage(model.attributes, {
+      ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+    });
 
     model.set({ id });
 
@@ -4520,7 +4541,9 @@ export class ConversationModel extends window.Backbone
       // TODO: DESKTOP-722
     } as unknown as MessageAttributesType);
 
-    const id = await window.Signal.Data.saveMessage(model.attributes);
+    const id = await window.Signal.Data.saveMessage(model.attributes, {
+      ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+    });
 
     model.set({ id });
 
@@ -4555,7 +4578,9 @@ export class ConversationModel extends window.Backbone
         // TODO: DESKTOP-722
       } as unknown as MessageAttributesType);
 
-      const id = await window.Signal.Data.saveMessage(model.attributes);
+      const id = await window.Signal.Data.saveMessage(model.attributes, {
+        ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+      });
       model.set({ id });
 
       const message = window.MessageController.register(model.id, model);
@@ -4605,16 +4630,23 @@ export class ConversationModel extends window.Backbone
     }
 
     const ourUuid = window.textsecure.storage.user.getCheckedUuid();
-    const ourGroups =
-      await window.ConversationController.getAllGroupsInvolvingUuid(ourUuid);
     const theirUuid = this.getUuid();
     if (!theirUuid) {
       return;
     }
-    const theirGroups =
-      await window.ConversationController.getAllGroupsInvolvingUuid(theirUuid);
 
-    const sharedGroups = window._.intersection(ourGroups, theirGroups);
+    const ourGroups =
+      await window.ConversationController.getAllGroupsInvolvingUuid(ourUuid);
+    const sharedGroups = ourGroups
+      .filter(
+        c =>
+          c.hasMember(ourUuid.toString()) && c.hasMember(theirUuid.toString())
+      )
+      .sort(
+        (left, right) =>
+          (right.get('timestamp') || 0) - (left.get('timestamp') || 0)
+      );
+
     const sharedGroupNames = sharedGroups.map(conversation =>
       conversation.getTitle()
     );
@@ -4632,11 +4664,33 @@ export class ConversationModel extends window.Backbone
     // request all conversation members' keys
     const conversations =
       this.getMembers() as unknown as Array<ConversationModel>;
-    await Promise.all(
-      window._.map(conversations, conversation =>
-        getProfile(conversation.get('uuid'), conversation.get('e164'))
-      )
-    );
+
+    const queue = new PQueue({
+      concurrency: 3,
+    });
+
+    // Convert Promise<void[]> that is returned by addAll() to Promise<void>
+    const promise = (async () => {
+      await queue.addAll(
+        conversations.map(
+          conversation => () =>
+            getProfile(conversation.get('uuid'), conversation.get('e164'))
+        )
+      );
+    })();
+
+    this._activeProfileFetch = promise;
+    try {
+      await promise;
+    } finally {
+      if (this._activeProfileFetch === promise) {
+        this._activeProfileFetch = undefined;
+      }
+    }
+  }
+
+  getActiveProfileFetch(): Promise<void> | undefined {
+    return this._activeProfileFetch;
   }
 
   async setEncryptedProfileName(encryptedName: string): Promise<void> {
@@ -4893,7 +4947,10 @@ export class ConversationModel extends window.Backbone
   }
 
   private getAvatarPath(): undefined | string {
-    const avatar = isMe(this.attributes)
+    const shouldShowProfileAvatar =
+      isMe(this.attributes) ||
+      window.storage.get('preferContactAvatars') === false;
+    const avatar = shouldShowProfileAvatar
       ? this.get('profileAvatar') || this.get('avatar')
       : this.get('avatar') || this.get('profileAvatar');
     return avatar?.path || undefined;
@@ -5280,6 +5337,19 @@ export class ConversationModel extends window.Backbone
   ): void {
     this.set('acknowledgedGroupNameCollisions', groupNameCollisions);
     window.Signal.Data.updateConversation(this.attributes);
+  }
+
+  onOpenStart(): void {
+    log.info(`conversation ${this.idForLogging()} open start`);
+    window.ConversationController.onConvoOpenStart(this.id);
+  }
+
+  onOpenComplete(startedAt: number): void {
+    const now = Date.now();
+    const delta = now - startedAt;
+
+    log.info(`conversation ${this.idForLogging()} open took ${delta}ms`);
+    window.CI?.handleEvent('conversation:open', { delta });
   }
 }
 

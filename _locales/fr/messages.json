@@ -482,7 +482,7 @@
         "description": "Title of the success page for submitting a debug log"
     },
     "debugLogSuccessNextSteps": {
-        "message": "Journal de débogage téléversé. Lorsque vous contactez l’assistance, copiez le lien ci-dessous et joignez-le avec une description du problème rencontré et les étapes pour le reproduire.",
+        "message": "Le journal de débogage a été téléversé. Quand vous contactez l’assistance, copiez le lien ci-dessous et joignez-le avec une description du problème rencontré, avec les étapes pour le reproduire.",
         "description": "Explanation of next steps to take when submitting debug log"
     },
     "debugLogCopy": {
@@ -648,8 +648,8 @@
         }
     },
     "decryptionErrorToast": {
-        "message": "Signal pour ordinateur a rencontré une erreur de déchiffrement.",
-        "description": "An error popup when we haven't added an error for decryption error.",
+        "message": "Signal Desktop a rencontré une erreur de déchiffrement de $name$, appareil $deviceId$.",
+        "description": "An error popup when we haven't added an in-timeline error for decryption error, only for beta/internal users.",
         "placeholders": {
             "name": {
                 "content": "$1",
@@ -1282,7 +1282,7 @@
         }
     },
     "ChangeNumber--notification": {
-        "message": "$sender$ a changé son numéro pour un nouveau.",
+        "message": "$sender$ a changé de numéro de téléphone",
         "description": "Shown in timeline when a member of a conversation changes their phone number",
         "placeholders": {
             "sender": {
@@ -1331,29 +1331,79 @@
         "message": "La confidentialité est possible. Signal la facilite.",
         "description": "Tagline displayed under 'installWelcome' string on the install page"
     },
-    "linkYourPhone": {
-        "message": "Reliez votre téléphone à Signal Desktop pour ordinateur",
-        "description": "Shown on the front page when the application first starts, above the QR code"
-    },
-    "signalSettings": {
-        "message": "Paramètres de Signal",
-        "description": "Used in the guidance to help people find the 'link new device' area of their Signal mobile app"
-    },
     "linkedDevices": {
         "message": "Appareils reliés",
         "description": "Used in the guidance to help people find the 'link new device' area of their Signal mobile app"
-    },
-    "plusButton": {
-        "message": "Bouton « + »",
-        "description": "The button used in Signal Android to add a new linked device"
     },
     "linkNewDevice": {
         "message": "Relier un nouvel appareil",
         "description": "The menu option shown in Signal iOS to add a new linked device"
     },
-    "LinkScreen__scan-this-code": {
+    "Install__scan-this-code": {
         "message": "Balayez ce code dans l’application Signal sur votre téléphone",
-        "description": "Alt text for the QR code on the device link screen"
+        "description": "Title of the device link screen. Also used as alt text for the QR code on the device link screen"
+    },
+    "Install__instructions__1": {
+        "message": "Ouvrez Signal sur votre téléphone",
+        "description": "Instructions on the device link screen"
+    },
+    "Install__instructions__2": {
+        "message": "Touchez $settings$ puis $linkedDevices$",
+        "description": "Instructions on the device link screen",
+        "placeholders": {
+            "settings": {
+                "content": "$1",
+                "example": "<strong>Settings</strong>"
+            },
+            "linkedDevices": {
+                "content": "$2",
+                "example": "<strong>Linked Devices</strong>"
+            }
+        }
+    },
+    "Install__instructions__2__settings": {
+        "message": "Paramètres",
+        "description": "Part of the 2nd instruction on the device link screen"
+    },
+    "Install__instructions__3": {
+        "message": "Touchez $plusButton$ (Android) ou $linkNewDevice$ (iPhone)",
+        "description": "Instructions on the device link screen",
+        "placeholders": {
+            "plusButton": {
+                "content": "$1",
+                "example": "<PlusButton />"
+            },
+            "linkNewDevice": {
+                "content": "$2",
+                "example": "<strong>Link New Device</strong>"
+            }
+        }
+    },
+    "Install__qr-failed": {
+        "message": "Le code QR n’a pas pu être chargé. Vérifiez votre connexion à Internet puis réessayez. $learnMore$",
+        "description": "Shown on the install screen if the QR code fails to load",
+        "placeholders": {
+            "learnMore": {
+                "content": "$1",
+                "example": "<a>Learn more</a>"
+            }
+        }
+    },
+    "Install__qr-failed__learn-more": {
+        "message": "En apprendre davantage",
+        "description": "Shown on the install screen if the QR code fails to load"
+    },
+    "Install__support-link": {
+        "message": "Besoin d’aide ?",
+        "description": "Shown on the install screen. Link takes users to a support page"
+    },
+    "Install__choose-device-name__description": {
+        "message": "Ce nom apparaîtra sous « Appareils reliés » sur votre téléphone",
+        "description": "The subheader shown on the 'choose device name' screen in the device linking process"
+    },
+    "Install__choose-device-name__placeholder": {
+        "message": "Mon ordinateur",
+        "description": "The placeholder for the 'choose device name' input"
     },
     "Preferences--device-name": {
         "message": "Nom de l’appareil ",
@@ -1371,6 +1421,10 @@
         "message": "Synchronisation des contacts et groupes",
         "description": "Shown during initial link while contacts and groups are being pulled from mobile device"
     },
+    "initialSync__subtitle": {
+        "message": "Remarque : l’historique de vos conversations ne sera pas synchronisé avec cet appareil",
+        "description": "Shown during initial link while contacts and groups are being pulled from mobile device"
+    },
     "installConnectionFailed": {
         "message": "Échec de connexion au serveur.",
         "description": "Displayed when we can't connect to the server."
@@ -1385,6 +1439,10 @@
     },
     "installErrorHeader": {
         "message": "Une erreur s’est produite.",
+        "description": ""
+    },
+    "installUnknownError": {
+        "message": "Une erreur inattendue s’est produite. Veuillez réessayer.",
         "description": ""
     },
     "installTryAgain": {
@@ -1419,24 +1477,28 @@
         "message": "Revenir à l’appel",
         "description": "Button label in the call lobby for returning to a call"
     },
+    "calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
+        "message": "Microphone coupé en raison de la taille de l’appe",
+        "description": "Shown in a call lobby toast if there are a lot of people already on the call"
+    },
     "calling__call-is-full": {
         "message": "L’appel est complet",
         "description": "Text in the call lobby when you can't join because the call is full"
     },
     "calling__button--video__label": {
-        "message": "Appareil photo",
+        "message": "Caméra",
         "description": "Label under the video button"
     },
     "calling__button--video-disabled": {
-        "message": "L’appareil photo est désactivé",
+        "message": "La caméra est désactivée",
         "description": "Button tooltip label when the camera is disabled"
     },
     "calling__button--video-off": {
-        "message": "Désactiver l’appareil photo",
+        "message": "Désactiver la caméra",
         "description": "Button tooltip label for turning off the camera"
     },
     "calling__button--video-on": {
-        "message": "Activer l’appareil photo",
+        "message": "Activer la caméra",
         "description": "Button tooltip label for turning on the camera"
     },
     "calling__button--audio__label": {
@@ -5434,7 +5496,7 @@
         "description": "This is the info about the disappearing messages setting, in groups"
     },
     "ConversationDetails--disappearing-messages-info--direct": {
-        "message": "When enabled, messages sent and received in this 1:1 chat will disappear after they've been seen.",
+        "message": "Si cette option est activée, les messages envoyés et reçus dans cette conversation disparaîtront après avoir été lus.",
         "description": "This is the info about the disappearing messages setting, for direct conversations"
     },
     "ConversationDetails--notifications": {
@@ -6180,7 +6242,7 @@
         "description": "Label for the Disappearing Messages default timer setting"
     },
     "UniversalTimerNotification__text": {
-        "message": "La minuterie des messages éphémères sera définie sur $timeValue$ quand vous échanger des messages avec eux.",
+        "message": "La minuterie des messages éphémères sera définie sur $timeValue$ quand vous échangez des messages avec cette personne.",
         "description": "A message displayed when default disappearing message timeout is about to be applied",
         "placeholders": {
             "timeValue": {
@@ -6194,11 +6256,11 @@
         "description": "An error notification displayed when message fails to render due to an internal error"
     },
     "GroupDescription__read-more": {
-        "message": "lire la suite",
+        "message": "Lire la suite",
         "description": "Button text when the group description is too long"
     },
     "EditConversationAttributesModal__description-warning": {
-        "message": "Les descriptions de gruope seront visibles aux membres de ce groupe et aux personnes qui ont été invitées.",
+        "message": "Les descriptions de groupe seront visibles aux membres de ce groupe et aux personnes qui ont été invitées.",
         "description": "Label text shown when editing group description"
     },
     "ConversationDetailsHeader--add-group-description": {
@@ -6585,6 +6647,22 @@
         "message": "Veuillez le fermer manuellement puis cliquez sur Réessayer pour continuer.",
         "description": "Second line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
     },
+    "CrashReportDialog__title": {
+        "message": "L’application a planté",
+        "description": "A title of the dialog displayed when starting an application after a recent crash"
+    },
+    "CrashReportDialog__body": {
+        "message": "Signal a redémarré après un plantage. Vous pouvez envoyer un rapport de plantage pour aider Signal à enquêter sur le problème.",
+        "description": "The body of the dialog displayed when starting an application after a recent crash"
+    },
+    "CrashReportDialog__submit": {
+        "message": "Envoyer",
+        "description": "A button label for submission of the crash reporter data after a recent crash"
+    },
+    "CrashReportDialog__erase": {
+        "message": "Ne pas envoyer",
+        "description": "A button label for erasure of the crash reporter data after a recent crash and continuing to start the app"
+    },
     "CustomizingPreferredReactions__title": {
         "message": "Personnaliser les réactions",
         "description": "Shown in the header of the modal for customizing the preferred reactions. Also shown in the tooltip for the button that opens this modal."
@@ -6626,11 +6704,11 @@
         "description": "Describes what attribute the color picker will change on the text"
     },
     "MediaEditor__text--highlight": {
-        "message": "Highlight",
+        "message": "Surligneur",
         "description": "Describes what attribute the color picker will change on the text"
     },
     "MediaEditor__text--outline": {
-        "message": "Outline",
+        "message": "Contour",
         "description": "Describes what attribute the color picker will change on the text"
     },
     "MediaEditor__text--underline": {
@@ -6685,18 +6763,6 @@
         "message": "Les nouveautés",
         "description": "Title for the whats new modal"
     },
-    "WhatsNew__v5.24--1": {
-        "message": "Vous pouvez désormais faire une recherche dans les conversations archivées. Imaginez-vous en train de chercher (rapidement) dans des tomes anciens, à la recherche du prochain indice.",
-        "description": "Release notes for v5.24"
-    },
-    "WhatsNew__v5.24--2": {
-        "message": "S'il vous est déjà arrivé de faire défiler un message vers le haut et de l'envoyer, vous pourriez vous demander où était votre message ! Désormais, chaque fois que vous enverrez un message, il défilera à l'écran pour que vous puissiez admirer votre travail.",
-        "description": "Release notes for v5.24"
-    },
-    "WhatsNew__v5.24--3": {
-        "message": "Vous réagissez à un message ? Il devrait maintenant être plus fiable, en réessayant jusqu'à 24 heures.",
-        "description": "Release notes for v5.24"
-    },
     "WhatsNew__v5.25--1": {
         "message": "Cette version contient un certain nombre de petits ajustements et de corrections de bogues pour assurer le bon fonctionnement de Signal.",
         "description": "Release notes for v5.25"
@@ -6706,11 +6772,37 @@
         "description": "Release notes for releases that only include bug fixes"
     },
     "WhatsNew__v5.26--1": {
-        "message": "Tired: Sending plain un-edited images on Signal. Wired: Adding cat stickers, neon text, and drawing happy trees on your images before sending them on Signal.",
+        "message": "Fatiguant : envoyer des images simples et non retouchées sur Signal. Excitant : ajouter des autocollants de chats, du texte fluo et dessiner des arbres heureux sur vos images avant de les envoyer sur Signal.",
         "description": "Release notes for v5.26"
     },
     "WhatsNew__v5.26--2": {
-        "message": "Ever feel like you need more pixels on the right pane in your life? Are you a fan of avatars, but only avatars and nothing else? Do you have a \"Save the screen real estate\" bumper sticker on your car? If you answered yes or no to any of those questions, then this update has got some collapsible left pane for you.",
+        "message": "Vous avez déjà eu l’impression d’avoir besoin de plus de pixels sur le volet droit de votre vie ? Êtes-vous un fan des avatars, mais seulement des avatars et rien d’autre ? Avez-vous un autocollant \"Défendez l'espace libre\" sur votre voiture ? Si vous avez répondu oui ou non à l'une de ces questions, cette mise à jour vous propose un volet gauche rétractable.",
         "description": "Release notes for v5.26"
+    },
+    "WhatsNew__macos-m1": {
+        "message": "Signal Desktop pour ordinateur est désormais optimisé pour la puce M1 d’Apple qui est utilisée dans ses ordinateurs les plus récents. Si vous êtes sur l’un de ces appareils dernier cri, l’appli devrait être beaucoup plus rapide. Sinon, souhaitez chaleureusement la bienvenue aux utilisateurs qui le sont. Un grand merci à $dennis$ pour son travail acharné !",
+        "description": "Release note for the macOS M1 release",
+        "placeholders": {
+            "dennis": {
+                "content": "$1",
+                "example": "<a>Dennis Ameling</a>"
+            }
+        }
+    },
+    "WhatsNew__v5.27--1": {
+        "message": "Dans un long appel ? Votre système devrait rester allumé tout du long, plutôt que de s'endormir au milieu d'une discussion importante.",
+        "description": "Release notes for v5.27"
+    },
+    "WhatsNew__v5.27--2": {
+        "message": "Il y a aussi quelques petits ajustements et corrections de bugs pour que Signal tourne bien, y compris plusieurs améliorations sur les appels.",
+        "description": "Release notes for v5.27"
+    },
+    "WhatsNew__v5.28--1": {
+        "message": "Nouvelle année, nouvel écran de configuration initiale. Nous avons redessiné les écrans de configuration initiale juste à temps pour 2022.",
+        "description": "Release notes for v5.28"
+    },
+    "WhatsNew__v5.29--1": {
+        "message": "Now, with fewer frantic searches for the loud typist or heavy chewer! In the call lobby, Desktop will now automatically disable audio if there are eight or more people in the call.",
+        "description": "Release notes for v5.28"
     }
 }

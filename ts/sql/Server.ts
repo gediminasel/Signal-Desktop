@@ -182,7 +182,7 @@ const dataInterface: ServerInterface = {
 
   createOrUpdateSession,
   createOrUpdateSessions,
-  commitSessionsAndUnprocessed,
+  commitDecryptResult,
   bulkAddSessions,
   removeSessionById,
   removeSessionsByConversation,
@@ -236,6 +236,7 @@ const dataInterface: ServerInterface = {
   getNewerMessagesByConversation,
   getTotalUnreadForConversation,
   getMessageMetricsForConversation,
+  getConversationRangeCenteredOnMessage,
   getLastConversationMessages,
   hasGroupCallHistoryMessage,
   migrateConversationMessages,
@@ -756,6 +757,10 @@ async function removeAllItems(): Promise<void> {
 }
 
 async function createOrUpdateSenderKey(key: SenderKeyType): Promise<void> {
+  createOrUpdateSenderKeySync(key);
+}
+
+function createOrUpdateSenderKeySync(key: SenderKeyType): void {
   const db = getInstance();
 
   prepare(
@@ -1174,16 +1179,22 @@ async function createOrUpdateSessions(
   })();
 }
 
-async function commitSessionsAndUnprocessed({
+async function commitDecryptResult({
+  senderKeys,
   sessions,
   unprocessed,
 }: {
+  senderKeys: Array<SenderKeyType>;
   sessions: Array<SessionType>;
   unprocessed: Array<UnprocessedType>;
 }): Promise<void> {
   const db = getInstance();
 
   db.transaction(() => {
+    for (const item of senderKeys) {
+      assertSync(createOrUpdateSenderKeySync(item));
+    }
+
     for (const item of sessions) {
       assertSync(createOrUpdateSessionSync(item));
     }
@@ -1688,20 +1699,7 @@ function hasUserInitiatedMessages(conversationId: string): boolean {
           SELECT 1 FROM messages
           WHERE
             conversationId = $conversationId AND
-            (type IS NULL
-              OR
-              type NOT IN (
-                'change-number-notification',
-                'group-v1-migration',
-                'group-v2-change',
-                'keychange',
-                'message-history-unsynced',
-                'profile-change',
-                'story',
-                'universal-timer-notification',
-                'verified-change'
-              )
-            )
+            isUserInitiatedMessage = 1
           LIMIT 1
         );
       `
@@ -1714,17 +1712,19 @@ function hasUserInitiatedMessages(conversationId: string): boolean {
 function saveMessageSync(
   data: MessageType,
   options: {
-    jobToInsert?: StoredJob;
-    forceSave?: boolean;
     alreadyInTransaction?: boolean;
     db?: Database;
-  } = {}
+    forceSave?: boolean;
+    jobToInsert?: StoredJob;
+    ourUuid: UUIDStringType;
+  }
 ): string {
   const {
-    jobToInsert,
-    forceSave,
     alreadyInTransaction,
     db = getInstance(),
+    forceSave,
+    jobToInsert,
+    ourUuid,
   } = options;
 
   if (!alreadyInTransaction) {
@@ -1741,6 +1741,7 @@ function saveMessageSync(
   const {
     body,
     conversationId,
+    groupV2Change,
     hasAttachments,
     hasFileAttachments,
     hasVisualMediaAttachments,
@@ -1772,6 +1773,7 @@ function saveMessageSync(
     hasAttachments: hasAttachments ? 1 : 0,
     hasFileAttachments: hasFileAttachments ? 1 : 0,
     hasVisualMediaAttachments: hasVisualMediaAttachments ? 1 : 0,
+    isChangeCreatedByUs: groupV2Change?.from === ourUuid ? 1 : 0,
     isErased: isErased ? 1 : 0,
     isViewOnce: isViewOnce ? 1 : 0,
     received_at: received_at || null,
@@ -1801,6 +1803,7 @@ function saveMessageSync(
         hasAttachments = $hasAttachments,
         hasFileAttachments = $hasFileAttachments,
         hasVisualMediaAttachments = $hasVisualMediaAttachments,
+        isChangeCreatedByUs = $isChangeCreatedByUs,
         isErased = $isErased,
         isViewOnce = $isViewOnce,
         received_at = $received_at,
@@ -1843,6 +1846,7 @@ function saveMessageSync(
       hasAttachments,
       hasFileAttachments,
       hasVisualMediaAttachments,
+      isChangeCreatedByUs,
       isErased,
       isViewOnce,
       received_at,
@@ -1866,6 +1870,7 @@ function saveMessageSync(
       $hasAttachments,
       $hasFileAttachments,
       $hasVisualMediaAttachments,
+      $isChangeCreatedByUs,
       $isErased,
       $isViewOnce,
       $received_at,
@@ -1895,10 +1900,11 @@ function saveMessageSync(
 
 async function saveMessage(
   data: MessageType,
-  options?: {
+  options: {
     jobToInsert?: StoredJob;
     forceSave?: boolean;
     alreadyInTransaction?: boolean;
+    ourUuid: UUIDStringType;
   }
 ): Promise<string> {
   return saveMessageSync(data, options);
@@ -1906,15 +1912,14 @@ async function saveMessage(
 
 async function saveMessages(
   arrayOfMessages: Array<MessageType>,
-  options?: { forceSave?: boolean }
+  options: { forceSave?: boolean; ourUuid: UUIDStringType }
 ): Promise<void> {
   const db = getInstance();
-  const { forceSave } = options || {};
 
   db.transaction(() => {
     for (const message of arrayOfMessages) {
       assertSync(
-        saveMessageSync(message, { forceSave, alreadyInTransaction: true })
+        saveMessageSync(message, { ...options, alreadyInTransaction: true })
       );
     }
   })();
@@ -2070,7 +2075,7 @@ async function getUnreadByConversationAndMarkRead({
           expirationStartTimestamp IS NULL OR
           expirationStartTimestamp > $expirationStartTimestamp
         ) AND
-        expireTimer IS NOT NULL AND
+        expireTimer > 0 AND
         conversationId = $conversationId AND
         storyId IS $storyId AND
         received_at <= $newestUnreadAt;
@@ -2157,11 +2162,11 @@ async function getUnreadReactionsAndMarkRead({
     const unreadMessages: Array<ReactionResultType> = db
       .prepare<Query>(
         `
-        SELECT rowid, targetAuthorUuid, targetTimestamp, messageId
+        SELECT reactions.rowid, targetAuthorUuid, targetTimestamp, messageId
         FROM reactions
         JOIN messages on messages.id IS reactions.messageId
         WHERE
-          unread IS NOT 0 AND
+          unread > 0 AND
           messages.conversationId IS $conversationId AND
           messages.received_at <= $newestUnreadAt AND
           messages.storyId IS $storyId
@@ -2181,7 +2186,7 @@ async function getUnreadReactionsAndMarkRead({
         UPDATE reactions SET
         unread = 0 WHERE rowid IN ( ${ids.map(() => '?').join(', ')} );
         `
-      ).run(idsToUpdate);
+      ).run(ids);
     });
 
     return unreadMessages;
@@ -2311,6 +2316,18 @@ async function _removeAllReactions(): Promise<void> {
 
 async function getOlderMessagesByConversation(
   conversationId: string,
+  options?: {
+    limit?: number;
+    messageId?: string;
+    receivedAt?: number;
+    sentAt?: number;
+    storyId?: UUIDStringType;
+  }
+): Promise<Array<MessageTypeUnhydrated>> {
+  return getOlderMessagesByConversationSync(conversationId, options);
+}
+function getOlderMessagesByConversationSync(
+  conversationId: string,
   {
     limit = 100,
     messageId,
@@ -2324,7 +2341,7 @@ async function getOlderMessagesByConversation(
     sentAt?: number;
     storyId?: UUIDStringType;
   } = {}
-): Promise<Array<MessageTypeUnhydrated>> {
+): Array<MessageTypeUnhydrated> {
   const db = getInstance();
 
   return db
@@ -2333,7 +2350,7 @@ async function getOlderMessagesByConversation(
       SELECT json FROM messages WHERE
         conversationId = $conversationId AND
         ($messageId IS NULL OR id IS NOT $messageId) AND
-        type IS NOT 'story' AND
+        isStory IS 0 AND
         storyId IS $storyId AND
         (
           (received_at = $received_at AND sent_at < $sent_at) OR
@@ -2397,6 +2414,17 @@ async function getOlderStories({
 
 async function getNewerMessagesByConversation(
   conversationId: string,
+  options?: {
+    limit?: number;
+    receivedAt?: number;
+    sentAt?: number;
+    storyId?: UUIDStringType;
+  }
+): Promise<Array<MessageTypeUnhydrated>> {
+  return getNewerMessagesByConversationSync(conversationId, options);
+}
+function getNewerMessagesByConversationSync(
+  conversationId: string,
   {
     limit = 100,
     receivedAt = 0,
@@ -2408,14 +2436,14 @@ async function getNewerMessagesByConversation(
     sentAt?: number;
     storyId?: UUIDStringType;
   } = {}
-): Promise<Array<MessageTypeUnhydrated>> {
+): Array<MessageTypeUnhydrated> {
   const db = getInstance();
   const rows: JSONRows = db
     .prepare<Query>(
       `
       SELECT json FROM messages WHERE
         conversationId = $conversationId AND
-        type IS NOT 'story' AND
+        isStory IS 0 AND
         storyId IS $storyId AND
         (
           (received_at = $received_at AND sent_at > $sent_at) OR
@@ -2445,7 +2473,7 @@ function getOldestMessageForConversation(
       `
       SELECT * FROM messages WHERE
         conversationId = $conversationId AND
-        type IS NOT 'story' AND
+        isStory IS 0 AND
         storyId IS $storyId
       ORDER BY received_at ASC, sent_at ASC
       LIMIT 1;
@@ -2472,7 +2500,7 @@ function getNewestMessageForConversation(
       `
       SELECT * FROM messages WHERE
         conversationId = $conversationId AND
-        type IS NOT 'story' AND
+        isStory IS 0 AND
         storyId IS $storyId
       ORDER BY received_at DESC, sent_at DESC
       LIMIT 1;
@@ -2504,31 +2532,9 @@ function getLastConversationActivity({
       SELECT json FROM messages
       WHERE
         conversationId = $conversationId AND
-        (type IS NULL
-          OR
-          type NOT IN (
-            'change-number-notification',
-            'group-v1-migration',
-            'keychange',
-            'message-history-unsynced',
-            'profile-change',
-            'story',
-            'universal-timer-notification',
-            'verified-change'
-          )
-        ) AND
-        (
-          json_extract(json, '$.expirationTimerUpdate.fromSync') IS NULL
-          OR
-          json_extract(json, '$.expirationTimerUpdate.fromSync') != 1
-        ) AND NOT
-        (
-          type IS 'group-v2-change' AND
-          json_extract(json, '$.groupV2Change.from') IS NOT $ourUuid AND
-          json_extract(json, '$.groupV2Change.details.length') IS 1 AND
-          json_extract(json, '$.groupV2Change.details[0].type') IS 'member-remove' AND
-          json_extract(json, '$.groupV2Change.details[0].uuid') IS NOT $ourUuid
-        )
+        shouldAffectActivity IS 1 AND
+        isTimerChangeFromSync IS 0 AND
+        isGroupLeaveEventFromOther IS 0
       ORDER BY received_at DESC, sent_at DESC
       LIMIT 1;
       `
@@ -2545,10 +2551,8 @@ function getLastConversationActivity({
 }
 function getLastConversationPreview({
   conversationId,
-  ourUuid,
 }: {
   conversationId: string;
-  ourUuid: UUIDStringType;
 }): MessageType | undefined {
   const db = getInstance();
   const row = prepare(
@@ -2557,36 +2561,18 @@ function getLastConversationPreview({
       SELECT json FROM messages
       WHERE
         conversationId = $conversationId AND
+        shouldAffectPreview IS 1 AND
+        isGroupLeaveEventFromOther IS 0 AND
         (
-          expiresAt IS NULL OR
-          (expiresAt > $now)
-        ) AND
-        (
-          type IS NULL
+          expiresAt IS NULL
           OR
-          type NOT IN (
-            'change-number-notification',
-            'group-v1-migration',
-            'message-history-unsynced',
-            'profile-change',
-            'story',
-            'universal-timer-notification',
-            'verified-change'
-          )
-        ) AND NOT
-        (
-          type IS 'group-v2-change' AND
-          json_extract(json, '$.groupV2Change.from') IS NOT $ourUuid AND
-          json_extract(json, '$.groupV2Change.details.length') IS 1 AND
-          json_extract(json, '$.groupV2Change.details[0].type') IS 'member-remove' AND
-          json_extract(json, '$.groupV2Change.details[0].uuid') IS NOT $ourUuid
+          expiresAt > $now
         )
       ORDER BY received_at DESC, sent_at DESC
       LIMIT 1;
       `
   ).get({
     conversationId,
-    ourUuid,
     now: Date.now(),
   });
 
@@ -2612,10 +2598,7 @@ async function getLastConversationMessages({
         conversationId,
         ourUuid,
       }),
-      preview: getLastConversationPreview({
-        conversationId,
-        ourUuid,
-      }),
+      preview: getLastConversationPreview({ conversationId }),
       hasUserInitiatedMessages: hasUserInitiatedMessages(conversationId),
     };
   })();
@@ -2632,7 +2615,7 @@ function getOldestUnreadMessageForConversation(
       SELECT * FROM messages WHERE
         conversationId = $conversationId AND
         readStatus = ${ReadStatus.Unread} AND
-        type IS NOT 'story' AND
+        isStory IS 0 AND
         storyId IS $storyId
       ORDER BY received_at ASC, sent_at ASC
       LIMIT 1;
@@ -2654,6 +2637,12 @@ async function getTotalUnreadForConversation(
   conversationId: string,
   storyId?: UUIDStringType
 ): Promise<number> {
+  return getTotalUnreadForConversationSync(conversationId, storyId);
+}
+function getTotalUnreadForConversationSync(
+  conversationId: string,
+  storyId?: UUIDStringType
+): number {
   const db = getInstance();
   const row = db
     .prepare<Query>(
@@ -2663,7 +2652,7 @@ async function getTotalUnreadForConversation(
       WHERE
         conversationId = $conversationId AND
         readStatus = ${ReadStatus.Unread} AND
-        type IS NOT 'story' AND
+        isStory IS 0 AND
         storyId IS $storyId;
       `
     )
@@ -2683,13 +2672,19 @@ async function getMessageMetricsForConversation(
   conversationId: string,
   storyId?: UUIDStringType
 ): Promise<ConversationMetricsType> {
+  return getMessageMetricsForConversationSync(conversationId, storyId);
+}
+function getMessageMetricsForConversationSync(
+  conversationId: string,
+  storyId?: UUIDStringType
+): ConversationMetricsType {
   const oldest = getOldestMessageForConversation(conversationId, storyId);
   const newest = getNewestMessageForConversation(conversationId, storyId);
   const oldestUnread = getOldestUnreadMessageForConversation(
     conversationId,
     storyId
   );
-  const totalUnread = await getTotalUnreadForConversation(
+  const totalUnread = getTotalUnreadForConversationSync(
     conversationId,
     storyId
   );
@@ -2702,6 +2697,47 @@ async function getMessageMetricsForConversation(
       : undefined,
     totalUnread,
   };
+}
+
+async function getConversationRangeCenteredOnMessage({
+  conversationId,
+  limit,
+  messageId,
+  receivedAt,
+  sentAt,
+  storyId,
+}: {
+  conversationId: string;
+  limit?: number;
+  messageId: string;
+  receivedAt: number;
+  sentAt?: number;
+  storyId?: UUIDStringType;
+}): Promise<{
+  older: Array<MessageTypeUnhydrated>;
+  newer: Array<MessageTypeUnhydrated>;
+  metrics: ConversationMetricsType;
+}> {
+  const db = getInstance();
+
+  return db.transaction(() => {
+    return {
+      older: getOlderMessagesByConversationSync(conversationId, {
+        limit,
+        messageId,
+        receivedAt,
+        sentAt,
+        storyId,
+      }),
+      newer: getNewerMessagesByConversationSync(conversationId, {
+        limit,
+        receivedAt,
+        sentAt,
+        storyId,
+      }),
+      metrics: getMessageMetricsForConversationSync(conversationId, storyId),
+    };
+  })();
 }
 
 async function hasGroupCallHistoryMessage(
@@ -4060,7 +4096,6 @@ async function removeAll(): Promise<void> {
       DELETE FROM identityKeys;
       DELETE FROM items;
       DELETE FROM jobs;
-      DELETE FROM jobs;
       DELETE FROM messages_fts;
       DELETE FROM messages;
       DELETE FROM preKeys;
@@ -4163,7 +4198,7 @@ async function getMessagesWithVisualMediaAttachments(
     .prepare<Query>(
       `
       SELECT json FROM messages WHERE
-        type IS NOT 'story' AND
+        isStory IS 0 AND
         storyId IS NULL AND
         conversationId = $conversationId AND
         hasVisualMediaAttachments = 1
@@ -4189,7 +4224,7 @@ async function getMessagesWithFileAttachments(
     .prepare<Query>(
       `
       SELECT json FROM messages WHERE
-        type IS NOT 'story' AND
+        isStory IS 0 AND
         storyId IS NULL AND
         conversationId = $conversationId AND
         hasFileAttachments = 1
