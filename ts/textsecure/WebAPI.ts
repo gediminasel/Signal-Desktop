@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Signal Messenger, LLC
+// Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /* eslint-disable no-param-reassign */
@@ -28,6 +28,8 @@ import type { Readable } from 'stream';
 import { assert, strictAssert } from '../util/assert';
 import { isRecord } from '../util/isRecord';
 import * as durations from '../util/durations';
+import type { ExplodePromiseResultType } from '../util/explodePromise';
+import { explodePromise } from '../util/explodePromise';
 import { getUserAgent } from '../util/getUserAgent';
 import { getStreamWithTimeout } from '../util/getStreamWithTimeout';
 import { formatAcceptLanguageHeader } from '../util/userLanguages';
@@ -36,7 +38,7 @@ import type { SocketStatus } from '../types/SocketStatus';
 import { toLogFormat } from '../types/errors';
 import { isPackIdValid, redactPackId } from '../types/Stickers';
 import type { UUID, UUIDStringType } from '../types/UUID';
-import { UUIDKind } from '../types/UUID';
+import { isValidUuid, UUIDKind } from '../types/UUID';
 import * as Bytes from '../Bytes';
 import {
   constantTimeEqual,
@@ -536,6 +538,7 @@ const URL_CALLS = {
   getIceServers: 'v1/accounts/turn',
   getStickerPackUpload: 'v1/sticker/pack/form',
   groupLog: 'v1/groups/logs',
+  groupJoinedAtVersion: 'v1/groups/joined_at_version',
   groups: 'v1/groups',
   groupsViaLink: 'v1/groups/join',
   groupToken: 'v1/groups/token',
@@ -633,6 +636,7 @@ type AjaxOptionsType = {
   urlParameters?: string;
   username?: string;
   validateResponse?: any;
+  isRegistration?: true;
 } & (
   | {
       unauthenticated?: false;
@@ -715,7 +719,6 @@ export type ProfileType = Readonly<{
   avatar?: string;
   unidentifiedAccess?: string;
   unrestrictedUnidentifiedAccess?: string;
-  username?: string;
   uuid?: string;
   credential?: string;
   capabilities?: CapabilitiesType;
@@ -751,6 +754,7 @@ export type WhoamiResultType = Readonly<{
   uuid?: UUIDStringType;
   pni?: UUIDStringType;
   number?: string;
+  username?: string;
 }>;
 
 export type ConfirmCodeResultType = Readonly<{
@@ -766,6 +770,8 @@ export type GetUuidsForE164sV2OptionsType = Readonly<{
 }>;
 
 export type WebAPIType = {
+  startRegistration(): unknown;
+  finishRegistration(baton: unknown): void;
   confirmCode: (
     number: string,
     code: string,
@@ -798,7 +804,7 @@ export type WebAPIType = {
     options: GroupCredentialsType
   ) => Promise<Proto.GroupExternalCredential>;
   getGroupLog: (
-    startVersion: number,
+    startVersion: number | undefined,
     options: GroupCredentialsType
   ) => Promise<GroupLogResponseType>;
   getIceServers: () => Promise<GetIceServersResultType>;
@@ -1067,6 +1073,8 @@ export function initialize({
     const PARSE_GROUP_LOG_RANGE_HEADER =
       /$versions (\d{1,10})-(\d{1,10})\/(d{1,10})/;
 
+    let activeRegistration: ExplodePromiseResultType<void> | undefined;
+
     const socketManager = new SocketManager({
       url,
       certificateAuthority,
@@ -1117,6 +1125,7 @@ export function initialize({
       confirmCode,
       createGroup,
       deleteUsername,
+      finishRegistration,
       fetchLinkPreviewImage,
       fetchLinkPreviewMetadata,
       getAttachment,
@@ -1165,6 +1174,7 @@ export function initialize({
       sendMessagesUnauth,
       sendWithSenderKey,
       setSignedPreKey,
+      startRegistration,
       updateDeviceName,
       uploadAvatar,
       uploadGroupAvatar,
@@ -1186,6 +1196,18 @@ export function initialize({
     ): Promise<unknown>;
 
     async function _ajax(param: AjaxOptionsType): Promise<unknown> {
+      if (
+        !param.unauthenticated &&
+        activeRegistration &&
+        !param.isRegistration
+      ) {
+        log.info('WebAPI: request blocked by active registration');
+        const start = Date.now();
+        await activeRegistration.promise;
+        const duration = Date.now() - start;
+        log.info(`WebAPI: request unblocked after ${duration}ms`);
+      }
+
       if (!param.urlParameters) {
         param.urlParameters = '';
       }
@@ -1244,12 +1266,25 @@ export function initialize({
       return `identity=${value}`;
     }
 
-    async function whoami() {
-      return (await _ajax({
+    async function whoami(): Promise<WhoamiResultType> {
+      const response = await _ajax({
         call: 'whoami',
         httpType: 'GET',
         responseType: 'json',
-      })) as WhoamiResultType;
+      });
+
+      if (!isRecord(response)) {
+        return {};
+      }
+
+      return {
+        uuid: isValidUuid(response.uuid) ? response.uuid : undefined,
+        pni: isValidUuid(response.pni) ? response.pni : undefined,
+        number:
+          typeof response.number === 'string' ? response.number : undefined,
+        username:
+          typeof response.username === 'string' ? response.username : undefined,
+      };
     }
 
     async function sendChallengeResponse(challengeResponse: ChallengeType) {
@@ -1346,17 +1381,29 @@ export function initialize({
     ): Promise<Uint8Array> {
       const { credentials, greaterThanVersion } = options;
 
-      return _ajax({
+      const { data, response } = await _ajax({
         call: 'storageManifest',
         contentType: 'application/x-protobuf',
         host: storageUrl,
         httpType: 'GET',
-        responseType: 'bytes',
+        responseType: 'byteswithdetails',
         urlParameters: greaterThanVersion
           ? `/version/${greaterThanVersion}`
           : '',
         ...credentials,
       });
+
+      if (response.status === 204) {
+        throw makeHTTPError(
+          'promiseAjax: error response',
+          response.status,
+          response.headers.raw(),
+          data,
+          new Error().stack
+        );
+      }
+
+      return data;
     }
 
     async function getStorageRecords(
@@ -1635,6 +1682,31 @@ export function initialize({
       }
     }
 
+    function startRegistration() {
+      strictAssert(
+        activeRegistration === undefined,
+        'Registration already in progress'
+      );
+
+      activeRegistration = explodePromise<void>();
+      log.info('WebAPI: starting registration');
+
+      return activeRegistration;
+    }
+
+    function finishRegistration(registration: unknown) {
+      strictAssert(activeRegistration !== undefined, 'No active registration');
+      strictAssert(
+        activeRegistration === registration,
+        'Invalid registration baton'
+      );
+
+      log.info('WebAPI: finishing registration');
+      const current = activeRegistration;
+      activeRegistration = undefined;
+      current.resolve();
+    }
+
     async function confirmCode(
       number: string,
       code: string,
@@ -1677,6 +1749,7 @@ export function initialize({
       password = newPassword;
 
       const response = (await _ajax({
+        isRegistration: true,
         call,
         httpType: 'PUT',
         responseType: 'json',
@@ -1749,6 +1822,7 @@ export function initialize({
       };
 
       await _ajax({
+        isRegistration: true,
         call: 'keys',
         urlParameters: `?${uuidKindToQuery(uuidKind)}`,
         httpType: 'PUT',
@@ -2529,13 +2603,29 @@ export function initialize({
     }
 
     async function getGroupLog(
-      startVersion: number,
+      startVersion: number | undefined,
       options: GroupCredentialsType
     ): Promise<GroupLogResponseType> {
       const basicAuth = generateGroupAuth(
         options.groupPublicParamsHex,
         options.authCredentialPresentationHex
       );
+
+      // If we don't know starting revision - fetch it from the server
+      if (startVersion === undefined) {
+        const { data: joinedData } = await _ajax({
+          basicAuth,
+          call: 'groupJoinedAtVersion',
+          contentType: 'application/x-protobuf',
+          host: storageUrl,
+          httpType: 'GET',
+          responseType: 'byteswithdetails',
+        });
+
+        const { joinedAtVersion } = Proto.Member.decode(joinedData);
+
+        return getGroupLog(joinedAtVersion, options);
+      }
 
       const withDetails = await _ajax({
         basicAuth,

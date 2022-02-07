@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Signal Messenger, LLC
+// Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import * as React from 'react';
@@ -53,6 +53,7 @@ const getDefaultProps = () => ({
   conversationId: 'conversation-id',
   getPreferredBadge: () => undefined,
   id: 'asdf',
+  isOldestTimelineItem: false,
   isSelected: false,
   interactionMode: 'keyboard' as const,
   theme: ThemeType.light,
@@ -493,21 +494,19 @@ storiesOf('Components/Conversation/TimelineItem', module)
     );
   })
   .add('Unknown Type', () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore: intentional
     const item = {
       type: 'random',
       data: {
         somethin: 'somethin',
       },
-    } as TimelineItemProps['item'];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any as TimelineItemProps['item'];
 
     return <TimelineItem {...getDefaultProps()} item={item} i18n={i18n} />;
   })
   .add('Missing Item', () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore: intentional
-    const item = null as TimelineItemProps['item'];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const item = null as any as TimelineItemProps['item'];
 
     return <TimelineItem {...getDefaultProps()} item={item} i18n={i18n} />;
   });

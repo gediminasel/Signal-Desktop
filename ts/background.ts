@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Signal Messenger, LLC
+// Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { webFrame } from 'electron';
@@ -20,6 +20,7 @@ import {
 import type {
   MessageAttributesType,
   ConversationAttributesType,
+  ReactionAttributesType,
 } from './model-types.d';
 import * as Bytes from './Bytes';
 import * as Timers from './Timers';
@@ -88,9 +89,7 @@ import type { WebAPIType } from './textsecure/WebAPI';
 import * as KeyChangeListener from './textsecure/KeyChangeListener';
 import { RotateSignedPreKeyListener } from './textsecure/RotateSignedPreKeyListener';
 import { isDirectConversation, isGroupV2 } from './util/whatTypeOfConversation';
-import { getSendOptions } from './util/getSendOptions';
 import { BackOff, FIBONACCI_TIMEOUTS } from './util/BackOff';
-import { handleMessageSend } from './util/handleMessageSend';
 import { AppViewType } from './state/ducks/app';
 import { UsernameSaveState } from './state/ducks/conversationsEnums';
 import type { BadgesStateType } from './state/ducks/badges';
@@ -107,6 +106,12 @@ import { Reactions } from './messageModifiers/Reactions';
 import { ReadSyncs } from './messageModifiers/ReadSyncs';
 import { ViewSyncs } from './messageModifiers/ViewSyncs';
 import { ViewOnceOpenSyncs } from './messageModifiers/ViewOnceOpenSyncs';
+import type { DeleteAttributesType } from './messageModifiers/Deletes';
+import type { MessageReceiptAttributesType } from './messageModifiers/MessageReceipts';
+import type { MessageRequestAttributesType } from './messageModifiers/MessageRequests';
+import type { ReadSyncAttributesType } from './messageModifiers/ReadSyncs';
+import type { ViewSyncAttributesType } from './messageModifiers/ViewSyncs';
+import type { ViewOnceOpenSyncAttributesType } from './messageModifiers/ViewOnceOpenSyncs';
 import { ReadStatus } from './messages/MessageReadStatus';
 import type { SendStateByConversationId } from './messages/MessageSendState';
 import { SendStatus } from './messages/MessageSendState';
@@ -120,8 +125,8 @@ import { onRetryRequest, onDecryptionError } from './util/handleRetry';
 import { themeChanged } from './shims/themeChanged';
 import { createIPCEvents } from './util/createIPCEvents';
 import { RemoveAllConfiguration } from './types/RemoveAllConfiguration';
+import { isValidUuid, UUIDKind } from './types/UUID';
 import type { UUID } from './types/UUID';
-import { UUIDKind } from './types/UUID';
 import * as log from './logging/log';
 import {
   loadRecentEmojis,
@@ -135,6 +140,9 @@ import { ToastConversationUnarchived } from './components/ToastConversationUnarc
 import { showToast } from './util/showToast';
 import { startInteractionMode } from './windows/startInteractionMode';
 import { deliveryReceiptsJobQueue } from './jobs/deliveryReceiptsJobQueue';
+import { updateOurUsername } from './util/updateOurUsername';
+import { ReactionSource } from './reactions/ReactionSource';
+import { singleProtoJobQueue } from './jobs/singleProtoJobQueue';
 
 const MAX_ATTACHMENT_DOWNLOAD_AGE = 3600 * 72 * 1000;
 
@@ -297,10 +305,6 @@ export async function startApp(): Promise<void> {
       })
     );
     messageReceiver.addEventListener('empty', queuedEventListener(onEmpty));
-    messageReceiver.addEventListener(
-      'reconnect',
-      queuedEventListener(onReconnect)
-    );
     messageReceiver.addEventListener(
       'configuration',
       queuedEventListener(onConfiguration)
@@ -710,11 +714,7 @@ export async function startApp(): Promise<void> {
       }
 
       // This one should always be last - it could restart the app
-      if (
-        window.isBeforeVersion(lastVersion, 'v1.15.0-beta.5') ||
-        (window.isAfterVersion(lastVersion, 'v5.24.0-alpha') &&
-          window.isBeforeVersion(lastVersion, 'v5.25.0'))
-      ) {
+      if (window.isBeforeVersion(lastVersion, 'v5.30.0-alpha')) {
         await deleteAllLogs();
         window.restart();
         return;
@@ -947,6 +947,7 @@ export async function startApp(): Promise<void> {
         i18n: window.i18n,
         interactionMode: window.getInteractionMode(),
         theme,
+        version: window.getVersion(),
       },
     };
 
@@ -971,6 +972,10 @@ export async function startApp(): Promise<void> {
       composer: bindActionCreators(actionCreators.composer, store.dispatch),
       conversations: bindActionCreators(
         actionCreators.conversations,
+        store.dispatch
+      ),
+      crashReports: bindActionCreators(
+        actionCreators.crashReports,
         store.dispatch
       ),
       emojis: bindActionCreators(actionCreators.emojis, store.dispatch),
@@ -1569,6 +1574,10 @@ export async function startApp(): Promise<void> {
     resumeTasksWithTimeout();
   });
 
+  window.Whisper.events.on('powerMonitorLockScreen', () => {
+    window.reduxActions.calling.hangUpActiveCall();
+  });
+
   const reconnectToWebSocketQueue = new LatestQueue();
 
   const enqueueReconnectToWebSocket = () => {
@@ -1594,7 +1603,7 @@ export async function startApp(): Promise<void> {
     unlinkAndDisconnect(RemoveAllConfiguration.Full);
   });
 
-  function runStorageService() {
+  async function runStorageService() {
     window.Signal.Services.enableStorageService();
 
     if (window.ConversationController.areWePrimaryDevice()) {
@@ -1604,10 +1613,16 @@ export async function startApp(): Promise<void> {
       return;
     }
 
-    handleMessageSend(window.textsecure.messaging.sendRequestKeySyncMessage(), {
-      messageIds: [],
-      sendType: 'otherSync',
-    });
+    try {
+      await singleProtoJobQueue.add(
+        window.textsecure.messaging.getRequestKeySyncMessage()
+      );
+    } catch (error) {
+      log.error(
+        'runStorageService: Failed to queue sync message',
+        Errors.toLogFormat(error)
+      );
+    }
   }
 
   let challengeHandler: ChallengeHandler | undefined;
@@ -1700,7 +1715,9 @@ export async function startApp(): Promise<void> {
           };
         });
 
-      await window.Signal.Data.saveMessages(newMessageAttributes);
+      await window.Signal.Data.saveMessages(newMessageAttributes, {
+        ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+      });
     }
     log.info('Expiration start timestamp cleanup: complete');
 
@@ -1850,10 +1867,16 @@ export async function startApp(): Promise<void> {
           return;
         }
 
-        await handleMessageSend(
-          window.textsecure.messaging.sendRequestKeySyncMessage(),
-          { messageIds: [], sendType: 'otherSync' }
-        );
+        try {
+          await singleProtoJobQueue.add(
+            window.textsecure.messaging.getRequestKeySyncMessage()
+          );
+        } catch (error) {
+          log.error(
+            'desktop.storage/onChange: Failed to queue sync message',
+            Errors.toLogFormat(error)
+          );
+        }
       }
     );
 
@@ -2137,13 +2160,16 @@ export async function startApp(): Promise<void> {
         try {
           // Note: we always have to register our capabilities all at once, so we do this
           //   after connect on every startup
-          await server.registerCapabilities({
-            announcementGroup: true,
-            'gv2-3': true,
-            'gv1-migration': true,
-            senderKey: true,
-            changeNumber: true,
-          });
+          await Promise.all([
+            server.registerCapabilities({
+              announcementGroup: true,
+              'gv2-3': true,
+              'gv1-migration': true,
+              senderKey: true,
+              changeNumber: true,
+            }),
+            updateOurUsername(),
+          ]);
         } catch (error) {
           log.error(
             'Error: Unable to register our capabilities.',
@@ -2178,12 +2204,6 @@ export async function startApp(): Promise<void> {
           runStorageService();
         });
 
-        const ourConversation =
-          window.ConversationController.getOurConversationOrThrow();
-        const sendOptions = await getSendOptions(ourConversation.attributes, {
-          syncMessage: true,
-        });
-
         const installedStickerPacks = Stickers.getInstalledStickerPacks();
         if (installedStickerPacks.length) {
           const operations = installedStickerPacks.map(pack => ({
@@ -2199,18 +2219,16 @@ export async function startApp(): Promise<void> {
             return;
           }
 
-          handleMessageSend(
-            window.textsecure.messaging.sendStickerPackSync(
-              operations,
-              sendOptions
-            ),
-            { messageIds: [], sendType: 'otherSync' }
-          ).catch(error => {
-            log.error(
-              'Failed to send installed sticker packs via sync message',
-              error && error.stack ? error.stack : error
+          try {
+            await singleProtoJobQueue.add(
+              window.textsecure.messaging.getStickerPackSync(operations)
             );
-          });
+          } catch (error) {
+            log.error(
+              'connect: Failed to queue sticker sync message',
+              Errors.toLogFormat(error)
+            );
+          }
         }
       }
 
@@ -2365,19 +2383,14 @@ export async function startApp(): Promise<void> {
         messagesToSave.push(message.attributes);
       }
     });
-    await window.Signal.Data.saveMessages(messagesToSave);
-  }
-  function onReconnect() {
-    // We disable notifications on first connect, but the same applies to reconnect. In
-    //   scenarios where we're coming back from sleep, we can get offline/online events
-    //   very fast, and it looks like a network blip. But we need to suppress
-    //   notifications in these scenarios too. So we listen for 'reconnect' events.
-    profileKeyResponseQueue.pause();
-    lightSessionResetQueue.pause();
-    onDecryptionErrorQueue.pause();
-    onRetryRequestQueue.pause();
-    window.Whisper.deliveryReceiptQueue.pause();
-    notificationService.disable();
+    await window.Signal.Data.saveMessages(messagesToSave, {
+      ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+    });
+
+    // Process crash reports if any
+    window.reduxActions.crashReports.setCrashReportCount(
+      await window.crashReports.getCount()
+    );
   }
 
   let initialStartupCount = 0;
@@ -2455,6 +2468,7 @@ export async function startApp(): Promise<void> {
       e164: sender,
       uuid: senderUuid,
       highTrust: true,
+      reason: `onTyping(${typing.timestamp})`,
     });
 
     // We multiplex between GV1/GV2 groups here, but we don't kick off migrations
@@ -2492,6 +2506,23 @@ export async function startApp(): Promise<void> {
     ) {
       log.warn(
         `Received typing indicator for group ${conversation.idForLogging()}, which we're not a part of. Dropping.`
+      );
+      return;
+    }
+    if (conversation?.isBlocked()) {
+      log.info(
+        `onTyping: conversation ${conversation.idForLogging()} is blocked, dropping typing message`
+      );
+      return;
+    }
+    const senderConversation = window.ConversationController.get(senderId);
+    if (!senderConversation) {
+      log.warn('onTyping: No conversation for sender!');
+      return;
+    }
+    if (senderConversation.isBlocked()) {
+      log.info(
+        `onTyping: sender ${conversation.idForLogging()} is blocked, dropping typing message`
       );
       return;
     }
@@ -2578,6 +2609,7 @@ export async function startApp(): Promise<void> {
         e164: details.number,
         uuid: details.uuid,
         highTrust: true,
+        reason: 'onContactReceived',
       });
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const conversation = window.ConversationController.get(detailsId)!;
@@ -2806,6 +2838,7 @@ export async function startApp(): Promise<void> {
         e164: envelope.source,
         uuid: envelope.sourceUuid,
         highTrust: true,
+        reason: `onEnvelopeReceived(${envelope.timestamp})`,
       });
     }
   }
@@ -2870,18 +2903,27 @@ export async function startApp(): Promise<void> {
         return Promise.resolve();
       }
 
+      strictAssert(
+        reaction.targetTimestamp,
+        'Reaction without targetTimestamp'
+      );
+      const fromId = window.ConversationController.ensureContactIds({
+        e164: data.source,
+        uuid: data.sourceUuid,
+      });
+      strictAssert(fromId, 'Reaction without fromId');
+
       log.info('Queuing incoming reaction for', reaction.targetTimestamp);
-      const reactionModel = Reactions.getSingleton().add({
+      const attributes: ReactionAttributesType = {
         emoji: reaction.emoji,
         remove: reaction.remove,
         targetAuthorUuid,
         targetTimestamp: reaction.targetTimestamp,
         timestamp,
-        fromId: window.ConversationController.ensureContactIds({
-          e164: data.source,
-          uuid: data.sourceUuid,
-        }),
-      });
+        fromId,
+        source: ReactionSource.FromSomeoneElse,
+      };
+      const reactionModel = Reactions.getSingleton().add(attributes);
       // Note: We do not wait for completion here
       Reactions.getSingleton().onReaction(reactionModel);
       confirm();
@@ -2891,16 +2933,28 @@ export async function startApp(): Promise<void> {
     if (data.message.delete) {
       const { delete: del } = data.message;
       log.info('Queuing incoming DOE for', del.targetSentTimestamp);
-      const deleteModel = Deletes.getSingleton().add({
+
+      strictAssert(
+        del.targetSentTimestamp,
+        'Delete missing targetSentTimestamp'
+      );
+      strictAssert(data.serverTimestamp, 'Delete missing serverTimestamp');
+      const fromId = window.ConversationController.ensureContactIds({
+        e164: data.source,
+        uuid: data.sourceUuid,
+      });
+      strictAssert(fromId, 'Delete missing fromId');
+
+      const attributes: DeleteAttributesType = {
         targetSentTimestamp: del.targetSentTimestamp,
         serverTimestamp: data.serverTimestamp,
-        fromId: window.ConversationController.ensureContactIds({
-          e164: data.source,
-          uuid: data.sourceUuid,
-        }),
-      });
+        fromId,
+      };
+      const deleteModel = Deletes.getSingleton().add(attributes);
+
       // Note: We do not wait for completion here
       Deletes.getSingleton().onDelete(deleteModel);
+
       confirm();
       return Promise.resolve();
     }
@@ -2920,6 +2974,7 @@ export async function startApp(): Promise<void> {
       e164: data.source,
       uuid: data.sourceUuid,
       highTrust: true,
+      reason: 'onProfileKeyUpdate',
     });
     const conversation = window.ConversationController.get(conversationId);
 
@@ -3004,7 +3059,6 @@ export async function startApp(): Promise<void> {
             {
               uuid: destinationUuid,
               e164: destination,
-              highTrust: true,
             }
           );
           if (!conversationId || conversationId === ourId) {
@@ -3137,6 +3191,7 @@ export async function startApp(): Promise<void> {
         e164: source,
         uuid: sourceUuid,
         highTrust: true,
+        reason: `getMessageDescriptor(${message.timestamp}): group v1`,
       });
 
       const conversationId = window.ConversationController.ensureGroup(id, {
@@ -3153,6 +3208,7 @@ export async function startApp(): Promise<void> {
       e164: destination,
       uuid: destinationUuid,
       highTrust: true,
+      reason: `getMessageDescriptor(${message.timestamp}): private`,
     });
     if (!id) {
       confirm();
@@ -3210,6 +3266,10 @@ export async function startApp(): Promise<void> {
       );
 
       const { reaction, timestamp } = data.message;
+      strictAssert(
+        reaction.targetTimestamp,
+        'Reaction without targetAuthorUuid'
+      );
 
       if (!isValidReactionEmoji(reaction.emoji)) {
         log.warn('Received an invalid reaction emoji. Dropping it');
@@ -3218,15 +3278,16 @@ export async function startApp(): Promise<void> {
       }
 
       log.info('Queuing sent reaction for', reaction.targetTimestamp);
-      const reactionModel = Reactions.getSingleton().add({
+      const attributes: ReactionAttributesType = {
         emoji: reaction.emoji,
         remove: reaction.remove,
         targetAuthorUuid,
         targetTimestamp: reaction.targetTimestamp,
         timestamp,
-        fromId: window.ConversationController.getOurConversationId(),
-        fromSync: true,
-      });
+        fromId: window.ConversationController.getOurConversationIdOrThrow(),
+        source: ReactionSource.FromSync,
+      };
+      const reactionModel = Reactions.getSingleton().add(attributes);
       // Note: We do not wait for completion here
       Reactions.getSingleton().onReaction(reactionModel);
 
@@ -3236,12 +3297,20 @@ export async function startApp(): Promise<void> {
 
     if (data.message.delete) {
       const { delete: del } = data.message;
+      strictAssert(
+        del.targetSentTimestamp,
+        'Delete without targetSentTimestamp'
+      );
+      strictAssert(data.serverTimestamp, 'Data has no serverTimestamp');
+
       log.info('Queuing sent DOE for', del.targetSentTimestamp);
-      const deleteModel = Deletes.getSingleton().add({
+
+      const attributes: DeleteAttributesType = {
         targetSentTimestamp: del.targetSentTimestamp,
         serverTimestamp: data.serverTimestamp,
-        fromId: window.ConversationController.getOurConversationId(),
-      });
+        fromId: window.ConversationController.getOurConversationIdOrThrow(),
+      };
+      const deleteModel = Deletes.getSingleton().add(attributes);
       // Note: We do not wait for completion here
       Deletes.getSingleton().onDelete(deleteModel);
       confirm();
@@ -3409,26 +3478,6 @@ export async function startApp(): Promise<void> {
       return;
     }
 
-    if (
-      error instanceof HTTPError &&
-      (error.code === -1 || error.code === 502)
-    ) {
-      // Failed to connect to server
-      if (navigator.onLine) {
-        const timeout = reconnectBackOff.getAndIncrement();
-
-        log.info(`retrying in ${timeout}ms`);
-        reconnectTimer = Timers.setTimeout(connect, timeout);
-
-        window.Whisper.events.trigger('reconnectTimer');
-
-        // If we couldn't connect during startup - we should still switch SQL to
-        // the main process to avoid stalling UI.
-        window.Signal.Data.goBackToMainProcess();
-      }
-      return;
-    }
-
     log.warn('background onError: Doing nothing with incoming error');
   }
 
@@ -3437,12 +3486,16 @@ export async function startApp(): Promise<void> {
 
     const { source, sourceUuid, timestamp } = ev;
     log.info(`view once open sync ${source} ${timestamp}`);
+    strictAssert(source, 'ViewOnceOpen without source');
+    strictAssert(sourceUuid, 'ViewOnceOpen without sourceUuid');
+    strictAssert(timestamp, 'ViewOnceOpen without timestamp');
 
-    const sync = ViewOnceOpenSyncs.getSingleton().add({
+    const attributes: ViewOnceOpenSyncAttributesType = {
       source,
       sourceUuid,
       timestamp,
-    });
+    };
+    const sync = ViewOnceOpenSyncs.getSingleton().add(attributes);
 
     ViewOnceOpenSyncs.getSingleton().onSync(sync);
   }
@@ -3458,7 +3511,7 @@ export async function startApp(): Promise<void> {
       case FETCH_LATEST_ENUM.LOCAL_PROFILE: {
         const ourUuid = window.textsecure.storage.user.getUuid()?.toString();
         const ourE164 = window.textsecure.storage.user.getNumber();
-        await getProfile(ourUuid, ourE164);
+        await Promise.all([getProfile(ourUuid, ourE164), updateOurUsername()]);
         break;
       }
       case FETCH_LATEST_ENUM.STORAGE_MANIFEST:
@@ -3486,9 +3539,21 @@ export async function startApp(): Promise<void> {
     }
 
     if (storageServiceKey) {
-      log.info('onKeysSync: received keys');
       const storageServiceKeyBase64 = Bytes.toBase64(storageServiceKey);
-      window.storage.put('storageKey', storageServiceKeyBase64);
+      if (window.storage.get('storageKey') === storageServiceKeyBase64) {
+        log.info(
+          "onKeysSync: storage service key didn't change, " +
+            'fetching manifest anyway'
+        );
+      } else {
+        log.info(
+          'onKeysSync: updated storage service key, erasing state and fetching'
+        );
+        await window.storage.put('storageKey', storageServiceKeyBase64);
+        await window.Signal.Services.eraseAllStorageServiceState({
+          keepUnknownFields: true,
+        });
+      }
 
       await window.Signal.Services.runStorageServiceSyncJob();
     }
@@ -3513,13 +3578,19 @@ export async function startApp(): Promise<void> {
       messageRequestResponseType,
     });
 
-    const sync = MessageRequests.getSingleton().add({
+    strictAssert(
+      messageRequestResponseType,
+      'onMessageRequestResponse: missing type'
+    );
+
+    const attributes: MessageRequestAttributesType = {
       threadE164,
       threadUuid,
       groupId,
       groupV2Id,
       type: messageRequestResponseType,
-    });
+    };
+    const sync = MessageRequests.getSingleton().add(attributes);
 
     MessageRequests.getSingleton().onResponse(sync);
   }
@@ -3556,6 +3627,7 @@ export async function startApp(): Promise<void> {
         e164: source,
         uuid: sourceUuid,
         highTrust: true,
+        reason: `onReadOrViewReceipt(${envelopeTimestamp})`,
       }
     );
     log.info(
@@ -3575,14 +3647,21 @@ export async function startApp(): Promise<void> {
       return;
     }
 
-    const receipt = MessageReceipts.getSingleton().add({
+    strictAssert(
+      isValidUuid(sourceUuid),
+      'onReadOrViewReceipt: Missing sourceUuid'
+    );
+    strictAssert(sourceDevice, 'onReadOrViewReceipt: Missing sourceDevice');
+
+    const attributes: MessageReceiptAttributesType = {
       messageSentAt: timestamp,
       receiptTimestamp: envelopeTimestamp,
       sourceConversationId,
       sourceUuid,
       sourceDevice,
       type,
-    });
+    };
+    const receipt = MessageReceipts.getSingleton().add(attributes);
 
     // Note: We do not wait for completion here
     MessageReceipts.getSingleton().onReceipt(receipt);
@@ -3606,13 +3685,18 @@ export async function startApp(): Promise<void> {
       timestamp
     );
 
-    const receipt = ReadSyncs.getSingleton().add({
+    strictAssert(senderId, 'onReadSync missing senderId');
+    strictAssert(senderUuid, 'onReadSync missing senderUuid');
+    strictAssert(timestamp, 'onReadSync missing timestamp');
+
+    const attributes: ReadSyncAttributesType = {
       senderId,
       sender,
       senderUuid,
       timestamp,
       readAt,
-    });
+    };
+    const receipt = ReadSyncs.getSingleton().add(attributes);
 
     receipt.on('remove', ev.confirm);
 
@@ -3638,13 +3722,18 @@ export async function startApp(): Promise<void> {
       timestamp
     );
 
-    const receipt = ViewSyncs.getSingleton().add({
+    strictAssert(senderId, 'onViewSync missing senderId');
+    strictAssert(senderUuid, 'onViewSync missing senderUuid');
+    strictAssert(timestamp, 'onViewSync missing timestamp');
+
+    const attributes: ViewSyncAttributesType = {
       senderId,
       senderE164,
       senderUuid,
       timestamp,
       viewedAt: envelopeTimestamp,
-    });
+    };
+    const receipt = ViewSyncs.getSingleton().add(attributes);
 
     receipt.on('remove', ev.confirm);
 
@@ -3705,6 +3794,7 @@ export async function startApp(): Promise<void> {
       e164,
       uuid,
       highTrust: true,
+      reason: 'onVerified',
     });
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const contact = window.ConversationController.get(verifiedId)!;
@@ -3735,6 +3825,7 @@ export async function startApp(): Promise<void> {
         e164: source,
         uuid: sourceUuid,
         highTrust: true,
+        reason: `onDeliveryReceipt(${envelopeTimestamp})`,
       }
     );
 
@@ -3754,14 +3845,25 @@ export async function startApp(): Promise<void> {
       return;
     }
 
-    const receipt = MessageReceipts.getSingleton().add({
+    strictAssert(
+      envelopeTimestamp,
+      'onDeliveryReceipt: missing envelopeTimestamp'
+    );
+    strictAssert(
+      isValidUuid(sourceUuid),
+      'onDeliveryReceipt: missing valid sourceUuid'
+    );
+    strictAssert(sourceDevice, 'onDeliveryReceipt: missing sourceDevice');
+
+    const attributes: MessageReceiptAttributesType = {
       messageSentAt: timestamp,
       receiptTimestamp: envelopeTimestamp,
       sourceConversationId,
       sourceUuid,
       sourceDevice,
       type: MessageReceiptType.Delivery,
-    });
+    };
+    const receipt = MessageReceipts.getSingleton().add(attributes);
 
     // Note: We don't wait for completion here
     MessageReceipts.getSingleton().onReceipt(receipt);

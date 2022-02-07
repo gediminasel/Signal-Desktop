@@ -1,4 +1,4 @@
-// Copyright 2018-2021 Signal Messenger, LLC
+// Copyright 2018-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 // For reference: https://github.com/airbnb/javascript
@@ -116,6 +116,21 @@ const typescriptRules = {
   ...rules,
 
   '@typescript-eslint/array-type': ['error', { default: 'generic' }],
+
+  'no-restricted-imports': 'off',
+  '@typescript-eslint/no-restricted-imports': [
+    'error',
+    {
+      paths: [
+        {
+          name: 'chai',
+          importNames: ['expect', 'should', 'Should'],
+          message: 'Please use assert',
+          allowTypeImports: true,
+        },
+      ],
+    },
+  ],
 
   // Overrides recommended by typescript-eslint
   //   https://github.com/typescript-eslint/typescript-eslint/releases/tag/v4.0.0

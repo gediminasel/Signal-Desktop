@@ -21,6 +21,11 @@ import updateToSchemaVersion42 from './42-stale-reactions';
 import updateToSchemaVersion43 from './43-gv2-uuid';
 import updateToSchemaVersion44 from './44-badges';
 import updateToSchemaVersion45 from './45-stories';
+import updateToSchemaVersion46 from './46-optimize-stories';
+import updateToSchemaVersion47 from './47-further-optimize';
+import updateToSchemaVersion48 from './48-fix-user-initiated-index';
+import updateToSchemaVersion49 from './49-fix-preview-index';
+import updateToSchemaVersion50 from './50-fix-messages-unread-index';
 
 function updateToSchemaVersion1(
   currentVersion: number,
@@ -1905,6 +1910,11 @@ export const SCHEMA_VERSIONS = [
   updateToSchemaVersion43,
   updateToSchemaVersion44,
   updateToSchemaVersion45,
+  updateToSchemaVersion46,
+  updateToSchemaVersion47,
+  updateToSchemaVersion48,
+  updateToSchemaVersion49,
+  updateToSchemaVersion50,
 ];
 
 export function updateSchema(db: Database, logger: LoggerType): void {

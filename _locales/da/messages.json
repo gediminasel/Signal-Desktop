@@ -648,8 +648,8 @@
         }
     },
     "decryptionErrorToast": {
-        "message": "Desktop stødte på en dekrypteringsfejl.",
-        "description": "An error popup when we haven't added an error for decryption error.",
+        "message": "Desktop stødte på en dekrypteringsfejl fra $name$, enhed $deviceId$",
+        "description": "An error popup when we haven't added an in-timeline error for decryption error, only for beta/internal users.",
         "placeholders": {
             "name": {
                 "content": "$1",
@@ -1282,7 +1282,7 @@
         }
     },
     "ChangeNumber--notification": {
-        "message": "$sender$ ændrede sit nummer til et nyt nummer.",
+        "message": "$sender$ har ændret sit telefonnummer",
         "description": "Shown in timeline when a member of a conversation changes their phone number",
         "placeholders": {
             "sender": {
@@ -1331,29 +1331,79 @@
         "message": "Privatliv er muligt. Signal gør det nemt",
         "description": "Tagline displayed under 'installWelcome' string on the install page"
     },
-    "linkYourPhone": {
-        "message": "Forbind din telefon til Signal Desktop",
-        "description": "Shown on the front page when the application first starts, above the QR code"
-    },
-    "signalSettings": {
-        "message": "Signal-indstillinger",
-        "description": "Used in the guidance to help people find the 'link new device' area of their Signal mobile app"
-    },
     "linkedDevices": {
         "message": "Forbundne enheder",
         "description": "Used in the guidance to help people find the 'link new device' area of their Signal mobile app"
-    },
-    "plusButton": {
-        "message": "'+' knap",
-        "description": "The button used in Signal Android to add a new linked device"
     },
     "linkNewDevice": {
         "message": "Forbind ny enhed",
         "description": "The menu option shown in Signal iOS to add a new linked device"
     },
-    "LinkScreen__scan-this-code": {
+    "Install__scan-this-code": {
         "message": "Scan denne kode i Signal-appen på din telefon",
-        "description": "Alt text for the QR code on the device link screen"
+        "description": "Title of the device link screen. Also used as alt text for the QR code on the device link screen"
+    },
+    "Install__instructions__1": {
+        "message": "Åbn Signal på din telefon",
+        "description": "Instructions on the device link screen"
+    },
+    "Install__instructions__2": {
+        "message": "Tryk ind på $settings$, tryk så på $linkedDevices$",
+        "description": "Instructions on the device link screen",
+        "placeholders": {
+            "settings": {
+                "content": "$1",
+                "example": "<strong>Settings</strong>"
+            },
+            "linkedDevices": {
+                "content": "$2",
+                "example": "<strong>Linked Devices</strong>"
+            }
+        }
+    },
+    "Install__instructions__2__settings": {
+        "message": "Indstillinger",
+        "description": "Part of the 2nd instruction on the device link screen"
+    },
+    "Install__instructions__3": {
+        "message": "Tryk på $plusButton$ (Android) eller $linkNewDevice$ (iPhone)",
+        "description": "Instructions on the device link screen",
+        "placeholders": {
+            "plusButton": {
+                "content": "$1",
+                "example": "<PlusButton />"
+            },
+            "linkNewDevice": {
+                "content": "$2",
+                "example": "<strong>Link New Device</strong>"
+            }
+        }
+    },
+    "Install__qr-failed": {
+        "message": "QR-kode kunne ikke indlæses. Tjek dit internet, og prøv igen. $learnMore$",
+        "description": "Shown on the install screen if the QR code fails to load",
+        "placeholders": {
+            "learnMore": {
+                "content": "$1",
+                "example": "<a>Learn more</a>"
+            }
+        }
+    },
+    "Install__qr-failed__learn-more": {
+        "message": "Lær mere",
+        "description": "Shown on the install screen if the QR code fails to load"
+    },
+    "Install__support-link": {
+        "message": "Brug for hjælp?",
+        "description": "Shown on the install screen. Link takes users to a support page"
+    },
+    "Install__choose-device-name__description": {
+        "message": "Du vil se dette navn under \"Forbundne enheder\" på din telefon",
+        "description": "The subheader shown on the 'choose device name' screen in the device linking process"
+    },
+    "Install__choose-device-name__placeholder": {
+        "message": "Min computer",
+        "description": "The placeholder for the 'choose device name' input"
     },
     "Preferences--device-name": {
         "message": "Enhedsnavn",
@@ -1371,6 +1421,10 @@
         "message": "Synkroniserer kontakter og grupper",
         "description": "Shown during initial link while contacts and groups are being pulled from mobile device"
     },
+    "initialSync__subtitle": {
+        "message": "Bemærk: Din samtalehistorik vil ikke blive synkroniseret til denne enhed",
+        "description": "Shown during initial link while contacts and groups are being pulled from mobile device"
+    },
     "installConnectionFailed": {
         "message": "Det var ikke muligt at kontakte serveren.",
         "description": "Displayed when we can't connect to the server."
@@ -1385,6 +1439,10 @@
     },
     "installErrorHeader": {
         "message": "Noget gik galt!",
+        "description": ""
+    },
+    "installUnknownError": {
+        "message": "Der opstod en uventet fejl. Prøv venligst igen.",
         "description": ""
     },
     "installTryAgain": {
@@ -1418,6 +1476,10 @@
     "calling__return": {
         "message": "Tilbage til opkald",
         "description": "Button label in the call lobby for returning to a call"
+    },
+    "calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
+        "message": "Mikrofon slået fra på grund af størrelsen på opkaldet",
+        "description": "Shown in a call lobby toast if there are a lot of people already on the call"
     },
     "calling__call-is-full": {
         "message": "Opkaldet er fuldt",
@@ -6585,6 +6647,22 @@
         "message": "Luk den manuelt og klik Prøv igen for at fortsætte",
         "description": "Second line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
     },
+    "CrashReportDialog__title": {
+        "message": "Applikationen brød sammen",
+        "description": "A title of the dialog displayed when starting an application after a recent crash"
+    },
+    "CrashReportDialog__body": {
+        "message": "Signal genstartede efter et nedbrud. Du kan indsende en nedbrudsrapport for at hjælpe Signal med at undersøge problemet.",
+        "description": "The body of the dialog displayed when starting an application after a recent crash"
+    },
+    "CrashReportDialog__submit": {
+        "message": "Send",
+        "description": "A button label for submission of the crash reporter data after a recent crash"
+    },
+    "CrashReportDialog__erase": {
+        "message": "Send ikke",
+        "description": "A button label for erasure of the crash reporter data after a recent crash and continuing to start the app"
+    },
     "CustomizingPreferredReactions__title": {
         "message": "Tilpas reaktioner",
         "description": "Shown in the header of the modal for customizing the preferred reactions. Also shown in the tooltip for the button that opens this modal."
@@ -6685,18 +6763,6 @@
         "message": "Nyheder",
         "description": "Title for the whats new modal"
     },
-    "WhatsNew__v5.24--1": {
-        "message": "Du kan nu søge i arkiverede samtaler. Forestil dig, at du søger (hurtigt) gennem gamle skrifter på jagt efter det næste spor.",
-        "description": "Release notes for v5.24"
-    },
-    "WhatsNew__v5.24--2": {
-        "message": "Hvis du nogensinde har scrollet opad og sendt en besked, har du måske undret dig over, hvor din besked var. Når du nu sender en besked, bliver den scrollet op i billedet, så du kan beundre dit hårde arbejde.",
-        "description": "Release notes for v5.24"
-    },
-    "WhatsNew__v5.24--3": {
-        "message": "Reagerer du på en besked? Det skulle nu være mere pålideligt, idet der forsøges igen i op til 24 timer",
-        "description": "Release notes for v5.24"
-    },
     "WhatsNew__v5.25--1": {
         "message": "Denne version indeholder en række småjusteringer og fejlrettelser som sikrer, at Signal kører problemfrit.",
         "description": "Release notes for v5.25"
@@ -6712,5 +6778,31 @@
     "WhatsNew__v5.26--2": {
         "message": "Har du nogensinde følt, at du har brug for flere pixels på en rude? Er du fan af avatarer, men kun avatarer og ikke andet? Har du et \"Bevar skærmpladsen\"-klistermærke på din kofanger? Hvis du har svaret ja eller nej til et af disse spørgsmål, får du med denne opdatering en sammenklappelig venstre rude.",
         "description": "Release notes for v5.26"
+    },
+    "WhatsNew__macos-m1": {
+        "message": "Signal Desktop er nu optimeret til Apples M1-chip, som bruges i deres nyere computere. Hvis du bruger en af disse nymodens enheder, burde appen nu være meget hurtigere. Hvis du ikke gør, så giv en varm velkomst til de brugere, der gør. En kæmpe tak til $dennis$ for hans hårde arbejde her!",
+        "description": "Release note for the macOS M1 release",
+        "placeholders": {
+            "dennis": {
+                "content": "$1",
+                "example": "<a>Dennis Ameling</a>"
+            }
+        }
+    },
+    "WhatsNew__v5.27--1": {
+        "message": "I gang med et langt opkald? Dit system burde nu holde sig vågent uafbrudt i stedet for at falde i søvn, mens du er midt i en vigtig diskussion.",
+        "description": "Release notes for v5.27"
+    },
+    "WhatsNew__v5.27--2": {
+        "message": "Der er også en række små justeringer og fejlrettelser for at få Signal til at køre problemfrit, herunder flere opkaldsrelaterede forbedringer.",
+        "description": "Release notes for v5.27"
+    },
+    "WhatsNew__v5.28--1": {
+        "message": "Nyt år, nyt skærmbillede til startopsætning. Vi har omdesignet skærmbillederne til den indledende opsætning lige i tide til 2022.",
+        "description": "Release notes for v5.28"
+    },
+    "WhatsNew__v5.29--1": {
+        "message": "Nu med færre hektiske søgninger efter den, som larmer med sin tastning eller tygger højlydt! I opkaldslobbyen vil Desktop nu automatisk deaktivere lyd, hvis der er otte eller flere personer i opkaldet.",
+        "description": "Release notes for v5.28"
     }
 }

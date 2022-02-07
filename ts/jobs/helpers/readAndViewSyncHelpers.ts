@@ -70,26 +70,22 @@ export async function runReadOrViewSyncJob({
   syncs: ReadonlyArray<SyncType>;
   timestamp: number;
 }>): Promise<void> {
-  let sendType: SendTypesType;
-  let doSync:
-    | typeof window.textsecure.messaging.syncReadMessages
-    | typeof window.textsecure.messaging.syncView;
-  if (isView) {
-    sendType = 'viewSync';
-    doSync = window.textsecure.messaging.syncView.bind(
-      window.textsecure.messaging
-    );
-  } else {
-    sendType = 'readSync';
-    doSync = window.textsecure.messaging.syncReadMessages.bind(
-      window.textsecure.messaging
-    );
-  }
-
   if (!syncs.length) {
     log.info("skipping this job because there's nothing to sync");
     return;
   }
+
+  let sendType: SendTypesType;
+  if (isView) {
+    sendType = 'viewSync';
+  } else {
+    sendType = 'readSync';
+  }
+
+  const syncTimestamps = syncs.map(sync => sync.timestamp);
+  log.info(
+    `sending ${sendType}(s) for timestamp(s) ${syncTimestamps.join(', ')}`
+  );
 
   const timeRemaining = timestamp + maxRetryTime - Date.now();
 
@@ -102,11 +98,26 @@ export async function runReadOrViewSyncJob({
     return;
   }
 
+  await window.ConversationController.load();
+
   const ourConversation =
     window.ConversationController.getOurConversationOrThrow();
   const sendOptions = await getSendOptions(ourConversation.attributes, {
     syncMessage: true,
   });
+
+  let doSync:
+    | typeof window.textsecure.messaging.syncReadMessages
+    | typeof window.textsecure.messaging.syncView;
+  if (isView) {
+    doSync = window.textsecure.messaging.syncView.bind(
+      window.textsecure.messaging
+    );
+  } else {
+    doSync = window.textsecure.messaging.syncReadMessages.bind(
+      window.textsecure.messaging
+    );
+  }
 
   try {
     await Promise.all(

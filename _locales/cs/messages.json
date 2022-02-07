@@ -52,7 +52,7 @@
         "description": "The label that is used for the Help menu in the program main menu. The '&' indicates that the following letter will be used as the keyboard 'shortcut letter' for accessing the menu with the Alt-<letter> combination."
     },
     "mainMenuSettings": {
-        "message": "Předvolby...",
+        "message": "Předvolby…",
         "description": "The label that is used for the Preferences menu in the program main menu. This should be consistent with the standard naming for ‘Preferences’ on the operating system."
     },
     "appMenuServices": {
@@ -188,15 +188,15 @@
         "description": "One of the menu options available in the Avatar popup menu"
     },
     "loading": {
-        "message": "Nahrávání...",
+        "message": "Načítání…",
         "description": "Message shown on the loading screen before we've loaded any messages"
     },
     "optimizingApplication": {
-        "message": "Optimalizace aplikace...",
+        "message": "Optimalizace aplikace…",
         "description": "Message shown on the loading screen while we are doing application optimizations"
     },
     "migratingToSQLCipher": {
-        "message": "Optimalizace zpráv... $status$ dokončeno.",
+        "message": "Optimalizace zpráv… $status$ dokončeno.",
         "description": "Message shown on the loading screen while we are doing application optimizations",
         "placeholders": {
             "status": {
@@ -302,7 +302,7 @@
         "description": "Message shown as the export location if we didn't capture the target directory"
     },
     "upgradingDatabase": {
-        "message": "Aktualizace databáze. To může nějakou chvíli trvat...",
+        "message": "Aktualizace databáze. Může to nějakou chvíli trvat…",
         "description": "Message shown on the loading screen when we're changing database structure on first run of a new version"
     },
     "loadingMessages": {
@@ -614,7 +614,7 @@
         "description": "Shown in toast when user attempts to send .exe file, for example"
     },
     "loadingPreview": {
-        "message": "Načítám náhled...",
+        "message": "Načítání náhledu…",
         "description": "Shown while Signal Desktop is fetching metadata for a url in composition area"
     },
     "stagedPreviewThumbnail": {
@@ -648,8 +648,8 @@
         }
     },
     "decryptionErrorToast": {
-        "message": "Desktop narazil na chybu při dešifrování.",
-        "description": "An error popup when we haven't added an error for decryption error.",
+        "message": "Signal narazil na chybu při dešifrování od $name$, zařízení $deviceId$",
+        "description": "An error popup when we haven't added an in-timeline error for decryption error, only for beta/internal users.",
         "placeholders": {
             "name": {
                 "content": "$1",
@@ -690,7 +690,7 @@
         "description": "Displayed when the desktop client cannot connect to the server."
     },
     "connecting": {
-        "message": "Probíhá připojování...",
+        "message": "Připojování…",
         "description": "Displayed when the desktop client is currently connecting to the server."
     },
     "connect": {
@@ -852,7 +852,7 @@
         }
     },
     "welcomeToSignal": {
-        "message": "Vítejte v Signal",
+        "message": "Vítá vás Signal",
         "description": ""
     },
     "whatsNew": {
@@ -924,7 +924,7 @@
         "description": "When rendering an address, used to provide context to a post office box"
     },
     "downloading": {
-        "message": "Stahuji",
+        "message": "Stahování",
         "description": "Shown in the message bubble while a long message attachment is being downloaded"
     },
     "downloadAttachment": {
@@ -1282,7 +1282,7 @@
         }
     },
     "ChangeNumber--notification": {
-        "message": "$sender$ změnili své číslo na nové",
+        "message": "$sender$ změnil své telefonní číslo",
         "description": "Shown in timeline when a member of a conversation changes their phone number",
         "placeholders": {
             "sender": {
@@ -1331,29 +1331,79 @@
         "message": "Soukromí je možné. Signal jej usnadňuje.",
         "description": "Tagline displayed under 'installWelcome' string on the install page"
     },
-    "linkYourPhone": {
-        "message": "Propojit telefon se Signal v počítači",
-        "description": "Shown on the front page when the application first starts, above the QR code"
-    },
-    "signalSettings": {
-        "message": "Nastavení Signal",
-        "description": "Used in the guidance to help people find the 'link new device' area of their Signal mobile app"
-    },
     "linkedDevices": {
         "message": "Propojená zařízení",
         "description": "Used in the guidance to help people find the 'link new device' area of their Signal mobile app"
-    },
-    "plusButton": {
-        "message": "Tlačítko '+'",
-        "description": "The button used in Signal Android to add a new linked device"
     },
     "linkNewDevice": {
         "message": "Propojit nové zařízení",
         "description": "The menu option shown in Signal iOS to add a new linked device"
     },
-    "LinkScreen__scan-this-code": {
-        "message": "Naskenujte tento kód v aplikaci Signal ve svém telefonu.",
-        "description": "Alt text for the QR code on the device link screen"
+    "Install__scan-this-code": {
+        "message": "Tento kód naskenujte v aplikaci Signal na svém telefonu",
+        "description": "Title of the device link screen. Also used as alt text for the QR code on the device link screen"
+    },
+    "Install__instructions__1": {
+        "message": "Na svém telefonu otevřete Signal",
+        "description": "Instructions on the device link screen"
+    },
+    "Install__instructions__2": {
+        "message": "Klepněte na $settings$ a potom na $linkedDevices$",
+        "description": "Instructions on the device link screen",
+        "placeholders": {
+            "settings": {
+                "content": "$1",
+                "example": "<strong>Settings</strong>"
+            },
+            "linkedDevices": {
+                "content": "$2",
+                "example": "<strong>Linked Devices</strong>"
+            }
+        }
+    },
+    "Install__instructions__2__settings": {
+        "message": "Nastavení",
+        "description": "Part of the 2nd instruction on the device link screen"
+    },
+    "Install__instructions__3": {
+        "message": "Klepněte na $plusButton$ (Android), nebo na $linkNewDevice$ (iPhone)",
+        "description": "Instructions on the device link screen",
+        "placeholders": {
+            "plusButton": {
+                "content": "$1",
+                "example": "<PlusButton />"
+            },
+            "linkNewDevice": {
+                "content": "$2",
+                "example": "<strong>Link New Device</strong>"
+            }
+        }
+    },
+    "Install__qr-failed": {
+        "message": "QR kód se nemohl načíst. Zkontrolujte své připojení k internetu a zkuste to znovu. $learnMore$",
+        "description": "Shown on the install screen if the QR code fails to load",
+        "placeholders": {
+            "learnMore": {
+                "content": "$1",
+                "example": "<a>Learn more</a>"
+            }
+        }
+    },
+    "Install__qr-failed__learn-more": {
+        "message": "Zjistit více",
+        "description": "Shown on the install screen if the QR code fails to load"
+    },
+    "Install__support-link": {
+        "message": "Potřebujete pomoc?",
+        "description": "Shown on the install screen. Link takes users to a support page"
+    },
+    "Install__choose-device-name__description": {
+        "message": "Název tohoto zařízení uvidíte pod „Spárovaná zařízení“",
+        "description": "The subheader shown on the 'choose device name' screen in the device linking process"
+    },
+    "Install__choose-device-name__placeholder": {
+        "message": "Můj počítač",
+        "description": "The placeholder for the 'choose device name' input"
     },
     "Preferences--device-name": {
         "message": "Název zařízení",
@@ -1371,6 +1421,10 @@
         "message": "Synchronizuji kontakty a skupiny",
         "description": "Shown during initial link while contacts and groups are being pulled from mobile device"
     },
+    "initialSync__subtitle": {
+        "message": "Poznámka: Historie chatu nebude synchronizována do tohoto zařízení.",
+        "description": "Shown during initial link while contacts and groups are being pulled from mobile device"
+    },
     "installConnectionFailed": {
         "message": "Připojení k serveru selhalo.",
         "description": "Displayed when we can't connect to the server."
@@ -1385,6 +1439,10 @@
     },
     "installErrorHeader": {
         "message": "Něco se pokazilo!",
+        "description": ""
+    },
+    "installUnknownError": {
+        "message": "Nastala neočekávaná chyba. Zkuste to prosím znovu.",
         "description": ""
     },
     "installTryAgain": {
@@ -1418,6 +1476,10 @@
     "calling__return": {
         "message": "Zpátky k hovoru",
         "description": "Button label in the call lobby for returning to a call"
+    },
+    "calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
+        "message": "Mikrofon byl ztlumen kvůli velkému počtu lidí v hovoru",
+        "description": "Shown in a call lobby toast if there are a lot of people already on the call"
     },
     "calling__call-is-full": {
         "message": "Hovor je plný",
@@ -2268,7 +2330,7 @@
         "description": "Label text for menu bar visibility setting"
     },
     "startConversation": {
-        "message": "Zahájit novou konverzaci...",
+        "message": "Zahájit novou konverzaci…",
         "description": "Label underneath number a user enters that is not an existing contact"
     },
     "newConversation": {
@@ -2350,7 +2412,7 @@
         "description": "Shown in the alert when you try to add someone who can't be added to a group"
     },
     "chooseGroupMembers__cant-add-member__body": {
-        "message": "\"$name$\" nemůže být přidán do skupiny, protože používám starou verzi aplikace Signal. Můžete je přidat do skupiny poté, co si aktualizují aplikaci Signal.",
+        "message": "„$name$“ nelze přidat do skupiny, protože používají starou verzi aplikace Signal. Můžete je přidat do skupiny poté, co si aktualizují aplikaci Signal.",
         "description": "Shown in the alert when you try to add someone who can't be added to a group",
         "placeholders": {
             "max": {
@@ -2698,7 +2760,7 @@
         "description": "Shown in the sticker picker when one or more stickers could not be downloaded."
     },
     "stickers--StickerPicker--DownloadPending": {
-        "message": "Instaluji balík nálepek...",
+        "message": "Instalace balíčku nálepek…",
         "description": "Shown in the sticker picker when one or more stickers are still downloading."
     },
     "stickers--StickerPicker--Empty": {
@@ -3162,7 +3224,7 @@
         "description": "Help text for the drop stage of the sticker creator"
     },
     "StickerCreator--MetaStage--title": {
-        "message": "Ještě pár detailů...",
+        "message": "Ještě pár detailů…",
         "description": "Title for the meta stage of the sticker creator"
     },
     "StickerCreator--MetaStage--Field--title": {
@@ -3658,7 +3720,7 @@
         "description": "Shown in conversation history when your video call is missed or declined"
     },
     "incomingAudioCall": {
-        "message": "Příchozí hovor...",
+        "message": "Příchozí hovor…",
         "description": "Shown in both the incoming call bar and notification for an incoming audio call"
     },
     "incomingVideoCall": {
@@ -6585,6 +6647,22 @@
         "message": "Zavřete ji ručně a poté klikněte na Opakovat pro pokračování.",
         "description": "Second line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
     },
+    "CrashReportDialog__title": {
+        "message": "Aplikace spadla",
+        "description": "A title of the dialog displayed when starting an application after a recent crash"
+    },
+    "CrashReportDialog__body": {
+        "message": "Signal se po havárii znovu spustil. Můžete odeslat hlášení o pádu a pomoci tak společnosti Signal problém prošetřit.",
+        "description": "The body of the dialog displayed when starting an application after a recent crash"
+    },
+    "CrashReportDialog__submit": {
+        "message": "Odeslat",
+        "description": "A button label for submission of the crash reporter data after a recent crash"
+    },
+    "CrashReportDialog__erase": {
+        "message": "Neodesílat",
+        "description": "A button label for erasure of the crash reporter data after a recent crash and continuing to start the app"
+    },
     "CustomizingPreferredReactions__title": {
         "message": "Přizpůsobení reakcí",
         "description": "Shown in the header of the modal for customizing the preferred reactions. Also shown in the tooltip for the button that opens this modal."
@@ -6685,18 +6763,6 @@
         "message": "Co je nového",
         "description": "Title for the whats new modal"
     },
-    "WhatsNew__v5.24--1": {
-        "message": "Nyní můžete vyhledávat v archivovaných konverzacích. Představte si, že (rychle) prohledáváte staré svazky a hledáte další stopu.",
-        "description": "Release notes for v5.24"
-    },
-    "WhatsNew__v5.24--2": {
-        "message": "Pokud jste někdy posouvali nahoru a odesílali zprávu, možná jste se divili, kde se vaše zpráva nachází! Nyní, kdykoli odešlete zprávu, bude posunuta na obrazovku, abyste mohli obdivovat svou tvrdou práci.",
-        "description": "Release notes for v5.24"
-    },
-    "WhatsNew__v5.24--3": {
-        "message": "Reagujete na zprávu? Nyní by měla být reakce spolehlivější s opakovanými pokusy až 24 hodin.",
-        "description": "Release notes for v5.24"
-    },
     "WhatsNew__v5.25--1": {
         "message": "Tato verze obsahuje řadu drobných úprav a oprav chyb, aby Signal fungoval hladce.",
         "description": "Release notes for v5.25"
@@ -6712,5 +6778,31 @@
     "WhatsNew__v5.26--2": {
         "message": "Měli jste někdy pocit, že potřebujete více pixelů na té \"správné\" straně svého života? Jste fanouškem avatarů, ale pouze avatarů a ničeho jiného? Máte na autě samolepku \"Šetřete prostor na obrazovce\"? Pokud jste na některou z těchto otázek odpověděli ano nebo ne, pak má pro vás tato aktualizace schovávací levý panel.",
         "description": "Release notes for v5.26"
+    },
+    "WhatsNew__macos-m1": {
+        "message": "Signal Desktop nyní nativně podporuje čip M1 společnosti Apple, který se používá v novějších počítačích. Pokud používáte jedno z těchto nových zařízení, aplikace by měla být mnohem svižnější. Pokud ne, ostatním to přejte. Obrovské díky $dennis$ za jeho skvělou práci!",
+        "description": "Release note for the macOS M1 release",
+        "placeholders": {
+            "dennis": {
+                "content": "$1",
+                "example": "<a>Dennis Ameling</a>"
+            }
+        }
+    },
+    "WhatsNew__v5.27--1": {
+        "message": "Na dlouhém callu? Váš systém by měl zůstat po celou dobu vzhůru, místo aby usnul uprostřed důležité diskuse.",
+        "description": "Release notes for v5.27"
+    },
+    "WhatsNew__v5.27--2": {
+        "message": "K dispozici je také řada drobných vylepšení a oprav chyb, které zajišťují bezproblémový chod aplikace Signal, včetně několika vylepšení souvisejících s voláním.",
+        "description": "Release notes for v5.27"
+    },
+    "WhatsNew__v5.28--1": {
+        "message": "Nový rok, nová úvodní obrazovka nastavení. Přepracovali jsme obrazovky úvodního nastavení tak akorát na začátek 2022.",
+        "description": "Release notes for v5.28"
+    },
+    "WhatsNew__v5.29--1": {
+        "message": "Nyní už nebudete muset zběsile hledat hlasitého písaře nebo přežvýkavce! Při připojování k hovoru Signal Desktop automaticky vypne zvuk, pokud se účastní osm nebo více osob.",
+        "description": "Release notes for v5.28"
     }
 }

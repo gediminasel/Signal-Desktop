@@ -70,7 +70,6 @@ try {
   window.getServerPublicParams = () => config.serverPublicParams;
   window.getSfuUrl = () => config.sfuUrl;
   window.isBehindProxy = () => Boolean(config.proxyUrl);
-  window.isLegacyOS = () => config.isLegacyOS === 'true';
   window.getAutoLaunch = () => {
     return ipc.invoke('get-auto-launch');
   };
@@ -225,6 +224,10 @@ try {
 
   ipc.on('power-channel:resume', () => {
     Whisper.events.trigger('powerMonitorResume');
+  });
+
+  ipc.on('power-channel:lock-screen', () => {
+    Whisper.events.trigger('powerMonitorLockScreen');
   });
 
   window.sendChallengeRequest = request =>
@@ -392,7 +395,6 @@ try {
   const { ActiveWindowService } = require('./ts/services/ActiveWindowService');
 
   window.imageToBlurHash = imageToBlurHash;
-  window.emojiData = require('emoji-datasource');
   window.libphonenumber =
     require('google-libphonenumber').PhoneNumberUtil.getInstance();
   window.libphonenumber.PhoneNumberFormat =
@@ -438,6 +440,9 @@ try {
   const { addSensitivePath } = require('./ts/util/privacy');
 
   addSensitivePath(window.baseAttachmentsPath);
+  if (config.crashDumpsPath) {
+    addSensitivePath(config.crashDumpsPath);
+  }
 
   window.Signal = Signal.setup({
     Attachments,
@@ -458,7 +463,6 @@ try {
   require('./ts/backbone/views/whisper_view');
   require('./ts/views/conversation_view');
   require('./ts/views/inbox_view');
-  require('./ts/views/install_view');
   require('./ts/SignalProtocolStore');
   require('./ts/background');
 

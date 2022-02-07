@@ -648,8 +648,8 @@
         }
     },
     "decryptionErrorToast": {
-        "message": "Signal-Desktop heeft een probleem met ontsleutelen.",
-        "description": "An error popup when we haven't added an error for decryption error.",
+        "message": "Er is in Signal-Desktop een fout opgetreden bij het ontsleutelen van $name$, op apparaat $deviceId$",
+        "description": "An error popup when we haven't added an in-timeline error for decryption error, only for beta/internal users.",
         "placeholders": {
             "name": {
                 "content": "$1",
@@ -1331,29 +1331,79 @@
         "message": "Privacy is mogelijk. Signal maakt het gemakkelijk.",
         "description": "Tagline displayed under 'installWelcome' string on the install page"
     },
-    "linkYourPhone": {
-        "message": "Koppel je telefoon aan Signal-Desktop",
-        "description": "Shown on the front page when the application first starts, above the QR code"
-    },
-    "signalSettings": {
-        "message": "Signals instellingen",
-        "description": "Used in the guidance to help people find the 'link new device' area of their Signal mobile app"
-    },
     "linkedDevices": {
         "message": "Gekoppelde apparaten",
         "description": "Used in the guidance to help people find the 'link new device' area of their Signal mobile app"
-    },
-    "plusButton": {
-        "message": "‘+’-knop",
-        "description": "The button used in Signal Android to add a new linked device"
     },
     "linkNewDevice": {
         "message": "Nieuw apparaat koppelen",
         "description": "The menu option shown in Signal iOS to add a new linked device"
     },
-    "LinkScreen__scan-this-code": {
+    "Install__scan-this-code": {
         "message": "Scan deze code met de Signal app op je telefoon",
-        "description": "Alt text for the QR code on the device link screen"
+        "description": "Title of the device link screen. Also used as alt text for the QR code on the device link screen"
+    },
+    "Install__instructions__1": {
+        "message": "Open de Signal app op je telefoon",
+        "description": "Instructions on the device link screen"
+    },
+    "Install__instructions__2": {
+        "message": "Tik op $settings$ en vervolgens op $linkedDevices$",
+        "description": "Instructions on the device link screen",
+        "placeholders": {
+            "settings": {
+                "content": "$1",
+                "example": "<strong>Settings</strong>"
+            },
+            "linkedDevices": {
+                "content": "$2",
+                "example": "<strong>Linked Devices</strong>"
+            }
+        }
+    },
+    "Install__instructions__2__settings": {
+        "message": "Instellingen",
+        "description": "Part of the 2nd instruction on the device link screen"
+    },
+    "Install__instructions__3": {
+        "message": "Tik op $plusButton$ (Android) of $linkNewDevice$ (iPhone)",
+        "description": "Instructions on the device link screen",
+        "placeholders": {
+            "plusButton": {
+                "content": "$1",
+                "example": "<PlusButton />"
+            },
+            "linkNewDevice": {
+                "content": "$2",
+                "example": "<strong>Link New Device</strong>"
+            }
+        }
+    },
+    "Install__qr-failed": {
+        "message": "De QR-code kan niet geladen worden. Ga na dat je apparaat met het internet is verbonden en probeer het opnieuw. $learnMore$",
+        "description": "Shown on the install screen if the QR code fails to load",
+        "placeholders": {
+            "learnMore": {
+                "content": "$1",
+                "example": "<a>Learn more</a>"
+            }
+        }
+    },
+    "Install__qr-failed__learn-more": {
+        "message": "Meer leren hierover",
+        "description": "Shown on the install screen if the QR code fails to load"
+    },
+    "Install__support-link": {
+        "message": "Hulp nodig?",
+        "description": "Shown on the install screen. Link takes users to a support page"
+    },
+    "Install__choose-device-name__description": {
+        "message": "Je zult deze naam zien in het menu ‘Gekoppelde apparaten’ in de Signal app op je telefoon.",
+        "description": "The subheader shown on the 'choose device name' screen in the device linking process"
+    },
+    "Install__choose-device-name__placeholder": {
+        "message": "Mijn computer",
+        "description": "The placeholder for the 'choose device name' input"
     },
     "Preferences--device-name": {
         "message": "Apparaatnaam",
@@ -1371,6 +1421,10 @@
         "message": "Contacten en groepen worden gesynchroniseerd",
         "description": "Shown during initial link while contacts and groups are being pulled from mobile device"
     },
+    "initialSync__subtitle": {
+        "message": "Let op: Je gespreksgeschiedenis uit het verleden wordt niet overgezet naar dit apparaat",
+        "description": "Shown during initial link while contacts and groups are being pulled from mobile device"
+    },
     "installConnectionFailed": {
         "message": "Verbinden met server mislukt.",
         "description": "Displayed when we can't connect to the server."
@@ -1385,6 +1439,10 @@
     },
     "installErrorHeader": {
         "message": "Er ging iets mis!",
+        "description": ""
+    },
+    "installUnknownError": {
+        "message": "Er is een onverwachte fout opgetreden. Probeer het opnieuw.",
         "description": ""
     },
     "installTryAgain": {
@@ -1418,6 +1476,10 @@
     "calling__return": {
         "message": "Naar de oproep terugkeren",
         "description": "Button label in the call lobby for returning to a call"
+    },
+    "calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
+        "message": "Je microfoon is gedempt vanwege het aantal deelnemers aan deze oproep",
+        "description": "Shown in a call lobby toast if there are a lot of people already on the call"
     },
     "calling__call-is-full": {
         "message": "De oproep is vol",
@@ -6585,6 +6647,22 @@
         "message": "Sluit zelf de Signal app en klik vervolgens op ‘Opnieuw proberen’.",
         "description": "Second line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
     },
+    "CrashReportDialog__title": {
+        "message": "De applicatie is gecrashed",
+        "description": "A title of the dialog displayed when starting an application after a recent crash"
+    },
+    "CrashReportDialog__body": {
+        "message": "Signal is herstart nadat het is gecrashed. Je kunt een crashrapport uploaden om de ontwikkelaars te helpen het probleem te vinden en te verhelpen.",
+        "description": "The body of the dialog displayed when starting an application after a recent crash"
+    },
+    "CrashReportDialog__submit": {
+        "message": "Uploaden",
+        "description": "A button label for submission of the crash reporter data after a recent crash"
+    },
+    "CrashReportDialog__erase": {
+        "message": "Niet uploaden",
+        "description": "A button label for erasure of the crash reporter data after a recent crash and continuing to start the app"
+    },
     "CustomizingPreferredReactions__title": {
         "message": "Reactie-balk personaliseren",
         "description": "Shown in the header of the modal for customizing the preferred reactions. Also shown in the tooltip for the button that opens this modal."
@@ -6685,18 +6763,6 @@
         "message": "wat er nieuw is",
         "description": "Title for the whats new modal"
     },
-    "WhatsNew__v5.24--1": {
-        "message": "Je kunt vanaf nu ook gearchive gesprekken doorzoeken.",
-        "description": "Release notes for v5.24"
-    },
-    "WhatsNew__v5.24--2": {
-        "message": "Als je een bericht verzend terwijl je omhoog hebt gescrolt, dan wordt vanaf nu automatisch naar beneden naar je nieuwe bericht gescrolt.",
-        "description": "Release notes for v5.24"
-    },
-    "WhatsNew__v5.24--3": {
-        "message": "Het verzenden van een emoji-reactie op een bericht zou vanaf nu betrouwbaarder moeten zijn. Als het niet lukt probeert Signal het automatisch opnieuw.",
-        "description": "Release notes for v5.24"
-    },
     "WhatsNew__v5.25--1": {
         "message": "Deze versie bevat een aantal kleine foutoplossingen waardoor Signal voor nog meer mensen goed werkt.",
         "description": "Release notes for v5.25"
@@ -6712,5 +6778,31 @@
     "WhatsNew__v5.26--2": {
         "message": "Het linker paneel kan vanaf nu worden verkleint om gesprekken breder weer te geven.",
         "description": "Release notes for v5.26"
+    },
+    "WhatsNew__macos-m1": {
+        "message": "Signal-Desktop is nu geoptimaliseerd voor Apples M1-chip die in hun nieuwere computers wordt gebruikt. Als je een van deze nieuwe apparaten gebruikt, zou de Signal app vanaf nu veel sneller moeten zijn. Veel dank aan $dennis$ voor zijn harde werk aan deze verbetering!",
+        "description": "Release note for the macOS M1 release",
+        "placeholders": {
+            "dennis": {
+                "content": "$1",
+                "example": "<a>Dennis Ameling</a>"
+            }
+        }
+    },
+    "WhatsNew__v5.27--1": {
+        "message": "Je apparaat gaat niet langer automatisch over naar slaapstand wanneer je nog aan een oproep deelneemt.",
+        "description": "Release notes for v5.27"
+    },
+    "WhatsNew__v5.27--2": {
+        "message": "Er zijn ook een aantal kleine verbeteringen en foutoplossingen om er onder andere tijdens het bellen voor te zorgen dat Signal goed blijft werken.",
+        "description": "Release notes for v5.27"
+    },
+    "WhatsNew__v5.28--1": {
+        "message": "Het startscherm voor gebruikers die Signal-Desktop voor het eerst aan hun telefoon koppelen is opnieuw ontworpen.",
+        "description": "Release notes for v5.28"
+    },
+    "WhatsNew__v5.29--1": {
+        "message": "Als er in een groepsoproep acht of meer deelnemers zijn dan worden microfoons vanaf nu automatisch gedempt om te voorkomen dat iedereen steeds op zoek moet gaan naar die ene persoon die zo luid typt.",
+        "description": "Release notes for v5.28"
     }
 }

@@ -12,6 +12,7 @@ import {
 import type { ClientZkGroupCipher } from '@signalapp/signal-client/zkgroup';
 import { v4 as getGuid } from 'uuid';
 import LRU from 'lru-cache';
+import PQueue from 'p-queue';
 import * as log from './logging/log';
 import {
   getCredentialsForToday,
@@ -1716,6 +1717,7 @@ export async function createGroupV2({
   };
   await window.Signal.Data.saveMessages([createdTheGroupMessage], {
     forceSave: true,
+    ourUuid,
   });
   const model = new window.Whisper.Message(createdTheGroupMessage);
   window.MessageController.register(model.id, model);
@@ -2793,6 +2795,8 @@ async function updateGroup(
   },
   { viaSync = false } = {}
 ): Promise<void> {
+  const logId = conversation.idForLogging();
+
   const { newAttributes, groupChangeMessages, members } = updates;
   const ourUuid = window.textsecure.storage.user.getCheckedUuid();
 
@@ -2858,9 +2862,42 @@ async function updateGroup(
     };
   });
 
+  const contactsWithoutProfileKey = new Array<ConversationModel>();
+
+  // Capture profile key for each member in the group, if we don't have it yet
+  members.forEach(member => {
+    const contact = window.ConversationController.getOrCreate(
+      member.uuid,
+      'private'
+    );
+
+    if (member.profileKey && !contact.get('profileKey')) {
+      contactsWithoutProfileKey.push(contact);
+      contact.setProfileKey(member.profileKey);
+    }
+  });
+
+  if (contactsWithoutProfileKey.length !== 0) {
+    log.info(
+      `updateGroup/${logId}: fetching ` +
+        `${contactsWithoutProfileKey.length} missing profiles`
+    );
+
+    const profileFetchQueue = new PQueue({
+      concurrency: 3,
+    });
+    await profileFetchQueue.addAll(
+      contactsWithoutProfileKey.map(contact => () => {
+        const active = contact.getActiveProfileFetch();
+        return active || contact.getProfiles();
+      })
+    );
+  }
+
   if (changeMessagesToSave.length > 0) {
     await window.Signal.Data.saveMessages(changeMessagesToSave, {
       forceSave: true,
+      ourUuid: ourUuid.toString(),
     });
     changeMessagesToSave.forEach(changeMessage => {
       const model = new window.Whisper.Message(changeMessage);
@@ -2868,15 +2905,6 @@ async function updateGroup(
       conversation.trigger('newmessage', model);
     });
   }
-
-  // Capture profile key for each member in the group, if we don't have it yet
-  members.forEach(member => {
-    const contact = window.ConversationController.get(member.uuid);
-
-    if (member.profileKey && contact && !contact.get('profileKey')) {
-      contact.setProfileKey(member.profileKey);
-    }
-  });
 
   // No need for convo.updateLastMessage(), 'newmessage' handler does that
 }
@@ -2948,15 +2976,19 @@ async function getGroupUpdates({
 
       return result;
     } catch (error) {
+      const nextStep = isFirstFetch
+        ? `fetching logs since ${newRevision}`
+        : 'fetching full state';
+
       if (error.code === TEMPORAL_AUTH_REJECTED_CODE) {
         // We will fail over to the updateGroupViaState call below
         log.info(
-          `getGroupUpdates/${logId}: Temporal credential failure, now fetching full group state`
+          `getGroupUpdates/${logId}: Temporal credential failure, now ${nextStep}`
         );
       } else if (error.code === GROUP_ACCESS_DENIED_CODE) {
         // We will fail over to the updateGroupViaState call below
         log.info(
-          `getGroupUpdates/${logId}: Log access denied, now fetching full group state`
+          `getGroupUpdates/${logId}: Log access denied, now ${nextStep}`
         );
       } else {
         throw error;
@@ -3244,7 +3276,9 @@ async function getGroupDelta({
   });
 
   const currentRevision = group.revision;
-  let revisionToFetch = isNumber(currentRevision) ? currentRevision + 1 : 0;
+  let revisionToFetch = isNumber(currentRevision)
+    ? currentRevision + 1
+    : undefined;
 
   let response;
   const changes: Array<Proto.IGroupChanges> = [];

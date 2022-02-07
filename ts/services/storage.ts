@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Signal Messenger, LLC
+// Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { debounce, isNumber } from 'lodash';
@@ -27,7 +27,6 @@ import type { ConversationModel } from '../models/conversations';
 import { strictAssert } from '../util/assert';
 import * as durations from '../util/durations';
 import { BackOff } from '../util/BackOff';
-import { handleMessageSend } from '../util/handleMessageSend';
 import { storageJobQueue } from '../util/JobQueue';
 import { sleep } from '../util/sleep';
 import { isMoreRecentThan } from '../util/timestamp';
@@ -39,6 +38,8 @@ import {
 } from '../util/whatTypeOfConversation';
 import { SignalService as Proto } from '../protobuf';
 import * as log from '../logging/log';
+import { singleProtoJobQueue } from '../jobs/singleProtoJobQueue';
+import * as Errors from '../types/errors';
 
 type IManifestRecordIdentifier = Proto.ManifestRecord.IIdentifier;
 
@@ -553,15 +554,21 @@ async function uploadManifest(
 
   if (window.ConversationController.areWePrimaryDevice()) {
     log.warn(
-      'uploadManifest: We are primary device; not sending sync manifest'
+      'storageService.uploadManifest: We are primary device; not sending sync manifest'
     );
     return;
   }
 
-  await handleMessageSend(
-    window.textsecure.messaging.sendFetchManifestSyncMessage(),
-    { messageIds: [], sendType: 'otherSync' }
-  );
+  try {
+    await singleProtoJobQueue.add(
+      window.textsecure.messaging.getFetchManifestSyncMessage()
+    );
+  } catch (error) {
+    log.error(
+      'storageService.uploadManifest: Failed to queue sync message',
+      Errors.toLogFormat(error)
+    );
+  }
 }
 
 async function stopStorageServiceSync() {
@@ -578,7 +585,7 @@ async function stopStorageServiceSync() {
 
   await sleep(backOff.getAndIncrement());
   log.info('storageService.stopStorageServiceSync: requesting new keys');
-  setTimeout(() => {
+  setTimeout(async () => {
     if (!window.textsecure.messaging) {
       throw new Error('storageService.stopStorageServiceSync: We are offline!');
     }
@@ -589,11 +596,16 @@ async function stopStorageServiceSync() {
       );
       return;
     }
-
-    handleMessageSend(window.textsecure.messaging.sendRequestKeySyncMessage(), {
-      messageIds: [],
-      sendType: 'otherSync',
-    });
+    try {
+      await singleProtoJobQueue.add(
+        window.textsecure.messaging.getRequestKeySyncMessage()
+      );
+    } catch (error) {
+      log.error(
+        'storageService.stopStorageServiceSync: Failed to queue sync message',
+        Errors.toLogFormat(error)
+      );
+    }
   });
 }
 
@@ -670,6 +682,11 @@ async function fetchManifest(
       return;
     }
   } catch (err) {
+    if (err.code === 204) {
+      log.info('storageService.fetchManifest: no newer manifest, ok');
+      return;
+    }
+
     log.error(
       'storageService.fetchManifest: failed!',
       err && err.stack ? err.stack : String(err)
@@ -677,10 +694,6 @@ async function fetchManifest(
 
     if (err.code === 404) {
       await createNewManifest();
-      return;
-    }
-    if (err.code === 204) {
-      // noNewerManifest we're ok
       return;
     }
 
@@ -1046,6 +1059,8 @@ async function sync(
     }
 
     const localManifestVersion = manifestFromStorage || 0;
+
+    log.info(`storageService.sync: fetching ${localManifestVersion}`);
     manifest = await fetchManifest(localManifestVersion);
 
     // Guarding against no manifests being returned, everything should be ok
@@ -1064,9 +1079,12 @@ async function sync(
       `storageService.sync: manifest versions - previous: ${localManifestVersion}, current: ${version}`
     );
 
+    const hasConflicts = await processManifest(manifest);
+
+    log.info(`storageService.sync: storing new manifest version ${version}`);
+
     window.storage.put('manifestVersion', version);
 
-    const hasConflicts = await processManifest(manifest);
     if (hasConflicts && !ignoreConflicts) {
       await upload(true);
     }
@@ -1113,14 +1131,23 @@ async function upload(fromSync = false): Promise<void> {
     backOff.reset();
 
     if (window.ConversationController.areWePrimaryDevice()) {
-      log.warn('upload: We are primary device; not sending key sync request');
+      log.warn(
+        'storageService.upload: We are primary device; not sending key sync request'
+      );
       return;
     }
 
-    await handleMessageSend(
-      window.textsecure.messaging.sendRequestKeySyncMessage(),
-      { messageIds: [], sendType: 'otherSync' }
-    );
+    try {
+      await singleProtoJobQueue.add(
+        window.textsecure.messaging.getRequestKeySyncMessage()
+      );
+    } catch (error) {
+      log.error(
+        'storageService.upload: Failed to queue sync message',
+        Errors.toLogFormat(error)
+      );
+    }
+
     return;
   }
 
@@ -1168,11 +1195,15 @@ export function enableStorageService(): void {
 
 // Note: this function is meant to be called before ConversationController is hydrated.
 //   It goes directly to the database, so in-memory conversations will be out of date.
-export async function eraseAllStorageServiceState(): Promise<void> {
+export async function eraseAllStorageServiceState({
+  keepUnknownFields = false,
+}: { keepUnknownFields?: boolean } = {}): Promise<void> {
   log.info('storageService.eraseAllStorageServiceState: starting...');
   await Promise.all([
     window.storage.remove('manifestVersion'),
-    window.storage.remove('storage-service-unknown-records'),
+    keepUnknownFields
+      ? Promise.resolve()
+      : window.storage.remove('storage-service-unknown-records'),
     window.storage.remove('storageCredentials'),
   ]);
   await eraseStorageServiceStateFromConversations();

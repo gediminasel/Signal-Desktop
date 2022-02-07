@@ -909,4 +909,446 @@ describe('SQL migrations test', () => {
       assert.sameDeepMembers(members, [UUID_1, UUID_2]);
     });
   });
+
+  describe('updateToSchemaVersion47', () => {
+    it('creates and pre-populates new isChangeCreatedByUs field', () => {
+      const OTHER_UUID = generateGuid();
+      const MESSAGE_ID_1 = generateGuid();
+      const MESSAGE_ID_2 = generateGuid();
+      const CONVERSATION_ID = generateGuid();
+
+      updateToVersion(46);
+
+      const uuidItem = JSON.stringify({
+        value: `${OUR_UUID}.4`,
+      });
+      const changeFromUs = JSON.stringify({
+        groupV2Change: {
+          from: OUR_UUID,
+          details: [
+            {
+              type: 'member-remove',
+              uuid: OTHER_UUID,
+            },
+          ],
+        },
+      });
+      const changeFromOther = JSON.stringify({
+        groupV2Change: {
+          from: OTHER_UUID,
+          details: [
+            {
+              type: 'member-remove',
+              uuid: OUR_UUID,
+            },
+          ],
+        },
+      });
+
+      db.exec(
+        `
+        INSERT INTO items (id, json) VALUES ('uuid_id', '${uuidItem}');
+        INSERT INTO messages
+          (id, conversationId, type, json)
+          VALUES
+          ('${MESSAGE_ID_1}', '${CONVERSATION_ID}', 'outgoing', '${changeFromUs}'),
+          ('${MESSAGE_ID_2}', '${CONVERSATION_ID}', 'outgoing', '${changeFromOther}');
+        `
+      );
+
+      updateToVersion(47);
+
+      assert.strictEqual(
+        db.prepare('SELECT COUNT(*) FROM messages;').pluck().get(),
+        2
+      );
+      assert.strictEqual(
+        db
+          .prepare(
+            'SELECT COUNT(*) FROM messages WHERE isChangeCreatedByUs IS 0;'
+          )
+          .pluck()
+          .get(),
+        1,
+        'zero'
+      );
+      assert.strictEqual(
+        db
+          .prepare(
+            'SELECT COUNT(*) FROM messages WHERE isChangeCreatedByUs IS 1;'
+          )
+          .pluck()
+          .get(),
+        1,
+        'one'
+      );
+    });
+
+    it('creates new auto-generated isStory field', () => {
+      const STORY_ID_1 = generateGuid();
+      const MESSAGE_ID_1 = generateGuid();
+      const MESSAGE_ID_2 = generateGuid();
+      const MESSAGE_ID_3 = generateGuid();
+      const CONVERSATION_ID = generateGuid();
+
+      updateToVersion(47);
+
+      db.exec(
+        `
+        INSERT INTO messages
+          (id, storyId, conversationId, type, body)
+          VALUES
+          ('${MESSAGE_ID_1}', '${STORY_ID_1}', '${CONVERSATION_ID}', 'story', 'story 1'),
+          ('${MESSAGE_ID_2}', null, '${CONVERSATION_ID}', 'outgoing', 'reply to story 1'),
+          ('${MESSAGE_ID_3}', null, '${CONVERSATION_ID}', null, 'null type!');
+        `
+      );
+
+      assert.strictEqual(
+        db.prepare('SELECT COUNT(*) FROM messages;').pluck().get(),
+        3
+      );
+      assert.strictEqual(
+        db
+          .prepare('SELECT COUNT(*) FROM messages WHERE isStory IS 0;')
+          .pluck()
+          .get(),
+        2
+      );
+      assert.strictEqual(
+        db
+          .prepare('SELECT COUNT(*) FROM messages WHERE isStory IS 1;')
+          .pluck()
+          .get(),
+        1
+      );
+    });
+
+    it('creates new auto-generated shouldAffectActivity/shouldAffectPreview/isUserInitiatedMessage fields', () => {
+      const MESSAGE_ID_1 = generateGuid();
+      const MESSAGE_ID_2 = generateGuid();
+      const MESSAGE_ID_3 = generateGuid();
+      const MESSAGE_ID_4 = generateGuid();
+      const CONVERSATION_ID = generateGuid();
+
+      updateToVersion(47);
+
+      db.exec(
+        `
+        INSERT INTO messages
+          (id, conversationId, type)
+          VALUES
+          ('${MESSAGE_ID_1}', '${CONVERSATION_ID}', 'story'),
+          ('${MESSAGE_ID_2}', '${CONVERSATION_ID}', 'keychange'),
+          ('${MESSAGE_ID_3}', '${CONVERSATION_ID}', 'outgoing'),
+          ('${MESSAGE_ID_4}', '${CONVERSATION_ID}', 'group-v2-change');
+        `
+      );
+
+      assert.strictEqual(
+        db.prepare('SELECT COUNT(*) FROM messages;').pluck().get(),
+        4
+      );
+      assert.strictEqual(
+        db
+          .prepare(
+            'SELECT COUNT(*) FROM messages WHERE shouldAffectPreview IS 1;'
+          )
+          .pluck()
+          .get(),
+        3
+      );
+      assert.strictEqual(
+        db
+          .prepare(
+            'SELECT COUNT(*) FROM messages WHERE shouldAffectActivity IS 1;'
+          )
+          .pluck()
+          .get(),
+        2
+      );
+      assert.strictEqual(
+        db
+          .prepare(
+            'SELECT COUNT(*) FROM messages WHERE isUserInitiatedMessage IS 1;'
+          )
+          .pluck()
+          .get(),
+        1
+      );
+    });
+
+    it('creates new auto-generated isTimerChangeFromSync fields', () => {
+      const MESSAGE_ID_1 = generateGuid();
+      const MESSAGE_ID_2 = generateGuid();
+      const MESSAGE_ID_3 = generateGuid();
+      const CONVERSATION_ID = generateGuid();
+
+      updateToVersion(47);
+
+      const timerUpdate = JSON.stringify({
+        expirationTimerUpdate: {
+          expireTimer: 30,
+          fromSync: false,
+        },
+      });
+      const timerUpdateFromSync = JSON.stringify({
+        expirationTimerUpdate: {
+          expireTimer: 30,
+          fromSync: true,
+        },
+      });
+
+      db.exec(
+        `
+        INSERT INTO messages
+          (id, conversationId, type, json)
+          VALUES
+          ('${MESSAGE_ID_1}', '${CONVERSATION_ID}', 'outgoing', '${timerUpdate}'),
+          ('${MESSAGE_ID_2}', '${CONVERSATION_ID}', 'outgoing', '${timerUpdateFromSync}'),
+          ('${MESSAGE_ID_3}', '${CONVERSATION_ID}', 'outgoing', '{}');
+        `
+      );
+
+      assert.strictEqual(
+        db.prepare('SELECT COUNT(*) FROM messages;').pluck().get(),
+        3
+      );
+      assert.strictEqual(
+        db
+          .prepare(
+            'SELECT COUNT(*) FROM messages WHERE isTimerChangeFromSync IS 1;'
+          )
+          .pluck()
+          .get(),
+        1
+      );
+      assert.strictEqual(
+        db
+          .prepare(
+            'SELECT COUNT(*) FROM messages WHERE isTimerChangeFromSync IS 0;'
+          )
+          .pluck()
+          .get(),
+        2
+      );
+    });
+
+    it('creates new auto-generated isGroupLeaveEvent fields', () => {
+      const MESSAGE_ID_1 = generateGuid();
+      const MESSAGE_ID_2 = generateGuid();
+      const MESSAGE_ID_3 = generateGuid();
+      const MESSAGE_ID_4 = generateGuid();
+      const MESSAGE_ID_5 = generateGuid();
+      const CONVERSATION_ID = generateGuid();
+      const FIRST_UUID = generateGuid();
+      const SECOND_UUID = generateGuid();
+      const THIRD_UUID = generateGuid();
+
+      updateToVersion(47);
+
+      const memberRemoveByOther = JSON.stringify({
+        groupV2Change: {
+          from: FIRST_UUID,
+          details: [
+            {
+              type: 'member-remove',
+              uuid: SECOND_UUID,
+            },
+          ],
+        },
+      });
+      const memberLeave = JSON.stringify({
+        groupV2Change: {
+          from: FIRST_UUID,
+          details: [
+            {
+              type: 'member-remove',
+              uuid: FIRST_UUID,
+            },
+          ],
+        },
+      });
+      const multipleRemoves = JSON.stringify({
+        groupV2Change: {
+          from: FIRST_UUID,
+          details: [
+            {
+              type: 'member-remove',
+              uuid: SECOND_UUID,
+            },
+            {
+              type: 'member-remove',
+              uuid: THIRD_UUID,
+            },
+          ],
+        },
+      });
+      const memberAdd = JSON.stringify({
+        groupV2Change: {
+          from: FIRST_UUID,
+          details: [
+            {
+              type: 'member-add',
+              uuid: FIRST_UUID,
+            },
+          ],
+        },
+      });
+
+      db.exec(
+        `
+        INSERT INTO messages
+          (id, conversationId, type, json)
+          VALUES
+          ('${MESSAGE_ID_1}', '${CONVERSATION_ID}', 'outgoing', '${memberLeave}'),
+          ('${MESSAGE_ID_2}', '${CONVERSATION_ID}', 'group-v2-change', '${memberRemoveByOther}'),
+          ('${MESSAGE_ID_3}', '${CONVERSATION_ID}', 'group-v2-change', '${memberLeave}'),
+          ('${MESSAGE_ID_4}', '${CONVERSATION_ID}', 'group-v2-change', '${multipleRemoves}'),
+          ('${MESSAGE_ID_5}', '${CONVERSATION_ID}', 'group-v2-change', '${memberAdd}');
+        `
+      );
+
+      assert.strictEqual(
+        db.prepare('SELECT COUNT(*) FROM messages;').pluck().get(),
+        5
+      );
+      assert.strictEqual(
+        db
+          .prepare(
+            'SELECT COUNT(*) FROM messages WHERE isGroupLeaveEvent IS 1;'
+          )
+          .pluck()
+          .get(),
+        1
+      );
+      assert.strictEqual(
+        db
+          .prepare(
+            'SELECT COUNT(*) FROM messages WHERE isGroupLeaveEvent IS 0;'
+          )
+          .pluck()
+          .get(),
+        4
+      );
+    });
+
+    it('ensures that index is used for getOlderMessagesByConversation', () => {
+      updateToVersion(47);
+
+      const { detail } = db
+        .prepare(
+          `
+        EXPLAIN QUERY PLAN
+        SELECT json FROM messages WHERE
+          conversationId = 'd8b05bb1-36b3-4478-841b-600af62321eb' AND
+          (NULL IS NULL OR id IS NOT NULL) AND
+          isStory IS 0 AND
+          storyId IS NULL AND
+          (
+            (received_at = 17976931348623157 AND sent_at < NULL) OR
+            received_at < 17976931348623157
+          )
+        ORDER BY received_at DESC, sent_at DESC
+        LIMIT 10;
+        `
+        )
+        .get();
+
+      assert.notInclude(detail, 'B-TREE');
+      assert.notInclude(detail, 'SCAN');
+      assert.include(
+        detail,
+        'SEARCH messages USING INDEX messages_conversation (conversationId=? AND isStory=? AND storyId=? AND received_at<?)'
+      );
+    });
+  });
+
+  describe('updateToSchemaVersion48', () => {
+    it('creates usable index for hasUserInitiatedMessages', () => {
+      updateToVersion(48);
+
+      const details = db
+        .prepare(
+          `
+        EXPLAIN QUERY PLAN
+        SELECT COUNT(*) as count FROM
+          (
+            SELECT 1 FROM messages
+            WHERE
+              conversationId = 'convo' AND
+              isUserInitiatedMessage = 1
+            LIMIT 1
+          );
+        `
+        )
+        .all()
+        .map(({ detail }) => detail)
+        .join('\n');
+
+      assert.include(
+        details,
+        'SEARCH messages USING INDEX message_user_initiated (conversationId=? AND isUserInitiatedMessage=?)'
+      );
+    });
+  });
+
+  describe('updateToSchemaVersion49', () => {
+    it('creates usable index for messages preview', () => {
+      updateToVersion(49);
+
+      const details = db
+        .prepare(
+          `
+        EXPLAIN QUERY PLAN
+        SELECT json FROM messages
+        WHERE
+          conversationId = 'convo' AND
+          shouldAffectPreview IS 1 AND
+          isGroupLeaveEventFromOther IS 0 AND
+          (
+            expiresAt IS NULL
+            OR
+            expiresAt > 123
+          )
+        ORDER BY received_at DESC, sent_at DESC
+        LIMIT 1;
+        `
+        )
+        .all()
+        .map(({ detail }) => detail)
+        .join('\n');
+
+      assert.include(details, 'USING INDEX messages_preview');
+      assert.notInclude(details, 'TEMP B-TREE');
+      assert.notInclude(details, 'SCAN');
+    });
+  });
+
+  describe('updateToSchemaVersion49', () => {
+    it('creates usable index for messages_unread', () => {
+      updateToVersion(50);
+
+      const details = db
+        .prepare(
+          `
+          EXPLAIN QUERY PLAN
+          SELECT * FROM messages WHERE
+            conversationId = 'conversation' AND
+            readStatus = 'something' AND
+            isStory IS 0 AND
+            storyId IS NULL
+          ORDER BY received_at ASC, sent_at ASC
+          LIMIT 1;
+        `
+        )
+        .all()
+        .map(({ detail }) => detail)
+        .join('\n');
+
+      assert.include(details, 'USING INDEX messages_unread');
+      assert.notInclude(details, 'TEMP B-TREE');
+      assert.notInclude(details, 'SCAN');
+    });
+  });
 });

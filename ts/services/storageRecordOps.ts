@@ -182,6 +182,11 @@ export async function toAccountRecord(
   );
   accountRecord.linkPreviews = Boolean(window.Events.getLinkPreviewSetting());
 
+  const preferContactAvatars = window.storage.get('preferContactAvatars');
+  if (preferContactAvatars !== undefined) {
+    accountRecord.preferContactAvatars = Boolean(preferContactAvatars);
+  }
+
   const primarySendsSms = window.storage.get('primarySendsSms');
   if (primarySendsSms !== undefined) {
     accountRecord.primarySendsSms = Boolean(primarySendsSms);
@@ -418,7 +423,12 @@ function doRecordsConflict(
 
     // If both types are Long we can use Long's equals to compare them
     if (Long.isLong(localValue) || typeof localValue === 'number') {
-      if (!Long.isLong(remoteValue) || typeof remoteValue !== 'number') {
+      if (!Long.isLong(remoteValue) && typeof remoteValue !== 'number') {
+        log.info(
+          'storageService.doRecordsConflict: Conflict found, remote value ' +
+            'is not a number',
+          key
+        );
         return true;
       }
 
@@ -770,6 +780,7 @@ export async function mergeContactRecord(
     e164,
     uuid,
     highTrust: true,
+    reason: 'mergeContactRecord',
   });
 
   if (!id) {
@@ -854,6 +865,7 @@ export async function mergeAccountRecord(
     readReceipts,
     sealedSenderIndicators,
     typingIndicators,
+    preferContactAvatars,
     primarySendsSms,
     universalExpireTimer,
     e164: accountE164,
@@ -875,6 +887,15 @@ export async function mergeAccountRecord(
 
   if (typeof linkPreviews === 'boolean') {
     window.storage.put('linkPreviews', linkPreviews);
+  }
+
+  if (typeof preferContactAvatars === 'boolean') {
+    const previous = window.storage.get('preferContactAvatars');
+    window.storage.put('preferContactAvatars', preferContactAvatars);
+
+    if (Boolean(previous) !== Boolean(preferContactAvatars)) {
+      window.ConversationController.forceRerender();
+    }
   }
 
   if (typeof primarySendsSms === 'boolean') {

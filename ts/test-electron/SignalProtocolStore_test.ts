@@ -1,4 +1,4 @@
-// Copyright 2015-2021 Signal Messenger, LLC
+// Copyright 2015-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -1138,16 +1138,9 @@ describe('SignalProtocolStore', () => {
 
     describe('When invalid direction is given', () => {
       it('should fail', async () => {
-        try {
-          await store.isTrustedIdentity(
-            identifier,
-            testKey.pubKey,
-            'dir' as any
-          );
-          throw new Error('isTrustedIdentity should have failed');
-        } catch (error) {
-          // good
-        }
+        await assert.isRejected(
+          store.isTrustedIdentity(identifier, testKey.pubKey, 'dir' as any)
+        );
       });
     });
     describe('When direction is RECEIVING', () => {
@@ -1442,7 +1435,9 @@ describe('SignalProtocolStore', () => {
   });
 
   describe('zones', () => {
+    const distributionId = UUID.generate().toString();
     const zone = new Zone('zone', {
+      pendingSenderKeys: true,
       pendingSessions: true,
       pendingUnprocessed: true,
     });
@@ -1450,6 +1445,7 @@ describe('SignalProtocolStore', () => {
     beforeEach(async () => {
       await store.removeAllUnprocessed();
       await store.removeAllSessions(theirUuid.toString());
+      await store.removeAllSenderKeys();
     });
 
     it('should not store pending sessions in global zone', async () => {
@@ -1467,12 +1463,29 @@ describe('SignalProtocolStore', () => {
       assert.equal(await store.loadSession(id), testRecord);
     });
 
-    it('commits session stores and unprocessed on success', async () => {
+    it('should not store pending sender keys in global zone', async () => {
       const id = new QualifiedAddress(ourUuid, new Address(theirUuid, 1));
-      const testRecord = getSessionRecord();
+      const testRecord = getSenderKeyRecord();
+
+      await assert.isRejected(
+        store.withZone(GLOBAL_ZONE, 'test', async () => {
+          await store.saveSenderKey(id, distributionId, testRecord);
+          throw new Error('Failure');
+        }),
+        'Failure'
+      );
+
+      assert.equal(await store.getSenderKey(id, distributionId), testRecord);
+    });
+
+    it('commits sender keys, sessions and unprocessed on success', async () => {
+      const id = new QualifiedAddress(ourUuid, new Address(theirUuid, 1));
+      const testSession = getSessionRecord();
+      const testSenderKey = getSenderKeyRecord();
 
       await store.withZone(zone, 'test', async () => {
-        await store.storeSession(id, testRecord, { zone });
+        await store.storeSession(id, testSession, { zone });
+        await store.saveSenderKey(id, distributionId, testSenderKey, { zone });
 
         await store.addUnprocessed(
           {
@@ -1484,10 +1497,16 @@ describe('SignalProtocolStore', () => {
           },
           { zone }
         );
-        assert.equal(await store.loadSession(id, { zone }), testRecord);
+
+        assert.equal(await store.loadSession(id, { zone }), testSession);
+        assert.equal(
+          await store.getSenderKey(id, distributionId, { zone }),
+          testSenderKey
+        );
       });
 
-      assert.equal(await store.loadSession(id), testRecord);
+      assert.equal(await store.loadSession(id), testSession);
+      assert.equal(await store.getSenderKey(id, distributionId), testSenderKey);
 
       const allUnprocessed = await store.getAllUnprocessed();
       assert.deepEqual(
@@ -1496,18 +1515,31 @@ describe('SignalProtocolStore', () => {
       );
     });
 
-    it('reverts session stores and unprocessed on error', async () => {
+    it('reverts sender keys, sessions and unprocessed on error', async () => {
       const id = new QualifiedAddress(ourUuid, new Address(theirUuid, 1));
-      const testRecord = getSessionRecord();
-      const failedRecord = getSessionRecord();
+      const testSession = getSessionRecord();
+      const failedSession = getSessionRecord();
+      const testSenderKey = getSenderKeyRecord();
+      const failedSenderKey = getSenderKeyRecord();
 
-      await store.storeSession(id, testRecord);
-      assert.equal(await store.loadSession(id), testRecord);
+      await store.storeSession(id, testSession);
+      assert.equal(await store.loadSession(id), testSession);
+
+      await store.saveSenderKey(id, distributionId, testSenderKey);
+      assert.equal(await store.getSenderKey(id, distributionId), testSenderKey);
 
       await assert.isRejected(
         store.withZone(zone, 'test', async () => {
-          await store.storeSession(id, failedRecord, { zone });
-          assert.equal(await store.loadSession(id, { zone }), failedRecord);
+          await store.storeSession(id, failedSession, { zone });
+          assert.equal(await store.loadSession(id, { zone }), failedSession);
+
+          await store.saveSenderKey(id, distributionId, failedSenderKey, {
+            zone,
+          });
+          assert.equal(
+            await store.getSenderKey(id, distributionId, { zone }),
+            failedSenderKey
+          );
 
           await store.addUnprocessed(
             {
@@ -1525,7 +1557,8 @@ describe('SignalProtocolStore', () => {
         'Failure'
       );
 
-      assert.equal(await store.loadSession(id), testRecord);
+      assert.equal(await store.loadSession(id), testSession);
+      assert.equal(await store.getSenderKey(id, distributionId), testSenderKey);
       assert.deepEqual(await store.getAllUnprocessed(), []);
     });
 

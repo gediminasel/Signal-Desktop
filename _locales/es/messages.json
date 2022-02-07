@@ -648,8 +648,8 @@
         }
     },
     "decryptionErrorToast": {
-        "message": "Fallo encontrado al descifrar.",
-        "description": "An error popup when we haven't added an error for decryption error.",
+        "message": "Fallo encontrado al descifrar un mensaje de $name$, dispositivo $deviceId$",
+        "description": "An error popup when we haven't added an in-timeline error for decryption error, only for beta/internal users.",
         "placeholders": {
             "name": {
                 "content": "$1",
@@ -1208,7 +1208,7 @@
         "description": "Shown on the drop-down menu for an individual message, deletes single message"
     },
     "deleteMessageForEveryone": {
-        "message": "Eliminar mensaje en el chat",
+        "message": "Eliminar mensaje del chat",
         "description": "Shown on the drop-down menu for an individual message, deletes single message for everyone"
     },
     "deleteMessages": {
@@ -1331,29 +1331,79 @@
         "message": "La privacidad es posible. Signal lo hace fácil.",
         "description": "Tagline displayed under 'installWelcome' string on the install page"
     },
-    "linkYourPhone": {
-        "message": "Enlaza tu teléfono con Signal Desktop",
-        "description": "Shown on the front page when the application first starts, above the QR code"
-    },
-    "signalSettings": {
-        "message": "Ajustes de Signal",
-        "description": "Used in the guidance to help people find the 'link new device' area of their Signal mobile app"
-    },
     "linkedDevices": {
         "message": "Dispositivos enlazados",
         "description": "Used in the guidance to help people find the 'link new device' area of their Signal mobile app"
-    },
-    "plusButton": {
-        "message": "Botón '+'",
-        "description": "The button used in Signal Android to add a new linked device"
     },
     "linkNewDevice": {
         "message": "Enlazar nuevo dispositivo",
         "description": "The menu option shown in Signal iOS to add a new linked device"
     },
-    "LinkScreen__scan-this-code": {
-        "message": "Escanea este código en la aplicación de Signal en tu teléfono",
-        "description": "Alt text for the QR code on the device link screen"
+    "Install__scan-this-code": {
+        "message": "Escanea este código desde Signal en tu teléfono",
+        "description": "Title of the device link screen. Also used as alt text for the QR code on the device link screen"
+    },
+    "Install__instructions__1": {
+        "message": "Abre Signal en tu teléfono.",
+        "description": "Instructions on the device link screen"
+    },
+    "Install__instructions__2": {
+        "message": "Toca en «$settings$», después en «$linkedDevices$»",
+        "description": "Instructions on the device link screen",
+        "placeholders": {
+            "settings": {
+                "content": "$1",
+                "example": "<strong>Settings</strong>"
+            },
+            "linkedDevices": {
+                "content": "$2",
+                "example": "<strong>Linked Devices</strong>"
+            }
+        }
+    },
+    "Install__instructions__2__settings": {
+        "message": "Ajustes",
+        "description": "Part of the 2nd instruction on the device link screen"
+    },
+    "Install__instructions__3": {
+        "message": "Toca en «$plusButton$» (Android) o «$linkNewDevice$» (iPhone)",
+        "description": "Instructions on the device link screen",
+        "placeholders": {
+            "plusButton": {
+                "content": "$1",
+                "example": "<PlusButton />"
+            },
+            "linkNewDevice": {
+                "content": "$2",
+                "example": "<strong>Link New Device</strong>"
+            }
+        }
+    },
+    "Install__qr-failed": {
+        "message": "Fallo al cargar el código QR. Comprueba tu conexión e inténtalo de nuevo. $learnMore$",
+        "description": "Shown on the install screen if the QR code fails to load",
+        "placeholders": {
+            "learnMore": {
+                "content": "$1",
+                "example": "<a>Learn more</a>"
+            }
+        }
+    },
+    "Install__qr-failed__learn-more": {
+        "message": "Saber más",
+        "description": "Shown on the install screen if the QR code fails to load"
+    },
+    "Install__support-link": {
+        "message": "¿Necesitas ayuda?",
+        "description": "Shown on the install screen. Link takes users to a support page"
+    },
+    "Install__choose-device-name__description": {
+        "message": "Este nombre aparecerá bajo «Dispositivos enlazados» en tu teléfono",
+        "description": "The subheader shown on the 'choose device name' screen in the device linking process"
+    },
+    "Install__choose-device-name__placeholder": {
+        "message": "Computadora/ordenador",
+        "description": "The placeholder for the 'choose device name' input"
     },
     "Preferences--device-name": {
         "message": "Nombre del dispositivo",
@@ -1371,6 +1421,10 @@
         "message": "Sincronizando personas y grupos",
         "description": "Shown during initial link while contacts and groups are being pulled from mobile device"
     },
+    "initialSync__subtitle": {
+        "message": "Nota: Tus chats previos no se sincronizarán con este dispositivo",
+        "description": "Shown during initial link while contacts and groups are being pulled from mobile device"
+    },
     "installConnectionFailed": {
         "message": "Fallo al conectar con el servidor.",
         "description": "Displayed when we can't connect to the server."
@@ -1385,6 +1439,10 @@
     },
     "installErrorHeader": {
         "message": "¡Algo ha salido mal!",
+        "description": ""
+    },
+    "installUnknownError": {
+        "message": "Ha ocurrido un fallo inesperado. Por favor, inténtalo de nuevo.",
         "description": ""
     },
     "installTryAgain": {
@@ -1418,6 +1476,10 @@
     "calling__return": {
         "message": "Volver a la llamada",
         "description": "Button label in the call lobby for returning to a call"
+    },
+    "calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
+        "message": "Micrófono silenciado por llamada con bastantes participantes",
+        "description": "Shown in a call lobby toast if there are a lot of people already on the call"
     },
     "calling__call-is-full": {
         "message": "La llamada está llena",
@@ -2292,7 +2354,7 @@
         "description": "Shown if request to Signal servers to find username fails"
     },
     "startConversation--username-not-found": {
-        "message": "Alias de usuari@ no encontrado. $atUsername$ no usa Signal. Asegúrate de haber introducido el alias de usuari@ correcto.",
+        "message": "Alias de usuari@ no encontrado. $atUsername$ no usa Signal. Asegúrate de haber introducido el alias correcto.",
         "description": "Shown in dialog if username is not found. Note that 'username' will be the output of at-username",
         "placeholders": {
             "atUsername": {
@@ -6585,6 +6647,22 @@
         "message": "Por favor, cierra la aplicación manualmente y haz clic en reintentar para continuar.",
         "description": "Second line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
     },
+    "CrashReportDialog__title": {
+        "message": "La aplicación se ha cerrado",
+        "description": "A title of the dialog displayed when starting an application after a recent crash"
+    },
+    "CrashReportDialog__body": {
+        "message": "Signal se ha reiniciado tras un fallo. Puedes enviarnos un informe del fallo para que investiguemos el problema.",
+        "description": "The body of the dialog displayed when starting an application after a recent crash"
+    },
+    "CrashReportDialog__submit": {
+        "message": "Enviar",
+        "description": "A button label for submission of the crash reporter data after a recent crash"
+    },
+    "CrashReportDialog__erase": {
+        "message": "No enviar",
+        "description": "A button label for erasure of the crash reporter data after a recent crash and continuing to start the app"
+    },
     "CustomizingPreferredReactions__title": {
         "message": "Personalizar reacciones",
         "description": "Shown in the header of the modal for customizing the preferred reactions. Also shown in the tooltip for the button that opens this modal."
@@ -6685,18 +6763,6 @@
         "message": "Novedades",
         "description": "Title for the whats new modal"
     },
-    "WhatsNew__v5.24--1": {
-        "message": "Ahora puedes buscar en los chat archivados. Imagínate buscando (rápidamente) la siguiente pista entre tomos antiguos.",
-        "description": "Release notes for v5.24"
-    },
-    "WhatsNew__v5.24--2": {
-        "message": "Si alguna vez te desplazaste hacia arriba en el chat y enviaste un mensaje, es posible que te preguntaras ¿dónde está mi mensaje? Ahora, cada vez que envíes un mensaje, aparecerá en pantalla para que puedas admirar tu arduo trabajo.",
-        "description": "Release notes for v5.24"
-    },
-    "WhatsNew__v5.24--3": {
-        "message": "¿Reaccionas a un mensaje? Ahora debería ser más fiable, con reintentos hasta tras 24 horas",
-        "description": "Release notes for v5.24"
-    },
     "WhatsNew__v5.25--1": {
         "message": "Esta versión contiene un par de pequeñas mejoras para que Signal funcione sin problemas.",
         "description": "Release notes for v5.25"
@@ -6712,5 +6778,31 @@
     "WhatsNew__v5.26--2": {
         "message": "¿Alguna vez has tenido la sensación de necesitar más píxeles en el panel de los mensajes? ¿Eres fan de avatares, y sólamente avatares? ¿Tienes una pegatina de \"Estás demasiado cerca, necesito espacio entre nosotr@s\" en la parte trasera de tu auto? Si has respondido sí o no a alguna de estas preguntas, te alegrará saber que la vista del panel con la lista de chats se puede reducir.",
         "description": "Release notes for v5.26"
+    },
+    "WhatsNew__macos-m1": {
+        "message": "Ahora, Signal Desktop está optimizada para los procesadores M1 que Apple usa en sus nuevos Macs. Si utilizas uno de esos Macs, Signal funciona de manera más ligera. Si no, dale la bienvenida a la gente que los usa. ¡Los agradecimientos son para $dennis$ por su duro trabajo!",
+        "description": "Release note for the macOS M1 release",
+        "placeholders": {
+            "dennis": {
+                "content": "$1",
+                "example": "<a>Dennis Ameling</a>"
+            }
+        }
+    },
+    "WhatsNew__v5.27--1": {
+        "message": "¿La llamada dura demasiado? Tu sistema permanecerá despierto durante todo el tiempo de la llamada, en lugar de entrar en hibernación en medio de esa conversación tan importante.",
+        "description": "Release notes for v5.27"
+    },
+    "WhatsNew__v5.27--2": {
+        "message": "También hemos reparado un par de fallos para que Signal funcione mejor, sobre todo en las llamadas.",
+        "description": "Release notes for v5.27"
+    },
+    "WhatsNew__v5.28--1": {
+        "message": "Año nuevo, nueva pantalla de configuración. Hemos rediseñado las pantallas de configuración a tiempo para 2022.",
+        "description": "Release notes for v5.28"
+    },
+    "WhatsNew__v5.29--1": {
+        "message": "¡Ahora, con menos ruido por búsquedas de mecanógrafos frenéticos o masticadores compulsivos! En la sala de espera, Desktop desactivará el audio automáticamente si hay ocho o más personas en la llamada.",
+        "description": "Release notes for v5.28"
     }
 }

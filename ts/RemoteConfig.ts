@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Signal Messenger, LLC
+// Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { get, throttle } from 'lodash';
@@ -8,21 +8,18 @@ import * as log from './logging/log';
 
 export type ConfigKeyType =
   | 'desktop.announcementGroup'
-  | 'desktop.calling.useWindowsAdm2'
-  | 'desktop.canResizeLeftPane.beta'
-  | 'desktop.canResizeLeftPane.production'
   | 'desktop.clientExpiration'
   | 'desktop.disableGV1'
   | 'desktop.groupCallOutboundRing'
   | 'desktop.groupCalling'
   | 'desktop.gv2'
   | 'desktop.internalUser'
+  | 'desktop.messageCleanup'
   | 'desktop.mandatoryProfileSharing'
   | 'desktop.mediaQuality.levels'
   | 'desktop.messageRequests'
   | 'desktop.retryReceiptLifespan'
   | 'desktop.retryRespondMaxAge'
-  | 'desktop.screensharing2'
   | 'desktop.senderKey.send'
   | 'desktop.senderKey.retry'
   | 'desktop.sendSenderKey3'

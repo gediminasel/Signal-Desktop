@@ -188,7 +188,7 @@
         "description": "One of the menu options available in the Avatar popup menu"
     },
     "loading": {
-        "message": "S'està carregant...",
+        "message": "Es carrega...",
         "description": "Message shown on the loading screen before we've loaded any messages"
     },
     "optimizingApplication": {
@@ -648,8 +648,8 @@
         }
     },
     "decryptionErrorToast": {
-        "message": "Hi ha hagut un error de desencriptació.",
-        "description": "An error popup when we haven't added an error for decryption error.",
+        "message": "L'escriptori ha tingut un error de desencriptació de $name$, dispositiu $deviceId$",
+        "description": "An error popup when we haven't added an in-timeline error for decryption error, only for beta/internal users.",
         "placeholders": {
             "name": {
                 "content": "$1",
@@ -1282,7 +1282,7 @@
         }
     },
     "ChangeNumber--notification": {
-        "message": "$sender$ ha canviat el número",
+        "message": "$sender$ ha canviat el número de telèfon.",
         "description": "Shown in timeline when a member of a conversation changes their phone number",
         "placeholders": {
             "sender": {
@@ -1331,29 +1331,79 @@
         "message": "La privadesa és possible. El Signla la fa fàcil.",
         "description": "Tagline displayed under 'installWelcome' string on the install page"
     },
-    "linkYourPhone": {
-        "message": "Enllaceu el mòbil amb el Signal Desktop",
-        "description": "Shown on the front page when the application first starts, above the QR code"
-    },
-    "signalSettings": {
-        "message": "Configuració del Signal",
-        "description": "Used in the guidance to help people find the 'link new device' area of their Signal mobile app"
-    },
     "linkedDevices": {
         "message": "Dispositius enllaçats",
         "description": "Used in the guidance to help people find the 'link new device' area of their Signal mobile app"
-    },
-    "plusButton": {
-        "message": "Botó «+»",
-        "description": "The button used in Signal Android to add a new linked device"
     },
     "linkNewDevice": {
         "message": "Enllaça un dispositiu nou",
         "description": "The menu option shown in Signal iOS to add a new linked device"
     },
-    "LinkScreen__scan-this-code": {
+    "Install__scan-this-code": {
         "message": "Escanegeu aquest codi a l'aplicació Signal del telèfon",
-        "description": "Alt text for the QR code on the device link screen"
+        "description": "Title of the device link screen. Also used as alt text for the QR code on the device link screen"
+    },
+    "Install__instructions__1": {
+        "message": "Obriu el Signal al telèfon.",
+        "description": "Instructions on the device link screen"
+    },
+    "Install__instructions__2": {
+        "message": "Toqueu$settings$ i després $linkedDevices$",
+        "description": "Instructions on the device link screen",
+        "placeholders": {
+            "settings": {
+                "content": "$1",
+                "example": "<strong>Settings</strong>"
+            },
+            "linkedDevices": {
+                "content": "$2",
+                "example": "<strong>Linked Devices</strong>"
+            }
+        }
+    },
+    "Install__instructions__2__settings": {
+        "message": "Configuració",
+        "description": "Part of the 2nd instruction on the device link screen"
+    },
+    "Install__instructions__3": {
+        "message": "Toqueu $plusButton$ (Android) o $linkNewDevice$ (iPhone)",
+        "description": "Instructions on the device link screen",
+        "placeholders": {
+            "plusButton": {
+                "content": "$1",
+                "example": "<PlusButton />"
+            },
+            "linkNewDevice": {
+                "content": "$2",
+                "example": "<strong>Link New Device</strong>"
+            }
+        }
+    },
+    "Install__qr-failed": {
+        "message": "No s'ha pogut carregar el codi QR. Comproveu la connexió a Internet i torneu-ho a provar. $learnMore$",
+        "description": "Shown on the install screen if the QR code fails to load",
+        "placeholders": {
+            "learnMore": {
+                "content": "$1",
+                "example": "<a>Learn more</a>"
+            }
+        }
+    },
+    "Install__qr-failed__learn-more": {
+        "message": "Més informació",
+        "description": "Shown on the install screen if the QR code fails to load"
+    },
+    "Install__support-link": {
+        "message": "Us cal ajuda?",
+        "description": "Shown on the install screen. Link takes users to a support page"
+    },
+    "Install__choose-device-name__description": {
+        "message": "Veureu aquest nom sota \"Dispositius enllaçats\" al telèfon.",
+        "description": "The subheader shown on the 'choose device name' screen in the device linking process"
+    },
+    "Install__choose-device-name__placeholder": {
+        "message": "L'ordinador",
+        "description": "The placeholder for the 'choose device name' input"
     },
     "Preferences--device-name": {
         "message": "Nom del dispositiu",
@@ -1371,6 +1421,10 @@
         "message": "Sincronització de contactes i grups",
         "description": "Shown during initial link while contacts and groups are being pulled from mobile device"
     },
+    "initialSync__subtitle": {
+        "message": "Nota: l'historial de converses no se sincronitzarà amb aquest dispositiu.",
+        "description": "Shown during initial link while contacts and groups are being pulled from mobile device"
+    },
     "installConnectionFailed": {
         "message": "No s'ha pogut connectar al servidor.",
         "description": "Displayed when we can't connect to the server."
@@ -1385,6 +1439,10 @@
     },
     "installErrorHeader": {
         "message": "Alguna cosa ha anat malament!",
+        "description": ""
+    },
+    "installUnknownError": {
+        "message": "Hi ha hagut un error inesperat. Torneu-ho a provar.",
         "description": ""
     },
     "installTryAgain": {
@@ -1418,6 +1476,10 @@
     "calling__return": {
         "message": "Torna a la trucada",
         "description": "Button label in the call lobby for returning to a call"
+    },
+    "calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
+        "message": "S'ha silenciat el micròfon a causa de la mida de la trucada.",
+        "description": "Shown in a call lobby toast if there are a lot of people already on the call"
     },
     "calling__call-is-full": {
         "message": "La trucada és plena",
@@ -6585,6 +6647,22 @@
         "message": "Tanqueu-lo manualment i cliqueu a tornar-ho a provar per continuar.",
         "description": "Second line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
     },
+    "CrashReportDialog__title": {
+        "message": "Ha fallat l'aplicació.",
+        "description": "A title of the dialog displayed when starting an application after a recent crash"
+    },
+    "CrashReportDialog__body": {
+        "message": "El Signal s'ha reiniciat després d'una fallada. Podeu enviar un informe d'error per ajudar el Signal a investigar el problema.",
+        "description": "The body of the dialog displayed when starting an application after a recent crash"
+    },
+    "CrashReportDialog__submit": {
+        "message": "Envia",
+        "description": "A button label for submission of the crash reporter data after a recent crash"
+    },
+    "CrashReportDialog__erase": {
+        "message": "No l'enviïs",
+        "description": "A button label for erasure of the crash reporter data after a recent crash and continuing to start the app"
+    },
     "CustomizingPreferredReactions__title": {
         "message": "Personalització de reaccions",
         "description": "Shown in the header of the modal for customizing the preferred reactions. Also shown in the tooltip for the button that opens this modal."
@@ -6685,18 +6763,6 @@
         "message": "Què hi ha de nou",
         "description": "Title for the whats new modal"
     },
-    "WhatsNew__v5.24--1": {
-        "message": "Ara podeu cercar a les converses arxivades. Imagineu-vos buscant (ràpidament) a través de volums antics, buscant la pista següent.",
-        "description": "Release notes for v5.24"
-    },
-    "WhatsNew__v5.24--2": {
-        "message": "Si alguna vegada us heu desplaçat cap amunt i heu enviat un missatge, potser us preguntareu on era el missatge! Ara, sempre que envieu un missatge, es desplaçarà a la vista perquè admireu la feina feta.",
-        "description": "Release notes for v5.24"
-    },
-    "WhatsNew__v5.24--3": {
-        "message": "Reaccioneu a un missatge? Ara hauria de ser més fiable, tornant-ho a provar fins a 24 hores.",
-        "description": "Release notes for v5.24"
-    },
     "WhatsNew__v5.25--1": {
         "message": "Aquesta versió conté una sèrie de petites modificacions i correccions d'errors per tal que el Signal funcioni sense problemes.",
         "description": "Release notes for v5.25"
@@ -6712,5 +6778,31 @@
     "WhatsNew__v5.26--2": {
         "message": "Alguna vegada heu sentit que necessiteu més píxels al plafó? Sou fan dels avatars, però només dels avatars i res més? Teniu un adhesiu estrambòtic al para-xocs del cotxe? Si heu respost sí o no a qualsevol d'aquestes preguntes, aquesta actualització té un plafó esquerre plegable per a vosaltres.",
         "description": "Release notes for v5.26"
+    },
+    "WhatsNew__macos-m1": {
+        "message": "El Signal Desktop ara està optimitzat per al xip M1 d'Apple, que s'usa als seus ordinadors més nous. Si sou en un d'aquests dispositius nous, l'aplicació hauria de ser molt més ràpida. Si no hi sou, donem la benvinguda als usuaris que hi són. Moltes gràcies a $dennis$ pel seu esforç aquí!",
+        "description": "Release note for the macOS M1 release",
+        "placeholders": {
+            "dennis": {
+                "content": "$1",
+                "example": "<a>Dennis Ameling</a>"
+            }
+        }
+    },
+    "WhatsNew__v5.27--1": {
+        "message": "En una trucada llarga? El vostre sistema hauria de romandre despert tota l'estona, en lloc d'adormir-se mentre esteu enmig d'una discussió important.",
+        "description": "Release notes for v5.27"
+    },
+    "WhatsNew__v5.27--2": {
+        "message": "També hi ha una sèrie de petits retocs i correccions d'errors perquè el Signal funcioni sense problemes, incloses diverses millores relacionades amb les trucades.",
+        "description": "Release notes for v5.27"
+    },
+    "WhatsNew__v5.28--1": {
+        "message": "Any nou, nova pantalla de configuració inicial. Hem redissenyat les pantalles de configuració inicial just a temps per al 2022.",
+        "description": "Release notes for v5.28"
+    },
+    "WhatsNew__v5.29--1": {
+        "message": "Ara, amb menys cerques frenètiques per al mecanògraf fort o el mastegador pesat! Al vestíbul de trucades, el Desktop ara desactivarà automàticament l'àudio si hi ha vuit o més persones a la trucada.",
+        "description": "Release notes for v5.28"
     }
 }

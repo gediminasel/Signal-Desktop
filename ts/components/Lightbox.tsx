@@ -18,10 +18,8 @@ import { IMAGE_PNG, isImage, isVideo } from '../types/MIME';
 import type { LocalizerType } from '../types/Util';
 import type { MediaItemType, MessageAttributesType } from '../types/MediaItem';
 import { formatDuration } from '../util/formatDuration';
-import { showToast } from '../util/showToast';
 import { useRestoreFocus } from '../hooks/useRestoreFocus';
 import * as log from '../logging/log';
-import { ToastUnableToLoadAttachment } from './ToastUnableToLoadAttachment';
 
 export type PropsType = {
   children?: ReactNode;
@@ -283,7 +281,10 @@ export function Lightbox({
         return;
       }
 
-      const { screenWidth, screenHeight } = zoomCache;
+      const { maxX, maxY, screenWidth, screenHeight } = zoomCache;
+
+      const shouldTranslateX = maxX * ZOOM_SCALE > screenWidth;
+      const shouldTranslateY = maxY * ZOOM_SCALE > screenHeight;
 
       const offsetX = screenWidth / 2 - ev.clientX;
       const offsetY = screenHeight / 2 - ev.clientY;
@@ -293,8 +294,8 @@ export function Lightbox({
 
       springApi.start({
         scale: ZOOM_SCALE,
-        translateX: x,
-        translateY: y,
+        translateX: shouldTranslateX ? x : undefined,
+        translateY: shouldTranslateY ? y : undefined,
       });
     },
     [maxBoundsLimiter, springApi]
@@ -351,12 +352,20 @@ export function Lightbox({
       }
 
       if (!isZoomed) {
+        const maxX = imageNode.offsetWidth;
+        const maxY = imageNode.offsetHeight;
+        const screenHeight = window.innerHeight;
+        const screenWidth = window.innerWidth;
+
         zoomCacheRef.current = {
-          maxX: imageNode.offsetWidth,
-          maxY: imageNode.offsetHeight,
-          screenHeight: window.innerHeight,
-          screenWidth: window.innerWidth,
+          maxX,
+          maxY,
+          screenHeight,
+          screenWidth,
         };
+
+        const shouldTranslateX = maxX * ZOOM_SCALE > screenWidth;
+        const shouldTranslateY = maxY * ZOOM_SCALE > screenHeight;
 
         const { height, left, top, width } =
           animateNode.getBoundingClientRect();
@@ -369,8 +378,8 @@ export function Lightbox({
 
         springApi.start({
           scale: ZOOM_SCALE,
-          translateX: x,
-          translateY: y,
+          translateX: shouldTranslateX ? x : undefined,
+          translateY: shouldTranslateY ? y : undefined,
         });
 
         setIsZoomed(true);
@@ -418,28 +427,30 @@ export function Lightbox({
     if (isImageTypeSupported) {
       if (objectURL) {
         content = (
-          <button
-            className="Lightbox__zoom-button"
-            onClick={zoomButtonHandler}
-            type="button"
-          >
-            <img
-              alt={i18n('lightboxImageAlt')}
-              className="Lightbox__object"
-              onContextMenu={(ev: React.MouseEvent<HTMLImageElement>) => {
-                // These are the only image types supported by Electron's NativeImage
-                if (
-                  ev &&
-                  contentType !== IMAGE_PNG &&
-                  !/image\/jpe?g/g.test(contentType)
-                ) {
-                  ev.preventDefault();
-                }
-              }}
-              src={objectURL}
-              ref={imageRef}
-            />
-          </button>
+          <div className="Lightbox__zoomable-container">
+            <button
+              className="Lightbox__zoom-button"
+              onClick={zoomButtonHandler}
+              type="button"
+            >
+              <img
+                alt={i18n('lightboxImageAlt')}
+                className="Lightbox__object"
+                onContextMenu={(ev: React.MouseEvent<HTMLImageElement>) => {
+                  // These are the only image types supported by Electron's NativeImage
+                  if (
+                    ev &&
+                    contentType !== IMAGE_PNG &&
+                    !/image\/jpe?g/g.test(contentType)
+                  ) {
+                    ev.preventDefault();
+                  }
+                }}
+                src={objectURL}
+                ref={imageRef}
+              />
+            </button>
+          </div>
         );
       } else {
         content = (
@@ -455,25 +466,6 @@ export function Lightbox({
           />
         );
       }
-    } else if (isVideoTypeSupported && window.isLegacyOS()) {
-      const onLegacyClick = (event: React.MouseEvent<HTMLVideoElement>) => {
-        event.preventDefault();
-        event.stopPropagation();
-
-        showToast(ToastUnableToLoadAttachment);
-      };
-
-      content = (
-        <video
-          className="Lightbox__object"
-          controls={false}
-          key={objectURL}
-          loop={false}
-          onClick={onLegacyClick}
-        >
-          <source src={objectURL} />
-        </video>
-      );
     } else if (isVideoTypeSupported) {
       const shouldLoop = loop || isAttachmentGIF || isViewOnce;
 

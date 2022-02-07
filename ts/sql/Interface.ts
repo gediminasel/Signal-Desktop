@@ -329,7 +329,8 @@ export type DataInterface = {
 
   createOrUpdateSession: (data: SessionType) => Promise<void>;
   createOrUpdateSessions: (array: Array<SessionType>) => Promise<void>;
-  commitSessionsAndUnprocessed(options: {
+  commitDecryptResult(options: {
+    senderKeys: Array<SenderKeyType>;
     sessions: Array<SessionType>;
     unprocessed: Array<UnprocessedType>;
   }): Promise<void>;
@@ -371,14 +372,15 @@ export type DataInterface = {
   getMessageCount: (conversationId?: string) => Promise<number>;
   saveMessage: (
     data: MessageType,
-    options?: {
+    options: {
       jobToInsert?: StoredJob;
       forceSave?: boolean;
+      ourUuid: UUIDStringType;
     }
   ) => Promise<string>;
   saveMessages: (
     arrayOfMessages: Array<MessageType>,
-    options?: { forceSave?: boolean }
+    options: { forceSave?: boolean; ourUuid: UUIDStringType }
   ) => Promise<void>;
   removeMessage: (id: string) => Promise<void>;
   removeMessages: (ids: Array<string>) => Promise<void>;
@@ -450,6 +452,7 @@ export type DataInterface = {
     conversationId: string,
     storyId?: UUIDStringType
   ) => Promise<ConversationMetricsType>;
+  // getConversationRangeCenteredOnMessage is JSON on server, full message on client
   getLastConversationMessages: (options: {
     conversationId: string;
     ourUuid: UUIDStringType;
@@ -621,6 +624,18 @@ export type ServerInterface = DataInterface & {
       storyId?: UUIDStringType;
     }
   ) => Promise<Array<MessageTypeUnhydrated>>;
+  getConversationRangeCenteredOnMessage: (options: {
+    conversationId: string;
+    limit?: number;
+    messageId: string;
+    receivedAt: number;
+    sentAt?: number;
+    storyId?: UUIDStringType;
+  }) => Promise<{
+    older: Array<MessageTypeUnhydrated>;
+    newer: Array<MessageTypeUnhydrated>;
+    metrics: ConversationMetricsType;
+  }>;
 
   // Server-only
 
@@ -680,6 +695,18 @@ export type ClientInterface = DataInterface & {
       storyId?: UUIDStringType;
     }
   ) => Promise<Array<MessageAttributesType>>;
+  getConversationRangeCenteredOnMessage: (options: {
+    conversationId: string;
+    limit?: number;
+    messageId: string;
+    receivedAt: number;
+    sentAt?: number;
+    storyId?: UUIDStringType;
+  }) => Promise<{
+    older: Array<MessageAttributesType>;
+    newer: Array<MessageAttributesType>;
+    metrics: ConversationMetricsType;
+  }>;
 
   // Client-side only
 

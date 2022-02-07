@@ -1,4 +1,4 @@
-// Copyright 2017-2021 Signal Messenger, LLC
+// Copyright 2017-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { join, normalize } from 'path';
@@ -7,7 +7,6 @@ import * as os from 'os';
 import { chmod, realpath, writeFile } from 'fs-extra';
 import { randomBytes } from 'crypto';
 
-import pify from 'pify';
 import normalizePath from 'normalize-path';
 import fastGlob from 'fast-glob';
 import PQueue from 'p-queue';
@@ -16,20 +15,22 @@ import {
   app,
   BrowserWindow,
   clipboard,
+  desktopCapturer,
   dialog,
   ipcMain as ipc,
   Menu,
   powerSaveBlocker,
   protocol as electronProtocol,
   screen,
+  session,
   shell,
   systemPreferences,
-  desktopCapturer,
 } from 'electron';
 import { z } from 'zod';
 
 import packageJson from '../package.json';
 import * as GlobalErrors from './global_errors';
+import { setup as setupCrashReports } from './crashReports';
 import { setup as setupSpellChecker } from './spell_check';
 import { redactAll, addSensitivePath } from '../ts/util/privacy';
 import { strictAssert } from '../ts/util/assert';
@@ -55,6 +56,7 @@ import * as attachments from './attachments';
 import * as attachmentChannel from './attachment_channel';
 import * as bounce from '../ts/services/bounce';
 import * as updater from '../ts/updater/index';
+import { updateDefaultSession } from './updateDefaultSession';
 import { PreventDisplaySleepService } from './PreventDisplaySleepService';
 import { SystemTrayService } from './SystemTrayService';
 import { SystemTraySettingCache } from './SystemTraySettingCache';
@@ -72,7 +74,7 @@ import type { MenuOptionsType } from './menu';
 import { createTemplate } from './menu';
 import { installFileHandler, installWebHandler } from './protocol_filter';
 import * as OS from '../ts/OS';
-import { isProduction } from '../ts/util/version';
+import { isProduction, isAlpha } from '../ts/util/version';
 import {
   isSgnlHref,
   isCaptchaHref,
@@ -80,6 +82,7 @@ import {
   parseSgnlHref,
   parseCaptchaHref,
   parseSignalHttpsLink,
+  rewriteSignalHrefsIfNecessary,
 } from '../ts/util/sgnlHref';
 import { toggleMaximizedBrowserWindow } from '../ts/util/toggleMaximizedBrowserWindow';
 import {
@@ -99,7 +102,6 @@ import { load as loadLocale } from './locale';
 import type { LoggerType } from '../ts/types/Logging';
 
 const animationSettings = systemPreferences.getAnimationSettings();
-const getRealPath = pify(realpath);
 
 // Keep a global reference of the window object, if you don't, the window will
 //   be closed automatically when the JavaScript object is garbage collected.
@@ -117,30 +119,18 @@ const development =
   getEnvironment() === Environment.Development ||
   getEnvironment() === Environment.Staging;
 
-const enableCI = config.get<boolean>('enableCI');
+const isThrottlingEnabled = development || isAlpha(app.getVersion());
 
-const sql = new MainSQL();
-const heicConverter = getHeicConverter();
+const enableCI = config.get<boolean>('enableCI');
 
 const preventDisplaySleepService = new PreventDisplaySleepService(
   powerSaveBlocker
-);
-
-let systemTrayService: SystemTrayService | undefined;
-const systemTraySettingCache = new SystemTraySettingCache(
-  sql,
-  ephemeralConfig,
-  process.argv,
-  app.getVersion()
 );
 
 const challengeHandler = new ChallengeMainHandler();
 
 const nativeThemeNotifier = new NativeThemeNotifier();
 nativeThemeNotifier.initialize();
-
-let sqlInitTimeStart = 0;
-let sqlInitTimeEnd = 0;
 
 let appStartInitialSpellcheckSetting = true;
 
@@ -149,26 +139,8 @@ const defaultWebPrefs = {
     process.argv.some(arg => arg === '--enable-dev-tools') ||
     getEnvironment() !== Environment.Production ||
     !isProduction(app.getVersion()),
+  spellcheck: false,
 };
-
-async function getSpellCheckSetting() {
-  const fastValue = ephemeralConfig.get('spell-check');
-  if (fastValue !== undefined) {
-    getLogger().info('got fast spellcheck setting', fastValue);
-    return fastValue;
-  }
-
-  const json = await sql.sqlCall('getItemById', ['spell-check']);
-
-  // Default to `true` if setting doesn't exist yet
-  const slowValue = json ? json.value : true;
-
-  ephemeralConfig.set('spell-check', slowValue);
-
-  getLogger().info('got slow spellcheck setting', slowValue);
-
-  return slowValue;
-}
 
 function showWindow() {
   if (!mainWindow) {
@@ -230,6 +202,39 @@ if (!process.mas) {
   }
 }
 /* eslint-enable no-console */
+
+let sqlInitTimeStart = 0;
+let sqlInitTimeEnd = 0;
+
+const sql = new MainSQL();
+const heicConverter = getHeicConverter();
+
+async function getSpellCheckSetting() {
+  const fastValue = ephemeralConfig.get('spell-check');
+  if (fastValue !== undefined) {
+    getLogger().info('got fast spellcheck setting', fastValue);
+    return fastValue;
+  }
+
+  const json = await sql.sqlCall('getItemById', ['spell-check']);
+
+  // Default to `true` if setting doesn't exist yet
+  const slowValue = json ? json.value : true;
+
+  ephemeralConfig.set('spell-check', slowValue);
+
+  getLogger().info('got slow spellcheck setting', slowValue);
+
+  return slowValue;
+}
+
+let systemTrayService: SystemTrayService | undefined;
+const systemTraySettingCache = new SystemTraySettingCache(
+  sql,
+  ephemeralConfig,
+  process.argv,
+  app.getVersion()
+);
 
 const windowFromUserConfig = userConfig.get('window');
 const windowFromEphemeral = ephemeralConfig.get('window');
@@ -324,18 +329,20 @@ function prepareUrl(
     appStartInitialSpellcheckSetting,
     userDataPath: app.getPath('userData'),
     downloadsPath: app.getPath('downloads'),
-    isLegacyOS: OS.isLegacy(),
     homePath: app.getPath('home'),
+    crashDumpsPath: app.getPath('crashDumps'),
     ...moreKeys,
   }).href;
 }
 
-async function handleUrl(event: Electron.Event, target: string) {
+async function handleUrl(event: Electron.Event, rawTarget: string) {
   event.preventDefault();
-  const parsedUrl = maybeParseUrl(target);
+  const parsedUrl = maybeParseUrl(rawTarget);
   if (!parsedUrl) {
     return;
   }
+
+  const target = rewriteSignalHrefsIfNecessary(rawTarget);
 
   const { protocol, hostname } = parsedUrl;
   const isDevServer =
@@ -479,10 +486,7 @@ async function createWindow() {
       ),
       nativeWindowOpen: true,
       spellcheck: await getSpellCheckSetting(),
-      // We are evaluating background throttling in development. If we decide to
-      //   move forward, we can remove this line (as `backgroundThrottling` is true by
-      //   default).
-      backgroundThrottling: development,
+      backgroundThrottling: isThrottlingEnabled,
       enablePreferredSizeMode: true,
     },
     icon: windowIcon,
@@ -536,7 +540,7 @@ async function createWindow() {
   }
 
   mainWindowCreated = true;
-  setupSpellChecker(mainWindow, getLocale().messages);
+  setupSpellChecker(mainWindow, getLocale());
   if (!startInTray && windowConfig && windowConfig.maximized) {
     mainWindow.maximize();
   }
@@ -774,9 +778,7 @@ ipc.on('set-is-call-active', (_event, isCallActive) => {
     return;
   }
 
-  // We are evaluating background throttling in development. If we decide to move
-  //   forward, we can remove this check.
-  if (!development) {
+  if (!isThrottlingEnabled) {
     return;
   }
 
@@ -1129,7 +1131,7 @@ async function showStickerCreator() {
   };
 
   stickerCreatorWindow = new BrowserWindow(options);
-  setupSpellChecker(stickerCreatorWindow, getLocale().messages);
+  setupSpellChecker(stickerCreatorWindow, getLocale());
 
   handleCommonWindowEvents(stickerCreatorWindow);
 
@@ -1186,6 +1188,11 @@ async function showDebugLogWindow() {
       nativeWindowOpen: true,
     },
     parent: mainWindow,
+    // Electron has [a macOS bug][0] that causes parent windows to become unresponsive if
+    //   it's fullscreen and opens a fullscreen child window. Until that's fixed, we
+    //   prevent the child window from being fullscreenable, which sidesteps the problem.
+    // [0]: https://github.com/electron/electron/issues/32374
+    fullscreenable: !OS.isMacOS(),
   };
 
   debugLogWindow = new BrowserWindow(options);
@@ -1203,6 +1210,9 @@ async function showDebugLogWindow() {
   debugLogWindow.once('ready-to-show', () => {
     if (debugLogWindow) {
       debugLogWindow.show();
+
+      // Electron sometimes puts the window in a strange spot until it's shown.
+      debugLogWindow.center();
     }
   });
 }
@@ -1378,18 +1388,28 @@ ipc.on('database-error', (_event: Electron.Event, error: string) => {
   onDatabaseError(error);
 });
 
+function getAppLocale(): string {
+  return getEnvironment() === Environment.Test ? 'en' : app.getLocale();
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 let ready = false;
 app.on('ready', async () => {
-  const userDataPath = await getRealPath(app.getPath('userData'));
+  updateDefaultSession(session.defaultSession);
+
+  const [userDataPath, crashDumpsPath] = await Promise.all([
+    realpath(app.getPath('userData')),
+    realpath(app.getPath('crashDumps')),
+  ]);
 
   logger = await logging.initialize(getMainWindow);
 
+  await setupCrashReports(getLogger);
+
   if (!locale) {
-    const appLocale =
-      getEnvironment() === Environment.Test ? 'en' : app.getLocale();
+    const appLocale = getAppLocale();
     locale = loadLocale({ appLocale, logger });
   }
 
@@ -1429,9 +1449,10 @@ app.on('ready', async () => {
     });
   });
 
-  const installPath = await getRealPath(app.getAppPath());
+  const installPath = await realpath(app.getAppPath());
 
   addSensitivePath(userDataPath);
+  addSensitivePath(crashDumpsPath);
 
   if (getEnvironment() !== Environment.Test) {
     installFileHandler({
@@ -1712,6 +1733,7 @@ app.on('before-quit', () => {
     shouldQuit: windowState.shouldQuit(),
   });
 
+  systemTrayService?.markShouldQuit();
   windowState.markShouldQuit();
 
   if (mainWindow) {
@@ -2063,7 +2085,7 @@ async function ensureFilePermissions(onlyFiles?: Array<string>) {
   getLogger().info('Begin ensuring permissions');
 
   const start = Date.now();
-  const userDataPath = await getRealPath(app.getPath('userData'));
+  const userDataPath = await realpath(app.getPath('userData'));
   // fast-glob uses `/` for all platforms
   const userDataGlob = normalizePath(join(userDataPath, '**', '*'));
 
@@ -2137,6 +2159,10 @@ ipc.handle('getScreenCaptureSources', async () => {
 
 if (isTestEnvironment(getEnvironment())) {
   ipc.handle('ci:test-electron:done', async (_event, info) => {
+    if (!process.env.TEST_QUIT_ON_COMPLETE) {
+      return;
+    }
+
     process.stdout.write(
       `ci:test-electron:done=${JSON.stringify(info)}\n`,
       () => app.quit()

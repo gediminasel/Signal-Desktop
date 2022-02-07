@@ -197,6 +197,7 @@ export type PropsData = {
 
   deletedForEveryone?: boolean;
 
+  canReact: boolean;
   canReply: boolean;
   canDownload: boolean;
   canDeleteForEveryone: boolean;
@@ -422,6 +423,9 @@ export class Message extends React.PureComponent<Props, State> {
   };
 
   public override componentDidMount(): void {
+    const { conversationId } = this.props;
+    window.ConversationController.onConvoMessageMount(conversationId);
+
     this.startSelectedTimer();
     this.startDeleteForEveryoneTimerIfApplicable();
 
@@ -1333,6 +1337,7 @@ export class Message extends React.PureComponent<Props, State> {
     const {
       attachments,
       canDownload,
+      canReact,
       canReply,
       direction,
       disableMenu,
@@ -1475,7 +1480,7 @@ export class Message extends React.PureComponent<Props, State> {
         >
           {this.isWindowWidthNotNarrow() && (
             <>
-              {canReply ? reactButton : null}
+              {canReact ? reactButton : null}
               {canDownload ? downloadButton : null}
               {canReply ? replyButton : null}
             </>
@@ -1520,6 +1525,7 @@ export class Message extends React.PureComponent<Props, State> {
     const {
       attachments,
       canDownload,
+      canReact,
       canReply,
       deleteMessage,
       deleteMessageForEveryone,
@@ -1568,36 +1574,40 @@ export class Message extends React.PureComponent<Props, State> {
             {i18n('downloadAttachment')}
           </MenuItem>
         ) : null}
-        {canReply && shouldShowAdditional ? (
+        {shouldShowAdditional ? (
           <>
-            <MenuItem
-              attributes={{
-                className:
-                  'module-message__context--icon module-message__context__reply',
-              }}
-              onClick={(event: React.MouseEvent) => {
-                event.stopPropagation();
-                event.preventDefault();
+            {canReply && (
+              <MenuItem
+                attributes={{
+                  className:
+                    'module-message__context--icon module-message__context__reply',
+                }}
+                onClick={(event: React.MouseEvent) => {
+                  event.stopPropagation();
+                  event.preventDefault();
 
-                replyToMessage(id);
-              }}
-            >
-              {i18n('replyToMessage')}
-            </MenuItem>
-            <MenuItem
-              attributes={{
-                className:
-                  'module-message__context--icon module-message__context__react',
-              }}
-              onClick={(event: React.MouseEvent) => {
-                event.stopPropagation();
-                event.preventDefault();
+                  replyToMessage(id);
+                }}
+              >
+                {i18n('replyToMessage')}
+              </MenuItem>
+            )}
+            {canReact && (
+              <MenuItem
+                attributes={{
+                  className:
+                    'module-message__context--icon module-message__context__react',
+                }}
+                onClick={(event: React.MouseEvent) => {
+                  event.stopPropagation();
+                  event.preventDefault();
 
-                this.toggleReactionPicker();
-              }}
-            >
-              {i18n('reactToMessage')}
-            </MenuItem>
+                  this.toggleReactionPicker();
+                }}
+              >
+                {i18n('reactToMessage')}
+              </MenuItem>
+            )}
           </>
         ) : null}
         <MenuItem
@@ -2331,7 +2341,7 @@ export class Message extends React.PureComponent<Props, State> {
 
   public handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>): void => {
     // Do not allow reactions to error messages
-    const { canReply } = this.props;
+    const { canReact } = this.props;
 
     const key = KeyboardLayout.lookup(event.nativeEvent);
 
@@ -2339,7 +2349,7 @@ export class Message extends React.PureComponent<Props, State> {
       (key === 'E' || key === 'e') &&
       (event.metaKey || event.ctrlKey) &&
       event.shiftKey &&
-      canReply
+      canReact
     ) {
       this.toggleReactionPicker();
     }

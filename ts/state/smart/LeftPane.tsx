@@ -1,4 +1,4 @@
-// Copyright 2019-2021 Signal Messenger, LLC
+// Copyright 2019-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import React from 'react';
@@ -9,7 +9,6 @@ import type { PropsType as LeftPanePropsType } from '../../components/LeftPane';
 import { LeftPane, LeftPaneMode } from '../../components/LeftPane';
 import type { StateType } from '../reducer';
 import { missingCaseError } from '../../util/missingCaseError';
-import { isAlpha, isBeta } from '../../util/version';
 
 import { ComposerStep, OneTimeModalState } from '../ducks/conversationsEnums';
 import {
@@ -58,6 +57,7 @@ import { SmartNetworkStatus } from './NetworkStatus';
 import { SmartRelinkDialog } from './RelinkDialog';
 import { SmartUpdateDialog } from './UpdateDialog';
 import { SmartCaptchaDialog } from './CaptchaDialog';
+import { SmartCrashReportDialog } from './CrashReportDialog';
 
 function renderExpiredBuildDialog(
   props: Readonly<{ containerWidthBreakpoint: WidthBreakpoint }>
@@ -88,6 +88,9 @@ function renderUpdateDialog(
 function renderCaptchaDialog({ onSkip }: { onSkip(): void }): JSX.Element {
   return <SmartCaptchaDialog onSkip={onSkip} />;
 }
+function renderCrashReportDialog(): JSX.Element {
+  return <SmartCrashReportDialog />;
+}
 
 const getModeSpecificProps = (
   state: StateType
@@ -104,6 +107,7 @@ const getModeSpecificProps = (
           archivedConversations,
           searchConversation,
           searchTerm,
+          startSearchCounter: getStartSearchCounter(state),
           ...(searchConversation && searchTerm ? getSearchResults(state) : {}),
         };
       }
@@ -115,12 +119,18 @@ const getModeSpecificProps = (
         return {
           mode: LeftPaneMode.Search,
           primarySendsSms,
+          searchConversation: getSearchConversation(state),
+          searchDisabled: state.network.challengeStatus !== 'idle',
+          startSearchCounter: getStartSearchCounter(state),
           ...getSearchResults(state),
         };
       }
       return {
         mode: LeftPaneMode.Inbox,
         isAboutToSearchInAConversation: getIsSearchingInAConversation(state),
+        searchConversation: getSearchConversation(state),
+        searchDisabled: state.network.challengeStatus !== 'idle',
+        searchTerm: getQuery(state),
         startSearchCounter: getStartSearchCounter(state),
         ...getLeftPaneLists(state),
       };
@@ -164,19 +174,9 @@ const getModeSpecificProps = (
   }
 };
 
-const canResizeLeftPane = () =>
-  window.Signal.RemoteConfig.isEnabled('desktop.internalUser') ||
-  isAlpha(window.getVersion()) ||
-  isBeta(window.getVersion())
-    ? window.Signal.RemoteConfig.isEnabled('desktop.canResizeLeftPane.beta')
-    : window.Signal.RemoteConfig.isEnabled(
-        'desktop.canResizeLeftPane.production'
-      );
-
 const mapStateToProps = (state: StateType) => {
   return {
     modeSpecificProps: getModeSpecificProps(state),
-    canResizeLeftPane: canResizeLeftPane(),
     preferredWidthFromStorage: getPreferredLeftPaneWidth(state),
     selectedConversationId: getSelectedConversationId(state),
     selectedMessageId: getSelectedMessage(state)?.id,
@@ -185,6 +185,7 @@ const mapStateToProps = (state: StateType) => {
     i18n: getIntl(state),
     regionCode: getRegionCode(state),
     challengeStatus: state.network.challengeStatus,
+    crashReportCount: state.crashReports.count,
     renderExpiredBuildDialog,
     renderMainHeader,
     renderMessageSearchResult,
@@ -192,6 +193,7 @@ const mapStateToProps = (state: StateType) => {
     renderRelinkDialog,
     renderUpdateDialog,
     renderCaptchaDialog,
+    renderCrashReportDialog,
     theme: getTheme(state),
   };
 };

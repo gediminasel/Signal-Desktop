@@ -369,12 +369,17 @@ export const getConversationCallMode = (
   return CallMode.None;
 };
 
+const retryMessages = async (messageIds: Iterable<string>): Promise<void> => {
+  const messages = await getMessagesById(messageIds);
+  await Promise.all(messages.map(message => message.retrySend()));
+};
+
 // Actions
 
+const CLEAR_MESSAGES_PENDING_CONVERSATION_VERIFICATION =
+  'conversations/CLEAR_MESSAGES_PENDING_CONVERSATION_VERIFICATION';
 export const COLORS_CHANGED = 'conversations/COLORS_CHANGED';
 export const COLOR_SELECTED = 'conversations/COLOR_SELECTED';
-const CANCEL_MESSAGES_PENDING_CONVERSATION_VERIFICATION =
-  'conversations/CANCEL_MESSAGES_PENDING_CONVERSATION_VERIFICATION';
 const COMPOSE_TOGGLE_EDITING_AVATAR =
   'conversations/compose/COMPOSE_TOGGLE_EDITING_AVATAR';
 const COMPOSE_ADD_AVATAR = 'conversations/compose/ADD_AVATAR';
@@ -386,9 +391,6 @@ const MESSAGE_STOPPED_BY_MISSING_VERIFICATION =
 const REPLACE_AVATARS = 'conversations/REPLACE_AVATARS';
 const UPDATE_USERNAME_SAVE_STATE = 'conversations/UPDATE_USERNAME_SAVE_STATE';
 
-type CancelMessagesPendingConversationVerificationActionType = {
-  type: typeof CANCEL_MESSAGES_PENDING_CONVERSATION_VERIFICATION;
-};
 type CantAddContactToGroupActionType = {
   type: 'CANT_ADD_CONTACT_TO_GROUP';
   payload: {
@@ -398,6 +400,9 @@ type CantAddContactToGroupActionType = {
 type ClearGroupCreationErrorActionType = { type: 'CLEAR_GROUP_CREATION_ERROR' };
 type ClearInvitedUuidsForNewlyCreatedGroupActionType = {
   type: 'CLEAR_INVITED_UUIDS_FOR_NEWLY_CREATED_GROUP';
+};
+type ClearMessagesPendingConversationVerificationActionType = {
+  type: typeof CLEAR_MESSAGES_PENDING_CONVERSATION_VERIFICATION;
 };
 type CloseCantAddContactToGroupModalActionType = {
   type: 'CLOSE_CANT_ADD_CONTACT_TO_GROUP_MODAL';
@@ -730,11 +735,11 @@ type ReplaceAvatarsActionType = {
   };
 };
 export type ConversationActionType =
-  | CancelMessagesPendingConversationVerificationActionType
   | CantAddContactToGroupActionType
   | ClearChangedMessagesActionType
   | ClearGroupCreationErrorActionType
   | ClearInvitedUuidsForNewlyCreatedGroupActionType
+  | ClearMessagesPendingConversationVerificationActionType
   | ClearSelectedMessageActionType
   | ClearUnreadMetricsActionType
   | CloseCantAddContactToGroupModalActionType
@@ -1243,19 +1248,39 @@ function verifyConversationsStoppingMessageSend(): ThunkAction<
   void,
   RootStateType,
   unknown,
-  never
+  ClearMessagesPendingConversationVerificationActionType
 > {
-  return async (_dispatch, getState) => {
-    const conversationIds = Object.keys(
-      getState().conversations.outboundMessagesPendingConversationVerification
+  return async (dispatch, getState) => {
+    const { outboundMessagesPendingConversationVerification } =
+      getState().conversations;
+
+    const allMessageIds = new Set<string>();
+    const promises: Array<Promise<unknown>> = [];
+
+    Object.entries(outboundMessagesPendingConversationVerification).forEach(
+      ([conversationId, messageIds]) => {
+        for (const messageId of messageIds) {
+          allMessageIds.add(messageId);
+        }
+
+        const conversation = window.ConversationController.get(conversationId);
+        if (!conversation) {
+          return;
+        }
+        if (conversation.isUnverified()) {
+          promises.push(conversation.setVerifiedDefault());
+        }
+        promises.push(conversation.setApproved());
+      }
     );
 
-    await Promise.all(
-      conversationIds.map(async conversationId => {
-        const conversation = window.ConversationController.get(conversationId);
-        await conversation?.setVerifiedDefault();
-      })
-    );
+    promises.push(retryMessages(allMessageIds));
+
+    dispatch({
+      type: CLEAR_MESSAGES_PENDING_CONVERSATION_VERIFICATION,
+    });
+
+    await Promise.all(promises);
   };
 }
 
@@ -1317,7 +1342,7 @@ function cancelMessagesPendingConversationVerification(): ThunkAction<
   void,
   RootStateType,
   unknown,
-  CancelMessagesPendingConversationVerificationActionType
+  ClearMessagesPendingConversationVerificationActionType
 > {
   return async (dispatch, getState) => {
     const messageIdsPending = getMessageIdsPendingBecauseOfVerification(
@@ -1329,11 +1354,12 @@ function cancelMessagesPendingConversationVerification(): ThunkAction<
     });
 
     dispatch({
-      type: CANCEL_MESSAGES_PENDING_CONVERSATION_VERIFICATION,
+      type: CLEAR_MESSAGES_PENDING_CONVERSATION_VERIFICATION,
     });
 
     await window.Signal.Data.saveMessages(
-      messagesStopped.map(message => message.attributes)
+      messagesStopped.map(message => message.attributes),
+      { ourUuid: window.textsecure.storage.user.getCheckedUuid().toString() }
     );
   };
 }
@@ -1383,10 +1409,7 @@ function conversationChanged(
           id
         ) ?? [];
       if (messageIdsPending.length) {
-        const messagesPending = await getMessagesById(messageIdsPending);
-        messagesPending.forEach(message => {
-          message.retrySend();
-        });
+        retryMessages(messageIdsPending);
       }
     }
 
@@ -1612,13 +1635,21 @@ function reviewMessageRequestNameCollision(
   return { type: 'REVIEW_MESSAGE_REQUEST_NAME_COLLISION', payload };
 }
 
-function messagesReset(
-  conversationId: string,
-  messages: Array<MessageAttributesType>,
-  metrics: MessageMetricsType,
-  scrollToMessageId?: string,
-  unboundedFetch?: boolean
-): MessagesResetActionType {
+export type MessageResetOptionsType = Readonly<{
+  conversationId: string;
+  messages: Array<MessageAttributesType>;
+  metrics: MessageMetricsType;
+  scrollToMessageId?: string;
+  unboundedFetch?: boolean;
+}>;
+
+function messagesReset({
+  conversationId,
+  messages,
+  metrics,
+  scrollToMessageId,
+  unboundedFetch,
+}: MessageResetOptionsType): MessagesResetActionType {
   return {
     type: 'MESSAGES_RESET',
     payload: {
@@ -1814,10 +1845,6 @@ async function checkForUsername(
       username
     );
 
-    if (!profile.username || profile.username !== username) {
-      log.error("checkForUsername: Returned username didn't match searched");
-      return;
-    }
     if (!profile.uuid) {
       log.error("checkForUsername: Returned profile didn't include a uuid");
       return;
@@ -1825,7 +1852,7 @@ async function checkForUsername(
 
     return {
       uuid: UUID.cast(profile.uuid),
-      username: profile.username,
+      username,
     };
   } catch (error: unknown) {
     if (!isRecord(error)) {
@@ -2232,7 +2259,7 @@ export function reducer(
   state: Readonly<ConversationsStateType> = getEmptyState(),
   action: Readonly<ConversationActionType>
 ): ConversationsStateType {
-  if (action.type === CANCEL_MESSAGES_PENDING_CONVERSATION_VERIFICATION) {
+  if (action.type === CLEAR_MESSAGES_PENDING_CONVERSATION_VERIFICATION) {
     return {
       ...state,
       outboundMessagesPendingConversationVerification: {},

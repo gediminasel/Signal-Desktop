@@ -1,4 +1,4 @@
-// Copyright 2019-2021 Signal Messenger, LLC
+// Copyright 2019-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import React, { useEffect, useCallback, useMemo, useState } from 'react';
@@ -89,13 +89,14 @@ export type PropsType = {
   selectedConversationId: undefined | string;
   selectedMessageId: undefined | string;
   regionCode: string;
-  canResizeLeftPane: boolean;
   challengeStatus: 'idle' | 'required' | 'pending';
   setChallengeStatus: (status: 'idle') => void;
+  crashReportCount: number;
   theme: ThemeType;
 
   // Action Creators
   cantAddContactToGroup: (conversationId: string) => void;
+  clearConversationSearch: () => void;
   clearGroupCreationError: () => void;
   clearSearch: () => void;
   closeCantAddContactToGroupModal: () => void;
@@ -144,12 +145,14 @@ export type PropsType = {
     _: Readonly<{ containerWidthBreakpoint: WidthBreakpoint }>
   ) => JSX.Element;
   renderCaptchaDialog: (props: { onSkip(): void }) => JSX.Element;
+  renderCrashReportDialog: () => JSX.Element;
 };
 
 export const LeftPane: React.FC<PropsType> = ({
   cantAddContactToGroup,
-  canResizeLeftPane,
   challengeStatus,
+  crashReportCount,
+  clearConversationSearch,
   clearGroupCreationError,
   clearSearch,
   closeCantAddContactToGroupModal,
@@ -165,6 +168,7 @@ export const LeftPane: React.FC<PropsType> = ({
   openConversationInternal,
   preferredWidthFromStorage,
   renderCaptchaDialog,
+  renderCrashReportDialog,
   renderExpiredBuildDialog,
   renderMainHeader,
   renderMessageSearchResult,
@@ -459,7 +463,9 @@ export const LeftPane: React.FC<PropsType> = ({
   ]);
 
   const preRowsNode = helper.getPreRowsNode({
+    clearConversationSearch,
     clearGroupCreationError,
+    clearSearch,
     closeCantAddContactToGroupModal,
     closeMaximumGroupSizeModal,
     closeRecommendedGroupSizeModal,
@@ -468,14 +474,11 @@ export const LeftPane: React.FC<PropsType> = ({
     composeSaveAvatarToDisk,
     createGroup,
     i18n,
-    setComposeGroupAvatar,
-    setComposeGroupName,
-    setComposeGroupExpireTimer,
-    toggleComposeEditingAvatar,
-    onChangeComposeSearchTerm: event => {
-      setComposeSearchTerm(event.target.value);
-    },
     removeSelectedContact: toggleConversationInChooseMembers,
+    setComposeGroupAvatar,
+    setComposeGroupExpireTimer,
+    setComposeGroupName,
+    toggleComposeEditingAvatar,
   });
   const footerContents = helper.getFooterContents({
     createGroup,
@@ -548,18 +551,29 @@ export const LeftPane: React.FC<PropsType> = ({
       {/* eslint-enable jsx-a11y/no-static-element-interactions */}
       <div className="module-left-pane__header">
         {helper.getHeaderContents({
-          clearSearch,
           i18n,
           showInbox,
           startComposing,
           showChooseGroupMembers,
-          updateSearchTerm,
         }) || renderMainHeader()}
       </div>
-      {renderExpiredBuildDialog({ containerWidthBreakpoint: widthBreakpoint })}
-      {renderRelinkDialog({ containerWidthBreakpoint: widthBreakpoint })}
-      {renderNetworkStatus({ containerWidthBreakpoint: widthBreakpoint })}
-      {renderUpdateDialog({ containerWidthBreakpoint: widthBreakpoint })}
+      {helper.getSearchInput({
+        clearConversationSearch,
+        clearSearch,
+        i18n,
+        onChangeComposeSearchTerm: event => {
+          setComposeSearchTerm(event.target.value);
+        },
+        updateSearchTerm,
+      })}
+      <div className="module-left-pane__dialogs">
+        {renderExpiredBuildDialog({
+          containerWidthBreakpoint: widthBreakpoint,
+        })}
+        {renderRelinkDialog({ containerWidthBreakpoint: widthBreakpoint })}
+        {renderNetworkStatus({ containerWidthBreakpoint: widthBreakpoint })}
+        {renderUpdateDialog({ containerWidthBreakpoint: widthBreakpoint })}
+      </div>
       {preRowsNode && <React.Fragment key={0}>{preRowsNode}</React.Fragment>}
       <Measure bounds>
         {({ contentRect, measureRef }: MeasuredComponentProps) => (
@@ -624,23 +638,22 @@ export const LeftPane: React.FC<PropsType> = ({
       {footerContents && (
         <div className="module-left-pane__footer">{footerContents}</div>
       )}
-      {canResizeLeftPane && (
-        <>
-          {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
-          <div
-            className="module-left-pane__resize-grab-area"
-            onMouseDown={() => {
-              setIsResizing(true);
-            }}
-          />
-        </>
-      )}
+      <>
+        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+        <div
+          className="module-left-pane__resize-grab-area"
+          onMouseDown={() => {
+            setIsResizing(true);
+          }}
+        />
+      </>
       {challengeStatus !== 'idle' &&
         renderCaptchaDialog({
           onSkip() {
             setChallengeStatus('idle');
           },
         })}
+      {crashReportCount > 0 && renderCrashReportDialog()}
     </div>
   );
 };

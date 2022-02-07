@@ -648,8 +648,8 @@
         }
     },
     "decryptionErrorToast": {
-        "message": "Ohjelma törmäsi salauksen purkuvirheeseen.",
-        "description": "An error popup when we haven't added an error for decryption error.",
+        "message": "Työpöytä törmäsi salauksen purkuvirheeseen lähteestä $name$, laitteelta $deviceId$",
+        "description": "An error popup when we haven't added an in-timeline error for decryption error, only for beta/internal users.",
         "placeholders": {
             "name": {
                 "content": "$1",
@@ -790,7 +790,7 @@
         "description": "Aria label for clear search button"
     },
     "searchIn": {
-        "message": "Search chat",
+        "message": "Etsi keskustelusta",
         "description": "Shown in the search box before text is entered when searching in a specific conversation"
     },
     "noSearchResults": {
@@ -1282,7 +1282,7 @@
         }
     },
     "ChangeNumber--notification": {
-        "message": "$sender$on vaihtanut puhelinnumeronsa",
+        "message": "$sender$ on vaihtanut puhelinnumeronsa",
         "description": "Shown in timeline when a member of a conversation changes their phone number",
         "placeholders": {
             "sender": {
@@ -1331,29 +1331,79 @@
         "message": "Yksityisyys on mahdollista. Signal tekee siitä helppoa.",
         "description": "Tagline displayed under 'installWelcome' string on the install page"
     },
-    "linkYourPhone": {
-        "message": "Yhdistä puhelimesi ja Signal Desktop",
-        "description": "Shown on the front page when the application first starts, above the QR code"
-    },
-    "signalSettings": {
-        "message": "Signal-asetukset",
-        "description": "Used in the guidance to help people find the 'link new device' area of their Signal mobile app"
-    },
     "linkedDevices": {
         "message": "Yhdistetyt laitteet",
         "description": "Used in the guidance to help people find the 'link new device' area of their Signal mobile app"
-    },
-    "plusButton": {
-        "message": "'+'-nappi",
-        "description": "The button used in Signal Android to add a new linked device"
     },
     "linkNewDevice": {
         "message": "Yhdistä uusi laite",
         "description": "The menu option shown in Signal iOS to add a new linked device"
     },
-    "LinkScreen__scan-this-code": {
+    "Install__scan-this-code": {
         "message": "Skannaa tämä koodi puhelimesi Signal-sovelluksessa.",
-        "description": "Alt text for the QR code on the device link screen"
+        "description": "Title of the device link screen. Also used as alt text for the QR code on the device link screen"
+    },
+    "Install__instructions__1": {
+        "message": "Avaa Signal puhelimessa",
+        "description": "Instructions on the device link screen"
+    },
+    "Install__instructions__2": {
+        "message": "Valitse ensin $settings$ ja seuraavaksi $linkedDevices$",
+        "description": "Instructions on the device link screen",
+        "placeholders": {
+            "settings": {
+                "content": "$1",
+                "example": "<strong>Settings</strong>"
+            },
+            "linkedDevices": {
+                "content": "$2",
+                "example": "<strong>Linked Devices</strong>"
+            }
+        }
+    },
+    "Install__instructions__2__settings": {
+        "message": "Asetukset",
+        "description": "Part of the 2nd instruction on the device link screen"
+    },
+    "Install__instructions__3": {
+        "message": "Napauta $plusButton$ (Android) tai $linkNewDevice$ (iPhone)",
+        "description": "Instructions on the device link screen",
+        "placeholders": {
+            "plusButton": {
+                "content": "$1",
+                "example": "<PlusButton />"
+            },
+            "linkNewDevice": {
+                "content": "$2",
+                "example": "<strong>Link New Device</strong>"
+            }
+        }
+    },
+    "Install__qr-failed": {
+        "message": "QR-koodin lataaminen ei onnistunut. Tarkista internet-yhteytesi ja yritä uudelleen. $learnMore$",
+        "description": "Shown on the install screen if the QR code fails to load",
+        "placeholders": {
+            "learnMore": {
+                "content": "$1",
+                "example": "<a>Learn more</a>"
+            }
+        }
+    },
+    "Install__qr-failed__learn-more": {
+        "message": "Lue lisää",
+        "description": "Shown on the install screen if the QR code fails to load"
+    },
+    "Install__support-link": {
+        "message": "Tarvitsetko apua?",
+        "description": "Shown on the install screen. Link takes users to a support page"
+    },
+    "Install__choose-device-name__description": {
+        "message": "Tämä nimi näytetään Yhdistetyt laitteet -näkymässä.",
+        "description": "The subheader shown on the 'choose device name' screen in the device linking process"
+    },
+    "Install__choose-device-name__placeholder": {
+        "message": "Oma tietokone",
+        "description": "The placeholder for the 'choose device name' input"
     },
     "Preferences--device-name": {
         "message": "Laitteen nimi",
@@ -1371,6 +1421,10 @@
         "message": "Synkronoidaan yhteystietoja ja ryhmiä",
         "description": "Shown during initial link while contacts and groups are being pulled from mobile device"
     },
+    "initialSync__subtitle": {
+        "message": "Huomio: keskusteluhistoriaa ei synkronoida tälle laitteelle",
+        "description": "Shown during initial link while contacts and groups are being pulled from mobile device"
+    },
     "installConnectionFailed": {
         "message": "Palvelimeen ei saada yhteyttä.",
         "description": "Displayed when we can't connect to the server."
@@ -1385,6 +1439,10 @@
     },
     "installErrorHeader": {
         "message": "Jokin meni pieleen!",
+        "description": ""
+    },
+    "installUnknownError": {
+        "message": "Tapahtui odottamaton virhe. Yritä uudelleen.",
         "description": ""
     },
     "installTryAgain": {
@@ -1418,6 +1476,10 @@
     "calling__return": {
         "message": "Palaa puheluun",
         "description": "Button label in the call lobby for returning to a call"
+    },
+    "calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
+        "message": "Mikrofonisi on mykistetty, koska puhelussa on paljon osanottajia.",
+        "description": "Shown in a call lobby toast if there are a lot of people already on the call"
     },
     "calling__call-is-full": {
         "message": "Puhelu on täynnä",
@@ -5434,7 +5496,7 @@
         "description": "This is the info about the disappearing messages setting, in groups"
     },
     "ConversationDetails--disappearing-messages-info--direct": {
-        "message": "When enabled, messages sent and received in this 1:1 chat will disappear after they've been seen.",
+        "message": "Kun käytössä, tämän 1:1-keskustelun lähetetyt ja vastaanotetut viestit katoavat, kun ne on nähty.",
         "description": "This is the info about the disappearing messages setting, for direct conversations"
     },
     "ConversationDetails--notifications": {
@@ -6585,6 +6647,22 @@
         "message": "Sulje se itse ja napsauta Yritä uudelleen jatkaaksesi.",
         "description": "Second line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
     },
+    "CrashReportDialog__title": {
+        "message": "Sovellus kaatui",
+        "description": "A title of the dialog displayed when starting an application after a recent crash"
+    },
+    "CrashReportDialog__body": {
+        "message": "Signal käynnistettiin uudelleen virheen jälkeen. Voit lähettää virheraportin Signalille, tämä auttaa ohjelmistovirheen tutkimisessa ja korjaamisessa.",
+        "description": "The body of the dialog displayed when starting an application after a recent crash"
+    },
+    "CrashReportDialog__submit": {
+        "message": "Lähetä",
+        "description": "A button label for submission of the crash reporter data after a recent crash"
+    },
+    "CrashReportDialog__erase": {
+        "message": "Älä lähetä",
+        "description": "A button label for erasure of the crash reporter data after a recent crash and continuing to start the app"
+    },
     "CustomizingPreferredReactions__title": {
         "message": "Mukauta reaktiot",
         "description": "Shown in the header of the modal for customizing the preferred reactions. Also shown in the tooltip for the button that opens this modal."
@@ -6602,7 +6680,7 @@
         "description": "Label for the draw button in the media editor"
     },
     "MediaEditor__control--text": {
-        "message": "Add text",
+        "message": "Lisää teksti",
         "description": "Label for the text button in the media editor"
     },
     "MediaEditor__control--sticker": {
@@ -6610,7 +6688,7 @@
         "description": "Label for the sticker button in the media editor"
     },
     "MediaEditor__control--crop": {
-        "message": "Crop and rotate",
+        "message": "Leikkaa ja käännä",
         "description": "Label for the crop & rotate button in the media editor"
     },
     "MediaEditor__control--undo": {
@@ -6622,35 +6700,35 @@
         "description": "Label for the redo button in the media editor"
     },
     "MediaEditor__text--regular": {
-        "message": "Regular",
+        "message": "Tavallinen",
         "description": "Describes what attribute the color picker will change on the text"
     },
     "MediaEditor__text--highlight": {
-        "message": "Highlight",
+        "message": "Korostus",
         "description": "Describes what attribute the color picker will change on the text"
     },
     "MediaEditor__text--outline": {
-        "message": "Outline",
+        "message": "Reunaviiva",
         "description": "Describes what attribute the color picker will change on the text"
     },
     "MediaEditor__text--underline": {
-        "message": "Underline",
+        "message": "Alleviivaus",
         "description": "Describes what attribute the color picker will change on the text"
     },
     "MediaEditor__draw--pen": {
-        "message": "Pen",
+        "message": "Kynä",
         "description": "Type of brush to free draw"
     },
     "MediaEditor__draw--highlighter": {
-        "message": "Highlighter",
+        "message": "Korostuskynä",
         "description": "Type of brush to free draw"
     },
     "MediaEditor__draw--thin": {
-        "message": "Thin",
+        "message": "Ohut",
         "description": "Tip width of the brush"
     },
     "MediaEditor__draw--regular": {
-        "message": "Regular",
+        "message": "Tavallinen",
         "description": "Tip width of the brush"
     },
     "MediaEditor__draw--medium": {
@@ -6658,7 +6736,7 @@
         "description": "Tip width of the brush"
     },
     "MediaEditor__draw--heavy": {
-        "message": "Heavy",
+        "message": "Vahva",
         "description": "Tip width of the brush"
     },
     "MediaEditor__crop--reset": {
@@ -6666,7 +6744,7 @@
         "description": "Reset the crop state"
     },
     "MediaEditor__crop--rotate": {
-        "message": "Rotate",
+        "message": "Käännä",
         "description": "Rotate the canvas"
     },
     "MediaEditor__crop--flip": {
@@ -6685,18 +6763,6 @@
         "message": "Uudet ominaisuudet",
         "description": "Title for the whats new modal"
     },
-    "WhatsNew__v5.24--1": {
-        "message": "Voit nyt etsiä arkistoiduista keskusteluista. Kuvittele itsesi etsiväsi (nopeasti) muinaisten teosten läpi ja etsiväsi seuraavaa vihjettä.",
-        "description": "Release notes for v5.24"
-    },
-    "WhatsNew__v5.24--2": {
-        "message": "Jos olet joskus vierittänyt ylöspäin ja lähettänyt viestin, saatat ihmetellä, missä viestisi oli! Nyt aina kun lähetät viestin, se vieritetään näkyviin, jotta voit ihailla kovaa työtäsi.",
-        "description": "Release notes for v5.24"
-    },
-    "WhatsNew__v5.24--3": {
-        "message": "Reagoitko viestiin? Sen pitäisi nyt olla luotettavampi ja yrittää uudelleen jopa 24 tuntia",
-        "description": "Release notes for v5.24"
-    },
     "WhatsNew__v5.25--1": {
         "message": "Tämä versio sisältää useita pieniä parannuksia ja virhekorjauksia, jotka pitävät Signalin toiminnan sujuvana.",
         "description": "Release notes for v5.25"
@@ -6706,11 +6772,37 @@
         "description": "Release notes for releases that only include bug fixes"
     },
     "WhatsNew__v5.26--1": {
-        "message": "Tired: Sending plain un-edited images on Signal. Wired: Adding cat stickers, neon text, and drawing happy trees on your images before sending them on Signal.",
+        "message": "Väsynyt: Lähetä tavallisia, muokkaamattomia kuvia Signalissa. Virkeä: Lisää kissatarroja, neon-tekstiä ja piirtele iloisia puita kuviin ennen niiden lähetystä Signalilla.",
         "description": "Release notes for v5.26"
     },
     "WhatsNew__v5.26--2": {
-        "message": "Ever feel like you need more pixels on the right pane in your life? Are you a fan of avatars, but only avatars and nothing else? Do you have a \"Save the screen real estate\" bumper sticker on your car? If you answered yes or no to any of those questions, then this update has got some collapsible left pane for you.",
+        "message": "Tuntuuko sinusta koskaan siltä, että haluaisit lisää pikseleitä elämäsi oikeaan sivupalkkiin? Oletko avatarien ja vain avatarien ystävä? Onko sinulla \"säästä näytöllä käytettyä tilaa\" -puskuritarra autossasi? Vastasitpa kyllä tai ei edellisiin kysymyksiin, tämä päivitys tuo sinulle vasemman sivupalkin pienentämismahdollisuuden.",
         "description": "Release notes for v5.26"
+    },
+    "WhatsNew__macos-m1": {
+        "message": "Signal Desktop pyörii nyt natiivitilassa uusilla Applen M1 -tietokoneilla. Jos sinulla on tällainen tietokone, ohjelman pitäisi nyt toimia nopeammin. Jos ei ole, voit olla iloinen sellaisten ihmisten puolesta. Suuret kiitokset käyttäjälle $dennis$ hänen suuresta työpanoksestaan M1-tuen mahdollistamisessa!",
+        "description": "Release note for the macOS M1 release",
+        "placeholders": {
+            "dennis": {
+                "content": "$1",
+                "example": "<a>Dennis Ameling</a>"
+            }
+        }
+    },
+    "WhatsNew__v5.27--1": {
+        "message": "Pitkä puhelu? Järjestelmäsi tulisi pysyä levon sijaan hereillä koko ajan, kun olet tärkeässä keskustelussa.",
+        "description": "Release notes for v5.27"
+    },
+    "WhatsNew__v5.27--2": {
+        "message": "On muutamia pieniä viilauksia ja korjauksia, joiden avulla Signal toimii sulavasti, mukaan lukien muutamia puheluaiheisia parannuksia.",
+        "description": "Release notes for v5.27"
+    },
+    "WhatsNew__v5.28--1": {
+        "message": "Uusi vuosi, uusi ensiasetusten syöttönäkymä. Olemme uudistaneet ensiasetusten syöttönäkymän juuri ajoissa vuotta 2022 ajatellen.",
+        "description": "Release notes for v5.28"
+    },
+    "WhatsNew__v5.29--1": {
+        "message": "Uutta: vähemmän näppäimistön hakkaajan tai äänekkään purukuminsyöjän jahtaamista! Signal Desktop mykistää nyt mikrofonisi automaattisesti, mikäli puhelussa on vähintään kahdeksan osallistujaa.",
+        "description": "Release notes for v5.28"
     }
 }

@@ -20,6 +20,8 @@ import { UUID, isValidUuid } from './types/UUID';
 import { Address } from './types/Address';
 import { QualifiedAddress } from './types/QualifiedAddress';
 import * as log from './logging/log';
+import { sleep } from './util/sleep';
+import { isNotNil } from './util/isNotNil';
 
 const MAX_MESSAGE_BODY_LENGTH = 64 * 1024;
 
@@ -118,6 +120,8 @@ export class ConversationController {
   private _initialFetchComplete = false;
 
   private _initialPromise: undefined | Promise<void>;
+
+  private _conversationOpenStart = new Map<string, number>();
 
   constructor(private _conversations: ConversationModelCollectionType) {}
 
@@ -277,7 +281,12 @@ export class ConversationController {
   getOurConversationId(): string | undefined {
     const e164 = window.textsecure.storage.user.getNumber();
     const uuid = window.textsecure.storage.user.getUuid()?.toString();
-    return this.ensureContactIds({ e164, uuid, highTrust: true });
+    return this.ensureContactIds({
+      e164,
+      uuid,
+      highTrust: true,
+      reason: 'getOurConversationId',
+    });
   }
 
   getOurConversationIdOrThrow(): string {
@@ -323,11 +332,20 @@ export class ConversationController {
     e164,
     uuid,
     highTrust,
-  }: {
-    e164?: string | null;
-    uuid?: string | null;
-    highTrust?: boolean;
-  }): string | undefined {
+    reason,
+  }:
+    | {
+        e164?: string | null;
+        uuid?: string | null;
+        highTrust?: false;
+        reason?: void;
+      }
+    | {
+        e164?: string | null;
+        uuid?: string | null;
+        highTrust: true;
+        reason: string;
+      }): string | undefined {
     // Check for at least one parameter being provided. This is necessary
     // because this path can be called on startup to resolve our own ID before
     // our phone number or UUID are known. The existing behavior in these
@@ -344,7 +362,10 @@ export class ConversationController {
 
     // 1. Handle no match at all
     if (!convoE164 && !convoUuid) {
-      log.info('ensureContactIds: Creating new contact, no matches found');
+      log.info(
+        'ensureContactIds: Creating new contact, no matches found',
+        highTrust ? reason : 'no reason'
+      );
       const newConvo = this.getOrCreate(identifier, 'private');
       if (highTrust && e164) {
         newConvo.updateE164(e164);
@@ -373,7 +394,10 @@ export class ConversationController {
       // Fill in the UUID for an e164-only contact
       if (normalizedUuid && !convoE164.get('uuid')) {
         if (highTrust) {
-          log.info('ensureContactIds: Adding UUID to e164-only match');
+          log.info(
+            `ensureContactIds: Adding UUID (${uuid}) to e164-only match ` +
+              `(${e164}), reason: ${reason}`
+          );
           convoE164.updateUuid(normalizedUuid);
           updateConversation(convoE164.attributes);
         }
@@ -387,7 +411,10 @@ export class ConversationController {
       const newConvo = this.getOrCreate(normalizedUuid, 'private');
 
       if (highTrust) {
-        log.info('ensureContactIds: Moving e164 from old contact to new');
+        log.info(
+          `ensureContactIds: Moving e164 (${e164}) from old contact ` +
+            `(${convoE164.get('uuid')}) to new (${uuid}), reason: ${reason}`
+        );
 
         // Remove the e164 from the old contact...
         convoE164.set({ e164: undefined });
@@ -404,7 +431,10 @@ export class ConversationController {
     }
     if (!convoE164 && convoUuid) {
       if (e164 && highTrust) {
-        log.info('ensureContactIds: Adding e164 to UUID-only match');
+        log.info(
+          `ensureContactIds: Adding e164 (${e164}) to UUID-only match ` +
+            `(${uuid}), reason: ${reason}`
+        );
         convoUuid.updateE164(e164);
         updateConversation(convoUuid.attributes);
       }
@@ -427,7 +457,9 @@ export class ConversationController {
       // Conflict: If e164 match already has a UUID, we remove its e164.
       if (convoE164.get('uuid') && convoE164.get('uuid') !== normalizedUuid) {
         log.info(
-          'ensureContactIds: e164 match had different UUID than incoming pair, removing its e164.'
+          `ensureContactIds: e164 match (${e164}) had different ` +
+            `UUID(${convoE164.get('uuid')}) than incoming pair (${uuid}), ` +
+            `removing its e164, reason: ${reason}`
         );
 
         // Remove the e164 from the old contact...
@@ -752,6 +784,52 @@ export class ConversationController {
   load(): Promise<void> {
     this._initialPromise ||= this.doLoad();
     return this._initialPromise;
+  }
+
+  // A number of things outside conversation.attributes affect conversation re-rendering.
+  //   If it's scoped to a given conversation, it's easy to trigger('change'). There are
+  //   important values in storage and the storage service which change rendering pretty
+  //   radically, so this function is necessary to force regeneration of props.
+  async forceRerender(identifiers?: Array<string>): Promise<void> {
+    let count = 0;
+    const conversations = identifiers
+      ? identifiers.map(identifier => this.get(identifier)).filter(isNotNil)
+      : this._conversations.models.slice();
+    log.info(
+      `forceRerender: Starting to loop through ${conversations.length} conversations`
+    );
+
+    for (let i = 0, max = conversations.length; i < max; i += 1) {
+      const conversation = conversations[i];
+
+      if (conversation.cachedProps) {
+        conversation.oldCachedProps = conversation.cachedProps;
+        conversation.cachedProps = null;
+
+        conversation.trigger('props-change', conversation, false);
+        count += 1;
+      }
+
+      if (count % 10 === 0) {
+        // eslint-disable-next-line no-await-in-loop
+        await sleep(300);
+      }
+    }
+    log.info(`forceRerender: Updated ${count} conversations`);
+  }
+
+  onConvoOpenStart(conversationId: string): void {
+    this._conversationOpenStart.set(conversationId, Date.now());
+  }
+
+  onConvoMessageMount(conversationId: string): void {
+    const loadStart = this._conversationOpenStart.get(conversationId);
+    if (loadStart === undefined) {
+      return;
+    }
+
+    this._conversationOpenStart.delete(conversationId);
+    this.get(conversationId)?.onOpenComplete(loadStart);
   }
 
   private async doLoad(): Promise<void> {
