@@ -1,4 +1,4 @@
-// Copyright 2019-2021 Signal Messenger, LLC
+// Copyright 2019-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /* eslint-disable camelcase */
@@ -480,7 +480,7 @@ export type ConversationChangedActionType = {
     data: ConversationType;
   };
 };
-type ConversationRemovedActionType = {
+export type ConversationRemovedActionType = {
   type: 'CONVERSATION_REMOVED';
   payload: {
     id: string;
@@ -1439,7 +1439,9 @@ function conversationUnloaded(id: string): ConversationUnloadedActionType {
   };
 }
 
-function createGroup(): ThunkAction<
+function createGroup(
+  createGroupV2 = groups.createGroupV2
+): ThunkAction<
   void,
   RootStateType,
   unknown,
@@ -1461,7 +1463,7 @@ function createGroup(): ThunkAction<
     dispatch({ type: 'CREATE_GROUP_PENDING' });
 
     try {
-      const conversation = await groups.createGroupV2({
+      const conversation = await createGroupV2({
         name: composer.groupName.trim(),
         avatar: composer.groupAvatar,
         avatars: composer.userAvatarData.map(avatarData =>

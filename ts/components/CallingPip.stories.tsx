@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Signal Messenger, LLC
+// Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import * as React from 'react';
@@ -60,7 +60,7 @@ const defaultCall: ActiveCallType = {
 const createProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
   activeCall: overrideProps.activeCall || defaultCall,
   getGroupCallVideoFrameSource: fakeGetGroupCallVideoFrameSource,
-  hangUp: action('hang-up'),
+  hangUpActiveCall: action('hang-up-active-call'),
   hasLocalVideo: boolean('hasLocalVideo', overrideProps.hasLocalVideo || false),
   i18n,
   setGroupCallVideoRequest: action('set-group-call-video-request'),
@@ -119,6 +119,7 @@ story.add('Group Call', () => {
       deviceCount: 0,
       peekedParticipants: [],
       remoteParticipants: [],
+      speakingDemuxIds: new Set<number>(),
     },
   });
   return <CallingPip {...props} />;

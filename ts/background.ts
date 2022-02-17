@@ -459,6 +459,7 @@ export async function startApp(): Promise<void> {
   log.info('environment:', window.getEnvironment());
 
   let newVersion = false;
+  let lastVersion: string | undefined;
 
   window.document.title = window.getTitle();
 
@@ -640,7 +641,7 @@ export async function startApp(): Promise<void> {
     );
 
     const currentVersion = window.getVersion();
-    const lastVersion = window.storage.get('version');
+    lastVersion = window.storage.get('version');
     newVersion = !lastVersion || currentVersion !== lastVersion;
     await window.storage.put('version', currentVersion);
 
@@ -1679,6 +1680,12 @@ export async function startApp(): Promise<void> {
       }
     }
 
+    if (newVersion && lastVersion) {
+      if (window.isBeforeVersion(lastVersion, 'v5.31.0')) {
+        window.ConversationController.repairPinnedConversations();
+      }
+    }
+
     window.dispatchEvent(new Event('storage_ready'));
 
     badgeImageFileDownloader.checkForFilesToDownload();
@@ -1689,7 +1696,11 @@ export async function startApp(): Promise<void> {
     log.info(
       `Expiration start timestamp cleanup: Found ${messagesUnexpectedlyMissingExpirationStartTimestamp.length} messages for cleanup`
     );
-    if (messagesUnexpectedlyMissingExpirationStartTimestamp.length) {
+    if (!window.textsecure.storage.user.getUuid()) {
+      log.info(
+        "Expiration start timestamp cleanup: Cancelling update; we don't have our own UUID"
+      );
+    } else if (messagesUnexpectedlyMissingExpirationStartTimestamp.length) {
       const newMessageAttributes =
         messagesUnexpectedlyMissingExpirationStartTimestamp.map(message => {
           const expirationStartTimestamp = Math.min(
@@ -1707,7 +1718,7 @@ export async function startApp(): Promise<void> {
             )
           );
           log.info(
-            `Expiration start timestamp cleanup: starting timer for ${message.type} message sent at ${message.sent_at}. Starting timer at ${message.expirationStartTimestamp}`
+            `Expiration start timestamp cleanup: starting timer for ${message.type} message sent at ${message.sent_at}. Starting timer at ${expirationStartTimestamp}`
           );
           return {
             ...message,
@@ -1828,55 +1839,6 @@ export async function startApp(): Promise<void> {
         });
 
         removeMessageRequestListener();
-      }
-    );
-
-    // Listen for changes to the `desktop.gv2` remote configuration flag
-    const removeGv2Listener = window.Signal.RemoteConfig.onChange(
-      'desktop.gv2',
-      async ({ enabled }) => {
-        if (!enabled) {
-          return;
-        }
-
-        // Erase current manifest version so we re-process storage service data
-        await window.storage.remove('manifestVersion');
-
-        // Kick off window.storage service fetch to grab GroupV2 information
-        await window.Signal.Services.runStorageServiceSyncJob();
-
-        // This is a one-time thing
-        removeGv2Listener();
-      }
-    );
-
-    window.Signal.RemoteConfig.onChange(
-      'desktop.storage',
-      async ({ enabled }) => {
-        if (!enabled) {
-          await window.storage.remove('storageKey');
-          return;
-        }
-
-        await window.storage.remove('manifestVersion');
-
-        if (window.ConversationController.areWePrimaryDevice()) {
-          log.warn(
-            'onChange/desktop.storage: We are primary device; not sending key sync request'
-          );
-          return;
-        }
-
-        try {
-          await singleProtoJobQueue.add(
-            window.textsecure.messaging.getRequestKeySyncMessage()
-          );
-        } catch (error) {
-          log.error(
-            'desktop.storage/onChange: Failed to queue sync message',
-            Errors.toLogFormat(error)
-          );
-        }
       }
     );
 
@@ -2229,6 +2191,17 @@ export async function startApp(): Promise<void> {
               Errors.toLogFormat(error)
             );
           }
+        }
+
+        try {
+          await singleProtoJobQueue.add(
+            window.textsecure.messaging.getRequestKeySyncMessage()
+          );
+        } catch (error) {
+          log.error(
+            'Failed to queue request key sync message',
+            Errors.toLogFormat(error)
+          );
         }
       }
 
@@ -2995,9 +2968,9 @@ export async function startApp(): Promise<void> {
     }
 
     log.info(
-      'onProfileKeyUpdate: updating profileKey',
-      data.source,
-      data.sourceUuid
+      'onProfileKeyUpdate: updating profileKey for',
+      data.sourceUuid,
+      data.source
     );
 
     await conversation.setProfileKey(data.profileKey);

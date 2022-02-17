@@ -1,4 +1,4 @@
-// Copyright 2018-2021 Signal Messenger, LLC
+// Copyright 2018-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /* eslint-disable no-console */
@@ -30,6 +30,9 @@ const excludedFilesRegexp = RegExp(
     '\\.d\\.ts$',
     '.+\\.stories\\.js',
     '.+\\.stories\\.tsx',
+
+    // Compiled files
+    '^ts/.+\\.js',
 
     // High-traffic files in our project
     '^app/.+(ts|js)',
@@ -74,6 +77,7 @@ const excludedFilesRegexp = RegExp(
     '^.github/.+',
 
     // Modules we trust
+    '^node_modules/@signalapp/signal-client/.+',
     '^node_modules/core-js-pure/.+',
     '^node_modules/core-js/.+',
     '^node_modules/fbjs/.+',
@@ -104,8 +108,10 @@ const excludedFilesRegexp = RegExp(
     '^node_modules/react-color/.+/(?:core-js|fbjs|lodash)/.+',
 
     // Modules used only in test/development scenarios
+    '^node_modules/esbuild/.+',
     '^node_modules/@babel/.+',
     '^node_modules/@chanzuckerberg/axe-storybook-testing/.+',
+    '^node_modules/@signalapp/mock-server/.+',
     '^node_modules/@svgr/.+',
     '^node_modules/@types/.+',
     '^node_modules/@webassemblyjs/.+',
@@ -195,8 +201,6 @@ const excludedFilesRegexp = RegExp(
     '^node_modules/needle/.+',
     '^node_modules/nise/.+',
     '^node_modules/node-gyp/.+',
-    '^node_modules/node-sass-import-once/.+',
-    '^node_modules/node-sass/.+',
     '^node_modules/npm-run-all/.+',
     '^node_modules/nsp/.+',
     '^node_modules/nyc/.+',
@@ -222,6 +226,7 @@ const excludedFilesRegexp = RegExp(
     '^node_modules/resolve/.+',
     '^node_modules/sass-graph/.+',
     '^node_modules/sass-loader/.+',
+    '^node_modules/sass/.+',
     '^node_modules/schema-utils/.+',
     '^node_modules/scss-tokenizer/.+',
     '^node_modules/send/.+',

@@ -17,6 +17,7 @@ import type {
   WhatIsThis,
 } from '../model-types.d';
 import { getInitials } from '../util/getInitials';
+import { normalizeUuid } from '../util/normalizeUuid';
 import type { AttachmentType } from '../types/Attachment';
 import { isGIF } from '../types/Attachment';
 import type { CallHistoryDetailsType } from '../types/Calling';
@@ -143,6 +144,7 @@ const ATTRIBUTES_THAT_DONT_INVALIDATE_PROPS_CACHE = new Set([
   'profileLastFetchedAt',
   'needsStorageServiceSync',
   'storageID',
+  'storageVersion',
   'storageUnknownFields',
 ]);
 
@@ -261,6 +263,17 @@ export class ConversationModel extends window.Backbone
   override initialize(
     attributes: Partial<ConversationAttributesType> = {}
   ): void {
+    const uuid = this.get('uuid');
+    const normalizedUuid =
+      uuid && normalizeUuid(uuid, 'ConversationModel.initialize');
+    if (uuid && normalizedUuid !== uuid) {
+      log.warn(
+        'ConversationModel.initialize: normalizing uuid from ' +
+          `${uuid} to ${normalizedUuid}`
+      );
+      this.set('uuid', normalizedUuid);
+    }
+
     if (isValidE164(attributes.id, false)) {
       this.set({ id: UUID.generate().toString(), e164: attributes.id });
     }
@@ -4045,6 +4058,10 @@ export class ConversationModel extends window.Backbone
           timestamp: now,
           isArchived: false,
         });
+
+        if (enableProfileSharing) {
+          this.captureChange('mandatoryProfileSharing');
+        }
       } finally {
         this.isInReduxBatch = false;
       }
@@ -4174,9 +4191,7 @@ export class ConversationModel extends window.Backbone
 
     if (Boolean(before) !== Boolean(after)) {
       if (after) {
-        // we're capturing a storage sync below so
-        // we don't need to capture it twice
-        this.unpin({ stopStorageSync: true });
+        this.unpin();
       }
       this.captureChange('isArchived');
     }
@@ -5056,14 +5071,6 @@ export class ConversationModel extends window.Backbone
   // [X] markedUnread
   // [X] dontNotifyForMentionsIfMuted
   captureChange(logMessage: string): void {
-    if (!window.Signal.RemoteConfig.isEnabled('desktop.storageWrite3')) {
-      log.info(
-        'conversation.captureChange: Returning early; desktop.storageWrite3 is falsey'
-      );
-
-      return;
-    }
-
     log.info('storageService[captureChange]', logMessage, this.idForLogging());
     this.set({ needsStorageServiceSync: true });
 
@@ -5072,7 +5079,7 @@ export class ConversationModel extends window.Backbone
     });
   }
 
-  startMuteTimer(): void {
+  startMuteTimer({ viaStorageServiceSync = false } = {}): void {
     if (this.muteTimer !== undefined) {
       clearTimeout(this.muteTimer);
       this.muteTimer = undefined;
@@ -5082,7 +5089,7 @@ export class ConversationModel extends window.Backbone
     if (isNumber(muteExpiresAt) && muteExpiresAt < Number.MAX_SAFE_INTEGER) {
       const delay = muteExpiresAt - Date.now();
       if (delay <= 0) {
-        this.setMuteExpiration(0);
+        this.setMuteExpiration(0, { viaStorageServiceSync });
         return;
       }
 
@@ -5101,7 +5108,10 @@ export class ConversationModel extends window.Backbone
     }
 
     this.set({ muteExpiresAt });
-    this.startMuteTimer();
+
+    // Don't cause duplicate captureChange
+    this.startMuteTimer({ viaStorageServiceSync: true });
+
     if (!viaStorageServiceSync) {
       this.captureChange('mutedUntilTimestamp');
     }
@@ -5289,7 +5299,7 @@ export class ConversationModel extends window.Backbone
     window.Signal.Data.updateConversation(this.attributes);
   }
 
-  unpin({ stopStorageSync = false } = {}): void {
+  unpin(): void {
     if (!this.get('isPinned')) {
       return;
     }
@@ -5302,9 +5312,7 @@ export class ConversationModel extends window.Backbone
 
     pinnedConversationIds.delete(this.id);
 
-    if (!stopStorageSync) {
-      this.writePinnedConversations([...pinnedConversationIds]);
-    }
+    this.writePinnedConversations([...pinnedConversationIds]);
 
     this.set('isPinned', false);
     window.Signal.Data.updateConversation(this.attributes);
@@ -5491,7 +5499,7 @@ window.Whisper.ConversationCollection = window.Backbone.Collection.extend({
   },
 
   comparator(m: WhatIsThis) {
-    return -m.get('timestamp');
+    return -(m.get('active_at') || 0);
   },
 });
 

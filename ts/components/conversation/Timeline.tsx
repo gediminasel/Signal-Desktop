@@ -3,17 +3,14 @@
 
 import { debounce, get, isEqual, isNumber, pick } from 'lodash';
 import classNames from 'classnames';
-import type { CSSProperties, ReactChild, ReactNode, RefObject } from 'react';
+import type { ReactChild, ReactNode, RefObject } from 'react';
 import React from 'react';
 import { createSelector } from 'reselect';
-import type { Grid } from 'react-virtualized';
-import {
-  AutoSizer,
-  CellMeasurer,
-  CellMeasurerCache,
-  List,
-} from 'react-virtualized';
+import type { Grid, ListRowProps } from 'react-virtualized';
+import { AutoSizer, CellMeasurer, List } from 'react-virtualized';
 import Measure from 'react-measure';
+
+import * as log from '../../logging/log';
 
 import { ScrollDownButton } from './ScrollDownButton';
 
@@ -40,6 +37,7 @@ import type { GroupNameCollisionsWithIdsByTitle } from '../../util/groupMemberNa
 import { hasUnacknowledgedCollisions } from '../../util/groupMemberNameCollisions';
 import { TimelineFloatingHeader } from './TimelineFloatingHeader';
 import {
+  RowHeightCache,
   fromItemIndexToRow,
   fromRowToItemIndex,
   getEphemeralRows,
@@ -50,6 +48,7 @@ import {
   getWidthBreakpoint,
 } from '../../util/timelineUtil';
 
+const ESTIMATED_ROW_HEIGHT = 64;
 const AT_BOTTOM_THRESHOLD = 15;
 const NEAR_BOTTOM_THRESHOLD = 15;
 const AT_TOP_THRESHOLD = 10;
@@ -115,7 +114,7 @@ type PropsHousekeepingType = {
   warning?: WarningType;
   contactSpoofingReview?: ContactSpoofingReviewPropType;
 
-  getTimestampForMessage: (_: string) => number;
+  getTimestampForMessage: (messageId: string) => undefined | number;
   getPreferredBadge: PreferredBadgeSelectorType;
   i18n: LocalizerType;
   theme: ThemeType;
@@ -170,6 +169,7 @@ export type PropsActionsType = {
   onBlockAndReportSpam: (conversationId: string) => unknown;
   onDelete: (conversationId: string) => unknown;
   onUnblock: (conversationId: string) => unknown;
+  peekGroupCallForTheFirstTime: (conversationId: string) => unknown;
   removeMember: (conversationId: string) => unknown;
   selectMessage: (messageId: string, conversationId: string) => unknown;
   clearSelectedMessage: () => unknown;
@@ -184,15 +184,6 @@ export type PropsType = PropsDataType &
   PropsHousekeepingType &
   PropsActionsType;
 
-// from https://github.com/bvaughn/react-virtualized/blob/fb3484ed5dcc41bffae8eab029126c0fb8f7abc0/source/List/types.js#L5
-type RowRendererParamsType = {
-  index: number;
-  isScrolling: boolean;
-  isVisible: boolean;
-  key: string;
-  parent: Record<string, unknown>;
-  style: CSSProperties;
-};
 type OnScrollParamsType = {
   scrollTop: number;
   clientHeight: number;
@@ -220,7 +211,7 @@ type StateType = {
   oneTimeScrollRow?: number;
   visibleRows?: {
     newestFullyVisible?: VisibleRowType;
-    oldestPartiallyVisible?: VisibleRowType;
+    oldestPartiallyVisibleMessageId?: string;
     oldestFullyVisible?: VisibleRowType;
   };
 
@@ -263,6 +254,7 @@ const getActions = createSelector(
       'onBlockAndReportSpam',
       'onDelete',
       'onUnblock',
+      'peekGroupCallForTheFirstTime',
       'removeMember',
       'selectMessage',
       'clearSelectedMessage',
@@ -306,10 +298,7 @@ const getActions = createSelector(
 );
 
 export class Timeline extends React.PureComponent<PropsType, StateType> {
-  private cellSizeCache = new CellMeasurerCache({
-    defaultHeight: 64,
-    fixedWidth: true,
-  });
+  private cellSizeCache = new RowHeightCache(ESTIMATED_ROW_HEIGHT);
 
   private mostRecentWidth = 0;
 
@@ -326,6 +315,8 @@ export class Timeline extends React.PureComponent<PropsType, StateType> {
   private loadCountdownTimeout: NodeJS.Timeout | null = null;
 
   private hasRecentlyScrolledTimeout?: NodeJS.Timeout;
+
+  private delayedPeekTimeout?: NodeJS.Timeout;
 
   private containerRefMerger = createRefMerger();
 
@@ -445,9 +436,7 @@ export class Timeline extends React.PureComponent<PropsType, StateType> {
     this.offsetFromBottom = undefined;
     this.resizeFlag = false;
     if (isNumber(row) && row > 0) {
-      // This is a private interface we want to use.
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this.cellSizeCache as any).clearPlus(row, 0);
+      this.cellSizeCache.clearPlus(row);
     } else {
       this.cellSizeCache.clearAll();
     }
@@ -612,7 +601,7 @@ export class Timeline extends React.PureComponent<PropsType, StateType> {
     }
 
     let newestFullyVisible: undefined | VisibleRowType;
-    let oldestPartiallyVisible: undefined | VisibleRowType;
+    let oldestPartiallyVisibleMessageId: undefined | string;
     let oldestFullyVisible: undefined | VisibleRowType;
 
     const { children } = innerScrollContainer;
@@ -646,20 +635,18 @@ export class Timeline extends React.PureComponent<PropsType, StateType> {
         continue;
       }
 
-      const thisRow = {
-        offsetTop,
-        row: parseInt(child.getAttribute('data-row') || '-1', 10),
-        id,
-      };
-
       const bottom = offsetTop + offsetHeight;
 
-      if (bottom >= visibleTop && !oldestPartiallyVisible) {
-        oldestPartiallyVisible = thisRow;
+      if (bottom >= visibleTop && !oldestPartiallyVisibleMessageId) {
+        oldestPartiallyVisibleMessageId = id;
       }
 
       if (offsetTop + AT_TOP_THRESHOLD >= visibleTop) {
-        oldestFullyVisible = thisRow;
+        oldestFullyVisible = {
+          offsetTop,
+          row: parseInt(child.getAttribute('data-row') || '-1', 10),
+          id,
+        };
         break;
       }
     }
@@ -667,7 +654,7 @@ export class Timeline extends React.PureComponent<PropsType, StateType> {
     this.setState(oldState => {
       const visibleRows = {
         newestFullyVisible,
-        oldestPartiallyVisible,
+        oldestPartiallyVisibleMessageId,
         oldestFullyVisible,
       };
 
@@ -779,7 +766,7 @@ export class Timeline extends React.PureComponent<PropsType, StateType> {
     key,
     parent,
     style,
-  }: Readonly<RowRendererParamsType>): JSX.Element => {
+  }: Readonly<ListRowProps>): JSX.Element => {
     const {
       id,
       i18n,
@@ -886,6 +873,11 @@ export class Timeline extends React.PureComponent<PropsType, StateType> {
     );
   };
 
+  private getRowHeightFromCache = ({
+    index,
+  }: Readonly<{ index: number }>): number =>
+    this.cellSizeCache.getHeight(index);
+
   private scrollToBottom = (setFocus?: boolean): void => {
     const { selectMessage, id, items } = this.props;
 
@@ -960,10 +952,21 @@ export class Timeline extends React.PureComponent<PropsType, StateType> {
   public override componentDidMount(): void {
     this.updateWithVisibleRows();
     window.registerForActive(this.updateWithVisibleRows);
+
+    this.delayedPeekTimeout = setTimeout(() => {
+      const { id, peekGroupCallForTheFirstTime } = this.props;
+      peekGroupCallForTheFirstTime(id);
+    }, 500);
   }
 
   public override componentWillUnmount(): void {
+    const { delayedPeekTimeout } = this;
+
     window.unregisterForActive(this.updateWithVisibleRows);
+
+    if (delayedPeekTimeout) {
+      clearTimeout(delayedPeekTimeout);
+    }
   }
 
   public override componentDidUpdate(
@@ -1285,12 +1288,20 @@ export class Timeline extends React.PureComponent<PropsType, StateType> {
     const scrollToIndex = this.getScrollTarget();
 
     if (!items || rowCount === 0) {
+      log.error('<Timeline> row count is 0');
       return null;
     }
 
     let floatingHeader: ReactNode;
-    const oldestPartiallyVisibleRow = visibleRows?.oldestPartiallyVisible;
-    if (oldestPartiallyVisibleRow) {
+    const oldestPartiallyVisibleMessageId =
+      visibleRows?.oldestPartiallyVisibleMessageId;
+    // It's possible that a message was removed from `items` but we still have its ID in
+    //   state. `getTimestampForMessage` might return undefined in that case.
+    const oldestPartiallyVisibleMessageTimestamp =
+      oldestPartiallyVisibleMessageId
+        ? getTimestampForMessage(oldestPartiallyVisibleMessageId)
+        : undefined;
+    if (oldestPartiallyVisibleMessageTimestamp) {
       floatingHeader = (
         <TimelineFloatingHeader
           i18n={i18n}
@@ -1300,10 +1311,10 @@ export class Timeline extends React.PureComponent<PropsType, StateType> {
               ? { marginTop: lastMeasuredWarningHeight }
               : undefined
           }
-          timestamp={getTimestampForMessage(oldestPartiallyVisibleRow.id)}
+          timestamp={oldestPartiallyVisibleMessageTimestamp}
           visible={
             (hasRecentlyScrolled || isLoadingMessages) &&
-            (!haveOldest || oldestPartiallyVisibleRow.id !== items[0])
+            (!haveOldest || oldestPartiallyVisibleMessageId !== items[0])
           }
         />
       );
@@ -1328,7 +1339,11 @@ export class Timeline extends React.PureComponent<PropsType, StateType> {
 
           return (
             <List
-              deferredMeasurementCache={this.cellSizeCache}
+              // React Virtualized has an incorrect type for this prop. Until [a fix][0]
+              //   is merged, we have to do this cast.
+              // [0]: https://github.com/DefinitelyTyped/DefinitelyTyped/pull/58705
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              deferredMeasurementCache={this.cellSizeCache as any}
               height={height}
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               onScroll={this.onScroll as any}
@@ -1336,7 +1351,7 @@ export class Timeline extends React.PureComponent<PropsType, StateType> {
               onRowsRendered={this.onRowsRendered}
               ref={this.listRef}
               rowCount={rowCount}
-              rowHeight={this.cellSizeCache.rowHeight}
+              rowHeight={this.getRowHeightFromCache}
               rowRenderer={this.rowRenderer}
               scrollToAlignment="start"
               scrollToIndex={scrollToIndex}

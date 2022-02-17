@@ -1126,12 +1126,15 @@ export function getPropsForCallHistory(
     throw new Error('getPropsForCallHistory: Missing callHistoryDetails');
   }
 
+  const activeCallConversationId = activeCall?.conversationId;
+
   switch (callHistoryDetails.callMode) {
     // Old messages weren't saved with a call mode.
     case undefined:
     case CallMode.Direct:
       return {
         ...callHistoryDetails,
+        activeCallConversationId,
         callMode: CallMode.Direct,
       };
     case CallMode.Group: {
@@ -1140,7 +1143,6 @@ export function getPropsForCallHistory(
         throw new Error('getPropsForCallHistory: missing conversation ID');
       }
 
-      const creator = conversationSelector(callHistoryDetails.creatorUuid);
       let call = callSelector(conversationId);
       if (call && call.callMode !== CallMode.Group) {
         log.error(
@@ -1149,14 +1151,18 @@ export function getPropsForCallHistory(
         call = undefined;
       }
 
+      const creator = conversationSelector(callHistoryDetails.creatorUuid);
+      const deviceCount = call?.peekInfo?.deviceCount ?? 0;
+
       return {
-        activeCallConversationId: activeCall?.conversationId,
+        activeCallConversationId,
         callMode: CallMode.Group,
         conversationId,
         creator,
-        deviceCount: call?.peekInfo.deviceCount ?? 0,
-        ended: callHistoryDetails.eraId !== call?.peekInfo.eraId,
-        maxDevices: call?.peekInfo.maxDevices ?? Infinity,
+        deviceCount,
+        ended:
+          callHistoryDetails.eraId !== call?.peekInfo?.eraId || !deviceCount,
+        maxDevices: call?.peekInfo?.maxDevices ?? Infinity,
         startedTime: callHistoryDetails.startedTime,
       };
     }

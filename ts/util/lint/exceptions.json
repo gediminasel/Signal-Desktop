@@ -133,6 +133,62 @@
     "updated": "2021-04-05T20:48:36.065Z"
   },
   {
+    "rule": "jQuery-append(",
+    "path": "node_modules/@evanhahn/lottie-web-light/index.js",
+    "line": "      this._elementHelper.append(img);",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-01-27T20:06:59.988Z"
+  },
+  {
+    "rule": "jQuery-insertBefore(",
+    "path": "node_modules/@evanhahn/lottie-web-light/index.js",
+    "line": "    this.layerElement.insertBefore(newElement, nextElement);",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-01-27T20:06:59.988Z"
+  },
+  {
+    "rule": "jQuery-insertBefore(",
+    "path": "node_modules/@evanhahn/lottie-web-light/index.js",
+    "line": "    parentNode.insertBefore(useElem, nextChild);",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-01-27T20:06:59.988Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/@evanhahn/lottie-web-light/index.js",
+    "line": "          _workerSelf.assetLoader.load(",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-01-27T20:06:59.988Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/@evanhahn/lottie-web-light/index.js",
+    "line": "          _workerSelf.assetLoader.load(",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-01-27T20:06:59.988Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/@malept/flatpak-bundler/node_modules/debug/src/browser.js",
+    "line": "function load() {",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/@malept/flatpak-bundler/node_modules/debug/src/common.js",
+    "line": "\tcreateDebug.enable(createDebug.load());",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/@malept/flatpak-bundler/node_modules/debug/src/node.js",
+    "line": "function load() {",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
     "rule": "eval",
     "path": "node_modules/@protobufjs/inquire/index.js",
     "line": "        var mod = eval(\"quire\".replace(/^/,\"re\"))(moduleName); // eslint-disable-line no-eval",
@@ -559,6 +615,28 @@
     "reasonCategory": "falseMatch",
     "updated": "2020-08-28T16:12:19.904Z",
     "reasonDetail": "isn't jquery"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/agent-base/node_modules/debug/src/browser.js",
+    "line": "function load() {",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/agent-base/node_modules/debug/src/common.js",
+    "line": "\tcreateDebug.enable(createDebug.load());",
+    "reasonCategory": "falseMatch|testCode|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
+    "updated": "2022-02-11T21:58:24.827Z",
+    "reasonDetail": "<optional>"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/agent-base/node_modules/debug/src/node.js",
+    "line": "function load() {",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
   },
   {
     "rule": "jQuery-wrap(",
@@ -1221,6 +1299,27 @@
     "updated": "2018-09-19T18:13:29.628Z"
   },
   {
+    "rule": "jQuery-load(",
+    "path": "node_modules/electron-notarize/node_modules/debug/src/browser.js",
+    "line": "function load() {",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/electron-notarize/node_modules/debug/src/common.js",
+    "line": "\tcreateDebug.enable(createDebug.load());",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/electron-notarize/node_modules/debug/src/node.js",
+    "line": "function load() {",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
     "rule": "jQuery-append(",
     "path": "node_modules/enquirer/lib/prompts/autocomplete.js",
     "line": "    return this.append(ch);",
@@ -1510,60 +1609,32 @@
     "updated": "2020-09-11T17:24:56.124Z"
   },
   {
+    "rule": "jQuery-load(",
+    "path": "node_modules/get-uri/node_modules/debug/src/browser.js",
+    "line": "function load() {",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/get-uri/node_modules/debug/src/common.js",
+    "line": "\tcreateDebug.enable(createDebug.load());",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/get-uri/node_modules/debug/src/node.js",
+    "line": "function load() {",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
     "rule": "jQuery-$(",
     "path": "node_modules/global-dirs/index.js",
     "line": "\t// Homebrew special case: `$(brew --prefix)/lib/node_modules/npm/npmrc`",
     "reasonCategory": "exampleCode",
     "updated": "2021-11-13T01:24:25.496Z"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/globby/node_modules/braces/lib/expand.js",
-    "line": "        result.push(append(value, stash, enclose));",
-    "reasonCategory": "falseMatch",
-    "updated": "2021-12-11T01:13:16.250Z"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/globby/node_modules/braces/lib/expand.js",
-    "line": "        result.push(Array.isArray(ele) ? append(item, ele, enclose) : (item + ele));",
-    "reasonCategory": "falseMatch",
-    "updated": "2021-12-11T01:13:16.250Z"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/globby/node_modules/braces/lib/expand.js",
-    "line": "      q.push(append(q.pop(), stringify(node, options)));",
-    "reasonCategory": "falseMatch",
-    "updated": "2021-12-11T01:13:16.250Z"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/globby/node_modules/braces/lib/expand.js",
-    "line": "      q.push(append(q.pop(), ['{}']));",
-    "reasonCategory": "falseMatch",
-    "updated": "2021-12-11T01:13:16.250Z"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/globby/node_modules/braces/lib/expand.js",
-    "line": "      q.push(append(q.pop(), range));",
-    "reasonCategory": "falseMatch",
-    "updated": "2021-12-11T01:13:16.250Z"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/globby/node_modules/braces/lib/expand.js",
-    "line": "        q.push(append(q.pop(), queue, enclose));",
-    "reasonCategory": "falseMatch",
-    "updated": "2021-12-11T01:13:16.250Z"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/globby/node_modules/braces/lib/expand.js",
-    "line": "        queue.push(append(queue.pop(), child.value));",
-    "reasonCategory": "falseMatch",
-    "updated": "2021-12-11T01:13:16.250Z"
   },
   {
     "rule": "DOM-innerHTML",
@@ -1683,6 +1754,54 @@
     "line": "  return wrap(str, width, indent);",
     "reasonCategory": "falseMatch",
     "updated": "2021-11-13T01:38:33.299Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/http-proxy-agent/node_modules/debug/src/browser.js",
+    "line": "function load() {",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/http-proxy-agent/node_modules/debug/src/common.js",
+    "line": "\tcreateDebug.enable(createDebug.load());",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/http-proxy-agent/node_modules/debug/src/node.js",
+    "line": "function load() {",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/https-proxy-agent/node_modules/debug/src/browser.js",
+    "line": "function load() {",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/https-proxy-agent/node_modules/debug/src/common.js",
+    "line": "\tcreateDebug.enable(createDebug.load());",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/https-proxy-agent/node_modules/debug/src/node.js",
+    "line": "function load() {",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
+    "rule": "jQuery-$(",
+    "path": "node_modules/immutable/dist/immutable.min.js",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T16:23:37.435Z"
   },
   {
     "rule": "DOM-innerHTML",
@@ -1861,21 +1980,6 @@
     "line": "    load: function load(path) {",
     "reasonCategory": "falseMatch",
     "updated": "2021-04-06T04:01:59.934Z"
-  },
-  {
-    "rule": "eval",
-    "path": "node_modules/js-base64/base64.js",
-    "line": "            buffer = eval(\"require('buffer').Buffer\");",
-    "reasonCategory": "usageTrusted",
-    "updated": "2020-08-25T16:58:28.474Z",
-    "reasonDetail": "Hard coded string"
-  },
-  {
-    "rule": "eval",
-    "path": "node_modules/js-base64/base64.min.js",
-    "reasonCategory": "usageTrusted",
-    "updated": "2020-08-25T16:58:28.474Z",
-    "reasonDetail": "Hard coded string"
   },
   {
     "rule": "jQuery-$(",
@@ -4327,6 +4431,13 @@
     "updated": "2019-03-09T00:08:44.242Z"
   },
   {
+    "rule": "eval",
+    "path": "node_modules/micro/node_modules/depd/index.js",
+    "line": "  var deprecatedfn = eval('(function (' + args + ') {\\n' +",
+    "reasonCategory": "usageTrusted",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
     "rule": "DOM-innerHTML",
     "path": "node_modules/min-document/serialize.js",
     "line": "        } else if (elem.innerHTML) {",
@@ -4491,6 +4602,27 @@
     "line": "\t\t\t\theaders.append('Content-Type', contentType);",
     "reasonCategory": "falseMatch",
     "updated": "2020-09-14T16:19:54.461Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/pac-proxy-agent/node_modules/debug/src/browser.js",
+    "line": "function load() {",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/pac-proxy-agent/node_modules/debug/src/common.js",
+    "line": "\tcreateDebug.enable(createDebug.load());",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/pac-proxy-agent/node_modules/debug/src/node.js",
+    "line": "function load() {",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
   },
   {
     "rule": "DOM-innerHTML",
@@ -5160,6 +5292,27 @@
     "line": "    return this.load(filename, options, SYNC);",
     "reasonCategory": "falseMatch",
     "updated": "2018-09-15T00:38:04.183Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/proxy-agent/node_modules/debug/src/browser.js",
+    "line": "function load() {",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/proxy-agent/node_modules/debug/src/common.js",
+    "line": "\tcreateDebug.enable(createDebug.load());",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/proxy-agent/node_modules/debug/src/node.js",
+    "line": "function load() {",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
   },
   {
     "rule": "DOM-document.write(",
@@ -6316,6 +6469,27 @@
     "updated": "2018-09-15T00:38:04.183Z"
   },
   {
+    "rule": "jQuery-load(",
+    "path": "node_modules/socks-proxy-agent/node_modules/debug/src/browser.js",
+    "line": "function load() {",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/socks-proxy-agent/node_modules/debug/src/common.js",
+    "line": "\tcreateDebug.enable(createDebug.load());",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/socks-proxy-agent/node_modules/debug/src/node.js",
+    "line": "function load() {",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
     "rule": "jQuery-append(",
     "path": "node_modules/socks/build/client/socksclient.js",
     "line": "        this.receiveBuffer.append(data);",
@@ -6328,6 +6502,13 @@
     "line": "    append(data) {",
     "reasonCategory": "falseMatch",
     "updated": "2018-11-27T18:02:26.186Z"
+  },
+  {
+    "rule": "jQuery-prepend(",
+    "path": "node_modules/source-map-js/lib/source-node.js",
+    "line": "      this.prepend(aChunk[i]);",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T16:23:37.435Z"
   },
   {
     "rule": "jQuery-prepend(",
@@ -6410,6 +6591,27 @@
     "line": "function wrap(txt, len) {",
     "reasonCategory": "falseMatch",
     "updated": "2020-04-25T01:47:02.583Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/sumchecker/node_modules/debug/src/browser.js",
+    "line": "function load() {",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/sumchecker/node_modules/debug/src/common.js",
+    "line": "\tcreateDebug.enable(createDebug.load());",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "node_modules/sumchecker/node_modules/debug/src/node.js",
+    "line": "function load() {",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-11T21:58:24.827Z"
   },
   {
     "rule": "jQuery-append(",
@@ -6767,24 +6969,34 @@
   },
   {
     "rule": "eval",
-    "path": "node_modules/vm2/lib/main.js",
+    "path": "node_modules/vm2/lib/nodevm.js",
     "line": "\t * @param {boolean} [options.eval=true] - Allow the dynamic evaluation of code via eval(code) or Function(code)().<br>",
-    "reasonCategory": "exampleCode",
-    "updated": "2021-09-02T23:51:29.928Z"
-  },
-  {
-    "rule": "eval",
-    "path": "node_modules/vm2/lib/main.js",
-    "line": "\t * @param {boolean} [options.eval=true] - Allow the dynamic evaluation of code via eval(code) or Function(code)().<br>",
-    "reasonCategory": "exampleCode",
-    "updated": "2021-09-02T23:51:29.928Z"
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-16T15:30:35.122Z",
+    "reasonDetail": "falseMatch"
   },
   {
     "rule": "jQuery-wrap(",
-    "path": "node_modules/vm2/lib/main.js",
+    "path": "node_modules/vm2/lib/script.js",
     "line": "\twrap(prefix, suffix) {",
     "reasonCategory": "falseMatch",
-    "updated": "2021-09-02T23:51:29.928Z"
+    "updated": "2022-02-16T15:30:35.122Z"
+  },
+  {
+    "rule": "eval",
+    "path": "node_modules/vm2/lib/vm.js",
+    "line": "\t * @param {boolean} [options.eval=true] - Allow the dynamic evaluation of code via eval(code) or Function(code)().<br>",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-16T15:30:35.122Z",
+    "reasonDetail": "This is a comment."
+  },
+  {
+    "rule": "jQuery-$(",
+    "path": "node_modules/vm2/node_modules/acorn/dist/acorn.js",
+    "line": "  // $$('#table-binary-unicode-properties > figure > table > tbody > tr > td:nth-child(1) code').map(el => el.innerText)",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-02-16T15:30:35.122Z",
+    "reasonDetail": "This is a comment."
   },
   {
     "rule": "jQuery-wrap(",
@@ -6963,22 +7175,6 @@
   },
   {
     "rule": "DOM-innerHTML",
-    "path": "ts/backbone/views/Lightbox.js",
-    "line": "    container.innerHTML = '';",
-    "reasonCategory": "usageTrusted",
-    "updated": "2018-09-17T20:50:40.689Z",
-    "reasonDetail": "Hard-coded value"
-  },
-  {
-    "rule": "DOM-innerHTML",
-    "path": "ts/backbone/views/Lightbox.js",
-    "line": "    container.innerHTML = '';",
-    "reasonCategory": "usageTrusted",
-    "updated": "2018-09-17T20:50:40.689Z",
-    "reasonDetail": "Hard-coded value"
-  },
-  {
-    "rule": "DOM-innerHTML",
     "path": "ts/backbone/views/Lightbox.ts",
     "line": "  container.innerHTML = '';",
     "reasonCategory": "usageTrusted",
@@ -6992,14 +7188,6 @@
     "reasonCategory": "usageTrusted",
     "updated": "2018-09-17T20:50:40.689Z",
     "reasonDetail": "Hard-coded value"
-  },
-  {
-    "rule": "jQuery-html(",
-    "path": "ts/backbone/views/whisper_view.js",
-    "line": "            this.$el.html(window.Mustache.render(template, attrs));",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-02-26T18:44:56.450Z",
-    "reasonDetail": "Rendering provided template"
   },
   {
     "rule": "jQuery-html(",
@@ -7016,20 +7204,6 @@
     "reasonCategory": "usageTrusted",
     "updated": "2021-12-10T23:24:03.829Z",
     "reasonDetail": "Doesn't touch the DOM."
-  },
-  {
-    "rule": "jQuery-load(",
-    "path": "ts/challenge.js",
-    "line": "    async load() {",
-    "reasonCategory": "falseMatch",
-    "updated": "2021-05-05T23:11:22.692Z"
-  },
-  {
-    "rule": "jQuery-load(",
-    "path": "ts/challenge.js",
-    "line": "            // 1. `.load()` when the `window.storage` is ready",
-    "reasonCategory": "falseMatch",
-    "updated": "2021-05-05T23:11:22.692Z"
   },
   {
     "rule": "jQuery-load(",
@@ -7118,34 +7292,10 @@
   },
   {
     "rule": "React-useRef",
-    "path": "ts/components/CallingLobby.js",
-    "line": "    const localVideoRef = react_1.default.useRef(null);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2020-10-26T19:12:24.410Z",
-    "reasonDetail": "Used to get the local video element for rendering."
-  },
-  {
-    "rule": "React-useRef",
     "path": "ts/components/CallingLobby.tsx",
     "line": "  const localVideoRef = React.useRef<null | HTMLVideoElement>(null);",
     "reasonCategory": "usageTrusted",
     "updated": "2021-07-30T16:57:33.618Z"
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/CallingPip.js",
-    "line": "    const videoContainerRef = react_1.default.useRef(null);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2020-10-26T19:12:24.410Z",
-    "reasonDetail": "Element is measured. Its HTML is not used."
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/CallingPip.js",
-    "line": "    const localVideoRef = react_1.default.useRef(null);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2020-10-26T19:12:24.410Z",
-    "reasonDetail": "Used to get the local video element for rendering."
   },
   {
     "rule": "React-useRef",
@@ -7196,61 +7346,6 @@
     "line": "  const fileInputRef = useRef<null | HTMLInputElement>(null);",
     "reasonCategory": "usageTrusted",
     "updated": "2021-09-23T00:07:11.885Z"
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/CompositionInput.js",
-    "line": "    const emojiCompletionRef = React.useRef();",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-10-26T19:12:24.410Z",
-    "reasonDetail": "Doesn't refer to a DOM element."
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/CompositionInput.js",
-    "line": "    const quillRef = React.useRef();",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-10-26T19:12:24.410Z",
-    "reasonDetail": "Doesn't refer to a DOM element."
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/CompositionInput.js",
-    "line": "    const propsRef = React.useRef(props);",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-10-26T19:12:24.410Z",
-    "reasonDetail": "Doesn't refer to a DOM element."
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/CompositionInput.js",
-    "line": "    const mentionCompletionRef = React.useRef();",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-10-26T23:54:34.273Z",
-    "reasonDetail": "Doesn't refer to a DOM element."
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/CompositionInput.js",
-    "line": "    const memberRepositoryRef = React.useRef(new memberRepository_1.MemberRepository());",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-10-26T23:56:13.482Z",
-    "reasonDetail": "Doesn't refer to a DOM element."
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/CompositionInput.js",
-    "line": "    const scrollerRef = React.useRef(null);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2020-10-26T19:12:24.410Z",
-    "reasonDetail": "Used with Quill for scrolling."
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/CompositionInput.js",
-    "line": "    const callbacksRef = React.useRef(unstaleCallbacks);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-04-21T21:35:38.757Z"
   },
   {
     "rule": "React-useRef",
@@ -7321,13 +7416,6 @@
     "line": "  const remoteVideoRef = useRef<HTMLCanvasElement | null>(null);",
     "reasonCategory": "usageTrusted",
     "updated": "2021-07-30T16:57:33.618Z"
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/ForwardMessageModal.js",
-    "line": "    const inputApiRef = react_1.default.useRef();",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-04-19T18:13:21.664Z"
   },
   {
     "rule": "React-useRef",
@@ -7432,13 +7520,6 @@
   },
   {
     "rule": "jQuery-$(",
-    "path": "ts/components/Intl.js",
-    "line": "        const FIND_REPLACEMENTS = /\\$([^$]+)\\$/g;",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-07-21T18:34:59.251Z"
-  },
-  {
-    "rule": "jQuery-$(",
     "path": "ts/components/Intl.tsx",
     "line": "    const FIND_REPLACEMENTS = /\\$([^$]+)\\$/g;",
     "reasonCategory": "falseMatch",
@@ -7447,10 +7528,9 @@
   {
     "rule": "React-useRef",
     "path": "ts/components/LeftPaneSearchInput.tsx",
-    "line": "    const inputRef = useRef<null | HTMLInputElement>(null);",
+    "line": "  const inputRef = useRef<null | HTMLInputElement>(null);",
     "reasonCategory": "usageTrusted",
-    "updated": "2021-10-29T22:48:58.354Z",
-    "reasonDetail": "Only used to focus the input."
+    "updated": "2022-02-11T20:49:03.879Z"
   },
   {
     "rule": "React-useRef",
@@ -7489,10 +7569,11 @@
   },
   {
     "rule": "React-useRef",
-    "path": "ts/components/LeftPaneMainSearchInput.tsx",
-    "line": "  const inputRef = useRef<HTMLInputElement | null>(null);",
+    "path": "ts/components/Lottie.tsx",
+    "line": "  const containerRef = useRef<null | HTMLDivElement>(null);",
     "reasonCategory": "usageTrusted",
-    "updated": "2022-01-26T23:11:05.369Z"
+    "updated": "2022-01-27T20:06:59.988Z",
+    "reasonDetail": "Doesn't manipulate the DOM."
   },
   {
     "rule": "React-useRef",
@@ -7522,14 +7603,6 @@
     "reasonCategory": "usageTrusted",
     "updated": "2022-01-04T21:43:17.517Z",
     "reasonDetail": "Used to change the style in non-production builds."
-  },
-  {
-    "rule": "React-createRef",
-    "path": "ts/components/SafetyNumberChangeDialog.js",
-    "line": "    const cancelButtonRef = React.createRef();",
-    "reasonCategory": "usageTrusted",
-    "updated": "2020-06-23T06:48:06.829Z",
-    "reasonDetail": "Used to focus cancel button when dialog opens"
   },
   {
     "rule": "React-useRef",
@@ -7568,34 +7641,10 @@
   },
   {
     "rule": "React-useRef",
-    "path": "ts/components/Tooltip.js",
-    "line": "    const wrapperRef = react_1.default.useRef(null);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2020-12-04T00:11:08.128Z",
-    "reasonDetail": "Used to add (and remove) event listeners."
-  },
-  {
-    "rule": "React-useRef",
     "path": "ts/components/Tooltip.tsx",
     "line": "  const wrapperRef = React.useRef<HTMLSpanElement | null>(null);",
     "reasonCategory": "usageTrusted",
     "updated": "2021-07-30T16:57:33.618Z"
-  },
-  {
-    "rule": "React-createRef",
-    "path": "ts/components/conversation/ConversationHeader.js",
-    "line": "        this.menuTriggerRef = react_1.default.createRef();",
-    "reasonCategory": "usageTrusted",
-    "updated": "2020-08-28T16:12:19.904Z",
-    "reasonDetail": "Used to reference popup menu"
-  },
-  {
-    "rule": "React-createRef",
-    "path": "ts/components/conversation/ConversationHeader.js",
-    "line": "        this.headerRef = react_1.default.createRef();",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-01-18T22:24:05.937Z",
-    "reasonDetail": "Used to reference popup menu boundaries element"
   },
   {
     "rule": "React-createRef",
@@ -7637,43 +7686,11 @@
   },
   {
     "rule": "React-createRef",
-    "path": "ts/components/conversation/InlineNotificationWrapper.js",
-    "line": "        this.focusRef = react_1.default.createRef();",
-    "reasonCategory": "usageTrusted",
-    "updated": "2019-11-06T19:56:38.557Z",
-    "reasonDetail": "Used to manage focus"
-  },
-  {
-    "rule": "React-createRef",
     "path": "ts/components/conversation/InlineNotificationWrapper.tsx",
     "line": "  public focusRef: React.RefObject<HTMLDivElement> = React.createRef();",
     "reasonCategory": "usageTrusted",
     "updated": "2019-11-06T19:56:38.557Z",
     "reasonDetail": "Used to manage focus"
-  },
-  {
-    "rule": "React-createRef",
-    "path": "ts/components/conversation/Message.js",
-    "line": "        this.reactionsContainerRef = react_1.default.createRef();",
-    "reasonCategory": "usageTrusted",
-    "updated": "2020-08-28T16:12:19.904Z",
-    "reasonDetail": "Used for detecting clicks outside reaction viewer"
-  },
-  {
-    "rule": "React-createRef",
-    "path": "ts/components/conversation/Message.js",
-    "line": "        this.focusRef = react_1.default.createRef();",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-03-05T20:05:07.474Z",
-    "reasonDetail": "Used for managing focus only"
-  },
-  {
-    "rule": "React-createRef",
-    "path": "ts/components/conversation/Message.js",
-    "line": "        this.audioButtonRef = react_1.default.createRef();",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-03-05T20:05:07.474Z",
-    "reasonDetail": "Used for propagating click from the Message to MessageAudio's button"
   },
   {
     "rule": "React-createRef",
@@ -7707,44 +7724,12 @@
     "updated": "2021-07-30T16:57:33.618Z"
   },
   {
-    "rule": "React-createRef",
-    "path": "ts/components/conversation/MessageDetail.js",
-    "line": "        this.focusRef = react_1.default.createRef();",
-    "reasonCategory": "usageTrusted",
-    "updated": "2019-11-01T22:46:33.013Z",
-    "reasonDetail": "Used for setting focus only"
-  },
-  {
-    "rule": "React-createRef",
-    "path": "ts/components/conversation/MessageDetail.js",
-    "line": "        this.messageContainerRef = react_1.default.createRef();",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-08-20T16:48:00.885Z",
-    "reasonDetail": "Needed to confine Poppers. We don't actually manipulate this DOM reference."
-  },
-  {
     "rule": "React-useRef",
     "path": "ts/components/conversation/Quote.tsx",
     "line": "  const imageRef = useRef(new Image());",
     "reasonCategory": "usageTrusted",
     "updated": "2021-01-20T21:30:08.430Z",
     "reasonDetail": "Doesn't touch the DOM."
-  },
-  {
-    "rule": "React-createRef",
-    "path": "ts/components/conversation/Timeline.js",
-    "line": "        this.listRef = react_1.default.createRef();",
-    "reasonCategory": "usageTrusted",
-    "updated": "2019-07-31T00:19:18.696Z",
-    "reasonDetail": "Timeline needs to interact with its child List directly"
-  },
-  {
-    "rule": "React-createRef",
-    "path": "ts/components/conversation/Timeline.js",
-    "line": "        this.containerRef = react_1.default.createRef();",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-08-20T16:48:00.885Z",
-    "reasonDetail": "Needed to confine Poppers. We don't actually manipulate this DOM reference."
   },
   {
     "rule": "React-useRef",
@@ -7776,14 +7761,6 @@
   },
   {
     "rule": "React-createRef",
-    "path": "ts/components/conversation/media-gallery/MediaGallery.js",
-    "line": "        this.focusRef = react_1.default.createRef();",
-    "reasonCategory": "usageTrusted",
-    "updated": "2019-11-01T22:46:33.013Z",
-    "reasonDetail": "Used for setting focus only"
-  },
-  {
-    "rule": "React-createRef",
     "path": "ts/components/conversation/media-gallery/MediaGallery.tsx",
     "line": "  public readonly focusRef: React.RefObject<HTMLDivElement> = React.createRef();",
     "reasonCategory": "usageTrusted",
@@ -7797,14 +7774,6 @@
     "reasonCategory": "usageTrusted",
     "updated": "2021-12-06T23:07:28.947Z",
     "reasonDetail": "Doesn't touch the DOM."
-  },
-  {
-    "rule": "React-createRef",
-    "path": "ts/components/stickers/StickerManager.js",
-    "line": "    const focusRef = React.createRef();",
-    "reasonCategory": "usageTrusted",
-    "updated": "2019-11-21T06:13:49.384Z",
-    "reasonDetail": "Used for setting focus only"
   },
   {
     "rule": "React-useRef",
@@ -7822,35 +7791,6 @@
   },
   {
     "rule": "React-useRef",
-    "path": "ts/hooks/useRestoreFocus.js",
-    "line": "    const lastFocusedRef = React.useRef(null);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-07-30T01:08:01.309Z",
-    "reasonDetail": "Used to store the previous-focused item, again to set focus"
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/hooks/useRestoreFocus.js",
-    "line": "    const toFocusRef = React.useRef(null);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-09-17T17:37:46.279Z"
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/hooks/useRestoreFocus.js",
-    "line": "    const toFocusRef = React.useRef(null);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-10-22T00:52:39.251Z"
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/hooks/useRestoreFocus.js",
-    "line": "    const lastFocusedRef = React.useRef(null);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-10-22T00:52:39.251Z"
-  },
-  {
-    "rule": "React-useRef",
     "path": "ts/hooks/useRestoreFocus.ts",
     "line": "  const toFocusRef = React.useRef<HTMLElement | null>(null);",
     "reasonCategory": "usageTrusted",
@@ -7879,22 +7819,8 @@
   },
   {
     "rule": "jQuery-load(",
-    "path": "ts/jobs/helpers/readAndViewSyncHelpers.js",
-    "line": "    await window.ConversationController.load();",
-    "reasonCategory": "falseMatch",
-    "updated": "2021-12-15T19:58:28.089Z"
-  },
-  {
-    "rule": "jQuery-load(",
-    "path": "ts/jobs/helpers/readAndViewSyncHelpers.ts",
+    "path": "ts/jobs/helpers/syncHelpers.ts",
     "line": "  await window.ConversationController.load();",
-    "reasonCategory": "falseMatch",
-    "updated": "2021-12-15T19:58:28.089Z"
-  },
-  {
-    "rule": "jQuery-load(",
-    "path": "ts/jobs/normalMessageSendJobQueue.js",
-    "line": "        await window.ConversationController.load();",
     "reasonCategory": "falseMatch",
     "updated": "2021-11-04T16:14:03.477Z"
   },
@@ -7903,14 +7829,7 @@
     "path": "ts/jobs/normalMessageSendJobQueue.ts",
     "line": "    await window.ConversationController.load();",
     "reasonCategory": "falseMatch",
-    "updated": "2021-11-04T16:14:03.477Z"
-  },
-  {
-    "rule": "jQuery-load(",
-    "path": "ts/jobs/reactionJobQueue.js",
-    "line": "        await window.ConversationController.load();",
-    "reasonCategory": "falseMatch",
-    "updated": "2021-11-04T16:14:03.477Z"
+    "updated": "2021-12-15T19:58:28.089Z"
   },
   {
     "rule": "jQuery-load(",
@@ -7918,34 +7837,6 @@
     "line": "    await window.ConversationController.load();",
     "reasonCategory": "falseMatch",
     "updated": "2021-11-04T16:14:03.477Z"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "ts/logging/uploadDebugLog.js",
-    "line": "    form.append('key', uploadKey);",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-12-17T18:08:07.752Z"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "ts/logging/uploadDebugLog.js",
-    "line": "        form.append(key, value);",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-12-17T18:08:07.752Z"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "ts/logging/uploadDebugLog.js",
-    "line": "    form.append('Content-Type', contentType);",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-12-17T18:08:07.752Z"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "ts/logging/uploadDebugLog.js",
-    "line": "    form.append('file', contentBuffer, {",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-12-17T18:08:07.752Z"
   },
   {
     "rule": "jQuery-append(",
@@ -7977,22 +7868,6 @@
   },
   {
     "rule": "jQuery-$(",
-    "path": "ts/manage_full_screen_class.js",
-    "line": "$(document).ready(() => {",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-01-21T23:06:13.270Z",
-    "reasonDetail": "Doesn't manipulate the DOM."
-  },
-  {
-    "rule": "jQuery-$(",
-    "path": "ts/manage_full_screen_class.js",
-    "line": "        $(document.body).toggleClass('full-screen', isFullScreen);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-01-21T23:06:13.270Z",
-    "reasonDetail": "Manipulates a trusted class."
-  },
-  {
-    "rule": "jQuery-$(",
     "path": "ts/manage_full_screen_class.ts",
     "line": "$(document).ready(() => {",
     "reasonCategory": "usageTrusted",
@@ -8008,43 +7883,12 @@
     "reasonDetail": "Manipulates a trusted class."
   },
   {
-    "rule": "React-createRef",
-    "path": "ts/quill/mentions/completion.js",
-    "line": "        this.suggestionListRef = react_1.default.createRef();",
-    "reasonCategory": "usageTrusted",
-    "updated": "2020-10-30T23:03:08.319Z"
-  },
-  {
-    "rule": "DOM-innerHTML",
-    "path": "ts/quill/signal-clipboard/index.js",
-    "line": "    return div.innerHTML;",
-    "reasonCategory": "usageTrusted",
-    "updated": "2020-11-06T17:43:07.381Z",
-    "reasonDetail": "used for figuring out clipboard contents"
-  },
-  {
     "rule": "DOM-innerHTML",
     "path": "ts/quill/signal-clipboard/index.ts",
     "line": "  return div.innerHTML;",
     "reasonCategory": "usageTrusted",
     "updated": "2020-11-06T17:43:07.381Z",
     "reasonDetail": "used for figuring out clipboard contents"
-  },
-  {
-    "rule": "jQuery-$(",
-    "path": "ts/set_os_class.js",
-    "line": "    $(document.body).addClass(className);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-01-21T23:06:13.270Z",
-    "reasonDetail": "Adds a trusted CSS class."
-  },
-  {
-    "rule": "jQuery-$(",
-    "path": "ts/set_os_class.js",
-    "line": "$(document).ready(() => {",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-01-21T23:06:13.270Z",
-    "reasonDetail": "Doesn't manipulate the DOM."
   },
   {
     "rule": "jQuery-$(",
@@ -8064,13 +7908,6 @@
   },
   {
     "rule": "jQuery-load(",
-    "path": "ts/state/ducks/app.js",
-    "line": "        await window.ConversationController.load();",
-    "reasonCategory": "falseMatch",
-    "updated": "2021-11-04T16:14:03.477Z"
-  },
-  {
-    "rule": "jQuery-load(",
     "path": "ts/state/ducks/app.ts",
     "line": "    await window.ConversationController.load();",
     "reasonCategory": "falseMatch",
@@ -8086,13 +7923,6 @@
   },
   {
     "rule": "jQuery-load(",
-    "path": "ts/types/Stickers.js",
-    "line": "async function load() {",
-    "reasonCategory": "falseMatch",
-    "updated": "2021-07-02T02:57:58.052Z"
-  },
-  {
-    "rule": "jQuery-load(",
     "path": "ts/types/Stickers.ts",
     "line": "export async function load(): Promise<void> {",
     "reasonCategory": "falseMatch",
@@ -8100,57 +7930,10 @@
   },
   {
     "rule": "jQuery-load(",
-    "path": "ts/util/avatarDataToBytes.js",
-    "line": "    await font.load();",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-08-03T21:17:38.615Z"
-  },
-  {
-    "rule": "jQuery-load(",
     "path": "ts/util/avatarDataToBytes.ts",
     "line": "  await font.load();",
     "reasonCategory": "usageTrusted",
     "updated": "2021-08-03T21:17:38.615Z"
-  },
-  {
-    "rule": "jQuery-$(",
-    "path": "ts/util/createIPCEvents.js",
-    "line": "            if ($('.dark-overlay').length) {",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-08-18T18:22:55.307Z",
-    "reasonDetail": "Legacy code"
-  },
-  {
-    "rule": "jQuery-$(",
-    "path": "ts/util/createIPCEvents.js",
-    "line": "            $(document.body).prepend('<div class=\"dark-overlay\"></div>');",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-08-18T18:22:55.307Z",
-    "reasonDetail": "Legacy code"
-  },
-  {
-    "rule": "jQuery-$(",
-    "path": "ts/util/createIPCEvents.js",
-    "line": "            $('.dark-overlay').on('click', () => $('.dark-overlay').remove());",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-08-18T18:22:55.307Z",
-    "reasonDetail": "Legacy code"
-  },
-  {
-    "rule": "jQuery-$(",
-    "path": "ts/util/createIPCEvents.js",
-    "line": "        }, removeDarkOverlay: () => $('.dark-overlay').remove(), showKeyboardShortcuts: () => window.showKeyboardShortcuts(), deleteAllData: async () => {",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-08-18T18:22:55.307Z",
-    "reasonDetail": "Legacy code"
-  },
-  {
-    "rule": "jQuery-prepend(",
-    "path": "ts/util/createIPCEvents.js",
-    "line": "            $(document.body).prepend('<div class=\"dark-overlay\"></div>');",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-08-18T18:22:55.307Z",
-    "reasonDetail": "Legacy code"
   },
   {
     "rule": "jQuery-$(",
@@ -8194,13 +7977,6 @@
   },
   {
     "rule": "jQuery-load(",
-    "path": "ts/util/sendReceipts.js",
-    "line": "    await window.ConversationController.load();",
-    "reasonCategory": "falseMatch",
-    "updated": "2021-12-15T19:58:28.089Z"
-  },
-  {
-    "rule": "jQuery-load(",
     "path": "ts/util/sendReceipts.ts",
     "line": "  await window.ConversationController.load();",
     "reasonCategory": "falseMatch",
@@ -8208,101 +7984,10 @@
   },
   {
     "rule": "jQuery-$(",
-    "path": "ts/util/setupI18n.js",
-    "line": "        const FIND_REPLACEMENTS = /\\$([^$]+)\\$/g;",
-    "reasonCategory": "falseMatch",
-    "updated": "2021-09-17T21:51:57.475Z"
-  },
-  {
-    "rule": "jQuery-$(",
     "path": "ts/util/setupI18n.ts",
     "line": "    const FIND_REPLACEMENTS = /\\$([^$]+)\\$/g;",
     "reasonCategory": "falseMatch",
     "updated": "2021-09-17T21:51:57.475Z"
-  },
-  {
-    "rule": "jQuery-$(",
-    "path": "ts/views/inbox_view.js",
-    "line": "    template: () => $('#app-loading-screen').html(),",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-09-15T21:07:50.995Z"
-  },
-  {
-    "rule": "jQuery-$(",
-    "path": "ts/views/inbox_view.js",
-    "line": "            this.$('.message').text(message);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-09-15T21:07:50.995Z"
-  },
-  {
-    "rule": "jQuery-$(",
-    "path": "ts/views/inbox_view.js",
-    "line": "    template: () => $('#two-column').html(),",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-09-15T21:07:50.995Z"
-  },
-  {
-    "rule": "jQuery-$(",
-    "path": "ts/views/inbox_view.js",
-    "line": "            el: this.$('.conversation-stack'),",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-09-15T21:07:50.995Z"
-  },
-  {
-    "rule": "jQuery-$(",
-    "path": "ts/views/inbox_view.js",
-    "line": "        this.$('.left-pane-placeholder').replaceWith(this.leftPaneView.el);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-10-08T17:39:41.541Z"
-  },
-  {
-    "rule": "jQuery-$(",
-    "path": "ts/views/inbox_view.js",
-    "line": "        this.$('.no-conversation-open').toggle(!isAnyConversationOpen);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-10-08T17:40:22.770Z"
-  },
-  {
-    "rule": "jQuery-$(",
-    "path": "ts/views/inbox_view.js",
-    "line": "        this.$('.whats-new-placeholder').append(this.whatsNewLink.el);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-10-22T20:58:48.103Z"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "ts/views/inbox_view.js",
-    "line": "        this.$('.whats-new-placeholder').append(this.whatsNewLink.el);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-10-22T20:58:48.103Z"
-  },
-  {
-    "rule": "jQuery-appendTo(",
-    "path": "ts/views/inbox_view.js",
-    "line": "            view.$el.appendTo(this.el);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-09-20T22:27:31.785Z"
-  },
-  {
-    "rule": "jQuery-html(",
-    "path": "ts/views/inbox_view.js",
-    "line": "    template: () => $('#app-loading-screen').html(),",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-09-15T21:07:50.995Z"
-  },
-  {
-    "rule": "jQuery-html(",
-    "path": "ts/views/inbox_view.js",
-    "line": "    template: () => $('#two-column').html(),",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-09-15T21:07:50.995Z"
-  },
-  {
-    "rule": "jQuery-prependTo(",
-    "path": "ts/views/inbox_view.js",
-    "line": "            this.appLoadingScreen.$el.prependTo(this.el);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-09-15T21:07:50.995Z"
   },
   {
     "rule": "jQuery-$(",
@@ -8387,13 +8072,6 @@
     "line": "      this.appLoadingScreen.$el.prependTo(this.el);",
     "reasonCategory": "usageTrusted",
     "updated": "2021-09-15T21:07:50.995Z"
-  },
-  {
-    "rule": "DOM-innerHTML",
-    "path": "ts/windows/loading/start.js",
-    "line": "    message.innerHTML = window.SignalContext.i18n('optimizingApplication');",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-09-17T21:02:59.414Z"
   },
   {
     "rule": "DOM-innerHTML",

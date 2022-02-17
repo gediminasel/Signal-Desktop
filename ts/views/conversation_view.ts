@@ -54,6 +54,7 @@ import {
   getConversationSelector,
   getMessagesByConversation,
 } from '../state/selectors/conversations';
+import { getActiveCallState } from '../state/selectors/calling';
 import { ConversationDetailsMembershipList } from '../components/conversation/conversation-details/ConversationDetailsMembershipList';
 import { showSafetyNumberChangeDialog } from '../shims/showSafetyNumberChangeDialog';
 import type {
@@ -110,6 +111,7 @@ import { resolveAttachmentDraftData } from '../util/resolveAttachmentDraftData';
 import { showToast } from '../util/showToast';
 import { viewSyncJobQueue } from '../jobs/viewSyncJobQueue';
 import { viewedReceiptsJobQueue } from '../jobs/viewedReceiptsJobQueue';
+import { RecordingState } from '../state/ducks/audioRecorder';
 
 type AttachmentOptions = {
   messageId: string;
@@ -468,6 +470,11 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
 
     const markMessageRead = async (messageId: string) => {
       if (!window.isActive()) {
+        return;
+      }
+
+      const activeCall = getActiveCallState(window.reduxStore.getState());
+      if (activeCall && !activeCall.pip) {
         return;
       }
 
@@ -964,7 +971,12 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
 
   // TODO DESKTOP-2426
   async processAttachments(files: Array<File>): Promise<void> {
-    if (this.preview) {
+    const state = window.reduxStore.getState();
+
+    const isRecording =
+      state.audioRecorder.recordingState === RecordingState.Recording;
+
+    if (this.preview || isRecording) {
       return;
     }
 

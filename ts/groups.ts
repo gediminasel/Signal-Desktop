@@ -2541,7 +2541,16 @@ export async function respondToGroupV2Migration({
       logId: `getGroupLog/${logId}`,
       publicParams,
       secretParams,
-      request: (sender, options) => sender.getGroupLog(0, options),
+      request: (sender, options) =>
+        sender.getGroupLog(
+          {
+            startVersion: 0,
+            includeFirstState: true,
+            includeLastState: false,
+            maxSupportedChangeEpoch: SUPPORTED_CHANGE_EPOCH,
+          },
+          options
+        ),
     });
 
     // Attempt to start with the first group state, only later processing future updates
@@ -2826,7 +2835,7 @@ async function updateGroup(
   //   Unknown Group in the left pane.
   let activeAt = null;
   if (viaSync) {
-    activeAt = null;
+    activeAt = conversation.get('active_at') || null;
   } else if ((isInitialDataFetch || justJoinedGroup) && newAttributes.name) {
     activeAt = initialSentAt;
   } else {
@@ -3276,6 +3285,7 @@ async function getGroupDelta({
   });
 
   const currentRevision = group.revision;
+  const isFirstFetch = !isNumber(currentRevision);
   let revisionToFetch = isNumber(currentRevision)
     ? currentRevision + 1
     : undefined;
@@ -3284,7 +3294,15 @@ async function getGroupDelta({
   const changes: Array<Proto.IGroupChanges> = [];
   do {
     // eslint-disable-next-line no-await-in-loop
-    response = await sender.getGroupLog(revisionToFetch, options);
+    response = await sender.getGroupLog(
+      {
+        startVersion: revisionToFetch,
+        includeFirstState: isFirstFetch,
+        includeLastState: false,
+        maxSupportedChangeEpoch: SUPPORTED_CHANGE_EPOCH,
+      },
+      options
+    );
     changes.push(response.changes);
     if (response.end) {
       revisionToFetch = response.end + 1;
@@ -4716,6 +4734,13 @@ async function applyGroupState({
   if (groupState.membersPendingAdminApproval) {
     result.pendingAdminApprovalV2 = groupState.membersPendingAdminApproval.map(
       member => {
+        if (member.profileKey) {
+          newProfileKeys.push({
+            profileKey: member.profileKey,
+            uuid: UUID.cast(member.userId),
+          });
+        }
+
         return {
           uuid: UUID.cast(member.userId),
           timestamp: member.timestamp,
