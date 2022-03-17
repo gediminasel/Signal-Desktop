@@ -6401,7 +6401,7 @@
   {
     "rule": "jQuery-wrap(",
     "path": "node_modules/regenerator-runtime/runtime.js",
-    "line": "      wrap(innerFn, outerFn, self, tryLocsList)",
+    "line": "      wrap(innerFn, outerFn, self, tryLocsList),",
     "reasonCategory": "falseMatch",
     "updated": "2019-12-11T01:10:06.091Z"
   },
@@ -7641,6 +7641,13 @@
   },
   {
     "rule": "React-useRef",
+    "path": "ts/components/StoryViewsNRepliesModal.tsx",
+    "line": "  const inputApiRef = React.useRef<InputApi | undefined>();",
+    "reasonCategory": "usageTrusted",
+    "updated": "2022-02-15T17:57:06.507Z"
+  },
+  {
+    "rule": "React-useRef",
     "path": "ts/components/Tooltip.tsx",
     "line": "  const wrapperRef = React.useRef<HTMLSpanElement | null>(null);",
     "reasonCategory": "usageTrusted",
@@ -7661,14 +7668,6 @@
     "reasonCategory": "usageTrusted",
     "updated": "2021-01-18T22:24:05.937Z",
     "reasonDetail": "Used to reference popup menu boundaries element"
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/conversation/ConversationHero.tsx",
-    "line": "  const firstRenderRef = useRef(true);",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-10-26T19:12:24.410Z",
-    "reasonDetail": "Doesn't refer to a DOM element."
   },
   {
     "rule": "React-useRef",
@@ -7819,22 +7818,22 @@
   },
   {
     "rule": "jQuery-load(",
-    "path": "ts/jobs/helpers/syncHelpers.ts",
-    "line": "  await window.ConversationController.load();",
-    "reasonCategory": "falseMatch",
-    "updated": "2021-11-04T16:14:03.477Z"
-  },
-  {
-    "rule": "jQuery-load(",
-    "path": "ts/jobs/normalMessageSendJobQueue.ts",
+    "path": "ts/jobs/conversationJobQueue.ts",
     "line": "    await window.ConversationController.load();",
     "reasonCategory": "falseMatch",
     "updated": "2021-12-15T19:58:28.089Z"
   },
   {
     "rule": "jQuery-load(",
-    "path": "ts/jobs/reactionJobQueue.ts",
-    "line": "    await window.ConversationController.load();",
+    "path": "ts/jobs/helpers/sendReaction.ts",
+    "line": "  await window.ConversationController.load();",
+    "reasonCategory": "falseMatch",
+    "updated": "2021-11-04T16:14:03.477Z"
+  },
+  {
+    "rule": "jQuery-load(",
+    "path": "ts/jobs/helpers/syncHelpers.ts",
+    "line": "  await window.ConversationController.load();",
     "reasonCategory": "falseMatch",
     "updated": "2021-11-04T16:14:03.477Z"
   },

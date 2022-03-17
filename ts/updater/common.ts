@@ -2,24 +2,20 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /* eslint-disable no-console */
-import {
-  createWriteStream,
-  statSync,
-  writeFile as writeFileCallback,
-} from 'fs';
+import { createWriteStream } from 'fs';
+import { pathExists } from 'fs-extra';
+import { readdir, rename, stat, writeFile } from 'fs/promises';
 import { promisify } from 'util';
 import { execFile } from 'child_process';
-import { join, normalize, dirname } from 'path';
+import { join, normalize, extname } from 'path';
 import { tmpdir } from 'os';
 import { throttle } from 'lodash';
 
 import type { ParserConfiguration } from 'dashdash';
 import { createParser } from 'dashdash';
-import ProxyAgent from 'proxy-agent';
 import { FAILSAFE_SCHEMA, safeLoad } from 'js-yaml';
 import { gt } from 'semver';
 import config from 'config';
-import type { StrictOptions as GotOptions } from 'got';
 import got from 'got';
 import { v4 as getGuid } from 'uuid';
 import pify from 'pify';
@@ -29,11 +25,11 @@ import type { BrowserWindow } from 'electron';
 import { app, ipcMain } from 'electron';
 
 import * as durations from '../util/durations';
-import { getTempPath } from '../util/attachments';
+import { getTempPath, getUpdateCachePath } from '../util/attachments';
 import { DialogType } from '../types/Dialogs';
 import * as Errors from '../types/errors';
-import { getUserAgent } from '../util/getUserAgent';
 import { isAlpha, isBeta } from '../util/version';
+import { strictAssert } from '../util/assert';
 
 import * as packageJson from '../../package.json';
 import {
@@ -45,14 +41,18 @@ import { isPathInside } from '../util/isPathInside';
 import type { SettingsChannel } from '../main/settingsChannel';
 
 import type { LoggerType } from '../types/Logging';
+import { getGotOptions } from './got';
+import { checkIntegrity } from './util';
+import type { PrepareDownloadResultType as DifferentialDownloadDataType } from './differential';
+import {
+  prepareDownload as prepareDifferentialDownload,
+  download as downloadDifferentialData,
+  getBlockMapFileName,
+  isValidPreparedData as isValidDifferentialData,
+} from './differential';
 
-const writeFile = pify(writeFileCallback);
 const mkdirpPromise = pify(mkdirp);
 const rimrafPromise = pify(rimraf);
-
-export const GOT_CONNECT_TIMEOUT = 2 * 60 * 1000;
-export const GOT_LOOKUP_TIMEOUT = 2 * 60 * 1000;
-export const GOT_SOCKET_TIMEOUT = 2 * 60 * 1000;
 
 const INTERVAL = 30 * durations.MINUTE;
 
@@ -73,20 +73,46 @@ export type UpdateInformationType = {
   fileName: string;
   size: number;
   version: string;
+  sha512: string;
+  differentialData: DifferentialDownloadDataType | undefined;
 };
+
+enum DownloadMode {
+  DifferentialOnly = 'DifferentialOnly',
+  FullOnly = 'FullOnly',
+  Automatic = 'Automatic',
+}
+
+type DownloadUpdateResultType = Readonly<{
+  updateFilePath: string;
+  signature: Buffer;
+}>;
 
 export abstract class Updater {
   protected fileName: string | undefined;
 
   protected version: string | undefined;
 
-  protected updateFilePath: string | undefined;
+  protected cachedDifferentialData: DifferentialDownloadDataType | undefined;
+
+  private throttledSendDownloadingUpdate: (downloadedSize: number) => void;
+
+  private activeDownload: Promise<boolean> | undefined;
 
   constructor(
     protected readonly logger: LoggerType,
     private readonly settingsChannel: SettingsChannel,
     protected readonly getMainWindow: () => BrowserWindow | undefined
-  ) {}
+  ) {
+    this.throttledSendDownloadingUpdate = throttle((downloadedSize: number) => {
+      const mainWindow = this.getMainWindow();
+      mainWindow?.webContents.send(
+        'show-update-dialog',
+        DialogType.Downloading,
+        { downloadedSize }
+      );
+    }, 500);
+  }
 
   //
   // Public APIs
@@ -99,8 +125,6 @@ export abstract class Updater {
   public async start(): Promise<void> {
     this.logger.info('updater/start: starting checks...');
 
-    app.once('quit', () => this.quitHandler());
-
     setInterval(async () => {
       try {
         await this.checkForUpdatesMaybeInstall();
@@ -111,12 +135,6 @@ export abstract class Updater {
 
     await this.deletePreviousInstallers();
     await this.checkForUpdatesMaybeInstall();
-  }
-
-  public quitHandler(): void {
-    if (this.updateFilePath) {
-      this.deleteCache(this.updateFilePath);
-    }
   }
 
   //
@@ -131,9 +149,11 @@ export abstract class Updater {
   // Protected methods
   //
 
-  protected setUpdateListener(performUpdateCallback: () => void): void {
-    ipcMain.removeAllListeners('start-update');
-    ipcMain.once('start-update', performUpdateCallback);
+  protected setUpdateListener(
+    performUpdateCallback: () => Promise<void>
+  ): void {
+    ipcMain.removeHandler('start-update');
+    ipcMain.handleOnce('start-update', performUpdateCallback);
   }
 
   //
@@ -141,37 +161,61 @@ export abstract class Updater {
   //
 
   private async downloadAndInstall(
-    newFileName: string,
-    newVersion: string,
-    updateOnProgress?: boolean
-  ): Promise<void> {
-    const { logger } = this;
-    try {
-      const oldFileName = this.fileName;
-      const oldVersion = this.version;
+    updateInfo: UpdateInformationType,
+    mode: DownloadMode
+  ): Promise<boolean> {
+    if (this.activeDownload) {
+      return this.activeDownload;
+    }
 
-      if (this.updateFilePath) {
-        this.deleteCache(this.updateFilePath);
-      }
-      this.fileName = newFileName;
+    try {
+      this.activeDownload = this.doDownloadAndInstall(updateInfo, mode);
+
+      return await this.activeDownload;
+    } finally {
+      this.activeDownload = undefined;
+    }
+  }
+
+  private async doDownloadAndInstall(
+    updateInfo: UpdateInformationType,
+    mode: DownloadMode
+  ): Promise<boolean> {
+    const { logger } = this;
+
+    const { fileName: newFileName, version: newVersion } = updateInfo;
+
+    try {
+      const oldVersion = this.version;
       this.version = newVersion;
 
+      let downloadResult: DownloadUpdateResultType | undefined;
+
       try {
-        this.updateFilePath = await this.downloadUpdate(
-          this.fileName,
-          updateOnProgress
-        );
+        downloadResult = await this.downloadUpdate(updateInfo, mode);
       } catch (error) {
         // Restore state in case of download error
-        this.fileName = oldFileName;
         this.version = oldVersion;
+
         throw error;
       }
 
+      if (!downloadResult) {
+        logger.warn('downloadAndInstall: no update was downloaded');
+        strictAssert(
+          mode !== DownloadMode.Automatic && mode !== DownloadMode.FullOnly,
+          'Automatic and full mode downloads are guaranteed to happen or error'
+        );
+        return false;
+      }
+
+      const { updateFilePath, signature } = downloadResult;
+
       const publicKey = hexToBinary(config.get('updatesPublicKey'));
       const verified = await verifySignature(
-        this.updateFilePath,
+        updateFilePath,
         this.version,
+        signature,
         publicKey
       );
       if (!verified) {
@@ -179,11 +223,11 @@ export abstract class Updater {
         //   re-download the broken release. We will download it only once per launch.
         throw new Error(
           'Downloaded update did not pass signature verification ' +
-            `(version: '${this.version}'; fileName: '${this.fileName}')`
+            `(version: '${this.version}'; fileName: '${newFileName}')`
         );
       }
 
-      await this.installUpdate(this.updateFilePath);
+      await this.installUpdate(updateFilePath);
 
       const mainWindow = this.getMainWindow();
       if (mainWindow) {
@@ -195,8 +239,11 @@ export abstract class Updater {
           'downloadAndInstall: no mainWindow, cannot show update dialog'
         );
       }
+
+      return true;
     } catch (error) {
       logger.error(`downloadAndInstall: ${Errors.toLogFormat(error)}`);
+      throw error;
     }
   }
 
@@ -204,52 +251,85 @@ export abstract class Updater {
     const { logger } = this;
 
     logger.info('checkForUpdatesMaybeInstall: checking for update...');
-    const result = await this.checkForUpdates(force);
-    if (!result) {
+    const updateInfo = await this.checkForUpdates(force);
+    if (!updateInfo) {
       return;
     }
 
-    const { fileName: newFileName, version: newVersion } = result;
+    const { version: newVersion } = updateInfo;
 
-    if (
-      force ||
-      this.fileName !== newFileName ||
-      !this.version ||
-      gt(newVersion, this.version)
-    ) {
-      const autoDownloadUpdates = await this.getAutoDownloadUpdateSetting();
-      if (!autoDownloadUpdates) {
-        this.setUpdateListener(async () => {
-          logger.info(
-            'checkForUpdatesMaybeInstall: have not downloaded update, going to download'
-          );
-          await this.downloadAndInstall(newFileName, newVersion, true);
-        });
-        const mainWindow = this.getMainWindow();
-
-        if (mainWindow) {
-          mainWindow.webContents.send(
-            'show-update-dialog',
-            DialogType.DownloadReady,
-            {
-              downloadSize: result.size,
-              version: result.version,
-            }
-          );
-        } else {
-          logger.warn(
-            'checkForUpdatesMaybeInstall: no mainWindow, cannot show update dialog'
-          );
-        }
-        return;
-      }
-      await this.downloadAndInstall(newFileName, newVersion);
+    if (!force && this.version && !gt(newVersion, this.version)) {
+      return;
     }
+
+    const autoDownloadUpdates = await this.getAutoDownloadUpdateSetting();
+    if (autoDownloadUpdates) {
+      await this.downloadAndInstall(updateInfo, DownloadMode.Automatic);
+      return;
+    }
+
+    let mode = DownloadMode.FullOnly;
+    if (updateInfo.differentialData) {
+      mode = DownloadMode.DifferentialOnly;
+    }
+
+    await this.offerUpdate(updateInfo, mode, 0);
+  }
+
+  private async offerUpdate(
+    updateInfo: UpdateInformationType,
+    mode: DownloadMode,
+    attempt: number
+  ): Promise<void> {
+    const { logger } = this;
+
+    this.setUpdateListener(async () => {
+      logger.info('offerUpdate: have not downloaded update, going to download');
+
+      const didDownload = await this.downloadAndInstall(updateInfo, mode);
+      if (!didDownload && mode === DownloadMode.DifferentialOnly) {
+        this.logger.warn(
+          'offerUpdate: Failed to download differential update, offering full'
+        );
+
+        return this.offerUpdate(updateInfo, DownloadMode.FullOnly, attempt + 1);
+      }
+
+      strictAssert(didDownload, 'FullOnly must always download update');
+    });
+
+    const mainWindow = this.getMainWindow();
+    if (!mainWindow) {
+      logger.warn('offerUpdate: no mainWindow, cannot show update dialog');
+      return;
+    }
+
+    let downloadSize: number;
+    if (mode === DownloadMode.DifferentialOnly) {
+      strictAssert(
+        updateInfo.differentialData,
+        'Must have differential data in DifferentialOnly mode'
+      );
+      downloadSize = updateInfo.differentialData.downloadSize;
+    } else {
+      downloadSize = updateInfo.size;
+    }
+
+    logger.info(`offerUpdate: offering ${mode} update`);
+    mainWindow.webContents.send(
+      'show-update-dialog',
+      attempt === 0 ? DialogType.DownloadReady : DialogType.FullDownloadReady,
+      {
+        downloadSize,
+        downloadMode: mode,
+        version: updateInfo.version,
+      }
+    );
   }
 
   private async checkForUpdates(
     forceUpdate = false
-  ): Promise<UpdateInformationType | null> {
+  ): Promise<UpdateInformationType | undefined> {
     const yaml = await getUpdateYaml();
     const parsedYaml = parseYaml(yaml);
     const version = getVersion(parsedYaml);
@@ -259,102 +339,286 @@ export abstract class Updater {
         'checkForUpdates: no version extracted from downloaded yaml'
       );
 
-      return null;
+      return;
     }
 
-    if (forceUpdate || isVersionNewer(version)) {
+    if (!forceUpdate && !isVersionNewer(version)) {
       this.logger.info(
-        `checkForUpdates: found newer version ${version} ` +
-          `forceUpdate=${forceUpdate}`
+        `checkForUpdates: ${version} is not newer than ${packageJson.version}; ` +
+          'no new update available'
       );
 
-      const fileName = getUpdateFileName(
-        parsedYaml,
-        process.platform,
-        await this.getArch()
-      );
-
-      return {
-        fileName,
-        size: getSize(parsedYaml, fileName),
-        version,
-      };
+      return;
     }
 
     this.logger.info(
-      `checkForUpdates: ${version} is not newer; no new update available`
+      `checkForUpdates: found newer version ${version} ` +
+        `forceUpdate=${forceUpdate}`
     );
 
-    return null;
+    const fileName = getUpdateFileName(
+      parsedYaml,
+      process.platform,
+      await this.getArch()
+    );
+
+    const sha512 = getSHA512(parsedYaml, fileName);
+    strictAssert(sha512 !== undefined, 'Missing required hash');
+
+    const latestInstaller = await this.getLatestCachedInstaller(
+      extname(fileName)
+    );
+
+    let differentialData: DifferentialDownloadDataType | undefined;
+    if (latestInstaller) {
+      this.logger.info(
+        `checkForUpdates: Found local installer ${latestInstaller}`
+      );
+
+      const diffOptions = {
+        oldFile: latestInstaller,
+        newUrl: `${getUpdatesBase()}/${fileName}`,
+        sha512,
+      };
+
+      if (
+        this.cachedDifferentialData &&
+        isValidDifferentialData(this.cachedDifferentialData, diffOptions)
+      ) {
+        this.logger.info('checkForUpdates: using cached differential data');
+
+        differentialData = this.cachedDifferentialData;
+      } else {
+        try {
+          differentialData = await prepareDifferentialDownload(diffOptions);
+
+          this.cachedDifferentialData = differentialData;
+
+          this.logger.info(
+            'checkForUpdates: differential download size',
+            differentialData.downloadSize
+          );
+        } catch (error) {
+          this.logger.error(
+            'checkForUpdates: Failed to prepare differential update',
+            Errors.toLogFormat(error)
+          );
+          this.cachedDifferentialData = undefined;
+        }
+      }
+    }
+
+    return {
+      fileName,
+      size: getSize(parsedYaml, fileName),
+      version,
+      sha512,
+      differentialData,
+    };
+  }
+
+  private async getLatestCachedInstaller(
+    extension: string
+  ): Promise<string | undefined> {
+    const cacheDir = await createUpdateCacheDirIfNeeded();
+    const oldFiles = (await readdir(cacheDir)).map(fileName => {
+      return join(cacheDir, fileName);
+    });
+
+    return oldFiles.find(fileName => extname(fileName) === extension);
   }
 
   private async downloadUpdate(
-    fileName: string,
-    updateOnProgress?: boolean
-  ): Promise<string> {
+    { fileName, sha512, differentialData }: UpdateInformationType,
+    mode: DownloadMode
+  ): Promise<DownloadUpdateResultType | undefined> {
     const baseUrl = getUpdatesBase();
     const updateFileUrl = `${baseUrl}/${fileName}`;
 
+    const updateOnProgress = mode !== DownloadMode.Automatic;
+
     const signatureFileName = getSignatureFileName(fileName);
+    const blockMapFileName = getBlockMapFileName(fileName);
     const signatureUrl = `${baseUrl}/${signatureFileName}`;
+    const blockMapUrl = `${baseUrl}/${blockMapFileName}`;
 
-    let tempDir;
+    let cacheDir = await createUpdateCacheDirIfNeeded();
+    const targetUpdatePath = join(cacheDir, fileName);
+
+    const tempDir = await createTempDir();
+
+    const tempUpdatePath = join(tempDir, fileName);
+    const tempBlockMapPath = join(tempDir, blockMapFileName);
+
     try {
-      tempDir = await createTempDir();
-      const targetUpdatePath = join(tempDir, fileName);
-      const targetSignaturePath = join(tempDir, getSignatureFileName(fileName));
+      validatePath(cacheDir, targetUpdatePath);
 
-      validatePath(tempDir, targetUpdatePath);
-      validatePath(tempDir, targetSignaturePath);
+      validatePath(tempDir, tempUpdatePath);
+      validatePath(tempDir, tempBlockMapPath);
 
       this.logger.info(`downloadUpdate: Downloading signature ${signatureUrl}`);
-      const { body } = await got.get(signatureUrl, getGotOptions());
-      await writeFile(targetSignaturePath, body);
+      const signature = Buffer.from(
+        await got(signatureUrl, getGotOptions()).text(),
+        'hex'
+      );
 
-      this.logger.info(`downloadUpdate: Downloading update ${updateFileUrl}`);
-      const downloadStream = got.stream(updateFileUrl, getGotOptions());
-      const writeStream = createWriteStream(targetUpdatePath);
-
-      await new Promise<void>((resolve, reject) => {
-        const mainWindow = this.getMainWindow();
-        if (updateOnProgress && mainWindow) {
-          let downloadedSize = 0;
-
-          const throttledSend = throttle(() => {
-            mainWindow.webContents.send(
-              'show-update-dialog',
-              DialogType.Downloading,
-              { downloadedSize }
-            );
-          }, 500);
-
-          downloadStream.on('data', data => {
-            downloadedSize += data.length;
-            throttledSend();
-          });
+      if (differentialData) {
+        this.logger.info(`downloadUpdate: Saving blockmap ${blockMapUrl}`);
+        await writeFile(tempBlockMapPath, differentialData.newBlockMap);
+      } else {
+        try {
+          this.logger.info(
+            `downloadUpdate: Downloading blockmap ${blockMapUrl}`
+          );
+          const blockMap = await got(blockMapUrl, getGotOptions()).buffer();
+          await writeFile(tempBlockMapPath, blockMap);
+        } catch (error) {
+          this.logger.warn(
+            'downloadUpdate: Failed to download blockmap, continuing',
+            Errors.toLogFormat(error)
+          );
         }
+      }
 
-        downloadStream.on('error', error => {
-          reject(error);
-        });
-        downloadStream.on('end', () => {
-          resolve();
-        });
+      let gotUpdate = false;
+      if (!gotUpdate && (await pathExists(targetUpdatePath))) {
+        const checkResult = await checkIntegrity(targetUpdatePath, sha512);
+        if (checkResult.ok) {
+          this.logger.info(
+            `downloadUpdate: Not downloading update ${updateFileUrl}, ` +
+              'local file has the same hash'
+          );
 
-        writeStream.on('error', error => {
-          reject(error);
-        });
+          // Move file into downloads directory
+          try {
+            await rename(targetUpdatePath, tempUpdatePath);
+            gotUpdate = true;
+          } catch (error) {
+            this.logger.error(
+              'downloadUpdate: failed to move already downloaded file',
+              Errors.toLogFormat(error)
+            );
+          }
+        } else {
+          this.logger.error(
+            'downloadUpdate: integrity check failure',
+            checkResult.error
+          );
+        }
+      }
 
-        downloadStream.pipe(writeStream);
+      const isDifferentialEnabled =
+        differentialData && mode !== DownloadMode.FullOnly;
+      if (!gotUpdate && isDifferentialEnabled) {
+        this.logger.info(
+          `downloadUpdate: Downloading differential update ${updateFileUrl}`
+        );
+
+        try {
+          await downloadDifferentialData(tempUpdatePath, differentialData, {
+            statusCallback: updateOnProgress
+              ? this.throttledSendDownloadingUpdate
+              : undefined,
+            logger: this.logger,
+          });
+
+          gotUpdate = true;
+        } catch (error) {
+          this.logger.error(
+            'downloadUpdate: Failed to apply differential update',
+            Errors.toLogFormat(error)
+          );
+        }
+      }
+
+      const isFullEnabled = mode !== DownloadMode.DifferentialOnly;
+      if (!gotUpdate && isFullEnabled) {
+        this.logger.info(
+          `downloadUpdate: Downloading full update ${updateFileUrl}`
+        );
+
+        // We could have failed to update differentially due to low free disk
+        // space. Remove all cached updates since we are doing a full download
+        // anyway.
+        await rimrafPromise(cacheDir);
+        cacheDir = await createUpdateCacheDirIfNeeded();
+
+        await this.downloadAndReport(
+          updateFileUrl,
+          tempUpdatePath,
+          updateOnProgress
+        );
+        gotUpdate = true;
+      }
+
+      if (!gotUpdate) {
+        return undefined;
+      }
+
+      this.logger.info(
+        'downloadUpdate: Downloaded update, moving into cache dir'
+      );
+
+      // Backup old files
+      const restoreDir = await getTempDir();
+      await rename(cacheDir, restoreDir);
+
+      // Move the files into the final position
+      try {
+        await rename(tempDir, cacheDir);
+      } catch (error) {
+        // Attempt to restore old files
+        await rename(restoreDir, cacheDir);
+
+        throw error;
+      }
+
+      try {
+        await deleteTempDir(restoreDir);
+      } catch (error) {
+        this.logger.warn(
+          'downloadUpdate: Failed to remove backup folder, ignoring',
+          Errors.toLogFormat(error)
+        );
+      }
+
+      return { updateFilePath: targetUpdatePath, signature };
+    } finally {
+      await deleteTempDir(tempDir);
+    }
+  }
+
+  private async downloadAndReport(
+    updateFileUrl: string,
+    targetUpdatePath: string,
+    updateOnProgress = false
+  ): Promise<void> {
+    const downloadStream = got.stream(updateFileUrl, getGotOptions());
+    const writeStream = createWriteStream(targetUpdatePath);
+
+    await new Promise<void>((resolve, reject) => {
+      if (updateOnProgress) {
+        let downloadedSize = 0;
+
+        downloadStream.on('data', data => {
+          downloadedSize += data.length;
+          this.throttledSendDownloadingUpdate(downloadedSize);
+        });
+      }
+
+      downloadStream.on('error', error => {
+        reject(error);
+      });
+      downloadStream.on('end', () => {
+        resolve();
       });
 
-      return targetUpdatePath;
-    } catch (error) {
-      if (tempDir) {
-        await deleteTempDir(tempDir);
-      }
-      throw error;
-    }
+      writeStream.on('error', error => {
+        reject(error);
+      });
+
+      downloadStream.pipe(writeStream);
+    });
   }
 
   private async getAutoDownloadUpdateSetting(): Promise<boolean> {
@@ -368,18 +632,6 @@ export abstract class Updater {
         Errors.toLogFormat(error)
       );
       return false;
-    }
-  }
-
-  private async deleteCache(filePath: string | null): Promise<void> {
-    if (!filePath) {
-      return;
-    }
-    const tempDir = dirname(filePath);
-    try {
-      await deleteTempDir(tempDir);
-    } catch (error) {
-      this.logger.error(`quitHandler: ${Errors.toLogFormat(error)}`);
     }
   }
 
@@ -426,12 +678,6 @@ export function getUpdateCheckUrl(): string {
 
 export function getUpdatesBase(): string {
   return config.get('updatesUrl');
-}
-export function getCertificateAuthority(): string {
-  return config.get('certificateAuthority');
-}
-export function getProxyUrl(): string | undefined {
-  return process.env.HTTPS_PROXY || process.env.https_proxy;
 }
 
 export function getUpdatesFileName(): string {
@@ -504,9 +750,22 @@ export function getUpdateFileName(
   return path;
 }
 
+function getSHA512(
+  info: JSONUpdateSchema,
+  fileName: string
+): string | undefined {
+  if (!info || !info.files) {
+    throw new Error('getSHA512: No files present in YAML file');
+  }
+
+  const foundFile = info.files.find(file => file.url === fileName);
+
+  return foundFile?.sha512;
+}
+
 function getSize(info: JSONUpdateSchema, fileName: string): number {
   if (!info || !info.files) {
-    throw new Error('getUpdateFileName: No files present in YAML file');
+    throw new Error('getSize: No files present in YAML file');
   }
 
   const foundFile = info.files.find(file => file.url === fileName);
@@ -529,55 +788,51 @@ async function getUpdateYaml(): Promise<string> {
   return body;
 }
 
-function getGotOptions(): GotOptions {
-  const certificateAuthority = getCertificateAuthority();
-  const proxyUrl = getProxyUrl();
-  const agent = proxyUrl
-    ? {
-        http: new ProxyAgent(proxyUrl),
-        https: new ProxyAgent(proxyUrl),
-      }
-    : undefined;
-
-  return {
-    agent,
-    https: {
-      certificateAuthority,
-    },
-    headers: {
-      'Cache-Control': 'no-cache',
-      'User-Agent': getUserAgent(packageJson.version),
-    },
-    timeout: {
-      connect: GOT_CONNECT_TIMEOUT,
-      lookup: GOT_LOOKUP_TIMEOUT,
-
-      // This timeout is reset whenever we get new data on the socket
-      socket: GOT_SOCKET_TIMEOUT,
-    },
-  };
-}
-
 function getBaseTempDir() {
   // We only use tmpdir() when this code is run outside of an Electron app (as in: tests)
   return app ? getTempPath(app.getPath('userData')) : tmpdir();
 }
 
 export async function createTempDir(): Promise<string> {
+  const targetDir = await getTempDir();
+
+  await mkdirpPromise(targetDir);
+
+  return targetDir;
+}
+
+export async function getTempDir(): Promise<string> {
   const baseTempDir = getBaseTempDir();
   const uniqueName = getGuid();
-  const targetDir = join(baseTempDir, uniqueName);
+
+  // Create parent folder if not already present
+  if (!(await pathExists(baseTempDir))) {
+    await mkdirpPromise(baseTempDir);
+  }
+
+  return join(baseTempDir, uniqueName);
+}
+
+function getUpdateCacheDir() {
+  // We only use tmpdir() when this code is run outside of an Electron app (as in: tests)
+  return app ? getUpdateCachePath(app.getPath('userData')) : tmpdir();
+}
+
+export async function createUpdateCacheDirIfNeeded(): Promise<string> {
+  const targetDir = getUpdateCacheDir();
   await mkdirpPromise(targetDir);
 
   return targetDir;
 }
 
 export async function deleteTempDir(targetDir: string): Promise<void> {
-  const pathInfo = statSync(targetDir);
-  if (!pathInfo.isDirectory()) {
-    throw new Error(
-      `deleteTempDir: Cannot delete path '${targetDir}' because it is not a directory`
-    );
+  if (await pathExists(targetDir)) {
+    const pathInfo = await stat(targetDir);
+    if (!pathInfo.isDirectory()) {
+      throw new Error(
+        `deleteTempDir: Cannot delete path '${targetDir}' because it is not a directory`
+      );
+    }
   }
 
   const baseTempDir = getBaseTempDir();

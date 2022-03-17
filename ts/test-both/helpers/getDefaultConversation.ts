@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Signal Messenger, LLC
+// Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { v4 as generateUuid } from 'uuid';
@@ -317,6 +317,13 @@ const LAST_NAMES = [
 export const getFirstName = (): string => sample(FIRST_NAMES) || 'Test';
 export const getLastName = (): string => sample(LAST_NAMES) || 'Test';
 
+export const getAvatarPath = (): string =>
+  sample([
+    '/fixtures/kitten-1-64-64.jpg',
+    '/fixtures/kitten-2-64-64.jpg',
+    '/fixtures/kitten-3-64-64.jpg',
+  ]) || '';
+
 export function getDefaultConversation(
   overrideProps: Partial<ConversationType> = {}
 ): ConversationType {
@@ -325,12 +332,12 @@ export function getDefaultConversation(
 
   return {
     acceptedMessageRequest: true,
+    avatarPath: getAvatarPath(),
     badges: [],
     e164: '+1300555000',
     color: getRandomColor(),
     firstName,
     id: generateUuid(),
-    isGroupV2Capable: true,
     isMe: false,
     lastUpdated: Date.now(),
     markedUnread: Boolean(overrideProps.markedUnread),

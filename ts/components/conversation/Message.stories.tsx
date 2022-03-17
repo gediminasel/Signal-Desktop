@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Signal Messenger, LLC
+// Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import * as React from 'react';
@@ -29,6 +29,7 @@ import enMessages from '../../../_locales/en/messages.json';
 import { pngUrl } from '../../storybook/Fixtures';
 import { getDefaultConversation } from '../../test-both/helpers/getDefaultConversation';
 import { WidthBreakpoint } from '../_util';
+import { MINUTE } from '../../util/durations';
 
 import { fakeAttachment } from '../../test-both/helpers/fakeAttachment';
 import { getFakeBadge } from '../../test-both/helpers/getFakeBadge';
@@ -103,9 +104,10 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   canReply: true,
   canDownload: true,
   canDeleteForEveryone: overrideProps.canDeleteForEveryone || false,
+  canRetry: overrideProps.canRetry || false,
+  canRetryDeleteForEveryone: overrideProps.canRetryDeleteForEveryone || false,
   checkForAccount: action('checkForAccount'),
   clearSelectedMessage: action('clearSelectedMessage'),
-  collapseMetadata: overrideProps.collapseMetadata,
   containerElementRef: React.createRef<HTMLElement>(),
   containerWidthBreakpoint: WidthBreakpoint.Wide,
   conversationColor:
@@ -149,7 +151,6 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   markAttachmentAsCorrupted: action('markAttachmentAsCorrupted'),
   markViewed: action('markViewed'),
   messageExpanded: action('messageExpanded'),
-  onHeightChange: action('onHeightChange'),
   openConversation: action('openConversation'),
   openLink: action('openLink'),
   previews: overrideProps.previews || [],
@@ -164,6 +165,7 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   renderAudioAttachment,
   replyToMessage: action('replyToMessage'),
   retrySend: action('retrySend'),
+  retryDeleteForEveryone: action('retryDeleteForEveryone'),
   scrollToQuotedMessage: action('scrollToQuotedMessage'),
   selectMessage: action('selectMessage'),
   showContactDetail: action('showContactDetail'),
@@ -184,13 +186,33 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   timestamp: number('timestamp', overrideProps.timestamp || Date.now()),
 });
 
-const renderBothDirections = (props: Props) => (
-  <>
-    <Message {...props} />
-    <br />
-    <Message {...props} direction="outgoing" />
-  </>
-);
+const createTimelineItem = (data: undefined | Props) =>
+  data && {
+    type: 'message' as const,
+    data,
+    timestamp: data.timestamp,
+  };
+
+const renderMany = (propsArray: ReadonlyArray<Props>) =>
+  propsArray.map((message, index) => (
+    <Message
+      key={message.text}
+      {...message}
+      previousItem={createTimelineItem(propsArray[index - 1])}
+      item={createTimelineItem(message)}
+      nextItem={createTimelineItem(propsArray[index + 1])}
+    />
+  ));
+
+const renderBothDirections = (props: Props) =>
+  renderMany([
+    props,
+    {
+      ...props,
+      author: { ...props.author, id: getDefaultConversation().id },
+      direction: 'outgoing',
+    },
+  ]);
 
 story.add('Plain Message', () => {
   const props = createProps({
@@ -341,17 +363,6 @@ story.add('Pending', () => {
   const props = createProps({
     text: 'Hello there from a pal! I am sending a long message so that it will wrap a bit, since I like that look.',
     textPending: true,
-  });
-
-  return renderBothDirections(props);
-});
-
-story.add('Collapsed Metadata', () => {
-  const props = createProps({
-    author: getDefaultConversation({ title: 'Fred Willard' }),
-    collapseMetadata: true,
-    conversationType: 'group',
-    text: 'Hello there from a pal!',
   });
 
   return renderBothDirections(props);
@@ -573,13 +584,23 @@ story.add('Sticker', () => {
 });
 
 story.add('Deleted', () => {
-  const props = createProps({
+  const propsSent = createProps({
     conversationType: 'group',
     deletedForEveryone: true,
     status: 'sent',
   });
+  const propsSending = createProps({
+    conversationType: 'group',
+    deletedForEveryone: true,
+    status: 'sending',
+  });
 
-  return renderBothDirections(props);
+  return (
+    <>
+      {renderBothDirections(propsSent)}
+      {renderBothDirections(propsSending)}
+    </>
+  );
 });
 
 story.add('Deleted with expireTimer', () => {
@@ -595,6 +616,30 @@ story.add('Deleted with expireTimer', () => {
   return renderBothDirections(props);
 });
 
+story.add('Deleted with error', () => {
+  const propsPartialError = createProps({
+    timestamp: Date.now() - 60 * 1000,
+    canDeleteForEveryone: true,
+    conversationType: 'group',
+    deletedForEveryone: true,
+    status: 'partial-sent',
+  });
+  const propsError = createProps({
+    timestamp: Date.now() - 60 * 1000,
+    canDeleteForEveryone: true,
+    conversationType: 'group',
+    deletedForEveryone: true,
+    status: 'error',
+  });
+
+  return (
+    <>
+      {renderBothDirections(propsPartialError)}
+      {renderBothDirections(propsError)}
+    </>
+  );
+});
+
 story.add('Can delete for everyone', () => {
   const props = createProps({
     status: 'read',
@@ -608,6 +653,7 @@ story.add('Can delete for everyone', () => {
 story.add('Error', () => {
   const props = createProps({
     status: 'error',
+    canRetry: true,
     text: 'I hope you get this.',
   });
 
@@ -1297,6 +1343,8 @@ story.add('All the context menus', () => {
     ],
     status: 'partial-sent',
     canDeleteForEveryone: true,
+    canRetry: true,
+    canRetryDeleteForEveryone: true,
   });
 
   return <Message {...props} direction="outgoing" />;
@@ -1351,3 +1399,67 @@ story.add('Custom Color', () => (
     />
   </>
 ));
+
+story.add('Collapsing text-only DMs', () => {
+  const them = getDefaultConversation();
+  const me = getDefaultConversation({ isMe: true });
+
+  return renderMany([
+    createProps({
+      author: them,
+      text: 'One',
+      timestamp: Date.now() - 5 * MINUTE,
+    }),
+    createProps({
+      author: them,
+      text: 'Two',
+      timestamp: Date.now() - 4 * MINUTE,
+    }),
+    createProps({
+      author: them,
+      text: 'Three',
+      timestamp: Date.now() - 3 * MINUTE,
+    }),
+    createProps({
+      author: me,
+      direction: 'outgoing',
+      text: 'Four',
+      timestamp: Date.now() - 2 * MINUTE,
+    }),
+    createProps({
+      text: 'Five',
+      author: me,
+      timestamp: Date.now() - MINUTE,
+      direction: 'outgoing',
+    }),
+    createProps({
+      author: me,
+      direction: 'outgoing',
+      text: 'Six',
+    }),
+  ]);
+});
+
+story.add('Collapsing text-only group messages', () => {
+  const author = getDefaultConversation();
+
+  return renderMany([
+    createProps({
+      author,
+      conversationType: 'group',
+      text: 'One',
+      timestamp: Date.now() - 2 * MINUTE,
+    }),
+    createProps({
+      author,
+      conversationType: 'group',
+      text: 'Two',
+      timestamp: Date.now() - MINUTE,
+    }),
+    createProps({
+      author,
+      conversationType: 'group',
+      text: 'Three',
+    }),
+  ]);
+});

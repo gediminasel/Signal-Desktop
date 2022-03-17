@@ -28,10 +28,15 @@ import { ScrollBehavior } from '../types/Util';
 import type { PreferredBadgeSelectorType } from '../state/selectors/badges';
 import { usePrevious } from '../hooks/usePrevious';
 import { missingCaseError } from '../util/missingCaseError';
-import { strictAssert } from '../util/assert';
-import { isSorted } from '../util/isSorted';
 import type { WidthBreakpoint } from './_util';
 import { getConversationListWidthBreakpoint } from './_util';
+import {
+  MIN_WIDTH,
+  SNAP_WIDTH,
+  MIN_FULL_WIDTH,
+  MAX_WIDTH,
+  getWidthFromPreferredWidth,
+} from '../util/leftPaneWidth';
 
 import { ConversationList } from './ConversationList';
 import { ContactCheckboxDisabledReason } from './conversationList/ContactCheckbox';
@@ -41,15 +46,6 @@ import type {
   ReplaceAvatarActionType,
   SaveAvatarToDiskActionType,
 } from '../types/Avatar';
-
-const MIN_WIDTH = 97;
-const SNAP_WIDTH = 200;
-const MIN_FULL_WIDTH = 280;
-const MAX_WIDTH = 380;
-strictAssert(
-  isSorted([MIN_WIDTH, SNAP_WIDTH, MIN_FULL_WIDTH, MAX_WIDTH]),
-  'Expected widths to be in the right order'
-);
 
 export enum LeftPaneMode {
   Inbox,
@@ -88,18 +84,16 @@ export type PropsType = {
   preferredWidthFromStorage: number;
   selectedConversationId: undefined | string;
   selectedMessageId: undefined | string;
-  regionCode: string;
+  regionCode: string | undefined;
   challengeStatus: 'idle' | 'required' | 'pending';
   setChallengeStatus: (status: 'idle') => void;
   crashReportCount: number;
   theme: ThemeType;
 
   // Action Creators
-  cantAddContactToGroup: (conversationId: string) => void;
   clearConversationSearch: () => void;
   clearGroupCreationError: () => void;
   clearSearch: () => void;
-  closeCantAddContactToGroupModal: () => void;
   closeMaximumGroupSizeModal: () => void;
   closeRecommendedGroupSizeModal: () => void;
   createGroup: () => void;
@@ -149,13 +143,11 @@ export type PropsType = {
 };
 
 export const LeftPane: React.FC<PropsType> = ({
-  cantAddContactToGroup,
   challengeStatus,
   crashReportCount,
   clearConversationSearch,
   clearGroupCreationError,
   clearSearch,
-  closeCantAddContactToGroupModal,
   closeMaximumGroupSizeModal,
   closeRecommendedGroupSizeModal,
   composeDeleteAvatarFromDisk,
@@ -466,7 +458,6 @@ export const LeftPane: React.FC<PropsType> = ({
     clearConversationSearch,
     clearGroupCreationError,
     clearSearch,
-    closeCantAddContactToGroupModal,
     closeMaximumGroupSizeModal,
     closeRecommendedGroupSizeModal,
     composeDeleteAvatarFromDisk,
@@ -504,13 +495,6 @@ export const LeftPane: React.FC<PropsType> = ({
     selectedConversationId
   );
 
-  let width: number;
-  if (requiresFullWidth || preferredWidth >= SNAP_WIDTH) {
-    width = Math.max(preferredWidth, MIN_FULL_WIDTH);
-  } else {
-    width = MIN_WIDTH;
-  }
-
   const isScrollable = helper.isScrollable();
 
   let rowIndexToScrollTo: undefined | number;
@@ -531,6 +515,10 @@ export const LeftPane: React.FC<PropsType> = ({
   //   archive explainer text at the top of the archive view causes problems otherwise.
   //   It also ensures that we scroll to the top when switching views.
   const listKey = preRowsNode ? 1 : 0;
+
+  const width = getWidthFromPreferredWidth(preferredWidth, {
+    requiresFullWidth,
+  });
 
   const widthBreakpoint = getConversationListWidthBreakpoint(width);
 
@@ -606,9 +594,6 @@ export const LeftPane: React.FC<PropsType> = ({
                       case ContactCheckboxDisabledReason.AlreadyAdded:
                       case ContactCheckboxDisabledReason.MaximumContactsSelected:
                         // These are no-ops.
-                        break;
-                      case ContactCheckboxDisabledReason.NotCapable:
-                        cantAddContactToGroup(conversationId);
                         break;
                       default:
                         throw missingCaseError(disabledReason);

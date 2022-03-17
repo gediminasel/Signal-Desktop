@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import memoizee from 'memoizee';
-import { fromPairs, isNumber } from 'lodash';
+import { isNumber } from 'lodash';
 import { createSelector } from 'reselect';
 
 import type { StateType } from '../reducer';
@@ -12,12 +12,17 @@ import type {
   ConversationMessageType,
   ConversationsStateType,
   ConversationType,
+  ConversationVerificationData,
   MessageLookupType,
   MessagesByConversationType,
   PreJoinConversationType,
 } from '../ducks/conversations';
 import type { UsernameSaveState } from '../ducks/conversationsEnums';
-import { ComposerStep, OneTimeModalState } from '../ducks/conversationsEnums';
+import {
+  ComposerStep,
+  OneTimeModalState,
+  ConversationVerificationState,
+} from '../ducks/conversationsEnums';
 import { getOwn } from '../../util/getOwn';
 import { isNotNil } from '../../util/isNotNil';
 import { deconstructLookup } from '../../util/deconstructLookup';
@@ -360,9 +365,13 @@ export const getMe = createSelector(
   [getConversationLookup, getUserConversationId],
   (
     lookup: ConversationLookupType,
-    ourConversationId: string
+    ourConversationId: string | undefined
   ): ConversationType => {
-    return lookup[ourConversationId];
+    if (!ourConversationId) {
+      return getPlaceholderContact();
+    }
+
+    return lookup[ourConversationId] || getPlaceholderContact();
   }
 );
 
@@ -526,28 +535,6 @@ export const getFilteredCandidateContactsForNewGroup = createSelector(
   filterAndSortConversationsByTitle
 );
 
-export const getCantAddContactForModal = createSelector(
-  getConversationLookup,
-  getComposerState,
-  (conversationLookup, composerState): undefined | ConversationType => {
-    if (composerState?.step !== ComposerStep.ChooseGroupMembers) {
-      return undefined;
-    }
-
-    const conversationId = composerState.cantAddContactIdForModal;
-    if (!conversationId) {
-      return undefined;
-    }
-
-    const result = getOwn(conversationLookup, conversationId);
-    assert(
-      result,
-      'getCantAddContactForModal: failed to look up conversation by ID; returning undefined'
-    );
-    return result;
-  }
-);
-
 const getGroupCreationComposerState = createSelector(
   getComposerState,
   (
@@ -649,8 +636,6 @@ export const getConversationSelector = createSelector(
   ): GetConversationByIdType => {
     return (id?: string) => {
       if (!id) {
-        log.warn(`getConversationSelector: Called with a falsey id ${id}`);
-        // This will return a placeholder contact
         return selector(undefined);
       }
 
@@ -709,10 +694,10 @@ const getCachedConversationMemberColorsSelector = createSelector(
   getUserConversationId,
   (
     conversationSelector: GetConversationByIdType,
-    ourConversationId: string
+    ourConversationId: string | undefined
   ) => {
     return memoizee(
-      (conversationId: string) => {
+      (conversationId: string | undefined) => {
         const contactNameColors: Map<string, ContactNameColorType> = new Map();
         const {
           sortedGroupMembers = [],
@@ -721,7 +706,9 @@ const getCachedConversationMemberColorsSelector = createSelector(
         } = conversationSelector(conversationId);
 
         if (type === 'direct') {
-          contactNameColors.set(ourConversationId, ContactNameColors[0]);
+          if (ourConversationId) {
+            contactNameColors.set(ourConversationId, ContactNameColors[0]);
+          }
           contactNameColors.set(theirId, ContactNameColors[0]);
           return contactNameColors;
         }
@@ -746,7 +733,7 @@ const getCachedConversationMemberColorsSelector = createSelector(
 
 export type ContactNameColorSelectorType = (
   conversationId: string,
-  contactId: string
+  contactId: string | undefined
 ) => ContactNameColorType;
 
 export const getContactNameColorSelector = createSelector(
@@ -754,8 +741,13 @@ export const getContactNameColorSelector = createSelector(
   conversationMemberColorsSelector => {
     return (
       conversationId: string,
-      contactId: string
+      contactId: string | undefined
     ): ContactNameColorType => {
+      if (!contactId) {
+        log.warn('No color generated for missing contactId');
+        return ContactNameColors[0];
+      }
+
       const contactNameColors =
         conversationMemberColorsSelector(conversationId);
       const color = contactNameColors.get(contactId);
@@ -787,10 +779,10 @@ export const getMessageSelector = createSelector(
     messageLookup: MessageLookupType,
     selectedMessage: SelectedMessageType | undefined,
     conversationSelector: GetConversationByIdType,
-    regionCode: string,
-    ourNumber: string,
-    ourUuid: UUIDStringType,
-    ourConversationId: string,
+    regionCode: string | undefined,
+    ourNumber: string | undefined,
+    ourUuid: UUIDStringType | undefined,
+    ourConversationId: string | undefined,
     callSelector: CallSelectorType,
     activeCall: undefined | CallStateType,
     accountSelector: AccountSelectorType,
@@ -823,13 +815,10 @@ export function _conversationMessagesSelector(
   conversation: ConversationMessageType
 ): TimelinePropsType {
   const {
-    heightChangeMessageIds,
     isLoadingMessages,
     isNearBottom,
-    loadCountdownStart,
     messageIds,
     metrics,
-    resetCounter,
     scrollToMessageId,
     scrollToMessageCounter,
   } = conversation;
@@ -846,14 +835,6 @@ export function _conversationMessagesSelector(
 
   const items = messageIds;
 
-  const messageHeightChangeLookup =
-    heightChangeMessageIds && heightChangeMessageIds.length
-      ? fromPairs(heightChangeMessageIds.map(id => [id, true]))
-      : null;
-  const messageHeightChangeIndex = messageHeightChangeLookup
-    ? messageIds.findIndex(id => messageHeightChangeLookup[id])
-    : undefined;
-
   const oldestUnreadIndex = oldestUnread
     ? messageIds.findIndex(id => id === oldestUnread.id)
     : undefined;
@@ -866,19 +847,12 @@ export function _conversationMessagesSelector(
     haveNewest,
     haveOldest,
     isLoadingMessages,
-    loadCountdownStart,
-    items,
     isNearBottom,
-    messageHeightChangeBaton: heightChangeMessageIds,
-    messageHeightChangeIndex:
-      isNumber(messageHeightChangeIndex) && messageHeightChangeIndex >= 0
-        ? messageHeightChangeIndex
-        : undefined,
+    items,
     oldestUnreadIndex:
       isNumber(oldestUnreadIndex) && oldestUnreadIndex >= 0
         ? oldestUnreadIndex
         : undefined,
-    resetCounter,
     scrollToIndex:
       isNumber(scrollToIndex) && scrollToIndex >= 0 ? scrollToIndex : undefined,
     scrollToIndexCounter: scrollToMessageCounter,
@@ -913,8 +887,7 @@ export const getConversationMessagesSelector = createSelector(
         return {
           haveNewest: false,
           haveOldest: false,
-          isLoadingMessages: false,
-          resetCounter: 0,
+          isLoadingMessages: true,
           scrollToIndexCounter: 0,
           totalUnread: 0,
           items: [],
@@ -995,52 +968,59 @@ export const getGroupAdminsSelector = createSelector(
   }
 );
 
-const getOutboundMessagesPendingConversationVerification = createSelector(
+const getConversationVerificationData = createSelector(
   getConversations,
   (
     conversations: Readonly<ConversationsStateType>
-  ): Record<string, Array<string>> =>
-    conversations.outboundMessagesPendingConversationVerification
+  ): Record<string, ConversationVerificationData> =>
+    conversations.verificationDataByConversation
 );
 
-const getConversationIdsStoppingMessageSendBecauseOfVerification =
-  createSelector(
-    getOutboundMessagesPendingConversationVerification,
-    (outboundMessagesPendingConversationVerification): Array<string> =>
-      Object.keys(outboundMessagesPendingConversationVerification)
-  );
+export const getConversationIdsStoppedForVerification = createSelector(
+  getConversationVerificationData,
+  (verificationDataByConversation): Array<string> =>
+    Object.keys(verificationDataByConversation)
+);
 
-export const getConversationsStoppingMessageSendBecauseOfVerification =
-  createSelector(
-    getConversationByIdSelector,
-    getConversationIdsStoppingMessageSendBecauseOfVerification,
-    (
-      conversationSelector: (id: string) => undefined | ConversationType,
-      conversationIds: ReadonlyArray<string>
-    ): Array<ConversationType> => {
-      const conversations = conversationIds
-        .map(conversationId => conversationSelector(conversationId))
-        .filter(isNotNil);
-      return sortByTitle(conversations);
-    }
-  );
-
-export const getMessageIdsPendingBecauseOfVerification = createSelector(
-  getOutboundMessagesPendingConversationVerification,
-  (outboundMessagesPendingConversationVerification): Set<string> => {
-    const result = new Set<string>();
-    Object.values(outboundMessagesPendingConversationVerification).forEach(
-      messageGroup => {
-        messageGroup.forEach(messageId => {
-          result.add(messageId);
-        });
-      }
-    );
-    return result;
+export const getConversationsStoppedForVerification = createSelector(
+  getConversationByIdSelector,
+  getConversationIdsStoppedForVerification,
+  (
+    conversationSelector: (id: string) => undefined | ConversationType,
+    conversationIds: ReadonlyArray<string>
+  ): Array<ConversationType> => {
+    const conversations = conversationIds
+      .map(conversationId => conversationSelector(conversationId))
+      .filter(isNotNil);
+    return sortByTitle(conversations);
   }
 );
 
-export const getNumberOfMessagesPendingBecauseOfVerification = createSelector(
-  getMessageIdsPendingBecauseOfVerification,
-  (messageIds: Readonly<Set<string>>): number => messageIds.size
+export const getConversationIdsStoppingSend = createSelector(
+  getConversationVerificationData,
+  (pendingData): Array<string> => {
+    const result = new Set<string>();
+    Object.values(pendingData).forEach(item => {
+      if (item.type === ConversationVerificationState.PendingVerification) {
+        item.conversationsNeedingVerification.forEach(conversationId => {
+          result.add(conversationId);
+        });
+      }
+    });
+    return Array.from(result);
+  }
+);
+
+export const getConversationsStoppingSend = createSelector(
+  getConversationByIdSelector,
+  getConversationIdsStoppingSend,
+  (
+    conversationSelector: (id: string) => undefined | ConversationType,
+    conversationIds: ReadonlyArray<string>
+  ): Array<ConversationType> => {
+    const conversations = conversationIds
+      .map(conversationId => conversationSelector(conversationId))
+      .filter(isNotNil);
+    return sortByTitle(conversations);
+  }
 );

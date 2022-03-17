@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Signal Messenger, LLC
+// Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /* eslint-disable no-bitwise */
@@ -45,6 +45,7 @@ import { dropNull } from '../util/dropNull';
 import { normalizeUuid } from '../util/normalizeUuid';
 import { normalizeNumber } from '../util/normalizeNumber';
 import { parseIntOrThrow } from '../util/parseIntOrThrow';
+import { clearTimeoutIfNecessary } from '../util/clearTimeoutIfNecessary';
 import { Zone } from '../util/Zone';
 import { deriveMasterKeyFromGroupV1 } from '../Crypto';
 import type { DownloadedAttachmentType } from '../types/Attachment';
@@ -71,6 +72,7 @@ import type { Storage } from './Storage';
 import { WarnOnlyError } from './Errors';
 import * as Bytes from '../Bytes';
 import type {
+  ProcessedAttachment,
   ProcessedDataMessage,
   ProcessedSyncMessage,
   ProcessedSent,
@@ -106,6 +108,7 @@ import {
   GroupSyncEvent,
 } from './messageReceiverEvents';
 import * as log from '../logging/log';
+import * as durations from '../util/durations';
 import { areArraysMatchingSets } from '../util/areArraysMatchingSets';
 
 const GROUPV1_ID_LENGTH = 16;
@@ -756,10 +759,8 @@ export default class MessageReceiver
   }
 
   private clearRetryTimeout(): void {
-    if (this.retryCachedTimeout) {
-      clearInterval(this.retryCachedTimeout);
-      this.retryCachedTimeout = undefined;
-    }
+    clearTimeoutIfNecessary(this.retryCachedTimeout);
+    this.retryCachedTimeout = undefined;
   }
 
   private maybeScheduleRetryTimeout(): void {
@@ -1788,20 +1789,72 @@ export default class MessageReceiver
     return this.dispatchAndWait(ev);
   }
 
+  private async handleStoryMessage(
+    envelope: UnsealedEnvelope,
+    msg: Proto.IStoryMessage
+  ): Promise<void> {
+    const logId = this.getEnvelopeId(envelope);
+    log.info('MessageReceiver.handleStoryMessage', logId);
+
+    const attachments: Array<ProcessedAttachment> = [];
+
+    if (msg.fileAttachment) {
+      const attachment = processAttachment(msg.fileAttachment);
+      attachments.push(attachment);
+    }
+
+    if (msg.textAttachment) {
+      log.error(
+        'MessageReceiver.handleStoryMessage: Got a textAttachment, cannot handle it',
+        logId
+      );
+      return;
+    }
+
+    const expireTimer = envelope.timestamp + durations.DAY - Date.now();
+
+    if (expireTimer <= 0) {
+      log.info(
+        'MessageReceiver.handleStoryMessage: story already expired',
+        logId
+      );
+      this.removeFromCache(envelope);
+      return;
+    }
+
+    const ev = new MessageEvent(
+      {
+        source: envelope.source,
+        sourceUuid: envelope.sourceUuid,
+        sourceDevice: envelope.sourceDevice,
+        timestamp: envelope.timestamp,
+        serverGuid: envelope.serverGuid,
+        serverTimestamp: envelope.serverTimestamp,
+        unidentifiedDeliveryReceived: Boolean(
+          envelope.unidentifiedDeliveryReceived
+        ),
+        message: {
+          attachments,
+          expireTimer,
+          flags: 0,
+          isStory: true,
+          isViewOnce: false,
+          timestamp: envelope.timestamp,
+        },
+        receivedAtCounter: envelope.receivedAtCounter,
+        receivedAtDate: envelope.receivedAtDate,
+      },
+      this.removeFromCache.bind(this, envelope)
+    );
+    return this.dispatchAndWait(ev);
+  }
+
   private async handleDataMessage(
     envelope: UnsealedEnvelope,
     msg: Proto.IDataMessage
   ): Promise<void> {
     const logId = this.getEnvelopeId(envelope);
     log.info('MessageReceiver.handleDataMessage', logId);
-
-    if (msg.storyContext) {
-      log.info(
-        `MessageReceiver.handleDataMessage/${logId}: Dropping incoming dataMessage with storyContext field`
-      );
-      this.removeFromCache(envelope);
-      return undefined;
-    }
 
     let p: Promise<void> = Promise.resolve();
     // eslint-disable-next-line no-bitwise
@@ -1824,7 +1877,10 @@ export default class MessageReceiver
     }
 
     if (msg.flags && msg.flags & Proto.DataMessage.Flags.PROFILE_KEY_UPDATE) {
-      strictAssert(msg.profileKey, 'PROFILE_KEY_UPDATE without profileKey');
+      strictAssert(
+        msg.profileKey && msg.profileKey.length > 0,
+        'PROFILE_KEY_UPDATE without profileKey'
+      );
 
       const ev = new ProfileKeyUpdateEvent(
         {
@@ -1991,11 +2047,7 @@ export default class MessageReceiver
       return;
     }
     if (content.storyMessage) {
-      const logId = this.getEnvelopeId(envelope);
-      log.info(
-        `innerHandleContentMessage/${logId}: Dropping incoming message with storyMessage field`
-      );
-      this.removeFromCache(envelope);
+      await this.handleStoryMessage(envelope, content.storyMessage);
       return;
     }
 
@@ -2608,7 +2660,7 @@ export default class MessageReceiver
     envelope: ProcessedEnvelope,
     contacts: Proto.SyncMessage.IContacts
   ): Promise<void> {
-    log.info('contact sync');
+    log.info('MessageReceiver: handleContacts');
     const { blob } = contacts;
     if (!blob) {
       throw new Error('MessageReceiver.handleContacts: blob field was missing');
@@ -2629,10 +2681,10 @@ export default class MessageReceiver
       contactDetails = contactBuffer.next();
     }
 
-    const finalEvent = new ContactSyncEvent();
-    results.push(this.dispatchAndWait(finalEvent));
-
     await Promise.all(results);
+
+    const finalEvent = new ContactSyncEvent();
+    await this.dispatchAndWait(finalEvent);
 
     log.info('handleContacts: finished');
   }
@@ -2792,14 +2844,35 @@ export default class MessageReceiver
 }
 
 function envelopeTypeToCiphertextType(type: number | undefined): number {
-  if (type === Proto.Envelope.Type.CIPHERTEXT) {
+  const { Type } = Proto.Envelope;
+
+  if (type === Type.CIPHERTEXT) {
     return CiphertextMessageType.Whisper;
   }
-  if (type === Proto.Envelope.Type.PLAINTEXT_CONTENT) {
+  if (type === Type.KEY_EXCHANGE) {
+    throw new Error(
+      'envelopeTypeToCiphertextType: Cannot process KEY_EXCHANGE messages'
+    );
+  }
+  if (type === Type.PLAINTEXT_CONTENT) {
     return CiphertextMessageType.Plaintext;
   }
-  if (type === Proto.Envelope.Type.PREKEY_BUNDLE) {
+  if (type === Type.PREKEY_BUNDLE) {
     return CiphertextMessageType.PreKey;
   }
+  if (type === Type.RECEIPT) {
+    return CiphertextMessageType.Plaintext;
+  }
+  if (type === Type.UNIDENTIFIED_SENDER) {
+    throw new Error(
+      'envelopeTypeToCiphertextType: Cannot process UNIDENTIFIED_SENDER messages'
+    );
+  }
+  if (type === Type.UNKNOWN) {
+    throw new Error(
+      'envelopeTypeToCiphertextType: Cannot process UNKNOWN messages'
+    );
+  }
+
   throw new Error(`envelopeTypeToCiphertextType: Unknown type ${type}`);
 }

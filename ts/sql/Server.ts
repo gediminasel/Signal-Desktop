@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Signal Messenger, LLC
+// Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /* eslint-disable camelcase */
@@ -281,6 +281,7 @@ const dataInterface: ServerInterface = {
   _deleteAllStoryDistributions,
   createNewStoryDistribution,
   getAllStoryDistributionsWithMembers,
+  getStoryDistributionWithMembers,
   modifyStoryDistribution,
   modifyStoryDistributionMembers,
   deleteStoryDistribution,
@@ -1948,6 +1949,13 @@ async function removeMessages(ids: Array<string>): Promise<void> {
 
 async function getMessageById(id: string): Promise<MessageType | undefined> {
   const db = getInstance();
+  return getMessageByIdSync(db, id);
+}
+
+export function getMessageByIdSync(
+  db: Database,
+  id: string
+): MessageType | undefined {
   const row = db
     .prepare<Query>('SELECT json FROM messages WHERE id = $id;')
     .get({
@@ -3958,6 +3966,33 @@ async function getAllStoryDistributionsWithMembers(): Promise<
     members: (byListId[list.id] || []).map(member => member.uuid),
   }));
 }
+async function getStoryDistributionWithMembers(
+  id: string
+): Promise<StoryDistributionWithMembersType | undefined> {
+  const db = getInstance();
+  const storyDistribution = prepare(
+    db,
+    'SELECT * FROM storyDistributions WHERE id = $id;'
+  ).get({
+    id,
+  });
+
+  if (!storyDistribution) {
+    return undefined;
+  }
+
+  const members = prepare(
+    db,
+    'SELECT * FROM storyDistributionMembers WHERE listId = $id;'
+  ).all({
+    id,
+  });
+
+  return {
+    ...storyDistribution,
+    members: members.map(({ uuid }) => uuid),
+  };
+}
 async function modifyStoryDistribution(
   distribution: StoryDistributionType
 ): Promise<void> {
@@ -4551,7 +4586,13 @@ async function removeKnownDraftAttachments(
 
 async function getJobsInQueue(queueType: string): Promise<Array<StoredJob>> {
   const db = getInstance();
+  return getJobsInQueueSync(db, queueType);
+}
 
+export function getJobsInQueueSync(
+  db: Database,
+  queueType: string
+): Array<StoredJob> {
   return db
     .prepare<Query>(
       `
@@ -4570,7 +4611,7 @@ async function getJobsInQueue(queueType: string): Promise<Array<StoredJob>> {
     }));
 }
 
-function insertJobSync(db: Database, job: Readonly<StoredJob>): void {
+export function insertJobSync(db: Database, job: Readonly<StoredJob>): void {
   db.prepare<Query>(
     `
       INSERT INTO jobs

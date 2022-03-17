@@ -102,6 +102,7 @@ export type ActiveCallStateType = {
   conversationId: string;
   hasLocalAudio: boolean;
   hasLocalVideo: boolean;
+  amISpeaking: boolean;
   isInSpeakerView: boolean;
   joinedAt?: number;
   outgoingRing: boolean;
@@ -462,7 +463,9 @@ type DeclineCallActionType = {
 };
 
 type GroupCallAudioLevelsChangeActionPayloadType = Readonly<{
+  audioLevelForSpeaking: number;
   conversationId: string;
+  localAudioLevel: number;
   remoteDeviceStates: ReadonlyArray<{ audioLevel: number; demuxId: number }>;
 }>;
 
@@ -832,11 +835,14 @@ function groupCallStateChange(
       didSomeoneStartPresenting = false;
     }
 
+    const { ourUuid } = getState().user;
+    strictAssert(ourUuid, 'groupCallStateChange failed to fetch our uuid');
+
     dispatch({
       type: GROUP_CALL_STATE_CHANGE,
       payload: {
         ...payload,
-        ourUuid: getState().user.ourUuid,
+        ourUuid,
       },
     });
 
@@ -1428,6 +1434,7 @@ export function reducer(
         conversationId: action.payload.conversationId,
         hasLocalAudio: action.payload.hasLocalAudio,
         hasLocalVideo: action.payload.hasLocalVideo,
+        amISpeaking: false,
         isInSpeakerView: false,
         pip: false,
         safetyNumberChangedUuids: [],
@@ -1455,6 +1462,7 @@ export function reducer(
         conversationId: action.payload.conversationId,
         hasLocalAudio: action.payload.hasLocalAudio,
         hasLocalVideo: action.payload.hasLocalVideo,
+        amISpeaking: false,
         isInSpeakerView: false,
         pip: false,
         safetyNumberChangedUuids: [],
@@ -1477,6 +1485,7 @@ export function reducer(
         conversationId: action.payload.conversationId,
         hasLocalAudio: true,
         hasLocalVideo: action.payload.asVideoCall,
+        amISpeaking: false,
         isInSpeakerView: false,
         pip: false,
         safetyNumberChangedUuids: [],
@@ -1630,6 +1639,7 @@ export function reducer(
         conversationId: action.payload.conversationId,
         hasLocalAudio: action.payload.hasLocalAudio,
         hasLocalVideo: action.payload.hasLocalVideo,
+        amISpeaking: false,
         isInSpeakerView: false,
         pip: false,
         safetyNumberChangedUuids: [],
@@ -1687,24 +1697,40 @@ export function reducer(
   }
 
   if (action.type === GROUP_CALL_AUDIO_LEVELS_CHANGE) {
-    const { conversationId, remoteDeviceStates } = action.payload;
+    const {
+      audioLevelForSpeaking,
+      conversationId,
+      localAudioLevel,
+      remoteDeviceStates,
+    } = action.payload;
 
+    const { activeCallState } = state;
     const existingCall = getGroupCall(conversationId, state);
-    if (!existingCall) {
+
+    // The PiP check is an optimization. We don't need to update audio levels if the user
+    //   cannot see them.
+    if (!activeCallState || activeCallState.pip || !existingCall) {
       return state;
     }
+
+    const amISpeaking = localAudioLevel > audioLevelForSpeaking;
 
     const speakingDemuxIds = new Set<number>();
     remoteDeviceStates.forEach(({ audioLevel, demuxId }) => {
       // We expect `audioLevel` to be a number but have this check just in case.
-      if (typeof audioLevel === 'number' && audioLevel > 0.25) {
+      if (
+        typeof audioLevel === 'number' &&
+        audioLevel > audioLevelForSpeaking
+      ) {
         speakingDemuxIds.add(demuxId);
       }
     });
 
     // This action is dispatched frequently. This equality check helps avoid re-renders.
+    const oldAmISpeaking = activeCallState.amISpeaking;
     const oldSpeakingDemuxIds = existingCall.speakingDemuxIds;
     if (
+      oldAmISpeaking === amISpeaking &&
       oldSpeakingDemuxIds &&
       setUtil.isEqual(oldSpeakingDemuxIds, speakingDemuxIds)
     ) {
@@ -1713,6 +1739,7 @@ export function reducer(
 
     return {
       ...state,
+      activeCallState: { ...activeCallState, amISpeaking },
       callsByConversation: {
         ...callsByConversation,
         [conversationId]: { ...existingCall, speakingDemuxIds },

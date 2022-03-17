@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Signal Messenger, LLC
+// Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import * as Backbone from 'backbone';
@@ -69,6 +69,8 @@ export type GroupMigrationType = {
   invitedMembers: Array<GroupV2PendingMemberType>;
 };
 
+export type PreviewMessageType = Array<WhatIsThis>;
+
 export type QuotedMessageType = {
   attachments: Array<typeof window.WhatIsThis>;
   // `author` is an old attribute that holds the author's E164. We shouldn't use it for
@@ -81,6 +83,13 @@ export type QuotedMessageType = {
   isViewOnce: boolean;
   text?: string;
   messageId: string;
+};
+
+export type StickerMessageType = {
+  packId: string;
+  stickerId: number;
+  packKey: string;
+  data?: AttachmentType;
 };
 
 export type RetryOptions = Readonly<{
@@ -164,13 +173,8 @@ export type MessageAttributesType = {
     | 'verified-change';
   body?: string;
   attachments?: Array<AttachmentType>;
-  preview?: Array<WhatIsThis>;
-  sticker?: {
-    packId: string;
-    stickerId: number;
-    packKey: string;
-    data?: AttachmentType;
-  };
+  preview?: PreviewMessageType;
+  sticker?: StickerMessageType;
   sent_at: number;
   unidentifiedDeliveries?: Array<string>;
   contact?: Array<EmbeddedContactType>;
@@ -214,9 +218,18 @@ export type MessageAttributesType = {
 
   // Should only be present for outgoing messages
   sendStateByConversationId?: SendStateByConversationId;
+
+  // Should only be present for messages deleted for everyone
+  deletedForEveryoneSendStatus?: Record<string, boolean>;
+  deletedForEveryoneFailed?: boolean;
 };
 
 export type ConversationAttributesTypeType = 'private' | 'group';
+
+export type ConversationLastProfileType = Readonly<{
+  profileKey: string;
+  profileKeyVersion: string;
+}>;
 
 export type ConversationAttributesType = {
   accessKey?: string | null;
@@ -239,6 +252,7 @@ export type ConversationAttributesType = {
   draftAttachments?: Array<AttachmentDraftType>;
   draftBodyRanges?: Array<BodyRangeType>;
   draftTimestamp?: number | null;
+  hideStory?: boolean;
   inbox_position: number;
   isPinned: boolean;
   lastMessageDeletedForEveryone: boolean;
@@ -255,7 +269,7 @@ export type ConversationAttributesType = {
     path: string;
   };
   profileKeyCredential?: string | null;
-  profileKeyVersion?: string | null;
+  lastProfile?: ConversationLastProfileType;
   quotedMessageId?: string | null;
   sealedSender?: unknown;
   sentMessageCount: number;

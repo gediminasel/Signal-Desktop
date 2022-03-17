@@ -7,7 +7,7 @@ import { memoize } from 'lodash';
 import { mapDispatchToProps } from '../actions';
 import { CallManager } from '../../components/CallManager';
 import { calling as callingService } from '../../services/calling';
-import { getUserUuid, getIntl, getTheme } from '../selectors/user';
+import { getIntl, getTheme } from '../selectors/user';
 import { getMe, getConversationSelector } from '../selectors/conversations';
 import { getActiveCall } from '../ducks/calling';
 import type { ConversationType } from '../ducks/conversations';
@@ -22,7 +22,7 @@ import { CallMode, CallState } from '../../types/Calling';
 import type { StateType } from '../reducer';
 import { missingCaseError } from '../../util/missingCaseError';
 import { SmartCallingDeviceSelection } from './CallingDeviceSelection';
-import type { Props as SafetyNumberViewerProps } from './SafetyNumberViewer';
+import type { SafetyNumberProps } from '../../components/SafetyNumberChangeDialog';
 import { SmartSafetyNumberViewer } from './SafetyNumberViewer';
 import { callingTones } from '../../util/callingTones';
 import {
@@ -41,7 +41,7 @@ function renderDeviceSelection(): JSX.Element {
   return <SmartCallingDeviceSelection />;
 }
 
-function renderSafetyNumberViewer(props: SafetyNumberViewerProps): JSX.Element {
+function renderSafetyNumberViewer(props: SafetyNumberProps): JSX.Element {
   return <SmartSafetyNumberViewer {...props} />;
 }
 
@@ -130,6 +130,7 @@ const mapStateToActiveCallProp = (
     conversation,
     hasLocalAudio: activeCallState.hasLocalAudio,
     hasLocalVideo: activeCallState.hasLocalVideo,
+    amISpeaking: activeCallState.amISpeaking,
     isInSpeakerView: activeCallState.isInSpeakerView,
     joinedAt: activeCallState.joinedAt,
     outgoingRing: activeCallState.outgoingRing,
@@ -323,12 +324,7 @@ const mapStateToProps = (state: StateType) => ({
   i18n: getIntl(state),
   isGroupCallOutboundRingEnabled: isGroupCallOutboundRingEnabled(),
   incomingCall: mapStateToIncomingCallProp(state),
-  me: {
-    ...getMe(state),
-    // `getMe` returns a `ConversationType` which might not have a UUID, at least
-    //   according to the type. This ensures one is set.
-    uuid: getUserUuid(state),
-  },
+  me: getMe(state),
   notifyForCall,
   playRingtone,
   stopRingtone,

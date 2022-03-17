@@ -3,9 +3,8 @@
 
 import type { WebAPIType } from '../textsecure/WebAPI';
 
+import { conversationJobQueue } from './conversationJobQueue';
 import { deliveryReceiptsJobQueue } from './deliveryReceiptsJobQueue';
-import { normalMessageSendJobQueue } from './normalMessageSendJobQueue';
-import { reactionJobQueue } from './reactionJobQueue';
 import { readReceiptsJobQueue } from './readReceiptsJobQueue';
 import { readSyncJobQueue } from './readSyncJobQueue';
 import { removeStorageKeyJobQueue } from './removeStorageKeyJobQueue';
@@ -26,8 +25,7 @@ export function initializeAllJobQueues({
   reportSpamJobQueue.initialize({ server });
 
   // General conversation send queue
-  normalMessageSendJobQueue.streamJobs();
-  reactionJobQueue.streamJobs();
+  conversationJobQueue.streamJobs();
 
   // Single proto send queue, used for a variety of one-off simple messages
   singleProtoJobQueue.streamJobs();
@@ -36,11 +34,11 @@ export function initializeAllJobQueues({
   deliveryReceiptsJobQueue.streamJobs();
   readReceiptsJobQueue.streamJobs();
   viewedReceiptsJobQueue.streamJobs();
-  viewOnceOpenJobQueue.streamJobs();
 
   // Syncs to ourselves
   readSyncJobQueue.streamJobs();
   viewSyncJobQueue.streamJobs();
+  viewOnceOpenJobQueue.streamJobs();
 
   // Other queues
   removeStorageKeyJobQueue.streamJobs();

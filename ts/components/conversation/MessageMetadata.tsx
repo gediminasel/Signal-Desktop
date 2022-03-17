@@ -1,9 +1,10 @@
 // Copyright 2018-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { FunctionComponent, ReactChild } from 'react';
+import type { ReactChild, ReactElement } from 'react';
 import React from 'react';
 import classNames from 'classnames';
+import Measure from 'react-measure';
 
 import type { ConversationType } from '../../state/ducks/conversations';
 import type { LocalizerType } from '../../types/Util';
@@ -21,9 +22,11 @@ type PropsType = {
   hasText: boolean;
   i18n: LocalizerType;
   id: string;
+  isInline?: boolean;
   isShowingImage: boolean;
   isSticker?: boolean;
   isTapToViewExpired?: boolean;
+  onWidthMeasured?: (width: number) => unknown;
   lastSeenHere?: ConversationType[];
   showMessageDetail: (id: string) => void;
   status?: MessageStatusType;
@@ -31,25 +34,25 @@ type PropsType = {
   timestamp: number;
 };
 
-export const MessageMetadata: FunctionComponent<PropsType> = props => {
-  const {
-    deletedForEveryone,
-    direction,
-    expirationLength,
-    expirationTimestamp,
-    hasText,
-    i18n,
-    id,
-    isShowingImage,
-    isSticker,
-    isTapToViewExpired,
-    lastSeenHere,
-    showMessageDetail,
-    status,
-    textPending,
-    timestamp,
-  } = props;
-
+export const MessageMetadata = ({
+  deletedForEveryone,
+  direction,
+  expirationLength,
+  expirationTimestamp,
+  hasText,
+  i18n,
+  id,
+  isInline,
+  isShowingImage,
+  isSticker,
+  isTapToViewExpired,
+  lastSeenHere,
+  onWidthMeasured,
+  showMessageDetail,
+  status,
+  textPending,
+  timestamp,
+}: Readonly<PropsType>): ReactElement => {
   const withImageNoCaption = Boolean(!isSticker && !hasText && isShowingImage);
   const metadataDirection = isSticker ? undefined : direction;
 
@@ -63,7 +66,9 @@ export const MessageMetadata: FunctionComponent<PropsType> = props => {
     if (isError || isPartiallySent || isPaused) {
       let statusInfo: React.ReactChild;
       if (isError) {
-        statusInfo = i18n('sendFailed');
+        statusInfo = deletedForEveryone
+          ? i18n('deleteFailed')
+          : i18n('sendFailed');
       } else if (isPaused) {
         statusInfo = i18n('sendPaused');
       } else {
@@ -78,7 +83,9 @@ export const MessageMetadata: FunctionComponent<PropsType> = props => {
               showMessageDetail(id);
             }}
           >
-            {i18n('partiallySent')}
+            {deletedForEveryone
+              ? i18n('partiallyDeleted')
+              : i18n('partiallySent')}
           </button>
         );
       }
@@ -136,16 +143,13 @@ export const MessageMetadata: FunctionComponent<PropsType> = props => {
     }}>{seenBubblesNode}</div>;
   }
 
-  return (
-    <div
-      className={classNames(
-        'module-message__metadata',
-        `module-message__metadata--${direction}`,
-        withImageNoCaption
-          ? 'module-message__metadata--with-image-no-caption'
-          : null
-      )}
-    >
+  const className = classNames(
+    'module-message__metadata',
+    isInline && 'module-message__metadata--inline',
+    withImageNoCaption && 'module-message__metadata--with-image-no-caption'
+  );
+  const children = (
+    <>
       {timestampNode}
       {seenBubblesNode}
       {expirationLength && expirationTimestamp ? (
@@ -163,7 +167,7 @@ export const MessageMetadata: FunctionComponent<PropsType> = props => {
           <Spinner svgSize="small" size="14px" direction={direction} />
         </div>
       ) : null}
-      {!deletedForEveryone &&
+      {(!deletedForEveryone || status === 'sending') &&
       !textPending &&
       direction === 'outgoing' &&
       status !== 'error' &&
@@ -184,6 +188,25 @@ export const MessageMetadata: FunctionComponent<PropsType> = props => {
           )}
         />
       ) : null}
-    </div>
+    </>
   );
+
+  if (onWidthMeasured) {
+    return (
+      <Measure
+        bounds
+        onResize={({ bounds }) => {
+          onWidthMeasured(bounds?.width || 0);
+        }}
+      >
+        {({ measureRef }) => (
+          <div className={className} ref={measureRef}>
+            {children}
+          </div>
+        )}
+      </Measure>
+    );
+  }
+
+  return <div className={className}>{children}</div>;
 };

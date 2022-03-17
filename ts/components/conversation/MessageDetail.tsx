@@ -79,6 +79,7 @@ export type PropsBackboneActions = Pick<
   | 'renderEmojiPicker'
   | 'renderReactionPicker'
   | 'replyToMessage'
+  | 'retryDeleteForEveryone'
   | 'retrySend'
   | 'showContactDetail'
   | 'showContactModal'
@@ -106,7 +107,6 @@ const _keyForError = (error: Error): string => {
 
 export class MessageDetail extends React.Component<Props> {
   private readonly focusRef = React.createRef<HTMLDivElement>();
-
   private readonly messageContainerRef = React.createRef<HTMLDivElement>();
 
   public override componentDidMount(): void {
@@ -289,6 +289,7 @@ export class MessageDetail extends React.Component<Props> {
       renderEmojiPicker,
       renderReactionPicker,
       replyToMessage,
+      retryDeleteForEveryone,
       retrySend,
       showContactDetail,
       showContactModal,
@@ -335,7 +336,6 @@ export class MessageDetail extends React.Component<Props> {
             markAttachmentAsCorrupted={markAttachmentAsCorrupted}
             markViewed={markViewed}
             messageExpanded={noop}
-            onHeightChange={noop}
             openConversation={openConversation}
             openLink={openLink}
             reactToMessage={reactToMessage}
@@ -343,6 +343,7 @@ export class MessageDetail extends React.Component<Props> {
             renderEmojiPicker={renderEmojiPicker}
             renderReactionPicker={renderReactionPicker}
             replyToMessage={replyToMessage}
+            retryDeleteForEveryone={retryDeleteForEveryone}
             retrySend={retrySend}
             showForwardMessageModal={showForwardMessageModal}
             scrollToQuotedMessage={() => {

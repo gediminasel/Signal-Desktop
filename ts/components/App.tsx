@@ -16,36 +16,39 @@ import { useReducedMotion } from '../hooks/useReducedMotion';
 
 type PropsType = {
   appView: AppViewType;
+  openInbox: () => void;
+  registerSingleDevice: (number: string, code: string) => Promise<void>;
   renderCallManager: () => JSX.Element;
   renderGlobalModalContainer: () => JSX.Element;
-  openInbox: () => void;
+  isShowingStoriesView: boolean;
+  renderStories: () => JSX.Element;
   requestVerification: (
     type: 'sms' | 'voice',
     number: string,
     token: string
   ) => Promise<void>;
-  registerSingleDevice: (number: string, code: string) => Promise<void>;
   theme: ThemeType;
 } & ComponentProps<typeof Inbox>;
 
 export const App = ({
   appView,
-  cancelMessagesPendingConversationVerification,
-  conversationsStoppingMessageSendBecauseOfVerification,
+  cancelConversationVerification,
+  conversationsStoppingSend,
   hasInitialLoadCompleted,
   getPreferredBadge,
   i18n,
   isCustomizingPreferredReactions,
-  numberOfMessagesPendingBecauseOfVerification,
+  isShowingStoriesView,
   renderCallManager,
   renderCustomizingPreferredReactionsModal,
   renderGlobalModalContainer,
   renderSafetyNumber,
   openInbox,
+  renderStories,
   requestVerification,
   registerSingleDevice,
   theme,
-  verifyConversationsStoppingMessageSend,
+  verifyConversationsStoppingSend,
 }: PropsType): JSX.Element => {
   let contents;
 
@@ -66,27 +69,18 @@ export const App = ({
   } else if (appView === AppViewType.Inbox) {
     contents = (
       <Inbox
-        cancelMessagesPendingConversationVerification={
-          cancelMessagesPendingConversationVerification
-        }
-        conversationsStoppingMessageSendBecauseOfVerification={
-          conversationsStoppingMessageSendBecauseOfVerification
-        }
+        cancelConversationVerification={cancelConversationVerification}
+        conversationsStoppingSend={conversationsStoppingSend}
         hasInitialLoadCompleted={hasInitialLoadCompleted}
         getPreferredBadge={getPreferredBadge}
         i18n={i18n}
         isCustomizingPreferredReactions={isCustomizingPreferredReactions}
-        numberOfMessagesPendingBecauseOfVerification={
-          numberOfMessagesPendingBecauseOfVerification
-        }
         renderCustomizingPreferredReactionsModal={
           renderCustomizingPreferredReactionsModal
         }
         renderSafetyNumber={renderSafetyNumber}
         theme={theme}
-        verifyConversationsStoppingMessageSend={
-          verifyConversationsStoppingMessageSend
-        }
+        verifyConversationsStoppingSend={verifyConversationsStoppingSend}
       />
     );
   }
@@ -128,6 +122,7 @@ export const App = ({
     >
       {renderGlobalModalContainer()}
       {renderCallManager()}
+      {isShowingStoriesView && renderStories()}
       {contents}
     </div>
   );

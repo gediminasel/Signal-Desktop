@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Signal Messenger, LLC
+// Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import * as React from 'react';
@@ -39,6 +39,8 @@ const defaultMessageProps: MessagesProps = {
   }),
   canReact: true,
   canReply: true,
+  canRetry: true,
+  canRetryDeleteForEveryone: true,
   canDeleteForEveryone: true,
   canDownload: true,
   checkForAccount: action('checkForAccount'),
@@ -66,8 +68,7 @@ const defaultMessageProps: MessagesProps = {
   kickOffAttachmentDownload: action('default--kickOffAttachmentDownload'),
   markAttachmentAsCorrupted: action('default--markAttachmentAsCorrupted'),
   markViewed: action('default--markViewed'),
-  messageExpanded: action('dafult--message-expanded'),
-  onHeightChange: action('default--onHeightChange'),
+  messageExpanded: action('default--message-expanded'),
   openConversation: action('default--openConversation'),
   openLink: action('default--openLink'),
   previews: [],
@@ -78,6 +79,7 @@ const defaultMessageProps: MessagesProps = {
   renderAudioAttachment: () => <div>*AudioAttachment*</div>,
   replyToMessage: action('default--replyToMessage'),
   retrySend: action('default--retrySend'),
+  retryDeleteForEveryone: action('default--retryDeleteForEveryone'),
   scrollToQuotedMessage: action('default--scrollToQuotedMessage'),
   selectMessage: action('default--selectMessage'),
   showContactDetail: action('default--showContactDetail'),
@@ -210,6 +212,9 @@ story.add('Image Only', () => {
       isVoiceMessage: false,
       thumbnail: {
         contentType: IMAGE_PNG,
+        height: 100,
+        width: 100,
+        path: pngUrl,
         objectUrl: pngUrl,
       },
     },
@@ -225,6 +230,9 @@ story.add('Image Attachment', () => {
       isVoiceMessage: false,
       thumbnail: {
         contentType: IMAGE_PNG,
+        height: 100,
+        width: 100,
+        path: pngUrl,
         objectUrl: pngUrl,
       },
     },
@@ -267,6 +275,9 @@ story.add('Video Only', () => {
       isVoiceMessage: false,
       thumbnail: {
         contentType: IMAGE_PNG,
+        height: 100,
+        width: 100,
+        path: pngUrl,
         objectUrl: pngUrl,
       },
     },
@@ -285,6 +296,9 @@ story.add('Video Attachment', () => {
       isVoiceMessage: false,
       thumbnail: {
         contentType: IMAGE_PNG,
+        height: 100,
+        width: 100,
+        path: pngUrl,
         objectUrl: pngUrl,
       },
     },

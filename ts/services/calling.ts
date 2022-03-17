@@ -37,6 +37,7 @@ import {
 } from 'ringrtc';
 import { uniqBy, noop } from 'lodash';
 
+import * as RemoteConfig from '../RemoteConfig';
 import type {
   ActionsType as UxActionsType,
   GroupCallParticipantInfoType,
@@ -62,6 +63,7 @@ import {
   getAudioDeviceModule,
   parseAudioDeviceModule,
 } from '../calling/audioDeviceModule';
+import { getAudioLevelForSpeaking } from '../calling/getAudioLevelForSpeaking';
 import {
   findBestMatchingAudioDeviceIndex,
   findBestMatchingCameraId,
@@ -75,16 +77,15 @@ import { dropNull, shallowDropNull } from '../util/dropNull';
 import { getOwn } from '../util/getOwn';
 import { isNormalNumber } from '../util/isNormalNumber';
 import * as durations from '../util/durations';
+import { clearTimeoutIfNecessary } from '../util/clearTimeoutIfNecessary';
 import { handleMessageSend } from '../util/handleMessageSend';
-import {
-  fetchMembershipProof,
-  getMembershipList,
-  wrapWithSyncMessageSend,
-} from '../groups';
+import { fetchMembershipProof, getMembershipList } from '../groups';
+import { wrapWithSyncMessageSend } from '../util/wrapWithSyncMessageSend';
 import type { ProcessedEnvelope } from '../textsecure/Types.d';
 import { missingCaseError } from '../util/missingCaseError';
 import { normalizeGroupCallTimestamp } from '../util/ringrtc/normalizeGroupCallTimestamp';
 import {
+  AUDIO_LEVEL_INTERVAL_MS,
   REQUESTED_VIDEO_WIDTH,
   REQUESTED_VIDEO_HEIGHT,
   REQUESTED_VIDEO_FRAMERATE,
@@ -627,7 +628,7 @@ export class CallingClass {
       groupIdBuffer,
       this.sfuUrl,
       Buffer.alloc(0),
-      500,
+      AUDIO_LEVEL_INTERVAL_MS,
       {
         onLocalDeviceStateChanged: groupCall => {
           const localDeviceState = groupCall.getLocalDeviceState();
@@ -680,9 +681,14 @@ export class CallingClass {
           if (!remoteDeviceStates) {
             return;
           }
+          const localAudioLevel = groupCall.getLocalDeviceState().audioLevel;
 
           this.uxActions?.groupCallAudioLevelsChange({
+            audioLevelForSpeaking: getAudioLevelForSpeaking(
+              RemoteConfig.getValue
+            ),
             conversationId,
+            localAudioLevel,
             remoteDeviceStates,
           });
         },
@@ -847,15 +853,21 @@ export class CallingClass {
     peekInfo: PeekInfo
   ): GroupCallPeekInfoType {
     return {
-      uuids: peekInfo.joinedMembers.map(uuidBuffer => {
-        let uuid = bytesToUuid(uuidBuffer);
-        if (!uuid) {
+      uuids: peekInfo.devices.map(peekDeviceInfo => {
+        if (peekDeviceInfo.userId) {
+          const uuid = bytesToUuid(peekDeviceInfo.userId);
+          if (uuid) {
+            return uuid;
+          }
           log.error(
             'Calling.formatGroupCallPeekInfoForRedux: could not convert peek UUID Uint8Array to string; using fallback UUID'
           );
-          uuid = '00000000-0000-0000-0000-000000000000';
+        } else {
+          log.error(
+            'Calling.formatGroupCallPeekInfoForRedux: device had no user ID; using fallback UUID'
+          );
         }
-        return uuid;
+        return '00000000-0000-0000-0000-000000000000';
       }),
       creatorUuid: peekInfo.creator && bytesToUuid(peekInfo.creator),
       eraId: peekInfo.eraId,
@@ -1062,24 +1074,33 @@ export class CallingClass {
   hangup(conversationId: string): void {
     log.info('CallingClass.hangup()');
 
-    const call = getOwn(this.callsByConversation, conversationId);
-    if (!call) {
-      log.warn('Trying to hang up a non-existent call');
-      return;
+    const specificCall = getOwn(this.callsByConversation, conversationId);
+    if (!specificCall) {
+      log.error(
+        `hangup: Trying to hang up a non-existent call for conversation ${conversationId}`
+      );
     }
 
     ipcRenderer.send('close-screen-share-controller');
 
-    if (call instanceof Call) {
-      RingRTC.hangup(call.callId);
-    } else if (call instanceof GroupCall) {
-      // This ensures that we turn off our devices.
-      call.setOutgoingAudioMuted(true);
-      call.setOutgoingVideoMuted(true);
-      call.disconnect();
-    } else {
-      throw missingCaseError(call);
-    }
+    const entries = Object.entries(this.callsByConversation);
+    log.info(`hangup: ${entries.length} call(s) to hang up...`);
+
+    entries.forEach(([callConversationId, call]) => {
+      log.info(`hangup: Hanging up conversation ${callConversationId}`);
+      if (call instanceof Call) {
+        RingRTC.hangup(call.callId);
+      } else if (call instanceof GroupCall) {
+        // This ensures that we turn off our devices.
+        call.setOutgoingAudioMuted(true);
+        call.setOutgoingVideoMuted(true);
+        call.disconnect();
+      } else {
+        throw missingCaseError(call);
+      }
+    });
+
+    log.info('hangup: Done.');
   }
 
   setOutgoingAudio(conversationId: string, enabled: boolean): void {
@@ -1219,10 +1240,8 @@ export class CallingClass {
   }
 
   private stopDeviceReselectionTimer() {
-    if (this.deviceReselectionTimer) {
-      clearInterval(this.deviceReselectionTimer);
-      this.deviceReselectionTimer = undefined;
-    }
+    clearTimeoutIfNecessary(this.deviceReselectionTimer);
+    this.deviceReselectionTimer = undefined;
   }
 
   private mediaDeviceSettingsEqual(
@@ -1965,7 +1984,7 @@ export class CallingClass {
       hideIp: shouldRelayCalls || isContactUnknown,
       bandwidthMode: BandwidthMode.Normal,
       // TODO: DESKTOP-3101
-      // audioLevelsIntervalMillis: 500,
+      // audioLevelsIntervalMillis: AUDIO_LEVEL_INTERVAL_MS,
     };
   }
 
@@ -2081,7 +2100,7 @@ export class CallingClass {
     const wasStartedByMe = Boolean(
       creatorConversation && isMe(creatorConversation.attributes)
     );
-    const isAnybodyElseInGroupCall = Boolean(peekInfo.joinedMembers.length);
+    const isAnybodyElseInGroupCall = Boolean(peekInfo.devices.length);
 
     if (
       isNewCall &&

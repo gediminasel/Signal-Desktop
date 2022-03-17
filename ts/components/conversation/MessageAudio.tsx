@@ -1,4 +1,4 @@
-// Copyright 2021 Signal Messenger, LLC
+// Copyright 2021-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import React, { useRef, useEffect, useState } from 'react';
@@ -19,6 +19,7 @@ export type Props = {
   renderingContext: string;
   i18n: LocalizerType;
   attachment: AttachmentType;
+  collapseMetadata: boolean;
   withContentAbove: boolean;
   withContentBelow: boolean;
 
@@ -150,6 +151,7 @@ export const MessageAudio: React.FC<Props> = (props: Props) => {
     i18n,
     renderingContext,
     attachment,
+    collapseMetadata,
     withContentAbove,
     withContentBelow,
 
@@ -528,7 +530,15 @@ export const MessageAudio: React.FC<Props> = (props: Props) => {
 
   const metadata = (
     <div className={`${CSS_BASE}__metadata`}>
-      {!withContentBelow && (
+      <div
+        className={classNames(
+          `${CSS_BASE}__countdown`,
+          `${CSS_BASE}__countdown--${played ? 'played' : 'unplayed'}`
+        )}
+      >
+        {timeToText(countDown)}
+      </div>
+      {!withContentBelow && !collapseMetadata && (
         <MessageMetadata
           direction={direction}
           expirationLength={expirationLength}
@@ -545,14 +555,6 @@ export const MessageAudio: React.FC<Props> = (props: Props) => {
           timestamp={timestamp}
         />
       )}
-      <div
-        className={classNames(
-          `${CSS_BASE}__countdown`,
-          `${CSS_BASE}__countdown--${played ? 'played' : 'unplayed'}`
-        )}
-      >
-        {timeToText(countDown)}
-      </div>
     </div>
   );
 

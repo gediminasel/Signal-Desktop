@@ -19,13 +19,11 @@ import { StorybookThemeContext } from '../../../.storybook/StorybookThemeContext
 import { ConversationHero } from './ConversationHero';
 import { getDefaultConversation } from '../../test-both/helpers/getDefaultConversation';
 import { getRandomColor } from '../../test-both/helpers/getRandomColor';
-import { LastSeenIndicator } from './LastSeenIndicator';
 import { TypingBubble } from './TypingBubble';
 import { ContactSpoofingType } from '../../util/contactSpoofing';
 import { ReadStatus } from '../../messages/MessageReadStatus';
 import type { WidthBreakpoint } from '../_util';
 import { ThemeType } from '../../types/Util';
-import { UUID } from '../../types/UUID';
 
 const i18n = setupI18n('en', enMessages);
 
@@ -50,6 +48,8 @@ const items: Record<string, TimelineItemType> = {
       canDownload: true,
       canReact: true,
       canReply: true,
+      canRetry: true,
+      canRetryDeleteForEveryone: true,
       conversationColor: 'forest',
       conversationId: 'conversation-id',
       conversationType: 'group',
@@ -72,6 +72,8 @@ const items: Record<string, TimelineItemType> = {
       canDownload: true,
       canReact: true,
       canReply: true,
+      canRetry: true,
+      canRetryDeleteForEveryone: true,
       conversationColor: 'forest',
       conversationId: 'conversation-id',
       conversationType: 'group',
@@ -108,6 +110,8 @@ const items: Record<string, TimelineItemType> = {
       canDownload: true,
       canReact: true,
       canReply: true,
+      canRetry: true,
+      canRetryDeleteForEveryone: true,
       conversationColor: 'crimson',
       conversationId: 'conversation-id',
       conversationType: 'group',
@@ -205,6 +209,8 @@ const items: Record<string, TimelineItemType> = {
       canDownload: true,
       canReact: true,
       canReply: true,
+      canRetry: true,
+      canRetryDeleteForEveryone: true,
       conversationColor: 'plum',
       conversationId: 'conversation-id',
       conversationType: 'group',
@@ -228,6 +234,8 @@ const items: Record<string, TimelineItemType> = {
       canDownload: true,
       canReact: true,
       canReply: true,
+      canRetry: true,
+      canRetryDeleteForEveryone: true,
       conversationColor: 'crimson',
       conversationId: 'conversation-id',
       conversationType: 'group',
@@ -251,6 +259,8 @@ const items: Record<string, TimelineItemType> = {
       canDownload: true,
       canReact: true,
       canReply: true,
+      canRetry: true,
+      canRetryDeleteForEveryone: true,
       conversationColor: 'crimson',
       conversationId: 'conversation-id',
       conversationType: 'group',
@@ -274,6 +284,8 @@ const items: Record<string, TimelineItemType> = {
       canDownload: true,
       canReact: true,
       canReply: true,
+      canRetry: true,
+      canRetryDeleteForEveryone: true,
       conversationColor: 'crimson',
       conversationId: 'conversation-id',
       conversationType: 'group',
@@ -297,6 +309,8 @@ const items: Record<string, TimelineItemType> = {
       canDownload: true,
       canReact: true,
       canReply: true,
+      canRetry: true,
+      canRetryDeleteForEveryone: true,
       conversationColor: 'crimson',
       conversationId: 'conversation-id',
       conversationType: 'group',
@@ -324,11 +338,9 @@ const actions = () => ({
     'acknowledgeGroupMemberNameCollisions'
   ),
   checkForAccount: action('checkForAccount'),
-  clearChangedMessages: action('clearChangedMessages'),
   clearInvitedUuidsForNewlyCreatedGroup: action(
     'clearInvitedUuidsForNewlyCreatedGroup'
   ),
-  setLoadCountdownStart: action('setLoadCountdownStart'),
   setIsNearBottom: action('setIsNearBottom'),
   learnMoreAboutDeliveryIssue: action('learnMoreAboutDeliveryIssue'),
   loadAndScroll: action('loadAndScroll'),
@@ -342,6 +354,7 @@ const actions = () => ({
 
   reactToMessage: action('reactToMessage'),
   replyToMessage: action('replyToMessage'),
+  retryDeleteForEveryone: action('retryDeleteForEveryone'),
   retrySend: action('retrySend'),
   deleteMessage: action('deleteMessage'),
   deleteMessageForEveryone: action('deleteMessageForEveryone'),
@@ -358,7 +371,6 @@ const actions = () => ({
   displayTapToViewMessage: action('displayTapToViewMessage'),
   doubleCheckMissingQuoteReference: action('doubleCheckMissingQuoteReference'),
 
-  onHeightChange: action('onHeightChange'),
   openLink: action('openLink'),
   scrollToQuotedMessage: action('scrollToQuotedMessage'),
   showExpiredIncomingTapToViewToast: action(
@@ -373,7 +385,6 @@ const actions = () => ({
 
   downloadNewVersion: action('downloadNewVersion'),
 
-  messageSizeChanged: action('messageSizeChanged'),
   startCallingLobby: action('startCallingLobby'),
   returnToActiveCall: action('returnToActiveCall'),
 
@@ -432,10 +443,6 @@ const renderItem = ({
   />
 );
 
-const renderLastSeenIndicator = () => (
-  <LastSeenIndicator count={2} i18n={i18n} />
-);
-
 const getAbout = () => text('about', '👍 Free to chat');
 const getTitle = () => text('name', 'Cayce Bollard');
 const getName = () => text('name', 'Cayce Bollard');
@@ -460,7 +467,6 @@ const renderHeroRow = () => {
         profileName={getProfileName()}
         phoneNumber={getPhoneNumber()}
         conversationType="direct"
-        onHeightChange={action('onHeightChange in ConversationHero')}
         sharedGroupNames={['NYC Rock Climbers', 'Dinner Party']}
         theme={theme}
         unblurAvatar={action('unblurAvatar')}
@@ -486,6 +492,7 @@ const renderTypingBubble = () => (
 );
 
 const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
+  discardMessages: action('discardMessages'),
   getPreferredBadge: () => undefined,
   i18n,
   theme: React.useContext(StorybookThemeContext),
@@ -493,6 +500,7 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
   getTimestampForMessage: Date.now,
   haveNewest: boolean('haveNewest', overrideProps.haveNewest !== false),
   haveOldest: boolean('haveOldest', overrideProps.haveOldest !== false),
+  isConversationSelected: true,
   isIncomingMessageRequest: boolean(
     'isIncomingMessageRequest',
     overrideProps.isIncomingMessageRequest === true
@@ -502,7 +510,6 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
     overrideProps.isLoadingMessages === false
   ),
   items: overrideProps.items || Object.keys(items),
-  resetCounter: 0,
   scrollToIndex: overrideProps.scrollToIndex,
   scrollToIndexCounter: 0,
   totalUnread: number('totalUnread', overrideProps.totalUnread || 0),
@@ -515,10 +522,9 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
 
   id: uuid(),
   renderItem,
-  renderLastSeenIndicator,
   renderHeroRow,
   renderTypingBubble,
-  typingContactId: overrideProps.typingContactId,
+  isSomeoneTyping: overrideProps.isSomeoneTyping || false,
 
   ...actions(),
 });
@@ -589,9 +595,7 @@ story.add('Target Index to Top', () => {
 });
 
 story.add('Typing Indicator', () => {
-  const props = useProps({
-    typingContactId: UUID.generate().toString(),
-  });
+  const props = useProps({ isSomeoneTyping: true });
 
   return <Timeline {...props} />;
 });

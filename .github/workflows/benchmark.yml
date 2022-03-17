@@ -1,4 +1,4 @@
-# Copyright 2020-2021 Signal Messenger, LLC
+# Copyright 2020-2022 Signal Messenger, LLC
 # SPDX-License-Identifier: AGPL-3.0-only
 
 name: Benchmark
@@ -13,6 +13,7 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     if: ${{ github.repository == 'signalapp/Signal-Desktop-Private' }}
+    timeout-minutes: 30
 
     steps:
     - name: Get system specs
@@ -26,7 +27,7 @@ jobs:
     - name: Setup node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '16.9.1'
+        node-version: '16.13.0'
     - name: Install global dependencies
       run: npm install -g yarn@1.22.10
 
@@ -49,9 +50,6 @@ jobs:
     - name: Bundle
       run: yarn build:webpack
 
-    - name: Setup hosts
-      run: sudo echo "127.0.0.1 mock.signal.org" | sudo tee -a /etc/hosts
-
     - name: Run startup benchmarks
       run: |
         set -o pipefail
@@ -62,6 +60,7 @@ jobs:
         NODE_ENV: production
         RUN_COUNT: 10
         ELECTRON_ENABLE_STACK_DUMPING: on
+        ARTIFACTS_DIR: artifacts/startup
 
     - name: Run send benchmarks
       run: |
@@ -74,6 +73,7 @@ jobs:
         NODE_ENV: production
         RUN_COUNT: 100
         ELECTRON_ENABLE_STACK_DUMPING: on
+        ARTIFACTS_DIR: artifacts/send
 
     - name: Run group send benchmarks
       run: |
@@ -87,6 +87,7 @@ jobs:
         NODE_ENV: production
         RUN_COUNT: 100
         ELECTRON_ENABLE_STACK_DUMPING: on
+        ARTIFACTS_DIR: artifacts/group-send
 
     - name: Run conversation open benchmarks
       run: |
@@ -100,6 +101,14 @@ jobs:
         NODE_ENV: production
         RUN_COUNT: 100
         ELECTRON_ENABLE_STACK_DUMPING: on
+        ARTIFACTS_DIR: artifacts/convo-open
+
+    - name: Upload benchmark logs on failure
+      if: failure()
+      uses: actions/upload-artifact@v2
+      with:
+        name: logs
+        path: artifacts
 
     - name: Clone benchmark repo
       uses: actions/checkout@v2

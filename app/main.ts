@@ -74,7 +74,7 @@ import type { MenuOptionsType } from './menu';
 import { createTemplate } from './menu';
 import { installFileHandler, installWebHandler } from './protocol_filter';
 import * as OS from '../ts/OS';
-import { isProduction, isAlpha } from '../ts/util/version';
+import { isProduction } from '../ts/util/version';
 import {
   isSgnlHref,
   isCaptchaHref,
@@ -84,6 +84,7 @@ import {
   parseSignalHttpsLink,
   rewriteSignalHrefsIfNecessary,
 } from '../ts/util/sgnlHref';
+import { clearTimeoutIfNecessary } from '../ts/util/clearTimeoutIfNecessary';
 import { toggleMaximizedBrowserWindow } from '../ts/util/toggleMaximizedBrowserWindow';
 import {
   getTitleBarVisibility,
@@ -119,7 +120,7 @@ const development =
   getEnvironment() === Environment.Development ||
   getEnvironment() === Environment.Staging;
 
-const isThrottlingEnabled = development || isAlpha(app.getVersion());
+const isThrottlingEnabled = development || !isProduction(app.getVersion());
 
 const enableCI = config.get<boolean>('enableCI');
 const forcePreloadBundle = config.get<boolean>('forcePreloadBundle');
@@ -307,12 +308,15 @@ function prepareUrl(
     serverUrl: config.get<string>('serverUrl'),
     storageUrl: config.get<string>('storageUrl'),
     updatesUrl: config.get<string>('updatesUrl'),
-    directoryUrl: config.get<string>('directoryUrl'),
-    directoryEnclaveId: config.get<string>('directoryEnclaveId'),
-    directoryTrustAnchor: config.get<string>('directoryTrustAnchor'),
+    directoryVersion: config.get<number | undefined>('directoryVersion') || 1,
+    directoryUrl: config.get<string | null>('directoryUrl') || undefined,
+    directoryEnclaveId:
+      config.get<string | null>('directoryEnclaveId') || undefined,
+    directoryTrustAnchor:
+      config.get<string | null>('directoryTrustAnchor') || undefined,
     directoryV2Url: config.get<string>('directoryV2Url'),
     directoryV2PublicKey: config.get<string>('directoryV2PublicKey'),
-    directoryV2CodeHash: config.get<string>('directoryV2CodeHash'),
+    directoryV2CodeHashes: config.get<string>('directoryV2CodeHashes'),
     cdnUrl0: config.get<ConfigType>('cdn').get<string>('0'),
     cdnUrl2: config.get<ConfigType>('cdn').get<string>('2'),
     certificateAuthority: config.get<string>('certificateAuthority'),
@@ -1394,6 +1398,10 @@ function getAppLocale(): string {
   return getEnvironment() === Environment.Test ? 'en' : app.getLocale();
 }
 
+// Signal doesn't really use media keys so we set this switch here to unblock
+// them so that other apps can use them if they need to.
+app.commandLine.appendSwitch('disable-features', 'HardwareMediaKeyHandling');
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -1698,9 +1706,7 @@ async function requestShutdown() {
       if (error) {
         return reject(error);
       }
-      if (timeout) {
-        clearTimeout(timeout);
-      }
+      clearTimeoutIfNecessary(timeout);
 
       resolve();
     });

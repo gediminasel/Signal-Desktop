@@ -82,8 +82,9 @@ import {
 } from '../../messages/MessageSendState';
 import * as log from '../../logging/log';
 import { getConversationColorAttributes } from '../../util/getConversationColorAttributes';
+import { DAY, HOUR } from '../../util/durations';
 
-const THREE_HOURS = 3 * 60 * 60 * 1000;
+const THREE_HOURS = 3 * HOUR;
 
 type FormattedContact = Partial<ConversationType> &
   Pick<
@@ -104,12 +105,12 @@ type PropsForUnsupportedMessage = {
 
 export type GetPropsForBubbleOptions = Readonly<{
   conversationSelector: GetConversationByIdType;
-  ourConversationId: string;
+  ourConversationId?: string;
   ourNumber?: string;
-  ourUuid: UUIDStringType;
+  ourUuid?: UUIDStringType;
   selectedMessageId?: string;
   selectedMessageCounter?: number;
-  regionCode: string;
+  regionCode?: string;
   callSelector: CallSelectorType;
   activeCall?: CallStateType;
   accountSelector: AccountSelectorType;
@@ -126,6 +127,12 @@ export function isOutgoing(
   message: Pick<MessageWithUIFieldsType, 'type'>
 ): boolean {
   return message.type === 'outgoing';
+}
+
+export function isStory(
+  message: Pick<MessageWithUIFieldsType, 'type'>
+): boolean {
+  return message.type === 'story';
 }
 
 export function hasErrors(
@@ -195,7 +202,7 @@ export function getContactId(
     ourNumber,
     ourUuid,
   }: GetContactOptions
-): string {
+): string | undefined {
   const source = getSource(message, ourNumber);
   const sourceUuid = getSourceUuid(message, ourUuid);
 
@@ -510,6 +517,8 @@ type ShallowPropsType = Pick<
   | 'canDownload'
   | 'canReact'
   | 'canReply'
+  | 'canRetry'
+  | 'canRetryDeleteForEveryone'
   | 'contact'
   | 'contactNameColor'
   | 'conversationColor'
@@ -593,6 +602,8 @@ const getShallowPropsForMessage = createSelectorCreator(memoizeByRoot, isEqual)(
       canDownload: canDownload(message, conversationSelector),
       canReact: canReact(message, ourConversationId, conversationSelector),
       canReply: canReply(message, ourConversationId, conversationSelector),
+      canRetry: hasErrors(message),
+      canRetryDeleteForEveryone: canRetryDeleteForEveryone(message),
       contact: getPropsForEmbeddedContact(message, regionCode, accountSelector),
       contactNameColor,
       conversationColor,
@@ -1286,9 +1297,14 @@ function createNonBreakingLastSeparator(text?: string): string {
 export function getMessagePropStatus(
   message: Pick<
     MessageWithUIFieldsType,
-    'type' | 'errors' | 'sendStateByConversationId'
+    | 'deletedForEveryone'
+    | 'deletedForEveryoneFailed'
+    | 'deletedForEveryoneSendStatus'
+    | 'errors'
+    | 'sendStateByConversationId'
+    | 'type'
   >,
-  ourConversationId: string
+  ourConversationId: string | undefined
 ): LastMessageStatus | undefined {
   if (!isOutgoing(message)) {
     return undefined;
@@ -1298,9 +1314,35 @@ export function getMessagePropStatus(
     return 'paused';
   }
 
-  const { sendStateByConversationId = {} } = message;
+  const {
+    deletedForEveryone,
+    deletedForEveryoneFailed,
+    deletedForEveryoneSendStatus,
+    sendStateByConversationId = {},
+  } = message;
 
-  if (isMessageJustForMe(sendStateByConversationId, ourConversationId)) {
+  // Note: we only do anything here if deletedForEveryoneSendStatus exists, because old
+  //   messages deleted for everyone won't have send status.
+  if (deletedForEveryone && deletedForEveryoneSendStatus) {
+    if (deletedForEveryoneFailed) {
+      const anySuccessfulSends = Object.values(
+        deletedForEveryoneSendStatus
+      ).some(item => item);
+
+      return anySuccessfulSends ? 'partial-sent' : 'error';
+    }
+    const missingSends = Object.values(deletedForEveryoneSendStatus).some(
+      item => !item
+    );
+    if (missingSends) {
+      return 'sending';
+    }
+  }
+
+  if (
+    ourConversationId &&
+    isMessageJustForMe(sendStateByConversationId, ourConversationId)
+  ) {
     const status =
       sendStateByConversationId[ourConversationId]?.status ??
       SendStatus.Pending;
@@ -1315,7 +1357,9 @@ export function getMessagePropStatus(
   }
 
   const sendStates = Object.values(
-    omit(sendStateByConversationId, ourConversationId)
+    ourConversationId
+      ? omit(sendStateByConversationId, ourConversationId)
+      : sendStateByConversationId
   );
   const highestSuccessfulStatus = sendStates.reduce(
     (result: SendStatus, { status }) => maxStatus(result, status),
@@ -1345,7 +1389,7 @@ export function getMessagePropStatus(
 
 export function getPropsForEmbeddedContact(
   message: MessageWithUIFieldsType,
-  regionCode: string,
+  regionCode: string | undefined,
   accountSelector: (identifier?: string) => boolean
 ): EmbeddedContactType | undefined {
   const contacts = message.contact;
@@ -1429,7 +1473,7 @@ function canReplyOrReact(
     MessageWithUIFieldsType,
     'deletedForEveryone' | 'sendStateByConversationId' | 'type'
   >,
-  ourConversationId: string,
+  ourConversationId: string | undefined,
   conversation: undefined | Readonly<ConversationType>
 ): boolean {
   const { deletedForEveryone, sendStateByConversationId } = message;
@@ -1457,11 +1501,18 @@ function canReplyOrReact(
   if (isOutgoing(message)) {
     return (
       isMessageJustForMe(sendStateByConversationId, ourConversationId) ||
-      someSendStatus(omit(sendStateByConversationId, ourConversationId), isSent)
+      someSendStatus(
+        ourConversationId
+          ? omit(sendStateByConversationId, ourConversationId)
+          : sendStateByConversationId,
+        isSent
+      )
     );
   }
 
-  if (isIncoming(message)) {
+  // If we get past all the other checks above then we can always reply or
+  // react if the message type is "incoming" | "story"
+  if (isIncoming(message) || isStory(message)) {
     return true;
   }
 
@@ -1477,7 +1528,7 @@ export function canReply(
     | 'sendStateByConversationId'
     | 'type'
   >,
-  ourConversationId: string,
+  ourConversationId: string | undefined,
   conversationSelector: GetConversationByIdType
 ): boolean {
   const conversation = getConversation(message, conversationSelector);
@@ -1498,7 +1549,7 @@ export function canReact(
     | 'sendStateByConversationId'
     | 'type'
   >,
-  ourConversationId: string,
+  ourConversationId: string | undefined,
   conversationSelector: GetConversationByIdType
 ): boolean {
   const conversation = getConversation(message, conversationSelector);
@@ -1520,6 +1571,20 @@ export function canDeleteForEveryone(
     isMoreRecentThan(message.sent_at, THREE_HOURS) &&
     // Is it sent to anyone?
     someSendStatus(message.sendStateByConversationId, isSent)
+  );
+}
+
+export function canRetryDeleteForEveryone(
+  message: Pick<
+    MessageWithUIFieldsType,
+    'deletedForEveryone' | 'deletedForEveryoneFailed' | 'sent_at'
+  >
+): boolean {
+  return Boolean(
+    message.deletedForEveryone &&
+      message.deletedForEveryoneFailed &&
+      // Is it too old to delete?
+      isMoreRecentThan(message.sent_at, DAY)
   );
 }
 

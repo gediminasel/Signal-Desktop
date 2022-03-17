@@ -1,4 +1,4 @@
-// Copyright 2019-2021 Signal Messenger, LLC
+// Copyright 2019-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /* global window */
@@ -13,6 +13,8 @@ const pMap = require('p-map');
 // It is important to call this as early as possible
 const { SignalContext } = require('../ts/windows/context');
 
+window.i18n = SignalContext.i18n;
+
 const {
   deriveStickerPackKey,
   encryptAttachment,
@@ -26,8 +28,7 @@ const { createSetting } = require('../ts/util/preload');
 const STICKER_SIZE = 512;
 const MIN_STICKER_DIMENSION = 10;
 const MAX_STICKER_DIMENSION = STICKER_SIZE;
-const MAX_WEBP_STICKER_BYTE_LENGTH = 100 * 1024;
-const MAX_ANIMATED_STICKER_BYTE_LENGTH = 300 * 1024;
+const MAX_STICKER_BYTE_LENGTH = 300 * 1024;
 
 window.ROOT_PATH = window.location.href.startsWith('file') ? '../../' : '/';
 window.getEnvironment = getEnvironment;
@@ -55,12 +56,13 @@ const WebAPI = initializeWebAPI({
   url: config.serverUrl,
   storageUrl: config.storageUrl,
   updatesUrl: config.updatesUrl,
+  directoryVersion: parseInt(config.directoryVersion, 10),
   directoryUrl: config.directoryUrl,
   directoryEnclaveId: config.directoryEnclaveId,
   directoryTrustAnchor: config.directoryTrustAnchor,
   directoryV2Url: config.directoryV2Url,
   directoryV2PublicKey: config.directoryV2PublicKey,
-  directoryV2CodeHash: config.directoryV2CodeHash,
+  directoryV2CodeHashes: (config.directoryV2CodeHashes || '').split(','),
   cdnUrlObject: {
     0: config.cdnUrl0,
     2: config.cdnUrl2,
@@ -99,7 +101,7 @@ window.processStickerImage = async path => {
   // [0]: https://github.com/lovell/sharp/issues/2375
   const animatedPngDataIfExists = getAnimatedPngDataIfExists(imgBuffer);
   if (animatedPngDataIfExists) {
-    if (imgBuffer.byteLength > MAX_ANIMATED_STICKER_BYTE_LENGTH) {
+    if (imgBuffer.byteLength > MAX_STICKER_BYTE_LENGTH) {
       throw processStickerError(
         'Sticker file was too large',
         'StickerCreator--Toasts--tooLarge'
@@ -142,7 +144,7 @@ window.processStickerImage = async path => {
       })
       .webp()
       .toBuffer();
-    if (processedBuffer.byteLength > MAX_WEBP_STICKER_BYTE_LENGTH) {
+    if (processedBuffer.byteLength > MAX_STICKER_BYTE_LENGTH) {
       throw processStickerError(
         'Sticker file was too large',
         'StickerCreator--Toasts--tooLarge'

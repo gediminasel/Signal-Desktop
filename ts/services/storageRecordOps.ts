@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Signal Messenger, LLC
+// Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { isEqual, isNumber } from 'lodash';
@@ -6,13 +6,13 @@ import Long from 'long';
 
 import { deriveMasterKeyFromGroupV1 } from '../Crypto';
 import * as Bytes from '../Bytes';
-import dataInterface from '../sql/Client';
 import {
   deriveGroupFields,
   waitThenMaybeUpdateGroup,
   waitThenRespondToGroupV2Migration,
 } from '../groups';
 import { assert } from '../util/assert';
+import { dropNull } from '../util/dropNull';
 import { normalizeUuid } from '../util/normalizeUuid';
 import { missingCaseError } from '../util/missingCaseError';
 import {
@@ -40,8 +40,6 @@ import * as preferredReactionEmoji from '../reactions/preferredReactionEmoji';
 import { SignalService as Proto } from '../protobuf';
 import * as log from '../logging/log';
 
-const { updateConversation } = dataInterface;
-
 type RecordClass =
   | Proto.IAccountRecord
   | Proto.IContactRecord
@@ -52,6 +50,8 @@ export type MergeResultType = Readonly<{
   hasConflict: boolean;
   shouldDrop?: boolean;
   conversation?: ConversationModel;
+  needsProfileFetch?: boolean;
+  updatedConversations?: ReadonlyArray<ConversationModel>;
   oldStorageID?: string;
   oldStorageVersion?: number;
   details: ReadonlyArray<string>;
@@ -153,15 +153,18 @@ export async function toContactRecord(
   contactRecord.mutedUntilTimestamp = getSafeLongFromTimestamp(
     conversation.get('muteExpiresAt')
   );
+  if (conversation.get('hideStory') !== undefined) {
+    contactRecord.hideStory = Boolean(conversation.get('hideStory'));
+  }
 
   applyUnknownFields(contactRecord, conversation);
 
   return contactRecord;
 }
 
-export async function toAccountRecord(
+export function toAccountRecord(
   conversation: ConversationModel
-): Promise<Proto.AccountRecord> {
+): Proto.AccountRecord {
   const accountRecord = new Proto.AccountRecord();
 
   if (conversation.get('profileKey')) {
@@ -318,9 +321,9 @@ export async function toAccountRecord(
   return accountRecord;
 }
 
-export async function toGroupV1Record(
+export function toGroupV1Record(
   conversation: ConversationModel
-): Promise<Proto.GroupV1Record> {
+): Proto.GroupV1Record {
   const groupV1Record = new Proto.GroupV1Record();
 
   groupV1Record.id = Bytes.fromBinary(String(conversation.get('groupId')));
@@ -337,9 +340,9 @@ export async function toGroupV1Record(
   return groupV1Record;
 }
 
-export async function toGroupV2Record(
+export function toGroupV2Record(
   conversation: ConversationModel
-): Promise<Proto.GroupV2Record> {
+): Proto.GroupV2Record {
   const groupV2Record = new Proto.GroupV2Record();
 
   const masterKey = conversation.get('masterKey');
@@ -356,6 +359,7 @@ export async function toGroupV2Record(
   groupV2Record.dontNotifyForMentionsIfMuted = Boolean(
     conversation.get('dontNotifyForMentionsIfMuted')
   );
+  groupV2Record.hideStory = Boolean(conversation.get('hideStory'));
 
   applyUnknownFields(groupV2Record, conversation);
 
@@ -591,7 +595,7 @@ export async function mergeGroupV1Record(
     addUnknownFields(groupV1Record, conversation, details);
 
     const { hasConflict, details: extraDetails } = doesRecordHavePendingChanges(
-      await toGroupV1Record(conversation),
+      toGroupV1Record(conversation),
       groupV1Record,
       conversation
     );
@@ -608,20 +612,19 @@ export async function mergeGroupV1Record(
     details.push('marking v1 group for an update to v2');
   }
 
-  updateConversation(conversation.attributes);
-
   return {
     hasConflict: hasPendingChanges,
     conversation,
     oldStorageID,
     oldStorageVersion,
     details,
+    updatedConversations: [conversation],
   };
 }
 
-async function getGroupV2Conversation(
+function getGroupV2Conversation(
   masterKeyBuffer: Uint8Array
-): Promise<ConversationModel> {
+): ConversationModel {
   const groupFields = deriveGroupFields(masterKeyBuffer);
 
   const groupId = Bytes.toBase64(groupFields.id);
@@ -632,7 +635,7 @@ async function getGroupV2Conversation(
   // First we check for an existing GroupV2 group
   const groupV2 = window.ConversationController.get(groupId);
   if (groupV2) {
-    await groupV2.maybeRepairGroupV2({
+    groupV2.maybeRepairGroupV2({
       masterKey,
       secretParams,
       publicParams,
@@ -676,12 +679,13 @@ export async function mergeGroupV2Record(
   }
 
   const masterKeyBuffer = groupV2Record.masterKey;
-  const conversation = await getGroupV2Conversation(masterKeyBuffer);
+  const conversation = getGroupV2Conversation(masterKeyBuffer);
 
   const oldStorageID = conversation.get('storageID');
   const oldStorageVersion = conversation.get('storageVersion');
 
   conversation.set({
+    hideStory: Boolean(groupV2Record.hideStory),
     isArchived: Boolean(groupV2Record.archived),
     markedUnread: Boolean(groupV2Record.markedUnread),
     dontNotifyForMentionsIfMuted: Boolean(
@@ -705,14 +709,12 @@ export async function mergeGroupV2Record(
   addUnknownFields(groupV2Record, conversation, details);
 
   const { hasConflict, details: extraDetails } = doesRecordHavePendingChanges(
-    await toGroupV2Record(conversation),
+    toGroupV2Record(conversation),
     groupV2Record,
     conversation
   );
 
   details = details.concat(extraDetails);
-
-  updateConversation(conversation.attributes);
 
   const isGroupNewToUs = !isNumber(conversation.get('revision'));
   const isFirstSync = !window.storage.get('storageFetchComplete');
@@ -746,6 +748,7 @@ export async function mergeGroupV2Record(
   return {
     hasConflict,
     conversation,
+    updatedConversations: [conversation],
     oldStorageID,
     oldStorageVersion,
     details,
@@ -768,8 +771,8 @@ export async function mergeContactRecord(
       : undefined,
   };
 
-  const e164 = contactRecord.serviceE164 || undefined;
-  const uuid = contactRecord.serviceUuid || undefined;
+  const e164 = dropNull(contactRecord.serviceE164);
+  const uuid = dropNull(contactRecord.serviceUuid);
 
   // All contacts must have UUID
   if (!uuid) {
@@ -796,10 +799,31 @@ export async function mergeContactRecord(
     'private'
   );
 
-  if (contactRecord.profileKey) {
-    await conversation.setProfileKey(Bytes.toBase64(contactRecord.profileKey), {
-      viaStorageServiceSync: true,
-    });
+  let needsProfileFetch = false;
+  if (contactRecord.profileKey && contactRecord.profileKey.length > 0) {
+    needsProfileFetch = await conversation.setProfileKey(
+      Bytes.toBase64(contactRecord.profileKey),
+      { viaStorageServiceSync: true }
+    );
+  }
+
+  const remoteName = dropNull(contactRecord.givenName);
+  const remoteFamilyName = dropNull(contactRecord.familyName);
+  const localName = conversation.get('profileName');
+  const localFamilyName = conversation.get('profileFamilyName');
+  if (
+    remoteName &&
+    (localName !== remoteName || localFamilyName !== remoteFamilyName)
+  ) {
+    // Local name doesn't match remote name, fetch profile
+    if (localName) {
+      conversation.getProfiles();
+    } else {
+      conversation.set({
+        profileName: remoteName,
+        profileFamilyName: remoteFamilyName,
+      });
+    }
   }
 
   const verified = await conversation.safeGetVerified();
@@ -832,6 +856,7 @@ export async function mergeContactRecord(
   const oldStorageVersion = conversation.get('storageVersion');
 
   conversation.set({
+    hideStory: Boolean(contactRecord.hideStory),
     isArchived: Boolean(contactRecord.archived),
     markedUnread: Boolean(contactRecord.markedUnread),
     storageID,
@@ -852,11 +877,11 @@ export async function mergeContactRecord(
   );
   details = details.concat(extraDetails);
 
-  updateConversation(conversation.attributes);
-
   return {
     hasConflict,
     conversation,
+    updatedConversations: [conversation],
+    needsProfileFetch,
     oldStorageID,
     oldStorageVersion,
     details,
@@ -890,6 +915,8 @@ export async function mergeAccountRecord(
     subscriberCurrencyCode,
     displayBadgesOnProfile,
   } = accountRecord;
+
+  const updatedConversations = new Array<ConversationModel>();
 
   window.storage.put('read-receipt-setting', Boolean(readReceipts));
 
@@ -1060,12 +1087,22 @@ export async function mergeAccountRecord(
 
     conversationsToUnpin.forEach(conversation => {
       conversation.set({ isPinned: false });
-      updateConversation(conversation.attributes);
+      updatedConversations.push(conversation);
     });
 
     remotelyPinnedConversations.forEach(conversation => {
       conversation.set({ isPinned: true, isArchived: false });
-      updateConversation(conversation.attributes);
+
+      if (
+        window.Signal.Util.postLinkExperience.isActive() &&
+        isGroupV2(conversation.attributes)
+      ) {
+        log.info(
+          'mergeAccountRecord: Adding the message history disclaimer on link'
+        );
+        conversation.addMessageHistoryDisclaimer();
+      }
+      updatedConversations.push(conversation);
     });
 
     window.storage.put('pinnedConversationIds', remotelyPinnedConversationIds);
@@ -1102,28 +1139,34 @@ export async function mergeAccountRecord(
     storageVersion,
   });
 
-  if (accountRecord.profileKey) {
-    await conversation.setProfileKey(Bytes.toBase64(accountRecord.profileKey));
-  }
+  let needsProfileFetch = false;
+  if (profileKey && profileKey.length > 0) {
+    needsProfileFetch = await conversation.setProfileKey(
+      Bytes.toBase64(profileKey),
+      { viaStorageServiceSync: true }
+    );
 
-  if (avatarUrl) {
-    await conversation.setProfileAvatar(avatarUrl);
-    window.storage.put('avatarUrl', avatarUrl);
+    if (avatarUrl) {
+      await conversation.setProfileAvatar(avatarUrl, profileKey);
+      window.storage.put('avatarUrl', avatarUrl);
+    }
   }
 
   const { hasConflict, details: extraDetails } = doesRecordHavePendingChanges(
-    await toAccountRecord(conversation),
+    toAccountRecord(conversation),
     accountRecord,
     conversation
   );
 
-  updateConversation(conversation.attributes);
+  updatedConversations.push(conversation);
 
   details = details.concat(extraDetails);
 
   return {
     hasConflict,
     conversation,
+    updatedConversations,
+    needsProfileFetch,
     oldStorageID,
     oldStorageVersion,
     details,

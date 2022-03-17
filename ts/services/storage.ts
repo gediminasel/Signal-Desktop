@@ -12,6 +12,7 @@ import {
   deriveStorageManifestKey,
   encryptProfile,
   decryptProfile,
+  deriveMasterKeyFromGroupV1,
 } from '../Crypto';
 import {
   mergeAccountRecord,
@@ -49,8 +50,11 @@ import type {
 
 type IManifestRecordIdentifier = Proto.ManifestRecord.IIdentifier;
 
-const { eraseStorageServiceStateFromConversations, updateConversation } =
-  dataInterface;
+const {
+  eraseStorageServiceStateFromConversations,
+  updateConversation,
+  updateConversations,
+} = dataInterface;
 
 const uploadBucket: Array<number> = [];
 
@@ -128,10 +132,7 @@ function generateStorageID(): Uint8Array {
 }
 
 type GeneratedManifestType = {
-  conversationsToUpdate: Array<{
-    conversation: ConversationModel;
-    storageID: string | undefined;
-  }>;
+  postUploadUpdateFunctions: Array<() => unknown>;
   deleteKeys: Array<Uint8Array>;
   newItems: Set<Proto.IStorageItem>;
   storageManifest: Proto.IStorageManifest;
@@ -151,7 +152,7 @@ async function generateManifest(
 
   const ITEM_TYPE = Proto.ManifestRecord.Identifier.Type;
 
-  const conversationsToUpdate = [];
+  const postUploadUpdateFunctions: Array<() => unknown> = [];
   const insertKeys: Array<string> = [];
   const deleteKeys: Array<Uint8Array> = [];
   const manifestRecordKeys: Set<IManifestRecordIdentifier> = new Set();
@@ -274,9 +275,13 @@ async function generateManifest(
         );
       }
 
-      conversationsToUpdate.push({
-        conversation,
-        storageID,
+      postUploadUpdateFunctions.push(() => {
+        conversation.set({
+          needsStorageServiceSync: false,
+          storageVersion: version,
+          storageID,
+        });
+        updateConversation(conversation.attributes);
       });
     }
 
@@ -509,7 +514,7 @@ async function generateManifest(
   storageManifest.value = encryptedManifest;
 
   return {
-    conversationsToUpdate,
+    postUploadUpdateFunctions,
     deleteKeys,
     newItems,
     storageManifest,
@@ -519,7 +524,7 @@ async function generateManifest(
 async function uploadManifest(
   version: number,
   {
-    conversationsToUpdate,
+    postUploadUpdateFunctions,
     deleteKeys,
     newItems,
     storageManifest,
@@ -555,18 +560,11 @@ async function uploadManifest(
 
     log.info(
       `storageService.upload(${version}): upload complete, updating ` +
-        `conversations=${conversationsToUpdate.length}`
+        `items=${postUploadUpdateFunctions.length}`
     );
 
     // update conversations with the new storageID
-    conversationsToUpdate.forEach(({ conversation, storageID }) => {
-      conversation.set({
-        needsStorageServiceSync: false,
-        storageVersion: version,
-        storageID,
-      });
-      updateConversation(conversation.attributes);
-    });
+    postUploadUpdateFunctions.forEach(fn => fn());
   } catch (err) {
     log.error(
       `storageService.upload(${version}): failed!`,
@@ -654,11 +652,11 @@ async function createNewManifest() {
 
   const version = window.storage.get('manifestVersion', 0);
 
-  const { conversationsToUpdate, newItems, storageManifest } =
+  const { postUploadUpdateFunctions, newItems, storageManifest } =
     await generateManifest(version, undefined, true);
 
   await uploadManifest(version, {
-    conversationsToUpdate,
+    postUploadUpdateFunctions,
     // we have created a new manifest, there should be no keys to delete
     deleteKeys: [],
     newItems,
@@ -743,6 +741,8 @@ type MergedRecordType = UnknownRecord & {
   shouldDrop: boolean;
   hasError: boolean;
   isUnsupported: boolean;
+  updatedConversations: ReadonlyArray<ConversationModel>;
+  needProfileFetch: ReadonlyArray<ConversationModel>;
 };
 
 async function mergeRecord(
@@ -756,6 +756,8 @@ async function mergeRecord(
   let mergeResult: MergeResultType = { hasConflict: false, details: [] };
   let isUnsupported = false;
   let hasError = false;
+  let updatedConversations = new Array<ConversationModel>();
+  const needProfileFetch = new Array<ConversationModel>();
 
   try {
     if (itemType === ITEM_TYPE.UNKNOWN) {
@@ -802,6 +804,15 @@ async function mergeRecord(
     const oldID = mergeResult.oldStorageID
       ? redactStorageID(mergeResult.oldStorageID, mergeResult.oldStorageVersion)
       : '?';
+    updatedConversations = [
+      ...updatedConversations,
+      ...(mergeResult.updatedConversations ?? []),
+    ];
+    if (mergeResult.needsProfileFetch) {
+      strictAssert(mergeResult.conversation, 'needsProfileFetch, but no convo');
+      needProfileFetch.push(mergeResult.conversation);
+    }
+
     log.info(
       `storageService.merge(${redactedID}): merged item type=${itemType} ` +
         `oldID=${oldID} ` +
@@ -826,6 +837,8 @@ async function mergeRecord(
     isUnsupported,
     itemType,
     storageID,
+    updatedConversations,
+    needProfileFetch,
   };
 }
 
@@ -1046,30 +1059,111 @@ async function processRemoteRecords(
       `count=${missingKeys.size}`
   );
 
+  const ITEM_TYPE = Proto.ManifestRecord.Identifier.Type;
   const droppedKeys = new Set<string>();
 
-  // Merge Account records last since it contains the pinned conversations
-  // and we need all other records merged first before we can find the pinned
-  // records in our db
-  const ITEM_TYPE = Proto.ManifestRecord.Identifier.Type;
-  const sortedStorageItems = decryptedStorageItems.sort((_, b) =>
-    b.itemType === ITEM_TYPE.ACCOUNT ? -1 : 1
-  );
+  // Drop all GV1 records for which we have GV2 record in the same manifest
+  const masterKeys = new Map<string, string>();
+  for (const { itemType, storageID, storageRecord } of decryptedStorageItems) {
+    if (itemType === ITEM_TYPE.GROUPV2 && storageRecord.groupV2?.masterKey) {
+      masterKeys.set(
+        Bytes.toBase64(storageRecord.groupV2.masterKey),
+        storageID
+      );
+    }
+  }
+
+  let accountItem: MergeableItemType | undefined;
+
+  const prunedStorageItems = decryptedStorageItems.filter(item => {
+    const { itemType, storageID, storageRecord } = item;
+    if (itemType === ITEM_TYPE.ACCOUNT) {
+      if (accountItem !== undefined) {
+        log.warn(
+          `storageService.process(${storageVersion}): duplicate account ` +
+            `record=${redactStorageID(storageID, storageVersion)} ` +
+            `previous=${redactStorageID(accountItem.storageID, storageVersion)}`
+        );
+        droppedKeys.add(accountItem.storageID);
+      }
+
+      accountItem = item;
+      return false;
+    }
+
+    if (itemType !== ITEM_TYPE.GROUPV1 || !storageRecord.groupV1?.id) {
+      return true;
+    }
+
+    const masterKey = deriveMasterKeyFromGroupV1(storageRecord.groupV1.id);
+    const gv2StorageID = masterKeys.get(Bytes.toBase64(masterKey));
+    if (!gv2StorageID) {
+      return true;
+    }
+
+    log.warn(
+      `storageService.process(${storageVersion}): dropping ` +
+        `GV1 record=${redactStorageID(storageID, storageVersion)} ` +
+        `GV2 record=${redactStorageID(gv2StorageID, storageVersion)} ` +
+        'is in the same manifest'
+    );
+    droppedKeys.add(storageID);
+
+    return false;
+  });
 
   try {
     log.info(
       `storageService.process(${storageVersion}): ` +
-        `attempting to merge records=${sortedStorageItems.length}`
+        `attempting to merge records=${prunedStorageItems.length}`
     );
-    const mergedRecords = await pMap(
-      sortedStorageItems,
-      (item: MergeableItemType) => mergeRecord(storageVersion, item),
-      { concurrency: 5 }
-    );
+    if (accountItem !== undefined) {
+      log.info(
+        `storageService.process(${storageVersion}): account ` +
+          `record=${redactStorageID(accountItem.storageID, storageVersion)}`
+      );
+    }
+
+    const mergedRecords = [
+      ...(await pMap(
+        prunedStorageItems,
+        (item: MergeableItemType) => mergeRecord(storageVersion, item),
+        { concurrency: 32 }
+      )),
+
+      // Merge Account records last since it contains the pinned conversations
+      // and we need all other records merged first before we can find the pinned
+      // records in our db
+      ...(accountItem ? [await mergeRecord(storageVersion, accountItem)] : []),
+    ];
+
     log.info(
       `storageService.process(${storageVersion}): ` +
         `processed records=${mergedRecords.length}`
     );
+
+    const updatedConversations = mergedRecords
+      .map(record => record.updatedConversations)
+      .flat()
+      .map(convo => convo.attributes);
+    await updateConversations(updatedConversations);
+
+    log.info(
+      `storageService.process(${storageVersion}): ` +
+        `updated conversations=${updatedConversations.length}`
+    );
+
+    const needProfileFetch = mergedRecords
+      .map(record => record.needProfileFetch)
+      .flat();
+
+    log.info(
+      `storageService.process(${storageVersion}): ` +
+        `kicking off profile fetches=${needProfileFetch.length}`
+    );
+
+    // Intentionally not awaiting
+    pMap(needProfileFetch, convo => convo.getProfiles(), { concurrency: 3 });
 
     // Collect full map of previously and currently unknown records
     const unknownRecords: Map<string, UnknownRecord> = new Map();
@@ -1190,7 +1284,9 @@ async function sync(
     throw new Error('storageService.sync: Cannot start; no storage key!');
   }
 
-  log.info('storageService.sync: starting...');
+  log.info(
+    `storageService.sync: starting... ignoreConflicts=${ignoreConflicts}`
+  );
 
   let manifest: Proto.ManifestRecord | undefined;
   try {
@@ -1251,7 +1347,6 @@ async function sync(
     );
   }
 
-  window.Signal.Util.postLinkExperience.stop();
   log.info('storageService.sync: complete');
   return manifest;
 }
@@ -1329,6 +1424,9 @@ async function upload(fromSync = false): Promise<void> {
       false
     );
     await uploadManifest(version, generatedManifest);
+
+    // Clear pending delete keys after successful upload
+    await window.storage.put('storage-service-pending-deletes', []);
   } catch (err) {
     if (err.code === 409) {
       await sleep(conflictBackOff.getAndIncrement());
@@ -1389,6 +1487,9 @@ export const runStorageServiceSyncJob = debounce(() => {
   ourProfileKeyService.blockGetWithPromise(
     storageJobQueue(async () => {
       await sync();
+
+      // Notify listeners about sync completion
+      window.Whisper.events.trigger('storageService:syncComplete');
     }, `sync v${window.storage.get('manifestVersion')}`)
   );
 }, 500);

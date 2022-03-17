@@ -189,8 +189,16 @@ export default class OutgoingMessage {
   numberCompleted(): void {
     this.identifiersCompleted += 1;
     if (this.identifiersCompleted >= this.identifiers.length) {
+      const proto = this.message;
       const contentProto = this.getContentProtoBytes();
       const { timestamp, contentHint, recipients } = this;
+      let dataMessage: Uint8Array | undefined;
+
+      if (proto instanceof Proto.Content && proto.dataMessage) {
+        dataMessage = Proto.DataMessage.encode(proto.dataMessage).finish();
+      } else if (proto instanceof Proto.DataMessage) {
+        dataMessage = Proto.DataMessage.encode(proto).finish();
+      }
 
       this.callback({
         successfulIdentifiers: this.successfulIdentifiers,
@@ -199,6 +207,7 @@ export default class OutgoingMessage {
         unidentifiedDeliveries: this.unidentifiedDeliveries,
 
         contentHint,
+        dataMessage,
         recipients,
         contentProto,
         timestamp,
@@ -707,12 +716,7 @@ export default class OutgoingMessage {
       await this.reloadDevicesAndSend(identifier, true)();
     } catch (error) {
       if (error?.message?.includes('untrusted identity for address')) {
-        const newError = new OutgoingIdentityKeyError(
-          identifier,
-          error.originalMessage,
-          error.timestamp,
-          error.identityKey && new Uint8Array(error.identityKey)
-        );
+        const newError = new OutgoingIdentityKeyError(identifier);
         this.registerError(identifier, 'Untrusted identity', newError);
       } else {
         this.registerError(

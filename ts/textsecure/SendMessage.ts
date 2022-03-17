@@ -29,6 +29,8 @@ import type { UUID, UUIDStringType } from '../types/UUID';
 import type {
   ChallengeType,
   GetGroupLogOptionsType,
+  GetProfileOptionsType,
+  GetProfileUnauthOptionsType,
   GroupCredentialsType,
   GroupLogResponseType,
   MultiRecipient200ResponseType,
@@ -191,10 +193,12 @@ export type MessageOptionsType = {
   timestamp: number;
   mentions?: BodyRangesType;
   groupCallUpdate?: GroupCallUpdateType;
+  storyContextTimestamp?: number;
 };
 export type GroupSendOptionsType = {
   attachments?: Array<AttachmentType>;
   expireTimer?: number;
+  flags?: number;
   groupV2?: GroupV2InfoType;
   groupV1?: GroupV1InfoType;
   messageText?: string;
@@ -207,6 +211,7 @@ export type GroupSendOptionsType = {
   timestamp: number;
   mentions?: BodyRangesType;
   groupCallUpdate?: GroupCallUpdateType;
+  storyContextTimestamp?: number;
 };
 
 class Message {
@@ -251,6 +256,8 @@ class Message {
 
   groupCallUpdate?: GroupCallUpdateType;
 
+  storyContextTimestamp?: number;
+
   constructor(options: MessageOptionsType) {
     this.attachments = options.attachments || [];
     this.body = options.body;
@@ -269,6 +276,7 @@ class Message {
     this.deletedForEveryoneTimestamp = options.deletedForEveryoneTimestamp;
     this.mentions = options.mentions;
     this.groupCallUpdate = options.groupCallUpdate;
+    this.storyContextTimestamp = options.storyContextTimestamp;
 
     if (!(this.recipients instanceof Array)) {
       throw new Error('Invalid recipient list');
@@ -467,6 +475,18 @@ class Message {
       groupCallUpdate.eraId = this.groupCallUpdate.eraId;
 
       proto.groupCallUpdate = groupCallUpdate;
+    }
+
+    if (this.storyContextTimestamp) {
+      const { StoryContext } = Proto.DataMessage;
+
+      const storyContext = new StoryContext();
+      storyContext.authorUuid = String(
+        window.textsecure.storage.user.getCheckedUuid()
+      );
+      storyContext.sentTimestamp = this.storyContextTimestamp;
+
+      proto.storyContext = storyContext;
     }
 
     this.dataMessage = proto;
@@ -764,20 +784,22 @@ export default class MessageSender {
     options: Readonly<GroupSendOptionsType>
   ): MessageOptionsType {
     const {
-      messageText,
-      timestamp,
       attachments,
-      quote,
-      preview,
-      sticker,
-      reaction,
-      expireTimer,
-      profileKey,
       deletedForEveryoneTimestamp,
-      groupV2,
-      groupV1,
-      mentions,
+      expireTimer,
+      flags,
       groupCallUpdate,
+      groupV1,
+      groupV2,
+      mentions,
+      messageText,
+      preview,
+      profileKey,
+      quote,
+      reaction,
+      sticker,
+      storyContextTimestamp,
+      timestamp,
     } = options;
 
     if (!groupV1 && !groupV2) {
@@ -815,6 +837,7 @@ export default class MessageSender {
       body: messageText,
       deletedForEveryoneTimestamp,
       expireTimer,
+      flags,
       groupCallUpdate,
       groupV2,
       group: groupV1
@@ -830,6 +853,7 @@ export default class MessageSender {
       reaction,
       recipients,
       sticker,
+      storyContextTimestamp,
       timestamp,
     };
   }
@@ -867,7 +891,6 @@ export default class MessageSender {
         new Promise((resolve, reject) => {
           this.sendMessageProto({
             callback: (res: CallbackResultType) => {
-              res.dataMessage = message.encode();
               if (res.errors && res.errors.length > 0) {
                 reject(new SendMessageProtoError(res));
               } else {
@@ -952,7 +975,6 @@ export default class MessageSender {
           reject(new SendMessageProtoError(result));
           return;
         }
-
         resolve(result);
       };
 
@@ -970,12 +992,14 @@ export default class MessageSender {
 
   async sendIndividualProto({
     contentHint,
+    groupId,
     identifier,
     options,
     proto,
     timestamp,
   }: Readonly<{
     contentHint: number;
+    groupId?: string;
     identifier: string | undefined;
     options?: SendOptionsType;
     proto: Proto.DataMessage | Proto.Content | PlaintextContent;
@@ -993,7 +1017,7 @@ export default class MessageSender {
       this.sendMessageProto({
         callback,
         contentHint,
-        groupId: undefined,
+        groupId,
         options,
         proto,
         recipients: [identifier],
@@ -1019,6 +1043,7 @@ export default class MessageSender {
     groupId,
     profileKey,
     options,
+    storyContextTimestamp,
   }: Readonly<{
     identifier: string;
     messageText: string | undefined;
@@ -1033,6 +1058,7 @@ export default class MessageSender {
     contentHint: number;
     groupId: string | undefined;
     profileKey?: Uint8Array;
+    storyContextTimestamp?: number;
     options?: SendOptionsType;
   }>): Promise<CallbackResultType> {
     return this.sendMessage({
@@ -1048,6 +1074,7 @@ export default class MessageSender {
         deletedForEveryoneTimestamp,
         expireTimer,
         profileKey,
+        storyContextTimestamp,
       },
       contentHint,
       groupId,
@@ -1534,35 +1561,6 @@ export default class MessageSender {
 
   // Sending messages to contacts
 
-  async sendProfileKeyUpdate(
-    profileKey: Readonly<Uint8Array>,
-    recipients: ReadonlyArray<string>,
-    options: Readonly<SendOptionsType>,
-    groupId?: string
-  ): Promise<CallbackResultType> {
-    const { ContentHint } = Proto.UnidentifiedSenderMessage.Message;
-
-    return this.sendMessage({
-      messageOptions: {
-        recipients,
-        timestamp: Date.now(),
-        profileKey,
-        flags: Proto.DataMessage.Flags.PROFILE_KEY_UPDATE,
-        ...(groupId
-          ? {
-              group: {
-                id: groupId,
-                type: Proto.GroupContext.Type.DELIVER,
-              },
-            }
-          : {}),
-      },
-      contentHint: ContentHint.RESENDABLE,
-      groupId: undefined,
-      options,
-    });
-  }
-
   async sendCallingMessage(
     recipientId: string,
     callingMessage: Readonly<Proto.ICallingMessage>,
@@ -1699,29 +1697,6 @@ export default class MessageSender {
     };
   }
 
-  async sendExpirationTimerUpdateToIdentifier(
-    identifier: string,
-    expireTimer: number | undefined,
-    timestamp: number,
-    profileKey?: Readonly<Uint8Array>,
-    options?: Readonly<SendOptionsType>
-  ): Promise<CallbackResultType> {
-    const { ContentHint } = Proto.UnidentifiedSenderMessage.Message;
-
-    return this.sendMessage({
-      messageOptions: {
-        recipients: [identifier],
-        timestamp,
-        expireTimer,
-        profileKey,
-        flags: Proto.DataMessage.Flags.EXPIRATION_TIMER_UPDATE,
-      },
-      contentHint: ContentHint.RESENDABLE,
-      groupId: undefined,
-      options,
-    });
-  }
-
   async sendRetryRequest({
     groupId,
     options,
@@ -1833,15 +1808,15 @@ export default class MessageSender {
     sendLogCallback?: SendLogCallbackType;
     timestamp: number;
   }>): Promise<CallbackResultType> {
-    const dataMessage = proto.dataMessage
-      ? Proto.DataMessage.encode(proto.dataMessage).finish()
-      : undefined;
-
     const myE164 = window.textsecure.storage.user.getNumber();
     const myUuid = window.textsecure.storage.user.getUuid()?.toString();
     const identifiers = recipients.filter(id => id !== myE164 && id !== myUuid);
 
     if (identifiers.length === 0) {
+      const dataMessage = proto.dataMessage
+        ? Proto.DataMessage.encode(proto.dataMessage).finish()
+        : undefined;
+
       return Promise.resolve({
         dataMessage,
         errors: [],
@@ -1853,7 +1828,6 @@ export default class MessageSender {
 
     return new Promise((resolve, reject) => {
       const callback = (res: CallbackResultType) => {
-        res.dataMessage = dataMessage;
         if (res.errors && res.errors.length > 0) {
           reject(new SendMessageProtoError(res));
         } else {
@@ -2020,84 +1994,14 @@ export default class MessageSender {
     });
   }
 
-  async sendExpirationTimerUpdateToGroup(
-    groupId: string,
-    groupIdentifiers: ReadonlyArray<string>,
-    expireTimer: number | undefined,
-    timestamp: number,
-    profileKey?: Readonly<Uint8Array>,
-    options?: Readonly<SendOptionsType>
-  ): Promise<CallbackResultType> {
-    const myNumber = window.textsecure.storage.user.getNumber();
-    const myUuid = window.textsecure.storage.user.getUuid()?.toString();
-    const recipients = groupIdentifiers.filter(
-      identifier => identifier !== myNumber && identifier !== myUuid
-    );
-    const messageOptions = {
-      recipients,
-      timestamp,
-      expireTimer,
-      profileKey,
-      flags: Proto.DataMessage.Flags.EXPIRATION_TIMER_UPDATE,
-      group: {
-        id: groupId,
-        type: Proto.GroupContext.Type.DELIVER,
-      },
-    };
-    const proto = await this.getContentMessage(messageOptions);
-
-    if (recipients.length === 0) {
-      return Promise.resolve({
-        successfulIdentifiers: [],
-        failoverIdentifiers: [],
-        errors: [],
-        unidentifiedDeliveries: [],
-        dataMessage: await this.getDataMessage(messageOptions),
-      });
-    }
-
-    const { ContentHint } = Proto.UnidentifiedSenderMessage.Message;
-    const contentHint = ContentHint.RESENDABLE;
-    const sendLogCallback =
-      groupIdentifiers.length > 1
-        ? this.makeSendLogCallback({
-            contentHint,
-            proto: Buffer.from(Proto.Content.encode(proto).finish()),
-            sendType: 'expirationTimerUpdate',
-            timestamp,
-          })
-        : undefined;
-
-    return this.sendGroupProto({
-      contentHint,
-      groupId: undefined, // only for GV2 ids
-      options,
-      proto,
-      recipients,
-      sendLogCallback,
-      timestamp,
-    });
-  }
-
   // Simple pass-throughs
 
   async getProfile(
     uuid: UUID,
-    options: Readonly<{
-      accessKey?: string;
-      profileKeyVersion: string;
-      profileKeyCredentialRequest?: string;
-      userLanguages: ReadonlyArray<string>;
-    }>
+    options: GetProfileOptionsType | GetProfileUnauthOptionsType
   ): ReturnType<WebAPIType['getProfile']> {
-    const { accessKey } = options;
-
-    if (accessKey) {
-      const unauthOptions = {
-        ...options,
-        accessKey,
-      };
-      return this.server.getProfileUnauth(uuid.toString(), unauthOptions);
+    if (options.accessKey !== undefined) {
+      return this.server.getProfileUnauth(uuid.toString(), options);
     }
 
     return this.server.getProfile(uuid.toString(), options);

@@ -8,8 +8,8 @@ import * as log from './logging/log';
 
 export type ConfigKeyType =
   | 'desktop.announcementGroup'
+  | 'desktop.calling.audioLevelForSpeaking'
   | 'desktop.clientExpiration'
-  | 'desktop.disableGV1'
   | 'desktop.groupCallOutboundRing'
   | 'desktop.internalUser'
   | 'desktop.mandatoryProfileSharing'
@@ -24,6 +24,7 @@ export type ConfigKeyType =
   | 'desktop.sendSenderKey3'
   | 'desktop.showUserBadges.beta'
   | 'desktop.showUserBadges2'
+  | 'desktop.stories'
   | 'desktop.usernames'
   | 'global.calling.maxGroupCallRingSize'
   | 'global.groupsv2.groupSizeHardLimit'

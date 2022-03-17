@@ -1,4 +1,4 @@
-// Copyright 2021 Signal Messenger, LLC
+// Copyright 2021-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import Measure from 'react-measure';
@@ -582,20 +582,22 @@ export const MediaEditor = ({
             {
               icon: 'MediaEditor__icon--text-regular',
               label: i18n('MediaEditor__text--regular'),
+              onClick: () => setTextStyle(TextStyle.Regular),
               value: TextStyle.Regular,
             },
             {
               icon: 'MediaEditor__icon--text-highlight',
               label: i18n('MediaEditor__text--highlight'),
+              onClick: () => setTextStyle(TextStyle.Highlight),
               value: TextStyle.Highlight,
             },
             {
               icon: 'MediaEditor__icon--text-outline',
               label: i18n('MediaEditor__text--outline'),
+              onClick: () => setTextStyle(TextStyle.Outline),
               value: TextStyle.Outline,
             },
           ]}
-          onChange={value => setTextStyle(value)}
           theme={Theme.Dark}
           value={textStyle}
         />
@@ -636,15 +638,16 @@ export const MediaEditor = ({
             {
               icon: 'MediaEditor__icon--draw-pen',
               label: i18n('MediaEditor__draw--pen'),
+              onClick: () => setDrawTool(DrawTool.Pen),
               value: DrawTool.Pen,
             },
             {
               icon: 'MediaEditor__icon--draw-highlighter',
               label: i18n('MediaEditor__draw--highlighter'),
+              onClick: () => setDrawTool(DrawTool.Highlighter),
               value: DrawTool.Highlighter,
             },
           ]}
-          onChange={value => setDrawTool(value)}
           theme={Theme.Dark}
           value={drawTool}
         />
@@ -664,25 +667,28 @@ export const MediaEditor = ({
             {
               icon: 'MediaEditor__icon--width-thin',
               label: i18n('MediaEditor__draw--thin'),
+              onClick: () => setDrawWidth(DrawWidth.Thin),
               value: DrawWidth.Thin,
             },
             {
               icon: 'MediaEditor__icon--width-regular',
               label: i18n('MediaEditor__draw--regular'),
+              onClick: () => setDrawWidth(DrawWidth.Regular),
               value: DrawWidth.Regular,
             },
             {
               icon: 'MediaEditor__icon--width-medium',
               label: i18n('MediaEditor__draw--medium'),
+              onClick: () => setDrawWidth(DrawWidth.Medium),
               value: DrawWidth.Medium,
             },
             {
               icon: 'MediaEditor__icon--width-heavy',
               label: i18n('MediaEditor__draw--heavy'),
+              onClick: () => setDrawWidth(DrawWidth.Heavy),
               value: DrawWidth.Heavy,
             },
           ]}
-          onChange={value => setDrawWidth(value)}
           theme={Theme.Dark}
           value={drawWidth}
         />
@@ -719,6 +725,7 @@ export const MediaEditor = ({
               width: image.width,
             };
             setImageState(newImageState);
+            moveFabricObjectsForReset(fabricCanvas, imageState);
             takeSnapshot('reset', newImageState);
           }}
           type="button"
@@ -740,7 +747,7 @@ export const MediaEditor = ({
 
               const center = obj.getCenterPoint();
 
-              obj.set('angle', ((obj.angle || 0) - 90) % 360);
+              obj.set('angle', ((obj.angle || 0) + 270) % 360);
 
               obj.setPositionByOrigin(
                 new fabric.Point(center.y, imageState.width - center.x),
@@ -1127,6 +1134,60 @@ function moveFabricObjectsForCrop(
 
     const translatedCenter = new fabric.Point(x - left, y - top);
     obj.setPositionByOrigin(translatedCenter, 'center', 'center');
+    obj.setCoords();
+  });
+}
+
+function moveFabricObjectsForReset(
+  fabricCanvas: fabric.Canvas,
+  oldImageState: Readonly<ImageStateType>
+): void {
+  fabricCanvas.getObjects().forEach(obj => {
+    if (obj.excludeFromExport) {
+      return;
+    }
+
+    let newCenterX: number;
+    let newCenterY: number;
+
+    // First, reset position changes caused by image rotation:
+    const oldCenter = obj.getCenterPoint();
+    const distanceFromRightEdge = oldImageState.width - oldCenter.x;
+    const distanceFromBottomEdge = oldImageState.height - oldCenter.y;
+    switch (oldImageState.angle % 360) {
+      case 0:
+        newCenterX = oldCenter.x;
+        newCenterY = oldCenter.y;
+        break;
+      case 90:
+        newCenterX = oldCenter.y;
+        newCenterY = distanceFromRightEdge;
+        break;
+      case 180:
+        newCenterX = distanceFromRightEdge;
+        newCenterY = distanceFromBottomEdge;
+        break;
+      case 270:
+        newCenterX = distanceFromBottomEdge;
+        newCenterY = oldCenter.x;
+        break;
+      default:
+        throw new Error('Unexpected angle');
+    }
+
+    // Next, reset position changes caused by crop:
+    newCenterX += oldImageState.cropX;
+    newCenterY += oldImageState.cropY;
+
+    // It's important to set the angle *before* setting the position, because
+    //   Fabric's positioning is affected by object angle.
+    obj.set('angle', (obj.angle || 0) - oldImageState.angle);
+    obj.setPositionByOrigin(
+      new fabric.Point(newCenterX, newCenterY),
+      'center',
+      'center'
+    );
+
     obj.setCoords();
   });
 }

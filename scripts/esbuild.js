@@ -23,25 +23,39 @@ const nodeDefaults = {
 
 const bundleDefaults = {
   ...nodeDefaults,
+  define: {
+    'process.env.NODE_ENV': isProd ? '"production"' : '"development"',
+  },
   bundle: true,
   external: [
+    // Native libraries
     '@signalapp/signal-client',
     '@signalapp/signal-client/zkgroup',
-    'backbone',
     'better-sqlite3',
+    'electron',
     'fs-xattr',
     'fsevents',
-    'got',
-    'jquery',
     'mac-screen-capture-permissions',
-    'node-fetch',
-    'sass',
-    'pino',
-    'proxy-agent',
     'ringrtc',
+    'sass',
     'sharp',
     'websocket',
-    'electron',
+
+    // Things that don't bundle well
+    'backbone',
+    'got',
+    'jquery',
+    'node-fetch',
+    'pino',
+    'proxy-agent',
+
+    // Large libraries (3.7mb total)
+    // See: https://esbuild.github.io/api/#analyze
+    'emoji-datasource',
+    'fabric',
+    'google-libphonenumber',
+    'moment',
+    'quill',
 
     // Uses fast-glob and dynamic requires
     './preload_test',

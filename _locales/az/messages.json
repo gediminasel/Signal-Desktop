@@ -415,19 +415,9 @@
         "message": "Aşağıdakı şəxslər yenidən quraşdırmış və ya cihazlarını dəyişdirmiş ola bilər. Gizliliyinizə əmin olmaq üçün güvənlik nömrənizi təsdiqləyin.",
         "description": "Shown on confirmation dialog when user attempts to send a message"
     },
-    "safetyNumberChangeDialog__pending-messages--1": {
-        "message": "Gözləyən mesajı göndər",
+    "safetyNumberChangeDialog__pending-messages": {
+        "message": "Gözləyən mesajları göndər",
         "description": "Shown on confirmation dialog when user attempts to send a message in the outbox"
-    },
-    "safetyNumberChangeDialog__pending-messages--many": {
-        "message": "Gözləyən $count$ mesajı göndər",
-        "description": "Shown on confirmation dialog when user attempts to send a message in the outbox",
-        "placeholders": {
-            "count": {
-                "content": "$1",
-                "example": "123"
-            }
-        }
     },
     "identityKeyErrorOnSend": {
         "message": "$name1$ ilə  olan güvənlik nömrəniz dəyişdirildi. Unutmayın, bu dəyişiklik, kiminsə rabitənizi kəsməyə çaılşdığı və ya sadəcə $name2$  əlaqəsinin Signal-ı yenidən quraşdırdığı mənasını verə bilər. Bu əlaqə ilə güvənlik nömrənizi təsdiqləmək istəyə bilərsiniz.",
@@ -2429,13 +2419,7 @@
     },
     "chooseGroupMembers__cant-add-member__body": {
         "message": "\"$name$\", Signal-ın köhnə versiyasını istifadə etdiyi üçün qrupa əlavə edilə bilmədi. Signal-ı yenilədikdən sonra qrupa əlavə edə bilərsiniz.",
-        "description": "Shown in the alert when you try to add someone who can't be added to a group",
-        "placeholders": {
-            "max": {
-                "content": "$1",
-                "example": "Jane Doe"
-            }
-        }
+        "description": "Shown in the alert when you try to add someone who can't be added to a group"
     },
     "setGroupMetadata__title": {
         "message": "Qrupun adı",
@@ -2516,6 +2500,10 @@
     "downloadNewVersionMessage": {
         "message": "Yeniləməni endirmək üçün klikləyin",
         "description": ""
+    },
+    "downloadFullNewVersionMessage": {
+        "message": "Signal yenilənə bilmədi. Yenidən sınamaq üçün klikləyin.",
+        "description": "Shown in update dialog when partial update fails and we have to ask user to download full update"
     },
     "autoUpdateNewVersionInstructions": {
         "message": "Yeniləmələri tətbiq etmək üçün \"Signal-ı yenidən başlat\"a basın.",
@@ -3909,8 +3897,8 @@
             }
         }
     },
-    "calling__call-notification__button__in-another-call-tooltip": {
-        "message": "Artıq zəngdəsiniz.",
+    "calling__in-another-call-tooltip": {
+        "message": "Artıq zəngdəsiniz",
         "description": "Tooltip in disabled notification button when you're on another call"
     },
     "calling__call-notification__button__call-full-tooltip": {
@@ -6799,40 +6787,6 @@
         "message": "Bu versiya, Signal-ın problemsiz işləməsini təmin etmək üçün kiçik düzəltmələr və xəta düzəltmələri ehtiva edir.",
         "description": "Release notes for releases that only include bug fixes"
     },
-    "WhatsNew__v5.26--1": {
-        "message": "Yorğun: Signal-da düzəliş edilməmiş şəkillər göndərilir. Naqilli: Şəkillərə, onları Signal-da göndərməzdən əvvəl pişik stikerləri, neon mətnlər əlavə edin və onların üzərində xoşbəxt ağaclar çəkin.",
-        "description": "Release notes for v5.26"
-    },
-    "WhatsNew__v5.26--2": {
-        "message": "Həyatınız boyu heç sağ paneldə daha çox pikselə ehtiyacınız olduğunu hiss etmisiniz? Avatar pərəstişkarısınız, amma yalnız avatarlar, başqa heç nə? Avtomobilinizdə \"Ekran daşınmaz əmlakını saxla\" bufer etiketi var? Bu suallardan hər hansısa birinə bəli cavabı vermisinizsə, bu yeniləmədə sizin üçün yığcamlaşdırıla bilən sol panel var.",
-        "description": "Release notes for v5.26"
-    },
-    "WhatsNew__macos-m1": {
-        "message": "Signal Masaüstü, artıq Apple-ın ən son kompüterlərində istifadə edilən M1 çipi üçün optimallaşdırılıb. Bu yeni modelləri istifadə edirsinizsə, tətbiq daha sürətli olmalıdır. İstifadə etmirsinizsə, onda istifadə edənləri mehribanca salamlayın. Əziyyətinə görə çoxlu təşəkkürlər $dennis$!",
-        "description": "Release note for the macOS M1 release",
-        "placeholders": {
-            "dennis": {
-                "content": "$1",
-                "example": "<a>Dennis Ameling</a>"
-            }
-        }
-    },
-    "WhatsNew__v5.27--1": {
-        "message": "Uzun-uzun söhbət edirsiniz? Vacib iclasda olarkən sisteminizin yuxuya getmək əvəzinə tam oyaq qalmalıdır.",
-        "description": "Release notes for v5.27"
-    },
-    "WhatsNew__v5.27--2": {
-        "message": "Həmçinin, zənglərlə əlaqəli bir neçə təkmilləşdirmə daxil olmaqla Signal-ın problemsiz işləməsini təmin etmək üçün bir neçə xəta düzəlişləri də var.",
-        "description": "Release notes for v5.27"
-    },
-    "WhatsNew__v5.28--1": {
-        "message": "Yeni il, yeni başlanğıc ekranı. Başlanğıc quraşdırma ekranlarını 2022 üçün vaxtında yenidən dizayn etdik.",
-        "description": "Release notes for v5.28"
-    },
-    "WhatsNew__v5.29--1": {
-        "message": "İndi, yüksək səsli makinaçı və ya ağır çeynənən üçün daha az çılğın axtarışlarla! Zəng lobbisində səkkiz və ya daha çox adam varsa, Masaüstü səsi avtomatik bağlayacaq.",
-        "description": "Release notes for v5.29"
-    },
     "WhatsNew__v5.31--1": {
         "message": "Söhbətlərinizin arasında istədiyiniz qədər gəzin.",
         "description": "Release notes for v5.31"
@@ -6848,5 +6802,21 @@
     "WhatsNew__v5.32--2": {
         "message": "Dəstəklənən dillərin siyahısı genişləndirildi. Səyləri ilə bunu mümkün edən könüllü tərcüməçilərə ürəkdən təşəkkürlər!",
         "description": "Release notes for v5.32"
+    },
+    "WhatsNew__v5.34--1": {
+        "message": "Heç qeyri-stabil bağlantıda Signal-ı istifadə etmisiniz? Artıq narahat olmağa ehtiyac yoxdur. Yox olan mesajlar üçün vaxtölçən dəyişiklikləri və daha çoxu Wi-Fi-nız təkrar qaydasına düşəndə göndəriləcək.",
+        "description": "Release notes for v5.34"
+    },
+    "WhatsNew__v5.35--1": {
+        "message": "Ən son yeniləmə sistemi təqdim edildi və arıtq növbəti yeniləmələr üçün kiçik yeniləmələr olacaq.",
+        "description": "Release notes for v5.35"
+    },
+    "WhatsNew__v5.35--2": {
+        "message": "Signal artıq medi düymələri saxlamır.",
+        "description": "Release notes for v5.35"
+    },
+    "WhatsNew__v5.35--3": {
+        "message": "Yapon dostlarımız üçün daha yaxşı şrift dəstəyi.",
+        "description": "Release notes for v5.35"
     }
 }

@@ -28,7 +28,6 @@ import {
   GroupCallConnectionState,
   GroupCallJoinState,
 } from '../types/Calling';
-import type { AvatarColorType } from '../types/Colors';
 import { AvatarColors } from '../types/Colors';
 import type { ConversationType } from '../state/ducks/conversations';
 import { CallingToastManager } from './CallingToastManager';
@@ -37,9 +36,9 @@ import { GroupCallRemoteParticipants } from './GroupCallRemoteParticipants';
 import type { LocalizerType } from '../types/Util';
 import { NeedsScreenRecordingPermissionsModal } from './NeedsScreenRecordingPermissionsModal';
 import { missingCaseError } from '../util/missingCaseError';
-import type { UUIDStringType } from '../types/UUID';
 import * as KeyboardLayout from '../services/keyboardLayout';
 import { useActivateSpeakerViewOnPresenting } from '../hooks/useActivateSpeakerViewOnPresenting';
+import { CallingAudioIndicator } from './CallingAudioIndicator';
 
 export type PropsType = {
   activeCall: ActiveCallType;
@@ -49,16 +48,7 @@ export type PropsType = {
   hangUpActiveCall: () => void;
   i18n: LocalizerType;
   joinedAt?: number;
-  me: {
-    avatarPath?: string;
-    color?: AvatarColorType;
-    id: string;
-    name?: string;
-    phoneNumber?: string;
-    profileName?: string;
-    title: string;
-    uuid: UUIDStringType;
-  };
+  me: ConversationType;
   openSystemPreferencesAction: () => unknown;
   setGroupCallVideoRequest: (_: Array<GroupCallVideoRequest>) => void;
   setLocalAudio: (_: SetLocalAudioType) => void;
@@ -136,6 +126,7 @@ export const CallScreen: React.FC<PropsType> = ({
     conversation,
     hasLocalAudio,
     hasLocalVideo,
+    amISpeaking,
     isInSpeakerView,
     presentingSource,
     remoteParticipants,
@@ -512,13 +503,12 @@ export const CallScreen: React.FC<PropsType> = ({
             onClick={hangUpActiveCall}
           />
         </div>
-        <div
-          className={classNames('module-ongoing-call__footer__local-preview', {
-            'module-ongoing-call__footer__local-preview--audio-muted':
-              !hasLocalAudio,
-          })}
-        >
+        <div className="module-ongoing-call__footer__local-preview">
           {localPreviewNode}
+          <CallingAudioIndicator
+            hasAudio={hasLocalAudio}
+            isSpeaking={amISpeaking}
+          />
         </div>
       </div>
     </div>

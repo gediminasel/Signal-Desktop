@@ -5,23 +5,26 @@ import { assert } from 'chai';
 import * as sinon from 'sinon';
 import { v4 as uuid } from 'uuid';
 import { times } from 'lodash';
-import { set } from 'lodash/fp';
 import { reducer as rootReducer } from '../../../state/reducer';
 import { noopAction } from '../../../state/ducks/noop';
 import {
-  OneTimeModalState,
   ComposerStep,
+  ConversationVerificationState,
+  OneTimeModalState,
 } from '../../../state/ducks/conversationsEnums';
 import type {
+  CancelVerificationDataByConversationActionType,
   ConversationMessageType,
-  ConversationType,
   ConversationsStateType,
+  ConversationType,
   MessageType,
   SwitchToAssociatedViewActionType,
   ToggleConversationInChooseMembersActionType,
 } from '../../../state/ducks/conversations';
 import {
   actions,
+  cancelConversationVerification,
+  clearCancelledConversationVerification,
   getConversationCallMode,
   getEmptyState,
   reducer,
@@ -44,16 +47,13 @@ import {
 import { updateRemoteConfig } from '../../../test-both/helpers/RemoteConfigStub';
 
 const {
-  cantAddContactToGroup,
   clearGroupCreationError,
   clearInvitedUuidsForNewlyCreatedGroup,
-  closeCantAddContactToGroupModal,
   closeContactSpoofingReview,
   closeMaximumGroupSizeModal,
   closeRecommendedGroupSizeModal,
+  conversationStoppedByMissingVerification,
   createGroup,
-  messageSizeChanged,
-  messageStoppedByMissingVerification,
   openConversationInternal,
   repairNewestMessage,
   repairOldestMessage,
@@ -330,13 +330,11 @@ describe('both/state/ducks/conversations', () => {
 
     function getDefaultConversationMessage(): ConversationMessageType {
       return {
-        heightChangeMessageIds: [],
         isLoadingMessages: false,
         messageIds: [],
         metrics: {
           totalUnread: 0,
         },
-        resetCounter: 0,
         scrollToMessageCounter: 0,
       };
     }
@@ -461,22 +459,6 @@ describe('both/state/ducks/conversations', () => {
       });
     });
 
-    describe('CANT_ADD_CONTACT_TO_GROUP', () => {
-      it('marks the conversation ID as "cannot add"', () => {
-        const state = {
-          ...getEmptyState(),
-          composer: defaultChooseGroupMembersComposerState,
-        };
-        const action = cantAddContactToGroup('abc123');
-        const result = reducer(state, action);
-
-        assert(
-          result.composer?.step === ComposerStep.ChooseGroupMembers &&
-            result.composer.cantAddContactIdForModal === 'abc123'
-        );
-      });
-    });
-
     describe('CLEAR_GROUP_CREATION_ERROR', () => {
       it('clears the group creation error', () => {
         const state = {
@@ -509,26 +491,6 @@ describe('both/state/ducks/conversations', () => {
         const result = reducer(state, action);
 
         assert.isUndefined(result.invitedUuidsForNewlyCreatedGroup);
-      });
-    });
-
-    describe('CLOSE_CANT_ADD_CONTACT_TO_GROUP_MODAL', () => {
-      it('closes the "cannot add contact" modal"', () => {
-        const state = {
-          ...getEmptyState(),
-          composer: {
-            ...defaultChooseGroupMembersComposerState,
-            cantAddContactIdForModal: 'abc123',
-          },
-        };
-        const action = closeCantAddContactToGroupModal();
-        const result = reducer(state, action);
-
-        assert(
-          result.composer?.step === ComposerStep.ChooseGroupMembers &&
-            result.composer.cantAddContactIdForModal === undefined,
-          'Expected the contact ID to be cleared'
-        );
       });
     });
 
@@ -828,102 +790,205 @@ describe('both/state/ducks/conversations', () => {
       });
     });
 
-    describe('MESSAGE_SIZE_CHANGED', () => {
-      const stateWithActiveConversation = {
-        ...getEmptyState(),
-        messagesByConversation: {
-          [conversationId]: {
-            heightChangeMessageIds: [],
-            isLoadingMessages: false,
-            isNearBottom: true,
-            messageIds: [messageId],
-            metrics: { totalUnread: 0 },
-            resetCounter: 0,
-            scrollToMessageCounter: 0,
-          },
-        },
-        messagesLookup: {
-          [messageId]: getDefaultMessage(messageId),
-        },
-      };
-
-      it('does nothing if no conversation is active', () => {
-        const state = getEmptyState();
-
-        assert.strictEqual(
-          reducer(state, messageSizeChanged('messageId', 'convoId')),
-          state
-        );
-      });
-
-      it('does nothing if a different conversation is active', () => {
-        assert.deepEqual(
-          reducer(
-            stateWithActiveConversation,
-            messageSizeChanged(messageId, 'another-conversation-guid')
-          ),
-          stateWithActiveConversation
-        );
-      });
-
-      it('adds the message ID to the list of messages with changed heights', () => {
-        const result = reducer(
-          stateWithActiveConversation,
-          messageSizeChanged(messageId, conversationId)
-        );
-
-        assert.sameMembers(
-          result.messagesByConversation[conversationId]
-            ?.heightChangeMessageIds || [],
-          [messageId]
-        );
-      });
-
-      it("doesn't add duplicates to the list of changed-heights messages", () => {
-        const state = set(
-          ['messagesByConversation', conversationId, 'heightChangeMessageIds'],
-          [messageId],
-          stateWithActiveConversation
-        );
-        const result = reducer(
-          state,
-          messageSizeChanged(messageId, conversationId)
-        );
-
-        assert.sameMembers(
-          result.messagesByConversation[conversationId]
-            ?.heightChangeMessageIds || [],
-          [messageId]
-        );
-      });
-    });
-
-    describe('MESSAGE_STOPPED_BY_MISSING_VERIFICATION', () => {
-      it('adds messages that need conversation verification, removing duplicates', () => {
+    describe('CONVERSATION_STOPPED_BY_MISSING_VERIFICATION', () => {
+      it('adds to state, removing duplicates', () => {
         const first = reducer(
           getEmptyState(),
-          messageStoppedByMissingVerification('message 1', ['convo 1'])
+          conversationStoppedByMissingVerification({
+            conversationId: 'convo A',
+            untrustedConversationIds: ['convo 1'],
+          })
         );
         const second = reducer(
           first,
-          messageStoppedByMissingVerification('message 1', ['convo 2'])
+          conversationStoppedByMissingVerification({
+            conversationId: 'convo A',
+            untrustedConversationIds: ['convo 2'],
+          })
         );
         const third = reducer(
           second,
-          messageStoppedByMissingVerification('message 2', [
-            'convo 1',
-            'convo 3',
-          ])
+          conversationStoppedByMissingVerification({
+            conversationId: 'convo A',
+            untrustedConversationIds: ['convo 1', 'convo 3'],
+          })
         );
 
-        assert.deepStrictEqual(
-          third.outboundMessagesPendingConversationVerification,
-          {
-            'convo 1': ['message 1', 'message 2'],
-            'convo 2': ['message 1'],
-            'convo 3': ['message 2'],
-          }
+        assert.deepStrictEqual(third.verificationDataByConversation, {
+          'convo A': {
+            type: ConversationVerificationState.PendingVerification,
+            conversationsNeedingVerification: ['convo 1', 'convo 2', 'convo 3'],
+          },
+        });
+      });
+
+      it('stomps on VerificationCancelled state', () => {
+        const state: ConversationsStateType = {
+          ...getEmptyState(),
+          verificationDataByConversation: {
+            'convo A': {
+              type: ConversationVerificationState.VerificationCancelled,
+              canceledAt: Date.now(),
+            },
+          },
+        };
+        const actual = reducer(
+          state,
+          conversationStoppedByMissingVerification({
+            conversationId: 'convo A',
+            untrustedConversationIds: ['convo 1', 'convo 2'],
+          })
         );
+
+        assert.deepStrictEqual(actual.verificationDataByConversation, {
+          'convo A': {
+            type: ConversationVerificationState.PendingVerification,
+            conversationsNeedingVerification: ['convo 1', 'convo 2'],
+          },
+        });
+      });
+    });
+
+    describe('CANCEL_CONVERSATION_PENDING_VERIFICATION', () => {
+      function getAction(
+        timestamp: number,
+        conversationsState: ConversationsStateType
+      ): CancelVerificationDataByConversationActionType {
+        const dispatch = sinon.spy();
+
+        cancelConversationVerification(timestamp)(
+          dispatch,
+          () => ({
+            ...getEmptyRootState(),
+            conversations: conversationsState,
+          }),
+          null
+        );
+
+        return dispatch.getCall(0).args[0];
+      }
+
+      it('replaces existing PendingVerification state', () => {
+        const now = Date.now();
+        const state: ConversationsStateType = {
+          ...getEmptyState(),
+          verificationDataByConversation: {
+            'convo A': {
+              type: ConversationVerificationState.PendingVerification,
+              conversationsNeedingVerification: ['convo 1', 'convo 2'],
+            },
+          },
+        };
+        const action = getAction(now, state);
+        const actual = reducer(state, action);
+
+        assert.deepStrictEqual(actual.verificationDataByConversation, {
+          'convo A': {
+            type: ConversationVerificationState.VerificationCancelled,
+            canceledAt: now,
+          },
+        });
+      });
+
+      it('updates timestamp for existing VerificationCancelled state', () => {
+        const now = Date.now();
+        const state: ConversationsStateType = {
+          ...getEmptyState(),
+          verificationDataByConversation: {
+            'convo A': {
+              type: ConversationVerificationState.VerificationCancelled,
+              canceledAt: now - 1,
+            },
+          },
+        };
+        const action = getAction(now, state);
+        const actual = reducer(state, action);
+
+        assert.deepStrictEqual(actual.verificationDataByConversation, {
+          'convo A': {
+            type: ConversationVerificationState.VerificationCancelled,
+            canceledAt: now,
+          },
+        });
+      });
+
+      it('uses newest timestamp when updating existing VerificationCancelled state', () => {
+        const now = Date.now();
+        const state: ConversationsStateType = {
+          ...getEmptyState(),
+          verificationDataByConversation: {
+            'convo A': {
+              type: ConversationVerificationState.VerificationCancelled,
+              canceledAt: now,
+            },
+          },
+        };
+        const action = getAction(now, state);
+        const actual = reducer(state, action);
+
+        assert.deepStrictEqual(actual.verificationDataByConversation, {
+          'convo A': {
+            type: ConversationVerificationState.VerificationCancelled,
+            canceledAt: now,
+          },
+        });
+      });
+
+      it('does nothing if no existing state', () => {
+        const state: ConversationsStateType = getEmptyState();
+        const action = getAction(Date.now(), state);
+        const actual = reducer(state, action);
+
+        assert.strictEqual(actual, state);
+      });
+    });
+
+    describe('CANCEL_CONVERSATION_PENDING_VERIFICATION', () => {
+      it('removes existing VerificationCancelled state', () => {
+        const now = Date.now();
+        const state: ConversationsStateType = {
+          ...getEmptyState(),
+          verificationDataByConversation: {
+            'convo A': {
+              type: ConversationVerificationState.VerificationCancelled,
+              canceledAt: now,
+            },
+          },
+        };
+        const actual = reducer(
+          state,
+          clearCancelledConversationVerification('convo A')
+        );
+
+        assert.deepStrictEqual(actual.verificationDataByConversation, {});
+      });
+
+      it('leaves existing PendingVerification state', () => {
+        const state: ConversationsStateType = {
+          ...getEmptyState(),
+          verificationDataByConversation: {
+            'convo A': {
+              type: ConversationVerificationState.PendingVerification,
+              conversationsNeedingVerification: ['convo 1', 'convo 2'],
+            },
+          },
+        };
+        const actual = reducer(
+          state,
+          clearCancelledConversationVerification('convo A')
+        );
+
+        assert.deepStrictEqual(actual, state);
+      });
+
+      it('does nothing with empty state', () => {
+        const state: ConversationsStateType = getEmptyState();
+        const actual = reducer(
+          state,
+          clearCancelledConversationVerification('convo A')
+        );
+
+        assert.deepStrictEqual(actual, state);
       });
     });
 

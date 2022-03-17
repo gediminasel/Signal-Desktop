@@ -1,4 +1,4 @@
-// Copyright 2021 Signal Messenger, LLC
+// Copyright 2021-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { connect } from 'react-redux';
@@ -21,6 +21,7 @@ export type Props = {
   renderingContext: string;
   i18n: LocalizerType;
   attachment: AttachmentType;
+  collapseMetadata: boolean;
   withContentAbove: boolean;
   withContentBelow: boolean;
 

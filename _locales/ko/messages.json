@@ -415,19 +415,9 @@
         "message": "앱을 재설치했거나 기기를 바꾼 사람의 목록입니다. 보안을 보장하려면 안전 번호를 검증하세요.",
         "description": "Shown on confirmation dialog when user attempts to send a message"
     },
-    "safetyNumberChangeDialog__pending-messages--1": {
-        "message": "Send pending message",
+    "safetyNumberChangeDialog__pending-messages": {
+        "message": "Send pending messages",
         "description": "Shown on confirmation dialog when user attempts to send a message in the outbox"
-    },
-    "safetyNumberChangeDialog__pending-messages--many": {
-        "message": "Send $count$ pending messages",
-        "description": "Shown on confirmation dialog when user attempts to send a message in the outbox",
-        "placeholders": {
-            "count": {
-                "content": "$1",
-                "example": "123"
-            }
-        }
     },
     "identityKeyErrorOnSend": {
         "message": "$name1$ 님의 안전 번호가 변경되었습니다. 이 변경 사항은 누군가가 내 통신 내용을 가로채려고 했을 수도, $name2$ 님이 단순히 Signal을 다시 설치했을 수도 있습니다. 이 연락처로 안전 번호를 확인할 수 있습니다.",
@@ -2429,13 +2419,7 @@
     },
     "chooseGroupMembers__cant-add-member__body": {
         "message": "'$name$' 님은 이전 버전의 Signal을 사용하고 있기 때문에 그룹에 추가할 수 없습니다. Signal을 업데이트한 후 그룹에 추가할 수 있습니다.",
-        "description": "Shown in the alert when you try to add someone who can't be added to a group",
-        "placeholders": {
-            "max": {
-                "content": "$1",
-                "example": "Jane Doe"
-            }
-        }
+        "description": "Shown in the alert when you try to add someone who can't be added to a group"
     },
     "setGroupMetadata__title": {
         "message": "그룹 이름 입력",
@@ -2516,6 +2500,10 @@
     "downloadNewVersionMessage": {
         "message": "Click to download update",
         "description": ""
+    },
+    "downloadFullNewVersionMessage": {
+        "message": "Signal couldn’t update. Click to try again.",
+        "description": "Shown in update dialog when partial update fails and we have to ask user to download full update"
     },
     "autoUpdateNewVersionInstructions": {
         "message": "Signal을 다시 시작하여 업데이트를 적용하세요.",
@@ -3909,7 +3897,7 @@
             }
         }
     },
-    "calling__call-notification__button__in-another-call-tooltip": {
+    "calling__in-another-call-tooltip": {
         "message": "이미 통화 참가자 수 최대",
         "description": "Tooltip in disabled notification button when you're on another call"
     },
@@ -6799,40 +6787,6 @@
         "message": "This version contains a number of small tweaks and bug fixes to keep Signal running smoothly.",
         "description": "Release notes for releases that only include bug fixes"
     },
-    "WhatsNew__v5.26--1": {
-        "message": "Tired: Sending plain un-edited images on Signal. Wired: Adding cat stickers, neon text, and drawing happy trees on your images before sending them on Signal.",
-        "description": "Release notes for v5.26"
-    },
-    "WhatsNew__v5.26--2": {
-        "message": "Ever feel like you need more pixels on the right pane in your life? Are you a fan of avatars, but only avatars and nothing else? Do you have a \"Save the screen real estate\" bumper sticker on your car? If you answered yes or no to any of those questions, then this update has got some collapsible left pane for you.",
-        "description": "Release notes for v5.26"
-    },
-    "WhatsNew__macos-m1": {
-        "message": "Signal Desktop is now optimized for Apple's M1 chip which is used in their newer computers. If you're on one of those new-fangled devices, the app should be much snappier. If you're not, give a warm welcome to the users that are. Huge thanks to $dennis$ for his hard work here!",
-        "description": "Release note for the macOS M1 release",
-        "placeholders": {
-            "dennis": {
-                "content": "$1",
-                "example": "<a>Dennis Ameling</a>"
-            }
-        }
-    },
-    "WhatsNew__v5.27--1": {
-        "message": "On a long call? Your system should stay awake the whole time, instead of falling asleep while you're in the middle of an important discussion.",
-        "description": "Release notes for v5.27"
-    },
-    "WhatsNew__v5.27--2": {
-        "message": "There are also a number of small tweaks and bug fixes to keep Signal running smoothly, including several calling-related improvements.",
-        "description": "Release notes for v5.27"
-    },
-    "WhatsNew__v5.28--1": {
-        "message": "New year, new initial setup screen. We've redesigned the initial setup screens just in time for 2022.",
-        "description": "Release notes for v5.28"
-    },
-    "WhatsNew__v5.29--1": {
-        "message": "Now, with fewer frantic searches for the loud typist or heavy chewer! In the call lobby, Desktop will now automatically disable audio if there are eight or more people in the call.",
-        "description": "Release notes for v5.29"
-    },
     "WhatsNew__v5.31--1": {
         "message": "Endlessly scroll through your conversations and feel confident that wherever you are in the conversation you will know when.",
         "description": "Release notes for v5.31"
@@ -6848,5 +6802,21 @@
     "WhatsNew__v5.32--2": {
         "message": "The list of supported languages has expanded. We sincerely appreciate the volunteer translators whose efforts made this possible.",
         "description": "Release notes for v5.32"
+    },
+    "WhatsNew__v5.34--1": {
+        "message": "Ever used Signal while on an unstable connection? You can worry no more - disappearing message timer changes and more will now be sent out once your Wi-Fi feels better again.",
+        "description": "Release notes for v5.34"
+    },
+    "WhatsNew__v5.35--1": {
+        "message": "A new update system has been introduced and folks should start seeing smaller updates with the next update.",
+        "description": "Release notes for v5.35"
+    },
+    "WhatsNew__v5.35--2": {
+        "message": "Applications that use media keys rejoice! Signal no longer has a hold on them.",
+        "description": "Release notes for v5.35"
+    },
+    "WhatsNew__v5.35--3": {
+        "message": "Better font support for our Japanese friends.",
+        "description": "Release notes for v5.35"
     }
 }

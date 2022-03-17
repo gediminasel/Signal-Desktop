@@ -5,7 +5,6 @@ import { isEmpty, mapValues, pick } from 'lodash';
 import type { RefObject } from 'react';
 import React from 'react';
 import { connect } from 'react-redux';
-import memoizee from 'memoizee';
 
 import { mapDispatchToProps } from '../actions';
 import type {
@@ -31,7 +30,6 @@ import {
 
 import { SmartTimelineItem } from './TimelineItem';
 import { SmartTypingBubble } from './TypingBubble';
-import { SmartLastSeenIndicator } from './LastSeenIndicator';
 import { SmartHeroRow } from './HeroRow';
 import { renderAudioAttachment } from './renderAudioAttachment';
 import { renderEmojiPicker } from './renderEmojiPicker';
@@ -47,6 +45,7 @@ import {
   invertIdsByTitle,
 } from '../../util/groupMemberNameCollisions';
 import { ContactSpoofingType } from '../../util/contactSpoofing';
+import type { UnreadIndicatorPlacement } from '../../util/timelineUtil';
 import type { WidthBreakpoint } from '../../components/_util';
 import { getPreferredBadgeSelector } from '../selectors/badges';
 
@@ -85,6 +84,7 @@ export type TimelinePropsType = ExternalProps &
     | 'reactToMessage'
     | 'removeMember'
     | 'replyToMessage'
+    | 'retryDeleteForEveryone'
     | 'retrySend'
     | 'scrollToQuotedMessage'
     | 'showContactDetail'
@@ -99,16 +99,6 @@ export type TimelinePropsType = ExternalProps &
     | 'updateSharedGroups'
   >;
 
-const createBoundOnHeightChange = memoizee(
-  (
-    onHeightChange: (messageId: string) => unknown,
-    messageId: string
-  ): (() => unknown) => {
-    return () => onHeightChange(messageId);
-  },
-  { max: 500 }
-);
-
 function renderItem({
   actionProps,
   containerElementRef,
@@ -117,8 +107,8 @@ function renderItem({
   isOldestTimelineItem,
   messageId,
   nextMessageId,
-  onHeightChange,
   previousMessageId,
+  unreadIndicatorPlacement,
 }: {
   actionProps: TimelineActionsType;
   containerElementRef: RefObject<HTMLElement>;
@@ -127,8 +117,8 @@ function renderItem({
   isOldestTimelineItem: boolean;
   messageId: string;
   nextMessageId: undefined | string;
-  onHeightChange: (messageId: string) => unknown;
   previousMessageId: undefined | string;
+  unreadIndicatorPlacement: undefined | UnreadIndicatorPlacement;
 }): JSX.Element {
   return (
     <SmartTimelineItem
@@ -140,28 +130,22 @@ function renderItem({
       messageId={messageId}
       previousMessageId={previousMessageId}
       nextMessageId={nextMessageId}
-      onHeightChange={createBoundOnHeightChange(onHeightChange, messageId)}
       renderEmojiPicker={renderEmojiPicker}
       renderReactionPicker={renderReactionPicker}
       renderAudioAttachment={renderAudioAttachment}
+      unreadIndicatorPlacement={unreadIndicatorPlacement}
     />
   );
 }
 
-function renderLastSeenIndicator(id: string): JSX.Element {
-  return <SmartLastSeenIndicator id={id} />;
-}
-
 function renderHeroRow(
   id: string,
-  onHeightChange: () => unknown,
   unblurAvatar: () => void,
   updateSharedGroups: () => unknown
 ): JSX.Element {
   return (
     <SmartHeroRow
       id={id}
-      onHeightChange={onHeightChange}
       unblurAvatar={unblurAvatar}
       updateSharedGroups={updateSharedGroups}
     />
@@ -303,13 +287,14 @@ const mapStateToProps = (state: StateType, props: ExternalProps) => {
     ...pick(conversation, [
       'areWeAdmin',
       'unreadCount',
-      'typingContactId',
       'isGroupV1AndDisabled',
     ]),
+    isConversationSelected: state.conversations.selectedConversationId === id,
     isIncomingMessageRequest: Boolean(
       conversation.messageRequestsEnabled &&
         !conversation.acceptedMessageRequest
     ),
+    isSomeoneTyping: Boolean(conversation.typingContactId),
     ...conversationMessages,
     invitedContactsForNewlyCreatedGroup:
       getInvitedContactsForNewlyCreatedGroup(state),
@@ -323,7 +308,6 @@ const mapStateToProps = (state: StateType, props: ExternalProps) => {
     i18n: getIntl(state),
     theme: getTheme(state),
     renderItem,
-    renderLastSeenIndicator,
     renderHeroRow,
     renderTypingBubble,
     ...actions,

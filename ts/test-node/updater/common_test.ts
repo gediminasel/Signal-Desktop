@@ -2,14 +2,20 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { assert } from 'chai';
+import { pathExists } from 'fs-extra';
+import { stat, mkdir } from 'fs/promises';
+import { join } from 'path';
 
 import {
-  createTempDir,
+  createUpdateCacheDirIfNeeded,
   getUpdateFileName,
   getVersion,
   isUpdateFileNameValid,
   validatePath,
   parseYaml,
+  createTempDir,
+  getTempDir,
+  deleteTempDir,
 } from '../../updater/common';
 
 describe('updater/signatures', () => {
@@ -138,18 +144,46 @@ releaseDate: '2021-12-03T19:00:23.754Z'
 
   describe('#validatePath', () => {
     it('succeeds for simple children', async () => {
-      const base = await createTempDir();
+      const base = await createUpdateCacheDirIfNeeded();
       validatePath(base, `${base}/child`);
       validatePath(base, `${base}/child/grandchild`);
     });
     it('returns false for problematic names', async () => {
-      const base = await createTempDir();
+      const base = await createUpdateCacheDirIfNeeded();
       assert.throws(() => {
         validatePath(base, `${base}/../child`);
       });
       assert.throws(() => {
         validatePath(base, '/root');
       });
+    });
+  });
+
+  describe('createTempDir', () => {
+    it('creates a temporary directory', async () => {
+      const dir = await createTempDir();
+      assert.isTrue((await stat(dir)).isDirectory());
+
+      await deleteTempDir(dir);
+
+      assert.isFalse(await pathExists(dir), 'Directory should be deleted');
+    });
+  });
+
+  describe('getTempDir', () => {
+    it('reserves a temporary directory', async () => {
+      const dir = await getTempDir();
+      assert.isTrue(
+        (await stat(join(dir, '..'))).isDirectory(),
+        'Parent folder should exist'
+      );
+      assert.isFalse(await pathExists(dir), 'Reserved folder should not exist');
+
+      await mkdir(dir);
+
+      await deleteTempDir(dir);
+
+      assert.isFalse(await pathExists(dir), 'Directory should be deleted');
     });
   });
 });

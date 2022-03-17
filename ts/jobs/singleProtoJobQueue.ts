@@ -16,8 +16,12 @@ import { handleMessageSend } from '../util/handleMessageSend';
 import { getSendOptions } from '../util/getSendOptions';
 import type { SingleProtoJobData } from '../textsecure/SendMessage';
 import { singleProtoJobDataSchema } from '../textsecure/SendMessage';
-import { handleMultipleSendErrors } from './helpers/handleMultipleSendErrors';
-import { SendMessageProtoError } from '../textsecure/Errors';
+import {
+  handleMultipleSendErrors,
+  maybeExpandErrors,
+} from './helpers/handleMultipleSendErrors';
+import { isConversationUnregistered } from '../util/isConversationUnregistered';
+import { isConversationAccepted } from '../util/isConversationAccepted';
 
 const MAX_RETRY_TIME = DAY;
 const MAX_PARALLEL_JOBS = 5;
@@ -74,6 +78,25 @@ export class SingleProtoJobQueue extends JobQueue<SingleProtoJobData> {
       );
     }
 
+    if (!isConversationAccepted(conversation.attributes)) {
+      log.info(
+        `conversation ${conversation.idForLogging()} is not accepted; refusing to send`
+      );
+      return;
+    }
+    if (isConversationUnregistered(conversation.attributes)) {
+      log.info(
+        `conversation ${conversation.idForLogging()} is unregistered; refusing to send`
+      );
+      return;
+    }
+    if (conversation.isBlocked()) {
+      log.info(
+        `conversation ${conversation.idForLogging()} is blocked; refusing to send`
+      );
+      return;
+    }
+
     const proto = Proto.Content.decode(Bytes.fromBase64(protoBase64));
     const options = await getSendOptions(conversation.attributes, {
       syncMessage: isSyncMessage,
@@ -91,16 +114,12 @@ export class SingleProtoJobQueue extends JobQueue<SingleProtoJobData> {
         { messageIds, sendType: type }
       );
     } catch (error: unknown) {
-      const errors =
-        error instanceof SendMessageProtoError
-          ? error.errors || [error]
-          : [error];
-
       await handleMultipleSendErrors({
-        errors,
+        errors: maybeExpandErrors(error),
         isFinalAttempt,
         log,
         timeRemaining,
+        toThrow: error,
       });
     }
   }

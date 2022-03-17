@@ -39,6 +39,7 @@ import { reportSpamJobQueue } from '../jobs/reportSpamJobQueue';
 import type { GroupNameCollisionsWithIdsByTitle } from '../util/groupMemberNameCollisions';
 import {
   isDirectConversation,
+  isGroup,
   isGroupV1,
 } from '../util/whatTypeOfConversation';
 import { findAndFormatContact } from '../util/findAndFormatContact';
@@ -112,6 +113,8 @@ import { showToast } from '../util/showToast';
 import { viewSyncJobQueue } from '../jobs/viewSyncJobQueue';
 import { viewedReceiptsJobQueue } from '../jobs/viewedReceiptsJobQueue';
 import { RecordingState } from '../state/ducks/audioRecorder';
+import { UUIDKind } from '../types/UUID';
+import { retryDeleteForEveryone } from '../util/retryDeleteForEveryone';
 
 type AttachmentOptions = {
   messageId: string;
@@ -165,6 +168,7 @@ type MessageActionsType = {
   ) => unknown;
   replyToMessage: (messageId: string) => unknown;
   retrySend: (messageId: string) => unknown;
+  retryDeleteForEveryone: (messageId: string) => unknown;
   showContactDetail: (options: {
     contact: EmbeddedContactType;
     signalAccount?: string;
@@ -872,6 +876,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
       reactToMessage,
       replyToMessage,
       retrySend,
+      retryDeleteForEveryone,
       showContactDetail,
       showContactModal,
       showSafetyNumber,
@@ -1253,11 +1258,17 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
     );
     this.model.throttledFetchSMSOnlyUUID();
 
-    strictAssert(
-      this.model.throttledGetProfiles !== undefined,
-      'Conversation model should be initialized'
-    );
-    await this.model.throttledGetProfiles();
+    const ourUuid = window.textsecure.storage.user.getUuid(UUIDKind.ACI);
+    if (
+      !isGroup(this.model.attributes) ||
+      (ourUuid && this.model.hasMember(ourUuid.toString()))
+    ) {
+      strictAssert(
+        this.model.throttledGetProfiles !== undefined,
+        'Conversation model should be initialized'
+      );
+      await this.model.throttledGetProfiles();
+    }
 
     this.model.updateVerified();
   }
@@ -3000,7 +3011,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
 
     const link = links.find(
       item =>
-        LinkPreview.isLinkSafeToPreview(item) &&
+        LinkPreview.shouldPreviewHref(item) &&
         !this.excludedPreviewUrls.includes(item)
     );
     if (!link) {
@@ -3227,7 +3238,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
     }
 
     // This is already checked elsewhere, but we want to be extra-careful.
-    if (!LinkPreview.isLinkSafeToPreview(url)) {
+    if (!LinkPreview.shouldPreviewHref(url)) {
       return null;
     }
 
@@ -3242,7 +3253,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
     const { title, imageHref, description, date } = linkPreviewMetadata;
 
     let image;
-    if (imageHref && LinkPreview.isLinkSafeToPreview(imageHref)) {
+    if (imageHref && LinkPreview.shouldPreviewHref(imageHref)) {
       let objectUrl: void | string;
       try {
         const fullSizeImage =

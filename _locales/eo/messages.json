@@ -415,19 +415,9 @@
         "message": "La jenaj homoj eble restarigis aŭ ŝanĝis iliajn aparatojn. Kontrolu vian sekurigan numeron kun ili por certigi vian privatecon.",
         "description": "Shown on confirmation dialog when user attempts to send a message"
     },
-    "safetyNumberChangeDialog__pending-messages--1": {
-        "message": "Sendi pritraktotan mesaĝon",
+    "safetyNumberChangeDialog__pending-messages": {
+        "message": "Sendi pritraktotajn mesaĝojn",
         "description": "Shown on confirmation dialog when user attempts to send a message in the outbox"
-    },
-    "safetyNumberChangeDialog__pending-messages--many": {
-        "message": "Sendi $count$ pritraktotajn mesaĝojn",
-        "description": "Shown on confirmation dialog when user attempts to send a message in the outbox",
-        "placeholders": {
-            "count": {
-                "content": "$1",
-                "example": "123"
-            }
-        }
     },
     "identityKeyErrorOnSend": {
         "message": "Via sekuriga numero kun $name1$ ŝanĝiĝis. Tio povas aŭ signifi, ke iu provas interkapti viajn komunikojn, aŭ ke $name2$ simple reinstalis Signal-on. Vi certe volos kontroli la sekurigan numeron kun tiu ĉi kontakto.",
@@ -2429,13 +2419,7 @@
     },
     "chooseGroupMembers__cant-add-member__body": {
         "message": "„$name$“ ne povas esti aldonita al la grupo, ĉar ŝi aŭ li uzas malnovan version de Signal. Vi povos aldoni ŝin aŭ lin, kiam ŝi aŭ li ĝisdatigos Signal-on.",
-        "description": "Shown in the alert when you try to add someone who can't be added to a group",
-        "placeholders": {
-            "max": {
-                "content": "$1",
-                "example": "Jane Doe"
-            }
-        }
+        "description": "Shown in the alert when you try to add someone who can't be added to a group"
     },
     "setGroupMetadata__title": {
         "message": "Nomi tiun grupon",
@@ -2516,6 +2500,10 @@
     "downloadNewVersionMessage": {
         "message": "Alklaki por elŝuti ĝisdatigon",
         "description": ""
+    },
+    "downloadFullNewVersionMessage": {
+        "message": "Signal ne povis esti ĝisdatigita. Alklaku por reprovi.",
+        "description": "Shown in update dialog when partial update fails and we have to ask user to download full update"
     },
     "autoUpdateNewVersionInstructions": {
         "message": "Premu „Restartigi Signal-on“ por ĝisdatigi.",
@@ -3909,7 +3897,7 @@
             }
         }
     },
-    "calling__call-notification__button__in-another-call-tooltip": {
+    "calling__in-another-call-tooltip": {
         "message": "Vi jam estas en alvoko",
         "description": "Tooltip in disabled notification button when you're on another call"
     },
@@ -6799,40 +6787,6 @@
         "message": "Tiu versio enhavas kelkajn optimumaĵojn kaj riparetojn, por ke Signal plu funkciu bone.",
         "description": "Release notes for releases that only include bug fixes"
     },
-    "WhatsNew__v5.26--1": {
-        "message": "Vi povas nun desegni sur bildo aŭ aldoni glumarkojn aŭ tekstojn sur bildo antaŭ ol sendi ĝin.",
-        "description": "Release notes for v5.26"
-    },
-    "WhatsNew__v5.26--2": {
-        "message": "Ĉu vi jam diris al vi, ke vi bezonas pli da spaco en la dekstra panelo? Se jes, vi nun povas maletendi la maldekstran panelon.",
-        "description": "Release notes for v5.26"
-    },
-    "WhatsNew__macos-m1": {
-        "message": "Signal Desktop nun funkcias senpere ĉe novaj M1-komputiloj de Apple. Sur tiaj komputiloj, la aplikaĵo estu pli rapida. Multajn dankojn al $dennis$ por ties granda laboro pri tio!",
-        "description": "Release note for the macOS M1 release",
-        "placeholders": {
-            "dennis": {
-                "content": "$1",
-                "example": "<a>Dennis Ameling</a>"
-            }
-        }
-    },
-    "WhatsNew__v5.27--1": {
-        "message": "Ĉu longa alvoko? Via sistemo ne plu endormiĝos dum via grava interparolo.",
-        "description": "Release notes for v5.27"
-    },
-    "WhatsNew__v5.27--2": {
-        "message": "Estas ankaŭ kelkaj plibonaĵetoj kaj sencimigoj, por ke Signal plu bone funkcias, inkluzive de plibonigoj pri alvokoj.",
-        "description": "Release notes for v5.27"
-    },
-    "WhatsNew__v5.28--1": {
-        "message": "Nova jaro, nova eka agordo-fenestro. Ni refaris la bonvenigajn fenestrojn ĵuse por 2022. ",
-        "description": "Release notes for v5.28"
-    },
-    "WhatsNew__v5.29--1": {
-        "message": "Nun, malpli da serĉoj pri la laŭt-tajpanto aŭ la bru-maĉanto! Dum alvoko, Signal Desktop nun aŭtomate malŝaltos la mikrofonon, se estas almenaŭ ok homoj en al alvoko. ",
-        "description": "Release notes for v5.29"
-    },
     "WhatsNew__v5.31--1": {
         "message": "Rulumu senfini tra viaj interparoloj, kaj sciu certe, kiam ili okazis.",
         "description": "Release notes for v5.31"
@@ -6842,11 +6796,27 @@
         "description": "Release notes for v5.31"
     },
     "WhatsNew__v5.32--1": {
-        "message": "Easily track down that errant loud typist or heavy chewer in group calls - we've introduced a new animated speaking indicator!",
+        "message": "Estas nun pli facile trovi tiun bruan tajpanton aŭ maĉanton en grup-alvokoj — jen nova animacia parol-indikilo!",
         "description": "Release notes for v5.32"
     },
     "WhatsNew__v5.32--2": {
-        "message": "The list of supported languages has expanded. We sincerely appreciate the volunteer translators whose efforts made this possible.",
+        "message": "La listo de disponeblaj lingvoj pligrandiĝis. Ni sincere estas dankemaj al la traduk-volontuloj, kies peno ebligis tion.",
         "description": "Release notes for v5.32"
+    },
+    "WhatsNew__v5.34--1": {
+        "message": "Ĉu vi jam uzis Signal-on per malstabila konekto? Ne plu zorgu: kiam la konekto pliboniĝos, ĉio ne funkcianta estos reprovita.",
+        "description": "Release notes for v5.34"
+    },
+    "WhatsNew__v5.35--1": {
+        "message": "Jen nova sistemo por ĝisdatigo: estos pli etaj ĝisdatigoj ekde la venonta ĝisdatigo.",
+        "description": "Release notes for v5.35"
+    },
+    "WhatsNew__v5.35--2": {
+        "message": "Aplikaĵoj uzante aŭdvidajn klavojn ĝoju! Signal ne plu interagas kun ili.",
+        "description": "Release notes for v5.35"
+    },
+    "WhatsNew__v5.35--3": {
+        "message": "Pli bona subteno pri japanlingvaj tiparoj.",
+        "description": "Release notes for v5.35"
     }
 }

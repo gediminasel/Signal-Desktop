@@ -3,7 +3,6 @@
 
 import type { ReactChild, RefObject } from 'react';
 import React from 'react';
-import { omit } from 'lodash';
 
 import type { LocalizerType, ThemeType } from '../../types/Util';
 import { isSameDay } from '../../util/timestamp';
@@ -54,7 +53,7 @@ import type { SmartContactRendererType } from '../../groupChange';
 import { ResetSessionNotification } from './ResetSessionNotification';
 import type { PropsType as ProfileChangeNotificationPropsType } from './ProfileChangeNotification';
 import { ProfileChangeNotification } from './ProfileChangeNotification';
-import * as log from '../../logging/log';
+import type { UnreadIndicatorPlacement } from '../../util/timelineUtil';
 import type { FullJSXType } from '../Intl';
 
 type CallHistoryType = {
@@ -156,6 +155,7 @@ type PropsLocalType = {
   theme: ThemeType;
   previousItem: undefined | TimelineItemType;
   nextItem: undefined | TimelineItemType;
+  unreadIndicatorPlacement?: undefined | UnreadIndicatorPlacement;
 };
 
 type PropsActionsType = MessageActionsType &
@@ -188,7 +188,6 @@ export class TimelineItem extends React.PureComponent<PropsType> {
       item,
       i18n,
       theme,
-      messageSizeChanged,
       nextItem,
       previousItem,
       renderContact,
@@ -196,11 +195,16 @@ export class TimelineItem extends React.PureComponent<PropsType> {
       returnToActiveCall,
       selectMessage,
       startCallingLobby,
+      unreadIndicatorPlacement,
     } = this.props;
 
     if (!item) {
-      log.warn(`TimelineItem: item ${id} provided was falsey`);
-
+      // This can happen under normal conditions.
+      //
+      // `<Timeline>` and `<TimelineItem>` are connected to Redux separately. If a
+      //   timeline item is removed from Redux, `<TimelineItem>` might re-render before
+      //   `<Timeline>` does, which means we'll try to render nothing. This should resolve
+      //   itself quickly, as soon as `<Timeline>` re-renders.
       return null;
     }
 
@@ -208,13 +212,14 @@ export class TimelineItem extends React.PureComponent<PropsType> {
     if (item.type === 'message') {
       itemContents = (
         <Message
-          {...omit(this.props, ['item'])}
+          {...this.props}
           {...item.data}
           containerElementRef={containerElementRef}
           getPreferredBadge={getPreferredBadge}
           i18n={i18n}
           theme={theme}
           renderingContext="conversation/TimelineItem"
+          unreadIndicatorPlacement={unreadIndicatorPlacement}
         />
       );
     } else {
@@ -229,8 +234,6 @@ export class TimelineItem extends React.PureComponent<PropsType> {
           <CallingNotification
             conversationId={conversationId}
             i18n={i18n}
-            messageId={id}
-            messageSizeChanged={messageSizeChanged}
             nextItem={nextItem}
             returnToActiveCall={returnToActiveCall}
             startCallingLobby={startCallingLobby}

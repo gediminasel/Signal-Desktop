@@ -214,7 +214,7 @@
         "description": "Shown as a header for pinned conversations in the left pane"
     },
     "LeftPane--chats": {
-        "message": "Spjöll",
+        "message": "Spjall",
         "description": "Shown as a header for non-pinned conversations in the left pane"
     },
     "archiveHelperText": {
@@ -415,19 +415,9 @@
         "message": "Eftirfarandi einstaklingar hafa sett Signal upp aftur eða skipt um tæki. Sannreyndu öryggisnúmer þín með þeim til að tryggja öryggi.",
         "description": "Shown on confirmation dialog when user attempts to send a message"
     },
-    "safetyNumberChangeDialog__pending-messages--1": {
+    "safetyNumberChangeDialog__pending-messages": {
         "message": "Senda skilaboð í bið",
         "description": "Shown on confirmation dialog when user attempts to send a message in the outbox"
-    },
-    "safetyNumberChangeDialog__pending-messages--many": {
-        "message": "Senda $count$ skilaboð í bið",
-        "description": "Shown on confirmation dialog when user attempts to send a message in the outbox",
-        "placeholders": {
-            "count": {
-                "content": "$1",
-                "example": "123"
-            }
-        }
     },
     "identityKeyErrorOnSend": {
         "message": "Öryggisnúmer þitt með $name1$ hefur breyst. Þetta gæti þýtt að einhver sé að reyna að komast inn í samskiptin þín, eða einfaldlega að $name2$ hefur sett Signal upp aftur. Þú gætir viljað sannreyna nýja öryggisnúmerið hér fyrir neðan.",
@@ -1868,7 +1858,7 @@
         "description": "Description of the always relay calls setting"
     },
     "alwaysRelayCallsDetail": {
-        "message": "Senda símtöl áfram í gegnum netþjóna Signal til að minnka líkur á að þínir tengiliðu geti komist að þinni ip addressu. Að virkja þennan möguleika mun minnka gæði símtals.",
+        "message": "Senda símtöl áfram í gegnum netþjóna Signal til að minnka líkur á að tengiliðirnir þínir geti komist að IP-vistfanginu þínu. Að virkja þennan möguleika mun minnka gæði símtala.",
         "description": "Details describing the always relay calls setting"
     },
     "permissions": {
@@ -2429,13 +2419,7 @@
     },
     "chooseGroupMembers__cant-add-member__body": {
         "message": "Ekki er hægt að bæta \"$name$\" í þennan hóp þar sem þeir eru að nota gamla útgáfu af Signal. Þú getur bætt þeim í hópinn eftir að þeir hafa uppfært Signal.",
-        "description": "Shown in the alert when you try to add someone who can't be added to a group",
-        "placeholders": {
-            "max": {
-                "content": "$1",
-                "example": "Jane Doe"
-            }
-        }
+        "description": "Shown in the alert when you try to add someone who can't be added to a group"
     },
     "setGroupMetadata__title": {
         "message": "Nefndu þennan hóp",
@@ -2516,6 +2500,10 @@
     "downloadNewVersionMessage": {
         "message": "Smelltu til að sækja uppfærslu",
         "description": ""
+    },
+    "downloadFullNewVersionMessage": {
+        "message": "Signal gat ekki uppfærst. Smelltu til að reyna aftur.",
+        "description": "Shown in update dialog when partial update fails and we have to ask user to download full update"
     },
     "autoUpdateNewVersionInstructions": {
         "message": "Ýttu á 'Endurræsa Signal' til að setja inn uppfærslurnar.",
@@ -3909,7 +3897,7 @@
             }
         }
     },
-    "calling__call-notification__button__in-another-call-tooltip": {
+    "calling__in-another-call-tooltip": {
         "message": "Þú ert nú þegar í samtali",
         "description": "Tooltip in disabled notification button when you're on another call"
     },
@@ -6528,7 +6516,7 @@
         "description": "Button to switch the settings view"
     },
     "Preferences__button--chats": {
-        "message": "Spjöll",
+        "message": "Spjall",
         "description": "Button to switch the settings view (and a title of pane)"
     },
     "Preferences__button--calls": {
@@ -6582,7 +6570,7 @@
         "description": "Label for the notification content setting select box"
     },
     "Preferences--blocked": {
-        "message": "Bannaður",
+        "message": "Bannaðir",
         "description": "Label for blocked contacts setting"
     },
     "Preferences--blocked-count-singular": {
@@ -6799,40 +6787,6 @@
         "message": "Þessi útgáfa inniheldur nokkrar villuleiðréttingar og fínstillingar til að Signal keyri sem áreiðanlegast.",
         "description": "Release notes for releases that only include bug fixes"
     },
-    "WhatsNew__v5.26--1": {
-        "message": "Þreytt: Senda venjulegar ómeðhöndlaðar myndir í Signal. Heitt: Bæta við kattamyndum, neontexta og hamingjusömum trjám á myndirnar áður en þær eru sendar með Signal.",
-        "description": "Release notes for v5.26"
-    },
-    "WhatsNew__v5.26--2": {
-        "message": "Einhverntíma fundist þrengt að þér í lífinu? Á hægri hliðinni? Ertu með áhuga á avatar-auðkennismyndum en engu öðru? Ertu með \"Spörum skjápláss\"-límmiða á stuðaranum? Ef þú hefur svarað með já eða nei við einhverjum þessara spurninga, áttu eftir að meta það að þessi uppfærsla kemur með samanfellanlegu hliðarspjaldi vinstra megin.",
-        "description": "Release notes for v5.26"
-    },
-    "WhatsNew__macos-m1": {
-        "message": "Signal Desktop er núna bestað fyrir M1-örflöguna frá Apple sem er notuð í tölvunum þeirra. Ef þú ert með eitt af þessum nýkomnu tækjum, ætti forritið að vera með mun betri svörun. Ef svo er ekki, ættirðu að óska til hamingju þeim notendum sem þessa njóta. Gríðarlega góðar þakkir til $dennis$ fyrir vinnu hans við þetta!",
-        "description": "Release note for the macOS M1 release",
-        "placeholders": {
-            "dennis": {
-                "content": "$1",
-                "example": "<a>Dennis Ameling</a>"
-            }
-        }
-    },
-    "WhatsNew__v5.27--1": {
-        "message": "Í löngu símtali? Kerfið þitt ætti að haldast vakandi allan tímann, í stað þess að blunda á meðan þú ert í miðju mikilvægu samtali.",
-        "description": "Release notes for v5.27"
-    },
-    "WhatsNew__v5.27--2": {
-        "message": "Það er einnig fjöldi smábreytinga og lagfæringa á göllum sem hjálpa til við að keyra Signal óaðfinnanlega, þar með taldar lagfæringar sem tengjast símtölum.",
-        "description": "Release notes for v5.27"
-    },
-    "WhatsNew__v5.28--1": {
-        "message": "Nýtt ár, nýr fyrsti uppsetningarskjár. Okkur tókst að endurhanna uppsetningarskjáinn í tæka tíð áður en árið 2022 gekk í garð.",
-        "description": "Release notes for v5.28"
-    },
-    "WhatsNew__v5.29--1": {
-        "message": "Núna þarf að leita á færri stöðum að þessum sem hamast á lyklaborðinu eða tyggur hátt. Forritið slekkur núna sjálfvirkt á hljóðnemum ef það eru fleiri en átta manns í samtalinu.",
-        "description": "Release notes for v5.29"
-    },
     "WhatsNew__v5.31--1": {
         "message": "Skrunaðu endalaust í gegnum samtölin þín en hafðu samt á tilfinninguni að þú sért nákvæmlega með á nótunum.",
         "description": "Release notes for v5.31"
@@ -6842,11 +6796,27 @@
         "description": "Release notes for v5.31"
     },
     "WhatsNew__v5.32--1": {
-        "message": "Easily track down that errant loud typist or heavy chewer in group calls - we've introduced a new animated speaking indicator!",
+        "message": "Ekki láta hávært lyklaglamur eða smjatt frá næsta manni trufla þig - núna er tánmerki með hreyfingu sem lætur þig vita þegar einhver er að tala!",
         "description": "Release notes for v5.32"
     },
     "WhatsNew__v5.32--2": {
-        "message": "The list of supported languages has expanded. We sincerely appreciate the volunteer translators whose efforts made this possible.",
+        "message": "Listinn yfir studd tungumál er alltaf að lengjast. Við þökkum einlæglega öllum sjálfboðaliðunum sem sjá um þýðingarnar.",
         "description": "Release notes for v5.32"
+    },
+    "WhatsNew__v5.34--1": {
+        "message": "Einhverntíma reynt að nota Signal á óstöðugri tengingu? Nú þarftu ekki lengur að hafa áhyggjur - breytingar á niðurtalningu skilaboða sem hverfa og ýmsu fleiru verða núna sendar út um leið og Wi-Fi-netinu líður betur.",
+        "description": "Release notes for v5.34"
+    },
+    "WhatsNew__v5.35--1": {
+        "message": "Nýtt uppfærslukerfi er komið til sögunnar, fólk ætti að sjá smærri uppfærslur á næstunni.",
+        "description": "Release notes for v5.35"
+    },
+    "WhatsNew__v5.35--2": {
+        "message": "Forrit sem nota lykla fyrir gagnamiðla ættu að gleðjast - Signal heldur ekki lengur í þá.",
+        "description": "Release notes for v5.35"
+    },
+    "WhatsNew__v5.35--3": {
+        "message": "Betri leturstuðningur fyrir japanska vini okkar.",
+        "description": "Release notes for v5.35"
     }
 }
