@@ -113,6 +113,7 @@ import * as Errors from '../types/errors';
 import { isMessageUnread } from '../util/isMessageUnread';
 import type { SenderKeyTargetType } from '../util/sendToGroup';
 import { singleProtoJobQueue } from '../jobs/singleProtoJobQueue';
+import { getMessageById as getMessageByIdLazy } from '../messages/getMessageById';
 
 /* eslint-disable more/no-then */
 window.Whisper = window.Whisper || {};
@@ -1936,19 +1937,24 @@ export class ConversationModel extends window.Backbone
     let lastSeenMap = this.get('lastMessagesSeen') || {};
     let lastSeenMsg = lastSeenMap[conversationId] || {receivedAt: 0, id: ''};
     if (lastSeenMsg.receivedAt >= receivedAt)
-        return;
+      return;
 
     if (lastSeenMsg.id) {
-      const prevMsg = await getMessageById(lastSeenMsg.id);
+      const prevMsg = await getMessageByIdLazy(lastSeenMsg.id);
       if(prevMsg) {
-        const prevSeen = prevMsg.lastSeenHere || [];
-        prevMsg.lastSeenHere = [...prevSeen].filter(x => x !== this.id);
-        window.Signal.Util.queueUpdateMessage(prevMsg);
+        const prevSeen = prevMsg.get("lastSeenHere") || [];
+        prevMsg.set("lastSeenHere", [...prevSeen].filter(x => x !== this.id));
+        window.Signal.Util.queueUpdateMessage(prevMsg.attributes);
       } else {
         log.error(
           `failed to load last seen message with id ${lastSeenMsg.id}.`
         );
       }
+      // we awaited so lastSeen may have changed (probably)
+      lastSeenMap = this.get('lastMessagesSeen') || {};
+      lastSeenMsg = lastSeenMap[conversationId] || {receivedAt: 0, id: ''};
+      if (lastSeenMsg.receivedAt >= receivedAt)
+        return;
     }
     
     const prevSeenHereList = message.get('lastSeenHere') || [];
