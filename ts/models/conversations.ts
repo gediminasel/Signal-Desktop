@@ -215,8 +215,6 @@ export class ConversationModel extends window.Backbone
 
   private isInReduxBatch = false;
   
-  lastMessagesSeen?: Record<string, {sendAt: number, id: string}>;
-
   private _activeProfileFetch?: Promise<void>;
 
   override defaults(): Partial<ConversationAttributesType> {
@@ -1940,21 +1938,26 @@ export class ConversationModel extends window.Backbone
     return undefined;
   }
   
-  updateLastSeenMessage(message: MessageModel, conversationId: string): void {
+  async updateLastSeenMessage(message: MessageModel, conversationId: string): Promise<void> {
     const receivedAt = message.get('received_at');
-    const lastSeenMap = this.get('lastMessagesSeen') || {};
-    const lastSeenMsg = lastSeenMap[conversationId] || {receivedAt: 0, id: ''};
+    let lastSeenMap = this.get('lastMessagesSeen') || {};
+    let lastSeenMsg = lastSeenMap[conversationId] || {receivedAt: 0, id: ''};
     if (lastSeenMsg.receivedAt >= receivedAt)
         return;
 
     if (lastSeenMsg.id) {
-      const prevMsg = window.MessageController.getById(lastSeenMsg.id);
+      const prevMsg = await getMessageById(lastSeenMsg.id);
       if(prevMsg) {
-        const prevSeen = prevMsg.get('lastSeenHere') || [];
-        prevMsg.set('lastSeenHere', [...prevSeen].filter(x => x !== this.id));
-        window.Signal.Util.queueUpdateMessage(prevMsg.attributes);
+        const prevSeen = prevMsg.lastSeenHere || [];
+        prevMsg.lastSeenHere = [...prevSeen].filter(x => x !== this.id);
+        window.Signal.Util.queueUpdateMessage(prevMsg);
+      } else {
+        log.error(
+          `failed to load last seen message with id ${lastSeenMsg.id}.`
+        );
       }
     }
+    
     const prevSeenHereList = message.get('lastSeenHere') || [];
     message.set('lastSeenHere', [...prevSeenHereList, this.id]);
 

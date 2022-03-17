@@ -220,7 +220,7 @@ export class MessageReceipts extends Collection<MessageReceiptModel> {
         const deviceId = receipt.get('sourceDevice');
 
         if(type === MessageReceiptType.Read && recipient && conversationId)
-            recipient.updateLastSeenMessage(message, conversationId);
+          await recipient.updateLastSeenMessage(message, conversationId);
 
         if (recipientUuid && deviceId) {
           await deleteSentProtoBatcher.add({

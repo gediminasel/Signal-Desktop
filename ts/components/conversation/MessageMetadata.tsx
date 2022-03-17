@@ -11,6 +11,7 @@ import type { DirectionType, MessageStatusType } from './Message';
 import { ExpireTimer } from './ExpireTimer';
 import { MessageTimestamp } from './MessageTimestamp';
 import { Spinner } from '../Spinner';
+import { AvatarPreview } from '../AvatarPreview';
 
 type PropsType = {
   deletedForEveryone?: boolean;
@@ -111,8 +112,28 @@ export const MessageMetadata: FunctionComponent<PropsType> = props => {
   }
 
   let seenBubblesNode = null;
-  if(lastSeenHere) {
-    seenBubblesNode = lastSeenHere.map(c => <img key={c.id} src={c.avatarPath} height={15} style={{marginLeft: '2px', borderRadius:"100px"}}/>)
+  if (lastSeenHere) {
+    seenBubblesNode = lastSeenHere.map(c => <div key={c.id} title={c.title}>
+      <AvatarPreview
+        avatarColor={c.color}
+        avatarPath={c.avatarPath}
+        conversationTitle={c.title}
+        i18n={i18n}
+        isGroup={false}
+        style={{
+          fontSize: '11px',
+          height: '15px',
+          maxHeight: 512,
+          maxWidth: 512,
+          width: '15px',
+          margin: '0 0 0 2px'
+        }}
+      /></div>);
+    seenBubblesNode = <div style={{
+      marginLeft: '4px',
+      flexDirection: 'row',
+      display: 'flex'
+    }}>{seenBubblesNode}</div>;
   }
 
   return (
