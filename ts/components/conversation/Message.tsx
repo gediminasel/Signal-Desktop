@@ -88,6 +88,7 @@ import {
   areMessagesInSameGroup,
   UnreadIndicatorPlacement,
 } from '../../util/timelineUtil';
+import { AvatarPreview } from '../AvatarPreview';
 
 type Trigger = {
   handleContextClick: (event: React.MouseEvent<HTMLDivElement>) => void;
@@ -759,7 +760,6 @@ export class Message extends React.PureComponent<Props, State> {
       timestamp,
       id,
       showMessageDetail,
-      lastSeenHere,
     } = this.props;
 
     const isStickerLike = isSticker || this.canRenderStickerLikeEmoji();
@@ -778,13 +778,42 @@ export class Message extends React.PureComponent<Props, State> {
         isSticker={isStickerLike}
         isTapToViewExpired={isTapToViewExpired}
         onWidthMeasured={isInline ? this.updateMetadataWidth : undefined}
-        lastSeenHere={this.lastSeenHereStr(lastSeenHere || [])}
         showMessageDetail={showMessageDetail}
         status={status}
         textPending={textPending}
         timestamp={timestamp}
       />
     );
+  }
+
+  private renderLastSeen(): ReactNode {
+    let lastSeenStr = this.lastSeenHereStr(this.props.lastSeenHere || []);
+    if(!lastSeenStr || lastSeenStr.length === 0)
+      return null;
+    
+    let seenBubblesNode = lastSeenStr.map(c => <div key={c.id} title={c.title}>
+      <AvatarPreview
+        avatarColor={c.color}
+        avatarPath={c.avatarPath}
+        conversationTitle={c.title}
+        i18n={this.props.i18n}
+        isGroup={false}
+        style={{
+          fontSize: '11px',
+          height: '20px',
+          maxHeight: 512,
+          maxWidth: 512,
+          width: '20px',
+          margin: '0 2px 0 0'
+        }}
+      /></div>);
+    return <div style={{
+      marginLeft: 'auto',
+      flexDirection: 'row',
+      display: 'flex',
+      height: '20px',
+      justifyContent: 'flex-end',
+    }}>{seenBubblesNode}</div>;
   }
 
   private renderAuthor(): ReactNode {
@@ -2568,16 +2597,19 @@ export class Message extends React.PureComponent<Props, State> {
     }
 
     return (
-      <div className="module-message__container-outer">
-        <div
-          className={containerClassnames}
-          style={containerStyles}
-          onContextMenu={this.showContextMenu}
-        >
-          {this.renderAuthor()}
-          {this.renderContents()}
+      <div>
+        <div className="module-message__container-outer" style={{marginLeft: 'auto'}}>
+          <div
+            className={containerClassnames}
+            style={containerStyles}
+            onContextMenu={this.showContextMenu}
+          >
+            {this.renderAuthor()}
+            {this.renderContents()}
+          </div>
+          {this.renderReactions(direction === 'outgoing')}
         </div>
-        {this.renderReactions(direction === 'outgoing')}
+        {this.renderLastSeen()}
       </div>
     );
   }

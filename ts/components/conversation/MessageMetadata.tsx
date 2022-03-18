@@ -6,13 +6,11 @@ import React from 'react';
 import classNames from 'classnames';
 import Measure from 'react-measure';
 
-import type { ConversationType } from '../../state/ducks/conversations';
 import type { LocalizerType } from '../../types/Util';
 import type { DirectionType, MessageStatusType } from './Message';
 import { ExpireTimer } from './ExpireTimer';
 import { MessageTimestamp } from './MessageTimestamp';
 import { Spinner } from '../Spinner';
-import { AvatarPreview } from '../AvatarPreview';
 
 type PropsType = {
   deletedForEveryone?: boolean;
@@ -27,7 +25,6 @@ type PropsType = {
   isSticker?: boolean;
   isTapToViewExpired?: boolean;
   onWidthMeasured?: (width: number) => unknown;
-  lastSeenHere?: ConversationType[];
   showMessageDetail: (id: string) => void;
   status?: MessageStatusType;
   textPending?: boolean;
@@ -46,7 +43,6 @@ export const MessageMetadata = ({
   isShowingImage,
   isSticker,
   isTapToViewExpired,
-  lastSeenHere,
   onWidthMeasured,
   showMessageDetail,
   status,
@@ -118,31 +114,6 @@ export const MessageMetadata = ({
     }
   }
 
-  let seenBubblesNode = null;
-  if (lastSeenHere) {
-    seenBubblesNode = lastSeenHere.map(c => <div key={c.id} title={c.title}>
-      <AvatarPreview
-        avatarColor={c.color}
-        avatarPath={c.avatarPath}
-        conversationTitle={c.title}
-        i18n={i18n}
-        isGroup={false}
-        style={{
-          fontSize: '11px',
-          height: '15px',
-          maxHeight: 512,
-          maxWidth: 512,
-          width: '15px',
-          margin: '0 0 0 2px'
-        }}
-      /></div>);
-    seenBubblesNode = <div style={{
-      marginLeft: '4px',
-      flexDirection: 'row',
-      display: 'flex'
-    }}>{seenBubblesNode}</div>;
-  }
-
   const className = classNames(
     'module-message__metadata',
     isInline && 'module-message__metadata--inline',
@@ -151,7 +122,6 @@ export const MessageMetadata = ({
   const children = (
     <>
       {timestampNode}
-      {seenBubblesNode}
       {expirationLength && expirationTimestamp ? (
         <ExpireTimer
           direction={metadataDirection}
