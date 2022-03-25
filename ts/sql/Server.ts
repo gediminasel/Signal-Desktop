@@ -80,7 +80,7 @@ import type {
   IdentityKeyType,
   ItemKeyType,
   ItemType,
-  LastConversationMessagesType,
+  ConversationMessageStatsType,
   MessageMetricsType,
   MessageType,
   MessageTypeUnhydrated,
@@ -237,7 +237,8 @@ const dataInterface: ServerInterface = {
   getTotalUnreadForConversation,
   getMessageMetricsForConversation,
   getConversationRangeCenteredOnMessage,
-  getLastConversationMessages,
+  getConversationMessageStats,
+  getLastConversationMessage,
   hasGroupCallHistoryMessage,
   migrateConversationMessages,
 
@@ -1912,7 +1913,7 @@ async function saveMessage(
 }
 
 async function saveMessages(
-  arrayOfMessages: Array<MessageType>,
+  arrayOfMessages: ReadonlyArray<MessageType>,
   options: { forceSave?: boolean; ourUuid: UUIDStringType }
 ): Promise<void> {
   const db = getInstance();
@@ -2055,6 +2056,16 @@ async function getMessageBySender({
   return jsonToObject(rows[0].json);
 }
 
+export function _storyIdPredicate(storyId: string | undefined): string {
+  if (storyId === undefined) {
+    // We could use 'TRUE' here, but it is better to require `$storyId`
+    // parameter
+    return '$storyId IS NULL';
+  }
+
+  return 'storyId IS $storyId';
+}
+
 async function getUnreadByConversationAndMarkRead({
   conversationId,
   newestUnreadAt,
@@ -2085,7 +2096,7 @@ async function getUnreadByConversationAndMarkRead({
         ) AND
         expireTimer > 0 AND
         conversationId = $conversationId AND
-        storyId IS $storyId AND
+        (${_storyIdPredicate(storyId)}) AND
         received_at <= $newestUnreadAt;
       `
     ).run({
@@ -2104,7 +2115,7 @@ async function getUnreadByConversationAndMarkRead({
         WHERE
           readStatus = ${ReadStatus.Unread} AND
           conversationId = $conversationId AND
-          storyId IS $storyId AND
+          (${_storyIdPredicate(storyId)}) AND
           received_at <= $newestUnreadAt
         ORDER BY received_at DESC, sent_at DESC;
         `
@@ -2124,7 +2135,7 @@ async function getUnreadByConversationAndMarkRead({
         WHERE
           readStatus = ${ReadStatus.Unread} AND
           conversationId = $conversationId AND
-          storyId IS $storyId AND
+          (${_storyIdPredicate(storyId)}) AND
           received_at <= $newestUnreadAt;
         `
     ).run({
@@ -2359,7 +2370,7 @@ function getOlderMessagesByConversationSync(
         conversationId = $conversationId AND
         ($messageId IS NULL OR id IS NOT $messageId) AND
         isStory IS 0 AND
-        storyId IS $storyId AND
+        (${_storyIdPredicate(storyId)}) AND
         (
           (received_at = $received_at AND sent_at < $sent_at) OR
           received_at < $received_at
@@ -2452,7 +2463,7 @@ function getNewerMessagesByConversationSync(
       SELECT json FROM messages WHERE
         conversationId = $conversationId AND
         isStory IS 0 AND
-        storyId IS $storyId AND
+        (${_storyIdPredicate(storyId)}) AND
         (
           (received_at = $received_at AND sent_at > $sent_at) OR
           received_at > $received_at
@@ -2482,7 +2493,7 @@ function getOldestMessageForConversation(
       SELECT * FROM messages WHERE
         conversationId = $conversationId AND
         isStory IS 0 AND
-        storyId IS $storyId
+        (${_storyIdPredicate(storyId)})
       ORDER BY received_at ASC, sent_at ASC
       LIMIT 1;
       `
@@ -2509,7 +2520,7 @@ function getNewestMessageForConversation(
       SELECT * FROM messages WHERE
         conversationId = $conversationId AND
         isStory IS 0 AND
-        storyId IS $storyId
+        (${_storyIdPredicate(storyId)})
       ORDER BY received_at DESC, sent_at DESC
       LIMIT 1;
       `
@@ -2591,13 +2602,13 @@ function getLastConversationPreview({
   return jsonToObject(row.json);
 }
 
-async function getLastConversationMessages({
+async function getConversationMessageStats({
   conversationId,
   ourUuid,
 }: {
   conversationId: string;
   ourUuid: UUIDStringType;
-}): Promise<LastConversationMessagesType> {
+}): Promise<ConversationMessageStatsType> {
   const db = getInstance();
 
   return db.transaction(() => {
@@ -2612,6 +2623,32 @@ async function getLastConversationMessages({
   })();
 }
 
+async function getLastConversationMessage({
+  conversationId,
+}: {
+  conversationId: string;
+}): Promise<MessageType | undefined> {
+  const db = getInstance();
+  const row = db
+    .prepare<Query>(
+      `
+      SELECT * FROM messages WHERE
+        conversationId = $conversationId
+      ORDER BY received_at DESC, sent_at DESC
+      LIMIT 1;
+      `
+    )
+    .get({
+      conversationId,
+    });
+
+  if (!row) {
+    return undefined;
+  }
+
+  return jsonToObject(row.json);
+}
+
 function getOldestUnreadMessageForConversation(
   conversationId: string,
   storyId?: UUIDStringType
@@ -2624,7 +2661,7 @@ function getOldestUnreadMessageForConversation(
         conversationId = $conversationId AND
         readStatus = ${ReadStatus.Unread} AND
         isStory IS 0 AND
-        storyId IS $storyId
+        (${_storyIdPredicate(storyId)})
       ORDER BY received_at ASC, sent_at ASC
       LIMIT 1;
       `
@@ -2661,7 +2698,7 @@ function getTotalUnreadForConversationSync(
         conversationId = $conversationId AND
         readStatus = ${ReadStatus.Unread} AND
         isStory IS 0 AND
-        storyId IS $storyId;
+        (${_storyIdPredicate(storyId)})
       `
     )
     .get({

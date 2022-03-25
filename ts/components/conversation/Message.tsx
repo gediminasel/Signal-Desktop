@@ -112,7 +112,8 @@ const EXPIRED_DELAY = 600;
 const GROUP_AVATAR_SIZE = AvatarSize.TWENTY_EIGHT;
 const STICKER_SIZE = 200;
 const GIF_SIZE = 300;
-const SELECTED_TIMEOUT = 1000;
+// Note: this needs to match the animation time
+const SELECTED_TIMEOUT = 1200;
 const THREE_HOURS = 3 * 60 * 60 * 1000;
 const SENT_STATUSES = new Set<MessageStatusType>([
   'delivered',
@@ -126,6 +127,13 @@ enum MetadataPlacement {
   RenderedByMessageAudioComponent,
   InlineWithText,
   Bottom,
+}
+
+export enum TextDirection {
+  LeftToRight = 'LeftToRight',
+  RightToLeft = 'RightToLeft',
+  Default = 'Default',
+  None = 'None',
 }
 
 export const MessageStatuses = [
@@ -177,6 +185,7 @@ export type PropsData = {
   conversationId: string;
   displayLimit?: number;
   text?: string;
+  textDirection: TextDirection;
   textPending?: boolean;
   isSticker?: boolean;
   isSelected?: boolean;
@@ -218,6 +227,13 @@ export type PropsData = {
     bodyRanges?: BodyRangesType;
     referencedMessageNotFound: boolean;
     isViewOnce: boolean;
+  };
+  storyReplyContext?: {
+    authorTitle: string;
+    conversationColor: ConversationColorType;
+    customColor?: CustomColorType;
+    isFromMe: boolean;
+    rawAttachment?: QuotedAttachmentType;
   };
   previews: Array<LinkPreviewType>;
 
@@ -289,7 +305,7 @@ export type PropsActions = {
     contact: EmbeddedContactType;
     signalAccount?: string;
   }) => void;
-  showContactModal: (contactId: string) => void;
+  showContactModal: (contactId: string, conversationId?: string) => void;
 
   kickOffAttachmentDownload: (options: {
     attachment: AttachmentType;
@@ -543,8 +559,11 @@ export class Message extends React.PureComponent<Props, State> {
       expirationTimestamp,
       status,
       text,
+      textDirection,
     }: Readonly<Props> = this.props
   ): MetadataPlacement {
+    const isRTL = textDirection === TextDirection.RightToLeft;
+
     if (
       !expirationLength &&
       !expirationTimestamp &&
@@ -561,6 +580,10 @@ export class Message extends React.PureComponent<Props, State> {
     }
 
     if (this.canRenderStickerLikeEmoji()) {
+      return MetadataPlacement.Bottom;
+    }
+
+    if (isRTL) {
       return MetadataPlacement.Bottom;
     }
 
@@ -1295,6 +1318,59 @@ export class Message extends React.PureComponent<Props, State> {
     );
   }
 
+  public renderStoryReplyContext(): JSX.Element | null {
+    const {
+      conversationColor,
+      customColor,
+      direction,
+      i18n,
+      storyReplyContext,
+    } = this.props;
+
+    if (!storyReplyContext) {
+      return null;
+    }
+
+    const isIncoming = direction === 'incoming';
+
+    let curveTopLeft: boolean;
+    let curveTopRight: boolean;
+    if (this.shouldRenderAuthor()) {
+      curveTopLeft = false;
+      curveTopRight = false;
+    } else if (isIncoming) {
+      curveTopLeft = !this.isCollapsedAbove();
+      curveTopRight = true;
+    } else {
+      curveTopLeft = true;
+      curveTopRight = !this.isCollapsedAbove();
+    }
+
+    return (
+      <Quote
+        authorTitle={storyReplyContext.authorTitle}
+        conversationColor={conversationColor}
+        curveTopLeft={curveTopLeft}
+        curveTopRight={curveTopRight}
+        customColor={customColor}
+        i18n={i18n}
+        isFromMe={storyReplyContext.isFromMe}
+        isIncoming={isIncoming}
+        isViewOnce={false}
+        moduleClassName="StoryReplyQuote"
+        onClick={() => {
+          // TODO DESKTOP-3255
+        }}
+        rawAttachment={storyReplyContext.rawAttachment}
+        referencedMessageNotFound={false}
+        text={i18n('message--getNotificationText--text-with-emoji', {
+          text: i18n('message--getNotificationText--photo'),
+          emoji: '📷',
+        })}
+      />
+    );
+  }
+
   public renderEmbeddedContact(): JSX.Element | null {
     const {
       contact,
@@ -1359,12 +1435,13 @@ export class Message extends React.PureComponent<Props, State> {
   private renderAvatar(): ReactNode {
     const {
       author,
+      conversationId,
+      conversationType,
+      direction,
       getPreferredBadge,
       i18n,
       showContactModal,
       theme,
-      conversationType,
-      direction,
     } = this.props;
 
     if (conversationType !== 'group' || direction !== 'incoming') {
@@ -1394,7 +1471,7 @@ export class Message extends React.PureComponent<Props, State> {
               event.stopPropagation();
               event.preventDefault();
 
-              showContactModal(author.id);
+              showContactModal(author.id, conversationId);
             }}
             phoneNumber={author.phoneNumber}
             profileName={author.profileName}
@@ -1421,9 +1498,11 @@ export class Message extends React.PureComponent<Props, State> {
       openConversation,
       status,
       text,
+      textDirection,
       textPending,
     } = this.props;
     const { metadataWidth } = this.state;
+    const isRTL = textDirection === TextDirection.RightToLeft;
 
     // eslint-disable-next-line no-nested-ternary
     const contents = deletedForEveryone
@@ -1438,7 +1517,6 @@ export class Message extends React.PureComponent<Props, State> {
 
     return (
       <div
-        dir="auto"
         className={classNames(
           'module-message__text',
           `module-message__text--${direction}`,
@@ -1446,6 +1524,7 @@ export class Message extends React.PureComponent<Props, State> {
             ? 'module-message__text--error'
             : null
         )}
+        dir={isRTL ? 'rtl' : undefined}
       >
         <MessageBodyReadMore
           bodyRanges={bodyRanges}
@@ -1459,9 +1538,10 @@ export class Message extends React.PureComponent<Props, State> {
           text={contents || ''}
           textPending={textPending}
         />
-        {this.getMetadataPlacement() === MetadataPlacement.InlineWithText && (
-          <MessageTextMetadataSpacer metadataWidth={metadataWidth} />
-        )}
+        {!isRTL &&
+          this.getMetadataPlacement() === MetadataPlacement.InlineWithText && (
+            <MessageTextMetadataSpacer metadataWidth={metadataWidth} />
+          )}
       </div>
     );
   }
@@ -2325,6 +2405,7 @@ export class Message extends React.PureComponent<Props, State> {
     return (
       <>
         {this.renderQuote()}
+        {this.renderStoryReplyContext()}
         {this.renderAttachment()}
         {this.renderPreview()}
         {this.renderEmbeddedContact()}
@@ -2549,6 +2630,7 @@ export class Message extends React.PureComponent<Props, State> {
       isTapToView,
       isTapToViewExpired,
       isTapToViewError,
+      text,
     } = this.props;
     const { isSelected } = this.state;
 
@@ -2560,12 +2642,18 @@ export class Message extends React.PureComponent<Props, State> {
     const isEmojiOnly = this.canRenderStickerLikeEmoji();
     const isStickerLike = isSticker || isEmojiOnly;
 
+    // If it's a mostly-normal gray incoming text box, we don't want to darken it as much
+    const lighterSelect =
+      isSelected &&
+      direction === 'incoming' &&
+      !isStickerLike &&
+      (text || (!isVideo(attachments) && !isImage(attachments)));
+
     const containerClassnames = classNames(
       'module-message__container',
       isGIF(attachments) ? 'module-message__container--gif' : null,
-      isSelected && !isStickerLike
-        ? 'module-message__container--selected'
-        : null,
+      isSelected ? 'module-message__container--selected' : null,
+      lighterSelect ? 'module-message__container--selected-lighter' : null,
       !isStickerLike ? `module-message__container--${direction}` : null,
       isEmojiOnly ? 'module-message__container--emoji' : null,
       isTapToView ? 'module-message__container--with-tap-to-view' : null,

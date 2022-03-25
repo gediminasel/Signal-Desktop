@@ -7,7 +7,6 @@ import type {
   GroupV1Update,
   MessageAttributesType,
   MessageReactionType,
-  ShallowChallengeError,
   QuotedMessageType,
   WhatIsThis,
 } from '../model-types.d';
@@ -51,6 +50,7 @@ import { isImage, isVideo } from '../types/Attachment';
 import * as Attachment from '../types/Attachment';
 import { stringToMIMEType } from '../types/MIME';
 import * as MIME from '../types/MIME';
+import * as GroupChange from '../groupChange';
 import { ReadStatus } from '../messages/MessageReadStatus';
 import type { SendStateByConversationId } from '../messages/MessageSendState';
 import {
@@ -77,7 +77,6 @@ import { handleMessageSend } from '../util/handleMessageSend';
 import { getSendOptions } from '../util/getSendOptions';
 import { findAndFormatContact } from '../util/findAndFormatContact';
 import {
-  getLastChallengeError,
   getMessagePropStatus,
   getPropsForCallHistory,
   getPropsForMessage,
@@ -149,6 +148,7 @@ import { findStoryMessage } from '../util/findStoryMessage';
 import { isConversationAccepted } from '../util/isConversationAccepted';
 import { getStoryDataFromMessageAttributes } from '../services/storyLoader';
 import type { ConversationQueueJobData } from '../jobs/conversationJobQueue';
+import { getMessageById } from '../messages/getMessageById';
 
 /* eslint-disable camelcase */
 /* eslint-disable more/no-then */
@@ -302,6 +302,33 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       !isUnsupportedMessage(attributes) &&
       !isVerifiedChange(attributes)
     );
+  }
+
+  async hydrateStoryContext(): Promise<void> {
+    const storyId = this.get('storyId');
+    if (!storyId) {
+      return;
+    }
+
+    if (this.get('storyReplyContext')) {
+      return;
+    }
+
+    const message = await getMessageById(storyId);
+
+    if (!message) {
+      return;
+    }
+
+    const attachments = message.get('attachments');
+
+    this.set({
+      storyReplyContext: {
+        attachment: attachments ? attachments[0] : undefined,
+        authorUuid: message.get('sourceUuid'),
+        messageId: message.get('id'),
+      },
+    });
   }
 
   getPropsForMessageDetail(ourConversationId: string): PropsForMessageDetail {
@@ -486,7 +513,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         'getNotificationData: isGroupV2Change true, but no groupV2Change!'
       );
 
-      const lines = window.Signal.GroupChange.renderChange<string>(change, {
+      const changes = GroupChange.renderChange<string>(change, {
         i18n: window.i18n,
         ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
         renderContact: (conversationId: string) => {
@@ -503,7 +530,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         ) => window.i18n(key, components),
       });
 
-      return { text: lines.join(' ') };
+      return { text: changes.map(({ text }) => text).join(' ') };
     }
 
     const attachments = this.get('attachments') || [];
@@ -1122,13 +1149,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
     this.set({ errors });
 
-    if (
-      !this.doNotSave &&
-      errors.some(error => error.name === 'SendMessageChallengeError')
-    ) {
-      await window.Signal.challengeHandler.register(this);
-    }
-
     if (!skipSave && !this.doNotSave) {
       await window.Signal.Data.saveMessage(this.attributes, {
         ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
@@ -1652,10 +1672,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     }
 
     return false;
-  }
-
-  getLastChallengeError(): ShallowChallengeError | undefined {
-    return getLastChallengeError(this.attributes);
   }
 
   hasAttachmentDownloads(): boolean {
@@ -2211,6 +2227,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         quote,
         storyId: storyQuote?.id,
       };
+
       const dataMessage = await upgradeMessageSchema(withQuoteReference);
 
       try {
@@ -2431,7 +2448,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
             message.set({ expireTimer: dataMessage.expireTimer });
           }
 
-          if (!hasGroupV2Prop) {
+          if (!hasGroupV2Prop && !isStory(message.attributes)) {
             if (isExpirationTimerUpdate(message.attributes)) {
               message.set({
                 expirationTimerUpdate: {

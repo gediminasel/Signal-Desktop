@@ -85,6 +85,12 @@ export type QuotedMessageType = {
   messageId: string;
 };
 
+type StoryReplyContextType = {
+  attachment?: AttachmentType;
+  authorUuid?: string;
+  messageId: string;
+};
+
 export type StickerMessageType = {
   packId: string;
   stickerId: number;
@@ -147,6 +153,7 @@ export type MessageAttributesType = {
   retryOptions?: RetryOptions;
   sourceDevice?: number;
   storyId?: string;
+  storyReplyContext?: StoryReplyContextType;
   supportedVersionAtReceive?: unknown;
   synced?: boolean;
   unidentifiedDeliveryReceived?: boolean;
@@ -346,6 +353,7 @@ export type ConversationAttributesType = {
   membersV2?: Array<GroupV2MemberType>;
   pendingMembersV2?: Array<GroupV2PendingMemberType>;
   pendingAdminApprovalV2?: Array<GroupV2PendingAdminApprovalType>;
+  bannedMembersV2?: Array<GroupV2BannedMemberType>;
   groupInviteLinkPassword?: string;
   previousGroupV1Id?: string;
   previousGroupV1Members?: Array<string>;
@@ -382,6 +390,11 @@ export type GroupV2PendingMemberType = {
   uuid: UUIDStringType;
   timestamp: number;
   role: MemberRoleEnum;
+};
+
+export type GroupV2BannedMemberType = {
+  uuid: UUIDStringType;
+  timestamp: number;
 };
 
 export type GroupV2PendingAdminApprovalType = {

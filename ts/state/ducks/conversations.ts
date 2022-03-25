@@ -63,7 +63,7 @@ import {
   getMe,
   getUsernameSaveState,
 } from '../selectors/conversations';
-import type { AvatarDataType } from '../../types/Avatar';
+import type { AvatarDataType, AvatarUpdateType } from '../../types/Avatar';
 import { getDefaultAvatars } from '../../types/Avatar';
 import { getAvatarData } from '../../util/getAvatarData';
 import { isSameAvatarData } from '../../util/isSameAvatarData';
@@ -82,6 +82,7 @@ import { useBoundActions } from '../../hooks/useBoundActions';
 
 import type { NoopActionType } from './noop';
 import { conversationJobQueue } from '../../jobs/conversationJobQueue';
+import type { TimelineMessageLoadingState } from '../../util/timelineUtil';
 
 // State
 
@@ -120,6 +121,7 @@ export type ConversationType = {
   avatars?: Array<AvatarDataType>;
   avatarPath?: string;
   avatarHash?: string;
+  profileAvatarPath?: string;
   unblurredAvatarPath?: string;
   areWeAdmin?: boolean;
   areWePending?: boolean;
@@ -170,6 +172,7 @@ export type ConversationType = {
   pendingApprovalMemberships?: Array<{
     uuid: UUIDStringType;
   }>;
+  bannedMemberships?: Array<UUIDStringType>;
   muteExpiresAt?: number;
   dontNotifyForMentionsIfMuted?: boolean;
   type: ConversationTypeType;
@@ -242,9 +245,9 @@ export type MessageLookupType = {
   [key: string]: MessageWithUIFieldsType;
 };
 export type ConversationMessageType = {
-  isLoadingMessages: boolean;
   isNearBottom?: boolean;
   messageIds: Array<string>;
+  messageLoadingState?: undefined | TimelineMessageLoadingState;
   metrics: MessageMetricsType;
   scrollToMessageId?: string;
   scrollToMessageCounter: number;
@@ -592,11 +595,11 @@ export type MessagesResetActionType = {
     unboundedFetch: boolean;
   };
 };
-export type SetMessagesLoadingActionType = {
-  type: 'SET_MESSAGES_LOADING';
+export type SetMessageLoadingStateActionType = {
+  type: 'SET_MESSAGE_LOADING_STATE';
   payload: {
     conversationId: string;
-    isLoadingMessages: boolean;
+    messageLoadingState: undefined | TimelineMessageLoadingState;
   };
 };
 export type SetIsNearBottomActionType = {
@@ -772,7 +775,7 @@ export type ConversationActionType =
   | SetConversationHeaderTitleActionType
   | SetIsFetchingUsernameActionType
   | SetIsNearBottomActionType
-  | SetMessagesLoadingActionType
+  | SetMessageLoadingStateActionType
   | SetPreJoinConversationActionType
   | SetRecentMediaItemsActionType
   | SetSelectedConversationPanelDepthActionType
@@ -838,7 +841,7 @@ export const actions = {
   setComposeGroupName,
   setComposeSearchTerm,
   setIsNearBottom,
-  setMessagesLoading,
+  setMessageLoadingState,
   setPreJoinConversation,
   setRecentMediaItems,
   setSelectedConversationHeaderTitle,
@@ -1093,7 +1096,7 @@ function saveUsername({
 
 function myProfileChanged(
   profileData: ProfileDataType,
-  avatarBuffer?: Uint8Array
+  avatar: AvatarUpdateType
 ): ThunkAction<
   void,
   RootStateType,
@@ -1109,7 +1112,7 @@ function myProfileChanged(
           ...conversation,
           ...profileData,
         },
-        avatarBuffer
+        avatar
       );
 
       // writeProfile above updates the backbone model which in turn updates
@@ -1634,15 +1637,15 @@ function messagesReset({
     },
   };
 }
-function setMessagesLoading(
+function setMessageLoadingState(
   conversationId: string,
-  isLoadingMessages: boolean
-): SetMessagesLoadingActionType {
+  messageLoadingState: undefined | TimelineMessageLoadingState
+): SetMessageLoadingStateActionType {
   return {
-    type: 'SET_MESSAGES_LOADING',
+    type: 'SET_MESSAGE_LOADING_STATE',
     payload: {
       conversationId,
-      isLoadingMessages,
+      messageLoadingState,
     },
   };
 }
@@ -2599,7 +2602,6 @@ export function reducer(
       messagesByConversation: {
         ...messagesByConversation,
         [conversationId]: {
-          isLoadingMessages: false,
           scrollToMessageId,
           scrollToMessageCounter: existingConversation
             ? existingConversation.scrollToMessageCounter + 1
@@ -2614,9 +2616,9 @@ export function reducer(
       },
     };
   }
-  if (action.type === 'SET_MESSAGES_LOADING') {
+  if (action.type === 'SET_MESSAGE_LOADING_STATE') {
     const { payload } = action;
-    const { conversationId, isLoadingMessages } = payload;
+    const { conversationId, messageLoadingState } = payload;
 
     const { messagesByConversation } = state;
     const existingConversation = messagesByConversation[conversationId];
@@ -2631,7 +2633,7 @@ export function reducer(
         ...messagesByConversation,
         [conversationId]: {
           ...existingConversation,
-          isLoadingMessages,
+          messageLoadingState,
         },
       },
     };
@@ -2686,7 +2688,7 @@ export function reducer(
         ...messagesByConversation,
         [conversationId]: {
           ...existingConversation,
-          isLoadingMessages: false,
+          messageLoadingState: undefined,
           scrollToMessageId: messageId,
           scrollToMessageCounter:
             existingConversation.scrollToMessageCounter + 1,
@@ -2949,8 +2951,8 @@ export function reducer(
         ...messagesByConversation,
         [conversationId]: {
           ...existingConversation,
-          isLoadingMessages: false,
           messageIds,
+          messageLoadingState: undefined,
           scrollToMessageId: isJustSent ? last.id : undefined,
           metrics: {
             ...existingConversation.metrics,

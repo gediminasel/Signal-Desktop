@@ -1,18 +1,10 @@
 // Copyright 2021-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  identity,
-  isEqual,
-  isNumber,
-  isObject,
-  map,
-  omit,
-  pick,
-  reduce,
-} from 'lodash';
+import { identity, isEqual, isNumber, isObject, map, omit, pick } from 'lodash';
 import { createSelectorCreator } from 'reselect';
 import filesize from 'filesize';
+import getDirection from 'direction';
 
 import type {
   LastMessageStatus,
@@ -22,6 +14,7 @@ import type {
 
 import type { TimelineItemType } from '../../components/conversation/TimelineItem';
 import type { PropsData } from '../../components/conversation/Message';
+import { TextDirection } from '../../components/conversation/Message';
 import type { PropsData as TimerNotificationProps } from '../../components/conversation/TimerNotification';
 import type { PropsData as ChangeNumberNotificationProps } from '../../components/conversation/ChangeNumberNotification';
 import type { PropsData as SafetyNumberNotificationProps } from '../../components/conversation/SafetyNumberNotification';
@@ -432,6 +425,55 @@ export const getReactionsForMessage = createSelectorCreator(
   (_, reactions): PropsData['reactions'] => reactions
 );
 
+export const getPropsForStoryReplyContext = createSelectorCreator(
+  memoizeByRoot,
+  isEqual
+)(
+  // `memoizeByRoot` requirement
+  identity,
+
+  (
+    message: Pick<
+      MessageWithUIFieldsType,
+      'body' | 'conversationId' | 'storyReplyContext'
+    >,
+    {
+      conversationSelector,
+      ourConversationId,
+    }: {
+      conversationSelector: GetConversationByIdType;
+      ourConversationId?: string;
+    }
+  ): PropsData['storyReplyContext'] => {
+    const { storyReplyContext } = message;
+    if (!storyReplyContext) {
+      return undefined;
+    }
+
+    const contact = conversationSelector(storyReplyContext.authorUuid);
+
+    const authorTitle = contact.title;
+    const isFromMe = contact.id === ourConversationId;
+
+    const conversation = getConversation(message, conversationSelector);
+
+    const { conversationColor, customColor } =
+      getConversationColorAttributes(conversation);
+
+    return {
+      authorTitle,
+      conversationColor,
+      customColor,
+      isFromMe,
+      rawAttachment: storyReplyContext.attachment
+        ? processQuoteAttachment(storyReplyContext.attachment)
+        : undefined,
+    };
+  },
+
+  (_, storyReplyContext): PropsData['storyReplyContext'] => storyReplyContext
+);
+
 export const getPropsForQuote = createSelectorCreator(memoizeByRoot, isEqual)(
   // `memoizeByRoot` requirement
   identity,
@@ -457,7 +499,7 @@ export const getPropsForQuote = createSelectorCreator(memoizeByRoot, isEqual)(
       id: sentAt,
       isViewOnce,
       referencedMessageNotFound,
-      text,
+      text = '',
     } = quote;
 
     const contact = conversationSelector(authorUuid || author);
@@ -491,7 +533,7 @@ export const getPropsForQuote = createSelectorCreator(memoizeByRoot, isEqual)(
       isViewOnce,
       referencedMessageNotFound,
       sentAt: Number(sentAt),
-      text: createNonBreakingLastSeparator(text),
+      text,
     };
   },
 
@@ -544,6 +586,7 @@ type ShallowPropsType = Pick<
   | 'selectedReaction'
   | 'status'
   | 'text'
+  | 'textDirection'
   | 'textPending'
   | 'timestamp'
 >;
@@ -629,7 +672,8 @@ const getShallowPropsForMessage = createSelectorCreator(memoizeByRoot, isEqual)(
       selectedReaction,
       lastSeenHere: message.lastSeenHere,
       status: getMessagePropStatus(message, ourConversationId),
-      text: createNonBreakingLastSeparator(message.body),
+      text: message.body,
+      textDirection: getTextDirection(message.body),
       textPending: message.bodyPending,
       timestamp: message.sent_at,
     };
@@ -637,6 +681,27 @@ const getShallowPropsForMessage = createSelectorCreator(memoizeByRoot, isEqual)(
 
   (_: unknown, props: ShallowPropsType) => props
 );
+
+function getTextDirection(body?: string): TextDirection {
+  if (!body) {
+    return TextDirection.None;
+  }
+
+  const direction = getDirection(body);
+  switch (direction) {
+    case 'ltr':
+      return TextDirection.LeftToRight;
+    case 'rtl':
+      return TextDirection.RightToLeft;
+    case 'neutral':
+      return TextDirection.Default;
+    default: {
+      const unexpected: never = direction;
+      log.warn(`getTextDirection: unexpected direction ${unexpected}`);
+      return TextDirection.None;
+    }
+  }
+}
 
 export const getPropsForMessage: (
   message: MessageWithUIFieldsType,
@@ -653,6 +718,7 @@ export const getPropsForMessage: (
   getPreviewsForMessage,
   getReactionsForMessage,
   getPropsForQuote,
+  getPropsForStoryReplyContext,
   getShallowPropsForMessage,
   (
     _,
@@ -662,6 +728,7 @@ export const getPropsForMessage: (
     previews: Array<LinkPreviewType>,
     reactions: PropsData['reactions'],
     quote: PropsData['quote'],
+    storyReplyContext: PropsData['storyReplyContext'],
     shallowProps: ShallowPropsType
   ): Omit<PropsForMessage, 'renderingContext'> => {
     return {
@@ -671,6 +738,7 @@ export const getPropsForMessage: (
       previews,
       quote,
       reactions,
+      storyReplyContext,
       ...shallowProps,
     };
   }
@@ -860,7 +928,10 @@ function getPropsForGroupV2Change(
   const conversation = getConversation(message, conversationSelector);
 
   return {
+    areWeAdmin: Boolean(conversation.areWeAdmin),
     groupName: conversation?.type === 'group' ? conversation?.name : undefined,
+    groupMemberships: conversation.memberships,
+    groupBannedMemberships: conversation.bannedMemberships,
     ourUuid,
     change,
   };
@@ -1276,22 +1347,6 @@ export function isTapToView(message: MessageWithUIFieldsType): boolean {
   }
 
   return Boolean(message.isViewOnce || message.messageTimer);
-}
-
-function createNonBreakingLastSeparator(text?: string): string {
-  if (!text) {
-    return '';
-  }
-
-  const nbsp = '\xa0';
-  const regex = /(\S)( +)(\S+\s*)$/;
-  return text.replace(regex, (_match, start, spaces, end) => {
-    const newSpaces =
-      end.length < 12
-        ? reduce(spaces, accumulator => accumulator + nbsp, '')
-        : spaces;
-    return `${start}${newSpaces}${end}`;
-  });
 }
 
 export function getMessagePropStatus(

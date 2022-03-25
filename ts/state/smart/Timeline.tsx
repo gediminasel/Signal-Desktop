@@ -61,6 +61,7 @@ export type TimelinePropsType = ExternalProps &
     ComponentPropsType,
     | 'acknowledgeGroupMemberNameCollisions'
     | 'contactSupport'
+    | 'blockGroupLinkRequests'
     | 'deleteMessage'
     | 'deleteMessageForEveryone'
     | 'displayTapToViewMessage'
@@ -284,11 +285,8 @@ const mapStateToProps = (state: StateType, props: ExternalProps) => {
 
   return {
     id,
-    ...pick(conversation, [
-      'areWeAdmin',
-      'unreadCount',
-      'isGroupV1AndDisabled',
-    ]),
+    ...pick(conversation, ['unreadCount', 'isGroupV1AndDisabled']),
+    conversation,
     isConversationSelected: state.conversations.selectedConversationId === id,
     isIncomingMessageRequest: Boolean(
       conversation.messageRequestsEnabled &&
