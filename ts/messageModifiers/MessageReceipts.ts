@@ -219,8 +219,15 @@ export class MessageReceipts extends Collection<MessageReceiptModel> {
         const recipientUuid = recipient?.get('uuid');
         const deviceId = receipt.get('sourceDevice');
 
-        if(type === MessageReceiptType.Read && recipient && conversationId)
-          await recipient.updateLastSeenMessage(message, conversationId);
+        if(type === MessageReceiptType.Read) {
+          if(recipient) {
+            await recipient.updateLastSeenMessage(message, conversationId);
+          } else {
+            log.warn(
+              `MessageReceipts.onReceipt: Missing recipient or ${conversationId} for read receipt`
+            );
+          }
+        }
 
         if (recipientUuid && deviceId) {
           await deleteSentProtoBatcher.add({

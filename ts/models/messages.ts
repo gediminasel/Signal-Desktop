@@ -2627,9 +2627,9 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     let changed = false;
 
     if (type === 'outgoing') {
-      const sendActions = MessageReceipts.getSingleton()
-        .forMessage(conversation, message)
-        .map(receipt => {
+      const receipts = MessageReceipts.getSingleton()
+                      .forMessage(conversation, message);
+      const sendActions = receipts.map(receipt => {
           let sendActionType: SendActionType;
           const receiptType = receipt.get('type');
           switch (receiptType) {
@@ -2686,6 +2686,43 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       ) {
         message.set('sendStateByConversationId', newSendStateByConversationId);
         changed = true;
+      }
+      
+      const conversationId = message.get('conversationId');
+
+      for (const receipt of receipts) {
+        const sourceConversationId = receipt.get('sourceConversationId');
+        const type = receipt.get('type');
+        if (type === MessageReceiptType.Read) {
+          const recipient = window.ConversationController.get(sourceConversationId);
+          if (recipient) {
+            if (await recipient.updateLastSeenMessage(message, conversationId, false)) {
+              changed = true;
+            }
+          }
+        }
+      }
+
+      if(!isFirstRun) {
+        for(const sourceConversationId in newSendStateByConversationId) {
+          if (newSendStateByConversationId[sourceConversationId].status !== SendStatus.Read)
+            continue;
+          const recipient = window.ConversationController.get(sourceConversationId);
+          if (recipient) {
+            const receivedAt = message.get('received_at');
+            const lastSeenMap = recipient.get('lastMessagesSeen') || {};
+            const lastSeenMsg = lastSeenMap[conversationId];
+            if(lastSeenMsg && lastSeenMsg.receivedAt === receivedAt) {
+              const prevSeenHereList = message.get('lastSeenHere') || [];
+              message.set('lastSeenHere', [...prevSeenHereList, recipient.id]);
+
+              let newMap = {...lastSeenMap};
+              newMap[conversationId] = {receivedAt, id: message.id};
+              recipient.set('lastMessagesSeen', newMap);
+              window.Signal.Data.updateConversation(recipient.attributes);
+            }
+          }
+        }
       }
     }
 

@@ -1932,39 +1932,55 @@ export class ConversationModel extends window.Backbone
     return undefined;
   }
   
-  async updateLastSeenMessage(message: MessageModel, conversationId: string): Promise<void> {
-    const receivedAt = message.get('received_at');
-    let lastSeenMap = this.get('lastMessagesSeen') || {};
-    let lastSeenMsg = lastSeenMap[conversationId] || {receivedAt: 0, id: ''};
-    if (lastSeenMsg.receivedAt >= receivedAt)
-      return;
-
-    if (lastSeenMsg.id) {
-      const prevMsg = await getMessageByIdLazy(lastSeenMsg.id);
-      if(prevMsg) {
-        const prevSeen = prevMsg.get("lastSeenHere") || [];
-        prevMsg.set("lastSeenHere", [...prevSeen].filter(x => x !== this.id));
-        window.Signal.Util.queueUpdateMessage(prevMsg.attributes);
-      } else {
-        log.error(
-          `failed to load last seen message with id ${lastSeenMsg.id}.`
-        );
-      }
-      // we awaited so lastSeen may have changed (probably)
-      lastSeenMap = this.get('lastMessagesSeen') || {};
-      lastSeenMsg = lastSeenMap[conversationId] || {receivedAt: 0, id: ''};
+  async updateLastSeenMessage(message: MessageModel, conversationId: string, updateMessage: boolean = true): Promise<boolean> {
+    try {
+      const receivedAt = message.get('received_at');
+      let lastSeenMap = this.get('lastMessagesSeen') || {};
+      let lastSeenMsg = lastSeenMap[conversationId] || {receivedAt: 0, id: ''};
       if (lastSeenMsg.receivedAt >= receivedAt)
-        return;
-    }
-    
-    const prevSeenHereList = message.get('lastSeenHere') || [];
-    message.set('lastSeenHere', [...prevSeenHereList, this.id]);
+        return false;
 
-    window.Signal.Util.queueUpdateMessage(message.attributes);
-    let newMap = {...lastSeenMap};
-    newMap[conversationId] = {receivedAt, id: message.id};
-    this.set('lastMessagesSeen', newMap);
-    window.Signal.Data.updateConversation(this.attributes);
+      if (lastSeenMsg.id) {
+        const prevMsg = await getMessageByIdLazy(lastSeenMsg.id);
+        if(prevMsg) {
+          window.MessageController.register(prevMsg.id, prevMsg);
+          const prevSeen = prevMsg.get("lastSeenHere") || [];
+          prevMsg.set("lastSeenHere", [...prevSeen].filter(x => x !== this.id));
+          window.Signal.Util.queueUpdateMessage(prevMsg.attributes);
+        } else {
+          log.error(
+            `failed to load last seen message with id ${lastSeenMsg.id}.`
+          );
+        }
+        // we awaited so lastSeen may have changed (probably)
+        lastSeenMap = this.get('lastMessagesSeen') || {};
+        lastSeenMsg = lastSeenMap[conversationId] || {receivedAt: 0, id: ''};
+        if (lastSeenMsg.receivedAt >= receivedAt) {
+          return false;
+        }
+      }
+      
+      if (updateMessage) {
+        const prevSeenHereList = message.get('lastSeenHere') || [];
+        message.set('lastSeenHere', [...prevSeenHereList, this.id]);
+        window.Signal.Util.queueUpdateMessage(message.attributes);
+      }
+
+      let newMap = {...lastSeenMap};
+      newMap[conversationId] = {receivedAt, id: updateMessage ? message.id : ''};
+      this.set('lastMessagesSeen', newMap);
+      if (updateMessage) {
+        window.Signal.Data.updateConversation(this.attributes);
+      }
+
+      return true;
+    } catch (err: unknown) {
+      log.error(
+        `failed to update last seen for message with id ${message.id} ` +
+          `due to error ${Errors.toLogFormat(err)}`
+      );
+    }
+    return false;
   }
 
   decrementMessageCount(): void {
