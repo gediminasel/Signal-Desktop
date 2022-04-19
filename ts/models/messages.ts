@@ -2716,12 +2716,16 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
             if (await recipient.updateLastSeenMessage(message, conversationId, false)) {
               changed = true;
             }
+          } else {
+            log.error(
+              `failed to find conversation with id ${sourceConversationId}`
+            );
           }
         }
       }
 
       if(!isFirstRun) {
-        for(const sourceConversationId in newSendStateByConversationId) {
+        for (const sourceConversationId in newSendStateByConversationId) {
           if (newSendStateByConversationId[sourceConversationId].status !== SendStatus.Read)
             continue;
           const recipient = window.ConversationController.get(sourceConversationId);
@@ -2732,12 +2736,17 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
             if(lastSeenMsg && lastSeenMsg.receivedAt === receivedAt) {
               const prevSeenHereList = message.get('lastSeenHere') || [];
               message.set('lastSeenHere', [...prevSeenHereList, recipient.id]);
+              changed = true;
 
               let newMap = {...lastSeenMap};
               newMap[conversationId] = {receivedAt, id: message.id};
               recipient.set('lastMessagesSeen', newMap);
               window.Signal.Data.updateConversation(recipient.attributes);
             }
+          } else {
+            log.error(
+              `failed to find conversation with id ${sourceConversationId}`
+            );
           }
         }
       }

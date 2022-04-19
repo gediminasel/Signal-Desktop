@@ -583,6 +583,7 @@ type ShallowPropsType = Pick<
   | 'isTapToViewExpired'
   | 'readStatus'
   | 'lastSeenHere'
+  | 'receivedAt'
   | 'selectedReaction'
   | 'status'
   | 'text'
@@ -641,6 +642,7 @@ const getShallowPropsForMessage = createSelectorCreator(memoizeByRoot, isEqual)(
       getConversationColorAttributes(conversation);
 
     return {
+      receivedAt: message.received_at,
       canDeleteForEveryone: canDeleteForEveryone(message),
       canDownload: canDownload(message, conversationSelector),
       canReact: canReact(message, ourConversationId, conversationSelector),

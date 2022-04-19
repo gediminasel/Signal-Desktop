@@ -252,6 +252,8 @@ export type PropsData = {
 
   deletedForEveryone?: boolean;
 
+  receivedAt: number;
+
   canRetry: boolean;
   canRetryDeleteForEveryone: boolean;
   canReact: boolean;
@@ -735,10 +737,31 @@ export class Message extends React.PureComponent<Props, State> {
     );
   }
 
-  private lastSeenHereStr = memoize(
+  private lastSeenHereSorted = memoize(
     (lastSeenHere: string[]) => {
-      const conversations = lastSeenHere.map(id => window.ConversationController.get(id)!.format());
-      return conversations.sort((a, b) => a.id.localeCompare(b.id));
+      const conversationId = this.props.conversationId;
+      const receivedAt = this.props.receivedAt;
+      const users = lastSeenHere.map(id => window.ConversationController.get(id)!);
+      const lastSeenUsers = users.filter(u => ((u.get('lastMessagesSeen') || {})[conversationId] || {}).receivedAt <= receivedAt);
+      const formated = lastSeenUsers.map(u => u.format());
+
+      if (lastSeenUsers.length !== lastSeenHere.length) {
+        const lastSeenUpdated = lastSeenUsers.map(u => u.id);
+        const msg = window.MessageController.getById(this.props.id);
+        if(msg) {
+          // hack
+          setTimeout(() =>
+          {
+            msg.set("lastSeenHere", lastSeenUpdated);
+            window.Signal.Util.queueUpdateMessage(msg.attributes);
+          }, 0);
+        } else {
+          log.error(
+            `failed to load current message with id ${this.props.id}.`
+          );
+        }
+      }
+      return formated.sort((a, b) => a.id.localeCompare(b.id));
     }
   );
 
@@ -810,11 +833,11 @@ export class Message extends React.PureComponent<Props, State> {
   }
 
   private renderLastSeen(): ReactNode {
-    let lastSeenStr = this.lastSeenHereStr(this.props.lastSeenHere || []);
-    if(!lastSeenStr || lastSeenStr.length === 0)
+    let lastSeenSorted = this.lastSeenHereSorted(this.props.lastSeenHere || []);
+    if(!lastSeenSorted || lastSeenSorted.length === 0)
       return null;
     
-    let seenBubblesNode = lastSeenStr.map(c => <div key={c.id} title={c.title}>
+    let seenBubblesNode = lastSeenSorted.map(c => <div key={c.id} title={c.title}>
       <AvatarPreview
         avatarColor={c.color}
         avatarPath={c.avatarPath}
