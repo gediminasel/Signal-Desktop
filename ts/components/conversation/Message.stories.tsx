@@ -20,6 +20,7 @@ import {
   IMAGE_WEBP,
   VIDEO_MP4,
   stringToMIMEType,
+  IMAGE_GIF,
 } from '../../types/MIME';
 import { ReadStatus } from '../../messages/MessageReadStatus';
 import { MessageAudio } from './MessageAudio';
@@ -30,6 +31,7 @@ import { pngUrl } from '../../storybook/Fixtures';
 import { getDefaultConversation } from '../../test-both/helpers/getDefaultConversation';
 import { WidthBreakpoint } from '../_util';
 import { MINUTE } from '../../util/durations';
+import { ContactFormType } from '../../types/EmbeddedContact';
 
 import {
   fakeAttachment,
@@ -37,6 +39,7 @@ import {
 } from '../../test-both/helpers/fakeAttachment';
 import { getFakeBadge } from '../../test-both/helpers/getFakeBadge';
 import { ThemeType } from '../../types/Util';
+import { UUID } from '../../types/UUID';
 
 const i18n = setupI18n('en', enMessages);
 
@@ -118,6 +121,7 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
     select('conversationColor', ConversationColors, ConversationColors[0]),
   conversationId: text('conversationId', overrideProps.conversationId || ''),
   conversationType: overrideProps.conversationType || 'direct',
+  contact: overrideProps.contact,
   deletedForEveryone: overrideProps.deletedForEveryone,
   deleteMessage: action('deleteMessage'),
   deleteMessageForEveryone: action('deleteMessageForEveryone'),
@@ -171,6 +175,15 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   retryDeleteForEveryone: action('retryDeleteForEveryone'),
   scrollToQuotedMessage: action('scrollToQuotedMessage'),
   selectMessage: action('selectMessage'),
+  shouldCollapseAbove: isBoolean(overrideProps.shouldCollapseAbove)
+    ? overrideProps.shouldCollapseAbove
+    : false,
+  shouldCollapseBelow: isBoolean(overrideProps.shouldCollapseBelow)
+    ? overrideProps.shouldCollapseBelow
+    : false,
+  shouldHideMetadata: isBoolean(overrideProps.shouldHideMetadata)
+    ? overrideProps.shouldHideMetadata
+    : false,
   showContactDetail: action('showContactDetail'),
   showContactModal: action('showContactModal'),
   showExpiredIncomingTapToViewToast: action(
@@ -182,6 +195,7 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   showForwardMessageModal: action('showForwardMessageModal'),
   showMessageDetail: action('showMessageDetail'),
   showVisualAttachment: action('showVisualAttachment'),
+  startConversation: action('startConversation'),
   status: overrideProps.status || 'sent',
   text: overrideProps.text || text('text', ''),
   textDirection: overrideProps.textDirection || TextDirection.Default,
@@ -202,9 +216,9 @@ const renderMany = (propsArray: ReadonlyArray<Props>) =>
     <Message
       key={message.text}
       {...message}
-      previousItem={createTimelineItem(propsArray[index - 1])}
+      shouldCollapseAbove={Boolean(propsArray[index - 1])}
       item={createTimelineItem(message)}
-      nextItem={createTimelineItem(propsArray[index + 1])}
+      shouldCollapseBelow={Boolean(propsArray[index + 1])}
     />
   ));
 
@@ -367,6 +381,16 @@ story.add('Expiring', () => {
     expirationLength: 30 * 1000,
     expirationTimestamp: Date.now() + 30 * 1000,
     text: 'Hello there from a pal! I am sending a long message so that it will wrap a bit, since I like that look.',
+  });
+
+  return renderBothDirections(props);
+});
+
+story.add('Will expire but still sending', () => {
+  const props = createProps({
+    status: 'sending',
+    expirationLength: 30 * 1000,
+    text: 'We always show the timer if a message has an expiration length, even if unread or still sending.',
   });
 
   return renderBothDirections(props);
@@ -598,12 +622,12 @@ story.add('Sticker', () => {
 
 story.add('Deleted', () => {
   const propsSent = createProps({
-    conversationType: 'group',
+    conversationType: 'direct',
     deletedForEveryone: true,
     status: 'sent',
   });
   const propsSending = createProps({
-    conversationType: 'group',
+    conversationType: 'direct',
     deletedForEveryone: true,
     status: 'sending',
   });
@@ -636,6 +660,7 @@ story.add('Deleted with error', () => {
     conversationType: 'group',
     deletedForEveryone: true,
     status: 'partial-sent',
+    direction: 'outgoing',
   });
   const propsError = createProps({
     timestamp: Date.now() - 60 * 1000,
@@ -643,12 +668,13 @@ story.add('Deleted with error', () => {
     conversationType: 'group',
     deletedForEveryone: true,
     status: 'error',
+    direction: 'outgoing',
   });
 
   return (
     <>
-      {renderBothDirections(propsPartialError)}
-      {renderBothDirections(propsError)}
+      <Message {...propsPartialError} />
+      <Message {...propsError} />
     </>
   );
 });
@@ -1494,4 +1520,140 @@ story.add('Story reply', () => {
       }}
     />
   );
+});
+
+const fullContact = {
+  avatar: {
+    avatar: fakeAttachment({
+      path: '/fixtures/giphy-GVNvOUpeYmI7e.gif',
+      contentType: IMAGE_GIF,
+    }),
+    isProfile: true,
+  },
+  email: [
+    {
+      value: 'jerjor@fakemail.com',
+      type: ContactFormType.HOME,
+    },
+  ],
+  name: {
+    givenName: 'Jerry',
+    familyName: 'Jordan',
+    prefix: 'Dr.',
+    suffix: 'Jr.',
+    middleName: 'James',
+    displayName: 'Jerry Jordan',
+  },
+  number: [
+    {
+      value: '555-444-2323',
+      type: ContactFormType.HOME,
+    },
+  ],
+};
+
+story.add('EmbeddedContact: Full Contact', () => {
+  const props = createProps({
+    contact: fullContact,
+  });
+  return renderBothDirections(props);
+});
+
+story.add('EmbeddedContact: 2x Incoming, with Send Message', () => {
+  const props = createProps({
+    contact: {
+      ...fullContact,
+      firstNumber: fullContact.number[0].value,
+      uuid: UUID.generate().toString(),
+    },
+    direction: 'incoming',
+  });
+  return renderMany([props, props]);
+});
+
+story.add('EmbeddedContact: 2x Outgoing, with Send Message', () => {
+  const props = createProps({
+    contact: {
+      ...fullContact,
+      firstNumber: fullContact.number[0].value,
+      uuid: UUID.generate().toString(),
+    },
+    direction: 'outgoing',
+  });
+  return renderMany([props, props]);
+});
+
+story.add('EmbeddedContact: Only Email', () => {
+  const props = createProps({
+    contact: {
+      email: fullContact.email,
+    },
+  });
+
+  return renderBothDirections(props);
+});
+
+story.add('EmbeddedContact: Given Name', () => {
+  const props = createProps({
+    contact: {
+      name: {
+        givenName: 'Jerry',
+      },
+    },
+  });
+
+  return renderBothDirections(props);
+});
+
+story.add('EmbeddedContact: Organization', () => {
+  const props = createProps({
+    contact: {
+      organization: 'Company 5',
+    },
+  });
+
+  return renderBothDirections(props);
+});
+
+story.add('EmbeddedContact: Given + Family Name', () => {
+  const props = createProps({
+    contact: {
+      name: {
+        givenName: 'Jerry',
+        familyName: 'FamilyName',
+      },
+    },
+  });
+
+  return renderBothDirections(props);
+});
+
+story.add('EmbeddedContact: Family Name', () => {
+  const props = createProps({
+    contact: {
+      name: {
+        familyName: 'FamilyName',
+      },
+    },
+  });
+
+  return renderBothDirections(props);
+});
+
+story.add('EmbeddedContact: Loading Avatar', () => {
+  const props = createProps({
+    contact: {
+      name: {
+        displayName: 'Jerry Jordan',
+      },
+      avatar: {
+        avatar: fakeAttachment({
+          pending: true,
+          contentType: IMAGE_GIF,
+        }),
+        isProfile: true,
+      },
+    },
+  });
+  return renderBothDirections(props);
 });

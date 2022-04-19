@@ -149,6 +149,9 @@ import { isConversationAccepted } from '../util/isConversationAccepted';
 import { getStoryDataFromMessageAttributes } from '../services/storyLoader';
 import type { ConversationQueueJobData } from '../jobs/conversationJobQueue';
 import { getMessageById } from '../messages/getMessageById';
+import { shouldDownloadStory } from '../util/shouldDownloadStory';
+import { shouldShowStoriesView } from '../state/selectors/stories';
+import type { ContactWithHydratedAvatar } from '../textsecure/SendMessage';
 
 /* eslint-disable camelcase */
 /* eslint-disable more/no-then */
@@ -185,6 +188,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
   private pendingMarkRead?: number;
 
   syncPromise?: Promise<CallbackResultType | void>;
+
+  cachedOutgoingContactData?: Array<ContactWithHydratedAvatar>;
 
   cachedOutgoingPreviewData?: Array<LinkPreviewType>;
 
@@ -225,15 +230,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
   }
 
   notifyRedux(): void {
-    const { messageChanged } = window.reduxActions.conversations;
-
-    if (messageChanged) {
-      const conversationId = this.get('conversationId');
-      // Note: The clone is important for triggering a re-run of selectors
-      messageChanged(this.id, conversationId, { ...this.attributes });
-    }
-
-    const { addStory } = window.reduxActions.stories;
+    const { storyChanged } = window.reduxActions.stories;
 
     if (isStory(this.attributes)) {
       const ourConversationId =
@@ -247,17 +244,18 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         return;
       }
 
-      // TODO DESKTOP-3179
-      // Only add stories to redux if we've downloaded them. This should work
-      // because once we download a story we'll receive another change event
-      // which kicks off this function again.
-      if (Attachment.hasNotDownloaded(storyData.attachment)) {
-        return;
-      }
+      storyChanged(storyData);
 
-      // This is fine to call multiple times since the addStory action only
-      // adds new stories.
-      addStory(storyData);
+      // We don't want messageChanged to run
+      return;
+    }
+
+    const { messageChanged } = window.reduxActions.conversations;
+
+    if (messageChanged) {
+      const conversationId = this.get('conversationId');
+      // Note: The clone is important for triggering a re-run of selectors
+      messageChanged(this.id, conversationId, { ...this.attributes });
     }
   }
 
@@ -1932,11 +1930,13 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       );
 
       if (
-        type === 'story' &&
-        !isConversationAccepted(conversation.attributes)
+        isStory(message.attributes) &&
+        !isConversationAccepted(conversation.attributes, {
+          ignoreEmptyConvo: true,
+        })
       ) {
         log.info(
-          'handleDataMessage: dropping story from !whitelisted',
+          'handleDataMessage: dropping story from !accepted',
           this.getSenderIdentifier()
         );
         confirm();
@@ -2438,6 +2438,10 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
             return;
           }
 
+          if (isStory(message.attributes)) {
+            attributes.hasPostedStory = true;
+          }
+
           attributes.active_at = now;
           conversation.set(attributes);
 
@@ -2480,8 +2484,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
                   conversation.updateExpirationTimer(
                     dataMessage.expireTimer,
                     source,
-                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                    message.getReceivedAt()!,
+                    message,
                     {
                       fromGroupUpdate: isGroupUpdate(message.attributes),
                     }
@@ -2492,12 +2495,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
                 // We only turn off timers if it's not a group update
                 !isGroupUpdate(message.attributes)
               ) {
-                conversation.updateExpirationTimer(
-                  undefined,
-                  source,
-                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                  message.getReceivedAt()!
-                );
+                conversation.updateExpirationTimer(undefined, source, message);
               }
             }
           }
@@ -2562,15 +2560,25 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         // outgoing message or we've accepted the conversation
         const reduxState = window.reduxStore.getState();
         const attachments = this.get('attachments') || [];
+
+        let queueStoryForDownload = false;
+        if (isStory(message.attributes)) {
+          const isShowingStories = shouldShowStoriesView(reduxState);
+
+          queueStoryForDownload =
+            isShowingStories ||
+            (await shouldDownloadStory(conversation.attributes));
+        }
+
         const shouldHoldOffDownload =
-          (isImage(attachments) || isVideo(attachments)) &&
-          isInCall(reduxState);
+          (isStory(message.attributes) && !queueStoryForDownload) ||
+          (!isStory(message.attributes) &&
+            (isImage(attachments) || isVideo(attachments)) &&
+            isInCall(reduxState));
+
         if (
           this.hasAttachmentDownloads() &&
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          (this.getConversation()!.getAccepted() ||
-            isStory(message.attributes) ||
-            isOutgoing(message.attributes)) &&
+          (conversation.getAccepted() || isOutgoing(message.attributes)) &&
           !shouldHoldOffDownload
         ) {
           if (window.attachmentDownloadQueue) {
@@ -2826,6 +2834,20 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
           changed = true;
         }
       }
+    }
+
+    if (
+      isStory(message.attributes) &&
+      !message.get('expirationStartTimestamp')
+    ) {
+      message.set(
+        'expirationStartTimestamp',
+        Math.min(
+          message.get('serverTimestamp') || message.get('timestamp'),
+          Date.now()
+        )
+      );
+      changed = true;
     }
 
     // Does this message have any pending, previously-received associated reactions?

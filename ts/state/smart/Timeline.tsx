@@ -29,6 +29,8 @@ import {
 } from '../selectors/conversations';
 
 import { SmartTimelineItem } from './TimelineItem';
+import { SmartContactSpoofingReviewDialog } from './ContactSpoofingReviewDialog';
+import type { PropsType as SmartContactSpoofingReviewDialogPropsType } from './ContactSpoofingReviewDialog';
 import { SmartTypingBubble } from './TypingBubble';
 import { SmartHeroRow } from './HeroRow';
 import { renderAudioAttachment } from './renderAudioAttachment';
@@ -96,6 +98,7 @@ export type TimelinePropsType = ExternalProps &
     | 'showIdentity'
     | 'showMessageDetail'
     | 'showVisualAttachment'
+    | 'startConversation'
     | 'unblurAvatar'
     | 'updateSharedGroups'
   >;
@@ -137,6 +140,12 @@ function renderItem({
       unreadIndicatorPlacement={unreadIndicatorPlacement}
     />
   );
+}
+
+function renderContactSpoofingReviewDialog(
+  props: SmartContactSpoofingReviewDialogPropsType
+): JSX.Element {
+  return <SmartContactSpoofingReviewDialog {...props} />;
 }
 
 function renderHeroRow(
@@ -286,7 +295,6 @@ const mapStateToProps = (state: StateType, props: ExternalProps) => {
   return {
     id,
     ...pick(conversation, ['unreadCount', 'isGroupV1AndDisabled']),
-    conversation,
     isConversationSelected: state.conversations.selectedConversationId === id,
     isIncomingMessageRequest: Boolean(
       conversation.messageRequestsEnabled &&
@@ -306,6 +314,7 @@ const mapStateToProps = (state: StateType, props: ExternalProps) => {
     i18n: getIntl(state),
     theme: getTheme(state),
     renderItem,
+    renderContactSpoofingReviewDialog,
     renderHeroRow,
     renderTypingBubble,
     ...actions,

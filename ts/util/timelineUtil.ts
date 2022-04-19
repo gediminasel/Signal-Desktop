@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { isNumber } from 'lodash';
+import * as log from '../logging/log';
 import type { PropsType as TimelinePropsType } from '../components/conversation/Timeline';
 import type { TimelineItemType } from '../components/conversation/TimelineItem';
 import { WidthBreakpoint } from '../components/_util';
@@ -54,8 +55,47 @@ const getMessageTimelineItemData = (
 ): undefined | MessageTimelineItemDataType =>
   timelineItem?.type === 'message' ? timelineItem.data : undefined;
 
-function isDelivered(status?: LastMessageStatus) {
-  return status === 'delivered' || status === 'read' || status === 'viewed';
+export function shouldCurrentMessageHideMetadata(
+  areMessagesGrouped: boolean,
+  item: MaybeMessageTimelineItemType,
+  newerTimelineItem: MaybeMessageTimelineItemType
+): boolean {
+  if (!areMessagesGrouped) {
+    return false;
+  }
+
+  const message = getMessageTimelineItemData(item);
+  if (!message) {
+    return false;
+  }
+
+  const newerMessage = getMessageTimelineItemData(newerTimelineItem);
+  if (!newerMessage) {
+    return false;
+  }
+
+  // If newer message is deleted, but current isn't, we'll show metadata.
+  if (newerMessage.deletedForEveryone && !message.deletedForEveryone) {
+    return false;
+  }
+
+  switch (message.status) {
+    case undefined:
+      return true;
+    case 'paused':
+    case 'error':
+    case 'partial-sent':
+    case 'sending':
+      return false;
+    case 'sent':
+    case 'delivered':
+    case 'read':
+    case 'viewed':
+      return true;
+    default:
+      log.error(missingCaseError(message.status));
+      return true;
+  }
 }
 
 export function areMessagesInSameGroup(
@@ -77,20 +117,12 @@ export function areMessagesInSameGroup(
     return false;
   }
 
-  // We definitely don't want to group if we transition from non-deleted to deleted, since
-  //   deleted messages don't show status.
-  if (newerMessage.deletedForEveryone && !olderMessage.deletedForEveryone) {
-    return false;
-  }
-
   return Boolean(
     !olderMessage.reactions?.length &&
       olderMessage.author.id === newerMessage.author.id &&
       newerMessage.timestamp >= olderMessage.timestamp &&
       newerMessage.timestamp - olderMessage.timestamp < COLLAPSE_WITHIN &&
-      isSameDay(olderMessage.timestamp, newerMessage.timestamp) &&
-      (olderMessage.status === newerMessage.status ||
-        (isDelivered(newerMessage.status) && isDelivered(olderMessage.status)))
+      isSameDay(olderMessage.timestamp, newerMessage.timestamp)
   );
 }
 

@@ -11,7 +11,7 @@ import type { LinkPreviewType } from '../../types/message/LinkPreviews';
 import { getPreferredBadgeSelector } from '../selectors/badges';
 import { getAllComposableConversations } from '../selectors/conversations';
 import { getLinkPreview } from '../selectors/linkPreviews';
-import { getIntl, getTheme } from '../selectors/user';
+import { getIntl, getTheme, getRegionCode } from '../selectors/user';
 import { getEmojiSkinTone } from '../selectors/items';
 import { selectRecentEmojis } from '../selectors/emojis';
 import type { AttachmentType } from '../../types/Attachment';
@@ -24,6 +24,7 @@ export type SmartForwardMessageModalProps = {
     attachments?: Array<AttachmentType>,
     linkPreview?: LinkPreviewType
   ) => void;
+  hasContact: boolean;
   isSticker: boolean;
   messageBody?: string;
   onClose: () => void;
@@ -42,6 +43,7 @@ const mapStateToProps = (
   const {
     attachments,
     doForwardMessage,
+    hasContact,
     isSticker,
     messageBody,
     onClose,
@@ -59,6 +61,7 @@ const mapStateToProps = (
     candidateConversations,
     doForwardMessage,
     getPreferredBadge: getPreferredBadgeSelector(state),
+    hasContact,
     i18n: getIntl(state),
     isSticker,
     linkPreview,
@@ -69,6 +72,7 @@ const mapStateToProps = (
     skinTone,
     onTextTooLong,
     theme: getTheme(state),
+    regionCode: getRegionCode(state),
   };
 };
 

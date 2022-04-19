@@ -460,20 +460,24 @@
         "description": "Shown in conversation banner when more than one group member's safety number has changed, but they were previously verified."
     },
     "debugLogExplanation": {
-        "message": "Ez a naplófájl publikusan elérhető lesz az interneten annak érdekében, hogy a fejlesztők megtekinthessék. A tartalmát küldés előtt letöltheted.",
-        "description": ""
+        "message": "A Küldés gombra nyomva a hibanaplód egy egyedi, nem publikus online tárhelyre kerül feltöltésre, ahonnan 30 nap után törlődik. Ha gondolod, mentsd el előbb a készülékedre is.",
+        "description": "Description of what will happen with your debug log"
     },
     "debugLogError": {
         "message": "Hiba történt a feltöltés során. Küldd el a naplófájlt szöveges csatolmányként a support@signal.org címre!",
-        "description": ""
+        "description": "Error message a recommendations if debug log upload fails"
     },
     "debugLogSuccess": {
         "message": "Naplófájl feltöltve",
         "description": "Title of the success page for submitting a debug log"
     },
     "debugLogSuccessNextSteps": {
-        "message": "Hibakeresési napló feltöltve. Amikor felveszed a kapcsolatot a támogatással, másold be a lenti linket a probléma leírásával, és az annak előidézéséhez szükséges lépésekkel együtt!",
+        "message": "Hibanapló feltöltve. Mikor felveszed a kapcsolatot a támogatással, másold be a lenti URL-t egy leírás kíséretében, amiben a problémát és annak reprodukálható lépéseit írod le.",
         "description": "Explanation of next steps to take when submitting debug log"
+    },
+    "debugLogLogIsIncomplete": {
+        "message": "... a teljes naplóhoz kattints a Mentés gombra",
+        "description": "Shown as the text for the copy button on the debug log screen"
     },
     "debugLogCopy": {
         "message": "Hivatkozás másolása",
@@ -828,8 +832,12 @@
         "description": "Shown to separate the types of search results"
     },
     "findByUsernameHeader": {
-        "message": "Keresés felhasználónév alapján",
-        "description": "Shown to separate the types of search results"
+        "message": "Felhasználó keresése",
+        "description": "Shown when search could be a valid username, with one sub-item that will kick off the search"
+    },
+    "findByPhoneNumberHeader": {
+        "message": "Telefonszám keresése",
+        "description": "Shown when search could be a valid phone number, with one sub-item that will kick off the search"
     },
     "at-username": {
         "message": "@$username$",
@@ -962,7 +970,7 @@
         "description": "Confirmation dialog message for when the voice recording is interrupted due to app losing focus"
     },
     "voiceNoteLimit": {
-        "message": "A hangüzenetek maximális hossza öt perc. A rögzítés megáll, ha átváltasz egy másik alkalmazásra.",
+        "message": "A hangüzenetek maximális hossza egy óra. A rögzítés megáll, ha átváltasz egy másik alkalmazásra.",
         "description": "Shown in toast to warn user about limited time and that window must be in focus"
     },
     "voiceNoteMustBeOnlyAttachment": {
@@ -1051,6 +1059,20 @@
                 "content": "$2",
                 "example": "retry update"
             },
+            "url": {
+                "content": "$2",
+                "example": "https://signal.org/download"
+            },
+            "support": {
+                "content": "$3",
+                "example": "contact support"
+            }
+        }
+    },
+    "cannotUpdateRequireManualDetail": {
+        "message": "A Signal Desktop frissítése nem sikerült. Telepítsd az új verziót manuálisan a $url$ weboldalról, majd lépj kapcsolatba velünk a tapasztalt problémával kapcsolatban: $support$.",
+        "description": "Shown if a general error happened while trying to install update package and manual update is required",
+        "placeholders": {
             "url": {
                 "content": "$2",
                 "example": "https://signal.org/download"
@@ -1354,7 +1376,7 @@
         "description": "Instructions on the device link screen"
     },
     "Install__instructions__2": {
-        "message": "Koppints a $settings$, majd a $linkedDevices$ menüpontra",
+        "message": "Kattints a $settings$, majd a $linkedDevices$ menüpontra",
         "description": "Instructions on the device link screen",
         "placeholders": {
             "settings": {
@@ -1372,7 +1394,7 @@
         "description": "Part of the 2nd instruction on the device link screen"
     },
     "Install__instructions__3": {
-        "message": "Koppints a $plusButton$ (Android) vagy $linkNewDevice$ (iPhone) gombra",
+        "message": "Kattints a $plusButton$ (Android) vagy $linkNewDevice$ (iPhone) gombra",
         "description": "Instructions on the device link screen",
         "placeholders": {
             "plusButton": {
@@ -2379,6 +2401,10 @@
         "message": "Nem sikerült betölteni a felhasználónevet. Ellenőrizd a kapcsolatodat, majd próbáld újra!",
         "description": "Shown if request to Signal servers to find username fails"
     },
+    "Toast--failed-to-fetch-phone-number": {
+        "message": "A telefonszám lekérése sikertelen. Ellenőrizd a kapcsolatodat, majd próbáld újra!",
+        "description": "Shown if request to Signal servers to find phone number fails"
+    },
     "startConversation--username-not-found": {
         "message": "A felhasználó nem található. Nincs $atUsername$ nevű Signal-felhasználó. Győződj meg róla, hogy a teljes felhasználónevet adtad meg!",
         "description": "Shown in dialog if username is not found. Note that 'username' will be the output of at-username",
@@ -2386,6 +2412,26 @@
             "atUsername": {
                 "content": "$1",
                 "example": "@alex"
+            }
+        }
+    },
+    "startConversation--phone-number-not-found": {
+        "message": "Sikertelen: \"$phoneNumber$\" nem tartozik felhasználóhoz.",
+        "description": "Shown in dialog if phone number is not found.",
+        "placeholders": {
+            "phoneNumber": {
+                "content": "$1",
+                "example": "+1 203-123-4567"
+            }
+        }
+    },
+    "startConversation--phone-number-not-valid": {
+        "message": "Sikertelen: \"$phoneNumber$\" szám található.",
+        "description": "Shown in dialog if phone number is not valid.",
+        "placeholders": {
+            "phoneNumber": {
+                "content": "$1",
+                "example": "+1 203-123-4567"
             }
         }
     },
@@ -4103,6 +4149,14 @@
         "message": "Ez a csoporthivatkozás már nem érvényes.",
         "description": "Shown if you click a group link and we can't get information about it"
     },
+    "GroupV2--join--link-forbidden--title": {
+        "message": "Nem sikerült belépni a csoportba",
+        "description": "Shown if you click a group link and you have been forbidden from joining via the link"
+    },
+    "GroupV2--join--link-forbidden": {
+        "message": "Egy admin távolított el, így már nem tudsz csoporthivatkozás használatával csatlakozni ehhez a csoporthoz.",
+        "description": "Shown if you click a group link and you have been forbidden from joining via the link"
+    },
     "GroupV2--join--prompt-with-approval": {
         "message": "A csoportba történő belépéshez a csoport egy adminjának jóváhagyása szükséges. A csatlakozási igény jóváhagyása után neved és képed láthatóvá válik a csoport tagjai számára.",
         "description": "Shown when you click on a group link to confirm, if it requires admin approval"
@@ -5137,6 +5191,30 @@
             }
         }
     },
+    "GroupV2--admin-approval-bounce--one": {
+        "message": "$joinerName$ csatlakozási kérést küldött a csoporthivatkozás segítségével, majd visszavonta",
+        "description": "Shown in timeline or conversation preview when v2 group changes",
+        "placeholders": {
+            "joinerName": {
+                "content": "$1",
+                "example": "Alice"
+            }
+        }
+    },
+    "GroupV2--admin-approval-bounce": {
+        "message": "$joinerName$ csatlakozási kérést küldött a csoporthivatkozás segítségével, majd visszavonta $numberOfRequests$ alkalommal",
+        "description": "Shown in timeline or conversation preview when v2 group changes",
+        "placeholders": {
+            "joinerName": {
+                "content": "$1",
+                "example": "Alice"
+            },
+            "numberOfRequests": {
+                "content": "$1",
+                "example": "3"
+            }
+        }
+    },
     "GroupV2--group-link-add--disabled--you": {
         "message": "Bekapcsoltad a csoport-hivatkozásokat (adminisztrátori jóváhagyás nem szükséges).",
         "description": "Shown in timeline or conversation preview when v2 group changes"
@@ -5424,11 +5502,11 @@
         "description": "In the instructions for becoming a sustainer. First instruction."
     },
     "BadgeSustainerInstructions__instructions__2": {
-        "message": "Koppints a profilképedre bal-felül a Beállítások megnyitásához!",
+        "message": "Kattints a profilképedre bal-felül a Beállítások megnyitásához!",
         "description": "In the instructions for becoming a sustainer. Second instruction."
     },
     "BadgeSustainerInstructions__instructions__3": {
-        "message": "Koppints a \"Válj Fenntartóvá!\" menüpontra, és iratkozz fel!",
+        "message": "Kattints a \"Válj Fenntartóvá!\" menüpontra, és iratkozz fel!",
         "description": "In the instructions for becoming a sustainer. Third instruction."
     },
     "CompositionArea--expand": {
@@ -5713,6 +5791,16 @@
             }
         }
     },
+    "PendingRequests--deny-for--with-link": {
+        "message": "Megtagadod a kérést \"$name$\" felhasználótól? A jövőben nem lesz képes csatlakozási kérést küldeni a csoporthivatkozás segítségével.",
+        "description": "This is the modal content when confirming denying a group request to join",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Meowsy Purrington"
+            }
+        }
+    },
     "PendingInvites--invites": {
         "message": "Saját meghívottjaid",
         "description": "This is the title list of all invites"
@@ -5802,6 +5890,28 @@
     "PendingInvites--info": {
         "message": "A meghívott személyek részletes adatai nem lesznek láthatóak, míg nem lépnek be a csoportba. A meghívottak csak azokat az üzeneteket láthatják, melyeket a csatlakozásukat követően küldtek el.",
         "description": "Information shown below the invite list"
+    },
+    "PendingRequests--block--button": {
+        "message": "Kérés elutasítása",
+        "description": "Shown in timeline if users cancel their request to join a group via a group link"
+    },
+    "PendingRequests--block--title": {
+        "message": "Elutasítod az kérést?",
+        "description": "Title of dialog to block a user from requesting to join via the link again"
+    },
+    "PendingRequests--block--contents": {
+        "message": "$name$ nem lesz képes többé a csoporthivatkozás használatával csatlakozni, vagy csatlakozási kérdést küldeni. Manuálisan továbbra is hozzáadható lesz.",
+        "description": "Details of dialog to block a user from requesting to join via the link again",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Annoying Person"
+            }
+        }
+    },
+    "PendingRequests--block--confirm": {
+        "message": "Kérés elutasítása",
+        "description": "Confirmation button of dialog to block a user from requesting to join via the link again"
     },
     "AvatarInput--no-photo-label--group": {
         "message": "Csoport profilkép hozzáadása",
@@ -6087,6 +6197,16 @@
     },
     "RemoveGroupMemberConfirmation__description": {
         "message": "\"$name$\" eltávolítása a csoportból?",
+        "description": "When confirming the removal of a group member, show this text in the dialog",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane Doe"
+            }
+        }
+    },
+    "RemoveGroupMemberConfirmation__description__with-link": {
+        "message": "Eltávolítod \"$name$\" felhasználót a csoportból? A jövőben nem lesz képes csatlakozni a csoporthivatkozás segítségével.",
         "description": "When confirming the removal of a group member, show this text in the dialog",
         "placeholders": {
             "name": {
@@ -6927,13 +7047,15 @@
     },
     "StoryListItem__hide-modal--confirm": {
         "message": "Elrejtés",
-        "description": "Action button for the confirmation dialog to hide a story",
-        "placeholders": {
-            "name": {
-                "content": "$1",
-                "example": "Abby"
-            }
-        }
+        "description": "Action button for the confirmation dialog to hide a story"
+    },
+    "StoryImage__error": {
+        "message": "Hiba a kép megjelenítésekor",
+        "description": "aria-label for image errors"
+    },
+    "TextAttachment__preview__link": {
+        "message": "Hivatkozás megnyitása",
+        "description": "Title for the link preview tooltip"
     },
     "WhatsNew__modal-title": {
         "message": "Újdonságok",
@@ -6943,22 +7065,6 @@
         "message": "Ebbe a verzióba néhány kisebb újítás és hibajavítás került annak érdekében, hogy a Signal továbbra is gond nélkül fusson.",
         "description": "Release notes for releases that only include bug fixes"
     },
-    "WhatsNew__v5.34--1": {
-        "message": "Használtad már a Signalt ingadozó hálózati kapcsolat alatt? Többé nincs miért aggódni, az eltűnő üzenetek időzítésének átállítása és minden más változtatás azonnal felszinkronizálásra kerül, amint a kapcsolat helyreállt.",
-        "description": "Release notes for v5.34"
-    },
-    "WhatsNew__v5.35--1": {
-        "message": "Az új frissítési rendszer bevezetésével kisebb méretben érkeznek az újdonságok.",
-        "description": "Release notes for v5.35"
-    },
-    "WhatsNew__v5.35--2": {
-        "message": "A média billentyűkhöz kötött alkalmazások fellélegezhetnek. A Signal nem kapaszkodik beléjük mostantól.",
-        "description": "Release notes for v5.35"
-    },
-    "WhatsNew__v5.35--3": {
-        "message": "Japán barátaink jobb betűtípus támogatást kaptak.",
-        "description": "Release notes for v5.35"
-    },
     "WhatsNew__v5.36--1": {
         "message": "Szeretnéd gyorsan átfutni egy csoportos beszélgetés tartalmát? Mostantól több üzenet fér el egyszerre a képernyőre. Az azonos feladótól származó üzeneteket feladó szerint csoportosítjuk, ha közel azonos időben lettek elküldve.",
         "description": "Release notes for v5.36"
@@ -6967,8 +7073,20 @@
         "message": "A Törlés mindenkinek funkció használata során egy folyamatjelző tudatja veled, hogy sikeres volt-e a művelet. Ha bármilyen okból megszakadt volna, akkor lehetőséged lesz újra megpróbálni.",
         "description": "Release notes for v5.36"
     },
-    "WhatsNew__v5.36--3": {
-        "message": "Önkéntes fordítóinknak köszönhetően mostantól támogatjuk a skót gael nyelvet is.",
-        "description": "Release notes for v5.36"
+    "WhatsNew__v5.37--1": {
+        "message": "Mostantól a rövid üzenetek kevesebb helyet foglalnak, mivel az időbélyeget a szöveggel egy magasságba helyeztük. Így több hely marad a képernyőn frappáns egyszavas beköszönéseidnek.",
+        "description": "Release notes for v5.37"
+    },
+    "WhatsNew__v5.37--2": {
+        "message": "Soha többé hiányzó matricacsomagok! Az asztali Signal verzió mostantól minden telefonon telepített csomaggal is megbirkózik.",
+        "description": "Release notes for v5.37"
+    },
+    "WhatsNew__v5.39--1": {
+        "message": "Mostantól hozzáadhatsz csoporttagokat pusztán telefonszámuk alapján is.",
+        "description": "Release notes for v5.39"
+    },
+    "WhatsNew__v5.39--2": {
+        "message": "Kedvenc kontaktjaid csak pár gombnyomás távolságra vannak. A kontaktkereső már támogatja a nem-latin kiosztásokat is, mint például a cirill.",
+        "description": "Release notes for v5.39"
     }
 }

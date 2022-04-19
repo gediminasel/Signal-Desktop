@@ -207,11 +207,11 @@ const dataInterface: ClientInterface = {
   getAllConversationIds,
   getAllGroupsInvolvingUuid,
 
-  searchConversations,
   searchMessages,
   searchMessagesInConversation,
 
   getMessageCount,
+  getStoryCount,
   saveMessage,
   saveMessages,
   removeMessage,
@@ -295,6 +295,7 @@ const dataInterface: ClientInterface = {
   _deleteAllStoryReads,
   addNewStoryRead,
   getLastStoryReadsForAuthor,
+  countStoryReadsByConversation,
 
   removeAll,
   removeAllConfiguration,
@@ -591,10 +592,7 @@ function makeChannel(fnName: string) {
             'Detected sql corruption in renderer process. ' +
               `Restarting the application immediately. Error: ${error.message}`
           );
-          ipc?.send(
-            'database-error',
-            `${error.stack}\n${Server.getCorruptionLog()}`
-          );
+          ipc?.send('database-error', error.stack);
         }
         log.error(
           `Renderer SQL channel job (${fnName}) error ${error.message}`
@@ -675,6 +673,8 @@ function keysFromBytes(keys: Array<string>, data: any) {
 // Top-level calls
 
 async function shutdown() {
+  log.info('Client.shutdown');
+
   // Stop accepting new SQL jobs, flush outstanding queue
   await _shutdown();
 
@@ -1029,12 +1029,6 @@ async function getAllGroupsInvolvingUuid(uuid: UUIDStringType) {
   return channels.getAllGroupsInvolvingUuid(uuid);
 }
 
-async function searchConversations(query: string) {
-  const conversations = await channels.searchConversations(query);
-
-  return conversations;
-}
-
 function handleSearchMessageJSON(
   messages: Array<ServerSearchResultMessageType>
 ): Array<ClientSearchResultMessageType> {
@@ -1076,6 +1070,10 @@ async function searchMessagesInConversation(
 
 async function getMessageCount(conversationId?: string) {
   return channels.getMessageCount(conversationId);
+}
+
+async function getStoryCount(conversationId: string) {
+  return channels.getStoryCount(conversationId);
 }
 
 async function saveMessage(
@@ -1240,7 +1238,7 @@ async function getOlderMessagesByConversation(
     messageId?: string;
     receivedAt?: number;
     sentAt?: number;
-    storyId?: UUIDStringType;
+    storyId?: string;
   }
 ) {
   const messages = await channels.getOlderMessagesByConversation(
@@ -1632,6 +1630,11 @@ async function getLastStoryReadsForAuthor(options: {
   limit?: number;
 }): Promise<Array<StoryReadType>> {
   return channels.getLastStoryReadsForAuthor(options);
+}
+async function countStoryReadsByConversation(
+  conversationId: string
+): Promise<number> {
+  return channels.countStoryReadsByConversation(conversationId);
 }
 
 // Other

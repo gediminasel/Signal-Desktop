@@ -196,6 +196,7 @@ export type StickerPackType = Readonly<{
 export type UnprocessedType = {
   id: string;
   timestamp: number;
+  receivedAtCounter: number | null;
   version: number;
   attempts: number;
   envelope?: string;
@@ -362,14 +363,11 @@ export type DataInterface = {
     id: UUIDStringType
   ) => Promise<Array<ConversationType>>;
 
-  searchConversations: (
-    query: string,
-    options?: { limit?: number }
-  ) => Promise<Array<ConversationType>>;
   // searchMessages is JSON on server, full message on Client
   // searchMessagesInConversation is JSON on server, full message on Client
 
   getMessageCount: (conversationId?: string) => Promise<number>;
+  getStoryCount: (conversationId: string) => Promise<number>;
   saveMessage: (
     data: MessageType,
     options: {
@@ -560,6 +558,7 @@ export type DataInterface = {
     conversationId?: UUIDStringType;
     limit?: number;
   }): Promise<Array<StoryReadType>>;
+  countStoryReadsByConversation(conversationId: string): Promise<number>;
 
   removeAll: () => Promise<void>;
   removeAllConfiguration: (type?: RemoveAllConfiguration) => Promise<void>;
@@ -618,7 +617,7 @@ export type ServerInterface = DataInterface & {
       messageId?: string;
       receivedAt?: number;
       sentAt?: number;
-      storyId?: UUIDStringType;
+      storyId?: string;
     }
   ) => Promise<Array<MessageTypeUnhydrated>>;
   getNewerMessagesByConversation: (
@@ -645,7 +644,6 @@ export type ServerInterface = DataInterface & {
 
   // Server-only
 
-  getCorruptionLog: () => string;
   initialize: (options: {
     configDir: string;
     key: string;
@@ -689,7 +687,7 @@ export type ClientInterface = DataInterface & {
       messageId?: string;
       receivedAt?: number;
       sentAt?: number;
-      storyId?: UUIDStringType;
+      storyId?: string;
     }
   ) => Promise<Array<MessageAttributesType>>;
   getNewerMessagesByConversation: (

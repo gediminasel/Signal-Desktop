@@ -15,6 +15,7 @@ import { blobToArrayBuffer } from 'blob-util';
 
 import type { LoggerType } from './Logging';
 import * as MIME from './MIME';
+import * as log from '../logging/log';
 import { toLogFormat } from './errors';
 import { SignalService } from '../protobuf';
 import {
@@ -25,6 +26,8 @@ import type { LocalizerType } from './Util';
 import { ThemeType } from './Util';
 import * as GoogleChrome from '../util/GoogleChrome';
 import { scaleImageToLevel } from '../util/scaleImageToLevel';
+import { parseIntOrThrow } from '../util/parseIntOrThrow';
+import { getValue } from '../RemoteConfig';
 
 const MAX_WIDTH = 300;
 const MAX_HEIGHT = MAX_WIDTH * 1.5;
@@ -66,9 +69,36 @@ export type AttachmentType = {
   cdnId?: string;
   cdnKey?: string;
   data?: Uint8Array;
+  textAttachment?: TextAttachmentType;
 
   /** Legacy field. Used only for downloading old attachments */
   id?: number;
+};
+
+export enum TextAttachmentStyleType {
+  DEFAULT = 0,
+  REGULAR = 1,
+  BOLD = 2,
+  SERIF = 3,
+  SCRIPT = 4,
+  CONDENSED = 5,
+}
+
+export type TextAttachmentType = {
+  text?: string | null;
+  textStyle?: number | null;
+  textForegroundColor?: number | null;
+  textBackgroundColor?: number | null;
+  preview?: {
+    url?: string | null;
+    title?: string | null;
+  } | null;
+  gradient?: {
+    startColor?: number | null;
+    endColor?: number | null;
+    angle?: number | null;
+  } | null;
+  color?: number | null;
 };
 
 export type DownloadedAttachmentType = AttachmentType & {
@@ -695,8 +725,16 @@ export function isGIF(attachments?: ReadonlyArray<AttachmentType>): boolean {
   return hasFlag && isVideoAttachment(attachment);
 }
 
-export function hasNotDownloaded(attachment?: AttachmentType): boolean {
+export function isDownloaded(attachment?: AttachmentType): boolean {
+  return Boolean(attachment && (attachment.path || attachment.textAttachment));
+}
+
+export function hasNotResolved(attachment?: AttachmentType): boolean {
   return Boolean(attachment && !attachment.url);
+}
+
+export function isDownloading(attachment?: AttachmentType): boolean {
+  return Boolean(attachment && attachment.downloadJobId && attachment.pending);
 }
 
 export function hasVideoBlurHash(attachments?: Array<AttachmentType>): boolean {
@@ -957,14 +995,21 @@ export const getFileExtension = (
   }
 };
 
-export const getUploadSizeLimitKb = (contentType: MIME.MIMEType): number => {
-  if (MIME.isGif(contentType)) {
-    return 25000;
+const MEBIBYTE = 1024 * 1024;
+const DEFAULT_MAX = 100 * MEBIBYTE;
+
+export const getMaximumAttachmentSize = (): number => {
+  try {
+    return parseIntOrThrow(
+      getValue('global.attachments.maxBytes'),
+      'preProcessAttachment/maxAttachmentSize'
+    );
+  } catch (error) {
+    log.warn(
+      'Failed to parse integer out of global.attachments.maxBytes feature flag'
+    );
+    return DEFAULT_MAX;
   }
-  if (isImageTypeSupported(contentType)) {
-    return 6000;
-  }
-  return 100000;
 };
 
 export const defaultBlurHash = (theme: ThemeType = ThemeType.light): string => {

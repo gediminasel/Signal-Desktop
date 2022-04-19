@@ -23,6 +23,7 @@ function getDefaultProps(): PropsType {
   return {
     i18n,
     onClick: action('onClick'),
+    queueStoryDownload: action('queueStoryDownload'),
     story: {
       messageId: '123',
       sender: getDefaultConversation(),
@@ -62,7 +63,7 @@ story.add('My Story (many)', () => (
 story.add("Someone's story", () => (
   <StoryListItem
     {...getDefaultProps()}
-    group={{ title: 'Sports Group' }}
+    group={getDefaultConversation({ title: 'Sports Group' })}
     story={{
       attachment: fakeAttachment({
         thumbnail: fakeThumbnail('/fixtures/tina-rolf-269345-unsplash.jpg'),

@@ -1,9 +1,10 @@
 // Copyright 2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import FocusTrap from 'focus-trap-react';
 import React, { useState } from 'react';
 import classNames from 'classnames';
-import type { ConversationStoryType, StoryViewType } from './StoryListItem';
+import type { ConversationStoryType } from './StoryListItem';
 import type { LocalizerType } from '../types/Util';
 import type { PropsType as SmartStoryViewerPropsType } from '../state/smart/StoryViewer';
 import { StoriesPane } from './StoriesPane';
@@ -16,14 +17,10 @@ export type PropsType = {
   preferredWidthFromStorage: number;
   openConversationInternal: (_: { conversationId: string }) => unknown;
   renderStoryViewer: (props: SmartStoryViewerPropsType) => JSX.Element;
+  queueStoryDownload: (storyId: string) => unknown;
   stories: Array<ConversationStoryType>;
   toggleHideStories: (conversationId: string) => unknown;
   toggleStoriesView: () => unknown;
-};
-
-type ViewingStoryType = {
-  conversationId: string;
-  stories: Array<StoryViewType>;
 };
 
 export const Stories = ({
@@ -31,13 +28,14 @@ export const Stories = ({
   i18n,
   openConversationInternal,
   preferredWidthFromStorage,
+  queueStoryDownload,
   renderStoryViewer,
   stories,
   toggleHideStories,
   toggleStoriesView,
 }: PropsType): JSX.Element => {
-  const [storiesToView, setStoriesToView] = useState<
-    undefined | ViewingStoryType
+  const [conversationIdToView, setConversationIdToView] = useState<
+    undefined | string
   >();
 
   const width = getWidthFromPreferredWidth(preferredWidthFromStorage, {
@@ -46,63 +44,56 @@ export const Stories = ({
 
   return (
     <div className={classNames('Stories', themeClassName(Theme.Dark))}>
-      {storiesToView &&
+      {conversationIdToView &&
         renderStoryViewer({
-          conversationId: storiesToView.conversationId,
-          onClose: () => setStoriesToView(undefined),
+          conversationId: conversationIdToView,
+          onClose: () => setConversationIdToView(undefined),
           onNextUserStories: () => {
             const storyIndex = stories.findIndex(
-              x => x.conversationId === storiesToView.conversationId
+              x => x.conversationId === conversationIdToView
             );
             if (storyIndex >= stories.length - 1) {
-              setStoriesToView(undefined);
+              setConversationIdToView(undefined);
               return;
             }
             const nextStory = stories[storyIndex + 1];
-            setStoriesToView({
-              conversationId: nextStory.conversationId,
-              stories: nextStory.stories,
-            });
+            setConversationIdToView(nextStory.conversationId);
           },
           onPrevUserStories: () => {
             const storyIndex = stories.findIndex(
-              x => x.conversationId === storiesToView.conversationId
+              x => x.conversationId === conversationIdToView
             );
             if (storyIndex === 0) {
-              setStoriesToView(undefined);
+              setConversationIdToView(undefined);
               return;
             }
             const prevStory = stories[storyIndex - 1];
-            setStoriesToView({
-              conversationId: prevStory.conversationId,
-              stories: prevStory.stories,
-            });
+            setConversationIdToView(prevStory.conversationId);
           },
-          stories: storiesToView.stories,
         })}
-      <div className="Stories__pane" style={{ width }}>
-        <StoriesPane
-          hiddenStories={hiddenStories}
-          i18n={i18n}
-          onBack={toggleStoriesView}
-          onStoryClicked={conversationId => {
-            const storyIndex = stories.findIndex(
-              x => x.conversationId === conversationId
-            );
-            const foundStory = stories[storyIndex];
+      <FocusTrap focusTrapOptions={{ allowOutsideClick: true }}>
+        <div className="Stories__pane" style={{ width }}>
+          <StoriesPane
+            hiddenStories={hiddenStories}
+            i18n={i18n}
+            onBack={toggleStoriesView}
+            onStoryClicked={conversationId => {
+              const storyIndex = stories.findIndex(
+                x => x.conversationId === conversationId
+              );
+              const foundStory = stories[storyIndex];
 
-            if (foundStory) {
-              setStoriesToView({
-                conversationId,
-                stories: foundStory.stories,
-              });
-            }
-          }}
-          openConversationInternal={openConversationInternal}
-          stories={stories}
-          toggleHideStories={toggleHideStories}
-        />
-      </div>
+              if (foundStory) {
+                setConversationIdToView(conversationId);
+              }
+            }}
+            openConversationInternal={openConversationInternal}
+            queueStoryDownload={queueStoryDownload}
+            stories={stories}
+            toggleHideStories={toggleHideStories}
+          />
+        </div>
+      </FocusTrap>
       <div className="Stories__placeholder">
         <div className="Stories__placeholder__stories" />
         {i18n('Stories__placeholder--text')}

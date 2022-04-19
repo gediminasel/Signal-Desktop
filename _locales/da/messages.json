@@ -1,6 +1,6 @@
 {
     "softwareAcknowledgments": {
-        "message": "Software anerkendelser",
+        "message": "Software-anerkendelser",
         "description": "Shown in the about box for the link to software acknowledgments"
     },
     "privacyPolicy": {
@@ -12,7 +12,7 @@
         "description": "Shown in the top-level error popup, allowing user to copy the error text and close the app"
     },
     "unknownContact": {
-        "message": "Ukendt kontaktperson",
+        "message": "Ukendt kontakt",
         "description": "Shown as the name of a contact if we don't have any displayable information about them"
     },
     "unknownGroup": {
@@ -460,20 +460,24 @@
         "description": "Shown in conversation banner when more than one group member's safety number has changed, but they were previously verified."
     },
     "debugLogExplanation": {
-        "message": "Denne log vil blive offentliggjort online, så bidragsydere kan se den. Du kan hente hele loggen, inden du indsender den.",
-        "description": ""
+        "message": "Når du klikker på Indsend, bliver din log lagt online i 30 dage på en unik, ikke-offentliggjort URL-adresse. Du kan gemme den lokalt først.",
+        "description": "Description of what will happen with your debug log"
     },
     "debugLogError": {
         "message": "Noget gik galt med upload! Send venligst en e-mail til support@signal.org og vedhæft din log som en tekstfil.",
-        "description": ""
+        "description": "Error message a recommendations if debug log upload fails"
     },
     "debugLogSuccess": {
         "message": "Fejlsøgningslog indsendt",
         "description": "Title of the success page for submitting a debug log"
     },
     "debugLogSuccessNextSteps": {
-        "message": "Fejlsøgningslog uploadet. Når du kontakter support, skal du kopiere linket nedenfor og vedhæfte det sammen med en beskrivelse af det problem, du så, og de trin du skal følge for at reproducere det.",
+        "message": "Fejlsøgningslog overført. Når du kontakter support, skal du kopiere nedenstående URL-adresse og vedhæfte den sammen med en beskrivelse af det problem, du så, og de trin, du skal følge for at genskabe det.",
         "description": "Explanation of next steps to take when submitting debug log"
+    },
+    "debugLogLogIsIncomplete": {
+        "message": "... klik på Gem for at se den fulde log",
+        "description": "Shown as the text for the copy button on the debug log screen"
     },
     "debugLogCopy": {
         "message": "Kopiér link",
@@ -828,8 +832,12 @@
         "description": "Shown to separate the types of search results"
     },
     "findByUsernameHeader": {
-        "message": "Find via brugernavn",
-        "description": "Shown to separate the types of search results"
+        "message": "Find ud fra brugernavn",
+        "description": "Shown when search could be a valid username, with one sub-item that will kick off the search"
+    },
+    "findByPhoneNumberHeader": {
+        "message": "Find ud fra telefonnummer",
+        "description": "Shown when search could be a valid phone number, with one sub-item that will kick off the search"
     },
     "at-username": {
         "message": "@$username$",
@@ -962,7 +970,7 @@
         "description": "Confirmation dialog message for when the voice recording is interrupted due to app losing focus"
     },
     "voiceNoteLimit": {
-        "message": "Talebeskeder er begrænset til fem minutter. Optagelsen stopper, hvis du skifter til en anden app.",
+        "message": "Talebeskeder er begrænset til én time. Optagelsen stopper, hvis du skifter til en anden app.",
         "description": "Shown in toast to warn user about limited time and that window must be in focus"
     },
     "voiceNoteMustBeOnlyAttachment": {
@@ -1051,6 +1059,20 @@
                 "content": "$2",
                 "example": "retry update"
             },
+            "url": {
+                "content": "$2",
+                "example": "https://signal.org/download"
+            },
+            "support": {
+                "content": "$3",
+                "example": "contact support"
+            }
+        }
+    },
+    "cannotUpdateRequireManualDetail": {
+        "message": "Signal kunne ikke opdatere. Besøg $url$ for at installere den manuelt. Dernæst, $support$ om dette problem",
+        "description": "Shown if a general error happened while trying to install update package and manual update is required",
+        "placeholders": {
             "url": {
                 "content": "$2",
                 "example": "https://signal.org/download"
@@ -2379,6 +2401,10 @@
         "message": "Kunne ikke hente brugernavn. Kontroller din forbindelse og prøv igen.",
         "description": "Shown if request to Signal servers to find username fails"
     },
+    "Toast--failed-to-fetch-phone-number": {
+        "message": "Det lykkedes ikke at hente telefonnummer. Kontroller din forbindelse, og prøv igen.",
+        "description": "Shown if request to Signal servers to find phone number fails"
+    },
     "startConversation--username-not-found": {
         "message": "Bruger ikke fundet. $atUsername$ er ikke en Signal-bruger; sørg for, at du har indtastet det fulde brugernavn.",
         "description": "Shown in dialog if username is not found. Note that 'username' will be the output of at-username",
@@ -2386,6 +2412,26 @@
             "atUsername": {
                 "content": "$1",
                 "example": "@alex"
+            }
+        }
+    },
+    "startConversation--phone-number-not-found": {
+        "message": "Bruger ikke fundet. \"$phoneNumber$\" er ikke en Signal-bruger.",
+        "description": "Shown in dialog if phone number is not found.",
+        "placeholders": {
+            "phoneNumber": {
+                "content": "$1",
+                "example": "+1 203-123-4567"
+            }
+        }
+    },
+    "startConversation--phone-number-not-valid": {
+        "message": "Bruger ikke fundet. \"$phoneNumber$\" er ikke et gyldigt telefonnummer.",
+        "description": "Shown in dialog if phone number is not valid.",
+        "placeholders": {
+            "phoneNumber": {
+                "content": "$1",
+                "example": "+1 203-123-4567"
             }
         }
     },
@@ -2638,7 +2684,7 @@
         }
     },
     "ConversationListItem--message-request": {
-        "message": "Besked forespørgsel",
+        "message": "Beskedanmodning",
         "description": "Preview shown for conversation if the user has not yet accepted an incoming message request"
     },
     "ConversationListItem--draft-prefix": {
@@ -3720,11 +3766,11 @@
         "description": "Shown in conversation history when you accepted an incoming video call"
     },
     "missedIncomingAudioCall": {
-        "message": "Mistet lydopkald",
+        "message": "Ubesvaret lydopkald",
         "description": "Shown in conversation history when you missed an incoming audio call"
     },
     "missedIncomingVideoCall": {
-        "message": "Mistet videoopkald",
+        "message": "Ubesvaret videoopkald",
         "description": "Shown in conversation history when you missed an incoming video call"
     },
     "acceptedOutgoingAudioCall": {
@@ -4103,6 +4149,14 @@
         "message": "Gruppelinket er ikke længere gyldigt",
         "description": "Shown if you click a group link and we can't get information about it"
     },
+    "GroupV2--join--link-forbidden--title": {
+        "message": "Deltagelse i gruppen er ikke mulig",
+        "description": "Shown if you click a group link and you have been forbidden from joining via the link"
+    },
+    "GroupV2--join--link-forbidden": {
+        "message": "Du kan ikke deltage i denne gruppe via gruppelinket, fordi en administrator har fjernet dig.",
+        "description": "Shown if you click a group link and you have been forbidden from joining via the link"
+    },
     "GroupV2--join--prompt-with-approval": {
         "message": "En administrator af gruppen skal godkende din anmodning før du kan deltage. Hvis det er godkendt, deles dit navn og billede med dens medlemmer.",
         "description": "Shown when you click on a group link to confirm, if it requires admin approval"
@@ -4116,7 +4170,7 @@
         "description": "The button to join the group, if approval is required"
     },
     "GroupV2--join--cancel-request-to-join": {
-        "message": "Annullér forespørgsel",
+        "message": "Annullér anmodning",
         "description": "The button to cancel request to join the group"
     },
     "GroupV2--join--cancel-request-to-join--confirmation": {
@@ -5137,6 +5191,30 @@
             }
         }
     },
+    "GroupV2--admin-approval-bounce--one": {
+        "message": "$joinerName$ anmodede om og annullerede deres anmodning om at blive medlem via gruppelinket",
+        "description": "Shown in timeline or conversation preview when v2 group changes",
+        "placeholders": {
+            "joinerName": {
+                "content": "$1",
+                "example": "Alice"
+            }
+        }
+    },
+    "GroupV2--admin-approval-bounce": {
+        "message": "$joinerName$ anmodede og annullerede $numberOfRequests$ anmodninger om at blive medlem via gruppelinket",
+        "description": "Shown in timeline or conversation preview when v2 group changes",
+        "placeholders": {
+            "joinerName": {
+                "content": "$1",
+                "example": "Alice"
+            },
+            "numberOfRequests": {
+                "content": "$1",
+                "example": "3"
+            }
+        }
+    },
     "GroupV2--group-link-add--disabled--you": {
         "message": "Du aktiverede gruppelinket med administratorgodkendelse slået fra.",
         "description": "Shown in timeline or conversation preview when v2 group changes"
@@ -5713,6 +5791,16 @@
             }
         }
     },
+    "PendingRequests--deny-for--with-link": {
+        "message": "Afvis anmodninger fra \"$name$\"? Personen vil ikke kunne anmode om at blive medlem via gruppelinket igen.",
+        "description": "This is the modal content when confirming denying a group request to join",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Meowsy Purrington"
+            }
+        }
+    },
     "PendingInvites--invites": {
         "message": "Inviteret af dig",
         "description": "This is the title list of all invites"
@@ -5802,6 +5890,28 @@
     "PendingInvites--info": {
         "message": "Detaljer om inviterede personer til denne gruppe, vises først indtil de deltager. Inviterede vil kun se beskeder efter deltagelse i gruppen.",
         "description": "Information shown below the invite list"
+    },
+    "PendingRequests--block--button": {
+        "message": "Bloker anmodning",
+        "description": "Shown in timeline if users cancel their request to join a group via a group link"
+    },
+    "PendingRequests--block--title": {
+        "message": "Bloker anmodning?",
+        "description": "Title of dialog to block a user from requesting to join via the link again"
+    },
+    "PendingRequests--block--contents": {
+        "message": "$name$ vil ikke kunne deltage eller anmode om at deltage i denne gruppe via gruppelinket. De kan stadig tilføjes til gruppen manuelt.",
+        "description": "Details of dialog to block a user from requesting to join via the link again",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Annoying Person"
+            }
+        }
+    },
+    "PendingRequests--block--confirm": {
+        "message": "Bloker anmodning",
+        "description": "Confirmation button of dialog to block a user from requesting to join via the link again"
     },
     "AvatarInput--no-photo-label--group": {
         "message": "Tilføj gruppebillede",
@@ -6048,7 +6158,7 @@
         "description": "Description for the contact spoofing review dialog"
     },
     "ContactSpoofingReviewDialog__possibly-unsafe-title": {
-        "message": "Forespørgsel",
+        "message": "Anmodning",
         "description": "Header in the contact spoofing review dialog, shown above the potentially-unsafe user"
     },
     "ContactSpoofingReviewDialog__safe-title": {
@@ -6087,6 +6197,16 @@
     },
     "RemoveGroupMemberConfirmation__description": {
         "message": "Fjern $name$ fra gruppen?",
+        "description": "When confirming the removal of a group member, show this text in the dialog",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane Doe"
+            }
+        }
+    },
+    "RemoveGroupMemberConfirmation__description__with-link": {
+        "message": "Fjern \"$name$\" fra gruppen? Personen vil ikke kunne tilslutte sig igen via gruppelinket.",
         "description": "When confirming the removal of a group member, show this text in the dialog",
         "placeholders": {
             "name": {
@@ -6927,13 +7047,15 @@
     },
     "StoryListItem__hide-modal--confirm": {
         "message": "Skjul",
-        "description": "Action button for the confirmation dialog to hide a story",
-        "placeholders": {
-            "name": {
-                "content": "$1",
-                "example": "Abby"
-            }
-        }
+        "description": "Action button for the confirmation dialog to hide a story"
+    },
+    "StoryImage__error": {
+        "message": "Fejl ved visning af billede",
+        "description": "aria-label for image errors"
+    },
+    "TextAttachment__preview__link": {
+        "message": "Besøg link",
+        "description": "Title for the link preview tooltip"
     },
     "WhatsNew__modal-title": {
         "message": "Nyheder",
@@ -6943,22 +7065,6 @@
         "message": "Denne version indeholder en række småjusteringer og fejlrettelser som sikrer, at Signal kører problemfrit.",
         "description": "Release notes for releases that only include bug fixes"
     },
-    "WhatsNew__v5.34--1": {
-        "message": "Har du nogensinde brugt Signal på en ustabil forbindelse? Nu behøver du ikke længere bekymre dig - ændringer i udløbstiden for forsvindende beskeder og andet vil nu blive sendt ud, når dit Wi-Fi er bedre igen.",
-        "description": "Release notes for v5.34"
-    },
-    "WhatsNew__v5.35--1": {
-        "message": "Der er blevet indført et nyt opdateringssystem, og folk burde begynde at se mindre opdateringer med den næste opdatering.",
-        "description": "Release notes for v5.35"
-    },
-    "WhatsNew__v5.35--2": {
-        "message": "Applikationer, der bruger medieknapper, kan glæde sig! Signal har ikke længere magten over dem.",
-        "description": "Release notes for v5.35"
-    },
-    "WhatsNew__v5.35--3": {
-        "message": "Bedre understøttelse af skrifttyper for vores japanske venner.",
-        "description": "Release notes for v5.35"
-    },
     "WhatsNew__v5.36--1": {
         "message": "Scanner du hurtigt en gruppesamtale? Der er mere plads til flere beskeder på skærmen på én gang. Vi grupperer nu afsenders beskeder sammen, hvis de ligger tæt på hinanden i tid.",
         "description": "Release notes for v5.36"
@@ -6967,8 +7073,20 @@
         "message": "Når du udfører en Slet for alle, vises der nu en status, der fortæller dig, om den er blevet sendt eller ej. Hvis det af en eller anden grund mislykkes, kan du også forsøge igen!",
         "description": "Release notes for v5.36"
     },
-    "WhatsNew__v5.36--3": {
-        "message": "Takket være vores frivillige oversættere har vi tilføjet understøttelse af skotsk gælisk!",
-        "description": "Release notes for v5.36"
+    "WhatsNew__v5.37--1": {
+        "message": "Vi sørger for at holde korte beskeder korte ved at sætte ting som tidsstempler på samme linje som teksten. Nu har du mere plads på skærmen til et hurtigt \"hej\" for at tjekke, hvordan det går med en ven.",
+        "description": "Release notes for v5.37"
+    },
+    "WhatsNew__v5.37--2": {
+        "message": "Slut med manglende klistermærkepakker! Desktop burde nu kunne håndtere alle de samme klistermærkepakker, som din telefon kan!",
+        "description": "Release notes for v5.37"
+    },
+    "WhatsNew__v5.39--1": {
+        "message": "Du kan nu tilføje personer til grupper ved blot at bruge deres telefonnummer.",
+        "description": "Release notes for v5.39"
+    },
+    "WhatsNew__v5.39--2": {
+        "message": "Dine foretrukne kontakter er nu kun et par tastetryk væk. Kontaktsøgning understøtter nu ikke-latinske alfabeter såsom kyrillisk.",
+        "description": "Release notes for v5.39"
     }
 }

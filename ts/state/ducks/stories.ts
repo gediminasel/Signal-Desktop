@@ -6,18 +6,26 @@ import { pick } from 'lodash';
 import type { AttachmentType } from '../../types/Attachment';
 import type { BodyRangeType } from '../../types/Util';
 import type { MessageAttributesType } from '../../model-types.d';
-import type { MessageDeletedActionType } from './conversations';
+import type {
+  MessageChangedActionType,
+  MessageDeletedActionType,
+} from './conversations';
 import type { NoopActionType } from './noop';
 import type { StateType as RootStateType } from '../reducer';
 import type { StoryViewType } from '../../components/StoryListItem';
 import type { SyncType } from '../../jobs/helpers/syncHelpers';
 import * as log from '../../logging/log';
+import dataInterface from '../../sql/Client';
 import { ReadStatus } from '../../messages/MessageReadStatus';
 import { ToastReactionFailed } from '../../components/ToastReactionFailed';
+import { UUID } from '../../types/UUID';
 import { enqueueReactionForSend } from '../../reactions/enqueueReactionForSend';
 import { getMessageById } from '../../messages/getMessageById';
 import { markViewed } from '../../services/MessageUpdater';
+import { queueAttachmentDownloads } from '../../util/queueAttachmentDownloads';
+import { replaceIndex } from '../../util/replaceIndex';
 import { showToast } from '../../util/showToast';
+import { isDownloaded, isDownloading } from '../../types/Attachment';
 import { useBoundActions } from '../../hooks/useBoundActions';
 import { viewSyncJobQueue } from '../../jobs/viewSyncJobQueue';
 import { viewedReceiptsJobQueue } from '../../jobs/viewedReceiptsJobQueue';
@@ -28,25 +36,47 @@ export type StoryDataType = {
   selectedReaction?: string;
 } & Pick<
   MessageAttributesType,
-  'conversationId' | 'readStatus' | 'source' | 'sourceUuid' | 'timestamp'
+  | 'conversationId'
+  | 'deletedForEveryone'
+  | 'readStatus'
+  | 'sendStateByConversationId'
+  | 'source'
+  | 'sourceUuid'
+  | 'timestamp'
+  | 'type'
 >;
 
 // State
 
 export type StoriesStateType = {
   readonly isShowingStoriesView: boolean;
+  readonly replyState?: {
+    messageId: string;
+    replies: Array<MessageAttributesType>;
+  };
   readonly stories: Array<StoryDataType>;
 };
 
 // Actions
 
-const ADD_STORY = 'stories/ADD_STORY';
+const LOAD_STORY_REPLIES = 'stories/LOAD_STORY_REPLIES';
+const MARK_STORY_READ = 'stories/MARK_STORY_READ';
 const REACT_TO_STORY = 'stories/REACT_TO_STORY';
+const REPLY_TO_STORY = 'stories/REPLY_TO_STORY';
+const STORY_CHANGED = 'stories/STORY_CHANGED';
 const TOGGLE_VIEW = 'stories/TOGGLE_VIEW';
 
-type AddStoryActionType = {
-  type: typeof ADD_STORY;
-  payload: StoryDataType;
+type LoadStoryRepliesActionType = {
+  type: typeof LOAD_STORY_REPLIES;
+  payload: {
+    messageId: string;
+    replies: Array<MessageAttributesType>;
+  };
+};
+
+type MarkStoryReadActionType = {
+  type: typeof MARK_STORY_READ;
+  payload: string;
 };
 
 type ReactToStoryActionType = {
@@ -57,38 +87,67 @@ type ReactToStoryActionType = {
   };
 };
 
+type ReplyToStoryActionType = {
+  type: typeof REPLY_TO_STORY;
+  payload: MessageAttributesType;
+};
+
+type StoryChangedActionType = {
+  type: typeof STORY_CHANGED;
+  payload: StoryDataType;
+};
+
 type ToggleViewActionType = {
   type: typeof TOGGLE_VIEW;
 };
 
 export type StoriesActionType =
-  | AddStoryActionType
+  | LoadStoryRepliesActionType
+  | MarkStoryReadActionType
+  | MessageChangedActionType
   | MessageDeletedActionType
   | ReactToStoryActionType
+  | ReplyToStoryActionType
+  | StoryChangedActionType
   | ToggleViewActionType;
 
 // Action Creators
 
 export const actions = {
-  addStory,
+  loadStoryReplies,
   markStoryRead,
+  queueStoryDownload,
   reactToStory,
   replyToStory,
+  storyChanged,
   toggleStoriesView,
 };
 
 export const useStoriesActions = (): typeof actions => useBoundActions(actions);
 
-function addStory(story: StoryDataType): AddStoryActionType {
-  return {
-    type: ADD_STORY,
-    payload: story,
+function loadStoryReplies(
+  conversationId: string,
+  messageId: string
+): ThunkAction<void, RootStateType, unknown, LoadStoryRepliesActionType> {
+  return async dispatch => {
+    const replies = await dataInterface.getOlderMessagesByConversation(
+      conversationId,
+      { limit: 9000, storyId: messageId }
+    );
+
+    dispatch({
+      type: LOAD_STORY_REPLIES,
+      payload: {
+        messageId,
+        replies,
+      },
+    });
   };
 }
 
 function markStoryRead(
   messageId: string
-): ThunkAction<void, RootStateType, unknown, NoopActionType> {
+): ThunkAction<void, RootStateType, unknown, MarkStoryReadActionType> {
   return async (dispatch, getState) => {
     const { stories } = getState().stories;
 
@@ -96,6 +155,10 @@ function markStoryRead(
 
     if (!matchingStory) {
       log.warn(`markStoryRead: no matching story found: ${messageId}`);
+      return;
+    }
+
+    if (!isDownloaded(matchingStory.attachment)) {
       return;
     }
 
@@ -109,7 +172,9 @@ function markStoryRead(
       return;
     }
 
-    markViewed(message.attributes, Date.now());
+    const storyReadDate = Date.now();
+
+    markViewed(message.attributes, storyReadDate);
 
     const viewedReceipt = {
       messageId,
@@ -124,6 +189,55 @@ function markStoryRead(
     }
 
     viewedReceiptsJobQueue.add({ viewedReceipt });
+
+    await dataInterface.addNewStoryRead({
+      authorId: message.attributes.sourceUuid,
+      conversationId: message.attributes.conversationId,
+      storyId: new UUID(messageId).toString(),
+      storyReadDate,
+    });
+
+    dispatch({
+      type: MARK_STORY_READ,
+      payload: messageId,
+    });
+  };
+}
+
+function queueStoryDownload(
+  storyId: string
+): ThunkAction<void, RootStateType, unknown, NoopActionType> {
+  return async dispatch => {
+    const story = await getMessageById(storyId);
+
+    if (!story) {
+      return;
+    }
+
+    const storyAttributes: MessageAttributesType = story.attributes;
+    const { attachments } = storyAttributes;
+    const attachment = attachments && attachments[0];
+
+    if (!attachment) {
+      log.warn('queueStoryDownload: No attachment found for story', {
+        storyId,
+      });
+      return;
+    }
+
+    if (isDownloaded(attachment)) {
+      return;
+    }
+
+    if (isDownloading(attachment)) {
+      return;
+    }
+
+    // We want to ensure that we re-hydrate the story reply context with the
+    // completed attachment download.
+    story.set({ storyReplyContext: undefined });
+
+    await queueAttachmentDownloads(story.attributes);
 
     dispatch({
       type: 'NOOP',
@@ -164,27 +278,40 @@ function replyToStory(
   mentions: Array<BodyRangeType>,
   timestamp: number,
   story: StoryViewType
-): NoopActionType {
-  const conversation = window.ConversationController.get(conversationId);
+): ThunkAction<void, RootStateType, unknown, ReplyToStoryActionType> {
+  return async dispatch => {
+    const conversation = window.ConversationController.get(conversationId);
 
-  if (conversation) {
-    conversation.enqueueMessageForSend(
-      messageBody,
-      [],
-      undefined,
-      undefined,
-      undefined,
-      mentions,
+    if (!conversation) {
+      log.error('replyToStory: conversation does not exist', conversationId);
+      return;
+    }
+
+    const messageAttributes = await conversation.enqueueMessageForSend(
+      {
+        body: messageBody,
+        attachments: [],
+        mentions,
+      },
       {
         storyId: story.messageId,
         timestamp,
       }
     );
-  }
 
+    if (messageAttributes) {
+      dispatch({
+        type: REPLY_TO_STORY,
+        payload: messageAttributes,
+      });
+    }
+  };
+}
+
+function storyChanged(story: StoryDataType): StoryChangedActionType {
   return {
-    type: 'NOOP',
-    payload: null,
+    type: STORY_CHANGED,
+    payload: story,
   };
 }
 
@@ -218,38 +345,68 @@ export function reducer(
   }
 
   if (action.type === 'MESSAGE_DELETED') {
-    return {
-      ...state,
-      stories: state.stories.filter(
-        story => story.messageId !== action.payload.id
-      ),
-    };
-  }
-
-  if (action.type === ADD_STORY) {
-    const newStory = pick(action.payload, [
-      'attachment',
-      'conversationId',
-      'messageId',
-      'readStatus',
-      'selectedReaction',
-      'source',
-      'sourceUuid',
-      'timestamp',
-    ]);
-
-    // TODO DEKTOP-3179
-    // ADD_STORY fires whenever the message model changes so we check if this
-    // story already exists in state -- if it does then we don't need to re-add.
-    const hasStory = state.stories.find(
-      existingStory => existingStory.messageId === newStory.messageId
+    const nextStories = state.stories.filter(
+      story => story.messageId !== action.payload.id
     );
-    if (hasStory) {
+
+    if (nextStories.length === state.stories.length) {
       return state;
     }
 
-    const stories = [newStory, ...state.stories].sort((a, b) =>
-      a.timestamp > b.timestamp ? -1 : 1
+    return {
+      ...state,
+      stories: nextStories,
+    };
+  }
+
+  if (action.type === STORY_CHANGED) {
+    const newStory = pick(action.payload, [
+      'attachment',
+      'conversationId',
+      'deletedForEveryone',
+      'messageId',
+      'readStatus',
+      'selectedReaction',
+      'sendStateByConversationId',
+      'source',
+      'sourceUuid',
+      'timestamp',
+      'type',
+    ]);
+
+    // Stories don't really need to change except for when we don't have the
+    // attachment downloaded and we queue a download. Then the story's message
+    // will have the new attachment information. This is an optimization so
+    // we don't needlessly re-render.
+    const prevStory = state.stories.find(
+      existingStory => existingStory.messageId === newStory.messageId
+    );
+    if (prevStory) {
+      const shouldReplace =
+        (!isDownloaded(prevStory.attachment) &&
+          isDownloaded(newStory.attachment)) ||
+        isDownloading(newStory.attachment);
+
+      if (!shouldReplace) {
+        return state;
+      }
+
+      const storyIndex = state.stories.findIndex(
+        existingStory => existingStory.messageId === newStory.messageId
+      );
+
+      if (storyIndex < 0) {
+        return state;
+      }
+
+      return {
+        ...state,
+        stories: replaceIndex(state.stories, storyIndex, newStory),
+      };
+    }
+
+    const stories = [...state.stories, newStory].sort((a, b) =>
+      a.timestamp > b.timestamp ? 1 : -1
     );
 
     return {
@@ -271,6 +428,80 @@ export function reducer(
 
         return story;
       }),
+    };
+  }
+
+  if (action.type === MARK_STORY_READ) {
+    return {
+      ...state,
+      stories: state.stories.map(story => {
+        if (story.messageId === action.payload) {
+          return {
+            ...story,
+            readStatus: ReadStatus.Viewed,
+          };
+        }
+
+        return story;
+      }),
+    };
+  }
+
+  if (action.type === LOAD_STORY_REPLIES) {
+    return {
+      ...state,
+      replyState: action.payload,
+    };
+  }
+
+  // For live updating of the story replies
+  if (
+    action.type === 'MESSAGE_CHANGED' &&
+    state.replyState &&
+    state.replyState.messageId === action.payload.data.storyId
+  ) {
+    const { replyState } = state;
+    const messageIndex = replyState.replies.findIndex(
+      reply => reply.id === action.payload.id
+    );
+
+    // New message
+    if (messageIndex < 0) {
+      return {
+        ...state,
+        replyState: {
+          messageId: replyState.messageId,
+          replies: [...replyState.replies, action.payload.data],
+        },
+      };
+    }
+
+    // Changed message, also handles DOE
+    return {
+      ...state,
+      replyState: {
+        messageId: replyState.messageId,
+        replies: replaceIndex(
+          replyState.replies,
+          messageIndex,
+          action.payload.data
+        ),
+      },
+    };
+  }
+
+  if (action.type === REPLY_TO_STORY) {
+    const { replyState } = state;
+    if (!replyState) {
+      return state;
+    }
+
+    return {
+      ...state,
+      replyState: {
+        messageId: replyState.messageId,
+        replies: [...replyState.replies, action.payload],
+      },
     };
   }
 

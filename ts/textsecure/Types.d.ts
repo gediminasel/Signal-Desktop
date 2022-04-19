@@ -4,6 +4,7 @@
 import type { SignalService as Proto } from '../protobuf';
 import type { IncomingWebSocketRequest } from './WebsocketResources';
 import type { UUID } from '../types/UUID';
+import type { TextAttachmentType } from '../types/Attachment';
 
 export {
   IdentityKeyType,
@@ -85,7 +86,6 @@ export type ProcessedEnvelope = Readonly<{
   sourceDevice?: number;
   destinationUuid: UUID;
   timestamp: number;
-  legacyMessage?: Uint8Array;
   content?: Uint8Array;
   serverGuid: string;
   serverTimestamp: number;
@@ -106,6 +106,7 @@ export type ProcessedAttachment = {
   caption?: string;
   blurHash?: string;
   cdnNumber?: number;
+  textAttachment?: TextAttachmentType;
 };
 
 export type ProcessedGroupContext = {

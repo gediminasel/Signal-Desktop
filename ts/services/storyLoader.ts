@@ -7,7 +7,6 @@ import type { StoryDataType } from '../state/ducks/stories';
 import * as log from '../logging/log';
 import dataInterface from '../sql/Client';
 import { getAttachmentsForMessage } from '../state/selectors/message';
-import { hasNotDownloaded } from '../types/Attachment';
 import { isNotNil } from '../util/isNotNil';
 import { strictAssert } from '../util/assert';
 
@@ -30,24 +29,9 @@ export function getStoryDataFromMessageAttributes(
     return;
   }
 
-  // Quickly determine if item hasn't been
-  // downloaded before we run getAttachmentsForMessage which is cached.
-  if (!unresolvedAttachment.path) {
-    log.warn(
-      `getStoryDataFromMessageAttributes: ${message.id} not downloaded (no path)`
-    );
-    return;
-  }
-
-  const [attachment] = getAttachmentsForMessage(message);
-
-  // TODO DESKTOP-3179
-  if (hasNotDownloaded(attachment)) {
-    log.warn(
-      `getStoryDataFromMessageAttributes: ${message.id} not downloaded (no url)`
-    );
-    return;
-  }
+  const [attachment] = unresolvedAttachment.path
+    ? getAttachmentsForMessage(message)
+    : [unresolvedAttachment];
 
   const selectedReaction = (
     (message.reactions || []).find(re => re.fromId === ourConversationId) || {}
@@ -59,10 +43,13 @@ export function getStoryDataFromMessageAttributes(
     selectedReaction,
     ...pick(message, [
       'conversationId',
+      'deletedForEveryone',
       'readStatus',
+      'sendStateByConversationId',
       'source',
       'sourceUuid',
       'timestamp',
+      'type',
     ]),
   };
 }
@@ -80,4 +67,35 @@ export function getStoriesForRedux(): Array<StoryDataType> {
   storyData = undefined;
 
   return stories;
+}
+
+export async function repairUnexpiredStories(): Promise<void> {
+  if (!storyData) {
+    await loadStories();
+  }
+
+  strictAssert(storyData, 'Could not load stories');
+
+  const storiesWithExpiry = storyData
+    .filter(story => !story.expirationStartTimestamp)
+    .map(story => ({
+      ...story,
+      expirationStartTimestamp: Math.min(
+        story.serverTimestamp || story.timestamp,
+        Date.now()
+      ),
+    }));
+
+  log.info(
+    'repairUnexpiredStories: repairing number of stories',
+    storiesWithExpiry.length
+  );
+
+  await Promise.all(
+    storiesWithExpiry.map(messageAttributes => {
+      return window.Signal.Data.saveMessage(messageAttributes, {
+        ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+      });
+    })
+  );
 }

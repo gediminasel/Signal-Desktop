@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /* eslint-disable camelcase */
-import { compact, isNumber } from 'lodash';
+import { compact, isNumber, throttle, debounce } from 'lodash';
 import { batch as batchDispatch } from 'react-redux';
 import PQueue from 'p-queue';
 
@@ -29,6 +29,7 @@ import * as Conversation from '../types/Conversation';
 import * as Stickers from '../types/Stickers';
 import { CapabilityError } from '../types/errors';
 import type {
+  ContactWithHydratedAvatar,
   GroupV1InfoType,
   GroupV2InfoType,
   StickerType,
@@ -90,10 +91,11 @@ import {
 } from '../util/whatTypeOfConversation';
 import { SignalService as Proto } from '../protobuf';
 import {
+  getMessagePropStatus,
   hasErrors,
   isIncoming,
+  isStory,
   isTapToView,
-  getMessagePropStatus,
 } from '../state/selectors/message';
 import {
   conversationJobQueue,
@@ -177,7 +179,7 @@ export class ConversationModel extends window.Backbone
 
   contactCollection?: Backbone.Collection<ConversationModel>;
 
-  debouncedUpdateLastMessage?: () => void;
+  debouncedUpdateLastMessage?: (() => void) & { flush(): void };
 
   initialPromise?: Promise<unknown>;
 
@@ -292,14 +294,14 @@ export class ConversationModel extends window.Backbone
     //   our first save to the database. Or first fetch from the database.
     this.initialPromise = Promise.resolve();
 
-    this.throttledBumpTyping = window._.throttle(this.bumpTyping, 300);
-    this.debouncedUpdateLastMessage = window._.debounce(
+    this.throttledBumpTyping = throttle(this.bumpTyping, 300);
+    this.debouncedUpdateLastMessage = debounce(
       this.updateLastMessage.bind(this),
       200
     );
     this.throttledUpdateSharedGroups =
       this.throttledUpdateSharedGroups ||
-      window._.throttle(this.updateSharedGroups.bind(this), FIVE_MINUTES);
+      throttle(this.updateSharedGroups.bind(this), FIVE_MINUTES);
 
     this.contactCollection = this.getContactCollection();
     this.contactCollection.on(
@@ -361,11 +363,11 @@ export class ConversationModel extends window.Backbone
     // conversation for the first time.
     this.isFetchingUUID = this.isSMSOnly();
 
-    this.throttledFetchSMSOnlyUUID = window._.throttle(
+    this.throttledFetchSMSOnlyUUID = throttle(
       this.fetchSMSOnlyUUID.bind(this),
       FIVE_MINUTES
     );
-    this.throttledMaybeMigrateV1Group = window._.throttle(
+    this.throttledMaybeMigrateV1Group = throttle(
       this.maybeMigrateV1Group.bind(this),
       FIVE_MINUTES
     );
@@ -1374,7 +1376,9 @@ export class ConversationModel extends window.Backbone
     // Clear typing indicator for a given contact if we receive a message from them
     this.clearContactTypingTimer(typingToken);
 
-    this.addSingleMessage(message);
+    if (!isStory(message.attributes)) {
+      this.addSingleMessage(message);
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.debouncedUpdateLastMessage!();
@@ -1390,6 +1394,11 @@ export class ConversationModel extends window.Backbone
     message: MessageModel,
     { isJustSent }: { isJustSent: boolean } = { isJustSent: false }
   ): Promise<void> {
+    await this.beforeAddSingleMessage();
+    this.doAddSingleMessage(message, { isJustSent });
+  }
+
+  private async beforeAddSingleMessage(): Promise<void> {
     if (!this.newMessageQueue) {
       this.newMessageQueue = new window.PQueue({
         concurrency: 1,
@@ -1401,7 +1410,12 @@ export class ConversationModel extends window.Backbone
     await this.newMessageQueue.add(async () => {
       await this.inProgressFetch;
     });
+  }
 
+  private doAddSingleMessage(
+    message: MessageModel,
+    { isJustSent }: { isJustSent: boolean }
+  ): void {
     const { messagesAdded } = window.reduxActions.conversations;
     const { conversations } = window.reduxStore.getState();
     const { messagesByConversation } = conversations;
@@ -1415,7 +1429,7 @@ export class ConversationModel extends window.Backbone
       newestId && messageIds && messageIds[messageIds.length - 1] === newestId;
 
     if (isJustSent && existingConversation && !isLatestInMemory) {
-      await this.loadNewestMessages(undefined, undefined);
+      this.loadNewestMessages(undefined, undefined);
     } else {
       messagesAdded({
         conversationId,
@@ -3711,16 +3725,22 @@ export class ConversationModel extends window.Backbone
     sticker?: WhatIsThis
   ): Promise<WhatIsThis> {
     if (attachments && attachments.length) {
-      const validAttachments = filter(
-        attachments,
-        attachment => attachment && !attachment.pending && !attachment.error
-      );
-      const attachmentsToUse = Array.from(take(validAttachments, 1));
+      const attachmentsToUse = Array.from(take(attachments, 1));
       const isGIFQuote = isGIF(attachmentsToUse);
 
       return Promise.all(
         map(attachmentsToUse, async attachment => {
-          const { fileName, thumbnail, contentType } = attachment;
+          const { path, fileName, thumbnail, contentType } = attachment;
+
+          if (!path) {
+            return {
+              contentType: isGIFQuote ? IMAGE_GIF : contentType,
+              // Our protos library complains about this field being undefined, so we
+              //   force it to null
+              fileName: fileName || null,
+              thumbnail: null,
+            };
+          }
 
           return {
             contentType: isGIFQuote ? IMAGE_GIF : contentType,
@@ -3739,12 +3759,22 @@ export class ConversationModel extends window.Backbone
     }
 
     if (preview && preview.length) {
-      const validPreviews = filter(preview, item => item && item.image);
-      const previewsToUse = take(validPreviews, 1);
+      const previewsToUse = take(preview, 1);
 
       return Promise.all(
         map(previewsToUse, async attachment => {
           const { image } = attachment;
+
+          if (!image) {
+            return {
+              contentType: IMAGE_JPEG,
+              // Our protos library complains about these fields being undefined, so we
+              //   force them to null
+              fileName: null,
+              thumbnail: null,
+            };
+          }
+
           const { contentType } = image;
 
           return {
@@ -3857,7 +3887,11 @@ export class ConversationModel extends window.Backbone
       },
     };
 
-    this.enqueueMessageForSend(undefined, [], undefined, [], sticker);
+    this.enqueueMessageForSend({
+      body: undefined,
+      attachments: [],
+      sticker,
+    });
     window.reduxActions.stickers.useSticker(packId, stickerId);
   }
 
@@ -3948,12 +3982,23 @@ export class ConversationModel extends window.Backbone
   }
 
   async enqueueMessageForSend(
-    body: string | undefined,
-    attachments: Array<AttachmentType>,
-    quote?: QuotedMessageType,
-    preview?: Array<LinkPreviewType>,
-    sticker?: StickerType,
-    mentions?: BodyRangesType,
+    {
+      attachments,
+      body,
+      contact,
+      mentions,
+      preview,
+      quote,
+      sticker,
+    }: {
+      attachments: Array<AttachmentType>;
+      body: string | undefined;
+      contact?: Array<ContactWithHydratedAvatar>;
+      mentions?: BodyRangesType;
+      preview?: Array<LinkPreviewType>;
+      quote?: QuotedMessageType;
+      sticker?: StickerType;
+    },
     {
       dontClearDraft,
       sendHQImages,
@@ -3965,7 +4010,7 @@ export class ConversationModel extends window.Backbone
       storyId?: string;
       timestamp?: number;
     } = {}
-  ): Promise<void> {
+  ): Promise<MessageAttributesType | undefined> {
     if (this.isGroupV1AndDisabled()) {
       return;
     }
@@ -4023,6 +4068,7 @@ export class ConversationModel extends window.Backbone
       type: 'outgoing',
       body,
       conversationId: this.id,
+      contact,
       quote,
       preview,
       attachments: attachmentsToSend,
@@ -4054,6 +4100,7 @@ export class ConversationModel extends window.Backbone
 
     const model = new window.Whisper.Message(attributes);
     const message = window.MessageController.register(model.id, model);
+    message.cachedOutgoingContactData = contact;
     message.cachedOutgoingPreviewData = preview;
     message.cachedOutgoingQuoteData = quote;
     message.cachedOutgoingStickerData = sticker;
@@ -4094,6 +4141,9 @@ export class ConversationModel extends window.Backbone
 
     const renderStart = Date.now();
 
+    // Perform asynchronous tasks before entering the batching mode
+    await this.beforeAddSingleMessage();
+
     this.isInReduxBatch = true;
     batchDispatch(() => {
       try {
@@ -4103,7 +4153,7 @@ export class ConversationModel extends window.Backbone
         const enableProfileSharing = Boolean(
           mandatoryProfileSharingEnabled && !this.get('profileSharing')
         );
-        this.addSingleMessage(model, { isJustSent: true });
+        this.doAddSingleMessage(model, { isJustSent: true });
 
         const draftProperties = dontClearDraft
           ? {}
@@ -4145,6 +4195,8 @@ export class ConversationModel extends window.Backbone
     }
 
     window.Signal.Data.updateConversation(this.attributes);
+
+    return attributes;
   }
 
   // Is this someone who is a contact, or are we sharing our profile with them?
@@ -4448,11 +4500,13 @@ export class ConversationModel extends window.Backbone
   async updateExpirationTimer(
     providedExpireTimer: number | undefined,
     providedSource?: unknown,
-    receivedAt?: number,
+    initiatingMessage?: MessageModel,
     options: { fromSync?: unknown; fromGroupUpdate?: unknown } = {}
   ): Promise<boolean | null | MessageModel | void> {
+    const isSetByOther = providedSource || initiatingMessage;
+
     if (isGroupV2(this.attributes)) {
-      if (providedSource || receivedAt) {
+      if (isSetByOther) {
         throw new Error(
           'updateExpirationTimer: GroupV2 timers are not updated this way'
         );
@@ -4465,7 +4519,7 @@ export class ConversationModel extends window.Backbone
       return false;
     }
 
-    if (this.isGroupV1AndDisabled()) {
+    if (!isSetByOther && this.isGroupV1AndDisabled()) {
       throw new Error(
         'updateExpirationTimer: GroupV1 is deprecated; cannot update expiration timer'
       );
@@ -4496,7 +4550,7 @@ export class ConversationModel extends window.Backbone
     });
 
     // if change wasn't made remotely, send it to the number/group
-    if (!receivedAt) {
+    if (!isSetByOther) {
       try {
         await conversationJobQueue.add({
           type: conversationQueueJobEnum.enum.DirectExpirationTimerUpdate,
@@ -4516,7 +4570,11 @@ export class ConversationModel extends window.Backbone
 
     // When we add a disappearing messages notification to the conversation, we want it
     //   to be above the message that initiated that change, hence the subtraction.
-    const timestamp = (receivedAt || Date.now()) - 1;
+    const receivedAt =
+      initiatingMessage?.get('received_at') ||
+      window.Signal.Util.incrementMessageCounter();
+    const receivedAtMS = initiatingMessage?.get('received_at_ms') || Date.now();
+    const sentAt = (initiatingMessage?.get('sent_at') || receivedAtMS) - 1;
 
     this.set({ expireTimer });
 
@@ -4532,9 +4590,9 @@ export class ConversationModel extends window.Backbone
       readStatus: ReadStatus.Unread,
       conversationId: this.id,
       // No type; 'incoming' messages are specially treated by conversation.markRead()
-      sent_at: timestamp,
-      received_at: window.Signal.Util.incrementMessageCounter(),
-      received_at_ms: timestamp,
+      sent_at: sentAt,
+      received_at: receivedAt,
+      received_at_ms: receivedAtMS,
       flags: Proto.DataMessage.Flags.EXPIRATION_TIMER_UPDATE,
       expirationTimerUpdate: {
         expireTimer,
@@ -5460,6 +5518,18 @@ export class ConversationModel extends window.Backbone
 
     log.info(`conversation ${this.idForLogging()} open took ${delta}ms`);
     window.CI?.handleEvent('conversation:open', { delta });
+  }
+
+  async flushDebouncedUpdates(): Promise<void> {
+    try {
+      await this.debouncedUpdateLastMessage?.flush();
+    } catch (error) {
+      const logId = this.idForLogging();
+      log.error(
+        `flushDebouncedUpdates(${logId}): got error`,
+        Errors.toLogFormat(error)
+      );
+    }
   }
 }
 

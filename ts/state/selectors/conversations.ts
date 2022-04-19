@@ -25,6 +25,7 @@ import {
 } from '../ducks/conversationsEnums';
 import { getOwn } from '../../util/getOwn';
 import { isNotNil } from '../../util/isNotNil';
+import type { UUIDFetchStateType } from '../../util/uuidFetchState';
 import { deconstructLookup } from '../../util/deconstructLookup';
 import type { PropsDataType as TimelinePropsType } from '../../components/conversation/Timeline';
 import type { TimelineItemType } from '../../components/conversation/TimelineItem';
@@ -120,7 +121,7 @@ export const getConversationsByUsername = createSelector(
   }
 );
 
-const getAllConversations = createSelector(
+export const getAllConversations = createSelector(
   getConversationLookup,
   (lookup): Array<ConversationType> => Object.values(lookup)
 );
@@ -394,21 +395,25 @@ export const getComposerConversationSearchTerm = createSelector(
   }
 );
 
-export const getIsFetchingUsername = createSelector(
+export const getComposerUUIDFetchState = createSelector(
   getComposerState,
-  (composer): boolean => {
+  (composer): UUIDFetchStateType => {
     if (!composer) {
       assert(false, 'getIsFetchingUsername: composer is not open');
-      return false;
+      return {};
     }
-    if (composer.step !== ComposerStep.StartDirectConversation) {
+    if (
+      composer.step !== ComposerStep.StartDirectConversation &&
+      composer.step !== ComposerStep.ChooseGroupMembers
+    ) {
       assert(
         false,
-        `getIsFetchingUsername: step ${composer.step} has no isFetchingUsername key`
+        `getComposerUUIDFetchState: step ${composer.step} ` +
+          'has no uuidFetchState key'
       );
-      return false;
+      return {};
     }
-    return composer.isFetchingUsername;
+    return composer.uuidFetchState;
   }
 );
 
@@ -419,6 +424,7 @@ function isTrusted(conversation: ConversationType): boolean {
 
   return Boolean(
     isInSystemContacts(conversation) ||
+      conversation.sharedGroupNames.length > 0 ||
       conversation.profileSharing ||
       conversation.isMe
   );
@@ -511,28 +517,33 @@ const getNormalizedComposerConversationSearchTerm = createSelector(
 export const getFilteredComposeContacts = createSelector(
   getNormalizedComposerConversationSearchTerm,
   getComposableContacts,
+  getRegionCode,
   (
     searchTerm: string,
-    contacts: Array<ConversationType>
+    contacts: Array<ConversationType>,
+    regionCode: string | undefined
   ): Array<ConversationType> => {
-    return filterAndSortConversationsByTitle(contacts, searchTerm);
+    return filterAndSortConversationsByTitle(contacts, searchTerm, regionCode);
   }
 );
 
 export const getFilteredComposeGroups = createSelector(
   getNormalizedComposerConversationSearchTerm,
   getComposableGroups,
+  getRegionCode,
   (
     searchTerm: string,
-    groups: Array<ConversationType>
+    groups: Array<ConversationType>,
+    regionCode: string | undefined
   ): Array<ConversationType> => {
-    return filterAndSortConversationsByTitle(groups, searchTerm);
+    return filterAndSortConversationsByTitle(groups, searchTerm, regionCode);
   }
 );
 
 export const getFilteredCandidateContactsForNewGroup = createSelector(
   getCandidateContactsForNewGroup,
   getNormalizedComposerConversationSearchTerm,
+  getRegionCode,
   filterAndSortConversationsByTitle
 );
 
@@ -1022,6 +1033,11 @@ export const getConversationsStoppingSend = createSelector(
     const conversations = conversationIds
       .map(conversationId => conversationSelector(conversationId))
       .filter(isNotNil);
+    if (conversationIds.length !== conversations.length) {
+      log.warn(
+        `getConversationsStoppingSend: Started with ${conversationIds.length} items, ended up with ${conversations.length}.`
+      );
+    }
     return sortByTitle(conversations);
   }
 );

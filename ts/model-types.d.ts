@@ -289,6 +289,7 @@ export type ConversationAttributesType = {
   // Shared fields
   active_at?: number | null;
   draft?: string | null;
+  hasPostedStory?: boolean;
   isArchived?: boolean;
   lastMessage?: string | null;
   name?: string;

@@ -1,7 +1,7 @@
 // Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { ProfileKeyCredentialRequestContext } from '@signalapp/signal-client/zkgroup';
+import type { ProfileKeyCredentialRequestContext } from '@signalapp/libsignal-client/zkgroup';
 import { SEALED_SENDER } from '../types/SealedSender';
 import * as Errors from '../types/errors';
 import type {
@@ -131,9 +131,11 @@ async function doGetProfile(c: ConversationModel): Promise<void> {
           throw error;
         }
         if (error.code === 401 || error.code === 403) {
-          if (!isMe(c.attributes)) {
-            await c.setProfileKey(undefined);
+          if (isMe(c.attributes)) {
+            throw error;
           }
+
+          await c.setProfileKey(undefined);
 
           // Retry fetch using last known profileKeyVersion or fetch
           // unversioned profile.

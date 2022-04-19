@@ -38,7 +38,11 @@ import { normalizeUuid } from './util/normalizeUuid';
 import { filter } from './util/iterables';
 import { isNotNil } from './util/isNotNil';
 import { IdleDetector } from './IdleDetector';
-import { loadStories, getStoriesForRedux } from './services/storyLoader';
+import {
+  getStoriesForRedux,
+  loadStories,
+  repairUnexpiredStories,
+} from './services/storyLoader';
 import { senderCertificateService } from './services/senderCertificate';
 import { GROUP_CREDENTIALS_KEY } from './services/groupCredentialFetcher';
 import * as KeyboardLayout from './services/keyboardLayout';
@@ -68,6 +72,7 @@ import type {
   FetchLatestEvent,
   GroupEvent,
   KeysEvent,
+  PNIIdentityEvent,
   MessageEvent,
   MessageEventData,
   MessageRequestResponseEvent,
@@ -369,6 +374,10 @@ export async function startApp(): Promise<void> {
       queuedEventListener(onFetchLatestSync)
     );
     messageReceiver.addEventListener('keys', queuedEventListener(onKeysSync));
+    messageReceiver.addEventListener(
+      'pniIdentity',
+      queuedEventListener(onPNIIdentitySync)
+    );
   });
 
   ourProfileKeyService.initialize(window.storage);
@@ -643,10 +652,22 @@ export async function startApp(): Promise<void> {
             server !== undefined,
             'WebAPI should be initialized together with MessageReceiver'
           );
+          log.info('background/shutdown: shutting down messageReceiver');
           server.unregisterRequestHandler(messageReceiver);
           messageReceiver.stopProcessing();
           await window.waitForAllBatchers();
         }
+
+        log.info('background/shutdown: flushing conversations');
+
+        // Flush debounced updates for conversations
+        await Promise.all(
+          window.ConversationController.getAll().map(convo =>
+            convo.flushDebouncedUpdates()
+          )
+        );
+
+        log.info('background/shutdown: waiting for all batchers');
 
         // A number of still-to-queue database queries might be waiting inside batchers.
         //   We wait for these to empty first, and then shut down the data interface.
@@ -654,6 +675,8 @@ export async function startApp(): Promise<void> {
           window.waitForAllBatchers(),
           window.waitForAllWaitBatchers(),
         ]);
+
+        log.info('background/shutdown: closing the database');
 
         // Shut down the data interface cleanly
         await window.Signal.Data.shutdown();
@@ -699,6 +722,13 @@ export async function startApp(): Promise<void> {
           `Clearing remoteBuildExpiration. Previous value was ${remoteBuildExpiration}`
         );
         window.storage.remove('remoteBuildExpiration');
+      }
+
+      if (
+        window.isBeforeVersion(lastVersion, 'v5.40.0') &&
+        window.isAfterVersion(lastVersion, 'v5.36.0')
+      ) {
+        await repairUnexpiredStories();
       }
 
       if (window.isBeforeVersion(lastVersion, 'v1.29.2-beta.1')) {
@@ -829,8 +859,7 @@ export async function startApp(): Promise<void> {
       );
     } catch (error) {
       log.warn(
-        'Failed to parse integer out of desktop.retryReceiptLifespan feature flag',
-        error && error.stack ? error.stack : error
+        'Failed to parse integer out of desktop.retryReceiptLifespan feature flag'
       );
     }
 
@@ -2259,6 +2288,8 @@ export async function startApp(): Promise<void> {
   window.waitForEmptyEventQueue = waitForEmptyEventQueue;
 
   async function onEmpty() {
+    const { storage, messaging } = window.textsecure;
+
     await Promise.all([
       window.waitForAllBatchers(),
       window.flushAllWaitBatchers(),
@@ -2332,7 +2363,7 @@ export async function startApp(): Promise<void> {
       }
     });
     await window.Signal.Data.saveMessages(messagesToSave, {
-      ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+      ourUuid: storage.user.getCheckedUuid().toString(),
     });
 
     // Process crash reports if any
@@ -2348,12 +2379,23 @@ export async function startApp(): Promise<void> {
       routineProfileRefresh({
         allConversations: window.ConversationController.getAll(),
         ourConversationId,
-        storage: window.storage,
+        storage,
       });
     } else {
       assert(
         false,
         'Failed to fetch our conversation ID. Skipping routine profile refresh'
+      );
+    }
+
+    // Make sure we have the PNI identity
+
+    const pni = storage.user.getCheckedUuid(UUIDKind.PNI);
+    const pniIdentity = await storage.protocol.getIdentityKeyPair(pni);
+    if (!pniIdentity) {
+      log.info('Requesting PNI identity sync');
+      await singleProtoJobQueue.add(
+        messaging.getRequestPniIdentitySyncMessage()
       );
     }
   }
@@ -2600,13 +2642,10 @@ export async function startApp(): Promise<void> {
       const { expireTimer } = details;
       const isValidExpireTimer = typeof expireTimer === 'number';
       if (isValidExpireTimer) {
-        const ourId = window.ConversationController.getOurConversationId();
-        const receivedAt = Date.now();
-
         await conversation.updateExpirationTimer(
           expireTimer,
-          ourId,
-          receivedAt,
+          window.ConversationController.getOurConversationId(),
+          undefined,
           {
             fromSync: true,
           }
@@ -2699,11 +2738,10 @@ export async function startApp(): Promise<void> {
       return;
     }
 
-    const receivedAt = Date.now();
     await conversation.updateExpirationTimer(
       expireTimer,
       window.ConversationController.getOurConversationId(),
-      receivedAt,
+      undefined,
       {
         fromSync: true,
       }
@@ -3484,6 +3522,15 @@ export async function startApp(): Promise<void> {
 
       await window.Signal.Services.runStorageServiceSyncJob();
     }
+  }
+
+  async function onPNIIdentitySync(ev: PNIIdentityEvent) {
+    ev.confirm();
+
+    log.info('onPNIIdentitySync: updating PNI keys');
+    const manager = window.getAccountManager();
+    const { privateKey: privKey, publicKey: pubKey } = ev.data;
+    await manager.updatePNIIdentity({ privKey, pubKey });
   }
 
   async function onMessageRequestResponse(ev: MessageRequestResponseEvent) {

@@ -10,33 +10,9 @@ import * as Bytes from '../../Bytes';
 import * as logger from '../../logging/log';
 
 import { fakeAttachment } from '../../test-both/helpers/fakeAttachment';
+import { DAY } from '../../util/durations';
 
 describe('Attachment', () => {
-  describe('getUploadSizeLimitKb', () => {
-    const { getUploadSizeLimitKb } = Attachment;
-
-    it('returns 6000 kilobytes for supported non-GIF images', () => {
-      assert.strictEqual(getUploadSizeLimitKb(MIME.IMAGE_JPEG), 6000);
-      assert.strictEqual(getUploadSizeLimitKb(MIME.IMAGE_PNG), 6000);
-      assert.strictEqual(getUploadSizeLimitKb(MIME.IMAGE_WEBP), 6000);
-    });
-
-    it('returns 25000 kilobytes for GIFs', () => {
-      assert.strictEqual(getUploadSizeLimitKb(MIME.IMAGE_GIF), 25000);
-    });
-
-    it('returns 100000 for other file types', () => {
-      assert.strictEqual(getUploadSizeLimitKb(MIME.APPLICATION_JSON), 100000);
-      assert.strictEqual(getUploadSizeLimitKb(MIME.AUDIO_AAC), 100000);
-      assert.strictEqual(getUploadSizeLimitKb(MIME.AUDIO_MP3), 100000);
-      assert.strictEqual(getUploadSizeLimitKb(MIME.VIDEO_MP4), 100000);
-      assert.strictEqual(
-        getUploadSizeLimitKb('image/vnd.adobe.photoshop' as MIME.MIMEType),
-        100000
-      );
-    });
-  });
-
   describe('getFileExtension', () => {
     it('should return file extension from content type', () => {
       const input: Attachment.AttachmentType = fakeAttachment({
@@ -74,12 +50,14 @@ describe('Attachment', () => {
           data: Bytes.fromString('foo'),
           contentType: MIME.VIDEO_QUICKTIME,
         });
-        const timestamp = new Date(new Date(0).getTimezoneOffset() * 60 * 1000);
+        const timestamp = new Date(
+          DAY + new Date(DAY).getTimezoneOffset() * 60 * 1000
+        );
         const actual = Attachment.getSuggestedFilename({
           attachment,
           timestamp,
         });
-        const expected = 'signal-1970-01-01-000000.mov';
+        const expected = 'signal-1970-01-02-000000.mov';
         assert.strictEqual(actual, expected);
       });
     });
@@ -89,13 +67,15 @@ describe('Attachment', () => {
           data: Bytes.fromString('foo'),
           contentType: MIME.VIDEO_QUICKTIME,
         });
-        const timestamp = new Date(new Date(0).getTimezoneOffset() * 60 * 1000);
+        const timestamp = new Date(
+          DAY + new Date(DAY).getTimezoneOffset() * 60 * 1000
+        );
         const actual = Attachment.getSuggestedFilename({
           attachment,
           timestamp,
           index: 3,
         });
-        const expected = 'signal-1970-01-01-000000_003.mov';
+        const expected = 'signal-1970-01-02-000000_003.mov';
         assert.strictEqual(actual, expected);
       });
     });

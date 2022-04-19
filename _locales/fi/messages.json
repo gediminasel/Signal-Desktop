@@ -460,20 +460,24 @@
         "description": "Shown in conversation banner when more than one group member's safety number has changed, but they were previously verified."
     },
     "debugLogExplanation": {
-        "message": "Tämä loki julkaistaan verkossa avustajien nähtäväksi. Voit ladata koko lokin ennen lähettämistä.",
-        "description": ""
+        "message": "Lokisi lähtetetään 30 päivän ajaksi verkkoon ja sille määritetään yksityinen URL-osoite. Voit tallentaa sen ensin myös paikallisesti.",
+        "description": "Description of what will happen with your debug log"
     },
     "debugLogError": {
         "message": "Jotain meni pieleen lähettämisessä! Lähetä sähköpostia support@signal.org ja liitä siihen loki tekstitiedostona.",
-        "description": ""
+        "description": "Error message a recommendations if debug log upload fails"
     },
     "debugLogSuccess": {
         "message": "Debuggausloki lähetetty",
         "description": "Title of the success page for submitting a debug log"
     },
     "debugLogSuccessNextSteps": {
-        "message": "Virheenkorjausloki ladattu. Kun otat yhteyttä tukeen, kopioi alla oleva linkki ja liitä se sekä kuvaus havaitsemastasi ongelmasta ja vaiheet sen toistamiseksi.",
+        "message": "Vianselvitysloki on lähetetty. Ottaessasi yhteyttä tukeen, kopioi ja liitä alla oleva URL-osoite ongelmakuvauksen ja sen toistoon vaadittavien tehtävien mukaan.",
         "description": "Explanation of next steps to take when submitting debug log"
+    },
+    "debugLogLogIsIncomplete": {
+        "message": "...nähdäksesi täyden lokin, paina Tallenna.",
+        "description": "Shown as the text for the copy button on the debug log screen"
     },
     "debugLogCopy": {
         "message": "Kopioi linkki",
@@ -572,7 +576,7 @@
         "description": "The string \"today\""
     },
     "yesterday": {
-        "message": "Huomenna",
+        "message": "Eilen",
         "description": "The string \"yesterday\""
     },
     "thisWeek": {
@@ -684,7 +688,7 @@
         "description": "Displayed when the desktop client is currently connecting to the server."
     },
     "connect": {
-        "message": "Napsauta yhdistääksesi uudelleen.",
+        "message": "Yhdistä uudelleen napsauttamalla.",
         "description": "Shown to allow the user to manually attempt a reconnect."
     },
     "connectingHangOn": {
@@ -828,8 +832,12 @@
         "description": "Shown to separate the types of search results"
     },
     "findByUsernameHeader": {
-        "message": "Etsi käyttäjätunnuksella",
-        "description": "Shown to separate the types of search results"
+        "message": "Etsi käyttäjänimellä",
+        "description": "Shown when search could be a valid username, with one sub-item that will kick off the search"
+    },
+    "findByPhoneNumberHeader": {
+        "message": "Etsi puhelinnumerolla",
+        "description": "Shown when search could be a valid phone number, with one sub-item that will kick off the search"
     },
     "at-username": {
         "message": "@$username$",
@@ -962,7 +970,7 @@
         "description": "Confirmation dialog message for when the voice recording is interrupted due to app losing focus"
     },
     "voiceNoteLimit": {
-        "message": "Ääniviestien aikaraja on viisi minuuttia. Nauhoitus lopetetaan, jos vaihdat toiseen sovellukseen.",
+        "message": "Ääniviestin maksimipituus on yksi tunti. Tallentaminen katkeaa jos vaihdat toiseen sovellukseen.",
         "description": "Shown in toast to warn user about limited time and that window must be in focus"
     },
     "voiceNoteMustBeOnlyAttachment": {
@@ -1044,13 +1052,27 @@
         "description": "Shown in a button when a conversation is unmuted and can be muted"
     },
     "cannotUpdateDetail": {
-        "message": "Päivitys ei onnistunut. $retry$ tai käy osoitteessa $url$ asentaaksesi päivityksen käsin. Sen jälkeen $support$ ongelmasta.",
+        "message": "Päivitys ei onnistunut. $retry$ tai asenna päivitys käsin osoitteesta $url$. Sitten $support$ ongelmasta.",
         "description": "Shown if a general error happened while trying to install update package",
         "placeholders": {
             "retry": {
                 "content": "$2",
                 "example": "retry update"
             },
+            "url": {
+                "content": "$2",
+                "example": "https://signal.org/download"
+            },
+            "support": {
+                "content": "$3",
+                "example": "contact support"
+            }
+        }
+    },
+    "cannotUpdateRequireManualDetail": {
+        "message": "Päivitys ei onnistunut. Asenna päivitys käsin osoitteesta $url$. Sitten ilmoita $support$ ongelmasta.",
+        "description": "Shown if a general error happened while trying to install update package and manual update is required",
+        "placeholders": {
             "url": {
                 "content": "$2",
                 "example": "https://signal.org/download"
@@ -2032,7 +2054,7 @@
         "description": "Shown on outgoing message if it cannot be sent immediately"
     },
     "partiallySent": {
-        "message": "Osittain lähetetty, napsauta nähdäksesi lisätietoja",
+        "message": "Osittain lähetetty, lisätietoja napsauttamalla",
         "description": "Shown on outgoing message if it is partially sent"
     },
     "partiallyDeleted": {
@@ -2056,7 +2078,7 @@
         "description": "Warning notification that this version of the app has expired"
     },
     "upgrade": {
-        "message": "Napsauta mennäksesi lataussivulle signal.org/download",
+        "message": "Siirry lataussivulle signal.org/download napsauttamalla",
         "description": "Label text for button to upgrade the app to the latest version"
     },
     "mediaMessage": {
@@ -2236,7 +2258,7 @@
         }
     },
     "audioNotificationDescription": {
-        "message": "Salli ilmoitusten äänimerkki",
+        "message": "Toista ilmoitusten äänimerkki",
         "description": "Description for audio notification setting"
     },
     "callRingtoneNotificationDescription": {
@@ -2379,6 +2401,10 @@
         "message": "Käyttäjätunnuksen noutaminen epäonnistui. Tarkista verkkoyhteys ja yritä uudelleen.",
         "description": "Shown if request to Signal servers to find username fails"
     },
+    "Toast--failed-to-fetch-phone-number": {
+        "message": "Puhelinnumeron noutaminen epäonnistui. Tarkista verkkoyhteys ja yritä uudelleen.",
+        "description": "Shown if request to Signal servers to find phone number fails"
+    },
     "startConversation--username-not-found": {
         "message": "Käyttäjää ei löydy. $atUsername$ ei ole Signal-käyttäjä. Varmista, että olet syöttänyt koko käyttäjätunnuksen.",
         "description": "Shown in dialog if username is not found. Note that 'username' will be the output of at-username",
@@ -2386,6 +2412,26 @@
             "atUsername": {
                 "content": "$1",
                 "example": "@alex"
+            }
+        }
+    },
+    "startConversation--phone-number-not-found": {
+        "message": "Käyttäjää ei löydy. $phoneNumber$ ei ole Signal-käyttäjä.",
+        "description": "Shown in dialog if phone number is not found.",
+        "placeholders": {
+            "phoneNumber": {
+                "content": "$1",
+                "example": "+1 203-123-4567"
+            }
+        }
+    },
+    "startConversation--phone-number-not-valid": {
+        "message": "Käyttäjää ei löydy. \"$phoneNumber$\" ei ole kelvollinen puhelinnumero.",
+        "description": "Shown in dialog if phone number is not valid.",
+        "placeholders": {
+            "phoneNumber": {
+                "content": "$1",
+                "example": "+1 203-123-4567"
             }
         }
     },
@@ -2506,15 +2552,15 @@
         "description": ""
     },
     "autoUpdateNewVersionMessage": {
-        "message": "Napsauta uudelleenkäynnistääksesi Signalin",
+        "message": "Käynnistä Signal uudelleen napsauttamalla",
         "description": ""
     },
     "downloadNewVersionMessage": {
-        "message": "Napsauta ladataksesi päivityksen",
+        "message": "Lataa päivitys napsauttamalla",
         "description": ""
     },
     "downloadFullNewVersionMessage": {
-        "message": "Signalin päivitys ei onnistunut. Napsauta yrittääksesi uudelleen.",
+        "message": "Signalin päivitys ei onnistunut. Yritä uudelleen napsauttamalla.",
         "description": "Shown in update dialog when partial update fails and we have to ask user to download full update"
     },
     "autoUpdateNewVersionInstructions": {
@@ -3166,7 +3212,7 @@
         "description": "The title of the Sticker Pack Creator window"
     },
     "StickerCreator--DropZone--staticText": {
-        "message": "Napsauta lisätäksesi tai pudota kuvat tähän",
+        "message": "Lisää napsauttamalla tai pudota kuvia tähän",
         "description": "Text which appears on the Sticker Creator drop zone when there is no active drag"
     },
     "StickerCreator--DropZone--activeText": {
@@ -3218,11 +3264,11 @@
         "description": "Label for the X button used to remove a staged sticker"
     },
     "StickerCreator--DropStage--dragDrop": {
-        "message": "Napsauta tai raahaa tiedostoa lisätäksesi tarran",
+        "message": "Lisää tarra napsauttamalla tai vetämällä ja pudottamalla tiedosto",
         "description": "Shown on the + section of the file addition stage of sticker pack creation"
     },
     "StickerCreator--DropStage--help": {
-        "message": "Tarrojen tulee olla PNG-, APNG- tai WebP-muodossa läpinäkyvällä taustalla ja 512x512 pikseliä. Suositeltu marginaali on 16 pikseliä.",
+        "message": "Tarran tulee olla PNG-, APNG- tai WebP-muodossa, läpinäkyvällä taustalla ja kooltaan 512 x 512 pikseliä. Suositeltu marginaali on 16 pikseliä.",
         "description": "Help text for the drop stage of the sticker creator"
     },
     "StickerCreator--DropStage--showMargins": {
@@ -3230,7 +3276,7 @@
         "description": "Text for the show margins toggle on the drop stage of the sticker creator"
     },
     "StickerCreator--DropStage--addMore": {
-        "message": "Lisää $count$ tai enemmän",
+        "message": "Lisää vielä vähintään $count$",
         "description": "Text to show user how many more stickers they must add",
         "placeholders": {
             "hashtag": {
@@ -4102,6 +4148,14 @@
     "GroupV2--join--link-revoked": {
         "message": "Tämä ryhmälinkki ei ole enää kelvollinen.",
         "description": "Shown if you click a group link and we can't get information about it"
+    },
+    "GroupV2--join--link-forbidden--title": {
+        "message": "Ryhmään liittyminen epäonnistui",
+        "description": "Shown if you click a group link and you have been forbidden from joining via the link"
+    },
+    "GroupV2--join--link-forbidden": {
+        "message": "Et voi liittyä ryhmään linkin avulla koska ylläpitäjä poisti sinut ryhmästä.",
+        "description": "Shown if you click a group link and you have been forbidden from joining via the link"
     },
     "GroupV2--join--prompt-with-approval": {
         "message": "Tämän ryhmän ylläpitäjän on hyväksyttävä pyyntösi ennen kuin voit liittyä tähän ryhmään. Kun pyyntösi hyväksytään, nimesi ja kuvasi jaetaan sen jäsenille.",
@@ -5137,6 +5191,30 @@
             }
         }
     },
+    "GroupV2--admin-approval-bounce--one": {
+        "message": "$joinerName$ pyysi ja perui jäsenyyspyyntönsä ryhmälinkin välityksellä",
+        "description": "Shown in timeline or conversation preview when v2 group changes",
+        "placeholders": {
+            "joinerName": {
+                "content": "$1",
+                "example": "Alice"
+            }
+        }
+    },
+    "GroupV2--admin-approval-bounce": {
+        "message": "$joinerName$ pyysi ja perui $numberOfRequests$ jäsenyyspyyntöä ryhmälinkin välityksellä",
+        "description": "Shown in timeline or conversation preview when v2 group changes",
+        "placeholders": {
+            "joinerName": {
+                "content": "$1",
+                "example": "Alice"
+            },
+            "numberOfRequests": {
+                "content": "$1",
+                "example": "3"
+            }
+        }
+    },
     "GroupV2--group-link-add--disabled--you": {
         "message": "Otit ryhmälinkin käyttöön. Liittymispyynnöt eivät ole käytössä.",
         "description": "Shown in timeline or conversation preview when v2 group changes"
@@ -5713,6 +5791,16 @@
             }
         }
     },
+    "PendingRequests--deny-for--with-link": {
+        "message": "Kielletäänkö pyyntö käyttäjältä \"$name$\"? He eivät voi enää pyytää jäsenyyttä ryhmälinkin välityksellä.",
+        "description": "This is the modal content when confirming denying a group request to join",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Meowsy Purrington"
+            }
+        }
+    },
     "PendingInvites--invites": {
         "message": "Sinun lähettämäsi kutsut",
         "description": "This is the title list of all invites"
@@ -5802,6 +5890,28 @@
     "PendingInvites--info": {
         "message": "Ryhmään kutsutun henkilön tiedot näytetään vasta ryhmään liittymisen jälkeen. Kutsuttu ei näe ryhmän viestejä ennen liittymistä.",
         "description": "Information shown below the invite list"
+    },
+    "PendingRequests--block--button": {
+        "message": "Hylkää pyyntö",
+        "description": "Shown in timeline if users cancel their request to join a group via a group link"
+    },
+    "PendingRequests--block--title": {
+        "message": "Hylätäänkö pyyntö?",
+        "description": "Title of dialog to block a user from requesting to join via the link again"
+    },
+    "PendingRequests--block--contents": {
+        "message": "$name$ ei voi liittyä tai pyytää jäsenyyttä ryhmälinkin kautta. Heidät voidaan edelleen lisätä ryhmään manuaalisesti.",
+        "description": "Details of dialog to block a user from requesting to join via the link again",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Annoying Person"
+            }
+        }
+    },
+    "PendingRequests--block--confirm": {
+        "message": "Hylkää pyyntö",
+        "description": "Confirmation button of dialog to block a user from requesting to join via the link again"
     },
     "AvatarInput--no-photo-label--group": {
         "message": "Lisää ryhmän kuva",
@@ -6036,7 +6146,7 @@
         "description": "Shown in the timeline warning when you have a message request from someone with the same name as someone else"
     },
     "ContactSpoofing__same-name-in-group__link": {
-        "message": "Napsauta tarkastellaksesi",
+        "message": "Tarkastele napsauttamalla",
         "description": "Shown in the timeline warning when you multiple group members have the same name"
     },
     "ContactSpoofingReviewDialog__title": {
@@ -6087,6 +6197,16 @@
     },
     "RemoveGroupMemberConfirmation__description": {
         "message": "Poista \"$name$\" ryhmästä?",
+        "description": "When confirming the removal of a group member, show this text in the dialog",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane Doe"
+            }
+        }
+    },
+    "RemoveGroupMemberConfirmation__description__with-link": {
+        "message": "Poistetaanko \"$name$\" ryhmästä? He eivät voi liittyä ryhmälinkin välityksellä uudelleen.",
         "description": "When confirming the removal of a group member, show this text in the dialog",
         "placeholders": {
             "name": {
@@ -6238,7 +6358,7 @@
         "description": "Title for the custom disappearing message timeout dialog"
     },
     "DisappearingTimeDialog__body": {
-        "message": "Valitse haluamasi aika viestin poistumiselle.",
+        "message": "Valitse aika viestin katoamiselle.",
         "description": "Body for the custom disappearing message timeout dialog"
     },
     "DisappearingTimeDialog__set": {
@@ -6246,23 +6366,23 @@
         "description": "Text for the dialog button confirming the custom disappearing message timeout"
     },
     "DisappearingTimeDialog__seconds": {
-        "message": "Sekuntia",
+        "message": "sekuntia",
         "description": "Name of the 'seconds' unit select for the custom disappearing message timeout dialog"
     },
     "DisappearingTimeDialog__minutes": {
-        "message": "Minuuttia",
+        "message": "minuuttia",
         "description": "Name of the 'minutes' unit select for the custom disappearing message timeout dialog"
     },
     "DisappearingTimeDialog__hours": {
-        "message": "Tuntia",
+        "message": "tuntia",
         "description": "Name of the 'hours' unit select for the custom disappearing message timeout dialog"
     },
     "DisappearingTimeDialog__days": {
-        "message": "Päivää",
+        "message": "päivää",
         "description": "Name of the 'days' unit select for the custom disappearing message timeout dialog"
     },
     "DisappearingTimeDialog__weeks": {
-        "message": "Viikkoa",
+        "message": "viikkoa",
         "description": "Name of the 'weeks' unit select for the custom disappearing message timeout dialog"
     },
     "settings__DisappearingMessages__footer": {
@@ -6284,7 +6404,7 @@
         }
     },
     "ErrorBoundaryNotification__text": {
-        "message": "Ei voitu näyttää tätä viestiä. Napsauta lähettääksesi virhelokin.",
+        "message": "Viestiä ei voitu näyttää. Lähetä virheilmoitus napsauttamalla.",
         "description": "An error notification displayed when message fails to render due to an internal error"
     },
     "GroupDescription__read-more": {
@@ -6544,7 +6664,7 @@
         "description": "Button to switch the settings view"
     },
     "Preferences--lastSynced": {
-        "message": "Viimeinen tuonti $date$ $time$",
+        "message": "Viimeisin tuonti $date$ $time$",
         "description": "Label for date and time of last sync operation",
         "placeholders": {
             "date": {
@@ -6676,7 +6796,7 @@
         "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
     },
     "NSIS__retry-dialog--second-line": {
-        "message": "Sulje se itse ja napsauta Yritä uudelleen jatkaaksesi.",
+        "message": "Sulje se itse ja jatka napsauttamalla Yritä uudelleen.",
         "description": "Second line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
     },
     "CrashReportDialog__title": {
@@ -6700,7 +6820,7 @@
         "description": "Shown in the header of the modal for customizing the preferred reactions. Also shown in the tooltip for the button that opens this modal."
     },
     "CustomizingPreferredReactions__subtitle": {
-        "message": "Napsauta vaihtaaksesi emojin",
+        "message": "Vaihda emoji napsauttamalla",
         "description": "Instructions in the modal for customizing the preferred reactions."
     },
     "CustomizingPreferredReactions__had-save-error": {
@@ -6927,13 +7047,15 @@
     },
     "StoryListItem__hide-modal--confirm": {
         "message": "Piilota",
-        "description": "Action button for the confirmation dialog to hide a story",
-        "placeholders": {
-            "name": {
-                "content": "$1",
-                "example": "Abby"
-            }
-        }
+        "description": "Action button for the confirmation dialog to hide a story"
+    },
+    "StoryImage__error": {
+        "message": "Kuvan näyttämisessä tapahtui virhe",
+        "description": "aria-label for image errors"
+    },
+    "TextAttachment__preview__link": {
+        "message": "Avaa linkki",
+        "description": "Title for the link preview tooltip"
     },
     "WhatsNew__modal-title": {
         "message": "Uudet ominaisuudet",
@@ -6943,22 +7065,6 @@
         "message": "Tämä versio sisältää useita pieniä parannuksia ja virhekorjauksia, jotka pitävät Signalin toiminnan sujuvana.",
         "description": "Release notes for releases that only include bug fixes"
     },
-    "WhatsNew__v5.34--1": {
-        "message": "Oletko koskaan käyttänyt Signalia epävakaalla verkkoyhteydellä? Enää ei ole tarvetta huoleen - katoavien viestien ajastin muuttuu ja jatkossa synkronoidaan enemmän, kun yhteytesi voi taas paremmin.",
-        "description": "Release notes for v5.34"
-    },
-    "WhatsNew__v5.35--1": {
-        "message": "Uusi päivitysjärjestelmä on otettu käyttöön ja jatkossa päivitysten pitäisi sujua huomaamattomammin.",
-        "description": "Release notes for v5.35"
-    },
-    "WhatsNew__v5.35--2": {
-        "message": "Signal ei enää estä erikoisnäppäinten (medianäppäimet) toimintaa.",
-        "description": "Release notes for v5.35"
-    },
-    "WhatsNew__v5.35--3": {
-        "message": "Parempi fonttituki japanilaisille ystävillemme.",
-        "description": "Release notes for v5.35"
-    },
     "WhatsNew__v5.36--1": {
         "message": "Vilkaisetko ryhmäkeskustelua nopeasti? Näytölle mahtuu enemmän viestejä saman aikaisesti. Ryhmittelemme nyt lähettäjän viestit yhteen, jos niiden lähetysaijat ovat läheisiä.",
         "description": "Release notes for v5.36"
@@ -6967,8 +7073,20 @@
         "message": "Kun suoritat poiston kaikilta, näet nyt edistymisanimaation, joka kertoo onko poisto onnistunut vai ei. Jos poisto jostakin syystä epäonnistuu, voit myös yrittää uudelleen!",
         "description": "Release notes for v5.36"
     },
-    "WhatsNew__v5.36--3": {
-        "message": "Kiitos vapaaehtoiskääntäjiemme, olemme lisänneet tuen skotlannin gaelille!",
-        "description": "Release notes for v5.36"
+    "WhatsNew__v5.37--1": {
+        "message": "Pidämme lyhyet viestit lyhyinä sijoitamalla asiat, kuten aikaleimat samalle riville tekstin kanssa. Nyt ruudulla on enemmän tilaa kaverin pikaiselle 'tervehdykselle'.",
+        "description": "Release notes for v5.37"
+    },
+    "WhatsNew__v5.37--2": {
+        "message": "Puuttuvat tarrapaketit kadotkoon! Puhelimella toimivien tarrapakettien pitäisi nyt toimia myös työpöydällä!",
+        "description": "Release notes for v5.37"
+    },
+    "WhatsNew__v5.39--1": {
+        "message": "Voit nyt lisätä ihmisiä ryhmiin pelkän puhelinnumeron perusteella.",
+        "description": "Release notes for v5.39"
+    },
+    "WhatsNew__v5.39--2": {
+        "message": "Lempiyhteystietosi ovat nyt vain muutaman näppäinpainalluksen päässä. Yhteystietohaku tukee nyt muitakin kuin latinalaisia merkistöjä, kuten esimerkiksi kyrillisiä merkistöjä.",
+        "description": "Release notes for v5.39"
     }
 }

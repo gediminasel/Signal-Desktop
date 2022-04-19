@@ -87,6 +87,7 @@ export type PropsBackboneActions = Pick<
   | 'showExpiredOutgoingTapToViewToast'
   | 'showForwardMessageModal'
   | 'showVisualAttachment'
+  | 'startConversation'
 >;
 
 export type PropsReduxActions = Pick<
@@ -297,6 +298,7 @@ export class MessageDetail extends React.Component<Props> {
       showExpiredOutgoingTapToViewToast,
       showForwardMessageModal,
       showVisualAttachment,
+      startConversation,
       theme,
     } = this.props;
 
@@ -345,6 +347,9 @@ export class MessageDetail extends React.Component<Props> {
             replyToMessage={replyToMessage}
             retryDeleteForEveryone={retryDeleteForEveryone}
             retrySend={retrySend}
+            shouldCollapseAbove={false}
+            shouldCollapseBelow={false}
+            shouldHideMetadata={false}
             showForwardMessageModal={showForwardMessageModal}
             scrollToQuotedMessage={() => {
               log.warn('MessageDetail: scrollToQuotedMessage called!');
@@ -361,6 +366,7 @@ export class MessageDetail extends React.Component<Props> {
               log.warn('MessageDetail: deleteMessageForEveryone called!');
             }}
             showVisualAttachment={showVisualAttachment}
+            startConversation={startConversation}
             theme={theme}
           />
         </div>

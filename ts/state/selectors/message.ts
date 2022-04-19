@@ -1447,7 +1447,7 @@ export function getMessagePropStatus(
 export function getPropsForEmbeddedContact(
   message: MessageWithUIFieldsType,
   regionCode: string | undefined,
-  accountSelector: (identifier?: string) => boolean
+  accountSelector: (identifier?: string) => UUIDStringType | undefined
 ): EmbeddedContactType | undefined {
   const contacts = message.contact;
   if (!contacts || !contacts.length) {
@@ -1463,7 +1463,7 @@ export function getPropsForEmbeddedContact(
     getAbsoluteAttachmentPath:
       window.Signal.Migrations.getAbsoluteAttachmentPath,
     firstNumber,
-    isNumberOnSignal: accountSelector(firstNumber),
+    uuid: accountSelector(firstNumber),
   });
 }
 

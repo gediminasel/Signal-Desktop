@@ -29,7 +29,7 @@ import { TimelineWarning } from './TimelineWarning';
 import { TimelineWarnings } from './TimelineWarnings';
 import { NewlyCreatedGroupInvitedContactsDialog } from '../NewlyCreatedGroupInvitedContactsDialog';
 import { ContactSpoofingType } from '../../util/contactSpoofing';
-import { ContactSpoofingReviewDialog } from './ContactSpoofingReviewDialog';
+import type { PropsType as SmartContactSpoofingReviewDialogPropsType } from '../../state/smart/ContactSpoofingReviewDialog';
 import type { GroupNameCollisionsWithIdsByTitle } from '../../util/groupMemberNameCollisions';
 import { hasUnacknowledgedCollisions } from '../../util/groupMemberNameCollisions';
 import { TimelineFloatingHeader } from './TimelineFloatingHeader';
@@ -46,6 +46,7 @@ import {
   setScrollBottom,
 } from '../../util/scrollUtil';
 import { LastSeenIndicator } from './LastSeenIndicator';
+import { MINUTE } from '../../util/durations';
 
 const AT_BOTTOM_THRESHOLD = 15;
 const AT_BOTTOM_DETECTOR_STYLE = { height: AT_BOTTOM_THRESHOLD };
@@ -95,7 +96,6 @@ export type PropsDataType = {
 
 type PropsHousekeepingType = {
   id: string;
-  conversation: ConversationType;
   isConversationSelected: boolean;
   isGroupV1AndDisabled?: boolean;
   isIncomingMessageRequest: boolean;
@@ -133,6 +133,9 @@ type PropsHousekeepingType = {
     updateSharedGroups: () => unknown
   ) => JSX.Element;
   renderTypingBubble: (id: string) => JSX.Element;
+  renderContactSpoofingReviewDialog: (
+    props: SmartContactSpoofingReviewDialogPropsType
+  ) => JSX.Element;
 };
 
 export type PropsActionsType = {
@@ -160,6 +163,7 @@ export type PropsActionsType = {
   onDelete: (conversationId: string) => unknown;
   onUnblock: (conversationId: string) => unknown;
   peekGroupCallForTheFirstTime: (conversationId: string) => unknown;
+  peekGroupCallIfItHasMembers: (conversationId: string) => unknown;
   removeMember: (conversationId: string) => unknown;
   selectMessage: (messageId: string, conversationId: string) => unknown;
   clearSelectedMessage: () => unknown;
@@ -219,6 +223,7 @@ const getActions = createSelector(
       'onDelete',
       'onUnblock',
       'peekGroupCallForTheFirstTime',
+      'peekGroupCallIfItHasMembers',
       'removeMember',
       'selectMessage',
       'clearSelectedMessage',
@@ -248,6 +253,7 @@ const getActions = createSelector(
       'scrollToQuotedMessage',
       'showExpiredIncomingTapToViewToast',
       'showExpiredOutgoingTapToViewToast',
+      'startConversation',
 
       'showIdentity',
 
@@ -279,6 +285,7 @@ export class Timeline extends React.Component<
 
   private hasRecentlyScrolledTimeout?: NodeJS.Timeout;
   private delayedPeekTimeout?: NodeJS.Timeout;
+  private peekInterval?: NodeJS.Timeout;
 
   override state: StateType = {
     hasRecentlyScrolled: true,
@@ -560,18 +567,27 @@ export class Timeline extends React.Component<
 
     this.delayedPeekTimeout = setTimeout(() => {
       const { id, peekGroupCallForTheFirstTime } = this.props;
+      this.delayedPeekTimeout = undefined;
       peekGroupCallForTheFirstTime(id);
     }, 500);
+
+    this.peekInterval = setInterval(() => {
+      const { id, peekGroupCallIfItHasMembers } = this.props;
+      peekGroupCallIfItHasMembers(id);
+    }, MINUTE);
   }
 
   public override componentWillUnmount(): void {
-    const { delayedPeekTimeout } = this;
+    const { delayedPeekTimeout, peekInterval } = this;
 
     window.unregisterForActive(this.markNewestBottomVisibleMessageRead);
 
     this.intersectionObserver?.disconnect();
 
     clearTimeoutIfNecessary(delayedPeekTimeout);
+    if (peekInterval) {
+      clearInterval(peekInterval);
+    }
   }
 
   public override getSnapshotBeforeUpdate(
@@ -764,7 +780,6 @@ export class Timeline extends React.Component<
       clearInvitedUuidsForNewlyCreatedGroup,
       closeContactSpoofingReview,
       contactSpoofingReview,
-      conversation,
       getPreferredBadge,
       getTimestampForMessage,
       haveNewest,
@@ -786,6 +801,7 @@ export class Timeline extends React.Component<
       renderHeroRow,
       renderItem,
       renderTypingBubble,
+      renderContactSpoofingReviewDialog,
       reviewGroupMemberNameCollision,
       reviewMessageRequestNameCollision,
       showContactModal,
@@ -1029,26 +1045,21 @@ export class Timeline extends React.Component<
 
       switch (contactSpoofingReview.type) {
         case ContactSpoofingType.DirectConversationWithSameTitle:
-          contactSpoofingReviewDialog = (
-            <ContactSpoofingReviewDialog
-              {...commonProps}
-              type={ContactSpoofingType.DirectConversationWithSameTitle}
-              possiblyUnsafeConversation={
-                contactSpoofingReview.possiblyUnsafeConversation
-              }
-              safeConversation={contactSpoofingReview.safeConversation}
-            />
-          );
+          contactSpoofingReviewDialog = renderContactSpoofingReviewDialog({
+            ...commonProps,
+            type: ContactSpoofingType.DirectConversationWithSameTitle,
+            possiblyUnsafeConversation:
+              contactSpoofingReview.possiblyUnsafeConversation,
+            safeConversation: contactSpoofingReview.safeConversation,
+          });
           break;
         case ContactSpoofingType.MultipleGroupMembersWithSameTitle:
-          contactSpoofingReviewDialog = (
-            <ContactSpoofingReviewDialog
-              {...commonProps}
-              type={ContactSpoofingType.MultipleGroupMembersWithSameTitle}
-              group={conversation}
-              collisionInfoByTitle={contactSpoofingReview.collisionInfoByTitle}
-            />
-          );
+          contactSpoofingReviewDialog = renderContactSpoofingReviewDialog({
+            ...commonProps,
+            type: ContactSpoofingType.MultipleGroupMembersWithSameTitle,
+            groupConversationId: id,
+            collisionInfoByTitle: contactSpoofingReview.collisionInfoByTitle,
+          });
           break;
         default:
           throw missingCaseError(contactSpoofingReview);

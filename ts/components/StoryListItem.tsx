@@ -9,12 +9,23 @@ import type { ConversationType } from '../state/ducks/conversations';
 import { Avatar, AvatarSize, AvatarStoryRing } from './Avatar';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import { ContextMenuPopper } from './ContextMenu';
-import { getAvatarColor } from '../types/Colors';
 import { MessageTimestamp } from './conversation/MessageTimestamp';
+import { StoryImage } from './StoryImage';
+import { getAvatarColor } from '../types/Colors';
 
 export type ConversationStoryType = {
   conversationId: string;
-  group?: Pick<ConversationType, 'title'>;
+  group?: Pick<
+    ConversationType,
+    | 'acceptedMessageRequest'
+    | 'avatarPath'
+    | 'color'
+    | 'id'
+    | 'name'
+    | 'profileName'
+    | 'sharedGroupNames'
+    | 'title'
+  >;
   hasMultiple?: boolean;
   isHidden?: boolean;
   searchNames?: string; // This is just here to satisfy Fuse's types
@@ -23,6 +34,7 @@ export type ConversationStoryType = {
 
 export type StoryViewType = {
   attachment?: AttachmentType;
+  canReply?: boolean;
   hasReplies?: boolean;
   hasRepliesFromSelf?: boolean;
   isHidden?: boolean;
@@ -53,6 +65,7 @@ export type PropsType = Pick<
   onClick: () => unknown;
   onGoToConversation?: (conversationId: string) => unknown;
   onHideStory?: (conversationId: string) => unknown;
+  queueStoryDownload: (storyId: string) => unknown;
   story: StoryViewType;
 };
 
@@ -64,6 +77,7 @@ export const StoryListItem = ({
   onClick,
   onGoToConversation,
   onHideStory,
+  queueStoryDownload,
   story,
 }: PropsType): JSX.Element => {
   const [hasConfirmHideStory, setHasConfirmHideStory] = useState(false);
@@ -121,6 +135,7 @@ export const StoryListItem = ({
           }
         }}
         ref={setReferenceElement}
+        tabIndex={0}
         type="button"
       >
         <Avatar
@@ -182,14 +197,15 @@ export const StoryListItem = ({
             />
           )}
           {hasMultiple && <div className="StoryListItem__previews--more" />}
-          {attachment && (
-            <div
-              className="StoryListItem__previews--image"
-              style={{
-                backgroundImage: `url("${attachment.thumbnail?.url}")`,
-              }}
-            />
-          )}
+          <StoryImage
+            attachment={attachment}
+            i18n={i18n}
+            isThumbnail
+            label=""
+            moduleClassName="StoryListItem__previews--image"
+            queueStoryDownload={queueStoryDownload}
+            storyId={story.messageId}
+          />
         </div>
       </button>
       <ContextMenuPopper

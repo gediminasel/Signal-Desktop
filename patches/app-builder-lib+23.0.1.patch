@@ -27,7 +27,7 @@ index 01da9f4..094c175 100644
 +export declare function hashFile(file: string, blockSize?: number): Promise<unknown>;
 +export declare function hashFileContents(contents: Buffer | string, blockSize?: number): unknown;
 diff --git a/node_modules/app-builder-lib/out/targets/LinuxTargetHelper.js b/node_modules/app-builder-lib/out/targets/LinuxTargetHelper.js
-index ffcc8bd..4215569 100644
+index ffcc8bd..bafab0e 100644
 --- a/node_modules/app-builder-lib/out/targets/LinuxTargetHelper.js
 +++ b/node_modules/app-builder-lib/out/targets/LinuxTargetHelper.js
 @@ -88,7 +88,7 @@ class LinuxTargetHelper {
@@ -52,3 +52,56 @@ index 1536059..555f8f5 100644
 -
  update-mime-database /usr/share/mime || true
  update-desktop-database /usr/share/applications || true
+diff --git a/node_modules/app-builder-lib/templates/nsis/include/allowOnlyOneInstallerInstance.nsh b/node_modules/app-builder-lib/templates/nsis/include/allowOnlyOneInstallerInstance.nsh
+index cc77993..ac36618 100644
+--- a/node_modules/app-builder-lib/templates/nsis/include/allowOnlyOneInstallerInstance.nsh
++++ b/node_modules/app-builder-lib/templates/nsis/include/allowOnlyOneInstallerInstance.nsh
+@@ -40,7 +40,7 @@
+     ${nsProcess::FindProcess} "${_FILE}" ${_ERR}
+   !else
+     # find process owned by current user
+-    nsExec::Exec `cmd /c tasklist /FI "USERNAME eq %USERNAME%" /FI "IMAGENAME eq ${_FILE}" | find "${_FILE}"`
++    nsExec::Exec `cmd /c tasklist /FI "USERNAME eq %USERNAME%" /FI "IMAGENAME eq ${_FILE}" | %SYSTEMROOT%\System32\find.exe "${_FILE}"`
+     Pop ${_ERR}
+   !endif
+ !macroend
+diff --git a/node_modules/app-builder-lib/templates/nsis/include/extractAppPackage.nsh b/node_modules/app-builder-lib/templates/nsis/include/extractAppPackage.nsh
+index d96a655..f5470bf 100644
+--- a/node_modules/app-builder-lib/templates/nsis/include/extractAppPackage.nsh
++++ b/node_modules/app-builder-lib/templates/nsis/include/extractAppPackage.nsh
+@@ -113,13 +113,21 @@
+       # Try copying a few times before asking for a user action.
+       Goto RetryExtract7za
+     ${else}
+-      MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "$(appCannotBeClosed)" /SD IDCANCEL IDRETRY RetryExtract7za
++      MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "$(appCannotBeClosed)" /SD IDRETRY IDCANCEL AbortExtract7za
+     ${endIf}
+ 
+     # As an absolutely last resort after a few automatic attempts and user
+     # intervention - we will just overwrite everything with `Nsis7z::Extract`
+     # even though it is not atomic and will ignore errors.
++
++    # Clear the temporary folder first to make sure we don't use twice as
++    # much disk space.
++    RMDir /r "$PLUGINSDIR\7z-out"
++
+     Nsis7z::Extract "${FILE}"
++    Goto DoneExtract7za
++
++  AbortExtract7za:
+     Quit
+ 
+   RetryExtract7za:
+diff --git a/node_modules/app-builder-lib/templates/nsis/messages.yml b/node_modules/app-builder-lib/templates/nsis/messages.yml
+index 6527c99..695444c 100644
+--- a/node_modules/app-builder-lib/templates/nsis/messages.yml
++++ b/node_modules/app-builder-lib/templates/nsis/messages.yml
+@@ -45,7 +45,7 @@ x64WinRequired:
+   es: Windows de 64 bits es requerido
+   da: 64-bit Windows er påkrævet
+ appRunning:
+-  en: "${PRODUCT_NAME} is running.\nClick OK to close it."
++  en: "${PRODUCT_NAME} is running.\nClick OK to close it.\nIf it doesn't close, try closing it manually."
+   de: "${PRODUCT_NAME} ist geöffnet. \nKlicken Sie zum Schliessen auf «OK»."
+   it: "${PRODUCT_NAME} è in esecuzione. \nPremi OK per chiudere."
+   fr: "${PRODUCT_NAME} est en cours d’utilisation. \nCliquez sur «OK» pour fermer ce programme."

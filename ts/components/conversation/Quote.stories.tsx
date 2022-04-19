@@ -82,6 +82,9 @@ const defaultMessageProps: MessagesProps = {
   retryDeleteForEveryone: action('default--retryDeleteForEveryone'),
   scrollToQuotedMessage: action('default--scrollToQuotedMessage'),
   selectMessage: action('default--selectMessage'),
+  shouldCollapseAbove: false,
+  shouldCollapseBelow: false,
+  shouldHideMetadata: false,
   showContactDetail: action('default--showContactDetail'),
   showContactModal: action('default--showContactModal'),
   showExpiredIncomingTapToViewToast: action(
@@ -93,6 +96,7 @@ const defaultMessageProps: MessagesProps = {
   showForwardMessageModal: action('default--showForwardMessageModal'),
   showMessageDetail: action('default--showMessageDetail'),
   showVisualAttachment: action('default--showVisualAttachment'),
+  startConversation: action('default--startConversation'),
   status: 'sent',
   text: 'This is really interesting.',
   textDirection: TextDirection.Default,

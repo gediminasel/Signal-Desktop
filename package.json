@@ -4,7 +4,7 @@
   "description": "Private messaging from your desktop",
   "desktopName": "signal.desktop",
   "repository": "https://github.com/signalapp/Signal-Desktop.git",
-  "version": "5.37.0-beta.1",
+  "version": "5.40.0-beta.1",
   "license": "AGPL-3.0-only",
   "author": {
     "name": "Signal Messenger, LLC",
@@ -80,14 +80,14 @@
     "@evanhahn/lottie-web-light": "5.8.1",
     "@popperjs/core": "2.9.2",
     "@react-spring/web": "9.4.1",
-    "@signalapp/signal-client": "0.12.4",
+    "@signalapp/libsignal-client": "0.15.0",
     "@sindresorhus/is": "0.8.0",
     "@types/fabric": "4.5.3",
     "abort-controller": "3.0.0",
     "array-move": "2.1.0",
     "axe-core": "4.1.4",
     "backbone": "1.4.0",
-    "better-sqlite3": "https://github.com/signalapp/better-sqlite3#4f66ee7b85477016dd0b2c3d2f13dcb60abd452e",
+    "better-sqlite3": "https://github.com/signalapp/better-sqlite3#3c4a7eebba3d5f5d8cb88fe83be1c01b8c0dea7d",
     "bezier-easing": "2.1.0",
     "blob-util": "2.0.2",
     "blueimp-load-image": "5.14.0",
@@ -98,9 +98,9 @@
     "dashdash": "1.14.1",
     "dicer": "0.3.1",
     "direction": "1.0.4",
-    "emoji-datasource": "7.0.2",
-    "emoji-datasource-apple": "7.0.2",
-    "emoji-regex": "9.2.2",
+    "emoji-datasource": "14.0.0",
+    "emoji-datasource-apple": "14.0.0",
+    "emoji-regex": "10.1.0",
     "encoding": "0.1.13",
     "fabric": "4.6.0",
     "fast-glob": "3.2.1",
@@ -109,7 +109,7 @@
     "focus-trap-react": "8.8.1",
     "form-data": "4.0.0",
     "fs-extra": "5.0.0",
-    "fuse.js": "3.4.4",
+    "fuse.js": "6.5.3",
     "glob": "7.1.6",
     "google-libphonenumber": "3.2.27",
     "got": "11.8.2",
@@ -126,7 +126,7 @@
     "mac-screen-capture-permissions": "2.0.0",
     "memoizee": "0.4.14",
     "mkdirp": "0.5.2",
-    "moment": "2.29.1",
+    "moment": "2.29.2",
     "mustache": "2.3.0",
     "node-fetch": "2.6.7",
     "node-forge": "1.3.0",
@@ -164,7 +164,7 @@
     "redux-ts-utils": "3.2.2",
     "reselect": "4.1.2",
     "rimraf": "2.6.2",
-    "ringrtc": "https://github.com/signalapp/signal-ringrtc-node.git#fc3a17abb293ffb3f16ead2c39fc16086ba53d31",
+    "ringrtc": "https://github.com/signalapp/signal-ringrtc-node.git#0464fe30a74b0617c976b66528c9a033fa80ad38",
     "rotating-file-stream": "2.1.5",
     "sanitize.css": "11.0.0",
     "semver": "5.4.1",
@@ -189,13 +189,13 @@
     "@chanzuckerberg/axe-storybook-testing": "3.0.2",
     "@electron/fuses": "1.5.0",
     "@mixer/parallel-prettier": "2.0.1",
-    "@signalapp/mock-server": "1.2.0",
+    "@signalapp/mock-server": "1.3.0",
     "@storybook/addon-actions": "5.1.11",
     "@storybook/addon-knobs": "5.1.11",
     "@storybook/addons": "5.1.11",
     "@storybook/react": "5.1.11",
     "@types/backbone": "1.4.5",
-    "@types/better-sqlite3": "7.4.0",
+    "@types/better-sqlite3": "7.5.0",
     "@types/blueimp-load-image": "5.14.1",
     "@types/chai": "4.2.18",
     "@types/chai-as-promised": "7.1.4",
@@ -264,11 +264,11 @@
     "cross-env": "5.2.0",
     "css-loader": "3.2.0",
     "debug": "4.3.3",
-    "electron": "17.1.2",
+    "electron": "17.3.1",
     "electron-builder": "23.0.1",
     "electron-mocha": "11.0.2",
     "electron-notarize": "0.1.1",
-    "esbuild": "0.14.27",
+    "esbuild": "0.14.28",
     "eslint": "7.7.0",
     "eslint-config-airbnb-typescript-prettier": "4.2.0",
     "eslint-config-prettier": "6.11.0",
@@ -296,8 +296,8 @@
     "typed-scss-modules": "4.1.1",
     "typescript": "4.6.2",
     "webpack": "5.30.0",
-    "webpack-cli": "4.6.0",
-    "webpack-dev-server": "3.11.2"
+    "webpack-cli": "4.9.2",
+    "webpack-dev-server": "4.7.4"
   },
   "resolutions": {
     "@storybook/react/@storybook/core/node-fetch": "2.6.1",
@@ -314,9 +314,6 @@
   "build": {
     "appId": "org.whispersystems.signal-desktop",
     "mac": {
-      "asarUnpack": [
-        "**/*.node"
-      ],
       "artifactName": "${name}-mac-${arch}-${version}.${ext}",
       "category": "public.app-category.social-networking",
       "darkModeSupport": true,
@@ -330,7 +327,7 @@
         }
       ],
       "mergeASARs": true,
-      "singleArchFiles": "node_modules/{@signalapp/signal-client/prebuilds/**,ringrtc/build/**,sharp/**}",
+      "singleArchFiles": "node_modules/{@signalapp/libsignal-client/prebuilds/**,ringrtc/build/**,sharp/**}",
       "target": [
         {
           "target": "zip",
@@ -351,11 +348,6 @@
       "bundleVersion": "1"
     },
     "win": {
-      "asarUnpack": [
-        "**/*.node",
-        "node_modules/spellchecker/vendor/hunspell_dictionaries",
-        "node_modules/sharp"
-      ],
       "artifactName": "${name}-win-${version}.${ext}",
       "certificateSubjectName": "Signal Messenger, LLC",
       "certificateSha1": "8C9A0B5C852EC703D83EF7BFBCEB54B796073759",
@@ -382,11 +374,6 @@
       "desktop": {
         "StartupWMClass": "Signal"
       },
-      "asarUnpack": [
-        "**/*.node",
-        "node_modules/spellchecker/vendor/hunspell_dictionaries",
-        "node_modules/sharp"
-      ],
       "target": [
         "deb"
       ],
@@ -411,10 +398,14 @@
     "beforeBuild": "scripts/install-cross-deps.js",
     "afterPack": "ts/scripts/after-pack.js",
     "afterSign": "ts/scripts/after-sign.js",
+    "afterAllArtifactBuild": "ts/scripts/after-all-artifact-build.js",
+    "asar": {
+      "smartUnpack": false
+    },
     "asarUnpack": [
-      "ts/workers/heicConverter.bundle.js",
-      "ts/sql/mainWorker.bundle.js",
-      "node_modules/better-sqlite3/build/Release/better_sqlite3.node"
+      "**/*.node",
+      "node_modules/sharp/{build,vendor}/**",
+      "!node_modules/sharp/**/*.{js,json}"
     ],
     "files": [
       "package.json",
@@ -477,7 +468,7 @@
       "!node_modules/better-sqlite3/deps/*",
       "!node_modules/better-sqlite3/src/*",
       "node_modules/better-sqlite3/build/Release/better_sqlite3.node",
-      "node_modules/@signalapp/signal-client/prebuilds/${platform}-${arch}/*.node",
+      "node_modules/@signalapp/libsignal-client/prebuilds/${platform}-${arch}/*.node",
       "node_modules/ringrtc/build/${platform}/*${arch}*.node",
       "node_modules/mac-screen-capture-permissions/build/Release/*.node",
       "!**/node_modules/react-dom/*/*.development.js",

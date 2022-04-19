@@ -17,10 +17,14 @@ const i18n = setupI18n('en', enMessages);
 const story = storiesOf('Components/StoryViewer', module);
 
 function getDefaultProps(): PropsType {
+  const sender = getDefaultConversation();
+
   return {
+    conversationId: sender.id,
     getPreferredBadge: () => undefined,
     group: undefined,
     i18n,
+    loadStoryReplies: action('loadStoryReplies'),
     markStoryRead: action('markStoryRead'),
     onClose: action('onClose'),
     onNextUserStories: action('onNextUserStories'),
@@ -31,19 +35,18 @@ function getDefaultProps(): PropsType {
     onTextTooLong: action('onTextTooLong'),
     onUseEmoji: action('onUseEmoji'),
     preferredReactionEmoji: ['❤️', '👍', '👎', '😂', '😮', '😢'],
+    queueStoryDownload: action('queueStoryDownload'),
     renderEmojiPicker: () => <div />,
-    replies: Math.floor(Math.random() * 20),
     stories: [
       {
         attachment: fakeAttachment({
           url: '/fixtures/snow.jpg',
         }),
         messageId: '123',
-        sender: getDefaultConversation(),
+        sender,
         timestamp: Date.now(),
       },
     ],
-    views: Math.floor(Math.random() * 20),
   };
 }
 

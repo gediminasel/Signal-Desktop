@@ -15,8 +15,10 @@ import type { PropsType } from './Timeline';
 import { Timeline } from './Timeline';
 import type { TimelineItemType } from './TimelineItem';
 import { TimelineItem } from './TimelineItem';
+import { ContactSpoofingReviewDialog } from './ContactSpoofingReviewDialog';
 import { StorybookThemeContext } from '../../../.storybook/StorybookThemeContext';
 import { ConversationHero } from './ConversationHero';
+import type { PropsType as SmartContactSpoofingReviewDialogPropsType } from '../../state/smart/ContactSpoofingReviewDialog';
 import { getDefaultConversation } from '../../test-both/helpers/getDefaultConversation';
 import { getRandomColor } from '../../test-both/helpers/getRandomColor';
 import { TypingBubble } from './TypingBubble';
@@ -396,6 +398,7 @@ const actions = () => ({
   downloadNewVersion: action('downloadNewVersion'),
 
   startCallingLobby: action('startCallingLobby'),
+  startConversation: action('startConversation'),
   returnToActiveCall: action('returnToActiveCall'),
 
   contactSupport: action('contactSupport'),
@@ -415,31 +418,28 @@ const actions = () => ({
   unblurAvatar: action('unblurAvatar'),
 
   peekGroupCallForTheFirstTime: action('peekGroupCallForTheFirstTime'),
+  peekGroupCallIfItHasMembers: action('peekGroupCallIfItHasMembers'),
 });
 
 const renderItem = ({
   messageId,
   containerElementRef,
   containerWidthBreakpoint,
-  isOldestTimelineItem,
 }: {
   messageId: string;
   containerElementRef: React.RefObject<HTMLElement>;
   containerWidthBreakpoint: WidthBreakpoint;
-  isOldestTimelineItem: boolean;
 }) => (
   <TimelineItem
     getPreferredBadge={() => undefined}
     id=""
-    isOldestTimelineItem={isOldestTimelineItem}
     isSelected={false}
     renderEmojiPicker={() => <div />}
     renderReactionPicker={() => <div />}
     item={items[messageId]}
-    previousItem={undefined}
-    nextItem={undefined}
     i18n={i18n}
     interactionMode="keyboard"
+    isNextItemCallingNotification={false}
     theme={ThemeType.light}
     containerElementRef={containerElementRef}
     containerWidthBreakpoint={containerWidthBreakpoint}
@@ -449,9 +449,31 @@ const renderItem = ({
       <div>*UniversalTimerNotification*</div>
     )}
     renderAudioAttachment={() => <div>*AudioAttachment*</div>}
+    shouldCollapseAbove={false}
+    shouldCollapseBelow={false}
+    shouldHideMetadata={false}
+    shouldRenderDateHeader={false}
     {...actions()}
   />
 );
+
+const renderContactSpoofingReviewDialog = (
+  props: SmartContactSpoofingReviewDialogPropsType
+) => {
+  if (props.type === ContactSpoofingType.MultipleGroupMembersWithSameTitle) {
+    return (
+      <ContactSpoofingReviewDialog
+        {...props}
+        group={{
+          ...getDefaultConversation(),
+          areWeAdmin: true,
+        }}
+      />
+    );
+  }
+
+  return <ContactSpoofingReviewDialog {...props} />;
+};
 
 const getAbout = () => text('about', '👍 Free to chat');
 const getTitle = () => text('name', 'Cayce Bollard');
@@ -502,7 +524,6 @@ const renderTypingBubble = () => (
 );
 
 const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
-  conversation: overrideProps.conversation || getDefaultConversation(),
   discardMessages: action('discardMessages'),
   getPreferredBadge: () => undefined,
   i18n,
@@ -531,6 +552,7 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
   renderItem,
   renderHeroRow,
   renderTypingBubble,
+  renderContactSpoofingReviewDialog,
   isSomeoneTyping: overrideProps.isSomeoneTyping || false,
 
   ...actions(),

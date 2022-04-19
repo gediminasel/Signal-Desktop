@@ -48,6 +48,7 @@ export type DataPropsType = {
     linkPreview?: LinkPreviewType
   ) => void;
   getPreferredBadge: PreferredBadgeSelectorType;
+  hasContact: boolean;
   i18n: LocalizerType;
   isSticker: boolean;
   linkPreview?: LinkPreviewType;
@@ -60,6 +61,7 @@ export type DataPropsType = {
   ) => unknown;
   onTextTooLong: () => void;
   theme: ThemeType;
+  regionCode: string | undefined;
 } & Pick<EmojiButtonProps, 'recentEmojis' | 'skinTone'>;
 
 type ActionPropsType = Pick<
@@ -78,6 +80,7 @@ export const ForwardMessageModal: FunctionComponent<PropsType> = ({
   candidateConversations,
   doForwardMessage,
   getPreferredBadge,
+  hasContact,
   i18n,
   isSticker,
   linkPreview,
@@ -91,6 +94,7 @@ export const ForwardMessageModal: FunctionComponent<PropsType> = ({
   removeLinkPreview,
   skinTone,
   theme,
+  regionCode,
 }) => {
   const inputRef = useRef<null | HTMLInputElement>(null);
   const inputApiRef = React.useRef<InputApi | undefined>();
@@ -99,7 +103,7 @@ export const ForwardMessageModal: FunctionComponent<PropsType> = ({
   >([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredConversations, setFilteredConversations] = useState(
-    filterAndSortConversationsByRecent(candidateConversations, '')
+    filterAndSortConversationsByRecent(candidateConversations, '', regionCode)
   );
   const [attachmentsToForward, setAttachmentsToForward] = useState<
     Array<AttachmentType>
@@ -108,7 +112,7 @@ export const ForwardMessageModal: FunctionComponent<PropsType> = ({
   const [messageBodyText, setMessageBodyText] = useState(messageBody || '');
   const [cannotMessage, setCannotMessage] = useState(false);
 
-  const isMessageEditable = !isSticker;
+  const isMessageEditable = !isSticker && !hasContact;
 
   const hasSelectedMaximumNumberOfContacts =
     selectedContacts.length >= MAX_FORWARD;
@@ -140,6 +144,7 @@ export const ForwardMessageModal: FunctionComponent<PropsType> = ({
     hasContactsSelected &&
     (Boolean(messageBodyText) ||
       isSticker ||
+      hasContact ||
       (attachmentsToForward && attachmentsToForward.length));
 
   const forwardMessage = React.useCallback(() => {
@@ -168,14 +173,20 @@ export const ForwardMessageModal: FunctionComponent<PropsType> = ({
       setFilteredConversations(
         filterAndSortConversationsByRecent(
           candidateConversations,
-          normalizedSearchTerm
+          normalizedSearchTerm,
+          regionCode
         )
       );
     }, 200);
     return () => {
       clearTimeout(timeout);
     };
-  }, [candidateConversations, normalizedSearchTerm, setFilteredConversations]);
+  }, [
+    candidateConversations,
+    normalizedSearchTerm,
+    setFilteredConversations,
+    regionCode,
+  ]);
 
   const contactLookup = useMemo(() => {
     const map = new Map();
@@ -412,6 +423,12 @@ export const ForwardMessageModal: FunctionComponent<PropsType> = ({
                               toggleSelectedConversation(conversationId);
                             }
                           }}
+                          lookupConversationWithoutUuid={
+                            asyncShouldNeverBeCalled
+                          }
+                          showConversation={shouldNeverBeCalled}
+                          showUserNotFoundModal={shouldNeverBeCalled}
+                          setIsFetchingUUID={shouldNeverBeCalled}
                           onSelectConversation={shouldNeverBeCalled}
                           renderMessageSearchResult={() => {
                             shouldNeverBeCalled();
@@ -420,10 +437,6 @@ export const ForwardMessageModal: FunctionComponent<PropsType> = ({
                           rowCount={rowCount}
                           shouldRecomputeRowHeights={false}
                           showChooseGroupMembers={shouldNeverBeCalled}
-                          startNewConversationFromPhoneNumber={
-                            shouldNeverBeCalled
-                          }
-                          startNewConversationFromUsername={shouldNeverBeCalled}
                           theme={theme}
                         />
                       </div>
@@ -469,4 +482,12 @@ export const ForwardMessageModal: FunctionComponent<PropsType> = ({
 
 function shouldNeverBeCalled(..._args: ReadonlyArray<unknown>): void {
   assert(false, 'This should never be called. Doing nothing');
+}
+
+async function asyncShouldNeverBeCalled(
+  ..._args: ReadonlyArray<unknown>
+): Promise<undefined> {
+  shouldNeverBeCalled();
+
+  return undefined;
 }

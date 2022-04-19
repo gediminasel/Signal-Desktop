@@ -12,7 +12,7 @@ import type {
   SealedSenderDecryptionResult,
   SenderCertificate,
   UnidentifiedSenderMessageContent,
-} from '@signalapp/signal-client';
+} from '@signalapp/libsignal-client';
 import {
   CiphertextMessageType,
   DecryptionErrorMessage,
@@ -28,7 +28,7 @@ import {
   signalDecrypt,
   signalDecryptPreKey,
   SignalMessage,
-} from '@signalapp/signal-client';
+} from '@signalapp/libsignal-client';
 
 import {
   IdentityKeys,
@@ -60,7 +60,11 @@ import type { UnprocessedType } from '../textsecure.d';
 import { deriveGroupFields, MASTER_KEY_LENGTH } from '../groups';
 
 import createTaskWithTimeout from './TaskWithTimeout';
-import { processAttachment, processDataMessage } from './processDataMessage';
+import {
+  processAttachment,
+  processDataMessage,
+  processGroupV2Context,
+} from './processDataMessage';
 import { processSyncMessage } from './processSyncMessage';
 import type { EventHandler } from './EventTarget';
 import EventTarget from './EventTarget';
@@ -98,6 +102,7 @@ import {
   MessageRequestResponseEvent,
   FetchLatestEvent,
   KeysEvent,
+  PNIIdentityEvent,
   StickerPackEvent,
   VerifiedEvent,
   ReadSyncEvent,
@@ -110,6 +115,7 @@ import {
 import * as log from '../logging/log';
 import * as durations from '../util/durations';
 import { areArraysMatchingSets } from '../util/areArraysMatchingSets';
+import { generateBlurHash } from '../util/generateBlurHash';
 
 const GROUPV1_ID_LENGTH = 16;
 const GROUPV2_ID_LENGTH = 32;
@@ -192,6 +198,8 @@ export default class MessageReceiver
   private serverTrustRoot: Uint8Array;
 
   private stoppingProcessing?: boolean;
+
+  private pendingPNIIdentityEvent?: PNIIdentityEvent;
 
   constructor({ server, storage, serverTrustRoot }: MessageReceiverOptions) {
     super();
@@ -310,7 +318,6 @@ export default class MessageReceiver
               )
             : ourUuid,
           timestamp: decoded.timestamp?.toNumber(),
-          legacyMessage: dropNull(decoded.legacyMessage),
           content: dropNull(decoded.content),
           serverGuid: decoded.serverGuid,
           serverTimestamp,
@@ -349,6 +356,7 @@ export default class MessageReceiver
   }
 
   public stopProcessing(): void {
+    log.info('MessageReceiver.stopProcessing');
     this.stoppingProcessing = true;
   }
 
@@ -465,6 +473,11 @@ export default class MessageReceiver
   public override addEventListener(
     name: 'keys',
     handler: (ev: KeysEvent) => void
+  ): void;
+
+  public override addEventListener(
+    name: 'pniIdentity',
+    handler: (ev: PNIIdentityEvent) => void
   ): void;
 
   public override addEventListener(
@@ -598,6 +611,13 @@ export default class MessageReceiver
       this.isEmptied = true;
 
       this.maybeScheduleRetryTimeout();
+
+      // Emit PNI identity event after processing the queue
+      const { pendingPNIIdentityEvent } = this;
+      this.pendingPNIIdentityEvent = undefined;
+      if (pendingPNIIdentityEvent) {
+        await this.dispatchAndWait(pendingPNIIdentityEvent);
+      }
     };
 
     const waitForDecryptedQueue = async () => {
@@ -677,8 +697,9 @@ export default class MessageReceiver
 
       const envelope: ProcessedEnvelope = {
         id: item.id,
-        receivedAtCounter: item.timestamp,
-        receivedAtDate: Date.now(),
+        receivedAtCounter: item.receivedAtCounter ?? item.timestamp,
+        receivedAtDate:
+          item.receivedAtCounter === null ? Date.now() : item.timestamp,
         messageAgeSec: item.messageAgeSec || 0,
 
         // Proto.Envelope fields
@@ -690,7 +711,6 @@ export default class MessageReceiver
           decoded.destinationUuid || item.destinationUuid || ourUuid.toString()
         ),
         timestamp: decoded.timestamp?.toNumber(),
-        legacyMessage: dropNull(decoded.legacyMessage),
         content: dropNull(decoded.content),
         serverGuid: decoded.serverGuid,
         serverTimestamp:
@@ -975,7 +995,8 @@ export default class MessageReceiver
       id,
       version: 2,
       envelope: Bytes.toBase64(plaintext),
-      timestamp: envelope.receivedAtCounter,
+      receivedAtCounter: envelope.receivedAtCounter,
+      timestamp: envelope.timestamp,
       attempts: 1,
       messageAgeSec: envelope.messageAgeSec,
     };
@@ -1107,14 +1128,9 @@ export default class MessageReceiver
 
       return;
     }
-    if (envelope.legacyMessage) {
-      await this.innerHandleLegacyMessage(envelope, plaintext);
-
-      return;
-    }
 
     this.removeFromCache(envelope);
-    throw new Error('Received message with no content and no legacyMessage');
+    throw new Error('Received message with no content');
   }
 
   private async unsealEnvelope(
@@ -1144,10 +1160,10 @@ export default class MessageReceiver
 
     strictAssert(uuidKind === UUIDKind.ACI, 'Sealed non-ACI envelope');
 
-    const ciphertext = envelope.content || envelope.legacyMessage;
+    const ciphertext = envelope.content;
     if (!ciphertext) {
       this.removeFromCache(envelope);
-      throw new Error('Received message with no content and no legacyMessage');
+      throw new Error('Received message with no content');
     }
 
     log.info(`MessageReceiver.unsealEnvelope(${logId}): unidentified message`);
@@ -1209,12 +1225,8 @@ export default class MessageReceiver
     }
 
     let ciphertext: Uint8Array;
-    let isLegacy = false;
     if (envelope.content) {
       ciphertext = envelope.content;
-    } else if (envelope.legacyMessage) {
-      ciphertext = envelope.legacyMessage;
-      isLegacy = true;
     } else {
       this.removeFromCache(envelope);
       strictAssert(
@@ -1223,9 +1235,7 @@ export default class MessageReceiver
       );
     }
 
-    log.info(
-      `MessageReceiver.decryptEnvelope(${logId})${isLegacy ? ' (legacy)' : ''}`
-    );
+    log.info(`MessageReceiver.decryptEnvelope(${logId})`);
     const plaintext = await this.decrypt(
       stores,
       envelope,
@@ -1235,11 +1245,6 @@ export default class MessageReceiver
 
     if (!plaintext) {
       log.warn('MessageReceiver.decryptEnvelope: plaintext was falsey');
-      return { plaintext, envelope };
-    }
-
-    // Legacy envelopes do not carry senderKeyDistributionMessage
-    if (isLegacy) {
       return { plaintext, envelope };
     }
 
@@ -1801,15 +1806,32 @@ export default class MessageReceiver
     }
 
     if (msg.textAttachment) {
-      log.error(
-        'MessageReceiver.handleStoryMessage: Got a textAttachment, cannot handle it',
-        logId
+      attachments.push({
+        size: msg.textAttachment.text?.length,
+        textAttachment: msg.textAttachment,
+        blurHash: generateBlurHash(
+          (msg.textAttachment.color ||
+            msg.textAttachment.gradient?.startColor) ??
+            undefined
+        ),
+      });
+    }
+
+    const groupV2 = msg.group ? processGroupV2Context(msg.group) : undefined;
+    if (groupV2 && this.isGroupBlocked(groupV2.id)) {
+      log.warn(
+        `MessageReceiver.handleStoryMessage: envelope ${this.getEnvelopeId(
+          envelope
+        )} ignored; destined for blocked group`
       );
+      this.removeFromCache(envelope);
       return;
     }
 
     const expireTimer = Math.min(
-      (envelope.serverTimestamp + durations.DAY - Date.now()) / 1000,
+      Math.floor(
+        (envelope.serverTimestamp + durations.DAY - Date.now()) / 1000
+      ),
       durations.DAY / 1000
     );
 
@@ -1837,6 +1859,7 @@ export default class MessageReceiver
           attachments,
           expireTimer,
           flags: 0,
+          groupV2,
           isStory: true,
           isViewOnce: false,
           timestamp: envelope.timestamp,
@@ -1857,7 +1880,7 @@ export default class MessageReceiver
     log.info('MessageReceiver.handleDataMessage', logId);
 
     const isStoriesEnabled =
-      isEnabled('desktop.stories') && isEnabled('desktop.internalUser');
+      isEnabled('desktop.stories') || isEnabled('desktop.internalUser');
     if (!isStoriesEnabled && msg.storyContext) {
       log.info(
         `MessageReceiver.handleDataMessage/${logId}: Dropping incoming dataMessage with storyContext field`
@@ -1947,14 +1970,6 @@ export default class MessageReceiver
       this.removeFromCache.bind(this, envelope)
     );
     return this.dispatchAndWait(ev);
-  }
-
-  private async innerHandleLegacyMessage(
-    envelope: ProcessedEnvelope,
-    plaintext: Uint8Array
-  ) {
-    const message = Proto.DataMessage.decode(plaintext);
-    return this.handleDataMessage(envelope, message);
   }
 
   private async maybeUpdateTimestamp(
@@ -2058,7 +2073,7 @@ export default class MessageReceiver
     }
 
     const isStoriesEnabled =
-      isEnabled('desktop.stories') && isEnabled('desktop.internalUser');
+      isEnabled('desktop.stories') || isEnabled('desktop.internalUser');
     if (content.storyMessage) {
       if (isStoriesEnabled) {
         await this.handleStoryMessage(envelope, content.storyMessage);
@@ -2472,6 +2487,9 @@ export default class MessageReceiver
     if (syncMessage.keys) {
       return this.handleKeys(envelope, syncMessage.keys);
     }
+    if (syncMessage.pniIdentity) {
+      return this.handlePNIIdentity(envelope, syncMessage.pniIdentity);
+    }
     if (syncMessage.viewed && syncMessage.viewed.length) {
       return this.handleViewed(envelope, syncMessage.viewed);
     }
@@ -2587,6 +2605,31 @@ export default class MessageReceiver
     );
 
     return this.dispatchAndWait(ev);
+  }
+
+  private async handlePNIIdentity(
+    envelope: ProcessedEnvelope,
+    { publicKey, privateKey }: Proto.SyncMessage.IPniIdentity
+  ): Promise<void> {
+    log.info('MessageReceiver: got pni identity sync message');
+
+    if (!publicKey || !privateKey) {
+      log.warn('MessageReceiver: empty pni identity sync message');
+      return undefined;
+    }
+
+    const ev = new PNIIdentityEvent(
+      { publicKey, privateKey },
+      this.removeFromCache.bind(this, envelope)
+    );
+
+    if (this.isEmptied) {
+      log.info('MessageReceiver: emitting pni identity sync message');
+      return this.dispatchAndWait(ev);
+    }
+
+    log.info('MessageReceiver: scheduling pni identity sync message');
+    this.pendingPNIIdentityEvent = ev;
   }
 
   private async handleStickerPackOperation(

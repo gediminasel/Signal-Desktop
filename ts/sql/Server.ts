@@ -203,11 +203,11 @@ const dataInterface: ServerInterface = {
   getAllConversationIds,
   getAllGroupsInvolvingUuid,
 
-  searchConversations,
   searchMessages,
   searchMessagesInConversation,
 
   getMessageCount,
+  getStoryCount,
   saveMessage,
   saveMessages,
   removeMessage,
@@ -291,6 +291,7 @@ const dataInterface: ServerInterface = {
   _deleteAllStoryReads,
   addNewStoryRead,
   getLastStoryReadsForAuthor,
+  countStoryReadsByConversation,
 
   removeAll,
   removeAllConfiguration,
@@ -314,7 +315,6 @@ const dataInterface: ServerInterface = {
 
   // Server-only
 
-  getCorruptionLog,
   initialize,
   initializeRenderer,
 
@@ -466,19 +466,6 @@ let logger = consoleLogger;
 let globalInstanceRenderer: Database | undefined;
 let databaseFilePath: string | undefined;
 let indexedDBPath: string | undefined;
-
-let corruptionLog = new Array<string>();
-
-SQL.setCorruptionLogger(line => {
-  logger.error(`SQL corruption: ${line}`);
-  corruptionLog.push(line);
-});
-
-function getCorruptionLog(): string {
-  const result = corruptionLog.join('\n');
-  corruptionLog = [];
-  return result;
-}
 
 async function initialize({
   configDir,
@@ -1524,33 +1511,6 @@ async function getAllGroupsInvolvingUuid(
   return rows.map(row => rowToConversation(row));
 }
 
-async function searchConversations(
-  query: string,
-  { limit }: { limit?: number } = {}
-): Promise<Array<ConversationType>> {
-  const db = getInstance();
-  const rows: ConversationRows = db
-    .prepare<Query>(
-      `
-      SELECT json, profileLastFetchedAt
-      FROM conversations WHERE
-        (
-          e164 LIKE $query OR
-          name LIKE $query OR
-          profileFullName LIKE $query
-        )
-      ORDER BY active_at DESC
-      LIMIT $limit
-      `
-    )
-    .all({
-      query: `%${query}%`,
-      limit: limit || 100,
-    });
-
-  return rows.map(row => rowToConversation(row));
-}
-
 async function searchMessages(
   query: string,
   params: { limit?: number; conversationId?: string } = {}
@@ -1684,6 +1644,20 @@ function getMessageCountSync(
     .get({ conversationId });
 
   return count;
+}
+
+async function getStoryCount(conversationId: string): Promise<number> {
+  const db = getInstance();
+  return db
+    .prepare<Query>(
+      `
+        SELECT count(*)
+        FROM messages
+        WHERE conversationId = $conversationId AND isStory = 1;
+        `
+    )
+    .pluck()
+    .get({ conversationId });
 }
 
 async function getMessageCount(conversationId?: string): Promise<number> {
@@ -2340,7 +2314,7 @@ async function getOlderMessagesByConversation(
     messageId?: string;
     receivedAt?: number;
     sentAt?: number;
-    storyId?: UUIDStringType;
+    storyId?: string;
   }
 ): Promise<Array<MessageTypeUnhydrated>> {
   return getOlderMessagesByConversationSync(conversationId, options);
@@ -2358,7 +2332,7 @@ function getOlderMessagesByConversationSync(
     messageId?: string;
     receivedAt?: number;
     sentAt?: number;
-    storyId?: UUIDStringType;
+    storyId?: string;
   } = {}
 ): Array<MessageTypeUnhydrated> {
   const db = getInstance();
@@ -2392,7 +2366,7 @@ function getOlderMessagesByConversationSync(
 
 async function getOlderStories({
   conversationId,
-  limit = 10,
+  limit = 9999,
   receivedAt = Number.MAX_VALUE,
   sentAt,
   sourceUuid,
@@ -2416,7 +2390,7 @@ async function getOlderStories({
         (received_at < $receivedAt
           OR (received_at IS $receivedAt AND sent_at < $sentAt)
         )
-      ORDER BY received_at DESC, sent_at DESC
+      ORDER BY received_at ASC, sent_at ASC
       LIMIT $limit;
       `
     )
@@ -2969,6 +2943,7 @@ function saveUnprocessedSync(data: UnprocessedType): string {
   const {
     id,
     timestamp,
+    receivedAtCounter,
     version,
     attempts,
     envelope,
@@ -2994,6 +2969,7 @@ function saveUnprocessedSync(data: UnprocessedType): string {
     INSERT OR REPLACE INTO unprocessed (
       id,
       timestamp,
+      receivedAtCounter,
       version,
       attempts,
       envelope,
@@ -3006,6 +2982,7 @@ function saveUnprocessedSync(data: UnprocessedType): string {
     ) values (
       $id,
       $timestamp,
+      $receivedAtCounter,
       $version,
       $attempts,
       $envelope,
@@ -3020,6 +2997,7 @@ function saveUnprocessedSync(data: UnprocessedType): string {
   ).run({
     id,
     timestamp,
+    receivedAtCounter: receivedAtCounter ?? null,
     version,
     attempts,
     envelope: envelope || null,
@@ -3155,8 +3133,10 @@ function removeUnprocessedSync(id: string | Array<string>): void {
     return;
   }
 
+  // This can happen normally due to flushing of `cacheRemoveBatcher` in
+  // MessageReceiver.
   if (!id.length) {
-    throw new Error('removeUnprocessedSync: No ids to delete!');
+    return;
   }
 
   assertSync(batchMultiVarQuery(db, id, removeUnprocessedsSync));
@@ -4151,6 +4131,21 @@ async function getLastStoryReadsForAuthor({
       conversationId: conversationId || null,
       limit,
     });
+}
+
+async function countStoryReadsByConversation(
+  conversationId: string
+): Promise<number> {
+  const db = getInstance();
+  return db
+    .prepare<Query>(
+      `
+      SELECT COUNT(storyId) FROM storyReads
+      WHERE conversationId = $conversationId;
+      `
+    )
+    .pluck()
+    .get({ conversationId });
 }
 
 // All data in database

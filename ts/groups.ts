@@ -7,11 +7,10 @@ import {
   flatten,
   fromPairs,
   isNumber,
-  last,
   values,
 } from 'lodash';
 import Long from 'long';
-import type { ClientZkGroupCipher } from '@signalapp/signal-client/zkgroup';
+import type { ClientZkGroupCipher } from '@signalapp/libsignal-client/zkgroup';
 import { v4 as getGuid } from 'uuid';
 import LRU from 'lru-cache';
 import PQueue from 'p-queue';
@@ -2933,6 +2932,7 @@ async function updateGroup(
     );
 
     if (
+      !isMe(contact.attributes) &&
       member.profileKey &&
       member.profileKey.length > 0 &&
       contact.get('profileKey') !== member.profileKey
@@ -2942,6 +2942,7 @@ async function updateGroup(
     }
   });
 
+  let profileFetches: Promise<Array<void>> | undefined;
   if (contactsWithoutProfileKey.length !== 0) {
     log.info(
       `updateGroup/${logId}: fetching ` +
@@ -2951,22 +2952,23 @@ async function updateGroup(
     const profileFetchQueue = new PQueue({
       concurrency: 3,
     });
+    profileFetches = profileFetchQueue.addAll(
+      contactsWithoutProfileKey.map(contact => () => {
+        const active = contact.getActiveProfileFetch();
+        return active || contact.getProfiles();
+      })
+    );
+  }
+
+  if (changeMessagesToSave.length > 0) {
     try {
-      await profileFetchQueue.addAll(
-        contactsWithoutProfileKey.map(contact => () => {
-          const active = contact.getActiveProfileFetch();
-          return active || contact.getProfiles();
-        })
-      );
+      await profileFetches;
     } catch (error) {
       log.error(
         `updateGroup/${logId}: failed to fetch missing profiles`,
         Errors.toLogFormat(error)
       );
     }
-  }
-
-  if (changeMessagesToSave.length > 0) {
     await appendChangeMessages(conversation, changeMessagesToSave);
   }
 
@@ -3583,11 +3585,12 @@ async function getGroupDelta({
   });
 
   const currentRevision = group.revision;
-  let latestRevision = newRevision;
-  const isFirstFetch = !isNumber(currentRevision);
-  let revisionToFetch = isNumber(currentRevision)
-    ? currentRevision + 1
-    : undefined;
+  let includeFirstState = true;
+
+  // The range is inclusive so make sure that we always request the revision
+  // that we are currently at since we might want the latest full state in
+  // `integrateGroupChanges`.
+  let revisionToFetch = isNumber(currentRevision) ? currentRevision : undefined;
 
   let response;
   const changes: Array<Proto.IGroupChanges> = [];
@@ -3596,7 +3599,7 @@ async function getGroupDelta({
     response = await sender.getGroupLog(
       {
         startVersion: revisionToFetch,
-        includeFirstState: isFirstFetch,
+        includeFirstState,
         includeLastState: true,
         maxSupportedChangeEpoch: SUPPORTED_CHANGE_EPOCH,
       },
@@ -3607,13 +3610,10 @@ async function getGroupDelta({
       revisionToFetch = response.end + 1;
     }
 
-    if (latestRevision === undefined) {
-      latestRevision = response.currentRevision ?? response.end;
-    }
+    includeFirstState = false;
   } while (
     response.end &&
-    latestRevision !== undefined &&
-    response.end < latestRevision
+    (newRevision === undefined || response.end < newRevision)
   );
 
   // Would be nice to cache the unused groupChanges here, to reduce server roundtrips
@@ -3621,7 +3621,7 @@ async function getGroupDelta({
   return integrateGroupChanges({
     changes,
     group,
-    newRevision: latestRevision,
+    newRevision,
   });
 }
 
@@ -3682,44 +3682,6 @@ async function integrateGroupChanges({
           error && error.stack ? error.stack : error
         );
       }
-    }
-  }
-
-  const lastState = last(last(changes)?.groupChanges)?.groupState;
-
-  // Apply the last included state if present to make sure that we didn't miss
-  // anything in the log processing above.
-  if (lastState) {
-    try {
-      const { newAttributes, groupChangeMessages, members } =
-        await integrateGroupChange({
-          group: attributes,
-          newRevision,
-          groupState: lastState,
-        });
-
-      if (groupChangeMessages.length !== 0 || finalMembers.length !== 0) {
-        assert(
-          groupChangeMessages.length === 0,
-          'Fallback group state processing should not kick in'
-        );
-
-        log.warn(
-          `integrateGroupChanges/${logId}: local state was different from ` +
-            'the remote final state. ' +
-            `Got ${groupChangeMessages.length} change messages, and ` +
-            `${finalMembers.length} updated members`
-        );
-      }
-
-      attributes = newAttributes;
-      finalMessages.push(groupChangeMessages);
-      finalMembers.push(members);
-    } catch (error) {
-      log.error(
-        `integrateGroupChanges/${logId}: Failed to apply final state`,
-        Errors.toLogFormat(error)
-      );
     }
   }
 
@@ -3789,6 +3751,7 @@ async function integrateGroupChange({
 
   // These need to be populated from the groupChange. But we might not get one!
   let isChangeSupported = false;
+  let isSameVersion = false;
   let isMoreThanOneVersionUp = false;
   let groupChangeActions: undefined | Proto.GroupChange.IActions;
   let decryptedChangeActions: undefined | DecryptedGroupChangeActions;
@@ -3799,11 +3762,16 @@ async function integrateGroupChange({
       groupChange.actions || new Uint8Array(0)
     );
 
+    // Version is higher that what we have in the incoming message
     if (
       groupChangeActions.version &&
       newRevision !== undefined &&
       groupChangeActions.version > newRevision
     ) {
+      log.info(
+        `integrateGroupChange/${logId}: Skipping ` +
+          `${groupChangeActions.version}, newRevision is ${newRevision}`
+      );
       return {
         newAttributes: group,
         groupChangeMessages: [],
@@ -3828,31 +3796,79 @@ async function integrateGroupChange({
       !isNumber(groupChange.changeEpoch) ||
       groupChange.changeEpoch <= SUPPORTED_CHANGE_EPOCH;
 
-    isMoreThanOneVersionUp = Boolean(
-      groupChangeActions.version &&
-        isNumber(group.revision) &&
-        groupChangeActions.version > group.revision + 1
-    );
+    // Version is lower or the same as what we currently have
+    if (group.revision !== undefined && groupChangeActions.version) {
+      if (groupChangeActions.version < group.revision) {
+        log.info(
+          `integrateGroupChange/${logId}: Skipping stale version` +
+            `${groupChangeActions.version}, current ` +
+            `revision is ${group.revision}`
+        );
+        return {
+          newAttributes: group,
+          groupChangeMessages: [],
+          members: [],
+        };
+      }
+      if (groupChangeActions.version === group.revision) {
+        isSameVersion = true;
+      } else if (groupChangeActions.version > group.revision + 1) {
+        isMoreThanOneVersionUp = true;
+      }
+    }
   }
 
-  if (
-    !groupChange ||
-    !isChangeSupported ||
-    isFirstFetch ||
-    (isMoreThanOneVersionUp && !weAreAwaitingApproval)
-  ) {
-    if (!groupState) {
+  let attributes = group;
+  const aggregatedChangeMessages = [];
+  const aggregatedMembers = [];
+
+  const canApplyChange =
+    groupChange &&
+    isChangeSupported &&
+    !isSameVersion &&
+    !isFirstFetch &&
+    (!isMoreThanOneVersionUp || weAreAwaitingApproval);
+
+  // Apply the change first
+  if (canApplyChange) {
+    if (!sourceUuid || !groupChangeActions || !decryptedChangeActions) {
       throw new Error(
-        `integrateGroupChange/${logId}: No group state, but we can't apply changes!`
+        `integrateGroupChange/${logId}: Missing necessary information that should have come from group actions`
       );
     }
 
     log.info(
-      `integrateGroupChange/${logId}: Applying full group state, from version ${group.revision} to ${groupState.version}`,
+      `integrateGroupChange/${logId}: Applying group change actions, ` +
+        `from version ${group.revision} to ${groupChangeActions.version}`
+    );
+
+    const { newAttributes, newProfileKeys } = await applyGroupChange({
+      group,
+      actions: decryptedChangeActions,
+      sourceUuid,
+    });
+
+    const groupChangeMessages = extractDiffs({
+      old: attributes,
+      current: newAttributes,
+      sourceUuid,
+    });
+
+    attributes = newAttributes;
+    aggregatedChangeMessages.push(groupChangeMessages);
+    aggregatedMembers.push(profileKeysToMembers(newProfileKeys));
+  }
+
+  // Apply the group state afterwards to verify that we didn't miss anything
+  if (groupState) {
+    log.info(
+      `integrateGroupChange/${logId}: Applying full group state, ` +
+        `from version ${group.revision} to ${groupState.version}`,
       {
         isChangePresent: Boolean(groupChange),
         isChangeSupported,
         isFirstFetch,
+        isSameVersion,
         isMoreThanOneVersionUp,
         weAreAwaitingApproval,
       }
@@ -3865,47 +3881,50 @@ async function integrateGroupChange({
     );
 
     const { newAttributes, newProfileKeys } = await applyGroupState({
-      group,
+      group: attributes,
       groupState: decryptedGroupState,
       sourceUuid: isFirstFetch ? sourceUuid : undefined,
     });
 
-    return {
-      newAttributes,
-      groupChangeMessages: extractDiffs({
-        old: group,
-        current: newAttributes,
-        sourceUuid: isFirstFetch ? sourceUuid : undefined,
-      }),
-      members: profileKeysToMembers(newProfileKeys),
-    };
-  }
+    const groupChangeMessages = extractDiffs({
+      old: attributes,
+      current: newAttributes,
+      sourceUuid: isFirstFetch ? sourceUuid : undefined,
+    });
 
-  if (!sourceUuid || !groupChangeActions || !decryptedChangeActions) {
-    throw new Error(
-      `integrateGroupChange/${logId}: Missing necessary information that should have come from group actions`
+    const newMembers = profileKeysToMembers(newProfileKeys);
+
+    if (
+      canApplyChange &&
+      (groupChangeMessages.length !== 0 || newMembers.length !== 0)
+    ) {
+      assert(
+        groupChangeMessages.length === 0,
+        'Fallback group state processing should not kick in'
+      );
+
+      log.warn(
+        `integrateGroupChange/${logId}: local state was different from ` +
+          'the remote final state. ' +
+          `Got ${groupChangeMessages.length} change messages, and ` +
+          `${newMembers.length} updated members`
+      );
+    }
+
+    attributes = newAttributes;
+    aggregatedChangeMessages.push(groupChangeMessages);
+    aggregatedMembers.push(newMembers);
+  } else {
+    strictAssert(
+      canApplyChange,
+      `integrateGroupChange/${logId}: No group state, but we can't apply changes!`
     );
   }
 
-  log.info(
-    `integrateGroupChange/${logId}: Applying group change actions, from version ${group.revision} to ${groupChangeActions.version}`
-  );
-
-  const { newAttributes, newProfileKeys } = await applyGroupChange({
-    group,
-    actions: decryptedChangeActions,
-    sourceUuid,
-  });
-  const groupChangeMessages = extractDiffs({
-    old: group,
-    current: newAttributes,
-    sourceUuid,
-  });
-
   return {
-    newAttributes,
-    groupChangeMessages,
-    members: profileKeysToMembers(newProfileKeys),
+    newAttributes: attributes,
+    groupChangeMessages: aggregatedChangeMessages.flat(),
+    members: aggregatedMembers.flat(),
   };
 }
 

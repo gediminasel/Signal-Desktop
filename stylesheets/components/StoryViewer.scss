@@ -29,6 +29,7 @@
   &__close-button {
     @include button-reset;
     @include modal-close-button;
+    top: var(--title-bar-drag-area-height);
   }
 
   &__more {
@@ -36,10 +37,16 @@
     height: 24px;
     position: absolute;
     right: 48px;
-    top: 12px;
+    top: var(--title-bar-drag-area-height);
     width: 24px;
 
     @include color-svg('../images/icons/v2/more-horiz-24.svg', $color-white);
+
+    @include keyboard-mode {
+      &:focus {
+        background-color: $color-ultramarine;
+      }
+    }
   }
 
   &__container {
@@ -64,6 +71,7 @@
     position: absolute;
     transform: translateX(-50%);
     width: 284px;
+    z-index: $z-index-above-base;
 
     &--group-avatar {
       margin-left: -8px;
@@ -82,12 +90,38 @@
     }
   }
 
+  &__caption {
+    @include font-body-1-bold;
+    color: $color-gray-05;
+    padding: 4px 0;
+
+    &__overlay {
+      background: $color-black-alpha-60;
+      height: 100%;
+      left: 0;
+      position: absolute;
+      top: 0;
+      width: 100%;
+      z-index: $z-index-base;
+    }
+  }
+
   &__actions {
-    margin: 16px 0 32px 0;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 32px;
+    min-height: 52px;
   }
 
   &__reply {
     @include button-reset;
+    color: $color-gray-05;
+    @include keyboard-mode {
+      &:focus {
+        color: $color-ultramarine;
+      }
+    }
   }
 
   &__progress {
