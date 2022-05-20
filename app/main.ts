@@ -19,6 +19,7 @@ import {
   dialog,
   ipcMain as ipc,
   Menu,
+  nativeTheme,
   powerSaveBlocker,
   protocol as electronProtocol,
   screen,
@@ -33,8 +34,11 @@ import * as GlobalErrors from './global_errors';
 import { setup as setupCrashReports } from './crashReports';
 import { setup as setupSpellChecker } from './spell_check';
 import { redactAll, addSensitivePath } from '../ts/util/privacy';
+import { missingCaseError } from '../ts/util/missingCaseError';
 import { strictAssert } from '../ts/util/assert';
 import { consoleLogger } from '../ts/util/consoleLogger';
+import type { ThemeSettingType } from '../ts/types/Storage.d';
+import { ThemeType } from '../ts/types/Util';
 
 import './startup_config';
 
@@ -228,6 +232,61 @@ async function getSpellCheckSetting() {
   getLogger().info('got slow spellcheck setting', slowValue);
 
   return slowValue;
+}
+
+type GetThemeSettingOptionsType = Readonly<{
+  ephemeralOnly?: boolean;
+}>;
+
+async function getThemeSetting({
+  ephemeralOnly = false,
+}: GetThemeSettingOptionsType = {}): Promise<ThemeSettingType> {
+  const fastValue = ephemeralConfig.get('theme-setting');
+  if (fastValue !== undefined) {
+    getLogger().info('got fast theme-setting value', fastValue);
+    return fastValue as ThemeSettingType;
+  }
+
+  if (ephemeralOnly) {
+    return 'system';
+  }
+
+  const json = await sql.sqlCall('getItemById', ['theme-setting']);
+
+  // Default to `system` if setting doesn't exist yet
+  const slowValue = json ? json.value : 'system';
+
+  ephemeralConfig.set('theme-setting', slowValue);
+
+  getLogger().info('got slow theme-setting value', slowValue);
+
+  return slowValue;
+}
+
+async function getResolvedThemeSetting(
+  options?: GetThemeSettingOptionsType
+): Promise<ThemeType> {
+  const theme = await getThemeSetting(options);
+  if (theme === 'system') {
+    return nativeTheme.shouldUseDarkColors ? ThemeType.dark : ThemeType.light;
+  }
+  return ThemeType[theme];
+}
+
+async function getBackgroundColor(
+  options?: GetThemeSettingOptionsType
+): Promise<string> {
+  const theme = await getResolvedThemeSetting(options);
+
+  if (theme === 'light') {
+    return '#3a76f0';
+  }
+
+  if (theme === 'dark') {
+    return '#121212';
+  }
+
+  throw missingCaseError(theme);
 }
 
 let systemTrayService: SystemTrayService | undefined;
@@ -479,7 +538,7 @@ async function createWindow() {
         : 'default',
     backgroundColor: isTestEnvironment(getEnvironment())
       ? '#ffffff' // Tests should always be rendered on a white background
-      : '#3a76f0',
+      : await getBackgroundColor(),
     webPreferences: {
       ...defaultWebPrefs,
       nodeIntegration: false,
@@ -489,10 +548,10 @@ async function createWindow() {
         __dirname,
         usePreloadBundle ? '../preload.bundle.js' : '../preload.js'
       ),
-      nativeWindowOpen: true,
       spellcheck: await getSpellCheckSetting(),
       backgroundThrottling: isThrottlingEnabled,
       enablePreferredSizeMode: true,
+      disableBlinkFeatures: 'Accelerated2dCanvas,AcceleratedSmallCanvases',
     },
     icon: windowIcon,
     ...pick(windowConfig, ['autoHideMenuBar', 'width', 'height', 'x', 'y']),
@@ -600,6 +659,7 @@ async function createWindow() {
 
   const moreKeys = {
     isFullScreen: String(Boolean(mainWindow.isFullScreen())),
+    resolvedTheme: await getResolvedThemeSetting(),
   };
 
   if (getEnvironment() === Environment.Test) {
@@ -997,7 +1057,7 @@ function showScreenShareWindow(sourceName: string) {
 }
 
 let aboutWindow: BrowserWindow | undefined;
-function showAbout() {
+async function showAbout() {
   if (aboutWindow) {
     aboutWindow.show();
     return;
@@ -1009,7 +1069,7 @@ function showAbout() {
     resizable: false,
     title: getLocale().i18n('aboutSignalDesktop'),
     autoHideMenuBar: true,
-    backgroundColor: '#3a76f0',
+    backgroundColor: await getBackgroundColor(),
     show: false,
     webPreferences: {
       ...defaultWebPrefs,
@@ -1039,7 +1099,7 @@ function showAbout() {
 }
 
 let settingsWindow: BrowserWindow | undefined;
-function showSettingsWindow() {
+async function showSettingsWindow() {
   if (settingsWindow) {
     settingsWindow.show();
     return;
@@ -1052,7 +1112,7 @@ function showSettingsWindow() {
     resizable: false,
     title: getLocale().i18n('signalDesktopPreferences'),
     autoHideMenuBar: true,
-    backgroundColor: '#3a76f0',
+    backgroundColor: await getBackgroundColor(),
     show: false,
     webPreferences: {
       ...defaultWebPrefs,
@@ -1122,7 +1182,7 @@ async function showStickerCreator() {
     height: 650,
     title: getLocale().i18n('signalDesktopStickerCreator'),
     autoHideMenuBar: true,
-    backgroundColor: '#3a76f0',
+    backgroundColor: await getBackgroundColor(),
     show: false,
     webPreferences: {
       ...defaultWebPrefs,
@@ -1173,16 +1233,14 @@ async function showDebugLogWindow() {
     return;
   }
 
-  const theme = settingsChannel
-    ? await settingsChannel.getSettingFromMainWindow('themeSetting')
-    : undefined;
+  const theme = await getThemeSetting();
   const options = {
     width: 700,
     height: 500,
     resizable: false,
     title: getLocale().i18n('debugLog'),
     autoHideMenuBar: true,
-    backgroundColor: '#3a76f0',
+    backgroundColor: await getBackgroundColor(),
     show: false,
     webPreferences: {
       ...defaultWebPrefs,
@@ -1236,9 +1294,7 @@ function showPermissionsPopupWindow(forCalling: boolean, forCamera: boolean) {
       return;
     }
 
-    const theme = settingsChannel
-      ? await settingsChannel.getSettingFromMainWindow('themeSetting')
-      : undefined;
+    const theme = await getThemeSetting();
     const size = mainWindow.getSize();
     const options = {
       width: Math.min(400, size[0]),
@@ -1246,7 +1302,7 @@ function showPermissionsPopupWindow(forCalling: boolean, forCamera: boolean) {
       resizable: false,
       title: getLocale().i18n('allowAccess'),
       autoHideMenuBar: true,
-      backgroundColor: '#3a76f0',
+      backgroundColor: await getBackgroundColor(),
       show: false,
       modal: true,
       webPreferences: {
@@ -1287,6 +1343,21 @@ function showPermissionsPopupWindow(forCalling: boolean, forCamera: boolean) {
     });
   });
 }
+
+const runSQLCorruptionHandler = async () => {
+  // This is a glorified event handler. Normally, this promise never resolves,
+  // but if there is a corruption error triggered by any query that we run
+  // against the database - the promise will resolve and we will call
+  // `onDatabaseError`.
+  const error = await sql.whenCorrupted();
+
+  getLogger().error(
+    'Detected sql corruption in main process. ' +
+      `Restarting the application immediately. Error: ${error.message}`
+  );
+
+  await onDatabaseError(error.stack || error.message);
+};
 
 async function initializeSQL(
   userDataPath: string
@@ -1332,6 +1403,9 @@ async function initializeSQL(
     sqlInitTimeEnd = Date.now();
   }
 
+  // Only if we've initialized things successfully do we set up the corruption handler
+  runSQLCorruptionHandler();
+
   return { ok: true, error: undefined };
 }
 
@@ -1347,43 +1421,31 @@ const onDatabaseError = async (error: string) => {
 
   const buttonIndex = dialog.showMessageBoxSync({
     buttons: [
-      getLocale().i18n('copyErrorAndQuit'),
       getLocale().i18n('deleteAndRestart'),
+      getLocale().i18n('copyErrorAndQuit'),
     ],
-    defaultId: 0,
+    defaultId: 1,
+    cancelId: 1,
     detail: redactAll(error),
     message: getLocale().i18n('databaseError'),
     noLink: true,
     type: 'error',
   });
 
-  if (buttonIndex === 0) {
+  if (buttonIndex === 1) {
     clipboard.writeText(`Database startup error:\n\n${redactAll(error)}`);
   } else {
     await sql.removeDB();
     userConfig.remove();
+    getLogger().error(
+      'onDatabaseError: Requesting immediate restart after quit'
+    );
     app.relaunch();
   }
 
+  getLogger().error('onDatabaseError: Quitting application');
   app.exit(1);
 };
-
-const runSQLCorruptionHandler = async () => {
-  // This is a glorified event handler. Normally, this promise never resolves,
-  // but if there is a corruption error triggered by any query that we run
-  // against the database - the promise will resolve and we will call
-  // `onDatabaseError`.
-  const error = await sql.whenCorrupted();
-
-  getLogger().error(
-    'Detected sql corruption in main process. ' +
-      `Restarting the application immediately. Error: ${error.message}`
-  );
-
-  await onDatabaseError(error.stack || error.message);
-};
-
-runSQLCorruptionHandler();
 
 let sqlInitPromise:
   | Promise<{ ok: true; error: undefined } | { ok: false; error: Error }>
@@ -1504,6 +1566,12 @@ app.on('ready', async () => {
   const timeout = new Promise(resolveFn =>
     setTimeout(resolveFn, 3000, 'timeout')
   );
+
+  // This color is to be used only in loading screen and in this case we should
+  // never wait for the database to be initialized. Thus the theme setting
+  // lookup should be done only in ephemeral config.
+  const backgroundColor = await getBackgroundColor({ ephemeralOnly: true });
+
   // eslint-disable-next-line more/no-then
   Promise.race([sqlInitPromise, timeout]).then(maybeTimeout => {
     if (maybeTimeout !== 'timeout') {
@@ -1520,7 +1588,7 @@ app.on('ready', async () => {
       height: 265,
       resizable: false,
       frame: false,
-      backgroundColor: '#3a76f0',
+      backgroundColor,
       webPreferences: {
         ...defaultWebPrefs,
         nodeIntegration: false,

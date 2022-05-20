@@ -54,21 +54,23 @@ const {
   closeRecommendedGroupSizeModal,
   conversationStoppedByMissingVerification,
   createGroup,
+  discardMessages,
+  messageChanged,
   openConversationInternal,
   repairNewestMessage,
   repairOldestMessage,
+  resetAllChatColors,
+  reviewGroupMemberNameCollision,
+  reviewMessageRequestNameCollision,
   setComposeGroupAvatar,
   setComposeGroupName,
   setComposeSearchTerm,
   setPreJoinConversation,
   showArchivedConversations,
+  showChooseGroupMembers,
   showInbox,
   startComposing,
-  showChooseGroupMembers,
   startSettingGroupMetadata,
-  resetAllChatColors,
-  reviewGroupMemberNameCollision,
-  reviewMessageRequestNameCollision,
   toggleConversationInChooseMembers,
 } = actions;
 
@@ -316,7 +318,7 @@ describe('both/state/ducks/conversations', () => {
     function getDefaultMessage(id: string): MessageType {
       return {
         attachments: [],
-        conversationId: 'conversationId',
+        conversationId,
         id,
         received_at: previousTime,
         sent_at: previousTime,
@@ -330,9 +332,10 @@ describe('both/state/ducks/conversations', () => {
 
     function getDefaultConversationMessage(): ConversationMessageType {
       return {
+        messageChangeCounter: 0,
         messageIds: [],
         metrics: {
-          totalUnread: 0,
+          totalUnseen: 0,
         },
         scrollToMessageCounter: 0,
       };
@@ -1008,7 +1011,7 @@ describe('both/state/ducks/conversations', () => {
               ...getDefaultConversationMessage(),
               messageIds: [messageIdThree, messageIdTwo, messageId],
               metrics: {
-                totalUnread: 0,
+                totalUnseen: 0,
               },
             },
           },
@@ -1028,7 +1031,7 @@ describe('both/state/ducks/conversations', () => {
               ...getDefaultConversationMessage(),
               messageIds: [messageIdThree, messageIdTwo, messageId],
               metrics: {
-                totalUnread: 0,
+                totalUnseen: 0,
                 newest: {
                   id: messageId,
                   received_at: time,
@@ -1058,7 +1061,7 @@ describe('both/state/ducks/conversations', () => {
               ...getDefaultConversationMessage(),
               messageIds: [],
               metrics: {
-                totalUnread: 0,
+                totalUnseen: 0,
                 newest: {
                   id: messageId,
                   received_at: time,
@@ -1082,7 +1085,7 @@ describe('both/state/ducks/conversations', () => {
               messageIds: [],
               metrics: {
                 newest: undefined,
-                totalUnread: 0,
+                totalUnseen: 0,
               },
             },
           },
@@ -1118,7 +1121,7 @@ describe('both/state/ducks/conversations', () => {
               ...getDefaultConversationMessage(),
               messageIds: [messageId, messageIdTwo, messageIdThree],
               metrics: {
-                totalUnread: 0,
+                totalUnseen: 0,
               },
             },
           },
@@ -1138,7 +1141,7 @@ describe('both/state/ducks/conversations', () => {
               ...getDefaultConversationMessage(),
               messageIds: [messageId, messageIdTwo, messageIdThree],
               metrics: {
-                totalUnread: 0,
+                totalUnseen: 0,
                 oldest: {
                   id: messageId,
                   received_at: time,
@@ -1168,7 +1171,7 @@ describe('both/state/ducks/conversations', () => {
               ...getDefaultConversationMessage(),
               messageIds: [],
               metrics: {
-                totalUnread: 0,
+                totalUnseen: 0,
                 oldest: {
                   id: messageId,
                   received_at: time,
@@ -1192,7 +1195,7 @@ describe('both/state/ducks/conversations', () => {
               messageIds: [],
               metrics: {
                 oldest: undefined,
-                totalUnread: 0,
+                totalUnseen: 0,
               },
             },
           },
@@ -1306,6 +1309,53 @@ describe('both/state/ducks/conversations', () => {
       });
     });
 
+    describe('DISCARD_MESSAGES', () => {
+      const startState: ConversationsStateType = {
+        ...getEmptyState(),
+        messagesLookup: {
+          [messageId]: getDefaultMessage(messageId),
+          [messageIdTwo]: getDefaultMessage(messageIdTwo),
+          [messageIdThree]: getDefaultMessage(messageIdThree),
+        },
+        messagesByConversation: {
+          [conversationId]: {
+            messageChangeCounter: 0,
+            metrics: {
+              totalUnseen: 0,
+            },
+            scrollToMessageCounter: 0,
+            messageIds: [messageId, messageIdTwo, messageIdThree],
+          },
+        },
+      };
+
+      it('eliminates older messages', () => {
+        const toDiscard = {
+          conversationId,
+          numberToKeepAtBottom: 2,
+        };
+        const state = reducer(startState, discardMessages(toDiscard));
+
+        assert.deepEqual(
+          state.messagesByConversation[conversationId]?.messageIds,
+          [messageIdTwo, messageIdThree]
+        );
+      });
+
+      it('eliminates newer messages', () => {
+        const toDiscard = {
+          conversationId,
+          numberToKeepAtTop: 2,
+        };
+        const state = reducer(startState, discardMessages(toDiscard));
+
+        assert.deepEqual(
+          state.messagesByConversation[conversationId]?.messageIds,
+          [messageId, messageIdTwo]
+        );
+      });
+    });
+
     describe('SET_PRE_JOIN_CONVERSATION', () => {
       const startState = {
         ...getEmptyState(),
@@ -1337,6 +1387,139 @@ describe('both/state/ducks/conversations', () => {
         );
 
         assert.isUndefined(resetState.preJoinConversation);
+      });
+    });
+
+    describe('MESSAGE_CHANGED', () => {
+      const startState: ConversationsStateType = {
+        ...getEmptyState(),
+        conversationLookup: {
+          [conversationId]: {
+            ...getDefaultConversation(),
+            id: conversationId,
+            groupVersion: 2,
+            groupId: 'dGhpc2lzYWdyb3VwaWR0aGlzaXNhZ3JvdXBpZHRoaXM=',
+          },
+        },
+        messagesByConversation: {
+          [conversationId]: {
+            messageChangeCounter: 0,
+            messageIds: [messageId, messageIdTwo, messageIdThree],
+            metrics: {
+              totalUnseen: 0,
+            },
+            scrollToMessageCounter: 0,
+          },
+        },
+        messagesLookup: {
+          [messageId]: {
+            ...getDefaultMessage(messageId),
+            displayLimit: undefined,
+          },
+          [messageIdTwo]: {
+            ...getDefaultMessage(messageIdTwo),
+            displayLimit: undefined,
+          },
+          [messageIdThree]: {
+            ...getDefaultMessage(messageIdThree),
+            displayLimit: undefined,
+          },
+        },
+      };
+      const changedMessage = {
+        ...getDefaultMessage(messageId),
+        body: 'changed',
+        displayLimit: undefined,
+      };
+
+      it('updates message data', () => {
+        const state = reducer(
+          startState,
+          messageChanged(messageId, conversationId, changedMessage)
+        );
+
+        assert.deepEqual(state.messagesLookup[messageId], changedMessage);
+        assert.strictEqual(
+          state.messagesByConversation[conversationId]?.messageChangeCounter,
+          0
+        );
+      });
+
+      it('does not update lookup if it is a story reply', () => {
+        const state = reducer(
+          startState,
+          messageChanged(messageId, conversationId, {
+            ...changedMessage,
+            storyId: 'story-id',
+          })
+        );
+
+        assert.deepEqual(
+          state.messagesLookup[messageId],
+          startState.messagesLookup[messageId]
+        );
+        assert.strictEqual(
+          state.messagesByConversation[conversationId]?.messageChangeCounter,
+          0
+        );
+      });
+
+      it('increments message change counter if new message has reactions', () => {
+        const changedMessageWithReaction: MessageType = {
+          ...changedMessage,
+          reactions: [
+            {
+              emoji: '🎁',
+              fromId: 'some-other-id',
+              timestamp: 2222,
+              targetTimestamp: 1111,
+              targetAuthorUuid: 'author-uuid',
+            },
+          ],
+        };
+        const state = reducer(
+          startState,
+          messageChanged(messageId, conversationId, changedMessageWithReaction)
+        );
+
+        assert.deepEqual(
+          state.messagesLookup[messageId],
+          changedMessageWithReaction
+        );
+        assert.strictEqual(
+          state.messagesByConversation[conversationId]?.messageChangeCounter,
+          1
+        );
+      });
+
+      it('does not increment message change counter if only old message had reactions', () => {
+        const updatedStartState = {
+          ...startState,
+          messagesLookup: {
+            [messageId]: {
+              ...startState.messagesLookup[messageId],
+              reactions: [
+                {
+                  emoji: '🎁',
+                  fromId: 'some-other-id',
+                  timestamp: 2222,
+                  targetTimestamp: 1111,
+                  targetAuthorUuid: 'author-uuid',
+                },
+              ],
+            },
+          },
+        };
+        const state = reducer(
+          updatedStartState,
+          messageChanged(messageId, conversationId, changedMessage)
+        );
+
+        assert.deepEqual(state.messagesLookup[messageId], changedMessage);
+        assert.strictEqual(
+          state.messagesByConversation[conversationId]?.messageChangeCounter,
+          0
+        );
       });
     });
 

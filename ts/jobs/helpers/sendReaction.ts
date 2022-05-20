@@ -22,10 +22,11 @@ import { getSendOptions } from '../../util/getSendOptions';
 import { SignalService as Proto } from '../../protobuf';
 import { handleMessageSend } from '../../util/handleMessageSend';
 import { ourProfileKeyService } from '../../services/ourProfileKey';
-import { canReact } from '../../state/selectors/message';
+import { canReact, isStory } from '../../state/selectors/message';
 import { findAndFormatContact } from '../../util/findAndFormatContact';
 import { UUID } from '../../types/UUID';
 import { handleMultipleSendErrors } from './handleMultipleSendErrors';
+import { incrementMessageCounter } from '../../util/incrementMessageCounter';
 
 import type {
   ConversationQueueJobBundle,
@@ -138,9 +139,8 @@ export async function sendReaction(
       type: 'outgoing',
       conversationId: conversation.get('id'),
       sent_at: pendingReaction.timestamp,
-      received_at: window.Signal.Util.incrementMessageCounter(),
+      received_at: incrementMessageCounter(),
       received_at_ms: pendingReaction.timestamp,
-      reaction: reactionForSend,
       timestamp: pendingReaction.timestamp,
       sendStateByConversationId: zipObject(
         Object.keys(pendingReaction.isSentByConversationId || {}),
@@ -150,7 +150,18 @@ export async function sendReaction(
         })
       ),
     });
-    ephemeralMessageForReactionSend.doNotSave = true;
+
+    if (
+      isStory(message.attributes) &&
+      isDirectConversation(conversation.attributes)
+    ) {
+      ephemeralMessageForReactionSend.set({
+        storyId: message.id,
+        storyReactionEmoji: reactionForSend.emoji,
+      });
+    } else {
+      ephemeralMessageForReactionSend.doNotSave = true;
+    }
 
     let didFullySend: boolean;
     const successfulConversationIds = new Set<string>();
@@ -204,12 +215,6 @@ export async function sendReaction(
           return;
         }
 
-        let storyMessage: MessageModel | undefined;
-        const storyId = message.get('storyId');
-        if (storyId) {
-          storyMessage = await getMessageById(storyId);
-        }
-
         log.info('sending direct reaction message');
         promise = window.textsecure.messaging.sendMessageToIdentifier({
           identifier: recipientIdentifiersWithoutMe[0],
@@ -226,10 +231,10 @@ export async function sendReaction(
           groupId: undefined,
           profileKey,
           options: sendOptions,
-          storyContext: storyMessage
+          storyContext: isStory(message.attributes)
             ? {
-                authorUuid: storyMessage.get('sourceUuid'),
-                timestamp: storyMessage.get('sent_at'),
+                authorUuid: message.get('sourceUuid'),
+                timestamp: message.get('sent_at'),
               }
             : undefined,
         });
@@ -261,6 +266,12 @@ export async function sendReaction(
                 timestamp: pendingReaction.timestamp,
                 expireTimer,
                 profileKey,
+                storyContext: isStory(message.attributes)
+                  ? {
+                      authorUuid: message.get('sourceUuid'),
+                      timestamp: message.get('sent_at'),
+                    }
+                  : undefined,
               },
               messageId,
               sendOptions,
@@ -308,12 +319,29 @@ export async function sendReaction(
           didFullySend = false;
         }
       }
+
+      if (!ephemeralMessageForReactionSend.doNotSave) {
+        const reactionMessage = ephemeralMessageForReactionSend;
+
+        await Promise.all([
+          await window.Signal.Data.saveMessage(reactionMessage.attributes, {
+            ourUuid,
+            forceSave: true,
+          }),
+          reactionMessage.hydrateStoryContext(message),
+        ]);
+
+        conversation.addSingleMessage(
+          window.MessageController.register(reactionMessage.id, reactionMessage)
+        );
+      }
     }
 
     const newReactions = reactionUtil.markOutgoingReactionSent(
       getReactions(message),
       pendingReaction,
-      successfulConversationIds
+      successfulConversationIds,
+      message.attributes
     );
     setReactions(message, newReactions);
 

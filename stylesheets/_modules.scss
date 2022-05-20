@@ -62,6 +62,19 @@
   transition: background 0.1s ease-out;
 }
 
+.module-message__quote-story-reaction-header {
+  @include font-subtitle;
+  margin-bottom: 6px;
+
+  .module-message__container-outgoing & {
+    color: $color-white-alpha-80;
+  }
+
+  .module-message__container-incoming & {
+    color: $color-gray-60;
+  }
+}
+
 .module-message--expired {
   animation: module-message__shake 0.2s linear infinite;
 }
@@ -288,6 +301,10 @@
     max-width: 370px;
   }
 }
+
+$message-padding-vertical: 8px;
+$message-padding-horizontal: 12px;
+
 .module-message__container {
   $collapsed-border-radius: 4px;
 
@@ -299,12 +316,11 @@
   min-width: 0px;
   overflow: hidden;
 
-  // These should match the margins in .module-message__attachment-container.
   padding: {
-    left: 12px;
-    right: 12px;
-    top: 8px;
-    bottom: 8px;
+    left: $message-padding-horizontal;
+    right: $message-padding-horizontal;
+    top: $message-padding-vertical;
+    bottom: $message-padding-vertical;
   }
 
   .module-message--collapsed-above & {
@@ -550,13 +566,11 @@
   text-align: center;
   position: relative;
 
-  // These should match the paddings from .module-message__container,
-  // effectively "undoing" that padding.
   margin: {
-    left: -12px;
-    right: -12px;
-    top: -8px;
-    bottom: -8px;
+    left: -$message-padding-horizontal;
+    right: -$message-padding-horizontal;
+    top: -$message-padding-vertical;
+    bottom: -$message-padding-vertical;
   }
 
   line-height: 0;
@@ -583,10 +597,10 @@
   text-align: center;
 
   margin: {
-    left: -12px;
-    right: -12px;
-    top: -9px;
-    bottom: -5px;
+    left: -$message-padding-horizontal;
+    right: -$message-padding-horizontal;
+    top: -$message-padding-vertical - 1px;
+    bottom: -$message-padding-vertical + 3px;
   }
 
   &--with-content-below {
@@ -774,12 +788,12 @@
 
   display: block;
 
-  margin-left: -12px;
-  margin-right: -12px;
+  margin-left: -$message-padding-horizontal;
+  margin-right: -$message-padding-horizontal;
   width: calc(100% + 24px);
   outline: none;
 
-  margin-top: -10px;
+  margin-top: -$message-padding-vertical;
   margin-bottom: 5px;
   overflow: hidden;
 
@@ -795,7 +809,7 @@
 }
 
 .module-message__link-preview__content {
-  padding: 8px 12px;
+  padding: $message-padding-vertical $message-padding-horizontal;
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -1206,10 +1220,10 @@
 
   @include font-body-2-bold;
 
-  margin-top: 8px;
-  margin-bottom: -8px;
-  margin-left: -12px;
-  margin-right: -12px;
+  margin-top: $message-padding-vertical;
+  margin-bottom: -$message-padding-vertical;
+  margin-left: -$message-padding-horizontal;
+  margin-right: -$message-padding-horizontal;
 
   text-align: center;
   padding: 10px;
@@ -1251,6 +1265,301 @@
 
   &--with-reactions {
     padding-bottom: 15px;
+  }
+}
+
+.module-message__unopened-gift-badge__container {
+  cursor: pointer;
+  user-select: none;
+}
+
+.module-message__unopened-gift-badge {
+  width: 240px;
+  height: 132px;
+  background-color: $color-ultramarine;
+  position: relative;
+
+  margin: {
+    left: -$message-padding-horizontal;
+    right: -$message-padding-horizontal;
+    top: -$message-padding-vertical;
+    bottom: $message-padding-vertical;
+  }
+}
+
+.module-message__unopened-gift-badge--outgoing {
+  @include light-theme {
+    border-bottom: 1px solid $color-white-alpha-80;
+  }
+  @include dark-theme {
+    border-bottom: 1px solid $color-gray-95;
+  }
+}
+
+.module-message__unopened-gift-badge__ribbon-horizontal {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: $color-white;
+}
+.module-message__unopened-gift-badge__ribbon-vertical {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: $color-white;
+}
+.module-message__unopened-gift-badge__bow {
+  position: absolute;
+
+  // Centered
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  // For proper alignment with the ribbons
+  margin-top: 3px;
+
+  // 75.26px by 51.93px in Figma, but there's a buffer in the SVG file
+  width: 81px;
+  height: 60px;
+}
+
+.module-message__unopened-gift-badge__text {
+  @include font-body-2;
+}
+.module-message__unopened-gift-badge__text--incoming {
+  @include light-theme {
+    color: $color-gray-60;
+  }
+  @include dark-theme {
+    color: $color-gray-25;
+  }
+}
+.module-message__unopened-gift-badge__container
+  .module-message__text--incoming {
+  @include font-body-2;
+
+  @include light-theme {
+    color: $color-gray-60;
+  }
+  @include dark-theme {
+    color: $color-gray-25;
+  }
+}
+.module-message__unopened-gift-badge__container
+  .module-message__text--outgoing {
+  @include font-body-2;
+
+  @include light-theme {
+    color: $color-white-alpha-80;
+  }
+  @include dark-theme {
+    color: $color-white-alpha-80;
+  }
+}
+
+.module-message__redeemed-gift-badge {
+  display: flex;
+  flex-direction: row;
+
+  &__container {
+    user-select: none;
+  }
+
+  &__badge {
+    height: 64px;
+    width: 64px;
+    margin-left: 4px;
+    margin-top: 8px;
+    margin-right: 12px;
+    margin-bottom: 16px;
+    flex-grow: 0;
+    flex-shrink: 0;
+
+    &--missing-incoming {
+      border-radius: 50%;
+
+      @include light-theme {
+        background-color: $color-gray-15;
+      }
+      @include dark-theme {
+        background-color: $color-gray-60;
+      }
+    }
+    &--missing-outgoing {
+      border-radius: 50%;
+
+      @include light-theme {
+        background-color: $color-white-alpha-20;
+      }
+      @include dark-theme {
+        background-color: $color-white-alpha-20;
+      }
+    }
+  }
+
+  &__text {
+    flex-grow: 1;
+    margin-top: 19px;
+  }
+  &__title {
+    margin-bottom: 6px;
+    @include font-body-1;
+  }
+  &__remaining {
+    @include font-subtitle;
+
+    &--incoming {
+      @include light-theme {
+        color: $color-gray-75;
+      }
+      @include dark-theme {
+        color: $color-gray-25;
+      }
+    }
+    &--outgoing {
+      @include light-theme {
+        color: $color-white-alpha-80;
+      }
+      @include dark-theme {
+        color: $color-white-alpha-80;
+      }
+    }
+  }
+
+  &__button {
+    @include button-reset;
+    @include button-secondary;
+    margin-left: auto;
+    margin-right: auto;
+    width: 216px;
+    margin-bottom: 7px;
+    text-align: center;
+    border-radius: 4px;
+
+    @include font-body-1-bold;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+
+    &--incoming {
+      @include light-theme {
+        color: $color-gray-90;
+        background-color: $color-white;
+      }
+      @include dark-theme {
+        color: $color-gray-05;
+        background-color: $color-gray-62;
+      }
+
+      // Disabling hover
+      &:hover {
+        @include mouse-mode {
+          background-color: $color-white;
+        }
+
+        @include dark-mouse-mode {
+          background-color: $color-gray-62;
+        }
+      }
+    }
+
+    &--outgoing {
+      @include light-theme {
+        color: $color-gray-90;
+        background-color: $color-white-alpha-80;
+      }
+      @include dark-theme {
+        color: $color-gray-90;
+        background-color: $color-white-alpha-80;
+      }
+      &:hover {
+        @include mouse-mode {
+          background-color: $color-white-alpha-90;
+        }
+
+        @include dark-mouse-mode {
+          background-color: $color-white-alpha-90;
+        }
+      }
+      &:focus {
+        @include keyboard-mode {
+          box-shadow: 0px 0px 0px 3px $color-ultramarine-light;
+        }
+        @include dark-keyboard-mode {
+          box-shadow: 0px 0px 0px 3px $color-ultramarine-light;
+        }
+      }
+      &:active {
+        // We need to include all four here for specificity precedence
+
+        @include mouse-mode {
+          background-color: $color-white;
+        }
+        @include dark-mouse-mode {
+          background-color: $color-white;
+        }
+
+        @include keyboard-mode {
+          background-color: $color-white;
+        }
+        @include dark-keyboard-mode {
+          background-color: $color-white;
+        }
+      }
+    }
+
+    &__text {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      height: 36px;
+    }
+  }
+
+  &__icon-check {
+    height: 19px;
+    width: 19px;
+    margin-right: 5px;
+    display: inline-block;
+
+    &--incoming {
+      @include light-theme {
+        @include color-svg(
+          '../images/icons/v2/check-circle-outline-24.svg',
+          $color-gray-90
+        );
+      }
+      @include dark-theme {
+        @include color-svg(
+          '../images/icons/v2/check-circle-outline-24.svg',
+          $color-gray-05
+        );
+      }
+    }
+
+    &--outgoing {
+      @include light-theme {
+        @include color-svg(
+          '../images/icons/v2/check-circle-outline-24.svg',
+          $color-gray-90
+        );
+      }
+      @include dark-theme {
+        @include color-svg(
+          '../images/icons/v2/check-circle-outline-24.svg',
+          $color-gray-90
+        );
+      }
+    }
   }
 }
 
@@ -2132,103 +2441,6 @@ button.ConversationDetails__action-button {
   color: $color-gray-45;
 }
 
-// Module: Conversation Hero
-
-.module-conversation-hero {
-  padding: 32px 0 28px 0;
-  text-align: center;
-
-  &__avatar {
-    margin-bottom: 12px;
-  }
-
-  &__profile-name {
-    @include font-title-2;
-    margin-bottom: 2px;
-
-    @include light-theme {
-      color: $color-gray-90;
-    }
-
-    @include dark-theme {
-      color: $color-gray-05;
-    }
-  }
-
-  &__with {
-    @include font-body-2;
-    margin: 0 auto;
-    margin-bottom: 16px;
-    max-width: 500px;
-
-    @include light-theme {
-      color: $color-gray-60;
-    }
-
-    @include dark-theme {
-      color: $color-gray-25;
-    }
-  }
-
-  &__membership {
-    @include font-body-2;
-
-    padding: 0 16px;
-
-    @include light-theme {
-      color: $color-gray-60;
-    }
-
-    @include dark-theme {
-      color: $color-gray-25;
-    }
-
-    &__name {
-      @include font-body-2-bold;
-    }
-  }
-
-  &__message-request-warning {
-    @include font-body-2;
-
-    &__message {
-      display: flex;
-      margin-bottom: 12px;
-      align-items: center;
-      justify-content: center;
-      user-select: none;
-
-      @include light-theme {
-        color: $color-gray-60;
-      }
-      @include dark-theme {
-        color: $color-gray-25;
-      }
-
-      &::before {
-        content: '';
-        display: block;
-        height: 14px;
-        margin-right: 8px;
-        width: 14px;
-
-        @include light-theme {
-          @include color-svg(
-            '../images/icons/v2/info-outline-24.svg',
-            $color-gray-60
-          );
-        }
-        @include dark-theme {
-          @include color-svg(
-            '../images/icons/v2/info-solid-24.svg',
-            $color-gray-25
-          );
-        }
-      }
-    }
-  }
-}
-
 // Module: Message Request Actions
 
 .module-message-request-actions {
@@ -2416,8 +2628,7 @@ button.ConversationDetails__action-button {
     }
 
     @include light-theme {
-      &:hover,
-      &:focus {
+      &:hover {
         background: $color-gray-15;
       }
       &:active {
@@ -2425,8 +2636,7 @@ button.ConversationDetails__action-button {
       }
     }
     @include dark-theme {
-      &:hover,
-      &:focus {
+      &:hover {
         background: $color-gray-75;
       }
       &:active {
@@ -2589,28 +2799,8 @@ button.ConversationDetails__action-button {
   left: 6px;
 }
 
-.module-image--soft-corners {
-  border-radius: 4px;
-}
-
 .module-image--cropped {
   overflow: hidden;
-}
-
-.module-image--curved-top-left {
-  border-top-left-radius: 18px;
-}
-.module-image--curved-top-right {
-  border-top-right-radius: 18px;
-}
-.module-image--curved-bottom-left {
-  border-bottom-left-radius: 18px;
-}
-.module-image--curved-bottom-right {
-  border-bottom-right-radius: 18px;
-}
-.module-image--small-curved-top-left {
-  border-top-left-radius: 10px;
 }
 
 .module-image__border-overlay {
@@ -3864,12 +4054,14 @@ button.module-image__border-overlay:focus {
       z-index: $z-index-above-base;
 
       &__contact-name {
+        font-size: 12px;
         color: $color-white;
         margin-right: 20px;
         overflow: hidden;
         text-overflow: ellipsis;
         visibility: hidden;
         white-space: nowrap;
+        margin-bottom: 2px;
       }
     }
 
@@ -4020,10 +4212,6 @@ button.module-image__border-overlay:focus {
       overflow: hidden;
       position: relative;
       width: 100%;
-
-      .module-ongoing-call__group-call-remote-participant--audio-muted::after {
-        display: none;
-      }
 
       // The avatar image can be dragged on Windows.
       .module-Avatar img {
@@ -7291,6 +7479,8 @@ button.module-image__border-overlay:focus {
 
   select {
     @include font-body-1;
+    background: $color-gray-75;
+    color: $color-gray-02;
     -webkit-appearance: none;
     border-radius: 4px;
     border: 1px solid $color-gray-45;

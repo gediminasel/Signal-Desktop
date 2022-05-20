@@ -11,15 +11,17 @@ import { StoryViewer } from '../../components/StoryViewer';
 import { ToastMessageBodyTooLong } from '../../components/ToastMessageBodyTooLong';
 import {
   getEmojiSkinTone,
+  getHasAllStoriesMuted,
   getPreferredReactionEmoji,
 } from '../selectors/items';
-import { getStoriesSelector, getStoryReplies } from '../selectors/stories';
 import { getIntl } from '../selectors/user';
 import { getPreferredBadgeSelector } from '../selectors/badges';
+import { getStoriesSelector, getStoryReplies } from '../selectors/stories';
 import { renderEmojiPicker } from './renderEmojiPicker';
 import { showToast } from '../../util/showToast';
 import { useActions as useEmojisActions } from '../ducks/emojis';
 import { useActions as useItemsActions } from '../ducks/items';
+import { useConversationsActions } from '../ducks/conversations';
 import { useRecentEmojis } from '../selectors/emojis';
 import { useStoriesActions } from '../ducks/stories';
 
@@ -37,8 +39,10 @@ export function SmartStoryViewer({
   onPrevUserStories,
 }: PropsType): JSX.Element | null {
   const storiesActions = useStoriesActions();
-  const { onSetSkinTone } = useItemsActions();
+  const { onSetSkinTone, toggleHasAllStoriesMuted } = useItemsActions();
   const { onUseEmoji } = useEmojisActions();
+  const { openConversationInternal, toggleHideStories } =
+    useConversationsActions();
 
   const i18n = useSelector<StateType, LocalizerType>(getIntl);
   const getPreferredBadge = useSelector(getPreferredBadgeSelector);
@@ -56,19 +60,28 @@ export function SmartStoryViewer({
   const recentEmojis = useRecentEmojis();
   const skinTone = useSelector<StateType, number>(getEmojiSkinTone);
   const replyState = useSelector(getStoryReplies);
+  const hasAllStoriesMuted = useSelector<StateType, boolean>(
+    getHasAllStoriesMuted
+  );
 
   return (
     <StoryViewer
       conversationId={conversationId}
       getPreferredBadge={getPreferredBadge}
       group={group}
+      hasAllStoriesMuted={hasAllStoriesMuted}
       i18n={i18n}
       onClose={onClose}
+      onHideStory={toggleHideStories}
+      onGoToConversation={senderId => {
+        openConversationInternal({ conversationId: senderId });
+        storiesActions.toggleStoriesView();
+      }}
       onNextUserStories={onNextUserStories}
       onPrevUserStories={onPrevUserStories}
       onReactToStory={async (emoji, story) => {
-        const { messageId, selectedReaction: previousReaction } = story;
-        storiesActions.reactToStory(emoji, messageId, previousReaction);
+        const { messageId } = story;
+        storiesActions.reactToStory(emoji, messageId);
       }}
       onReplyToStory={(message, mentions, timestamp, story) => {
         storiesActions.replyToStory(
@@ -88,6 +101,7 @@ export function SmartStoryViewer({
       replyState={replyState}
       stories={stories}
       skinTone={skinTone}
+      toggleHasAllStoriesMuted={toggleHasAllStoriesMuted}
       {...storiesActions}
     />
   );

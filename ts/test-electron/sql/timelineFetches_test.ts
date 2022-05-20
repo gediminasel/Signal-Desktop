@@ -93,7 +93,9 @@ describe('sql/timelineFetches', () => {
       assert.lengthOf(await _getAllMessages(), 5);
 
       const messages = await getOlderMessagesByConversation(conversationId, {
+        isGroup: false,
         limit: 5,
+        storyId: undefined,
       });
       assert.lengthOf(messages, 3);
 
@@ -148,11 +150,66 @@ describe('sql/timelineFetches', () => {
       assert.lengthOf(await _getAllMessages(), 3);
 
       const messages = await getOlderMessagesByConversation(conversationId, {
+        isGroup: true,
         limit: 5,
         storyId,
       });
       assert.lengthOf(messages, 1);
       assert.strictEqual(messages[0].id, message2.id);
+    });
+
+    it('returns N most recent messages excluding group story replies', async () => {
+      assert.lengthOf(await _getAllMessages(), 0);
+
+      const now = Date.now();
+      const conversationId = getUuid();
+      const storyId = getUuid();
+      const ourUuid = getUuid();
+
+      const message1: MessageAttributesType = {
+        id: getUuid(),
+        body: 'story',
+        type: 'incoming',
+        conversationId,
+        sent_at: now - 20,
+        received_at: now - 20,
+        timestamp: now - 20,
+        storyId,
+      };
+      const message2: MessageAttributesType = {
+        id: getUuid(),
+        body: 'story reply 1',
+        type: 'outgoing',
+        conversationId,
+        sent_at: now - 10,
+        received_at: now - 10,
+        timestamp: now - 10,
+        storyId,
+      };
+      const message3: MessageAttributesType = {
+        id: getUuid(),
+        body: 'normal message',
+        type: 'outgoing',
+        conversationId,
+        sent_at: now,
+        received_at: now,
+        timestamp: now,
+      };
+
+      await saveMessages([message1, message2, message3], {
+        forceSave: true,
+        ourUuid,
+      });
+
+      assert.lengthOf(await _getAllMessages(), 3);
+
+      const messages = await getOlderMessagesByConversation(conversationId, {
+        isGroup: true,
+        limit: 5,
+        storyId: undefined,
+      });
+      assert.lengthOf(messages, 1);
+      assert.strictEqual(messages[0].id, message3.id);
     });
 
     it('returns N messages older than provided received_at', async () => {
@@ -198,9 +255,11 @@ describe('sql/timelineFetches', () => {
       assert.lengthOf(await _getAllMessages(), 3);
 
       const messages = await getOlderMessagesByConversation(conversationId, {
+        isGroup: true,
         limit: 5,
         receivedAt: target,
         sentAt: target,
+        storyId: undefined,
       });
       assert.lengthOf(messages, 1);
       assert.strictEqual(messages[0].id, message1.id);
@@ -249,9 +308,11 @@ describe('sql/timelineFetches', () => {
       assert.lengthOf(await _getAllMessages(), 3);
 
       const messages = await getOlderMessagesByConversation(conversationId, {
+        isGroup: true,
         limit: 5,
         receivedAt: target,
         sentAt: target,
+        storyId: undefined,
       });
 
       assert.lengthOf(messages, 2);
@@ -304,10 +365,12 @@ describe('sql/timelineFetches', () => {
       assert.lengthOf(await _getAllMessages(), 3);
 
       const messages = await getOlderMessagesByConversation(conversationId, {
+        isGroup: true,
         limit: 5,
+        messageId: message2.id,
         receivedAt: target,
         sentAt: target,
-        messageId: message2.id,
+        storyId: undefined,
       });
 
       assert.lengthOf(messages, 1);
@@ -380,7 +443,9 @@ describe('sql/timelineFetches', () => {
       assert.lengthOf(await _getAllMessages(), 5);
 
       const messages = await getNewerMessagesByConversation(conversationId, {
+        isGroup: false,
         limit: 5,
+        storyId: undefined,
       });
 
       assert.lengthOf(messages, 3);
@@ -434,6 +499,7 @@ describe('sql/timelineFetches', () => {
       assert.lengthOf(await _getAllMessages(), 3);
 
       const messages = await getNewerMessagesByConversation(conversationId, {
+        isGroup: true,
         limit: 5,
         storyId,
       });
@@ -485,12 +551,69 @@ describe('sql/timelineFetches', () => {
       assert.lengthOf(await _getAllMessages(), 3);
 
       const messages = await getNewerMessagesByConversation(conversationId, {
+        isGroup: true,
         limit: 5,
+        receivedAt: target,
+        sentAt: target,
+        storyId: undefined,
+      });
+      assert.lengthOf(messages, 1);
+      assert.strictEqual(messages[0].id, message3.id);
+    });
+
+    it('returns N messages excluding group story replies', async () => {
+      assert.lengthOf(await _getAllMessages(), 0);
+
+      const target = Date.now();
+      const conversationId = getUuid();
+      const ourUuid = getUuid();
+
+      const message1: MessageAttributesType = {
+        id: getUuid(),
+        body: 'message 1',
+        type: 'outgoing',
+        conversationId,
+        sent_at: target - 10,
+        received_at: target - 10,
+        timestamp: target - 10,
+        storyId: getUuid(),
+      };
+      const message2: MessageAttributesType = {
+        id: getUuid(),
+        body: 'message 2',
+        type: 'outgoing',
+        conversationId,
+        sent_at: target + 20,
+        received_at: target + 20,
+        timestamp: target + 20,
+      };
+      const message3: MessageAttributesType = {
+        id: getUuid(),
+        body: 'message 3',
+        type: 'outgoing',
+        conversationId,
+        sent_at: target + 10,
+        received_at: target + 10,
+        timestamp: target + 10,
+        storyId: getUuid(),
+      };
+
+      await saveMessages([message1, message2, message3], {
+        forceSave: true,
+        ourUuid,
+      });
+
+      assert.lengthOf(await _getAllMessages(), 3);
+
+      const messages = await getNewerMessagesByConversation(conversationId, {
+        isGroup: true,
+        limit: 5,
+        storyId: undefined,
         receivedAt: target,
         sentAt: target,
       });
       assert.lengthOf(messages, 1);
-      assert.strictEqual(messages[0].id, message3.id);
+      assert.strictEqual(messages[0].id, message2.id);
     });
 
     it('returns N newer messages with same received_at, greater sent_at', async () => {
@@ -536,9 +659,11 @@ describe('sql/timelineFetches', () => {
       assert.lengthOf(await _getAllMessages(), 3);
 
       const messages = await getNewerMessagesByConversation(conversationId, {
+        isGroup: true,
         limit: 5,
         receivedAt: target,
         sentAt: target,
+        storyId: undefined,
       });
 
       assert.lengthOf(messages, 2);
@@ -585,9 +710,9 @@ describe('sql/timelineFetches', () => {
         received_at: target - 8,
         timestamp: target - 8,
       };
-      const oldestUnread: MessageAttributesType = {
+      const oldestUnseen: MessageAttributesType = {
         id: getUuid(),
-        body: 'oldestUnread',
+        body: 'oldestUnseen',
         type: 'incoming',
         conversationId,
         sent_at: target - 7,
@@ -641,7 +766,7 @@ describe('sql/timelineFetches', () => {
           story,
           oldestInStory,
           oldest,
-          oldestUnread,
+          oldestUnseen,
           oldestStoryUnread,
           anotherUnread,
           newestInStory,
@@ -662,11 +787,11 @@ describe('sql/timelineFetches', () => {
       );
       assert.strictEqual(metricsInTimeline?.newest?.id, newest.id, 'newest');
       assert.strictEqual(
-        metricsInTimeline?.oldestUnread?.id,
-        oldestUnread.id,
-        'oldestUnread'
+        metricsInTimeline?.oldestUnseen?.id,
+        oldestUnseen.id,
+        'oldestUnseen'
       );
-      assert.strictEqual(metricsInTimeline?.totalUnread, 3, 'totalUnread');
+      assert.strictEqual(metricsInTimeline?.totalUnseen, 3, 'totalUnseen');
 
       const metricsInStory = await getMessageMetricsForConversation(
         conversationId,
@@ -683,11 +808,11 @@ describe('sql/timelineFetches', () => {
         'newestInStory'
       );
       assert.strictEqual(
-        metricsInStory?.oldestUnread?.id,
+        metricsInStory?.oldestUnseen?.id,
         oldestStoryUnread.id,
         'oldestStoryUnread'
       );
-      assert.strictEqual(metricsInStory?.totalUnread, 1, 'totalUnread');
+      assert.strictEqual(metricsInStory?.totalUnseen, 1, 'totalUnseen');
     });
   });
 });

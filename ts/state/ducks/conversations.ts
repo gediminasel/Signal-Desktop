@@ -79,6 +79,8 @@ import { useBoundActions } from '../../hooks/useBoundActions';
 import type { NoopActionType } from './noop';
 import { conversationJobQueue } from '../../jobs/conversationJobQueue';
 import type { TimelineMessageLoadingState } from '../../util/timelineUtil';
+import { isGroup } from '../../util/whatTypeOfConversation';
+import { missingCaseError } from '../../util/missingCaseError';
 
 // State
 
@@ -233,8 +235,8 @@ type MessagePointerType = {
 type MessageMetricsType = {
   newest?: MessagePointerType;
   oldest?: MessagePointerType;
-  oldestUnread?: MessagePointerType;
-  totalUnread: number;
+  oldestUnseen?: MessagePointerType;
+  totalUnseen: number;
 };
 
 export type MessageLookupType = {
@@ -242,6 +244,7 @@ export type MessageLookupType = {
 };
 export type ConversationMessageType = {
   isNearBottom?: boolean;
+  messageChangeCounter: number;
   messageIds: Array<string>;
   messageLoadingState?: undefined | TimelineMessageLoadingState;
   metrics: MessageMetricsType;
@@ -464,7 +467,13 @@ type CustomColorRemovedActionType = {
 };
 type DiscardMessagesActionType = {
   type: typeof DISCARD_MESSAGES;
-  payload: { conversationId: string; numberToKeepAtBottom: number };
+  payload: Readonly<
+    | {
+        conversationId: string;
+        numberToKeepAtBottom: number;
+      }
+    | { conversationId: string; numberToKeepAtTop: number }
+  >;
 };
 type SetPreJoinConversationActionType = {
   type: 'SET_PRE_JOIN_CONVERSATION';
@@ -2194,35 +2203,70 @@ export function reducer(
   }
 
   if (action.type === DISCARD_MESSAGES) {
-    const { conversationId, numberToKeepAtBottom } = action.payload;
+    const { conversationId } = action.payload;
+    if ('numberToKeepAtBottom' in action.payload) {
+      const { numberToKeepAtBottom } = action.payload;
+      const conversationMessages = getOwn(
+        state.messagesByConversation,
+        conversationId
+      );
+      if (!conversationMessages) {
+        return state;
+      }
 
-    const conversationMessages = getOwn(
-      state.messagesByConversation,
-      conversationId
-    );
-    if (!conversationMessages) {
-      return state;
-    }
+      const { messageIds: oldMessageIds } = conversationMessages;
+      if (oldMessageIds.length <= numberToKeepAtBottom) {
+        return state;
+      }
 
-    const { messageIds: oldMessageIds } = conversationMessages;
-    if (oldMessageIds.length <= numberToKeepAtBottom) {
-      return state;
-    }
+      const messageIdsToRemove = oldMessageIds.slice(0, -numberToKeepAtBottom);
+      const messageIdsToKeep = oldMessageIds.slice(-numberToKeepAtBottom);
 
-    const messageIdsToRemove = oldMessageIds.slice(0, -numberToKeepAtBottom);
-    const messageIdsToKeep = oldMessageIds.slice(-numberToKeepAtBottom);
-
-    return {
-      ...state,
-      messagesLookup: omit(state.messagesLookup, messageIdsToRemove),
-      messagesByConversation: {
-        ...state.messagesByConversation,
-        [conversationId]: {
-          ...conversationMessages,
-          messageIds: messageIdsToKeep,
+      return {
+        ...state,
+        messagesLookup: omit(state.messagesLookup, messageIdsToRemove),
+        messagesByConversation: {
+          ...state.messagesByConversation,
+          [conversationId]: {
+            ...conversationMessages,
+            messageIds: messageIdsToKeep,
+          },
         },
-      },
-    };
+      };
+    }
+
+    if ('numberToKeepAtTop' in action.payload) {
+      const { numberToKeepAtTop } = action.payload;
+      const conversationMessages = getOwn(
+        state.messagesByConversation,
+        conversationId
+      );
+      if (!conversationMessages) {
+        return state;
+      }
+
+      const { messageIds: oldMessageIds } = conversationMessages;
+      if (oldMessageIds.length <= numberToKeepAtTop) {
+        return state;
+      }
+
+      const messageIdsToRemove = oldMessageIds.slice(numberToKeepAtTop);
+      const messageIdsToKeep = oldMessageIds.slice(0, numberToKeepAtTop);
+
+      return {
+        ...state,
+        messagesLookup: omit(state.messagesLookup, messageIdsToRemove),
+        messagesByConversation: {
+          ...state.messagesByConversation,
+          [conversationId]: {
+            ...conversationMessages,
+            messageIds: messageIdsToKeep,
+          },
+        },
+      };
+    }
+
+    throw missingCaseError(action.payload);
   }
 
   if (action.type === 'SET_PRE_JOIN_CONVERSATION') {
@@ -2453,8 +2497,24 @@ export function reducer(
       return state;
     }
 
+    const conversationAttrs = state.conversationLookup[conversationId];
+    const isGroupStoryReply = isGroup(conversationAttrs) && data.storyId;
+    if (isGroupStoryReply) {
+      return state;
+    }
+
+    const toIncrement = data.reactions?.length ? 1 : 0;
+
     return {
       ...state,
+      messagesByConversation: {
+        ...state.messagesByConversation,
+        [conversationId]: {
+          ...existingConversation,
+          messageChangeCounter:
+            (existingConversation.messageChangeCounter || 0) + toIncrement,
+        },
+      },
       messagesLookup: {
         ...state.messagesLookup,
         [id]: {
@@ -2533,6 +2593,7 @@ export function reducer(
       messagesByConversation: {
         ...messagesByConversation,
         [conversationId]: {
+          messageChangeCounter: 0,
           scrollToMessageId,
           scrollToMessageCounter: existingConversation
             ? existingConversation.scrollToMessageCounter + 1
@@ -2666,7 +2727,7 @@ export function reducer(
     let metrics;
     if (messageIds.length === 0) {
       metrics = {
-        totalUnread: 0,
+        totalUnseen: 0,
       };
     } else {
       metrics = {
@@ -2784,7 +2845,7 @@ export function reducer(
       return state;
     }
 
-    let { newest, oldest, oldestUnread, totalUnread } =
+    let { newest, oldest, oldestUnseen, totalUnseen } =
       existingConversation.metrics;
 
     if (messages.length < 1) {
@@ -2846,7 +2907,7 @@ export function reducer(
     const newMessageIds = difference(newIds, existingConversation.messageIds);
     const { isNearBottom } = existingConversation;
 
-    if ((!isNearBottom || !isActive) && !oldestUnread) {
+    if ((!isNearBottom || !isActive) && !oldestUnseen) {
       const oldestId = newMessageIds.find(messageId => {
         const message = lookup[messageId];
 
@@ -2854,7 +2915,7 @@ export function reducer(
       });
 
       if (oldestId) {
-        oldestUnread = pick(lookup[oldestId], [
+        oldestUnseen = pick(lookup[oldestId], [
           'id',
           'received_at',
           'sent_at',
@@ -2862,14 +2923,14 @@ export function reducer(
       }
     }
 
-    // If this is a new incoming message, we'll increment our totalUnread count
-    if (isNewMessage && !isJustSent && oldestUnread) {
+    // If this is a new incoming message, we'll increment our totalUnseen count
+    if (isNewMessage && !isJustSent && oldestUnseen) {
       const newUnread: number = newMessageIds.reduce((sum, messageId) => {
         const message = lookup[messageId];
 
         return sum + (message && isMessageUnread(message) ? 1 : 0);
       }, 0);
-      totalUnread = (totalUnread || 0) + newUnread;
+      totalUnseen = (totalUnseen || 0) + newUnread;
     }
 
     return {
@@ -2889,8 +2950,8 @@ export function reducer(
             ...existingConversation.metrics,
             newest,
             oldest,
-            totalUnread,
-            oldestUnread,
+            totalUnseen,
+            oldestUnseen,
           },
         },
       },
@@ -2919,8 +2980,8 @@ export function reducer(
           ...existingConversation,
           metrics: {
             ...existingConversation.metrics,
-            oldestUnread: undefined,
-            totalUnread: 0,
+            oldestUnseen: undefined,
+            totalUnseen: 0,
           },
         },
       },

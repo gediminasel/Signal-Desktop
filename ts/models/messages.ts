@@ -21,7 +21,7 @@ import {
 import type { SentEventData } from '../textsecure/messageReceiverEvents';
 import { isNotNil } from '../util/isNotNil';
 import { isNormalNumber } from '../util/isNormalNumber';
-import { strictAssert } from '../util/assert';
+import { softAssert, strictAssert } from '../util/assert';
 import { missingCaseError } from '../util/missingCaseError';
 import { dropNull } from '../util/dropNull';
 import type { ConversationModel } from './conversations';
@@ -38,6 +38,7 @@ import type {
 } from '../textsecure/Types.d';
 import { SendMessageProtoError } from '../textsecure/Errors';
 import * as expirationTimer from '../util/expirationTimer';
+import { getUserLanguages } from '../util/userLanguages';
 
 import type { ReactionType } from '../types/Reactions';
 import { UUID, UUIDKind } from '../types/UUID';
@@ -86,12 +87,12 @@ import {
   isDeliveryIssue,
   isEndSession,
   isExpirationTimerUpdate,
+  isGiftBadge,
   isGroupUpdate,
   isGroupV1Migration,
   isGroupV2Change,
   isIncoming,
   isKeyChange,
-  isMessageHistoryUnsynced,
   isOutgoing,
   isStory,
   isProfileChange,
@@ -141,7 +142,7 @@ import {
 } from '../messages/helpers';
 import type { ReplacementValuesType } from '../types/I18N';
 import { viewOnceOpenJobQueue } from '../jobs/viewOnceOpenJobQueue';
-import { getMessageIdForLogging } from '../util/getMessageIdForLogging';
+import { getMessageIdForLogging } from '../util/idForLogging';
 import { hasAttachmentDownloads } from '../util/hasAttachmentDownloads';
 import { queueAttachmentDownloads } from '../util/queueAttachmentDownloads';
 import { findStoryMessage } from '../util/findStoryMessage';
@@ -152,6 +153,10 @@ import { getMessageById } from '../messages/getMessageById';
 import { shouldDownloadStory } from '../util/shouldDownloadStory';
 import { shouldShowStoriesView } from '../state/selectors/stories';
 import type { ContactWithHydratedAvatar } from '../textsecure/SendMessage';
+import { SeenStatus } from '../MessageSeenStatus';
+import { isNewReactionReplacingPrevious } from '../reactions/util';
+import { parseBoostBadgeListFromServer } from '../badges/parseBadgesFromServer';
+import { GiftBadgeStates } from '../components/conversation/Message';
 
 /* eslint-disable camelcase */
 /* eslint-disable more/no-then */
@@ -209,7 +214,16 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
     const readStatus = migrateLegacyReadStatus(this.attributes);
     if (readStatus !== undefined) {
-      this.set('readStatus', readStatus, { silent: true });
+      this.set(
+        {
+          readStatus,
+          seenStatus:
+            readStatus === ReadStatus.Unread
+              ? SeenStatus.Unseen
+              : SeenStatus.Seen,
+        },
+        { silent: true }
+      );
     }
 
     const sendStateByConversationId = migrateLegacySendAttributes(
@@ -233,12 +247,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     const { storyChanged } = window.reduxActions.stories;
 
     if (isStory(this.attributes)) {
-      const ourConversationId =
-        window.ConversationController.getOurConversationIdOrThrow();
-      const storyData = getStoryDataFromMessageAttributes(
-        this.attributes,
-        ourConversationId
-      );
+      const storyData = getStoryDataFromMessageAttributes(this.attributes);
 
       if (!storyData) {
         return;
@@ -294,7 +303,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       !isGroupV2Change(attributes) &&
       !isGroupV1Migration(attributes) &&
       !isKeyChange(attributes) &&
-      !isMessageHistoryUnsynced(attributes) &&
       !isProfileChange(attributes) &&
       !isUniversalTimerNotification(attributes) &&
       !isUnsupportedMessage(attributes) &&
@@ -302,7 +310,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     );
   }
 
-  async hydrateStoryContext(): Promise<void> {
+  async hydrateStoryContext(inMemoryMessage?: MessageModel): Promise<void> {
     const storyId = this.get('storyId');
     if (!storyId) {
       return;
@@ -312,9 +320,24 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       return;
     }
 
-    const message = await getMessageById(storyId);
+    const message = inMemoryMessage || (await getMessageById(storyId));
 
     if (!message) {
+      const conversation = this.getConversation();
+      softAssert(
+        conversation && isDirectConversation(conversation.attributes),
+        'hydrateStoryContext: Not a type=direct conversation'
+      );
+      this.set({
+        storyReplyContext: {
+          attachment: undefined,
+          // This is ok to do because story replies only show in 1:1 conversations
+          // so the story that was quoted should be from the same conversation.
+          authorUuid: conversation?.get('uuid'),
+          // No messageId, referenced story not found!
+          messageId: '',
+        },
+      });
       return;
     }
 
@@ -743,6 +766,26 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       };
     }
 
+    const giftBadge = this.get('giftBadge');
+    if (giftBadge) {
+      const emoji = '🎁';
+
+      if (isIncoming(this.attributes)) {
+        return {
+          emoji,
+          text: window.i18n('message--giftBadge--preview--sent'),
+        };
+      }
+
+      return {
+        emoji,
+        text:
+          giftBadge.state === GiftBadgeStates.Unopened
+            ? window.i18n('message--giftBadge--preview--unopened')
+            : window.i18n('message--giftBadge--preview--redeemed'),
+      };
+    }
+
     if (body) {
       return { text: body };
     }
@@ -767,6 +810,21 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
   getNotificationText(): string {
     const { text, emoji } = this.getNotificationData();
     const { attributes } = this;
+
+    if (attributes.storyReactionEmoji) {
+      const conversation = this.getConversation();
+      const firstName = conversation?.attributes.profileName;
+
+      if (!conversation || !firstName) {
+        return window.i18n('Quote__story-reaction--single');
+      }
+
+      if (isMe(conversation.attributes)) {
+        return window.i18n('Quote__story-reaction--yours');
+      }
+
+      return window.i18n('Quote__story-reaction', [firstName]);
+    }
 
     let modifiedText = text;
 
@@ -932,6 +990,25 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
   async doubleCheckMissingQuoteReference(): Promise<void> {
     const logId = this.idForLogging();
+
+    const storyId = this.get('storyId');
+    if (storyId) {
+      log.warn(
+        `doubleCheckMissingQuoteReference/${logId}: missing story reference`
+      );
+
+      const message = window.MessageController.getById(storyId);
+      if (!message) {
+        return;
+      }
+
+      if (this.get('storyReplyContext')) {
+        this.unset('storyReplyContext');
+      }
+      await this.hydrateStoryContext(message);
+      return;
+    }
+
     const quote = this.get('quote');
     if (!quote) {
       log.warn(`doubleCheckMissingQuoteReference/${logId}: Missing quote!`);
@@ -1040,6 +1117,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     const isCallHistoryValue = isCallHistory(attributes);
     const isChatSessionRefreshedValue = isChatSessionRefreshed(attributes);
     const isDeliveryIssueValue = isDeliveryIssue(attributes);
+    const isGiftBadgeValue = isGiftBadge(attributes);
     const isGroupUpdateValue = isGroupUpdate(attributes);
     const isGroupV2ChangeValue = isGroupV2Change(attributes);
     const isEndSessionValue = isEndSession(attributes);
@@ -1055,7 +1133,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
     // Locally-generated notifications
     const isKeyChangeValue = isKeyChange(attributes);
-    const isMessageHistoryUnsyncedValue = isMessageHistoryUnsynced(attributes);
     const isProfileChangeValue = isProfileChange(attributes);
     const isUniversalTimerNotificationValue =
       isUniversalTimerNotification(attributes);
@@ -1072,6 +1149,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       isCallHistoryValue ||
       isChatSessionRefreshedValue ||
       isDeliveryIssueValue ||
+      isGiftBadgeValue ||
       isGroupUpdateValue ||
       isGroupV2ChangeValue ||
       isEndSessionValue ||
@@ -1084,7 +1162,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       hasErrorsValue ||
       // Locally-generated notifications
       isKeyChangeValue ||
-      isMessageHistoryUnsyncedValue ||
       isProfileChangeValue ||
       isUniversalTimerNotificationValue;
 
@@ -1761,6 +1838,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
       // Just placeholder values for the fields
       referencedMessageNotFound: false,
+      isGiftBadge: quote.type === Proto.DataMessage.Quote.Type.GIFT_BADGE,
       isViewOnce: false,
       messageId: '',
     };
@@ -1814,6 +1892,23 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       ];
       // eslint-disable-next-line no-param-reassign
       quote.isViewOnce = true;
+
+      return;
+    }
+
+    const isMessageAGiftBadge = isGiftBadge(originalMessage.attributes);
+    if (isMessageAGiftBadge !== quote.isGiftBadge) {
+      log.warn(
+        `copyQuoteContentFromOriginal: Quote.isGiftBadge: ${quote.isGiftBadge}, isGiftBadge(message): ${isMessageAGiftBadge}`
+      );
+      // eslint-disable-next-line no-param-reassign
+      quote.isGiftBadge = isMessageAGiftBadge;
+    }
+    if (isMessageAGiftBadge) {
+      // eslint-disable-next-line no-param-reassign
+      quote.text = undefined;
+      // eslint-disable-next-line no-param-reassign
+      quote.attachments = [];
 
       return;
     }
@@ -2259,6 +2354,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
           decrypted_at: now,
           errors: [],
           flags: dataMessage.flags,
+          giftBadge: initialMessage.giftBadge,
           hasAttachments: dataMessage.hasAttachments,
           hasFileAttachments: dataMessage.hasFileAttachments,
           hasVisualMediaAttachments: dataMessage.hasVisualMediaAttachments,
@@ -2440,9 +2536,10 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
           if (isStory(message.attributes)) {
             attributes.hasPostedStory = true;
+          } else {
+            attributes.active_at = now;
           }
 
-          attributes.active_at = now;
           conversation.set(attributes);
 
           if (
@@ -2542,9 +2639,13 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         }
 
         const conversationTimestamp = conversation.get('timestamp');
+        const isGroupStoryReply =
+          isGroup(conversation.attributes) && message.get('storyId');
         if (
-          !conversationTimestamp ||
-          message.get('sent_at') > conversationTimestamp
+          !isStory(message.attributes) &&
+          !isGroupStoryReply &&
+          (!conversationTimestamp ||
+            message.get('sent_at') > conversationTimestamp)
         ) {
           conversation.set({
             lastMessage: message.getNotificationText(),
@@ -2556,9 +2657,50 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         conversation.incrementMessageCount();
         window.Signal.Data.updateConversation(conversation.attributes);
 
+        const reduxState = window.reduxStore.getState();
+
+        const giftBadge = message.get('giftBadge');
+        if (giftBadge) {
+          const { level } = giftBadge;
+          const existingBadgesById = reduxState.badges.byId;
+
+          const badgeId = `BOOST-${level}`;
+          if (!existingBadgesById[badgeId]) {
+            const { updatesUrl } = window.SignalContext.config;
+            strictAssert(
+              typeof updatesUrl === 'string',
+              'getProfile: expected updatesUrl to be a defined string'
+            );
+            const userLanguages = getUserLanguages(
+              navigator.languages,
+              window.getLocale()
+            );
+            const response =
+              await window.textsecure.messaging.server.getBoostBadgesFromServer(
+                userLanguages
+              );
+            const boostBadges = parseBoostBadgeListFromServer(
+              response,
+              updatesUrl
+            );
+            const badge = boostBadges[badgeId];
+            if (!badge) {
+              log.error(
+                `handleDataMessage: gift badge ${badgeId} not found on server`
+              );
+            } else {
+              await window.reduxActions.badges.updateOrCreate([
+                {
+                  ...badge,
+                  id: badgeId,
+                },
+              ]);
+            }
+          }
+        }
+
         // Only queue attachments for downloads if this is a story or
         // outgoing message or we've accepted the conversation
-        const reduxState = window.reduxStore.getState();
         const attachments = this.get('attachments') || [];
 
         let queueStoryForDownload = false;
@@ -2626,7 +2768,10 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     const isFirstRun = false;
     await this.modifyTargetMessage(conversation, isFirstRun);
 
-    if (isMessageUnread(this.attributes)) {
+    const isGroupStoryReply =
+      isGroup(conversation.attributes) && this.get('storyId');
+
+    if (isMessageUnread(this.attributes) && !isGroupStoryReply) {
       await conversation.notify(this);
     }
 
@@ -2637,6 +2782,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
     window.Whisper.events.trigger('incrementProgress');
     confirm();
+
+    conversation.queueJob('updateUnread', () => conversation.updateUnread());
   }
 
   // This function is called twice - once from handleDataMessage, and then again from
@@ -2768,6 +2915,9 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
       const viewSyncs = ViewSyncs.getSingleton().forMessage(message);
 
+      const isGroupStoryReply =
+        isGroup(conversation.attributes) && message.get('storyId');
+
       if (readSyncs.length !== 0 || viewSyncs.length !== 0) {
         const markReadAt = Math.min(
           Date.now(),
@@ -2797,16 +2947,18 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
           newReadStatus = ReadStatus.Read;
         }
 
-        message.set('readStatus', newReadStatus);
+        message.set({
+          readStatus: newReadStatus,
+          seenStatus: SeenStatus.Seen,
+        });
         changed = true;
 
         this.pendingMarkRead = Math.min(
           this.pendingMarkRead ?? Date.now(),
           markReadAt
         );
-      } else if (isFirstRun) {
+      } else if (isFirstRun && !isGroupStoryReply) {
         conversation.set({
-          unreadCount: (conversation.get('unreadCount') || 0) + 1,
           isArchived: false,
         });
       }
@@ -2927,14 +3079,15 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
       const reactions = reactionUtil.addOutgoingReaction(
         this.get('reactions') || [],
-        newReaction
+        newReaction,
+        isStory(this.attributes)
       );
       this.set({ reactions });
     } else {
       const oldReactions = this.get('reactions') || [];
       let reactions: Array<MessageReactionType>;
-      const oldReaction = oldReactions.find(
-        re => re.fromId === reaction.get('fromId')
+      const oldReaction = oldReactions.find(re =>
+        isNewReactionReplacingPrevious(re, reaction.attributes, this.attributes)
       );
       if (oldReaction) {
         this.clearNotifications(oldReaction);
@@ -2949,12 +3102,20 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         if (reaction.get('source') === ReactionSource.FromSync) {
           reactions = oldReactions.filter(
             re =>
-              re.fromId !== reaction.get('fromId') ||
-              re.timestamp > reaction.get('timestamp')
+              !isNewReactionReplacingPrevious(
+                re,
+                reaction.attributes,
+                this.attributes
+              ) || re.timestamp > reaction.get('timestamp')
           );
         } else {
           reactions = oldReactions.filter(
-            re => re.fromId !== reaction.get('fromId')
+            re =>
+              !isNewReactionReplacingPrevious(
+                re,
+                reaction.attributes,
+                this.attributes
+              )
           );
         }
         this.set({ reactions });
@@ -2983,7 +3144,12 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         }
 
         reactions = oldReactions.filter(
-          re => re.fromId !== reaction.get('fromId')
+          re =>
+            !isNewReactionReplacingPrevious(
+              re,
+              reaction.attributes,
+              this.attributes
+            )
         );
         reactions.push(reactionToAdd);
         this.set({ reactions });

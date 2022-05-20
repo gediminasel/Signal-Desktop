@@ -21,6 +21,7 @@ import type { UUIDStringType } from '../types/UUID';
 import type { BadgeType } from '../badges/types';
 import type { RemoveAllConfiguration } from '../types/RemoveAllConfiguration';
 import type { LoggerType } from '../types/Logging';
+import type { ReadStatus } from '../messages/MessageReadStatus';
 
 export type AttachmentDownloadJobTypeType =
   | 'long-message'
@@ -50,8 +51,8 @@ export type MessageMetricsType = {
 export type ConversationMetricsType = {
   oldest?: MessageMetricsType;
   newest?: MessageMetricsType;
-  oldestUnread?: MessageMetricsType;
-  totalUnread: number;
+  oldestUnseen?: MessageMetricsType;
+  totalUnseen: number;
 };
 export type ConversationType = ConversationAttributesType;
 export type EmojiType = {
@@ -384,16 +385,29 @@ export type DataInterface = {
   removeMessages: (ids: Array<string>) => Promise<void>;
   getTotalUnreadForConversation: (
     conversationId: string,
-    storyId?: UUIDStringType
+    options: {
+      storyId: UUIDStringType | undefined;
+      isGroup: boolean;
+    }
   ) => Promise<number>;
   getUnreadByConversationAndMarkRead: (options: {
     conversationId: string;
+    isGroup?: boolean;
     newestUnreadAt: number;
     readAt?: number;
     storyId?: UUIDStringType;
   }) => Promise<
     Array<
-      Pick<MessageType, 'id' | 'source' | 'sourceUuid' | 'sent_at' | 'type'>
+      { originalReadStatus: ReadStatus | undefined } & Pick<
+        MessageType,
+        | 'id'
+        | 'readStatus'
+        | 'seenStatus'
+        | 'sent_at'
+        | 'source'
+        | 'sourceUuid'
+        | 'type'
+      >
     >
   >;
   getUnreadReactionsAndMarkRead: (options: {
@@ -448,11 +462,13 @@ export type DataInterface = {
   // getNewerMessagesByConversation is JSON on server, full message on Client
   getMessageMetricsForConversation: (
     conversationId: string,
-    storyId?: UUIDStringType
+    storyId?: UUIDStringType,
+    isGroup?: boolean
   ) => Promise<ConversationMetricsType>;
   // getConversationRangeCenteredOnMessage is JSON on server, full message on client
   getConversationMessageStats: (options: {
     conversationId: string;
+    isGroup?: boolean;
     ourUuid: UUIDStringType;
   }) => Promise<ConversationMessageStatsType>;
   getLastConversationMessage(options: {
@@ -468,7 +484,7 @@ export type DataInterface = {
   ) => Promise<void>;
 
   getUnprocessedCount: () => Promise<number>;
-  getAllUnprocessed: () => Promise<Array<UnprocessedType>>;
+  getAllUnprocessedAndIncrementAttempts: () => Promise<Array<UnprocessedType>>;
   updateUnprocessedWithData: (
     id: string,
     data: UnprocessedUpdateType
@@ -612,30 +628,33 @@ export type ServerInterface = DataInterface & {
 
   getOlderMessagesByConversation: (
     conversationId: string,
-    options?: {
+    options: {
+      isGroup: boolean;
       limit?: number;
       messageId?: string;
       receivedAt?: number;
       sentAt?: number;
-      storyId?: string;
+      storyId: string | undefined;
     }
   ) => Promise<Array<MessageTypeUnhydrated>>;
   getNewerMessagesByConversation: (
     conversationId: string,
-    options?: {
+    options: {
+      isGroup: boolean;
       limit?: number;
       receivedAt?: number;
       sentAt?: number;
-      storyId?: UUIDStringType;
+      storyId: UUIDStringType | undefined;
     }
   ) => Promise<Array<MessageTypeUnhydrated>>;
   getConversationRangeCenteredOnMessage: (options: {
     conversationId: string;
+    isGroup: boolean;
     limit?: number;
     messageId: string;
     receivedAt: number;
     sentAt?: number;
-    storyId?: UUIDStringType;
+    storyId: UUIDStringType | undefined;
   }) => Promise<{
     older: Array<MessageTypeUnhydrated>;
     newer: Array<MessageTypeUnhydrated>;
@@ -683,29 +702,32 @@ export type ClientInterface = DataInterface & {
   getOlderMessagesByConversation: (
     conversationId: string,
     options: {
+      isGroup: boolean;
       limit?: number;
       messageId?: string;
       receivedAt?: number;
       sentAt?: number;
-      storyId?: string;
+      storyId: string | undefined;
     }
   ) => Promise<Array<MessageAttributesType>>;
   getNewerMessagesByConversation: (
     conversationId: string,
     options: {
+      isGroup: boolean;
       limit?: number;
       receivedAt?: number;
       sentAt?: number;
-      storyId?: UUIDStringType;
+      storyId: UUIDStringType | undefined;
     }
   ) => Promise<Array<MessageAttributesType>>;
   getConversationRangeCenteredOnMessage: (options: {
     conversationId: string;
+    isGroup: boolean;
     limit?: number;
     messageId: string;
     receivedAt: number;
     sentAt?: number;
-    storyId?: UUIDStringType;
+    storyId: UUIDStringType | undefined;
   }) => Promise<{
     older: Array<MessageAttributesType>;
     newer: Array<MessageAttributesType>;

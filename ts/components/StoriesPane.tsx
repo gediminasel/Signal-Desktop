@@ -52,24 +52,26 @@ function getNewestStory(story: ConversationStoryType): StoryViewType {
 export type PropsType = {
   hiddenStories: Array<ConversationStoryType>;
   i18n: LocalizerType;
-  onBack: () => unknown;
   onStoryClicked: (conversationId: string) => unknown;
   openConversationInternal: (_: { conversationId: string }) => unknown;
   queueStoryDownload: (storyId: string) => unknown;
   stories: Array<ConversationStoryType>;
   toggleHideStories: (conversationId: string) => unknown;
+  toggleStoriesView: () => unknown;
 };
 
 export const StoriesPane = ({
+  hiddenStories,
   i18n,
-  onBack,
   onStoryClicked,
   openConversationInternal,
   queueStoryDownload,
   stories,
   toggleHideStories,
+  toggleStoriesView,
 }: PropsType): JSX.Element => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [isShowingHiddenStories, setIsShowingHiddenStories] = useState(false);
   const [renderedStories, setRenderedStories] =
     useState<Array<ConversationStoryType>>(stories);
 
@@ -87,7 +89,7 @@ export const StoriesPane = ({
         <button
           aria-label={i18n('back')}
           className="Stories__pane__header--back"
-          onClick={onBack}
+          onClick={toggleStoriesView}
           tabIndex={0}
           type="button"
         />
@@ -117,16 +119,46 @@ export const StoriesPane = ({
             onClick={() => {
               onStoryClicked(story.conversationId);
             }}
-            onHideStory={() => {
-              toggleHideStories(getNewestStory(story).sender.id);
-            }}
+            onHideStory={toggleHideStories}
             onGoToConversation={conversationId => {
               openConversationInternal({ conversationId });
+              toggleStoriesView();
             }}
             queueStoryDownload={queueStoryDownload}
             story={getNewestStory(story)}
           />
         ))}
+        {Boolean(hiddenStories.length) && (
+          <>
+            <button
+              className={classNames('Stories__hidden-stories', {
+                'Stories__hidden-stories--expanded': isShowingHiddenStories,
+              })}
+              onClick={() => setIsShowingHiddenStories(!isShowingHiddenStories)}
+              type="button"
+            >
+              {i18n('Stories__hidden-stories')}
+            </button>
+            {isShowingHiddenStories &&
+              hiddenStories.map(story => (
+                <StoryListItem
+                  key={getNewestStory(story).timestamp}
+                  i18n={i18n}
+                  isHidden
+                  onClick={() => {
+                    onStoryClicked(story.conversationId);
+                  }}
+                  onHideStory={toggleHideStories}
+                  onGoToConversation={conversationId => {
+                    openConversationInternal({ conversationId });
+                    toggleStoriesView();
+                  }}
+                  queueStoryDownload={queueStoryDownload}
+                  story={getNewestStory(story)}
+                />
+              ))}
+          </>
+        )}
         {!stories.length && i18n('Stories__list-empty')}
       </div>
     </>

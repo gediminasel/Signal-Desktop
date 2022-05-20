@@ -14,11 +14,11 @@ let storyData: Array<MessageAttributesType> | undefined;
 
 export async function loadStories(): Promise<void> {
   storyData = await dataInterface.getOlderStories({});
+  await repairUnexpiredStories();
 }
 
 export function getStoryDataFromMessageAttributes(
-  message: MessageAttributesType,
-  ourConversationId?: string
+  message: MessageAttributesType
 ): StoryDataType | undefined {
   const { attachments } = message;
   const unresolvedAttachment = attachments ? attachments[0] : undefined;
@@ -33,17 +33,13 @@ export function getStoryDataFromMessageAttributes(
     ? getAttachmentsForMessage(message)
     : [unresolvedAttachment];
 
-  const selectedReaction = (
-    (message.reactions || []).find(re => re.fromId === ourConversationId) || {}
-  ).emoji;
-
   return {
     attachment,
     messageId: message.id,
-    selectedReaction,
     ...pick(message, [
       'conversationId',
       'deletedForEveryone',
+      'reactions',
       'readStatus',
       'sendStateByConversationId',
       'source',
@@ -57,11 +53,8 @@ export function getStoryDataFromMessageAttributes(
 export function getStoriesForRedux(): Array<StoryDataType> {
   strictAssert(storyData, 'storyData has not been loaded');
 
-  const ourConversationId =
-    window.ConversationController.getOurConversationId();
-
   const stories = storyData
-    .map(story => getStoryDataFromMessageAttributes(story, ourConversationId))
+    .map(getStoryDataFromMessageAttributes)
     .filter(isNotNil);
 
   storyData = undefined;
@@ -69,11 +62,7 @@ export function getStoriesForRedux(): Array<StoryDataType> {
   return stories;
 }
 
-export async function repairUnexpiredStories(): Promise<void> {
-  if (!storyData) {
-    await loadStories();
-  }
-
+async function repairUnexpiredStories(): Promise<void> {
   strictAssert(storyData, 'Could not load stories');
 
   const storiesWithExpiry = storyData
@@ -85,6 +74,10 @@ export async function repairUnexpiredStories(): Promise<void> {
         Date.now()
       ),
     }));
+
+  if (!storiesWithExpiry.length) {
+    return;
+  }
 
   log.info(
     'repairUnexpiredStories: repairing number of stories',

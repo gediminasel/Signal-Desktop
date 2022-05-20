@@ -75,6 +75,7 @@ const getDefaultProps = () => ({
   messageExpanded: action('messageExpanded'),
   showMessageDetail: action('showMessageDetail'),
   openConversation: action('openConversation'),
+  openGiftBadge: action('openGiftBadge'),
   showContactDetail: action('showContactDetail'),
   showContactModal: action('showContactModal'),
   showForwardMessageModal: action('showForwardMessageModal'),
@@ -416,10 +417,6 @@ storiesOf('Components/Conversation/TimelineItem', module)
           maxDevices: 16,
           startedTime: Date.now(),
         },
-      },
-      {
-        type: 'linkNotification',
-        data: null,
       },
       {
         type: 'profileChange',

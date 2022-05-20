@@ -55,6 +55,7 @@ const items: Record<string, TimelineItemType> = {
       canRetryDeleteForEveryone: true,
       conversationColor: 'forest',
       conversationId: 'conversation-id',
+      conversationTitle: 'Conversation Title',
       conversationType: 'group',
       direction: 'incoming',
       id: 'id-1',
@@ -80,6 +81,7 @@ const items: Record<string, TimelineItemType> = {
       canRetryDeleteForEveryone: true,
       conversationColor: 'forest',
       conversationId: 'conversation-id',
+      conversationTitle: 'Conversation Title',
       conversationType: 'group',
       direction: 'incoming',
       id: 'id-2',
@@ -119,6 +121,7 @@ const items: Record<string, TimelineItemType> = {
       canRetryDeleteForEveryone: true,
       conversationColor: 'crimson',
       conversationId: 'conversation-id',
+      conversationTitle: 'Conversation Title',
       conversationType: 'group',
       direction: 'incoming',
       id: 'id-3',
@@ -219,6 +222,7 @@ const items: Record<string, TimelineItemType> = {
       canRetryDeleteForEveryone: true,
       conversationColor: 'plum',
       conversationId: 'conversation-id',
+      conversationTitle: 'Conversation Title',
       conversationType: 'group',
       direction: 'outgoing',
       id: 'id-6',
@@ -245,6 +249,7 @@ const items: Record<string, TimelineItemType> = {
       canRetryDeleteForEveryone: true,
       conversationColor: 'crimson',
       conversationId: 'conversation-id',
+      conversationTitle: 'Conversation Title',
       conversationType: 'group',
       direction: 'outgoing',
       id: 'id-7',
@@ -271,6 +276,7 @@ const items: Record<string, TimelineItemType> = {
       canRetryDeleteForEveryone: true,
       conversationColor: 'crimson',
       conversationId: 'conversation-id',
+      conversationTitle: 'Conversation Title',
       conversationType: 'group',
       direction: 'outgoing',
       id: 'id-8',
@@ -297,6 +303,7 @@ const items: Record<string, TimelineItemType> = {
       canRetryDeleteForEveryone: true,
       conversationColor: 'crimson',
       conversationId: 'conversation-id',
+      conversationTitle: 'Conversation Title',
       conversationType: 'group',
       direction: 'outgoing',
       id: 'id-9',
@@ -323,6 +330,7 @@ const items: Record<string, TimelineItemType> = {
       canRetryDeleteForEveryone: true,
       conversationColor: 'crimson',
       conversationId: 'conversation-id',
+      conversationTitle: 'Conversation Title',
       conversationType: 'group',
       direction: 'outgoing',
       id: 'id-10',
@@ -335,11 +343,6 @@ const items: Record<string, TimelineItemType> = {
       textDirection: TextDirection.Default,
       timestamp: Date.now(),
     },
-    timestamp: Date.now(),
-  },
-  'id-15': {
-    type: 'linkNotification',
-    data: null,
     timestamp: Date.now(),
   },
 };
@@ -384,6 +387,7 @@ const actions = () => ({
   doubleCheckMissingQuoteReference: action('doubleCheckMissingQuoteReference'),
 
   openLink: action('openLink'),
+  openGiftBadge: action('openGiftBadge'),
   scrollToQuotedMessage: action('scrollToQuotedMessage'),
   showExpiredIncomingTapToViewToast: action(
     'showExpiredIncomingTapToViewToast'
@@ -538,11 +542,12 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
     overrideProps.isIncomingMessageRequest === true
   ),
   items: overrideProps.items || Object.keys(items),
+  messageChangeCounter: 0,
   scrollToIndex: overrideProps.scrollToIndex,
   scrollToIndexCounter: 0,
-  totalUnread: number('totalUnread', overrideProps.totalUnread || 0),
-  oldestUnreadIndex:
-    number('oldestUnreadIndex', overrideProps.oldestUnreadIndex || 0) ||
+  totalUnseen: number('totalUnseen', overrideProps.totalUnseen || 0),
+  oldestUnseenIndex:
+    number('oldestUnseenIndex', overrideProps.oldestUnseenIndex || 0) ||
     undefined,
   invitedContactsForNewlyCreatedGroup:
     overrideProps.invitedContactsForNewlyCreatedGroup || [],
@@ -608,8 +613,8 @@ story.add('Empty (just hero)', () => {
 
 story.add('Last Seen', () => {
   const props = useProps({
-    oldestUnreadIndex: 13,
-    totalUnread: 2,
+    oldestUnseenIndex: 13,
+    totalUnseen: 2,
   });
 
   return <Timeline {...props} />;

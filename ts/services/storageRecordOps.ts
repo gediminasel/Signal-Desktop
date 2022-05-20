@@ -35,7 +35,7 @@ import {
 } from '../util/universalExpireTimer';
 import { ourProfileKeyService } from './ourProfileKey';
 import { isGroupV1, isGroupV2 } from '../util/whatTypeOfConversation';
-import { isValidUuid } from '../types/UUID';
+import { isValidUuid, UUID, UUIDKind } from '../types/UUID';
 import * as preferredReactionEmoji from '../reactions/preferredReactionEmoji';
 import { SignalService as Proto } from '../protobuf';
 import * as log from '../logging/log';
@@ -786,6 +786,10 @@ export async function mergeContactRecord(
     return { hasConflict: false, shouldDrop: true, details: ['invalid uuid'] };
   }
 
+  if (window.storage.user.getOurUuidKind(new UUID(uuid)) !== UUIDKind.Unknown) {
+    return { hasConflict: false, shouldDrop: true, details: ['our own uuid'] };
+  }
+
   const id = window.ConversationController.ensureContactIds({
     e164,
     uuid,
@@ -1107,16 +1111,6 @@ export async function mergeAccountRecord(
 
     remotelyPinnedConversations.forEach(conversation => {
       conversation.set({ isPinned: true, isArchived: false });
-
-      if (
-        window.Signal.Util.postLinkExperience.isActive() &&
-        isGroupV2(conversation.attributes)
-      ) {
-        log.info(
-          'mergeAccountRecord: Adding the message history disclaimer on link'
-        );
-        conversation.addMessageHistoryDisclaimer();
-      }
       updatedConversations.push(conversation);
     });
 

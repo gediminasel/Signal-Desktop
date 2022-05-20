@@ -12,7 +12,7 @@ import { SignalService } from '../../protobuf';
 import { ConversationColors } from '../../types/Colors';
 import { EmojiPicker } from '../emoji/EmojiPicker';
 import type { Props, AudioAttachmentProps } from './Message';
-import { TextDirection, Message } from './Message';
+import { GiftBadgeStates, Message, TextDirection } from './Message';
 import {
   AUDIO_MP3,
   IMAGE_JPEG,
@@ -30,7 +30,7 @@ import enMessages from '../../../_locales/en/messages.json';
 import { pngUrl } from '../../storybook/Fixtures';
 import { getDefaultConversation } from '../../test-both/helpers/getDefaultConversation';
 import { WidthBreakpoint } from '../_util';
-import { MINUTE } from '../../util/durations';
+import { DAY, HOUR, MINUTE, SECOND } from '../../util/durations';
 import { ContactFormType } from '../../types/EmbeddedContact';
 
 import {
@@ -40,6 +40,7 @@ import {
 import { getFakeBadge } from '../../test-both/helpers/getFakeBadge';
 import { ThemeType } from '../../types/Util';
 import { UUID } from '../../types/UUID';
+import { BadgeCategory } from '../../badges/BadgeCategory';
 
 const i18n = setupI18n('en', enMessages);
 
@@ -119,6 +120,9 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   conversationColor:
     overrideProps.conversationColor ||
     select('conversationColor', ConversationColors, ConversationColors[0]),
+  conversationTitle:
+    overrideProps.conversationTitle ||
+    text('conversationTitle', 'Conversation Title'),
   conversationId: text('conversationId', overrideProps.conversationId || ''),
   conversationType: overrideProps.conversationType || 'direct',
   contact: overrideProps.contact,
@@ -138,8 +142,9 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
     number('expirationTimestamp', overrideProps.expirationTimestamp || 0) ||
     undefined,
   getPreferredBadge: overrideProps.getPreferredBadge || (() => undefined),
+  giftBadge: overrideProps.giftBadge,
   i18n,
-  id: text('id', overrideProps.id || ''),
+  id: text('id', overrideProps.id || 'random-message-id'),
   renderingContext: 'storybook',
   interactionMode: overrideProps.interactionMode || 'keyboard',
   isSticker: isBoolean(overrideProps.isSticker)
@@ -159,6 +164,7 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   markViewed: action('markViewed'),
   messageExpanded: action('messageExpanded'),
   openConversation: action('openConversation'),
+  openGiftBadge: action('openGiftBadge'),
   openLink: action('openLink'),
   previews: overrideProps.previews || [],
   reactions: overrideProps.reactions,
@@ -222,15 +228,30 @@ const renderMany = (propsArray: ReadonlyArray<Props>) =>
     />
   ));
 
-const renderBothDirections = (props: Props) =>
-  renderMany([
-    props,
-    {
+const renderThree = (props: Props) => renderMany([props, props, props]);
+
+const renderBothDirections = (props: Props) => (
+  <>
+    {renderThree(props)}
+    {renderThree({
       ...props,
       author: { ...props.author, id: getDefaultConversation().id },
       direction: 'outgoing',
-    },
-  ]);
+    })}
+  </>
+);
+const renderSingleBothDirections = (props: Props) => (
+  <>
+    <Message {...props} />
+    <Message
+      {...{
+        ...props,
+        author: { ...props.author, id: getDefaultConversation().id },
+        direction: 'outgoing',
+      }}
+    />
+  </>
+);
 
 story.add('Plain Message', () => {
   const props = createProps({
@@ -353,7 +374,7 @@ story.add('Delivered', () => {
     text: 'Hello there from a pal! I am sending a long message so that it will wrap a bit, since I like that look.',
   });
 
-  return <Message {...props} />;
+  return renderThree(props);
 });
 
 story.add('Read', () => {
@@ -363,7 +384,7 @@ story.add('Read', () => {
     text: 'Hello there from a pal! I am sending a long message so that it will wrap a bit, since I like that look.',
   });
 
-  return <Message {...props} />;
+  return renderThree(props);
 });
 
 story.add('Sending', () => {
@@ -373,7 +394,7 @@ story.add('Sending', () => {
     text: 'Hello there from a pal! I am sending a long message so that it will wrap a bit, since I like that look.',
   });
 
-  return <Message {...props} />;
+  return renderThree(props);
 });
 
 story.add('Expiring', () => {
@@ -502,7 +523,7 @@ story.add('Reactions (wider message)', () => {
     ],
   });
 
-  return renderBothDirections(props);
+  return renderSingleBothDirections(props);
 });
 
 const joyReactions = Array.from({ length: 52 }, () => getJoyReaction());
@@ -577,7 +598,7 @@ story.add('Reactions (short message)', () => {
     ],
   });
 
-  return renderBothDirections(props);
+  return renderSingleBothDirections(props);
 });
 
 story.add('Avatar in Group', () => {
@@ -588,7 +609,7 @@ story.add('Avatar in Group', () => {
     text: 'Hello it is me, the saxophone.',
   });
 
-  return <Message {...props} />;
+  return renderThree(props);
 });
 
 story.add('Badge in Group', () => {
@@ -599,7 +620,7 @@ story.add('Badge in Group', () => {
     text: 'Hello it is me, the saxophone.',
   });
 
-  return <Message {...props} />;
+  return renderThree(props);
 });
 
 story.add('Sticker', () => {
@@ -673,8 +694,8 @@ story.add('Deleted with error', () => {
 
   return (
     <>
-      <Message {...propsPartialError} />
-      <Message {...propsError} />
+      {renderThree(propsPartialError)}
+      {renderThree(propsError)}
     </>
   );
 });
@@ -684,9 +705,10 @@ story.add('Can delete for everyone', () => {
     status: 'read',
     text: 'I hope you get this.',
     canDeleteForEveryone: true,
+    direction: 'outgoing',
   });
 
-  return <Message {...props} direction="outgoing" />;
+  return renderThree(props);
 });
 
 story.add('Error', () => {
@@ -916,7 +938,7 @@ story.add('Link Preview with too new a date', () => {
 });
 
 story.add('Image', () => {
-  const props = createProps({
+  const darkImageProps = createProps({
     attachments: [
       fakeAttachment({
         url: '/fixtures/tina-rolf-269345-unsplash.jpg',
@@ -928,8 +950,25 @@ story.add('Image', () => {
     ],
     status: 'sent',
   });
+  const lightImageProps = createProps({
+    attachments: [
+      fakeAttachment({
+        url: pngUrl,
+        fileName: 'the-sax.png',
+        contentType: IMAGE_PNG,
+        height: 240,
+        width: 320,
+      }),
+    ],
+    status: 'sent',
+  });
 
-  return renderBothDirections(props);
+  return (
+    <>
+      {renderBothDirections(darkImageProps)}
+      {renderBothDirections(lightImageProps)}
+    </>
+  );
 });
 
 for (let i = 2; i <= 5; i += 1) {
@@ -937,39 +976,39 @@ for (let i = 2; i <= 5; i += 1) {
     const props = createProps({
       attachments: [
         fakeAttachment({
-          url: '/fixtures/tina-rolf-269345-unsplash.jpg',
-          fileName: 'tina-rolf-269345-unsplash.jpg',
-          contentType: IMAGE_JPEG,
-          width: 128,
-          height: 128,
+          url: pngUrl,
+          fileName: 'the-sax.png',
+          contentType: IMAGE_PNG,
+          height: 240,
+          width: 320,
         }),
         fakeAttachment({
-          url: '/fixtures/tina-rolf-269345-unsplash.jpg',
-          fileName: 'tina-rolf-269345-unsplash.jpg',
-          contentType: IMAGE_JPEG,
-          width: 128,
-          height: 128,
+          url: pngUrl,
+          fileName: 'the-sax.png',
+          contentType: IMAGE_PNG,
+          height: 240,
+          width: 320,
         }),
         fakeAttachment({
-          url: '/fixtures/tina-rolf-269345-unsplash.jpg',
-          fileName: 'tina-rolf-269345-unsplash.jpg',
-          contentType: IMAGE_JPEG,
-          width: 128,
-          height: 128,
+          url: pngUrl,
+          fileName: 'the-sax.png',
+          contentType: IMAGE_PNG,
+          height: 240,
+          width: 320,
         }),
         fakeAttachment({
-          url: '/fixtures/tina-rolf-269345-unsplash.jpg',
-          fileName: 'tina-rolf-269345-unsplash.jpg',
-          contentType: IMAGE_JPEG,
-          width: 128,
-          height: 128,
+          url: pngUrl,
+          fileName: 'the-sax.png',
+          contentType: IMAGE_PNG,
+          height: 240,
+          width: 320,
         }),
         fakeAttachment({
-          url: '/fixtures/tina-rolf-269345-unsplash.jpg',
-          fileName: 'tina-rolf-269345-unsplash.jpg',
-          contentType: IMAGE_JPEG,
-          width: 128,
-          height: 128,
+          url: pngUrl,
+          fileName: 'the-sax.png',
+          contentType: IMAGE_PNG,
+          height: 240,
+          width: 320,
         }),
       ].slice(0, i),
       status: 'sent',
@@ -1185,6 +1224,7 @@ story.add('Other File Type', () => {
         contentType: stringToMIMEType('text/plain'),
         fileName: 'my-resume.txt',
         url: 'my-resume.txt',
+        fileSize: '10MB',
       }),
     ],
     status: 'sent',
@@ -1200,6 +1240,7 @@ story.add('Other File Type with Caption', () => {
         contentType: stringToMIMEType('text/plain'),
         fileName: 'my-resume.txt',
         url: 'my-resume.txt',
+        fileSize: '10MB',
       }),
     ],
     status: 'sent',
@@ -1217,6 +1258,7 @@ story.add('Other File Type with Long Filename', () => {
         fileName:
           'INSERT-APP-NAME_INSERT-APP-APPLE-ID_AppStore_AppsGamesWatch.psd.zip',
         url: 'a2/a2334324darewer4234',
+        fileSize: '10MB',
       }),
     ],
     status: 'sent',
@@ -1316,7 +1358,7 @@ story.add('TapToView Error', () => {
     status: 'sent',
   });
 
-  return <Message {...props} />;
+  return renderThree(props);
 });
 
 story.add('Dangerous File Type', () => {
@@ -1419,23 +1461,23 @@ story.add('Not approved, with link preview', () => {
 
 story.add('Custom Color', () => (
   <>
-    <Message
-      {...createProps({ text: 'Solid.' })}
-      direction="outgoing"
-      customColor={{
+    {renderThree({
+      ...createProps({ text: 'Solid.' }),
+      direction: 'outgoing',
+      customColor: {
         start: { hue: 82, saturation: 35 },
-      }}
-    />
+      },
+    })}
     <br style={{ clear: 'both' }} />
-    <Message
-      {...createProps({ text: 'Gradient.' })}
-      direction="outgoing"
-      customColor={{
+    {renderThree({
+      ...createProps({ text: 'Gradient.' }),
+      direction: 'outgoing',
+      customColor: {
         deg: 192,
         start: { hue: 304, saturation: 85 },
         end: { hue: 231, saturation: 76 },
-      }}
-    />
+      },
+    })}
   </>
 ));
 
@@ -1506,20 +1548,56 @@ story.add('Collapsing text-only group messages', () => {
 story.add('Story reply', () => {
   const conversation = getDefaultConversation();
 
-  return (
-    <Message
-      {...createProps({ text: 'Wow!' })}
-      storyReplyContext={{
-        authorTitle: conversation.title,
-        conversationColor: ConversationColors[0],
-        isFromMe: false,
-        rawAttachment: fakeAttachment({
-          url: '/fixtures/snow.jpg',
-          thumbnail: fakeThumbnail('/fixtures/snow.jpg'),
-        }),
-      }}
-    />
-  );
+  return renderThree({
+    ...createProps({ direction: 'outgoing', text: 'Wow!' }),
+    storyReplyContext: {
+      authorTitle: conversation.firstName || conversation.title,
+      conversationColor: ConversationColors[0],
+      isFromMe: false,
+      rawAttachment: fakeAttachment({
+        url: '/fixtures/snow.jpg',
+        thumbnail: fakeThumbnail('/fixtures/snow.jpg'),
+      }),
+      text: 'Photo',
+    },
+  });
+});
+
+story.add('Story reply (yours)', () => {
+  const conversation = getDefaultConversation();
+
+  return renderThree({
+    ...createProps({ direction: 'incoming', text: 'Wow!' }),
+    storyReplyContext: {
+      authorTitle: conversation.firstName || conversation.title,
+      conversationColor: ConversationColors[0],
+      isFromMe: true,
+      rawAttachment: fakeAttachment({
+        url: '/fixtures/snow.jpg',
+        thumbnail: fakeThumbnail('/fixtures/snow.jpg'),
+      }),
+      text: 'Photo',
+    },
+  });
+});
+
+story.add('Story reply (emoji)', () => {
+  const conversation = getDefaultConversation();
+
+  return renderThree({
+    ...createProps({ direction: 'outgoing', text: 'Wow!' }),
+    storyReplyContext: {
+      authorTitle: conversation.firstName || conversation.title,
+      conversationColor: ConversationColors[0],
+      emoji: '💄',
+      isFromMe: false,
+      rawAttachment: fakeAttachment({
+        url: '/fixtures/snow.jpg',
+        thumbnail: fakeThumbnail('/fixtures/snow.jpg'),
+      }),
+      text: 'Photo',
+    },
+  });
 });
 
 const fullContact = {
@@ -1559,7 +1637,7 @@ story.add('EmbeddedContact: Full Contact', () => {
   return renderBothDirections(props);
 });
 
-story.add('EmbeddedContact: 2x Incoming, with Send Message', () => {
+story.add('EmbeddedContact: with Send Message', () => {
   const props = createProps({
     contact: {
       ...fullContact,
@@ -1568,19 +1646,7 @@ story.add('EmbeddedContact: 2x Incoming, with Send Message', () => {
     },
     direction: 'incoming',
   });
-  return renderMany([props, props]);
-});
-
-story.add('EmbeddedContact: 2x Outgoing, with Send Message', () => {
-  const props = createProps({
-    contact: {
-      ...fullContact,
-      firstNumber: fullContact.number[0].value,
-      uuid: UUID.generate().toString(),
-    },
-    direction: 'outgoing',
-  });
-  return renderMany([props, props]);
+  return renderBothDirections(props);
 });
 
 story.add('EmbeddedContact: Only Email', () => {
@@ -1653,6 +1719,104 @@ story.add('EmbeddedContact: Loading Avatar', () => {
         }),
         isProfile: true,
       },
+    },
+  });
+  return renderBothDirections(props);
+});
+
+story.add('Gift Badge: Unopened', () => {
+  const props = createProps({
+    giftBadge: {
+      state: GiftBadgeStates.Unopened,
+      expiration: Date.now() + DAY * 30,
+      level: 3,
+    },
+  });
+  return renderBothDirections(props);
+});
+
+const getPreferredBadge = () => ({
+  category: BadgeCategory.Donor,
+  descriptionTemplate: 'This is a description of the badge',
+  id: 'BOOST-3',
+  images: [
+    {
+      transparent: {
+        localPath: '/fixtures/orange-heart.svg',
+        url: 'http://someplace',
+      },
+    },
+  ],
+  name: 'heart',
+});
+
+story.add('Gift Badge: Redeemed (30 days)', () => {
+  const props = createProps({
+    getPreferredBadge,
+    giftBadge: {
+      state: GiftBadgeStates.Redeemed,
+      expiration: Date.now() + DAY * 30 + SECOND,
+      level: 3,
+    },
+  });
+  return renderBothDirections(props);
+});
+
+story.add('Gift Badge: Redeemed (24 hours)', () => {
+  const props = createProps({
+    getPreferredBadge,
+    giftBadge: {
+      state: GiftBadgeStates.Redeemed,
+      expiration: Date.now() + DAY + SECOND,
+      level: 3,
+    },
+  });
+  return renderBothDirections(props);
+});
+
+story.add('Gift Badge: Redeemed (60 minutes)', () => {
+  const props = createProps({
+    getPreferredBadge,
+    giftBadge: {
+      state: GiftBadgeStates.Redeemed,
+      expiration: Date.now() + HOUR + SECOND,
+      level: 3,
+    },
+  });
+  return renderBothDirections(props);
+});
+
+story.add('Gift Badge: Redeemed (1 minute)', () => {
+  const props = createProps({
+    getPreferredBadge,
+    giftBadge: {
+      state: GiftBadgeStates.Redeemed,
+      expiration: Date.now() + MINUTE + SECOND,
+      level: 3,
+    },
+  });
+  return renderBothDirections(props);
+});
+
+story.add('Gift Badge: Redeemed (expired)', () => {
+  const props = createProps({
+    getPreferredBadge,
+    giftBadge: {
+      state: GiftBadgeStates.Redeemed,
+      expiration: Date.now(),
+      level: 3,
+    },
+  });
+  return renderBothDirections(props);
+});
+
+story.add('Gift Badge: Missing Badge', () => {
+  const props = createProps({
+    getPreferredBadge: () => undefined,
+    giftBadge: {
+      state: GiftBadgeStates.Redeemed,
+      expiration: Date.now() + MINUTE + SECOND,
+      level: 3,
     },
   });
   return renderBothDirections(props);

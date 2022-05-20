@@ -76,6 +76,7 @@ import {
 import * as log from '../../logging/log';
 import { getConversationColorAttributes } from '../../util/getConversationColorAttributes';
 import { DAY, HOUR } from '../../util/durations';
+import { getStoryReplyText } from '../../util/getStoryReplyText';
 
 const THREE_HOURS = 3 * HOUR;
 
@@ -435,7 +436,7 @@ export const getPropsForStoryReplyContext = createSelectorCreator(
   (
     message: Pick<
       MessageWithUIFieldsType,
-      'body' | 'conversationId' | 'storyReplyContext'
+      'body' | 'conversationId' | 'storyReactionEmoji' | 'storyReplyContext'
     >,
     {
       conversationSelector,
@@ -445,14 +446,14 @@ export const getPropsForStoryReplyContext = createSelectorCreator(
       ourConversationId?: string;
     }
   ): PropsData['storyReplyContext'] => {
-    const { storyReplyContext } = message;
+    const { storyReactionEmoji, storyReplyContext } = message;
     if (!storyReplyContext) {
       return undefined;
     }
 
     const contact = conversationSelector(storyReplyContext.authorUuid);
 
-    const authorTitle = contact.title;
+    const authorTitle = contact.firstName || contact.title;
     const isFromMe = contact.id === ourConversationId;
 
     const conversation = getConversation(message, conversationSelector);
@@ -464,10 +465,13 @@ export const getPropsForStoryReplyContext = createSelectorCreator(
       authorTitle,
       conversationColor,
       customColor,
+      emoji: storyReactionEmoji,
       isFromMe,
       rawAttachment: storyReplyContext.attachment
         ? processQuoteAttachment(storyReplyContext.attachment)
         : undefined,
+      referencedMessageNotFound: !storyReplyContext.messageId,
+      text: getStoryReplyText(window.i18n, storyReplyContext.attachment),
     };
   },
 
@@ -498,6 +502,7 @@ export const getPropsForQuote = createSelectorCreator(memoizeByRoot, isEqual)(
       authorUuid,
       id: sentAt,
       isViewOnce,
+      isGiftBadge: isTargetGiftBadge,
       referencedMessageNotFound,
       text = '',
     } = quote;
@@ -530,6 +535,7 @@ export const getPropsForQuote = createSelectorCreator(memoizeByRoot, isEqual)(
       rawAttachment: firstAttachment
         ? processQuoteAttachment(firstAttachment)
         : undefined,
+      isGiftBadge: Boolean(isTargetGiftBadge),
       isViewOnce,
       referencedMessageNotFound,
       sentAt: Number(sentAt),
@@ -565,6 +571,7 @@ type ShallowPropsType = Pick<
   | 'contactNameColor'
   | 'conversationColor'
   | 'conversationId'
+  | 'conversationTitle'
   | 'conversationType'
   | 'customColor'
   | 'deletedForEveryone'
@@ -572,6 +579,7 @@ type ShallowPropsType = Pick<
   | 'displayLimit'
   | 'expirationLength'
   | 'expirationTimestamp'
+  | 'giftBadge'
   | 'id'
   | 'isBlocked'
   | 'isMessageRequestAccepted'
@@ -653,6 +661,7 @@ const getShallowPropsForMessage = createSelectorCreator(memoizeByRoot, isEqual)(
       contactNameColor,
       conversationColor,
       conversationId,
+      conversationTitle: conversation.title,
       conversationType: isGroup ? 'group' : 'direct',
       customColor,
       deletedForEveryone: message.deletedForEveryone || false,
@@ -660,6 +669,7 @@ const getShallowPropsForMessage = createSelectorCreator(memoizeByRoot, isEqual)(
       displayLimit: message.displayLimit,
       expirationLength,
       expirationTimestamp,
+      giftBadge: message.giftBadge,
       id: message.id,
       isBlocked: conversation.isBlocked || false,
       isMessageRequestAccepted: conversation?.acceptedMessageRequest ?? true,
@@ -786,13 +796,6 @@ export function getPropsForBubble(
     return {
       type: 'groupV1Migration',
       data: getPropsForGroupV1Migration(message, options),
-      timestamp,
-    };
-  }
-  if (isMessageHistoryUnsynced(message)) {
-    return {
-      type: 'linkNotification',
-      data: null,
       timestamp,
     };
   }
@@ -988,14 +991,6 @@ function getPropsForGroupV1Migration(
   };
 }
 
-// Message History Unsynced
-
-export function isMessageHistoryUnsynced(
-  message: MessageWithUIFieldsType
-): boolean {
-  return message.type === 'message-history-unsynced';
-}
-
 // Note: props are null!
 
 // Expiration Timer Update
@@ -1093,6 +1088,14 @@ function getPropsForVerificationNotification(
     isLocal,
     contact: conversationSelector(identifier),
   };
+}
+
+// Gift Badge
+
+export function isGiftBadge(
+  message: Pick<MessageWithUIFieldsType, 'giftBadge'>
+): boolean {
+  return Boolean(message.giftBadge);
 }
 
 // Group Update (V1)

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import FocusTrap from 'focus-trap-react';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import classNames from 'classnames';
 import type { ConversationStoryType } from './StoryListItem';
 import type { LocalizerType } from '../types/Util';
@@ -10,6 +10,7 @@ import type { PropsType as SmartStoryViewerPropsType } from '../state/smart/Stor
 import { StoriesPane } from './StoriesPane';
 import { Theme, themeClassName } from '../util/theme';
 import { getWidthFromPreferredWidth } from '../util/leftPaneWidth';
+import * as log from '../logging/log';
 
 export type PropsType = {
   hiddenStories: Array<ConversationStoryType>;
@@ -42,55 +43,87 @@ export const Stories = ({
     requiresFullWidth: true,
   });
 
+  const onNextUserStories = useCallback(() => {
+    // First find the next unread story if there are any
+    const nextUnreadIndex = stories.findIndex(conversationStory =>
+      conversationStory.stories.some(story => story.isUnread)
+    );
+
+    log.info('stories.onNextUserStories', { nextUnreadIndex });
+
+    if (nextUnreadIndex >= 0) {
+      const nextStory = stories[nextUnreadIndex];
+      setConversationIdToView(nextStory.conversationId);
+      return;
+    }
+
+    // If not then play the next available story
+    const storyIndex = stories.findIndex(
+      x => x.conversationId === conversationIdToView
+    );
+
+    log.info('stories.onNextUserStories', {
+      storyIndex,
+      length: stories.length,
+    });
+
+    // If we've reached the end, close the viewer
+    if (storyIndex >= stories.length - 1 || storyIndex === -1) {
+      setConversationIdToView(undefined);
+      return;
+    }
+    const nextStory = stories[storyIndex + 1];
+    setConversationIdToView(nextStory.conversationId);
+  }, [conversationIdToView, stories]);
+
+  const onPrevUserStories = useCallback(() => {
+    const storyIndex = stories.findIndex(
+      x => x.conversationId === conversationIdToView
+    );
+
+    log.info('stories.onPrevUserStories', {
+      storyIndex,
+      length: stories.length,
+    });
+
+    if (storyIndex <= 0) {
+      // Restart playback on the story if it's the oldest
+      setConversationIdToView(conversationIdToView);
+      return;
+    }
+    const prevStory = stories[storyIndex - 1];
+    setConversationIdToView(prevStory.conversationId);
+  }, [conversationIdToView, stories]);
+
   return (
     <div className={classNames('Stories', themeClassName(Theme.Dark))}>
       {conversationIdToView &&
         renderStoryViewer({
           conversationId: conversationIdToView,
           onClose: () => setConversationIdToView(undefined),
-          onNextUserStories: () => {
-            const storyIndex = stories.findIndex(
-              x => x.conversationId === conversationIdToView
-            );
-            if (storyIndex >= stories.length - 1) {
-              setConversationIdToView(undefined);
-              return;
-            }
-            const nextStory = stories[storyIndex + 1];
-            setConversationIdToView(nextStory.conversationId);
-          },
-          onPrevUserStories: () => {
-            const storyIndex = stories.findIndex(
-              x => x.conversationId === conversationIdToView
-            );
-            if (storyIndex === 0) {
-              setConversationIdToView(undefined);
-              return;
-            }
-            const prevStory = stories[storyIndex - 1];
-            setConversationIdToView(prevStory.conversationId);
-          },
+          onNextUserStories,
+          onPrevUserStories,
         })}
       <FocusTrap focusTrapOptions={{ allowOutsideClick: true }}>
         <div className="Stories__pane" style={{ width }}>
           <StoriesPane
             hiddenStories={hiddenStories}
             i18n={i18n}
-            onBack={toggleStoriesView}
-            onStoryClicked={conversationId => {
+            onStoryClicked={clickedIdToView => {
               const storyIndex = stories.findIndex(
-                x => x.conversationId === conversationId
+                x => x.conversationId === clickedIdToView
               );
-              const foundStory = stories[storyIndex];
-
-              if (foundStory) {
-                setConversationIdToView(conversationId);
-              }
+              log.info('stories.onStoryClicked', {
+                storyIndex,
+                length: stories.length,
+              });
+              setConversationIdToView(clickedIdToView);
             }}
             openConversationInternal={openConversationInternal}
             queueStoryDownload={queueStoryDownload}
             stories={stories}
             toggleHideStories={toggleHideStories}
+            toggleStoriesView={toggleStoriesView}
           />
         </div>
       </FocusTrap>

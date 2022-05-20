@@ -33,12 +33,12 @@ import type { PropsType as SmartContactSpoofingReviewDialogPropsType } from '../
 import type { GroupNameCollisionsWithIdsByTitle } from '../../util/groupMemberNameCollisions';
 import { hasUnacknowledgedCollisions } from '../../util/groupMemberNameCollisions';
 import { TimelineFloatingHeader } from './TimelineFloatingHeader';
-import type { TimelineMessageLoadingState } from '../../util/timelineUtil';
 import {
-  ScrollAnchor,
-  UnreadIndicatorPlacement,
   getScrollAnchorBeforeUpdate,
   getWidthBreakpoint,
+  ScrollAnchor,
+  TimelineMessageLoadingState,
+  UnreadIndicatorPlacement,
 } from '../../util/timelineUtil';
 import {
   getScrollBottom,
@@ -53,6 +53,7 @@ const AT_BOTTOM_DETECTOR_STYLE = { height: AT_BOTTOM_THRESHOLD };
 
 const MIN_ROW_HEIGHT = 18;
 const SCROLL_DOWN_BUTTON_THRESHOLD = 8;
+const LOAD_NEWER_THRESHOLD = 5;
 
 export type WarningType =
   | {
@@ -85,13 +86,14 @@ export type ContactSpoofingReviewPropType =
 export type PropsDataType = {
   haveNewest: boolean;
   haveOldest: boolean;
+  messageChangeCounter: number;
   messageLoadingState?: TimelineMessageLoadingState;
   isNearBottom?: boolean;
   items: ReadonlyArray<string>;
-  oldestUnreadIndex?: number;
+  oldestUnseenIndex?: number;
   scrollToIndex?: number;
   scrollToIndexCounter: number;
-  totalUnread: number;
+  totalUnseen: number;
 };
 
 type PropsHousekeepingType = {
@@ -109,7 +111,13 @@ type PropsHousekeepingType = {
   contactSpoofingReview?: ContactSpoofingReviewPropType;
 
   discardMessages: (
-    _: Readonly<{ conversationId: string; numberToKeepAtBottom: number }>
+    _: Readonly<
+      | {
+          conversationId: string;
+          numberToKeepAtBottom: number;
+        }
+      | { conversationId: string; numberToKeepAtTop: number }
+    >
   ) => void;
   getTimestampForMessage: (messageId: string) => undefined | number;
   getPreferredBadge: PreferredBadgeSelectorType;
@@ -241,6 +249,7 @@ const getActions = createSelector(
       'deleteMessageForEveryone',
       'showMessageDetail',
       'openConversation',
+      'openGiftBadge',
       'showContactDetail',
       'showContactModal',
       'kickOffAttachmentDownload',
@@ -342,7 +351,7 @@ export class Timeline extends React.Component<
       items,
       loadNewestMessages,
       messageLoadingState,
-      oldestUnreadIndex,
+      oldestUnseenIndex,
       selectMessage,
     } = this.props;
     const { newestBottomVisibleMessageId } = this.state;
@@ -358,15 +367,15 @@ export class Timeline extends React.Component<
 
     if (
       newestBottomVisibleMessageId &&
-      isNumber(oldestUnreadIndex) &&
+      isNumber(oldestUnseenIndex) &&
       items.findIndex(item => item === newestBottomVisibleMessageId) <
-        oldestUnreadIndex
+        oldestUnseenIndex
     ) {
       if (setFocus) {
-        const messageId = items[oldestUnreadIndex];
+        const messageId = items[oldestUnseenIndex];
         selectMessage(messageId, id);
       } else {
-        this.scrollToItemIndex(oldestUnreadIndex);
+        this.scrollToItemIndex(oldestUnseenIndex);
       }
     } else if (haveNewest) {
       this.scrollToBottom(setFocus);
@@ -487,10 +496,15 @@ export class Timeline extends React.Component<
         if (newestBottomVisibleMessageId) {
           this.markNewestBottomVisibleMessageRead();
 
+          const rowIndex = getRowIndexFromElement(newestBottomVisible);
+          const maxRowIndex = items.length - 1;
+
           if (
             !messageLoadingState &&
             !haveNewest &&
-            newestBottomVisibleMessageId === last(items)
+            isNumber(rowIndex) &&
+            maxRowIndex >= 0 &&
+            rowIndex >= maxRowIndex - LOAD_NEWER_THRESHOLD
           ) {
             loadNewerMessages(newestBottomVisibleMessageId);
           }
@@ -541,17 +555,13 @@ export class Timeline extends React.Component<
     this.intersectionObserver.observe(atBottomDetectorEl);
   }
 
-  private markNewestBottomVisibleMessageRead = throttle(
-    (): void => {
-      const { markMessageRead } = this.props;
-      const { newestBottomVisibleMessageId } = this.state;
-      if (newestBottomVisibleMessageId) {
-        markMessageRead(newestBottomVisibleMessageId);
-      }
-    },
-    500,
-    { leading: false }
-  );
+  private markNewestBottomVisibleMessageRead = throttle((): void => {
+    const { markMessageRead } = this.props;
+    const { newestBottomVisibleMessageId } = this.state;
+    if (newestBottomVisibleMessageId) {
+      markMessageRead(newestBottomVisibleMessageId);
+    }
+  }, 500);
 
   public override componentDidMount(): void {
     const containerEl = this.containerRef.current;
@@ -637,8 +647,18 @@ export class Timeline extends React.Component<
     _prevState: Readonly<StateType>,
     snapshot: Readonly<SnapshotType>
   ): void {
-    const { items: oldItems } = prevProps;
-    const { discardMessages, id, items: newItems } = this.props;
+    const {
+      items: oldItems,
+      messageChangeCounter: previousMessageChangeCounter,
+      messageLoadingState: previousMessageLoadingState,
+    } = prevProps;
+    const {
+      discardMessages,
+      id,
+      items: newItems,
+      messageChangeCounter,
+      messageLoadingState,
+    } = this.props;
 
     const containerEl = this.containerRef.current;
     if (containerEl && snapshot) {
@@ -666,14 +686,38 @@ export class Timeline extends React.Component<
       this.updateIntersectionObserver();
 
       // This condition is somewhat arbitrary.
+      const numberToKeepAtBottom = this.maxVisibleRows * 2;
       const shouldDiscardOlderMessages: boolean =
-        this.isAtBottom() && newItems.length >= this.maxVisibleRows * 1.5;
+        this.isAtBottom() && newItems.length > numberToKeepAtBottom;
       if (shouldDiscardOlderMessages) {
         discardMessages({
           conversationId: id,
-          numberToKeepAtBottom: this.maxVisibleRows,
+          numberToKeepAtBottom,
         });
       }
+
+      const loadingStateThatJustFinished:
+        | undefined
+        | TimelineMessageLoadingState =
+        !messageLoadingState && previousMessageLoadingState
+          ? previousMessageLoadingState
+          : undefined;
+      const numberToKeepAtTop = this.maxVisibleRows * 5;
+      const shouldDiscardNewerMessages: boolean =
+        !this.isAtBottom() &&
+        loadingStateThatJustFinished ===
+          TimelineMessageLoadingState.LoadingOlderMessages &&
+        newItems.length > numberToKeepAtTop;
+
+      if (shouldDiscardNewerMessages) {
+        discardMessages({
+          conversationId: id,
+          numberToKeepAtTop,
+        });
+      }
+    }
+    if (previousMessageChangeCounter !== messageChangeCounter) {
+      this.markNewestBottomVisibleMessageRead();
     }
   }
 
@@ -792,7 +836,7 @@ export class Timeline extends React.Component<
       isSomeoneTyping,
       items,
       messageLoadingState,
-      oldestUnreadIndex,
+      oldestUnseenIndex,
       onBlock,
       onBlockAndReportSpam,
       onDelete,
@@ -806,7 +850,7 @@ export class Timeline extends React.Component<
       reviewMessageRequestNameCollision,
       showContactModal,
       theme,
-      totalUnread,
+      totalUnseen,
       unblurAvatar,
       unreadCount,
       updateSharedGroups,
@@ -900,17 +944,17 @@ export class Timeline extends React.Component<
       }
 
       let unreadIndicatorPlacement: undefined | UnreadIndicatorPlacement;
-      if (oldestUnreadIndex === itemIndex) {
+      if (oldestUnseenIndex === itemIndex) {
         unreadIndicatorPlacement = UnreadIndicatorPlacement.JustAbove;
         messageNodes.push(
           <LastSeenIndicator
             key="last seen indicator"
-            count={totalUnread}
+            count={totalUnseen}
             i18n={i18n}
             ref={this.lastSeenIndicatorRef}
           />
         );
-      } else if (oldestUnreadIndex === nextItemIndex) {
+      } else if (oldestUnseenIndex === nextItemIndex) {
         unreadIndicatorPlacement = UnreadIndicatorPlacement.JustBelow;
       }
 
@@ -1195,6 +1239,14 @@ function getMessageIdFromElement(
   element: undefined | Element
 ): undefined | string {
   return element instanceof HTMLElement ? element.dataset.messageId : undefined;
+}
+
+function getRowIndexFromElement(
+  element: undefined | Element
+): undefined | number {
+  return element instanceof HTMLElement && element.dataset.itemIndex
+    ? parseInt(element.dataset.itemIndex, 10)
+    : undefined;
 }
 
 function showDebugLog() {

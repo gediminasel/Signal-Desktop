@@ -247,7 +247,7 @@ const dataInterface: ClientInterface = {
   migrateConversationMessages,
 
   getUnprocessedCount,
-  getAllUnprocessed,
+  getAllUnprocessedAndIncrementAttempts,
   getUnprocessedById,
   updateUnprocessedWithData,
   updateUnprocessedsWithData,
@@ -1170,13 +1170,17 @@ async function getMessageBySender({
 
 async function getTotalUnreadForConversation(
   conversationId: string,
-  storyId?: UUIDStringType
+  options: {
+    storyId: UUIDStringType | undefined;
+    isGroup: boolean;
+  }
 ) {
-  return channels.getTotalUnreadForConversation(conversationId, storyId);
+  return channels.getTotalUnreadForConversation(conversationId, options);
 }
 
 async function getUnreadByConversationAndMarkRead(options: {
   conversationId: string;
+  isGroup?: boolean;
   newestUnreadAt: number;
   readAt?: number;
   storyId?: UUIDStringType;
@@ -1228,22 +1232,25 @@ function handleMessageJSON(
 async function getOlderMessagesByConversation(
   conversationId: string,
   {
+    isGroup,
     limit = 100,
     messageId,
     receivedAt = Number.MAX_VALUE,
     sentAt = Number.MAX_VALUE,
     storyId,
   }: {
+    isGroup: boolean;
     limit?: number;
     messageId?: string;
     receivedAt?: number;
     sentAt?: number;
-    storyId?: string;
+    storyId: string | undefined;
   }
 ) {
   const messages = await channels.getOlderMessagesByConversation(
     conversationId,
     {
+      isGroup,
       limit,
       receivedAt,
       sentAt,
@@ -1267,20 +1274,23 @@ async function getOlderStories(options: {
 async function getNewerMessagesByConversation(
   conversationId: string,
   {
+    isGroup,
     limit = 100,
     receivedAt = 0,
     sentAt = 0,
     storyId,
   }: {
+    isGroup: boolean;
     limit?: number;
     receivedAt?: number;
     sentAt?: number;
-    storyId?: UUIDStringType;
+    storyId: UUIDStringType | undefined;
   }
 ) {
   const messages = await channels.getNewerMessagesByConversation(
     conversationId,
     {
+      isGroup,
       limit,
       receivedAt,
       sentAt,
@@ -1292,14 +1302,17 @@ async function getNewerMessagesByConversation(
 }
 async function getConversationMessageStats({
   conversationId,
+  isGroup,
   ourUuid,
 }: {
   conversationId: string;
+  isGroup?: boolean;
   ourUuid: UUIDStringType;
 }): Promise<ConversationMessageStatsType> {
   const { preview, activity, hasUserInitiatedMessages } =
     await channels.getConversationMessageStats({
       conversationId,
+      isGroup,
       ourUuid,
     });
 
@@ -1318,22 +1331,25 @@ async function getLastConversationMessage({
 }
 async function getMessageMetricsForConversation(
   conversationId: string,
-  storyId?: UUIDStringType
+  storyId?: UUIDStringType,
+  isGroup?: boolean
 ) {
   const result = await channels.getMessageMetricsForConversation(
     conversationId,
-    storyId
+    storyId,
+    isGroup
   );
 
   return result;
 }
 async function getConversationRangeCenteredOnMessage(options: {
   conversationId: string;
+  isGroup: boolean;
   limit?: number;
   messageId: string;
   receivedAt: number;
   sentAt?: number;
-  storyId?: UUIDStringType;
+  storyId: UUIDStringType | undefined;
 }) {
   const result = await channels.getConversationRangeCenteredOnMessage(options);
 
@@ -1375,6 +1391,8 @@ async function removeAllMessagesInConversation(
     //   time so we don't use too much memory.
     messages = await getOlderMessagesByConversation(conversationId, {
       limit: chunkSize,
+      isGroup: true,
+      storyId: undefined,
     });
 
     if (!messages.length) {
@@ -1428,8 +1446,8 @@ async function getUnprocessedCount() {
   return channels.getUnprocessedCount();
 }
 
-async function getAllUnprocessed() {
-  return channels.getAllUnprocessed();
+async function getAllUnprocessedAndIncrementAttempts() {
+  return channels.getAllUnprocessedAndIncrementAttempts();
 }
 
 async function getUnprocessedById(id: string) {

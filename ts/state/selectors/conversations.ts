@@ -828,6 +828,7 @@ export function _conversationMessagesSelector(
 ): TimelinePropsType {
   const {
     isNearBottom,
+    messageChangeCounter,
     messageIds,
     messageLoadingState,
     metrics,
@@ -839,7 +840,7 @@ export function _conversationMessagesSelector(
   const lastId =
     messageIds.length === 0 ? undefined : messageIds[messageIds.length - 1];
 
-  const { oldestUnread } = metrics;
+  const { oldestUnseen } = metrics;
 
   const haveNewest = !metrics.newest || !lastId || lastId === metrics.newest.id;
   const haveOldest =
@@ -847,28 +848,29 @@ export function _conversationMessagesSelector(
 
   const items = messageIds;
 
-  const oldestUnreadIndex = oldestUnread
-    ? messageIds.findIndex(id => id === oldestUnread.id)
+  const oldestUnseenIndex = oldestUnseen
+    ? messageIds.findIndex(id => id === oldestUnseen.id)
     : undefined;
   const scrollToIndex = scrollToMessageId
     ? messageIds.findIndex(id => id === scrollToMessageId)
     : undefined;
-  const { totalUnread } = metrics;
+  const { totalUnseen } = metrics;
 
   return {
     haveNewest,
     haveOldest,
     isNearBottom,
     items,
+    messageChangeCounter,
     messageLoadingState,
-    oldestUnreadIndex:
-      isNumber(oldestUnreadIndex) && oldestUnreadIndex >= 0
-        ? oldestUnreadIndex
+    oldestUnseenIndex:
+      isNumber(oldestUnseenIndex) && oldestUnseenIndex >= 0
+        ? oldestUnseenIndex
         : undefined,
     scrollToIndex:
       isNumber(scrollToIndex) && scrollToIndex >= 0 ? scrollToIndex : undefined,
     scrollToIndexCounter: scrollToMessageCounter,
-    totalUnread,
+    totalUnseen,
   };
 }
 
@@ -899,9 +901,10 @@ export const getConversationMessagesSelector = createSelector(
         return {
           haveNewest: false,
           haveOldest: false,
+          messageChangeCounter: 0,
           messageLoadingState: TimelineMessageLoadingState.DoingInitialLoad,
           scrollToIndexCounter: 0,
-          totalUnread: 0,
+          totalUnseen: 0,
           items: [],
         };
       }

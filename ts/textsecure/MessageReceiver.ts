@@ -104,7 +104,6 @@ import {
   KeysEvent,
   PNIIdentityEvent,
   StickerPackEvent,
-  VerifiedEvent,
   ReadSyncEvent,
   ViewSyncEvent,
   ContactEvent,
@@ -486,11 +485,6 @@ export default class MessageReceiver
   ): void;
 
   public override addEventListener(
-    name: 'verified',
-    handler: (ev: VerifiedEvent) => void
-  ): void;
-
-  public override addEventListener(
     name: 'readSync',
     handler: (ev: ReadSyncEvent) => void
   ): void;
@@ -808,17 +802,11 @@ export default class MessageReceiver
       return [];
     }
 
-    const items = await this.storage.protocol.getAllUnprocessed();
+    const items =
+      await this.storage.protocol.getAllUnprocessedAndIncrementAttempts();
     log.info('getAllFromCache loaded', items.length, 'saved envelopes');
 
-    return items.map(item => {
-      const { attempts = 0 } = item;
-
-      return {
-        ...item,
-        attempts: attempts + 1,
-      };
-    });
+    return items;
   }
 
   private async decryptAndCacheBatch(
@@ -2458,7 +2446,9 @@ export default class MessageReceiver
       return this.handleRead(envelope, syncMessage.read);
     }
     if (syncMessage.verified) {
-      return this.handleVerified(envelope, syncMessage.verified);
+      log.info('Got verified sync message, dropping');
+      this.removeFromCache(envelope);
+      return undefined;
     }
     if (syncMessage.configuration) {
       return this.handleConfiguration(envelope, syncMessage.configuration);
@@ -2629,6 +2619,7 @@ export default class MessageReceiver
     }
 
     log.info('MessageReceiver: scheduling pni identity sync message');
+    this.pendingPNIIdentityEvent?.confirm();
     this.pendingPNIIdentityEvent = ev;
   }
 
@@ -2651,27 +2642,6 @@ export default class MessageReceiver
       this.removeFromCache.bind(this, envelope)
     );
 
-    return this.dispatchAndWait(ev);
-  }
-
-  private async handleVerified(
-    envelope: ProcessedEnvelope,
-    verified: Proto.IVerified
-  ): Promise<void> {
-    const ev = new VerifiedEvent(
-      {
-        state: verified.state,
-        destination: dropNull(verified.destination),
-        destinationUuid: verified.destinationUuid
-          ? normalizeUuid(
-              verified.destinationUuid,
-              'handleVerified.destinationUuid'
-            )
-          : undefined,
-        identityKey: verified.identityKey ? verified.identityKey : undefined,
-      },
-      this.removeFromCache.bind(this, envelope)
-    );
     return this.dispatchAndWait(ev);
   }
 

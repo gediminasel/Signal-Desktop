@@ -45,7 +45,7 @@ import type {
 } from './textsecure/Types.d';
 import type { RemoveAllConfiguration } from './types/RemoveAllConfiguration';
 import type { UUIDStringType } from './types/UUID';
-import { UUID } from './types/UUID';
+import { UUID, UUIDKind } from './types/UUID';
 import type { Address } from './types/Address';
 import type { QualifiedAddressStringType } from './types/QualifiedAddress';
 import { QualifiedAddress } from './types/QualifiedAddress';
@@ -1682,7 +1682,11 @@ export class SignalProtocolStore extends EventsMixin {
     const identityRecord = await this.getOrMigrateIdentityRecord(uuid);
     const id = uuid.toString();
 
-    window.ConversationController.getOrCreate(id, 'private');
+    // When saving a PNI identity - don't create a separate conversation
+    const uuidKind = window.textsecure.storage.user.getOurUuidKind(uuid);
+    if (uuidKind !== UUIDKind.PNI) {
+      window.ConversationController.getOrCreate(id, 'private');
+    }
 
     const updates: Partial<IdentityKeyType> = {
       ...identityRecord,
@@ -1855,9 +1859,9 @@ export class SignalProtocolStore extends EventsMixin {
     });
   }
 
-  getAllUnprocessed(): Promise<Array<UnprocessedType>> {
+  getAllUnprocessedAndIncrementAttempts(): Promise<Array<UnprocessedType>> {
     return this.withZone(GLOBAL_ZONE, 'getAllUnprocessed', async () => {
-      return window.Signal.Data.getAllUnprocessed();
+      return window.Signal.Data.getAllUnprocessedAndIncrementAttempts();
     });
   }
 

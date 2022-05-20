@@ -29,6 +29,7 @@ import type { Receipt } from './types/Receipt';
 import { getTitleBarVisibility, TitleBarVisibility } from './types/Settings';
 import { SocketStatus } from './types/SocketStatus';
 import { DEFAULT_CONVERSATION_COLOR } from './types/Colors';
+import { ThemeType } from './types/Util';
 import { ChallengeHandler } from './challenge';
 import * as durations from './util/durations';
 import { explodePromise } from './util/explodePromise';
@@ -38,11 +39,7 @@ import { normalizeUuid } from './util/normalizeUuid';
 import { filter } from './util/iterables';
 import { isNotNil } from './util/isNotNil';
 import { IdleDetector } from './IdleDetector';
-import {
-  getStoriesForRedux,
-  loadStories,
-  repairUnexpiredStories,
-} from './services/storyLoader';
+import { getStoriesForRedux, loadStories } from './services/storyLoader';
 import { senderCertificateService } from './services/senderCertificate';
 import { GROUP_CREDENTIALS_KEY } from './services/groupCredentialFetcher';
 import * as KeyboardLayout from './services/keyboardLayout';
@@ -84,7 +81,6 @@ import type {
   SentEventData,
   StickerPackEvent,
   TypingEvent,
-  VerifiedEvent,
   ViewEvent,
   ViewOnceOpenSyncEvent,
   ViewSyncEvent,
@@ -144,6 +140,7 @@ import { ReactionSource } from './reactions/ReactionSource';
 import { singleProtoJobQueue } from './jobs/singleProtoJobQueue';
 import { getInitialState } from './state/getInitialState';
 import { conversationJobQueue } from './jobs/conversationJobQueue';
+import { SeenStatus } from './MessageSeenStatus';
 
 const MAX_ATTACHMENT_DOWNLOAD_AGE = 3600 * 72 * 1000;
 
@@ -170,6 +167,13 @@ export async function cleanupSessionResets(): Promise<void> {
 }
 
 export async function startApp(): Promise<void> {
+  if (window.initialTheme === ThemeType.light) {
+    document.body.classList.add('light-theme');
+  }
+  if (window.initialTheme === ThemeType.dark) {
+    document.body.classList.add('dark-theme');
+  }
+
   const idleDetector = new IdleDetector();
 
   await KeyboardLayout.initialize();
@@ -326,10 +330,6 @@ export async function startApp(): Promise<void> {
     messageReceiver.addEventListener(
       'view',
       queuedEventListener(onViewReceipt)
-    );
-    messageReceiver.addEventListener(
-      'verified',
-      queuedEventListener(onVerified)
     );
     messageReceiver.addEventListener(
       'error',
@@ -722,13 +722,6 @@ export async function startApp(): Promise<void> {
           `Clearing remoteBuildExpiration. Previous value was ${remoteBuildExpiration}`
         );
         window.storage.remove('remoteBuildExpiration');
-      }
-
-      if (
-        window.isBeforeVersion(lastVersion, 'v5.40.0') &&
-        window.isAfterVersion(lastVersion, 'v5.36.0')
-      ) {
-        await repairUnexpiredStories();
       }
 
       if (window.isBeforeVersion(lastVersion, 'v1.29.2-beta.1')) {
@@ -2100,6 +2093,7 @@ export async function startApp(): Promise<void> {
           await Promise.all([
             server.registerCapabilities({
               announcementGroup: true,
+              giftBadges: true,
               'gv2-3': true,
               'gv1-migration': true,
               senderKey: true,
@@ -2181,9 +2175,6 @@ export async function startApp(): Promise<void> {
             Errors.toLogFormat(error)
           );
         }
-
-        log.info('firstRun: disabling post link experience');
-        window.Signal.Util.postLinkExperience.stop();
 
         // Switch to inbox view even if contact sync is still running
         if (
@@ -2651,13 +2642,6 @@ export async function startApp(): Promise<void> {
           }
         );
       }
-
-      if (window.Signal.Util.postLinkExperience.isActive()) {
-        log.info(
-          'onContactReceived: Adding the message history disclaimer on link'
-        );
-        await conversation.addMessageHistoryDisclaimer();
-      }
     } catch (error) {
       log.error('onContactReceived error:', Errors.toLogFormat(error));
     }
@@ -2726,12 +2710,6 @@ export async function startApp(): Promise<void> {
 
     window.Signal.Data.updateConversation(conversation.attributes);
 
-    if (window.Signal.Util.postLinkExperience.isActive()) {
-      log.info(
-        'onGroupReceived: Adding the message history disclaimer on link'
-      );
-      await conversation.addMessageHistoryDisclaimer();
-    }
     const { expireTimer } = details;
     const isValidExpireTimer = typeof expireTimer === 'number';
     if (!isValidExpireTimer) {
@@ -2889,8 +2867,9 @@ export async function startApp(): Promise<void> {
         source: ReactionSource.FromSomeoneElse,
       };
       const reactionModel = Reactions.getSingleton().add(attributes);
+
       // Note: We do not wait for completion here
-      Reactions.getSingleton().onReaction(reactionModel);
+      Reactions.getSingleton().onReaction(reactionModel, message);
       confirm();
       return Promise.resolve();
     }
@@ -2925,6 +2904,7 @@ export async function startApp(): Promise<void> {
     }
 
     if (handleGroupCallUpdateMessage(data.message, messageDescriptor)) {
+      confirm();
       return Promise.resolve();
     }
 
@@ -3057,22 +3037,24 @@ export async function startApp(): Promise<void> {
     }
 
     return new window.Whisper.Message({
-      source: window.textsecure.storage.user.getNumber(),
-      sourceUuid: window.textsecure.storage.user.getUuid()?.toString(),
-      sourceDevice: data.device,
-      sent_at: timestamp,
-      serverTimestamp: data.serverTimestamp,
-      received_at: data.receivedAtCounter,
-      received_at_ms: data.receivedAtDate,
       conversationId: descriptor.id,
-      timestamp,
-      type: 'outgoing',
-      sendStateByConversationId,
-      unidentifiedDeliveries,
       expirationStartTimestamp: Math.min(
         data.expirationStartTimestamp || timestamp,
         now
       ),
+      readStatus: ReadStatus.Read,
+      received_at_ms: data.receivedAtDate,
+      received_at: data.receivedAtCounter,
+      seenStatus: SeenStatus.NotApplicable,
+      sendStateByConversationId,
+      sent_at: timestamp,
+      serverTimestamp: data.serverTimestamp,
+      source: window.textsecure.storage.user.getNumber(),
+      sourceDevice: data.device,
+      sourceUuid: window.textsecure.storage.user.getUuid()?.toString(),
+      timestamp,
+      type: 'outgoing',
+      unidentifiedDeliveries,
     } as Partial<MessageAttributesType> as WhatIsThis);
   }
 
@@ -3254,7 +3236,7 @@ export async function startApp(): Promise<void> {
       };
       const reactionModel = Reactions.getSingleton().add(attributes);
       // Note: We do not wait for completion here
-      Reactions.getSingleton().onReaction(reactionModel);
+      Reactions.getSingleton().onReaction(reactionModel, message);
 
       event.confirm();
       return Promise.resolve();
@@ -3321,6 +3303,7 @@ export async function startApp(): Promise<void> {
       unidentifiedDeliveryReceived: data.unidentifiedDeliveryReceived,
       type: data.message.isStory ? 'story' : 'incoming',
       readStatus: ReadStatus.Unread,
+      seenStatus: SeenStatus.Unseen,
       timestamp: data.timestamp,
     } as Partial<MessageAttributesType> as WhatIsThis);
   }
@@ -3451,7 +3434,6 @@ export async function startApp(): Promise<void> {
 
     const { source, sourceUuid, timestamp } = ev;
     log.info(`view once open sync ${source} ${timestamp}`);
-    strictAssert(source, 'ViewOnceOpen without source');
     strictAssert(sourceUuid, 'ViewOnceOpen without sourceUuid');
     strictAssert(timestamp, 'ViewOnceOpen without timestamp');
 
@@ -3714,77 +3696,6 @@ export async function startApp(): Promise<void> {
     // Note: Here we wait, because we want viewed states to be in the database
     //   before we move on.
     return ViewSyncs.getSingleton().onSync(receipt);
-  }
-
-  async function onVerified(ev: VerifiedEvent) {
-    const e164 = ev.verified.destination;
-    const uuid = ev.verified.destinationUuid;
-    const key = ev.verified.identityKey;
-    let state;
-
-    if (ev.confirm) {
-      ev.confirm();
-    }
-
-    const c = new window.Whisper.Conversation({
-      e164,
-      uuid,
-      type: 'private',
-    } as Partial<ConversationAttributesType> as WhatIsThis);
-    const error = c.validate();
-    if (error) {
-      log.error(
-        'Invalid verified sync received:',
-        e164,
-        uuid,
-        Errors.toLogFormat(error)
-      );
-      return;
-    }
-
-    switch (ev.verified.state) {
-      case Proto.Verified.State.DEFAULT:
-        state = 'DEFAULT';
-        break;
-      case Proto.Verified.State.VERIFIED:
-        state = 'VERIFIED';
-        break;
-      case Proto.Verified.State.UNVERIFIED:
-        state = 'UNVERIFIED';
-        break;
-      default:
-        log.error(`Got unexpected verified state: ${ev.verified.state}`);
-    }
-
-    log.info(
-      'got verified sync for',
-      e164,
-      uuid,
-      state,
-      ev.verified.viaContactSync ? 'via contact sync' : ''
-    );
-
-    const verifiedId = window.ConversationController.ensureContactIds({
-      e164,
-      uuid,
-      highTrust: true,
-      reason: 'onVerified',
-    });
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const contact = window.ConversationController.get(verifiedId)!;
-    const options = {
-      viaSyncMessage: true,
-      viaContactSync: ev.verified.viaContactSync,
-      key,
-    };
-
-    if (state === 'VERIFIED') {
-      await contact.setVerified(options);
-    } else if (state === 'DEFAULT') {
-      await contact.setVerifiedDefault(options);
-    } else {
-      await contact.setUnverified(options);
-    }
   }
 
   function onDeliveryReceipt(ev: DeliveryEvent) {
