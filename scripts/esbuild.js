@@ -68,7 +68,7 @@ esbuild.build({
   format: 'cjs',
   mainFields: ['browser', 'main'],
   entryPoints: glob
-    .sync('{app,ts}/**/*.{ts,tsx}', {
+    .sync('{app,ts,sticker-creator}/**/*.{ts,tsx}', {
       nodir: true,
       root: ROOT_DIR,
     })
@@ -80,6 +80,6 @@ esbuild.build({
 esbuild.build({
   ...bundleDefaults,
   mainFields: ['browser', 'main'],
-  entryPoints: [path.join(ROOT_DIR, 'preload.js')],
+  entryPoints: [path.join(ROOT_DIR, 'ts', 'windows', 'main', 'preload.ts')],
   outfile: path.join(ROOT_DIR, 'preload.bundle.js'),
 });

@@ -1,8 +1,6 @@
 // Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-/* eslint-disable more/no-then */
-/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable max-classes-per-file */
 
@@ -31,19 +29,12 @@ class SyncRequestInner extends EventTarget {
 
   timeoutMillis: number;
 
-  constructor(
-    private sender: MessageSender,
-    private receiver: MessageReceiver,
-    timeoutMillis?: number
-  ) {
+  constructor(private receiver: MessageReceiver, timeoutMillis?: number) {
     super();
 
-    if (
-      !(sender instanceof MessageSender) ||
-      !(receiver instanceof MessageReceiver)
-    ) {
+    if (!(receiver instanceof MessageReceiver)) {
       throw new Error(
-        'Tried to construct a SyncRequest without MessageSender and MessageReceiver'
+        'Tried to construct a SyncRequest without MessageReceiver'
       );
     }
 
@@ -63,8 +54,6 @@ class SyncRequestInner extends EventTarget {
     }
     this.started = true;
 
-    const { sender } = this;
-
     if (window.ConversationController.areWePrimaryDevice()) {
       log.warn('SyncRequest.start: We are primary device; returning early');
       return;
@@ -75,10 +64,12 @@ class SyncRequestInner extends EventTarget {
     );
     try {
       await Promise.all([
-        singleProtoJobQueue.add(sender.getRequestConfigurationSyncMessage()),
-        singleProtoJobQueue.add(sender.getRequestBlockSyncMessage()),
-        singleProtoJobQueue.add(sender.getRequestContactSyncMessage()),
-        singleProtoJobQueue.add(sender.getRequestGroupSyncMessage()),
+        singleProtoJobQueue.add(
+          MessageSender.getRequestConfigurationSyncMessage()
+        ),
+        singleProtoJobQueue.add(MessageSender.getRequestBlockSyncMessage()),
+        singleProtoJobQueue.add(MessageSender.getRequestContactSyncMessage()),
+        singleProtoJobQueue.add(MessageSender.getRequestGroupSyncMessage()),
       ]);
     } catch (error: unknown) {
       log.error(
@@ -137,12 +128,8 @@ export default class SyncRequest {
     handler: EventHandler
   ) => void;
 
-  constructor(
-    sender: MessageSender,
-    receiver: MessageReceiver,
-    timeoutMillis?: number
-  ) {
-    const inner = new SyncRequestInner(sender, receiver, timeoutMillis);
+  constructor(receiver: MessageReceiver, timeoutMillis?: number) {
+    const inner = new SyncRequestInner(receiver, timeoutMillis);
     this.inner = inner;
     this.addEventListener = inner.addEventListener.bind(inner);
     this.removeEventListener = inner.removeEventListener.bind(inner);

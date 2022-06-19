@@ -16,17 +16,6 @@ body {
 
   @include font-body-1;
 
-  // These should match the logic in `ts/types/Settings.ts`'s `getTitleBarVisibility`.
-  //
-  // It'd be great if we could use the `:fullscreen` selector here, but that does not seem
-  //   to work with Electron, at least on macOS.
-  --title-bar-drag-area-height: 0px; // Needs to have a unit to work with `calc()`.
-  --draggable-app-region: initial;
-  &.os-macos:not(.full-screen) {
-    --title-bar-drag-area-height: 28px;
-    --draggable-app-region: drag;
-  }
-
   &.light-theme {
     background-color: $color-white;
     color: $color-gray-90;
@@ -235,6 +224,9 @@ $loading-height: 16px;
   right: 0;
   top: 0;
   bottom: 0;
+
+  /* There is no titlebar during loading screen on Windows */
+  -webkit-app-region: drag;
 
   /* Note: background-color is intentionally transparent until body has the
    *       theme class.

@@ -1,7 +1,5 @@
-// Copyright 2020-2021 Signal Messenger, LLC
+// Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
-
-/* eslint-disable strict */
 
 import type { BrowserWindow } from 'electron';
 import { Menu, clipboard, nativeImage } from 'electron';
@@ -11,7 +9,7 @@ import { fileURLToPath } from 'url';
 import { maybeParseUrl } from '../ts/util/url';
 import type { LocaleType } from './locale';
 
-import type { MenuListType } from './menu';
+import type { MenuListType } from '../ts/types/menu';
 
 export function getLanguages(
   userLocale: string,

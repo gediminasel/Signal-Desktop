@@ -15,6 +15,7 @@ import { countStickers } from './lib';
 import { offsetDistanceModifier } from '../../util/popperUtil';
 import { themeClassName } from '../../util/theme';
 import * as KeyboardLayout from '../../services/keyboardLayout';
+import { useRefMerger } from '../../hooks/useRefMerger';
 
 export type OwnProps = {
   readonly className?: string;
@@ -66,6 +67,8 @@ export const StickerButton = React.memo(
     const [popperRoot, setPopperRoot] = React.useState<HTMLElement | null>(
       null
     );
+    const buttonRef = React.useRef<HTMLButtonElement | null>(null);
+    const refMerger = useRefMerger();
 
     const handleClickButton = React.useCallback(() => {
       // Clear tooltip state
@@ -133,7 +136,11 @@ export const StickerButton = React.memo(
             targetClassName.indexOf('module-sticker-picker__header__button') <
               0;
 
-          if (!root.contains(targetElement) && isMissingButtonClass) {
+          if (
+            !root.contains(targetElement) &&
+            isMissingButtonClass &&
+            targetElement !== buttonRef.current
+          ) {
             setOpen(false);
           }
         };
@@ -208,7 +215,7 @@ export const StickerButton = React.memo(
           {({ ref }) => (
             <button
               type="button"
-              ref={ref}
+              ref={refMerger(buttonRef, ref)}
               onClick={handleClickButton}
               className={classNames(
                 {

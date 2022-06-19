@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { memoize, noop } from 'lodash';
-import { storiesOf } from '@storybook/react';
+import { select } from '@storybook/addon-knobs';
 
 import type { PropsType } from './GroupCallRemoteParticipant';
 import { GroupCallRemoteParticipant } from './GroupCallRemoteParticipant';
@@ -14,7 +14,9 @@ import enMessages from '../../_locales/en/messages.json';
 
 const i18n = setupI18n('en', enMessages);
 
-type OverridePropsType =
+type OverridePropsType = {
+  audioLevel?: number;
+} & (
   | {
       isInPip: true;
     }
@@ -24,22 +26,29 @@ type OverridePropsType =
       left: number;
       top: number;
       width: number;
-    };
+    }
+);
 
 const getFrameBuffer = memoize(() => Buffer.alloc(FRAME_BUFFER_SIZE));
 
 const createProps = (
   overrideProps: OverridePropsType,
-  isBlocked?: boolean
+  {
+    isBlocked = false,
+    hasRemoteAudio = false,
+  }: {
+    isBlocked?: boolean;
+    hasRemoteAudio?: boolean;
+  } = {}
 ): PropsType => ({
   getFrameBuffer,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getGroupCallVideoFrameSource: noop as any,
   i18n,
-  isSpeaking: false,
+  audioLevel: 0,
   remoteParticipant: {
     demuxId: 123,
-    hasRemoteAudio: false,
+    hasRemoteAudio,
     hasRemoteVideo: true,
     presenting: false,
     sharingScreen: false,
@@ -52,12 +61,13 @@ const createProps = (
     }),
   },
   ...overrideProps,
-  ...(overrideProps.isInPip ? {} : { isSpeaking: false }),
 });
 
-const story = storiesOf('Components/GroupCallRemoteParticipant', module);
+export default {
+  title: 'Components/GroupCallRemoteParticipant',
+};
 
-story.add('Default', () => (
+export const Default = (): JSX.Element => (
   <GroupCallRemoteParticipant
     {...createProps({
       isInPip: false,
@@ -67,17 +77,37 @@ story.add('Default', () => (
       width: 120,
     })}
   />
-));
+);
 
-story.add('isInPip', () => (
+export const Speaking = (): JSX.Element => (
+  <GroupCallRemoteParticipant
+    {...createProps(
+      {
+        isInPip: false,
+        height: 120,
+        left: 0,
+        top: 0,
+        width: 120,
+        audioLevel: select('audioLevel', [0, 0.5, 1], 0.5),
+      },
+      { hasRemoteAudio: true }
+    )}
+  />
+);
+
+export const IsInPip = (): JSX.Element => (
   <GroupCallRemoteParticipant
     {...createProps({
       isInPip: true,
     })}
   />
-));
+);
 
-story.add('Blocked', () => (
+IsInPip.story = {
+  name: 'isInPip',
+};
+
+export const Blocked = (): JSX.Element => (
   <GroupCallRemoteParticipant
     {...createProps(
       {
@@ -87,7 +117,7 @@ story.add('Blocked', () => (
         top: 0,
         width: 120,
       },
-      true
+      { isBlocked: true }
     )}
   />
-));
+);

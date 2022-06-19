@@ -15,6 +15,7 @@ import { getPlatform } from '../selectors/user';
 import { isConversationTooBigToRing } from '../../conversations/isConversationTooBigToRing';
 import { missingCaseError } from '../../util/missingCaseError';
 import { calling } from '../../services/calling';
+import { truncateAudioLevel } from '../../calling/truncateAudioLevel';
 import type { StateType as RootStateType } from '../reducer';
 import type {
   ChangeIODevicePayloadType,
@@ -26,6 +27,7 @@ import type {
 import {
   CallingDeviceType,
   CallMode,
+  CallViewMode,
   CallState,
   GroupCallConnectionState,
   GroupCallJoinState,
@@ -44,7 +46,7 @@ import { getConversationCallMode } from './conversations';
 import * as log from '../../logging/log';
 import { strictAssert } from '../../util/assert';
 import { waitForOnline } from '../../util/waitForOnline';
-import * as setUtil from '../../util/setUtil';
+import * as mapUtil from '../../util/mapUtil';
 
 // State
 
@@ -95,15 +97,15 @@ export type GroupCallStateType = {
   joinState: GroupCallJoinState;
   peekInfo?: GroupCallPeekInfoType;
   remoteParticipants: Array<GroupCallParticipantInfoType>;
-  speakingDemuxIds?: Set<number>;
+  remoteAudioLevels?: Map<number, number>;
 } & GroupCallRingStateType;
 
 export type ActiveCallStateType = {
   conversationId: string;
   hasLocalAudio: boolean;
   hasLocalVideo: boolean;
-  amISpeaking: boolean;
-  isInSpeakerView: boolean;
+  localAudioLevel: number;
+  viewMode: CallViewMode;
   joinedAt?: number;
   outgoingRing: boolean;
   pip: boolean;
@@ -426,6 +428,8 @@ const TOGGLE_PARTICIPANTS = 'calling/TOGGLE_PARTICIPANTS';
 const TOGGLE_PIP = 'calling/TOGGLE_PIP';
 const TOGGLE_SETTINGS = 'calling/TOGGLE_SETTINGS';
 const TOGGLE_SPEAKER_VIEW = 'calling/TOGGLE_SPEAKER_VIEW';
+const SWITCH_TO_PRESENTATION_VIEW = 'calling/SWITCH_TO_PRESENTATION_VIEW';
+const SWITCH_FROM_PRESENTATION_VIEW = 'calling/SWITCH_FROM_PRESENTATION_VIEW';
 
 type AcceptCallPendingActionType = {
   type: 'calling/ACCEPT_CALL_PENDING';
@@ -467,7 +471,6 @@ type DeclineCallActionType = {
 };
 
 type GroupCallAudioLevelsChangeActionPayloadType = Readonly<{
-  audioLevelForSpeaking: number;
   conversationId: string;
   localAudioLevel: number;
   remoteDeviceStates: ReadonlyArray<{ audioLevel: number; demuxId: number }>;
@@ -597,6 +600,14 @@ type ToggleSpeakerViewActionType = {
   type: 'calling/TOGGLE_SPEAKER_VIEW';
 };
 
+type SwitchToPresentationViewActionType = {
+  type: 'calling/SWITCH_TO_PRESENTATION_VIEW';
+};
+
+type SwitchFromPresentationViewActionType = {
+  type: 'calling/SWITCH_FROM_PRESENTATION_VIEW';
+};
+
 export type CallingActionType =
   | AcceptCallPendingActionType
   | CancelCallActionType
@@ -632,7 +643,9 @@ export type CallingActionType =
   | TogglePipActionType
   | SetPresentingFulfilledActionType
   | ToggleSettingsActionType
-  | ToggleSpeakerViewActionType;
+  | ToggleSpeakerViewActionType
+  | SwitchToPresentationViewActionType
+  | SwitchFromPresentationViewActionType;
 
 // Action Creators
 
@@ -1314,6 +1327,18 @@ function toggleSpeakerView(): ToggleSpeakerViewActionType {
   };
 }
 
+function switchToPresentationView(): SwitchToPresentationViewActionType {
+  return {
+    type: SWITCH_TO_PRESENTATION_VIEW,
+  };
+}
+
+function switchFromPresentationView(): SwitchFromPresentationViewActionType {
+  return {
+    type: SWITCH_FROM_PRESENTATION_VIEW,
+  };
+}
+
 export const actions = {
   acceptCall,
   callStateChange,
@@ -1349,6 +1374,8 @@ export const actions = {
   setOutgoingRing,
   startCall,
   startCallingLobby,
+  switchToPresentationView,
+  switchFromPresentationView,
   toggleParticipants,
   togglePip,
   toggleScreenRecordingPermissionsDialog,
@@ -1456,8 +1483,8 @@ export function reducer(
         conversationId: action.payload.conversationId,
         hasLocalAudio: action.payload.hasLocalAudio,
         hasLocalVideo: action.payload.hasLocalVideo,
-        amISpeaking: false,
-        isInSpeakerView: false,
+        localAudioLevel: 0,
+        viewMode: CallViewMode.Grid,
         pip: false,
         safetyNumberChangedUuids: [],
         settingsDialogOpen: false,
@@ -1484,8 +1511,8 @@ export function reducer(
         conversationId: action.payload.conversationId,
         hasLocalAudio: action.payload.hasLocalAudio,
         hasLocalVideo: action.payload.hasLocalVideo,
-        amISpeaking: false,
-        isInSpeakerView: false,
+        localAudioLevel: 0,
+        viewMode: CallViewMode.Grid,
         pip: false,
         safetyNumberChangedUuids: [],
         settingsDialogOpen: false,
@@ -1507,8 +1534,8 @@ export function reducer(
         conversationId: action.payload.conversationId,
         hasLocalAudio: true,
         hasLocalVideo: action.payload.asVideoCall,
-        amISpeaking: false,
-        isInSpeakerView: false,
+        localAudioLevel: 0,
+        viewMode: CallViewMode.Grid,
         pip: false,
         safetyNumberChangedUuids: [],
         settingsDialogOpen: false,
@@ -1661,8 +1688,8 @@ export function reducer(
         conversationId: action.payload.conversationId,
         hasLocalAudio: action.payload.hasLocalAudio,
         hasLocalVideo: action.payload.hasLocalVideo,
-        amISpeaking: false,
-        isInSpeakerView: false,
+        localAudioLevel: 0,
+        viewMode: CallViewMode.Grid,
         pip: false,
         safetyNumberChangedUuids: [],
         settingsDialogOpen: false,
@@ -1719,12 +1746,7 @@ export function reducer(
   }
 
   if (action.type === GROUP_CALL_AUDIO_LEVELS_CHANGE) {
-    const {
-      audioLevelForSpeaking,
-      conversationId,
-      localAudioLevel,
-      remoteDeviceStates,
-    } = action.payload;
+    const { conversationId, remoteDeviceStates } = action.payload;
 
     const { activeCallState } = state;
     const existingCall = getGroupCall(conversationId, state);
@@ -1735,36 +1757,38 @@ export function reducer(
       return state;
     }
 
-    const amISpeaking = localAudioLevel > audioLevelForSpeaking;
+    const localAudioLevel = truncateAudioLevel(action.payload.localAudioLevel);
 
-    const speakingDemuxIds = new Set<number>();
+    const remoteAudioLevels = new Map<number, number>();
     remoteDeviceStates.forEach(({ audioLevel, demuxId }) => {
       // We expect `audioLevel` to be a number but have this check just in case.
-      if (
-        typeof audioLevel === 'number' &&
-        audioLevel > audioLevelForSpeaking
-      ) {
-        speakingDemuxIds.add(demuxId);
+      if (typeof audioLevel !== 'number') {
+        return;
+      }
+
+      const graded = truncateAudioLevel(audioLevel);
+      if (graded > 0) {
+        remoteAudioLevels.set(demuxId, graded);
       }
     });
 
     // This action is dispatched frequently. This equality check helps avoid re-renders.
-    const oldAmISpeaking = activeCallState.amISpeaking;
-    const oldSpeakingDemuxIds = existingCall.speakingDemuxIds;
+    const oldLocalAudioLevel = activeCallState.localAudioLevel;
+    const oldRemoteAudioLevels = existingCall.remoteAudioLevels;
     if (
-      oldAmISpeaking === amISpeaking &&
-      oldSpeakingDemuxIds &&
-      setUtil.isEqual(oldSpeakingDemuxIds, speakingDemuxIds)
+      oldLocalAudioLevel === localAudioLevel &&
+      oldRemoteAudioLevels &&
+      mapUtil.isEqual(oldRemoteAudioLevels, remoteAudioLevels)
     ) {
       return state;
     }
 
     return {
       ...state,
-      activeCallState: { ...activeCallState, amISpeaking },
+      activeCallState: { ...activeCallState, localAudioLevel },
       callsByConversation: {
         ...callsByConversation,
-        [conversationId]: { ...existingCall, speakingDemuxIds },
+        [conversationId]: { ...existingCall, remoteAudioLevels },
       },
     };
   }
@@ -2132,11 +2156,61 @@ export function reducer(
       return state;
     }
 
+    let newViewMode: CallViewMode;
+    if (activeCallState.viewMode === CallViewMode.Grid) {
+      newViewMode = CallViewMode.Speaker;
+    } else {
+      // This will switch presentation/speaker to grid
+      newViewMode = CallViewMode.Grid;
+    }
+
     return {
       ...state,
       activeCallState: {
         ...activeCallState,
-        isInSpeakerView: !activeCallState.isInSpeakerView,
+        viewMode: newViewMode,
+      },
+    };
+  }
+
+  if (action.type === SWITCH_TO_PRESENTATION_VIEW) {
+    const { activeCallState } = state;
+    if (!activeCallState) {
+      log.warn('Cannot switch to speaker view when there is no active call');
+      return state;
+    }
+
+    // "Presentation" mode reverts to "Grid" when the call is over so don't
+    // switch it if it is in "Speaker" mode.
+    if (activeCallState.viewMode === CallViewMode.Speaker) {
+      return state;
+    }
+
+    return {
+      ...state,
+      activeCallState: {
+        ...activeCallState,
+        viewMode: CallViewMode.Presentation,
+      },
+    };
+  }
+
+  if (action.type === SWITCH_FROM_PRESENTATION_VIEW) {
+    const { activeCallState } = state;
+    if (!activeCallState) {
+      log.warn('Cannot switch to speaker view when there is no active call');
+      return state;
+    }
+
+    if (activeCallState.viewMode !== CallViewMode.Presentation) {
+      return state;
+    }
+
+    return {
+      ...state,
+      activeCallState: {
+        ...activeCallState,
+        viewMode: CallViewMode.Grid,
       },
     };
   }

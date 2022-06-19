@@ -27,8 +27,10 @@ import {
 } from 'lodash';
 
 import { deleteExternalFiles } from '../types/Conversation';
+import { expiringMessagesDeletionService } from '../services/expiringMessagesDeletion';
+import { tapToViewMessagesDeletionService } from '../services/tapToViewMessagesDeletionService';
 import * as Bytes from '../Bytes';
-import { CURRENT_SCHEMA_VERSION } from '../../js/modules/types/message';
+import { CURRENT_SCHEMA_VERSION } from '../types/Message2';
 import { createBatcher } from '../util/batcher';
 import { assert, strictAssert } from '../util/assert';
 import { cleanDataForIpc } from './cleanDataForIpc';
@@ -254,6 +256,7 @@ const dataInterface: ClientInterface = {
   removeUnprocessed,
   removeAllUnprocessed,
 
+  getAttachmentDownloadJobById,
   getNextAttachmentDownloadJobs,
   saveAttachmentDownloadJob,
   resetAttachmentDownloadPending,
@@ -1089,8 +1092,8 @@ async function saveMessage(
     jobToInsert: options.jobToInsert && formatJobForInsert(options.jobToInsert),
   });
 
-  window.Whisper.ExpiringMessagesListener.update();
-  window.Whisper.TapToViewMessagesListener.update();
+  expiringMessagesDeletionService.update();
+  tapToViewMessagesDeletionService.update();
 
   return id;
 }
@@ -1104,8 +1107,8 @@ async function saveMessages(
     options
   );
 
-  window.Whisper.ExpiringMessagesListener.update();
-  window.Whisper.TapToViewMessagesListener.update();
+  expiringMessagesDeletionService.update();
+  tapToViewMessagesDeletionService.update();
 }
 
 async function removeMessage(id: string) {
@@ -1476,6 +1479,9 @@ async function removeAllUnprocessed() {
 
 // Attachment downloads
 
+async function getAttachmentDownloadJobById(id: string) {
+  return channels.getAttachmentDownloadJobById(id);
+}
 async function getNextAttachmentDownloadJobs(
   limit?: number,
   options?: { timestamp?: number }

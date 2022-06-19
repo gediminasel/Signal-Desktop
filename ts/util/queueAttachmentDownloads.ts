@@ -2,14 +2,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { partition } from 'lodash';
-import type { AttachmentType } from '../types/Attachment';
-import type { EmbeddedContactType } from '../types/EmbeddedContact';
-import type {
-  MessageAttributesType,
-  PreviewMessageType,
-  QuotedMessageType,
-  StickerMessageType,
-} from '../model-types.d';
 import * as AttachmentDownloads from '../messageModifiers/AttachmentDownloads';
 import * as log from '../logging/log';
 import { isLongMessage } from '../types/MIME';
@@ -21,13 +13,22 @@ import {
 } from '../types/Stickers';
 import dataInterface from '../sql/Client';
 
+import type { AttachmentType } from '../types/Attachment';
+import type { EmbeddedContactType } from '../types/EmbeddedContact';
+import type {
+  MessageAttributesType,
+  QuotedMessageType,
+} from '../model-types.d';
+import type { StickerType } from '../types/Stickers';
+import type { LinkPreviewType } from '../types/message/LinkPreviews';
+
 type ReturnType = {
-  bodyPending?: boolean;
+  bodyAttachment?: AttachmentType;
   attachments: Array<AttachmentType>;
-  preview: PreviewMessageType;
+  preview: Array<LinkPreviewType>;
   contact: Array<EmbeddedContactType>;
   quote?: QuotedMessageType;
-  sticker?: StickerMessageType;
+  sticker?: StickerType;
 };
 
 // Receive logic
@@ -41,7 +42,7 @@ export async function queueAttachmentDownloads(
   const idForLogging = getMessageIdForLogging(message);
 
   let count = 0;
-  let bodyPending;
+  let bodyAttachment;
 
   log.info(
     `Queueing ${attachmentsToQueue.length} attachment downloads for message ${idForLogging}`
@@ -64,8 +65,15 @@ export async function queueAttachmentDownloads(
 
   if (longMessageAttachments.length > 0) {
     count += 1;
-    bodyPending = true;
-    await AttachmentDownloads.addJob(longMessageAttachments[0], {
+    [bodyAttachment] = longMessageAttachments;
+  }
+  if (!bodyAttachment && message.bodyAttachment) {
+    count += 1;
+    bodyAttachment = message.bodyAttachment;
+  }
+
+  if (bodyAttachment) {
+    await AttachmentDownloads.addJob(bodyAttachment, {
       messageId,
       type: 'long-message',
       index: 0,
@@ -252,7 +260,7 @@ export async function queueAttachmentDownloads(
   }
 
   return {
-    bodyPending,
+    bodyAttachment,
     attachments,
     preview,
     contact,

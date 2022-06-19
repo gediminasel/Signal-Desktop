@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Signal Messenger, LLC
+// Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /* eslint-disable @typescript-eslint/ban-types */
@@ -43,9 +43,7 @@ export type AttachmentDownloadJobType = {
 };
 export type MessageMetricsType = {
   id: string;
-  // eslint-disable-next-line camelcase
   received_at: number;
-  // eslint-disable-next-line camelcase
   sent_at: number;
 };
 export type ConversationMetricsType = {
@@ -143,7 +141,6 @@ export type SessionType = {
 export type SessionIdType = SessionType['id'];
 export type SignedPreKeyType = {
   confirmed: boolean;
-  // eslint-disable-next-line camelcase
   created_at: number;
   ourUuid: UUIDStringType;
   id: `${UUIDStringType}:${number}`;
@@ -202,6 +199,7 @@ export type UnprocessedType = {
   attempts: number;
   envelope?: string;
 
+  messageAgeSec?: number;
   source?: string;
   sourceUuid?: string;
   sourceDevice?: number;
@@ -496,6 +494,9 @@ export type DataInterface = {
   removeUnprocessed: (id: string | Array<string>) => Promise<void>;
   removeAllUnprocessed: () => Promise<void>;
 
+  getAttachmentDownloadJobById: (
+    id: string
+  ) => Promise<AttachmentDownloadJobType | undefined>;
   getNextAttachmentDownloadJobs: (
     limit?: number,
     options?: { timestamp?: number }

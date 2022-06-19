@@ -247,13 +247,13 @@ const renderPreferences = async () => {
 
     // Actions and other props
     addCustomColor: ipcAddCustomColor,
-    closeSettings: () => ipcRenderer.send('close-settings'),
+    closeSettings: () => SignalContext.executeMenuRole('close'),
     doDeleteAllData: () => ipcRenderer.send('delete-all-data'),
     doneRendering,
     editCustomColor: ipcEditCustomColor,
     getConversationsWithCustomColor: ipcGetConversationsWithCustomColor,
     initialSpellCheckSetting:
-      SignalContext.config.appStartInitialSpellcheckSetting === 'true',
+      SignalContext.config.appStartInitialSpellcheckSetting,
     makeSyncRequest: ipcMakeSyncRequest,
     removeCustomColor: ipcRemoveCustomColor,
     removeCustomColorOnConversations: ipcRemoveCustomColorOnConversations,
@@ -337,6 +337,10 @@ const renderPreferences = async () => {
     onZoomFactorChange: settingZoomFactor.setValue,
 
     i18n: SignalContext.i18n,
+
+    platform: process.platform,
+    isWindows11: SignalContext.OS.isWindows11(),
+    executeMenuRole: SignalContext.executeMenuRole,
   };
 
   function reRender<Value>(f: (value: Value) => Promise<Value>) {

@@ -31,7 +31,7 @@ import type { PropsDataType as TimelinePropsType } from '../../components/conver
 import type { TimelineItemType } from '../../components/conversation/TimelineItem';
 import { assert } from '../../util/assert';
 import { isConversationUnregistered } from '../../util/isConversationUnregistered';
-import { filterAndSortConversationsByTitle } from '../../util/filterAndSortConversations';
+import { filterAndSortConversationsByRecent } from '../../util/filterAndSortConversations';
 import type { ContactNameColorType } from '../../types/Colors';
 import { ContactNameColors } from '../../types/Colors';
 import type { AvatarDataType } from '../../types/Avatar';
@@ -523,7 +523,7 @@ export const getFilteredComposeContacts = createSelector(
     contacts: Array<ConversationType>,
     regionCode: string | undefined
   ): Array<ConversationType> => {
-    return filterAndSortConversationsByTitle(contacts, searchTerm, regionCode);
+    return filterAndSortConversationsByRecent(contacts, searchTerm, regionCode);
   }
 );
 
@@ -536,7 +536,7 @@ export const getFilteredComposeGroups = createSelector(
     groups: Array<ConversationType>,
     regionCode: string | undefined
   ): Array<ConversationType> => {
-    return filterAndSortConversationsByTitle(groups, searchTerm, regionCode);
+    return filterAndSortConversationsByRecent(groups, searchTerm, regionCode);
   }
 );
 
@@ -544,7 +544,7 @@ export const getFilteredCandidateContactsForNewGroup = createSelector(
   getCandidateContactsForNewGroup,
   getNormalizedComposerConversationSearchTerm,
   getRegionCode,
-  filterAndSortConversationsByTitle
+  filterAndSortConversationsByRecent
 );
 
 const getGroupCreationComposerState = createSelector(
@@ -1011,13 +1011,13 @@ export const getConversationsStoppedForVerification = createSelector(
   }
 );
 
-export const getConversationIdsStoppingSend = createSelector(
+export const getConversationUuidsStoppingSend = createSelector(
   getConversationVerificationData,
   (pendingData): Array<string> => {
     const result = new Set<string>();
     Object.values(pendingData).forEach(item => {
       if (item.type === ConversationVerificationState.PendingVerification) {
-        item.conversationsNeedingVerification.forEach(conversationId => {
+        item.uuidsNeedingVerification.forEach(conversationId => {
           result.add(conversationId);
         });
       }
@@ -1027,20 +1027,13 @@ export const getConversationIdsStoppingSend = createSelector(
 );
 
 export const getConversationsStoppingSend = createSelector(
-  getConversationByIdSelector,
-  getConversationIdsStoppingSend,
+  getConversationSelector,
+  getConversationUuidsStoppingSend,
   (
-    conversationSelector: (id: string) => undefined | ConversationType,
-    conversationIds: ReadonlyArray<string>
+    conversationSelector: GetConversationByIdType,
+    uuids: ReadonlyArray<string>
   ): Array<ConversationType> => {
-    const conversations = conversationIds
-      .map(conversationId => conversationSelector(conversationId))
-      .filter(isNotNil);
-    if (conversationIds.length !== conversations.length) {
-      log.warn(
-        `getConversationsStoppingSend: Started with ${conversationIds.length} items, ended up with ${conversations.length}.`
-      );
-    }
+    const conversations = uuids.map(uuid => conversationSelector(uuid));
     return sortByTitle(conversations);
   }
 );

@@ -36,6 +36,7 @@ export async function sendNormalMessage(
   conversation: ConversationModel,
   {
     isFinalAttempt,
+    messaging,
     shouldContinue,
     timeRemaining,
     log,
@@ -91,7 +92,9 @@ export async function sendNormalMessage(
 
   if (!shouldContinue) {
     log.info(`message ${messageId} ran out of time. Giving up on sending it`);
-    await markMessageFailed(message, messageSendErrors);
+    await markMessageFailed(message, [
+      new Error('Message send ran out of time'),
+    ]);
     return;
   }
 
@@ -106,21 +109,23 @@ export async function sendNormalMessage(
     const {
       allRecipientIdentifiers,
       recipientIdentifiersWithoutMe,
-      untrustedConversationIds,
+      sentRecipientIdentifiers,
+      untrustedUuids,
     } = getMessageRecipients({
+      log,
       message,
       conversation,
     });
 
-    if (untrustedConversationIds.length) {
+    if (untrustedUuids.length) {
       window.reduxActions.conversations.conversationStoppedByMissingVerification(
         {
           conversationId: conversation.id,
-          untrustedConversationIds,
+          untrustedUuids,
         }
       );
       throw new Error(
-        `Message ${messageId} sending blocked because ${untrustedConversationIds.length} conversation(s) were untrusted. Failing this attempt.`
+        `Message ${messageId} sending blocked because ${untrustedUuids.length} conversation(s) were untrusted. Failing this attempt.`
       );
     }
 
@@ -148,9 +153,13 @@ export async function sendNormalMessage(
     let messageSendPromise: Promise<CallbackResultType | void>;
 
     if (recipientIdentifiersWithoutMe.length === 0) {
-      if (!isMe(conversation.attributes) && !isGroup(conversation.attributes)) {
+      if (
+        !isMe(conversation.attributes) &&
+        !isGroup(conversation.attributes) &&
+        sentRecipientIdentifiers.length === 0
+      ) {
         log.info(
-          'No recipients, but we are not sending to ourselves or to group. Failing job.'
+          'No recipients; not sending to ourselves or to group, and no successful sends. Failing job.'
         );
         markMessageFailed(message, [new Error('No valid recipients')]);
         return;
@@ -158,7 +167,7 @@ export async function sendNormalMessage(
 
       // We're sending to Note to Self or a 'lonely group' with just us in it
       log.info('sending sync message only');
-      const dataMessage = await window.textsecure.messaging.getDataMessage({
+      const dataMessage = await messaging.getDataMessage({
         attachments,
         body,
         contact,
@@ -197,8 +206,9 @@ export async function sendNormalMessage(
         log.info('sending group message');
         innerPromise = conversation.queueJob(
           'conversationQueue/sendNormalMessage',
-          () =>
+          abortSignal =>
             window.Signal.Util.sendToGroup({
+              abortSignal,
               contentHint: ContentHint.RESENDABLE,
               groupSendOptions: {
                 attachments,
@@ -252,7 +262,7 @@ export async function sendNormalMessage(
         }
 
         log.info('sending direct message');
-        innerPromise = window.textsecure.messaging.sendMessageToIdentifier({
+        innerPromise = messaging.sendMessageToIdentifier({
           attachments,
           contact,
           contentHint: ContentHint.RESENDABLE,
@@ -323,28 +333,28 @@ export async function sendNormalMessage(
 }
 
 function getMessageRecipients({
+  log,
   conversation,
   message,
 }: Readonly<{
+  log: LoggerType;
   conversation: ConversationModel;
   message: MessageModel;
 }>): {
   allRecipientIdentifiers: Array<string>;
   recipientIdentifiersWithoutMe: Array<string>;
-  untrustedConversationIds: Array<string>;
+  sentRecipientIdentifiers: Array<string>;
+  untrustedUuids: Array<string>;
 } {
   const allRecipientIdentifiers: Array<string> = [];
   const recipientIdentifiersWithoutMe: Array<string> = [];
-  const untrustedConversationIds: Array<string> = [];
+  const untrustedUuids: Array<string> = [];
+  const sentRecipientIdentifiers: Array<string> = [];
 
   const currentConversationRecipients = conversation.getMemberConversationIds();
 
   Object.entries(message.get('sendStateByConversationId') || {}).forEach(
     ([recipientConversationId, sendState]) => {
-      if (isSent(sendState.status)) {
-        return;
-      }
-
       const recipient = window.ConversationController.get(
         recipientConversationId
       );
@@ -362,7 +372,14 @@ function getMessageRecipients({
       }
 
       if (recipient.isUntrusted()) {
-        untrustedConversationIds.push(recipientConversationId);
+        const uuid = recipient.get('uuid');
+        if (!uuid) {
+          log.error(
+            `sendNormalMessage/getMessageRecipients: Untrusted conversation ${recipient.idForLogging()} missing UUID.`
+          );
+          return;
+        }
+        untrustedUuids.push(uuid);
         return;
       }
       if (recipient.isUnregistered()) {
@@ -371,6 +388,11 @@ function getMessageRecipients({
 
       const recipientIdentifier = recipient.getSendTarget();
       if (!recipientIdentifier) {
+        return;
+      }
+
+      if (isSent(sendState.status)) {
+        sentRecipientIdentifiers.push(recipientIdentifier);
         return;
       }
 
@@ -384,7 +406,8 @@ function getMessageRecipients({
   return {
     allRecipientIdentifiers,
     recipientIdentifiersWithoutMe,
-    untrustedConversationIds,
+    sentRecipientIdentifiers,
+    untrustedUuids,
   };
 }
 

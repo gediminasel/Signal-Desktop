@@ -1,4 +1,4 @@
-// Copyright 2020-2021 Signal Messenger, LLC
+// Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { debounce, uniq, without } from 'lodash';
@@ -14,14 +14,15 @@ import type { ConversationModel } from './models/conversations';
 import { getContactId } from './messages/helpers';
 import { maybeDeriveGroupV2Id } from './groups';
 import { assert } from './util/assert';
-import { map, reduce } from './util/iterables';
 import { isGroupV1, isGroupV2 } from './util/whatTypeOfConversation';
+import { getConversationUnreadCountForAppBadge } from './util/getConversationUnreadCountForAppBadge';
 import { UUID, isValidUuid } from './types/UUID';
 import { Address } from './types/Address';
 import { QualifiedAddress } from './types/QualifiedAddress';
 import * as log from './logging/log';
 import { sleep } from './util/sleep';
 import { isNotNil } from './util/isNotNil';
+import { SECOND } from './util/durations';
 
 const MAX_MESSAGE_BODY_LENGTH = 64 * 1024;
 
@@ -41,77 +42,6 @@ const {
 export function start(): void {
   const conversations = new window.Whisper.ConversationCollection();
 
-  // This class is entirely designed to keep the app title, badge and tray icon updated.
-  //   In the future it could listen to redux changes and do its updates there.
-  const inboxCollection = new (window.Backbone.Collection.extend({
-    initialize() {
-      this.listenTo(conversations, 'add change:active_at', this.addActive);
-      this.listenTo(conversations, 'reset', () => this.reset([]));
-
-      const debouncedUpdateUnreadCount = debounce(
-        this.updateUnreadCount.bind(this),
-        1000
-      );
-
-      this.on('add remove change:unreadCount', debouncedUpdateUnreadCount);
-      window.Whisper.events.on('updateUnreadCount', debouncedUpdateUnreadCount);
-      this.on('add', (model: ConversationModel): void => {
-        // If the conversation is muted we set a timeout so when the mute expires
-        // we can reset the mute state on the model. If the mute has already expired
-        // then we reset the state right away.
-        model.startMuteTimer();
-      });
-    },
-    addActive(model: ConversationModel) {
-      if (model.get('active_at')) {
-        this.add(model);
-      } else {
-        this.remove(model);
-      }
-    },
-    updateUnreadCount() {
-      const canCountMutedConversations = window.storage.get(
-        'badge-count-muted-conversations'
-      );
-
-      const canCount = (m: ConversationModel) =>
-        !m.isMuted() || canCountMutedConversations;
-
-      const getUnreadCount = (m: ConversationModel) => {
-        const unreadCount = m.get('unreadCount');
-
-        if (unreadCount) {
-          return unreadCount;
-        }
-
-        if (m.get('markedUnread')) {
-          return 1;
-        }
-
-        return 0;
-      };
-
-      const newUnreadCount = reduce(
-        map(this, (m: ConversationModel) =>
-          canCount(m) ? getUnreadCount(m) : 0
-        ),
-        (item: number, memo: number) => (item || 0) + memo,
-        0
-      );
-      window.storage.put('unreadCount', newUnreadCount);
-
-      if (newUnreadCount > 0) {
-        window.setBadgeCount(newUnreadCount);
-        window.document.title = `${window.getTitle()} (${newUnreadCount})`;
-      } else {
-        window.setBadgeCount(0);
-        window.document.title = window.getTitle();
-      }
-      window.updateTrayIcon(newUnreadCount);
-    },
-  }))();
-
-  window.getInboxCollection = () => inboxCollection;
   window.getConversations = () => conversations;
   window.ConversationController = new ConversationController(conversations);
 }
@@ -123,7 +53,67 @@ export class ConversationController {
 
   private _conversationOpenStart = new Map<string, number>();
 
-  constructor(private _conversations: ConversationModelCollectionType) {}
+  private _hasQueueEmptied = false;
+
+  constructor(private _conversations: ConversationModelCollectionType) {
+    const debouncedUpdateUnreadCount = debounce(
+      this.updateUnreadCount.bind(this),
+      SECOND,
+      {
+        leading: true,
+        maxWait: SECOND,
+        trailing: true,
+      }
+    );
+
+    // A few things can cause us to update the app-level unread count
+    window.Whisper.events.on('updateUnreadCount', debouncedUpdateUnreadCount);
+    this._conversations.on(
+      'add remove change:active_at change:unreadCount change:markedUnread change:isArchived change:muteExpiresAt',
+      debouncedUpdateUnreadCount
+    );
+
+    // If the conversation is muted we set a timeout so when the mute expires
+    // we can reset the mute state on the model. If the mute has already expired
+    // then we reset the state right away.
+    this._conversations.on('add', (model: ConversationModel): void => {
+      model.startMuteTimer();
+    });
+  }
+
+  updateUnreadCount(): void {
+    if (!this._hasQueueEmptied) {
+      return;
+    }
+
+    const canCountMutedConversations =
+      window.storage.get('badge-count-muted-conversations') || false;
+
+    const newUnreadCount = this._conversations.reduce(
+      (result: number, conversation: ConversationModel) =>
+        result +
+        getConversationUnreadCountForAppBadge(
+          conversation.attributes,
+          canCountMutedConversations
+        ),
+      0
+    );
+    window.storage.put('unreadCount', newUnreadCount);
+
+    if (newUnreadCount > 0) {
+      window.setBadgeCount(newUnreadCount);
+      window.document.title = `${window.getTitle()} (${newUnreadCount})`;
+    } else {
+      window.setBadgeCount(0);
+      window.document.title = window.getTitle();
+    }
+    window.updateTrayIcon(newUnreadCount);
+  }
+
+  onEmpty(): void {
+    this._hasQueueEmptied = true;
+    this.updateUnreadCount();
+  }
 
   get(id?: string | null): ConversationModel | undefined {
     if (!this._initialFetchComplete) {

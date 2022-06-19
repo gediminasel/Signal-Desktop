@@ -1,12 +1,7 @@
-// Copyright 2014-2020 Signal Messenger, LLC
+// Copyright 2014-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /* global Whisper, _, Backbone */
-
-// Override the database id.
-window.Whisper = window.Whisper || {};
-window.Whisper.Database = window.Whisper.Database || {};
-Whisper.Database.id = 'test';
 
 /*
  * global helpers for tests
@@ -43,3 +38,5 @@ before(async () => {
 
 window.Whisper = window.Whisper || {};
 window.Whisper.events = _.clone(Backbone.Events);
+
+window.textsecure.storage.protocol = new window.SignalProtocolStore();

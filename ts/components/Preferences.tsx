@@ -10,9 +10,9 @@ import type { AudioDevice } from 'ringrtc';
 import type { MediaDeviceSettings } from '../types/Calling';
 import type {
   ZoomFactorType,
-  ThemeSettingType,
   NotificationSettingType,
 } from '../types/Storage.d';
+import type { ThemeSettingType } from '../types/StorageUIKeys';
 import { Button, ButtonVariant } from './Button';
 import { ChatColorPicker } from './ChatColorPicker';
 import { Checkbox } from './Checkbox';
@@ -29,6 +29,8 @@ import { PhoneNumberDiscoverability } from '../util/phoneNumberDiscoverability';
 import { PhoneNumberSharingMode } from '../util/phoneNumberSharingMode';
 import { Select } from './Select';
 import { Spinner } from './Spinner';
+import { TitleBarContainer } from './TitleBarContainer';
+import type { ExecuteMenuRoleType } from './TitleBarContainer';
 import { getCustomColorStyle } from '../util/getCustomColorStyle';
 import {
   DEFAULT_DURATIONS_IN_SECONDS,
@@ -37,6 +39,7 @@ import {
 } from '../util/expirationTimer';
 import { useEscapeHandling } from '../hooks/useEscapeHandling';
 import { useUniqueId } from '../hooks/useUniqueId';
+import { useTheme } from '../hooks/useTheme';
 
 type CheckboxChangeHandlerType = (value: boolean) => unknown;
 type SelectChangeHandlerType<T = string | number> = (value: T) => unknown;
@@ -99,6 +102,9 @@ export type PropsType = {
       value: CustomColorType;
     }
   ) => unknown;
+  platform: string;
+  isWindows11: boolean;
+  executeMenuRole: ExecuteMenuRoleType;
 
   // Limited support features
   isAudioNotificationsSupported: boolean;
@@ -193,6 +199,7 @@ export const Preferences = ({
   doDeleteAllData,
   doneRendering,
   editCustomColor,
+  executeMenuRole,
   getConversationsWithCustomColor,
   hasAudioNotifications,
   hasAutoDownloadUpdate,
@@ -223,6 +230,7 @@ export const Preferences = ({
   isNotificationAttentionSupported,
   isSyncSupported,
   isSystemTraySupported,
+  isWindows11,
   lastSyncTime,
   makeSyncRequest,
   notificationContent,
@@ -250,6 +258,7 @@ export const Preferences = ({
   onThemeChange,
   onUniversalExpireTimerChange,
   onZoomFactorChange,
+  platform,
   removeCustomColor,
   removeCustomColorOnConversations,
   resetAllChatColors,
@@ -273,6 +282,7 @@ export const Preferences = ({
   const [nowSyncing, setNowSyncing] = useState(false);
   const [showDisappearingTimerDialog, setShowDisappearingTimerDialog] =
     useState(false);
+  const theme = useTheme();
 
   useEffect(() => {
     doneRendering();
@@ -1017,78 +1027,85 @@ export const Preferences = ({
   }
 
   return (
-    <div className="Preferences">
-      <div className="Preferences__page-selector">
-        <button
-          type="button"
-          className={classNames({
-            Preferences__button: true,
-            'Preferences__button--general': true,
-            'Preferences__button--selected': page === Page.General,
-          })}
-          onClick={() => setPage(Page.General)}
-        >
-          {i18n('Preferences__button--general')}
-        </button>
-        <button
-          type="button"
-          className={classNames({
-            Preferences__button: true,
-            'Preferences__button--appearance': true,
-            'Preferences__button--selected':
-              page === Page.Appearance || page === Page.ChatColor,
-          })}
-          onClick={() => setPage(Page.Appearance)}
-        >
-          {i18n('Preferences__button--appearance')}
-        </button>
-        <button
-          type="button"
-          className={classNames({
-            Preferences__button: true,
-            'Preferences__button--chats': true,
-            'Preferences__button--selected': page === Page.Chats,
-          })}
-          onClick={() => setPage(Page.Chats)}
-        >
-          {i18n('Preferences__button--chats')}
-        </button>
-        <button
-          type="button"
-          className={classNames({
-            Preferences__button: true,
-            'Preferences__button--calls': true,
-            'Preferences__button--selected': page === Page.Calls,
-          })}
-          onClick={() => setPage(Page.Calls)}
-        >
-          {i18n('Preferences__button--calls')}
-        </button>
-        <button
-          type="button"
-          className={classNames({
-            Preferences__button: true,
-            'Preferences__button--notifications': true,
-            'Preferences__button--selected': page === Page.Notifications,
-          })}
-          onClick={() => setPage(Page.Notifications)}
-        >
-          {i18n('Preferences__button--notifications')}
-        </button>
-        <button
-          type="button"
-          className={classNames({
-            Preferences__button: true,
-            'Preferences__button--privacy': true,
-            'Preferences__button--selected': page === Page.Privacy,
-          })}
-          onClick={() => setPage(Page.Privacy)}
-        >
-          {i18n('Preferences__button--privacy')}
-        </button>
+    <TitleBarContainer
+      platform={platform}
+      isWindows11={isWindows11}
+      theme={theme}
+      executeMenuRole={executeMenuRole}
+    >
+      <div className="Preferences">
+        <div className="Preferences__page-selector">
+          <button
+            type="button"
+            className={classNames({
+              Preferences__button: true,
+              'Preferences__button--general': true,
+              'Preferences__button--selected': page === Page.General,
+            })}
+            onClick={() => setPage(Page.General)}
+          >
+            {i18n('Preferences__button--general')}
+          </button>
+          <button
+            type="button"
+            className={classNames({
+              Preferences__button: true,
+              'Preferences__button--appearance': true,
+              'Preferences__button--selected':
+                page === Page.Appearance || page === Page.ChatColor,
+            })}
+            onClick={() => setPage(Page.Appearance)}
+          >
+            {i18n('Preferences__button--appearance')}
+          </button>
+          <button
+            type="button"
+            className={classNames({
+              Preferences__button: true,
+              'Preferences__button--chats': true,
+              'Preferences__button--selected': page === Page.Chats,
+            })}
+            onClick={() => setPage(Page.Chats)}
+          >
+            {i18n('Preferences__button--chats')}
+          </button>
+          <button
+            type="button"
+            className={classNames({
+              Preferences__button: true,
+              'Preferences__button--calls': true,
+              'Preferences__button--selected': page === Page.Calls,
+            })}
+            onClick={() => setPage(Page.Calls)}
+          >
+            {i18n('Preferences__button--calls')}
+          </button>
+          <button
+            type="button"
+            className={classNames({
+              Preferences__button: true,
+              'Preferences__button--notifications': true,
+              'Preferences__button--selected': page === Page.Notifications,
+            })}
+            onClick={() => setPage(Page.Notifications)}
+          >
+            {i18n('Preferences__button--notifications')}
+          </button>
+          <button
+            type="button"
+            className={classNames({
+              Preferences__button: true,
+              'Preferences__button--privacy': true,
+              'Preferences__button--selected': page === Page.Privacy,
+            })}
+            onClick={() => setPage(Page.Privacy)}
+          >
+            {i18n('Preferences__button--privacy')}
+          </button>
+        </div>
+        <div className="Preferences__settings-pane">{settings}</div>
       </div>
-      <div className="Preferences__settings-pane">{settings}</div>
-    </div>
+    </TitleBarContainer>
   );
 };
 

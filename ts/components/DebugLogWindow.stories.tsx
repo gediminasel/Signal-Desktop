@@ -3,7 +3,6 @@
 
 import React from 'react';
 import { action } from '@storybook/addon-actions';
-import { storiesOf } from '@storybook/react';
 
 import enMessages from '../../_locales/en/messages.json';
 import type { PropsType } from './DebugLogWindow';
@@ -26,8 +25,19 @@ const createProps = (): PropsType => ({
     await sleep(5000);
     return 'https://picsum.photos/1800/900';
   },
+  executeMenuRole: action('executeMenuRole'),
+  platform: 'win32',
+  isWindows11: false,
 });
 
-const story = storiesOf('Components/DebugLogWindow', module);
+export default {
+  title: 'Components/DebugLogWindow',
+};
 
-story.add('DebugLogWindow', () => <DebugLogWindow {...createProps()} />);
+export const _DebugLogWindow = (): JSX.Element => (
+  <DebugLogWindow {...createProps()} />
+);
+
+_DebugLogWindow.story = {
+  name: 'DebugLogWindow',
+};

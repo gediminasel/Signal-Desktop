@@ -1,4 +1,4 @@
-<!-- Copyright 2014-2021 Signal Messenger, LLC -->
+<!-- Copyright 2014-2022 Signal Messenger, LLC -->
 <!-- SPDX-License-Identifier: AGPL-3.0-only -->
 
 <!DOCTYPE html>
@@ -23,10 +23,54 @@
             img-src 'self' blob: data:;
             media-src 'self' blob:;
             object-src 'none';
-            script-src 'self' 'sha256-eLeGwSfPmXJ+EUiLfIeXABvLiUqDbiKgNLpHITaabgQ=';
+            script-src 'self' 'sha256-Qu05oqDmBO5fZacm7tr/oerJcqsW0G/XqP4PRCziovc=' 'sha256-eLeGwSfPmXJ+EUiLfIeXABvLiUqDbiKgNLpHITaabgQ=';
             style-src 'self' 'unsafe-inline';"
     />
     <title>Signal</title>
+    <link
+      rel="preload"
+      href="fonts/inter-v3.10/Inter-BoldItalic.woff2"
+      as="font"
+      crossorigin
+      type="font/woff2"
+    />
+    <link
+      rel="preload"
+      href="fonts/inter-v3.10/Inter-Bold.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="fonts/inter-v3.10/Inter-SemiBoldItalic.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="fonts/inter-v3.10/Inter-Italic.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="fonts/inter-v3.10/Inter-SemiBold.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="fonts/inter-v3.10/Inter-Regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="preload" href="images/signal-logo.svg" as="image" crossorigin />
+
     <link
       href="node_modules/sanitize.css/sanitize.css"
       rel="stylesheet"
@@ -34,6 +78,11 @@
     />
     <link
       href="node_modules/react-quill/dist/quill.core.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="node_modules/@indutny/frameless-titlebar/dist/styles.css"
       rel="stylesheet"
       type="text/css"
     />
@@ -90,39 +139,6 @@
         {{ #summary }} <div class='summary'>{{ summary }}</div>{{ /summary }}
       </div>
     </script>
-
-    <script type="text/javascript" src="js/components.js"></script>
-    <script type="text/javascript" src="ts/set_os_class.js"></script>
-    <script
-      type="text/javascript"
-      src="ts/manage_full_screen_class.js"
-    ></script>
-    <script type="text/javascript" src="ts/backboneJquery.js"></script>
-    <script type="text/javascript" src="js/reliable_trigger.js"></script>
-    <script type="text/javascript" src="js/database.js"></script>
-
-    <script
-      type="text/javascript"
-      src="libtextsecure/protocol_wrapper.js"
-    ></script>
-
-    <script type="text/javascript" src="js/libphonenumber-util.js"></script>
-    <script type="text/javascript" src="js/expiring_messages.js"></script>
-    <script
-      type="text/javascript"
-      src="js/expiring_tap_to_view_messages.js"
-    ></script>
-
-    <script
-      type="text/javascript"
-      src="js/views/react_wrapper_view.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="ts/shims/showConfirmationDialog.js"
-    ></script>
-
-    <script type="text/javascript" src="js/wall_clock_listener.js"></script>
   </head>
   <body class="overflow-hidden">
     <div id="app-container">
@@ -136,10 +152,33 @@
             <span class="dot"></span>
             <span class="dot"></span>
           </div>
-          <div class="message"></div>
+          <div class="message">&nbsp;</div>
         </div>
       </div>
     </div>
+
+    <script type="text/javascript">
+      document
+        .querySelector('.app-loading-screen')
+        .addEventListener('dblclick', () => window.showDebugLog());
+    </script>
+
+    <script type="text/javascript" src="js/components.js"></script>
+    <script type="text/javascript" src="ts/set_os_class.js"></script>
+    <script
+      type="text/javascript"
+      src="ts/manage_full_screen_class.js"
+    ></script>
+    <script type="text/javascript" src="ts/backbone/backboneJquery.js"></script>
+    <script
+      type="text/javascript"
+      src="ts/backbone/reliable_trigger.js"
+    ></script>
+
+    <script
+      type="text/javascript"
+      src="ts/shims/showConfirmationDialog.js"
+    ></script>
 
     <!--
     Note: this inline script cannot be changed without also changing the hash in

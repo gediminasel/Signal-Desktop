@@ -24,9 +24,10 @@ import type {
 } from './model-types.d';
 import * as Bytes from './Bytes';
 import * as Timers from './Timers';
+import * as indexedDb from './indexeddb';
 import type { WhatIsThis } from './window.d';
+import type { MenuOptionsType } from './types/menu';
 import type { Receipt } from './types/Receipt';
-import { getTitleBarVisibility, TitleBarVisibility } from './types/Settings';
 import { SocketStatus } from './types/SocketStatus';
 import { DEFAULT_CONVERSATION_COLOR } from './types/Colors';
 import { ThemeType } from './types/Util';
@@ -38,7 +39,10 @@ import { assert, strictAssert } from './util/assert';
 import { normalizeUuid } from './util/normalizeUuid';
 import { filter } from './util/iterables';
 import { isNotNil } from './util/isNotNil';
+import { setAppLoadingScreenMessage } from './setAppLoadingScreenMessage';
 import { IdleDetector } from './IdleDetector';
+import { expiringMessagesDeletionService } from './services/expiringMessagesDeletion';
+import { tapToViewMessagesDeletionService } from './services/tapToViewMessagesDeletionService';
 import { getStoriesForRedux, loadStories } from './services/storyLoader';
 import { senderCertificateService } from './services/senderCertificate';
 import { GROUP_CREDENTIALS_KEY } from './services/groupCredentialFetcher';
@@ -48,6 +52,7 @@ import { isMoreRecentThan, isOlderThan, toDayMillis } from './util/timestamp';
 import { isValidReactionEmoji } from './reactions/isValidReactionEmoji';
 import type { ConversationModel } from './models/conversations';
 import { getContact } from './messages/helpers';
+import { migrateMessageData } from './messages/migrateMessageData';
 import { createBatcher } from './util/batcher';
 import { updateConversationsWithUuidLookup } from './updateConversationsWithUuidLookup';
 import { initializeAllJobQueues } from './jobs/initializeAllJobQueues';
@@ -55,6 +60,7 @@ import { removeStorageKeyJobQueue } from './jobs/removeStorageKeyJobQueue';
 import { ourProfileKeyService } from './services/ourProfileKey';
 import { notificationService } from './services/notifications';
 import { areWeASubscriberService } from './services/areWeASubscriber';
+import { startTimeTravelDetector } from './util/startTimeTravelDetector';
 import { shouldRespondWithProfileKey } from './util/shouldRespondWithProfileKey';
 import { LatestQueue } from './util/LatestQueue';
 import { parseIntOrThrow } from './util/parseIntOrThrow';
@@ -128,12 +134,14 @@ import type { UUID } from './types/UUID';
 import * as log from './logging/log';
 import { loadRecentEmojis } from './util/loadRecentEmojis';
 import { deleteAllLogs } from './util/deleteAllLogs';
+import { ReactWrapperView } from './views/ReactWrapperView';
 import { ToastCaptchaFailed } from './components/ToastCaptchaFailed';
 import { ToastCaptchaSolved } from './components/ToastCaptchaSolved';
 import { ToastConversationArchived } from './components/ToastConversationArchived';
 import { ToastConversationUnarchived } from './components/ToastConversationUnarchived';
 import { showToast } from './util/showToast';
 import { startInteractionMode } from './windows/startInteractionMode';
+import type { MainWindowStatsType } from './windows/context';
 import { deliveryReceiptsJobQueue } from './jobs/deliveryReceiptsJobQueue';
 import { updateOurUsername } from './util/updateOurUsername';
 import { ReactionSource } from './reactions/ReactionSource';
@@ -141,6 +149,8 @@ import { singleProtoJobQueue } from './jobs/singleProtoJobQueue';
 import { getInitialState } from './state/getInitialState';
 import { conversationJobQueue } from './jobs/conversationJobQueue';
 import { SeenStatus } from './MessageSeenStatus';
+import MessageSender from './textsecure/SendMessage';
+import type AccountManager from './textsecure/AccountManager';
 
 const MAX_ATTACHMENT_DOWNLOAD_AGE = 3600 * 72 * 1000;
 
@@ -167,6 +177,8 @@ export async function cleanupSessionResets(): Promise<void> {
 }
 
 export async function startApp(): Promise<void> {
+  window.textsecure.storage.protocol = new window.SignalProtocolStore();
+
   if (window.initialTheme === ThemeType.light) {
     document.body.classList.add('light-theme');
   }
@@ -227,7 +239,11 @@ export async function startApp(): Promise<void> {
       },
 
       async sendChallengeResponse(data) {
-        await window.textsecure.messaging.sendChallengeResponse(data);
+        const { messaging } = window.textsecure;
+        if (!messaging) {
+          throw new Error('sendChallengeResponse: messaging is not available!');
+        }
+        await messaging.sendChallengeResponse(data);
       },
 
       onChallengeFailed() {
@@ -262,7 +278,6 @@ export async function startApp(): Promise<void> {
       serverTrustRoot: window.getServerTrustRoot(),
     });
 
-    // eslint-disable-next-line no-inner-declarations
     function queuedEventListener<Args extends Array<unknown>>(
       handler: (...args: Args) => Promise<void> | void,
       track = true
@@ -444,7 +459,7 @@ export async function startApp(): Promise<void> {
       },
     });
 
-  if (getTitleBarVisibility() === TitleBarVisibility.Hidden) {
+  if (window.platform === 'darwin') {
     window.addEventListener('dblclick', (event: Event) => {
       const target = event.target as HTMLElement;
       if (isWindowDragElement(target)) {
@@ -490,9 +505,6 @@ export async function startApp(): Promise<void> {
   //   of preload.js processing
   window.setImmediate = window.nodeSetImmediate;
 
-  const { MessageDataMigrator } = window.Signal.Workflow;
-  const { removeDatabase: removeIndexedDB, doesDatabaseExist } =
-    window.Signal.IndexedDB;
   const { Message } = window.Signal.Types;
   const {
     upgradeMessageSchema,
@@ -500,7 +512,6 @@ export async function startApp(): Promise<void> {
     deleteAttachmentData,
     doesAttachmentExist,
   } = window.Signal.Migrations;
-  const { Views } = window.Signal;
 
   log.info('background page reloaded');
   log.info('environment:', window.getEnvironment());
@@ -527,10 +538,13 @@ export async function startApp(): Promise<void> {
     }
     return server.getSocketStatus();
   };
-  let accountManager: typeof window.textsecure.AccountManager;
+  let accountManager: AccountManager;
   window.getAccountManager = () => {
     if (accountManager) {
       return accountManager;
+    }
+    if (!server) {
+      throw new Error('getAccountManager: server is not available!');
     }
 
     accountManager = new window.textsecure.AccountManager(server);
@@ -544,11 +558,14 @@ export async function startApp(): Promise<void> {
     return accountManager;
   };
 
-  const cancelInitializationMessage = Views.Initialization.setMessage();
+  const cancelInitializationMessage = setAppLoadingScreenMessage(
+    undefined,
+    window.i18n
+  );
 
   const version = await window.Signal.Data.getItemById('version');
   if (!version) {
-    const isIndexedDBPresent = await doesDatabaseExist();
+    const isIndexedDBPresent = await indexedDb.doesDatabaseExist();
     if (isIndexedDBPresent) {
       log.info('Found IndexedDB database.');
       try {
@@ -579,7 +596,7 @@ export async function startApp(): Promise<void> {
         log.info('Deleting IndexedDB file...');
 
         await Promise.all([
-          removeIndexedDB(),
+          indexedDb.removeDatabase(),
           window.Signal.Data.removeAll(),
           window.Signal.Data.removeIndexedDBFiles(),
         ]);
@@ -790,7 +807,10 @@ export async function startApp(): Promise<void> {
       }
     }
 
-    Views.Initialization.setMessage(window.i18n('optimizingApplication'));
+    setAppLoadingScreenMessage(
+      window.i18n('optimizingApplication'),
+      window.i18n
+    );
 
     if (newVersion) {
       // We've received reports that this update can take longer than two minutes, so we
@@ -814,7 +834,7 @@ export async function startApp(): Promise<void> {
       log.error('SQL failed to initialize', err && err.stack ? err.stack : err);
     }
 
-    Views.Initialization.setMessage(window.i18n('loading'));
+    setAppLoadingScreenMessage(window.i18n('loading'), window.i18n);
 
     let isMigrationWithIndexComplete = false;
     log.info(
@@ -824,8 +844,7 @@ export async function startApp(): Promise<void> {
       const NUM_MESSAGES_PER_BATCH = 1;
 
       if (!isMigrationWithIndexComplete) {
-        const batchWithIndex = await MessageDataMigrator.processNext({
-          BackboneMessageCollection: window.Whisper.MessageCollection,
+        const batchWithIndex = await migrateMessageData({
           numMessagesPerBatch: NUM_MESSAGES_PER_BATCH,
           upgradeMessageSchema,
           getMessagesNeedingUpgrade:
@@ -921,6 +940,19 @@ export async function startApp(): Promise<void> {
       }
     }, FIVE_MINUTES);
 
+    let mainWindowStats = {
+      isMaximized: false,
+      isFullScreen: false,
+    };
+
+    let menuOptions = {
+      development: false,
+      devTools: false,
+      includeSetup: false,
+      isProduction: true,
+      platform: 'unknown',
+    };
+
     try {
       await Promise.all([
         window.ConversationController.load(),
@@ -929,6 +961,12 @@ export async function startApp(): Promise<void> {
         loadInitialBadgesState(),
         loadStories(),
         window.textsecure.storage.protocol.hydrateCaches(),
+        (async () => {
+          mainWindowStats = await window.SignalContext.getMainWindowStats();
+        })(),
+        (async () => {
+          menuOptions = await window.SignalContext.getMenuOptions();
+        })(),
       ]);
       await window.ConversationController.checkForConflicts();
     } catch (error) {
@@ -937,7 +975,7 @@ export async function startApp(): Promise<void> {
         error && error.stack ? error.stack : error
       );
     } finally {
-      initializeRedux();
+      initializeRedux({ mainWindowStats, menuOptions });
       start();
       window.Signal.Services.initializeNetworkObserver(
         window.reduxActions.network
@@ -955,12 +993,20 @@ export async function startApp(): Promise<void> {
     }
   });
 
-  function initializeRedux() {
+  function initializeRedux({
+    mainWindowStats,
+    menuOptions,
+  }: {
+    mainWindowStats: MainWindowStatsType;
+    menuOptions: MenuOptionsType;
+  }) {
     // Here we set up a full redux store with initial state for our LeftPane Root
     const convoCollection = window.getConversations();
     const initialState = getInitialState({
       badges: initialBadgesState,
       stories: getStoriesForRedux(),
+      mainWindowStats,
+      menuOptions,
     });
 
     const store = window.Signal.State.createStore(initialState);
@@ -1101,11 +1147,31 @@ export async function startApp(): Promise<void> {
       }
     });
 
+    window.Whisper.events.on(
+      'setWindowStats',
+      ({
+        isFullScreen,
+        isMaximized,
+      }: {
+        isFullScreen: boolean;
+        isMaximized: boolean;
+      }) => {
+        window.reduxActions.user.userChanged({
+          isMainWindowMaximized: isMaximized,
+          isMainWindowFullScreen: isFullScreen,
+        });
+      }
+    );
+
+    window.Whisper.events.on('setMenuOptions', (options: MenuOptionsType) => {
+      window.reduxActions.user.userChanged({ menuOptions: options });
+    });
+
     let shortcutGuideView: WhatIsThis | null = null;
 
     window.showKeyboardShortcuts = () => {
       if (!shortcutGuideView) {
-        shortcutGuideView = new window.Whisper.ReactWrapperView({
+        shortcutGuideView = new ReactWrapperView({
           className: 'shortcut-guide-wrapper',
           JSX: window.Signal.State.Roots.createShortcutGuideModal(
             window.reduxStore,
@@ -1290,15 +1356,6 @@ export async function startApp(): Promise<void> {
         if (modalHost) {
           return;
         }
-      }
-
-      // Close window.Backbone-based confirmation dialog
-      if (window.Whisper.activeConfirmationView && key === 'Escape') {
-        window.Whisper.activeConfirmationView.remove();
-        window.Whisper.activeConfirmationView = null;
-        event.preventDefault();
-        event.stopPropagation();
-        return;
       }
 
       // Send Escape to active conversation so it can close panels
@@ -1627,9 +1684,7 @@ export async function startApp(): Promise<void> {
     }
 
     try {
-      await singleProtoJobQueue.add(
-        window.textsecure.messaging.getRequestKeySyncMessage()
-      );
+      await singleProtoJobQueue.add(MessageSender.getRequestKeySyncMessage());
     } catch (error) {
       log.error(
         'runStorageService: Failed to queue sync message',
@@ -1726,9 +1781,16 @@ export async function startApp(): Promise<void> {
     window.setAutoHideMenuBar(hideMenuBar);
     window.setMenuBarVisibility(!hideMenuBar);
 
-    window.Whisper.WallClockListener.init(window.Whisper.events);
-    window.Whisper.ExpiringMessagesListener.init(window.Whisper.events);
-    window.Whisper.TapToViewMessagesListener.init(window.Whisper.events);
+    startTimeTravelDetector(() => {
+      window.Whisper.events.trigger('timetravel');
+    });
+
+    expiringMessagesDeletionService.update();
+    tapToViewMessagesDeletionService.update();
+    window.Whisper.events.on('timetravel', () => {
+      expiringMessagesDeletionService.update();
+      tapToViewMessagesDeletionService.update();
+    });
 
     const isCoreDataValid = Boolean(
       window.textsecure.storage.user.getUuid() &&
@@ -1820,7 +1882,6 @@ export async function startApp(): Promise<void> {
     strictAssert(messageReceiver, 'MessageReceiver not initialized');
 
     const syncRequest = new window.textsecure.SyncRequest(
-      window.textsecure.messaging,
       messageReceiver,
       timeoutMillis
     );
@@ -1891,6 +1952,10 @@ export async function startApp(): Promise<void> {
     }
   }
 
+  // When true - we are running the very first storage and contact sync after
+  // linking.
+  let isInitialSync = false;
+
   let connectCount = 0;
   let connecting = false;
   async function connect(firstRun?: boolean) {
@@ -1903,6 +1968,9 @@ export async function startApp(): Promise<void> {
 
     try {
       connecting = true;
+
+      // Reset the flag and update it below if needed
+      isInitialSync = false;
 
       log.info('connect', { firstRun, connectCount });
 
@@ -2111,7 +2179,6 @@ export async function startApp(): Promise<void> {
       }
 
       if (firstRun === true && deviceId !== 1) {
-        const { messaging } = window.textsecure;
         const hasThemeSetting = Boolean(window.storage.get('theme-setting'));
         if (
           !hasThemeSetting &&
@@ -2145,17 +2212,20 @@ export async function startApp(): Promise<void> {
         const contactSyncComplete = waitForEvent('contactSync:complete');
 
         log.info('firstRun: requesting initial sync');
+        isInitialSync = true;
 
         // Request configuration, block, GV1 sync messages, contacts
         // (only avatars and inboxPosition),and Storage Service sync.
         try {
           await Promise.all([
             singleProtoJobQueue.add(
-              messaging.getRequestConfigurationSyncMessage()
+              MessageSender.getRequestConfigurationSyncMessage()
             ),
-            singleProtoJobQueue.add(messaging.getRequestBlockSyncMessage()),
-            singleProtoJobQueue.add(messaging.getRequestGroupSyncMessage()),
-            singleProtoJobQueue.add(messaging.getRequestContactSyncMessage()),
+            singleProtoJobQueue.add(MessageSender.getRequestBlockSyncMessage()),
+            singleProtoJobQueue.add(MessageSender.getRequestGroupSyncMessage()),
+            singleProtoJobQueue.add(
+              MessageSender.getRequestContactSyncMessage()
+            ),
             runStorageService(),
           ]);
         } catch (error) {
@@ -2175,6 +2245,9 @@ export async function startApp(): Promise<void> {
             Errors.toLogFormat(error)
           );
         }
+
+        log.info('firstRun: initial sync complete');
+        isInitialSync = false;
 
         // Switch to inbox view even if contact sync is still running
         if (
@@ -2204,7 +2277,7 @@ export async function startApp(): Promise<void> {
           log.info('firstRun: requesting stickers', operations.length);
           try {
             await singleProtoJobQueue.add(
-              messaging.getStickerPackSync(operations)
+              MessageSender.getStickerPackSync(operations)
             );
           } catch (error) {
             log.error(
@@ -2279,7 +2352,7 @@ export async function startApp(): Promise<void> {
   window.waitForEmptyEventQueue = waitForEmptyEventQueue;
 
   async function onEmpty() {
-    const { storage, messaging } = window.textsecure;
+    const { storage } = window.textsecure;
 
     await Promise.all([
       window.waitForAllBatchers(),
@@ -2287,6 +2360,7 @@ export async function startApp(): Promise<void> {
     ]);
     log.info('onEmpty: All outstanding database requests complete');
     window.readyForUpdates();
+    window.ConversationController.onEmpty();
 
     // Start listeners here, after we get through our queue.
     RotateSignedPreKeyListener.init(window.Whisper.events, newVersion);
@@ -2305,11 +2379,12 @@ export async function startApp(): Promise<void> {
 
     window.reduxActions.app.initialLoadComplete();
 
+    const processedCount = messageReceiver?.getAndResetProcessedCount() || 0;
     window.logAppLoadedEvent?.({
-      processedCount: messageReceiver && messageReceiver.getProcessedCount(),
+      processedCount,
     });
     if (messageReceiver) {
-      log.info('App loaded - messages:', messageReceiver.getProcessedCount());
+      log.info('App loaded - messages:', processedCount);
     }
 
     window.Signal.Util.setBatchingStrategy(false);
@@ -2386,7 +2461,7 @@ export async function startApp(): Promise<void> {
     if (!pniIdentity) {
       log.info('Requesting PNI identity sync');
       await singleProtoJobQueue.add(
-        messaging.getRequestPniIdentitySyncMessage()
+        MessageSender.getRequestPniIdentitySyncMessage()
       );
     }
   }
@@ -2639,6 +2714,7 @@ export async function startApp(): Promise<void> {
           undefined,
           {
             fromSync: true,
+            isInitialSync,
           }
         );
       }

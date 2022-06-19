@@ -1,17 +1,20 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-$(document).ready(() => {
+{
   let className: string;
-  if (window.Signal.OS.isWindows()) {
+  if (window.SignalContext.OS.isWindows()) {
     className = 'os-windows';
-  } else if (window.Signal.OS.isMacOS()) {
+    if (window.SignalContext.OS.isWindows11()) {
+      document.body.classList.add('os-windows-11');
+    }
+  } else if (window.SignalContext.OS.isMacOS()) {
     className = 'os-macos';
-  } else if (window.Signal.OS.isLinux()) {
+  } else if (window.SignalContext.OS.isLinux()) {
     className = 'os-linux';
   } else {
     throw new Error('Unexpected operating system; not applying ');
   }
 
-  $(document.body).addClass(className);
-});
+  document.body.classList.add(className);
+}

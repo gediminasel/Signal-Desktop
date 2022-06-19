@@ -24,8 +24,8 @@ import {
 } from '../util/GoogleChrome';
 import type { LocalizerType } from './Util';
 import { ThemeType } from './Util';
-import * as GoogleChrome from '../util/GoogleChrome';
 import { scaleImageToLevel } from '../util/scaleImageToLevel';
+import * as GoogleChrome from '../util/GoogleChrome';
 import { parseIntOrThrow } from '../util/parseIntOrThrow';
 import { getValue } from '../RemoteConfig';
 
@@ -58,6 +58,7 @@ export type AttachmentType = {
     url?: string;
     contentType: MIME.MIMEType;
     path: string;
+    data?: Uint8Array;
   };
   screenshotData?: Uint8Array;
   screenshotPath?: string;
@@ -73,6 +74,17 @@ export type AttachmentType = {
 
   /** Legacy field. Used only for downloading old attachments */
   id?: number;
+
+  /** Legacy field, used long ago for migrating attachments to disk. */
+  schemaVersion?: number;
+
+  /** Removed once we download the attachment */
+  digest?: string;
+  key?: string;
+};
+
+export type AttachmentWithHydratedData = AttachmentType & {
+  data: Uint8Array;
 };
 
 export enum TextAttachmentStyleType {
@@ -155,11 +167,12 @@ export type AttachmentDraftType =
     };
 
 export type ThumbnailType = {
-  height: number;
-  width: number;
+  height?: number;
+  width?: number;
   url?: string;
   contentType: MIME.MIMEType;
-  path: string;
+  path?: string;
+  data?: Uint8Array;
   // Only used when quote needed to make an in-memory thumbnail
   objectUrl?: string;
 };
@@ -370,19 +383,21 @@ export function hasData(attachment: AttachmentType): boolean {
 
 export function loadData(
   readAttachmentData: (path: string) => Promise<Uint8Array>
-): (attachment?: AttachmentType) => Promise<AttachmentType> {
+): (attachment: AttachmentType) => Promise<AttachmentWithHydratedData> {
   if (!is.function_(readAttachmentData)) {
     throw new TypeError("'readAttachmentData' must be a function");
   }
 
-  return async (attachment?: AttachmentType): Promise<AttachmentType> => {
+  return async (
+    attachment: AttachmentType
+  ): Promise<AttachmentWithHydratedData> => {
     if (!isValid(attachment)) {
       throw new TypeError("'attachment' is not valid");
     }
 
     const isAlreadyLoaded = Boolean(attachment.data);
     if (isAlreadyLoaded) {
-      return attachment;
+      return attachment as AttachmentWithHydratedData;
     }
 
     if (!is.string(attachment.path)) {
@@ -428,16 +443,19 @@ export async function captureDimensionsAndScreenshot(
   attachment: AttachmentType,
   params: {
     writeNewAttachmentData: (data: Uint8Array) => Promise<string>;
-    getAbsoluteAttachmentPath: (path: string) => Promise<string>;
+    getAbsoluteAttachmentPath: (path: string) => string;
     makeObjectUrl: (
       data: Uint8Array | ArrayBuffer,
       contentType: MIME.MIMEType
     ) => string;
     revokeObjectUrl: (path: string) => void;
-    getImageDimensions: (params: { objectUrl: string; logger: LoggerType }) => {
+    getImageDimensions: (params: {
+      objectUrl: string;
+      logger: LoggerType;
+    }) => Promise<{
       width: number;
       height: number;
-    };
+    }>;
     makeImageThumbnail: (params: {
       size: number;
       objectUrl: string;
@@ -477,7 +495,7 @@ export async function captureDimensionsAndScreenshot(
     return attachment;
   }
 
-  const absolutePath = await getAbsoluteAttachmentPath(attachment.path);
+  const absolutePath = getAbsoluteAttachmentPath(attachment.path);
 
   if (GoogleChrome.isImageTypeSupported(contentType)) {
     try {
@@ -1017,4 +1035,10 @@ export const defaultBlurHash = (theme: ThemeType = ThemeType.light): string => {
     return 'L05OQnoffQofoffQfQfQfQfQfQfQ';
   }
   return 'L1Q]+w-;fQ-;~qfQfQfQfQfQfQfQ';
+};
+
+export const canBeDownloaded = (
+  attachment: Pick<AttachmentType, 'key' | 'digest'>
+): boolean => {
+  return Boolean(attachment.key && attachment.digest);
 };

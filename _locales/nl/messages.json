@@ -468,15 +468,15 @@
         "description": "Description of what will happen with your debug log"
     },
     "debugLogError": {
-        "message": "Er is iets mis gegaan bij het uploaden. Suur alsjeblieft een e-mail naar support@signal.org en voeg aan die e-mail je foutopsporingslog toe als een tekstbestand.",
+        "message": "Er is iets mis gegaan bij het uploaden. Stuur alsjeblieft een e-mail naar support@signal.org en voeg aan die e-mail je foutopsporingslog toe als een tekstbestand.",
         "description": "Error message a recommendations if debug log upload fails"
     },
     "debugLogSuccess": {
-        "message": "Foutopsporingslog succesvol geupload",
+        "message": "Foutopsporingslog succesvol geüpload",
         "description": "Title of the success page for submitting a debug log"
     },
     "debugLogSuccessNextSteps": {
-        "message": "Neem nu contact op met ondersteuning en kopiëer de URL hieronder om die samen met een omschrijving van je probleem en een omschrijving van de stappen om het probleem te veroorzaken in te dienen.",
+        "message": "Neem nu contact op met ondersteuning en kopieer de URL hieronder om die samen met een omschrijving van je probleem en een omschrijving van de stappen om het probleem te veroorzaken in te dienen.",
         "description": "Explanation of next steps to take when submitting debug log"
     },
     "debugLogLogIsIncomplete": {
@@ -564,7 +564,7 @@
         "description": "Message shown to user in the media gallery when there are no messages with media attachments (images or video)"
     },
     "allMedia": {
-        "message": "Alle media",
+        "message": "Alle media uit dit gesprek",
         "description": "Header for the media gallery"
     },
     "documents": {
@@ -876,11 +876,11 @@
         "description": ""
     },
     "typingAlt": {
-        "message": "Typ-animatie voor dit gesprek",
+        "message": "Iemand in dit gesprek is aan het typen",
         "description": "Used as the 'title' attribute for the typing animation"
     },
     "contactInAddressBook": {
-        "message": "Deze persoon staat in je contactenlijst",
+        "message": "Deze persoon staat ook in de systeemcontactenlijst van je telefoon.",
         "description": "Description of icon denoting that contact is from your address book"
     },
     "contactAvatarAlt": {
@@ -928,6 +928,10 @@
     "downloading": {
         "message": "Wordt gedownload",
         "description": "Shown in the message bubble while a long message attachment is being downloaded"
+    },
+    "downloadFullMessage": {
+        "message": "Volledig bericht downloaden",
+        "description": "Shown in the message bubble while a long message attachment is not downloaded"
     },
     "downloadAttachment": {
         "message": "Bijlage downloaden",
@@ -1126,7 +1130,7 @@
         "description": ""
     },
     "delete": {
-        "message": "Afwijzen",
+        "message": "Wissen",
         "description": ""
     },
     "accept": {
@@ -1294,7 +1298,7 @@
         "description": "Shown on explainer dialog available from delivery issue timeline events"
     },
     "DeliveryIssue--summary": {
-        "message": "Een bericht, media, sticker, emoji-reactie, of een bevestiging dat een bericht gelezen is van $sender$ kan niet aan jou worden afgeleverd. Het kan zijn dat hij of zij iets probeerde naar je te verzenden in een één-op-één gesprek of in een groepsgesprek.",
+        "message": "Een bericht, media, sticker, emoji-reactie, of een bevestiging dat een bericht gelezen is van $sender$ kan niet aan jou worden afgeleverd. Het kan zijn dat hij of zij iets probeerde naar je te verzenden in een één-op-één-gesprek of in een groepsgesprek.",
         "description": "Shown on explainer dialog available from delivery issue timeline events in 1:1 conversations",
         "placeholders": {
             "name": {
@@ -1586,11 +1590,11 @@
         "description": "Label in the calling lobby indicating that your camera is off"
     },
     "calling__pre-call-info--empty-group": {
-        "message": "Er is niemand behalve jij in dit gesprek",
+        "message": "Er is niemand in de groepsoproep. Klik op ‘Oproep beginnen’ om een oproep te beginnen.",
         "description": "Shown in the calling lobby to describe who is in the call"
     },
     "calling__pre-call-info--1-person-in-call": {
-        "message": "$first$ is aanwezig in deze oproep",
+        "message": "$first$ is aanwezig in de oproep. Klik op ‘Aan oproep deelnemen’ om zelf deel te nemen.",
         "description": "Shown in the calling lobby to describe who is in the call",
         "placeholders": {
             "first": {
@@ -1600,11 +1604,11 @@
         }
     },
     "calling__pre-call-info--another-device-in-call": {
-        "message": "Een van je andere apparaten neemt deel aan deze oproep",
+        "message": "Een van je andere apparaten neemt deel aan deze oproep. Klik op ‘Aan oproep deelnemen’ om ook vanaf dit apparaat deel te nemen.",
         "description": "Shown in the calling lobby to describe when it is just you"
     },
     "calling__pre-call-info--2-people-in-call": {
-        "message": "$first$ en $second$ zijn aanwezig in deze oproep",
+        "message": "$first$ en $second$ zijn aanwezig in deze oproep. Klik op ‘Aan oproep deelnemen’ om zelf deel te nemen.",
         "description": "Shown in the calling lobby to describe who is in the call",
         "placeholders": {
             "first": {
@@ -1618,7 +1622,7 @@
         }
     },
     "calling__pre-call-info--3-people-in-call": {
-        "message": "$first$, $second$ en $third$ zijn aanwezig in deze oproep",
+        "message": "$first$, $second$ en $third$ zijn aanwezig in deze oproep. Klik op ‘Aan oproep deelnemen’ om zelf deel te nemen.",
         "description": "Shown in the calling lobby to describe who is in the call",
         "placeholders": {
             "first": {
@@ -1636,7 +1640,7 @@
         }
     },
     "calling__pre-call-info--many-people-in-call": {
-        "message": ",$first$ $second$ en $others$ anderen zijn aanwezig in deze oproep",
+        "message": "$first$, $second$ en $others$ anderen zijn aanwezig in deze oproep. Klik op ‘Aan oproep deelnemen’ om zelf deel te nemen.",
         "description": "Shown in the calling lobby to describe who is in the call",
         "placeholders": {
             "first": {
@@ -1664,7 +1668,7 @@
         }
     },
     "calling__pre-call-info--will-ring-2": {
-        "message": "Signal belt $first$ en $second$",
+        "message": "Als je doorgaat zul je $first$ en $second$ bellen",
         "description": "Shown in the calling lobby to describe who will be rang",
         "placeholders": {
             "first": {
@@ -1678,7 +1682,7 @@
         }
     },
     "calling__pre-call-info--will-ring-3": {
-        "message": "Signal belt $first$, $second$ en $third$",
+        "message": "Als je doorgaat zul je $first$, $second$ en $third$ bellen",
         "description": "Shown in the calling lobby to describe who will be rang",
         "placeholders": {
             "first": {
@@ -1696,7 +1700,7 @@
         }
     },
     "calling__pre-call-info--will-ring-many": {
-        "message": "Signal belt $first$, $second$ en nog $others$ anderen",
+        "message": "Als je doorgaat zul je $first$, $second$ en nog $others$ anderen bellen",
         "description": "Shown in the calling lobby to describe who will be rang",
         "placeholders": {
             "person": {
@@ -1714,7 +1718,7 @@
         }
     },
     "calling__pre-call-info--will-notify-1": {
-        "message": "$person$ zal een melding krijgen",
+        "message": "Als je doorgaat zal $person$ een melding krijgen",
         "description": "Shown in the calling lobby to describe who will be notified",
         "placeholders": {
             "person": {
@@ -1724,7 +1728,7 @@
         }
     },
     "calling__pre-call-info--will-notify-2": {
-        "message": "$first$ en $second$ zullen een melding krijgen",
+        "message": "Als je doorgaat zullen $first$ en $second$ een melding krijgen",
         "description": "Shown in the calling lobby to describe who will be notified",
         "placeholders": {
             "first": {
@@ -1738,7 +1742,7 @@
         }
     },
     "calling__pre-call-info--will-notify-3": {
-        "message": "$first$, $second$ en $third$ zullen een melding krijgen",
+        "message": "Als je doorgaat zullen $first$, $second$ en $third$ een melding krijgen",
         "description": "Shown in the calling lobby to describe who will be notified",
         "placeholders": {
             "first": {
@@ -1756,7 +1760,7 @@
         }
     },
     "calling__pre-call-info--will-notify-many": {
-        "message": "$first$, $second$ en $others$ anderen zullen een melding krijgen",
+        "message": "Als je doorgaat zullen $first$, $second$ en $others$ anderen een melding krijgen",
         "description": "Shown in the calling lobby to describe who will be notified",
         "placeholders": {
             "person": {
@@ -1774,15 +1778,15 @@
         }
     },
     "calling__in-this-call--zero": {
-        "message": "Er is niemand behalve jij in dit gesprek",
+        "message": "Er is niemand behalve jij in deze oproep",
         "description": "Shown in the participants list to describe how many people are in the call"
     },
     "calling__in-this-call--one": {
-        "message": "1 persoon in dit gesprek",
+        "message": "1 persoon in deze oproep",
         "description": "Shown in the participants list to describe how many people are in the call"
     },
     "calling__in-this-call--many": {
-        "message": "$people$ personen in dit gesprek aanwezig",
+        "message": "$people$ personen in deze oproep aanwezig",
         "description": "Shown in the participants list to describe how many people are in the call",
         "placeholders": {
             "people": {
@@ -1818,7 +1822,7 @@
         "description": "Title for the share screen notification"
     },
     "calling__presenting--notification-body": {
-        "message": "Klik hier om wanneer je klaar bent met je scherm laten zien terug te gaan naar de oproep.",
+        "message": "Klik hier wanneer je klaar bent met je scherm laten zien om terug te gaan naar de oproep.",
         "description": "Body text for the share screen notification"
     },
     "calling__presenting--info": {
@@ -1900,11 +1904,11 @@
         "description": "Header for permissions section of settings"
     },
     "mediaPermissionsDescription": {
-        "message": "Toestemming geven om de microfoon te gebruiken",
+        "message": "Ik geef de Signal-app toestemming om mijn microfoon te gebruiken",
         "description": "Description of the media permission description"
     },
     "mediaCameraPermissionsDescription": {
-        "message": "Toestemming geven om de camera te gebruiken",
+        "message": "Ik geef de Signal-app toestemming om mijn camera te gebruiken",
         "description": "Description of the media permission description"
     },
     "general": {
@@ -1924,11 +1928,11 @@
         "description": "Shown when the user disables spellcheck to indicate that they must restart Signal."
     },
     "SystemTraySetting__minimize-to-system-tray": {
-        "message": "Minimaliseer naar systeemvak in plaats van taakbalk",
+        "message": "Minimaliseer naar het systeemvak in plaats van de taakbalk",
         "description": "In the settings, shown next to the checkbox option for minimizing to the system tray"
     },
     "SystemTraySetting__minimize-to-and-start-in-system-tray": {
-        "message": "Houd Signal geminimaliseerd naar systeemvak wanneer het wordt gestart",
+        "message": "Houd Signal geminimaliseerd naar het systeemvak wanneer het wordt gestart",
         "description": "In the settings, shown next to the checkbox option for starting in the system tray"
     },
     "autoLaunchDescription": {
@@ -1960,11 +1964,11 @@
         "description": "Text of the button that deletes all data"
     },
     "deleteAllDataProgress": {
-        "message": "Verbinding wordt verbroken en alle gegevens worden gewist",
+        "message": "Aan het ontkoppelen en alle gegevens aan het wissen",
         "description": "Message shown to user when app is disconnected and data deleted"
     },
     "deleteOldIndexedDBData": {
-        "message": "Je hebt nog overbodige gegevens op je apparaat van een Signal-desktop installatie van voor oktober 2018. Als je er voor kiest om verder te gaan, dan zullen alle gegevens inclusief al je gesprekjen worden gewist van Signal-desktop en zal je met een schone installatie beginnen.",
+        "message": "Je hebt nog overbodige gegevens op je apparaat van een Signal-desktop installatie van voor oktober 2018. Als je er voor kiest om verder te gaan, dan zullen alle gegevens inclusief al je gesprekken worden gewist van Signal-desktop en zal je met een schone installatie beginnen.",
         "description": "Shown if user last ran Signal Desktop before October 2018"
     },
     "deleteOldData": {
@@ -2262,7 +2266,7 @@
         }
     },
     "audioNotificationDescription": {
-        "message": "Meldingsgeluid afspelen",
+        "message": "Bij nieuwe meldingen geluid afspelen",
         "description": "Description for audio notification setting"
     },
     "callRingtoneNotificationDescription": {
@@ -2366,7 +2370,7 @@
         "description": "Name for the conversation with your own phone number"
     },
     "noteToSelfHero": {
-        "message": "Je kunt in dit gesprek notities voor jezelf achterlaten. Als je gebruik maakt van gekoppelde apparaten dan zullen notities worden gesynchroniseerd.",
+        "message": "Je kunt in dit speciale gesprek notities voor jezelf achterlaten. Je kunt notities toevoegen en teruglezen vanaf al je gekoppelde apparaten, want noties die zijn verzonden na het moment van koppelen worden gesynchroniseerd.",
         "description": "Description for the Note to Self conversation"
     },
     "notificationDrawAttention": {
@@ -2757,6 +2761,102 @@
         "message": "Dit bericht is gewist.",
         "description": "Shown in a message's bubble when the message has been deleted for everyone."
     },
+    "message--giftBadge--unopened": {
+        "message": "Bekijk dit bericht op je mobiele telefoon om deze te openen",
+        "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    },
+    "message--giftBadge--unopened--label": {
+        "message": "Cadeau",
+        "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    },
+    "message--giftBadge--unopened--toast--incoming": {
+        "message": "Je kunt dit cadeau openen in de Signal-app op je mobiele telefoon",
+        "description": "Shown when you've clicked on an incoming gift badge you haven't yet redeemed"
+    },
+    "message--giftBadge--unopened--toast--outgoing": {
+        "message": "Je kunt dit cadeau bekijken in de Signal-app op je mobiele telefoon",
+        "description": "Shown when you've clicked on an outgoing gift badge"
+    },
+    "message--giftBadge--preview--unopened": {
+        "message": "Je hebt een cadeau ontvangen",
+        "description": "Shown to label the gift badge in notifications and the left pane"
+    },
+    "message--giftBadge--preview--redeemed": {
+        "message": "Je hebt een cadeau-badge in ontvangst genomen",
+        "description": "Shown to label the redeemed gift badge in notifications and the left pane"
+    },
+    "message--giftBadge--preview--sent": {
+        "message": "Je hebt een cadeau-badge verzonden",
+        "description": "Shown to label a gift badge you've sent in notifications and the left pane"
+    },
+    "message--giftBadge": {
+        "message": "Cadeau-badge",
+        "description": "Shown to label the gift badge you've redeemed on another device"
+    },
+    "quote--giftBadge": {
+        "message": "Cadeau",
+        "description": "Shown to label a gift badge you've replied to"
+    },
+    "message--giftBadge--remaining--days": {
+        "message": "$days$ dagen resterend",
+        "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for days > 1)",
+        "placeholders": {
+            "days": {
+                "content": "$1",
+                "example": "58"
+            }
+        }
+    },
+    "message--giftBadge--remaining--hours": {
+        "message": "$hours$ uur resterend",
+        "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for hours > 1)",
+        "placeholders": {
+            "hours": {
+                "content": "$1",
+                "example": "23"
+            }
+        }
+    },
+    "message--giftBadge--remaining--minutes": {
+        "message": "$minutes$ minuten resterend",
+        "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for minutes > 1)",
+        "placeholders": {
+            "minutes": {
+                "content": "$1",
+                "example": "45"
+            }
+        }
+    },
+    "message--giftBadge--remaining--one-minute": {
+        "message": "1 minuut resterend",
+        "description": "Describes how long remains for the gift badge you've redeemed on another device"
+    },
+    "message--giftBadge--expired": {
+        "message": "Verlopen",
+        "description": "Shows that a gift badge is expired"
+    },
+    "message--giftBadge--view": {
+        "message": "Weergeven",
+        "description": "Shown when you've sent a gift badge to someone then opened it"
+    },
+    "message--giftBadge--redeemed": {
+        "message": "In ontvangst genomen",
+        "description": "Shown when you've redeemed the gift badge on another device"
+    },
+    "modal--giftBadge--title": {
+        "message": "Bedankt voor je steun!",
+        "description": "The title of the outgoing gift badge detail dialog"
+    },
+    "modal--giftBadge--description": {
+        "message": "Je hebt een badge cadeau gedaan aan $name$. Als hij of zij de badge in ontvangt neemt dan kan hij of zij kiezen of hij of zij die wil weergeven op zijn of haar profiel.",
+        "description": "The description of the outgoing gift badge detail dialog",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Paige Hall"
+            }
+        }
+    },
     "stickers--toast--InstallFailed": {
         "message": "Stickerpakket kon niet worden geïnstalleerd",
         "description": "Shown in a toast if the user attempts to install a sticker pack and it fails"
@@ -2924,7 +3024,7 @@
         "description": "When a message is too long this is the affordance to expand the message"
     },
     "Message--unsupported-message": {
-        "message": "Je hebt een bericht ontvangen van $contact$ die niet kan worden verwerkt of niet kan worden weeggegeven omdat het gebruik maakt van een nieuwe functie van Signal.",
+        "message": "Je hebt een bericht ontvangen van $contact$ die niet kan worden verwerkt of niet kan worden weergegeven omdat het gebruik maakt van een nieuwe functie van Signal.",
         "description": "",
         "placeholders": {
             "contact": {
@@ -2934,7 +3034,7 @@
         }
     },
     "Message--unsupported-message-ask-to-resend": {
-        "message": "Je kunt $contact$ vragen om dit bericht opnieuw te verzenden nudat je een actuele versie van Signal gebruikt.",
+        "message": "Nu je een actuele versie van Signal gebruikt kun je $contact$ vragen om dit bericht opnieuw te verzenden .",
         "description": "",
         "placeholders": {
             "contact": {
@@ -2948,7 +3048,7 @@
         "description": ""
     },
     "Message--from-me-unsupported-message-ask-to-resend": {
-        "message": "Toekomstige berichten zoals dit bericht zullen worden gesynchroniseerd nudat je een actuele versie van Signal gebruikt.",
+        "message": "Nu je een actuele versie van Signal gebruikt zullen toekomstige berichten die vergelijkbaar zijn met deze worden gesynchroniseerd.",
         "description": ""
     },
     "Message--update-signal": {
@@ -3044,7 +3144,7 @@
         "description": "Shown in the shortcuts guide"
     },
     "Keyboard--open-all-media-view": {
-        "message": "‘Alle media’-scherm weergeven",
+        "message": "Alle media uit dit gesprek weergeven",
         "description": "Shown in the shortcuts guide"
     },
     "Keyboard--open-emoji-chooser": {
@@ -3178,6 +3278,30 @@
     "Keyboard--toggle-video": {
         "message": "Camera aan- of uitzetten",
         "description": "Shown in the shortcuts guide"
+    },
+    "Keyboard--accept-video-call": {
+        "message": "Oproep aanvaarden met camera aan",
+        "description": "Shown in the calling keyboard shortcuts guide"
+    },
+    "Keyboard--accept-audio-call": {
+        "message": "Oproep aanvaarden alleen geluid",
+        "description": "Shown in the calling keyboard shortcuts guide"
+    },
+    "Keyboard--start-audio-call": {
+        "message": "Audio-oproep beginnen",
+        "description": "Shown in the calling keyboard shortcuts guide"
+    },
+    "Keyboard--start-video-call": {
+        "message": "Video-oproep beginnen",
+        "description": "Shown in the calling keyboard shortcuts guide"
+    },
+    "Keyboard--decline-call": {
+        "message": "Oproep afwijzen",
+        "description": "Shown in the calling keyboard shortcuts guide"
+    },
+    "Keyboard--hang-up": {
+        "message": "Oproep beëindigen",
+        "description": "Shown in the calling keyboard shortcuts guide"
     },
     "close-popup": {
         "message": "Verschijning sluiten",
@@ -3534,7 +3658,7 @@
         }
     },
     "MessageRequests--block-direct-confirm-body": {
-        "message": "Geblokkeerde personen kunnen niet zien dat ze geblokkeerd zijn: het lijkt voor hen alsof je telefoon over gaat en alsof berichten worden afgeleverd.\nJe huidige profielnaam en -foto blijven voor geblokkeerde personen zichtbaar maar worden ze niet bijgewerkt als je een nieuwe foto of naam instelt.\nIn groepen zullen jouw berichten niet zichtbaar zijn voor personen die je hebt geblokkeerd.",
+        "message": "Geblokkeerde personen kunnen niet zien dat ze geblokkeerd zijn: het lijkt voor hen alsof je telefoon over gaat en alsof berichten worden afgeleverd.\nJe huidige profielnaam en -foto blijven voor geblokkeerde personen zichtbaar maar worden ze niet bijgewerkt als je een nieuwe foto of naam instelt.\nGeblokkeerde personen kunnen in groepsgesprekken de berichten die jij stuurt niet zien.",
         "description": "Shown as the body in the confirmation modal for blocking a private message request"
     },
     "MessageRequests--block-group-confirm-title": {
@@ -3790,7 +3914,7 @@
         "description": "Shown in conversation history when your audio call is missed or declined"
     },
     "missedOrDeclinedOutgoingVideoCall": {
-        "message": "Onbeantwoord videogesprek",
+        "message": "Onbeantwoorde video-oproep",
         "description": "Shown in conversation history when your video call is missed or declined"
     },
     "incomingAudioCall": {
@@ -4108,10 +4232,6 @@
     "GroupV2--cannot-send": {
         "message": "Je kunt naar die groep geen berichten doorsturen.",
         "description": "Shown in toast when you attempt to forward a message to an announcement only group"
-    },
-    "GroupV2--add--missing-capability": {
-        "message": "Deze personen kunnen niet aan de groep worden toegevoegd totdat ze hun Signal-app hebben bijgewerkt.",
-        "description": "Shown in a confirmation dialog when members who cannot view announcement only group cannot be added"
     },
     "GroupV2--cannot-start-group-call": {
         "message": "Alleen beheerders van deze groep kunnen een groepsoproep beginnen.",
@@ -5438,7 +5558,7 @@
         "description": "Shown in timeline when a group is upgraded and you were invited instead of added"
     },
     "GroupV1--Migration--invited--one": {
-        "message": "$contact$ niet toegevoegd worden aan de nieuwe-stijl groep en je hebt daarom een uitnodiging gekregen om opnieuw lid te worden.",
+        "message": "$contact$ kon niet toegevoegd worden aan de nieuwe-stijl groep en heeft daarom een uitnodiging gekregen om opnieuw lid te worden.",
         "description": "Shown in timeline when a group is upgraded and one person was invited, instead of added",
         "placeholders": {
             "contact": {
@@ -5510,7 +5630,7 @@
         "description": "In the instructions for becoming a sustainer. Second instruction."
     },
     "BadgeSustainerInstructions__instructions__3": {
-        "message": "Tik op ‘Help Signal mogelijk maken’",
+        "message": "Tik op ‘Aan Signal doneren’ en kies op welke manier je wilt bijdragen",
         "description": "In the instructions for becoming a sustainer. Third instruction."
     },
     "CompositionArea--expand": {
@@ -5534,7 +5654,7 @@
         "description": "Displayed while checking if the contact is SMS-only"
     },
     "countMutedConversationsDescription": {
-        "message": "Gedempte gesprekken meetellen in badge-getal",
+        "message": "Berichten in gedempte gesprekken meetellen in het aantal ongelezen berichten",
         "description": "Description for counting muted conversations in badge setting"
     },
     "ContactModal--message": {
@@ -5598,11 +5718,11 @@
         "description": "This is the label for the disappearing messages setting panel"
     },
     "ConversationDetails--disappearing-messages-info--group": {
-        "message": "Nieuwe berichten in dit gesprek zullen voor iedereen worden gewist nadat de ingestelde tijdspanne is verlopen. De tijdspanne begint voor iedere persoon individueel pas te lopen vanaf het moment dat hij of zij het bericht heeft gezien. — Gebruik dit niet ter beveiliging, want Signal kan niet garanderen dat berichten op het apparaat van een ander ook daadwerkelijk worden gewist.",
+        "message": "Nieuwe berichten in dit gesprek zullen voor iedereen worden gewist nadat de ingestelde tijdspanne is verlopen. De tijdspanne begint voor iedere persoon individueel pas te lopen vanaf het moment dat hij of zij het bericht heeft gezien. — Gebruik verlopende berichten niet ter beveiliging, want Signal kan niet garanderen dat berichten op het apparaat van een ander ook daadwerkelijk worden gewist.",
         "description": "This is the info about the disappearing messages setting, in groups"
     },
     "ConversationDetails--disappearing-messages-info--direct": {
-        "message": "Indien ingeschakeld zal elk nieuwe bericht dat in dit gesprek verzonden of ontvangen wordt voor iedere deelnemer aan het gesprek gewist worden nadat de ingestelde tijd verlopen is. De tijd gaat voor iedere deelnemer pas lopen vanaf het moment dat hij of zij het bericht heeft gezien.  – Gebruik verlopende berichten niet ter beveiliging, want Signal kan niet garanderen dat een bericht op het apparaat van een ander daadwerkelijk wordt gewist.",
+        "message": "Nieuwe berichten in dit gesprek zullen voor iedereen worden gewist nadat de ingestelde tijdspanne is verlopen. De tijdspanne begint voor iedere persoon individueel pas te lopen vanaf het moment dat hij of zij het bericht heeft gezien. — Gebruik verlopende berichten niet ter beveiliging, want Signal kan niet garanderen dat berichten op het apparaat van een ander ook daadwerkelijk worden gewist.",
         "description": "This is the info about the disappearing messages setting, for direct conversations"
     },
     "ConversationDetails--notifications": {
@@ -5642,7 +5762,7 @@
         "description": "This is a button to leave a group"
     },
     "ConversationDetailsActions--block-group": {
-        "message": "Groep blokkeren en verlaten",
+        "message": "Groep blokkeren",
         "description": "This is a button to block a group"
     },
     "ConversationDetailsActions--leave-group-must-choose-new-admin": {
@@ -6398,7 +6518,7 @@
         "description": "Name of the 'weeks' unit select for the custom disappearing message timeout dialog"
     },
     "settings__DisappearingMessages__footer": {
-        "message": "Stel in dat berichten in alle nieuwe gesprekken die jij zelf begint een bepaalde tijd nadat ze gezien zijn voor zowel jou als je gesprekspartner vanzelf worden gewist.",
+        "message": "Hiermee stel je voor alle toekomstige gesprekken die jij zelf begint in dat berichten voor iedereen worden gewist nadat de ingestelde tijdspanne is verlopen. De tijdspanne begint voor iedere persoon individueel pas te lopen vanaf het moment dat hij of zij het bericht heeft gezien. — Gebruik verlopende berichten niet ter beveiliging, want Signal kan niet garanderen dat berichten op het apparaat van een ander ook daadwerkelijk worden gewist.",
         "description": "Footer for the Disappearing Messages settings section"
     },
     "settings__DisappearingMessages__timer__label": {
@@ -6496,7 +6616,7 @@
         "description": "Shown on the edit username screen"
     },
     "ProfileEditor--username--check-characters": {
-        "message": "Gebruikersnamen mogen alleen uit de karakters a-z, 0-9 en _ bestaan.",
+        "message": "Gebruikersnamen mogen alleen uit de karakters a-Z, 0-9 en _ bestaan.",
         "description": "Shown if user has attempted to use forbidden characters"
     },
     "ProfileEditor--username--check-starting-character": {
@@ -6564,7 +6684,7 @@
         "description": "ConfirmationDialog text for discarding changes"
     },
     "ProfileEditor--info": {
-        "message": "Signal-profielen worden eind-tot-eind-versleuteld uitgewisseld. Je profielinformatie is alleen zichtbaar voor personen die zijn opgeslagen in jouw contactenlijst, personen naar wie je zelf een nieuw gesprek initieert, personen van wie je een gespreksverzoek aanvaard en alle leden van een groep waarvan jij lid bent. $learnMore$",
+        "message": "In Signal worden profielen, net als berichten en oproepen, eind-tot-eind-versleuteld uitgewisseld. Je profielnaam, -foto en -omschrijving zijn alleen zichtbaar voor personen die zijn opgeslagen in jouw contactenlijst, personen naar wie je zelf een nieuw gesprek initieert, personen van wie je een gespreksverzoek aanvaard en alle leden van groepen waarvan jij lid bent. Niemand anders kan jouw profiel zien, zelfs Signal niet. $learnMore$",
         "description": "Information shown at the bottom of the profile editor section",
         "placeholders": {
             "learnMore": {
@@ -6676,7 +6796,7 @@
         "description": "Button to switch the settings view"
     },
     "Preferences--lastSynced": {
-        "message": "Meest recent geimporteerd op $date$ om $time$",
+        "message": "Meest recent geïmporteerd op $date$ om $time$",
         "description": "Label for date and time of last sync operation",
         "placeholders": {
             "date": {
@@ -6698,7 +6818,7 @@
         "description": "Label for changing the zoom level"
     },
     "Preferences__link-previews--title": {
-        "message": "Voorbeeldafbeeldingen genereren",
+        "message": "Voorbeeld van website meesturen",
         "description": "Title for the generate link previews setting"
     },
     "Preferences__link-previews--description": {
@@ -7039,13 +7159,29 @@
             }
         }
     },
+    "StoryViewer__pause": {
+        "message": "Pauzeren",
+        "description": "Aria label for pausing a story"
+    },
+    "StoryViewer__play": {
+        "message": "Afspelen",
+        "description": "Aria label for playing a story"
+    },
     "StoryViewer__reply": {
         "message": "Reageren",
         "description": "Button label to reply to a story"
     },
-    "StoryViewsNRepliesModal__placeholder": {
-        "message": "Typ een reactie …",
-        "description": "Placeholder text for the story reply modal"
+    "StoryViewer__reply-group": {
+        "message": "Naar de groep reageren",
+        "description": "Button label to reply to a group story"
+    },
+    "StoryViewer__mute": {
+        "message": "Meldingen dempen",
+        "description": "Aria label for muting stories"
+    },
+    "StoryViewer__unmute": {
+        "message": "Meldingen niet langer dempen",
+        "description": "Aria label for unmuting stories"
     },
     "StoryViewsNRepliesModal__no-replies": {
         "message": "Nog geen reacties",
@@ -7099,6 +7235,32 @@
         "message": "Verwijzing volgen",
         "description": "Title for the link preview tooltip"
     },
+    "Quote__story": {
+        "message": "Verhaal",
+        "description": "Title for replies to stories"
+    },
+    "Quote__story-reaction": {
+        "message": "Reageerde op een verhaal van $name$",
+        "description": "Label for when a person reacts to a story",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Charlie"
+            }
+        }
+    },
+    "Quote__story-reaction--yours": {
+        "message": "Reageerde op je verhaal",
+        "description": "Label for when a person reacts to your story"
+    },
+    "Quote__story-reaction--single": {
+        "message": "Reageerde op een verhaal",
+        "description": "Used whenever we can't find a user's first name"
+    },
+    "Quote__story-unavailable": {
+        "message": "Niet langer beschikbaar",
+        "description": "Label for when a story is not found"
+    },
     "WhatsNew__modal-title": {
         "message": "wat er nieuw is",
         "description": "Title for the whats new modal"
@@ -7107,22 +7269,16 @@
         "message": "Deze versie bevat een aantal kleine foutoplossingen waardoor Signal voor nog meer mensen goed werkt.",
         "description": "Release notes for releases that only include bug fixes"
     },
-    "WhatsNew__v5.40--1": {
-        "message": "Foutoplossingen, waaronder een oplossing voor een fout waarbij het soms moeilijk was op op menuknoppen te klikken.",
-        "description": "Release notes for v5.40"
+    "WhatsNew__v5.45--1": {
+        "message": "Door audioniveau-indicatoren in groepsoproepen kun je zien wie degene is die fluistert en wie er schreeuwt.",
+        "description": "Release notes for v5.45"
     },
-    "WhatsNew__v5.40--2": {
-        "message": "Dank aan $dsanders11$ en $yusufsahinhamza$ voor hun hulp bij het schrijven van code voor deze verbeteringen.",
-        "description": "Release notes for v5.40",
-        "placeholders": {
-            "dsanders11": {
-                "content": "$1",
-                "example": "dsanders11"
-            },
-            "yusufsahinhamza": {
-                "content": "$2",
-                "example": "yusufsahinhamza"
-            }
-        }
+    "WhatsNew__v5.45--2": {
+        "message": "Vanaf nu kun je de ook op Signal-desktop de groepen zien waarvoor je vanaf je telefoon hebt verzocht om lid te worden (via een groepsverwijzing). ",
+        "description": "Release notes for v5.45"
+    },
+    "WhatsNew__v5.45--3": {
+        "message": "Heb je een slechte wifi-verbinding? Geen probleem, want vanaf nu kun je het downloaden van bijlagen opnieuw proberen.",
+        "description": "Release notes for v5.45"
     }
 }

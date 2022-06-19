@@ -251,6 +251,7 @@ const dataInterface: ServerInterface = {
   removeUnprocessed,
   removeAllUnprocessed,
 
+  getAttachmentDownloadJobById,
   getNextAttachmentDownloadJobs,
   saveAttachmentDownloadJob,
   resetAttachmentDownloadPending,
@@ -2100,13 +2101,15 @@ async function getUnreadByConversationAndMarkRead({
         expirationStartTimestamp = $expirationStartTimestamp,
         json = json_patch(json, $jsonPatch)
       WHERE
+        conversationId = $conversationId AND
+        (${_storyIdPredicate(storyId, isGroup)}) AND
+        isStory IS 0 AND
+        type IS 'incoming' AND
         (
           expirationStartTimestamp IS NULL OR
           expirationStartTimestamp > $expirationStartTimestamp
         ) AND
         expireTimer > 0 AND
-        conversationId = $conversationId AND
-        (${_storyIdPredicate(storyId, isGroup)}) AND
         received_at <= $newestUnreadAt;
       `
     ).run({
@@ -3251,7 +3254,7 @@ async function getAllUnprocessedAndIncrementAttempts(): Promise<
         `
           SELECT *
           FROM unprocessed
-          ORDER BY timestamp ASC;
+          ORDER BY receivedAtCounter ASC;
         `
       )
       .all();
@@ -3299,6 +3302,11 @@ async function removeAllUnprocessed(): Promise<void> {
 // Attachment Downloads
 
 const ATTACHMENT_DOWNLOADS_TABLE = 'attachment_downloads';
+async function getAttachmentDownloadJobById(
+  id: string
+): Promise<AttachmentDownloadJobType | undefined> {
+  return getById(getInstance(), ATTACHMENT_DOWNLOADS_TABLE, id);
+}
 async function getNextAttachmentDownloadJobs(
   limit?: number,
   options: { timestamp?: number } = {}

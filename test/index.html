@@ -1,4 +1,4 @@
-<!-- Copyright 2014-2021 Signal Messenger, LLC -->
+<!-- Copyright 2014-2022 Signal Messenger, LLC -->
 <!-- SPDX-License-Identifier: AGPL-3.0-only -->
 
 <html>
@@ -66,11 +66,13 @@
     </script>
 
     <script type="text/javascript" src="../js/components.js"></script>
-    <script type="text/javascript" src="../ts/backboneJquery.js"></script>
     <script
       type="text/javascript"
-      src="../js/reliable_trigger.js"
-      data-cover
+      src="../ts/backbone/backboneJquery.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../ts/backbone/reliable_trigger.js"
     ></script>
     <script
       type="text/javascript"
@@ -81,43 +83,11 @@
     </script>
     <script type="text/javascript" src="test.js"></script>
 
-    <script type="text/javascript" src="../js/database.js" data-cover></script>
-
-    <script
-      type="text/javascript"
-      src="../libtextsecure/protocol_wrapper.js"
-    ></script>
-
-    <script type="text/javascript" src="../js/libphonenumber-util.js"></script>
-    <script
-      type="text/javascript"
-      src="../js/expiring_messages.js"
-      data-cover
-    ></script>
-    <script
-      type="text/javascript"
-      src="../js/expiring_tap_to_view_messages.js"
-      data-cover
-    ></script>
-
-    <script
-      type="text/javascript"
-      src="../js/views/react_wrapper_view.js"
-    ></script>
-
-    <script type="text/javascript" src="views/whisper_view_test.js"></script>
-
-    <script type="text/javascript" src="libphonenumber_util_test.js"></script>
-    <script type="text/javascript" src="reliable_trigger_test.js"></script>
-    <script type="text/javascript" src="database_test.js"></script>
-    <script type="text/javascript" src="i18n_test.js"></script>
-    <script type="text/javascript" src="stickers_test.js"></script>
-
     <script type="text/javascript">
       window.Signal.conversationControllerStart();
 
-      window.test.prepareTests();
-      delete window.test.prepareTests;
+      window.testUtilities.prepareTests();
+      delete window.testUtilities.prepareTests;
 
       !(function () {
         const passed = [];
@@ -135,7 +105,9 @@
               });
             });
 
-            runner.on('end', () => window.test.onComplete({ passed, failed }));
+            runner.on('end', () =>
+              window.testUtilities.onComplete({ passed, failed })
+            );
           }
         }
 

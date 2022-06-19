@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import * as React from 'react';
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { boolean, select, text } from '@storybook/addon-knobs';
 
@@ -12,6 +11,7 @@ import {
   CallEndedReason,
   CallMode,
   CallState,
+  CallViewMode,
   GroupCallConnectionState,
   GroupCallJoinState,
 } from '../types/Calling';
@@ -50,8 +50,12 @@ const getCommonActiveCallData = () => ({
   joinedAt: Date.now(),
   hasLocalAudio: boolean('hasLocalAudio', true),
   hasLocalVideo: boolean('hasLocalVideo', false),
-  amISpeaking: boolean('amISpeaking', false),
-  isInSpeakerView: boolean('isInSpeakerView', false),
+  localAudioLevel: select('localAudioLevel', [0, 0.5, 1], 0),
+  viewMode: select(
+    'viewMode',
+    [CallViewMode.Grid, CallViewMode.Presentation, CallViewMode.Speaker],
+    CallViewMode.Grid
+  ),
   outgoingRing: boolean('outgoingRing', true),
   pip: boolean('pip', false),
   settingsDialogOpen: boolean('settingsDialogOpen', false),
@@ -101,6 +105,8 @@ const createProps = (storyProps: Partial<PropsType> = {}): PropsType => ({
   setOutgoingRing: action('set-outgoing-ring'),
   startCall: action('start-call'),
   stopRingtone: action('stop-ringtone'),
+  switchToPresentationView: action('switch-to-presentation-view'),
+  switchFromPresentationView: action('switch-from-presentation-view'),
   theme: ThemeType.light,
   toggleParticipants: action('toggle-participants'),
   togglePip: action('toggle-pip'),
@@ -111,11 +117,13 @@ const createProps = (storyProps: Partial<PropsType> = {}): PropsType => ({
   toggleSpeakerView: action('toggle-speaker-view'),
 });
 
-const story = storiesOf('Components/CallManager', module);
+export default {
+  title: 'Components/CallManager',
+};
 
-story.add('No Call', () => <CallManager {...createProps()} />);
+export const NoCall = (): JSX.Element => <CallManager {...createProps()} />;
 
-story.add('Ongoing Direct Call', () => (
+export const OngoingDirectCall = (): JSX.Element => (
   <CallManager
     {...createProps({
       activeCall: {
@@ -129,9 +137,9 @@ story.add('Ongoing Direct Call', () => (
       },
     })}
   />
-));
+);
 
-story.add('Ongoing Group Call', () => (
+export const OngoingGroupCall = (): JSX.Element => (
   <CallManager
     {...createProps({
       activeCall: {
@@ -145,13 +153,13 @@ story.add('Ongoing Group Call', () => (
         groupMembers: [],
         peekedParticipants: [],
         remoteParticipants: [],
-        speakingDemuxIds: new Set<number>(),
+        remoteAudioLevels: new Map<number, number>(),
       },
     })}
   />
-));
+);
 
-story.add('Ringing (direct call)', () => (
+export const RingingDirectCall = (): JSX.Element => (
   <CallManager
     {...createProps({
       incomingCall: {
@@ -161,9 +169,13 @@ story.add('Ringing (direct call)', () => (
       },
     })}
   />
-));
+);
 
-story.add('Ringing (group call)', () => (
+RingingDirectCall.story = {
+  name: 'Ringing (direct call)',
+};
+
+export const RingingGroupCall = (): JSX.Element => (
   <CallManager
     {...createProps({
       incomingCall: {
@@ -181,9 +193,13 @@ story.add('Ringing (group call)', () => (
       },
     })}
   />
-));
+);
 
-story.add('Call Request Needed', () => (
+RingingGroupCall.story = {
+  name: 'Ringing (group call)',
+};
+
+export const CallRequestNeeded = (): JSX.Element => (
   <CallManager
     {...createProps({
       activeCall: {
@@ -198,9 +214,9 @@ story.add('Call Request Needed', () => (
       },
     })}
   />
-));
+);
 
-story.add('Group call - Safety Number Changed', () => (
+export const GroupCallSafetyNumberChanged = (): JSX.Element => (
   <CallManager
     {...createProps({
       activeCall: {
@@ -220,8 +236,12 @@ story.add('Group call - Safety Number Changed', () => (
         groupMembers: [],
         peekedParticipants: [],
         remoteParticipants: [],
-        speakingDemuxIds: new Set<number>(),
+        remoteAudioLevels: new Map<number, number>(),
       },
     })}
   />
-));
+);
+
+GroupCallSafetyNumberChanged.story = {
+  name: 'Group call - Safety Number Changed',
+};

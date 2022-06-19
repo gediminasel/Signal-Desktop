@@ -1,7 +1,6 @@
 // Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-/* eslint-disable no-nested-ternary */
 /* eslint-disable no-bitwise */
 /* eslint-disable max-classes-per-file */
 
@@ -39,19 +38,19 @@ import type {
   WebAPIType,
 } from './WebAPI';
 import createTaskWithTimeout from './TaskWithTimeout';
-import type { CallbackResultType } from './Types.d';
+import type {
+  CallbackResultType,
+  StorageServiceCallOptionsType,
+  StorageServiceCredentials,
+} from './Types.d';
 import type {
   SerializedCertificateType,
   SendLogCallbackType,
 } from './OutgoingMessage';
 import OutgoingMessage from './OutgoingMessage';
-import type { CDSResponseType } from './CDSSocketManager';
+import type { CDSResponseType } from './cds/Types.d';
 import * as Bytes from '../Bytes';
 import { getRandomBytes, getZeroes, encryptAttachment } from '../Crypto';
-import type {
-  StorageServiceCallOptionsType,
-  StorageServiceCredentials,
-} from '../textsecure.d';
 import {
   MessageError,
   SignedPreKeyRotationError,
@@ -74,6 +73,7 @@ import {
   numberToEmailType,
   numberToAddressType,
 } from '../types/EmbeddedContact';
+import type { StickerWithHydratedData } from '../types/Stickers';
 
 export type SendMetadataType = {
   [identifier: string]: {
@@ -107,13 +107,7 @@ type GroupCallUpdateType = {
   eraId: string;
 };
 
-export type StickerType = {
-  packId: string;
-  stickerId: number;
-  packKey: string;
-  data: Readonly<AttachmentType>;
-  emoji?: string;
-
+export type StickerType = StickerWithHydratedData & {
   attachmentPointer?: Proto.IAttachmentPointer;
 };
 
@@ -632,7 +626,7 @@ export default class MessageSender {
     );
   }
 
-  getRandomPadding(): Uint8Array {
+  static getRandomPadding(): Uint8Array {
     // Generate a random int from 1 and 512
     const buffer = getRandomBytes(2);
     const paddingLength = (new Uint16Array(buffer)[0] & 0x1ff) + 1;
@@ -805,7 +799,6 @@ export default class MessageSender {
             return;
           }
 
-          // eslint-disable-next-line no-param-reassign
           itemAvatar.attachmentPointer = await this.makeAttachmentPointer(
             attachment
           );
@@ -998,7 +991,7 @@ export default class MessageSender {
     };
   }
 
-  createSyncMessage(): Proto.SyncMessage {
+  static createSyncMessage(): Proto.SyncMessage {
     const syncMessage = new Proto.SyncMessage();
 
     syncMessage.padding = this.getRandomPadding();
@@ -1289,7 +1282,7 @@ export default class MessageSender {
       ];
     }
 
-    const syncMessage = this.createSyncMessage();
+    const syncMessage = MessageSender.createSyncMessage();
     syncMessage.sent = sentMessage;
     const contentMessage = new Proto.Content();
     contentMessage.syncMessage = syncMessage;
@@ -1305,12 +1298,12 @@ export default class MessageSender {
     });
   }
 
-  getRequestBlockSyncMessage(): SingleProtoJobData {
+  static getRequestBlockSyncMessage(): SingleProtoJobData {
     const myUuid = window.textsecure.storage.user.getCheckedUuid();
 
     const request = new Proto.SyncMessage.Request();
     request.type = Proto.SyncMessage.Request.Type.BLOCKED;
-    const syncMessage = this.createSyncMessage();
+    const syncMessage = MessageSender.createSyncMessage();
     syncMessage.request = request;
     const contentMessage = new Proto.Content();
     contentMessage.syncMessage = syncMessage;
@@ -1328,12 +1321,12 @@ export default class MessageSender {
     };
   }
 
-  getRequestConfigurationSyncMessage(): SingleProtoJobData {
+  static getRequestConfigurationSyncMessage(): SingleProtoJobData {
     const myUuid = window.textsecure.storage.user.getCheckedUuid();
 
     const request = new Proto.SyncMessage.Request();
     request.type = Proto.SyncMessage.Request.Type.CONFIGURATION;
-    const syncMessage = this.createSyncMessage();
+    const syncMessage = MessageSender.createSyncMessage();
     syncMessage.request = request;
     const contentMessage = new Proto.Content();
     contentMessage.syncMessage = syncMessage;
@@ -1351,7 +1344,7 @@ export default class MessageSender {
     };
   }
 
-  getRequestGroupSyncMessage(): SingleProtoJobData {
+  static getRequestGroupSyncMessage(): SingleProtoJobData {
     const myUuid = window.textsecure.storage.user.getCheckedUuid();
 
     const request = new Proto.SyncMessage.Request();
@@ -1374,7 +1367,7 @@ export default class MessageSender {
     };
   }
 
-  getRequestContactSyncMessage(): SingleProtoJobData {
+  static getRequestContactSyncMessage(): SingleProtoJobData {
     const myUuid = window.textsecure.storage.user.getCheckedUuid();
 
     const request = new Proto.SyncMessage.Request();
@@ -1397,7 +1390,7 @@ export default class MessageSender {
     };
   }
 
-  getRequestPniIdentitySyncMessage(): SingleProtoJobData {
+  static getRequestPniIdentitySyncMessage(): SingleProtoJobData {
     const myUuid = window.textsecure.storage.user.getCheckedUuid();
 
     const request = new Proto.SyncMessage.Request();
@@ -1420,7 +1413,7 @@ export default class MessageSender {
     };
   }
 
-  getFetchManifestSyncMessage(): SingleProtoJobData {
+  static getFetchManifestSyncMessage(): SingleProtoJobData {
     const myUuid = window.textsecure.storage.user.getCheckedUuid();
 
     const fetchLatest = new Proto.SyncMessage.FetchLatest();
@@ -1444,7 +1437,7 @@ export default class MessageSender {
     };
   }
 
-  getFetchLocalProfileSyncMessage(): SingleProtoJobData {
+  static getFetchLocalProfileSyncMessage(): SingleProtoJobData {
     const myUuid = window.textsecure.storage.user.getCheckedUuid();
 
     const fetchLatest = new Proto.SyncMessage.FetchLatest();
@@ -1468,7 +1461,7 @@ export default class MessageSender {
     };
   }
 
-  getRequestKeySyncMessage(): SingleProtoJobData {
+  static getRequestKeySyncMessage(): SingleProtoJobData {
     const myUuid = window.textsecure.storage.user.getCheckedUuid();
 
     const request = new Proto.SyncMessage.Request();
@@ -1502,7 +1495,7 @@ export default class MessageSender {
   ): Promise<CallbackResultType> {
     const myUuid = window.textsecure.storage.user.getCheckedUuid();
 
-    const syncMessage = this.createSyncMessage();
+    const syncMessage = MessageSender.createSyncMessage();
     syncMessage.read = [];
     for (let i = 0; i < reads.length; i += 1) {
       const proto = new Proto.SyncMessage.Read({
@@ -1536,7 +1529,7 @@ export default class MessageSender {
   ): Promise<CallbackResultType> {
     const myUuid = window.textsecure.storage.user.getCheckedUuid();
 
-    const syncMessage = this.createSyncMessage();
+    const syncMessage = MessageSender.createSyncMessage();
     syncMessage.viewed = views.map(
       view =>
         new Proto.SyncMessage.Viewed({
@@ -1579,7 +1572,7 @@ export default class MessageSender {
 
     const myUuid = window.textsecure.storage.user.getCheckedUuid();
 
-    const syncMessage = this.createSyncMessage();
+    const syncMessage = MessageSender.createSyncMessage();
 
     const viewOnceOpen = new Proto.SyncMessage.ViewOnceOpen();
     if (senderE164 !== undefined) {
@@ -1603,7 +1596,7 @@ export default class MessageSender {
     });
   }
 
-  getMessageRequestResponseSync(
+  static getMessageRequestResponseSync(
     options: Readonly<{
       threadE164?: string;
       threadUuid?: string;
@@ -1613,7 +1606,7 @@ export default class MessageSender {
   ): SingleProtoJobData {
     const myUuid = window.textsecure.storage.user.getCheckedUuid();
 
-    const syncMessage = this.createSyncMessage();
+    const syncMessage = MessageSender.createSyncMessage();
 
     const response = new Proto.SyncMessage.MessageRequestResponse();
     if (options.threadE164 !== undefined) {
@@ -1644,7 +1637,7 @@ export default class MessageSender {
     };
   }
 
-  getStickerPackSync(
+  static getStickerPackSync(
     operations: ReadonlyArray<{
       packId: string;
       packKey: string;
@@ -1665,7 +1658,7 @@ export default class MessageSender {
       return operation;
     });
 
-    const syncMessage = this.createSyncMessage();
+    const syncMessage = MessageSender.createSyncMessage();
     syncMessage.stickerPackOperation = packOperations;
 
     const contentMessage = new Proto.Content();
@@ -1684,7 +1677,7 @@ export default class MessageSender {
     };
   }
 
-  getVerificationSync(
+  static getVerificationSync(
     destinationE164: string | undefined,
     destinationUuid: string | undefined,
     state: number,
@@ -1696,7 +1689,7 @@ export default class MessageSender {
       throw new Error('syncVerification: Neither e164 nor UUID were provided');
     }
 
-    const padding = this.getRandomPadding();
+    const padding = MessageSender.getRandomPadding();
 
     const verified = new Proto.Verified();
     verified.state = state;
@@ -1709,7 +1702,7 @@ export default class MessageSender {
     verified.identityKey = identityKey;
     verified.nullMessage = padding;
 
-    const syncMessage = this.createSyncMessage();
+    const syncMessage = MessageSender.createSyncMessage();
     syncMessage.verified = verified;
 
     const contentMessage = new Proto.Content();
@@ -1834,7 +1827,7 @@ export default class MessageSender {
     });
   }
 
-  getNullMessage({
+  static getNullMessage({
     uuid,
     e164,
     padding,
@@ -1850,7 +1843,7 @@ export default class MessageSender {
       throw new Error('sendNullMessage: Got neither uuid nor e164!');
     }
 
-    nullMessage.padding = padding || this.getRandomPadding();
+    nullMessage.padding = padding || MessageSender.getRandomPadding();
 
     const contentMessage = new Proto.Content();
     contentMessage.nullMessage = nullMessage;
@@ -2244,7 +2237,7 @@ export default class MessageSender {
   }
 
   async getGroupFromLink(
-    groupInviteLink: string,
+    groupInviteLink: string | undefined,
     auth: Readonly<GroupCredentialsType>
   ): Promise<Proto.GroupJoinInfo> {
     return this.server.getGroupFromLink(groupInviteLink, auth);

@@ -18,10 +18,12 @@ import {
   isAnybodyElseInGroupCall,
   reducer,
 } from '../../../state/ducks/calling';
+import { truncateAudioLevel } from '../../../calling/truncateAudioLevel';
 import { calling as callingService } from '../../../services/calling';
 import {
   CallMode,
   CallState,
+  CallViewMode,
   GroupCallConnectionState,
   GroupCallJoinState,
 } from '../../../types/Calling';
@@ -50,8 +52,8 @@ describe('calling duck', () => {
       conversationId: 'fake-direct-call-conversation-id',
       hasLocalAudio: true,
       hasLocalVideo: false,
-      amISpeaking: false,
-      isInSpeakerView: false,
+      localAudioLevel: 0,
+      viewMode: CallViewMode.Grid,
       showParticipantsList: false,
       safetyNumberChangedUuids: [],
       outgoingRing: true,
@@ -129,13 +131,29 @@ describe('calling duck', () => {
       conversationId: 'fake-group-call-conversation-id',
       hasLocalAudio: true,
       hasLocalVideo: false,
-      amISpeaking: false,
-      isInSpeakerView: false,
+      localAudioLevel: 0,
+      viewMode: CallViewMode.Grid,
       showParticipantsList: false,
       safetyNumberChangedUuids: [],
       outgoingRing: false,
       pip: false,
       settingsDialogOpen: false,
+    },
+  };
+
+  const stateWithActivePresentationViewGroupCall = {
+    ...stateWithGroupCall,
+    activeCallState: {
+      ...stateWithActiveGroupCall.activeCallState,
+      viewMode: CallViewMode.Presentation,
+    },
+  };
+
+  const stateWithActiveSpeakerViewGroupCall = {
+    ...stateWithGroupCall,
+    activeCallState: {
+      ...stateWithActiveGroupCall.activeCallState,
+      viewMode: CallViewMode.Speaker,
     },
   };
 
@@ -435,8 +453,8 @@ describe('calling duck', () => {
             conversationId: 'fake-direct-call-conversation-id',
             hasLocalAudio: true,
             hasLocalVideo: true,
-            amISpeaking: false,
-            isInSpeakerView: false,
+            localAudioLevel: 0,
+            viewMode: CallViewMode.Grid,
             showParticipantsList: false,
             safetyNumberChangedUuids: [],
             outgoingRing: false,
@@ -528,8 +546,8 @@ describe('calling duck', () => {
             conversationId: 'fake-group-call-conversation-id',
             hasLocalAudio: true,
             hasLocalVideo: true,
-            amISpeaking: false,
-            isInSpeakerView: false,
+            localAudioLevel: 0,
+            viewMode: CallViewMode.Grid,
             showParticipantsList: false,
             safetyNumberChangedUuids: [],
             outgoingRing: false,
@@ -763,9 +781,16 @@ describe('calling duck', () => {
         { audioLevel: 0, demuxId: 9 },
       ];
 
+      const remoteAudioLevels = new Map<number, number>([
+        [1, truncateAudioLevel(0.3)],
+        [2, truncateAudioLevel(0.4)],
+        [3, truncateAudioLevel(0.5)],
+        [7, truncateAudioLevel(0.2)],
+        [8, truncateAudioLevel(0.1)],
+      ]);
+
       it("does nothing if there's no relevant call", () => {
         const action = groupCallAudioLevelsChange({
-          audioLevelForSpeaking: 0.25,
           conversationId: 'garbage',
           localAudioLevel: 1,
           remoteDeviceStates,
@@ -784,14 +809,13 @@ describe('calling duck', () => {
               ...stateWithActiveGroupCall.callsByConversation[
                 'fake-group-call-conversation-id'
               ],
-              speakingDemuxIds: new Set([3, 2, 1]),
+              remoteAudioLevels,
             },
           },
         };
         const action = groupCallAudioLevelsChange({
-          audioLevelForSpeaking: 0.25,
           conversationId: 'fake-group-call-conversation-id',
-          localAudioLevel: 0.1,
+          localAudioLevel: 0.001,
           remoteDeviceStates,
         });
 
@@ -802,21 +826,23 @@ describe('calling duck', () => {
 
       it('updates the set of speaking participants, including yourself', () => {
         const action = groupCallAudioLevelsChange({
-          audioLevelForSpeaking: 0.25,
           conversationId: 'fake-group-call-conversation-id',
           localAudioLevel: 0.8,
           remoteDeviceStates,
         });
         const result = reducer(stateWithActiveGroupCall, action);
 
-        assert.isTrue(result.activeCallState?.amISpeaking);
+        assert.strictEqual(
+          result.activeCallState?.localAudioLevel,
+          truncateAudioLevel(0.8)
+        );
 
         const call =
           result.callsByConversation['fake-group-call-conversation-id'];
         if (call?.callMode !== CallMode.Group) {
           throw new Error('Expected a group call to be found');
         }
-        assert.deepStrictEqual(call.speakingDemuxIds, new Set([1, 2, 3]));
+        assert.deepStrictEqual(call.remoteAudioLevels, remoteAudioLevels);
       });
     });
 
@@ -1112,8 +1138,8 @@ describe('calling duck', () => {
           conversationId: 'fake-group-call-conversation-id',
           hasLocalAudio: true,
           hasLocalVideo: false,
-          amISpeaking: false,
-          isInSpeakerView: false,
+          localAudioLevel: 0,
+          viewMode: CallViewMode.Grid,
           showParticipantsList: false,
           safetyNumberChangedUuids: [],
           outgoingRing: false,
@@ -1641,8 +1667,8 @@ describe('calling duck', () => {
             conversationId: 'fake-conversation-id',
             hasLocalAudio: true,
             hasLocalVideo: true,
-            amISpeaking: false,
-            isInSpeakerView: false,
+            localAudioLevel: 0,
+            viewMode: CallViewMode.Grid,
             showParticipantsList: false,
             safetyNumberChangedUuids: [],
             pip: false,
@@ -1927,8 +1953,8 @@ describe('calling duck', () => {
           conversationId: 'fake-conversation-id',
           hasLocalAudio: true,
           hasLocalVideo: false,
-          amISpeaking: false,
-          isInSpeakerView: false,
+          localAudioLevel: 0,
+          viewMode: CallViewMode.Grid,
           showParticipantsList: false,
           safetyNumberChangedUuids: [],
           pip: false,
@@ -2004,7 +2030,7 @@ describe('calling duck', () => {
     describe('toggleSpeakerView', () => {
       const { toggleSpeakerView } = actions;
 
-      it('toggles speaker view', () => {
+      it('toggles speaker view from grid view', () => {
         const afterOneToggle = reducer(
           stateWithActiveGroupCall,
           toggleSpeakerView()
@@ -2012,9 +2038,92 @@ describe('calling duck', () => {
         const afterTwoToggles = reducer(afterOneToggle, toggleSpeakerView());
         const afterThreeToggles = reducer(afterTwoToggles, toggleSpeakerView());
 
-        assert.isTrue(afterOneToggle.activeCallState?.isInSpeakerView);
-        assert.isFalse(afterTwoToggles.activeCallState?.isInSpeakerView);
-        assert.isTrue(afterThreeToggles.activeCallState?.isInSpeakerView);
+        assert.strictEqual(
+          afterOneToggle.activeCallState?.viewMode,
+          CallViewMode.Speaker
+        );
+        assert.strictEqual(
+          afterTwoToggles.activeCallState?.viewMode,
+          CallViewMode.Grid
+        );
+        assert.strictEqual(
+          afterThreeToggles.activeCallState?.viewMode,
+          CallViewMode.Speaker
+        );
+      });
+
+      it('toggles speaker view from presentation view', () => {
+        const afterOneToggle = reducer(
+          stateWithActivePresentationViewGroupCall,
+          toggleSpeakerView()
+        );
+        const afterTwoToggles = reducer(afterOneToggle, toggleSpeakerView());
+        const afterThreeToggles = reducer(afterTwoToggles, toggleSpeakerView());
+
+        assert.strictEqual(
+          afterOneToggle.activeCallState?.viewMode,
+          CallViewMode.Grid
+        );
+        assert.strictEqual(
+          afterTwoToggles.activeCallState?.viewMode,
+          CallViewMode.Speaker
+        );
+        assert.strictEqual(
+          afterThreeToggles.activeCallState?.viewMode,
+          CallViewMode.Grid
+        );
+      });
+    });
+
+    describe('switchToPresentationView', () => {
+      const { switchToPresentationView, switchFromPresentationView } = actions;
+
+      it('toggles presentation view from grid view', () => {
+        const afterOneToggle = reducer(
+          stateWithActiveGroupCall,
+          switchToPresentationView()
+        );
+        const afterTwoToggles = reducer(
+          afterOneToggle,
+          switchToPresentationView()
+        );
+        const finalState = reducer(
+          afterOneToggle,
+          switchFromPresentationView()
+        );
+
+        assert.strictEqual(
+          afterOneToggle.activeCallState?.viewMode,
+          CallViewMode.Presentation
+        );
+        assert.strictEqual(
+          afterTwoToggles.activeCallState?.viewMode,
+          CallViewMode.Presentation
+        );
+        assert.strictEqual(
+          finalState.activeCallState?.viewMode,
+          CallViewMode.Grid
+        );
+      });
+
+      it('does not toggle presentation view from speaker view', () => {
+        const afterOneToggle = reducer(
+          stateWithActiveSpeakerViewGroupCall,
+          switchToPresentationView()
+        );
+        const finalState = reducer(
+          afterOneToggle,
+          switchFromPresentationView()
+        );
+
+        assert.strictEqual(
+          afterOneToggle.activeCallState?.viewMode,
+          CallViewMode.Speaker
+        );
+        assert.strictEqual(
+          finalState.activeCallState?.viewMode,
+          CallViewMode.Speaker
+        );
       });
     });
   });

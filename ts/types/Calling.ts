@@ -11,6 +11,14 @@ export enum CallMode {
   Group = 'Group',
 }
 
+// Speaker and Presentation has the same UI, but Presentation mode will switch
+// to Grid mode when the presentation is over.
+export enum CallViewMode {
+  Grid = 'Grid',
+  Speaker = 'Speaker',
+  Presentation = 'Presentation',
+}
+
 export type PresentableSource = {
   appIcon?: string;
   id: string;
@@ -28,8 +36,8 @@ type ActiveCallBaseType = {
   conversation: ConversationType;
   hasLocalAudio: boolean;
   hasLocalVideo: boolean;
-  amISpeaking: boolean;
-  isInSpeakerView: boolean;
+  localAudioLevel: number;
+  viewMode: CallViewMode;
   isSharingScreen?: boolean;
   joinedAt?: number;
   outgoingRing: boolean;
@@ -66,7 +74,7 @@ type ActiveGroupCallType = ActiveCallBaseType & {
   groupMembers: Array<Pick<ConversationType, 'id' | 'firstName' | 'title'>>;
   peekedParticipants: Array<ConversationType>;
   remoteParticipants: Array<GroupCallRemoteParticipantType>;
-  speakingDemuxIds: Set<number>;
+  remoteAudioLevels: Map<number, number>;
 };
 
 export type ActiveCallType = ActiveDirectCallType | ActiveGroupCallType;

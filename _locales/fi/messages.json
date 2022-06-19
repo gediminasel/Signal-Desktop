@@ -929,6 +929,10 @@
         "message": "Ladataan",
         "description": "Shown in the message bubble while a long message attachment is being downloaded"
     },
+    "downloadFullMessage": {
+        "message": "Lataa koko viesti",
+        "description": "Shown in the message bubble while a long message attachment is not downloaded"
+    },
     "downloadAttachment": {
         "message": "Lataa liite",
         "description": "Shown in a message's triple-dot menu if there isn't room for a dedicated download button"
@@ -2757,6 +2761,102 @@
         "message": "Tämä viesti poistettiin.",
         "description": "Shown in a message's bubble when the message has been deleted for everyone."
     },
+    "message--giftBadge--unopened": {
+        "message": "Avaa tämä viesti puhelimellasi",
+        "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    },
+    "message--giftBadge--unopened--label": {
+        "message": "Lahja",
+        "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    },
+    "message--giftBadge--unopened--toast--incoming": {
+        "message": "Tarkista puhelimesi avataksesi lahjasi",
+        "description": "Shown when you've clicked on an incoming gift badge you haven't yet redeemed"
+    },
+    "message--giftBadge--unopened--toast--outgoing": {
+        "message": "Tarkista puhelimesi nähdäksesi lahjasi",
+        "description": "Shown when you've clicked on an outgoing gift badge"
+    },
+    "message--giftBadge--preview--unopened": {
+        "message": "Olet saanut lahjan",
+        "description": "Shown to label the gift badge in notifications and the left pane"
+    },
+    "message--giftBadge--preview--redeemed": {
+        "message": "Lunastit lahjakunniamerkin",
+        "description": "Shown to label the redeemed gift badge in notifications and the left pane"
+    },
+    "message--giftBadge--preview--sent": {
+        "message": "Lähetit kunniamerkin lahjaksi",
+        "description": "Shown to label a gift badge you've sent in notifications and the left pane"
+    },
+    "message--giftBadge": {
+        "message": "Lahjaksi saatu kunniamerkki",
+        "description": "Shown to label the gift badge you've redeemed on another device"
+    },
+    "quote--giftBadge": {
+        "message": "Lahja",
+        "description": "Shown to label a gift badge you've replied to"
+    },
+    "message--giftBadge--remaining--days": {
+        "message": "$days$ päivää jäljellä",
+        "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for days > 1)",
+        "placeholders": {
+            "days": {
+                "content": "$1",
+                "example": "58"
+            }
+        }
+    },
+    "message--giftBadge--remaining--hours": {
+        "message": "$hours$ tunti jäljellä",
+        "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for hours > 1)",
+        "placeholders": {
+            "hours": {
+                "content": "$1",
+                "example": "23"
+            }
+        }
+    },
+    "message--giftBadge--remaining--minutes": {
+        "message": "$minutes$ minuuttia jäljellä",
+        "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for minutes > 1)",
+        "placeholders": {
+            "minutes": {
+                "content": "$1",
+                "example": "45"
+            }
+        }
+    },
+    "message--giftBadge--remaining--one-minute": {
+        "message": "1 minuutti jäljellä",
+        "description": "Describes how long remains for the gift badge you've redeemed on another device"
+    },
+    "message--giftBadge--expired": {
+        "message": "Vanhentunut",
+        "description": "Shows that a gift badge is expired"
+    },
+    "message--giftBadge--view": {
+        "message": "Näytä",
+        "description": "Shown when you've sent a gift badge to someone then opened it"
+    },
+    "message--giftBadge--redeemed": {
+        "message": "Lunastettu",
+        "description": "Shown when you've redeemed the gift badge on another device"
+    },
+    "modal--giftBadge--title": {
+        "message": "Kiitämme tuestasi!",
+        "description": "The title of the outgoing gift badge detail dialog"
+    },
+    "modal--giftBadge--description": {
+        "message": "Olet lahjoittanut kunniamerkin käyttäjälle $name$. Kun hän vastaanottaa sen, hän voi itse valita lisääkö hän merkin profiilikuvaansa.",
+        "description": "The description of the outgoing gift badge detail dialog",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Paige Hall"
+            }
+        }
+    },
     "stickers--toast--InstallFailed": {
         "message": "Tarrapakettia ei voitu asentaa",
         "description": "Shown in a toast if the user attempts to install a sticker pack and it fails"
@@ -3178,6 +3278,30 @@
     "Keyboard--toggle-video": {
         "message": "Kytke video päälle ja pois",
         "description": "Shown in the shortcuts guide"
+    },
+    "Keyboard--accept-video-call": {
+        "message": "Hyväksy videopuhelu",
+        "description": "Shown in the calling keyboard shortcuts guide"
+    },
+    "Keyboard--accept-audio-call": {
+        "message": "Hyväksy äänipuhelu",
+        "description": "Shown in the calling keyboard shortcuts guide"
+    },
+    "Keyboard--start-audio-call": {
+        "message": "Aloita äänipuhelu",
+        "description": "Shown in the calling keyboard shortcuts guide"
+    },
+    "Keyboard--start-video-call": {
+        "message": "Aloita videopuhelu",
+        "description": "Shown in the calling keyboard shortcuts guide"
+    },
+    "Keyboard--decline-call": {
+        "message": "Hylkää puhelu",
+        "description": "Shown in the calling keyboard shortcuts guide"
+    },
+    "Keyboard--hang-up": {
+        "message": "Lopeta puhelu",
+        "description": "Shown in the calling keyboard shortcuts guide"
     },
     "close-popup": {
         "message": "Sulje ponnahdusikkuna",
@@ -4108,10 +4232,6 @@
     "GroupV2--cannot-send": {
         "message": "Et voi lähettää viestejä tähän ryhmään.",
         "description": "Shown in toast when you attempt to forward a message to an announcement only group"
-    },
-    "GroupV2--add--missing-capability": {
-        "message": "Näitä henkilöitä ei voi lisätä ryhmään ennen kuin he päivittävät Signalin.",
-        "description": "Shown in a confirmation dialog when members who cannot view announcement only group cannot be added"
     },
     "GroupV2--cannot-start-group-call": {
         "message": "Vain ryhmän ylläpitäjät voivat tehdä kutsun.",
@@ -7039,13 +7159,29 @@
             }
         }
     },
+    "StoryViewer__pause": {
+        "message": "Pysäytä",
+        "description": "Aria label for pausing a story"
+    },
+    "StoryViewer__play": {
+        "message": "Toista",
+        "description": "Aria label for playing a story"
+    },
     "StoryViewer__reply": {
         "message": "Vastaa",
         "description": "Button label to reply to a story"
     },
-    "StoryViewsNRepliesModal__placeholder": {
-        "message": "Kirjoita vastaus...",
-        "description": "Placeholder text for the story reply modal"
+    "StoryViewer__reply-group": {
+        "message": "Vastaa ryhmälle",
+        "description": "Button label to reply to a group story"
+    },
+    "StoryViewer__mute": {
+        "message": "Mykistä",
+        "description": "Aria label for muting stories"
+    },
+    "StoryViewer__unmute": {
+        "message": "Poista mykistys",
+        "description": "Aria label for unmuting stories"
     },
     "StoryViewsNRepliesModal__no-replies": {
         "message": "Ei vastauksia vielä",
@@ -7099,6 +7235,32 @@
         "message": "Avaa linkki",
         "description": "Title for the link preview tooltip"
     },
+    "Quote__story": {
+        "message": "Tarina",
+        "description": "Title for replies to stories"
+    },
+    "Quote__story-reaction": {
+        "message": "Reagoit tarinaan henkilöltä $name$",
+        "description": "Label for when a person reacts to a story",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Charlie"
+            }
+        }
+    },
+    "Quote__story-reaction--yours": {
+        "message": "Reagoi tarinaasi",
+        "description": "Label for when a person reacts to your story"
+    },
+    "Quote__story-reaction--single": {
+        "message": "Tarinaan reagoitu",
+        "description": "Used whenever we can't find a user's first name"
+    },
+    "Quote__story-unavailable": {
+        "message": "Ei enää saatavana",
+        "description": "Label for when a story is not found"
+    },
     "WhatsNew__modal-title": {
         "message": "Uudet ominaisuudet",
         "description": "Title for the whats new modal"
@@ -7107,22 +7269,16 @@
         "message": "Tämä versio sisältää useita pieniä parannuksia ja virhekorjauksia, jotka pitävät Signalin toiminnan sujuvana.",
         "description": "Release notes for releases that only include bug fixes"
     },
-    "WhatsNew__v5.40--1": {
-        "message": "Virheenkorjauksia, mukaan lukien sen virheen korjaaminen joka teki joskus valikoiden klikkaamisesta hankalaa.",
-        "description": "Release notes for v5.40"
+    "WhatsNew__v5.45--1": {
+        "message": "Dynaamiset ääni-indikaattorit ryhmäpuheluissa auttavat nyt sinua näkemään kuiskaatko, huudatko vai puhutko sopivalla äänenvoimakkuudella.",
+        "description": "Release notes for v5.45"
     },
-    "WhatsNew__v5.40--2": {
-        "message": "Kiitos vapaaehtoisille osallistujillemme $dsanders11$ ja $yusufsahinhamza$ heidän panoksestaan näihin parannuksiin.",
-        "description": "Release notes for v5.40",
-        "placeholders": {
-            "dsanders11": {
-                "content": "$1",
-                "example": "dsanders11"
-            },
-            "yusufsahinhamza": {
-                "content": "$2",
-                "example": "yusufsahinhamza"
-            }
-        }
+    "WhatsNew__v5.45--2": {
+        "message": "Näet nyt myös työpöytäversiossa ryhmät, joihin olet pyytänyt liittymistä puhelimellasi.",
+        "description": "Release notes for v5.45"
+    },
+    "WhatsNew__v5.45--3": {
+        "message": "Onko sinulla pykivä verkkoyhteys? Ei hätää, voit nyt käskyttää Signalin yrittämään liitteiden lataamista uudelleen.",
+        "description": "Release notes for v5.45"
     }
 }

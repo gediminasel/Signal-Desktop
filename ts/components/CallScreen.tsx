@@ -7,6 +7,7 @@ import { noop } from 'lodash';
 import classNames from 'classnames';
 import type { VideoFrameSource } from 'ringrtc';
 import type {
+  ActiveCallStateType,
   SetLocalAudioType,
   SetLocalPreviewType,
   SetLocalVideoType,
@@ -24,6 +25,7 @@ import type {
 } from '../types/Calling';
 import {
   CallMode,
+  CallViewMode,
   CallState,
   GroupCallConnectionState,
   GroupCallJoinState,
@@ -61,6 +63,8 @@ export type PropsType = {
   setPresenting: (_?: PresentedSource) => void;
   setRendererCanvas: (_: SetRendererCanvasType) => void;
   stickyControls: boolean;
+  switchToPresentationView: () => void;
+  switchFromPresentationView: () => void;
   toggleParticipants: () => void;
   togglePip: () => void;
   toggleScreenRecordingPermissionsDialog: () => unknown;
@@ -72,6 +76,15 @@ type DirectCallHeaderMessagePropsType = {
   i18n: LocalizerType;
   callState: CallState;
   joinedAt?: number;
+};
+
+export const isInSpeakerView = (
+  call: Pick<ActiveCallStateType, 'viewMode'> | undefined
+): boolean => {
+  return Boolean(
+    call?.viewMode === CallViewMode.Presentation ||
+      call?.viewMode === CallViewMode.Speaker
+  );
 };
 
 function DirectCallHeaderMessage({
@@ -120,6 +133,8 @@ export const CallScreen: React.FC<PropsType> = ({
   setPresenting,
   setRendererCanvas,
   stickyControls,
+  switchToPresentationView,
+  switchFromPresentationView,
   toggleParticipants,
   togglePip,
   toggleScreenRecordingPermissionsDialog,
@@ -130,19 +145,18 @@ export const CallScreen: React.FC<PropsType> = ({
     conversation,
     hasLocalAudio,
     hasLocalVideo,
-    amISpeaking,
-    isInSpeakerView,
+    localAudioLevel,
     presentingSource,
     remoteParticipants,
     showNeedsScreenRecordingPermissionsWarning,
     showParticipantsList,
   } = activeCall;
 
-  useActivateSpeakerViewOnPresenting(
+  useActivateSpeakerViewOnPresenting({
     remoteParticipants,
-    isInSpeakerView,
-    toggleSpeakerView
-  );
+    switchToPresentationView,
+    switchFromPresentationView,
+  });
 
   const activeCallShortcuts = useActiveCallShortcuts(hangUpActiveCall);
   useKeyboardShortcuts(activeCallShortcuts);
@@ -293,10 +307,10 @@ export const CallScreen: React.FC<PropsType> = ({
         <GroupCallRemoteParticipants
           getGroupCallVideoFrameSource={getGroupCallVideoFrameSource}
           i18n={i18n}
-          isInSpeakerView={isInSpeakerView}
+          isInSpeakerView={isInSpeakerView(activeCall)}
           remoteParticipants={activeCall.remoteParticipants}
           setGroupCallVideoRequest={setGroupCallVideoRequest}
-          speakingDemuxIds={activeCall.speakingDemuxIds}
+          remoteAudioLevels={activeCall.remoteAudioLevels}
         />
       );
       break;
@@ -448,7 +462,7 @@ export const CallScreen: React.FC<PropsType> = ({
       >
         <CallingHeader
           i18n={i18n}
-          isInSpeakerView={isInSpeakerView}
+          isInSpeakerView={isInSpeakerView(activeCall)}
           isGroupCall={isGroupCall}
           message={headerMessage}
           participantCount={participantCount}
@@ -514,7 +528,7 @@ export const CallScreen: React.FC<PropsType> = ({
           {localPreviewNode}
           <CallingAudioIndicator
             hasAudio={hasLocalAudio}
-            isSpeaking={amISpeaking}
+            audioLevel={localAudioLevel}
           />
         </div>
       </div>

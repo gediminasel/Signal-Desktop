@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /* eslint-disable no-bitwise */
-/* eslint-disable camelcase */
 
 import { isNumber } from 'lodash';
 import PQueue from 'p-queue';
@@ -56,7 +55,6 @@ import * as Errors from '../types/errors';
 import { isEnabled } from '../RemoteConfig';
 
 import { SignalService as Proto } from '../protobuf';
-import type { UnprocessedType } from '../textsecure.d';
 import { deriveGroupFields, MASTER_KEY_LENGTH } from '../groups';
 
 import createTaskWithTimeout from './TaskWithTimeout';
@@ -82,6 +80,7 @@ import type {
   ProcessedSent,
   ProcessedEnvelope,
   IRequestHandler,
+  UnprocessedType,
 } from './Types.d';
 import {
   EmptyEvent,
@@ -115,6 +114,7 @@ import * as log from '../logging/log';
 import * as durations from '../util/durations';
 import { areArraysMatchingSets } from '../util/areArraysMatchingSets';
 import { generateBlurHash } from '../util/generateBlurHash';
+import { APPLICATION_OCTET_STREAM } from '../types/MIME';
 
 const GROUPV1_ID_LENGTH = 16;
 const GROUPV2_ID_LENGTH = 32;
@@ -251,8 +251,10 @@ export default class MessageReceiver
     });
   }
 
-  public getProcessedCount(): number {
-    return this.processedCount;
+  public getAndResetProcessedCount(): number {
+    const count = this.processedCount;
+    this.processedCount = 0;
+    return count;
   }
 
   public handleRequest(request: IncomingWebSocketRequest): void {
@@ -1238,8 +1240,12 @@ export default class MessageReceiver
 
     // Note: we need to process this as part of decryption, because we might need this
     //   sender key to decrypt the next message in the queue!
+    let isGroupV2 = false;
+
     try {
       const content = Proto.Content.decode(plaintext);
+
+      isGroupV2 = Boolean(content.dataMessage?.groupV2);
 
       if (
         content.senderKeyDistributionMessage &&
@@ -1258,12 +1264,14 @@ export default class MessageReceiver
       );
     }
 
+    // We want to process GroupV2 updates, even from blocked users. We'll drop them later.
     if (
-      (envelope.source && this.isBlocked(envelope.source)) ||
-      (envelope.sourceUuid && this.isUuidBlocked(envelope.sourceUuid))
+      !isGroupV2 &&
+      ((envelope.source && this.isBlocked(envelope.source)) ||
+        (envelope.sourceUuid && this.isUuidBlocked(envelope.sourceUuid)))
     ) {
       log.info(
-        'MessageReceiver.decryptEnvelope: Dropping message from blocked sender'
+        'MessageReceiver.decryptEnvelope: Dropping non-GV2 message from blocked sender'
       );
       return { plaintext: undefined, envelope };
     }
@@ -1715,7 +1723,6 @@ export default class MessageReceiver
     }
 
     let p: Promise<void> = Promise.resolve();
-    // eslint-disable-next-line no-bitwise
     if (msg.flags && msg.flags & Proto.DataMessage.Flags.END_SESSION) {
       if (destinationUuid) {
         p = this.handleEndSession(new UUID(destinationUuid));
@@ -1794,8 +1801,14 @@ export default class MessageReceiver
     }
 
     if (msg.textAttachment) {
+      const { text } = msg.textAttachment;
+      if (!text) {
+        throw new Error('Text attachments must have text!');
+      }
+
       attachments.push({
-        size: msg.textAttachment.text?.length,
+        size: text.length,
+        contentType: APPLICATION_OCTET_STREAM,
         textAttachment: msg.textAttachment,
         blurHash: generateBlurHash(
           (msg.textAttachment.color ||
@@ -1878,7 +1891,6 @@ export default class MessageReceiver
     }
 
     let p: Promise<void> = Promise.resolve();
-    // eslint-disable-next-line no-bitwise
     const destination = envelope.sourceUuid;
     if (!destination) {
       throw new Error(

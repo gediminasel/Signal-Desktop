@@ -158,7 +158,6 @@ import { isNewReactionReplacingPrevious } from '../reactions/util';
 import { parseBoostBadgeListFromServer } from '../badges/parseBadgesFromServer';
 import { GiftBadgeStates } from '../components/conversation/Message';
 
-/* eslint-disable camelcase */
 /* eslint-disable more/no-then */
 
 type PropsForMessageDetail = Pick<
@@ -206,7 +205,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     if (_.isObject(attributes)) {
       this.set(
         TypedMessage.initializeSchemaVersion({
-          message: attributes,
+          message: attributes as MessageAttributesType,
           logger: log,
         })
       );
@@ -770,7 +769,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     if (giftBadge) {
       const emoji = '🎁';
 
-      if (isIncoming(this.attributes)) {
+      if (isOutgoing(this.attributes)) {
         return {
           emoji,
           text: window.i18n('message--giftBadge--preview--sent'),
@@ -1401,7 +1400,13 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       ...(this.get('sendStateByConversationId') || {}),
     };
 
+    const sendIsNotFinal =
+      'sendIsNotFinal' in result.value && result.value.sendIsNotFinal;
+    const sendIsFinal = !sendIsNotFinal;
+
+    // Capture successful sends
     const successfulIdentifiers: Array<string> =
+      sendIsFinal &&
       'successfulIdentifiers' in result.value &&
       Array.isArray(result.value.successfulIdentifiers)
         ? result.value.successfulIdentifiers
@@ -1435,9 +1440,11 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       }
     });
 
+    // Integrate sends via sealed sender
     const previousUnidentifiedDeliveries =
       this.get('unidentifiedDeliveries') || [];
     const newUnidentifiedDeliveries =
+      sendIsFinal &&
       'unidentifiedDeliveries' in result.value &&
       Array.isArray(result.value.unidentifiedDeliveries)
         ? result.value.unidentifiedDeliveries
@@ -1445,6 +1452,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
     const promises: Array<Promise<unknown>> = [];
 
+    // Process errors
     let errors: Array<CustomError>;
     if (result.value instanceof SendMessageProtoError && result.value.errors) {
       ({ errors } = result.value);
@@ -1467,7 +1475,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         window.ConversationController.get(error.identifier) ||
         window.ConversationController.get(error.number);
 
-      if (conversation && !saveErrors) {
+      if (conversation && !saveErrors && sendIsFinal) {
         const previousSendState = getOwn(
           sendStateByConversationId,
           conversation.id
@@ -1581,6 +1589,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       this.set({
         // This is the same as a normal send()
         expirationStartTimestamp: Date.now(),
+        errors: [],
       });
       const result = await this.sendSyncMessage();
       this.set({
@@ -1629,6 +1638,11 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       return;
     }
 
+    const { messaging } = window.textsecure;
+    if (!messaging) {
+      throw new Error('sendSyncMessage: messaging not available!');
+    }
+
     this.syncPromise = this.syncPromise || Promise.resolve();
     const next = async () => {
       const dataMessage = this.get('dataMessage');
@@ -1668,7 +1682,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       );
 
       return handleMessageSend(
-        window.textsecure.messaging.sendSyncMessage({
+        messaging.sendSyncMessage({
           encodedDataMessage: dataMessage,
           timestamp: this.get('sent_at'),
           destination: conv.get('e164'),
@@ -2019,9 +2033,10 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const conversation = window.ConversationController.get(conversationId)!;
+    const idLog = conversation.idForLogging();
     await conversation.queueJob('handleDataMessage', async () => {
       log.info(
-        `Starting handleDataMessage for message ${message.idForLogging()} in conversation ${conversation.idForLogging()}`
+        `handleDataMessage/${idLog}: processsing message ${message.idForLogging()}`
       );
 
       if (
@@ -2031,7 +2046,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         })
       ) {
         log.info(
-          'handleDataMessage: dropping story from !accepted',
+          `handleDataMessage/${idLog}: dropping story from !accepted`,
           this.getSenderIdentifier()
         );
         confirm();
@@ -2043,10 +2058,13 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         this.getSenderIdentifier()
       );
       if (inMemoryMessage) {
-        log.info('handleDataMessage: cache hit', this.getSenderIdentifier());
+        log.info(
+          `handleDataMessage/${idLog}: cache hit`,
+          this.getSenderIdentifier()
+        );
       } else {
         log.info(
-          'handleDataMessage: duplicate check db lookup needed',
+          `handleDataMessage/${idLog}: duplicate check db lookup needed`,
           this.getSenderIdentifier()
         );
       }
@@ -2055,14 +2073,17 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       const isUpdate = Boolean(data && data.isRecipientUpdate);
 
       if (existingMessage && type === 'incoming') {
-        log.warn('Received duplicate message', this.idForLogging());
+        log.warn(
+          `handleDataMessage/${idLog}: Received duplicate message`,
+          this.idForLogging()
+        );
         confirm();
         return;
       }
       if (type === 'outgoing') {
         if (isUpdate && existingMessage) {
           log.info(
-            `handleDataMessage: Updating message ${message.idForLogging()} with received transcript`
+            `handleDataMessage/${idLog}: Updating message ${message.idForLogging()} with received transcript`
           );
 
           const toUpdate = window.MessageController.register(
@@ -2139,7 +2160,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         }
         if (isUpdate) {
           log.warn(
-            `handleDataMessage: Received update transcript, but no existing entry for message ${message.idForLogging()}. Dropping.`
+            `handleDataMessage/${idLog}: Received update transcript, but no existing entry for message ${message.idForLogging()}. Dropping.`
           );
 
           confirm();
@@ -2147,7 +2168,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         }
         if (existingMessage) {
           log.warn(
-            `handleDataMessage: Received duplicate transcript for message ${message.idForLogging()}, but it was not an update transcript. Dropping.`
+            `handleDataMessage/${idLog}: Received duplicate transcript for message ${message.idForLogging()}, but it was not an update transcript. Dropping.`
           );
 
           confirm();
@@ -2212,7 +2233,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
             } catch (error) {
               const errorText = error && error.stack ? error.stack : error;
               log.error(
-                `handleDataMessage: Failed to process group update for ${conversation.idForLogging()} as part of message ${message.idForLogging()}: ${errorText}`
+                `handleDataMessage/${idLog}: Failed to process group update as part of message ${message.idForLogging()}: ${errorText}`
               );
               throw error;
             }
@@ -2232,6 +2253,19 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       const isV1GroupUpdate =
         initialMessage.group &&
         initialMessage.group.type !== Proto.GroupContext.Type.DELIVER;
+
+      // Drop if from blocked user. Only GroupV2 messages should need to be dropped here.
+      const isBlocked =
+        (source && window.storage.blocked.isBlocked(source)) ||
+        (sourceUuid && window.storage.blocked.isUuidBlocked(sourceUuid));
+      if (isBlocked) {
+        log.info(
+          `handleDataMessage/${idLog}: Dropping message from blocked sender. hasGroupV2Prop: ${hasGroupV2Prop}`
+        );
+
+        confirm();
+        return;
+      }
 
       // Drop an incoming GroupV2 message if we or the sender are not part of the group
       //   after applying the message's associated group changes.
@@ -2318,6 +2352,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       ]);
 
       const withQuoteReference = {
+        ...message.attributes,
         ...initialMessage,
         quote,
         storyId: storyQuote?.id,
@@ -2381,12 +2416,12 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
           };
 
           // GroupV1
-          if (!hasGroupV2Prop && dataMessage.group) {
+          if (!hasGroupV2Prop && initialMessage.group) {
             const pendingGroupUpdate: GroupV1Update = {};
 
             const memberConversations: Array<ConversationModel> =
               await Promise.all(
-                dataMessage.group.membersE164.map((e164: string) =>
+                initialMessage.group.membersE164.map((e164: string) =>
                   window.ConversationController.getOrCreateAndWait(
                     e164,
                     'private'
@@ -2397,20 +2432,20 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
             attributes = {
               ...attributes,
               type: 'group',
-              groupId: dataMessage.group.id,
+              groupId: initialMessage.group.id,
             };
-            if (dataMessage.group.type === GROUP_TYPES.UPDATE) {
+            if (initialMessage.group.type === GROUP_TYPES.UPDATE) {
               attributes = {
                 ...attributes,
-                name: dataMessage.group.name,
+                name: initialMessage.group.name,
                 members: _.union(members, conversation.get('members')),
               };
 
-              if (dataMessage.group.name !== conversation.get('name')) {
-                pendingGroupUpdate.name = dataMessage.group.name;
+              if (initialMessage.group.name !== conversation.get('name')) {
+                pendingGroupUpdate.name = initialMessage.group.name;
               }
 
-              const avatarAttachment = dataMessage.group.avatar;
+              const avatarAttachment = initialMessage.group.avatar;
 
               let downloadedAvatar;
               let hash;
@@ -2491,7 +2526,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
                 attributes.left = false;
                 conversation.set({ addedBy: getContactId(message.attributes) });
               }
-            } else if (dataMessage.group.type === GROUP_TYPES.QUIT) {
+            } else if (initialMessage.group.type === GROUP_TYPES.QUIT) {
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               const sender = window.ConversationController.get(senderId)!;
               const inGroup = Boolean(
@@ -2555,7 +2590,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
                 expirationTimerUpdate: {
                   source,
                   sourceUuid,
-                  expireTimer: dataMessage.expireTimer,
+                  expireTimer: initialMessage.expireTimer,
                 },
               });
               conversation.set({ expireTimer: dataMessage.expireTimer });
@@ -2597,8 +2632,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
             }
           }
 
-          if (dataMessage.profileKey) {
-            const { profileKey } = dataMessage;
+          if (initialMessage.profileKey) {
+            const { profileKey } = initialMessage;
             if (
               source === window.textsecure.storage.user.getNumber() ||
               sourceUuid ===
@@ -2662,40 +2697,34 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         const giftBadge = message.get('giftBadge');
         if (giftBadge) {
           const { level } = giftBadge;
-          const existingBadgesById = reduxState.badges.byId;
-
-          const badgeId = `BOOST-${level}`;
-          if (!existingBadgesById[badgeId]) {
-            const { updatesUrl } = window.SignalContext.config;
-            strictAssert(
-              typeof updatesUrl === 'string',
-              'getProfile: expected updatesUrl to be a defined string'
+          const { updatesUrl } = window.SignalContext.config;
+          strictAssert(
+            typeof updatesUrl === 'string',
+            'getProfile: expected updatesUrl to be a defined string'
+          );
+          const userLanguages = getUserLanguages(
+            navigator.languages,
+            window.getLocale()
+          );
+          const { messaging } = window.textsecure;
+          if (!messaging) {
+            throw new Error('handleDataMessage: messaging is not available');
+          }
+          const response = await messaging.server.getBoostBadgesFromServer(
+            userLanguages
+          );
+          const boostBadgesByLevel = parseBoostBadgeListFromServer(
+            response,
+            updatesUrl
+          );
+          const badge = boostBadgesByLevel[level];
+          if (!badge) {
+            log.error(
+              `handleDataMessage: gift badge with level ${level} not found on server`
             );
-            const userLanguages = getUserLanguages(
-              navigator.languages,
-              window.getLocale()
-            );
-            const response =
-              await window.textsecure.messaging.server.getBoostBadgesFromServer(
-                userLanguages
-              );
-            const boostBadges = parseBoostBadgeListFromServer(
-              response,
-              updatesUrl
-            );
-            const badge = boostBadges[badgeId];
-            if (!badge) {
-              log.error(
-                `handleDataMessage: gift badge ${badgeId} not found on server`
-              );
-            } else {
-              await window.reduxActions.badges.updateOrCreate([
-                {
-                  ...badge,
-                  id: badgeId,
-                },
-              ]);
-            }
+          } else {
+            await window.reduxActions.badges.updateOrCreate([badge]);
+            giftBadge.id = badge.id;
           }
         }
 
@@ -2918,6 +2947,11 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       const isGroupStoryReply =
         isGroup(conversation.attributes) && message.get('storyId');
 
+      const keepMutedChatsArchived =
+        window.storage.get('keepMutedChatsArchived') ?? false;
+      const keepThisConversationArchived =
+        keepMutedChatsArchived && conversation.isMuted();
+
       if (readSyncs.length !== 0 || viewSyncs.length !== 0) {
         const markReadAt = Math.min(
           Date.now(),
@@ -2957,7 +2991,11 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
           this.pendingMarkRead ?? Date.now(),
           markReadAt
         );
-      } else if (isFirstRun && !isGroupStoryReply) {
+      } else if (
+        isFirstRun &&
+        !isGroupStoryReply &&
+        !keepThisConversationArchived
+      ) {
         conversation.set({
           isArchived: false,
         });

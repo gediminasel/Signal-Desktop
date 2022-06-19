@@ -27,7 +27,7 @@ import {
   getComposeSelectedContacts,
   getContactNameColorSelector,
   getConversationByIdSelector,
-  getConversationIdsStoppingSend,
+  getConversationUuidsStoppingSend,
   getConversationIdsStoppedForVerification,
   getConversationsByTitleSelector,
   getConversationSelector,
@@ -311,17 +311,17 @@ describe('both/state/selectors/conversations', () => {
           verificationDataByConversation: {
             'convo a': {
               type: ConversationVerificationState.PendingVerification as const,
-              conversationsNeedingVerification: ['abc'],
+              uuidsNeedingVerification: ['abc'],
             },
             'convo b': {
               type: ConversationVerificationState.PendingVerification as const,
-              conversationsNeedingVerification: ['def', 'abc'],
+              uuidsNeedingVerification: ['def', 'abc'],
             },
           },
         },
       };
 
-      assert.sameDeepMembers(getConversationIdsStoppingSend(state), [
+      assert.sameDeepMembers(getConversationUuidsStoppingSend(state), [
         'abc',
         'def',
       ]);
@@ -354,11 +354,11 @@ describe('both/state/selectors/conversations', () => {
           verificationDataByConversation: {
             'convo a': {
               type: ConversationVerificationState.PendingVerification as const,
-              conversationsNeedingVerification: ['abc'],
+              uuidsNeedingVerification: ['abc'],
             },
             'convo b': {
               type: ConversationVerificationState.PendingVerification as const,
-              conversationsNeedingVerification: ['def', 'abc'],
+              uuidsNeedingVerification: ['def', 'abc'],
             },
           },
         },
@@ -965,10 +965,10 @@ describe('both/state/selectors/conversations', () => {
 
       const ids = result.map(contact => contact.id);
       assert.deepEqual(ids, [
+        'our-conversation-id',
         'convo-1',
         'convo-5',
         'convo-6',
-        'our-conversation-id',
       ]);
     });
 

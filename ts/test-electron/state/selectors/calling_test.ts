@@ -7,6 +7,7 @@ import { noopAction } from '../../../state/ducks/noop';
 import {
   CallMode,
   CallState,
+  CallViewMode,
   GroupCallConnectionState,
   GroupCallJoinState,
 } from '../../../types/Calling';
@@ -51,8 +52,8 @@ describe('state/selectors/calling', () => {
       conversationId: 'fake-direct-call-conversation-id',
       hasLocalAudio: true,
       hasLocalVideo: false,
-      amISpeaking: false,
-      isInSpeakerView: false,
+      localAudioLevel: 0,
+      viewMode: CallViewMode.Grid,
       showParticipantsList: false,
       safetyNumberChangedUuids: [],
       outgoingRing: true,

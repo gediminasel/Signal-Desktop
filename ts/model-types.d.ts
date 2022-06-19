@@ -28,6 +28,10 @@ import AccessRequiredEnum = Proto.AccessControl.AccessRequired;
 import MemberRoleEnum = Proto.Member.Role;
 import { SeenStatus } from './MessageSeenStatus';
 import { GiftBadgeStates } from './components/conversation/Message';
+import { LinkPreviewType } from './types/message/LinkPreviews';
+
+import type { StickerType } from './types/Stickers';
+import { MIMEType } from './types/MIME';
 
 export type WhatIsThis = any;
 
@@ -62,10 +66,14 @@ export type GroupMigrationType = {
   invitedMembers: Array<GroupV2PendingMemberType>;
 };
 
-export type PreviewMessageType = Array<WhatIsThis>;
+export type QuotedAttachment = {
+  contentType: MIMEType;
+  fileName?: string;
+  thumbnail?: AttachmentType;
+};
 
 export type QuotedMessageType = {
-  attachments: Array<typeof window.WhatIsThis>;
+  attachments: Array<WhatIsThis /* QuotedAttachment */>;
   // `author` is an old attribute that holds the author's E164. We shouldn't use it for
   //   new messages, but old messages might have this attribute.
   author?: string;
@@ -83,13 +91,6 @@ type StoryReplyContextType = {
   attachment?: AttachmentType;
   authorUuid?: string;
   messageId: string;
-};
-
-export type StickerMessageType = {
-  packId: string;
-  stickerId: number;
-  packKey: string;
-  data?: AttachmentType;
 };
 
 export type RetryOptions = Readonly<{
@@ -116,7 +117,7 @@ export type MessageReactionType = {
 };
 
 export type MessageAttributesType = {
-  bodyPending?: boolean;
+  bodyAttachment?: AttachmentType;
   bodyRanges?: BodyRangesType;
   callHistoryDetails?: CallHistoryDetailsFromDiskType;
   changedId?: string;
@@ -129,9 +130,9 @@ export type MessageAttributesType = {
   expireTimer?: number;
   groupMigration?: GroupMigrationType;
   group_update?: GroupV1Update;
-  hasAttachments?: boolean;
-  hasFileAttachments?: boolean;
-  hasVisualMediaAttachments?: boolean;
+  hasAttachments?: boolean | 0 | 1;
+  hasFileAttachments?: boolean | 0 | 1;
+  hasVisualMediaAttachments?: boolean | 0 | 1;
   isErased?: boolean;
   isTapToViewInvalid?: boolean;
   isViewOnce?: boolean;
@@ -173,8 +174,8 @@ export type MessageAttributesType = {
     | 'verified-change';
   body?: string;
   attachments?: Array<AttachmentType>;
-  preview?: PreviewMessageType;
-  sticker?: StickerMessageType;
+  preview?: Array<LinkPreviewType>;
+  sticker?: StickerType;
   sent_at: number;
   unidentifiedDeliveries?: Array<string>;
   contact?: Array<EmbeddedContactType>;
@@ -183,6 +184,7 @@ export type MessageAttributesType = {
   giftBadge?: {
     expiration: number;
     level: number;
+    id: string | undefined;
     receiptCredentialPresentation: string;
     state: GiftBadgeStates;
   };

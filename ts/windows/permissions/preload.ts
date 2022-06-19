@@ -3,7 +3,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { contextBridge, ipcRenderer } from 'electron';
+import { contextBridge } from 'electron';
 
 import { SignalContext } from '../context';
 
@@ -25,8 +25,7 @@ contextBridge.exposeInMainWorld(
 contextBridge.exposeInMainWorld('SignalContext', {
   ...SignalContext,
   renderWindow: () => {
-    const forCalling = SignalContext.config.forCalling === 'true';
-    const forCamera = SignalContext.config.forCamera === 'true';
+    const { forCalling, forCamera } = SignalContext.config;
 
     let message;
     if (forCalling) {
@@ -40,7 +39,7 @@ contextBridge.exposeInMainWorld('SignalContext', {
     }
 
     function onClose() {
-      ipcRenderer.send('close-permissions-popup');
+      SignalContext.executeMenuRole('close');
     }
 
     ReactDOM.render(

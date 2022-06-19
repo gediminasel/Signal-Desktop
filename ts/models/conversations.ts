@@ -1,10 +1,10 @@
 // Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-/* eslint-disable camelcase */
 import { compact, isNumber, throttle, debounce } from 'lodash';
 import { batch as batchDispatch } from 'react-redux';
 import PQueue from 'p-queue';
+import { v4 as generateGuid } from 'uuid';
 
 import type {
   ConversationAttributesType,
@@ -19,6 +19,10 @@ import type {
 } from '../model-types.d';
 import { getInitials } from '../util/getInitials';
 import { normalizeUuid } from '../util/normalizeUuid';
+import {
+  getRegionCodeForNumber,
+  parseNumber,
+} from '../util/libphonenumberUtil';
 import { clearTimeoutIfNecessary } from '../util/clearTimeoutIfNecessary';
 import type { AttachmentType } from '../types/Attachment';
 import { isGIF } from '../types/Attachment';
@@ -34,6 +38,7 @@ import type {
   StickerType,
 } from '../textsecure/SendMessage';
 import createTaskWithTimeout from '../textsecure/TaskWithTimeout';
+import MessageSender from '../textsecure/SendMessage';
 import type { CallbackResultType } from '../textsecure/Types.d';
 import type { ConversationType } from '../state/ducks/conversations';
 import type {
@@ -44,7 +49,7 @@ import type {
 import type { MessageModel } from './messages';
 import { getContact } from '../messages/helpers';
 import { strictAssert } from '../util/assert';
-import { isMuted } from '../util/isMuted';
+import { isConversationMuted } from '../util/isConversationMuted';
 import { isConversationSMSOnly } from '../util/isConversationSMSOnly';
 import { isConversationUnregistered } from '../util/isConversationUnregistered';
 import { missingCaseError } from '../util/missingCaseError';
@@ -1246,7 +1251,9 @@ export class ConversationModel extends window.Backbone
   }
 
   async sendTypingMessage(isTyping: boolean): Promise<void> {
-    if (!window.textsecure.messaging) {
+    const { messaging } = window.textsecure;
+
+    if (!messaging) {
       return;
     }
 
@@ -1295,8 +1302,7 @@ export class ConversationModel extends window.Backbone
         `sendTypingMessage(${this.idForLogging()}): sending ${content.isTyping}`
       );
 
-      const contentMessage =
-        window.textsecure.messaging.getTypingContentMessage(content);
+      const contentMessage = messaging.getTypingContentMessage(content);
 
       const { ContentHint } = Proto.UnidentifiedSenderMessage.Message;
 
@@ -1306,7 +1312,7 @@ export class ConversationModel extends window.Backbone
       };
       if (isDirectConversation(this.attributes)) {
         await handleMessageSend(
-          window.textsecure.messaging.sendMessageProtoAndWait({
+          messaging.sendMessageProtoAndWait({
             timestamp,
             recipients: groupMembers,
             proto: contentMessage,
@@ -2329,7 +2335,9 @@ export class ConversationModel extends window.Backbone
 
     const inviteLinkPassword = this.get('groupInviteLinkPassword');
     if (!inviteLinkPassword) {
-      throw new Error('Missing groupInviteLinkPassword!');
+      log.warn(
+        `cancelJoinRequest/${this.idForLogging()}: We don't have an inviteLinkPassword!`
+      );
     }
 
     await this.modifyGroupV2({
@@ -2550,7 +2558,7 @@ export class ConversationModel extends window.Backbone
 
     try {
       await singleProtoJobQueue.add(
-        window.textsecure.messaging.getMessageRequestResponseSync({
+        MessageSender.getMessageRequestResponseSync({
           threadE164: this.get('e164'),
           threadUuid: this.get('uuid'),
           groupId,
@@ -2637,7 +2645,7 @@ export class ConversationModel extends window.Backbone
     });
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const { VERIFIED, UNVERIFIED } = this.verifiedEnum!;
+    const { VERIFIED, DEFAULT } = this.verifiedEnum!;
 
     if (!isDirectConversation(this.attributes)) {
       throw new Error(
@@ -2688,7 +2696,7 @@ export class ConversationModel extends window.Backbone
     const didVerifiedChange = beginningVerified !== verified;
     const isExplicitUserAction = !options.viaStorageServiceSync;
     const shouldShowFromStorageSync =
-      options.viaStorageServiceSync && verified !== UNVERIFIED;
+      options.viaStorageServiceSync && verified !== DEFAULT;
     if (
       // The message came from an explicit verification in a client (not
       // storage service sync)
@@ -2742,12 +2750,7 @@ export class ConversationModel extends window.Backbone
 
     try {
       await singleProtoJobQueue.add(
-        window.textsecure.messaging.getVerificationSync(
-          e164,
-          uuid.toString(),
-          state,
-          key
-        )
+        MessageSender.getVerificationSync(e164, uuid.toString(), state, key)
       );
     } catch (error) {
       log.error(
@@ -3058,11 +3061,8 @@ export class ConversationModel extends window.Backbone
   async addVerifiedChange(
     verifiedChangeId: string,
     verified: boolean,
-    providedOptions: Record<string, unknown>
+    options: { local?: boolean } = { local: true }
   ): Promise<void> {
-    const options = providedOptions || {};
-    window._.defaults(options, { local: true });
-
     if (isMe(this.attributes)) {
       log.info('refusing to add verified change advisory for our own number');
       return;
@@ -3077,30 +3077,30 @@ export class ConversationModel extends window.Backbone
       lastMessage
     );
 
+    const shouldBeUnseen = !options.local && !verified;
     const timestamp = Date.now();
-    const message = {
+    const message: MessageAttributesType = {
+      id: generateGuid(),
       conversationId: this.id,
-      local: options.local,
-      readStatus: ReadStatus.Unread,
+      local: Boolean(options.local),
+      readStatus: shouldBeUnseen ? ReadStatus.Unread : ReadStatus.Read,
       received_at_ms: timestamp,
       received_at: window.Signal.Util.incrementMessageCounter(),
-      seenStatus: SeenStatus.Unseen,
+      seenStatus: shouldBeUnseen ? SeenStatus.Unseen : SeenStatus.Unseen,
       sent_at: lastMessage,
+      timestamp,
       type: 'verified-change',
       verified,
       verifiedChanged: verifiedChangeId,
-      // TODO: DESKTOP-722
-    } as unknown as MessageAttributesType;
+    };
 
-    const id = await window.Signal.Data.saveMessage(message, {
+    await window.Signal.Data.saveMessage(message, {
       ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+      forceSave: true,
     });
     const model = window.MessageController.register(
-      id,
-      new window.Whisper.Message({
-        ...message,
-        id,
-      })
+      message.id,
+      new window.Whisper.Message(message)
     );
 
     this.trigger('newmessage', model);
@@ -3456,7 +3456,7 @@ export class ConversationModel extends window.Backbone
       if (!regionCode) {
         throw new Error('No region code');
       }
-      const number = window.libphonenumber.util.parseNumber(
+      const number = parseNumber(
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         this.get('e164')!,
         regionCode
@@ -3490,13 +3490,19 @@ export class ConversationModel extends window.Backbone
     return null;
   }
 
-  queueJob<T>(name: string, callback: () => Promise<T>): Promise<T> {
+  queueJob<T>(
+    name: string,
+    callback: (abortSignal: AbortSignal) => Promise<T>
+  ): Promise<T> {
     this.jobQueue = this.jobQueue || new window.PQueue({ concurrency: 1 });
 
     const taskWithTimeout = createTaskWithTimeout(
       callback,
       `conversation ${this.idForLogging()}`
     );
+
+    const abortController = new AbortController();
+    const { signal: abortSignal } = abortController;
 
     const queuedAt = Date.now();
     return this.jobQueue.add(async () => {
@@ -3508,7 +3514,10 @@ export class ConversationModel extends window.Backbone
       }
 
       try {
-        return await taskWithTimeout();
+        return await taskWithTimeout(abortSignal);
+      } catch (error) {
+        abortController.abort();
+        throw error;
       } finally {
         const duration = Date.now() - startedAt;
 
@@ -3874,6 +3883,11 @@ export class ConversationModel extends window.Backbone
         contentType,
         width,
         height,
+        blurHash: await window.imageToBlurHash(
+          new Blob([data], {
+            type: IMAGE_JPEG,
+          })
+        ),
       },
     };
 
@@ -3994,11 +4008,13 @@ export class ConversationModel extends window.Backbone
       sendHQImages,
       storyId,
       timestamp,
+      extraReduxActions,
     }: {
       dontClearDraft?: boolean;
       sendHQImages?: boolean;
       storyId?: string;
       timestamp?: number;
+      extraReduxActions?: () => void;
     } = {}
   ): Promise<MessageAttributesType | undefined> {
     if (this.isGroupV1AndDisabled()) {
@@ -4020,15 +4036,11 @@ export class ConversationModel extends window.Backbone
       'desktop.mandatoryProfileSharing'
     );
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const destination = this.getSendTarget()!;
-    const recipients = this.getRecipients();
-
     await this.maybeApplyUniversalTimer();
 
     const expireTimer = this.get('expireTimer');
 
-    const recipientMaybeConversations = map(recipients, identifier =>
+    const recipientMaybeConversations = map(this.getRecipients(), identifier =>
       window.ConversationController.get(identifier)
     );
     const recipientConversations = filter(
@@ -4053,7 +4065,8 @@ export class ConversationModel extends window.Backbone
     }
 
     // Here we move attachments to disk
-    const messageWithSchema = await upgradeMessageSchema({
+    const attributes = await upgradeMessageSchema({
+      id: UUID.generate().toString(),
       timestamp: now,
       type: 'outgoing',
       body,
@@ -4066,7 +4079,6 @@ export class ConversationModel extends window.Backbone
       received_at: window.Signal.Util.incrementMessageCounter(),
       received_at_ms: now,
       expireTimer,
-      recipients,
       readStatus: ReadStatus.Read,
       seenStatus: SeenStatus.NotApplicable,
       sticker,
@@ -4081,14 +4093,6 @@ export class ConversationModel extends window.Backbone
       ),
       storyId,
     });
-
-    if (isDirectConversation(this.attributes)) {
-      messageWithSchema.destination = destination;
-    }
-    const attributes: MessageAttributesType = {
-      ...messageWithSchema,
-      id: UUID.generate().toString(),
-    };
 
     const model = new window.Whisper.Message(attributes);
     const message = window.MessageController.register(model.id, model);
@@ -4168,6 +4172,8 @@ export class ConversationModel extends window.Backbone
         if (enableProfileSharing) {
           this.captureChange('mandatoryProfileSharing');
         }
+
+        extraReduxActions?.();
       } finally {
         this.isInReduxBatch = false;
       }
@@ -4315,8 +4321,6 @@ export class ConversationModel extends window.Backbone
     if (Boolean(previousMarkedUnread) !== Boolean(markedUnread)) {
       this.captureChange('markedUnread');
     }
-
-    window.Whisper.events.trigger('updateUnreadCount');
   }
 
   async refreshGroupLink(): Promise<void> {
@@ -4494,7 +4498,15 @@ export class ConversationModel extends window.Backbone
     providedExpireTimer: number | undefined,
     providedSource?: unknown,
     initiatingMessage?: MessageModel,
-    options: { fromSync?: unknown; fromGroupUpdate?: unknown } = {}
+    {
+      fromSync = false,
+      isInitialSync = false,
+      fromGroupUpdate = false,
+    }: {
+      fromSync?: boolean;
+      isInitialSync?: boolean;
+      fromGroupUpdate?: boolean;
+    } = {}
   ): Promise<boolean | null | MessageModel | void> {
     const isSetByOther = providedSource || initiatingMessage;
 
@@ -4523,8 +4535,6 @@ export class ConversationModel extends window.Backbone
     if (this.get('left')) {
       return false;
     }
-
-    window._.defaults(options, { fromSync: false, fromGroupUpdate: false });
 
     if (!expireTimer) {
       expireTimer = undefined;
@@ -4582,14 +4592,14 @@ export class ConversationModel extends window.Backbone
       expirationTimerUpdate: {
         expireTimer,
         source,
-        fromSync: options.fromSync,
-        fromGroupUpdate: options.fromGroupUpdate,
+        fromSync,
+        fromGroupUpdate,
       },
       flags: Proto.DataMessage.Flags.EXPIRATION_TIMER_UPDATE,
-      readStatus: ReadStatus.Unread,
+      readStatus: isInitialSync ? ReadStatus.Read : ReadStatus.Unread,
       received_at_ms: receivedAtMS,
       received_at: receivedAt,
-      seenStatus: SeenStatus.Unseen,
+      seenStatus: isInitialSync ? SeenStatus.Seen : SeenStatus.Unseen,
       sent_at: sentAt,
       type: 'timer-notification',
       // TODO: DESKTOP-722
@@ -4615,6 +4625,11 @@ export class ConversationModel extends window.Backbone
 
   // Deprecated: only applies to GroupV1
   async leaveGroup(): Promise<void> {
+    const { messaging } = window.textsecure;
+    if (!messaging) {
+      throw new Error('leaveGroup: Cannot leave v1 group when offline!');
+    }
+
     if (!isGroupV1(this.attributes)) {
       throw new Error(
         `leaveGroup: Group ${this.idForLogging()} is not GroupV1!`
@@ -4655,11 +4670,7 @@ export class ConversationModel extends window.Backbone
     const options = await getSendOptions(this.attributes);
     message.send(
       handleMessageSend(
-        window.textsecure.messaging.leaveGroup(
-          groupId,
-          groupIdentifiers,
-          options
-        ),
+        messaging.leaveGroup(groupId, groupIdentifiers, options),
         { messageIds: [], sendType: 'legacyGroupChange' }
       )
     );
@@ -4824,7 +4835,11 @@ export class ConversationModel extends window.Backbone
       return;
     }
 
-    const avatar = await window.textsecure.messaging.getAvatar(avatarPath);
+    const { messaging } = window.textsecure;
+    if (!messaging) {
+      throw new Error('setProfileAvatar: Cannot fetch avatar when offline!');
+    }
+    const avatar = await messaging.getAvatar(avatarPath);
 
     // decrypt
     const decrypted = decryptProfile(avatar, decryptionKey);
@@ -5044,18 +5059,17 @@ export class ConversationModel extends window.Backbone
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const number = this.get('e164')!;
     try {
-      const parsedNumber = window.libphonenumber.parse(number);
-      const regionCode =
-        window.libphonenumber.getRegionCodeForNumber(parsedNumber);
+      const parsedNumber = window.libphonenumberInstance.parse(number);
+      const regionCode = getRegionCodeForNumber(number);
       if (regionCode === window.storage.get('regionCode')) {
-        return window.libphonenumber.format(
+        return window.libphonenumberInstance.format(
           parsedNumber,
-          window.libphonenumber.PhoneNumberFormat.NATIONAL
+          window.libphonenumberFormat.NATIONAL
         );
       }
-      return window.libphonenumber.format(
+      return window.libphonenumberInstance.format(
         parsedNumber,
-        window.libphonenumber.PhoneNumberFormat.INTERNATIONAL
+        window.libphonenumberFormat.INTERNATIONAL
       );
     } catch (e) {
       return number;
@@ -5253,7 +5267,7 @@ export class ConversationModel extends window.Backbone
   }
 
   isMuted(): boolean {
-    return isMuted(this.get('muteExpiresAt'));
+    return isConversationMuted(this.attributes);
   }
 
   async notify(

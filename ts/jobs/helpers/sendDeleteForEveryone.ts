@@ -23,7 +23,7 @@ import type {
   ConversationQueueJobBundle,
   DeleteForEveryoneJobData,
 } from '../conversationJobQueue';
-import { getUntrustedConversationIds } from './getUntrustedConversationIds';
+import { getUntrustedConversationUuids } from './getUntrustedConversationUuids';
 import { handleMessageSend } from '../../util/handleMessageSend';
 import { isConversationAccepted } from '../../util/isConversationAccepted';
 import { isConversationUnregistered } from '../../util/isConversationUnregistered';
@@ -39,6 +39,7 @@ export async function sendDeleteForEveryone(
   conversation: ConversationModel,
   {
     isFinalAttempt,
+    messaging,
     shouldContinue,
     timestamp,
     timeRemaining,
@@ -79,20 +80,20 @@ export async function sendDeleteForEveryone(
     ? getRecipients(deletedForEveryoneSendStatus)
     : recipientsFromJob;
 
-  const untrustedConversationIds = getUntrustedConversationIds(recipients);
-  if (untrustedConversationIds.length) {
+  const untrustedUuids = getUntrustedConversationUuids(recipients);
+  if (untrustedUuids.length) {
     window.reduxActions.conversations.conversationStoppedByMissingVerification({
       conversationId: conversation.id,
-      untrustedConversationIds,
+      untrustedUuids,
     });
     throw new Error(
-      `Delete for everyone blocked because ${untrustedConversationIds.length} conversation(s) were untrusted. Failing this attempt.`
+      `Delete for everyone blocked because ${untrustedUuids.length} conversation(s) were untrusted. Failing this attempt.`
     );
   }
 
   await conversation.queueJob(
     'conversationQueue/sendDeleteForEveryone',
-    async () => {
+    async abortSignal => {
       log.info(
         `Sending deleteForEveryone to conversation ${logId}`,
         `with timestamp ${timestamp}`,
@@ -108,7 +109,7 @@ export async function sendDeleteForEveryone(
 
       try {
         if (isMe(conversation.attributes)) {
-          const proto = await window.textsecure.messaging.getContentMessage({
+          const proto = await messaging.getContentMessage({
             deletedForEveryoneTimestamp: targetTimestamp,
             profileKey,
             recipients: conversation.getRecipients(),
@@ -120,7 +121,7 @@ export async function sendDeleteForEveryone(
           );
 
           await handleMessageSend(
-            window.textsecure.messaging.sendSyncMessage({
+            messaging.sendSyncMessage({
               encodedDataMessage: Proto.DataMessage.encode(
                 proto.dataMessage
               ).finish(),
@@ -209,6 +210,7 @@ export async function sendDeleteForEveryone(
             messageIds,
             send: async () =>
               window.Signal.Util.sendToGroup({
+                abortSignal,
                 contentHint,
                 groupSendOptions: {
                   groupV1: conversation.getGroupV1Info(recipients),

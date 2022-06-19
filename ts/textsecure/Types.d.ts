@@ -6,6 +6,7 @@ import type { IncomingWebSocketRequest } from './WebsocketResources';
 import type { UUID } from '../types/UUID';
 import type { TextAttachmentType } from '../types/Attachment';
 import { GiftBadgeStates } from '../components/conversation/Message';
+import { MIMEType } from '../types/MIME';
 
 export {
   IdentityKeyType,
@@ -97,9 +98,9 @@ export type ProcessedAttachment = {
   cdnId?: string;
   cdnKey?: string;
   digest?: string;
-  contentType?: string;
+  contentType: MIMEType;
   key?: string;
-  size?: number;
+  size: number;
   fileName?: string;
   flags?: number;
   width?: number;
@@ -189,9 +190,10 @@ export type ProcessedGroupCallUpdate = Proto.DataMessage.IGroupCallUpdate;
 export type ProcessedStoryContext = Proto.DataMessage.IStoryContext;
 
 export type ProcessedGiftBadge = {
-  receiptCredentialPresentation: string;
-  level: number;
   expiration: number;
+  id: string | undefined;
+  level: number;
+  receiptCredentialPresentation: string;
   state: GiftBadgeStates;
 };
 
@@ -249,6 +251,10 @@ export interface CallbackResultType {
   errors?: Array<CustomError>;
   unidentifiedDeliveries?: Array<string>;
   dataMessage?: Uint8Array;
+
+  // If this send is not the final step in a multi-step send, we shouldn't treat its
+  //   results we would treat a one-step send.
+  sendIsNotFinal?: boolean;
 
   // Fields necessary for send log save
   contentHint?: number;

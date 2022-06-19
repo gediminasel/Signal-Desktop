@@ -6,6 +6,7 @@
 @import 'variables';
 @import 'mixins';
 @import 'global';
+@import 'titlebar';
 
 // Old style: components
 @import 'progress';
@@ -96,6 +97,7 @@
 @import './components/ReactionPickerPicker.scss';
 @import './components/SafetyNumberChangeDialog.scss';
 @import './components/SafetyNumberViewer.scss';
+@import './components/ScrollDownButton.scss';
 @import './components/SearchInput.scss';
 @import './components/SearchResultsLoadingFakeHeader.scss';
 @import './components/SearchResultsLoadingFakeRow.scss';
@@ -114,5 +116,6 @@
 @import './components/TimelineFloatingHeader.scss';
 @import './components/TimelineWarning.scss';
 @import './components/TimelineWarnings.scss';
+@import './components/TitleBarContainer.scss';
 @import './components/Toast.scss';
 @import './components/WhatsNew.scss';

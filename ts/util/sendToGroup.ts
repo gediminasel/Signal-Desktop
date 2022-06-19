@@ -89,6 +89,7 @@ export type SenderKeyTargetType = {
 };
 
 export async function sendToGroup({
+  abortSignal,
   contentHint,
   groupSendOptions,
   isPartialSend,
@@ -97,6 +98,7 @@ export async function sendToGroup({
   sendTarget,
   sendType,
 }: {
+  abortSignal?: AbortSignal;
   contentHint: number;
   groupSendOptions: GroupSendOptionsType;
   isPartialSend?: boolean;
@@ -119,6 +121,12 @@ export async function sendToGroup({
   const contentMessage = await window.textsecure.messaging.getContentMessage(
     protoAttributes
   );
+
+  // Attachment upload might take too long to succeed - we don't want to proceed
+  // with the send if the caller aborted this call.
+  if (abortSignal?.aborted) {
+    throw new Error('sendToGroup was aborted');
+  }
 
   return sendContentMessageToGroup({
     contentHint,
@@ -404,18 +412,31 @@ export async function sendToGroupViaSenderKey(options: {
         newToMemberUuids.length
       } members: ${JSON.stringify(newToMemberUuids)}`
     );
-    await handleMessageSend(
-      window.textsecure.messaging.sendSenderKeyDistributionMessage(
-        {
-          contentHint: ContentHint.RESENDABLE,
-          distributionId,
-          groupId,
-          identifiers: newToMemberUuids,
-        },
-        sendOptions ? { ...sendOptions, online: false } : undefined
-      ),
-      { messageIds: [], sendType: 'senderKeyDistributionMessage' }
-    );
+    try {
+      await handleMessageSend(
+        window.textsecure.messaging.sendSenderKeyDistributionMessage(
+          {
+            contentHint: ContentHint.RESENDABLE,
+            distributionId,
+            groupId,
+            identifiers: newToMemberUuids,
+          },
+          sendOptions ? { ...sendOptions, online: false } : undefined
+        ),
+        { messageIds: [], sendType: 'senderKeyDistributionMessage' }
+      );
+    } catch (error) {
+      // If we partially fail to send the sender key distribution message (SKDM), we don't
+      //   want the successful SKDM sends to be considered an overall success.
+      if (error instanceof SendMessageProtoError) {
+        throw new SendMessageProtoError({
+          ...error,
+          sendIsNotFinal: true,
+        });
+      }
+
+      throw error;
+    }
 
     // Update memberDevices with new devices
     const updatedMemberDevices = [...memberDevices, ...newToMemberDevices];
@@ -731,6 +752,11 @@ export function _shouldFailSend(error: unknown, logId: string): boolean {
   //   SendMessageChallengeError
   //   MessageError
   if (isRecord(error) && typeof error.code === 'number') {
+    if (error.code === 400) {
+      logError('Invalid request, failing.');
+      return true;
+    }
+
     if (error.code === 401) {
       logError('Permissions error, failing.');
       return true;

@@ -1,4 +1,4 @@
-// Copyright 2018-2021 Signal Messenger, LLC
+// Copyright 2018-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { ipcRenderer } from 'electron';
@@ -23,8 +23,7 @@ type FSAttrType = {
 let xattr: FSAttrType | undefined;
 
 try {
-  // eslint-disable-next-line max-len
-  // eslint-disable-next-line global-require, import/no-extraneous-dependencies, import/no-unresolved
+  // eslint-disable-next-line global-require, import/no-extraneous-dependencies
   xattr = require('fs-xattr');
 } catch (e) {
   window.SignalContext.log?.info('x-attr dependency did not load successfully');
@@ -128,7 +127,7 @@ export const createWriterForNew = (
 
 export const createWriterForExisting = (
   root: string
-): ((options: { data: Uint8Array; path: string }) => Promise<string>) => {
+): ((options: { data?: Uint8Array; path?: string }) => Promise<string>) => {
   if (!isString(root)) {
     throw new TypeError("'root' must be a path");
   }
@@ -137,15 +136,15 @@ export const createWriterForExisting = (
     data: bytes,
     path: relativePath,
   }: {
-    data: Uint8Array;
-    path: string;
+    data?: Uint8Array;
+    path?: string;
   }): Promise<string> => {
     if (!isString(relativePath)) {
       throw new TypeError("'relativePath' must be a path");
     }
 
-    if (!isTypedArray(bytes)) {
-      throw new TypeError("'arrayBuffer' must be an array buffer");
+    if (!bytes) {
+      throw new TypeError("'data' must be a Uint8Array");
     }
 
     const buffer = Buffer.from(bytes);

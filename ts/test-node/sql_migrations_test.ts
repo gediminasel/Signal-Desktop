@@ -2028,82 +2028,6 @@ describe('SQL migrations test', () => {
   });
 
   describe('updateToSchemaVersion58', () => {
-    it('updates readStatus/seenStatus for messages with unread: true/1 in JSON', () => {
-      const MESSAGE_ID_1 = generateGuid();
-      const MESSAGE_ID_2 = generateGuid();
-      const MESSAGE_ID_3 = generateGuid();
-      const MESSAGE_ID_4 = generateGuid();
-      const CONVERSATION_ID = generateGuid();
-
-      updateToVersion(57);
-
-      // prettier-ignore
-      db.exec(
-        `
-        INSERT INTO messages
-          (id, conversationId, type, json)
-          VALUES
-          ('${MESSAGE_ID_1}', '${CONVERSATION_ID}', 'incoming', '${JSON.stringify(
-            { unread: true }
-          )}'),
-          ('${MESSAGE_ID_2}', '${CONVERSATION_ID}', 'incoming', '${JSON.stringify(
-            { unread: 1 }
-          )}'),
-          ('${MESSAGE_ID_3}', '${CONVERSATION_ID}', 'incoming', '${JSON.stringify(
-            { unread: undefined }
-           )}'),
-          ('${MESSAGE_ID_4}', '${CONVERSATION_ID}', 'incoming', '${JSON.stringify(
-            { unread: 0 }
-          )}');
-        `
-      );
-
-      assert.strictEqual(
-        db.prepare('SELECT COUNT(*) FROM messages;').pluck().get(),
-        4,
-        'starting total'
-      );
-
-      updateToVersion(58);
-
-      assert.strictEqual(
-        db.prepare('SELECT COUNT(*) FROM messages;').pluck().get(),
-        4,
-        'ending total'
-      );
-      assert.strictEqual(
-        db
-          .prepare(
-            `SELECT COUNT(*) FROM messages WHERE readStatus = ${ReadStatus.Unread};`
-          )
-          .pluck()
-          .get(),
-        2,
-        'ending unread count'
-      );
-      assert.strictEqual(
-        db
-          .prepare(
-            `SELECT COUNT(*) FROM messages WHERE seenStatus = ${SeenStatus.Unseen};`
-          )
-          .pluck()
-          .get(),
-        2,
-        'ending unread count'
-      );
-
-      assert.strictEqual(
-        db
-          .prepare(
-            `SELECT readStatus FROM messages WHERE id = '${MESSAGE_ID_2}' LIMIT 1;`
-          )
-          .pluck()
-          .get(),
-        ReadStatus.Unread,
-        'checking read status for message2'
-      );
-    });
-
     it('updates unseenStatus for previously-unread messages', () => {
       const MESSAGE_ID_1 = generateGuid();
       const MESSAGE_ID_2 = generateGuid();
@@ -2359,6 +2283,46 @@ describe('SQL migrations test', () => {
           seenStatus: SeenStatus.Seen,
         }),
         'checking JSON for message4'
+      );
+    });
+  });
+
+  describe('updateToSchemaVersion60', () => {
+    it('updates index to make query efficient', () => {
+      updateToVersion(60);
+
+      const items = db
+        .prepare(
+          `
+        EXPLAIN QUERY PLAN
+        UPDATE messages
+        INDEXED BY expiring_message_by_conversation_and_received_at
+        SET
+          expirationStartTimestamp = 342342,
+          json = json_patch(json, '{ "something": true }')
+        WHERE
+          conversationId = 'conversationId' AND
+          storyId IS NULL AND
+          isStory IS 0 AND
+          type IS 'incoming' AND
+          (
+            expirationStartTimestamp IS NULL OR
+            expirationStartTimestamp > 23423423
+          ) AND
+          expireTimer > 0 AND
+          received_at <= 234234;
+        `
+        )
+        .all();
+      const detail = items.map(item => item.detail).join('\n');
+
+      assert.notInclude(detail, 'B-TREE');
+      assert.notInclude(detail, 'SCAN');
+      assert.include(
+        detail,
+        'SEARCH messages USING INDEX ' +
+          'expiring_message_by_conversation_and_received_at ' +
+          '(conversationId=? AND storyId=?)'
       );
     });
   });

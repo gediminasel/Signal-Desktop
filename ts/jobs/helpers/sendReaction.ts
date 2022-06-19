@@ -34,11 +34,13 @@ import type {
 } from '../conversationJobQueue';
 import { isConversationAccepted } from '../../util/isConversationAccepted';
 import { isConversationUnregistered } from '../../util/isConversationUnregistered';
+import type { LoggerType } from '../../types/Logging';
 
 export async function sendReaction(
   conversation: ConversationModel,
   {
     isFinalAttempt,
+    messaging,
     shouldContinue,
     timeRemaining,
     log,
@@ -106,18 +108,18 @@ export async function sendReaction(
     const {
       allRecipientIdentifiers,
       recipientIdentifiersWithoutMe,
-      untrustedConversationIds,
-    } = getRecipients(pendingReaction, conversation);
+      untrustedUuids,
+    } = getRecipients(log, pendingReaction, conversation);
 
-    if (untrustedConversationIds.length) {
+    if (untrustedUuids.length) {
       window.reduxActions.conversations.conversationStoppedByMissingVerification(
         {
           conversationId: conversation.id,
-          untrustedConversationIds,
+          untrustedUuids,
         }
       );
       throw new Error(
-        `Reaction for message ${messageId} sending blocked because ${untrustedConversationIds.length} conversation(s) were untrusted. Failing this attempt.`
+        `Reaction for message ${messageId} sending blocked because ${untrustedUuids.length} conversation(s) were untrusted. Failing this attempt.`
       );
     }
 
@@ -168,7 +170,7 @@ export async function sendReaction(
 
     if (recipientIdentifiersWithoutMe.length === 0) {
       log.info('sending sync reaction message only');
-      const dataMessage = await window.textsecure.messaging.getDataMessage({
+      const dataMessage = await messaging.getDataMessage({
         attachments: [],
         expireTimer,
         groupV2: conversation.getGroupV2Info({
@@ -216,7 +218,7 @@ export async function sendReaction(
         }
 
         log.info('sending direct reaction message');
-        promise = window.textsecure.messaging.sendMessageToIdentifier({
+        promise = messaging.sendMessageToIdentifier({
           identifier: recipientIdentifiersWithoutMe[0],
           messageText: undefined,
           attachments: [],
@@ -242,7 +244,7 @@ export async function sendReaction(
         log.info('sending group reaction message');
         promise = conversation.queueJob(
           'conversationQueue/sendReaction',
-          () => {
+          abortSignal => {
             // Note: this will happen for all old jobs queued before 5.32.x
             if (isGroupV2(conversation.attributes) && !isNumber(revision)) {
               log.error('No revision provided, but conversation is GroupV2');
@@ -256,6 +258,7 @@ export async function sendReaction(
             }
 
             return window.Signal.Util.sendToGroup({
+              abortSignal,
               contentHint: ContentHint.RESENDABLE,
               groupSendOptions: {
                 groupV1: conversation.getGroupV1Info(
@@ -381,16 +384,17 @@ const setReactions = (
 };
 
 function getRecipients(
+  log: LoggerType,
   reaction: Readonly<MessageReactionType>,
   conversation: ConversationModel
 ): {
   allRecipientIdentifiers: Array<string>;
   recipientIdentifiersWithoutMe: Array<string>;
-  untrustedConversationIds: Array<string>;
+  untrustedUuids: Array<string>;
 } {
   const allRecipientIdentifiers: Array<string> = [];
   const recipientIdentifiersWithoutMe: Array<string> = [];
-  const untrustedConversationIds: Array<string> = [];
+  const untrustedUuids: Array<string> = [];
 
   const currentConversationRecipients = conversation.getMemberConversationIds();
 
@@ -411,11 +415,18 @@ function getRecipients(
     }
 
     if (recipient.isUntrusted()) {
-      untrustedConversationIds.push(recipientIdentifier);
+      const uuid = recipient.get('uuid');
+      if (!uuid) {
+        log.error(
+          `sendReaction/getRecipients: Untrusted conversation ${recipient.idForLogging()} missing UUID.`
+        );
+        continue;
+      }
+      untrustedUuids.push(uuid);
       continue;
     }
     if (recipient.isUnregistered()) {
-      untrustedConversationIds.push(recipientIdentifier);
+      untrustedUuids.push(recipientIdentifier);
       continue;
     }
 
@@ -428,7 +439,7 @@ function getRecipients(
   return {
     allRecipientIdentifiers,
     recipientIdentifiersWithoutMe,
-    untrustedConversationIds,
+    untrustedUuids,
   };
 }
 

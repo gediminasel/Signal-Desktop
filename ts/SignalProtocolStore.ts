@@ -52,6 +52,7 @@ import { QualifiedAddress } from './types/QualifiedAddress';
 import * as log from './logging/log';
 import { singleProtoJobQueue } from './jobs/singleProtoJobQueue';
 import * as Errors from './types/errors';
+import MessageSender from './textsecure/SendMessage';
 
 const TIMESTAMP_THRESHOLD = 5 * 1000; // 5 seconds
 
@@ -186,7 +187,7 @@ export function freezeSignedPreKey(
 
 // We add a this parameter to avoid an 'implicit any' error on the next line
 const EventsMixin = function EventsMixin(this: unknown) {
-  window._.assign(this, window.Backbone.Events);
+  Object.assign(this, window.Backbone.Events);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any as typeof window.Backbone.EventsMixin;
 
@@ -1386,7 +1387,7 @@ export class SignalProtocolStore extends EventsMixin {
 
       // Enqueue a null message with newly-created session
       await singleProtoJobQueue.add(
-        window.textsecure.messaging.getNullMessage({
+        MessageSender.getNullMessage({
           uuid: uuid.toString(),
         })
       );

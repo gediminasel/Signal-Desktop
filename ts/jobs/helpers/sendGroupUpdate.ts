@@ -19,7 +19,7 @@ import type {
   GroupUpdateJobData,
   ConversationQueueJobBundle,
 } from '../conversationJobQueue';
-import { getUntrustedConversationIds } from './getUntrustedConversationIds';
+import { getUntrustedConversationUuids } from './getUntrustedConversationUuids';
 
 // Note: because we don't have a recipient map, if some sends fail, we will resend this
 //   message to folks that got it on the first go-round. This is okay, because receivers
@@ -53,14 +53,14 @@ export async function sendGroupUpdate(
 
   const { groupChangeBase64, recipients, revision } = data;
 
-  const untrustedConversationIds = getUntrustedConversationIds(recipients);
-  if (untrustedConversationIds.length) {
+  const untrustedUuids = getUntrustedConversationUuids(recipients);
+  if (untrustedUuids.length) {
     window.reduxActions.conversations.conversationStoppedByMissingVerification({
       conversationId: conversation.id,
-      untrustedConversationIds,
+      untrustedUuids,
     });
     throw new Error(
-      `Group update blocked because ${untrustedConversationIds.length} conversation(s) were untrusted. Failing this attempt.`
+      `Group update blocked because ${untrustedUuids.length} conversation(s) were untrusted. Failing this attempt.`
     );
   }
 
@@ -90,27 +90,30 @@ export async function sendGroupUpdate(
   };
 
   try {
-    await conversation.queueJob('conversationQueue/sendGroupUpdate', async () =>
-      wrapWithSyncMessageSend({
-        conversation,
-        logId,
-        messageIds: [],
-        send: async () =>
-          window.Signal.Util.sendToGroup({
-            groupSendOptions: {
-              groupV2,
-              timestamp,
-              profileKey,
-            },
-            contentHint,
-            messageId: undefined,
-            sendOptions,
-            sendTarget: conversation.toSenderKeyTarget(),
-            sendType,
-          }),
-        sendType,
-        timestamp,
-      })
+    await conversation.queueJob(
+      'conversationQueue/sendGroupUpdate',
+      async abortSignal =>
+        wrapWithSyncMessageSend({
+          conversation,
+          logId,
+          messageIds: [],
+          send: async () =>
+            window.Signal.Util.sendToGroup({
+              abortSignal,
+              groupSendOptions: {
+                groupV2,
+                timestamp,
+                profileKey,
+              },
+              contentHint,
+              messageId: undefined,
+              sendOptions,
+              sendTarget: conversation.toSenderKeyTarget(),
+              sendType,
+            }),
+          sendType,
+          timestamp,
+        })
     );
   } catch (error: unknown) {
     await handleMultipleSendErrors({

@@ -3,13 +3,13 @@
 
 import * as React from 'react';
 import { times } from 'lodash';
-import { storiesOf } from '@storybook/react';
 import { boolean, select, number } from '@storybook/addon-knobs';
 import { action } from '@storybook/addon-actions';
 
 import type { GroupCallRemoteParticipantType } from '../types/Calling';
 import {
   CallMode,
+  CallViewMode,
   CallState,
   GroupCallConnectionState,
   GroupCallJoinState,
@@ -44,8 +44,8 @@ const conversation = getDefaultConversation({
 type OverridePropsBase = {
   hasLocalAudio?: boolean;
   hasLocalVideo?: boolean;
-  amISpeaking?: boolean;
-  isInSpeakerView?: boolean;
+  localAudioLevel?: number;
+  viewMode?: CallViewMode;
 };
 
 type DirectCallOverrideProps = OverridePropsBase & {
@@ -104,7 +104,7 @@ const createActiveGroupCallProp = (overrideProps: GroupCallOverrideProps) => ({
   peekedParticipants:
     overrideProps.peekedParticipants || overrideProps.remoteParticipants || [],
   remoteParticipants: overrideProps.remoteParticipants || [],
-  speakingDemuxIds: new Set<number>(),
+  remoteAudioLevels: new Map<number, number>(),
 });
 
 const createActiveCallProp = (
@@ -121,10 +121,15 @@ const createActiveCallProp = (
       'hasLocalVideo',
       overrideProps.hasLocalVideo || false
     ),
-    amISpeaking: boolean('amISpeaking', overrideProps.amISpeaking || false),
-    isInSpeakerView: boolean(
-      'isInSpeakerView',
-      overrideProps.isInSpeakerView || false
+    localAudioLevel: select(
+      'localAudioLevel',
+      [0, 0.5, 1],
+      overrideProps.localAudioLevel || 0
+    ),
+    viewMode: select(
+      'viewMode',
+      [CallViewMode.Grid, CallViewMode.Speaker, CallViewMode.Presentation],
+      overrideProps.viewMode || CallViewMode.Grid
     ),
     outgoingRing: true,
     pip: false,
@@ -168,6 +173,8 @@ const createProps = (
   setPresenting: action('toggle-presenting'),
   setRendererCanvas: action('set-renderer-canvas'),
   stickyControls: boolean('stickyControls', false),
+  switchToPresentationView: action('switch-to-presentation-view'),
+  switchFromPresentationView: action('switch-from-presentation-view'),
   toggleParticipants: action('toggle-participants'),
   togglePip: action('toggle-pip'),
   toggleScreenRecordingPermissionsDialog: action(
@@ -177,13 +184,15 @@ const createProps = (
   toggleSpeakerView: action('toggle-speaker-view'),
 });
 
-const story = storiesOf('Components/CallScreen', module);
+export default {
+  title: 'Components/CallScreen',
+};
 
-story.add('Default', () => {
+export const Default = (): JSX.Element => {
   return <CallScreen {...createProps()} />;
-});
+};
 
-story.add('Pre-Ring', () => {
+export const PreRing = (): JSX.Element => {
   return (
     <CallScreen
       {...createProps({
@@ -192,9 +201,13 @@ story.add('Pre-Ring', () => {
       })}
     />
   );
-});
+};
 
-story.add('Ringing', () => {
+PreRing.story = {
+  name: 'Pre-Ring',
+};
+
+export const _Ringing = (): JSX.Element => {
   return (
     <CallScreen
       {...createProps({
@@ -203,9 +216,9 @@ story.add('Ringing', () => {
       })}
     />
   );
-});
+};
 
-story.add('Reconnecting', () => {
+export const _Reconnecting = (): JSX.Element => {
   return (
     <CallScreen
       {...createProps({
@@ -214,9 +227,9 @@ story.add('Reconnecting', () => {
       })}
     />
   );
-});
+};
 
-story.add('Ended', () => {
+export const _Ended = (): JSX.Element => {
   return (
     <CallScreen
       {...createProps({
@@ -225,9 +238,9 @@ story.add('Ended', () => {
       })}
     />
   );
-});
+};
 
-story.add('hasLocalAudio', () => {
+export const HasLocalAudio = (): JSX.Element => {
   return (
     <CallScreen
       {...createProps({
@@ -236,9 +249,13 @@ story.add('hasLocalAudio', () => {
       })}
     />
   );
-});
+};
 
-story.add('hasLocalVideo', () => {
+HasLocalAudio.story = {
+  name: 'hasLocalAudio',
+};
+
+export const HasLocalVideo = (): JSX.Element => {
   return (
     <CallScreen
       {...createProps({
@@ -247,9 +264,13 @@ story.add('hasLocalVideo', () => {
       })}
     />
   );
-});
+};
 
-story.add('hasRemoteVideo', () => {
+HasLocalVideo.story = {
+  name: 'hasLocalVideo',
+};
+
+export const HasRemoteVideo = (): JSX.Element => {
   return (
     <CallScreen
       {...createProps({
@@ -258,9 +279,13 @@ story.add('hasRemoteVideo', () => {
       })}
     />
   );
-});
+};
 
-story.add('Group call - 1', () => (
+HasRemoteVideo.story = {
+  name: 'hasRemoteVideo',
+};
+
+export const GroupCall1 = (): JSX.Element => (
   <CallScreen
     {...createProps({
       callMode: CallMode.Group,
@@ -281,7 +306,11 @@ story.add('Group call - 1', () => (
       ],
     })}
   />
-));
+);
+
+GroupCall1.story = {
+  name: 'Group call - 1',
+};
 
 // We generate these upfront so that the list is stable when you move the slider.
 const allRemoteParticipants = times(MAX_PARTICIPANTS).map(index => ({
@@ -297,7 +326,7 @@ const allRemoteParticipants = times(MAX_PARTICIPANTS).map(index => ({
   }),
 }));
 
-story.add('Group call - Many', () => {
+export const GroupCallMany = (): JSX.Element => {
   return (
     <CallScreen
       {...createProps({
@@ -314,9 +343,13 @@ story.add('Group call - Many', () => {
       })}
     />
   );
-});
+};
 
-story.add('Group call - reconnecting', () => (
+GroupCallMany.story = {
+  name: 'Group call - Many',
+};
+
+export const GroupCallReconnecting = (): JSX.Element => (
   <CallScreen
     {...createProps({
       callMode: CallMode.Group,
@@ -338,18 +371,26 @@ story.add('Group call - reconnecting', () => (
       ],
     })}
   />
-));
+);
 
-story.add('Group call - 0', () => (
+GroupCallReconnecting.story = {
+  name: 'Group call - reconnecting',
+};
+
+export const GroupCall0 = (): JSX.Element => (
   <CallScreen
     {...createProps({
       callMode: CallMode.Group,
       remoteParticipants: [],
     })}
   />
-));
+);
 
-story.add('Group call - someone is sharing screen', () => (
+GroupCall0.story = {
+  name: 'Group call - 0',
+};
+
+export const GroupCallSomeoneIsSharingScreen = (): JSX.Element => (
   <CallScreen
     {...createProps({
       callMode: CallMode.Group,
@@ -362,11 +403,14 @@ story.add('Group call - someone is sharing screen', () => (
         })),
     })}
   />
-));
+);
 
-story.add(
-  "Group call - someone is sharing screen and you're reconnecting",
-  () => (
+GroupCallSomeoneIsSharingScreen.story = {
+  name: 'Group call - someone is sharing screen',
+};
+
+export const GroupCallSomeoneIsSharingScreenAndYoureReconnecting =
+  (): JSX.Element => (
     <CallScreen
       {...createProps({
         callMode: CallMode.Group,
@@ -380,5 +424,8 @@ story.add(
           })),
       })}
     />
-  )
-);
+  );
+
+GroupCallSomeoneIsSharingScreenAndYoureReconnecting.story = {
+  name: "Group call - someone is sharing screen and you're reconnecting",
+};

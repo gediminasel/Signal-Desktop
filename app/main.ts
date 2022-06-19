@@ -27,6 +27,10 @@ import {
   shell,
   systemPreferences,
 } from 'electron';
+import type {
+  MenuItemConstructorOptions,
+  TitleBarOverlayOptions,
+} from 'electron';
 import { z } from 'zod';
 
 import packageJson from '../package.json';
@@ -34,15 +38,21 @@ import * as GlobalErrors from './global_errors';
 import { setup as setupCrashReports } from './crashReports';
 import { setup as setupSpellChecker } from './spell_check';
 import { redactAll, addSensitivePath } from '../ts/util/privacy';
+import { createSupportUrl } from '../ts/util/createSupportUrl';
 import { missingCaseError } from '../ts/util/missingCaseError';
 import { strictAssert } from '../ts/util/assert';
 import { consoleLogger } from '../ts/util/consoleLogger';
-import type { ThemeSettingType } from '../ts/types/Storage.d';
+import type { ThemeSettingType } from '../ts/types/StorageUIKeys';
 import { ThemeType } from '../ts/types/Util';
 
 import './startup_config';
 
 import type { ConfigType } from './config';
+import type { RendererConfigType } from '../ts/types/RendererConfig';
+import {
+  directoryConfigSchema,
+  rendererConfigSchema,
+} from '../ts/types/RendererConfig';
 import config from './config';
 import {
   Environment,
@@ -74,7 +84,8 @@ import * as logging from '../ts/logging/main_process_logging';
 import { MainSQL } from '../ts/sql/main';
 import * as sqlChannels from './sql_channel';
 import * as windowState from './window_state';
-import type { MenuOptionsType } from './menu';
+import type { CreateTemplateOptionsType } from './menu';
+import type { MenuActionType } from '../ts/types/menu';
 import { createTemplate } from './menu';
 import { installFileHandler, installWebHandler } from './protocol_filter';
 import * as OS from '../ts/OS';
@@ -90,10 +101,6 @@ import {
 } from '../ts/util/sgnlHref';
 import { clearTimeoutIfNecessary } from '../ts/util/clearTimeoutIfNecessary';
 import { toggleMaximizedBrowserWindow } from '../ts/util/toggleMaximizedBrowserWindow';
-import {
-  getTitleBarVisibility,
-  TitleBarVisibility,
-} from '../ts/types/Settings';
 import { ChallengeMainHandler } from '../ts/main/challengeMain';
 import { NativeThemeNotifier } from '../ts/main/NativeThemeNotifier';
 import { PowerChannel } from '../ts/main/powerChannel';
@@ -163,10 +170,6 @@ function showWindow() {
     mainWindow.show();
   }
 }
-
-// This code runs before the 'ready' event fires, so we don't have our logging
-//   infrastructure in place yet. So we use console.log directly.
-/* eslint-disable no-console */
 
 if (!process.mas) {
   console.log('making app single instance');
@@ -253,8 +256,12 @@ async function getThemeSetting({
 
   const json = await sql.sqlCall('getItemById', ['theme-setting']);
 
-  // Default to `system` if setting doesn't exist yet
-  const slowValue = json ? json.value : 'system';
+  // Default to `system` if setting doesn't exist or is invalid
+  const setting: unknown = json?.value;
+  const slowValue =
+    setting === 'light' || setting === 'dark' || setting === 'system'
+      ? setting
+      : 'system';
 
   ephemeralConfig.set('theme-setting', slowValue);
 
@@ -323,6 +330,8 @@ if (windowFromUserConfig) {
   ephemeralConfig.set('window', windowConfig);
 }
 
+let menuOptions: CreateTemplateOptionsType | undefined;
+
 // These will be set after app fires the 'ready' event
 let logger: LoggerType | undefined;
 let locale: LocaleType | undefined;
@@ -345,57 +354,100 @@ function getLocale(): LocaleType {
   return locale;
 }
 
-function prepareFileUrl(
+type PrepareUrlOptions = { forCalling?: boolean; forCamera?: boolean };
+
+async function prepareFileUrl(
   pathSegments: ReadonlyArray<string>,
-  moreKeys?: undefined | Record<string, unknown>
-): string {
+  options: PrepareUrlOptions = {}
+): Promise<string> {
   const filePath = join(...pathSegments);
   const fileUrl = pathToFileURL(filePath);
-  return prepareUrl(fileUrl, moreKeys);
+  return prepareUrl(fileUrl, options);
 }
 
-function prepareUrl(
+async function prepareUrl(
   url: URL,
-  moreKeys?: undefined | Record<string, unknown>
-): string {
-  return setUrlSearchParams(url, {
-    name: packageJson.productName,
-    locale: locale ? locale.name : undefined,
-    version: app.getVersion(),
-    buildCreation: config.get<number | undefined>('buildCreation'),
-    buildExpiration: config.get<number | undefined>('buildExpiration'),
-    serverUrl: config.get<string>('serverUrl'),
-    storageUrl: config.get<string>('storageUrl'),
-    updatesUrl: config.get<string>('updatesUrl'),
+  { forCalling, forCamera }: PrepareUrlOptions = {}
+): Promise<string> {
+  const theme = await getResolvedThemeSetting();
+
+  const directoryConfig = directoryConfigSchema.safeParse({
     directoryVersion: config.get<number | undefined>('directoryVersion') || 1,
     directoryUrl: config.get<string | null>('directoryUrl') || undefined,
     directoryEnclaveId:
       config.get<string | null>('directoryEnclaveId') || undefined,
     directoryTrustAnchor:
       config.get<string | null>('directoryTrustAnchor') || undefined,
-    directoryV2Url: config.get<string>('directoryV2Url'),
-    directoryV2PublicKey: config.get<string>('directoryV2PublicKey'),
-    directoryV2CodeHashes: config.get<string>('directoryV2CodeHashes'),
+    directoryV2Url: config.get<string | null>('directoryV2Url') || undefined,
+    directoryV2PublicKey:
+      config.get<string | null>('directoryV2PublicKey') || undefined,
+    directoryV2CodeHashes:
+      config.get<Array<string> | null>('directoryV2CodeHashes') || undefined,
+    directoryV3Url: config.get<string | null>('directoryV3Url') || undefined,
+    directoryV3MRENCLAVE:
+      config.get<string | null>('directoryV3MRENCLAVE') || undefined,
+    directoryV3Root: config.get<string | null>('directoryV3Root') || undefined,
+  });
+  if (!directoryConfig.success) {
+    throw new Error(
+      `prepareUrl: Failed to parse renderer directory config ${JSON.stringify(
+        directoryConfig.error.flatten()
+      )}`
+    );
+  }
+
+  const urlParams: RendererConfigType = {
+    name: packageJson.productName,
+    locale: getLocale().name,
+    version: app.getVersion(),
+    buildCreation: config.get<number>('buildCreation'),
+    buildExpiration: config.get<number>('buildExpiration'),
+    serverUrl: config.get<string>('serverUrl'),
+    storageUrl: config.get<string>('storageUrl'),
+    updatesUrl: config.get<string>('updatesUrl'),
     cdnUrl0: config.get<ConfigType>('cdn').get<string>('0'),
     cdnUrl2: config.get<ConfigType>('cdn').get<string>('2'),
     certificateAuthority: config.get<string>('certificateAuthority'),
-    environment: enableCI ? 'production' : getEnvironment(),
-    enableCI: enableCI ? 'true' : '',
-    node_version: process.versions.node,
+    environment: enableCI ? Environment.Production : getEnvironment(),
+    enableCI,
+    nodeVersion: process.versions.node,
     hostname: os.hostname(),
-    appInstance: process.env.NODE_APP_INSTANCE,
-    proxyUrl: process.env.HTTPS_PROXY || process.env.https_proxy,
+    appInstance: process.env.NODE_APP_INSTANCE || undefined,
+    proxyUrl: process.env.HTTPS_PROXY || process.env.https_proxy || undefined,
     contentProxyUrl: config.get<string>('contentProxyUrl'),
     sfuUrl: config.get('sfuUrl'),
-    reducedMotionSetting: animationSettings.prefersReducedMotion ? 'true' : '',
+    reducedMotionSetting: animationSettings.prefersReducedMotion,
     serverPublicParams: config.get<string>('serverPublicParams'),
     serverTrustRoot: config.get<string>('serverTrustRoot'),
+    theme,
     appStartInitialSpellcheckSetting,
     userDataPath: app.getPath('userData'),
     homePath: app.getPath('home'),
     crashDumpsPath: app.getPath('crashDumps'),
-    ...moreKeys,
-  }).href;
+
+    directoryConfig: directoryConfig.data,
+
+    // Only used by the main window
+    isMainWindowFullScreen: Boolean(mainWindow?.isFullScreen()),
+
+    // Only for tests
+    argv: JSON.stringify(process.argv),
+
+    // Only for permission popup window
+    forCalling: Boolean(forCalling),
+    forCamera: Boolean(forCamera),
+  };
+
+  const parsed = rendererConfigSchema.safeParse(urlParams);
+  if (!parsed.success) {
+    throw new Error(
+      `prepareUrl: Failed to parse renderer config ${JSON.stringify(
+        parsed.error.flatten()
+      )}`
+    );
+  }
+
+  return setUrlSearchParams(url, { config: JSON.stringify(parsed.data) }).href;
 }
 
 async function handleUrl(event: Electron.Event, rawTarget: string) {
@@ -428,7 +480,10 @@ async function handleUrl(event: Electron.Event, rawTarget: string) {
   }
 }
 
-function handleCommonWindowEvents(window: BrowserWindow) {
+function handleCommonWindowEvents(
+  window: BrowserWindow,
+  titleBarOverlay: TitleBarOverlayOptions | false = false
+) {
   window.webContents.on('will-navigate', handleUrl);
   window.webContents.on('new-window', handleUrl);
   window.webContents.on(
@@ -466,6 +521,23 @@ function handleCommonWindowEvents(window: BrowserWindow) {
   window.webContents.on('preferred-size-changed', onZoomChanged);
 
   nativeThemeNotifier.addWindow(window);
+
+  if (titleBarOverlay) {
+    const onThemeChange = async () => {
+      try {
+        const newOverlay = await getTitleBarOverlay();
+        if (!newOverlay) {
+          return;
+        }
+        window.setTitleBarOverlay(newOverlay);
+      } catch (error) {
+        console.error('onThemeChange error', error);
+      }
+    };
+
+    nativeTheme.on('updated', onThemeChange);
+    settingsChannel?.on('change:themeSetting', onThemeChange);
+  }
 }
 
 const DEFAULT_WIDTH = 800;
@@ -486,10 +558,10 @@ type BoundsType = {
 };
 
 function isVisible(window: BoundsType, bounds: BoundsType) {
-  const boundsX = get(bounds, 'x') || 0;
-  const boundsY = get(bounds, 'y') || 0;
-  const boundsWidth = get(bounds, 'width') || DEFAULT_WIDTH;
-  const boundsHeight = get(bounds, 'height') || DEFAULT_HEIGHT;
+  const boundsX = bounds?.x || 0;
+  const boundsY = bounds?.y || 0;
+  const boundsWidth = bounds?.width || DEFAULT_WIDTH;
+  const boundsHeight = bounds?.height || DEFAULT_HEIGHT;
 
   // requiring BOUNDS_BUFFER pixels on the left or right side
   const rightSideClearOfLeftBound =
@@ -520,9 +592,49 @@ if (OS.isWindows()) {
   windowIcon = join(__dirname, '../build/icons/png/512x512.png');
 }
 
+const mainTitleBarStyle =
+  OS.isLinux() || isTestEnvironment(getEnvironment())
+    ? ('default' as const)
+    : ('hidden' as const);
+
+const nonMainTitleBarStyle = OS.isWindows()
+  ? ('hidden' as const)
+  : ('default' as const);
+
+async function getTitleBarOverlay(): Promise<TitleBarOverlayOptions | false> {
+  if (!OS.isWindows()) {
+    return false;
+  }
+
+  const theme = await getResolvedThemeSetting();
+
+  let color: string;
+  let symbolColor: string;
+  if (theme === 'light') {
+    color = '#e8e8e8';
+    symbolColor = '#1b1b1b';
+  } else if (theme === 'dark') {
+    color = '#24292e';
+    symbolColor = '#fff';
+  } else {
+    throw missingCaseError(theme);
+  }
+
+  return {
+    color,
+    symbolColor,
+
+    // Should match stylesheets/components/TitleBarContainer.scss minus the
+    // border
+    height: (OS.isWindows11() ? 29 : 28) - 1,
+  };
+}
+
 async function createWindow() {
   const usePreloadBundle =
     !isTestEnvironment(getEnvironment()) || forcePreloadBundle;
+
+  const titleBarOverlay = await getTitleBarOverlay();
 
   const windowOptions: Electron.BrowserWindowConstructorOptions = {
     show: false,
@@ -531,11 +643,8 @@ async function createWindow() {
     minWidth: MIN_WIDTH,
     minHeight: MIN_HEIGHT,
     autoHideMenuBar: false,
-    titleBarStyle:
-      getTitleBarVisibility() === TitleBarVisibility.Hidden &&
-      !isTestEnvironment(getEnvironment())
-        ? 'hidden'
-        : 'default',
+    titleBarStyle: mainTitleBarStyle,
+    titleBarOverlay,
     backgroundColor: isTestEnvironment(getEnvironment())
       ? '#ffffff' // Tests should always be rendered on a white background
       : await getBackgroundColor(),
@@ -546,7 +655,9 @@ async function createWindow() {
       contextIsolation: false,
       preload: join(
         __dirname,
-        usePreloadBundle ? '../preload.bundle.js' : '../preload.js'
+        usePreloadBundle
+          ? '../preload.bundle.js'
+          : '../ts/windows/main/preload.js'
       ),
       spellcheck: await getSpellCheckSetting(),
       backgroundThrottling: isThrottlingEnabled,
@@ -615,7 +726,20 @@ async function createWindow() {
     systemTrayService.setMainWindow(mainWindow);
   }
 
-  function captureAndSaveWindowStats() {
+  function saveWindowStats() {
+    if (!windowConfig) {
+      return;
+    }
+
+    getLogger().info(
+      'Updating BrowserWindow config: %s',
+      JSON.stringify(windowConfig)
+    );
+    ephemeralConfig.set('window', windowConfig);
+  }
+  const debouncedSaveStats = debounce(saveWindowStats, 500);
+
+  function captureWindowStats() {
     if (!mainWindow) {
       return;
     }
@@ -623,8 +747,7 @@ async function createWindow() {
     const size = mainWindow.getSize();
     const position = mainWindow.getPosition();
 
-    // so if we need to recreate the window, we have the most recent settings
-    windowConfig = {
+    const newWindowConfig = {
       maximized: mainWindow.isMaximized(),
       autoHideMenuBar: mainWindow.autoHideMenuBar,
       fullscreen: mainWindow.isFullScreen(),
@@ -634,16 +757,24 @@ async function createWindow() {
       y: position[1],
     };
 
-    getLogger().info(
-      'Updating BrowserWindow config: %s',
-      JSON.stringify(windowConfig)
-    );
-    ephemeralConfig.set('window', windowConfig);
+    if (
+      newWindowConfig.fullscreen !== windowConfig?.fullscreen ||
+      newWindowConfig.maximized !== windowConfig?.maximized
+    ) {
+      mainWindow.webContents.send('window:set-window-stats', {
+        isMaximized: newWindowConfig.maximized,
+        isFullScreen: newWindowConfig.fullscreen,
+      });
+    }
+
+    // so if we need to recreate the window, we have the most recent settings
+    windowConfig = newWindowConfig;
+
+    debouncedSaveStats();
   }
 
-  const debouncedCaptureStats = debounce(captureAndSaveWindowStats, 500);
-  mainWindow.on('resize', debouncedCaptureStats);
-  mainWindow.on('move', debouncedCaptureStats);
+  mainWindow.on('resize', captureWindowStats);
+  mainWindow.on('move', captureWindowStats);
 
   const setWindowFocus = () => {
     if (!mainWindow) {
@@ -657,22 +788,10 @@ async function createWindow() {
   // This is a fallback in case we drop an event for some reason.
   setInterval(setWindowFocus, 10000);
 
-  const moreKeys = {
-    isFullScreen: String(Boolean(mainWindow.isFullScreen())),
-    resolvedTheme: await getResolvedThemeSetting(),
-  };
-
   if (getEnvironment() === Environment.Test) {
-    mainWindow.loadURL(
-      prepareFileUrl([__dirname, '../test/index.html'], {
-        ...moreKeys,
-        argv: JSON.stringify(process.argv),
-      })
-    );
+    mainWindow.loadURL(await prepareFileUrl([__dirname, '../test/index.html']));
   } else {
-    mainWindow.loadURL(
-      prepareFileUrl([__dirname, '../background.html'], moreKeys)
-    );
+    mainWindow.loadURL(await prepareFileUrl([__dirname, '../background.html']));
   }
 
   if (!enableCI && config.get<boolean>('openDevTools')) {
@@ -680,7 +799,7 @@ async function createWindow() {
     mainWindow.webContents.openDevTools();
   }
 
-  handleCommonWindowEvents(mainWindow);
+  handleCommonWindowEvents(mainWindow, titleBarOverlay);
 
   // App dock icon bounce
   bounce.init(mainWindow);
@@ -910,51 +1029,8 @@ ipc.once('ready-for-updates', readyForUpdates);
 const TEN_MINUTES = 10 * 60 * 1000;
 setTimeout(readyForUpdates, TEN_MINUTES);
 
-// the support only provides a subset of languages available within the app
-// so we have to list them out here and fallback to english if not included
-
-const SUPPORT_LANGUAGES = [
-  'ar',
-  'bn',
-  'de',
-  'en-us',
-  'es',
-  'fr',
-  'hi',
-  'hi-in',
-  'hc',
-  'id',
-  'it',
-  'ja',
-  'ko',
-  'mr',
-  'ms',
-  'nl',
-  'pl',
-  'pt',
-  'ru',
-  'sv',
-  'ta',
-  'te',
-  'tr',
-  'uk',
-  'ur',
-  'vi',
-  'zh-cn',
-  'zh-tw',
-];
-
 function openContactUs() {
-  const userLanguage = app.getLocale();
-  const language = SUPPORT_LANGUAGES.includes(userLanguage)
-    ? userLanguage
-    : 'en-us';
-
-  // This URL needs a hardcoded language because the '?desktop' is dropped if the page
-  //   auto-redirects to the proper URL
-  shell.openExternal(
-    `https://support.signal.org/hc/${language}/requests/new?desktop`
-  );
+  shell.openExternal(createSupportUrl({ locale: app.getLocale() }));
 }
 
 function openJoinTheBeta() {
@@ -1001,7 +1077,7 @@ function setupAsStandalone() {
 }
 
 let screenShareWindow: BrowserWindow | undefined;
-function showScreenShareWindow(sourceName: string) {
+async function showScreenShareWindow(sourceName: string) {
   if (screenShareWindow) {
     screenShareWindow.showInactive();
     return;
@@ -1023,6 +1099,7 @@ function showScreenShareWindow(sourceName: string) {
     resizable: false,
     show: false,
     title: getLocale().i18n('screenShareWindow'),
+    titleBarStyle: nonMainTitleBarStyle,
     width,
     webPreferences: {
       ...defaultWebPrefs,
@@ -1039,7 +1116,9 @@ function showScreenShareWindow(sourceName: string) {
 
   handleCommonWindowEvents(screenShareWindow);
 
-  screenShareWindow.loadURL(prepareFileUrl([__dirname, '../screenShare.html']));
+  screenShareWindow.loadURL(
+    await prepareFileUrl([__dirname, '../screenShare.html'])
+  );
 
   screenShareWindow.on('closed', () => {
     screenShareWindow = undefined;
@@ -1063,11 +1142,15 @@ async function showAbout() {
     return;
   }
 
+  const titleBarOverlay = await getTitleBarOverlay();
+
   const options = {
     width: 500,
     height: 500,
     resizable: false,
     title: getLocale().i18n('aboutSignalDesktop'),
+    titleBarStyle: nonMainTitleBarStyle,
+    titleBarOverlay,
     autoHideMenuBar: true,
     backgroundColor: await getBackgroundColor(),
     show: false,
@@ -1083,9 +1166,9 @@ async function showAbout() {
 
   aboutWindow = new BrowserWindow(options);
 
-  handleCommonWindowEvents(aboutWindow);
+  handleCommonWindowEvents(aboutWindow, titleBarOverlay);
 
-  aboutWindow.loadURL(prepareFileUrl([__dirname, '../about.html']));
+  aboutWindow.loadURL(await prepareFileUrl([__dirname, '../about.html']));
 
   aboutWindow.on('closed', () => {
     aboutWindow = undefined;
@@ -1105,12 +1188,16 @@ async function showSettingsWindow() {
     return;
   }
 
+  const titleBarOverlay = await getTitleBarOverlay();
+
   const options = {
     width: 700,
     height: 700,
     frame: true,
     resizable: false,
     title: getLocale().i18n('signalDesktopPreferences'),
+    titleBarStyle: nonMainTitleBarStyle,
+    titleBarOverlay,
     autoHideMenuBar: true,
     backgroundColor: await getBackgroundColor(),
     show: false,
@@ -1126,9 +1213,9 @@ async function showSettingsWindow() {
 
   settingsWindow = new BrowserWindow(options);
 
-  handleCommonWindowEvents(settingsWindow);
+  handleCommonWindowEvents(settingsWindow, titleBarOverlay);
 
-  settingsWindow.loadURL(prepareFileUrl([__dirname, '../settings.html']));
+  settingsWindow.loadURL(await prepareFileUrl([__dirname, '../settings.html']));
 
   settingsWindow.on('closed', () => {
     settingsWindow = undefined;
@@ -1174,6 +1261,8 @@ async function showStickerCreator() {
 
   const { x = 0, y = 0 } = windowConfig || {};
 
+  const titleBarOverlay = await getTitleBarOverlay();
+
   const options = {
     x: x + 100,
     y: y + 100,
@@ -1181,6 +1270,8 @@ async function showStickerCreator() {
     minWidth: 800,
     height: 650,
     title: getLocale().i18n('signalDesktopStickerCreator'),
+    titleBarStyle: nonMainTitleBarStyle,
+    titleBarOverlay,
     autoHideMenuBar: true,
     backgroundColor: await getBackgroundColor(),
     show: false,
@@ -1198,7 +1289,7 @@ async function showStickerCreator() {
   stickerCreatorWindow = new BrowserWindow(options);
   setupSpellChecker(stickerCreatorWindow, getLocale());
 
-  handleCommonWindowEvents(stickerCreatorWindow);
+  handleCommonWindowEvents(stickerCreatorWindow, titleBarOverlay);
 
   const appUrl = process.env.SIGNAL_ENABLE_HTTP
     ? prepareUrl(
@@ -1206,7 +1297,7 @@ async function showStickerCreator() {
       )
     : prepareFileUrl([__dirname, '../sticker-creator/dist/index.html']);
 
-  stickerCreatorWindow.loadURL(appUrl);
+  stickerCreatorWindow.loadURL(await appUrl);
 
   stickerCreatorWindow.on('closed', () => {
     stickerCreatorWindow = undefined;
@@ -1233,12 +1324,15 @@ async function showDebugLogWindow() {
     return;
   }
 
-  const theme = await getThemeSetting();
+  const titleBarOverlay = await getTitleBarOverlay();
+
   const options = {
     width: 700,
     height: 500,
     resizable: false,
     title: getLocale().i18n('debugLog'),
+    titleBarStyle: nonMainTitleBarStyle,
+    titleBarOverlay,
     autoHideMenuBar: true,
     backgroundColor: await getBackgroundColor(),
     show: false,
@@ -1260,10 +1354,10 @@ async function showDebugLogWindow() {
 
   debugLogWindow = new BrowserWindow(options);
 
-  handleCommonWindowEvents(debugLogWindow);
+  handleCommonWindowEvents(debugLogWindow, titleBarOverlay);
 
   debugLogWindow.loadURL(
-    prepareFileUrl([__dirname, '../debug_log.html'], { theme })
+    await prepareFileUrl([__dirname, '../debug_log.html'])
   );
 
   debugLogWindow.on('closed', () => {
@@ -1294,13 +1388,13 @@ function showPermissionsPopupWindow(forCalling: boolean, forCamera: boolean) {
       return;
     }
 
-    const theme = await getThemeSetting();
     const size = mainWindow.getSize();
     const options = {
       width: Math.min(400, size[0]),
       height: Math.min(150, size[1]),
       resizable: false,
       title: getLocale().i18n('allowAccess'),
+      titleBarStyle: nonMainTitleBarStyle,
       autoHideMenuBar: true,
       backgroundColor: await getBackgroundColor(),
       show: false,
@@ -1321,8 +1415,7 @@ function showPermissionsPopupWindow(forCalling: boolean, forCamera: boolean) {
     handleCommonWindowEvents(permissionsPopupWindow);
 
     permissionsPopupWindow.loadURL(
-      prepareFileUrl([__dirname, '../permissions_popup.html'], {
-        theme,
+      await prepareFileUrl([__dirname, '../permissions_popup.html'], {
         forCalling,
         forCamera,
       })
@@ -1463,6 +1556,9 @@ function getAppLocale(): string {
 // them so that other apps can use them if they need to.
 app.commandLine.appendSwitch('disable-features', 'HardwareMediaKeyHandling');
 
+// If we don't set this, Desktop will ask for access to keychain/keyring on startup
+app.commandLine.appendSwitch('password-store', 'basic');
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -1573,7 +1669,7 @@ app.on('ready', async () => {
   const backgroundColor = await getBackgroundColor({ ephemeralOnly: true });
 
   // eslint-disable-next-line more/no-then
-  Promise.race([sqlInitPromise, timeout]).then(maybeTimeout => {
+  Promise.race([sqlInitPromise, timeout]).then(async maybeTimeout => {
     if (maybeTimeout !== 'timeout') {
       return;
     }
@@ -1609,7 +1705,7 @@ app.on('ready', async () => {
       loadingWindow = undefined;
     });
 
-    loadingWindow.loadURL(prepareFileUrl([__dirname, '../loading.html']));
+    loadingWindow.loadURL(await prepareFileUrl([__dirname, '../loading.html']));
   });
 
   try {
@@ -1649,7 +1745,6 @@ app.on('ready', async () => {
     return;
   }
 
-  // eslint-disable-next-line more/no-then
   appStartInitialSpellcheckSetting = await getSpellCheckSetting();
 
   try {
@@ -1721,9 +1816,9 @@ app.on('ready', async () => {
   ]);
 });
 
-function setupMenu(options?: Partial<MenuOptionsType>) {
+function setupMenu(options?: Partial<CreateTemplateOptionsType>) {
   const { platform } = process;
-  const menuOptions = {
+  menuOptions = {
     // options
     development,
     devTools: defaultWebPrefs.devTools,
@@ -1753,6 +1848,14 @@ function setupMenu(options?: Partial<MenuOptionsType>) {
   const template = createTemplate(menuOptions, getLocale().messages);
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
+
+  mainWindow?.webContents.send('window:set-menu-options', {
+    development: menuOptions.development,
+    devTools: menuOptions.devTools,
+    includeSetup: menuOptions.includeSetup,
+    isProduction: menuOptions.isProduction,
+    platform: menuOptions.platform,
+  });
 }
 
 async function requestShutdown() {
@@ -1950,12 +2053,6 @@ ipc.on(
   }
 );
 
-ipc.on('close-about', () => {
-  if (aboutWindow) {
-    aboutWindow.close();
-  }
-});
-
 ipc.on('close-screen-share-controller', () => {
   if (screenShareWindow) {
     screenShareWindow.close();
@@ -1981,11 +2078,6 @@ ipc.on('update-tray-icon', (_event: Electron.Event, unreadCount: number) => {
 // Debug Log-related IPC calls
 
 ipc.on('show-debug-log', showDebugLogWindow);
-ipc.on('close-debug-log', () => {
-  if (debugLogWindow) {
-    debugLogWindow.close();
-  }
-});
 ipc.on(
   'show-debug-log-save-dialog',
   async (_event: Electron.Event, logText: string) => {
@@ -2013,11 +2105,6 @@ ipc.handle(
     }
   }
 );
-ipc.on('close-permissions-popup', () => {
-  if (permissionsPopupWindow) {
-    permissionsPopupWindow.close();
-  }
-});
 
 // Settings-related IPC calls
 
@@ -2033,11 +2120,6 @@ function removeDarkOverlay() {
 }
 
 ipc.on('show-settings', showSettingsWindow);
-ipc.on('close-settings', () => {
-  if (settingsWindow) {
-    settingsWindow.close();
-  }
-});
 
 ipc.on('delete-all-data', () => {
   if (settingsWindow) {
@@ -2226,6 +2308,124 @@ ipc.handle('getScreenCaptureSources', async () => {
     thumbnailSize: { height: 102, width: 184 },
     types: ['window', 'screen'],
   });
+});
+
+ipc.handle('executeMenuRole', async ({ sender }, untypedRole) => {
+  const role = untypedRole as MenuItemConstructorOptions['role'];
+
+  const senderWindow = BrowserWindow.fromWebContents(sender);
+
+  switch (role) {
+    case 'undo':
+      sender.undo();
+      break;
+    case 'redo':
+      sender.redo();
+      break;
+    case 'cut':
+      sender.cut();
+      break;
+    case 'copy':
+      sender.copy();
+      break;
+    case 'paste':
+      sender.paste();
+      break;
+    case 'pasteAndMatchStyle':
+      sender.pasteAndMatchStyle();
+      break;
+    case 'delete':
+      sender.delete();
+      break;
+    case 'selectAll':
+      sender.selectAll();
+      break;
+    case 'reload':
+      sender.reload();
+      break;
+    case 'toggleDevTools':
+      sender.toggleDevTools();
+      break;
+
+    case 'resetZoom':
+      sender.setZoomLevel(0);
+      break;
+    case 'zoomIn':
+      sender.setZoomLevel(sender.getZoomLevel() + 1);
+      break;
+    case 'zoomOut':
+      sender.setZoomLevel(sender.getZoomLevel() - 1);
+      break;
+
+    case 'togglefullscreen':
+      senderWindow?.setFullScreen(!senderWindow?.isFullScreen());
+      break;
+    case 'minimize':
+      senderWindow?.minimize();
+      break;
+    case 'close':
+      senderWindow?.close();
+      break;
+
+    case 'quit':
+      app.quit();
+      break;
+
+    default:
+      // ignored
+      break;
+  }
+});
+
+ipc.handle('getMainWindowStats', async () => {
+  return {
+    isMaximized: windowConfig?.maximized ?? false,
+    isFullScreen: windowConfig?.fullscreen ?? false,
+  };
+});
+
+ipc.handle('getMenuOptions', async () => {
+  return {
+    development: menuOptions?.development ?? false,
+    devTools: menuOptions?.devTools ?? false,
+    includeSetup: menuOptions?.includeSetup ?? false,
+    isProduction: menuOptions?.isProduction ?? true,
+    platform: menuOptions?.platform ?? 'unknown',
+  };
+});
+
+ipc.handle('executeMenuAction', async (_event, action: MenuActionType) => {
+  if (action === 'forceUpdate') {
+    forceUpdate();
+  } else if (action === 'openContactUs') {
+    openContactUs();
+  } else if (action === 'openForums') {
+    openForums();
+  } else if (action === 'openJoinTheBeta') {
+    openJoinTheBeta();
+  } else if (action === 'openReleaseNotes') {
+    openReleaseNotes();
+  } else if (action === 'openSupportPage') {
+    openSupportPage();
+  } else if (action === 'setupAsNewDevice') {
+    setupAsNewDevice();
+  } else if (action === 'setupAsStandalone') {
+    setupAsStandalone();
+  } else if (action === 'showAbout') {
+    showAbout();
+  } else if (action === 'showDebugLog') {
+    showDebugLogWindow();
+  } else if (action === 'showKeyboardShortcuts') {
+    showKeyboardShortcuts();
+  } else if (action === 'showSettings') {
+    showSettingsWindow();
+  } else if (action === 'showStickerCreator') {
+    showStickerCreator();
+  } else if (action === 'showWindow') {
+    showWindow();
+  } else {
+    throw missingCaseError(action);
+  }
 });
 
 if (isTestEnvironment(getEnvironment())) {
