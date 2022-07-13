@@ -16,6 +16,7 @@ import { ScrollBehavior } from '../types/Util';
 import { getConversationListWidthBreakpoint } from './_util';
 import type { PreferredBadgeSelectorType } from '../state/selectors/badges';
 import type { LookupConversationWithoutUuidActionsType } from '../util/lookupConversationWithoutUuid';
+import type { ShowConversationType } from '../state/ducks/conversations';
 
 import type { PropsData as ConversationListItemPropsType } from './conversationList/ConversationListItem';
 import { ConversationListItem } from './conversationList/ConversationListItem';
@@ -24,6 +25,7 @@ import { ContactListItem } from './conversationList/ContactListItem';
 import type { ContactCheckboxDisabledReason } from './conversationList/ContactCheckbox';
 import { ContactCheckbox as ContactCheckboxComponent } from './conversationList/ContactCheckbox';
 import { PhoneNumberCheckbox as PhoneNumberCheckboxComponent } from './conversationList/PhoneNumberCheckbox';
+import { UsernameCheckbox as UsernameCheckboxComponent } from './conversationList/UsernameCheckbox';
 import { CreateNewGroupButton } from './conversationList/CreateNewGroupButton';
 import { StartNewConversation as StartNewConversationComponent } from './conversationList/StartNewConversation';
 import { SearchResultsLoadingFakeHeader as SearchResultsLoadingFakeHeaderComponent } from './conversationList/SearchResultsLoadingFakeHeader';
@@ -31,19 +33,20 @@ import { SearchResultsLoadingFakeRow as SearchResultsLoadingFakeRowComponent } f
 import { UsernameSearchResultListItem } from './conversationList/UsernameSearchResultListItem';
 
 export enum RowType {
-  ArchiveButton,
-  Blank,
-  Contact,
-  ContactCheckbox,
-  PhoneNumberCheckbox,
-  Conversation,
-  CreateNewGroup,
-  Header,
-  MessageSearchResult,
-  SearchResultsLoadingFakeHeader,
-  SearchResultsLoadingFakeRow,
-  StartNewConversation,
-  UsernameSearchResult,
+  ArchiveButton = 'ArchiveButton',
+  Blank = 'Blank',
+  Contact = 'Contact',
+  ContactCheckbox = 'ContactCheckbox',
+  PhoneNumberCheckbox = 'PhoneNumberCheckbox',
+  UsernameCheckbox = 'UsernameCheckbox',
+  Conversation = 'Conversation',
+  CreateNewGroup = 'CreateNewGroup',
+  Header = 'Header',
+  MessageSearchResult = 'MessageSearchResult',
+  SearchResultsLoadingFakeHeader = 'SearchResultsLoadingFakeHeader',
+  SearchResultsLoadingFakeRow = 'SearchResultsLoadingFakeRow',
+  StartNewConversation = 'StartNewConversation',
+  UsernameSearchResult = 'UsernameSearchResult',
 }
 
 type ArchiveButtonRowType = {
@@ -69,6 +72,13 @@ type ContactCheckboxRowType = {
 type PhoneNumberCheckboxRowType = {
   type: RowType.PhoneNumberCheckbox;
   phoneNumber: ParsedE164Type;
+  isChecked: boolean;
+  isFetching: boolean;
+};
+
+type UsernameCheckboxRowType = {
+  type: RowType.UsernameCheckbox;
+  username: string;
   isChecked: boolean;
   isFetching: boolean;
 };
@@ -118,6 +128,7 @@ export type Row =
   | ContactRowType
   | ContactCheckboxRowType
   | PhoneNumberCheckboxRowType
+  | UsernameCheckboxRowType
   | ConversationRowType
   | CreateNewGroupRowType
   | MessageRowType
@@ -154,7 +165,7 @@ export type PropsType = {
   onSelectConversation: (conversationId: string, messageId?: string) => void;
   renderMessageSearchResult: (id: string) => JSX.Element;
   showChooseGroupMembers: () => void;
-  showConversation: (conversationId: string) => void;
+  showConversation: ShowConversationType;
 } & LookupConversationWithoutUuidActionsType;
 
 const NORMAL_ROW_HEIGHT = 76;
@@ -269,6 +280,23 @@ export const ConversationList: React.FC<PropsType> = ({
           result = (
             <PhoneNumberCheckboxComponent
               phoneNumber={row.phoneNumber}
+              lookupConversationWithoutUuid={lookupConversationWithoutUuid}
+              showUserNotFoundModal={showUserNotFoundModal}
+              setIsFetchingUUID={setIsFetchingUUID}
+              toggleConversationInChooseMembers={conversationId =>
+                onClickContactCheckbox(conversationId, undefined)
+              }
+              isChecked={row.isChecked}
+              isFetching={row.isFetching}
+              i18n={i18n}
+              theme={theme}
+            />
+          );
+          break;
+        case RowType.UsernameCheckbox:
+          result = (
+            <UsernameCheckboxComponent
+              username={row.username}
               lookupConversationWithoutUuid={lookupConversationWithoutUuid}
               showUserNotFoundModal={showUserNotFoundModal}
               setIsFetchingUUID={setIsFetchingUUID}

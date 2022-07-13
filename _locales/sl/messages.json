@@ -476,7 +476,7 @@
         "description": "Title of the success page for submitting a debug log"
     },
     "debugLogSuccessNextSteps": {
-        "message": "Sistemska zabeležba je bila prenešena. Ko boste stopili v stik s podporno službo, prekopirajte spodnji URL naslov in ga pripnite skupaj z opisom problema ter koraki za njegovo ponovitev.",
+        "message": "Sistemska zabeležba je bila prenesena. Ko boste stopili v stik s podporno službo, prekopirajte spodnji URL naslov in ga pripnite skupaj z opisom problema ter koraki za njegovo ponovitev.",
         "description": "Explanation of next steps to take when submitting debug log"
     },
     "debugLogLogIsIncomplete": {
@@ -871,10 +871,6 @@
         "message": "kaj je novega",
         "description": "Clickable link that displays the latest release notes"
     },
-    "selectAContact": {
-        "message": "Izberite osebo ali skupino in začnite s pogovorom.",
-        "description": ""
-    },
     "typingAlt": {
         "message": "Animacija tipkanja za ta pogovor",
         "description": "Used as the 'title' attribute for the typing animation"
@@ -1182,7 +1178,7 @@
         "description": "Label for the time a message was received"
     },
     "sendMessage": {
-        "message": "Pošlji sporočilo",
+        "message": "Sporočilo",
         "description": "Placeholder text in the message entry field"
     },
     "groupMembers": {
@@ -1264,7 +1260,7 @@
         "description": "Shown in timeline when a error happened, and the session was automatically reset."
     },
     "ChatRefresh--learnMore": {
-        "message": "Več o tem...",
+        "message": "Več o tem",
         "description": "Shown in timeline when session is automatically reset, to provide access to a popup info dialog"
     },
     "ChatRefresh--summary": {
@@ -1290,7 +1286,7 @@
         }
     },
     "DeliveryIssue--learnMore": {
-        "message": "Več o tem...",
+        "message": "Več o tem",
         "description": "Shown in timeline when message delivery issue happens, to provide access to a popup info dialog"
     },
     "DeliveryIssue--title": {
@@ -1298,7 +1294,7 @@
         "description": "Shown on explainer dialog available from delivery issue timeline events"
     },
     "DeliveryIssue--summary": {
-        "message": "Sporočilo, nalepka, reakcija, obvestilo o prebranem sporočilu ali medijska datoteka uporabnika_ce $sender$ vam ne morejo biti dostavljeni. Lahko so bili poslani osebno ali prek skupine.",
+        "message": "Sporočilo, nalepka, reakcija, obvestilo o prebranem sporočilu ali medijska datoteka uporabnika_ce $sender$ ne morejo biti dostavljeni. Lahko so bili poslani osebno ali prek skupine.",
         "description": "Shown on explainer dialog available from delivery issue timeline events in 1:1 conversations",
         "placeholders": {
             "name": {
@@ -1426,7 +1422,7 @@
         }
     },
     "Install__qr-failed__learn-more": {
-        "message": "Izvedite več",
+        "message": "Preberite več",
         "description": "Shown on the install screen if the QR code fails to load"
     },
     "Install__support-link": {
@@ -1640,7 +1636,7 @@
         }
     },
     "calling__pre-call-info--many-people-in-call": {
-        "message": "$first$, $second$, in še $others$ drugih so v tem klicu",
+        "message": "$first$, $second$, in še $others$ drugih je v tem klicu",
         "description": "Shown in the calling lobby to describe who is in the call",
         "placeholders": {
             "first": {
@@ -1658,7 +1654,7 @@
         }
     },
     "calling__pre-call-info--will-ring-1": {
-        "message": "Signal bo pozvonil uporabniku_ci $person$",
+        "message": "Signal bo poklical uporabnika_co $person$",
         "description": "Shown in the calling lobby to describe who will be rung",
         "placeholders": {
             "person": {
@@ -1668,7 +1664,7 @@
         }
     },
     "calling__pre-call-info--will-ring-2": {
-        "message": "Signal bo zvonil uporabnikoma_cama $first$ in $second$",
+        "message": "Signal bo poklical uporabnika_ci $first$ in $second$",
         "description": "Shown in the calling lobby to describe who will be rang",
         "placeholders": {
             "first": {
@@ -1682,7 +1678,7 @@
         }
     },
     "calling__pre-call-info--will-ring-3": {
-        "message": "Signal bo zvonil uporabnikom_cam $first$, $second$ in $third$",
+        "message": "Signal bo poklical uporabnike_ce $first$, $second$ in $third$",
         "description": "Shown in the calling lobby to describe who will be rang",
         "placeholders": {
             "first": {
@@ -1700,7 +1696,7 @@
         }
     },
     "calling__pre-call-info--will-ring-many": {
-        "message": "Signal bo zvonil uporabnikoma_cama $first$, $second$ in še $others$ ",
+        "message": "Signal bo poklical uporabnika_co $first$, $second$ in še $others$ ",
         "description": "Shown in the calling lobby to describe who will be rang",
         "placeholders": {
             "person": {
@@ -1782,7 +1778,7 @@
         "description": "Shown in the participants list to describe how many people are in the call"
     },
     "calling__in-this-call--one": {
-        "message": "Udeleženci klica - 1 uporabnikov",
+        "message": "Udeleženci klica - 1 uporabnik_ca",
         "description": "Shown in the participants list to describe how many people are in the call"
     },
     "calling__in-this-call--many": {
@@ -1992,11 +1988,11 @@
         "description": "Label for setting notifications to display name and message text"
     },
     "noNameOrMessage": {
-        "message": "Ne pošiljatelj, ne sporočilo",
+        "message": "Ne ime ne vsebina",
         "description": "Label for setting notifications to display no name and no message text"
     },
     "nameOnly": {
-        "message": "Samo pošiljatelja",
+        "message": "Samo ime",
         "description": "Label for setting notifications to display sender name only"
     },
     "newMessage": {
@@ -2066,7 +2062,7 @@
         "description": "Shown on outgoing message if it is partially sent"
     },
     "partiallyDeleted": {
-        "message": "Delno izbrisano, klikni za nov poskus",
+        "message": "Delno izbrisano, kliknite za nov poskus",
         "description": "Shown on a message which was deleted for everyone if the delete wasn't successfully sent to everyone"
     },
     "showMore": {
@@ -2144,7 +2140,7 @@
         }
     },
     "minutesAgo": {
-        "message": "$minutes$m",
+        "message": "$minutes$min",
         "description": "Contracted form of 'X minutes ago' which works both for singular and plural",
         "placeholders": {
             "minutes": {
@@ -2588,7 +2584,7 @@
         "description": ""
     },
     "leftTheGroup": {
-        "message": "Uporabnik $name$ je zapustil skupino.",
+        "message": "Uporabnik_ca $name$ je zapustil_a skupino.",
         "description": "Shown in the conversation history when a single person leaves the group",
         "placeholders": {
             "name": {
@@ -2598,7 +2594,7 @@
         }
     },
     "multipleLeftTheGroup": {
-        "message": "Uporabnik $name$ je zapustil skupino.",
+        "message": "Uporabnik_ca $name$ je zapustil_a skupino.",
         "description": "Shown in the conversation history when multiple people leave the group",
         "placeholders": {
             "name": {
@@ -2608,7 +2604,7 @@
         }
     },
     "updatedTheGroup": {
-        "message": "Uporabnik $name$ je posodobil skupino.",
+        "message": "Uporabnik_ca $name$ je posodobil_a skupino.",
         "description": "Shown in the conversation history when someone updates the group",
         "placeholders": {
             "name": {
@@ -2640,7 +2636,7 @@
         "description": "Shown in the conversation history when you are added to a group."
     },
     "joinedTheGroup": {
-        "message": "Uporabnik $name$ se je pridružil skupini.",
+        "message": "Uporabnik_ca $name$ se je pridružil_a skupini.",
         "description": "Shown in the conversation history when a single person joins the group",
         "placeholders": {
             "name": {
@@ -2761,9 +2757,13 @@
         "message": "Sporočilo je bilo izbrisano",
         "description": "Shown in a message's bubble when the message has been deleted for everyone."
     },
-    "message--giftBadge--unopened": {
+    "message--giftBadge--unopened--incoming": {
         "message": "Odprite to sporočilo na mobilnem telefonu",
         "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    },
+    "message--giftBadge--unopened--outgoing": {
+        "message": "Za ogled darila tapnite na to sporočilo na svojem mobilnem telefonu",
+        "description": "Shown in a message's bubble when you've sent a gift badge to a contact"
     },
     "message--giftBadge--unopened--label": {
         "message": "Darilo",
@@ -2782,15 +2782,15 @@
         "description": "Shown to label the gift badge in notifications and the left pane"
     },
     "message--giftBadge--preview--redeemed": {
-        "message": "Vnovčili ste darilni bedž",
+        "message": "Vnovčili ste darilno značko",
         "description": "Shown to label the redeemed gift badge in notifications and the left pane"
     },
     "message--giftBadge--preview--sent": {
-        "message": "Poslali ste darilni bedž",
+        "message": "Poslali ste darilno značko",
         "description": "Shown to label a gift badge you've sent in notifications and the left pane"
     },
     "message--giftBadge": {
-        "message": "Darilni bedž",
+        "message": "Darilna značka",
         "description": "Shown to label the gift badge you've redeemed on another device"
     },
     "quote--giftBadge": {
@@ -2848,7 +2848,7 @@
         "description": "The title of the outgoing gift badge detail dialog"
     },
     "modal--giftBadge--description": {
-        "message": "Podarili ste bedž uporabniku_ci $name$. Ko potrdi prejem, bo lahko bedž prikazoval_a ali skril_a.",
+        "message": "Podarili ste značko uporabniku_ci $name$. Ko potrdi prejem, bo lahko značko prikazal_a ali skril_a.",
         "description": "The description of the outgoing gift badge detail dialog",
         "placeholders": {
             "name": {
@@ -5610,11 +5610,11 @@
         "description": "Generic next label"
     },
     "BadgeDialog__become-a-sustainer-button": {
-        "message": "Postanite podpornik_ca",
+        "message": "Podprite Signal",
         "description": "In the badge dialog. This button is shown under sustainer badges, taking users to some instructions"
     },
     "BadgeSustainerInstructions__header": {
-        "message": "Postanite podpornik_ca",
+        "message": "Podprite Signal",
         "description": "In the instructions for becoming a sustainer. The heading."
     },
     "BadgeSustainerInstructions__subheader": {
@@ -5630,7 +5630,7 @@
         "description": "In the instructions for becoming a sustainer. Second instruction."
     },
     "BadgeSustainerInstructions__instructions__3": {
-        "message": "Tapnite na \"Postanite podpornik_ca\" in se naročite",
+        "message": "Tapnite na \"Doniraj Signalu\" in se naročite",
         "description": "In the instructions for becoming a sustainer. Third instruction."
     },
     "CompositionArea--expand": {
@@ -5765,6 +5765,10 @@
         "message": "Blokiraj skupino",
         "description": "This is a button to block a group"
     },
+    "ConversationDetailsActions--unblock-group": {
+        "message": "Odblokiraj skupino",
+        "description": "This is a button to unblock a group"
+    },
     "ConversationDetailsActions--leave-group-must-choose-new-admin": {
         "message": "Pred odhodom iz skupine morate določiti vsaj enega skrbnika_co skupine.",
         "description": "Shown if, before leaving a group, you need to choose an admin"
@@ -5780,6 +5784,16 @@
     "ConversationDetailsActions--leave-group-modal-confirm": {
         "message": "Zapusti",
         "description": "This is the modal button to confirm leaving a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-title": {
+        "message": "Odblokiraj skupino \"$groupName$\"?",
+        "description": "This is the modal title for confirming unblock of a group",
+        "placeholders": {
+            "groupName": {
+                "content": "$1",
+                "example": "Our Conversation"
+            }
+        }
     },
     "ConversationDetailsActions--block-group-modal-title": {
         "message": "Želite zapustiti in blokirati skupino \"$groupName$\"?",
@@ -5798,6 +5812,14 @@
     "ConversationDetailsActions--block-group-modal-confirm": {
         "message": "Blokiraj",
         "description": "This is the modal button to confirm blocking a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-content": {
+        "message": "Vaši stiki vas bodo lahko dodali v to skupino.",
+        "description": "This is the modal content for confirming unblock of a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-confirm": {
+        "message": "Odblokiraj",
+        "description": "This is the modal button to confirm unblock of a group"
     },
     "ConversationDetailsHeader--members": {
         "message": "$number$ članov_ic",
@@ -7066,7 +7088,7 @@
         "description": "Title for the my stories list"
     },
     "MyStories__story": {
-        "message": "Tvoja zgodba",
+        "message": "Vaša zgodba",
         "description": "aria-label for each one of your stories"
     },
     "MyStories__download": {
@@ -7231,6 +7253,58 @@
         "message": "Napaka pri prikazovanju slike",
         "description": "aria-label for image errors"
     },
+    "StoryCreator__text-bg": {
+        "message": "Vklopi barvno ozadje teksta",
+        "description": "Button label"
+    },
+    "StoryCreator__story-bg": {
+        "message": "Spremeni barvo ozadja zgodbe",
+        "description": "Button label"
+    },
+    "StoryCreator__next": {
+        "message": "Naprej",
+        "description": "Button label text to advance to next step of story creation"
+    },
+    "StoryCreator__add-link": {
+        "message": "Dodaj povezavo",
+        "description": "Button label to apply the link preview to story"
+    },
+    "StoryCreator__input-placeholder": {
+        "message": "Dodaj tekst",
+        "description": "Placeholder to add text"
+    },
+    "StoryCreator__text--regular": {
+        "message": "Običajno",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--bold": {
+        "message": "Krepko",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--serif": {
+        "message": "Serif",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--script": {
+        "message": "Rokopis",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--condensed": {
+        "message": "Stisnjeno",
+        "description": "Label for font"
+    },
+    "StoryCreator__link-preview-placeholder": {
+        "message": "Tipkajte ali prilepite URL",
+        "description": "Placeholder for the URL input for link previews"
+    },
+    "StoryCreator__link-preview-empty": {
+        "message": "Dodajte povezavo za gledalce svoje zgodbe",
+        "description": "Empty state for the link preview"
+    },
+    "TextAttachment__placeholder": {
+        "message": "Dodaj tekst",
+        "description": "Placeholder for the add text input"
+    },
     "TextAttachment__preview__link": {
         "message": "Obišči povezavo",
         "description": "Title for the link preview tooltip"
@@ -7269,16 +7343,8 @@
         "message": "Ta različica vsebuje majhne spremembe in popravke, ki omogočajo, da Signal teče brez težav.",
         "description": "Release notes for releases that only include bug fixes"
     },
-    "WhatsNew__v5.45--1": {
-        "message": "Dynamic audio indicators in group calls help you see if you're whispering, yelling, or just right.",
-        "description": "Release notes for v5.45"
-    },
-    "WhatsNew__v5.45--2": {
-        "message": "Groups you’ve requested to join from your phone (via an invite link) will now show up on Desktop.",
-        "description": "Release notes for v5.45"
-    },
-    "WhatsNew__v5.45--3": {
-        "message": "Got a spotty Wi-Fi connection? Not a problem, you can now retry downloading attachments.",
-        "description": "Release notes for v5.45"
+    "WhatsNew__v5.47--1": {
+        "message": "Za vse, ki v sistemu Windows uporabljate temni način, imamo novo naslovno vrstico, ki ustreza vašemu slogu.",
+        "description": "Release notes for v5.47"
     }
 }

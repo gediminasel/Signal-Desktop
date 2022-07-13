@@ -3,7 +3,6 @@
 
 // The idea with this file is to make it webpackable for the style guide
 
-import * as Backbone from './backbone';
 import * as Crypto from './Crypto';
 import * as Curve from './Curve';
 import { start as conversationControllerStart } from './ConversationController';
@@ -29,11 +28,9 @@ import { SystemTraySettingsCheckboxes } from './components/conversation/SystemTr
 import { createChatColorPicker } from './state/roots/createChatColorPicker';
 import { createConversationDetails } from './state/roots/createConversationDetails';
 import { createApp } from './state/roots/createApp';
-import { createForwardMessageModal } from './state/roots/createForwardMessageModal';
 import { createGroupLinkManagement } from './state/roots/createGroupLinkManagement';
 import { createGroupV1MigrationModal } from './state/roots/createGroupV1MigrationModal';
 import { createGroupV2JoinModal } from './state/roots/createGroupV2JoinModal';
-import { createLeftPane } from './state/roots/createLeftPane';
 import { createMessageDetail } from './state/roots/createMessageDetail';
 import { createConversationNotificationsSettings } from './state/roots/createConversationNotificationsSettings';
 import { createGroupV2Permissions } from './state/roots/createGroupV2Permissions';
@@ -419,12 +416,10 @@ export const setup = (options: {
     createApp,
     createChatColorPicker,
     createConversationDetails,
-    createForwardMessageModal,
     createGroupLinkManagement,
     createGroupV1MigrationModal,
     createGroupV2JoinModal,
     createGroupV2Permissions,
-    createLeftPane,
     createMessageDetail,
     createConversationNotificationsSettings,
     createPendingInvites,
@@ -482,7 +477,6 @@ export const setup = (options: {
   };
 
   return {
-    Backbone,
     Components,
     Crypto,
     Curve,

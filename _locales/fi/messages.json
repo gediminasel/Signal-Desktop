@@ -144,7 +144,7 @@
         "description": "View menu command to make everything smaller"
     },
     "viewMenuToggleFullScreen": {
-        "message": "Vaihda kokoruututila",
+        "message": "Vaihda koko näytön tila",
         "description": "View menu command to enter or leave Full Screen mode"
     },
     "viewMenuToggleDevTools": {
@@ -242,7 +242,7 @@
         "description": "Shown in menu for conversation, and pins the conversation to the top of the conversation list"
     },
     "unpinConversation": {
-        "message": "Irrota keskustelu",
+        "message": "Poista keskustelun kiinnitys",
         "description": "Undoes Archive Conversation action, and unpins the conversation from the top of the conversation list"
     },
     "pinnedConversationsFull": {
@@ -266,7 +266,7 @@
         "description": "Introduction to the process of importing messages and contacts from disk"
     },
     "importChooserTitle": {
-        "message": "Valitse kansio jonne tiedot on tallennettu",
+        "message": "Valitse kansio, jonne tiedot on tallennettu",
         "description": "Title of the popup window used to select data previously exported"
     },
     "importErrorHeader": {
@@ -358,7 +358,7 @@
         "description": "Shown in the conversation history when a user links a new device to explain what is not supported."
     },
     "youMarkedAsVerified": {
-        "message": "Merkitsit turvanumerosi yhteystiedon $name$ kanssa varmennetuksi",
+        "message": "Merkitsit turvanumerosi käyttäjän $name$ kanssa varmennetuksi",
         "description": "Shown in the conversation history when the user marks a contact as verified.",
         "placeholders": {
             "name": {
@@ -368,7 +368,7 @@
         }
     },
     "youMarkedAsNotVerified": {
-        "message": "Merkitsit turvanumerosi yhteystiedon $name$ kanssa varmentamattomaksi",
+        "message": "Merkitsit turvanumerosi käyttäjän $name$ kanssa varmentamattomaksi",
         "description": "Shown in the conversation history when the user marks a contact as not verified, whether on the Safety Number screen or by dismissing a banner or dialog.",
         "placeholders": {
             "name": {
@@ -378,7 +378,7 @@
         }
     },
     "youMarkedAsVerifiedOtherDevice": {
-        "message": "Merkitsit turvanumerosi yhteystiedon $name$ kanssa varmennetuksi toisessa laitteessa",
+        "message": "Merkitsit turvanumerosi käyttäjän $name$ kanssa varmennetuksi toisessa laitteessa",
         "description": "Shown in the conversation history when we discover that the user marked a contact as verified on another device.",
         "placeholders": {
             "name": {
@@ -388,7 +388,7 @@
         }
     },
     "youMarkedAsNotVerifiedOtherDevice": {
-        "message": "Merkitsit turvanumerosi yhteystiedon $name$ kanssa varmentamattomaksi toisessa laitteessa",
+        "message": "Merkitsit turvanumerosi käyttäjän $name$ kanssa varmentamattomaksi toisessa laitteessa",
         "description": "Shown in the conversation history when we discover that the user marked a contact as not verified on another device.",
         "placeholders": {
             "name": {
@@ -398,11 +398,11 @@
         }
     },
     "membersNeedingVerification": {
-        "message": "Turvanumerosi on vaihtunut usean tämän ryhmän jäsenen kanssa sen jälkeen kun olet viimeksi varmentanut ne. Napauttamalla ryhmän jäsentä näet tämän turvanumeron.",
+        "message": "Turvanumerosi ovat vaihtuneet usean tämän ryhmän jäsenen kanssa sen jälkeen kun olet viimeksi varmentanut ne. Napauttamalla ryhmän jäsentä näet uuden turvanumeron.",
         "description": "When there are multiple previously-verified group members with safety number changes, a banner will be shown. The list of contacts with safety number changes is shown, and this text introduces that list."
     },
     "changedRightAfterVerify": {
-        "message": "Turvanumero jota yrität varmentaa on vaihtunut. Yritä varmentaa uusi turvanumerosi yhteystiedon $name1$ kanssa. Muista, että tämä muutos voi tarkoittaa joko sitä, että joku yrittää kaapata viestiliikennettänne, tai sitä, että $name2$ on yksinkertaisesti uudelleenasentanut Signalin.",
+        "message": "Turvanumero, jota yrität varmentaa on vaihtunut. Yritä varmentaa uusi turvanumerosi yhteystiedon $name1$ kanssa. Muista, että tämä muutos voi tarkoittaa joko sitä, että joku yrittää kaapata viestiliikennettänne, tai sitä, että $name2$ on asentanut Signalin uudelleen.",
         "description": "Shown on the safety number screen when the user has selected to verify/unverify a contact's safety number, and we immediately discover a safety number change",
         "placeholders": {
             "name1": {
@@ -416,7 +416,7 @@
         }
     },
     "changedVerificationWarning": {
-        "message": "Seuraavat henkilöt ovat saattaneet uudelleenasentaa tai vaihtaneet laitteita. Varmenna turvanumerosi heidän kanssaan yksityisyyden takaamiseksi.",
+        "message": "Seuraavat henkilöt ovat saattaneet asentaa sovelluksen uudelleen tai vaihtaa laitetta. Varmenna turvanumerosi heidän kanssaan yksityisyyden takaamiseksi.",
         "description": "Shown on confirmation dialog when user attempts to send a message"
     },
     "safetyNumberChangeDialog__pending-messages": {
@@ -424,7 +424,7 @@
         "description": "Shown on confirmation dialog when user attempts to send a message in the outbox"
     },
     "identityKeyErrorOnSend": {
-        "message": "Turvanumerosi yhteystiedon $name1$ kanssa on vaihtunut. Tämä voi tarkoittaa joko sitä, että joku yrittää kaapata viestiliikennettänne, tai sitä, että $name2$ on yksinkertaisesti uudelleenasentanut Signalin. Saatat haluta varmentaa turvanumerosi tämän yhteystiedon kanssa.",
+        "message": "Turvanumerosi käyttäjän $name1$ kanssa on vaihtunut. Tämä voi tarkoittaa joko sitä, että joku yrittää kaapata viestiliikennettänne, tai sitä, että $name2$ on asentanut Signalin uudelleen. Suosittelemme varmentamaan turvanumerosi tämän käyttäjän kanssa uudelleen.",
         "description": "Shown when user clicks on a failed recipient in the message detail view after an identity key change",
         "placeholders": {
             "name1": {
@@ -438,11 +438,11 @@
         }
     },
     "sendAnyway": {
-        "message": "Lähetä joka tapauksessa",
+        "message": "Lähetä silti",
         "description": "Used on a warning dialog to make it clear that it might be risky to send the message."
     },
     "callAnyway": {
-        "message": "Soita joka tapauksessa",
+        "message": "Soita silti",
         "description": "Used on a warning dialog to make it clear that it might be risky to call the conversation."
     },
     "continueCall": {
@@ -450,7 +450,7 @@
         "description": "Used on a warning dialog to make it clear that it might be risky to continue the group call."
     },
     "noLongerVerified": {
-        "message": "Turvanumerosi yhteystiedon $name$ kanssa on vaihtunut eikä se ole enää varmennettu. Näytä napsauttamalla.",
+        "message": "Turvanumerosi käyttäjän $name$ kanssa on vaihtunut eikä se ole enää varmennettu. Näytä napsauttamalla.",
         "description": "Shown in conversation banner when user's safety number has changed, but they were previously verified.",
         "placeholders": {
             "name": {
@@ -460,23 +460,23 @@
         }
     },
     "multipleNoLongerVerified": {
-        "message": "Turvanumerosi on vaihtunut usean tämän ryhmän jäsenen kanssa eivätkä ne ole enää varmennettuja. Näytä napsauttamalla.",
+        "message": "Turvanumerosi ovat vaihtuneet usean tämän ryhmän jäsenen kanssa eivätkä ne ole enää varmennettuja. Näytä napsauttamalla.",
         "description": "Shown in conversation banner when more than one group member's safety number has changed, but they were previously verified."
     },
     "debugLogExplanation": {
-        "message": "Lokisi lähtetetään 30 päivän ajaksi verkkoon ja sille määritetään yksityinen URL-osoite. Voit tallentaa sen ensin myös paikallisesti.",
+        "message": "Kun napsautat Lähetä, lokitiedosto lähetetään 30 päivän ajaksi verkkoon ja sille määritetään yksityinen URL-osoite. Voit tallentaa sen ensin myös paikallisesti.",
         "description": "Description of what will happen with your debug log"
     },
     "debugLogError": {
-        "message": "Jotain meni pieleen lähettämisessä! Lähetä sähköpostia support@signal.org ja liitä siihen loki tekstitiedostona.",
+        "message": "Jotain meni pieleen tiedostoa lähetettäessä! Lähetä sähköpostia osoitteeseen support@signal.org ja liitä loki siihen tekstitiedostona.",
         "description": "Error message a recommendations if debug log upload fails"
     },
     "debugLogSuccess": {
-        "message": "Debuggausloki lähetetty",
+        "message": "Vianetsintäloki lähetetty",
         "description": "Title of the success page for submitting a debug log"
     },
     "debugLogSuccessNextSteps": {
-        "message": "Vianselvitysloki on lähetetty. Ottaessasi yhteyttä tukeen, kopioi ja liitä alla oleva URL-osoite ongelmakuvauksen ja sen toistoon vaadittavien tehtävien mukaan.",
+        "message": "Vianetsintäloki on lähetetty. Ottaessasi yhteyttä tukeen, kopioi ja liitä mukaan alla oleva URL-osoite, kuvaus ongelmasta, sekä  vaiheet, joiden seurauksena ongelma ilmenee.",
         "description": "Explanation of next steps to take when submitting debug log"
     },
     "debugLogLogIsIncomplete": {
@@ -512,15 +512,15 @@
         "description": "Label for a button to accept a new safety number"
     },
     "verify": {
-        "message": "Merkitse varmennetuksi",
+        "message": "Merkitse vahvistetuksi",
         "description": ""
     },
     "unverify": {
-        "message": "Merkitse varmentamattomaksi",
+        "message": "Merkitse vahvistamattomaksi",
         "description": ""
     },
     "isVerified": {
-        "message": "Olet varmentanut turvanumerosi yhteystiedon $name$ kanssa.",
+        "message": "Olet vahvistanut turvanumerosi yhteystiedon $name$ kanssa.",
         "description": "Summary state shown at top of the safety number screen if user has verified contact.",
         "placeholders": {
             "name": {
@@ -530,7 +530,7 @@
         }
     },
     "isNotVerified": {
-        "message": "Et ole varmentanut turvanumeroasi yhteystiedon $name$ kanssa.",
+        "message": "Et ole vahvistanut turvanumeroasi yhteystiedon $name$ kanssa.",
         "description": "Summary state shown at top of the safety number screen if user has not verified contact.",
         "placeholders": {
             "name": {
@@ -540,7 +540,7 @@
         }
     },
     "verified": {
-        "message": "Varmennettu",
+        "message": "Vahvistettu",
         "description": ""
     },
     "newIdentity": {
@@ -548,7 +548,7 @@
         "description": "Header for a key change dialog"
     },
     "identityChanged": {
-        "message": "Turvanumerosi tämän yhteystiedon kanssa on vaihtunut. Tämä voi tarkoittaa joko sitä, että joku yrittää kaapata viestiliikennettänne, tai sitä, että yhteystietosi on yksinkertaisesti uudelleenasentanut Signalin. Saatat haluta varmentaa alla näkyvän turvanumeron.",
+        "message": "Turvanumerosi tämän yhteystiedon kanssa on vaihtunut. Tämä voi tarkoittaa joko sitä, että joku yrittää kaapata viestiliikennettänne, tai sitä, että hän on asentanut Signalin uudelleen. Suosittelemme vahvistamaan turvanumerosi uudelleen.",
         "description": ""
     },
     "incomingError": {
@@ -646,7 +646,7 @@
         }
     },
     "decryptionErrorToast": {
-        "message": "Työpöytä törmäsi salauksen purkuvirheeseen lähteestä $name$, laitteelta $deviceId$",
+        "message": "Salauksen purkuvirhe lähteestä $name$, laitteelta $deviceId$",
         "description": "An error popup when we haven't added an in-timeline error for decryption error, only for beta/internal users.",
         "placeholders": {
             "name": {
@@ -684,7 +684,7 @@
         "description": ""
     },
     "disconnected": {
-        "message": "Ei yhteyttä",
+        "message": "Yhteys katkaistu",
         "description": "Displayed when the desktop client cannot connect to the server."
     },
     "connecting": {
@@ -708,11 +708,11 @@
         "description": "Obvious instructions for when a user's computer loses its network connection"
     },
     "submitDebugLog": {
-        "message": "Virheenkorjausloki",
+        "message": "Vianetsintäloki",
         "description": "Menu item and header text for debug log modal (sentence case)"
     },
     "debugLog": {
-        "message": "Virheenkorjausloki",
+        "message": "Vianetsintäloki",
         "description": "View menu item to open the debug log (title case)"
     },
     "forceUpdate": {
@@ -728,19 +728,19 @@
         "description": "Item under the help menu, takes you to the contact us support page"
     },
     "goToReleaseNotes": {
-        "message": "Julkaisutiedot",
+        "message": "Siirry julkaisutietoihin",
         "description": "Item under the help menu, takes you to GitHub page for release notes"
     },
     "goToForums": {
-        "message": "Keskustelupalsta",
+        "message": "Siirry keskustelupalstalle",
         "description": "Item under the Help menu, takes you to the forums"
     },
     "goToSupportPage": {
-        "message": "Tukisivusto",
+        "message": "Siirry tukisivustolle",
         "description": "Item under the Help menu, takes you to the support page"
     },
     "joinTheBeta": {
-        "message": "Liity beetaan",
+        "message": "Liity beeta-ohjelmaan",
         "description": "Item under the Help menu, takes you to an article describing how to install the beta release of Signal Desktop"
     },
     "signalDesktopPreferences": {
@@ -748,7 +748,7 @@
         "description": "Title of the window that pops up with Signal Desktop preferences in it"
     },
     "signalDesktopStickerCreator": {
-        "message": "Tarrapakettiluoja",
+        "message": "Tarrapaketin luonti",
         "description": "Title of the window that pops up with Signal Desktop preferences in it"
     },
     "aboutSignalDesktop": {
@@ -756,7 +756,7 @@
         "description": "Item under the Help menu, which opens a small about window"
     },
     "screenShareWindow": {
-        "message": "Jaa näyttö",
+        "message": "Näytön jakaminen",
         "description": "Title for screen sharing window"
     },
     "speech": {
@@ -788,7 +788,7 @@
         "description": "Aria label for clear search button"
     },
     "searchIn": {
-        "message": "Etsi keskustelusta",
+        "message": "Hae keskustelusta",
         "description": "Shown in the search box before text is entered when searching in a specific conversation"
     },
     "noSearchResults": {
@@ -836,7 +836,7 @@
         "description": "Shown to separate the types of search results"
     },
     "findByUsernameHeader": {
-        "message": "Etsi käyttäjänimellä",
+        "message": "Etsi käyttäjätunnuksella",
         "description": "Shown when search could be a valid username, with one sub-item that will kick off the search"
     },
     "findByPhoneNumberHeader": {
@@ -870,10 +870,6 @@
     "viewReleaseNotes": {
         "message": "uusiin ominaisuuksiin",
         "description": "Clickable link that displays the latest release notes"
-    },
-    "selectAContact": {
-        "message": "Aloita keskustelu valitsemalla yhteystieto tai ryhmä",
-        "description": ""
     },
     "typingAlt": {
         "message": "Kirjoitusanimaatio tälle keskustelulle",
@@ -922,7 +918,7 @@
         "description": "Generic label shown if contact address has custom type but no label"
     },
     "poBox": {
-        "message": "Postilokero",
+        "message": "postilokero",
         "description": "When rendering an address, used to provide context to a post office box"
     },
     "downloading": {
@@ -978,19 +974,19 @@
         "description": "Confirmation dialog message for when the voice recording is interrupted due to app losing focus"
     },
     "voiceNoteLimit": {
-        "message": "Ääniviestin maksimipituus on yksi tunti. Tallentaminen katkeaa jos vaihdat toiseen sovellukseen.",
+        "message": "Ääniviestin maksimipituus on yksi tunti. Tallentaminen katkeaa, jos vaihdat toiseen sovellukseen.",
         "description": "Shown in toast to warn user about limited time and that window must be in focus"
     },
     "voiceNoteMustBeOnlyAttachment": {
-        "message": "Ääniviestissä on oltava vain yksi liite.",
+        "message": "Ääniviestissä voi olla vain yksi liite.",
         "description": "Shown in toast if tries to record a voice note with any staged attachments"
     },
     "voiceNoteError": {
-        "message": "Ääniviestin äänityksessä tapahtui virhe.",
+        "message": "Ääniviestin tallennuksessa tapahtui virhe.",
         "description": "Shown in a dialog to inform user that we experienced an unrecoverable error"
     },
     "attachmentSaved": {
-        "message": "Liite talletettu.",
+        "message": "Liite tallennettu.",
         "description": "Shown after user selects to save to downloads"
     },
     "attachmentSavedShow": {
@@ -1002,7 +998,7 @@
         "description": "Shown when the user represented is the current user."
     },
     "replyingTo": {
-        "message": "Vastaus: $name$",
+        "message": "Vastaus käyttäjälle $name$",
         "description": "Shown in iOS theme when you or someone quotes to a message which is not from you",
         "placeholders": {
             "name": {
@@ -1032,7 +1028,7 @@
         "description": "A button shown in dialog requesting the user to turn on audio permissions"
     },
     "audio": {
-        "message": "Äänitiedosto",
+        "message": "Ääni",
         "description": "Shown in a quotation of a message containing an audio attachment if no text was originally provided with that attachment"
     },
     "video": {
@@ -1078,7 +1074,7 @@
         }
     },
     "cannotUpdateRequireManualDetail": {
-        "message": "Päivitys ei onnistunut. Asenna päivitys käsin osoitteesta $url$. Sitten ilmoita $support$ ongelmasta.",
+        "message": "Päivitys ei onnistunut. Asenna päivitys käsin osoitteesta $url$. Sitten $support$ ongelmasta.",
         "description": "Shown if a general error happened while trying to install update package and manual update is required",
         "placeholders": {
             "url": {
@@ -1138,7 +1134,7 @@
         "description": ""
     },
     "forward": {
-        "message": "Välittäminen",
+        "message": "Välitä",
         "description": ""
     },
     "done": {
@@ -1166,11 +1162,11 @@
         "description": "Label for the sender of a message"
     },
     "to": {
-        "message": "Vastaanottajat",
+        "message": "Vastaanottaja(t)",
         "description": "Label for the receiver of a message"
     },
     "toJoiner": {
-        "message": "vastaanottaja",
+        "message": ", vastaanottaja(t)",
         "description": "Joiner for message search results - like 'Jon' to 'Friends Group'"
     },
     "sent": {
@@ -1182,7 +1178,7 @@
         "description": "Label for the time a message was received"
     },
     "sendMessage": {
-        "message": "Lähetä viesti",
+        "message": "Viesti",
         "description": "Placeholder text in the message entry field"
     },
     "groupMembers": {
@@ -1202,7 +1198,7 @@
         "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
     },
     "verifyHelp": {
-        "message": "Vertaa yllä olevia lukuja $name$kanssa varmistaaksesi päästä päähän -salauksen turvallisuus.",
+        "message": "Vertaa yllä olevia lukuja $name$ kanssa varmistaaksesi päästä päähän -salauksen turvallisuus.",
         "description": "",
         "placeholders": {
             "name": {
@@ -1228,7 +1224,7 @@
         "description": "Shown on the drop-down menu for an individual message, takes you to message detail screen"
     },
     "retrySend": {
-        "message": "Lähetä uudelleen",
+        "message": "Yritä lähettää uudelleen",
         "description": "Shown on the drop-down menu for an individual message, but only if it is an outgoing message that failed to send"
     },
     "retryDeleteForEveryone": {
@@ -1268,7 +1264,7 @@
         "description": "Shown in timeline when session is automatically reset, to provide access to a popup info dialog"
     },
     "ChatRefresh--summary": {
-        "message": "Signalin sisältö salataan päästä päähän, mutta ajoittain keskustelu voidaan joutua päivittämään. Se ei vaikuta tietoturvaan, mutta tämän yhteyshenkilön viimeisin viesti ei välttämättä näy, ja voit pyytää häntä lähettämään sen uudelleen.",
+        "message": "Signalin sisältö salataan päästä päähän. Tästä syystä keskustelu täytyy joskus päivittää. Tämä ei vaikuta tietoturvaan. Tämän yhteyshenkilön viimeisin viesti ei välttämättä näy. Voit pyytää häntä lähettämään sen uudelleen.",
         "description": "Shown on explainer dialog available from chat session refreshed timeline events"
     },
     "ChatRefresh--contactSupport": {
@@ -1298,7 +1294,7 @@
         "description": "Shown on explainer dialog available from delivery issue timeline events"
     },
     "DeliveryIssue--summary": {
-        "message": " Kohteen$sender$viestiä, tarraa, reaktiota, lukukuittia tai mediaa ei voitu toimittaa sinulle. Se on ehkä yrittetty lähettää sinulle suoraan tai ryhmässä.",
+        "message": "Lähettäjän $sender$ viestiä, tarraa, reaktiota, lukukuittausta tai mediaa ei voitu toimittaa sinulle. Se on ehkä yritetty lähettää sinulle suoraan tai ryhmässä.",
         "description": "Shown on explainer dialog available from delivery issue timeline events in 1:1 conversations",
         "placeholders": {
             "name": {
@@ -1308,7 +1304,7 @@
         }
     },
     "DeliveryIssue--summary--group": {
-        "message": "Kohteen $sender$viestiä, tarraa, reaktiota, lukukuittia tai mediaa ei voitu toimittaa sinulle. Se on ehkä yrittetty lähettää sinulle tässä keskustelussa.",
+        "message": "Lähettäjän $sender$ viestiä, tarraa, reaktiota, lukukuittausta tai mediaa ei voitu toimittaa sinulle tässä keskustelussa.",
         "description": "Shown on explainer dialog available from delivery issue timeline events in groups",
         "placeholders": {
             "name": {
@@ -1356,7 +1352,7 @@
         "description": "Used on reset buttons"
     },
     "fileIconAlt": {
-        "message": "Tiedoston ikoni",
+        "message": "Tiedoston kuvake",
         "description": "Used in the media gallery documents tab to visually represent a file"
     },
     "installWelcome": {
@@ -1364,7 +1360,7 @@
         "description": "Welcome title on the install page"
     },
     "installTagline": {
-        "message": "Yksityisyys on mahdollista. Signal tekee siitä helppoa.",
+        "message": "Yksityisyys on mahdollista jokaiselle. Signal tekee siitä helppoa.",
         "description": "Tagline displayed under 'installWelcome' string on the install page"
     },
     "linkedDevices": {
@@ -1450,7 +1446,7 @@
         "description": "The header shown on the 'choose device name' screen in the device linking process"
     },
     "finishLinkingPhone": {
-        "message": "Viimeistele puhelinyhteys",
+        "message": "Viimeistele yhdistäminen puhelimeen",
         "description": "The text on the button to finish the linking process, after choosing the device name"
     },
     "initialSync": {
@@ -1458,7 +1454,7 @@
         "description": "Shown during initial link while contacts and groups are being pulled from mobile device"
     },
     "initialSync__subtitle": {
-        "message": "Huomio: keskusteluhistoriaa ei synkronoida tälle laitteelle",
+        "message": "Huomaa: keskusteluhistoriaa ei synkronoida tälle laitteelle",
         "description": "Shown during initial link while contacts and groups are being pulled from mobile device"
     },
     "installConnectionFailed": {
@@ -1658,7 +1654,7 @@
         }
     },
     "calling__pre-call-info--will-ring-1": {
-        "message": "Signal ottaa yhteyden $person$",
+        "message": "Signal soittaa käyttäjälle $person$",
         "description": "Shown in the calling lobby to describe who will be rung",
         "placeholders": {
             "person": {
@@ -1668,7 +1664,7 @@
         }
     },
     "calling__pre-call-info--will-ring-2": {
-        "message": "Signal soittaa $first$ ja $second$",
+        "message": "Signal soittaa käyttäjille $first$ ja $second$",
         "description": "Shown in the calling lobby to describe who will be rang",
         "placeholders": {
             "first": {
@@ -1682,7 +1678,7 @@
         }
     },
     "calling__pre-call-info--will-ring-3": {
-        "message": "Signal soittaa $first$, $second$, ja $third$",
+        "message": "Signal soittaa käyttäjille $first$, $second$ ja $third$",
         "description": "Shown in the calling lobby to describe who will be rang",
         "placeholders": {
             "first": {
@@ -1700,7 +1696,7 @@
         }
     },
     "calling__pre-call-info--will-ring-many": {
-        "message": "Signal soittaa $first$, $second$, ja $others$ muulle",
+        "message": "Signal soittaa käyttäjille $first$, $second$ ja $others$ muulle",
         "description": "Shown in the calling lobby to describe who will be rang",
         "placeholders": {
             "person": {
@@ -1718,7 +1714,7 @@
         }
     },
     "calling__pre-call-info--will-notify-1": {
-        "message": "$person$ ilmoitetaan",
+        "message": "Käyttäjälle $person$ ilmoitetaan",
         "description": "Shown in the calling lobby to describe who will be notified",
         "placeholders": {
             "person": {
@@ -1728,7 +1724,7 @@
         }
     },
     "calling__pre-call-info--will-notify-2": {
-        "message": "$first$ ja $second$ ilmoitetaan",
+        "message": "Käyttäjille $first$ ja $second$ ilmoitetaan",
         "description": "Shown in the calling lobby to describe who will be notified",
         "placeholders": {
             "first": {
@@ -1742,7 +1738,7 @@
         }
     },
     "calling__pre-call-info--will-notify-3": {
-        "message": "$first$, $second$, ja $third$ ilmoitetaan",
+        "message": "Käyttäjille $first$, $second$ ja $third$ ilmoitetaan",
         "description": "Shown in the calling lobby to describe who will be notified",
         "placeholders": {
             "first": {
@@ -1760,7 +1756,7 @@
         }
     },
     "calling__pre-call-info--will-notify-many": {
-        "message": "$first$, $second$, ja $others$ muuta ilmoitetaan",
+        "message": "Käyttäjille $first$, $second$ ja $others$ muulle ilmoitetaan",
         "description": "Shown in the calling lobby to describe who will be notified",
         "placeholders": {
             "person": {
@@ -1806,15 +1802,15 @@
         }
     },
     "calling__block-info": {
-        "message": "Et saa heidän ääntä tai videota eivätkä he saa sinun.",
+        "message": "Et voi enää käydä ääni- tai videoviestinvaihtoa tämän käyttäjän kanssa.",
         "description": "Shown in the modal dialog to describe how blocking works in a group call"
     },
     "calling__overflow__scroll-up": {
-        "message": "Selaa ylöspäin",
+        "message": "Vieritä ylöspäin",
         "description": "Label for the \"scroll up\" button in a call's overflow area"
     },
     "calling__overflow__scroll-down": {
-        "message": "Selaa alaspäin",
+        "message": "Vieritä alaspäin",
         "description": "Label for the \"scroll down\" button in a call's overflow area"
     },
     "calling__presenting--notification-title": {
@@ -1840,7 +1836,7 @@
         "description": "Button for stopping screen sharing"
     },
     "calling__presenting--you-stopped": {
-        "message": "Lopetit jakamisen",
+        "message": "Lopetit esittämisen",
         "description": "Toast that appears when someone stops presenting"
     },
     "calling__presenting--person-ongoing": {
@@ -1880,7 +1876,7 @@
         "description": "Shown as the description for the modal that requests screen recording permissions"
     },
     "calling__presenting--permission-instruction-step3": {
-        "message": "Valitse oikealla Signaali -valintaruutu. Jos Signaali ei näy luettelossa, lisää se napsauttamalla +.",
+        "message": "Valitse Signal-valintaruutu oikealla. Jos Signal ei näy luettelossa, lisää se napsauttamalla +.",
         "description": "Shown as the description for the modal that requests screen recording permissions"
     },
     "calling__presenting--permission-open": {
@@ -1956,7 +1952,7 @@
         "description": "Header of the full-screen delete data confirmation screen"
     },
     "deleteAllDataBody": {
-        "message": "Olet tuhoamassa tämän ohjelman kaikki käyttäjätiedot, mukaanlukien kaikki yhteystiedot ja viestit. Voit aina yhdistää mobiililaitteesi uudelleen, mutta se ei palauta jo tuhottuja viestejä.",
+        "message": "Olet tuhoamassa tämän ohjelman kaikki käyttäjätiedot, mukaan lukien kaikki yhteystiedot ja viestit. Voit aina yhdistää mobiililaitteesi uudelleen, mutta se ei palauta jo tuhottuja viestejä.",
         "description": "Text describing what exactly will happen if the user clicks the button to delete all data"
     },
     "deleteAllDataButton": {
@@ -1984,7 +1980,7 @@
         "description": "Explain the purpose of the notification settings"
     },
     "disableNotifications": {
-        "message": "Kokonaan pois päältä",
+        "message": "Kytke ilmoitukset pois päältä",
         "description": "Label for disabling notifications"
     },
     "nameAndMessage": {
@@ -2018,7 +2014,7 @@
         }
     },
     "notificationReaction": {
-        "message": "$sender$ reagoi  $emoji$ viestiisi",
+        "message": "$sender$ lähetti reaktion $emoji$ viestiisi",
         "description": "",
         "placeholders": {
             "sender": {
@@ -2032,7 +2028,7 @@
         }
     },
     "notificationReactionMessage": {
-        "message": "$sender$ reagoi  $emoji$ viestiin:  $message$",
+        "message": "$sender$ lähetti reaktion $emoji$ viestiin $message$",
         "description": "",
         "placeholders": {
             "sender": {
@@ -2062,11 +2058,11 @@
         "description": "Shown on outgoing message if it cannot be sent immediately"
     },
     "partiallySent": {
-        "message": "Osittain lähetetty, lisätietoja napsauttamalla",
+        "message": "Osittain lähetetty, napauta nähdäksesi lisätietoja",
         "description": "Shown on outgoing message if it is partially sent"
     },
     "partiallyDeleted": {
-        "message": "Poistettiin osittain, yritä uudelleen painamalla",
+        "message": "Poistettiin osittain, yritä uudelleen napauttamalla",
         "description": "Shown on a message which was deleted for everyone if the delete wasn't successfully sent to everyone"
     },
     "showMore": {
@@ -2082,7 +2078,7 @@
         "description": "Text that links to a support article on verifying safety numbers"
     },
     "expiredWarning": {
-        "message": "Käyttämäsi versio Signal Desktopista on vanhentunut. Viestien lähettäminen ja vastaanottaminen eivät enää toimi, ennen kuin olet päivittänyt uusimpaan versioon.",
+        "message": "Käyttämäsi versio Signal Desktopista on vanhentunut. Voit lähettää ja vastaanottaa viestejä päivittämällä uusimpaan versioon.",
         "description": "Warning notification that this version of the app has expired"
     },
     "upgrade": {
@@ -2094,7 +2090,7 @@
         "description": "Description of a message that has an attachment and no text, displayed in the conversation list as a preview."
     },
     "unregisteredUser": {
-        "message": "Numero ei ole rekisteröity.",
+        "message": "Numeroa ei rekisteröity",
         "description": "Error message displayed when sending to an unregistered user."
     },
     "sync": {
@@ -2170,7 +2166,7 @@
         "description": "Timestamp format string for displaying \"Yesterday\" and the time"
     },
     "messageBodyTooLong": {
-        "message": "Viestin runko on liian pitkä.",
+        "message": "Viestin teksti on liian pitkä.",
         "description": "Shown if the user tries to send more than 64kb of text"
     },
     "unblockToSend": {
@@ -2182,7 +2178,7 @@
         "description": "Brief message shown when trying to message a blocked group"
     },
     "youChangedTheTimer": {
-        "message": "Sinä asetit viestien katoamisajaksi $time$.",
+        "message": "Asetit viestien katoamisajaksi $time$.",
         "description": "Message displayed when you change the message expiration timer in a conversation.",
         "placeholders": {
             "time": {
@@ -2252,7 +2248,7 @@
         }
     },
     "youDisabledDisappearingMessages": {
-        "message": "Sinä asetit katoavat viestit pois päältä.",
+        "message": "Asetit katoavat viestit pois päältä.",
         "description": "Displayed in the conversation list when the timer is turned off"
     },
     "timerSetTo": {
@@ -2282,7 +2278,7 @@
         "description": "Description for incoming calls setting"
     },
     "contactChangedProfileName": {
-        "message": "$sender$ muutti profiilinimensä $oldProfile$ nimeksi $newProfile$.",
+        "message": "$sender$ vaihtoi profiilinimensä $oldProfile$ nimeksi $newProfile$.",
         "description": "Description for incoming calls setting",
         "placeholders": {
             "sender": {
@@ -2300,7 +2296,7 @@
         }
     },
     "changedProfileName": {
-        "message": "$oldProfile$ muutti profiilinimekseen $newProfile$.",
+        "message": "$oldProfile$ vaihtoi profiilinimekseen $newProfile$.",
         "description": "Shown when a contact not in your address book changes their profile name",
         "placeholders": {
             "oldProfile": {
@@ -2340,7 +2336,7 @@
         "description": "Label on button included with safety number change notification in the conversation"
     },
     "cannotGenerateSafetyNumber": {
-        "message": "Tätä käyttäjää ei voida varmentaa ennen kuin olet lähettänyt tai vastaanottanut viestejä hänen kanssaan.",
+        "message": "Tätä käyttäjää ei voida varmentaa, ennen kuin olet lähettänyt tai vastaanottanut viestejä hänen kanssaan.",
         "description": "Shown on the safety number screen if you have never exchanged messages with that contact"
     },
     "yourSafetyNumberWith": {
@@ -2584,7 +2580,7 @@
         "description": ""
     },
     "autoUpdateIgnoreButtonLabel": {
-        "message": "Jätä päivitys huomioimatta",
+        "message": "Ohita päivitys",
         "description": ""
     },
     "leftTheGroup": {
@@ -2618,7 +2614,7 @@
         }
     },
     "youUpdatedTheGroup": {
-        "message": "Sinä päivitit ryhmää.",
+        "message": "Päivitit ryhmää.",
         "description": "Shown in the conversation history when you update a group"
     },
     "updatedGroupAvatar": {
@@ -2682,7 +2678,7 @@
         "description": "For aria-label within conversation list. Describes if last message is not defined."
     },
     "BaseConversationListItem__aria-label": {
-        "message": "Mene keskusteluun $title$kanssa.",
+        "message": "Siirry keskusteluun käyttäjän $title$kanssa",
         "description": "Aria label for the conversation list item button",
         "placeholders": {
             "title": {
@@ -2761,9 +2757,13 @@
         "message": "Tämä viesti poistettiin.",
         "description": "Shown in a message's bubble when the message has been deleted for everyone."
     },
-    "message--giftBadge--unopened": {
+    "message--giftBadge--unopened--incoming": {
         "message": "Avaa tämä viesti puhelimellasi",
         "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    },
+    "message--giftBadge--unopened--outgoing": {
+        "message": "Katso saamasi lahja avaamalla tämä viesti puhelimellasi",
+        "description": "Shown in a message's bubble when you've sent a gift badge to a contact"
     },
     "message--giftBadge--unopened--label": {
         "message": "Lahja",
@@ -2782,7 +2782,7 @@
         "description": "Shown to label the gift badge in notifications and the left pane"
     },
     "message--giftBadge--preview--redeemed": {
-        "message": "Lunastit lahjakunniamerkin",
+        "message": "Lunastit lahjaksi saadun kunniamerkin",
         "description": "Shown to label the redeemed gift badge in notifications and the left pane"
     },
     "message--giftBadge--preview--sent": {
@@ -2898,7 +2898,7 @@
         "description": "Shown in the sticker pack manager next to sticker packs which are already installed."
     },
     "stickers--StickerManager--Introduction--Image": {
-        "message": "Esittelyssä tarrat: \"Bandit the Cat\"",
+        "message": "Esittelyssä tarrat: Bandit the Cat",
         "description": "Alt text on a tooltip image when the user upgrades to a version of Signal supporting stickers."
     },
     "stickers--StickerManager--Introduction--Title": {
@@ -3034,7 +3034,7 @@
         }
     },
     "Message--unsupported-message-ask-to-resend": {
-        "message": "Voit pyytää yhteyshenkilöä $contact$ lähettämään tämän viestin uudelleen, nyt kun käytät ajantasaista Signal-versiota.",
+        "message": "Voit pyytää käyttäjää $contact$ lähettämään tämän viestin uudelleen, nyt kun käytät ajantasaista Signal-versiota.",
         "description": "",
         "placeholders": {
             "contact": {
@@ -3048,7 +3048,7 @@
         "description": ""
     },
     "Message--from-me-unsupported-message-ask-to-resend": {
-        "message": "Tämänkaltaiset tulevat viestit synkronoidaan nyt, kun käytät ajantasaista Signal-versiota.",
+        "message": "Tulevaisuudessa vastaavat viestit synkronoidaan, kun käytät ajantasaista Signal-versiota.",
         "description": ""
     },
     "Message--update-signal": {
@@ -3132,15 +3132,15 @@
         "description": "Shown in the shortcuts guide"
     },
     "Keyboard--search": {
-        "message": "Hae",
+        "message": "Haku",
         "description": "Shown in the shortcuts guide"
     },
     "Keyboard--search-in-conversation": {
-        "message": "Etsi keskustelussa",
+        "message": "Hae keskustelusta",
         "description": "Shown in the shortcuts guide"
     },
     "Keyboard--focus-composer": {
-        "message": "Tarkenna syöttökenttä",
+        "message": "Tarkenna syöttökenttään",
         "description": "Shown in the shortcuts guide"
     },
     "Keyboard--open-all-media-view": {
@@ -3148,11 +3148,11 @@
         "description": "Shown in the shortcuts guide"
     },
     "Keyboard--open-emoji-chooser": {
-        "message": "Avaa emoji-valitsin",
+        "message": "Avaa emojivalitsin",
         "description": "Shown in the shortcuts guide"
     },
     "Keyboard--open-sticker-chooser": {
-        "message": "Avaa tarra-valitsin",
+        "message": "Avaa tarravalitsin",
         "description": "Shown in the shortcuts guide"
     },
     "Keyboard--begin-recording-voice-note": {
@@ -3168,7 +3168,7 @@
         "description": "Shown in the shortcuts guide"
     },
     "Keyboard--toggle-reply": {
-        "message": "Avaa tai sulje vastaaminen valittuun viestiin",
+        "message": "Vaihda vastaaminen valittuun viestiin",
         "description": "Shown in the shortcuts guide"
     },
     "Keyboard--toggle-reaction-picker": {
@@ -3316,7 +3316,7 @@
         "description": "Used in draft attachment list to remove an individual attachment"
     },
     "backToInbox": {
-        "message": "Takaisin viestiluetteloon",
+        "message": "Takaisin postilaatikkoon",
         "description": "Used as alt-text of button on archived conversations screen"
     },
     "conversationArchived": {
@@ -3336,7 +3336,7 @@
         "description": "A toast that shows up when user marks a conversation as unread"
     },
     "StickerCreator--title": {
-        "message": "Tarrapaketinluonti",
+        "message": "Tarrapaketin luonti",
         "description": "The title of the Sticker Pack Creator window"
     },
     "StickerCreator--DropZone--staticText": {
@@ -3384,7 +3384,7 @@
         "description": "Default text for the previous button on all stages of the sticker creator"
     },
     "StickerCreator--DropStage--title": {
-        "message": "Lisää tarrasi",
+        "message": "Lisää omiin tarroihin",
         "description": "Title for the drop stage of the sticker creator"
     },
     "StickerCreator--DropStage--removeSticker": {
@@ -3404,7 +3404,7 @@
         "description": "Text for the show margins toggle on the drop stage of the sticker creator"
     },
     "StickerCreator--DropStage--addMore": {
-        "message": "Lisää vielä vähintään $count$",
+        "message": "Lisää $count$ tai enemmän",
         "description": "Text to show user how many more stickers they must add",
         "placeholders": {
             "hashtag": {
@@ -3450,7 +3450,7 @@
         "description": "Text for the upload button in the confirmation dialog on the meta stage of the sticker creator"
     },
     "StickerCreator--MetaStage--ConfirmDialog--text": {
-        "message": "Et enää voi muokata tai poistaa tarrapaketin luomisen jälkeen.",
+        "message": "Et voi enää tehdä muokkauksia tai poistoja tarrapaketin luomisen jälkeen.",
         "description": "The text inside the confirmation dialog on the meta stage of the sticker creator"
     },
     "StickerCreator--UploadStage--title": {
@@ -3566,7 +3566,7 @@
         "description": "Text for the sticker preview for the dark theme"
     },
     "StickerCreator--Authentication--error": {
-        "message": "Asenna Signal puhelimeesi ja tietokoneelle, jotta voit käyttää tarrapakettiluojaa",
+        "message": "Asenna Signal puhelimeesi ja tietokoneelle, jotta voit käyttää tarrapakettityökalua",
         "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
     },
     "Reactions--remove": {
@@ -3606,7 +3606,7 @@
         }
     },
     "MessageRequests--message-group": {
-        "message": "Liitytäänkö tähän ryhmään ja näytetäänkö nimesi ja profiilikuvasi sen jäsenille? He eivät tiedä että olet nähnyt heidän viestinsä ennen hyväksymistä.",
+        "message": "Liitytäänkö tähän ryhmään ja näytetäänkö nimesi ja profiilikuvasi sen jäsenille? He eivät tiedä, että olet nähnyt heidän viestinsä ennen hyväksymistä.",
         "description": "Shown as the message for a message request in a group"
     },
     "MessageRequests--message-group-blocked": {
@@ -3644,7 +3644,7 @@
         "description": "Shown as a button to let the user block a message request and report spam"
     },
     "MessageRequests--block-and-report-spam-success-toast": {
-        "message": "Ilmoitettu spammista ja blokattu",
+        "message": "Ilmoitettu roskapostista ja estetty",
         "description": "Shown in a toast when you successfully block a user and report them as spam"
     },
     "MessageRequests--block-direct-confirm-title": {
@@ -3658,7 +3658,7 @@
         }
     },
     "MessageRequests--block-direct-confirm-body": {
-        "message": "Estetyt henkilöt eivät voi soittaa sinulle tai lähettää sinulle viestejä.",
+        "message": "Estetyt käyttäjät eivät voi soittaa sinulle tai lähettää sinulle viestejä.",
         "description": "Shown as the body in the confirmation modal for blocking a private message request"
     },
     "MessageRequests--block-group-confirm-title": {
@@ -3672,7 +3672,7 @@
         }
     },
     "MessageRequests--block-group-confirm-body": {
-        "message": "Et tule vastaanottamaan viestejä tai päivityksiä tältä ryhmältä, eivätkä ryhmän jäsenet voi lisätä sinua takaisin ryhmään.",
+        "message": "Et enää saa viestejä tai päivityksiä tältä ryhmältä, eivätkä ryhmän jäsenet voi lisätä sinua takaisin ryhmään.",
         "description": "Shown as the body in the confirmation modal for blocking a group message request"
     },
     "MessageRequests--delete": {
@@ -3702,11 +3702,11 @@
         "description": "Shown as a button to let the user delete a direct message request"
     },
     "MessageRequests--delete-group": {
-        "message": "Poista ja poistu",
+        "message": "Poista ja poistu ryhmästä",
         "description": "Shown as a button to let the user delete a group message request"
     },
     "MessageRequests--delete-group-confirm-body": {
-        "message": "Poistut tästä ryhmästä ja se poistetaan kaikilta laitteiltasi.",
+        "message": "Poistut tästä ryhmästä ja ryhmä poistetaan kaikilta laitteiltasi.",
         "description": "Shown as the body in the confirmation modal for deleting a group message request"
     },
     "MessageRequests--accept": {
@@ -3808,7 +3808,7 @@
         }
     },
     "member-of-more-than-3-groups--one-more": {
-        "message": " $group1$, $group2$, $group3$ jäsen ja vielä yhdelle",
+        "message": "Jäsen ryhmissä $group1$, $group2$, $group3$ ja yhdessä muussa",
         "description": "Shown in the conversation hero to indicate this user is a member of four mutual groups",
         "placeholders": {
             "group1": {
@@ -3936,7 +3936,7 @@
         }
     },
     "incomingGroupCall__ringing-1-other": {
-        "message": "$ringer$ kutsuu sinua ja $otherMember$",
+        "message": "$ringer$ soittaa sinulle ja $otherMember$ muulle",
         "description": "Shown in the incoming call bar when someone is ringing you for a group call",
         "placeholders": {
             "ringer": {
@@ -3950,7 +3950,7 @@
         }
     },
     "incomingGroupCall__ringing-2-others": {
-        "message": "$ringer$kutsuu sinua, $first$, ja $second$",
+        "message": "$ringer$ soittaa sinulle, käyttäjälle $first$, ja $second$ muulle",
         "description": "Shown in the incoming call bar when someone is ringing you for a group call",
         "placeholders": {
             "ringer": {
@@ -3968,7 +3968,7 @@
         }
     },
     "incomingGroupCall__ringing-3-others": {
-        "message": "$ringer$ kutsuu sinua, $first$, $second$, ja yhtä toista",
+        "message": "$ringer$ soittaa sinulle, käyttäjille $first$, $second$, sekä yhdelle muulle",
         "description": "Shown in the incoming call bar when someone is ringing you for a group call",
         "placeholders": {
             "ringer": {
@@ -3986,7 +3986,7 @@
         }
     },
     "incomingGroupCall__ringing-many": {
-        "message": "$ringer$ kutsuu sinua, $first$, $second$, ja $remaining$ muuta",
+        "message": "$ringer$ soittaa sinulle, käyttäjille $first$, $second$, sekä $remaining$ muulle",
         "description": "Shown in the incoming call bar when someone is ringing you for a group call",
         "placeholders": {
             "ringer": {
@@ -4008,7 +4008,7 @@
         }
     },
     "outgoingCallRinging": {
-        "message": "Soi…",
+        "message": "Soitetaan…",
         "description": "Shown in the call screen when placing an outgoing call that is now ringing"
     },
     "makeOutgoingCall": {
@@ -4226,7 +4226,7 @@
         "description": "Button to dismiss popup dialog when user-initiated task has gone wrong"
     },
     "unknown-sgnl-link": {
-        "message": "Anteeksi, mutta tuo sgnl:// linkki ei käy järkeen!",
+        "message": "Pahoittelut! Tämä sgnl:// -linkki ei toimi.",
         "description": "Shown if you click on a sgnl:// link not currently supported by Desktop"
     },
     "GroupV2--cannot-send": {
@@ -4234,7 +4234,7 @@
         "description": "Shown in toast when you attempt to forward a message to an announcement only group"
     },
     "GroupV2--cannot-start-group-call": {
-        "message": "Vain ryhmän ylläpitäjät voivat tehdä kutsun.",
+        "message": "Vain ryhmän ylläpitäjä voi aloittaa puhelun.",
         "description": "Shown in toast when a non-admin starts a group call in an announcements only group"
     },
     "GroupV2--join--invalid-link--title": {
@@ -4278,11 +4278,11 @@
         "description": "Shown if you click a group link and you have been forbidden from joining via the link"
     },
     "GroupV2--join--link-forbidden": {
-        "message": "Et voi liittyä ryhmään linkin avulla koska ylläpitäjä poisti sinut ryhmästä.",
+        "message": "Et voi liittyä ryhmään ryhmälinkin avulla, koska ylläpitäjä poisti sinut ryhmästä.",
         "description": "Shown if you click a group link and you have been forbidden from joining via the link"
     },
     "GroupV2--join--prompt-with-approval": {
-        "message": "Tämän ryhmän ylläpitäjän on hyväksyttävä pyyntösi ennen kuin voit liittyä tähän ryhmään. Kun pyyntösi hyväksytään, nimesi ja kuvasi jaetaan sen jäsenille.",
+        "message": "Ryhmän ylläpitäjän on hyväksyttävä liittymispyyntö ennen ryhmään liittymistä. Liittymispyynnön yhteydessä nimesi ja kuvasi näkyvät ryhmän jäsenille.",
         "description": "Shown when you click on a group link to confirm, if it requires admin approval"
     },
     "GroupV2--join--join-button": {
@@ -4334,7 +4334,7 @@
         }
     },
     "GroupV2--join--requested": {
-        "message": "Liittymispyyntösi on lähetetty ryhmän ylläpitäjälle. Saat ilmoituksen, kun he tekevät päätöksen.",
+        "message": "Liittymispyyntösi on lähetetty ryhmän ylläpitäjille. Saat ilmoituksen, kun he tekevät päätöksen.",
         "description": "Shown in composition area when you've requested to join a group"
     },
     "GroupV2--join--general-join-failure--title": {
@@ -4362,7 +4362,7 @@
         "description": "Shown along with a spinner when an update operation takes longer than one second"
     },
     "GroupV2--create--you": {
-        "message": "Sinä loit ryhmän.",
+        "message": "Loit ryhmän.",
         "description": "Shown in timeline or conversation preview when v2 group changes"
     },
     "GroupV2--create--other": {
@@ -4468,7 +4468,7 @@
         "description": "Shown in timeline or conversation preview when v2 group changes"
     },
     "GroupV2--access-attributes--admins--other": {
-        "message": "$adminName$ vaihtoi asetusta kuka voi muokata ryhmän infoa  \"Vain ylläpitäjät.\"",
+        "message": "$adminName$ muutti vain ylläpitäjät ryhmän tietojen muokkaajiksi.",
         "description": "Shown in timeline or conversation preview when v2 group changes",
         "placeholders": {
             "adminName": {
@@ -4478,15 +4478,15 @@
         }
     },
     "GroupV2--access-attributes--admins--you": {
-        "message": "Vaihdoit asetusta kuka voi muokata ryhmän infoa \"Vain ylläpitäjät.\"",
+        "message": "Muutit vain ylläpitäjät ryhmän tietojen muokkaajiksi.",
         "description": "Shown in timeline or conversation preview when v2 group changes"
     },
     "GroupV2--access-attributes--admins--unknown": {
-        "message": "Ylläpitäjä vaihtoi asetusta kuka voi muokata ryhmän infoa \"Vain ylläpitäjät.\"",
+        "message": "Ylläpitäjä muutti vain ylläpitäjät ryhmän tietojen muokkaajiksi.",
         "description": "Shown in timeline or conversation preview when v2 group changes"
     },
     "GroupV2--access-attributes--all--other": {
-        "message": "$adminName$ vaihtoi asetusta kuka voi muokata ryhmän infoa \"Kaikki jäsenet.\"",
+        "message": "$adminName$ muutti kaikki jäsenet ryhmän tietojen muokkaajiksi.",
         "description": "Shown in timeline or conversation preview when v2 group changes",
         "placeholders": {
             "adminName": {
@@ -4496,15 +4496,15 @@
         }
     },
     "GroupV2--access-attributes--all--you": {
-        "message": "Sinä vaihdoit asetusta kuka voi muokata ryhmän infoa \"Kaikki jäsenet.\"",
+        "message": "Muutit kaikki jäsenet ryhmän tietojen muokkaajiksi.",
         "description": "Shown in timeline or conversation preview when v2 group changes"
     },
     "GroupV2--access-attributes--all--unknown": {
-        "message": "Ylläpitäjä vaihtoi asetusta kuka voi muokata ryhmän infoa \"Kaikki jäsenet.\"",
+        "message": "Ylläpitäjä muutti kaikki jäsenet ryhmän tietojen muokkaajiksi.",
         "description": "Shown in timeline or conversation preview when v2 group changes"
     },
     "GroupV2--access-members--admins--other": {
-        "message": "$adminName$ vaihtoi asetusta kuka voi muokata ryhmän jäsenyyttä \"Vain ylläpitäjät.\"",
+        "message": "$adminName$muutti vain ylläpitäjät ryhmän jäsenyyden muokkaajiksi. ",
         "description": "Shown in timeline or conversation preview when v2 group changes",
         "placeholders": {
             "adminName": {
@@ -4514,15 +4514,15 @@
         }
     },
     "GroupV2--access-members--admins--you": {
-        "message": "Sinä vaihdoit asetusta kuka voi muokata ryhmän jäsenyyttä \"Vain ylläpitäjät.\"",
+        "message": "Muutit vain ylläpitäjät ryhmän jäsenyyden muokkaajiksi. ",
         "description": "Shown in timeline or conversation preview when v2 group changes"
     },
     "GroupV2--access-members--admins--unknown": {
-        "message": "Ylläpitäjä vaihtoi asetusta kuka voi muokata ryhmän jäsenyyttä \"Vain ylläpitäjät.\"",
+        "message": "Ylläpitäjä muutti vain ylläpitäjät ryhmän jäsenyyden muokkaajiksi. ",
         "description": "Shown in timeline or conversation preview when v2 group changes"
     },
     "GroupV2--access-members--all--other": {
-        "message": "$adminName$ vaihtoi asetusta kuka voi muokata ryhmän jäsenyyttä \"Kaikki jäsenet.\"",
+        "message": "$adminName$ muutti vain ylläpitäjät ryhmän jäsenyyden muokkaajiksi. ",
         "description": "Shown in timeline or conversation preview when v2 group changes",
         "placeholders": {
             "adminName": {
@@ -4532,19 +4532,19 @@
         }
     },
     "GroupV2--access-members--all--you": {
-        "message": "Sinä vaihdoit asetusta kuka voi muokata ryhmän jäsenyyttä \"Kaikki jäsenet.\"",
+        "message": "Muutit kaikki jäsenet ryhmän jäsenyyden muokkaajiksi. ",
         "description": "Shown in timeline or conversation preview when v2 group changes"
     },
     "GroupV2--access-members--all--unknown": {
-        "message": "Ylläpitäjä vaihtoi asetusta kuka voi muokata ryhmän jäsenyyttä \"Kaikki jäsenet.\"",
+        "message": "Ylläpitäjä muutti kaikki jäsenet ryhmän jäsenyyden muokkaajiksi. ",
         "description": "Shown in timeline or conversation preview when v2 group changes"
     },
     "GroupV2--access-invite-link--disabled--you": {
-        "message": "Otit liittymispyynnöt pois käytöstä.",
+        "message": "Poistit ylläpitäjän hyväksynnän ryhmälinkillä liittyttäessä.",
         "description": "Shown in timeline or conversation preview when v2 group changes"
     },
     "GroupV2--access-invite-link--disabled--other": {
-        "message": "$adminName$ otti liittymispyynnöt pois käytöstä.",
+        "message": "$adminName$poisti ylläpitäjän hyväksynnän ryhmälinkillä liittyttäessä. ",
         "description": "Shown in timeline or conversation preview when v2 group changes",
         "placeholders": {
             "adminName": {
@@ -4554,15 +4554,15 @@
         }
     },
     "GroupV2--access-invite-link--disabled--unknown": {
-        "message": "Liittymispyynnöt on otettu pois käytöstä.",
+        "message": "Ylläpitäjän hyväksyntä ryhmälinkillä liittyttäessä on poistettu.",
         "description": "Shown in timeline or conversation preview when v2 group changes"
     },
     "GroupV2--access-invite-link--enabled--you": {
-        "message": "Otit liittymispyynnöt käyttöön.",
+        "message": "Otit käyttöön ylläpitäjän hyväksynnän ryhmälinkillä liittyttäessä.",
         "description": "Shown in timeline or conversation preview when v2 group changes"
     },
     "GroupV2--access-invite-link--enabled--other": {
-        "message": "$adminName$otti liittymispyynnöt käyttöön.",
+        "message": "$adminName$ otti käyttöön ylläpitäjän hyväksynnän ryhmälinkillä liittyttäessä.",
         "description": "Shown in timeline or conversation preview when v2 group changes",
         "placeholders": {
             "adminName": {
@@ -4572,7 +4572,7 @@
         }
     },
     "GroupV2--access-invite-link--enabled--unknown": {
-        "message": "Ryhmälinkin järjestelmänvalvojan hyväksyntä on otettu käyttöön.",
+        "message": "Ylläpitäjän hyväksyntä ryhmälinkillä liittyttäessä on otettu käyttöön.",
         "description": "Shown in timeline or conversation preview when v2 group changes"
     },
     "GroupV2--member-add--invited--you": {
@@ -4970,7 +4970,7 @@
         }
     },
     "GroupV2--pending-add--one--you--unknown": {
-        "message": "Sinut kutsuttiin liittymään ryhmään.",
+        "message": "Sinut kutsuttiin ryhmään.",
         "description": "Shown in timeline or conversation preview when v2 group changes"
     },
     "GroupV2--pending-add--many--other": {
@@ -5056,7 +5056,7 @@
         }
     },
     "GroupV2--pending-remove--revoke-own--to-you": {
-        "message": "$inviterName$ peruutti heidän kutsun sinulle.",
+        "message": "$inviterName$ peruutti kutsunsa sinulle.",
         "description": "Shown in timeline or conversation preview when v2 group changes",
         "placeholders": {
             "inviterName": {
@@ -5066,7 +5066,7 @@
         }
     },
     "GroupV2--pending-remove--revoke-own--unknown": {
-        "message": "$inviterName$peruutti heidän kutsun yhdelle ihmiselle.",
+        "message": "$inviterName$ peruutti kutsunsa yhdelle henkilölle.",
         "description": "Shown in timeline or conversation preview when v2 group changes",
         "placeholders": {
             "inviterName": {
@@ -5120,7 +5120,7 @@
         }
     },
     "GroupV2--pending-remove--revoke-invite-from--one--other": {
-        "message": "$adminName$ peruutti kutsun ryhmään yhdeltä henkilöltä kutsuttuna $memberName$.",
+        "message": "$adminName$ peruutti kutsun ryhmään yhdeltä käyttäjän $memberName$ kutsumalta henkilöltä.",
         "description": "Shown in timeline or conversation preview when v2 group changes",
         "placeholders": {
             "adminName": {
@@ -5134,7 +5134,7 @@
         }
     },
     "GroupV2--pending-remove--revoke-invite-from--one--you": {
-        "message": "Peruutit kutsun yhdeltä henkilöltä kutsuttuna $memberName$.",
+        "message": "Peruutit kutsun yhdeltä käyttäjän $memberName$ kutsumalta henkilöltä.",
         "description": "Shown in timeline or conversation preview when v2 group changes",
         "placeholders": {
             "memberName": {
@@ -5144,7 +5144,7 @@
         }
     },
     "GroupV2--pending-remove--revoke-invite-from--one--unknown": {
-        "message": "Ylläpitäjä peruutti kutsun ryhmään yhdeltä henkilöltä kutsuttuna $memberName$.",
+        "message": "Ylläpitäjä peruutti kutsun yhdeltä käyttäjän $memberName$ kutsumalta henkilöltä.",
         "description": "Shown in timeline or conversation preview when v2 group changes",
         "placeholders": {
             "memberName": {
@@ -5154,7 +5154,7 @@
         }
     },
     "GroupV2--pending-remove--revoke-invite-from-you--one--other": {
-        "message": "$adminName$ peruutti kutsusi ryhmään henkilölle $inviteeName$.",
+        "message": "$adminName$ peruutti henkilölle $inviteeName$lähettämäsi kutsun ryhmään.",
         "description": "Shown in timeline or conversation preview when v2 group changes",
         "placeholders": {
             "adminName": {
@@ -5174,7 +5174,7 @@
         }
     },
     "GroupV2--pending-remove--revoke-invite-from-you--one--unknown": {
-        "message": "Ylläpitäjä peruutti lähettämäsi kutsun ryhmään henkilölle $inviteeName$.",
+        "message": "Ylläpitäjä peruutti henkilölle $inviteeName$lähettämäsi kutsun ryhmään.",
         "description": "Shown in timeline or conversation preview when v2 group changes",
         "placeholders": {
             "inviteeName": {
@@ -5184,7 +5184,7 @@
         }
     },
     "GroupV2--pending-remove--revoke-invite-from--many--other": {
-        "message": "$adminName$ peruutti kutsut ryhmään $count$ henkilöltä, jotka  $memberName$ kutsui.",
+        "message": "$adminName$ peruutti kutsut ryhmään $count$ käyttäjän $memberName$kutsumalta henkilöltä.",
         "description": "Shown in timeline or conversation preview when v2 group changes",
         "placeholders": {
             "adminName": {
@@ -5198,7 +5198,7 @@
         }
     },
     "GroupV2--pending-remove--revoke-invite-from--many--you": {
-        "message": "Peruutit kutsut ryhmään $count$ henkilöltä $memberName$ kutsumana.",
+        "message": "Peruutit kutsun $count$ käyttäjän $memberName$ kutsumalta henkilöltä.",
         "description": "Shown in timeline or conversation preview when v2 group changes",
         "placeholders": {
             "count": {
@@ -5212,7 +5212,7 @@
         }
     },
     "GroupV2--pending-remove--revoke-invite-from--many--unknown": {
-        "message": "Ylläpitäjä perui kutsut ryhmään $count$ henkilöltä $memberName$ kutsumana.",
+        "message": "Ylläpitäjä peruutti kutsut ryhmään $count$ käyttäjän $memberName$kutsumalta henkilöltä.",
         "description": "Shown in timeline or conversation preview when v2 group changes",
         "placeholders": {
             "count": {
@@ -5226,7 +5226,7 @@
         }
     },
     "GroupV2--pending-remove--revoke-invite-from-you--many--other": {
-        "message": "$adminName$ perui lähettämäsi kutsut ryhmään $count$ ihmiseltä.",
+        "message": "$adminName$perui lähettämäsi kutsut ryhmään $count$ henkilöltä.",
         "description": "Shown in timeline or conversation preview when v2 group changes",
         "placeholders": {
             "adminName": {
@@ -5394,11 +5394,11 @@
         "description": "Shown in timeline or conversation preview when v2 group changes"
     },
     "GroupV2--group-link-reset--you": {
-        "message": "Sinä uudelleenasetit ryhmälinkin.",
+        "message": "Loit ryhmälinkin uudelleen.",
         "description": "Shown in timeline or conversation preview when v2 group changes"
     },
     "GroupV2--group-link-reset--other": {
-        "message": "$adminName$ uudelleenasetti ryhmälinkin.",
+        "message": "$adminName$ loi ryhmälinkin uudelleen.",
         "description": "Shown in timeline or conversation preview when v2 group changes",
         "placeholders": {
             "adminName": {
@@ -5408,7 +5408,7 @@
         }
     },
     "GroupV2--group-link-reset--unknown": {
-        "message": "Ryhmälinkki on asetettu uudelleen.",
+        "message": "Ryhmälinkki on luotu uudelleen.",
         "description": "Shown in timeline or conversation preview when v2 group changes"
     },
     "GroupV2--description--remove--you": {
@@ -5448,11 +5448,11 @@
         "description": "Shown in timeline or conversation preview when v2 group changes"
     },
     "GroupV2--announcements--admin--you": {
-        "message": "Muutit ryhmäasetukset siten, että vain järjestelmänvalvojat voivat lähettää viestejä.",
+        "message": "Muutit ryhmän asetuksia ja nyt vain ylläpitäjät voivat lähettää viestejä.",
         "description": "Shown in timeline or conversation preview when v2 group changes"
     },
     "GroupV2--announcements--admin--other": {
-        "message": "$memberName$ muutti ryhmäasetuksia siten, että vain ylläpitäjät voivat lähettää viestejä.",
+        "message": "$memberName$ muutti ryhmän asetuksia ja nyt vain ylläpitäjät voivat lähettää viestejä.",
         "description": "Shown in timeline or conversation preview when v2 group changes",
         "placeholders": {
             "adminName": {
@@ -5462,15 +5462,15 @@
         }
     },
     "GroupV2--announcements--admin--unknown": {
-        "message": "Ryhmä muuttui sellaiseksi, että vain ylläpitäjät voivat lähettää viestejä.",
+        "message": "Ryhmän asetuksia muutettiin ja nyt vain ylläpitäjät voivat lähettää viestejä.",
         "description": "Shown in timeline or conversation preview when v2 group changes"
     },
     "GroupV2--announcements--member--you": {
-        "message": "Muutit ryhmän asetukset sellaisiksi, että kaikki ryhmän jäsenet voivat lähettää viestejä.",
+        "message": "Muutit ryhmän asetuksia ja nyt kaikki ryhmän jäsenet voivat lähettää viestejä.",
         "description": "Shown in timeline or conversation preview when v2 group changes"
     },
     "GroupV2--announcements--member--other": {
-        "message": "$memberName$ muutti ryhmän asetuksia sellaisiksi, että kaikki voivat lähettää viestejä.",
+        "message": "$memberName$ muutti ryhmän asetuksia ja nyt kaikki jäsenet voivat lähettää viestejä.",
         "description": "Shown in timeline or conversation preview when v2 group changes",
         "placeholders": {
             "adminName": {
@@ -5480,11 +5480,11 @@
         }
     },
     "GroupV2--announcements--member--unknown": {
-        "message": "Ryhmä muuttui sellaiseksi, että kaikki jäsenet voivat lähettää viestejä.",
+        "message": "Ryhmän asetuksia muutettiin ja nyt kaikki jäsenet voivat lähettää viestejä.",
         "description": "Shown in timeline or conversation preview when v2 group changes"
     },
     "GroupV1--Migration--disabled": {
-        "message": "Päivitä tämä ryhmä aktivoidaksesi uusia ominaisuuksia kuten @mentions ja ylläpitäjät. Oman nimensä ja kuvansa jakamattomat jäsenet kutsutaan liittymään. $learnMore$",
+        "message": "Päivitä tämä ryhmä ottaaksesi käyttöön uudet ominaisuudet kuten @maininnat ja ylläpitäjät. Jäsenille, jotka eivät ole jakaneet nimeään tai kuvaansa tässä ryhmässä, lähetetään kutsu. $learnMore$",
         "description": "Shown instead of composition area when user is forced to migrate a legacy group (GV1).",
         "placeholders": {
             "learnMore": {
@@ -5510,11 +5510,11 @@
         "description": "Shown on Learn More popup after GV1 migration"
     },
     "GroupV1--Migration--migrate--title": {
-        "message": "Päivitä uuden tyylin ryhmään",
+        "message": "Päivitä uuteen ryhmään",
         "description": "Shown on Migration popup after choosing to migrate group"
     },
     "GroupV1--Migration--info--summary": {
-        "message": "Uuden tyylin ryhmät tukevat nyt @mainintoja ja ylläpitäjiä, sekä muita ominaisuuksia tulevaisuudessa.",
+        "message": "Uudet ryhmät tukevat nyt @mainintoja ja ylläpitäjiä, sekä muita ominaisuuksia tulevaisuudessa.",
         "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
     },
     "GroupV1--Migration--info--keep-history": {
@@ -5530,15 +5530,15 @@
         "description": "Shown on Learn More popup after GV1 migration"
     },
     "GroupV1--Migration--info--invited--many": {
-        "message": "Näiden jäsenten tulee hyväksyä kutsu liittyä tähän ryhmään takaisin, ja eivät saa ryhmän viestejä ennen kuin he hyväksyvät:",
+        "message": "Näiden jäsenten on hyväksyttävä kutsu liittyä tähän ryhmään uudelleen. He saavat ryhmäviestit vasta hyväksyttyään kutsun.",
         "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
     },
     "GroupV1--Migration--info--invited--one": {
-        "message": "Tämän jäsenen on hyväksyttävä kutsu liittyä uudelleen tähän ryhmään, eikä hän saa ryhmäviestejä ennen kuin hän hyväksyy:",
+        "message": "Tämän jäsenen on hyväksyttävä kutsu liittyä tähän ryhmään uudelleen. Hän saa ryhmäviestit vasta hyväksyttyään kutsun.",
         "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
     },
     "GroupV1--Migration--info--removed--before--many": {
-        "message": "Nämä jäsenet eivät pysty liittymään uusiin ryhmiin, ja heidät poistetaan tästä ryhmästä:",
+        "message": "Nämä jäsenet eivät voi liittyä uusiin ryhmiin, ja heidät poistetaan tästä ryhmästä:",
         "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
     },
     "GroupV1--Migration--info--removed--before--one": {
@@ -5554,7 +5554,7 @@
         "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
     },
     "GroupV1--Migration--invited--you": {
-        "message": "Sinua ei pystytty lisäämään uuteen ryhmään ja sait siihen kutsun.",
+        "message": "Sinua ei voitu lisätä uuteen ryhmään ja sinut on kutsuttu liittymään.",
         "description": "Shown in timeline when a group is upgraded and you were invited instead of added"
     },
     "GroupV1--Migration--invited--one": {
@@ -5610,15 +5610,15 @@
         "description": "Generic next label"
     },
     "BadgeDialog__become-a-sustainer-button": {
-        "message": "Ryhdy tukijaksi",
+        "message": "Lahjoita Signalille",
         "description": "In the badge dialog. This button is shown under sustainer badges, taking users to some instructions"
     },
     "BadgeSustainerInstructions__header": {
-        "message": "Ryhdy tukijaksi",
+        "message": "Lahjoita Signalille",
         "description": "In the instructions for becoming a sustainer. The heading."
     },
     "BadgeSustainerInstructions__subheader": {
-        "message": "Signal toimii kaltaistesi käyttäjien panoksella. Osallistu ja ansaitse merkki.",
+        "message": "Signal toimii kaltaistesi ihmisten tuella. Tee lahjoitus ja ansaitse merkki.",
         "description": "In the instructions for becoming a sustainer. The subheading."
     },
     "BadgeSustainerInstructions__instructions__1": {
@@ -5626,15 +5626,15 @@
         "description": "In the instructions for becoming a sustainer. First instruction."
     },
     "BadgeSustainerInstructions__instructions__2": {
-        "message": "Paina profiilikuvaasi ja ylävasemmalta avataksesi asetukset",
+        "message": "Napauta profiilikuvaasi ylävasemmalla avataksesi asetukset",
         "description": "In the instructions for becoming a sustainer. Second instruction."
     },
     "BadgeSustainerInstructions__instructions__3": {
-        "message": "Paina \"Ryhdy tukijaksi\" ja tilaa",
+        "message": "Napauta Lahjoita Signalille ja tilaa",
         "description": "In the instructions for becoming a sustainer. Third instruction."
     },
     "CompositionArea--expand": {
-        "message": "Suurenna",
+        "message": "Laajenna",
         "description": "Aria label for expanding composition area"
     },
     "CompositionArea--attach-file": {
@@ -5646,15 +5646,15 @@
         "description": "Title for the composition area for the SMS-only contact"
     },
     "CompositionArea--sms-only__body": {
-        "message": "Signal-työpöytäsovellus ei tue muiden kuin Signalin yhteyshenkilöiden viestintää. Pyydä tätä henkilöä asentamaan Signal, jotta viestintä olisi turvallisempi.",
+        "message": "Signal-työpöytäsovellus ei tue viestejä käyttäjille, jotka eivät käytä Signalia. Pyydä tätä henkilöä asentamaan Signal, jotta viestintä olisi turvallisempi.",
         "description": "Body for the composition area for the SMS-only contact"
     },
     "CompositionArea--sms-only__spinner-label": {
-        "message": "Tarkistaa yhteyshenkilöiden rekisteröitymistilaa",
+        "message": "Tarkistetaan yhteystietojen rekisteröityminen",
         "description": "Displayed while checking if the contact is SMS-only"
     },
     "countMutedConversationsDescription": {
-        "message": "Sisällytä mykistetyt keskustelut tunnusten määrään",
+        "message": "Sisällytä mykistetyt keskustelut ilmoituksiin",
         "description": "Description for counting muted conversations in badge setting"
     },
     "ContactModal--message": {
@@ -5670,7 +5670,7 @@
         "description": "Button text for make admin button in Group Contact Details modal"
     },
     "ContactModal--make-admin-info": {
-        "message": "$contact$ voi tulevaisuudessa muokata ryhmää ja sen jäseniä.",
+        "message": "$contact$voi muokata ryhmää ja sen jäseniä.",
         "description": "Shown in a confirmation dialog when you are about to grant admin privileges to someone",
         "placeholders": {
             "contact": {
@@ -5742,7 +5742,7 @@
         "description": "This is the label for the 'who can add members' panel"
     },
     "ConversationDetails--add-members-info": {
-        "message": "Valitse, ketkä voivat lisätä uusia jäseniä tähän ryhmään.",
+        "message": "Valitse, kuka voi lisätä uusia jäseniä tähän ryhmään.",
         "description": "This is the additional info for the 'who can add members' panel"
     },
     "ConversationDetails--announcement-label": {
@@ -5765,8 +5765,12 @@
         "message": "Estä ryhmä",
         "description": "This is a button to block a group"
     },
+    "ConversationDetailsActions--unblock-group": {
+        "message": "Poista ryhmän esto",
+        "description": "This is a button to unblock a group"
+    },
     "ConversationDetailsActions--leave-group-must-choose-new-admin": {
-        "message": "Ennen kuin lähdet, sinun on valittava vähintään yksi uusi ylläpitäjä tälle ryhmälle.",
+        "message": "Ennen kuin poistut ryhmästä, valitse uusi ylläpitäjä tälle ryhmälle.",
         "description": "Shown if, before leaving a group, you need to choose an admin"
     },
     "ConversationDetailsActions--leave-group-modal-title": {
@@ -5781,8 +5785,18 @@
         "message": "Poistu",
         "description": "This is the modal button to confirm leaving a group"
     },
+    "ConversationDetailsActions--unblock-group-modal-title": {
+        "message": "Poistetaanko ryhmän $groupName$ esto?",
+        "description": "This is the modal title for confirming unblock of a group",
+        "placeholders": {
+            "groupName": {
+                "content": "$1",
+                "example": "Our Conversation"
+            }
+        }
+    },
     "ConversationDetailsActions--block-group-modal-title": {
-        "message": "Estetäänkö ja poistutaanko ryhmästä \"$groupName$\"?",
+        "message": "Estetäänkö ja poistutaanko ryhmästä $groupName$?",
         "description": "This is the modal title for confirming blocking a group",
         "placeholders": {
             "groupName": {
@@ -5792,12 +5806,20 @@
         }
     },
     "ConversationDetailsActions--block-group-modal-content": {
-        "message": "Et tule vastaanottamaan viestejä tai päivityksiä tältä ryhmältä.",
+        "message": "Et enää saa viestejä tai päivityksiä tältä ryhmältä.",
         "description": "This is the modal content for confirming blocking a group"
     },
     "ConversationDetailsActions--block-group-modal-confirm": {
         "message": "Estä",
         "description": "This is the modal button to confirm blocking a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-content": {
+        "message": "Yhteystietosi voivat lisätä sinut takaisin tähän ryhmään.",
+        "description": "This is the modal content for confirming unblock of a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-confirm": {
+        "message": "Poista esto",
+        "description": "This is the modal button to confirm unblock of a group"
     },
     "ConversationDetailsHeader--members": {
         "message": "$number$ jäsentä",
@@ -5860,7 +5882,7 @@
         "description": "This lets users share their group link"
     },
     "GroupLinkManagement--confirm-reset": {
-        "message": "Haluatko varmasti nollata ryhmälinkin? Ryhmään ei voi enää liittyä nykyistä linkkiä käyttäen.",
+        "message": "Haluatko varmasti asettaa ryhmälinkin uudelleen? Ryhmään ei voi enää liittyä nykyistä linkkiä käyttäen.",
         "description": "Shown in the confirmation dialog when an admin is about to reset the group link"
     },
     "GroupLinkManagement--reset": {
@@ -5872,7 +5894,7 @@
         "description": "Title for the approve new members select area"
     },
     "GroupLinkManagement--approve-info": {
-        "message": "Vaadi ylläpitäjän hyväksyntä uusille jäsenille, jotka liittyvät ryhmälinkin kautta.",
+        "message": "Ylläpitäjän on hyväksyttävä ryhmälinkin kautta liittyvät uudet jäsenet.",
         "description": "Description for the approve new members select area"
     },
     "PendingInvites--tab-requests": {
@@ -5896,7 +5918,7 @@
         }
     },
     "PendingRequests--approve-for": {
-        "message": "Hyväksytäänkö liittymispyyntö käyttäjältä \"$name$\"?",
+        "message": "Hyväksytäänkö liittymispyyntö käyttäjältä $name$?",
         "description": "This is the modal content when confirming approving a group request to join",
         "placeholders": {
             "name": {
@@ -5906,7 +5928,7 @@
         }
     },
     "PendingRequests--deny-for": {
-        "message": "Hylätäänkö liittymispyyntö käyttäjältä \"$name$\"?",
+        "message": "Hylätäänkö liittymispyyntö käyttäjältä $name$?",
         "description": "This is the modal content when confirming denying a group request to join",
         "placeholders": {
             "name": {
@@ -5916,7 +5938,7 @@
         }
     },
     "PendingRequests--deny-for--with-link": {
-        "message": "Kielletäänkö pyyntö käyttäjältä \"$name$\"? He eivät voi enää pyytää jäsenyyttä ryhmälinkin välityksellä.",
+        "message": "Hylätäänkö pyyntö käyttäjältä $name$? Tämän jälkeen hän ei voi enää pyytää liittymistä ryhmälinkin kautta.",
         "description": "This is the modal content when confirming denying a group request to join",
         "placeholders": {
             "name": {
@@ -5926,11 +5948,11 @@
         }
     },
     "PendingInvites--invites": {
-        "message": "Sinun lähettämäsi kutsut",
+        "message": "Lähettämäsi kutsut",
         "description": "This is the title list of all invites"
     },
     "PendingInvites--invited-by-you": {
-        "message": "Sinun lähettämäsi kutsut",
+        "message": "Lähettämäsi kutsut",
         "description": "This is the title for the list of members you have invited"
     },
     "PendingInvites--invited-by-others": {
@@ -5952,7 +5974,7 @@
         "description": "This is aria label for revoking a group invite icon"
     },
     "PendingInvites--revoke-for": {
-        "message": "Peruuta ryhmäkutsu käyttäjältä \"$name$\"?",
+        "message": "Peruuta ryhmäkutsu käyttäjältä $name$?",
         "description": "This is the modal content when confirming revoking a single invite",
         "placeholders": {
             "number": {
@@ -5976,7 +5998,7 @@
         }
     },
     "PendingInvites--revoke-from-plural": {
-        "message": "Perutaanko $number$ kutsut, jotka lähetti \"$name$\"?",
+        "message": "Perutaanko $number$ kutsut, jotka lähetti $name$?",
         "description": "This is the modal content when confirming revoking multiple invites",
         "placeholders": {
             "number": {
@@ -6024,7 +6046,7 @@
         "description": "Title of dialog to block a user from requesting to join via the link again"
     },
     "PendingRequests--block--contents": {
-        "message": "$name$ ei voi liittyä tai pyytää jäsenyyttä ryhmälinkin kautta. Heidät voidaan edelleen lisätä ryhmään manuaalisesti.",
+        "message": "$name$ ei voi liittyä tai pyytää jäsenyyttä ryhmälinkin kautta. Heidät voidaan edelleen lisätä ryhmään käsin.",
         "description": "Details of dialog to block a user from requesting to join via the link again",
         "placeholders": {
             "name": {
@@ -6050,7 +6072,7 @@
         "description": "The label for the avatar uploader when a photo is selected"
     },
     "AvatarInput--upload-photo-choice": {
-        "message": "Tallenna kuva",
+        "message": "Lataa kuva",
         "description": "The button text when you click on an uploaded avatar and want to upload a new one"
     },
     "AvatarInput--remove-photo-choice": {
@@ -6094,7 +6116,7 @@
         "description": "When creating a new group and inviting users, this is shown in the dialog"
     },
     "NewlyCreatedGroupInvitedContactsDialog--body--info-paragraph": {
-        "message": "Heille on lähetetty ryhmäkutsu. He eivät näe ryhmän sisältöä ennen kutsun hyväksymistä.",
+        "message": "Heidät on kutsuttu liittymään ryhmään, ja he näkevät ryhmäviestit vasta hyväksyttyään kutsun.",
         "description": "When creating a new group and inviting users, this is shown in the dialog"
     },
     "NewlyCreatedGroupInvitedContactsDialog--body--learn-more": {
@@ -6204,7 +6226,7 @@
         "description": "Aria label for audio attachment's playback time slider"
     },
     "emptyInboxMessage": {
-        "message": "Napsauta $composeIcon$ edellä ja etsi yhteystietojasi tai ryhmiäsi.",
+        "message": "Napauta $composeIcon$ yllä ja etsi yhteystietojasi tai ryhmiäsi.",
         "description": "Shown in the left-pane when the inbox is empty",
         "placeholders": {
             "composeIcon": {
@@ -6234,7 +6256,7 @@
         "description": "Shown on the message request warning. Clicking this button will open a dialog with more information"
     },
     "MessageRequestWarning__dialog__details": {
-        "message": "Et kuulu samoihin ryhmiin tämän henkilön kanssa. Käy pyynnöt tarkasti läpi ennen hyväksymistä vältääksesi epätoivotut viestit.",
+        "message": "Et kuulu samoihin ryhmiin tämän henkilön kanssa. Käy pyynnöt huolellisesti läpi ennen hyväksymistä välttääksesi ei-toivotut viestit.",
         "description": "Shown in the message request warning dialog. Gives more information about message requests"
     },
     "MessageRequestWarning__dialog__learn-even-more": {
@@ -6242,7 +6264,7 @@
         "description": "Shown in the message request warning dialog. Clicking this button will open a page on Signal's support site"
     },
     "ContactSpoofing__same-name": {
-        "message": "Tarkista pyynnöt huolellisesti. Signal löysi toisen saman nimisen henkilön. $link$",
+        "message": "Tarkista pyynnöt huolellisesti. Signal löysi toisen saman nimisen yhteystiedon. $link$",
         "description": "Shown in the timeline warning when you have a message request from someone with the same name as someone else",
         "placeholders": {
             "link": {
@@ -6270,7 +6292,7 @@
         "description": "Shown in the timeline warning when you have a message request from someone with the same name as someone else"
     },
     "ContactSpoofing__same-name-in-group__link": {
-        "message": "Tarkastele napsauttamalla",
+        "message": "Tarkista napauttamalla",
         "description": "Shown in the timeline warning when you multiple group members have the same name"
     },
     "ContactSpoofingReviewDialog__title": {
@@ -6294,7 +6316,7 @@
         "description": "Title for the contact name spoofing review dialog in groups"
     },
     "ContactSpoofingReviewDialog__group__description": {
-        "message": "$count$ ryhmän jäsenellä on samat nimet. Tarkista alla olevat jäsenet tai ryhdy toimiin.",
+        "message": "Ryhmän jäsenissä on $count$ käyttäjää, joilla on samanlainen nimi. Tarkista jäsenet alapuolelta ja korjaa ongelma.",
         "description": "Description for the group contact spoofing review dialog"
     },
     "ContactSpoofingReviewDialog__group__members-header": {
@@ -6302,7 +6324,7 @@
         "description": "Header in the group contact spoofing review dialog. After this header, there will be a list of members"
     },
     "ContactSpoofingReviewDialog__group__name-change-info": {
-        "message": " $oldName$ on äskettäin vaihtanut profiilinsa nimeksi $newName$",
+        "message": "$oldName$ on äskettäin vaihtanut profiilinsa nimeksi $newName$",
         "description": "In the group contact spoofing review dialog, this text is shown when someone has changed their name recently",
         "placeholders": {
             "oldName": {
@@ -6320,7 +6342,7 @@
         "description": "When confirming the removal of a group member, show this text in the button"
     },
     "RemoveGroupMemberConfirmation__description": {
-        "message": "Poista \"$name$\" ryhmästä?",
+        "message": "Poista $name$ ryhmästä?",
         "description": "When confirming the removal of a group member, show this text in the dialog",
         "placeholders": {
             "name": {
@@ -6330,7 +6352,7 @@
         }
     },
     "RemoveGroupMemberConfirmation__description__with-link": {
-        "message": "Poistetaanko \"$name$\" ryhmästä? He eivät voi liittyä ryhmälinkin välityksellä uudelleen.",
+        "message": "Poistetaanko $name$ ryhmästä? He eivät voi liittyä ryhmälinkin välityksellä uudelleen.",
         "description": "When confirming the removal of a group member, show this text in the dialog",
         "placeholders": {
             "name": {
@@ -6344,11 +6366,11 @@
         "description": "Header in the captcha dialog"
     },
     "CaptchaDialog__first-paragraph": {
-        "message": "Tee verifikaatio jotta voimme välttää spammia Signalissa.",
+        "message": "Auta vähentämään roskapostia Signalissa ja suorita vahvistaminen.",
         "description": "First paragraph in the captcha dialog"
     },
     "CaptchaDialog__second-paragraph": {
-        "message": "Voit jatkaa viestintää verifikaation jälkeen. Kaikki pausetetut viestit lähetetään automaattisesti.",
+        "message": "Voit jatkaa viestintää vahvistamisen jälkeen. Kaikki odottavat viestit lähetetään automaattisesti.",
         "description": "First paragraph in the captcha dialog"
     },
     "CaptchaDialog--can-close__title": {
@@ -6356,7 +6378,7 @@
         "description": "Header in the captcha dialog that can be closed"
     },
     "CaptchaDialog--can-close__body": {
-        "message": "Jos päätät ohittaa vahvistuksen, saatat menettää muiden ihmisten viestejä ja viestien lähettäminen voi epäonnistua.",
+        "message": "Jos päätät ohittaa vahvistuksen, saatat menettää muiden lähettämiä viestejä ja omien viestiesi lähettäminen voi epäonnistua.",
         "description": "Body of the captcha dialog that can be closed"
     },
     "CaptchaDialog--can_close__skip-verification": {
@@ -6398,15 +6420,15 @@
         "description": "View title for the chat color picker and editor"
     },
     "ChatColorPicker__reset": {
-        "message": "Poista keskustelun väri",
+        "message": "Palauta keskustelun väri",
         "description": "Button label for resetting chat colors"
     },
     "ChatColorPicker__resetDefault": {
-        "message": "Poista keskustelujen väri",
+        "message": "Palauta keskustelujen värit",
         "description": "Confirmation dialog title for resetting all chat colors or only the global default one"
     },
     "ChatColorPicker__resetAll": {
-        "message": "Poista kaikkien keskustelujen värit",
+        "message": "Palauta kaikkien keskustelujen värit",
         "description": "Button label for resetting all chat colors"
     },
     "ChatColorPicker__confirm-reset-default": {
@@ -6414,7 +6436,7 @@
         "description": "Button label for resetting only global chat color"
     },
     "ChatColorPicker__confirm-reset": {
-        "message": "Nollaa",
+        "message": "Palauta alkuasetuksiin",
         "description": "Confirm button label for resetting chat colors"
     },
     "ChatColorPicker__confirm-reset-message": {
@@ -6422,15 +6444,15 @@
         "description": "Modal message text for confirming resetting of chat colors"
     },
     "ChatColorPicker__custom-color--label": {
-        "message": "Näytä oman värin muokkain",
+        "message": "Näytä värin muokkausväline",
         "description": "aria-label for custom color editor button"
     },
     "ChatColorPicker__sampleBubble1": {
-        "message": "Tässä on esikatselu keskustelun väristä.",
+        "message": "Valittu keskustelun väri näkyy tässä.",
         "description": "An example message bubble for selecting the chat color"
     },
     "ChatColorPicker__sampleBubble2": {
-        "message": "Toinen kupla.",
+        "message": "Toinen kupla",
         "description": "An example message bubble for selecting the chat color"
     },
     "ChatColorPicker__sampleBubble3": {
@@ -6442,7 +6464,7 @@
         "description": "Option in the custom color bubble context menu"
     },
     "ChatColorPicker__context--duplicate": {
-        "message": "Duplikoi",
+        "message": "Monista",
         "description": "Option in the custom color bubble context menu"
     },
     "ChatColorPicker__context--delete": {
@@ -6526,7 +6548,7 @@
         "description": "Label for the Disappearing Messages default timer setting"
     },
     "UniversalTimerNotification__text": {
-        "message": "Häviävän viesti näkyy $timeValue$ viestin lähettämisen jälkeen.",
+        "message": "Katoava viesti näkyy $timeValue$ viestin lähettämisen jälkeen.",
         "description": "A message displayed when default disappearing message timeout is about to be applied",
         "placeholders": {
             "timeValue": {
@@ -6612,7 +6634,7 @@
         "description": "Placeholder for the username field"
     },
     "ProfileEditor--username--helper": {
-        "message": "Signalin käyttäjätunnukset ovat valinnaisia. Jos päätät luoda käyttäjätunnuksen, muut Signalin käyttäjät voivat löytää sinut tällä käyttäjätunnuksella ja ottaa sinuun yhteyttä tietämättään puhelinnumeroasi.",
+        "message": "Käyttäjätunnukset ovat valinnaisia Signalissa. Jos päätät luoda käyttäjätunnuksen, muut Signal-käyttäjät voivat löytää sinut käyttäjätunnuksen perusteella ilman puhelinnumeroasi.",
         "description": "Shown on the edit username screen"
     },
     "ProfileEditor--username--check-characters": {
@@ -6648,7 +6670,7 @@
         "description": "Shown if user has attempted to save a username which is not available"
     },
     "ProfileEditor--username--general-error": {
-        "message": "Käyttäjätunnustasi ei voitu tallettaa. Tarkista yhteytesi ja yritä uudelleen.",
+        "message": "Käyttäjätunnustasi ei voitu tallentaa. Tarkista yhteytesi ja yritä uudelleen.",
         "description": "Shown if something unknown has gone wrong with username save."
     },
     "ProfileEditor--username--delete-general-error": {
@@ -6722,7 +6744,7 @@
         "description": "Title for profile editing"
     },
     "ProfileEditorModal--name": {
-        "message": "Sinun nimi",
+        "message": "Nimesi",
         "description": "Title for editing your name"
     },
     "ProfileEditorModal--about": {
@@ -6738,7 +6760,7 @@
         "description": "Title for username editing"
     },
     "ProfileEditorModal--error": {
-        "message": "Profiiliasi ei voitu päivittää. Ole hyvä ja päivitä uudelleen.",
+        "message": "Profiiliasi ei voitu päivittää. Ole hyvä ja yritä uudelleen.",
         "description": "Error message when something goes wrong updating your profile."
     },
     "AnnouncementsOnlyGroupBanner--modal": {
@@ -6746,7 +6768,7 @@
         "description": "Modal title for the list of admins in a group"
     },
     "AnnouncementsOnlyGroupBanner--announcements-only": {
-        "message": "Vain $admins$ voi lähettää viestejä",
+        "message": "Vain $admins$ voi(vat) lähettää viestejä.",
         "description": "Displayed if sending of messages is disabled to non-admins",
         "placeholders": {
             "admins": {
@@ -6886,7 +6908,7 @@
         "description": "Label for the see my phone number setting"
     },
     "Preferences--find-me": {
-        "message": "Etsi minut puhelinnumeroni perusteella",
+        "message": "Löytää minut puhelinnumeron perusteella",
         "description": "Label for the find me by my phone number setting"
     },
     "Preferences--read-receipts": {
@@ -6906,7 +6928,7 @@
         "description": "Label for checkbox for the auto download updates setting"
     },
     "Preferences__enable-notifications": {
-        "message": "Käytä ilmoituksia",
+        "message": "Kytke ilmoitukset päälle",
         "description": "Label for checkbox for the notifications setting"
     },
     "Preferences__devices": {
@@ -6932,7 +6954,7 @@
         "description": "Second line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
     },
     "NSIS__appRunning": {
-        "message": "$appName$ on käynnissä.\nValitse OK sulkeaksesi sen.\nJos se ei sulkeudu, yritä sulkea se manuaalisesti.",
+        "message": "$appName$ on käynnissä.\nValitse OK sulkeaksesi sen.\nJos se ei sulkeudu, yritä sulkea se käsin.",
         "description": "The contents of a dialog displayed when Windows installer detect that the application is running and asks user to close it. Note: please keep the line breaks so that the text occupies three separate lines",
         "placeholders": {
             "appName": {
@@ -6954,7 +6976,7 @@
         "description": "A title of the dialog displayed when starting an application after a recent crash"
     },
     "CrashReportDialog__body": {
-        "message": "Signal käynnistettiin uudelleen virheen jälkeen. Voit lähettää virheraportin Signalille, tämä auttaa ohjelmistovirheen tutkimisessa ja korjaamisessa.",
+        "message": "Signal käynnistettiin uudelleen virheen jälkeen. Voit lähettää virheraportin Signalille. Tämä auttaa ohjelmistovirheen tutkimisessa ja korjaamisessa.",
         "description": "The body of the dialog displayed when starting an application after a recent crash"
     },
     "CrashReportDialog__submit": {
@@ -6990,7 +7012,7 @@
         "description": "Label for the sticker button in the media editor"
     },
     "MediaEditor__control--crop": {
-        "message": "Leikkaa ja käännä",
+        "message": "Rajaa ja käännä",
         "description": "Label for the crop & rotate button in the media editor"
     },
     "MediaEditor__control--undo": {
@@ -7046,7 +7068,7 @@
         "description": "Reset the crop state"
     },
     "MediaEditor__crop--rotate": {
-        "message": "Käännä",
+        "message": "Kierrä",
         "description": "Rotate the canvas"
     },
     "MediaEditor__crop--flip": {
@@ -7138,7 +7160,7 @@
         "description": "Button label to go to hidden stories pane"
     },
     "Stories__list-empty": {
-        "message": "Viimeiaikaisia tarinoita ei juuri nyt ole",
+        "message": "Viimeiaikaisia tarinoita ei ole tällä hetkellä",
         "description": "Description for when there are no stories to show"
     },
     "Stories__placeholder--text": {
@@ -7231,6 +7253,58 @@
         "message": "Kuvan näyttämisessä tapahtui virhe",
         "description": "aria-label for image errors"
     },
+    "StoryCreator__text-bg": {
+        "message": "Vaihda tekstin taustaväri",
+        "description": "Button label"
+    },
+    "StoryCreator__story-bg": {
+        "message": "Vaihda tarinan taustaväri",
+        "description": "Button label"
+    },
+    "StoryCreator__next": {
+        "message": "Seuraava",
+        "description": "Button label text to advance to next step of story creation"
+    },
+    "StoryCreator__add-link": {
+        "message": "Lisää linkki",
+        "description": "Button label to apply the link preview to story"
+    },
+    "StoryCreator__input-placeholder": {
+        "message": "Lisää teksti",
+        "description": "Placeholder to add text"
+    },
+    "StoryCreator__text--regular": {
+        "message": "Tavallinen",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--bold": {
+        "message": "Lihavointi",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--serif": {
+        "message": "Pääteviiva",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--script": {
+        "message": "Käsinkirjoitus",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--condensed": {
+        "message": "Tiivistetty",
+        "description": "Label for font"
+    },
+    "StoryCreator__link-preview-placeholder": {
+        "message": "Kirjoita tai liitä osoite",
+        "description": "Placeholder for the URL input for link previews"
+    },
+    "StoryCreator__link-preview-empty": {
+        "message": "Lisää linkki tarinasi katselijoille",
+        "description": "Empty state for the link preview"
+    },
+    "TextAttachment__placeholder": {
+        "message": "Lisää teksti",
+        "description": "Placeholder for the add text input"
+    },
     "TextAttachment__preview__link": {
         "message": "Avaa linkki",
         "description": "Title for the link preview tooltip"
@@ -7250,11 +7324,11 @@
         }
     },
     "Quote__story-reaction--yours": {
-        "message": "Reagoi tarinaasi",
+        "message": "lähetti reaktion tarinaasi",
         "description": "Label for when a person reacts to your story"
     },
     "Quote__story-reaction--single": {
-        "message": "Tarinaan reagoitu",
+        "message": "Lähetti reaktion tarinaan",
         "description": "Used whenever we can't find a user's first name"
     },
     "Quote__story-unavailable": {
@@ -7269,16 +7343,8 @@
         "message": "Tämä versio sisältää useita pieniä parannuksia ja virhekorjauksia, jotka pitävät Signalin toiminnan sujuvana.",
         "description": "Release notes for releases that only include bug fixes"
     },
-    "WhatsNew__v5.45--1": {
-        "message": "Dynaamiset ääni-indikaattorit ryhmäpuheluissa auttavat nyt sinua näkemään kuiskaatko, huudatko vai puhutko sopivalla äänenvoimakkuudella.",
-        "description": "Release notes for v5.45"
-    },
-    "WhatsNew__v5.45--2": {
-        "message": "Näet nyt myös työpöytäversiossa ryhmät, joihin olet pyytänyt liittymistä puhelimellasi.",
-        "description": "Release notes for v5.45"
-    },
-    "WhatsNew__v5.45--3": {
-        "message": "Onko sinulla pykivä verkkoyhteys? Ei hätää, voit nyt käskyttää Signalin yrittämään liitteiden lataamista uudelleen.",
-        "description": "Release notes for v5.45"
+    "WhatsNew__v5.47--1": {
+        "message": "Olemme tuoneet uuden otsikkopalkin Windowsin tumman tilan käyttäjille.",
+        "description": "Release notes for v5.47"
     }
 }

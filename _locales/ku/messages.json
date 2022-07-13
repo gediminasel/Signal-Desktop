@@ -871,10 +871,6 @@
         "message": "what's new",
         "description": "Clickable link that displays the latest release notes"
     },
-    "selectAContact": {
-        "message": "Ji bo dest bi axiftinê bikî, kesekî an jî komekê hilbijêre.",
-        "description": ""
-    },
     "typingAlt": {
         "message": "Ji bo vê axiftinê, anîmasyona nivîsandinê",
         "description": "Used as the 'title' attribute for the typing animation"
@@ -928,6 +924,10 @@
     "downloading": {
         "message": "Tê daxistin",
         "description": "Shown in the message bubble while a long message attachment is being downloaded"
+    },
+    "downloadFullMessage": {
+        "message": "Download Full Message",
+        "description": "Shown in the message bubble while a long message attachment is not downloaded"
     },
     "downloadAttachment": {
         "message": "Pêvekê daxîne",
@@ -1178,7 +1178,7 @@
         "description": "Label for the time a message was received"
     },
     "sendMessage": {
-        "message": "Peyamekê bişîne",
+        "message": "Peyam",
         "description": "Placeholder text in the message entry field"
     },
     "groupMembers": {
@@ -2757,9 +2757,13 @@
         "message": "Ev peyam hat jêbirin.",
         "description": "Shown in a message's bubble when the message has been deleted for everyone."
     },
-    "message--giftBadge--unopened": {
+    "message--giftBadge--unopened--incoming": {
         "message": "View this message on mobile to open it",
         "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    },
+    "message--giftBadge--unopened--outgoing": {
+        "message": "Tap this message on mobile to view your gift",
+        "description": "Shown in a message's bubble when you've sent a gift badge to a contact"
     },
     "message--giftBadge--unopened--label": {
         "message": "Gift",
@@ -5606,11 +5610,11 @@
         "description": "Generic next label"
     },
     "BadgeDialog__become-a-sustainer-button": {
-        "message": "Become a Sustainer",
+        "message": "Bexşê bide Sîgnalê",
         "description": "In the badge dialog. This button is shown under sustainer badges, taking users to some instructions"
     },
     "BadgeSustainerInstructions__header": {
-        "message": "Become a Sustainer",
+        "message": "Bexşê bide Sîgnalê",
         "description": "In the instructions for becoming a sustainer. The heading."
     },
     "BadgeSustainerInstructions__subheader": {
@@ -5626,7 +5630,7 @@
         "description": "In the instructions for becoming a sustainer. Second instruction."
     },
     "BadgeSustainerInstructions__instructions__3": {
-        "message": "Tap on \"Become a Sustainer\" and subscribe",
+        "message": "Tap on \"Donate to Signal\" and subscribe",
         "description": "In the instructions for becoming a sustainer. Third instruction."
     },
     "CompositionArea--expand": {
@@ -5761,6 +5765,10 @@
         "message": "Komê asteng bike",
         "description": "This is a button to block a group"
     },
+    "ConversationDetailsActions--unblock-group": {
+        "message": "Astenga komê rake",
+        "description": "This is a button to unblock a group"
+    },
     "ConversationDetailsActions--leave-group-must-choose-new-admin": {
         "message": "Berî ku tu derkevî, divê tu herî kêm rêveberekî nû ji bo vê komê hilbijêrî.",
         "description": "Shown if, before leaving a group, you need to choose an admin"
@@ -5776,6 +5784,16 @@
     "ConversationDetailsActions--leave-group-modal-confirm": {
         "message": "Derkeve",
         "description": "This is the modal button to confirm leaving a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-title": {
+        "message": "Unblock the \"$groupName$\" Group?",
+        "description": "This is the modal title for confirming unblock of a group",
+        "placeholders": {
+            "groupName": {
+                "content": "$1",
+                "example": "Our Conversation"
+            }
+        }
     },
     "ConversationDetailsActions--block-group-modal-title": {
         "message": "Block and Leave the \"$groupName$\" Group?",
@@ -5794,6 +5812,14 @@
     "ConversationDetailsActions--block-group-modal-confirm": {
         "message": "Asteng bike",
         "description": "This is the modal button to confirm blocking a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-content": {
+        "message": "Your contacts will be able add you to this group.",
+        "description": "This is the modal content for confirming unblock of a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-confirm": {
+        "message": "Astengê rake",
+        "description": "This is the modal button to confirm unblock of a group"
     },
     "ConversationDetailsHeader--members": {
         "message": "$number$ members",
@@ -7227,6 +7253,58 @@
         "message": "Error displaying image",
         "description": "aria-label for image errors"
     },
+    "StoryCreator__text-bg": {
+        "message": "Toggle text background color",
+        "description": "Button label"
+    },
+    "StoryCreator__story-bg": {
+        "message": "Change story background color",
+        "description": "Button label"
+    },
+    "StoryCreator__next": {
+        "message": "Pêşve",
+        "description": "Button label text to advance to next step of story creation"
+    },
+    "StoryCreator__add-link": {
+        "message": "Add link",
+        "description": "Button label to apply the link preview to story"
+    },
+    "StoryCreator__input-placeholder": {
+        "message": "Add text",
+        "description": "Placeholder to add text"
+    },
+    "StoryCreator__text--regular": {
+        "message": "Regular",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--bold": {
+        "message": "Bold",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--serif": {
+        "message": "Serif",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--script": {
+        "message": "Script",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--condensed": {
+        "message": "Condensed",
+        "description": "Label for font"
+    },
+    "StoryCreator__link-preview-placeholder": {
+        "message": "Type or paste a URL",
+        "description": "Placeholder for the URL input for link previews"
+    },
+    "StoryCreator__link-preview-empty": {
+        "message": "Add a link for viewers of your story",
+        "description": "Empty state for the link preview"
+    },
+    "TextAttachment__placeholder": {
+        "message": "Add text",
+        "description": "Placeholder for the add text input"
+    },
     "TextAttachment__preview__link": {
         "message": "Visit link",
         "description": "Title for the link preview tooltip"
@@ -7265,22 +7343,8 @@
         "message": "This version contains a number of small tweaks and bug fixes to keep Signal running smoothly.",
         "description": "Release notes for releases that only include bug fixes"
     },
-    "WhatsNew__v5.40--1": {
-        "message": "Bug fixes including a fix to an issue that would sometimes make it difficult to click on menus. ",
-        "description": "Release notes for v5.40"
-    },
-    "WhatsNew__v5.40--2": {
-        "message": "Thanks to our open source contributors $dsanders11$ and $yusufsahinhamza$ for contributing to these improvements.",
-        "description": "Release notes for v5.40",
-        "placeholders": {
-            "dsanders11": {
-                "content": "$1",
-                "example": "dsanders11"
-            },
-            "yusufsahinhamza": {
-                "content": "$2",
-                "example": "yusufsahinhamza"
-            }
-        }
+    "WhatsNew__v5.47--1": {
+        "message": "For all the dark mode folks on Windows, we've got a new titlebar to match your style.",
+        "description": "Release notes for v5.47"
     }
 }

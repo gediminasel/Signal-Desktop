@@ -871,10 +871,6 @@
         "message": "wat er nieuw is",
         "description": "Clickable link that displays the latest release notes"
     },
-    "selectAContact": {
-        "message": "Selecteer een contactpersoon of groep om een gesprek te openen.",
-        "description": ""
-    },
     "typingAlt": {
         "message": "Iemand in dit gesprek is aan het typen",
         "description": "Used as the 'title' attribute for the typing animation"
@@ -1182,7 +1178,7 @@
         "description": "Label for the time a message was received"
     },
     "sendMessage": {
-        "message": "Een bericht verzenden",
+        "message": "Berichten",
         "description": "Placeholder text in the message entry field"
     },
     "groupMembers": {
@@ -2761,9 +2757,13 @@
         "message": "Dit bericht is gewist.",
         "description": "Shown in a message's bubble when the message has been deleted for everyone."
     },
-    "message--giftBadge--unopened": {
+    "message--giftBadge--unopened--incoming": {
         "message": "Bekijk dit bericht op je mobiele telefoon om deze te openen",
         "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    },
+    "message--giftBadge--unopened--outgoing": {
+        "message": "Tik op dit bericht op mobiel om je cadeau te bekijken",
+        "description": "Shown in a message's bubble when you've sent a gift badge to a contact"
     },
     "message--giftBadge--unopened--label": {
         "message": "Cadeau",
@@ -5610,11 +5610,11 @@
         "description": "Generic next label"
     },
     "BadgeDialog__become-a-sustainer-button": {
-        "message": "Help Signal mogelijk maken",
+        "message": "Aan Signal doneren",
         "description": "In the badge dialog. This button is shown under sustainer badges, taking users to some instructions"
     },
     "BadgeSustainerInstructions__header": {
-        "message": "Help Signal mogelijk maken",
+        "message": "Aan Signal doneren",
         "description": "In the instructions for becoming a sustainer. The heading."
     },
     "BadgeSustainerInstructions__subheader": {
@@ -5630,7 +5630,7 @@
         "description": "In the instructions for becoming a sustainer. Second instruction."
     },
     "BadgeSustainerInstructions__instructions__3": {
-        "message": "Tik op ‘Aan Signal doneren’ en kies op welke manier je wilt bijdragen",
+        "message": "Tik op \"Doneren aan Signal\" en meld je aan",
         "description": "In the instructions for becoming a sustainer. Third instruction."
     },
     "CompositionArea--expand": {
@@ -5765,6 +5765,10 @@
         "message": "Groep blokkeren",
         "description": "This is a button to block a group"
     },
+    "ConversationDetailsActions--unblock-group": {
+        "message": "Groep deblokkeren",
+        "description": "This is a button to unblock a group"
+    },
     "ConversationDetailsActions--leave-group-must-choose-new-admin": {
         "message": "Voor je de groep verlaat moet je tenminste één beheerder aanwijzen voor deze groep.",
         "description": "Shown if, before leaving a group, you need to choose an admin"
@@ -5780,6 +5784,16 @@
     "ConversationDetailsActions--leave-group-modal-confirm": {
         "message": "Verlaten",
         "description": "This is the modal button to confirm leaving a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-title": {
+        "message": "De groep  $groupName$ deblokkeren?",
+        "description": "This is the modal title for confirming unblock of a group",
+        "placeholders": {
+            "groupName": {
+                "content": "$1",
+                "example": "Our Conversation"
+            }
+        }
     },
     "ConversationDetailsActions--block-group-modal-title": {
         "message": "De groep “$groupName$” blokkeren en verlaten?",
@@ -5798,6 +5812,14 @@
     "ConversationDetailsActions--block-group-modal-confirm": {
         "message": "Blokkeren",
         "description": "This is the modal button to confirm blocking a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-content": {
+        "message": "Je contacten zullen je aan deze groep kunnen toevoegen.",
+        "description": "This is the modal content for confirming unblock of a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-confirm": {
+        "message": "Deblokkeren",
+        "description": "This is the modal button to confirm unblock of a group"
     },
     "ConversationDetailsHeader--members": {
         "message": "$number$ leden",
@@ -7231,6 +7253,58 @@
         "message": "Fout bij weergeven van afbeelding",
         "description": "aria-label for image errors"
     },
+    "StoryCreator__text-bg": {
+        "message": "Toggle tekst achtergrondkleur",
+        "description": "Button label"
+    },
+    "StoryCreator__story-bg": {
+        "message": "Verander achtergrondkleur van verhaal",
+        "description": "Button label"
+    },
+    "StoryCreator__next": {
+        "message": "Volgende",
+        "description": "Button label text to advance to next step of story creation"
+    },
+    "StoryCreator__add-link": {
+        "message": "Link toevoegen",
+        "description": "Button label to apply the link preview to story"
+    },
+    "StoryCreator__input-placeholder": {
+        "message": "Tekst toevoegen",
+        "description": "Placeholder to add text"
+    },
+    "StoryCreator__text--regular": {
+        "message": "Normaal",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--bold": {
+        "message": "Vet",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--serif": {
+        "message": "Serif",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--script": {
+        "message": "Script",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--condensed": {
+        "message": "Dun",
+        "description": "Label for font"
+    },
+    "StoryCreator__link-preview-placeholder": {
+        "message": "Typ of plak een verwijzing",
+        "description": "Placeholder for the URL input for link previews"
+    },
+    "StoryCreator__link-preview-empty": {
+        "message": "Voeg een link toe voor kijkers van je verhaal",
+        "description": "Empty state for the link preview"
+    },
+    "TextAttachment__placeholder": {
+        "message": "Tekst toevoegen",
+        "description": "Placeholder for the add text input"
+    },
     "TextAttachment__preview__link": {
         "message": "Verwijzing volgen",
         "description": "Title for the link preview tooltip"
@@ -7269,16 +7343,8 @@
         "message": "Deze versie bevat een aantal kleine foutoplossingen waardoor Signal voor nog meer mensen goed werkt.",
         "description": "Release notes for releases that only include bug fixes"
     },
-    "WhatsNew__v5.45--1": {
-        "message": "Door audioniveau-indicatoren in groepsoproepen kun je zien wie degene is die fluistert en wie er schreeuwt.",
-        "description": "Release notes for v5.45"
-    },
-    "WhatsNew__v5.45--2": {
-        "message": "Vanaf nu kun je de ook op Signal-desktop de groepen zien waarvoor je vanaf je telefoon hebt verzocht om lid te worden (via een groepsverwijzing). ",
-        "description": "Release notes for v5.45"
-    },
-    "WhatsNew__v5.45--3": {
-        "message": "Heb je een slechte wifi-verbinding? Geen probleem, want vanaf nu kun je het downloaden van bijlagen opnieuw proberen.",
-        "description": "Release notes for v5.45"
+    "WhatsNew__v5.47--1": {
+        "message": "Voor alle gebruikers van de donkere modus op Windows, we hebben een nieuwe titelbalk die bij je stijl past.",
+        "description": "Release notes for v5.47"
     }
 }

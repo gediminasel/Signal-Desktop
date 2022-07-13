@@ -871,10 +871,6 @@
         "message": "les nouveautés",
         "description": "Clickable link that displays the latest release notes"
     },
-    "selectAContact": {
-        "message": "Sélectionnez un contact ou un groupe pour lancer une conversation.",
-        "description": ""
-    },
     "typingAlt": {
         "message": "Animation de saisie pour cette conversation",
         "description": "Used as the 'title' attribute for the typing animation"
@@ -930,7 +926,7 @@
         "description": "Shown in the message bubble while a long message attachment is being downloaded"
     },
     "downloadFullMessage": {
-        "message": "Download Full Message",
+        "message": "Télécharger le message complet",
         "description": "Shown in the message bubble while a long message attachment is not downloaded"
     },
     "downloadAttachment": {
@@ -1182,7 +1178,7 @@
         "description": "Label for the time a message was received"
     },
     "sendMessage": {
-        "message": "Envoyez un message",
+        "message": "Message",
         "description": "Placeholder text in the message entry field"
     },
     "groupMembers": {
@@ -2761,40 +2757,44 @@
         "message": "Ce message a été supprimé.",
         "description": "Shown in a message's bubble when the message has been deleted for everyone."
     },
-    "message--giftBadge--unopened": {
-        "message": "View this message on mobile to open it",
+    "message--giftBadge--unopened--incoming": {
+        "message": "Afficher ce message sur un téléphone pour l'ouvrir",
         "description": "Shown in a message's bubble when you've received a gift badge from a contact"
     },
+    "message--giftBadge--unopened--outgoing": {
+        "message": "Depuis votre téléphone, appuyez sur ce message pour voir votre cadeau",
+        "description": "Shown in a message's bubble when you've sent a gift badge to a contact"
+    },
     "message--giftBadge--unopened--label": {
-        "message": "Gift",
+        "message": "cadeau",
         "description": "Shown in a message's bubble when you've received a gift badge from a contact"
     },
     "message--giftBadge--unopened--toast--incoming": {
-        "message": "Check your phone to open gift",
+        "message": "Consultez votre téléphone pour ouvrir le cadeau",
         "description": "Shown when you've clicked on an incoming gift badge you haven't yet redeemed"
     },
     "message--giftBadge--unopened--toast--outgoing": {
-        "message": "Check your phone to view your gift",
+        "message": "Consultez votre téléphone pour afficher votre cadeau",
         "description": "Shown when you've clicked on an outgoing gift badge"
     },
     "message--giftBadge--preview--unopened": {
-        "message": "You received a gift",
+        "message": "Vous avez reçu un cadeau",
         "description": "Shown to label the gift badge in notifications and the left pane"
     },
     "message--giftBadge--preview--redeemed": {
-        "message": "You redeemed a gift badge",
+        "message": "Vous avez utilisé un macaron cadeau",
         "description": "Shown to label the redeemed gift badge in notifications and the left pane"
     },
     "message--giftBadge--preview--sent": {
-        "message": "You sent a gift badge",
+        "message": "Vous avez envoyé un macaron cadeau",
         "description": "Shown to label a gift badge you've sent in notifications and the left pane"
     },
     "message--giftBadge": {
-        "message": "Gift Badge",
+        "message": "Macaron cadeau",
         "description": "Shown to label the gift badge you've redeemed on another device"
     },
     "quote--giftBadge": {
-        "message": "Gift",
+        "message": "cadeau",
         "description": "Shown to label a gift badge you've replied to"
     },
     "message--giftBadge--remaining--days": {
@@ -2840,7 +2840,7 @@
         "description": "Shown when you've sent a gift badge to someone then opened it"
     },
     "message--giftBadge--redeemed": {
-        "message": "Redeemed",
+        "message": "Échangé",
         "description": "Shown when you've redeemed the gift badge on another device"
     },
     "modal--giftBadge--title": {
@@ -2848,7 +2848,7 @@
         "description": "The title of the outgoing gift badge detail dialog"
     },
     "modal--giftBadge--description": {
-        "message": "You've gifted a badge to $name$. When they accept, they'll be given a choice to show or hide their badge.",
+        "message": "Vous avez offert un macaron à $name$. Une fois votre cadeau accepté, votre destinataire pourra choisir d'afficher ou de masquer son macaron.",
         "description": "The description of the outgoing gift badge detail dialog",
         "placeholders": {
             "name": {
@@ -3280,11 +3280,11 @@
         "description": "Shown in the shortcuts guide"
     },
     "Keyboard--accept-video-call": {
-        "message": "Accept call with video",
+        "message": "Accepter un appel vidéo",
         "description": "Shown in the calling keyboard shortcuts guide"
     },
     "Keyboard--accept-audio-call": {
-        "message": "Accept call with audio",
+        "message": "Accepter un appel audio",
         "description": "Shown in the calling keyboard shortcuts guide"
     },
     "Keyboard--start-audio-call": {
@@ -5610,11 +5610,11 @@
         "description": "Generic next label"
     },
     "BadgeDialog__become-a-sustainer-button": {
-        "message": "Devenir donateur mensuel",
+        "message": "Faire un don à Signal",
         "description": "In the badge dialog. This button is shown under sustainer badges, taking users to some instructions"
     },
     "BadgeSustainerInstructions__header": {
-        "message": "Devenir donateur mensuel",
+        "message": "Faire un don à Signal",
         "description": "In the instructions for becoming a sustainer. The heading."
     },
     "BadgeSustainerInstructions__subheader": {
@@ -5630,7 +5630,7 @@
         "description": "In the instructions for becoming a sustainer. Second instruction."
     },
     "BadgeSustainerInstructions__instructions__3": {
-        "message": "Touchez sur « Devenir donateur mensuel » et abonnez-vous",
+        "message": "Appuyez sur « Faire un don à Signal » et inscrivez-vous",
         "description": "In the instructions for becoming a sustainer. Third instruction."
     },
     "CompositionArea--expand": {
@@ -5765,6 +5765,10 @@
         "message": "Bloquer le groupe",
         "description": "This is a button to block a group"
     },
+    "ConversationDetailsActions--unblock-group": {
+        "message": "Débloquer le groupe",
+        "description": "This is a button to unblock a group"
+    },
     "ConversationDetailsActions--leave-group-must-choose-new-admin": {
         "message": "Avant de quitter le groupe, vous devez choisir au moins un nouvel administrateur pour ce groupe.",
         "description": "Shown if, before leaving a group, you need to choose an admin"
@@ -5780,6 +5784,16 @@
     "ConversationDetailsActions--leave-group-modal-confirm": {
         "message": "Quitter",
         "description": "This is the modal button to confirm leaving a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-title": {
+        "message": "Débloquer le groupe « $groupName$ » ?",
+        "description": "This is the modal title for confirming unblock of a group",
+        "placeholders": {
+            "groupName": {
+                "content": "$1",
+                "example": "Our Conversation"
+            }
+        }
     },
     "ConversationDetailsActions--block-group-modal-title": {
         "message": "Bloquer le groupe « $groupName$ » et le quitter ?",
@@ -5798,6 +5812,14 @@
     "ConversationDetailsActions--block-group-modal-confirm": {
         "message": "Bloquer",
         "description": "This is the modal button to confirm blocking a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-content": {
+        "message": "Vos contacts pourront vous ajouter à ce groupe.",
+        "description": "This is the modal content for confirming unblock of a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-confirm": {
+        "message": "Débloquer",
+        "description": "This is the modal button to confirm unblock of a group"
     },
     "ConversationDetailsHeader--members": {
         "message": "$number$ membres",
@@ -6932,7 +6954,7 @@
         "description": "Second line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
     },
     "NSIS__appRunning": {
-        "message": "$appName$ is running.\nClick OK to close it.\nIf it doesn't close, try closing it manually.",
+        "message": "$appName$ est en cours d'exécution.\nAppuyez sur OK pour le fermer.\nEn cas d'échec, essayez manuellement.",
         "description": "The contents of a dialog displayed when Windows installer detect that the application is running and asks user to close it. Note: please keep the line breaks so that the text occupies three separate lines",
         "placeholders": {
             "appName": {
@@ -7231,6 +7253,58 @@
         "message": "Erreur d’affichage de l’image",
         "description": "aria-label for image errors"
     },
+    "StoryCreator__text-bg": {
+        "message": "Changer le fond de la conversation",
+        "description": "Button label"
+    },
+    "StoryCreator__story-bg": {
+        "message": "Changer le fond de la story",
+        "description": "Button label"
+    },
+    "StoryCreator__next": {
+        "message": "Suivant",
+        "description": "Button label text to advance to next step of story creation"
+    },
+    "StoryCreator__add-link": {
+        "message": "Ajouter un lien",
+        "description": "Button label to apply the link preview to story"
+    },
+    "StoryCreator__input-placeholder": {
+        "message": "Ajouter du texte",
+        "description": "Placeholder to add text"
+    },
+    "StoryCreator__text--regular": {
+        "message": "Normal",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--bold": {
+        "message": "Gras",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--serif": {
+        "message": "Empattement",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--script": {
+        "message": "Texte",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--condensed": {
+        "message": "Résumé",
+        "description": "Label for font"
+    },
+    "StoryCreator__link-preview-placeholder": {
+        "message": "Tapez ou collez une URL",
+        "description": "Placeholder for the URL input for link previews"
+    },
+    "StoryCreator__link-preview-empty": {
+        "message": "Ajouter un lien pour les personnes qui voient votre Story",
+        "description": "Empty state for the link preview"
+    },
+    "TextAttachment__placeholder": {
+        "message": "Ajouter du texte",
+        "description": "Placeholder for the add text input"
+    },
     "TextAttachment__preview__link": {
         "message": "Visitez le lien",
         "description": "Title for the link preview tooltip"
@@ -7269,16 +7343,8 @@
         "message": "Cette version contient un certain nombre de petits ajustements et de corrections de bogues pour assurer le bon fonctionnement de Signal.",
         "description": "Release notes for releases that only include bug fixes"
     },
-    "WhatsNew__v5.45--1": {
-        "message": "Dynamic audio indicators in group calls help you see if you're whispering, yelling, or just right.",
-        "description": "Release notes for v5.45"
-    },
-    "WhatsNew__v5.45--2": {
-        "message": "Groups you’ve requested to join from your phone (via an invite link) will now show up on Desktop.",
-        "description": "Release notes for v5.45"
-    },
-    "WhatsNew__v5.45--3": {
-        "message": "Got a spotty Wi-Fi connection? Not a problem, you can now retry downloading attachments.",
-        "description": "Release notes for v5.45"
+    "WhatsNew__v5.47--1": {
+        "message": "Pour les adeptes du mode sombre de Windows, nous avons une nouvelle barre de titre rien que pour vous !",
+        "description": "Release notes for v5.47"
     }
 }

@@ -36,6 +36,9 @@ import updateToSchemaVersion57 from './57-rm-message-history-unsynced';
 import updateToSchemaVersion58 from './58-update-unread';
 import updateToSchemaVersion59 from './59-unprocessed-received-at-counter-index';
 import updateToSchemaVersion60 from './60-update-expiring-index';
+import updateToSchemaVersion61 from './61-distribution-list-storage';
+import updateToSchemaVersion62 from './62-add-urgent-to-send-log';
+import updateToSchemaVersion63 from './63-add-urgent-to-unprocessed';
 
 function updateToSchemaVersion1(
   currentVersion: number,
@@ -1935,6 +1938,9 @@ export const SCHEMA_VERSIONS = [
   updateToSchemaVersion58,
   updateToSchemaVersion59,
   updateToSchemaVersion60,
+  updateToSchemaVersion61,
+  updateToSchemaVersion62,
+  updateToSchemaVersion63,
 ];
 
 export function updateSchema(db: Database, logger: LoggerType): void {

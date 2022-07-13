@@ -7,7 +7,7 @@
   height: var(--window-height);
   left: 0;
   position: absolute;
-  top: var(--titlebar-height);
+  top: 0;
   user-select: none;
   width: 100%;
   z-index: $z-index-stories;
@@ -19,7 +19,7 @@
     flex-direction: column;
     height: 100%;
     width: 380px;
-    padding-top: 42px;
+    padding-top: calc(14px + var(--title-bar-drag-area-height));
 
     &__header {
       align-items: center;
@@ -163,5 +163,9 @@
         );
       }
     }
+  }
+
+  &__my-stories {
+    padding: 0 10px;
   }
 }

@@ -2,8 +2,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { debounce } from 'lodash';
+
 import type { MessageModel } from '../models/messages';
 import { clearTimeoutIfNecessary } from '../util/clearTimeoutIfNecessary';
+import { sleep } from '../util/sleep';
+import { SECOND } from '../util/durations';
 
 class ExpiringMessagesDeletionService {
   public update: typeof this.checkExpiringMessages;
@@ -49,6 +52,10 @@ class ExpiringMessagesDeletionService {
         });
 
         const conversation = message.getConversation();
+
+        // We do this to update the UI, if this message is being displayed somewhere
+        message.trigger('expired');
+
         if (conversation) {
           // An expired message only counts as decrementing the message count, not
           // the sent message count
@@ -60,9 +67,15 @@ class ExpiringMessagesDeletionService {
         'destroyExpiredMessages: Error deleting expired messages',
         error && error.stack ? error.stack : error
       );
+      window.SignalContext.log.info(
+        'destroyExpiredMessages: Waiting 30 seconds before trying again'
+      );
+      await sleep(30 * SECOND);
     }
 
-    window.SignalContext.log.info('destroyExpiredMessages: complete');
+    window.SignalContext.log.info(
+      'destroyExpiredMessages: done, scheduling another check'
+    );
     this.update();
   }
 

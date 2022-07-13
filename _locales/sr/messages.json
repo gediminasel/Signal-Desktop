@@ -871,10 +871,6 @@
         "message": "шта ново",
         "description": "Clickable link that displays the latest release notes"
     },
-    "selectAContact": {
-        "message": "Започните преписку одабиром дописника или групе.",
-        "description": ""
-    },
     "typingAlt": {
         "message": "Куцање анимације за овај разговор",
         "description": "Used as the 'title' attribute for the typing animation"
@@ -1182,7 +1178,7 @@
         "description": "Label for the time a message was received"
     },
     "sendMessage": {
-        "message": "Пошаљи поруку",
+        "message": "Порука",
         "description": "Placeholder text in the message entry field"
     },
     "groupMembers": {
@@ -2761,9 +2757,13 @@
         "message": "Ова порука је избрисана.",
         "description": "Shown in a message's bubble when the message has been deleted for everyone."
     },
-    "message--giftBadge--unopened": {
+    "message--giftBadge--unopened--incoming": {
         "message": "Погледајте ову поруку на мобилном телефону да бисте је отворили",
         "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    },
+    "message--giftBadge--unopened--outgoing": {
+        "message": "Dodirnite ovu poruku na mobilnom uređaju da vidite poklon",
+        "description": "Shown in a message's bubble when you've sent a gift badge to a contact"
     },
     "message--giftBadge--unopened--label": {
         "message": "Поклон",
@@ -2848,7 +2848,7 @@
         "description": "The title of the outgoing gift badge detail dialog"
     },
     "modal--giftBadge--description": {
-        "message": "You've gifted a badge to $name$. When they accept, they'll be given a choice to show or hide their badge.",
+        "message": "$name$ je od vas dobio/la značku. Kada prihvati značku, moći će da bira da li želi da je prikaže ili sakrije.",
         "description": "The description of the outgoing gift badge detail dialog",
         "placeholders": {
             "name": {
@@ -5610,11 +5610,11 @@
         "description": "Generic next label"
     },
     "BadgeDialog__become-a-sustainer-button": {
-        "message": "Постати одрживач",
+        "message": "Донирајте услузи Signal",
         "description": "In the badge dialog. This button is shown under sustainer badges, taking users to some instructions"
     },
     "BadgeSustainerInstructions__header": {
-        "message": "Постати одрживач",
+        "message": "Донирајте услузи Signal",
         "description": "In the instructions for becoming a sustainer. The heading."
     },
     "BadgeSustainerInstructions__subheader": {
@@ -5630,7 +5630,7 @@
         "description": "In the instructions for becoming a sustainer. Second instruction."
     },
     "BadgeSustainerInstructions__instructions__3": {
-        "message": "Додирните \"Постаните одрживач\" и претплатите се",
+        "message": "Dodirnite „Donirajte za Signal“ i pretplatite se",
         "description": "In the instructions for becoming a sustainer. Third instruction."
     },
     "CompositionArea--expand": {
@@ -5765,6 +5765,10 @@
         "message": "Блокирај групу",
         "description": "This is a button to block a group"
     },
+    "ConversationDetailsActions--unblock-group": {
+        "message": "Одблокирај групу",
+        "description": "This is a button to unblock a group"
+    },
     "ConversationDetailsActions--leave-group-must-choose-new-admin": {
         "message": "Пре него што напустите, морате да изаберете барем једног администратора за ову групу.",
         "description": "Shown if, before leaving a group, you need to choose an admin"
@@ -5780,6 +5784,16 @@
     "ConversationDetailsActions--leave-group-modal-confirm": {
         "message": "Напусти",
         "description": "This is the modal button to confirm leaving a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-title": {
+        "message": "Želite li da odblokirate grupu „$groupName$“?",
+        "description": "This is the modal title for confirming unblock of a group",
+        "placeholders": {
+            "groupName": {
+                "content": "$1",
+                "example": "Our Conversation"
+            }
+        }
     },
     "ConversationDetailsActions--block-group-modal-title": {
         "message": "Блокирај и напусти групу „$groupName$”?",
@@ -5798,6 +5812,14 @@
     "ConversationDetailsActions--block-group-modal-confirm": {
         "message": "Блокирај",
         "description": "This is the modal button to confirm blocking a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-content": {
+        "message": "Vaši kontakti će moći da vas dodaju u ovu grupu.",
+        "description": "This is the modal content for confirming unblock of a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-confirm": {
+        "message": "Одблокирај",
+        "description": "This is the modal button to confirm unblock of a group"
     },
     "ConversationDetailsHeader--members": {
         "message": "$number$ члана/ова",
@@ -7231,6 +7253,58 @@
         "message": "Грешка при приказивања слике",
         "description": "aria-label for image errors"
     },
+    "StoryCreator__text-bg": {
+        "message": "Uključi boju pozadine teksta",
+        "description": "Button label"
+    },
+    "StoryCreator__story-bg": {
+        "message": "Promeni boju pozadine priče",
+        "description": "Button label"
+    },
+    "StoryCreator__next": {
+        "message": "Даље",
+        "description": "Button label text to advance to next step of story creation"
+    },
+    "StoryCreator__add-link": {
+        "message": "Dodaj link",
+        "description": "Button label to apply the link preview to story"
+    },
+    "StoryCreator__input-placeholder": {
+        "message": "Додај текст",
+        "description": "Placeholder to add text"
+    },
+    "StoryCreator__text--regular": {
+        "message": "Регуларно",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--bold": {
+        "message": "Podebljano",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--serif": {
+        "message": "Serif",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--script": {
+        "message": "Pismo",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--condensed": {
+        "message": "Zbijeno",
+        "description": "Label for font"
+    },
+    "StoryCreator__link-preview-placeholder": {
+        "message": "Унети или прилепити УРЛ",
+        "description": "Placeholder for the URL input for link previews"
+    },
+    "StoryCreator__link-preview-empty": {
+        "message": "Dodajte link za gledaoce vaše priče",
+        "description": "Empty state for the link preview"
+    },
+    "TextAttachment__placeholder": {
+        "message": "Додај текст",
+        "description": "Placeholder for the add text input"
+    },
     "TextAttachment__preview__link": {
         "message": "Посетите везу",
         "description": "Title for the link preview tooltip"
@@ -7269,16 +7343,8 @@
         "message": "This version contains a number of small tweaks and bug fixes to keep Signal running smoothly.",
         "description": "Release notes for releases that only include bug fixes"
     },
-    "WhatsNew__v5.45--1": {
-        "message": "Dynamic audio indicators in group calls help you see if you're whispering, yelling, or just right.",
-        "description": "Release notes for v5.45"
-    },
-    "WhatsNew__v5.45--2": {
-        "message": "Groups you’ve requested to join from your phone (via an invite link) will now show up on Desktop.",
-        "description": "Release notes for v5.45"
-    },
-    "WhatsNew__v5.45--3": {
-        "message": "Got a spotty Wi-Fi connection? Not a problem, you can now retry downloading attachments.",
-        "description": "Release notes for v5.45"
+    "WhatsNew__v5.47--1": {
+        "message": "Za sve ljude koji koriste tamni režim u Windows-u – imamo novu naslovnu traku koja odgovara vašem stilu.",
+        "description": "Release notes for v5.47"
     }
 }

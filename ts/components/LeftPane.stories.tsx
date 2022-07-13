@@ -124,7 +124,6 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => {
     getPreferredBadge: () => undefined,
     i18n,
     preferredWidthFromStorage: 320,
-    openConversationInternal: action('openConversationInternal'),
     regionCode: 'US',
     challengeStatus: select(
       'challengeStatus',
@@ -148,7 +147,7 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => {
         getPreferredBadge={() => undefined}
         i18n={i18n}
         id={id}
-        openConversationInternal={action('openConversationInternal')}
+        showConversation={action('showConversation')}
         sentAt={1587358800000}
         snippet="Lorem <<left>>ipsum<<right>> wow"
         theme={ThemeType.light}
@@ -884,6 +883,7 @@ export const ChooseGroupMembersPartialPhoneNumber = (): JSX.Element => (
         candidateContacts: [],
         isShowingRecommendedGroupSizeModal: false,
         isShowingMaximumGroupSizeModal: false,
+        isUsernamesEnabled: true,
         searchTerm: '+1(212) 555',
         regionCode: 'US',
         selectedContacts: [],
@@ -905,6 +905,7 @@ export const ChooseGroupMembersValidPhoneNumber = (): JSX.Element => (
         candidateContacts: [],
         isShowingRecommendedGroupSizeModal: false,
         isShowingMaximumGroupSizeModal: false,
+        isUsernamesEnabled: true,
         searchTerm: '+1(212) 555 5454',
         regionCode: 'US',
         selectedContacts: [],
@@ -915,6 +916,28 @@ export const ChooseGroupMembersValidPhoneNumber = (): JSX.Element => (
 
 ChooseGroupMembersValidPhoneNumber.story = {
   name: 'Choose Group Members: Valid phone number',
+};
+
+export const ChooseGroupMembersUsername = (): JSX.Element => (
+  <LeftPane
+    {...useProps({
+      modeSpecificProps: {
+        mode: LeftPaneMode.ChooseGroupMembers,
+        uuidFetchState: {},
+        candidateContacts: [],
+        isShowingRecommendedGroupSizeModal: false,
+        isShowingMaximumGroupSizeModal: false,
+        isUsernamesEnabled: true,
+        searchTerm: '@signal',
+        regionCode: 'US',
+        selectedContacts: [],
+      },
+    })}
+  />
+);
+
+ChooseGroupMembersUsername.story = {
+  name: 'Choose Group Members: username',
 };
 
 export const GroupMetadataNoTimer = (): JSX.Element => (

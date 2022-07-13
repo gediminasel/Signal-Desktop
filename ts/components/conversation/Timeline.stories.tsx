@@ -36,11 +36,6 @@ export default {
 // eslint-disable-next-line
 const noop = () => {};
 
-Object.assign(window, {
-  registerForActive: noop,
-  unregisterForActive: noop,
-});
-
 const items: Record<string, TimelineItemType> = {
   'id-1': {
     type: 'message',
@@ -359,7 +354,6 @@ const actions = () => ({
   ),
   setIsNearBottom: action('setIsNearBottom'),
   learnMoreAboutDeliveryIssue: action('learnMoreAboutDeliveryIssue'),
-  loadAndScroll: action('loadAndScroll'),
   loadOlderMessages: action('loadOlderMessages'),
   loadNewerMessages: action('loadNewerMessages'),
   loadNewestMessages: action('loadNewestMessages'),
@@ -424,6 +418,8 @@ const actions = () => ({
 
   peekGroupCallForTheFirstTime: action('peekGroupCallForTheFirstTime'),
   peekGroupCallIfItHasMembers: action('peekGroupCallIfItHasMembers'),
+
+  viewStory: action('viewStory'),
 });
 
 const renderItem = ({

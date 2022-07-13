@@ -2,13 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import FocusTrap from 'focus-trap-react';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { useSpring, animated, to } from '@react-spring/web';
 import type { BodyRangeType, LocalizerType } from '../types/Util';
@@ -16,27 +10,28 @@ import type { ConversationType } from '../state/ducks/conversations';
 import type { EmojiPickDataType } from './emoji/EmojiPicker';
 import type { PreferredBadgeSelectorType } from '../state/selectors/badges';
 import type { RenderEmojiPickerProps } from './conversation/ReactionPicker';
-import type { ReplyStateType } from '../types/Stories';
-import type { StoryViewType } from './StoryListItem';
+import type { ReplyStateType, StoryViewType } from '../types/Stories';
+import type { ViewStoryActionCreatorType } from '../state/ducks/stories';
+import * as log from '../logging/log';
 import { AnimatedEmojiGalore } from './AnimatedEmojiGalore';
 import { Avatar, AvatarSize } from './Avatar';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import { ContextMenuPopper } from './ContextMenu';
 import { Intl } from './Intl';
 import { MessageTimestamp } from './conversation/MessageTimestamp';
+import { SendStatus } from '../messages/MessageSendState';
 import { StoryImage } from './StoryImage';
+import { StoryViewDirectionType, StoryViewModeType } from '../types/Stories';
 import { StoryViewsNRepliesModal } from './StoryViewsNRepliesModal';
 import { Theme } from '../util/theme';
 import { getAvatarColor } from '../types/Colors';
 import { getStoryBackground } from '../util/getStoryBackground';
 import { getStoryDuration } from '../util/getStoryDuration';
 import { graphemeAwareSlice } from '../util/graphemeAwareSlice';
-import { isDownloaded, isDownloading } from '../types/Attachment';
 import { useEscapeHandling } from '../hooks/useEscapeHandling';
-import * as log from '../logging/log';
 
 export type PropsType = {
-  conversationId: string;
+  currentIndex: number;
   getPreferredBadge: PreferredBadgeSelectorType;
   group?: Pick<
     ConversationType,
@@ -53,11 +48,9 @@ export type PropsType = {
   i18n: LocalizerType;
   loadStoryReplies: (conversationId: string, messageId: string) => unknown;
   markStoryRead: (mId: string) => unknown;
-  onClose: () => unknown;
+  numStories: number;
   onGoToConversation: (conversationId: string) => unknown;
   onHideStory: (conversationId: string) => unknown;
-  onNextUserStories: () => unknown;
-  onPrevUserStories: () => unknown;
   onSetSkinTone: (tone: number) => unknown;
   onTextTooLong: () => unknown;
   onReactToStory: (emoji: string, story: StoryViewType) => unknown;
@@ -74,9 +67,10 @@ export type PropsType = {
   renderEmojiPicker: (props: RenderEmojiPickerProps) => JSX.Element;
   replyState?: ReplyStateType;
   skinTone?: number;
-  stories: Array<StoryViewType>;
+  story: StoryViewType;
+  storyViewMode?: StoryViewModeType;
   toggleHasAllStoriesMuted: () => unknown;
-  views?: Array<string>;
+  viewStory: ViewStoryActionCreatorType;
 };
 
 const CAPTION_BUFFER = 20;
@@ -91,18 +85,16 @@ enum Arrow {
 }
 
 export const StoryViewer = ({
-  conversationId,
+  currentIndex,
   getPreferredBadge,
   group,
   hasAllStoriesMuted,
   i18n,
   loadStoryReplies,
   markStoryRead,
-  onClose,
+  numStories,
   onGoToConversation,
   onHideStory,
-  onNextUserStories,
-  onPrevUserStories,
   onReactToStory,
   onReplyToStory,
   onSetSkinTone,
@@ -114,11 +106,11 @@ export const StoryViewer = ({
   renderEmojiPicker,
   replyState,
   skinTone,
-  stories,
+  story,
+  storyViewMode,
   toggleHasAllStoriesMuted,
-  views,
+  viewStory,
 }: PropsType): JSX.Element => {
-  const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
   const [storyDuration, setStoryDuration] = useState<number | undefined>();
   const [isShowingContextMenu, setIsShowingContextMenu] = useState(false);
   const [hasConfirmHideStory, setHasConfirmHideStory] = useState(false);
@@ -126,9 +118,8 @@ export const StoryViewer = ({
     useState<HTMLButtonElement | null>(null);
   const [reactionEmoji, setReactionEmoji] = useState<string | undefined>();
 
-  const visibleStory = stories[currentStoryIndex];
-
-  const { attachment, canReply, isHidden, messageId, timestamp } = visibleStory;
+  const { attachment, canReply, isHidden, messageId, sendState, timestamp } =
+    story;
   const {
     acceptedMessageRequest,
     avatarPath,
@@ -140,9 +131,13 @@ export const StoryViewer = ({
     profileName,
     sharedGroupNames,
     title,
-  } = visibleStory.sender;
+  } = story.sender;
 
   const [hasReplyModal, setHasReplyModal] = useState(false);
+
+  const onClose = useCallback(() => {
+    viewStory();
+  }, [viewStory]);
 
   const onEscape = useCallback(() => {
     if (hasReplyModal) {
@@ -173,48 +168,6 @@ export const StoryViewer = ({
   useEffect(() => {
     setHasExpandedCaption(false);
   }, [messageId]);
-
-  // These exist to change currentStoryIndex to the oldest unread story a user
-  // has, or set to 0 whenever conversationId changes.
-  // We use a ref so that we only depend on conversationId changing, since
-  // the stories Array will change once we mark as story as viewed.
-  const storiesRef = useRef(stories);
-
-  useEffect(() => {
-    const unreadStoryIndex = storiesRef.current.findIndex(
-      story => story.isUnread
-    );
-    log.info('stories.findUnreadStory', {
-      unreadStoryIndex,
-      stories: storiesRef.current.length,
-    });
-    setCurrentStoryIndex(unreadStoryIndex < 0 ? 0 : unreadStoryIndex);
-  }, [conversationId]);
-
-  useEffect(() => {
-    storiesRef.current = stories;
-  }, [stories]);
-
-  // Either we show the next story in the current user's stories or we ask
-  // for the next user's stories.
-  const showNextStory = useCallback(() => {
-    if (currentStoryIndex < stories.length - 1) {
-      setCurrentStoryIndex(currentStoryIndex + 1);
-    } else {
-      setCurrentStoryIndex(0);
-      onNextUserStories();
-    }
-  }, [currentStoryIndex, onNextUserStories, stories.length]);
-
-  // Either we show the previous story in the current user's stories or we ask
-  // for the prior user's stories.
-  const showPrevStory = useCallback(() => {
-    if (currentStoryIndex === 0) {
-      onPrevUserStories();
-    } else {
-      setCurrentStoryIndex(currentStoryIndex - 1);
-    }
-  }, [currentStoryIndex, onPrevUserStories]);
 
   useEffect(() => {
     let shouldCancel = false;
@@ -248,12 +201,16 @@ export const StoryViewer = ({
       onRest: {
         width: ({ value }) => {
           if (value === 100) {
-            showNextStory();
+            viewStory(
+              story.messageId,
+              storyViewMode,
+              StoryViewDirectionType.Next
+            );
           }
         },
       },
     }),
-    [showNextStory]
+    [story.messageId, storyViewMode, viewStory]
   );
 
   // We need to be careful about this effect refreshing, it should only run
@@ -275,7 +232,7 @@ export const StoryViewer = ({
     return () => {
       spring.stop();
     };
-  }, [currentStoryIndex, spring, storyDuration]);
+  }, [currentIndex, spring, storyDuration]);
 
   const [pauseStory, setPauseStory] = useState(false);
 
@@ -300,32 +257,23 @@ export const StoryViewer = ({
     log.info('stories.markStoryRead', { messageId });
   }, [markStoryRead, messageId]);
 
-  // Queue all undownloaded stories once we're viewing someone's stories
-  const storiesToDownload = useMemo(() => {
-    return stories
-      .filter(
-        story =>
-          !isDownloaded(story.attachment) && !isDownloading(story.attachment)
-      )
-      .map(story => story.messageId);
-  }, [stories]);
-  useEffect(() => {
-    storiesToDownload.forEach(storyId => queueStoryDownload(storyId));
-  }, [queueStoryDownload, storiesToDownload]);
-
   const navigateStories = useCallback(
     (ev: KeyboardEvent) => {
       if (ev.key === 'ArrowRight') {
-        showNextStory();
+        viewStory(story.messageId, storyViewMode, StoryViewDirectionType.Next);
         ev.preventDefault();
         ev.stopPropagation();
       } else if (ev.key === 'ArrowLeft') {
-        showPrevStory();
+        viewStory(
+          story.messageId,
+          storyViewMode,
+          StoryViewDirectionType.Previous
+        );
         ev.preventDefault();
         ev.stopPropagation();
       }
     },
-    [showPrevStory, showNextStory]
+    [story.messageId, storyViewMode, viewStory]
   );
 
   useEffect(() => {
@@ -336,13 +284,14 @@ export const StoryViewer = ({
     };
   }, [navigateStories]);
 
-  const isGroupStory = Boolean(group?.id);
+  const groupId = group?.id;
+  const isGroupStory = Boolean(groupId);
   useEffect(() => {
-    if (!isGroupStory) {
+    if (!groupId) {
       return;
     }
-    loadStoryReplies(conversationId, messageId);
-  }, [conversationId, isGroupStory, loadStoryReplies, messageId]);
+    loadStoryReplies(groupId, messageId);
+  }, [groupId, loadStoryReplies, messageId]);
 
   const [arrowToShow, setArrowToShow] = useState<Arrow>(Arrow.None);
 
@@ -378,9 +327,15 @@ export const StoryViewer = ({
 
   const replies =
     replyState && replyState.messageId === messageId ? replyState.replies : [];
-
-  const viewCount = (views || []).length;
+  const views = sendState
+    ? sendState.filter(({ status }) => status === SendStatus.Viewed)
+    : [];
   const replyCount = replies.length;
+  const viewCount = views.length;
+
+  const shouldShowContextMenu = !sendState;
+
+  const hasPrevNextArrows = storyViewMode !== StoryViewModeType.Single;
 
   return (
     <FocusTrap focusTrapOptions={{ allowOutsideClick: true }}>
@@ -390,18 +345,26 @@ export const StoryViewer = ({
           style={{ background: getStoryBackground(attachment) }}
         />
         <div className="StoryViewer__content">
-          <button
-            aria-label={i18n('back')}
-            className={classNames(
-              'StoryViewer__arrow StoryViewer__arrow--left',
-              {
-                'StoryViewer__arrow--visible': arrowToShow === Arrow.Left,
+          {hasPrevNextArrows && (
+            <button
+              aria-label={i18n('back')}
+              className={classNames(
+                'StoryViewer__arrow StoryViewer__arrow--left',
+                {
+                  'StoryViewer__arrow--visible': arrowToShow === Arrow.Left,
+                }
+              )}
+              onClick={() =>
+                viewStory(
+                  story.messageId,
+                  storyViewMode,
+                  StoryViewDirectionType.Previous
+                )
               }
-            )}
-            onClick={showPrevStory}
-            onMouseMove={() => setArrowToShow(Arrow.Left)}
-            type="button"
-          />
+              onMouseMove={() => setArrowToShow(Arrow.Left)}
+              type="button"
+            />
+          )}
           <div className="StoryViewer__protection StoryViewer__protection--top" />
           <div className="StoryViewer__container">
             <StoryImage
@@ -532,22 +495,21 @@ export const StoryViewer = ({
                   onClick={toggleHasAllStoriesMuted}
                   type="button"
                 />
-                <button
-                  aria-label={i18n('MyStories__more')}
-                  className="StoryViewer__more"
-                  onClick={() => setIsShowingContextMenu(true)}
-                  ref={setReferenceElement}
-                  type="button"
-                />
+                {shouldShowContextMenu && (
+                  <button
+                    aria-label={i18n('MyStories__more')}
+                    className="StoryViewer__more"
+                    onClick={() => setIsShowingContextMenu(true)}
+                    ref={setReferenceElement}
+                    type="button"
+                  />
+                )}
               </div>
             </div>
             <div className="StoryViewer__progress">
-              {stories.map((story, index) => (
-                <div
-                  className="StoryViewer__progress--container"
-                  key={story.messageId}
-                >
-                  {currentStoryIndex === index ? (
+              {Array.from(Array(numStories), (_, index) => (
+                <div className="StoryViewer__progress--container" key={index}>
+                  {currentIndex === index ? (
                     <animated.div
                       className="StoryViewer__progress--bar"
                       style={{
@@ -558,7 +520,7 @@ export const StoryViewer = ({
                     <div
                       className="StoryViewer__progress--bar"
                       style={{
-                        width: currentStoryIndex < index ? '0%' : '100%',
+                        width: currentIndex < index ? '0%' : '100%',
                       }}
                     />
                   )}
@@ -619,18 +581,26 @@ export const StoryViewer = ({
               )}
             </div>
           </div>
-          <button
-            aria-label={i18n('forward')}
-            className={classNames(
-              'StoryViewer__arrow StoryViewer__arrow--right',
-              {
-                'StoryViewer__arrow--visible': arrowToShow === Arrow.Right,
+          {hasPrevNextArrows && (
+            <button
+              aria-label={i18n('forward')}
+              className={classNames(
+                'StoryViewer__arrow StoryViewer__arrow--right',
+                {
+                  'StoryViewer__arrow--visible': arrowToShow === Arrow.Right,
+                }
+              )}
+              onClick={() =>
+                viewStory(
+                  story.messageId,
+                  storyViewMode,
+                  StoryViewDirectionType.Next
+                )
               }
-            )}
-            onClick={showNextStory}
-            onMouseMove={() => setArrowToShow(Arrow.Right)}
-            type="button"
-          />
+              onMouseMove={() => setArrowToShow(Arrow.Right)}
+              type="button"
+            />
+          )}
           <div className="StoryViewer__protection StoryViewer__protection--bottom" />
           <button
             aria-label={i18n('close')}
@@ -677,7 +647,7 @@ export const StoryViewer = ({
             isMyStory={isMe}
             onClose={() => setHasReplyModal(false)}
             onReact={emoji => {
-              onReactToStory(emoji, visibleStory);
+              onReactToStory(emoji, story);
               setHasReplyModal(false);
               setReactionEmoji(emoji);
             }}
@@ -685,7 +655,7 @@ export const StoryViewer = ({
               if (!isGroupStory) {
                 setHasReplyModal(false);
               }
-              onReplyToStory(message, mentions, replyTimestamp, visibleStory);
+              onReplyToStory(message, mentions, replyTimestamp, story);
             }}
             onSetSkinTone={onSetSkinTone}
             onTextTooLong={onTextTooLong}
@@ -696,7 +666,7 @@ export const StoryViewer = ({
             replies={replies}
             skinTone={skinTone}
             storyPreviewAttachment={attachment}
-            views={[]}
+            views={views}
           />
         )}
         {hasConfirmHideStory && (

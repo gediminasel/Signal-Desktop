@@ -17,6 +17,7 @@ import { useReducedMotion } from '../hooks/useReducedMotion';
 import type { MenuOptionsType, MenuActionType } from '../types/menu';
 import { TitleBarContainer } from './TitleBarContainer';
 import type { ExecuteMenuRoleType } from './TitleBarContainer';
+import type { SelectedStoryDataType } from '../state/ducks/stories';
 
 type PropsType = {
   appView: AppViewType;
@@ -27,6 +28,8 @@ type PropsType = {
   renderGlobalModalContainer: () => JSX.Element;
   isShowingStoriesView: boolean;
   renderStories: () => JSX.Element;
+  selectedStoryData?: SelectedStoryDataType;
+  renderStoryViewer: () => JSX.Element;
   requestVerification: (
     type: 'sms' | 'voice',
     number: string,
@@ -36,8 +39,8 @@ type PropsType = {
   isMaximized: boolean;
   isFullScreen: boolean;
   menuOptions: MenuOptionsType;
-  platform: string;
-  isWindows11: boolean;
+  hasCustomTitleBar: boolean;
+  hideMenuBar: boolean;
 
   executeMenuRole: ExecuteMenuRoleType;
   executeMenuAction: (action: MenuActionType) => void;
@@ -48,30 +51,37 @@ export const App = ({
   appView,
   cancelConversationVerification,
   conversationsStoppingSend,
-  hasInitialLoadCompleted,
+  executeMenuAction,
+  executeMenuRole,
   getPreferredBadge,
+  hasInitialLoadCompleted,
+  hideMenuBar,
   i18n,
   isCustomizingPreferredReactions,
-  isShowingStoriesView,
-  isMaximized,
   isFullScreen,
-  isWindows11,
-  menuOptions,
-  platform,
+  isMaximized,
+  isShowingStoriesView,
+  hasCustomTitleBar,
   localeMessages,
+  menuOptions,
+  openInbox,
+  registerSingleDevice,
   renderCallManager,
   renderCustomizingPreferredReactionsModal,
   renderGlobalModalContainer,
+  renderLeftPane,
   renderSafetyNumber,
-  openInbox,
   renderStories,
+  renderStoryViewer,
   requestVerification,
-  registerSingleDevice,
+  selectedConversationId,
+  selectedMessage,
+  selectedStoryData,
+  showConversation,
+  showWhatsNewModal,
   theme,
-  verifyConversationsStoppingSend,
-  executeMenuAction,
-  executeMenuRole,
   titleBarDoubleClick,
+  verifyConversationsStoppingSend,
 }: PropsType): JSX.Element => {
   let contents;
 
@@ -101,7 +111,12 @@ export const App = ({
         renderCustomizingPreferredReactionsModal={
           renderCustomizingPreferredReactionsModal
         }
+        renderLeftPane={renderLeftPane}
         renderSafetyNumber={renderSafetyNumber}
+        selectedConversationId={selectedConversationId}
+        selectedMessage={selectedMessage}
+        showConversation={showConversation}
+        showWhatsNewModal={showWhatsNewModal}
         theme={theme}
         verifyConversationsStoppingSend={verifyConversationsStoppingSend}
       />
@@ -140,14 +155,14 @@ export const App = ({
       theme={theme}
       isMaximized={isMaximized}
       isFullScreen={isFullScreen}
-      platform={platform}
-      isWindows11={isWindows11}
+      hasCustomTitleBar={hasCustomTitleBar}
+      executeMenuRole={executeMenuRole}
+      titleBarDoubleClick={titleBarDoubleClick}
       hasMenu
+      hideMenuBar={hideMenuBar}
       localeMessages={localeMessages}
       menuOptions={menuOptions}
-      executeMenuRole={executeMenuRole}
       executeMenuAction={executeMenuAction}
-      titleBarDoubleClick={titleBarDoubleClick}
     >
       <div
         className={classNames({
@@ -159,6 +174,7 @@ export const App = ({
         {renderGlobalModalContainer()}
         {renderCallManager()}
         {isShowingStoriesView && renderStories()}
+        {selectedStoryData && renderStoryViewer()}
         {contents}
       </div>
     </TitleBarContainer>

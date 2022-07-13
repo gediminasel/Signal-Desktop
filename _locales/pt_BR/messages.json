@@ -871,10 +871,6 @@
         "message": "novidades",
         "description": "Clickable link that displays the latest release notes"
     },
-    "selectAContact": {
-        "message": "Selecione um contato ou grupo para começar a conversar.",
-        "description": ""
-    },
     "typingAlt": {
         "message": "Animação da digitação nesta conversa",
         "description": "Used as the 'title' attribute for the typing animation"
@@ -1182,7 +1178,7 @@
         "description": "Label for the time a message was received"
     },
     "sendMessage": {
-        "message": "Enviar uma mensagem",
+        "message": "Mensagem",
         "description": "Placeholder text in the message entry field"
     },
     "groupMembers": {
@@ -2761,9 +2757,13 @@
         "message": "Essa mensagem foi excluída.",
         "description": "Shown in a message's bubble when the message has been deleted for everyone."
     },
-    "message--giftBadge--unopened": {
+    "message--giftBadge--unopened--incoming": {
         "message": "Abra esta mensagem no celular para vê-la",
         "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    },
+    "message--giftBadge--unopened--outgoing": {
+        "message": "Toque nesta mensagem no celular para ver seu presente",
+        "description": "Shown in a message's bubble when you've sent a gift badge to a contact"
     },
     "message--giftBadge--unopened--label": {
         "message": "Presente",
@@ -5610,11 +5610,11 @@
         "description": "Generic next label"
     },
     "BadgeDialog__become-a-sustainer-button": {
-        "message": "Torne-se um apoiador",
+        "message": "Doar para o Signal",
         "description": "In the badge dialog. This button is shown under sustainer badges, taking users to some instructions"
     },
     "BadgeSustainerInstructions__header": {
-        "message": "Torne-se um apoiador",
+        "message": "Doar para o Signal",
         "description": "In the instructions for becoming a sustainer. The heading."
     },
     "BadgeSustainerInstructions__subheader": {
@@ -5630,7 +5630,7 @@
         "description": "In the instructions for becoming a sustainer. Second instruction."
     },
     "BadgeSustainerInstructions__instructions__3": {
-        "message": "Toque em \"Torne-se um apoiador\" e contribua",
+        "message": "Toque em \"Doar para o Signal\" e assine",
         "description": "In the instructions for becoming a sustainer. Third instruction."
     },
     "CompositionArea--expand": {
@@ -5765,6 +5765,10 @@
         "message": "Bloquear o grupo",
         "description": "This is a button to block a group"
     },
+    "ConversationDetailsActions--unblock-group": {
+        "message": "Desbloquear o grupo",
+        "description": "This is a button to unblock a group"
+    },
     "ConversationDetailsActions--leave-group-must-choose-new-admin": {
         "message": "Antes de sair, você deve escolher pelo menos uma nova pessoa admin para este grupo.",
         "description": "Shown if, before leaving a group, you need to choose an admin"
@@ -5780,6 +5784,16 @@
     "ConversationDetailsActions--leave-group-modal-confirm": {
         "message": "Sair",
         "description": "This is the modal button to confirm leaving a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-title": {
+        "message": "Deseja desbloquear o grupo \"$groupName$\"?",
+        "description": "This is the modal title for confirming unblock of a group",
+        "placeholders": {
+            "groupName": {
+                "content": "$1",
+                "example": "Our Conversation"
+            }
+        }
     },
     "ConversationDetailsActions--block-group-modal-title": {
         "message": "Bloquear e sair do grupo \"$groupName$\"?",
@@ -5798,6 +5812,14 @@
     "ConversationDetailsActions--block-group-modal-confirm": {
         "message": "Bloquear",
         "description": "This is the modal button to confirm blocking a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-content": {
+        "message": "Seus contatos poderão adicionar você no grupo.",
+        "description": "This is the modal content for confirming unblock of a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-confirm": {
+        "message": "Desbloquear",
+        "description": "This is the modal button to confirm unblock of a group"
     },
     "ConversationDetailsHeader--members": {
         "message": "$number$ membros",
@@ -7231,6 +7253,58 @@
         "message": "Erro ao exibir a imagem",
         "description": "aria-label for image errors"
     },
+    "StoryCreator__text-bg": {
+        "message": "Cor do plano de fundo do texto de ativação/desativação",
+        "description": "Button label"
+    },
+    "StoryCreator__story-bg": {
+        "message": "Mudar cor do plano de fundo do story",
+        "description": "Button label"
+    },
+    "StoryCreator__next": {
+        "message": "Próximo",
+        "description": "Button label text to advance to next step of story creation"
+    },
+    "StoryCreator__add-link": {
+        "message": "Adicionar link",
+        "description": "Button label to apply the link preview to story"
+    },
+    "StoryCreator__input-placeholder": {
+        "message": "Adicionar texto",
+        "description": "Placeholder to add text"
+    },
+    "StoryCreator__text--regular": {
+        "message": "Regular",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--bold": {
+        "message": "Negrito",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--serif": {
+        "message": "Serifa",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--script": {
+        "message": "Manuscrita",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--condensed": {
+        "message": "Condensada",
+        "description": "Label for font"
+    },
+    "StoryCreator__link-preview-placeholder": {
+        "message": "Digite ou cole um link",
+        "description": "Placeholder for the URL input for link previews"
+    },
+    "StoryCreator__link-preview-empty": {
+        "message": "Adicione um link para os visualizadores do seu story",
+        "description": "Empty state for the link preview"
+    },
+    "TextAttachment__placeholder": {
+        "message": "Adicionar texto",
+        "description": "Placeholder for the add text input"
+    },
     "TextAttachment__preview__link": {
         "message": "Abrir link",
         "description": "Title for the link preview tooltip"
@@ -7269,16 +7343,8 @@
         "message": "Essa versão contém pequenos retoques e consertos no Signal para ele continuar funcionando confortavelmente.",
         "description": "Release notes for releases that only include bug fixes"
     },
-    "WhatsNew__v5.45--1": {
-        "message": "Os indicadores dinâmicos de áudio em chamadas de grupo ajudam a você perceber se está sussurrando, gritando ou em sintonia perfeita.",
-        "description": "Release notes for v5.45"
-    },
-    "WhatsNew__v5.45--2": {
-        "message": "Os grupos nos quais você solicitou participação via seu telefone (através de um link de convite) agora aparecerão no Desktop.",
-        "description": "Release notes for v5.45"
-    },
-    "WhatsNew__v5.45--3": {
-        "message": "Tem uma conexão Wi-Fi anormal? Não há problema, agora você pode baixar os anexos outra vez.",
-        "description": "Release notes for v5.45"
+    "WhatsNew__v5.47--1": {
+        "message": "Temos uma nova barra de títulos perfeita para quem curte o modo escuro no Windows.",
+        "description": "Release notes for v5.47"
     }
 }

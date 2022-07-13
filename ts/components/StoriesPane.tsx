@@ -4,24 +4,31 @@
 import Fuse from 'fuse.js';
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
-import { isNotNil } from '../util/isNotNil';
-import type { ConversationStoryType, StoryViewType } from './StoryListItem';
+
+import type {
+  ConversationType,
+  ShowConversationType,
+} from '../state/ducks/conversations';
+import type {
+  ConversationStoryType,
+  MyStoryType,
+  StoryViewType,
+} from '../types/Stories';
 import type { LocalizerType } from '../types/Util';
+import { MyStoriesButton } from './MyStoriesButton';
 import { SearchInput } from './SearchInput';
 import { StoryListItem } from './StoryListItem';
+import { isNotNil } from '../util/isNotNil';
 
 const FUSE_OPTIONS: Fuse.IFuseOptions<ConversationStoryType> = {
-  getFn: (obj, path) => {
+  getFn: (story, path) => {
     if (path === 'searchNames') {
-      return obj.stories
-        .flatMap((story: StoryViewType) => [
-          story.sender.title,
-          story.sender.name,
-        ])
-        .filter(isNotNil);
+      return [story.storyView.sender.title, story.storyView.sender.name].filter(
+        isNotNil
+      );
     }
 
-    return obj.group?.title ?? '';
+    return story.group?.title ?? '';
   },
   keys: [
     {
@@ -45,16 +52,20 @@ function search(
     .map(result => result.item);
 }
 
-function getNewestStory(story: ConversationStoryType): StoryViewType {
+function getNewestMyStory(story: MyStoryType): StoryViewType {
   return story.stories[story.stories.length - 1];
 }
 
 export type PropsType = {
   hiddenStories: Array<ConversationStoryType>;
   i18n: LocalizerType;
+  me: ConversationType;
+  myStories: Array<MyStoryType>;
+  onAddStory: () => unknown;
+  onMyStoriesClicked: () => unknown;
   onStoryClicked: (conversationId: string) => unknown;
-  openConversationInternal: (_: { conversationId: string }) => unknown;
   queueStoryDownload: (storyId: string) => unknown;
+  showConversation: ShowConversationType;
   stories: Array<ConversationStoryType>;
   toggleHideStories: (conversationId: string) => unknown;
   toggleStoriesView: () => unknown;
@@ -63,9 +74,13 @@ export type PropsType = {
 export const StoriesPane = ({
   hiddenStories,
   i18n,
+  me,
+  myStories,
+  onAddStory,
+  onMyStoriesClicked,
   onStoryClicked,
-  openConversationInternal,
   queueStoryDownload,
+  showConversation,
   stories,
   toggleHideStories,
   toggleStoriesView,
@@ -96,6 +111,12 @@ export const StoriesPane = ({
         <div className="Stories__pane__header--title">
           {i18n('Stories__title')}
         </div>
+        <button
+          aria-label={i18n('Stories__add')}
+          className="Stories__pane__header--camera"
+          onClick={onAddStory}
+          type="button"
+        />
       </div>
       <SearchInput
         i18n={i18n}
@@ -106,6 +127,16 @@ export const StoriesPane = ({
         placeholder={i18n('search')}
         value={searchTerm}
       />
+      <MyStoriesButton
+        hasMultiple={myStories.length ? myStories[0].stories.length > 1 : false}
+        i18n={i18n}
+        me={me}
+        newestStory={
+          myStories.length ? getNewestMyStory(myStories[0]) : undefined
+        }
+        onClick={onMyStoriesClicked}
+        queueStoryDownload={queueStoryDownload}
+      />
       <div
         className={classNames('Stories__pane__list', {
           'Stories__pane__list--empty': !stories.length,
@@ -115,17 +146,17 @@ export const StoriesPane = ({
           <StoryListItem
             group={story.group}
             i18n={i18n}
-            key={getNewestStory(story).timestamp}
+            key={story.storyView.timestamp}
             onClick={() => {
               onStoryClicked(story.conversationId);
             }}
             onHideStory={toggleHideStories}
             onGoToConversation={conversationId => {
-              openConversationInternal({ conversationId });
+              showConversation({ conversationId });
               toggleStoriesView();
             }}
             queueStoryDownload={queueStoryDownload}
-            story={getNewestStory(story)}
+            story={story.storyView}
           />
         ))}
         {Boolean(hiddenStories.length) && (
@@ -142,7 +173,7 @@ export const StoriesPane = ({
             {isShowingHiddenStories &&
               hiddenStories.map(story => (
                 <StoryListItem
-                  key={getNewestStory(story).timestamp}
+                  key={story.storyView.timestamp}
                   i18n={i18n}
                   isHidden
                   onClick={() => {
@@ -150,11 +181,11 @@ export const StoriesPane = ({
                   }}
                   onHideStory={toggleHideStories}
                   onGoToConversation={conversationId => {
-                    openConversationInternal({ conversationId });
+                    showConversation({ conversationId });
                     toggleStoriesView();
                   }}
                   queueStoryDownload={queueStoryDownload}
-                  story={getNewestStory(story)}
+                  story={story.storyView}
                 />
               ))}
           </>

@@ -222,7 +222,7 @@
         "description": "Shown at the top of the archived conversations list in the left pane"
     },
     "noArchivedConversations": {
-        "message": "No archived conversations.",
+        "message": "Nav arhivētu sarunu",
         "description": "Shown at the top of the archived conversations list in the left pane if there is no any archived conversation"
     },
     "archiveConversation": {
@@ -420,7 +420,7 @@
         "description": "Shown on confirmation dialog when user attempts to send a message"
     },
     "safetyNumberChangeDialog__pending-messages": {
-        "message": "Send pending messages",
+        "message": "Nosūtīt gaidošās ziņas",
         "description": "Shown on confirmation dialog when user attempts to send a message in the outbox"
     },
     "identityKeyErrorOnSend": {
@@ -464,11 +464,11 @@
         "description": "Shown in conversation banner when more than one group member's safety number has changed, but they were previously verified."
     },
     "debugLogExplanation": {
-        "message": "When you click Submit, your log will be posted online for 30 days at a unique, unpublished URL. You may Save it locally first.",
+        "message": "Kad noklikšķināsiet uz \"Iesniegt\", jūsu žurnāls tiks publicēts un 30 dienas būs pieejams tiešsaistē ar unikālu, nepublisku URL. Varat to vispirms saglabāt lokāli.",
         "description": "Description of what will happen with your debug log"
     },
     "debugLogError": {
-        "message": "Something went wrong with the upload! Please email support@signal.org and attach your log as a text file.",
+        "message": "Radās problēma ar augšupielādi! Lūdzu, nosūtiet e-pastu uz adresi support@signal.org un pievienojiet savu žurnālu kā teksta failu.",
         "description": "Error message a recommendations if debug log upload fails"
     },
     "debugLogSuccess": {
@@ -871,10 +871,6 @@
         "message": "what's new",
         "description": "Clickable link that displays the latest release notes"
     },
-    "selectAContact": {
-        "message": "Izvēlieties kontaktu vai grupu, lai sāktu tērzēšanu.",
-        "description": ""
-    },
     "typingAlt": {
         "message": "Animācijas teksta rakstīšana šai sarunai",
         "description": "Used as the 'title' attribute for the typing animation"
@@ -928,6 +924,10 @@
     "downloading": {
         "message": "Lejupielādē",
         "description": "Shown in the message bubble while a long message attachment is being downloaded"
+    },
+    "downloadFullMessage": {
+        "message": "Download Full Message",
+        "description": "Shown in the message bubble while a long message attachment is not downloaded"
     },
     "downloadAttachment": {
         "message": "Lejupielādēt pielikumu",
@@ -1178,7 +1178,7 @@
         "description": "Label for the time a message was received"
     },
     "sendMessage": {
-        "message": "Nosūtīt ziņu",
+        "message": "Ziņa",
         "description": "Placeholder text in the message entry field"
     },
     "groupMembers": {
@@ -2757,9 +2757,13 @@
         "message": "Ziņojums ir izdzēsts.",
         "description": "Shown in a message's bubble when the message has been deleted for everyone."
     },
-    "message--giftBadge--unopened": {
+    "message--giftBadge--unopened--incoming": {
         "message": "View this message on mobile to open it",
         "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    },
+    "message--giftBadge--unopened--outgoing": {
+        "message": "Pieskarieties šai ziņai mobilajā ierīcē, lai skatītu savu dāvanu",
+        "description": "Shown in a message's bubble when you've sent a gift badge to a contact"
     },
     "message--giftBadge--unopened--label": {
         "message": "Dāvana",
@@ -5606,11 +5610,11 @@
         "description": "Generic next label"
     },
     "BadgeDialog__become-a-sustainer-button": {
-        "message": "Kļūsti par Uzturētāju",
+        "message": "Ziedot Signal",
         "description": "In the badge dialog. This button is shown under sustainer badges, taking users to some instructions"
     },
     "BadgeSustainerInstructions__header": {
-        "message": "Kļūsti par Uzturētāju",
+        "message": "Ziedot Signal",
         "description": "In the instructions for becoming a sustainer. The heading."
     },
     "BadgeSustainerInstructions__subheader": {
@@ -5626,7 +5630,7 @@
         "description": "In the instructions for becoming a sustainer. Second instruction."
     },
     "BadgeSustainerInstructions__instructions__3": {
-        "message": "Tap on \"Become a Sustainer\" and subscribe",
+        "message": "Pieskarieties \"Ziedot Signal\" un abonējiet",
         "description": "In the instructions for becoming a sustainer. Third instruction."
     },
     "CompositionArea--expand": {
@@ -5761,6 +5765,10 @@
         "message": "Bloķēt grupu",
         "description": "This is a button to block a group"
     },
+    "ConversationDetailsActions--unblock-group": {
+        "message": "Atbloķēt grupu",
+        "description": "This is a button to unblock a group"
+    },
     "ConversationDetailsActions--leave-group-must-choose-new-admin": {
         "message": "Pirms aiziešanas šai grupai jāizvēlas vismaz viens jauns administrators.",
         "description": "Shown if, before leaving a group, you need to choose an admin"
@@ -5776,6 +5784,16 @@
     "ConversationDetailsActions--leave-group-modal-confirm": {
         "message": "Pamest",
         "description": "This is the modal button to confirm leaving a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-title": {
+        "message": "Vai atbloķēt grupu \"$groupName$\"?",
+        "description": "This is the modal title for confirming unblock of a group",
+        "placeholders": {
+            "groupName": {
+                "content": "$1",
+                "example": "Our Conversation"
+            }
+        }
     },
     "ConversationDetailsActions--block-group-modal-title": {
         "message": "Vai bloķēt un izstāties no grupas \"$groupName$\"?",
@@ -5794,6 +5812,14 @@
     "ConversationDetailsActions--block-group-modal-confirm": {
         "message": "Bloķēt",
         "description": "This is the modal button to confirm blocking a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-content": {
+        "message": "Jūsu kontakti varēs jūs pievienot šai grupai.",
+        "description": "This is the modal content for confirming unblock of a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-confirm": {
+        "message": "Atbloķēt",
+        "description": "This is the modal button to confirm unblock of a group"
     },
     "ConversationDetailsHeader--members": {
         "message": "$number$ dalībnieki",
@@ -7227,6 +7253,58 @@
         "message": "Error displaying image",
         "description": "aria-label for image errors"
     },
+    "StoryCreator__text-bg": {
+        "message": "Pārslēgt fona krāsu",
+        "description": "Button label"
+    },
+    "StoryCreator__story-bg": {
+        "message": "Mainīt stāsta fona krāsu",
+        "description": "Button label"
+    },
+    "StoryCreator__next": {
+        "message": "Tālāk",
+        "description": "Button label text to advance to next step of story creation"
+    },
+    "StoryCreator__add-link": {
+        "message": "Pievienot saiti",
+        "description": "Button label to apply the link preview to story"
+    },
+    "StoryCreator__input-placeholder": {
+        "message": "Pievienot tekstu",
+        "description": "Placeholder to add text"
+    },
+    "StoryCreator__text--regular": {
+        "message": "Regular",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--bold": {
+        "message": "Treknraksts",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--serif": {
+        "message": "Serifa",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--script": {
+        "message": "Skripts",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--condensed": {
+        "message": "Saspiests",
+        "description": "Label for font"
+    },
+    "StoryCreator__link-preview-placeholder": {
+        "message": "Uzrakstiet vai ielīmējiet URL",
+        "description": "Placeholder for the URL input for link previews"
+    },
+    "StoryCreator__link-preview-empty": {
+        "message": "Pievienojiet saiti jūsu stāsta skatītājiem",
+        "description": "Empty state for the link preview"
+    },
+    "TextAttachment__placeholder": {
+        "message": "Pievienot tekstu",
+        "description": "Placeholder for the add text input"
+    },
     "TextAttachment__preview__link": {
         "message": "Apmeklēt saiti",
         "description": "Title for the link preview tooltip"
@@ -7265,22 +7343,8 @@
         "message": "This version contains a number of small tweaks and bug fixes to keep Signal running smoothly.",
         "description": "Release notes for releases that only include bug fixes"
     },
-    "WhatsNew__v5.40--1": {
-        "message": "Bug fixes including a fix to an issue that would sometimes make it difficult to click on menus. ",
-        "description": "Release notes for v5.40"
-    },
-    "WhatsNew__v5.40--2": {
-        "message": "Thanks to our open source contributors $dsanders11$ and $yusufsahinhamza$ for contributing to these improvements.",
-        "description": "Release notes for v5.40",
-        "placeholders": {
-            "dsanders11": {
-                "content": "$1",
-                "example": "dsanders11"
-            },
-            "yusufsahinhamza": {
-                "content": "$2",
-                "example": "yusufsahinhamza"
-            }
-        }
+    "WhatsNew__v5.47--1": {
+        "message": "Visiem Windows tumšā režīma lietotājiem! Esam izveidojuši jaunu virsrakstjoslu atbilstoši jūsu stilam.",
+        "description": "Release notes for v5.47"
     }
 }

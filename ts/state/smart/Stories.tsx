@@ -6,35 +6,28 @@ import { useSelector } from 'react-redux';
 
 import type { LocalizerType } from '../../types/Util';
 import type { StateType } from '../reducer';
-import type { PropsType as SmartStoryViewerPropsType } from './StoryViewer';
-import { SmartStoryViewer } from './StoryViewer';
+import type { PropsType as SmartStoryCreatorPropsType } from './StoryCreator';
+import { SmartStoryCreator } from './StoryCreator';
 import { Stories } from '../../components/Stories';
+import { getMe } from '../selectors/conversations';
 import { getIntl } from '../selectors/user';
 import { getPreferredLeftPaneWidth } from '../selectors/items';
 import { getStories } from '../selectors/stories';
-import { useStoriesActions } from '../ducks/stories';
+import { saveAttachment } from '../../util/saveAttachment';
 import { useConversationsActions } from '../ducks/conversations';
+import { useGlobalModalActions } from '../ducks/globalModals';
+import { useStoriesActions } from '../ducks/stories';
 
-function renderStoryViewer({
-  conversationId,
+function renderStoryCreator({
   onClose,
-  onNextUserStories,
-  onPrevUserStories,
-}: SmartStoryViewerPropsType): JSX.Element {
-  return (
-    <SmartStoryViewer
-      conversationId={conversationId}
-      onClose={onClose}
-      onNextUserStories={onNextUserStories}
-      onPrevUserStories={onPrevUserStories}
-    />
-  );
+}: SmartStoryCreatorPropsType): JSX.Element {
+  return <SmartStoryCreator onClose={onClose} />;
 }
 
 export function SmartStories(): JSX.Element | null {
   const storiesActions = useStoriesActions();
-  const { openConversationInternal, toggleHideStories } =
-    useConversationsActions();
+  const { showConversation, toggleHideStories } = useConversationsActions();
+  const { toggleForwardMessageModal } = useGlobalModalActions();
 
   const i18n = useSelector<StateType, LocalizerType>(getIntl);
 
@@ -46,7 +39,9 @@ export function SmartStories(): JSX.Element | null {
     getPreferredLeftPaneWidth
   );
 
-  const { hiddenStories, stories } = useSelector(getStories);
+  const { hiddenStories, myStories, stories } = useSelector(getStories);
+
+  const me = useSelector(getMe);
 
   if (!isShowingStoriesView) {
     return null;
@@ -56,9 +51,19 @@ export function SmartStories(): JSX.Element | null {
     <Stories
       hiddenStories={hiddenStories}
       i18n={i18n}
-      openConversationInternal={openConversationInternal}
+      me={me}
+      myStories={myStories}
+      onForwardStory={storyId => {
+        toggleForwardMessageModal(storyId);
+      }}
+      onSaveStory={story => {
+        if (story.attachment) {
+          saveAttachment(story.attachment, story.timestamp);
+        }
+      }}
       preferredWidthFromStorage={preferredWidthFromStorage}
-      renderStoryViewer={renderStoryViewer}
+      renderStoryCreator={renderStoryCreator}
+      showConversation={showConversation}
       stories={stories}
       toggleHideStories={toggleHideStories}
       {...storiesActions}

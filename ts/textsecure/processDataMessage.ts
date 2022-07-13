@@ -3,6 +3,7 @@
 
 import Long from 'long';
 import { ReceiptCredentialPresentation } from '@signalapp/libsignal-client/zkgroup';
+import { isNumber } from 'lodash';
 
 import { assert, strictAssert } from '../util/assert';
 import { dropNull, shallowDropNull } from '../util/dropNull';
@@ -27,6 +28,7 @@ import type {
 import { WarnOnlyError } from './Errors';
 import { GiftBadgeStates } from '../components/conversation/Message';
 import { APPLICATION_OCTET_STREAM, stringToMIMEType } from '../types/MIME';
+import { SECOND } from '../util/durations';
 
 const FLAGS = Proto.DataMessage.Flags;
 export const ATTACHMENT_MAX = 32;
@@ -49,7 +51,7 @@ export function processAttachment(
   const hasCdnId = Long.isLong(cdnId) ? !cdnId.isZero() : Boolean(cdnId);
 
   const { contentType, digest, key, size } = attachment;
-  if (!size) {
+  if (!isNumber(size)) {
     throw new Error('Missing size on incoming attachment!');
   }
 
@@ -242,7 +244,6 @@ export function processDelete(
 }
 
 export function processGiftBadge(
-  timestamp: number,
   giftBadge: Proto.DataMessage.IGiftBadge | null | undefined
 ): ProcessedGiftBadge | undefined {
   if (
@@ -258,7 +259,7 @@ export function processGiftBadge(
   );
 
   return {
-    expiration: timestamp + Number(receipt.getReceiptExpirationTime()),
+    expiration: Number(receipt.getReceiptExpirationTime()) * SECOND,
     id: undefined,
     level: Number(receipt.getReceiptLevel()),
     receiptCredentialPresentation: Bytes.toBase64(
@@ -317,7 +318,7 @@ export async function processDataMessage(
     bodyRanges: message.bodyRanges ?? [],
     groupCallUpdate: dropNull(message.groupCallUpdate),
     storyContext: dropNull(message.storyContext),
-    giftBadge: processGiftBadge(timestamp, message.giftBadge),
+    giftBadge: processGiftBadge(message.giftBadge),
   };
 
   const isEndSession = Boolean(result.flags & FLAGS.END_SESSION);

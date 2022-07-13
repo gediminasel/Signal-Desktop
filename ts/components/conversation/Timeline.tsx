@@ -161,7 +161,6 @@ export type PropsActionsType = {
   ) => void;
 
   learnMoreAboutDeliveryIssue: () => unknown;
-  loadAndScroll: (messageId: string) => unknown;
   loadOlderMessages: (messageId: string) => unknown;
   loadNewerMessages: (messageId: string) => unknown;
   loadNewestMessages: (messageId: string, setFocus?: boolean) => unknown;
@@ -220,7 +219,6 @@ const getActions = createSelector(
       'reviewGroupMemberNameCollision',
       'reviewMessageRequestNameCollision',
       'learnMoreAboutDeliveryIssue',
-      'loadAndScroll',
       'loadOlderMessages',
       'loadNewerMessages',
       'loadNewestMessages',
@@ -269,6 +267,8 @@ const getActions = createSelector(
       'downloadNewVersion',
 
       'contactSupport',
+
+      'viewStory',
     ]);
 
     const safe: AssertProps<PropsActionsType, typeof unsafe> = unsafe;
@@ -566,14 +566,18 @@ export class Timeline extends React.Component<
   public override componentDidMount(): void {
     const containerEl = this.containerRef.current;
     const messagesEl = this.messagesRef.current;
+    const { isConversationSelected } = this.props;
     strictAssert(
-      containerEl && messagesEl,
+      // We don't render anything unless the conversation is selected
+      (containerEl && messagesEl) || !isConversationSelected,
       '<Timeline> mounted without some refs'
     );
 
     this.updateIntersectionObserver();
 
-    window.registerForActive(this.markNewestBottomVisibleMessageRead);
+    window.SignalContext.activeWindowService.registerForActive(
+      this.markNewestBottomVisibleMessageRead
+    );
 
     this.delayedPeekTimeout = setTimeout(() => {
       const { id, peekGroupCallForTheFirstTime } = this.props;
@@ -590,7 +594,9 @@ export class Timeline extends React.Component<
   public override componentWillUnmount(): void {
     const { delayedPeekTimeout, peekInterval } = this;
 
-    window.unregisterForActive(this.markNewestBottomVisibleMessageRead);
+    window.SignalContext.activeWindowService.unregisterForActive(
+      this.markNewestBottomVisibleMessageRead
+    );
 
     this.intersectionObserver?.disconnect();
 

@@ -1,7 +1,7 @@
 // Copyright 2018-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { KeyboardEvent } from 'react';
+import type { CSSProperties, KeyboardEvent } from 'react';
 import type { Options } from '@popperjs/core';
 import FocusTrap from 'focus-trap-react';
 import React, { useEffect, useState } from 'react';
@@ -35,6 +35,7 @@ export type ContextMenuPropsType<T> = {
 
 export type PropsType<T> = {
   readonly buttonClassName?: string;
+  readonly buttonStyle?: CSSProperties;
   readonly i18n: LocalizerType;
 } & Pick<
   ContextMenuPropsType<T>,
@@ -85,60 +86,69 @@ export function ContextMenuPopper<T>({
   }
 
   return (
-    <div className={theme ? themeClassName(theme) : undefined}>
-      <div
-        className="ContextMenu__popper"
-        ref={setPopperElement}
-        style={styles.popper}
-        {...attributes.popper}
-      >
-        {title && <div className="ContextMenu__title">{title}</div>}
-        {menuOptions.map((option, index) => (
-          <button
-            aria-label={option.label}
-            className={classNames({
-              ContextMenu__option: true,
-              'ContextMenu__option--focused': focusedIndex === index,
-            })}
-            key={option.label}
-            type="button"
-            onClick={() => {
-              option.onClick(option.value);
-              onClose();
-            }}
-          >
-            <div className="ContextMenu__option--container">
-              {option.icon && (
-                <div
-                  className={classNames(
-                    'ContextMenu__option--icon',
-                    option.icon
-                  )}
-                />
-              )}
-              <div>
-                <div className="ContextMenu__option--title">{option.label}</div>
-                {option.description && (
-                  <div className="ContextMenu__option--description">
-                    {option.description}
-                  </div>
+    <FocusTrap
+      focusTrapOptions={{
+        allowOutsideClick: true,
+      }}
+    >
+      <div className={theme ? themeClassName(theme) : undefined}>
+        <div
+          className="ContextMenu__popper"
+          ref={setPopperElement}
+          style={styles.popper}
+          {...attributes.popper}
+        >
+          {title && <div className="ContextMenu__title">{title}</div>}
+          {menuOptions.map((option, index) => (
+            <button
+              aria-label={option.label}
+              className={classNames({
+                ContextMenu__option: true,
+                'ContextMenu__option--focused': focusedIndex === index,
+              })}
+              key={option.label}
+              type="button"
+              onClick={() => {
+                option.onClick(option.value);
+                onClose();
+              }}
+            >
+              <div className="ContextMenu__option--container">
+                {option.icon && (
+                  <div
+                    className={classNames(
+                      'ContextMenu__option--icon',
+                      option.icon
+                    )}
+                  />
                 )}
+                <div>
+                  <div className="ContextMenu__option--title">
+                    {option.label}
+                  </div>
+                  {option.description && (
+                    <div className="ContextMenu__option--description">
+                      {option.description}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-            {typeof value !== 'undefined' &&
-            typeof option.value !== 'undefined' &&
-            value === option.value ? (
-              <div className="ContextMenu__option--selected" />
-            ) : null}
-          </button>
-        ))}
+              {typeof value !== 'undefined' &&
+              typeof option.value !== 'undefined' &&
+              value === option.value ? (
+                <div className="ContextMenu__option--selected" />
+              ) : null}
+            </button>
+          ))}
+        </div>
       </div>
-    </div>
+    </FocusTrap>
   );
 }
 
 export function ContextMenu<T>({
   buttonClassName,
+  buttonStyle,
   i18n,
   menuOptions,
   popperOptions,
@@ -208,13 +218,10 @@ export function ContextMenu<T>({
         onClick={handleClick}
         onKeyDown={handleKeyDown}
         ref={setReferenceElement}
+        style={buttonStyle}
         type="button"
       />
-      <FocusTrap
-        focusTrapOptions={{
-          allowOutsideClick: true,
-        }}
-      >
+      {menuShowing && (
         <ContextMenuPopper
           focusedIndex={focusedIndex}
           isMenuShowing={menuShowing}
@@ -225,7 +232,7 @@ export function ContextMenu<T>({
           title={title}
           value={value}
         />
-      </FocusTrap>
+      )}
     </div>
   );
 }

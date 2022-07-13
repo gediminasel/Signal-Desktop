@@ -871,10 +871,6 @@
         "message": "מה חדש",
         "description": "Clickable link that displays the latest release notes"
     },
-    "selectAContact": {
-        "message": "בחר איש קשר או קבוצה כדי להתחיל שיחה.",
-        "description": ""
-    },
     "typingAlt": {
         "message": "הנפשת הקלדה עבור שיחה זו",
         "description": "Used as the 'title' attribute for the typing animation"
@@ -1182,7 +1178,7 @@
         "description": "Label for the time a message was received"
     },
     "sendMessage": {
-        "message": "שלח הודעה",
+        "message": "הודעה",
         "description": "Placeholder text in the message entry field"
     },
     "groupMembers": {
@@ -2761,9 +2757,13 @@
         "message": "הודעה זו נמחקה.",
         "description": "Shown in a message's bubble when the message has been deleted for everyone."
     },
-    "message--giftBadge--unopened": {
+    "message--giftBadge--unopened--incoming": {
         "message": "הצג הודעה זו בנייד כדי לפתוח אותה",
         "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    },
+    "message--giftBadge--unopened--outgoing": {
+        "message": "יש ללחוץ על הודעה זו בנייד כדי לראות את המתנה שלך",
+        "description": "Shown in a message's bubble when you've sent a gift badge to a contact"
     },
     "message--giftBadge--unopened--label": {
         "message": "שי",
@@ -5610,11 +5610,11 @@
         "description": "Generic next label"
     },
     "BadgeDialog__become-a-sustainer-button": {
-        "message": "הייה מחזיק",
+        "message": "תרום אל Signal",
         "description": "In the badge dialog. This button is shown under sustainer badges, taking users to some instructions"
     },
     "BadgeSustainerInstructions__header": {
-        "message": "הייה מחזיק",
+        "message": "תרום אל Signal",
         "description": "In the instructions for becoming a sustainer. The heading."
     },
     "BadgeSustainerInstructions__subheader": {
@@ -5630,7 +5630,7 @@
         "description": "In the instructions for becoming a sustainer. Second instruction."
     },
     "BadgeSustainerInstructions__instructions__3": {
-        "message": "הקש על \"הייה מחזיק\" והירשם כמנוי",
+        "message": "יש ללחוץ על ״תרומה ל-Signal״ ולעשות מנוי",
         "description": "In the instructions for becoming a sustainer. Third instruction."
     },
     "CompositionArea--expand": {
@@ -5765,6 +5765,10 @@
         "message": "חסום קבוצה",
         "description": "This is a button to block a group"
     },
+    "ConversationDetailsActions--unblock-group": {
+        "message": "שחרר חסימת קבוצה",
+        "description": "This is a button to unblock a group"
+    },
     "ConversationDetailsActions--leave-group-must-choose-new-admin": {
         "message": "לפני שאתה עוזב, אתה חייב לבחור לפחות מנהלן חדש אחד עבור קבוצה זו.",
         "description": "Shown if, before leaving a group, you need to choose an admin"
@@ -5780,6 +5784,16 @@
     "ConversationDetailsActions--leave-group-modal-confirm": {
         "message": "עזוב",
         "description": "This is the modal button to confirm leaving a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-title": {
+        "message": "להסיר את החסימה מהקבוצה ״$groupName$״?",
+        "description": "This is the modal title for confirming unblock of a group",
+        "placeholders": {
+            "groupName": {
+                "content": "$1",
+                "example": "Our Conversation"
+            }
+        }
     },
     "ConversationDetailsActions--block-group-modal-title": {
         "message": "לחסום ולעזוב את הקבוצה \"$groupName$\"?",
@@ -5798,6 +5812,14 @@
     "ConversationDetailsActions--block-group-modal-confirm": {
         "message": "חסום",
         "description": "This is the modal button to confirm blocking a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-content": {
+        "message": "אנשי הקשר שלך יוכלו להוסיף אותך לקבוצה הזו.",
+        "description": "This is the modal content for confirming unblock of a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-confirm": {
+        "message": "שחרר חסימה",
+        "description": "This is the modal button to confirm unblock of a group"
     },
     "ConversationDetailsHeader--members": {
         "message": "$number$ חברי קבוצה",
@@ -7231,6 +7253,58 @@
         "message": "שגיאה בהצגת תמונה",
         "description": "aria-label for image errors"
     },
+    "StoryCreator__text-bg": {
+        "message": "שינוי צבע הרקע של טקסט",
+        "description": "Button label"
+    },
+    "StoryCreator__story-bg": {
+        "message": "שינוי צבע הרקע של סטורי",
+        "description": "Button label"
+    },
+    "StoryCreator__next": {
+        "message": "הבא",
+        "description": "Button label text to advance to next step of story creation"
+    },
+    "StoryCreator__add-link": {
+        "message": "הוספת לינק",
+        "description": "Button label to apply the link preview to story"
+    },
+    "StoryCreator__input-placeholder": {
+        "message": "הוסף טקסט",
+        "description": "Placeholder to add text"
+    },
+    "StoryCreator__text--regular": {
+        "message": "רגיל",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--bold": {
+        "message": "Bold",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--serif": {
+        "message": "Serif",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--script": {
+        "message": "Script",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--condensed": {
+        "message": "Condensed",
+        "description": "Label for font"
+    },
+    "StoryCreator__link-preview-placeholder": {
+        "message": "הקלד או הדבק מען",
+        "description": "Placeholder for the URL input for link previews"
+    },
+    "StoryCreator__link-preview-empty": {
+        "message": "הוספת לינק למי שצופה בסטורי שלך",
+        "description": "Empty state for the link preview"
+    },
+    "TextAttachment__placeholder": {
+        "message": "הוסף טקסט",
+        "description": "Placeholder for the add text input"
+    },
     "TextAttachment__preview__link": {
         "message": "בקר בקישור",
         "description": "Title for the link preview tooltip"
@@ -7269,16 +7343,8 @@
         "message": "גרסה זו מכילה מספר של שפצורים קטנים ותיקוני תקלים כדי לשמור על Signal שירוץ באופן חלק.",
         "description": "Release notes for releases that only include bug fixes"
     },
-    "WhatsNew__v5.45--1": {
-        "message": "מחווני שמע דינאמיים בשיחות קבוצתיות עוזרות לך לראות אם אתה לוחש, צורח, או פשוט צודק.",
-        "description": "Release notes for v5.45"
-    },
-    "WhatsNew__v5.45--2": {
-        "message": "קבוצות שביקשת להצטרף אליהן מהטלפון שלך (באמצעות קישור הזמנה) יופיעו על שולחן עבודה.",
-        "description": "Release notes for v5.45"
-    },
-    "WhatsNew__v5.45--3": {
-        "message": "יש לך חיבור Wi-Fi בלתי יציב? אין בעיה, אתה יכול לנסות מחדש עכשיו להוריד צרופות.",
-        "description": "Release notes for v5.45"
+    "WhatsNew__v5.47--1": {
+        "message": "לכל מי שמשתמש במצב כהה ב-Windows, יש לנו סרגל כותרת חדש שיתאים בול לסגנון שלכם.",
+        "description": "Release notes for v5.47"
     }
 }

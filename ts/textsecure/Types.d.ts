@@ -92,6 +92,7 @@ export type ProcessedEnvelope = Readonly<{
   serverGuid: string;
   serverTimestamp: number;
   groupId?: string;
+  urgent?: boolean;
 }>;
 
 export type ProcessedAttachment = {
@@ -108,7 +109,7 @@ export type ProcessedAttachment = {
   caption?: string;
   blurHash?: string;
   cdnNumber?: number;
-  textAttachment?: TextAttachmentType;
+  textAttachment?: Omit<TextAttachmentType, 'preview'>;
 };
 
 export type ProcessedGroupContext = {
@@ -219,6 +220,7 @@ export type ProcessedDataMessage = {
   groupCallUpdate?: ProcessedGroupCallUpdate;
   storyContext?: ProcessedStoryContext;
   giftBadge?: ProcessedGiftBadge;
+  canReplyToStory?: boolean;
 };
 
 export type ProcessedUnidentifiedDeliveryStatus = Omit<
@@ -226,6 +228,7 @@ export type ProcessedUnidentifiedDeliveryStatus = Omit<
   'destinationUuid'
 > & {
   destinationUuid?: string;
+  isAllowedToReplyToStory?: boolean;
 };
 
 export type ProcessedSent = Omit<
@@ -261,6 +264,7 @@ export interface CallbackResultType {
   contentProto?: Uint8Array;
   timestamp?: number;
   recipients?: Record<string, Array<number>>;
+  urgent?: boolean;
 }
 
 export interface IRequestHandler {

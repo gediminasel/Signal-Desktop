@@ -222,7 +222,7 @@
         "description": "Shown at the top of the archived conversations list in the left pane"
     },
     "noArchivedConversations": {
-        "message": "No archived conversations.",
+        "message": "ആർക്കൈവ് ചെയ്‌ത സംഭാഷണങ്ങൾ ഒന്നുമില്ല.",
         "description": "Shown at the top of the archived conversations list in the left pane if there is no any archived conversation"
     },
     "archiveConversation": {
@@ -420,7 +420,7 @@
         "description": "Shown on confirmation dialog when user attempts to send a message"
     },
     "safetyNumberChangeDialog__pending-messages": {
-        "message": "Send pending messages",
+        "message": "ശേഷിക്കുന്ന സന്ദേശങ്ങൾ അയയ്ക്കുക",
         "description": "Shown on confirmation dialog when user attempts to send a message in the outbox"
     },
     "identityKeyErrorOnSend": {
@@ -464,23 +464,23 @@
         "description": "Shown in conversation banner when more than one group member's safety number has changed, but they were previously verified."
     },
     "debugLogExplanation": {
-        "message": "When you click Submit, your log will be posted online for 30 days at a unique, unpublished URL. You may Save it locally first.",
+        "message": "സമർപ്പിക്കുക എന്നതിൽ നിങ്ങൾ ക്ലിക്ക് ചെയ്യുമ്പോൾ, നിങ്ങളുടെ ലോഗ് 30 ദിവസത്തേക്ക് തനതും പ്രസിദ്ധീകരിക്കാത്തതുമായ ഒരു URL-ൽ ഓൺലൈനിൽ പോസ്റ്റ് ചെയ്യും. നിങ്ങൾ അത് ആദ്യം പ്രാദേശികമായി സംരക്ഷിക്കേണ്ടതാണ്.",
         "description": "Description of what will happen with your debug log"
     },
     "debugLogError": {
-        "message": "Something went wrong with the upload! Please email support@signal.org and attach your log as a text file.",
+        "message": "അപ്‌ലോഡ് ചെയ്‌തതിൽ എന്തോ കുഴപ്പം സംഭവിച്ചു! നിങ്ങളുടെ ലോഗ് ഒരു ടെക്സ്റ്റ് ഫയലായി അറ്റാച്ച് ചെയ്‌ത്, support@signal.org എന്ന വിലാസത്തിലേക്ക് ഇമെയിൽ അയയ്‌ക്കുക.",
         "description": "Error message a recommendations if debug log upload fails"
     },
     "debugLogSuccess": {
-        "message": "Debug log submitted",
+        "message": "ഡീബഗ് ലോഗ് സമർപ്പിച്ചു",
         "description": "Title of the success page for submitting a debug log"
     },
     "debugLogSuccessNextSteps": {
-        "message": "Debug log uploaded. When you contact support, copy the URL below and attach it along with a description of the problem you saw and steps to reproduce it.",
+        "message": "ഡീബഗ് ലോഗ് അപ്‌ലോഡ് ചെയ്‌തു. നിങ്ങൾ പിന്തുണയുമായി ബന്ധപ്പെടുമ്പോൾ, ചുവടെ നൽകിയിട്ടുള്ള URL പകർത്തിയ ശേഷം, നിങ്ങൾ കണ്ട പ്രശ്‌നത്തിന്റെ ഒരു വിവരണവും അത് പുനർനിർമ്മിക്കുന്നതിനുള്ള ഘട്ടങ്ങളും സഹിതം അറ്റാച്ച് ചെയ്യുക.",
         "description": "Explanation of next steps to take when submitting debug log"
     },
     "debugLogLogIsIncomplete": {
-        "message": "... to see the full log, click Save",
+        "message": "... പൂർണ്ണമായ ലോഗ് കാണുന്നതിന്, സംരക്ഷിക്കുക എന്നതിൽ ക്ലിക്ക് ചെയ്യുക",
         "description": "Shown as the text for the copy button on the debug log screen"
     },
     "debugLogCopy": {
@@ -646,7 +646,7 @@
         }
     },
     "decryptionErrorToast": {
-        "message": "Desktop ran into a decryption error from $name$, device $deviceId$",
+        "message": " $name$,  $deviceId$ എന്ന ഉപകരണത്തിൽ നിന്നുള്ള ഒരു ഡിക്രിപ്‌ഷൻ പിശക് ഡെസ്‌ക്‌ടോപ്പ് നേരിട്ടു.",
         "description": "An error popup when we haven't added an in-timeline error for decryption error, only for beta/internal users.",
         "placeholders": {
             "name": {
@@ -660,7 +660,7 @@
         }
     },
     "decryptionErrorToastAction": {
-        "message": "Submit log",
+        "message": "ലോഗ് സമർപ്പിക്കുക",
         "description": "Label for the decryption error toast button"
     },
     "oneNonImageAtATimeToast": {
@@ -692,11 +692,11 @@
         "description": "Displayed when the desktop client is currently connecting to the server."
     },
     "connect": {
-        "message": "Click to reconnect.",
+        "message": "വീണ്ടും കണക്‌ട് ചെയ്യാൻ ക്ലിക്ക് ചെയ്യുക.",
         "description": "Shown to allow the user to manually attempt a reconnect."
     },
     "connectingHangOn": {
-        "message": "Shouldn't be long",
+        "message": "ഉടനെ കണക്‌ട് ചെയ്യും",
         "description": "Subtext description for when the client is connecting to the server."
     },
     "offline": {
@@ -788,7 +788,7 @@
         "description": "Aria label for clear search button"
     },
     "searchIn": {
-        "message": "Search chat",
+        "message": "ചാറ്റ് തിരയുക",
         "description": "Shown in the search box before text is entered when searching in a specific conversation"
     },
     "noSearchResults": {
@@ -836,15 +836,15 @@
         "description": "Shown to separate the types of search results"
     },
     "findByUsernameHeader": {
-        "message": "Find by username",
+        "message": "ഉപയോക്തൃനാമം ഉപയോഗിച്ച് കണ്ടെത്തുക",
         "description": "Shown when search could be a valid username, with one sub-item that will kick off the search"
     },
     "findByPhoneNumberHeader": {
-        "message": "Find by phone number",
+        "message": "ഫോൺ നമ്പർ ഉപയോഗിച്ച് കണ്ടെത്തുക",
         "description": "Shown when search could be a valid phone number, with one sub-item that will kick off the search"
     },
     "at-username": {
-        "message": "@$username$",
+        "message": "@$username$ ",
         "description": "@ added to username to signify it as a username. Should it be on the right in your language?",
         "placeholders": {
             "username": {
@@ -858,7 +858,7 @@
         "description": ""
     },
     "whatsNew": {
-        "message": "See $whatsNew$ in this update",
+        "message": "ഈ അപ്‌ഡേറ്റിൽ $whatsNew$ കാണുക",
         "description": "Shown in the main window",
         "placeholders": {
             "name": {
@@ -868,12 +868,8 @@
         }
     },
     "viewReleaseNotes": {
-        "message": "what's new",
+        "message": "പുതിയതായി ഉള്ളത്",
         "description": "Clickable link that displays the latest release notes"
-    },
-    "selectAContact": {
-        "message": "ചാറ്റിംഗ് ആരംഭിക്കുന്നതിന് ഒരു കോണ്ടാക്റ്റ് അല്ലെങ്കിൽ ഗ്രൂപ്പ് തിരെഞ്ഞെടുക്കുക.",
-        "description": ""
     },
     "typingAlt": {
         "message": "ഈ സംഭാഷണത്തിനായി ആനിമേഷൻ ടൈപ്പുചെയ്യുന്നു",
@@ -929,6 +925,10 @@
         "message": "ഡൌൺ‌ലോഡ് ചെയ്യുന്നു",
         "description": "Shown in the message bubble while a long message attachment is being downloaded"
     },
+    "downloadFullMessage": {
+        "message": "സന്ദേശം പൂർണ്ണമായി ഡൗൺലോഡ് ചെയ്യുക",
+        "description": "Shown in the message bubble while a long message attachment is not downloaded"
+    },
     "downloadAttachment": {
         "message": "അറ്റാച്ച്‌മെന്റ് ഡൌൺലോഡ് ചെയ്യുക",
         "description": "Shown in a message's triple-dot menu if there isn't room for a dedicated download button"
@@ -954,15 +954,15 @@
         "description": "Shown in toast if user clicks on quote references messages not loaded in view, but in database"
     },
     "voiceRecording--start": {
-        "message": "Start recording voice message",
+        "message": "ശബ്‌ദ സന്ദേശം റെക്കോർഡ് ചെയ്യൻ ആരംഭിക്കുക",
         "description": "Tooltip for microphone button to start voice message"
     },
     "voiceRecording--complete": {
-        "message": "Complete voice message and send",
+        "message": "ശബ്‌ദ സന്ദേശം പൂർത്തിയാക്കിയ ശേഷം അയയ്ക്കുക",
         "description": "Tooltip for green complete voice message and send"
     },
     "voiceRecording--cancel": {
-        "message": "Cancel voice message",
+        "message": "ശബ്‌ദ സന്ദേശം റദ്ദാക്കുക",
         "description": "Tooltip for red button to cancel voice message"
     },
     "voiceRecordingInterruptedMax": {
@@ -974,7 +974,7 @@
         "description": "Confirmation dialog message for when the voice recording is interrupted due to app losing focus"
     },
     "voiceNoteLimit": {
-        "message": "Voice messages are limited to one hour. Recording will stop if you switch to another app.",
+        "message": "ശബ്‌ദ സന്ദേശങ്ങളുടെ ദൈർഘ്യം ഒരു മണിക്കൂറായി പരിമിതപ്പെടുത്തിയിരിക്കുന്നു. നിങ്ങൾ മറ്റൊരു ആപ്പിലേക്ക് മാറിയാൽ റെക്കോർഡിംഗ് നിലയ്‌ക്കും.",
         "description": "Shown in toast to warn user about limited time and that window must be in focus"
     },
     "voiceNoteMustBeOnlyAttachment": {
@@ -982,15 +982,15 @@
         "description": "Shown in toast if tries to record a voice note with any staged attachments"
     },
     "voiceNoteError": {
-        "message": "There was an error with the voice recorder.",
+        "message": "ശബ്‌ദ റെക്കോർഡറിൽ ഒരു പിശക് ഉണ്ടായിരുന്നു.",
         "description": "Shown in a dialog to inform user that we experienced an unrecoverable error"
     },
     "attachmentSaved": {
-        "message": "Attachment saved.",
+        "message": "അറ്റാച്ചുമെന്റ് സംരക്ഷിച്ചു.",
         "description": "Shown after user selects to save to downloads"
     },
     "attachmentSavedShow": {
-        "message": "Show in folder",
+        "message": "ഫോൾഡറിൽ കാണിക്കുക",
         "description": "Button label for showing the attachment in your file system"
     },
     "you": {
@@ -1056,7 +1056,7 @@
         "description": "Shown in a button when a conversation is unmuted and can be muted"
     },
     "cannotUpdateDetail": {
-        "message": "Signal couldn't update. $retry$ or visit $url$ to install it manually. Then, $support$ about this problem",
+        "message": "Signal അപ്‌ഡേറ്റ് ചെയ്യാൻ കഴിഞ്ഞില്ല. അത് സ്വമേധയാ ഇൻസ്റ്റാൾ ചെയ്യാൻ, $retry$ അല്ലെങ്കിൽ $url$ സന്ദർശിക്കുക. തുടർന്ന്, ഈ പ്രശ്‌നത്തെ കുറിച്ച് $support$ എന്നതിൽ അറിയിക്കുക",
         "description": "Shown if a general error happened while trying to install update package",
         "placeholders": {
             "retry": {
@@ -1074,7 +1074,7 @@
         }
     },
     "cannotUpdateRequireManualDetail": {
-        "message": "Signal couldn't update. Visit $url$ to install it manually. Then, $support$ about this problem",
+        "message": "Signal അപ്‌ഡേറ്റ് ചെയ്യാൻ കഴിഞ്ഞില്ല. അത് സ്വമേധയാ ഇൻസ്റ്റാൾ ചെയ്യാൻ, $url$ സന്ദർശിക്കുക. തുടർന്ന്, ഈ പ്രശ്‌നത്തെ കുറിച്ച് $support$ എന്നതിൽ അറിയിക്കുക",
         "description": "Shown if a general error happened while trying to install update package and manual update is required",
         "placeholders": {
             "url": {
@@ -1178,7 +1178,7 @@
         "description": "Label for the time a message was received"
     },
     "sendMessage": {
-        "message": "ഒരു മെസ്സേജ് അയക്കുക",
+        "message": "സന്ദേശം",
         "description": "Placeholder text in the message entry field"
     },
     "groupMembers": {
@@ -1198,7 +1198,7 @@
         "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
     },
     "verifyHelp": {
-        "message": "To verify the security of your end-to-end encryption with $name$, compare the numbers above with their device.",
+        "message": "$name$ എന്നതുമായുള്ള നിങ്ങളുടെ എൻഡ്-ടു-എൻഡ് എൻക്രിപ്‌ഷൻ പരിശോധിച്ചുറപ്പിക്കുന്നതിന്, മുകളിൽ നൽകിയിട്ടുള്ള നമ്പരുകൾ അവരുടെ ഉപകരണത്തിലെ നമ്പരുകളുമായി ഒത്ത് നോക്കുക.",
         "description": "",
         "placeholders": {
             "name": {
@@ -1228,7 +1228,7 @@
         "description": "Shown on the drop-down menu for an individual message, but only if it is an outgoing message that failed to send"
     },
     "retryDeleteForEveryone": {
-        "message": "Retry Delete for Everyone",
+        "message": "എല്ലാവർക്കും ഇല്ലാതാക്കുക എന്നത് വീണ്ടും ശ്രമിച്ച് നോക്കുക",
         "description": "Shown on the drop-down menu for an individual message, but only if a previous delete for everyone failed to send"
     },
     "forwardMessage": {
@@ -1314,7 +1314,7 @@
         }
     },
     "ChangeNumber--notification": {
-        "message": "$sender$ changed their phone number",
+        "message": "$sender$ അവരുടെ ഫോൺ നമ്പർ മാറ്റി",
         "description": "Shown in timeline when a member of a conversation changes their phone number",
         "placeholders": {
             "sender": {
@@ -1380,7 +1380,7 @@
         "description": "Instructions on the device link screen"
     },
     "Install__instructions__2": {
-        "message": "Tap into $settings$, then tap $linkedDevices$",
+        "message": " $settings$ എന്നതിൽ തൊടുക, തുടർന്ന് $linkedDevices$ എന്നതിൽ തൊടുക",
         "description": "Instructions on the device link screen",
         "placeholders": {
             "settings": {
@@ -1398,7 +1398,7 @@
         "description": "Part of the 2nd instruction on the device link screen"
     },
     "Install__instructions__3": {
-        "message": "Tap $plusButton$ (Android) or $linkNewDevice$ (iPhone)",
+        "message": " $plusButton$ (Android) എന്നതിൽ അല്ലെങ്കിൽ $linkNewDevice$ (iPhone) എന്നതിൽ തൊടുക",
         "description": "Instructions on the device link screen",
         "placeholders": {
             "plusButton": {
@@ -1412,7 +1412,7 @@
         }
     },
     "Install__qr-failed": {
-        "message": "The QR code couldn't load. Check your internet and try again. $learnMore$",
+        "message": "QR കോഡ് ലോഡ് ചെയ്യാൻ കഴിഞ്ഞില്ല. നിങ്ങളുടെ ഇന്റർനെറ്റ് പരിശോധിച്ച ശേഷം വീണ്ടും ശ്രമിക്കുക. $learnMore$",
         "description": "Shown on the install screen if the QR code fails to load",
         "placeholders": {
             "learnMore": {
@@ -1430,11 +1430,11 @@
         "description": "Shown on the install screen. Link takes users to a support page"
     },
     "Install__choose-device-name__description": {
-        "message": "You'll see this name under \"Linked Devices\" on your phone",
+        "message": "നിങ്ങളുടെ ഫോണിൽ \"ലിങ്ക് ചെയ്‌ത ഉപകരണങ്ങൾ\" എന്നതിന് താഴെ നിങ്ങൾ ഈ പേര് കാണുന്നതാണ്",
         "description": "The subheader shown on the 'choose device name' screen in the device linking process"
     },
     "Install__choose-device-name__placeholder": {
-        "message": "My Computer",
+        "message": "എന്റെ കമ്പ്യൂട്ടർ",
         "description": "The placeholder for the 'choose device name' input"
     },
     "Preferences--device-name": {
@@ -1454,7 +1454,7 @@
         "description": "Shown during initial link while contacts and groups are being pulled from mobile device"
     },
     "initialSync__subtitle": {
-        "message": "Note: Your chat history will not be synced to this device",
+        "message": "ശ്രദ്ധിക്കുക: നിങ്ങളുടെ ചാറ്റ് ചരിത്രം ഈ ഉപകരണവുമായി സമന്വയിപ്പിക്കില്ല",
         "description": "Shown during initial link while contacts and groups are being pulled from mobile device"
     },
     "installConnectionFailed": {
@@ -1474,7 +1474,7 @@
         "description": ""
     },
     "installUnknownError": {
-        "message": "An unexpected error occurred. Please try again.",
+        "message": "ഒരു അപ്രതീക്ഷിത പിശക് സംഭവിച്ചു. വീണ്ടും ശ്രമിക്കുക.",
         "description": ""
     },
     "installTryAgain": {
@@ -1510,7 +1510,7 @@
         "description": "Button label in the call lobby for returning to a call"
     },
     "calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
-        "message": "Microphone muted due to the size of the call",
+        "message": "കോളിൽ വളരെ അധികം ആളുകൾ ഉള്ളതിനാൽ, മൈക്രോഫോൺ നിശബ്‌ദമാക്കുക",
         "description": "Shown in a call lobby toast if there are a lot of people already on the call"
     },
     "calling__call-is-full": {
@@ -1574,11 +1574,11 @@
         "description": "Button tooltip label when you can't ring because the group is too large"
     },
     "calling__button--ring__off": {
-        "message": "Notify, don't ring",
+        "message": "അറിയിക്കുക, റിംഗ് ചെയ്യരുത്",
         "description": "Button tooltip label for turning ringing off"
     },
     "calling__button--ring__on": {
-        "message": "Enable ringing",
+        "message": "റിംഗ് ചെയ്യുന്നത് പ്രാപ്‌തമാക്കുക",
         "description": "Button tooltip label for turning ringing on"
     },
     "calling__your-video-is-off": {
@@ -1654,7 +1654,7 @@
         }
     },
     "calling__pre-call-info--will-ring-1": {
-        "message": "Signal will ring $person$",
+        "message": "Signal  $person$ എന്നയാളെ റിംഗ് ചെയ്യും",
         "description": "Shown in the calling lobby to describe who will be rung",
         "placeholders": {
             "person": {
@@ -1664,7 +1664,7 @@
         }
     },
     "calling__pre-call-info--will-ring-2": {
-        "message": "Signal will ring $first$ and $second$",
+        "message": "Signal  $first$, $second$ എന്നിവരെ റിംഗ് ചെയ്യും",
         "description": "Shown in the calling lobby to describe who will be rang",
         "placeholders": {
             "first": {
@@ -1678,7 +1678,7 @@
         }
     },
     "calling__pre-call-info--will-ring-3": {
-        "message": "Signal will ring $first$, $second$, and $third$",
+        "message": "Signal  $first$, $second$, $third$ എന്നിവരെ റിംഗ് ചെയ്യും",
         "description": "Shown in the calling lobby to describe who will be rang",
         "placeholders": {
             "first": {
@@ -1696,7 +1696,7 @@
         }
     },
     "calling__pre-call-info--will-ring-many": {
-        "message": "Signal will ring $first$, $second$, and $others$ others",
+        "message": "Signal  $first$, $second$ എന്നിവരെയും മറ്റ് $others$ ആളുകളെയും റിംഗ് ചെയ്യും",
         "description": "Shown in the calling lobby to describe who will be rang",
         "placeholders": {
             "person": {
@@ -1714,7 +1714,7 @@
         }
     },
     "calling__pre-call-info--will-notify-1": {
-        "message": "$person$ will be notified",
+        "message": "$person$ എന്നയാളെ അറിയിക്കും",
         "description": "Shown in the calling lobby to describe who will be notified",
         "placeholders": {
             "person": {
@@ -1724,7 +1724,7 @@
         }
     },
     "calling__pre-call-info--will-notify-2": {
-        "message": "$first$ and $second$ will be notified",
+        "message": "$first$, $second$ എന്നിവരെ അറിയിക്കും",
         "description": "Shown in the calling lobby to describe who will be notified",
         "placeholders": {
             "first": {
@@ -1738,7 +1738,7 @@
         }
     },
     "calling__pre-call-info--will-notify-3": {
-        "message": "$first$, $second$, and $third$ will be notified",
+        "message": "$first$, $second$,  $third$ എന്നിവരെ അറിയിക്കും",
         "description": "Shown in the calling lobby to describe who will be notified",
         "placeholders": {
             "first": {
@@ -1756,7 +1756,7 @@
         }
     },
     "calling__pre-call-info--will-notify-many": {
-        "message": "$first$, $second$, and $others$ others will be notified",
+        "message": "$first$, $second$ എന്നിവരെയും മറ്റ്  $others$ ആളുകളെയും അറിയിക്കും",
         "description": "Shown in the calling lobby to describe who will be notified",
         "placeholders": {
             "person": {
@@ -1912,7 +1912,7 @@
         "description": "Header for general options on the settings screen"
     },
     "spellCheckDescription": {
-        "message": "Spell check text entered in message composition box",
+        "message": "സന്ദേശ കോമ്പോസിഷൻ ബോക്‌സിൽ എന്റർ ചെയ്‌ത വാചകത്തിലെ അക്ഷരത്തെറ്റ് പരിശോധിക്കുക",
         "description": "Description of the spell check setting"
     },
     "spellCheckWillBeEnabled": {
@@ -1936,7 +1936,7 @@
         "description": "Description for the automatic launch setting"
     },
     "clearDataHeader": {
-        "message": "Clear application data",
+        "message": "ആപ്ലിക്കേഷൻ ഡാറ്റ മായ്‌ക്കുക",
         "description": "Header in the settings dialog for the section dealing with data deletion"
     },
     "clearDataExplanation": {
@@ -2050,7 +2050,7 @@
         "description": "Shown on outgoing message if it fails to send"
     },
     "deleteFailed": {
-        "message": "Delete failed",
+        "message": "ഇല്ലാതാക്കുന്നത് പരാജയപ്പെട്ടു",
         "description": "Shown on a message which was deleted for everyone if the delete wasn't successfully sent to anyone"
     },
     "sendPaused": {
@@ -2062,7 +2062,7 @@
         "description": "Shown on outgoing message if it is partially sent"
     },
     "partiallyDeleted": {
-        "message": "Partially deleted, click to retry",
+        "message": "ഭാഗികമായി ഇല്ലാതാക്കി, വീണ്ടും ശ്രമിക്കാൻ ക്ലിക്ക് ചെയ്യുക",
         "description": "Shown on a message which was deleted for everyone if the delete wasn't successfully sent to everyone"
     },
     "showMore": {
@@ -2082,7 +2082,7 @@
         "description": "Warning notification that this version of the app has expired"
     },
     "upgrade": {
-        "message": "Click to go to signal.org/download",
+        "message": "signal.org/download എന്നതിലേക്ക് പോകാൻ ക്ലിക്ക് ചെയ്യുക",
         "description": "Label text for button to upgrade the app to the latest version"
     },
     "mediaMessage": {
@@ -2094,7 +2094,7 @@
         "description": "Error message displayed when sending to an unregistered user."
     },
     "sync": {
-        "message": "Import contacts",
+        "message": "കോൺടാക്റ്റുകൾ ഇമ്പോർട്ട് ചെയ്യുക",
         "description": "Label for contact and group sync settings"
     },
     "syncExplanation": {
@@ -2158,11 +2158,11 @@
         "description": "Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
     },
     "timestampFormat__long__today": {
-        "message": "[Today] LT",
+        "message": "[ഇന്ന്] LT",
         "description": "Timestamp format string for displaying \"Today\" and the time"
     },
     "timestampFormat__long__yesterday": {
-        "message": "[Yesterday] LT",
+        "message": "[ഇന്നലെ] LT",
         "description": "Timestamp format string for displaying \"Yesterday\" and the time"
     },
     "messageBodyTooLong": {
@@ -2262,7 +2262,7 @@
         }
     },
     "audioNotificationDescription": {
-        "message": "Play notification sounds",
+        "message": "അറിയിപ്പ് ശബ്‌ദങ്ങൾ പ്ലേ ചെയ്യുക",
         "description": "Description for audio notification setting"
     },
     "callRingtoneNotificationDescription": {
@@ -2386,7 +2386,7 @@
         "description": "Label for header when starting a new conversation"
     },
     "stories": {
-        "message": "Stories",
+        "message": "സ്റ്റോറീസ്",
         "description": "Label for header to go to stories view"
     },
     "contactSearchPlaceholder": {
@@ -2402,15 +2402,15 @@
         "description": "Label shown when there are no conversations to compose to"
     },
     "Toast--failed-to-fetch-username": {
-        "message": "Failed to fetch username. Check your connection and try again.",
+        "message": "ഉപയോക്തൃനാമം കണ്ടെത്തുന്നത് പരാജയപ്പെട്ടു. നിങ്ങളുടെ കണക്ഷൻ പരിശോധിച്ച ശേഷം വീണ്ടും ശ്രമിക്കുക.",
         "description": "Shown if request to Signal servers to find username fails"
     },
     "Toast--failed-to-fetch-phone-number": {
-        "message": "Failed to fetch phone number. Check your connection and try again.",
+        "message": "ഫോൺ നമ്പർ കണ്ടെത്തുന്നത് പരാജയപ്പെട്ടു. നിങ്ങളുടെ കണക്ഷൻ പരിശോധിച്ച ശേഷം വീണ്ടും ശ്രമിക്കുക.",
         "description": "Shown if request to Signal servers to find phone number fails"
     },
     "startConversation--username-not-found": {
-        "message": "User not found. $atUsername$ is not a Signal user; make sure you’ve entered the complete username.",
+        "message": "ഉപയോക്താവിനെ കണ്ടെത്തിയില്ല. $atUsername$  ഒരു Signal ഉപയോക്താവല്ല; നിങ്ങൾ പൂർണ്ണമായ ഉപയോക്തൃനാമം എന്റർ ചെയ്‌തിട്ടുണ്ടെന്ന് ഉറപ്പാക്കുക.",
         "description": "Shown in dialog if username is not found. Note that 'username' will be the output of at-username",
         "placeholders": {
             "atUsername": {
@@ -2420,7 +2420,7 @@
         }
     },
     "startConversation--phone-number-not-found": {
-        "message": "User not found. \"$phoneNumber$\" is not a Signal user.",
+        "message": "ഉപയോക്താവിനെ കണ്ടെത്തിയില്ല. \"$phoneNumber$\" ഒരു Signal ഉപയോക്താവല്ല.",
         "description": "Shown in dialog if phone number is not found.",
         "placeholders": {
             "phoneNumber": {
@@ -2430,7 +2430,7 @@
         }
     },
     "startConversation--phone-number-not-valid": {
-        "message": "User not found. \"$phoneNumber$\" is not a valid phone number.",
+        "message": "ഉപയോക്താവിനെ കണ്ടെത്തിയില്ല. \"$phoneNumber$\" ഒരു സാധുതയുള്ള ഫോൺ നമ്പർ അല്ല.",
         "description": "Shown in dialog if phone number is not valid.",
         "placeholders": {
             "phoneNumber": {
@@ -2757,12 +2757,16 @@
         "message": "ഈ സന്ദേശം ഇല്ലാതാക്കി.",
         "description": "Shown in a message's bubble when the message has been deleted for everyone."
     },
-    "message--giftBadge--unopened": {
+    "message--giftBadge--unopened--incoming": {
         "message": "View this message on mobile to open it",
         "description": "Shown in a message's bubble when you've received a gift badge from a contact"
     },
+    "message--giftBadge--unopened--outgoing": {
+        "message": "നിങ്ങളുടെ ഗിഫ്റ്റ് കാണാൻ, മൊബൈലിലെ ഈ സന്ദേശത്തിൽ ടാപ്പ് ചെയ്യുക",
+        "description": "Shown in a message's bubble when you've sent a gift badge to a contact"
+    },
     "message--giftBadge--unopened--label": {
-        "message": "Gift",
+        "message": "ഗിഫ്റ്റ്",
         "description": "Shown in a message's bubble when you've received a gift badge from a contact"
     },
     "message--giftBadge--unopened--toast--incoming": {
@@ -2774,11 +2778,11 @@
         "description": "Shown when you've clicked on an outgoing gift badge"
     },
     "message--giftBadge--preview--unopened": {
-        "message": "You received a gift",
+        "message": "നിങ്ങൾക്കൊരു ഗിഫ്റ്റ് ലഭിച്ചു",
         "description": "Shown to label the gift badge in notifications and the left pane"
     },
     "message--giftBadge--preview--redeemed": {
-        "message": "You redeemed a gift badge",
+        "message": "നിങ്ങളൊരു ഗിഫ്റ്റ് ബാഡ്‍ജ് റിഡീം ചെയ്‌തു",
         "description": "Shown to label the redeemed gift badge in notifications and the left pane"
     },
     "message--giftBadge--preview--sent": {
@@ -2790,7 +2794,7 @@
         "description": "Shown to label the gift badge you've redeemed on another device"
     },
     "quote--giftBadge": {
-        "message": "Gift",
+        "message": "ഗിഫ്റ്റ്",
         "description": "Shown to label a gift badge you've replied to"
     },
     "message--giftBadge--remaining--days": {
@@ -2828,7 +2832,7 @@
         "description": "Describes how long remains for the gift badge you've redeemed on another device"
     },
     "message--giftBadge--expired": {
-        "message": "Expired",
+        "message": "കാലഹരണപ്പെട്ടു",
         "description": "Shows that a gift badge is expired"
     },
     "message--giftBadge--view": {
@@ -2836,7 +2840,7 @@
         "description": "Shown when you've sent a gift badge to someone then opened it"
     },
     "message--giftBadge--redeemed": {
-        "message": "Redeemed",
+        "message": "റിഡീം ചെയ്‌തു",
         "description": "Shown when you've redeemed the gift badge on another device"
     },
     "modal--giftBadge--title": {
@@ -5606,11 +5610,11 @@
         "description": "Generic next label"
     },
     "BadgeDialog__become-a-sustainer-button": {
-        "message": "പരിപാലകര്‍ ആകുക",
+        "message": "Signal-ന് സംഭാവന ചെയ്യുക",
         "description": "In the badge dialog. This button is shown under sustainer badges, taking users to some instructions"
     },
     "BadgeSustainerInstructions__header": {
-        "message": "പരിപാലകര്‍ ആകുക",
+        "message": "Signal-ന് സംഭാവന ചെയ്യുക",
         "description": "In the instructions for becoming a sustainer. The heading."
     },
     "BadgeSustainerInstructions__subheader": {
@@ -5626,7 +5630,7 @@
         "description": "In the instructions for becoming a sustainer. Second instruction."
     },
     "BadgeSustainerInstructions__instructions__3": {
-        "message": "Tap on \"Become a Sustainer\" and subscribe",
+        "message": "\"Signal-ന് സംഭാവന ചെയ്യുക\" എന്നതിൽ ടാപ്പ് ചെയ്‌ത് സബ്സ്ക്രൈബ് ചെയ്യുക",
         "description": "In the instructions for becoming a sustainer. Third instruction."
     },
     "CompositionArea--expand": {
@@ -5761,6 +5765,10 @@
         "message": "ഗ്രൂപ്പ് തടയുക",
         "description": "This is a button to block a group"
     },
+    "ConversationDetailsActions--unblock-group": {
+        "message": "ഗ്രൂപ്പ് തടഞ്ഞത് മാറ്റുക",
+        "description": "This is a button to unblock a group"
+    },
     "ConversationDetailsActions--leave-group-must-choose-new-admin": {
         "message": "നിങ്ങൾ പോകുന്നതിനുമുമ്പ്, ഈ ഗ്രൂപ്പിനായി ഒരു പുതിയ അഡ്‌മിനെയെങ്കിലും തിരഞ്ഞെടുക്കണം.",
         "description": "Shown if, before leaving a group, you need to choose an admin"
@@ -5776,6 +5784,16 @@
     "ConversationDetailsActions--leave-group-modal-confirm": {
         "message": "വിട്ട് പോകുക",
         "description": "This is the modal button to confirm leaving a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-title": {
+        "message": "\"$groupName$\" ഗ്രൂപ്പ് തടഞ്ഞത് മാറ്റണോ?",
+        "description": "This is the modal title for confirming unblock of a group",
+        "placeholders": {
+            "groupName": {
+                "content": "$1",
+                "example": "Our Conversation"
+            }
+        }
     },
     "ConversationDetailsActions--block-group-modal-title": {
         "message": "\"$groupName$\" ഗ്രൂപ്പ് തടയുക കൂടാതെ ഉപേക്ഷിക്കുക ?",
@@ -5794,6 +5812,14 @@
     "ConversationDetailsActions--block-group-modal-confirm": {
         "message": "തടയുക",
         "description": "This is the modal button to confirm blocking a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-content": {
+        "message": "നിങ്ങളുടെ കോൺടാക്റ്റുകൾക്ക് നിങ്ങളെ ഈ ഗ്രൂപ്പിലേക്ക് ചേർക്കാനാകും.",
+        "description": "This is the modal content for confirming unblock of a group"
+    },
+    "ConversationDetailsActions--unblock-group-modal-confirm": {
+        "message": "തടഞ്ഞത് മാറ്റുക",
+        "description": "This is the modal button to confirm unblock of a group"
     },
     "ConversationDetailsHeader--members": {
         "message": "$number$ അംഗങ്ങൾ",
@@ -7118,7 +7144,7 @@
         "description": "Confirmation dialog description text for deleting a story"
     },
     "Stories__title": {
-        "message": "Stories",
+        "message": "സ്റ്റോറീസ്",
         "description": "Title for the stories list"
     },
     "Stories__mine": {
@@ -7126,11 +7152,11 @@
         "description": "Label for your stories"
     },
     "Stories__add": {
-        "message": "Add a story",
+        "message": "ഒരു സ്റ്റോറി ചേർക്കുക",
         "description": "Description hint to add a story"
     },
     "Stories__hidden-stories": {
-        "message": "Hidden stories",
+        "message": "മറച്ച സ്റ്റോറീസ്",
         "description": "Button label to go to hidden stories pane"
     },
     "Stories__list-empty": {
@@ -7180,15 +7206,15 @@
         "description": "Aria label for unmuting stories"
     },
     "StoryViewsNRepliesModal__no-replies": {
-        "message": "No replies yet",
+        "message": "ഇതുവരെ മറുപടികളൊന്നുമില്ല",
         "description": "Placeholder text for when there are no replies"
     },
     "StoryViewsNRepliesModal__tab--views": {
-        "message": "Views",
+        "message": "കാഴ്ച്ചകൾ",
         "description": "Title for views tab"
     },
     "StoryViewsNRepliesModal__tab--replies": {
-        "message": "Replies",
+        "message": "മറുപടികൾ",
         "description": "Title for replies tab"
     },
     "StoryViewsNRepliesModal__react": {
@@ -7196,7 +7222,7 @@
         "description": "aria-label for reaction button"
     },
     "StoryViewsNRepliesModal__reacted": {
-        "message": "Reacted to the story",
+        "message": "സ്റ്റോറിയോട് പ്രതികരിച്ചു",
         "description": "Description of someone reacting to a story"
     },
     "StoryListItem__label": {
@@ -7208,11 +7234,11 @@
         "description": "Label for menu item to un-hide the story"
     },
     "StoryListItem__hide": {
-        "message": "Hide story",
+        "message": "സ്റ്റോറി മറയ്ക്കുക",
         "description": "Label for menu item to hide the story"
     },
     "StoryListItem__go-to-chat": {
-        "message": "Go to chat",
+        "message": "ചാറ്റിലേക്ക് പോകുക",
         "description": "Label for menu item to go to conversation"
     },
     "StoryListItem__hide-modal--body": {
@@ -7226,6 +7252,58 @@
     "StoryImage__error": {
         "message": "Error displaying image",
         "description": "aria-label for image errors"
+    },
+    "StoryCreator__text-bg": {
+        "message": "ടെക്സ്റ്റ് പശ്ചാത്തല നിറം ടോഗിൾ ചെയ്യുക",
+        "description": "Button label"
+    },
+    "StoryCreator__story-bg": {
+        "message": "സ്റ്റോറി പശ്ചാത്തല നിറം മാറ്റുക",
+        "description": "Button label"
+    },
+    "StoryCreator__next": {
+        "message": "അടുത്തത്",
+        "description": "Button label text to advance to next step of story creation"
+    },
+    "StoryCreator__add-link": {
+        "message": "ലിങ്ക് ചേർക്കുക",
+        "description": "Button label to apply the link preview to story"
+    },
+    "StoryCreator__input-placeholder": {
+        "message": "എഴുത്ത് ചേർക്കുക",
+        "description": "Placeholder to add text"
+    },
+    "StoryCreator__text--regular": {
+        "message": "Regular",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--bold": {
+        "message": "ബോൾഡ്",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--serif": {
+        "message": "സെറിഫ്",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--script": {
+        "message": "സ്ക്രിപ്റ്റ്",
+        "description": "Label for font"
+    },
+    "StoryCreator__text--condensed": {
+        "message": "കണ്ടൻസ്‌ഡ്",
+        "description": "Label for font"
+    },
+    "StoryCreator__link-preview-placeholder": {
+        "message": "ഒരു യുആർഎൽ ടൈപ്പ് ചെയ്യുകയോ ഒട്ടിക്കുകയോ ചെയ്യുക",
+        "description": "Placeholder for the URL input for link previews"
+    },
+    "StoryCreator__link-preview-empty": {
+        "message": "നിങ്ങളുടെ സ്റ്റോറിയുടെ കാഴ്ചക്കാർക്കായി ഒരു ലിങ്ക് ചേർക്കുക",
+        "description": "Empty state for the link preview"
+    },
+    "TextAttachment__placeholder": {
+        "message": "എഴുത്ത് ചേർക്കുക",
+        "description": "Placeholder for the add text input"
     },
     "TextAttachment__preview__link": {
         "message": "ലിങ്ക് സന്ദർശിക്കുക",
@@ -7246,15 +7324,15 @@
         }
     },
     "Quote__story-reaction--yours": {
-        "message": "Reacted to your story",
+        "message": "നിങ്ങളുടെ സ്റ്റോറിയോട് പ്രതികരിച്ചു",
         "description": "Label for when a person reacts to your story"
     },
     "Quote__story-reaction--single": {
-        "message": "Reacted to a story",
+        "message": "ഒരു സ്റ്റോറിയോട് പ്രതികരിച്ചു",
         "description": "Used whenever we can't find a user's first name"
     },
     "Quote__story-unavailable": {
-        "message": "No longer available",
+        "message": "ഇനി ലഭ്യമല്ല",
         "description": "Label for when a story is not found"
     },
     "WhatsNew__modal-title": {
@@ -7265,22 +7343,8 @@
         "message": "This version contains a number of small tweaks and bug fixes to keep Signal running smoothly.",
         "description": "Release notes for releases that only include bug fixes"
     },
-    "WhatsNew__v5.40--1": {
-        "message": "Bug fixes including a fix to an issue that would sometimes make it difficult to click on menus. ",
-        "description": "Release notes for v5.40"
-    },
-    "WhatsNew__v5.40--2": {
-        "message": "Thanks to our open source contributors $dsanders11$ and $yusufsahinhamza$ for contributing to these improvements.",
-        "description": "Release notes for v5.40",
-        "placeholders": {
-            "dsanders11": {
-                "content": "$1",
-                "example": "dsanders11"
-            },
-            "yusufsahinhamza": {
-                "content": "$2",
-                "example": "yusufsahinhamza"
-            }
-        }
+    "WhatsNew__v5.47--1": {
+        "message": "Windows-ലെ എല്ലാ ഡാർക്ക് മോഡ് പ്രേക്ഷകരോടും, നിങ്ങളുടെ ശൈലിയുമായി യോജിക്കുന്ന ഒരു പുതിയ ടൈറ്റിൽബാർ ഞങ്ങൾ കൊണ്ടുവന്നിട്ടുണ്ട്.",
+        "description": "Release notes for v5.47"
     }
 }

@@ -10,8 +10,10 @@ import { App } from '../../components/App';
 import { SmartCallManager } from './CallManager';
 import { SmartCustomizingPreferredReactionsModal } from './CustomizingPreferredReactionsModal';
 import { SmartGlobalModalContainer } from './GlobalModalContainer';
+import { SmartLeftPane } from './LeftPane';
 import { SmartSafetyNumberViewer } from './SafetyNumberViewer';
 import { SmartStories } from './Stories';
+import { SmartStoryViewer } from './StoryViewer';
 import type { StateType } from '../reducer';
 import { getPreferredBadgeSelector } from '../selectors/badges';
 import {
@@ -21,9 +23,12 @@ import {
   getIsMainWindowMaximized,
   getIsMainWindowFullScreen,
   getMenuOptions,
-  getPlatform,
 } from '../selectors/user';
-import { shouldShowStoriesView } from '../selectors/stories';
+import {
+  getSelectedStoryData,
+  shouldShowStoriesView,
+} from '../selectors/stories';
+import { getHideMenuBar } from '../selectors/items';
 import { getConversationsStoppingSend } from '../selectors/conversations';
 import { getIsCustomizingPreferredReactions } from '../selectors/preferredReactions';
 import { mapDispatchToProps } from '../actions';
@@ -40,18 +45,21 @@ const mapStateToProps = (state: StateType) => {
     isMaximized: getIsMainWindowMaximized(state),
     isFullScreen: getIsMainWindowFullScreen(state),
     menuOptions: getMenuOptions(state),
-    platform: getPlatform(state),
-    isWindows11: window.SignalContext.OS.isWindows11(),
+    hasCustomTitleBar: window.SignalContext.OS.hasCustomTitleBar(),
+    hideMenuBar: getHideMenuBar(state),
     renderCallManager: () => <SmartCallManager />,
     renderCustomizingPreferredReactionsModal: () => (
       <SmartCustomizingPreferredReactionsModal />
     ),
     renderGlobalModalContainer: () => <SmartGlobalModalContainer />,
+    renderLeftPane: () => <SmartLeftPane />,
     renderSafetyNumber: (props: SafetyNumberProps) => (
       <SmartSafetyNumberViewer {...props} />
     ),
     isShowingStoriesView: shouldShowStoriesView(state),
     renderStories: () => <SmartStories />,
+    selectedStoryData: getSelectedStoryData(state),
+    renderStoryViewer: () => <SmartStoryViewer />,
     requestVerification: (
       type: 'sms' | 'voice',
       number: string,
@@ -68,6 +76,8 @@ const mapStateToProps = (state: StateType) => {
     registerSingleDevice: (number: string, code: string): Promise<void> => {
       return window.getAccountManager().registerSingleDevice(number, code);
     },
+    selectedConversationId: state.conversations.selectedConversationId,
+    selectedMessage: state.conversations.selectedMessage,
     theme: getTheme(state),
 
     executeMenuRole: (role: MenuItemConstructorOptions['role']): void => {

@@ -15,6 +15,7 @@ import {
   forEach,
   fromPairs,
   groupBy,
+  isBoolean,
   isNil,
   isNumber,
   isString,
@@ -32,7 +33,7 @@ import { STORAGE_UI_KEYS } from '../types/StorageUIKeys';
 import { UUID } from '../types/UUID';
 import type { UUIDStringType } from '../types/UUID';
 import type { StoredJob } from '../jobs/types';
-import { assert, assertSync } from '../util/assert';
+import { assert, assertSync, strictAssert } from '../util/assert';
 import { combineNames } from '../util/combineNames';
 import { consoleLogger } from '../util/consoleLogger';
 import { dropNull } from '../util/dropNull';
@@ -287,6 +288,7 @@ const dataInterface: ServerInterface = {
   getStoryDistributionWithMembers,
   modifyStoryDistribution,
   modifyStoryDistributionMembers,
+  modifyStoryDistributionWithMembers,
   deleteStoryDistribution,
 
   _getAllStoryReads,
@@ -819,14 +821,19 @@ async function insertSentProto(
       INSERT INTO sendLogPayloads (
         contentHint,
         proto,
-        timestamp
+        timestamp,
+        urgent
       ) VALUES (
         $contentHint,
         $proto,
-        $timestamp
+        $timestamp,
+        $urgent
       );
       `
-    ).run(proto);
+    ).run({
+      ...proto,
+      urgent: proto.urgent ? 1 : 0,
+    });
     const id = parseIntOrThrow(
       info.lastInsertRowid,
       'insertSentProto/lastInsertRowid'
@@ -1081,6 +1088,7 @@ async function getSentProtoByRecipient({
   const { messageIds } = row;
   return {
     ...row,
+    urgent: isNumber(row.urgent) ? Boolean(row.urgent) : true,
     messageIds: messageIds ? messageIds.split(',') : [],
   };
 }
@@ -1092,7 +1100,10 @@ async function getAllSentProtos(): Promise<Array<SentProtoType>> {
   const db = getInstance();
   const rows = prepare<EmptyQuery>(db, 'SELECT * FROM sendLogPayloads;').all();
 
-  return rows;
+  return rows.map(row => ({
+    ...row,
+    urgent: isNumber(row.urgent) ? Boolean(row.urgent) : true,
+  }));
 }
 async function _getAllSentProtoRecipients(): Promise<
   Array<SentRecipientsDBType>
@@ -1739,8 +1750,16 @@ function saveMessageSync(
     readStatus,
     expireTimer,
     expirationStartTimestamp,
+    attachments,
   } = data;
   let { seenStatus } = data;
+
+  if (attachments) {
+    strictAssert(
+      attachments.every(attachment => !attachment.data),
+      'Attempting to save a hydrated message'
+    );
+  }
 
   if (readStatus === ReadStatus.Unread && seenStatus !== SeenStatus.Unseen) {
     log.warn(
@@ -3075,6 +3094,7 @@ function saveUnprocessedSync(data: UnprocessedType): string {
     serverGuid,
     serverTimestamp,
     decrypted,
+    urgent,
   } = data;
   if (!id) {
     throw new Error('saveUnprocessedSync: id was falsey');
@@ -3100,7 +3120,8 @@ function saveUnprocessedSync(data: UnprocessedType): string {
       sourceDevice,
       serverGuid,
       serverTimestamp,
-      decrypted
+      decrypted,
+      urgent
     ) values (
       $id,
       $timestamp,
@@ -3113,7 +3134,8 @@ function saveUnprocessedSync(data: UnprocessedType): string {
       $sourceDevice,
       $serverGuid,
       $serverTimestamp,
-      $decrypted
+      $decrypted,
+      $urgent
     );
     `
   ).run({
@@ -3129,6 +3151,7 @@ function saveUnprocessedSync(data: UnprocessedType): string {
     serverGuid: serverGuid || null,
     serverTimestamp: serverTimestamp || null,
     decrypted: decrypted || null,
+    urgent: urgent || !isBoolean(urgent) ? 1 : 0,
   });
 
   return id;
@@ -3200,7 +3223,10 @@ async function getUnprocessedById(
       id,
     });
 
-  return row;
+  return {
+    ...row,
+    urgent: isNumber(row.urgent) ? Boolean(row.urgent) : true,
+  };
 }
 
 async function getUnprocessedCount(): Promise<number> {
@@ -3257,7 +3283,11 @@ async function getAllUnprocessedAndIncrementAttempts(): Promise<
           ORDER BY receivedAtCounter ASC;
         `
       )
-      .all();
+      .all()
+      .map(row => ({
+        ...row,
+        urgent: isNumber(row.urgent) ? Boolean(row.urgent) : true,
+      }));
   })();
 }
 
@@ -4026,8 +4056,19 @@ async function getAllBadgeImageFileLocalPaths(): Promise<Set<string>> {
 
 type StoryDistributionForDatabase = Readonly<
   {
+    allowsReplies: 0 | 1;
+    deletedAtTimestamp: number | null;
+    isBlockList: 0 | 1;
     senderKeyInfoJson: string | null;
-  } & Omit<StoryDistributionType, 'senderKeyInfo'>
+    storageNeedsSync: 0 | 1;
+  } & Omit<
+    StoryDistributionType,
+    | 'allowsReplies'
+    | 'deletedAtTimestamp'
+    | 'isBlockList'
+    | 'senderKeyInfo'
+    | 'storageNeedsSync'
+  >
 >;
 
 function hydrateStoryDistribution(
@@ -4035,9 +4076,14 @@ function hydrateStoryDistribution(
 ): StoryDistributionType {
   return {
     ...omit(fromDatabase, 'senderKeyInfoJson'),
+    allowsReplies: Boolean(fromDatabase.allowsReplies),
+    deletedAtTimestamp: fromDatabase.deletedAtTimestamp || undefined,
+    isBlockList: Boolean(fromDatabase.isBlockList),
     senderKeyInfo: fromDatabase.senderKeyInfoJson
       ? JSON.parse(fromDatabase.senderKeyInfoJson)
       : undefined,
+    storageNeedsSync: Boolean(fromDatabase.storageNeedsSync),
+    storageUnknownFields: fromDatabase.storageUnknownFields || undefined,
   };
 }
 function freezeStoryDistribution(
@@ -4045,9 +4091,14 @@ function freezeStoryDistribution(
 ): StoryDistributionForDatabase {
   return {
     ...omit(story, 'senderKeyInfo'),
+    allowsReplies: story.allowsReplies ? 1 : 0,
+    deletedAtTimestamp: story.deletedAtTimestamp || null,
+    isBlockList: story.isBlockList ? 1 : 0,
     senderKeyInfoJson: story.senderKeyInfo
       ? JSON.stringify(story.senderKeyInfo)
       : null,
+    storageNeedsSync: story.storageNeedsSync ? 1 : 0,
+    storageUnknownFields: story.storageUnknownFields || null,
   };
 }
 
@@ -4087,15 +4138,25 @@ async function createNewStoryDistribution(
       INSERT INTO storyDistributions(
         id,
         name,
-        avatarUrlPath,
-        avatarKey,
-        senderKeyInfoJson
+        deletedAtTimestamp,
+        allowsReplies,
+        isBlockList,
+        senderKeyInfoJson,
+        storageID,
+        storageVersion,
+        storageUnknownFields,
+        storageNeedsSync
       ) VALUES (
         $id,
         $name,
-        $avatarUrlPath,
-        $avatarKey,
-        $senderKeyInfoJson
+        $deletedAtTimestamp,
+        $allowsReplies,
+        $isBlockList,
+        $senderKeyInfoJson,
+        $storageID,
+        $storageVersion,
+        $storageUnknownFields,
+        $storageNeedsSync
       );
       `
     ).run(payload);
@@ -4163,23 +4224,90 @@ async function getStoryDistributionWithMembers(
     members: members.map(({ uuid }) => uuid),
   };
 }
-async function modifyStoryDistribution(
-  distribution: StoryDistributionType
-): Promise<void> {
-  const payload = freezeStoryDistribution(distribution);
-  const db = getInstance();
+function modifyStoryDistributionSync(
+  db: Database,
+  payload: StoryDistributionForDatabase
+): void {
   prepare(
     db,
     `
     UPDATE storyDistributions
     SET
       name = $name,
-      avatarUrlPath = $avatarUrlPath,
-      avatarKey = $avatarKey,
-      senderKeyInfoJson = $senderKeyInfoJson
+      deletedAtTimestamp = $deletedAtTimestamp,
+      allowsReplies = $allowsReplies,
+      isBlockList = $isBlockList,
+      senderKeyInfoJson = $senderKeyInfoJson,
+      storageID = $storageID,
+      storageVersion = $storageVersion,
+      storageUnknownFields = $storageUnknownFields,
+      storageNeedsSync = $storageNeedsSync
     WHERE id = $id
     `
   ).run(payload);
+}
+function modifyStoryDistributionMembersSync(
+  db: Database,
+  listId: string,
+  {
+    toAdd,
+    toRemove,
+  }: { toAdd: Array<UUIDStringType>; toRemove: Array<UUIDStringType> }
+) {
+  const memberInsertStatement = prepare(
+    db,
+    `
+    INSERT OR REPLACE INTO storyDistributionMembers (
+      listId,
+      uuid
+    ) VALUES (
+      $listId,
+      $uuid
+    );
+    `
+  );
+
+  for (const uuid of toAdd) {
+    memberInsertStatement.run({
+      listId,
+      uuid,
+    });
+  }
+
+  batchMultiVarQuery(db, toRemove, (uuids: Array<UUIDStringType>) => {
+    db.prepare<ArrayQuery>(
+      `
+      DELETE FROM storyDistributionMembers
+      WHERE listId = ? AND uuid IN ( ${uuids.map(() => '?').join(', ')} );
+      `
+    ).run([listId, ...uuids]);
+  });
+}
+async function modifyStoryDistributionWithMembers(
+  distribution: StoryDistributionType,
+  {
+    toAdd,
+    toRemove,
+  }: { toAdd: Array<UUIDStringType>; toRemove: Array<UUIDStringType> }
+): Promise<void> {
+  const payload = freezeStoryDistribution(distribution);
+  const db = getInstance();
+
+  if (toAdd.length || toRemove.length) {
+    db.transaction(() => {
+      modifyStoryDistributionSync(db, payload);
+      modifyStoryDistributionMembersSync(db, payload.id, { toAdd, toRemove });
+    })();
+  } else {
+    modifyStoryDistributionSync(db, payload);
+  }
+}
+async function modifyStoryDistribution(
+  distribution: StoryDistributionType
+): Promise<void> {
+  const payload = freezeStoryDistribution(distribution);
+  const db = getInstance();
+  modifyStoryDistributionSync(db, payload);
 }
 async function modifyStoryDistributionMembers(
   listId: string,
@@ -4191,34 +4319,7 @@ async function modifyStoryDistributionMembers(
   const db = getInstance();
 
   db.transaction(() => {
-    const memberInsertStatement = prepare(
-      db,
-      `
-      INSERT OR REPLACE INTO storyDistributionMembers (
-        listId,
-        uuid
-      ) VALUES (
-        $listId,
-        $uuid
-      );
-      `
-    );
-
-    for (const uuid of toAdd) {
-      memberInsertStatement.run({
-        listId,
-        uuid,
-      });
-    }
-
-    batchMultiVarQuery(db, toRemove, (uuids: Array<UUIDStringType>) => {
-      db.prepare<ArrayQuery>(
-        `
-        DELETE FROM storyDistributionMembers
-        WHERE listId = ? AND uuid IN ( ${uuids.map(() => '?').join(', ')} );
-        `
-      ).run([listId, ...uuids]);
-    });
+    modifyStoryDistributionMembersSync(db, listId, { toAdd, toRemove });
   })();
 }
 async function deleteStoryDistribution(id: UUIDStringType): Promise<void> {
@@ -4387,22 +4488,31 @@ async function removeAllConfiguration(
   })();
 }
 
+const MAX_MESSAGE_MIGRATION_ATTEMPTS = 5;
+
 async function getMessagesNeedingUpgrade(
   limit: number,
   { maxVersion }: { maxVersion: number }
 ): Promise<Array<MessageType>> {
   const db = getInstance();
+
   const rows: JSONRows = db
     .prepare<Query>(
       `
       SELECT json
       FROM messages
-      WHERE schemaVersion IS NULL OR schemaVersion < $maxVersion
+      WHERE
+        (schemaVersion IS NULL OR schemaVersion < $maxVersion) AND
+        IFNULL(
+          json_extract(json, '$.schemaMigrationAttempts'),
+          0
+        ) < $maxAttempts
       LIMIT $limit;
       `
     )
     .all({
       maxVersion,
+      maxAttempts: MAX_MESSAGE_MIGRATION_ATTEMPTS,
       limit,
     });
 

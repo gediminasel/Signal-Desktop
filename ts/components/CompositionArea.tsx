@@ -15,7 +15,10 @@ import type { ErrorDialogAudioRecorderType } from '../state/ducks/audioRecorder'
 import { RecordingState } from '../state/ducks/audioRecorder';
 import type { HandleAttachmentsProcessingArgsType } from '../util/handleAttachmentsProcessing';
 import { Spinner } from './Spinner';
-import type { Props as EmojiButtonProps } from './emoji/EmojiButton';
+import type {
+  Props as EmojiButtonProps,
+  EmojiButtonAPI,
+} from './emoji/EmojiButton';
 import { EmojiButton } from './emoji/EmojiButton';
 import type { Props as StickerButtonProps } from './stickers/StickerButton';
 import { StickerButton } from './stickers/StickerButton';
@@ -41,7 +44,7 @@ import { AudioCapture } from './conversation/AudioCapture';
 import { CompositionUpload } from './CompositionUpload';
 import type { ConversationType } from '../state/ducks/conversations';
 import type { EmojiPickDataType } from './emoji/EmojiPicker';
-import type { LinkPreviewWithDomain } from '../types/LinkPreview';
+import type { LinkPreviewType } from '../types/message/LinkPreviews';
 
 import { MandatoryProfileSharingActions } from './conversation/MandatoryProfileSharingActions';
 import { MediaQualitySelector } from './MediaQualitySelector';
@@ -102,7 +105,7 @@ export type OwnProps = Readonly<{
   isSMSOnly?: boolean;
   left?: boolean;
   linkPreviewLoading: boolean;
-  linkPreviewResult?: LinkPreviewWithDomain;
+  linkPreviewResult?: LinkPreviewType;
   messageRequestsEnabled?: boolean;
   onClearAttachments(): unknown;
   onClickQuotedMessage(): unknown;
@@ -259,6 +262,7 @@ export const CompositionArea = ({
     AttachmentDraftType | undefined
   >();
   const inputApiRef = useRef<InputApi | undefined>();
+  const emojiButtonRef = useRef<EmojiButtonAPI | undefined>();
   const fileInputRef = useRef<null | HTMLInputElement>(null);
 
   const handleForceSend = useCallback(() => {
@@ -270,6 +274,7 @@ export const CompositionArea = ({
 
   const handleSubmit = useCallback(
     (message: string, mentions: Array<BodyRangeType>, timestamp: number) => {
+      emojiButtonRef.current?.close();
       onSendMessage({
         draftAttachments,
         mentions,
@@ -358,6 +363,7 @@ export const CompositionArea = ({
     <>
       <div className="CompositionArea__button-cell">
         <EmojiButton
+          emojiButtonApi={emojiButtonRef}
           i18n={i18n}
           doSend={handleForceSend}
           onPickEmoji={insertEmoji}
@@ -393,6 +399,7 @@ export const CompositionArea = ({
         onSendAudioRecording={(
           voiceNoteAttachment: InMemoryAttachmentDraftType
         ) => {
+          emojiButtonRef.current?.close();
           onSendMessage({ voiceNoteAttachment });
         }}
         startRecording={startRecording}
@@ -631,10 +638,10 @@ export const CompositionArea = ({
             />
           </div>
         )}
-        {linkPreviewLoading && (
+        {linkPreviewLoading && linkPreviewResult && (
           <div className="preview-wrapper">
             <StagedLinkPreview
-              {...(linkPreviewResult || {})}
+              {...linkPreviewResult}
               i18n={i18n}
               onClose={onCloseLinkPreview}
             />

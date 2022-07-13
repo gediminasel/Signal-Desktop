@@ -17,6 +17,7 @@ import type {
   ConversationTypeType,
   InteractionModeType,
 } from '../../state/ducks/conversations';
+import type { ViewStoryActionCreatorType } from '../../state/ducks/stories';
 import type { TimelineItemType } from './TimelineItem';
 import { ReadStatus } from '../../messages/MessageReadStatus';
 import { Avatar, AvatarSize } from '../Avatar';
@@ -45,6 +46,7 @@ import { shouldUseFullSizeLinkPreviewImage } from '../../linkPreviews/shouldUseF
 import { WidthBreakpoint } from '../_util';
 import { OutgoingGiftBadgeModal } from '../OutgoingGiftBadgeModal';
 import * as log from '../../logging/log';
+import { StoryViewModeType } from '../../types/Stories';
 
 import type { AttachmentType } from '../../types/Attachment';
 import {
@@ -254,7 +256,7 @@ export type PropsData = {
     emoji?: string;
     isFromMe: boolean;
     rawAttachment?: QuotedAttachmentType;
-    referencedMessageNotFound?: boolean;
+    storyId?: string;
     text: string;
   };
   previews: Array<LinkPreviewType>;
@@ -365,6 +367,7 @@ export type PropsActions = {
 
   showExpiredIncomingTapToViewToast: () => unknown;
   showExpiredOutgoingTapToViewToast: () => unknown;
+  viewStory: ViewStoryActionCreatorType;
 };
 
 export type Props = PropsData &
@@ -1255,7 +1258,10 @@ export class Message extends React.PureComponent<Props, State> {
           />
         ) : null}
         <div className="module-message__link-preview__content">
-          {first.image && previewHasImage && !isFullSizeImage ? (
+          {first.image &&
+          first.domain &&
+          previewHasImage &&
+          !isFullSizeImage ? (
             <div className="module-message__link-preview__icon_container">
               <Image
                 noBorder
@@ -1344,7 +1350,7 @@ export class Message extends React.PureComponent<Props, State> {
     }
 
     if (giftBadge.state === GiftBadgeStates.Unopened) {
-      const description = i18n('message--giftBadge--unopened');
+      const description = i18n(`message--giftBadge--unopened--${direction}`);
       const isRTL = getDirection(description) === 'rtl';
       const { metadataWidth } = this.state;
 
@@ -1579,6 +1585,7 @@ export class Message extends React.PureComponent<Props, State> {
       direction,
       i18n,
       storyReplyContext,
+      viewStory,
     } = this.props;
 
     if (!storyReplyContext) {
@@ -1606,13 +1613,11 @@ export class Message extends React.PureComponent<Props, State> {
           isViewOnce={false}
           moduleClassName="StoryReplyQuote"
           onClick={() => {
-            // TODO DESKTOP-3255
+            viewStory(storyReplyContext.storyId, StoryViewModeType.Single);
           }}
           rawAttachment={storyReplyContext.rawAttachment}
           reactionEmoji={storyReplyContext.emoji}
-          referencedMessageNotFound={Boolean(
-            storyReplyContext.referencedMessageNotFound
-          )}
+          referencedMessageNotFound={!storyReplyContext.storyId}
           text={storyReplyContext.text}
         />
       </>
@@ -1686,7 +1691,11 @@ export class Message extends React.PureComponent<Props, State> {
     return (
       <button
         type="button"
-        onClick={() => startConversation(firstNumber, uuid)}
+        onClick={e => {
+          e.preventDefault();
+          e.stopPropagation();
+          startConversation(firstNumber, uuid);
+        }}
         className={classNames(
           'module-message__send-message-button',
           noBottomLeftCurve &&
@@ -2722,7 +2731,7 @@ export class Message extends React.PureComponent<Props, State> {
       isTapToView,
       isTapToViewExpired,
       kickOffAttachmentDownload,
-      openConversation,
+      startConversation,
       openGiftBadge,
       showContactDetail,
       showVisualAttachment,
@@ -2833,13 +2842,15 @@ export class Message extends React.PureComponent<Props, State> {
       event.stopPropagation();
 
       this.audioButtonRef.current.click();
+      return;
     }
 
     if (contact && contact.firstNumber && contact.uuid) {
-      openConversation(contact.firstNumber);
+      startConversation(contact.firstNumber, contact.uuid);
 
       event.preventDefault();
       event.stopPropagation();
+      return;
     }
 
     if (contact) {

@@ -1,5 +1,8 @@
-// Copyright 2018-2021 Signal Messenger, LLC
+// Copyright 2018-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
+
+// This has to be the first import because of monkey-patching
+import '../shims';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -33,8 +36,7 @@ contextBridge.exposeInMainWorld('SignalContext', {
         environment: `${environmentText.join(' - ')}${platform}`,
         i18n: SignalContext.i18n,
         version: SignalContext.getVersion(),
-        platform: process.platform,
-        isWindows11: SignalContext.OS.isWindows11(),
+        hasCustomTitleBar: SignalContext.OS.hasCustomTitleBar(),
         executeMenuRole: SignalContext.executeMenuRole,
       }),
       document.getElementById('app')

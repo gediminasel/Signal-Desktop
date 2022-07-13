@@ -44,6 +44,10 @@ import { IdleDetector } from './IdleDetector';
 import { expiringMessagesDeletionService } from './services/expiringMessagesDeletion';
 import { tapToViewMessagesDeletionService } from './services/tapToViewMessagesDeletionService';
 import { getStoriesForRedux, loadStories } from './services/storyLoader';
+import {
+  getDistributionListsForRedux,
+  loadDistributionLists,
+} from './services/distributionListLoader';
 import { senderCertificateService } from './services/senderCertificate';
 import { GROUP_CREDENTIALS_KEY } from './services/groupCredentialFetcher';
 import * as KeyboardLayout from './services/keyboardLayout';
@@ -428,7 +432,7 @@ export async function startApp(): Promise<void> {
 
   const eventHandlerQueue = new window.PQueue({
     concurrency: 1,
-    timeout: 1000 * 60 * 2,
+    timeout: durations.MINUTE * 30,
   });
 
   const profileKeyResponseQueue = new window.PQueue();
@@ -446,7 +450,7 @@ export async function startApp(): Promise<void> {
 
   window.Whisper.deliveryReceiptQueue = new window.PQueue({
     concurrency: 1,
-    timeout: 1000 * 60 * 2,
+    timeout: durations.MINUTE * 30,
   });
   window.Whisper.deliveryReceiptQueue.pause();
   window.Whisper.deliveryReceiptBatcher =
@@ -700,7 +704,16 @@ export async function startApp(): Promise<void> {
       },
     });
 
-    webFrame.setZoomFactor(window.Events.getZoomFactor());
+    const zoomFactor = window.Events.getZoomFactor();
+    webFrame.setZoomFactor(zoomFactor);
+    document.body.style.setProperty('--zoom-factor', zoomFactor.toString());
+
+    window.addEventListener('resize', () => {
+      document.body.style.setProperty(
+        '--zoom-factor',
+        webFrame.getZoomFactor().toString()
+      );
+    });
 
     // How long since we were last running?
     const lastHeartbeat = toDayMillis(window.storage.get('lastHeartbeat', 0));
@@ -841,7 +854,8 @@ export async function startApp(): Promise<void> {
       `Starting background data migration. Target version: ${Message.CURRENT_SCHEMA_VERSION}`
     );
     idleDetector.on('idle', async () => {
-      const NUM_MESSAGES_PER_BATCH = 1;
+      const NUM_MESSAGES_PER_BATCH = 100;
+      const BATCH_DELAY = 5 * durations.SECOND;
 
       if (!isMigrationWithIndexComplete) {
         const batchWithIndex = await migrateMessageData({
@@ -849,15 +863,22 @@ export async function startApp(): Promise<void> {
           upgradeMessageSchema,
           getMessagesNeedingUpgrade:
             window.Signal.Data.getMessagesNeedingUpgrade,
-          saveMessage: window.Signal.Data.saveMessage,
+          saveMessages: window.Signal.Data.saveMessages,
         });
         log.info('Upgrade message schema (with index):', batchWithIndex);
         isMigrationWithIndexComplete = batchWithIndex.done;
       }
 
+      idleDetector.stop();
+
       if (isMigrationWithIndexComplete) {
         log.info('Background migration complete. Stopping idle detector.');
-        idleDetector.stop();
+      } else {
+        log.info('Background migration not complete. Pausing idle detector.');
+
+        setTimeout(() => {
+          idleDetector.start();
+        }, BATCH_DELAY);
       }
     });
 
@@ -960,6 +981,7 @@ export async function startApp(): Promise<void> {
         loadRecentEmojis(),
         loadInitialBadgesState(),
         loadStories(),
+        loadDistributionLists(),
         window.textsecure.storage.protocol.hydrateCaches(),
         (async () => {
           mainWindowStats = await window.SignalContext.getMainWindowStats();
@@ -1004,9 +1026,10 @@ export async function startApp(): Promise<void> {
     const convoCollection = window.getConversations();
     const initialState = getInitialState({
       badges: initialBadgesState,
-      stories: getStoriesForRedux(),
       mainWindowStats,
       menuOptions,
+      stories: getStoriesForRedux(),
+      storyDistributionLists: getDistributionListsForRedux(),
     });
 
     const store = window.Signal.State.createStore(initialState);
@@ -1055,6 +1078,10 @@ export async function startApp(): Promise<void> {
       search: bindActionCreators(actionCreators.search, store.dispatch),
       stickers: bindActionCreators(actionCreators.stickers, store.dispatch),
       stories: bindActionCreators(actionCreators.stories, store.dispatch),
+      storyDistributionLists: bindActionCreators(
+        actionCreators.storyDistributionLists,
+        store.dispatch
+      ),
       updates: bindActionCreators(actionCreators.updates, store.dispatch),
       user: bindActionCreators(actionCreators.user, store.dispatch),
     };
@@ -1508,6 +1535,10 @@ export async function startApp(): Promise<void> {
         (key === 'c' || key === 'C')
       ) {
         conversation.trigger('unload', 'keyboard shortcut close');
+        window.reduxActions.conversations.showConversation({
+          conversationId: undefined,
+          messageId: undefined,
+        });
         event.preventDefault();
         event.stopPropagation();
         return;
@@ -1804,7 +1835,9 @@ export async function startApp(): Promise<void> {
       window.reduxActions.app.openInstaller();
     }
 
-    window.registerForActive(() => notificationService.clear());
+    const { activeWindowService } = window.SignalContext;
+
+    activeWindowService.registerForActive(() => notificationService.clear());
     window.addEventListener('unload', () => notificationService.fastClear());
 
     notificationService.on('click', (id, messageId) => {
@@ -1817,7 +1850,7 @@ export async function startApp(): Promise<void> {
     });
 
     // Maybe refresh remote configuration when we become active
-    window.registerForActive(async () => {
+    activeWindowService.registerForActive(async () => {
       strictAssert(server !== undefined, 'WebAPI not ready');
 
       try {
@@ -2708,15 +2741,13 @@ export async function startApp(): Promise<void> {
       const { expireTimer } = details;
       const isValidExpireTimer = typeof expireTimer === 'number';
       if (isValidExpireTimer) {
-        await conversation.updateExpirationTimer(
-          expireTimer,
-          window.ConversationController.getOurConversationId(),
-          undefined,
-          {
-            fromSync: true,
-            isInitialSync,
-          }
-        );
+        await conversation.updateExpirationTimer(expireTimer, {
+          source: window.ConversationController.getOurConversationId(),
+          receivedAt: ev.receivedAtCounter,
+          fromSync: true,
+          isInitialSync,
+          reason: 'contact sync',
+        });
       }
     } catch (error) {
       log.error('onContactReceived error:', Errors.toLogFormat(error));
@@ -2792,14 +2823,12 @@ export async function startApp(): Promise<void> {
       return;
     }
 
-    await conversation.updateExpirationTimer(
-      expireTimer,
-      window.ConversationController.getOurConversationId(),
-      undefined,
-      {
-        fromSync: true,
-      }
-    );
+    await conversation.updateExpirationTimer(expireTimer, {
+      fromSync: true,
+      receivedAt: ev.receivedAtCounter,
+      source: window.ConversationController.getOurConversationId(),
+      reason: 'group sync',
+    });
   }
 
   // Received:
@@ -3074,7 +3103,7 @@ export async function startApp(): Promise<void> {
       unidentifiedStatus.reduce(
         (
           result: SendStateByConversationId,
-          { destinationUuid, destination }
+          { destinationUuid, destination, isAllowedToReplyToStory }
         ) => {
           const conversationId = window.ConversationController.ensureContactIds(
             {
@@ -3089,6 +3118,7 @@ export async function startApp(): Promise<void> {
           return {
             ...result,
             [conversationId]: {
+              isAllowedToReplyToStory,
               status: SendStatus.Sent,
               updatedAt: timestamp,
             },
@@ -3113,6 +3143,9 @@ export async function startApp(): Promise<void> {
     }
 
     return new window.Whisper.Message({
+      canReplyToStory: data.message.isStory
+        ? data.message.canReplyToStory
+        : undefined,
       conversationId: descriptor.id,
       expirationStartTimestamp: Math.min(
         data.expirationStartTimestamp || timestamp,
@@ -3129,7 +3162,8 @@ export async function startApp(): Promise<void> {
       sourceDevice: data.device,
       sourceUuid: window.textsecure.storage.user.getUuid()?.toString(),
       timestamp,
-      type: 'outgoing',
+      type: data.message.isStory ? 'story' : 'outgoing',
+      storyDistributionListId: data.storyDistributionListId,
       unidentifiedDeliveries,
     } as Partial<MessageAttributesType> as WhatIsThis);
   }
@@ -3367,20 +3401,23 @@ export async function startApp(): Promise<void> {
       `Did not receive receivedAtCounter for message: ${data.timestamp}`
     );
     return new window.Whisper.Message({
-      source: data.source,
-      sourceUuid: data.sourceUuid,
-      sourceDevice: data.sourceDevice,
+      canReplyToStory: data.message.isStory
+        ? data.message.canReplyToStory
+        : undefined,
+      conversationId: descriptor.id,
+      readStatus: ReadStatus.Unread,
+      received_at: data.receivedAtCounter,
+      received_at_ms: data.receivedAtDate,
+      seenStatus: SeenStatus.Unseen,
       sent_at: data.timestamp,
       serverGuid: data.serverGuid,
       serverTimestamp: data.serverTimestamp,
-      received_at: data.receivedAtCounter,
-      received_at_ms: data.receivedAtDate,
-      conversationId: descriptor.id,
-      unidentifiedDeliveryReceived: data.unidentifiedDeliveryReceived,
-      type: data.message.isStory ? 'story' : 'incoming',
-      readStatus: ReadStatus.Unread,
-      seenStatus: SeenStatus.Unseen,
+      source: data.source,
+      sourceDevice: data.sourceDevice,
+      sourceUuid: data.sourceUuid,
       timestamp: data.timestamp,
+      type: data.message.isStory ? 'story' : 'incoming',
+      unidentifiedDeliveryReceived: data.unidentifiedDeliveryReceived,
     } as Partial<MessageAttributesType> as WhatIsThis);
   }
 
