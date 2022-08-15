@@ -8,7 +8,6 @@ import type {
   MessageAttributesType,
   MessageReactionType,
   QuotedMessageType,
-  WhatIsThis,
 } from '../model-types.d';
 import {
   filter,
@@ -18,6 +17,7 @@ import {
   repeat,
   zipObject,
 } from '../util/iterables';
+import type { DeleteModel } from '../messageModifiers/Deletes';
 import type { SentEventData } from '../textsecure/messageReceiverEvents';
 import { isNotNil } from '../util/isNotNil';
 import { isNormalNumber } from '../util/isNormalNumber';
@@ -46,7 +46,10 @@ import * as reactionUtil from '../reactions/util';
 import * as Stickers from '../types/Stickers';
 import * as Errors from '../types/errors';
 import * as EmbeddedContact from '../types/EmbeddedContact';
-import type { AttachmentType } from '../types/Attachment';
+import type {
+  AttachmentType,
+  AttachmentWithHydratedData,
+} from '../types/Attachment';
 import { isImage, isVideo } from '../types/Attachment';
 import * as Attachment from '../types/Attachment';
 import { stringToMIMEType } from '../types/MIME';
@@ -158,6 +161,7 @@ import { isNewReactionReplacingPrevious } from '../reactions/util';
 import { parseBoostBadgeListFromServer } from '../badges/parseBadgesFromServer';
 import { GiftBadgeStates } from '../components/conversation/Message';
 import { downloadAttachment } from '../util/downloadAttachment';
+import type { StickerWithHydratedData } from '../types/Stickers';
 
 /* eslint-disable more/no-then */
 
@@ -176,9 +180,14 @@ const { getTextWithMentions, GoogleChrome } = window.Signal.Util;
 const { getMessageBySender } = window.Signal.Data;
 
 export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
-  static getLongMessageAttachment: (
-    attachment: typeof window.WhatIsThis
-  ) => typeof window.WhatIsThis;
+  static getLongMessageAttachment: (opts: {
+    attachments: Array<AttachmentWithHydratedData>;
+    body?: string;
+    now: number;
+  }) => {
+    body?: string;
+    attachments: Array<AttachmentWithHydratedData>;
+  };
 
   CURRENT_PROTOCOL_VERSION?: number;
 
@@ -198,9 +207,9 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
   cachedOutgoingPreviewData?: Array<LinkPreviewType>;
 
-  cachedOutgoingQuoteData?: WhatIsThis;
+  cachedOutgoingQuoteData?: QuotedMessageType;
 
-  cachedOutgoingStickerData?: WhatIsThis;
+  cachedOutgoingStickerData?: StickerWithHydratedData;
 
   override initialize(attributes: unknown): void {
     if (_.isObject(attributes)) {
@@ -459,7 +468,12 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         conversationSelector: findAndFormatContact,
         ourConversationId,
         ourNumber: window.textsecure.storage.user.getNumber(),
-        ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+        ourACI: window.textsecure.storage.user
+          .getCheckedUuid(UUIDKind.ACI)
+          .toString(),
+        ourPNI: window.textsecure.storage.user
+          .getCheckedUuid(UUIDKind.PNI)
+          .toString(),
         regionCode: window.storage.get('regionCode', 'ZZ'),
         accountSelector: (identifier?: string) => {
           const state = window.reduxStore.getState();
@@ -540,7 +554,12 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
       const changes = GroupChange.renderChange<string>(change, {
         i18n: window.i18n,
-        ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+        ourACI: window.textsecure.storage.user
+          .getCheckedUuid(UUIDKind.ACI)
+          .toString(),
+        ourPNI: window.textsecure.storage.user
+          .getCheckedUuid(UUIDKind.PNI)
+          .toString(),
         renderContact: (conversationId: string) => {
           const conversation =
             window.ConversationController.get(conversationId);
@@ -816,18 +835,11 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     const { attributes } = this;
 
     if (attributes.storyReactionEmoji) {
-      const conversation = this.getConversation();
-      const firstName = conversation?.attributes.profileName;
-
-      if (!conversation || !firstName) {
-        return window.i18n('Quote__story-reaction--single');
+      if (!window.Signal.OS.isLinux()) {
+        return attributes.storyReactionEmoji;
       }
 
-      if (isMe(conversation.attributes)) {
-        return window.i18n('Quote__story-reaction--yours');
-      }
-
-      return window.i18n('Quote__story-reaction', [firstName]);
+      return window.i18n('Quote__story-reaction--single');
     }
 
     let modifiedText = text;
@@ -1907,7 +1919,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       // eslint-disable-next-line no-param-reassign
       quote.attachments = [
         {
-          contentType: 'image/jpeg',
+          contentType: MIME.IMAGE_JPEG,
         },
       ];
       // eslint-disable-next-line no-param-reassign
@@ -1939,7 +1951,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     // eslint-disable-next-line no-param-reassign
     quote.text = originalMessage.get('body');
     if (firstAttachment) {
-      firstAttachment.thumbnail = undefined;
+      firstAttachment.thumbnail = null;
     }
 
     if (
@@ -2042,7 +2054,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     const idLog = conversation.idForLogging();
     await conversation.queueJob('handleDataMessage', async () => {
       log.info(
-        `handleDataMessage/${idLog}: processsing message ${message.idForLogging()}`
+        `handleDataMessage/${idLog}: processing message ${message.idForLogging()}`
       );
 
       if (
@@ -2213,12 +2225,14 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
             publicParams: initialMessage.groupV2.publicParams,
           });
 
-          // Standard GroupV2 modification codepath
           const existingRevision = conversation.get('revision');
+          const isFirstUpdate = !_.isNumber(existingRevision);
+
+          // Standard GroupV2 modification codepath
           const isV2GroupUpdate =
             initialMessage.groupV2 &&
             _.isNumber(initialMessage.groupV2.revision) &&
-            (!_.isNumber(existingRevision) ||
+            (isFirstUpdate ||
               initialMessage.groupV2.revision > existingRevision);
 
           if (isV2GroupUpdate && initialMessage.groupV2) {
@@ -2247,9 +2261,9 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         }
       }
 
-      const ourConversationId =
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        window.ConversationController.getOurConversationId()!;
+      const ourACI = window.textsecure.storage.user.getCheckedUuid(
+        UUIDKind.ACI
+      );
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const senderId = window.ConversationController.ensureContactIds({
         e164: source,
@@ -2273,15 +2287,17 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         return;
       }
 
+      const areWeMember =
+        !conversation.get('left') && conversation.hasMember(ourACI);
+
       // Drop an incoming GroupV2 message if we or the sender are not part of the group
       //   after applying the message's associated group changes.
       if (
         type === 'incoming' &&
         !isDirectConversation(conversation.attributes) &&
         hasGroupV2Prop &&
-        (conversation.get('left') ||
-          !conversation.hasMember(ourConversationId) ||
-          !conversation.hasMember(senderId))
+        (!areWeMember ||
+          (sourceUuid && !conversation.hasMember(new UUID(sourceUuid))))
       ) {
         log.warn(
           `Received message destined for group ${conversation.idForLogging()}, which we or the sender are not a part of. Dropping.`
@@ -2301,7 +2317,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         !hasGroupV2Prop &&
         !isV1GroupUpdate &&
         conversation.get('members') &&
-        (conversation.get('left') || !conversation.hasMember(ourConversationId))
+        !areWeMember
       ) {
         log.warn(
           `Received message destined for group ${conversation.idForLogging()}, which we're not a part of. Dropping.`
@@ -2323,13 +2339,13 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       // Drop incoming messages to announcement only groups where sender is not admin
       if (
         conversation.get('announcementsOnly') &&
-        !conversation.isAdmin(senderId)
+        !conversation.isAdmin(UUID.checkedLookup(senderId))
       ) {
         confirm();
         return;
       }
 
-      const messageId = UUID.generate().toString();
+      const messageId = message.get('id') || UUID.generate().toString();
 
       // Send delivery receipts, but only for incoming sealed sender messages
       // and not for messages from unaccepted conversations
@@ -2372,7 +2388,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         const urls = LinkPreview.findLinks(dataMessage.body || '');
         const incomingPreview = dataMessage.preview || [];
         const preview = incomingPreview.filter(
-          (item: typeof window.WhatIsThis) =>
+          (item: LinkPreviewType) =>
             (item.image || item.title) &&
             urls.includes(item.url) &&
             LinkPreview.shouldPreviewHref(item.url)
@@ -2596,48 +2612,43 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
                   expireTimer: initialMessage.expireTimer,
                 },
               });
-              conversation.set({ expireTimer: dataMessage.expireTimer });
-            }
 
-            // NOTE: Remove once the above calls this.model.updateExpirationTimer()
-            const { expireTimer } = dataMessage;
-            const shouldLogExpireTimerChange =
-              isExpirationTimerUpdate(message.attributes) || expireTimer;
-            if (shouldLogExpireTimerChange) {
-              log.info("Update conversation 'expireTimer'", {
-                id: conversation.idForLogging(),
-                expireTimer,
-                source: 'handleDataMessage',
-              });
-            }
-
-            if (!isEndSession(message.attributes)) {
-              if (dataMessage.expireTimer) {
-                if (
-                  dataMessage.expireTimer !== conversation.get('expireTimer')
-                ) {
-                  conversation.updateExpirationTimer(dataMessage.expireTimer, {
-                    source,
-                    receivedAt: message.get('received_at'),
-                    receivedAtMS: message.get('received_at_ms'),
-                    sentAt: message.get('sent_at'),
-                    fromGroupUpdate: isGroupUpdate(message.attributes),
-                    reason: `handleDataMessage(${this.idForLogging()})`,
-                  });
-                }
-              } else if (
-                conversation.get('expireTimer') &&
-                // We only turn off timers if it's not a group update
-                !isGroupUpdate(message.attributes)
-              ) {
-                conversation.updateExpirationTimer(undefined, {
-                  source,
-                  receivedAt: message.get('received_at'),
-                  receivedAtMS: message.get('received_at_ms'),
-                  sentAt: message.get('sent_at'),
-                  reason: `handleDataMessage(${this.idForLogging()})`,
+              if (conversation.get('expireTimer') !== dataMessage.expireTimer) {
+                log.info('Incoming expirationTimerUpdate changed timer', {
+                  id: conversation.idForLogging(),
+                  expireTimer: dataMessage.expireTimer || 'disabled',
+                  source: 'handleDataMessage/expirationTimerUpdate',
+                });
+                conversation.set({
+                  expireTimer: dataMessage.expireTimer,
                 });
               }
+            }
+
+            // Note: For incoming expire timer updates (not normal messages that come
+            //   along with an expireTimer), the conversation will be updated by this
+            //   point and these calls will return early.
+            if (dataMessage.expireTimer) {
+              conversation.updateExpirationTimer(dataMessage.expireTimer, {
+                source,
+                receivedAt: message.get('received_at'),
+                receivedAtMS: message.get('received_at_ms'),
+                sentAt: message.get('sent_at'),
+                fromGroupUpdate: isGroupUpdate(message.attributes),
+                reason: `handleDataMessage(${this.idForLogging()})`,
+              });
+            } else if (
+              // We won't turn off timers for these kinds of messages:
+              !isGroupUpdate(message.attributes) &&
+              !isEndSession(message.attributes)
+            ) {
+              conversation.updateExpirationTimer(undefined, {
+                source,
+                receivedAt: message.get('received_at'),
+                receivedAtMS: message.get('received_at_ms'),
+                sentAt: message.get('sent_at'),
+                reason: `handleDataMessage(${this.idForLogging()})`,
+              });
             }
           }
 
@@ -3259,7 +3270,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
   }
 
   async handleDeleteForEveryone(
-    del: typeof window.WhatIsThis,
+    del: DeleteModel,
     shouldPersist = true
   ): Promise<void> {
     log.info('Handling DOE.', {

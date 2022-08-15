@@ -2832,7 +2832,7 @@
         "description": "Describes how long remains for the gift badge you've redeemed on another device"
     },
     "message--giftBadge--expired": {
-        "message": "Expired",
+        "message": "समाप्त हो गया",
         "description": "Shows that a gift badge is expired"
     },
     "message--giftBadge--view": {
@@ -4278,7 +4278,7 @@
         "description": "Shown if you click a group link and you have been forbidden from joining via the link"
     },
     "GroupV2--join--link-forbidden": {
-        "message": "You can't join this group via the group link because an admin removed you.",
+        "message": "आप ग्रुप लिंक द्वारा इस ग्रुप में शामिल नहीं हो सकते क्योंकि एक ऐडमिन ने आपको हटा दिया है।",
         "description": "Shown if you click a group link and you have been forbidden from joining via the link"
     },
     "GroupV2--join--prompt-with-approval": {
@@ -6038,11 +6038,11 @@
         "description": "Information shown below the invite list"
     },
     "PendingRequests--block--button": {
-        "message": "Block request",
+        "message": "अनुरोध ब्लॉक करें",
         "description": "Shown in timeline if users cancel their request to join a group via a group link"
     },
     "PendingRequests--block--title": {
-        "message": "Block request?",
+        "message": "अनुरोध ब्लॉक करना है?",
         "description": "Title of dialog to block a user from requesting to join via the link again"
     },
     "PendingRequests--block--contents": {
@@ -7206,7 +7206,7 @@
         "description": "Aria label for unmuting stories"
     },
     "StoryViewsNRepliesModal__no-replies": {
-        "message": "No replies yet",
+        "message": "कोई जवाब नहीं",
         "description": "Placeholder text for when there are no replies"
     },
     "StoryViewsNRepliesModal__tab--views": {
@@ -7222,7 +7222,7 @@
         "description": "aria-label for reaction button"
     },
     "StoryViewsNRepliesModal__reacted": {
-        "message": "Reacted to the story",
+        "message": "स्टोरी पर प्रतिक्रिया दी",
         "description": "Description of someone reacting to a story"
     },
     "StoryListItem__label": {
@@ -7306,7 +7306,7 @@
         "description": "Placeholder for the add text input"
     },
     "TextAttachment__preview__link": {
-        "message": "Visit link",
+        "message": "लिंक विज़िट करें",
         "description": "Title for the link preview tooltip"
     },
     "Quote__story": {
@@ -7324,7 +7324,7 @@
         }
     },
     "Quote__story-reaction--yours": {
-        "message": "Reacted to your story",
+        "message": "आपकी स्टोरी पर प्रतिक्रिया दी",
         "description": "Label for when a person reacts to your story"
     },
     "Quote__story-reaction--single": {
@@ -7332,8 +7332,12 @@
         "description": "Used whenever we can't find a user's first name"
     },
     "Quote__story-unavailable": {
-        "message": "No longer available",
+        "message": "मौजूद नहीं",
         "description": "Label for when a story is not found"
+    },
+    "ContextMenu--button": {
+        "message": "संदर्भ मेनू",
+        "description": "Default aria-label for the context menu buttons"
     },
     "WhatsNew__modal-title": {
         "message": "नया क्या है",

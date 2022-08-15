@@ -21,11 +21,11 @@ import type {
   MessageAttributesType,
   ConversationAttributesType,
   ReactionAttributesType,
+  ValidateConversationType,
 } from './model-types.d';
 import * as Bytes from './Bytes';
 import * as Timers from './Timers';
 import * as indexedDb from './indexeddb';
-import type { WhatIsThis } from './window.d';
 import type { MenuOptionsType } from './types/menu';
 import type { Receipt } from './types/Receipt';
 import { SocketStatus } from './types/SocketStatus';
@@ -51,7 +51,7 @@ import {
 import { senderCertificateService } from './services/senderCertificate';
 import { GROUP_CREDENTIALS_KEY } from './services/groupCredentialFetcher';
 import * as KeyboardLayout from './services/keyboardLayout';
-import { routineProfileRefresh } from './routineProfileRefresh';
+import { RoutineProfileRefresher } from './routineProfileRefresh';
 import { isMoreRecentThan, isOlderThan, toDayMillis } from './util/timestamp';
 import { isValidReactionEmoji } from './reactions/isValidReactionEmoji';
 import type { ConversationModel } from './models/conversations';
@@ -133,8 +133,7 @@ import { onRetryRequest, onDecryptionError } from './util/handleRetry';
 import { themeChanged } from './shims/themeChanged';
 import { createIPCEvents } from './util/createIPCEvents';
 import { RemoveAllConfiguration } from './types/RemoveAllConfiguration';
-import { isValidUuid, UUIDKind } from './types/UUID';
-import type { UUID } from './types/UUID';
+import { isValidUuid, UUIDKind, UUID } from './types/UUID';
 import * as log from './logging/log';
 import { loadRecentEmojis } from './util/loadRecentEmojis';
 import { deleteAllLogs } from './util/deleteAllLogs';
@@ -155,6 +154,8 @@ import { conversationJobQueue } from './jobs/conversationJobQueue';
 import { SeenStatus } from './MessageSeenStatus';
 import MessageSender from './textsecure/SendMessage';
 import type AccountManager from './textsecure/AccountManager';
+import { onStoryRecipientUpdate } from './util/onStoryRecipientUpdate';
+import { validateConversation } from './util/validateConversation';
 
 const MAX_ATTACHMENT_DOWNLOAD_AGE = 3600 * 72 * 1000;
 
@@ -220,6 +221,7 @@ export async function startApp(): Promise<void> {
   let server: WebAPIType | undefined;
   let messageReceiver: MessageReceiver | undefined;
   let challengeHandler: ChallengeHandler | undefined;
+  let routineProfileRefresher: RoutineProfileRefresher | undefined;
 
   window.storage.onready(() => {
     server = window.WebAPI.connect(
@@ -316,7 +318,7 @@ export async function startApp(): Promise<void> {
     );
     messageReceiver.addEventListener(
       'contact',
-      queuedEventListener(onContactReceived)
+      queuedEventListener(onContactReceived, false)
     );
     messageReceiver.addEventListener(
       'contactSync',
@@ -396,6 +398,10 @@ export async function startApp(): Promise<void> {
     messageReceiver.addEventListener(
       'pniIdentity',
       queuedEventListener(onPNIIdentitySync)
+    );
+    messageReceiver.addEventListener(
+      'storyRecipientUpdate',
+      queuedEventListener(onStoryRecipientUpdate, false)
     );
   });
 
@@ -812,6 +818,11 @@ export async function startApp(): Promise<void> {
         await window.Signal.Data.clearAllErrorStickerPackAttempts();
       }
 
+      if (window.isBeforeVersion(lastVersion, 'v5.50.0-alpha.1')) {
+        await window.storage.put('groupCredentials', []);
+        await window.Signal.Data.removeAllProfileKeyCredentials();
+      }
+
       // This one should always be last - it could restart the app
       if (window.isBeforeVersion(lastVersion, 'v5.30.0-alpha')) {
         await deleteAllLogs();
@@ -850,35 +861,55 @@ export async function startApp(): Promise<void> {
     setAppLoadingScreenMessage(window.i18n('loading'), window.i18n);
 
     let isMigrationWithIndexComplete = false;
+    let isIdleTaskProcessing = false;
     log.info(
       `Starting background data migration. Target version: ${Message.CURRENT_SCHEMA_VERSION}`
     );
     idleDetector.on('idle', async () => {
-      const NUM_MESSAGES_PER_BATCH = 100;
-      const BATCH_DELAY = 5 * durations.SECOND;
+      const NUM_MESSAGES_PER_BATCH = 25;
+      const BATCH_DELAY = 10 * durations.SECOND;
 
-      if (!isMigrationWithIndexComplete) {
-        const batchWithIndex = await migrateMessageData({
-          numMessagesPerBatch: NUM_MESSAGES_PER_BATCH,
-          upgradeMessageSchema,
-          getMessagesNeedingUpgrade:
-            window.Signal.Data.getMessagesNeedingUpgrade,
-          saveMessages: window.Signal.Data.saveMessages,
-        });
-        log.info('Upgrade message schema (with index):', batchWithIndex);
-        isMigrationWithIndexComplete = batchWithIndex.done;
+      if (isIdleTaskProcessing) {
+        log.warn(
+          'idleDetector/idle: previous batch incomplete, not starting another'
+        );
+        return;
       }
+      try {
+        isIdleTaskProcessing = true;
 
-      idleDetector.stop();
+        if (!isMigrationWithIndexComplete) {
+          log.warn(
+            `idleDetector/idle: fetching at most ${NUM_MESSAGES_PER_BATCH} for migration`
+          );
+          const batchWithIndex = await migrateMessageData({
+            numMessagesPerBatch: NUM_MESSAGES_PER_BATCH,
+            upgradeMessageSchema,
+            getMessagesNeedingUpgrade:
+              window.Signal.Data.getMessagesNeedingUpgrade,
+            saveMessages: window.Signal.Data.saveMessages,
+          });
+          log.info('idleDetector/idle: Upgraded messages:', batchWithIndex);
+          isMigrationWithIndexComplete = batchWithIndex.done;
+        }
+      } finally {
+        idleDetector.stop();
 
-      if (isMigrationWithIndexComplete) {
-        log.info('Background migration complete. Stopping idle detector.');
-      } else {
-        log.info('Background migration not complete. Pausing idle detector.');
+        if (isMigrationWithIndexComplete) {
+          log.info(
+            'idleDetector/idle: Background migration complete. Stopping.'
+          );
+        } else {
+          log.info(
+            `idleDetector/idle: Background migration not complete. Pausing for ${BATCH_DELAY}ms.`
+          );
 
-        setTimeout(() => {
-          idleDetector.start();
-        }, BATCH_DELAY);
+          setTimeout(() => {
+            idleDetector.start();
+          }, BATCH_DELAY);
+        }
+
+        isIdleTaskProcessing = false;
       }
     });
 
@@ -1082,6 +1113,7 @@ export async function startApp(): Promise<void> {
         actionCreators.storyDistributionLists,
         store.dispatch
       ),
+      toast: bindActionCreators(actionCreators.toast, store.dispatch),
       updates: bindActionCreators(actionCreators.updates, store.dispatch),
       user: bindActionCreators(actionCreators.user, store.dispatch),
     };
@@ -1152,7 +1184,12 @@ export async function startApp(): Promise<void> {
     window.Whisper.events.on('userChanged', (reconnect = false) => {
       const newDeviceId = window.textsecure.storage.user.getDeviceId();
       const newNumber = window.textsecure.storage.user.getNumber();
-      const newUuid = window.textsecure.storage.user.getUuid()?.toString();
+      const newACI = window.textsecure.storage.user
+        .getUuid(UUIDKind.ACI)
+        ?.toString();
+      const newPNI = window.textsecure.storage.user
+        .getUuid(UUIDKind.PNI)
+        ?.toString();
       const ourConversation =
         window.ConversationController.getOurConversation();
 
@@ -1164,7 +1201,8 @@ export async function startApp(): Promise<void> {
         ourConversationId: ourConversation?.get('id'),
         ourDeviceId: newDeviceId,
         ourNumber: newNumber,
-        ourUuid: newUuid,
+        ourACI: newACI,
+        ourPNI: newPNI,
         regionCode: window.storage.get('regionCode'),
       });
 
@@ -1194,7 +1232,7 @@ export async function startApp(): Promise<void> {
       window.reduxActions.user.userChanged({ menuOptions: options });
     });
 
-    let shortcutGuideView: WhatIsThis | null = null;
+    let shortcutGuideView: ReactWrapperView | null = null;
 
     window.showKeyboardShortcuts = () => {
       if (!shortcutGuideView) {
@@ -2472,14 +2510,15 @@ export async function startApp(): Promise<void> {
 
     // Kick off a profile refresh if necessary, but don't wait for it, as failure is
     //   tolerable.
-    const ourConversationId =
-      window.ConversationController.getOurConversationId();
-    if (ourConversationId) {
-      routineProfileRefresh({
-        allConversations: window.ConversationController.getAll(),
-        ourConversationId,
+    if (!routineProfileRefresher) {
+      routineProfileRefresher = new RoutineProfileRefresher({
+        getAllConversations: () => window.ConversationController.getAll(),
+        getOurConversationId: () =>
+          window.ConversationController.getOurConversationId(),
         storage,
       });
+
+      routineProfileRefresher.start();
     } else {
       assert(
         false,
@@ -2605,10 +2644,14 @@ export async function startApp(): Promise<void> {
       return;
     }
 
+    const ourACI = window.textsecure.storage.user.getUuid(UUIDKind.ACI);
+    const ourPNI = window.textsecure.storage.user.getUuid(UUIDKind.PNI);
+
     // We drop typing notifications in groups we're not a part of
     if (
       !isDirectConversation(conversation.attributes) &&
-      !conversation.hasMember(ourId)
+      !(ourACI && conversation.hasMember(ourACI)) &&
+      !(ourPNI && conversation.hasMember(ourPNI))
     ) {
       log.warn(
         `Received typing indicator for group ${conversation.idForLogging()}, which we're not a part of. Dropping.`
@@ -2681,15 +2724,18 @@ export async function startApp(): Promise<void> {
     window.Whisper.events.trigger('contactSync:complete');
   }
 
-  async function onContactReceived(ev: ContactEvent) {
+  // Note: Like the handling for incoming/outgoing messages, this method is synchronous,
+  //   deferring its async logic to the function passed to conversation.queueJob().
+  function onContactReceived(ev: ContactEvent) {
     const details = ev.contactDetails;
 
-    const c = new window.Whisper.Conversation({
+    const partialConversation: ValidateConversationType = {
       e164: details.number,
-      uuid: details.uuid,
+      uuid: UUID.fromString(details.uuid),
       type: 'private',
-    } as Partial<ConversationAttributesType> as WhatIsThis);
-    const validationError = c.validate();
+    };
+
+    const validationError = validateConversation(partialConversation);
     if (validationError) {
       log.error(
         'Invalid contact received:',
@@ -2698,60 +2744,66 @@ export async function startApp(): Promise<void> {
       return;
     }
 
-    try {
-      const detailsId = window.ConversationController.ensureContactIds({
-        e164: details.number,
-        uuid: details.uuid,
-        highTrust: true,
-        reason: 'onContactReceived',
-      });
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const conversation = window.ConversationController.get(detailsId)!;
+    const detailsId = window.ConversationController.ensureContactIds({
+      e164: details.number,
+      uuid: details.uuid,
+      highTrust: true,
+      reason: 'onContactReceived',
+    });
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const conversation = window.ConversationController.get(detailsId)!;
 
-      conversation.set({
-        name: details.name,
-        inbox_position: details.inboxPosition,
-      });
-
-      // Update the conversation avatar only if new avatar exists and hash differs
-      const { avatar } = details;
-      if (avatar && avatar.data) {
-        const newAttributes = await Conversation.maybeUpdateAvatar(
-          conversation.attributes,
-          avatar.data,
-          {
-            writeNewAttachmentData,
-            deleteAttachmentData,
-            doesAttachmentExist,
-          }
-        );
-        conversation.set(newAttributes);
-      } else {
-        const { attributes } = conversation;
-        if (attributes.avatar && attributes.avatar.path) {
-          await deleteAttachmentData(attributes.avatar.path);
-        }
-        conversation.set({ avatar: null });
-      }
-
-      window.Signal.Data.updateConversation(conversation.attributes);
-
-      // expireTimer isn't stored in Storage Service so we have to rely on the
-      // contact sync.
-      const { expireTimer } = details;
-      const isValidExpireTimer = typeof expireTimer === 'number';
-      if (isValidExpireTimer) {
-        await conversation.updateExpirationTimer(expireTimer, {
-          source: window.ConversationController.getOurConversationId(),
-          receivedAt: ev.receivedAtCounter,
-          fromSync: true,
-          isInitialSync,
-          reason: 'contact sync',
+    // It's important to use queueJob here because we might update the expiration timer
+    //   and we don't want conflicts with incoming message processing happening on the
+    //   conversation queue.
+    conversation.queueJob('onContactReceived', async () => {
+      try {
+        conversation.set({
+          name: details.name,
+          inbox_position: details.inboxPosition,
         });
+
+        // Update the conversation avatar only if new avatar exists and hash differs
+        const { avatar } = details;
+        if (avatar && avatar.data) {
+          const newAttributes = await Conversation.maybeUpdateAvatar(
+            conversation.attributes,
+            avatar.data,
+            {
+              writeNewAttachmentData,
+              deleteAttachmentData,
+              doesAttachmentExist,
+            }
+          );
+          conversation.set(newAttributes);
+        } else {
+          const { attributes } = conversation;
+          if (attributes.avatar && attributes.avatar.path) {
+            await deleteAttachmentData(attributes.avatar.path);
+          }
+          conversation.set({ avatar: null });
+        }
+
+        window.Signal.Data.updateConversation(conversation.attributes);
+
+        // expireTimer isn't in Storage Service so we have to rely on contact sync.
+        const { expireTimer } = details;
+        const isValidExpireTimer = typeof expireTimer === 'number';
+        if (isValidExpireTimer) {
+          await conversation.updateExpirationTimer(expireTimer, {
+            source: window.ConversationController.getOurConversationId(),
+            receivedAt: ev.receivedAtCounter,
+            fromSync: true,
+            isInitialSync,
+            reason: 'contact sync',
+          });
+        }
+
+        window.Whisper.events.trigger('incrementProgress');
+      } catch (error) {
+        log.error('onContactReceived error:', Errors.toLogFormat(error));
       }
-    } catch (error) {
-      log.error('onContactReceived error:', Errors.toLogFormat(error));
-    }
+    });
   }
 
   async function onGroupSyncComplete() {
@@ -3142,7 +3194,8 @@ export async function startApp(): Promise<void> {
         .filter(isNotNil);
     }
 
-    return new window.Whisper.Message({
+    const partialMessage: MessageAttributesType = {
+      id: UUID.generate().toString(),
       canReplyToStory: data.message.isStory
         ? data.message.canReplyToStory
         : undefined,
@@ -3165,7 +3218,9 @@ export async function startApp(): Promise<void> {
       type: data.message.isStory ? 'story' : 'outgoing',
       storyDistributionListId: data.storyDistributionListId,
       unidentifiedDeliveries,
-    } as Partial<MessageAttributesType> as WhatIsThis);
+    };
+
+    return new window.Whisper.Message(partialMessage);
   }
 
   // Works with 'sent' and 'message' data sent from MessageReceiver, with a little massage
@@ -3400,7 +3455,8 @@ export async function startApp(): Promise<void> {
       Boolean(data.receivedAtCounter),
       `Did not receive receivedAtCounter for message: ${data.timestamp}`
     );
-    return new window.Whisper.Message({
+    const partialMessage: MessageAttributesType = {
+      id: UUID.generate().toString(),
       canReplyToStory: data.message.isStory
         ? data.message.canReplyToStory
         : undefined,
@@ -3414,11 +3470,14 @@ export async function startApp(): Promise<void> {
       serverTimestamp: data.serverTimestamp,
       source: data.source,
       sourceDevice: data.sourceDevice,
-      sourceUuid: data.sourceUuid,
+      sourceUuid: data.sourceUuid
+        ? UUID.fromString(data.sourceUuid)
+        : undefined,
       timestamp: data.timestamp,
       type: data.message.isStory ? 'story' : 'incoming',
       unidentifiedDeliveryReceived: data.unidentifiedDeliveryReceived,
-    } as Partial<MessageAttributesType> as WhatIsThis);
+    };
+    return new window.Whisper.Message(partialMessage);
   }
 
   // Returns `false` if this message isn't a group call message.

@@ -168,13 +168,10 @@ export type AttachmentDraftType =
       size: number;
     };
 
-export type ThumbnailType = {
-  height?: number;
-  width?: number;
-  url?: string;
-  contentType: MIME.MIMEType;
-  path?: string;
-  data?: Uint8Array;
+export type ThumbnailType = Pick<
+  AttachmentType,
+  'height' | 'width' | 'url' | 'contentType' | 'path' | 'data'
+> & {
   // Only used when quote needed to make an in-memory thumbnail
   objectUrl?: string;
 };
@@ -236,7 +233,7 @@ export async function migrateDataToFileSystem(
 // Over time, we can expand this definition to become more narrow, e.g. require certain
 // fields, etc.
 export function isValid(
-  rawAttachment?: AttachmentType
+  rawAttachment?: Pick<AttachmentType, 'data' | 'path'>
 ): rawAttachment is AttachmentType {
   // NOTE: We cannot use `_.isPlainObject` because `rawAttachment` is
   // deserialized by protobuf:
@@ -396,14 +393,14 @@ export function hasData(attachment: AttachmentType): boolean {
 
 export function loadData(
   readAttachmentData: (path: string) => Promise<Uint8Array>
-): (attachment: AttachmentType) => Promise<AttachmentWithHydratedData> {
+): (
+  attachment: Pick<AttachmentType, 'data' | 'path'>
+) => Promise<AttachmentWithHydratedData> {
   if (!is.function_(readAttachmentData)) {
     throw new TypeError("'readAttachmentData' must be a function");
   }
 
-  return async (
-    attachment: AttachmentType
-  ): Promise<AttachmentWithHydratedData> => {
+  return async attachment => {
     if (!isValid(attachment)) {
       throw new TypeError("'attachment' is not valid");
     }
@@ -996,8 +993,9 @@ export const getSuggestedFilename = ({
   timestamp?: number | Date;
   index?: number;
 }): string => {
-  if (!isNumber(index) && attachment.fileName) {
-    return attachment.fileName;
+  const { fileName } = attachment;
+  if (fileName) {
+    return fileName;
   }
 
   const prefix = 'signal';
@@ -1006,7 +1004,10 @@ export const getSuggestedFilename = ({
     : '';
   const fileType = getFileExtension(attachment);
   const extension = fileType ? `.${fileType}` : '';
-  const indexSuffix = index ? `_${padStart(index.toString(), 3, '0')}` : '';
+  const indexSuffix =
+    isNumber(index) && index > 1
+      ? `_${padStart(index.toString(), 3, '0')}`
+      : '';
 
   return `${prefix}${suffix}${indexSuffix}${extension}`;
 };

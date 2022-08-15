@@ -109,6 +109,7 @@ import {
   ContactSyncEvent,
   GroupEvent,
   GroupSyncEvent,
+  StoryRecipientUpdateEvent,
 } from './messageReceiverEvents';
 import * as log from '../logging/log';
 import * as durations from '../util/durations';
@@ -579,6 +580,11 @@ export default class MessageReceiver
     handler: (ev: EnvelopeEvent) => void
   ): void;
 
+  public override addEventListener(
+    name: 'storyRecipientUpdate',
+    handler: (ev: StoryRecipientUpdateEvent) => void
+  ): void;
+
   public override addEventListener(name: string, handler: EventHandler): void {
     return super.addEventListener(name, handler);
   }
@@ -759,7 +765,9 @@ export default class MessageReceiver
         // Proto.Envelope fields
         type: decoded.type,
         source: decoded.source || item.source,
-        sourceUuid: decoded.sourceUuid || item.sourceUuid,
+        sourceUuid: decoded.sourceUuid
+          ? UUID.cast(decoded.sourceUuid)
+          : item.sourceUuid,
         sourceDevice: decoded.sourceDevice || item.sourceDevice,
         destinationUuid: new UUID(
           decoded.destinationUuid || item.destinationUuid || ourUuid.toString()
@@ -1819,7 +1827,8 @@ export default class MessageReceiver
     const ev = new SentEvent(
       {
         destination: dropNull(destination),
-        destinationUuid: dropNull(destinationUuid),
+        destinationUuid:
+          dropNull(destinationUuid) || envelope.destinationUuid.toString(),
         timestamp: timestamp?.toNumber(),
         serverTimestamp: envelope.serverTimestamp,
         device: envelope.sourceDevice,
@@ -1929,7 +1938,7 @@ export default class MessageReceiver
 
         isAllowedToReply.set(
           destinationUuid,
-          Boolean(recipient.isAllowedToReply)
+          recipient.isAllowedToReply !== false
         );
       });
 
@@ -2570,6 +2579,18 @@ export default class MessageReceiver
         return;
       }
 
+      if (sentMessage.storyMessageRecipients && sentMessage.isRecipientUpdate) {
+        const ev = new StoryRecipientUpdateEvent(
+          {
+            destinationUuid: envelope.destinationUuid.toString(),
+            timestamp: envelope.timestamp,
+            storyMessageRecipients: sentMessage.storyMessageRecipients,
+          },
+          this.removeFromCache.bind(this, envelope)
+        );
+        return this.dispatchAndWait(ev);
+      }
+
       if (!sentMessage || !sentMessage.message) {
         throw new Error(
           'MessageReceiver.handleSyncMessage: sync sent message was missing message'
@@ -2883,7 +2904,7 @@ export default class MessageReceiver
     envelope: ProcessedEnvelope,
     contacts: Proto.SyncMessage.IContacts
   ): Promise<void> {
-    log.info('MessageReceiver: handleContacts');
+    log.info(`MessageReceiver: handleContacts ${getEnvelopeId(envelope)}`);
     const { blob } = contacts;
     if (!blob) {
       throw new Error('MessageReceiver.handleContacts: blob field was missing');
@@ -2922,6 +2943,7 @@ export default class MessageReceiver
     groups: Proto.SyncMessage.IGroups
   ): Promise<void> {
     log.info('group sync');
+    log.info(`MessageReceiver: handleGroups ${getEnvelopeId(envelope)}`);
     const { blob } = groups;
 
     this.removeFromCache(envelope);
