@@ -81,6 +81,7 @@ import { handleMessageSend } from '../util/handleMessageSend';
 import { getSendOptions } from '../util/getSendOptions';
 import { findAndFormatContact } from '../util/findAndFormatContact';
 import {
+  getAttachmentsForMessage,
   getMessagePropStatus,
   getPropsForCallHistory,
   getPropsForMessage,
@@ -194,6 +195,9 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
   // Set when sending some sync messages, so we get the functionality of
   //   send(), without zombie messages going into the database.
   doNotSave?: boolean;
+  // Set when sending stories, so we get the functionality of send() but we are
+  //   able to send the sync message elsewhere.
+  doNotSendSyncMessage?: boolean;
 
   INITIAL_PROTOCOL_VERSION?: number;
 
@@ -288,12 +292,12 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     const sourceDevice = this.get('sourceDevice');
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const sourceId = window.ConversationController.ensureContactIds({
+    const conversation = window.ConversationController.lookupOrCreate({
       e164: source,
       uuid: sourceUuid,
     })!;
 
-    return `${sourceId}.${sourceDevice}-${sentAt}`;
+    return `${conversation?.id}.${sourceDevice}-${sentAt}`;
   }
 
   getReceivedAt(): number {
@@ -354,7 +358,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       return;
     }
 
-    const attachments = message.get('attachments');
+    const attachments = getAttachmentsForMessage({ ...message.attributes });
 
     this.set({
       storyReplyContext: {
@@ -728,11 +732,10 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
     const stickerData = this.get('sticker');
     if (stickerData) {
-      const sticker = Stickers.getSticker(
-        stickerData.packId,
-        stickerData.stickerId
-      );
-      const { emoji } = sticker || {};
+      const emoji =
+        Stickers.getSticker(stickerData.packId, stickerData.stickerId)?.emoji ||
+        stickerData?.emoji;
+
       if (!emoji) {
         log.warn('Unable to get emoji for sticker');
       }
@@ -1575,7 +1578,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
     updateLeftPane();
 
-    if (sentToAtLeastOneRecipient) {
+    if (sentToAtLeastOneRecipient && !this.doNotSendSyncMessage) {
       promises.push(this.sendSyncMessage());
     }
 
@@ -2074,7 +2077,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       // First, check for duplicates. If we find one, stop processing here.
       const inMemoryMessage = window.MessageController.findBySender(
         this.getSenderIdentifier()
-      );
+      )?.attributes;
       if (inMemoryMessage) {
         log.info(
           `handleDataMessage/${idLog}: cache hit`,
@@ -2090,7 +2093,14 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         inMemoryMessage || (await getMessageBySender(this.attributes));
       const isUpdate = Boolean(data && data.isRecipientUpdate);
 
-      if (existingMessage && type === 'incoming') {
+      const isDuplicateMessage =
+        existingMessage &&
+        (type === 'incoming' ||
+          (type === 'story' &&
+            existingMessage.storyDistributionListId ===
+              this.attributes.storyDistributionListId));
+
+      if (isDuplicateMessage) {
         log.warn(
           `handleDataMessage/${idLog}: Received duplicate message`,
           this.idForLogging()
@@ -2128,14 +2138,13 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
                 return;
               }
 
-              const destinationConversationId =
-                window.ConversationController.ensureContactIds({
-                  uuid: destinationUuid,
-                  e164: destination,
-                  highTrust: true,
+              const destinationConversation =
+                window.ConversationController.maybeMergeContacts({
+                  aci: destinationUuid,
+                  e164: destination || undefined,
                   reason: `handleDataMessage(${initialMessage.timestamp})`,
                 });
-              if (!destinationConversationId) {
+              if (!destinationConversation) {
                 return;
               }
 
@@ -2146,9 +2155,9 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
               const previousSendState = getOwn(
                 sendStateByConversationId,
-                destinationConversationId
+                destinationConversation.id
               );
-              sendStateByConversationId[destinationConversationId] =
+              sendStateByConversationId[destinationConversation.id] =
                 previousSendState
                   ? sendStateReducer(previousSendState, {
                       type: SendActionType.Sent,
@@ -2265,7 +2274,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         UUIDKind.ACI
       );
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const senderId = window.ConversationController.ensureContactIds({
+      const sender = window.ConversationController.lookupOrCreate({
         e164: source,
         uuid: sourceUuid,
       })!;
@@ -2339,7 +2348,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       // Drop incoming messages to announcement only groups where sender is not admin
       if (
         conversation.get('announcementsOnly') &&
-        !conversation.isAdmin(UUID.checkedLookup(senderId))
+        !conversation.isAdmin(UUID.checkedLookup(sender?.id))
       ) {
         confirm();
         return;
@@ -2372,6 +2381,15 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         this.copyFromQuotedMessage(initialMessage.quote, conversation.id),
         findStoryMessage(conversation.id, initialMessage.storyContext),
       ]);
+
+      if (initialMessage.storyContext && !storyQuote) {
+        log.warn(
+          `handleDataMessage/${idLog}: Received storyContext message but no matching story. Dropping.`
+        );
+
+        confirm();
+        return;
+      }
 
       const withQuoteReference = {
         ...message.attributes,
@@ -2426,6 +2444,10 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
           sticker: dataMessage.sticker,
           storyId: dataMessage.storyId,
         });
+
+        if (storyQuote) {
+          await this.hydrateStoryContext(storyQuote);
+        }
 
         const isSupported = !isUnsupportedMessage(message.attributes);
         if (!isSupported) {
@@ -2511,6 +2533,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
                     await Attachment.migrateDataToFileSystem(downloadedAvatar, {
                       writeNewAttachmentData:
                         window.Signal.Migrations.writeNewAttachmentData,
+                      logger: log,
                     });
                   avatar = {
                     ...onDiskAttachment,
@@ -2546,8 +2569,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
                 conversation.set({ addedBy: getContactId(message.attributes) });
               }
             } else if (initialMessage.group.type === GROUP_TYPES.QUIT) {
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              const sender = window.ConversationController.get(senderId)!;
               const inGroup = Boolean(
                 sender &&
                   (conversation.get('members') || []).includes(sender.id)
@@ -2663,14 +2684,11 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
             } else if (isDirectConversation(conversation.attributes)) {
               conversation.setProfileKey(profileKey);
             } else {
-              const localId = window.ConversationController.ensureContactIds({
+              const local = window.ConversationController.lookupOrCreate({
                 e164: source,
                 uuid: sourceUuid,
               });
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              window.ConversationController.get(localId)!.setProfileKey(
-                profileKey
-              );
+              local?.setProfileKey(profileKey);
             }
           }
 

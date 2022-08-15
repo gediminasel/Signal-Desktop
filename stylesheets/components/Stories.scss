@@ -21,11 +21,37 @@
     width: 380px;
     padding-top: calc(14px + var(--title-bar-drag-area-height));
 
+    &__add-story__button {
+      @include color-svg('../images/icons/v2/plus-24.svg', $color-white);
+      height: 22px;
+      position: absolute;
+      right: 63px;
+      top: 0px;
+      width: 22px;
+    }
+
+    &__settings__button {
+      @include dark-theme {
+        @include color-svg(
+          '../images/icons/v2/more-horiz-24.svg',
+          $color-white
+        );
+      }
+      height: 22px;
+      margin-left: 24px;
+      opacity: 1;
+      position: absolute;
+      right: 14px;
+      top: 0px;
+      width: 22px;
+    }
+
     &__header {
       align-items: center;
       display: flex;
       justify-content: space-between;
       padding: 0 16px;
+      position: relative;
 
       &--centered {
         justify-content: flex-start;
@@ -44,45 +70,19 @@
         width: 100%;
       }
 
-      &--camera {
-        @include button-reset;
-        @include color-svg(
-          '../images/icons/v2/camera-outline-24.svg',
-          $color-white
-        );
-        height: 22px;
-        width: 22px;
-      }
-
       &--back {
         @include button-reset;
 
         height: 24px;
+        position: absolute;
         width: 24px;
 
-        @include light-theme {
-          @include color-svg(
-            '../images/icons/v2/chevron-left-24.svg',
-            $color-gray-60
-          );
-        }
+        @include color-svg(
+          '../images/icons/v2/chevron-left-24.svg',
+          $color-white
+        );
 
         @include keyboard-mode {
-          &:focus {
-            @include color-svg(
-              '../images/icons/v2/chevron-left-24.svg',
-              $color-ultramarine
-            );
-          }
-        }
-
-        @include dark-theme {
-          @include color-svg(
-            '../images/icons/v2/chevron-left-24.svg',
-            $color-gray-25
-          );
-        }
-        @include dark-keyboard-mode {
           &:hover {
             @include color-svg(
               '../images/icons/v2/chevron-left-24.svg',
@@ -95,15 +95,18 @@
 
     &__list {
       @include scrollbar;
+      display: flex;
+      flex-direction: column;
       flex: 1;
       overflow-y: overlay;
-      padding: 0 10px;
+      padding: 0 14px;
 
       &--empty {
         @include font-body-1;
         align-items: center;
         color: $color-gray-45;
         display: flex;
+        flex: 1;
         flex-direction: column;
         justify-content: center;
       }
@@ -163,9 +166,5 @@
         );
       }
     }
-  }
-
-  &__my-stories {
-    padding: 0 10px;
   }
 }

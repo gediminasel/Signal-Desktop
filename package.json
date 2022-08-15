@@ -4,7 +4,7 @@
   "description": "Private messaging from your desktop",
   "desktopName": "signal.desktop",
   "repository": "https://github.com/signalapp/Signal-Desktop.git",
-  "version": "5.51.0-beta.1",
+  "version": "5.55.0-beta.1",
   "license": "AGPL-3.0-only",
   "author": {
     "name": "Signal Messenger, LLC",
@@ -77,10 +77,10 @@
     "fs-xattr": "0.3.0"
   },
   "dependencies": {
-    "@indutny/frameless-titlebar": "2.3.4",
+    "@indutny/frameless-titlebar": "2.3.5",
     "@popperjs/core": "2.9.2",
     "@react-spring/web": "9.4.5",
-    "@signalapp/libsignal-client": "0.18.1",
+    "@signalapp/libsignal-client": "0.19.2",
     "@sindresorhus/is": "0.8.0",
     "@types/fabric": "4.5.3",
     "abort-controller": "3.0.0",
@@ -166,7 +166,7 @@
     "redux-ts-utils": "3.2.2",
     "reselect": "4.1.2",
     "rimraf": "2.6.2",
-    "ringrtc": "https://github.com/signalapp/signal-ringrtc-node.git#3e05d7ec7b1878df69e0d7b215b693d82b3b3791",
+    "ringrtc": "https://github.com/signalapp/signal-ringrtc-node.git#009b3eec4f1c4ce1485ff6931f086d0f54469500",
     "rotating-file-stream": "2.1.5",
     "sanitize.css": "11.0.0",
     "semver": "5.4.1",
@@ -190,7 +190,7 @@
     "@babel/preset-typescript": "7.17.12",
     "@electron/fuses": "1.5.0",
     "@mixer/parallel-prettier": "2.0.1",
-    "@signalapp/mock-server": "2.0.1",
+    "@signalapp/mock-server": "2.4.1",
     "@storybook/addon-a11y": "6.5.6",
     "@storybook/addon-actions": "6.5.6",
     "@storybook/addon-controls": "6.5.6",
@@ -264,13 +264,14 @@
     "babel-core": "7.0.0-bridge.0",
     "babel-loader": "8.0.6",
     "babel-plugin-lodash": "3.3.4",
+    "casual": "1.6.2",
     "chai": "4.3.4",
     "chai-as-promised": "7.1.1",
     "core-js": "2.6.9",
     "cross-env": "5.2.0",
     "css-loader": "3.2.0",
     "debug": "4.3.3",
-    "electron": "19.0.7",
+    "electron": "19.0.11",
     "electron-builder": "23.0.8",
     "electron-mocha": "11.0.2",
     "electron-notarize": "1.2.1",
@@ -314,7 +315,7 @@
     "fabric/jsdom": "https://registry.yarnpkg.com/nop/-/nop-1.0.0.tgz",
     "fast-glob/glob-parent": "5.1.2",
     "read-last-lines/mz/thenify-all/thenify": "3.3.1",
-    "sharp/color/color-string": "1.7.4"
+    "sharp/color/color-string": "1.9.0"
   },
   "engines": {
     "node": "16.13.2"

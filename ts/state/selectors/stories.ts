@@ -20,7 +20,7 @@ import type {
   StoryDataType,
   StoriesStateType,
 } from '../ducks/stories';
-import { MY_STORIES_ID } from '../../types/Stories';
+import { HasStories, MY_STORIES_ID } from '../../types/Stories';
 import { ReadStatus } from '../../messages/MessageReadStatus';
 import { SendStatus } from '../../messages/MessageSendState';
 import { canReply } from './message';
@@ -30,6 +30,7 @@ import {
   getMe,
 } from './conversations';
 import { getDistributionListSelector } from './storyDistributionLists';
+import { getStoriesEnabled } from './items';
 
 export const getStoriesState = (state: StateType): StoriesStateType =>
   state.stories;
@@ -37,6 +38,11 @@ export const getStoriesState = (state: StateType): StoriesStateType =>
 export const shouldShowStoriesView = createSelector(
   getStoriesState,
   ({ isShowingStoriesView }): boolean => isShowingStoriesView
+);
+
+export const hasSelectedStoryData = createSelector(
+  getStoriesState,
+  ({ selectedStoryData }): boolean => Boolean(selectedStoryData)
 );
 
 export const getSelectedStoryData = createSelector(
@@ -74,8 +80,10 @@ function getAvatarData(
   ConversationType,
   | 'acceptedMessageRequest'
   | 'avatarPath'
+  | 'badges'
   | 'color'
   | 'isMe'
+  | 'id'
   | 'name'
   | 'profileName'
   | 'sharedGroupNames'
@@ -84,8 +92,10 @@ function getAvatarData(
   return pick(conversation, [
     'acceptedMessageRequest',
     'avatarPath',
+    'badges',
     'color',
     'isMe',
+    'id',
     'name',
     'profileName',
     'sharedGroupNames',
@@ -100,6 +110,7 @@ export function getStoryView(
   const sender = pick(conversationSelector(story.sourceUuid || story.source), [
     'acceptedMessageRequest',
     'avatarPath',
+    'badges',
     'color',
     'firstName',
     'hideStory',
@@ -131,17 +142,7 @@ export function getStoryView(
 
       innerSendState.push({
         ...recipientSendState,
-        recipient: pick(recipient, [
-          'acceptedMessageRequest',
-          'avatarPath',
-          'color',
-          'id',
-          'isMe',
-          'name',
-          'profileName',
-          'sharedGroupNames',
-          'title',
-        ]),
+        recipient,
       });
     });
 
@@ -215,11 +216,12 @@ export const getStoryReplies = createSelector(
           const conversation = conversationSelector(reaction.fromId);
 
           return {
-            ...getAvatarData(conversation),
+            author: getAvatarData(conversation),
             contactNameColor: contactNameColorSelector(
               foundStory.conversationId,
               conversation.id
             ),
+            conversationId: reaction.fromId,
             id: getReactionUniqueId(reaction),
             reactionEmoji: reaction.emoji,
             timestamp: reaction.timestamp,
@@ -234,12 +236,14 @@ export const getStoryReplies = createSelector(
           : conversationSelector(reply.sourceUuid || reply.source);
 
       return {
-        ...getAvatarData(conversation),
+        author: getAvatarData(conversation),
         ...pick(reply, ['body', 'deletedForEveryone', 'id', 'timestamp']),
         contactNameColor: contactNameColorSelector(
           reply.conversationId,
           conversation.id
         ),
+        conversationId: conversation.id,
+        readStatus: reply.readStatus,
       };
     });
 
@@ -286,33 +290,47 @@ export const getStories = createSelector(
         return;
       }
 
-      if (story.sendStateByConversationId && story.storyDistributionListId) {
-        const list =
-          story.storyDistributionListId === MY_STORIES_ID
-            ? { id: MY_STORIES_ID, name: MY_STORIES_ID }
-            : distributionListSelector(story.storyDistributionListId);
+      const conversationStory = getConversationStory(
+        conversationSelector,
+        story
+      );
 
-        if (!list) {
+      if (story.sendStateByConversationId) {
+        let sentId = story.conversationId;
+        let sentName = conversationStory.group?.title;
+
+        if (story.storyDistributionListId) {
+          const list =
+            story.storyDistributionListId === MY_STORIES_ID
+              ? { id: MY_STORIES_ID, name: MY_STORIES_ID }
+              : distributionListSelector(
+                  story.storyDistributionListId.toLowerCase()
+                );
+
+          if (!list) {
+            return;
+          }
+
+          sentId = list.id;
+          sentName = list.name;
+        }
+
+        if (!sentName) {
           return;
         }
 
         const storyView = getStoryView(conversationSelector, story);
 
-        const existingMyStory = myStoriesById.get(list.id) || { stories: [] };
+        const existingMyStory = myStoriesById.get(sentId) || { stories: [] };
 
-        myStoriesById.set(list.id, {
-          distributionId: list.id,
-          distributionName: list.name,
+        myStoriesById.set(sentId, {
+          id: sentId,
+          name: sentName,
           stories: [...existingMyStory.stories, storyView],
         });
 
         return;
       }
-
-      const conversationStory = getConversationStory(
-        conversationSelector,
-        story
-      );
 
       let storiesMap: Map<string, ConversationStoryType>;
 
@@ -339,4 +357,66 @@ export const getStories = createSelector(
       stories: Array.from(storiesById.values()).sort(sortByRecencyAndUnread),
     };
   }
+);
+
+export const getUnreadStorySenderCount = createSelector(
+  getStoriesState,
+  ({ stories }): number => {
+    return new Set(
+      stories
+        .filter(
+          story =>
+            story.readStatus === ReadStatus.Unread && !story.deletedForEveryone
+        )
+        .map(story => story.conversationId)
+    ).size;
+  }
+);
+
+export const getHasStoriesSelector = createSelector(
+  getStoriesEnabled,
+  getStoriesState,
+  (isEnabled, { stories }) =>
+    (conversationId?: string): HasStories | undefined => {
+      if (!isEnabled || !conversationId) {
+        return;
+      }
+
+      const conversationStories = stories.filter(
+        story => story.conversationId === conversationId
+      );
+
+      if (!conversationStories.length) {
+        return;
+      }
+
+      return conversationStories.some(
+        story =>
+          story.readStatus === ReadStatus.Unread && !story.deletedForEveryone
+      )
+        ? HasStories.Unread
+        : HasStories.Read;
+    }
+);
+
+export const getStoryByIdSelector = createSelector(
+  getStoriesState,
+  ({ stories }) =>
+    (
+      conversationSelector: GetConversationByIdType,
+      messageId: string
+    ):
+      | { conversationStory: ConversationStoryType; storyView: StoryViewType }
+      | undefined => {
+      const story = stories.find(item => item.messageId === messageId);
+
+      if (!story) {
+        return;
+      }
+
+      return {
+        conversationStory: getConversationStory(conversationSelector, story),
+        storyView: getStoryView(conversationSelector, story),
+      };
+    }
 );

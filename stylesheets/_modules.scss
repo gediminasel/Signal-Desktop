@@ -356,7 +356,7 @@ $message-padding-horizontal: 12px;
   }
 }
 
-.module-message:focus {
+.module-message:focus-within {
   @include keyboard-mode {
     background: $color-selected-message-background-light;
   }
@@ -2614,6 +2614,25 @@ button.ConversationDetails__action-button {
     }
   }
 
+  &__stories-badge {
+    @include rounded-corners;
+    align-items: center;
+    background-color: $color-accent-red;
+    color: $color-white;
+    display: flex;
+    font-size: 10px;
+    height: 16px;
+    justify-content: center;
+    min-width: 16px;
+    overflow: hidden;
+    padding: 0 2px;
+    position: absolute;
+    right: -6px;
+    top: -4px;
+    user-select: none;
+    z-index: $z-index-base;
+  }
+
   &__stories-icon {
     -webkit-app-region: no-drag;
     align-items: center;
@@ -2623,9 +2642,10 @@ button.ConversationDetails__action-button {
     display: inline-flex;
     height: 32px;
     justify-content: center;
-    padding: 2px;
-    width: 32px;
     margin-right: 20px;
+    padding: 2px;
+    position: relative;
+    width: 32px;
 
     .module-left-pane--width-narrow & {
       display: none;
@@ -7462,7 +7482,7 @@ button.module-image__border-overlay:focus {
   left: var(--window-border);
   top: var(--titlebar-height);
   position: fixed;
-  z-index: $z-index-popup-overlay;
+  z-index: $z-index-modal-host;
 }
 
 .module-modal-host__overlay-container {
@@ -7476,7 +7496,7 @@ button.module-image__border-overlay:focus {
   overflow: hidden;
   padding: 20px;
   position: fixed;
-  z-index: $z-index-popup-overlay;
+  z-index: $z-index-modal-host;
 }
 
 .module-modal-host--on-top-of-everything {

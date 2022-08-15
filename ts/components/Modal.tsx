@@ -22,7 +22,9 @@ type PropsType = {
   hasStickyButtons?: boolean;
   hasXButton?: boolean;
   i18n: LocalizerType;
+  modalFooter?: JSX.Element;
   moduleClassName?: string;
+  onBackButtonClick?: () => unknown;
   onClose?: () => void;
   title?: ReactNode;
   useFocusTrap?: boolean;
@@ -40,11 +42,13 @@ export function Modal({
   hasStickyButtons,
   hasXButton,
   i18n,
+  modalFooter,
   moduleClassName,
   noMouseClose,
+  onBackButtonClick,
   onClose = noop,
-  title,
   theme,
+  title,
   useFocusTrap,
 }: Readonly<ModalPropsType>): ReactElement {
   const { close, modalStyles, overlayStyles } = useAnimated(onClose, {
@@ -69,7 +73,9 @@ export function Modal({
           hasStickyButtons={hasStickyButtons}
           hasXButton={hasXButton}
           i18n={i18n}
+          modalFooter={modalFooter}
           moduleClassName={moduleClassName}
+          onBackButtonClick={onBackButtonClick}
           onClose={close}
           title={title}
         >
@@ -85,7 +91,9 @@ export function ModalWindow({
   hasStickyButtons,
   hasXButton,
   i18n,
+  modalFooter,
   moduleClassName,
+  onBackButtonClick,
   onClose = noop,
   title,
 }: Readonly<PropsType>): JSX.Element {
@@ -97,7 +105,7 @@ export function ModalWindow({
   const [scrolled, setScrolled] = useState(false);
   const [hasOverflow, setHasOverflow] = useState(false);
 
-  const hasHeader = Boolean(hasXButton || title);
+  const hasHeader = Boolean(hasXButton || title || onBackButtonClick);
   const getClassName = getClassNamesFor(BASE_CLASS_NAME, moduleClassName);
 
   function handleResize({ scroll }: ContentRect) {
@@ -127,14 +135,21 @@ export function ModalWindow({
         }}
       >
         {hasHeader && (
-          <div className={getClassName('__header')}>
-            {hasXButton && (
+          <div
+            className={classNames(
+              getClassName('__header'),
+              onBackButtonClick
+                ? getClassName('__header--with-back-button')
+                : null
+            )}
+          >
+            {onBackButtonClick && (
               <button
-                aria-label={i18n('close')}
-                type="button"
-                className={getClassName('__close-button')}
+                aria-label={i18n('back')}
+                className={getClassName('__back-button')}
+                onClick={onBackButtonClick}
                 tabIndex={0}
-                onClick={onClose}
+                type="button"
               />
             )}
             {title && (
@@ -146,6 +161,18 @@ export function ModalWindow({
               >
                 {title}
               </h1>
+            )}
+            {hasXButton && !title && (
+              <div className={getClassName('__title')} />
+            )}
+            {hasXButton && (
+              <button
+                aria-label={i18n('close')}
+                className={getClassName('__close-button')}
+                onClick={onClose}
+                tabIndex={0}
+                type="button"
+              />
             )}
           </div>
         )}
@@ -169,6 +196,7 @@ export function ModalWindow({
             </div>
           )}
         </Measure>
+        {modalFooter}
       </div>
     </>
   );

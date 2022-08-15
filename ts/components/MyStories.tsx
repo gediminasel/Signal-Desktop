@@ -7,8 +7,9 @@ import type { LocalizerType } from '../types/Util';
 import type { ViewStoryActionCreatorType } from '../state/ducks/stories';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import { ContextMenu } from './ContextMenu';
-import { MY_STORIES_ID, StoryViewModeType } from '../types/Stories';
+import { StoryViewModeType } from '../types/Stories';
 import { MessageTimestamp } from './conversation/MessageTimestamp';
+import { StoryDistributionListName } from './StoryDistributionListName';
 import { StoryImage } from './StoryImage';
 import { Theme } from '../util/theme';
 
@@ -67,11 +68,13 @@ export const MyStories = ({
       </div>
       <div className="Stories__pane__list">
         {myStories.map(list => (
-          <div className="MyStories__distribution" key={list.distributionId}>
+          <div className="MyStories__distribution" key={list.id}>
             <div className="MyStories__distribution__title">
-              {list.distributionId === MY_STORIES_ID
-                ? i18n('Stories__mine')
-                : list.distributionName}
+              <StoryDistributionListName
+                i18n={i18n}
+                id={list.id}
+                name={list.name}
+              />
             </div>
             {list.stories.map(story => (
               <div className="MyStories__story" key={story.timestamp}>
@@ -80,13 +83,18 @@ export const MyStories = ({
                     aria-label={i18n('MyStories__story')}
                     className="MyStories__story__preview"
                     onClick={() =>
-                      viewStory(story.messageId, StoryViewModeType.Single)
+                      viewStory({
+                        storyId: story.messageId,
+                        storyViewMode: StoryViewModeType.Single,
+                      })
                     }
                     type="button"
                   >
                     <StoryImage
                       attachment={story.attachment}
+                      firstName={i18n('you')}
                       i18n={i18n}
+                      isMe
                       isThumbnail
                       label={i18n('MyStories__story')}
                       moduleClassName="MyStories__story__preview"
@@ -103,6 +111,7 @@ export const MyStories = ({
                       ])}
                   <MessageTimestamp
                     i18n={i18n}
+                    isRelativeTime
                     module="MyStories__story__timestamp"
                     timestamp={story.timestamp}
                   />
@@ -117,9 +126,15 @@ export const MyStories = ({
                   type="button"
                 />
                 <ContextMenu
-                  buttonClassName="MyStories__story__more"
                   i18n={i18n}
                   menuOptions={[
+                    {
+                      icon: 'MyStories__icon--forward',
+                      label: i18n('forward'),
+                      onClick: () => {
+                        onForward(story.messageId);
+                      },
+                    },
                     {
                       icon: 'MyStories__icon--save',
                       label: i18n('save'),
@@ -128,10 +143,14 @@ export const MyStories = ({
                       },
                     },
                     {
-                      icon: 'MyStories__icon--forward',
-                      label: i18n('forward'),
+                      icon: 'StoryListItem__icon--info',
+                      label: i18n('StoryListItem__info'),
                       onClick: () => {
-                        onForward(story.messageId);
+                        viewStory({
+                          storyId: story.messageId,
+                          storyViewMode: StoryViewModeType.Single,
+                          shouldShowDetailsModal: true,
+                        });
                       },
                     },
                     {
@@ -142,6 +161,7 @@ export const MyStories = ({
                       },
                     },
                   ]}
+                  moduleClassName="MyStories__story__more"
                   theme={Theme.Dark}
                 />
               </div>

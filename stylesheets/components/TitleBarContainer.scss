@@ -58,7 +58,8 @@
   }
 
   &__content {
-    height: var(--window-height);
+    height: calc(100vh - var(--titlebar-height));
     position: relative;
+    overflow: hidden;
   }
 }

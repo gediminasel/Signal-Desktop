@@ -278,13 +278,13 @@ export type ConversationAttributesType = {
   draftBodyRanges?: Array<BodyRangeType>;
   draftTimestamp?: number | null;
   hideStory?: boolean;
-  inbox_position: number;
-  isPinned: boolean;
-  lastMessageDeletedForEveryone: boolean;
+  inbox_position?: number;
+  isPinned?: boolean;
+  lastMessageDeletedForEveryone?: boolean;
   lastMessageStatus?: LastMessageStatus | null;
   lastMessagesSeen?: Record<string, {receivedAt: number, id: string}>;
-  markedUnread: boolean;
-  messageCount: number;
+  markedUnread?: boolean;
+  messageCount?: number;
   messageCountBeforeMessageRequests?: number | null;
   messageRequestResponseType?: number;
   muteExpiresAt?: number;
@@ -299,7 +299,7 @@ export type ConversationAttributesType = {
   lastProfile?: ConversationLastProfileType;
   quotedMessageId?: string | null;
   sealedSender?: unknown;
-  sentMessageCount: number;
+  sentMessageCount?: number;
   sharedGroupNames?: Array<string>;
 
   id: string;
@@ -315,7 +315,7 @@ export type ConversationAttributesType = {
   name?: string;
   needsStorageServiceSync?: boolean;
   needsVerification?: boolean;
-  profileSharing: boolean;
+  profileSharing?: boolean;
   storageID?: string;
   storageVersion?: number;
   storageUnknownFields?: string;
@@ -324,6 +324,7 @@ export type ConversationAttributesType = {
 
   // Private core info
   uuid?: UUIDStringType;
+  pni?: UUIDStringType;
   e164?: string;
 
   // Private other fields
@@ -344,6 +345,7 @@ export type ConversationAttributesType = {
   //   to leave a group.
   left?: boolean;
   groupVersion?: number;
+  isGroupStorySendReady?: boolean;
 
   // GroupV1 only
   members?: Array<string>;

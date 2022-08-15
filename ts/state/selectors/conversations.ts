@@ -37,6 +37,7 @@ import { ContactNameColors } from '../../types/Colors';
 import type { AvatarDataType } from '../../types/Avatar';
 import type { UUIDStringType } from '../../types/UUID';
 import { isInSystemContacts } from '../../util/isInSystemContacts';
+import { isSignalConnection } from '../../util/getSignalConnections';
 import { sortByTitle } from '../../util/sortByTitle';
 import {
   isDirectConversation,
@@ -125,6 +126,12 @@ export const getConversationsByUsername = createSelector(
 export const getAllConversations = createSelector(
   getConversationLookup,
   (lookup): Array<ConversationType> => Object.values(lookup)
+);
+
+export const getAllSignalConnections = createSelector(
+  getAllConversations,
+  (conversations): Array<ConversationType> =>
+    conversations.filter(isSignalConnection)
 );
 
 export const getConversationsByTitleSelector = createSelector(
@@ -507,6 +514,20 @@ export const getComposableGroups = createSelector(
     Object.values(conversationLookup).filter(
       conversation =>
         conversation.type === 'group' && canComposeConversation(conversation)
+    )
+);
+
+export const getNonGroupStories = createSelector(
+  getComposableGroups,
+  (groups: Array<ConversationType>): Array<ConversationType> =>
+    groups.filter(group => !group.isGroupStorySendReady)
+);
+
+export const getGroupStories = createSelector(
+  getConversationLookup,
+  (conversationLookup: ConversationLookupType): Array<ConversationType> =>
+    Object.values(conversationLookup).filter(
+      conversation => conversation.isGroupStorySendReady
     )
 );
 

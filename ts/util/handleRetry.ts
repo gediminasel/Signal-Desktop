@@ -599,10 +599,10 @@ function scheduleSessionReset(senderUuid: string, senderDevice: number) {
     );
   }
 
-  lightSessionResetQueue.add(() => {
+  lightSessionResetQueue.add(async () => {
     const ourUuid = window.textsecure.storage.user.getCheckedUuid();
 
-    window.textsecure.storage.protocol.lightSessionReset(
+    await window.textsecure.storage.protocol.lightSessionReset(
       new QualifiedAddress(ourUuid, Address.create(senderUuid, senderDevice))
     );
   });
@@ -616,18 +616,9 @@ function startAutomaticSessionReset(decryptionError: DecryptionErrorEventData) {
 
   scheduleSessionReset(senderUuid, senderDevice);
 
-  const conversationId = window.ConversationController.ensureContactIds({
+  const conversation = window.ConversationController.lookupOrCreate({
     uuid: senderUuid,
   });
-
-  if (!conversationId) {
-    log.warn(
-      'onLightSessionReset: No conversation id, cannot add message to timeline'
-    );
-    return;
-  }
-  const conversation = window.ConversationController.get(conversationId);
-
   if (!conversation) {
     log.warn(
       'onLightSessionReset: No conversation, cannot add message to timeline'

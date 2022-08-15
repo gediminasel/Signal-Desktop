@@ -13,6 +13,7 @@
 
   &__replies {
     flex: 1;
+    margin: 0 -16px;
     max-height: 75vh;
     overflow-y: overlay;
 
@@ -127,7 +128,7 @@
     align-items: center;
     display: flex;
     justify-content: space-between;
-    padding: 12px 0;
+    padding: 12px 16px;
 
     &--container {
       display: flex;
@@ -179,6 +180,33 @@
       height: 64px;
       width: 40px;
     }
+  }
+
+  &__debugger__button {
+    color: $color-gray-25;
+    display: block;
+    font-weight: 600;
+    height: auto;
+    opacity: 1;
+    width: auto;
+
+    &--active {
+      @include dark-theme {
+        background: inherit;
+      }
+    }
+
+    &::after {
+      display: none;
+    }
+
+    &__text {
+      font-weight: normal;
+    }
+  }
+
+  &__copy-icon {
+    @include color-svg('../images/icons/v2/copy-outline-24.svg', $color-white);
   }
 }
 

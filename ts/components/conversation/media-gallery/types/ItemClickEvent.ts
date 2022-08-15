@@ -4,7 +4,6 @@
 import type { MessageAttributesType } from '../../../../model-types.d';
 import type { AttachmentType } from '../../../../types/Attachment';
 import { MediaItemType } from '../../../../types/MediaItem';
-import type { Message } from './Message';
 
 export type ItemClickEvent = {
   message: Pick<MessageAttributesType, 'sent_at'>;

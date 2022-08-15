@@ -20,10 +20,13 @@ export default {
   title: 'Components/StoryListItem',
   component: StoryListItem,
   argTypes: {
+    conversationId: {
+      defaultValue: getDefaultConversation().id,
+    },
+    getPreferredBadge: { action: true },
     i18n: {
       defaultValue: i18n,
     },
-    onClick: { action: true },
     onGoToConversation: { action: true },
     onHideStory: { action: true },
     queueStoryDownload: { action: true },
@@ -34,6 +37,7 @@ export default {
         timestamp: Date.now(),
       },
     },
+    viewUserStories: { action: true },
   },
 } as Meta;
 

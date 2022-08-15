@@ -3,7 +3,6 @@
 
 import { compact, has, isNumber, throttle, debounce } from 'lodash';
 import { batch as batchDispatch } from 'react-redux';
-import PQueue from 'p-queue';
 import { v4 as generateGuid } from 'uuid';
 
 import type {
@@ -81,6 +80,7 @@ import {
   take,
   repeat,
   zipObject,
+  collect,
 } from '../util/iterables';
 import * as universalExpireTimer from '../util/universalExpireTimer';
 import type { GroupNameCollisionsWithIdsByTitle } from '../util/groupMemberNameCollisions';
@@ -1279,11 +1279,11 @@ export class ConversationModel extends window.Backbone
     const e164 = message.get('source');
     const sourceDevice = message.get('sourceDevice');
 
-    const sourceId = window.ConversationController.ensureContactIds({
+    const source = window.ConversationController.lookupOrCreate({
       uuid,
       e164,
     });
-    const typingToken = `${sourceId}.${sourceDevice}`;
+    const typingToken = `${source?.id}.${sourceDevice}`;
 
     // Clear typing indicator for a given contact if we receive a message from them
     this.clearContactTypingTimer(typingToken);
@@ -1759,7 +1759,7 @@ export class ConversationModel extends window.Backbone
 
     const { customColor, customColorId } = this.getCustomColorData();
 
-    const ourACI = window.textsecure.storage.user.getCheckedUuid(UUIDKind.ACI);
+    const ourACI = window.textsecure.storage.user.getUuid(UUIDKind.ACI);
     const ourPNI = window.textsecure.storage.user.getUuid(UUIDKind.PNI);
 
     // TODO: DESKTOP-720
@@ -1779,12 +1779,13 @@ export class ConversationModel extends window.Backbone
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       activeAt: this.get('active_at')!,
       areWePending:
-        this.isMemberPending(ourACI) ||
-        Boolean(
-          ourPNI && !this.isMember(ourACI) && this.isMemberPending(ourPNI)
-        ),
+        ourACI &&
+        (this.isMemberPending(ourACI) ||
+          Boolean(
+            ourPNI && !this.isMember(ourACI) && this.isMemberPending(ourPNI)
+          )),
       areWePendingApproval: Boolean(
-        ourConversationId && this.isMemberAwaitingApproval(ourACI)
+        ourConversationId && ourACI && this.isMemberAwaitingApproval(ourACI)
       ),
       areWeAdmin: this.areWeAdmin(),
       avatars: getAvatarData(this.attributes),
@@ -1809,6 +1810,7 @@ export class ConversationModel extends window.Backbone
       groupVersion,
       groupId: this.get('groupId'),
       groupLink: this.getGroupLink(),
+      isGroupStorySendReady: Boolean(this.get('isGroupStorySendReady')),
       hideStory: Boolean(this.get('hideStory')),
       inboxPosition,
       isArchived: this.get('isArchived'),
@@ -1872,24 +1874,46 @@ export class ConversationModel extends window.Backbone
 
   updateE164(e164?: string | null): void {
     const oldValue = this.get('e164');
-    if (e164 && e164 !== oldValue) {
-      this.set('e164', e164);
+    if (e164 !== oldValue) {
+      this.set('e164', e164 || undefined);
 
-      if (oldValue) {
+      if (oldValue && e164) {
         this.addChangeNumberNotification(oldValue, e164);
       }
 
       window.Signal.Data.updateConversation(this.attributes);
       this.trigger('idUpdated', this, 'e164', oldValue);
+      this.captureChange('updateE164');
     }
   }
 
   updateUuid(uuid?: string): void {
     const oldValue = this.get('uuid');
-    if (uuid && uuid !== oldValue) {
-      this.set('uuid', UUID.cast(uuid.toLowerCase()));
+    if (uuid !== oldValue) {
+      this.set('uuid', uuid ? UUID.cast(uuid.toLowerCase()) : undefined);
       window.Signal.Data.updateConversation(this.attributes);
       this.trigger('idUpdated', this, 'uuid', oldValue);
+      this.captureChange('updateUuid');
+    }
+  }
+
+  updatePni(pni?: string): void {
+    const oldValue = this.get('pni');
+    if (pni !== oldValue) {
+      this.set('pni', pni ? UUID.cast(pni.toLowerCase()) : undefined);
+
+      if (
+        oldValue &&
+        pni &&
+        (!this.get('uuid') || this.get('uuid') === oldValue)
+      ) {
+        // TODO: DESKTOP-3974
+        this.addKeyChange(UUID.checkedLookup(oldValue));
+      }
+
+      window.Signal.Data.updateConversation(this.attributes);
+      this.trigger('idUpdated', this, 'pni', oldValue);
+      this.captureChange('updatePni');
     }
   }
 
@@ -3675,22 +3699,11 @@ export class ConversationModel extends window.Backbone
     }
 
     if (preview && preview.length) {
-      const previewsToUse = take(preview, 1);
+      const previewImages = collect(preview, prev => prev.image);
+      const previewImagesToUse = take(previewImages, 1);
 
       return Promise.all(
-        map(previewsToUse, async attachment => {
-          const { image } = attachment;
-
-          if (!image) {
-            return {
-              contentType: IMAGE_JPEG,
-              // Our protos library complains about these fields being undefined, so we
-              //   force them to null
-              fileName: null,
-              thumbnail: null,
-            };
-          }
-
+        map(previewImagesToUse, async image => {
           const { contentType } = image;
 
           return {
@@ -4068,7 +4081,7 @@ export class ConversationModel extends window.Backbone
   //   with them?
   isFromOrAddedByTrustedContact(): boolean {
     if (isDirectConversation(this.attributes)) {
-      return Boolean(this.get('name')) || this.get('profileSharing');
+      return Boolean(this.get('name')) || Boolean(this.get('profileSharing'));
     }
 
     const addedBy = this.get('addedBy');
@@ -4635,32 +4648,11 @@ export class ConversationModel extends window.Backbone
     const conversations =
       this.getMembers() as unknown as Array<ConversationModel>;
 
-    const queue = new PQueue({
-      concurrency: 3,
-    });
-
-    // Convert Promise<void[]> that is returned by addAll() to Promise<void>
-    const promise = (async () => {
-      await queue.addAll(
-        conversations.map(
-          conversation => () =>
-            getProfile(conversation.get('uuid'), conversation.get('e164'))
-        )
-      );
-    })();
-
-    this._activeProfileFetch = promise;
-    try {
-      await promise;
-    } finally {
-      if (this._activeProfileFetch === promise) {
-        this._activeProfileFetch = undefined;
-      }
-    }
-  }
-
-  getActiveProfileFetch(): Promise<void> | undefined {
-    return this._activeProfileFetch;
+    await Promise.all(
+      conversations.map(conversation =>
+        getProfile(conversation.get('uuid'), conversation.get('e164'))
+      )
+    );
   }
 
   async setEncryptedProfileName(
@@ -5464,6 +5456,9 @@ window.Whisper.ConversationCollection = window.Backbone.Collection.extend({
           if (idProp === 'uuid') {
             delete this._byUuid[oldValue];
           }
+          if (idProp === 'pni') {
+            delete this._byPni[oldValue];
+          }
           if (idProp === 'groupId') {
             delete this._byGroupId[oldValue];
           }
@@ -5475,6 +5470,10 @@ window.Whisper.ConversationCollection = window.Backbone.Collection.extend({
         const uuid = model.get('uuid');
         if (uuid) {
           this._byUuid[uuid] = model;
+        }
+        const pni = model.get('pni');
+        if (pni) {
+          this._byPni[pni] = model;
         }
         const groupId = model.get('groupId');
         if (groupId) {
@@ -5516,6 +5515,16 @@ window.Whisper.ConversationCollection = window.Backbone.Collection.extend({
         }
       }
 
+      const pni = model.get('pni');
+      if (pni) {
+        const existing = this._byPni[pni];
+
+        // Prefer the contact with both uuid and pni
+        if (!existing || (existing && !existing.get('uuid'))) {
+          this._byPni[pni] = model;
+        }
+      }
+
       const groupId = model.get('groupId');
       if (groupId) {
         this._byGroupId[groupId] = model;
@@ -5526,6 +5535,7 @@ window.Whisper.ConversationCollection = window.Backbone.Collection.extend({
   eraseLookups() {
     this._byE164 = Object.create(null);
     this._byUuid = Object.create(null);
+    this._byPni = Object.create(null);
     this._byGroupId = Object.create(null);
   },
 
@@ -5585,6 +5595,7 @@ window.Whisper.ConversationCollection = window.Backbone.Collection.extend({
       this._byE164[id] ||
       this._byE164[`+${id}`] ||
       this._byUuid[id] ||
+      this._byPni[id] ||
       this._byGroupId[id] ||
       window.Backbone.Collection.prototype.get.call(this, id)
     );

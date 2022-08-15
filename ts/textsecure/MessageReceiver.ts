@@ -101,7 +101,6 @@ import {
   MessageRequestResponseEvent,
   FetchLatestEvent,
   KeysEvent,
-  PNIIdentityEvent,
   StickerPackEvent,
   ReadSyncEvent,
   ViewSyncEvent,
@@ -115,7 +114,7 @@ import * as log from '../logging/log';
 import * as durations from '../util/durations';
 import { areArraysMatchingSets } from '../util/areArraysMatchingSets';
 import { generateBlurHash } from '../util/generateBlurHash';
-import { APPLICATION_OCTET_STREAM } from '../types/MIME';
+import { TEXT_ATTACHMENT } from '../types/MIME';
 import type { SendTypesType } from '../util/handleMessageSend';
 
 const GROUPV1_ID_LENGTH = 16;
@@ -256,8 +255,6 @@ export default class MessageReceiver
 
   private stoppingProcessing?: boolean;
 
-  private pendingPNIIdentityEvent?: PNIIdentityEvent;
-
   constructor({ server, storage, serverTrustRoot }: MessageReceiverOptions) {
     super();
 
@@ -360,7 +357,6 @@ export default class MessageReceiver
 
           // Proto.Envelope fields
           type: decoded.type,
-          source: decoded.source,
           sourceUuid: decoded.sourceUuid
             ? normalizeUuid(
                 decoded.sourceUuid,
@@ -376,6 +372,14 @@ export default class MessageReceiver
                 )
               )
             : ourUuid,
+          updatedPni: decoded.updatedPni
+            ? new UUID(
+                normalizeUuid(
+                  decoded.updatedPni,
+                  'MessageReceiver.handleRequest.updatedPni'
+                )
+              )
+            : undefined,
           timestamp: decoded.timestamp?.toNumber(),
           content: dropNull(decoded.content),
           serverGuid: decoded.serverGuid,
@@ -536,11 +540,6 @@ export default class MessageReceiver
   ): void;
 
   public override addEventListener(
-    name: 'pniIdentity',
-    handler: (ev: PNIIdentityEvent) => void
-  ): void;
-
-  public override addEventListener(
     name: 'sticker-pack',
     handler: (ev: StickerPackEvent) => void
   ): void;
@@ -671,13 +670,6 @@ export default class MessageReceiver
       this.isEmptied = true;
 
       this.maybeScheduleRetryTimeout();
-
-      // Emit PNI identity event after processing the queue
-      const { pendingPNIIdentityEvent } = this;
-      this.pendingPNIIdentityEvent = undefined;
-      if (pendingPNIIdentityEvent) {
-        await this.dispatchAndWait(pendingPNIIdentityEvent);
-      }
     };
 
     const waitForDecryptedQueue = async () => {
@@ -764,7 +756,7 @@ export default class MessageReceiver
 
         // Proto.Envelope fields
         type: decoded.type,
-        source: decoded.source || item.source,
+        source: item.source,
         sourceUuid: decoded.sourceUuid
           ? UUID.cast(decoded.sourceUuid)
           : item.sourceUuid,
@@ -772,6 +764,9 @@ export default class MessageReceiver
         destinationUuid: new UUID(
           decoded.destinationUuid || item.destinationUuid || ourUuid.toString()
         ),
+        updatedPni: decoded.updatedPni
+          ? new UUID(decoded.updatedPni)
+          : undefined,
         timestamp: decoded.timestamp?.toNumber(),
         content: dropNull(decoded.content),
         serverGuid: decoded.serverGuid,
@@ -902,16 +897,6 @@ export default class MessageReceiver
           items.map(async ({ data, envelope }) => {
             try {
               const { destinationUuid } = envelope;
-              const uuidKind =
-                this.storage.user.getOurUuidKind(destinationUuid);
-              if (uuidKind === UUIDKind.Unknown) {
-                log.warn(
-                  'MessageReceiver.decryptAndCacheBatch: ' +
-                    `Rejecting envelope ${getEnvelopeId(envelope)}, ` +
-                    `unknown uuid: ${destinationUuid}`
-                );
-                return;
-              }
 
               let stores = storesMap.get(destinationUuid.toString());
               if (!stores) {
@@ -935,8 +920,7 @@ export default class MessageReceiver
 
               const result = await this.queueEncryptedEnvelope(
                 stores,
-                envelope,
-                uuidKind
+                envelope
               );
               if (result.plaintext) {
                 decrypted.push({
@@ -972,6 +956,7 @@ export default class MessageReceiver
               sourceUuid: envelope.sourceUuid,
               sourceDevice: envelope.sourceDevice,
               destinationUuid: envelope.destinationUuid.toString(),
+              updatedPni: envelope.updatedPni?.toString(),
               serverGuid: envelope.serverGuid,
               serverTimestamp: envelope.serverTimestamp,
               decrypted: Bytes.toBase64(plaintext),
@@ -1089,13 +1074,23 @@ export default class MessageReceiver
 
   private async queueEncryptedEnvelope(
     stores: LockedStores,
-    envelope: ProcessedEnvelope,
-    uuidKind: UUIDKind
+    envelope: ProcessedEnvelope
   ): Promise<DecryptResult> {
     let logId = getEnvelopeId(envelope);
-    log.info(`queueing ${uuidKind} envelope`, logId);
+    log.info('queueing envelope', logId);
 
     const task = async (): Promise<DecryptResult> => {
+      const { destinationUuid } = envelope;
+      const uuidKind = this.storage.user.getOurUuidKind(destinationUuid);
+      if (uuidKind === UUIDKind.Unknown) {
+        log.warn(
+          'MessageReceiver.decryptAndCacheBatch: ' +
+            `Rejecting envelope ${getEnvelopeId(envelope)}, ` +
+            `unknown uuid: ${destinationUuid}`
+        );
+        return { plaintext: undefined, envelope };
+      }
+
       const unsealedEnvelope = await this.unsealEnvelope(
         stores,
         envelope,
@@ -1311,6 +1306,19 @@ export default class MessageReceiver
           content.senderKeyDistributionMessage
         );
       }
+
+      // Some sync messages have to be fully processed in the middle of
+      // decryption queue since subsequent envelopes use their key material.
+      const { syncMessage } = content;
+      if (syncMessage?.pniIdentity) {
+        await this.handlePNIIdentity(envelope, syncMessage.pniIdentity);
+        return { plaintext: undefined, envelope };
+      }
+
+      if (syncMessage?.pniChangeNumber) {
+        await this.handlePNIChangeNumber(envelope, syncMessage.pniChangeNumber);
+        return { plaintext: undefined, envelope };
+      }
     } catch (error) {
       log.error(
         'MessageReceiver.decryptEnvelope: Failed to process sender ' +
@@ -1384,7 +1392,9 @@ export default class MessageReceiver
     if (envelope.serverTimestamp > certificate.expiration()) {
       throw new Error(
         'MessageReceiver.validateUnsealedEnvelope: ' +
-          `Sender certificate is expired for envelope ${logId}`
+          `Sender certificate is expired for envelope ${logId}, ` +
+          `serverTimestamp: ${envelope.serverTimestamp}, ` +
+          `expiration: ${certificate.expiration()}`
       );
     }
 
@@ -1854,6 +1864,12 @@ export default class MessageReceiver
 
     const attachments: Array<ProcessedAttachment> = [];
 
+    if (!window.Events.getHasStoriesEnabled()) {
+      log.info('MessageReceiver.handleStoryMessage: dropping', logId);
+      this.removeFromCache(envelope);
+      return;
+    }
+
     if (msg.fileAttachment) {
       const attachment = processAttachment(msg.fileAttachment);
       attachments.push(attachment);
@@ -1868,7 +1884,7 @@ export default class MessageReceiver
       // TODO DESKTOP-3714 we should download the story link preview image
       attachments.push({
         size: text.length,
-        contentType: APPLICATION_OCTET_STREAM,
+        contentType: TEXT_ATTACHMENT,
         textAttachment: msg.textAttachment,
         blurHash: generateBlurHash(
           (msg.textAttachment.color ||
@@ -1916,6 +1932,24 @@ export default class MessageReceiver
       timestamp: envelope.timestamp,
     };
 
+    if (sentMessage && message.groupV2) {
+      const ev = new SentEvent(
+        {
+          destinationUuid: envelope.destinationUuid.toString(),
+          isRecipientUpdate: Boolean(sentMessage.isRecipientUpdate),
+          message,
+          receivedAtCounter: envelope.receivedAtCounter,
+          receivedAtDate: envelope.receivedAtDate,
+          serverTimestamp: envelope.serverTimestamp,
+          timestamp: envelope.timestamp,
+          unidentifiedStatus: sentMessage.unidentifiedStatus,
+        },
+        this.removeFromCache.bind(this, envelope)
+      );
+      this.dispatchAndWait(ev);
+      return;
+    }
+
     if (sentMessage) {
       const { storyMessageRecipients } = sentMessage;
       const recipients = storyMessageRecipients ?? [];
@@ -1929,15 +1963,20 @@ export default class MessageReceiver
           return;
         }
 
+        const normalizedDestinationUuid = normalizeUuid(
+          destinationUuid,
+          'handleStoryMessage.destinationUuid'
+        );
+
         recipient.distributionListIds?.forEach(listId => {
           const sentUuids: Set<string> =
             distributionListToSentUuid.get(listId) || new Set();
-          sentUuids.add(destinationUuid);
+          sentUuids.add(normalizedDestinationUuid);
           distributionListToSentUuid.set(listId, sentUuids);
         });
 
         isAllowedToReply.set(
-          destinationUuid,
+          normalizedDestinationUuid,
           recipient.isAllowedToReply !== false
         );
       });
@@ -1958,7 +1997,10 @@ export default class MessageReceiver
             isRecipientUpdate: Boolean(sentMessage.isRecipientUpdate),
             receivedAtCounter: envelope.receivedAtCounter,
             receivedAtDate: envelope.receivedAtDate,
-            storyDistributionListId: listId,
+            storyDistributionListId: normalizeUuid(
+              listId,
+              'storyDistributionListId'
+            ),
           },
           this.removeFromCache.bind(this, envelope)
         );
@@ -2567,6 +2609,9 @@ export default class MessageReceiver
     if (envelope.sourceDevice == ourDeviceId) {
       throw new Error('Received sync message from our own device');
     }
+    if (syncMessage.pniIdentity) {
+      return;
+    }
     if (syncMessage.sent) {
       const sentMessage = syncMessage.sent;
 
@@ -2580,6 +2625,18 @@ export default class MessageReceiver
       }
 
       if (sentMessage.storyMessageRecipients && sentMessage.isRecipientUpdate) {
+        if (!window.Events.getHasStoriesEnabled()) {
+          log.info(
+            'MessageReceiver.handleSyncMessage: dropping story recipients update'
+          );
+          this.removeFromCache(envelope);
+          return;
+        }
+
+        log.info(
+          'MessageReceiver.handleSyncMessage: handling storyMessageRecipients isRecipientUpdate sync message',
+          getEnvelopeId(envelope)
+        );
         const ev = new StoryRecipientUpdateEvent(
           {
             destinationUuid: envelope.destinationUuid.toString(),
@@ -2599,7 +2656,7 @@ export default class MessageReceiver
 
       if (this.isInvalidGroupData(sentMessage.message, envelope)) {
         this.removeFromCache(envelope);
-        return undefined;
+        return;
       }
 
       await this.checkGroupV1Data(sentMessage.message);
@@ -2617,11 +2674,11 @@ export default class MessageReceiver
     }
     if (syncMessage.contacts) {
       this.handleContacts(envelope, syncMessage.contacts);
-      return undefined;
+      return;
     }
     if (syncMessage.groups) {
       this.handleGroups(envelope, syncMessage.groups);
-      return undefined;
+      return;
     }
     if (syncMessage.blocked) {
       return this.handleBlocked(envelope, syncMessage.blocked);
@@ -2629,7 +2686,7 @@ export default class MessageReceiver
     if (syncMessage.request) {
       log.info('Got SyncMessage Request');
       this.removeFromCache(envelope);
-      return undefined;
+      return;
     }
     if (syncMessage.read && syncMessage.read.length) {
       return this.handleRead(envelope, syncMessage.read);
@@ -2637,7 +2694,7 @@ export default class MessageReceiver
     if (syncMessage.verified) {
       log.info('Got verified sync message, dropping');
       this.removeFromCache(envelope);
-      return undefined;
+      return;
     }
     if (syncMessage.configuration) {
       return this.handleConfiguration(envelope, syncMessage.configuration);
@@ -2666,9 +2723,6 @@ export default class MessageReceiver
     if (syncMessage.keys) {
       return this.handleKeys(envelope, syncMessage.keys);
     }
-    if (syncMessage.pniIdentity) {
-      return this.handlePNIIdentity(envelope, syncMessage.pniIdentity);
-    }
     if (syncMessage.viewed && syncMessage.viewed.length) {
       return this.handleViewed(envelope, syncMessage.viewed);
     }
@@ -2677,7 +2731,6 @@ export default class MessageReceiver
     log.warn(
       `handleSyncMessage/${getEnvelopeId(envelope)}: Got empty SyncMessage`
     );
-    return Promise.resolve();
   }
 
   private async handleConfiguration(
@@ -2797,6 +2850,7 @@ export default class MessageReceiver
     return this.dispatchAndWait(ev);
   }
 
+  // Runs on TaskType.Encrypted queue
   private async handlePNIIdentity(
     envelope: ProcessedEnvelope,
     { publicKey, privateKey }: Proto.SyncMessage.IPniIdentity
@@ -2807,22 +2861,47 @@ export default class MessageReceiver
 
     if (!publicKey || !privateKey) {
       log.warn('MessageReceiver: empty pni identity sync message');
-      return undefined;
+      return;
     }
 
-    const ev = new PNIIdentityEvent(
-      { publicKey, privateKey },
-      this.removeFromCache.bind(this, envelope)
-    );
+    const manager = window.getAccountManager();
+    await manager.updatePNIIdentity({ privKey: privateKey, pubKey: publicKey });
+  }
 
-    if (this.isEmptied) {
-      log.info('MessageReceiver: emitting pni identity sync message');
-      return this.dispatchAndWait(ev);
+  // Runs on TaskType.Encrypted queue
+  private async handlePNIChangeNumber(
+    envelope: ProcessedEnvelope,
+    {
+      identityKeyPair,
+      signedPreKey,
+      registrationId,
+    }: Proto.SyncMessage.IPniChangeNumber
+  ): Promise<void> {
+    log.info('MessageReceiver: got pni change number sync message');
+
+    logUnexpectedUrgentValue(envelope, 'pniIdentitySync');
+
+    const { updatedPni } = envelope;
+    if (!updatedPni) {
+      log.warn('MessageReceiver: missing pni in change number sync message');
+      return;
     }
 
-    log.info('MessageReceiver: scheduling pni identity sync message');
-    this.pendingPNIIdentityEvent?.confirm();
-    this.pendingPNIIdentityEvent = ev;
+    if (
+      !Bytes.isNotEmpty(identityKeyPair) ||
+      !Bytes.isNotEmpty(signedPreKey) ||
+      !isNumber(registrationId)
+    ) {
+      log.warn('MessageReceiver: empty pni change number sync message');
+      return;
+    }
+
+    const manager = window.getAccountManager();
+    await manager.setPni(updatedPni.toString(), {
+      identityKeyPair,
+      signedPreKey,
+      registrationId,
+    });
   }
 
   private async handleStickerPackOperation(

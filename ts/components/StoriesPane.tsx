@@ -15,9 +15,12 @@ import type {
   StoryViewType,
 } from '../types/Stories';
 import type { LocalizerType } from '../types/Util';
+import type { PreferredBadgeSelectorType } from '../state/selectors/badges';
+import { ContextMenu } from './ContextMenu';
 import { MyStoriesButton } from './MyStoriesButton';
 import { SearchInput } from './SearchInput';
 import { StoryListItem } from './StoryListItem';
+import { Theme } from '../util/theme';
 import { isNotNil } from '../util/isNotNil';
 
 const FUSE_OPTIONS: Fuse.IFuseOptions<ConversationStoryType> = {
@@ -57,33 +60,37 @@ function getNewestMyStory(story: MyStoryType): StoryViewType {
 }
 
 export type PropsType = {
+  getPreferredBadge: PreferredBadgeSelectorType;
   hiddenStories: Array<ConversationStoryType>;
   i18n: LocalizerType;
   me: ConversationType;
   myStories: Array<MyStoryType>;
-  onAddStory: () => unknown;
+  onAddStory: (file?: File) => unknown;
   onMyStoriesClicked: () => unknown;
-  onStoryClicked: (conversationId: string) => unknown;
+  onStoriesSettings: () => unknown;
   queueStoryDownload: (storyId: string) => unknown;
   showConversation: ShowConversationType;
   stories: Array<ConversationStoryType>;
   toggleHideStories: (conversationId: string) => unknown;
   toggleStoriesView: () => unknown;
+  viewUserStories: (conversationId: string) => unknown;
 };
 
 export const StoriesPane = ({
+  getPreferredBadge,
   hiddenStories,
   i18n,
   me,
   myStories,
   onAddStory,
   onMyStoriesClicked,
-  onStoryClicked,
+  onStoriesSettings,
   queueStoryDownload,
   showConversation,
   stories,
   toggleHideStories,
   toggleStoriesView,
+  viewUserStories,
 }: PropsType): JSX.Element => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isShowingHiddenStories, setIsShowingHiddenStories] = useState(false);
@@ -111,11 +118,53 @@ export const StoriesPane = ({
         <div className="Stories__pane__header--title">
           {i18n('Stories__title')}
         </div>
-        <button
-          aria-label={i18n('Stories__add')}
-          className="Stories__pane__header--camera"
-          onClick={onAddStory}
-          type="button"
+        <ContextMenu
+          i18n={i18n}
+          menuOptions={[
+            {
+              label: i18n('Stories__add-story--media'),
+              onClick: () => {
+                const input = document.createElement('input');
+                input.accept = 'image/*,video/*';
+                input.type = 'file';
+                input.onchange = () => {
+                  const file = input.files ? input.files[0] : undefined;
+
+                  if (!file) {
+                    return;
+                  }
+
+                  onAddStory(file);
+                };
+                input.click();
+              },
+            },
+            {
+              label: i18n('Stories__add-story--text'),
+              onClick: () => onAddStory(),
+            },
+          ]}
+          moduleClassName="Stories__pane__add-story"
+          popperOptions={{
+            placement: 'bottom',
+            strategy: 'absolute',
+          }}
+          theme={Theme.Dark}
+        />
+        <ContextMenu
+          i18n={i18n}
+          menuOptions={[
+            {
+              label: i18n('StoriesSettings__context-menu'),
+              onClick: () => onStoriesSettings(),
+            },
+          ]}
+          moduleClassName="Stories__pane__settings"
+          popperOptions={{
+            placement: 'bottom',
+            strategy: 'absolute',
+          }}
+          theme={Theme.Dark}
         />
       </div>
       <SearchInput
@@ -127,70 +176,77 @@ export const StoriesPane = ({
         placeholder={i18n('search')}
         value={searchTerm}
       />
-      <MyStoriesButton
-        hasMultiple={myStories.length ? myStories[0].stories.length > 1 : false}
-        i18n={i18n}
-        me={me}
-        newestStory={
-          myStories.length ? getNewestMyStory(myStories[0]) : undefined
-        }
-        onClick={onMyStoriesClicked}
-        queueStoryDownload={queueStoryDownload}
-      />
-      <div
-        className={classNames('Stories__pane__list', {
-          'Stories__pane__list--empty': !stories.length,
-        })}
-      >
-        {renderedStories.map(story => (
-          <StoryListItem
-            group={story.group}
+      <div className="Stories__pane__list">
+        <>
+          <MyStoriesButton
+            hasMultiple={
+              myStories.length ? myStories[0].stories.length > 1 : false
+            }
             i18n={i18n}
-            key={story.storyView.timestamp}
-            onClick={() => {
-              onStoryClicked(story.conversationId);
-            }}
-            onHideStory={toggleHideStories}
-            onGoToConversation={conversationId => {
-              showConversation({ conversationId });
-              toggleStoriesView();
-            }}
+            me={me}
+            newestStory={
+              myStories.length ? getNewestMyStory(myStories[0]) : undefined
+            }
+            onAddStory={onAddStory}
+            onClick={onMyStoriesClicked}
             queueStoryDownload={queueStoryDownload}
-            story={story.storyView}
           />
-        ))}
-        {Boolean(hiddenStories.length) && (
-          <>
-            <button
-              className={classNames('Stories__hidden-stories', {
-                'Stories__hidden-stories--expanded': isShowingHiddenStories,
-              })}
-              onClick={() => setIsShowingHiddenStories(!isShowingHiddenStories)}
-              type="button"
-            >
-              {i18n('Stories__hidden-stories')}
-            </button>
-            {isShowingHiddenStories &&
-              hiddenStories.map(story => (
-                <StoryListItem
-                  key={story.storyView.timestamp}
-                  i18n={i18n}
-                  isHidden
-                  onClick={() => {
-                    onStoryClicked(story.conversationId);
-                  }}
-                  onHideStory={toggleHideStories}
-                  onGoToConversation={conversationId => {
-                    showConversation({ conversationId });
-                    toggleStoriesView();
-                  }}
-                  queueStoryDownload={queueStoryDownload}
-                  story={story.storyView}
-                />
-              ))}
-          </>
-        )}
-        {!stories.length && i18n('Stories__list-empty')}
+          {renderedStories.map(story => (
+            <StoryListItem
+              conversationId={story.conversationId}
+              group={story.group}
+              getPreferredBadge={getPreferredBadge}
+              i18n={i18n}
+              key={story.storyView.timestamp}
+              onHideStory={toggleHideStories}
+              onGoToConversation={conversationId => {
+                showConversation({ conversationId });
+                toggleStoriesView();
+              }}
+              queueStoryDownload={queueStoryDownload}
+              story={story.storyView}
+              viewUserStories={viewUserStories}
+            />
+          ))}
+          {Boolean(hiddenStories.length) && (
+            <>
+              <button
+                className={classNames('Stories__hidden-stories', {
+                  'Stories__hidden-stories--expanded': isShowingHiddenStories,
+                })}
+                onClick={() =>
+                  setIsShowingHiddenStories(!isShowingHiddenStories)
+                }
+                type="button"
+              >
+                {i18n('Stories__hidden-stories')}
+              </button>
+              {isShowingHiddenStories &&
+                hiddenStories.map(story => (
+                  <StoryListItem
+                    conversationId={story.conversationId}
+                    key={story.storyView.timestamp}
+                    getPreferredBadge={getPreferredBadge}
+                    i18n={i18n}
+                    isHidden
+                    onHideStory={toggleHideStories}
+                    onGoToConversation={conversationId => {
+                      showConversation({ conversationId });
+                      toggleStoriesView();
+                    }}
+                    queueStoryDownload={queueStoryDownload}
+                    story={story.storyView}
+                    viewUserStories={viewUserStories}
+                  />
+                ))}
+            </>
+          )}
+          {!stories.length && (
+            <div className="Stories__pane__list--empty">
+              {i18n('Stories__list-empty')}
+            </div>
+          )}
+        </>
       </div>
     </>
   );

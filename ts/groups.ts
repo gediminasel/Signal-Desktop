@@ -13,7 +13,6 @@ import Long from 'long';
 import type { ClientZkGroupCipher } from '@signalapp/libsignal-client/zkgroup';
 import { v4 as getGuid } from 'uuid';
 import LRU from 'lru-cache';
-import PQueue from 'p-queue';
 import * as log from './logging/log';
 import {
   getCheckedCredentialsForToday,
@@ -61,6 +60,7 @@ import type {
   GroupCredentialsType,
   GroupLogResponseType,
 } from './textsecure/WebAPI';
+import { HTTPError } from './textsecure/Errors';
 import type MessageSender from './textsecure/SendMessage';
 import { CURRENT_SCHEMA_VERSION as MAX_MESSAGE_SCHEMA } from './types/Message2';
 import type { ConversationModel } from './models/conversations';
@@ -1472,10 +1472,6 @@ export async function modifyGroupV2({
 
   let refreshedCredentials = false;
 
-  const profileFetchQueue = new PQueue({
-    concurrency: 3,
-  });
-
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt += 1) {
     log.info(`modifyGroupV2/${logId}: Starting attempt ${attempt}`);
     try {
@@ -1496,16 +1492,9 @@ export async function modifyGroupV2({
           log.info(`modifyGroupV2/${logId}: Fetching profiles for ${logIds}`);
         }
 
-        for (const member of membersMissingCredentials) {
-          member.set({
-            profileKeyCredential: null,
-            profileKeyCredentialExpiration: null,
-          });
-        }
-
         // eslint-disable-next-line no-await-in-loop
-        await profileFetchQueue.addAll(
-          membersMissingCredentials.map(member => () => member.getProfiles())
+        await Promise.all(
+          membersMissingCredentials.map(member => member.getProfiles())
         );
       }
 
@@ -1603,8 +1592,8 @@ export async function modifyGroupV2({
         }
 
         // eslint-disable-next-line no-await-in-loop
-        await profileFetchQueue.addAll(
-          usingCredentialsFrom.map(member => () => member.getProfiles())
+        await Promise.all(
+          usingCredentialsFrom.map(member => member.getProfiles())
         );
 
         // Fetch credentials only once
@@ -1740,19 +1729,25 @@ export async function fetchMembershipProof({
 
 // Creating a group
 
-export async function createGroupV2({
-  name,
-  avatar,
-  expireTimer,
-  conversationIds,
-  avatars,
-}: Readonly<{
-  name: string;
-  avatar: undefined | Uint8Array;
-  expireTimer: undefined | number;
-  conversationIds: Array<string>;
-  avatars?: Array<AvatarDataType>;
-}>): Promise<ConversationModel> {
+export async function createGroupV2(
+  options: Readonly<{
+    name: string;
+    avatar: undefined | Uint8Array;
+    expireTimer: undefined | number;
+    conversationIds: Array<string>;
+    avatars?: Array<AvatarDataType>;
+    refreshedCredentials?: boolean;
+  }>
+): Promise<ConversationModel> {
+  const {
+    name,
+    avatar,
+    expireTimer,
+    conversationIds,
+    avatars,
+    refreshedCredentials = false,
+  } = options;
+
   // Ensure we have the credentials we need before attempting GroupsV2 operations
   await maybeFetchNewCredentials();
 
@@ -1775,10 +1770,6 @@ export async function createGroupV2({
     window.ConversationController.getOurConversationOrThrow();
   if (ourConversation.hasProfileKeyCredentialExpired()) {
     log.info(`createGroupV2/${logId}: fetching our own credentials`);
-    ourConversation.set({
-      profileKeyCredential: null,
-      profileKeyCredentialExpiration: null,
-    });
     await ourConversation.getProfiles();
   }
 
@@ -1874,12 +1865,45 @@ export async function createGroupV2({
     ...protoAndConversationAttributes,
   });
 
-  await makeRequestWithTemporalRetry({
-    logId: `createGroupV2/${logId}`,
-    publicParams,
-    secretParams,
-    request: (sender, options) => sender.createGroup(groupProto, options),
-  });
+  try {
+    await makeRequestWithTemporalRetry({
+      logId: `createGroupV2/${logId}`,
+      publicParams,
+      secretParams,
+      request: (sender, requestOptions) =>
+        sender.createGroup(groupProto, requestOptions),
+    });
+  } catch (error) {
+    if (!(error instanceof HTTPError)) {
+      throw error;
+    }
+    if (error.code !== 400 || refreshedCredentials) {
+      throw error;
+    }
+
+    const logIds = conversationIds.map(conversationId => {
+      const contact = window.ConversationController.get(conversationId);
+      if (!contact) {
+        return;
+      }
+      contact.set({
+        profileKeyCredential: null,
+        profileKeyCredentialExpiration: null,
+      });
+
+      return contact.idForLogging();
+    });
+
+    log.warn(
+      `createGroupV2/${logId}: Profile key credentials were not ` +
+        `up-to-date. Updating profiles for ${logIds} and retrying`
+    );
+
+    return createGroupV2({
+      ...options,
+      refreshedCredentials: true,
+    });
+  }
 
   let avatarAttribute: ConversationAttributesType['avatar'];
   if (uploadedAvatar) {
@@ -2477,11 +2501,11 @@ export function buildMigrationBubble(
     ...(newAttributes.membersV2 || []).map(item => item.uuid),
     ...(newAttributes.pendingMembersV2 || []).map(item => item.uuid),
   ].map(uuid => {
-    const conversationId = window.ConversationController.ensureContactIds({
+    const conversation = window.ConversationController.lookupOrCreate({
       uuid,
     });
-    strictAssert(conversationId, `Conversation not found for ${uuid}`);
-    return conversationId;
+    strictAssert(conversation, `Conversation not found for ${uuid}`);
+    return conversation.id;
   });
   const droppedMemberIds: Array<string> = difference(
     previousGroupV1MembersIds,
@@ -3088,14 +3112,8 @@ async function updateGroup(
         `${contactsWithoutProfileKey.length} missing profiles`
     );
 
-    const profileFetchQueue = new PQueue({
-      concurrency: 3,
-    });
-    profileFetches = profileFetchQueue.addAll(
-      contactsWithoutProfileKey.map(contact => () => {
-        const active = contact.getActiveProfileFetch();
-        return active || contact.getProfiles();
-      })
+    profileFetches = Promise.all(
+      contactsWithoutProfileKey.map(contact => contact.getProfiles())
     );
   }
 

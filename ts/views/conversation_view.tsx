@@ -1307,15 +1307,15 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
           const message = rawMedia[i];
           const { schemaVersion } = message;
 
-        if (
-          schemaVersion &&
-          schemaVersion < Message.VERSION_NEEDED_FOR_DISPLAY
-        ) {
-          // Yep, we really do want to wait for each of these
-          // eslint-disable-next-line no-await-in-loop
-          rawMedia[i] = await upgradeMessageSchema(message);
-          // eslint-disable-next-line no-await-in-loop
-          await window.Signal.Data.saveMessage(rawMedia[i], { ourUuid });
+          if (
+            schemaVersion &&
+            schemaVersion < Message.VERSION_NEEDED_FOR_DISPLAY
+          ) {
+            // Yep, we really do want to wait for each of these
+            // eslint-disable-next-line no-await-in-loop
+            rawMedia[i] = await upgradeMessageSchema(message);
+            // eslint-disable-next-line no-await-in-loop
+            await window.Signal.Data.saveMessage(rawMedia[i], { ourUuid });
           }
         }
 
@@ -1339,7 +1339,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
                 return {
                   path: attachment.path,
                   objectURL: getAbsoluteAttachmentPath(attachment.path),
-                  thumbnailObjectUrl: thumbnail
+                  thumbnailObjectUrl: thumbnail?.path
                     ? getAbsoluteAttachmentPath(thumbnail.path)
                     : undefined,
                   contentType: attachment.contentType,
@@ -1348,12 +1348,10 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
                   message: {
                     attachments: message.attachments || [],
                     conversationId:
-                      window.ConversationController.get(
-                        window.ConversationController.ensureContactIds({
-                          uuid: message.sourceUuid,
-                          e164: message.source,
-                        })
-                      )?.id || message.conversationId,
+                      window.ConversationController.lookupOrCreate({
+                        uuid: message.sourceUuid,
+                        e164: message.source,
+                      })?.id || message.conversationId,
                     id: message.id,
                     received_at: message.received_at,
                     received_at_ms: Number(message.received_at_ms),
@@ -1392,20 +1390,15 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
               message,
             };
           });
-          return documents;
-      }
+        return documents;
+      };
 
       const onItemClick = async ({
         message,
         attachment,
         type,
-        items
-      }: {
-        message: MessageAttributesType;
-        attachment: AttachmentType;
-        type: 'documents' | 'media';
-        items: MediaItemType[]
-      }) => {
+        items,
+      }: ItemClickEvent) => {
         switch (type) {
           case 'documents': {
             saveAttachment(attachment, message.sent_at);
@@ -1413,7 +1406,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
           }
 
           case 'media': {
-            const media = items as MediaType[];
+            const media = items as Array<MediaType>;
             const selectedMedia =
               media.find(item => attachment.path === item.path) || media[0];
             this.showLightboxForMedia(selectedMedia, media);
@@ -1828,12 +1821,10 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
           attachments: message.get('attachments') || [],
           id: message.get('id'),
           conversationId:
-            window.ConversationController.get(
-              window.ConversationController.ensureContactIds({
-                uuid: message.get('sourceUuid'),
-                e164: message.get('source'),
-              })
-            )?.id || message.get('conversationId'),
+            window.ConversationController.lookupOrCreate({
+              uuid: message.get('sourceUuid'),
+              e164: message.get('source'),
+            })?.id || message.get('conversationId'),
           received_at: message.get('received_at'),
           received_at_ms: Number(message.get('received_at_ms')),
           sent_at: message.get('sent_at'),
@@ -2128,16 +2119,16 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
   }
 
   startConversation(e164: string, uuid: UUIDStringType): void {
-    const conversationId = window.ConversationController.ensureContactIds({
+    const conversation = window.ConversationController.lookupOrCreate({
       e164,
       uuid,
     });
     strictAssert(
-      conversationId,
+      conversation,
       `startConversation failed given ${e164}/${uuid} combination`
     );
 
-    this.openConversation(conversationId);
+    this.openConversation(conversation.id);
   }
 
   async openConversation(
@@ -2629,7 +2620,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
 
       log.info('Send pre-checks took', sendDelta, 'milliseconds');
 
-      model.enqueueMessageForSend(
+      await model.enqueueMessageForSend(
         {
           body: message,
           attachments,

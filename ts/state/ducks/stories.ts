@@ -9,11 +9,13 @@ import type { MessageAttributesType } from '../../model-types.d';
 import type {
   MessageChangedActionType,
   MessageDeletedActionType,
+  MessagesAddedActionType,
 } from './conversations';
 import type { NoopActionType } from './noop';
 import type { StateType as RootStateType } from '../reducer';
 import type { StoryViewType } from '../../types/Stories';
 import type { SyncType } from '../../jobs/helpers/syncHelpers';
+import type { UUIDStringType } from '../../types/UUID';
 import * as log from '../../logging/log';
 import dataInterface from '../../sql/Client';
 import { DAY } from '../../util/durations';
@@ -29,6 +31,7 @@ import { replaceIndex } from '../../util/replaceIndex';
 import { sendDeleteForEveryoneMessage } from '../../util/sendDeleteForEveryoneMessage';
 import { showToast } from '../../util/showToast';
 import {
+  hasFailed,
   hasNotResolved,
   isDownloaded,
   isDownloading,
@@ -36,8 +39,12 @@ import {
 import { getConversationSelector } from '../selectors/conversations';
 import { getSendOptions } from '../../util/getSendOptions';
 import { getStories } from '../selectors/stories';
+import { getStoryDataFromMessageAttributes } from '../../services/storyLoader';
 import { isGroup } from '../../util/whatTypeOfConversation';
+import { isNotNil } from '../../util/isNotNil';
+import { isStory } from '../../messages/helpers';
 import { onStoryRecipientUpdate } from '../../util/onStoryRecipientUpdate';
+import { sendStoryMessage as doSendStoryMessage } from '../../util/sendStoryMessage';
 import { useBoundActions } from '../../hooks/useBoundActions';
 import { viewSyncJobQueue } from '../../jobs/viewSyncJobQueue';
 import { viewedReceiptsJobQueue } from '../../jobs/viewedReceiptsJobQueue';
@@ -62,8 +69,9 @@ export type StoryDataType = {
 
 export type SelectedStoryDataType = {
   currentIndex: number;
+  messageId: string;
   numStories: number;
-  story: StoryDataType;
+  shouldShowDetailsModal: boolean;
 };
 
 // State
@@ -146,6 +154,7 @@ export type StoriesActionType =
   | MarkStoryReadActionType
   | MessageChangedActionType
   | MessageDeletedActionType
+  | MessagesAddedActionType
   | ReplyToStoryActionType
   | ResolveAttachmentUrlActionType
   | StoryChangedActionType
@@ -367,7 +376,10 @@ function markStoryRead(
       return;
     }
 
-    if (!isDownloaded(matchingStory.attachment)) {
+    if (
+      !isDownloaded(matchingStory.attachment) &&
+      !hasFailed(matchingStory.attachment)
+    ) {
       return;
     }
 
@@ -435,6 +447,10 @@ function queueStoryDownload(
       log.warn('queueStoryDownload: No attachment found for story', {
         storyId,
       });
+      return;
+    }
+
+    if (hasFailed(attachment)) {
       return;
     }
 
@@ -541,6 +557,21 @@ function replyToStory(
   };
 }
 
+function sendStoryMessage(
+  listIds: Array<UUIDStringType>,
+  conversationIds: Array<string>,
+  attachment: AttachmentType
+): ThunkAction<void, RootStateType, unknown, NoopActionType> {
+  return async dispatch => {
+    await doSendStoryMessage(listIds, conversationIds, attachment);
+
+    dispatch({
+      type: 'NOOP',
+      payload: null,
+    });
+  };
+}
+
 function storyChanged(story: StoryDataType): StoryChangedActionType {
   return {
     type: STORY_CHANGED,
@@ -573,7 +604,7 @@ const getSelectedStoryDataForConversationId = (
   const { stories } = state.stories;
 
   const storiesByConversationId = stories.filter(
-    item => item.conversationId === conversationId
+    item => item.conversationId === conversationId && !item.deletedForEveryone
   );
 
   // Find the index of the storyId provided, or if none provided then find the
@@ -616,7 +647,8 @@ const getSelectedStoryDataForConversationId = (
 };
 
 function viewUserStories(
-  conversationId: string
+  conversationId: string,
+  shouldShowDetailsModal = false
 ): ThunkAction<void, RootStateType, unknown, ViewStoryActionType> {
   return (dispatch, getState) => {
     const { currentIndex, hasUnread, numStories, storiesByConversationId } =
@@ -629,8 +661,9 @@ function viewUserStories(
       payload: {
         selectedStoryData: {
           currentIndex,
+          messageId: story.messageId,
           numStories,
-          story,
+          shouldShowDetailsModal,
         },
         storyViewMode: hasUnread
           ? StoryViewModeType.Unread
@@ -640,19 +673,23 @@ function viewUserStories(
   };
 }
 
-export type ViewStoryActionCreatorType = (
-  storyId?: string,
-  storyViewMode?: StoryViewModeType,
-  viewDirection?: StoryViewDirectionType
-) => unknown;
+export type ViewStoryActionCreatorType = (opts: {
+  closeViewer?: boolean;
+  storyId?: string;
+  storyViewMode?: StoryViewModeType;
+  viewDirection?: StoryViewDirectionType;
+  shouldShowDetailsModal?: boolean;
+}) => unknown;
 
-const viewStory: ViewStoryActionCreatorType = (
+const viewStory: ViewStoryActionCreatorType = ({
+  closeViewer,
+  shouldShowDetailsModal = false,
   storyId,
   storyViewMode,
-  viewDirection
-): ThunkAction<void, RootStateType, unknown, ViewStoryActionType> => {
+  viewDirection,
+}): ThunkAction<void, RootStateType, unknown, ViewStoryActionType> => {
   return (dispatch, getState) => {
-    if (!storyId || !storyViewMode) {
+    if (closeViewer || !storyId || !storyViewMode) {
       dispatch({
         type: VIEW_STORY,
         payload: undefined,
@@ -669,7 +706,9 @@ const viewStory: ViewStoryActionCreatorType = (
     // If all stories from a user are viewed, opening the viewer should take
     //    you to their oldest story
 
-    const story = stories.find(item => item.messageId === storyId);
+    const story = stories.find(
+      item => item.messageId === storyId && !item.deletedForEveryone
+    );
 
     if (!story) {
       return;
@@ -690,8 +729,9 @@ const viewStory: ViewStoryActionCreatorType = (
         payload: {
           selectedStoryData: {
             currentIndex,
+            messageId: storyId,
             numStories,
-            story,
+            shouldShowDetailsModal,
           },
           storyViewMode,
         },
@@ -712,8 +752,9 @@ const viewStory: ViewStoryActionCreatorType = (
         payload: {
           selectedStoryData: {
             currentIndex: nextIndex,
+            messageId: nextStory.messageId,
             numStories,
-            story: nextStory,
+            shouldShowDetailsModal: false,
           },
           storyViewMode,
         },
@@ -731,8 +772,9 @@ const viewStory: ViewStoryActionCreatorType = (
         payload: {
           selectedStoryData: {
             currentIndex: nextIndex,
+            messageId: nextStory.messageId,
             numStories,
-            story: nextStory,
+            shouldShowDetailsModal: false,
           },
           storyViewMode,
         },
@@ -744,7 +786,8 @@ const viewStory: ViewStoryActionCreatorType = (
     // stories first. But only if we're going "next"
     if (viewDirection === StoryViewDirectionType.Next) {
       const unreadStory = stories.find(
-        item => item.readStatus === ReadStatus.Unread
+        item =>
+          item.readStatus === ReadStatus.Unread && !item.deletedForEveryone
       );
       if (unreadStory) {
         const nextSelectedStoryData = getSelectedStoryDataForConversationId(
@@ -758,8 +801,9 @@ const viewStory: ViewStoryActionCreatorType = (
           payload: {
             selectedStoryData: {
               currentIndex: nextSelectedStoryData.currentIndex,
+              messageId: unreadStory.messageId,
               numStories: nextSelectedStoryData.numStories,
-              story: unreadStory,
+              shouldShowDetailsModal: false,
             },
             storyViewMode,
           },
@@ -818,8 +862,10 @@ const viewStory: ViewStoryActionCreatorType = (
         payload: {
           selectedStoryData: {
             currentIndex: 0,
+            messageId:
+              nextSelectedStoryData.storiesByConversationId[0].messageId,
             numStories: nextSelectedStoryData.numStories,
-            story: nextSelectedStoryData.storiesByConversationId[0],
+            shouldShowDetailsModal: false,
           },
           storyViewMode,
         },
@@ -854,8 +900,10 @@ const viewStory: ViewStoryActionCreatorType = (
         payload: {
           selectedStoryData: {
             currentIndex: 0,
+            messageId:
+              nextSelectedStoryData.storiesByConversationId[0].messageId,
             numStories: nextSelectedStoryData.numStories,
-            story: nextSelectedStoryData.storiesByConversationId[0],
+            shouldShowDetailsModal: false,
           },
           storyViewMode,
         },
@@ -878,6 +926,7 @@ export const actions = {
   queueStoryDownload,
   reactToStory,
   replyToStory,
+  sendStoryMessage,
   storyChanged,
   toggleStoriesView,
   viewUserStories,
@@ -906,6 +955,12 @@ export function reducer(
     return {
       ...state,
       isShowingStoriesView: !state.isShowingStoriesView,
+      selectedStoryData: state.isShowingStoriesView
+        ? undefined
+        : state.selectedStoryData,
+      storyViewMode: state.isShowingStoriesView
+        ? undefined
+        : state.storyViewMode,
     };
   }
 
@@ -952,6 +1007,8 @@ export function reducer(
       const hasAttachmentDownloaded =
         !isDownloaded(prevStory.attachment) &&
         isDownloaded(newStory.attachment);
+      const hasAttachmentFailed =
+        hasFailed(newStory.attachment) && !hasFailed(prevStory.attachment);
       const readStatusChanged = prevStory.readStatus !== newStory.readStatus;
       const reactionsChanged =
         prevStory.reactions?.length !== newStory.reactions?.length;
@@ -965,12 +1022,22 @@ export function reducer(
       const shouldReplace =
         isDownloadingAttachment ||
         hasAttachmentDownloaded ||
+        hasAttachmentFailed ||
         hasBeenDeleted ||
         hasSendStateChanged ||
         readStatusChanged ||
         reactionsChanged;
       if (!shouldReplace) {
         return state;
+      }
+
+      if (hasBeenDeleted) {
+        return {
+          ...state,
+          stories: state.stories.filter(
+            existingStory => existingStory.messageId !== newStory.messageId
+          ),
+        };
       }
 
       return {
@@ -1010,6 +1077,26 @@ export function reducer(
     return {
       ...state,
       replyState: action.payload,
+    };
+  }
+
+  if (action.type === 'MESSAGES_ADDED' && action.payload.isJustSent) {
+    const stories = action.payload.messages.filter(isStory);
+    if (!stories.length) {
+      return state;
+    }
+
+    const newStories = stories
+      .map(messageAttrs => getStoryDataFromMessageAttributes(messageAttrs))
+      .filter(isNotNil);
+
+    if (!newStories.length) {
+      return state;
+    }
+
+    return {
+      ...state,
+      stories: [...state.stories, ...newStories],
     };
   }
 
@@ -1100,20 +1187,11 @@ export function reducer(
   }
 
   if (action.type === DOE_STORY) {
-    const prevStoryIndex = state.stories.findIndex(
-      existingStory => existingStory.messageId === action.payload
-    );
-
-    if (prevStoryIndex < 0) {
-      return state;
-    }
-
     return {
       ...state,
-      stories: replaceIndex(state.stories, prevStoryIndex, {
-        ...state.stories[prevStoryIndex],
-        deletedForEveryone: true,
-      }),
+      stories: state.stories.filter(
+        existingStory => existingStory.messageId !== action.payload
+      ),
     };
   }
 

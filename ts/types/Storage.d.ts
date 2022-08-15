@@ -35,8 +35,8 @@ export type NotificationSettingType = 'message' | 'name' | 'count' | 'off';
 export type IdentityKeyMap = Record<
   string,
   {
-    privKey: string;
-    pubKey: string;
+    privKey: Uint8Array;
+    pubKey: Uint8Array;
   }
 >;
 
@@ -65,6 +65,7 @@ export type StorageAccessType = {
   customColors: CustomColorsItemType;
   device_name: string;
   hasRegisterSupportForUnauthenticatedDelivery: boolean;
+  hasStoriesEnabled: boolean;
   identityKeyMap: IdentityKeyMap;
   lastHeartbeat: number;
   lastStartup: number;

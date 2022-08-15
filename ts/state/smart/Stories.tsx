@@ -11,6 +11,7 @@ import { SmartStoryCreator } from './StoryCreator';
 import { Stories } from '../../components/Stories';
 import { getMe } from '../selectors/conversations';
 import { getIntl } from '../selectors/user';
+import { getPreferredBadgeSelector } from '../selectors/badges';
 import { getPreferredLeftPaneWidth } from '../selectors/items';
 import { getStories } from '../selectors/stories';
 import { saveAttachment } from '../../util/saveAttachment';
@@ -19,15 +20,17 @@ import { useGlobalModalActions } from '../ducks/globalModals';
 import { useStoriesActions } from '../ducks/stories';
 
 function renderStoryCreator({
+  file,
   onClose,
 }: SmartStoryCreatorPropsType): JSX.Element {
-  return <SmartStoryCreator onClose={onClose} />;
+  return <SmartStoryCreator file={file} onClose={onClose} />;
 }
 
 export function SmartStories(): JSX.Element | null {
   const storiesActions = useStoriesActions();
   const { showConversation, toggleHideStories } = useConversationsActions();
-  const { toggleForwardMessageModal } = useGlobalModalActions();
+  const { showStoriesSettings, toggleForwardMessageModal } =
+    useGlobalModalActions();
 
   const i18n = useSelector<StateType, LocalizerType>(getIntl);
 
@@ -38,6 +41,7 @@ export function SmartStories(): JSX.Element | null {
   const preferredWidthFromStorage = useSelector<StateType, number>(
     getPreferredLeftPaneWidth
   );
+  const getPreferredBadge = useSelector(getPreferredBadgeSelector);
 
   const { hiddenStories, myStories, stories } = useSelector(getStories);
 
@@ -49,6 +53,7 @@ export function SmartStories(): JSX.Element | null {
 
   return (
     <Stories
+      getPreferredBadge={getPreferredBadge}
       hiddenStories={hiddenStories}
       i18n={i18n}
       me={me}
@@ -64,6 +69,7 @@ export function SmartStories(): JSX.Element | null {
       preferredWidthFromStorage={preferredWidthFromStorage}
       renderStoryCreator={renderStoryCreator}
       showConversation={showConversation}
+      showStoriesSettings={showStoriesSettings}
       stories={stories}
       toggleHideStories={toggleHideStories}
       {...storiesActions}

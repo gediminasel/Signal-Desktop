@@ -389,7 +389,6 @@ async function prepareUrl(
     directoryV3Url: config.get<string | null>('directoryV3Url') || undefined,
     directoryV3MRENCLAVE:
       config.get<string | null>('directoryV3MRENCLAVE') || undefined,
-    directoryV3Root: config.get<string | null>('directoryV3Root') || undefined,
   });
   if (!directoryConfig.success) {
     throw new Error(
@@ -607,10 +606,15 @@ if (OS.isWindows()) {
   windowIcon = join(__dirname, '../build/icons/png/512x512.png');
 }
 
+// The titlebar is hidden on:
+//   - Windows < 10 (7, 8)
+//   - macOS (but no custom titlebar is displayed, see
+//     `--title-bar-drag-area-height` in `stylesheets/_titlebar.scss`
 const mainTitleBarStyle =
-  OS.isLinux() || isTestEnvironment(getEnvironment())
-    ? ('default' as const)
-    : ('hidden' as const);
+  (OS.isMacOS() || OS.hasCustomTitleBar()) &&
+  !isTestEnvironment(getEnvironment())
+    ? ('hidden' as const)
+    : ('default' as const);
 
 const nonMainTitleBarStyle = OS.hasCustomTitleBar()
   ? ('hidden' as const)
@@ -641,7 +645,7 @@ async function getTitleBarOverlay(): Promise<TitleBarOverlayOptions | false> {
     color,
     symbolColor,
 
-    // Should match stylesheets/components/TitleBarContainer.scss
+    // Should match `--titlebar-height` in stylesheets/_titlebar.scss
     height: 28 - 1,
   };
 }
@@ -1584,7 +1588,7 @@ app.on('ready', async () => {
 
   if (!locale) {
     const appLocale = getAppLocale();
-    locale = loadLocale({ appLocale, logger });
+    locale = loadLocale({ appLocale, logger: getLogger() });
   }
 
   sqlInitPromise = initializeSQL(userDataPath);

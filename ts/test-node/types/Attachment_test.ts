@@ -62,7 +62,7 @@ describe('Attachment', () => {
       });
     });
     context('for attachment with index', () => {
-      it('should use filename if provided', () => {
+      it('should use filename if it is provided', () => {
         const attachment: Attachment.AttachmentType = fakeAttachment({
           fileName: 'funny-cat.mov',
           data: Bytes.fromString('foo'),
@@ -74,9 +74,44 @@ describe('Attachment', () => {
         const actual = Attachment.getSuggestedFilename({
           attachment,
           timestamp,
-          index: 3,
         });
         const expected = 'funny-cat.mov';
+        assert.strictEqual(actual, expected);
+      });
+
+      it('should use filename if it is provided and index is 1', () => {
+        const attachment: Attachment.AttachmentType = fakeAttachment({
+          fileName: 'funny-cat.mov',
+          data: Bytes.fromString('foo'),
+          contentType: MIME.VIDEO_QUICKTIME,
+        });
+        const timestamp = new Date(
+          DAY + new Date(DAY).getTimezoneOffset() * 60 * 1000
+        );
+        const actual = Attachment.getSuggestedFilename({
+          attachment,
+          timestamp,
+          index: 1,
+        });
+        const expected = 'funny-cat.mov';
+        assert.strictEqual(actual, expected);
+      });
+
+      it('should use filename if it is provided and index is >1', () => {
+        const attachment: Attachment.AttachmentType = fakeAttachment({
+          fileName: 'funny-cat.mov',
+          data: Bytes.fromString('foo'),
+          contentType: MIME.VIDEO_QUICKTIME,
+        });
+        const timestamp = new Date(
+          DAY + new Date(DAY).getTimezoneOffset() * 60 * 1000
+        );
+        const actual = Attachment.getSuggestedFilename({
+          attachment,
+          timestamp,
+          index: 2,
+        });
+        const expected = 'signal-1970-01-02-000000_002.mov';
         assert.strictEqual(actual, expected);
       });
 
@@ -396,6 +431,7 @@ describe('Attachment', () => {
 
       const actual = await Attachment.migrateDataToFileSystem(input, {
         writeNewAttachmentData,
+        logger,
       });
       assert.deepEqual(actual, expected);
     });
@@ -417,11 +453,12 @@ describe('Attachment', () => {
 
       const actual = await Attachment.migrateDataToFileSystem(input, {
         writeNewAttachmentData,
+        logger,
       });
       assert.deepEqual(actual, expected);
     });
 
-    it('should throw error if data is not valid', async () => {
+    it('should clear `data` field if it is not a typed array', async () => {
       const input = {
         contentType: MIME.IMAGE_JPEG,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -432,12 +469,12 @@ describe('Attachment', () => {
 
       const writeNewAttachmentData = async () => 'abc/abcdefgh123456789';
 
-      await assert.isRejected(
-        Attachment.migrateDataToFileSystem(input, {
-          writeNewAttachmentData,
-        }),
-        'Expected `attachment.data` to be a typed array; got: number'
-      );
+      const actual = await Attachment.migrateDataToFileSystem(input, {
+        writeNewAttachmentData,
+        logger,
+      });
+
+      assert.isUndefined(actual.data);
     });
   });
 });

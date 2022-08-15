@@ -2,11 +2,21 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 .ContextMenu {
+  &__container {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+
   &__popper {
     @extend %module-composition-popper;
     margin: 0;
-    padding: 6px 0;
+    padding: 6px 2px;
     width: auto;
+
+    &--single-item {
+      padding: 0;
+    }
   }
 
   &__title {
@@ -16,50 +26,6 @@
 
   &__button {
     @include button-reset();
-    align-items: center;
-    border-radius: 16px;
-    display: flex;
-    height: 32px;
-    justify-content: center;
-    opacity: 0.5;
-    width: 32px;
-
-    &:focus,
-    &:hover {
-      opacity: 1;
-    }
-
-    &::after {
-      @include light-theme {
-        @include color-svg(
-          '../images/icons/v2/collapse-down-20.svg',
-          $color-black
-        );
-      }
-      @include dark-theme {
-        @include color-svg(
-          '../images/icons/v2/collapse-down-20.svg',
-          $color-white
-        );
-      }
-      content: '';
-      display: block;
-      flex-shrink: 0;
-      height: 24px;
-      width: 24px;
-    }
-
-    &--active {
-      opacity: 1;
-
-      @include light-theme() {
-        background-color: $color-gray-05;
-      }
-
-      @include dark-theme() {
-        background-color: $color-gray-75;
-      }
-    }
   }
 
   &__option {
@@ -74,8 +40,8 @@
     display: flex;
     justify-content: space-between;
     padding: 6px;
-    margin: 0 2px;
     min-width: 150px;
+    width: 100%;
 
     &--container {
       display: flex;
@@ -121,9 +87,15 @@
     &--focused,
     &:focus,
     &:active {
-      border-radius: 6px;
-      box-shadow: 0 0 1px 1px $color-ultramarine;
-      outline: none;
+      @include keyboard-mode {
+        border-radius: 6px;
+        box-shadow: 0 0 1px 1px $color-ultramarine;
+        outline: none;
+      }
     }
+  }
+
+  &__popper--single-item &__option {
+    padding: 12px 6px;
   }
 }

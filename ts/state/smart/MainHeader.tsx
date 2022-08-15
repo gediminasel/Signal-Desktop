@@ -17,6 +17,7 @@ import {
 } from '../selectors/user';
 import { getMe } from '../selectors/conversations';
 import { getStoriesEnabled } from '../selectors/items';
+import { getUnreadStorySenderCount } from '../selectors/stories';
 
 const mapStateToProps = (state: StateType) => {
   const me = getMe(state);
@@ -31,6 +32,7 @@ const mapStateToProps = (state: StateType) => {
     badge: getPreferredBadgeSelector(state)(me.badges),
     theme: getTheme(state),
     i18n: getIntl(state),
+    unreadStoriesCount: getUnreadStorySenderCount(state),
   };
 };
 

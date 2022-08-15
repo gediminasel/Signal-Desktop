@@ -87,6 +87,7 @@ export type ProcessedEnvelope = Readonly<{
   sourceUuid?: UUIDStringType;
   sourceDevice?: number;
   destinationUuid: UUID;
+  updatedPni?: UUID;
   timestamp: number;
   content?: Uint8Array;
   serverGuid: string;
@@ -170,6 +171,7 @@ export type ProcessedSticker = {
   packId?: string;
   packKey?: string;
   stickerId?: number;
+  emoji?: string;
   data?: ProcessedAttachment;
 };
 
@@ -270,3 +272,9 @@ export interface CallbackResultType {
 export interface IRequestHandler {
   handleRequest(request: IncomingWebSocketRequest): void;
 }
+
+export type PniKeyMaterialType = Readonly<{
+  identityKeyPair: Uint8Array;
+  signedPreKey: Uint8Array;
+  registrationId: number;
+}>;

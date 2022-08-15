@@ -3,12 +3,16 @@
 
 import { assert } from 'chai';
 import type { PrimaryDevice, Group } from '@signalapp/mock-server';
-import { StorageState, Proto } from '@signalapp/mock-server';
+import { StorageState, Proto, UUIDKind } from '@signalapp/mock-server';
 import createDebug from 'debug';
 
 import * as durations from '../../util/durations';
 import { Bootstrap } from '../bootstrap';
 import type { App } from '../bootstrap';
+import { MY_STORIES_ID } from '../../types/Stories';
+import { uuidToBytes } from '../../util/uuidToBytes';
+
+const IdentifierType = Proto.ManifestRecord.Identifier.Type;
 
 export const debug = createDebug('mock:test:gv2');
 
@@ -51,11 +55,24 @@ describe('gv2', function needsName() {
       identityState: Proto.ContactRecord.IdentityState.VERIFIED,
       whitelisted: true,
 
-      identityKey: pniContact.pniPublicKey.serialize(),
+      identityKey: pniContact.getPublicKey(UUIDKind.PNI).serialize(),
 
       // Give PNI as the uuid!
       serviceUuid: pniContact.device.pni,
       givenName: 'PNI Contact',
+    });
+
+    state = state.addRecord({
+      type: IdentifierType.STORY_DISTRIBUTION_LIST,
+      record: {
+        storyDistributionList: {
+          allowsReplies: true,
+          identifier: uuidToBytes(MY_STORIES_ID),
+          isBlockList: true,
+          name: MY_STORIES_ID,
+          recipientUuids: [],
+        },
+      },
     });
 
     await phone.setStorageState(state);

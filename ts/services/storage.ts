@@ -21,11 +21,13 @@ import {
   mergeGroupV1Record,
   mergeGroupV2Record,
   mergeStoryDistributionListRecord,
+  mergeStickerPackRecord,
   toAccountRecord,
   toContactRecord,
   toGroupV1Record,
   toGroupV2Record,
   toStoryDistributionListRecord,
+  toStickerPackRecord,
 } from './storageRecordOps';
 import type { MergeResultType } from './storageRecordOps';
 import { MAX_READ_KEYS } from './storageConstants';
@@ -52,6 +54,13 @@ import type {
   UnknownRecord,
 } from '../types/StorageService.d';
 import MessageSender from '../textsecure/SendMessage';
+import type {
+  StoryDistributionWithMembersType,
+  StorageServiceFieldsType,
+  StickerPackType,
+  UninstalledStickerPackType,
+} from '../sql/Interface';
+import { MY_STORIES_ID } from '../types/Stories';
 
 type IManifestRecordIdentifier = Proto.ManifestRecord.IIdentifier;
 
@@ -320,26 +329,110 @@ async function generateManifest(
     }
   }
 
-  const storyDistributionLists =
-    await dataInterface.getAllStoryDistributionsWithMembers();
+  const {
+    storyDistributionLists,
+    installedStickerPacks,
+    uninstalledStickerPacks,
+  } = await getNonConversationRecords();
 
   log.info(
-    `storageService.upload(${version}): adding storyDistributionLists=${storyDistributionLists.length}`
+    `storageService.upload(${version}): ` +
+      `adding storyDistributionLists=${storyDistributionLists.length}`
   );
 
   storyDistributionLists.forEach(storyDistributionList => {
+    const storageRecord = new Proto.StorageRecord();
+    storageRecord.storyDistributionList = toStoryDistributionListRecord(
+      storyDistributionList
+    );
+
     const { isNewItem, storageID } = processStorageRecord({
       currentStorageID: storyDistributionList.storageID,
       currentStorageVersion: storyDistributionList.storageVersion,
       identifierType: ITEM_TYPE.STORY_DISTRIBUTION_LIST,
       storageNeedsSync: storyDistributionList.storageNeedsSync,
-      storageRecord: toStoryDistributionListRecord(storyDistributionList),
+      storageRecord,
     });
 
     if (isNewItem) {
       postUploadUpdateFunctions.push(() => {
         dataInterface.modifyStoryDistribution({
           ...storyDistributionList,
+          storageID,
+          storageVersion: version,
+          storageNeedsSync: false,
+        });
+      });
+    }
+  });
+
+  log.info(
+    `storageService.upload(${version}): ` +
+      `adding uninstalled stickerPacks=${uninstalledStickerPacks.length}`
+  );
+
+  const uninstalledStickerPackIds = new Set<string>();
+
+  uninstalledStickerPacks.forEach(stickerPack => {
+    const storageRecord = new Proto.StorageRecord();
+    storageRecord.stickerPack = toStickerPackRecord(stickerPack);
+
+    uninstalledStickerPackIds.add(stickerPack.id);
+
+    const { isNewItem, storageID } = processStorageRecord({
+      currentStorageID: stickerPack.storageID,
+      currentStorageVersion: stickerPack.storageVersion,
+      identifierType: ITEM_TYPE.STICKER_PACK,
+      storageNeedsSync: stickerPack.storageNeedsSync,
+      storageRecord,
+    });
+
+    if (isNewItem) {
+      postUploadUpdateFunctions.push(() => {
+        dataInterface.addUninstalledStickerPack({
+          ...stickerPack,
+          storageID,
+          storageVersion: version,
+          storageNeedsSync: false,
+        });
+      });
+    }
+  });
+
+  log.info(
+    `storageService.upload(${version}): ` +
+      `adding installed stickerPacks=${installedStickerPacks.length}`
+  );
+
+  installedStickerPacks.forEach(stickerPack => {
+    if (uninstalledStickerPackIds.has(stickerPack.id)) {
+      log.error(
+        `storageService.upload(${version}): ` +
+          `sticker pack ${stickerPack.id} is both installed and uninstalled`
+      );
+      window.reduxActions.stickers.uninstallStickerPack(
+        stickerPack.id,
+        stickerPack.key,
+        { fromSync: true }
+      );
+      return;
+    }
+
+    const storageRecord = new Proto.StorageRecord();
+    storageRecord.stickerPack = toStickerPackRecord(stickerPack);
+
+    const { isNewItem, storageID } = processStorageRecord({
+      currentStorageID: stickerPack.storageID,
+      currentStorageVersion: stickerPack.storageVersion,
+      identifierType: ITEM_TYPE.STICKER_PACK,
+      storageNeedsSync: stickerPack.storageNeedsSync,
+      storageRecord,
+    });
+
+    if (isNewItem) {
+      postUploadUpdateFunctions.push(() => {
+        dataInterface.createOrUpdateStickerPack({
+          ...stickerPack,
           storageID,
           storageVersion: version,
           storageNeedsSync: false,
@@ -851,6 +944,15 @@ async function mergeRecord(
         storageVersion,
         storageRecord.storyDistributionList
       );
+    } else if (
+      itemType === ITEM_TYPE.STICKER_PACK &&
+      storageRecord.stickerPack
+    ) {
+      mergeResult = await mergeStickerPackRecord(
+        storageID,
+        storageVersion,
+        storageRecord.stickerPack
+      );
     } else {
       isUnsupported = true;
       log.warn(
@@ -907,6 +1009,31 @@ async function mergeRecord(
   };
 }
 
+type NonConversationRecordsResultType = Readonly<{
+  installedStickerPacks: ReadonlyArray<StickerPackType>;
+  uninstalledStickerPacks: ReadonlyArray<UninstalledStickerPackType>;
+  storyDistributionLists: ReadonlyArray<StoryDistributionWithMembersType>;
+}>;
+
+// TODO: DESKTOP-3929
+async function getNonConversationRecords(): Promise<NonConversationRecordsResultType> {
+  const [
+    storyDistributionLists,
+    uninstalledStickerPacks,
+    installedStickerPacks,
+  ] = await Promise.all([
+    dataInterface.getAllStoryDistributionsWithMembers(),
+    dataInterface.getUninstalledStickerPacks(),
+    dataInterface.getInstalledStickerPacks(),
+  ]);
+
+  return {
+    storyDistributionLists,
+    uninstalledStickerPacks,
+    installedStickerPacks,
+  };
+}
+
 async function processManifest(
   manifest: Proto.IManifestRecord,
   version: number
@@ -923,6 +1050,7 @@ async function processManifest(
 
   const remoteKeys = new Set(remoteKeysTypeMap.keys());
   const localVersions = new Map<string, number | undefined>();
+  let localRecordCount = 0;
 
   const conversations = window.getConversations();
   conversations.forEach((conversation: ConversationModel) => {
@@ -931,6 +1059,33 @@ async function processManifest(
       localVersions.set(storageID, conversation.get('storageVersion'));
     }
   });
+  localRecordCount += conversations.length;
+
+  {
+    const {
+      storyDistributionLists,
+      installedStickerPacks,
+      uninstalledStickerPacks,
+    } = await getNonConversationRecords();
+
+    const collectLocalKeysFromFields = ({
+      storageID,
+      storageVersion,
+    }: StorageServiceFieldsType): void => {
+      if (storageID) {
+        localVersions.set(storageID, storageVersion);
+      }
+    };
+
+    storyDistributionLists.forEach(collectLocalKeysFromFields);
+    localRecordCount += storyDistributionLists.length;
+
+    uninstalledStickerPacks.forEach(collectLocalKeysFromFields);
+    localRecordCount += uninstalledStickerPacks.length;
+
+    installedStickerPacks.forEach(collectLocalKeysFromFields);
+    localRecordCount += installedStickerPacks.length;
+  }
 
   const unknownRecordsArray: ReadonlyArray<UnknownRecord> =
     window.storage.get('storage-service-unknown-records') || [];
@@ -966,7 +1121,7 @@ async function processManifest(
   );
 
   log.info(
-    `storageService.process(${version}): localRecords=${conversations.length} ` +
+    `storageService.process(${version}): localRecords=${localRecordCount} ` +
       `localKeys=${localVersions.size} unknownKeys=${stillUnknown.length} ` +
       `remoteKeys=${remoteKeys.size}`
   );
@@ -1017,6 +1172,98 @@ async function processManifest(
       updateConversation(conversation.attributes);
     }
   });
+
+  // Refetch various records post-merge
+  {
+    const {
+      storyDistributionLists,
+      installedStickerPacks,
+      uninstalledStickerPacks,
+    } = await getNonConversationRecords();
+
+    uninstalledStickerPacks.forEach(stickerPack => {
+      const { storageID, storageVersion } = stickerPack;
+      if (!storageID || remoteKeys.has(storageID)) {
+        return;
+      }
+
+      const missingKey = redactStorageID(storageID, storageVersion);
+      log.info(
+        `storageService.process(${version}): localKey=${missingKey} was not ` +
+          'in remote manifest'
+      );
+      dataInterface.addUninstalledStickerPack({
+        ...stickerPack,
+        storageID: undefined,
+        storageVersion: undefined,
+      });
+    });
+
+    installedStickerPacks.forEach(stickerPack => {
+      const { storageID, storageVersion } = stickerPack;
+      if (!storageID || remoteKeys.has(storageID)) {
+        return;
+      }
+
+      const missingKey = redactStorageID(storageID, storageVersion);
+      log.info(
+        `storageService.process(${version}): localKey=${missingKey} was not ` +
+          'in remote manifest'
+      );
+      dataInterface.createOrUpdateStickerPack({
+        ...stickerPack,
+        storageID: undefined,
+        storageVersion: undefined,
+      });
+    });
+
+    storyDistributionLists.forEach(storyDistributionList => {
+      const { storageID, storageVersion } = storyDistributionList;
+      if (!storageID || remoteKeys.has(storageID)) {
+        return;
+      }
+
+      const missingKey = redactStorageID(storageID, storageVersion);
+      log.info(
+        `storageService.process(${version}): localKey=${missingKey} was not ` +
+          'in remote manifest'
+      );
+      dataInterface.modifyStoryDistribution({
+        ...storyDistributionList,
+        storageID: undefined,
+        storageVersion: undefined,
+      });
+    });
+
+    // Check to make sure we have a "My Stories" distribution list set up
+    const myStories = storyDistributionLists.find(
+      ({ id }) => id === MY_STORIES_ID
+    );
+
+    if (!myStories) {
+      const storyDistribution: StoryDistributionWithMembersType = {
+        allowsReplies: true,
+        id: MY_STORIES_ID,
+        isBlockList: true,
+        members: [],
+        name: MY_STORIES_ID,
+        senderKeyInfo: undefined,
+        storageNeedsSync: true,
+      };
+
+      await dataInterface.createNewStoryDistribution(storyDistribution);
+
+      const shouldSave = false;
+      window.reduxActions.storyDistributionLists.createDistributionList(
+        storyDistribution.name,
+        storyDistribution.members,
+        storyDistribution,
+        shouldSave
+      );
+
+      conflictCount += 1;
+    }
+  }
 
   log.info(
     `storageService.process(${version}): conflictCount=${conflictCount}`
@@ -1242,7 +1489,7 @@ async function processRemoteRecords(
     );
 
     // Intentionally not awaiting
-    pMap(needProfileFetch, convo => convo.getProfiles(), { concurrency: 3 });
+    needProfileFetch.map(convo => convo.getProfiles());
 
     // Collect full map of previously and currently unknown records
     const unknownRecords: Map<string, UnknownRecord> = new Map();

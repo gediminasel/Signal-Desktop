@@ -3,7 +3,6 @@
 
 /* eslint-disable camelcase */
 
-import PQueue from 'p-queue';
 import type { ThunkAction } from 'redux-thunk';
 import {
   difference,
@@ -196,6 +195,7 @@ export type ConversationType = {
   groupVersion?: 1 | 2;
   groupId?: string;
   groupLink?: string;
+  isGroupStorySendReady?: boolean;
   messageRequestsEnabled?: boolean;
   acceptedMessageRequest: boolean;
   secretParams?: string;
@@ -853,6 +853,7 @@ export const actions = {
   showConversation,
   startComposing,
   startSettingGroupMetadata,
+  tagGroupsAsNewGroupStory,
   toggleAdmin,
   toggleConversationInChooseMembers,
   toggleComposeEditingAvatar,
@@ -1586,9 +1587,6 @@ function conversationStoppedByMissingVerification(payload: {
   untrustedUuids: ReadonlyArray<string>;
 }): ConversationStoppedByMissingVerificationActionType {
   // Fetching profiles to ensure that we have their latest identity key in storage
-  const profileFetchQueue = new PQueue({
-    concurrency: 3,
-  });
   payload.untrustedUuids.forEach(uuid => {
     const conversation = window.ConversationController.get(uuid);
     if (!conversation) {
@@ -1598,10 +1596,8 @@ function conversationStoppedByMissingVerification(payload: {
       return;
     }
 
-    profileFetchQueue.add(() => {
-      const active = conversation.getActiveProfileFetch();
-      return active || conversation.getProfiles();
-    });
+    // Intentionally not awaiting here
+    conversation.getProfiles();
   });
 
   return {
@@ -1952,6 +1948,29 @@ function removeMemberFromGroup(
         task: () => conversationModel.removeFromGroupV2(contactId),
       });
     }
+    dispatch({
+      type: 'NOOP',
+      payload: null,
+    });
+  };
+}
+
+function tagGroupsAsNewGroupStory(
+  conversationIds: Array<string>
+): ThunkAction<void, RootStateType, unknown, NoopActionType> {
+  return async dispatch => {
+    await Promise.all(
+      conversationIds.map(async conversationId => {
+        const conversation = window.ConversationController.get(conversationId);
+        if (!conversation) {
+          return;
+        }
+
+        conversation.set({ isGroupStorySendReady: true });
+        await window.Signal.Data.updateConversation(conversation.attributes);
+      })
+    );
+
     dispatch({
       type: 'NOOP',
       payload: null,

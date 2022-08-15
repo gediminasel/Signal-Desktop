@@ -1141,6 +1141,14 @@
         "message": "סיים",
         "description": "Label for done"
     },
+    "update": {
+        "message": "עדכן",
+        "description": ""
+    },
+    "next2": {
+        "message": "הבא",
+        "description": ""
+    },
     "on": {
         "message": "מופעל",
         "description": "Label for when something is turned on"
@@ -2400,6 +2408,14 @@
     "noConversationsFound": {
         "message": "שיחות לא נמצאו",
         "description": "Label shown when there are no conversations to compose to"
+    },
+    "Toast--error": {
+        "message": "אירעה שגיאה",
+        "description": "Toast for general errors"
+    },
+    "Toast--error--action": {
+        "message": "הגש יומן",
+        "description": "Label for the error toast button"
     },
     "Toast--failed-to-fetch-username": {
         "message": "נכשל במשיכת שם משתמש. בדוק את החיבור שלך ונסה שוב.",
@@ -7143,6 +7159,36 @@
         "message": "למחוק את הסיפור הזה? הוא יימחק גם עבור כל מי שקיבל אותו.",
         "description": "Confirmation dialog description text for deleting a story"
     },
+    "SignalConnectionsModal__title": {
+        "message": "חברי Signal",
+        "description": "The phrase/term: 'Signal Connections'"
+    },
+    "SignalConnectionsModal__header": {
+        "message": "$connections$ הם אנשים שבחרת לבטוח בהם, באמצעות אחת מהפעולות הבאות:",
+        "description": "The beginning sentence to list the different ways a signal connection is formed",
+        "placeholders": {
+            "connections": {
+                "content": "$1",
+                "example": "Signal Connections"
+            }
+        }
+    },
+    "SignalConnectionsModal__bullet--1": {
+        "message": "מתחיל שיחה",
+        "description": "A way that signal connection is formed"
+    },
+    "SignalConnectionsModal__bullet--2": {
+        "message": "אישור בקשת הודעה",
+        "description": "A way that signal connection is formed"
+    },
+    "SignalConnectionsModal__bullet--3": {
+        "message": "שמירה באנשי הקשר שלך",
+        "description": "A way that signal connection is formed"
+    },
+    "SignalConnectionsModal__footer": {
+        "message": "חברי ה-Signal שלך יכולים לראות את השם והתמונה שלך, והם יכולים גם לראות פוסטים תחת ״הסטורי שלי״ אלא אם כן בחרת להסתיר אותם מהם.",
+        "description": "Additional information about signal connections and the stories they can see"
+    },
     "Stories__title": {
         "message": "סיפורים",
         "description": "Title for the stories list"
@@ -7181,6 +7227,182 @@
             }
         }
     },
+    "Stories__toast--sending-reply": {
+        "message": "שולח תשובה...",
+        "description": "Toast message"
+    },
+    "Stories__toast--sending-reaction": {
+        "message": "שולח תגובה...",
+        "description": "Toast message"
+    },
+    "Stories__toast--hasNoSound": {
+        "message": "לסטורי הזה אין צליל",
+        "description": "Toast message"
+    },
+    "StoriesSettings__title": {
+        "message": "הגדרות סיפור",
+        "description": "Title for the story settings modal"
+    },
+    "StoriesSettings__new-list": {
+        "message": "סיפור פרטי חדש",
+        "description": "Label to create a new private story list"
+    },
+    "StoriesSettings__viewers--singular": {
+        "message": "צופה $num$",
+        "description": "A single viewer",
+        "placeholders": {
+            "num": {
+                "content": "$1",
+                "example": "1"
+            }
+        }
+    },
+    "StoriesSettings__viewers--plural": {
+        "message": "$num$ צופים",
+        "description": "More than one viewer",
+        "placeholders": {
+            "num": {
+                "content": "$1",
+                "example": "14"
+            }
+        }
+    },
+    "StoriesSettings__who-can-see": {
+        "message": "מי יכול לראות את הסיפור הזה",
+        "description": "Title for the who can see this story section"
+    },
+    "StoriesSettings__add-viewer": {
+        "message": "הוסף צופה",
+        "description": "Button label to add a viewer to a story"
+    },
+    "StoriesSettings__remove--action": {
+        "message": "הסר",
+        "description": "Button to remove a member from a private list"
+    },
+    "StoriesSettings__remove--title": {
+        "message": "הסרה של $title$",
+        "description": "Title of the confirmation dialog, has a person's name",
+        "placeholders": {
+            "title": {
+                "content": "$1",
+                "example": "Aahron Lee"
+            }
+        }
+    },
+    "StoriesSettings__remove--body": {
+        "message": "האיש הזה לא יראה יותר את הסיפור שלך.",
+        "description": "Body of the confirmation dialog to remove someone from a private distribution list"
+    },
+    "StoriesSettings__replies-reactions--title": {
+        "message": "תשובות ותגובות",
+        "description": "Title for the replies & reactions section"
+    },
+    "StoriesSettings__replies-reactions--label": {
+        "message": "אפשור תשובות ותגובות",
+        "description": "Checkbox label to allow or disallow replies to your stories"
+    },
+    "StoriesSettings__replies-reactions--description": {
+        "message": "אפשר לתת לאנשים שרואים את הסטורי שלך להגיב ולשלוח תשובות.",
+        "description": "Description of checkbox to allow or disallow replies to your stories"
+    },
+    "StoriesSettings__delete-list": {
+        "message": "מחק סיפור פרטי",
+        "description": "Button label to delete a private distribution list"
+    },
+    "StoriesSettings__delete-list--confirm": {
+        "message": "למחוק סטורי פרטי?",
+        "description": "Confirmation text to delete a private distribution list"
+    },
+    "StoriesSettings__choose-viewers": {
+        "message": "בחירת צופים",
+        "description": "Modal title when choosing to add a viewer to a private distribution list"
+    },
+    "StoriesSettings__name-story": {
+        "message": "מתן שם לסטורי זה",
+        "description": "Modal title when naming a private distribution list"
+    },
+    "StoriesSettings__name-placeholder": {
+        "message": "שם סיפור (דרוש)",
+        "description": "Placeholder for input field"
+    },
+    "StoriesSettings__hide-story": {
+        "message": "הסתר סיפור מפני",
+        "description": "Modal title when hiding people from my stories"
+    },
+    "StoriesSettings__mine__all--label": {
+        "message": "כל חברי ה-Signal",
+        "description": "Input label to describe all signal connections"
+    },
+    "StoriesSettings__mine__all--description": {
+        "message": "שיתוף עם כל חברי ה-Signal",
+        "description": "Description of button StoriesSettings__mine__all--label"
+    },
+    "StoriesSettings__mine__exclude--label": {
+        "message": "כל חברי ה-Signal חוץ מ...",
+        "description": "Input label to create a block list"
+    },
+    "StoriesSettings__mine__exclude--description": {
+        "message": "מוסתר מ$num$ אנשים",
+        "description": "Description of how many people are excluded in a list",
+        "placeholders": {
+            "num": {
+                "content": "$1",
+                "example": "0"
+            }
+        }
+    },
+    "StoriesSettings__mine__only--label": {
+        "message": "שיתוף רק עם...",
+        "description": "Input label to create an exclusive allow list"
+    },
+    "StoriesSettings__mine__only--description": {
+        "message": "שיתוף רק עם אנשים נבחרים",
+        "description": "Description of button StoriesSettings__mine__only--label"
+    },
+    "StoriesSettings__mine__only--description--people": {
+        "message": "$num$ אנשים",
+        "description": "Description of how many people are in the exclusive allow list",
+        "placeholders": {
+            "num": {
+                "content": "$1",
+                "example": "7"
+            }
+        }
+    },
+    "StoriesSettings__mine__disclaimer": {
+        "message": "אפשר לבחור מי יראה את הסטורי שלך. השינויים לא ישפיעו על סטוריז שכבר שלחת. $learnMore$",
+        "description": "Disclaimer on how changes to story settings work",
+        "placeholders": {
+            "learnMore": {
+                "content": "$1",
+                "example": "<a>Learn more</a>"
+            }
+        }
+    },
+    "StoriesSettings__mine__disclaimer--learn-more": {
+        "message": "למד עוד.",
+        "description": "Learn more link to learn about who can view your story"
+    },
+    "StoriesSettings__context-menu": {
+        "message": "הגדרות סיפור",
+        "description": "Button label to get to story settings"
+    },
+    "SendStoryModal__title": {
+        "message": "שלח אל",
+        "description": "Title for the send story modal"
+    },
+    "SendStoryModal__send": {
+        "message": "שליחת סטורי",
+        "description": "aria-label for the send story button"
+    },
+    "Stories__settings-toggle--title": {
+        "message": "שיתוף וצפיה בסטוריז",
+        "description": "Select box title for the stories on/off toggle"
+    },
+    "Stories__settings-toggle--description": {
+        "message": "כבר לא תוכלו לשתף או לצפות בסיפורים כאשר האפשרות הזאת כבויה.",
+        "description": "Select box description for the stories on/off toggle"
+    },
     "StoryViewer__pause": {
         "message": "השהה",
         "description": "Aria label for pausing a story"
@@ -7204,6 +7426,30 @@
     "StoryViewer__unmute": {
         "message": "בטל השתקה",
         "description": "Aria label for unmuting stories"
+    },
+    "StoryDetailsModal__sent-time": {
+        "message": "נשלח $time$",
+        "description": "Sent timestamp",
+        "placeholders": {
+            "time": {
+                "content": "$1",
+                "example": "Today 5:33pm"
+            }
+        }
+    },
+    "StoryDetailsModal__file-size": {
+        "message": "גודל קובץ $size$",
+        "description": "File size description",
+        "placeholders": {
+            "size": {
+                "content": "$1",
+                "example": "100kb"
+            }
+        }
+    },
+    "StoryDetailsModal__copy-timestamp": {
+        "message": "העתקת חותמת זמן",
+        "description": "Context menu item to help debugging"
     },
     "StoryViewsNRepliesModal__no-replies": {
         "message": "אין תשובות עדין",
@@ -7240,6 +7486,14 @@
     "StoryListItem__go-to-chat": {
         "message": "לך אל התכתבות",
         "description": "Label for menu item to go to conversation"
+    },
+    "StoryListItem__delete": {
+        "message": "מחק",
+        "description": "Label for menu item to delete a story"
+    },
+    "StoryListItem__info": {
+        "message": "מידע",
+        "description": "Label for menu item to get a story's information"
     },
     "StoryListItem__hide-modal--body": {
         "message": "להסתיר סיפור? עדכוני סיפור חדשים מאת $name$ לא יופיעו יותר בראש רשימת הסיפורים.",
@@ -7293,6 +7547,14 @@
         "message": "Condensed",
         "description": "Label for font"
     },
+    "StoryCreator__control--text": {
+        "message": "הוספת טקסט לסטורי",
+        "description": "aria-label for edit text button"
+    },
+    "StoryCreator__control--link": {
+        "message": "הוספת קישור",
+        "description": "aria-label for adding a link preview"
+    },
     "StoryCreator__link-preview-placeholder": {
         "message": "הקלד או הדבק מען",
         "description": "Placeholder for the URL input for link previews"
@@ -7323,10 +7585,6 @@
             }
         }
     },
-    "Quote__story-reaction--yours": {
-        "message": "הגיב/ה אל הסיפור שלך",
-        "description": "Label for when a person reacts to your story"
-    },
     "Quote__story-reaction--single": {
         "message": "הגיב/ה אל סיפור",
         "description": "Used whenever we can't find a user's first name"
@@ -7347,8 +7605,32 @@
         "message": "גרסה זו מכילה מספר של שפצורים קטנים ותיקוני תקלים כדי לשמור על Signal שירוץ באופן חלק.",
         "description": "Release notes for releases that only include bug fixes"
     },
-    "WhatsNew__v5.47--1": {
-        "message": "לכל מי שמשתמש במצב כהה ב-Windows, יש לנו סרגל כותרת חדש שיתאים בול לסגנון שלכם.",
-        "description": "Release notes for v5.47"
+    "WhatsNew__bugfixes--1": {
+        "message": "עוד כמה התאמות קטנות, תיקוני באגים ושיפורים. תודה על השימוש ב-Signal!",
+        "description": "Release notes for releases that only include bug fixes"
+    },
+    "WhatsNew__bugfixes--2": {
+        "message": "מלא תיקוני באגים כדי לוודא שהאפליקציה שלך תמשיך לרוץ חלק. ויש עוד שדרוגים מרגשים באופק!",
+        "description": "Release notes for releases that only include bug fixes"
+    },
+    "WhatsNew__bugfixes--3": {
+        "message": "התאמות, תיקוני באגים ושיפורי ביצועים. אפשר להמשיך להתכתב, להתקשר ולקיים שיחות וידאו כרגיל.",
+        "description": "Release notes for releases that only include bug fixes"
+    },
+    "WhatsNew__bugfixes--4": {
+        "message": "עובדים קשה על תיקוני באגים ושיפור הביצועים בעוד דרכים כדי לוודא שהאפליקציה שלך תמשיך לרוץ חלק.",
+        "description": "Release notes for releases that only include bug fixes"
+    },
+    "WhatsNew__bugfixes--5": {
+        "message": "עוד התאמות קטנות, תיקוני באגים ומגוון תכניות לעתיד.",
+        "description": "Release notes for releases that only include bug fixes"
+    },
+    "WhatsNew__bugfixes--6": {
+        "message": "התאמות קטנות, תיקוני באגים ושיפורי ביצועים. תודה על השימוש ב-Signal!",
+        "description": "Release notes for releases that only include bug fixes"
+    },
+    "WhatsNew__v5.53--1": {
+        "message": "אם אתם משתמשים בקורא מסך JAWS, עכשיו תוכלו לנגן בהצלחה הודעות קוליות ולגשת להודעות ארוכות יותר שמקוצרות מאחורי כפתור ״קרא עוד״.",
+        "description": "Release notes for v5.53"
     }
 }

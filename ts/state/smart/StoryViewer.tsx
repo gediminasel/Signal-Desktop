@@ -20,11 +20,11 @@ import {
 import { getIntl } from '../selectors/user';
 import { getPreferredBadgeSelector } from '../selectors/badges';
 import {
-  getConversationStory,
   getSelectedStoryData,
   getStoryReplies,
-  getStoryView,
+  getStoryByIdSelector,
 } from '../selectors/stories';
+import { isInFullScreenCall } from '../selectors/calling';
 import { renderEmojiPicker } from './renderEmojiPicker';
 import { strictAssert } from '../../util/assert';
 import { useActions as useEmojisActions } from '../ducks/emojis';
@@ -57,11 +57,18 @@ export function SmartStoryViewer(): JSX.Element | null {
     getConversationSelector
   );
 
-  const storyView = getStoryView(conversationSelector, selectedStoryData.story);
-  const conversationStory = getConversationStory(
+  const getStoryById = useSelector(getStoryByIdSelector);
+
+  const storyInfo = getStoryById(
     conversationSelector,
-    selectedStoryData.story
+    selectedStoryData.messageId
   );
+  strictAssert(
+    storyInfo,
+    'StoryViewer: selected story does not exist in stories'
+  );
+  const { conversationStory, storyView } = storyInfo;
+
   const storyViewMode = useSelector<StateType, StoryViewModeType | undefined>(
     state => state.stories.storyViewMode
   );
@@ -73,11 +80,14 @@ export function SmartStoryViewer(): JSX.Element | null {
     getHasAllStoriesMuted
   );
 
+  const hasActiveCall = useSelector(isInFullScreenCall);
+
   return (
     <StoryViewer
       currentIndex={selectedStoryData.currentIndex}
       getPreferredBadge={getPreferredBadge}
       group={conversationStory.group}
+      hasActiveCall={hasActiveCall}
       hasAllStoriesMuted={hasAllStoriesMuted}
       i18n={i18n}
       numStories={selectedStoryData.numStories}
@@ -106,6 +116,7 @@ export function SmartStoryViewer(): JSX.Element | null {
       recentEmojis={recentEmojis}
       renderEmojiPicker={renderEmojiPicker}
       replyState={replyState}
+      shouldShowDetailsModal={selectedStoryData.shouldShowDetailsModal}
       showToast={showToast}
       skinTone={skinTone}
       story={storyView}

@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import PQueue from 'p-queue';
-import { isNumber } from 'lodash';
+import { isNumber, omit } from 'lodash';
 import { z } from 'zod';
 
 import {
   Direction,
+  IdentityKeyPair,
   PreKeyRecord,
   PrivateKey,
   PublicKey,
@@ -31,6 +32,7 @@ import type {
   IdentityKeyIdType,
   KeyPairType,
   OuterSignedPrekeyType,
+  PniKeyMaterialType,
   PreKeyIdType,
   PreKeyType,
   SenderKeyIdType,
@@ -255,8 +257,8 @@ export class SignalProtocolStore extends EventsMixin {
         for (const key of Object.keys(map.value)) {
           const { privKey, pubKey } = map.value[key];
           this.ourIdentityKeys.set(new UUID(key).toString(), {
-            privKey: Bytes.fromBase64(privKey),
-            pubKey: Bytes.fromBase64(pubKey),
+            privKey,
+            pubKey,
           });
         }
       })(),
@@ -461,7 +463,8 @@ export class SignalProtocolStore extends EventsMixin {
     ourUuid: UUID,
     keyId: number,
     keyPair: KeyPairType,
-    confirmed?: boolean
+    confirmed?: boolean,
+    createdAt = Date.now()
   ): Promise<void> {
     if (!this.signedPreKeys) {
       throw new Error('storeSignedPreKey: this.signedPreKeys not yet cached!');
@@ -475,7 +478,7 @@ export class SignalProtocolStore extends EventsMixin {
       keyId,
       publicKey: keyPair.pubKey,
       privateKey: keyPair.privKey,
-      created_at: Date.now(),
+      created_at: createdAt,
       confirmed: Boolean(confirmed),
     };
 
@@ -1042,11 +1045,11 @@ export class SignalProtocolStore extends EventsMixin {
       }
       const { uuid, deviceId } = qualifiedAddress;
 
-      const conversationId = window.ConversationController.ensureContactIds({
+      const conversation = window.ConversationController.lookupOrCreate({
         uuid: uuid.toString(),
       });
       strictAssert(
-        conversationId !== undefined,
+        conversation !== undefined,
         'storeSession: Ensure contact ids failed'
       );
       const id = qualifiedAddress.toString();
@@ -1056,7 +1059,7 @@ export class SignalProtocolStore extends EventsMixin {
           id,
           version: 2,
           ourUuid: qualifiedAddress.ourUuid.toString(),
-          conversationId,
+          conversationId: conversation.id,
           uuid: uuid.toString(),
           deviceId,
           record: record.serialize().toString('base64'),
@@ -1373,12 +1376,9 @@ export class SignalProtocolStore extends EventsMixin {
       const { uuid } = qualifiedAddress;
 
       // First, fetch this conversation
-      const conversationId = window.ConversationController.ensureContactIds({
+      const conversation = window.ConversationController.lookupOrCreate({
         uuid: uuid.toString(),
       });
-      assert(conversationId, `lightSessionReset/${id}: missing conversationId`);
-
-      const conversation = window.ConversationController.get(conversationId);
       assert(conversation, `lightSessionReset/${id}: missing conversation`);
 
       log.warn(`lightSessionReset/${id}: Resetting session`);
@@ -1933,6 +1933,101 @@ export class SignalProtocolStore extends EventsMixin {
     return this.withZone(GLOBAL_ZONE, 'removeAllUnprocessed', async () => {
       await window.Signal.Data.removeAllUnprocessed();
     });
+  }
+
+  async removeOurOldPni(oldPni: UUID): Promise<void> {
+    const { storage } = window;
+
+    log.info(`SignalProtocolStore.removeOurOldPni(${oldPni})`);
+
+    // Update caches
+    this.ourIdentityKeys.delete(oldPni.toString());
+    this.ourRegistrationIds.delete(oldPni.toString());
+
+    const preKeyPrefix = `${oldPni.toString()}:`;
+    if (this.preKeys) {
+      for (const key of this.preKeys.keys()) {
+        if (key.startsWith(preKeyPrefix)) {
+          this.preKeys.delete(key);
+        }
+      }
+    }
+    if (this.signedPreKeys) {
+      for (const key of this.signedPreKeys.keys()) {
+        if (key.startsWith(preKeyPrefix)) {
+          this.signedPreKeys.delete(key);
+        }
+      }
+    }
+
+    // Update database
+    await Promise.all([
+      storage.put(
+        'identityKeyMap',
+        omit(storage.get('identityKeyMap') || {}, oldPni.toString())
+      ),
+      storage.put(
+        'registrationIdMap',
+        omit(storage.get('registrationIdMap') || {}, oldPni.toString())
+      ),
+      window.Signal.Data.removePreKeysByUuid(oldPni.toString()),
+      window.Signal.Data.removeSignedPreKeysByUuid(oldPni.toString()),
+    ]);
+  }
+
+  async updateOurPniKeyMaterial(
+    pni: UUID,
+    {
+      identityKeyPair: identityBytes,
+      signedPreKey: signedPreKeyBytes,
+      registrationId,
+    }: PniKeyMaterialType
+  ): Promise<void> {
+    log.info(`SignalProtocolStore.updateOurPniKeyMaterial(${pni})`);
+
+    const identityKeyPair = IdentityKeyPair.deserialize(
+      Buffer.from(identityBytes)
+    );
+    const signedPreKey = SignedPreKeyRecord.deserialize(
+      Buffer.from(signedPreKeyBytes)
+    );
+
+    const { storage } = window;
+
+    const pniPublicKey = identityKeyPair.publicKey.serialize();
+    const pniPrivateKey = identityKeyPair.privateKey.serialize();
+
+    // Update caches
+    this.ourIdentityKeys.set(pni.toString(), {
+      pubKey: pniPublicKey,
+      privKey: pniPrivateKey,
+    });
+    this.ourRegistrationIds.set(pni.toString(), registrationId);
+
+    // Update database
+    await Promise.all([
+      storage.put('identityKeyMap', {
+        ...(storage.get('identityKeyMap') || {}),
+        [pni.toString()]: {
+          pubKey: pniPublicKey,
+          privKey: pniPrivateKey,
+        },
+      }),
+      storage.put('registrationIdMap', {
+        ...(storage.get('registrationIdMap') || {}),
+        [pni.toString()]: registrationId,
+      }),
+      this.storeSignedPreKey(
+        pni,
+        signedPreKey.id(),
+        {
+          privKey: signedPreKey.privateKey().serialize(),
+          pubKey: signedPreKey.publicKey().serialize(),
+        },
+        true,
+        signedPreKey.timestamp()
+      ),
+    ]);
   }
 
   async removeAllData(): Promise<void> {

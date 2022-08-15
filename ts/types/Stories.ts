@@ -4,24 +4,32 @@
 import type { AttachmentType } from './Attachment';
 import type { ContactNameColorType } from './Colors';
 import type { ConversationType } from '../state/ducks/conversations';
+import type { LocalizerType } from './Util';
+import type { ReadStatus } from '../messages/MessageReadStatus';
 import type { SendStatus } from '../messages/MessageSendState';
+import type { StoryDistributionListDataType } from '../state/ducks/storyDistributionLists';
 
-export type ReplyType = Pick<
-  ConversationType,
-  | 'acceptedMessageRequest'
-  | 'avatarPath'
-  | 'color'
-  | 'isMe'
-  | 'name'
-  | 'profileName'
-  | 'sharedGroupNames'
-  | 'title'
-> & {
+export type ReplyType = {
+  author: Pick<
+    ConversationType,
+    | 'acceptedMessageRequest'
+    | 'avatarPath'
+    | 'badges'
+    | 'color'
+    | 'id'
+    | 'isMe'
+    | 'name'
+    | 'profileName'
+    | 'sharedGroupNames'
+    | 'title'
+  >;
   body?: string;
   contactNameColor?: ContactNameColorType;
+  conversationId: string;
   deletedForEveryone?: boolean;
   id: string;
   reactionEmoji?: string;
+  readStatus?: ReadStatus;
   timestamp: number;
 };
 
@@ -50,18 +58,7 @@ export type ConversationStoryType = {
 
 export type StorySendStateType = {
   isAllowedToReplyToStory?: boolean;
-  recipient: Pick<
-    ConversationType,
-    | 'acceptedMessageRequest'
-    | 'avatarPath'
-    | 'color'
-    | 'id'
-    | 'isMe'
-    | 'name'
-    | 'profileName'
-    | 'sharedGroupNames'
-    | 'title'
-  >;
+  recipient: ConversationType;
   status: SendStatus;
   updatedAt?: number;
 };
@@ -78,6 +75,7 @@ export type StoryViewType = {
     ConversationType,
     | 'acceptedMessageRequest'
     | 'avatarPath'
+    | 'badges'
     | 'color'
     | 'firstName'
     | 'id'
@@ -93,8 +91,8 @@ export type StoryViewType = {
 };
 
 export type MyStoryType = {
-  distributionId: string;
-  distributionName: string;
+  id: string;
+  name: string;
   stories: Array<StoryViewType>;
 };
 
@@ -109,4 +107,24 @@ export enum StoryViewModeType {
   Unread = 'Unread',
   All = 'All',
   Single = 'Single',
+}
+
+export type StoryDistributionListWithMembersDataType = Omit<
+  StoryDistributionListDataType,
+  'memberUuids'
+> & {
+  members: Array<ConversationType>;
+};
+
+export function getStoryDistributionListName(
+  i18n: LocalizerType,
+  id: string,
+  name: string
+): string {
+  return id === MY_STORIES_ID ? i18n('Stories__mine') : name;
+}
+
+export enum HasStories {
+  Read = 'Read',
+  Unread = 'Unread',
 }

@@ -71,22 +71,26 @@ import {
 import { updateSchema } from './migrations';
 
 import type {
-  AllItemsType,
+  StoredAllItemsType,
   AttachmentDownloadJobType,
   ConversationMetricsType,
   ConversationType,
   DeleteSentProtoRecipientOptionsType,
   EmojiType,
+  GetConversationRangeCenteredOnMessageResultType,
+  GetUnreadByConversationAndMarkReadResultType,
   IdentityKeyIdType,
-  IdentityKeyType,
+  StoredIdentityKeyType,
+  InstalledStickerPackType,
   ItemKeyType,
-  ItemType,
+  StoredItemType,
   ConversationMessageStatsType,
   MessageMetricsType,
   MessageType,
   MessageTypeUnhydrated,
   PreKeyIdType,
-  PreKeyType,
+  ReactionResultType,
+  StoredPreKeyType,
   ServerSearchResultMessageType,
   SenderKeyIdType,
   SenderKeyType,
@@ -100,7 +104,8 @@ import type {
   SessionIdType,
   SessionType,
   SignedPreKeyIdType,
-  SignedPreKeyType,
+  StoredSignedPreKeyType,
+  StickerPackInfoType,
   StickerPackStatusType,
   StickerPackType,
   StickerType,
@@ -108,6 +113,7 @@ import type {
   StoryDistributionType,
   StoryDistributionWithMembersType,
   StoryReadType,
+  UninstalledStickerPackType,
   UnprocessedType,
   UnprocessedUpdateType,
 } from './Interface';
@@ -149,6 +155,7 @@ const dataInterface: ServerInterface = {
   getPreKeyById,
   bulkAddPreKeys,
   removePreKeyById,
+  removePreKeysByUuid,
   removeAllPreKeys,
   getAllPreKeys,
 
@@ -156,6 +163,7 @@ const dataInterface: ServerInterface = {
   getSignedPreKeyById,
   bulkAddSignedPreKeys,
   removeSignedPreKeyById,
+  removeSignedPreKeysByUuid,
   removeAllSignedPreKeys,
   getAllSignedPreKeys,
 
@@ -199,6 +207,7 @@ const dataInterface: ServerInterface = {
   updateConversation,
   updateConversations,
   removeConversation,
+  _removeAllConversations,
   updateAllConversationColors,
   removeAllProfileKeyCredentials,
 
@@ -263,6 +272,7 @@ const dataInterface: ServerInterface = {
 
   createOrUpdateStickerPack,
   updateStickerPackStatus,
+  updateStickerPackInfo,
   createOrUpdateSticker,
   updateStickerLastUsed,
   addStickerPackReference,
@@ -270,6 +280,13 @@ const dataInterface: ServerInterface = {
   getStickerCount,
   deleteStickerPack,
   getAllStickerPacks,
+  addUninstalledStickerPack,
+  removeUninstalledStickerPack,
+  getInstalledStickerPacks,
+  getUninstalledStickerPacks,
+  installStickerPack,
+  uninstallStickerPack,
+  getStickerPackInfo,
   getAllStickers,
   getRecentStickers,
   clearAllErrorStickerPackAttempts,
@@ -394,6 +411,7 @@ function switchToWAL(db: Database): void {
   // https://sqlite.org/wal.html
   db.pragma('journal_mode = WAL');
   db.pragma('synchronous = FULL');
+  db.pragma('fullfsync = ON');
 }
 
 function migrateSchemaVersion(db: Database): void {
@@ -633,16 +651,18 @@ function getInstance(): Database {
 }
 
 const IDENTITY_KEYS_TABLE = 'identityKeys';
-async function createOrUpdateIdentityKey(data: IdentityKeyType): Promise<void> {
+async function createOrUpdateIdentityKey(
+  data: StoredIdentityKeyType
+): Promise<void> {
   return createOrUpdate(getInstance(), IDENTITY_KEYS_TABLE, data);
 }
 async function getIdentityKeyById(
   id: IdentityKeyIdType
-): Promise<IdentityKeyType | undefined> {
+): Promise<StoredIdentityKeyType | undefined> {
   return getById(getInstance(), IDENTITY_KEYS_TABLE, id);
 }
 async function bulkAddIdentityKeys(
-  array: Array<IdentityKeyType>
+  array: Array<StoredIdentityKeyType>
 ): Promise<void> {
   return bulkAdd(getInstance(), IDENTITY_KEYS_TABLE, array);
 }
@@ -652,55 +672,67 @@ async function removeIdentityKeyById(id: IdentityKeyIdType): Promise<void> {
 async function removeAllIdentityKeys(): Promise<void> {
   return removeAllFromTable(getInstance(), IDENTITY_KEYS_TABLE);
 }
-async function getAllIdentityKeys(): Promise<Array<IdentityKeyType>> {
+async function getAllIdentityKeys(): Promise<Array<StoredIdentityKeyType>> {
   return getAllFromTable(getInstance(), IDENTITY_KEYS_TABLE);
 }
 
 const PRE_KEYS_TABLE = 'preKeys';
-async function createOrUpdatePreKey(data: PreKeyType): Promise<void> {
+async function createOrUpdatePreKey(data: StoredPreKeyType): Promise<void> {
   return createOrUpdate(getInstance(), PRE_KEYS_TABLE, data);
 }
 async function getPreKeyById(
   id: PreKeyIdType
-): Promise<PreKeyType | undefined> {
+): Promise<StoredPreKeyType | undefined> {
   return getById(getInstance(), PRE_KEYS_TABLE, id);
 }
-async function bulkAddPreKeys(array: Array<PreKeyType>): Promise<void> {
+async function bulkAddPreKeys(array: Array<StoredPreKeyType>): Promise<void> {
   return bulkAdd(getInstance(), PRE_KEYS_TABLE, array);
 }
 async function removePreKeyById(id: PreKeyIdType): Promise<void> {
   return removeById(getInstance(), PRE_KEYS_TABLE, id);
 }
+async function removePreKeysByUuid(uuid: UUIDStringType): Promise<void> {
+  const db = getInstance();
+  db.prepare<Query>('DELETE FROM preKeys WHERE ourUuid IS $uuid;').run({
+    uuid,
+  });
+}
 async function removeAllPreKeys(): Promise<void> {
   return removeAllFromTable(getInstance(), PRE_KEYS_TABLE);
 }
-async function getAllPreKeys(): Promise<Array<PreKeyType>> {
+async function getAllPreKeys(): Promise<Array<StoredPreKeyType>> {
   return getAllFromTable(getInstance(), PRE_KEYS_TABLE);
 }
 
 const SIGNED_PRE_KEYS_TABLE = 'signedPreKeys';
 async function createOrUpdateSignedPreKey(
-  data: SignedPreKeyType
+  data: StoredSignedPreKeyType
 ): Promise<void> {
   return createOrUpdate(getInstance(), SIGNED_PRE_KEYS_TABLE, data);
 }
 async function getSignedPreKeyById(
   id: SignedPreKeyIdType
-): Promise<SignedPreKeyType | undefined> {
+): Promise<StoredSignedPreKeyType | undefined> {
   return getById(getInstance(), SIGNED_PRE_KEYS_TABLE, id);
 }
 async function bulkAddSignedPreKeys(
-  array: Array<SignedPreKeyType>
+  array: Array<StoredSignedPreKeyType>
 ): Promise<void> {
   return bulkAdd(getInstance(), SIGNED_PRE_KEYS_TABLE, array);
 }
 async function removeSignedPreKeyById(id: SignedPreKeyIdType): Promise<void> {
   return removeById(getInstance(), SIGNED_PRE_KEYS_TABLE, id);
 }
+async function removeSignedPreKeysByUuid(uuid: UUIDStringType): Promise<void> {
+  const db = getInstance();
+  db.prepare<Query>('DELETE FROM signedPreKeys WHERE ourUuid IS $uuid;').run({
+    uuid,
+  });
+}
 async function removeAllSignedPreKeys(): Promise<void> {
   return removeAllFromTable(getInstance(), SIGNED_PRE_KEYS_TABLE);
 }
-async function getAllSignedPreKeys(): Promise<Array<SignedPreKeyType>> {
+async function getAllSignedPreKeys(): Promise<Array<StoredSignedPreKeyType>> {
   const db = getInstance();
   const rows: JSONRows = db
     .prepare<EmptyQuery>(
@@ -717,16 +749,16 @@ async function getAllSignedPreKeys(): Promise<Array<SignedPreKeyType>> {
 
 const ITEMS_TABLE = 'items';
 async function createOrUpdateItem<K extends ItemKeyType>(
-  data: ItemType<K>
+  data: StoredItemType<K>
 ): Promise<void> {
   return createOrUpdate(getInstance(), ITEMS_TABLE, data);
 }
 async function getItemById<K extends ItemKeyType>(
   id: K
-): Promise<ItemType<K> | undefined> {
+): Promise<StoredItemType<K> | undefined> {
   return getById(getInstance(), ITEMS_TABLE, id);
 }
-async function getAllItems(): Promise<AllItemsType> {
+async function getAllItems(): Promise<StoredAllItemsType> {
   const db = getInstance();
   const rows: JSONRows = db
     .prepare<EmptyQuery>('SELECT json FROM items ORDER BY id ASC;')
@@ -742,7 +774,7 @@ async function getAllItems(): Promise<AllItemsType> {
     result[id] = value;
   }
 
-  return result as unknown as AllItemsType;
+  return result as unknown as StoredAllItemsType;
 }
 async function removeItemById(id: ItemKeyType): Promise<void> {
   return removeById(getInstance(), ITEMS_TABLE, id);
@@ -1447,6 +1479,11 @@ async function removeConversation(id: Array<string> | string): Promise<void> {
   batchMultiVarQuery(db, id, removeConversationsSync);
 }
 
+async function _removeAllConversations(): Promise<void> {
+  const db = getInstance();
+  db.prepare<EmptyQuery>('DELETE from conversations;').run();
+}
+
 async function getConversationById(
   id: string
 ): Promise<ConversationType | undefined> {
@@ -2096,20 +2133,7 @@ async function getUnreadByConversationAndMarkRead({
   newestUnreadAt: number;
   storyId?: UUIDStringType;
   readAt?: number;
-}): Promise<
-  Array<
-    { originalReadStatus: ReadStatus | undefined } & Pick<
-      MessageType,
-      | 'id'
-      | 'source'
-      | 'sourceUuid'
-      | 'sent_at'
-      | 'type'
-      | 'readStatus'
-      | 'seenStatus'
-    >
-  >
-> {
+}): Promise<GetUnreadByConversationAndMarkReadResultType> {
   const db = getInstance();
   return db.transaction(() => {
     const expirationStartTimestamp = Math.min(Date.now(), readAt ?? Infinity);
@@ -2202,10 +2226,6 @@ async function getUnreadByConversationAndMarkRead({
   })();
 }
 
-type ReactionResultType = Pick<
-  ReactionType,
-  'targetAuthorUuid' | 'targetTimestamp' | 'messageId'
-> & { rowid: number };
 async function getUnreadReactionsAndMarkRead({
   conversationId,
   newestUnreadAt,
@@ -2868,11 +2888,9 @@ async function getConversationRangeCenteredOnMessage({
   receivedAt: number;
   sentAt?: number;
   storyId: UUIDStringType | undefined;
-}): Promise<{
-  older: Array<MessageTypeUnhydrated>;
-  newer: Array<MessageTypeUnhydrated>;
-  metrics: ConversationMetricsType;
-}> {
+}): Promise<
+  GetConversationRangeCenteredOnMessageResultType<MessageTypeUnhydrated>
+> {
   const db = getInstance();
 
   return db.transaction(() => {
@@ -3445,6 +3463,10 @@ async function createOrUpdateStickerPack(pack: StickerPackType): Promise<void> {
     status,
     stickerCount,
     title,
+    storageID,
+    storageVersion,
+    storageUnknownFields,
+    storageNeedsSync,
   } = pack;
   if (!id) {
     throw new Error(
@@ -3452,7 +3474,22 @@ async function createOrUpdateStickerPack(pack: StickerPackType): Promise<void> {
     );
   }
 
-  const rows = db
+  let { position } = pack;
+
+  // Assign default position
+  if (!isNumber(position)) {
+    position = db
+      .prepare<EmptyQuery>(
+        `
+        SELECT IFNULL(MAX(position) + 1, 0)
+        FROM sticker_packs
+        `
+      )
+      .pluck()
+      .get();
+  }
+
+  const row = db
     .prepare<Query>(
       `
       SELECT id
@@ -3460,7 +3497,7 @@ async function createOrUpdateStickerPack(pack: StickerPackType): Promise<void> {
       WHERE id = $id;
       `
     )
-    .all({ id });
+    .get({ id });
   const payload = {
     attemptedStatus: attemptedStatus ?? null,
     author,
@@ -3474,9 +3511,14 @@ async function createOrUpdateStickerPack(pack: StickerPackType): Promise<void> {
     status,
     stickerCount,
     title,
+    position: position ?? 0,
+    storageID: storageID ?? null,
+    storageVersion: storageVersion ?? null,
+    storageUnknownFields: storageUnknownFields ?? null,
+    storageNeedsSync: storageNeedsSync ? 1 : 0,
   };
 
-  if (rows && rows.length) {
+  if (row) {
     db.prepare<Query>(
       `
       UPDATE sticker_packs SET
@@ -3490,7 +3532,12 @@ async function createOrUpdateStickerPack(pack: StickerPackType): Promise<void> {
         lastUsed = $lastUsed,
         status = $status,
         stickerCount = $stickerCount,
-        title = $title
+        title = $title,
+        position = $position,
+        storageID = $storageID,
+        storageVersion = $storageVersion,
+        storageUnknownFields = $storageUnknownFields,
+        storageNeedsSync = $storageNeedsSync
       WHERE id = $id;
       `
     ).run(payload);
@@ -3512,7 +3559,12 @@ async function createOrUpdateStickerPack(pack: StickerPackType): Promise<void> {
       lastUsed,
       status,
       stickerCount,
-      title
+      title,
+      position,
+      storageID,
+      storageVersion,
+      storageUnknownFields,
+      storageNeedsSync
     ) values (
       $attemptedStatus,
       $author,
@@ -3525,16 +3577,21 @@ async function createOrUpdateStickerPack(pack: StickerPackType): Promise<void> {
       $lastUsed,
       $status,
       $stickerCount,
-      $title
+      $title,
+      $position,
+      $storageID,
+      $storageVersion,
+      $storageUnknownFields,
+      $storageNeedsSync
     )
     `
   ).run(payload);
 }
-async function updateStickerPackStatus(
+function updateStickerPackStatusSync(
   id: string,
   status: StickerPackStatusType,
   options?: { timestamp: number }
-): Promise<void> {
+): void {
   const db = getInstance();
   const timestamp = options ? options.timestamp || Date.now() : Date.now();
   const installedAt = status === 'installed' ? timestamp : null;
@@ -3550,6 +3607,61 @@ async function updateStickerPackStatus(
     status,
     installedAt,
   });
+}
+async function updateStickerPackStatus(
+  id: string,
+  status: StickerPackStatusType,
+  options?: { timestamp: number }
+): Promise<void> {
+  return updateStickerPackStatusSync(id, status, options);
+}
+async function updateStickerPackInfo({
+  id,
+  storageID,
+  storageVersion,
+  storageUnknownFields,
+  storageNeedsSync,
+  uninstalledAt,
+}: StickerPackInfoType): Promise<void> {
+  const db = getInstance();
+
+  if (uninstalledAt) {
+    db.prepare<Query>(
+      `
+      UPDATE uninstalled_sticker_packs
+      SET
+        storageID = $storageID,
+        storageVersion = $storageVersion,
+        storageUnknownFields = $storageUnknownFields,
+        storageNeedsSync = $storageNeedsSync
+      WHERE id = $id;
+      `
+    ).run({
+      id,
+      storageID: storageID ?? null,
+      storageVersion: storageVersion ?? null,
+      storageUnknownFields: storageUnknownFields ?? null,
+      storageNeedsSync: storageNeedsSync ? 1 : 0,
+    });
+  } else {
+    db.prepare<Query>(
+      `
+      UPDATE sticker_packs
+      SET
+        storageID = $storageID,
+        storageVersion = $storageVersion,
+        storageUnknownFields = $storageUnknownFields,
+        storageNeedsSync = $storageNeedsSync
+      WHERE id = $id;
+      `
+    ).run({
+      id,
+      storageID: storageID ?? null,
+      storageVersion: storageVersion ?? null,
+      storageUnknownFields: storageUnknownFields ?? null,
+      storageNeedsSync: storageNeedsSync ? 1 : 0,
+    });
+  }
 }
 async function clearAllErrorStickerPackAttempts(): Promise<void> {
   const db = getInstance();
@@ -3822,12 +3934,159 @@ async function getAllStickerPacks(): Promise<Array<StickerPackType>> {
     .prepare<EmptyQuery>(
       `
       SELECT * FROM sticker_packs
-      ORDER BY installedAt DESC, createdAt DESC
+      ORDER BY position ASC, id ASC
       `
     )
     .all();
 
   return rows || [];
+}
+function addUninstalledStickerPackSync(pack: UninstalledStickerPackType): void {
+  const db = getInstance();
+
+  db.prepare<Query>(
+    `
+        INSERT OR REPLACE INTO uninstalled_sticker_packs
+        (
+          id, uninstalledAt, storageID, storageVersion, storageUnknownFields,
+          storageNeedsSync
+        )
+        VALUES
+        (
+          $id, $uninstalledAt, $storageID, $storageVersion, $unknownFields,
+          $storageNeedsSync
+        )
+      `
+  ).run({
+    id: pack.id,
+    uninstalledAt: pack.uninstalledAt,
+    storageID: pack.storageID ?? null,
+    storageVersion: pack.storageVersion ?? null,
+    unknownFields: pack.storageUnknownFields ?? null,
+    storageNeedsSync: pack.storageNeedsSync ? 1 : 0,
+  });
+}
+async function addUninstalledStickerPack(
+  pack: UninstalledStickerPackType
+): Promise<void> {
+  return addUninstalledStickerPackSync(pack);
+}
+function removeUninstalledStickerPackSync(packId: string): void {
+  const db = getInstance();
+
+  db.prepare<Query>(
+    'DELETE FROM uninstalled_sticker_packs WHERE id IS $id'
+  ).run({ id: packId });
+}
+async function removeUninstalledStickerPack(packId: string): Promise<void> {
+  return removeUninstalledStickerPackSync(packId);
+}
+async function getUninstalledStickerPacks(): Promise<
+  Array<UninstalledStickerPackType>
+> {
+  const db = getInstance();
+
+  const rows = db
+    .prepare<EmptyQuery>(
+      'SELECT * FROM uninstalled_sticker_packs ORDER BY id ASC'
+    )
+    .all();
+
+  return rows || [];
+}
+async function getInstalledStickerPacks(): Promise<Array<StickerPackType>> {
+  const db = getInstance();
+
+  // If sticker pack has a storageID - it is being downloaded and about to be
+  // installed so we better sync it back to storage service if asked.
+  const rows = db
+    .prepare<EmptyQuery>(
+      `
+      SELECT *
+      FROM sticker_packs
+      WHERE
+        status IS "installed" OR
+        storageID IS NOT NULL
+      ORDER BY id ASC
+      `
+    )
+    .all();
+
+  return rows || [];
+}
+async function getStickerPackInfo(
+  packId: string
+): Promise<StickerPackInfoType | undefined> {
+  const db = getInstance();
+
+  return db.transaction(() => {
+    const uninstalled = db
+      .prepare<Query>(
+        `
+        SELECT * FROM uninstalled_sticker_packs
+        WHERE id IS $packId
+        `
+      )
+      .get({ packId });
+    if (uninstalled) {
+      return uninstalled as UninstalledStickerPackType;
+    }
+
+    const installed = db
+      .prepare<Query>(
+        `
+        SELECT
+          id, key, position, storageID, storageVersion, storageUnknownFields
+        FROM sticker_packs
+        WHERE id IS $packId
+        `
+      )
+      .get({ packId });
+    if (installed) {
+      return installed as InstalledStickerPackType;
+    }
+
+    return undefined;
+  })();
+}
+async function installStickerPack(
+  packId: string,
+  timestamp: number
+): Promise<void> {
+  const db = getInstance();
+  return db.transaction(() => {
+    const status = 'installed';
+    updateStickerPackStatusSync(packId, status, { timestamp });
+
+    removeUninstalledStickerPackSync(packId);
+  })();
+}
+async function uninstallStickerPack(
+  packId: string,
+  timestamp: number
+): Promise<void> {
+  const db = getInstance();
+  return db.transaction(() => {
+    const status = 'downloaded';
+    updateStickerPackStatusSync(packId, status);
+
+    db.prepare<Query>(
+      `
+      UPDATE sticker_packs SET
+        storageID = NULL,
+        storageVersion = NULL,
+        storageUnknownFields = NULL,
+        storageNeedsSync = 0
+      WHERE id = $packId;
+      `
+    ).run({ packId });
+
+    addUninstalledStickerPackSync({
+      id: packId,
+      uninstalledAt: timestamp,
+      storageNeedsSync: true,
+    });
+  })();
 }
 async function getAllStickers(): Promise<Array<StickerType>> {
   const db = getInstance();
@@ -4061,6 +4320,8 @@ type StoryDistributionForDatabase = Readonly<
     deletedAtTimestamp: number | null;
     isBlockList: 0 | 1;
     senderKeyInfoJson: string | null;
+    storageID: string | null;
+    storageVersion: number | null;
     storageNeedsSync: 0 | 1;
   } & Omit<
     StoryDistributionType,
@@ -4068,6 +4329,8 @@ type StoryDistributionForDatabase = Readonly<
     | 'deletedAtTimestamp'
     | 'isBlockList'
     | 'senderKeyInfo'
+    | 'storageID'
+    | 'storageVersion'
     | 'storageNeedsSync'
   >
 >;
@@ -4083,6 +4346,8 @@ function hydrateStoryDistribution(
     senderKeyInfo: fromDatabase.senderKeyInfoJson
       ? JSON.parse(fromDatabase.senderKeyInfoJson)
       : undefined,
+    storageID: fromDatabase.storageID || undefined,
+    storageVersion: fromDatabase.storageVersion || undefined,
     storageNeedsSync: Boolean(fromDatabase.storageNeedsSync),
     storageUnknownFields: fromDatabase.storageUnknownFields || undefined,
   };
@@ -4098,6 +4363,8 @@ function freezeStoryDistribution(
     senderKeyInfoJson: story.senderKeyInfo
       ? JSON.stringify(story.senderKeyInfo)
       : null,
+    storageID: story.storageID || null,
+    storageVersion: story.storageVersion || null,
     storageNeedsSync: story.storageNeedsSync ? 1 : 0,
     storageUnknownFields: story.storageUnknownFields || null,
   };

@@ -180,8 +180,10 @@ export async function migrateDataToFileSystem(
   attachment: AttachmentType,
   {
     writeNewAttachmentData,
+    logger,
   }: {
     writeNewAttachmentData: (data: Uint8Array) => Promise<string>;
+    logger: LoggerType;
   }
 ): Promise<AttachmentType> {
   if (!isFunction(writeNewAttachmentData)) {
@@ -195,11 +197,12 @@ export async function migrateDataToFileSystem(
     return attachment;
   }
 
+  // This attachment was already broken by a roundtrip to the database - repair it now
   if (!isTypedArray(data)) {
-    throw new TypeError(
-      'Expected `attachment.data` to be a typed array;' +
-        ` got: ${typeof attachment.data}`
+    logger.warn(
+      'migrateDataToFileSystem: Attachment had non-array `data` field; deleting.'
     );
+    return omit({ ...attachment }, ['data']);
   }
 
   const path = await writeNewAttachmentData(data);
@@ -765,6 +768,10 @@ export function isDownloading(attachment?: AttachmentType): boolean {
   return Boolean(attachment && attachment.downloadJobId && attachment.pending);
 }
 
+export function hasFailed(attachment?: AttachmentType): boolean {
+  return Boolean(attachment && attachment.error);
+}
+
 export function hasVideoBlurHash(attachments?: Array<AttachmentType>): boolean {
   const firstAttachment = attachments ? attachments[0] : null;
 
@@ -994,7 +1001,7 @@ export const getSuggestedFilename = ({
   index?: number;
 }): string => {
   const { fileName } = attachment;
-  if (fileName) {
+  if (fileName && (!isNumber(index) || index === 1)) {
     return fileName;
   }
 

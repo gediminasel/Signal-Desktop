@@ -57,7 +57,7 @@ export type DownloadMap = Record<
   }
 >;
 
-export const BLESSED_PACKS: Record<string, BlessedType> = {
+const BLESSED_PACKS: Record<string, BlessedType> = {
   '9acc9e8aba563d26a4994e69263e3b25': {
     key: 'Wm3/OUjCjvubeq+T7MN1xp/DFueAd+0mhnoU0QoPahI=',
     status: 'downloaded',
@@ -96,6 +96,8 @@ const STICKER_PACK_DEFAULTS: StickerPackType = {
   stickerCount: 0,
   stickers: {},
   title: '',
+
+  storageNeedsSync: false,
 };
 
 const VALID_PACK_ID_REGEXP = /^[0-9a-f]{32}$/i;
@@ -447,6 +449,12 @@ export async function downloadEphemeralPack(
       proto.stickers,
       sticker => !isNumber(sticker.id) || sticker.id === coverStickerId
     );
+    const coverSticker = proto.stickers.filter(
+      sticker => isNumber(sticker.id) && sticker.id === coverStickerId
+    );
+    if (coverSticker[0] && !coverProto.emoji) {
+      coverProto.emoji = coverSticker[0].emoji;
+    }
 
     const coverIncludedInList = nonCoverStickers.length < stickerCount;
 
@@ -529,6 +537,7 @@ export async function downloadEphemeralPack(
 export type DownloadStickerPackOptions = Readonly<{
   messageId?: string;
   fromSync?: boolean;
+  fromStorageService?: boolean;
   finalStatus?: StickerPackStatusType;
   suppressError?: boolean;
 }>;
@@ -558,6 +567,7 @@ async function doDownloadStickerPack(
     finalStatus = 'downloaded',
     messageId,
     fromSync = false,
+    fromStorageService = false,
     suppressError = false,
   }: DownloadStickerPackOptions
 ): Promise<void> {
@@ -648,6 +658,12 @@ async function doDownloadStickerPack(
       proto.stickers,
       sticker => !isNumber(sticker.id) || sticker.id === coverStickerId
     );
+    const coverSticker = proto.stickers.filter(
+      sticker => isNumber(sticker.id) && sticker.id === coverStickerId
+    );
+    if (coverSticker[0] && !coverProto.emoji) {
+      coverProto.emoji = coverSticker[0].emoji;
+    }
 
     coverIncludedInList = nonCoverStickers.length < stickerCount;
 
@@ -668,6 +684,7 @@ async function doDownloadStickerPack(
       status: 'pending',
       createdAt: Date.now(),
       stickers: {},
+      storageNeedsSync: !fromStorageService,
       ...pick(proto, ['title', 'author']),
     };
     await Data.createOrUpdateStickerPack(pack);
@@ -748,7 +765,10 @@ async function doDownloadStickerPack(
     }
 
     if (finalStatus === 'installed') {
-      await installStickerPack(packId, packKey, { fromSync });
+      await installStickerPack(packId, packKey, {
+        fromSync,
+        fromStorageService,
+      });
     } else {
       // Mark the pack as complete
       await Data.updateStickerPackStatus(packId, finalStatus);
@@ -888,7 +908,7 @@ export async function deletePackReference(
 }
 
 // The override; doesn't honor our ref-counting scheme - just deletes it all.
-export async function deletePack(packId: string): Promise<void> {
+async function deletePack(packId: string): Promise<void> {
   const isBlessed = Boolean(BLESSED_PACKS[packId]);
   if (isBlessed) {
     return;

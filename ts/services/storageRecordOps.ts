@@ -44,9 +44,15 @@ import * as preferredReactionEmoji from '../reactions/preferredReactionEmoji';
 import { SignalService as Proto } from '../protobuf';
 import * as log from '../logging/log';
 import type { UUIDStringType } from '../types/UUID';
-import { MY_STORIES_ID } from '../types/Stories';
-import type { StoryDistributionWithMembersType } from '../sql/Interface';
+import * as Stickers from '../types/Stickers';
+import type {
+  StoryDistributionWithMembersType,
+  StickerPackInfoType,
+} from '../sql/Interface';
 import dataInterface from '../sql/Client';
+import { MY_STORIES_ID } from '../types/Stories';
+
+const MY_STORIES_BYTES = uuidToBytes(MY_STORIES_ID);
 
 type RecordClass =
   | Proto.IAccountRecord
@@ -130,6 +136,10 @@ export async function toContactRecord(
   const e164 = conversation.get('e164');
   if (e164) {
     contactRecord.serviceE164 = e164;
+  }
+  const pni = conversation.get('pni');
+  if (pni) {
+    contactRecord.pni = pni;
   }
   const profileKey = conversation.get('profileKey');
   if (profileKey) {
@@ -409,6 +419,31 @@ export function toStoryDistributionListRecord(
   }
 
   return storyDistributionListRecord;
+}
+
+export function toStickerPackRecord(
+  stickerPack: StickerPackInfoType
+): Proto.StickerPackRecord {
+  const stickerPackRecord = new Proto.StickerPackRecord();
+
+  stickerPackRecord.packId = Bytes.fromHex(stickerPack.id);
+
+  if (stickerPack.uninstalledAt !== undefined) {
+    stickerPackRecord.deletedAtTimestamp = Long.fromNumber(
+      stickerPack.uninstalledAt
+    );
+  } else {
+    stickerPackRecord.packKey = Bytes.fromBase64(stickerPack.key);
+    if (stickerPack.position) {
+      stickerPackRecord.position = stickerPack.position;
+    }
+  }
+
+  if (stickerPack.storageUnknownFields) {
+    stickerPackRecord.__unknownFields = [stickerPack.storageUnknownFields];
+  }
+
+  return stickerPackRecord;
 }
 
 type MessageRequestCapableRecord = Proto.IContactRecord | Proto.IGroupV1Record;
@@ -818,6 +853,7 @@ export async function mergeContactRecord(
 
   const e164 = dropNull(contactRecord.serviceE164);
   const uuid = dropNull(contactRecord.serviceUuid);
+  const pni = dropNull(contactRecord.pni);
 
   // All contacts must have UUID
   if (!uuid) {
@@ -832,21 +868,30 @@ export async function mergeContactRecord(
     return { hasConflict: false, shouldDrop: true, details: ['our own uuid'] };
   }
 
-  const id = window.ConversationController.ensureContactIds({
+  const conversation = window.ConversationController.maybeMergeContacts({
+    aci: uuid,
     e164,
-    uuid,
-    highTrust: true,
+    pni,
     reason: 'mergeContactRecord',
   });
 
-  if (!id) {
-    throw new Error(`No ID for ${storageID}`);
+  if (!conversation) {
+    throw new Error(`No conversation for ${storageID}`);
   }
 
-  const conversation = await window.ConversationController.getOrCreateAndWait(
-    id,
-    'private'
-  );
+  // We're going to ignore this; it's likely a PNI-only contact we've already merged
+  if (conversation.get('uuid') !== uuid) {
+    log.warn(
+      `mergeContactRecord: ${conversation.idForLogging()} ` +
+        `with storageId ${conversation.get('storageID')} ` +
+        `had uuid that didn't match provided uuid ${uuid}`
+    );
+    return {
+      hasConflict: false,
+      shouldDrop: true,
+      details: [],
+    };
+  }
 
   let needsProfileFetch = false;
   if (contactRecord.profileKey && contactRecord.profileKey.length > 0) {
@@ -1098,32 +1143,32 @@ export async function mergeAccountRecord(
 
     const remotelyPinnedConversationPromises = pinnedConversations.map(
       async ({ contact, legacyGroupId, groupMasterKey }) => {
-        let conversationId: string | undefined;
+        let conversation: ConversationModel | undefined;
 
         if (contact) {
-          conversationId =
-            window.ConversationController.ensureContactIds(contact);
+          conversation = window.ConversationController.lookupOrCreate(contact);
         } else if (legacyGroupId && legacyGroupId.length) {
-          conversationId = Bytes.toBinary(legacyGroupId);
+          const groupId = Bytes.toBinary(legacyGroupId);
+          conversation = window.ConversationController.get(groupId);
         } else if (groupMasterKey && groupMasterKey.length) {
           const groupFields = deriveGroupFields(groupMasterKey);
           const groupId = Bytes.toBase64(groupFields.id);
 
-          conversationId = groupId;
+          conversation = window.ConversationController.get(groupId);
         } else {
           log.error(
             'storageService.mergeAccountRecord: Invalid identifier received'
           );
         }
 
-        if (!conversationId) {
+        if (!conversation) {
           log.error(
             'storageService.mergeAccountRecord: missing conversation id.'
           );
           return undefined;
         }
 
-        return window.ConversationController.get(conversationId);
+        return conversation;
       }
     );
 
@@ -1236,10 +1281,12 @@ export async function mergeStoryDistributionListRecord(
 
   const details: Array<string> = [];
 
-  const listId =
-    storyDistributionListRecord.name === MY_STORIES_ID
-      ? MY_STORIES_ID
-      : bytesToUuid(storyDistributionListRecord.identifier);
+  const listId = Bytes.areEqual(
+    MY_STORIES_BYTES,
+    storyDistributionListRecord.identifier
+  )
+    ? MY_STORIES_ID
+    : bytesToUuid(storyDistributionListRecord.identifier);
 
   if (!listId) {
     throw new Error('Could not parse distribution list id');
@@ -1250,7 +1297,7 @@ export async function mergeStoryDistributionListRecord(
 
   const remoteListMembers: Array<UUIDStringType> = (
     storyDistributionListRecord.recipientUuids || []
-  ).map(UUID.fromString);
+  ).map(UUID.cast);
 
   if (storyDistributionListRecord.__unknownFields) {
     details.push('adding unknown fields');
@@ -1277,12 +1324,14 @@ export async function mergeStoryDistributionListRecord(
 
   if (!localStoryDistributionList) {
     await dataInterface.createNewStoryDistribution(storyDistribution);
-    window.reduxActions.storyDistributionLists.createDistributionList({
-      allowsReplies: Boolean(storyDistribution.allowsReplies),
-      id: storyDistribution.id,
-      isBlockList: Boolean(storyDistribution.isBlockList),
-      name: storyDistribution.name,
-    });
+
+    const shouldSave = false;
+    window.reduxActions.storyDistributionLists.createDistributionList(
+      storyDistribution.name,
+      remoteListMembers,
+      storyDistribution,
+      shouldSave
+    );
 
     return {
       details,
@@ -1306,8 +1355,6 @@ export async function mergeStoryDistributionListRecord(
     storyDistributionListRecord
   );
 
-  const needsUpdate = needsToClearUnknownFields || hasConflict;
-
   const localMembersListSet = new Set(localStoryDistributionList.members);
   const toAdd: Array<UUIDStringType> = remoteListMembers.filter(
     uuid => !localMembersListSet.has(uuid)
@@ -1318,6 +1365,10 @@ export async function mergeStoryDistributionListRecord(
     localStoryDistributionList.members.filter(
       uuid => !remoteMemberListSet.has(uuid)
     );
+
+  const needsUpdate = Boolean(
+    needsToClearUnknownFields || hasConflict || toAdd.length || toRemove.length
+  );
 
   if (!needsUpdate) {
     return {
@@ -1335,11 +1386,129 @@ export async function mergeStoryDistributionListRecord(
     });
     window.reduxActions.storyDistributionLists.modifyDistributionList({
       allowsReplies: Boolean(storyDistribution.allowsReplies),
+      deletedAtTimestamp: storyDistribution.deletedAtTimestamp,
       id: storyDistribution.id,
       isBlockList: Boolean(storyDistribution.isBlockList),
+      membersToAdd: toAdd,
+      membersToRemove: toRemove,
       name: storyDistribution.name,
     });
   }
+
+  return {
+    details: [...details, ...conflictDetails],
+    hasConflict,
+    oldStorageID,
+    oldStorageVersion,
+  };
+}
+
+export async function mergeStickerPackRecord(
+  storageID: string,
+  storageVersion: number,
+  stickerPackRecord: Proto.IStickerPackRecord
+): Promise<MergeResultType> {
+  if (!stickerPackRecord.packId || Bytes.isEmpty(stickerPackRecord.packId)) {
+    throw new Error(`No stickerPackRecord identifier for ${storageID}`);
+  }
+
+  const details: Array<string> = [];
+  const id = Bytes.toHex(stickerPackRecord.packId);
+
+  const localStickerPack = await dataInterface.getStickerPackInfo(id);
+
+  if (stickerPackRecord.__unknownFields) {
+    details.push('adding unknown fields');
+  }
+  const storageUnknownFields = stickerPackRecord.__unknownFields
+    ? Bytes.concatenate(stickerPackRecord.__unknownFields)
+    : null;
+
+  let stickerPack: StickerPackInfoType;
+  if (stickerPackRecord.deletedAtTimestamp?.toNumber()) {
+    stickerPack = {
+      id,
+      uninstalledAt: stickerPackRecord.deletedAtTimestamp.toNumber(),
+      storageID,
+      storageVersion,
+      storageUnknownFields,
+      storageNeedsSync: false,
+    };
+  } else {
+    if (
+      !stickerPackRecord.packKey ||
+      Bytes.isEmpty(stickerPackRecord.packKey)
+    ) {
+      throw new Error(`No stickerPackRecord key for ${storageID}`);
+    }
+
+    stickerPack = {
+      id,
+      key: Bytes.toBase64(stickerPackRecord.packKey),
+      position:
+        'position' in stickerPackRecord
+          ? stickerPackRecord.position
+          : localStickerPack?.position ?? undefined,
+      storageID,
+      storageVersion,
+      storageUnknownFields,
+      storageNeedsSync: false,
+    };
+  }
+
+  const oldStorageID = localStickerPack?.storageID;
+  const oldStorageVersion = localStickerPack?.storageVersion;
+
+  const needsToClearUnknownFields =
+    !stickerPack.storageUnknownFields && localStickerPack?.storageUnknownFields;
+
+  if (needsToClearUnknownFields) {
+    details.push('clearing unknown fields');
+  }
+
+  const { hasConflict, details: conflictDetails } = doRecordsConflict(
+    toStickerPackRecord(stickerPack),
+    stickerPackRecord
+  );
+
+  const wasUninstalled = Boolean(localStickerPack?.uninstalledAt);
+  const isUninstalled = Boolean(stickerPack.uninstalledAt);
+
+  details.push(
+    `wasUninstalled=${wasUninstalled}`,
+    `isUninstalled=${isUninstalled}`,
+    `oldPosition=${localStickerPack?.position ?? '?'}`,
+    `newPosition=${stickerPack.position ?? '?'}`
+  );
+
+  if ((!localStickerPack || !wasUninstalled) && isUninstalled) {
+    assert(localStickerPack?.key, 'Installed sticker pack has no key');
+    window.reduxActions.stickers.uninstallStickerPack(
+      localStickerPack.id,
+      localStickerPack.key,
+      { fromStorageService: true }
+    );
+  } else if ((!localStickerPack || wasUninstalled) && !isUninstalled) {
+    assert(stickerPack.key, 'Sticker pack does not have key');
+
+    const status = Stickers.getStickerPackStatus(stickerPack.id);
+    if (status === 'downloaded') {
+      window.reduxActions.stickers.installStickerPack(
+        stickerPack.id,
+        stickerPack.key,
+        {
+          fromStorageService: true,
+        }
+      );
+    } else {
+      Stickers.downloadStickerPack(stickerPack.id, stickerPack.key, {
+        finalStatus: 'installed',
+        fromStorageService: true,
+      });
+    }
+  }
+
+  await dataInterface.updateStickerPackInfo(stickerPack);
 
   return {
     details: [...details, ...conflictDetails],
