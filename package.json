@@ -40,7 +40,7 @@
     "test-mock": "mocha ts/test-mock/**/*_test.js",
     "test-node-coverage": "nyc --reporter=lcov --reporter=text mocha --recursive test/modules ts/test-node ts/test-both",
     "eslint": "eslint --cache .",
-    "eslint-fix": "eslint --fix .",
+    "eslint-fix": "eslint --cache --fix .",
     "lint": "run-s --print-label lint-prettier check:types eslint",
     "lint-deps": "node ts/util/lint/linter.js",
     "lint-license-comments": "ts-node ts/util/lint/license_comments.ts",

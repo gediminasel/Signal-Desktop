@@ -282,7 +282,7 @@ export type ConversationAttributesType = {
   isPinned?: boolean;
   lastMessageDeletedForEveryone?: boolean;
   lastMessageStatus?: LastMessageStatus | null;
-  lastMessagesSeen?: Record<string, {receivedAt: number, id: string}>;
+  lastMessagesSeen?: Record<string, { receivedAt: number; id: string }>;
   markedUnread?: boolean;
   messageCount?: number;
   messageCountBeforeMessageRequests?: number | null;
