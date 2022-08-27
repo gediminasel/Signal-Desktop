@@ -182,9 +182,7 @@ export class MessageReceipts extends Collection<MessageReceiptModel> {
       window.Signal.Util.queueUpdateMessage(message.attributes);
 
       // notify frontend listeners
-      const conversation = window.ConversationController.get(
-        conversationId
-      );
+      const conversation = window.ConversationController.get(conversationId);
       const updateLeftPane = conversation
         ? conversation.debouncedUpdateLastMessage
         : undefined;
@@ -201,10 +199,9 @@ export class MessageReceipts extends Collection<MessageReceiptModel> {
       const recipient = window.ConversationController.get(sourceConversationId);
       const recipientUuid = recipient?.get('uuid');
       const deviceId = receipt.get('sourceDevice');
-      
 
-      if(type === MessageReceiptType.Read) {
-        if(recipient) {
+      if (type === MessageReceiptType.Read) {
+        if (recipient) {
           await recipient.updateLastSeenMessage(message, conversationId);
         } else {
           log.warn(

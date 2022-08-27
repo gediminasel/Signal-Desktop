@@ -104,6 +104,7 @@ const defaultMessageProps: MessagesProps = {
   i18n,
   id: 'messageId',
   renderingContext: 'storybook',
+  receivedAt: Date.now(),
   interactionMode: 'keyboard',
   isBlocked: false,
   isMessageRequestAccepted: true,

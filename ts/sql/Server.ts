@@ -4789,7 +4789,7 @@ async function getMessagesNeedingUpgrade(
 
 async function getMessagesWithVisualMediaAttachments(
   conversationId: string,
-  { limit, offset }: { limit: number, offset?: number }
+  { limit, offset }: { limit: number; offset?: number }
 ): Promise<Array<MessageType>> {
   const db = getInstance();
   const rows: JSONRows = db
@@ -4815,7 +4815,7 @@ async function getMessagesWithVisualMediaAttachments(
 
 async function getMessagesWithFileAttachments(
   conversationId: string,
-  { limit, offset }: { limit: number, offset?: number }
+  { limit, offset }: { limit: number; offset?: number }
 ): Promise<Array<MessageType>> {
   const db = getInstance();
   const rows = db

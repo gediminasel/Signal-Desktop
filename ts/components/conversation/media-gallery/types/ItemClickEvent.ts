@@ -3,11 +3,11 @@
 
 import type { MessageAttributesType } from '../../../../model-types.d';
 import type { AttachmentType } from '../../../../types/Attachment';
-import { MediaItemType } from '../../../../types/MediaItem';
+import type { MediaItemType } from '../../../../types/MediaItem';
 
 export type ItemClickEvent = {
   message: Pick<MessageAttributesType, 'sent_at'>;
   attachment: AttachmentType;
   type: 'media' | 'documents';
-  items: MediaItemType[]
+  items: Array<MediaItemType>;
 };

@@ -5,7 +5,7 @@ import type { ReactNode, RefObject } from 'react';
 import React from 'react';
 import ReactDOM, { createPortal } from 'react-dom';
 import classNames from 'classnames';
-import memoize from "memoizee";
+import memoize from 'memoizee';
 import getDirection from 'direction';
 import { drop, groupBy, orderBy, take, unescape } from 'lodash';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
@@ -94,6 +94,7 @@ import { AvatarPreview } from '../AvatarPreview';
 import { DAY, HOUR, MINUTE, SECOND } from '../../util/durations';
 import { BadgeImageTheme } from '../../badges/BadgeImageTheme';
 import { getBadgeImageFileLocalPath } from '../../badges/getBadgeImageFileLocalPath';
+import type { ConversationModel } from '../../models/conversations';
 
 type Trigger = {
   handleContextClick: (event: React.MouseEvent<HTMLDivElement>) => void;
@@ -266,7 +267,7 @@ export type PropsData = {
   isTapToViewError?: boolean;
 
   readStatus?: ReadStatus;
-  lastSeenHere?: string[];
+  lastSeenHere?: Array<string>;
 
   expirationLength?: number;
   expirationTimestamp?: number;
@@ -790,33 +791,35 @@ export class Message extends React.PureComponent<Props, State> {
     );
   }
 
-  private lastSeenHereSorted = memoize(
-    (lastSeenHere: string[]) => {
-      const conversationId = this.props.conversationId;
-      const receivedAt = this.props.receivedAt;
-      const users = lastSeenHere.map(id => window.ConversationController.get(id)!);
-      const lastSeenUsers = users.filter(u => ((u.get('lastMessagesSeen') || {})[conversationId] || {}).receivedAt <= receivedAt);
-      const formated = lastSeenUsers.map(u => u.format());
+  private lastSeenHereSorted = memoize((lastSeenHere: Array<string>) => {
+    const { conversationId } = this.props;
+    const { receivedAt, id } = this.props;
+    const users = lastSeenHere.map(myId =>
+      window.ConversationController.get(myId)
+    );
+    const lastSeenUsers: Array<ConversationModel> = users.filter(
+      (u): u is ConversationModel =>
+        u !== undefined &&
+        ((u.get('lastMessagesSeen') || {})[conversationId] || {}).receivedAt <=
+          receivedAt
+    );
+    const formated = lastSeenUsers.map(u => u.format());
 
-      if (lastSeenUsers.length !== lastSeenHere.length) {
-        const lastSeenUpdated = lastSeenUsers.map(u => u.id);
-        const msg = window.MessageController.getById(this.props.id);
-        if(msg) {
-          // hack
-          setTimeout(() =>
-          {
-            msg.set("lastSeenHere", lastSeenUpdated);
-            window.Signal.Util.queueUpdateMessage(msg.attributes);
-          }, 0);
-        } else {
-          log.error(
-            `failed to load current message with id ${this.props.id}.`
-          );
-        }
+    if (lastSeenUsers.length !== lastSeenHere.length) {
+      const lastSeenUpdated = lastSeenUsers.map(u => u.id);
+      const msg = window.MessageController.getById(id);
+      if (msg) {
+        // hack
+        setTimeout(() => {
+          msg.set('lastSeenHere', lastSeenUpdated);
+          window.Signal.Util.queueUpdateMessage(msg.attributes);
+        }, 0);
+      } else {
+        log.error(`failed to load current message with id ${id}.`);
       }
-      return formated.sort((a, b) => a.id.localeCompare(b.id));
     }
-  );
+    return formated.sort((a, b) => a.id.localeCompare(b.id));
+  });
 
   private updateMetadataWidth = (newMetadataWidth: number): void => {
     this.setState(({ metadataWidth }) => ({
@@ -843,7 +846,6 @@ export class Message extends React.PureComponent<Props, State> {
         log.error(missingCaseError(metadataPlacement));
         isInline = false;
         break;
-
     }
     const {
       deletedForEveryone,
@@ -886,33 +888,42 @@ export class Message extends React.PureComponent<Props, State> {
   }
 
   private renderLastSeen(): ReactNode {
-    let lastSeenSorted = this.lastSeenHereSorted(this.props.lastSeenHere || []);
-    if(!lastSeenSorted || lastSeenSorted.length === 0)
-      return null;
-    
-    let seenBubblesNode = lastSeenSorted.map(c => <div key={c.id} title={c.title}>
-      <AvatarPreview
-        avatarColor={c.color}
-        avatarPath={c.avatarPath}
-        conversationTitle={c.title}
-        i18n={this.props.i18n}
-        isGroup={false}
+    const { lastSeenHere, i18n } = this.props;
+    const lastSeenSorted = this.lastSeenHereSorted(lastSeenHere || []);
+    if (!lastSeenSorted || lastSeenSorted.length === 0) return null;
+
+    const seenBubblesNode = lastSeenSorted.map(c => (
+      <div key={c.id} title={c.title}>
+        <AvatarPreview
+          avatarColor={c.color}
+          avatarPath={c.avatarPath}
+          conversationTitle={c.title}
+          i18n={i18n}
+          isGroup={false}
+          style={{
+            fontSize: '11px',
+            height: '20px',
+            maxHeight: 512,
+            maxWidth: 512,
+            width: '20px',
+            margin: '0 2px 0 0',
+          }}
+        />
+      </div>
+    ));
+    return (
+      <div
         style={{
-          fontSize: '11px',
+          marginLeft: 'auto',
+          flexDirection: 'row',
+          display: 'flex',
           height: '20px',
-          maxHeight: 512,
-          maxWidth: 512,
-          width: '20px',
-          margin: '0 2px 0 0'
+          justifyContent: 'flex-end',
         }}
-      /></div>);
-    return <div style={{
-      marginLeft: 'auto',
-      flexDirection: 'row',
-      display: 'flex',
-      height: '20px',
-      justifyContent: 'flex-end',
-    }}>{seenBubblesNode}</div>;
+      >
+        {seenBubblesNode}
+      </div>
+    );
   }
 
   private renderAuthor(): ReactNode {

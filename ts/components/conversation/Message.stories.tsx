@@ -214,6 +214,7 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
     overrideProps.readStatus === undefined
       ? ReadStatus.Read
       : overrideProps.readStatus,
+  receivedAt: Date.now(),
   renderEmojiPicker,
   renderReactionPicker,
   renderAudioAttachment,

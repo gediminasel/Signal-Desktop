@@ -4,7 +4,7 @@
   "description": "Private messaging from your desktop",
   "desktopName": "signal.desktop",
   "repository": "https://github.com/signalapp/Signal-Desktop.git",
-  "version": "5.55.0-beta.1",
+  "version": "5.60.0-lel",
   "license": "AGPL-3.0-only",
   "author": {
     "name": "Signal Messenger, LLC",
@@ -40,6 +40,7 @@
     "test-mock": "mocha ts/test-mock/**/*_test.js",
     "test-node-coverage": "nyc --reporter=lcov --reporter=text mocha --recursive test/modules ts/test-node ts/test-both",
     "eslint": "eslint --cache .",
+    "eslint-fix": "eslint --fix .",
     "lint": "run-s --print-label lint-prettier check:types eslint",
     "lint-deps": "node ts/util/lint/linter.js",
     "lint-license-comments": "ts-node ts/util/lint/license_comments.ts",
@@ -363,7 +364,7 @@
       "signingHashAlgorithms": [
         "sha256"
       ],
-      "publisherName": "Signal Messenger, LLC",
+      "publisherName": "Gediminas Lelešius",
       "icon": "build/icons/win/icon.ico",
       "publish": [
         {

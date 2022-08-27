@@ -2868,33 +2868,35 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     let changed = false;
 
     if (type === 'outgoing') {
-      const receipts = MessageReceipts.getSingleton()
-                      .forMessage(conversation, message);
+      const receipts = MessageReceipts.getSingleton().forMessage(
+        conversation,
+        message
+      );
       const sendActions = receipts.map(receipt => {
-          let sendActionType: SendActionType;
-          const receiptType = receipt.get('type');
-          switch (receiptType) {
-            case MessageReceiptType.Delivery:
-              sendActionType = SendActionType.GotDeliveryReceipt;
-              break;
-            case MessageReceiptType.Read:
-              sendActionType = SendActionType.GotReadReceipt;
-              break;
-            case MessageReceiptType.View:
-              sendActionType = SendActionType.GotViewedReceipt;
-              break;
-            default:
-              throw missingCaseError(receiptType);
-          }
+        let sendActionType: SendActionType;
+        const receiptType = receipt.get('type');
+        switch (receiptType) {
+          case MessageReceiptType.Delivery:
+            sendActionType = SendActionType.GotDeliveryReceipt;
+            break;
+          case MessageReceiptType.Read:
+            sendActionType = SendActionType.GotReadReceipt;
+            break;
+          case MessageReceiptType.View:
+            sendActionType = SendActionType.GotViewedReceipt;
+            break;
+          default:
+            throw missingCaseError(receiptType);
+        }
 
-          return {
-            destinationConversationId: receipt.get('sourceConversationId'),
-            action: {
-              type: sendActionType,
-              updatedAt: receipt.get('receiptTimestamp'),
-            },
-          };
-        });
+        return {
+          destinationConversationId: receipt.get('sourceConversationId'),
+          action: {
+            type: sendActionType,
+            updatedAt: receipt.get('receiptTimestamp'),
+          },
+        };
+      });
 
       const oldSendStateByConversationId =
         this.get('sendStateByConversationId') || {};
@@ -2928,16 +2930,24 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         message.set('sendStateByConversationId', newSendStateByConversationId);
         changed = true;
       }
-      
+
       const conversationId = message.get('conversationId');
 
       for (const receipt of receipts) {
         const sourceConversationId = receipt.get('sourceConversationId');
-        const type = receipt.get('type');
-        if (type === MessageReceiptType.Read) {
-          const recipient = window.ConversationController.get(sourceConversationId);
+        const myType = receipt.get('type');
+        if (myType === MessageReceiptType.Read) {
+          const recipient =
+            window.ConversationController.get(sourceConversationId);
           if (recipient) {
-            if (await recipient.updateLastSeenMessage(message, conversationId, false)) {
+            if (
+              // eslint-disable-next-line no-await-in-loop
+              await recipient.updateLastSeenMessage(
+                message,
+                conversationId,
+                false
+              )
+            ) {
               changed = true;
             }
           } else {
@@ -2948,22 +2958,29 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         }
       }
 
-      if(!isFirstRun) {
-        for (const sourceConversationId in newSendStateByConversationId) {
-          if (newSendStateByConversationId[sourceConversationId].status !== SendStatus.Read)
+      if (!isFirstRun) {
+        for (const sourceConversationId of Object.keys(
+          newSendStateByConversationId
+        )) {
+          if (
+            newSendStateByConversationId[sourceConversationId].status !==
+            SendStatus.Read
+          ) {
             continue;
-          const recipient = window.ConversationController.get(sourceConversationId);
+          }
+          const recipient =
+            window.ConversationController.get(sourceConversationId);
           if (recipient) {
             const receivedAt = message.get('received_at');
             const lastSeenMap = recipient.get('lastMessagesSeen') || {};
             const lastSeenMsg = lastSeenMap[conversationId];
-            if(lastSeenMsg && lastSeenMsg.receivedAt === receivedAt) {
+            if (lastSeenMsg && lastSeenMsg.receivedAt === receivedAt) {
               const prevSeenHereList = message.get('lastSeenHere') || [];
               message.set('lastSeenHere', [...prevSeenHereList, recipient.id]);
               changed = true;
 
-              let newMap = {...lastSeenMap};
-              newMap[conversationId] = {receivedAt, id: message.id};
+              const newMap = { ...lastSeenMap };
+              newMap[conversationId] = { receivedAt, id: message.id };
               recipient.set('lastMessagesSeen', newMap);
               window.Signal.Data.updateConversation(recipient.attributes);
             }

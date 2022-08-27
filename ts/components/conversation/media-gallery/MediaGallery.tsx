@@ -97,8 +97,10 @@ export class MediaGallery extends React.Component<Props, State> {
   }
 
   public override componentDidUpdate(prevProps: Props): void {
-    if(this.props.media !== prevProps.media || this.props.documents !== prevProps.documents){
-      this.loadMediaItems(null, this.state.page);
+    const { media, documents } = this.props;
+    const { page } = this.state;
+    if (media !== prevProps.media || documents !== prevProps.documents) {
+      this.loadMediaItems(null, page);
     }
   }
 
@@ -129,49 +131,58 @@ export class MediaGallery extends React.Component<Props, State> {
     );
   }
 
-  private readonly loadMediaItems = (selectedTab: State['selectedTab'] | null, page: number): void => {
-    selectedTab = selectedTab || this.state.selectedTab;
-    this.setState({ selectedTab, page, loading: true, items: [] });
+  private readonly loadMediaItems = async (
+    selectedTab: State['selectedTab'] | null,
+    page: number
+  ): Promise<void> => {
+    const { selectedTab: selectedTabInState } = this.state;
+    const tabToLoad = selectedTab || selectedTabInState;
+    this.setState({ selectedTab: tabToLoad, page, loading: true, items: [] });
     const { media, documents } = this.props;
-    const loadMediaItems = selectedTab === 'media' ? media : documents;
-    if(!loadMediaItems) {
+    const loadMediaItems = tabToLoad === 'media' ? media : documents;
+    if (!loadMediaItems) {
       this.setState({ loading: false, items: [] });
       return;
     }
-    loadMediaItems(page).then((items) => {
+    try {
+      const items = await loadMediaItems(page);
       this.setState({ loading: false, items });
-    }, () => {
+    } catch (e) {
       this.setState({ loading: false, items: [] });
-    });
+    }
   };
 
   private readonly handleTabSelect = (event: TabSelectEvent): void => {
-    if(event.type !== this.state.selectedTab) {
+    const { selectedTab } = this.state;
+    if (event.type !== selectedTab) {
       this.loadMediaItems(event.type, 0);
     }
   };
 
   private readonly nextPage = (): void => {
-    if(this.props.pageSize)
-      this.loadMediaItems(null, this.state.page + 1);
+    const { page } = this.state;
+    const { pageSize } = this.props;
+    if (pageSize) this.loadMediaItems(null, page + 1);
   };
 
   private readonly prevPage = (): void => {
-    if(this.state.page > 0)
-      this.loadMediaItems(null, this.state.page - 1);
+    const { page } = this.state;
+    if (page > 0) this.loadMediaItems(null, page - 1);
   };
 
-  private readonly onItemClick = ((event: Omit<ItemClickEvent, 'items'>) => {
-    this.props.onItemClick && this.props.onItemClick({...event, items: this.state.items});
-  });
+  private readonly onItemClick = (event: Omit<ItemClickEvent, 'items'>) => {
+    const { onItemClick } = this.props;
+    const { items } = this.state;
+    onItemClick?.({ ...event, items });
+  };
 
   private renderSections() {
-    const { i18n, pageSize } = this.props;
+    const { i18n, pageSize, onItemClick } = this.props;
     const { selectedTab, page, items, loading } = this.state;
 
     const type = selectedTab;
 
-    if(loading) {
+    if (loading) {
       return <EmptyState data-test="EmptyState" label={i18n('loading')} />;
     }
 
@@ -189,14 +200,17 @@ export class MediaGallery extends React.Component<Props, State> {
         }
       })();
 
-      if(page > 0) {
-        return <div className="module-media-gallery__sections">
-          <button onClick={this.prevPage}>prev</button>
-          <EmptyState data-test="EmptyState" label={label} />
-        </div>;
-      } else {
-        return <EmptyState data-test="EmptyState" label={label} />
+      if (page > 0) {
+        return (
+          <div className="module-media-gallery__sections">
+            <button type="button" onClick={this.prevPage}>
+              prev
+            </button>
+            <EmptyState data-test="EmptyState" label={label} />
+          </div>
+        );
       }
+      return <EmptyState data-test="EmptyState" label={label} />;
     }
 
     const now = Date.now();
@@ -216,15 +230,25 @@ export class MediaGallery extends React.Component<Props, State> {
           i18n={i18n}
           type={type}
           mediaItems={section.mediaItems}
-          onItemClick={this.props.onItemClick && this.onItemClick}
+          onItemClick={onItemClick && this.onItemClick}
         />
       );
     });
 
-    return <div className="module-media-gallery__sections">
-      {sections}
-      {pageSize && items.length >= pageSize ? <button onClick={this.nextPage}>next</button> : null}
-      {page > 0 ? <button onClick={this.prevPage}>prev</button> : null}
-    </div>;
+    return (
+      <div className="module-media-gallery__sections">
+        {sections}
+        {pageSize && items.length >= pageSize ? (
+          <button type="button" onClick={this.nextPage}>
+            next
+          </button>
+        ) : null}
+        {page > 0 ? (
+          <button type="button" onClick={this.prevPage}>
+            prev
+          </button>
+        ) : null}
+      </div>
+    );
   }
 }

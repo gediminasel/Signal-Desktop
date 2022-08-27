@@ -16,7 +16,7 @@ import {
 } from './AttachmentSection.stories';
 import type { Props } from './MediaGallery';
 import { MediaGallery } from './MediaGallery';
-import { MediaItemType } from '../../../types/MediaItem';
+import type { MediaItemType } from '../../../types/MediaItem';
 
 const i18n = setupI18n('en', enMessages);
 
@@ -32,8 +32,8 @@ export type PartialProps = Omit<Omit<Partial<Props>, 'media'>, 'documents'> & {
 const createProps = (overrideProps: PartialProps = {}): Props => ({
   i18n,
   onItemClick: action('onItemClick'),
-  documents: async () => (overrideProps.documents || []),
-  media: async () => (overrideProps.media || []),
+  documents: async () => overrideProps.documents || [],
+  media: async () => overrideProps.media || [],
 });
 
 export const Populated = (): JSX.Element => {

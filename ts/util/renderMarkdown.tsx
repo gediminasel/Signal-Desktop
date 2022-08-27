@@ -1,0 +1,99 @@
+import type { ReactElement } from 'react';
+import React from 'react';
+import type { RenderTextCallbackType } from '../types/Util';
+
+const markdown: {
+  [symbol: string]: (t: JSX.Element, key: number) => JSX.Element;
+} = {
+  '**': (t, key) => <b key={key}>{t}</b>,
+  __: (t, key) => <u key={key}>{t}</u>,
+  '//': (t, key) => <i key={key}>{t}</i>,
+  '`': (t, key) => (
+    <code style={{ fontWeight: 'bold' }} key={key}>
+      {t}
+    </code>
+  ),
+  '~~': (t, key) => (
+    <span style={{ textDecorationLine: 'line-through' }} key={key}>
+      {t}
+    </span>
+  ),
+  '==': (t, key) => <mark key={key}>{t}</mark>,
+};
+
+export type RenderMarkdownArgs = {
+  text: string;
+  depth?: number;
+  key?: number;
+};
+
+export function renderMarkdownFactory(
+  renderChild: RenderTextCallbackType
+): RenderTextCallbackType {
+  function renderMarkdownMy({
+    text,
+    depth,
+    key,
+  }: RenderMarkdownArgs): ReactElement {
+    let myText = text;
+    let myDepth = depth || 6;
+    myDepth -= 1;
+    const res = [];
+    let childKey = 0;
+    while (myText.length > 0) {
+      let nextSymbol = null;
+
+      if (myDepth > 0) {
+        let nextIndex = 0;
+        for (const symbol of Object.keys(markdown)) {
+          const index = myText.indexOf(symbol);
+          if (index === -1) continue;
+          if (nextSymbol === null || index < nextIndex) {
+            nextSymbol = symbol;
+            nextIndex = index;
+          }
+        }
+      }
+
+      if (nextSymbol === null) {
+        break;
+      }
+
+      const result = myText.split(nextSymbol, 3);
+      childKey += 1;
+      res.push(
+        renderMarkdownMy({
+          text: result[0],
+          key: childKey,
+          depth: myDepth,
+        })
+      );
+
+      if (result.length === 3) {
+        myText = myText.substring(
+          result[0].length + result[1].length + 2 * nextSymbol.length
+        );
+        if (result[1].length === 0) {
+          res.push(nextSymbol.repeat(2));
+        } else {
+          const f = markdown[nextSymbol];
+          childKey += 1;
+          res.push(
+            f(renderMarkdownMy({ text: result[1], depth: myDepth }), childKey)
+          );
+        }
+      } else {
+        res.push(nextSymbol);
+        myText = myText.substring(result[0].length + nextSymbol.length);
+      }
+    }
+
+    if (myText.length > 0) {
+      childKey += 1;
+      res.push(renderChild({ text: myText, key: childKey }));
+    }
+
+    return <React.Fragment key={key}>{res}</React.Fragment>;
+  }
+  return renderMarkdownMy;
+}

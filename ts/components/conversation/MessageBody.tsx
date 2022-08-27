@@ -18,6 +18,7 @@ import type {
   LocalizerType,
   RenderTextCallbackType,
 } from '../../types/Util';
+import { renderMarkdownFactory } from '../../util/renderMarkdown';
 
 type OpenConversationActionType = (
   conversationId: string,
@@ -89,9 +90,9 @@ export function MessageBody({
     bodyRanges
   );
 
-  const renderMentions = ( innerText: string, innerKey?: number) => (
+  const renderMentions: RenderTextCallbackType = ({ text: innerText, key }) => (
     <AtMentionify
-      key={innerKey}
+      key={key}
       direction={direction}
       text={innerText}
       bodyRanges={bodyRanges}
@@ -99,69 +100,11 @@ export function MessageBody({
     />
   );
 
-  const markdown: {[symbol: string]: (t: JSX.Element, key: number) => JSX.Element} = {
-    '**': (t, key)=><b key={key}>{t}</b>,
-    '__': (t, key)=><u key={key}>{t}</u>,
-    '//': (t, key)=><i key={key}>{t}</i>,
-    '`': (t, key)=><code style={{ fontWeight: 'bold' }} key={key}>{t}</code>,
-    '~~': (t, key)=><span style={{ textDecorationLine: 'line-through' }} key={key}>{t}</span>,
-    '==': (t, key)=><mark key={key}>{t}</mark>,
-  };
+  let myDisableMarkdown = disableMarkdown;
 
-  if(text.startsWith('```')) {
-    disableMarkdown = true;
+  if (text.startsWith('```')) {
+    myDisableMarkdown = true;
   }
-
-  const renderMarkdown = disableMarkdown ? (({ text, key }: { text: string, key?: number }) => {
-    return renderMentions(text, key);
-  }) : (({ text, key, depth }: { text: string, key?: number, depth?: number }) => {
-    depth = depth || 6;
-    depth--;
-    const res = [];
-    let childKey = 1;
-    while(text.length > 0) {
-      let next_symbol = null;
-
-      if(depth > 0) {
-        let next_index = 0;
-        for(const symbol in markdown) {
-          const index = text.indexOf(symbol);
-          if(index === -1)
-            continue;
-          if(next_symbol === null || index < next_index) {
-            next_symbol = symbol;
-            next_index = index;
-          }
-        }
-      }
-
-      if(next_symbol === null) {
-        break;
-      }
-      
-      const result = text.split(next_symbol, 3);
-      res.push(renderMarkdown({text: result[0], key: childKey++, depth}));
-
-      if(result.length == 3) {
-        text = text.substring(result[0].length + result[1].length + 2 * next_symbol.length);
-        if(result[1].length === 0) {
-          res.push(next_symbol.repeat(2));
-        } else {
-          const f = markdown[next_symbol];
-          res.push(f(renderMarkdown({text: result[1], depth}), childKey++));
-        }
-      } else {
-        res.push(next_symbol);
-        text = text.substring(result[0].length + next_symbol.length);
-      }
-    }
-
-    if(text.length > 0){
-      res.push(renderMentions(text, childKey++));
-    }
-
-    return <React.Fragment key={key}>{res}</React.Fragment>;
-  });
 
   const renderNewLines: RenderTextCallbackType = ({
     text: textWithNewLines,
@@ -171,7 +114,11 @@ export function MessageBody({
       <AddNewLines
         key={key}
         text={textWithNewLines}
-        renderNonNewLine={renderMarkdown}
+        renderNonNewLine={
+          myDisableMarkdown
+            ? renderMentions
+            : renderMarkdownFactory(renderMentions)
+        }
       />
     );
   };

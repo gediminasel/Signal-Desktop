@@ -1869,19 +1869,21 @@ async function getMessagesNeedingUpgrade(
 
 async function getMessagesWithVisualMediaAttachments(
   conversationId: string,
-  { limit, offset }: { limit: number, offset?: number }
+  { limit, offset }: { limit: number; offset?: number }
 ): Promise<Array<MessageType>> {
   return channels.getMessagesWithVisualMediaAttachments(conversationId, {
-    limit, offset,
+    limit,
+    offset,
   });
 }
 
 async function getMessagesWithFileAttachments(
   conversationId: string,
-  { limit, offset }: { limit: number, offset?: number }
+  { limit, offset }: { limit: number; offset?: number }
 ): Promise<Array<MessageType>> {
   return channels.getMessagesWithFileAttachments(conversationId, {
-    limit, offset,
+    limit,
+    offset,
   });
 }
 

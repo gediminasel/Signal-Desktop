@@ -41,6 +41,7 @@ const defaultMessage: MessageDataPropsType = {
   conversationType: 'direct',
   direction: 'incoming',
   id: 'my-message',
+  receivedAt: Date.now(),
   renderingContext: 'storybook',
   isBlocked: false,
   isMessageRequestAccepted: true,

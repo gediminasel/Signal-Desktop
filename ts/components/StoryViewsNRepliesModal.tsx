@@ -320,6 +320,7 @@ export const StoryViewsNRepliesModal = ({
                 id={reply.id}
                 interactionMode="mouse"
                 readStatus={reply.readStatus}
+                receivedAt={0}
                 renderingContext="StoryViewsNRepliesModal"
                 shouldCollapseAbove={
                   reply.conversationId === replies[index - 1]?.conversationId
