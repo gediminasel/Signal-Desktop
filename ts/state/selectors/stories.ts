@@ -37,7 +37,7 @@ export const getStoriesState = (state: StateType): StoriesStateType =>
 
 export const shouldShowStoriesView = createSelector(
   getStoriesState,
-  ({ isShowingStoriesView }): boolean => isShowingStoriesView
+  ({ openedAtTimestamp }): boolean => Boolean(openedAtTimestamp)
 );
 
 export const hasSelectedStoryData = createSelector(
@@ -153,6 +153,7 @@ export function getStoryView(
   return {
     attachment,
     canReply: canReply(story, undefined, conversationSelector),
+    isHidden: Boolean(sender.hideStory),
     isUnread: story.readStatus === ReadStatus.Unread,
     messageId: story.messageId,
     sender,
@@ -179,6 +180,7 @@ export function getConversationStory(
     'name',
     'profileName',
     'sharedGroupNames',
+    'sortedGroupMembers',
     'title',
   ]);
 
@@ -262,25 +264,15 @@ export const getStories = createSelector(
   getConversationSelector,
   getDistributionListSelector,
   getStoriesState,
-  shouldShowStoriesView,
   (
     conversationSelector,
     distributionListSelector,
-    { stories }: Readonly<StoriesStateType>,
-    isShowingStoriesView
+    { stories }: Readonly<StoriesStateType>
   ): {
     hiddenStories: Array<ConversationStoryType>;
     myStories: Array<MyStoryType>;
     stories: Array<ConversationStoryType>;
   } => {
-    if (!isShowingStoriesView) {
-      return {
-        hiddenStories: [],
-        myStories: [],
-        stories: [],
-      };
-    }
-
     const hiddenStoriesById = new Map<string, ConversationStoryType>();
     const myStoriesById = new Map<string, MyStoryType>();
     const storiesById = new Map<string, ConversationStoryType>();
@@ -359,14 +351,16 @@ export const getStories = createSelector(
   }
 );
 
-export const getUnreadStorySenderCount = createSelector(
+export const getStoriesNotificationCount = createSelector(
   getStoriesState,
-  ({ stories }): number => {
+  ({ lastOpenedAtTimestamp, stories }): number => {
     return new Set(
       stories
         .filter(
           story =>
-            story.readStatus === ReadStatus.Unread && !story.deletedForEveryone
+            story.readStatus === ReadStatus.Unread &&
+            !story.deletedForEveryone &&
+            story.timestamp > (lastOpenedAtTimestamp || 0)
         )
         .map(story => story.conversationId)
     ).size;

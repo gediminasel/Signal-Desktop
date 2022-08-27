@@ -51,6 +51,7 @@ import type {
 } from '../sql/Interface';
 import dataInterface from '../sql/Client';
 import { MY_STORIES_ID } from '../types/Stories';
+import * as RemoteConfig from '../RemoteConfig';
 
 const MY_STORIES_BYTES = uuidToBytes(MY_STORIES_ID);
 
@@ -138,7 +139,7 @@ export async function toContactRecord(
     contactRecord.serviceE164 = e164;
   }
   const pni = conversation.get('pni');
-  if (pni) {
+  if (pni && RemoteConfig.isEnabled('desktop.pnp')) {
     contactRecord.pni = pni;
   }
   const profileKey = conversation.get('profileKey');
@@ -851,9 +852,11 @@ export async function mergeContactRecord(
       : undefined,
   };
 
+  const isPniSupported = RemoteConfig.isEnabled('desktop.pnp');
+
   const e164 = dropNull(contactRecord.serviceE164);
   const uuid = dropNull(contactRecord.serviceUuid);
-  const pni = dropNull(contactRecord.pni);
+  const pni = isPniSupported ? dropNull(contactRecord.pni) : undefined;
 
   // All contacts must have UUID
   if (!uuid) {
@@ -1281,10 +1284,12 @@ export async function mergeStoryDistributionListRecord(
 
   const details: Array<string> = [];
 
-  const listId = Bytes.areEqual(
+  const isMyStories = Bytes.areEqual(
     MY_STORIES_BYTES,
     storyDistributionListRecord.identifier
-  )
+  );
+
+  const listId = isMyStories
     ? MY_STORIES_ID
     : bytesToUuid(storyDistributionListRecord.identifier);
 
@@ -1303,12 +1308,14 @@ export async function mergeStoryDistributionListRecord(
     details.push('adding unknown fields');
   }
 
+  const deletedAtTimestamp = getTimestampFromLong(
+    storyDistributionListRecord.deletedAtTimestamp
+  );
+
   const storyDistribution: StoryDistributionWithMembersType = {
     id: listId,
     name: String(storyDistributionListRecord.name),
-    deletedAtTimestamp: getTimestampFromLong(
-      storyDistributionListRecord.deletedAtTimestamp
-    ),
+    deletedAtTimestamp: isMyStories ? undefined : deletedAtTimestamp,
     allowsReplies: Boolean(storyDistributionListRecord.allowsReplies),
     isBlockList: Boolean(storyDistributionListRecord.isBlockList),
     members: remoteListMembers,
@@ -1348,6 +1355,14 @@ export async function mergeStoryDistributionListRecord(
 
   if (needsToClearUnknownFields) {
     details.push('clearing unknown fields');
+  }
+
+  const isBadRemoteData = !deletedAtTimestamp && !storyDistribution.name;
+  if (isBadRemoteData) {
+    Object.assign(storyDistribution, {
+      name: localStoryDistributionList.name,
+      members: localStoryDistributionList.members,
+    });
   }
 
   const { hasConflict, details: conflictDetails } = doRecordsConflict(
@@ -1481,8 +1496,8 @@ export async function mergeStickerPackRecord(
     `newPosition=${stickerPack.position ?? '?'}`
   );
 
-  if ((!localStickerPack || !wasUninstalled) && isUninstalled) {
-    assert(localStickerPack?.key, 'Installed sticker pack has no key');
+  if (localStickerPack && !wasUninstalled && isUninstalled) {
+    assert(localStickerPack.key, 'Installed sticker pack has no key');
     window.reduxActions.stickers.uninstallStickerPack(
       localStickerPack.id,
       localStickerPack.key,

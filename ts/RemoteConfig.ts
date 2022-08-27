@@ -9,6 +9,9 @@ import * as log from './logging/log';
 export type ConfigKeyType =
   | 'desktop.announcementGroup'
   | 'desktop.calling.audioLevelForSpeaking'
+  | 'desktop.cdsi'
+  | 'desktop.cdsi.returnAcisWithoutUaks'
+  | 'desktop.cdsi.mirroring'
   | 'desktop.clientExpiration'
   | 'desktop.groupCallOutboundRing'
   | 'desktop.internalUser'
@@ -16,6 +19,7 @@ export type ConfigKeyType =
   | 'desktop.mediaQuality.levels'
   | 'desktop.messageCleanup'
   | 'desktop.messageRequests'
+  | 'desktop.pnp'
   | 'desktop.retryReceiptLifespan'
   | 'desktop.retryRespondMaxAge'
   | 'desktop.senderKey.retry'

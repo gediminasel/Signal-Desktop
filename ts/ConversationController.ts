@@ -27,6 +27,7 @@ import { QualifiedAddress } from './types/QualifiedAddress';
 import { sleep } from './util/sleep';
 import { isNotNil } from './util/isNotNil';
 import { MINUTE, SECOND } from './util/durations';
+import { getUuidsForE164s } from './util/getUuidsForE164s';
 
 type ConvoMatchType =
   | {
@@ -451,9 +452,6 @@ export class ConversationController {
       );
     }
 
-    const identifier = aci || e164 || pni;
-    strictAssert(identifier, `${logId}: identifier must be truthy!`);
-
     const matches: Array<ConvoMatchType> = [
       {
         key: 'uuid',
@@ -591,6 +589,12 @@ export class ConversationController {
     );
 
     log.info(`${logId}: Creating a new conversation with all inputs`);
+
+    // This is not our precedence for lookup, but it ensures that the PNI gets into the
+    //   uuid slot if we have no ACI.
+    const identifier = aci || pni || e164;
+    strictAssert(identifier, `${logId}: identifier must be truthy!`);
+
     return this.getOrCreate(identifier, 'private', { e164, pni });
   }
 
@@ -1094,6 +1098,30 @@ export class ConversationController {
       convo.set('isPinned', true);
 
       window.Signal.Data.updateConversation(convo.attributes);
+    }
+  }
+
+  // For testing
+  async _forgetE164(e164: string): Promise<void> {
+    const { server } = window.textsecure;
+    strictAssert(server, 'Server must be initialized');
+    const uuidMap = await getUuidsForE164s(server, [e164]);
+
+    const pni = uuidMap.get(e164)?.pni;
+
+    log.info(`ConversationController: forgetting e164=${e164} pni=${pni}`);
+
+    const convos = [this.get(e164), this.get(pni)];
+
+    for (const convo of convos) {
+      if (!convo) {
+        continue;
+      }
+
+      // eslint-disable-next-line no-await-in-loop
+      await removeConversation(convo.id);
+      this._conversations.remove(convo);
+      this._conversations.resetLookups();
     }
   }
 

@@ -779,13 +779,15 @@ export class Message extends React.PureComponent<Props, State> {
   }
 
   private canRenderStickerLikeEmoji(): boolean {
-    const { text, quote, attachments, previews } = this.props;
+    const { text, quote, storyReplyContext, attachments, previews } =
+      this.props;
 
     return Boolean(
       text &&
         isEmojiOnlyText(text) &&
         getEmojiCount(text) < 6 &&
         !quote &&
+        !storyReplyContext &&
         (!attachments || !attachments.length) &&
         (!previews || !previews.length)
     );
@@ -1044,7 +1046,10 @@ export class Message extends React.PureComponent<Props, State> {
         );
       }
 
-      if (isImage(attachments) || isVideo(attachments)) {
+      if (
+        isImage(attachments) ||
+        (isVideo(attachments) && hasVideoScreenshot(attachments))
+      ) {
         const bottomOverlay = !isSticker && !collapseMetadata;
         // We only want users to tab into this if there's more than one
         const tabIndex = attachments.length > 1 ? 0 : -1;
@@ -1625,6 +1630,9 @@ export class Message extends React.PureComponent<Props, State> {
           isViewOnce={false}
           moduleClassName="StoryReplyQuote"
           onClick={() => {
+            if (!storyReplyContext.storyId) {
+              return;
+            }
             viewStory({
               storyId: storyReplyContext.storyId,
               storyViewMode: StoryViewModeType.Single,

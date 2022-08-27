@@ -8,6 +8,7 @@ import type { LocalizerType } from './Util';
 import type { ReadStatus } from '../messages/MessageReadStatus';
 import type { SendStatus } from '../messages/MessageSendState';
 import type { StoryDistributionListDataType } from '../state/ducks/storyDistributionLists';
+import type { UUIDStringType } from './UUID';
 
 export type ReplyType = {
   author: Pick<
@@ -49,6 +50,7 @@ export type ConversationStoryType = {
     | 'name'
     | 'profileName'
     | 'sharedGroupNames'
+    | 'sortedGroupMembers'
     | 'title'
   >;
   isHidden?: boolean;
@@ -78,6 +80,7 @@ export type StoryViewType = {
     | 'badges'
     | 'color'
     | 'firstName'
+    | 'hideStory'
     | 'id'
     | 'isMe'
     | 'name'
@@ -96,17 +99,24 @@ export type MyStoryType = {
   stories: Array<StoryViewType>;
 };
 
-export const MY_STORIES_ID = '00000000-0000-0000-0000-000000000000';
+export const MY_STORIES_ID: UUIDStringType =
+  '00000000-0000-0000-0000-000000000000';
 
 export enum StoryViewDirectionType {
   Next = 'Next',
   Previous = 'Previous',
 }
 
+// Type of stories to view before closing the viewer
+// All = All the stories in order
+// Single = A single story. Like when clicking on a qouted story
+// Unread = View only unread stories
+// User = All of a user's stories
 export enum StoryViewModeType {
-  Unread = 'Unread',
   All = 'All',
   Single = 'Single',
+  Unread = 'Unread',
+  User = 'User',
 }
 
 export type StoryDistributionListWithMembersDataType = Omit<

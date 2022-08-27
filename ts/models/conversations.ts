@@ -8,7 +8,6 @@ import { v4 as generateGuid } from 'uuid';
 import type {
   ConversationAttributesType,
   ConversationLastProfileType,
-  ConversationModelCollectionType,
   LastMessageStatus,
   MessageAttributesType,
   QuotedMessageType,
@@ -35,7 +34,10 @@ import type {
 } from '../textsecure/SendMessage';
 import createTaskWithTimeout from '../textsecure/TaskWithTimeout';
 import MessageSender from '../textsecure/SendMessage';
-import type { CallbackResultType } from '../textsecure/Types.d';
+import type {
+  CallbackResultType,
+  PniSignatureMessageType,
+} from '../textsecure/Types.d';
 import type { ConversationType } from '../state/ducks/conversations';
 import type {
   AvatarColorType,
@@ -1032,8 +1034,8 @@ export class ConversationModel extends window.Backbone
   }
 
   async fetchSMSOnlyUUID(): Promise<void> {
-    const { messaging } = window.textsecure;
-    if (!messaging) {
+    const { server } = window.textsecure;
+    if (!server) {
       return;
     }
     if (!this.isSMSOnly()) {
@@ -1052,7 +1054,7 @@ export class ConversationModel extends window.Backbone
       await updateConversationsWithUuidLookup({
         conversationController: window.ConversationController,
         conversations: [this],
-        messaging,
+        server,
       });
     } finally {
       // No redux update here
@@ -1875,6 +1877,11 @@ export class ConversationModel extends window.Backbone
     if (e164 !== oldValue) {
       this.set('e164', e164 || undefined);
 
+      // When our own number has changed - reset pniCredential
+      if (isMe(this.attributes)) {
+        this.set({ pniCredential: null });
+      }
+
       if (oldValue && e164) {
         this.addChangeNumberNotification(oldValue, e164);
       }
@@ -2088,6 +2095,7 @@ export class ConversationModel extends window.Backbone
             senderE164: m.source,
             senderUuid: m.sourceUuid,
             timestamp: m.sent_at,
+            isDirectConversation: isDirectConversation(this.attributes),
           }))
         );
       }
@@ -2847,19 +2855,17 @@ export class ConversationModel extends window.Backbone
     });
   }
 
-  getUnverified(): ConversationModelCollectionType {
+  getUnverified(): Array<ConversationModel> {
     if (isDirectConversation(this.attributes)) {
-      return this.isUnverified()
-        ? new window.Whisper.ConversationCollection([this])
-        : new window.Whisper.ConversationCollection();
+      return this.isUnverified() ? [this] : [];
     }
-    return new window.Whisper.ConversationCollection(
+    return (
       this.contactCollection?.filter(contact => {
         if (isMe(contact.attributes)) {
           return false;
         }
         return contact.isUnverified();
-      })
+      }) || []
     );
   }
 
@@ -2880,19 +2886,22 @@ export class ConversationModel extends window.Backbone
     return window.textsecure.storage.protocol.setApproval(uuid, true);
   }
 
-  safeIsUntrusted(): boolean {
+  safeIsUntrusted(timestampThreshold?: number): boolean {
     try {
       const uuid = this.getUuid();
       strictAssert(uuid, `No uuid for conversation: ${this.id}`);
-      return window.textsecure.storage.protocol.isUntrusted(uuid);
+      return window.textsecure.storage.protocol.isUntrusted(
+        uuid,
+        timestampThreshold
+      );
     } catch (err) {
       return false;
     }
   }
 
-  isUntrusted(): boolean {
+  isUntrusted(timestampThreshold?: number): boolean {
     if (isDirectConversation(this.attributes)) {
-      return this.safeIsUntrusted();
+      return this.safeIsUntrusted(timestampThreshold);
     }
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     if (!this.contactCollection!.length) {
@@ -2904,26 +2913,25 @@ export class ConversationModel extends window.Backbone
       if (isMe(contact.attributes)) {
         return false;
       }
-      return contact.safeIsUntrusted();
+      return contact.safeIsUntrusted(timestampThreshold);
     });
   }
 
-  getUntrusted(): ConversationModelCollectionType {
+  getUntrusted(timestampThreshold?: number): Array<ConversationModel> {
     if (isDirectConversation(this.attributes)) {
-      if (this.isUntrusted()) {
-        return new window.Whisper.ConversationCollection([this]);
+      if (this.isUntrusted(timestampThreshold)) {
+        return [this];
       }
-      return new window.Whisper.ConversationCollection();
+      return [];
     }
 
-    return new window.Whisper.ConversationCollection(
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this.contactCollection!.filter(contact => {
+    return (
+      this.contactCollection?.filter(contact => {
         if (isMe(contact.attributes)) {
           return false;
         }
-        return contact.isUntrusted();
-      })
+        return contact.isUntrusted(timestampThreshold);
+      }) || []
     );
   }
 
@@ -3217,6 +3225,10 @@ export class ConversationModel extends window.Backbone
 
     this.trigger('newmessage', model);
     this.updateUnread();
+
+    if (this.get('isArchived')) {
+      this.setArchived(false);
+    }
   }
 
   /**
@@ -5440,6 +5452,13 @@ export class ConversationModel extends window.Backbone
         Errors.toLogFormat(error)
       );
     }
+  }
+
+  getPniSignatureMessage(): PniSignatureMessageType | undefined {
+    if (!this.get('shareMyPhoneNumber')) {
+      return undefined;
+    }
+    return window.textsecure.storage.protocol.signAlternateIdentity();
   }
 }
 

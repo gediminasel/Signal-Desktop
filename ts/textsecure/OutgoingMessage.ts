@@ -196,9 +196,13 @@ export default class OutgoingMessage {
       const contentProto = this.getContentProtoBytes();
       const { timestamp, contentHint, recipients, urgent } = this;
       let dataMessage: Uint8Array | undefined;
+      let hasPniSignatureMessage = false;
 
-      if (proto instanceof Proto.Content && proto.dataMessage) {
-        dataMessage = Proto.DataMessage.encode(proto.dataMessage).finish();
+      if (proto instanceof Proto.Content) {
+        if (proto.dataMessage) {
+          dataMessage = Proto.DataMessage.encode(proto.dataMessage).finish();
+        }
+        hasPniSignatureMessage = Boolean(proto.pniSignatureMessage);
       } else if (proto instanceof Proto.DataMessage) {
         dataMessage = Proto.DataMessage.encode(proto).finish();
       }
@@ -215,6 +219,7 @@ export default class OutgoingMessage {
         contentProto,
         timestamp,
         urgent,
+        hasPniSignatureMessage,
       });
     }
   }
@@ -666,9 +671,9 @@ export default class OutgoingMessage {
       if (isValidUuid(identifier)) {
         // We're good!
       } else if (isValidNumber(identifier)) {
-        if (!window.textsecure.messaging) {
+        if (!window.textsecure.server) {
           throw new Error(
-            'sendToIdentifier: window.textsecure.messaging is not available!'
+            'sendToIdentifier: window.textsecure.server is not available!'
           );
         }
 
@@ -678,7 +683,7 @@ export default class OutgoingMessage {
             conversations: [
               window.ConversationController.getOrCreate(identifier, 'private'),
             ],
-            messaging: window.textsecure.messaging,
+            server: window.textsecure.server,
           });
 
           const uuid =

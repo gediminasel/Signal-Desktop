@@ -54,6 +54,7 @@ export type PropsType = {
     | 'name'
     | 'profileName'
     | 'sharedGroupNames'
+    | 'sortedGroupMembers'
     | 'title'
   >;
   hasActiveCall?: boolean;
@@ -83,7 +84,7 @@ export type PropsType = {
   showToast: ShowToastActionCreatorType;
   skinTone?: number;
   story: StoryViewType;
-  storyViewMode?: StoryViewModeType;
+  storyViewMode: StoryViewModeType;
   toggleHasAllStoriesMuted: () => unknown;
   viewStory: ViewStoryActionCreatorType;
 };
@@ -303,9 +304,22 @@ export const StoryViewer = ({
     log.info('stories.markStoryRead', { messageId });
   }, [markStoryRead, messageId]);
 
+  const canFreelyNavigateStories =
+    storyViewMode === StoryViewModeType.All ||
+    storyViewMode === StoryViewModeType.Unread;
+
+  const canNavigateLeft =
+    (storyViewMode === StoryViewModeType.User && currentIndex > 0) ||
+    canFreelyNavigateStories;
+
+  const canNavigateRight =
+    (storyViewMode === StoryViewModeType.User &&
+      currentIndex < numStories - 1) ||
+    canFreelyNavigateStories;
+
   const navigateStories = useCallback(
     (ev: KeyboardEvent) => {
-      if (ev.key === 'ArrowRight') {
+      if (canNavigateRight && ev.key === 'ArrowRight') {
         viewStory({
           storyId: story.messageId,
           storyViewMode,
@@ -313,7 +327,7 @@ export const StoryViewer = ({
         });
         ev.preventDefault();
         ev.stopPropagation();
-      } else if (ev.key === 'ArrowLeft') {
+      } else if (canNavigateLeft && ev.key === 'ArrowLeft') {
         viewStory({
           storyId: story.messageId,
           storyViewMode,
@@ -323,7 +337,13 @@ export const StoryViewer = ({
         ev.stopPropagation();
       }
     },
-    [story.messageId, storyViewMode, viewStory]
+    [
+      canNavigateLeft,
+      canNavigateRight,
+      story.messageId,
+      storyViewMode,
+      viewStory,
+    ]
   );
 
   useEffect(() => {
@@ -382,8 +402,6 @@ export const StoryViewer = ({
     : [];
   const replyCount = replies.length;
   const viewCount = views.length;
-
-  const hasPrevNextArrows = storyViewMode !== StoryViewModeType.Single;
 
   const canMuteStory = isVideoAttachment(attachment);
   const isStoryMuted = hasAllStoriesMuted || !canMuteStory;
@@ -453,7 +471,7 @@ export const StoryViewer = ({
           style={{ background: getStoryBackground(attachment) }}
         />
         <div className="StoryViewer__content">
-          {hasPrevNextArrows && (
+          {canNavigateLeft && (
             <button
               aria-label={i18n('back')}
               className={classNames(
@@ -685,7 +703,7 @@ export const StoryViewer = ({
               )}
             </div>
           </div>
-          {hasPrevNextArrows && (
+          {canNavigateRight && (
             <button
               aria-label={i18n('forward')}
               className={classNames(
@@ -757,6 +775,7 @@ export const StoryViewer = ({
             renderEmojiPicker={renderEmojiPicker}
             replies={replies}
             skinTone={skinTone}
+            sortedGroupMembers={group?.sortedGroupMembers}
             storyPreviewAttachment={attachment}
             views={views}
           />
@@ -765,7 +784,10 @@ export const StoryViewer = ({
           <ConfirmationDialog
             actions={[
               {
-                action: () => onHideStory(id),
+                action: () => {
+                  onHideStory(id);
+                  onClose();
+                },
                 style: 'affirmative',
                 text: i18n('StoryListItem__hide-modal--confirm'),
               },

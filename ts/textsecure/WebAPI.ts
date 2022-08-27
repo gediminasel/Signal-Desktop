@@ -11,7 +11,6 @@ import type { Response } from 'node-fetch';
 import fetch from 'node-fetch';
 import ProxyAgent from 'proxy-agent';
 import { Agent } from 'https';
-import type { Dictionary } from 'lodash';
 import { escapeRegExp, isNumber } from 'lodash';
 import is from '@sindresorhus/is';
 import PQueue from 'p-queue';
@@ -34,17 +33,21 @@ import { toLogFormat } from '../types/errors';
 import { isPackIdValid, redactPackId } from '../types/Stickers';
 import type { UUID, UUIDStringType } from '../types/UUID';
 import { UUIDKind } from '../types/UUID';
+import type { DirectoryConfigType } from '../types/RendererConfig';
 import * as Bytes from '../Bytes';
 import { getRandomValue } from '../Crypto';
 import * as linkPreviewFetch from '../linkPreviews/linkPreviewFetch';
 import { isBadgeImageFileUrlValid } from '../badges/isBadgeImageFileUrlValid';
 
 import { SocketManager } from './SocketManager';
-import type { CDSAuthType, CDSResponseType } from './cds/Types.d';
+import type {
+  CDSAuthType,
+  CDSRequestOptionsType,
+  CDSResponseType,
+} from './cds/Types.d';
 import type { CDSBase } from './cds/CDSBase';
 import { LegacyCDS } from './cds/LegacyCDS';
 import type { LegacyCDSPutAttestationResponseType } from './cds/LegacyCDS';
-import { CDSH } from './cds/CDSH';
 import { CDSI } from './cds/CDSI';
 import type WebSocketResource from './WebsocketResources';
 import { SignalService as Proto } from '../protobuf';
@@ -482,6 +485,7 @@ const URL_CALLS = {
   accountExistence: 'v1/accounts/account',
   attachmentId: 'v2/attachments/form/upload',
   attestation: 'v1/attestation',
+  batchIdentityCheck: 'v1/profile/identity_check/batch',
   boostBadges: 'v1/subscription/boost/badges',
   challenge: 'v1/challenge',
   config: 'v1/config',
@@ -549,40 +553,6 @@ const WEBSOCKET_CALLS = new Set<keyof typeof URL_CALLS>([
   'storageToken',
 ]);
 
-type DirectoryV1OptionsType = Readonly<{
-  directoryVersion: 1;
-  directoryUrl: string;
-  directoryEnclaveId: string;
-  directoryTrustAnchor: string;
-}>;
-
-type DirectoryV2OptionsType = Readonly<{
-  directoryVersion: 2;
-  directoryV2Url: string;
-  directoryV2PublicKey: string;
-  directoryV2CodeHashes: ReadonlyArray<string>;
-}>;
-
-type DirectoryV3OptionsType = Readonly<{
-  directoryVersion: 3;
-  directoryV3Url: string;
-  directoryV3MRENCLAVE: string;
-}>;
-
-type OptionalDirectoryFieldsType = {
-  directoryUrl?: unknown;
-  directoryEnclaveId?: unknown;
-  directoryTrustAnchor?: unknown;
-  directoryV2Url?: unknown;
-  directoryV2PublicKey?: unknown;
-  directoryV2CodeHashes?: unknown;
-  directoryV3Url?: unknown;
-  directoryV3MRENCLAVE?: unknown;
-};
-
-type DirectoryOptionsType = OptionalDirectoryFieldsType &
-  (DirectoryV1OptionsType | DirectoryV2OptionsType | DirectoryV3OptionsType);
-
 type InitializeOptionsType = {
   url: string;
   storageUrl: string;
@@ -595,7 +565,7 @@ type InitializeOptionsType = {
   contentProxyUrl: string;
   proxyUrl: string | undefined;
   version: string;
-  directoryConfig: DirectoryOptionsType;
+  directoryConfig: DirectoryConfigType;
 };
 
 export type MessageType = Readonly<{
@@ -765,10 +735,13 @@ export type ConfirmCodeResultType = Readonly<{
   deviceId?: number;
 }>;
 
-export type GetUuidsForE164sV2OptionsType = Readonly<{
+export type CdsLookupOptionsType = Readonly<{
   e164s: ReadonlyArray<string>;
-  acis: ReadonlyArray<UUIDStringType>;
-  accessKeys: ReadonlyArray<string>;
+  acis?: ReadonlyArray<UUIDStringType>;
+  accessKeys?: ReadonlyArray<string>;
+  returnAcisWithoutUaks?: boolean;
+  isLegacy: boolean;
+  isMirroring: boolean;
 }>;
 
 type GetProfileCommonOptionsType = Readonly<
@@ -807,9 +780,24 @@ export type GetGroupCredentialsResultType = Readonly<{
   credentials: ReadonlyArray<GroupCredentialType>;
 }>;
 
+const verifyAciResponse = z
+  .object({
+    elements: z.array(
+      z.object({
+        aci: z.string(),
+        identityKey: z.string(),
+      })
+    ),
+  })
+  .passthrough();
+
+export type VerifyAciRequestType = Array<{ aci: string; fingerprint: string }>;
+export type VerifyAciResponseType = z.infer<typeof verifyAciResponse>;
+
 export type WebAPIType = {
   startRegistration(): unknown;
   finishRegistration(baton: unknown): void;
+  cdsLookup: (options: CdsLookupOptionsType) => Promise<CDSResponseType>;
   confirmCode: (
     number: string,
     code: string,
@@ -878,12 +866,6 @@ export type WebAPIType = {
   getStorageCredentials: MessageSender['getStorageCredentials'];
   getStorageManifest: MessageSender['getStorageManifest'];
   getStorageRecords: MessageSender['getStorageRecords'];
-  getUuidsForE164s: (
-    e164s: ReadonlyArray<string>
-  ) => Promise<Dictionary<UUIDStringType | null>>;
-  getUuidsForE164sV2: (
-    options: GetUuidsForE164sV2OptionsType
-  ) => Promise<CDSResponseType>;
   fetchLinkPreviewMetadata: (
     href: string,
     abortSignal: AbortSignal
@@ -908,6 +890,9 @@ export type WebAPIType = {
     inviteLinkBase64?: string
   ) => Promise<Proto.IGroupChange>;
   modifyStorageRecords: MessageSender['modifyStorageRecords'];
+  postBatchIdentityCheck: (
+    elements: VerifyAciRequestType
+  ) => Promise<VerifyAciResponseType>;
   putAttachment: (encryptedBin: Uint8Array) => Promise<string>;
   putProfile: (
     jsonData: ProfileRequestDataType
@@ -1109,12 +1094,17 @@ export function initialize({
       socketManager.authenticate({ username, password });
     }
 
-    let cds: CDSBase;
-    if (directoryConfig.directoryVersion === 1) {
-      const { directoryUrl, directoryEnclaveId, directoryTrustAnchor } =
-        directoryConfig;
+    const {
+      directoryType,
+      directoryUrl,
+      directoryEnclaveId,
+      directoryTrustAnchor,
+    } = directoryConfig;
 
-      cds = new LegacyCDS({
+    let legacyCDS: LegacyCDS | undefined;
+    let cds: CDSBase;
+    if (directoryType === 'legacy' || directoryType === 'mirrored-cdsi') {
+      legacyCDS = new LegacyCDS({
         logger: log,
         directoryEnclaveId,
         directoryTrustAnchor,
@@ -1187,37 +1177,20 @@ export function initialize({
           })) as CDSAuthType;
         },
       });
-    } else if (directoryConfig.directoryVersion === 2) {
-      const { directoryV2Url, directoryV2PublicKey, directoryV2CodeHashes } =
-        directoryConfig;
 
-      cds = new CDSH({
-        logger: log,
-        proxyUrl,
-
-        url: directoryV2Url,
-        publicKey: directoryV2PublicKey,
-        codeHashes: directoryV2CodeHashes,
-        certificateAuthority,
-        version,
-
-        async getAuth() {
-          return (await _ajax({
-            call: 'directoryAuthV2',
-            httpType: 'GET',
-            responseType: 'json',
-          })) as CDSAuthType;
-        },
-      });
-    } else if (directoryConfig.directoryVersion === 3) {
-      const { directoryV3Url, directoryV3MRENCLAVE } = directoryConfig;
+      if (directoryType === 'legacy') {
+        cds = legacyCDS;
+      }
+    }
+    if (directoryType === 'cdsi' || directoryType === 'mirrored-cdsi') {
+      const { directoryCDSIUrl, directoryCDSIMRENCLAVE } = directoryConfig;
 
       cds = new CDSI({
         logger: log,
         proxyUrl,
 
-        url: directoryV3Url,
-        mrenclave: directoryV3MRENCLAVE,
+        url: directoryCDSIUrl,
+        mrenclave: directoryCDSIMRENCLAVE,
         certificateAuthority,
         version,
 
@@ -1249,6 +1222,7 @@ export function initialize({
       unregisterRequestHandler,
       authenticate,
       logout,
+      cdsLookup,
       checkAccountExistence,
       confirmCode,
       createGroup,
@@ -1283,12 +1257,11 @@ export function initialize({
       getStorageCredentials,
       getStorageManifest,
       getStorageRecords,
-      getUuidsForE164s,
-      getUuidsForE164sV2,
       makeProxiedRequest,
       makeSfuRequest,
       modifyGroup,
       modifyStorageRecords,
+      postBatchIdentityCheck,
       putAttachment,
       putProfile,
       putStickers,
@@ -1574,6 +1547,28 @@ export function initialize({
         httpType: 'PUT',
         jsonData: capabilities,
       });
+    }
+
+    async function postBatchIdentityCheck(elements: VerifyAciRequestType) {
+      const res = await _ajax({
+        data: JSON.stringify({ elements }),
+        call: 'batchIdentityCheck',
+        httpType: 'POST',
+        responseType: 'json',
+      });
+
+      const result = verifyAciResponse.safeParse(res);
+
+      if (result.success) {
+        return result.data;
+      }
+
+      log.warn(
+        'WebAPI: invalid response from postBatchIdentityCheck',
+        toLogFormat(result.error)
+      );
+
+      throw result.error;
     }
 
     function getProfileUrl(
@@ -2855,30 +2850,64 @@ export function initialize({
       return socketManager.getProvisioningResource(handler);
     }
 
-    async function getUuidsForE164s(
-      e164s: ReadonlyArray<string>
-    ): Promise<Dictionary<UUIDStringType | null>> {
-      const map = await cds.request({
-        e164s,
-      });
+    async function mirroredCdsLookup(
+      requestOptions: CDSRequestOptionsType,
+      expectedMapPromise: Promise<CDSResponseType>
+    ): Promise<void> {
+      try {
+        log.info('cdsLookup: sending mirrored request');
+        const actualMap = await cds.request(requestOptions);
 
-      const result: Dictionary<UUIDStringType | null> = {};
-      for (const [key, value] of map) {
-        result[key] = value.pni ?? value.aci ?? null;
+        const expectedMap = await expectedMapPromise;
+        let matched = 0;
+        for (const [e164, { aci }] of actualMap) {
+          if (!aci) {
+            continue;
+          }
+
+          const expectedACI = expectedMap.get(e164)?.aci;
+          if (expectedACI === aci) {
+            matched += 1;
+          } else {
+            log.warn(
+              `cdsLookup: mirrored request has aci=${aci} for ${e164}, while ` +
+                `expected aci=${expectedACI}`
+            );
+          }
+        }
+
+        log.info(`cdsLookup: mirrored request success, matched=${matched}`);
+      } catch (error) {
+        log.error('cdsLookup: mirrored request error', toLogFormat(error));
       }
-      return result;
     }
 
-    async function getUuidsForE164sV2({
+    async function cdsLookup({
       e164s,
-      acis,
-      accessKeys,
-    }: GetUuidsForE164sV2OptionsType): Promise<CDSResponseType> {
-      return cds.request({
+      acis = [],
+      accessKeys = [],
+      returnAcisWithoutUaks,
+      isLegacy,
+      isMirroring,
+    }: CdsLookupOptionsType): Promise<CDSResponseType> {
+      const requestOptions = {
         e164s,
         acis,
         accessKeys,
-      });
+        returnAcisWithoutUaks,
+      };
+      if (!isLegacy || !legacyCDS) {
+        return cds.request(requestOptions);
+      }
+
+      const legacyRequest = legacyCDS.request(requestOptions);
+
+      if (legacyCDS !== cds && isMirroring) {
+        // Intentionally not awaiting
+        mirroredCdsLookup(requestOptions, legacyRequest);
+      }
+
+      return legacyRequest;
     }
   }
 }

@@ -5,7 +5,6 @@
 /* eslint-disable max-classes-per-file */
 
 import { z } from 'zod';
-import type { Dictionary } from 'lodash';
 import Long from 'long';
 import PQueue from 'p-queue';
 import type { PlaintextContent } from '@signalapp/libsignal-client';
@@ -15,8 +14,9 @@ import {
 } from '@signalapp/libsignal-client';
 
 import type { QuotedMessageType } from '../model-types.d';
+import type { ConversationModel } from '../models/conversations';
 import { GLOBAL_ZONE } from '../SignalProtocolStore';
-import { assert } from '../util/assert';
+import { assert, strictAssert } from '../util/assert';
 import { parseIntOrThrow } from '../util/parseIntOrThrow';
 import { Address } from '../types/Address';
 import { QualifiedAddress } from '../types/QualifiedAddress';
@@ -24,7 +24,7 @@ import { SenderKeys } from '../LibSignalStores';
 import type { LinkPreviewType } from '../types/message/LinkPreviews';
 import { MIMETypeToString } from '../types/MIME';
 import type * as Attachment from '../types/Attachment';
-import type { UUID, UUIDStringType } from '../types/UUID';
+import type { UUID } from '../types/UUID';
 import type {
   ChallengeType,
   GetGroupLogOptionsType,
@@ -48,7 +48,6 @@ import type {
   SendLogCallbackType,
 } from './OutgoingMessage';
 import OutgoingMessage from './OutgoingMessage';
-import type { CDSResponseType } from './cds/Types.d';
 import * as Bytes from '../Bytes';
 import { getRandomBytes, getZeroes, encryptAttachment } from '../Crypto';
 import {
@@ -65,6 +64,7 @@ import type {
 import { concat, isEmpty, map } from '../util/iterables';
 import type { SendTypesType } from '../util/handleMessageSend';
 import { shouldSaveProto, sendTypesEnum } from '../util/handleMessageSend';
+import { uuidToBytes } from '../util/uuidToBytes';
 import { SignalService as Proto } from '../protobuf';
 import * as log from '../logging/log';
 import type { Avatar, EmbeddedContactType } from '../types/EmbeddedContact';
@@ -574,9 +574,41 @@ class Message {
     return proto;
   }
 
-  encode() {
+  encode(): Uint8Array {
     return Proto.DataMessage.encode(this.toProto()).finish();
   }
+}
+
+type AddPniSignatureMessageToProtoOptionsType = Readonly<{
+  conversation?: ConversationModel;
+  proto: Proto.Content;
+  reason: string;
+}>;
+
+function addPniSignatureMessageToProto({
+  conversation,
+  proto,
+  reason,
+}: AddPniSignatureMessageToProtoOptionsType): void {
+  if (!conversation) {
+    return;
+  }
+
+  const pniSignatureMessage = conversation?.getPniSignatureMessage();
+  if (!pniSignatureMessage) {
+    return;
+  }
+
+  log.info(
+    `addPniSignatureMessageToProto(${reason}): ` +
+      `adding pni signature for ${conversation.idForLogging()}`
+  );
+
+  // eslint-disable-next-line no-param-reassign
+  proto.pniSignatureMessage = {
+    pni: uuidToBytes(pniSignatureMessage.pni),
+    signature: pniSignatureMessage.signature,
+  };
 }
 
 export default class MessageSender {
@@ -944,13 +976,34 @@ export default class MessageSender {
   }
 
   async getContentMessage(
-    options: Readonly<MessageOptionsType>
+    options: Readonly<MessageOptionsType> &
+      Readonly<{
+        includePniSignatureMessage?: boolean;
+      }>
   ): Promise<Proto.Content> {
     const message = await this.getHydratedMessage(options);
     const dataMessage = message.toProto();
 
     const contentMessage = new Proto.Content();
     contentMessage.dataMessage = dataMessage;
+
+    const { includePniSignatureMessage } = options;
+    if (includePniSignatureMessage) {
+      strictAssert(
+        message.recipients.length === 1,
+        'getContentMessage: includePniSignatureMessage is single recipient only'
+      );
+
+      const conversation = window.ConversationController.get(
+        message.recipients[0]
+      );
+
+      addPniSignatureMessageToProto({
+        conversation,
+        proto: contentMessage,
+        reason: `getContentMessage(${message.timestamp})`,
+      });
+    }
 
     return contentMessage;
   }
@@ -1000,6 +1053,14 @@ export default class MessageSender {
 
     const contentMessage = new Proto.Content();
     contentMessage.typingMessage = typingMessage;
+
+    if (recipientId) {
+      addPniSignatureMessageToProto({
+        conversation: window.ConversationController.get(recipientId),
+        proto: contentMessage,
+        reason: `getTypingContentMessage(${finalTimestamp})`,
+      });
+    }
 
     return contentMessage;
   }
@@ -1100,14 +1161,19 @@ export default class MessageSender {
     groupId,
     options,
     urgent,
+    includePniSignatureMessage,
   }: Readonly<{
     messageOptions: MessageOptionsType;
     contentHint: number;
     groupId: string | undefined;
     options?: SendOptionsType;
     urgent: boolean;
+    includePniSignatureMessage?: boolean;
   }>): Promise<CallbackResultType> {
-    const message = await this.getHydratedMessage(messageOptions);
+    const proto = await this.getContentMessage({
+      ...messageOptions,
+      includePniSignatureMessage,
+    });
 
     return new Promise((resolve, reject) => {
       this.sendMessageProto({
@@ -1121,9 +1187,9 @@ export default class MessageSender {
         contentHint,
         groupId,
         options,
-        proto: message.toProto(),
-        recipients: message.recipients || [],
-        timestamp: message.timestamp,
+        proto,
+        recipients: messageOptions.recipients || [],
+        timestamp: messageOptions.timestamp,
         urgent,
       });
     });
@@ -1276,6 +1342,7 @@ export default class MessageSender {
     storyContext,
     timestamp,
     urgent,
+    includePniSignatureMessage,
   }: Readonly<{
     attachments: ReadonlyArray<AttachmentType> | undefined;
     contact?: Array<ContactWithHydratedAvatar>;
@@ -1294,6 +1361,7 @@ export default class MessageSender {
     storyContext?: StoryContextType;
     timestamp: number;
     urgent: boolean;
+    includePniSignatureMessage?: boolean;
   }>): Promise<CallbackResultType> {
     return this.sendMessage({
       messageOptions: {
@@ -1315,6 +1383,7 @@ export default class MessageSender {
       groupId,
       options,
       urgent,
+      includePniSignatureMessage,
     });
   }
 
@@ -1886,6 +1955,14 @@ export default class MessageSender {
     const contentMessage = new Proto.Content();
     contentMessage.callingMessage = callingMessage;
 
+    const conversation = window.ConversationController.get(recipientId);
+
+    addPniSignatureMessageToProto({
+      conversation,
+      proto: contentMessage,
+      reason: `sendCallingMessage(${finalTimestamp})`,
+    });
+
     const { ContentHint } = Proto.UnidentifiedSenderMessage.Message;
 
     return this.sendMessageProtoAndWait({
@@ -1904,6 +1981,7 @@ export default class MessageSender {
       senderE164?: string;
       senderUuid?: string;
       timestamps: Array<number>;
+      isDirectConversation: boolean;
       options?: Readonly<SendOptionsType>;
     }>
   ): Promise<CallbackResultType> {
@@ -1918,6 +1996,7 @@ export default class MessageSender {
       senderE164?: string;
       senderUuid?: string;
       timestamps: Array<number>;
+      isDirectConversation: boolean;
       options?: Readonly<SendOptionsType>;
     }>
   ): Promise<CallbackResultType> {
@@ -1932,6 +2011,7 @@ export default class MessageSender {
       senderE164?: string;
       senderUuid?: string;
       timestamps: Array<number>;
+      isDirectConversation: boolean;
       options?: Readonly<SendOptionsType>;
     }>
   ): Promise<CallbackResultType> {
@@ -1946,12 +2026,14 @@ export default class MessageSender {
     senderUuid,
     timestamps,
     type,
+    isDirectConversation,
     options,
   }: Readonly<{
     senderE164?: string;
     senderUuid?: string;
     timestamps: Array<number>;
     type: Proto.ReceiptMessage.Type;
+    isDirectConversation: boolean;
     options?: Readonly<SendOptionsType>;
   }>): Promise<CallbackResultType> {
     if (!senderUuid && !senderE164) {
@@ -1960,21 +2042,35 @@ export default class MessageSender {
       );
     }
 
+    const timestamp = Date.now();
+
     const receiptMessage = new Proto.ReceiptMessage();
     receiptMessage.type = type;
-    receiptMessage.timestamp = timestamps.map(timestamp =>
-      Long.fromNumber(timestamp)
+    receiptMessage.timestamp = timestamps.map(receiptTimestamp =>
+      Long.fromNumber(receiptTimestamp)
     );
 
     const contentMessage = new Proto.Content();
     contentMessage.receiptMessage = receiptMessage;
+
+    if (isDirectConversation) {
+      const conversation = window.ConversationController.get(
+        senderUuid || senderE164
+      );
+
+      addPniSignatureMessageToProto({
+        conversation,
+        proto: contentMessage,
+        reason: `sendReceiptMessage(${type}, ${timestamp})`,
+      });
+    }
 
     const { ContentHint } = Proto.UnidentifiedSenderMessage.Message;
 
     return this.sendIndividualProto({
       identifier: senderUuid || senderE164,
       proto: contentMessage,
-      timestamp: Date.now(),
+      timestamp,
       contentHint: ContentHint.RESENDABLE,
       options,
       urgent: false,
@@ -2052,6 +2148,7 @@ export default class MessageSender {
     sendType,
     timestamp,
     urgent,
+    hasPniSignatureMessage,
   }: Readonly<{
     contentHint: number;
     messageId?: string;
@@ -2059,6 +2156,7 @@ export default class MessageSender {
     sendType: SendTypesType;
     timestamp: number;
     urgent: boolean;
+    hasPniSignatureMessage: boolean;
   }>): SendLogCallbackType {
     let initialSavePromise: Promise<number>;
 
@@ -2095,6 +2193,7 @@ export default class MessageSender {
             proto,
             timestamp,
             urgent,
+            hasPniSignatureMessage,
           },
           {
             recipients: { [recipientUuid]: deviceIds },
@@ -2270,6 +2369,7 @@ export default class MessageSender {
             sendType: 'senderKeyDistributionMessage',
             timestamp,
             urgent,
+            hasPniSignatureMessage: false,
           })
         : undefined;
 
@@ -2313,6 +2413,7 @@ export default class MessageSender {
             sendType: 'legacyGroupChange',
             timestamp,
             urgent: false,
+            hasPniSignatureMessage: false,
           })
         : undefined;
 
@@ -2344,32 +2445,10 @@ export default class MessageSender {
     return this.server.getProfile(uuid.toString(), options);
   }
 
-  async checkAccountExistence(uuid: UUID): Promise<boolean> {
-    return this.server.checkAccountExistence(uuid);
-  }
-
   async getProfileForUsername(
     username: string
   ): ReturnType<WebAPIType['getProfileForUsername']> {
     return this.server.getProfileForUsername(username);
-  }
-
-  async getUuidsForE164s(
-    numbers: ReadonlyArray<string>
-  ): Promise<Dictionary<UUIDStringType | null>> {
-    return this.server.getUuidsForE164s(numbers);
-  }
-
-  async getUuidsForE164sV2(
-    e164s: ReadonlyArray<string>,
-    acis: ReadonlyArray<UUIDStringType>,
-    accessKeys: ReadonlyArray<string>
-  ): Promise<CDSResponseType> {
-    return this.server.getUuidsForE164sV2({
-      e164s,
-      acis,
-      accessKeys,
-    });
   }
 
   async getAvatar(path: string): Promise<ReturnType<WebAPIType['getAvatar']>> {

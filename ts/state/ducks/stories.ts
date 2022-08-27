@@ -1,10 +1,11 @@
-// Copyright 2021 Signal Messenger, LLC
+// Copyright 2021-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { ThunkAction, ThunkDispatch } from 'redux-thunk';
 import { isEqual, noop, pick } from 'lodash';
 import type { AttachmentType } from '../../types/Attachment';
 import type { BodyRangeType } from '../../types/Util';
+import type { ConversationModel } from '../../models/conversations';
 import type { MessageAttributesType } from '../../model-types.d';
 import type {
   MessageChangedActionType,
@@ -20,9 +21,12 @@ import * as log from '../../logging/log';
 import dataInterface from '../../sql/Client';
 import { DAY } from '../../util/durations';
 import { ReadStatus } from '../../messages/MessageReadStatus';
+import { SafetyNumberChangeSource } from '../../components/SafetyNumberChangeDialog';
 import { StoryViewDirectionType, StoryViewModeType } from '../../types/Stories';
 import { StoryRecipientUpdateEvent } from '../../textsecure/messageReceiverEvents';
 import { ToastReactionFailed } from '../../components/ToastReactionFailed';
+import { assert } from '../../util/assert';
+import { blockSendUntilConversationsAreVerified } from '../../util/blockSendUntilConversationsAreVerified';
 import { enqueueReactionForSend } from '../../reactions/enqueueReactionForSend';
 import { getMessageById } from '../../messages/getMessageById';
 import { markViewed } from '../../services/MessageUpdater';
@@ -46,12 +50,14 @@ import { isStory } from '../../messages/helpers';
 import { onStoryRecipientUpdate } from '../../util/onStoryRecipientUpdate';
 import { sendStoryMessage as doSendStoryMessage } from '../../util/sendStoryMessage';
 import { useBoundActions } from '../../hooks/useBoundActions';
+import { verifyStoryListMembers as doVerifyStoryListMembers } from '../../util/verifyStoryListMembers';
 import { viewSyncJobQueue } from '../../jobs/viewSyncJobQueue';
 import { viewedReceiptsJobQueue } from '../../jobs/viewedReceiptsJobQueue';
 
 export type StoryDataType = {
   attachment?: AttachmentType;
   messageId: string;
+  startedDownload?: boolean;
 } & Pick<
   MessageAttributesType,
   | 'canReplyToStory'
@@ -72,28 +78,37 @@ export type SelectedStoryDataType = {
   messageId: string;
   numStories: number;
   shouldShowDetailsModal: boolean;
+  storyViewMode: StoryViewModeType;
 };
 
 // State
 
 export type StoriesStateType = {
-  readonly isShowingStoriesView: boolean;
+  readonly lastOpenedAtTimestamp: number | undefined;
+  readonly openedAtTimestamp: number | undefined;
   readonly replyState?: {
     messageId: string;
     replies: Array<MessageAttributesType>;
   };
   readonly selectedStoryData?: SelectedStoryDataType;
+  readonly sendStoryModalData?: {
+    untrustedUuids: Array<string>;
+    verifiedUuids: Array<string>;
+  };
   readonly stories: Array<StoryDataType>;
-  readonly storyViewMode?: StoryViewModeType;
 };
 
 // Actions
 
 const DOE_STORY = 'stories/DOE';
+const LIST_MEMBERS_VERIFIED = 'stories/LIST_MEMBERS_VERIFIED';
 const LOAD_STORY_REPLIES = 'stories/LOAD_STORY_REPLIES';
 const MARK_STORY_READ = 'stories/MARK_STORY_READ';
+const QUEUE_STORY_DOWNLOAD = 'stories/QUEUE_STORY_DOWNLOAD';
 const REPLY_TO_STORY = 'stories/REPLY_TO_STORY';
 export const RESOLVE_ATTACHMENT_URL = 'stories/RESOLVE_ATTACHMENT_URL';
+const SEND_STORY_MODAL_OPEN_STATE_CHANGED =
+  'stories/SEND_STORY_MODAL_OPEN_STATE_CHANGED';
 const STORY_CHANGED = 'stories/STORY_CHANGED';
 const TOGGLE_VIEW = 'stories/TOGGLE_VIEW';
 const VIEW_STORY = 'stories/VIEW_STORY';
@@ -101,6 +116,14 @@ const VIEW_STORY = 'stories/VIEW_STORY';
 type DOEStoryActionType = {
   type: typeof DOE_STORY;
   payload: string;
+};
+
+type ListMembersVerified = {
+  type: typeof LIST_MEMBERS_VERIFIED;
+  payload: {
+    untrustedUuids: Array<string>;
+    verifiedUuids: Array<string>;
+  };
 };
 
 type LoadStoryRepliesActionType = {
@@ -113,6 +136,11 @@ type LoadStoryRepliesActionType = {
 
 type MarkStoryReadActionType = {
   type: typeof MARK_STORY_READ;
+  payload: string;
+};
+
+type QueueStoryDownloadActionType = {
+  type: typeof QUEUE_STORY_DOWNLOAD;
   payload: string;
 };
 
@@ -129,6 +157,11 @@ type ResolveAttachmentUrlActionType = {
   };
 };
 
+type SendStoryModalOpenStateChanged = {
+  type: typeof SEND_STORY_MODAL_OPEN_STATE_CHANGED;
+  payload: number | undefined;
+};
+
 type StoryChangedActionType = {
   type: typeof STORY_CHANGED;
   payload: StoryDataType;
@@ -140,23 +173,21 @@ type ToggleViewActionType = {
 
 type ViewStoryActionType = {
   type: typeof VIEW_STORY;
-  payload:
-    | {
-        selectedStoryData: SelectedStoryDataType;
-        storyViewMode: StoryViewModeType;
-      }
-    | undefined;
+  payload: SelectedStoryDataType | undefined;
 };
 
 export type StoriesActionType =
   | DOEStoryActionType
+  | ListMembersVerified
   | LoadStoryRepliesActionType
   | MarkStoryReadActionType
   | MessageChangedActionType
   | MessageDeletedActionType
   | MessagesAddedActionType
+  | QueueStoryDownloadActionType
   | ReplyToStoryActionType
   | ResolveAttachmentUrlActionType
+  | SendStoryModalOpenStateChanged
   | StoryChangedActionType
   | ToggleViewActionType
   | ViewStoryActionType;
@@ -395,13 +426,14 @@ function markStoryRead(
 
     const storyReadDate = Date.now();
 
-    markViewed(message.attributes, storyReadDate);
+    message.set(markViewed(message.attributes, storyReadDate));
 
     const viewedReceipt = {
       messageId,
       senderE164: message.attributes.source,
       senderUuid: message.attributes.sourceUuid,
       timestamp: message.attributes.sent_at,
+      isDirectConversation: false,
     };
     const viewSyncs: Array<SyncType> = [viewedReceipt];
 
@@ -431,7 +463,7 @@ function queueStoryDownload(
   void,
   RootStateType,
   unknown,
-  NoopActionType | ResolveAttachmentUrlActionType
+  NoopActionType | QueueStoryDownloadActionType | ResolveAttachmentUrlActionType
 > {
   return async (dispatch, getState) => {
     const { stories } = getState().stories;
@@ -477,7 +509,11 @@ function queueStoryDownload(
       return;
     }
 
-    if (isDownloading(attachment)) {
+    // isDownloading checks for the downloadJobId which is set by
+    // queueAttachmentDownloads but we optimistically set story.startedDownload
+    // in redux to prevent race conditions from queuing up multiple attachment
+    // downloads before the attachment save takes place.
+    if (isDownloading(attachment) || story.startedDownload) {
       return;
     }
 
@@ -488,7 +524,13 @@ function queueStoryDownload(
       // completed attachment download.
       message.set({ storyReplyContext: undefined });
 
+      dispatch({
+        type: QUEUE_STORY_DOWNLOAD,
+        payload: storyId,
+      });
+
       await queueAttachmentDownloads(message.attributes);
+      return;
     }
 
     dispatch({
@@ -561,14 +603,52 @@ function sendStoryMessage(
   listIds: Array<UUIDStringType>,
   conversationIds: Array<string>,
   attachment: AttachmentType
-): ThunkAction<void, RootStateType, unknown, NoopActionType> {
-  return async dispatch => {
-    await doSendStoryMessage(listIds, conversationIds, attachment);
+): ThunkAction<void, RootStateType, unknown, SendStoryModalOpenStateChanged> {
+  return async (dispatch, getState) => {
+    const { stories } = getState();
+    const { openedAtTimestamp, sendStoryModalData } = stories;
+    assert(
+      openedAtTimestamp,
+      'sendStoryMessage: openedAtTimestamp is undefined, cannot send'
+    );
+    assert(
+      sendStoryModalData,
+      'sendStoryMessage: sendStoryModalData is not defined, cannot send'
+    );
 
     dispatch({
-      type: 'NOOP',
-      payload: null,
+      type: SEND_STORY_MODAL_OPEN_STATE_CHANGED,
+      payload: undefined,
     });
+
+    if (sendStoryModalData.untrustedUuids.length) {
+      log.info('sendStoryMessage: SN changed for some conversations');
+
+      const conversationsNeedingVerification: Array<ConversationModel> =
+        sendStoryModalData.untrustedUuids
+          .map(uuid => window.ConversationController.get(uuid))
+          .filter(isNotNil);
+
+      if (!conversationsNeedingVerification.length) {
+        log.warn(
+          'sendStoryMessage: Could not retrieve conversations for untrusted uuids'
+        );
+        return;
+      }
+
+      const result = await blockSendUntilConversationsAreVerified(
+        conversationsNeedingVerification,
+        SafetyNumberChangeSource.Story,
+        Date.now() - openedAtTimestamp
+      );
+
+      if (!result) {
+        log.info('sendStoryMessage: did not send');
+        return;
+      }
+    }
+
+    await doSendStoryMessage(listIds, conversationIds, attachment);
   };
 }
 
@@ -579,9 +659,66 @@ function storyChanged(story: StoryDataType): StoryChangedActionType {
   };
 }
 
+function sendStoryModalOpenStateChanged(
+  value: boolean
+): ThunkAction<void, RootStateType, unknown, SendStoryModalOpenStateChanged> {
+  return (dispatch, getState) => {
+    const { stories } = getState();
+
+    if (!stories.sendStoryModalData && value) {
+      dispatch({
+        type: SEND_STORY_MODAL_OPEN_STATE_CHANGED,
+        payload: Date.now(),
+      });
+    }
+
+    if (stories.sendStoryModalData && !value) {
+      dispatch({
+        type: SEND_STORY_MODAL_OPEN_STATE_CHANGED,
+        payload: undefined,
+      });
+    }
+  };
+}
+
 function toggleStoriesView(): ToggleViewActionType {
   return {
     type: TOGGLE_VIEW,
+  };
+}
+
+function verifyStoryListMembers(
+  memberUuids: Array<string>
+): ThunkAction<void, RootStateType, unknown, ListMembersVerified> {
+  return async (dispatch, getState) => {
+    const { stories } = getState();
+    const { sendStoryModalData } = stories;
+
+    if (!sendStoryModalData) {
+      return;
+    }
+
+    const alreadyVerifiedUuids = new Set([...sendStoryModalData.verifiedUuids]);
+
+    const uuidsNeedingVerification = memberUuids.filter(
+      uuid => !alreadyVerifiedUuids.has(uuid)
+    );
+
+    if (!uuidsNeedingVerification.length) {
+      return;
+    }
+
+    const { untrustedUuids, verifiedUuids } = await doVerifyStoryListMembers(
+      uuidsNeedingVerification
+    );
+
+    dispatch({
+      type: LIST_MEMBERS_VERIFIED,
+      payload: {
+        untrustedUuids: Array.from(untrustedUuids),
+        verifiedUuids: Array.from(verifiedUuids),
+      },
+    });
   };
 }
 
@@ -646,10 +783,17 @@ const getSelectedStoryDataForConversationId = (
   };
 };
 
-function viewUserStories(
-  conversationId: string,
-  shouldShowDetailsModal = false
-): ThunkAction<void, RootStateType, unknown, ViewStoryActionType> {
+export type ViewUserStoriesActionCreatorType = (opts: {
+  conversationId: string;
+  shouldShowDetailsModal?: boolean;
+  storyViewMode?: StoryViewModeType;
+}) => unknown;
+
+const viewUserStories: ViewUserStoriesActionCreatorType = ({
+  conversationId,
+  shouldShowDetailsModal = false,
+  storyViewMode,
+}): ThunkAction<void, RootStateType, unknown, ViewStoryActionType> => {
   return (dispatch, getState) => {
     const { currentIndex, hasUnread, numStories, storiesByConversationId } =
       getSelectedStoryDataForConversationId(dispatch, getState, conversationId);
@@ -659,43 +803,49 @@ function viewUserStories(
     dispatch({
       type: VIEW_STORY,
       payload: {
-        selectedStoryData: {
-          currentIndex,
-          messageId: story.messageId,
-          numStories,
-          shouldShowDetailsModal,
-        },
-        storyViewMode: hasUnread
-          ? StoryViewModeType.Unread
-          : StoryViewModeType.All,
+        currentIndex,
+        messageId: story.messageId,
+        numStories,
+        shouldShowDetailsModal,
+        storyViewMode:
+          storyViewMode ||
+          (hasUnread ? StoryViewModeType.Unread : StoryViewModeType.All),
       },
     });
   };
-}
+};
 
-export type ViewStoryActionCreatorType = (opts: {
-  closeViewer?: boolean;
-  storyId?: string;
-  storyViewMode?: StoryViewModeType;
-  viewDirection?: StoryViewDirectionType;
-  shouldShowDetailsModal?: boolean;
-}) => unknown;
+export type ViewStoryActionCreatorType = (
+  opts:
+    | {
+        closeViewer: true;
+      }
+    | {
+        storyId: string;
+        storyViewMode: StoryViewModeType;
+        viewDirection?: StoryViewDirectionType;
+        shouldShowDetailsModal?: boolean;
+      }
+) => unknown;
 
-const viewStory: ViewStoryActionCreatorType = ({
-  closeViewer,
-  shouldShowDetailsModal = false,
-  storyId,
-  storyViewMode,
-  viewDirection,
-}): ThunkAction<void, RootStateType, unknown, ViewStoryActionType> => {
+const viewStory: ViewStoryActionCreatorType = (
+  opts
+): ThunkAction<void, RootStateType, unknown, ViewStoryActionType> => {
   return (dispatch, getState) => {
-    if (closeViewer || !storyId || !storyViewMode) {
+    if ('closeViewer' in opts) {
       dispatch({
         type: VIEW_STORY,
         payload: undefined,
       });
       return;
     }
+
+    const {
+      shouldShowDetailsModal = false,
+      storyId,
+      storyViewMode,
+      viewDirection,
+    } = opts;
 
     const state = getState();
     const { stories } = state.stories;
@@ -711,6 +861,11 @@ const viewStory: ViewStoryActionCreatorType = ({
     );
 
     if (!story) {
+      log.warn('stories.viewStory: No story found', storyId);
+      dispatch({
+        type: VIEW_STORY,
+        payload: undefined,
+      });
       return;
     }
 
@@ -727,12 +882,10 @@ const viewStory: ViewStoryActionCreatorType = ({
       dispatch({
         type: VIEW_STORY,
         payload: {
-          selectedStoryData: {
-            currentIndex,
-            messageId: storyId,
-            numStories,
-            shouldShowDetailsModal,
-          },
+          currentIndex,
+          messageId: storyId,
+          numStories,
+          shouldShowDetailsModal,
           storyViewMode,
         },
       });
@@ -750,12 +903,10 @@ const viewStory: ViewStoryActionCreatorType = ({
       dispatch({
         type: VIEW_STORY,
         payload: {
-          selectedStoryData: {
-            currentIndex: nextIndex,
-            messageId: nextStory.messageId,
-            numStories,
-            shouldShowDetailsModal: false,
-          },
+          currentIndex: nextIndex,
+          messageId: nextStory.messageId,
+          numStories,
+          shouldShowDetailsModal: false,
           storyViewMode,
         },
       });
@@ -770,14 +921,21 @@ const viewStory: ViewStoryActionCreatorType = ({
       dispatch({
         type: VIEW_STORY,
         payload: {
-          selectedStoryData: {
-            currentIndex: nextIndex,
-            messageId: nextStory.messageId,
-            numStories,
-            shouldShowDetailsModal: false,
-          },
+          currentIndex: nextIndex,
+          messageId: nextStory.messageId,
+          numStories,
+          shouldShowDetailsModal: false,
           storyViewMode,
         },
+      });
+      return;
+    }
+
+    // We were just viewing a single user's stories. Close the viewer.
+    if (storyViewMode === StoryViewModeType.User) {
+      dispatch({
+        type: VIEW_STORY,
+        payload: undefined,
       });
       return;
     }
@@ -799,12 +957,10 @@ const viewStory: ViewStoryActionCreatorType = ({
         dispatch({
           type: VIEW_STORY,
           payload: {
-            selectedStoryData: {
-              currentIndex: nextSelectedStoryData.currentIndex,
-              messageId: unreadStory.messageId,
-              numStories: nextSelectedStoryData.numStories,
-              shouldShowDetailsModal: false,
-            },
+            currentIndex: nextSelectedStoryData.currentIndex,
+            messageId: unreadStory.messageId,
+            numStories: nextSelectedStoryData.numStories,
+            shouldShowDetailsModal: false,
             storyViewMode,
           },
         });
@@ -818,6 +974,13 @@ const viewStory: ViewStoryActionCreatorType = ({
     );
 
     if (conversationStoryIndex < 0) {
+      log.warn('stories.viewStory: No stories found for conversation', {
+        storiesLength: conversationStories.length,
+      });
+      dispatch({
+        type: VIEW_STORY,
+        payload: undefined,
+      });
       return;
     }
 
@@ -860,13 +1023,10 @@ const viewStory: ViewStoryActionCreatorType = ({
       dispatch({
         type: VIEW_STORY,
         payload: {
-          selectedStoryData: {
-            currentIndex: 0,
-            messageId:
-              nextSelectedStoryData.storiesByConversationId[0].messageId,
-            numStories: nextSelectedStoryData.numStories,
-            shouldShowDetailsModal: false,
-          },
+          currentIndex: 0,
+          messageId: nextSelectedStoryData.storiesByConversationId[0].messageId,
+          numStories: nextSelectedStoryData.numStories,
+          shouldShowDetailsModal: false,
           storyViewMode,
         },
       });
@@ -898,13 +1058,10 @@ const viewStory: ViewStoryActionCreatorType = ({
       dispatch({
         type: VIEW_STORY,
         payload: {
-          selectedStoryData: {
-            currentIndex: 0,
-            messageId:
-              nextSelectedStoryData.storiesByConversationId[0].messageId,
-            numStories: nextSelectedStoryData.numStories,
-            shouldShowDetailsModal: false,
-          },
+          currentIndex: 0,
+          messageId: nextSelectedStoryData.storiesByConversationId[0].messageId,
+          numStories: nextSelectedStoryData.numStories,
+          shouldShowDetailsModal: false,
           storyViewMode,
         },
       });
@@ -927,8 +1084,10 @@ export const actions = {
   reactToStory,
   replyToStory,
   sendStoryMessage,
+  sendStoryModalOpenStateChanged,
   storyChanged,
   toggleStoriesView,
+  verifyStoryListMembers,
   viewUserStories,
   viewStory,
 };
@@ -941,7 +1100,8 @@ export function getEmptyState(
   overrideState: Partial<StoriesStateType> = {}
 ): StoriesStateType {
   return {
-    isShowingStoriesView: false,
+    lastOpenedAtTimestamp: undefined,
+    openedAtTimestamp: undefined,
     stories: [],
     ...overrideState,
   };
@@ -952,15 +1112,19 @@ export function reducer(
   action: Readonly<StoriesActionType>
 ): StoriesStateType {
   if (action.type === TOGGLE_VIEW) {
+    const isShowingStoriesView = Boolean(state.openedAtTimestamp);
+
     return {
       ...state,
-      isShowingStoriesView: !state.isShowingStoriesView,
-      selectedStoryData: state.isShowingStoriesView
+      lastOpenedAtTimestamp: !isShowingStoriesView
+        ? state.openedAtTimestamp || Date.now()
+        : state.lastOpenedAtTimestamp,
+      openedAtTimestamp: isShowingStoriesView ? undefined : Date.now(),
+      replyState: undefined,
+      sendStoryModalData: undefined,
+      selectedStoryData: isShowingStoriesView
         ? undefined
         : state.selectedStoryData,
-      storyViewMode: state.isShowingStoriesView
-        ? undefined
-        : state.storyViewMode,
     };
   }
 
@@ -1196,12 +1360,76 @@ export function reducer(
   }
 
   if (action.type === VIEW_STORY) {
-    const { selectedStoryData, storyViewMode } = action.payload || {};
+    return {
+      ...state,
+      selectedStoryData: action.payload,
+    };
+  }
+
+  if (action.type === QUEUE_STORY_DOWNLOAD) {
+    const storyIndex = state.stories.findIndex(
+      story => story.messageId === action.payload
+    );
+
+    if (storyIndex < 0) {
+      return state;
+    }
+
+    const existingStory = state.stories[storyIndex];
 
     return {
       ...state,
-      selectedStoryData,
-      storyViewMode,
+      stories: replaceIndex(state.stories, storyIndex, {
+        ...existingStory,
+        startedDownload: true,
+      }),
+    };
+  }
+
+  if (action.type === SEND_STORY_MODAL_OPEN_STATE_CHANGED) {
+    if (action.payload) {
+      return {
+        ...state,
+        sendStoryModalData: {
+          untrustedUuids: [],
+          verifiedUuids: [],
+        },
+      };
+    }
+
+    return {
+      ...state,
+      sendStoryModalData: undefined,
+    };
+  }
+
+  if (action.type === LIST_MEMBERS_VERIFIED) {
+    const sendStoryModalData = {
+      untrustedUuids: [],
+      verifiedUuids: [],
+      ...(state.sendStoryModalData || {}),
+    };
+
+    const untrustedUuids = Array.from(
+      new Set([
+        ...sendStoryModalData.untrustedUuids,
+        ...action.payload.untrustedUuids,
+      ])
+    );
+    const verifiedUuids = Array.from(
+      new Set([
+        ...sendStoryModalData.verifiedUuids,
+        ...action.payload.verifiedUuids,
+      ])
+    );
+
+    return {
+      ...state,
+      sendStoryModalData: {
+        ...sendStoryModalData,
+        untrustedUuids,
+        verifiedUuids,
+      },
     };
   }
 

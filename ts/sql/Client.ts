@@ -26,7 +26,7 @@ import { tapToViewMessagesDeletionService } from '../services/tapToViewMessagesD
 import * as Bytes from '../Bytes';
 import { CURRENT_SCHEMA_VERSION } from '../types/Message2';
 import { createBatcher } from '../util/batcher';
-import { assert, strictAssert } from '../util/assert';
+import { assert, softAssert, strictAssert } from '../util/assert';
 import { mapObjectWithSpec } from '../util/mapObjectWithSpec';
 import type { ObjectMappingSpecType } from '../util/mapObjectWithSpec';
 import { cleanDataForIpc } from './cleanDataForIpc';
@@ -38,6 +38,7 @@ import type { ProcessGroupCallRingRequestResult } from '../types/Calling';
 import type { RemoveAllConfiguration } from '../types/RemoveAllConfiguration';
 import createTaskWithTimeout from '../textsecure/TaskWithTimeout';
 import * as log from '../logging/log';
+import { isValidUuid } from '../types/UUID';
 
 import type { StoredJob } from '../jobs/types';
 import { formatJobForInsert } from '../jobs/formatJobForInsert';
@@ -52,6 +53,7 @@ import type {
   ConversationType,
   ConversationMetricsType,
   DeleteSentProtoRecipientOptionsType,
+  DeleteSentProtoRecipientResultType,
   EmojiType,
   GetUnreadByConversationAndMarkReadResultType,
   GetConversationRangeCenteredOnMessageResultType,
@@ -835,10 +837,6 @@ async function removeAllSignedPreKeys(): Promise<void> {
 // Items
 
 const ITEM_SPECS: Partial<Record<ItemKeyType, ObjectMappingSpecType>> = {
-  senderCertificate: ['value.serialized'],
-  senderCertificateNoE164: ['value.serialized'],
-  subscriberId: ['value'],
-  profileKey: ['value'],
   identityKeyMap: {
     key: 'value',
     valueSpec: {
@@ -846,6 +844,10 @@ const ITEM_SPECS: Partial<Record<ItemKeyType, ObjectMappingSpecType>> = {
       valueSpec: ['privKey', 'pubKey'],
     },
   },
+  profileKey: ['value'],
+  senderCertificate: ['value.serialized'],
+  senderCertificateNoE164: ['value.serialized'],
+  subscriberId: ['value'],
 };
 async function createOrUpdateItem<K extends ItemKeyType>(
   data: ItemType<K>
@@ -951,8 +953,8 @@ async function deleteSentProtoRecipient(
   options:
     | DeleteSentProtoRecipientOptionsType
     | ReadonlyArray<DeleteSentProtoRecipientOptionsType>
-): Promise<void> {
-  await channels.deleteSentProtoRecipient(options);
+): Promise<DeleteSentProtoRecipientResultType> {
+  return channels.deleteSentProtoRecipient(options);
 }
 
 async function getSentProtoByRecipient(options: {
@@ -1168,6 +1170,8 @@ async function saveMessage(
     ...options,
     jobToInsert: options.jobToInsert && formatJobForInsert(options.jobToInsert),
   });
+
+  softAssert(isValidUuid(id), 'saveMessage: messageId is not a UUID');
 
   expiringMessagesDeletionService.update();
   tapToViewMessagesDeletionService.update();
@@ -1743,6 +1747,10 @@ async function _deleteAllStoryDistributions(): Promise<void> {
 async function createNewStoryDistribution(
   distribution: StoryDistributionWithMembersType
 ): Promise<void> {
+  strictAssert(
+    distribution.name,
+    'Distribution list does not have a valid name'
+  );
   await channels.createNewStoryDistribution(distribution);
 }
 async function getAllStoryDistributionsWithMembers(): Promise<
@@ -1758,6 +1766,17 @@ async function getStoryDistributionWithMembers(
 async function modifyStoryDistribution(
   distribution: StoryDistributionType
 ): Promise<void> {
+  if (distribution.deletedAtTimestamp) {
+    strictAssert(
+      !distribution.name,
+      'Attempt to delete distribution list but still has a name'
+    );
+  } else {
+    strictAssert(
+      distribution.name,
+      'Cannot clear distribution list name without deletedAtTimestamp set'
+    );
+  }
   await channels.modifyStoryDistribution(distribution);
 }
 async function modifyStoryDistributionMembers(
@@ -1776,6 +1795,17 @@ async function modifyStoryDistributionWithMembers(
     toRemove: Array<UUIDStringType>;
   }
 ): Promise<void> {
+  if (distribution.deletedAtTimestamp) {
+    strictAssert(
+      !distribution.name,
+      'Attempt to delete distribution list but still has a name'
+    );
+  } else {
+    strictAssert(
+      distribution.name,
+      'Cannot clear distribution list name without deletedAtTimestamp set'
+    );
+  }
   await channels.modifyStoryDistributionWithMembers(distribution, options);
 }
 async function deleteStoryDistribution(id: UUIDStringType): Promise<void> {

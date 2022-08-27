@@ -15,7 +15,11 @@ import type {
 import type { LocalizerType } from '../types/Util';
 import type { PreferredBadgeSelectorType } from '../state/selectors/badges';
 import type { PropsType as SmartStoryCreatorPropsType } from '../state/smart/StoryCreator';
-import type { ViewStoryActionCreatorType } from '../state/ducks/stories';
+import type { ShowToastActionCreatorType } from '../state/ducks/toast';
+import type {
+  ViewUserStoriesActionCreatorType,
+  ViewStoryActionCreatorType,
+} from '../state/ducks/stories';
 import { MyStories } from './MyStories';
 import { StoriesPane } from './StoriesPane';
 import { Theme, themeClassName } from '../util/theme';
@@ -35,10 +39,11 @@ export type PropsType = {
   renderStoryCreator: (props: SmartStoryCreatorPropsType) => JSX.Element;
   showConversation: ShowConversationType;
   showStoriesSettings: () => unknown;
+  showToast: ShowToastActionCreatorType;
   stories: Array<ConversationStoryType>;
   toggleHideStories: (conversationId: string) => unknown;
   toggleStoriesView: () => unknown;
-  viewUserStories: (conversationId: string) => unknown;
+  viewUserStories: ViewUserStoriesActionCreatorType;
   viewStory: ViewStoryActionCreatorType;
 };
 
@@ -64,6 +69,7 @@ export const Stories = ({
   renderStoryCreator,
   showConversation,
   showStoriesSettings,
+  showToast,
   stories,
   toggleHideStories,
   toggleStoriesView,
@@ -118,6 +124,7 @@ export const Stories = ({
             onStoriesSettings={showStoriesSettings}
             queueStoryDownload={queueStoryDownload}
             showConversation={showConversation}
+            showToast={showToast}
             stories={stories}
             toggleHideStories={toggleHideStories}
             toggleStoriesView={toggleStoriesView}

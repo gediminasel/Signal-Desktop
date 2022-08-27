@@ -16,9 +16,12 @@ import type {
 } from '../types/Stories';
 import type { LocalizerType } from '../types/Util';
 import type { PreferredBadgeSelectorType } from '../state/selectors/badges';
+import type { ShowToastActionCreatorType } from '../state/ducks/toast';
+import type { ViewUserStoriesActionCreatorType } from '../state/ducks/stories';
 import { ContextMenu } from './ContextMenu';
 import { MyStoriesButton } from './MyStoriesButton';
 import { SearchInput } from './SearchInput';
+import { StoriesAddStoryButton } from './StoriesAddStoryButton';
 import { StoryListItem } from './StoryListItem';
 import { Theme } from '../util/theme';
 import { isNotNil } from '../util/isNotNil';
@@ -70,10 +73,11 @@ export type PropsType = {
   onStoriesSettings: () => unknown;
   queueStoryDownload: (storyId: string) => unknown;
   showConversation: ShowConversationType;
+  showToast: ShowToastActionCreatorType;
   stories: Array<ConversationStoryType>;
   toggleHideStories: (conversationId: string) => unknown;
   toggleStoriesView: () => unknown;
-  viewUserStories: (conversationId: string) => unknown;
+  viewUserStories: ViewUserStoriesActionCreatorType;
 };
 
 export const StoriesPane = ({
@@ -87,6 +91,7 @@ export const StoriesPane = ({
   onStoriesSettings,
   queueStoryDownload,
   showConversation,
+  showToast,
   stories,
   toggleHideStories,
   toggleStoriesView,
@@ -118,38 +123,11 @@ export const StoriesPane = ({
         <div className="Stories__pane__header--title">
           {i18n('Stories__title')}
         </div>
-        <ContextMenu
+        <StoriesAddStoryButton
           i18n={i18n}
-          menuOptions={[
-            {
-              label: i18n('Stories__add-story--media'),
-              onClick: () => {
-                const input = document.createElement('input');
-                input.accept = 'image/*,video/*';
-                input.type = 'file';
-                input.onchange = () => {
-                  const file = input.files ? input.files[0] : undefined;
-
-                  if (!file) {
-                    return;
-                  }
-
-                  onAddStory(file);
-                };
-                input.click();
-              },
-            },
-            {
-              label: i18n('Stories__add-story--text'),
-              onClick: () => onAddStory(),
-            },
-          ]}
           moduleClassName="Stories__pane__add-story"
-          popperOptions={{
-            placement: 'bottom',
-            strategy: 'absolute',
-          }}
-          theme={Theme.Dark}
+          onAddStory={onAddStory}
+          showToast={showToast}
         />
         <ContextMenu
           i18n={i18n}
@@ -190,6 +168,7 @@ export const StoriesPane = ({
             onAddStory={onAddStory}
             onClick={onMyStoriesClicked}
             queueStoryDownload={queueStoryDownload}
+            showToast={showToast}
           />
           {renderedStories.map(story => (
             <StoryListItem
