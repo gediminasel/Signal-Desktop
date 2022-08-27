@@ -76,6 +76,13 @@ jobs:
       env:
         NODE_ENV: production
 
+    - name: Upload artifacts
+      id: upload-artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: deb-package
+        path: release//signal-desktop_*.deb
+
   windows:
     needs: lint
     runs-on: windows-latest
@@ -115,3 +122,10 @@ jobs:
     - run: yarn test-release
       env:
         SIGNAL_ENV: production
+
+    - name: Upload artifacts
+      id: upload-artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: installer-exe
+        path: release//signal-desktop-win-*.exe

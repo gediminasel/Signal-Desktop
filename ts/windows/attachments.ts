@@ -23,7 +23,7 @@ type FSAttrType = {
 let xattr: FSAttrType | undefined;
 
 try {
-  // eslint-disable-next-line global-require, import/no-unresolved
+  // eslint-disable-next-line global-require, import/no-extraneous-dependencies
   xattr = require('fs-xattr');
 } catch (e) {
   window.SignalContext.log?.info('x-attr dependency did not load successfully');
