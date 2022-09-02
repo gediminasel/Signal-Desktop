@@ -59,6 +59,7 @@ export type PropsType = {
   >;
   hasActiveCall?: boolean;
   hasAllStoriesMuted: boolean;
+  hasReadReceiptSetting: boolean;
   i18n: LocalizerType;
   loadStoryReplies: (conversationId: string, messageId: string) => unknown;
   markStoryRead: (mId: string) => unknown;
@@ -107,6 +108,7 @@ export const StoryViewer = ({
   group,
   hasActiveCall,
   hasAllStoriesMuted,
+  hasReadReceiptSetting,
   i18n,
   loadStoryReplies,
   markStoryRead,
@@ -147,13 +149,14 @@ export const StoryViewer = ({
     avatarPath,
     color,
     isMe,
-    id,
     firstName,
     name,
     profileName,
     sharedGroupNames,
     title,
   } = story.sender;
+
+  const conversationId = group?.id || story.sender.id;
 
   const [hasStoryViewsNRepliesModal, setHasStoryViewsNRepliesModal] =
     useState(false);
@@ -448,7 +451,7 @@ export const StoryViewer = ({
               : i18n('StoryListItem__hide'),
             onClick: () => {
               if (isHidden) {
-                onHideStory(id);
+                onHideStory(conversationId);
               } else {
                 setHasConfirmHideStory(true);
               }
@@ -458,7 +461,7 @@ export const StoryViewer = ({
             icon: 'StoryListItem__icon--chat',
             label: i18n('StoryListItem__go-to-chat'),
             onClick: () => {
-              onGoToConversation(id);
+              onGoToConversation(conversationId);
             },
           },
         ];
@@ -660,7 +663,11 @@ export const StoryViewer = ({
                   <>
                     {sendState || replyCount > 0 ? (
                       <span className="StoryViewer__reply__chevron">
+                        {sendState && !hasReadReceiptSetting && !replyCount && (
+                          <>{i18n('StoryViewer__views-off')}</>
+                        )}
                         {sendState &&
+                          hasReadReceiptSetting &&
                           (viewCount === 1 ? (
                             <Intl
                               i18n={i18n}
@@ -674,7 +681,7 @@ export const StoryViewer = ({
                               components={[<strong>{viewCount}</strong>]}
                             />
                           ))}
-                        {viewCount > 0 && replyCount > 0 && ' '}
+                        {(sendState || viewCount > 0) && replyCount > 0 && ' '}
                         {replyCount > 0 &&
                           (replyCount === 1 ? (
                             <Intl
@@ -748,24 +755,24 @@ export const StoryViewer = ({
             authorTitle={firstName || title}
             canReply={Boolean(canReply)}
             getPreferredBadge={getPreferredBadge}
+            hasReadReceiptSetting={hasReadReceiptSetting}
             i18n={i18n}
             isGroupStory={isGroupStory}
-            isMyStory={isMe}
             onClose={() => setHasStoryViewsNRepliesModal(false)}
             onReact={emoji => {
               onReactToStory(emoji, story);
               if (!isGroupStory) {
                 setHasStoryViewsNRepliesModal(false);
+                showToast(ToastType.StoryReact);
               }
               setReactionEmoji(emoji);
-              showToast(ToastType.StoryReact);
             }}
             onReply={(message, mentions, replyTimestamp) => {
               if (!isGroupStory) {
                 setHasStoryViewsNRepliesModal(false);
+                showToast(ToastType.StoryReply);
               }
               onReplyToStory(message, mentions, replyTimestamp, story);
-              showToast(ToastType.StoryReply);
             }}
             onSetSkinTone={onSetSkinTone}
             onTextTooLong={onTextTooLong}
@@ -785,7 +792,7 @@ export const StoryViewer = ({
             actions={[
               {
                 action: () => {
-                  onHideStory(id);
+                  onHideStory(conversationId);
                   onClose();
                 },
                 style: 'affirmative',

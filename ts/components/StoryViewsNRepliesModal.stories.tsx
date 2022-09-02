@@ -28,11 +28,11 @@ export default {
       defaultValue: true,
     },
     getPreferredBadge: { action: true },
+    hasReadReceiptSetting: {
+      defaultValue: true,
+    },
     i18n: {
       defaultValue: i18n,
-    },
-    isMyStory: {
-      defaultValue: false,
     },
     onClose: { action: true },
     onSetSkinTone: { action: true },
@@ -168,7 +168,6 @@ CanReply.storyName = 'Can reply';
 
 export const ViewsOnly = Template.bind({});
 ViewsOnly.args = {
-  isMyStory: true,
   views: getViewsAndReplies().views,
 };
 ViewsOnly.storyName = 'Views only';
@@ -206,3 +205,23 @@ export const InAGroupCantReply = Template.bind({});
   };
 }
 InAGroupCantReply.storyName = "In a group (can't reply)";
+
+export const ReadReceiptsTurnedOff = Template.bind({});
+ReadReceiptsTurnedOff.args = {
+  canReply: false,
+  hasReadReceiptSetting: false,
+  views: getViewsAndReplies().views,
+};
+ReadReceiptsTurnedOff.storyName = 'Read receipts turned off';
+
+export const GroupReadReceiptsOff = Template.bind({});
+{
+  const { views, replies } = getViewsAndReplies();
+  GroupReadReceiptsOff.args = {
+    hasReadReceiptSetting: false,
+    isGroupStory: true,
+    replies,
+    views,
+  };
+}
+GroupReadReceiptsOff.storyName = 'Read receipts turned off (group)';

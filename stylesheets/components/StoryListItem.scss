@@ -8,6 +8,7 @@
     border-radius: 10px;
     display: flex;
     height: 96px;
+    min-height: 96px;
     padding: 0 10px;
     width: 100%;
 
@@ -19,6 +20,13 @@
 
     &:hover {
       background: $color-gray-65;
+    }
+  }
+
+  &--active-opacity,
+  &--active-opacity__button {
+    &:active {
+      opacity: 0.3;
     }
   }
 
@@ -87,14 +95,16 @@
       @include button-reset;
 
       align-items: center;
-      background-size: cover;
       background-color: $color-gray-60;
+      background-size: cover;
       border-radius: 8px;
       display: flex;
       height: 72px;
       justify-content: center;
+      left: 0;
       overflow: hidden;
       position: absolute;
+      top: 0;
       width: 46px;
       z-index: $z-index-base;
     }
@@ -135,5 +145,15 @@
         $color-white
       );
     }
+  }
+
+  &__chevron::after {
+    content: '';
+    display: inline-block;
+    height: 20px;
+    margin-left: 6px;
+    vertical-align: middle;
+    width: 12px;
+    @include color-svg('../images/icons/v2/chevron-right-20.svg', $color-white);
   }
 }

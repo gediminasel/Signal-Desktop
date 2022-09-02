@@ -283,6 +283,7 @@ export type ConversationAttributesType = {
   lastMessageDeletedForEveryone?: boolean;
   lastMessageStatus?: LastMessageStatus | null;
   lastMessagesSeen?: Record<string, { receivedAt: number; id: string }>;
+  lastMessageAuthor?: string | null;
   markedUnread?: boolean;
   messageCount?: number;
   messageCountBeforeMessageRequests?: number | null;

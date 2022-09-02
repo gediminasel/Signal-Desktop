@@ -8,8 +8,10 @@ import type { LocalizerType } from '../types/Util';
 import type { ShowToastActionCreatorType } from '../state/ducks/toast';
 import type { StoryViewType } from '../types/Stories';
 import { Avatar, AvatarSize } from './Avatar';
+import { HasStories } from '../types/Stories';
 import { StoryImage } from './StoryImage';
 import { getAvatarColor } from '../types/Colors';
+import { MessageTimestamp } from './conversation/MessageTimestamp';
 
 import { StoriesAddStoryButton } from './StoriesAddStoryButton';
 
@@ -49,7 +51,7 @@ export const MyStoriesButton = ({
     return (
       <StoriesAddStoryButton
         i18n={i18n}
-        moduleClassName="StoryListItem"
+        moduleClassName="StoryListItem StoryListItem--active-opactiy"
         onAddStory={onAddStory}
         showToast={showToast}
       >
@@ -92,6 +94,7 @@ export const MyStoriesButton = ({
       <div className="MyStories__avatar-container">
         <StoriesAddStoryButton
           i18n={i18n}
+          moduleClassName="StoryListItem--active-opacity"
           onAddStory={onAddStory}
           showToast={showToast}
         >
@@ -107,6 +110,7 @@ export const MyStoriesButton = ({
             profileName={profileName}
             sharedGroupNames={sharedGroupNames}
             size={AvatarSize.FORTY_EIGHT}
+            storyRing={HasStories.Read}
             title={title}
           />
           <div
@@ -116,7 +120,7 @@ export const MyStoriesButton = ({
         </StoriesAddStoryButton>
       </div>
       <div
-        className="StoryListItem__click-container"
+        className="StoryListItem__click-container StoryListItem--active-opacity"
         onClick={onClick}
         onKeyDown={ev => {
           if (ev.key === 'Enter') {
@@ -129,11 +133,15 @@ export const MyStoriesButton = ({
         tabIndex={0}
       >
         <div className="StoryListItem__info">
-          <>
-            <div className="StoryListItem__info--title">
-              {i18n('Stories__mine')}
-            </div>
-          </>
+          <div className="StoryListItem__info--title StoryListItem__chevron">
+            {i18n('Stories__mine')}
+          </div>
+          <MessageTimestamp
+            i18n={i18n}
+            isRelativeTime
+            module="StoryListItem__info--timestamp"
+            timestamp={newestStory.timestamp}
+          />
         </div>
         <div
           aria-label={i18n('StoryListItem__label')}

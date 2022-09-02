@@ -150,6 +150,7 @@ export type ConversationType = {
     | {
         status?: LastMessageStatus;
         text: string;
+        author?: string;
         deletedForEveryone: false;
       }
     | { deletedForEveryone: true };
@@ -860,10 +861,10 @@ export const actions = {
   showConversation,
   startComposing,
   startSettingGroupMetadata,
-  tagGroupsAsNewGroupStory,
   toggleAdmin,
   toggleConversationInChooseMembers,
   toggleComposeEditingAvatar,
+  toggleGroupsForStorySend,
   toggleHideStories,
   updateConversationModelSharedGroups,
   verifyConversationsStoppingSend,
@@ -1962,7 +1963,7 @@ function removeMemberFromGroup(
   };
 }
 
-function tagGroupsAsNewGroupStory(
+function toggleGroupsForStorySend(
   conversationIds: Array<string>
 ): ThunkAction<void, RootStateType, unknown, NoopActionType> {
   return async dispatch => {
@@ -1973,7 +1974,9 @@ function tagGroupsAsNewGroupStory(
           return;
         }
 
-        conversation.set({ isGroupStorySendReady: true });
+        conversation.set({
+          isGroupStorySendReady: !conversation.get('isGroupStorySendReady'),
+        });
         await window.Signal.Data.updateConversation(conversation.attributes);
       })
     );

@@ -30,7 +30,7 @@ const renderNewLines: RenderTextCallbackType = ({
 
 const CHAR_LIMIT_TEXT_LARGE = 50;
 const CHAR_LIMIT_TEXT_MEDIUM = 200;
-const FONT_SIZE_LARGE = 64;
+const FONT_SIZE_LARGE = 59;
 const FONT_SIZE_MEDIUM = 42;
 const FONT_SIZE_SMALL = 32;
 
@@ -133,6 +133,10 @@ export const TextAttachment = ({
     node.setSelectionRange(node.value.length, node.value.length);
   }, [isEditingText]);
 
+  const storyBackgroundColor = {
+    background: getBackgroundColor(textAttachment),
+  };
+
   return (
     <Measure bounds>
       {({ contentRect, measureRef }) => (
@@ -151,17 +155,22 @@ export const TextAttachment = ({
             }
           }}
           ref={measureRef}
+          style={isThumbnail ? storyBackgroundColor : undefined}
         >
           <div
             className="TextAttachment__story"
             style={{
-              background: getBackgroundColor(textAttachment),
+              ...(isThumbnail ? {} : storyBackgroundColor),
               transform: `scale(${(contentRect.bounds?.height || 1) / 1280})`,
             }}
           >
             {(textContent || onChange) && (
               <div
-                className="TextAttachment__text"
+                className={classNames('TextAttachment__text', {
+                  'TextAttachment__text--with-bg': Boolean(
+                    textAttachment.textBackgroundColor
+                  ),
+                })}
                 style={{
                   backgroundColor: textAttachment.textBackgroundColor
                     ? getHexFromNumber(textAttachment.textBackgroundColor)

@@ -74,6 +74,26 @@ function sortByRecencyAndUnread(
   return storyA.storyView.timestamp > storyB.storyView.timestamp ? -1 : 1;
 }
 
+function sortMyStories(storyA: MyStoryType, storyB: MyStoryType): number {
+  if (storyA.id === MY_STORIES_ID) {
+    return -1;
+  }
+
+  if (storyB.id === MY_STORIES_ID) {
+    return 1;
+  }
+
+  if (!storyA.stories.length) {
+    return 1;
+  }
+
+  if (!storyB.stories.length) {
+    return -1;
+  }
+
+  return storyA.stories[0].timestamp > storyB.stories[0].timestamp ? -1 : 1;
+}
+
 function getAvatarData(
   conversation: ConversationType
 ): Pick<
@@ -318,10 +338,14 @@ export const getStories = createSelector(
         myStoriesById.set(sentId, {
           id: sentId,
           name: sentName,
-          stories: [...existingMyStory.stories, storyView],
+          stories: [storyView, ...existingMyStory.stories],
         });
 
-        return;
+        // If it's a group story we still want it to render as part of regular
+        // stories or hidden stories.
+        if (story.storyDistributionListId) {
+          return;
+        }
       }
 
       let storiesMap: Map<string, ConversationStoryType>;
@@ -345,7 +369,7 @@ export const getStories = createSelector(
 
     return {
       hiddenStories: Array.from(hiddenStoriesById.values()),
-      myStories: Array.from(myStoriesById.values()),
+      myStories: Array.from(myStoriesById.values()).sort(sortMyStories),
       stories: Array.from(storiesById.values()).sort(sortByRecencyAndUnread),
     };
   }

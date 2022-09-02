@@ -4,6 +4,7 @@
 import { compact, has, isNumber, throttle, debounce } from 'lodash';
 import { batch as batchDispatch } from 'react-redux';
 import { v4 as generateGuid } from 'uuid';
+import PQueue from 'p-queue';
 
 import type {
   ConversationAttributesType,
@@ -192,9 +193,9 @@ export class ConversationModel extends window.Backbone
 
   inProgressFetch?: Promise<unknown>;
 
-  newMessageQueue?: typeof window.PQueueType;
+  newMessageQueue?: PQueue;
 
-  jobQueue?: typeof window.PQueueType;
+  jobQueue?: PQueue;
 
   storeName?: string | null;
 
@@ -1314,7 +1315,7 @@ export class ConversationModel extends window.Backbone
 
   private async beforeAddSingleMessage(): Promise<void> {
     if (!this.newMessageQueue) {
-      this.newMessageQueue = new window.PQueue({
+      this.newMessageQueue = new PQueue({
         concurrency: 1,
         timeout: durations.MINUTE * 30,
       });
@@ -1703,6 +1704,7 @@ export class ConversationModel extends window.Backbone
       | {
           status?: LastMessageStatus;
           text: string;
+          author?: string;
           deletedForEveryone: false;
         }
       | { deletedForEveryone: true };
@@ -1715,6 +1717,7 @@ export class ConversationModel extends window.Backbone
         lastMessage = {
           status: dropNull(this.get('lastMessageStatus')),
           text: lastMessageText,
+          author: dropNull(this.get('lastMessageAuthor')),
           deletedForEveryone: false,
         };
       }
@@ -3491,7 +3494,7 @@ export class ConversationModel extends window.Backbone
     name: string,
     callback: (abortSignal: AbortSignal) => Promise<T>
   ): Promise<T> {
-    this.jobQueue = this.jobQueue || new window.PQueue({ concurrency: 1 });
+    this.jobQueue = this.jobQueue || new PQueue({ concurrency: 1 });
 
     const taskWithTimeout = createTaskWithTimeout(
       callback,
@@ -4055,6 +4058,7 @@ export class ConversationModel extends window.Backbone
               draft: null,
               draftTimestamp: null,
               lastMessage: model.getNotificationText(),
+              lastMessageAuthor: model.getAuthorText(),
               lastMessageStatus: 'sending' as const,
             };
 
@@ -4184,6 +4188,7 @@ export class ConversationModel extends window.Backbone
     this.set({
       lastMessage:
         (previewMessage ? previewMessage.getNotificationText() : '') || '',
+      lastMessageAuthor: previewMessage?.getAuthorText(),
       lastMessageStatus:
         (previewMessage
           ? getMessagePropStatus(previewMessage.attributes, ourConversationId)
@@ -4938,6 +4943,7 @@ export class ConversationModel extends window.Backbone
   async destroyMessages(): Promise<void> {
     this.set({
       lastMessage: null,
+      lastMessageAuthor: null,
       timestamp: null,
       active_at: null,
       pendingUniversalTimer: undefined,
@@ -4949,12 +4955,13 @@ export class ConversationModel extends window.Backbone
     });
   }
 
-  getTitle(): string {
+  getTitle({ isShort = false }: { isShort?: boolean } = {}): string {
     if (isDirectConversation(this.attributes)) {
       const username = this.get('username');
 
       return (
         this.get('name') ||
+        (isShort ? this.get('profileName') : undefined) ||
         this.getProfileName() ||
         this.getNumber() ||
         (username && window.i18n('at-username', { username })) ||

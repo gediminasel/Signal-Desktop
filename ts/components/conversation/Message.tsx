@@ -932,6 +932,7 @@ export class Message extends React.PureComponent<Props, State> {
     const {
       author,
       contactNameColor,
+      i18n,
       isSticker,
       isTapToView,
       isTapToViewExpired,
@@ -953,7 +954,7 @@ export class Message extends React.PureComponent<Props, State> {
       <div className={moduleName}>
         <ContactName
           contactNameColor={contactNameColor}
-          title={author.title}
+          title={author.isMe ? i18n('you') : author.title}
           module={moduleName}
         />
       </div>
@@ -1048,7 +1049,10 @@ export class Message extends React.PureComponent<Props, State> {
 
       if (
         isImage(attachments) ||
-        (isVideo(attachments) && hasVideoScreenshot(attachments))
+        (isVideo(attachments) &&
+          (!isDownloaded(attachments[0]) ||
+            !attachments?.[0].pending ||
+            hasVideoScreenshot(attachments)))
       ) {
         const bottomOverlay = !isSticker && !collapseMetadata;
         // We only want users to tab into this if there's more than one
@@ -1155,7 +1159,16 @@ export class Message extends React.PureComponent<Props, State> {
         )}
         // There's only ever one of these, so we don't want users to tab into it
         tabIndex={-1}
-        onClick={this.openGenericAttachment}
+        onClick={() => {
+          if (!isDownloaded(firstAttachment)) {
+            kickOffAttachmentDownload({
+              attachment: firstAttachment,
+              messageId: id,
+            });
+          } else {
+            this.openGenericAttachment();
+          }
+        }}
       >
         {pending ? (
           <div className="module-message__generic-attachment__spinner-container">
@@ -2809,7 +2822,6 @@ export class Message extends React.PureComponent<Props, State> {
       attachments &&
       attachments.length > 0 &&
       !isAttachmentPending &&
-      (isImage(attachments) || isVideo(attachments)) &&
       !isDownloaded(attachments[0])
     ) {
       event.preventDefault();
