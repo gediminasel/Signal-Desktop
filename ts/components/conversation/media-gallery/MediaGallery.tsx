@@ -17,10 +17,9 @@ import { getMessageTimestamp } from '../../../util/getMessageTimestamp';
 import type { MediaItemType } from '../../../types/MediaItem';
 
 export type Props = {
-  documents: (page: number) => Promise<Array<MediaItemType>>;
+  documents: (page: number) => Promise<[Array<MediaItemType>, boolean]>;
   i18n: LocalizerType;
-  media: (page: number) => Promise<Array<MediaItemType>>;
-  pageSize?: number;
+  media: (page: number) => Promise<[Array<MediaItemType>, boolean]>;
 
   onItemClick?: (event: ItemClickEvent) => void;
 };
@@ -29,6 +28,7 @@ type State = {
   selectedTab: 'media' | 'documents';
   page: number;
   items: Array<MediaItemType>;
+  hasMoreItems: boolean;
   loading: boolean;
 };
 
@@ -82,6 +82,7 @@ export class MediaGallery extends React.Component<Props, State> {
       page: 0,
       items: [],
       loading: true,
+      hasMoreItems: false,
     };
   }
 
@@ -145,10 +146,10 @@ export class MediaGallery extends React.Component<Props, State> {
       return;
     }
     try {
-      const items = await loadMediaItems(page);
-      this.setState({ loading: false, items });
+      const [items, hasMoreItems] = await loadMediaItems(page);
+      this.setState({ loading: false, items, hasMoreItems });
     } catch (e) {
-      this.setState({ loading: false, items: [] });
+      this.setState({ loading: false, items: [], hasMoreItems: false });
     }
   };
 
@@ -161,8 +162,7 @@ export class MediaGallery extends React.Component<Props, State> {
 
   private readonly nextPage = (): void => {
     const { page } = this.state;
-    const { pageSize } = this.props;
-    if (pageSize) this.loadMediaItems(null, page + 1);
+    this.loadMediaItems(null, page + 1);
   };
 
   private readonly prevPage = (): void => {
@@ -177,8 +177,8 @@ export class MediaGallery extends React.Component<Props, State> {
   };
 
   private renderSections() {
-    const { i18n, pageSize, onItemClick } = this.props;
-    const { selectedTab, page, items, loading } = this.state;
+    const { i18n, onItemClick } = this.props;
+    const { selectedTab, page, items, loading, hasMoreItems } = this.state;
 
     const type = selectedTab;
 
@@ -238,16 +238,18 @@ export class MediaGallery extends React.Component<Props, State> {
     return (
       <div className="module-media-gallery__sections">
         {sections}
-        {pageSize && items.length >= pageSize ? (
-          <button type="button" onClick={this.nextPage}>
-            next
-          </button>
-        ) : null}
-        {page > 0 ? (
-          <button type="button" onClick={this.prevPage}>
-            prev
-          </button>
-        ) : null}
+        <div style={{ display: 'flex' }}>
+          {page > 0 ? (
+            <button style={{ flex: 1 }} type="button" onClick={this.prevPage}>
+              prev
+            </button>
+          ) : null}
+          {hasMoreItems ? (
+            <button style={{ flex: 1 }} type="button" onClick={this.nextPage}>
+              next
+            </button>
+          ) : null}
+        </div>
       </div>
     );
   }

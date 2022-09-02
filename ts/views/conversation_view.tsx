@@ -1291,12 +1291,14 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
     const ourUuid = window.textsecure.storage.user.getCheckedUuid().toString();
 
     const getProps = () => {
-      const loadMedia = async (page: number) => {
+      const loadMedia = async (
+        page: number
+      ): Promise<[Array<MediaItemType>, boolean]> => {
         const rawMedia =
           await window.Signal.Data.getMessagesWithVisualMediaAttachments(
             conversationId,
             {
-              limit: DEFAULT_PAGE_SIZE,
+              limit: DEFAULT_PAGE_SIZE + 1,
               offset: DEFAULT_PAGE_SIZE * page,
             }
           );
@@ -1319,7 +1321,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
         }
 
         const media: Array<MediaType> = flatten(
-          rawMedia.map(message => {
+          rawMedia.slice(0, -1).map(message => {
             return (message.attachments || []).map(
               (
                 attachment: AttachmentType,
@@ -1361,21 +1363,24 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
             );
           })
         ).filter(isNotNil);
-        return media;
+        return [media, rawMedia.length > DEFAULT_PAGE_SIZE];
       };
 
-      const loadDocuments = async (page: number) => {
+      const loadDocuments = async (
+        page: number
+      ): Promise<[Array<MediaItemType>, boolean]> => {
         const rawDocuments =
           await window.Signal.Data.getMessagesWithFileAttachments(
             conversationId,
             {
-              limit: DEFAULT_PAGE_SIZE,
+              limit: DEFAULT_PAGE_SIZE + 1,
               offset: DEFAULT_PAGE_SIZE * page,
             }
           );
 
         // Unlike visual media, only one non-image attachment is supported
         const documents = rawDocuments
+          .slice(0, -1)
           .filter(message =>
             Boolean(message.attachments && message.attachments.length)
           )
@@ -1389,7 +1394,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
               message,
             };
           });
-        return documents;
+        return [documents, rawDocuments.length > DEFAULT_PAGE_SIZE];
       };
 
       const onItemClick = async ({
@@ -1421,7 +1426,6 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
         documents: loadDocuments,
         media: loadMedia,
         onItemClick,
-        pageSize: DEFAULT_PAGE_SIZE,
       };
     };
 
