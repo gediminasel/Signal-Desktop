@@ -32,8 +32,8 @@ export type PartialProps = Omit<Omit<Partial<Props>, 'media'>, 'documents'> & {
 const createProps = (overrideProps: PartialProps = {}): Props => ({
   i18n,
   onItemClick: action('onItemClick'),
-  documents: async () => overrideProps.documents || [],
-  media: async () => overrideProps.media || [],
+  documents: async () => [overrideProps.documents || [], false],
+  media: async () => [overrideProps.media || [], false],
 });
 
 export const Populated = (): JSX.Element => {
