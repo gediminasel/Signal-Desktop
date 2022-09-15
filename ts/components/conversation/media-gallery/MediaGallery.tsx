@@ -167,7 +167,9 @@ export class MediaGallery extends React.Component<Props, State> {
 
   private readonly prevPage = (): void => {
     const { page } = this.state;
-    if (page > 0) this.loadMediaItems(null, page - 1);
+    if (page > 0) {
+      this.loadMediaItems(null, page - 1);
+    }
   };
 
   private readonly onItemClick = (event: Omit<ItemClickEvent, 'items'>) => {

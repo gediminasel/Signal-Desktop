@@ -50,15 +50,17 @@ export function renderMarkdownFactory(
         let nextIndex = 0;
         for (const symbol of Object.keys(markdown)) {
           const index = myText.indexOf(symbol);
-          if (index === -1) continue;
-          if (nextSymbol === null || index < nextIndex) {
+          if (index === -1) {
+            continue;
+          }
+          if (nextSymbol == null || index < nextIndex) {
             nextSymbol = symbol;
             nextIndex = index;
           }
         }
       }
 
-      if (nextSymbol === null) {
+      if (nextSymbol == null) {
         break;
       }
 

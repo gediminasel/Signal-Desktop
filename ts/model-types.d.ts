@@ -228,7 +228,7 @@ export type MessageAttributesType = {
 
   // Should only be present for incoming messages and errors
   readStatus?: ReadStatus;
-  lastSeenHere?: string[];
+  lastSeenHere?: Array<string>;
   // Used for all kinds of notifications, as well as incoming messages
   seenStatus?: SeenStatus;
 

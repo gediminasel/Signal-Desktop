@@ -893,7 +893,9 @@ export class Message extends React.PureComponent<Props, State> {
   private renderLastSeen(): ReactNode {
     const { lastSeenHere, i18n } = this.props;
     const lastSeenSorted = this.lastSeenHereSorted(lastSeenHere || []);
-    if (!lastSeenSorted || lastSeenSorted.length === 0) return null;
+    if (!lastSeenSorted || lastSeenSorted.length === 0) {
+      return null;
+    }
 
     const seenBubblesNode = lastSeenSorted.map(c => (
       <div key={c.id} title={c.title}>

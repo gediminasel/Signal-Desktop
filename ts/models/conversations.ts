@@ -1973,7 +1973,9 @@ export class ConversationModel extends window.Backbone
         receivedAt: 0,
         id: '',
       };
-      if (lastSeenMsg.receivedAt >= receivedAt) return false;
+      if (lastSeenMsg.receivedAt >= receivedAt) {
+        return false;
+      }
 
       this.set('lastMessagesSeen', {
         ...lastSeenMap,
