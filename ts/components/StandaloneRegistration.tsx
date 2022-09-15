@@ -133,7 +133,9 @@ export const StandaloneRegistration = ({
         setError('Captcha handler is not ready!');
         return;
       }
-      const token = await window.Signal.challengeHandler.requestCaptcha();
+      const token = await window.Signal.challengeHandler.requestCaptcha({
+        reason: 'standalone registration',
+      });
 
       try {
         requestVerification(type, number, token);
@@ -184,7 +186,7 @@ export const StandaloneRegistration = ({
         return;
       }
 
-      strictAssert(number && code, 'Missing number or code');
+      strictAssert(number != null && code.length > 0, 'Missing number or code');
 
       try {
         await registerSingleDevice(number, code);

@@ -119,7 +119,9 @@ export class EmojiCompletion {
 
     const range = this.quill.getSelection();
 
-    if (!range) return PASS_THROUGH;
+    if (!range) {
+      return PASS_THROUGH;
+    }
 
     const [blot, index] = this.quill.getLeaf(range.index);
     const [leftTokenTextMatch, rightTokenTextMatch] = matchBlotTextPartitions(
@@ -200,14 +202,18 @@ export class EmojiCompletion {
   completeEmoji(): void {
     const range = this.quill.getSelection();
 
-    if (range === null) return;
+    if (range == null) {
+      return;
+    }
 
     const emoji = this.results[this.index];
     const [leafText] = this.getCurrentLeafTextPartitions();
 
     const tokenTextMatch = /:([-+0-9a-z_]*)(:?)$/.exec(leafText);
 
-    if (tokenTextMatch === null) return;
+    if (tokenTextMatch == null) {
+      return;
+    }
 
     const [, tokenText] = tokenTextMatch;
 
@@ -271,7 +277,7 @@ export class EmojiCompletion {
       getBoundingClientRect() {
         const selection = window.getSelection();
         // there's a selection and at least one range
-        if (selection !== null && selection.rangeCount !== 0) {
+        if (selection != null && selection.rangeCount !== 0) {
           // grab the first range, the one the user is actually on right now
           // clone it so we don't actually modify the user's selection/caret position
           const range = selection.getRangeAt(0).cloneRange();
@@ -281,21 +287,21 @@ export class EmojiCompletion {
           range.collapse(true);
 
           // if we can, position the popper at the beginning of the emoji text (:word)
-          const endContainerTextContent = range.endContainer.textContent;
-          const startOfEmojiText = endContainerTextContent?.lastIndexOf(':');
+          const textBeforeCursor = range.endContainer.textContent?.slice(
+            0,
+            range.startOffset
+          );
+          const startOfEmojiText = textBeforeCursor?.lastIndexOf(':');
+
           if (
-            endContainerTextContent &&
+            textBeforeCursor &&
             isNumber(startOfEmojiText) &&
             startOfEmojiText !== -1
           ) {
-            range.setStart(
-              range.endContainer,
-              range.endOffset -
-                (endContainerTextContent.length - startOfEmojiText)
-            );
+            range.setStart(range.endContainer, startOfEmojiText);
           } else {
             log.warn(
-              `Could not find the beginning of the emoji word to be completed. startOfEmojiText=${startOfEmojiText}, endContainerTextContent.length=${endContainerTextContent?.length}, range.offsets=${range.startOffset}-${range.endOffset}`
+              `Could not find the beginning of the emoji word to be completed. startOfEmojiText=${startOfEmojiText}, textBeforeCursor.length=${textBeforeCursor?.length}, range.offsets=${range.startOffset}-${range.endOffset}`
             );
           }
           return range.getClientRects()[0];

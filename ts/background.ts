@@ -2778,9 +2778,11 @@ export async function startApp(): Promise<void> {
     }
 
     await conversation.updateExpirationTimer(expireTimer, {
+      // Note: because it's our conversationId, this notification will be marked read. But
+      //   setting this will make 'isSetByOther' check true.
+      source: window.ConversationController.getOurConversationId(),
       fromSync: true,
       receivedAt: ev.receivedAtCounter,
-      source: window.ConversationController.getOurConversationId(),
       reason: 'group sync',
     });
   }
@@ -3559,7 +3561,7 @@ export async function startApp(): Promise<void> {
 
     const { storageServiceKey } = ev;
 
-    if (storageServiceKey === null) {
+    if (storageServiceKey == null) {
       log.info('onKeysSync: deleting window.storageKey');
       window.storage.remove('storageKey');
     }

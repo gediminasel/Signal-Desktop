@@ -42,7 +42,7 @@ jobs:
 
   macos:
     needs: lint
-    runs-on: macos-11
+    runs-on: macos-latest
     if: github.ref == 'refs/heads/development' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
     timeout-minutes: 30
 
@@ -66,14 +66,14 @@ jobs:
 
     - run: yarn generate
     - run: yarn prepare-beta-build
+    - run: yarn test-node
+    - run: yarn test-electron
+      timeout-minutes: 5
     - run: yarn build
       env:
         DISABLE_INSPECT_FUSE: on
     - name: Rebuild native modules for x64
       run: yarn electron:install-app-deps
-    - run: yarn test-node
-    - run: yarn test-electron
-      timeout-minutes: 5
     - run: yarn test-release
       env:
         NODE_ENV: production

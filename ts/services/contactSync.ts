@@ -28,7 +28,8 @@ export function setIsInitialSync(newValue: boolean): void {
 async function updateConversationFromContactSync(
   conversation: ConversationModel,
   details: ModifiedContactDetails,
-  receivedAtCounter: number
+  receivedAtCounter: number,
+  sentAt: number
 ): Promise<void> {
   const { writeNewAttachmentData, deleteAttachmentData, doesAttachmentExist } =
     window.Signal.Migrations;
@@ -60,17 +61,15 @@ async function updateConversationFromContactSync(
   }
 
   // expireTimer isn't in Storage Service so we have to rely on contact sync.
-  const { expireTimer } = details;
-  const isValidExpireTimer = typeof expireTimer === 'number';
-  if (isValidExpireTimer) {
-    await conversation.updateExpirationTimer(expireTimer, {
-      source: window.ConversationController.getOurConversationId(),
-      receivedAt: receivedAtCounter,
-      fromSync: true,
-      isInitialSync,
-      reason: 'contact sync',
-    });
-  }
+  await conversation.updateExpirationTimer(details.expireTimer, {
+    // Note: because it's our conversationId, this notification will be marked read. But
+    //   setting this will make 'isSetByOther' check true.
+    source: window.ConversationController.getOurConversationId(),
+    receivedAt: receivedAtCounter,
+    fromSync: true,
+    isInitialSync,
+    reason: `contact sync (sent=${sentAt})`,
+  });
 
   window.Whisper.events.trigger('incrementProgress');
 }
@@ -81,6 +80,7 @@ async function doContactSync({
   contacts,
   complete,
   receivedAtCounter,
+  sentAt,
 }: ContactSyncEvent): Promise<void> {
   // iOS sets `syncMessage.contacts.complete` flag to `true` unconditionally
   // and so we have to employ tricks to figure out whether the sync is full or
@@ -95,7 +95,7 @@ async function doContactSync({
         window.storage.user.getUuid()?.toString()
     );
 
-  const logId = `doContactSync(${receivedAtCounter}, isFullSync=${isFullSync})`;
+  const logId = `doContactSync(sent=${sentAt}, receivedAt=${receivedAtCounter}, isFullSync=${isFullSync})`;
   log.info(`${logId}: got ${contacts.length} contacts`);
 
   const updatedConversations = new Set<ConversationModel>();
@@ -132,7 +132,8 @@ async function doContactSync({
         await updateConversationFromContactSync(
           conversation,
           details,
-          receivedAtCounter
+          receivedAtCounter,
+          sentAt
         );
 
         updatedConversations.add(conversation);
@@ -189,6 +190,8 @@ async function doContactSync({
 }
 
 export async function onContactSync(ev: ContactSyncEvent): Promise<void> {
-  log.info(`onContactSync(${ev.receivedAtCounter}): queueing sync`);
+  log.info(
+    `onContactSync(sent=${ev.sentAt}, receivedAt=${ev.receivedAtCounter}): queueing sync`
+  );
   await queue.add(() => doContactSync(ev));
 }

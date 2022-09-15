@@ -7,7 +7,7 @@ import { getOwn } from './getOwn';
 
 export function isIterable(value: unknown): value is Iterable<unknown> {
   return (
-    (typeof value === 'object' && value !== null && Symbol.iterator in value) ||
+    (typeof value === 'object' && value != null && Symbol.iterator in value) ||
     typeof value === 'string'
   );
 }
@@ -133,7 +133,9 @@ class CollectIterator<T, S> implements Iterator<S> {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const nextIteration = this.iterator.next();
-      if (nextIteration.done) return nextIteration;
+      if (nextIteration.done) {
+        return nextIteration;
+      }
       const nextValue = this.fn(nextIteration.value);
       if (nextValue !== undefined) {
         return {

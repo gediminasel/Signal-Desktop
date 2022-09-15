@@ -15,6 +15,14 @@ const rules = {
     },
   ],
 
+  // No omitting braces, keep on the same line
+  'brace-style': ['error', '1tbs', { allowSingleLine: false }],
+  curly: ['error', 'all'],
+
+  // Always use === and !== except when directly comparing to null
+  // (which only will equal null or undefined)
+  eqeqeq: ['error', 'always', { null: 'never' }],
+
   // prevents us from accidentally checking in exclusive tests (`.only`):
   'mocha/no-exclusive-tests': 'error',
 
@@ -109,11 +117,18 @@ const rules = {
         '`with` is disallowed in strict mode because it makes code impossible to predict and optimize.',
     },
   ],
-  curly: 'error',
 };
 
 const typescriptRules = {
   ...rules,
+
+  // Override brace style to enable typescript-specific syntax
+  'brace-style': 'off',
+  '@typescript-eslint/brace-style': [
+    'error',
+    '1tbs',
+    { allowSingleLine: false },
+  ],
 
   '@typescript-eslint/array-type': ['error', { default: 'generic' }],
 

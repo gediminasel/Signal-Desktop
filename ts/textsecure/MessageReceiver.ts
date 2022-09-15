@@ -229,10 +229,13 @@ function getEnvelopeId(envelope: ProcessedEnvelope): string {
   return `${prefix} ${timestamp} (${envelope.id})`;
 }
 
+/* eslint-disable @typescript-eslint/brace-style -- Prettier conflicts with ESLint */
 export default class MessageReceiver
   extends EventTarget
   implements IRequestHandler
 {
+  /* eslint-enable @typescript-eslint/brace-style */
+
   private server: WebAPIType;
 
   private storage: Storage;
@@ -752,7 +755,7 @@ export default class MessageReceiver
         id: item.id,
         receivedAtCounter: item.receivedAtCounter ?? item.timestamp,
         receivedAtDate:
-          item.receivedAtCounter === null ? Date.now() : item.timestamp,
+          item.receivedAtCounter == null ? Date.now() : item.timestamp,
         messageAgeSec: item.messageAgeSec || 0,
 
         // Proto.Envelope fields
@@ -1942,12 +1945,12 @@ export default class MessageReceiver
       return;
     }
 
-    const expireTimer = Math.min(
-      Math.floor((envelope.timestamp + durations.DAY - Date.now()) / 1000),
-      durations.DAY / 1000
+    const timeRemaining = Math.min(
+      Math.floor(envelope.timestamp + durations.DAY - Date.now()),
+      durations.DAY
     );
 
-    if (expireTimer <= 0) {
+    if (timeRemaining <= 0) {
       log.info(
         'MessageReceiver.handleStoryMessage: story already expired',
         logId
@@ -1959,7 +1962,7 @@ export default class MessageReceiver
     const message: ProcessedDataMessage = {
       attachments,
       canReplyToStory: Boolean(msg.allowsReplies),
-      expireTimer,
+      expireTimer: durations.DAY / 1000,
       flags: 0,
       groupV2,
       isStory: true,
@@ -2105,7 +2108,7 @@ export default class MessageReceiver
 
     if (msg.flags && msg.flags & Proto.DataMessage.Flags.PROFILE_KEY_UPDATE) {
       strictAssert(
-        msg.profileKey && msg.profileKey.length > 0,
+        msg.profileKey != null && msg.profileKey.length > 0,
         'PROFILE_KEY_UPDATE without profileKey'
       );
 
@@ -3071,7 +3074,8 @@ export default class MessageReceiver
     const contactSync = new ContactSyncEvent(
       Array.from(contactBuffer),
       Boolean(contacts.complete),
-      envelope.receivedAtCounter
+      envelope.receivedAtCounter,
+      envelope.timestamp
     );
     await this.dispatchAndWait(contactSync);
 
