@@ -1975,6 +1975,14 @@ export class ConversationModel extends window.Backbone
       };
       if (lastSeenMsg.receivedAt >= receivedAt) return false;
 
+      this.set('lastMessagesSeen', {
+        ...lastSeenMap,
+        [conversationId]: {
+          receivedAt,
+          id: '',
+        },
+      });
+
       if (lastSeenMsg.id) {
         const prevMsg = await getMessageByIdLazy(lastSeenMsg.id);
         if (prevMsg) {
@@ -1993,7 +2001,7 @@ export class ConversationModel extends window.Backbone
         // we awaited so lastSeen may have changed (probably)
         lastSeenMap = this.get('lastMessagesSeen') || {};
         lastSeenMsg = lastSeenMap[conversationId] || { receivedAt: 0, id: '' };
-        if (lastSeenMsg.receivedAt >= receivedAt) {
+        if (lastSeenMsg.receivedAt > receivedAt) {
           return false;
         }
       }
@@ -2004,13 +2012,14 @@ export class ConversationModel extends window.Backbone
         window.Signal.Util.queueUpdateMessage(message.attributes);
       }
 
-      const newMap = { ...lastSeenMap };
-      newMap[conversationId] = {
-        receivedAt,
-        id: updateMessage ? message.id : '',
-      };
-      this.set('lastMessagesSeen', newMap);
       if (updateMessage) {
+        this.set('lastMessagesSeen', {
+          ...lastSeenMap,
+          [conversationId]: {
+            receivedAt,
+            id: message.id,
+          },
+        });
         window.Signal.Data.updateConversation(this.attributes);
       }
 

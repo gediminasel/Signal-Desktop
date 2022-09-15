@@ -808,6 +808,7 @@ export class Message extends React.PureComponent<Props, State> {
     const formated = lastSeenUsers.map(u => u.format());
 
     if (lastSeenUsers.length !== lastSeenHere.length) {
+      log.warn('lastSeenUsers HACK used');
       const lastSeenUpdated = lastSeenUsers.map(u => u.id);
       const msg = window.MessageController.getById(id);
       if (msg) {
