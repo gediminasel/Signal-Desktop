@@ -3,6 +3,8 @@
 
 # Signal Desktop
 
+**This is an unofficial fork of [signalapp/Signal-Desktop](https://github.com/signalapp/Signal-Desktop)!**
+
 Signal Desktop links with Signal on [Android](https://github.com/signalapp/Signal-Android) or [iOS](https://github.com/signalapp/Signal-iOS) and lets you message from your Windows, macOS, and Linux computers.
 
 [Install the production version](https://signal.org/download/) or help us out by [installing the beta version](https://support.signal.org/hc/articles/360007318471-Signal-Beta).
@@ -14,7 +16,9 @@ The [community forum](https://community.signalusers.org/) is another good place 
 
 ## Found a Bug?
 
-Please search for any [existing issues](https://github.com/signalapp/Signal-Desktop/issues) that describe your bug in order to avoid duplicate submissions.
+Please search for any [existing issues here](https://github.com/gediminasel/Signal-Desktop/issues)
+and [in the original fork](https://github.com/signalapp/Signal-Desktop/issues)
+that describe your bug in order to avoid duplicate submissions.
 
 ## Have a feature request, question, comment?
 
