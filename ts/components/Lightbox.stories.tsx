@@ -288,7 +288,11 @@ CustomChildren.story = {
 };
 
 export const Forwarding = (): JSX.Element => (
-  <Lightbox {...createProps({})} onForward={action('onForward')} />
+  <Lightbox
+    {...createProps({})}
+    onForward={action('onForward')}
+    onReply={action('onReply')}
+  />
 );
 
 export const ConversationHeader = (): JSX.Element => (

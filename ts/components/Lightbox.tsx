@@ -28,6 +28,7 @@ export type PropsType = {
   i18n: LocalizerType;
   isViewOnce?: boolean;
   media: Array<MediaItemType>;
+  onReply?: (messageId: string) => void;
   onForward?: (messageId: string) => void;
   onSave?: (options: {
     attachment: AttachmentType;
@@ -58,6 +59,7 @@ export function Lightbox({
   media,
   i18n,
   isViewOnce = false,
+  onReply,
   onForward,
   onSave,
   selectedIndex: initialSelectedIndex = 0,
@@ -156,6 +158,17 @@ export function Lightbox({
     close();
     const mediaItem = media[selectedIndex];
     onForward?.(mediaItem.message.id);
+  };
+
+  const handleReply = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    close();
+    const mediaItem = media[selectedIndex];
+    onReply?.(mediaItem.message.id);
   };
 
   const onKeyDown = useCallback(
@@ -553,6 +566,14 @@ export function Lightbox({
                   <div />
                 )}
                 <div className="Lightbox__controls">
+                  {onReply ? (
+                    <button
+                      aria-label={i18n('replyToMessage')}
+                      className="Lightbox__button Lightbox__button--reply"
+                      onClick={handleReply}
+                      type="button"
+                    />
+                  ) : null}
                   {onForward ? (
                     <button
                       aria-label={i18n('forwardMessage')}
