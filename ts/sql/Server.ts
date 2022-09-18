@@ -240,6 +240,7 @@ const dataInterface: ServerInterface = {
   _removeAllMessages,
   getAllMessageIds,
   getMessagesBySentAt,
+  getMessageAfterDate,
   getExpiredMessages,
   getMessagesUnexpectedlyMissingExpirationStartTimestamp,
   getSoonestMessageExpiry,
@@ -3025,6 +3026,31 @@ async function getMessagesBySentAt(
     });
 
   return rows.map(row => jsonToObject(row.json));
+}
+
+async function getMessageAfterDate(
+  sentAt: number,
+  conversationId: string
+): Promise<MessageType | null> {
+  const db = getInstance();
+  const rows: JSONRows = db
+    .prepare<Query>(
+      `
+      SELECT json FROM messages
+      WHERE sent_at > $sentAt AND conversationId = $conversationId
+      ORDER BY received_at, sent_at
+      LIMIT 1;
+      `
+    )
+    .all({
+      sentAt,
+      conversationId,
+    });
+  const data = rows.map(row => jsonToObject(row.json));
+  if (data.length < 1) {
+    return null;
+  }
+  return data[0] as MessageType;
 }
 
 async function getExpiredMessages(): Promise<Array<MessageType>> {

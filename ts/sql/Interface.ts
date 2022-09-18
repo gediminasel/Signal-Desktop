@@ -497,6 +497,10 @@ export type DataInterface = {
   _getAllMessages: () => Promise<Array<MessageType>>;
   _removeAllMessages: () => Promise<void>;
   getAllMessageIds: () => Promise<Array<string>>;
+  getMessageAfterDate: (
+    sentAt: number,
+    conversationId: string
+  ) => Promise<MessageType | null>;
   getMessagesBySentAt: (sentAt: number) => Promise<Array<MessageType>>;
   getExpiredMessages: () => Promise<Array<MessageType>>;
   getMessagesUnexpectedlyMissingExpirationStartTimestamp: () => Promise<

@@ -368,6 +368,22 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
       onOutgoingVideoCallInConversation:
         this.onOutgoingVideoCallInConversation.bind(this),
 
+      onJumpToDate: async (timestamp: number) => {
+        try {
+          const found = await window.Signal.Data.getMessageAfterDate(
+            timestamp,
+            this.model.id
+          );
+          if (found) {
+            this.scrollToMessage(found.id);
+          }
+        } catch (err: unknown) {
+          log.error(
+            `failed to load message with timestamp ${timestamp} ` +
+              `due to error ${err}`
+          );
+        }
+      },
       onShowConversationDetails: () => {
         this.showConversationDetails();
       },
@@ -1795,6 +1811,10 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
       media,
       onForward: messageId => {
         this.showForwardMessageModal(messageId);
+      },
+      onReply: messageId => {
+        this.resetPanel();
+        this.setQuoteMessage(messageId);
       },
       onSave,
       selectedIndex: selectedIndex >= 0 ? selectedIndex : 0,

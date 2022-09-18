@@ -250,6 +250,7 @@ const dataInterface: ClientInterface = {
   _removeAllMessages,
   getAllMessageIds,
   getMessagesBySentAt,
+  getMessageAfterDate,
   getExpiredMessages,
   getMessagesUnexpectedlyMissingExpirationStartTimestamp,
   getSoonestMessageExpiry,
@@ -1508,6 +1509,13 @@ async function getMessagesBySentAt(
   sentAt: number
 ): Promise<Array<MessageType>> {
   return channels.getMessagesBySentAt(sentAt);
+}
+
+async function getMessageAfterDate(
+  sentAt: number,
+  conversationId: string
+): Promise<MessageType | null> {
+  return channels.getMessageAfterDate(sentAt, conversationId);
 }
 
 async function getExpiredMessages(): Promise<Array<MessageType>> {

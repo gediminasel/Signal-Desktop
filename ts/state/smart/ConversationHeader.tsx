@@ -40,6 +40,7 @@ export type OwnProps = {
   onSetMuteNotifications: (seconds: number) => void;
   onSetPin: (value: boolean) => void;
   onShowAllMedia: () => void;
+  onJumpToDate: (timestamp: number) => void;
   onShowConversationDetails: () => void;
   onShowGroupMembers: () => void;
 };

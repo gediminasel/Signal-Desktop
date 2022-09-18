@@ -84,6 +84,7 @@ export type PropsActionsType = {
   onOutgoingVideoCallInConversation: () => void;
   onSetPin: (value: boolean) => void;
 
+  onJumpToDate: (timestamp: number) => void;
   onShowConversationDetails: () => void;
   onShowAllMedia: () => void;
   onShowGroupMembers: () => void;
@@ -123,6 +124,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
   private menuTriggerRef: React.RefObject<any>;
 
   public headerRef: React.RefObject<HTMLDivElement>;
+  public jumpToDateInputRef: React.RefObject<HTMLInputElement>;
 
   public constructor(props: PropsType) {
     super(props);
@@ -131,6 +133,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
 
     this.menuTriggerRef = React.createRef();
     this.headerRef = React.createRef();
+    this.jumpToDateInputRef = React.createRef();
     this.showMenuBound = this.showMenu.bind(this);
   }
 
@@ -341,6 +344,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
       onSetMuteNotifications,
       onSetPin,
       onShowAllMedia,
+      onJumpToDate,
       onShowConversationDetails,
       onShowGroupMembers,
       type,
@@ -440,6 +444,40 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
               : i18n('showConversationDetails--direct')}
           </MenuItem>
         ) : null}
+        <MenuItem
+          preventClose
+          onClick={() => {
+            (
+              this.jumpToDateInputRef.current as unknown as {
+                showPicker: () => void;
+              }
+            )?.showPicker();
+          }}
+        >
+          Jump to date
+          <input
+            style={{
+              width: '0',
+              visibility: 'hidden',
+            }}
+            type="date"
+            onChange={e => {
+              const isoDate = e.target.valueAsDate;
+              if (!isoDate) {
+                return;
+              }
+              const localDate = new Date();
+              localDate.setFullYear(
+                isoDate.getFullYear(),
+                isoDate.getMonth(),
+                isoDate.getDate()
+              );
+              localDate.setHours(0, 0, 0, 0);
+              onJumpToDate(localDate.getTime());
+            }}
+            ref={this.jumpToDateInputRef}
+          />
+        </MenuItem>
         {isGroup && !hasGV2AdminEnabled ? (
           <MenuItem onClick={onShowGroupMembers}>
             {i18n('showMembers')}

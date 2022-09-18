@@ -9298,6 +9298,14 @@
   {
     "rule": "React-createRef",
     "path": "ts/components/conversation/ConversationHeader.tsx",
+    "line": "    this.jumpToDateInputRef = React.createRef();",
+    "reasonCategory": "usageTrusted",
+    "updated": "2022-09-18T01:00:00.000Z",
+    "reasonDetail": "Used to reference jump to date input"
+  },
+  {
+    "rule": "React-createRef",
+    "path": "ts/components/conversation/ConversationHeader.tsx",
     "line": "    this.headerRef = React.createRef();",
     "reasonCategory": "usageTrusted",
     "updated": "2021-01-18T22:24:05.937Z",
