@@ -25,7 +25,7 @@ import { SafetyNumberChangeSource } from '../../components/SafetyNumberChangeDia
 import { StoryViewDirectionType, StoryViewModeType } from '../../types/Stories';
 import { StoryRecipientUpdateEvent } from '../../textsecure/messageReceiverEvents';
 import { ToastReactionFailed } from '../../components/ToastReactionFailed';
-import { assert } from '../../util/assert';
+import { assertDev } from '../../util/assert';
 import { blockSendUntilConversationsAreVerified } from '../../util/blockSendUntilConversationsAreVerified';
 import { enqueueReactionForSend } from '../../reactions/enqueueReactionForSend';
 import { getMessageById } from '../../messages/getMessageById';
@@ -40,7 +40,10 @@ import {
   isDownloaded,
   isDownloading,
 } from '../../types/Attachment';
-import { getConversationSelector } from '../selectors/conversations';
+import {
+  getConversationSelector,
+  getHideStoryConversationIds,
+} from '../selectors/conversations';
 import { getSendOptions } from '../../util/getSendOptions';
 import { getStories } from '../selectors/stories';
 import { getStoryDataFromMessageAttributes } from '../../services/storyLoader';
@@ -64,6 +67,7 @@ export type StoryDataType = {
   | 'conversationId'
   | 'deletedForEveryone'
   | 'reactions'
+  | 'readAt'
   | 'readStatus'
   | 'sendStateByConversationId'
   | 'source'
@@ -140,7 +144,10 @@ type LoadStoryRepliesActionType = {
 
 type MarkStoryReadActionType = {
   type: typeof MARK_STORY_READ;
-  payload: string;
+  payload: {
+    messageId: string;
+    readAt: number;
+  };
 };
 
 type QueueStoryDownloadActionType = {
@@ -456,7 +463,10 @@ function markStoryRead(
 
     dispatch({
       type: MARK_STORY_READ,
-      payload: messageId,
+      payload: {
+        messageId,
+        readAt: storyReadDate,
+      },
     });
   };
 }
@@ -611,11 +621,11 @@ function sendStoryMessage(
   return async (dispatch, getState) => {
     const { stories } = getState();
     const { openedAtTimestamp, sendStoryModalData } = stories;
-    assert(
+    assertDev(
       openedAtTimestamp,
       'sendStoryMessage: openedAtTimestamp is undefined, cannot send'
     );
-    assert(
+    assertDev(
       sendStoryModalData,
       'sendStoryMessage: sendStoryModalData is not defined, cannot send'
     );
@@ -804,6 +814,21 @@ const viewUserStories: ViewUserStoriesActionCreatorType = ({
 
     const story = storiesByConversationId[currentIndex];
 
+    const hiddenConversationIds = new Set(
+      getHideStoryConversationIds(getState())
+    );
+
+    let inferredStoryViewMode: StoryViewModeType;
+    if (storyViewMode) {
+      inferredStoryViewMode = storyViewMode;
+    } else if (hiddenConversationIds.has(conversationId)) {
+      inferredStoryViewMode = StoryViewModeType.Hidden;
+    } else if (hasUnread) {
+      inferredStoryViewMode = StoryViewModeType.Unread;
+    } else {
+      inferredStoryViewMode = StoryViewModeType.All;
+    }
+
     dispatch({
       type: VIEW_STORY,
       payload: {
@@ -811,26 +836,30 @@ const viewUserStories: ViewUserStoriesActionCreatorType = ({
         messageId: story.messageId,
         numStories,
         shouldShowDetailsModal,
-        storyViewMode:
-          storyViewMode ||
-          (hasUnread ? StoryViewModeType.Unread : StoryViewModeType.All),
+        storyViewMode: inferredStoryViewMode,
       },
     });
   };
 };
 
+type ViewStoryOptionsType =
+  | {
+      closeViewer: true;
+    }
+  | {
+      storyId: string;
+      storyViewMode: StoryViewModeType;
+      viewDirection?: StoryViewDirectionType;
+      shouldShowDetailsModal?: boolean;
+    };
+
 export type ViewStoryActionCreatorType = (
-  opts:
-    | {
-        closeViewer: true;
-      }
-    | {
-        storyId: string;
-        storyViewMode: StoryViewModeType;
-        viewDirection?: StoryViewDirectionType;
-        shouldShowDetailsModal?: boolean;
-      }
+  opts: ViewStoryOptionsType
 ) => unknown;
+
+export type DispatchableViewStoryType = (
+  opts: ViewStoryOptionsType
+) => ThunkAction<void, RootStateType, unknown, ViewStoryActionType>;
 
 const viewStory: ViewStoryActionCreatorType = (
   opts
@@ -947,10 +976,20 @@ const viewStory: ViewStoryActionCreatorType = (
     // Are there any unviewed stories left? If so we should play the unviewed
     // stories first. But only if we're going "next"
     if (viewDirection === StoryViewDirectionType.Next) {
-      const unreadStory = stories.find(
-        item =>
-          item.readStatus === ReadStatus.Unread && !item.deletedForEveryone
+      // Only stories that succeed the current story we're on.
+      const currentStoryIndex = stories.findIndex(
+        item => item.messageId === storyId
       );
+      // No hidden stories
+      const hiddenConversationIds = new Set(getHideStoryConversationIds(state));
+      const unreadStory = stories.find(
+        (item, index) =>
+          index > currentStoryIndex &&
+          !item.deletedForEveryone &&
+          item.readStatus === ReadStatus.Unread &&
+          !hiddenConversationIds.has(item.conversationId)
+      );
+
       if (unreadStory) {
         const nextSelectedStoryData = getSelectedStoryDataForConversationId(
           dispatch,
@@ -970,9 +1009,23 @@ const viewStory: ViewStoryActionCreatorType = (
         });
         return;
       }
+
+      // Close the viewer if we were viewing unread stories only and we did not
+      // find any more unread.
+      if (storyViewMode === StoryViewModeType.Unread) {
+        dispatch({
+          type: VIEW_STORY,
+          payload: undefined,
+        });
+        return;
+      }
     }
 
-    const conversationStories = getStories(state).stories;
+    const storiesSelectorState = getStories(state);
+    const conversationStories =
+      storyViewMode === StoryViewModeType.Hidden
+        ? storiesSelectorState.hiddenStories
+        : storiesSelectorState.stories;
     const conversationStoryIndex = conversationStories.findIndex(
       item => item.conversationId === story.conversationId
     );
@@ -1010,19 +1063,6 @@ const viewStory: ViewStoryActionCreatorType = (
         getState,
         conversationStory.conversationId
       );
-
-      // Close the viewer if we were viewing unread stories only and we've
-      // reached the last unread story.
-      if (
-        !nextSelectedStoryData.hasUnread &&
-        storyViewMode === StoryViewModeType.Unread
-      ) {
-        dispatch({
-          type: VIEW_STORY,
-          payload: undefined,
-        });
-        return;
-      }
 
       dispatch({
         type: VIEW_STORY,
@@ -1157,6 +1197,7 @@ export function reducer(
       'expireTimer',
       'messageId',
       'reactions',
+      'readAt',
       'readStatus',
       'sendStateByConversationId',
       'source',
@@ -1228,12 +1269,15 @@ export function reducer(
   }
 
   if (action.type === MARK_STORY_READ) {
+    const { messageId, readAt } = action.payload;
+
     return {
       ...state,
       stories: state.stories.map(story => {
-        if (story.messageId === action.payload) {
+        if (story.messageId === messageId) {
           return {
             ...story,
+            readAt,
             readStatus: ReadStatus.Viewed,
           };
         }

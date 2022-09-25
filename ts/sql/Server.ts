@@ -34,7 +34,7 @@ import { STORAGE_UI_KEYS } from '../types/StorageUIKeys';
 import { UUID } from '../types/UUID';
 import type { UUIDStringType } from '../types/UUID';
 import type { StoredJob } from '../jobs/types';
-import { assert, assertSync, strictAssert } from '../util/assert';
+import { assertDev, assertSync, strictAssert } from '../util/assert';
 import { combineNames } from '../util/combineNames';
 import { consoleLogger } from '../util/consoleLogger';
 import { dropNull } from '../util/dropNull';
@@ -377,7 +377,7 @@ function rowToConversation(row: ConversationRow): ConversationType {
   if (isNormalNumber(row.profileLastFetchedAt)) {
     profileLastFetchedAt = row.profileLastFetchedAt;
   } else {
-    assert(
+    assertDev(
       isNil(row.profileLastFetchedAt),
       'profileLastFetchedAt contained invalid data; defaulting to undefined'
     );
@@ -2170,16 +2170,18 @@ async function getUnreadByConversationAndMarkRead({
   newestUnreadAt,
   storyId,
   readAt,
+  now = Date.now(),
 }: {
   conversationId: string;
   isGroup?: boolean;
   newestUnreadAt: number;
   storyId?: UUIDStringType;
   readAt?: number;
+  now?: number;
 }): Promise<GetUnreadByConversationAndMarkReadResultType> {
   const db = getInstance();
   return db.transaction(() => {
-    const expirationStartTimestamp = Math.min(Date.now(), readAt ?? Infinity);
+    const expirationStartTimestamp = Math.min(now, readAt ?? Infinity);
     db.prepare<Query>(
       `
       UPDATE messages

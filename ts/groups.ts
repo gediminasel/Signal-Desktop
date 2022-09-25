@@ -20,7 +20,7 @@ import {
 } from './services/groupCredentialFetcher';
 import dataInterface from './sql/Client';
 import { toWebSafeBase64, fromWebSafeBase64 } from './util/webSafeBase64';
-import { assert, strictAssert } from './util/assert';
+import { assertDev, strictAssert } from './util/assert';
 import { isMoreRecentThan } from './util/timestamp';
 import * as durations from './util/durations';
 import { normalizeUuid } from './util/normalizeUuid';
@@ -35,7 +35,6 @@ import type {
 } from './model-types.d';
 import {
   createProfileKeyCredentialPresentation,
-  createPNICredentialPresentation,
   decodeProfileKeyCredentialPresentation,
   decryptGroupBlob,
   decryptProfileKey,
@@ -671,7 +670,7 @@ export async function buildAddMembersChange(
     conversationIds.map(async conversationId => {
       const contact = window.ConversationController.get(conversationId);
       if (!contact) {
-        assert(
+        assertDev(
           false,
           `buildAddMembersChange/${logId}: missing local contact, skipping`
         );
@@ -680,7 +679,10 @@ export async function buildAddMembersChange(
 
       const uuid = contact.getUuid();
       if (!uuid) {
-        assert(false, `buildAddMembersChange/${logId}: missing UUID; skipping`);
+        assertDev(
+          false,
+          `buildAddMembersChange/${logId}: missing UUID; skipping`
+        );
         return;
       }
 
@@ -1354,15 +1356,15 @@ export function buildPromotePendingAdminApprovalMemberChange({
 export type BuildPromoteMemberChangeOptionsType = Readonly<{
   group: ConversationAttributesType;
   serverPublicParamsBase64: string;
-  profileKeyCredentialBase64?: string;
-  pniCredentialBase64?: string;
+  profileKeyCredentialBase64: string;
+  isPendingPniAciProfileKey: boolean;
 }>;
 
 export function buildPromoteMemberChange({
   group,
   profileKeyCredentialBase64,
-  pniCredentialBase64,
   serverPublicParamsBase64,
+  isPendingPniAciProfileKey = false,
 }: BuildPromoteMemberChangeOptionsType): Proto.GroupChange.Actions {
   const actions = new Proto.GroupChange.Actions();
 
@@ -1378,31 +1380,20 @@ export function buildPromoteMemberChange({
     serverPublicParamsBase64
   );
 
-  let presentation: Uint8Array;
-  if (profileKeyCredentialBase64 !== undefined) {
-    presentation = createProfileKeyCredentialPresentation(
-      clientZkProfileCipher,
-      profileKeyCredentialBase64,
-      group.secretParams
-    );
+  const presentation = createProfileKeyCredentialPresentation(
+    clientZkProfileCipher,
+    profileKeyCredentialBase64,
+    group.secretParams
+  );
 
-    actions.promotePendingMembers = [
+  if (isPendingPniAciProfileKey) {
+    actions.promoteMembersPendingPniAciProfileKey = [
       {
         presentation,
       },
     ];
   } else {
-    strictAssert(
-      pniCredentialBase64,
-      'Either pniCredential or profileKeyCredential must be present'
-    );
-    presentation = createPNICredentialPresentation(
-      clientZkProfileCipher,
-      pniCredentialBase64,
-      group.secretParams
-    );
-
-    actions.promoteMembersPendingPniAciProfileKey = [
+    actions.promotePendingMembers = [
       {
         presentation,
       },
@@ -1788,7 +1779,7 @@ export async function createGroupV2(
     ...conversationIds.map(async conversationId => {
       const contact = window.ConversationController.get(conversationId);
       if (!contact) {
-        assert(
+        assertDev(
           false,
           `createGroupV2/${logId}: missing local contact, skipping`
         );
@@ -1797,7 +1788,7 @@ export async function createGroupV2(
 
       const contactUuid = contact.get('uuid');
       if (!contactUuid) {
-        assert(false, `createGroupV2/${logId}: missing UUID; skipping`);
+        assertDev(false, `createGroupV2/${logId}: missing UUID; skipping`);
         return;
       }
 
@@ -4143,7 +4134,7 @@ async function integrateGroupChange({
       canApplyChange &&
       (groupChangeMessages.length !== 0 || newMembers.length !== 0)
     ) {
-      assert(
+      assertDev(
         groupChangeMessages.length === 0,
         'Fallback group state processing should not kick in'
       );

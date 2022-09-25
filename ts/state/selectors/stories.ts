@@ -11,6 +11,7 @@ import type {
   ConversationStoryType,
   MyStoryType,
   ReplyStateType,
+  StoryDistributionListWithMembersDataType,
   StorySendStateType,
   StoryViewType,
 } from '../../types/Stories';
@@ -27,8 +28,10 @@ import { canReply } from './message';
 import {
   getContactNameColorSelector,
   getConversationSelector,
+  getHideStoryConversationIds,
   getMe,
 } from './conversations';
+import { getUserConversationId } from './user';
 import { getDistributionListSelector } from './storyDistributionLists';
 import { getStoriesEnabled } from './items';
 import { calculateExpirationTimestamp } from '../../util/expirationTimer';
@@ -70,6 +73,10 @@ function sortByRecencyAndUnread(
 
   if (storyA.storyView.isUnread) {
     return -1;
+  }
+
+  if (storyA.storyView.readAt && storyB.storyView.readAt) {
+    return storyA.storyView.readAt > storyB.storyView.readAt ? -1 : 1;
   }
 
   return storyA.storyView.timestamp > storyB.storyView.timestamp ? -1 : 1;
@@ -126,6 +133,7 @@ function getAvatarData(
 
 export function getStoryView(
   conversationSelector: GetConversationByIdType,
+  ourConversationId: string | undefined,
   story: StoryDataType
 ): StoryViewType {
   const sender = pick(conversationSelector(story.sourceUuid || story.source), [
@@ -143,10 +151,19 @@ export function getStoryView(
     'title',
   ]);
 
-  const { attachment, timestamp, expirationStartTimestamp, expireTimer } = pick(
-    story,
-    ['attachment', 'timestamp', 'expirationStartTimestamp', 'expireTimer']
-  );
+  const {
+    attachment,
+    expirationStartTimestamp,
+    expireTimer,
+    readAt,
+    timestamp,
+  } = pick(story, [
+    'attachment',
+    'expirationStartTimestamp',
+    'expireTimer',
+    'readAt',
+    'timestamp',
+  ]);
 
   const { sendStateByConversationId } = story;
   let sendState: Array<StorySendStateType> | undefined;
@@ -176,10 +193,11 @@ export function getStoryView(
 
   return {
     attachment,
-    canReply: canReply(story, undefined, conversationSelector),
+    canReply: canReply(story, ourConversationId, conversationSelector),
     isHidden: Boolean(sender.hideStory),
     isUnread: story.readStatus === ReadStatus.Unread,
     messageId: story.messageId,
+    readAt,
     sender,
     sendState,
     timestamp,
@@ -193,6 +211,7 @@ export function getStoryView(
 
 export function getConversationStory(
   conversationSelector: GetConversationByIdType,
+  ourConversationId: string | undefined,
   story: StoryDataType
 ): ConversationStoryType {
   const sender = pick(conversationSelector(story.sourceUuid || story.source), [
@@ -212,7 +231,11 @@ export function getConversationStory(
     'title',
   ]);
 
-  const storyView = getStoryView(conversationSelector, story);
+  const storyView = getStoryView(
+    conversationSelector,
+    ourConversationId,
+    story
+  );
 
   return {
     conversationId: conversation.id,
@@ -292,10 +315,12 @@ export const getStories = createSelector(
   getConversationSelector,
   getDistributionListSelector,
   getStoriesState,
+  getUserConversationId,
   (
     conversationSelector,
     distributionListSelector,
-    { stories }: Readonly<StoriesStateType>
+    { stories }: Readonly<StoriesStateType>,
+    ourConversationId
   ): {
     hiddenStories: Array<ConversationStoryType>;
     myStories: Array<MyStoryType>;
@@ -312,6 +337,7 @@ export const getStories = createSelector(
 
       const conversationStory = getConversationStory(
         conversationSelector,
+        ourConversationId,
         story
       );
 
@@ -339,7 +365,11 @@ export const getStories = createSelector(
           return;
         }
 
-        const storyView = getStoryView(conversationSelector, story);
+        const storyView = getStoryView(
+          conversationSelector,
+          ourConversationId,
+          story
+        );
 
         const existingMyStory = myStoriesById.get(sentId) || { stories: [] };
 
@@ -376,7 +406,9 @@ export const getStories = createSelector(
     });
 
     return {
-      hiddenStories: Array.from(hiddenStoriesById.values()),
+      hiddenStories: Array.from(hiddenStoriesById.values()).sort(
+        sortByRecencyAndUnread
+      ),
       myStories: Array.from(myStoriesById.values()).sort(sortMyStories),
       stories: Array.from(storiesById.values()).sort(sortByRecencyAndUnread),
     };
@@ -384,15 +416,19 @@ export const getStories = createSelector(
 );
 
 export const getStoriesNotificationCount = createSelector(
+  getHideStoryConversationIds,
   getStoriesState,
-  ({ lastOpenedAtTimestamp, stories }): number => {
+  (hideStoryConversationIds, { lastOpenedAtTimestamp, stories }): number => {
+    const hiddenConversationIds = new Set(hideStoryConversationIds);
+
     return new Set(
       stories
         .filter(
           story =>
             story.readStatus === ReadStatus.Unread &&
             !story.deletedForEveryone &&
-            story.timestamp > (lastOpenedAtTimestamp || 0)
+            story.timestamp > (lastOpenedAtTimestamp || 0) &&
+            !hiddenConversationIds.has(story.conversationId)
         )
         .map(story => story.conversationId)
     ).size;
@@ -427,12 +463,20 @@ export const getHasStoriesSelector = createSelector(
 
 export const getStoryByIdSelector = createSelector(
   getStoriesState,
-  ({ stories }) =>
+  getUserConversationId,
+  getDistributionListSelector,
+  ({ stories }, ourConversationId, distributionListSelector) =>
     (
       conversationSelector: GetConversationByIdType,
       messageId: string
     ):
-      | { conversationStory: ConversationStoryType; storyView: StoryViewType }
+      | {
+          conversationStory: ConversationStoryType;
+          distributionList:
+            | Pick<StoryDistributionListWithMembersDataType, 'id' | 'name'>
+            | undefined;
+          storyView: StoryViewType;
+        }
       | undefined => {
       const story = stories.find(item => item.messageId === messageId);
 
@@ -440,9 +484,26 @@ export const getStoryByIdSelector = createSelector(
         return;
       }
 
+      let distributionList:
+        | Pick<StoryDistributionListWithMembersDataType, 'id' | 'name'>
+        | undefined;
+      if (story.storyDistributionListId) {
+        distributionList =
+          story.storyDistributionListId === MY_STORIES_ID
+            ? { id: MY_STORIES_ID, name: MY_STORIES_ID }
+            : distributionListSelector(
+                story.storyDistributionListId.toLowerCase()
+              );
+      }
+
       return {
-        conversationStory: getConversationStory(conversationSelector, story),
-        storyView: getStoryView(conversationSelector, story),
+        conversationStory: getConversationStory(
+          conversationSelector,
+          ourConversationId,
+          story
+        ),
+        distributionList,
+        storyView: getStoryView(conversationSelector, ourConversationId, story),
       };
     }
 );

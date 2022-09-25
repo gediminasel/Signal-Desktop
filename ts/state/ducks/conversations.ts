@@ -19,7 +19,7 @@ import * as groups from '../../groups';
 import * as log from '../../logging/log';
 import { calling } from '../../services/calling';
 import { getOwn } from '../../util/getOwn';
-import { assert, strictAssert } from '../../util/assert';
+import { assertDev, strictAssert } from '../../util/assert';
 import * as universalExpireTimer from '../../util/universalExpireTimer';
 import type {
   ShowSendAnywayDialogActiontype,
@@ -209,6 +209,7 @@ export type ConversationType = {
   publicParams?: string;
   acknowledgedGroupNameCollisions?: GroupNameCollisionsWithIdsByTitle;
   profileKey?: string;
+  voiceNotePlaybackRate?: number;
 
   badges: Array<
     | {
@@ -401,6 +402,9 @@ const REPLACE_AVATARS = 'conversations/REPLACE_AVATARS';
 const UPDATE_USERNAME_SAVE_STATE = 'conversations/UPDATE_USERNAME_SAVE_STATE';
 export const SELECTED_CONVERSATION_CHANGED =
   'conversations/SELECTED_CONVERSATION_CHANGED';
+
+export const SET_VOICE_NOTE_PLAYBACK_RATE =
+  'conversations/SET_VOICE_NOTE_PLAYBACK_RATE';
 
 export type CancelVerificationDataByConversationActionType = {
   type: typeof CANCEL_CONVERSATION_PENDING_VERIFICATION;
@@ -855,6 +859,7 @@ export const actions = {
   setRecentMediaItems,
   setSelectedConversationHeaderTitle,
   setSelectedConversationPanelDepth,
+  setVoiceNotePlaybackRate,
   showArchivedConversations,
   showChooseGroupMembers,
   showInbox,
@@ -1270,6 +1275,42 @@ function resetAllChatColors(): ThunkAction<
   };
 }
 
+// update the conversation voice note playback rate preference for the conversation
+export function setVoiceNotePlaybackRate({
+  conversationId,
+  rate,
+}: {
+  conversationId: string;
+  rate: number;
+}): ThunkAction<void, RootStateType, unknown, ConversationChangedActionType> {
+  return async dispatch => {
+    const conversationModel = window.ConversationController.get(conversationId);
+    if (conversationModel) {
+      if (rate === 1) {
+        delete conversationModel.attributes.voiceNotePlaybackRate;
+      } else {
+        conversationModel.attributes.voiceNotePlaybackRate = rate;
+      }
+      await window.Signal.Data.updateConversation(conversationModel.attributes);
+    }
+
+    const conversation = conversationModel?.format();
+
+    if (conversation) {
+      dispatch({
+        type: 'CONVERSATION_CHANGED',
+        payload: {
+          id: conversationId,
+          data: {
+            ...conversation,
+            voiceNotePlaybackRate: rate,
+          },
+        },
+      });
+    }
+  };
+}
+
 function colorSelected({
   conversationId,
   conversationColor,
@@ -1533,7 +1574,7 @@ function createGroup(
       composer?.step !== ComposerStep.SetGroupMetadata ||
       composer.isCreating
     ) {
-      assert(false, 'Cannot create group in this stage; doing nothing');
+      assertDev(false, 'Cannot create group in this stage; doing nothing');
       return;
     }
 
@@ -1915,7 +1956,7 @@ function toggleConversationInChooseMembers(
       maxRecommendedGroupSize + 1
     );
 
-    assert(
+    assertDev(
       maxGroupSize > maxRecommendedGroupSize,
       'Expected the hard max group size to be larger than the recommended maximum'
     );
@@ -2157,7 +2198,10 @@ function closeComposerModal(
 ): ConversationsStateType {
   const { composer } = state;
   if (composer?.step !== ComposerStep.ChooseGroupMembers) {
-    assert(false, "Can't close the modal in this composer step. Doing nothing");
+    assertDev(
+      false,
+      "Can't close the modal in this composer step. Doing nothing"
+    );
     return state;
   }
   if (composer[modalToClose] !== OneTimeModalState.Showing) {
@@ -2292,7 +2336,7 @@ export function reducer(
   if (action.type === 'CLEAR_GROUP_CREATION_ERROR') {
     const { composer } = state;
     if (composer?.step !== ComposerStep.SetGroupMetadata) {
-      assert(
+      assertDev(
         false,
         "Can't clear group creation error in this composer state. Doing nothing"
       );
@@ -3263,7 +3307,7 @@ export function reducer(
       case ComposerStep.SetGroupMetadata:
         return state;
       default:
-        assert(
+        assertDev(
           false,
           'Cannot transition to setting group metadata from this state'
         );
@@ -3285,7 +3329,10 @@ export function reducer(
           },
         };
       default:
-        assert(false, 'Setting compose group avatar at this step is a no-op');
+        assertDev(
+          false,
+          'Setting compose group avatar at this step is a no-op'
+        );
         return state;
     }
   }
@@ -3304,7 +3351,7 @@ export function reducer(
           },
         };
       default:
-        assert(false, 'Setting compose group name at this step is a no-op');
+        assertDev(false, 'Setting compose group name at this step is a no-op');
         return state;
     }
   }
@@ -3323,7 +3370,7 @@ export function reducer(
           },
         };
       default:
-        assert(false, 'Setting compose group name at this step is a no-op');
+        assertDev(false, 'Setting compose group name at this step is a no-op');
         return state;
     }
   }
@@ -3331,7 +3378,7 @@ export function reducer(
   if (action.type === 'SET_COMPOSE_SEARCH_TERM') {
     const { composer } = state;
     if (!composer) {
-      assert(
+      assertDev(
         false,
         'Setting compose search term with the composer closed is a no-op'
       );
@@ -3341,7 +3388,7 @@ export function reducer(
       composer.step !== ComposerStep.StartDirectConversation &&
       composer.step !== ComposerStep.ChooseGroupMembers
     ) {
-      assert(
+      assertDev(
         false,
         `Setting compose search term at step ${composer.step} is a no-op`
       );
@@ -3360,7 +3407,7 @@ export function reducer(
   if (action.type === 'SET_IS_FETCHING_UUID') {
     const { composer } = state;
     if (!composer) {
-      assert(
+      assertDev(
         false,
         'Setting compose uuid fetch state with the composer closed is a no-op'
       );
@@ -3370,7 +3417,10 @@ export function reducer(
       composer.step !== ComposerStep.StartDirectConversation &&
       composer.step !== ComposerStep.ChooseGroupMembers
     ) {
-      assert(false, 'Setting compose uuid fetch state at this step is a no-op');
+      assertDev(
+        false,
+        'Setting compose uuid fetch state at this step is a no-op'
+      );
       return state;
     }
     const { identifier, isFetching } = action.payload;
@@ -3404,7 +3454,7 @@ export function reducer(
           },
         };
       default:
-        assert(false, 'Setting editing avatar at this step is a no-op');
+        assertDev(false, 'Setting editing avatar at this step is a no-op');
         return state;
     }
   }
@@ -3430,7 +3480,7 @@ export function reducer(
           },
         };
       default:
-        assert(false, 'Adding an avatar at this step is a no-op');
+        assertDev(false, 'Adding an avatar at this step is a no-op');
         return state;
     }
   }
@@ -3450,7 +3500,7 @@ export function reducer(
           },
         };
       default:
-        assert(false, 'Removing an avatar at this step is a no-op');
+        assertDev(false, 'Removing an avatar at this step is a no-op');
         return state;
     }
   }
@@ -3478,7 +3528,7 @@ export function reducer(
           },
         };
       default:
-        assert(false, 'Replacing an avatar at this step is a no-op');
+        assertDev(false, 'Replacing an avatar at this step is a no-op');
         return state;
     }
   }
@@ -3486,7 +3536,7 @@ export function reducer(
   if (action.type === 'TOGGLE_CONVERSATION_IN_CHOOSE_MEMBERS') {
     const { composer } = state;
     if (composer?.step !== ComposerStep.ChooseGroupMembers) {
-      assert(
+      assertDev(
         false,
         'Toggling conversation members is a no-op in this composer step'
       );

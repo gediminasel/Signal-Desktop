@@ -10,7 +10,7 @@ import React, {
   useState,
 } from 'react';
 import classNames from 'classnames';
-import { useSpring, animated, to } from '@react-spring/web';
+import { Globals, useSpring, animated, to } from '@react-spring/web';
 import type { BodyRangeType, LocalizerType } from '../types/Util';
 import type { ContextMenuOptionType } from './ContextMenu';
 import type { ConversationType } from '../state/ducks/conversations';
@@ -44,6 +44,7 @@ import { useEscapeHandling } from '../hooks/useEscapeHandling';
 export type PropsType = {
   currentIndex: number;
   deleteStoryForEveryone: (story: StoryViewType) => unknown;
+  distributionListName?: string;
   getPreferredBadge: PreferredBadgeSelectorType;
   group?: Pick<
     ConversationType,
@@ -104,6 +105,7 @@ enum Arrow {
 export const StoryViewer = ({
   currentIndex,
   deleteStoryForEveryone,
+  distributionListName,
   getPreferredBadge,
   group,
   hasActiveCall,
@@ -234,6 +236,23 @@ export const StoryViewer = ({
     };
   }, []);
 
+  // Currently there's no way to globally skip animations but only allow select
+  // ones. This component temporarily overrides the skipAnimation global and
+  // then sets it back when it unmounts.
+  // https://github.com/pmndrs/react-spring/issues/1982
+  useEffect(() => {
+    const { skipAnimation } = Globals;
+    Globals.assign({
+      skipAnimation: false,
+    });
+
+    return () => {
+      Globals.assign({
+        skipAnimation,
+      });
+    };
+  }, []);
+
   const [styles, spring] = useSpring(
     () => ({
       from: { width: 0 },
@@ -309,6 +328,7 @@ export const StoryViewer = ({
 
   const canFreelyNavigateStories =
     storyViewMode === StoryViewModeType.All ||
+    storyViewMode === StoryViewModeType.Hidden ||
     storyViewMode === StoryViewModeType.Unread;
 
   const canNavigateLeft =
@@ -424,8 +444,10 @@ export const StoryViewer = ({
     muteClassName = 'StoryViewer__soundless';
   }
 
+  const isSent = Boolean(sendState);
+
   const contextMenuOptions: ReadonlyArray<ContextMenuOptionType<unknown>> =
-    sendState
+    isSent
       ? [
           {
             icon: 'StoryListItem__icon--info',
@@ -552,7 +574,7 @@ export const StoryViewer = ({
               </div>
             )}
             <div className="StoryViewer__meta__playback-bar">
-              <div>
+              <div className="StoryViewer__meta__playback-bar__container">
                 <Avatar
                   acceptedMessageRequest={acceptedMessageRequest}
                   avatarPath={avatarPath}
@@ -584,20 +606,27 @@ export const StoryViewer = ({
                     title={group.title}
                   />
                 )}
-                <div className="StoryViewer__meta--title">
-                  {(group &&
-                    i18n('Stories__from-to-group', {
-                      name: isMe ? i18n('you') : title,
-                      group: group.title,
-                    })) ||
-                    (isMe ? i18n('you') : title)}
+                <div>
+                  <div className="StoryViewer__meta--title">
+                    {(group &&
+                      i18n('Stories__from-to-group', {
+                        name: isMe ? i18n('you') : title,
+                        group: group.title,
+                      })) ||
+                      (isMe ? i18n('you') : title)}
+                  </div>
+                  <MessageTimestamp
+                    i18n={i18n}
+                    isRelativeTime
+                    module="StoryViewer__meta--timestamp"
+                    timestamp={timestamp}
+                  />
+                  {distributionListName && (
+                    <div className="StoryViewer__meta__list">
+                      {distributionListName}
+                    </div>
+                  )}
                 </div>
-                <MessageTimestamp
-                  i18n={i18n}
-                  isRelativeTime
-                  module="StoryViewer__meta--timestamp"
-                  timestamp={timestamp}
-                />
               </div>
               <div className="StoryViewer__meta__playback-controls">
                 <button
@@ -654,7 +683,7 @@ export const StoryViewer = ({
               ))}
             </div>
             <div className="StoryViewer__actions">
-              {(canReply || sendState) && (
+              {(canReply || isSent) && (
                 <button
                   className="StoryViewer__reply"
                   onClick={() => setHasStoryViewsNRepliesModal(true)}
@@ -662,12 +691,12 @@ export const StoryViewer = ({
                   type="button"
                 >
                   <>
-                    {sendState || replyCount > 0 ? (
+                    {isSent || replyCount > 0 ? (
                       <span className="StoryViewer__reply__chevron">
-                        {sendState && !hasReadReceiptSetting && !replyCount && (
+                        {isSent && !hasReadReceiptSetting && !replyCount && (
                           <>{i18n('StoryViewer__views-off')}</>
                         )}
-                        {sendState &&
+                        {isSent &&
                           hasReadReceiptSetting &&
                           (viewCount === 1 ? (
                             <Intl
@@ -682,7 +711,7 @@ export const StoryViewer = ({
                               components={[<strong>{viewCount}</strong>]}
                             />
                           ))}
-                        {(sendState || viewCount > 0) && replyCount > 0 && ' '}
+                        {(isSent || viewCount > 0) && replyCount > 0 && ' '}
                         {replyCount > 0 &&
                           (replyCount === 1 ? (
                             <Intl
@@ -699,7 +728,7 @@ export const StoryViewer = ({
                           ))}
                       </span>
                     ) : null}
-                    {!sendState && !replyCount && (
+                    {!isSent && !replyCount && (
                       <span className="StoryViewer__reply__arrow">
                         {isGroupStory
                           ? i18n('StoryViewer__reply-group')
@@ -758,6 +787,7 @@ export const StoryViewer = ({
             canReply={Boolean(canReply)}
             getPreferredBadge={getPreferredBadge}
             hasReadReceiptSetting={hasReadReceiptSetting}
+            hasViewsCapability={isSent}
             i18n={i18n}
             isGroupStory={isGroupStory}
             onClose={() => setHasStoryViewsNRepliesModal(false)}

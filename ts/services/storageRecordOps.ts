@@ -15,7 +15,7 @@ import {
   waitThenMaybeUpdateGroup,
   waitThenRespondToGroupV2Migration,
 } from '../groups';
-import { assert } from '../util/assert';
+import { assertDev } from '../util/assert';
 import { dropNull } from '../util/dropNull';
 import { normalizeUuid } from '../util/normalizeUuid';
 import { missingCaseError } from '../util/missingCaseError';
@@ -175,6 +175,9 @@ export async function toContactRecord(
   if (conversation.get('hideStory') !== undefined) {
     contactRecord.hideStory = Boolean(conversation.get('hideStory'));
   }
+  contactRecord.unregisteredAtTimestamp = getSafeLongFromTimestamp(
+    conversation.get('firstUnregisteredAt')
+  );
 
   applyUnknownFields(contactRecord, conversation);
 
@@ -986,6 +989,19 @@ export async function mergeContactRecord(
     }
   );
 
+  if (
+    !contactRecord.unregisteredAtTimestamp ||
+    contactRecord.unregisteredAtTimestamp.equals(0)
+  ) {
+    conversation.setRegistered({ fromStorageService: true, shouldSave: false });
+  } else {
+    conversation.setUnregistered({
+      timestamp: getTimestampFromLong(contactRecord.unregisteredAtTimestamp),
+      fromStorageService: true,
+      shouldSave: false,
+    });
+  }
+
   const { hasConflict, details: extraDetails } = doesRecordHavePendingChanges(
     await toContactRecord(conversation),
     contactRecord,
@@ -1098,7 +1114,7 @@ export async function mergeAccountRecord(
       phoneNumberSharingModeToStore = PhoneNumberSharingMode.Nobody;
       break;
     default:
-      assert(
+      assertDev(
         false,
         `storageService.mergeAccountRecord: Got an unexpected phone number sharing mode: ${phoneNumberSharingMode}. Falling back to default`
       );
@@ -1505,14 +1521,14 @@ export async function mergeStickerPackRecord(
   );
 
   if (localStickerPack && !wasUninstalled && isUninstalled) {
-    assert(localStickerPack.key, 'Installed sticker pack has no key');
+    assertDev(localStickerPack.key, 'Installed sticker pack has no key');
     window.reduxActions.stickers.uninstallStickerPack(
       localStickerPack.id,
       localStickerPack.key,
       { fromStorageService: true }
     );
   } else if ((!localStickerPack || wasUninstalled) && !isUninstalled) {
-    assert(stickerPack.key, 'Sticker pack does not have key');
+    assertDev(stickerPack.key, 'Sticker pack does not have key');
 
     const status = Stickers.getStickerPackStatus(stickerPack.id);
     if (status === 'downloaded') {

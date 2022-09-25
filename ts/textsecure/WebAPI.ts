@@ -18,7 +18,7 @@ import { v4 as getGuid } from 'uuid';
 import { z } from 'zod';
 import type { Readable } from 'stream';
 
-import { assert, strictAssert } from '../util/assert';
+import { assertDev, strictAssert } from '../util/assert';
 import { isRecord } from '../util/isRecord';
 import * as durations from '../util/durations';
 import type { ExplodePromiseResultType } from '../util/explodePromise';
@@ -391,7 +391,7 @@ async function _promiseAjax(
   log.info(logId, response.status, 'Success');
 
   if (options.responseType === 'byteswithdetails') {
-    assert(result instanceof Uint8Array, 'Expected Uint8Array result');
+    assertDev(result instanceof Uint8Array, 'Expected Uint8Array result');
     const fullResult: BytesWithDetailsType = {
       data: result,
       contentType: getContentType(response),
@@ -694,8 +694,6 @@ export type ProfileType = Readonly<{
   uuid?: string;
   credential?: string;
 
-  // Only present when `credentialType` is `pni`
-  pniCredential?: string;
   capabilities?: CapabilitiesType;
   paymentAddress?: string;
   badges?: unknown;
@@ -753,7 +751,6 @@ export type CdsLookupOptionsType = Readonly<{
 type GetProfileCommonOptionsType = Readonly<
   {
     userLanguages: ReadonlyArray<string>;
-    credentialType?: 'pni' | 'expiringProfileKey';
   } & (
     | {
         profileKeyVersion?: undefined;
@@ -1584,7 +1581,6 @@ export function initialize({
       {
         profileKeyVersion,
         profileKeyCredentialRequest,
-        credentialType = 'expiringProfileKey',
       }: GetProfileCommonOptionsType
     ) {
       let profileUrl = `/${identifier}`;
@@ -1593,7 +1589,7 @@ export function initialize({
         if (profileKeyCredentialRequest !== undefined) {
           profileUrl +=
             `/${profileKeyCredentialRequest}` +
-            `?credentialType=${credentialType}`;
+            '?credentialType=expiringProfileKey';
         }
       } else {
         strictAssert(

@@ -227,6 +227,7 @@ export type MessageAttributesType = {
   sendHQImages?: boolean;
 
   // Should only be present for incoming messages and errors
+  readAt?: number;
   readStatus?: ReadStatus;
   lastSeenHere?: Array<string>;
   // Used for all kinds of notifications, as well as incoming messages
@@ -271,6 +272,7 @@ export type ConversationAttributesType = {
   customColor?: CustomColorType;
   customColorId?: string;
   discoveredUnregisteredAt?: number;
+  firstUnregisteredAt?: number;
   draftChanged?: boolean;
   draftAttachments?: Array<AttachmentDraftType>;
   draftBodyRanges?: Array<BodyRangeType>;
@@ -294,12 +296,14 @@ export type ConversationAttributesType = {
   };
   profileKeyCredential?: string | null;
   profileKeyCredentialExpiration?: number | null;
-  pniCredential?: string | null;
+  // TODO: DESKTOP-4223
+  pniCredential?: void;
   lastProfile?: ConversationLastProfileType;
   quotedMessageId?: string | null;
   sealedSender?: unknown;
   sentMessageCount?: number;
   sharedGroupNames?: Array<string>;
+  voiceNotePlaybackRate?: number;
 
   id: string;
   type: ConversationAttributesTypeType;

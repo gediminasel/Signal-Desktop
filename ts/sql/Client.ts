@@ -27,7 +27,7 @@ import { tapToViewMessagesDeletionService } from '../services/tapToViewMessagesD
 import * as Bytes from '../Bytes';
 import { CURRENT_SCHEMA_VERSION } from '../types/Message2';
 import { createBatcher } from '../util/batcher';
-import { assert, softAssert, strictAssert } from '../util/assert';
+import { assertDev, softAssert, strictAssert } from '../util/assert';
 import { mapObjectWithSpec } from '../util/mapObjectWithSpec';
 import type { ObjectMappingSpecType } from '../util/mapObjectWithSpec';
 import { cleanDataForIpc } from './cleanDataForIpc';
@@ -461,7 +461,7 @@ export function _cleanMessageData(data: MessageType): MessageType {
   const result = { ...data };
   // Ensure that all messages have the received_at set properly
   if (!data.received_at) {
-    assert(false, 'received_at was not set on the message');
+    assertDev(false, 'received_at was not set on the message');
     result.received_at = window.Signal.Util.incrementMessageCounter();
   }
   if (data.attachments) {
@@ -1053,7 +1053,7 @@ const updateConversationBatcher = createBatcher<ConversationType>({
     const ids = Object.keys(byId);
     const mostRecent = ids.map((id: string): ConversationType => {
       const maybeLast = last(byId[id]);
-      assert(maybeLast !== undefined, 'Empty array in `groupBy` result');
+      assertDev(maybeLast !== undefined, 'Empty array in `groupBy` result');
       return maybeLast;
     });
 
@@ -1069,7 +1069,7 @@ async function updateConversations(
   array: Array<ConversationType>
 ): Promise<void> {
   const { cleaned, pathsChanged } = cleanDataForIpc(array);
-  assert(
+  assertDev(
     !pathsChanged.length,
     `Paths were cleaned: ${JSON.stringify(pathsChanged)}`
   );
@@ -1270,6 +1270,7 @@ async function getUnreadByConversationAndMarkRead(options: {
   conversationId: string;
   isGroup?: boolean;
   newestUnreadAt: number;
+  now?: number;
   readAt?: number;
   storyId?: UUIDStringType;
 }): Promise<GetUnreadByConversationAndMarkReadResultType> {

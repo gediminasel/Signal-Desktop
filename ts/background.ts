@@ -35,7 +35,7 @@ import { ChallengeHandler } from './challenge';
 import * as durations from './util/durations';
 import { explodePromise } from './util/explodePromise';
 import { isWindowDragElement } from './util/isWindowDragElement';
-import { assert, strictAssert } from './util/assert';
+import { assertDev, strictAssert } from './util/assert';
 import { normalizeUuid } from './util/normalizeUuid';
 import { filter } from './util/iterables';
 import { isNotNil } from './util/isNotNil';
@@ -238,6 +238,10 @@ export async function startApp(): Promise<void> {
       },
 
       requestChallenge(request) {
+        if (window.CI) {
+          window.CI.handleEvent('challenge', request);
+          return;
+        }
         window.sendChallengeRequest(request);
       },
 
@@ -3359,7 +3363,7 @@ export async function startApp(): Promise<void> {
     data: MessageEventData,
     descriptor: MessageDescriptor
   ) {
-    assert(
+    assertDev(
       Boolean(data.receivedAtCounter),
       `Did not receive receivedAtCounter for message: ${data.timestamp}`
     );

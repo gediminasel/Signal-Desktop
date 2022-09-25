@@ -250,8 +250,6 @@ export class LeftPaneComposeHelper extends LeftPaneHelper<LeftPaneComposePropsTy
             this.username
           ),
         };
-
-        virtualRowIndex -= 1;
       }
     }
 
@@ -274,8 +272,6 @@ export class LeftPaneComposeHelper extends LeftPaneHelper<LeftPaneComposePropsTy
             this.phoneNumber.e164
           ),
         };
-
-        virtualRowIndex -= 1;
       }
     }
 

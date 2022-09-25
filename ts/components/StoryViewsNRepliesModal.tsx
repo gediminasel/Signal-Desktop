@@ -88,6 +88,7 @@ export type PropsType = {
   canReply: boolean;
   getPreferredBadge: PreferredBadgeSelectorType;
   hasReadReceiptSetting: boolean;
+  hasViewsCapability: boolean;
   i18n: LocalizerType;
   isGroupStory?: boolean;
   onClose: () => unknown;
@@ -115,6 +116,7 @@ export const StoryViewsNRepliesModal = ({
   canReply,
   getPreferredBadge,
   hasReadReceiptSetting,
+  hasViewsCapability,
   i18n,
   isGroupStory,
   onClose,
@@ -134,6 +136,7 @@ export const StoryViewsNRepliesModal = ({
 }: PropsType): JSX.Element | null => {
   const containerElementRef = useRef<HTMLDivElement | null>(null);
   const inputApiRef = useRef<InputApi | undefined>();
+  const shouldScrollToBottomRef = useRef(false);
   const [bottom, setBottom] = useState<HTMLDivElement | null>(null);
   const [messageBodyText, setMessageBodyText] = useState('');
   const [showReactionPicker, setShowReactionPicker] = useState(false);
@@ -146,12 +149,9 @@ export const StoryViewsNRepliesModal = ({
 
   const insertEmoji = useCallback(
     (e: EmojiPickDataType) => {
-      if (inputApiRef.current) {
-        inputApiRef.current.insertEmoji(e);
-        onUseEmoji(e);
-      }
+      onUseEmoji(e);
     },
-    [inputApiRef, onUseEmoji]
+    [onUseEmoji]
   );
 
   const [referenceElement, setReferenceElement] =
@@ -165,13 +165,14 @@ export const StoryViewsNRepliesModal = ({
     strategy: 'fixed',
   });
 
+  let composerElement: JSX.Element | undefined;
+
   useEffect(() => {
-    if (replies.length) {
+    if (replies.length && shouldScrollToBottomRef.current) {
       bottom?.scrollIntoView({ behavior: 'smooth' });
+      shouldScrollToBottomRef.current = false;
     }
   }, [bottom, replies.length]);
-
-  let composerElement: JSX.Element | undefined;
 
   if (canReply) {
     composerElement = (
@@ -205,6 +206,7 @@ export const StoryViewsNRepliesModal = ({
               onPickEmoji={insertEmoji}
               onSubmit={(...args) => {
                 inputApiRef.current?.reset();
+                shouldScrollToBottomRef.current = true;
                 onReply(...args);
               }}
               onTextTooLong={onTextTooLong}
@@ -357,7 +359,7 @@ export const StoryViewsNRepliesModal = ({
   }
 
   let viewsElement: JSX.Element | undefined;
-  if (!hasReadReceiptSetting) {
+  if (hasViewsCapability && !hasReadReceiptSetting) {
     viewsElement = (
       <div className="StoryViewsNRepliesModal__read-receipts-off">
         {i18n('StoryViewsNRepliesModal__read-receipts-off')}
@@ -401,10 +403,16 @@ export const StoryViewsNRepliesModal = ({
         ))}
       </div>
     );
+  } else if (hasViewsCapability) {
+    viewsElement = (
+      <div className="StoryViewsNRepliesModal__replies--none">
+        {i18n('StoryViewsNRepliesModal__no-views')}
+      </div>
+    );
   }
 
   const tabsElement =
-    views.length && replies.length ? (
+    viewsElement && repliesElement ? (
       <Tabs
         initialSelectedTab={Tab.Views}
         moduleClassName="StoryViewsNRepliesModal__tabs"
