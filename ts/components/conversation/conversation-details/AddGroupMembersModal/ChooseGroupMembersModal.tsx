@@ -269,7 +269,10 @@ export const ChooseGroupMembersModal: FunctionComponent<PropsType> = ({
   };
 
   return (
-    <ModalHost onClose={onClose}>
+    <ModalHost
+      modalName="AddGroupMembersModal.ChooseGroupMembersModal"
+      onClose={onClose}
+    >
       <div className="module-AddGroupMembersModal module-AddGroupMembersModal--choose-members">
         <button
           aria-label={i18n('close')}
@@ -304,11 +307,10 @@ export const ChooseGroupMembersModal: FunctionComponent<PropsType> = ({
                 acceptedMessageRequest={contact.acceptedMessageRequest}
                 avatarPath={contact.avatarPath}
                 color={contact.color}
-                firstName={contact.firstName}
+                firstName={contact.systemGivenName ?? contact.firstName}
                 i18n={i18n}
                 isMe={contact.isMe}
                 id={contact.id}
-                name={contact.name}
                 phoneNumber={contact.phoneNumber}
                 profileName={contact.profileName}
                 sharedGroupNames={contact.sharedGroupNames}

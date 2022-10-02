@@ -212,7 +212,6 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
       i18n,
       type,
       isMe,
-      name,
       phoneNumber,
       profileName,
       sharedGroupNames,
@@ -232,7 +231,6 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
           conversationType={type}
           i18n={i18n}
           isMe={isMe}
-          name={name}
           noteToSelf={isMe}
           onClick={
             hasStories

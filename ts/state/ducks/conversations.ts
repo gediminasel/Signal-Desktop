@@ -111,8 +111,11 @@ export type ConversationTypeType = typeof ConversationTypes[number];
 export type ConversationType = {
   id: string;
   uuid?: UUIDStringType;
+  pni?: UUIDStringType;
   e164?: string;
   name?: string;
+  systemGivenName?: string;
+  systemFamilyName?: string;
   familyName?: string;
   firstName?: string;
   profileName?: string;
@@ -130,6 +133,7 @@ export type ConversationType = {
   areWePendingApproval?: boolean;
   canChangeTimer?: boolean;
   canEditGroupInfo?: boolean;
+  canAddNewMembers?: boolean;
   color?: AvatarColorType;
   conversationColor?: ConversationColorType;
   customColor?: CustomColorType;
@@ -184,6 +188,7 @@ export type ConversationType = {
   // This is used by the CompositionInput for @mentions
   sortedGroupMembers?: Array<ConversationType>;
   title: string;
+  titleNoDefault?: string;
   searchableTitle?: string;
   unreadCount?: number;
   isSelected?: boolean;
@@ -803,6 +808,7 @@ export type ConversationActionType =
 // Action Creators
 
 export const actions = {
+  addMemberToGroup,
   cancelConversationVerification,
   changeHasGroupLink,
   clearCancelledConversationVerification,
@@ -2004,6 +2010,25 @@ function removeMemberFromGroup(
   };
 }
 
+function addMemberToGroup(
+  conversationId: string,
+  contactId: string,
+  onComplete: () => void
+): ThunkAction<void, RootStateType, unknown, never> {
+  return async () => {
+    const conversationModel = window.ConversationController.get(conversationId);
+    if (conversationModel) {
+      const idForLogging = conversationModel.idForLogging();
+      await longRunningTaskWrapper({
+        name: 'addMemberToGroup',
+        idForLogging,
+        task: () => conversationModel.addMembersV2([contactId]),
+      });
+      onComplete();
+    }
+  };
+}
+
 function toggleGroupsForStorySend(
   conversationIds: Array<string>
 ): ThunkAction<void, RootStateType, unknown, NoopActionType> {
@@ -2151,6 +2176,9 @@ export function updateConversationLookups(
   if (removed && removed.uuid) {
     result.conversationsByUuid = omit(result.conversationsByUuid, removed.uuid);
   }
+  if (removed && removed.pni) {
+    result.conversationsByUuid = omit(result.conversationsByUuid, removed.pni);
+  }
   if (removed && removed.groupId) {
     result.conversationsByGroupId = omit(
       result.conversationsByGroupId,
@@ -2174,6 +2202,12 @@ export function updateConversationLookups(
     result.conversationsByUuid = {
       ...result.conversationsByUuid,
       [added.uuid]: added,
+    };
+  }
+  if (added && added.pni) {
+    result.conversationsByUuid = {
+      ...result.conversationsByUuid,
+      [added.pni]: added,
     };
   }
   if (added && added.groupId) {

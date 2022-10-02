@@ -1614,6 +1614,12 @@ app.commandLine.appendSwitch('disable-features', 'HardwareMediaKeyHandling');
 // If we don't set this, Desktop will ask for access to keychain/keyring on startup
 app.commandLine.appendSwitch('password-store', 'basic');
 
+// <canvas/> rendering is often utterly broken on Linux when using GPU
+// acceleration.
+if (OS.isLinux()) {
+  app.disableHardwareAcceleration();
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -1740,7 +1746,7 @@ app.on('ready', async () => {
     );
   }
 
-  GlobalErrors.updateLocale(locale.messages);
+  GlobalErrors.updateLocale(locale);
 
   // If the sql initialization takes more than three seconds to complete, we
   // want to notify the user that things are happening
@@ -1888,7 +1894,7 @@ app.on('ready', async () => {
 
   setupMenu();
 
-  systemTrayService = new SystemTrayService({ messages: locale.messages });
+  systemTrayService = new SystemTrayService({ i18n: locale.i18n });
   systemTrayService.setMainWindow(mainWindow);
   systemTrayService.setEnabled(
     shouldMinimizeToSystemTray(await systemTraySettingCache.get())
@@ -1931,7 +1937,7 @@ function setupMenu(options?: Partial<CreateTemplateOptionsType>) {
     // overrides
     ...options,
   };
-  const template = createTemplate(menuOptions, getLocale().messages);
+  const template = createTemplate(menuOptions, getLocale().i18n);
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
 

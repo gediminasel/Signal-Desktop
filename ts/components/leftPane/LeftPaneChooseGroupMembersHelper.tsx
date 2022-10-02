@@ -219,11 +219,10 @@ export class LeftPaneChooseGroupMembersHelper extends LeftPaneHelper<LeftPaneCho
                 acceptedMessageRequest={contact.acceptedMessageRequest}
                 avatarPath={contact.avatarPath}
                 color={contact.color}
-                firstName={contact.firstName}
+                firstName={contact.systemGivenName ?? contact.firstName}
                 i18n={i18n}
                 id={contact.id}
                 isMe={contact.isMe}
-                name={contact.name}
                 phoneNumber={contact.phoneNumber}
                 profileName={contact.profileName}
                 sharedGroupNames={contact.sharedGroupNames}

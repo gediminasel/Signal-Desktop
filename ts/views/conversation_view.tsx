@@ -605,6 +605,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
       onStartGroupMigration: () => this.startMigrationToGV2(),
       onCancelJoinRequest: async () => {
         await window.showConfirmationDialog({
+          dialogName: 'GroupV2CancelRequestToJoin',
           message: window.i18n(
             'GroupV2--join--cancel-request-to-join--confirmation'
           ),
@@ -1716,6 +1717,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
     }
 
     window.showConfirmationDialog({
+      dialogName: 'deleteMessage',
       confirmStyle: 'negative',
       message: window.i18n('deleteWarning'),
       okText: window.i18n('delete'),
@@ -1740,6 +1742,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
     }
 
     window.showConfirmationDialog({
+      dialogName: 'deleteMessageForEveryone',
       confirmStyle: 'negative',
       message: window.i18n('deleteForEveryoneWarning'),
       okText: window.i18n('delete'),
@@ -2355,6 +2358,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
     const { model }: { model: ConversationModel } = this;
 
     window.showConfirmationDialog({
+      dialogName: 'destroyMessages',
       confirmStyle: 'negative',
       message: window.i18n('deleteConversationConfirmation'),
       okText: window.i18n('delete'),

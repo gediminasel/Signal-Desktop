@@ -31,11 +31,11 @@ const releaseNotes: ReleaseNotesType = {
   version: window.getVersion?.(),
   features: [
     {
-      key: 'WhatsNew__v5.61--0',
+      key: 'WhatsNew__v5.62--0',
       components: undefined,
     },
     {
-      key: 'WhatsNew__v5.61--1',
+      key: 'WhatsNew__v5.62--1',
       components: undefined,
     },
   ],
@@ -78,6 +78,7 @@ export const WhatsNewModal = ({
 
   return (
     <Modal
+      modalName="WhatsNewModal"
       hasXButton
       i18n={i18n}
       onClose={hideWhatsNewModal}

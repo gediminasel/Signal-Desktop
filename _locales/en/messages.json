@@ -1,4 +1,50 @@
 {
+  "smartling": {
+    "placeholder_format_custom": "(\\$.+?\\$)",
+    "translate_paths": [
+      {
+        "key": "{*}/message",
+        "path": "*/message",
+        "instruction": "*/description"
+      }
+    ]
+  },
+  "AddUserToAnotherGroupModal__title": {
+    "message": "Add to a group",
+    "description": "Shown as the title of the dialog that allows you to add a contact to an group"
+  },
+  "AddUserToAnotherGroupModal__confirm-title": {
+    "message": "Add new member?",
+    "description": "Shown as the title of the confirmation dialog when adding a contact to a group, after having selected the group"
+  },
+  "AddUserToAnotherGroupModal__confirm-add": {
+    "message": "Add",
+    "description": "Shown in the affirmative button of the confirmation dialog when adding a contact to a group"
+  },
+  "AddUserToAnotherGroupModal__confirm-message": {
+    "message": "Add “$contact$” to the group “$group$”",
+    "description": "Shown in the confirmation dialog body when adding a contact to a group"
+  },
+  "AddUserToAnotherGroupModal__toast--user-added-to-group": {
+    "message": "$contact$ was added to $group$",
+    "description": "Shown in toast after a user is added to an existing group"
+  },
+  "AddUserToAnotherGroupModal__toast--adding-user-to-group": {
+    "message": "Adding $contact$...",
+    "description": "Shown in toast while a user is being added to a group"
+  },
+  "GroupListItem__message-default": {
+    "message": "$count$ members",
+    "description": "Shown below the group name when selecting a group to invite a contact to"
+  },
+  "GroupListItem__message-already-member": {
+    "message": "Already a member",
+    "description": "Shown below the group name when selecting a group to invite a contact to, when the group item is disabled"
+  },
+  "GroupListItem__message-pending": {
+    "message": "Membership is pending",
+    "description": "Shown below the group name when selecting a group to invite a contact to, when the group item is disabled"
+  },
   "softwareAcknowledgments": {
     "message": "Software Acknowledgments",
     "description": "Shown in the about box for the link to software acknowledgments"
@@ -4251,6 +4297,18 @@
     "message": "See all",
     "description": "This is a button on the conversation details to show all members"
   },
+  "ConversationDetailsGroups--title": {
+    "message": "$number$ groups in common",
+    "description": "Title of the groups-in-common panel, in the contact details"
+  },
+  "ConversationDetailsGroups--add-to-group": {
+    "message": "Add to a group",
+    "description": "The button shown on a conversation details (for a direct contact) that you can click to add that contact to groups"
+  },
+  "ConversationDetailsGroups--show-all": {
+    "message": "See all",
+    "description": "This is a button on the conversation details (for a direct contact) to show all groups-in-common"
+  },
   "ConversationNotificationsSettings__mentions__label": {
     "message": "Mentions",
     "description": "In the conversation notifications settings, this is the label for the mentions option"
@@ -5787,14 +5845,6 @@
     "message": "Small tweaks, bug fixes, and performance enhancements. Thanks for using Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "WhatsNew__v5.57--1": {
-    "message": "Change the speed of audio messages to either get to the point or catch the details.",
-    "description": "Release notes for v5.57"
-  },
-  "WhatsNew__v5.57--2": {
-    "message": "Streamline your emoji searching. Once you’ve pulled up the emoji picker, skip the 🔍 and just start typing keywords.",
-    "description": "Release notes for v5.57"
-  },
   "WhatsNew__v5.61--0": {
     "message": "- Facing a conversation with a long list of Voice Notes to listen to? Click play, sit back, and relax - they'll continue playing automatically!",
     "description": "Release notes for v5.61"
@@ -5802,5 +5852,13 @@
   "WhatsNew__v5.61--1": {
     "message": "You can now attach some video flavor to a message along with your vacation photos!",
     "description": "Release notes for v5.61"
+  },
+  "WhatsNew__v5.62--0": {
+    "message": "Can’t remember which of your friends named Lou is on your basketball team? Check contact details to see shared groups between you and a friend.",
+    "description": "Release notes for v5.62"
+  },
+  "WhatsNew__v5.62--1": {
+    "message": "Easily add a friend to a group from their contact details screen to keep the conversation exciting.",
+    "description": "Release notes for v5.62"
   }
 }

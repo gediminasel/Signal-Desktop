@@ -152,7 +152,6 @@ export const StoryViewer = ({
     color,
     isMe,
     firstName,
-    name,
     profileName,
     sharedGroupNames,
     title,
@@ -342,6 +341,12 @@ export const StoryViewer = ({
 
   const navigateStories = useCallback(
     (ev: KeyboardEvent) => {
+      // the replies modal can consume arrow keys
+      // we don't want to navigate while someone is typing a reply
+      if (hasStoryViewsNRepliesModal) {
+        return;
+      }
+
       if (canNavigateRight && ev.key === 'ArrowRight') {
         viewStory({
           storyId: story.messageId,
@@ -361,6 +366,7 @@ export const StoryViewer = ({
       }
     },
     [
+      hasStoryViewsNRepliesModal,
       canNavigateLeft,
       canNavigateRight,
       story.messageId,
@@ -550,6 +556,30 @@ export const StoryViewer = ({
               />
             )}
           </div>
+
+          <div className="StoryViewer__protection StoryViewer__protection--bottom" />
+
+          {canNavigateRight && (
+            <button
+              aria-label={i18n('forward')}
+              className={classNames(
+                'StoryViewer__arrow StoryViewer__arrow--right',
+                {
+                  'StoryViewer__arrow--visible': arrowToShow === Arrow.Right,
+                }
+              )}
+              onClick={() =>
+                viewStory({
+                  storyId: story.messageId,
+                  storyViewMode,
+                  viewDirection: StoryViewDirectionType.Next,
+                })
+              }
+              onMouseMove={() => setArrowToShow(Arrow.Right)}
+              type="button"
+            />
+          )}
+
           <div className="StoryViewer__meta">
             {caption && (
               <div className="StoryViewer__caption">
@@ -583,7 +613,6 @@ export const StoryViewer = ({
                   conversationType="direct"
                   i18n={i18n}
                   isMe={Boolean(isMe)}
-                  name={name}
                   profileName={profileName}
                   sharedGroupNames={sharedGroupNames}
                   size={AvatarSize.TWENTY_EIGHT}
@@ -599,7 +628,6 @@ export const StoryViewer = ({
                     conversationType="group"
                     i18n={i18n}
                     isMe={false}
-                    name={group.name}
                     profileName={group.profileName}
                     sharedGroupNames={group.sharedGroupNames}
                     size={AvatarSize.TWENTY_EIGHT}
@@ -740,27 +768,6 @@ export const StoryViewer = ({
               )}
             </div>
           </div>
-          {canNavigateRight && (
-            <button
-              aria-label={i18n('forward')}
-              className={classNames(
-                'StoryViewer__arrow StoryViewer__arrow--right',
-                {
-                  'StoryViewer__arrow--visible': arrowToShow === Arrow.Right,
-                }
-              )}
-              onClick={() =>
-                viewStory({
-                  storyId: story.messageId,
-                  storyViewMode,
-                  viewDirection: StoryViewDirectionType.Next,
-                })
-              }
-              onMouseMove={() => setArrowToShow(Arrow.Right)}
-              type="button"
-            />
-          )}
-          <div className="StoryViewer__protection StoryViewer__protection--bottom" />
           <button
             aria-label={i18n('close')}
             className="StoryViewer__close-button"
@@ -821,6 +828,7 @@ export const StoryViewer = ({
         )}
         {hasConfirmHideStory && (
           <ConfirmationDialog
+            dialogName="StoryViewer.confirmHideStory"
             actions={[
               {
                 action: () => {
@@ -841,6 +849,7 @@ export const StoryViewer = ({
         )}
         {confirmDeleteStory && (
           <ConfirmationDialog
+            dialogName="StoryViewer.deleteStory"
             actions={[
               {
                 text: i18n('delete'),

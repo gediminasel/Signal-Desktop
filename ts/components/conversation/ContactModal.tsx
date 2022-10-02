@@ -43,6 +43,7 @@ type PropsActionType = {
   showConversation: ShowConversationType;
   toggleAdmin: (conversationId: string, contactId: string) => void;
   toggleSafetyNumberModal: (conversationId: string) => unknown;
+  toggleAddUserToAnotherGroupModal: (conversationId: string) => void;
   updateConversationModelSharedGroups: (conversationId: string) => void;
   viewUserStories: ViewUserStoriesActionCreatorType;
 };
@@ -77,6 +78,7 @@ export const ContactModal = ({
   theme,
   toggleAdmin,
   toggleSafetyNumberModal,
+  toggleAddUserToAnotherGroupModal,
   updateConversationModelSharedGroups,
   viewUserStories,
 }: PropsType): JSX.Element => {
@@ -110,6 +112,7 @@ export const ContactModal = ({
 
       modalNode = (
         <ConfirmationDialog
+          dialogName="ContactModal.toggleAdmin"
           actions={[
             {
               action: () => toggleAdmin(conversation.id, contact.id),
@@ -164,6 +167,7 @@ export const ContactModal = ({
 
       return (
         <Modal
+          modalName="ContactModal"
           moduleClassName="ContactModal__modal"
           hasXButton
           i18n={i18n}
@@ -178,7 +182,6 @@ export const ContactModal = ({
               conversationType="direct"
               i18n={i18n}
               isMe={contact.isMe}
-              name={contact.name}
               onClick={() => {
                 if (conversation && hasStories) {
                   viewUserStories({
@@ -240,6 +243,21 @@ export const ContactModal = ({
                     <div className="ContactModal__safety-number__bubble-icon" />
                   </div>
                   <span>{i18n('showSafetyNumber')}</span>
+                </button>
+              )}
+              {!contact.isMe && isMember && conversation?.id && (
+                <button
+                  type="button"
+                  className="ContactModal__button"
+                  onClick={() => {
+                    hideContactModal();
+                    toggleAddUserToAnotherGroupModal(contact.id);
+                  }}
+                >
+                  <div className="ContactModal__bubble-icon">
+                    <div className="ContactModal__add-to-another-group__bubble-icon" />
+                  </div>
+                  Add to another group
                 </button>
               )}
               {!contact.isMe && areWeAdmin && isMember && conversation?.id && (
