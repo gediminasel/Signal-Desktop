@@ -94,7 +94,6 @@ import { AvatarPreview } from '../AvatarPreview';
 import { DAY, HOUR, MINUTE, SECOND } from '../../util/durations';
 import { BadgeImageTheme } from '../../badges/BadgeImageTheme';
 import { getBadgeImageFileLocalPath } from '../../badges/getBadgeImageFileLocalPath';
-import type { ConversationModel } from '../../models/conversations';
 import { handleOutsideClick } from '../../util/handleOutsideClick';
 
 type Trigger = {
@@ -797,34 +796,11 @@ export class Message extends React.PureComponent<Props, State> {
   }
 
   private lastSeenHereSorted = memoize((lastSeenHere: Array<string>) => {
-    const { conversationId } = this.props;
-    const { receivedAt, id } = this.props;
-    const users = lastSeenHere.map(myId =>
-      window.ConversationController.get(myId)
-    );
-    const lastSeenUsers: Array<ConversationModel> = users.filter(
-      (u): u is ConversationModel =>
-        u !== undefined &&
-        ((u.get('lastMessagesSeen') || {})[conversationId] || {}).receivedAt <=
-          receivedAt
-    );
-    const formated = lastSeenUsers.map(u => u.format());
-
-    if (lastSeenUsers.length !== lastSeenHere.length) {
-      log.warn('lastSeenUsers HACK used');
-      const lastSeenUpdated = lastSeenUsers.map(u => u.id);
-      const msg = window.MessageController.getById(id);
-      if (msg) {
-        // hack
-        setTimeout(() => {
-          msg.set('lastSeenHere', lastSeenUpdated);
-          window.Signal.Util.queueUpdateMessage(msg.attributes);
-        }, 0);
-      } else {
-        log.error(`failed to load current message with id ${id}.`);
-      }
-    }
-    return formated.sort((a, b) => a.id.localeCompare(b.id));
+    const users = lastSeenHere
+      .map(myId => window.ConversationController.get(myId)?.format())
+      .filter((u): u is ConversationType => u !== undefined);
+    users.sort((a, b) => a.id.localeCompare(b.id));
+    return users;
   });
 
   private updateMetadataWidth = (newMetadataWidth: number): void => {
