@@ -372,6 +372,7 @@ const actions = () => ({
 
   reactToMessage: action('reactToMessage'),
   replyToMessage: action('replyToMessage'),
+  replyPrivately: action('replyPrivately'),
   retryDeleteForEveryone: action('retryDeleteForEveryone'),
   retrySend: action('retrySend'),
   deleteMessage: action('deleteMessage'),

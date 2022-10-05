@@ -239,6 +239,7 @@ export type PropsData = {
     text: string;
     rawAttachment?: QuotedAttachmentType;
     isFromMe: boolean;
+    fromGroupName: string | undefined;
     sentAt: number;
     authorId: string;
     authorPhoneNumber?: string;
@@ -319,6 +320,7 @@ export type PropsActions = {
     id: string,
     { emoji, remove }: { emoji: string; remove: boolean }
   ) => void;
+  replyPrivately: (id: string) => void;
   replyToMessage: (id: string) => void;
   retryDeleteForEveryone: (id: string) => void;
   retrySend: (id: string) => void;
@@ -1588,6 +1590,7 @@ export class Message extends React.PureComponent<Props, State> {
         isGiftBadge={isGiftBadge}
         referencedMessageNotFound={referencedMessageNotFound}
         isFromMe={quote.isFromMe}
+        fromGroupName={quote.fromGroupName}
         doubleCheckMissingQuoteReference={() =>
           doubleCheckMissingQuoteReference(id)
         }
@@ -1624,6 +1627,7 @@ export class Message extends React.PureComponent<Props, State> {
           customColor={customColor}
           i18n={i18n}
           isFromMe={storyReplyContext.isFromMe}
+          fromGroupName={undefined}
           isGiftBadge={false}
           isIncoming={isIncoming}
           isStoryReply
@@ -2078,14 +2082,17 @@ export class Message extends React.PureComponent<Props, State> {
       canReply,
       canRetry,
       canRetryDeleteForEveryone,
+      conversationType,
       deleteMessage,
       deleteMessageForEveryone,
       deletedForEveryone,
+      direction,
       giftBadge,
       i18n,
       id,
       isSticker,
       isTapToView,
+      replyPrivately,
       replyToMessage,
       retrySend,
       retryDeleteForEveryone,
@@ -2216,6 +2223,22 @@ export class Message extends React.PureComponent<Props, State> {
             }}
           >
             {i18n('forwardMessage')}
+          </MenuItem>
+        ) : null}
+        {conversationType === 'group' && direction === 'incoming' ? (
+          <MenuItem
+            attributes={{
+              className:
+                'module-message__context--icon module-message__context__reply',
+            }}
+            onClick={(event: React.MouseEvent) => {
+              event.stopPropagation();
+              event.preventDefault();
+
+              replyPrivately(id);
+            }}
+          >
+            Reply privately
           </MenuItem>
         ) : null}
         <MenuItem

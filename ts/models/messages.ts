@@ -18,14 +18,7 @@ import type {
   MessageReactionType,
   QuotedMessageType,
 } from '../model-types.d';
-import {
-  filter,
-  find,
-  map,
-  reduce,
-  repeat,
-  zipObject,
-} from '../util/iterables';
+import { filter, map, reduce, repeat, zipObject } from '../util/iterables';
 import type { DeleteModel } from '../messageModifiers/Deletes';
 import type { SentEventData } from '../textsecure/messageReceiverEvents';
 import { isNotNil } from '../util/isNotNil';
@@ -146,12 +139,13 @@ import * as Bytes from '../Bytes';
 import { computeHash } from '../Crypto';
 import { cleanupMessage, deleteMessageData } from '../util/cleanup';
 import {
+  findMatchingQuote,
+  findMatchingQuote2,
   getContact,
   getContactId,
   getSource,
   getSourceUuid,
   isCustomError,
-  isQuoteAMatch,
 } from '../messages/helpers';
 import type { ReplacementValuesType } from '../types/I18N';
 import { viewOnceOpenJobQueue } from '../jobs/viewOnceOpenJobQueue';
@@ -1085,8 +1079,10 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       const inMemoryMessages = window.MessageController.filterBySentAt(
         Number(sentAt)
       );
-      const matchingMessage = find(inMemoryMessages, message =>
-        isQuoteAMatch(message.attributes, this.get('conversationId'), quote)
+      const matchingMessage = findMatchingQuote(
+        inMemoryMessages,
+        quote,
+        this.get('conversationId')
       );
       if (!matchingMessage) {
         log.info(
@@ -1108,9 +1104,19 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       );
 
       await this.copyQuoteContentFromOriginal(matchingMessage, quote);
+      let { fromGroupName } = quote;
+      if (
+        matchingMessage.get('conversationId') !== this.get('conversationId')
+      ) {
+        const conversation = window.ConversationController.get(
+          matchingMessage.get('conversationId')
+        );
+        fromGroupName = conversation?.format()?.name;
+      }
       this.set({
         quote: {
           ...quote,
+          fromGroupName,
           referencedMessageNotFound: false,
         },
       });
@@ -1911,6 +1917,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       }),
 
       // Just placeholder values for the fields
+      fromGroupName: undefined,
       referencedMessageNotFound: false,
       isGiftBadge: quote.type === Proto.DataMessage.Quote.Type.GIFT_BADGE,
       isViewOnce: false,
@@ -1918,8 +1925,10 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     };
 
     const inMemoryMessages = window.MessageController.filterBySentAt(id);
-    const matchingMessage = find(inMemoryMessages, item =>
-      isQuoteAMatch(item.attributes, conversationId, result)
+    const matchingMessage = findMatchingQuote(
+      inMemoryMessages,
+      result,
+      conversationId
     );
 
     let queryMessage: undefined | MessageModel;
@@ -1929,16 +1938,20 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     } else {
       log.info('copyFromQuotedMessage: db lookup needed', id);
       const messages = await window.Signal.Data.getMessagesBySentAt(id);
-      const found = messages.find(item =>
-        isQuoteAMatch(item, conversationId, result)
-      );
+      const found = findMatchingQuote2(messages, result, conversationId);
 
       if (!found) {
         result.referencedMessageNotFound = true;
         return result;
       }
-
       queryMessage = window.MessageController.register(found.id, found);
+    }
+
+    if (queryMessage.get('conversationId') !== conversationId) {
+      const conversation = window.ConversationController.get(
+        queryMessage.get('conversationId')
+      );
+      result.fromGroupName = conversation?.format()?.name;
     }
 
     if (queryMessage) {

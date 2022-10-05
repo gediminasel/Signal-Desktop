@@ -209,6 +209,7 @@ export const Quote = (): JSX.Element => (
         isGiftBadge: false,
         isViewOnce: false,
         referencedMessageNotFound: false,
+        fromGroupName: undefined,
         authorTitle: 'Someone',
         isFromMe: false,
       },

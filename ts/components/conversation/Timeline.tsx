@@ -239,6 +239,7 @@ const getActions = createSelector(
       'doubleCheckMissingQuoteReference',
       'checkForAccount',
       'reactToMessage',
+      'replyPrivately',
       'replyToMessage',
       'retryDeleteForEveryone',
       'retrySend',

@@ -58,6 +58,7 @@ const getDefaultProps = () => ({
   theme: ThemeType.light,
   selectMessage: action('selectMessage'),
   reactToMessage: action('reactToMessage'),
+  replyPrivately: action('replyPrivately'),
   checkForAccount: action('checkForAccount'),
   clearSelectedMessage: action('clearSelectedMessage'),
   contactSupport: action('contactSupport'),

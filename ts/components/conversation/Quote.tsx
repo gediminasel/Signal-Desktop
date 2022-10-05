@@ -28,6 +28,7 @@ export type Props = {
   conversationColor: ConversationColorType;
   customColor?: CustomColorType;
   bodyRanges?: BodyRangesType;
+  fromGroupName: string | undefined;
   i18n: LocalizerType;
   isFromMe: boolean;
   isIncoming?: boolean;
@@ -432,8 +433,14 @@ export class Quote extends React.Component<Props, State> {
   }
 
   public renderAuthor(): JSX.Element {
-    const { authorTitle, i18n, isFromMe, isIncoming, isStoryReply } =
-      this.props;
+    const {
+      authorTitle,
+      i18n,
+      isFromMe,
+      isIncoming,
+      isStoryReply,
+      fromGroupName,
+    } = this.props;
 
     const title = isFromMe ? i18n('you') : <ContactName title={authorTitle} />;
     const author = isStoryReply ? (
@@ -441,7 +448,10 @@ export class Quote extends React.Component<Props, State> {
         {title} &middot; {i18n('Quote__story')}
       </>
     ) : (
-      title
+      <>
+        {title}
+        {fromGroupName ? ` / ${fromGroupName}` : null}
+      </>
     );
 
     return (

@@ -513,6 +513,7 @@ export const getPropsForQuote = createSelectorCreator(memoizeByRoot, isEqual)(
       isViewOnce,
       isGiftBadge: isTargetGiftBadge,
       referencedMessageNotFound,
+      fromGroupName,
       text = '',
     } = quote;
 
@@ -541,6 +542,7 @@ export const getPropsForQuote = createSelectorCreator(memoizeByRoot, isEqual)(
       conversationColor,
       customColor,
       isFromMe,
+      fromGroupName,
       rawAttachment: firstAttachment
         ? processQuoteAttachment(firstAttachment)
         : undefined,

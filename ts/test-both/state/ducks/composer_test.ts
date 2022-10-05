@@ -22,6 +22,7 @@ describe('both/state/ducks/composer', () => {
       isGiftBadge: false,
       messageId: '789',
       referencedMessageNotFound: false,
+      fromGroupName: undefined,
     },
   };
 

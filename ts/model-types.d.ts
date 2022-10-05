@@ -83,6 +83,7 @@ export type QuotedMessageType = {
   isGiftBadge?: boolean;
   isViewOnce: boolean;
   messageId: string;
+  fromGroupName: string | undefined;
   referencedMessageNotFound: boolean;
   text?: string;
 };

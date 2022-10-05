@@ -3837,7 +3837,10 @@ export class ConversationModel extends window.Backbone
     return [];
   }
 
-  async makeQuote(quotedMessage: MessageModel): Promise<QuotedMessageType> {
+  async makeQuote(
+    quotedMessage: MessageModel,
+    conversationId: string
+  ): Promise<QuotedMessageType> {
     const { getName } = EmbeddedContact;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const contact = getContact(quotedMessage.attributes)!;
@@ -3851,7 +3854,12 @@ export class ConversationModel extends window.Backbone
       embeddedContact && embeddedContact.length > 0
         ? getName(embeddedContact[0])
         : '';
-
+    const fromGroupName =
+      quotedMessage.get('conversationId') === conversationId
+        ? undefined
+        : window.ConversationController.get(
+            quotedMessage.get('conversationId')
+          )?.format()?.name;
     return {
       authorUuid: contact.get('uuid'),
       attachments: isTapToView(quotedMessage.attributes)
@@ -3859,6 +3867,7 @@ export class ConversationModel extends window.Backbone
         : await this.getQuoteAttachment(attachments, preview, sticker),
       bodyRanges: quotedMessage.get('bodyRanges'),
       id: quotedMessage.get('sent_at'),
+      fromGroupName,
       isViewOnce: isTapToView(quotedMessage.attributes),
       isGiftBadge: isGiftBadge(quotedMessage.attributes),
       messageId: quotedMessage.get('id'),

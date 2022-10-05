@@ -90,6 +90,7 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   renderAudioAttachment: () => <div>*AudioAttachment*</div>,
   renderEmojiPicker: () => <div />,
   renderReactionPicker: () => <div />,
+  replyPrivately: action('replyPrivately'),
   replyToMessage: action('replyToMessage'),
   retrySend: action('retrySend'),
   retryDeleteForEveryone: action('retryDeleteForEveryone'),

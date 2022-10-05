@@ -9,6 +9,8 @@ import type {
   QuotedMessageType,
 } from '../model-types.d';
 import type { UUIDStringType } from '../types/UUID';
+import { find } from '../util/iterables';
+import type { MessageModel } from '../models/messages';
 
 export function isIncoming(
   message: Pick<MessageAttributesType, 'type'>
@@ -26,9 +28,8 @@ export function isStory(message: Pick<MessageAttributesType, 'type'>): boolean {
   return message.type === 'story';
 }
 
-export function isQuoteAMatch(
+function isQuoteAMatch(
   message: MessageAttributesType | null | undefined,
-  conversationId: string,
   quote: QuotedMessageType
 ): message is MessageAttributesType {
   if (!message) {
@@ -42,9 +43,58 @@ export function isQuoteAMatch(
   });
 
   return (
-    message.sent_at === id &&
-    message.conversationId === conversationId &&
-    getContactId(message) === authorConversation?.id
+    message.sent_at === id && getContactId(message) === authorConversation?.id
+  );
+}
+
+export function findMatchingQuote(
+  messages: Iterable<MessageModel>,
+  quote: QuotedMessageType,
+  conversationId: string
+): MessageModel | undefined {
+  if (!messages) {
+    return undefined;
+  }
+
+  return (
+    find(
+      messages,
+      item =>
+        isQuoteAMatch(item.attributes, quote) &&
+        item.attributes.conversationId === conversationId
+    ) ||
+    find(
+      messages,
+      item =>
+        isQuoteAMatch(item.attributes, quote) &&
+        quote.text !== undefined &&
+        item.attributes.body?.localeCompare(quote.text) === 0
+    )
+  );
+}
+
+export function findMatchingQuote2(
+  messages: Iterable<MessageAttributesType>,
+  quote: QuotedMessageType,
+  conversationId: string
+): MessageAttributesType | undefined {
+  if (!messages) {
+    return undefined;
+  }
+
+  return (
+    find(
+      messages,
+      item =>
+        isQuoteAMatch(item, quote) && item.conversationId === conversationId
+    ) ||
+    find(
+      messages,
+      item =>
+        isQuoteAMatch(item, quote) &&
+        quote.text !== undefined &&
+        item.body?.localeCompare(quote.text) === 0
+    )
   );
 }
 

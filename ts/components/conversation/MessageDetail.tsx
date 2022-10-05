@@ -86,6 +86,7 @@ export type PropsBackboneActions = Pick<
   | 'renderAudioAttachment'
   | 'renderEmojiPicker'
   | 'renderReactionPicker'
+  | 'replyPrivately'
   | 'replyToMessage'
   | 'retryDeleteForEveryone'
   | 'retrySend'
@@ -299,6 +300,7 @@ export class MessageDetail extends React.Component<Props> {
       renderEmojiPicker,
       renderReactionPicker,
       replyToMessage,
+      replyPrivately,
       retryDeleteForEveryone,
       retrySend,
       showContactDetail,
@@ -359,6 +361,7 @@ export class MessageDetail extends React.Component<Props> {
             renderAudioAttachment={renderAudioAttachment}
             renderEmojiPicker={renderEmojiPicker}
             renderReactionPicker={renderReactionPicker}
+            replyPrivately={replyPrivately}
             replyToMessage={replyToMessage}
             retryDeleteForEveryone={retryDeleteForEveryone}
             retrySend={retrySend}

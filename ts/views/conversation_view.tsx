@@ -160,6 +160,7 @@ type MessageActionsType = {
     messageId: string,
     reaction: { emoji: string; remove: boolean }
   ) => unknown;
+  replyPrivately: (messageId: string) => unknown;
   replyToMessage: (messageId: string) => unknown;
   retrySend: (messageId: string) => unknown;
   retryDeleteForEveryone: (messageId: string) => unknown;
@@ -448,14 +449,9 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
     ) => {
       const { authorId, sentAt } = options;
 
-      const conversationId = this.model.id;
       const messages = await getMessagesBySentAt(sentAt);
       const message = messages.find(item =>
-        Boolean(
-          item.conversationId === conversationId &&
-            authorId &&
-            getContactId(item) === authorId
-        )
+        Boolean(authorId && getContactId(item) === authorId)
       );
 
       if (!message) {
@@ -764,6 +760,23 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
     const replyToMessage = (messageId: string) => {
       this.setQuoteMessage(messageId);
     };
+    const replyPrivately = async (messageId: string) => {
+      const message = window.MessageController.getById(messageId);
+      if (message && message.get('sourceUuid')) {
+        const conversation = window.ConversationController.lookupOrCreate({
+          e164: null,
+          uuid: message.get('sourceUuid'),
+        });
+        if (conversation) {
+          conversation.set({
+            draftChanged: true,
+            quotedMessageId: messageId,
+          });
+          window.Signal.Data.updateConversation(conversation.attributes);
+          this.openConversation(conversation.id);
+        }
+      }
+    };
     const retrySend = retryMessageSend;
     const deleteMessage = (messageId: string) => {
       this.deleteMessage(messageId);
@@ -910,6 +923,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
       openGiftBadge,
       openLink,
       reactToMessage,
+      replyPrivately,
       replyToMessage,
       retrySend,
       retryDeleteForEveryone,
@@ -930,6 +944,11 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
     const message = await getMessageById(messageId);
     if (!message) {
       throw new Error(`scrollToMessage: failed to load message ${messageId}`);
+    }
+
+    if (message.get('conversationId') !== this.model.id) {
+      this.openConversation(message.get('conversationId'), messageId);
+      return;
     }
 
     const state = window.reduxStore.getState();
@@ -2465,7 +2484,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
 
     if (message) {
       this.quotedMessage = message;
-      this.quote = await model.makeQuote(this.quotedMessage);
+      this.quote = await model.makeQuote(this.quotedMessage, this.model.id);
 
       this.enableMessageField();
       this.focusMessageField();

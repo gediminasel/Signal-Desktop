@@ -62,6 +62,7 @@ const MESSAGE_DEFAULT_PROPS = {
   renderAudioAttachment: () => <div />,
   renderEmojiPicker: () => <div />,
   renderReactionPicker: () => <div />,
+  replyPrivately: shouldNeverBeCalled,
   replyToMessage: shouldNeverBeCalled,
   retryDeleteForEveryone: shouldNeverBeCalled,
   retrySend: shouldNeverBeCalled,
@@ -186,6 +187,7 @@ export const StoryViewsNRepliesModal = ({
             conversationColor="ultramarine"
             i18n={i18n}
             isFromMe={false}
+            fromGroupName={undefined}
             isGiftBadge={false}
             isStoryReply
             isViewOnce={false}

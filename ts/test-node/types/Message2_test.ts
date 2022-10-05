@@ -171,6 +171,7 @@ describe('Message', () => {
           isViewOnce: false,
           messageId: 'some-message-id',
           referencedMessageNotFound: false,
+          fromGroupName: undefined,
           attachments: [
             {
               thumbnail: {
@@ -189,6 +190,7 @@ describe('Message', () => {
           id: 3523,
           isViewOnce: false,
           messageId: 'some-message-id',
+          fromGroupName: undefined,
           referencedMessageNotFound: false,
           attachments: [
             {
@@ -657,6 +659,7 @@ describe('Message', () => {
           id: 34233,
           isViewOnce: false,
           messageId: 'message-id',
+          fromGroupName: undefined,
           referencedMessageNotFound: false,
         },
       });
@@ -681,6 +684,7 @@ describe('Message', () => {
           id: 34233,
           isViewOnce: false,
           messageId: 'message-id',
+          fromGroupName: undefined,
           referencedMessageNotFound: false,
         },
       });
@@ -711,6 +715,7 @@ describe('Message', () => {
           isViewOnce: false,
           messageId: 'message-id',
           referencedMessageNotFound: false,
+          fromGroupName: undefined,
         },
       });
       const result = await upgradeVersion(
@@ -743,6 +748,7 @@ describe('Message', () => {
           isViewOnce: false,
           messageId: 'message-id',
           referencedMessageNotFound: false,
+          fromGroupName: undefined,
         },
       });
       const expected = getDefaultMessage({
@@ -762,6 +768,7 @@ describe('Message', () => {
           isViewOnce: false,
           messageId: 'message-id',
           referencedMessageNotFound: false,
+          fromGroupName: undefined,
         },
       });
       const result = await upgradeVersion(
@@ -792,6 +799,7 @@ describe('Message', () => {
           isViewOnce: false,
           messageId: 'message-id',
           referencedMessageNotFound: false,
+          fromGroupName: undefined,
         },
       });
       const expected = getDefaultMessage({
@@ -809,6 +817,7 @@ describe('Message', () => {
           isViewOnce: false,
           messageId: 'message-id',
           referencedMessageNotFound: false,
+          fromGroupName: undefined,
         },
       });
       const result = await upgradeVersion(
