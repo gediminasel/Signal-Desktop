@@ -13,19 +13,21 @@ import type { PreferredBadgeSelectorType } from '../state/selectors/badges';
 import type { PropsType as StoriesSettingsModalPropsType } from './StoriesSettingsModal';
 import type { StoryDistributionListWithMembersDataType } from '../types/Stories';
 import type { UUIDStringType } from '../types/UUID';
+import { Alert } from './Alert';
 import { Avatar, AvatarSize } from './Avatar';
 import { Button, ButtonVariant } from './Button';
 import { Checkbox } from './Checkbox';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import { ContextMenu } from './ContextMenu';
 import {
-  DistributionListSettings,
-  EditDistributionList,
+  DistributionListSettingsModal,
+  EditDistributionListModal,
   EditMyStoriesPrivacy,
   Page as StoriesSettingsPage,
 } from './StoriesSettingsModal';
 import { MY_STORIES_ID, getStoryDistributionListName } from '../types/Stories';
-import { Modal } from './Modal';
+import type { RenderModalPage, ModalPropsType } from './Modal';
+import { PagedModal, ModalPage } from './Modal';
 import { StoryDistributionListName } from './StoryDistributionListName';
 import { Theme } from '../util/theme';
 import { isNotNil } from '../util/isNotNil';
@@ -198,6 +200,8 @@ export const SendStoryModal = ({
     Array<ConversationType>
   >([]);
 
+  const [hasAnnouncementsOnlyAlert, setHasAnnouncementsOnlyAlert] =
+    useState(false);
   const [confirmRemoveGroupId, setConfirmRemoveGroupId] = useState<
     string | undefined
   >();
@@ -254,58 +258,113 @@ export const SendStoryModal = ({
     Array<UUIDStringType>
   >(initialMyStoriesMemberUuids);
 
-  let content: JSX.Element;
-  if (page === Page.SetMyStoriesPrivacy) {
-    content = (
-      <EditMyStoriesPrivacy
-        hasDisclaimerAbove
-        i18n={i18n}
-        learnMore="SendStoryModal__privacy-disclaimer"
-        myStories={stagedMyStories}
-        onClickExclude={() => {
-          let nextSelectedContacts = stagedMyStories.members;
+  let selectedNames: string | undefined;
+  if (page === Page.ChooseGroups) {
+    selectedNames = chosenGroupNames.join(', ');
+  } else {
+    selectedNames = selectedStoryNames
+      .map(listName => getStoryDistributionListName(i18n, listName, listName))
+      .join(', ');
+  }
 
-          if (!stagedMyStories.isBlockList) {
+  const modalCommonProps: Pick<ModalPropsType, 'hasXButton' | 'i18n'> = {
+    hasXButton: true,
+    i18n,
+  };
+
+  let modal: RenderModalPage;
+  if (page === Page.SetMyStoriesPrivacy) {
+    const footer = (
+      <>
+        <div />
+        <div>
+          <Button
+            onClick={() => setPage(Page.SendStory)}
+            variant={ButtonVariant.Secondary}
+          >
+            {i18n('cancel')}
+          </Button>
+          <Button
+            onClick={() => {
+              if (stagedMyStories.isBlockList) {
+                if (stagedMyStories.members.length) {
+                  onHideMyStoriesFrom(stagedMyStoriesMemberUuids);
+                } else {
+                  setMyStoriesToAllSignalConnections();
+                }
+              } else {
+                onViewersUpdated(MY_STORIES_ID, stagedMyStoriesMemberUuids);
+              }
+
+              setSelectedContacts([]);
+              setPage(Page.SendStory);
+            }}
+            variant={ButtonVariant.Primary}
+          >
+            {i18n('save')}
+          </Button>
+        </div>
+      </>
+    );
+
+    modal = handleClose => (
+      <ModalPage
+        modalName="SendStoryModal__my-stories-privacy"
+        title={i18n('SendStoryModal__my-stories-privacy')}
+        modalFooter={footer}
+        onClose={handleClose}
+        {...modalCommonProps}
+      >
+        <EditMyStoriesPrivacy
+          hasDisclaimerAbove
+          i18n={i18n}
+          learnMore="SendStoryModal__privacy-disclaimer"
+          myStories={stagedMyStories}
+          onClickExclude={() => {
+            let nextSelectedContacts = stagedMyStories.members;
+
+            if (!stagedMyStories.isBlockList) {
+              setStagedMyStories(myStories => ({
+                ...myStories,
+                isBlockList: true,
+                members: [],
+              }));
+              nextSelectedContacts = [];
+            }
+
+            setSelectedContacts(nextSelectedContacts);
+
+            setPage(Page.HideStoryFrom);
+          }}
+          onClickOnlyShareWith={() => {
+            if (!stagedMyStories.isBlockList) {
+              setSelectedContacts(stagedMyStories.members);
+            } else {
+              setStagedMyStories(myStories => ({
+                ...myStories,
+                isBlockList: false,
+                members: [],
+              }));
+            }
+
+            setPage(Page.AddViewer);
+          }}
+          setSelectedContacts={setSelectedContacts}
+          setMyStoriesToAllSignalConnections={() => {
             setStagedMyStories(myStories => ({
               ...myStories,
               isBlockList: true,
               members: [],
             }));
-            nextSelectedContacts = [];
-          }
-
-          setSelectedContacts(nextSelectedContacts);
-
-          setPage(Page.HideStoryFrom);
-        }}
-        onClickOnlyShareWith={() => {
-          if (!stagedMyStories.isBlockList) {
-            setSelectedContacts(stagedMyStories.members);
-          } else {
-            setStagedMyStories(myStories => ({
-              ...myStories,
-              isBlockList: false,
-              members: [],
-            }));
-          }
-
-          setPage(Page.AddViewer);
-        }}
-        setSelectedContacts={setSelectedContacts}
-        setMyStoriesToAllSignalConnections={() => {
-          setStagedMyStories(myStories => ({
-            ...myStories,
-            isBlockList: true,
-            members: [],
-          }));
-          setSelectedContacts([]);
-        }}
-        toggleSignalConnectionsModal={toggleSignalConnectionsModal}
-      />
+            setSelectedContacts([]);
+          }}
+          toggleSignalConnectionsModal={toggleSignalConnectionsModal}
+        />
+      </ModalPage>
     );
   } else if (page === Page.EditingDistributionList && listToEdit) {
-    content = (
-      <DistributionListSettings
+    modal = handleClose => (
+      <DistributionListSettingsModal
         getPreferredBadge={getPreferredBadge}
         i18n={i18n}
         listToEdit={listToEdit}
@@ -316,6 +375,8 @@ export const SendStoryModal = ({
         setPage={setPage}
         setSelectedContacts={setSelectedContacts}
         toggleSignalConnectionsModal={toggleSignalConnectionsModal}
+        onBackButtonClick={() => setListIdToEdit(undefined)}
+        onClose={handleClose}
       />
     );
   } else if (
@@ -324,8 +385,8 @@ export const SendStoryModal = ({
     page === Page.AddViewer ||
     page === Page.HideStoryFrom
   ) {
-    content = (
-      <EditDistributionList
+    modal = handleClose => (
+      <EditDistributionListModal
         candidateConversations={candidateConversations}
         getPreferredBadge={getPreferredBadge}
         i18n={i18n}
@@ -350,13 +411,60 @@ export const SendStoryModal = ({
           }
         }}
         page={page}
+        onClose={handleClose}
+        onBackButtonClick={() => {
+          if (listIdToEdit) {
+            if (
+              page === Page.AddViewer ||
+              page === Page.HideStoryFrom ||
+              page === Page.ChooseViewers
+            ) {
+              setPage(Page.EditingDistributionList);
+            } else {
+              setListIdToEdit(undefined);
+            }
+          } else if (page === Page.HideStoryFrom || page === Page.AddViewer) {
+            setSelectedContacts([]);
+            setStagedMyStories(initialMyStories);
+            setStagedMyStoriesMemberUuids(initialMyStoriesMemberUuids);
+            setPage(Page.SetMyStoriesPrivacy);
+          } else if (page === Page.ChooseViewers) {
+            setSelectedContacts([]);
+            setPage(Page.SendStory);
+          } else if (page === Page.NameStory) {
+            setPage(Page.ChooseViewers);
+          }
+        }}
         selectedContacts={selectedContacts}
         setSelectedContacts={setSelectedContacts}
       />
     );
   } else if (page === Page.ChooseGroups) {
-    content = (
+    const footer = (
       <>
+        <div className="SendStoryModal__selected-lists">{selectedNames}</div>
+        <button
+          aria-label={i18n('SendStoryModal__ok')}
+          className="SendStoryModal__ok"
+          disabled={!chosenGroupIds.size}
+          onClick={() => {
+            toggleGroupsForStorySend(Array.from(chosenGroupIds));
+            setChosenGroupIds(new Set());
+            setPage(Page.SendStory);
+          }}
+          type="button"
+        />
+      </>
+    );
+
+    modal = handleClose => (
+      <ModalPage
+        modalName="SendStoryModal__choose-groups"
+        title={i18n('SendStoryModal__choose-groups')}
+        modalFooter={footer}
+        onClose={handleClose}
+        {...modalCommonProps}
+      >
         <SearchInput
           disabled={groupConversations.length === 0}
           i18n={i18n}
@@ -376,6 +484,11 @@ export const SendStoryModal = ({
               moduleClassName="SendStoryModal__distribution-list"
               name="SendStoryModal__distribution-list"
               onChange={(value: boolean) => {
+                if (group.announcementsOnly && !group.areWeAdmin) {
+                  setHasAnnouncementsOnlyAlert(true);
+                  return;
+                }
+
                 setChosenGroupIds(groupIds => {
                   if (value) {
                     groupIds.add(group.id);
@@ -426,14 +539,35 @@ export const SendStoryModal = ({
           ))
         ) : (
           <div className="module-ForwardMessageModal__no-candidate-contacts">
-            {i18n('noContactsFound')}
+            {i18n('noGroupsFound')}
           </div>
         )}
-      </>
+      </ModalPage>
     );
   } else {
-    content = (
+    const footer = (
       <>
+        <div className="SendStoryModal__selected-lists">{selectedNames}</div>
+        <button
+          aria-label={i18n('SendStoryModal__send')}
+          className="SendStoryModal__send"
+          disabled={!selectedListIds.size && !selectedGroupIds.size}
+          onClick={() => {
+            onSend(Array.from(selectedListIds), Array.from(selectedGroupIds));
+          }}
+          type="button"
+        />
+      </>
+    );
+    modal = handleClose => (
+      <ModalPage
+        modalName="SendStoryModal__title"
+        title={i18n('SendStoryModal__title')}
+        moduleClassName="SendStoryModal"
+        modalFooter={footer}
+        onClose={handleClose}
+        {...modalCommonProps}
+      >
         <div className="SendStoryModal__top-bar">
           {i18n('stories')}
           <ContextMenu
@@ -582,6 +716,11 @@ export const SendStoryModal = ({
                 return;
               }
 
+              if (group.announcementsOnly && !group.areWeAdmin) {
+                setHasAnnouncementsOnlyAlert(true);
+                return;
+              }
+
               setSelectedGroupIds(groupIds => {
                 if (value) {
                   groupIds.add(group.id);
@@ -649,159 +788,27 @@ export const SendStoryModal = ({
             )}
           </Checkbox>
         ))}
-      </>
-    );
-  }
-
-  let modalTitle: string;
-  if (page === Page.SetMyStoriesPrivacy) {
-    modalTitle = i18n('SendStoryModal__my-stories-privacy');
-  } else if (page === Page.HideStoryFrom) {
-    modalTitle = i18n('StoriesSettings__hide-story');
-  } else if (page === Page.ChooseGroups) {
-    modalTitle = i18n('SendStoryModal__choose-groups');
-  } else if (page === Page.NameStory) {
-    modalTitle = i18n('StoriesSettings__name-story');
-  } else if (page === Page.ChooseViewers || page === Page.AddViewer) {
-    modalTitle = i18n('StoriesSettings__choose-viewers');
-  } else {
-    modalTitle = i18n('SendStoryModal__title');
-  }
-
-  let selectedNames: string | undefined;
-  if (page === Page.ChooseGroups) {
-    selectedNames = chosenGroupNames.join(', ');
-  } else {
-    selectedNames = selectedStoryNames
-      .map(listName => getStoryDistributionListName(i18n, listName, listName))
-      .join(', ');
-  }
-
-  const hasBackButton = page !== Page.SendStory;
-
-  let modalFooter: JSX.Element | undefined;
-  if (
-    page === Page.SendStory ||
-    page === Page.ChooseGroups ||
-    page === Page.SetMyStoriesPrivacy
-  ) {
-    modalFooter = (
-      <Modal.ButtonFooter moduleClassName="SendStoryModal">
-        {page !== Page.SetMyStoriesPrivacy && (
-          <div className="SendStoryModal__selected-lists">{selectedNames}</div>
-        )}
-        {page === Page.ChooseGroups && (
-          <button
-            aria-label={i18n('SendStoryModal__ok')}
-            className="SendStoryModal__ok"
-            disabled={!chosenGroupIds.size}
-            onClick={() => {
-              toggleGroupsForStorySend(Array.from(chosenGroupIds));
-              setChosenGroupIds(new Set());
-              setPage(Page.SendStory);
-            }}
-            type="button"
-          />
-        )}
-        {page === Page.SendStory && (
-          <button
-            aria-label={i18n('SendStoryModal__send')}
-            className="SendStoryModal__send"
-            disabled={!selectedListIds.size && !selectedGroupIds.size}
-            onClick={() => {
-              onSend(Array.from(selectedListIds), Array.from(selectedGroupIds));
-            }}
-            type="button"
-          />
-        )}
-        {page === Page.SetMyStoriesPrivacy && (
-          <>
-            <div />
-            <div>
-              <Button
-                onClick={() => setPage(Page.SendStory)}
-                variant={ButtonVariant.Secondary}
-              >
-                {i18n('cancel')}
-              </Button>
-              <Button
-                onClick={() => {
-                  if (stagedMyStories.isBlockList) {
-                    if (stagedMyStories.members.length) {
-                      onHideMyStoriesFrom(stagedMyStoriesMemberUuids);
-                    } else {
-                      setMyStoriesToAllSignalConnections();
-                    }
-                  } else {
-                    onViewersUpdated(MY_STORIES_ID, stagedMyStoriesMemberUuids);
-                  }
-
-                  setSelectedContacts([]);
-                  setPage(Page.SendStory);
-                }}
-                variant={ButtonVariant.Primary}
-              >
-                {i18n('save')}
-              </Button>
-            </div>
-          </>
-        )}
-      </Modal.ButtonFooter>
+      </ModalPage>
     );
   }
 
   return (
     <>
-      <Modal
+      <PagedModal
         modalName="SendStoryModal"
-        hasStickyButtons
-        hasXButton
-        i18n={i18n}
-        modalFooter={modalFooter}
-        onBackButtonClick={
-          hasBackButton
-            ? () => {
-                if (listIdToEdit) {
-                  if (
-                    page === Page.AddViewer ||
-                    page === Page.HideStoryFrom ||
-                    page === Page.ChooseViewers
-                  ) {
-                    setPage(Page.EditingDistributionList);
-                  } else {
-                    setListIdToEdit(undefined);
-                  }
-                } else if (page === Page.SetMyStoriesPrivacy) {
-                  setSelectedContacts([]);
-                  setStagedMyStories(initialMyStories);
-                  setStagedMyStoriesMemberUuids(initialMyStoriesMemberUuids);
-                  setPage(Page.SendStory);
-                } else if (
-                  page === Page.HideStoryFrom ||
-                  page === Page.AddViewer
-                ) {
-                  setSelectedContacts([]);
-                  setStagedMyStories(initialMyStories);
-                  setStagedMyStoriesMemberUuids(initialMyStoriesMemberUuids);
-                  setPage(Page.SetMyStoriesPrivacy);
-                } else if (page === Page.ChooseGroups) {
-                  setChosenGroupIds(new Set());
-                  setPage(Page.SendStory);
-                } else if (page === Page.ChooseViewers) {
-                  setSelectedContacts([]);
-                  setPage(Page.SendStory);
-                } else if (page === Page.NameStory) {
-                  setPage(Page.ChooseViewers);
-                }
-              }
-            : undefined
-        }
-        onClose={onClose}
-        title={modalTitle}
         theme={Theme.Dark}
+        onClose={onClose}
       >
-        {content}
-      </Modal>
+        {modal}
+      </PagedModal>
+      {hasAnnouncementsOnlyAlert && (
+        <Alert
+          body={i18n('SendStoryModal__announcements-only')}
+          i18n={i18n}
+          onClose={() => setHasAnnouncementsOnlyAlert(false)}
+          theme={Theme.Dark}
+        />
+      )}
       {confirmRemoveGroupId && (
         <ConfirmationDialog
           dialogName="SendStoryModal.confirmRemoveGroupId"

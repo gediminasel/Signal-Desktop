@@ -221,9 +221,10 @@ export async function startApp(): Promise<void> {
   let routineProfileRefresher: RoutineProfileRefresher | undefined;
 
   window.storage.onready(() => {
-    server = window.WebAPI.connect(
-      window.textsecure.storage.user.getWebAPICredentials()
-    );
+    server = window.WebAPI.connect({
+      ...window.textsecure.storage.user.getWebAPICredentials(),
+      hasStoriesDisabled: window.storage.get('hasStoriesDisabled', false),
+    });
     window.textsecure.server = server;
 
     initializeAllJobQueues({
@@ -1722,9 +1723,7 @@ export async function startApp(): Promise<void> {
       }
 
       log.info('reconnectToWebSocket starting...');
-      await server.onOffline();
-      await server.onOnline();
-      log.info('reconnectToWebSocket complete.');
+      await server.reconnect();
     });
   };
 
@@ -3670,11 +3669,8 @@ export async function startApp(): Promise<void> {
     );
     log.info(
       logTitle,
-      source,
-      sourceUuid,
-      sourceDevice,
+      `${sourceUuid || source}.${sourceDevice}`,
       envelopeTimestamp,
-      sourceConversation?.id,
       'for sent message',
       timestamp
     );
@@ -3806,17 +3802,15 @@ export async function startApp(): Promise<void> {
 
     log.info(
       'delivery receipt from',
-      source,
-      sourceUuid,
-      sourceDevice,
-      sourceConversation?.id,
+      `${sourceUuid || source}.${sourceDevice}`,
       envelopeTimestamp,
       'for sent message',
-      timestamp
+      timestamp,
+      `wasSentEncrypted=${wasSentEncrypted}`
     );
 
     if (!sourceConversation) {
-      log.info('no conversation for', source, sourceUuid);
+      log.info('onDeliveryReceipt: no conversation for', source, sourceUuid);
       return;
     }
 

@@ -647,6 +647,7 @@ describe('Message', () => {
           id: 34233,
           isViewOnce: false,
           messageId: 'message-id',
+          fromGroupName: undefined,
           referencedMessageNotFound: false,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any,

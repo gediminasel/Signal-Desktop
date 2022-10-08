@@ -72,6 +72,7 @@ export type StoryDataType = {
   | 'sendStateByConversationId'
   | 'source'
   | 'sourceUuid'
+  | 'sourceDevice'
   | 'storyDistributionListId'
   | 'timestamp'
   | 'type'
@@ -392,7 +393,11 @@ function loadStoryReplies(
     const conversation = getConversationSelector(getState())(conversationId);
     const replies = await dataInterface.getOlderMessagesByConversation(
       conversationId,
-      { limit: 9000, storyId: messageId, isGroup: isGroup(conversation) }
+      {
+        limit: 9000,
+        storyId: messageId,
+        includeStoryReplies: !isGroup(conversation),
+      }
     );
 
     dispatch({
@@ -422,16 +427,27 @@ function markStoryRead(
       !isDownloaded(matchingStory.attachment) &&
       !hasFailed(matchingStory.attachment)
     ) {
+      log.warn(
+        `markStoryRead: not downloaded: ${messageId} ${
+          matchingStory.attachment?.error
+            ? `error: ${matchingStory.attachment?.error}`
+            : ''
+        }`
+      );
       return;
     }
 
     if (matchingStory.readStatus !== ReadStatus.Unread) {
+      log.warn(
+        `markStoryRead: not unread, ${messageId} read status: ${matchingStory.readStatus}`
+      );
       return;
     }
 
     const message = await getMessageById(messageId);
 
     if (!message) {
+      log.warn(`markStoryRead: no message found ${messageId}`);
       return;
     }
 

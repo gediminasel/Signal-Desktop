@@ -246,7 +246,8 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
           profileName={profileName}
           sharedGroupNames={sharedGroupNames}
           size={AvatarSize.THIRTY_TWO}
-          storyRing={hasStories}
+          // user may have stories, but we don't show that on Note to Self conversation
+          storyRing={isMe ? undefined : hasStories}
           theme={theme}
           title={title}
           unblurredAvatarPath={unblurredAvatarPath}
@@ -351,7 +352,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
     const muteOptions = getMuteOptions(muteExpiresAt, i18n);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const disappearingTitle = i18n('disappearingMessages') as any;
+    const disappearingTitle = i18n('icu:disappearingMessages') as any;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const muteTitle = i18n('muteNotificationsTitle') as any;
     const isGroup = type === 'group';

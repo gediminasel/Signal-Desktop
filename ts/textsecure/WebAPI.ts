@@ -35,7 +35,7 @@ import type { UUID, UUIDStringType } from '../types/UUID';
 import { UUIDKind } from '../types/UUID';
 import type { DirectoryConfigType } from '../types/RendererConfig';
 import * as Bytes from '../Bytes';
-import { getRandomValue } from '../Crypto';
+import { randomInt } from '../Crypto';
 import * as linkPreviewFetch from '../linkPreviews/linkPreviewFetch';
 import { isBadgeImageFileUrlValid } from '../badges/isBadgeImageFileUrlValid';
 
@@ -612,6 +612,7 @@ type AjaxOptionsType = {
 
 export type WebAPIConnectOptionsType = WebAPICredentials & {
   useWebSocket?: boolean;
+  hasStoriesDisabled: boolean;
 };
 
 export type WebAPIConnectType = {
@@ -797,17 +798,22 @@ const verifyAciResponse = z
 export type VerifyAciRequestType = Array<{ aci: string; fingerprint: string }>;
 export type VerifyAciResponseType = z.infer<typeof verifyAciResponse>;
 
+export type ConfirmCodeOptionsType = Readonly<{
+  number: string;
+  code: string;
+  newPassword: string;
+  registrationId: number;
+  pniRegistrationId: number;
+  deviceName?: string | null;
+  accessKey?: Uint8Array;
+}>;
+
 export type WebAPIType = {
   startRegistration(): unknown;
   finishRegistration(baton: unknown): void;
   cdsLookup: (options: CdsLookupOptionsType) => Promise<CDSResponseType>;
   confirmCode: (
-    number: string,
-    code: string,
-    newPassword: string,
-    registrationId: number,
-    deviceName?: string | null,
-    options?: { accessKey?: Uint8Array }
+    options: ConfirmCodeOptionsType
   ) => Promise<ConfirmCodeResultType>;
   createGroup: (
     group: Proto.IGroup,
@@ -917,13 +923,18 @@ export type WebAPIType = {
     destination: string,
     messageArray: ReadonlyArray<MessageType>,
     timestamp: number,
-    options: { online?: boolean; urgent?: boolean }
+    options: { online?: boolean; story?: boolean; urgent?: boolean }
   ) => Promise<void>;
   sendMessagesUnauth: (
     destination: string,
     messageArray: ReadonlyArray<MessageType>,
     timestamp: number,
-    options: { accessKey?: string; online?: boolean; urgent?: boolean }
+    options: {
+      accessKey?: string;
+      online?: boolean;
+      story?: boolean;
+      urgent?: boolean;
+    }
   ) => Promise<void>;
   sendWithSenderKey: (
     payload: Uint8Array,
@@ -957,9 +968,11 @@ export type WebAPIType = {
   getSocketStatus: () => SocketStatus;
   registerRequestHandler: (handler: IRequestHandler) => void;
   unregisterRequestHandler: (handler: IRequestHandler) => void;
+  onHasStoriesDisabledChange: (newValue: boolean) => void;
   checkSockets: () => void;
   onOnline: () => Promise<void>;
-  onOffline: () => Promise<void>;
+  onOffline: () => void;
+  reconnect: () => Promise<void>;
 };
 
 export type SignedPreKeyType = {
@@ -1069,6 +1082,7 @@ export function initialize({
     username: initialUsername,
     password: initialPassword,
     useWebSocket = true,
+    hasStoriesDisabled,
   }: WebAPIConnectOptionsType) {
     let username = initialUsername;
     let password = initialPassword;
@@ -1083,6 +1097,7 @@ export function initialize({
       certificateAuthority,
       version,
       proxyUrl,
+      hasStoriesDisabled,
     });
 
     socketManager.on('statusChange', () => {
@@ -1223,8 +1238,10 @@ export function initialize({
       checkSockets,
       onOnline,
       onOffline,
+      reconnect,
       registerRequestHandler,
       unregisterRequestHandler,
+      onHasStoriesDisabledChange,
       authenticate,
       logout,
       cdsLookup,
@@ -1425,8 +1442,12 @@ export function initialize({
       await socketManager.onOnline();
     }
 
-    async function onOffline(): Promise<void> {
-      await socketManager.onOffline();
+    function onOffline(): void {
+      socketManager.onOffline();
+    }
+
+    async function reconnect(): Promise<void> {
+      await socketManager.reconnect();
     }
 
     function registerRequestHandler(handler: IRequestHandler): void {
@@ -1435,6 +1456,10 @@ export function initialize({
 
     function unregisterRequestHandler(handler: IRequestHandler): void {
       socketManager.unregisterRequestHandler(handler);
+    }
+
+    function onHasStoriesDisabledChange(newValue: boolean): void {
+      socketManager.onHasStoriesDisabledChange(newValue);
     }
 
     async function getConfig() {
@@ -1825,14 +1850,15 @@ export function initialize({
       current.resolve();
     }
 
-    async function confirmCode(
-      number: string,
-      code: string,
-      newPassword: string,
-      registrationId: number,
-      deviceName?: string | null,
-      options: { accessKey?: Uint8Array } = {}
-    ) {
+    async function confirmCode({
+      number,
+      code,
+      newPassword,
+      registrationId,
+      pniRegistrationId,
+      deviceName,
+      accessKey,
+    }: ConfirmCodeOptionsType) {
       const capabilities: CapabilitiesUploadType = {
         announcementGroup: true,
         giftBadges: true,
@@ -1843,12 +1869,12 @@ export function initialize({
         stories: true,
       };
 
-      const { accessKey } = options;
       const jsonData = {
         capabilities,
         fetchesMessages: true,
         name: deviceName || undefined,
         registrationId,
+        pniRegistrationId,
         supportsSms: false,
         unidentifiedAccessKey: accessKey
           ? Bytes.toBase64(accessKey)
@@ -2084,12 +2110,19 @@ export function initialize({
         accessKey,
         online,
         urgent = true,
-      }: { accessKey?: string; online?: boolean; urgent?: boolean }
+        story = false,
+      }: {
+        accessKey?: string;
+        online?: boolean;
+        story?: boolean;
+        urgent?: boolean;
+      }
     ) {
       const jsonData = {
         messages,
         timestamp,
         online: Boolean(online),
+        story,
         urgent,
       };
 
@@ -2108,12 +2141,17 @@ export function initialize({
       destination: string,
       messages: ReadonlyArray<MessageType>,
       timestamp: number,
-      { online, urgent = true }: { online?: boolean; urgent?: boolean }
+      {
+        online,
+        urgent = true,
+        story = false,
+      }: { online?: boolean; story?: boolean; urgent?: boolean }
     ) {
       const jsonData = {
         messages,
         timestamp,
         online: Boolean(online),
+        story,
         urgent,
       };
 
@@ -2393,11 +2431,11 @@ export function initialize({
     }
 
     function getHeaderPadding() {
-      const max = getRandomValue(1, 64);
+      const max = randomInt(1, 64);
       let characters = '';
 
       for (let i = 0; i < max; i += 1) {
-        characters += String.fromCharCode(getRandomValue(65, 122));
+        characters += String.fromCharCode(randomInt(65, 122));
       }
 
       return characters;

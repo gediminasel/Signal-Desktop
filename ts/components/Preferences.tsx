@@ -68,7 +68,7 @@ export type PropsDataType = {
   hasReadReceipts: boolean;
   hasRelayCalls?: boolean;
   hasSpellCheck: boolean;
-  hasStoriesEnabled: boolean;
+  hasStoriesDisabled: boolean;
   hasTypingIndicators: boolean;
   lastSyncTime?: number;
   notificationContent: NotificationSettingType;
@@ -133,7 +133,7 @@ type PropsFunctionType = {
   onCallNotificationsChange: CheckboxChangeHandlerType;
   onCallRingtoneNotificationChange: CheckboxChangeHandlerType;
   onCountMutedConversationsChange: CheckboxChangeHandlerType;
-  onHasStoriesEnabledChanged: SelectChangeHandlerType<boolean>;
+  onHasStoriesDisabledChanged: SelectChangeHandlerType<boolean>;
   onHideMenuBarChange: CheckboxChangeHandlerType;
   onIncomingCallNotificationsChange: CheckboxChangeHandlerType;
   onLastSyncTimeChange: (time: number) => unknown;
@@ -228,7 +228,7 @@ export const Preferences = ({
   hasReadReceipts,
   hasRelayCalls,
   hasSpellCheck,
-  hasStoriesEnabled,
+  hasStoriesDisabled,
   hasTypingIndicators,
   i18n,
   initialSpellCheckSetting,
@@ -251,7 +251,7 @@ export const Preferences = ({
   onCallNotificationsChange,
   onCallRingtoneNotificationChange,
   onCountMutedConversationsChange,
-  onHasStoriesEnabledChanged,
+  onHasStoriesDisabledChanged,
   onHideMenuBarChange,
   onIncomingCallNotificationsChange,
   onLastSyncTimeChange,
@@ -290,6 +290,7 @@ export const Preferences = ({
   const zoomSelectId = useUniqueId();
 
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [confirmStoriesOff, setConfirmStoriesOff] = useState(false);
   const [page, setPage] = useState<Page>(Page.General);
   const [showSyncFailed, setShowSyncFailed] = useState(false);
   const [nowSyncing, setNowSyncing] = useState(false);
@@ -915,7 +916,7 @@ export const Preferences = ({
             onSubmit={onUniversalExpireTimerChange}
           />
         )}
-        <SettingsRow title={i18n('disappearingMessages')}>
+        <SettingsRow title={i18n('icu:disappearingMessages')}>
           <Control
             left={
               <>
@@ -976,23 +977,22 @@ export const Preferences = ({
                 </label>
               }
               right={
-                <Select
-                  id={storiesId}
-                  onChange={value => {
-                    onHasStoriesEnabledChanged(value === 'true');
-                  }}
-                  options={[
-                    {
-                      text: i18n('on'),
-                      value: 'true',
-                    },
-                    {
-                      text: i18n('off'),
-                      value: 'false',
-                    },
-                  ]}
-                  value={String(hasStoriesEnabled)}
-                />
+                hasStoriesDisabled ? (
+                  <Button
+                    onClick={() => onHasStoriesDisabledChanged(false)}
+                    variant={ButtonVariant.Secondary}
+                  >
+                    {i18n('Preferences__turn-stories-on')}
+                  </Button>
+                ) : (
+                  <Button
+                    className="Preferences__stories-off"
+                    onClick={() => setConfirmStoriesOff(true)}
+                    variant={ButtonVariant.SecondaryDestructive}
+                  >
+                    {i18n('Preferences__turn-stories-off')}
+                  </Button>
+                )
               }
             />
           </SettingsRow>
@@ -1036,6 +1036,24 @@ export const Preferences = ({
             title={i18n('deleteAllDataHeader')}
           >
             {i18n('deleteAllDataBody')}
+          </ConfirmationDialog>
+        ) : null}
+        {confirmStoriesOff ? (
+          <ConfirmationDialog
+            dialogName="Preference.turnStoriesOff"
+            actions={[
+              {
+                action: () => onHasStoriesDisabledChanged(true),
+                style: 'negative',
+                text: i18n('Preferences__turn-stories-off--action'),
+              },
+            ]}
+            i18n={i18n}
+            onClose={() => {
+              setConfirmStoriesOff(false);
+            }}
+          >
+            {i18n('Preferences__turn-stories-off--body')}
           </ConfirmationDialog>
         ) : null}
       </>

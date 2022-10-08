@@ -1,13 +1,31 @@
 {
   "smartling": {
     "placeholder_format_custom": "(\\$.+?\\$)",
+    "string_format_paths": "icu: [*/messageformat]",
     "translate_paths": [
+      {
+        "path": "*/messageformat",
+        "key": "{*}/messageformat",
+        "instruction": "*/description"
+      },
       {
         "key": "{*}/message",
         "path": "*/message",
         "instruction": "*/description"
       }
     ]
+  },
+  "AddCaptionModal__title": {
+    "message": "Add a message",
+    "description": "Shown as the title of the dialog that allows you to add a caption to a story"
+  },
+  "AddCaptionModal__placeholder": {
+    "message": "Message",
+    "description": "Placeholder text for textarea when adding a caption/message (we don't know which yet so we default to message)"
+  },
+  "AddCaptionModal__submit-button": {
+    "message": "Done",
+    "description": "Label on the button that submits changes to a story's caption in the add-caption dialog"
   },
   "AddUserToAnotherGroupModal__title": {
     "message": "Add to a group",
@@ -733,8 +751,8 @@
     "message": "SMS/MMS contacts are not available on Desktop.",
     "description": "Shown in the search left pane when no results were found and primary device has SMS/MMS handling enabled"
   },
-  "noSearchResultsInConversation": {
-    "message": "No results for \"$searchTerm$\" in $conversationName$",
+  "icu:noSearchResultsInConversation": {
+    "messageformat": "No results for \"{searchTerm}\" in {conversationName}",
     "description": "Shown in the search left pane when no results were found"
   },
   "conversationsHeader": {
@@ -1212,12 +1230,8 @@
     "message": "Tap $plusButton$ (Android) or $linkNewDevice$ (iPhone)",
     "description": "Instructions on the device link screen"
   },
-  "Install__qr-failed": {
-    "message": "The QR code couldn't load. Check your internet and try again. $learnMore$",
-    "description": "Shown on the install screen if the QR code fails to load"
-  },
-  "Install__qr-failed__learn-more": {
-    "message": "Learn more",
+  "icu:Install__qr-failed": {
+    "messageformat": "The QR code couldn't load. Check your internet and try again. <learnMoreLink>Learn more</learnMoreLink>",
     "description": "Shown on the install screen if the QR code fails to load"
   },
   "Install__support-link": {
@@ -1777,8 +1791,8 @@
     "message": "off",
     "description": "Label for option to turn off message expiration in the timer menu"
   },
-  "disappearingMessages": {
-    "message": "Disappearing messages",
+  "icu:disappearingMessages": {
+    "messageformat": "Disappearing messages",
     "description": "Conversation menu option to enable disappearing messages. Title of the settings section for Disappearing Messages. Label of the disappearing timer select in group creation flow"
   },
   "disappearingMessagesDisabled": {
@@ -1900,6 +1914,10 @@
   "noContactsFound": {
     "message": "No contacts found",
     "description": "Label shown when there are no contacts to compose to"
+  },
+  "noGroupsFound": {
+    "message": "No groups found",
+    "description": "Label shown when there are no groups to compose to"
   },
   "noConversationsFound": {
     "message": "No conversations found",
@@ -2741,8 +2759,8 @@
     "message": "Back",
     "description": "Default text for the previous button on all stages of the sticker creator"
   },
-  "StickerCreator--DropStage--title": {
-    "message": "Add your stickers",
+  "icu:StickerCreator--DropStage--title": {
+    "messageformat": "Add your stickers",
     "description": "Title for the drop stage of the sticker creator"
   },
   "StickerCreator--DropStage--removeSticker": {
@@ -2761,8 +2779,8 @@
     "message": "Show margins",
     "description": "Text for the show margins toggle on the drop stage of the sticker creator"
   },
-  "StickerCreator--DropStage--addMore": {
-    "message": "Add $count$ or more",
+  "icu:StickerCreator--DropStage--addMore": {
+    "messageformat": "Add {count, number} or more",
     "description": "Text to show user how many more stickers they must add"
   },
   "StickerCreator--EmojiStage--title": {
@@ -2841,8 +2859,8 @@
     "message": "Check out this new sticker pack I created for Signal. #makeprivacystick",
     "description": "Text which is shared to social media platforms for sticker packs"
   },
-  "StickerCreator--Toasts--imagesAdded": {
-    "message": "$count$ image(s) added",
+  "icu:StickerCreator--Toasts--imagesAdded": {
+    "messageformat": "{count, plural, one {1 image} other {# images}} added",
     "description": "Text for the toast when images are added to the sticker creator"
   },
   "StickerCreator--Toasts--animated": {
@@ -4569,8 +4587,8 @@
     "message": ".5",
     "description": "Button in the voice note message widget that shows the current playback rate of .5x (half speed) and allows the user to toggle to the next rate. Don't include the 'x'."
   },
-  "emptyInboxMessage": {
-    "message": "Click the $composeIcon$ above and search for your contacts or groups to message.",
+  "icu:emptyInboxMessage": {
+    "messageformat": "Click the {composeIcon} above and search for your contacts or groups to message.",
     "description": "Shown in the left-pane when the inbox is empty"
   },
   "composeIcon": {
@@ -4985,8 +5003,8 @@
     "message": "Would you like to discard these changes?",
     "description": "ConfirmationDialog text for discarding changes"
   },
-  "ProfileEditor--info": {
-    "message": "Your profile is encrypted. Your profile and changes to it will be visible to your contacts and when you start or accept new chats. $learnMore$",
+  "icu:ProfileEditor--info": {
+    "messageformat": "Your profile is encrypted. Your profile and changes to it will be visible to your contacts and when you start or accept new chats. {learnMore}",
     "description": "Information shown at the bottom of the profile editor section"
   },
   "ProfileEditor--learnMore": {
@@ -5181,6 +5199,22 @@
     "message": "Devices",
     "description": "Label for Device list in call settings pane"
   },
+  "Preferences__turn-stories-on": {
+    "message": "Turn on stories",
+    "description": "Label to enable stories"
+  },
+  "Preferences__turn-stories-off": {
+    "message": "Turn off stories",
+    "description": "Label to disable stories"
+  },
+  "Preferences__turn-stories-off--action": {
+    "message": "Turn off",
+    "description": "Label in confirmation modal to disable stories"
+  },
+  "Preferences__turn-stories-off--body": {
+    "message": "You will no longer be able to share or view stories.",
+    "description": "Confirmation modal body for disabling stories"
+  },
   "DialogUpdate--version-available": {
     "message": "Update to version $version$ available",
     "description": "Tooltip for new update available"
@@ -5316,6 +5350,10 @@
   "MediaEditor__crop--crop": {
     "message": "Crop",
     "description": "Performs the crop"
+  },
+  "MediaEditor__caption-button": {
+    "message": "Add a message",
+    "description": "Label of the button on the bottom of the media editor that trigger the add-caption dialog"
   },
   "MyStories__title": {
     "message": "My Stories",
@@ -5589,6 +5627,10 @@
     "message": "Remove story? This will remove the story from your list, but you will still be able to view stories from this group.",
     "description": "Confirmation body for removing a group story"
   },
+  "SendStoryModal__announcements-only": {
+    "message": "Only admins can send stories to this group.",
+    "description": "Alert body for groups that non-admins cannot send stories to"
+  },
   "Stories__settings-toggle--title": {
     "message": "Share & View Stories",
     "description": "Select box title for the stories on/off toggle"
@@ -5860,5 +5902,13 @@
   "WhatsNew__v5.62--1": {
     "message": "Easily add a friend to a group from their contact details screen to keep the conversation exciting.",
     "description": "Release notes for v5.62"
+  },
+  "WhatsNew__v5.63--0": {
+    "message": "Hard at work fixing bugs and making other performance improvements to keep the app running smoothly for you.",
+    "description": "Release notes for v5.63"
+  },
+  "WhatsNew__v5.63--beta.2": {
+    "message": "Start using and testing our new stories feature. You can use the feature with other beta testers and let us know how it's working.",
+    "description": "Release notes for v5.63"
   }
 }

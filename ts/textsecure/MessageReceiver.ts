@@ -1447,7 +1447,7 @@ export default class MessageReceiver
       new DeliveryEvent(
         {
           timestamp: envelope.timestamp,
-          envelopeTimestamp: envelope.serverTimestamp,
+          envelopeTimestamp: envelope.timestamp,
           source: envelope.source,
           sourceUuid: envelope.sourceUuid,
           sourceDevice: envelope.sourceDevice,
@@ -1904,7 +1904,7 @@ export default class MessageReceiver
 
     const attachments: Array<ProcessedAttachment> = [];
 
-    if (!window.Events.getHasStoriesEnabled()) {
+    if (window.Events.getHasStoriesDisabled()) {
       log.info('MessageReceiver.handleStoryMessage: dropping', logId);
       this.removeFromCache(envelope);
       return;
@@ -1974,6 +1974,7 @@ export default class MessageReceiver
       const ev = new SentEvent(
         {
           destinationUuid: envelope.destinationUuid.toString(),
+          device: envelope.sourceDevice,
           isRecipientUpdate: Boolean(sentMessage.isRecipientUpdate),
           message,
           receivedAtCounter: envelope.receivedAtCounter,
@@ -2697,7 +2698,7 @@ export default class MessageReceiver
       }
 
       if (sentMessage.storyMessageRecipients && sentMessage.isRecipientUpdate) {
-        if (!window.Events.getHasStoriesEnabled()) {
+        if (window.Events.getHasStoriesDisabled()) {
           log.info(
             'MessageReceiver.handleSyncMessage: dropping story recipients update'
           );

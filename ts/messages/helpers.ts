@@ -122,7 +122,9 @@ export function getContact(
   return window.ConversationController.get(id);
 }
 
-export function getSource(message: MessageAttributesType): string | undefined {
+export function getSource(
+  message: Pick<MessageAttributesType, 'type' | 'source'>
+): string | undefined {
   if (isIncoming(message) || isStory(message)) {
     return message.source;
   }
@@ -134,7 +136,7 @@ export function getSource(message: MessageAttributesType): string | undefined {
 }
 
 export function getSourceDevice(
-  message: MessageAttributesType
+  message: Pick<MessageAttributesType, 'type' | 'sourceDevice'>
 ): string | number | undefined {
   const { sourceDevice } = message;
 
@@ -151,7 +153,7 @@ export function getSourceDevice(
 }
 
 export function getSourceUuid(
-  message: MessageAttributesType
+  message: Pick<MessageAttributesType, 'type' | 'sourceUuid'>
 ): UUIDStringType | undefined {
   if (isIncoming(message) || isStory(message)) {
     return message.sourceUuid;
