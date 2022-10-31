@@ -648,7 +648,14 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
           this.enableMessageField();
           return;
         }
-        this.sendMessage(message, mentions, {
+        let improvedMessage = message;
+        if (localStorage.getItem('realGoLinkAddress')) {
+          improvedMessage = improvedMessage.replace(
+            /(\s|^)(http:\/\/go|go)(\/[\w-])/gmu,
+            `$1${localStorage.getItem('realGoLinkAddress')}$3`
+          );
+        }
+        this.sendMessage(improvedMessage, mentions, {
           draftAttachments,
           timestamp,
           voiceNoteAttachment,
