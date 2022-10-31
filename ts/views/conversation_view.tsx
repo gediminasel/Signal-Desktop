@@ -112,6 +112,7 @@ import { SafetyNumberChangeSource } from '../components/SafetyNumberChangeDialog
 import { getOwn } from '../util/getOwn';
 import { CallMode } from '../types/Calling';
 import { isAnybodyElseInGroupCall } from '../state/ducks/calling';
+import { ToastTextMessagesForbidden } from '../components/ToastTextMessagesForbidden';
 
 type AttachmentOptions = {
   messageId: string;
@@ -638,6 +639,15 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
         timestamp?: number;
         voiceNoteAttachment?: AttachmentType;
       }): void => {
+        if (
+          message.length > 0 &&
+          this.model.get('description')?.includes('NO_TEXT_PLEASE')
+        ) {
+          this.disableMessageField();
+          showToast(ToastTextMessagesForbidden);
+          this.enableMessageField();
+          return;
+        }
         this.sendMessage(message, mentions, {
           draftAttachments,
           timestamp,
