@@ -16,7 +16,7 @@ import type {
 import type { UUIDStringType } from '../../types/UUID';
 import { DEFAULT_CONVERSATION_COLOR } from '../../types/Colors';
 import { getPreferredReactionEmoji as getPreferredReactionEmojiFromStoredValue } from '../../reactions/preferredReactionEmoji';
-import { isBeta } from '../../util/version';
+import { isBeta, isLel } from '../../util/version';
 import { getUserNumber, getUserACI } from './user';
 
 const DEFAULT_PREFERRED_LEFT_PANE_WIDTH = 320;
@@ -105,7 +105,7 @@ export const getStoriesEnabled = createSelector(
 
     if (
       isRemoteConfigFlagEnabled(remoteConfig, 'desktop.stories.beta') &&
-      isBeta(window.getVersion())
+      (isBeta(window.getVersion()) || isLel(window.getVersion()))
     ) {
       return true;
     }

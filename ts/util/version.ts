@@ -17,6 +17,9 @@ export const isProduction = (version: string): boolean => {
 export const isBeta = (version: string): boolean =>
   semver.parse(version)?.prerelease[0] === 'beta';
 
+export const isLel = (version: string): boolean =>
+  semver.parse(version)?.prerelease[0] === 'lel';
+
 export const isAlpha = (version: string): boolean =>
   semver.parse(version)?.prerelease[0] === 'alpha';
 
