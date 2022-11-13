@@ -336,7 +336,9 @@ export const ConversationDetails: React.ComponentType<Props> = ({
         theme={theme}
       />
 
-      <div>{conversation.messageCount} messages</div>
+      <div>
+        {conversation.messageCount} messages, {conversation.id}
+      </div>
 
       <div className="ConversationDetails__header-buttons">
         {!conversation.isMe && (

@@ -47,6 +47,7 @@ const mapStateToProps = (_state: StateType, props: PropsType) => {
     props;
 
   return {
+    id: timelineProps.id,
     renderCompositionArea: () => (
       <SmartCompositionArea {...compositionAreaProps} />
     ),
