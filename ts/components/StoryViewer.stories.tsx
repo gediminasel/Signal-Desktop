@@ -29,9 +29,11 @@ export default {
       defaultValue: undefined,
     },
     hasAllStoriesMuted: {
+      control: 'boolean',
       defaultValue: false,
     },
-    hasReadReceiptSetting: {
+    hasViewReceiptSetting: {
+      control: 'boolean',
       defaultValue: true,
     },
     i18n: {
@@ -66,6 +68,9 @@ export default {
     },
     toggleHasAllStoriesMuted: { action: true },
     viewStory: { action: true },
+  },
+  args: {
+    currentIndex: 0,
   },
 } as Meta;
 
@@ -127,6 +132,18 @@ Caption.args = {
   },
 };
 
+export const EmojiCaption = Template.bind({});
+EmojiCaption.args = {
+  story: {
+    ...getFakeStoryView(),
+    attachment: fakeAttachment({
+      caption: 'WOOOOOOOOW 🥰',
+      path: 'file.jpg',
+      url: '/fixtures/nathan-anderson-316188-unsplash.jpg',
+    }),
+  },
+};
+
 export const LongCaption = Template.bind({});
 LongCaption.args = {
   story: {
@@ -179,7 +196,7 @@ export const ReadReceiptsOff = Template.bind({});
     '/fixtures/nathan-anderson-316188-unsplash.jpg'
   );
   ReadReceiptsOff.args = {
-    hasReadReceiptSetting: false,
+    hasViewReceiptSetting: false,
     story: {
       ...storyView,
       sender: {

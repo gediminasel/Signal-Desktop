@@ -28,6 +28,7 @@ import * as EmbeddedContact from '../types/EmbeddedContact';
 import * as Conversation from '../types/Conversation';
 import type { StickerType, StickerWithHydratedData } from '../types/Stickers';
 import * as Stickers from '../types/Stickers';
+import { StorySendMode } from '../types/Stories';
 import type {
   ContactWithHydratedAvatar,
   GroupV1InfoType,
@@ -69,6 +70,7 @@ import { migrateColor } from '../util/migrateColor';
 import { isNotNil } from '../util/isNotNil';
 import { dropNull } from '../util/dropNull';
 import { notificationService } from '../services/notifications';
+import { storageServiceUploadJob } from '../services/storage';
 import { getSendOptions } from '../util/getSendOptions';
 import { isConversationAccepted } from '../util/isConversationAccepted';
 import { markConversationRead } from '../util/markConversationRead';
@@ -133,7 +135,7 @@ import { getMessageById as getMessageByIdLazy } from '../messages/getMessageById
 /* eslint-disable more/no-then */
 window.Whisper = window.Whisper || {};
 
-const { Services, Util } = window.Signal;
+const { Util } = window.Signal;
 const { Message } = window.Signal.Types;
 const {
   deleteAttachmentData,
@@ -1362,14 +1364,16 @@ export class ConversationModel extends window.Backbone
     message: MessageModel,
     { isJustSent }: { isJustSent: boolean } = { isJustSent: false }
   ): Promise<void> {
-    await this.beforeAddSingleMessage();
+    await this.beforeAddSingleMessage(message);
     this.doAddSingleMessage(message, { isJustSent });
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.debouncedUpdateLastMessage!();
   }
 
-  private async beforeAddSingleMessage(): Promise<void> {
+  private async beforeAddSingleMessage(message: MessageModel): Promise<void> {
+    await message.hydrateStoryContext();
+
     if (!this.newMessageQueue) {
       this.newMessageQueue = new PQueue({
         concurrency: 1,
@@ -1401,7 +1405,12 @@ export class ConversationModel extends window.Backbone
 
     if (isJustSent && existingConversation && !isLatestInMemory) {
       this.loadNewestMessages(undefined, undefined);
-    } else {
+    } else if (
+      // The message has to be not a story or has to be a story reply in direct
+      // conversation.
+      !isStory(message.attributes) &&
+      (message.get('storyId') == null || isDirectConversation(this.attributes))
+    ) {
       messagesAdded({
         conversationId,
         messages: [{ ...message.attributes }],
@@ -1869,7 +1878,7 @@ export class ConversationModel extends window.Backbone
       groupVersion,
       groupId: this.get('groupId'),
       groupLink: this.getGroupLink(),
-      isGroupStorySendReady: Boolean(this.get('isGroupStorySendReady')),
+      storySendMode: this.getStorySendMode(),
       hideStory: Boolean(this.get('hideStory')),
       inboxPosition,
       isArchived: this.get('isArchived'),
@@ -3727,13 +3736,16 @@ export class ConversationModel extends window.Backbone
   getRecipients({
     includePendingMembers,
     extraConversationsForSend,
+    isStoryReply = false,
   }: {
     includePendingMembers?: boolean;
     extraConversationsForSend?: Array<string>;
+    isStoryReply?: boolean;
   } = {}): Array<string> {
     return getRecipients(this.attributes, {
       includePendingMembers,
       extraConversationsForSend,
+      isStoryReply,
     });
   }
 
@@ -4010,12 +4022,26 @@ export class ConversationModel extends window.Backbone
       'desktop.mandatoryProfileSharing'
     );
 
-    await this.maybeApplyUniversalTimer();
+    let expirationStartTimestamp: number | undefined;
+    let expireTimer: number | undefined;
 
-    const expireTimer = this.get('expireTimer');
+    // If it's a group story reply then let's match the expiration timers
+    // with the parent story's expiration.
+    if (storyId && isGroup(this.attributes)) {
+      const parentStory = await getMessageById(storyId);
+      expirationStartTimestamp =
+        parentStory?.expirationStartTimestamp || Date.now();
+      expireTimer = parentStory?.expireTimer || durations.DAY;
+    } else {
+      await this.maybeApplyUniversalTimer();
+      expireTimer = this.get('expireTimer');
+    }
 
-    const recipientMaybeConversations = map(this.getRecipients(), identifier =>
-      window.ConversationController.get(identifier)
+    const recipientMaybeConversations = map(
+      this.getRecipients({
+        isStoryReply: storyId !== undefined,
+      }),
+      identifier => window.ConversationController.get(identifier)
     );
     const recipientConversations = filter(
       recipientMaybeConversations,
@@ -4052,6 +4078,7 @@ export class ConversationModel extends window.Backbone
       sent_at: now,
       received_at: window.Signal.Util.incrementMessageCounter(),
       received_at_ms: now,
+      expirationStartTimestamp,
       expireTimer,
       readStatus: ReadStatus.Read,
       seenStatus: SeenStatus.NotApplicable,
@@ -4111,56 +4138,53 @@ export class ConversationModel extends window.Backbone
 
     const renderStart = Date.now();
 
-    // Don't update the conversation with a story reply
-    if (storyId == null) {
-      // Perform asynchronous tasks before entering the batching mode
-      await this.beforeAddSingleMessage();
+    // Perform asynchronous tasks before entering the batching mode
+    await this.beforeAddSingleMessage(model);
 
-      this.isInReduxBatch = true;
-      batchDispatch(() => {
-        try {
-          const { clearUnreadMetrics } = window.reduxActions.conversations;
-          clearUnreadMetrics(this.id);
+    this.isInReduxBatch = true;
+    batchDispatch(() => {
+      try {
+        const { clearUnreadMetrics } = window.reduxActions.conversations;
+        clearUnreadMetrics(this.id);
 
-          const enabledProfileSharing = Boolean(
-            mandatoryProfileSharingEnabled && !this.get('profileSharing')
-          );
-          const unarchivedConversation = Boolean(this.get('isArchived'));
+        const enabledProfileSharing = Boolean(
+          mandatoryProfileSharingEnabled && !this.get('profileSharing')
+        );
+        const unarchivedConversation = Boolean(this.get('isArchived'));
 
-          this.doAddSingleMessage(model, { isJustSent: true });
+        this.doAddSingleMessage(model, { isJustSent: true });
 
-          const draftProperties = dontClearDraft
-            ? {}
-            : {
-                draft: null,
-                draftTimestamp: null,
-                lastMessage: model.getNotificationText(),
-                lastMessageAuthor: model.getAuthorText(),
-                lastMessageStatus: 'sending' as const,
-              };
+        const draftProperties = dontClearDraft
+          ? {}
+          : {
+              draft: null,
+              draftTimestamp: null,
+              lastMessage: model.getNotificationText(),
+              lastMessageAuthor: model.getAuthorText(),
+              lastMessageStatus: 'sending' as const,
+            };
 
-          this.set({
-            ...draftProperties,
-            ...(enabledProfileSharing ? { profileSharing: true } : {}),
-            ...this.incrementSentMessageCount({ dry: true }),
-            active_at: now,
-            timestamp: now,
-            ...(unarchivedConversation ? { isArchived: false } : {}),
-          });
+        this.set({
+          ...draftProperties,
+          ...(enabledProfileSharing ? { profileSharing: true } : {}),
+          ...this.incrementSentMessageCount({ dry: true }),
+          active_at: now,
+          timestamp: now,
+          ...(unarchivedConversation ? { isArchived: false } : {}),
+        });
 
-          if (enabledProfileSharing) {
-            this.captureChange('enqueueMessageForSend/mandatoryProfileSharing');
-          }
-          if (unarchivedConversation) {
-            this.captureChange('enqueueMessageForSend/unarchive');
-          }
-
-          extraReduxActions?.();
-        } finally {
-          this.isInReduxBatch = false;
+        if (enabledProfileSharing) {
+          this.captureChange('enqueueMessageForSend/mandatoryProfileSharing');
         }
-      });
-    }
+        if (unarchivedConversation) {
+          this.captureChange('enqueueMessageForSend/unarchive');
+        }
+
+        extraReduxActions?.();
+      } finally {
+        this.isInReduxBatch = false;
+      }
+    });
 
     if (sticker) {
       await addStickerPackReference(model.id, sticker.packId);
@@ -5266,7 +5290,7 @@ export class ConversationModel extends window.Backbone
     this.set({ needsStorageServiceSync: true });
 
     this.queueJob('captureChange', async () => {
-      Services.storageServiceUploadJob();
+      storageServiceUploadJob();
     });
   }
 
@@ -5287,8 +5311,13 @@ export class ConversationModel extends window.Backbone
   }
 
   toggleHideStories(): void {
-    this.set({ hideStory: !this.get('hideStory') });
+    const hideStory = !this.get('hideStory');
+    log.info(
+      `toggleHideStories(${this.idForLogging()}): newValue=${hideStory}`
+    );
+    this.set({ hideStory });
     this.captureChange('hideStory');
+    window.Signal.Data.updateConversation(this.attributes);
   }
 
   setMuteExpiration(
@@ -5378,6 +5407,7 @@ export class ConversationModel extends window.Backbone
     notificationService.add({
       senderTitle,
       conversationId,
+      storyId: message.get('storyId'),
       notificationIconUrl,
       isExpiringMessage,
       message: message.getNotificationText(),
@@ -5581,6 +5611,14 @@ export class ConversationModel extends window.Backbone
       return undefined;
     }
     return window.textsecure.storage.protocol.signAlternateIdentity();
+  }
+
+  getStorySendMode(): StorySendMode | undefined {
+    if (!isGroup(this.attributes)) {
+      return undefined;
+    }
+
+    return this.get('storySendMode') ?? StorySendMode.IfActive;
   }
 }
 

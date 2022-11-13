@@ -14,9 +14,9 @@ import type {
 } from '../types/Stories';
 import type { LocalizerType } from '../types/Util';
 import type { PreferredBadgeSelectorType } from '../state/selectors/badges';
-import type { PropsType as SmartStoryCreatorPropsType } from '../state/smart/StoryCreator';
 import type { ShowToastActionCreatorType } from '../state/ducks/toast';
 import type {
+  AddStoryData,
   ViewUserStoriesActionCreatorType,
   ViewStoryActionCreatorType,
 } from '../state/ducks/stories';
@@ -27,6 +27,7 @@ import { getWidthFromPreferredWidth } from '../util/leftPaneWidth';
 import { useEscapeHandling } from '../hooks/useEscapeHandling';
 
 export type PropsType = {
+  addStoryData: AddStoryData;
   deleteStoryForEveryone: (story: StoryViewType) => unknown;
   getPreferredBadge: PreferredBadgeSelectorType;
   hiddenStories: Array<ConversationStoryType>;
@@ -37,7 +38,8 @@ export type PropsType = {
   onSaveStory: (story: StoryViewType) => unknown;
   preferredWidthFromStorage: number;
   queueStoryDownload: (storyId: string) => unknown;
-  renderStoryCreator: (props: SmartStoryCreatorPropsType) => JSX.Element;
+  renderStoryCreator: () => JSX.Element;
+  setAddStoryData: (data: AddStoryData) => unknown;
   showConversation: ShowConversationType;
   showStoriesSettings: () => unknown;
   showToast: ShowToastActionCreatorType;
@@ -48,17 +50,11 @@ export type PropsType = {
   viewStory: ViewStoryActionCreatorType;
   isViewingStory: boolean;
   isStoriesSettingsVisible: boolean;
+  hasViewReceiptSetting: boolean;
 };
 
-type AddStoryType =
-  | {
-      type: 'Media';
-      file: File;
-    }
-  | { type: 'Text' }
-  | undefined;
-
 export const Stories = ({
+  addStoryData,
   deleteStoryForEveryone,
   getPreferredBadge,
   hiddenStories,
@@ -70,6 +66,7 @@ export const Stories = ({
   preferredWidthFromStorage,
   queueStoryDownload,
   renderStoryCreator,
+  setAddStoryData,
   showConversation,
   showStoriesSettings,
   showToast,
@@ -80,30 +77,27 @@ export const Stories = ({
   viewStory,
   isViewingStory,
   isStoriesSettingsVisible,
+  hasViewReceiptSetting,
 }: PropsType): JSX.Element => {
   const width = getWidthFromPreferredWidth(preferredWidthFromStorage, {
     requiresFullWidth: true,
   });
 
-  const [addStoryData, setAddStoryData] = useState<AddStoryType>();
   const [isMyStories, setIsMyStories] = useState(false);
 
   // only handle ESC if not showing a child that handles their own ESC
   useEscapeHandling(
     (isMyStories && myStories.length) ||
       isViewingStory ||
-      isStoriesSettingsVisible
+      isStoriesSettingsVisible ||
+      addStoryData
       ? undefined
       : toggleStoriesView
   );
 
   return (
     <div className={classNames('Stories', themeClassName(Theme.Dark))}>
-      {addStoryData &&
-        renderStoryCreator({
-          file: addStoryData.type === 'Media' ? addStoryData.file : undefined,
-          onClose: () => setAddStoryData(undefined),
-        })}
+      {addStoryData && renderStoryCreator()}
       <div className="Stories__pane" style={{ width }}>
         {isMyStories && myStories.length ? (
           <MyStories
@@ -115,6 +109,7 @@ export const Stories = ({
             onSave={onSaveStory}
             queueStoryDownload={queueStoryDownload}
             viewStory={viewStory}
+            hasViewReceiptSetting={hasViewReceiptSetting}
           />
         ) : (
           <StoriesPane

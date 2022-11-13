@@ -51,6 +51,7 @@ import {
 import { senderCertificateService } from './services/senderCertificate';
 import { GROUP_CREDENTIALS_KEY } from './services/groupCredentialFetcher';
 import * as KeyboardLayout from './services/keyboardLayout';
+import * as StorageService from './services/storage';
 import { RoutineProfileRefresher } from './routineProfileRefresh';
 import { isMoreRecentThan, isOlderThan, toDayMillis } from './util/timestamp';
 import { isValidReactionEmoji } from './reactions/isValidReactionEmoji';
@@ -153,6 +154,7 @@ import { SeenStatus } from './MessageSeenStatus';
 import MessageSender from './textsecure/SendMessage';
 import type AccountManager from './textsecure/AccountManager';
 import { onStoryRecipientUpdate } from './util/onStoryRecipientUpdate';
+import { StoryViewModeType, StoryViewTargetType } from './types/Stories';
 
 const MAX_ATTACHMENT_DOWNLOAD_AGE = 3600 * 72 * 1000;
 
@@ -226,6 +228,7 @@ export async function startApp(): Promise<void> {
       hasStoriesDisabled: window.storage.get('hasStoriesDisabled', false),
     });
     window.textsecure.server = server;
+    window.textsecure.messaging = new window.textsecure.MessageSender(server);
 
     initializeAllJobQueues({
       server,
@@ -537,6 +540,10 @@ export async function startApp(): Promise<void> {
     window.getAccountManager().refreshPreKeys(uuidKind);
   });
 
+  window.textsecure.storage.protocol.on('removeAllData', () => {
+    window.reduxActions.stories.removeAllStories();
+  });
+
   window.getSocketStatus = () => {
     if (server === undefined) {
       return SocketStatus.CLOSED;
@@ -786,7 +793,7 @@ export async function startApp(): Promise<void> {
         window.isBeforeVersion(lastVersion, 'v1.36.0-beta.1') &&
         window.isAfterVersion(lastVersion, 'v1.35.0-beta.1')
       ) {
-        await window.Signal.Services.eraseAllStorageServiceState();
+        await StorageService.eraseAllStorageServiceState();
       }
 
       if (window.isBeforeVersion(lastVersion, 'v5.2.0')) {
@@ -1002,8 +1009,11 @@ export async function startApp(): Promise<void> {
     };
 
     try {
+      // This needs to load before we prime the data because we expect
+      // ConversationController to be loaded and ready to use by then.
+      await window.ConversationController.load();
+
       await Promise.all([
-        window.ConversationController.load(),
         Stickers.load(),
         loadRecentEmojis(),
         loadInitialBadgesState(),
@@ -1175,6 +1185,8 @@ export async function startApp(): Promise<void> {
 
       changedConvoBatcher.add(conversation);
     });
+
+    // Called by SignalProtocolStore#removeAllData()
     convoCollection.on('reset', removeAllConversations);
 
     window.Whisper.events.on('userChanged', (reconnect = false) => {
@@ -1737,7 +1749,7 @@ export async function startApp(): Promise<void> {
   });
 
   async function runStorageService() {
-    window.Signal.Services.enableStorageService();
+    StorageService.enableStorageService();
 
     if (window.ConversationController.areWePrimaryDevice()) {
       log.warn(
@@ -1876,10 +1888,19 @@ export async function startApp(): Promise<void> {
     activeWindowService.registerForActive(() => notificationService.clear());
     window.addEventListener('unload', () => notificationService.fastClear());
 
-    notificationService.on('click', (id, messageId) => {
+    notificationService.on('click', (id, messageId, storyId) => {
       window.showWindow();
+
       if (id) {
-        window.Whisper.events.trigger('showConversation', id, messageId);
+        if (storyId) {
+          window.reduxActions.stories.viewStory({
+            storyId,
+            storyViewMode: StoryViewModeType.Single,
+            viewTarget: StoryViewTargetType.Replies,
+          });
+        } else {
+          window.Whisper.events.trigger('showConversation', id, messageId);
+        }
       } else {
         window.reduxActions.app.openInbox();
       }
@@ -2071,8 +2092,6 @@ export async function startApp(): Promise<void> {
         return;
       }
 
-      window.textsecure.messaging = new window.textsecure.MessageSender(server);
-
       // Update our profile key in the conversation if we just got linked.
       const profileKey = await ourProfileKeyService.get();
       if (firstRun && profileKey) {
@@ -2182,6 +2201,7 @@ export async function startApp(): Promise<void> {
         log.info('Boot after upgrading. Requesting contact sync');
         window.getSyncRequest();
 
+        StorageService.reprocessUnknownFields();
         runStorageService();
 
         try {
@@ -3548,7 +3568,7 @@ export async function startApp(): Promise<void> {
       }
       case FETCH_LATEST_ENUM.STORAGE_MANIFEST:
         log.info('onFetchLatestSync: fetching latest manifest');
-        await window.Signal.Services.runStorageServiceSyncJob();
+        await StorageService.runStorageServiceSyncJob();
         break;
       case FETCH_LATEST_ENUM.SUBSCRIPTION_STATUS:
         log.info('onFetchLatestSync: fetching latest subscription status');
@@ -3582,12 +3602,12 @@ export async function startApp(): Promise<void> {
           'onKeysSync: updated storage service key, erasing state and fetching'
         );
         await window.storage.put('storageKey', storageServiceKeyBase64);
-        await window.Signal.Services.eraseAllStorageServiceState({
+        await StorageService.eraseAllStorageServiceState({
           keepUnknownFields: true,
         });
       }
 
-      await window.Signal.Services.runStorageServiceSyncJob();
+      await StorageService.runStorageServiceSyncJob();
     }
   }
 
@@ -3677,7 +3697,7 @@ export async function startApp(): Promise<void> {
 
     event.confirm();
 
-    if (!window.storage.get('read-receipt-setting') || !sourceConversation) {
+    if (!sourceConversation) {
       return;
     }
 

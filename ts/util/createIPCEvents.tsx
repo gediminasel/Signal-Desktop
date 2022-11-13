@@ -4,7 +4,7 @@
 import { webFrame } from 'electron';
 import type { AudioDevice } from 'ringrtc';
 import * as React from 'react';
-import * as RemoteConfig from '../RemoteConfig';
+import { getStoriesAvailable } from './stories';
 
 import type { ZoomFactorType } from '../types/Storage.d';
 import type {
@@ -36,6 +36,7 @@ import * as durations from './durations';
 import { isPhoneNumberSharingEnabled } from './isPhoneNumberSharingEnabled';
 import { parseE164FromSignalDotMeHash } from './sgnlHref';
 import * as log from '../logging/log';
+import { deleteAllMyStories } from './deleteAllMyStories';
 
 type ThemeType = 'light' | 'dark' | 'system';
 type NotificationSettingType = 'message' | 'name' | 'count' | 'off';
@@ -62,6 +63,7 @@ export type IPCEventsValuesType = {
   themeSetting: ThemeType;
   universalExpireTimer: number;
   zoomFactor: ZoomFactorType;
+  storyViewReceiptsEnabled: boolean;
 
   // Optional
   mediaPermissions: boolean;
@@ -89,6 +91,7 @@ export type IPCEventsCallbacksType = {
   addCustomColor: (customColor: CustomColorType) => void;
   addDarkOverlay: () => void;
   deleteAllData: () => Promise<void>;
+  deleteAllMyStories: () => Promise<void>;
   closeDB: () => Promise<void>;
   editCustomColor: (colorId: string, customColor: CustomColorType) => void;
   getConversationsWithCustomColor: (x: string) => Array<ConversationType>;
@@ -186,6 +189,16 @@ export function createIPCEvents(
       account.captureChange('hasStoriesDisabled');
       window.textsecure.server?.onHasStoriesDisabledChange(value);
     },
+    getStoryViewReceiptsEnabled: () => {
+      return (
+        window.storage.get('storyViewReceiptsEnabled') ??
+        window.storage.get('read-receipt-setting') ??
+        false
+      );
+    },
+    setStoryViewReceiptsEnabled: async (value: boolean) => {
+      await window.storage.put('storyViewReceiptsEnabled', value);
+    },
 
     getPreferredAudioInputDevice: () =>
       window.storage.get('preferred-audio-input-device'),
@@ -199,6 +212,10 @@ export function createIPCEvents(
       window.storage.get('preferred-video-input-device'),
     setPreferredVideoInputDevice: device =>
       window.storage.put('preferred-video-input-device', device),
+
+    deleteAllMyStories: async () => {
+      await deleteAllMyStories();
+    },
 
     // Chat Color redux hookups
     getCustomColors: () => {
@@ -343,9 +360,7 @@ export function createIPCEvents(
 
     isPhoneNumberSharingEnabled: () => isPhoneNumberSharingEnabled(),
     isPrimary: () => window.textsecure.storage.user.getDeviceId() === 1,
-    shouldShowStoriesSettings: () =>
-      RemoteConfig.isEnabled('desktop.internalUser') ||
-      RemoteConfig.isEnabled('desktop.stories'),
+    shouldShowStoriesSettings: () => getStoriesAvailable(),
     syncRequest: () =>
       new Promise<void>((resolve, reject) => {
         const FIVE_MINUTES = 5 * durations.MINUTE;

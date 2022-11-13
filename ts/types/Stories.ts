@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { AttachmentType } from './Attachment';
+import type { BodyRangesType, LocalizerType } from './Util';
 import type { ContactNameColorType } from './Colors';
 import type { ConversationType } from '../state/ducks/conversations';
-import type { LocalizerType } from './Util';
 import type { ReadStatus } from '../messages/MessageReadStatus';
 import type { SendStatus } from '../messages/MessageSendState';
 import type { StoryDistributionListDataType } from '../state/ducks/storyDistributionLists';
@@ -25,6 +25,7 @@ export type ReplyType = {
     | 'title'
   >;
   body?: string;
+  bodyRanges?: BodyRangesType;
   contactNameColor?: ContactNameColorType;
   conversationId: string;
   deletedForEveryone?: boolean;
@@ -36,11 +37,13 @@ export type ReplyType = {
 
 export type ReplyStateType = {
   messageId: string;
-  replies: Array<ReplyType>;
+  replies: ReadonlyArray<ReplyType>;
 };
 
 export type ConversationStoryType = {
   conversationId: string;
+  hasReplies?: boolean;
+  hasRepliesFromSelf?: boolean;
   group?: Pick<
     ConversationType,
     | 'acceptedMessageRequest'
@@ -52,6 +55,7 @@ export type ConversationStoryType = {
     | 'sharedGroupNames'
     | 'sortedGroupMembers'
     | 'title'
+    | 'left'
   >;
   isHidden?: boolean;
   searchNames?: string; // This is just here to satisfy Fuse's types
@@ -68,8 +72,6 @@ export type StorySendStateType = {
 export type StoryViewType = {
   attachment?: AttachmentType;
   canReply?: boolean;
-  hasReplies?: boolean;
-  hasRepliesFromSelf?: boolean;
   isHidden?: boolean;
   isUnread?: boolean;
   messageId: string;
@@ -110,6 +112,12 @@ export enum StoryViewDirectionType {
   Previous = 'Previous',
 }
 
+export enum StoryViewTargetType {
+  Details = 'Details',
+  Views = 'Views',
+  Replies = 'Replies',
+}
+
 // Type of stories to view before closing the viewer
 // All = All the stories in order
 // Single = A single story. Like when clicking on a qouted story
@@ -118,6 +126,7 @@ export enum StoryViewDirectionType {
 export enum StoryViewModeType {
   All = 'All',
   Hidden = 'Hidden',
+  MyStories = 'MyStories',
   Single = 'Single',
   Unread = 'Unread',
   User = 'User',
@@ -141,4 +150,10 @@ export function getStoryDistributionListName(
 export enum HasStories {
   Read = 'Read',
   Unread = 'Unread',
+}
+
+export enum StorySendMode {
+  IfActive = 'IfActive',
+  Always = 'Always',
+  Never = 'Never',
 }

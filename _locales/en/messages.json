@@ -433,22 +433,38 @@
   },
   "changedVerificationWarning": {
     "message": "The following people may have reinstalled or changed devices. Verify your safety number with them to ensure privacy.",
+    "description": "(deleted 2022/11/26) Shown on confirmation dialog when user attempts to send a message"
+  },
+  "safetyNumberChangeDialog__message": {
+    "message": "The following people may have reinstalled Signal or changed devices. Click a recipient to confirm the new safety number. This is optional.",
     "description": "Shown on confirmation dialog when user attempts to send a message"
   },
   "safetyNumberChangeDialog__pending-messages": {
     "message": "Send pending messages",
     "description": "Shown on confirmation dialog when user attempts to send a message in the outbox"
   },
+  "safetyNumberChangeDialog__review": {
+    "message": "Review",
+    "description": "Shown to enter 'review' mode if more than five contacts have changed safety numbers"
+  },
+  "icu:safetyNumberChangeDialog__many-contacts": {
+    "messageformat": "{count, plural, other {You have # connections who may have reinstalled Signal or changed devices. You can optionally review their safety numbers before sending.}}",
+    "description": "Shown during an attempted send when more than five contacts have changed their safety numbers"
+  },
   "identityKeyErrorOnSend": {
     "message": "Your safety number with $name1$ has changed. This could either mean that someone is trying to intercept your communication or that $name2$ has simply reinstalled Signal. You may wish to verify your safety number with this contact.",
     "description": "Shown when user clicks on a failed recipient in the message detail view after an identity key change"
   },
   "sendAnyway": {
-    "message": "Send Anyway",
+    "message": "Send anyway",
+    "description": "Used on a warning dialog to make it clear that it might be risky to send the message."
+  },
+  "safetyNumberChangeDialog_send": {
+    "message": "Send",
     "description": "Used on a warning dialog to make it clear that it might be risky to send the message."
   },
   "callAnyway": {
-    "message": "Call Anyway",
+    "message": "Call anyway",
     "description": "Used on a warning dialog to make it clear that it might be risky to call the conversation."
   },
   "continueCall": {
@@ -3037,11 +3053,15 @@
   },
   "ConversationHero--members": {
     "message": "$count$ members",
-    "description": "Specifies the number of members in a group conversation"
+    "description": "(deleted 2022/11/21) Specifies the number of members in a group conversation"
   },
   "ConversationHero--members-1": {
     "message": "1 member",
-    "description": "Specifies the number of members in a group conversation when there is one member"
+    "description": "(deleted 2022/11/21) Specifies the number of members in a group conversation when there is one member"
+  },
+  "icu:ConversationHero--members": {
+    "messageformat": "{count, plural, one {1 member} other {# members}}",
+    "description": "Specifies the number of members in a group conversation"
   },
   "member-of-1-group": {
     "message": "Member of $group$",
@@ -5212,7 +5232,7 @@
     "description": "Label in confirmation modal to disable stories"
   },
   "Preferences__turn-stories-off--body": {
-    "message": "You will no longer be able to share or view stories.",
+    "message": "You will no longer be able to share or view stories. Story updates you have recently shared will also be deleted.",
     "description": "Confirmation modal body for disabling stories"
   },
   "DialogUpdate--version-available": {
@@ -5356,7 +5376,7 @@
     "description": "Label of the button on the bottom of the media editor that trigger the add-caption dialog"
   },
   "MyStories__title": {
-    "message": "My Stories",
+    "message": "My Story",
     "description": "Title for the my stories list"
   },
   "MyStories__story": {
@@ -5373,11 +5393,19 @@
   },
   "MyStories__views--singular": {
     "message": "$num$ view",
-    "description": "Number of views your story has"
+    "description": "(deleted 2022/10/13) Number of views your story has"
   },
   "MyStories__views--plural": {
     "message": "$num$ views",
+    "description": "(deleted 2022/10/13) Number of views your story has"
+  },
+  "icu:MyStories__views": {
+    "messageformat": "{views, plural, one {1 view} other {# views}}",
     "description": "Number of views your story has"
+  },
+  "icu:MyStories__views-off": {
+    "messageformat": "Views off",
+    "description": "Shown next to the user's story when the user has read receipts turned off"
   },
   "MyStories__replies--singular": {
     "message": "$num$ reply",
@@ -5420,7 +5448,7 @@
     "description": "Title for the stories list"
   },
   "Stories__mine": {
-    "message": "My Stories",
+    "message": "My Story",
     "description": "Label for your stories"
   },
   "Stories__add": {
@@ -5442,6 +5470,14 @@
   "Stories__list-empty": {
     "message": "No recent stories to show right now",
     "description": "Description for when there are no stories to show"
+  },
+  "Stories__list--sending": {
+    "message": "Sending...",
+    "description": "Pending text for story being sent in list view"
+  },
+  "Stories__list--send_failed": {
+    "message": "Send failed",
+    "description": "Error text for story failed to send in list view"
   },
   "Stories__placeholder--text": {
     "message": "Click to view a story",
@@ -5467,20 +5503,32 @@
     "message": "Story settings",
     "description": "Title for the story settings modal"
   },
+  "icu:StoriesSettings__description": {
+    "messageformat": "Stories automatically disapper after 24 hours. Choose who can view your story or create new stories with specific viewers or groups.",
+    "description": "Description for story settings modal"
+  },
   "StoriesSettings__new-list": {
-    "message": "New private story",
-    "description": "Label to create a new private story list"
+    "message": "New custom story",
+    "description": "Label to create a new custom distribution list"
+  },
+  "StoriesSettings__new-list--visibility": {
+    "message": "Only you can see the name of this story.",
+    "description": "Explanation about the visibility of custom distribution list names"
   },
   "StoriesSettings__viewers--singular": {
     "message": "$num$ viewer",
-    "description": "A single viewer"
+    "description": "(deleted 2022/10/21) A single viewer"
   },
   "StoriesSettings__viewers--plural": {
     "message": "$num$ viewers",
-    "description": "More than one viewer"
+    "description": "(deleted 2022/10/21) More than one viewer"
+  },
+  "icu:StoriesSettings__viewers": {
+    "messageformat": "{count, plural, one {1 viewer} other {# viewers}}",
+    "description": "The number of viewers for a story distribution list"
   },
   "StoriesSettings__who-can-see": {
-    "message": "Who can see this story",
+    "message": "Who can view this story",
     "description": "Title for the who can see this story section"
   },
   "StoriesSettings__add-viewer": {
@@ -5489,7 +5537,7 @@
   },
   "StoriesSettings__remove--action": {
     "message": "Remove",
-    "description": "Button to remove a member from a private list"
+    "description": "Button to remove a member from a custom list"
   },
   "StoriesSettings__remove--title": {
     "message": "Remove $title$",
@@ -5497,7 +5545,7 @@
   },
   "StoriesSettings__remove--body": {
     "message": "This person will no longer see your story.",
-    "description": "Body of the confirmation dialog to remove someone from a private distribution list"
+    "description": "Body of the confirmation dialog to remove someone from a custom distribution list"
   },
   "StoriesSettings__replies-reactions--title": {
     "message": "Replies & reactions",
@@ -5512,20 +5560,20 @@
     "description": "Description of checkbox to allow or disallow replies to your stories"
   },
   "StoriesSettings__delete-list": {
-    "message": "Delete private story",
-    "description": "Button label to delete a private distribution list"
+    "message": "Delete custom story",
+    "description": "Button label to delete a custom distribution list"
   },
   "StoriesSettings__delete-list--confirm": {
-    "message": "Delete private story?",
-    "description": "Confirmation text to delete a private distribution list"
+    "message": "Are you sure you want to delete \"$name$\"? Updates shared to this story will also be deleted.",
+    "description": "Confirmation text to delete a custom distribution list"
   },
   "StoriesSettings__choose-viewers": {
     "message": "Choose Viewers",
-    "description": "Modal title when choosing to add a viewer to a private distribution list"
+    "description": "Modal title when choosing to add a viewer to a custom distribution list"
   },
   "StoriesSettings__name-story": {
-    "message": "Name this story",
-    "description": "Modal title when naming a private distribution list"
+    "message": "Name story",
+    "description": "Modal title when naming a custom distribution list"
   },
   "StoriesSettings__name-placeholder": {
     "message": "Story name (required)",
@@ -5544,7 +5592,7 @@
     "description": "Description of button StoriesSettings__mine__all--label"
   },
   "StoriesSettings__mine__exclude--label": {
-    "message": "All Signal connections except...",
+    "message": "All except...",
     "description": "Input label to create a block list"
   },
   "StoriesSettings__mine__exclude--description": {
@@ -5553,7 +5601,7 @@
   },
   "StoriesSettings__mine__only--label": {
     "message": "Only share with...",
-    "description": "Input label to create an exclusive allow list"
+    "description": "Input label to create an exclude list"
   },
   "StoriesSettings__mine__only--description": {
     "message": "Only share with selected people",
@@ -5575,6 +5623,14 @@
     "message": "Story settings",
     "description": "Button label to get to story settings"
   },
+  "StoriesSettings__view-receipts--label": {
+    "message": "View Receipts",
+    "description": "Label of view receipts checkbox in story settings"
+  },
+  "StoriesSettings__view-receipts--description": {
+    "message": "To change this setting, open the Signal app on your mobile device and navigate to Settings -> Stories",
+    "description": "Description of how view receipts can be changed in story settings"
+  },
   "SendStoryModal__choose-who-can-view": {
     "message": "Choose who can view your story",
     "description": "Shown during the first time posting a story"
@@ -5587,17 +5643,45 @@
     "message": "Send story",
     "description": "aria-label for the send story button"
   },
+  "SendStoryModal__custom-story": {
+    "message": "Custom story",
+    "description": "Subtitle for custom stories in the 'send to' list - shown next to the viewer count"
+  },
+  "SendStoryModal__group-story": {
+    "message": "Group story",
+    "description": "Subtitle for group stories in the 'send to' list - shown next to the member count"
+  },
+  "SendStoryModal__only-share-with": {
+    "message": "Only share with",
+    "description": "Subtitle for My Story when the user has chosen an exclude list"
+  },
+  "icu:SendStoryModal__excluded": {
+    "messageformat": "{count, plural, one {1 excluded} other {# excluded}}",
+    "description": "Label for excluded count for My Story as an exclude list"
+  },
   "SendStoryModal__new": {
-    "message": "New story",
+    "message": "New",
     "description": "button to create a new distribution list to send story to"
+  },
+  "SendStoryModal__new-custom--title": {
+    "message": "New custom story",
+    "description": "Create a new distribution list"
+  },
+  "SendStoryModal__new-custom--name-visibility": {
+    "message": "Only you can see the name of this story.",
+    "description": "Clarification below the text box to name your story distribution list"
+  },
+  "SendStoryModal__new-custom--description": {
+    "message": "Visible only to specific people",
+    "description": "Description of what a distribution list would do"
   },
   "SendStoryModal__new-private--title": {
     "message": "New private story",
-    "description": "Create a new distribution list"
+    "description": "(deleted 2022/11/21) Create a new distribution list"
   },
   "SendStoryModal__new-private--description": {
     "message": "Visible only to specific people",
-    "description": "Description of what a distribution list would do"
+    "description": "(deleted 2022/11/21) Description of what a distribution list would do"
   },
   "SendStoryModal__new-group--title": {
     "message": "New group story",
@@ -5612,8 +5696,8 @@
     "description": "Modal title when choosing groups"
   },
   "SendStoryModal__my-stories-privacy": {
-    "message": "My stories privacy",
-    "description": "Modal title for setting privacy for My Stories"
+    "message": "My Story privacy",
+    "description": "Modal title for setting privacy for My Story"
   },
   "SendStoryModal__privacy-disclaimer": {
     "message": "Choose which Signal connections can view your story. You can always change this in privacy settings. $learnMore$",
@@ -5665,7 +5749,7 @@
   },
   "StoryViewer__views-off": {
     "message": "Views off",
-    "description": "When the user has read receipts turned off"
+    "description": "(deleted 2022/10/13) When the user has read receipts turned off"
   },
   "StoryDetailsModal__sent-time": {
     "message": "Sent $time$",
@@ -5684,7 +5768,7 @@
     "description": "Context menu item to help debugging"
   },
   "StoryViewsNRepliesModal__read-receipts-off": {
-    "message": "Enable read receipts to see who's viewed your stories. Open the Signal app on your mobile device and navigate to Settings > Privacy.",
+    "message": "Enable view receipts to see who’s viewed your stories. Open the Signal app on your mobile device and navigate to Settings > Stories.",
     "description": "Instructions on how to enable read receipts"
   },
   "StoryViewsNRepliesModal__no-replies": {
@@ -5710,6 +5794,10 @@
   "StoryViewsNRepliesModal__reacted": {
     "message": "Reacted to the story",
     "description": "Description of someone reacting to a story"
+  },
+  "icu:StoryViewsNRepliesModal__not-a-member": {
+    "messageformat": "You can’t reply to this story because you’re longer a member of this group.",
+    "description": "Shown in the composer area of the reply-to-story modal when a user can't make a reply because they are no longer a member"
   },
   "StoryListItem__label": {
     "message": "Story",
@@ -5846,6 +5934,18 @@
   "Quote__story-reaction--single": {
     "message": "Reacted to a story",
     "description": "Used whenever we can't find a user's first name"
+  },
+  "Quote__story-reaction-notification--incoming": {
+    "message": "Reacted $emoji$ to your story",
+    "description": "Notification test for incoming story reactions"
+  },
+  "Quote__story-reaction-notification--outgoing": {
+    "message": "You reacted $emoji$ to a story from $name$",
+    "description": "Notification test for outgoing story reactions"
+  },
+  "Quote__story-reaction-notification--outgoing--nameless": {
+    "message": "You reacted $emoji$ to a story",
+    "description": "Notification test for outgoing story reactions but no name"
   },
   "Quote__story-unavailable": {
     "message": "No longer available",

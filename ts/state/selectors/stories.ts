@@ -6,7 +6,7 @@ import { pick } from 'lodash';
 
 import type { GetConversationByIdType } from './conversations';
 import type { ConversationType } from '../ducks/conversations';
-import type { MessageReactionType } from '../../model-types.d';
+import type { AttachmentType } from '../../types/Attachment';
 import type {
   ConversationStoryType,
   MyStoryType,
@@ -20,6 +20,7 @@ import type {
   SelectedStoryDataType,
   StoryDataType,
   StoriesStateType,
+  AddStoryData,
 } from '../ducks/stories';
 import { HasStories, MY_STORIES_ID } from '../../types/Stories';
 import { ReadStatus } from '../../messages/MessageReadStatus';
@@ -36,6 +37,7 @@ import { getDistributionListSelector } from './storyDistributionLists';
 import { getStoriesEnabled } from './items';
 import { calculateExpirationTimestamp } from '../../util/expirationTimer';
 import { getMessageIdForLogging } from '../../util/idForLogging';
+import * as log from '../../logging/log';
 
 export const getStoriesState = (state: StateType): StoriesStateType =>
   state.stories;
@@ -56,9 +58,10 @@ export const getSelectedStoryData = createSelector(
     selectedStoryData
 );
 
-function getReactionUniqueId(reaction: MessageReactionType): string {
-  return `${reaction.fromId}:${reaction.targetAuthorUuid}:${reaction.timestamp}`;
-}
+export const getAddStoryData = createSelector(
+  getStoriesState,
+  ({ addStoryData }): AddStoryData => addStoryData
+);
 
 function sortByRecencyAndUnread(
   storyA: ConversationStoryType,
@@ -132,6 +135,13 @@ function getAvatarData(
   ]);
 }
 
+export function getStoryDownloadableAttachment({
+  attachment,
+}: StoryDataType): AttachmentType | undefined {
+  // See: getStoryDataFromMessageAttributes for how preview gets populated.
+  return attachment?.textAttachment?.preview?.image ?? attachment;
+}
+
 export function getStoryView(
   conversationSelector: GetConversationByIdType,
   ourConversationId: string | undefined,
@@ -158,13 +168,7 @@ export function getStoryView(
     expireTimer,
     readAt,
     timestamp,
-  } = pick(story, [
-    'attachment',
-    'expirationStartTimestamp',
-    'expireTimer',
-    'readAt',
-    'timestamp',
-  ]);
+  } = story;
 
   const { sendStateByConversationId } = story;
   let sendState: Array<StorySendStateType> | undefined;
@@ -222,7 +226,6 @@ export function getConversationStory(
   story: StoryDataType
 ): ConversationStoryType {
   const sender = pick(conversationSelector(story.sourceUuid || story.source), [
-    'hideStory',
     'id',
   ]);
 
@@ -230,12 +233,14 @@ export function getConversationStory(
     'acceptedMessageRequest',
     'avatarPath',
     'color',
+    'hideStory',
     'id',
     'name',
     'profileName',
     'sharedGroupNames',
     'sortedGroupMembers',
     'title',
+    'left',
   ]);
 
   const storyView = getStoryView(
@@ -247,7 +252,9 @@ export function getConversationStory(
   return {
     conversationId: conversation.id,
     group: conversation.id !== sender.id ? conversation : undefined,
-    isHidden: Boolean(sender.hideStory),
+    hasReplies: story.hasReplies,
+    hasRepliesFromSelf: story.hasRepliesFromSelf,
+    isHidden: Boolean(conversation.hideStory),
     storyView,
   };
 }
@@ -261,33 +268,11 @@ export const getStoryReplies = createSelector(
     conversationSelector,
     contactNameColorSelector,
     me,
-    { stories, replyState }: Readonly<StoriesStateType>
+    { replyState }: Readonly<StoriesStateType>
   ): ReplyStateType | undefined => {
     if (!replyState) {
       return;
     }
-
-    const foundStory = stories.find(
-      story => story.messageId === replyState.messageId
-    );
-
-    const reactions = foundStory
-      ? (foundStory.reactions || []).map(reaction => {
-          const conversation = conversationSelector(reaction.fromId);
-
-          return {
-            author: getAvatarData(conversation),
-            contactNameColor: contactNameColorSelector(
-              foundStory.conversationId,
-              conversation.id
-            ),
-            conversationId: reaction.fromId,
-            id: getReactionUniqueId(reaction),
-            reactionEmoji: reaction.emoji,
-            timestamp: reaction.timestamp,
-          };
-        })
-      : [];
 
     const replies = replyState.replies.map(reply => {
       const conversation =
@@ -297,7 +282,14 @@ export const getStoryReplies = createSelector(
 
       return {
         author: getAvatarData(conversation),
-        ...pick(reply, ['body', 'deletedForEveryone', 'id', 'timestamp']),
+        ...pick(reply, [
+          'body',
+          'bodyRanges',
+          'deletedForEveryone',
+          'id',
+          'timestamp',
+        ]),
+        reactionEmoji: reply.storyReaction?.emoji,
         contactNameColor: contactNameColorSelector(
           reply.conversationId,
           conversation.id
@@ -307,13 +299,9 @@ export const getStoryReplies = createSelector(
       };
     });
 
-    const combined = [...replies, ...reactions].sort((a, b) =>
-      a.timestamp > b.timestamp ? 1 : -1
-    );
-
     return {
       messageId: replyState.messageId,
-      replies: combined,
+      replies,
     };
   }
 );
@@ -339,6 +327,21 @@ export const getStories = createSelector(
 
     stories.forEach(story => {
       if (story.deletedForEveryone) {
+        return;
+      }
+
+      // if for some reason this story is already experied (bug)
+      // log it and skip it
+      if ((calculateExpirationTimestamp(story) ?? 0) < Date.now()) {
+        const messageIdForLogging = getMessageIdForLogging({
+          ...pick(story, 'type', 'sourceUuid', 'sourceDevice'),
+          sent_at: story.timestamp,
+        });
+        log.warn('selectors/getStories: story already expired', {
+          message: messageIdForLogging,
+          expireTimer: story.expireTimer,
+          expirationStartTimestamp: story.expirationStartTimestamp,
+        });
         return;
       }
 
@@ -394,7 +397,6 @@ export const getStories = createSelector(
       }
 
       let storiesMap: Map<string, ConversationStoryType>;
-
       if (conversationStory.isHidden) {
         storiesMap = hiddenStoriesById;
       } else {
@@ -408,6 +410,11 @@ export const getStories = createSelector(
       storiesMap.set(conversationStory.conversationId, {
         ...existingConversationStory,
         ...conversationStory,
+        hasReplies:
+          existingConversationStory?.hasReplies || conversationStory.hasReplies,
+        hasRepliesFromSelf:
+          existingConversationStory?.hasRepliesFromSelf ||
+          conversationStory.hasRepliesFromSelf,
         storyView: conversationStory.storyView,
       });
     });

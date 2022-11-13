@@ -30,6 +30,7 @@ import type { GiftBadgeStates } from './components/conversation/Message';
 import type { LinkPreviewType } from './types/message/LinkPreviews';
 
 import type { StickerType } from './types/Stickers';
+import type { StorySendMode } from './types/Stories';
 import type { MIMEType } from './types/MIME';
 
 import AccessRequiredEnum = Proto.AccessControl.AccessRequired;
@@ -146,7 +147,7 @@ export type MessageAttributesType = {
   messageTimer?: unknown;
   profileChange?: ProfileNameChangeType;
   quote?: QuotedMessageType;
-  reactions?: Array<MessageReactionType>;
+  reactions?: ReadonlyArray<MessageReactionType>;
   requiredProtocolVersion?: number;
   retryOptions?: RetryOptions;
   sourceDevice?: number;
@@ -184,7 +185,11 @@ export type MessageAttributesType = {
   unidentifiedDeliveries?: Array<string>;
   contact?: Array<EmbeddedContactType>;
   conversationId: string;
-  storyReactionEmoji?: string;
+  storyReaction?: {
+    emoji: string;
+    targetAuthorUuid: string;
+    targetTimestamp: number;
+  };
   giftBadge?: {
     expiration: number;
     level: number;
@@ -352,7 +357,7 @@ export type ConversationAttributesType = {
   //   to leave a group.
   left?: boolean;
   groupVersion?: number;
-  isGroupStorySendReady?: boolean;
+  storySendMode?: StorySendMode;
 
   // GroupV1 only
   members?: Array<string>;

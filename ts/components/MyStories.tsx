@@ -3,11 +3,12 @@
 
 import React, { useState } from 'react';
 import type { MyStoryType, StoryViewType } from '../types/Stories';
+import { StoryViewTargetType, StoryViewModeType } from '../types/Stories';
 import type { LocalizerType } from '../types/Util';
 import type { ViewStoryActionCreatorType } from '../state/ducks/stories';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import { ContextMenu } from './ContextMenu';
-import { StoryViewModeType } from '../types/Stories';
+
 import { MessageTimestamp } from './conversation/MessageTimestamp';
 import { StoryDistributionListName } from './StoryDistributionListName';
 import { StoryImage } from './StoryImage';
@@ -22,6 +23,7 @@ export type PropsType = {
   onSave: (story: StoryViewType) => unknown;
   queueStoryDownload: (storyId: string) => unknown;
   viewStory: ViewStoryActionCreatorType;
+  hasViewReceiptSetting: boolean;
 };
 
 export const MyStories = ({
@@ -33,6 +35,7 @@ export const MyStories = ({
   onSave,
   queueStoryDownload,
   viewStory,
+  hasViewReceiptSetting,
 }: PropsType): JSX.Element => {
   const [confirmDeleteStory, setConfirmDeleteStory] = useState<
     StoryViewType | undefined
@@ -85,7 +88,7 @@ export const MyStories = ({
                   onClick={() =>
                     viewStory({
                       storyId: story.messageId,
-                      storyViewMode: StoryViewModeType.User,
+                      storyViewMode: StoryViewModeType.MyStories,
                     })
                   }
                   type="button"
@@ -104,13 +107,11 @@ export const MyStories = ({
                     />
                   </div>
                   <div className="MyStories__story__details">
-                    {story.views === 1
-                      ? i18n('MyStories__views--singular', [
-                          String(story.views),
-                        ])
-                      : i18n('MyStories__views--plural', [
-                          String(story.views || 0),
-                        ])}
+                    {hasViewReceiptSetting
+                      ? i18n('icu:MyStories__views', {
+                          views: story.views ?? 0,
+                        })
+                      : i18n('icu:MyStories__views-off')}
                     <MessageTimestamp
                       i18n={i18n}
                       isRelativeTime
@@ -119,14 +120,17 @@ export const MyStories = ({
                     />
                   </div>
                 </button>
-                <button
-                  aria-label={i18n('MyStories__download')}
-                  className="MyStories__story__download"
-                  onClick={() => {
-                    onSave(story);
-                  }}
-                  type="button"
-                />
+                {story.attachment &&
+                  (story.attachment.path || story.attachment.data) && (
+                    <button
+                      aria-label={i18n('MyStories__download')}
+                      className="MyStories__story__download"
+                      onClick={() => {
+                        onSave(story);
+                      }}
+                      type="button"
+                    />
+                  )}
                 <ContextMenu
                   i18n={i18n}
                   menuOptions={[
@@ -138,20 +142,13 @@ export const MyStories = ({
                       },
                     },
                     {
-                      icon: 'MyStories__icon--save',
-                      label: i18n('save'),
-                      onClick: () => {
-                        onSave(story);
-                      },
-                    },
-                    {
                       icon: 'StoryListItem__icon--info',
                       label: i18n('StoryListItem__info'),
                       onClick: () => {
                         viewStory({
                           storyId: story.messageId,
-                          storyViewMode: StoryViewModeType.User,
-                          shouldShowDetailsModal: true,
+                          storyViewMode: StoryViewModeType.MyStories,
+                          viewTarget: StoryViewTargetType.Details,
                         });
                       },
                     },

@@ -6,6 +6,12 @@ package signalservice;
 option java_package         = "org.whispersystems.signalservice.internal.storage";
 option java_outer_classname = "SignalStorageProtos";
 
+enum OptionalBool {
+  UNSET = 0;
+  ENABLED = 1;
+  DISABLED = 2;
+}
+
 message StorageManifest  {
   optional uint64 version = 1;
   optional bytes  value   = 2;
@@ -101,14 +107,22 @@ message GroupV1Record {
 }
 
 message GroupV2Record {
-  optional bytes  masterKey                    = 1;
-  optional bool   blocked                      = 2;
-  optional bool   whitelisted                  = 3;
-  optional bool   archived                     = 4;
-  optional bool   markedUnread                 = 5;
-  optional uint64 mutedUntilTimestamp          = 6;
-  optional bool   dontNotifyForMentionsIfMuted = 7;
-  optional bool   hideStory                    = 8;
+  enum StorySendMode {
+    DEFAULT = 0;
+    DISABLED = 1;
+    ENABLED = 2;
+  }
+
+  optional bytes masterKey = 1;
+  optional bool blocked = 2;
+  optional bool whitelisted = 3;
+  optional bool archived = 4;
+  optional bool markedUnread = 5;
+  optional uint64 mutedUntilTimestamp = 6;
+  optional bool dontNotifyForMentionsIfMuted = 7;
+  optional bool hideStory = 8;
+  reserved /* storySendEnabled */ 9; // removed
+  optional StorySendMode storySendMode = 10;
 }
 
 message AccountRecord {
@@ -131,32 +145,34 @@ message AccountRecord {
     }
   }
 
-  optional bytes                  profileKey                   = 1;
-  optional string                 givenName                    = 2;
-  optional string                 familyName                   = 3;
-  optional string                 avatarUrl                    = 4;
-  optional bool                   noteToSelfArchived           = 5;
-  optional bool                   readReceipts                 = 6;
-  optional bool                   sealedSenderIndicators       = 7;
-  optional bool                   typingIndicators             = 8;
-  optional bool                   proxiedLinkPreviews          = 9;
-  optional bool                   noteToSelfMarkedUnread       = 10;
-  optional bool                   linkPreviews                 = 11;
-  optional PhoneNumberSharingMode phoneNumberSharingMode       = 12;
-  optional bool                   notDiscoverableByPhoneNumber = 13;
-  repeated PinnedConversation     pinnedConversations          = 14;
-  optional bool                   preferContactAvatars         = 15;
-  optional uint32                 universalExpireTimer         = 17;
-  optional bool                   primarySendsSms              = 18;
-  optional string                 e164                         = 19;
-  repeated string                 preferredReactionEmoji       = 20;
-  optional bytes                  subscriberId                 = 21;
-  optional string                 subscriberCurrencyCode       = 22;
-  optional bool                   displayBadgesOnProfile       = 23;
-  optional bool                   keepMutedChatsArchived       = 25;
-  optional bool                   hasSetMyStoriesPrivacy       = 26;
-  reserved                     /* hasViewedOnboardingStory */    27;
-  optional bool                   storiesDisabled              = 28;
+  optional bytes profileKey = 1;
+  optional string givenName = 2;
+  optional string familyName = 3;
+  optional string avatarUrl = 4;
+  optional bool noteToSelfArchived = 5;
+  optional bool readReceipts = 6;
+  optional bool sealedSenderIndicators = 7;
+  optional bool typingIndicators = 8;
+  optional bool proxiedLinkPreviews = 9;
+  optional bool noteToSelfMarkedUnread = 10;
+  optional bool linkPreviews = 11;
+  optional PhoneNumberSharingMode phoneNumberSharingMode = 12;
+  optional bool notDiscoverableByPhoneNumber = 13;
+  repeated PinnedConversation pinnedConversations = 14;
+  optional bool preferContactAvatars = 15;
+  optional uint32 universalExpireTimer = 17;
+  optional bool primarySendsSms = 18;
+  optional string e164 = 19;
+  repeated string preferredReactionEmoji = 20;
+  optional bytes subscriberId = 21;
+  optional string subscriberCurrencyCode = 22;
+  optional bool displayBadgesOnProfile = 23;
+  optional bool keepMutedChatsArchived = 25;
+  optional bool hasSetMyStoriesPrivacy = 26;
+  reserved /* hasViewedOnboardingStory */ 27;
+  reserved 28; // deprecatedStoriesDisabled
+  optional bool storiesDisabled = 29;
+  optional OptionalBool storyViewReceiptsEnabled = 30;
 }
 
 message StoryDistributionListRecord {

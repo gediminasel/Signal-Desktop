@@ -1161,6 +1161,7 @@ export default class MessageSender {
     groupId,
     options,
     urgent,
+    story,
     includePniSignatureMessage,
   }: Readonly<{
     messageOptions: MessageOptionsType;
@@ -1168,6 +1169,7 @@ export default class MessageSender {
     groupId: string | undefined;
     options?: SendOptionsType;
     urgent: boolean;
+    story?: boolean;
     includePniSignatureMessage?: boolean;
   }>): Promise<CallbackResultType> {
     const proto = await this.getContentMessage({
@@ -1191,6 +1193,7 @@ export default class MessageSender {
         recipients: messageOptions.recipients || [],
         timestamp: messageOptions.timestamp,
         urgent,
+        story,
       });
     });
   }
@@ -1255,6 +1258,7 @@ export default class MessageSender {
     groupId,
     options,
     urgent,
+    story,
   }: Readonly<{
     timestamp: number;
     recipients: Array<string>;
@@ -1263,6 +1267,7 @@ export default class MessageSender {
     groupId: string | undefined;
     options?: SendOptionsType;
     urgent: boolean;
+    story?: boolean;
   }>): Promise<CallbackResultType> {
     return new Promise((resolve, reject) => {
       const callback = (result: CallbackResultType) => {
@@ -1282,6 +1287,7 @@ export default class MessageSender {
         recipients,
         timestamp,
         urgent,
+        story,
       });
     });
   }
@@ -1343,6 +1349,7 @@ export default class MessageSender {
     reaction,
     sticker,
     storyContext,
+    story,
     timestamp,
     urgent,
     includePniSignatureMessage,
@@ -1362,6 +1369,7 @@ export default class MessageSender {
     reaction?: ReactionType;
     sticker?: StickerWithHydratedData;
     storyContext?: StoryContextType;
+    story?: boolean;
     timestamp: number;
     urgent: boolean;
     includePniSignatureMessage?: boolean;
@@ -1385,6 +1393,7 @@ export default class MessageSender {
       contentHint,
       groupId,
       options,
+      story,
       urgent,
       includePniSignatureMessage,
     });

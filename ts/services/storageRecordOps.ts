@@ -50,7 +50,7 @@ import type {
   StickerPackInfoType,
 } from '../sql/Interface';
 import dataInterface from '../sql/Client';
-import { MY_STORIES_ID } from '../types/Stories';
+import { MY_STORIES_ID, StorySendMode } from '../types/Stories';
 import * as RemoteConfig from '../RemoteConfig';
 
 const MY_STORIES_BYTES = uuidToBytes(MY_STORIES_ID);
@@ -362,6 +362,17 @@ export function toAccountRecord(
   const hasStoriesDisabled = window.storage.get('hasStoriesDisabled');
   accountRecord.storiesDisabled = hasStoriesDisabled === true;
 
+  const storyViewReceiptsEnabled = window.storage.get(
+    'storyViewReceiptsEnabled'
+  );
+  if (storyViewReceiptsEnabled !== undefined) {
+    accountRecord.storyViewReceiptsEnabled = storyViewReceiptsEnabled
+      ? Proto.OptionalBool.ENABLED
+      : Proto.OptionalBool.DISABLED;
+  } else {
+    accountRecord.storyViewReceiptsEnabled = Proto.OptionalBool.UNSET;
+  }
+
   applyUnknownFields(accountRecord, conversation);
 
   return accountRecord;
@@ -406,6 +417,18 @@ export function toGroupV2Record(
     conversation.get('dontNotifyForMentionsIfMuted')
   );
   groupV2Record.hideStory = Boolean(conversation.get('hideStory'));
+  const storySendMode = conversation.get('storySendMode');
+  if (storySendMode !== undefined) {
+    if (storySendMode === StorySendMode.IfActive) {
+      groupV2Record.storySendMode = Proto.GroupV2Record.StorySendMode.DEFAULT;
+    } else if (storySendMode === StorySendMode.Never) {
+      groupV2Record.storySendMode = Proto.GroupV2Record.StorySendMode.DISABLED;
+    } else if (storySendMode === StorySendMode.Always) {
+      groupV2Record.storySendMode = Proto.GroupV2Record.StorySendMode.ENABLED;
+    } else {
+      throw missingCaseError(storySendMode);
+    }
+  }
 
   applyUnknownFields(groupV2Record, conversation);
 
@@ -785,6 +808,23 @@ export async function mergeGroupV2Record(
   const oldStorageID = conversation.get('storageID');
   const oldStorageVersion = conversation.get('storageVersion');
 
+  const recordStorySendMode =
+    groupV2Record.storySendMode ?? Proto.GroupV2Record.StorySendMode.DEFAULT;
+  let storySendMode: StorySendMode;
+  if (recordStorySendMode === Proto.GroupV2Record.StorySendMode.DEFAULT) {
+    storySendMode = StorySendMode.IfActive;
+  } else if (
+    recordStorySendMode === Proto.GroupV2Record.StorySendMode.DISABLED
+  ) {
+    storySendMode = StorySendMode.Never;
+  } else if (
+    recordStorySendMode === Proto.GroupV2Record.StorySendMode.ENABLED
+  ) {
+    storySendMode = StorySendMode.Always;
+  } else {
+    throw missingCaseError(recordStorySendMode);
+  }
+
   conversation.set({
     hideStory: Boolean(groupV2Record.hideStory),
     isArchived: Boolean(groupV2Record.archived),
@@ -794,6 +834,7 @@ export async function mergeGroupV2Record(
     ),
     storageID,
     storageVersion,
+    storySendMode,
   });
 
   conversation.setMuteExpiration(
@@ -1063,6 +1104,7 @@ export async function mergeAccountRecord(
     keepMutedChatsArchived,
     hasSetMyStoriesPrivacy,
     storiesDisabled,
+    storyViewReceiptsEnabled,
   } = accountRecord;
 
   const updatedConversations = new Array<ConversationModel>();
@@ -1260,6 +1302,19 @@ export async function mergeAccountRecord(
     const hasStoriesDisabled = Boolean(storiesDisabled);
     window.storage.put('hasStoriesDisabled', hasStoriesDisabled);
     window.textsecure.server?.onHasStoriesDisabledChange(hasStoriesDisabled);
+  }
+
+  switch (storyViewReceiptsEnabled) {
+    case Proto.OptionalBool.ENABLED:
+      window.storage.put('storyViewReceiptsEnabled', true);
+      break;
+    case Proto.OptionalBool.DISABLED:
+      window.storage.put('storyViewReceiptsEnabled', false);
+      break;
+    case Proto.OptionalBool.UNSET:
+    default:
+      // Do nothing
+      break;
   }
 
   const ourID = window.ConversationController.getOurConversationId();

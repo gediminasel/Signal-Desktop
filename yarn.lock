@@ -1967,7 +1967,15 @@
     "@react-spring/shared" "~9.4.5"
     "@react-spring/types" "~9.4.5"
 
-"@signalapp/libsignal-client@0.20.0", "@signalapp/libsignal-client@^0.20.0":
+"@signalapp/libsignal-client@0.21.1":
+  version "0.21.1"
+  resolved "https://registry.yarnpkg.com/@signalapp/libsignal-client/-/libsignal-client-0.21.1.tgz#381d6162ae0e7719dc625780c1d6c3f9f558c33d"
+  integrity sha512-PiQfzB1sI5G6BEDl7Vq/4gj1btLkqvPwd4F9b0IHmWqgLAuCDR/ROnrKtEVRZlWmmWLMTwxo61E0eUhnesgrTQ==
+  dependencies:
+    node-gyp-build "^4.2.3"
+    uuid "^8.3.0"
+
+"@signalapp/libsignal-client@^0.20.0":
   version "0.20.0"
   resolved "https://registry.yarnpkg.com/@signalapp/libsignal-client/-/libsignal-client-0.20.0.tgz#d3160575e61592dcc85cb216ff9f38074b24d554"
   integrity sha512-uVrDVQKIVNVIGaGfacmpd10O0vSywC5D83PZRRlTBetMideLjxwksj1lco6t5QbM4m6G5Bwc5/xZ/cjzsUjCOA==
@@ -1975,10 +1983,10 @@
     node-gyp-build "^4.2.3"
     uuid "^8.3.0"
 
-"@signalapp/mock-server@2.10.0":
-  version "2.10.0"
-  resolved "https://registry.yarnpkg.com/@signalapp/mock-server/-/mock-server-2.10.0.tgz#a27246e7b912caebc0bef628303e11689bf9b74c"
-  integrity sha512-kHos3n8lNBhivUecEFG4g1rvYpJ6oPgzKMOsaI+vN8R1R4Pc63WXxrLsxqAI2QmAngD+nmOgbjwAvKyH4MN0+w==
+"@signalapp/mock-server@2.11.0":
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/@signalapp/mock-server/-/mock-server-2.11.0.tgz#fe5f6229c4a5c28b3591e986a1622218452c5112"
+  integrity sha512-m23XZ8lrBn0u+zakxkKG5SezyUg6fnWwZewFF28sHNL7fQDVPHJkFCJZgE9XJwHBDM7TYz9ca/ucReW4GIPHoQ==
   dependencies:
     "@signalapp/libsignal-client" "^0.20.0"
     debug "^4.3.2"
@@ -7534,10 +7542,10 @@ electron-window@^0.8.0:
   dependencies:
     is-electron-renderer "^2.0.0"
 
-electron@20.1.4:
-  version "20.1.4"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-20.1.4.tgz#d25b549f14376f99a0a239e27d67ef8515b4a5a0"
-  integrity sha512-7ov5kgSQi2JewV5SrVfjGasUvyScjuJrrDCW0rYxtP2SMe3JjoP4rsOOnh3ps2P/Nrdlbv+0ygiK0zp4ARCZ+A==
+electron@20.3.4:
+  version "20.3.4"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-20.3.4.tgz#a982196c7901a17d1107618634b1d0839f49c1df"
+  integrity sha512-kZYy7lgR9k24rkz89lQSXA28PkjMz1Z6Fr5ewvfjUatKOSrc0NJKlZ+mJ9KDmTvD5+gqOmewAyVecEGsMLFVow==
   dependencies:
     "@electron/get" "^1.14.1"
     "@types/node" "^16.11.26"

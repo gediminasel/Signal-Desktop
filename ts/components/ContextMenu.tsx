@@ -3,7 +3,6 @@
 
 import type { KeyboardEvent, ReactNode } from 'react';
 import type { Options, VirtualElement } from '@popperjs/core';
-import FocusTrap from 'focus-trap-react';
 import React, { useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { usePopper } from 'react-popper';
@@ -23,19 +22,28 @@ export type ContextMenuOptionType<T> = {
   readonly value?: T;
 };
 
-export type PropsType<T> = {
-  readonly ariaLabel?: string;
-  readonly children?: ReactNode;
-  readonly i18n: LocalizerType;
-  readonly menuOptions: ReadonlyArray<ContextMenuOptionType<T>>;
-  readonly moduleClassName?: string;
-  readonly onClick?: () => unknown;
-  readonly onMenuShowingChanged?: (value: boolean) => unknown;
-  readonly popperOptions?: Pick<Options, 'placement' | 'strategy'>;
-  readonly theme?: Theme;
-  readonly title?: string;
-  readonly value?: T;
+type RenderButtonProps = {
+  openMenu: (() => void) | ((ev: React.MouseEvent) => void);
+  onKeyDown: (ev: KeyboardEvent) => void;
+  isMenuShowing: boolean;
+  ref: React.Ref<HTMLButtonElement> | null;
 };
+
+export type PropsType<T> = Readonly<{
+  ariaLabel?: string;
+  // contents of the button OR a function that will render the whole button
+  children?: ReactNode | ((props: RenderButtonProps) => JSX.Element);
+  i18n: LocalizerType;
+  menuOptions: ReadonlyArray<ContextMenuOptionType<T>>;
+  moduleClassName?: string;
+  button?: () => JSX.Element;
+  onClick?: () => unknown;
+  onMenuShowingChanged?: (value: boolean) => unknown;
+  popperOptions?: Pick<Options, 'placement' | 'strategy'>;
+  theme?: Theme;
+  title?: string;
+  value?: T;
+}>;
 
 let closeCurrentOpenContextMenu: undefined | (() => unknown);
 
@@ -119,14 +127,24 @@ export function ContextMenu<T>({
   }, [isMenuShowing, referenceElement, popperElement]);
 
   const handleKeyDown = (ev: KeyboardEvent) => {
-    if (!isMenuShowing) {
-      if (ev.key === 'Enter') {
-        setFocusedIndex(0);
+    if ((ev.key === 'Enter' || ev.key === 'Space') && !isMenuShowing) {
+      closeCurrentOpenContextMenu?.();
+      closeCurrentOpenContextMenu = () => setIsMenuShowing(false);
+      if (referenceElement) {
+        const box = referenceElement.getBoundingClientRect();
+        virtualElement.current = generateVirtualElement(box.x, box.y);
       }
+      setIsMenuShowing(true);
+      setFocusedIndex(0);
+      ev.preventDefault();
+      ev.stopPropagation();
+    }
+
+    if (!isMenuShowing) {
       return;
     }
 
-    if (ev.key === 'ArrowDown') {
+    if (ev.key === 'ArrowDown' || ev.key === 'Tab') {
       const currFocusedIndex = focusedIndex || 0;
       const nextFocusedIndex =
         currFocusedIndex >= menuOptions.length - 1 ? 0 : currFocusedIndex + 1;
@@ -154,6 +172,13 @@ export function ContextMenu<T>({
       ev.stopPropagation();
       ev.preventDefault();
     }
+
+    if (ev.key === 'Escape') {
+      setIsMenuShowing(false);
+      closeCurrentOpenContextMenu = undefined;
+      ev.stopPropagation();
+      ev.preventDefault();
+    }
   };
 
   const handleClick = (ev: React.MouseEvent) => {
@@ -167,13 +192,16 @@ export function ContextMenu<T>({
 
   const getClassName = getClassNamesFor('ContextMenu', moduleClassName);
 
-  return (
-    <div
-      className={classNames(
-        getClassName('__container'),
-        theme ? themeClassName(theme) : undefined
-      )}
-    >
+  let buttonNode: ReactNode;
+  if (typeof children === 'function') {
+    buttonNode = (children as (props: RenderButtonProps) => JSX.Element)({
+      openMenu: onClick || handleClick,
+      onKeyDown: handleKeyDown,
+      isMenuShowing,
+      ref: setReferenceElement,
+    });
+  } else {
+    buttonNode = (
       <button
         aria-label={ariaLabel || i18n('ContextMenu--button')}
         className={classNames(
@@ -188,72 +216,77 @@ export function ContextMenu<T>({
       >
         {children}
       </button>
+    );
+  }
+
+  return (
+    <div
+      className={classNames(
+        getClassName('__container'),
+        theme ? themeClassName(theme) : undefined
+      )}
+    >
+      {buttonNode}
       {isMenuShowing && (
-        <FocusTrap
-          focusTrapOptions={{
-            allowOutsideClick: true,
-          }}
-        >
-          <div className={theme ? themeClassName(theme) : undefined}>
-            <div
-              className={classNames(
-                getClassName('__popper'),
-                menuOptions.length === 1
-                  ? getClassName('__popper--single-item')
-                  : undefined
-              )}
-              ref={setPopperElement}
-              style={styles.popper}
-              {...attributes.popper}
-            >
-              {title && <div className={getClassName('__title')}>{title}</div>}
-              {menuOptions.map((option, index) => (
-                <button
-                  aria-label={option.label}
-                  className={classNames(
-                    getClassName('__option'),
-                    focusedIndex === index
-                      ? getClassName('__option--focused')
-                      : undefined
-                  )}
-                  key={option.label}
-                  type="button"
-                  onClick={() => {
-                    option.onClick(option.value);
-                    setIsMenuShowing(false);
-                    closeCurrentOpenContextMenu = undefined;
-                  }}
-                >
-                  <div className={getClassName('__option--container')}>
-                    {option.icon && (
-                      <div
-                        className={classNames(
-                          getClassName('__option--icon'),
-                          option.icon
-                        )}
-                      />
-                    )}
-                    <div>
-                      <div className={getClassName('__option--title')}>
-                        {option.label}
-                      </div>
-                      {option.description && (
-                        <div className={getClassName('__option--description')}>
-                          {option.description}
-                        </div>
+        <div className={theme ? themeClassName(theme) : undefined}>
+          <div
+            className={classNames(
+              getClassName('__popper'),
+              menuOptions.length === 1
+                ? getClassName('__popper--single-item')
+                : undefined
+            )}
+            ref={setPopperElement}
+            style={styles.popper}
+            {...attributes.popper}
+          >
+            {title && <div className={getClassName('__title')}>{title}</div>}
+            {menuOptions.map((option, index) => (
+              <button
+                aria-label={option.label}
+                className={classNames(
+                  getClassName('__option'),
+                  focusedIndex === index
+                    ? getClassName('__option--focused')
+                    : undefined
+                )}
+                key={option.label}
+                type="button"
+                onClick={() => {
+                  option.onClick(option.value);
+                  setIsMenuShowing(false);
+                  closeCurrentOpenContextMenu = undefined;
+                }}
+              >
+                <div className={getClassName('__option--container')}>
+                  {option.icon && (
+                    <div
+                      className={classNames(
+                        getClassName('__option--icon'),
+                        option.icon
                       )}
+                    />
+                  )}
+                  <div>
+                    <div className={getClassName('__option--title')}>
+                      {option.label}
                     </div>
+                    {option.description && (
+                      <div className={getClassName('__option--description')}>
+                        {option.description}
+                      </div>
+                    )}
                   </div>
-                  {typeof value !== 'undefined' &&
-                  typeof option.value !== 'undefined' &&
-                  value === option.value ? (
-                    <div className={getClassName('__option--selected')} />
-                  ) : null}
-                </button>
-              ))}
-            </div>
+                </div>
+                {typeof value !== 'undefined' &&
+                typeof option.value !== 'undefined' &&
+                value === option.value ? (
+                  <div className={getClassName('__option--selected')} />
+                ) : null}
+              </button>
+            ))}
           </div>
-        </FocusTrap>
+        </div>
       )}
     </div>
   );

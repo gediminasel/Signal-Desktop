@@ -9,6 +9,7 @@ import * as log from '../logging/log';
 import dataInterface from '../sql/Client';
 import { DAY, SECOND } from './durations';
 import { MY_STORIES_ID } from '../types/Stories';
+import { getStoriesBlocked } from './stories';
 import { ReadStatus } from '../messages/MessageReadStatus';
 import { SeenStatus } from '../MessageSeenStatus';
 import { SendStatus } from '../messages/MessageSendState';
@@ -28,10 +29,17 @@ export async function sendStoryMessage(
   conversationIds: Array<string>,
   attachment: AttachmentType
 ): Promise<void> {
+  if (getStoriesBlocked()) {
+    log.warn('stories.sendStoryMessage: stories disabled, returning early');
+    return;
+  }
+
   const { messaging } = window.textsecure;
 
   if (!messaging) {
-    log.warn('stories.sendStoryMessage: messaging not available');
+    log.warn(
+      'stories.sendStoryMessage: messaging not available, returning early'
+    );
     return;
   }
 
@@ -149,6 +157,7 @@ export async function sendStoryMessage(
           attachments,
           conversationId: ourConversation.id,
           expireTimer: DAY / SECOND,
+          expirationStartTimestamp: Date.now(),
           id: UUID.generate().toString(),
           readStatus: ReadStatus.Read,
           received_at: incrementMessageCounter(),
@@ -158,6 +167,7 @@ export async function sendStoryMessage(
           sent_at: timestamp,
           source: window.textsecure.storage.user.getNumber(),
           sourceUuid: window.textsecure.storage.user.getUuid()?.toString(),
+          sourceDevice: window.textsecure.storage.user.getDeviceId(),
           storyDistributionListId: distributionList.id,
           timestamp,
           type: 'story',
@@ -198,7 +208,8 @@ export async function sendStoryMessage(
         return;
       }
 
-      const groupTimestamp = timestamp + index;
+      // We want all of these timestamps to be different from the My Story timestamp.
+      const groupTimestamp = timestamp + index + 1;
 
       const myId = window.ConversationController.getOurConversationIdOrThrow();
       const sendState = {
@@ -229,6 +240,7 @@ export async function sendStoryMessage(
           canReplyToStory: true,
           conversationId,
           expireTimer: DAY / SECOND,
+          expirationStartTimestamp: Date.now(),
           id: UUID.generate().toString(),
           readStatus: ReadStatus.Read,
           received_at: incrementMessageCounter(),
@@ -238,6 +250,7 @@ export async function sendStoryMessage(
           sent_at: groupTimestamp,
           source: window.textsecure.storage.user.getNumber(),
           sourceUuid: window.textsecure.storage.user.getUuid()?.toString(),
+          sourceDevice: window.textsecure.storage.user.getDeviceId(),
           timestamp: groupTimestamp,
           type: 'story',
         });
@@ -297,7 +310,8 @@ export async function sendStoryMessage(
           type: conversationQueueJobEnum.enum.Story,
           conversationId,
           messageIds: [messageAttributes.id],
-          timestamp,
+          // using the group timestamp, which will differ from the 1:1 timestamp
+          timestamp: messageAttributes.timestamp,
         },
         async jobToInsert => {
           const model = new window.Whisper.Message(messageAttributes);

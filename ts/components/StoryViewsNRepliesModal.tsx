@@ -1,7 +1,13 @@
 // Copyright 2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import classNames from 'classnames';
 import { usePopper } from 'react-popper';
 import type { AttachmentType } from '../types/Attachment';
@@ -12,6 +18,7 @@ import type { InputApi } from './CompositionInput';
 import type { PreferredBadgeSelectorType } from '../state/selectors/badges';
 import type { RenderEmojiPickerProps } from './conversation/ReactionPicker';
 import type { ReplyType, StorySendStateType } from '../types/Stories';
+import { StoryViewTargetType } from '../types/Stories';
 import { Avatar, AvatarSize } from './Avatar';
 import { CompositionInput } from './CompositionInput';
 import { ContactName } from './conversation/ContactName';
@@ -79,7 +86,7 @@ const MESSAGE_DEFAULT_PROPS = {
   viewStory: shouldNeverBeCalled,
 };
 
-enum Tab {
+export enum StoryViewsNRepliesTab {
   Replies = 'Replies',
   Views = 'Views',
 }
@@ -88,10 +95,10 @@ export type PropsType = {
   authorTitle: string;
   canReply: boolean;
   getPreferredBadge: PreferredBadgeSelectorType;
-  hasReadReceiptSetting: boolean;
+  hasViewReceiptSetting: boolean;
   hasViewsCapability: boolean;
   i18n: LocalizerType;
-  isGroupStory?: boolean;
+  group: Pick<ConversationType, 'left'> | undefined;
   onClose: () => unknown;
   onReact: (emoji: string) => unknown;
   onReply: (
@@ -105,21 +112,23 @@ export type PropsType = {
   preferredReactionEmoji: Array<string>;
   recentEmojis?: Array<string>;
   renderEmojiPicker: (props: RenderEmojiPickerProps) => JSX.Element;
-  replies: Array<ReplyType>;
+  replies: ReadonlyArray<ReplyType>;
   skinTone?: number;
   sortedGroupMembers?: Array<ConversationType>;
   storyPreviewAttachment?: AttachmentType;
   views: Array<StorySendStateType>;
+  viewTarget: StoryViewTargetType;
+  onChangeViewTarget: (target: StoryViewTargetType) => unknown;
 };
 
 export const StoryViewsNRepliesModal = ({
   authorTitle,
   canReply,
   getPreferredBadge,
-  hasReadReceiptSetting,
+  hasViewReceiptSetting,
   hasViewsCapability,
   i18n,
-  isGroupStory,
+  group,
   onClose,
   onReact,
   onReply,
@@ -134,13 +143,29 @@ export const StoryViewsNRepliesModal = ({
   sortedGroupMembers,
   storyPreviewAttachment,
   views,
+  viewTarget,
+  onChangeViewTarget,
 }: PropsType): JSX.Element | null => {
   const containerElementRef = useRef<HTMLDivElement | null>(null);
   const inputApiRef = useRef<InputApi | undefined>();
-  const shouldScrollToBottomRef = useRef(false);
-  const [bottom, setBottom] = useState<HTMLDivElement | null>(null);
+  const shouldScrollToBottomRef = useRef(true);
+  const bottomRef = useRef<HTMLDivElement>(null);
   const [messageBodyText, setMessageBodyText] = useState('');
   const [showReactionPicker, setShowReactionPicker] = useState(false);
+
+  const currentTab = useMemo<StoryViewsNRepliesTab>(() => {
+    return viewTarget === StoryViewTargetType.Replies
+      ? StoryViewsNRepliesTab.Replies
+      : StoryViewsNRepliesTab.Views;
+  }, [viewTarget]);
+
+  const onTabChange = (tab: string) => {
+    onChangeViewTarget(
+      tab === StoryViewsNRepliesTab.Replies
+        ? StoryViewTargetType.Replies
+        : StoryViewTargetType.Views
+    );
+  };
 
   const focusComposer = useCallback(() => {
     if (inputApiRef.current) {
@@ -171,17 +196,27 @@ export const StoryViewsNRepliesModal = ({
 
   let composerElement: JSX.Element | undefined;
 
-  useEffect(() => {
-    if (replies.length && shouldScrollToBottomRef.current) {
-      bottom?.scrollIntoView({ behavior: 'smooth' });
+  useLayoutEffect(() => {
+    if (
+      currentTab === StoryViewsNRepliesTab.Replies &&
+      replies.length &&
+      shouldScrollToBottomRef.current
+    ) {
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
       shouldScrollToBottomRef.current = false;
     }
-  }, [bottom, replies.length]);
+  }, [currentTab, replies.length]);
 
-  if (canReply) {
+  if (group && group.left) {
+    composerElement = (
+      <div className="StoryViewsNRepliesModal__not-a-member">
+        {i18n('icu:StoryViewsNRepliesModal__not-a-member')}
+      </div>
+    );
+  } else if (canReply) {
     composerElement = (
       <>
-        {!isGroupStory && (
+        {!group && (
           <Quote
             authorTitle={authorTitle}
             conversationColor="ultramarine"
@@ -216,7 +251,7 @@ export const StoryViewsNRepliesModal = ({
               }}
               onTextTooLong={onTextTooLong}
               placeholder={
-                isGroupStory
+                group
                   ? i18n('StoryViewer__reply-group')
                   : i18n('StoryViewer__reply')
               }
@@ -320,6 +355,7 @@ export const StoryViewsNRepliesModal = ({
               <Message
                 {...MESSAGE_DEFAULT_PROPS}
                 author={reply.author}
+                bodyRanges={reply.bodyRanges}
                 contactNameColor={reply.contactNameColor}
                 containerElementRef={containerElementRef}
                 conversationColor="ultramarine"
@@ -351,10 +387,10 @@ export const StoryViewsNRepliesModal = ({
             </div>
           )
         )}
-        <div ref={setBottom} />
+        <div ref={bottomRef} />
       </div>
     );
-  } else if (isGroupStory) {
+  } else if (group) {
     repliesElement = (
       <div className="StoryViewsNRepliesModal__replies--none">
         {i18n('StoryViewsNRepliesModal__no-replies')}
@@ -363,7 +399,7 @@ export const StoryViewsNRepliesModal = ({
   }
 
   let viewsElement: JSX.Element | undefined;
-  if (hasViewsCapability && !hasReadReceiptSetting) {
+  if (hasViewsCapability && !hasViewReceiptSetting) {
     viewsElement = (
       <div className="StoryViewsNRepliesModal__read-receipts-off">
         {i18n('StoryViewsNRepliesModal__read-receipts-off')}
@@ -417,23 +453,24 @@ export const StoryViewsNRepliesModal = ({
   const tabsElement =
     viewsElement && repliesElement ? (
       <Tabs
-        initialSelectedTab={Tab.Views}
+        selectedTab={currentTab}
+        onTabChange={onTabChange}
         moduleClassName="StoryViewsNRepliesModal__tabs"
         tabs={[
           {
-            id: Tab.Views,
+            id: StoryViewsNRepliesTab.Views,
             label: i18n('StoryViewsNRepliesModal__tab--views'),
           },
           {
-            id: Tab.Replies,
+            id: StoryViewsNRepliesTab.Replies,
             label: i18n('StoryViewsNRepliesModal__tab--replies'),
           },
         ]}
       >
         {({ selectedTab }) => (
           <>
-            {selectedTab === Tab.Views && viewsElement}
-            {selectedTab === Tab.Replies && (
+            {selectedTab === StoryViewsNRepliesTab.Views && viewsElement}
+            {selectedTab === StoryViewsNRepliesTab.Replies && (
               <>
                 {repliesElement}
                 {composerElement}
@@ -459,7 +496,7 @@ export const StoryViewsNRepliesModal = ({
     >
       <div
         className={classNames({
-          'StoryViewsNRepliesModal--group': Boolean(isGroupStory),
+          'StoryViewsNRepliesModal--group': Boolean(group),
         })}
       >
         {tabsElement || (

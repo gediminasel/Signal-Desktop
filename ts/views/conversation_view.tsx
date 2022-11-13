@@ -1341,6 +1341,11 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
           const message = rawMedia[i];
           const { schemaVersion } = message;
 
+          // We want these message to be cached in memory for other operations like
+          //   listening to 'expired' events when showing the lightbox, and so any other
+          //   code working with this message has the latest updates.
+          const model = window.MessageController.register(message.id, message);
+
           if (
             schemaVersion &&
             schemaVersion < Message.VERSION_NEEDED_FOR_DISPLAY
@@ -1348,6 +1353,8 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
             // Yep, we really do want to wait for each of these
             // eslint-disable-next-line no-await-in-loop
             rawMedia[i] = await upgradeMessageSchema(message);
+            model.set(rawMedia[i]);
+
             // eslint-disable-next-line no-await-in-loop
             await window.Signal.Data.saveMessage(rawMedia[i], { ourUuid });
           }
@@ -1801,8 +1808,21 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
         mediaItem.attachment.path === selectedMediaItem.attachment.path
     );
 
+    const mediaMessage = selectedMediaItem.message;
+    const message = window.MessageController.getById(mediaMessage.id);
+    if (!message) {
+      throw new Error(
+        `showLightboxForMedia: Message ${mediaMessage.id} missing!`
+      );
+    }
+
+    const close = () => {
+      closeLightbox();
+      this.stopListening(message, 'expired', closeLightbox);
+    };
+
     showLightbox({
-      close: closeLightbox,
+      close,
       i18n: window.i18n,
       getConversation: getConversationSelector(window.reduxStore.getState()),
       media,
@@ -1816,6 +1836,8 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
       onSave,
       selectedIndex: selectedIndex >= 0 ? selectedIndex : 0,
     });
+
+    this.listenTo(message, 'expired', close);
   }
 
   showLightbox({
@@ -2642,11 +2664,9 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
 
     // If we have attachments, don't add link preview
     if (!this.hasFiles({ includePending: true })) {
-      maybeGrabLinkPreview(
-        messageText,
-        LinkPreviewSourceType.Composer,
-        caretLocation
-      );
+      maybeGrabLinkPreview(messageText, LinkPreviewSourceType.Composer, {
+        caretLocation,
+      });
     }
   }
 

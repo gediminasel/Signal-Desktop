@@ -25,10 +25,11 @@ import { StoriesAddStoryButton } from './StoriesAddStoryButton';
 import { StoryListItem } from './StoryListItem';
 import { Theme } from '../util/theme';
 import { isNotNil } from '../util/isNotNil';
+import { useRestoreFocus } from '../hooks/useRestoreFocus';
 
 const FUSE_OPTIONS: Fuse.IFuseOptions<ConversationStoryType> = {
   getFn: (story, path) => {
-    if (path === 'searchNames') {
+    if (path[0] === 'searchNames' || path === 'searchNames') {
       return [story.storyView.sender.title, story.storyView.sender.name].filter(
         isNotNil
       );
@@ -110,10 +111,13 @@ export const StoriesPane = ({
     }
   }, [searchTerm, stories]);
 
+  const [focusRef] = useRestoreFocus();
+
   return (
     <>
       <div className="Stories__pane__header">
         <button
+          ref={focusRef}
           aria-label={i18n('back')}
           className="Stories__pane__header--back"
           onClick={toggleStoriesView}
@@ -173,15 +177,17 @@ export const StoriesPane = ({
           {renderedStories.map(story => (
             <StoryListItem
               conversationId={story.conversationId}
-              group={story.group}
               getPreferredBadge={getPreferredBadge}
+              hasReplies={story.hasReplies}
+              hasRepliesFromSelf={story.hasRepliesFromSelf}
+              group={story.group}
               i18n={i18n}
               key={story.storyView.timestamp}
-              onHideStory={toggleHideStories}
               onGoToConversation={conversationId => {
                 showConversation({ conversationId });
                 toggleStoriesView();
               }}
+              onHideStory={toggleHideStories}
               queueStoryDownload={queueStoryDownload}
               story={story.storyView}
               viewUserStories={viewUserStories}
@@ -204,15 +210,16 @@ export const StoriesPane = ({
                 hiddenStories.map(story => (
                   <StoryListItem
                     conversationId={story.conversationId}
-                    key={story.storyView.timestamp}
                     getPreferredBadge={getPreferredBadge}
+                    group={story.group}
                     i18n={i18n}
                     isHidden
-                    onHideStory={toggleHideStories}
+                    key={story.storyView.timestamp}
                     onGoToConversation={conversationId => {
                       showConversation({ conversationId });
                       toggleStoriesView();
                     }}
+                    onHideStory={toggleHideStories}
                     queueStoryDownload={queueStoryDownload}
                     story={story.storyView}
                     viewUserStories={viewUserStories}

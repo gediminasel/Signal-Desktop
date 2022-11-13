@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import FocusTrap from 'focus-trap-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { get, has, noop } from 'lodash';
 import { usePopper } from 'react-popper';
@@ -14,9 +14,10 @@ import type { TextAttachmentType } from '../types/Attachment';
 import { Button, ButtonVariant } from './Button';
 import { ContextMenu } from './ContextMenu';
 import { LinkPreviewSourceType, findLinks } from '../types/LinkPreview';
+import type { MaybeGrabLinkPreviewOptionsType } from '../types/LinkPreview';
 import { Input } from './Input';
 import { Slider } from './Slider';
-import { StagedLinkPreview } from './conversation/StagedLinkPreview';
+import { StoryLinkPreview } from './StoryLinkPreview';
 import { TextAttachment } from './TextAttachment';
 import { Theme, themeClassName } from '../util/theme';
 import { getRGBA, getRGBANumber } from '../mediaEditor/util/color';
@@ -27,13 +28,17 @@ import {
 } from '../util/getStoryBackground';
 import { objectMap } from '../util/objectMap';
 import { handleOutsideClick } from '../util/handleOutsideClick';
+import { ConfirmDiscardDialog } from './ConfirmDiscardDialog';
+import { Spinner } from './Spinner';
 
 export type PropsType = {
   debouncedMaybeGrabLinkPreview: (
     message: string,
-    source: LinkPreviewSourceType
+    source: LinkPreviewSourceType,
+    options?: MaybeGrabLinkPreviewOptionsType
   ) => unknown;
   i18n: LocalizerType;
+  isSending: boolean;
   linkPreview?: LinkPreviewType;
   onClose: () => unknown;
   onDone: (textAttachment: TextAttachmentType) => unknown;
@@ -119,10 +124,17 @@ function getBgButtonAriaLabel(
 export const TextStoryCreator = ({
   debouncedMaybeGrabLinkPreview,
   i18n,
+  isSending,
   linkPreview,
   onClose,
   onDone,
 }: PropsType): JSX.Element => {
+  const [showConfirmDiscardModal, setShowConfirmDiscardModal] = useState(false);
+
+  const onTryClose = useCallback(() => {
+    setShowConfirmDiscardModal(true);
+  }, [setShowConfirmDiscardModal]);
+
   const [isEditingText, setIsEditingText] = useState(false);
   const [selectedBackground, setSelectedBackground] =
     useState<BackgroundStyleType>(BackgroundStyle.BG1);
@@ -178,7 +190,10 @@ export const TextStoryCreator = ({
     }
     debouncedMaybeGrabLinkPreview(
       linkPreviewInputValue,
-      LinkPreviewSourceType.StoryCreator
+      LinkPreviewSourceType.StoryCreator,
+      {
+        mode: 'story',
+      }
     );
   }, [
     debouncedMaybeGrabLinkPreview,
@@ -247,11 +262,11 @@ export const TextStoryCreator = ({
           setIsColorPickerShowing(false);
           setIsEditingText(false);
           setIsLinkPreviewInputShowing(false);
-          event.preventDefault();
-          event.stopPropagation();
         } else {
-          onClose();
+          onTryClose();
         }
+        event.preventDefault();
+        event.stopPropagation();
       }
     };
 
@@ -266,7 +281,9 @@ export const TextStoryCreator = ({
     isEditingText,
     isLinkPreviewInputShowing,
     colorPickerPopperButtonRef,
-    onClose,
+    showConfirmDiscardModal,
+    setShowConfirmDiscardModal,
+    onTryClose,
   ]);
 
   useEffect(() => {
@@ -417,7 +434,7 @@ export const TextStoryCreator = ({
           )}
           <div className="StoryCreator__toolbar--buttons">
             <Button
-              onClick={onClose}
+              onClick={onTryClose}
               theme={Theme.Dark}
               variant={ButtonVariant.Secondary}
             >
@@ -524,14 +541,13 @@ export const TextStoryCreator = ({
                   <div className="StoryCreator__link-preview-container">
                     {linkPreview ? (
                       <>
-                        <StagedLinkPreview
-                          domain={linkPreview.domain}
-                          i18n={i18n}
-                          image={linkPreview.image}
-                          moduleClassName="StoryCreator__link-preview"
-                          title={linkPreview.title}
-                          url={linkPreview.url}
-                        />
+                        <div className="StoryCreator__link-preview-wrapper">
+                          <StoryLinkPreview
+                            {...linkPreview}
+                            forceCompactMode
+                            i18n={i18n}
+                          />
+                        </div>
                         <Button
                           className="StoryCreator__link-preview-button"
                           onClick={() => {
@@ -555,15 +571,26 @@ export const TextStoryCreator = ({
               )}
             </div>
             <Button
-              disabled={!hasChanges}
+              disabled={!hasChanges || isSending}
               onClick={() => onDone(textAttachment)}
               theme={Theme.Dark}
               variant={ButtonVariant.Primary}
             >
-              {i18n('StoryCreator__next')}
+              {isSending ? (
+                <Spinner svgSize="small" />
+              ) : (
+                i18n('StoryCreator__next')
+              )}
             </Button>
           </div>
         </div>
+        {showConfirmDiscardModal && (
+          <ConfirmDiscardDialog
+            i18n={i18n}
+            onClose={() => setShowConfirmDiscardModal(false)}
+            onDiscard={onClose}
+          />
+        )}
       </div>
     </FocusTrap>
   );
