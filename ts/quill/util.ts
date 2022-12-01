@@ -59,8 +59,8 @@ export const getTextFromOps = (ops: Array<DeltaOperation>): string =>
     }, '')
     .trim();
 
-const expandGoLinks = (text) => {
-  if (localStorage.getItem('realGoLinkAddress')) {
+const expandGoLinks = (text: string) => {
+  if (window.localStorage && localStorage.getItem('realGoLinkAddress')) {
     return text.replace(
       /(\s|^)(http:\/\/go|go)(\/[\w-])/gmu,
       `$1${localStorage.getItem('realGoLinkAddress')}$3`

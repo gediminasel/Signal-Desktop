@@ -8,8 +8,8 @@ type PropsType = {
   onClose: () => unknown;
 };
 
-export const ToastTextMessagesForbidden = ({
+export function ToastTextMessagesForbidden({
   onClose,
-}: PropsType): JSX.Element => {
+}: PropsType): JSX.Element {
   return <Toast onClose={onClose}>This group is for media only!</Toast>;
-};
+}

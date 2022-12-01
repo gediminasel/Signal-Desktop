@@ -234,7 +234,9 @@ export function TimelineMessage(props: Props): JSX.Element {
       : undefined;
 
   const handleReplyToMessage = canReply ? () => replyToMessage(id) : undefined;
-  const handleReplyPrivately = canReplyPrivately ? () => replyPrivately(id) : undefined;
+  const handleReplyPrivately = canReplyPrivately
+    ? () => replyPrivately(id)
+    : undefined;
 
   const handleReact = canReact ? () => toggleReactionPicker() : undefined;
 

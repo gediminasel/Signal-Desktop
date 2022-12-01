@@ -12,12 +12,12 @@ export type PropsType = {
   renderTimeline: () => JSX.Element;
 };
 
-export const ConversationView = ({
+export function ConversationView({
   id,
   renderCompositionArea,
   renderConversationHeader,
   renderTimeline,
-}: PropsType): JSX.Element => {
+}: PropsType): JSX.Element {
   const url = encodeURIComponent(
     join(SignalContext.config.userDataPath, 'bgs', `${id}.png`)
   );

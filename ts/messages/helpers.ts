@@ -14,7 +14,7 @@ import type { AnyPaymentEvent } from '../types/Payment';
 import type { LocalizerType } from '../types/Util';
 import { missingCaseError } from '../util/missingCaseError';
 import { find } from '../util/iterables';
-import { MessageModel } from '../models/messages';
+import type { MessageModel } from '../models/messages';
 
 export function isIncoming(
   message: Pick<MessageAttributesType, 'type'>

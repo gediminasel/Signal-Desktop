@@ -681,7 +681,11 @@ const getShallowPropsForMessage = createSelectorCreator(memoizeByRoot, isEqual)(
       canDownload: canDownload(message, conversationSelector),
       canReact: canReact(message, ourConversationId, conversationSelector),
       canReply: canReply(message, ourConversationId, conversationSelector),
-      canReplyPrivately: canReplyPrivately(message, ourConversationId, conversationSelector),
+      canReplyPrivately: canReplyPrivately(
+        message,
+        ourConversationId,
+        conversationSelector
+      ),
       canRetry: hasErrors(message),
       canRetryDeleteForEveryone: canRetryDeleteForEveryone(message),
       contact: getPropsForEmbeddedContact(message, regionCode, accountSelector),
@@ -1797,7 +1801,6 @@ export function canReplyPrivately(
   }
   return canReplyOrReact(message, ourConversationId, conversation);
 }
-
 
 export function canReact(
   message: Pick<
