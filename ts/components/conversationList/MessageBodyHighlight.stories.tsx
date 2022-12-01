@@ -21,37 +21,38 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   text: text('text', overrideProps.text || ''),
 });
 
-export const Basic = (): JSX.Element => {
+export function Basic(): JSX.Element {
   const props = createProps({
     text: 'This is before <<left>>Inside<<right>> This is after.',
   });
 
   return <MessageBodyHighlight {...props} />;
-};
+}
 
-export const NoReplacement = (): JSX.Element => {
+export function NoReplacement(): JSX.Element {
   const props = createProps({
     text: 'All\nplain\ntext 🔥 http://somewhere.com',
   });
 
   return <MessageBodyHighlight {...props} />;
-};
+}
 
-export const TwoReplacements = (): JSX.Element => {
+export function TwoReplacements(): JSX.Element {
   const props = createProps({
     text: 'Begin <<left>>Inside #1<<right>> This is between the two <<left>>Inside #2<<right>> End.',
   });
 
   return <MessageBodyHighlight {...props} />;
-};
+}
 
-export const TwoReplacementsWithAnMention = (): JSX.Element => {
+export function TwoReplacementsWithAnMention(): JSX.Element {
   const props = createProps({
     bodyRanges: [
       {
         length: 1,
         mentionUuid: '0ca40892-7b1a-11eb-9439-0242ac130002',
         replacementText: 'Jin Sakai',
+        conversationID: 'x',
         start: 33,
       },
     ],
@@ -59,28 +60,28 @@ export const TwoReplacementsWithAnMention = (): JSX.Element => {
   });
 
   return <MessageBodyHighlight {...props} />;
-};
+}
 
 TwoReplacementsWithAnMention.story = {
   name: 'Two Replacements with an @mention',
 };
 
-export const EmojiNewlinesUrLs = (): JSX.Element => {
+export function EmojiNewlinesUrLs(): JSX.Element {
   const props = createProps({
     text: '\nhttp://somewhere.com\n\n🔥 Before -- <<left>>A 🔥 inside<<right>> -- After 🔥',
   });
 
   return <MessageBodyHighlight {...props} />;
-};
+}
 
 EmojiNewlinesUrLs.story = {
   name: 'Emoji + Newlines + URLs',
 };
 
-export const NoJumbomoji = (): JSX.Element => {
+export function NoJumbomoji(): JSX.Element {
   const props = createProps({
     text: '🔥',
   });
 
   return <MessageBodyHighlight {...props} />;
-};
+}

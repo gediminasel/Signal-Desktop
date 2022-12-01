@@ -28,7 +28,9 @@ import type {
 import { WarnOnlyError } from './Errors';
 import { GiftBadgeStates } from '../components/conversation/Message';
 import { APPLICATION_OCTET_STREAM, stringToMIMEType } from '../types/MIME';
-import { SECOND } from '../util/durations';
+import { SECOND, DurationInSeconds } from '../util/durations';
+import type { AnyPaymentEvent } from '../types/Payment';
+import { PaymentEventKind } from '../types/Payment';
 
 const FLAGS = Proto.DataMessage.Flags;
 export const ATTACHMENT_MAX = 32;
@@ -121,6 +123,38 @@ export function processGroupV2Context(
     secretParams: Bytes.toBase64(data.secretParams),
     publicParams: Bytes.toBase64(data.publicParams),
   };
+}
+
+export function processPayment(
+  payment?: Proto.DataMessage.IPayment | null
+): AnyPaymentEvent | undefined {
+  if (!payment) {
+    return undefined;
+  }
+
+  if (payment.notification != null) {
+    return {
+      kind: PaymentEventKind.Notification,
+      note: payment.notification.note ?? null,
+    };
+  }
+
+  if (payment.activation != null) {
+    if (
+      payment.activation.type ===
+      Proto.DataMessage.Payment.Activation.Type.REQUEST
+    ) {
+      return { kind: PaymentEventKind.ActivationRequest };
+    }
+    if (
+      payment.activation.type ===
+      Proto.DataMessage.Payment.Activation.Type.ACTIVATED
+    ) {
+      return { kind: PaymentEventKind.Activation };
+    }
+  }
+
+  return undefined;
 }
 
 export function processQuote(
@@ -267,10 +301,10 @@ export function processGiftBadge(
   };
 }
 
-export async function processDataMessage(
+export function processDataMessage(
   message: Proto.IDataMessage,
   envelopeTimestamp: number
-): Promise<ProcessedDataMessage> {
+): ProcessedDataMessage {
   /* eslint-disable no-bitwise */
 
   // Now that its decrypted, validate the message and clean it up for consumer
@@ -299,12 +333,13 @@ export async function processDataMessage(
     group: processGroupContext(message.group),
     groupV2: processGroupV2Context(message.groupV2),
     flags: message.flags ?? 0,
-    expireTimer: message.expireTimer ?? 0,
+    expireTimer: DurationInSeconds.fromSeconds(message.expireTimer ?? 0),
     profileKey:
       message.profileKey && message.profileKey.length > 0
         ? Bytes.toBase64(message.profileKey)
         : undefined,
     timestamp,
+    payment: processPayment(message.payment),
     quote: processQuote(message.quote),
     contact: processContact(message.contact),
     preview: processPreview(message.preview),

@@ -12,6 +12,7 @@ export type PropsType = {
     id: string;
     checkboxNode: JSX.Element;
     labelNode: JSX.Element;
+    checked?: boolean;
   }) => JSX.Element;
   description?: string;
   disabled?: boolean;
@@ -23,7 +24,7 @@ export type PropsType = {
   onClick?: () => unknown;
 };
 
-export const Checkbox = ({
+export function Checkbox({
   checked,
   children,
   description,
@@ -34,7 +35,7 @@ export const Checkbox = ({
   name,
   onChange,
   onClick,
-}: PropsType): JSX.Element => {
+}: PropsType): JSX.Element {
   const getClassName = getClassNamesFor('Checkbox', moduleClassName);
   const id = useMemo(() => `${name}::${uuid()}`, [name]);
 
@@ -65,7 +66,7 @@ export const Checkbox = ({
     <div className={getClassName('')}>
       <div className={getClassName('__container')}>
         {children ? (
-          children({ id, checkboxNode, labelNode })
+          children({ id, checkboxNode, labelNode, checked })
         ) : (
           <>
             {checkboxNode}
@@ -75,4 +76,4 @@ export const Checkbox = ({
       </div>
     </div>
   );
-};
+}

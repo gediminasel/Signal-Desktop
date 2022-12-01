@@ -37,6 +37,7 @@ import {
   DEFAULT_DURATIONS_SET,
   format as formatExpirationTimer,
 } from '../util/expirationTimer';
+import { DurationInSeconds } from '../util/durations';
 import { useEscapeHandling } from '../hooks/useEscapeHandling';
 import { useUniqueId } from '../hooks/useUniqueId';
 import { useTheme } from '../hooks/useTheme';
@@ -76,7 +77,7 @@ export type PropsDataType = {
   selectedMicrophone?: AudioDevice;
   selectedSpeaker?: AudioDevice;
   themeSetting: ThemeSettingType;
-  universalExpireTimer: number;
+  universalExpireTimer: DurationInSeconds;
   whoCanFindMe: PhoneNumberDiscoverability;
   whoCanSeeMe: PhoneNumberSharingMode;
   zoomFactor: ZoomFactorType;
@@ -195,7 +196,7 @@ const DEFAULT_ZOOM_FACTORS = [
   },
 ];
 
-export const Preferences = ({
+export function Preferences({
   addCustomColor,
   availableCameras,
   availableMicrophones,
@@ -280,11 +281,11 @@ export const Preferences = ({
   setGlobalDefaultConversationColor,
   shouldShowStoriesSettings,
   themeSetting,
-  universalExpireTimer = 0,
+  universalExpireTimer = DurationInSeconds.ZERO,
   whoCanFindMe,
   whoCanSeeMe,
   zoomFactor,
-}: PropsType): JSX.Element => {
+}: PropsType): JSX.Element {
   const storiesId = useUniqueId();
   const themeSelectId = useUniqueId();
   const zoomSelectId = useUniqueId();
@@ -954,7 +955,7 @@ export const Preferences = ({
                   {
                     value: isCustomDisappearingMessageValue
                       ? universalExpireTimer
-                      : -1,
+                      : DurationInSeconds.fromSeconds(-1),
                     text: isCustomDisappearingMessageValue
                       ? formatExpirationTimer(i18n, universalExpireTimer)
                       : i18n('selectedCustomDisappearingTimeOption'),
@@ -1173,24 +1174,24 @@ export const Preferences = ({
       </div>
     </TitleBarContainer>
   );
-};
+}
 
-const SettingsRow = ({
+function SettingsRow({
   children,
   title,
 }: {
   children: ReactNode;
   title?: string;
-}): JSX.Element => {
+}): JSX.Element {
   return (
     <div className="Preferences__settings-row">
       {title && <h3 className="Preferences__padding">{title}</h3>}
       {children}
     </div>
   );
-};
+}
 
-const Control = ({
+function Control({
   left,
   onClick,
   right,
@@ -1198,7 +1199,7 @@ const Control = ({
   left: ReactNode;
   onClick?: () => unknown;
   right: ReactNode;
-}): JSX.Element => {
+}): JSX.Element {
   const content = (
     <>
       <div className="Preferences__control--key">{left}</div>
@@ -1219,7 +1220,7 @@ const Control = ({
   }
 
   return <div className="Preferences__control">{content}</div>;
-};
+}
 
 function localizeDefault(i18n: LocalizerType, deviceLabel: string): string {
   return deviceLabel.toLowerCase().startsWith('default')

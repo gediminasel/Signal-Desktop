@@ -1,9 +1,6 @@
 // Copyright 2017-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// This has to be the first import because it patches "os" module
-import '../ts/util/patchWindows7Hostname';
-
 import { join, normalize } from 'path';
 import { pathToFileURL } from 'url';
 import * as os from 'os';
@@ -49,6 +46,7 @@ import { strictAssert } from '../ts/util/assert';
 import { consoleLogger } from '../ts/util/consoleLogger';
 import type { ThemeSettingType } from '../ts/types/StorageUIKeys';
 import { ThemeType } from '../ts/types/Util';
+import * as Errors from '../ts/types/errors';
 
 import './startup_config';
 
@@ -161,6 +159,9 @@ const defaultWebPrefs = {
   spellcheck: false,
 };
 
+const DISABLE_GPU =
+  OS.isLinux() && !process.argv.some(arg => arg === '--enable-gpu');
+
 function showWindow() {
   if (!mainWindow) {
     return;
@@ -224,17 +225,17 @@ let sqlInitTimeEnd = 0;
 const sql = new MainSQL();
 const heicConverter = getHeicConverter();
 
-async function getSpellCheckSetting() {
+async function getSpellCheckSetting(): Promise<boolean> {
   const fastValue = ephemeralConfig.get('spell-check');
-  if (fastValue !== undefined) {
+  if (typeof fastValue === 'boolean') {
     getLogger().info('got fast spellcheck setting', fastValue);
     return fastValue;
   }
 
-  const json = await sql.sqlCall('getItemById', ['spell-check']);
+  const json = await sql.sqlCall('getItemById', 'spell-check');
 
   // Default to `true` if setting doesn't exist yet
-  const slowValue = json ? json.value : true;
+  const slowValue = typeof json?.value === 'boolean' ? json.value : true;
 
   ephemeralConfig.set('spell-check', slowValue);
 
@@ -260,7 +261,7 @@ async function getThemeSetting({
     return 'system';
   }
 
-  const json = await sql.sqlCall('getItemById', ['theme-setting']);
+  const json = await sql.sqlCall('getItemById', 'theme-setting');
 
   // Default to `system` if setting doesn't exist or is invalid
   const setting: unknown = json?.value;
@@ -378,16 +379,9 @@ async function prepareUrl(
   const theme = await getResolvedThemeSetting();
 
   const directoryConfig = directoryConfigSchema.safeParse({
-    directoryType: config.get<string | undefined>('directoryType') || 'legacy',
     directoryUrl: config.get<string | null>('directoryUrl') || undefined,
-    directoryEnclaveId:
-      config.get<string | null>('directoryEnclaveId') || undefined,
-    directoryTrustAnchor:
-      config.get<string | null>('directoryTrustAnchor') || undefined,
-    directoryCDSIUrl:
-      config.get<string | null>('directoryCDSIUrl') || undefined,
-    directoryCDSIMRENCLAVE:
-      config.get<string | null>('directoryCDSIMRENCLAVE') || undefined,
+    directoryMRENCLAVE:
+      config.get<string | null>('directoryMRENCLAVE') || undefined,
   });
   if (!directoryConfig.success) {
     throw new Error(
@@ -406,6 +400,7 @@ async function prepareUrl(
     serverUrl: config.get<string>('serverUrl'),
     storageUrl: config.get<string>('storageUrl'),
     updatesUrl: config.get<string>('updatesUrl'),
+    resourcesUrl: config.get<string>('resourcesUrl'),
     cdnUrl0: config.get<ConfigType>('cdn').get<string>('0'),
     cdnUrl2: config.get<ConfigType>('cdn').get<string>('2'),
     certificateAuthority: config.get<string>('certificateAuthority'),
@@ -477,7 +472,7 @@ async function handleUrl(event: Electron.Event, rawTarget: string) {
     try {
       await shell.openExternal(target);
     } catch (error) {
-      getLogger().error(`Failed to open url: ${error.stack}`);
+      getLogger().error(`Failed to open url: ${Errors.toLogFormat(error)}`);
     }
   }
 }
@@ -934,7 +929,7 @@ async function createWindow() {
 }
 
 // Renderer asks if we are done with the database
-ipc.on('database-ready', async event => {
+ipc.handle('database-ready', async () => {
   if (!sqlInitPromise) {
     getLogger().error('database-ready requested, but sqlInitPromise is falsey');
     return;
@@ -944,13 +939,12 @@ ipc.on('database-ready', async event => {
   if (error) {
     getLogger().error(
       'database-ready requested, but got sql error',
-      error && error.stack
+      Errors.toLogFormat(error)
     );
     return;
   }
 
   getLogger().info('sending `database-ready`');
-  event.sender.send('database-ready');
 });
 
 ipc.on('show-window', () => {
@@ -1036,7 +1030,7 @@ async function readyForUpdates() {
   } catch (error) {
     getLogger().error(
       'Error starting update checks:',
-      error && error.stack ? error.stack : error
+      Errors.toLogFormat(error)
     );
   }
 }
@@ -1046,10 +1040,7 @@ async function forceUpdate() {
     getLogger().info('starting force update');
     await updater.force();
   } catch (error) {
-    getLogger().error(
-      'Error during force update:',
-      error && error.stack ? error.stack : error
-    );
+    getLogger().error('Error during force update:', Errors.toLogFormat(error));
   }
 }
 
@@ -1265,8 +1256,8 @@ async function showSettingsWindow() {
 
 async function getIsLinked() {
   try {
-    const number = await sql.sqlCall('getItemById', ['number_id']);
-    const password = await sql.sqlCall('getItemById', ['password']);
+    const number = await sql.sqlCall('getItemById', 'number_id');
+    const password = await sql.sqlCall('getItemById', 'password');
     return Boolean(number && password);
   } catch (e) {
     return false;
@@ -1484,7 +1475,7 @@ const runSQLCorruptionHandler = async () => {
       `Restarting the application immediately. Error: ${error.message}`
   );
 
-  await onDatabaseError(error.stack || error.message);
+  await onDatabaseError(Errors.toLogFormat(error));
 };
 
 async function initializeSQL(
@@ -1616,7 +1607,7 @@ app.commandLine.appendSwitch('password-store', 'basic');
 
 // <canvas/> rendering is often utterly broken on Linux when using GPU
 // acceleration.
-if (OS.isLinux()) {
+if (DISABLE_GPU) {
   app.disableHardwareAcceleration();
 }
 
@@ -1657,12 +1648,10 @@ app.on('ready', async () => {
 
     // Update both stores
     ephemeralConfig.set('system-tray-setting', newValue);
-    await sql.sqlCall('createOrUpdateItem', [
-      {
-        id: 'system-tray-setting',
-        value: newValue,
-      },
-    ]);
+    await sql.sqlCall('createOrUpdateItem', {
+      id: 'system-tray-setting',
+      value: newValue,
+    });
 
     if (OS.isWindows()) {
       getLogger().info('app.ready: enabling open at login');
@@ -1805,15 +1794,15 @@ app.on('ready', async () => {
   } catch (err) {
     logger.error(
       'main/ready: Error deleting temp dir:',
-      err && err.stack ? err.stack : err
+      Errors.toLogFormat(err)
     );
   }
 
   // Initialize IPC channels before creating the window
 
   attachmentChannel.initialize({
+    sql,
     configDir: userDataPath,
-    cleanupOrphanedAttachments,
   });
   sqlChannels.initialize(sql);
   PowerChannel.initialize({
@@ -1832,7 +1821,7 @@ app.on('ready', async () => {
   if (sqlError) {
     getLogger().error('sql.initialize was unsuccessful; returning early');
 
-    await onDatabaseError(sqlError.stack || sqlError.message);
+    await onDatabaseError(Errors.toLogFormat(sqlError));
 
     return;
   }
@@ -1841,53 +1830,16 @@ app.on('ready', async () => {
 
   try {
     const IDB_KEY = 'indexeddb-delete-needed';
-    const item = await sql.sqlCall('getItemById', [IDB_KEY]);
+    const item = await sql.sqlCall('getItemById', IDB_KEY);
     if (item && item.value) {
-      await sql.sqlCall('removeIndexedDBFiles', []);
-      await sql.sqlCall('removeItemById', [IDB_KEY]);
+      await sql.sqlCall('removeIndexedDBFiles');
+      await sql.sqlCall('removeItemById', IDB_KEY);
     }
   } catch (err) {
     getLogger().error(
       '(ready event handler) error deleting IndexedDB:',
-      err && err.stack ? err.stack : err
+      Errors.toLogFormat(err)
     );
-  }
-
-  async function cleanupOrphanedAttachments() {
-    const allAttachments = await attachments.getAllAttachments(userDataPath);
-    const orphanedAttachments = await sql.sqlCall('removeKnownAttachments', [
-      allAttachments,
-    ]);
-    await attachments.deleteAll({
-      userDataPath,
-      attachments: orphanedAttachments,
-    });
-
-    await attachments.deleteAllBadges({
-      userDataPath,
-      pathsToKeep: await sql.sqlCall('getAllBadgeImageFileLocalPaths', []),
-    });
-
-    const allStickers = await attachments.getAllStickers(userDataPath);
-    const orphanedStickers = await sql.sqlCall('removeKnownStickers', [
-      allStickers,
-    ]);
-    await attachments.deleteAllStickers({
-      userDataPath,
-      stickers: orphanedStickers,
-    });
-
-    const allDraftAttachments = await attachments.getAllDraftAttachments(
-      userDataPath
-    );
-    const orphanedDraftAttachments = await sql.sqlCall(
-      'removeKnownDraftAttachments',
-      [allDraftAttachments]
-    );
-    await attachments.deleteAllDraftAttachments({
-      userDataPath,
-      attachments: orphanedDraftAttachments,
-    });
   }
 
   ready = true;
@@ -1995,10 +1947,7 @@ async function requestShutdown() {
   try {
     await request;
   } catch (error) {
-    getLogger().error(
-      'requestShutdown error:',
-      error && error.stack ? error.stack : error
-    );
+    getLogger().error('requestShutdown error:', Errors.toLogFormat(error));
   }
 }
 
@@ -2203,7 +2152,7 @@ ipc.handle(
     } catch (error) {
       getLogger().error(
         'show-permissions-popup error:',
-        error && error.stack ? error.stack : error
+        Errors.toLogFormat(error)
       );
     }
   }
@@ -2246,7 +2195,10 @@ ipc.on('get-built-in-images', async () => {
     if (mainWindow && mainWindow.webContents) {
       mainWindow.webContents.send('get-success-built-in-images', error.message);
     } else {
-      getLogger().error('Error handling get-built-in-images:', error.stack);
+      getLogger().error(
+        'Error handling get-built-in-images:',
+        Errors.toLogFormat(error)
+      );
     }
   }
 });
@@ -2326,10 +2278,7 @@ ipc.on('install-sticker-pack', (_event, packId, packKeyHex) => {
   }
 });
 
-ipc.on('ensure-file-permissions', async event => {
-  await ensureFilePermissions();
-  event.reply('ensure-file-permissions-done');
-});
+ipc.handle('ensure-file-permissions', () => ensureFilePermissions());
 
 /**
  * Ensure files in the user's data directory have the proper permissions.

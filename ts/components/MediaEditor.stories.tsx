@@ -27,41 +27,49 @@ const getDefaultProps = (): PropsType => ({
   imageSrc: IMAGE_2,
   onClose: action('onClose'),
   onDone: action('onDone'),
+  isSending: false,
+  imageToBlurHash: async () => 'LDA,FDBnm+I=p{tkIUI;~UkpELV]',
 
   // StickerButtonProps
   installedPacks,
   recentStickers: [Stickers.wide, Stickers.tall, Stickers.abe],
 });
 
-export const ExtraLarge = (): JSX.Element => (
-  <MediaEditor {...getDefaultProps()} />
-);
+export function ExtraLarge(): JSX.Element {
+  return <MediaEditor {...getDefaultProps()} />;
+}
 
-export const Large = (): JSX.Element => (
-  <MediaEditor {...getDefaultProps()} imageSrc={IMAGE_1} />
-);
+export function Large(): JSX.Element {
+  return <MediaEditor {...getDefaultProps()} imageSrc={IMAGE_1} />;
+}
 
-export const Smol = (): JSX.Element => (
-  <MediaEditor {...getDefaultProps()} imageSrc={IMAGE_3} />
-);
+export function Smol(): JSX.Element {
+  return <MediaEditor {...getDefaultProps()} imageSrc={IMAGE_3} />;
+}
 
-export const Portrait = (): JSX.Element => (
-  <MediaEditor {...getDefaultProps()} imageSrc={IMAGE_4} />
-);
+export function Portrait(): JSX.Element {
+  return <MediaEditor {...getDefaultProps()} imageSrc={IMAGE_4} />;
+}
 
-export const WithCaption = (): JSX.Element => (
-  <MediaEditor
-    {...getDefaultProps()}
-    supportsCaption
-    renderCompositionTextArea={props => (
-      <CompositionTextArea
-        {...props}
-        i18n={i18n}
-        onPickEmoji={action('onPickEmoji')}
-        onSetSkinTone={action('onSetSkinTone')}
-        onTextTooLong={action('onTextTooLong')}
-        getPreferredBadge={() => undefined}
-      />
-    )}
-  />
-);
+export function Sending(): JSX.Element {
+  return <MediaEditor {...getDefaultProps()} isSending />;
+}
+
+export function WithCaption(): JSX.Element {
+  return (
+    <MediaEditor
+      {...getDefaultProps()}
+      supportsCaption
+      renderCompositionTextArea={props => (
+        <CompositionTextArea
+          {...props}
+          i18n={i18n}
+          onPickEmoji={action('onPickEmoji')}
+          onSetSkinTone={action('onSetSkinTone')}
+          onTextTooLong={action('onTextTooLong')}
+          getPreferredBadge={() => undefined}
+        />
+      )}
+    />
+  );
+}

@@ -24,18 +24,23 @@ import {
   getPreferredBadgeSelector,
 } from '../selectors/badges';
 import { assertDev } from '../../util/assert';
+import type { DurationInSeconds } from '../../util/durations';
 import { SignalService as Proto } from '../../protobuf';
 import { getConversationColorAttributes } from '../../util/getConversationColorAttributes';
 import type { SmartChooseGroupMembersModalPropsType } from './ChooseGroupMembersModal';
 import { SmartChooseGroupMembersModal } from './ChooseGroupMembersModal';
 import type { SmartConfirmAdditionsModalPropsType } from './ConfirmAdditionsModal';
 import { SmartConfirmAdditionsModal } from './ConfirmAdditionsModal';
+import {
+  getGroupSizeRecommendedLimit,
+  getGroupSizeHardLimit,
+} from '../../groups/limits';
 
 export type SmartConversationDetailsProps = {
   addMembers: (conversationIds: ReadonlyArray<string>) => Promise<void>;
   conversationId: string;
   loadRecentMediaItems: (limit: number) => void;
-  setDisappearingMessages: (seconds: number) => void;
+  setDisappearingMessages: (seconds: DurationInSeconds) => void;
   showAllMedia: () => void;
   showChatColorEditor: () => void;
   showGroupLinkManagement: () => void;
@@ -114,6 +119,9 @@ const mapStateToProps = (
 
   const groupsInCommonSorted = sortBy(groupsInCommon, 'title');
 
+  const maxGroupSize = getGroupSizeHardLimit(1001);
+  const maxRecommendedGroupSize = getGroupSizeRecommendedLimit(151);
+
   return {
     ...props,
     areWeASubscriber: getAreWeASubscriber(state),
@@ -129,6 +137,8 @@ const mapStateToProps = (
     i18n: getIntl(state),
     isAdmin,
     ...groupMemberships,
+    maxGroupSize,
+    maxRecommendedGroupSize,
     userAvatarData: conversation.avatars || [],
     hasGroupLink,
     groupsInCommon: groupsInCommonSorted,

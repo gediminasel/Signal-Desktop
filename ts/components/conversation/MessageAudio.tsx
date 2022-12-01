@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import React, { useCallback, useRef, useEffect, useState } from 'react';
+import type { RefObject, ReactNode } from 'react';
 import classNames from 'classnames';
 import { noop } from 'lodash';
 import { animated, useSpring } from '@react-spring/web';
@@ -18,6 +19,7 @@ import type { ActiveAudioPlayerStateType } from '../../state/ducks/audioPlayer';
 
 export type OwnProps = Readonly<{
   active: ActiveAudioPlayerStateType | undefined;
+  buttonRef: RefObject<HTMLButtonElement>;
   renderingContext: string;
   i18n: LocalizerType;
   attachment: AttachmentType;
@@ -66,6 +68,7 @@ type ButtonProps = {
   onClick: () => void;
   onMouseDown?: () => void;
   onMouseUp?: () => void;
+  children?: ReactNode;
 };
 
 enum State {
@@ -122,81 +125,85 @@ const timeToText = (time: number): string => {
  * Handles animations, key events, and stoping event propagation
  * for play button and playback rate button
  */
-const Button: React.FC<ButtonProps> = props => {
-  const {
-    i18n,
-    variant,
-    mod,
-    label,
-    children,
-    onClick,
-    visible = true,
-    animateClick = true,
-  } = props;
-  const [isDown, setIsDown] = useState(false);
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  function ButtonInner(props, ref) {
+    const {
+      i18n,
+      variant,
+      mod,
+      label,
+      children,
+      onClick,
+      visible = true,
+      animateClick = true,
+    } = props;
+    const [isDown, setIsDown] = useState(false);
 
-  const [animProps] = useSpring(
-    {
-      config: SPRING_CONFIG,
-      to: isDown && animateClick ? { scale: 1.3 } : { scale: visible ? 1 : 0 },
-    },
-    [visible, isDown, animateClick]
-  );
+    const [animProps] = useSpring(
+      {
+        config: SPRING_CONFIG,
+        to:
+          isDown && animateClick ? { scale: 1.3 } : { scale: visible ? 1 : 0 },
+      },
+      [visible, isDown, animateClick]
+    );
 
-  // Clicking button toggle playback
-  const onButtonClick = useCallback(
-    (event: React.MouseEvent) => {
-      event.stopPropagation();
-      event.preventDefault();
+    // Clicking button toggle playback
+    const onButtonClick = useCallback(
+      (event: React.MouseEvent) => {
+        event.stopPropagation();
+        event.preventDefault();
 
-      onClick();
-    },
-    [onClick]
-  );
+        onClick();
+      },
+      [onClick]
+    );
 
-  // Keyboard playback toggle
-  const onButtonKeyDown = useCallback(
-    (event: React.KeyboardEvent) => {
-      if (event.key !== 'Enter' && event.key !== 'Space') {
-        return;
-      }
-      event.stopPropagation();
-      event.preventDefault();
+    // Keyboard playback toggle
+    const onButtonKeyDown = useCallback(
+      (event: React.KeyboardEvent) => {
+        if (event.key !== 'Enter' && event.key !== 'Space') {
+          return;
+        }
+        event.stopPropagation();
+        event.preventDefault();
 
-      onClick();
-    },
-    [onClick]
-  );
+        onClick();
+      },
+      [onClick]
+    );
 
-  return (
-    <animated.div style={animProps}>
-      <button
-        type="button"
-        className={classNames(
-          `${CSS_BASE}__${variant}-button`,
-          mod ? `${CSS_BASE}__${variant}-button--${mod}` : undefined
-        )}
-        onClick={onButtonClick}
-        onKeyDown={onButtonKeyDown}
-        onMouseDown={() => setIsDown(true)}
-        onMouseUp={() => setIsDown(false)}
-        onMouseLeave={() => setIsDown(false)}
-        tabIndex={0}
-        aria-label={i18n(label)}
-      >
-        {children}
-      </button>
-    </animated.div>
-  );
-};
+    return (
+      <animated.div style={animProps}>
+        <button
+          type="button"
+          ref={ref}
+          className={classNames(
+            `${CSS_BASE}__${variant}-button`,
+            mod ? `${CSS_BASE}__${variant}-button--${mod}` : undefined
+          )}
+          onClick={onButtonClick}
+          onKeyDown={onButtonKeyDown}
+          onMouseDown={() => setIsDown(true)}
+          onMouseUp={() => setIsDown(false)}
+          onMouseLeave={() => setIsDown(false)}
+          tabIndex={0}
+          aria-label={i18n(label)}
+        >
+          {children}
+        </button>
+      </animated.div>
+    );
+  }
+);
 
-const PlayedDot = ({
+function PlayedDot({
   played,
   onHide,
 }: {
   played: boolean;
   onHide: () => void;
-}) => {
+}) {
   const start = played ? 1 : 0;
   const end = played ? 0 : 1;
 
@@ -224,7 +231,7 @@ const PlayedDot = ({
       )}
     />
   );
-};
+}
 
 /**
  * Display message audio attachment along with its waveform, duration, and
@@ -239,9 +246,10 @@ const PlayedDot = ({
  * `context` is required for displaying separate MessageAudio instances in
  * MessageDetails and Message React components.
  */
-export const MessageAudio: React.FC<Props> = (props: Props) => {
+export function MessageAudio(props: Props): JSX.Element {
   const {
     active,
+    buttonRef,
     i18n,
     renderingContext,
     attachment,
@@ -506,6 +514,7 @@ export const MessageAudio: React.FC<Props> = (props: Props) => {
   } else if (state === State.NotDownloaded) {
     button = (
       <Button
+        ref={buttonRef}
         i18n={i18n}
         variant="play"
         mod="download"
@@ -518,6 +527,7 @@ export const MessageAudio: React.FC<Props> = (props: Props) => {
     // State.Normal
     button = (
       <Button
+        ref={buttonRef}
         i18n={i18n}
         variant="play"
         mod={isPlaying ? 'pause' : 'play'}
@@ -615,4 +625,4 @@ export const MessageAudio: React.FC<Props> = (props: Props) => {
       {metadata}
     </div>
   );
-};
+}

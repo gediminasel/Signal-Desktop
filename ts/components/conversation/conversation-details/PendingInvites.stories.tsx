@@ -7,6 +7,7 @@ import { times } from 'lodash';
 import { action } from '@storybook/addon-actions';
 
 import { UUID } from '../../../types/UUID';
+import { StorySendMode } from '../../../types/Stories';
 import { setupI18n } from '../../../util/setupI18n';
 import enMessages from '../../../../_locales/en/messages.json';
 import type { PropsType } from './PendingInvites';
@@ -40,6 +41,8 @@ const conversation: ConversationType = {
   title: 'Some Conversation',
   type: 'group',
   sharedGroupNames: [],
+  acknowledgedGroupNameCollisions: {},
+  storySendMode: StorySendMode.IfActive,
 };
 
 const OUR_UUID = UUID.generate().toString();
@@ -72,17 +75,17 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
   ...overrideProps,
 });
 
-export const Basic = (): JSX.Element => {
+export function Basic(): JSX.Element {
   const props = useProps();
 
   return <PendingInvites {...props} />;
-};
+}
 
-export const WithBadges = (): JSX.Element => {
+export function WithBadges(): JSX.Element {
   const props = useProps({ getPreferredBadge: () => getFakeBadge() });
 
   return <PendingInvites {...props} />;
-};
+}
 
 WithBadges.story = {
   name: 'With badges',

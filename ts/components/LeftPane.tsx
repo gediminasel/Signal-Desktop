@@ -28,6 +28,7 @@ import { ScrollBehavior } from '../types/Util';
 import type { PreferredBadgeSelectorType } from '../state/selectors/badges';
 import { usePrevious } from '../hooks/usePrevious';
 import { missingCaseError } from '../util/missingCaseError';
+import type { DurationInSeconds } from '../util/durations';
 import type { WidthBreakpoint } from './_util';
 import { getConversationListWidthBreakpoint } from './_util';
 import * as KeyboardLayout from '../services/keyboardLayout';
@@ -106,7 +107,7 @@ export type PropsType = {
   savePreferredLeftPaneWidth: (_: number) => void;
   searchInConversation: (conversationId: string) => unknown;
   setComposeGroupAvatar: (_: undefined | Uint8Array) => void;
-  setComposeGroupExpireTimer: (_: number) => void;
+  setComposeGroupExpireTimer: (_: DurationInSeconds) => void;
   setComposeGroupName: (_: string) => void;
   setComposeSearchTerm: (composeSearchTerm: string) => void;
   showArchivedConversations: () => void;
@@ -139,7 +140,7 @@ export type PropsType = {
   renderCrashReportDialog: () => JSX.Element;
 } & LookupConversationWithoutUuidActionsType;
 
-export const LeftPane: React.FC<PropsType> = ({
+export function LeftPane({
   challengeStatus,
   crashReportCount,
   clearConversationSearch,
@@ -186,7 +187,7 @@ export const LeftPane: React.FC<PropsType> = ({
   theme,
   toggleComposeEditingAvatar,
   updateSearchTerm,
-}) => {
+}: PropsType): JSX.Element {
   const [preferredWidth, setPreferredWidth] = useState(
     // This clamp is present just in case we get a bogus value from storage.
     clamp(preferredWidthFromStorage, MIN_WIDTH, MAX_WIDTH)
@@ -621,15 +622,13 @@ export const LeftPane: React.FC<PropsType> = ({
       {footerContents && (
         <div className="module-left-pane__footer">{footerContents}</div>
       )}
-      <>
-        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
-        <div
-          className="module-left-pane__resize-grab-area"
-          onMouseDown={() => {
-            setIsResizing(true);
-          }}
-        />
-      </>
+      {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+      <div
+        className="module-left-pane__resize-grab-area"
+        onMouseDown={() => {
+          setIsResizing(true);
+        }}
+      />
       {challengeStatus !== 'idle' &&
         renderCaptchaDialog({
           onSkip() {
@@ -639,7 +638,7 @@ export const LeftPane: React.FC<PropsType> = ({
       {crashReportCount > 0 && renderCrashReportDialog()}
     </div>
   );
-};
+}
 
 function keyboardKeyToNumericIndex(key: string): undefined | number {
   if (key.length !== 1) {

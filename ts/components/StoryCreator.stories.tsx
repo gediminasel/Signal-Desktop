@@ -37,8 +37,12 @@ export default {
       defaultValue: false,
     },
     i18n: { defaultValue: i18n },
+    imageToBlurHash: async () => 'LDA,FDBnm+I=p{tkIUI;~UkpELV]',
     installedPacks: {
       defaultValue: [],
+    },
+    isSending: {
+      defaultValue: false,
     },
     linkPreview: {
       defaultValue: undefined,
@@ -51,8 +55,13 @@ export default {
     onDistributionListCreated: { action: true },
     onHideMyStoriesFrom: { action: true },
     onSend: { action: true },
+    onSetSkinTone: { action: true },
+    onUseEmoji: { action: true },
     onViewersUpdated: { action: true },
     processAttachment: { action: true },
+    recentEmojis: {
+      defaultValue: [],
+    },
     recentStickers: {
       defaultValue: [],
     },
@@ -61,10 +70,14 @@ export default {
     signalConnections: {
       defaultValue: Array.from(Array(42), getDefaultConversation),
     },
+    skinTone: {
+      defaultValue: 0,
+    },
     toggleSignalConnectionsModal: { action: true },
   },
 } as Meta;
 
+// eslint-disable-next-line react/function-component-definition
 const Template: Story<PropsType> = args => <StoryCreator {...args} />;
 
 export const Default = Template.bind({});
@@ -94,4 +107,9 @@ FirstTime.args = {
 };
 FirstTime.story = {
   name: 'First time posting a story',
+};
+
+export const Sending = Template.bind({});
+Sending.args = {
+  isSending: true,
 };

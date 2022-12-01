@@ -19,20 +19,23 @@ export type PropsType = {
   i18n: LocalizerType;
   moduleClassName?: string;
   onAddStory: (file?: File) => unknown;
+  onContextMenuShowingChanged?: (value: boolean) => void;
   showToast: ShowToastActionCreatorType;
 };
 
-export const StoriesAddStoryButton = ({
+export function StoriesAddStoryButton({
   children,
   i18n,
   moduleClassName,
   onAddStory,
   showToast,
-}: PropsType): JSX.Element => {
+  onContextMenuShowingChanged,
+}: PropsType): JSX.Element {
   return (
     <ContextMenu
       ariaLabel={i18n('Stories__add')}
       i18n={i18n}
+      onMenuShowingChanged={onContextMenuShowingChanged}
       menuOptions={[
         {
           label: i18n('Stories__add-story--media'),
@@ -87,4 +90,4 @@ export const StoriesAddStoryButton = ({
       {children}
     </ContextMenu>
   );
-};
+}

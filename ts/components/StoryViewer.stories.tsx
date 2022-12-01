@@ -29,9 +29,11 @@ export default {
       defaultValue: undefined,
     },
     hasAllStoriesMuted: {
+      control: 'boolean',
       defaultValue: false,
     },
-    hasReadReceiptSetting: {
+    hasViewReceiptSetting: {
+      control: 'boolean',
       defaultValue: true,
     },
     i18n: {
@@ -54,6 +56,7 @@ export default {
     },
     queueStoryDownload: { action: true },
     renderEmojiPicker: { action: true },
+    retrySend: { action: true },
     showToast: { action: true },
     skinTone: {
       defaultValue: 0,
@@ -66,9 +69,14 @@ export default {
     },
     toggleHasAllStoriesMuted: { action: true },
     viewStory: { action: true },
+    isWindowActive: { defaultValue: true },
+  },
+  args: {
+    currentIndex: 0,
   },
 } as Meta;
 
+// eslint-disable-next-line react/function-component-definition
 const Template: Story<PropsType> = args => <StoryViewer {...args} />;
 
 export const SomeonesStory = Template.bind({});
@@ -127,6 +135,18 @@ Caption.args = {
   },
 };
 
+export const EmojiCaption = Template.bind({});
+EmojiCaption.args = {
+  story: {
+    ...getFakeStoryView(),
+    attachment: fakeAttachment({
+      caption: 'WOOOOOOOOW 🥰',
+      path: 'file.jpg',
+      url: '/fixtures/nathan-anderson-316188-unsplash.jpg',
+    }),
+  },
+};
+
 export const LongCaption = Template.bind({});
 LongCaption.args = {
   story: {
@@ -173,13 +193,42 @@ export const YourStory = Template.bind({});
   YourStory.storyName = 'Your story';
 }
 
+export const YourStoryFailed = Template.bind({});
+{
+  const storyView = getFakeStoryView(
+    '/fixtures/nathan-anderson-316188-unsplash.jpg'
+  );
+
+  YourStoryFailed.args = {
+    distributionList: { id: '123', name: 'Close Friends' },
+    story: {
+      ...storyView,
+      sender: {
+        ...storyView.sender,
+        isMe: true,
+      },
+      sendState: [
+        {
+          recipient: getDefaultConversation(),
+          status: SendStatus.Viewed,
+        },
+        {
+          recipient: getDefaultConversation(),
+          status: SendStatus.Failed,
+        },
+      ],
+    },
+  };
+  YourStory.storyName = 'Your story';
+}
+
 export const ReadReceiptsOff = Template.bind({});
 {
   const storyView = getFakeStoryView(
     '/fixtures/nathan-anderson-316188-unsplash.jpg'
   );
   ReadReceiptsOff.args = {
-    hasReadReceiptSetting: false,
+    hasViewReceiptSetting: false,
     story: {
       ...storyView,
       sender: {

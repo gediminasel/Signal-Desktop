@@ -3,15 +3,17 @@
 
 import React, { useState } from 'react';
 import classNames from 'classnames';
-import type { ConversationType } from '../state/ducks/conversations';
 import type { ConversationStoryType, StoryViewType } from '../types/Stories';
+import type { ConversationType } from '../state/ducks/conversations';
 import type { LocalizerType } from '../types/Util';
 import type { PreferredBadgeSelectorType } from '../state/selectors/badges';
 import type { ViewUserStoriesActionCreatorType } from '../state/ducks/stories';
 import { Avatar, AvatarSize } from './Avatar';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import { ContextMenu } from './ContextMenu';
-import { HasStories } from '../types/Stories';
+import { SIGNAL_ACI } from '../types/SignalConversation';
+import { StoryViewTargetType, HasStories } from '../types/Stories';
+
 import { MessageTimestamp } from './conversation/MessageTimestamp';
 import { StoryImage } from './StoryImage';
 import { ThemeType } from '../types/Util';
@@ -20,6 +22,8 @@ import { getAvatarColor } from '../types/Colors';
 export type PropsType = Pick<ConversationStoryType, 'group' | 'isHidden'> & {
   conversationId: string;
   getPreferredBadge: PreferredBadgeSelectorType;
+  hasReplies?: boolean;
+  hasRepliesFromSelf?: boolean;
   i18n: LocalizerType;
   onGoToConversation: (conversationId: string) => unknown;
   onHideStory: (conversationId: string) => unknown;
@@ -74,10 +78,12 @@ function StoryListItemAvatar({
   );
 }
 
-export const StoryListItem = ({
+export function StoryListItem({
   conversationId,
   getPreferredBadge,
   group,
+  hasReplies,
+  hasRepliesFromSelf,
   i18n,
   isHidden,
   onGoToConversation,
@@ -85,19 +91,14 @@ export const StoryListItem = ({
   queueStoryDownload,
   story,
   viewUserStories,
-}: PropsType): JSX.Element => {
+}: PropsType): JSX.Element {
   const [hasConfirmHideStory, setHasConfirmHideStory] = useState(false);
 
-  const {
-    attachment,
-    hasReplies,
-    hasRepliesFromSelf,
-    isUnread,
-    sender,
-    timestamp,
-  } = story;
+  const { attachment, isUnread, sender, timestamp } = story;
 
   const { firstName, title } = sender;
+
+  const isSignalOfficial = sender.uuid === SIGNAL_ACI;
 
   let avatarStoryRing: HasStories | undefined;
   if (attachment) {
@@ -105,10 +106,44 @@ export const StoryListItem = ({
   }
 
   let repliesElement: JSX.Element | undefined;
-  if (hasRepliesFromSelf) {
+  if (group === undefined && hasRepliesFromSelf) {
     repliesElement = <div className="StoryListItem__info--replies--self" />;
-  } else if (hasReplies) {
+  } else if (group && (hasReplies || hasRepliesFromSelf)) {
     repliesElement = <div className="StoryListItem__info--replies--others" />;
+  }
+
+  const menuOptions = [
+    {
+      icon: 'StoryListItem__icon--hide',
+      label: isHidden
+        ? i18n('StoryListItem__unhide')
+        : i18n('StoryListItem__hide'),
+      onClick: () => {
+        if (isHidden) {
+          onHideStory(conversationId);
+        } else {
+          setHasConfirmHideStory(true);
+        }
+      },
+    },
+  ];
+
+  if (!isSignalOfficial) {
+    menuOptions.push({
+      icon: 'StoryListItem__icon--info',
+      label: i18n('StoryListItem__info'),
+      onClick: () =>
+        viewUserStories({
+          conversationId,
+          viewTarget: StoryViewTargetType.Details,
+        }),
+    });
+
+    menuOptions.push({
+      icon: 'StoryListItem__icon--chat',
+      label: i18n('StoryListItem__go-to-chat'),
+      onClick: () => onGoToConversation(conversationId),
+    });
   }
 
   return (
@@ -116,32 +151,7 @@ export const StoryListItem = ({
       <ContextMenu
         aria-label={i18n('StoryListItem__label')}
         i18n={i18n}
-        menuOptions={[
-          {
-            icon: 'StoryListItem__icon--hide',
-            label: isHidden
-              ? i18n('StoryListItem__unhide')
-              : i18n('StoryListItem__hide'),
-            onClick: () => {
-              if (isHidden) {
-                onHideStory(conversationId);
-              } else {
-                setHasConfirmHideStory(true);
-              }
-            },
-          },
-          {
-            icon: 'StoryListItem__icon--info',
-            label: i18n('StoryListItem__info'),
-            onClick: () =>
-              viewUserStories({ conversationId, shouldShowDetailsModal: true }),
-          },
-          {
-            icon: 'StoryListItem__icon--chat',
-            label: i18n('StoryListItem__go-to-chat'),
-            onClick: () => onGoToConversation(conversationId),
-          },
-        ]}
+        menuOptions={menuOptions}
         moduleClassName={classNames('StoryListItem', {
           'StoryListItem--hidden': isHidden,
         })}
@@ -158,17 +168,20 @@ export const StoryListItem = ({
           {...(group || sender)}
         />
         <div className="StoryListItem__info">
-          <>
-            <div className="StoryListItem__info--title">
-              {group ? group.title : title}
-            </div>
+          <div className="StoryListItem__info--title">
+            {group ? group.title : title}
+            {isSignalOfficial && (
+              <span className="StoryListItem__signal-official" />
+            )}
+          </div>
+          {!isSignalOfficial && (
             <MessageTimestamp
               i18n={i18n}
               isRelativeTime
               module="StoryListItem__info--timestamp"
               timestamp={timestamp}
             />
-          </>
+          )}
           {repliesElement}
         </div>
 
@@ -205,4 +218,4 @@ export const StoryListItem = ({
       )}
     </>
   );
-};
+}

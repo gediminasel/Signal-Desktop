@@ -6,7 +6,7 @@
 import * as Backbone from 'backbone';
 
 import type { GroupV2ChangeType } from './groups';
-import type { BodyRangeType, BodyRangesType } from './types/Util';
+import type { DraftBodyRangesType, BodyRangesType } from './types/Util';
 import type { CallHistoryDetailsFromDiskType } from './types/Calling';
 import type { CustomColorType, ConversationColorType } from './types/Colors';
 import type { DeviceType } from './textsecure/Types.d';
@@ -30,7 +30,10 @@ import type { GiftBadgeStates } from './components/conversation/Message';
 import type { LinkPreviewType } from './types/message/LinkPreviews';
 
 import type { StickerType } from './types/Stickers';
+import type { StorySendMode } from './types/Stories';
 import type { MIMEType } from './types/MIME';
+import type { DurationInSeconds } from './util/durations';
+import type { AnyPaymentEvent } from './types/Payment';
 
 import AccessRequiredEnum = Proto.AccessControl.AccessRequired;
 import MemberRoleEnum = Proto.Member.Role;
@@ -74,6 +77,7 @@ export type QuotedMessageType = {
   // TODO DESKTOP-3826
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   attachments: Array<any>;
+  payment?: AnyPaymentEvent;
   // `author` is an old attribute that holds the author's E164. We shouldn't use it for
   //   new messages, but old messages might have this attribute.
   author?: string;
@@ -117,7 +121,6 @@ export type MessageReactionType = {
   isSentByConversationId?: Record<string, boolean>;
 };
 
-/* eslint-disable camelcase */
 export type MessageAttributesType = {
   bodyAttachment?: AttachmentType;
   bodyRanges?: BodyRangesType;
@@ -130,7 +133,7 @@ export type MessageAttributesType = {
   deletedForEveryoneTimestamp?: number;
   errors?: Array<CustomError>;
   expirationStartTimestamp?: number | null;
-  expireTimer?: number;
+  expireTimer?: DurationInSeconds;
   groupMigration?: GroupMigrationType;
   group_update?: GroupV1Update;
   hasAttachments?: boolean | 0 | 1;
@@ -145,14 +148,16 @@ export type MessageAttributesType = {
   message?: unknown;
   messageTimer?: unknown;
   profileChange?: ProfileNameChangeType;
+  payment?: AnyPaymentEvent;
   quote?: QuotedMessageType;
-  reactions?: Array<MessageReactionType>;
+  reactions?: ReadonlyArray<MessageReactionType>;
   requiredProtocolVersion?: number;
   retryOptions?: RetryOptions;
   sourceDevice?: number;
   storyDistributionListId?: string;
   storyId?: string;
   storyReplyContext?: StoryReplyContextType;
+  storyRecipientsVersion?: number;
   supportedVersionAtReceive?: unknown;
   synced?: boolean;
   unidentifiedDeliveryReceived?: boolean;
@@ -184,7 +189,11 @@ export type MessageAttributesType = {
   unidentifiedDeliveries?: Array<string>;
   contact?: Array<EmbeddedContactType>;
   conversationId: string;
-  storyReactionEmoji?: string;
+  storyReaction?: {
+    emoji: string;
+    targetAuthorUuid: string;
+    targetTimestamp: number;
+  };
   giftBadge?: {
     expiration: number;
     level: number;
@@ -194,7 +203,7 @@ export type MessageAttributesType = {
   };
 
   expirationTimerUpdate?: {
-    expireTimer: number;
+    expireTimer?: DurationInSeconds;
     fromSync?: unknown;
     source?: string;
     sourceUuid?: string;
@@ -255,7 +264,6 @@ export type ValidateConversationType = Pick<
   'e164' | 'uuid' | 'type' | 'groupId'
 >;
 
-/* eslint-disable camelcase */
 export type ConversationAttributesType = {
   accessKey?: string | null;
   addedBy?: string;
@@ -276,7 +284,7 @@ export type ConversationAttributesType = {
   firstUnregisteredAt?: number;
   draftChanged?: boolean;
   draftAttachments?: Array<AttachmentDraftType>;
-  draftBodyRanges?: Array<BodyRangeType>;
+  draftBodyRanges?: DraftBodyRangesType;
   draftTimestamp?: number | null;
   hideStory?: boolean;
   inbox_position?: number;
@@ -352,7 +360,7 @@ export type ConversationAttributesType = {
   //   to leave a group.
   left?: boolean;
   groupVersion?: number;
-  isGroupStorySendReady?: boolean;
+  storySendMode?: StorySendMode;
 
   // GroupV1 only
   members?: Array<string>;
@@ -379,7 +387,7 @@ export type ConversationAttributesType = {
   } | null;
   avatars?: Array<AvatarDataType>;
   description?: string;
-  expireTimer?: number;
+  expireTimer?: DurationInSeconds;
   membersV2?: Array<GroupV2MemberType>;
   pendingMembersV2?: Array<GroupV2PendingMemberType>;
   pendingAdminApprovalV2?: Array<GroupV2PendingAdminApprovalType>;
@@ -431,11 +439,6 @@ export type GroupV2BannedMemberType = {
 export type GroupV2PendingAdminApprovalType = {
   uuid: UUIDStringType;
   timestamp: number;
-};
-
-export type VerificationOptions = {
-  key?: null | Uint8Array;
-  viaStorageServiceSync?: boolean;
 };
 
 export type ShallowChallengeError = CustomError & {

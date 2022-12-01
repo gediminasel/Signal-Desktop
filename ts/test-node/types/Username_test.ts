@@ -10,8 +10,6 @@ describe('Username', () => {
     const { getUsernameFromSearch } = Username;
 
     it('matches invalid username searches', () => {
-      assert.strictEqual(getUsernameFromSearch('username!'), 'username!');
-      assert.strictEqual(getUsernameFromSearch('1username'), '1username');
       assert.strictEqual(getUsernameFromSearch('use'), 'use');
       assert.strictEqual(
         getUsernameFromSearch('username9012345678901234567'),
@@ -22,6 +20,7 @@ describe('Username', () => {
     it('matches valid username searches', () => {
       assert.strictEqual(getUsernameFromSearch('username_34'), 'username_34');
       assert.strictEqual(getUsernameFromSearch('u5ername'), 'u5ername');
+      assert.strictEqual(getUsernameFromSearch('username.12'), 'username.12');
       assert.strictEqual(getUsernameFromSearch('user'), 'user');
       assert.strictEqual(
         getUsernameFromSearch('username901234567890123456'),
@@ -33,6 +32,7 @@ describe('Username', () => {
       assert.strictEqual(getUsernameFromSearch('@username!'), 'username!');
       assert.strictEqual(getUsernameFromSearch('@1username'), '1username');
       assert.strictEqual(getUsernameFromSearch('@username_34'), 'username_34');
+      assert.strictEqual(getUsernameFromSearch('@username.34'), 'username.34');
       assert.strictEqual(getUsernameFromSearch('@u5ername'), 'u5ername');
     });
 
@@ -40,6 +40,7 @@ describe('Username', () => {
       assert.strictEqual(getUsernameFromSearch('username!@'), 'username!');
       assert.strictEqual(getUsernameFromSearch('1username@'), '1username');
       assert.strictEqual(getUsernameFromSearch('username_34@'), 'username_34');
+      assert.strictEqual(getUsernameFromSearch('username.34@'), 'username.34');
       assert.strictEqual(getUsernameFromSearch('u5ername@'), 'u5ername');
     });
 
@@ -48,32 +49,6 @@ describe('Username', () => {
       assert.isUndefined(getUsernameFromSearch('2223'));
       assert.isUndefined(getUsernameFromSearch('+3'));
       assert.isUndefined(getUsernameFromSearch('+234234234233'));
-    });
-  });
-
-  describe('isValidUsername', () => {
-    const { isValidUsername } = Username;
-
-    it('does not match invalid username searches', () => {
-      assert.isFalse(isValidUsername('username!'));
-      assert.isFalse(isValidUsername('1username'));
-      assert.isFalse(isValidUsername('use'));
-      assert.isFalse(isValidUsername('username9012345678901234567'));
-    });
-
-    it('matches valid usernames', () => {
-      assert.isTrue(isValidUsername('username_34'));
-      assert.isTrue(isValidUsername('u5ername'));
-      assert.isTrue(isValidUsername('_username'));
-      assert.isTrue(isValidUsername('user'));
-      assert.isTrue(isValidUsername('username901234567890123456'));
-    });
-
-    it('does not match valid and invalid usernames with @ prefix or suffix', () => {
-      assert.isFalse(isValidUsername('@username_34'));
-      assert.isFalse(isValidUsername('@1username'));
-      assert.isFalse(isValidUsername('username_34@'));
-      assert.isFalse(isValidUsername('1username@'));
     });
   });
 });

@@ -4,21 +4,25 @@
 import React from 'react';
 import { sortBy } from 'lodash';
 import { Emojify } from './Emojify';
-import type { BodyRangesType } from '../../types/Util';
+import type {
+  BodyRangesType,
+  HydratedBodyRangeType,
+  HydratedBodyRangesType,
+} from '../../types/Util';
 
 export type Props = {
-  bodyRanges?: BodyRangesType;
+  bodyRanges?: HydratedBodyRangesType;
   direction?: 'incoming' | 'outgoing';
   openConversation?: (conversationId: string, messageId?: string) => void;
   text: string;
 };
 
-export const AtMentionify = ({
+export function AtMentionify({
   bodyRanges,
   direction,
   openConversation,
   text,
-}: Props): JSX.Element => {
+}: Props): JSX.Element {
   if (!bodyRanges) {
     return <>{text}</>;
   }
@@ -28,7 +32,7 @@ export const AtMentionify = ({
   let match = MENTIONS_REGEX.exec(text);
   let last = 0;
 
-  const rangeStarts = new Map();
+  const rangeStarts = new Map<number, HydratedBodyRangeType>();
   bodyRanges.forEach(range => {
     rangeStarts.set(range.start, range);
   });
@@ -49,7 +53,7 @@ export const AtMentionify = ({
           className={`MessageBody__at-mention MessageBody__at-mention--${direction}`}
           key={range.start}
           onClick={() => {
-            if (openConversation && range.conversationID) {
+            if (openConversation) {
               openConversation(range.conversationID);
             }
           }}
@@ -57,8 +61,7 @@ export const AtMentionify = ({
             if (
               e.target === e.currentTarget &&
               e.keyCode === 13 &&
-              openConversation &&
-              range.conversationID
+              openConversation
             ) {
               openConversation(range.conversationID);
             }
@@ -85,7 +88,7 @@ export const AtMentionify = ({
   }
 
   return <>{results}</>;
-};
+}
 
 // At-mentions need to be pre-processed before being pushed through the
 // AtMentionify component, this is due to bodyRanges containing start+length

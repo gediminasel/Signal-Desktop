@@ -39,6 +39,7 @@ import {
 } from '../util/universalExpireTimer';
 import { ourProfileKeyService } from './ourProfileKey';
 import { isGroupV1, isGroupV2 } from '../util/whatTypeOfConversation';
+import { DurationInSeconds } from '../util/durations';
 import { isValidUuid, UUID, UUIDKind } from '../types/UUID';
 import * as preferredReactionEmoji from '../reactions/preferredReactionEmoji';
 import { SignalService as Proto } from '../protobuf';
@@ -50,10 +51,11 @@ import type {
   StickerPackInfoType,
 } from '../sql/Interface';
 import dataInterface from '../sql/Client';
-import { MY_STORIES_ID } from '../types/Stories';
+import { MY_STORY_ID, StorySendMode } from '../types/Stories';
 import * as RemoteConfig from '../RemoteConfig';
+import { findAndDeleteOnboardingStoryIfExists } from '../util/findAndDeleteOnboardingStoryIfExists';
 
-const MY_STORIES_BYTES = uuidToBytes(MY_STORIES_ID);
+const MY_STORY_BYTES = uuidToBytes(MY_STORY_ID);
 
 type RecordClass =
   | Proto.IAccountRecord
@@ -88,6 +90,22 @@ function toRecordVerified(verified: number): Proto.ContactRecord.IdentityState {
       return STATE_ENUM.UNVERIFIED;
     default:
       return STATE_ENUM.DEFAULT;
+  }
+}
+
+function fromRecordVerified(
+  verified: Proto.ContactRecord.IdentityState
+): number {
+  const VERIFIED_ENUM = window.textsecure.storage.protocol.VerifiedStatus;
+  const STATE_ENUM = Proto.ContactRecord.IdentityState;
+
+  switch (verified) {
+    case STATE_ENUM.VERIFIED:
+      return VERIFIED_ENUM.VERIFIED;
+    case STATE_ENUM.UNVERIFIED:
+      return VERIFIED_ENUM.UNVERIFIED;
+    default:
+      return VERIFIED_ENUM.DEFAULT;
   }
 }
 
@@ -359,8 +377,26 @@ export function toAccountRecord(
     accountRecord.hasSetMyStoriesPrivacy = hasSetMyStoriesPrivacy;
   }
 
+  const hasViewedOnboardingStory = window.storage.get(
+    'hasViewedOnboardingStory'
+  );
+  if (hasViewedOnboardingStory !== undefined) {
+    accountRecord.hasViewedOnboardingStory = hasViewedOnboardingStory;
+  }
+
   const hasStoriesDisabled = window.storage.get('hasStoriesDisabled');
   accountRecord.storiesDisabled = hasStoriesDisabled === true;
+
+  const storyViewReceiptsEnabled = window.storage.get(
+    'storyViewReceiptsEnabled'
+  );
+  if (storyViewReceiptsEnabled !== undefined) {
+    accountRecord.storyViewReceiptsEnabled = storyViewReceiptsEnabled
+      ? Proto.OptionalBool.ENABLED
+      : Proto.OptionalBool.DISABLED;
+  } else {
+    accountRecord.storyViewReceiptsEnabled = Proto.OptionalBool.UNSET;
+  }
 
   applyUnknownFields(accountRecord, conversation);
 
@@ -406,6 +442,18 @@ export function toGroupV2Record(
     conversation.get('dontNotifyForMentionsIfMuted')
   );
   groupV2Record.hideStory = Boolean(conversation.get('hideStory'));
+  const storySendMode = conversation.get('storySendMode');
+  if (storySendMode !== undefined) {
+    if (storySendMode === StorySendMode.IfActive) {
+      groupV2Record.storySendMode = Proto.GroupV2Record.StorySendMode.DEFAULT;
+    } else if (storySendMode === StorySendMode.Never) {
+      groupV2Record.storySendMode = Proto.GroupV2Record.StorySendMode.DISABLED;
+    } else if (storySendMode === StorySendMode.Always) {
+      groupV2Record.storySendMode = Proto.GroupV2Record.StorySendMode.ENABLED;
+    } else {
+      throw missingCaseError(storySendMode);
+    }
+  }
 
   applyUnknownFields(groupV2Record, conversation);
 
@@ -785,6 +833,23 @@ export async function mergeGroupV2Record(
   const oldStorageID = conversation.get('storageID');
   const oldStorageVersion = conversation.get('storageVersion');
 
+  const recordStorySendMode =
+    groupV2Record.storySendMode ?? Proto.GroupV2Record.StorySendMode.DEFAULT;
+  let storySendMode: StorySendMode;
+  if (recordStorySendMode === Proto.GroupV2Record.StorySendMode.DEFAULT) {
+    storySendMode = StorySendMode.IfActive;
+  } else if (
+    recordStorySendMode === Proto.GroupV2Record.StorySendMode.DISABLED
+  ) {
+    storySendMode = StorySendMode.Never;
+  } else if (
+    recordStorySendMode === Proto.GroupV2Record.StorySendMode.ENABLED
+  ) {
+    storySendMode = StorySendMode.Always;
+  } else {
+    throw missingCaseError(recordStorySendMode);
+  }
+
   conversation.set({
     hideStory: Boolean(groupV2Record.hideStory),
     isArchived: Boolean(groupV2Record.archived),
@@ -794,6 +859,7 @@ export async function mergeGroupV2Record(
     ),
     storageID,
     storageVersion,
+    storySendMode,
   });
 
   conversation.setMuteExpiration(
@@ -950,35 +1016,34 @@ export async function mergeContactRecord(
     systemFamilyName: dropNull(contactRecord.systemFamilyName),
   });
 
+  // https://github.com/signalapp/Signal-Android/blob/fc3db538bcaa38dc149712a483d3032c9c1f3998/app/src/main/java/org/thoughtcrime/securesms/database/RecipientDatabase.kt#L921-L936
   if (contactRecord.identityKey) {
     const verified = await conversation.safeGetVerified();
-    const storageServiceVerified = contactRecord.identityState || 0;
-    const verifiedOptions = {
-      key: contactRecord.identityKey,
-      viaStorageServiceSync: true,
-    };
-    const STATE_ENUM = Proto.ContactRecord.IdentityState;
+    const newVerified = fromRecordVerified(contactRecord.identityState ?? 0);
 
-    if (verified !== storageServiceVerified) {
-      details.push(`updating verified state to=${verified}`);
+    const needsNotification =
+      await window.textsecure.storage.protocol.updateIdentityAfterSync(
+        new UUID(uuid),
+        newVerified,
+        contactRecord.identityKey
+      );
+
+    if (verified !== newVerified) {
+      details.push(
+        `updating verified state from=${verified} to=${newVerified}`
+      );
+
+      conversation.set({ verified: newVerified });
     }
 
-    // Update verified status unconditionally to make sure we will take the
-    // latest identity key from the manifest.
-    let keyChange: boolean;
-    switch (storageServiceVerified) {
-      case STATE_ENUM.VERIFIED:
-        keyChange = await conversation.setVerified(verifiedOptions);
-        break;
-      case STATE_ENUM.UNVERIFIED:
-        keyChange = await conversation.setUnverified(verifiedOptions);
-        break;
-      default:
-        keyChange = await conversation.setVerifiedDefault(verifiedOptions);
-    }
-
-    if (keyChange) {
-      details.push('key changed');
+    const VERIFIED_ENUM = window.textsecure.storage.protocol.VerifiedStatus;
+    if (needsNotification) {
+      details.push('adding a verified notification');
+      await conversation.addVerifiedChange(
+        conversation.id,
+        newVerified === VERIFIED_ENUM.VERIFIED,
+        { local: false }
+      );
     }
   }
 
@@ -1062,7 +1127,9 @@ export async function mergeAccountRecord(
     displayBadgesOnProfile,
     keepMutedChatsArchived,
     hasSetMyStoriesPrivacy,
+    hasViewedOnboardingStory,
     storiesDisabled,
+    storyViewReceiptsEnabled,
   } = accountRecord;
 
   const updatedConversations = new Array<ConversationModel>();
@@ -1112,7 +1179,9 @@ export async function mergeAccountRecord(
     window.storage.put('preferredReactionEmoji', rawPreferredReactionEmoji);
   }
 
-  setUniversalExpireTimer(universalExpireTimer || 0);
+  setUniversalExpireTimer(
+    DurationInSeconds.fromSeconds(universalExpireTimer || 0)
+  );
 
   const PHONE_NUMBER_SHARING_MODE_ENUM =
     Proto.AccountRecord.PhoneNumberSharingMode;
@@ -1257,9 +1326,32 @@ export async function mergeAccountRecord(
   window.storage.put('keepMutedChatsArchived', Boolean(keepMutedChatsArchived));
   window.storage.put('hasSetMyStoriesPrivacy', Boolean(hasSetMyStoriesPrivacy));
   {
+    const hasViewedOnboardingStoryBool = Boolean(hasViewedOnboardingStory);
+    window.storage.put(
+      'hasViewedOnboardingStory',
+      hasViewedOnboardingStoryBool
+    );
+    if (hasViewedOnboardingStoryBool) {
+      findAndDeleteOnboardingStoryIfExists();
+    }
+  }
+  {
     const hasStoriesDisabled = Boolean(storiesDisabled);
     window.storage.put('hasStoriesDisabled', hasStoriesDisabled);
     window.textsecure.server?.onHasStoriesDisabledChange(hasStoriesDisabled);
+  }
+
+  switch (storyViewReceiptsEnabled) {
+    case Proto.OptionalBool.ENABLED:
+      window.storage.put('storyViewReceiptsEnabled', true);
+      break;
+    case Proto.OptionalBool.DISABLED:
+      window.storage.put('storyViewReceiptsEnabled', false);
+      break;
+    case Proto.OptionalBool.UNSET:
+    default:
+      // Do nothing
+      break;
   }
 
   const ourID = window.ConversationController.getOurConversationId();
@@ -1329,13 +1421,13 @@ export async function mergeStoryDistributionListRecord(
 
   const details: Array<string> = [];
 
-  const isMyStories = Bytes.areEqual(
-    MY_STORIES_BYTES,
+  const isMyStory = Bytes.areEqual(
+    MY_STORY_BYTES,
     storyDistributionListRecord.identifier
   );
 
-  const listId = isMyStories
-    ? MY_STORIES_ID
+  const listId = isMyStory
+    ? MY_STORY_ID
     : bytesToUuid(storyDistributionListRecord.identifier);
 
   if (!listId) {
@@ -1360,7 +1452,7 @@ export async function mergeStoryDistributionListRecord(
   const storyDistribution: StoryDistributionWithMembersType = {
     id: listId,
     name: String(storyDistributionListRecord.name),
-    deletedAtTimestamp: isMyStories ? undefined : deletedAtTimestamp,
+    deletedAtTimestamp: isMyStory ? undefined : deletedAtTimestamp,
     allowsReplies: Boolean(storyDistributionListRecord.allowsReplies),
     isBlockList: Boolean(storyDistributionListRecord.isBlockList),
     members: remoteListMembers,

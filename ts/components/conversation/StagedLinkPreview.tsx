@@ -20,7 +20,7 @@ export type Props = LinkPreviewType & {
   onClose?: () => void;
 };
 
-export const StagedLinkPreview: React.FC<Props> = ({
+export function StagedLinkPreview({
   date,
   description,
   domain,
@@ -30,7 +30,7 @@ export const StagedLinkPreview: React.FC<Props> = ({
   moduleClassName,
   onClose,
   title,
-}: Props) => {
+}: Props): JSX.Element {
   const isImage = isImageAttachment(image);
   const isLoaded = Boolean(domain);
 
@@ -38,6 +38,38 @@ export const StagedLinkPreview: React.FC<Props> = ({
     'module-staged-link-preview',
     moduleClassName
   );
+
+  let maybeContent: JSX.Element | undefined;
+  if (isLoaded) {
+    // No title, no description - display only domain
+    if (!title && !description) {
+      maybeContent = (
+        <div
+          className={classNames(
+            getClassName('__content'),
+            getClassName('__content--only-url')
+          )}
+        >
+          <div className={getClassName('__title')}>{domain}</div>
+        </div>
+      );
+    } else {
+      maybeContent = (
+        <div className={getClassName('__content')}>
+          <div className={getClassName('__title')}>{title}</div>
+          {description && (
+            <div className={getClassName('__description')}>
+              {unescape(description)}
+            </div>
+          )}
+          <div className={getClassName('__footer')}>
+            <div className={getClassName('__location')}>{domain}</div>
+            <LinkPreviewDate date={date} className={getClassName('__date')} />
+          </div>
+        </div>
+      );
+    }
+  }
 
   return (
     <div
@@ -68,20 +100,7 @@ export const StagedLinkPreview: React.FC<Props> = ({
         </div>
       ) : null}
       {isLoaded && !image && <div className={getClassName('__no-image')} />}
-      {isLoaded ? (
-        <div className={getClassName('__content')}>
-          <div className={getClassName('__title')}>{title}</div>
-          {description && (
-            <div className={getClassName('__description')}>
-              {unescape(description)}
-            </div>
-          )}
-          <div className={getClassName('__footer')}>
-            <div className={getClassName('__location')}>{domain}</div>
-            <LinkPreviewDate date={date} className={getClassName('__date')} />
-          </div>
-        </div>
-      ) : null}
+      {maybeContent}
       {onClose && (
         <button
           aria-label={i18n('close')}
@@ -92,4 +111,4 @@ export const StagedLinkPreview: React.FC<Props> = ({
       )}
     </div>
   );
-};
+}

@@ -1,9 +1,6 @@
 // Copyright 2021-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// This has to be the first import because of monkey-patching
-import '../shims';
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { contextBridge, ipcRenderer } from 'electron';
@@ -17,6 +14,7 @@ import {
   shouldMinimizeToSystemTray,
 } from '../../types/SystemTraySetting';
 import { awaitObject } from '../../util/awaitObject';
+import { DurationInSeconds } from '../../util/durations';
 import { createSetting, createCallback } from '../../util/preload';
 import { startInteractionMode } from '../startInteractionMode';
 
@@ -88,6 +86,7 @@ const ipcPNP = createCallback('isPhoneNumberSharingEnabled');
 const ipcShouldShowStoriesSettings = createCallback(
   'shouldShowStoriesSettings'
 );
+const ipcDeleteAllMyStories = createCallback('deleteAllMyStories');
 
 // ChatColorPicker redux hookups
 // The redux actions update over IPC through a preferences re-render
@@ -217,6 +216,10 @@ const renderPreferences = async () => {
   const { hasMinimizeToAndStartInSystemTray, hasMinimizeToSystemTray } =
     getSystemTraySettingValues(systemTraySetting);
 
+  const onUniversalExpireTimerChange = reRender(
+    settingUniversalExpireTimer.setValue
+  );
+
   const props = {
     // Settings
     availableCameras,
@@ -252,7 +255,7 @@ const renderPreferences = async () => {
     selectedMicrophone,
     selectedSpeaker,
     themeSetting,
-    universalExpireTimer,
+    universalExpireTimer: DurationInSeconds.fromSeconds(universalExpireTimer),
     whoCanFindMe,
     whoCanSeeMe,
     zoomFactor,
@@ -301,7 +304,13 @@ const renderPreferences = async () => {
     onCountMutedConversationsChange: reRender(
       settingCountMutedConversations.setValue
     ),
-    onHasStoriesDisabledChanged: reRender(settingHasStoriesDisabled.setValue),
+    onHasStoriesDisabledChanged: reRender(async (value: boolean) => {
+      await settingHasStoriesDisabled.setValue(value);
+      if (!value) {
+        ipcDeleteAllMyStories();
+      }
+      return value;
+    }),
     onHideMenuBarChange: reRender(settingHideMenuBar.setValue),
     onIncomingCallNotificationsChange: reRender(
       settingIncomingCallNotification.setValue
@@ -343,9 +352,11 @@ const renderPreferences = async () => {
     onSelectedSpeakerChange: reRender(settingAudioOutput.setValue),
     onSpellCheckChange: reRender(settingSpellCheck.setValue),
     onThemeChange: reRender(settingTheme.setValue),
-    onUniversalExpireTimerChange: reRender(
-      settingUniversalExpireTimer.setValue
-    ),
+    onUniversalExpireTimerChange: (newValue: number): Promise<void> => {
+      return onUniversalExpireTimerChange(
+        DurationInSeconds.fromSeconds(newValue)
+      );
+    },
 
     // Zoom factor change doesn't require immediate rerender since it will:
     // 1. Update the zoom factor in the main window

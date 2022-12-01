@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import * as React from 'react';
-import * as moment from 'moment';
 import { boolean, number, select, text } from '@storybook/addon-knobs';
 
 import { setupI18n } from '../../util/setupI18n';
+import { DurationInSeconds } from '../../util/durations';
 import enMessages from '../../../_locales/en/messages.json';
 import type { Props } from './TimerNotification';
 import { TimerNotification } from './TimerNotification';
@@ -34,16 +34,19 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
       }
     : {
         disabled: false,
-        expireTimer: number(
-          'expireTimer',
-          ('expireTimer' in overrideProps ? overrideProps.expireTimer : 0) || 0
+        expireTimer: DurationInSeconds.fromMillis(
+          number(
+            'expireTimer',
+            ('expireTimer' in overrideProps ? overrideProps.expireTimer : 0) ||
+              0
+          )
         ),
       }),
 });
 
-export const SetByOther = (): JSX.Element => {
+export function SetByOther(): JSX.Element {
   const props = createProps({
-    expireTimer: moment.duration(1, 'hour').asSeconds(),
+    expireTimer: DurationInSeconds.fromHours(1),
     type: 'fromOther',
     title: 'Mr. Fire',
   });
@@ -55,13 +58,13 @@ export const SetByOther = (): JSX.Element => {
       <TimerNotification {...props} disabled />
     </>
   );
-};
+}
 
-export const SetByOtherWithALongName = (): JSX.Element => {
+export function SetByOtherWithALongName(): JSX.Element {
   const longName = '🦴🧩📴'.repeat(50);
 
   const props = createProps({
-    expireTimer: moment.duration(1, 'hour').asSeconds(),
+    expireTimer: DurationInSeconds.fromHours(1),
     type: 'fromOther',
     title: longName,
   });
@@ -73,15 +76,15 @@ export const SetByOtherWithALongName = (): JSX.Element => {
       <TimerNotification {...props} disabled />
     </>
   );
-};
+}
 
 SetByOtherWithALongName.story = {
   name: 'Set By Other (with a long name)',
 };
 
-export const SetByYou = (): JSX.Element => {
+export function SetByYou(): JSX.Element {
   const props = createProps({
-    expireTimer: moment.duration(1, 'hour').asSeconds(),
+    expireTimer: DurationInSeconds.fromHours(1),
     type: 'fromMe',
     title: 'Mr. Fire',
   });
@@ -93,11 +96,11 @@ export const SetByYou = (): JSX.Element => {
       <TimerNotification {...props} disabled />
     </>
   );
-};
+}
 
-export const SetBySync = (): JSX.Element => {
+export function SetBySync(): JSX.Element {
   const props = createProps({
-    expireTimer: moment.duration(1, 'hour').asSeconds(),
+    expireTimer: DurationInSeconds.fromHours(1),
     type: 'fromSync',
     title: 'Mr. Fire',
   });
@@ -109,4 +112,4 @@ export const SetBySync = (): JSX.Element => {
       <TimerNotification {...props} disabled />
     </>
   );
-};
+}

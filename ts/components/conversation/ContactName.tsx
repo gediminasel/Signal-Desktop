@@ -11,18 +11,20 @@ import { getClassNamesFor } from '../../util/getClassNamesFor';
 export type PropsType = {
   contactNameColor?: ContactNameColorType;
   firstName?: string;
+  isSignalConversation?: boolean;
   module?: string;
   preferFirstName?: boolean;
   title: string;
 };
 
-export const ContactName = ({
+export function ContactName({
   contactNameColor,
   firstName,
+  isSignalConversation,
   module,
   preferFirstName,
   title,
-}: PropsType): JSX.Element => {
+}: PropsType): JSX.Element {
   const getClassName = getClassNamesFor('module-contact-name', module);
 
   let text: string;
@@ -41,6 +43,9 @@ export const ContactName = ({
       dir="auto"
     >
       <Emojify text={text} />
+      {isSignalConversation && (
+        <span className="StoryListItem__signal-official" />
+      )}
     </span>
   );
-};
+}

@@ -1,9 +1,7 @@
 // Copyright 2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import sharp from 'sharp';
-import pify from 'pify';
-import { readFile } from 'fs';
+import { readFile } from 'fs/promises';
 import { noop, uniqBy } from 'lodash';
 import { ipcRenderer as ipc } from 'electron';
 
@@ -18,6 +16,15 @@ import { initialize as initializeWebAPI } from '../../ts/textsecure/WebAPI';
 
 import { SignalContext } from '../../ts/windows/context';
 import { getAnimatedPngDataIfExists } from '../../ts/util/getAnimatedPngDataIfExists';
+import { explodePromise } from '../../ts/util/explodePromise';
+
+class ProcessStickerImageError extends Error {
+  constructor(message: string, public readonly errorMessageI18nKey: string) {
+    super(message);
+  }
+}
+export type ProcessStickerImageErrorType = typeof ProcessStickerImageError;
+window.ProcessStickerImageError = ProcessStickerImageError;
 
 const STICKER_SIZE = 512;
 const MIN_STICKER_DIMENSION = 10;
@@ -30,6 +37,7 @@ const WebAPI = initializeWebAPI({
   url: config.serverUrl,
   storageUrl: config.storageUrl,
   updatesUrl: config.updatesUrl,
+  resourcesUrl: config.resourcesUrl,
   directoryConfig: config.directoryConfig,
   cdnUrlObject: {
     0: config.cdnUrl0,
@@ -41,24 +49,46 @@ const WebAPI = initializeWebAPI({
   version: config.version,
 });
 
-function processStickerError(message: string, i18nKey: string): Error {
-  const result = new Error(message);
-  result.errorMessageI18nKey = i18nKey;
-  return result;
+export type StickerImageData = Readonly<{
+  buffer: Buffer;
+  src: string;
+  path: string;
+}>;
+
+async function loadImage(data: Buffer): Promise<HTMLImageElement> {
+  const image = new Image();
+
+  const { promise, resolve, reject } = explodePromise<void>();
+
+  image.addEventListener('load', () => resolve());
+  image.addEventListener('error', () => reject(new Error('Bad image')));
+  image.src = `data:image/jpeg;base64,${data.toString('base64')}`;
+
+  await promise;
+
+  return image;
 }
 
-window.processStickerImage = async (path: string | undefined) => {
+declare global {
+  // eslint-disable-next-line no-restricted-syntax
+  interface OffscreenCanvas {
+    convertToBlob(options: { type: string; quality: number }): Promise<Blob>;
+  }
+}
+
+window.processStickerImage = async function processStickerImage(
+  path?: string
+): Promise<StickerImageData> {
   if (!path) {
     throw new Error(`Path ${path} is not valid!`);
   }
 
-  const imgBuffer = await pify(readFile)(path);
-  const sharpImg = sharp(imgBuffer);
-  const meta = await sharpImg.metadata();
+  const imgBuffer = await readFile(path);
 
-  const { width, height } = meta;
+  const image = await loadImage(imgBuffer);
+  const { naturalWidth: width, naturalHeight: height } = image;
   if (!width || !height) {
-    throw processStickerError(
+    throw new ProcessStickerImageError(
       'Sticker height or width were falsy',
       'StickerCreator--Toasts--errorProcessing'
     );
@@ -67,38 +97,37 @@ window.processStickerImage = async (path: string | undefined) => {
   let contentType;
   let processedBuffer;
 
-  // [Sharp doesn't support APNG][0], so we do something simpler: validate the file size
+  // For APNG we do something simpler: validate the file size
   //   and dimensions without resizing, cropping, or converting. In a perfect world, we'd
   //   resize and convert any animated image (GIF, animated WebP) to APNG.
-  // [0]: https://github.com/lovell/sharp/issues/2375
   const animatedPngDataIfExists = getAnimatedPngDataIfExists(imgBuffer);
   if (animatedPngDataIfExists) {
     if (imgBuffer.byteLength > MAX_STICKER_BYTE_LENGTH) {
-      throw processStickerError(
+      throw new ProcessStickerImageError(
         'Sticker file was too large',
         'StickerCreator--Toasts--tooLarge'
       );
     }
     if (width !== height) {
-      throw processStickerError(
+      throw new ProcessStickerImageError(
         'Sticker must be square',
         'StickerCreator--Toasts--APNG--notSquare'
       );
     }
     if (width > MAX_STICKER_DIMENSION) {
-      throw processStickerError(
+      throw new ProcessStickerImageError(
         'Sticker dimensions are too large',
         'StickerCreator--Toasts--APNG--dimensionsTooLarge'
       );
     }
     if (width < MIN_STICKER_DIMENSION) {
-      throw processStickerError(
+      throw new ProcessStickerImageError(
         'Sticker dimensions are too small',
         'StickerCreator--Toasts--APNG--dimensionsTooSmall'
       );
     }
     if (animatedPngDataIfExists.numPlays !== Infinity) {
-      throw processStickerError(
+      throw new ProcessStickerImageError(
         'Animated stickers must loop forever',
         'StickerCreator--Toasts--mustLoopForever'
       );
@@ -106,18 +135,39 @@ window.processStickerImage = async (path: string | undefined) => {
     contentType = 'image/png';
     processedBuffer = imgBuffer;
   } else {
-    contentType = 'image/webp';
-    processedBuffer = await sharpImg
-      .resize({
-        width: STICKER_SIZE,
-        height: STICKER_SIZE,
-        fit: 'contain',
-        background: { r: 0, g: 0, b: 0, alpha: 0 },
-      })
-      .webp()
-      .toBuffer();
-    if (processedBuffer.byteLength > MAX_STICKER_BYTE_LENGTH) {
-      throw processStickerError(
+    const canvas = new OffscreenCanvas(STICKER_SIZE, STICKER_SIZE);
+    const context = canvas.getContext('2d');
+    if (!context) {
+      throw new Error('Failed to get 2d context of canvas');
+    }
+
+    const scaleFactor = STICKER_SIZE / Math.max(width, height);
+    const newWidth = width * scaleFactor;
+    const newHeight = height * scaleFactor;
+    const dx = (STICKER_SIZE - newWidth) / 2;
+    const dy = (STICKER_SIZE - newHeight) / 2;
+
+    (context as OffscreenCanvasRenderingContext2D).drawImage(
+      image,
+      dx,
+      dy,
+      newWidth,
+      newHeight
+    );
+
+    const blob = await canvas.convertToBlob({
+      type: 'image/webp',
+      quality: 0.8,
+    });
+
+    // eslint-disable-next-line no-await-in-loop
+    processedBuffer = Buffer.from(await blob.arrayBuffer());
+
+    if (
+      !processedBuffer ||
+      processedBuffer.byteLength > MAX_STICKER_BYTE_LENGTH
+    ) {
+      throw new ProcessStickerImageError(
         'Sticker file was too large',
         'StickerCreator--Toasts--tooLarge'
       );
@@ -128,7 +178,6 @@ window.processStickerImage = async (path: string | undefined) => {
     path,
     buffer: processedBuffer,
     src: `data:${contentType};base64,${processedBuffer.toString('base64')}`,
-    meta,
   };
 };
 

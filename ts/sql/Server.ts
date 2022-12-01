@@ -6,6 +6,7 @@
 import { join } from 'path';
 import mkdirp from 'mkdirp';
 import rimraf from 'rimraf';
+import { randomBytes } from 'crypto';
 import type { Database, Statement } from 'better-sqlite3';
 import SQL from 'better-sqlite3';
 import pProps from 'p-props';
@@ -45,7 +46,6 @@ import { parseIntOrThrow } from '../util/parseIntOrThrow';
 import * as durations from '../util/durations';
 import { formatCountForLogging } from '../logging/formatCountForLogging';
 import type { ConversationColorType, CustomColorType } from '../types/Colors';
-import { ProcessGroupCallRingRequestResult } from '../types/Calling';
 import { RemoveAllConfiguration } from '../types/RemoveAllConfiguration';
 import type { BadgeType, BadgeImageType } from '../badges/types';
 import { parseBadgeCategory } from '../badges/BadgeCategory';
@@ -64,7 +64,6 @@ import {
   getById,
   bulkAdd,
   createOrUpdate,
-  TableIterator,
   setUserVersion,
   getUserVersion,
   getSchemaVersion,
@@ -79,7 +78,9 @@ import type {
   DeleteSentProtoRecipientOptionsType,
   DeleteSentProtoRecipientResultType,
   EmojiType,
+  GetAllStoriesResultType,
   GetConversationRangeCenteredOnMessageResultType,
+  GetKnownMessageAttachmentsResultType,
   GetUnreadByConversationAndMarkReadResultType,
   IdentityKeyIdType,
   StoredIdentityKeyType,
@@ -87,6 +88,7 @@ import type {
   ItemKeyType,
   StoredItemType,
   ConversationMessageStatsType,
+  MessageAttachmentsCursorType,
   MessageMetricsType,
   MessageType,
   MessageTypeUnhydrated,
@@ -247,7 +249,7 @@ const dataInterface: ServerInterface = {
   getNextTapToViewMessageTimestampToAgeOut,
   getTapToViewMessagesNeedingErase,
   getOlderMessagesByConversation,
-  getOlderStories,
+  getAllStories,
   getNewerMessagesByConversation,
   getTotalUnreadForConversation,
   getMessageMetricsForConversation,
@@ -330,9 +332,9 @@ const dataInterface: ServerInterface = {
   insertJob,
   deleteJob,
 
-  processGroupCallRingRequest,
-  processGroupCallRingCancelation,
-  cleanExpiredGroupCallRings,
+  wasGroupCallRingPreviouslyCanceled,
+  processGroupCallRingCancellation,
+  cleanExpiredGroupCallRingCancellations,
 
   getMaxMessageCounter,
 
@@ -343,7 +345,9 @@ const dataInterface: ServerInterface = {
   initialize,
   initializeRenderer,
 
-  removeKnownAttachments,
+  getKnownMessageAttachments,
+  finishGetKnownMessageAttachments,
+  getKnownConversationAttachments,
   removeKnownStickers,
   removeKnownDraftAttachments,
   getAllBadgeImageFileLocalPaths,
@@ -354,7 +358,10 @@ type DatabaseQueryCache = Map<string, Statement<Array<unknown>>>;
 
 const statementCache = new WeakMap<Database, DatabaseQueryCache>();
 
-function prepare<T>(db: Database, query: string): Statement<T> {
+function prepare<T extends Array<unknown> | Record<string, unknown>>(
+  db: Database,
+  query: string
+): Statement<T> {
   let dbCache = statementCache.get(db);
   if (!dbCache) {
     dbCache = new Map();
@@ -920,7 +927,7 @@ async function insertSentProto(
       `
     );
 
-    for (const messageId of messageIds) {
+    for (const messageId of new Set(messageIds)) {
       messageStatement.run({
         id,
         messageId,
@@ -1763,22 +1770,21 @@ async function getMessageCount(conversationId?: string): Promise<number> {
 function hasUserInitiatedMessages(conversationId: string): boolean {
   const db = getInstance();
 
-  const row: { count: number } = db
+  const exists: number = db
     .prepare<Query>(
       `
-      SELECT COUNT(*) as count FROM
-        (
-          SELECT 1 FROM messages
-          WHERE
-            conversationId = $conversationId AND
-            isUserInitiatedMessage = 1
-          LIMIT 1
-        );
+      SELECT EXISTS(
+        SELECT 1 FROM messages
+        WHERE
+          conversationId = $conversationId AND
+          isUserInitiatedMessage = 1
+      );
       `
     )
+    .pluck()
     .get({ conversationId });
 
-  return row.count !== 0;
+  return exists !== 0;
 }
 
 function saveMessageSync(
@@ -2502,45 +2508,53 @@ function getOlderMessagesByConversationSync(
     .reverse();
 }
 
-async function getOlderStories({
+async function getAllStories({
   conversationId,
-  limit = 9999,
-  receivedAt = Number.MAX_VALUE,
-  sentAt,
   sourceUuid,
 }: {
   conversationId?: string;
-  limit?: number;
-  receivedAt?: number;
-  sentAt?: number;
   sourceUuid?: UUIDStringType;
-}): Promise<Array<MessageType>> {
+}): Promise<GetAllStoriesResultType> {
   const db = getInstance();
-  const rows: JSONRows = db
+  const rows: ReadonlyArray<{
+    json: string;
+    hasReplies: number;
+    hasRepliesFromSelf: number;
+  }> = db
     .prepare<Query>(
       `
-      SELECT json
+      SELECT
+        json,
+        (SELECT EXISTS(
+          SELECT 1
+          FROM messages as replies
+          WHERE replies.storyId IS messages.id
+        )) as hasReplies,
+        (SELECT EXISTS(
+          SELECT 1
+          FROM messages AS selfReplies
+          WHERE
+            selfReplies.storyId IS messages.id AND
+            selfReplies.type IS 'outgoing'
+        )) as hasRepliesFromSelf
       FROM messages
       WHERE
         type IS 'story' AND
         ($conversationId IS NULL OR conversationId IS $conversationId) AND
-        ($sourceUuid IS NULL OR sourceUuid IS $sourceUuid) AND
-        (received_at < $receivedAt
-          OR (received_at IS $receivedAt AND sent_at < $sentAt)
-        )
-      ORDER BY received_at ASC, sent_at ASC
-      LIMIT $limit;
+        ($sourceUuid IS NULL OR sourceUuid IS $sourceUuid)
+      ORDER BY received_at ASC, sent_at ASC;
       `
     )
     .all({
       conversationId: conversationId || null,
-      receivedAt,
-      sentAt: sentAt || null,
       sourceUuid: sourceUuid || null,
-      limit,
     });
 
-  return rows.map(row => jsonToObject(row.json));
+  return rows.map(row => ({
+    ...jsonToObject(row.json),
+    hasReplies: row.hasReplies !== 0,
+    hasRepliesFromSelf: row.hasRepliesFromSelf !== 0,
+  }));
 }
 
 async function getNewerMessagesByConversation(
@@ -2990,26 +3004,25 @@ async function hasGroupCallHistoryMessage(
 ): Promise<boolean> {
   const db = getInstance();
 
-  const row: { 'count(*)': number } | undefined = db
+  const exists: number = db
     .prepare<Query>(
       `
-      SELECT count(*) FROM messages
-      WHERE conversationId = $conversationId
-      AND type = 'call-history'
-      AND json_extract(json, '$.callHistoryDetails.callMode') = 'Group'
-      AND json_extract(json, '$.callHistoryDetails.eraId') = $eraId
-      LIMIT 1;
+      SELECT EXISTS(
+        SELECT 1 FROM messages
+        WHERE conversationId = $conversationId
+        AND type = 'call-history'
+        AND json_extract(json, '$.callHistoryDetails.callMode') = 'Group'
+        AND json_extract(json, '$.callHistoryDetails.eraId') = $eraId
+      );
       `
     )
+    .pluck()
     .get({
       conversationId,
       eraId,
     });
 
-  if (row) {
-    return Boolean(row['count(*)']);
-  }
-  return false;
+  return exists !== 0;
 }
 
 async function migrateConversationMessages(
@@ -3204,6 +3217,7 @@ function saveUnprocessedSync(data: UnprocessedType): string {
     serverTimestamp,
     decrypted,
     urgent,
+    story,
   } = data;
   if (!id) {
     throw new Error('saveUnprocessedSync: id was falsey');
@@ -3230,7 +3244,8 @@ function saveUnprocessedSync(data: UnprocessedType): string {
       serverGuid,
       serverTimestamp,
       decrypted,
-      urgent
+      urgent,
+      story
     ) values (
       $id,
       $timestamp,
@@ -3244,7 +3259,8 @@ function saveUnprocessedSync(data: UnprocessedType): string {
       $serverGuid,
       $serverTimestamp,
       $decrypted,
-      $urgent
+      $urgent,
+      $story
     );
     `
   ).run({
@@ -3261,6 +3277,7 @@ function saveUnprocessedSync(data: UnprocessedType): string {
     serverTimestamp: serverTimestamp || null,
     decrypted: decrypted || null,
     urgent: urgent || !isBoolean(urgent) ? 1 : 0,
+    story: story ? 1 : 0,
   });
 
   return id;
@@ -3335,6 +3352,7 @@ async function getUnprocessedById(
   return {
     ...row,
     urgent: isNumber(row.urgent) ? Boolean(row.urgent) : true,
+    story: Boolean(row.story),
   };
 }
 
@@ -3396,6 +3414,7 @@ async function getAllUnprocessedAndIncrementAttempts(): Promise<
       .map(row => ({
         ...row,
         urgent: isNumber(row.urgent) ? Boolean(row.urgent) : true,
+        story: Boolean(row.story),
       }));
   })();
 }
@@ -4508,6 +4527,11 @@ async function _deleteAllStoryDistributions(): Promise<void> {
 async function createNewStoryDistribution(
   distribution: StoryDistributionWithMembersType
 ): Promise<void> {
+  strictAssert(
+    distribution.name,
+    'Distribution list does not have a valid name'
+  );
+
   const db = getInstance();
 
   db.transaction(() => {
@@ -4609,6 +4633,18 @@ function modifyStoryDistributionSync(
   db: Database,
   payload: StoryDistributionForDatabase
 ): void {
+  if (payload.deletedAtTimestamp) {
+    strictAssert(
+      !payload.name,
+      'Attempt to delete distribution list but still has a name'
+    );
+  } else {
+    strictAssert(
+      payload.name,
+      'Cannot clear distribution list name without deletedAtTimestamp set'
+    );
+  }
+
   prepare(
     db,
     `
@@ -4794,7 +4830,7 @@ async function removeAll(): Promise<void> {
       DELETE FROM badges;
       DELETE FROM conversations;
       DELETE FROM emojis;
-      DELETE FROM groupCallRings;
+      DELETE FROM groupCallRingCancellations;
       DELETE FROM identityKeys;
       DELETE FROM items;
       DELETE FROM jobs;
@@ -4815,6 +4851,7 @@ async function removeAll(): Promise<void> {
       DELETE FROM storyDistributions;
       DELETE FROM storyReads;
       DELETE FROM unprocessed;
+      DELETE FROM uninstalled_sticker_packs;
     `);
   })();
 }
@@ -5076,39 +5113,129 @@ function getExternalDraftFilesForConversation(
   return files;
 }
 
-async function removeKnownAttachments(
-  allAttachments: Array<string>
-): Promise<Array<string>> {
+async function getKnownMessageAttachments(
+  cursor?: MessageAttachmentsCursorType
+): Promise<GetKnownMessageAttachmentsResultType> {
   const db = getInstance();
-  const lookup: Dictionary<boolean> = fromPairs(
-    map(allAttachments, file => [file, true])
-  );
-  const chunkSize = 500;
+  const result = new Set<string>();
+  const chunkSize = 1000;
 
-  const total = getMessageCountSync();
-  logger.info(
-    `removeKnownAttachments: About to iterate through ${total} messages`
-  );
+  return db.transaction(() => {
+    let count = cursor?.count ?? 0;
 
-  let count = 0;
+    strictAssert(
+      !cursor?.done,
+      'getKnownMessageAttachments: iteration cannot be restarted'
+    );
 
-  for (const message of new TableIterator<MessageType>(db, 'messages')) {
-    const externalFiles = getExternalFilesForMessage(message);
-    forEach(externalFiles, file => {
-      delete lookup[file];
-    });
-    count += 1;
+    let runId: string;
+    if (cursor === undefined) {
+      runId = randomBytes(8).toString('hex');
+
+      const total = getMessageCountSync();
+      logger.info(
+        `getKnownMessageAttachments(${runId}): ` +
+          `Starting iteration through ${total} messages`
+      );
+
+      db.exec(
+        `
+        CREATE TEMP TABLE tmp_${runId}_updated_messages
+          (rowid INTEGER PRIMARY KEY ASC);
+
+        INSERT INTO tmp_${runId}_updated_messages (rowid)
+        SELECT rowid FROM messages;
+
+        CREATE TEMP TRIGGER tmp_${runId}_message_updates
+        UPDATE OF json ON messages
+        BEGIN
+          INSERT OR IGNORE INTO tmp_${runId}_updated_messages (rowid)
+          VALUES (NEW.rowid);
+        END;
+
+        CREATE TEMP TRIGGER tmp_${runId}_message_inserts
+        AFTER INSERT ON messages
+        BEGIN
+          INSERT OR IGNORE INTO tmp_${runId}_updated_messages (rowid)
+          VALUES (NEW.rowid);
+        END;
+        `
+      );
+    } else {
+      ({ runId } = cursor);
+    }
+
+    const rowids: Array<number> = db
+      .prepare<Query>(
+        `
+      DELETE FROM tmp_${runId}_updated_messages
+      RETURNING rowid
+      LIMIT $chunkSize;
+      `
+      )
+      .pluck()
+      .all({ chunkSize });
+
+    const messages = batchMultiVarQuery(
+      db,
+      rowids,
+      (batch: Array<number>): Array<MessageType> => {
+        const query = db.prepare<ArrayQuery>(
+          `SELECT json FROM messages WHERE rowid IN (${Array(batch.length)
+            .fill('?')
+            .join(',')});`
+        );
+        const rows: JSONRows = query.all(batch);
+        return rows.map(row => jsonToObject(row.json));
+      }
+    );
+
+    for (const message of messages) {
+      const externalFiles = getExternalFilesForMessage(message);
+      forEach(externalFiles, file => result.add(file));
+      count += 1;
+    }
+
+    const done = rowids.length < chunkSize;
+    return {
+      attachments: Array.from(result),
+      cursor: { runId, count, done },
+    };
+  })();
+}
+
+async function finishGetKnownMessageAttachments({
+  runId,
+  count,
+  done,
+}: MessageAttachmentsCursorType): Promise<void> {
+  const db = getInstance();
+
+  const logId = `finishGetKnownMessageAttachments(${runId})`;
+  if (!done) {
+    logger.warn(`${logId}: iteration not finished`);
   }
 
-  logger.info(`removeKnownAttachments: Done processing ${count} messages`);
+  logger.info(`${logId}: reached the end after processing ${count} messages`);
+  db.exec(`
+    DROP TABLE tmp_${runId}_updated_messages;
+    DROP TRIGGER tmp_${runId}_message_updates;
+    DROP TRIGGER tmp_${runId}_message_inserts;
+  `);
+}
+
+async function getKnownConversationAttachments(): Promise<Array<string>> {
+  const db = getInstance();
+  const result = new Set<string>();
+  const chunkSize = 500;
 
   let complete = false;
-  count = 0;
   let id = '';
 
   const conversationTotal = await getConversationCount();
   logger.info(
-    `removeKnownAttachments: About to iterate through ${conversationTotal} conversations`
+    'getKnownConversationAttachments: About to iterate through ' +
+      `${conversationTotal}`
   );
 
   const fetchConversations = db.prepare<Query>(
@@ -5131,9 +5258,7 @@ async function removeKnownAttachments(
     );
     conversations.forEach(conversation => {
       const externalFiles = getExternalFilesForConversation(conversation);
-      externalFiles.forEach(file => {
-        delete lookup[file];
-      });
+      externalFiles.forEach(file => result.add(file));
     });
 
     const lastMessage: ConversationType | undefined = last(conversations);
@@ -5141,16 +5266,15 @@ async function removeKnownAttachments(
       ({ id } = lastMessage);
     }
     complete = conversations.length < chunkSize;
-    count += conversations.length;
   }
 
-  logger.info(`removeKnownAttachments: Done processing ${count} conversations`);
+  logger.info('getKnownConversationAttachments: Done processing');
 
-  return Object.keys(lookup);
+  return Array.from(result);
 }
 
 async function removeKnownStickers(
-  allStickers: Array<string>
+  allStickers: ReadonlyArray<string>
 ): Promise<Array<string>> {
   const db = getInstance();
   const lookup: Dictionary<boolean> = fromPairs(
@@ -5201,7 +5325,7 @@ async function removeKnownStickers(
 }
 
 async function removeKnownDraftAttachments(
-  allStickers: Array<string>
+  allStickers: ReadonlyArray<string>
 ): Promise<Array<string>> {
   const db = getInstance();
   const lookup: Dictionary<boolean> = fromPairs(
@@ -5314,69 +5438,36 @@ async function deleteJob(id: string): Promise<void> {
   db.prepare<Query>('DELETE FROM jobs WHERE id = $id').run({ id });
 }
 
-async function processGroupCallRingRequest(
+async function wasGroupCallRingPreviouslyCanceled(
   ringId: bigint
-): Promise<ProcessGroupCallRingRequestResult> {
+): Promise<boolean> {
   const db = getInstance();
 
-  return db.transaction(() => {
-    let result: ProcessGroupCallRingRequestResult;
-
-    const wasRingPreviouslyCanceled = Boolean(
-      db
-        .prepare<Query>(
-          `
-          SELECT 1 FROM groupCallRings
-          WHERE ringId = $ringId AND isActive = 0
-          LIMIT 1;
-          `
-        )
-        .pluck(true)
-        .get({ ringId })
-    );
-
-    if (wasRingPreviouslyCanceled) {
-      result = ProcessGroupCallRingRequestResult.RingWasPreviouslyCanceled;
-    } else {
-      const isThereAnotherActiveRing = Boolean(
-        db
-          .prepare<EmptyQuery>(
-            `
-            SELECT 1 FROM groupCallRings
-            WHERE isActive = 1
-            LIMIT 1;
-            `
-          )
-          .pluck(true)
-          .get()
+  return db
+    .prepare<Query>(
+      `
+      SELECT EXISTS (
+        SELECT 1 FROM groupCallRingCancellations
+        WHERE ringId = $ringId
+        AND createdAt >= $ringsOlderThanThisAreIgnored
       );
-      if (isThereAnotherActiveRing) {
-        result = ProcessGroupCallRingRequestResult.ThereIsAnotherActiveRing;
-      } else {
-        result = ProcessGroupCallRingRequestResult.ShouldRing;
-      }
-
-      db.prepare<Query>(
-        `
-        INSERT OR IGNORE INTO groupCallRings (ringId, isActive, createdAt)
-        VALUES ($ringId, 1, $createdAt);
-        `
-      );
-    }
-
-    return result;
-  })();
+      `
+    )
+    .pluck()
+    .get({
+      ringId,
+      ringsOlderThanThisAreIgnored: Date.now() - MAX_GROUP_CALL_RING_AGE,
+    });
 }
 
-async function processGroupCallRingCancelation(ringId: bigint): Promise<void> {
+async function processGroupCallRingCancellation(ringId: bigint): Promise<void> {
   const db = getInstance();
 
   db.prepare<Query>(
     `
-    INSERT INTO groupCallRings (ringId, isActive, createdAt)
-    VALUES ($ringId, 0, $createdAt)
-    ON CONFLICT (ringId) DO
-    UPDATE SET isActive = 0;
+    INSERT INTO groupCallRingCancellations (ringId, createdAt)
+    VALUES ($ringId, $createdAt)
+    ON CONFLICT (ringId) DO NOTHING;
     `
   ).run({ ringId, createdAt: Date.now() });
 }
@@ -5385,12 +5476,12 @@ async function processGroupCallRingCancelation(ringId: bigint): Promise<void> {
 //   that, it doesn't really matter what the value is.
 const MAX_GROUP_CALL_RING_AGE = 30 * durations.MINUTE;
 
-async function cleanExpiredGroupCallRings(): Promise<void> {
+async function cleanExpiredGroupCallRingCancellations(): Promise<void> {
   const db = getInstance();
 
   db.prepare<Query>(
     `
-    DELETE FROM groupCallRings
+    DELETE FROM groupCallRingCancellations
     WHERE createdAt < $expiredRingTime;
     `
   ).run({

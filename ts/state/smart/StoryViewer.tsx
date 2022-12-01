@@ -13,9 +13,9 @@ import { ToastType, useToastActions } from '../ducks/toast';
 import { getConversationSelector } from '../selectors/conversations';
 import {
   getEmojiSkinTone,
-  getHasAllStoriesMuted,
-  getHasReadReceiptSetting,
+  getHasStoryViewReceiptSetting,
   getPreferredReactionEmoji,
+  isInternalUser,
 } from '../selectors/items';
 import { getIntl } from '../selectors/user';
 import { getPreferredBadgeSelector } from '../selectors/badges';
@@ -23,22 +23,30 @@ import {
   getSelectedStoryData,
   getStoryReplies,
   getStoryByIdSelector,
+  getHasAllStoriesUnmuted,
 } from '../selectors/stories';
 import { isInFullScreenCall } from '../selectors/calling';
+import { isSignalConversation } from '../../util/isSignalConversation';
 import { renderEmojiPicker } from './renderEmojiPicker';
+import { retryMessageSend } from '../../util/retryMessageSend';
+import { saveAttachment } from '../../util/saveAttachment';
 import { strictAssert } from '../../util/assert';
+import { asyncShouldNeverBeCalled } from '../../util/shouldNeverBeCalled';
 import { useActions as useEmojisActions } from '../ducks/emojis';
-import { useActions as useItemsActions } from '../ducks/items';
 import { useConversationsActions } from '../ducks/conversations';
 import { useRecentEmojis } from '../selectors/emojis';
+import { useActions as useItemsActions } from '../ducks/items';
 import { useStoriesActions } from '../ducks/stories';
+import { useIsWindowActive } from '../../hooks/useIsWindowActive';
 
 export function SmartStoryViewer(): JSX.Element | null {
   const storiesActions = useStoriesActions();
-  const { onSetSkinTone, toggleHasAllStoriesMuted } = useItemsActions();
   const { onUseEmoji } = useEmojisActions();
   const { showConversation, toggleHideStories } = useConversationsActions();
+  const { onSetSkinTone } = useItemsActions();
   const { showToast } = useToastActions();
+
+  const isWindowActive = useIsWindowActive();
 
   const i18n = useSelector<StateType, LocalizerType>(getIntl);
   const getPreferredBadge = useSelector(getPreferredBadgeSelector);
@@ -51,6 +59,8 @@ export function SmartStoryViewer(): JSX.Element | null {
     SelectedStoryDataType | undefined
   >(getSelectedStoryData);
 
+  const internalUser = useSelector<StateType, boolean>(isInternalUser);
+
   strictAssert(selectedStoryData, 'StoryViewer: !selectedStoryData');
 
   const conversationSelector = useSelector<StateType, GetConversationByIdType>(
@@ -59,27 +69,28 @@ export function SmartStoryViewer(): JSX.Element | null {
 
   const getStoryById = useSelector(getStoryByIdSelector);
 
+  const recentEmojis = useRecentEmojis();
+  const skinTone = useSelector<StateType, number>(getEmojiSkinTone);
+  const replyState = useSelector(getStoryReplies);
+  const hasAllStoriesUnmuted = useSelector<StateType, boolean>(
+    getHasAllStoriesUnmuted
+  );
+
+  const hasActiveCall = useSelector(isInFullScreenCall);
+  const hasViewReceiptSetting = useSelector<StateType, boolean>(
+    getHasStoryViewReceiptSetting
+  );
+
   const storyInfo = getStoryById(
     conversationSelector,
     selectedStoryData.messageId
   );
-  strictAssert(
-    storyInfo,
-    'StoryViewer: selected story does not exist in stories'
-  );
+
+  if (!storyInfo) {
+    return null;
+  }
+
   const { conversationStory, distributionList, storyView } = storyInfo;
-
-  const recentEmojis = useRecentEmojis();
-  const skinTone = useSelector<StateType, number>(getEmojiSkinTone);
-  const replyState = useSelector(getStoryReplies);
-  const hasAllStoriesMuted = useSelector<StateType, boolean>(
-    getHasAllStoriesMuted
-  );
-
-  const hasActiveCall = useSelector(isInFullScreenCall);
-  const hasReadReceiptSetting = useSelector<StateType, boolean>(
-    getHasReadReceiptSetting
-  );
 
   return (
     <StoryViewer
@@ -88,9 +99,15 @@ export function SmartStoryViewer(): JSX.Element | null {
       getPreferredBadge={getPreferredBadge}
       group={conversationStory.group}
       hasActiveCall={hasActiveCall}
-      hasAllStoriesMuted={hasAllStoriesMuted}
-      hasReadReceiptSetting={hasReadReceiptSetting}
+      hasAllStoriesUnmuted={hasAllStoriesUnmuted}
+      hasViewReceiptSetting={hasViewReceiptSetting}
       i18n={i18n}
+      isInternalUser={internalUser}
+      saveAttachment={internalUser ? saveAttachment : asyncShouldNeverBeCalled}
+      isSignalConversation={isSignalConversation({
+        id: conversationStory.conversationId,
+      })}
+      isWindowActive={isWindowActive}
       numStories={selectedStoryData.numStories}
       onHideStory={toggleHideStories}
       onGoToConversation={senderId => {
@@ -117,12 +134,12 @@ export function SmartStoryViewer(): JSX.Element | null {
       recentEmojis={recentEmojis}
       renderEmojiPicker={renderEmojiPicker}
       replyState={replyState}
-      shouldShowDetailsModal={selectedStoryData.shouldShowDetailsModal}
+      retrySend={retryMessageSend}
       showToast={showToast}
       skinTone={skinTone}
       story={storyView}
       storyViewMode={selectedStoryData.storyViewMode}
-      toggleHasAllStoriesMuted={toggleHasAllStoriesMuted}
+      viewTarget={selectedStoryData.viewTarget}
       {...storiesActions}
     />
   );

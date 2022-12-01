@@ -15,6 +15,7 @@ import { ToastStickerPackInstallFailed } from './ToastStickerPackInstallFailed';
 import { WhatsNewLink } from './WhatsNewLink';
 import { showToast } from '../util/showToast';
 import { strictAssert } from '../util/assert';
+import { SelectedMessageSource } from '../state/ducks/conversationsEnums';
 
 export type PropsType = {
   hasInitialLoadCompleted: boolean;
@@ -24,11 +25,12 @@ export type PropsType = {
   renderLeftPane: () => JSX.Element;
   selectedConversationId?: string;
   selectedMessage?: string;
+  selectedMessageSource?: SelectedMessageSource;
   showConversation: ShowConversationType;
   showWhatsNewModal: () => unknown;
 };
 
-export const Inbox = ({
+export function Inbox({
   hasInitialLoadCompleted,
   i18n,
   isCustomizingPreferredReactions,
@@ -36,9 +38,10 @@ export const Inbox = ({
   renderLeftPane,
   selectedConversationId,
   selectedMessage,
+  selectedMessageSource,
   showConversation,
   showWhatsNewModal,
-}: PropsType): JSX.Element => {
+}: PropsType): JSX.Element {
   const [loadingMessageCount, setLoadingMessageCount] = useState(0);
   const [internalHasInitialLoadCompleted, setInternalHasInitialLoadCompleted] =
     useState(hasInitialLoadCompleted);
@@ -86,13 +89,18 @@ export const Inbox = ({
       setPrevConversation(conversation);
 
       conversation.trigger('opened', selectedMessage);
-    } else if (selectedMessage) {
+    } else if (
+      selectedMessage &&
+      selectedMessageSource !== SelectedMessageSource.Focus
+    ) {
       conversation.trigger('scroll-to-message', selectedMessage);
     }
-
-    // Make sure poppers are positioned properly
-    window.dispatchEvent(new Event('resize'));
-  }, [prevConversation, selectedConversationId, selectedMessage]);
+  }, [
+    prevConversation,
+    selectedConversationId,
+    selectedMessage,
+    selectedMessageSource,
+  ]);
 
   // Whenever the selectedConversationId is cleared we should also ensure
   // that prevConversation is cleared too.
@@ -239,4 +247,4 @@ export const Inbox = ({
       {activeModal}
     </>
   );
-};
+}

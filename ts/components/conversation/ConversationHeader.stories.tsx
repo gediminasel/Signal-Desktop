@@ -9,6 +9,7 @@ import { action } from '@storybook/addon-actions';
 import { getDefaultConversation } from '../../test-both/helpers/getDefaultConversation';
 import { getRandomColor } from '../../test-both/helpers/getRandomColor';
 import { setupI18n } from '../../util/setupI18n';
+import { DurationInSeconds } from '../../util/durations';
 import enMessages from '../../../_locales/en/messages.json';
 import { StorybookThemeContext } from '../../../.storybook/StorybookThemeContext';
 import {
@@ -60,7 +61,7 @@ const commonProps = {
   viewUserStories: action('viewUserStories'),
 };
 
-export const PrivateConvo = (): JSX.Element => {
+export function PrivateConvo(): JSX.Element {
   const items: ItemsType = [
     {
       title: 'With name and profile, verified',
@@ -153,7 +154,7 @@ export const PrivateConvo = (): JSX.Element => {
         phoneNumber: '(202) 555-0005',
         type: 'direct',
         id: '7',
-        expireTimer: 10,
+        expireTimer: DurationInSeconds.fromSeconds(10),
         acceptedMessageRequest: true,
       },
     },
@@ -166,7 +167,7 @@ export const PrivateConvo = (): JSX.Element => {
         phoneNumber: '(202) 555-0005',
         type: 'direct',
         id: '8',
-        expireTimer: 300,
+        expireTimer: DurationInSeconds.fromSeconds(300),
         acceptedMessageRequest: true,
         isVerified: true,
         canChangeTimer: true,
@@ -214,13 +215,13 @@ export const PrivateConvo = (): JSX.Element => {
       })}
     </>
   );
-};
+}
 
 PrivateConvo.story = {
   name: '1:1 conversation',
 };
 
-export const Group = (): JSX.Element => {
+export function Group(): JSX.Element {
   const items: ItemsType = [
     {
       title: 'Basic',
@@ -232,7 +233,7 @@ export const Group = (): JSX.Element => {
         phoneNumber: '',
         id: '11',
         type: 'group',
-        expireTimer: 10,
+        expireTimer: DurationInSeconds.fromSeconds(10),
         acceptedMessageRequest: true,
         outgoingCallButtonStyle: OutgoingCallButtonStyle.JustVideo,
       },
@@ -248,7 +249,7 @@ export const Group = (): JSX.Element => {
         id: '12',
         type: 'group',
         left: true,
-        expireTimer: 10,
+        expireTimer: DurationInSeconds.fromSeconds(10),
         acceptedMessageRequest: true,
         outgoingCallButtonStyle: OutgoingCallButtonStyle.JustVideo,
       },
@@ -263,7 +264,7 @@ export const Group = (): JSX.Element => {
         phoneNumber: '',
         id: '13',
         type: 'group',
-        expireTimer: 10,
+        expireTimer: DurationInSeconds.fromSeconds(10),
         acceptedMessageRequest: true,
         outgoingCallButtonStyle: OutgoingCallButtonStyle.Join,
       },
@@ -278,7 +279,7 @@ export const Group = (): JSX.Element => {
         phoneNumber: '',
         id: '14',
         type: 'group',
-        expireTimer: 10,
+        expireTimer: DurationInSeconds.fromSeconds(10),
         acceptedMessageRequest: true,
         outgoingCallButtonStyle: OutgoingCallButtonStyle.JustVideo,
         muteExpiresAt: Infinity,
@@ -300,13 +301,13 @@ export const Group = (): JSX.Element => {
       })}
     </>
   );
-};
+}
 
 Group.story = {
   name: 'In a group',
 };
 
-const NoteToSelf = () => {
+function NoteToSelf() {
   const items: ItemsType = [
     {
       title: 'In chat with yourself',
@@ -338,13 +339,13 @@ const NoteToSelf = () => {
       })}
     </>
   );
-};
+}
 
 NoteToSelf.story = {
   name: 'Note to Self',
 };
 
-const Unaccepted = () => {
+function Unaccepted() {
   const items: ItemsType = [
     {
       title: '1:1 conversation',
@@ -376,7 +377,7 @@ const Unaccepted = () => {
       })}
     </>
   );
-};
+}
 
 Unaccepted.story = {
   name: 'Unaccepted',

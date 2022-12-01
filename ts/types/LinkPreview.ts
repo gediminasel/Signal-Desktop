@@ -15,7 +15,7 @@ export type LinkPreviewImage = AttachmentType & {
 };
 
 export type LinkPreviewResult = {
-  title: string;
+  title: string | null;
   url: string;
   image?: LinkPreviewImage;
   description: string | null;
@@ -31,6 +31,15 @@ export enum LinkPreviewSourceType {
   ForwardMessageModal,
   StoryCreator,
 }
+
+export type MaybeGrabLinkPreviewOptionsType = Readonly<{
+  caretLocation?: number;
+  mode?: 'conversation' | 'story';
+}>;
+
+export type AddLinkPreviewOptionsType = Readonly<{
+  disableFetch?: boolean;
+}>;
 
 const linkify = LinkifyIt();
 
@@ -144,7 +153,7 @@ const VALID_URI_CHARACTERS = new Set([
   '_',
   '~',
 ]);
-const ASCII_PATTERN = new RegExp('[\\u0020-\\u007F]', 'g');
+const ASCII_PATTERN = /[\u0020-\u007F]/g;
 const MAX_HREF_LENGTH = 2 ** 12;
 
 export function isLinkSneaky(href: string): boolean {

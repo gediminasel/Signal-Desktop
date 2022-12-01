@@ -3,14 +3,9 @@
 
 // Captures the globals put in place by preload.js, background.js and others
 
-/* eslint-disable max-classes-per-file */
-
-import type { Cancelable } from 'lodash';
 import type { Store } from 'redux';
 import type * as Backbone from 'backbone';
-import type * as Underscore from 'underscore';
 import type PQueue from 'p-queue/dist';
-import type { Ref } from 'react';
 import type { assert } from 'chai';
 import type * as Mustache from 'mustache';
 
@@ -29,6 +24,7 @@ import type {
 } from './challenge';
 import type { WebAPIConnectType } from './textsecure/WebAPI';
 import type { CallingClass } from './services/calling';
+import type * as StorageService from './services/storage';
 import type * as Groups from './groups';
 import type * as Crypto from './Crypto';
 import type * as Curve from './Curve';
@@ -143,17 +139,12 @@ export type SignalCoreType = {
   RemoteConfig: typeof RemoteConfig;
   Services: {
     calling: CallingClass;
-    enableStorageService: () => void;
-    eraseAllStorageServiceState: (options?: {
-      keepUnknownFields?: boolean | undefined;
-    }) => Promise<void>;
     initializeGroupCredentialFetcher: () => Promise<void>;
     initializeNetworkObserver: (network: ReduxActions['network']) => void;
     initializeUpdateListener: (updates: ReduxActions['updates']) => void;
     retryPlaceholders?: Util.RetryPlaceholders;
     lightSessionResetQueue?: PQueue;
-    runStorageServiceSyncJob: (() => void) & Cancelable;
-    storageServiceUploadJob: (() => void) & Cancelable;
+    storage: typeof StorageService;
   };
   Migrations: ReturnType<typeof initializeMigrations>;
   Types: {
@@ -237,7 +228,6 @@ declare global {
     ) => Promise<void>;
 
     FontFace: typeof FontFace;
-    _: typeof Underscore;
     $: typeof jQuery;
 
     imageToBlurHash: typeof imageToBlurHash;
@@ -363,15 +353,6 @@ declare global {
     };
   }
 
-  interface Error {
-    originalError?: Event;
-    reason?: unknown;
-    stackForLog?: string;
-
-    // Used in sticker creator to attach messages to errors
-    errorMessageI18nKey?: string;
-  }
-
   interface Element {
     // WebKit-specific
     scrollIntoViewIfNeeded: (bringToCenter?: boolean) => void;
@@ -392,19 +373,6 @@ declare global {
   }
 }
 
-export class GumVideoCapturer {
-  constructor(
-    maxWidth: number,
-    maxHeight: number,
-    maxFramerate: number,
-    localPreview: Ref<HTMLVideoElement>
-  );
-}
-
-export class CanvasVideoRenderer {
-  constructor(canvas: Ref<HTMLCanvasElement>);
-}
-
 export type WhisperType = {
   Conversation: typeof ConversationModel;
   ConversationCollection: typeof ConversationModelCollectionType;
@@ -423,5 +391,4 @@ export type WhisperType = {
   //   'extend View' syntax. Thus, we'll need to typescriptify most of it at once.
 
   InboxView: typeof Backbone.View;
-  View: typeof Backbone.View;
 };

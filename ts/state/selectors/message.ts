@@ -16,6 +16,7 @@ import type {
 
 import type { TimelineItemType } from '../../components/conversation/TimelineItem';
 import type { PropsData } from '../../components/conversation/Message';
+import type { PropsData as TimelineMessagePropsData } from '../../components/conversation/TimelineMessage';
 import { TextDirection } from '../../components/conversation/Message';
 import type { PropsData as TimerNotificationProps } from '../../components/conversation/TimerNotification';
 import type { PropsData as ChangeNumberNotificationProps } from '../../components/conversation/ChangeNumberNotification';
@@ -24,6 +25,7 @@ import type { PropsData as VerificationNotificationProps } from '../../component
 import type { PropsDataType as GroupsV2Props } from '../../components/conversation/GroupV2Change';
 import type { PropsDataType as GroupV1MigrationPropsType } from '../../components/conversation/GroupV1Migration';
 import type { PropsDataType as DeliveryIssuePropsType } from '../../components/conversation/DeliveryIssueNotification';
+import type { PropsType as PaymentEventNotificationPropsType } from '../../components/conversation/PaymentEventNotification';
 import type {
   PropsData as GroupNotificationProps,
   ChangeType,
@@ -36,7 +38,7 @@ import type { UUIDStringType } from '../../types/UUID';
 
 import type { EmbeddedContactType } from '../../types/EmbeddedContact';
 import { embeddedContactSelector } from '../../types/EmbeddedContact';
-import type { AssertProps, BodyRangesType } from '../../types/Util';
+import type { AssertProps, HydratedBodyRangesType } from '../../types/Util';
 import type { LinkPreviewType } from '../../types/message/LinkPreviews';
 import { getMentionsRegex } from '../../types/Message';
 import { CallMode } from '../../types/Calling';
@@ -92,10 +94,20 @@ import {
 } from '../../messages/MessageSendState';
 import * as log from '../../logging/log';
 import { getConversationColorAttributes } from '../../util/getConversationColorAttributes';
-import { DAY, HOUR, SECOND } from '../../util/durations';
+import { DAY, HOUR, DurationInSeconds } from '../../util/durations';
 import { getStoryReplyText } from '../../util/getStoryReplyText';
-import { isIncoming, isOutgoing, isStory } from '../../messages/helpers';
+import type { MessageAttributesWithPaymentEvent } from '../../messages/helpers';
+import {
+  isIncoming,
+  isOutgoing,
+  messageHasPaymentEvent,
+  isStory,
+} from '../../messages/helpers';
+
 import { calculateExpirationTimestamp } from '../../util/expirationTimer';
+import { isSignalConversation } from '../../util/isSignalConversation';
+import type { AnyPaymentEvent } from '../../types/Payment';
+import { isPaymentNotificationEvent } from '../../types/Payment';
 
 export { isIncoming, isOutgoing, isStory };
 
@@ -113,7 +125,7 @@ type FormattedContact = Partial<ConversationType> &
     | 'type'
     | 'unblurredAvatarPath'
   >;
-export type PropsForMessage = Omit<PropsData, 'interactionMode'>;
+export type PropsForMessage = Omit<TimelineMessagePropsData, 'interactionMode'>;
 type PropsForUnsupportedMessage = {
   canProcessNow: boolean;
   contact: FormattedContact;
@@ -287,7 +299,7 @@ export const processBodyRanges = createSelectorCreator(memoizeByRoot, isEqual)(
   (
     { bodyRanges }: Pick<MessageWithUIFieldsType, 'bodyRanges'>,
     { conversationSelector }: { conversationSelector: GetConversationByIdType }
-  ): BodyRangesType | undefined => {
+  ): HydratedBodyRangesType | undefined => {
     if (!bodyRanges) {
       return undefined;
     }
@@ -305,7 +317,7 @@ export const processBodyRanges = createSelectorCreator(memoizeByRoot, isEqual)(
       })
       .sort((a, b) => b.start - a.start);
   },
-  (_, ranges): undefined | BodyRangesType => ranges
+  (_, ranges): undefined | HydratedBodyRangesType => ranges
 );
 
 const getAuthorForMessage = createSelectorCreator(memoizeByRoot)(
@@ -445,7 +457,7 @@ export const getPropsForStoryReplyContext = createSelectorCreator(
   (
     message: Pick<
       MessageWithUIFieldsType,
-      'body' | 'conversationId' | 'storyReactionEmoji' | 'storyReplyContext'
+      'body' | 'conversationId' | 'storyReaction' | 'storyReplyContext'
     >,
     {
       conversationSelector,
@@ -455,7 +467,7 @@ export const getPropsForStoryReplyContext = createSelectorCreator(
       ourConversationId?: string;
     }
   ): PropsData['storyReplyContext'] => {
-    const { storyReactionEmoji, storyReplyContext } = message;
+    const { storyReaction, storyReplyContext } = message;
     if (!storyReplyContext) {
       return undefined;
     }
@@ -474,7 +486,7 @@ export const getPropsForStoryReplyContext = createSelectorCreator(
       authorTitle,
       conversationColor,
       customColor,
-      emoji: storyReactionEmoji,
+      emoji: storyReaction?.emoji,
       isFromMe,
       rawAttachment: storyReplyContext.attachment
         ? processQuoteAttachment(storyReplyContext.attachment)
@@ -492,7 +504,10 @@ export const getPropsForQuote = createSelectorCreator(memoizeByRoot, isEqual)(
   identity,
 
   (
-    message: Pick<MessageWithUIFieldsType, 'conversationId' | 'quote'>,
+    message: Pick<
+      MessageWithUIFieldsType,
+      'conversationId' | 'quote' | 'payment'
+    >,
     {
       conversationSelector,
       ourConversationId,
@@ -514,6 +529,7 @@ export const getPropsForQuote = createSelectorCreator(memoizeByRoot, isEqual)(
       isGiftBadge: isTargetGiftBadge,
       referencedMessageNotFound,
       fromGroupName,
+      payment,
       text = '',
     } = quote;
 
@@ -540,12 +556,14 @@ export const getPropsForQuote = createSelectorCreator(memoizeByRoot, isEqual)(
       authorTitle,
       bodyRanges: processBodyRanges(quote, { conversationSelector }),
       conversationColor,
+      conversationTitle: conversation.title,
       customColor,
       isFromMe,
       fromGroupName,
       rawAttachment: firstAttachment
         ? processQuoteAttachment(firstAttachment)
         : undefined,
+      payment,
       isGiftBadge: Boolean(isTargetGiftBadge),
       isViewOnce,
       referencedMessageNotFound,
@@ -577,6 +595,7 @@ type ShallowPropsType = Pick<
   | 'canDownload'
   | 'canReact'
   | 'canReply'
+  | 'canReplyPrivately'
   | 'canRetry'
   | 'canRetryDeleteForEveryone'
   | 'contact'
@@ -603,7 +622,6 @@ type ShallowPropsType = Pick<
   | 'isTapToViewExpired'
   | 'readStatus'
   | 'lastSeenHere'
-  | 'receivedAt'
   | 'selectedReaction'
   | 'status'
   | 'text'
@@ -630,7 +648,9 @@ const getShallowPropsForMessage = createSelectorCreator(memoizeByRoot, isEqual)(
     }: GetPropsForMessageOptions
   ): ShallowPropsType => {
     const { expireTimer, expirationStartTimestamp, conversationId } = message;
-    const expirationLength = expireTimer ? expireTimer * SECOND : undefined;
+    const expirationLength = expireTimer
+      ? DurationInSeconds.toMillis(expireTimer)
+      : undefined;
 
     const conversation = getConversation(message, conversationSelector);
     const isGroup = conversation.type === 'group';
@@ -657,11 +677,11 @@ const getShallowPropsForMessage = createSelectorCreator(memoizeByRoot, isEqual)(
       getConversationColorAttributes(conversation);
 
     return {
-      receivedAt: message.received_at,
       canDeleteForEveryone: canDeleteForEveryone(message),
       canDownload: canDownload(message, conversationSelector),
       canReact: canReact(message, ourConversationId, conversationSelector),
       canReply: canReply(message, ourConversationId, conversationSelector),
+      canReplyPrivately: canReplyPrivately(message, ourConversationId, conversationSelector),
       canRetry: hasErrors(message),
       canRetryDeleteForEveryone: canRetryDeleteForEveryone(message),
       contact: getPropsForEmbeddedContact(message, regionCode, accountSelector),
@@ -709,6 +729,12 @@ function getTextAttachment(
   return (
     message.bodyAttachment && getPropsForAttachment(message.bodyAttachment)
   );
+}
+
+function getPayment(
+  message: MessageWithUIFieldsType
+): AnyPaymentEvent | undefined {
+  return message.payment;
 }
 
 export function cleanBodyForDirectionCheck(text: string): string {
@@ -767,46 +793,48 @@ function getTextDirection(body?: string): TextDirection {
 export const getPropsForMessage: (
   message: MessageWithUIFieldsType,
   options: GetPropsForMessageOptions
-) => Omit<PropsForMessage, 'renderingContext'> = createSelectorCreator(
-  memoizeByRoot
-)(
-  // `memoizeByRoot` requirement
-  identity,
+) => Omit<PropsForMessage, 'renderingContext' | 'menu' | 'contextMenu'> =
+  createSelectorCreator(memoizeByRoot)(
+    // `memoizeByRoot` requirement
+    identity,
 
-  getAttachmentsForMessage,
-  processBodyRanges,
-  getCachedAuthorForMessage,
-  getPreviewsForMessage,
-  getReactionsForMessage,
-  getPropsForQuote,
-  getPropsForStoryReplyContext,
-  getTextAttachment,
-  getShallowPropsForMessage,
-  (
-    _,
-    attachments: Array<AttachmentType>,
-    bodyRanges: BodyRangesType | undefined,
-    author: PropsData['author'],
-    previews: Array<LinkPreviewType>,
-    reactions: PropsData['reactions'],
-    quote: PropsData['quote'],
-    storyReplyContext: PropsData['storyReplyContext'],
-    textAttachment: PropsData['textAttachment'],
-    shallowProps: ShallowPropsType
-  ): Omit<PropsForMessage, 'renderingContext'> => {
-    return {
-      attachments,
-      author,
-      bodyRanges,
-      previews,
-      quote,
-      reactions,
-      storyReplyContext,
-      textAttachment,
-      ...shallowProps,
-    };
-  }
-);
+    getAttachmentsForMessage,
+    processBodyRanges,
+    getCachedAuthorForMessage,
+    getPreviewsForMessage,
+    getReactionsForMessage,
+    getPropsForQuote,
+    getPropsForStoryReplyContext,
+    getTextAttachment,
+    getPayment,
+    getShallowPropsForMessage,
+    (
+      _,
+      attachments: Array<AttachmentType>,
+      bodyRanges: HydratedBodyRangesType | undefined,
+      author: PropsData['author'],
+      previews: Array<LinkPreviewType>,
+      reactions: PropsData['reactions'],
+      quote: PropsData['quote'],
+      storyReplyContext: PropsData['storyReplyContext'],
+      textAttachment: PropsData['textAttachment'],
+      payment: PropsData['payment'],
+      shallowProps: ShallowPropsType
+    ): Omit<PropsForMessage, 'renderingContext' | 'menu' | 'contextMenu'> => {
+      return {
+        attachments,
+        author,
+        bodyRanges,
+        previews,
+        quote,
+        reactions,
+        storyReplyContext,
+        textAttachment,
+        payment,
+        ...shallowProps,
+      };
+    }
+  );
 
 // This is getPropsForMessage but wrapped in reselect's createSelector so that
 // we can derive all of the selector dependencies that getPropsForMessage
@@ -969,7 +997,29 @@ export function getPropsForBubble(
     };
   }
 
+  if (
+    messageHasPaymentEvent(message) &&
+    !isPaymentNotificationEvent(message.payment)
+  ) {
+    return {
+      type: 'paymentEvent',
+      data: getPropsForPaymentEvent(message, options),
+      timestamp,
+    };
+  }
+
   return getBubblePropsForMessage(message, options);
+}
+
+function getPropsForPaymentEvent(
+  message: MessageAttributesWithPaymentEvent,
+  { conversationSelector }: GetPropsForBubbleOptions
+): Omit<PaymentEventNotificationPropsType, 'i18n'> {
+  return {
+    sender: conversationSelector(message.sourceUuid),
+    conversation: conversationSelector(message.conversationId),
+    event: message.payment,
+  };
 }
 
 // Unsupported Message
@@ -1112,10 +1162,26 @@ function getPropsForTimerNotification(
   const sourceId = sourceUuid || source;
   const formattedContact = conversationSelector(sourceId);
 
+  // Pacify typescript
+  type MaybeExpireTimerType =
+    | { disabled: true }
+    | {
+        disabled: false;
+        expireTimer: DurationInSeconds;
+      };
+
+  const maybeExpireTimer: MaybeExpireTimerType = disabled
+    ? {
+        disabled: true,
+      }
+    : {
+        disabled: false,
+        expireTimer,
+      };
+
   const basicProps = {
     ...formattedContact,
-    disabled,
-    expireTimer,
+    ...maybeExpireTimer,
     type: 'fromOther' as const,
   };
 
@@ -1627,6 +1693,7 @@ function canReplyOrReact(
     | 'canReplyToStory'
     | 'deletedForEveryone'
     | 'sendStateByConversationId'
+    | 'payment'
     | 'type'
   >,
   ourConversationId: string | undefined,
@@ -1651,6 +1718,10 @@ function canReplyOrReact(
   }
 
   if (deletedForEveryone) {
+    return false;
+  }
+
+  if (isSignalConversation(conversation)) {
     return false;
   }
 
@@ -1703,6 +1774,30 @@ export function canReply(
   }
   return canReplyOrReact(message, ourConversationId, conversation);
 }
+
+export function canReplyPrivately(
+  message: Pick<
+    MessageWithUIFieldsType,
+    | 'canReplyToStory'
+    | 'conversationId'
+    | 'deletedForEveryone'
+    | 'sendStateByConversationId'
+    | 'type'
+  >,
+  ourConversationId: string | undefined,
+  conversationSelector: GetConversationByIdType
+): boolean {
+  const conversation = getConversation(message, conversationSelector);
+  if (
+    !conversation ||
+    conversation.type !== 'group' ||
+    message.type !== 'incoming'
+  ) {
+    return false;
+  }
+  return canReplyOrReact(message, ourConversationId, conversation);
+}
+
 
 export function canReact(
   message: Pick<

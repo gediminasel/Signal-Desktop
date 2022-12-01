@@ -16,6 +16,7 @@ import { sendNormalMessage } from './helpers/sendNormalMessage';
 import { sendDirectExpirationTimerUpdate } from './helpers/sendDirectExpirationTimerUpdate';
 import { sendGroupUpdate } from './helpers/sendGroupUpdate';
 import { sendDeleteForEveryone } from './helpers/sendDeleteForEveryone';
+import { sendDeleteStoryForEveryone } from './helpers/sendDeleteStoryForEveryone';
 import { sendProfileKey } from './helpers/sendProfileKey';
 import { sendReaction } from './helpers/sendReaction';
 import { sendStory } from './helpers/sendStory';
@@ -35,11 +36,13 @@ import { explodePromise } from '../util/explodePromise';
 import type { Job } from './Job';
 import type { ParsedJob } from './types';
 import type SendMessage from '../textsecure/SendMessage';
+import type { UUIDStringType } from '../types/UUID';
 
 // Note: generally, we only want to add to this list. If you do need to change one of
 //   these values, you'll likely need to write a database migration.
 export const conversationQueueJobEnum = z.enum([
   'DeleteForEveryone',
+  'DeleteStoryForEveryone',
   'DirectExpirationTimerUpdate',
   'GroupUpdate',
   'NormalMessage',
@@ -58,6 +61,25 @@ const deleteForEveryoneJobDataSchema = z.object({
 });
 export type DeleteForEveryoneJobData = z.infer<
   typeof deleteForEveryoneJobDataSchema
+>;
+
+const deleteStoryForEveryoneJobDataSchema = z.object({
+  type: z.literal(conversationQueueJobEnum.enum.DeleteStoryForEveryone),
+  conversationId: z.string(),
+  storyId: z.string(),
+  targetTimestamp: z.number(),
+  updatedStoryRecipients: z
+    .array(
+      z.object({
+        destinationUuid: z.string(),
+        distributionListIds: z.array(z.string()),
+        isAllowedToReply: z.boolean(),
+      })
+    )
+    .optional(),
+});
+export type DeleteStoryForEveryoneJobData = z.infer<
+  typeof deleteStoryForEveryoneJobDataSchema
 >;
 
 const expirationTimerUpdateJobDataSchema = z.object({
@@ -119,6 +141,7 @@ export type StoryJobData = z.infer<typeof storyJobDataSchema>;
 
 export const conversationQueueJobDataSchema = z.union([
   deleteForEveryoneJobDataSchema,
+  deleteStoryForEveryoneJobDataSchema,
   expirationTimerUpdateJobDataSchema,
   groupUpdateJobDataSchema,
   normalMessageSendJobDataSchema,
@@ -333,6 +356,9 @@ export class ConversationJobQueue extends JobQueue<ConversationQueueJobData> {
         case jobSet.DeleteForEveryone:
           await sendDeleteForEveryone(conversation, jobBundle, data);
           break;
+        case jobSet.DeleteStoryForEveryone:
+          await sendDeleteStoryForEveryone(conversation, jobBundle, data);
+          break;
         case jobSet.DirectExpirationTimerUpdate:
           await sendDirectExpirationTimerUpdate(conversation, jobBundle, data);
           break;
@@ -361,7 +387,7 @@ export class ConversationJobQueue extends JobQueue<ConversationQueueJobData> {
         }
       }
     } catch (error: unknown) {
-      const untrustedUuids: Array<string> = [];
+      const untrustedUuids: Array<UUIDStringType> = [];
 
       const processError = (toProcess: unknown) => {
         if (toProcess instanceof OutgoingIdentityKeyError) {

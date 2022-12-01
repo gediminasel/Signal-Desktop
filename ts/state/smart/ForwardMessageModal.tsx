@@ -3,12 +3,13 @@
 
 import React from 'react';
 import { useSelector } from 'react-redux';
-import type { BodyRangeType } from '../../types/Util';
+import type { DraftBodyRangesType } from '../../types/Util';
 import type { ForwardMessagePropsType } from '../ducks/globalModals';
 import type { StateType } from '../reducer';
 import * as log from '../../logging/log';
 import { ForwardMessageModal } from '../../components/ForwardMessageModal';
 import { LinkPreviewSourceType } from '../../types/LinkPreview';
+import * as Errors from '../../types/errors';
 import type { GetConversationByIdType } from '../selectors/conversations';
 import {
   getAllComposableConversations,
@@ -107,7 +108,7 @@ export function SmartForwardMessageModal(): JSX.Element | null {
             closeModal();
           }
         } catch (err) {
-          log.warn('doForwardMessage', err && err.stack ? err.stack : err);
+          log.warn('doForwardMessage', Errors.toLogFormat(err));
         }
       }}
       getPreferredBadge={getPreferredBadge}
@@ -121,14 +122,14 @@ export function SmartForwardMessageModal(): JSX.Element | null {
       onClose={closeModal}
       onEditorStateChange={(
         messageText: string,
-        _: Array<BodyRangeType>,
+        _: DraftBodyRangesType,
         caretLocation?: number
       ) => {
         if (!attachments.length) {
           maybeGrabLinkPreview(
             messageText,
             LinkPreviewSourceType.ForwardMessageModal,
-            caretLocation
+            { caretLocation }
           );
         }
       }}

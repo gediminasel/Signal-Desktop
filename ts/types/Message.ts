@@ -1,8 +1,7 @@
 // Copyright 2018-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-/* eslint-disable camelcase */
-
+import type { DurationInSeconds } from '../util/durations';
 import type { AttachmentType } from './Attachment';
 import type { EmbeddedContactType } from './EmbeddedContact';
 import type { IndexableBoolean, IndexablePresence } from './IndexedDB';
@@ -30,7 +29,7 @@ export type IncomingMessage = Readonly<
     body?: string;
     decrypted_at?: number;
     errors?: Array<Error>;
-    expireTimer?: number;
+    expireTimer?: DurationInSeconds;
     messageTimer?: number; // deprecated
     isViewOnce?: number;
     flags?: number;
@@ -54,7 +53,7 @@ export type OutgoingMessage = Readonly<
 
     // Optional
     body?: string;
-    expireTimer?: number;
+    expireTimer?: DurationInSeconds;
     messageTimer?: number; // deprecated
     isViewOnce?: number;
     synced: boolean;
@@ -88,7 +87,7 @@ export type SharedMessageProperties = Readonly<{
 export type ExpirationTimerUpdate = Partial<
   Readonly<{
     expirationTimerUpdate: Readonly<{
-      expireTimer: number;
+      expireTimer: DurationInSeconds;
       fromSync: boolean;
       source: string; // PhoneNumber
     }>;

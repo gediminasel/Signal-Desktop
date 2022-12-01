@@ -7,8 +7,8 @@ import type { SendStateByConversationId } from '../messages/MessageSendState';
 import type { UUIDStringType } from '../types/UUID';
 import * as log from '../logging/log';
 import dataInterface from '../sql/Client';
-import { DAY, SECOND } from './durations';
-import { MY_STORIES_ID } from '../types/Stories';
+import { MY_STORY_ID, StorySendMode } from '../types/Stories';
+import { getStoriesBlocked } from './stories';
 import { ReadStatus } from '../messages/MessageReadStatus';
 import { SeenStatus } from '../MessageSeenStatus';
 import { SendStatus } from '../messages/MessageSendState';
@@ -22,16 +22,25 @@ import { getSignalConnections } from './getSignalConnections';
 import { incrementMessageCounter } from './incrementMessageCounter';
 import { isGroupV2 } from './whatTypeOfConversation';
 import { isNotNil } from './isNotNil';
+import { collect } from './iterables';
+import { DurationInSeconds } from './durations';
 
 export async function sendStoryMessage(
   listIds: Array<string>,
   conversationIds: Array<string>,
   attachment: AttachmentType
 ): Promise<void> {
+  if (getStoriesBlocked()) {
+    log.warn('stories.sendStoryMessage: stories disabled, returning early');
+    return;
+  }
+
   const { messaging } = window.textsecure;
 
   if (!messaging) {
-    log.warn('stories.sendStoryMessage: messaging not available');
+    log.warn(
+      'stories.sendStoryMessage: messaging not available, returning early'
+    );
     return;
   }
 
@@ -73,10 +82,7 @@ export async function sendStoryMessage(
 
       let distributionListMembers: Array<UUIDStringType> = [];
 
-      if (
-        distributionList.id === MY_STORIES_ID &&
-        distributionList.isBlockList
-      ) {
+      if (distributionList.id === MY_STORY_ID && distributionList.isBlockList) {
         const inBlockList = new Set<UUIDStringType>(distributionList.members);
         distributionListMembers = getSignalConnections().reduce(
           (acc, convo) => {
@@ -87,6 +93,10 @@ export async function sendStoryMessage(
 
             const uuid = UUID.cast(id);
             if (inBlockList.has(uuid)) {
+              return acc;
+            }
+
+            if (convo.isEverUnregistered()) {
               return acc;
             }
 
@@ -148,7 +158,8 @@ export async function sendStoryMessage(
         return window.Signal.Migrations.upgradeMessageSchema({
           attachments,
           conversationId: ourConversation.id,
-          expireTimer: DAY / SECOND,
+          expireTimer: DurationInSeconds.DAY,
+          expirationStartTimestamp: Date.now(),
           id: UUID.generate().toString(),
           readStatus: ReadStatus.Read,
           received_at: incrementMessageCounter(),
@@ -158,6 +169,7 @@ export async function sendStoryMessage(
           sent_at: timestamp,
           source: window.textsecure.storage.user.getNumber(),
           sourceUuid: window.textsecure.storage.user.getUuid()?.toString(),
+          sourceDevice: window.textsecure.storage.user.getDeviceId(),
           storyDistributionListId: distributionList.id,
           timestamp,
           type: 'story',
@@ -170,8 +182,8 @@ export async function sendStoryMessage(
     MessageAttributesType
   >();
 
-  await Promise.all(
-    conversationIds.map(async (conversationId, index) => {
+  const groupsToSendTo = Array.from(
+    collect(conversationIds, conversationId => {
       const group = window.ConversationController.get(conversationId);
 
       if (!group) {
@@ -198,7 +210,29 @@ export async function sendStoryMessage(
         return;
       }
 
-      const groupTimestamp = timestamp + index;
+      return group;
+    })
+  );
+
+  // sending a story to a group marks it as one we want to always
+  // include on the send-story-to list
+  const groupsToUpdate = Array.from(groupsToSendTo).filter(
+    group => group.getStorySendMode() !== StorySendMode.Always
+  );
+  for (const group of groupsToUpdate) {
+    group.set('storySendMode', StorySendMode.Always);
+  }
+  window.Signal.Data.updateConversations(
+    groupsToUpdate.map(group => group.attributes)
+  );
+  for (const group of groupsToUpdate) {
+    group.captureChange('storySendMode');
+  }
+
+  await Promise.all(
+    groupsToSendTo.map(async (group, index) => {
+      // We want all of these timestamps to be different from the My Story timestamp.
+      const groupTimestamp = timestamp + index + 1;
 
       const myId = window.ConversationController.getOurConversationIdOrThrow();
       const sendState = {
@@ -227,8 +261,9 @@ export async function sendStoryMessage(
         await window.Signal.Migrations.upgradeMessageSchema({
           attachments,
           canReplyToStory: true,
-          conversationId,
-          expireTimer: DAY / SECOND,
+          conversationId: group.id,
+          expireTimer: DurationInSeconds.DAY,
+          expirationStartTimestamp: Date.now(),
           id: UUID.generate().toString(),
           readStatus: ReadStatus.Read,
           received_at: incrementMessageCounter(),
@@ -238,11 +273,12 @@ export async function sendStoryMessage(
           sent_at: groupTimestamp,
           source: window.textsecure.storage.user.getNumber(),
           sourceUuid: window.textsecure.storage.user.getUuid()?.toString(),
+          sourceDevice: window.textsecure.storage.user.getDeviceId(),
           timestamp: groupTimestamp,
           type: 'story',
         });
 
-      groupV2MessagesByConversationId.set(conversationId, messageAttributes);
+      groupV2MessagesByConversationId.set(group.id, messageAttributes);
     })
   );
 
@@ -297,7 +333,8 @@ export async function sendStoryMessage(
           type: conversationQueueJobEnum.enum.Story,
           conversationId,
           messageIds: [messageAttributes.id],
-          timestamp,
+          // using the group timestamp, which will differ from the 1:1 timestamp
+          timestamp: messageAttributes.timestamp,
         },
         async jobToInsert => {
           const model = new window.Whisper.Message(messageAttributes);

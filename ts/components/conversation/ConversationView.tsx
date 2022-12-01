@@ -46,4 +46,4 @@ export const ConversationView = ({
       </div>
     </div>
   );
-};
+}

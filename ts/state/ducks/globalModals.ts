@@ -11,10 +11,14 @@ import * as SingleServePromise from '../../services/singleServePromise';
 import { getMessageById } from '../../messages/getMessageById';
 import { getMessagePropsSelector } from '../selectors/message';
 import { useBoundActions } from '../../hooks/useBoundActions';
+import type { RecipientsByConversation } from './stories';
 
 // State
 
-export type ForwardMessagePropsType = Omit<PropsForMessage, 'renderingContext'>;
+export type ForwardMessagePropsType = Omit<
+  PropsForMessage,
+  'renderingContext' | 'menu' | 'contextMenu'
+>;
 export type SafetyNumberChangedBlockingDataType = Readonly<{
   promiseUuid: UUIDStringType;
   source?: SafetyNumberChangeSource;
@@ -133,10 +137,10 @@ type HideStoriesSettingsActionType = {
   type: typeof HIDE_STORIES_SETTINGS;
 };
 
-export type ShowSendAnywayDialogActiontype = {
+export type ShowSendAnywayDialogActionType = {
   type: typeof SHOW_SEND_ANYWAY_DIALOG;
   payload: SafetyNumberChangedBlockingDataType & {
-    conversationsToPause: Map<string, Set<string>>;
+    untrustedByConversation: RecipientsByConversation;
   };
 };
 
@@ -154,7 +158,7 @@ export type GlobalModalsActionType =
   | HideStoriesSettingsActionType
   | ShowStoriesSettingsActionType
   | HideSendAnywayDialogActiontype
-  | ShowSendAnywayDialogActiontype
+  | ShowSendAnywayDialogActionType
   | ToggleForwardMessageModalActionType
   | ToggleProfileEditorActionType
   | ToggleProfileEditorErrorActionType
@@ -308,17 +312,17 @@ function toggleSignalConnectionsModal(): ToggleSignalConnectionsModalActionType 
 }
 
 function showBlockingSafetyNumberChangeDialog(
-  conversationsToPause: Map<string, Set<string>>,
+  untrustedByConversation: RecipientsByConversation,
   explodedPromise: ExplodePromiseResultType<boolean>,
   source?: SafetyNumberChangeSource
-): ThunkAction<void, RootStateType, unknown, ShowSendAnywayDialogActiontype> {
+): ThunkAction<void, RootStateType, unknown, ShowSendAnywayDialogActionType> {
   const promiseUuid = SingleServePromise.set<boolean>(explodedPromise);
 
   return dispatch => {
     dispatch({
       type: SHOW_SEND_ANYWAY_DIALOG,
       payload: {
-        conversationsToPause,
+        untrustedByConversation,
         promiseUuid,
         source,
       },

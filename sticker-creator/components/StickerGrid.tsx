@@ -14,6 +14,7 @@ import { DropZone } from '../elements/DropZone';
 import { processStickerImage } from '../util/preload';
 import { useI18n } from '../util/i18n';
 import { MINUTE } from '../../ts/util/durations';
+import * as Errors from '../../ts/types/errors';
 
 const queue = new PQueue({ concurrency: 3, timeout: MINUTE * 30 });
 
@@ -64,13 +65,16 @@ const InnerGrid = SortableContainer(
             } catch (e) {
               window.SignalContext.log.error(
                 'Error processing image:',
-                e?.stack ? e.stack : String(e)
+                Errors.toLogFormat(e)
               );
               actions.removeSticker(path);
+
+              const key =
+                e instanceof window.ProcessStickerImageError
+                  ? e.errorMessageI18nKey
+                  : 'StickerCreator--Toasts--errorProcessing';
               actions.addToast({
-                key:
-                  (e || {}).errorMessageI18nKey ||
-                  'StickerCreator--Toasts--errorProcessing',
+                key,
               });
             }
           });

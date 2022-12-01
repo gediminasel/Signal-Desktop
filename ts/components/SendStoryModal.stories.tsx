@@ -16,6 +16,7 @@ import {
   getMyStories,
   getFakeDistributionListsWithMembers,
 } from '../test-both/helpers/getFakeDistributionLists';
+import { VIDEO_MP4 } from '../types/MIME';
 
 const i18n = setupI18n('en', enMessages);
 
@@ -28,6 +29,13 @@ export default {
   title: 'Components/SendStoryModal',
   component: SendStoryModal,
   argTypes: {
+    draftAttachment: {
+      defaultValue: {
+        contentType: VIDEO_MP4,
+        fileName: 'pixabay-Soap-Bubble-7141.mp4',
+        url: '/fixtures/pixabay-Soap-Bubble-7141.mp4',
+      },
+    },
     candidateConversations: {
       defaultValue: Array.from(Array(100), () => getDefaultConversation()),
     },
@@ -65,11 +73,32 @@ export default {
   },
 } as Meta;
 
+// eslint-disable-next-line react/function-component-definition
 const Template: Story<PropsType> = args => <SendStoryModal {...args} />;
 
 export const Modal = Template.bind({});
 Modal.args = {
   distributionLists: getFakeDistributionListsWithMembers(),
+};
+
+export const BlockList = Template.bind({});
+BlockList.args = {
+  distributionLists: [
+    { ...getMyStories(), members: [getDefaultConversation()] },
+  ],
+  groupStories: [],
+};
+
+export const AllowList = Template.bind({});
+AllowList.args = {
+  distributionLists: [
+    {
+      ...getMyStories(),
+      isBlockList: false,
+      members: [getDefaultConversation()],
+    },
+  ],
+  groupStories: [],
 };
 
 export const FirstTime = Template.bind({});

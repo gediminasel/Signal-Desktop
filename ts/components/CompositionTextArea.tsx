@@ -9,7 +9,7 @@ import { shouldNeverBeCalled } from '../util/shouldNeverBeCalled';
 import type { InputApi } from './CompositionInput';
 import { CompositionInput } from './CompositionInput';
 import { EmojiButton } from './emoji/EmojiButton';
-import type { BodyRangeType, ThemeType } from '../types/Util';
+import type { DraftBodyRangesType, ThemeType } from '../types/Util';
 import type { Props as EmojiButtonProps } from './emoji/EmojiButton';
 import type { PreferredBadgeSelectorType } from '../state/selectors/badges';
 import * as grapheme from '../util/grapheme';
@@ -24,13 +24,13 @@ export type CompositionTextAreaProps = {
   onPickEmoji: (e: EmojiPickDataType) => void;
   onChange: (
     messageText: string,
-    bodyRanges: Array<BodyRangeType>,
+    bodyRanges: DraftBodyRangesType,
     caretLocation?: number | undefined
   ) => void;
   onSetSkinTone: (tone: number) => void;
   onSubmit: (
     message: string,
-    mentions: Array<BodyRangeType>,
+    mentions: DraftBodyRangesType,
     timestamp: number
   ) => void;
   onTextTooLong: () => void;
@@ -46,7 +46,7 @@ export type CompositionTextAreaProps = {
  * Meant for modals that need to collect a message or caption. It is
  * basically a rectangle input with an emoji selector floating at the top-right
  */
-export const CompositionTextArea = ({
+export function CompositionTextArea({
   i18n,
   placeholder,
   maxLength,
@@ -63,7 +63,7 @@ export const CompositionTextArea = ({
   theme,
   recentEmojis,
   skinTone,
-}: CompositionTextAreaProps): JSX.Element => {
+}: CompositionTextAreaProps): JSX.Element {
   const inputApiRef = React.useRef<InputApi | undefined>();
   const [characterCount, setCharacterCount] = React.useState(
     grapheme.count(draftText)
@@ -88,7 +88,7 @@ export const CompositionTextArea = ({
   const handleChange = React.useCallback(
     (
       newValue: string,
-      bodyRanges: Array<BodyRangeType>,
+      bodyRanges: DraftBodyRangesType,
       caretLocation?: number | undefined
     ) => {
       const inputEl = inputApiRef.current;
@@ -158,4 +158,4 @@ export const CompositionTextArea = ({
         )}
     </div>
   );
-};
+}

@@ -38,7 +38,7 @@ import {
 import { uniqBy, noop } from 'lodash';
 
 import type {
-  ActionsType as UxActionsType,
+  ActionsType as CallingReduxActionsType,
   GroupCallParticipantInfoType,
   GroupCallPeekInfoType,
 } from '../state/ducks/calling';
@@ -55,7 +55,6 @@ import {
   CallMode,
   GroupCallConnectionState,
   GroupCallJoinState,
-  ProcessGroupCallRingRequestResult,
 } from '../types/Calling';
 import {
   AudioDeviceModule,
@@ -67,7 +66,8 @@ import {
   findBestMatchingCameraId,
 } from '../calling/findBestMatchingDevice';
 import type { LocalizerType } from '../types/Util';
-import { UUID } from '../types/UUID';
+import { UUID, UUIDKind } from '../types/UUID';
+import * as Errors from '../types/errors';
 import type { ConversationModel } from '../models/conversations';
 import * as Bytes from '../Bytes';
 import { uuidToBytes, bytesToUuid } from '../Crypto';
@@ -102,9 +102,9 @@ import * as log from '../logging/log';
 import { assertDev } from '../util/assert';
 
 const {
-  processGroupCallRingRequest,
-  processGroupCallRingCancelation,
-  cleanExpiredGroupCallRings,
+  processGroupCallRingCancellation,
+  cleanExpiredGroupCallRingCancellations,
+  wasGroupCallRingPreviouslyCanceled,
 } = dataInterface;
 
 const RINGRTC_HTTP_METHOD_TO_OUR_HTTP_METHOD: Map<
@@ -128,6 +128,24 @@ enum GroupCallUpdateMessageState {
   SentJoin,
   SentLeft,
 }
+
+type CallingReduxInterface = Pick<
+  CallingReduxActionsType,
+  | 'callStateChange'
+  | 'cancelIncomingGroupCallRing'
+  | 'groupCallAudioLevelsChange'
+  | 'groupCallStateChange'
+  | 'outgoingCall'
+  | 'receiveIncomingDirectCall'
+  | 'receiveIncomingGroupCall'
+  | 'refreshIODevices'
+  | 'remoteSharingScreenChange'
+  | 'remoteVideoChange'
+  | 'setPresenting'
+  | 'startCallingLobby'
+> & {
+  areAnyCallsActiveOrRinging(): boolean;
+};
 
 function isScreenSource(source: PresentedSource): boolean {
   return source.id.startsWith('screen');
@@ -254,7 +272,7 @@ export class CallingClass {
 
   readonly videoRenderer: CanvasVideoRenderer;
 
-  private uxActions?: UxActionsType;
+  private reduxInterface?: CallingReduxInterface;
 
   private sfuUrl?: string;
 
@@ -281,9 +299,9 @@ export class CallingClass {
     this.callsByConversation = {};
   }
 
-  initialize(uxActions: UxActionsType, sfuUrl: string): void {
-    this.uxActions = uxActions;
-    if (!uxActions) {
+  initialize(reduxInterface: CallingReduxInterface, sfuUrl: string): void {
+    this.reduxInterface = reduxInterface;
+    if (!reduxInterface) {
       throw new Error('CallingClass.initialize: Invalid uxActions.');
     }
 
@@ -321,7 +339,7 @@ export class CallingClass {
     });
 
     ipcRenderer.on('stop-screen-share', () => {
-      uxActions.setPresenting();
+      reduxInterface.setPresenting();
     });
 
     ipcRenderer.on('quit', () => {
@@ -390,7 +408,7 @@ export class CallingClass {
         throw missingCaseError(callMode);
     }
 
-    if (!this.uxActions) {
+    if (!this.reduxInterface) {
       log.error('Missing uxActions, new call not allowed.');
       return;
     }
@@ -492,7 +510,7 @@ export class CallingClass {
   ): Promise<void> {
     log.info('CallingClass.startOutgoingDirectCall()');
 
-    if (!this.uxActions) {
+    if (!this.reduxInterface) {
       throw new Error('Redux actions not available');
     }
 
@@ -544,7 +562,7 @@ export class CallingClass {
     RingRTC.setVideoRenderer(call.callId, this.videoRenderer);
     this.attachToCall(conversation, call);
 
-    this.uxActions.outgoingCall({
+    this.reduxInterface.outgoingCall({
       conversationId: conversation.id,
       hasLocalAudio,
       hasLocalVideo,
@@ -715,7 +733,7 @@ export class CallingClass {
           }
           const localAudioLevel = groupCall.getLocalDeviceState().audioLevel;
 
-          this.uxActions?.groupCallAudioLevelsChange({
+          this.reduxInterface?.groupCallAudioLevelsChange({
             conversationId,
             localAudioLevel,
             remoteDeviceStates,
@@ -803,6 +821,11 @@ export class CallingClass {
         'Conversation is missing required parameters. Cannot join group call'
       );
       return;
+    }
+
+    const haveMediaPermissions = await this.requestPermissions(hasLocalVideo);
+    if (!haveMediaPermissions) {
+      log.info('Permissions were denied, but allow joining group call');
     }
 
     await this.startDeviceReselectionTimer();
@@ -985,7 +1008,7 @@ export class CallingClass {
     conversationId: string,
     groupCall: GroupCall
   ): void {
-    this.uxActions?.groupCallStateChange({
+    this.reduxInterface?.groupCallStateChange({
       conversationId,
       ...this.formatGroupCallForRedux(groupCall),
     });
@@ -1039,10 +1062,7 @@ export class CallingClass {
       sendType: 'callingMessage',
       timestamp,
     }).catch(err => {
-      log.error(
-        'Failed to send group call update:',
-        err && err.stack ? err.stack : err
-      );
+      log.error('Failed to send group call update:', Errors.toLogFormat(err));
     });
   }
 
@@ -1247,8 +1267,8 @@ export class CallingClass {
         icon: 'images/icons/v2/video-solid-24.svg',
         message: window.i18n('calling__presenting--notification-body'),
         onNotificationClick: () => {
-          if (this.uxActions) {
-            this.uxActions.setPresenting();
+          if (this.reduxInterface) {
+            this.reduxInterface.setPresenting();
           }
         },
         silent: true,
@@ -1365,7 +1385,7 @@ export class CallingClass {
 
       await this.selectPreferredDevices(newSettings);
       this.lastMediaDeviceSettings = newSettings;
-      this.uxActions?.refreshIODevices(newSettings);
+      this.reduxInterface?.refreshIODevices(newSettings);
     }
   }
 
@@ -1698,39 +1718,63 @@ export class CallingClass {
       log.error('handleGroupCallRingUpdate(): could not find conversation');
       return;
     }
+
+    const logId = `handleGroupCallRingUpdate(${conversation.idForLogging()})`;
+    if (conversation.isBlocked()) {
+      log.warn(`${logId}: is blocked`);
+      return;
+    }
+
+    const ourACI = window.textsecure.storage.user.getCheckedUuid(UUIDKind.ACI);
+
+    if (conversation.get('left') || !conversation.hasMember(ourACI)) {
+      log.warn(`${logId}: we left the group`);
+      return;
+    }
+
+    if (!conversation.hasMember(new UUID(ringerUuid))) {
+      log.warn(`${logId}: they left the group`);
+      return;
+    }
+
+    if (
+      conversation.get('announcementsOnly') &&
+      !conversation.isAdmin(new UUID(ringerUuid))
+    ) {
+      log.warn(`${logId}: non-admin update to announcement-only group`);
+      return;
+    }
+
     const conversationId = conversation.id;
 
     let shouldRing = false;
 
     if (update === RingUpdate.Requested) {
-      const processResult = await processGroupCallRingRequest(ringId);
-      switch (processResult) {
-        case ProcessGroupCallRingRequestResult.ShouldRing:
-          shouldRing = true;
-          break;
-        case ProcessGroupCallRingRequestResult.RingWasPreviouslyCanceled:
-          RingRTC.cancelGroupRing(groupIdBytes, ringId, null);
-          break;
-        case ProcessGroupCallRingRequestResult.ThereIsAnotherActiveRing:
-          RingRTC.cancelGroupRing(groupIdBytes, ringId, RingCancelReason.Busy);
-          break;
-        default:
-          throw missingCaseError(processResult);
+      if (await wasGroupCallRingPreviouslyCanceled(ringId)) {
+        RingRTC.cancelGroupRing(groupIdBytes, ringId, null);
+      } else if (this.areAnyCallsActiveOrRinging()) {
+        RingRTC.cancelGroupRing(groupIdBytes, ringId, RingCancelReason.Busy);
+      } else if (window.Events.getIncomingCallNotification()) {
+        shouldRing = true;
+      } else {
+        log.info(
+          'Incoming calls are disabled. Ignoring group call ring request'
+        );
       }
     } else {
-      await processGroupCallRingCancelation(ringId);
+      await processGroupCallRingCancellation(ringId);
     }
 
     if (shouldRing) {
       log.info('handleGroupCallRingUpdate: ringing');
-      this.uxActions?.receiveIncomingGroupCall({
+      this.reduxInterface?.receiveIncomingGroupCall({
         conversationId,
         ringId,
         ringerUuid,
       });
     } else {
-      log.info('handleGroupCallRingUpdate: canceling any existing ring');
-      this.uxActions?.cancelIncomingGroupCallRing({
+      log.info('handleGroupCallRingUpdate: canceling the existing ring');
+      this.reduxInterface?.cancelIncomingGroupCallRing({
         conversationId,
         ringId,
       });
@@ -1782,7 +1826,7 @@ export class CallingClass {
   private async handleIncomingCall(call: Call): Promise<CallSettings | null> {
     log.info('CallingClass.handleIncomingCall()');
 
-    if (!this.uxActions || !this.localDeviceId) {
+    if (!this.reduxInterface || !this.localDeviceId) {
       log.error('Missing required objects, ignoring incoming call.');
       return null;
     }
@@ -1790,6 +1834,13 @@ export class CallingClass {
     const conversation = window.ConversationController.get(call.remoteUserId);
     if (!conversation) {
       log.error('Missing conversation, ignoring incoming call.');
+      return null;
+    }
+
+    if (conversation.isBlocked()) {
+      log.warn(
+        `handleIncomingCall(): ${conversation.idForLogging()} is blocked`
+      );
       return null;
     }
 
@@ -1815,7 +1866,7 @@ export class CallingClass {
 
       this.attachToCall(conversation, call);
 
-      this.uxActions.receiveIncomingDirectCall({
+      this.reduxInterface.receiveIncomingDirectCall({
         conversationId: conversation.id,
         isVideoCall: call.isVideoCall,
       });
@@ -1824,7 +1875,7 @@ export class CallingClass {
 
       return await this.getCallSettings(conversation);
     } catch (err) {
-      log.error(`Ignoring incoming call: ${err.stack}`);
+      log.error(`Ignoring incoming call: ${Errors.toLogFormat(err)}`);
       this.addCallHistoryForFailedIncomingCall(
         conversation,
         call.isVideoCall,
@@ -1835,6 +1886,7 @@ export class CallingClass {
   }
 
   private handleAutoEndedIncomingCallRequest(
+    _callId: CallId,
     remoteUserId: UserId,
     reason: CallEndedReason,
     ageInSeconds: number,
@@ -1866,8 +1918,8 @@ export class CallingClass {
   private attachToCall(conversation: ConversationModel, call: Call): void {
     this.callsByConversation[conversation.id] = call;
 
-    const { uxActions } = this;
-    if (!uxActions) {
+    const { reduxInterface } = this;
+    if (!reduxInterface) {
       return;
     }
 
@@ -1883,7 +1935,7 @@ export class CallingClass {
         this.lastMediaDeviceSettings = undefined;
         delete this.callsByConversation[conversation.id];
       }
-      uxActions.callStateChange({
+      reduxInterface.callStateChange({
         conversationId: conversation.id,
         acceptedTime,
         callState: call.state,
@@ -1896,7 +1948,7 @@ export class CallingClass {
 
     // eslint-disable-next-line no-param-reassign
     call.handleRemoteVideoEnabled = () => {
-      uxActions.remoteVideoChange({
+      reduxInterface.remoteVideoChange({
         conversationId: conversation.id,
         hasVideo: call.remoteVideoEnabled,
       });
@@ -1904,7 +1956,7 @@ export class CallingClass {
 
     // eslint-disable-next-line no-param-reassign
     call.handleRemoteSharingScreen = () => {
-      uxActions.remoteSharingScreenChange({
+      reduxInterface.remoteSharingScreenChange({
         conversationId: conversation.id,
         isSharingScreen: Boolean(call.remoteSharingScreen),
       });
@@ -2189,7 +2241,7 @@ export class CallingClass {
       icon: 'images/icons/v2/video-solid-24.svg',
       message: notificationMessage,
       onNotificationClick: () => {
-        this.uxActions?.startCallingLobby({
+        this.reduxInterface?.startCallingLobby({
           conversationId: conversation.id,
           isVideoCall: true,
         });
@@ -2199,9 +2251,13 @@ export class CallingClass {
     });
   }
 
+  private areAnyCallsActiveOrRinging(): boolean {
+    return this.reduxInterface?.areAnyCallsActiveOrRinging() ?? false;
+  }
+
   private async cleanExpiredGroupCallRingsAndLoop(): Promise<void> {
     try {
-      await cleanExpiredGroupCallRings();
+      await cleanExpiredGroupCallRingCancellations();
     } catch (err: unknown) {
       // These errors are ignored here. They should be logged elsewhere and it's okay if
       //   we don't do a cleanup this time.

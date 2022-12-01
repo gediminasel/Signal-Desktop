@@ -38,11 +38,9 @@ const bundleDefaults = {
     'mac-screen-capture-permissions',
     'ringrtc',
     'sass',
-    'sharp',
     'websocket',
 
     // Things that don't bundle well
-    'backbone',
     'got',
     'jquery',
     'node-fetch',

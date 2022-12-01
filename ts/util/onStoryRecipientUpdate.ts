@@ -5,16 +5,13 @@ import { isEqual } from 'lodash';
 import type { DeleteAttributesType } from '../messageModifiers/Deletes';
 import type { StoryRecipientUpdateEvent } from '../textsecure/messageReceiverEvents';
 import * as log from '../logging/log';
-import { Deletes } from '../messageModifiers/Deletes';
+import { DeleteModel } from '../messageModifiers/Deletes';
 import { SendStatus } from '../messages/MessageSendState';
-import { deleteForEveryone } from './deleteForEveryone';
-import {
-  getConversationIdForLogging,
-  getMessageIdForLogging,
-} from './idForLogging';
+import { getConversationIdForLogging } from './idForLogging';
 import { isStory } from '../state/selectors/message';
 import { normalizeUuid } from './normalizeUuid';
 import { queueUpdateMessage } from './messageBatcher';
+import { isMe } from './whatTypeOfConversation';
 
 export async function onStoryRecipientUpdate(
   event: StoryRecipientUpdateEvent
@@ -25,8 +22,15 @@ export async function onStoryRecipientUpdate(
 
   const conversation = window.ConversationController.get(destinationUuid);
 
+  const logId = `onStoryRecipientUpdate(${destinationUuid}, ${timestamp})`;
+
   if (!conversation) {
-    log.info(`onStoryRecipientUpdate no conversation for ${destinationUuid}`);
+    log.warn(`${logId}: no conversation`);
+    return;
+  }
+
+  if (!isMe(conversation.attributes)) {
+    log.warn(`${logId}: story recipient update on invalid conversation`);
     return;
   }
 
@@ -37,35 +41,39 @@ export async function onStoryRecipientUpdate(
     );
 
   if (!targetConversation) {
-    log.info('onStoryRecipientUpdate !targetConversation', {
-      destinationUuid,
-      timestamp,
-    });
-
+    log.info(`${logId}: no targetConversation`);
     return;
   }
 
-  targetConversation.queueJob('onStoryRecipientUpdate', async () => {
-    log.info('onStoryRecipientUpdate updating', timestamp);
+  targetConversation.queueJob(logId, async () => {
+    log.info(`${logId}: updating`);
 
     // Build up some maps for fast/easy lookups
     const isAllowedToReply = new Map<string, boolean>();
-    const conversationIdToDistributionListIds = new Map<string, Set<string>>();
+    const distributionListIdToConversationIds = new Map<string, Set<string>>();
     data.storyMessageRecipients.forEach(item => {
-      const convo = window.ConversationController.get(item.destinationUuid);
+      if (!item.destinationUuid) {
+        return;
+      }
+
+      const convo = window.ConversationController.get(
+        normalizeUuid(item.destinationUuid, `${logId}.destinationUuid`)
+      );
 
       if (!convo || !item.distributionListIds) {
         return;
       }
 
-      conversationIdToDistributionListIds.set(
-        convo.id,
-        new Set(
-          item.distributionListIds.map(uuid =>
-            normalizeUuid(uuid, 'onStoryRecipientUpdate.distributionListId')
-          )
-        )
-      );
+      for (const rawUuid of item.distributionListIds) {
+        const uuid = normalizeUuid(rawUuid, `${logId}.distributionListId`);
+
+        const existing = distributionListIdToConversationIds.get(uuid);
+        if (existing === undefined) {
+          distributionListIdToConversationIds.set(uuid, new Set([convo.id]));
+        } else {
+          existing.add(convo.id);
+        }
+      }
       isAllowedToReply.set(convo.id, item.isAllowedToReply !== false);
     });
 
@@ -76,67 +84,72 @@ export async function onStoryRecipientUpdate(
     const messages = await window.Signal.Data.getMessagesBySentAt(timestamp);
 
     // Now we figure out who needs to be added and who needs to removed
-    messages.forEach(item => {
+    const handledMessages = messages.filter(item => {
       if (!isStory(item)) {
-        return;
+        return false;
       }
 
       const { sendStateByConversationId, storyDistributionListId } = item;
 
       if (!sendStateByConversationId || !storyDistributionListId) {
-        return;
+        return false;
       }
+
+      const newConversationIds =
+        distributionListIdToConversationIds.get(storyDistributionListId) ??
+        new Set();
 
       const nextSendStateByConversationId = {
         ...sendStateByConversationId,
       };
 
-      conversationIdToDistributionListIds.forEach(
-        (distributionListIds, conversationId) => {
-          const hasDistributionListId = distributionListIds.has(
-            storyDistributionListId
-          );
+      // Find conversation ids present in the local send state, but missing
+      // in the remote state, and remove them from the local state.
+      for (const oldId of Object.keys(sendStateByConversationId)) {
+        if (!newConversationIds.has(oldId)) {
+          const recipient = window.ConversationController.get(oldId);
 
-          const recipient = window.ConversationController.get(conversationId);
-          const conversationIdForLogging = recipient
+          const recipientLogId = recipient
             ? getConversationIdForLogging(recipient.attributes)
-            : conversationId;
+            : oldId;
 
-          if (
-            hasDistributionListId &&
-            !sendStateByConversationId[conversationId]
-          ) {
-            log.info('onStoryRecipientUpdate adding', {
-              conversationId: conversationIdForLogging,
-              messageId: getMessageIdForLogging(item),
-              storyDistributionListId,
-            });
-            nextSendStateByConversationId[conversationId] = {
-              isAllowedToReplyToStory: Boolean(
-                isAllowedToReply.get(conversationId)
-              ),
-              status: SendStatus.Sent,
-              updatedAt: now,
-            };
-          } else if (
-            sendStateByConversationId[conversationId] &&
-            !hasDistributionListId
-          ) {
-            log.info('onStoryRecipientUpdate removing', {
-              conversationId: conversationIdForLogging,
-              messageId: getMessageIdForLogging(item),
-              storyDistributionListId,
-            });
-            delete nextSendStateByConversationId[conversationId];
-          }
+          log.info(`${logId}: removing`, {
+            recipient: recipientLogId,
+            messageId: item.id,
+            storyDistributionListId,
+          });
+          delete nextSendStateByConversationId[oldId];
         }
-      );
+      }
+
+      // Find conversation ids present in the remote send state, but missing in
+      // the local send state, and add them to the local state.
+      for (const newId of newConversationIds) {
+        if (sendStateByConversationId[newId] === undefined) {
+          const recipient = window.ConversationController.get(newId);
+
+          const recipientLogId = recipient
+            ? getConversationIdForLogging(recipient.attributes)
+            : newId;
+
+          log.info(`${logId}: adding`, {
+            recipient: recipientLogId,
+            messageId: item.id,
+            storyDistributionListId,
+          });
+          nextSendStateByConversationId[newId] = {
+            isAllowedToReplyToStory: Boolean(isAllowedToReply.get(newId)),
+            status: SendStatus.Sent,
+            updatedAt: now,
+          };
+        }
+      }
 
       if (isEqual(sendStateByConversationId, nextSendStateByConversationId)) {
-        log.info(
-          'onStoryRecipientUpdate: sendStateByConversationId does not need update'
-        );
-        return;
+        log.info(`${logId}: sendStateByConversationId does not need update`, {
+          messageId: item.id,
+        });
+        return true;
       }
 
       const message = window.MessageController.register(item.id, item);
@@ -150,8 +163,8 @@ export async function onStoryRecipientUpdate(
         (sendStateConversationIds.size === 1 &&
           sendStateConversationIds.has(ourConversationId))
       ) {
-        log.info('onStoryRecipientUpdate DOE', {
-          messageId: getMessageIdForLogging(item),
+        log.info(`${logId} DOE`, {
+          messageId: item.id,
           storyDistributionListId,
         });
         const delAttributes: DeleteAttributesType = {
@@ -159,20 +172,29 @@ export async function onStoryRecipientUpdate(
           serverTimestamp: Number(item.serverTimestamp),
           targetSentTimestamp: item.timestamp,
         };
-        const doe = Deletes.getSingleton().add(delAttributes);
+        const doe = new DeleteModel(delAttributes);
+
         // There are no longer any remaining members for this message so lets
         // run it through deleteForEveryone which marks the message as
         // deletedForEveryone locally.
-        deleteForEveryone(message, doe);
+        //
+        // NOTE: We don't call `Deletes.onDelete()` so the message lookup by
+        // sent timestamp doesn't happen (it would return all copies of the
+        // story, not just the one we want to delete).
+        message.handleDeleteForEveryone(doe);
       } else {
         message.set({
           sendStateByConversationId: nextSendStateByConversationId,
         });
         queueUpdateMessage(message.attributes);
       }
+
+      return true;
     });
 
-    window.Whisper.events.trigger('incrementProgress');
-    confirm();
+    if (handledMessages.length) {
+      window.Whisper.events.trigger('incrementProgress');
+      confirm();
+    }
   });
 }

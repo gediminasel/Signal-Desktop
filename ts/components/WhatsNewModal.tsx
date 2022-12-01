@@ -31,16 +31,16 @@ const releaseNotes: ReleaseNotesType = {
   version: window.getVersion?.(),
   features: [
     {
-      key: 'WhatsNew__v5.63--0',
+      key: 'WhatsNew__v6.1--1',
       components: undefined,
     },
   ],
 };
 
-export const WhatsNewModal = ({
+export function WhatsNewModal({
   i18n,
   hideWhatsNewModal,
-}: PropsType): JSX.Element => {
+}: PropsType): JSX.Element {
   let contentNode: ReactChild;
 
   if (releaseNotes.features.length === 1) {
@@ -89,4 +89,4 @@ export const WhatsNewModal = ({
       </>
     </Modal>
   );
-};
+}

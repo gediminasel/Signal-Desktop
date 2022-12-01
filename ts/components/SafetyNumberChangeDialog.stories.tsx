@@ -10,6 +10,7 @@ import { setupI18n } from '../util/setupI18n';
 import enMessages from '../../_locales/en/messages.json';
 import { StorybookThemeContext } from '../../.storybook/StorybookThemeContext';
 import { getFakeBadge } from '../test-both/helpers/getFakeBadge';
+import { MY_STORY_ID } from '../types/Stories';
 
 const i18n = setupI18n('en', enMessages);
 
@@ -22,22 +23,24 @@ const contactWithAllData = getDefaultConversation({
   phoneNumber: '(305) 123-4567',
 });
 
-const contactWithJustProfile = getDefaultConversation({
+const contactWithJustProfileVerified = getDefaultConversation({
   id: 'def',
   avatarPath: undefined,
   title: '-*Smartest Dude*-',
   profileName: '-*Smartest Dude*-',
   name: undefined,
   phoneNumber: '(305) 123-4567',
+  isVerified: true,
 });
 
-const contactWithJustNumber = getDefaultConversation({
+const contactWithJustNumberVerified = getDefaultConversation({
   id: 'xyz',
   avatarPath: undefined,
   profileName: undefined,
   name: undefined,
   title: '(305) 123-4567',
   phoneNumber: '(305) 123-4567',
+  isVerified: true,
 });
 
 const contactWithNothing = getDefaultConversation({
@@ -55,57 +58,21 @@ export default {
   title: 'Components/SafetyNumberChangeDialog',
 };
 
-export const SingleContactDialog = (): JSX.Element => {
-  const theme = useTheme();
-  return (
-    <SafetyNumberChangeDialog
-      contacts={[contactWithAllData]}
-      getPreferredBadge={() => undefined}
-      i18n={i18n}
-      onCancel={action('cancel')}
-      onConfirm={action('confirm')}
-      renderSafetyNumber={() => {
-        action('renderSafetyNumber');
-        return <div>This is a mock Safety Number View</div>;
-      }}
-      theme={theme}
-    />
-  );
-};
-
-export const DifferentConfirmationText = (): JSX.Element => {
-  const theme = useTheme();
-  return (
-    <SafetyNumberChangeDialog
-      confirmText="You are awesome"
-      contacts={[contactWithAllData]}
-      getPreferredBadge={() => undefined}
-      i18n={i18n}
-      onCancel={action('cancel')}
-      onConfirm={action('confirm')}
-      renderSafetyNumber={() => {
-        action('renderSafetyNumber');
-        return <div>This is a mock Safety Number View</div>;
-      }}
-      theme={theme}
-    />
-  );
-};
-
-export const MultiContactDialog = (): JSX.Element => {
+export function SingleContactDialog(): JSX.Element {
   const theme = useTheme();
   return (
     <SafetyNumberChangeDialog
       contacts={[
-        contactWithAllData,
-        contactWithJustProfile,
-        contactWithJustNumber,
-        contactWithNothing,
+        {
+          story: undefined,
+          contacts: [contactWithAllData],
+        },
       ]}
       getPreferredBadge={() => undefined}
       i18n={i18n}
       onCancel={action('cancel')}
       onConfirm={action('confirm')}
+      removeFromStory={action('removeFromStory')}
       renderSafetyNumber={() => {
         action('renderSafetyNumber');
         return <div>This is a mock Safety Number View</div>;
@@ -113,22 +80,111 @@ export const MultiContactDialog = (): JSX.Element => {
       theme={theme}
     />
   );
-};
+}
 
-export const MultipleContactsAllWithBadges = (): JSX.Element => {
+export function DifferentConfirmationText(): JSX.Element {
+  const theme = useTheme();
+  return (
+    <SafetyNumberChangeDialog
+      confirmText="You are awesome"
+      contacts={[
+        {
+          story: undefined,
+          contacts: [contactWithAllData],
+        },
+      ]}
+      getPreferredBadge={() => undefined}
+      i18n={i18n}
+      onCancel={action('cancel')}
+      onConfirm={action('confirm')}
+      removeFromStory={action('removeFromStory')}
+      renderSafetyNumber={() => {
+        action('renderSafetyNumber');
+        return <div>This is a mock Safety Number View</div>;
+      }}
+      theme={theme}
+    />
+  );
+}
+
+export function MultiContactDialog(): JSX.Element {
   const theme = useTheme();
   return (
     <SafetyNumberChangeDialog
       contacts={[
-        contactWithAllData,
-        contactWithJustProfile,
-        contactWithJustNumber,
-        contactWithNothing,
+        {
+          story: undefined,
+          contacts: [contactWithAllData, contactWithJustProfileVerified],
+        },
+        {
+          story: undefined,
+          contacts: [contactWithJustNumberVerified, contactWithNothing],
+        },
+      ]}
+      getPreferredBadge={() => undefined}
+      i18n={i18n}
+      onCancel={action('cancel')}
+      onConfirm={action('confirm')}
+      removeFromStory={action('removeFromStory')}
+      renderSafetyNumber={() => {
+        action('renderSafetyNumber');
+        return <div>This is a mock Safety Number View</div>;
+      }}
+      theme={theme}
+    />
+  );
+}
+
+export function AllVerified(): JSX.Element {
+  const theme = useTheme();
+  return (
+    <SafetyNumberChangeDialog
+      contacts={[
+        {
+          story: undefined,
+          contacts: [
+            contactWithJustProfileVerified,
+            contactWithJustNumberVerified,
+          ],
+        },
+      ]}
+      getPreferredBadge={() => undefined}
+      i18n={i18n}
+      onCancel={action('cancel')}
+      onConfirm={action('confirm')}
+      removeFromStory={action('removeFromStory')}
+      renderSafetyNumber={() => {
+        action('renderSafetyNumber');
+        return <div>This is a mock Safety Number View</div>;
+      }}
+      theme={theme}
+    />
+  );
+}
+AllVerified.story = {
+  name: 'All verified; Send button instead',
+};
+
+export function MultipleContactsAllWithBadges(): JSX.Element {
+  const theme = useTheme();
+  return (
+    <SafetyNumberChangeDialog
+      contacts={[
+        {
+          story: undefined,
+          contacts: [
+            contactWithAllData,
+            contactWithJustProfileVerified,
+            contactWithJustNumberVerified,
+            contactWithNothing,
+          ],
+        },
       ]}
       getPreferredBadge={() => getFakeBadge()}
       i18n={i18n}
       onCancel={action('cancel')}
       onConfirm={action('confirm')}
+      removeFromStory={action('removeFromStory')}
       renderSafetyNumber={() => {
         action('renderSafetyNumber');
         return <div>This is a mock Safety Number View</div>;
@@ -136,32 +192,38 @@ export const MultipleContactsAllWithBadges = (): JSX.Element => {
       theme={theme}
     />
   );
-};
+}
 
 MultipleContactsAllWithBadges.story = {
   name: 'Multiple contacts, all with badges',
 };
 
-export const ScrollDialog = (): JSX.Element => {
+export function TenContacts(): JSX.Element {
   const theme = useTheme();
   return (
     <SafetyNumberChangeDialog
       contacts={[
-        contactWithAllData,
-        contactWithJustProfile,
-        contactWithJustNumber,
-        contactWithNothing,
-        contactWithAllData,
-        contactWithAllData,
-        contactWithAllData,
-        contactWithAllData,
-        contactWithAllData,
-        contactWithAllData,
+        {
+          story: undefined,
+          contacts: [
+            contactWithAllData,
+            contactWithJustProfileVerified,
+            contactWithJustNumberVerified,
+            contactWithNothing,
+            contactWithAllData,
+            contactWithAllData,
+            contactWithAllData,
+            contactWithAllData,
+            contactWithAllData,
+            contactWithAllData,
+          ],
+        },
       ]}
       getPreferredBadge={() => undefined}
       i18n={i18n}
       onCancel={action('cancel')}
       onConfirm={action('confirm')}
+      removeFromStory={action('removeFromStory')}
       renderSafetyNumber={() => {
         action('renderSafetyNumber');
         return <div>This is a mock Safety Number View</div>;
@@ -169,4 +231,95 @@ export const ScrollDialog = (): JSX.Element => {
       theme={theme}
     />
   );
+}
+
+TenContacts.story = {
+  name: 'Ten contacts; first isReviewing = false, then scrolling dialog',
 };
+
+export function NoContacts(): JSX.Element {
+  const theme = useTheme();
+  return (
+    <SafetyNumberChangeDialog
+      contacts={[
+        {
+          story: {
+            name: 'My Story',
+            conversationId: 'our-conversation-id',
+            distributionId: MY_STORY_ID,
+          },
+          contacts: [],
+        },
+        {
+          story: {
+            name: 'Custom List A',
+            conversationId: 'our-conversation-id',
+            distributionId: 'some-other-distribution-id',
+          },
+          contacts: [],
+        },
+      ]}
+      getPreferredBadge={() => undefined}
+      i18n={i18n}
+      onCancel={action('cancel')}
+      onConfirm={action('confirm')}
+      removeFromStory={action('removeFromStory')}
+      renderSafetyNumber={() => {
+        action('renderSafetyNumber');
+        return <div>This is a mock Safety Number View</div>;
+      }}
+      theme={theme}
+    />
+  );
+}
+
+export function InMultipleStories(): JSX.Element {
+  const theme = useTheme();
+  return (
+    <SafetyNumberChangeDialog
+      contacts={[
+        {
+          story: {
+            name: 'Not to be trusted',
+            conversationId: 'our-conversation-id',
+            distributionId: MY_STORY_ID,
+          },
+          contacts: [contactWithAllData, contactWithJustProfileVerified],
+        },
+        {
+          story: {
+            name: 'Custom List A',
+            conversationId: 'our-conversation-id',
+            distributionId: 'some-other-distribution-id',
+          },
+          contacts: [
+            contactWithAllData,
+            contactWithAllData,
+            contactWithAllData,
+          ],
+        },
+        {
+          story: {
+            name: 'Hiking Buds',
+            conversationId: 'hiking-group-id',
+          },
+          contacts: [
+            contactWithJustNumberVerified,
+            contactWithAllData,
+            contactWithAllData,
+          ],
+        },
+      ]}
+      getPreferredBadge={() => undefined}
+      i18n={i18n}
+      onCancel={action('cancel')}
+      onConfirm={action('confirm')}
+      removeFromStory={action('removeFromStory')}
+      renderSafetyNumber={() => {
+        action('renderSafetyNumber');
+        return <div>This is a mock Safety Number View</div>;
+      }}
+      theme={theme}
+    />
+  );
+}

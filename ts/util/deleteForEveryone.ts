@@ -5,7 +5,9 @@ import type { DeleteModel } from '../messageModifiers/Deletes';
 import type { MessageModel } from '../models/messages';
 import * as log from '../logging/log';
 import { DAY } from './durations';
+import { isMe } from './whatTypeOfConversation';
 import { getContactId } from '../messages/helpers';
+import { isStory } from '../state/selectors/message';
 
 export async function deleteForEveryone(
   message: MessageModel,
@@ -13,6 +15,17 @@ export async function deleteForEveryone(
   shouldPersist = true
 ): Promise<void> {
   if (isDeletionByMe(message, doe)) {
+    const conversation = message.getConversation();
+
+    // Our 1:1 stories are deleted through ts/util/onStoryRecipientUpdate.ts
+    if (
+      isStory(message.attributes) &&
+      conversation &&
+      isMe(conversation.attributes)
+    ) {
+      return;
+    }
+
     await message.handleDeleteForEveryone(doe, shouldPersist);
     return;
   }

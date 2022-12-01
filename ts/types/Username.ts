@@ -1,23 +1,51 @@
-// Copyright 2021 Signal Messenger, LLC
+// Copyright 2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-export const MAX_USERNAME = 26;
-export const MIN_USERNAME = 4;
+export type UsernameReservationType = Readonly<{
+  username: string;
+  previousUsername: string | undefined;
+  reservationToken: string;
+}>;
 
-export function isValidUsername(searchTerm: string): boolean {
-  return /^[a-z_][0-9a-z_]{3,25}$/.test(searchTerm);
+export enum ReserveUsernameError {
+  Unprocessable = 'Unprocessable',
+  Conflict = 'Conflict',
 }
 
 export function getUsernameFromSearch(searchTerm: string): string | undefined {
-  if (/^[+0-9]+$/.test(searchTerm)) {
+  // Search term contains username if it:
+  // - Is a valid username with or without a discriminator
+  // - Starts with @
+  // - Ends with @
+  const match = searchTerm.match(
+    /^(?:(?<valid>[a-z_][0-9a-z_]*(?:\.\d*)?)|@(?<start>.*?)@?|@?(?<end>.*?)?@)$/
+  );
+  if (!match) {
     return undefined;
   }
 
-  const match = /^@?(.*?)@?$/.exec(searchTerm);
-
-  if (match && match[1]) {
-    return match[1];
+  const { groups } = match;
+  if (!groups) {
+    return undefined;
   }
 
-  return undefined;
+  return (groups.valid || groups.start || groups.end) ?? undefined;
+}
+
+export function getNickname(username: string): string | undefined {
+  const match = username.match(/^(.*?)(?:\.|$)/);
+  if (!match) {
+    return undefined;
+  }
+
+  return match[1];
+}
+
+export function getDiscriminator(username: string): string {
+  const match = username.match(/(\..*)$/);
+  if (!match) {
+    return '';
+  }
+
+  return match[1];
 }

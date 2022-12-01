@@ -1,13 +1,7 @@
 // Copyright 2018-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type {
-  CSSProperties,
-  FunctionComponent,
-  MouseEvent,
-  ReactChild,
-  ReactNode,
-} from 'react';
+import type { CSSProperties, MouseEvent, ReactChild, ReactNode } from 'react';
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { noop } from 'lodash';
@@ -25,7 +19,7 @@ import { getBadgeImageFileLocalPath } from '../badges/getBadgeImageFileLocalPath
 import { getInitials } from '../util/getInitials';
 import { isBadgeVisible } from '../badges/isBadgeVisible';
 import { shouldBlurAvatar } from '../util/shouldBlurAvatar';
-import { shouldShowBadges } from '../badges/shouldShowBadges';
+import { SIGNAL_AVATAR_PATH } from '../types/SignalConversation';
 
 export enum AvatarBlur {
   NoBlur,
@@ -98,7 +92,7 @@ const getDefaultBlur = (
 ): AvatarBlur =>
   shouldBlurAvatar(...args) ? AvatarBlur.BlurPicture : AvatarBlur.NoBlur;
 
-export const Avatar: FunctionComponent<Props> = ({
+export function Avatar({
   acceptedMessageRequest,
   avatarPath,
   badge,
@@ -126,7 +120,7 @@ export const Avatar: FunctionComponent<Props> = ({
     sharedGroupNames,
     unblurredAvatarPath,
   }),
-}) => {
+}: Props): JSX.Element {
   const [imageBroken, setImageBroken] = useState(false);
 
   useEffect(() => {
@@ -248,14 +242,7 @@ export const Avatar: FunctionComponent<Props> = ({
 
   let badgeNode: ReactNode;
   const badgeSize = _getBadgeSize(size);
-  if (
-    badge &&
-    theme &&
-    !noteToSelf &&
-    badgeSize &&
-    isBadgeVisible(badge) &&
-    shouldShowBadges()
-  ) {
+  if (badge && theme && !noteToSelf && badgeSize && isBadgeVisible(badge)) {
     const badgePlacement = _getBadgePlacement(size);
     const badgeTheme =
       theme === ThemeType.light ? BadgeImageTheme.Light : BadgeImageTheme.Dark;
@@ -303,7 +290,10 @@ export const Avatar: FunctionComponent<Props> = ({
         'module-Avatar',
         Boolean(storyRing) && 'module-Avatar--with-story',
         storyRing === HasStories.Unread && 'module-Avatar--with-story--unread',
-        className
+        className,
+        avatarPath === SIGNAL_AVATAR_PATH
+          ? 'module-Avatar--signal-official'
+          : undefined
       )}
       style={{
         minWidth: size,
@@ -316,7 +306,7 @@ export const Avatar: FunctionComponent<Props> = ({
       {badgeNode}
     </div>
   );
-};
+}
 
 // This is only exported for testing.
 export function _getBadgeSize(avatarSize: number): undefined | number {

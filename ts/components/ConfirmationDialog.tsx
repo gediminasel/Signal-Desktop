@@ -27,11 +27,12 @@ export type OwnProps = Readonly<{
   i18n: LocalizerType;
   moduleClassName?: string;
   noMouseClose?: boolean;
+  noDefaultCancelButton?: boolean;
   onCancel?: () => unknown;
   onClose: () => unknown;
   onTopOfEverything?: boolean;
   theme?: Theme;
-  title?: string | React.ReactNode;
+  title?: React.ReactNode;
 }>;
 
 export type Props = OwnProps;
@@ -56,48 +57,49 @@ function getButtonVariant(
   return ButtonVariant.Secondary;
 }
 
-export const ConfirmationDialog = React.memo(
-  ({
-    actions = [],
-    dialogName,
-    cancelButtonVariant,
-    cancelText,
-    children,
-    hasXButton,
-    i18n,
-    moduleClassName,
-    noMouseClose,
-    onCancel,
-    onClose,
-    onTopOfEverything,
-    theme,
-    title,
-  }: Props) => {
-    const { close, overlayStyles, modalStyles } = useAnimated(onClose, {
-      getFrom: () => ({ opacity: 0, transform: 'scale(0.25)' }),
-      getTo: isOpen => ({ opacity: isOpen ? 1 : 0, transform: 'scale(1)' }),
-    });
+export const ConfirmationDialog = React.memo(function ConfirmationDialogInner({
+  actions = [],
+  dialogName,
+  cancelButtonVariant,
+  cancelText,
+  children,
+  hasXButton,
+  i18n,
+  moduleClassName,
+  noMouseClose,
+  noDefaultCancelButton,
+  onCancel,
+  onClose,
+  onTopOfEverything,
+  theme,
+  title,
+}: Props) {
+  const { close, overlayStyles, modalStyles } = useAnimated(onClose, {
+    getFrom: () => ({ opacity: 0, transform: 'scale(0.25)' }),
+    getTo: isOpen => ({ opacity: isOpen ? 1 : 0, transform: 'scale(1)' }),
+  });
 
-    const cancelAndClose = useCallback(() => {
-      if (onCancel) {
-        onCancel();
+  const cancelAndClose = useCallback(() => {
+    if (onCancel) {
+      onCancel();
+    }
+    close();
+  }, [close, onCancel]);
+
+  const handleCancel = useCallback(
+    (e: MouseEvent) => {
+      if (e.target === e.currentTarget) {
+        cancelAndClose();
       }
-      close();
-    }, [close, onCancel]);
+    },
+    [cancelAndClose]
+  );
 
-    const handleCancel = useCallback(
-      (e: MouseEvent) => {
-        if (e.target === e.currentTarget) {
-          cancelAndClose();
-        }
-      },
-      [cancelAndClose]
-    );
+  const hasActions = Boolean(actions.length);
 
-    const hasActions = Boolean(actions.length);
-
-    const footer = (
-      <>
+  const footer = (
+    <>
+      {!noDefaultCancelButton ? (
         <Button
           onClick={handleCancel}
           ref={focusRef}
@@ -108,47 +110,48 @@ export const ConfirmationDialog = React.memo(
         >
           {cancelText || i18n('confirmation-dialog--Cancel')}
         </Button>
-        {actions.map((action, i) => (
-          <Button
-            key={action.text}
-            onClick={() => {
-              action.action();
-              close();
-            }}
-            data-action={i}
-            variant={getButtonVariant(action.style)}
-          >
-            {action.text}
-          </Button>
-        ))}
-      </>
-    );
+      ) : null}
+      {actions.map((action, i) => (
+        <Button
+          key={action.text}
+          onClick={() => {
+            action.action();
+            close();
+          }}
+          data-action={i}
+          variant={getButtonVariant(action.style)}
+        >
+          {action.text}
+        </Button>
+      ))}
+    </>
+  );
 
-    const modalName = `ConfirmationDialog.${dialogName}`;
+  const modalName = `ConfirmationDialog.${dialogName}`;
 
-    return (
-      <ModalHost
-        modalName={modalName}
-        noMouseClose={noMouseClose}
-        onClose={close}
-        onTopOfEverything={onTopOfEverything}
-        overlayStyles={overlayStyles}
-        theme={theme}
-      >
-        <animated.div style={modalStyles}>
-          <ModalPage
-            modalName={modalName}
-            hasXButton={hasXButton}
-            i18n={i18n}
-            moduleClassName={moduleClassName}
-            onClose={cancelAndClose}
-            title={title}
-            modalFooter={footer}
-          >
-            {children}
-          </ModalPage>
-        </animated.div>
-      </ModalHost>
-    );
-  }
-);
+  return (
+    <ModalHost
+      modalName={modalName}
+      noMouseClose={noMouseClose}
+      onClose={close}
+      onEscape={cancelAndClose}
+      onTopOfEverything={onTopOfEverything}
+      overlayStyles={overlayStyles}
+      theme={theme}
+    >
+      <animated.div style={modalStyles}>
+        <ModalPage
+          modalName={modalName}
+          hasXButton={hasXButton}
+          i18n={i18n}
+          moduleClassName={moduleClassName}
+          onClose={cancelAndClose}
+          title={title}
+          modalFooter={footer}
+        >
+          {children}
+        </ModalPage>
+      </animated.div>
+    </ModalHost>
+  );
+});

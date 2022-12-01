@@ -1,7 +1,7 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { FunctionComponent, ReactChild, ReactNode } from 'react';
+import type { ReactChild, ReactNode } from 'react';
 import React, { useState } from 'react';
 import { concat, orderBy } from 'lodash';
 
@@ -60,9 +60,7 @@ enum ConfirmationStateType {
   ConfirmingGroupRemoval,
 }
 
-export const ContactSpoofingReviewDialog: FunctionComponent<
-  PropsType
-> = props => {
+export function ContactSpoofingReviewDialog(props: PropsType): JSX.Element {
   const {
     getPreferredBadge,
     i18n,
@@ -308,6 +306,22 @@ export const ContactSpoofingReviewDialog: FunctionComponent<
               conversationInfo.conversation.profileName ||
               conversationInfo.conversation.title;
 
+            let callout: JSX.Element | undefined;
+            if (oldName && oldName !== newName) {
+              callout = (
+                <div className="module-ContactSpoofingReviewDialogPerson__info__property module-ContactSpoofingReviewDialogPerson__info__property--callout">
+                  <Intl
+                    i18n={i18n}
+                    id="ContactSpoofingReviewDialog__group__name-change-info"
+                    components={{
+                      oldName: <Emojify text={oldName} />,
+                      newName: <Emojify text={newName} />,
+                    }}
+                  />
+                </div>
+              );
+            }
+
             return (
               <>
                 {index !== 0 && <hr />}
@@ -318,18 +332,7 @@ export const ContactSpoofingReviewDialog: FunctionComponent<
                   i18n={i18n}
                   theme={theme}
                 >
-                  {Boolean(oldName) && oldName !== newName && (
-                    <div className="module-ContactSpoofingReviewDialogPerson__info__property module-ContactSpoofingReviewDialogPerson__info__property--callout">
-                      <Intl
-                        i18n={i18n}
-                        id="ContactSpoofingReviewDialog__group__name-change-info"
-                        components={{
-                          oldName: <Emojify text={oldName} />,
-                          newName: <Emojify text={newName} />,
-                        }}
-                      />
-                    </div>
-                  )}
+                  {callout}
                   {button && (
                     <div className="module-ContactSpoofingReviewDialog__buttons">
                       {button}
@@ -359,4 +362,4 @@ export const ContactSpoofingReviewDialog: FunctionComponent<
       {contents}
     </Modal>
   );
-};
+}

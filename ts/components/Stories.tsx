@@ -14,9 +14,9 @@ import type {
 } from '../types/Stories';
 import type { LocalizerType } from '../types/Util';
 import type { PreferredBadgeSelectorType } from '../state/selectors/badges';
-import type { PropsType as SmartStoryCreatorPropsType } from '../state/smart/StoryCreator';
 import type { ShowToastActionCreatorType } from '../state/ducks/toast';
 import type {
+  AddStoryData,
   ViewUserStoriesActionCreatorType,
   ViewStoryActionCreatorType,
 } from '../state/ducks/stories';
@@ -27,42 +27,42 @@ import { getWidthFromPreferredWidth } from '../util/leftPaneWidth';
 import { useEscapeHandling } from '../hooks/useEscapeHandling';
 
 export type PropsType = {
+  addStoryData: AddStoryData;
   deleteStoryForEveryone: (story: StoryViewType) => unknown;
   getPreferredBadge: PreferredBadgeSelectorType;
+  hasViewReceiptSetting: boolean;
   hiddenStories: Array<ConversationStoryType>;
   i18n: LocalizerType;
+  isStoriesSettingsVisible: boolean;
+  isViewingStory: boolean;
   me: ConversationType;
   myStories: Array<MyStoryType>;
   onForwardStory: (storyId: string) => unknown;
   onSaveStory: (story: StoryViewType) => unknown;
   preferredWidthFromStorage: number;
   queueStoryDownload: (storyId: string) => unknown;
-  renderStoryCreator: (props: SmartStoryCreatorPropsType) => JSX.Element;
+  renderStoryCreator: () => JSX.Element;
+  retrySend: (messageId: string) => unknown;
+  setAddStoryData: (data: AddStoryData) => unknown;
   showConversation: ShowConversationType;
   showStoriesSettings: () => unknown;
   showToast: ShowToastActionCreatorType;
   stories: Array<ConversationStoryType>;
   toggleHideStories: (conversationId: string) => unknown;
   toggleStoriesView: () => unknown;
-  viewUserStories: ViewUserStoriesActionCreatorType;
   viewStory: ViewStoryActionCreatorType;
-  isViewingStory: boolean;
-  isStoriesSettingsVisible: boolean;
+  viewUserStories: ViewUserStoriesActionCreatorType;
 };
 
-type AddStoryType =
-  | {
-      type: 'Media';
-      file: File;
-    }
-  | { type: 'Text' }
-  | undefined;
-
-export const Stories = ({
+export function Stories({
+  addStoryData,
   deleteStoryForEveryone,
   getPreferredBadge,
+  hasViewReceiptSetting,
   hiddenStories,
   i18n,
+  isStoriesSettingsVisible,
+  isViewingStory,
   me,
   myStories,
   onForwardStory,
@@ -70,43 +70,40 @@ export const Stories = ({
   preferredWidthFromStorage,
   queueStoryDownload,
   renderStoryCreator,
+  retrySend,
+  setAddStoryData,
   showConversation,
   showStoriesSettings,
   showToast,
   stories,
   toggleHideStories,
   toggleStoriesView,
-  viewUserStories,
   viewStory,
-  isViewingStory,
-  isStoriesSettingsVisible,
-}: PropsType): JSX.Element => {
+  viewUserStories,
+}: PropsType): JSX.Element {
   const width = getWidthFromPreferredWidth(preferredWidthFromStorage, {
     requiresFullWidth: true,
   });
 
-  const [addStoryData, setAddStoryData] = useState<AddStoryType>();
   const [isMyStories, setIsMyStories] = useState(false);
 
   // only handle ESC if not showing a child that handles their own ESC
   useEscapeHandling(
     (isMyStories && myStories.length) ||
       isViewingStory ||
-      isStoriesSettingsVisible
+      isStoriesSettingsVisible ||
+      addStoryData
       ? undefined
       : toggleStoriesView
   );
 
   return (
     <div className={classNames('Stories', themeClassName(Theme.Dark))}>
-      {addStoryData &&
-        renderStoryCreator({
-          file: addStoryData.type === 'Media' ? addStoryData.file : undefined,
-          onClose: () => setAddStoryData(undefined),
-        })}
+      {addStoryData && renderStoryCreator()}
       <div className="Stories__pane" style={{ width }}>
         {isMyStories && myStories.length ? (
           <MyStories
+            hasViewReceiptSetting={hasViewReceiptSetting}
             i18n={i18n}
             myStories={myStories}
             onBack={() => setIsMyStories(false)}
@@ -114,6 +111,7 @@ export const Stories = ({
             onForward={onForwardStory}
             onSave={onSaveStory}
             queueStoryDownload={queueStoryDownload}
+            retrySend={retrySend}
             viewStory={viewStory}
           />
         ) : (
@@ -152,4 +150,4 @@ export const Stories = ({
       </div>
     </div>
   );
-};
+}

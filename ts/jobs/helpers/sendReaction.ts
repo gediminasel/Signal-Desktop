@@ -4,6 +4,7 @@
 import { isNumber } from 'lodash';
 
 import * as Errors from '../../types/errors';
+import { strictAssert } from '../../util/assert';
 import { repeat, zipObject } from '../../util/iterables';
 import type { CallbackResultType } from '../../textsecure/Types.d';
 import type { MessageModel } from '../../models/messages';
@@ -25,6 +26,7 @@ import { ourProfileKeyService } from '../../services/ourProfileKey';
 import { canReact, isStory } from '../../state/selectors/message';
 import { findAndFormatContact } from '../../util/findAndFormatContact';
 import { UUID } from '../../types/UUID';
+import type { UUIDStringType } from '../../types/UUID';
 import { handleMultipleSendErrors } from './handleMultipleSendErrors';
 import { incrementMessageCounter } from '../../util/incrementMessageCounter';
 
@@ -63,11 +65,16 @@ export async function sendReaction(
     return;
   }
 
+  strictAssert(
+    !isStory(message.attributes),
+    'Story reactions should be handled by sendStoryReaction'
+  );
   const { pendingReaction, emojiToRemove } =
     reactionUtil.getNewestPendingOutgoingReaction(
       getReactions(message),
       ourConversationId
     );
+
   if (!pendingReaction) {
     log.info(`no pending reaction for ${messageId}. Doing nothing`);
     return;
@@ -105,6 +112,7 @@ export async function sendReaction(
       return;
     }
 
+    const expireTimer = messageConversation.get('expireTimer');
     const {
       allRecipientIdentifiers,
       recipientIdentifiersWithoutMe,
@@ -123,7 +131,6 @@ export async function sendReaction(
       );
     }
 
-    const expireTimer = message.get('expireTimer');
     const profileKey = conversation.get('profileSharing')
       ? await ourProfileKeyService.get()
       : undefined;
@@ -153,17 +160,7 @@ export async function sendReaction(
       ),
     });
 
-    if (
-      isStory(message.attributes) &&
-      isDirectConversation(conversation.attributes)
-    ) {
-      ephemeralMessageForReactionSend.set({
-        storyId: message.id,
-        storyReactionEmoji: reactionForSend.emoji,
-      });
-    } else {
-      ephemeralMessageForReactionSend.doNotSave = true;
-    }
+    ephemeralMessageForReactionSend.doNotSave = true;
 
     let didFullySend: boolean;
     const successfulConversationIds = new Set<string>();
@@ -233,12 +230,6 @@ export async function sendReaction(
           groupId: undefined,
           profileKey,
           options: sendOptions,
-          storyContext: isStory(message.attributes)
-            ? {
-                authorUuid: message.get('sourceUuid'),
-                timestamp: message.get('sent_at'),
-              }
-            : undefined,
           urgent: true,
           includePniSignatureMessage: true,
         });
@@ -271,12 +262,6 @@ export async function sendReaction(
                 timestamp: pendingReaction.timestamp,
                 expireTimer,
                 profileKey,
-                storyContext: isStory(message.attributes)
-                  ? {
-                      authorUuid: message.get('sourceUuid'),
-                      timestamp: message.get('sent_at'),
-                    }
-                  : undefined,
               },
               messageId,
               sendOptions,
@@ -346,8 +331,7 @@ export async function sendReaction(
     const newReactions = reactionUtil.markOutgoingReactionSent(
       getReactions(message),
       pendingReaction,
-      successfulConversationIds,
-      message.attributes
+      successfulConversationIds
     );
     setReactions(message, newReactions);
 
@@ -372,8 +356,9 @@ export async function sendReaction(
   }
 }
 
-const getReactions = (message: MessageModel): Array<MessageReactionType> =>
-  message.get('reactions') || [];
+const getReactions = (
+  message: MessageModel
+): ReadonlyArray<MessageReactionType> => message.get('reactions') || [];
 
 const setReactions = (
   message: MessageModel,
@@ -393,11 +378,11 @@ function getRecipients(
 ): {
   allRecipientIdentifiers: Array<string>;
   recipientIdentifiersWithoutMe: Array<string>;
-  untrustedUuids: Array<string>;
+  untrustedUuids: Array<UUIDStringType>;
 } {
   const allRecipientIdentifiers: Array<string> = [];
   const recipientIdentifiersWithoutMe: Array<string> = [];
-  const untrustedUuids: Array<string> = [];
+  const untrustedUuids: Array<UUIDStringType> = [];
 
   const currentConversationRecipients = conversation.getMemberConversationIds();
 
@@ -429,7 +414,6 @@ function getRecipients(
       continue;
     }
     if (recipient.isUnregistered()) {
-      untrustedUuids.push(recipientIdentifier);
       continue;
     }
 

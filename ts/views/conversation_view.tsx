@@ -12,7 +12,8 @@ import { render } from 'mustache';
 import type { AttachmentType } from '../types/Attachment';
 import { isGIF } from '../types/Attachment';
 import * as Stickers from '../types/Stickers';
-import type { BodyRangeType, BodyRangesType } from '../types/Util';
+import * as Errors from '../types/errors';
+import type { DraftBodyRangesType } from '../types/Util';
 import type { MIMEType } from '../types/MIME';
 import type { ConversationModel } from '../models/conversations';
 import type {
@@ -35,6 +36,7 @@ import {
   isGroupV1,
 } from '../util/whatTypeOfConversation';
 import { findAndFormatContact } from '../util/findAndFormatContact';
+import type { DurationInSeconds } from '../util/durations';
 import { getPreferredBadgeSelector } from '../state/selectors/badges';
 import {
   canReply,
@@ -204,7 +206,7 @@ const MAX_MESSAGE_BODY_LENGTH = 64 * 1024;
 export class ConversationView extends window.Backbone.View<ConversationModel> {
   private debouncedSaveDraft: (
     messageText: string,
-    bodyRanges: Array<BodyRangeType>
+    bodyRanges: DraftBodyRangesType
   ) => Promise<void>;
   private lazyUpdateVerified: () => void;
 
@@ -349,7 +351,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
     const conversationHeaderProps = {
       id: this.model.id,
 
-      onSetDisappearingMessages: (seconds: number) =>
+      onSetDisappearingMessages: (seconds: DurationInSeconds) =>
         this.setDisappearingMessages(seconds),
       onDeleteMessages: () => this.destroyMessages(),
       onSearchInConversation: () => {
@@ -557,7 +559,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
         this.sendStickerMessage({ packId, stickerId }),
       onEditorStateChange: (
         msg: string,
-        bodyRanges: Array<BodyRangeType>,
+        bodyRanges: DraftBodyRangesType,
         caretLocation?: number
       ) => this.onEditorStateChange(msg, bodyRanges, caretLocation),
       onTextTooLong: () => showToast(ToastMessageBodyTooLong),
@@ -634,7 +636,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
         voiceNoteAttachment,
       }: {
         draftAttachments?: ReadonlyArray<AttachmentType>;
-        mentions?: BodyRangesType;
+        mentions?: DraftBodyRangesType;
         message?: string;
         timestamp?: number;
         voiceNoteAttachment?: AttachmentType;
@@ -1341,6 +1343,11 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
           const message = rawMedia[i];
           const { schemaVersion } = message;
 
+          // We want these message to be cached in memory for other operations like
+          //   listening to 'expired' events when showing the lightbox, and so any other
+          //   code working with this message has the latest updates.
+          const model = window.MessageController.register(message.id, message);
+
           if (
             schemaVersion &&
             schemaVersion < Message.VERSION_NEEDED_FOR_DISPLAY
@@ -1348,6 +1355,8 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
             // Yep, we really do want to wait for each of these
             // eslint-disable-next-line no-await-in-loop
             rawMedia[i] = await upgradeMessageSchema(message);
+            model.set(rawMedia[i]);
+
             // eslint-disable-next-line no-await-in-loop
             await window.Signal.Data.saveMessage(rawMedia[i], { ourUuid });
           }
@@ -1488,6 +1497,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
     const view = new ReactWrapperView({
       className: 'panel',
       // We present an empty panel briefly, while we wait for props to load.
+      // eslint-disable-next-line react/jsx-no-useless-fragment
       JSX: <></>,
       onClose: () => {
         unsubscribe();
@@ -1747,7 +1757,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
         } catch (error) {
           log.error(
             'Error sending delete-for-everyone',
-            error && error.stack,
+            Errors.toLogFormat(error),
             messageId
           );
           showToast(ToastDeleteForEveryoneFailed);
@@ -1801,8 +1811,21 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
         mediaItem.attachment.path === selectedMediaItem.attachment.path
     );
 
+    const mediaMessage = selectedMediaItem.message;
+    const message = window.MessageController.getById(mediaMessage.id);
+    if (!message) {
+      throw new Error(
+        `showLightboxForMedia: Message ${mediaMessage.id} missing!`
+      );
+    }
+
+    const close = () => {
+      closeLightbox();
+      this.stopListening(message, 'expired', closeLightbox);
+    };
+
     showLightbox({
-      close: closeLightbox,
+      close,
       i18n: window.i18n,
       getConversation: getConversationSelector(window.reduxStore.getState()),
       media,
@@ -1816,6 +1839,8 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
       onSave,
       selectedIndex: selectedIndex >= 0 ? selectedIndex : 0,
     });
+
+    this.listenTo(message, 'expired', close);
   }
 
   showLightbox({
@@ -2235,11 +2260,6 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
         timeout = undefined;
 
         panel.view.remove();
-
-        if (this.panels.length === 0) {
-          // Make sure poppers are positioned properly
-          window.dispatchEvent(new Event('resize'));
-        }
       };
       panel.view.$el
         .addClass('panel--remove')
@@ -2264,6 +2284,11 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
       await window.Signal.Data.getMessagesWithVisualMediaAttachments(model.id, {
         limit,
       });
+
+    // Cache these messages in memory to ensure Lightbox can find them
+    messages.forEach(message => {
+      window.MessageController.register(message.id, message);
+    });
 
     const loadedRecentMediaItems = messages
       .filter(message => message.attachments !== undefined)
@@ -2305,7 +2330,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
     );
   }
 
-  async setDisappearingMessages(seconds: number): Promise<void> {
+  async setDisappearingMessages(seconds: DurationInSeconds): Promise<void> {
     const { model }: { model: ConversationModel } = this;
 
     const valueToSet = seconds > 0 ? seconds : undefined;
@@ -2371,8 +2396,14 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
   }
 
   async isCallSafe(): Promise<boolean> {
+    const recipientsByConversation = {
+      [this.model.id]: {
+        uuids: this.model.getMemberUuids().map(uuid => uuid.toString()),
+      },
+    };
+
     const callAnyway = await blockSendUntilConversationsAreVerified(
-      [this.model],
+      recipientsByConversation,
       SafetyNumberChangeSource.Calling
     );
 
@@ -2390,11 +2421,15 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
     packId: string;
     stickerId: number;
   }): Promise<void> {
-    const { model }: { model: ConversationModel } = this;
+    const recipientsByConversation = {
+      [this.model.id]: {
+        uuids: this.model.getMemberUuids().map(uuid => uuid.toString()),
+      },
+    };
 
     try {
       const sendAnyway = await blockSendUntilConversationsAreVerified(
-        [this.model],
+        recipientsByConversation,
         SafetyNumberChangeSource.MessageSend
       );
       if (!sendAnyway) {
@@ -2406,9 +2441,9 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
       }
 
       const { packId, stickerId } = options;
-      model.sendStickerMessage(packId, stickerId);
+      this.model.sendStickerMessage(packId, stickerId);
     } catch (error) {
-      log.error('clickSend error:', error && error.stack ? error.stack : error);
+      log.error('clickSend error:', Errors.toLogFormat(error));
     }
   }
 
@@ -2535,23 +2570,27 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
 
   async sendMessage(
     message = '',
-    mentions: BodyRangesType = [],
+    mentions: DraftBodyRangesType = [],
     options: {
       draftAttachments?: ReadonlyArray<AttachmentType>;
       timestamp?: number;
       voiceNoteAttachment?: AttachmentType;
     } = {}
   ): Promise<void> {
-    const { model }: { model: ConversationModel } = this;
     const timestamp = options.timestamp || Date.now();
 
     this.sendStart = Date.now();
+    const recipientsByConversation = {
+      [this.model.id]: {
+        uuids: this.model.getMemberUuids().map(uuid => uuid.toString()),
+      },
+    };
 
     try {
       this.disableMessageField();
 
       const sendAnyway = await blockSendUntilConversationsAreVerified(
-        [this.model],
+        recipientsByConversation,
         SafetyNumberChangeSource.MessageSend
       );
       if (!sendAnyway) {
@@ -2560,14 +2599,11 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
       }
     } catch (error) {
       this.enableMessageField();
-      log.error(
-        'sendMessage error:',
-        error && error.stack ? error.stack : error
-      );
+      log.error('sendMessage error:', Errors.toLogFormat(error));
       return;
     }
 
-    model.clearTypingTimers();
+    this.model.clearTypingTimers();
 
     if (this.showInvalidMessageToast(message)) {
       this.enableMessageField();
@@ -2601,7 +2637,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
 
       log.info('Send pre-checks took', sendDelta, 'milliseconds');
 
-      await model.enqueueMessageForSend(
+      await this.model.enqueueMessageForSend(
         {
           body: message,
           attachments,
@@ -2614,7 +2650,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
           timestamp,
           extraReduxActions: () => {
             this.compositionApi.current?.reset();
-            model.setMarkedUnread(false);
+            this.model.setMarkedUnread(false);
             this.setQuoteMessage(null);
             resetLinkPreview();
             this.clearAttachments();
@@ -2625,7 +2661,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
     } catch (error) {
       log.error(
         'Error pulling attached files before send',
-        error && error.stack ? error.stack : error
+        Errors.toLogFormat(error)
       );
     } finally {
       this.enableMessageField();
@@ -2634,7 +2670,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
 
   onEditorStateChange(
     messageText: string,
-    bodyRanges: Array<BodyRangeType>,
+    bodyRanges: DraftBodyRangesType,
     caretLocation?: number
   ): void {
     this.maybeBumpTyping(messageText);
@@ -2642,17 +2678,15 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
 
     // If we have attachments, don't add link preview
     if (!this.hasFiles({ includePending: true })) {
-      maybeGrabLinkPreview(
-        messageText,
-        LinkPreviewSourceType.Composer,
-        caretLocation
-      );
+      maybeGrabLinkPreview(messageText, LinkPreviewSourceType.Composer, {
+        caretLocation,
+      });
     }
   }
 
   async saveDraft(
     messageText: string,
-    bodyRanges: Array<BodyRangeType>
+    bodyRanges: DraftBodyRangesType
   ): Promise<void> {
     const { model }: { model: ConversationModel } = this;
 

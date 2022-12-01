@@ -1,7 +1,6 @@
 // Copyright 2021-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { FunctionComponent } from 'react';
 import React, {
   useCallback,
   useEffect,
@@ -24,7 +23,11 @@ import { ConversationList, RowType } from './ConversationList';
 import type { ConversationType } from '../state/ducks/conversations';
 import type { PreferredBadgeSelectorType } from '../state/selectors/badges';
 import type { LinkPreviewType } from '../types/message/LinkPreviews';
-import type { BodyRangeType, LocalizerType, ThemeType } from '../types/Util';
+import type {
+  DraftBodyRangesType,
+  LocalizerType,
+  ThemeType,
+} from '../types/Util';
 import type { SmartCompositionTextAreaProps } from '../state/smart/CompositionTextArea';
 import { ModalHost } from './ModalHost';
 import { SearchInput } from './SearchInput';
@@ -54,7 +57,7 @@ export type DataPropsType = {
   onClose: () => void;
   onEditorStateChange: (
     messageText: string,
-    bodyRanges: Array<BodyRangeType>,
+    bodyRanges: DraftBodyRangesType,
     caretLocation?: number
   ) => unknown;
   theme: ThemeType;
@@ -72,7 +75,7 @@ export type PropsType = DataPropsType & ActionPropsType;
 
 const MAX_FORWARD = 5;
 
-export const ForwardMessageModal: FunctionComponent<PropsType> = ({
+export function ForwardMessageModal({
   attachments,
   candidateConversations,
   doForwardMessage,
@@ -88,7 +91,7 @@ export const ForwardMessageModal: FunctionComponent<PropsType> = ({
   RenderCompositionTextArea,
   theme,
   regionCode,
-}) => {
+}: PropsType): JSX.Element {
   const inputRef = useRef<null | HTMLInputElement>(null);
   const [selectedContacts, setSelectedContacts] = useState<
     Array<ConversationType>
@@ -424,4 +427,4 @@ export const ForwardMessageModal: FunctionComponent<PropsType> = ({
       </ModalHost>
     </>
   );
-};
+}

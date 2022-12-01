@@ -8,8 +8,9 @@ import { action } from '@storybook/addon-actions';
 
 import { ConversationColors } from '../../types/Colors';
 import { pngUrl } from '../../storybook/Fixtures';
-import type { Props as MessagesProps } from './Message';
-import { Message, TextDirection } from './Message';
+import type { Props as TimelineMessagesProps } from './TimelineMessage';
+import { TimelineMessage } from './TimelineMessage';
+import { TextDirection } from './Message';
 import {
   AUDIO_MP3,
   IMAGE_PNG,
@@ -25,6 +26,7 @@ import enMessages from '../../../_locales/en/messages.json';
 import { getDefaultConversation } from '../../test-both/helpers/getDefaultConversation';
 import { WidthBreakpoint } from '../_util';
 import { ThemeType } from '../../types/Util';
+import { PaymentEventKind } from '../../types/Payment';
 
 const i18n = setupI18n('en', enMessages);
 
@@ -73,13 +75,14 @@ export default {
   },
 } as Meta;
 
-const defaultMessageProps: MessagesProps = {
+const defaultMessageProps: TimelineMessagesProps = {
   author: getDefaultConversation({
     id: 'some-id',
     title: 'Person X',
   }),
   canReact: true,
   canReply: true,
+  canReplyPrivately: true,
   canRetry: true,
   canRetryDeleteForEveryone: true,
   canDeleteForEveryone: true,
@@ -103,8 +106,7 @@ const defaultMessageProps: MessagesProps = {
   getPreferredBadge: () => undefined,
   i18n,
   id: 'messageId',
-  renderingContext: 'storybook',
-  receivedAt: Date.now(),
+  // renderingContext: 'storybook',
   interactionMode: 'keyboard',
   isBlocked: false,
   isMessageRequestAccepted: true,
@@ -121,8 +123,8 @@ const defaultMessageProps: MessagesProps = {
   renderEmojiPicker: () => <div />,
   renderReactionPicker: () => <div />,
   renderAudioAttachment: () => <div>*AudioAttachment*</div>,
-  replyPrivately: action('default--replyPrivately'),
   replyToMessage: action('default--replyToMessage'),
+  replyPrivately: action('default--replyPrivately'),
   retrySend: action('default--retrySend'),
   retryDeleteForEveryone: action('default--retryDeleteForEveryone'),
   scrollToQuotedMessage: action('default--scrollToQuotedMessage'),
@@ -167,6 +169,7 @@ const renderInMessage = ({
       authorId: 'an-author',
       authorTitle,
       conversationColor,
+      conversationTitle: getDefaultConversation().title,
       isFromMe,
       rawAttachment,
       isViewOnce,
@@ -180,13 +183,14 @@ const renderInMessage = ({
 
   return (
     <div style={{ overflow: 'hidden' }}>
-      <Message {...messageProps} />
+      <TimelineMessage {...messageProps} />
       <br />
-      <Message {...messageProps} direction="outgoing" />
+      <TimelineMessage {...messageProps} direction="outgoing" />
     </div>
   );
 };
 
+// eslint-disable-next-line react/function-component-definition
 const Template: Story<Props> = args => <Quote {...args} />;
 const TemplateInMessage: Story<Props> = args => renderInMessage(args);
 
@@ -224,7 +228,7 @@ IncomingByMe.story = {
   name: 'Incoming by Me',
 };
 
-export const IncomingOutgoingColors = (args: Props): JSX.Element => {
+export function IncomingOutgoingColors(args: Props): JSX.Element {
   return (
     <>
       {ConversationColors.map(color =>
@@ -232,7 +236,7 @@ export const IncomingOutgoingColors = (args: Props): JSX.Element => {
       )}
     </>
   );
-};
+}
 IncomingOutgoingColors.args = {};
 IncomingOutgoingColors.story = {
   name: 'Incoming/Outgoing Colors',
@@ -501,26 +505,28 @@ MentionIncomingMe.story = {
   name: '@mention + incoming + me',
 };
 
-export const CustomColor = (args: Props): JSX.Element => (
-  <>
-    <Quote
-      {...args}
-      customColor={{
-        start: { hue: 82, saturation: 35 },
-      }}
-    />
-    <Quote
-      {...args}
-      isIncoming={false}
-      text="A gradient"
-      customColor={{
-        deg: 192,
-        start: { hue: 304, saturation: 85 },
-        end: { hue: 231, saturation: 76 },
-      }}
-    />
-  </>
-);
+export function CustomColor(args: Props): JSX.Element {
+  return (
+    <>
+      <Quote
+        {...args}
+        customColor={{
+          start: { hue: 82, saturation: 35 },
+        }}
+      />
+      <Quote
+        {...args}
+        isIncoming={false}
+        text="A gradient"
+        customColor={{
+          deg: 192,
+          start: { hue: 304, saturation: 85 },
+          end: { hue: 231, saturation: 76 },
+        }}
+      />
+    </>
+  );
+}
 CustomColor.args = {
   isIncoming: true,
   text: 'Solid + Gradient',
@@ -565,4 +571,13 @@ IsStoryReplyEmoji.args = {
 };
 IsStoryReplyEmoji.story = {
   name: 'isStoryReply emoji',
+};
+
+export const Payment = Template.bind({});
+Payment.args = {
+  text: '',
+  payment: {
+    kind: PaymentEventKind.Notification,
+    note: null,
+  },
 };

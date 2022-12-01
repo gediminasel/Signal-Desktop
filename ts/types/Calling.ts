@@ -49,7 +49,7 @@ type ActiveCallBaseType = {
   showParticipantsList: boolean;
 };
 
-type ActiveDirectCallType = ActiveCallBaseType & {
+export type ActiveDirectCallType = ActiveCallBaseType & {
   callMode: CallMode.Direct;
   callState?: CallState;
   callEndedReason?: CallEndedReason;
@@ -64,7 +64,7 @@ type ActiveDirectCallType = ActiveCallBaseType & {
   ];
 };
 
-type ActiveGroupCallType = ActiveCallBaseType & {
+export type ActiveGroupCallType = ActiveCallBaseType & {
   callMode: CallMode.Group;
   connectionState: GroupCallConnectionState;
   conversationsWithSafetyNumberChanges: Array<ConversationType>;
@@ -72,6 +72,7 @@ type ActiveGroupCallType = ActiveCallBaseType & {
   maxDevices: number;
   deviceCount: number;
   groupMembers: Array<Pick<ConversationType, 'id' | 'firstName' | 'title'>>;
+  isConversationTooBigToRing: boolean;
   peekedParticipants: Array<ConversationType>;
   remoteParticipants: Array<GroupCallRemoteParticipantType>;
   remoteAudioLevels: Map<number, number>;
@@ -195,9 +196,3 @@ export type ChangeIODevicePayloadType =
   | { type: CallingDeviceType.CAMERA; selectedDevice: string }
   | { type: CallingDeviceType.MICROPHONE; selectedDevice: AudioDevice }
   | { type: CallingDeviceType.SPEAKER; selectedDevice: AudioDevice };
-
-export enum ProcessGroupCallRingRequestResult {
-  ShouldRing,
-  RingWasPreviouslyCanceled,
-  ThereIsAnotherActiveRing,
-}

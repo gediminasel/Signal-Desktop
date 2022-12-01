@@ -29,20 +29,15 @@ const defaultMessage: MessageDataPropsType = {
     id: 'some-id',
     title: 'Max',
   }),
-  canReact: true,
-  canReply: true,
-  canRetry: true,
-  canRetryDeleteForEveryone: true,
   canDeleteForEveryone: true,
-  canDownload: true,
   conversationColor: 'crimson',
   conversationId: 'my-convo',
   conversationTitle: 'Conversation Title',
   conversationType: 'direct',
   direction: 'incoming',
   id: 'my-message',
-  receivedAt: Date.now(),
   renderingContext: 'storybook',
+  menu: undefined,
   isBlocked: false,
   isMessageRequestAccepted: true,
   previews: [],
@@ -86,14 +81,7 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   openConversation: action('openConversation'),
   openGiftBadge: action('openGiftBadge'),
   openLink: action('openLink'),
-  reactToMessage: action('reactToMessage'),
   renderAudioAttachment: () => <div>*AudioAttachment*</div>,
-  renderEmojiPicker: () => <div />,
-  renderReactionPicker: () => <div />,
-  replyPrivately: action('replyPrivately'),
-  replyToMessage: action('replyToMessage'),
-  retrySend: action('retrySend'),
-  retryDeleteForEveryone: action('retryDeleteForEveryone'),
   showContactDetail: action('showContactDetail'),
   showContactModal: action('showContactModal'),
   showExpiredIncomingTapToViewToast: action(
@@ -102,13 +90,12 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   showExpiredOutgoingTapToViewToast: action(
     'showExpiredOutgoingTapToViewToast'
   ),
-  showForwardMessageModal: action('showForwardMessageModal'),
   showVisualAttachment: action('showVisualAttachment'),
   startConversation: action('startConversation'),
   viewStory: action('viewStory'),
 });
 
-export const DeliveredIncoming = (): JSX.Element => {
+export function DeliveredIncoming(): JSX.Element {
   const props = createProps({
     contacts: [
       {
@@ -123,9 +110,9 @@ export const DeliveredIncoming = (): JSX.Element => {
     ],
   });
   return <MessageDetail {...props} />;
-};
+}
 
-export const DeliveredOutgoing = (): JSX.Element => {
+export function DeliveredOutgoing(): JSX.Element {
   const props = createProps({
     message: {
       ...defaultMessage,
@@ -134,9 +121,9 @@ export const DeliveredOutgoing = (): JSX.Element => {
     },
   });
   return <MessageDetail {...props} />;
-};
+}
 
-export const MessageStatuses = (): JSX.Element => {
+export function MessageStatuses(): JSX.Element {
   const props = createProps({
     contacts: [
       {
@@ -187,9 +174,9 @@ export const MessageStatuses = (): JSX.Element => {
     },
   });
   return <MessageDetail {...props} />;
-};
+}
 
-export const NotDelivered = (): JSX.Element => {
+export function NotDelivered(): JSX.Element {
   const props = createProps({
     message: {
       ...defaultMessage,
@@ -201,9 +188,9 @@ export const NotDelivered = (): JSX.Element => {
   props.receivedAt = undefined as any;
 
   return <MessageDetail {...props} />;
-};
+}
 
-export const NoContacts = (): JSX.Element => {
+export function NoContacts(): JSX.Element {
   const props = createProps({
     contacts: [],
     message: {
@@ -213,9 +200,9 @@ export const NoContacts = (): JSX.Element => {
     },
   });
   return <MessageDetail {...props} />;
-};
+}
 
-export const AllErrors = (): JSX.Element => {
+export function AllErrors(): JSX.Element {
   const props = createProps({
     errors: [
       {
@@ -260,4 +247,4 @@ export const AllErrors = (): JSX.Element => {
     ],
   });
   return <MessageDetail {...props} />;
-};
+}

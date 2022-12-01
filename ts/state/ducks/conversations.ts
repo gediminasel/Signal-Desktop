@@ -1,8 +1,6 @@
 // Copyright 2019-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-/* eslint-disable camelcase */
-
 import type { ThunkAction } from 'redux-thunk';
 import {
   difference,
@@ -20,16 +18,23 @@ import * as log from '../../logging/log';
 import { calling } from '../../services/calling';
 import { getOwn } from '../../util/getOwn';
 import { assertDev, strictAssert } from '../../util/assert';
+import type { DurationInSeconds } from '../../util/durations';
 import * as universalExpireTimer from '../../util/universalExpireTimer';
 import type {
-  ShowSendAnywayDialogActiontype,
+  ShowSendAnywayDialogActionType,
   ToggleProfileEditorErrorActionType,
 } from './globalModals';
 import {
   SHOW_SEND_ANYWAY_DIALOG,
   TOGGLE_PROFILE_EDITOR_ERROR,
 } from './globalModals';
-import { isRecord } from '../../util/isRecord';
+import {
+  MODIFY_LIST,
+  DELETE_LIST,
+  HIDE_MY_STORIES_FROM,
+  VIEWERS_CHANGED,
+} from './storyDistributionLists';
+import type { StoryDistributionListsActionType } from './storyDistributionLists';
 import type {
   UUIDFetchStateKeyType,
   UUIDFetchStateType,
@@ -45,10 +50,12 @@ import type {
   ConversationAttributesType,
   MessageAttributesType,
 } from '../../model-types.d';
-import type { BodyRangeType } from '../../types/Util';
+import type { DraftBodyRangesType } from '../../types/Util';
 import { CallMode } from '../../types/Calling';
 import type { MediaItemType } from '../../types/MediaItem';
 import type { UUIDStringType } from '../../types/UUID';
+import { MY_STORY_ID, StorySendMode } from '../../types/Stories';
+import * as Errors from '../../types/errors';
 import {
   getGroupSizeRecommendedLimit,
   getGroupSizeHardLimit,
@@ -58,12 +65,10 @@ import { toggleSelectedContactForGroupAddition } from '../../groups/toggleSelect
 import type { GroupNameCollisionsWithIdsByTitle } from '../../util/groupMemberNameCollisions';
 import { ContactSpoofingType } from '../../util/contactSpoofing';
 import { writeProfile } from '../../services/writeProfile';
-import { writeUsername } from '../../services/writeUsername';
 import {
   getConversationUuidsStoppingSend,
   getConversationIdsStoppedForVerification,
   getMe,
-  getUsernameSaveState,
 } from '../selectors/conversations';
 import type { AvatarDataType, AvatarUpdateType } from '../../types/Avatar';
 import { getDefaultAvatars } from '../../types/Avatar';
@@ -74,11 +79,9 @@ import {
   ComposerStep,
   ConversationVerificationState,
   OneTimeModalState,
-  UsernameSaveState,
+  SelectedMessageSource,
 } from './conversationsEnums';
 import { markViewed as messageUpdaterMarkViewed } from '../../services/MessageUpdater';
-import { showToast } from '../../util/showToast';
-import { ToastFailedToDeleteUsername } from '../../components/ToastFailedToDeleteUsername';
 import { useBoundActions } from '../../hooks/useBoundActions';
 
 import type { NoopActionType } from './noop';
@@ -175,7 +178,7 @@ export type ConversationType = {
   accessControlMembers?: number;
   announcementsOnly?: boolean;
   announcementsOnlyReady?: boolean;
-  expireTimer?: number;
+  expireTimer?: DurationInSeconds;
   memberships?: Array<{
     uuid: UUIDStringType;
     isAdmin: boolean;
@@ -190,7 +193,6 @@ export type ConversationType = {
   bannedMemberships?: Array<UUIDStringType>;
   muteExpiresAt?: number;
   dontNotifyForMentionsIfMuted?: boolean;
-  type: ConversationTypeType;
   isMe: boolean;
   lastUpdated?: number;
   // This is used by the CompositionInput for @mentions
@@ -207,7 +209,7 @@ export type ConversationType = {
 
   shouldShowDraft?: boolean;
   draftText?: string | null;
-  draftBodyRanges?: Array<BodyRangeType>;
+  draftBodyRanges?: DraftBodyRangesType;
   draftPreview?: string;
 
   sharedGroupNames: Array<string>;
@@ -215,12 +217,10 @@ export type ConversationType = {
   groupVersion?: 1 | 2;
   groupId?: string;
   groupLink?: string;
-  isGroupStorySendReady?: boolean;
   messageRequestsEnabled?: boolean;
   acceptedMessageRequest: boolean;
   secretParams?: string;
   publicParams?: string;
-  acknowledgedGroupNameCollisions?: GroupNameCollisionsWithIdsByTitle;
   profileKey?: string;
   voiceNotePlaybackRate?: number;
 
@@ -234,7 +234,18 @@ export type ConversationType = {
         isVisible: boolean;
       }
   >;
-};
+} & (
+  | {
+      type: 'direct';
+      storySendMode?: undefined;
+      acknowledgedGroupNameCollisions?: undefined;
+    }
+  | {
+      type: 'group';
+      storySendMode: StorySendMode;
+      acknowledgedGroupNameCollisions: GroupNameCollisionsWithIdsByTitle;
+    }
+);
 export type ProfileDataType = {
   firstName: string;
 } & Pick<ConversationType, 'aboutEmoji' | 'aboutText' | 'familyName'>;
@@ -290,22 +301,33 @@ export type PreJoinConversationType = {
 type ComposerGroupCreationState = {
   groupAvatar: undefined | Uint8Array;
   groupName: string;
-  groupExpireTimer: number;
+  groupExpireTimer: DurationInSeconds;
   maximumGroupSizeModalState: OneTimeModalState;
   recommendedGroupSizeModalState: OneTimeModalState;
   selectedConversationIds: Array<string>;
   userAvatarData: Array<AvatarDataType>;
 };
 
+type DistributionVerificationData = {
+  uuidsNeedingVerification: ReadonlyArray<UUIDStringType>;
+};
+
 export type ConversationVerificationData =
   | {
       type: ConversationVerificationState.PendingVerification;
-      uuidsNeedingVerification: ReadonlyArray<string>;
+      uuidsNeedingVerification: ReadonlyArray<UUIDStringType>;
+
+      byDistributionId?: Record<string, DistributionVerificationData>;
     }
   | {
       type: ConversationVerificationState.VerificationCancelled;
       canceledAt: number;
     };
+
+type VerificationDataByConversation = Record<
+  string,
+  ConversationVerificationData
+>;
 
 type ComposerStateType =
   | {
@@ -346,21 +368,21 @@ export type ConversationsStateType = {
   conversationsByGroupId: ConversationLookupType;
   conversationsByUsername: ConversationLookupType;
   selectedConversationId?: string;
-  selectedMessage?: string;
+  selectedMessage: string | undefined;
   selectedMessageCounter: number;
+  selectedMessageSource: SelectedMessageSource | undefined;
   selectedConversationTitle?: string;
   selectedConversationPanelDepth: number;
   showArchived: boolean;
   composer?: ComposerStateType;
   contactSpoofingReview?: ContactSpoofingReviewStateType;
-  usernameSaveState: UsernameSaveState;
 
   /**
    * Each key is a conversation ID. Each value is a value representing the state of
    * verification: either a set of pending conversationIds to be approved, or a tombstone
    * telling jobs to cancel themselves up to that timestamp.
    */
-  verificationDataByConversation: Record<string, ConversationVerificationData>;
+  verificationDataByConversation: VerificationDataByConversation;
 
   // Note: it's very important that both of these locations are always kept up to date
   messagesLookup: MessageLookupType;
@@ -412,7 +434,6 @@ const CONVERSATION_STOPPED_BY_MISSING_VERIFICATION =
   'conversations/CONVERSATION_STOPPED_BY_MISSING_VERIFICATION';
 const DISCARD_MESSAGES = 'conversations/DISCARD_MESSAGES';
 const REPLACE_AVATARS = 'conversations/REPLACE_AVATARS';
-const UPDATE_USERNAME_SAVE_STATE = 'conversations/UPDATE_USERNAME_SAVE_STATE';
 export const SELECTED_CONVERSATION_CHANGED =
   'conversations/SELECTED_CONVERSATION_CHANGED';
 
@@ -560,7 +581,8 @@ type ConversationStoppedByMissingVerificationActionType = {
   type: typeof CONVERSATION_STOPPED_BY_MISSING_VERIFICATION;
   payload: {
     conversationId: string;
-    untrustedUuids: ReadonlyArray<string>;
+    distributionId?: string;
+    untrustedUuids: ReadonlyArray<UUIDStringType>;
   };
 };
 export type MessageChangedActionType = {
@@ -698,7 +720,7 @@ type SetComposeGroupNameActionType = {
 };
 type SetComposeGroupExpireTimerActionType = {
   type: 'SET_COMPOSE_GROUP_EXPIRE_TIMER';
-  payload: { groupExpireTimer: number };
+  payload: { groupExpireTimer: DurationInSeconds };
 };
 type SetComposeSearchTermActionType = {
   type: 'SET_COMPOSE_SEARCH_TERM';
@@ -738,12 +760,6 @@ export type ToggleConversationInChooseMembersActionType = {
     maxGroupSize: number;
   };
 };
-type UpdateUsernameSaveStateActionType = {
-  type: typeof UPDATE_USERNAME_SAVE_STATE;
-  payload: {
-    newSaveState: UsernameSaveState;
-  };
-};
 
 type ReplaceAvatarsActionType = {
   type: typeof REPLACE_AVATARS;
@@ -752,6 +768,7 @@ type ReplaceAvatarsActionType = {
     avatars: Array<AvatarDataType>;
   };
 };
+
 export type ConversationActionType =
   | CancelVerificationDataByConversationActionType
   | ClearCancelledVerificationActionType
@@ -806,12 +823,11 @@ export type ConversationActionType =
   | ShowArchivedConversationsActionType
   | ShowChooseGroupMembersActionType
   | ShowInboxActionType
-  | ShowSendAnywayDialogActiontype
+  | ShowSendAnywayDialogActionType
   | StartComposingActionType
   | StartSettingGroupMetadataActionType
   | ToggleConversationInChooseMembersActionType
-  | ToggleComposeEditingAvatarActionType
-  | UpdateUsernameSaveStateActionType;
+  | ToggleComposeEditingAvatarActionType;
 
 // Action Creators
 
@@ -824,7 +840,6 @@ export const actions = {
   clearInvitedUuidsForNewlyCreatedGroup,
   clearSelectedMessage,
   clearUnreadMetrics,
-  clearUsernameSave,
   closeContactSpoofingReview,
   closeMaximumGroupSizeModal,
   closeRecommendedGroupSizeModal,
@@ -858,7 +873,6 @@ export const actions = {
   reviewGroupMemberNameCollision,
   reviewMessageRequestNameCollision,
   saveAvatarToDisk,
-  saveUsername,
   scrollToMessage,
   selectMessage,
   setAccessControlAddFromInviteLinkSetting,
@@ -931,7 +945,7 @@ async function getAvatarsAndUpdateConversation(
   conversation.attributes.avatars = nextAvatars.map(avatarData =>
     omit(avatarData, ['buffer'])
   );
-  await window.Signal.Data.updateConversation(conversation.attributes);
+  window.Signal.Data.updateConversation(conversation.attributes);
 
   return nextAvatars;
 }
@@ -1164,82 +1178,6 @@ function saveAvatarToDisk(
   };
 }
 
-function makeUsernameSaveType(
-  newSaveState: UsernameSaveState
-): UpdateUsernameSaveStateActionType {
-  return {
-    type: UPDATE_USERNAME_SAVE_STATE,
-    payload: {
-      newSaveState,
-    },
-  };
-}
-
-function clearUsernameSave(): UpdateUsernameSaveStateActionType {
-  return makeUsernameSaveType(UsernameSaveState.None);
-}
-
-function saveUsername({
-  username,
-  previousUsername,
-}: {
-  username: string | undefined;
-  previousUsername: string | undefined;
-}): ThunkAction<
-  void,
-  RootStateType,
-  unknown,
-  UpdateUsernameSaveStateActionType
-> {
-  return async (dispatch, getState) => {
-    const state = getState();
-
-    const previousState = getUsernameSaveState(state);
-    if (previousState !== UsernameSaveState.None) {
-      log.error(
-        `saveUsername: Save requested, but previous state was ${previousState}`
-      );
-      dispatch(makeUsernameSaveType(UsernameSaveState.GeneralError));
-      return;
-    }
-
-    try {
-      dispatch(makeUsernameSaveType(UsernameSaveState.Saving));
-      await writeUsername({ username, previousUsername });
-
-      // writeUsername above updates the backbone model which in turn updates
-      // redux through it's on:change event listener. Once we lose Backbone
-      // we'll need to manually sync these new changes.
-      dispatch(makeUsernameSaveType(UsernameSaveState.Success));
-    } catch (error: unknown) {
-      // Check to see if we were deleting
-      if (!username) {
-        dispatch(makeUsernameSaveType(UsernameSaveState.DeleteFailed));
-        showToast(ToastFailedToDeleteUsername);
-        return;
-      }
-
-      if (!isRecord(error)) {
-        dispatch(makeUsernameSaveType(UsernameSaveState.GeneralError));
-        return;
-      }
-
-      if (error.code === 409) {
-        dispatch(makeUsernameSaveType(UsernameSaveState.UsernameTakenError));
-        return;
-      }
-      if (error.code === 400) {
-        dispatch(
-          makeUsernameSaveType(UsernameSaveState.UsernameMalformedError)
-        );
-        return;
-      }
-
-      dispatch(makeUsernameSaveType(UsernameSaveState.GeneralError));
-    }
-  };
-}
-
 function myProfileChanged(
   profileData: ProfileDataType,
   avatar: AvatarUpdateType
@@ -1269,7 +1207,7 @@ function myProfileChanged(
         payload: null,
       });
     } catch (err) {
-      log.error('myProfileChanged', err && err.stack ? err.stack : err);
+      log.error('myProfileChanged', Errors.toLogFormat(err));
       dispatch({ type: TOGGLE_PROFILE_EDITOR_ERROR });
     }
   };
@@ -1355,7 +1293,7 @@ export function setVoiceNotePlaybackRate({
       } else {
         conversationModel.attributes.voiceNotePlaybackRate = rate;
       }
-      await window.Signal.Data.updateConversation(conversationModel.attributes);
+      window.Signal.Data.updateConversation(conversationModel.attributes);
     }
 
     const conversation = conversationModel?.format();
@@ -1405,7 +1343,7 @@ function colorSelected({
         delete conversation.attributes.customColorId;
       }
 
-      await window.Signal.Data.updateConversation(conversation.attributes);
+      window.Signal.Data.updateConversation(conversation.attributes);
     }
 
     dispatch({
@@ -1669,7 +1607,7 @@ function createGroup(
         })
       );
     } catch (err) {
-      log.error('Failed to create group', err && err.stack ? err.stack : err);
+      log.error('Failed to create group', Errors.toLogFormat(err));
       dispatch({ type: 'CREATE_GROUP_REJECTED' });
     }
   };
@@ -1697,7 +1635,8 @@ function selectMessage(
 
 function conversationStoppedByMissingVerification(payload: {
   conversationId: string;
-  untrustedUuids: ReadonlyArray<string>;
+  distributionId?: string;
+  untrustedUuids: ReadonlyArray<UUIDStringType>;
 }): ConversationStoppedByMissingVerificationActionType {
   // Fetching profiles to ensure that we have their latest identity key in storage
   payload.untrustedUuids.forEach(uuid => {
@@ -1976,7 +1915,7 @@ function setComposeGroupName(groupName: string): SetComposeGroupNameActionType {
 }
 
 function setComposeGroupExpireTimer(
-  groupExpireTimer: number
+  groupExpireTimer: DurationInSeconds
 ): SetComposeGroupExpireTimerActionType {
   return {
     type: 'SET_COMPOSE_GROUP_EXPIRE_TIMER',
@@ -2098,10 +2037,17 @@ function toggleGroupsForStorySend(
           return;
         }
 
+        const oldStorySendMode = conversation.getStorySendMode();
+        const newStorySendMode =
+          oldStorySendMode === StorySendMode.Always
+            ? StorySendMode.Never
+            : StorySendMode.Always;
+
         conversation.set({
-          isGroupStorySendReady: !conversation.get('isGroupStorySendReady'),
+          storySendMode: newStorySendMode,
         });
-        await window.Signal.Data.updateConversation(conversation.attributes);
+        window.Signal.Data.updateConversation(conversation.attributes);
+        conversation.captureChange('storySendMode');
       })
     );
 
@@ -2202,11 +2148,12 @@ export function getEmptyState(): ConversationsStateType {
     verificationDataByConversation: {},
     messagesByConversation: {},
     messagesLookup: {},
+    selectedMessage: undefined,
     selectedMessageCounter: 0,
+    selectedMessageSource: undefined,
     showArchived: false,
     selectedConversationTitle: '',
     selectedConversationPanelDepth: 0,
-    usernameSaveState: UsernameSaveState.None,
   };
 }
 
@@ -2308,48 +2255,138 @@ function closeComposerModal(
   };
 }
 
-function getVerificationDataForConversation(
-  state: Readonly<ConversationsStateType>,
-  conversationId: string,
-  untrustedUuids: ReadonlyArray<string>
-): Record<string, ConversationVerificationData> {
-  const { verificationDataByConversation } = state;
-  const existingPendingState = getOwn(
-    verificationDataByConversation,
-    conversationId
-  );
+function getVerificationDataForConversation({
+  conversationId,
+  distributionId,
+  state,
+  untrustedUuids,
+}: {
+  conversationId: string;
+  distributionId?: string;
+  state: Readonly<VerificationDataByConversation>;
+  untrustedUuids: ReadonlyArray<UUIDStringType>;
+}): VerificationDataByConversation {
+  const existing = getOwn(state, conversationId);
 
   if (
-    !existingPendingState ||
-    existingPendingState.type ===
-      ConversationVerificationState.VerificationCancelled
+    !existing ||
+    existing.type === ConversationVerificationState.VerificationCancelled
   ) {
     return {
       [conversationId]: {
         type: ConversationVerificationState.PendingVerification as const,
-        uuidsNeedingVerification: untrustedUuids,
+        uuidsNeedingVerification: distributionId ? [] : untrustedUuids,
+        ...(distributionId
+          ? {
+              byDistributionId: {
+                [distributionId]: {
+                  uuidsNeedingVerification: untrustedUuids,
+                },
+              },
+            }
+          : undefined),
       },
     };
   }
 
-  const uuidsNeedingVerification: ReadonlyArray<string> = Array.from(
-    new Set([
-      ...existingPendingState.uuidsNeedingVerification,
-      ...untrustedUuids,
-    ])
+  const existingUuids = distributionId
+    ? existing.byDistributionId?.[distributionId]?.uuidsNeedingVerification
+    : existing.uuidsNeedingVerification;
+
+  const uuidsNeedingVerification: ReadonlyArray<UUIDStringType> = Array.from(
+    new Set([...(existingUuids || []), ...untrustedUuids])
   );
 
   return {
     [conversationId]: {
+      ...existing,
       type: ConversationVerificationState.PendingVerification as const,
-      uuidsNeedingVerification,
+      ...(distributionId ? undefined : { uuidsNeedingVerification }),
+      ...(distributionId
+        ? {
+            byDistributionId: {
+              ...existing.byDistributionId,
+              [distributionId]: {
+                uuidsNeedingVerification,
+              },
+            },
+          }
+        : undefined),
     },
   };
 }
 
+// Return same data, and we do nothing. Return undefined, and we'll delete the list.
+type DistributionVisitor = (
+  id: string,
+  data: DistributionVerificationData
+) => DistributionVerificationData | undefined;
+
+function visitListsInVerificationData(
+  existing: VerificationDataByConversation,
+  visitor: DistributionVisitor
+): VerificationDataByConversation {
+  let result = existing;
+
+  Object.entries(result).forEach(([conversationId, conversationData]) => {
+    if (
+      conversationData.type !==
+      ConversationVerificationState.PendingVerification
+    ) {
+      return;
+    }
+
+    const { byDistributionId } = conversationData;
+    if (!byDistributionId) {
+      return;
+    }
+
+    let updatedByDistributionId = byDistributionId;
+    Object.entries(byDistributionId).forEach(
+      ([distributionId, distributionData]) => {
+        const visitorResult = visitor(distributionId, distributionData);
+
+        if (!visitorResult) {
+          updatedByDistributionId = omit(updatedByDistributionId, [
+            distributionId,
+          ]);
+        } else if (visitorResult !== distributionData) {
+          updatedByDistributionId = {
+            ...updatedByDistributionId,
+            [distributionId]: visitorResult,
+          };
+        }
+      }
+    );
+
+    const listCount = Object.keys(updatedByDistributionId).length;
+    if (
+      conversationData.uuidsNeedingVerification.length === 0 &&
+      listCount === 0
+    ) {
+      result = omit(result, [conversationId]);
+    } else if (listCount === 0) {
+      result = {
+        ...result,
+        [conversationId]: omit(conversationData, ['byDistributionId']),
+      };
+    } else if (updatedByDistributionId !== byDistributionId) {
+      result = {
+        ...result,
+        [conversationId]: {
+          ...conversationData,
+          byDistributionId: updatedByDistributionId,
+        },
+      };
+    }
+  });
+
+  return result;
+}
+
 export function reducer(
   state: Readonly<ConversationsStateType> = getEmptyState(),
-  action: Readonly<ConversationActionType>
+  action: Readonly<ConversationActionType | StoryDistributionListsActionType>
 ): ConversationsStateType {
   if (action.type === CLEAR_CONVERSATIONS_PENDING_VERIFICATION) {
     return {
@@ -2362,16 +2399,12 @@ export function reducer(
     const { conversationId } = action.payload;
     const { verificationDataByConversation } = state;
 
-    const existingPendingState = getOwn(
-      verificationDataByConversation,
-      conversationId
-    );
+    const existing = getOwn(verificationDataByConversation, conversationId);
 
     // If there are active verifications required, this will do nothing.
     if (
-      existingPendingState &&
-      existingPendingState.type ===
-        ConversationVerificationState.PendingVerification
+      existing &&
+      existing.type === ConversationVerificationState.PendingVerification
     ) {
       return state;
     }
@@ -2690,16 +2723,151 @@ export function reducer(
       ...state,
       selectedMessage: messageId,
       selectedMessageCounter: state.selectedMessageCounter + 1,
+      selectedMessageSource: SelectedMessageSource.Focus,
     };
   }
-  if (action.type === CONVERSATION_STOPPED_BY_MISSING_VERIFICATION) {
-    const { conversationId, untrustedUuids } = action.payload;
 
-    const nextVerificationData = getVerificationDataForConversation(
-      state,
-      conversationId,
-      untrustedUuids
+  if (action.type === MODIFY_LIST) {
+    const {
+      id: listId,
+      isBlockList,
+      membersToRemove,
+      membersToAdd,
+    } = action.payload;
+    const removedUuids = new Set(isBlockList ? membersToAdd : membersToRemove);
+
+    const nextVerificationData = visitListsInVerificationData(
+      state.verificationDataByConversation,
+      (id, data): DistributionVerificationData | undefined => {
+        if (listId === id) {
+          const uuidsNeedingVerification = data.uuidsNeedingVerification.filter(
+            uuid => !removedUuids.has(uuid)
+          );
+
+          if (!uuidsNeedingVerification.length) {
+            return undefined;
+          }
+          return {
+            ...data,
+            uuidsNeedingVerification,
+          };
+        }
+
+        return data;
+      }
     );
+
+    if (nextVerificationData === state.verificationDataByConversation) {
+      return state;
+    }
+
+    return {
+      ...state,
+      verificationDataByConversation: nextVerificationData,
+    };
+  }
+  if (action.type === DELETE_LIST) {
+    const { listId } = action.payload;
+
+    const nextVerificationData = visitListsInVerificationData(
+      state.verificationDataByConversation,
+      (id, data): DistributionVerificationData | undefined => {
+        if (listId === id) {
+          return undefined;
+        }
+
+        return data;
+      }
+    );
+
+    if (nextVerificationData === state.verificationDataByConversation) {
+      return state;
+    }
+
+    return {
+      ...state,
+      verificationDataByConversation: nextVerificationData,
+    };
+  }
+  if (action.type === HIDE_MY_STORIES_FROM) {
+    const removedUuids = new Set(action.payload);
+
+    const nextVerificationData = visitListsInVerificationData(
+      state.verificationDataByConversation,
+      (id, data): DistributionVerificationData | undefined => {
+        if (MY_STORY_ID === id) {
+          const uuidsNeedingVerification = data.uuidsNeedingVerification.filter(
+            uuid => !removedUuids.has(uuid)
+          );
+
+          if (!uuidsNeedingVerification.length) {
+            return undefined;
+          }
+
+          return {
+            ...data,
+            uuidsNeedingVerification,
+          };
+        }
+
+        return data;
+      }
+    );
+
+    if (nextVerificationData === state.verificationDataByConversation) {
+      return state;
+    }
+
+    return {
+      ...state,
+      verificationDataByConversation: nextVerificationData,
+    };
+  }
+  if (action.type === VIEWERS_CHANGED) {
+    const { listId, memberUuids } = action.payload;
+    const newUuids = new Set(memberUuids);
+
+    const nextVerificationData = visitListsInVerificationData(
+      state.verificationDataByConversation,
+      (id, data): DistributionVerificationData | undefined => {
+        if (listId === id) {
+          const uuidsNeedingVerification = data.uuidsNeedingVerification.filter(
+            uuid => newUuids.has(uuid)
+          );
+
+          if (!uuidsNeedingVerification.length) {
+            return undefined;
+          }
+
+          return {
+            ...data,
+            uuidsNeedingVerification,
+          };
+        }
+
+        return data;
+      }
+    );
+
+    if (nextVerificationData === state.verificationDataByConversation) {
+      return state;
+    }
+
+    return {
+      ...state,
+      verificationDataByConversation: nextVerificationData,
+    };
+  }
+
+  if (action.type === CONVERSATION_STOPPED_BY_MISSING_VERIFICATION) {
+    const { conversationId, distributionId, untrustedUuids } = action.payload;
+
+    const nextVerificationData = getVerificationDataForConversation({
+      conversationId,
+      distributionId,
+      state: state.verificationDataByConversation,
+      untrustedUuids,
+    });
 
     return {
       ...state,
@@ -2714,14 +2882,30 @@ export function reducer(
       ...state.verificationDataByConversation,
     };
 
-    action.payload.conversationsToPause.forEach(
-      (untrustedUuids, conversationId) => {
-        const nextVerificationData = getVerificationDataForConversation(
-          state,
+    Object.entries(action.payload.untrustedByConversation).forEach(
+      ([conversationId, conversationData]) => {
+        const nextConversation = getVerificationDataForConversation({
+          state: verificationDataByConversation,
           conversationId,
-          Array.from(untrustedUuids)
+          untrustedUuids: conversationData.uuids,
+        });
+        Object.assign(verificationDataByConversation, nextConversation);
+
+        if (!conversationData.byDistributionId) {
+          return;
+        }
+
+        Object.entries(conversationData.byDistributionId).forEach(
+          ([distributionId, distributionData]) => {
+            const nextDistribution = getVerificationDataForConversation({
+              state: verificationDataByConversation,
+              distributionId,
+              conversationId,
+              untrustedUuids: distributionData.uuids,
+            });
+            Object.assign(verificationDataByConversation, nextDistribution);
+          }
         );
-        Object.assign(verificationDataByConversation, nextVerificationData);
       }
     );
 
@@ -2835,6 +3019,7 @@ export function reducer(
         ? {
             selectedMessage: scrollToMessageId,
             selectedMessageCounter: state.selectedMessageCounter + 1,
+            selectedMessageSource: SelectedMessageSource.Reset,
           }
         : {}),
       messagesLookup: {
@@ -2927,6 +3112,7 @@ export function reducer(
       ...state,
       selectedMessage: messageId,
       selectedMessageCounter: state.selectedMessageCounter + 1,
+      selectedMessageSource: SelectedMessageSource.NavigateToMessage,
       messagesByConversation: {
         ...messagesByConversation,
         [conversationId]: {
@@ -3212,6 +3398,8 @@ export function reducer(
     return {
       ...state,
       selectedMessage: undefined,
+      selectedMessageCounter: 0,
+      selectedMessageSource: undefined,
     };
   }
   if (action.type === 'CLEAR_UNREAD_METRICS') {
@@ -3246,6 +3434,7 @@ export function reducer(
       ...omit(state, 'contactSpoofingReview'),
       selectedConversationId: id,
       selectedMessage: messageId,
+      selectedMessageSource: SelectedMessageSource.NavigateToMessage,
     };
 
     if (switchToAssociatedView && id) {
@@ -3328,7 +3517,7 @@ export function reducer(
     let maximumGroupSizeModalState: OneTimeModalState;
     let groupName: string;
     let groupAvatar: undefined | Uint8Array;
-    let groupExpireTimer: number;
+    let groupExpireTimer: DurationInSeconds;
     let userAvatarData = getDefaultAvatars(true);
 
     switch (state.composer?.step) {
@@ -3773,15 +3962,6 @@ export function reducer(
         [conversationId]: changed,
       },
       ...updateConversationLookups(changed, conversation, state),
-    };
-  }
-
-  if (action.type === UPDATE_USERNAME_SAVE_STATE) {
-    const { newSaveState } = action.payload;
-
-    return {
-      ...state,
-      usernameSaveState: newSaveState,
     };
   }
 

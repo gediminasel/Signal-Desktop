@@ -14,12 +14,13 @@ import * as durations from '../../util/durations';
 import { UUID } from '../../types/UUID';
 import { getDefaultConversation } from './getDefaultConversation';
 import { fakeAttachment, fakeThumbnail } from './fakeAttachment';
-import { MY_STORIES_ID } from '../../types/Stories';
+import { MY_STORY_ID, ResolvedSendStatus } from '../../types/Stories';
 
 function getAttachmentWithThumbnail(url: string): AttachmentType {
   return fakeAttachment({
-    url,
+    path: url,
     thumbnail: fakeThumbnail(url),
+    url,
   });
 }
 
@@ -28,7 +29,8 @@ export function getFakeMyStory(id?: string, name?: string): MyStoryType {
 
   return {
     id: id || UUID.generate().toString(),
-    name: name || id === MY_STORIES_ID ? 'My Stories' : casual.catch_phrase,
+    name: name || id === MY_STORY_ID ? 'My Stories' : casual.catch_phrase,
+    reducedSendStatus: ResolvedSendStatus.Sent,
     stories: Array.from(Array(storyCount), () => ({
       ...getFakeStoryView(),
       sendState: [],
@@ -49,7 +51,6 @@ export function getFakeStoryView(
     attachment: getAttachmentWithThumbnail(
       attachmentUrl || '/fixtures/tina-rolf-269345-unsplash.jpg'
     ),
-    hasReplies: Boolean(casual.coin_flip),
     isUnread: Boolean(casual.coin_flip),
     messageId,
     messageIdForLogging: `${messageId} (for logging)`,
@@ -70,8 +71,14 @@ export function getFakeStory({
 }): ConversationStoryType {
   const storyView = getFakeStoryView(attachmentUrl, timestamp);
 
+  const hasReplies = group ? Boolean(casual.coin_flip) : false;
+  const hasRepliesFromSelf =
+    group && hasReplies ? Boolean(casual.coin_flip) : false;
+
   return {
     conversationId: storyView.sender.id,
+    hasReplies,
+    hasRepliesFromSelf,
     group,
     storyView,
   };

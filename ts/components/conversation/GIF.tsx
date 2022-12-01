@@ -14,6 +14,7 @@ import {
   getImageDimensions,
   defaultBlurHash,
 } from '../../types/Attachment';
+import * as Errors from '../../types/errors';
 import * as log from '../../logging/log';
 
 const MAX_GIF_REPEAT = 4;
@@ -36,7 +37,7 @@ export type Props = {
 
 type MediaEvent = React.SyntheticEvent<HTMLVideoElement, Event>;
 
-export const GIF: React.FC<Props> = props => {
+export function GIF(props: Props): JSX.Element {
   const {
     attachment,
     size,
@@ -90,7 +91,7 @@ export const GIF: React.FC<Props> = props => {
       video.play().catch(error => {
         log.info(
           "Failed to match GIF playback to window's state",
-          (error && error.stack) || error
+          Errors.toLogFormat(error)
         );
       });
     } else {
@@ -258,4 +259,4 @@ export const GIF: React.FC<Props> = props => {
       {fileSize}
     </div>
   );
-};
+}

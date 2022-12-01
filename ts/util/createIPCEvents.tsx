@@ -4,7 +4,8 @@
 import { webFrame } from 'electron';
 import type { AudioDevice } from 'ringrtc';
 import * as React from 'react';
-import * as RemoteConfig from '../RemoteConfig';
+import { noop } from 'lodash';
+import { getStoriesAvailable } from './stories';
 
 import type { ZoomFactorType } from '../types/Storage.d';
 import type {
@@ -13,6 +14,7 @@ import type {
   DefaultConversationColorType,
 } from '../types/Colors';
 import { DEFAULT_CONVERSATION_COLOR } from '../types/Colors';
+import * as Errors from '../types/errors';
 import * as Stickers from '../types/Stickers';
 import type { SystemTraySetting } from '../types/SystemTraySetting';
 import { parseSystemTraySetting } from '../types/SystemTraySetting';
@@ -33,9 +35,15 @@ import { PhoneNumberDiscoverability } from './phoneNumberDiscoverability';
 import { PhoneNumberSharingMode } from './phoneNumberSharingMode';
 import { assertDev } from './assert';
 import * as durations from './durations';
+import type { DurationInSeconds } from './durations';
 import { isPhoneNumberSharingEnabled } from './isPhoneNumberSharingEnabled';
-import { parseE164FromSignalDotMeHash } from './sgnlHref';
+import {
+  parseE164FromSignalDotMeHash,
+  parseUsernameFromSignalDotMeHash,
+} from './sgnlHref';
+import { lookupConversationWithoutUuid } from './lookupConversationWithoutUuid';
 import * as log from '../logging/log';
+import { deleteAllMyStories } from './deleteAllMyStories';
 
 type ThemeType = 'light' | 'dark' | 'system';
 type NotificationSettingType = 'message' | 'name' | 'count' | 'off';
@@ -60,8 +68,9 @@ export type IPCEventsValuesType = {
   spellCheck: boolean;
   systemTraySetting: SystemTraySetting;
   themeSetting: ThemeType;
-  universalExpireTimer: number;
+  universalExpireTimer: DurationInSeconds;
   zoomFactor: ZoomFactorType;
+  storyViewReceiptsEnabled: boolean;
 
   // Optional
   mediaPermissions: boolean;
@@ -89,6 +98,7 @@ export type IPCEventsCallbacksType = {
   addCustomColor: (customColor: CustomColorType) => void;
   addDarkOverlay: () => void;
   deleteAllData: () => Promise<void>;
+  deleteAllMyStories: () => Promise<void>;
   closeDB: () => Promise<void>;
   editCustomColor: (colorId: string, customColor: CustomColorType) => void;
   getConversationsWithCustomColor: (x: string) => Array<ConversationType>;
@@ -100,7 +110,7 @@ export type IPCEventsCallbacksType = {
   removeDarkOverlay: () => void;
   resetAllChatColors: () => void;
   resetDefaultChatColor: () => void;
-  showConversationViaSignalDotMe: (hash: string) => void;
+  showConversationViaSignalDotMe: (hash: string) => Promise<void>;
   showKeyboardShortcuts: () => void;
   showGroupViaLink: (x: string) => Promise<void>;
   showReleaseNotes: () => void;
@@ -186,6 +196,16 @@ export function createIPCEvents(
       account.captureChange('hasStoriesDisabled');
       window.textsecure.server?.onHasStoriesDisabledChange(value);
     },
+    getStoryViewReceiptsEnabled: () => {
+      return (
+        window.storage.get('storyViewReceiptsEnabled') ??
+        window.storage.get('read-receipt-setting') ??
+        false
+      );
+    },
+    setStoryViewReceiptsEnabled: async (value: boolean) => {
+      await window.storage.put('storyViewReceiptsEnabled', value);
+    },
 
     getPreferredAudioInputDevice: () =>
       window.storage.get('preferred-audio-input-device'),
@@ -199,6 +219,10 @@ export function createIPCEvents(
       window.storage.get('preferred-video-input-device'),
     setPreferredVideoInputDevice: device =>
       window.storage.put('preferred-video-input-device', device),
+
+    deleteAllMyStories: async () => {
+      await deleteAllMyStories();
+    },
 
     // Chat Color redux hookups
     getCustomColors: () => {
@@ -343,9 +367,7 @@ export function createIPCEvents(
 
     isPhoneNumberSharingEnabled: () => isPhoneNumberSharingEnabled(),
     isPrimary: () => window.textsecure.storage.user.getDeviceId() === 1,
-    shouldShowStoriesSettings: () =>
-      RemoteConfig.isEnabled('desktop.internalUser') ||
-      RemoteConfig.isEnabled('desktop.stories'),
+    shouldShowStoriesSettings: () => getStoriesAvailable(),
     syncRequest: () =>
       new Promise<void>((resolve, reject) => {
         const FIVE_MINUTES = 5 * durations.MINUTE;
@@ -377,13 +399,24 @@ export function createIPCEvents(
     },
 
     addDarkOverlay: () => {
-      if ($('.dark-overlay').length) {
+      const elems = document.querySelectorAll('.dark-overlay');
+      if (elems.length) {
         return;
       }
-      $(document.body).prepend('<div class="dark-overlay"></div>');
-      $('.dark-overlay').on('click', () => $('.dark-overlay').remove());
+      const newOverlay = document.createElement('div');
+      newOverlay.className = 'dark-overlay';
+      newOverlay.addEventListener('click', () => {
+        newOverlay.remove();
+      });
+      document.body.prepend(newOverlay);
     },
-    removeDarkOverlay: () => $('.dark-overlay').remove(),
+    removeDarkOverlay: () => {
+      const elems = document.querySelectorAll('.dark-overlay');
+
+      for (const elem of elems) {
+        elem.remove();
+      }
+    },
     showKeyboardShortcuts: () => window.showKeyboardShortcuts(),
 
     deleteAllData: async () => {
@@ -432,7 +465,7 @@ export function createIPCEvents(
         window.isShowingModal = false;
         log.error(
           'showStickerPack: Ran into an error!',
-          error && error.stack ? error.stack : error
+          Errors.toLogFormat(error)
         );
         const errorView = new ReactWrapperView({
           className: 'error-modal-wrapper',
@@ -462,7 +495,7 @@ export function createIPCEvents(
       } catch (error) {
         log.error(
           'showGroupViaLink: Ran into an error!',
-          error && error.stack ? error.stack : error
+          Errors.toLogFormat(error)
         );
         const errorView = new ReactWrapperView({
           className: 'error-modal-wrapper',
@@ -480,7 +513,7 @@ export function createIPCEvents(
       }
       window.isShowingModal = false;
     },
-    showConversationViaSignalDotMe(hash: string) {
+    async showConversationViaSignalDotMe(hash: string) {
       if (!window.Signal.Util.Registration.everDone()) {
         log.info(
           'showConversationViaSignalDotMe: Not registered, returning early'
@@ -488,13 +521,33 @@ export function createIPCEvents(
         return;
       }
 
+      const { showUserNotFoundModal } = window.reduxActions.globalModals;
+
       const maybeE164 = parseE164FromSignalDotMeHash(hash);
       if (maybeE164) {
-        const convo = window.ConversationController.lookupOrCreate({
+        const convoId = await lookupConversationWithoutUuid({
+          type: 'e164',
           e164: maybeE164,
+          phoneNumber: maybeE164,
+          showUserNotFoundModal,
+          setIsFetchingUUID: noop,
         });
-        if (convo) {
-          trigger('showConversation', convo.id);
+        if (convoId) {
+          trigger('showConversation', convoId);
+          return;
+        }
+      }
+
+      const maybeUsername = parseUsernameFromSignalDotMeHash(hash);
+      if (maybeUsername) {
+        const convoId = await lookupConversationWithoutUuid({
+          type: 'username',
+          username: maybeUsername,
+          showUserNotFoundModal,
+          setIsFetchingUUID: noop,
+        });
+        if (convoId) {
+          trigger('showConversation', convoId);
           return;
         }
       }

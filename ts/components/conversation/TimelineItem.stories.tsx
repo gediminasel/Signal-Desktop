@@ -7,6 +7,7 @@ import { action } from '@storybook/addon-actions';
 
 import { EmojiPicker } from '../emoji/EmojiPicker';
 import { setupI18n } from '../../util/setupI18n';
+import { DurationInSeconds } from '../../util/durations';
 import enMessages from '../../../_locales/en/messages.json';
 import type { PropsType as TimelineItemProps } from './TimelineItem';
 import { TimelineItem } from './TimelineItem';
@@ -16,6 +17,7 @@ import { AvatarColors } from '../../types/Colors';
 import { getDefaultConversation } from '../../test-both/helpers/getDefaultConversation';
 import { WidthBreakpoint } from '../_util';
 import { ThemeType } from '../../types/Util';
+import { PaymentEventKind } from '../../types/Payment';
 
 const i18n = setupI18n('en', enMessages);
 
@@ -43,7 +45,10 @@ const renderContact = (conversationId: string) => (
 );
 
 const renderUniversalTimerNotification = () => (
-  <UniversalTimerNotification i18n={i18n} expireTimer={3600} />
+  <UniversalTimerNotification
+    i18n={i18n}
+    expireTimer={DurationInSeconds.HOUR}
+  />
 );
 
 const getDefaultProps = () => ({
@@ -115,7 +120,7 @@ export default {
   title: 'Components/Conversation/TimelineItem',
 };
 
-export const PlainMessage = (): JSX.Element => {
+export function PlainMessage(): JSX.Element {
   const item = {
     type: 'message',
     data: {
@@ -131,15 +136,15 @@ export const PlainMessage = (): JSX.Element => {
   } as TimelineItemProps['item'];
 
   return <TimelineItem {...getDefaultProps()} item={item} i18n={i18n} />;
-};
+}
 
-export const Notification = (): JSX.Element => {
+export function Notification(): JSX.Element {
   const items = [
     {
       type: 'timerNotification',
       data: {
         phoneNumber: '(202) 555-0000',
-        expireTimer: 60,
+        expireTimer: DurationInSeconds.MINUTE,
         ...getDefaultConversation(),
         type: 'fromOther',
       },
@@ -435,6 +440,50 @@ export const Notification = (): JSX.Element => {
       },
     },
     {
+      type: 'paymentEvent',
+      data: {
+        event: {
+          kind: PaymentEventKind.ActivationRequest,
+        },
+        sender: getDefaultConversation(),
+        conversation: getDefaultConversation(),
+      },
+    },
+    {
+      type: 'paymentEvent',
+      data: {
+        event: {
+          kind: PaymentEventKind.Activation,
+        },
+        sender: getDefaultConversation(),
+        conversation: getDefaultConversation(),
+      },
+    },
+    {
+      type: 'paymentEvent',
+      data: {
+        event: {
+          kind: PaymentEventKind.ActivationRequest,
+        },
+        sender: getDefaultConversation({
+          isMe: true,
+        }),
+        conversation: getDefaultConversation(),
+      },
+    },
+    {
+      type: 'paymentEvent',
+      data: {
+        event: {
+          kind: PaymentEventKind.Activation,
+        },
+        sender: getDefaultConversation({
+          isMe: true,
+        }),
+        conversation: getDefaultConversation(),
+      },
+    },
+    {
       type: 'resetSessionNotification',
       data: null,
     },
@@ -499,9 +548,9 @@ export const Notification = (): JSX.Element => {
       ))}
     </>
   );
-};
+}
 
-export const UnknownType = (): JSX.Element => {
+export function UnknownType(): JSX.Element {
   const item = {
     type: 'random',
     data: {
@@ -511,11 +560,11 @@ export const UnknownType = (): JSX.Element => {
   } as any as TimelineItemProps['item'];
 
   return <TimelineItem {...getDefaultProps()} item={item} i18n={i18n} />;
-};
+}
 
-export const MissingItem = (): JSX.Element => {
+export function MissingItem(): JSX.Element {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const item = null as any as TimelineItemProps['item'];
 
   return <TimelineItem {...getDefaultProps()} item={item} i18n={i18n} />;
-};
+}

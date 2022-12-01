@@ -7,6 +7,8 @@ import type { UUID, UUIDStringType } from '../types/UUID';
 import type { TextAttachmentType } from '../types/Attachment';
 import type { GiftBadgeStates } from '../components/conversation/Message';
 import type { MIMEType } from '../types/MIME';
+import type { DurationInSeconds } from '../util/durations';
+import type { AnyPaymentEvent } from '../types/Payment';
 
 export {
   IdentityKeyType,
@@ -66,7 +68,7 @@ export type KeyPairType = {
 
 export type OuterSignedPrekeyType = {
   confirmed: boolean;
-  // eslint-disable-next-line camelcase
+
   created_at: number;
   keyId: number;
   privKey: Uint8Array;
@@ -94,6 +96,7 @@ export type ProcessedEnvelope = Readonly<{
   serverTimestamp: number;
   groupId?: string;
   urgent?: boolean;
+  story?: boolean;
 }>;
 
 export type ProcessedAttachment = {
@@ -206,9 +209,10 @@ export type ProcessedDataMessage = {
   group?: ProcessedGroupContext;
   groupV2?: ProcessedGroupV2Context;
   flags: number;
-  expireTimer: number;
+  expireTimer: DurationInSeconds;
   profileKey?: string;
   timestamp: number;
+  payment?: AnyPaymentEvent;
   quote?: ProcessedQuote;
   contact?: ReadonlyArray<ProcessedContact>;
   preview?: ReadonlyArray<ProcessedPreview>;

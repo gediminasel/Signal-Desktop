@@ -15,6 +15,7 @@ import type { ExecuteMenuRoleType } from './TitleBarContainer';
 import { ToastLoadingFullLogs } from './ToastLoadingFullLogs';
 import { openLinkInWebBrowser } from '../util/openLinkInWebBrowser';
 import { createSupportUrl } from '../util/createSupportUrl';
+import * as Errors from '../types/errors';
 import { useEscapeHandling } from '../hooks/useEscapeHandling';
 import { useTheme } from '../hooks/useTheme';
 
@@ -41,7 +42,7 @@ enum ToastType {
   Loading,
 }
 
-export const DebugLogWindow = ({
+export function DebugLogWindow({
   closeWindow,
   downloadLog,
   i18n,
@@ -49,7 +50,7 @@ export const DebugLogWindow = ({
   uploadLogs,
   hasCustomTitleBar,
   executeMenuRole,
-}: PropsType): JSX.Element => {
+}: PropsType): JSX.Element {
   const [loadState, setLoadState] = useState<LoadState>(LoadState.NotStarted);
   const [logText, setLogText] = useState<string | undefined>();
   const [publicLogURL, setPublicLogURL] = useState<string | undefined>();
@@ -107,10 +108,7 @@ export const DebugLogWindow = ({
       const publishedLogURL = await uploadLogs(text);
       setPublicLogURL(publishedLogURL);
     } catch (error) {
-      log.error(
-        'DebugLogWindow error:',
-        error && error.stack ? error.stack : error
-      );
+      log.error('DebugLogWindow error:', Errors.toLogFormat(error));
       setLoadState(LoadState.Loaded);
       setToastType(ToastType.Error);
     }
@@ -230,4 +228,4 @@ export const DebugLogWindow = ({
       </div>
     </TitleBarContainer>
   );
-};
+}

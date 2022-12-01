@@ -38,6 +38,7 @@ import type {
 import { SignalService as Proto } from '../protobuf';
 import * as log from '../logging/log';
 import MessageSender from '../textsecure/SendMessage';
+import type { StoryDistributionListDataType } from '../state/ducks/storyDistributionLists';
 
 const RETRY_LIMIT = 5;
 
@@ -101,7 +102,7 @@ export async function onRetryRequest(event: RetryRequestEvent): Promise<void> {
   } catch (error) {
     log.warn(
       `onRetryRequest/${logId}: Failed to parse integer from desktop.retryRespondMaxAge feature flag`,
-      error && error.stack ? error.stack : error
+      Errors.toLogFormat(error)
     );
   }
 
@@ -138,7 +139,8 @@ export async function onRetryRequest(event: RetryRequestEvent): Promise<void> {
 
   const { contentHint, messageIds, proto, timestamp, urgent } = sentProto;
 
-  const { contentProto, groupId } = await maybeAddSenderKeyDistributionMessage({
+  // Only applies to sender key sends in groups. See below for story distribution lists.
+  const addSenderKeyResult = await maybeAddSenderKeyDistributionMessage({
     contentProto: Proto.Content.decode(proto),
     logId,
     messageIds,
@@ -146,44 +148,35 @@ export async function onRetryRequest(event: RetryRequestEvent): Promise<void> {
     requesterUuid,
     timestamp,
   });
+  // eslint-disable-next-line prefer-destructuring
+  let contentProto: Proto.IContent | undefined =
+    addSenderKeyResult.contentProto;
+  const { groupId } = addSenderKeyResult;
 
-  // Assert that the requesting UUID is still part of a distribution list that
-  // the message was sent to.
-  if (contentProto.storyMessage) {
-    const { storyDistributionLists } = window.reduxStore.getState();
-    const membersByListId = new Map<string, Set<string>>();
-    storyDistributionLists.distributionLists.forEach(list => {
-      membersByListId.set(list.id, new Set(list.memberUuids));
+  // Assert that the requesting UUID is still part of a story distribution list that
+  //   the message was sent to, and add its sender key distribution message (SKDM).
+  if (contentProto.storyMessage && !groupId) {
+    contentProto = await checkDistributionListAndAddSKDM({
+      confirm,
+      contentProto,
+      logId,
+      messaging,
+      requesterUuid,
+      timestamp,
     });
-
-    const messages = await dataInterface.getMessagesBySentAt(timestamp);
-    const isInDistributionList = messages.some(message => {
-      if (!message.storyDistributionListId) {
-        return false;
-      }
-
-      const members = membersByListId.get(message.storyDistributionListId);
-      if (!members) {
-        return false;
-      }
-
-      return members.has(requesterUuid);
-    });
-
-    if (!isInDistributionList) {
-      log.warn(
-        `onRetryRequest/${logId}: requesterUuid is not in distribution list`
-      );
-      confirm();
+    if (!contentProto) {
       return;
     }
   }
+  const story = Boolean(contentProto.storyMessage);
 
   const recipientConversation = window.ConversationController.getOrCreate(
     requesterUuid,
     'private'
   );
-  const sendOptions = await getSendOptions(recipientConversation.attributes);
+  const sendOptions = await getSendOptions(recipientConversation.attributes, {
+    story,
+  });
   const promise = messaging.sendMessageProtoAndWait({
     contentHint,
     groupId,
@@ -192,6 +185,7 @@ export async function onRetryRequest(event: RetryRequestEvent): Promise<void> {
     recipients: [requesterUuid],
     timestamp,
     urgent,
+    story,
   });
 
   await handleMessageSend(promise, {
@@ -303,7 +297,6 @@ async function sendDistributionMessageOrNullMessage(
   options: RetryRequestEventData,
   didArchive: boolean
 ): Promise<void> {
-  const { ContentHint } = Proto.UnidentifiedSenderMessage.Message;
   const { groupId, requesterUuid } = options;
   let sentDistributionMessage = false;
   log.info(`sendDistributionMessageOrNullMessage/${logId}: Starting...`);
@@ -340,7 +333,6 @@ async function sendDistributionMessageOrNullMessage(
         await handleMessageSend(
           messaging.sendSenderKeyDistributionMessage(
             {
-              contentHint: ContentHint.RESENDABLE,
               distributionId,
               groupId,
               identifiers: [requesterUuid],
@@ -355,7 +347,7 @@ async function sendDistributionMessageOrNullMessage(
       } catch (error) {
         log.error(
           `sendDistributionMessageOrNullMessage/${logId}: Failed to send sender key distribution message`,
-          error && error.stack ? error.stack : error
+          Errors.toLogFormat(error)
         );
       }
     }
@@ -425,6 +417,88 @@ async function getRetryConversation({
 
   const { conversationId } = message;
   return window.ConversationController.get(conversationId);
+}
+
+async function checkDistributionListAndAddSKDM({
+  contentProto,
+  timestamp,
+  confirm,
+  logId,
+  requesterUuid,
+  messaging,
+}: {
+  contentProto: Proto.IContent;
+  timestamp: number;
+  confirm: () => void;
+  requesterUuid: string;
+  logId: string;
+  messaging: MessageSender;
+}): Promise<Proto.IContent | undefined> {
+  let distributionList: StoryDistributionListDataType | undefined;
+  const { storyDistributionLists } = window.reduxStore.getState();
+  const membersByListId = new Map<string, Set<string>>();
+  const listsById = new Map<string, StoryDistributionListDataType>();
+  storyDistributionLists.distributionLists.forEach(list => {
+    membersByListId.set(list.id, new Set(list.memberUuids));
+    listsById.set(list.id, list);
+  });
+
+  const messages = await dataInterface.getMessagesBySentAt(timestamp);
+  const isInAnyDistributionList = messages.some(message => {
+    const listId = message.storyDistributionListId;
+    if (!listId) {
+      return false;
+    }
+
+    const members = membersByListId.get(listId);
+    if (!members) {
+      return false;
+    }
+
+    const isInList = members.has(requesterUuid);
+
+    if (isInList) {
+      distributionList = listsById.get(listId);
+    }
+
+    return isInList;
+  });
+
+  if (!isInAnyDistributionList) {
+    log.warn(
+      `checkDistributionListAndAddSKDM/${logId}: requesterUuid is not in distribution list. Dropping.`
+    );
+    confirm();
+    return undefined;
+  }
+
+  strictAssert(
+    distributionList,
+    `checkDistributionListAndAddSKDM/${logId}: Should have a distribution list by this point`
+  );
+  const distributionDetails =
+    await window.Signal.Data.getStoryDistributionWithMembers(
+      distributionList.id
+    );
+  const distributionId = distributionDetails?.senderKeyInfo?.distributionId;
+  if (!distributionId) {
+    log.warn(
+      `onRetryRequest/${logId}: No sender key info for distribution list ${distributionList.id}`
+    );
+    return contentProto;
+  }
+
+  const protoWithDistributionMessage =
+    await messaging.getSenderKeyDistributionMessage(distributionId, {
+      throwIfNotInDatabase: true,
+      timestamp,
+    });
+
+  return {
+    ...contentProto,
+    senderKeyDistributionMessage:
+      protoWithDistributionMessage.senderKeyDistributionMessage,
+  };
 }
 
 async function maybeAddSenderKeyDistributionMessage({
@@ -575,7 +649,7 @@ async function requestResend(decryptionError: DecryptionErrorEventData) {
   } catch (error) {
     log.error(
       `requestResend/${logId}: Failed to send retry request, failing over to automatic reset`,
-      error && error.stack ? error.stack : error
+      Errors.toLogFormat(error)
     );
     startAutomaticSessionReset(decryptionError);
     return;

@@ -466,14 +466,14 @@ $message-padding-horizontal: 12px;
   @include light-theme {
     color: $color-gray-90;
     border: 1px solid $color-gray-25;
-    background-color: $color-white;
+    background-color: transparent;
     background-image: none;
   }
 
   @include dark-theme {
     color: $color-gray-05;
     border: 1px solid $color-gray-75;
-    background-color: $color-gray-95;
+    background-color: transparent;
     background-image: none;
   }
 }
@@ -784,7 +784,8 @@ $message-padding-horizontal: 12px;
 
   &--nonclickable {
     cursor: inherit;
-    .module-image__image {
+    .module-image__image,
+    .module-image__border-overlay--with-click-handler {
       cursor: inherit;
     }
   }
@@ -3359,6 +3360,72 @@ button.module-image__border-overlay:focus {
   }
 }
 
+.module-payment-notification {
+  &__container {
+    display: block;
+  }
+
+  &__label {
+    margin: 0 0 7px;
+    @include font-subtitle;
+
+    @include light-theme() {
+      color: $color-gray-60;
+    }
+    @include dark-theme() {
+      color: $color-gray-25;
+    }
+  }
+
+  &__check_device_box {
+    display: flex;
+    gap: 9px;
+    align-items: center;
+    @include font-body-2;
+    padding: 22px 7px;
+    padding-left: 12px;
+    border-radius: 18px;
+    margin: 0 -4px;
+
+    @include light-theme() {
+      background: $color-white-alpha-60;
+      color: $color-gray-90;
+    }
+    @include dark-theme() {
+      background: $color-white-alpha-20;
+      color: $color-white;
+    }
+
+    &::before {
+      content: '';
+      display: block;
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      @include color-svg('../images/icons/v2/info-16.svg', currentcolor);
+    }
+  }
+
+  &__note {
+    margin: 9px 0 0;
+    @include font-body-1;
+  }
+
+  &--outgoing &__label {
+    @include light-theme() {
+      color: $color-white-alpha-80;
+    }
+    @include dark-theme() {
+      color: $color-white-alpha-80;
+    }
+  }
+
+  &--outgoing &__check_device_box {
+    background: $color-white-alpha-20;
+    color: $color-white;
+  }
+}
+
 // Module: Spinner
 
 .module-spinner__container {
@@ -3634,6 +3701,18 @@ button.module-image__border-overlay:focus {
 
 // Module: Calling
 .module-calling {
+  // creates a new independent stacking context that includes modals
+  //
+  // container has no width/height, direct children need to:
+  // - size themselves explicitly (no percentage width/height or top/bottom or left/right)
+  // - size themselves in relation to viewport (position: fixed)
+  &__modal-container {
+    position: fixed;
+    top: var(--titlebar-height);
+    left: 0;
+    z-index: $z-index-on-top-of-everything;
+  }
+
   &__container {
     align-items: center;
     background-color: $calling-background-color;
@@ -3641,7 +3720,7 @@ button.module-image__border-overlay:focus {
     flex-direction: column;
     height: var(--window-height);
     justify-content: center;
-    position: absolute;
+    position: fixed;
     width: 100%;
     z-index: $z-index-calling;
   }
@@ -3912,8 +3991,8 @@ button.module-image__border-overlay:focus {
     line-height: 0;
     overflow: hidden;
     border-radius: 5px;
-    transition: top 200ms linear, left 200ms linear, width 200ms linear,
-      height 200ms linear;
+    transform: translate(0, 0);
+    transition: transform 200ms linear, width 200ms linear, height 200ms linear;
 
     &__remote-video {
       // The background-color is seen while the video loads.
@@ -4097,7 +4176,7 @@ button.module-image__border-overlay:focus {
   box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05), 0px 8px 20px rgba(0, 0, 0, 0.3);
   cursor: grab;
   height: 158px;
-  position: absolute;
+  position: fixed;
   width: 120px;
   z-index: $z-index-calling-pip;
 
@@ -4351,12 +4430,6 @@ button.module-image__border-overlay:focus {
   &--width-narrow {
     padding-left: 10px;
     padding-right: 10px;
-  }
-
-  &--scroll-behavior {
-    &-default {
-      @include smooth-scroll;
-    }
   }
 
   &__item {
@@ -5341,9 +5414,9 @@ button.module-image__border-overlay:focus {
   }
 
   @include dark-theme {
-    background: $color-gray-80;
+    background: $color-gray-75;
     ::-webkit-scrollbar-thumb {
-      border: 2px solid $color-gray-80;
+      border: 2px solid $color-gray-75;
     }
   }
 }
@@ -6632,6 +6705,21 @@ button.module-image__border-overlay:focus {
     @include dark-theme {
       @include color-svg(
         '../images/icons/v2/emoji-smiley-outline-24.svg',
+        $color-gray-15
+      );
+    }
+  }
+
+  &--profile-editor::after {
+    @include light-theme {
+      @include color-svg(
+        '../images/icons/v2/add-emoji-outline-24.svg',
+        $color-gray-75
+      );
+    }
+    @include dark-theme {
+      @include color-svg(
+        '../images/icons/v2/add-emoji-outline-24.svg',
         $color-gray-15
       );
     }
@@ -8135,6 +8223,22 @@ button.module-image__border-overlay:focus {
     @include dark-theme {
       @include color-svg(
         '../images/icons/v2/trash-solid-24.svg',
+        $color-gray-15
+      );
+    }
+  }
+
+  &__copy-timestamp::before {
+    @include light-theme {
+      @include color-svg(
+        '../images/icons/v2/copy-outline-24.svg',
+        $color-black
+      );
+    }
+
+    @include dark-theme {
+      @include color-svg(
+        '../images/icons/v2/copy-outline-24.svg',
         $color-gray-15
       );
     }

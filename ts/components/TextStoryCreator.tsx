@@ -2,21 +2,25 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import FocusTrap from 'focus-trap-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { get, has, noop } from 'lodash';
 import { usePopper } from 'react-popper';
 
+import type { EmojiPickDataType } from './emoji/EmojiPicker';
 import type { LinkPreviewType } from '../types/message/LinkPreviews';
 import type { LocalizerType } from '../types/Util';
+import type { Props as EmojiButtonPropsType } from './emoji/EmojiButton';
 import type { TextAttachmentType } from '../types/Attachment';
 
 import { Button, ButtonVariant } from './Button';
 import { ContextMenu } from './ContextMenu';
+import { EmojiButton } from './emoji/EmojiButton';
 import { LinkPreviewSourceType, findLinks } from '../types/LinkPreview';
+import type { MaybeGrabLinkPreviewOptionsType } from '../types/LinkPreview';
 import { Input } from './Input';
 import { Slider } from './Slider';
-import { StagedLinkPreview } from './conversation/StagedLinkPreview';
+import { StoryLinkPreview } from './StoryLinkPreview';
 import { TextAttachment } from './TextAttachment';
 import { Theme, themeClassName } from '../util/theme';
 import { getRGBA, getRGBANumber } from '../mediaEditor/util/color';
@@ -25,19 +29,25 @@ import {
   COLOR_WHITE_INT,
   getBackgroundColor,
 } from '../util/getStoryBackground';
+import { convertShortName } from './emoji/lib';
 import { objectMap } from '../util/objectMap';
 import { handleOutsideClick } from '../util/handleOutsideClick';
+import { ConfirmDiscardDialog } from './ConfirmDiscardDialog';
+import { Spinner } from './Spinner';
 
 export type PropsType = {
   debouncedMaybeGrabLinkPreview: (
     message: string,
-    source: LinkPreviewSourceType
+    source: LinkPreviewSourceType,
+    options?: MaybeGrabLinkPreviewOptionsType
   ) => unknown;
   i18n: LocalizerType;
+  isSending: boolean;
   linkPreview?: LinkPreviewType;
   onClose: () => unknown;
   onDone: (textAttachment: TextAttachmentType) => unknown;
-};
+  onUseEmoji: (_: EmojiPickDataType) => unknown;
+} & Pick<EmojiButtonPropsType, 'onSetSkinTone' | 'recentEmojis' | 'skinTone'>;
 
 enum LinkPreviewApplied {
   None = 'None',
@@ -116,13 +126,24 @@ function getBgButtonAriaLabel(
   return i18n('StoryCreator__text-bg--none');
 }
 
-export const TextStoryCreator = ({
+export function TextStoryCreator({
   debouncedMaybeGrabLinkPreview,
   i18n,
+  isSending,
   linkPreview,
   onClose,
   onDone,
-}: PropsType): JSX.Element => {
+  onSetSkinTone,
+  onUseEmoji,
+  recentEmojis,
+  skinTone,
+}: PropsType): JSX.Element {
+  const [showConfirmDiscardModal, setShowConfirmDiscardModal] = useState(false);
+
+  const onTryClose = useCallback(() => {
+    setShowConfirmDiscardModal(true);
+  }, [setShowConfirmDiscardModal]);
+
   const [isEditingText, setIsEditingText] = useState(false);
   const [selectedBackground, setSelectedBackground] =
     useState<BackgroundStyleType>(BackgroundStyle.BG1);
@@ -132,16 +153,6 @@ export const TextStoryCreator = ({
   );
   const [sliderValue, setSliderValue] = useState<number>(100);
   const [text, setText] = useState<string>('');
-
-  const textEditorRef = useRef<HTMLInputElement | null>(null);
-
-  useEffect(() => {
-    if (isEditingText) {
-      textEditorRef.current?.focus();
-    } else {
-      textEditorRef.current?.blur();
-    }
-  }, [isEditingText]);
 
   const [isColorPickerShowing, setIsColorPickerShowing] = useState(false);
   const [colorPickerPopperButtonRef, setColorPickerPopperButtonRef] =
@@ -178,7 +189,10 @@ export const TextStoryCreator = ({
     }
     debouncedMaybeGrabLinkPreview(
       linkPreviewInputValue,
-      LinkPreviewSourceType.StoryCreator
+      LinkPreviewSourceType.StoryCreator,
+      {
+        mode: 'story',
+      }
     );
   }, [
     debouncedMaybeGrabLinkPreview,
@@ -247,11 +261,11 @@ export const TextStoryCreator = ({
           setIsColorPickerShowing(false);
           setIsEditingText(false);
           setIsLinkPreviewInputShowing(false);
-          event.preventDefault();
-          event.stopPropagation();
         } else {
-          onClose();
+          onTryClose();
         }
+        event.preventDefault();
+        event.stopPropagation();
       }
     };
 
@@ -266,7 +280,9 @@ export const TextStoryCreator = ({
     isEditingText,
     isLinkPreviewInputShowing,
     colorPickerPopperButtonRef,
-    onClose,
+    showConfirmDiscardModal,
+    setShowConfirmDiscardModal,
+    onTryClose,
   ]);
 
   useEffect(() => {
@@ -311,6 +327,8 @@ export const TextStoryCreator = ({
 
   const hasChanges = Boolean(text || hasLinkPreviewApplied);
 
+  const textEditorRef = useRef<HTMLTextAreaElement | null>(null);
+
   return (
     <FocusTrap focusTrapOptions={{ allowOutsideClick: true }}>
       <div className="StoryCreator">
@@ -328,6 +346,7 @@ export const TextStoryCreator = ({
             onRemoveLinkPreview={() => {
               setLinkPreviewApplied(LinkPreviewApplied.None);
             }}
+            ref={textEditorRef}
             textAttachment={textAttachment}
           />
         </div>
@@ -411,13 +430,33 @@ export const TextStoryCreator = ({
                 }}
                 type="button"
               />
+              <EmojiButton
+                className="StoryCreator__emoji-button"
+                i18n={i18n}
+                onPickEmoji={data => {
+                  onUseEmoji(data);
+                  const emoji = convertShortName(data.shortName, data.skinTone);
+                  const insertAt =
+                    textEditorRef.current?.selectionEnd ?? text.length;
+                  setText(
+                    originalText =>
+                      `${originalText.substr(
+                        0,
+                        insertAt
+                      )}${emoji}${originalText.substr(insertAt, text.length)}`
+                  );
+                }}
+                recentEmojis={recentEmojis}
+                skinTone={skinTone}
+                onSetSkinTone={onSetSkinTone}
+              />
             </div>
           ) : (
             <div className="StoryCreator__toolbar--space" />
           )}
           <div className="StoryCreator__toolbar--buttons">
             <Button
-              onClick={onClose}
+              onClick={onTryClose}
               theme={Theme.Dark}
               variant={ButtonVariant.Secondary}
             >
@@ -524,14 +563,13 @@ export const TextStoryCreator = ({
                   <div className="StoryCreator__link-preview-container">
                     {linkPreview ? (
                       <>
-                        <StagedLinkPreview
-                          domain={linkPreview.domain}
-                          i18n={i18n}
-                          image={linkPreview.image}
-                          moduleClassName="StoryCreator__link-preview"
-                          title={linkPreview.title}
-                          url={linkPreview.url}
-                        />
+                        <div className="StoryCreator__link-preview-wrapper">
+                          <StoryLinkPreview
+                            {...linkPreview}
+                            forceCompactMode
+                            i18n={i18n}
+                          />
+                        </div>
                         <Button
                           className="StoryCreator__link-preview-button"
                           onClick={() => {
@@ -555,16 +593,27 @@ export const TextStoryCreator = ({
               )}
             </div>
             <Button
-              disabled={!hasChanges}
+              disabled={!hasChanges || isSending}
               onClick={() => onDone(textAttachment)}
               theme={Theme.Dark}
               variant={ButtonVariant.Primary}
             >
-              {i18n('StoryCreator__next')}
+              {isSending ? (
+                <Spinner svgSize="small" />
+              ) : (
+                i18n('StoryCreator__next')
+              )}
             </Button>
           </div>
         </div>
+        {showConfirmDiscardModal && (
+          <ConfirmDiscardDialog
+            i18n={i18n}
+            onClose={() => setShowConfirmDiscardModal(false)}
+            onDiscard={onClose}
+          />
+        )}
       </div>
     </FocusTrap>
   );
-};
+}

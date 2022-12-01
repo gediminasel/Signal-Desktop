@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import Measure from 'react-measure';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { createPortal } from 'react-dom';
 import { fabric } from 'fabric';
@@ -10,6 +10,8 @@ import { get, has, noop } from 'lodash';
 
 import type { LocalizerType } from '../types/Util';
 import { ThemeType } from '../types/Util';
+import type { MIMEType } from '../types/MIME';
+import { IMAGE_PNG } from '../types/MIME';
 import type { Props as StickerButtonProps } from './stickers/StickerButton';
 import type { ImageStateType } from '../mediaEditor/ImageStateType';
 
@@ -20,6 +22,7 @@ import { Slider } from './Slider';
 import { StickerButton } from './stickers/StickerButton';
 import { Theme } from '../util/theme';
 import { canvasToBytes } from '../util/canvasToBytes';
+import type { imageToBlurHash } from '../util/imageToBlurHash';
 import { useFabricHistory } from '../mediaEditor/useFabricHistory';
 import { usePortal } from '../hooks/usePortal';
 import { useUniqueId } from '../hooks/useUniqueId';
@@ -38,13 +41,24 @@ import { AddCaptionModal } from './AddCaptionModal';
 import type { SmartCompositionTextAreaProps } from '../state/smart/CompositionTextArea';
 import { Emojify } from './conversation/Emojify';
 import { AddNewLines } from './conversation/AddNewLines';
+import { useConfirmDiscard } from '../hooks/useConfirmDiscard';
+import { Spinner } from './Spinner';
+
+export type MediaEditorResultType = Readonly<{
+  data: Uint8Array;
+  contentType: MIMEType;
+  blurHash: string;
+  caption?: string;
+}>;
 
 export type PropsType = {
   doneButtonLabel?: string;
   i18n: LocalizerType;
   imageSrc: string;
+  isSending: boolean;
+  imageToBlurHash: typeof imageToBlurHash;
   onClose: () => unknown;
-  onDone: (data: Uint8Array, caption?: string | undefined) => unknown;
+  onDone: (result: MediaEditorResultType) => unknown;
 } & Pick<StickerButtonProps, 'installedPacks' | 'recentStickers'> &
   (
     | {
@@ -101,10 +115,11 @@ function isCmdOrCtrl(ev: KeyboardEvent): boolean {
   return commandKey || controlKey;
 }
 
-export const MediaEditor = ({
+export function MediaEditor({
   doneButtonLabel,
   i18n,
   imageSrc,
+  isSending,
   onClose,
   onDone,
 
@@ -112,7 +127,7 @@ export const MediaEditor = ({
   installedPacks,
   recentStickers,
   ...props
-}: PropsType): JSX.Element | null => {
+}: PropsType): JSX.Element | null {
   const [fabricCanvas, setFabricCanvas] = useState<fabric.Canvas | undefined>();
   const [image, setImage] = useState<HTMLImageElement>(new Image());
   const [isStickerPopperOpen, setIsStickerPopperOpen] =
@@ -173,6 +188,12 @@ export const MediaEditor = ({
 
   const [editMode, setEditMode] = useState<EditMode | undefined>();
 
+  const [confirmDiscardModal, confirmDiscardIf] = useConfirmDiscard(i18n);
+
+  const onTryClose = useCallback(() => {
+    confirmDiscardIf(caption !== '' || Boolean(image), onClose);
+  }, [confirmDiscardIf, caption, image, onClose]);
+
   // Keyboard support
   useEffect(() => {
     if (!fabricCanvas) {
@@ -207,7 +228,7 @@ export const MediaEditor = ({
             // there's no easy way to prevent an ESC meant for the
             // sticker-picker from hitting this handler first
             if (!isStickerPopperOpen) {
-              onClose();
+              onTryClose();
             }
           } else {
             setEditMode(undefined);
@@ -349,7 +370,7 @@ export const MediaEditor = ({
     fabricCanvas,
     editMode,
     isStickerPopperOpen,
-    onClose,
+    onTryClose,
     redoIfPossible,
     undoIfPossible,
   ]);
@@ -957,7 +978,7 @@ export const MediaEditor = ({
         )}
         <div className="MediaEditor__toolbar--buttons">
           <Button
-            onClick={onClose}
+            onClick={onTryClose}
             theme={Theme.Dark}
             variant={ButtonVariant.Secondary}
           >
@@ -1095,7 +1116,7 @@ export const MediaEditor = ({
             />
           </div>
           <Button
-            disabled={!image || isSaving}
+            disabled={!image || isSaving || isSending}
             onClick={async () => {
               if (!fabricCanvas) {
                 return;
@@ -1105,6 +1126,7 @@ export const MediaEditor = ({
               setIsSaving(true);
 
               let data: Uint8Array;
+              let blurHash: string;
               try {
                 const renderFabricCanvas = await cloneFabricCanvas(
                   fabricCanvas
@@ -1141,26 +1163,42 @@ export const MediaEditor = ({
                 const renderedCanvas = renderFabricCanvas.toCanvasElement();
 
                 data = await canvasToBytes(renderedCanvas);
+
+                const blob = new Blob([data], {
+                  type: IMAGE_PNG,
+                });
+
+                blurHash = await props.imageToBlurHash(blob);
               } catch (err) {
-                onClose();
+                onTryClose();
                 throw err;
               } finally {
                 setIsSaving(false);
               }
 
-              onDone(data, caption !== '' ? caption : undefined);
+              onDone({
+                contentType: IMAGE_PNG,
+                data,
+                caption: caption !== '' ? caption : undefined,
+                blurHash,
+              });
             }}
             theme={Theme.Dark}
             variant={ButtonVariant.Primary}
           >
-            {doneButtonLabel || i18n('save')}
+            {isSending ? (
+              <Spinner svgSize="small" />
+            ) : (
+              doneButtonLabel || i18n('save')
+            )}
           </Button>
         </div>
       </div>
+      {confirmDiscardModal}
     </div>,
     portal
   );
-};
+}
 
 function getPendingCrop(
   fabricCanvas: fabric.Canvas

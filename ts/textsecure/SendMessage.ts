@@ -65,6 +65,7 @@ import { concat, isEmpty, map } from '../util/iterables';
 import type { SendTypesType } from '../util/handleMessageSend';
 import { shouldSaveProto, sendTypesEnum } from '../util/handleMessageSend';
 import { uuidToBytes } from '../util/uuidToBytes';
+import type { DurationInSeconds } from '../util/durations';
 import { SignalService as Proto } from '../protobuf';
 import * as log from '../logging/log';
 import type { Avatar, EmbeddedContactType } from '../types/EmbeddedContact';
@@ -174,7 +175,7 @@ export type MessageOptionsType = {
   attachments?: ReadonlyArray<AttachmentType> | null;
   body?: string;
   contact?: Array<ContactWithHydratedAvatar>;
-  expireTimer?: number;
+  expireTimer?: DurationInSeconds;
   flags?: number;
   group?: {
     id: string;
@@ -198,7 +199,7 @@ export type GroupSendOptionsType = {
   attachments?: Array<AttachmentType>;
   contact?: Array<ContactWithHydratedAvatar>;
   deletedForEveryoneTimestamp?: number;
-  expireTimer?: number;
+  expireTimer?: DurationInSeconds;
   flags?: number;
   groupCallUpdate?: GroupCallUpdateType;
   groupV1?: GroupV1InfoType;
@@ -221,7 +222,7 @@ class Message {
 
   contact?: Array<ContactWithHydratedAvatar>;
 
-  expireTimer?: number;
+  expireTimer?: DurationInSeconds;
 
   flags?: number;
 
@@ -355,7 +356,9 @@ class Message {
       const placeholders = this.body.match(/\uFFFC/g);
       const placeholderCount = placeholders ? placeholders.length : 0;
       log.info(
-        `Sending a message with ${mentionCount} mentions and ${placeholderCount} placeholders`
+        `Sending a message with ${mentionCount} mentions and ${placeholderCount} placeholders${
+          this.storyContext ? `, story: ${this.storyContext.timestamp}` : ''
+        }`
       );
     }
     if (this.flags) {
@@ -1161,6 +1164,7 @@ export default class MessageSender {
     groupId,
     options,
     urgent,
+    story,
     includePniSignatureMessage,
   }: Readonly<{
     messageOptions: MessageOptionsType;
@@ -1168,6 +1172,7 @@ export default class MessageSender {
     groupId: string | undefined;
     options?: SendOptionsType;
     urgent: boolean;
+    story?: boolean;
     includePniSignatureMessage?: boolean;
   }>): Promise<CallbackResultType> {
     const proto = await this.getContentMessage({
@@ -1191,6 +1196,7 @@ export default class MessageSender {
         recipients: messageOptions.recipients || [],
         timestamp: messageOptions.timestamp,
         urgent,
+        story,
       });
     });
   }
@@ -1255,6 +1261,7 @@ export default class MessageSender {
     groupId,
     options,
     urgent,
+    story,
   }: Readonly<{
     timestamp: number;
     recipients: Array<string>;
@@ -1263,6 +1270,7 @@ export default class MessageSender {
     groupId: string | undefined;
     options?: SendOptionsType;
     urgent: boolean;
+    story?: boolean;
   }>): Promise<CallbackResultType> {
     return new Promise((resolve, reject) => {
       const callback = (result: CallbackResultType) => {
@@ -1282,6 +1290,7 @@ export default class MessageSender {
         recipients,
         timestamp,
         urgent,
+        story,
       });
     });
   }
@@ -1343,6 +1352,7 @@ export default class MessageSender {
     reaction,
     sticker,
     storyContext,
+    story,
     timestamp,
     urgent,
     includePniSignatureMessage,
@@ -1351,7 +1361,7 @@ export default class MessageSender {
     contact?: Array<ContactWithHydratedAvatar>;
     contentHint: number;
     deletedForEveryoneTimestamp: number | undefined;
-    expireTimer: number | undefined;
+    expireTimer: DurationInSeconds | undefined;
     groupId: string | undefined;
     identifier: string;
     messageText: string | undefined;
@@ -1362,6 +1372,7 @@ export default class MessageSender {
     reaction?: ReactionType;
     sticker?: StickerWithHydratedData;
     storyContext?: StoryContextType;
+    story?: boolean;
     timestamp: number;
     urgent: boolean;
     includePniSignatureMessage?: boolean;
@@ -1385,6 +1396,7 @@ export default class MessageSender {
       contentHint,
       groupId,
       options,
+      story,
       urgent,
       includePniSignatureMessage,
     });
@@ -1419,11 +1431,7 @@ export default class MessageSender {
     urgent: boolean;
     options?: SendOptionsType;
     storyMessage?: Proto.StoryMessage;
-    storyMessageRecipients?: Array<{
-      destinationUuid: string;
-      distributionListIds: Array<string>;
-      isAllowedToReply: boolean;
-    }>;
+    storyMessageRecipients?: ReadonlyArray<Proto.SyncMessage.Sent.IStoryMessageRecipient>;
   }>): Promise<CallbackResultType> {
     const myUuid = window.textsecure.storage.user.getCheckedUuid();
 
@@ -1449,17 +1457,7 @@ export default class MessageSender {
       sentMessage.storyMessage = storyMessage;
     }
     if (storyMessageRecipients) {
-      sentMessage.storyMessageRecipients = storyMessageRecipients.map(
-        recipient => {
-          const storyMessageRecipient =
-            new Proto.SyncMessage.Sent.StoryMessageRecipient();
-          storyMessageRecipient.destinationUuid = recipient.destinationUuid;
-          storyMessageRecipient.distributionListIds =
-            recipient.distributionListIds;
-          storyMessageRecipient.isAllowedToReply = recipient.isAllowedToReply;
-          return storyMessageRecipient;
-        }
-      );
+      sentMessage.storyMessageRecipients = storyMessageRecipients.slice();
     }
 
     if (isUpdate) {
@@ -2350,7 +2348,7 @@ export default class MessageSender {
       story,
       urgent,
     }: Readonly<{
-      contentHint: number;
+      contentHint?: number;
       distributionId: string;
       groupId: string | undefined;
       identifiers: ReadonlyArray<string>;
@@ -2361,6 +2359,7 @@ export default class MessageSender {
     options?: Readonly<SendOptionsType>
   ): Promise<CallbackResultType> {
     const timestamp = Date.now();
+    const { ContentHint } = Proto.UnidentifiedSenderMessage.Message;
     const contentMessage = await this.getSenderKeyDistributionMessage(
       distributionId,
       {
@@ -2372,7 +2371,7 @@ export default class MessageSender {
     const sendLogCallback =
       identifiers.length > 1
         ? this.makeSendLogCallback({
-            contentHint,
+            contentHint: contentHint ?? ContentHint.IMPLICIT,
             proto: Buffer.from(Proto.Content.encode(contentMessage).finish()),
             sendType: 'senderKeyDistributionMessage',
             timestamp,
@@ -2382,7 +2381,7 @@ export default class MessageSender {
         : undefined;
 
     return this.sendGroupProto({
-      contentHint,
+      contentHint: contentHint ?? ContentHint.IMPLICIT,
       groupId,
       options,
       proto: contentMessage,
@@ -2452,12 +2451,6 @@ export default class MessageSender {
     }
 
     return this.server.getProfile(uuid.toString(), options);
-  }
-
-  async getProfileForUsername(
-    username: string
-  ): ReturnType<WebAPIType['getProfileForUsername']> {
-    return this.server.getProfileForUsername(username);
   }
 
   async getAvatar(path: string): Promise<ReturnType<WebAPIType['getAvatar']>> {
@@ -2591,14 +2584,5 @@ export default class MessageSender {
     avatarData: Readonly<Uint8Array>
   ): Promise<string> {
     return this.server.uploadAvatar(requestHeaders, avatarData);
-  }
-
-  async putUsername(
-    username: string
-  ): Promise<ReturnType<WebAPIType['putUsername']>> {
-    return this.server.putUsername(username);
-  }
-  async deleteUsername(): Promise<ReturnType<WebAPIType['deleteUsername']>> {
-    return this.server.deleteUsername();
   }
 }

@@ -22,7 +22,7 @@ export type PropsHousekeeping = {
 
 export type Props = PropsData & PropsHousekeeping;
 
-export const ChangeNumberNotification: React.FC<Props> = props => {
+export function ChangeNumberNotification(props: Props): JSX.Element {
   const { i18n, sender, timestamp } = props;
 
   return (
@@ -32,7 +32,7 @@ export const ChangeNumberNotification: React.FC<Props> = props => {
           <Intl
             id="ChangeNumber--notification"
             components={{
-              sender: <Emojify text={sender.title || sender.firstName} />,
+              sender: <Emojify text={sender.title || sender.firstName || ''} />,
             }}
             i18n={i18n}
           />
@@ -43,4 +43,4 @@ export const ChangeNumberNotification: React.FC<Props> = props => {
       icon="phone"
     />
   );
-};
+}

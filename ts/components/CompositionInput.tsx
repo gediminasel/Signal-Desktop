@@ -14,7 +14,11 @@ import { MentionCompletion } from '../quill/mentions/completion';
 import { EmojiBlot, EmojiCompletion } from '../quill/emoji';
 import type { EmojiPickDataType } from './emoji/EmojiPicker';
 import { convertShortName } from './emoji/lib';
-import type { LocalizerType, BodyRangeType, ThemeType } from '../types/Util';
+import type {
+  LocalizerType,
+  DraftBodyRangesType,
+  ThemeType,
+} from '../types/Util';
 import type { ConversationType } from '../state/ducks/conversations';
 import type { PreferredBadgeSelectorType } from '../state/selectors/badges';
 import { isValidUuid } from '../types/UUID';
@@ -62,38 +66,38 @@ export type InputApi = {
   submit: () => void;
 };
 
-export type Props = {
+export type Props = Readonly<{
   children?: React.ReactNode;
-  readonly i18n: LocalizerType;
-  readonly disabled?: boolean;
-  readonly getPreferredBadge: PreferredBadgeSelectorType;
-  readonly large?: boolean;
-  readonly inputApi?: React.MutableRefObject<InputApi | undefined>;
-  readonly skinTone?: EmojiPickDataType['skinTone'];
-  readonly draftText?: string;
-  readonly draftBodyRanges?: Array<BodyRangeType>;
-  readonly moduleClassName?: string;
-  readonly theme: ThemeType;
-  readonly placeholder?: string;
+  i18n: LocalizerType;
+  disabled?: boolean;
+  getPreferredBadge: PreferredBadgeSelectorType;
+  large?: boolean;
+  inputApi?: React.MutableRefObject<InputApi | undefined>;
+  skinTone?: EmojiPickDataType['skinTone'];
+  draftText?: string;
+  draftBodyRanges?: DraftBodyRangesType;
+  moduleClassName?: string;
+  theme: ThemeType;
+  placeholder?: string;
   sortedGroupMembers?: Array<ConversationType>;
   scrollerRef?: React.RefObject<HTMLDivElement>;
   onDirtyChange?(dirty: boolean): unknown;
   onEditorStateChange?(
     messageText: string,
-    bodyRanges: Array<BodyRangeType>,
+    bodyRanges: DraftBodyRangesType,
     caretLocation?: number
   ): unknown;
   onTextTooLong(): unknown;
   onPickEmoji(o: EmojiPickDataType): unknown;
   onSubmit(
     message: string,
-    mentions: Array<BodyRangeType>,
+    mentions: DraftBodyRangesType,
     timestamp: number
   ): unknown;
   onScroll?: (ev: React.UIEvent<HTMLElement>) => void;
   getQuotedMessage?(): unknown;
   clearQuotedMessage?(): unknown;
-};
+}>;
 
 const MAX_LENGTH = 64 * 1024;
 const BASE_CLASS_NAME = 'module-composition-input';
@@ -143,7 +147,7 @@ export function CompositionInput(props: Props): React.ReactElement {
 
   const generateDelta = (
     text: string,
-    bodyRanges: Array<BodyRangeType>
+    bodyRanges: DraftBodyRangesType
   ): Delta => {
     const initialOps = [{ insert: text }];
     const opsWithMentions = insertMentionOps(initialOps, bodyRanges);
@@ -152,7 +156,7 @@ export function CompositionInput(props: Props): React.ReactElement {
     return new Delta(opsWithEmojis);
   };
 
-  const getTextAndMentions = (): [string, Array<BodyRangeType>] => {
+  const getTextAndMentions = (): [string, DraftBodyRangesType] => {
     const quill = quillRef.current;
 
     if (quill === undefined) {
@@ -671,6 +675,7 @@ export function CompositionInput(props: Props): React.ReactElement {
       <Reference>
         {({ ref }) => (
           <div className={getClassName('__input')} ref={ref}>
+            {children}
             <div
               ref={
                 props.scrollerRef
@@ -685,7 +690,6 @@ export function CompositionInput(props: Props): React.ReactElement {
                 children ? getClassName('__input--with-children') : null
               )}
             >
-              {children}
               {reactQuill}
               {emojiCompletionElement}
               {mentionCompletionElement}

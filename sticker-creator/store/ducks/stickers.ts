@@ -8,16 +8,7 @@ import type { Draft } from 'redux-ts-utils';
 import { createAction, handleAction, reduceReducers } from 'redux-ts-utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
-import {
-  clamp,
-  find,
-  isNumber,
-  isString,
-  pull,
-  remove,
-  take,
-  uniq,
-} from 'lodash';
+import { clamp, find, isString, pull, remove, take, uniq } from 'lodash';
 import type { SortEnd } from 'react-sortable-hoc';
 import { bindActionCreators } from 'redux';
 import arrayMove from 'array-move';
@@ -31,6 +22,8 @@ import type { EmojiPickDataType } from '../../../ts/components/emoji/EmojiPicker
 import { convertShortName } from '../../../ts/components/emoji/lib';
 import { isNotNil } from '../../../ts/util/isNotNil';
 
+type StickerEmojiData = { id: string; emoji: EmojiPickDataType };
+
 export const initializeStickers = createAction<Array<string>>(
   'stickers/initializeStickers'
 );
@@ -41,8 +34,7 @@ export const removeSticker = createAction<string>('stickers/removeSticker');
 export const moveSticker = createAction<SortEnd>('stickers/moveSticker');
 export const setCover = createAction<StickerImageData>('stickers/setCover');
 export const resetCover = createAction<StickerImageData>('stickers/resetCover');
-export const setEmoji =
-  createAction<{ id: string; emoji: EmojiPickDataType }>('stickers/setEmoji');
+export const setEmoji = createAction<StickerEmojiData>('stickers/setEmoji');
 export const setTitle = createAction<string>('stickers/setTitle');
 export const setAuthor = createAction<string>('stickers/setAuthor');
 export const setPackMeta = createAction<PackMetaData>('stickers/setPackMeta');
@@ -135,11 +127,7 @@ export const reducer = reduceReducers<State>(
     }),
 
     handleAction(addImageData, (state, { payload }) => {
-      if (isNumber(payload.meta.pages)) {
-        state.toasts.push({ key: 'StickerCreator--Toasts--animated' });
-        pull(state.order, payload.path);
-        delete state.data[payload.path];
-      } else if (payload.buffer.byteLength > maxByteSize) {
+      if (payload.buffer.byteLength > maxByteSize) {
         state.toasts.push({ key: 'StickerCreator--Toasts--tooLarge' });
         pull(state.order, payload.path);
         delete state.data[payload.path];

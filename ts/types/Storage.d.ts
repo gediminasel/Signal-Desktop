@@ -41,7 +41,7 @@ export type IdentityKeyMap = Record<
 >;
 
 // This should be in sync with `STORAGE_UI_KEYS` in `ts/types/StorageUIKeys.ts`.
-/* eslint-disable camelcase */
+
 export type StorageAccessType = {
   'always-relay-calls': boolean;
   'audio-notification': boolean;
@@ -65,9 +65,12 @@ export type StorageAccessType = {
   defaultConversationColor: DefaultConversationColorType;
   customColors: CustomColorsItemType;
   device_name: string;
+  existingOnboardingStoryMessageIds: Array<string> | undefined;
   hasRegisterSupportForUnauthenticatedDelivery: boolean;
   hasSetMyStoriesPrivacy: boolean;
+  hasViewedOnboardingStory: boolean;
   hasStoriesDisabled: boolean;
+  storyViewReceiptsEnabled: boolean;
   identityKeyMap: IdentityKeyMap;
   lastHeartbeat: number;
   lastStartup: number;
@@ -138,7 +141,6 @@ export type StorageAccessType = {
   subscriberCurrencyCode: string;
   displayBadgesOnProfile: boolean;
   keepMutedChatsArchived: boolean;
-  hasAllStoriesMuted: boolean;
 
   // Deprecated
   senderCertificateWithUuid: never;

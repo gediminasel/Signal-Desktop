@@ -45,7 +45,7 @@ export default {
     },
     queueStoryDownload: { action: true },
     renderStoryCreator: { action: true },
-    renderStoryViewer: { action: true },
+    retrySend: { action: true },
     showConversation: { action: true },
     showStoriesSettings: { action: true },
     showToast: { action: true },
@@ -59,6 +59,7 @@ export default {
   },
 } as Meta;
 
+// eslint-disable-next-line react/function-component-definition
 const Template: Story<PropsType> = args => <Stories {...args} />;
 
 export const Blank = Template.bind({});

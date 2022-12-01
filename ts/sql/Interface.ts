@@ -1,7 +1,6 @@
 // Copyright 2020-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-/* eslint-disable camelcase */
 import type {
   ConversationAttributesType,
   MessageAttributesType,
@@ -10,7 +9,6 @@ import type {
 import type { StoredJob } from '../jobs/types';
 import type { ReactionType } from '../types/Reactions';
 import type { ConversationColorType, CustomColorType } from '../types/Colors';
-import type { ProcessGroupCallRingRequestResult } from '../types/Calling';
 import type { StorageAccessType } from '../types/Storage.d';
 import type { AttachmentType } from '../types/Attachment';
 import type { BodyRangesType, BytesToStrings } from '../types/Util';
@@ -265,6 +263,7 @@ export type UnprocessedType = {
   serverTimestamp?: number;
   decrypted?: string;
   urgent?: boolean;
+  story?: boolean;
 };
 
 export type UnprocessedUpdateType = {
@@ -342,6 +341,24 @@ export type GetConversationRangeCenteredOnMessageResultType<Message> =
     newer: Array<Message>;
     metrics: ConversationMetricsType;
   }>;
+
+export type MessageAttachmentsCursorType = Readonly<{
+  done: boolean;
+  runId: string;
+  count: number;
+}>;
+
+export type GetKnownMessageAttachmentsResultType = Readonly<{
+  cursor: MessageAttachmentsCursorType;
+  attachments: ReadonlyArray<string>;
+}>;
+
+export type GetAllStoriesResultType = ReadonlyArray<
+  MessageType & {
+    hasReplies: boolean;
+    hasRepliesFromSelf: boolean;
+  }
+>;
 
 export type DataInterface = {
   close: () => Promise<void>;
@@ -511,13 +528,10 @@ export type DataInterface = {
   getNextTapToViewMessageTimestampToAgeOut: () => Promise<undefined | number>;
   getTapToViewMessagesNeedingErase: () => Promise<Array<MessageType>>;
   // getOlderMessagesByConversation is JSON on server, full message on Client
-  getOlderStories: (options: {
+  getAllStories: (options: {
     conversationId?: string;
-    limit?: number;
-    receivedAt?: number;
-    sentAt?: number;
     sourceUuid?: UUIDStringType;
-  }) => Promise<Array<MessageType>>;
+  }) => Promise<GetAllStoriesResultType>;
   // getNewerMessagesByConversation is JSON on server, full message on Client
   getMessageMetricsForConversation: (
     conversationId: string,
@@ -682,11 +696,9 @@ export type DataInterface = {
   insertJob(job: Readonly<StoredJob>): Promise<void>;
   deleteJob(id: string): Promise<void>;
 
-  processGroupCallRingRequest(
-    ringId: bigint
-  ): Promise<ProcessGroupCallRingRequestResult>;
-  processGroupCallRingCancelation(ringId: bigint): Promise<void>;
-  cleanExpiredGroupCallRings(): Promise<void>;
+  wasGroupCallRingPreviouslyCanceled(ringId: bigint): Promise<boolean>;
+  processGroupCallRingCancellation(ringId: bigint): Promise<void>;
+  cleanExpiredGroupCallRingCancellations(): Promise<void>;
 
   getMaxMessageCounter(): Promise<number | undefined>;
 
@@ -781,17 +793,24 @@ export type ServerInterface = DataInterface & {
     key: string;
   }) => Promise<void>;
 
-  removeKnownAttachments: (
-    allAttachments: Array<string>
+  getKnownMessageAttachments: (
+    cursor?: MessageAttachmentsCursorType
+  ) => Promise<GetKnownMessageAttachmentsResultType>;
+  finishGetKnownMessageAttachments: (
+    cursor: MessageAttachmentsCursorType
+  ) => Promise<void>;
+  getKnownConversationAttachments: () => Promise<Array<string>>;
+  removeKnownStickers: (
+    allStickers: ReadonlyArray<string>
   ) => Promise<Array<string>>;
-  removeKnownStickers: (allStickers: Array<string>) => Promise<Array<string>>;
   removeKnownDraftAttachments: (
-    allStickers: Array<string>
+    allStickers: ReadonlyArray<string>
   ) => Promise<Array<string>>;
   getAllBadgeImageFileLocalPaths: () => Promise<Set<string>>;
 };
 
-export type ClientInterface = DataInterface & {
+// Differing signature on client/server
+export type ClientExclusiveInterface = {
   // Differing signature on client/server
 
   updateConversation: (data: ConversationType) => void;
@@ -874,21 +893,10 @@ export type ClientInterface = DataInterface & {
   cleanupOrphanedAttachments: () => Promise<void>;
   ensureFilePermissions: () => Promise<void>;
 
-  _jobs: { [id: string]: ClientJobType };
-
   // To decide whether to use IPC to use the database in the main process or
   //   use the db already running in the renderer.
   goBackToMainProcess: () => Promise<void>;
   startInRendererProcess: (isTesting?: boolean) => Promise<void>;
 };
 
-export type ClientJobType = {
-  fnName: string;
-  start: number;
-  resolve?: (value: unknown) => void;
-  reject?: (error: Error) => void;
-
-  // Only in DEBUG mode
-  complete?: boolean;
-  args?: ReadonlyArray<unknown>;
-};
+export type ClientInterface = DataInterface & ClientExclusiveInterface;

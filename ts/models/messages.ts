@@ -2,14 +2,21 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
+  groupBy,
+  difference,
   isEmpty,
   isEqual,
   isNumber,
+  isObject,
   mapValues,
   maxBy,
   noop,
   omit,
+  partition,
+  pick,
+  reject,
   union,
+  without,
 } from 'lodash';
 import type {
   CustomError,
@@ -26,6 +33,7 @@ import { isNormalNumber } from '../util/isNormalNumber';
 import { softAssert, strictAssert } from '../util/assert';
 import { missingCaseError } from '../util/missingCaseError';
 import { dropNull } from '../util/dropNull';
+import { incrementMessageCounter } from '../util/incrementMessageCounter';
 import type { ConversationModel } from './conversations';
 import type {
   OwnProps as SmartMessageDetailPropsType,
@@ -43,7 +51,7 @@ import * as expirationTimer from '../util/expirationTimer';
 import { getUserLanguages } from '../util/userLanguages';
 
 import type { ReactionType } from '../types/Reactions';
-import { UUID, UUIDKind } from '../types/UUID';
+import { isValidUuid, UUID, UUIDKind } from '../types/UUID';
 import * as reactionUtil from '../reactions/util';
 import * as Stickers from '../types/Stickers';
 import * as Errors from '../types/errors';
@@ -146,6 +154,8 @@ import {
   getSource,
   getSourceUuid,
   isCustomError,
+  messageHasPaymentEvent,
+  getPaymentEventNotificationText,
 } from '../messages/helpers';
 import type { ReplacementValuesType } from '../types/I18N';
 import { viewOnceOpenJobQueue } from '../jobs/viewOnceOpenJobQueue';
@@ -153,7 +163,6 @@ import { getMessageIdForLogging } from '../util/idForLogging';
 import { hasAttachmentDownloads } from '../util/hasAttachmentDownloads';
 import { queueAttachmentDownloads } from '../util/queueAttachmentDownloads';
 import { findStoryMessage } from '../util/findStoryMessage';
-import { isConversationAccepted } from '../util/isConversationAccepted';
 import { getStoryDataFromMessageAttributes } from '../services/storyLoader';
 import type { ConversationQueueJobData } from '../jobs/conversationJobQueue';
 import { getMessageById } from '../messages/getMessageById';
@@ -166,7 +175,82 @@ import { parseBoostBadgeListFromServer } from '../badges/parseBadgesFromServer';
 import { GiftBadgeStates } from '../components/conversation/Message';
 import { downloadAttachment } from '../util/downloadAttachment';
 import type { StickerWithHydratedData } from '../types/Stickers';
-import { SECOND } from '../util/durations';
+import { DurationInSeconds } from '../util/durations';
+import dataInterface from '../sql/Client';
+
+function isSameUuid(
+  a: UUID | string | null | undefined,
+  b: UUID | string | null | undefined
+): boolean {
+  return a != null && b != null && String(a) === String(b);
+}
+
+async function shouldReplyNotifyUser(
+  message: MessageModel,
+  conversation: ConversationModel
+): Promise<boolean> {
+  // Don't notify if the message has already been read
+  if (!isMessageUnread(message.attributes)) {
+    return false;
+  }
+
+  const storyId = message.get('storyId');
+
+  // If this is not a reply to a story, always notify.
+  if (storyId == null) {
+    return true;
+  }
+
+  // Always notify if this is not a group
+  if (!isGroup(conversation.attributes)) {
+    return true;
+  }
+
+  const matchedStory = window.reduxStore
+    .getState()
+    .stories.stories.find(story => {
+      return story.messageId === storyId;
+    });
+
+  // If we can't find the story, don't notify
+  if (matchedStory == null) {
+    log.warn("Couldn't find story for reply");
+    return false;
+  }
+
+  const currentUserId = window.textsecure.storage.user.getUuid();
+  const storySourceId = matchedStory.sourceUuid;
+
+  const currentUserIdSource = isSameUuid(storySourceId, currentUserId);
+
+  // If the story is from the current user, always notify
+  if (currentUserIdSource) {
+    return true;
+  }
+
+  // If the story is from a different user, only notify if the user has
+  // replied or reacted to the story
+
+  const replies = await dataInterface.getOlderMessagesByConversation(
+    conversation.id,
+    {
+      limit: 9000,
+      storyId,
+      includeStoryReplies: true,
+    }
+  );
+
+  const prevCurrentUserReply = replies.find(replyMessage => {
+    return replyMessage.type === 'outgoing';
+  });
+
+  if (prevCurrentUserReply != null) {
+    return true;
+  }
+
+  // Otherwise don't notify
+  return false;
+}
 
 /* eslint-disable more/no-then */
 
@@ -180,8 +264,6 @@ type PropsForMessageDetail = Pick<
   | 'expirationLength'
   | 'expirationTimestamp'
 >;
-
-declare const _: typeof window._;
 
 window.Whisper = window.Whisper || {};
 
@@ -211,6 +293,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
   INITIAL_PROTOCOL_VERSION?: number;
 
+  deletingForEveryone?: boolean;
+
   isSelected?: boolean;
 
   private pendingMarkRead?: number;
@@ -226,7 +310,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
   cachedOutgoingStickerData?: StickerWithHydratedData;
 
   override initialize(attributes: unknown): void {
-    if (_.isObject(attributes)) {
+    if (isObject(attributes)) {
       this.set(
         TypedMessage.initializeSchemaVersion({
           message: attributes as MessageAttributesType,
@@ -337,7 +421,9 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     );
   }
 
-  async hydrateStoryContext(inMemoryMessage?: MessageModel): Promise<void> {
+  async hydrateStoryContext(
+    inMemoryMessage?: MessageModel | null
+  ): Promise<void> {
     const storyId = this.get('storyId');
     if (!storyId) {
       return;
@@ -347,7 +433,10 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       return;
     }
 
-    const message = inMemoryMessage || (await getMessageById(storyId));
+    const message =
+      inMemoryMessage === undefined
+        ? await getMessageById(storyId)
+        : inMemoryMessage;
 
     if (!message) {
       const conversation = this.getConversation();
@@ -428,10 +517,10 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
     // If an error has a specific number it's associated with, we'll show it next to
     //   that contact. Otherwise, it will be a standalone entry.
-    const errors = _.reject(allErrors, error =>
+    const errors = reject(allErrors, error =>
       Boolean(error.identifier || error.number)
     );
-    const errorsGroupedById = _.groupBy(allErrors, error => {
+    const errorsGroupedById = groupBy(allErrors, error => {
       const identifier = error.identifier || error.number;
       if (!identifier) {
         return null;
@@ -478,7 +567,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     const expireTimer = this.get('expireTimer');
     const expirationStartTimestamp = this.get('expirationStartTimestamp');
     const expirationLength = isNumber(expireTimer)
-      ? expireTimer * SECOND
+      ? DurationInSeconds.toMillis(expireTimer)
       : undefined;
     const expirationTimestamp = expirationTimer.calculateExpirationTimestamp({
       expireTimer,
@@ -603,6 +692,21 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       return { text: changes.map(({ text }) => text).join(' ') };
     }
 
+    if (messageHasPaymentEvent(attributes)) {
+      const sender = findAndFormatContact(attributes.sourceUuid);
+      const conversation = findAndFormatContact(attributes.conversationId);
+      return {
+        text: getPaymentEventNotificationText(
+          attributes.payment,
+          sender.title,
+          conversation.title,
+          sender.isMe,
+          window.i18n
+        ),
+        emoji: '💳',
+      };
+    }
+
     const attachments = this.get('attachments') || [];
 
     if (isTapToView(attributes)) {
@@ -659,7 +763,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       }
 
       if (groupUpdate.joined && groupUpdate.joined.length) {
-        const joinedContacts = _.map(groupUpdate.joined, item =>
+        const joinedContacts = groupUpdate.joined.map(item =>
           window.ConversationController.getOrCreate(item, 'private')
         );
         const joinedWithoutMe = joinedContacts.filter(
@@ -669,7 +773,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         if (joinedContacts.length > 1) {
           messages.push(
             window.i18n('multipleJoinedTheGroup', [
-              _.map(joinedWithoutMe, contact => contact.getTitle()).join(', '),
+              joinedWithoutMe.map(contact => contact.getTitle()).join(', '),
             ])
           );
 
@@ -870,9 +974,33 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     const { text, emoji } = this.getNotificationData();
     const { attributes } = this;
 
-    if (attributes.storyReactionEmoji) {
+    if (attributes.storyReaction) {
+      if (attributes.type === 'outgoing') {
+        const name = this.getConversation()?.get('profileName');
+
+        if (!name) {
+          return window.i18n(
+            'Quote__story-reaction-notification--outgoing--nameless',
+            {
+              emoji: attributes.storyReaction.emoji,
+            }
+          );
+        }
+
+        return window.i18n('Quote__story-reaction-notification--outgoing', {
+          emoji: attributes.storyReaction.emoji,
+          name,
+        });
+      }
+
+      if (attributes.type === 'incoming') {
+        return window.i18n('Quote__story-reaction-notification--incoming', {
+          emoji: attributes.storyReaction.emoji,
+        });
+      }
+
       if (!window.Signal.OS.isLinux()) {
-        return attributes.storyReactionEmoji;
+        return attributes.storyReaction.emoji;
       }
 
       return window.i18n('Quote__story-reaction--single');
@@ -914,7 +1042,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
   override validate(attributes: Record<string, unknown>): void {
     const required = ['conversationId', 'received_at', 'sent_at'];
-    const missing = _.filter(required, attr => !attributes[attr]);
+    const missing = required.filter(attr => !attributes[attr]);
     if (missing.length) {
       log.warn(`Message missing attributes: ${missing}`);
     }
@@ -1142,7 +1270,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     } catch (error) {
       log.error(
         `Error erasing data for message ${this.idForLogging()}:`,
-        error && error.stack ? error.stack : error
+        Errors.toLogFormat(error)
       );
     }
 
@@ -1201,6 +1329,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     const isUniversalTimerNotificationValue =
       isUniversalTimerNotification(attributes);
 
+    const isPayment = messageHasPaymentEvent(attributes);
+
     // Note: not all of these message types go through message.handleDataMessage
 
     const hasSomethingToDisplay =
@@ -1209,6 +1339,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       hasAttachment ||
       hasEmbeddedContact ||
       isSticker ||
+      isPayment ||
       // Rendered sync messages
       isCallHistoryValue ||
       isChatSessionRefreshedValue ||
@@ -1258,11 +1389,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     }
 
     errors.forEach(e => {
-      log.error(
-        'Message.saveErrors:',
-        e && e.reason ? e.reason : null,
-        e && e.stack ? e.stack : e
-      );
+      log.error('Message.saveErrors:', Errors.toLogFormat(e));
     });
     errors = errors.map(e => {
       // Note: in our environment, instanceof can be scary, so we have a backup check
@@ -1270,7 +1397,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       // We check instanceof second because typescript believes that anything that comes
       //   through here must be an instance of Error, so e is 'never' after that check.
       if ((e.message && e.stack) || e instanceof Error) {
-        return _.pick(
+        return pick(
           e,
           'name',
           'message',
@@ -1315,8 +1442,29 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const conversation = this.getConversation()!;
 
-    const currentConversationRecipients =
-      conversation.getMemberConversationIds();
+    let currentConversationRecipients: Set<string> | undefined;
+
+    const { storyDistributionListId } = this.attributes;
+
+    if (storyDistributionListId) {
+      const storyDistribution =
+        await dataInterface.getStoryDistributionWithMembers(
+          storyDistributionListId
+        );
+
+      if (!storyDistribution) {
+        this.markFailed();
+        return;
+      }
+
+      currentConversationRecipients = new Set(
+        storyDistribution.members
+          .map(uuid => window.ConversationController.get(uuid)?.id)
+          .filter(isNotNil)
+      );
+    } else {
+      currentConversationRecipients = conversation.getMemberConversationIds();
+    }
 
     // Determine retry recipients and get their most up-to-date addressing information
     const oldSendStateByConversationId =
@@ -1406,7 +1554,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
   removeOutgoingErrors(incomingIdentifier: string): CustomError {
     const incomingConversationId =
       window.ConversationController.getConversationId(incomingIdentifier);
-    const errors = _.partition(
+    const errors = partition(
       this.get('errors'),
       e =>
         window.ConversationController.getConversationId(
@@ -1597,9 +1745,12 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     }
 
     attributesToUpdate.sendStateByConversationId = sendStateByConversationId;
-    attributesToUpdate.expirationStartTimestamp = sentToAtLeastOneRecipient
-      ? Date.now()
-      : undefined;
+    // Only update the expirationStartTimestamp if we don't already have one set
+    if (!this.get('expirationStartTimestamp')) {
+      attributesToUpdate.expirationStartTimestamp = sentToAtLeastOneRecipient
+        ? Date.now()
+        : undefined;
+    }
     attributesToUpdate.unidentifiedDeliveries = union(
       previousUnidentifiedDeliveries,
       newUnidentifiedDeliveries
@@ -1899,22 +2050,30 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       id,
 
       attachments: quote.attachments.slice(),
-      bodyRanges: quote.bodyRanges.map(({ start, length, mentionUuid }) => {
-        strictAssert(
-          start != null,
-          'Received quote with a bodyRange.start == null'
-        );
-        strictAssert(
-          length != null,
-          'Received quote with a bodyRange.length == null'
-        );
+      bodyRanges: quote.bodyRanges
+        .map(({ start, length, mentionUuid }) => {
+          strictAssert(
+            start != null,
+            'Received quote with a bodyRange.start == null'
+          );
+          strictAssert(
+            length != null,
+            'Received quote with a bodyRange.length == null'
+          );
+          if (!isValidUuid(mentionUuid)) {
+            log.warn(
+              `copyFromQuotedMessage: invalid mentionUuid ${mentionUuid}`
+            );
+            return undefined;
+          }
 
-        return {
-          start,
-          length,
-          mentionUuid: dropNull(mentionUuid),
-        };
-      }),
+          return {
+            start,
+            length,
+            mentionUuid,
+          };
+        })
+        .filter(isNotNil),
 
       // Just placeholder values for the fields
       fromGroupName: undefined,
@@ -1947,7 +2106,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       queryMessage = window.MessageController.register(found.id, found);
     }
 
-    if (queryMessage.get('conversationId') !== conversationId) {
+    if (queryMessage && queryMessage.get('conversationId') !== conversationId) {
       const conversation = window.ConversationController.get(
         queryMessage.get('conversationId')
       );
@@ -1967,6 +2126,11 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
   ): Promise<void> {
     const { attachments } = quote;
     const firstAttachment = attachments ? attachments[0] : undefined;
+
+    if (messageHasPaymentEvent(originalMessage.attributes)) {
+      // eslint-disable-next-line no-param-reassign
+      quote.payment = originalMessage.get('payment');
+    }
 
     if (isTapToView(originalMessage.attributes)) {
       // eslint-disable-next-line no-param-reassign
@@ -2107,22 +2271,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const conversation = window.ConversationController.get(conversationId)!;
     const idLog = `handleDataMessage/${conversation.idForLogging()} ${message.idForLogging()}`;
-    await conversation.queueJob('handleDataMessage', async () => {
+    await conversation.queueJob(idLog, async () => {
       log.info(`${idLog}: starting processing in queue`);
-
-      if (
-        isStory(message.attributes) &&
-        !isConversationAccepted(conversation.attributes, {
-          ignoreEmptyConvo: true,
-        })
-      ) {
-        log.info(
-          `${idLog}: dropping story from !accepted`,
-          this.getSenderIdentifier()
-        );
-        confirm();
-        return;
-      }
 
       // First, check for duplicates. If we find one, stop processing here.
       const inMemoryMessage = window.MessageController.findBySender(
@@ -2279,12 +2429,12 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
           });
 
           const existingRevision = conversation.get('revision');
-          const isFirstUpdate = !_.isNumber(existingRevision);
+          const isFirstUpdate = !isNumber(existingRevision);
 
           // Standard GroupV2 modification codepath
           const isV2GroupUpdate =
             initialMessage.groupV2 &&
-            _.isNumber(initialMessage.groupV2.revision) &&
+            isNumber(initialMessage.groupV2.revision) &&
             (isFirstUpdate ||
               initialMessage.groupV2.revision > existingRevision);
 
@@ -2304,7 +2454,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
                 sentAt: message.get('sent_at'),
               });
             } catch (error) {
-              const errorText = error && error.stack ? error.stack : error;
+              const errorText = Errors.toLogFormat(error);
               log.error(
                 `${idLog}: Failed to process group update as part of message ${message.idForLogging()}: ${errorText}`
               );
@@ -2400,8 +2550,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
       const messageId = message.get('id') || UUID.generate().toString();
 
-      // Send delivery receipts, but only for incoming sealed sender messages
-      // and not for messages from unaccepted conversations
+      // Send delivery receipts, but only for non-story sealed sender messages
+      //   and not for messages from unaccepted conversations
       if (
         type === 'incoming' &&
         this.get('unidentifiedDeliveryReceived') &&
@@ -2440,6 +2590,66 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         return;
       }
 
+      if (storyQuote) {
+        const sendStateByConversationId =
+          storyQuote.get('sendStateByConversationId') || {};
+        const sendState = sendStateByConversationId[sender.id];
+
+        const storyQuoteIsFromSelf =
+          storyQuote.get('sourceUuid') ===
+          window.storage.user.getCheckedUuid().toString();
+
+        if (storyQuoteIsFromSelf && !sendState) {
+          log.warn(
+            `${idLog}: Received storyContext message but sender was not in sendStateByConversationId. Dropping.`
+          );
+
+          confirm();
+          return;
+        }
+
+        if (
+          storyQuoteIsFromSelf &&
+          sendState.isAllowedToReplyToStory === false
+        ) {
+          log.warn(
+            `${idLog}: Received storyContext message but sender is not allowed to reply. Dropping.`
+          );
+
+          confirm();
+          return;
+        }
+
+        const storyDistributionListId = storyQuote.get(
+          'storyDistributionListId'
+        );
+
+        if (storyDistributionListId) {
+          const storyDistribution =
+            await dataInterface.getStoryDistributionWithMembers(
+              storyDistributionListId
+            );
+
+          if (!storyDistribution) {
+            log.warn(
+              `${idLog}: Received storyContext message for story with no associated distribution list. Dropping.`
+            );
+
+            confirm();
+            return;
+          }
+
+          if (!storyDistribution.allowsReplies) {
+            log.warn(
+              `${idLog}: Received storyContext message but distribution list does not allow replies. Dropping.`
+            );
+
+            confirm();
+            return;
+          }
+        }
+      }
+
       const withQuoteReference = {
         ...message.attributes,
         ...initialMessage,
@@ -2449,17 +2659,27 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
       const dataMessage = await upgradeMessageSchema(withQuoteReference);
 
+      const isGroupStoryReply =
+        isGroup(conversation.attributes) && dataMessage.storyId;
+
       try {
         const now = new Date().getTime();
 
         const urls = LinkPreview.findLinks(dataMessage.body || '');
         const incomingPreview = dataMessage.preview || [];
-        const preview = incomingPreview.filter(
-          (item: LinkPreviewType) =>
-            (item.image || item.title) &&
-            urls.includes(item.url) &&
-            LinkPreview.shouldPreviewHref(item.url)
-        );
+        const preview = incomingPreview.filter((item: LinkPreviewType) => {
+          if (!item.image && !item.title) {
+            return false;
+          }
+          // Story link previews don't have to correspond to links in the
+          // message body.
+          if (isStory(message.attributes)) {
+            return true;
+          }
+          return (
+            urls.includes(item.url) && LinkPreview.shouldPreviewHref(item.url)
+          );
+        });
         if (preview.length < incomingPreview.length) {
           log.info(
             `${message.idForLogging()}: Eliminated ${
@@ -2488,6 +2708,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
             dataMessage.requiredProtocolVersion ||
             this.INITIAL_PROTOCOL_VERSION,
           supportedVersionAtReceive: this.CURRENT_PROTOCOL_VERSION,
+          payment: dataMessage.payment,
           quote: dataMessage.quote,
           schemaVersion: dataMessage.schemaVersion,
           sticker: dataMessage.sticker,
@@ -2531,7 +2752,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
               attributes = {
                 ...attributes,
                 name: initialMessage.group.name,
-                members: _.union(members, conversation.get('members')),
+                members: union(members, conversation.get('members')),
               };
 
               if (initialMessage.group.name !== conversation.get('name')) {
@@ -2599,14 +2820,14 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
                 );
               }
 
-              const difference = _.difference(
+              const differentMembers = difference(
                 members,
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 conversation.get('members')!
               );
-              if (difference.length > 0) {
+              if (differentMembers.length > 0) {
                 // Because GroupV1 groups are based on e164 only
-                const maybeE164s = map(difference, id =>
+                const maybeE164s = map(differentMembers, id =>
                   window.ConversationController.get(id)?.get('e164')
                 );
                 const e164s = filter(maybeE164s, isNotNil);
@@ -2636,7 +2857,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
               } else {
                 pendingGroupUpdate.left = sender.get('id');
               }
-              attributes.members = _.without(
+              attributes.members = without(
                 conversation.get('members'),
                 sender.get('id')
               );
@@ -2664,11 +2885,28 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
           conversation.set(attributes);
 
+          // Sync group story reply expiration timers with the parent story's
+          // expiration timer
+          if (isGroupStoryReply && storyQuote) {
+            message.set({
+              expireTimer: storyQuote.get('expireTimer'),
+              expirationStartTimestamp: storyQuote.get(
+                'expirationStartTimestamp'
+              ),
+            });
+          }
+
           if (
             dataMessage.expireTimer &&
             !isExpirationTimerUpdate(dataMessage)
           ) {
             message.set({ expireTimer: dataMessage.expireTimer });
+            if (isStory(message.attributes)) {
+              log.info(`${idLog}: Starting story expiration`);
+              message.set({
+                expirationStartTimestamp: dataMessage.timestamp,
+              });
+            }
           }
 
           if (!hasGroupV2Prop && !isStory(message.attributes)) {
@@ -2759,13 +2997,12 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         }
 
         const conversationTimestamp = conversation.get('timestamp');
-        const isGroupStoryReply =
-          isGroup(conversation.attributes) && message.get('storyId');
         if (
           !isStory(message.attributes) &&
           !isGroupStoryReply &&
           (!conversationTimestamp ||
-            message.get('sent_at') > conversationTimestamp)
+            message.get('sent_at') > conversationTimestamp) &&
+          messageHasPaymentEvent(message.attributes)
         ) {
           conversation.set({
             lastMessage: message.getNotificationText(),
@@ -2861,7 +3098,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         log.info(`${idLog}: Batching save`);
         this.saveAndNotify(conversation, confirm);
       } catch (error) {
-        const errorForLog = error && error.stack ? error.stack : error;
+        const errorForLog = Errors.toLogFormat(error);
         log.error(`${idLog}: error:`, errorForLog);
         throw error;
       }
@@ -2881,10 +3118,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     const isFirstRun = false;
     await this.modifyTargetMessage(conversation, isFirstRun);
 
-    const isGroupStoryReply =
-      isGroup(conversation.attributes) && this.get('storyId');
-
-    if (isMessageUnread(this.attributes) && !isGroupStoryReply) {
+    if (await shouldReplyNotifyUser(this, conversation)) {
       await conversation.notify(this);
     }
 
@@ -3218,34 +3452,62 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     }
 
     const previousLength = (this.get('reactions') || []).length;
-    if (reaction.get('source') === ReactionSource.FromThisDevice) {
-      log.info(
-        `handleReaction: sending reaction to ${this.idForLogging()} from this device`
-      );
+    const newReaction: MessageReactionType = {
+      emoji: reaction.get('remove') ? undefined : reaction.get('emoji'),
+      fromId: reaction.get('fromId'),
+      targetAuthorUuid: reaction.get('targetAuthorUuid'),
+      targetTimestamp: reaction.get('targetTimestamp'),
+      timestamp: reaction.get('timestamp'),
+      isSentByConversationId: zipObject(
+        conversation.getMemberConversationIds(),
+        repeat(false)
+      ),
+    };
 
-      const newReaction = {
-        emoji: reaction.get('remove') ? undefined : reaction.get('emoji'),
-        fromId: reaction.get('fromId'),
-        targetAuthorUuid: reaction.get('targetAuthorUuid'),
-        targetTimestamp: reaction.get('targetTimestamp'),
-        timestamp: reaction.get('timestamp'),
-        isSentByConversationId: zipObject(
-          conversation.getMemberConversationIds(),
-          repeat(false)
-        ),
-      };
+    const isFromThisDevice =
+      reaction.get('source') === ReactionSource.FromThisDevice;
+    const isFromSync = reaction.get('source') === ReactionSource.FromSync;
+    const isFromSomeoneElse =
+      reaction.get('source') === ReactionSource.FromSomeoneElse;
+    strictAssert(
+      isFromThisDevice || isFromSync || isFromSomeoneElse,
+      'Reaction can only be from this device, from sync, or from someone else'
+    );
+
+    if (isStory(this.attributes)) {
+      if (isFromThisDevice) {
+        log.info(
+          'handleReaction: sending story reaction to ' +
+            `${this.idForLogging()} from this device`
+        );
+      } else if (isFromSync) {
+        log.info(
+          'handleReaction: receiving story reaction to ' +
+            `${this.idForLogging()} from another device`
+        );
+      } else {
+        log.info(
+          'handleReaction: receiving story reaction to ' +
+            `${this.idForLogging()} from someone else`
+        );
+        conversation.notify(this, reaction);
+      }
+    } else if (isFromThisDevice) {
+      log.info(
+        `handleReaction: sending reaction to ${this.idForLogging()} ` +
+          'from this device'
+      );
 
       const reactions = reactionUtil.addOutgoingReaction(
         this.get('reactions') || [],
-        newReaction,
-        isStory(this.attributes)
+        newReaction
       );
       this.set({ reactions });
     } else {
       const oldReactions = this.get('reactions') || [];
       let reactions: Array<MessageReactionType>;
       const oldReaction = oldReactions.find(re =>
-        isNewReactionReplacingPrevious(re, reaction.attributes, this.attributes)
+        isNewReactionReplacingPrevious(re, reaction.attributes)
       );
       if (oldReaction) {
         this.clearNotifications(oldReaction);
@@ -3257,23 +3519,15 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
           this.idForLogging()
         );
 
-        if (reaction.get('source') === ReactionSource.FromSync) {
+        if (isFromSync) {
           reactions = oldReactions.filter(
             re =>
-              !isNewReactionReplacingPrevious(
-                re,
-                reaction.attributes,
-                this.attributes
-              ) || re.timestamp > reaction.get('timestamp')
+              !isNewReactionReplacingPrevious(re, reaction.attributes) ||
+              re.timestamp > reaction.get('timestamp')
           );
         } else {
           reactions = oldReactions.filter(
-            re =>
-              !isNewReactionReplacingPrevious(
-                re,
-                reaction.attributes,
-                this.attributes
-              )
+            re => !isNewReactionReplacingPrevious(re, reaction.attributes)
           );
         }
         this.set({ reactions });
@@ -3291,7 +3545,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         );
 
         let reactionToAdd: MessageReactionType;
-        if (reaction.get('source') === ReactionSource.FromSync) {
+        if (isFromSync) {
           const ourReactions = [
             reaction.toJSON(),
             ...oldReactions.filter(re => re.fromId === reaction.get('fromId')),
@@ -3302,20 +3556,12 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         }
 
         reactions = oldReactions.filter(
-          re =>
-            !isNewReactionReplacingPrevious(
-              re,
-              reaction.attributes,
-              this.attributes
-            )
+          re => !isNewReactionReplacingPrevious(re, reaction.attributes)
         );
         reactions.push(reactionToAdd);
         this.set({ reactions });
 
-        if (
-          isOutgoing(this.attributes) &&
-          reaction.get('source') === ReactionSource.FromSomeoneElse
-        ) {
+        if (isOutgoing(this.attributes) && isFromSomeoneElse) {
           conversation.notify(this, reaction);
         }
 
@@ -3338,13 +3584,63 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       `Went from ${previousLength} to ${currentLength} reactions.`
     );
 
-    if (reaction.get('source') === ReactionSource.FromThisDevice) {
-      const jobData: ConversationQueueJobData = {
-        type: conversationQueueJobEnum.enum.Reaction,
-        conversationId: conversation.id,
-        messageId: this.id,
-        revision: conversation.get('revision'),
-      };
+    if (isFromThisDevice) {
+      let jobData: ConversationQueueJobData;
+      if (isStory(this.attributes)) {
+        strictAssert(
+          newReaction.emoji !== undefined,
+          'New story reaction must have an emoji'
+        );
+        const reactionMessage = new window.Whisper.Message({
+          id: UUID.generate().toString(),
+          type: 'outgoing',
+          conversationId: conversation.id,
+          sent_at: newReaction.timestamp,
+          received_at: incrementMessageCounter(),
+          received_at_ms: newReaction.timestamp,
+          timestamp: newReaction.timestamp,
+          expireTimer: conversation.get('expireTimer'),
+          sendStateByConversationId: zipObject(
+            Object.keys(newReaction.isSentByConversationId || {}),
+            repeat({
+              status: SendStatus.Pending,
+              updatedAt: Date.now(),
+            })
+          ),
+          storyId: this.id,
+          storyReaction: {
+            emoji: newReaction.emoji,
+            targetAuthorUuid: newReaction.targetAuthorUuid,
+            targetTimestamp: newReaction.targetTimestamp,
+          },
+        });
+
+        await Promise.all([
+          await window.Signal.Data.saveMessage(reactionMessage.attributes, {
+            ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+            forceSave: true,
+          }),
+          reactionMessage.hydrateStoryContext(this),
+        ]);
+
+        conversation.addSingleMessage(
+          window.MessageController.register(reactionMessage.id, reactionMessage)
+        );
+
+        jobData = {
+          type: conversationQueueJobEnum.enum.NormalMessage,
+          conversationId: conversation.id,
+          messageId: reactionMessage.id,
+          revision: conversation.get('revision'),
+        };
+      } else {
+        jobData = {
+          type: conversationQueueJobEnum.enum.Reaction,
+          conversationId: conversation.id,
+          messageId: this.id,
+          revision: conversation.get('revision'),
+        };
+      }
       if (shouldPersist) {
         await conversationJobQueue.add(jobData, async jobToInsert => {
           log.info(
@@ -3360,7 +3656,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       } else {
         await conversationJobQueue.add(jobData);
       }
-    } else if (shouldPersist) {
+    } else if (shouldPersist && !isStory(this.attributes)) {
       await window.Signal.Data.saveMessage(this.attributes, {
         ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
       });
@@ -3371,24 +3667,35 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     del: DeleteModel,
     shouldPersist = true
   ): Promise<void> {
+    if (this.deletingForEveryone || this.get('deletedForEveryone')) {
+      return;
+    }
+
     log.info('Handling DOE.', {
+      messageId: this.id,
       fromId: del.get('fromId'),
       targetSentTimestamp: del.get('targetSentTimestamp'),
       messageServerTimestamp: this.get('serverTimestamp'),
       deleteServerTimestamp: del.get('serverTimestamp'),
     });
 
-    // Remove any notifications for this message
-    notificationService.removeBy({ messageId: this.get('id') });
+    try {
+      this.deletingForEveryone = true;
 
-    // Erase the contents of this message
-    await this.eraseContents(
-      { deletedForEveryone: true, reactions: [] },
-      shouldPersist
-    );
+      // Remove any notifications for this message
+      notificationService.removeBy({ messageId: this.get('id') });
 
-    // Update the conversation's last message in case this was the last message
-    this.getConversation()?.updateLastMessage();
+      // Erase the contents of this message
+      await this.eraseContents(
+        { deletedForEveryone: true, reactions: [] },
+        shouldPersist
+      );
+
+      // Update the conversation's last message in case this was the last message
+      this.getConversation()?.updateLastMessage();
+    } finally {
+      this.deletingForEveryone = undefined;
+    }
   }
 
   clearNotifications(reaction: Partial<ReactionType> = {}): void {

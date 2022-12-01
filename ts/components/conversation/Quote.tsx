@@ -11,7 +11,7 @@ import * as GoogleChrome from '../../util/GoogleChrome';
 
 import { MessageBody } from './MessageBody';
 import type { AttachmentType, ThumbnailType } from '../../types/Attachment';
-import type { BodyRangesType, LocalizerType } from '../../types/Util';
+import type { HydratedBodyRangesType, LocalizerType } from '../../types/Util';
 import type {
   ConversationColorType,
   CustomColorType,
@@ -22,13 +22,16 @@ import { TextAttachment } from '../TextAttachment';
 import { getTextWithMentions } from '../../util/getTextWithMentions';
 import { getClassNamesFor } from '../../util/getClassNamesFor';
 import { getCustomColorStyle } from '../../util/getCustomColorStyle';
+import type { AnyPaymentEvent } from '../../types/Payment';
+import { PaymentEventKind } from '../../types/Payment';
+import { getPaymentEventNotificationText } from '../../messages/helpers';
 
 export type Props = {
   authorTitle: string;
   conversationColor: ConversationColorType;
+  conversationTitle: string;
   customColor?: CustomColorType;
-  bodyRanges?: BodyRangesType;
-  fromGroupName: string | undefined;
+  bodyRanges?: HydratedBodyRangesType;
   i18n: LocalizerType;
   isFromMe: boolean;
   isIncoming?: boolean;
@@ -37,8 +40,10 @@ export type Props = {
   moduleClassName?: string;
   onClick?: () => void;
   onClose?: () => void;
+  fromGroupName: string | undefined;
   text: string;
   rawAttachment?: QuotedAttachmentType;
+  payment?: AnyPaymentEvent;
   isGiftBadge: boolean;
   isViewOnce: boolean;
   reactionEmoji?: string;
@@ -72,6 +77,10 @@ function validateQuote(quote: Props): boolean {
   }
 
   if (quote.rawAttachment) {
+    return true;
+  }
+
+  if (quote.payment?.kind === PaymentEventKind.Notification) {
     return true;
   }
 
@@ -272,6 +281,28 @@ export class Quote extends React.Component<Props, State> {
           {fileName}
         </div>
       </div>
+    );
+  }
+
+  public renderPayment(): JSX.Element | null {
+    const { payment, authorTitle, conversationTitle, isFromMe, i18n } =
+      this.props;
+
+    if (payment == null) {
+      return null;
+    }
+
+    return (
+      <>
+        <Emojify text="💳" />
+        {getPaymentEventNotificationText(
+          payment,
+          authorTitle,
+          conversationTitle,
+          isFromMe,
+          i18n
+        )}
+      </>
     );
   }
 
@@ -560,6 +591,7 @@ export class Quote extends React.Component<Props, State> {
           <div className={this.getClassName('__primary')}>
             {this.renderAuthor()}
             {this.renderGenericFile()}
+            {this.renderPayment()}
             {this.renderText()}
           </div>
           {reactionEmoji && (

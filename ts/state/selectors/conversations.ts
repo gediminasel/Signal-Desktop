@@ -17,7 +17,7 @@ import type {
   MessagesByConversationType,
   PreJoinConversationType,
 } from '../ducks/conversations';
-import type { UsernameSaveState } from '../ducks/conversationsEnums';
+import type { StoriesStateType, StoryDataType } from '../ducks/stories';
 import {
   ComposerStep,
   OneTimeModalState,
@@ -38,11 +38,13 @@ import type { UUIDStringType } from '../../types/UUID';
 import { isInSystemContacts } from '../../util/isInSystemContacts';
 import { isSignalConnection } from '../../util/getSignalConnections';
 import { sortByTitle } from '../../util/sortByTitle';
+import { DurationInSeconds } from '../../util/durations';
 import {
   isDirectConversation,
   isGroupV1,
   isGroupV2,
 } from '../../util/whatTypeOfConversation';
+import { isGroupInStoryMode } from '../../util/isGroupInStoryMode';
 
 import {
   getIntl,
@@ -60,6 +62,8 @@ import type { AccountSelectorType } from './accounts';
 import { getAccountSelector } from './accounts';
 import * as log from '../../logging/log';
 import { TimelineMessageLoadingState } from '../../util/timelineUtil';
+import { isSignalConversation } from '../../util/isSignalConversation';
+import { reduce } from '../../util/iterables';
 
 let placeholderContact: ConversationType;
 export const getPlaceholderContact = (): ConversationType => {
@@ -162,13 +166,6 @@ export const getSelectedMessage = createSelector(
       id: state.selectedMessage,
       counter: state.selectedMessageCounter,
     };
-  }
-);
-
-export const getUsernameSaveState = createSelector(
-  getConversations,
-  (state: ConversationsStateType): UsernameSaveState => {
-    return state.usernameSaveState;
   }
 );
 
@@ -299,6 +296,10 @@ export const _getLeftPaneLists = (
         ...conversation,
         isSelected: true,
       };
+    }
+
+    if (isSignalConversation(conversation)) {
+      continue;
     }
 
     // We always show pinned conversations
@@ -455,7 +456,8 @@ function hasDisplayInfo(conversation: ConversationType): boolean {
 
 function canComposeConversation(conversation: ConversationType): boolean {
   return Boolean(
-    !conversation.isBlocked &&
+    !isSignalConversation(conversation) &&
+      !conversation.isBlocked &&
       !isConversationUnregistered(conversation) &&
       hasDisplayInfo(conversation) &&
       isTrusted(conversation)
@@ -467,6 +469,7 @@ export const getAllComposableConversations = createSelector(
   (conversationLookup: ConversationLookupType): Array<ConversationType> =>
     Object.values(conversationLookup).filter(
       conversation =>
+        !isSignalConversation(conversation) &&
         !conversation.isBlocked &&
         !conversation.isGroupV1AndDisabled &&
         !isConversationUnregistered(conversation) &&
@@ -531,18 +534,60 @@ export const getComposableGroups = createSelector(
     )
 );
 
+const getConversationIdsWithStories = createSelector(
+  (state: StateType): StoriesStateType => state.stories,
+  (stories: StoriesStateType): Set<string> => {
+    return new Set(stories.stories.map(({ conversationId }) => conversationId));
+  }
+);
+
 export const getNonGroupStories = createSelector(
   getComposableGroups,
-  (groups: Array<ConversationType>): Array<ConversationType> =>
-    groups.filter(group => !group.isGroupStorySendReady)
+  getConversationIdsWithStories,
+  (
+    groups: Array<ConversationType>,
+    conversationIdsWithStories: Set<string>
+  ): Array<ConversationType> => {
+    return groups.filter(
+      group => !isGroupInStoryMode(group, conversationIdsWithStories)
+    );
+  }
 );
+
+export const selectMostRecentActiveStoryTimestampByGroupOrDistributionList =
+  createSelector(
+    (state: StateType): ReadonlyArray<StoryDataType> => state.stories.stories,
+    (stories: ReadonlyArray<StoryDataType>): Record<string, number> => {
+      return reduce<StoryDataType, Record<string, number>>(
+        stories,
+        (acc, story) => {
+          const distributionListOrConversationId =
+            story.storyDistributionListId ?? story.conversationId;
+          const cur = acc[distributionListOrConversationId];
+          if (cur && story.timestamp < cur) {
+            return acc;
+          }
+          return {
+            ...acc,
+            [distributionListOrConversationId]: story.timestamp,
+          };
+        },
+        {}
+      );
+    }
+  );
 
 export const getGroupStories = createSelector(
   getConversationLookup,
-  (conversationLookup: ConversationLookupType): Array<ConversationType> =>
-    Object.values(conversationLookup).filter(
-      conversation => conversation.isGroupStorySendReady
-    )
+  getConversationIdsWithStories,
+  (
+    conversationLookup: ConversationLookupType,
+    conversationIdsWithStories: Set<string>
+  ): Array<ConversationType> => {
+    return Object.values(conversationLookup).filter(conversation =>
+      isGroupInStoryMode(conversation, conversationIdsWithStories)
+    );
+  }
 );
 
 const getNormalizedComposerConversationSearchTerm = createSelector(
@@ -590,7 +635,7 @@ const getGroupCreationComposerState = createSelector(
   ): {
     groupName: string;
     groupAvatar: undefined | Uint8Array;
-    groupExpireTimer: number;
+    groupExpireTimer: DurationInSeconds;
     selectedConversationIds: Array<string>;
   } => {
     switch (composerState?.step) {
@@ -605,7 +650,7 @@ const getGroupCreationComposerState = createSelector(
         return {
           groupName: '',
           groupAvatar: undefined,
-          groupExpireTimer: 0,
+          groupExpireTimer: DurationInSeconds.ZERO,
           selectedConversationIds: [],
         };
     }
@@ -624,7 +669,7 @@ export const getComposeGroupName = createSelector(
 
 export const getComposeGroupExpireTimer = createSelector(
   getGroupCreationComposerState,
-  (composerState): number => composerState.groupExpireTimer
+  (composerState): DurationInSeconds => composerState.groupExpireTimer
 );
 
 export const getComposeSelectedContacts = createSelector(
@@ -1030,7 +1075,7 @@ export const getContactSelector = createSelector(
   }
 );
 
-const getConversationVerificationData = createSelector(
+export const getConversationVerificationData = createSelector(
   getConversations,
   (
     conversations: Readonly<ConversationsStateType>
@@ -1053,6 +1098,14 @@ export const getConversationUuidsStoppingSend = createSelector(
         item.uuidsNeedingVerification.forEach(conversationId => {
           result.add(conversationId);
         });
+
+        if (item.byDistributionId) {
+          Object.values(item.byDistributionId).forEach(distribution => {
+            distribution.uuidsNeedingVerification.forEach(conversationId => {
+              result.add(conversationId);
+            });
+          });
+        }
       }
     });
     return Array.from(result);

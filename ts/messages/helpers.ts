@@ -9,8 +9,12 @@ import type {
   QuotedMessageType,
 } from '../model-types.d';
 import type { UUIDStringType } from '../types/UUID';
+import { PaymentEventKind } from '../types/Payment';
+import type { AnyPaymentEvent } from '../types/Payment';
+import type { LocalizerType } from '../types/Util';
+import { missingCaseError } from '../util/missingCaseError';
 import { find } from '../util/iterables';
-import type { MessageModel } from '../models/messages';
+import { MessageModel } from '../models/messages';
 
 export function isIncoming(
   message: Pick<MessageAttributesType, 'type'>
@@ -28,7 +32,85 @@ export function isStory(message: Pick<MessageAttributesType, 'type'>): boolean {
   return message.type === 'story';
 }
 
-function isQuoteAMatch(
+export type MessageAttributesWithPaymentEvent = MessageAttributesType & {
+  payment: AnyPaymentEvent;
+};
+
+export function messageHasPaymentEvent(
+  message: MessageAttributesType
+): message is MessageAttributesWithPaymentEvent {
+  return message.payment != null;
+}
+
+export function getPaymentEventNotificationText(
+  payment: AnyPaymentEvent,
+  senderTitle: string,
+  conversationTitle: string | null,
+  senderIsMe: boolean,
+  i18n: LocalizerType
+): string {
+  if (payment.kind === PaymentEventKind.Notification) {
+    return i18n('icu:payment-event-notification-label');
+  }
+  return getPaymentEventDescription(
+    payment,
+    senderTitle,
+    conversationTitle,
+    senderIsMe,
+    i18n
+  );
+}
+
+export function getPaymentEventDescription(
+  payment: AnyPaymentEvent,
+  senderTitle: string,
+  conversationTitle: string | null,
+  senderIsMe: boolean,
+  i18n: LocalizerType
+): string {
+  const { kind } = payment;
+  if (kind === PaymentEventKind.Notification) {
+    if (senderIsMe) {
+      if (conversationTitle != null) {
+        return i18n('icu:payment-event-notification-message-you-label', {
+          receiver: conversationTitle,
+        });
+      }
+      return i18n(
+        'icu:payment-event-notification-message-you-label-without-receiver'
+      );
+    }
+    return i18n('icu:payment-event-notification-message-label', {
+      sender: senderTitle,
+    });
+  }
+  if (kind === PaymentEventKind.ActivationRequest) {
+    if (senderIsMe) {
+      if (conversationTitle != null) {
+        return i18n('icu:payment-event-activation-request-you-label', {
+          receiver: conversationTitle,
+        });
+      }
+      return i18n(
+        'icu:payment-event-activation-request-you-label-without-receiver'
+      );
+    }
+    return i18n('icu:payment-event-activation-request-label', {
+      sender: senderTitle,
+    });
+  }
+  if (kind === PaymentEventKind.Activation) {
+    if (senderIsMe) {
+      return i18n('icu:payment-event-activated-you-label');
+    }
+    return i18n('icu:payment-event-activated-label', {
+      sender: senderTitle,
+    });
+  }
+  throw missingCaseError(kind);
+}
+
+export function isQuoteAMatch(
   message: MessageAttributesType | null | undefined,
   quote: QuotedMessageType
 ): message is MessageAttributesType {

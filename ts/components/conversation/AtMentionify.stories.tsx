@@ -24,37 +24,40 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   text: text('text', overrideProps.text || ''),
 });
 
-export const NoMentions = (): JSX.Element => {
+export function NoMentions(): JSX.Element {
   const props = createProps({
     text: 'Hello World',
   });
 
   return <AtMentionify {...props} />;
-};
+}
 
 NoMentions.story = {
   name: 'No @mentions',
 };
 
-export const MultipleMentions = (): JSX.Element => {
+export function MultipleMentions(): JSX.Element {
   const bodyRanges = [
     {
       start: 4,
       length: 1,
       mentionUuid: 'abc',
       replacementText: 'Professor Farnsworth',
+      conversationID: 'x',
     },
     {
       start: 2,
       length: 1,
       mentionUuid: 'def',
       replacementText: 'Philip J Fry',
+      conversationID: 'x',
     },
     {
       start: 0,
       length: 1,
       mentionUuid: 'xyz',
       replacementText: 'Yancy Fry',
+      conversationID: 'x',
     },
   ];
   const props = createProps({
@@ -64,31 +67,34 @@ export const MultipleMentions = (): JSX.Element => {
   });
 
   return <AtMentionify {...props} />;
-};
+}
 
 MultipleMentions.story = {
   name: 'Multiple @Mentions',
 };
 
-export const ComplexMentions = (): JSX.Element => {
+export function ComplexMentions(): JSX.Element {
   const bodyRanges = [
     {
       start: 80,
       length: 1,
       mentionUuid: 'ioe',
       replacementText: 'Cereal Killer',
+      conversationID: 'x',
     },
     {
       start: 78,
       length: 1,
       mentionUuid: 'fdr',
       replacementText: 'Acid Burn',
+      conversationID: 'x',
     },
     {
       start: 4,
       length: 1,
       mentionUuid: 'ope',
       replacementText: 'Zero Cool',
+      conversationID: 'x',
     },
   ];
 
@@ -101,7 +107,7 @@ export const ComplexMentions = (): JSX.Element => {
   });
 
   return <AtMentionify {...props} />;
-};
+}
 
 ComplexMentions.story = {
   name: 'Complex @mentions',

@@ -16,27 +16,6 @@
     "reasonDetail": "Part of runtime library for C++ transpiled code"
   },
   {
-    "rule": "React-useRef",
-    "path": "ts/components/AddCaptionModal.tsx",
-    "line": "  const scrollerRef = React.useRef<HTMLDivElement>(null);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2022-10-03T16:06:12.837Z"
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/CompositionInput.tsx",
-    "line": "  const scrollerRefInner = React.useRef<HTMLDivElement>(null);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2022-10-03T16:06:12.837Z"
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/CompositionTextArea.tsx",
-    "line": "  const inputApiRef = React.useRef<InputApi | undefined>();",
-    "reasonCategory": "usageTrusted",
-    "updated": "2022-10-03T16:06:12.837Z"
-  },
-  {
     "rule": "jQuery-append(",
     "path": "components/mp3lameencoder/lib/Mp3LameEncoder.js",
     "line": "            bb.append((new Uint8Array(byteArray)).buffer); // we need to pass a buffer, and must copy the array to get the right data range",
@@ -432,34 +411,6 @@
     "updated": "2022-06-04T00:50:49.405Z"
   },
   {
-    "rule": "jQuery-load(",
-    "path": "node_modules/@mdx-js/mdx/node_modules/resolve/lib/async.js",
-    "line": "        load(exts, x, loadAsFilePackage);",
-    "reasonCategory": "falseMatch",
-    "updated": "2022-06-04T00:50:49.405Z"
-  },
-  {
-    "rule": "jQuery-load(",
-    "path": "node_modules/@mdx-js/mdx/node_modules/resolve/lib/async.js",
-    "line": "        function load(exts, x, loadPackage) {",
-    "reasonCategory": "falseMatch",
-    "updated": "2022-06-04T00:50:49.405Z"
-  },
-  {
-    "rule": "jQuery-load(",
-    "path": "node_modules/@mdx-js/mdx/node_modules/resolve/lib/async.js",
-    "line": "                    if (r) return load(",
-    "reasonCategory": "falseMatch",
-    "updated": "2022-06-04T00:50:49.405Z"
-  },
-  {
-    "rule": "jQuery-load(",
-    "path": "node_modules/@mdx-js/mdx/node_modules/resolve/lib/async.js",
-    "line": "                load(exts.slice(1), x, pkg);",
-    "reasonCategory": "falseMatch",
-    "updated": "2022-06-04T00:50:49.405Z"
-  },
-  {
     "rule": "jQuery-prepend(",
     "path": "node_modules/@mdx-js/mdx/node_modules/source-map/dist/source-map.debug.js",
     "line": "\t      this.prepend(aChunk[i]);",
@@ -485,20 +436,6 @@
     "line": "      this.prepend(aChunk[i]);",
     "reasonCategory": "falseMatch",
     "updated": "2022-06-04T00:50:49.405Z"
-  },
-  {
-    "rule": "jQuery-wrap(",
-    "path": "node_modules/@mixer/parallel-prettier/node_modules/commander/index.js",
-    "line": "        return helper.wrap(fullText, helpWidth - itemIndentWidth, termWidth + itemSeparatorWidth);",
-    "reasonCategory": "falseMatch",
-    "updated": "2022-03-22T19:29:46.099Z"
-  },
-  {
-    "rule": "jQuery-wrap(",
-    "path": "node_modules/@mixer/parallel-prettier/node_modules/commander/index.js",
-    "line": "  wrap(str, width, indent, minColumnWidth = 40) {",
-    "reasonCategory": "falseMatch",
-    "updated": "2022-03-22T19:29:46.099Z"
   },
   {
     "rule": "eval",
@@ -658,42 +595,42 @@
   {
     "rule": "React-useRef",
     "path": "node_modules/@react-spring/shared/dist/react-spring-shared.cjs.dev.js",
-    "line": "  const committed = React.useRef();",
+    "line": "  const committed = react.useRef();",
     "reasonCategory": "usageTrusted",
     "updated": "2021-09-27T21:37:06.339Z"
   },
   {
     "rule": "React-useRef",
     "path": "node_modules/@react-spring/shared/dist/react-spring-shared.cjs.dev.js",
-    "line": "  const prevRef = React.useRef();",
+    "line": "  const prevRef = react.useRef();",
     "reasonCategory": "usageTrusted",
     "updated": "2021-09-27T21:37:06.339Z"
   },
   {
     "rule": "React-useRef",
     "path": "node_modules/@react-spring/shared/dist/react-spring-shared.cjs.dev.js",
-    "line": "  const isMounted = React.useRef(false);",
+    "line": "  const isMounted = react.useRef(false);",
     "reasonCategory": "usageTrusted",
     "updated": "2022-06-01T22:57:44.591Z"
   },
   {
     "rule": "React-useRef",
     "path": "node_modules/@react-spring/shared/dist/react-spring-shared.cjs.prod.js",
-    "line": "  const committed = React.useRef();",
+    "line": "  const committed = react.useRef();",
     "reasonCategory": "usageTrusted",
     "updated": "2021-09-27T21:37:06.339Z"
   },
   {
     "rule": "React-useRef",
     "path": "node_modules/@react-spring/shared/dist/react-spring-shared.cjs.prod.js",
-    "line": "  const prevRef = React.useRef();",
+    "line": "  const prevRef = react.useRef();",
     "reasonCategory": "usageTrusted",
     "updated": "2021-09-27T21:37:06.339Z"
   },
   {
     "rule": "React-useRef",
     "path": "node_modules/@react-spring/shared/dist/react-spring-shared.cjs.prod.js",
-    "line": "  const isMounted = React.useRef(false);",
+    "line": "  const isMounted = react.useRef(false);",
     "reasonCategory": "usageTrusted",
     "updated": "2022-06-01T22:57:44.591Z"
   },
@@ -1823,34 +1760,6 @@
     "updated": "2020-04-30T22:35:27.860Z"
   },
   {
-    "rule": "jQuery-append(",
-    "path": "node_modules/del/node_modules/picomatch/lib/parse.js",
-    "line": "    if (tok.value || tok.output) append(tok);",
-    "reasonCategory": "falseMatch",
-    "updated": "2022-02-14T16:45:31.703Z"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/del/node_modules/picomatch/lib/parse.js",
-    "line": "      append({ value });",
-    "reasonCategory": "falseMatch",
-    "updated": "2022-02-14T16:45:31.703Z"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/del/node_modules/picomatch/lib/parse.js",
-    "line": "      append({ value });",
-    "reasonCategory": "falseMatch",
-    "updated": "2022-02-14T16:45:31.703Z"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/del/node_modules/picomatch/lib/parse.js",
-    "line": "      append({ value });",
-    "reasonCategory": "falseMatch|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
-    "updated": "2022-02-14T16:45:31.703Z"
-  },
-  {
     "rule": "eval",
     "path": "node_modules/depd/index.js",
     "line": "  var deprecatedfn = eval('(function (' + args + ') {\\n' +",
@@ -2032,161 +1941,10 @@
     "updated": "2022-06-01T22:57:44.591Z"
   },
   {
-    "rule": "jQuery-append(",
-    "path": "node_modules/enquirer/lib/prompts/autocomplete.js",
-    "line": "    return this.append(ch);",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-08-26T00:10:28.628Z",
-    "reasonDetail": "isn't jquery"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/enquirer/lib/prompts/autocomplete.js",
-    "line": "    return this.options.multiple ? super.space(ch) : this.append(ch);",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-08-26T00:10:28.628Z",
-    "reasonDetail": "isn't jquery"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/enquirer/lib/prompts/autocomplete.js",
-    "line": "  append(ch) {",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-08-26T00:10:28.628Z",
-    "reasonDetail": "isn't jquery"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/enquirer/lib/prompts/autocomplete.js",
-    "line": "    return this.append(ch);",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-08-26T00:10:28.628Z",
-    "reasonDetail": "isn't jquery"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/enquirer/lib/prompts/editable.js",
-    "line": "  append(char, key) {",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-08-26T00:10:28.628Z",
-    "reasonDetail": "isn't jquery"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/enquirer/lib/prompts/editable.js",
-    "line": "    return this.focused.editable ? this.append(char) : super.space();",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-08-26T00:10:28.628Z",
-    "reasonDetail": "isn't jquery"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/enquirer/lib/prompts/editable.js",
-    "line": "    return this.focused.editable ? this.append(char) : super.number(char);",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-08-26T00:10:28.628Z",
-    "reasonDetail": "isn't jquery"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/enquirer/lib/prompts/form.js",
-    "line": "    return !!char && this.append(char);",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-08-26T00:10:28.628Z",
-    "reasonDetail": "isn't jquery"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/enquirer/lib/prompts/form.js",
-    "line": "  append(char) {",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-08-26T00:10:28.628Z",
-    "reasonDetail": "isn't jquery"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/enquirer/lib/prompts/snippet.js",
-    "line": "      this.append(ch, key);",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-08-26T00:10:28.628Z",
-    "reasonDetail": "isn't jquery"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/enquirer/lib/prompts/snippet.js",
-    "line": "  append(ch, key) {",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-08-26T00:10:28.628Z",
-    "reasonDetail": "isn't jquery"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/enquirer/lib/types/number.js",
-    "line": "  append(ch) {",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-08-26T00:10:28.628Z",
-    "reasonDetail": "isn't jquery"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/enquirer/lib/types/number.js",
-    "line": "    return super.append(ch);",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-08-26T00:10:28.628Z",
-    "reasonDetail": "isn't jquery"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/enquirer/lib/types/number.js",
-    "line": "    return super.append(ch);",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-08-26T00:10:28.628Z",
-    "reasonDetail": "isn't jquery"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/enquirer/lib/types/string.js",
-    "line": "        return this.append('\\n', key);",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-08-26T00:10:28.628Z",
-    "reasonDetail": "isn't jquery"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/enquirer/lib/types/string.js",
-    "line": "    this.append(ch);",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-08-26T00:10:28.628Z",
-    "reasonDetail": "isn't jquery"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/enquirer/lib/types/string.js",
-    "line": "  append(ch) {",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-08-26T00:10:28.628Z",
-    "reasonDetail": "isn't jquery"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/enquirer/lib/types/string.js",
-    "line": "    this.append(str);",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-08-26T00:10:28.628Z",
-    "reasonDetail": "isn't jquery"
-  },
-  {
     "rule": "jQuery-$(",
     "path": "node_modules/envinfo/dist/envinfo.js",
     "reasonCategory": "falseMatch",
     "updated": "2021-04-05T20:48:36.065Z"
-  },
-  {
-    "rule": "jQuery-$(",
-    "path": "node_modules/espree/node_modules/acorn/dist/acorn.js",
-    "line": "  // $$('#table-binary-unicode-properties > figure > table > tbody > tr > td:nth-child(1) code').map(el => el.innerText)",
-    "reasonCategory": "falseMatch",
-    "updated": "2022-06-04T00:50:49.405Z"
   },
   {
     "rule": "React-ref",
@@ -2251,13 +2009,6 @@
     "updated": "2021-12-01T01:13:59.892Z"
   },
   {
-    "rule": "jQuery-load(",
-    "path": "node_modules/file-entry-cache/cache.js",
-    "line": "    var cache = flatCache.load( cacheId, _path );",
-    "reasonCategory": "falseMatch",
-    "updated": "2018-09-15T00:38:04.183Z"
-  },
-  {
     "rule": "jQuery-wrap(",
     "path": "node_modules/filelist/index.js",
     "line": "    wrap(ARRAY_METHODS[i]);",
@@ -2270,20 +2021,6 @@
     "line": "\t\tif (options.multiArgs) {",
     "reasonCategory": "falseMatch",
     "updated": "2020-08-25T00:30:50.619Z"
-  },
-  {
-    "rule": "jQuery-load(",
-    "path": "node_modules/flat-cache/cache.js",
-    "line": "    me.load( fName, dir );",
-    "reasonCategory": "falseMatch",
-    "updated": "2018-09-15T00:38:04.183Z"
-  },
-  {
-    "rule": "jQuery-load(",
-    "path": "node_modules/flat-cache/cache.js",
-    "line": "    obj.load( docId, cacheDir );",
-    "reasonCategory": "falseMatch",
-    "updated": "2018-09-15T00:38:04.183Z"
   },
   {
     "rule": "React-findDOMNode",
@@ -8084,34 +7821,6 @@
     "updated": "2022-06-04T00:50:49.405Z"
   },
   {
-    "rule": "jQuery-load(",
-    "path": "node_modules/remark-mdx/node_modules/resolve/lib/async.js",
-    "line": "        load(exts, x, loadAsFilePackage);",
-    "reasonCategory": "falseMatch",
-    "updated": "2022-06-04T00:50:49.405Z"
-  },
-  {
-    "rule": "jQuery-load(",
-    "path": "node_modules/remark-mdx/node_modules/resolve/lib/async.js",
-    "line": "        function load(exts, x, loadPackage) {",
-    "reasonCategory": "falseMatch",
-    "updated": "2022-06-04T00:50:49.405Z"
-  },
-  {
-    "rule": "jQuery-load(",
-    "path": "node_modules/remark-mdx/node_modules/resolve/lib/async.js",
-    "line": "                    if (r) return load(",
-    "reasonCategory": "falseMatch",
-    "updated": "2022-06-04T00:50:49.405Z"
-  },
-  {
-    "rule": "jQuery-load(",
-    "path": "node_modules/remark-mdx/node_modules/resolve/lib/async.js",
-    "line": "                load(exts.slice(1), x, pkg);",
-    "reasonCategory": "falseMatch",
-    "updated": "2022-06-04T00:50:49.405Z"
-  },
-  {
     "rule": "jQuery-prepend(",
     "path": "node_modules/remark-mdx/node_modules/source-map/dist/source-map.debug.js",
     "line": "\t      this.prepend(aChunk[i]);",
@@ -8275,14 +7984,6 @@
     "line": "function load() {",
     "reasonCategory": "falseMatch",
     "updated": "2022-02-11T21:58:24.827Z"
-  },
-  {
-    "rule": "jQuery-append(",
-    "path": "node_modules/table/dist/createStream.js",
-    "line": "        return append(row, columnWidthIndex, config);",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-08-26T00:10:28.628Z",
-    "reasonDetail": "isn't jquery"
   },
   {
     "rule": "jQuery-append(",
@@ -8822,14 +8523,6 @@
     "updated": "2020-07-21T18:34:59.251Z"
   },
   {
-    "rule": "jQuery-html(",
-    "path": "ts/backbone/views/whisper_view.ts",
-    "line": "      this.$el.html(window.Mustache.render(template, attrs));",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-02-26T18:44:56.450Z",
-    "reasonDetail": "Rendered template has been sanitized"
-  },
-  {
     "rule": "React-useRef",
     "path": "ts/calling/useGetCallingFrameBuffer.ts",
     "line": "  const ref = useRef<Buffer | null>(null);",
@@ -8857,6 +8550,13 @@
     "line": "        // 1. `.load()` when the `window.storage` is ready",
     "reasonCategory": "falseMatch",
     "updated": "2021-05-05T23:11:22.692Z"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/AddCaptionModal.tsx",
+    "line": "  const scrollerRef = React.useRef<HTMLDivElement>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2022-10-03T16:06:12.837Z"
   },
   {
     "rule": "React-useRef",
@@ -9031,6 +8731,20 @@
   },
   {
     "rule": "React-useRef",
+    "path": "ts/components/CompositionInput.tsx",
+    "line": "  const scrollerRefInner = React.useRef<HTMLDivElement>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2022-10-03T16:06:12.837Z"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/CompositionTextArea.tsx",
+    "line": "  const inputApiRef = React.useRef<InputApi | undefined>();",
+    "reasonCategory": "usageTrusted",
+    "updated": "2022-10-03T16:06:12.837Z"
+  },
+  {
+    "rule": "React-useRef",
     "path": "ts/components/ContactPills.tsx",
     "line": "  const elRef = useRef<null | HTMLDivElement>(null);",
     "reasonCategory": "usageTrusted",
@@ -9042,13 +8756,6 @@
     "line": "  const virtualElement = useRef<VirtualElement>(generateVirtualElement(0, 0));",
     "reasonCategory": "usageTrusted",
     "updated": "2022-08-19T17:09:38.534Z"
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/ConversationList.tsx",
-    "line": "  const listRef = useRef<null | List>(null);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-07-30T16:57:33.618Z"
   },
   {
     "rule": "React-useRef",
@@ -9133,7 +8840,7 @@
   {
     "rule": "React-useRef",
     "path": "ts/components/Input.tsx",
-    "line": "    const innerRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(",
+    "line": "    const innerRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);",
     "reasonCategory": "usageTrusted",
     "updated": "2021-07-30T16:57:33.618Z"
   },
@@ -9201,6 +8908,13 @@
     "updated": "2021-10-11T21:21:08.188Z"
   },
   {
+    "rule": "React-useRef",
+    "path": "ts/components/ListView.tsx",
+    "line": "  const listRef = useRef<null | List>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2022-11-11T17:11:07.659Z"
+  },
+  {
     "rule": "React-createRef",
     "path": "ts/components/MainHeader.tsx",
     "line": "  public containerRef: React.RefObject<HTMLDivElement> = React.createRef();",
@@ -9229,6 +8943,13 @@
     "line": "  const bodyRef = useRef<HTMLDivElement | null>(null);",
     "reasonCategory": "usageTrusted",
     "updated": "2021-09-21T01:40:08.534Z"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/ModalContainer.tsx",
+    "line": "  const containerRef = React.useRef<HTMLDivElement | null>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2022-10-14T16:39:48.461Z"
   },
   {
     "rule": "React-useRef",
@@ -9298,9 +9019,26 @@
   {
     "rule": "React-useRef",
     "path": "ts/components/StoryViewer.tsx",
-    "line": "  const unmountRef = useRef<boolean>(false);",
+    "line": "  const progressBarRef = useRef<HTMLDivElement>(null);",
     "reasonCategory": "usageTrusted",
-    "updated": "2022-07-18T23:30:04.033Z"
+    "updated": "2022-10-13T15:18:21.267Z",
+    "reasonDetail": "<optional>"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/StoryViewer.tsx",
+    "line": "  const animationRef = useRef<Animation | null>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2022-10-13T15:18:21.267Z",
+    "reasonDetail": "<optional>"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/StoryViewer.tsx",
+    "line": "  const onFinishRef = useRef<(() => void) | null>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2022-10-13T15:18:21.267Z",
+    "reasonDetail": "<optional>"
   },
   {
     "rule": "React-useRef",
@@ -9319,9 +9057,16 @@
   {
     "rule": "React-useRef",
     "path": "ts/components/StoryViewsNRepliesModal.tsx",
-    "line": "  const shouldScrollToBottomRef = useRef(false);",
+    "line": "  const shouldScrollToBottomRef = useRef(true);",
     "reasonCategory": "usageTrusted",
-    "updated": "2022-09-22T03:07:22.153Z"
+    "updated": "2022-10-05T18:51:56.411Z"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/StoryViewsNRepliesModal.tsx",
+    "line": "  const bottomRef = useRef<HTMLDivElement>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2022-10-05T18:51:56.411Z"
   },
   {
     "rule": "React-useRef",
@@ -9340,7 +9085,7 @@
   {
     "rule": "React-useRef",
     "path": "ts/components/TextStoryCreator.tsx",
-    "line": "  const textEditorRef = useRef<HTMLInputElement | null>(null);",
+    "line": "  const textEditorRef = useRef<HTMLTextAreaElement | null>(null);",
     "reasonCategory": "usageTrusted",
     "updated": "2022-06-16T23:23:32.306Z"
   },
@@ -9435,6 +9180,13 @@
     "reasonCategory": "usageTrusted",
     "updated": "2021-01-20T21:30:08.430Z",
     "reasonDetail": "Doesn't touch the DOM."
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/conversation/TimelineMessage.tsx",
+    "line": "  const menuTriggerRef = useRef<Trigger | null>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2022-11-03T14:21:47.456Z"
   },
   {
     "rule": "React-useRef",
@@ -9639,44 +9391,11 @@
     "updated": "2021-08-03T21:17:38.615Z"
   },
   {
-    "rule": "jQuery-$(",
-    "path": "ts/util/createIPCEvents.tsx",
-    "line": "      if ($('.dark-overlay').length) {",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-08-18T18:22:55.307Z",
-    "reasonDetail": "Legacy code"
-  },
-  {
-    "rule": "jQuery-$(",
-    "path": "ts/util/createIPCEvents.tsx",
-    "line": "      $(document.body).prepend('<div class=\"dark-overlay\"></div>');",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-08-18T18:22:55.307Z",
-    "reasonDetail": "Legacy code"
-  },
-  {
-    "rule": "jQuery-$(",
-    "path": "ts/util/createIPCEvents.tsx",
-    "line": "      $('.dark-overlay').on('click', () => $('.dark-overlay').remove());",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-08-18T18:22:55.307Z",
-    "reasonDetail": "Legacy code"
-  },
-  {
-    "rule": "jQuery-$(",
-    "path": "ts/util/createIPCEvents.tsx",
-    "line": "    removeDarkOverlay: () => $('.dark-overlay').remove(),",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-08-18T18:22:55.307Z",
-    "reasonDetail": "Legacy code"
-  },
-  {
     "rule": "jQuery-prepend(",
     "path": "ts/util/createIPCEvents.tsx",
-    "line": "      $(document.body).prepend('<div class=\"dark-overlay\"></div>');",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-08-18T18:22:55.307Z",
-    "reasonDetail": "Legacy code"
+    "line": "      document.body.prepend(newOverlay);",
+    "reasonCategory": "falseMatch",
+    "updated": "2022-11-30T00:14:31.394Z"
   },
   {
     "rule": "jQuery-load(",
