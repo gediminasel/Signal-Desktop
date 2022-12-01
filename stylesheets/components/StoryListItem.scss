@@ -18,7 +18,10 @@
       }
     }
 
-    &:hover {
+    // highlighted on hover and when it has triggered a context menu
+    // that has not been closed yet (active)
+    &:hover,
+    &--active {
       background: $color-gray-65;
     }
   }
@@ -58,11 +61,32 @@
     &--title {
       @include font-body-1-bold;
       color: $color-gray-05;
+      display: flex;
+      align-items: center;
     }
 
-    &--timestamp {
+    &--timestamp,
+    &--sending,
+    &--send_failed {
       @include font-body-2;
       color: $color-gray-25;
+    }
+
+    &--send_failed {
+      display: flex;
+      align-items: center;
+      &::before {
+        content: '';
+        display: flex;
+        flex-shrink: 0;
+        height: 12px;
+        width: 12px;
+        margin-right: 8px;
+        @include color-svg(
+          '../images/icons/v2/error-outline-12.svg',
+          $color-accent-red
+        );
+      }
     }
 
     &--replies {
@@ -155,5 +179,13 @@
     vertical-align: middle;
     width: 12px;
     @include color-svg('../images/icons/v2/chevron-right-20.svg', $color-white);
+  }
+
+  &__signal-official {
+    background: url('../images/icons/v2/official-20.svg') no-repeat center;
+    display: inline-block;
+    height: 16px;
+    margin-left: 6px;
+    width: 16px;
   }
 }

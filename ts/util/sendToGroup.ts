@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { differenceWith, omit, partition } from 'lodash';
-import PQueue from 'p-queue';
 
 import {
   ErrorCode,
+  LibSignalErrorBase,
   groupEncrypt,
   ProtocolAddress,
   sealedSenderMultiRecipientEncrypt,
@@ -22,6 +22,7 @@ import {
 import { Address } from '../types/Address';
 import { QualifiedAddress } from '../types/QualifiedAddress';
 import { UUID } from '../types/UUID';
+import * as Errors from '../types/errors';
 import { getValue, isEnabled } from '../RemoteConfig';
 import type { UUIDStringType } from '../types/UUID';
 import { isRecord } from './isRecord';
@@ -60,15 +61,13 @@ import { SignalService as Proto } from '../protobuf';
 import { strictAssert } from './assert';
 import * as log from '../logging/log';
 import { GLOBAL_ZONE } from '../SignalProtocolStore';
-import { MINUTE } from './durations';
+import { waitForAll } from './waitForAll';
 
 const ERROR_EXPIRED_OR_MISSING_DEVICES = 409;
 const ERROR_STALE_DEVICES = 410;
 
 const HOUR = 60 * 60 * 1000;
 const DAY = 24 * HOUR;
-
-const MAX_CONCURRENCY = 5;
 
 // sendWithSenderKey is recursive, but we don't want to loop back too many times.
 const MAX_RECURSION = 10;
@@ -99,6 +98,7 @@ export async function sendToGroup({
   sendOptions,
   sendTarget,
   sendType,
+  story,
   urgent,
 }: {
   abortSignal?: AbortSignal;
@@ -109,6 +109,7 @@ export async function sendToGroup({
   sendOptions?: SendOptionsType;
   sendTarget: SenderKeyTargetType;
   sendType: SendTypesType;
+  story?: boolean;
   urgent: boolean;
 }): Promise<CallbackResultType> {
   strictAssert(
@@ -141,6 +142,7 @@ export async function sendToGroup({
     sendOptions,
     sendTarget,
     sendType,
+    story,
     timestamp,
     urgent,
   });
@@ -216,7 +218,7 @@ export async function sendContentMessageToGroup({
 
       log.error(
         `sendToGroup/${logId}: Sender Key send failed, logging, proceeding to normal send`,
-        error && error.stack ? error.stack : error
+        Errors.toLogFormat(error)
       );
     }
   }
@@ -377,7 +379,7 @@ export async function sendToGroupViaSenderKey(options: {
   // 4. Partition devices into sender key and non-sender key groups
   const [devicesForSenderKey, devicesForNormalSend] = partition(
     currentDevices,
-    device => isValidSenderKeyRecipient(memberSet, device.identifier)
+    device => isValidSenderKeyRecipient(memberSet, device.identifier, { story })
   );
 
   const senderKeyRecipients = getUuidsFromDevices(devicesForSenderKey);
@@ -435,11 +437,12 @@ export async function sendToGroupViaSenderKey(options: {
       await handleMessageSend(
         window.textsecure.messaging.sendSenderKeyDistributionMessage(
           {
-            contentHint: ContentHint.RESENDABLE,
+            contentHint,
             distributionId,
             groupId,
             identifiers: newToMemberUuids,
-            story,
+            // SKDMs should only have story=true if we're sending to a distribution list
+            story: sendTarget.getGroupId() ? false : story,
             urgent,
           },
           sendOptions ? { ...sendOptions, online: false } : undefined
@@ -513,20 +516,20 @@ export async function sendToGroupViaSenderKey(options: {
       contentMessage: Proto.Content.encode(contentMessage).finish(),
       groupId,
     });
-    const accessKeys = getXorOfAccessKeys(devicesForSenderKey);
+    const accessKeys = getXorOfAccessKeys(devicesForSenderKey, { story });
 
     const result = await window.textsecure.messaging.server.sendWithSenderKey(
       messageBuffer,
       accessKeys,
       timestamp,
-      { online, urgent }
+      { online, story, urgent }
     );
 
     const parsed = multiRecipient200ResponseSchema.safeParse(result);
     if (parsed.success) {
       const { uuids404 } = parsed.data;
       if (uuids404 && uuids404.length > 0) {
-        await _waitForAll({
+        await waitForAll({
           tasks: uuids404.map(
             uuid => async () => markIdentifierUnregistered(uuid)
           ),
@@ -580,7 +583,10 @@ export async function sendToGroupViaSenderKey(options: {
         recursionCount: recursionCount + 1,
       });
     }
-    if (error.code === ErrorCode.InvalidRegistrationId && error.addr) {
+    if (
+      error instanceof LibSignalErrorBase &&
+      error.code === ErrorCode.InvalidRegistrationId
+    ) {
       const address = error.addr as ProtocolAddress;
       const name = address.name();
 
@@ -741,7 +747,7 @@ function getSenderKeyExpireDuration(): number {
   } catch (error) {
     log.warn(
       `getSenderKeyExpireDuration: Failed to parse integer. Using default of ${MAX_SENDER_KEY_EXPIRE_DURATION}.`,
-      error && error.stack ? error.stack : error
+      Errors.toLogFormat(error)
     );
     return MAX_SENDER_KEY_EXPIRE_DURATION;
   }
@@ -752,7 +758,10 @@ export function _shouldFailSend(error: unknown, logId: string): boolean {
     log.error(`_shouldFailSend/${logId}: ${message}`);
   };
 
-  if (error instanceof Error && error.message.includes('untrusted identity')) {
+  if (
+    error instanceof LibSignalErrorBase &&
+    error.code === ErrorCode.UntrustedIdentity
+  ) {
     logError("'untrusted identity' error, failing.");
     return true;
   }
@@ -781,11 +790,6 @@ export function _shouldFailSend(error: unknown, logId: string): boolean {
   if (isRecord(error) && typeof error.code === 'number') {
     if (error.code === 400) {
       logError('Invalid request, failing.');
-      return true;
-    }
-
-    if (error.code === 401) {
-      logError('Permissions error, failing.');
       return true;
     }
 
@@ -832,21 +836,6 @@ export function _shouldFailSend(error: unknown, logId: string): boolean {
   return false;
 }
 
-export async function _waitForAll<T>({
-  tasks,
-  maxConcurrency = MAX_CONCURRENCY,
-}: {
-  tasks: Array<() => Promise<T>>;
-  maxConcurrency?: number;
-}): Promise<Array<T>> {
-  const queue = new PQueue({
-    concurrency: maxConcurrency,
-    timeout: MINUTE * 30,
-    throwOnTimeout: true,
-  });
-  return queue.addAll(tasks);
-}
-
 function getRecipients(options: GroupSendOptionsType): Array<string> {
   if (options.groupV2) {
     return options.groupV2.members;
@@ -889,7 +878,7 @@ function isIdentifierRegistered(identifier: string) {
 async function handle409Response(logId: string, error: HTTPError) {
   const parsed = multiRecipient409ResponseSchema.safeParse(error.response);
   if (parsed.success) {
-    await _waitForAll({
+    await waitForAll({
       tasks: parsed.data.map(item => async () => {
         const { uuid, devices } = item;
         // Start new sessions with devices we didn't know about before
@@ -901,7 +890,7 @@ async function handle409Response(logId: string, error: HTTPError) {
         if (devices.extraDevices && devices.extraDevices.length > 0) {
           const ourUuid = window.textsecure.storage.user.getCheckedUuid();
 
-          await _waitForAll({
+          await waitForAll({
             tasks: devices.extraDevices.map(deviceId => async () => {
               await window.textsecure.storage.protocol.archiveSession(
                 new QualifiedAddress(ourUuid, Address.create(uuid, deviceId))
@@ -930,14 +919,14 @@ async function handle410Response(
 
   const parsed = multiRecipient410ResponseSchema.safeParse(error.response);
   if (parsed.success) {
-    await _waitForAll({
+    await waitForAll({
       tasks: parsed.data.map(item => async () => {
         const { uuid, devices } = item;
         if (devices.staleDevices && devices.staleDevices.length > 0) {
           const ourUuid = window.textsecure.storage.user.getCheckedUuid();
 
           // First, archive our existing sessions with these devices
-          await _waitForAll({
+          await waitForAll({
             tasks: devices.staleDevices.map(deviceId => async () => {
               await window.textsecure.storage.protocol.archiveSession(
                 new QualifiedAddress(ourUuid, Address.create(uuid, deviceId))
@@ -977,7 +966,10 @@ async function handle410Response(
   }
 }
 
-function getXorOfAccessKeys(devices: Array<DeviceType>): Buffer {
+function getXorOfAccessKeys(
+  devices: Array<DeviceType>,
+  { story }: { story?: boolean } = {}
+): Buffer {
   const uuids = getUuidsFromDevices(devices);
 
   const result = Buffer.alloc(ACCESS_KEY_LENGTH);
@@ -994,7 +986,7 @@ function getXorOfAccessKeys(devices: Array<DeviceType>): Buffer {
       );
     }
 
-    const accessKey = getAccessKey(conversation.attributes);
+    const accessKey = getAccessKey(conversation.attributes, { story });
     if (!accessKey) {
       throw new Error(`getXorOfAccessKeys: No accessKey for UUID ${uuid}`);
     }
@@ -1099,7 +1091,8 @@ async function encryptForSenderKey({
 
 function isValidSenderKeyRecipient(
   members: Set<ConversationModel>,
-  uuid: string
+  uuid: string,
+  { story }: { story?: boolean } = {}
 ): boolean {
   const memberConversation = window.ConversationController.get(uuid);
   if (!memberConversation) {
@@ -1121,7 +1114,7 @@ function isValidSenderKeyRecipient(
     return false;
   }
 
-  if (!getAccessKey(memberConversation.attributes)) {
+  if (!getAccessKey(memberConversation.attributes, { story })) {
     return false;
   }
 
@@ -1247,9 +1240,14 @@ async function resetSenderKey(sendTarget: SenderKeyTargetType): Promise<void> {
 }
 
 function getAccessKey(
-  attributes: ConversationAttributesType
+  attributes: ConversationAttributesType,
+  { story }: { story?: boolean }
 ): string | undefined {
   const { sealedSender, accessKey } = attributes;
+
+  if (story) {
+    return accessKey || ZERO_ACCESS_KEY;
+  }
 
   if (sealedSender === SEALED_SENDER.ENABLED) {
     return accessKey || undefined;
@@ -1273,7 +1271,7 @@ async function fetchKeysForIdentifiers(
   );
 
   try {
-    await _waitForAll({
+    await waitForAll({
       tasks: identifiers.map(
         identifier => async () => fetchKeysForIdentifier(identifier)
       ),
@@ -1281,7 +1279,7 @@ async function fetchKeysForIdentifiers(
   } catch (error) {
     log.error(
       'fetchKeysForIdentifiers: Failed to fetch keys:',
-      error && error.stack ? error.stack : error
+      Errors.toLogFormat(error)
     );
     throw error;
   }
@@ -1307,11 +1305,13 @@ async function fetchKeysForIdentifier(
   );
 
   try {
+    // Note: we have no way to make an unrestricted unathenticated key fetch as part of a
+    //   story send, so we hardcode story=false.
     const { accessKeyFailed } = await getKeysForIdentifier(
       identifier,
       window.textsecure?.messaging?.server,
       devices,
-      getAccessKey(emptyConversation.attributes)
+      getAccessKey(emptyConversation.attributes, { story: false })
     );
     if (accessKeyFailed) {
       log.info(

@@ -247,7 +247,9 @@ const dataInterface: ServerInterface = {
   getNextTapToViewMessageTimestampToAgeOut,
   getTapToViewMessagesNeedingErase,
   getOlderMessagesByConversation,
-  getOlderStories,
+  getAllStories,
+  hasStoryReplies,
+  hasStoryRepliesFromSelf,
   getNewerMessagesByConversation,
   getTotalUnreadForConversation,
   getMessageMetricsForConversation,
@@ -354,7 +356,10 @@ type DatabaseQueryCache = Map<string, Statement<Array<unknown>>>;
 
 const statementCache = new WeakMap<Database, DatabaseQueryCache>();
 
-function prepare<T>(db: Database, query: string): Statement<T> {
+function prepare<T extends Array<unknown> | Record<string, unknown>>(
+  db: Database,
+  query: string
+): Statement<T> {
   let dbCache = statementCache.get(db);
   if (!dbCache) {
     dbCache = new Map();
@@ -2502,17 +2507,11 @@ function getOlderMessagesByConversationSync(
     .reverse();
 }
 
-async function getOlderStories({
+async function getAllStories({
   conversationId,
-  limit = 9999,
-  receivedAt = Number.MAX_VALUE,
-  sentAt,
   sourceUuid,
 }: {
   conversationId?: string;
-  limit?: number;
-  receivedAt?: number;
-  sentAt?: number;
   sourceUuid?: UUIDStringType;
 }): Promise<Array<MessageType>> {
   const db = getInstance();
@@ -2524,23 +2523,48 @@ async function getOlderStories({
       WHERE
         type IS 'story' AND
         ($conversationId IS NULL OR conversationId IS $conversationId) AND
-        ($sourceUuid IS NULL OR sourceUuid IS $sourceUuid) AND
-        (received_at < $receivedAt
-          OR (received_at IS $receivedAt AND sent_at < $sentAt)
-        )
-      ORDER BY received_at ASC, sent_at ASC
-      LIMIT $limit;
+        ($sourceUuid IS NULL OR sourceUuid IS $sourceUuid)
+      ORDER BY received_at ASC, sent_at ASC;
       `
     )
     .all({
       conversationId: conversationId || null,
-      receivedAt,
-      sentAt: sentAt || null,
       sourceUuid: sourceUuid || null,
-      limit,
     });
 
   return rows.map(row => jsonToObject(row.json));
+}
+
+async function hasStoryReplies(storyId: string): Promise<boolean> {
+  const db = getInstance();
+
+  const row: { count: number } = db
+    .prepare<Query>(
+      `
+      SELECT COUNT(*) as count
+      FROM messages
+      WHERE storyId IS $storyId;
+      `
+    )
+    .get({ storyId });
+
+  return row.count !== 0;
+}
+
+async function hasStoryRepliesFromSelf(storyId: string): Promise<boolean> {
+  const db = getInstance();
+
+  const sql = `
+  SELECT COUNT(*) as count
+  FROM messages
+  WHERE
+    storyId IS $storyId AND
+    type IS 'outgoing'
+  `;
+
+  const row: { count: number } = db.prepare<Query>(sql).get({ storyId });
+
+  return row.count !== 0;
 }
 
 async function getNewerMessagesByConversation(
@@ -3204,6 +3228,7 @@ function saveUnprocessedSync(data: UnprocessedType): string {
     serverTimestamp,
     decrypted,
     urgent,
+    story,
   } = data;
   if (!id) {
     throw new Error('saveUnprocessedSync: id was falsey');
@@ -3230,7 +3255,8 @@ function saveUnprocessedSync(data: UnprocessedType): string {
       serverGuid,
       serverTimestamp,
       decrypted,
-      urgent
+      urgent,
+      story
     ) values (
       $id,
       $timestamp,
@@ -3244,7 +3270,8 @@ function saveUnprocessedSync(data: UnprocessedType): string {
       $serverGuid,
       $serverTimestamp,
       $decrypted,
-      $urgent
+      $urgent,
+      $story
     );
     `
   ).run({
@@ -3261,6 +3288,7 @@ function saveUnprocessedSync(data: UnprocessedType): string {
     serverTimestamp: serverTimestamp || null,
     decrypted: decrypted || null,
     urgent: urgent || !isBoolean(urgent) ? 1 : 0,
+    story: story ? 1 : 0,
   });
 
   return id;
@@ -3335,6 +3363,7 @@ async function getUnprocessedById(
   return {
     ...row,
     urgent: isNumber(row.urgent) ? Boolean(row.urgent) : true,
+    story: Boolean(row.story),
   };
 }
 
@@ -3396,6 +3425,7 @@ async function getAllUnprocessedAndIncrementAttempts(): Promise<
       .map(row => ({
         ...row,
         urgent: isNumber(row.urgent) ? Boolean(row.urgent) : true,
+        story: Boolean(row.story),
       }));
   })();
 }
@@ -4815,6 +4845,7 @@ async function removeAll(): Promise<void> {
       DELETE FROM storyDistributions;
       DELETE FROM storyReads;
       DELETE FROM unprocessed;
+      DELETE FROM uninstalled_sticker_packs;
     `);
   })();
 }

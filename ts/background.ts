@@ -17,6 +17,7 @@ import { HTTPError } from './textsecure/Errors';
 import createTaskWithTimeout, {
   suspendTasksWithTimeout,
   resumeTasksWithTimeout,
+  reportLongRunningTasks,
 } from './textsecure/TaskWithTimeout';
 import type {
   MessageAttributesType,
@@ -51,6 +52,7 @@ import {
 import { senderCertificateService } from './services/senderCertificate';
 import { GROUP_CREDENTIALS_KEY } from './services/groupCredentialFetcher';
 import * as KeyboardLayout from './services/keyboardLayout';
+import * as StorageService from './services/storage';
 import { RoutineProfileRefresher } from './routineProfileRefresh';
 import { isMoreRecentThan, isOlderThan, toDayMillis } from './util/timestamp';
 import { isValidReactionEmoji } from './reactions/isValidReactionEmoji';
@@ -153,6 +155,8 @@ import { SeenStatus } from './MessageSeenStatus';
 import MessageSender from './textsecure/SendMessage';
 import type AccountManager from './textsecure/AccountManager';
 import { onStoryRecipientUpdate } from './util/onStoryRecipientUpdate';
+import { StoryViewModeType, StoryViewTargetType } from './types/Stories';
+import { downloadOnboardingStory } from './util/downloadOnboardingStory';
 
 const MAX_ATTACHMENT_DOWNLOAD_AGE = 3600 * 72 * 1000;
 
@@ -226,6 +230,7 @@ export async function startApp(): Promise<void> {
       hasStoriesDisabled: window.storage.get('hasStoriesDisabled', false),
     });
     window.textsecure.server = server;
+    window.textsecure.messaging = new window.textsecure.MessageSender(server);
 
     initializeAllJobQueues({
       server,
@@ -286,23 +291,25 @@ export async function startApp(): Promise<void> {
       serverTrustRoot: window.getServerTrustRoot(),
     });
 
-    function queuedEventListener<Args extends Array<unknown>>(
-      handler: (...args: Args) => Promise<void> | void,
+    function queuedEventListener<E extends Event>(
+      handler: (event: E) => Promise<void> | void,
       track = true
-    ): (...args: Args) => void {
-      return (...args: Args): void => {
-        eventHandlerQueue.add(async () => {
-          try {
-            await handler(...args);
-          } finally {
-            // message/sent: Message.handleDataMessage has its own queue and will
-            //   trigger this event itself when complete.
-            // error: Error processing (below) also has its own queue and self-trigger.
-            if (track) {
-              window.Whisper.events.trigger('incrementProgress');
+    ): (event: E) => void {
+      return (event: E): void => {
+        eventHandlerQueue.add(
+          createTaskWithTimeout(async () => {
+            try {
+              await handler(event);
+            } finally {
+              // message/sent: Message.handleDataMessage has its own queue and will
+              //   trigger this event itself when complete.
+              // error: Error processing (below) also has its own queue and self-trigger.
+              if (track) {
+                window.Whisper.events.trigger('incrementProgress');
+              }
             }
-          }
-        });
+          }, `queuedEventListener(${event.type}, ${event.timeStamp})`)
+        );
       };
     }
 
@@ -356,13 +363,13 @@ export async function startApp(): Promise<void> {
     );
     messageReceiver.addEventListener(
       'decryption-error',
-      queuedEventListener((event: DecryptionErrorEvent) => {
+      queuedEventListener((event: DecryptionErrorEvent): void => {
         onDecryptionErrorQueue.add(() => onDecryptionError(event));
       })
     );
     messageReceiver.addEventListener(
       'retry-request',
-      queuedEventListener((event: RetryRequestEvent) => {
+      queuedEventListener((event: RetryRequestEvent): void => {
         onRetryRequestQueue.add(() => onRetryRequest(event));
       })
     );
@@ -410,6 +417,12 @@ export async function startApp(): Promise<void> {
     }
   });
 
+  window.SignalContext.activeWindowService.registerForChange(isActive => {
+    if (!isActive) {
+      window.reduxActions?.stories.setHasAllStoriesUnmuted(false);
+    }
+  });
+
   let resolveOnAppView: (() => void) | undefined;
   const onAppView = new Promise<void>(resolve => {
     resolveOnAppView = resolve;
@@ -432,7 +445,6 @@ export async function startApp(): Promise<void> {
 
   const eventHandlerQueue = new PQueue({
     concurrency: 1,
-    timeout: durations.MINUTE * 30,
   });
 
   // Note: this queue is meant to allow for stop/start of tasks, not limit parallelism.
@@ -537,6 +549,10 @@ export async function startApp(): Promise<void> {
     window.getAccountManager().refreshPreKeys(uuidKind);
   });
 
+  window.textsecure.storage.protocol.on('removeAllData', () => {
+    window.reduxActions.stories.removeAllStories();
+  });
+
   window.getSocketStatus = () => {
     if (server === undefined) {
       return SocketStatus.CLOSED;
@@ -592,7 +608,7 @@ export async function startApp(): Promise<void> {
         } catch (error) {
           log.info(
             'User chose not to delete old data. Shutting down.',
-            error && error.stack ? error.stack : error
+            Errors.toLogFormat(error)
           );
           window.shutdown();
           return;
@@ -610,7 +626,7 @@ export async function startApp(): Promise<void> {
       } catch (error) {
         log.error(
           'Failed to remove IndexedDB file or remove SQL data:',
-          error && error.stack ? error.stack : error
+          Errors.toLogFormat(error)
         );
       }
 
@@ -786,7 +802,7 @@ export async function startApp(): Promise<void> {
         window.isBeforeVersion(lastVersion, 'v1.36.0-beta.1') &&
         window.isAfterVersion(lastVersion, 'v1.35.0-beta.1')
       ) {
-        await window.Signal.Services.eraseAllStorageServiceState();
+        await StorageService.eraseAllStorageServiceState();
       }
 
       if (window.isBeforeVersion(lastVersion, 'v5.2.0')) {
@@ -851,7 +867,7 @@ export async function startApp(): Promise<void> {
     try {
       await window.Signal.Data.startInRendererProcess();
     } catch (err) {
-      log.error('SQL failed to initialize', err && err.stack ? err.stack : err);
+      log.error('SQL failed to initialize', Errors.toLogFormat(err));
     }
 
     setAppLoadingScreenMessage(window.i18n('loading'), window.i18n);
@@ -942,7 +958,7 @@ export async function startApp(): Promise<void> {
       } catch (error) {
         log.warn(
           'background/setInterval: Failed to parse integer from desktop.retryRespondMaxAge feature flag',
-          error && error.stack ? error.stack : error
+          Errors.toLogFormat(error)
         );
       }
 
@@ -953,7 +969,7 @@ export async function startApp(): Promise<void> {
       } catch (error) {
         log.error(
           'background/onready/setInterval: Error deleting sent protos: ',
-          error && error.stack ? error.stack : error
+          Errors.toLogFormat(error)
         );
       }
 
@@ -983,9 +999,13 @@ export async function startApp(): Promise<void> {
       } catch (error) {
         log.error(
           'background/onready/setInterval: Error getting expired retry placeholders: ',
-          error && error.stack ? error.stack : error
+          Errors.toLogFormat(error)
         );
       }
+    }, FIVE_MINUTES);
+
+    setInterval(() => {
+      reportLongRunningTasks();
     }, FIVE_MINUTES);
 
     let mainWindowStats = {
@@ -1002,8 +1022,12 @@ export async function startApp(): Promise<void> {
     };
 
     try {
+      // This needs to load before we prime the data because we expect
+      // ConversationController to be loaded and ready to use by then.
+      await window.ConversationController.load();
+
       await Promise.all([
-        window.ConversationController.load(),
+        window.ConversationController.getOrCreateSignalConversation(),
         Stickers.load(),
         loadRecentEmojis(),
         loadInitialBadgesState(),
@@ -1016,12 +1040,13 @@ export async function startApp(): Promise<void> {
         (async () => {
           menuOptions = await window.SignalContext.getMenuOptions();
         })(),
+        downloadOnboardingStory(),
       ]);
       await window.ConversationController.checkForConflicts();
     } catch (error) {
       log.error(
         'background.js: ConversationController failed to load:',
-        error && error.stack ? error.stack : error
+        Errors.toLogFormat(error)
       );
     } finally {
       initializeRedux({ mainWindowStats, menuOptions });
@@ -1112,6 +1137,7 @@ export async function startApp(): Promise<void> {
       toast: bindActionCreators(actionCreators.toast, store.dispatch),
       updates: bindActionCreators(actionCreators.updates, store.dispatch),
       user: bindActionCreators(actionCreators.user, store.dispatch),
+      username: bindActionCreators(actionCreators.username, store.dispatch),
     };
 
     const {
@@ -1175,6 +1201,8 @@ export async function startApp(): Promise<void> {
 
       changedConvoBatcher.add(conversation);
     });
+
+    // Called by SignalProtocolStore#removeAllData()
     convoCollection.on('reset', removeAllConversations);
 
     window.Whisper.events.on('userChanged', (reconnect = false) => {
@@ -1737,7 +1765,7 @@ export async function startApp(): Promise<void> {
   });
 
   async function runStorageService() {
-    window.Signal.Services.enableStorageService();
+    StorageService.enableStorageService();
 
     if (window.ConversationController.areWePrimaryDevice()) {
       log.warn(
@@ -1835,6 +1863,7 @@ export async function startApp(): Promise<void> {
 
       // Cancel throttled calls to refreshRemoteConfig since our auth changed.
       window.Signal.RemoteConfig.maybeRefreshRemoteConfig.cancel();
+      window.Signal.RemoteConfig.maybeRefreshRemoteConfig(server);
 
       connect(true);
     });
@@ -1876,10 +1905,19 @@ export async function startApp(): Promise<void> {
     activeWindowService.registerForActive(() => notificationService.clear());
     window.addEventListener('unload', () => notificationService.fastClear());
 
-    notificationService.on('click', (id, messageId) => {
+    notificationService.on('click', (id, messageId, storyId) => {
       window.showWindow();
+
       if (id) {
-        window.Whisper.events.trigger('showConversation', id, messageId);
+        if (storyId) {
+          window.reduxActions.stories.viewStory({
+            storyId,
+            storyViewMode: StoryViewModeType.Single,
+            viewTarget: StoryViewTargetType.Replies,
+          });
+        } else {
+          window.Whisper.events.trigger('showConversation', id, messageId);
+        }
       } else {
         window.reduxActions.app.openInbox();
       }
@@ -2071,8 +2109,6 @@ export async function startApp(): Promise<void> {
         return;
       }
 
-      window.textsecure.messaging = new window.textsecure.MessageSender(server);
-
       // Update our profile key in the conversation if we just got linked.
       const profileKey = await ourProfileKeyService.get();
       if (firstRun && profileKey) {
@@ -2108,7 +2144,7 @@ export async function startApp(): Promise<void> {
         } catch (error) {
           log.error(
             'connect: Error refreshing remote config:',
-            error && error.stack ? error.stack : error
+            Errors.toLogFormat(error)
           );
         }
 
@@ -2182,6 +2218,7 @@ export async function startApp(): Promise<void> {
         log.info('Boot after upgrading. Requesting contact sync');
         window.getSyncRequest();
 
+        StorageService.reprocessUnknownFields();
         runStorageService();
 
         try {
@@ -2193,7 +2230,7 @@ export async function startApp(): Promise<void> {
         } catch (e) {
           log.error(
             'Problem with account manager updates after starting new version: ',
-            e && e.stack ? e.stack : e
+            Errors.toLogFormat(e)
           );
         }
       }
@@ -2206,7 +2243,7 @@ export async function startApp(): Promise<void> {
         } catch (error) {
           log.error(
             'Error: Unable to register for unauthenticated delivery support.',
-            error && error.stack ? error.stack : error
+            Errors.toLogFormat(error)
           );
         }
       }
@@ -2237,7 +2274,7 @@ export async function startApp(): Promise<void> {
         } catch (error) {
           log.error(
             'Error: Unable to register our capabilities.',
-            error && error.stack ? error.stack : error
+            Errors.toLogFormat(error)
           );
         }
       }
@@ -2420,7 +2457,7 @@ export async function startApp(): Promise<void> {
 
   window.waitForEmptyEventQueue = waitForEmptyEventQueue;
 
-  async function onEmpty() {
+  async function onEmpty(): Promise<void> {
     const { storage } = window.textsecure;
 
     await Promise.all([
@@ -2557,7 +2594,7 @@ export async function startApp(): Promise<void> {
     connect();
   }
 
-  function onConfiguration(ev: ConfigurationEvent) {
+  function onConfiguration(ev: ConfigurationEvent): void {
     ev.confirm();
 
     const { configuration } = ev;
@@ -2589,7 +2626,7 @@ export async function startApp(): Promise<void> {
     }
   }
 
-  function onTyping(ev: TypingEvent) {
+  function onTyping(ev: TypingEvent): void {
     // Note: this type of message is automatically removed from cache in MessageReceiver
 
     const { typing, sender, senderUuid, senderDevice } = ev;
@@ -2678,7 +2715,7 @@ export async function startApp(): Promise<void> {
     });
   }
 
-  async function onStickerPack(ev: StickerPackEvent) {
+  function onStickerPack(ev: StickerPackEvent): void {
     ev.confirm();
 
     const packs = ev.stickerPacks;
@@ -2712,13 +2749,13 @@ export async function startApp(): Promise<void> {
     });
   }
 
-  async function onGroupSyncComplete() {
+  async function onGroupSyncComplete(): Promise<void> {
     log.info('onGroupSyncComplete');
     await window.storage.put('synced_at', Date.now());
   }
 
   // Note: this handler is only for v1 groups received via 'group sync' messages
-  async function onGroupReceived(ev: GroupEvent) {
+  async function onGroupReceived(ev: GroupEvent): Promise<void> {
     const details = ev.groupDetails;
     const { id } = details;
 
@@ -2826,7 +2863,10 @@ export async function startApp(): Promise<void> {
             return;
           }
         } catch (error) {
-          log.error('respondWithProfileKeyBatcher error', error && error.stack);
+          log.error(
+            'respondWithProfileKeyBatcher error',
+            Errors.toLogFormat(error)
+          );
         }
 
         sender.queueJob('sendProfileKeyUpdate', () =>
@@ -2839,7 +2879,7 @@ export async function startApp(): Promise<void> {
     maxSize: Infinity,
   });
 
-  function onEnvelopeReceived({ envelope }: EnvelopeEvent) {
+  function onEnvelopeReceived({ envelope }: EnvelopeEvent): void {
     const ourUuid = window.textsecure.storage.user.getUuid()?.toString();
     if (envelope.sourceUuid && envelope.sourceUuid !== ourUuid) {
       window.ConversationController.maybeMergeContacts({
@@ -2853,7 +2893,7 @@ export async function startApp(): Promise<void> {
   // Note: We do very little in this function, since everything in handleDataMessage is
   //   inside a conversation-specific queue(). Any code here might run before an earlier
   //   message is processed in handleDataMessage().
-  function onMessageReceived(event: MessageEvent) {
+  async function onMessageReceived(event: MessageEvent): Promise<void> {
     const { data, confirm } = event;
 
     const messageDescriptor = getMessageDescriptor({
@@ -2918,7 +2958,7 @@ export async function startApp(): Promise<void> {
       if (!isValidReactionEmoji(reaction.emoji)) {
         log.warn('Received an invalid reaction emoji. Dropping it');
         confirm();
-        return Promise.resolve();
+        return;
       }
 
       strictAssert(
@@ -2946,7 +2986,7 @@ export async function startApp(): Promise<void> {
       // Note: We do not wait for completion here
       Reactions.getSingleton().onReaction(reactionModel, message);
       confirm();
-      return Promise.resolve();
+      return;
     }
 
     if (data.message.delete) {
@@ -2975,21 +3015,22 @@ export async function startApp(): Promise<void> {
       Deletes.getSingleton().onDelete(deleteModel);
 
       confirm();
-      return Promise.resolve();
+      return;
     }
 
     if (handleGroupCallUpdateMessage(data.message, messageDescriptor)) {
       confirm();
-      return Promise.resolve();
+      return;
     }
 
     // Don't wait for handleDataMessage, as it has its own per-conversation queueing
     message.handleDataMessage(data.message, event.confirm);
-
-    return Promise.resolve();
   }
 
-  async function onProfileKeyUpdate({ data, confirm }: ProfileKeyUpdateEvent) {
+  async function onProfileKeyUpdate({
+    data,
+    confirm,
+  }: ProfileKeyUpdateEvent): Promise<void> {
     const conversation = window.ConversationController.maybeMergeContacts({
       aci: data.sourceUuid,
       e164: data.source,
@@ -3250,7 +3291,7 @@ export async function startApp(): Promise<void> {
   // Note: We do very little in this function, since everything in handleDataMessage is
   //   inside a conversation-specific queue(). Any code here might run before an earlier
   //   message is processed in handleDataMessage().
-  function onSentMessage(event: SentEvent) {
+  async function onSentMessage(event: SentEvent): Promise<void> {
     const { data, confirm } = event;
 
     const source = window.textsecure.storage.user.getNumber();
@@ -3298,7 +3339,7 @@ export async function startApp(): Promise<void> {
       if (!isValidReactionEmoji(reaction.emoji)) {
         log.warn('Received an invalid reaction emoji. Dropping it');
         event.confirm();
-        return Promise.resolve();
+        return;
       }
 
       log.info('Queuing sent reaction for', reaction.targetTimestamp);
@@ -3316,7 +3357,7 @@ export async function startApp(): Promise<void> {
       Reactions.getSingleton().onReaction(reactionModel, message);
 
       event.confirm();
-      return Promise.resolve();
+      return;
     }
 
     if (data.message.delete) {
@@ -3338,20 +3379,18 @@ export async function startApp(): Promise<void> {
       // Note: We do not wait for completion here
       Deletes.getSingleton().onDelete(deleteModel);
       confirm();
-      return Promise.resolve();
+      return;
     }
 
     if (handleGroupCallUpdateMessage(data.message, messageDescriptor)) {
       event.confirm();
-      return Promise.resolve();
+      return;
     }
 
     // Don't wait for handleDataMessage, as it has its own per-conversation queueing
     message.handleDataMessage(data.message, event.confirm, {
       data,
     });
-
-    return Promise.resolve();
   }
 
   type MessageDescriptor = {
@@ -3489,14 +3528,14 @@ export async function startApp(): Promise<void> {
       log.error(
         'unlinkAndDisconnect: Something went wrong clearing ' +
           'local configuration',
-        eraseError && eraseError.stack ? eraseError.stack : eraseError
+        Errors.toLogFormat(eraseError)
       );
     } finally {
       window.Signal.Util.Registration.markEverDone();
     }
   }
 
-  function onError(ev: ErrorEvent) {
+  function onError(ev: ErrorEvent): void {
     const { error } = ev;
     log.error('background onError:', Errors.toLogFormat(error));
 
@@ -3511,7 +3550,7 @@ export async function startApp(): Promise<void> {
     log.warn('background onError: Doing nothing with incoming error');
   }
 
-  async function onViewOnceOpenSync(ev: ViewOnceOpenSyncEvent) {
+  function onViewOnceOpenSync(ev: ViewOnceOpenSyncEvent): void {
     ev.confirm();
 
     const { source, sourceUuid, timestamp } = ev;
@@ -3529,7 +3568,7 @@ export async function startApp(): Promise<void> {
     ViewOnceOpenSyncs.getSingleton().onSync(sync);
   }
 
-  async function onFetchLatestSync(ev: FetchLatestEvent) {
+  async function onFetchLatestSync(ev: FetchLatestEvent): Promise<void> {
     ev.confirm();
 
     const { eventType } = ev;
@@ -3538,6 +3577,7 @@ export async function startApp(): Promise<void> {
 
     switch (eventType) {
       case FETCH_LATEST_ENUM.LOCAL_PROFILE: {
+        log.info('onFetchLatestSync: fetching latest local profile');
         const ourUuid = window.textsecure.storage.user.getUuid()?.toString();
         const ourE164 = window.textsecure.storage.user.getNumber();
         await Promise.all([
@@ -3548,7 +3588,7 @@ export async function startApp(): Promise<void> {
       }
       case FETCH_LATEST_ENUM.STORAGE_MANIFEST:
         log.info('onFetchLatestSync: fetching latest manifest');
-        await window.Signal.Services.runStorageServiceSyncJob();
+        await StorageService.runStorageServiceSyncJob();
         break;
       case FETCH_LATEST_ENUM.SUBSCRIPTION_STATUS:
         log.info('onFetchLatestSync: fetching latest subscription status');
@@ -3582,16 +3622,16 @@ export async function startApp(): Promise<void> {
           'onKeysSync: updated storage service key, erasing state and fetching'
         );
         await window.storage.put('storageKey', storageServiceKeyBase64);
-        await window.Signal.Services.eraseAllStorageServiceState({
+        await StorageService.eraseAllStorageServiceState({
           keepUnknownFields: true,
         });
       }
 
-      await window.Signal.Services.runStorageServiceSyncJob();
+      await StorageService.runStorageServiceSyncJob();
     }
   }
 
-  async function onMessageRequestResponse(ev: MessageRequestResponseEvent) {
+  function onMessageRequestResponse(ev: MessageRequestResponseEvent): void {
     ev.confirm();
 
     const {
@@ -3627,7 +3667,7 @@ export async function startApp(): Promise<void> {
     MessageRequests.getSingleton().onResponse(sync);
   }
 
-  function onReadReceipt(event: Readonly<ReadEvent>) {
+  function onReadReceipt(event: Readonly<ReadEvent>): void {
     onReadOrViewReceipt({
       logTitle: 'read receipt',
       event,
@@ -3677,7 +3717,7 @@ export async function startApp(): Promise<void> {
 
     event.confirm();
 
-    if (!window.storage.get('read-receipt-setting') || !sourceConversation) {
+    if (!sourceConversation) {
       return;
     }
 
@@ -3702,7 +3742,7 @@ export async function startApp(): Promise<void> {
     MessageReceipts.getSingleton().onReceipt(receipt);
   }
 
-  function onReadSync(ev: ReadSyncEvent) {
+  function onReadSync(ev: ReadSyncEvent): Promise<void> {
     const { envelopeTimestamp, sender, senderUuid, timestamp } = ev.read;
     const readAt = envelopeTimestamp;
     const senderConversation = window.ConversationController.lookupOrCreate({
@@ -3741,7 +3781,7 @@ export async function startApp(): Promise<void> {
     return ReadSyncs.getSingleton().onSync(receipt);
   }
 
-  function onViewSync(ev: ViewSyncEvent) {
+  function onViewSync(ev: ViewSyncEvent): Promise<void> {
     const { envelopeTimestamp, senderE164, senderUuid, timestamp } = ev.view;
     const senderConversation = window.ConversationController.lookupOrCreate({
       e164: senderE164,
@@ -3779,7 +3819,7 @@ export async function startApp(): Promise<void> {
     return ViewSyncs.getSingleton().onSync(receipt);
   }
 
-  function onDeliveryReceipt(ev: DeliveryEvent) {
+  function onDeliveryReceipt(ev: DeliveryEvent): void {
     const { deliveryReceipt } = ev;
     const {
       envelopeTimestamp,

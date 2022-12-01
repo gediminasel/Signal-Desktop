@@ -5,25 +5,24 @@ import { createSelector } from 'reselect';
 import { isInteger } from 'lodash';
 
 import { ITEM_NAME as UNIVERSAL_EXPIRE_TIMER_ITEM } from '../../util/universalExpireTimer';
+import { innerIsBucketValueEnabled } from '../../RemoteConfig';
 import type { ConfigKeyType, ConfigMapType } from '../../RemoteConfig';
-
 import type { StateType } from '../reducer';
 import type { ItemsStateType } from '../ducks/items';
 import type {
   ConversationColorType,
   CustomColorType,
 } from '../../types/Colors';
+import type { UUIDStringType } from '../../types/UUID';
 import { DEFAULT_CONVERSATION_COLOR } from '../../types/Colors';
 import { getPreferredReactionEmoji as getPreferredReactionEmojiFromStoredValue } from '../../reactions/preferredReactionEmoji';
+import { isBeta } from '../../util/version';
+import { DurationInSeconds } from '../../util/durations';
+import { getUserNumber, getUserACI } from './user';
 
 const DEFAULT_PREFERRED_LEFT_PANE_WIDTH = 320;
 
 export const getItems = (state: StateType): ItemsStateType => state.items;
-
-export const getHasAllStoriesMuted = createSelector(
-  getItems,
-  ({ hasAllStoriesMuted }): boolean => Boolean(hasAllStoriesMuted)
-);
 
 export const getAreWeASubscriber = createSelector(
   getItems,
@@ -44,13 +43,25 @@ export const getPinnedConversationIds = createSelector(
 
 export const getUniversalExpireTimer = createSelector(
   getItems,
-  (state: ItemsStateType): number => state[UNIVERSAL_EXPIRE_TIMER_ITEM] || 0
+  (state: ItemsStateType): DurationInSeconds =>
+    DurationInSeconds.fromSeconds(state[UNIVERSAL_EXPIRE_TIMER_ITEM] || 0)
 );
 
 const isRemoteConfigFlagEnabled = (
   config: Readonly<ConfigMapType>,
   key: ConfigKeyType
 ): boolean => Boolean(config[key]?.enabled);
+
+// See isBucketValueEnabled in RemoteConfig.ts
+const isRemoteConfigBucketEnabled = (
+  config: Readonly<ConfigMapType>,
+  name: ConfigKeyType,
+  e164: string | undefined,
+  uuid: UUIDStringType | undefined
+): boolean => {
+  const flagValue = config[name]?.value;
+  return innerIsBucketValueEnabled(name, flagValue, e164, uuid);
+};
 
 const getRemoteConfig = createSelector(
   getItems,
@@ -63,13 +74,48 @@ export const getUsernamesEnabled = createSelector(
     isRemoteConfigFlagEnabled(remoteConfig, 'desktop.usernames')
 );
 
+export const isInternalUser = createSelector(
+  getRemoteConfig,
+  (remoteConfig: ConfigMapType): boolean => {
+    return isRemoteConfigFlagEnabled(remoteConfig, 'desktop.internalUser');
+  }
+);
+
+// Note: ts/util/stories is the other place this check is done
 export const getStoriesEnabled = createSelector(
   getItems,
   getRemoteConfig,
-  (state: ItemsStateType, remoteConfig: ConfigMapType): boolean =>
-    !state.hasStoriesDisabled &&
-    (isRemoteConfigFlagEnabled(remoteConfig, 'desktop.internalUser') ||
-      isRemoteConfigFlagEnabled(remoteConfig, 'desktop.stories'))
+  getUserNumber,
+  getUserACI,
+  (
+    state: ItemsStateType,
+    remoteConfig: ConfigMapType,
+    e164: string | undefined,
+    aci: UUIDStringType | undefined
+  ): boolean => {
+    if (state.hasStoriesDisabled) {
+      return false;
+    }
+
+    if (
+      isRemoteConfigBucketEnabled(remoteConfig, 'desktop.stories2', e164, aci)
+    ) {
+      return true;
+    }
+
+    if (isRemoteConfigFlagEnabled(remoteConfig, 'desktop.internalUser')) {
+      return true;
+    }
+
+    if (
+      isRemoteConfigFlagEnabled(remoteConfig, 'desktop.stories2.beta') &&
+      isBeta(window.getVersion())
+    ) {
+      return true;
+    }
+
+    return false;
+  }
 );
 
 export const getDefaultConversationColor = createSelector(
@@ -134,4 +180,12 @@ export const getHasSetMyStoriesPrivacy = createSelector(
 export const getHasReadReceiptSetting = createSelector(
   getItems,
   (state: ItemsStateType): boolean => Boolean(state['read-receipt-setting'])
+);
+
+export const getHasStoryViewReceiptSetting = createSelector(
+  getItems,
+  (state: ItemsStateType): boolean =>
+    Boolean(
+      state.storyViewReceiptsEnabled ?? state['read-receipt-setting'] ?? false
+    )
 );

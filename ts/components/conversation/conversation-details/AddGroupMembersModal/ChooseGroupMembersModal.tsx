@@ -94,21 +94,10 @@ export const ChooseGroupMembersModal: FunctionComponent<PropsType> = ({
 
   const phoneNumber = parseAndFormatPhoneNumber(searchTerm, regionCode);
 
-  let isPhoneNumberChecked = false;
-  if (phoneNumber) {
-    isPhoneNumberChecked =
-      phoneNumber.isValid &&
-      selectedContacts.some(contact => contact.e164 === phoneNumber.e164);
-  }
-
-  const isPhoneNumberVisible =
-    phoneNumber &&
-    candidateContacts.every(contact => contact.e164 !== phoneNumber.e164);
-
   let username: string | undefined;
   let isUsernameChecked = false;
   let isUsernameVisible = false;
-  if (!phoneNumber && isUsernamesEnabled) {
+  if (isUsernamesEnabled) {
     username = getUsernameFromSearch(searchTerm);
 
     isUsernameChecked = selectedContacts.some(
@@ -119,6 +108,17 @@ export const ChooseGroupMembersModal: FunctionComponent<PropsType> = ({
       Boolean(username) &&
       candidateContacts.every(contact => contact.username !== username);
   }
+
+  let isPhoneNumberChecked = false;
+  if (!username && phoneNumber) {
+    isPhoneNumberChecked =
+      phoneNumber.isValid &&
+      selectedContacts.some(contact => contact.e164 === phoneNumber.e164);
+  }
+
+  const isPhoneNumberVisible =
+    phoneNumber &&
+    candidateContacts.every(contact => contact.e164 !== phoneNumber.e164);
 
   const inputRef = useRef<null | HTMLInputElement>(null);
 

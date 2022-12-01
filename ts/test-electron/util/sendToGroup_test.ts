@@ -3,10 +3,10 @@
 
 import { assert } from 'chai';
 import * as sinon from 'sinon';
+import { LibSignalErrorBase } from '@signalapp/libsignal-client';
 
 import {
   _analyzeSenderKeyDevices,
-  _waitForAll,
   _shouldFailSend,
 } from '../../util/sendToGroup';
 import { UUID } from '../../types/UUID';
@@ -166,21 +166,6 @@ describe('sendToGroup', () => {
     });
   });
 
-  describe('#_waitForAll', () => {
-    it('returns result of provided tasks', async () => {
-      const task1 = () => Promise.resolve(1);
-      const task2 = () => Promise.resolve(2);
-      const task3 = () => Promise.resolve(3);
-
-      const result = await _waitForAll({
-        tasks: [task1, task2, task3],
-        maxConcurrency: 1,
-      });
-
-      assert.deepEqual(result, [1, 2, 3]);
-    });
-  });
-
   describe('#_shouldFailSend', () => {
     it('returns false for a generic error', async () => {
       const error = new Error('generic');
@@ -188,7 +173,11 @@ describe('sendToGroup', () => {
     });
 
     it("returns true for any error with 'untrusted' identity", async () => {
-      const error = new Error('This was an untrusted identity.');
+      const error = new LibSignalErrorBase(
+        'untrusted identity',
+        'UntrustedIdentity',
+        'ignored'
+      );
       assert.isTrue(_shouldFailSend(error, 'logId'));
     });
 
@@ -233,7 +222,7 @@ describe('sendToGroup', () => {
     it('returns true for a specified error codes', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const error: any = new Error('generic');
-      error.code = 401;
+      error.code = 428;
 
       assert.isTrue(_shouldFailSend(error, 'testing generic'));
       assert.isTrue(
@@ -321,7 +310,7 @@ describe('sendToGroup', () => {
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const error: any = new Error('generic');
-      error.code = 401;
+      error.code = 428;
 
       assert.isTrue(
         _shouldFailSend(

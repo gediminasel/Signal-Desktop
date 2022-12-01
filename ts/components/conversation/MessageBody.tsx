@@ -14,7 +14,7 @@ import { AddNewLines } from './AddNewLines';
 import { Linkify } from './Linkify';
 
 import type {
-  BodyRangesType,
+  HydratedBodyRangesType,
   LocalizerType,
   RenderTextCallbackType,
 } from '../../types/Util';
@@ -36,7 +36,7 @@ export type Props = {
   disableLinks?: boolean;
   disableMarkdown?: boolean;
   i18n: LocalizerType;
-  bodyRanges?: BodyRangesType;
+  bodyRanges?: HydratedBodyRangesType;
   onIncreaseTextLength?: () => unknown;
   openConversation?: OpenConversationActionType;
   kickOffBodyDownload?: () => void;

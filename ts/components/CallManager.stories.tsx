@@ -24,6 +24,7 @@ import { setupI18n } from '../util/setupI18n';
 import type { SafetyNumberProps } from './SafetyNumberChangeDialog';
 import enMessages from '../../_locales/en/messages.json';
 import { ThemeType } from '../types/Util';
+import { StorySendMode } from '../types/Stories';
 
 const i18n = setupI18n('en', enMessages);
 
@@ -151,6 +152,7 @@ export const OngoingGroupCall = (): JSX.Element => (
         joinState: GroupCallJoinState.Joined,
         maxDevices: 5,
         groupMembers: [],
+        isConversationTooBigToRing: false,
         peekedParticipants: [],
         remoteParticipants: [],
         remoteAudioLevels: new Map<number, number>(),
@@ -184,6 +186,8 @@ export const RingingGroupCall = (): JSX.Element => (
           ...getConversation(),
           type: 'group',
           title: 'Tahoe Trip',
+          acknowledgedGroupNameCollisions: {},
+          storySendMode: StorySendMode.IfActive,
         },
         otherMembersRung: [
           { firstName: 'Morty', title: 'Morty Smith' },
@@ -234,6 +238,7 @@ export const GroupCallSafetyNumberChanged = (): JSX.Element => (
         joinState: GroupCallJoinState.Joined,
         maxDevices: 5,
         groupMembers: [],
+        isConversationTooBigToRing: false,
         peekedParticipants: [],
         remoteParticipants: [],
         remoteAudioLevels: new Map<number, number>(),

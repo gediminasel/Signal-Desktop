@@ -10,8 +10,7 @@ import React, {
   useState,
 } from 'react';
 import classNames from 'classnames';
-import { Globals, useSpring, animated, to } from '@react-spring/web';
-import type { BodyRangeType, LocalizerType } from '../types/Util';
+import type { DraftBodyRangesType, LocalizerType } from '../types/Util';
 import type { ContextMenuOptionType } from './ContextMenu';
 import type { ConversationType } from '../state/ducks/conversations';
 import type { EmojiPickDataType } from './emoji/EmojiPicker';
@@ -25,13 +24,20 @@ import { AnimatedEmojiGalore } from './AnimatedEmojiGalore';
 import { Avatar, AvatarSize } from './Avatar';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import { ContextMenu } from './ContextMenu';
+import { Emojify } from './conversation/Emojify';
 import { Intl } from './Intl';
 import { MessageTimestamp } from './conversation/MessageTimestamp';
 import { SendStatus } from '../messages/MessageSendState';
+import { Spinner } from './Spinner';
 import { StoryDetailsModal } from './StoryDetailsModal';
 import { StoryDistributionListName } from './StoryDistributionListName';
 import { StoryImage } from './StoryImage';
-import { StoryViewDirectionType, StoryViewModeType } from '../types/Stories';
+import {
+  ResolvedSendStatus,
+  StoryViewDirectionType,
+  StoryViewModeType,
+  StoryViewTargetType,
+} from '../types/Stories';
 import { StoryViewsNRepliesModal } from './StoryViewsNRepliesModal';
 import { Theme } from '../util/theme';
 import { ToastType } from '../state/ducks/toast';
@@ -39,11 +45,17 @@ import { getAvatarColor } from '../types/Colors';
 import { getStoryBackground } from '../util/getStoryBackground';
 import { getStoryDuration } from '../util/getStoryDuration';
 import { graphemeAwareSlice } from '../util/graphemeAwareSlice';
+import type { saveAttachment } from '../util/saveAttachment';
 import { isVideoAttachment } from '../types/Attachment';
 import { useEscapeHandling } from '../hooks/useEscapeHandling';
+import { useRetryStorySend } from '../hooks/useRetryStorySend';
+import { resolveStorySendStatus } from '../util/resolveStorySendStatus';
+import { strictAssert } from '../util/assert';
 
 export type PropsType = {
   currentIndex: number;
+  deleteGroupStoryReply: (id: string) => void;
+  deleteGroupStoryReplyForEveryone: (id: string) => void;
   deleteStoryForEveryone: (story: StoryViewType) => unknown;
   distributionList?: { id: string; name: string };
   getPreferredBadge: PreferredBadgeSelectorType;
@@ -58,11 +70,15 @@ export type PropsType = {
     | 'sharedGroupNames'
     | 'sortedGroupMembers'
     | 'title'
+    | 'left'
   >;
   hasActiveCall?: boolean;
-  hasAllStoriesMuted: boolean;
-  hasReadReceiptSetting: boolean;
+  hasAllStoriesUnmuted: boolean;
+  hasViewReceiptSetting: boolean;
   i18n: LocalizerType;
+  isInternalUser?: boolean;
+  isSignalConversation?: boolean;
+  isWindowActive: boolean;
   loadStoryReplies: (conversationId: string, messageId: string) => unknown;
   markStoryRead: (mId: string) => unknown;
   numStories: number;
@@ -73,7 +89,7 @@ export type PropsType = {
   onReactToStory: (emoji: string, story: StoryViewType) => unknown;
   onReplyToStory: (
     message: string,
-    mentions: Array<BodyRangeType>,
+    mentions: DraftBodyRangesType,
     timestamp: number,
     story: StoryViewType
   ) => unknown;
@@ -83,13 +99,15 @@ export type PropsType = {
   recentEmojis?: Array<string>;
   renderEmojiPicker: (props: RenderEmojiPickerProps) => JSX.Element;
   replyState?: ReplyStateType;
-  shouldShowDetailsModal?: boolean;
+  retrySend: (messageId: string) => unknown;
+  saveAttachment: typeof saveAttachment;
+  setHasAllStoriesUnmuted: (isUnmuted: boolean) => unknown;
   showToast: ShowToastActionCreatorType;
   skinTone?: number;
   story: StoryViewType;
   storyViewMode: StoryViewModeType;
-  toggleHasAllStoriesMuted: () => unknown;
   viewStory: ViewStoryActionCreatorType;
+  viewTarget?: StoryViewTargetType;
 };
 
 const CAPTION_BUFFER = 20;
@@ -105,14 +123,19 @@ enum Arrow {
 
 export const StoryViewer = ({
   currentIndex,
+  deleteGroupStoryReply,
+  deleteGroupStoryReplyForEveryone,
   deleteStoryForEveryone,
   distributionList,
   getPreferredBadge,
   group,
   hasActiveCall,
-  hasAllStoriesMuted,
-  hasReadReceiptSetting,
+  hasAllStoriesUnmuted,
+  hasViewReceiptSetting,
   i18n,
+  isInternalUser,
+  isSignalConversation,
+  isWindowActive,
   loadStoryReplies,
   markStoryRead,
   numStories,
@@ -128,13 +151,15 @@ export const StoryViewer = ({
   recentEmojis,
   renderEmojiPicker,
   replyState,
-  shouldShowDetailsModal,
+  retrySend,
+  saveAttachment,
+  setHasAllStoriesUnmuted,
   showToast,
   skinTone,
   story,
   storyViewMode,
-  toggleHasAllStoriesMuted,
   viewStory,
+  viewTarget,
 }: PropsType): JSX.Element => {
   const [isShowingContextMenu, setIsShowingContextMenu] =
     useState<boolean>(false);
@@ -167,11 +192,17 @@ export const StoryViewer = ({
 
   const conversationId = group?.id || story.sender.id;
 
-  const [hasStoryViewsNRepliesModal, setHasStoryViewsNRepliesModal] =
-    useState(false);
-  const [hasStoryDetailsModal, setHasStoryDetailsModal] = useState(
-    Boolean(shouldShowDetailsModal)
+  const sendStatus = sendState ? resolveStorySendStatus(sendState) : undefined;
+  const { renderAlert, setWasManuallyRetried, wasManuallyRetried } =
+    useRetryStorySend(i18n, sendStatus);
+
+  const [currentViewTarget, setCurrentViewTarget] = useState(
+    viewTarget ?? null
   );
+
+  useEffect(() => {
+    setCurrentViewTarget(viewTarget ?? null);
+  }, [viewTarget]);
 
   const onClose = useCallback(() => {
     viewStory({
@@ -180,12 +211,12 @@ export const StoryViewer = ({
   }, [viewStory]);
 
   const onEscape = useCallback(() => {
-    if (hasStoryViewsNRepliesModal) {
-      setHasStoryViewsNRepliesModal(false);
+    if (currentViewTarget != null) {
+      setCurrentViewTarget(null);
     } else {
       onClose();
     }
-  }, [hasStoryViewsNRepliesModal, onClose]);
+  }, [currentViewTarget, onClose]);
 
   useEscapeHandling(onEscape);
 
@@ -236,97 +267,97 @@ export const StoryViewer = ({
     };
   }, [attachment, messageId]);
 
-  const unmountRef = useRef<boolean>(false);
-  useEffect(() => {
-    return () => {
-      unmountRef.current = true;
-    };
-  }, []);
+  const progressBarRef = useRef<HTMLDivElement>(null);
+  const animationRef = useRef<Animation | null>(null);
 
-  // Currently there's no way to globally skip animations but only allow select
-  // ones. This component temporarily overrides the skipAnimation global and
-  // then sets it back when it unmounts.
-  // https://github.com/pmndrs/react-spring/issues/1982
+  // Putting this in a ref allows us to call it from the useEffect below without
+  // triggering the effect to re-run every time these values change.
+  const onFinishRef = useRef<(() => void) | null>(null);
   useEffect(() => {
-    const { skipAnimation } = Globals;
-    Globals.assign({
-      skipAnimation: false,
-    });
-
-    return () => {
-      Globals.assign({
-        skipAnimation,
+    onFinishRef.current = () => {
+      viewStory({
+        storyId: story.messageId,
+        storyViewMode,
+        viewDirection: StoryViewDirectionType.Next,
       });
     };
-  }, []);
+  }, [story.messageId, storyViewMode, viewStory]);
 
-  const [styles, spring] = useSpring(
-    () => ({
-      from: { width: 0 },
-      to: { width: 100 },
-      loop: true,
-      onRest: {
-        width: ({ value }) => {
-          if (unmountRef.current) {
-            log.info(
-              'stories.StoryViewer.spring.onRest: called after component unmounted'
-            );
-            return;
-          }
-
-          if (value === 100) {
-            viewStory({
-              storyId: story.messageId,
-              storyViewMode,
-              viewDirection: StoryViewDirectionType.Next,
-            });
-          }
-        },
-      },
-    }),
-    [story.messageId, storyViewMode, viewStory]
-  );
+  // This guarantees that we'll have a valid ref to the animation when we need it
+  strictAssert(currentIndex != null, "StoryViewer: currentIndex can't be null");
 
   // We need to be careful about this effect refreshing, it should only run
   // every time a story changes or its duration changes.
   useEffect(() => {
     if (!storyDuration) {
-      spring.stop();
       return;
     }
 
-    spring.start({
-      config: {
+    strictAssert(
+      progressBarRef.current != null,
+      "progressBarRef can't be null"
+    );
+    const target = progressBarRef.current;
+
+    const animation = target.animate(
+      [{ transform: 'translateX(-100%)' }, { transform: 'translateX(0%)' }],
+      {
+        id: 'story-progress-bar',
         duration: storyDuration,
-      },
-      from: { width: 0 },
-      to: { width: 100 },
-    });
+        easing: 'linear',
+        fill: 'forwards',
+      }
+    );
+
+    animationRef.current = animation;
+
+    function onFinish() {
+      onFinishRef.current?.();
+    }
+
+    animation.addEventListener('finish', onFinish);
+
+    // Reset the stuff that pauses a story when you switch story views
+    setConfirmDeleteStory(undefined);
+    setHasConfirmHideStory(false);
+    setHasExpandedCaption(false);
+    setIsShowingContextMenu(false);
+    setPauseStory(false);
 
     return () => {
-      spring.stop();
+      animation.removeEventListener('finish', onFinish);
+      animation.cancel();
     };
-  }, [currentIndex, spring, storyDuration]);
+  }, [story.messageId, storyDuration]);
 
   const [pauseStory, setPauseStory] = useState(false);
 
+  useEffect(() => {
+    if (!isWindowActive) {
+      setPauseStory(true);
+    }
+  }, [isWindowActive]);
+
+  const alertElement = renderAlert();
+
   const shouldPauseViewing =
+    Boolean(alertElement) ||
+    Boolean(confirmDeleteStory) ||
+    currentViewTarget != null ||
     hasActiveCall ||
     hasConfirmHideStory ||
     hasExpandedCaption ||
-    hasStoryDetailsModal ||
-    hasStoryViewsNRepliesModal ||
     isShowingContextMenu ||
     pauseStory ||
     Boolean(reactionEmoji);
 
   useEffect(() => {
     if (shouldPauseViewing) {
-      spring.pause();
+      animationRef.current?.pause();
     } else {
-      spring.resume();
+      animationRef.current?.play();
     }
-  }, [shouldPauseViewing, spring]);
+  }, [shouldPauseViewing, story.messageId, storyDuration]);
 
   useEffect(() => {
     markStoryRead(messageId);
@@ -336,6 +367,7 @@ export const StoryViewer = ({
   const canFreelyNavigateStories =
     storyViewMode === StoryViewModeType.All ||
     storyViewMode === StoryViewModeType.Hidden ||
+    storyViewMode === StoryViewModeType.MyStories ||
     storyViewMode === StoryViewModeType.Unread;
 
   const canNavigateLeft =
@@ -351,7 +383,7 @@ export const StoryViewer = ({
     (ev: KeyboardEvent) => {
       // the replies modal can consume arrow keys
       // we don't want to navigate while someone is typing a reply
-      if (hasStoryViewsNRepliesModal) {
+      if (currentViewTarget != null) {
         return;
       }
 
@@ -374,7 +406,7 @@ export const StoryViewer = ({
       }
     },
     [
-      hasStoryViewsNRepliesModal,
+      currentViewTarget,
       canNavigateLeft,
       canNavigateRight,
       story.messageId,
@@ -407,27 +439,41 @@ export const StoryViewer = ({
       return;
     }
 
-    let lastMouseMove: number | undefined;
+    let mouseMoveExpiration: number | undefined;
+    let timer: NodeJS.Timeout | undefined;
 
     function updateLastMouseMove() {
-      lastMouseMove = Date.now();
+      mouseMoveExpiration = Date.now() + MOUSE_IDLE_TIME;
+
+      if (timer === undefined) {
+        checkMouseIdle();
+      }
     }
 
     function checkMouseIdle() {
-      requestAnimationFrame(() => {
-        if (lastMouseMove && Date.now() - lastMouseMove > MOUSE_IDLE_TIME) {
-          setArrowToShow(Arrow.None);
-        } else {
-          checkMouseIdle();
-        }
-      });
+      timer = undefined;
+
+      if (mouseMoveExpiration === undefined) {
+        return;
+      }
+
+      const remaining = mouseMoveExpiration - Date.now();
+      if (remaining <= 0) {
+        setArrowToShow(Arrow.None);
+        return;
+      }
+
+      timer = setTimeout(checkMouseIdle, remaining);
     }
-    checkMouseIdle();
 
     document.addEventListener('mousemove', updateLastMouseMove);
 
     return () => {
-      lastMouseMove = undefined;
+      if (timer !== undefined) {
+        clearTimeout(timer);
+      }
+      mouseMoveExpiration = undefined;
+      timer = undefined;
       document.removeEventListener('mousemove', updateLastMouseMove);
     };
   }, [arrowToShow]);
@@ -440,19 +486,19 @@ export const StoryViewer = ({
   const replyCount = replies.length;
   const viewCount = views.length;
 
-  const canMuteStory = isVideoAttachment(attachment);
-  const isStoryMuted = hasAllStoriesMuted || !canMuteStory;
+  const hasAudio = isVideoAttachment(attachment);
+  const isStoryMuted = !hasAllStoriesUnmuted || !hasAudio;
 
   let muteClassName: string;
   let muteAriaLabel: string;
-  if (canMuteStory) {
-    muteAriaLabel = hasAllStoriesMuted
-      ? i18n('StoryViewer__unmute')
-      : i18n('StoryViewer__mute');
+  if (hasAudio) {
+    muteAriaLabel = hasAllStoriesUnmuted
+      ? i18n('StoryViewer__mute')
+      : i18n('StoryViewer__unmute');
 
-    muteClassName = hasAllStoriesMuted
-      ? 'StoryViewer__unmute'
-      : 'StoryViewer__mute';
+    muteClassName = hasAllStoriesUnmuted
+      ? 'StoryViewer__mute'
+      : 'StoryViewer__unmute';
   } else {
     muteAriaLabel = i18n('Stories__toast--hasNoSound');
     muteClassName = 'StoryViewer__soundless';
@@ -460,51 +506,73 @@ export const StoryViewer = ({
 
   const isSent = Boolean(sendState);
 
-  const contextMenuOptions: ReadonlyArray<ContextMenuOptionType<unknown>> =
-    isSent
-      ? [
-          {
-            icon: 'StoryListItem__icon--info',
-            label: i18n('StoryListItem__info'),
-            onClick: () => setHasStoryDetailsModal(true),
-          },
-          {
-            icon: 'StoryListItem__icon--delete',
-            label: i18n('StoryListItem__delete'),
-            onClick: () => setConfirmDeleteStory(story),
-          },
-        ]
-      : [
-          {
-            icon: 'StoryListItem__icon--info',
-            label: i18n('StoryListItem__info'),
-            onClick: () => setHasStoryDetailsModal(true),
-          },
-          {
-            icon: 'StoryListItem__icon--hide',
-            label: isHidden
-              ? i18n('StoryListItem__unhide')
-              : i18n('StoryListItem__hide'),
-            onClick: () => {
-              if (isHidden) {
-                onHideStory(conversationId);
-              } else {
-                setHasConfirmHideStory(true);
-              }
-            },
-          },
-          {
-            icon: 'StoryListItem__icon--chat',
-            label: i18n('StoryListItem__go-to-chat'),
-            onClick: () => {
-              onGoToConversation(conversationId);
-            },
-          },
-        ];
+  let contextMenuOptions:
+    | ReadonlyArray<ContextMenuOptionType<unknown>>
+    | undefined;
+
+  if (isSent) {
+    contextMenuOptions = [
+      {
+        icon: 'StoryListItem__icon--info',
+        label: i18n('StoryListItem__info'),
+        onClick: () => setCurrentViewTarget(StoryViewTargetType.Details),
+      },
+      {
+        icon: 'StoryListItem__icon--delete',
+        label: i18n('StoryListItem__delete'),
+        onClick: () => setConfirmDeleteStory(story),
+      },
+    ];
+  } else if (!isSignalConversation) {
+    contextMenuOptions = [
+      {
+        icon: 'StoryListItem__icon--info',
+        label: i18n('StoryListItem__info'),
+        onClick: () => setCurrentViewTarget(StoryViewTargetType.Details),
+      },
+      {
+        icon: 'StoryListItem__icon--hide',
+        label: isHidden
+          ? i18n('StoryListItem__unhide')
+          : i18n('StoryListItem__hide'),
+        onClick: () => {
+          if (isHidden) {
+            onHideStory(conversationId);
+          } else {
+            setHasConfirmHideStory(true);
+          }
+        },
+      },
+      {
+        icon: 'StoryListItem__icon--chat',
+        label: i18n('StoryListItem__go-to-chat'),
+        onClick: () => {
+          onGoToConversation(conversationId);
+        },
+      },
+    ];
+  }
+
+  function doRetrySend() {
+    if (wasManuallyRetried) {
+      return;
+    }
+
+    if (
+      sendStatus !== ResolvedSendStatus.Failed &&
+      sendStatus !== ResolvedSendStatus.PartiallySent
+    ) {
+      return;
+    }
+
+    setWasManuallyRetried(true);
+    retrySend(messageId);
+  }
 
   return (
-    <FocusTrap focusTrapOptions={{ allowOutsideClick: true }}>
+    <FocusTrap focusTrapOptions={{ clickOutsideDeactivates: true }}>
       <div className="StoryViewer">
+        {alertElement}
         <div
           className="StoryViewer__overlay"
           style={{ background: getStoryBackground(attachment) }}
@@ -591,7 +659,7 @@ export const StoryViewer = ({
           <div className="StoryViewer__meta">
             {caption && (
               <div className="StoryViewer__caption">
-                {caption.text}
+                <Emojify text={caption.text} />
                 {caption.hasReadMore && !hasExpandedCaption && (
                   <button
                     className="MessageBody__read-more"
@@ -642,7 +710,7 @@ export const StoryViewer = ({
                     title={group.title}
                   />
                 )}
-                <div>
+                <div className="StoryViewer__meta--title-container">
                   <div className="StoryViewer__meta--title">
                     {(group &&
                       i18n('Stories__from-to-group', {
@@ -685,59 +753,94 @@ export const StoryViewer = ({
                   aria-label={muteAriaLabel}
                   className={muteClassName}
                   onClick={
-                    canMuteStory
-                      ? toggleHasAllStoriesMuted
+                    hasAudio
+                      ? () => setHasAllStoriesUnmuted(!hasAllStoriesUnmuted)
                       : () => showToast(ToastType.StoryMuted)
                   }
                   type="button"
                 />
-                <ContextMenu
-                  aria-label={i18n('MyStories__more')}
-                  i18n={i18n}
-                  menuOptions={contextMenuOptions}
-                  moduleClassName="StoryViewer__more"
-                  onMenuShowingChanged={setIsShowingContextMenu}
-                  theme={Theme.Dark}
-                />
+                {contextMenuOptions && (
+                  <ContextMenu
+                    aria-label={i18n('MyStories__more')}
+                    i18n={i18n}
+                    menuOptions={contextMenuOptions}
+                    moduleClassName="StoryViewer__more"
+                    onMenuShowingChanged={setIsShowingContextMenu}
+                    theme={Theme.Dark}
+                  />
+                )}
               </div>
             </div>
             <div className="StoryViewer__progress">
               {Array.from(Array(numStories), (_, index) => (
                 <div className="StoryViewer__progress--container" key={index}>
                   {currentIndex === index ? (
-                    <animated.div
+                    <div
+                      ref={progressBarRef}
                       className="StoryViewer__progress--bar"
-                      style={{
-                        width: to([styles.width], width => `${width}%`),
-                      }}
                     />
                   ) : (
                     <div
                       className="StoryViewer__progress--bar"
-                      style={{
-                        width: currentIndex < index ? '0%' : '100%',
-                      }}
+                      style={
+                        currentIndex < index
+                          ? {}
+                          : {
+                              transform: 'translateX(0%)',
+                            }
+                      }
                     />
                   )}
                 </div>
               ))}
             </div>
             <div className="StoryViewer__actions">
-              {(canReply || isSent) && (
+              {sendStatus === ResolvedSendStatus.Failed && !wasManuallyRetried && (
+                <button
+                  className="StoryViewer__actions__failed"
+                  onClick={doRetrySend}
+                  type="button"
+                >
+                  {i18n('StoryViewer__failed')}
+                </button>
+              )}
+              {sendStatus === ResolvedSendStatus.PartiallySent &&
+                !wasManuallyRetried && (
+                  <button
+                    className="StoryViewer__actions__failed"
+                    onClick={doRetrySend}
+                    type="button"
+                  >
+                    {i18n('StoryViewer__partial-fail')}
+                  </button>
+                )}
+              {sendStatus === ResolvedSendStatus.Sending && (
+                <div className="StoryViewer__sending">
+                  <Spinner
+                    moduleClassName="StoryViewer__sending__spinner"
+                    svgSize="small"
+                  />
+                  {i18n('StoryViewer__sending')}
+                </div>
+              )}
+              {(canReply ||
+                (isSent && sendStatus === ResolvedSendStatus.Sent)) && (
                 <button
                   className="StoryViewer__reply"
-                  onClick={() => setHasStoryViewsNRepliesModal(true)}
+                  onClick={() =>
+                    setCurrentViewTarget(StoryViewTargetType.Replies)
+                  }
                   tabIndex={0}
                   type="button"
                 >
                   <>
                     {isSent || replyCount > 0 ? (
                       <span className="StoryViewer__reply__chevron">
-                        {isSent && !hasReadReceiptSetting && !replyCount && (
+                        {isSent && !hasViewReceiptSetting && !replyCount && (
                           <>{i18n('StoryViewer__views-off')}</>
                         )}
                         {isSent &&
-                          hasReadReceiptSetting &&
+                          hasViewReceiptSetting &&
                           (viewCount === 1 ? (
                             <Intl
                               i18n={i18n}
@@ -788,39 +891,43 @@ export const StoryViewer = ({
             type="button"
           />
         </div>
-        {hasStoryDetailsModal && (
+        {currentViewTarget === StoryViewTargetType.Details && (
           <StoryDetailsModal
+            attachment={attachment}
             getPreferredBadge={getPreferredBadge}
             i18n={i18n}
-            onClose={() => setHasStoryDetailsModal(false)}
+            isInternalUser={isInternalUser}
+            onClose={() => setCurrentViewTarget(null)}
+            saveAttachment={saveAttachment}
             sender={story.sender}
             sendState={sendState}
-            size={attachment?.size}
             timestamp={timestamp}
             expirationTimestamp={story.expirationTimestamp}
           />
         )}
-        {hasStoryViewsNRepliesModal && (
+        {(currentViewTarget === StoryViewTargetType.Replies ||
+          currentViewTarget === StoryViewTargetType.Views) && (
           <StoryViewsNRepliesModal
             authorTitle={firstName || title}
             canReply={Boolean(canReply)}
             getPreferredBadge={getPreferredBadge}
-            hasReadReceiptSetting={hasReadReceiptSetting}
+            hasViewReceiptSetting={hasViewReceiptSetting}
             hasViewsCapability={isSent}
             i18n={i18n}
-            isGroupStory={isGroupStory}
-            onClose={() => setHasStoryViewsNRepliesModal(false)}
+            isInternalUser={isInternalUser}
+            group={group}
+            onClose={() => setCurrentViewTarget(null)}
             onReact={emoji => {
               onReactToStory(emoji, story);
               if (!isGroupStory) {
-                setHasStoryViewsNRepliesModal(false);
+                setCurrentViewTarget(null);
                 showToast(ToastType.StoryReact);
               }
               setReactionEmoji(emoji);
             }}
             onReply={(message, mentions, replyTimestamp) => {
               if (!isGroupStory) {
-                setHasStoryViewsNRepliesModal(false);
+                setCurrentViewTarget(null);
                 showToast(ToastType.StoryReply);
               }
               onReplyToStory(message, mentions, replyTimestamp, story);
@@ -836,6 +943,10 @@ export const StoryViewer = ({
             sortedGroupMembers={group?.sortedGroupMembers}
             storyPreviewAttachment={attachment}
             views={views}
+            viewTarget={currentViewTarget}
+            onChangeViewTarget={setCurrentViewTarget}
+            deleteGroupStoryReply={deleteGroupStoryReply}
+            deleteGroupStoryReplyForEveryone={deleteGroupStoryReplyForEveryone}
           />
         )}
         {hasConfirmHideStory && (

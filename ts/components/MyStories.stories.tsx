@@ -10,8 +10,9 @@ import { within, userEvent } from '@storybook/testing-library';
 
 import type { PropsType } from './MyStories';
 import enMessages from '../../_locales/en/messages.json';
-import { MY_STORIES_ID } from '../types/Stories';
+import { MY_STORY_ID } from '../types/Stories';
 import { MyStories } from './MyStories';
+import { SendStatus } from '../messages/MessageSendState';
 import { getDefaultConversation } from '../test-both/helpers/getDefaultConversation';
 import { getFakeMyStory } from '../test-both/helpers/getFakeStory';
 import { setupI18n } from '../util/setupI18n';
@@ -41,10 +42,14 @@ export default {
     ourConversationId: {
       defaultValue: getDefaultConversation().id,
     },
+    hasViewReceiptSetting: {
+      control: 'boolean',
+      defaultValue: false,
+    },
     queueStoryDownload: {
       action: true,
     },
-    renderStoryViewer: {
+    retrySend: {
       action: true,
     },
     viewStory: { action: true },
@@ -85,7 +90,7 @@ const interactionTest: PlayFunction<ReactFramework, PropsType> = async ({
 
 export const SingleListStories = Template.bind({});
 SingleListStories.args = {
-  myStories: [getFakeMyStory(MY_STORIES_ID)],
+  myStories: [getFakeMyStory(MY_STORY_ID)],
 };
 SingleListStories.play = interactionTest;
 SingleListStories.story = {
@@ -95,7 +100,7 @@ SingleListStories.story = {
 export const MultiListStories = Template.bind({});
 MultiListStories.args = {
   myStories: [
-    getFakeMyStory(MY_STORIES_ID),
+    getFakeMyStory(MY_STORY_ID),
     getFakeMyStory(uuid(), 'Cool Peeps'),
     getFakeMyStory(uuid(), 'Family'),
   ],
@@ -104,3 +109,30 @@ MultiListStories.play = interactionTest;
 MultiListStories.story = {
   name: 'Multiple distribution lists',
 };
+
+export const FailedSentStory = Template.bind({});
+{
+  const myStory = getFakeMyStory(MY_STORY_ID);
+  FailedSentStory.args = {
+    myStories: [
+      {
+        ...myStory,
+        stories: myStory.stories.map((story, index) => {
+          if (index === 0) {
+            return {
+              ...story,
+              sendState: [
+                {
+                  recipient: getDefaultConversation(),
+                  status: SendStatus.Failed,
+                },
+              ],
+            };
+          }
+          return story;
+        }),
+      },
+      getFakeMyStory(uuid(), 'Cool Peeps'),
+    ],
+  };
+}

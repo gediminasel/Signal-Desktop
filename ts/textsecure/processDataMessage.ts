@@ -28,7 +28,7 @@ import type {
 import { WarnOnlyError } from './Errors';
 import { GiftBadgeStates } from '../components/conversation/Message';
 import { APPLICATION_OCTET_STREAM, stringToMIMEType } from '../types/MIME';
-import { SECOND } from '../util/durations';
+import { SECOND, DurationInSeconds } from '../util/durations';
 
 const FLAGS = Proto.DataMessage.Flags;
 export const ATTACHMENT_MAX = 32;
@@ -267,10 +267,10 @@ export function processGiftBadge(
   };
 }
 
-export async function processDataMessage(
+export function processDataMessage(
   message: Proto.IDataMessage,
   envelopeTimestamp: number
-): Promise<ProcessedDataMessage> {
+): ProcessedDataMessage {
   /* eslint-disable no-bitwise */
 
   // Now that its decrypted, validate the message and clean it up for consumer
@@ -299,7 +299,7 @@ export async function processDataMessage(
     group: processGroupContext(message.group),
     groupV2: processGroupV2Context(message.groupV2),
     flags: message.flags ?? 0,
-    expireTimer: message.expireTimer ?? 0,
+    expireTimer: DurationInSeconds.fromSeconds(message.expireTimer ?? 0),
     profileKey:
       message.profileKey && message.profileKey.length > 0
         ? Bytes.toBase64(message.profileKey)

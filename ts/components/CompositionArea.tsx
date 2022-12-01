@@ -6,14 +6,14 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { get } from 'lodash';
 import classNames from 'classnames';
 import type {
-  BodyRangeType,
-  BodyRangesType,
+  DraftBodyRangesType,
   LocalizerType,
   ThemeType,
 } from '../types/Util';
 import type { ErrorDialogAudioRecorderType } from '../state/ducks/audioRecorder';
 import { RecordingState } from '../state/ducks/audioRecorder';
 import type { HandleAttachmentsProcessingArgsType } from '../util/handleAttachmentsProcessing';
+import type { imageToBlurHash } from '../util/imageToBlurHash';
 import { Spinner } from './Spinner';
 import type {
   Props as EmojiButtonProps,
@@ -57,7 +57,6 @@ import {
   useKeyboardShortcuts,
 } from '../hooks/useKeyboardShortcuts';
 import { MediaEditor } from './MediaEditor';
-import { IMAGE_PNG } from '../types/MIME';
 import { isImageTypeSupported } from '../util/GoogleChrome';
 import * as KeyboardLayout from '../services/keyboardLayout';
 
@@ -92,15 +91,18 @@ export type OwnProps = Readonly<{
   ) => unknown;
   compositionApi?: MutableRefObject<CompositionAPIType>;
   conversationId: string;
+  uuid?: string;
   draftAttachments: ReadonlyArray<AttachmentDraftType>;
   errorDialogAudioRecorderType?: ErrorDialogAudioRecorderType;
   errorRecording: (e: ErrorDialogAudioRecorderType) => unknown;
   groupAdmins: Array<ConversationType>;
   groupVersion?: 1 | 2;
   i18n: LocalizerType;
+  imageToBlurHash: typeof imageToBlurHash;
   isFetchingUUID?: boolean;
   isGroupV1AndDisabled?: boolean;
   isMissingMandatoryProfileSharing?: boolean;
+  isSignalConversation?: boolean;
   recordingState: RecordingState;
   isSMSOnly?: boolean;
   left?: boolean;
@@ -114,7 +116,7 @@ export type OwnProps = Readonly<{
   onSelectMediaQuality(isHQ: boolean): unknown;
   onSendMessage(options: {
     draftAttachments?: ReadonlyArray<AttachmentDraftType>;
-    mentions?: BodyRangesType;
+    mentions?: DraftBodyRangesType;
     message?: string;
     timestamp?: number;
     voiceNoteAttachment?: InMemoryAttachmentDraftType;
@@ -173,9 +175,11 @@ export const CompositionArea = ({
   conversationId,
   i18n,
   onSendMessage,
+  imageToBlurHash,
   processAttachments,
   removeAttachment,
   theme,
+  isSignalConversation,
 
   // AttachmentList
   draftAttachments,
@@ -273,7 +277,7 @@ export const CompositionArea = ({
   }, [inputApiRef, setLarge]);
 
   const handleSubmit = useCallback(
-    (message: string, mentions: Array<BodyRangeType>, timestamp: number) => {
+    (message: string, mentions: DraftBodyRangesType, timestamp: number) => {
       emojiButtonRef.current?.close();
       onSendMessage({
         draftAttachments,
@@ -481,6 +485,11 @@ export const CompositionArea = ({
     };
   }, [setLarge]);
 
+  if (isSignalConversation) {
+    // TODO DESKTOP-4547
+    return <div />;
+  }
+
   if (
     isBlocked ||
     areWePending ||
@@ -587,11 +596,14 @@ export const CompositionArea = ({
         <MediaEditor
           i18n={i18n}
           imageSrc={attachmentToEdit.url}
+          imageToBlurHash={imageToBlurHash}
+          isSending={false}
           onClose={() => setAttachmentToEdit(undefined)}
-          onDone={data => {
+          onDone={({ data, contentType, blurHash }) => {
             const newAttachment = {
               ...attachmentToEdit,
-              contentType: IMAGE_PNG,
+              contentType,
+              blurHash,
               data,
               size: data.byteLength,
             };

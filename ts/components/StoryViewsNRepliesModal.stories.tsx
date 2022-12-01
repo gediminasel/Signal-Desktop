@@ -4,6 +4,7 @@
 import type { Meta, Story } from '@storybook/react';
 import React from 'react';
 
+import { useArgs } from '@storybook/addons';
 import type { PropsType } from './StoryViewsNRepliesModal';
 import * as durations from '../util/durations';
 import enMessages from '../../_locales/en/messages.json';
@@ -14,6 +15,7 @@ import { UUID } from '../types/UUID';
 import { fakeAttachment } from '../test-both/helpers/fakeAttachment';
 import { getDefaultConversation } from '../test-both/helpers/getDefaultConversation';
 import { setupI18n } from '../util/setupI18n';
+import { StoryViewTargetType } from '../types/Stories';
 
 const i18n = setupI18n('en', enMessages);
 
@@ -28,10 +30,12 @@ export default {
       defaultValue: true,
     },
     getPreferredBadge: { action: true },
-    hasReadReceiptSetting: {
+    hasViewReceiptSetting: {
+      control: 'boolean',
       defaultValue: true,
     },
     hasViewsCapability: {
+      control: 'boolean',
       defaultValue: false,
     },
     i18n: {
@@ -63,6 +67,12 @@ export default {
     },
     views: {
       defaultValue: [],
+    },
+    viewTarget: {
+      defaultValue: StoryViewTargetType.Views,
+    },
+    onChangeViewTarget: {
+      action: true,
     },
   },
 } as Meta;
@@ -161,9 +171,21 @@ function getViewsAndReplies() {
   };
 }
 
-const Template: Story<PropsType> = args => (
-  <StoryViewsNRepliesModal {...args} />
-);
+const Template: Story<PropsType> = args => {
+  const [, updateArgs] = useArgs();
+
+  function onChangeViewTarget(viewTarget: StoryViewTargetType) {
+    args.onChangeViewTarget(viewTarget);
+    updateArgs({ viewTarget });
+  }
+
+  return (
+    <StoryViewsNRepliesModal
+      {...args}
+      onChangeViewTarget={onChangeViewTarget}
+    />
+  );
+};
 
 export const CanReply = Template.bind({});
 CanReply.args = {};
@@ -187,7 +209,7 @@ NoViews.storyName = 'No views';
 
 export const InAGroupNoReplies = Template.bind({});
 InAGroupNoReplies.args = {
-  isGroupStory: true,
+  group: {},
 };
 InAGroupNoReplies.storyName = 'In a group (no replies)';
 
@@ -196,7 +218,7 @@ export const InAGroup = Template.bind({});
   const { views, replies } = getViewsAndReplies();
   InAGroup.args = {
     hasViewsCapability: true,
-    isGroupStory: true,
+    group: {},
     replies,
     views,
   };
@@ -213,7 +235,7 @@ export const InAGroupCantReply = Template.bind({});
   const { views, replies } = getViewsAndReplies();
   InAGroupCantReply.args = {
     canReply: false,
-    isGroupStory: true,
+    group: {},
     replies,
     views,
   };
@@ -223,19 +245,29 @@ InAGroupCantReply.storyName = "In a group (can't reply)";
 export const ReadReceiptsTurnedOff = Template.bind({});
 ReadReceiptsTurnedOff.args = {
   canReply: false,
-  hasReadReceiptSetting: false,
+  hasViewReceiptSetting: false,
   hasViewsCapability: true,
   views: getViewsAndReplies().views,
 };
 ReadReceiptsTurnedOff.storyName = 'Read receipts turned off';
 
+export const InAGroupButLeft = Template.bind({});
+{
+  const { replies } = getViewsAndReplies();
+  InAGroupButLeft.args = {
+    group: { left: true },
+    replies,
+  };
+}
+InAGroupButLeft.storyName = 'In a group (but left)';
+
 export const GroupReadReceiptsOff = Template.bind({});
 {
   const { views, replies } = getViewsAndReplies();
   GroupReadReceiptsOff.args = {
-    hasReadReceiptSetting: false,
+    hasViewReceiptSetting: false,
     hasViewsCapability: true,
-    isGroupStory: true,
+    group: {},
     replies,
     views,
   };

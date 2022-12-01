@@ -6,7 +6,10 @@ import React, { useState } from 'react';
 
 import { Button, ButtonIconType, ButtonVariant } from '../../Button';
 import { Tooltip } from '../../Tooltip';
-import type { ConversationType } from '../../../state/ducks/conversations';
+import type {
+  ConversationType,
+  ShowConversationType,
+} from '../../../state/ducks/conversations';
 import type { PreferredBadgeSelectorType } from '../../../state/selectors/badges';
 import type { SmartChooseGroupMembersModalPropsType } from '../../../state/smart/ChooseGroupMembersModal';
 import type { SmartConfirmAdditionsModalPropsType } from '../../../state/smart/ConfirmAdditionsModal';
@@ -17,6 +20,7 @@ import type { LocalizerType, ThemeType } from '../../../types/Util';
 import type { MediaItemType } from '../../../types/MediaItem';
 import type { BadgeType } from '../../../badges/types';
 import { missingCaseError } from '../../../util/missingCaseError';
+import { DurationInSeconds } from '../../../util/durations';
 
 import { DisappearingTimerSelect } from '../../DisappearingTimerSelect';
 
@@ -71,10 +75,12 @@ export type StateProps = {
   isGroup: boolean;
   loadRecentMediaItems: (limit: number) => void;
   groupsInCommon: Array<ConversationType>;
+  maxGroupSize: number;
+  maxRecommendedGroupSize: number;
   memberships: Array<GroupV2Membership>;
   pendingApprovalMemberships: ReadonlyArray<GroupV2RequestingMembership>;
   pendingMemberships: ReadonlyArray<GroupV2PendingMembership>;
-  setDisappearingMessages: (seconds: number) => void;
+  setDisappearingMessages: (seconds: DurationInSeconds) => void;
   showAllMedia: () => void;
   showChatColorEditor: () => void;
   showGroupLinkManagement: () => void;
@@ -113,6 +119,7 @@ type ActionProps = {
   replaceAvatar: ReplaceAvatarActionType;
   saveAvatarToDisk: SaveAvatarToDiskActionType;
   showContactModal: (contactId: string, conversationId?: string) => void;
+  showConversation: ShowConversationType;
   toggleSafetyNumberModal: (conversationId: string) => unknown;
   searchInConversation: (id: string) => unknown;
   toggleAddUserToAnotherGroupModal: (contactId?: string) => void;
@@ -137,6 +144,8 @@ export const ConversationDetails: React.ComponentType<Props> = ({
   isGroup,
   loadRecentMediaItems,
   memberships,
+  maxGroupSize,
+  maxRecommendedGroupSize,
   onBlock,
   onLeave,
   onOutgoingAudioCallInConversation,
@@ -155,6 +164,7 @@ export const ConversationDetails: React.ComponentType<Props> = ({
   showChatColorEditor,
   showContactModal,
   showConversationNotificationsSettings,
+  showConversation,
   showGroupLinkManagement,
   showGroupV2Permissions,
   showLightboxForMedia,
@@ -267,6 +277,8 @@ export const ConversationDetails: React.ComponentType<Props> = ({
               setAddGroupMembersRequestState(RequestState.InactiveWithError);
             }
           }}
+          maxGroupSize={maxGroupSize}
+          maxRecommendedGroupSize={maxRecommendedGroupSize}
           onClose={() => {
             setModalState(ModalState.NothingOpen);
             setEditGroupAttributesRequestState(RequestState.Inactive);
@@ -403,7 +415,7 @@ export const ConversationDetails: React.ComponentType<Props> = ({
             right={
               <DisappearingTimerSelect
                 i18n={i18n}
-                value={conversation.expireTimer || 0}
+                value={conversation.expireTimer || DurationInSeconds.ZERO}
                 onChange={setDisappearingMessages}
               />
             }
@@ -534,6 +546,7 @@ export const ConversationDetails: React.ComponentType<Props> = ({
           i18n={i18n}
           groupsInCommon={groupsInCommon}
           toggleAddUserToAnotherGroupModal={toggleAddUserToAnotherGroupModal}
+          showConversation={showConversation}
         />
       )}
 

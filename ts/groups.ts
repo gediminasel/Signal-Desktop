@@ -18,11 +18,12 @@ import {
   getCheckedCredentialsForToday,
   maybeFetchNewCredentials,
 } from './services/groupCredentialFetcher';
+import { storageServiceUploadJob } from './services/storage';
 import dataInterface from './sql/Client';
 import { toWebSafeBase64, fromWebSafeBase64 } from './util/webSafeBase64';
 import { assertDev, strictAssert } from './util/assert';
 import { isMoreRecentThan } from './util/timestamp';
-import * as durations from './util/durations';
+import { MINUTE, DurationInSeconds } from './util/durations';
 import { normalizeUuid } from './util/normalizeUuid';
 import { dropNull } from './util/dropNull';
 import type {
@@ -452,7 +453,10 @@ async function uploadAvatar(
       key,
     };
   } catch (error) {
-    log.warn(`uploadAvatar/${logId} Failed to upload avatar`, error.stack);
+    log.warn(
+      `uploadAvatar/${logId} Failed to upload avatar`,
+      Errors.toLogFormat(error)
+    );
     throw error;
   }
 }
@@ -853,7 +857,7 @@ export function buildDisappearingMessagesTimerChange({
   expireTimer,
   group,
 }: {
-  expireTimer: number;
+  expireTimer: DurationInSeconds;
   group: ConversationAttributesType;
 }): Proto.GroupChange.Actions {
   const actions = new Proto.GroupChange.Actions();
@@ -1457,7 +1461,7 @@ export async function modifyGroupV2({
   }
 
   const startTime = Date.now();
-  const timeoutTime = startTime + durations.MINUTE;
+  const timeoutTime = startTime + MINUTE;
 
   const MAX_ATTEMPTS = 5;
 
@@ -1724,7 +1728,7 @@ export async function createGroupV2(
   options: Readonly<{
     name: string;
     avatar: undefined | Uint8Array;
-    expireTimer: undefined | number;
+    expireTimer: undefined | DurationInSeconds;
     conversationIds: Array<string>;
     avatars?: Array<AvatarDataType>;
     refreshedCredentials?: boolean;
@@ -1933,7 +1937,7 @@ export async function createGroupV2(
   );
 
   await conversation.queueJob('storageServiceUploadJob', async () => {
-    await window.Signal.Services.storageServiceUploadJob();
+    await storageServiceUploadJob();
   });
 
   const timestamp = Date.now();
@@ -2390,7 +2394,7 @@ export async function initiateMigrationToGroupV2(
       } catch (error) {
         log.error(
           `initiateMigrationToGroupV2/${logId}: Error creating group:`,
-          error.stack
+          Errors.toLogFormat(error)
         );
 
         throw error;
@@ -2472,7 +2476,7 @@ export async function waitThenRespondToGroupV2Migration(
     } catch (error) {
       log.error(
         `waitThenRespondToGroupV2Migration/${conversation.idForLogging()}: respondToGroupV2Migration failure:`,
-        error && error.stack ? error.stack : error
+        Errors.toLogFormat(error)
       );
     }
   });
@@ -2903,7 +2907,7 @@ type MaybeUpdatePropsType = Readonly<{
   groupChange?: WrappedGroupChangeType;
 }>;
 
-const FIVE_MINUTES = 5 * durations.MINUTE;
+const FIVE_MINUTES = 5 * MINUTE;
 
 export async function waitThenMaybeUpdateGroup(
   options: MaybeUpdatePropsType,
@@ -2945,7 +2949,7 @@ export async function waitThenMaybeUpdateGroup(
     } catch (error) {
       log.error(
         `waitThenMaybeUpdateGroup/${conversation.idForLogging()}: maybeUpdateGroup failure:`,
-        error && error.stack ? error.stack : error
+        Errors.toLogFormat(error)
       );
     }
   });
@@ -2983,7 +2987,7 @@ export async function maybeUpdateGroup(
   } catch (error) {
     log.error(
       `maybeUpdateGroup/${logId}: Failed to update group:`,
-      error && error.stack ? error.stack : error
+      Errors.toLogFormat(error)
     );
     throw error;
   }
@@ -3909,7 +3913,7 @@ async function integrateGroupChanges({
       } catch (error) {
         log.error(
           `integrateGroupChanges/${logId}: Failed to apply change log, continuing to apply remaining change logs.`,
-          error && error.stack ? error.stack : error
+          Errors.toLogFormat(error)
         );
       }
     }
@@ -4624,7 +4628,7 @@ function extractDiffs({
       Boolean(current.expireTimer) &&
       old.expireTimer !== current.expireTimer)
   ) {
-    const expireTimer = current.expireTimer || 0;
+    const expireTimer = current.expireTimer || DurationInSeconds.ZERO;
     log.info(
       `extractDiffs/${logId}: generating change notifcation for new ${expireTimer} timer`
     );
@@ -4976,9 +4980,9 @@ async function applyGroupChange({
       disappearingMessagesTimer &&
       disappearingMessagesTimer.content === 'disappearingMessagesDuration'
     ) {
-      result.expireTimer = dropNull(
-        disappearingMessagesTimer.disappearingMessagesDuration
-      );
+      const duration = disappearingMessagesTimer.disappearingMessagesDuration;
+      result.expireTimer =
+        duration == null ? undefined : DurationInSeconds.fromSeconds(duration);
     } else {
       log.warn(
         `applyGroupChange/${logId}: Clearing group expireTimer due to missing data.`
@@ -5286,7 +5290,7 @@ export async function applyNewAvatar(
   } catch (error) {
     log.warn(
       `applyNewAvatar/${logId} Failed to handle avatar, clearing it`,
-      error.stack
+      Errors.toLogFormat(error)
     );
     if (result.avatar && result.avatar.path) {
       await window.Signal.Migrations.deleteAttachmentData(result.avatar.path);
@@ -5334,9 +5338,9 @@ async function applyGroupState({
     disappearingMessagesTimer &&
     disappearingMessagesTimer.content === 'disappearingMessagesDuration'
   ) {
-    result.expireTimer = dropNull(
-      disappearingMessagesTimer.disappearingMessagesDuration
-    );
+    const duration = disappearingMessagesTimer.disappearingMessagesDuration;
+    result.expireTimer =
+      duration == null ? undefined : DurationInSeconds.fromSeconds(duration);
   } else {
     result.expireTimer = undefined;
   }
@@ -5621,7 +5625,7 @@ function decryptGroupChange(
     } catch (error) {
       log.warn(
         `decryptGroupChange/${logId}: Unable to decrypt sourceUuid.`,
-        error && error.stack ? error.stack : error
+        Errors.toLogFormat(error)
       );
     }
 
@@ -5676,7 +5680,7 @@ function decryptGroupChange(
       } catch (error) {
         log.warn(
           `decryptGroupChange/${logId}: Unable to decrypt deleteMembers.deletedUserId. Dropping member.`,
-          error && error.stack ? error.stack : error
+          Errors.toLogFormat(error)
         );
         return null;
       }
@@ -5710,7 +5714,7 @@ function decryptGroupChange(
       } catch (error) {
         log.warn(
           `decryptGroupChange/${logId}: Unable to decrypt modifyMemberRole.userId. Dropping member.`,
-          error && error.stack ? error.stack : error
+          Errors.toLogFormat(error)
         );
         return null;
       }
@@ -5843,7 +5847,7 @@ function decryptGroupChange(
       } catch (error) {
         log.warn(
           `decryptGroupChange/${logId}: Unable to decrypt deletePendingMembers.deletedUserId. Dropping member.`,
-          error && error.stack ? error.stack : error
+          Errors.toLogFormat(error)
         );
         return null;
       }
@@ -6021,7 +6025,7 @@ function decryptGroupChange(
       } catch (error) {
         log.warn(
           `decryptGroupChange/${logId}: Unable to decrypt modifyTitle.title`,
-          error && error.stack ? error.stack : error
+          Errors.toLogFormat(error)
         );
       }
     } else {
@@ -6048,7 +6052,7 @@ function decryptGroupChange(
       } catch (error) {
         log.warn(
           `decryptGroupChange/${logId}: Unable to decrypt modifyDisappearingMessagesTimer.timer`,
-          error && error.stack ? error.stack : error
+          Errors.toLogFormat(error)
         );
       }
     } else {
@@ -6151,7 +6155,7 @@ function decryptGroupChange(
         } catch (error) {
           log.warn(
             `decryptGroupChange/${logId}: Unable to decrypt deletePendingApproval.deletedUserId. Dropping member.`,
-            error && error.stack ? error.stack : error
+            Errors.toLogFormat(error)
           );
           return null;
         }
@@ -6189,7 +6193,7 @@ function decryptGroupChange(
         } catch (error) {
           log.warn(
             `decryptGroupChange/${logId}: Unable to decrypt promoteAdminApproval.userId. Dropping member.`,
-            error && error.stack ? error.stack : error
+            Errors.toLogFormat(error)
           );
           return null;
         }
@@ -6231,7 +6235,7 @@ function decryptGroupChange(
       } catch (error) {
         log.warn(
           `decryptGroupChange/${logId}: Unable to decrypt modifyDescription.descriptionBytes`,
-          error && error.stack ? error.stack : error
+          Errors.toLogFormat(error)
         );
       }
     } else {
@@ -6364,7 +6368,7 @@ function decryptGroupState(
     } catch (error) {
       log.warn(
         `decryptGroupState/${logId}: Unable to decrypt title. Clearing it.`,
-        error && error.stack ? error.stack : error
+        Errors.toLogFormat(error)
       );
     }
   }
@@ -6387,7 +6391,7 @@ function decryptGroupState(
     } catch (error) {
       log.warn(
         `decryptGroupState/${logId}: Unable to decrypt disappearing message timer. Clearing it.`,
-        error && error.stack ? error.stack : error
+        Errors.toLogFormat(error)
       );
     }
   }
@@ -6471,7 +6475,7 @@ function decryptGroupState(
     } catch (error) {
       log.warn(
         `decryptGroupState/${logId}: Unable to decrypt descriptionBytes. Clearing it.`,
-        error && error.stack ? error.stack : error
+        Errors.toLogFormat(error)
       );
     }
   }
@@ -6536,7 +6540,7 @@ function decryptMember(
   } catch (error) {
     log.warn(
       `decryptMember/${logId}: Unable to decrypt member userid. Dropping member.`,
-      error && error.stack ? error.stack : error
+      Errors.toLogFormat(error)
     );
     return undefined;
   }
@@ -6607,7 +6611,7 @@ function decryptMemberPendingProfileKey(
   } catch (error) {
     log.warn(
       `decryptMemberPendingProfileKey/${logId}: Unable to decrypt pending member addedByUserId. Dropping member.`,
-      error && error.stack ? error.stack : error
+      Errors.toLogFormat(error)
     );
     return undefined;
   }
@@ -6647,7 +6651,7 @@ function decryptMemberPendingProfileKey(
   } catch (error) {
     log.warn(
       `decryptMemberPendingProfileKey/${logId}: Unable to decrypt pending member userId. Dropping member.`,
-      error && error.stack ? error.stack : error
+      Errors.toLogFormat(error)
     );
     return undefined;
   }
@@ -6672,7 +6676,7 @@ function decryptMemberPendingProfileKey(
     } catch (error) {
       log.warn(
         `decryptMemberPendingProfileKey/${logId}: Unable to decrypt pending member profileKey. Dropping profileKey.`,
-        error && error.stack ? error.stack : error
+        Errors.toLogFormat(error)
       );
     }
 
@@ -6734,7 +6738,7 @@ function decryptMemberPendingAdminApproval(
   } catch (error) {
     log.warn(
       `decryptMemberPendingAdminApproval/${logId}: Unable to decrypt pending member userId. Dropping member.`,
-      error && error.stack ? error.stack : error
+      Errors.toLogFormat(error)
     );
     return undefined;
   }
@@ -6759,7 +6763,7 @@ function decryptMemberPendingAdminApproval(
     } catch (error) {
       log.warn(
         `decryptMemberPendingAdminApproval/${logId}: Unable to decrypt profileKey. Dropping profileKey.`,
-        error && error.stack ? error.stack : error
+        Errors.toLogFormat(error)
       );
     }
 

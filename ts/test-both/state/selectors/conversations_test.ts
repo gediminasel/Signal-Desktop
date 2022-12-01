@@ -51,6 +51,7 @@ import type { UUIDStringType } from '../../../types/UUID';
 import enMessages from '../../../../_locales/en/messages.json';
 import {
   getDefaultConversation,
+  getDefaultGroup,
   getDefaultConversationWithUuid,
 } from '../../helpers/getDefaultConversation';
 import {
@@ -59,7 +60,10 @@ import {
   defaultSetGroupMetadataComposerState,
 } from '../../helpers/defaultComposerStates';
 
-describe('both/state/selectors/conversations', () => {
+describe('both/state/selectors/conversations-extra', () => {
+  const UUID_1 = UUID.generate().toString();
+  const UUID_2 = UUID.generate().toString();
+
   const getEmptyRootState = (): StateType => {
     return rootReducer(undefined, noopAction());
   };
@@ -67,6 +71,16 @@ describe('both/state/selectors/conversations', () => {
   function makeConversation(id: string): ConversationType {
     const title = `${id} title`;
     return getDefaultConversation({
+      id,
+      searchableTitle: title,
+      title,
+      titleNoDefault: title,
+    });
+  }
+
+  function makeGroup(id: string): ConversationType {
+    const title = `${id} title`;
+    return getDefaultGroup({
       id,
       searchableTitle: title,
       title,
@@ -301,32 +315,32 @@ describe('both/state/selectors/conversations', () => {
     });
 
     it('returns all conversations stopping send', () => {
-      const convo1 = makeConversation('abc');
-      const convo2 = makeConversation('def');
+      const convo1 = makeConversation(UUID_1);
+      const convo2 = makeConversation(UUID_2);
       const state: StateType = {
         ...getEmptyRootState(),
         conversations: {
           ...getEmptyState(),
           conversationLookup: {
-            def: convo2,
-            abc: convo1,
+            [UUID_1]: convo1,
+            [UUID_2]: convo2,
           },
           verificationDataByConversation: {
             'convo a': {
               type: ConversationVerificationState.PendingVerification as const,
-              uuidsNeedingVerification: ['abc'],
+              uuidsNeedingVerification: [UUID_1],
             },
             'convo b': {
               type: ConversationVerificationState.PendingVerification as const,
-              uuidsNeedingVerification: ['def', 'abc'],
+              uuidsNeedingVerification: [UUID_2, UUID_1],
             },
           },
         },
       };
 
       assert.sameDeepMembers(getConversationUuidsStoppingSend(state), [
-        'abc',
-        'def',
+        UUID_1,
+        UUID_2,
       ]);
 
       assert.sameDeepMembers(getConversationsStoppingSend(state), [
@@ -532,15 +546,13 @@ describe('both/state/selectors/conversations', () => {
           title: 'A',
         },
         'convo-2': {
-          ...makeConversation('convo-2'),
-          type: 'group',
+          ...makeGroup('convo-2'),
           isGroupV1AndDisabled: true,
           name: '2',
           title: 'Should Be Dropped (GV1)',
         },
         'convo-3': {
-          ...makeConversation('convo-3'),
-          type: 'group',
+          ...makeGroup('convo-3'),
           name: 'B',
           title: 'B',
         },
@@ -621,10 +633,8 @@ describe('both/state/selectors/conversations', () => {
               profileSharing: false,
             },
             'convo-1': {
-              ...makeConversation('convo-1'),
-              type: 'group' as const,
+              ...makeGroup('convo-1'),
               name: 'Friends!',
-              sharedGroupNames: [],
             },
             'convo-2': {
               ...makeConversation('convo-2'),
@@ -704,10 +714,8 @@ describe('both/state/selectors/conversations', () => {
               name: 'Me!',
             },
             'convo-1': {
-              ...makeConversation('convo-1'),
-              type: 'group' as const,
+              ...makeGroup('convo-1'),
               name: 'Friends!',
-              sharedGroupNames: [],
             },
             'convo-2': {
               ...makeConversation('convo-2'),
@@ -787,15 +795,11 @@ describe('both/state/selectors/conversations', () => {
               name: 'Me!',
             },
             'convo-1': {
-              ...makeConversation('convo-1'),
-              type: 'group' as const,
+              ...makeGroup('convo-1'),
               name: 'Friends!',
-              sharedGroupNames: [],
             },
             'convo-2': {
-              ...makeConversation('convo-2'),
-              type: 'group' as const,
-              sharedGroupNames: [],
+              ...makeGroup('convo-2'),
             },
           },
         },
@@ -813,22 +817,16 @@ describe('both/state/selectors/conversations', () => {
           ...getEmptyState(),
           conversationLookup: {
             'convo-0': {
-              ...makeConversation('convo-0'),
-              type: 'group' as const,
+              ...makeGroup('convo-0'),
               name: 'Family!',
               isBlocked: true,
-              sharedGroupNames: [],
             },
             'convo-1': {
-              ...makeConversation('convo-1'),
-              type: 'group' as const,
+              ...makeGroup('convo-1'),
               name: 'Friends!',
-              sharedGroupNames: [],
             },
             'convo-2': {
-              ...makeConversation('convo-2'),
-              type: 'group' as const,
-              sharedGroupNames: [],
+              ...makeGroup('convo-2'),
             },
           },
         },
@@ -883,8 +881,7 @@ describe('both/state/selectors/conversations', () => {
           title: 'Should Be Dropped (no name, no profile sharing)',
         },
         'convo-3': {
-          ...makeConversation('convo-3'),
-          type: 'group',
+          ...makeGroup('convo-3'),
           title: 'Should Be Dropped (group)',
         },
         'convo-4': {
@@ -980,39 +977,29 @@ describe('both/state/selectors/conversations', () => {
               title: 'Should be dropped (contact)',
             },
             'convo-3': {
-              ...makeConversation('convo-3'),
-              type: 'group',
+              ...makeGroup('convo-3'),
               name: 'Hello World',
               title: 'Hello World',
-              sharedGroupNames: [],
             },
             'convo-4': {
-              ...makeConversation('convo-4'),
-              type: 'group',
+              ...makeGroup('convo-4'),
               isBlocked: true,
               title: 'Should be dropped (blocked)',
-              sharedGroupNames: [],
             },
             'convo-5': {
-              ...makeConversation('convo-5'),
-              type: 'group',
+              ...makeGroup('convo-5'),
               title: 'Unknown Group',
-              sharedGroupNames: [],
             },
             'convo-6': {
-              ...makeConversation('convo-6'),
-              type: 'group',
+              ...makeGroup('convo-6'),
               name: 'Signal',
               title: 'Signal',
-              sharedGroupNames: [],
             },
             'convo-7': {
-              ...makeConversation('convo-7'),
+              ...makeGroup('convo-7'),
               profileSharing: false,
-              type: 'group',
               name: 'Signal Fake',
               title: 'Signal Fake',
-              sharedGroupNames: [],
             },
           },
           composer: {
@@ -1067,10 +1054,8 @@ describe('both/state/selectors/conversations', () => {
               title: 'Should be dropped (has no name)',
             },
             'convo-3': {
-              ...makeConversation('convo-3'),
-              type: 'group',
+              ...makeGroup('convo-3'),
               title: 'Should Be Dropped (group)',
-              sharedGroupNames: [],
             },
             'convo-4': {
               ...makeConversation('convo-4'),
@@ -1651,17 +1636,18 @@ describe('both/state/selectors/conversations', () => {
 
   describe('#getContactNameColorSelector', () => {
     it('returns the right color order sorted by UUID ASC', () => {
-      const group = makeConversation('group');
-      group.type = 'group';
-      group.sortedGroupMembers = [
-        makeConversationWithUuid('fff'),
-        makeConversationWithUuid('f00'),
-        makeConversationWithUuid('e00'),
-        makeConversationWithUuid('d00'),
-        makeConversationWithUuid('c00'),
-        makeConversationWithUuid('b00'),
-        makeConversationWithUuid('a00'),
-      ];
+      const group: ConversationType = {
+        ...makeGroup('group'),
+        sortedGroupMembers: [
+          makeConversationWithUuid('fff'),
+          makeConversationWithUuid('f00'),
+          makeConversationWithUuid('e00'),
+          makeConversationWithUuid('d00'),
+          makeConversationWithUuid('c00'),
+          makeConversationWithUuid('b00'),
+          makeConversationWithUuid('a00'),
+        ],
+      };
       const state = {
         ...getEmptyRootState(),
         conversations: {

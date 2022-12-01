@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import * as React from 'react';
-import * as moment from 'moment';
 import { times } from 'lodash';
 import { v4 as uuid } from 'uuid';
 import { text, boolean, number } from '@storybook/addon-knobs';
 import { action } from '@storybook/addon-actions';
 
 import { setupI18n } from '../../util/setupI18n';
+import { DurationInSeconds } from '../../util/durations';
 import enMessages from '../../../_locales/en/messages.json';
 import type { PropsType } from './Timeline';
 import { Timeline } from './Timeline';
@@ -47,6 +47,7 @@ const items: Record<string, TimelineItemType> = {
       canDownload: true,
       canReact: true,
       canReply: true,
+      canReplyPrivately: true,
       canRetry: true,
       canRetryDeleteForEveryone: true,
       conversationColor: 'forest',
@@ -59,7 +60,6 @@ const items: Record<string, TimelineItemType> = {
       isMessageRequestAccepted: true,
       previews: [],
       readStatus: ReadStatus.Read,
-      receivedAt: Date.now(),
       text: '🔥',
       textDirection: TextDirection.Default,
       timestamp: Date.now(),
@@ -74,6 +74,7 @@ const items: Record<string, TimelineItemType> = {
       canDownload: true,
       canReact: true,
       canReply: true,
+      canReplyPrivately: true,
       canRetry: true,
       canRetryDeleteForEveryone: true,
       conversationColor: 'forest',
@@ -86,7 +87,6 @@ const items: Record<string, TimelineItemType> = {
       isMessageRequestAccepted: true,
       previews: [],
       readStatus: ReadStatus.Read,
-      receivedAt: Date.now(),
       text: 'Hello there from the new world! http://somewhere.com',
       textDirection: TextDirection.Default,
       timestamp: Date.now(),
@@ -115,6 +115,7 @@ const items: Record<string, TimelineItemType> = {
       canDownload: true,
       canReact: true,
       canReply: true,
+      canReplyPrivately: true,
       canRetry: true,
       canRetryDeleteForEveryone: true,
       conversationColor: 'crimson',
@@ -127,7 +128,6 @@ const items: Record<string, TimelineItemType> = {
       isMessageRequestAccepted: true,
       previews: [],
       readStatus: ReadStatus.Read,
-      receivedAt: Date.now(),
       text: 'Hello there from the new world!',
       textDirection: TextDirection.Default,
       timestamp: Date.now(),
@@ -138,7 +138,7 @@ const items: Record<string, TimelineItemType> = {
     type: 'timerNotification',
     data: {
       disabled: false,
-      expireTimer: moment.duration(2, 'hours').asSeconds(),
+      expireTimer: DurationInSeconds.fromHours(2),
       title: "It's Me",
       type: 'fromMe',
     },
@@ -148,7 +148,7 @@ const items: Record<string, TimelineItemType> = {
     type: 'timerNotification',
     data: {
       disabled: false,
-      expireTimer: moment.duration(2, 'hours').asSeconds(),
+      expireTimer: DurationInSeconds.fromHours(2),
       title: '(202) 555-0000',
       type: 'fromOther',
     },
@@ -217,6 +217,7 @@ const items: Record<string, TimelineItemType> = {
       canDownload: true,
       canReact: true,
       canReply: true,
+      canReplyPrivately: true,
       canRetry: true,
       canRetryDeleteForEveryone: true,
       conversationColor: 'plum',
@@ -229,7 +230,6 @@ const items: Record<string, TimelineItemType> = {
       isMessageRequestAccepted: true,
       previews: [],
       readStatus: ReadStatus.Read,
-      receivedAt: Date.now(),
       status: 'sent',
       text: '🔥',
       textDirection: TextDirection.Default,
@@ -245,6 +245,7 @@ const items: Record<string, TimelineItemType> = {
       canDownload: true,
       canReact: true,
       canReply: true,
+      canReplyPrivately: true,
       canRetry: true,
       canRetryDeleteForEveryone: true,
       conversationColor: 'crimson',
@@ -257,7 +258,6 @@ const items: Record<string, TimelineItemType> = {
       isMessageRequestAccepted: true,
       previews: [],
       readStatus: ReadStatus.Read,
-      receivedAt: Date.now(),
       status: 'read',
       text: 'Hello there from the new world! http://somewhere.com',
       textDirection: TextDirection.Default,
@@ -273,6 +273,7 @@ const items: Record<string, TimelineItemType> = {
       canDownload: true,
       canReact: true,
       canReply: true,
+      canReplyPrivately: true,
       canRetry: true,
       canRetryDeleteForEveryone: true,
       conversationColor: 'crimson',
@@ -285,7 +286,6 @@ const items: Record<string, TimelineItemType> = {
       isMessageRequestAccepted: true,
       previews: [],
       readStatus: ReadStatus.Read,
-      receivedAt: Date.now(),
       status: 'sent',
       text: 'Hello there from the new world! 🔥',
       textDirection: TextDirection.Default,
@@ -301,6 +301,7 @@ const items: Record<string, TimelineItemType> = {
       canDownload: true,
       canReact: true,
       canReply: true,
+      canReplyPrivately: true,
       canRetry: true,
       canRetryDeleteForEveryone: true,
       conversationColor: 'crimson',
@@ -313,7 +314,6 @@ const items: Record<string, TimelineItemType> = {
       isMessageRequestAccepted: true,
       previews: [],
       readStatus: ReadStatus.Read,
-      receivedAt: Date.now(),
       status: 'sent',
       text: 'Hello there from the new world! And this is multiple lines of text. Lines and lines and lines.',
       textDirection: TextDirection.Default,
@@ -329,6 +329,7 @@ const items: Record<string, TimelineItemType> = {
       canDownload: true,
       canReact: true,
       canReply: true,
+      canReplyPrivately: true,
       canRetry: true,
       canRetryDeleteForEveryone: true,
       conversationColor: 'crimson',
@@ -341,7 +342,6 @@ const items: Record<string, TimelineItemType> = {
       isMessageRequestAccepted: true,
       previews: [],
       readStatus: ReadStatus.Read,
-      receivedAt: Date.now(),
       status: 'read',
       text: 'Hello there from the new world! And this is multiple lines of text. Lines and lines and lines.',
       textDirection: TextDirection.Default,

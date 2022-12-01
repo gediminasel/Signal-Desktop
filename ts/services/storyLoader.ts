@@ -7,20 +7,52 @@ import type { StoryDataType } from '../state/ducks/stories';
 import * as durations from '../util/durations';
 import * as log from '../logging/log';
 import dataInterface from '../sql/Client';
-import { getAttachmentsForMessage } from '../state/selectors/message';
+import {
+  getAttachmentsForMessage,
+  getPropsForAttachment,
+} from '../state/selectors/message';
+import type { LinkPreviewType } from '../types/message/LinkPreviews';
 import { isNotNil } from '../util/isNotNil';
 import { strictAssert } from '../util/assert';
 import { dropNull } from '../util/dropNull';
+import { DurationInSeconds } from '../util/durations';
+import { SIGNAL_ACI } from '../types/SignalConversation';
 
-let storyData: Array<MessageAttributesType> | undefined;
+let storyData:
+  | Array<
+      MessageAttributesType & {
+        hasReplies?: boolean;
+        hasRepliesFromSelf?: boolean;
+      }
+    >
+  | undefined;
 
 export async function loadStories(): Promise<void> {
-  storyData = await dataInterface.getOlderStories({});
+  const stories = await dataInterface.getAllStories({});
+
+  storyData = await Promise.all(
+    stories.map(async story => {
+      const [hasReplies, hasRepliesFromSelf] = await Promise.all([
+        dataInterface.hasStoryReplies(story.id),
+        dataInterface.hasStoryRepliesFromSelf(story.id),
+      ]);
+
+      return {
+        ...story,
+        hasReplies,
+        hasRepliesFromSelf,
+      };
+    })
+  );
+
   await repairUnexpiredStories();
 }
 
 export function getStoryDataFromMessageAttributes(
-  message: MessageAttributesType
+  message: MessageAttributesType & {
+    hasReplies?: boolean;
+    hasRepliesFromSelf?: boolean;
+  }
 ): StoryDataType | undefined {
   const { attachments, deletedForEveryone } = message;
   const unresolvedAttachment = attachments ? attachments[0] : undefined;
@@ -31,10 +63,37 @@ export function getStoryDataFromMessageAttributes(
     return;
   }
 
-  const [attachment] =
+  let [attachment] =
     unresolvedAttachment && unresolvedAttachment.path
       ? getAttachmentsForMessage(message)
       : [unresolvedAttachment];
+
+  let preview: LinkPreviewType | undefined;
+  if (message.preview?.length) {
+    strictAssert(
+      message.preview.length === 1,
+      'getStoryDataFromMessageAttributes: story can have only one preview'
+    );
+    [preview] = message.preview;
+
+    strictAssert(
+      attachment?.textAttachment,
+      'getStoryDataFromMessageAttributes: story must have a ' +
+        'textAttachment with preview'
+    );
+    attachment = {
+      ...attachment,
+      textAttachment: {
+        ...attachment.textAttachment,
+        preview: {
+          ...preview,
+          image: preview.image && getPropsForAttachment(preview.image),
+        },
+      },
+    };
+  } else if (attachment) {
+    attachment = getPropsForAttachment(attachment);
+  }
 
   return {
     attachment,
@@ -43,6 +102,8 @@ export function getStoryDataFromMessageAttributes(
       'canReplyToStory',
       'conversationId',
       'deletedForEveryone',
+      'hasReplies',
+      'hasRepliesFromSelf',
       'reactions',
       'readAt',
       'readStatus',
@@ -50,6 +111,7 @@ export function getStoryDataFromMessageAttributes(
       'source',
       'sourceUuid',
       'storyDistributionListId',
+      'storyRecipientsVersion',
       'timestamp',
       'type',
     ]),
@@ -73,21 +135,24 @@ export function getStoriesForRedux(): Array<StoryDataType> {
 async function repairUnexpiredStories(): Promise<void> {
   strictAssert(storyData, 'Could not load stories');
 
-  const DAY_AS_SECONDS = durations.DAY / 1000;
+  const DAY_AS_SECONDS = DurationInSeconds.fromDays(1);
 
   const storiesWithExpiry = storyData
     .filter(
       story =>
-        !story.expirationStartTimestamp ||
-        !story.expireTimer ||
-        story.expireTimer > DAY_AS_SECONDS
+        story.sourceUuid !== SIGNAL_ACI &&
+        (!story.expirationStartTimestamp ||
+          !story.expireTimer ||
+          story.expireTimer > DAY_AS_SECONDS)
     )
     .map(story => ({
       ...story,
       expirationStartTimestamp: Math.min(story.timestamp, Date.now()),
-      expireTimer: Math.min(
-        Math.floor((story.timestamp + durations.DAY - Date.now()) / 1000),
-        DAY_AS_SECONDS
+      expireTimer: DurationInSeconds.fromMillis(
+        Math.min(
+          Math.floor(story.timestamp + durations.DAY - Date.now()),
+          durations.DAY
+        )
       ),
     }));
 

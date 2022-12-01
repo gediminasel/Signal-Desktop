@@ -10,10 +10,9 @@ import type { InteractionModeType } from '../../state/ducks/conversations';
 import { TimelineDateHeader } from './TimelineDateHeader';
 import type {
   Props as AllMessageProps,
+  PropsData as TimelineMessageProps,
   PropsActions as MessageActionsType,
-  PropsData as MessageProps,
-} from './Message';
-import { Message } from './Message';
+} from './TimelineMessage';
 import type { PropsActionsType as CallingNotificationActionsType } from './CallingNotification';
 import { CallingNotification } from './CallingNotification';
 import type { PropsActionsType as PropsChatSessionRefreshedActionsType } from './ChatSessionRefreshedNotification';
@@ -55,6 +54,7 @@ import { ResetSessionNotification } from './ResetSessionNotification';
 import type { PropsType as ProfileChangeNotificationPropsType } from './ProfileChangeNotification';
 import { ProfileChangeNotification } from './ProfileChangeNotification';
 import type { FullJSXType } from '../Intl';
+import { TimelineMessage } from './TimelineMessage';
 
 type CallHistoryType = {
   type: 'callHistory';
@@ -70,7 +70,7 @@ type DeliveryIssueType = {
 };
 type MessageType = {
   type: 'message';
-  data: Omit<MessageProps, 'renderingContext'>;
+  data: TimelineMessageProps;
 };
 type UnsupportedMessageType = {
   type: 'unsupportedMessage';
@@ -208,7 +208,7 @@ export class TimelineItem extends React.PureComponent<PropsType> {
     let itemContents: ReactChild;
     if (item.type === 'message') {
       itemContents = (
-        <Message
+        <TimelineMessage
           {...this.props}
           {...item.data}
           shouldCollapseAbove={shouldCollapseAbove}
@@ -218,7 +218,6 @@ export class TimelineItem extends React.PureComponent<PropsType> {
           getPreferredBadge={getPreferredBadge}
           i18n={i18n}
           theme={theme}
-          renderingContext="conversation/TimelineItem"
         />
       );
     } else {
@@ -241,11 +240,7 @@ export class TimelineItem extends React.PureComponent<PropsType> {
         );
       } else if (item.type === 'chatSessionRefreshed') {
         notification = (
-          <ChatSessionRefreshedNotification
-            {...this.props}
-            {...item.data}
-            i18n={i18n}
-          />
+          <ChatSessionRefreshedNotification {...this.props} i18n={i18n} />
         );
       } else if (item.type === 'deliveryIssue') {
         notification = (
@@ -298,13 +293,7 @@ export class TimelineItem extends React.PureComponent<PropsType> {
           <GroupV1Migration {...this.props} {...item.data} i18n={i18n} />
         );
       } else if (item.type === 'resetSessionNotification') {
-        notification = (
-          <ResetSessionNotification
-            {...this.props}
-            {...item.data}
-            i18n={i18n}
-          />
-        );
+        notification = <ResetSessionNotification {...this.props} i18n={i18n} />;
       } else if (item.type === 'profileChange') {
         notification = (
           <ProfileChangeNotification

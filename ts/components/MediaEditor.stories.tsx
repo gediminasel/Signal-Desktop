@@ -27,6 +27,8 @@ const getDefaultProps = (): PropsType => ({
   imageSrc: IMAGE_2,
   onClose: action('onClose'),
   onDone: action('onDone'),
+  isSending: false,
+  imageToBlurHash: async () => 'LDA,FDBnm+I=p{tkIUI;~UkpELV]',
 
   // StickerButtonProps
   installedPacks,
@@ -47,6 +49,10 @@ export const Smol = (): JSX.Element => (
 
 export const Portrait = (): JSX.Element => (
   <MediaEditor {...getDefaultProps()} imageSrc={IMAGE_4} />
+);
+
+export const Sending = (): JSX.Element => (
+  <MediaEditor {...getDefaultProps()} isSending />
 );
 
 export const WithCaption = (): JSX.Element => (

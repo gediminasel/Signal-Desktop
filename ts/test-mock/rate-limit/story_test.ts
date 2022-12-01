@@ -7,7 +7,7 @@ import { Proto, StorageState } from '@signalapp/mock-server';
 
 import * as durations from '../../util/durations';
 import { uuidToBytes } from '../../util/uuidToBytes';
-import { MY_STORIES_ID } from '../../types/Stories';
+import { MY_STORY_ID } from '../../types/Stories';
 import { Bootstrap } from '../bootstrap';
 import type { App } from '../bootstrap';
 
@@ -15,7 +15,7 @@ export const debug = createDebug('mock:test:rate-limit');
 
 const IdentifierType = Proto.ManifestRecord.Identifier.Type;
 
-describe('rate-limit/story', function needsName() {
+describe('story/no-sender-key', function needsName() {
   this.timeout(durations.MINUTE);
 
   let bootstrap: Bootstrap;
@@ -44,9 +44,9 @@ describe('rate-limit/story', function needsName() {
       record: {
         storyDistributionList: {
           allowsReplies: true,
-          identifier: uuidToBytes(MY_STORIES_ID),
+          identifier: uuidToBytes(MY_STORY_ID),
           isBlockList: true,
-          name: MY_STORIES_ID,
+          name: MY_STORY_ID,
           recipientUuids: [],
         },
       },
@@ -65,7 +65,7 @@ describe('rate-limit/story', function needsName() {
     await bootstrap.teardown();
   });
 
-  it('should request challenge and accept solution', async () => {
+  it('should successfully send story', async () => {
     const {
       server,
       contactsWithoutProfileKey: contacts,
@@ -106,37 +106,14 @@ describe('rate-limit/story', function needsName() {
         .locator('.StoryCreator__toolbar button >> "Next"')
         .click();
 
-      debug('Selecting "My Stories"');
+      debug('Selecting "My Story"');
       await window
-        .locator('.SendStoryModal__distribution-list__name >> "My Stories"')
+        .locator('.SendStoryModal__distribution-list__name >> "My Story"')
         .click();
 
       debug('Hitting Send');
       await window.locator('button.SendStoryModal__send').click();
     }
-
-    debug('Waiting for challenge');
-    const request = await app.waitForChallenge();
-
-    debug('Checking for presence of captcha modal');
-    await window
-      .locator('.module-Modal__title >> "Verify to continue messaging"')
-      .waitFor();
-
-    debug('Removing rate-limiting');
-    for (const contact of contacts) {
-      const failedMessages = server.stopRateLimiting({
-        source: desktop.uuid,
-        target: contact.device.uuid,
-      });
-      assert.isAtMost(failedMessages ?? 0, 1);
-    }
-
-    debug('Solving challenge');
-    app.solveChallenge({
-      seq: request.seq,
-      data: { captcha: 'anything' },
-    });
 
     debug('Verifying that all contacts received story');
     await Promise.all(

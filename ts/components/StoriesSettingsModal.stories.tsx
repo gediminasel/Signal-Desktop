@@ -7,7 +7,10 @@ import React from 'react';
 import type { PropsType } from './StoriesSettingsModal';
 import enMessages from '../../_locales/en/messages.json';
 import { StoriesSettingsModal } from './StoriesSettingsModal';
-import { getDefaultConversation } from '../test-both/helpers/getDefaultConversation';
+import {
+  getDefaultConversation,
+  getDefaultGroup,
+} from '../test-both/helpers/getDefaultConversation';
 import { setupI18n } from '../util/setupI18n';
 import {
   getMyStories,
@@ -23,8 +26,14 @@ export default {
     candidateConversations: {
       defaultValue: Array.from(Array(100), () => getDefaultConversation()),
     },
+    signalConnections: {
+      defaultValue: Array.from(Array(42), getDefaultConversation),
+    },
     distributionLists: {
       defaultValue: [],
+    },
+    groupStories: {
+      defaultValue: Array.from(Array(2), getDefaultGroup),
     },
     getPreferredBadge: { action: true },
     hideStoriesSettings: { action: true },
@@ -34,14 +43,20 @@ export default {
     me: {
       defaultValue: getDefaultConversation(),
     },
+    storyViewReceiptsEnabled: { control: 'boolean' },
     onDeleteList: { action: true },
+    toggleGroupsForStorySend: { action: true },
     onDistributionListCreated: { action: true },
     onHideMyStoriesFrom: { action: true },
-    onRemoveMember: { action: true },
+    onRemoveMembers: { action: true },
     onRepliesNReactionsChanged: { action: true },
     onViewersUpdated: { action: true },
     setMyStoriesToAllSignalConnections: { action: true },
     toggleSignalConnectionsModal: { action: true },
+    setStoriesDisabled: { action: true },
+    getConversationByUuid: {
+      defaultValue: () => getDefaultGroup(),
+    },
   },
 } as Meta;
 

@@ -4,6 +4,7 @@
 import PQueue from 'p-queue';
 import { isNumber, omit } from 'lodash';
 import { z } from 'zod';
+import { EventEmitter } from 'events';
 
 import {
   Direction,
@@ -119,6 +120,11 @@ export type VerifyAlternateIdentityOptionsType = Readonly<{
   signature: Uint8Array;
 }>;
 
+export type SetVerifiedExtra = Readonly<{
+  firstUse?: boolean;
+  nonblockingApproval?: boolean;
+}>;
+
 export const GLOBAL_ZONE = new Zone('GLOBAL_ZONE');
 
 async function _fillCaches<ID, T extends HasIdType<ID>, HydratedType>(
@@ -195,12 +201,6 @@ export function freezeSignedPreKey(
   return keyPair;
 }
 
-// We add a this parameter to avoid an 'implicit any' error on the next line
-const EventsMixin = function EventsMixin(this: unknown) {
-  Object.assign(this, window.Backbone.Events);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-} as any as typeof window.Backbone.EventsMixin;
-
 type SessionCacheEntry = CacheEntryType<SessionType, SessionRecord>;
 type SenderKeyCacheEntry = CacheEntryType<SenderKeyType, SenderKeyRecord>;
 
@@ -209,7 +209,7 @@ type ZoneQueueEntryType = Readonly<{
   callback(): void;
 }>;
 
-export class SignalProtocolStore extends EventsMixin {
+export class SignalProtocolStore extends EventEmitter {
   // Enums used across the app
 
   VerifiedStatus = VerifiedStatus;
@@ -388,11 +388,11 @@ export class SignalProtocolStore extends EventsMixin {
     const id: PreKeyIdType = `${ourUuid.toString()}:${keyId}`;
 
     try {
-      this.trigger('removePreKey', ourUuid);
+      this.emit('removePreKey', ourUuid);
     } catch (error) {
       log.error(
         'removePreKey error triggering removePreKey:',
-        error && error.stack ? error.stack : error
+        Errors.toLogFormat(error)
       );
     }
 
@@ -604,7 +604,7 @@ export class SignalProtocolStore extends EventsMixin {
           await this.commitZoneChanges('saveSenderKey');
         }
       } catch (error) {
-        const errorString = error && error.stack ? error.stack : error;
+        const errorString = Errors.toLogFormat(error);
         log.error(
           `saveSenderKey: failed to save senderKey ${senderId}/${distributionId}: ${errorString}`
         );
@@ -653,7 +653,7 @@ export class SignalProtocolStore extends EventsMixin {
         log.info('Successfully fetched sender key(cache miss):', id);
         return item;
       } catch (error) {
-        const errorString = error && error.stack ? error.stack : error;
+        const errorString = Errors.toLogFormat(error);
         log.error(
           `getSenderKey: failed to load sender key ${senderId}/${distributionId}: ${errorString}`
         );
@@ -679,7 +679,7 @@ export class SignalProtocolStore extends EventsMixin {
 
       this.senderKeys.delete(id);
     } catch (error) {
-      const errorString = error && error.stack ? error.stack : error;
+      const errorString = Errors.toLogFormat(error);
       log.error(
         `removeSenderKey: failed to remove senderKey ${senderId}/${distributionId}: ${errorString}`
       );
@@ -860,7 +860,7 @@ export class SignalProtocolStore extends EventsMixin {
         `pending sender keys size ${this.pendingSenderKeys.size}, ` +
         `pending sessions size ${this.pendingSessions.size}, ` +
         `pending unprocessed size ${this.pendingUnprocessed.size}`,
-      error && error.stack
+      Errors.toLogFormat(error)
     );
     this.pendingSenderKeys.clear();
     this.pendingSessions.clear();
@@ -961,7 +961,7 @@ export class SignalProtocolStore extends EventsMixin {
         //   and save it to the database.
         return await this._maybeMigrateSession(entry.fromDB, { zone });
       } catch (error) {
-        const errorString = error && error.stack ? error.stack : error;
+        const errorString = Errors.toLogFormat(error);
         log.error(`loadSession: failed to load session ${id}: ${errorString}`);
         return undefined;
       }
@@ -1095,7 +1095,7 @@ export class SignalProtocolStore extends EventsMixin {
           await this.commitZoneChanges('storeSession');
         }
       } catch (error) {
-        const errorString = error && error.stack ? error.stack : error;
+        const errorString = Errors.toLogFormat(error);
         log.error(`storeSession: Save failed for ${id}: ${errorString}`);
         throw error;
       }
@@ -1189,7 +1189,7 @@ export class SignalProtocolStore extends EventsMixin {
       } catch (error) {
         log.error(
           'getOpenDevices: Failed to get devices',
-          error && error.stack ? error.stack : error
+          Errors.toLogFormat(error)
         );
         throw error;
       }
@@ -1488,6 +1488,7 @@ export class SignalProtocolStore extends EventsMixin {
     return newRecord;
   }
 
+  // https://github.com/signalapp/Signal-Android/blob/fc3db538bcaa38dc149712a483d3032c9c1f3998/app/src/main/java/org/thoughtcrime/securesms/crypto/storage/SignalBaseIdentityKeyStore.java#L128
   async isTrustedIdentity(
     encodedAddress: Address,
     publicKey: Uint8Array,
@@ -1500,8 +1501,9 @@ export class SignalProtocolStore extends EventsMixin {
     if (encodedAddress == null) {
       throw new Error('isTrustedIdentity: encodedAddress was undefined/null');
     }
-    const ourUuid = window.textsecure.storage.user.getCheckedUuid();
-    const isOurIdentifier = encodedAddress.uuid.isEqual(ourUuid);
+    const isOurIdentifier = window.textsecure.storage.user.isOurUuid(
+      encodedAddress.uuid
+    );
 
     const identityRecord = await this.getOrMigrateIdentityRecord(
       encodedAddress.uuid
@@ -1527,6 +1529,7 @@ export class SignalProtocolStore extends EventsMixin {
     }
   }
 
+  // https://github.com/signalapp/Signal-Android/blob/fc3db538bcaa38dc149712a483d3032c9c1f3998/app/src/main/java/org/thoughtcrime/securesms/crypto/storage/SignalBaseIdentityKeyStore.java#L233
   isTrustedForSending(
     publicKey: Uint8Array,
     identityRecord?: IdentityKeyType
@@ -1602,6 +1605,7 @@ export class SignalProtocolStore extends EventsMixin {
     });
   }
 
+  // https://github.com/signalapp/Signal-Android/blob/fc3db538bcaa38dc149712a483d3032c9c1f3998/app/src/main/java/org/thoughtcrime/securesms/crypto/storage/SignalBaseIdentityKeyStore.java#L69
   async saveIdentity(
     encodedAddress: Address,
     publicKey: Uint8Array,
@@ -1645,8 +1649,21 @@ export class SignalProtocolStore extends EventsMixin {
       return false;
     }
 
-    const oldpublicKey = identityRecord.publicKey;
-    if (!constantTimeEqual(oldpublicKey, publicKey)) {
+    const identityKeyChanged = !constantTimeEqual(
+      identityRecord.publicKey,
+      publicKey
+    );
+
+    if (identityKeyChanged) {
+      const isOurIdentifier = window.textsecure.storage.user.isOurUuid(
+        encodedAddress.uuid
+      );
+
+      if (isOurIdentifier && identityKeyChanged) {
+        log.warn('saveIdentity: ignoring identity for ourselves');
+        return false;
+      }
+
       log.info('saveIdentity: Replacing existing identity...');
       const previousStatus = identityRecord.verified;
       let verifiedStatus;
@@ -1668,12 +1685,14 @@ export class SignalProtocolStore extends EventsMixin {
         nonblockingApproval,
       });
 
+      // See `addKeyChange` in `ts/models/conversations.ts` for sender key info
+      // update caused by this.
       try {
-        this.trigger('keychange', encodedAddress.uuid);
+        this.emit('keychange', encodedAddress.uuid);
       } catch (error) {
         log.error(
           'saveIdentity: error triggering keychange:',
-          error && error.stack ? error.stack : error
+          Errors.toLogFormat(error)
         );
       }
 
@@ -1697,7 +1716,10 @@ export class SignalProtocolStore extends EventsMixin {
     return false;
   }
 
-  isNonBlockingApprovalRequired(identityRecord: IdentityKeyType): boolean {
+  // https://github.com/signalapp/Signal-Android/blob/fc3db538bcaa38dc149712a483d3032c9c1f3998/app/src/main/java/org/thoughtcrime/securesms/crypto/storage/SignalBaseIdentityKeyStore.java#L257
+  private isNonBlockingApprovalRequired(
+    identityRecord: IdentityKeyType
+  ): boolean {
     return (
       !identityRecord.firstUse &&
       isMoreRecentThan(identityRecord.timestamp, TIMESTAMP_THRESHOLD) &&
@@ -1751,10 +1773,12 @@ export class SignalProtocolStore extends EventsMixin {
     await this._saveIdentityKey(identityRecord);
   }
 
+  // https://github.com/signalapp/Signal-Android/blob/fc3db538bcaa38dc149712a483d3032c9c1f3998/app/src/main/java/org/thoughtcrime/securesms/crypto/storage/SignalBaseIdentityKeyStore.java#L215
+  // and https://github.com/signalapp/Signal-Android/blob/fc3db538bcaa38dc149712a483d3032c9c1f3998/app/src/main/java/org/thoughtcrime/securesms/verify/VerifyDisplayFragment.java#L544
   async setVerified(
     uuid: UUID,
     verifiedStatus: number,
-    publicKey?: Uint8Array
+    extra: SetVerifiedExtra = {}
   ): Promise<void> {
     if (uuid == null) {
       throw new Error('setVerified: uuid was undefined/null');
@@ -1769,14 +1793,12 @@ export class SignalProtocolStore extends EventsMixin {
       throw new Error(`setVerified: No identity record for ${uuid.toString()}`);
     }
 
-    if (!publicKey || constantTimeEqual(identityRecord.publicKey, publicKey)) {
-      identityRecord.verified = verifiedStatus;
-
-      if (validateIdentityKey(identityRecord)) {
-        await this._saveIdentityKey(identityRecord);
-      }
-    } else {
-      log.info('setVerified: No identity record for specified publicKey');
+    if (validateIdentityKey(identityRecord)) {
+      await this._saveIdentityKey({
+        ...identityRecord,
+        ...extra,
+        verified: verifiedStatus,
+      });
     }
   }
 
@@ -1798,59 +1820,63 @@ export class SignalProtocolStore extends EventsMixin {
     return VerifiedStatus.DEFAULT;
   }
 
-  // See https://github.com/signalapp/Signal-iOS-Private/blob/e32c2dff0d03f67467b4df621d84b11412d50cdb/SignalServiceKit/src/Messages/OWSIdentityManager.m#L317
-  // for reference.
-  async processVerifiedMessage(
+  // See https://github.com/signalapp/Signal-Android/blob/fc3db538bcaa38dc149712a483d3032c9c1f3998/app/src/main/java/org/thoughtcrime/securesms/database/IdentityDatabase.java#L184
+  async updateIdentityAfterSync(
     uuid: UUID,
     verifiedStatus: number,
-    publicKey?: Uint8Array
+    publicKey: Uint8Array
   ): Promise<boolean> {
-    if (uuid == null) {
-      throw new Error('processVerifiedMessage: uuid was undefined/null');
-    }
-    if (!validateVerifiedStatus(verifiedStatus)) {
-      throw new Error('processVerifiedMessage: Invalid verified status');
-    }
-    if (publicKey !== undefined && !(publicKey instanceof Uint8Array)) {
-      throw new Error('processVerifiedMessage: Invalid public key');
-    }
+    strictAssert(
+      validateVerifiedStatus(verifiedStatus),
+      `Invalid verified status: ${verifiedStatus}`
+    );
 
     const identityRecord = await this.getOrMigrateIdentityRecord(uuid);
+    const hadEntry = identityRecord !== undefined;
+    const keyMatches = Boolean(
+      identityRecord?.publicKey &&
+        constantTimeEqual(publicKey, identityRecord.publicKey)
+    );
+    const statusMatches =
+      keyMatches && verifiedStatus === identityRecord?.verified;
 
-    let isEqual = false;
-
-    if (identityRecord && publicKey) {
-      isEqual = constantTimeEqual(publicKey, identityRecord.publicKey);
+    if (!keyMatches || !statusMatches) {
+      await this.saveIdentityWithAttributes(uuid, {
+        publicKey,
+        verified: verifiedStatus,
+        firstUse: !hadEntry,
+        timestamp: Date.now(),
+        nonblockingApproval: true,
+      });
     }
 
-    // Just update verified status if the key is the same or not present
-    if (isEqual || !publicKey) {
-      await this.setVerified(uuid, verifiedStatus, publicKey);
-      return false;
-    }
-
-    await this.saveIdentityWithAttributes(uuid, {
-      publicKey,
-      verified: verifiedStatus,
-      firstUse: false,
-      timestamp: Date.now(),
-      nonblockingApproval: verifiedStatus === VerifiedStatus.VERIFIED,
-    });
-
-    if (identityRecord) {
+    if (hadEntry && !keyMatches) {
       try {
-        this.trigger('keychange', uuid);
+        this.emit('keychange', uuid);
       } catch (error) {
         log.error(
-          'processVerifiedMessage error triggering keychange:',
+          'updateIdentityAfterSync: error triggering keychange:',
           Errors.toLogFormat(error)
         );
       }
-
-      // true signifies that we overwrote a previous key with a new one
-      return true;
     }
 
+    // See: https://github.com/signalapp/Signal-Android/blob/fc3db538bcaa38dc149712a483d3032c9c1f3998/app/src/main/java/org/thoughtcrime/securesms/database/RecipientDatabase.kt#L921-L936
+    if (
+      verifiedStatus === VerifiedStatus.VERIFIED &&
+      (!hadEntry || identityRecord?.verified !== VerifiedStatus.VERIFIED)
+    ) {
+      // Needs a notification.
+      return true;
+    }
+    if (
+      verifiedStatus !== VerifiedStatus.VERIFIED &&
+      hadEntry &&
+      identityRecord?.verified === VerifiedStatus.VERIFIED
+    ) {
+      // Needs a notification.
+      return true;
+    }
     return false;
   }
 
@@ -2071,6 +2097,8 @@ export class SignalProtocolStore extends EventsMixin {
 
     window.ConversationController.reset();
     await window.ConversationController.load();
+
+    this.emit('removeAllData');
   }
 
   async removeAllConfiguration(mode: RemoveAllConfiguration): Promise<void> {
@@ -2155,6 +2183,43 @@ export class SignalProtocolStore extends EventsMixin {
     });
 
     return Array.from(union.values());
+  }
+  //
+  // EventEmitter types
+  //
+
+  public override on(
+    name: 'removePreKey',
+    handler: (ourUuid: UUID) => unknown
+  ): this;
+
+  public override on(
+    name: 'keychange',
+    handler: (theirUuid: UUID) => unknown
+  ): this;
+
+  public override on(name: 'removeAllData', handler: () => unknown): this;
+
+  public override on(
+    eventName: string | symbol,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    listener: (...args: Array<any>) => void
+  ): this {
+    return super.on(eventName, listener);
+  }
+
+  public override emit(name: 'removePreKey', ourUuid: UUID): boolean;
+
+  public override emit(name: 'keychange', theirUuid: UUID): boolean;
+
+  public override emit(name: 'removeAllData'): boolean;
+
+  public override emit(
+    eventName: string | symbol,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ...args: Array<any>
+  ): boolean {
+    return super.emit(eventName, ...args);
   }
 }
 

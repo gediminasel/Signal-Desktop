@@ -26,14 +26,12 @@ import {
   isFetchingByUsername,
   isFetchingByE164,
 } from '../../util/uuidFetchState';
-import {
-  getGroupSizeRecommendedLimit,
-  getGroupSizeHardLimit,
-} from '../../groups/limits';
 
 export type LeftPaneChooseGroupMembersPropsType = {
   uuidFetchState: UUIDFetchStateType;
   candidateContacts: ReadonlyArray<ConversationType>;
+  groupSizeRecommendedLimit: number;
+  groupSizeHardLimit: number;
   isShowingRecommendedGroupSizeModal: boolean;
   isShowingMaximumGroupSizeModal: boolean;
   isUsernamesEnabled: boolean;
@@ -53,6 +51,10 @@ export class LeftPaneChooseGroupMembersHelper extends LeftPaneHelper<LeftPaneCho
 
   private readonly isShowingRecommendedGroupSizeModal: boolean;
 
+  private readonly groupSizeRecommendedLimit: number;
+
+  private readonly groupSizeHardLimit: number;
+
   private readonly searchTerm: string;
 
   private readonly phoneNumber: ParsedE164Type | undefined;
@@ -70,6 +72,8 @@ export class LeftPaneChooseGroupMembersHelper extends LeftPaneHelper<LeftPaneCho
     isShowingMaximumGroupSizeModal,
     isShowingRecommendedGroupSizeModal,
     isUsernamesEnabled,
+    groupSizeRecommendedLimit,
+    groupSizeHardLimit,
     searchTerm,
     regionCode,
     selectedContacts,
@@ -78,6 +82,8 @@ export class LeftPaneChooseGroupMembersHelper extends LeftPaneHelper<LeftPaneCho
     super();
 
     this.uuidFetchState = uuidFetchState;
+    this.groupSizeRecommendedLimit = groupSizeRecommendedLimit - 1;
+    this.groupSizeHardLimit = groupSizeHardLimit - 1;
 
     this.candidateContacts = candidateContacts;
     this.isShowingMaximumGroupSizeModal = isShowingMaximumGroupSizeModal;
@@ -85,22 +91,7 @@ export class LeftPaneChooseGroupMembersHelper extends LeftPaneHelper<LeftPaneCho
       isShowingRecommendedGroupSizeModal;
     this.searchTerm = searchTerm;
 
-    const phoneNumber = parseAndFormatPhoneNumber(searchTerm, regionCode);
-    if (phoneNumber) {
-      this.isPhoneNumberChecked =
-        phoneNumber.isValid &&
-        selectedContacts.some(contact => contact.e164 === phoneNumber.e164);
-
-      const isVisible = this.candidateContacts.every(
-        contact => contact.e164 !== phoneNumber.e164
-      );
-      if (isVisible) {
-        this.phoneNumber = phoneNumber;
-      }
-    } else {
-      this.isPhoneNumberChecked = false;
-    }
-    if (!this.phoneNumber && isUsernamesEnabled) {
+    if (isUsernamesEnabled) {
       const username = getUsernameFromSearch(searchTerm);
       const isVisible = this.candidateContacts.every(
         contact => contact.username !== username
@@ -115,6 +106,22 @@ export class LeftPaneChooseGroupMembersHelper extends LeftPaneHelper<LeftPaneCho
       );
     } else {
       this.isUsernameChecked = false;
+    }
+
+    const phoneNumber = parseAndFormatPhoneNumber(searchTerm, regionCode);
+    if (!this.username && phoneNumber) {
+      this.isPhoneNumberChecked =
+        phoneNumber.isValid &&
+        selectedContacts.some(contact => contact.e164 === phoneNumber.e164);
+
+      const isVisible = this.candidateContacts.every(
+        contact => contact.e164 !== phoneNumber.e164
+      );
+      if (isVisible) {
+        this.phoneNumber = phoneNumber;
+      }
+    } else {
+      this.isPhoneNumberChecked = false;
     }
     this.selectedContacts = selectedContacts;
 
@@ -193,7 +200,7 @@ export class LeftPaneChooseGroupMembersHelper extends LeftPaneHelper<LeftPaneCho
       modalNode = (
         <AddGroupMemberErrorDialog
           i18n={i18n}
-          maximumNumberOfContacts={this.getMaximumNumberOfContacts()}
+          maximumNumberOfContacts={this.groupSizeHardLimit}
           mode={AddGroupMemberErrorDialogMode.MaximumGroupSize}
           onClose={closeMaximumGroupSizeModal}
         />
@@ -202,7 +209,7 @@ export class LeftPaneChooseGroupMembersHelper extends LeftPaneHelper<LeftPaneCho
       modalNode = (
         <AddGroupMemberErrorDialog
           i18n={i18n}
-          recommendedMaximumNumberOfContacts={this.getRecommendedMaximumNumberOfContacts()}
+          recommendedMaximumNumberOfContacts={this.groupSizeRecommendedLimit}
           mode={AddGroupMemberErrorDialogMode.RecommendedMaximumGroupSize}
           onClose={closeRecommendedGroupSizeModal}
         />
@@ -392,20 +399,12 @@ export class LeftPaneChooseGroupMembersHelper extends LeftPaneHelper<LeftPaneCho
   }
 
   private hasSelectedMaximumNumberOfContacts(): boolean {
-    return this.selectedContacts.length >= this.getMaximumNumberOfContacts();
+    return this.selectedContacts.length >= this.groupSizeHardLimit;
   }
 
   private hasExceededMaximumNumberOfContacts(): boolean {
     // It should be impossible to reach this state. This is here as a failsafe.
-    return this.selectedContacts.length > this.getMaximumNumberOfContacts();
-  }
-
-  private getRecommendedMaximumNumberOfContacts(): number {
-    return getGroupSizeRecommendedLimit(151) - 1;
-  }
-
-  private getMaximumNumberOfContacts(): number {
-    return getGroupSizeHardLimit(1001) - 1;
+    return this.selectedContacts.length > this.groupSizeHardLimit;
   }
 }
 

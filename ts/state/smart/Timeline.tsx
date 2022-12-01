@@ -215,7 +215,7 @@ const getWarning = (
         return {
           type: ContactSpoofingType.MultipleGroupMembersWithSameTitle,
           acknowledgedGroupNameCollisions:
-            conversation.acknowledgedGroupNameCollisions || {},
+            conversation.acknowledgedGroupNameCollisions,
           groupNameCollisions:
             dehydrateCollisionsWithConversations(groupNameCollisions),
         };
@@ -224,7 +224,7 @@ const getWarning = (
       return undefined;
     }
     default:
-      throw missingCaseError(conversation.type);
+      throw missingCaseError(conversation);
   }
 };
 
@@ -252,6 +252,10 @@ const getContactSpoofingReview = (
         ),
       };
     case ContactSpoofingType.MultipleGroupMembersWithSameTitle: {
+      assertDev(
+        currentConversation.type === 'group',
+        'MultipleGroupMembersWithSameTitle: expects group conversation'
+      );
       const { memberships } = getGroupMemberships(
         currentConversation,
         getConversationByUuid
@@ -259,7 +263,7 @@ const getContactSpoofingReview = (
       const groupNameCollisions = getCollisionsFromMemberships(memberships);
 
       const previouslyAcknowledgedTitlesById = invertIdsByTitle(
-        currentConversation.acknowledgedGroupNameCollisions || {}
+        currentConversation.acknowledgedGroupNameCollisions
       );
 
       const collisionInfoByTitle = mapValues(

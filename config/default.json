@@ -1,18 +1,15 @@
 {
   "serverUrl": "https://chat.staging.signal.org",
   "storageUrl": "https://storage-staging.signal.org",
-  "directoryType": "cdsi",
-  "directoryUrl": null,
-  "directoryEnclaveId": null,
-  "directoryTrustAnchor": null,
-  "directoryCDSIUrl": "https://cdsi.staging.signal.org",
-  "directoryCDSIMRENCLAVE": "ef4787a56a154ac6d009138cac17155acd23cfe4329281252365dd7c252e7fbf",
+  "directoryUrl": "https://cdsi.staging.signal.org",
+  "directoryMRENCLAVE": "ef4787a56a154ac6d009138cac17155acd23cfe4329281252365dd7c252e7fbf",
   "cdn": {
     "0": "https://cdn-staging.signal.org",
     "2": "https://cdn2-staging.signal.org"
   },
   "contentProxyUrl": "http://contentproxy.signal.org:443",
   "updatesUrl": "https://updates2.signal.org/desktop",
+  "resourcesUrl": "https://updates2.signal.org",
   "updatesPublicKey": "05fd7dd3de7149dc0a127909fee7de0f7620ddd0de061b37a2c303e37de802a401",
   "sfuUrl": "https://sfu.voip.signal.org/",
   "updatesEnabled": false,

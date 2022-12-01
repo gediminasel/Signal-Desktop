@@ -6,7 +6,6 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import AbortController from 'abort-controller';
 import type { Response } from 'node-fetch';
 import fetch from 'node-fetch';
 import ProxyAgent from 'proxy-agent';
@@ -40,14 +39,7 @@ import * as linkPreviewFetch from '../linkPreviews/linkPreviewFetch';
 import { isBadgeImageFileUrlValid } from '../badges/isBadgeImageFileUrlValid';
 
 import { SocketManager } from './SocketManager';
-import type {
-  CDSAuthType,
-  CDSRequestOptionsType,
-  CDSResponseType,
-} from './cds/Types.d';
-import type { CDSBase } from './cds/CDSBase';
-import { LegacyCDS } from './cds/LegacyCDS';
-import type { LegacyCDSPutAttestationResponseType } from './cds/LegacyCDS';
+import type { CDSAuthType, CDSResponseType } from './cds/Types.d';
 import { CDSI } from './cds/CDSI';
 import type WebSocketResource from './WebsocketResources';
 import { SignalService as Proto } from '../protobuf';
@@ -63,12 +55,6 @@ import type {
 import { handleStatusCode, translateError } from './Utils';
 import * as log from '../logging/log';
 import { maybeParseUrl } from '../util/url';
-import {
-  ToastInternalError,
-  ToastInternalErrorKind,
-} from '../components/ToastInternalError';
-import { showToast } from '../util/showToast';
-import { isProduction } from '../util/version';
 
 // Note: this will break some code that expects to be able to use err.response when a
 //   web request fails, because it will force it to text. But it is very useful for
@@ -185,44 +171,34 @@ type BytesWithDetailsType = {
   response: Response;
 };
 
-export const multiRecipient200ResponseSchema = z
-  .object({
-    uuids404: z.array(z.string()).optional(),
-    needsSync: z.boolean().optional(),
-  })
-  .passthrough();
+export const multiRecipient200ResponseSchema = z.object({
+  uuids404: z.array(z.string()).optional(),
+  needsSync: z.boolean().optional(),
+});
 export type MultiRecipient200ResponseType = z.infer<
   typeof multiRecipient200ResponseSchema
 >;
 
 export const multiRecipient409ResponseSchema = z.array(
-  z
-    .object({
-      uuid: z.string(),
-      devices: z
-        .object({
-          missingDevices: z.array(z.number()).optional(),
-          extraDevices: z.array(z.number()).optional(),
-        })
-        .passthrough(),
-    })
-    .passthrough()
+  z.object({
+    uuid: z.string(),
+    devices: z.object({
+      missingDevices: z.array(z.number()).optional(),
+      extraDevices: z.array(z.number()).optional(),
+    }),
+  })
 );
 export type MultiRecipient409ResponseType = z.infer<
   typeof multiRecipient409ResponseSchema
 >;
 
 export const multiRecipient410ResponseSchema = z.array(
-  z
-    .object({
-      uuid: z.string(),
-      devices: z
-        .object({
-          staleDevices: z.array(z.number()).optional(),
-        })
-        .passthrough(),
-    })
-    .passthrough()
+  z.object({
+    uuid: z.string(),
+    devices: z.object({
+      staleDevices: z.array(z.number()).optional(),
+    }),
+  })
 );
 export type MultiRecipient410ResponseType = z.infer<
   typeof multiRecipient410ResponseSchema
@@ -503,6 +479,8 @@ const URL_CALLS = {
   getGroupAvatarUpload: 'v1/groups/avatar/form',
   getGroupCredentials: 'v1/certificate/auth/group',
   getIceServers: 'v1/accounts/turn',
+  getOnboardingStoryManifest:
+    'dynamic/desktop/stories/onboarding/manifest.json',
   getStickerPackUpload: 'v1/sticker/pack/form',
   groupLog: 'v1/groups/logs',
   groupJoinedAtVersion: 'v1/groups/joined_at_version',
@@ -524,6 +502,8 @@ const URL_CALLS = {
   supportUnauthenticatedDelivery: 'v1/devices/unauthenticated_delivery',
   updateDeviceName: 'v1/accounts/name',
   username: 'v1/accounts/username',
+  reservedUsername: 'v1/accounts/username/reserved',
+  confirmUsername: 'v1/accounts/username/confirm',
   whoami: 'v1/accounts/whoami',
 };
 
@@ -563,6 +543,7 @@ type InitializeOptionsType = {
   url: string;
   storageUrl: string;
   updatesUrl: string;
+  resourcesUrl: string;
   cdnUrlObject: {
     readonly '0': string;
     readonly [propName: string]: string;
@@ -599,6 +580,7 @@ type AjaxOptionsType = {
   username?: string;
   validateResponse?: any;
   isRegistration?: true;
+  abortSignal?: AbortSignal;
 } & (
   | {
       unauthenticated?: false;
@@ -671,17 +653,15 @@ export type ProfileRequestDataType = {
   version: string;
 };
 
-const uploadAvatarHeadersZod = z
-  .object({
-    acl: z.string(),
-    algorithm: z.string(),
-    credential: z.string(),
-    date: z.string(),
-    key: z.string(),
-    policy: z.string(),
-    signature: z.string(),
-  })
-  .passthrough();
+const uploadAvatarHeadersZod = z.object({
+  acl: z.string(),
+  algorithm: z.string(),
+  credential: z.string(),
+  date: z.string(),
+  key: z.string(),
+  policy: z.string(),
+  signature: z.string(),
+});
 export type UploadAvatarHeadersType = z.infer<typeof uploadAvatarHeadersZod>;
 
 export type ProfileType = Readonly<{
@@ -698,6 +678,10 @@ export type ProfileType = Readonly<{
   capabilities?: CapabilitiesType;
   paymentAddress?: string;
   badges?: unknown;
+}>;
+
+export type AccountType = Readonly<{
+  uuid?: string;
 }>;
 
 export type GetIceServersResultType = Readonly<{
@@ -724,14 +708,12 @@ export type MakeProxiedRequestResultType =
       totalSize: number;
     };
 
-const whoamiResultZod = z
-  .object({
-    uuid: z.string(),
-    pni: z.string(),
-    number: z.string(),
-    username: z.string().or(z.null()).optional(),
-  })
-  .passthrough();
+const whoamiResultZod = z.object({
+  uuid: z.string(),
+  pni: z.string(),
+  number: z.string(),
+  username: z.string().or(z.null()).optional(),
+});
 export type WhoamiResultType = z.infer<typeof whoamiResultZod>;
 
 export type ConfirmCodeResultType = Readonly<{
@@ -745,8 +727,6 @@ export type CdsLookupOptionsType = Readonly<{
   acis?: ReadonlyArray<UUIDStringType>;
   accessKeys?: ReadonlyArray<string>;
   returnAcisWithoutUaks?: boolean;
-  isLegacy: boolean;
-  isMirroring: boolean;
 }>;
 
 type GetProfileCommonOptionsType = Readonly<
@@ -784,19 +764,36 @@ export type GetGroupCredentialsResultType = Readonly<{
   credentials: ReadonlyArray<GroupCredentialType>;
 }>;
 
-const verifyAciResponse = z
-  .object({
-    elements: z.array(
-      z.object({
-        aci: z.string(),
-        identityKey: z.string(),
-      })
-    ),
-  })
-  .passthrough();
+const verifyAciResponse = z.object({
+  elements: z.array(
+    z.object({
+      aci: z.string(),
+      identityKey: z.string(),
+    })
+  ),
+});
 
 export type VerifyAciRequestType = Array<{ aci: string; fingerprint: string }>;
 export type VerifyAciResponseType = z.infer<typeof verifyAciResponse>;
+
+export type ReserveUsernameOptionsType = Readonly<{
+  nickname: string;
+  abortSignal?: AbortSignal;
+}>;
+
+export type ConfirmUsernameOptionsType = Readonly<{
+  usernameToConfirm: string;
+  reservationToken: string;
+  abortSignal?: AbortSignal;
+}>;
+
+const reserveUsernameResultZod = z.object({
+  username: z.string(),
+  reservationToken: z.string(),
+});
+export type ReserveUsernameResultType = z.infer<
+  typeof reserveUsernameResultZod
+>;
 
 export type ConfirmCodeOptionsType = Readonly<{
   number: string;
@@ -819,7 +816,11 @@ export type WebAPIType = {
     group: Proto.IGroup,
     options: GroupCredentialsType
   ) => Promise<void>;
-  deleteUsername: () => Promise<void>;
+  deleteUsername: (abortSignal?: AbortSignal) => Promise<void>;
+  downloadOnboardingStories: (
+    version: string,
+    imageFiles: Array<string>
+  ) => Promise<Array<Uint8Array>>;
   getAttachment: (cdnKey: string, cdnNumber?: number) => Promise<Uint8Array>;
   getAvatar: (path: string) => Promise<Uint8Array>;
   getDevices: () => Promise<GetDevicesResultType>;
@@ -851,11 +852,15 @@ export type WebAPIType = {
     options?: { accessKey?: string }
   ) => Promise<ServerKeysType>;
   getMyKeys: (uuidKind: UUIDKind) => Promise<number>;
+  getOnboardingStoryManifest: () => Promise<{
+    version: string;
+    languages: Record<string, Array<string>>;
+  }>;
   getProfile: (
     identifier: string,
     options: GetProfileOptionsType
   ) => Promise<ProfileType>;
-  getProfileForUsername: (username: string) => Promise<ProfileType>;
+  getAccountForUsername: (username: string) => Promise<AccountType>;
   getProfileUnauth: (
     identifier: string,
     options: GetProfileUnauthOptionsType
@@ -911,7 +916,10 @@ export type WebAPIType = {
     encryptedStickers: Array<Uint8Array>,
     onProgress?: () => void
   ) => Promise<string>;
-  putUsername: (newUsername: string) => Promise<void>;
+  reserveUsername: (
+    options: ReserveUsernameOptionsType
+  ) => Promise<ReserveUsernameResultType>;
+  confirmUsername(options: ConfirmUsernameOptionsType): Promise<void>;
   registerCapabilities: (capabilities: CapabilitiesUploadType) => Promise<void>;
   registerKeys: (genKeys: KeysType, uuidKind: UUIDKind) => Promise<void>;
   registerSupportForUnauthenticatedDelivery: () => Promise<void>;
@@ -942,6 +950,7 @@ export type WebAPIType = {
     timestamp: number,
     options: {
       online?: boolean;
+      story?: boolean;
       urgent?: boolean;
     }
   ) => Promise<MultiRecipient200ResponseType>;
@@ -1031,6 +1040,7 @@ export function initialize({
   url,
   storageUrl,
   updatesUrl,
+  resourcesUrl,
   directoryConfig,
   cdnUrlObject,
   certificateAuthority,
@@ -1046,6 +1056,9 @@ export function initialize({
   }
   if (!is.string(updatesUrl)) {
     throw new Error('WebAPI.initialize: Invalid updatesUrl');
+  }
+  if (!is.string(resourcesUrl)) {
+    throw new Error('WebAPI.initialize: Invalid updatesUrl (general)');
   }
   if (!is.object(cdnUrlObject)) {
     throw new Error('WebAPI.initialize: Invalid cdnUrlObject');
@@ -1112,117 +1125,25 @@ export function initialize({
       socketManager.authenticate({ username, password });
     }
 
-    const {
-      directoryType,
-      directoryUrl,
-      directoryEnclaveId,
-      directoryTrustAnchor,
-    } = directoryConfig;
+    const { directoryUrl, directoryMRENCLAVE } = directoryConfig;
 
-    let legacyCDS: LegacyCDS | undefined;
-    let cds: CDSBase;
-    if (directoryType === 'legacy' || directoryType === 'mirrored-cdsi') {
-      legacyCDS = new LegacyCDS({
-        logger: log,
-        directoryEnclaveId,
-        directoryTrustAnchor,
-        proxyUrl,
+    const cds = new CDSI({
+      logger: log,
+      proxyUrl,
 
-        async putAttestation(auth, publicKey) {
-          const data = JSON.stringify({
-            clientPublic: Bytes.toBase64(publicKey),
-            iasVersion: 4,
-          });
-          const result = (await _outerAjax(null, {
-            certificateAuthority,
-            type: 'PUT',
-            contentType: 'application/json; charset=utf-8',
-            host: directoryUrl,
-            path: `${URL_CALLS.attestation}/${directoryEnclaveId}`,
-            user: auth.username,
-            password: auth.password,
-            proxyUrl,
-            responseType: 'jsonwithdetails',
-            data,
-            timeout: 30000,
-            version,
-          })) as JSONWithDetailsType<LegacyCDSPutAttestationResponseType>;
+      url: directoryUrl,
+      mrenclave: directoryMRENCLAVE,
+      certificateAuthority,
+      version,
 
-          const { response, data: responseBody } = result;
-
-          const cookie = response.headers.get('set-cookie') ?? undefined;
-
-          return { cookie, responseBody };
-        },
-
-        async fetchDiscoveryData(auth, data, cookie) {
-          const response = (await _outerAjax(null, {
-            certificateAuthority,
-            type: 'PUT',
-            headers: cookie
-              ? {
-                  cookie,
-                }
-              : undefined,
-            contentType: 'application/json; charset=utf-8',
-            host: directoryUrl,
-            path: `${URL_CALLS.discovery}/${directoryEnclaveId}`,
-            user: auth.username,
-            password: auth.password,
-            proxyUrl,
-            responseType: 'json',
-            timeout: 30000,
-            data: JSON.stringify(data),
-            version,
-          })) as {
-            requestId: string;
-            iv: string;
-            data: string;
-            mac: string;
-          };
-
-          return {
-            requestId: Bytes.fromBase64(response.requestId),
-            iv: Bytes.fromBase64(response.iv),
-            data: Bytes.fromBase64(response.data),
-            mac: Bytes.fromBase64(response.mac),
-          };
-        },
-
-        async getAuth() {
-          return (await _ajax({
-            call: 'directoryAuth',
-            httpType: 'GET',
-            responseType: 'json',
-          })) as CDSAuthType;
-        },
-      });
-
-      if (directoryType === 'legacy') {
-        cds = legacyCDS;
-      }
-    }
-    if (directoryType === 'cdsi' || directoryType === 'mirrored-cdsi') {
-      const { directoryCDSIUrl, directoryCDSIMRENCLAVE } = directoryConfig;
-
-      cds = new CDSI({
-        logger: log,
-        proxyUrl,
-
-        url: directoryCDSIUrl,
-        mrenclave: directoryCDSIMRENCLAVE,
-        certificateAuthority,
-        version,
-
-        async getAuth() {
-          return (await _ajax({
-            call: 'directoryAuthV2',
-            httpType: 'GET',
-            responseType: 'json',
-          })) as CDSAuthType;
-        },
-      });
-    }
+      async getAuth() {
+        return (await _ajax({
+          call: 'directoryAuthV2',
+          httpType: 'GET',
+          responseType: 'json',
+        })) as CDSAuthType;
+      },
+    });
 
     let fetchForLinkPreviews: linkPreviewFetch.FetchFn;
     if (proxyUrl) {
@@ -1234,26 +1155,23 @@ export function initialize({
 
     // Thanks, function hoisting!
     return {
-      getSocketStatus,
-      checkSockets,
-      onOnline,
-      onOffline,
-      reconnect,
-      registerRequestHandler,
-      unregisterRequestHandler,
-      onHasStoriesDisabledChange,
       authenticate,
-      logout,
       cdsLookup,
       checkAccountExistence,
+      checkSockets,
       confirmCode,
+      confirmUsername,
       createGroup,
       deleteUsername,
-      finishRegistration,
+      downloadOnboardingStories,
       fetchLinkPreviewImage,
       fetchLinkPreviewMetadata,
+      finishRegistration,
+      getAccountForUsername,
       getAttachment,
       getAvatar,
+      getBadgeImageFile,
+      getBoostBadgesFromServer,
       getConfig,
       getDevices,
       getGroup,
@@ -1267,43 +1185,49 @@ export function initialize({
       getKeysForIdentifier,
       getKeysForIdentifierUnauth,
       getMyKeys,
+      getOnboardingStoryManifest,
       getProfile,
-      getProfileForUsername,
       getProfileUnauth,
-      getBadgeImageFile,
-      getBoostBadgesFromServer,
       getProvisioningResource,
       getSenderCertificate,
+      getSocketStatus,
       getSticker,
       getStickerPackManifest,
       getStorageCredentials,
       getStorageManifest,
       getStorageRecords,
+      logout,
       makeProxiedRequest,
       makeSfuRequest,
       modifyGroup,
       modifyStorageRecords,
+      onHasStoriesDisabledChange,
+      onOffline,
+      onOnline,
       postBatchIdentityCheck,
       putAttachment,
       putProfile,
       putStickers,
-      putUsername,
+      reconnect,
       registerCapabilities,
       registerKeys,
+      registerRequestHandler,
       registerSupportForUnauthenticatedDelivery,
       reportMessage,
       requestVerificationSMS,
       requestVerificationVoice,
+      reserveUsername,
+      sendChallengeResponse,
       sendMessages,
       sendMessagesUnauth,
       sendWithSenderKey,
       setSignedPreKey,
       startRegistration,
+      unregisterRequestHandler,
       updateDeviceName,
       uploadAvatar,
       uploadGroupAvatar,
       whoami,
-      sendChallengeResponse,
     };
 
     function _ajax(
@@ -1362,6 +1286,7 @@ export function initialize({
         version,
         unauthenticated: param.unauthenticated,
         accessKey: param.accessKey,
+        abortSignal: param.abortSignal,
       };
 
       try {
@@ -1495,6 +1420,20 @@ export function initialize({
         responseType: 'json',
         schema: { username: 'string', password: 'string' },
       })) as StorageServiceCredentials;
+    }
+
+    async function getOnboardingStoryManifest() {
+      const res = await _ajax({
+        call: 'getOnboardingStoryManifest',
+        host: resourcesUrl,
+        httpType: 'GET',
+        responseType: 'json',
+      });
+
+      return res as {
+        version: string;
+        languages: Record<string, Array<string>>;
+      };
     }
 
     async function getStorageManifest(
@@ -1649,13 +1588,15 @@ export function initialize({
       })) as ProfileType;
     }
 
-    async function getProfileForUsername(usernameToFetch: string) {
+    async function getAccountForUsername(usernameToFetch: string) {
       return (await _ajax({
-        call: 'profile',
+        call: 'username',
         httpType: 'GET',
-        urlParameters: `/username/${usernameToFetch}`,
+        urlParameters: `/${encodeURIComponent(usernameToFetch)}`,
         responseType: 'json',
         redactUrl: _createRedactor(usernameToFetch),
+        unauthenticated: true,
+        accessKey: undefined,
       })) as ProfileType;
     }
 
@@ -1733,6 +1674,28 @@ export function initialize({
       });
     }
 
+    async function downloadOnboardingStories(
+      manifestVersion: string,
+      imageFiles: Array<string>
+    ): Promise<Array<Uint8Array>> {
+      return Promise.all(
+        imageFiles.map(fileName =>
+          _outerAjax(
+            `${resourcesUrl}/static/desktop/stories/onboarding/${manifestVersion}/${fileName}.jpg`,
+            {
+              certificateAuthority,
+              contentType: 'application/octet-stream',
+              proxyUrl,
+              responseType: 'bytes',
+              timeout: 0,
+              type: 'GET',
+              version,
+            }
+          )
+        )
+      );
+    }
+
     async function getBoostBadgesFromServer(
       userLanguages: ReadonlyArray<string>
     ): Promise<unknown> {
@@ -1764,17 +1727,42 @@ export function initialize({
       });
     }
 
-    async function deleteUsername() {
+    async function deleteUsername(abortSignal?: AbortSignal) {
       await _ajax({
         call: 'username',
         httpType: 'DELETE',
+        abortSignal,
       });
     }
-    async function putUsername(newUsername: string) {
-      await _ajax({
-        call: 'username',
+    async function reserveUsername({
+      nickname,
+      abortSignal,
+    }: ReserveUsernameOptionsType) {
+      const response = await _ajax({
+        call: 'reservedUsername',
         httpType: 'PUT',
-        urlParameters: `/${newUsername}`,
+        jsonData: {
+          nickname,
+        },
+        responseType: 'json',
+        abortSignal,
+      });
+
+      return reserveUsernameResultZod.parse(response);
+    }
+    async function confirmUsername({
+      usernameToConfirm,
+      reservationToken,
+      abortSignal,
+    }: ConfirmUsernameOptionsType) {
+      await _ajax({
+        call: 'confirmUsername',
+        httpType: 'PUT',
+        jsonData: {
+          usernameToConfirm,
+          reservationToken,
+        },
+        abortSignal,
       });
     }
 
@@ -2122,14 +2110,13 @@ export function initialize({
         messages,
         timestamp,
         online: Boolean(online),
-        story,
         urgent,
       };
 
       await _ajax({
         call: 'messages',
         httpType: 'PUT',
-        urlParameters: `/${destination}`,
+        urlParameters: `/${destination}?story=${booleanToString(story)}`,
         jsonData,
         responseType: 'json',
         unauthenticated: true,
@@ -2151,14 +2138,13 @@ export function initialize({
         messages,
         timestamp,
         online: Boolean(online),
-        story,
         urgent,
       };
 
       await _ajax({
         call: 'messages',
         httpType: 'PUT',
-        urlParameters: `/${destination}`,
+        urlParameters: `/${destination}?story=${booleanToString(story)}`,
         jsonData,
         responseType: 'json',
       });
@@ -2175,20 +2161,23 @@ export function initialize({
       {
         online,
         urgent = true,
+        story = false,
       }: {
         online?: boolean;
+        story?: boolean;
         urgent?: boolean;
       }
     ): Promise<MultiRecipient200ResponseType> {
       const onlineParam = `&online=${booleanToString(online)}`;
       const urgentParam = `&urgent=${booleanToString(urgent)}`;
+      const storyParam = `&story=${booleanToString(story)}`;
 
       const response = await _ajax({
         call: 'multiRecipient',
         httpType: 'PUT',
         contentType: 'application/vnd.signal-messenger.mrm',
         data,
-        urlParameters: `?ts=${timestamp}${onlineParam}${urgentParam}`,
+        urlParameters: `?ts=${timestamp}${onlineParam}${urgentParam}${storyParam}`,
         responseType: 'json',
         unauthenticated: true,
         accessKey: Bytes.toBase64(accessKeys),
@@ -2892,74 +2881,18 @@ export function initialize({
       return socketManager.getProvisioningResource(handler);
     }
 
-    async function mirroredCdsLookup(
-      requestOptions: CDSRequestOptionsType,
-      expectedMapPromise: Promise<CDSResponseType>
-    ): Promise<void> {
-      try {
-        log.info('cdsLookup: sending mirrored request');
-        const actualMap = await cds.request(requestOptions);
-
-        const expectedMap = await expectedMapPromise;
-        let matched = 0;
-        let warnings = 0;
-        for (const [e164, { aci }] of actualMap) {
-          if (!aci) {
-            continue;
-          }
-
-          const expectedACI = expectedMap.get(e164)?.aci;
-          if (expectedACI === aci) {
-            matched += 1;
-          } else {
-            warnings += 1;
-            log.warn(
-              `cdsLookup: mirrored request has aci=${aci} for ${e164}, while ` +
-                `expected aci=${expectedACI}`
-            );
-          }
-        }
-
-        if (warnings !== 0 && !isProduction(window.getVersion())) {
-          log.info('cdsLookup: showing error toast');
-          showToast(ToastInternalError, {
-            kind: ToastInternalErrorKind.CDSMirroringError,
-            onShowDebugLog: () => window.showDebugLog(),
-          });
-        }
-
-        log.info(`cdsLookup: mirrored request success, matched=${matched}`);
-      } catch (error) {
-        log.error('cdsLookup: mirrored request error', toLogFormat(error));
-      }
-    }
-
     async function cdsLookup({
       e164s,
       acis = [],
       accessKeys = [],
       returnAcisWithoutUaks,
-      isLegacy,
-      isMirroring,
     }: CdsLookupOptionsType): Promise<CDSResponseType> {
-      const requestOptions = {
+      return cds.request({
         e164s,
         acis,
         accessKeys,
         returnAcisWithoutUaks,
-      };
-      if (!isLegacy || !legacyCDS) {
-        return cds.request(requestOptions);
-      }
-
-      const legacyRequest = legacyCDS.request(requestOptions);
-
-      if (legacyCDS !== cds && isMirroring) {
-        // Intentionally not awaiting
-        mirroredCdsLookup(requestOptions, legacyRequest);
-      }
-
-      return legacyRequest;
+      });
     }
   }
 }

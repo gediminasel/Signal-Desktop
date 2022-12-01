@@ -24,6 +24,8 @@ import { isConversationSMSOnly } from '../../util/isConversationSMSOnly';
 import { mapDispatchToProps } from '../actions';
 import { missingCaseError } from '../../util/missingCaseError';
 import { strictAssert } from '../../util/assert';
+import { isSignalConversation } from '../../util/isSignalConversation';
+import type { DurationInSeconds } from '../../util/durations';
 
 export type OwnProps = {
   id: string;
@@ -36,7 +38,7 @@ export type OwnProps = {
   onOutgoingAudioCallInConversation: () => void;
   onOutgoingVideoCallInConversation: () => void;
   onSearchInConversation: () => void;
-  onSetDisappearingMessages: (seconds: number) => void;
+  onSetDisappearingMessages: (seconds: DurationInSeconds) => void;
   onSetMuteNotifications: (seconds: number) => void;
   onSetPin: (value: boolean) => void;
   onShowAllMedia: () => void;
@@ -119,6 +121,7 @@ const mapStateToProps = (state: StateType, ownProps: OwnProps) => {
     isMissingMandatoryProfileSharing:
       isMissingRequiredProfileSharing(conversation),
     isSMSOnly: isConversationSMSOnly(conversation),
+    isSignalConversation: isSignalConversation(conversation),
     i18n: getIntl(state),
     showBackButton: state.conversations.selectedConversationPanelDepth > 0,
     outgoingCallButtonStyle: getOutgoingCallButtonStyle(conversation, state),

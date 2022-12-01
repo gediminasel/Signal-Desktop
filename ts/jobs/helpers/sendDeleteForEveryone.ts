@@ -34,6 +34,7 @@ import type { MessageModel } from '../../models/messages';
 import { SendMessageProtoError } from '../../textsecure/Errors';
 import { strictAssert } from '../../util/assert';
 import type { LoggerType } from '../../types/Logging';
+import { isStory } from '../../messages/helpers';
 
 export async function sendDeleteForEveryone(
   conversation: ConversationModel,
@@ -54,14 +55,22 @@ export async function sendDeleteForEveryone(
     targetTimestamp,
   } = data;
 
+  const logId = `sendDeleteForEveryone(${conversation.idForLogging()}, ${messageId})`;
+
   const message = await getMessageById(messageId);
   if (!message) {
-    log.error(`Failed to fetch message ${messageId}. Failing job.`);
+    log.error(`${logId}: Failed to fetch message. Failing job.`);
+    return;
+  }
+
+  const story = isStory(message.attributes);
+  if (story && !isGroupV2(conversation.attributes)) {
+    log.error(`${logId}: 1-on-1 Story DOE must use its own job. Failing job`);
     return;
   }
 
   if (!shouldContinue) {
-    log.info('Ran out of time. Giving up on sending delete for everyone');
+    log.info(`${logId}: Ran out of time. Giving up on sending`);
     updateMessageWithFailure(message, [new Error('Ran out of time!')], log);
     return;
   }
@@ -70,8 +79,6 @@ export async function sendDeleteForEveryone(
   const { ContentHint } = Proto.UnidentifiedSenderMessage.Message;
   const contentHint = ContentHint.RESENDABLE;
   const messageIds = [messageId];
-
-  const logId = `deleteForEveryone/${conversation.idForLogging()}`;
 
   const deletedForEveryoneSendStatus = message.get(
     'deletedForEveryoneSendStatus'
@@ -95,9 +102,8 @@ export async function sendDeleteForEveryone(
     'conversationQueue/sendDeleteForEveryone',
     async abortSignal => {
       log.info(
-        `Sending deleteForEveryone to conversation ${logId}`,
-        `with timestamp ${timestamp}`,
-        `for message ${targetTimestamp}`
+        `${logId}: Sending deleteForEveryone with timestamp ${timestamp}` +
+          `for message ${targetTimestamp}, isStory=${story}`
       );
 
       let profileKey: Uint8Array | undefined;
@@ -105,7 +111,9 @@ export async function sendDeleteForEveryone(
         profileKey = await ourProfileKeyService.get();
       }
 
-      const sendOptions = await getSendOptions(conversation.attributes);
+      const sendOptions = await getSendOptions(conversation.attributes, {
+        story,
+      });
 
       try {
         if (isMe(conversation.attributes)) {
@@ -188,6 +196,7 @@ export async function sendDeleteForEveryone(
                 profileKey,
                 options: sendOptions,
                 urgent: true,
+                story,
                 includePniSignatureMessage: true,
               }),
             sendType,
@@ -226,6 +235,7 @@ export async function sendDeleteForEveryone(
                 sendOptions,
                 sendTarget: conversation.toSenderKeyTarget(),
                 sendType: 'deleteForEveryone',
+                story,
                 urgent: true,
               }),
             sendType,

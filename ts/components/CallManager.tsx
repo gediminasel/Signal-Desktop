@@ -197,6 +197,7 @@ const ActiveCallManager: React.FC<ActiveCallManagerPropsType> = ({
   let groupMembers:
     | undefined
     | Array<Pick<ConversationType, 'id' | 'firstName' | 'title'>>;
+  let isConversationTooBigToRing = false;
 
   switch (activeCall.callMode) {
     case CallMode.Direct: {
@@ -222,6 +223,7 @@ const ActiveCallManager: React.FC<ActiveCallManagerPropsType> = ({
     case CallMode.Group: {
       showCallLobby = activeCall.joinState !== GroupCallJoinState.Joined;
       isCallFull = activeCall.deviceCount >= activeCall.maxDevices;
+      isConversationTooBigToRing = activeCall.isConversationTooBigToRing;
       ({ groupMembers } = activeCall);
       break;
     }
@@ -242,6 +244,7 @@ const ActiveCallManager: React.FC<ActiveCallManagerPropsType> = ({
           isGroupCall={activeCall.callMode === CallMode.Group}
           isGroupCallOutboundRingEnabled={isGroupCallOutboundRingEnabled}
           isCallFull={isCallFull}
+          isConversationTooBigToRing={isConversationTooBigToRing}
           me={me}
           onCallCanceled={cancelActiveCall}
           onJoinCall={joinActiveCall}
@@ -353,7 +356,12 @@ const ActiveCallManager: React.FC<ActiveCallManagerPropsType> = ({
       activeCall.conversationsWithSafetyNumberChanges.length ? (
         <SafetyNumberChangeDialog
           confirmText={i18n('continueCall')}
-          contacts={activeCall.conversationsWithSafetyNumberChanges}
+          contacts={[
+            {
+              story: undefined,
+              contacts: activeCall.conversationsWithSafetyNumberChanges,
+            },
+          ]}
           getPreferredBadge={getPreferredBadge}
           i18n={i18n}
           onCancel={onSafetyNumberDialogCancel}

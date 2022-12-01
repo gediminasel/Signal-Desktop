@@ -16,27 +16,6 @@
     "reasonDetail": "Part of runtime library for C++ transpiled code"
   },
   {
-    "rule": "React-useRef",
-    "path": "ts/components/AddCaptionModal.tsx",
-    "line": "  const scrollerRef = React.useRef<HTMLDivElement>(null);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2022-10-03T16:06:12.837Z"
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/CompositionInput.tsx",
-    "line": "  const scrollerRefInner = React.useRef<HTMLDivElement>(null);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2022-10-03T16:06:12.837Z"
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/CompositionTextArea.tsx",
-    "line": "  const inputApiRef = React.useRef<InputApi | undefined>();",
-    "reasonCategory": "usageTrusted",
-    "updated": "2022-10-03T16:06:12.837Z"
-  },
-  {
     "rule": "jQuery-append(",
     "path": "components/mp3lameencoder/lib/Mp3LameEncoder.js",
     "line": "            bb.append((new Uint8Array(byteArray)).buffer); // we need to pass a buffer, and must copy the array to get the right data range",
@@ -658,42 +637,42 @@
   {
     "rule": "React-useRef",
     "path": "node_modules/@react-spring/shared/dist/react-spring-shared.cjs.dev.js",
-    "line": "  const committed = React.useRef();",
+    "line": "  const committed = react.useRef();",
     "reasonCategory": "usageTrusted",
     "updated": "2021-09-27T21:37:06.339Z"
   },
   {
     "rule": "React-useRef",
     "path": "node_modules/@react-spring/shared/dist/react-spring-shared.cjs.dev.js",
-    "line": "  const prevRef = React.useRef();",
+    "line": "  const prevRef = react.useRef();",
     "reasonCategory": "usageTrusted",
     "updated": "2021-09-27T21:37:06.339Z"
   },
   {
     "rule": "React-useRef",
     "path": "node_modules/@react-spring/shared/dist/react-spring-shared.cjs.dev.js",
-    "line": "  const isMounted = React.useRef(false);",
+    "line": "  const isMounted = react.useRef(false);",
     "reasonCategory": "usageTrusted",
     "updated": "2022-06-01T22:57:44.591Z"
   },
   {
     "rule": "React-useRef",
     "path": "node_modules/@react-spring/shared/dist/react-spring-shared.cjs.prod.js",
-    "line": "  const committed = React.useRef();",
+    "line": "  const committed = react.useRef();",
     "reasonCategory": "usageTrusted",
     "updated": "2021-09-27T21:37:06.339Z"
   },
   {
     "rule": "React-useRef",
     "path": "node_modules/@react-spring/shared/dist/react-spring-shared.cjs.prod.js",
-    "line": "  const prevRef = React.useRef();",
+    "line": "  const prevRef = react.useRef();",
     "reasonCategory": "usageTrusted",
     "updated": "2021-09-27T21:37:06.339Z"
   },
   {
     "rule": "React-useRef",
     "path": "node_modules/@react-spring/shared/dist/react-spring-shared.cjs.prod.js",
-    "line": "  const isMounted = React.useRef(false);",
+    "line": "  const isMounted = react.useRef(false);",
     "reasonCategory": "usageTrusted",
     "updated": "2022-06-01T22:57:44.591Z"
   },
@@ -8860,6 +8839,13 @@
   },
   {
     "rule": "React-useRef",
+    "path": "ts/components/AddCaptionModal.tsx",
+    "line": "  const scrollerRef = React.useRef<HTMLDivElement>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2022-10-03T16:06:12.837Z"
+  },
+  {
+    "rule": "React-useRef",
     "path": "ts/components/AvatarTextEditor.tsx",
     "line": "  const measureElRef = useRef<null | HTMLDivElement>(null);",
     "reasonCategory": "usageTrusted",
@@ -9031,6 +9017,20 @@
   },
   {
     "rule": "React-useRef",
+    "path": "ts/components/CompositionInput.tsx",
+    "line": "  const scrollerRefInner = React.useRef<HTMLDivElement>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2022-10-03T16:06:12.837Z"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/CompositionTextArea.tsx",
+    "line": "  const inputApiRef = React.useRef<InputApi | undefined>();",
+    "reasonCategory": "usageTrusted",
+    "updated": "2022-10-03T16:06:12.837Z"
+  },
+  {
+    "rule": "React-useRef",
     "path": "ts/components/ContactPills.tsx",
     "line": "  const elRef = useRef<null | HTMLDivElement>(null);",
     "reasonCategory": "usageTrusted",
@@ -9045,10 +9045,10 @@
   },
   {
     "rule": "React-useRef",
-    "path": "ts/components/ConversationList.tsx",
+    "path": "ts/components/ListView.tsx",
     "line": "  const listRef = useRef<null | List>(null);",
     "reasonCategory": "usageTrusted",
-    "updated": "2021-07-30T16:57:33.618Z"
+    "updated": "2022-11-11T17:11:07.659Z"
   },
   {
     "rule": "React-useRef",
@@ -9232,6 +9232,13 @@
   },
   {
     "rule": "React-useRef",
+    "path": "ts/components/ModalContainer.tsx",
+    "line": "  const containerRef = React.useRef<HTMLDivElement | null>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2022-10-14T16:39:48.461Z"
+  },
+  {
+    "rule": "React-useRef",
     "path": "ts/components/ModalHost.tsx",
     "line": "    const containerRef = React.useRef<HTMLDivElement | null>(null);",
     "reasonCategory": "usageTrusted",
@@ -9298,9 +9305,26 @@
   {
     "rule": "React-useRef",
     "path": "ts/components/StoryViewer.tsx",
-    "line": "  const unmountRef = useRef<boolean>(false);",
+    "line": "  const progressBarRef = useRef<HTMLDivElement>(null);",
     "reasonCategory": "usageTrusted",
-    "updated": "2022-07-18T23:30:04.033Z"
+    "updated": "2022-10-13T15:18:21.267Z",
+    "reasonDetail": "<optional>"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/StoryViewer.tsx",
+    "line": "  const animationRef = useRef<Animation | null>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2022-10-13T15:18:21.267Z",
+    "reasonDetail": "<optional>"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/StoryViewer.tsx",
+    "line": "  const onFinishRef = useRef<(() => void) | null>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2022-10-13T15:18:21.267Z",
+    "reasonDetail": "<optional>"
   },
   {
     "rule": "React-useRef",
@@ -9319,28 +9343,35 @@
   {
     "rule": "React-useRef",
     "path": "ts/components/StoryViewsNRepliesModal.tsx",
-    "line": "  const shouldScrollToBottomRef = useRef(false);",
+    "line": "  const shouldScrollToBottomRef = useRef(true);",
     "reasonCategory": "usageTrusted",
-    "updated": "2022-09-22T03:07:22.153Z"
+    "updated": "2022-10-05T18:51:56.411Z"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/StoryViewsNRepliesModal.tsx",
+    "line": "  const bottomRef = useRef<HTMLDivElement>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2022-10-05T18:51:56.411Z"
   },
   {
     "rule": "React-useRef",
     "path": "ts/components/TextAttachment.tsx",
-    "line": "  const linkPreview = useRef<HTMLDivElement | null>(null);",
+    "line": "    const linkPreview = useRef<HTMLDivElement | null>(null);",
     "reasonCategory": "usageTrusted",
     "updated": "2022-04-06T00:59:17.194Z"
   },
   {
     "rule": "React-useRef",
     "path": "ts/components/TextAttachment.tsx",
-    "line": "  const textEditorRef = useRef<HTMLTextAreaElement | null>(null);",
+    "line": "    const textEditorRef = useRef<HTMLTextAreaElement | null>(null);",
     "reasonCategory": "usageTrusted",
     "updated": "2022-06-16T23:23:32.306Z"
   },
   {
     "rule": "React-useRef",
     "path": "ts/components/TextStoryCreator.tsx",
-    "line": "  const textEditorRef = useRef<HTMLInputElement | null>(null);",
+    "line": "  const textEditorRef = useRef<HTMLTextAreaElement | null>(null);",
     "reasonCategory": "usageTrusted",
     "updated": "2022-06-16T23:23:32.306Z"
   },
@@ -9435,6 +9466,13 @@
     "reasonCategory": "usageTrusted",
     "updated": "2021-01-20T21:30:08.430Z",
     "reasonDetail": "Doesn't touch the DOM."
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/conversation/TimelineMessage.tsx",
+    "line": "  const menuTriggerRef = useRef<Trigger | null>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2022-11-03T14:21:47.456Z"
   },
   {
     "rule": "React-useRef",

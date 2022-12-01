@@ -1,41 +1,49 @@
 // Copyright 2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React from 'react';
+import React, { useState } from 'react';
 import classNames from 'classnames';
 import type { ConversationType } from '../state/ducks/conversations';
 import type { LocalizerType } from '../types/Util';
+import type { MyStoryType, StoryViewType } from '../types/Stories';
 import type { ShowToastActionCreatorType } from '../state/ducks/toast';
-import type { StoryViewType } from '../types/Stories';
 import { Avatar, AvatarSize } from './Avatar';
-import { HasStories } from '../types/Stories';
+import { HasStories, ResolvedSendStatus } from '../types/Stories';
+import { MessageTimestamp } from './conversation/MessageTimestamp';
+import { StoriesAddStoryButton } from './StoriesAddStoryButton';
 import { StoryImage } from './StoryImage';
 import { getAvatarColor } from '../types/Colors';
-import { MessageTimestamp } from './conversation/MessageTimestamp';
-
-import { StoriesAddStoryButton } from './StoriesAddStoryButton';
+import { reduceStorySendStatus } from '../util/resolveStorySendStatus';
 
 export type PropsType = {
-  hasMultiple: boolean;
   i18n: LocalizerType;
   me: ConversationType;
-  newestStory?: StoryViewType;
+  myStories: Array<MyStoryType>;
   onAddStory: () => unknown;
   onClick: () => unknown;
   queueStoryDownload: (storyId: string) => unknown;
   showToast: ShowToastActionCreatorType;
 };
 
-export const MyStoriesButton = ({
-  hasMultiple,
+function getNewestMyStory(story: MyStoryType): StoryViewType {
+  return story.stories[0];
+}
+
+export const MyStoryButton = ({
   i18n,
   me,
-  newestStory,
+  myStories,
   onAddStory,
   onClick,
   queueStoryDownload,
   showToast,
 }: PropsType): JSX.Element => {
+  const [active, setActive] = useState(false);
+
+  const newestStory = myStories.length
+    ? getNewestMyStory(myStories[0])
+    : undefined;
+
   const {
     acceptedMessageRequest,
     avatarPath,
@@ -68,10 +76,7 @@ export const MyStoriesButton = ({
             size={AvatarSize.FORTY_EIGHT}
             title={title}
           />
-          <div
-            aria-label={i18n('Stories__add')}
-            className="MyStories__avatar__add-story"
-          />
+          <div className="MyStories__avatar__add-story" />
         </div>
         <div className="StoryListItem__info">
           <>
@@ -87,14 +92,30 @@ export const MyStoriesButton = ({
     );
   }
 
+  const hasMultiple = myStories.length
+    ? myStories[0].stories.length > 1
+    : false;
+
+  const reducedSendStatus: ResolvedSendStatus = myStories.reduce(
+    (acc: ResolvedSendStatus, myStory) =>
+      reduceStorySendStatus(acc, myStory.reducedSendStatus),
+    ResolvedSendStatus.Sent
+  );
+
   return (
-    <div className="StoryListItem__button">
+    <div
+      className={classNames(
+        'StoryListItem__button',
+        active && 'StoryListItem__button--active'
+      )}
+    >
       <div className="MyStories__avatar-container">
         <StoriesAddStoryButton
           i18n={i18n}
           moduleClassName="StoryListItem--active-opacity"
           onAddStory={onAddStory}
           showToast={showToast}
+          onContextMenuShowingChanged={setActive}
         >
           <Avatar
             acceptedMessageRequest={acceptedMessageRequest}
@@ -110,10 +131,7 @@ export const MyStoriesButton = ({
             storyRing={HasStories.Read}
             title={title}
           />
-          <div
-            aria-label={i18n('Stories__add')}
-            className="MyStories__avatar__add-story"
-          />
+          <div className="MyStories__avatar__add-story" />
         </StoriesAddStoryButton>
       </div>
       <div
@@ -131,14 +149,31 @@ export const MyStoriesButton = ({
       >
         <div className="StoryListItem__info">
           <div className="StoryListItem__info--title StoryListItem__chevron">
-            {i18n('Stories__mine')}
+            {i18n('MyStories__list_item')}
           </div>
-          <MessageTimestamp
-            i18n={i18n}
-            isRelativeTime
-            module="StoryListItem__info--timestamp"
-            timestamp={newestStory.timestamp}
-          />
+          {reducedSendStatus === ResolvedSendStatus.Sending && (
+            <span className="StoryListItem__info--sending">
+              {i18n('Stories__list--sending')}
+            </span>
+          )}
+          {reducedSendStatus === ResolvedSendStatus.Failed && (
+            <span className="StoryListItem__info--send_failed">
+              {i18n('Stories__list--send_failed')}
+            </span>
+          )}
+          {reducedSendStatus === ResolvedSendStatus.PartiallySent && (
+            <span className="StoryListItem__info--send_failed">
+              {i18n('Stories__list--partially-sent')}
+            </span>
+          )}
+          {reducedSendStatus === ResolvedSendStatus.Sent && (
+            <MessageTimestamp
+              i18n={i18n}
+              isRelativeTime
+              module="StoryListItem__info--timestamp"
+              timestamp={newestStory.timestamp}
+            />
+          )}
         </div>
         <div
           aria-label={i18n('StoryListItem__label')}

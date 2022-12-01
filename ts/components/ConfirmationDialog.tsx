@@ -27,11 +27,12 @@ export type OwnProps = Readonly<{
   i18n: LocalizerType;
   moduleClassName?: string;
   noMouseClose?: boolean;
+  noDefaultCancelButton?: boolean;
   onCancel?: () => unknown;
   onClose: () => unknown;
   onTopOfEverything?: boolean;
   theme?: Theme;
-  title?: string | React.ReactNode;
+  title?: React.ReactNode;
 }>;
 
 export type Props = OwnProps;
@@ -67,6 +68,7 @@ export const ConfirmationDialog = React.memo(
     i18n,
     moduleClassName,
     noMouseClose,
+    noDefaultCancelButton,
     onCancel,
     onClose,
     onTopOfEverything,
@@ -98,16 +100,18 @@ export const ConfirmationDialog = React.memo(
 
     const footer = (
       <>
-        <Button
-          onClick={handleCancel}
-          ref={focusRef}
-          variant={
-            cancelButtonVariant ||
-            (hasActions ? ButtonVariant.Secondary : ButtonVariant.Primary)
-          }
-        >
-          {cancelText || i18n('confirmation-dialog--Cancel')}
-        </Button>
+        {!noDefaultCancelButton ? (
+          <Button
+            onClick={handleCancel}
+            ref={focusRef}
+            variant={
+              cancelButtonVariant ||
+              (hasActions ? ButtonVariant.Secondary : ButtonVariant.Primary)
+            }
+          >
+            {cancelText || i18n('confirmation-dialog--Cancel')}
+          </Button>
+        ) : null}
         {actions.map((action, i) => (
           <Button
             key={action.text}
@@ -131,6 +135,7 @@ export const ConfirmationDialog = React.memo(
         modalName={modalName}
         noMouseClose={noMouseClose}
         onClose={close}
+        onEscape={cancelAndClose}
         onTopOfEverything={onTopOfEverything}
         overlayStyles={overlayStyles}
         theme={theme}

@@ -1,9 +1,6 @@
 // Copyright 2017-2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// This has to be the first import because it patches "os" module
-import '../ts/util/patchWindows7Hostname';
-
 import { join, normalize } from 'path';
 import { pathToFileURL } from 'url';
 import * as os from 'os';
@@ -49,6 +46,7 @@ import { strictAssert } from '../ts/util/assert';
 import { consoleLogger } from '../ts/util/consoleLogger';
 import type { ThemeSettingType } from '../ts/types/StorageUIKeys';
 import { ThemeType } from '../ts/types/Util';
+import * as Errors from '../ts/types/errors';
 
 import './startup_config';
 
@@ -160,6 +158,9 @@ const defaultWebPrefs = {
     !isProduction(app.getVersion()),
   spellcheck: false,
 };
+
+const DISABLE_GPU =
+  OS.isLinux() && !process.argv.some(arg => arg === '--enable-gpu');
 
 function showWindow() {
   if (!mainWindow) {
@@ -378,16 +379,9 @@ async function prepareUrl(
   const theme = await getResolvedThemeSetting();
 
   const directoryConfig = directoryConfigSchema.safeParse({
-    directoryType: config.get<string | undefined>('directoryType') || 'legacy',
     directoryUrl: config.get<string | null>('directoryUrl') || undefined,
-    directoryEnclaveId:
-      config.get<string | null>('directoryEnclaveId') || undefined,
-    directoryTrustAnchor:
-      config.get<string | null>('directoryTrustAnchor') || undefined,
-    directoryCDSIUrl:
-      config.get<string | null>('directoryCDSIUrl') || undefined,
-    directoryCDSIMRENCLAVE:
-      config.get<string | null>('directoryCDSIMRENCLAVE') || undefined,
+    directoryMRENCLAVE:
+      config.get<string | null>('directoryMRENCLAVE') || undefined,
   });
   if (!directoryConfig.success) {
     throw new Error(
@@ -406,6 +400,7 @@ async function prepareUrl(
     serverUrl: config.get<string>('serverUrl'),
     storageUrl: config.get<string>('storageUrl'),
     updatesUrl: config.get<string>('updatesUrl'),
+    resourcesUrl: config.get<string>('resourcesUrl'),
     cdnUrl0: config.get<ConfigType>('cdn').get<string>('0'),
     cdnUrl2: config.get<ConfigType>('cdn').get<string>('2'),
     certificateAuthority: config.get<string>('certificateAuthority'),
@@ -477,7 +472,7 @@ async function handleUrl(event: Electron.Event, rawTarget: string) {
     try {
       await shell.openExternal(target);
     } catch (error) {
-      getLogger().error(`Failed to open url: ${error.stack}`);
+      getLogger().error(`Failed to open url: ${Errors.toLogFormat(error)}`);
     }
   }
 }
@@ -944,7 +939,7 @@ ipc.on('database-ready', async event => {
   if (error) {
     getLogger().error(
       'database-ready requested, but got sql error',
-      error && error.stack
+      Errors.toLogFormat(error)
     );
     return;
   }
@@ -1036,7 +1031,7 @@ async function readyForUpdates() {
   } catch (error) {
     getLogger().error(
       'Error starting update checks:',
-      error && error.stack ? error.stack : error
+      Errors.toLogFormat(error)
     );
   }
 }
@@ -1046,10 +1041,7 @@ async function forceUpdate() {
     getLogger().info('starting force update');
     await updater.force();
   } catch (error) {
-    getLogger().error(
-      'Error during force update:',
-      error && error.stack ? error.stack : error
-    );
+    getLogger().error('Error during force update:', Errors.toLogFormat(error));
   }
 }
 
@@ -1484,7 +1476,7 @@ const runSQLCorruptionHandler = async () => {
       `Restarting the application immediately. Error: ${error.message}`
   );
 
-  await onDatabaseError(error.stack || error.message);
+  await onDatabaseError(Errors.toLogFormat(error));
 };
 
 async function initializeSQL(
@@ -1616,7 +1608,7 @@ app.commandLine.appendSwitch('password-store', 'basic');
 
 // <canvas/> rendering is often utterly broken on Linux when using GPU
 // acceleration.
-if (OS.isLinux()) {
+if (DISABLE_GPU) {
   app.disableHardwareAcceleration();
 }
 
@@ -1805,7 +1797,7 @@ app.on('ready', async () => {
   } catch (err) {
     logger.error(
       'main/ready: Error deleting temp dir:',
-      err && err.stack ? err.stack : err
+      Errors.toLogFormat(err)
     );
   }
 
@@ -1832,7 +1824,7 @@ app.on('ready', async () => {
   if (sqlError) {
     getLogger().error('sql.initialize was unsuccessful; returning early');
 
-    await onDatabaseError(sqlError.stack || sqlError.message);
+    await onDatabaseError(Errors.toLogFormat(sqlError));
 
     return;
   }
@@ -1849,7 +1841,7 @@ app.on('ready', async () => {
   } catch (err) {
     getLogger().error(
       '(ready event handler) error deleting IndexedDB:',
-      err && err.stack ? err.stack : err
+      Errors.toLogFormat(err)
     );
   }
 
@@ -1995,10 +1987,7 @@ async function requestShutdown() {
   try {
     await request;
   } catch (error) {
-    getLogger().error(
-      'requestShutdown error:',
-      error && error.stack ? error.stack : error
-    );
+    getLogger().error('requestShutdown error:', Errors.toLogFormat(error));
   }
 }
 
@@ -2203,7 +2192,7 @@ ipc.handle(
     } catch (error) {
       getLogger().error(
         'show-permissions-popup error:',
-        error && error.stack ? error.stack : error
+        Errors.toLogFormat(error)
       );
     }
   }
@@ -2246,7 +2235,10 @@ ipc.on('get-built-in-images', async () => {
     if (mainWindow && mainWindow.webContents) {
       mainWindow.webContents.send('get-success-built-in-images', error.message);
     } else {
-      getLogger().error('Error handling get-built-in-images:', error.stack);
+      getLogger().error(
+        'Error handling get-built-in-images:',
+        Errors.toLogFormat(error)
+      );
     }
   }
 });

@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { AttachmentType } from './Attachment';
+import type { HydratedBodyRangesType, LocalizerType } from './Util';
 import type { ContactNameColorType } from './Colors';
 import type { ConversationType } from '../state/ducks/conversations';
-import type { LocalizerType } from './Util';
 import type { ReadStatus } from '../messages/MessageReadStatus';
 import type { SendStatus } from '../messages/MessageSendState';
 import type { StoryDistributionListDataType } from '../state/ducks/storyDistributionLists';
@@ -25,6 +25,7 @@ export type ReplyType = {
     | 'title'
   >;
   body?: string;
+  bodyRanges?: HydratedBodyRangesType;
   contactNameColor?: ContactNameColorType;
   conversationId: string;
   deletedForEveryone?: boolean;
@@ -36,11 +37,13 @@ export type ReplyType = {
 
 export type ReplyStateType = {
   messageId: string;
-  replies: Array<ReplyType>;
+  replies: ReadonlyArray<ReplyType>;
 };
 
 export type ConversationStoryType = {
   conversationId: string;
+  hasReplies?: boolean;
+  hasRepliesFromSelf?: boolean;
   group?: Pick<
     ConversationType,
     | 'acceptedMessageRequest'
@@ -52,6 +55,7 @@ export type ConversationStoryType = {
     | 'sharedGroupNames'
     | 'sortedGroupMembers'
     | 'title'
+    | 'left'
   >;
   isHidden?: boolean;
   searchNames?: string; // This is just here to satisfy Fuse's types
@@ -68,8 +72,6 @@ export type StorySendStateType = {
 export type StoryViewType = {
   attachment?: AttachmentType;
   canReply?: boolean;
-  hasReplies?: boolean;
-  hasRepliesFromSelf?: boolean;
   isHidden?: boolean;
   isUnread?: boolean;
   messageId: string;
@@ -89,6 +91,7 @@ export type StoryViewType = {
     | 'profileName'
     | 'sharedGroupNames'
     | 'title'
+    | 'uuid'
   >;
   sendState?: Array<StorySendStateType>;
   timestamp: number;
@@ -99,15 +102,22 @@ export type StoryViewType = {
 export type MyStoryType = {
   id: string;
   name: string;
+  reducedSendStatus: ResolvedSendStatus;
   stories: Array<StoryViewType>;
 };
 
-export const MY_STORIES_ID: UUIDStringType =
+export const MY_STORY_ID: UUIDStringType =
   '00000000-0000-0000-0000-000000000000';
 
 export enum StoryViewDirectionType {
   Next = 'Next',
   Previous = 'Previous',
+}
+
+export enum StoryViewTargetType {
+  Details = 'Details',
+  Views = 'Views',
+  Replies = 'Replies',
 }
 
 // Type of stories to view before closing the viewer
@@ -118,6 +128,7 @@ export enum StoryViewDirectionType {
 export enum StoryViewModeType {
   All = 'All',
   Hidden = 'Hidden',
+  MyStories = 'MyStories',
   Single = 'Single',
   Unread = 'Unread',
   User = 'User',
@@ -135,10 +146,29 @@ export function getStoryDistributionListName(
   id: string,
   name: string
 ): string {
-  return id === MY_STORIES_ID ? i18n('Stories__mine') : name;
+  return id === MY_STORY_ID ? i18n('Stories__mine') : name;
 }
 
 export enum HasStories {
   Read = 'Read',
   Unread = 'Unread',
 }
+
+export enum StorySendMode {
+  IfActive = 'IfActive',
+  Always = 'Always',
+  Never = 'Never',
+}
+
+export enum ResolvedSendStatus {
+  Failed = 'Failed',
+  PartiallySent = 'PartiallySent',
+  Sending = 'Sending',
+  Sent = 'Sent',
+}
+
+export type StoryMessageRecipientsType = Array<{
+  destinationUuid: string;
+  distributionListIds: Array<string>;
+  isAllowedToReply: boolean;
+}>;

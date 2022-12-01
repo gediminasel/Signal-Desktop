@@ -12,7 +12,10 @@ import {
   conversationQueueJobEnum,
 } from '../jobs/conversationJobQueue';
 import { deleteForEveryone } from './deleteForEveryone';
-import { getConversationIdForLogging } from './idForLogging';
+import {
+  getConversationIdForLogging,
+  getMessageIdForLogging,
+} from './idForLogging';
 import { getMessageById } from '../messages/getMessageById';
 import { getRecipientConversationIds } from './getRecipientConversationIds';
 import { getRecipients } from './getRecipients';
@@ -37,22 +40,29 @@ export async function sendDeleteForEveryoneMessage(
   if (!message) {
     throw new Error('sendDeleteForEveryoneMessage: Cannot find message!');
   }
-  const messageModel = window.MessageController.register(messageId, message);
+  const idForLogging = getMessageIdForLogging(message.attributes);
 
   const timestamp = Date.now();
-  if (
-    timestamp - targetTimestamp >
-    (deleteForEveryoneDuration || THREE_HOURS)
-  ) {
-    throw new Error('Cannot send DOE for a message older than three hours');
+  const maxDuration = deleteForEveryoneDuration || THREE_HOURS;
+  if (timestamp - targetTimestamp > maxDuration) {
+    throw new Error(`Cannot send DOE for a message older than ${maxDuration}`);
   }
 
-  messageModel.set({
+  message.set({
     deletedForEveryoneSendStatus: zipObject(
       getRecipientConversationIds(conversationAttributes),
       repeat(false)
     ),
   });
+
+  const conversationIdForLogging = getConversationIdForLogging(
+    conversationAttributes
+  );
+
+  log.info(
+    `sendDeleteForEveryoneMessage: enqueing DeleteForEveryone: ${idForLogging} ` +
+      `in conversation ${conversationIdForLogging}`
+  );
 
   try {
     const jobData: ConversationQueueJobData = {
@@ -64,18 +74,18 @@ export async function sendDeleteForEveryoneMessage(
       targetTimestamp,
     };
     await conversationJobQueue.add(jobData, async jobToInsert => {
-      const idForLogging = getConversationIdForLogging(conversationAttributes);
       log.info(
-        `sendDeleteForEveryoneMessage: saving message ${idForLogging} and job ${jobToInsert.id}`
+        `sendDeleteForEveryoneMessage: Deleting message ${idForLogging} ` +
+          `in conversation ${conversationIdForLogging} with job ${jobToInsert.id}`
       );
-      await window.Signal.Data.saveMessage(messageModel.attributes, {
+      await window.Signal.Data.saveMessage(message.attributes, {
         jobToInsert,
         ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
       });
     });
   } catch (error) {
     log.error(
-      'sendDeleteForEveryoneMessage: Failed to queue delete for everyone',
+      `sendDeleteForEveryoneMessage: Failed to queue delete for everyone for message ${idForLogging}`,
       Errors.toLogFormat(error)
     );
     throw error;
@@ -86,5 +96,5 @@ export async function sendDeleteForEveryoneMessage(
     serverTimestamp: Date.now(),
     fromId: window.ConversationController.getOurConversationIdOrThrow(),
   });
-  await deleteForEveryone(messageModel, deleteModel);
+  await deleteForEveryone(message, deleteModel);
 }

@@ -6,7 +6,7 @@
 import * as Backbone from 'backbone';
 
 import type { GroupV2ChangeType } from './groups';
-import type { BodyRangeType, BodyRangesType } from './types/Util';
+import type { DraftBodyRangesType, BodyRangesType } from './types/Util';
 import type { CallHistoryDetailsFromDiskType } from './types/Calling';
 import type { CustomColorType, ConversationColorType } from './types/Colors';
 import type { DeviceType } from './textsecure/Types.d';
@@ -30,7 +30,9 @@ import type { GiftBadgeStates } from './components/conversation/Message';
 import type { LinkPreviewType } from './types/message/LinkPreviews';
 
 import type { StickerType } from './types/Stickers';
+import type { StorySendMode } from './types/Stories';
 import type { MIMEType } from './types/MIME';
+import type { DurationInSeconds } from './util/durations';
 
 import AccessRequiredEnum = Proto.AccessControl.AccessRequired;
 import MemberRoleEnum = Proto.Member.Role;
@@ -130,7 +132,7 @@ export type MessageAttributesType = {
   deletedForEveryoneTimestamp?: number;
   errors?: Array<CustomError>;
   expirationStartTimestamp?: number | null;
-  expireTimer?: number;
+  expireTimer?: DurationInSeconds;
   groupMigration?: GroupMigrationType;
   group_update?: GroupV1Update;
   hasAttachments?: boolean | 0 | 1;
@@ -146,13 +148,14 @@ export type MessageAttributesType = {
   messageTimer?: unknown;
   profileChange?: ProfileNameChangeType;
   quote?: QuotedMessageType;
-  reactions?: Array<MessageReactionType>;
+  reactions?: ReadonlyArray<MessageReactionType>;
   requiredProtocolVersion?: number;
   retryOptions?: RetryOptions;
   sourceDevice?: number;
   storyDistributionListId?: string;
   storyId?: string;
   storyReplyContext?: StoryReplyContextType;
+  storyRecipientsVersion?: number;
   supportedVersionAtReceive?: unknown;
   synced?: boolean;
   unidentifiedDeliveryReceived?: boolean;
@@ -184,7 +187,11 @@ export type MessageAttributesType = {
   unidentifiedDeliveries?: Array<string>;
   contact?: Array<EmbeddedContactType>;
   conversationId: string;
-  storyReactionEmoji?: string;
+  storyReaction?: {
+    emoji: string;
+    targetAuthorUuid: string;
+    targetTimestamp: number;
+  };
   giftBadge?: {
     expiration: number;
     level: number;
@@ -194,7 +201,7 @@ export type MessageAttributesType = {
   };
 
   expirationTimerUpdate?: {
-    expireTimer: number;
+    expireTimer?: DurationInSeconds;
     fromSync?: unknown;
     source?: string;
     sourceUuid?: string;
@@ -276,7 +283,7 @@ export type ConversationAttributesType = {
   firstUnregisteredAt?: number;
   draftChanged?: boolean;
   draftAttachments?: Array<AttachmentDraftType>;
-  draftBodyRanges?: Array<BodyRangeType>;
+  draftBodyRanges?: DraftBodyRangesType;
   draftTimestamp?: number | null;
   hideStory?: boolean;
   inbox_position?: number;
@@ -352,7 +359,7 @@ export type ConversationAttributesType = {
   //   to leave a group.
   left?: boolean;
   groupVersion?: number;
-  isGroupStorySendReady?: boolean;
+  storySendMode?: StorySendMode;
 
   // GroupV1 only
   members?: Array<string>;
@@ -379,7 +386,7 @@ export type ConversationAttributesType = {
   } | null;
   avatars?: Array<AvatarDataType>;
   description?: string;
-  expireTimer?: number;
+  expireTimer?: DurationInSeconds;
   membersV2?: Array<GroupV2MemberType>;
   pendingMembersV2?: Array<GroupV2PendingMemberType>;
   pendingAdminApprovalV2?: Array<GroupV2PendingAdminApprovalType>;
@@ -435,7 +442,6 @@ export type GroupV2PendingAdminApprovalType = {
 
 export type VerificationOptions = {
   key?: null | Uint8Array;
-  viaStorageServiceSync?: boolean;
 };
 
 export type ShallowChallengeError = CustomError & {

@@ -1,6 +1,10 @@
 // Copyright 2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
+$tabs-height: 28px;
+$tabs-margin-bottom: 16px;
+$footer-height: 36px;
+
 .StoryViewsNRepliesModal {
   min-width: 320px;
   overflow: hidden;
@@ -8,7 +12,25 @@
   &--group {
     display: flex;
     flex-direction: column;
-    min-height: 400px;
+    flex: 1;
+    // explicit height prevents height:auto
+    // while allowing flex to actually size it
+    height: 0;
+
+    .StoryViewsNRepliesModal__replies {
+      // at least 400px tall
+      // but if screen is small, allow it to shrink further
+      // 75% - (header + header bottom margin + footer)
+      min-height: min(
+        calc(75vh - ($tabs-height + $tabs-margin-bottom + $footer-height)),
+        400px
+      );
+    }
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
   }
 
   &__replies {
@@ -45,7 +67,7 @@
 
   &__emoji-button {
     height: 24px;
-    margin-right: 8px;
+    margin-left: 10px;
     width: 24px;
 
     &::after {
@@ -56,6 +78,13 @@
         );
       }
     }
+  }
+
+  &__not-a-member {
+    margin: 24px 4px 8px 4px;
+    font-size: 12px;
+    text-align: center;
+    color: $color-gray-25;
   }
 
   &__input {
@@ -71,9 +100,12 @@
         color: $color-gray-25;
       }
 
+      display: flex;
+      align-items: center;
+      min-height: 36px;
+
       &--with-children {
-        align-items: center;
-        display: flex;
+        flex: 1;
       }
 
       .quill {
@@ -219,7 +251,7 @@
 .Tabs.StoryViewsNRepliesModal__tabs {
   border-bottom: none;
   justify-content: center;
-  margin-bottom: 16px;
+  margin-bottom: $tabs-margin-bottom;
 }
 
 .Tabs__tab.StoryViewsNRepliesModal__tabs__tab {

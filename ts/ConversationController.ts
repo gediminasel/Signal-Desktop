@@ -28,6 +28,7 @@ import { sleep } from './util/sleep';
 import { isNotNil } from './util/isNotNil';
 import { MINUTE, SECOND } from './util/durations';
 import { getUuidsForE164s } from './util/getUuidsForE164s';
+import { SIGNAL_ACI, SIGNAL_AVATAR_PATH } from './types/SignalConversation';
 
 type ConvoMatchType =
   | {
@@ -129,8 +130,8 @@ const {
 export function start(): void {
   const conversations = new window.Whisper.ConversationCollection();
 
-  window.getConversations = () => conversations;
   window.ConversationController = new ConversationController(conversations);
+  window.getConversations = () => conversations;
 }
 
 export class ConversationController {
@@ -143,6 +144,8 @@ export class ConversationController {
   private _hasQueueEmptied = false;
 
   private _combineConversationsQueue = new PQueue({ concurrency: 1 });
+
+  private _signalConversationId: undefined | string;
 
   constructor(private _conversations: ConversationModelCollectionType) {
     const debouncedUpdateUnreadCount = debounce(
@@ -296,7 +299,7 @@ export class ConversationController {
         log.error(
           'Contact is not valid. Not saving, but adding to collection:',
           conversation.idForLogging(),
-          validationError.stack
+          Errors.toLogFormat(validationError)
         );
 
         return conversation;
@@ -313,7 +316,7 @@ export class ConversationController {
           identifier,
           type,
           'Error:',
-          error && error.stack ? error.stack : error
+          Errors.toLogFormat(error)
         );
         throw error;
       }
@@ -404,6 +407,34 @@ export class ConversationController {
     }
 
     return conversation;
+  }
+
+  async getOrCreateSignalConversation(): Promise<ConversationModel> {
+    const conversation = await this.getOrCreateAndWait(SIGNAL_ACI, 'private', {
+      muteExpiresAt: Number.MAX_SAFE_INTEGER,
+      profileAvatar: { path: SIGNAL_AVATAR_PATH },
+      profileName: 'Signal',
+      profileSharing: true,
+    });
+
+    if (conversation.get('profileAvatar')?.path !== SIGNAL_AVATAR_PATH) {
+      conversation.set({
+        profileAvatar: { hash: SIGNAL_AVATAR_PATH, path: SIGNAL_AVATAR_PATH },
+      });
+      updateConversation(conversation.attributes);
+    }
+
+    this._signalConversationId = conversation.id;
+
+    return conversation;
+  }
+
+  isSignalConversation(uuidOrId: string): boolean {
+    if (uuidOrId === SIGNAL_ACI) {
+      return true;
+    }
+
+    return this._signalConversationId === uuidOrId;
   }
 
   areWePrimaryDevice(): boolean {
@@ -720,6 +751,13 @@ export class ConversationController {
         const existing = byUuid[pni];
         if (!existing) {
           byUuid[pni] = conversation;
+        } else if (existing === conversation) {
+          // Conversation has both uuid and pni set to the same value. This
+          // happens when starting a conversation by E164.
+          assertDev(
+            pni === uuid,
+            'checkForConflicts: expected PNI to be equal to UUID'
+          );
         } else {
           log.warn(`checkForConflicts: Found conflict with pni ${pni}`);
 
@@ -1209,7 +1247,7 @@ export class ConversationController {
           } catch (error) {
             log.error(
               'ConversationController.load/map: Failed to prepare a conversation',
-              error && error.stack ? error.stack : error
+              Errors.toLogFormat(error)
             );
           }
         })
@@ -1218,7 +1256,7 @@ export class ConversationController {
     } catch (error) {
       log.error(
         'ConversationController: initial fetch failed',
-        error && error.stack ? error.stack : error
+        Errors.toLogFormat(error)
       );
       throw error;
     }
