@@ -59,6 +59,16 @@ export const getTextFromOps = (ops: Array<DeltaOperation>): string =>
     }, '')
     .trim();
 
+const expandGoLinks = (text) => {
+  if (localStorage.getItem('realGoLinkAddress')) {
+    return text.replace(
+      /(\s|^)(http:\/\/go|go)(\/[\w-])/gmu,
+      `$1${localStorage.getItem('realGoLinkAddress')}$3`
+    );
+  }
+  return text;
+};
+
 export const getTextAndMentionsFromOps = (
   ops: Array<Op>
 ): [string, DraftBodyRangesType] => {
@@ -76,21 +86,22 @@ export const getTextAndMentionsFromOps = (
       }
 
       if (isInsertMentionOp(op)) {
+        const expandedAcc = expandGoLinks(acc);
         mentions.push({
           length: 1, // The length of `\uFFFC`
           mentionUuid: op.insert.mention.uuid,
           replacementText: op.insert.mention.title,
-          start: acc.length,
+          start: expandedAcc.length,
         });
 
-        return `${acc}\uFFFC`;
+        return `${expandedAcc}\uFFFC`;
       }
 
       return acc;
     }, '')
     .trimEnd(); // Trimming the start of this string will mess up mention indices
 
-  return [text, mentions];
+  return [expandGoLinks(text), mentions];
 };
 
 export const getBlotTextPartitions = (
