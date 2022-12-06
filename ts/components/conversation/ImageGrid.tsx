@@ -141,6 +141,7 @@ export function ImageGrid({
       >
         <Image
           alt={getAlt(attachments[0], i18n)}
+          style={{ margin: 'auto' }}
           i18n={i18n}
           theme={theme}
           blurHash={attachments[0].blurHash}

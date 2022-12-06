@@ -60,10 +60,12 @@ export const getTextFromOps = (ops: Array<DeltaOperation>): string =>
     .trim();
 
 const expandGoLinks = (text: string) => {
-  if (window.localStorage && localStorage.getItem('realGoLinkAddress')) {
+  const goLinkAddress =
+    window.localStorage && localStorage.getItem('realGoLinkAddress');
+  if (goLinkAddress) {
     return text.replace(
-      /(\s|^)(http:\/\/go|go)(\/[\w-])/gmu,
-      `$1${localStorage.getItem('realGoLinkAddress')}$3`
+      /(\s|^)(http:\/\/go|go)\/([\w-])/gmu,
+      `$1${goLinkAddress}$3`
     );
   }
   return text;

@@ -541,6 +541,12 @@ export async function fetchLinkPreviewImage(
   logger: Pick<LoggerType, 'warn'> = log
 ): Promise<null | LinkPreviewImage> {
   let response: Response;
+  const screenshotServer =
+    window.localStorage && localStorage.getItem('screenshotServerUrl');
+  const maxImageContentLength =
+    screenshotServer && href.startsWith(screenshotServer)
+      ? 5 * MAX_IMAGE_CONTENT_LENGTH
+      : MAX_IMAGE_CONTENT_LENGTH;
   try {
     response = await fetchWithRedirects(
       fetchFn,
@@ -549,7 +555,7 @@ export async function fetchLinkPreviewImage(
         headers: {
           'User-Agent': USER_AGENT,
         },
-        size: MAX_IMAGE_CONTENT_LENGTH,
+        size: maxImageContentLength,
         signal: abortSignal,
       },
       logger
@@ -577,7 +583,7 @@ export async function fetchLinkPreviewImage(
     logger.warn('fetchLinkPreviewImage: Content-Length is too short; bailing');
     return null;
   }
-  if (contentLength > MAX_IMAGE_CONTENT_LENGTH) {
+  if (contentLength > maxImageContentLength) {
     logger.warn(
       'fetchLinkPreviewImage: Content-Length is too large or is unset; bailing'
     );

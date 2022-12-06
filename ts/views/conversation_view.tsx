@@ -1869,7 +1869,7 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
 
     const loop = isGIF(attachments);
 
-    const media = attachments
+    let media = attachments
       .filter(item => item.thumbnail && !item.pending && !item.error)
       .map((item, index) => ({
         objectURL: getAbsoluteAttachmentPath(item.path ?? ''),
@@ -1894,6 +1894,36 @@ export class ConversationView extends window.Backbone.View<ConversationModel> {
           item.thumbnail?.objectUrl ||
           getAbsoluteAttachmentPath(item.thumbnail?.path ?? ''),
       }));
+
+    if (!media.length && attachment.path) {
+      media = [
+        {
+          objectURL: getAbsoluteAttachmentPath(attachment.path),
+          path: attachment.path,
+          contentType: attachment.contentType,
+          loop,
+          index: 0,
+          message: {
+            attachments: message.get('attachments') || [],
+            id: message.get('id'),
+            conversationId:
+              window.ConversationController.lookupOrCreate({
+                uuid: message.get('sourceUuid'),
+                e164: message.get('source'),
+              })?.id || message.get('conversationId'),
+            received_at: message.get('received_at'),
+            received_at_ms: Number(message.get('received_at_ms')),
+            sent_at: message.get('sent_at'),
+          },
+          attachment,
+          thumbnailObjectUrl:
+            attachment.thumbnail?.objectUrl ||
+            getAbsoluteAttachmentPath(
+              attachment.thumbnail?.path ?? attachment.path
+            ),
+        },
+      ];
+    }
 
     if (!media.length) {
       log.error(

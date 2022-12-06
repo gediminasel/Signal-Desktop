@@ -353,6 +353,10 @@ export class Linkify extends React.Component<Props> {
     const results: Array<JSX.Element | string> = [];
     let count = 1;
 
+    const screenshotServer =
+      window.localStorage && localStorage.getItem('screenshotServerUrl');
+    const goLinkAddress =
+      window.localStorage && localStorage.getItem('realGoLinkAddress');
     chunkData.forEach(({ chunk, matchData }) => {
       if (matchData.length === 0) {
         count += 1;
@@ -368,9 +372,16 @@ export class Linkify extends React.Component<Props> {
           results.push(renderNonLink({ text: textWithNoLink, key: count }));
         }
 
-        const { url, text: originalText } = match;
+        const { url } = match;
+        let { text: originalText } = match;
         count += 1;
         if (SUPPORTED_PROTOCOLS.test(url) && !isLinkSneaky(url)) {
+          if (screenshotServer && originalText.startsWith(screenshotServer)) {
+            originalText = originalText.replace(screenshotServer, 's/');
+          }
+          if (goLinkAddress && goLinkAddress.startsWith(goLinkAddress)) {
+            originalText = originalText.replace(goLinkAddress, 'go/');
+          }
           results.push(
             <a key={count} href={url}>
               {originalText}

@@ -1133,6 +1133,7 @@ export class Message extends React.PureComponent<Props, State> {
       quote,
       shouldCollapseAbove,
       theme,
+      showVisualAttachment,
     } = this.props;
 
     // Attachments take precedence over Link Previews
@@ -1156,7 +1157,12 @@ export class Message extends React.PureComponent<Props, State> {
         direction === 'incoming');
 
     const previewHasImage = isImageAttachment(first.image);
-    const isFullSizeImage = shouldUseFullSizeLinkPreviewImage(first);
+    const screenshotServer =
+      window.localStorage && localStorage.getItem('screenshotServerUrl');
+    const isScreenshot =
+      screenshotServer && first.url.startsWith(screenshotServer);
+    const isFullSizeImage =
+      isScreenshot || shouldUseFullSizeLinkPreviewImage(first);
 
     const linkPreviewDate = first.date || null;
 
@@ -1174,6 +1180,13 @@ export class Message extends React.PureComponent<Props, State> {
       ? () => {
           if (first.image && !isDownloaded(first.image)) {
             kickOffAttachmentDownload({
+              attachment: first.image,
+              messageId: id,
+            });
+            return;
+          }
+          if (first.image && isScreenshot) {
+            showVisualAttachment({
               attachment: first.image,
               messageId: id,
             });

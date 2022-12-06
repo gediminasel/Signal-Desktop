@@ -50,6 +50,7 @@ export type Props = {
 
   i18n: LocalizerType;
   theme?: ThemeType;
+  style?: React.CSSProperties;
   onClick?: (attachment: AttachmentType) => void;
   onClickClose?: (attachment: AttachmentType) => void;
   onError?: () => void;
@@ -214,6 +215,7 @@ export class Image extends React.Component<Props> {
           cropWidth || cropHeight ? 'module-image--cropped' : null
         )}
         style={{
+          ...this.props.style,
           width: width - cropWidth,
           height: height - cropHeight,
           ...curveStyles,
