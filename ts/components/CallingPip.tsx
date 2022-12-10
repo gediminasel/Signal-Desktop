@@ -65,8 +65,8 @@ export type PropsType = {
   togglePip: () => void;
 };
 
-const PIP_HEIGHT = 156;
-const PIP_WIDTH = 120;
+const PIP_HEIGHT_UNIT = 156;
+const PIP_WIDTH_UNIT = 120;
 const PIP_TOP_MARGIN = 56;
 const PIP_PADDING = 8;
 
@@ -88,6 +88,11 @@ export function CallingPip({
 
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
   const [windowHeight, setWindowHeight] = React.useState(window.innerHeight);
+  const [pipSizeMult, setPipSizeMult] = React.useState(
+    parseInt(localStorage.getItem('pipSizeMultiplier') || '', 10) || 1
+  );
+  const pipHeight = PIP_HEIGHT_UNIT * pipSizeMult;
+  const pipWidth = pipSizeMult > 1 ? pipHeight : PIP_WIDTH_UNIT * pipSizeMult;
   const [positionState, setPositionState] = React.useState<PositionState>({
     mode: PositionMode.SnapToRight,
     offsetY: PIP_TOP_MARGIN,
@@ -135,7 +140,7 @@ export function CallingPip({
         },
         {
           mode: PositionMode.SnapToRight,
-          distanceToEdge: innerWidth - (offsetX + PIP_WIDTH),
+          distanceToEdge: innerWidth - (offsetX + pipWidth),
         },
         {
           mode: PositionMode.SnapToTop,
@@ -143,7 +148,7 @@ export function CallingPip({
         },
         {
           mode: PositionMode.SnapToBottom,
-          distanceToEdge: innerHeight - (offsetY + PIP_HEIGHT),
+          distanceToEdge: innerHeight - (offsetY + pipHeight),
         },
       ];
 
@@ -172,7 +177,7 @@ export function CallingPip({
           throw missingCaseError(snapTo.mode);
       }
     }
-  }, [positionState, setPositionState]);
+  }, [positionState, setPositionState, pipHeight, pipWidth]);
 
   React.useEffect(() => {
     if (positionState.mode === PositionMode.BeingDragged) {
@@ -217,37 +222,31 @@ export function CallingPip({
           PIP_PADDING,
           Math.min(
             positionState.offsetY,
-            windowHeight - PIP_PADDING - PIP_HEIGHT
+            windowHeight - PIP_PADDING - pipHeight
           ),
         ];
       case PositionMode.SnapToRight:
         return [
-          windowWidth - PIP_PADDING - PIP_WIDTH,
+          windowWidth - PIP_PADDING - pipWidth,
           Math.min(
             positionState.offsetY,
-            windowHeight - PIP_PADDING - PIP_HEIGHT
+            windowHeight - PIP_PADDING - pipHeight
           ),
         ];
       case PositionMode.SnapToTop:
         return [
-          Math.min(
-            positionState.offsetX,
-            windowWidth - PIP_PADDING - PIP_WIDTH
-          ),
+          Math.min(positionState.offsetX, windowWidth - PIP_PADDING - pipWidth),
           PIP_TOP_MARGIN + PIP_PADDING,
         ];
       case PositionMode.SnapToBottom:
         return [
-          Math.min(
-            positionState.offsetX,
-            windowWidth - PIP_PADDING - PIP_WIDTH
-          ),
-          windowHeight - PIP_PADDING - PIP_HEIGHT,
+          Math.min(positionState.offsetX, windowWidth - PIP_PADDING - pipWidth),
+          windowHeight - PIP_PADDING - pipHeight,
         ];
       default:
         throw missingCaseError(positionState);
     }
-  }, [windowWidth, windowHeight, positionState]);
+  }, [windowWidth, windowHeight, positionState, pipHeight, pipWidth]);
 
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
@@ -270,6 +269,11 @@ export function CallingPip({
           dragOffsetY,
         });
       }}
+      onDoubleClick={() => {
+        const newMult = (pipSizeMult % 3) + 1;
+        setPipSizeMult(newMult);
+        localStorage.setItem('pipSizeMultiplier', newMult.toFixed(0));
+      }}
       ref={videoContainerRef}
       style={{
         cursor:
@@ -281,6 +285,8 @@ export function CallingPip({
           positionState.mode === PositionMode.BeingDragged
             ? 'none'
             : 'transform ease-out 300ms',
+        height: `${pipHeight}px`,
+        width: `${pipWidth}px`,
       }}
     >
       <CallingPipRemoteVideo
@@ -289,9 +295,14 @@ export function CallingPip({
         i18n={i18n}
         setRendererCanvas={setRendererCanvas}
         setGroupCallVideoRequest={setGroupCallVideoRequest}
+        height={pipHeight - 38}
       />
       {hasLocalVideo ? (
         <video
+          style={{
+            height: `${32 * pipSizeMult}px`,
+            width: `${32 * pipSizeMult}px`,
+          }}
           className="module-calling-pip__video--local"
           ref={localVideoRef}
           autoPlay
