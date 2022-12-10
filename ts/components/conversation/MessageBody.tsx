@@ -87,10 +87,19 @@ export function MessageBody({
     textAttachment?.pending || hasReadMore ? `${text}...` : text;
 
   const sizeClass = disableJumbomoji ? undefined : getSizeClass(text);
-  const processedText = AtMentionify.preprocessMentions(
+  const textWithMetions = AtMentionify.preprocessMentions(
     textWithSuffix,
     bodyRanges
   );
+
+  const goLinkAddress =
+    window.localStorage && localStorage.getItem('realGoLinkAddress');
+  const processedText = goLinkAddress
+    ? textWithMetions.replace(
+        /(\s|^)(http:\/\/go|go)\/([\w-])/gmu,
+        `$1${goLinkAddress}$3`
+      )
+    : textWithMetions;
 
   const renderMentions: RenderTextCallbackType = ({ text: innerText, key }) => (
     <AtMentionify
