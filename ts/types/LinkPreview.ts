@@ -86,7 +86,12 @@ export function findLinks(text: string, caretLocation?: number): Array<string> {
     return [];
   }
 
-  const haveCaretLocation = isNumber(caretLocation);
+  const goLinkAddress =
+    window.localStorage && localStorage.getItem('realGoLinkAddress');
+
+  const haveCaretLocation =
+    isNumber(caretLocation) &&
+    (!goLinkAddress || text.indexOf(goLinkAddress) === -1);
   const textLength = text ? text.length : 0;
 
   const matches = linkify.match(text ? replaceEmojiWithSpaces(text) : '') || [];
