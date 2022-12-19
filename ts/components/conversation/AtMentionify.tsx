@@ -37,6 +37,9 @@ export function AtMentionify({
     rangeStarts.set(range.start, range);
   });
 
+  const firstNameMentions =
+    window.localStorage && localStorage.getItem('firstNameMentions') === 'true';
+
   const results = [];
   while (match) {
     if (last < match.index) {
@@ -48,6 +51,9 @@ export function AtMentionify({
     const range = rangeStarts.get(rangeStart);
 
     if (range) {
+      const replacementText = firstNameMentions
+        ? range.replacementText.split(' ')[0]
+        : range.replacementText;
       results.push(
         <span
           className={`MessageBody__at-mention MessageBody__at-mention--${direction}`}
@@ -70,10 +76,11 @@ export function AtMentionify({
           role="link"
           data-id={range.conversationID}
           data-title={range.replacementText}
+          title={firstNameMentions ? range.replacementText : undefined}
         >
           <bdi>
             @
-            <Emojify text={range.replacementText} />
+            <Emojify text={replacementText} />
           </bdi>
         </span>
       );
