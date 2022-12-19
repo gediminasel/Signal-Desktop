@@ -18,13 +18,11 @@ import { getGroupMemberships } from '../../util/getGroupMemberships';
 import { getActiveCallState } from '../selectors/calling';
 import { getAreWeASubscriber } from '../selectors/items';
 import { getIntl, getTheme } from '../selectors/user';
-import type { MediaItemType } from '../../types/MediaItem';
 import {
   getBadgesSelector,
   getPreferredBadgeSelector,
 } from '../selectors/badges';
 import { assertDev } from '../../util/assert';
-import type { DurationInSeconds } from '../../util/durations';
 import { SignalService as Proto } from '../../protobuf';
 import { getConversationColorAttributes } from '../../util/getConversationColorAttributes';
 import type { SmartChooseGroupMembersModalPropsType } from './ChooseGroupMembersModal';
@@ -39,30 +37,14 @@ import {
 export type SmartConversationDetailsProps = {
   addMembers: (conversationIds: ReadonlyArray<string>) => Promise<void>;
   conversationId: string;
-  loadRecentMediaItems: (limit: number) => void;
-  setDisappearingMessages: (seconds: DurationInSeconds) => void;
   showAllMedia: () => void;
-  showChatColorEditor: () => void;
-  showGroupLinkManagement: () => void;
-  showGroupV2Permissions: () => void;
-  showConversationNotificationsSettings: () => void;
-  showPendingInvites: () => void;
-  showLightboxForMedia: (
-    selectedMediaItem: MediaItemType,
-    media: Array<MediaItemType>
-  ) => void;
   updateGroupAttributes: (
     _: Readonly<{
       avatar?: undefined | Uint8Array;
       title?: string;
     }>
   ) => Promise<void>;
-  onBlock: () => void;
   onLeave: () => void;
-  onUnblock: () => void;
-  setMuteExpiration: (muteExpiresAt: undefined | number) => unknown;
-  onOutgoingAudioCallInConversation: () => unknown;
-  onOutgoingVideoCallInConversation: () => unknown;
 };
 
 const ACCESS_ENUM = Proto.AccessControl.AccessRequired;

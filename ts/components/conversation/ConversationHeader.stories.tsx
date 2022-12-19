@@ -39,10 +39,9 @@ const commonProps = {
 
   onJumpToDate: action('onJumpToDate'),
   onShowConversationDetails: action('onShowConversationDetails'),
-  onSetDisappearingMessages: action('onSetDisappearingMessages'),
-  onDeleteMessages: action('onDeleteMessages'),
+  setDisappearingMessages: action('setDisappearingMessages'),
+  destroyMessages: action('destroyMessages'),
   onSearchInConversation: action('onSearchInConversation'),
-  onSetMuteNotifications: action('onSetMuteNotifications'),
   onOutgoingAudioCallInConversation: action(
     'onOutgoingAudioCallInConversation'
   ),
@@ -51,13 +50,14 @@ const commonProps = {
   ),
 
   onShowAllMedia: action('onShowAllMedia'),
-  onShowGroupMembers: action('onShowGroupMembers'),
   onGoBack: action('onGoBack'),
 
   onArchive: action('onArchive'),
   onMarkUnread: action('onMarkUnread'),
   onMoveToInbox: action('onMoveToInbox'),
-  onSetPin: action('onSetPin'),
+  pushPanelForConversation: action('pushPanelForConversation'),
+  setMuteExpiration: action('onSetMuteNotifications'),
+  setPinned: action('setPinned'),
   viewUserStories: action('viewUserStories'),
 };
 

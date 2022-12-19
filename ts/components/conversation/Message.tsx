@@ -15,6 +15,9 @@ import type {
   ConversationType,
   ConversationTypeType,
   InteractionModeType,
+  PushPanelForConversationActionType,
+  SaveAttachmentActionCreatorType,
+  ShowConversationType,
 } from '../../state/ducks/conversations';
 import type { ViewStoryActionCreatorType } from '../../state/ducks/stories';
 import type { ReadStatus } from '../../messages/MessageReadStatus';
@@ -89,6 +92,7 @@ import { PaymentEventKind } from '../../types/Payment';
 import type { AnyPaymentEvent } from '../../types/Payment';
 import { Emojify } from './Emojify';
 import { getPaymentEventDescription } from '../../messages/helpers';
+import { PanelType } from '../../types/Panels';
 
 const GUESS_METADATA_WIDTH_TIMESTAMP_SIZE = 10;
 const GUESS_METADATA_WIDTH_EXPIRE_TIMER_SIZE = 18;
@@ -302,15 +306,9 @@ export type PropsActions = {
   showMessageDetail: (id: string) => void;
 
   startConversation: (e164: string, uuid: UUIDStringType) => void;
-  openConversation: (conversationId: string, messageId?: string) => void;
+  showConversation: ShowConversationType;
   openGiftBadge: (messageId: string) => void;
-  showContactDetail: (options: {
-    contact: EmbeddedContactType;
-    signalAccount?: {
-      phoneNumber: string;
-      uuid: UUIDStringType;
-    };
-  }) => void;
+  pushPanelForConversation: PushPanelForConversationActionType;
   showContactModal: (contactId: string, conversationId?: string) => void;
 
   kickOffAttachmentDownload: (options: {
@@ -322,16 +320,12 @@ export type PropsActions = {
     messageId: string;
   }) => void;
   markViewed(messageId: string): void;
-  showVisualAttachment: (options: {
+  saveAttachment: SaveAttachmentActionCreatorType;
+  showLightbox: (options: {
     attachment: AttachmentType;
     messageId: string;
   }) => void;
-  downloadAttachment: (options: {
-    attachment: AttachmentType;
-    timestamp: number;
-    isDangerous: boolean;
-  }) => void;
-  displayTapToViewMessage: (messageId: string) => unknown;
+  showLightboxForViewOnceMedia: (messageId: string) => unknown;
 
   openLink: (url: string) => void;
   scrollToQuotedMessage: (options: {
@@ -899,7 +893,7 @@ export class Message extends React.PureComponent<Props, State> {
       renderAudioAttachment,
       renderingContext,
       showMessageDetail,
-      showVisualAttachment,
+      showLightbox,
       shouldCollapseAbove,
       shouldCollapseBelow,
       status,
@@ -950,7 +944,7 @@ export class Message extends React.PureComponent<Props, State> {
               reducedMotion={reducedMotion}
               onError={this.handleImageError}
               showVisualAttachment={() => {
-                showVisualAttachment({
+                showLightbox({
                   attachment: firstAttachment,
                   messageId: id,
                 });
@@ -997,7 +991,7 @@ export class Message extends React.PureComponent<Props, State> {
                 if (!isDownloaded(attachment)) {
                   kickOffAttachmentDownload({ attachment, messageId: id });
                 } else {
-                  showVisualAttachment({ attachment, messageId: id });
+                  showLightbox({ attachment, messageId: id });
                 }
               }}
             />
@@ -1133,7 +1127,7 @@ export class Message extends React.PureComponent<Props, State> {
       quote,
       shouldCollapseAbove,
       theme,
-      showVisualAttachment,
+      showLightbox,
     } = this.props;
 
     // Attachments take precedence over Link Previews
@@ -1186,7 +1180,7 @@ export class Message extends React.PureComponent<Props, State> {
             return;
           }
           if (first.image && isScreenshot) {
-            showVisualAttachment({
+            showLightbox({
               attachment: first.image,
               messageId: id,
             });
@@ -1635,10 +1629,11 @@ export class Message extends React.PureComponent<Props, State> {
   public renderEmbeddedContact(): JSX.Element | null {
     const {
       contact,
+      conversationId,
       conversationType,
       direction,
       i18n,
-      showContactDetail,
+      pushPanelForConversation,
       text,
     } = this.props;
     if (!contact) {
@@ -1670,9 +1665,12 @@ export class Message extends React.PureComponent<Props, State> {
                 }
               : undefined;
 
-          showContactDetail({
-            contact,
-            signalAccount,
+          pushPanelForConversation(conversationId, {
+            type: PanelType.ContactDetails,
+            args: {
+              contact,
+              signalAccount,
+            },
           });
         }}
         withContentAbove={withContentAbove}
@@ -1779,13 +1777,13 @@ export class Message extends React.PureComponent<Props, State> {
       displayLimit,
       i18n,
       id,
-      messageExpanded,
-      openConversation,
       kickOffAttachmentDownload,
+      messageExpanded,
+      showConversation,
       status,
       text,
-      textDirection,
       textAttachment,
+      textDirection,
     } = this.props;
     const { metadataWidth } = this.state;
     const isRTL = textDirection === TextDirection.RightToLeft;
@@ -1817,13 +1815,11 @@ export class Message extends React.PureComponent<Props, State> {
       >
         <MessageBodyReadMore
           bodyRanges={bodyRanges}
-          disableLinks={!this.areLinksEnabled()}
           direction={direction}
+          disableLinks={!this.areLinksEnabled()}
           displayLimit={displayLimit}
           i18n={i18n}
           id={id}
-          messageExpanded={messageExpanded}
-          openConversation={openConversation}
           kickOffBodyDownload={() => {
             if (!textAttachment) {
               return;
@@ -1833,6 +1829,8 @@ export class Message extends React.PureComponent<Props, State> {
               messageId: id,
             });
           }}
+          messageExpanded={messageExpanded}
+          showConversation={showConversation}
           text={contents || ''}
           textAttachment={textAttachment}
         />
@@ -2307,7 +2305,8 @@ export class Message extends React.PureComponent<Props, State> {
     const {
       attachments,
       contact,
-      displayTapToViewMessage,
+      conversationId,
+      showLightboxForViewOnceMedia,
       direction,
       giftBadge,
       id,
@@ -2316,8 +2315,8 @@ export class Message extends React.PureComponent<Props, State> {
       kickOffAttachmentDownload,
       startConversation,
       openGiftBadge,
-      showContactDetail,
-      showVisualAttachment,
+      pushPanelForConversation,
+      showLightbox,
       showExpiredIncomingTapToViewToast,
       showExpiredOutgoingTapToViewToast,
     } = this.props;
@@ -2358,7 +2357,7 @@ export class Message extends React.PureComponent<Props, State> {
         event.preventDefault();
         event.stopPropagation();
 
-        displayTapToViewMessage(id);
+        showLightboxForViewOnceMedia(id);
       }
 
       return;
@@ -2395,7 +2394,7 @@ export class Message extends React.PureComponent<Props, State> {
 
       const attachment = attachments[0];
 
-      showVisualAttachment({ attachment, messageId: id });
+      showLightbox({ attachment, messageId: id });
 
       return;
     }
@@ -2443,7 +2442,13 @@ export class Message extends React.PureComponent<Props, State> {
               uuid: contact.uuid,
             }
           : undefined;
-      showContactDetail({ contact, signalAccount });
+      pushPanelForConversation(conversationId, {
+        type: PanelType.ContactDetails,
+        args: {
+          contact,
+          signalAccount,
+        },
+      });
 
       event.preventDefault();
       event.stopPropagation();
@@ -2454,7 +2459,7 @@ export class Message extends React.PureComponent<Props, State> {
     const {
       id,
       attachments,
-      downloadAttachment,
+      saveAttachment,
       timestamp,
       kickOffAttachmentDownload,
     } = this.props;
@@ -2477,14 +2482,7 @@ export class Message extends React.PureComponent<Props, State> {
       return;
     }
 
-    const { fileName } = attachment;
-    const isDangerous = isFileDangerous(fileName || '');
-
-    downloadAttachment({
-      isDangerous,
-      attachment,
-      timestamp,
-    });
+    saveAttachment(attachment, timestamp);
   };
 
   public handleClick = (event: React.MouseEvent): void => {

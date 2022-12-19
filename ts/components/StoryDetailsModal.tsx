@@ -15,7 +15,7 @@ import { SendStatus } from '../messages/MessageSendState';
 import { Theme } from '../util/theme';
 import { formatDateTimeLong } from '../util/timestamp';
 import { DurationInSeconds } from '../util/durations';
-import type { saveAttachment } from '../util/saveAttachment';
+import type { SaveAttachmentActionCreatorType } from '../state/ducks/conversations';
 import type { AttachmentType } from '../types/Attachment';
 import { ThemeType } from '../types/Util';
 import { Time } from './Time';
@@ -27,7 +27,7 @@ export type PropsType = {
   i18n: LocalizerType;
   isInternalUser?: boolean;
   onClose: () => unknown;
-  saveAttachment: typeof saveAttachment;
+  saveAttachment: SaveAttachmentActionCreatorType;
   sender: StoryViewType['sender'];
   sendState?: Array<StorySendStateType>;
   attachment?: AttachmentType;
@@ -132,7 +132,7 @@ export function StoryDetailsModal({
                       phoneNumber={contact.phoneNumber}
                       profileName={contact.profileName}
                       sharedGroupNames={contact.sharedGroupNames}
-                      size={AvatarSize.THIRTY_SIX}
+                      size={AvatarSize.THIRTY_TWO}
                       theme={ThemeType.dark}
                       title={contact.title}
                       unblurredAvatarPath={contact.unblurredAvatarPath}
@@ -174,7 +174,7 @@ export function StoryDetailsModal({
               isMe={sender.isMe}
               profileName={sender.profileName}
               sharedGroupNames={sender.sharedGroupNames}
-              size={AvatarSize.THIRTY_SIX}
+              size={AvatarSize.THIRTY_TWO}
               theme={ThemeType.dark}
               title={sender.title}
             />

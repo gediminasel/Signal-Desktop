@@ -15,10 +15,10 @@ import { MediaGridItem } from '../media-gallery/MediaGridItem';
 export type Props = {
   conversation: ConversationType;
   i18n: LocalizerType;
-  loadRecentMediaItems: (limit: number) => void;
+  loadRecentMediaItems: (id: string, limit: number) => void;
   showAllMedia: () => void;
-  showLightboxForMedia: (
-    selectedMediaItem: MediaItemType,
+  showLightboxWithMedia: (
+    selectedAttachmentPath: string | undefined,
     media: Array<MediaItemType>
   ) => void;
 };
@@ -32,15 +32,15 @@ export function ConversationDetailsMediaList({
   i18n,
   loadRecentMediaItems,
   showAllMedia,
-  showLightboxForMedia,
+  showLightboxWithMedia,
 }: Props): JSX.Element | null {
   const mediaItems = conversation.recentMediaItems || [];
 
   const mediaItemsLength = mediaItems.length;
 
   React.useEffect(() => {
-    loadRecentMediaItems(MEDIA_ITEM_LIMIT);
-  }, [loadRecentMediaItems, mediaItemsLength]);
+    loadRecentMediaItems(conversation.id, MEDIA_ITEM_LIMIT);
+  }, [conversation.id, loadRecentMediaItems, mediaItemsLength]);
 
   if (mediaItemsLength === 0) {
     return null;
@@ -65,7 +65,9 @@ export function ConversationDetailsMediaList({
             key={`${mediaItem.message.id}-${mediaItem.index}`}
             mediaItem={mediaItem}
             i18n={i18n}
-            onClick={() => showLightboxForMedia(mediaItem, mediaItems)}
+            onClick={() =>
+              showLightboxWithMedia(mediaItem.attachment.path, mediaItems)
+            }
           />
         ))}
       </div>

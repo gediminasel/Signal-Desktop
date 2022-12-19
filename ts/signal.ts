@@ -24,19 +24,11 @@ import { StagedLinkPreview } from './components/conversation/StagedLinkPreview';
 import { DisappearingTimeDialog } from './components/DisappearingTimeDialog';
 
 // State
-import { createChatColorPicker } from './state/roots/createChatColorPicker';
 import { createConversationDetails } from './state/roots/createConversationDetails';
 import { createApp } from './state/roots/createApp';
-import { createGroupLinkManagement } from './state/roots/createGroupLinkManagement';
-import { createGroupV1MigrationModal } from './state/roots/createGroupV1MigrationModal';
 import { createGroupV2JoinModal } from './state/roots/createGroupV2JoinModal';
 import { createMessageDetail } from './state/roots/createMessageDetail';
-import { createConversationNotificationsSettings } from './state/roots/createConversationNotificationsSettings';
-import { createGroupV2Permissions } from './state/roots/createGroupV2Permissions';
-import { createPendingInvites } from './state/roots/createPendingInvites';
 import { createSafetyNumberViewer } from './state/roots/createSafetyNumberViewer';
-import { createStickerManager } from './state/roots/createStickerManager';
-import { createStickerPreviewModal } from './state/roots/createStickerPreviewModal';
 import { createShortcutGuideModal } from './state/roots/createShortcutGuideModal';
 
 import { createStore } from './state/createStore';
@@ -124,7 +116,6 @@ type MigrationsModuleType = {
   loadStickerData: (
     sticker: StickerType | undefined
   ) => Promise<StickerWithHydratedData | undefined>;
-  openFileInFolder: (target: string) => Promise<void>;
   readAttachmentData: (path: string) => Promise<Uint8Array>;
   readDraftData: (path: string) => Promise<Uint8Array>;
   readStickerData: (path: string) => Promise<Uint8Array>;
@@ -187,7 +178,6 @@ export function initializeMigrations({
     getStickersPath,
     getBadgesPath,
     getTempPath,
-    openFileInFolder,
     saveAttachmentToDisk,
   } = Attachments;
   const {
@@ -268,7 +258,6 @@ export function initializeMigrations({
     loadPreviewData,
     loadQuoteData,
     loadStickerData,
-    openFileInFolder,
     readAttachmentData,
     readDraftData,
     readStickerData,
@@ -366,7 +355,6 @@ type AttachmentsModuleType = {
   ) => (relativePath: string) => string;
 
   createDoesExist: (root: string) => (relativePath: string) => Promise<boolean>;
-  openFileInFolder: (target: string) => Promise<void>;
   saveAttachmentToDisk: ({
     data,
     name,
@@ -407,19 +395,11 @@ export const setup = (options: {
 
   const Roots = {
     createApp,
-    createChatColorPicker,
     createConversationDetails,
-    createGroupLinkManagement,
-    createGroupV1MigrationModal,
     createGroupV2JoinModal,
-    createGroupV2Permissions,
     createMessageDetail,
-    createConversationNotificationsSettings,
-    createPendingInvites,
     createSafetyNumberViewer,
     createShortcutGuideModal,
-    createStickerManager,
-    createStickerPreviewModal,
   };
 
   const Ducks = {

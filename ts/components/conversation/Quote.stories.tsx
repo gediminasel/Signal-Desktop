@@ -98,8 +98,7 @@ const defaultMessageProps: TimelineMessagesProps = {
   deleteMessage: action('default--deleteMessage'),
   deleteMessageForEveryone: action('default--deleteMessageForEveryone'),
   direction: 'incoming',
-  displayTapToViewMessage: action('default--displayTapToViewMessage'),
-  downloadAttachment: action('default--downloadAttachment'),
+  showLightboxForViewOnceMedia: action('default--showLightboxForViewOnceMedia'),
   doubleCheckMissingQuoteReference: action(
     'default--doubleCheckMissingQuoteReference'
   ),
@@ -114,7 +113,7 @@ const defaultMessageProps: TimelineMessagesProps = {
   markAttachmentAsCorrupted: action('default--markAttachmentAsCorrupted'),
   markViewed: action('default--markViewed'),
   messageExpanded: action('default--message-expanded'),
-  openConversation: action('default--openConversation'),
+  showConversation: action('default--showConversation'),
   openGiftBadge: action('openGiftBadge'),
   openLink: action('default--openLink'),
   previews: [],
@@ -123,16 +122,16 @@ const defaultMessageProps: TimelineMessagesProps = {
   renderEmojiPicker: () => <div />,
   renderReactionPicker: () => <div />,
   renderAudioAttachment: () => <div>*AudioAttachment*</div>,
-  replyToMessage: action('default--replyToMessage'),
-  replyPrivately: action('default--replyPrivately'),
+  setQuoteByMessageId: action('default--setQuoteByMessageId'),
   retrySend: action('default--retrySend'),
   retryDeleteForEveryone: action('default--retryDeleteForEveryone'),
+  saveAttachment: action('saveAttachment'),
   scrollToQuotedMessage: action('default--scrollToQuotedMessage'),
   selectMessage: action('default--selectMessage'),
   shouldCollapseAbove: false,
   shouldCollapseBelow: false,
   shouldHideMetadata: false,
-  showContactDetail: action('default--showContactDetail'),
+  pushPanelForConversation: action('default--pushPanelForConversation'),
   showContactModal: action('default--showContactModal'),
   showExpiredIncomingTapToViewToast: action(
     'showExpiredIncomingTapToViewToast'
@@ -140,9 +139,9 @@ const defaultMessageProps: TimelineMessagesProps = {
   showExpiredOutgoingTapToViewToast: action(
     'showExpiredOutgoingTapToViewToast'
   ),
-  showForwardMessageModal: action('default--showForwardMessageModal'),
+  toggleForwardMessageModal: action('default--toggleForwardMessageModal'),
   showMessageDetail: action('default--showMessageDetail'),
-  showVisualAttachment: action('default--showVisualAttachment'),
+  showLightbox: action('default--showLightbox'),
   startConversation: action('default--startConversation'),
   status: 'sent',
   text: 'This is really interesting.',

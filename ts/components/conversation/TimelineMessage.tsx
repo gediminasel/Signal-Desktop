@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import classNames from 'classnames';
+import { noop } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import type { Ref } from 'react';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
@@ -11,7 +12,6 @@ import type { PreventOverflowModifier } from '@popperjs/core/lib/modifiers/preve
 import { isDownloaded } from '../../types/Attachment';
 import type { LocalizerType } from '../../types/I18N';
 import { handleOutsideClick } from '../../util/handleOutsideClick';
-import { isFileDangerous } from '../../util/isFileDangerous';
 import { offsetDistanceModifier } from '../../util/popperUtil';
 import { StopPropagation } from '../StopPropagation';
 import { WidthBreakpoint } from '../_util';
@@ -25,6 +25,8 @@ import type {
 } from './Message';
 import { doesMessageBodyOverflow } from './MessageBodyReadMore';
 import type { Props as ReactionPickerProps } from './ReactionPicker';
+import { ConfirmationDialog } from '../ConfirmationDialog';
+import { useToggleReactionPicker } from '../../hooks/useKeyboardShortcuts';
 
 export type PropsData = {
   canDownload: boolean;
@@ -34,21 +36,23 @@ export type PropsData = {
   canReply: boolean;
   canReplyPrivately: boolean;
   selectedReaction?: string;
+  isSelected?: boolean;
 } & Omit<MessagePropsData, 'renderingContext' | 'menu'>;
 
 export type PropsActions = {
-  deleteMessage: (id: string) => void;
+  deleteMessage: (options: {
+    conversationId: string;
+    messageId: string;
+  }) => void;
   deleteMessageForEveryone: (id: string) => void;
-  showForwardMessageModal: (id: string) => void;
+  toggleForwardMessageModal: (id: string) => void;
   reactToMessage: (
     id: string,
     { emoji, remove }: { emoji: string; remove: boolean }
   ) => void;
   retrySend: (id: string) => void;
   retryDeleteForEveryone: (id: string) => void;
-
-  replyToMessage: (id: string) => void;
-  replyPrivately: (id: string) => void;
+  setQuoteByMessageId: (conversationId: string, messageId: string) => void;
 } & MessagePropsActions;
 
 export type Props = PropsData &
@@ -82,6 +86,7 @@ export function TimelineMessage(props: Props): JSX.Element {
     canRetryDeleteForEveryone,
     contact,
     payment,
+    conversationId,
     containerElementRef,
     containerWidthBreakpoint,
     deletedForEveryone,
@@ -89,17 +94,17 @@ export function TimelineMessage(props: Props): JSX.Element {
     deleteMessageForEveryone,
     direction,
     giftBadge,
+    isSelected,
     isSticker,
     isTapToView,
     reactToMessage,
-    replyToMessage,
-    replyPrivately,
+    setQuoteByMessageId,
     renderReactionPicker,
     renderEmojiPicker,
     retrySend,
     retryDeleteForEveryone,
     selectedReaction,
-    showForwardMessageModal,
+    toggleForwardMessageModal,
     showMessageDetail,
     text,
     timestamp,
@@ -171,7 +176,7 @@ export function TimelineMessage(props: Props): JSX.Element {
   });
 
   const openGenericAttachment = (event?: React.MouseEvent): void => {
-    const { downloadAttachment, kickOffAttachmentDownload } = props;
+    const { kickOffAttachmentDownload, saveAttachment } = props;
 
     if (event) {
       event.preventDefault();
@@ -191,14 +196,7 @@ export function TimelineMessage(props: Props): JSX.Element {
       return;
     }
 
-    const { fileName } = attachment;
-    const isDangerous = isFileDangerous(fileName || '');
-
-    downloadAttachment({
-      isDangerous,
-      attachment,
-      timestamp,
-    });
+    saveAttachment(attachment, timestamp);
   };
 
   const handleContextMenu = (event: React.MouseEvent<HTMLDivElement>): void => {
@@ -233,15 +231,87 @@ export function TimelineMessage(props: Props): JSX.Element {
       ? openGenericAttachment
       : undefined;
 
-  const handleReplyToMessage = canReply ? () => replyToMessage(id) : undefined;
+  const handleReplyToMessage = canReply
+    ? () => setQuoteByMessageId(conversationId, id)
+    : undefined;
   const handleReplyPrivately = canReplyPrivately
-    ? () => replyPrivately(id)
+    ? async () => {
+        const message = window.MessageController.getById(id);
+        if (message && message.get('sourceUuid')) {
+          const conversation = window.ConversationController.lookupOrCreate({
+            e164: null,
+            uuid: message.get('sourceUuid'),
+            reason: 'private reply',
+          });
+          if (conversation) {
+            if (conversationId !== conversation.id) {
+              window.reduxActions.conversations.showConversation({
+                conversationId: conversation.id,
+              });
+            }
+            setQuoteByMessageId(conversation.id, id);
+          }
+        }
+      }
     : undefined;
 
   const handleReact = canReact ? () => toggleReactionPicker() : undefined;
 
+  const [hasDOEConfirmation, setHasDOEConfirmation] = useState(false);
+  const [hasDeleteConfirmation, setHasDeleteConfirmation] = useState(false);
+
+  const toggleReactionPickerKeyboard = useToggleReactionPicker(
+    handleReact || noop
+  );
+
+  useEffect(() => {
+    if (isSelected) {
+      document.addEventListener('keydown', toggleReactionPickerKeyboard);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', toggleReactionPickerKeyboard);
+    };
+  }, [isSelected, toggleReactionPickerKeyboard]);
+
   return (
     <>
+      {hasDOEConfirmation && canDeleteForEveryone && (
+        <ConfirmationDialog
+          actions={[
+            {
+              action: () => deleteMessageForEveryone(id),
+              style: 'negative',
+              text: i18n('delete'),
+            },
+          ]}
+          dialogName="TimelineMessage/deleteMessageForEveryone"
+          i18n={i18n}
+          onClose={() => setHasDOEConfirmation(false)}
+        >
+          {i18n('deleteForEveryoneWarning')}
+        </ConfirmationDialog>
+      )}
+      {hasDeleteConfirmation && (
+        <ConfirmationDialog
+          actions={[
+            {
+              action: () =>
+                deleteMessage({
+                  conversationId,
+                  messageId: id,
+                }),
+              style: 'negative',
+              text: i18n('delete'),
+            },
+          ]}
+          dialogName="TimelineMessage/deleteMessage"
+          i18n={i18n}
+          onClose={() => setHasDeleteConfirmation(false)}
+        >
+          {i18n('deleteWarning')}
+        </ConfirmationDialog>
+      )}
       <Message
         {...props}
         renderingContext="conversation/TimelineItem"
@@ -306,10 +376,10 @@ export function TimelineMessage(props: Props): JSX.Element {
             ? () => retryDeleteForEveryone(id)
             : undefined
         }
-        onForward={canForward ? () => showForwardMessageModal(id) : undefined}
-        onDeleteForMe={() => deleteMessage(id)}
+        onForward={canForward ? () => toggleForwardMessageModal(id) : undefined}
+        onDeleteForMe={() => setHasDeleteConfirmation(true)}
         onDeleteForEveryone={
-          canDeleteForEveryone ? () => deleteMessageForEveryone(id) : undefined
+          canDeleteForEveryone ? () => setHasDOEConfirmation(true) : undefined
         }
         onMoreInfo={() => showMessageDetail(id)}
       />

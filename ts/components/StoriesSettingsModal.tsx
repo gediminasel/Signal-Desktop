@@ -54,7 +54,7 @@ export type PropsType = {
   onDistributionListCreated: (
     name: string,
     viewerUuids: Array<UUIDStringType>
-  ) => unknown;
+  ) => Promise<string>;
   onHideMyStoriesFrom: (viewerUuids: Array<UUIDStringType>) => unknown;
   onRemoveMembers: (listId: string, uuids: Array<UUIDStringType>) => unknown;
   onRepliesNReactionsChanged: (
@@ -164,7 +164,7 @@ function DistributionListItem({
             i18n={i18n}
             isMe
             sharedGroupNames={me.sharedGroupNames}
-            size={AvatarSize.THIRTY_SIX}
+            size={AvatarSize.THIRTY_TWO}
             title={me.title}
           />
         ) : (
@@ -218,7 +218,7 @@ function GroupStoryItem({
           i18n={i18n}
           isMe={false}
           sharedGroupNames={[]}
-          size={AvatarSize.THIRTY_SIX}
+          size={AvatarSize.THIRTY_TWO}
           title={groupStory.title}
         />
         <span className="StoriesSettingsModal__list__title">
@@ -676,7 +676,7 @@ export function DistributionListSettingsModal({
                   i18n={i18n}
                   isMe
                   sharedGroupNames={member.sharedGroupNames}
-                  size={AvatarSize.THIRTY_SIX}
+                  size={AvatarSize.THIRTY_TWO}
                   theme={ThemeType.dark}
                   title={member.title}
                 />
@@ -1077,7 +1077,7 @@ export function EditDistributionListModal({
                 i18n={i18n}
                 isMe
                 sharedGroupNames={contact.sharedGroupNames}
-                size={AvatarSize.THIRTY_SIX}
+                size={AvatarSize.THIRTY_TWO}
                 theme={ThemeType.dark}
                 title={contact.title}
               />
@@ -1193,22 +1193,22 @@ export function EditDistributionListModal({
                 getPreferredBadge={getPreferredBadge}
                 getRow={getRow}
                 i18n={i18n}
+                lookupConversationWithoutUuid={asyncShouldNeverBeCalled}
                 onClickArchiveButton={shouldNeverBeCalled}
                 onClickContactCheckbox={(conversationId: string) => {
                   toggleSelectedConversation(conversationId);
                 }}
-                lookupConversationWithoutUuid={asyncShouldNeverBeCalled}
-                showConversation={shouldNeverBeCalled}
-                showUserNotFoundModal={shouldNeverBeCalled}
-                setIsFetchingUUID={shouldNeverBeCalled}
                 onSelectConversation={shouldNeverBeCalled}
                 renderMessageSearchResult={() => {
                   shouldNeverBeCalled();
                   return <div />;
                 }}
                 rowCount={rowCount}
+                setIsFetchingUUID={shouldNeverBeCalled}
                 shouldRecomputeRowHeights={false}
                 showChooseGroupMembers={shouldNeverBeCalled}
+                showConversation={shouldNeverBeCalled}
+                showUserNotFoundModal={shouldNeverBeCalled}
                 theme={ThemeType.dark}
               />
             </div>
@@ -1260,7 +1260,7 @@ export function GroupStorySettingsModal({
           i18n={i18n}
           isMe={false}
           sharedGroupNames={[]}
-          size={AvatarSize.THIRTY_SIX}
+          size={AvatarSize.THIRTY_TWO}
           title={group.title}
         />
         <span className="GroupStorySettingsModal__title">{group.title}</span>
@@ -1287,7 +1287,7 @@ export function GroupStorySettingsModal({
               i18n={i18n}
               isMe={false}
               sharedGroupNames={[]}
-              size={AvatarSize.THIRTY_SIX}
+              size={AvatarSize.THIRTY_TWO}
               title={member.title}
             />
             <p className="GroupStorySettingsModal__members_item__name">

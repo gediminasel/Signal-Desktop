@@ -26,7 +26,6 @@ import type { ConversationType } from '../state/ducks/conversations';
 import { calling } from '../services/calling';
 import { getConversationsWithCustomColorSelector } from '../state/selectors/conversations';
 import { getCustomColors } from '../state/selectors/items';
-import { trigger } from '../shims/events';
 import { themeChanged } from '../shims/themeChanged';
 import { renderClearingDataView } from '../shims/renderClearingDataView';
 
@@ -45,6 +44,7 @@ import { lookupConversationWithoutUuid } from './lookupConversationWithoutUuid';
 import * as log from '../logging/log';
 import { deleteAllMyStories } from './deleteAllMyStories';
 
+type SentMediaQualityType = 'standard' | 'high';
 type ThemeType = 'light' | 'dark' | 'system';
 type NotificationSettingType = 'message' | 'name' | 'count' | 'off';
 
@@ -65,6 +65,7 @@ export type IPCEventsValuesType = {
   preferredAudioInputDevice: AudioDevice | undefined;
   preferredAudioOutputDevice: AudioDevice | undefined;
   preferredVideoInputDevice: string | undefined;
+  sentMediaQualitySetting: SentMediaQualityType;
   spellCheck: boolean;
   systemTraySetting: SystemTraySetting;
   themeSetting: ThemeType;
@@ -298,6 +299,10 @@ export function createIPCEvents(
       window.storage.get('auto-download-update', true),
     setAutoDownloadUpdate: value =>
       window.storage.put('auto-download-update', value),
+    getSentMediaQualitySetting: () =>
+      window.storage.get('sent-media-quality', 'standard'),
+    setSentMediaQualitySetting: value =>
+      window.storage.put('sent-media-quality', value),
     getThemeSetting: () => window.storage.get('theme-setting', 'system'),
     setThemeSetting: value => {
       const promise = window.storage.put('theme-setting', value);
@@ -435,59 +440,12 @@ export function createIPCEvents(
         log.warn('showStickerPack: Not registered, returning early');
         return;
       }
-      if (window.isShowingModal) {
-        log.warn('showStickerPack: Already showing modal, returning early');
-        return;
-      }
-      try {
-        window.isShowingModal = true;
-
-        // Kick off the download
-        Stickers.downloadEphemeralPack(packId, key);
-
-        const props = {
-          packId,
-          onClose: async () => {
-            window.isShowingModal = false;
-            stickerPreviewModalView.remove();
-            await Stickers.removeEphemeralPack(packId);
-          },
-        };
-
-        const stickerPreviewModalView = new ReactWrapperView({
-          className: 'sticker-preview-modal-wrapper',
-          JSX: window.Signal.State.Roots.createStickerPreviewModal(
-            window.reduxStore,
-            props
-          ),
-        });
-      } catch (error) {
-        window.isShowingModal = false;
-        log.error(
-          'showStickerPack: Ran into an error!',
-          Errors.toLogFormat(error)
-        );
-        const errorView = new ReactWrapperView({
-          className: 'error-modal-wrapper',
-          JSX: (
-            <ErrorModal
-              i18n={window.i18n}
-              onClose={() => {
-                errorView.remove();
-              }}
-            />
-          ),
-        });
-      }
+      window.reduxActions.globalModals.showStickerPackPreview(packId, key);
     },
     showGroupViaLink: async hash => {
       // We can get these events even if the user has never linked this instance.
       if (!window.Signal.Util.Registration.everDone()) {
         log.warn('showGroupViaLink: Not registered, returning early');
-        return;
-      }
-      if (window.isShowingModal) {
-        log.warn('showGroupViaLink: Already showing modal, returning early');
         return;
       }
       try {
@@ -511,7 +469,6 @@ export function createIPCEvents(
           ),
         });
       }
-      window.isShowingModal = false;
     },
     async showConversationViaSignalDotMe(hash: string) {
       if (!window.Signal.Util.Registration.everDone()) {
@@ -533,9 +490,13 @@ export function createIPCEvents(
           setIsFetchingUUID: noop,
         });
         if (convoId) {
-          trigger('showConversation', convoId);
+          window.reduxActions.conversations.showConversation({
+            conversationId: convoId,
+          });
           return;
         }
+        // We will show not found modal on error
+        return;
       }
 
       const maybeUsername = parseUsernameFromSignalDotMeHash(hash);
@@ -547,19 +508,17 @@ export function createIPCEvents(
           setIsFetchingUUID: noop,
         });
         if (convoId) {
-          trigger('showConversation', convoId);
+          window.reduxActions.conversations.showConversation({
+            conversationId: convoId,
+          });
           return;
         }
+        // We will show not found modal on error
+        return;
       }
 
       log.info('showConversationViaSignalDotMe: invalid E164');
-      if (window.isShowingModal) {
-        log.info(
-          'showConversationViaSignalDotMe: a modal is already showing. Doing nothing'
-        );
-      } else {
-        showUnknownSgnlLinkModal();
-      }
+      showUnknownSgnlLinkModal();
     },
 
     unknownSignalLink: () => {

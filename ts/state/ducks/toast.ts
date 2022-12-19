@@ -1,25 +1,13 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { useBoundActions } from '../../hooks/useBoundActions';
+import { ipcRenderer } from 'electron';
+
+import type { BoundActionCreatorsMapObject } from '../../hooks/useBoundActions';
+import type { NoopActionType } from './noop';
 import type { ReplacementValuesType } from '../../types/Util';
-
-export enum ToastType {
-  Error = 'Error',
-  MessageBodyTooLong = 'MessageBodyTooLong',
-  StoryMuted = 'StoryMuted',
-  StoryReact = 'StoryReact',
-  StoryReply = 'StoryReply',
-  StoryVideoError = 'StoryVideoError',
-  StoryVideoTooLong = 'StoryVideoTooLong',
-  StoryVideoUnsupported = 'StoryVideoUnsupported',
-  AddingUserToGroup = 'AddingUserToGroup',
-  UserAddedToGroup = 'UserAddedToGroup',
-  FailedToDeleteUsername = 'FailedToDeleteUsername',
-  CopiedUsername = 'CopiedUsername',
-  CopiedUsernameLink = 'CopiedUsernameLink',
-}
-
+import { useBoundActions } from '../../hooks/useBoundActions';
+import type { ToastType } from '../../types/Toast';
 // State
 
 export type ToastStateType = {
@@ -32,13 +20,13 @@ export type ToastStateType = {
 // Actions
 
 const HIDE_TOAST = 'toast/HIDE_TOAST';
-const SHOW_TOAST = 'toast/SHOW_TOAST';
+export const SHOW_TOAST = 'toast/SHOW_TOAST';
 
 type HideToastActionType = {
   type: typeof HIDE_TOAST;
 };
 
-type ShowToastActionType = {
+export type ShowToastActionType = {
   type: typeof SHOW_TOAST;
   payload: {
     toastType: ToastType;
@@ -53,6 +41,14 @@ export type ToastActionType = HideToastActionType | ShowToastActionType;
 function hideToast(): HideToastActionType {
   return {
     type: HIDE_TOAST,
+  };
+}
+
+function openFileInFolder(target: string): NoopActionType {
+  ipcRenderer.send('show-item-in-folder', target);
+  return {
+    type: 'NOOP',
+    payload: null,
   };
 }
 
@@ -76,10 +72,13 @@ export const showToast: ShowToastActionCreatorType = (
 
 export const actions = {
   hideToast,
+  openFileInFolder,
   showToast,
 };
 
-export const useToastActions = (): typeof actions => useBoundActions(actions);
+export const useToastActions = (): BoundActionCreatorsMapObject<
+  typeof actions
+> => useBoundActions(actions);
 
 // Reducer
 

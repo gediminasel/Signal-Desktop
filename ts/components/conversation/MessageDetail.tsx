@@ -65,7 +65,6 @@ export type PropsData = {
   receivedAt: number;
   sentAt: number;
 
-  showSafetyNumber: (contactId: string) => void;
   i18n: LocalizerType;
   theme: ThemeType;
   getPreferredBadge: PreferredBadgeSelectorType;
@@ -80,28 +79,31 @@ export type PropsData = {
 
 export type PropsBackboneActions = Pick<
   MessagePropsType,
-  | 'displayTapToViewMessage'
   | 'kickOffAttachmentDownload'
   | 'markAttachmentAsCorrupted'
-  | 'openConversation'
   | 'openGiftBadge'
   | 'openLink'
   | 'renderAudioAttachment'
-  | 'showContactDetail'
-  | 'showContactModal'
   | 'showExpiredIncomingTapToViewToast'
   | 'showExpiredOutgoingTapToViewToast'
-  | 'showVisualAttachment'
   | 'startConversation'
 >;
 
 export type PropsReduxActions = Pick<
   MessagePropsType,
+  | 'checkForAccount'
   | 'clearSelectedMessage'
   | 'doubleCheckMissingQuoteReference'
-  | 'checkForAccount'
+  | 'pushPanelForConversation'
+  | 'saveAttachment'
+  | 'showContactModal'
+  | 'showConversation'
+  | 'showLightbox'
+  | 'showLightboxForViewOnceMedia'
   | 'viewStory'
->;
+> & {
+  toggleSafetyNumberModal: (contactId: string) => void;
+};
 
 export type ExternalProps = PropsData & PropsBackboneActions;
 export type Props = PropsData & PropsBackboneActions & PropsReduxActions;
@@ -155,14 +157,14 @@ export class MessageDetail extends React.Component<Props> {
         theme={theme}
         title={title}
         sharedGroupNames={sharedGroupNames}
-        size={AvatarSize.THIRTY_SIX}
+        size={AvatarSize.THIRTY_TWO}
         unblurredAvatarPath={unblurredAvatarPath}
       />
     );
   }
 
   public renderContact(contact: Contact): JSX.Element {
-    const { i18n, showSafetyNumber } = this.props;
+    const { i18n, toggleSafetyNumberModal } = this.props;
     const errors = contact.errors || [];
 
     const errorComponent = contact.isOutgoingKeyError ? (
@@ -170,7 +172,7 @@ export class MessageDetail extends React.Component<Props> {
         <button
           type="button"
           className="module-message-detail__contact__show-safety-number"
-          onClick={() => showSafetyNumber(contact.id)}
+          onClick={() => toggleSafetyNumberModal(contact.id)}
         >
           {i18n('showSafetyNumber')}
         </button>
@@ -279,7 +281,7 @@ export class MessageDetail extends React.Component<Props> {
       checkForAccount,
       clearSelectedMessage,
       contactNameColor,
-      displayTapToViewMessage,
+      showLightboxForViewOnceMedia,
       doubleCheckMissingQuoteReference,
       expirationTimestamp,
       getPreferredBadge,
@@ -288,15 +290,16 @@ export class MessageDetail extends React.Component<Props> {
       kickOffAttachmentDownload,
       markAttachmentAsCorrupted,
       markViewed,
-      openConversation,
       openGiftBadge,
       openLink,
+      pushPanelForConversation,
       renderAudioAttachment,
-      showContactDetail,
+      saveAttachment,
       showContactModal,
+      showConversation,
       showExpiredIncomingTapToViewToast,
       showExpiredOutgoingTapToViewToast,
-      showVisualAttachment,
+      showLightbox,
       startConversation,
       theme,
       viewStory,
@@ -324,10 +327,7 @@ export class MessageDetail extends React.Component<Props> {
             menu={undefined}
             disableScroll
             displayLimit={Number.MAX_SAFE_INTEGER}
-            displayTapToViewMessage={displayTapToViewMessage}
-            downloadAttachment={() =>
-              log.warn('MessageDetail: deleteMessageForEveryone called!')
-            }
+            showLightboxForViewOnceMedia={showLightboxForViewOnceMedia}
             doubleCheckMissingQuoteReference={doubleCheckMissingQuoteReference}
             getPreferredBadge={getPreferredBadge}
             i18n={i18n}
@@ -336,17 +336,18 @@ export class MessageDetail extends React.Component<Props> {
             markAttachmentAsCorrupted={markAttachmentAsCorrupted}
             markViewed={markViewed}
             messageExpanded={noop}
-            openConversation={openConversation}
+            showConversation={showConversation}
             openGiftBadge={openGiftBadge}
             openLink={openLink}
+            pushPanelForConversation={pushPanelForConversation}
             renderAudioAttachment={renderAudioAttachment}
+            saveAttachment={saveAttachment}
             shouldCollapseAbove={false}
             shouldCollapseBelow={false}
             shouldHideMetadata={false}
             scrollToQuotedMessage={() => {
               log.warn('MessageDetail: scrollToQuotedMessage called!');
             }}
-            showContactDetail={showContactDetail}
             showContactModal={showContactModal}
             showExpiredIncomingTapToViewToast={
               showExpiredIncomingTapToViewToast
@@ -355,9 +356,9 @@ export class MessageDetail extends React.Component<Props> {
               showExpiredOutgoingTapToViewToast
             }
             showMessageDetail={() => {
-              log.warn('MessageDetail: deleteMessageForEveryone called!');
+              log.warn('MessageDetail: showMessageDetail called!');
             }}
-            showVisualAttachment={showVisualAttachment}
+            showLightbox={showLightbox}
             startConversation={startConversation}
             theme={theme}
             viewStory={viewStory}

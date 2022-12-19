@@ -33,13 +33,17 @@ export default {
 
 const useProps = (overrideProps: Partial<Props> = {}): Props => ({
   addAttachment: action('addAttachment'),
-  addPendingAttachment: action('addPendingAttachment'),
   conversationId: '123',
+  focusCounter: 0,
   i18n,
-  onSendMessage: action('onSendMessage'),
+  isDisabled: false,
+  messageCompositionId: '456',
+  sendMultiMediaMessage: action('sendMultiMediaMessage'),
   processAttachments: action('processAttachments'),
   removeAttachment: action('removeAttachment'),
   theme: React.useContext(StorybookThemeContext),
+  setComposerFocus: action('setComposerFocus'),
+  setQuoteByMessageId: action('setQuoteByMessageId'),
 
   // AttachmentList
   draftAttachments: overrideProps.draftAttachments || [],
@@ -60,8 +64,7 @@ const useProps = (overrideProps: Partial<Props> = {}): Props => ({
   onCloseLinkPreview: action('onCloseLinkPreview'),
   // Quote
   quotedMessageProps: overrideProps.quotedMessageProps,
-  onClickQuotedMessage: action('onClickQuotedMessage'),
-  setQuotedMessage: action('setQuotedMessage'),
+  scrollToMessage: action('scrollToMessage'),
   // MediaEditor
   imageToBlurHash: async () => 'LDA,FDBnm+I=p{tkIUI;~UkpELV]',
   // MediaQualitySelector
@@ -89,25 +92,24 @@ const useProps = (overrideProps: Partial<Props> = {}): Props => ({
   blessedPacks: [],
   recentStickers: [],
   clearInstalledStickerPack: action('clearInstalledStickerPack'),
-  onClickAddPack: action('onClickAddPack'),
-  onPickSticker: action('onPickSticker'),
+  pushPanelForConversation: action('pushPanelForConversation'),
+  sendStickerMessage: action('sendStickerMessage'),
   clearShowIntroduction: action('clearShowIntroduction'),
   showPickerHint: false,
   clearShowPickerHint: action('clearShowPickerHint'),
   // Message Requests
   conversationType: 'direct',
-  onAccept: action('onAccept'),
-  onBlock: action('onBlock'),
-  onBlockAndReportSpam: action('onBlockAndReportSpam'),
-  onDelete: action('onDelete'),
-  onUnblock: action('onUnblock'),
+  acceptConversation: action('acceptConversation'),
+  blockConversation: action('blockConversation'),
+  blockAndReportSpam: action('blockAndReportSpam'),
+  deleteConversation: action('deleteConversation'),
   messageRequestsEnabled: boolean(
     'messageRequestsEnabled',
     overrideProps.messageRequestsEnabled || false
   ),
   title: '',
   // GroupV1 Disabled Actions
-  onStartGroupMigration: action('onStartGroupMigration'),
+  showGV2MigrationDialog: action('showGV2MigrationDialog'),
   // GroupV2
   announcementsOnly: boolean(
     'announcementsOnly',
@@ -115,8 +117,8 @@ const useProps = (overrideProps: Partial<Props> = {}): Props => ({
   ),
   areWeAdmin: boolean('areWeAdmin', Boolean(overrideProps.areWeAdmin)),
   groupAdmins: [],
-  openConversation: action('openConversation'),
   onCancelJoinRequest: action('onCancelJoinRequest'),
+  showConversation: action('showConversation'),
   // SMS-only
   isSMSOnly: overrideProps.isSMSOnly || false,
   isFetchingUUID: overrideProps.isFetchingUUID || false,

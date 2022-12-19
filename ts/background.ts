@@ -158,6 +158,8 @@ import type AccountManager from './textsecure/AccountManager';
 import { onStoryRecipientUpdate } from './util/onStoryRecipientUpdate';
 import { StoryViewModeType, StoryViewTargetType } from './types/Stories';
 import { downloadOnboardingStory } from './util/downloadOnboardingStory';
+import { clearConversationDraftAttachments } from './util/clearConversationDraftAttachments';
+import { removeLinkPreview } from './services/LinkPreview';
 
 const MAX_ATTACHMENT_DOWNLOAD_AGE = 3600 * 72 * 1000;
 
@@ -1114,6 +1116,7 @@ export async function startApp(): Promise<void> {
         store.dispatch
       ),
       items: bindActionCreators(actionCreators.items, store.dispatch),
+      lightbox: bindActionCreators(actionCreators.lightbox, store.dispatch),
       linkPreviews: bindActionCreators(
         actionCreators.linkPreviews,
         store.dispatch
@@ -1506,7 +1509,7 @@ export async function startApp(): Promise<void> {
         shiftKey &&
         (key === 't' || key === 'T')
       ) {
-        conversation.trigger('focus-composer');
+        window.reduxActions.composer.setComposerFocus(conversation.id);
         event.preventDefault();
         event.stopPropagation();
         return;
@@ -1544,10 +1547,9 @@ export async function startApp(): Promise<void> {
         showToast(ToastConversationArchived, {
           undo: () => {
             conversation.setArchived(false);
-            window.Whisper.events.trigger(
-              'showConversation',
-              conversation.get('id')
-            );
+            window.reduxActions.conversations.showConversation({
+              conversationId: conversation.get('id'),
+            });
           },
         });
 
@@ -1631,7 +1633,16 @@ export async function startApp(): Promise<void> {
       ) {
         const { selectedMessage } = state.conversations;
 
-        conversation.trigger('toggle-reply', selectedMessage);
+        const composerState = window.reduxStore
+          ? window.reduxStore.getState().composer
+          : undefined;
+        const quote = composerState?.quotedMessage?.quote;
+
+        window.reduxActions.composer.setQuoteByMessageId(
+          conversation.id,
+          quote ? undefined : selectedMessage
+        );
+
         event.preventDefault();
         event.stopPropagation();
         return;
@@ -1647,10 +1658,12 @@ export async function startApp(): Promise<void> {
         const { selectedMessage } = state.conversations;
 
         if (selectedMessage) {
-          conversation.trigger('save-attachment', selectedMessage);
-
           event.preventDefault();
           event.stopPropagation();
+
+          window.reduxActions.conversations.saveAttachmentFromMessage(
+            selectedMessage
+          );
           return;
         }
       }
@@ -1664,10 +1677,22 @@ export async function startApp(): Promise<void> {
         const { selectedMessage } = state.conversations;
 
         if (selectedMessage) {
-          conversation.trigger('delete-message', selectedMessage);
-
           event.preventDefault();
           event.stopPropagation();
+
+          window.showConfirmationDialog({
+            dialogName: 'deleteMessage',
+            confirmStyle: 'negative',
+            message: window.i18n('deleteWarning'),
+            okText: window.i18n('delete'),
+            resolve: () => {
+              window.reduxActions.conversations.deleteMessage({
+                conversationId: conversation.id,
+                messageId: selectedMessage,
+              });
+            },
+          });
+
           return;
         }
       }
@@ -1690,7 +1715,7 @@ export async function startApp(): Promise<void> {
         !shiftKey &&
         (key === 'p' || key === 'P')
       ) {
-        conversation.trigger('remove-link-review');
+        removeLinkPreview();
 
         event.preventDefault();
         event.stopPropagation();
@@ -1704,7 +1729,10 @@ export async function startApp(): Promise<void> {
         shiftKey &&
         (key === 'p' || key === 'P')
       ) {
-        conversation.trigger('remove-all-draft-attachments');
+        clearConversationDraftAttachments(
+          conversation.id,
+          conversation.get('draftAttachments')
+        );
 
         event.preventDefault();
         event.stopPropagation();
@@ -1912,7 +1940,10 @@ export async function startApp(): Promise<void> {
             viewTarget: StoryViewTargetType.Replies,
           });
         } else {
-          window.Whisper.events.trigger('showConversation', id, messageId);
+          window.reduxActions.conversations.showConversation({
+            conversationId: id,
+            messageId,
+          });
         }
       } else {
         window.reduxActions.app.openInbox();
@@ -2260,7 +2291,6 @@ export async function startApp(): Promise<void> {
               announcementGroup: true,
               giftBadges: true,
               'gv2-3': true,
-              'gv1-migration': true,
               senderKey: true,
               changeNumber: true,
               stories: true,
@@ -2635,13 +2665,12 @@ export async function startApp(): Promise<void> {
 
     let conversation;
 
-    const senderConversation = window.ConversationController.maybeMergeContacts(
-      {
+    const { conversation: senderConversation } =
+      window.ConversationController.maybeMergeContacts({
         e164: sender,
         aci: senderUuid,
         reason: `onTyping(${typing.timestamp})`,
-      }
-    );
+      });
 
     // We multiplex between GV1/GV2 groups here, but we don't kick off migrations
     if (groupV2Id) {
@@ -2875,14 +2904,21 @@ export async function startApp(): Promise<void> {
     maxSize: Infinity,
   });
 
-  function onEnvelopeReceived({ envelope }: EnvelopeEvent): void {
+  async function onEnvelopeReceived({
+    envelope,
+  }: EnvelopeEvent): Promise<void> {
     const ourUuid = window.textsecure.storage.user.getUuid()?.toString();
     if (envelope.sourceUuid && envelope.sourceUuid !== ourUuid) {
-      window.ConversationController.maybeMergeContacts({
-        e164: envelope.source,
-        aci: envelope.sourceUuid,
-        reason: `onEnvelopeReceived(${envelope.timestamp})`,
-      });
+      const { mergePromises } =
+        window.ConversationController.maybeMergeContacts({
+          e164: envelope.source,
+          aci: envelope.sourceUuid,
+          reason: `onEnvelopeReceived(${envelope.timestamp})`,
+        });
+
+      if (mergePromises.length > 0) {
+        await Promise.all(mergePromises);
+      }
     }
   }
 
@@ -2964,6 +3000,7 @@ export async function startApp(): Promise<void> {
       const fromConversation = window.ConversationController.lookupOrCreate({
         e164: data.source,
         uuid: data.sourceUuid,
+        reason: 'onMessageReceived:reaction',
       });
       strictAssert(fromConversation, 'Reaction without fromConversation');
 
@@ -2997,6 +3034,7 @@ export async function startApp(): Promise<void> {
       const fromConversation = window.ConversationController.lookupOrCreate({
         e164: data.source,
         uuid: data.sourceUuid,
+        reason: 'onMessageReceived:delete',
       });
       strictAssert(fromConversation, 'Delete missing fromConversation');
 
@@ -3027,7 +3065,7 @@ export async function startApp(): Promise<void> {
     data,
     confirm,
   }: ProfileKeyUpdateEvent): Promise<void> {
-    const conversation = window.ConversationController.maybeMergeContacts({
+    const { conversation } = window.ConversationController.maybeMergeContacts({
       aci: data.sourceUuid,
       e164: data.source,
       reason: 'onProfileKeyUpdate',
@@ -3113,6 +3151,7 @@ export async function startApp(): Promise<void> {
           const conversation = window.ConversationController.lookupOrCreate({
             uuid: destinationUuid,
             e164: destination,
+            reason: 'createSentMessage',
           });
           if (!conversation || conversation.id === ourId) {
             return result;
@@ -3248,11 +3287,12 @@ export async function startApp(): Promise<void> {
       }
 
       // If we can't find one, we treat this as a normal GroupV1 group
-      const fromContact = window.ConversationController.maybeMergeContacts({
-        aci: sourceUuid,
-        e164: source,
-        reason: `getMessageDescriptor(${message.timestamp}): group v1`,
-      });
+      const { conversation: fromContact } =
+        window.ConversationController.maybeMergeContacts({
+          aci: sourceUuid,
+          e164: source,
+          reason: `getMessageDescriptor(${message.timestamp}): group v1`,
+        });
 
       const conversationId = window.ConversationController.ensureGroup(id, {
         addedBy: fromContact?.id,
@@ -3264,7 +3304,7 @@ export async function startApp(): Promise<void> {
       };
     }
 
-    const conversation = window.ConversationController.maybeMergeContacts({
+    const { conversation } = window.ConversationController.maybeMergeContacts({
       aci: destinationUuid,
       e164: destination,
       reason: `getMessageDescriptor(${message.timestamp}): private`,
@@ -3694,13 +3734,12 @@ export async function startApp(): Promise<void> {
       sourceDevice,
       wasSentEncrypted,
     } = event.receipt;
-    const sourceConversation = window.ConversationController.maybeMergeContacts(
-      {
+    const { conversation: sourceConversation } =
+      window.ConversationController.maybeMergeContacts({
         aci: sourceUuid,
         e164: source,
         reason: `onReadOrViewReceipt(${envelopeTimestamp})`,
-      }
-    );
+      });
     log.info(
       logTitle,
       `${sourceUuid || source}.${sourceDevice}`,
@@ -3742,6 +3781,7 @@ export async function startApp(): Promise<void> {
     const senderConversation = window.ConversationController.lookupOrCreate({
       e164: sender,
       uuid: senderUuid,
+      reason: 'onReadSync',
     });
     const senderId = senderConversation?.id;
 
@@ -3780,6 +3820,7 @@ export async function startApp(): Promise<void> {
     const senderConversation = window.ConversationController.lookupOrCreate({
       e164: senderE164,
       uuid: senderUuid,
+      reason: 'onViewSync',
     });
     const senderId = senderConversation?.id;
 
@@ -3826,13 +3867,12 @@ export async function startApp(): Promise<void> {
 
     ev.confirm();
 
-    const sourceConversation = window.ConversationController.maybeMergeContacts(
-      {
+    const { conversation: sourceConversation } =
+      window.ConversationController.maybeMergeContacts({
         aci: sourceUuid,
         e164: source,
         reason: `onDeliveryReceipt(${envelopeTimestamp})`,
-      }
-    );
+      });
 
     log.info(
       'delivery receipt from',

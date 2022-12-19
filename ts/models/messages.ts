@@ -115,6 +115,8 @@ import {
   isUnsupportedMessage,
   isVerifiedChange,
   processBodyRanges,
+  isConversationMerge,
+  isPhoneNumberDiscovery,
 } from '../state/selectors/message';
 import {
   isInCall,
@@ -175,6 +177,9 @@ import { parseBoostBadgeListFromServer } from '../badges/parseBadgesFromServer';
 import { GiftBadgeStates } from '../components/conversation/Message';
 import { downloadAttachment } from '../util/downloadAttachment';
 import type { StickerWithHydratedData } from '../types/Stickers';
+import { getStringForConversationMerge } from '../util/getStringForConversationMerge';
+import { getStringForPhoneNumberDiscovery } from '../util/getStringForPhoneNumberDiscovery';
+import { getTitle, renderNumber } from '../util/getTitle';
 import { DurationInSeconds } from '../util/durations';
 import dataInterface from '../sql/Client';
 
@@ -389,6 +394,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     const conversation = window.ConversationController.lookupOrCreate({
       e164: source,
       uuid: sourceUuid,
+      reason: 'MessageModel.getSenderIdentifier',
     })!;
 
     return `${conversation?.id}.${sourceDevice}-${sentAt}`;
@@ -408,12 +414,14 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     return (
       !isCallHistory(attributes) &&
       !isChatSessionRefreshed(attributes) &&
+      !isConversationMerge(attributes) &&
       !isEndSession(attributes) &&
       !isExpirationTimerUpdate(attributes) &&
       !isGroupUpdate(attributes) &&
-      !isGroupV2Change(attributes) &&
       !isGroupV1Migration(attributes) &&
+      !isGroupV2Change(attributes) &&
       !isKeyChange(attributes) &&
+      !isPhoneNumberDiscovery(attributes) &&
       !isProfileChange(attributes) &&
       !isUniversalTimerNotification(attributes) &&
       !isUnsupportedMessage(attributes) &&
@@ -615,12 +623,53 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
   }
 
   getNotificationData(): { emoji?: string; text: string } {
-    const { attributes } = this;
+    // eslint-disable-next-line prefer-destructuring
+    const attributes: MessageAttributesType = this.attributes;
 
     if (isDeliveryIssue(attributes)) {
       return {
         emoji: '⚠️',
         text: window.i18n('DeliveryIssue--preview'),
+      };
+    }
+
+    if (isConversationMerge(attributes)) {
+      const conversation = this.getConversation();
+      strictAssert(
+        conversation,
+        'getNotificationData/isConversationMerge/conversation'
+      );
+      strictAssert(
+        attributes.conversationMerge,
+        'getNotificationData/isConversationMerge/conversationMerge'
+      );
+
+      return {
+        text: getStringForConversationMerge({
+          obsoleteConversationTitle: getTitle(
+            attributes.conversationMerge.renderInfo
+          ),
+          conversationTitle: conversation.getTitle(),
+          i18n: window.i18n,
+        }),
+      };
+    }
+
+    if (isPhoneNumberDiscovery(attributes)) {
+      const conversation = this.getConversation();
+      strictAssert(conversation, 'getNotificationData/isPhoneNumberDiscovery');
+      strictAssert(
+        attributes.phoneNumberDiscovery,
+        'getNotificationData/isPhoneNumberDiscovery/phoneNumberDiscovery'
+      );
+
+      return {
+        text: getStringForPhoneNumberDiscovery({
+          phoneNumber: renderNumber(attributes.phoneNumberDiscovery.e164),
+          conversationTitle: conversation.getTitle(),
+          sharedGroup: conversation.get('sharedGroupNames')?.[0],
+          i18n: window.i18n,
+        }),
       };
     }
 
@@ -1328,6 +1377,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     const isProfileChangeValue = isProfileChange(attributes);
     const isUniversalTimerNotificationValue =
       isUniversalTimerNotification(attributes);
+    const isConversationMergeValue = isConversationMerge(attributes);
+    const isPhoneNumberDiscoveryValue = isPhoneNumberDiscovery(attributes);
 
     const isPayment = messageHasPaymentEvent(attributes);
 
@@ -1358,7 +1409,9 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       // Locally-generated notifications
       isKeyChangeValue ||
       isProfileChangeValue ||
-      isUniversalTimerNotificationValue;
+      isUniversalTimerNotificationValue ||
+      isConversationMergeValue ||
+      isPhoneNumberDiscoveryValue;
 
     return !hasSomethingToDisplay;
   }
@@ -2332,7 +2385,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
                 return;
               }
 
-              const destinationConversation =
+              const { conversation: destinationConversation } =
                 window.ConversationController.maybeMergeContacts({
                   aci: destinationUuid,
                   e164: destination || undefined,
@@ -2471,6 +2524,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       const sender = window.ConversationController.lookupOrCreate({
         e164: source,
         uuid: sourceUuid,
+        reason: 'handleDataMessage',
       })!;
       const hasGroupV2Prop = Boolean(initialMessage.groupV2);
       const isV1GroupUpdate =
@@ -2972,6 +3026,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
               const local = window.ConversationController.lookupOrCreate({
                 e164: source,
                 uuid: sourceUuid,
+                reason: 'handleDataMessage:setProfileKey',
               });
               local?.setProfileKey(profileKey);
             }

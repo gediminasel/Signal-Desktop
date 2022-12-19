@@ -957,7 +957,7 @@ export async function mergeContactRecord(
     return { hasConflict: false, shouldDrop: true, details: ['our own uuid'] };
   }
 
-  const conversation = window.ConversationController.maybeMergeContacts({
+  const { conversation } = window.ConversationController.maybeMergeContacts({
     aci: uuid,
     e164,
     pni,
@@ -1257,7 +1257,17 @@ export async function mergeAccountRecord(
         let conversation: ConversationModel | undefined;
 
         if (contact) {
-          conversation = window.ConversationController.lookupOrCreate(contact);
+          if (!contact.uuid && !contact.e164) {
+            log.error(
+              'storageService.mergeAccountRecord: No uuid or e164 on contact'
+            );
+            return undefined;
+          }
+          conversation = window.ConversationController.lookupOrCreate({
+            uuid: contact.uuid,
+            e164: contact.e164,
+            reason: 'storageService.mergeAccountRecord',
+          });
         } else if (legacyGroupId && legacyGroupId.length) {
           const groupId = Bytes.toBinary(legacyGroupId);
           conversation = window.ConversationController.get(groupId);

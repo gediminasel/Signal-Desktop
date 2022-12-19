@@ -13,6 +13,7 @@ import { Emojify } from './Emojify';
 import { AddNewLines } from './AddNewLines';
 import { Linkify } from './Linkify';
 
+import type { ShowConversationType } from '../../state/ducks/conversations';
 import type {
   HydratedBodyRangesType,
   LocalizerType,
@@ -20,26 +21,21 @@ import type {
 } from '../../types/Util';
 import { renderMarkdownFactory } from '../../util/renderMarkdown';
 
-type OpenConversationActionType = (
-  conversationId: string,
-  messageId?: string
-) => void;
-
 export type Props = {
-  direction?: 'incoming' | 'outgoing';
-  text: string;
   author?: string;
-  textAttachment?: Pick<AttachmentType, 'pending' | 'digest' | 'key'>;
+  bodyRanges?: HydratedBodyRangesType;
+  direction?: 'incoming' | 'outgoing';
   /** If set, all emoji will be the same size. Otherwise, just one emoji will be large. */
   disableJumbomoji?: boolean;
   /** If set, links will be left alone instead of turned into clickable `<a>` tags. */
   disableLinks?: boolean;
   disableMarkdown?: boolean;
   i18n: LocalizerType;
-  bodyRanges?: HydratedBodyRangesType;
-  onIncreaseTextLength?: () => unknown;
-  openConversation?: OpenConversationActionType;
   kickOffBodyDownload?: () => void;
+  onIncreaseTextLength?: () => unknown;
+  showConversation?: ShowConversationType;
+  text: string;
+  textAttachment?: Pick<AttachmentType, 'pending' | 'digest' | 'key'>;
 };
 
 const renderEmoji = ({
@@ -69,18 +65,18 @@ const renderEmoji = ({
  * them for you.
  */
 export function MessageBody({
+  author,
   bodyRanges,
   direction,
   disableJumbomoji,
   disableLinks,
   disableMarkdown,
   i18n,
-  onIncreaseTextLength,
-  openConversation,
-  text,
-  author,
-  textAttachment,
   kickOffBodyDownload,
+  onIncreaseTextLength,
+  showConversation,
+  text,
+  textAttachment,
 }: Props): JSX.Element {
   const hasReadMore = Boolean(onIncreaseTextLength);
   const textWithSuffix =
@@ -101,21 +97,29 @@ export function MessageBody({
       )
     : textWithMetions;
 
-  const renderMentions: RenderTextCallbackType = ({ text: innerText, key }) => (
+  const renderMentions: RenderTextCallbackType = ({
+    text: innerText,
+    key: innerKey,
+  }) => (
     <AtMentionify
-      key={key}
-      direction={direction}
-      text={innerText}
+      key={innerKey}
       bodyRanges={bodyRanges}
-      openConversation={openConversation}
+      direction={direction}
+      showConversation={showConversation}
+      text={innerText}
     />
   );
 
-  let myDisableMarkdown = disableMarkdown;
+  const myDisableMarkdown = disableMarkdown || text.startsWith('NOMD');
 
-  if (text.startsWith('```')) {
-    myDisableMarkdown = true;
-  }
+  const mdRenderred: RenderTextCallbackType =
+    !myDisableMarkdown && text.startsWith('```')
+      ? ({ text: t, key }) => (
+          <code key={key} style={{ fontWeight: 'bold' }}>
+            {renderMentions({ text: t, key })}
+          </code>
+        )
+      : renderMarkdownFactory(renderMentions);
 
   const renderNewLines: RenderTextCallbackType = ({
     text: textWithNewLines,
@@ -125,11 +129,7 @@ export function MessageBody({
       <AddNewLines
         key={key}
         text={textWithNewLines}
-        renderNonNewLine={
-          myDisableMarkdown
-            ? renderMentions
-            : renderMarkdownFactory(renderMentions)
-        }
+        renderNonNewLine={myDisableMarkdown ? renderMentions : mdRenderred}
       />
     );
   };

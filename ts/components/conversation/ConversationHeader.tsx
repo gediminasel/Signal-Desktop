@@ -18,7 +18,10 @@ import { Avatar, AvatarSize } from '../Avatar';
 import { InContactsIcon } from '../InContactsIcon';
 
 import type { LocalizerType, ThemeType } from '../../types/Util';
-import type { ConversationType } from '../../state/ducks/conversations';
+import type {
+  ConversationType,
+  PushPanelForConversationActionType,
+} from '../../state/ducks/conversations';
 import type { BadgeType } from '../../badges/types';
 import type { HasStories } from '../../types/Stories';
 import type { ViewUserStoriesActionCreatorType } from '../../state/ducks/stories';
@@ -28,11 +31,13 @@ import * as expirationTimer from '../../util/expirationTimer';
 import { missingCaseError } from '../../util/missingCaseError';
 import { isInSystemContacts } from '../../util/isInSystemContacts';
 import { isConversationMuted } from '../../util/isConversationMuted';
+import { ConfirmationDialog } from '../ConfirmationDialog';
 import { DurationInSeconds } from '../../util/durations';
 import {
   useStartCallShortcuts,
   useKeyboardShortcuts,
 } from '../../hooks/useKeyboardShortcuts';
+import { PanelType } from '../../types/Panels';
 
 export enum OutgoingCallButtonStyle {
   None,
@@ -79,23 +84,24 @@ export type PropsDataType = {
 >;
 
 export type PropsActionsType = {
-  onSetMuteNotifications: (seconds: number) => void;
-  onSetDisappearingMessages: (seconds: DurationInSeconds) => void;
-  onDeleteMessages: () => void;
-  onSearchInConversation: () => void;
-  onOutgoingAudioCallInConversation: () => void;
-  onOutgoingVideoCallInConversation: () => void;
-  onSetPin: (value: boolean) => void;
-
-  onJumpToDate: (timestamp: number) => void;
-  onShowConversationDetails: () => void;
-  onShowAllMedia: () => void;
-  onShowGroupMembers: () => void;
-  onGoBack: () => void;
-
+  destroyMessages: (conversationId: string) => void;
   onArchive: () => void;
+  onGoBack: () => void;
   onMarkUnread: () => void;
   onMoveToInbox: () => void;
+  onOutgoingAudioCallInConversation: (conversationId: string) => void;
+  onOutgoingVideoCallInConversation: (conversationId: string) => void;
+  onSearchInConversation: () => void;
+  onShowAllMedia: () => void;
+  onJumpToDate: (timestamp: number) => void;
+  onShowConversationDetails: () => void;
+  pushPanelForConversation: PushPanelForConversationActionType;
+  setDisappearingMessages: (
+    conversationId: string,
+    seconds: DurationInSeconds
+  ) => void;
+  setMuteExpiration: (conversationId: string, seconds: number) => void;
+  setPinned: (conversationId: string, value: boolean) => void;
   viewUserStories: ViewUserStoriesActionCreatorType;
 };
 
@@ -113,6 +119,7 @@ enum ModalState {
 }
 
 type StateType = {
+  hasDeleteMessagesConfirmation: boolean;
   isNarrow: boolean;
   modalState: ModalState;
 };
@@ -132,7 +139,11 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
   public constructor(props: PropsType) {
     super(props);
 
-    this.state = { isNarrow: false, modalState: ModalState.NothingOpen };
+    this.state = {
+      hasDeleteMessagesConfirmation: false,
+      isNarrow: false,
+      modalState: ModalState.NothingOpen,
+    };
 
     this.menuTriggerRef = React.createRef();
     this.headerRef = React.createRef();
@@ -332,6 +343,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
       expireTimer,
       groupVersion,
       i18n,
+      id,
       isArchived,
       isMissingMandatoryProfileSharing,
       isPinned,
@@ -340,16 +352,15 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
       markedUnread,
       muteExpiresAt,
       onArchive,
-      onDeleteMessages,
       onMarkUnread,
       onMoveToInbox,
-      onSetDisappearingMessages,
-      onSetMuteNotifications,
-      onSetPin,
       onShowAllMedia,
       onJumpToDate,
       onShowConversationDetails,
-      onShowGroupMembers,
+      pushPanelForConversation,
+      setDisappearingMessages,
+      setMuteExpiration,
+      setPinned,
       type,
     } = this.props;
 
@@ -366,7 +377,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
             {isMuted ? (
               <MenuItem
                 onClick={() => {
-                  onSetMuteNotifications(0);
+                  setMuteExpiration(id, 0);
                 }}
               >
                 {i18n('unmute')}
@@ -374,7 +385,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
             ) : (
               <MenuItem
                 onClick={() => {
-                  onSetMuteNotifications(Number.MAX_SAFE_INTEGER);
+                  setMuteExpiration(id, Number.MAX_SAFE_INTEGER);
                 }}
               >
                 {i18n('muteAlways')}
@@ -429,7 +440,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
             modalState: ModalState.CustomDisappearingTimeout,
           });
         } else {
-          onSetDisappearingMessages(seconds);
+          setDisappearingMessages(id, seconds);
         }
       };
 
@@ -460,7 +471,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
               key={item.name}
               disabled={item.disabled}
               onClick={() => {
-                onSetMuteNotifications(item.value);
+                setMuteExpiration(id, item.value);
               }}
             >
               {item.name}
@@ -509,7 +520,11 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
           />
         </MenuItem>
         {isGroup && !hasGV2AdminEnabled ? (
-          <MenuItem onClick={onShowGroupMembers}>
+          <MenuItem
+            onClick={() =>
+              pushPanelForConversation(id, { type: PanelType.GroupV1Members })
+            }
+          >
             {i18n('showMembers')}
           </MenuItem>
         ) : null}
@@ -525,17 +540,52 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
         ) : (
           <MenuItem onClick={onArchive}>{i18n('archiveConversation')}</MenuItem>
         )}
-        <MenuItem onClick={onDeleteMessages}>{i18n('deleteMessages')}</MenuItem>
+        <MenuItem
+          onClick={() => this.setState({ hasDeleteMessagesConfirmation: true })}
+        >
+          {i18n('deleteMessages')}
+        </MenuItem>
         {isPinned ? (
-          <MenuItem onClick={() => onSetPin(false)}>
+          <MenuItem onClick={() => setPinned(id, false)}>
             {i18n('unpinConversation')}
           </MenuItem>
         ) : (
-          <MenuItem onClick={() => onSetPin(true)}>
+          <MenuItem onClick={() => setPinned(id, true)}>
             {i18n('pinConversation')}
           </MenuItem>
         )}
       </ContextMenu>
+    );
+  }
+
+  private renderConfirmationDialog(): ReactNode {
+    const { hasDeleteMessagesConfirmation } = this.state;
+    const { destroyMessages, i18n, id } = this.props;
+
+    if (!hasDeleteMessagesConfirmation) {
+      return;
+    }
+
+    return (
+      <ConfirmationDialog
+        dialogName="ConversationHeader.destroyMessages"
+        actions={[
+          {
+            action: () => {
+              this.setState({ hasDeleteMessagesConfirmation: false });
+              destroyMessages(id);
+            },
+            style: 'negative',
+            text: i18n('delete'),
+          },
+        ]}
+        i18n={i18n}
+        onClose={() => {
+          this.setState({ hasDeleteMessagesConfirmation: false });
+        }}
+      >
+        {i18n('deleteConversationConfirmation')}
+      </ConfirmationDialog>
     );
   }
 
@@ -617,8 +667,8 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
       isSignalConversation,
       onOutgoingAudioCallInConversation,
       onOutgoingVideoCallInConversation,
-      onSetDisappearingMessages,
       outgoingCallButtonStyle,
+      setDisappearingMessages,
       showBackButton,
     } = this.props;
     const { isNarrow, modalState } = this.state;
@@ -634,7 +684,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
           initialValue={expireTimer}
           onSubmit={value => {
             this.setState({ modalState: ModalState.NothingOpen });
-            onSetDisappearingMessages(value);
+            setDisappearingMessages(id, value);
           }}
           onClose={() => this.setState({ modalState: ModalState.NothingOpen })}
         />
@@ -646,6 +696,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
     return (
       <>
         {modalNode}
+        {this.renderConfirmationDialog()}
         <Measure
           bounds
           onResize={({ bounds }) => {
@@ -669,6 +720,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
                   announcementsOnly={announcementsOnly}
                   areWeAdmin={areWeAdmin}
                   i18n={i18n}
+                  id={id}
                   isNarrow={isNarrow}
                   onOutgoingAudioCallInConversation={
                     onOutgoingAudioCallInConversation
@@ -695,6 +747,7 @@ function OutgoingCallButtons({
   announcementsOnly,
   areWeAdmin,
   i18n,
+  id,
   isNarrow,
   onOutgoingAudioCallInConversation,
   onOutgoingVideoCallInConversation,
@@ -705,6 +758,7 @@ function OutgoingCallButtons({
   | 'announcementsOnly'
   | 'areWeAdmin'
   | 'i18n'
+  | 'id'
   | 'onOutgoingAudioCallInConversation'
   | 'onOutgoingVideoCallInConversation'
   | 'outgoingCallButtonStyle'
@@ -722,14 +776,14 @@ function OutgoingCallButtons({
           : undefined
       )}
       disabled={showBackButton}
-      onClick={onOutgoingVideoCallInConversation}
+      onClick={() => onOutgoingVideoCallInConversation(id)}
       type="button"
     />
   );
 
   const startCallShortcuts = useStartCallShortcuts(
-    onOutgoingAudioCallInConversation,
-    onOutgoingVideoCallInConversation
+    () => onOutgoingAudioCallInConversation(id),
+    () => onOutgoingVideoCallInConversation(id)
   );
   useKeyboardShortcuts(startCallShortcuts);
 
@@ -744,7 +798,7 @@ function OutgoingCallButtons({
           {videoButton}
           <button
             type="button"
-            onClick={onOutgoingAudioCallInConversation}
+            onClick={() => onOutgoingAudioCallInConversation(id)}
             className={classNames(
               'module-ConversationHeader__button',
               'module-ConversationHeader__button--audio',
@@ -765,7 +819,7 @@ function OutgoingCallButtons({
             showBackButton ? null : 'module-ConversationHeader__button--show'
           )}
           disabled={showBackButton}
-          onClick={onOutgoingVideoCallInConversation}
+          onClick={() => onOutgoingVideoCallInConversation(id)}
           type="button"
         >
           {isNarrow ? null : i18n('joinOngoingCall')}

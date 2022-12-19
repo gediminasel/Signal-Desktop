@@ -23,6 +23,7 @@ export type PropsType = {
   isCustomizingPreferredReactions: boolean;
   renderCustomizingPreferredReactionsModal: () => JSX.Element;
   renderLeftPane: () => JSX.Element;
+  scrollToMessage: (conversationId: string, messageId: string) => unknown;
   selectedConversationId?: string;
   selectedMessage?: string;
   selectedMessageSource?: SelectedMessageSource;
@@ -36,6 +37,7 @@ export function Inbox({
   isCustomizingPreferredReactions,
   renderCustomizingPreferredReactionsModal,
   renderLeftPane,
+  scrollToMessage,
   selectedConversationId,
   selectedMessage,
   selectedMessageSource,
@@ -93,10 +95,11 @@ export function Inbox({
       selectedMessage &&
       selectedMessageSource !== SelectedMessageSource.Focus
     ) {
-      conversation.trigger('scroll-to-message', selectedMessage);
+      scrollToMessage(conversation.id, selectedMessage);
     }
   }, [
     prevConversation,
+    scrollToMessage,
     selectedConversationId,
     selectedMessage,
     selectedMessageSource,
@@ -132,10 +135,6 @@ export function Inbox({
       prevConversation.trigger('unload', 'force unload requested');
     }
 
-    function onShowConversation(id: string, messageId?: string): void {
-      showConversation({ conversationId: id, messageId });
-    }
-
     function packInstallFailed() {
       showToast(ToastStickerPackInstallFailed);
     }
@@ -144,14 +143,12 @@ export function Inbox({
     window.Whisper.events.on('pack-install-failed', packInstallFailed);
     window.Whisper.events.on('refreshConversation', refreshConversation);
     window.Whisper.events.on('setupAsNewDevice', unload);
-    window.Whisper.events.on('showConversation', onShowConversation);
 
     return () => {
       window.Whisper.events.off('loadingProgress', setLoadingMessageCount);
       window.Whisper.events.off('pack-install-failed', packInstallFailed);
       window.Whisper.events.off('refreshConversation', refreshConversation);
       window.Whisper.events.off('setupAsNewDevice', unload);
-      window.Whisper.events.off('showConversation', onShowConversation);
     };
   }, [prevConversation, showConversation]);
 

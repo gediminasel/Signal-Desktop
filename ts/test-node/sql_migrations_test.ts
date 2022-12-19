@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { assert } from 'chai';
-import type { Database } from 'better-sqlite3';
-import SQL from 'better-sqlite3';
+import type { Database } from '@signalapp/better-sqlite3';
+import SQL from '@signalapp/better-sqlite3';
 import { v4 as generateGuid } from 'uuid';
 
 import { SCHEMA_VERSIONS } from '../sql/migrations';
@@ -2420,6 +2420,78 @@ describe('SQL migrations test', () => {
           `
         );
       });
+    });
+  });
+
+  describe('updateToSchemaVersion71', () => {
+    it('deletes and re-creates auto-generated shouldAffectActivity/shouldAffectPreview/isUserInitiatedMessage fields', () => {
+      const MESSAGE_ID_0 = generateGuid();
+      const MESSAGE_ID_1 = generateGuid();
+      const MESSAGE_ID_2 = generateGuid();
+      const MESSAGE_ID_3 = generateGuid();
+      const MESSAGE_ID_4 = generateGuid();
+      const MESSAGE_ID_5 = generateGuid();
+      const MESSAGE_ID_6 = generateGuid();
+      const MESSAGE_ID_7 = generateGuid();
+      const CONVERSATION_ID = generateGuid();
+
+      updateToVersion(71);
+
+      db.exec(
+        `
+        INSERT INTO messages
+          (id, conversationId, type)
+          VALUES
+          ('${MESSAGE_ID_0}', '${CONVERSATION_ID}', NULL),
+          ('${MESSAGE_ID_1}', '${CONVERSATION_ID}', 'story'),
+          ('${MESSAGE_ID_2}', '${CONVERSATION_ID}', 'keychange'),
+          ('${MESSAGE_ID_3}', '${CONVERSATION_ID}', 'outgoing'),
+          ('${MESSAGE_ID_4}', '${CONVERSATION_ID}', 'group-v2-change'),
+          ('${MESSAGE_ID_5}', '${CONVERSATION_ID}', 'phone-number-discovery'),
+          ('${MESSAGE_ID_6}', '${CONVERSATION_ID}', 'conversation-merge'),
+          ('${MESSAGE_ID_7}', '${CONVERSATION_ID}', 'incoming');
+        `
+      );
+
+      assert.strictEqual(
+        db.prepare('SELECT COUNT(*) FROM messages;').pluck().get(),
+        8,
+        'total'
+      );
+
+      // Four: NULL, incoming, outgoing, and group-v2-change
+      assert.strictEqual(
+        db
+          .prepare(
+            'SELECT COUNT(*) FROM messages WHERE shouldAffectPreview IS 1;'
+          )
+          .pluck()
+          .get(),
+        4,
+        'shouldAffectPreview'
+      );
+      assert.strictEqual(
+        db
+          .prepare(
+            'SELECT COUNT(*) FROM messages WHERE shouldAffectActivity IS 1;'
+          )
+          .pluck()
+          .get(),
+        4,
+        'shouldAffectActivity'
+      );
+
+      // Three: NULL, incoming, outgoing
+      assert.strictEqual(
+        db
+          .prepare(
+            'SELECT COUNT(*) FROM messages WHERE isUserInitiatedMessage IS 1;'
+          )
+          .pluck()
+          .get(),
+        3,
+        'isUserInitiatedMessage'
+      );
     });
   });
 });

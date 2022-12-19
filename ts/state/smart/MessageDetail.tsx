@@ -24,6 +24,8 @@ export type OwnProps = Omit<
   | 'renderEmojiPicker'
   | 'renderReactionPicker'
   | 'theme'
+  | 'showContactModal'
+  | 'showConversation'
   | 'markViewed'
 >;
 
@@ -38,19 +40,12 @@ const mapStateToProps = (
     receivedAt,
     sentAt,
 
-    showSafetyNumber,
-
-    displayTapToViewMessage,
     kickOffAttachmentDownload,
     markAttachmentAsCorrupted,
-    openConversation,
     openGiftBadge,
     openLink,
-    showContactDetail,
-    showContactModal,
     showExpiredIncomingTapToViewToast,
     showExpiredOutgoingTapToViewToast,
-    showVisualAttachment,
     startConversation,
   } = props;
 
@@ -77,21 +72,14 @@ const mapStateToProps = (
     interactionMode: getInteractionMode(state),
     theme: getTheme(state),
 
-    showSafetyNumber,
-
-    displayTapToViewMessage,
     kickOffAttachmentDownload,
     markAttachmentAsCorrupted,
     markViewed,
-    openConversation,
     openGiftBadge,
     openLink,
     renderAudioAttachment,
-    showContactDetail,
-    showContactModal,
     showExpiredIncomingTapToViewToast,
     showExpiredOutgoingTapToViewToast,
-    showVisualAttachment,
     startConversation,
   };
 };

@@ -40,10 +40,12 @@ const createProps = (
   hasGroupLink = false,
   expireTimer?: DurationInSeconds
 ): Props => ({
+  acceptConversation: action('acceptConversation'),
   addMembers: async () => {
     action('addMembers');
   },
   areWeASubscriber: false,
+  blockConversation: action('blockConversation'),
   canEditGroupInfo: false,
   canAddNewMembers: false,
   conversation: expireTimer
@@ -78,21 +80,13 @@ const createProps = (
   setDisappearingMessages: action('setDisappearingMessages'),
   showAllMedia: action('showAllMedia'),
   showContactModal: action('showContactModal'),
-  showChatColorEditor: action('showChatColorEditor'),
-  showGroupLinkManagement: action('showGroupLinkManagement'),
-  showGroupV2Permissions: action('showGroupV2Permissions'),
-  showConversationNotificationsSettings: action(
-    'showConversationNotificationsSettings'
-  ),
+  pushPanelForConversation: action('pushPanelForConversation'),
   showConversation: action('showConversation'),
-  showPendingInvites: action('showPendingInvites'),
-  showLightboxForMedia: action('showLightboxForMedia'),
+  showLightboxWithMedia: action('showLightboxWithMedia'),
   updateGroupAttributes: async () => {
     action('updateGroupAttributes')();
   },
-  onBlock: action('onBlock'),
   onLeave: action('onLeave'),
-  onUnblock: action('onUnblock'),
   deleteAvatarFromDisk: action('deleteAvatarFromDisk'),
   replaceAvatar: action('replaceAvatar'),
   saveAvatarToDisk: action('saveAvatarToDisk'),

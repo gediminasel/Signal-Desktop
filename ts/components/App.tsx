@@ -8,7 +8,7 @@ import classNames from 'classnames';
 
 import type { ExecuteMenuRoleType } from './TitleBarContainer';
 import type { MenuOptionsType, MenuActionType } from '../types/menu';
-import type { ToastType } from '../state/ducks/toast';
+import type { ToastType } from '../types/Toast';
 import type { ViewStoryActionCreatorType } from '../state/ducks/stories';
 import type { ReplacementValuesType } from '../types/Util';
 import { ThemeType } from '../types/Util';
@@ -31,6 +31,7 @@ type PropsType = {
   renderStories: (closeView: () => unknown) => JSX.Element;
   hasSelectedStoryData: boolean;
   renderStoryViewer: (closeView: () => unknown) => JSX.Element;
+  renderLightbox: () => JSX.Element | null;
   requestVerification: (
     type: 'sms' | 'voice',
     number: string,
@@ -40,17 +41,19 @@ type PropsType = {
   isMaximized: boolean;
   isFullScreen: boolean;
   menuOptions: MenuOptionsType;
+  openFileInFolder: (target: string) => unknown;
   hasCustomTitleBar: boolean;
   hideMenuBar: boolean;
 
   executeMenuRole: ExecuteMenuRoleType;
   executeMenuAction: (action: MenuActionType) => void;
+  hideToast: () => unknown;
   titleBarDoubleClick: () => void;
   toast?: {
     toastType: ToastType;
     parameters?: ReplacementValuesType;
   };
-  hideToast: () => unknown;
+  scrollToMessage: (conversationId: string, messageId: string) => unknown;
   toggleStoriesView: () => unknown;
   viewStory: ViewStoryActionCreatorType;
 } & ComponentProps<typeof Inbox>;
@@ -71,14 +74,17 @@ export function App({
   hasCustomTitleBar,
   menuOptions,
   openInbox,
+  openFileInFolder,
   registerSingleDevice,
   renderCallManager,
   renderCustomizingPreferredReactionsModal,
   renderGlobalModalContainer,
   renderLeftPane,
+  renderLightbox,
   renderStories,
   renderStoryViewer,
   requestVerification,
+  scrollToMessage,
   selectedConversationId,
   selectedMessage,
   selectedMessageSource,
@@ -116,6 +122,7 @@ export function App({
           renderCustomizingPreferredReactionsModal
         }
         renderLeftPane={renderLeftPane}
+        scrollToMessage={scrollToMessage}
         selectedConversationId={selectedConversationId}
         selectedMessage={selectedMessage}
         selectedMessageSource={selectedMessageSource}
@@ -173,9 +180,15 @@ export function App({
           'dark-theme': theme === ThemeType.dark,
         })}
       >
-        <ToastManager hideToast={hideToast} i18n={i18n} toast={toast} />
+        <ToastManager
+          hideToast={hideToast}
+          i18n={i18n}
+          openFileInFolder={openFileInFolder}
+          toast={toast}
+        />
         {renderGlobalModalContainer()}
         {renderCallManager()}
+        {renderLightbox()}
         {isShowingStoriesView && renderStories(toggleStoriesView)}
         {hasSelectedStoryData &&
           renderStoryViewer(() => viewStory({ closeViewer: true }))}

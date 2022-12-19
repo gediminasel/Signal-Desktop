@@ -3,12 +3,12 @@
 
 /* eslint-disable camelcase */
 
+import { mkdirSync } from 'fs';
 import { join } from 'path';
-import mkdirp from 'mkdirp';
 import rimraf from 'rimraf';
 import { randomBytes } from 'crypto';
-import type { Database, Statement } from 'better-sqlite3';
-import SQL from 'better-sqlite3';
+import type { Database, Statement } from '@signalapp/better-sqlite3';
+import SQL from '@signalapp/better-sqlite3';
 import pProps from 'p-props';
 
 import type { Dictionary } from 'lodash';
@@ -200,6 +200,7 @@ const dataInterface: ServerInterface = {
   bulkAddSessions,
   removeSessionById,
   removeSessionsByConversation,
+  removeSessionsByUUID,
   removeAllSessions,
   getAllSessions,
 
@@ -524,7 +525,7 @@ async function initialize({
   indexedDBPath = join(configDir, 'IndexedDB');
 
   const dbDir = join(configDir, 'sql');
-  mkdirp.sync(dbDir);
+  mkdirSync(dbDir, { recursive: true });
 
   databaseFilePath = join(dbDir, 'db.sqlite');
 
@@ -1307,6 +1308,17 @@ async function removeSessionsByConversation(
     `
   ).run({
     conversationId,
+  });
+}
+async function removeSessionsByUUID(uuid: UUIDStringType): Promise<void> {
+  const db = getInstance();
+  db.prepare<Query>(
+    `
+    DELETE FROM sessions
+    WHERE uuid = $uuid;
+    `
+  ).run({
+    uuid,
   });
 }
 async function removeAllSessions(): Promise<void> {

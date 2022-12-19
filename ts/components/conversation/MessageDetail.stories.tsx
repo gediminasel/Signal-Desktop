@@ -69,20 +69,21 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   interactionMode: 'keyboard',
   theme: ThemeType.light,
 
-  showSafetyNumber: action('showSafetyNumber'),
+  toggleSafetyNumberModal: action('toggleSafetyNumberModal'),
 
   checkForAccount: action('checkForAccount'),
   clearSelectedMessage: action('clearSelectedMessage'),
-  displayTapToViewMessage: action('displayTapToViewMessage'),
+  showLightboxForViewOnceMedia: action('showLightboxForViewOnceMedia'),
   doubleCheckMissingQuoteReference: action('doubleCheckMissingQuoteReference'),
   kickOffAttachmentDownload: action('kickOffAttachmentDownload'),
   markAttachmentAsCorrupted: action('markAttachmentAsCorrupted'),
   markViewed: action('markViewed'),
-  openConversation: action('openConversation'),
+  showConversation: action('showConversation'),
   openGiftBadge: action('openGiftBadge'),
   openLink: action('openLink'),
   renderAudioAttachment: () => <div>*AudioAttachment*</div>,
-  showContactDetail: action('showContactDetail'),
+  saveAttachment: action('saveAttachment'),
+  pushPanelForConversation: action('pushPanelForConversation'),
   showContactModal: action('showContactModal'),
   showExpiredIncomingTapToViewToast: action(
     'showExpiredIncomingTapToViewToast'
@@ -90,7 +91,7 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   showExpiredOutgoingTapToViewToast: action(
     'showExpiredOutgoingTapToViewToast'
   ),
-  showVisualAttachment: action('showVisualAttachment'),
+  showLightbox: action('showLightbox'),
   startConversation: action('startConversation'),
   viewStory: action('viewStory'),
 });

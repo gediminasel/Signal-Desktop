@@ -22,7 +22,6 @@ import {
   shouldShowStoriesView,
 } from '../selectors/stories';
 import { retryMessageSend } from '../../util/retryMessageSend';
-import { saveAttachment } from '../../util/saveAttachment';
 import { useConversationsActions } from '../ducks/conversations';
 import { useGlobalModalActions } from '../ducks/globalModals';
 import { useStoriesActions } from '../ducks/stories';
@@ -34,7 +33,8 @@ function renderStoryCreator(): JSX.Element {
 
 export function SmartStories(): JSX.Element | null {
   const storiesActions = useStoriesActions();
-  const { showConversation, toggleHideStories } = useConversationsActions();
+  const { saveAttachment, showConversation, toggleHideStories } =
+    useConversationsActions();
   const { showStoriesSettings, toggleForwardMessageModal } =
     useGlobalModalActions();
   const { showToast } = useToastActions();
@@ -75,9 +75,7 @@ export function SmartStories(): JSX.Element | null {
       i18n={i18n}
       me={me}
       myStories={myStories}
-      onForwardStory={storyId => {
-        toggleForwardMessageModal(storyId);
-      }}
+      onForwardStory={toggleForwardMessageModal}
       onSaveStory={story => {
         if (story.attachment) {
           saveAttachment(story.attachment, story.timestamp);

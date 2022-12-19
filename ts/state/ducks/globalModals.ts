@@ -3,15 +3,21 @@
 
 import type { ThunkAction } from 'redux-thunk';
 import type { ExplodePromiseResultType } from '../../util/explodePromise';
+import type { GroupV2PendingMemberType } from '../../model-types.d';
 import type { PropsForMessage } from '../selectors/message';
+import type { RecipientsByConversation } from './stories';
 import type { SafetyNumberChangeSource } from '../../components/SafetyNumberChangeDialog';
 import type { StateType as RootStateType } from '../reducer';
 import type { UUIDStringType } from '../../types/UUID';
 import * as SingleServePromise from '../../services/singleServePromise';
+import * as Stickers from '../../types/Stickers';
 import { getMessageById } from '../../messages/getMessageById';
 import { getMessagePropsSelector } from '../selectors/message';
+import type { BoundActionCreatorsMapObject } from '../../hooks/useBoundActions';
+import { longRunningTaskWrapper } from '../../util/longRunningTaskWrapper';
 import { useBoundActions } from '../../hooks/useBoundActions';
-import type { RecipientsByConversation } from './stories';
+import { isGroupV1 } from '../../util/whatTypeOfConversation';
+import { getGroupMigrationMembers } from '../../groups';
 
 // State
 
@@ -24,9 +30,19 @@ export type SafetyNumberChangedBlockingDataType = Readonly<{
   source?: SafetyNumberChangeSource;
 }>;
 
+type MigrateToGV2PropsType = {
+  areWeInvited: boolean;
+  conversationId: string;
+  droppedMemberIds: ReadonlyArray<string>;
+  hasMigrated: boolean;
+  invitedMemberIds: ReadonlyArray<string>;
+};
+
 export type GlobalModalsStateType = Readonly<{
+  addUserToAnotherGroupModalContactId?: string;
   contactModalState?: ContactModalStateType;
   forwardMessageProps?: ForwardMessagePropsType;
+  gv2MigrationProps?: MigrateToGV2PropsType;
   isProfileEditorVisible: boolean;
   isSignalConnectionsVisible: boolean;
   isStoriesSettingsVisible: boolean;
@@ -34,7 +50,7 @@ export type GlobalModalsStateType = Readonly<{
   profileEditorHasError: boolean;
   safetyNumberChangedBlockingData?: SafetyNumberChangedBlockingDataType;
   safetyNumberModalContactId?: string;
-  addUserToAnotherGroupModalContactId?: string;
+  stickerPackPreviewId?: string;
   userNotFoundModalState?: UserNotFoundModalStateType;
 }>;
 
@@ -60,6 +76,10 @@ const TOGGLE_SIGNAL_CONNECTIONS_MODAL =
   'globalModals/TOGGLE_SIGNAL_CONNECTIONS_MODAL';
 export const SHOW_SEND_ANYWAY_DIALOG = 'globalModals/SHOW_SEND_ANYWAY_DIALOG';
 const HIDE_SEND_ANYWAY_DIALOG = 'globalModals/HIDE_SEND_ANYWAY_DIALOG';
+const SHOW_GV2_MIGRATION_DIALOG = 'globalModals/SHOW_GV2_MIGRATION_DIALOG';
+const CLOSE_GV2_MIGRATION_DIALOG = 'globalModals/CLOSE_GV2_MIGRATION_DIALOG';
+const SHOW_STICKER_PACK_PREVIEW = 'globalModals/SHOW_STICKER_PACK_PREVIEW';
+const CLOSE_STICKER_PACK_PREVIEW = 'globalModals/CLOSE_STICKER_PACK_PREVIEW';
 
 export type ContactModalStateType = {
   contactId: string;
@@ -137,6 +157,15 @@ type HideStoriesSettingsActionType = {
   type: typeof HIDE_STORIES_SETTINGS;
 };
 
+type StartMigrationToGV2ActionType = {
+  type: typeof SHOW_GV2_MIGRATION_DIALOG;
+  payload: MigrateToGV2PropsType;
+};
+
+type CloseGV2MigrationDialogActionType = {
+  type: typeof CLOSE_GV2_MIGRATION_DIALOG;
+};
+
 export type ShowSendAnywayDialogActionType = {
   type: typeof SHOW_SEND_ANYWAY_DIALOG;
   payload: SafetyNumberChangedBlockingDataType & {
@@ -148,7 +177,18 @@ type HideSendAnywayDialogActiontype = {
   type: typeof HIDE_SEND_ANYWAY_DIALOG;
 };
 
+export type ShowStickerPackPreviewActionType = {
+  type: typeof SHOW_STICKER_PACK_PREVIEW;
+  payload: string;
+};
+
+type CloseStickerPackPreviewActionType = {
+  type: typeof CLOSE_STICKER_PACK_PREVIEW;
+};
+
 export type GlobalModalsActionType =
+  | StartMigrationToGV2ActionType
+  | CloseGV2MigrationDialogActionType
   | HideContactModalActionType
   | ShowContactModalActionType
   | HideWhatsNewModalActionType
@@ -159,6 +199,8 @@ export type GlobalModalsActionType =
   | ShowStoriesSettingsActionType
   | HideSendAnywayDialogActiontype
   | ShowSendAnywayDialogActionType
+  | CloseStickerPackPreviewActionType
+  | ShowStickerPackPreviewActionType
   | ToggleForwardMessageModalActionType
   | ToggleProfileEditorActionType
   | ToggleProfileEditorErrorActionType
@@ -185,10 +227,15 @@ export const actions = {
   toggleSafetyNumberModal,
   toggleAddUserToAnotherGroupModal,
   toggleSignalConnectionsModal,
+  showGV2MigrationDialog,
+  closeGV2MigrationDialog,
+  showStickerPackPreview,
+  closeStickerPackPreview,
 };
 
-export const useGlobalModalActions = (): typeof actions =>
-  useBoundActions(actions);
+export const useGlobalModalActions = (): BoundActionCreatorsMapObject<
+  typeof actions
+> => useBoundActions(actions);
 
 function hideContactModal(): HideContactModalActionType {
   return {
@@ -242,6 +289,57 @@ function hideStoriesSettings(): HideStoriesSettingsActionType {
 
 function showStoriesSettings(): ShowStoriesSettingsActionType {
   return { type: SHOW_STORIES_SETTINGS };
+}
+
+function showGV2MigrationDialog(
+  conversationId: string
+): ThunkAction<void, RootStateType, unknown, StartMigrationToGV2ActionType> {
+  return async dispatch => {
+    const conversation = window.ConversationController.get(conversationId);
+    if (!conversation) {
+      throw new Error(
+        'showGV2MigrationDialog: Expected a conversation to be found. Doing nothing'
+      );
+    }
+
+    const idForLogging = conversation.idForLogging();
+
+    if (!isGroupV1(conversation.attributes)) {
+      throw new Error(
+        `showGV2MigrationDialog/${idForLogging}: Cannot start, not a GroupV1 group`
+      );
+    }
+
+    // Note: this call will throw if, after generating member lists, we are no longer a
+    //   member or are in the pending member list.
+    const { droppedGV2MemberIds, pendingMembersV2 } =
+      await longRunningTaskWrapper({
+        idForLogging,
+        name: 'getGroupMigrationMembers',
+        task: () => getGroupMigrationMembers(conversation),
+      });
+
+    const invitedMemberIds = pendingMembersV2.map(
+      (item: GroupV2PendingMemberType) => item.uuid
+    );
+
+    dispatch({
+      type: SHOW_GV2_MIGRATION_DIALOG,
+      payload: {
+        areWeInvited: false,
+        conversationId,
+        droppedMemberIds: droppedGV2MemberIds,
+        hasMigrated: false,
+        invitedMemberIds,
+      },
+    });
+  };
+}
+
+function closeGV2MigrationDialog(): CloseGV2MigrationDialogActionType {
+  return {
+    type: CLOSE_GV2_MIGRATION_DIALOG,
+  };
 }
 
 function toggleForwardMessageModal(
@@ -333,6 +431,40 @@ function showBlockingSafetyNumberChangeDialog(
 function hideBlockingSafetyNumberChangeDialog(): HideSendAnywayDialogActiontype {
   return {
     type: HIDE_SEND_ANYWAY_DIALOG,
+  };
+}
+
+function closeStickerPackPreview(): ThunkAction<
+  void,
+  RootStateType,
+  unknown,
+  CloseStickerPackPreviewActionType
+> {
+  return async (dispatch, getState) => {
+    const packId = getState().globalModals.stickerPackPreviewId;
+
+    if (!packId) {
+      return;
+    }
+
+    await Stickers.removeEphemeralPack(packId);
+    dispatch({
+      type: CLOSE_STICKER_PACK_PREVIEW,
+    });
+  };
+}
+
+export function showStickerPackPreview(
+  packId: string,
+  packKey: string
+): ShowStickerPackPreviewActionType {
+  // Intentionally not awaiting this so that we can show the modal right away.
+  // The modal has a loading spinner on it.
+  Stickers.downloadEphemeralPack(packId, packKey);
+
+  return {
+    type: SHOW_STICKER_PACK_PREVIEW,
+    payload: packId,
   };
 }
 
@@ -468,6 +600,20 @@ export function reducer(
     return {
       ...state,
       safetyNumberChangedBlockingData: undefined,
+    };
+  }
+
+  if (action.type === CLOSE_STICKER_PACK_PREVIEW) {
+    return {
+      ...state,
+      stickerPackPreviewId: undefined,
+    };
+  }
+
+  if (action.type === SHOW_STICKER_PACK_PREVIEW) {
+    return {
+      ...state,
+      stickerPackPreviewId: action.payload,
     };
   }
 

@@ -6,12 +6,13 @@ import type { LocalizerType, ReplacementValuesType } from '../types/Util';
 import { SECOND } from '../util/durations';
 import { Toast } from './Toast';
 import { ToastMessageBodyTooLong } from './ToastMessageBodyTooLong';
-import { ToastType } from '../state/ducks/toast';
 import { missingCaseError } from '../util/missingCaseError';
+import { ToastType } from '../types/Toast';
 
 export type PropsType = {
   hideToast: () => unknown;
   i18n: LocalizerType;
+  openFileInFolder: (target: string) => unknown;
   toast?: {
     toastType: ToastType;
     parameters?: ReplacementValuesType;
@@ -23,6 +24,7 @@ const SHORT_TIMEOUT = 3 * SECOND;
 export function ToastManager({
   hideToast,
   i18n,
+  openFileInFolder,
   toast,
 }: PropsType): JSX.Element | null {
   if (toast === undefined) {
@@ -30,6 +32,66 @@ export function ToastManager({
   }
 
   const { toastType } = toast;
+
+  if (toastType === ToastType.AddingUserToGroup) {
+    return (
+      <Toast onClose={hideToast} timeout={SHORT_TIMEOUT}>
+        {i18n(
+          'AddUserToAnotherGroupModal__toast--adding-user-to-group',
+          toast.parameters
+        )}
+      </Toast>
+    );
+  }
+
+  if (toastType === ToastType.Blocked) {
+    return <Toast onClose={hideToast}>{i18n('unblockToSend')}</Toast>;
+  }
+
+  if (toastType === ToastType.BlockedGroup) {
+    return <Toast onClose={hideToast}>{i18n('unblockGroupToSend')}</Toast>;
+  }
+
+  if (toastType === ToastType.CannotMixMultiAndNonMultiAttachments) {
+    return (
+      <Toast onClose={hideToast}>
+        {i18n('cannotSelectPhotosAndVideosAlongWithFiles')}
+      </Toast>
+    );
+  }
+
+  if (toastType === ToastType.CannotStartGroupCall) {
+    return (
+      <Toast onClose={hideToast}>
+        {i18n('GroupV2--cannot-start-group-call', toast.parameters)}
+      </Toast>
+    );
+  }
+
+  if (toastType === ToastType.CopiedUsername) {
+    return (
+      <Toast onClose={hideToast} timeout={3 * SECOND}>
+        {i18n('ProfileEditor--username--copied-username')}
+      </Toast>
+    );
+  }
+
+  if (toastType === ToastType.CopiedUsernameLink) {
+    return (
+      <Toast onClose={hideToast} timeout={3 * SECOND}>
+        {i18n('ProfileEditor--username--copied-username-link')}
+      </Toast>
+    );
+  }
+
+  if (toastType === ToastType.DangerousFileType) {
+    return <Toast onClose={hideToast}>{i18n('dangerousFileType')}</Toast>;
+  }
+
+  if (toastType === ToastType.DeleteForEveryoneFailed) {
+    return <Toast onClose={hideToast}>{i18n('deleteForEveryoneFailed')}</Toast>;
+  }
+
   if (toastType === ToastType.Error) {
     return (
       <Toast
@@ -45,8 +107,78 @@ export function ToastManager({
     );
   }
 
+  if (toastType === ToastType.Expired) {
+    return <Toast onClose={hideToast}>{i18n('expiredWarning')}</Toast>;
+  }
+
+  if (toastType === ToastType.FailedToDeleteUsername) {
+    return (
+      <Toast onClose={hideToast}>
+        {i18n('ProfileEditor--username--delete-general-error')}
+      </Toast>
+    );
+  }
+
+  if (toastType === ToastType.FileSaved) {
+    return (
+      <Toast
+        onClose={hideToast}
+        toastAction={{
+          label: i18n('attachmentSavedShow'),
+          onClick: () => {
+            if (toast.parameters && 'fullPath' in toast.parameters) {
+              openFileInFolder(String(toast.parameters.fullPath));
+            }
+          },
+        }}
+      >
+        {i18n('attachmentSaved')}
+      </Toast>
+    );
+  }
+
+  if (toastType === ToastType.FileSize) {
+    return (
+      <Toast onClose={hideToast}>
+        {i18n('icu:fileSizeWarning', toast?.parameters)}
+      </Toast>
+    );
+  }
+
+  if (toastType === ToastType.InvalidConversation) {
+    return <Toast onClose={hideToast}>{i18n('invalidConversation')}</Toast>;
+  }
+
+  if (toastType === ToastType.LeftGroup) {
+    return <Toast onClose={hideToast}>{i18n('youLeftTheGroup')}</Toast>;
+  }
+
+  if (toastType === ToastType.MaxAttachments) {
+    return <Toast onClose={hideToast}>{i18n('maximumAttachments')}</Toast>;
+  }
+
   if (toastType === ToastType.MessageBodyTooLong) {
     return <ToastMessageBodyTooLong i18n={i18n} onClose={hideToast} />;
+  }
+
+  if (toastType === ToastType.ReportedSpamAndBlocked) {
+    return (
+      <Toast onClose={hideToast}>
+        {i18n('MessageRequests--block-and-report-spam-success-toast')}
+      </Toast>
+    );
+  }
+
+  if (toastType === ToastType.PinnedConversationsFull) {
+    return <Toast onClose={hideToast}>{i18n('pinnedConversationsFull')}</Toast>;
+  }
+
+  if (toastType === ToastType.StoryMuted) {
+    return (
+      <Toast onClose={hideToast} timeout={SHORT_TIMEOUT}>
+        {i18n('Stories__toast--hasNoSound')}
+      </Toast>
+    );
   }
 
   if (toastType === ToastType.StoryReact) {
@@ -65,10 +197,10 @@ export function ToastManager({
     );
   }
 
-  if (toastType === ToastType.StoryMuted) {
+  if (toastType === ToastType.StoryVideoError) {
     return (
-      <Toast onClose={hideToast} timeout={SHORT_TIMEOUT}>
-        {i18n('Stories__toast--hasNoSound')}
+      <Toast onClose={hideToast}>
+        {i18n('StoryCreator__error--video-error')}
       </Toast>
     );
   }
@@ -89,21 +221,18 @@ export function ToastManager({
     );
   }
 
-  if (toastType === ToastType.StoryVideoError) {
-    return (
-      <Toast onClose={hideToast}>
-        {i18n('StoryCreator__error--video-error')}
-      </Toast>
-    );
+  if (toastType === ToastType.UnableToLoadAttachment) {
+    return <Toast onClose={hideToast}>{i18n('unableToLoadAttachment')}</Toast>;
   }
 
-  if (toastType === ToastType.AddingUserToGroup) {
+  if (toastType === ToastType.TextMessagesForbidden) {
+    return <Toast onClose={hideToast}>This group is for media only!</Toast>;
+  }
+
+  if (toastType === ToastType.UnsupportedMultiAttachment) {
     return (
-      <Toast onClose={hideToast} timeout={SHORT_TIMEOUT}>
-        {i18n(
-          'AddUserToAnotherGroupModal__toast--adding-user-to-group',
-          toast.parameters
-        )}
+      <Toast onClose={hideToast}>
+        {i18n('cannotSelectPhotosAndVideosAlongWithFiles')}
       </Toast>
     );
   }
@@ -115,30 +244,6 @@ export function ToastManager({
           'AddUserToAnotherGroupModal__toast--user-added-to-group',
           toast.parameters
         )}
-      </Toast>
-    );
-  }
-
-  if (toastType === ToastType.FailedToDeleteUsername) {
-    return (
-      <Toast onClose={hideToast}>
-        {i18n('ProfileEditor--username--delete-general-error')}
-      </Toast>
-    );
-  }
-
-  if (toastType === ToastType.CopiedUsername) {
-    return (
-      <Toast onClose={hideToast} timeout={3 * SECOND}>
-        {i18n('ProfileEditor--username--copied-username')}
-      </Toast>
-    );
-  }
-
-  if (toastType === ToastType.CopiedUsernameLink) {
-    return (
-      <Toast onClose={hideToast} timeout={3 * SECOND}>
-        {i18n('ProfileEditor--username--copied-username-link')}
       </Toast>
     );
   }

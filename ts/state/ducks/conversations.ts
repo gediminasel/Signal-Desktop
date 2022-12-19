@@ -12,6 +12,7 @@ import {
   without,
 } from 'lodash';
 
+import type { AttachmentType } from '../../types/Attachment';
 import type { StateType as RootStateType } from '../reducer';
 import * as groups from '../../groups';
 import * as log from '../../logging/log';
@@ -20,6 +21,8 @@ import { getOwn } from '../../util/getOwn';
 import { assertDev, strictAssert } from '../../util/assert';
 import type { DurationInSeconds } from '../../util/durations';
 import * as universalExpireTimer from '../../util/universalExpireTimer';
+import * as Attachment from '../../types/Attachment';
+import { isFileDangerous } from '../../util/isFileDangerous';
 import type {
   ShowSendAnywayDialogActionType,
   ToggleProfileEditorErrorActionType,
@@ -69,6 +72,7 @@ import {
   getConversationUuidsStoppingSend,
   getConversationIdsStoppedForVerification,
   getMe,
+  getMessagesByConversation,
 } from '../selectors/conversations';
 import type { AvatarDataType, AvatarUpdateType } from '../../types/Avatar';
 import { getDefaultAvatars } from '../../types/Avatar';
@@ -82,6 +86,7 @@ import {
   SelectedMessageSource,
 } from './conversationsEnums';
 import { markViewed as messageUpdaterMarkViewed } from '../../services/MessageUpdater';
+import type { BoundActionCreatorsMapObject } from '../../hooks/useBoundActions';
 import { useBoundActions } from '../../hooks/useBoundActions';
 
 import type { NoopActionType } from './noop';
@@ -90,12 +95,30 @@ import type { TimelineMessageLoadingState } from '../../util/timelineUtil';
 import {
   isDirectConversation,
   isGroup,
+  isGroupV2,
 } from '../../util/whatTypeOfConversation';
 import { missingCaseError } from '../../util/missingCaseError';
 import { viewedReceiptsJobQueue } from '../../jobs/viewedReceiptsJobQueue';
 import { viewSyncJobQueue } from '../../jobs/viewSyncJobQueue';
 import { ReadStatus } from '../../messages/MessageReadStatus';
-import { isIncoming } from '../selectors/message';
+import { isIncoming, isOutgoing } from '../selectors/message';
+import { sendDeleteForEveryoneMessage } from '../../util/sendDeleteForEveryoneMessage';
+import type { ShowToastActionType } from './toast';
+import { SHOW_TOAST } from './toast';
+import { ToastType } from '../../types/Toast';
+import { isMemberRequestingToJoin } from '../../util/isMemberRequestingToJoin';
+import { removePendingMember } from '../../util/removePendingMember';
+import { denyPendingApprovalRequest } from '../../util/denyPendingApprovalRequest';
+import { SignalService as Proto } from '../../protobuf';
+import { addReportSpamJob } from '../../jobs/helpers/addReportSpamJob';
+import { reportSpamJobQueue } from '../../jobs/reportSpamJobQueue';
+import {
+  modifyGroupV2,
+  buildPromotePendingAdminApprovalMemberChange,
+  initiateMigrationToGroupV2 as doInitiateMigrationToGroupV2,
+} from '../../groups';
+import { getMessageById } from '../../messages/getMessageById';
+import type { PanelRenderType } from '../../types/Panels';
 
 // State
 
@@ -371,8 +394,7 @@ export type ConversationsStateType = {
   selectedMessage: string | undefined;
   selectedMessageCounter: number;
   selectedMessageSource: SelectedMessageSource | undefined;
-  selectedConversationTitle?: string;
-  selectedConversationPanelDepth: number;
+  selectedConversationPanels: Array<PanelRenderType>;
   showArchived: boolean;
   composer?: ComposerStateType;
   contactSpoofingReview?: ContactSpoofingReviewStateType;
@@ -436,7 +458,8 @@ const DISCARD_MESSAGES = 'conversations/DISCARD_MESSAGES';
 const REPLACE_AVATARS = 'conversations/REPLACE_AVATARS';
 export const SELECTED_CONVERSATION_CHANGED =
   'conversations/SELECTED_CONVERSATION_CHANGED';
-
+const PUSH_PANEL = 'conversations/PUSH_PANEL';
+const POP_PANEL = 'conversations/POP_PANEL';
 export const SET_VOICE_NOTE_PLAYBACK_RATE =
   'conversations/SET_VOICE_NOTE_PLAYBACK_RATE';
 
@@ -657,14 +680,6 @@ export type SetIsNearBottomActionType = {
     isNearBottom: boolean;
   };
 };
-export type SetConversationHeaderTitleActionType = {
-  type: 'SET_CONVERSATION_HEADER_TITLE';
-  payload: { title?: string };
-};
-export type SetSelectedConversationPanelDepthActionType = {
-  type: 'SET_SELECTED_CONVERSATION_PANEL_DEPTH';
-  payload: { panelDepth: number };
-};
 export type ScrollToMessageActionType = {
   type: 'SCROLL_TO_MESSAGE';
   payload: {
@@ -760,6 +775,14 @@ export type ToggleConversationInChooseMembersActionType = {
     maxGroupSize: number;
   };
 };
+type PushPanelActionType = {
+  type: typeof PUSH_PANEL;
+  payload: PanelRenderType;
+};
+type PopPanelActionType = {
+  type: typeof POP_PANEL;
+  payload: null;
+};
 
 type ReplaceAvatarsActionType = {
   type: typeof REPLACE_AVATARS;
@@ -801,6 +824,8 @@ export type ConversationActionType =
   | MessageSelectedActionType
   | MessagesAddedActionType
   | MessagesResetActionType
+  | PopPanelActionType
+  | PushPanelActionType
   | RemoveAllConversationsActionType
   | RepairNewestMessageActionType
   | RepairOldestMessageActionType
@@ -813,13 +838,11 @@ export type ConversationActionType =
   | SetComposeGroupExpireTimerActionType
   | SetComposeGroupNameActionType
   | SetComposeSearchTermActionType
-  | SetConversationHeaderTitleActionType
   | SetIsFetchingUUIDActionType
   | SetIsNearBottomActionType
   | SetMessageLoadingStateActionType
   | SetPreJoinConversationActionType
   | SetRecentMediaItemsActionType
-  | SetSelectedConversationPanelDepthActionType
   | ShowArchivedConversationsActionType
   | ShowChooseGroupMembersActionType
   | ShowInboxActionType
@@ -832,7 +855,11 @@ export type ConversationActionType =
 // Action Creators
 
 export const actions = {
+  acceptConversation,
   addMemberToGroup,
+  approvePendingMembershipFromGroupV2,
+  blockAndReportSpam,
+  blockConversation,
   cancelConversationVerification,
   changeHasGroupLink,
   clearCancelledConversationVerification,
@@ -854,15 +881,23 @@ export const actions = {
   conversationUnloaded,
   createGroup,
   deleteAvatarFromDisk,
+  deleteConversation,
+  deleteMessageForEveryone,
+  deleteMessage,
+  destroyMessages,
   discardMessages,
   doubleCheckMissingQuoteReference,
   generateNewGroupLink,
+  initiateMigrationToGroupV2,
+  loadRecentMediaItems,
   messageChanged,
   messageDeleted,
   messageExpanded,
   messagesAdded,
   messagesReset,
   myProfileChanged,
+  popPanelForConversation,
+  pushPanelForConversation,
   removeAllConversations,
   removeCustomColorOnConversations,
   removeMemberFromGroup,
@@ -872,39 +907,47 @@ export const actions = {
   resetAllChatColors,
   reviewGroupMemberNameCollision,
   reviewMessageRequestNameCollision,
+  revokePendingMembershipsFromGroupV2,
+  saveAttachment,
+  saveAttachmentFromMessage,
   saveAvatarToDisk,
   scrollToMessage,
   selectMessage,
   setAccessControlAddFromInviteLinkSetting,
+  setAccessControlAttributesSetting,
+  setAccessControlMembersSetting,
+  setAnnouncementsOnly,
   setComposeGroupAvatar,
   setComposeGroupExpireTimer,
   setComposeGroupName,
   setComposeSearchTerm,
+  setDisappearingMessages,
+  setDontNotifyForMentionsIfMuted,
   setIsFetchingUUID,
   setIsNearBottom,
   setMessageLoadingState,
+  setMuteExpiration,
+  setPinned,
   setPreJoinConversation,
-  setRecentMediaItems,
-  setSelectedConversationHeaderTitle,
-  setSelectedConversationPanelDepth,
   setVoiceNotePlaybackRate,
   showArchivedConversations,
   showChooseGroupMembers,
-  showInbox,
   showConversation,
+  showInbox,
   startComposing,
   startSettingGroupMetadata,
   toggleAdmin,
-  toggleConversationInChooseMembers,
   toggleComposeEditingAvatar,
+  toggleConversationInChooseMembers,
   toggleGroupsForStorySend,
   toggleHideStories,
   updateConversationModelSharedGroups,
   verifyConversationsStoppingSend,
 };
 
-export const useConversationsActions = (): typeof actions =>
-  useBoundActions(actions);
+export const useConversationsActions = (): BoundActionCreatorsMapObject<
+  typeof actions
+> => useBoundActions(actions);
 
 function filterAvatarData(
   avatars: ReadonlyArray<AvatarDataType>,
@@ -927,7 +970,7 @@ async function getAvatarsAndUpdateConversation(
 ): Promise<Array<AvatarDataType>> {
   const conversation = window.ConversationController.get(conversationId);
   if (!conversation) {
-    throw new Error('No conversation found');
+    throw new Error('getAvatarsAndUpdateConversation: No conversation found');
   }
 
   const { conversationLookup } = conversations;
@@ -988,7 +1031,7 @@ function changeHasGroupLink(
   return async dispatch => {
     const conversation = window.ConversationController.get(conversationId);
     if (!conversation) {
-      throw new Error('No conversation found');
+      throw new Error('changeHasGroupLink: No conversation found');
     }
 
     await longRunningTaskWrapper({
@@ -1003,13 +1046,246 @@ function changeHasGroupLink(
   };
 }
 
+function setAnnouncementsOnly(
+  conversationId: string,
+  value: boolean
+): ThunkAction<void, RootStateType, unknown, NoopActionType> {
+  return async dispatch => {
+    const conversation = window.ConversationController.get(conversationId);
+    if (!conversation) {
+      throw new Error('setAnnouncementsOnly: No conversation found');
+    }
+
+    await longRunningTaskWrapper({
+      name: 'updateAnnouncementsOnly',
+      idForLogging: conversation.idForLogging(),
+      task: async () => conversation.updateAnnouncementsOnly(value),
+    });
+    dispatch({
+      type: 'NOOP',
+      payload: null,
+    });
+  };
+}
+
+function setAccessControlMembersSetting(
+  conversationId: string,
+  value: number
+): ThunkAction<void, RootStateType, unknown, NoopActionType> {
+  return async dispatch => {
+    const conversation = window.ConversationController.get(conversationId);
+    if (!conversation) {
+      throw new Error('setAccessControlMembersSetting: No conversation found');
+    }
+
+    await longRunningTaskWrapper({
+      name: 'updateAccessControlMembers',
+      idForLogging: conversation.idForLogging(),
+      task: async () => conversation.updateAccessControlMembers(value),
+    });
+    dispatch({
+      type: 'NOOP',
+      payload: null,
+    });
+  };
+}
+
+function setAccessControlAttributesSetting(
+  conversationId: string,
+  value: number
+): ThunkAction<void, RootStateType, unknown, NoopActionType> {
+  return async dispatch => {
+    const conversation = window.ConversationController.get(conversationId);
+    if (!conversation) {
+      throw new Error(
+        'setAccessControlAttributesSetting: No conversation found'
+      );
+    }
+
+    await longRunningTaskWrapper({
+      name: 'updateAccessControlAttributes',
+      idForLogging: conversation.idForLogging(),
+      task: async () => conversation.updateAccessControlAttributes(value),
+    });
+    dispatch({
+      type: 'NOOP',
+      payload: null,
+    });
+  };
+}
+
+function setDisappearingMessages(
+  conversationId: string,
+  seconds: DurationInSeconds
+): ThunkAction<void, RootStateType, unknown, NoopActionType> {
+  return async dispatch => {
+    const conversation = window.ConversationController.get(conversationId);
+    if (!conversation) {
+      throw new Error('setDisappearingMessages: No conversation found');
+    }
+
+    const valueToSet = seconds > 0 ? seconds : undefined;
+
+    await longRunningTaskWrapper({
+      name: 'updateExpirationTimer',
+      idForLogging: conversation.idForLogging(),
+      task: async () =>
+        conversation.updateExpirationTimer(valueToSet, {
+          reason: 'setDisappearingMessages',
+        }),
+    });
+    dispatch({
+      type: 'NOOP',
+      payload: null,
+    });
+  };
+}
+
+function setDontNotifyForMentionsIfMuted(
+  conversationId: string,
+  newValue: boolean
+): NoopActionType {
+  const conversation = window.ConversationController.get(conversationId);
+  if (!conversation) {
+    throw new Error('setDontNotifyForMentionsIfMuted: No conversation found');
+  }
+
+  conversation.setDontNotifyForMentionsIfMuted(newValue);
+
+  return {
+    type: 'NOOP',
+    payload: null,
+  };
+}
+
+function setMuteExpiration(
+  conversationId: string,
+  muteExpiresAt = 0
+): NoopActionType {
+  const conversation = window.ConversationController.get(conversationId);
+  if (!conversation) {
+    throw new Error('setMuteExpiration: No conversation found');
+  }
+
+  conversation.setMuteExpiration(
+    muteExpiresAt >= Number.MAX_SAFE_INTEGER
+      ? muteExpiresAt
+      : Date.now() + muteExpiresAt
+  );
+
+  return {
+    type: 'NOOP',
+    payload: null,
+  };
+}
+
+function setPinned(
+  conversationId: string,
+  value: boolean
+): NoopActionType | ShowToastActionType {
+  const conversation = window.ConversationController.get(conversationId);
+  if (!conversation) {
+    throw new Error('setPinned: No conversation found');
+  }
+
+  if (value) {
+    const pinnedConversationIds = window.storage.get(
+      'pinnedConversationIds',
+      new Array<string>()
+    );
+
+    if (pinnedConversationIds.length >= 4) {
+      return {
+        type: SHOW_TOAST,
+        payload: {
+          toastType: ToastType.PinnedConversationsFull,
+        },
+      };
+    }
+    conversation.pin();
+  } else {
+    conversation.unpin();
+  }
+
+  return {
+    type: 'NOOP',
+    payload: null,
+  };
+}
+
+function deleteMessage({
+  conversationId,
+  messageId,
+}: {
+  conversationId: string;
+  messageId: string;
+}): ThunkAction<void, RootStateType, unknown, NoopActionType> {
+  return async (dispatch, getState) => {
+    const message = await getMessageById(messageId);
+    if (!message) {
+      throw new Error(`deleteMessage: Message ${messageId} missing!`);
+    }
+
+    const conversation = window.ConversationController.get(conversationId);
+    if (!conversation) {
+      throw new Error('deleteMessage: No conversation found');
+    }
+
+    const messageConversationId = message.get('conversationId');
+    if (conversationId !== messageConversationId) {
+      throw new Error(
+        `deleteMessage: message conversation ${messageConversationId} doesn't match provided conversation ${conversationId}`
+      );
+    }
+
+    window.Signal.Data.removeMessage(messageId);
+    if (isOutgoing(message.attributes)) {
+      conversation.decrementSentMessageCount();
+    } else {
+      conversation.decrementMessageCount();
+    }
+    popPanelForConversation(conversationId)(dispatch, getState, undefined);
+
+    dispatch({
+      type: 'NOOP',
+      payload: null,
+    });
+  };
+}
+
+function destroyMessages(
+  conversationId: string
+): ThunkAction<void, RootStateType, unknown, NoopActionType> {
+  return async dispatch => {
+    const conversation = window.ConversationController.get(conversationId);
+    if (!conversation) {
+      throw new Error('destroyMessages: No conversation found');
+    }
+
+    await longRunningTaskWrapper({
+      name: 'destroymessages',
+      idForLogging: conversation.idForLogging(),
+      task: async () => {
+        conversation.trigger('unload', 'delete messages');
+        await conversation.destroyMessages();
+        conversation.updateLastMessage();
+      },
+    });
+
+    dispatch({
+      type: 'NOOP',
+      payload: null,
+    });
+  };
+}
+
 function generateNewGroupLink(
   conversationId: string
 ): ThunkAction<void, RootStateType, unknown, NoopActionType> {
   return async dispatch => {
     const conversation = window.ConversationController.get(conversationId);
     if (!conversation) {
-      throw new Error('No conversation found');
+      throw new Error('generateNewGroupLink: No conversation found');
     }
 
     await longRunningTaskWrapper({
@@ -1082,7 +1358,9 @@ function setAccessControlAddFromInviteLinkSetting(
   return async dispatch => {
     const conversation = window.ConversationController.get(conversationId);
     if (!conversation) {
-      throw new Error('No conversation found');
+      throw new Error(
+        'setAccessControlAddFromInviteLinkSetting: No conversation found'
+      );
     }
 
     await longRunningTaskWrapper({
@@ -1145,7 +1423,7 @@ function saveAvatarToDisk(
 ): ThunkAction<void, RootStateType, unknown, ReplaceAvatarsActionType> {
   return async (dispatch, getState) => {
     if (!avatarData.buffer) {
-      throw new Error('No avatar Uint8Array provided');
+      throw new Error('saveAvatarToDisk: No avatar Uint8Array provided');
     }
 
     strictAssert(conversationId, 'conversationId not provided');
@@ -1829,31 +2107,515 @@ function setIsFetchingUUID(
     },
   };
 }
-function setSelectedConversationHeaderTitle(
-  title?: string
-): SetConversationHeaderTitleActionType {
+
+export type PushPanelForConversationActionType = (
+  conversationId: string,
+  panel: PanelRenderType
+) => unknown;
+
+function pushPanelForConversation(
+  conversationId: string,
+  panel: PanelRenderType
+): PushPanelActionType {
+  const conversation = window.ConversationController.get(conversationId);
+  if (!conversation) {
+    throw new Error(
+      `addPanelToConversation: No conversation found for conversation ${conversationId}`
+    );
+  }
+
+  conversation.trigger('pushPanel', panel);
+
   return {
-    type: 'SET_CONVERSATION_HEADER_TITLE',
-    payload: { title },
+    type: PUSH_PANEL,
+    payload: panel,
   };
 }
-function setSelectedConversationPanelDepth(
-  panelDepth: number
-): SetSelectedConversationPanelDepthActionType {
-  return {
-    type: 'SET_SELECTED_CONVERSATION_PANEL_DEPTH',
-    payload: { panelDepth },
+
+function popPanelForConversation(
+  conversationId: string
+): ThunkAction<void, RootStateType, unknown, PopPanelActionType> {
+  return (dispatch, getState) => {
+    const conversation = window.ConversationController.get(conversationId);
+    if (!conversation) {
+      throw new Error(
+        `addPanelToConversation: No conversation found for conversation ${conversationId}`
+      );
+    }
+
+    const { conversations } = getState();
+    const { selectedConversationPanels } = conversations;
+
+    if (!selectedConversationPanels.length) {
+      return;
+    }
+
+    const panel = [...selectedConversationPanels].pop();
+
+    if (!panel) {
+      return;
+    }
+
+    conversation.trigger('popPanel', panel);
+
+    dispatch({
+      type: POP_PANEL,
+      payload: null,
+    });
   };
 }
-function setRecentMediaItems(
-  id: string,
-  recentMediaItems: Array<MediaItemType>
-): SetRecentMediaItemsActionType {
-  return {
-    type: 'SET_RECENT_MEDIA_ITEMS',
-    payload: { id, recentMediaItems },
+
+function deleteMessageForEveryone(
+  messageId: string
+): ThunkAction<
+  void,
+  RootStateType,
+  unknown,
+  NoopActionType | ShowToastActionType
+> {
+  return async dispatch => {
+    const message = window.MessageController.getById(messageId);
+    if (!message) {
+      throw new Error(
+        `deleteMessageForEveryone: Message ${messageId} missing!`
+      );
+    }
+
+    const conversation = message.getConversation();
+    if (!conversation) {
+      throw new Error('deleteMessageForEveryone: no conversation');
+    }
+
+    try {
+      await sendDeleteForEveryoneMessage(conversation.attributes, {
+        id: message.id,
+        timestamp: message.get('sent_at'),
+      });
+      dispatch({
+        type: 'NOOP',
+        payload: null,
+      });
+    } catch (error) {
+      log.error(
+        'Error sending delete-for-everyone',
+        Errors.toLogFormat(error),
+        messageId
+      );
+      dispatch({
+        type: SHOW_TOAST,
+        payload: {
+          toastType: ToastType.DeleteForEveryoneFailed,
+        },
+      });
+    }
   };
 }
+
+function approvePendingMembershipFromGroupV2(
+  conversationId: string,
+  memberId: string
+): ThunkAction<void, RootStateType, unknown, NoopActionType> {
+  return async dispatch => {
+    const conversation = window.ConversationController.get(conversationId);
+    if (!conversation) {
+      throw new Error(
+        `approvePendingMembershipFromGroupV2: No conversation found for conversation ${conversationId}`
+      );
+    }
+
+    const logId = conversation.idForLogging();
+
+    const pendingMember = window.ConversationController.get(memberId);
+    if (!pendingMember) {
+      throw new Error(
+        `approvePendingMembershipFromGroupV2/${logId}: No member found for conversation ${conversationId}`
+      );
+    }
+
+    const uuid = pendingMember.getCheckedUuid(
+      `approvePendingMembershipFromGroupV2/${logId}`
+    );
+
+    if (
+      isGroupV2(conversation.attributes) &&
+      isMemberRequestingToJoin(conversation.attributes, uuid)
+    ) {
+      await modifyGroupV2({
+        conversation,
+        usingCredentialsFrom: [pendingMember],
+        createGroupChange: async () => {
+          // This user's pending state may have changed in the time between the user's
+          //   button press and when we get here. It's especially important to check here
+          //   in conflict/retry cases.
+          if (!isMemberRequestingToJoin(conversation.attributes, uuid)) {
+            log.warn(
+              `approvePendingMembershipFromGroupV2/${logId}: ${uuid} is not requesting ` +
+                'to join the group. Returning early.'
+            );
+            return undefined;
+          }
+
+          return buildPromotePendingAdminApprovalMemberChange({
+            group: conversation.attributes,
+            uuid,
+          });
+        },
+        name: 'approvePendingMembershipFromGroupV2',
+      });
+    }
+
+    dispatch({
+      type: 'NOOP',
+      payload: null,
+    });
+  };
+}
+
+function revokePendingMembershipsFromGroupV2(
+  conversationId: string,
+  memberIds: Array<string>
+): ThunkAction<void, RootStateType, unknown, NoopActionType> {
+  return async dispatch => {
+    const conversation = window.ConversationController.get(conversationId);
+    if (!conversation) {
+      throw new Error(
+        `approvePendingMembershipFromGroupV2: No conversation found for conversation ${conversationId}`
+      );
+    }
+
+    if (!isGroupV2(conversation.attributes)) {
+      return;
+    }
+
+    // Only pending memberships can be revoked for multiple members at once
+    if (memberIds.length > 1) {
+      const uuids = memberIds.map(id => {
+        const uuid = window.ConversationController.get(id)?.getUuid();
+        strictAssert(uuid, `UUID does not exist for ${id}`);
+        return uuid;
+      });
+      await conversation.modifyGroupV2({
+        name: 'removePendingMember',
+        usingCredentialsFrom: [],
+        createGroupChange: () =>
+          removePendingMember(conversation.attributes, uuids),
+        extraConversationsForSend: memberIds,
+      });
+      return;
+    }
+
+    const [memberId] = memberIds;
+
+    const pendingMember = window.ConversationController.get(memberId);
+    if (!pendingMember) {
+      const logId = conversation.idForLogging();
+      throw new Error(
+        `revokePendingMembershipsFromGroupV2/${logId}: No conversation found for conversation ${memberId}`
+      );
+    }
+
+    const uuid = pendingMember.getCheckedUuid(
+      'revokePendingMembershipsFromGroupV2'
+    );
+
+    if (isMemberRequestingToJoin(conversation.attributes, uuid)) {
+      await conversation.modifyGroupV2({
+        name: 'denyPendingApprovalRequest',
+        usingCredentialsFrom: [],
+        createGroupChange: () =>
+          denyPendingApprovalRequest(conversation.attributes, uuid),
+        extraConversationsForSend: [memberId],
+      });
+    } else if (conversation.isMemberPending(uuid)) {
+      await conversation.modifyGroupV2({
+        name: 'removePendingMember',
+        usingCredentialsFrom: [],
+        createGroupChange: () =>
+          removePendingMember(conversation.attributes, [uuid]),
+        extraConversationsForSend: [memberId],
+      });
+    }
+
+    dispatch({
+      type: 'NOOP',
+      payload: null,
+    });
+  };
+}
+
+function blockAndReportSpam(
+  conversationId: string
+): ThunkAction<void, RootStateType, unknown, ShowToastActionType> {
+  return async dispatch => {
+    const conversation = window.ConversationController.get(conversationId);
+    if (!conversation) {
+      log.error(
+        `blockAndReportSpam: Expected a conversation to be found for ${conversationId}. Doing nothing.`
+      );
+      return;
+    }
+
+    const messageRequestEnum = Proto.SyncMessage.MessageRequestResponse.Type;
+    const idForLogging = conversation.idForLogging();
+
+    longRunningTaskWrapper({
+      name: 'blockAndReportSpam',
+      idForLogging,
+      task: async () => {
+        await Promise.all([
+          conversation.syncMessageRequestResponse(messageRequestEnum.BLOCK),
+          addReportSpamJob({
+            conversation: conversation.format(),
+            getMessageServerGuidsForSpam:
+              window.Signal.Data.getMessageServerGuidsForSpam,
+            jobQueue: reportSpamJobQueue,
+          }),
+        ]);
+
+        dispatch({
+          type: SHOW_TOAST,
+          payload: {
+            toastType: ToastType.ReportedSpamAndBlocked,
+          },
+        });
+      },
+    });
+  };
+}
+
+function acceptConversation(conversationId: string): NoopActionType {
+  const conversation = window.ConversationController.get(conversationId);
+  if (!conversation) {
+    throw new Error(
+      'acceptConversation: Expected a conversation to be found. Doing nothing'
+    );
+  }
+
+  const messageRequestEnum = Proto.SyncMessage.MessageRequestResponse.Type;
+
+  longRunningTaskWrapper({
+    name: 'acceptConversation',
+    idForLogging: conversation.idForLogging(),
+    task: conversation.syncMessageRequestResponse.bind(
+      conversation,
+      messageRequestEnum.ACCEPT
+    ),
+  });
+
+  return {
+    type: 'NOOP',
+    payload: null,
+  };
+}
+
+function blockConversation(conversationId: string): NoopActionType {
+  const conversation = window.ConversationController.get(conversationId);
+  if (!conversation) {
+    throw new Error(
+      'blockConversation: Expected a conversation to be found. Doing nothing'
+    );
+  }
+
+  const messageRequestEnum = Proto.SyncMessage.MessageRequestResponse.Type;
+
+  longRunningTaskWrapper({
+    name: 'blockConversation',
+    idForLogging: conversation.idForLogging(),
+    task: conversation.syncMessageRequestResponse.bind(
+      conversation,
+      messageRequestEnum.BLOCK
+    ),
+  });
+
+  return {
+    type: 'NOOP',
+    payload: null,
+  };
+}
+
+function deleteConversation(conversationId: string): NoopActionType {
+  const conversation = window.ConversationController.get(conversationId);
+  if (!conversation) {
+    throw new Error(
+      'deleteConversation: Expected a conversation to be found. Doing nothing'
+    );
+  }
+
+  const messageRequestEnum = Proto.SyncMessage.MessageRequestResponse.Type;
+
+  longRunningTaskWrapper({
+    name: 'deleteConversation',
+    idForLogging: conversation.idForLogging(),
+    task: conversation.syncMessageRequestResponse.bind(
+      conversation,
+      messageRequestEnum.DELETE
+    ),
+  });
+
+  return {
+    type: 'NOOP',
+    payload: null,
+  };
+}
+
+function initiateMigrationToGroupV2(conversationId: string): NoopActionType {
+  const conversation = window.ConversationController.get(conversationId);
+  if (!conversation) {
+    throw new Error(
+      'deleteConversation: Expected a conversation to be found. Doing nothing'
+    );
+  }
+
+  longRunningTaskWrapper({
+    idForLogging: conversation.idForLogging(),
+    name: 'initiateMigrationToGroupV2',
+    task: () => doInitiateMigrationToGroupV2(conversation),
+  });
+
+  return {
+    type: 'NOOP',
+    payload: null,
+  };
+}
+
+function loadRecentMediaItems(
+  conversationId: string,
+  limit: number
+): ThunkAction<void, RootStateType, unknown, SetRecentMediaItemsActionType> {
+  return async dispatch => {
+    const { getAbsoluteAttachmentPath } = window.Signal.Migrations;
+
+    const messages: Array<MessageAttributesType> =
+      await window.Signal.Data.getMessagesWithVisualMediaAttachments(
+        conversationId,
+        {
+          limit,
+        }
+      );
+
+    // Cache these messages in memory to ensure Lightbox can find them
+    messages.forEach(message => {
+      window.MessageController.register(message.id, message);
+    });
+
+    const recentMediaItems = messages
+      .filter(message => message.attachments !== undefined)
+      .reduce(
+        (acc, message) => [
+          ...acc,
+          ...(message.attachments || []).map(
+            (attachment: AttachmentType, index: number): MediaItemType => {
+              const { thumbnail } = attachment;
+
+              return {
+                objectURL: getAbsoluteAttachmentPath(attachment.path || ''),
+                thumbnailObjectUrl: thumbnail?.path
+                  ? getAbsoluteAttachmentPath(thumbnail.path)
+                  : '',
+                contentType: attachment.contentType,
+                index,
+                attachment,
+                message: {
+                  attachments: message.attachments || [],
+                  conversationId:
+                    window.ConversationController.get(message.sourceUuid)?.id ||
+                    message.conversationId,
+                  id: message.id,
+                  received_at: message.received_at,
+                  received_at_ms: Number(message.received_at_ms),
+                  sent_at: message.sent_at,
+                },
+              };
+            }
+          ),
+        ],
+        [] as Array<MediaItemType>
+      );
+
+    dispatch({
+      type: 'SET_RECENT_MEDIA_ITEMS',
+      payload: { id: conversationId, recentMediaItems },
+    });
+  };
+}
+
+export type SaveAttachmentActionCreatorType = (
+  attachment: AttachmentType,
+  timestamp?: number,
+  index?: number
+) => unknown;
+
+function saveAttachment(
+  attachment: AttachmentType,
+  timestamp = Date.now(),
+  index = 0
+): ThunkAction<void, RootStateType, unknown, ShowToastActionType> {
+  return async dispatch => {
+    const { fileName = '' } = attachment;
+
+    const isDangerous = isFileDangerous(fileName);
+
+    if (isDangerous) {
+      dispatch({
+        type: SHOW_TOAST,
+        payload: {
+          toastType: ToastType.DangerousFileType,
+        },
+      });
+      return;
+    }
+
+    const { readAttachmentData, saveAttachmentToDisk } =
+      window.Signal.Migrations;
+
+    const fullPath = await Attachment.save({
+      attachment,
+      index: index + 1,
+      readAttachmentData,
+      saveAttachmentToDisk,
+      timestamp,
+    });
+
+    if (fullPath) {
+      dispatch({
+        type: SHOW_TOAST,
+        payload: {
+          toastType: ToastType.FileSaved,
+          parameters: {
+            fullPath,
+          },
+        },
+      });
+    }
+  };
+}
+
+export function saveAttachmentFromMessage(
+  messageId: string,
+  providedAttachment?: AttachmentType
+): ThunkAction<void, RootStateType, unknown, ShowToastActionType> {
+  return async (dispatch, getState) => {
+    const message = await getMessageById(messageId);
+    if (!message) {
+      throw new Error(
+        `saveAttachmentFromMessage: Message ${messageId} missing!`
+      );
+    }
+
+    const { attachments, sent_at: timestamp } = message.attributes;
+    if (!attachments || attachments.length < 1) {
+      return;
+    }
+
+    const attachment =
+      providedAttachment && attachments.includes(providedAttachment)
+        ? providedAttachment
+        : attachments[0];
+
+    saveAttachment(attachment, timestamp)(dispatch, getState, null);
+  };
+}
+
 function clearInvitedUuidsForNewlyCreatedGroup(): ClearInvitedUuidsForNewlyCreatedGroupActionType {
   return { type: 'CLEAR_INVITED_UUIDS_FOR_NEWLY_CREATED_GROUP' };
 }
@@ -1885,16 +2647,55 @@ function closeMaximumGroupSizeModal(): CloseMaximumGroupSizeModalActionType {
 function closeRecommendedGroupSizeModal(): CloseRecommendedGroupSizeModalActionType {
   return { type: 'CLOSE_RECOMMENDED_GROUP_SIZE_MODAL' };
 }
+
 function scrollToMessage(
   conversationId: string,
   messageId: string
-): ScrollToMessageActionType {
-  return {
-    type: 'SCROLL_TO_MESSAGE',
-    payload: {
-      conversationId,
-      messageId,
-    },
+): ThunkAction<void, RootStateType, unknown, ScrollToMessageActionType> {
+  return async (dispatch, getState) => {
+    const conversation = window.ConversationController.get(conversationId);
+    if (!conversation) {
+      throw new Error('scrollToMessage: No conversation found');
+    }
+
+    const message = await getMessageById(messageId);
+    if (!message) {
+      throw new Error(`scrollToMessage: failed to load message ${messageId}`);
+    }
+    if (message.get('conversationId') !== conversationId) {
+      throw new Error(
+        `scrollToMessage: ${messageId} didn't have conversationId ${conversationId}`
+      );
+    }
+
+    const state = getState();
+
+    let isInMemory = true;
+
+    if (!window.MessageController.getById(messageId)) {
+      isInMemory = false;
+    }
+
+    // Message might be in memory, but not in the redux anymore because
+    // we call `messageReset()` in `loadAndScroll()`.
+    const messagesByConversation =
+      getMessagesByConversation(state)[conversationId];
+    if (!messagesByConversation?.messageIds.includes(messageId)) {
+      isInMemory = false;
+    }
+
+    if (isInMemory) {
+      dispatch({
+        type: 'SCROLL_TO_MESSAGE',
+        payload: {
+          conversationId,
+          messageId,
+        },
+      });
+      return;
+    }
+
+    conversation.loadAndScroll(messageId);
   };
 }
 
@@ -2028,7 +2829,7 @@ function addMemberToGroup(
 
 function toggleGroupsForStorySend(
   conversationIds: Array<string>
-): ThunkAction<void, RootStateType, unknown, NoopActionType> {
+): ThunkAction<Promise<void>, RootStateType, unknown, NoopActionType> {
   return async dispatch => {
     await Promise.all(
       conversationIds.map(async conversationId => {
@@ -2101,7 +2902,9 @@ type ShowConversationArgsType = {
   messageId?: string;
   switchToAssociatedView?: boolean;
 };
-export type ShowConversationType = (_: ShowConversationArgsType) => unknown;
+export type ShowConversationType = (
+  options: ShowConversationArgsType
+) => unknown;
 
 function showConversation({
   conversationId,
@@ -2152,8 +2955,7 @@ export function getEmptyState(): ConversationsStateType {
     selectedMessageCounter: 0,
     selectedMessageSource: undefined,
     showArchived: false,
-    selectedConversationTitle: '',
-    selectedConversationPanelDepth: 0,
+    selectedConversationPanels: [],
   };
 }
 
@@ -2658,7 +3460,7 @@ export function reducer(
     return {
       ...omit(state, 'contactSpoofingReview'),
       selectedConversationId,
-      selectedConversationPanelDepth: 0,
+      selectedConversationPanels: [],
       messagesLookup: omit(state.messagesLookup, messageIds),
       messagesByConversation: omit(state.messagesByConversation, [id]),
     };
@@ -2704,12 +3506,6 @@ export function reducer(
         hasError: true,
         isCreating: false,
       },
-    };
-  }
-  if (action.type === 'SET_SELECTED_CONVERSATION_PANEL_DEPTH') {
-    return {
-      ...state,
-      selectedConversationPanelDepth: action.payload.panelDepth,
     };
   }
   if (action.type === 'MESSAGE_SELECTED') {
@@ -3463,10 +4259,24 @@ export function reducer(
     };
   }
 
-  if (action.type === 'SET_CONVERSATION_HEADER_TITLE') {
+  if (action.type === PUSH_PANEL) {
     return {
       ...state,
-      selectedConversationTitle: action.payload.title,
+      selectedConversationPanels: [
+        ...state.selectedConversationPanels,
+        action.payload,
+      ],
+    };
+  }
+
+  if (action.type === POP_PANEL) {
+    const { selectedConversationPanels } = state;
+    const nextPanels = [...selectedConversationPanels];
+    nextPanels.pop();
+
+    return {
+      ...state,
+      selectedConversationPanels: nextPanels,
     };
   }
 

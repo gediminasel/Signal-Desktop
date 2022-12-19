@@ -250,9 +250,8 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   // disableMenu: overrideProps.disableMenu,
   disableScroll: overrideProps.disableScroll,
   direction: overrideProps.direction || 'incoming',
-  displayTapToViewMessage: action('displayTapToViewMessage'),
+  showLightboxForViewOnceMedia: action('showLightboxForViewOnceMedia'),
   doubleCheckMissingQuoteReference: action('doubleCheckMissingQuoteReference'),
-  downloadAttachment: action('downloadAttachment'),
   expirationLength:
     number('expirationLength', overrideProps.expirationLength || 0) ||
     undefined,
@@ -281,7 +280,7 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   markAttachmentAsCorrupted: action('markAttachmentAsCorrupted'),
   markViewed: action('markViewed'),
   messageExpanded: action('messageExpanded'),
-  openConversation: action('openConversation'),
+  showConversation: action('showConversation'),
   openGiftBadge: action('openGiftBadge'),
   openLink: action('openLink'),
   previews: overrideProps.previews || [],
@@ -295,8 +294,8 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   renderEmojiPicker,
   renderReactionPicker,
   renderAudioAttachment,
-  replyPrivately: action('replyPrivately'),
-  replyToMessage: action('replyToMessage'),
+  saveAttachment: action('saveAttachment'),
+  setQuoteByMessageId: action('setQuoteByMessageId'),
   retrySend: action('retrySend'),
   retryDeleteForEveryone: action('retryDeleteForEveryone'),
   scrollToQuotedMessage: action('scrollToQuotedMessage'),
@@ -310,7 +309,7 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   shouldHideMetadata: isBoolean(overrideProps.shouldHideMetadata)
     ? overrideProps.shouldHideMetadata
     : false,
-  showContactDetail: action('showContactDetail'),
+  pushPanelForConversation: action('pushPanelForConversation'),
   showContactModal: action('showContactModal'),
   showExpiredIncomingTapToViewToast: action(
     'showExpiredIncomingTapToViewToast'
@@ -318,9 +317,9 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   showExpiredOutgoingTapToViewToast: action(
     'showExpiredOutgoingTapToViewToast'
   ),
-  showForwardMessageModal: action('showForwardMessageModal'),
+  toggleForwardMessageModal: action('toggleForwardMessageModal'),
   showMessageDetail: action('showMessageDetail'),
-  showVisualAttachment: action('showVisualAttachment'),
+  showLightbox: action('showLightbox'),
   startConversation: action('startConversation'),
   status: overrideProps.status || 'sent',
   text: overrideProps.text || text('text', ''),

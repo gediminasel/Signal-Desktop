@@ -5,18 +5,18 @@ import React from 'react';
 
 import type { Props as MessageBodyPropsType } from './MessageBody';
 import { MessageBody } from './MessageBody';
-import { graphemeAwareSlice } from '../../util/graphemeAwareSlice';
+import { graphemeAndLinkAwareSlice } from '../../util/graphemeAndLinkAwareSlice';
 
 export type Props = Pick<
   MessageBodyPropsType,
+  | 'bodyRanges'
   | 'direction'
-  | 'text'
-  | 'textAttachment'
   | 'disableLinks'
   | 'i18n'
-  | 'bodyRanges'
-  | 'openConversation'
   | 'kickOffBodyDownload'
+  | 'showConversation'
+  | 'text'
+  | 'textAttachment'
 > & {
   id: string;
   displayLimit?: number;
@@ -38,15 +38,15 @@ export function MessageBodyReadMore({
   displayLimit,
   i18n,
   id,
-  messageExpanded,
-  openConversation,
   kickOffBodyDownload,
+  messageExpanded,
+  showConversation,
   text,
   textAttachment,
 }: Props): JSX.Element {
   const maxLength = displayLimit || INITIAL_LENGTH;
 
-  const { hasReadMore, text: slicedText } = graphemeAwareSlice(
+  const { hasReadMore, text: slicedText } = graphemeAndLinkAwareSlice(
     text,
     maxLength,
     BUFFER
@@ -61,13 +61,13 @@ export function MessageBodyReadMore({
   return (
     <MessageBody
       bodyRanges={bodyRanges}
+      direction={direction}
       disableLinks={disableLinks}
       disableMarkdown={hasReadMore}
-      direction={direction}
       i18n={i18n}
-      onIncreaseTextLength={onIncreaseTextLength}
-      openConversation={openConversation}
       kickOffBodyDownload={kickOffBodyDownload}
+      onIncreaseTextLength={onIncreaseTextLength}
+      showConversation={showConversation}
       text={slicedText}
       textAttachment={textAttachment}
     />

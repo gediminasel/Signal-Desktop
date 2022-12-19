@@ -15,7 +15,7 @@ import type { ViewUserStoriesActionCreatorType } from '../../state/ducks/stories
 import { StoryViewModeType } from '../../types/Stories';
 import * as log from '../../logging/log';
 import { About } from './About';
-import { Avatar } from '../Avatar';
+import { Avatar, AvatarSize } from '../Avatar';
 import { AvatarLightbox } from '../AvatarLightbox';
 import { BadgeDialog } from '../BadgeDialog';
 import { ConfirmationDialog } from '../ConfirmationDialog';
@@ -63,8 +63,8 @@ enum SubModalState {
 }
 
 export function ContactModal({
-  areWeASubscriber,
   areWeAdmin,
+  areWeASubscriber,
   badges,
   contact,
   conversation,
@@ -76,9 +76,9 @@ export function ContactModal({
   removeMemberFromGroup,
   showConversation,
   theme,
+  toggleAddUserToAnotherGroupModal,
   toggleAdmin,
   toggleSafetyNumberModal,
-  toggleAddUserToAnotherGroupModal,
   updateConversationModelSharedGroups,
   viewUserStories,
 }: PropsType): JSX.Element {
@@ -196,7 +196,7 @@ export function ContactModal({
               onClickBadge={() => setView(ContactModalView.ShowingBadges)}
               profileName={contact.profileName}
               sharedGroupNames={contact.sharedGroupNames}
-              size={96}
+              size={AvatarSize.EIGHTY}
               storyRing={hasStories}
               theme={theme}
               title={contact.title}

@@ -277,23 +277,22 @@ const actions = () => ({
   updateSharedGroups: action('updateSharedGroups'),
 
   reactToMessage: action('reactToMessage'),
-  replyToMessage: action('replyToMessage'),
-  replyPrivately: action('replyPrivately'),
+  setQuoteByMessageId: action('setQuoteByMessageId'),
   retryDeleteForEveryone: action('retryDeleteForEveryone'),
   retrySend: action('retrySend'),
   deleteMessage: action('deleteMessage'),
   deleteMessageForEveryone: action('deleteMessageForEveryone'),
   showMessageDetail: action('showMessageDetail'),
-  openConversation: action('openConversation'),
-  showContactDetail: action('showContactDetail'),
+  saveAttachment: action('saveAttachment'),
+  pushPanelForConversation: action('pushPanelForConversation'),
   showContactModal: action('showContactModal'),
+  showConversation: action('showConversation'),
   kickOffAttachmentDownload: action('kickOffAttachmentDownload'),
   markAttachmentAsCorrupted: action('markAttachmentAsCorrupted'),
   markViewed: action('markViewed'),
   messageExpanded: action('messageExpanded'),
-  showVisualAttachment: action('showVisualAttachment'),
-  downloadAttachment: action('downloadAttachment'),
-  displayTapToViewMessage: action('displayTapToViewMessage'),
+  showLightbox: action('showLightbox'),
+  showLightboxForViewOnceMedia: action('showLightboxForViewOnceMedia'),
   doubleCheckMissingQuoteReference: action('doubleCheckMissingQuoteReference'),
 
   openLink: action('openLink'),
@@ -305,9 +304,9 @@ const actions = () => ({
   showExpiredOutgoingTapToViewToast: action(
     'showExpiredOutgoingTapToViewToast'
   ),
-  showForwardMessageModal: action('showForwardMessageModal'),
+  toggleForwardMessageModal: action('toggleForwardMessageModal'),
 
-  showIdentity: action('showIdentity'),
+  toggleSafetyNumberModal: action('toggleSafetyNumberModal'),
 
   downloadNewVersion: action('downloadNewVersion'),
 
@@ -323,10 +322,10 @@ const actions = () => ({
     'reviewMessageRequestNameCollision'
   ),
 
-  onBlock: action('onBlock'),
-  onBlockAndReportSpam: action('onBlockAndReportSpam'),
-  onDelete: action('onDelete'),
-  onUnblock: action('onUnblock'),
+  acceptConversation: action('acceptConversation'),
+  blockAndReportSpam: action('blockAndReportSpam'),
+  blockConversation: action('blockConversation'),
+  deleteConversation: action('deleteConversation'),
   removeMember: action('removeMember'),
 
   unblurAvatar: action('unblurAvatar'),

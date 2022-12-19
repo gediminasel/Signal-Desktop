@@ -1062,6 +1062,7 @@ export class SignalProtocolStore extends EventEmitter {
 
       const conversation = window.ConversationController.lookupOrCreate({
         uuid: uuid.toString(),
+        reason: 'SignalProtocolStore.storeSession',
       });
       strictAssert(
         conversation !== undefined,
@@ -1225,35 +1226,68 @@ export class SignalProtocolStore extends EventEmitter {
     });
   }
 
-  async removeAllSessions(identifier: string): Promise<void> {
-    return this.withZone(GLOBAL_ZONE, 'removeAllSessions', async () => {
+  async removeSessionsByConversation(identifier: string): Promise<void> {
+    return this.withZone(
+      GLOBAL_ZONE,
+      'removeSessionsByConversation',
+      async () => {
+        if (!this.sessions) {
+          throw new Error(
+            'removeSessionsByConversation: this.sessions not yet cached!'
+          );
+        }
+
+        if (identifier == null) {
+          throw new Error(
+            'removeSessionsByConversation: identifier was undefined/null'
+          );
+        }
+
+        log.info(
+          'removeSessionsByConversation: deleting sessions for',
+          identifier
+        );
+
+        const id = window.ConversationController.getConversationId(identifier);
+        strictAssert(
+          id,
+          `removeSessionsByConversation: Conversation not found: ${identifier}`
+        );
+
+        const entries = Array.from(this.sessions.values());
+
+        for (let i = 0, max = entries.length; i < max; i += 1) {
+          const entry = entries[i];
+          if (entry.fromDB.conversationId === id) {
+            this.sessions.delete(entry.fromDB.id);
+            this.pendingSessions.delete(entry.fromDB.id);
+          }
+        }
+
+        await window.Signal.Data.removeSessionsByConversation(id);
+      }
+    );
+  }
+
+  async removeSessionsByUUID(uuid: UUIDStringType): Promise<void> {
+    return this.withZone(GLOBAL_ZONE, 'removeSessionsByUUID', async () => {
       if (!this.sessions) {
-        throw new Error('removeAllSessions: this.sessions not yet cached!');
+        throw new Error('removeSessionsByUUID: this.sessions not yet cached!');
       }
 
-      if (identifier == null) {
-        throw new Error('removeAllSessions: identifier was undefined/null');
-      }
-
-      log.info('removeAllSessions: deleting sessions for', identifier);
-
-      const id = window.ConversationController.getConversationId(identifier);
-      strictAssert(
-        id,
-        `removeAllSessions: Conversation not found: ${identifier}`
-      );
+      log.info('removeSessionsByUUID: deleting sessions for', uuid);
 
       const entries = Array.from(this.sessions.values());
 
       for (let i = 0, max = entries.length; i < max; i += 1) {
         const entry = entries[i];
-        if (entry.fromDB.conversationId === id) {
+        if (entry.fromDB.uuid === uuid) {
           this.sessions.delete(entry.fromDB.id);
           this.pendingSessions.delete(entry.fromDB.id);
         }
       }
 
-      await window.Signal.Data.removeSessionsByConversation(id);
+      await window.Signal.Data.removeSessionsByUUID(uuid);
     });
   }
 
@@ -1393,6 +1427,7 @@ export class SignalProtocolStore extends EventEmitter {
       // First, fetch this conversation
       const conversation = window.ConversationController.lookupOrCreate({
         uuid: uuid.toString(),
+        reason: 'SignalProtocolStore.lightSessionReset',
       });
       assertDev(conversation, `lightSessionReset/${id}: missing conversation`);
 
@@ -1521,7 +1556,11 @@ export class SignalProtocolStore extends EventEmitter {
 
     switch (direction) {
       case Direction.Sending:
-        return this.isTrustedForSending(publicKey, identityRecord);
+        return this.isTrustedForSending(
+          encodedAddress.uuid,
+          publicKey,
+          identityRecord
+        );
       case Direction.Receiving:
         return true;
       default:
@@ -1531,11 +1570,31 @@ export class SignalProtocolStore extends EventEmitter {
 
   // https://github.com/signalapp/Signal-Android/blob/fc3db538bcaa38dc149712a483d3032c9c1f3998/app/src/main/java/org/thoughtcrime/securesms/crypto/storage/SignalBaseIdentityKeyStore.java#L233
   isTrustedForSending(
+    uuid: UUID,
     publicKey: Uint8Array,
     identityRecord?: IdentityKeyType
   ): boolean {
     if (!identityRecord) {
-      log.info('isTrustedForSending: No previous record, returning true...');
+      // To track key changes across session switches, we save an old identity key on the
+      //   conversation.
+      const conversation = window.ConversationController.get(uuid.toString());
+      const previousIdentityKeyBase64 = conversation?.get(
+        'previousIdentityKey'
+      );
+      if (conversation && previousIdentityKeyBase64) {
+        const previousIdentityKey = Bytes.fromBase64(previousIdentityKeyBase64);
+
+        if (!constantTimeEqual(previousIdentityKey, publicKey)) {
+          log.info(
+            'isTrustedForSending: previousIdentityKey does not match, returning false'
+          );
+          return false;
+        }
+      }
+
+      log.info(
+        'isTrustedForSending: No previous record or previousIdentityKey, returning true'
+      );
       return true;
     }
 
@@ -1550,7 +1609,7 @@ export class SignalProtocolStore extends EventEmitter {
       return false;
     }
     if (identityRecord.verified === VerifiedStatus.UNVERIFIED) {
-      log.error('isTrustedIdentity: Needs unverified approval!');
+      log.error('isTrustedForSending: Needs unverified approval!');
       return false;
     }
     if (this.isNonBlockingApprovalRequired(identityRecord)) {
@@ -1646,6 +1705,8 @@ export class SignalProtocolStore extends EventEmitter {
         nonblockingApproval,
       });
 
+      this.checkPreviousKey(encodedAddress.uuid, publicKey, 'saveIdentity');
+
       return false;
     }
 
@@ -1688,7 +1749,7 @@ export class SignalProtocolStore extends EventEmitter {
       // See `addKeyChange` in `ts/models/conversations.ts` for sender key info
       // update caused by this.
       try {
-        this.emit('keychange', encodedAddress.uuid);
+        this.emit('keychange', encodedAddress.uuid, 'saveIdentity - change');
       } catch (error) {
         log.error(
           'saveIdentity: error triggering keychange:',
@@ -1820,6 +1881,37 @@ export class SignalProtocolStore extends EventEmitter {
     return VerifiedStatus.DEFAULT;
   }
 
+  // To track key changes across session switches, we save an old identity key on the
+  //   conversation. Whenever we get a new identity key for that contact, we need to
+  //   check it against that saved key - no need to pop a key change warning if it is
+  //   the same!
+  checkPreviousKey(uuid: UUID, publicKey: Uint8Array, context: string): void {
+    const conversation = window.ConversationController.get(uuid.toString());
+    const previousIdentityKeyBase64 = conversation?.get('previousIdentityKey');
+    if (conversation && previousIdentityKeyBase64) {
+      const previousIdentityKey = Bytes.fromBase64(previousIdentityKeyBase64);
+
+      try {
+        if (!constantTimeEqual(previousIdentityKey, publicKey)) {
+          this.emit(
+            'keychange',
+            uuid,
+            `${context} - previousIdentityKey check`
+          );
+        }
+
+        // We only want to clear previousIdentityKey on a match, or on successfully emit.
+        conversation.set({ previousIdentityKey: undefined });
+        window.Signal.Data.updateConversation(conversation.attributes);
+      } catch (error) {
+        log.error(
+          'saveIdentity: error triggering keychange:',
+          error && error.stack ? error.stack : error
+        );
+      }
+    }
+  }
+
   // See https://github.com/signalapp/Signal-Android/blob/fc3db538bcaa38dc149712a483d3032c9c1f3998/app/src/main/java/org/thoughtcrime/securesms/database/IdentityDatabase.java#L184
   async updateIdentityAfterSync(
     uuid: UUID,
@@ -1849,10 +1941,11 @@ export class SignalProtocolStore extends EventEmitter {
         nonblockingApproval: true,
       });
     }
-
-    if (hadEntry && !keyMatches) {
+    if (!hadEntry) {
+      this.checkPreviousKey(uuid, publicKey, 'updateIdentityAfterSync');
+    } else if (hadEntry && !keyMatches) {
       try {
-        this.emit('keychange', uuid);
+        this.emit('keychange', uuid, 'updateIdentityAfterSync - change');
       } catch (error) {
         log.error(
           'updateIdentityAfterSync: error triggering keychange:',
@@ -1909,7 +2002,7 @@ export class SignalProtocolStore extends EventEmitter {
     const id = uuid.toString();
     this.identityKeys.delete(id);
     await window.Signal.Data.removeIdentityKeyById(id);
-    await this.removeAllSessions(id);
+    await this.removeSessionsByUUID(id);
   }
 
   // Not yet processed messages - for resiliency
@@ -2195,7 +2288,7 @@ export class SignalProtocolStore extends EventEmitter {
 
   public override on(
     name: 'keychange',
-    handler: (theirUuid: UUID) => unknown
+    handler: (theirUuid: UUID, reason: string) => unknown
   ): this;
 
   public override on(name: 'removeAllData', handler: () => unknown): this;
@@ -2210,7 +2303,11 @@ export class SignalProtocolStore extends EventEmitter {
 
   public override emit(name: 'removePreKey', ourUuid: UUID): boolean;
 
-  public override emit(name: 'keychange', theirUuid: UUID): boolean;
+  public override emit(
+    name: 'keychange',
+    theirUuid: UUID,
+    reason: string
+  ): boolean;
 
   public override emit(name: 'removeAllData'): boolean;
 

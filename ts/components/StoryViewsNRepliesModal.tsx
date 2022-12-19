@@ -49,28 +49,27 @@ const MESSAGE_DEFAULT_PROPS = {
   checkForAccount: shouldNeverBeCalled,
   clearSelectedMessage: shouldNeverBeCalled,
   containerWidthBreakpoint: WidthBreakpoint.Medium,
-  displayTapToViewMessage: shouldNeverBeCalled,
   doubleCheckMissingQuoteReference: shouldNeverBeCalled,
-  downloadAttachment: shouldNeverBeCalled,
   isBlocked: false,
   isMessageRequestAccepted: true,
   kickOffAttachmentDownload: shouldNeverBeCalled,
   markAttachmentAsCorrupted: shouldNeverBeCalled,
   markViewed: shouldNeverBeCalled,
   messageExpanded: shouldNeverBeCalled,
-  // Called when clicking mention, but shouldn't do anything.
-  openConversation: noop,
   openGiftBadge: shouldNeverBeCalled,
   openLink: shouldNeverBeCalled,
   previews: [],
+  pushPanelForConversation: shouldNeverBeCalled,
   renderAudioAttachment: () => <div />,
+  saveAttachment: shouldNeverBeCalled,
   scrollToQuotedMessage: shouldNeverBeCalled,
-  showContactDetail: shouldNeverBeCalled,
   showContactModal: shouldNeverBeCalled,
+  showConversation: noop,
   showExpiredIncomingTapToViewToast: shouldNeverBeCalled,
   showExpiredOutgoingTapToViewToast: shouldNeverBeCalled,
+  showLightbox: shouldNeverBeCalled,
+  showLightboxForViewOnceMedia: shouldNeverBeCalled,
   showMessageDetail: shouldNeverBeCalled,
-  showVisualAttachment: shouldNeverBeCalled,
   startConversation: shouldNeverBeCalled,
   theme: ThemeType.dark,
   viewStory: shouldNeverBeCalled,
@@ -246,7 +245,7 @@ export function StoryViewsNRepliesModal({
               i18n={i18n}
               inputApi={inputApiRef}
               moduleClassName="StoryViewsNRepliesModal__input"
-              onEditorStateChange={messageText => {
+              onEditorStateChange={(_conversationId, messageText) => {
                 setMessageBodyText(messageText);
               }}
               onPickEmoji={onUseEmoji}

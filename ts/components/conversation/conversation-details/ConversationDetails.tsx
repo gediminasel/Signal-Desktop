@@ -8,6 +8,7 @@ import { Button, ButtonIconType, ButtonVariant } from '../../Button';
 import { Tooltip } from '../../Tooltip';
 import type {
   ConversationType,
+  PushPanelForConversationActionType,
   ShowConversationType,
 } from '../../../state/ducks/conversations';
 import type { PreferredBadgeSelectorType } from '../../../state/selectors/badges';
@@ -17,7 +18,6 @@ import { assertDev } from '../../../util/assert';
 import { getMutedUntilText } from '../../../util/getMutedUntilText';
 
 import type { LocalizerType, ThemeType } from '../../../types/Util';
-import type { MediaItemType } from '../../../types/MediaItem';
 import type { BadgeType } from '../../../badges/types';
 import { missingCaseError } from '../../../util/missingCaseError';
 import { DurationInSeconds } from '../../../util/durations';
@@ -30,6 +30,7 @@ import { AddGroupMembersModal } from './AddGroupMembersModal';
 import { ConversationDetailsActions } from './ConversationDetailsActions';
 import { ConversationDetailsHeader } from './ConversationDetailsHeader';
 import { ConversationDetailsIcon, IconType } from './ConversationDetailsIcon';
+import type { Props as ConversationDetailsMediaListPropsType } from './ConversationDetailsMediaList';
 import { ConversationDetailsMediaList } from './ConversationDetailsMediaList';
 import type { GroupV2Membership } from './ConversationDetailsMembershipList';
 import { ConversationDetailsMembershipList } from './ConversationDetailsMembershipList';
@@ -50,6 +51,7 @@ import type {
 } from '../../../types/Avatar';
 import { isConversationMuted } from '../../../util/isConversationMuted';
 import { ConversationDetailsGroups } from './ConversationDetailsGroups';
+import { PanelType } from '../../../types/Panels';
 
 enum ModalState {
   NothingOpen,
@@ -73,24 +75,13 @@ export type StateProps = {
   i18n: LocalizerType;
   isAdmin: boolean;
   isGroup: boolean;
-  loadRecentMediaItems: (limit: number) => void;
   groupsInCommon: Array<ConversationType>;
   maxGroupSize: number;
   maxRecommendedGroupSize: number;
   memberships: Array<GroupV2Membership>;
   pendingApprovalMemberships: ReadonlyArray<GroupV2RequestingMembership>;
   pendingMemberships: ReadonlyArray<GroupV2PendingMembership>;
-  setDisappearingMessages: (seconds: DurationInSeconds) => void;
   showAllMedia: () => void;
-  showChatColorEditor: () => void;
-  showGroupLinkManagement: () => void;
-  showGroupV2Permissions: () => void;
-  showPendingInvites: () => void;
-  showLightboxForMedia: (
-    selectedMediaItem: MediaItemType,
-    media: Array<MediaItemType>
-  ) => void;
-  showConversationNotificationsSettings: () => void;
   updateGroupAttributes: (
     _: Readonly<{
       avatar?: undefined | Uint8Array;
@@ -98,14 +89,9 @@ export type StateProps = {
       title?: string;
     }>
   ) => Promise<void>;
-  onBlock: () => void;
   onLeave: () => void;
-  onUnblock: () => void;
   theme: ThemeType;
   userAvatarData: Array<AvatarDataType>;
-  setMuteExpiration: (muteExpiresAt: undefined | number) => unknown;
-  onOutgoingAudioCallInConversation: () => unknown;
-  onOutgoingVideoCallInConversation: () => unknown;
   renderChooseGroupMembersModal: (
     props: SmartChooseGroupMembersModalPropsType
   ) => JSX.Element;
@@ -115,22 +101,32 @@ export type StateProps = {
 };
 
 type ActionProps = {
+  acceptConversation: (id: string) => void;
+  blockConversation: (id: string) => void;
   deleteAvatarFromDisk: DeleteAvatarFromDiskActionType;
+  loadRecentMediaItems: (id: string, limit: number) => void;
+  onOutgoingAudioCallInConversation: (conversationId: string) => unknown;
+  onOutgoingVideoCallInConversation: (conversationId: string) => unknown;
+  pushPanelForConversation: PushPanelForConversationActionType;
   replaceAvatar: ReplaceAvatarActionType;
   saveAvatarToDisk: SaveAvatarToDiskActionType;
+  searchInConversation: (id: string) => unknown;
+  setDisappearingMessages: (id: string, seconds: DurationInSeconds) => void;
+  setMuteExpiration: (id: string, muteExpiresAt: undefined | number) => unknown;
   showContactModal: (contactId: string, conversationId?: string) => void;
   showConversation: ShowConversationType;
-  toggleSafetyNumberModal: (conversationId: string) => unknown;
-  searchInConversation: (id: string) => unknown;
   toggleAddUserToAnotherGroupModal: (contactId?: string) => void;
-};
+  toggleSafetyNumberModal: (conversationId: string) => unknown;
+} & Pick<ConversationDetailsMediaListPropsType, 'showLightboxWithMedia'>;
 
 export type Props = StateProps & ActionProps;
 
 export function ConversationDetails({
+  acceptConversation,
   addMembers,
   areWeASubscriber,
   badges,
+  blockConversation,
   canEditGroupInfo,
   canAddNewMembers,
   conversation,
@@ -146,13 +142,12 @@ export function ConversationDetails({
   memberships,
   maxGroupSize,
   maxRecommendedGroupSize,
-  onBlock,
   onLeave,
   onOutgoingAudioCallInConversation,
   onOutgoingVideoCallInConversation,
-  onUnblock,
   pendingApprovalMemberships,
   pendingMemberships,
+  pushPanelForConversation,
   renderChooseGroupMembersModal,
   renderConfirmAdditionsModal,
   replaceAvatar,
@@ -161,14 +156,9 @@ export function ConversationDetails({
   setDisappearingMessages,
   setMuteExpiration,
   showAllMedia,
-  showChatColorEditor,
   showContactModal,
-  showConversationNotificationsSettings,
   showConversation,
-  showGroupLinkManagement,
-  showGroupV2Permissions,
-  showLightboxForMedia,
-  showPendingInvites,
+  showLightboxWithMedia,
   theme,
   toggleSafetyNumberModal,
   toggleAddUserToAnotherGroupModal,
@@ -291,6 +281,7 @@ export function ConversationDetails({
       modalNode = (
         <ConversationNotificationsModal
           i18n={i18n}
+          id={conversation.id}
           muteExpiresAt={conversation.muteExpiresAt}
           onClose={() => {
             setModalState(ModalState.NothingOpen);
@@ -305,7 +296,7 @@ export function ConversationDetails({
           dialogName="ConversationDetails.unmuteNotifications"
           actions={[
             {
-              action: () => setMuteExpiration(0),
+              action: () => setMuteExpiration(conversation.id, 0),
               style: 'affirmative',
               text: i18n('unmute'),
             },
@@ -358,14 +349,16 @@ export function ConversationDetails({
             <ConversationDetailsCallButton
               disabled={hasActiveCall}
               i18n={i18n}
-              onClick={onOutgoingVideoCallInConversation}
+              onClick={() => onOutgoingVideoCallInConversation(conversation.id)}
               type="video"
             />
             {!isGroup && (
               <ConversationDetailsCallButton
                 disabled={hasActiveCall}
                 i18n={i18n}
-                onClick={onOutgoingAudioCallInConversation}
+                onClick={() =>
+                  onOutgoingAudioCallInConversation(conversation.id)
+                }
                 type="audio"
               />
             )}
@@ -416,7 +409,9 @@ export function ConversationDetails({
               <DisappearingTimerSelect
                 i18n={i18n}
                 value={conversation.expireTimer || DurationInSeconds.ZERO}
-                onChange={setDisappearingMessages}
+                onChange={value =>
+                  setDisappearingMessages(conversation.id, value)
+                }
               />
             }
           />
@@ -429,7 +424,11 @@ export function ConversationDetails({
             />
           }
           label={i18n('showChatColorEditor')}
-          onClick={showChatColorEditor}
+          onClick={() => {
+            pushPanelForConversation(conversation.id, {
+              type: PanelType.ChatColorEditor,
+            });
+          }}
           right={
             <div
               className={`ConversationDetails__chat-color ConversationDetails__chat-color--${conversation.conversationColor}`}
@@ -448,7 +447,11 @@ export function ConversationDetails({
               />
             }
             label={i18n('ConversationDetails--notifications')}
-            onClick={showConversationNotificationsSettings}
+            onClick={() =>
+              pushPanelForConversation(conversation.id, {
+                type: PanelType.NotificationSettings,
+              })
+            }
             right={
               conversation.muteExpiresAt
                 ? getMutedUntilText(conversation.muteExpiresAt, i18n)
@@ -500,7 +503,11 @@ export function ConversationDetails({
                 />
               }
               label={i18n('ConversationDetails--group-link')}
-              onClick={showGroupLinkManagement}
+              onClick={() =>
+                pushPanelForConversation(conversation.id, {
+                  type: PanelType.GroupLinkManagement,
+                })
+              }
               right={hasGroupLink ? i18n('on') : i18n('off')}
             />
           ) : null}
@@ -512,7 +519,11 @@ export function ConversationDetails({
               />
             }
             label={i18n('ConversationDetails--requests-and-invites')}
-            onClick={showPendingInvites}
+            onClick={() =>
+              pushPanelForConversation(conversation.id, {
+                type: PanelType.GroupInvites,
+              })
+            }
             right={invitesCount}
           />
           {isAdmin ? (
@@ -524,7 +535,11 @@ export function ConversationDetails({
                 />
               }
               label={i18n('permissions')}
-              onClick={showGroupV2Permissions}
+              onClick={() =>
+                pushPanelForConversation(conversation.id, {
+                  type: PanelType.GroupPermissions,
+                })
+              }
             />
           ) : null}
         </PanelSection>
@@ -535,7 +550,7 @@ export function ConversationDetails({
         i18n={i18n}
         loadRecentMediaItems={loadRecentMediaItems}
         showAllMedia={showAllMedia}
-        showLightboxForMedia={showLightboxForMedia}
+        showLightboxWithMedia={showLightboxWithMedia}
       />
 
       {!isGroup && !conversation.isMe && (
@@ -550,15 +565,16 @@ export function ConversationDetails({
 
       {!conversation.isMe && (
         <ConversationDetailsActions
+          acceptConversation={acceptConversation}
+          blockConversation={blockConversation}
           cannotLeaveBecauseYouAreLastAdmin={cannotLeaveBecauseYouAreLastAdmin}
+          conversationId={conversation.id}
           conversationTitle={conversation.title}
           i18n={i18n}
           isBlocked={Boolean(conversation.isBlocked)}
           isGroup={isGroup}
           left={Boolean(conversation.left)}
-          onBlock={onBlock}
           onLeave={onLeave}
-          onUnblock={onUnblock}
         />
       )}
 

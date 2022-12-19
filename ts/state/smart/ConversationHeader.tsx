@@ -12,6 +12,7 @@ import {
 import { getPreferredBadgeSelector } from '../selectors/badges';
 import {
   getConversationSelector,
+  getConversationTitle,
   isMissingRequiredProfileSharing,
 } from '../selectors/conversations';
 import { CallMode } from '../../types/Calling';
@@ -25,26 +26,18 @@ import { mapDispatchToProps } from '../actions';
 import { missingCaseError } from '../../util/missingCaseError';
 import { strictAssert } from '../../util/assert';
 import { isSignalConversation } from '../../util/isSignalConversation';
-import type { DurationInSeconds } from '../../util/durations';
 
 export type OwnProps = {
   id: string;
 
   onArchive: () => void;
-  onDeleteMessages: () => void;
   onGoBack: () => void;
   onMarkUnread: () => void;
   onMoveToInbox: () => void;
-  onOutgoingAudioCallInConversation: () => void;
-  onOutgoingVideoCallInConversation: () => void;
   onSearchInConversation: () => void;
-  onSetDisappearingMessages: (seconds: DurationInSeconds) => void;
-  onSetMuteNotifications: (seconds: number) => void;
-  onSetPin: (value: boolean) => void;
   onShowAllMedia: () => void;
   onJumpToDate: (timestamp: number) => void;
   onShowConversationDetails: () => void;
-  onShowGroupMembers: () => void;
 };
 
 const getOutgoingCallButtonStyle = (
@@ -116,14 +109,14 @@ const mapStateToProps = (state: StateType, ownProps: OwnProps) => {
       'unblurredAvatarPath',
     ]),
     badge: getPreferredBadgeSelector(state)(conversation.badges),
-    conversationTitle: state.conversations.selectedConversationTitle,
+    conversationTitle: getConversationTitle(state),
     hasStories,
     isMissingMandatoryProfileSharing:
       isMissingRequiredProfileSharing(conversation),
     isSMSOnly: isConversationSMSOnly(conversation),
     isSignalConversation: isSignalConversation(conversation),
     i18n: getIntl(state),
-    showBackButton: state.conversations.selectedConversationPanelDepth > 0,
+    showBackButton: state.conversations.selectedConversationPanels.length > 0,
     outgoingCallButtonStyle: getOutgoingCallButtonStyle(conversation, state),
     theme: getTheme(state),
   };

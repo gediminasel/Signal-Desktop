@@ -56,7 +56,7 @@ export type PropsType = {
   onDistributionListCreated: (
     name: string,
     viewerUuids: Array<UUIDStringType>
-  ) => unknown;
+  ) => Promise<UUIDStringType>;
   onSelectedStoryList: (options: {
     conversationId: string;
     distributionId: string | undefined;
@@ -67,7 +67,7 @@ export type PropsType = {
     conversationIds: Array<string>
   ) => unknown;
   signalConnections: Array<ConversationType>;
-  toggleGroupsForStorySend: (cids: Array<string>) => unknown;
+  toggleGroupsForStorySend: (cids: Array<string>) => Promise<void>;
   mostRecentActiveStoryTimestampByGroupOrDistributionList: Record<
     string,
     number
@@ -419,9 +419,17 @@ export function SendStoryModal({
         candidateConversations={candidateConversations}
         getPreferredBadge={getPreferredBadge}
         i18n={i18n}
-        onCreateList={(name, uuids) => {
+        onCreateList={async (name, uuids) => {
+          const newDistributionListId = await onDistributionListCreated(
+            name,
+            uuids
+          );
+
           setSelectedContacts([]);
-          onDistributionListCreated(name, uuids);
+          setSelectedListIds(
+            listIds => new Set([...listIds, newDistributionListId])
+          );
+
           setPage(Page.SendStory);
         }}
         onViewersUpdated={uuids => {
@@ -480,9 +488,10 @@ export function SendStoryModal({
             aria-label={i18n('ok')}
             className="SendStoryModal__ok"
             disabled={!chosenGroupIds.size}
-            onClick={() => {
-              toggleGroupsForStorySend(Array.from(chosenGroupIds));
+            onClick={async () => {
+              await toggleGroupsForStorySend(Array.from(chosenGroupIds));
               setChosenGroupIds(new Set());
+              setSelectedGroupIds(chosenGroupIds);
               setPage(Page.SendStory);
             }}
             type="button"
@@ -549,7 +558,7 @@ export function SendStoryModal({
                       i18n={i18n}
                       isMe={false}
                       sharedGroupNames={[]}
-                      size={AvatarSize.THIRTY_SIX}
+                      size={AvatarSize.THIRTY_TWO}
                       title={group.title}
                     />
 
@@ -699,7 +708,7 @@ export function SendStoryModal({
                     i18n={i18n}
                     isMe
                     sharedGroupNames={me.sharedGroupNames}
-                    size={AvatarSize.THIRTY_SIX}
+                    size={AvatarSize.THIRTY_TWO}
                     title={me.title}
                   />
                 ) : (
@@ -813,7 +822,7 @@ export function SendStoryModal({
                   i18n={i18n}
                   isMe={false}
                   sharedGroupNames={[]}
-                  size={AvatarSize.THIRTY_SIX}
+                  size={AvatarSize.THIRTY_TWO}
                   title={group.title}
                 />
 

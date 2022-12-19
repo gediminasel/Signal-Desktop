@@ -6,23 +6,87 @@ import { join } from 'path';
 import { SignalContext } from '../../windows/context';
 
 export type PropsType = {
-  id: string;
+  conversationId: string;
+  processAttachments: (options: {
+    conversationId: string;
+    files: ReadonlyArray<File>;
+  }) => void;
   renderCompositionArea: () => JSX.Element;
   renderConversationHeader: () => JSX.Element;
   renderTimeline: () => JSX.Element;
+  renderPanel: () => JSX.Element | undefined;
 };
 
 export function ConversationView({
-  id,
+  conversationId,
+  processAttachments,
   renderCompositionArea,
   renderConversationHeader,
   renderTimeline,
+  renderPanel,
 }: PropsType): JSX.Element {
   const url = encodeURIComponent(
-    join(SignalContext.config.userDataPath, 'bgs', `${id}.png`)
+    join(SignalContext.config.userDataPath, 'bgs', `${conversationId}.png`)
   );
+  const onDrop = React.useCallback(
+    (event: React.DragEvent<HTMLDivElement>) => {
+      if (!event.dataTransfer) {
+        return;
+      }
+
+      if (event.dataTransfer.types[0] !== 'Files') {
+        return;
+      }
+
+      event.stopPropagation();
+      event.preventDefault();
+
+      const { files } = event.dataTransfer;
+      processAttachments({
+        conversationId,
+        files: Array.from(files),
+      });
+    },
+    [conversationId, processAttachments]
+  );
+
+  const onPaste = React.useCallback(
+    (event: React.ClipboardEvent<HTMLDivElement>) => {
+      if (!event.clipboardData) {
+        return;
+      }
+      const { items } = event.clipboardData;
+
+      const anyImages = [...items].some(
+        item => item.type.split('/')[0] === 'image'
+      );
+      if (!anyImages) {
+        return;
+      }
+
+      event.stopPropagation();
+      event.preventDefault();
+
+      const files: Array<File> = [];
+      for (let i = 0; i < items.length; i += 1) {
+        if (items[i].type.split('/')[0] === 'image') {
+          const file = items[i].getAsFile();
+          if (file) {
+            files.push(file);
+          }
+        }
+      }
+
+      processAttachments({
+        conversationId,
+        files,
+      });
+    },
+    [conversationId, processAttachments]
+  );
+
   return (
-    <div className="ConversationView">
+    <div className="ConversationView" onDrop={onDrop} onPaste={onPaste}>
       <div className="ConversationView__header">
         {renderConversationHeader()}
       </div>
@@ -44,6 +108,7 @@ export function ConversationView({
           {renderCompositionArea()}
         </div>
       </div>
+      {renderPanel()}
     </div>
   );
 }
