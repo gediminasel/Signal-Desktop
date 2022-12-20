@@ -21,7 +21,6 @@ const markdown: {
       {t}
     </span>
   ),
-  '!!': (t, key) => <mark key={key}>{t}</mark>,
 };
 
 export type RenderMarkdownArgs = {
