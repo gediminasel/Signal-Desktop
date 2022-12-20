@@ -41,6 +41,14 @@ export function renderMarkdownFactory(
     let myDepth = depth || 6;
     myDepth -= 1;
     const res = [];
+    if (depth == null && text.startsWith('-- ')) {
+      res.push(
+        <span key="circ" style={{ fontSize: '0.5em', verticalAlign: 'middle' }}>
+          &#9679;&nbsp;&nbsp;
+        </span>
+      );
+      myText = text.substring(3);
+    }
     let childKey = 0;
     while (myText.length > 0) {
       let nextSymbol = null;
