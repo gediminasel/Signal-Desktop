@@ -12,6 +12,7 @@ import {
   omit,
 } from 'lodash';
 import { blobToArrayBuffer } from 'blob-util';
+import { sep } from 'path';
 
 import type { LoggerType } from './Logging';
 import * as MIME from './MIME';
@@ -924,7 +925,12 @@ export const save = async ({
 }): Promise<string | null> => {
   let data: Uint8Array;
   if (attachment.path) {
-    data = await readAttachmentData(attachment.path);
+    data = await readAttachmentData(
+      attachment.path
+        .replaceAll('/', sep)
+        .replaceAll('\\', sep)
+        .replaceAll('%5C', sep)
+    );
   } else if (attachment.data) {
     data = attachment.data;
   } else {

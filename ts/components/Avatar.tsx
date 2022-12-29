@@ -5,6 +5,7 @@ import type { CSSProperties, MouseEvent, ReactChild, ReactNode } from 'react';
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { noop } from 'lodash';
+import { sep } from 'path';
 
 import type { AvatarColorType } from '../types/Colors';
 import type { BadgeType } from '../badges/types';
@@ -90,7 +91,7 @@ const getDefaultBlur = (
 
 export function Avatar({
   acceptedMessageRequest,
-  avatarPath,
+  avatarPath: dirtyAvatarPath,
   badge,
   className,
   color = 'A200',
@@ -111,13 +112,20 @@ export function Avatar({
   storyRing,
   blur = getDefaultBlur({
     acceptedMessageRequest,
-    avatarPath,
+    avatarPath: dirtyAvatarPath,
     isMe,
     sharedGroupNames,
     unblurredAvatarPath,
   }),
 }: Props): JSX.Element {
   const [imageBroken, setImageBroken] = useState(false);
+
+  const avatarPath = dirtyAvatarPath
+    ? dirtyAvatarPath
+        .replaceAll('/', sep)
+        .replaceAll('\\', sep)
+        .replaceAll('%5C', sep)
+    : '';
 
   useEffect(() => {
     setImageBroken(false);

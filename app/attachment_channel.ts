@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { ipcMain } from 'electron';
+import { sep } from 'path';
 import * as rimraf from 'rimraf';
 import {
   getAllAttachments,
@@ -87,6 +88,16 @@ async function cleanupOrphanedAttachments({
     let missing = 0;
     for (const known of attachments) {
       if (!orphanedAttachments.delete(known)) {
+        missing += 1;
+      }
+      if (
+        !orphanedAttachments.delete(
+          known
+            .replaceAll('/', sep)
+            .replaceAll('\\', sep)
+            .replaceAll('%5C', sep)
+        )
+      ) {
         missing += 1;
       }
     }

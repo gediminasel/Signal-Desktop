@@ -4,6 +4,7 @@
 import type { CSSProperties } from 'react';
 import React, { useEffect, useState } from 'react';
 import { noop } from 'lodash';
+import { sep } from 'path';
 
 import * as log from '../logging/log';
 import type { LocalizerType } from '../types/Util';
@@ -121,7 +122,12 @@ export function AvatarPreview({
     encodedPath = objectUrl;
     imageStatus = ImageStatus.HasImage;
   } else if (avatarPath) {
-    encodedPath = encodeURI(avatarPath);
+    encodedPath = encodeURI(
+      avatarPath
+        .replaceAll('/', sep)
+        .replaceAll('\\', sep)
+        .replaceAll('%5C', sep)
+    );
     imageStatus = ImageStatus.HasImage;
   } else {
     imageStatus = ImageStatus.Nothing;
