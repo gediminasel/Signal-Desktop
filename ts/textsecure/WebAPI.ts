@@ -1,4 +1,4 @@
-// Copyright 2020-2022 Signal Messenger, LLC
+// Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /* eslint-disable no-param-reassign */
@@ -27,6 +27,7 @@ import { getStreamWithTimeout } from '../util/getStreamWithTimeout';
 import { formatAcceptLanguageHeader } from '../util/userLanguages';
 import { toWebSafeBase64 } from '../util/webSafeBase64';
 import { getBasicAuth } from '../util/getBasicAuth';
+import { isPnpEnabled } from '../util/isPnpEnabled';
 import type { SocketStatus } from '../types/SocketStatus';
 import { toLogFormat } from '../types/errors';
 import { isPackIdValid, redactPackId } from '../types/Stickers';
@@ -612,6 +613,7 @@ export type CapabilitiesType = {
   senderKey: boolean;
   changeNumber: boolean;
   stories: boolean;
+  pni: boolean;
 };
 export type CapabilitiesUploadType = {
   announcementGroup: true;
@@ -620,6 +622,9 @@ export type CapabilitiesUploadType = {
   senderKey: true;
   changeNumber: true;
   stories: true;
+
+  // true in staging, false in production
+  pni: boolean;
 };
 
 type StickerPackManifestType = Uint8Array;
@@ -1125,7 +1130,7 @@ export function initialize({
     });
 
     if (useWebSocket) {
-      socketManager.authenticate({ username, password });
+      void socketManager.authenticate({ username, password });
     }
 
     const { directoryUrl, directoryMRENCLAVE } = directoryConfig;
@@ -1363,7 +1368,7 @@ export function initialize({
 
     function checkSockets(): void {
       // Intentionally not awaiting
-      socketManager.check();
+      void socketManager.check();
     }
 
     async function onOnline(): Promise<void> {
@@ -1387,7 +1392,7 @@ export function initialize({
     }
 
     function onHasStoriesDisabledChange(newValue: boolean): void {
-      socketManager.onHasStoriesDisabledChange(newValue);
+      void socketManager.onHasStoriesDisabledChange(newValue);
     }
 
     async function getConfig() {
@@ -1857,6 +1862,7 @@ export function initialize({
         senderKey: true,
         changeNumber: true,
         stories: true,
+        pni: isPnpEnabled(),
       };
 
       const jsonData = {

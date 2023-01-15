@@ -1,9 +1,9 @@
-// Copyright 2019-2022 Signal Messenger, LLC
+// Copyright 2019 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import classNames from 'classnames';
 import { noop } from 'lodash';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type { Ref } from 'react';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
 import ReactDOM, { createPortal } from 'react-dom';
@@ -23,10 +23,12 @@ import type {
   PropsData as MessagePropsData,
   PropsHousekeeping,
 } from './Message';
+import type { PushPanelForConversationActionType } from '../../state/ducks/conversations';
 import { doesMessageBodyOverflow } from './MessageBodyReadMore';
 import type { Props as ReactionPickerProps } from './ReactionPicker';
 import { ConfirmationDialog } from '../ConfirmationDialog';
 import { useToggleReactionPicker } from '../../hooks/useKeyboardShortcuts';
+import { PanelType } from '../../types/Panels';
 
 export type PropsData = {
   canDownload: boolean;
@@ -45,12 +47,13 @@ export type PropsActions = {
     messageId: string;
   }) => void;
   deleteMessageForEveryone: (id: string) => void;
+  pushPanelForConversation: PushPanelForConversationActionType;
   toggleForwardMessageModal: (id: string) => void;
   reactToMessage: (
     id: string,
     { emoji, remove }: { emoji: string; remove: boolean }
   ) => void;
-  retrySend: (id: string) => void;
+  retryMessageSend: (id: string) => void;
   retryDeleteForEveryone: (id: string) => void;
   setQuoteByMessageId: (conversationId: string, messageId: string) => void;
 } & MessagePropsActions;
@@ -73,41 +76,43 @@ type Trigger = {
  */
 export function TimelineMessage(props: Props): JSX.Element {
   const {
-    i18n,
-    id,
-    author,
     attachments,
+    author,
+    canDeleteForEveryone,
     canDownload,
     canReact,
     canReply,
     canReplyPrivately,
     canRetry,
-    canDeleteForEveryone,
     canRetryDeleteForEveryone,
     contact,
-    payment,
-    conversationId,
     containerElementRef,
     containerWidthBreakpoint,
-    deletedForEveryone,
+    conversationId,
     deleteMessage,
     deleteMessageForEveryone,
+    deletedForEveryone,
     direction,
     giftBadge,
+    i18n,
+    id,
     isSelected,
     isSticker,
     isTapToView,
+    kickOffAttachmentDownload,
+    payment,
+    pushPanelForConversation,
     reactToMessage,
-    setQuoteByMessageId,
-    renderReactionPicker,
     renderEmojiPicker,
-    retrySend,
+    renderReactionPicker,
     retryDeleteForEveryone,
+    retryMessageSend,
+    saveAttachment,
     selectedReaction,
-    toggleForwardMessageModal,
-    showMessageDetail,
+    setQuoteByMessageId,
     text,
     timestamp,
+    toggleForwardMessageModal,
   } = props;
 
   const [reactionPickerRoot, setReactionPickerRoot] = useState<
@@ -118,27 +123,28 @@ export function TimelineMessage(props: Props): JSX.Element {
   const isWindowWidthNotNarrow =
     containerWidthBreakpoint !== WidthBreakpoint.Narrow;
 
-  function popperPreventOverflowModifier(): Partial<PreventOverflowModifier> {
-    return {
-      name: 'preventOverflow',
-      options: {
-        altAxis: true,
-        boundary: containerElementRef.current || undefined,
-        padding: {
-          bottom: 16,
-          left: 8,
-          right: 8,
-          top: 16,
+  const popperPreventOverflowModifier =
+    useCallback((): Partial<PreventOverflowModifier> => {
+      return {
+        name: 'preventOverflow',
+        options: {
+          altAxis: true,
+          boundary: containerElementRef.current || undefined,
+          padding: {
+            bottom: 16,
+            left: 8,
+            right: 8,
+            top: 16,
+          },
         },
-      },
-    };
-  }
+      };
+    }, [containerElementRef]);
 
   // This id is what connects our triple-dot click with our associated pop-up menu.
   //   It needs to be unique.
   const triggerId = String(id || `${author.id}-${timestamp}`);
 
-  const toggleReactionPicker = React.useCallback(
+  const toggleReactionPicker = useCallback(
     (onlyRemove = false): void => {
       if (reactionPickerRoot) {
         document.body.removeChild(reactionPickerRoot);
@@ -175,42 +181,46 @@ export function TimelineMessage(props: Props): JSX.Element {
     };
   });
 
-  const openGenericAttachment = (event?: React.MouseEvent): void => {
-    const { kickOffAttachmentDownload, saveAttachment } = props;
+  const openGenericAttachment = useCallback(
+    (event?: React.MouseEvent): void => {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
 
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
+      if (!attachments || attachments.length !== 1) {
+        return;
+      }
 
-    if (!attachments || attachments.length !== 1) {
-      return;
-    }
+      const attachment = attachments[0];
+      if (!isDownloaded(attachment)) {
+        kickOffAttachmentDownload({
+          attachment,
+          messageId: id,
+        });
+        return;
+      }
 
-    const attachment = attachments[0];
-    if (!isDownloaded(attachment)) {
-      kickOffAttachmentDownload({
-        attachment,
-        messageId: id,
-      });
-      return;
-    }
+      saveAttachment(attachment, timestamp);
+    },
+    [kickOffAttachmentDownload, saveAttachment, attachments, id, timestamp]
+  );
 
-    saveAttachment(attachment, timestamp);
-  };
-
-  const handleContextMenu = (event: React.MouseEvent<HTMLDivElement>): void => {
-    const selection = window.getSelection();
-    if (selection && !selection.isCollapsed) {
-      return;
-    }
-    if (event.target instanceof HTMLAnchorElement) {
-      return;
-    }
-    if (menuTriggerRef.current) {
-      menuTriggerRef.current.handleContextClick(event);
-    }
-  };
+  const handleContextMenu = React.useCallback(
+    (event: React.MouseEvent<HTMLDivElement>): void => {
+      const selection = window.getSelection();
+      if (selection && !selection.isCollapsed) {
+        return;
+      }
+      if (event.target instanceof HTMLAnchorElement) {
+        return;
+      }
+      if (menuTriggerRef.current) {
+        menuTriggerRef.current.handleContextClick(event);
+      }
+    },
+    [menuTriggerRef]
+  );
 
   const canForward =
     !isTapToView && !deletedForEveryone && !giftBadge && !contact && !payment;
@@ -231,31 +241,39 @@ export function TimelineMessage(props: Props): JSX.Element {
       ? openGenericAttachment
       : undefined;
 
-  const handleReplyToMessage = canReply
-    ? () => setQuoteByMessageId(conversationId, id)
-    : undefined;
-  const handleReplyPrivately = canReplyPrivately
-    ? async () => {
-        const message = window.MessageController.getById(id);
-        if (message && message.get('sourceUuid')) {
-          const conversation = window.ConversationController.lookupOrCreate({
-            e164: null,
-            uuid: message.get('sourceUuid'),
-            reason: 'private reply',
+  const handleReplyToMessage = useCallback(() => {
+    if (!canReply) {
+      return;
+    }
+    setQuoteByMessageId(conversationId, id);
+  }, [canReply, conversationId, id, setQuoteByMessageId]);
+  const handleReplyPrivately = useCallback(async () => {
+    if (!canReplyPrivately) {
+      return;
+    }
+    const message = window.MessageController.getById(id);
+    if (message && message.get('sourceUuid')) {
+      const conversation = window.ConversationController.lookupOrCreate({
+        e164: null,
+        uuid: message.get('sourceUuid'),
+        reason: 'private reply',
+      });
+      if (conversation) {
+        if (conversationId !== conversation.id) {
+          window.reduxActions.conversations.showConversation({
+            conversationId: conversation.id,
           });
-          if (conversation) {
-            if (conversationId !== conversation.id) {
-              window.reduxActions.conversations.showConversation({
-                conversationId: conversation.id,
-              });
-            }
-            setQuoteByMessageId(conversation.id, id);
-          }
         }
+        setQuoteByMessageId(conversation.id, id);
       }
-    : undefined;
+    }
+  }, [canReplyPrivately, conversationId, id, setQuoteByMessageId]);
 
-  const handleReact = canReact ? () => toggleReactionPicker() : undefined;
+  const handleReact = useCallback(() => {
+    if (canReact) {
+      toggleReactionPicker();
+    }
+  }, [canReact, toggleReactionPicker]);
 
   const [hasDOEConfirmation, setHasDOEConfirmation] = useState(false);
   const [hasDeleteConfirmation, setHasDeleteConfirmation] = useState(false);
@@ -273,6 +291,71 @@ export function TimelineMessage(props: Props): JSX.Element {
       document.removeEventListener('keydown', toggleReactionPickerKeyboard);
     };
   }, [isSelected, toggleReactionPickerKeyboard]);
+
+  const renderMenu = useCallback(() => {
+    return (
+      <Manager>
+        <MessageMenu
+          i18n={i18n}
+          triggerId={triggerId}
+          isWindowWidthNotNarrow={isWindowWidthNotNarrow}
+          direction={direction}
+          menuTriggerRef={menuTriggerRef}
+          showMenu={handleContextMenu}
+          onDownload={handleDownload}
+          onReplyToMessage={handleReplyToMessage}
+          onReact={handleReact}
+        />
+        {reactionPickerRoot &&
+          createPortal(
+            <Popper
+              placement="top"
+              modifiers={[
+                offsetDistanceModifier(4),
+                popperPreventOverflowModifier(),
+              ]}
+            >
+              {({ ref, style }) =>
+                renderReactionPicker({
+                  ref,
+                  style,
+                  selected: selectedReaction,
+                  onClose: toggleReactionPicker,
+                  onPick: emoji => {
+                    toggleReactionPicker(true);
+                    reactToMessage(id, {
+                      emoji,
+                      remove: emoji === selectedReaction,
+                    });
+                  },
+                  renderEmojiPicker,
+                })
+              }
+            </Popper>,
+            reactionPickerRoot
+          )}
+      </Manager>
+    );
+  }, [
+    i18n,
+    triggerId,
+    isWindowWidthNotNarrow,
+    direction,
+    menuTriggerRef,
+    handleContextMenu,
+    handleDownload,
+
+    handleReplyToMessage,
+    handleReact,
+    reactionPickerRoot,
+    popperPreventOverflowModifier,
+    renderReactionPicker,
+    selectedReaction,
+    reactToMessage,
+    renderEmojiPicker,
+    toggleReactionPicker,
+    id,
+  ]);
 
   return (
     <>
@@ -312,55 +395,24 @@ export function TimelineMessage(props: Props): JSX.Element {
           {i18n('deleteWarning')}
         </ConfirmationDialog>
       )}
-      <Message
-        {...props}
-        renderingContext="conversation/TimelineItem"
-        onContextMenu={handleContextMenu}
-        menu={
-          <Manager>
-            <MessageMenu
-              i18n={i18n}
-              triggerId={triggerId}
-              isWindowWidthNotNarrow={isWindowWidthNotNarrow}
-              direction={direction}
-              menuTriggerRef={menuTriggerRef}
-              showMenu={handleContextMenu}
-              onDownload={handleDownload}
-              onReplyToMessage={handleReplyToMessage}
-              onReact={handleReact}
-            />
+      <div
+        onDoubleClick={ev => {
+          if (!handleReplyToMessage) {
+            return;
+          }
 
-            {reactionPickerRoot &&
-              createPortal(
-                <Popper
-                  placement="top"
-                  modifiers={[
-                    offsetDistanceModifier(4),
-                    popperPreventOverflowModifier(),
-                  ]}
-                >
-                  {({ ref, style }) =>
-                    renderReactionPicker({
-                      ref,
-                      style,
-                      selected: selectedReaction,
-                      onClose: toggleReactionPicker,
-                      onPick: emoji => {
-                        toggleReactionPicker(true);
-                        reactToMessage(id, {
-                          emoji,
-                          remove: emoji === selectedReaction,
-                        });
-                      },
-                      renderEmojiPicker,
-                    })
-                  }
-                </Popper>,
-                reactionPickerRoot
-              )}
-          </Manager>
-        }
-      />
+          ev.stopPropagation();
+          ev.preventDefault();
+          handleReplyToMessage();
+        }}
+      >
+        <Message
+          {...props}
+          renderingContext="conversation/TimelineItem"
+          onContextMenu={handleContextMenu}
+          renderMenu={renderMenu}
+        />
+      </div>
 
       <MessageContextMenu
         i18n={i18n}
@@ -370,7 +422,7 @@ export function TimelineMessage(props: Props): JSX.Element {
         onReplyToMessage={handleReplyToMessage}
         onReplyPrivately={handleReplyPrivately}
         onReact={handleReact}
-        onRetrySend={canRetry ? () => retrySend(id) : undefined}
+        onRetryMessageSend={canRetry ? () => retryMessageSend(id) : undefined}
         onRetryDeleteForEveryone={
           canRetryDeleteForEveryone
             ? () => retryDeleteForEveryone(id)
@@ -381,7 +433,12 @@ export function TimelineMessage(props: Props): JSX.Element {
         onDeleteForEveryone={
           canDeleteForEveryone ? () => setHasDOEConfirmation(true) : undefined
         }
-        onMoreInfo={() => showMessageDetail(id)}
+        onMoreInfo={() =>
+          pushPanelForConversation({
+            type: PanelType.MessageDetails,
+            args: { messageId: id },
+          })
+        }
       />
     </>
   );
@@ -435,6 +492,10 @@ function MessageMenu({
                   'module-message__buttons__menu',
                   `module-message__buttons__download--${direction}`
                 )}
+                onDoubleClick={ev => {
+                  // Prevent double click from triggering the replyToMessage action
+                  ev.stopPropagation();
+                }}
               />
             </ContextMenuTrigger>
           </StopPropagation>
@@ -478,6 +539,10 @@ function MessageMenu({
                     role="button"
                     className="module-message__buttons__react"
                     aria-label={i18n('reactToMessage')}
+                    onDoubleClick={ev => {
+                      // Prevent double click from triggering the replyToMessage action
+                      ev.stopPropagation();
+                    }}
                   />
                 );
               }}
@@ -496,6 +561,10 @@ function MessageMenu({
                 'module-message__buttons__download',
                 `module-message__buttons__download--${direction}`
               )}
+              onDoubleClick={ev => {
+                // Prevent double click from triggering the replyToMessage action
+                ev.stopPropagation();
+              }}
             />
           )}
 
@@ -517,6 +586,10 @@ function MessageMenu({
                 'module-message__buttons__reply',
                 `module-message__buttons__download--${direction}`
               )}
+              onDoubleClick={ev => {
+                // Prevent double click from triggering the replyToMessage action
+                ev.stopPropagation();
+              }}
             />
           )}
         </>
@@ -535,7 +608,7 @@ type MessageContextProps = {
   onReplyToMessage: (() => void) | undefined;
   onReplyPrivately: (() => void) | undefined;
   onReact: (() => void) | undefined;
-  onRetrySend: (() => void) | undefined;
+  onRetryMessageSend: (() => void) | undefined;
   onRetryDeleteForEveryone: (() => void) | undefined;
   onForward: (() => void) | undefined;
   onDeleteForMe: () => void;
@@ -552,7 +625,7 @@ const MessageContextMenu = ({
   onReplyPrivately,
   onReact,
   onMoreInfo,
-  onRetrySend,
+  onRetryMessageSend,
   onRetryDeleteForEveryone,
   onForward,
   onDeleteForMe,
@@ -621,7 +694,7 @@ const MessageContextMenu = ({
       >
         {i18n('moreInfo')}
       </MenuItem>
-      {onRetrySend && (
+      {onRetryMessageSend && (
         <MenuItem
           attributes={{
             className:
@@ -631,7 +704,7 @@ const MessageContextMenu = ({
             event.stopPropagation();
             event.preventDefault();
 
-            onRetrySend();
+            onRetryMessageSend();
           }}
         >
           {i18n('retrySend')}

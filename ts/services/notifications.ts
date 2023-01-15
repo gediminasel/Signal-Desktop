@@ -1,4 +1,4 @@
-// Copyright 2015-2021 Signal Messenger, LLC
+// Copyright 2015 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { debounce } from 'lodash';
@@ -157,7 +157,7 @@ class NotificationService extends EventEmitter {
       audioNotificationSupport === AudioNotificationSupport.Custom
     ) {
       // We kick off the sound to be played. No need to await it.
-      new Sound({ src: 'sounds/notification.ogg' }).play();
+      void new Sound({ src: 'sounds/notification.ogg' }).play();
     }
 
     this.lastNotification = notification;

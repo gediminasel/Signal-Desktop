@@ -1,4 +1,4 @@
-// Copyright 2018-2022 Signal Messenger, LLC
+// Copyright 2018 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import is from '@sindresorhus/is';
@@ -14,6 +14,7 @@ import {
 import { blobToArrayBuffer } from 'blob-util';
 import { sep } from 'path';
 
+import type { LinkPreviewType } from './message/LinkPreviews';
 import type { LoggerType } from './Logging';
 import * as MIME from './MIME';
 import { toLogFormat } from './errors';
@@ -100,11 +101,7 @@ export type TextAttachmentType = {
   textStyle?: number | null;
   textForegroundColor?: number | null;
   textBackgroundColor?: number | null;
-  preview?: {
-    image?: AttachmentType;
-    title?: string | null;
-    url?: string | null;
-  } | null;
+  preview?: LinkPreviewType;
   gradient?: {
     startColor?: number | null;
     endColor?: number | null;
@@ -727,14 +724,16 @@ export function hasFailed(attachment?: AttachmentType): boolean {
   return Boolean(resolved && resolved.error);
 }
 
-export function hasVideoBlurHash(attachments?: Array<AttachmentType>): boolean {
+export function hasVideoBlurHash(
+  attachments?: ReadonlyArray<AttachmentType>
+): boolean {
   const firstAttachment = attachments ? attachments[0] : null;
 
   return Boolean(firstAttachment && firstAttachment.blurHash);
 }
 
 export function hasVideoScreenshot(
-  attachments?: Array<AttachmentType>
+  attachments?: ReadonlyArray<AttachmentType>
 ): string | null | undefined {
   const firstAttachment = attachments ? attachments[0] : null;
 

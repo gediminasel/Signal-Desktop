@@ -1,4 +1,4 @@
-// Copyright 2019-2022 Signal Messenger, LLC
+// Copyright 2019 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { ThunkAction, ThunkDispatch } from 'redux-thunk';
@@ -31,7 +31,10 @@ import {
   getUserConversationId,
 } from '../selectors/user';
 import { strictAssert } from '../../util/assert';
-import { SELECTED_CONVERSATION_CHANGED } from './conversations';
+import {
+  CONVERSATION_UNLOADED,
+  SELECTED_CONVERSATION_CHANGED,
+} from './conversations';
 
 const {
   searchMessages: dataSearchMessages,
@@ -209,7 +212,7 @@ const doSearch = debounce(
       return;
     }
 
-    (async () => {
+    void (async () => {
       dispatch({
         type: 'SEARCH_MESSAGES_RESULTS_FULFILLED',
         payload: {
@@ -220,7 +223,7 @@ const doSearch = debounce(
     })();
 
     if (!searchConversationId) {
-      (async () => {
+      void (async () => {
         const { conversationIds, contactIds } =
           await queryConversationsAndContacts(query, {
             ourConversationId,
@@ -437,10 +440,10 @@ export function reducer(
 
   if (action.type === SELECTED_CONVERSATION_CHANGED) {
     const { payload } = action;
-    const { id, messageId } = payload;
+    const { conversationId, messageId } = payload;
     const { searchConversationId } = state;
 
-    if (searchConversationId && searchConversationId !== id) {
+    if (searchConversationId && searchConversationId !== conversationId) {
       return getEmptyState();
     }
 
@@ -450,12 +453,12 @@ export function reducer(
     };
   }
 
-  if (action.type === 'CONVERSATION_UNLOADED') {
+  if (action.type === CONVERSATION_UNLOADED) {
     const { payload } = action;
-    const { id } = payload;
+    const { conversationId } = payload;
     const { searchConversationId } = state;
 
-    if (searchConversationId && searchConversationId === id) {
+    if (searchConversationId && searchConversationId === conversationId) {
       return getEmptyState();
     }
 

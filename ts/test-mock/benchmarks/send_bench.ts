@@ -13,7 +13,7 @@ const CONVERSATION_SIZE = 500; // messages
 
 const LAST_MESSAGE = 'start sending messages now';
 
-(async () => {
+void (async () => {
   const bootstrap = new Bootstrap({
     benchmark: true,
   });
@@ -83,15 +83,14 @@ const LAST_MESSAGE = 'start sending messages now';
     }
 
     const timeline = window.locator(
-      '.timeline-wrapper, .ConversationView__template .react-wrapper'
+      '.timeline-wrapper, .conversation .ConversationView'
     );
 
     const deltaList = new Array<number>();
     for (let runId = 0; runId < RUN_COUNT + DISCARD_COUNT; runId += 1) {
       debug('finding composition input and clicking it');
       const composeArea = window.locator(
-        '.composition-area-wrapper, ' +
-          '.ConversationView__template .react-wrapper'
+        '.composition-area-wrapper, .conversation .ConversationView'
       );
       const input = composeArea.locator('_react=CompositionInput');
 

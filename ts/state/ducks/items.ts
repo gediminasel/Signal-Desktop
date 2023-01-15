@@ -1,4 +1,4 @@
-// Copyright 2019-2021 Signal Messenger, LLC
+// Copyright 2019 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { omit } from 'lodash';
@@ -8,6 +8,7 @@ import type { StateType as RootStateType } from '../reducer';
 import * as storageShim from '../../shims/storage';
 import type { BoundActionCreatorsMapObject } from '../../hooks/useBoundActions';
 import { useBoundActions } from '../../hooks/useBoundActions';
+import { drop } from '../../util/drop';
 import type {
   ConversationColorType,
   CustomColorType,
@@ -36,7 +37,7 @@ export type ItemsStateType = {
 
   readonly preferredLeftPaneWidth?: number;
 
-  readonly preferredReactionEmoji?: Array<string>;
+  readonly preferredReactionEmoji?: ReadonlyArray<string>;
 
   readonly areWeASubscriber?: boolean;
 };
@@ -100,16 +101,19 @@ export const useActions = (): BoundActionCreatorsMapObject<typeof actions> =>
 function putItem<K extends keyof StorageAccessType>(
   key: K,
   value: StorageAccessType[K]
-): ItemPutAction {
-  storageShim.put(key, value);
-
-  return {
-    type: 'items/PUT',
-    payload: null,
+): ThunkAction<void, RootStateType, unknown, ItemPutAction> {
+  return async dispatch => {
+    dispatch({
+      type: 'items/PUT',
+      payload: null,
+    });
+    await storageShim.put(key, value);
   };
 }
 
-function onSetSkinTone(tone: number): ItemPutAction {
+function onSetSkinTone(
+  tone: number
+): ThunkAction<void, RootStateType, unknown, ItemPutAction> {
   return putItem('skinTone', tone);
 }
 
@@ -124,7 +128,7 @@ function putItemExternal(key: string, value: unknown): ItemPutExternalAction {
 }
 
 function removeItem(key: keyof StorageAccessType): ItemRemoveAction {
-  storageShim.remove(key);
+  drop(storageShim.remove(key));
 
   return {
     type: 'items/REMOVE',
@@ -290,6 +294,10 @@ export function reducer(
 ): ItemsStateType {
   if (action.type === 'items/PUT_EXTERNAL') {
     const { payload } = action;
+
+    if (state[payload.key] === payload.value) {
+      return state;
+    }
 
     return {
       ...state,

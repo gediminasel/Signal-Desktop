@@ -1,4 +1,4 @@
-// Copyright 2019-2022 Signal Messenger, LLC
+// Copyright 2019 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -101,13 +101,13 @@ export type OwnProps = Readonly<{
   linkPreviewLoading: boolean;
   linkPreviewResult?: LinkPreviewType;
   messageRequestsEnabled?: boolean;
-  onClearAttachments(): unknown;
-  onCloseLinkPreview(): unknown;
+  onClearAttachments(conversationId: string): unknown;
+  onCloseLinkPreview(conversationId: string): unknown;
   processAttachments: (options: {
     conversationId: string;
     files: ReadonlyArray<File>;
   }) => unknown;
-  onSelectMediaQuality(isHQ: boolean): unknown;
+  setMediaQualitySetting(conversationId: string, isHQ: boolean): unknown;
   sendStickerMessage(
     id: string,
     opts: { packId: string; stickerId: number }
@@ -136,7 +136,7 @@ export type OwnProps = Readonly<{
   ): unknown;
   shouldSendHighQualityAttachments: boolean;
   showConversation: ShowConversationType;
-  startRecording: () => unknown;
+  startRecording: (id: string) => unknown;
   theme: ThemeType;
 }>;
 
@@ -170,7 +170,7 @@ export type Props = Pick<
   > &
   MessageRequestActionsProps &
   Pick<GroupV1DisabledActionsPropsType, 'showGV2MigrationDialog'> &
-  Pick<GroupV2PendingApprovalActionsPropsType, 'onCancelJoinRequest'> & {
+  Pick<GroupV2PendingApprovalActionsPropsType, 'cancelJoinRequest'> & {
     pushPanelForConversation: PushPanelForConversationActionType;
   } & OwnProps;
 
@@ -211,7 +211,7 @@ export function CompositionArea({
   quotedMessageProps,
   scrollToMessage,
   // MediaQualitySelector
-  onSelectMediaQuality,
+  setMediaQualitySetting,
   shouldSendHighQualityAttachments,
   // CompositionInput
   onEditorStateChange,
@@ -261,7 +261,7 @@ export function CompositionArea({
   announcementsOnly,
   areWeAdmin,
   groupAdmins,
-  onCancelJoinRequest,
+  cancelJoinRequest,
   showConversation,
   // SMS-only contacts
   isSMSOnly,
@@ -366,6 +366,20 @@ export function CompositionArea({
     [inputApiRef, onPickEmoji]
   );
 
+  const previousConversationId = usePrevious(conversationId, conversationId);
+  useEffect(() => {
+    if (!draftText) {
+      inputApiRef.current?.setText('');
+      return;
+    }
+
+    if (conversationId === previousConversationId) {
+      return;
+    }
+
+    inputApiRef.current?.setText(draftText, true);
+  }, [conversationId, draftText, previousConversationId]);
+
   const handleToggleLarge = useCallback(() => {
     setLarge(l => !l);
   }, [setLarge]);
@@ -391,9 +405,10 @@ export function CompositionArea({
       {showMediaQualitySelector ? (
         <div className="CompositionArea__button-cell">
           <MediaQualitySelector
+            conversationId={conversationId}
             i18n={i18n}
             isHighQuality={shouldSendHighQualityAttachments}
-            onSelectQuality={onSelectMediaQuality}
+            onSelectQuality={setMediaQualitySetting}
           />
         </div>
       ) : null}
@@ -462,7 +477,7 @@ export function CompositionArea({
         recentStickers={recentStickers}
         clearInstalledStickerPack={clearInstalledStickerPack}
         onClickAddPack={() =>
-          pushPanelForConversation(conversationId, {
+          pushPanelForConversation({
             type: PanelType.StickerManager,
           })
         }
@@ -592,8 +607,9 @@ export function CompositionArea({
   if (areWePendingApproval) {
     return (
       <GroupV2PendingApprovalActions
+        cancelJoinRequest={cancelJoinRequest}
+        conversationId={conversationId}
         i18n={i18n}
-        onCancelJoinRequest={onCancelJoinRequest}
       />
     );
   }
@@ -671,7 +687,7 @@ export function CompositionArea({
             <StagedLinkPreview
               {...linkPreviewResult}
               i18n={i18n}
-              onClose={onCloseLinkPreview}
+              onClose={() => onCloseLinkPreview(conversationId)}
             />
           </div>
         )}
@@ -683,7 +699,7 @@ export function CompositionArea({
               i18n={i18n}
               onAddAttachment={launchAttachmentPicker}
               onClickAttachment={maybeEditAttachment}
-              onClose={onClearAttachments}
+              onClose={() => onClearAttachments(conversationId)}
               onCloseAttachment={attachment => {
                 if (attachment.path) {
                   removeAttachment(conversationId, attachment.path);

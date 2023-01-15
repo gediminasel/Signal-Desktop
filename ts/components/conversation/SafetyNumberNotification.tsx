@@ -1,4 +1,4 @@
-// Copyright 2018-2021 Signal Messenger, LLC
+// Copyright 2018 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import React from 'react';
@@ -43,6 +43,7 @@ export function SafetyNumberNotification({
     <SystemMessage
       icon="safety-number"
       contents={
+        // eslint-disable-next-line local-rules/valid-i18n-keys
         <Intl
           id={changeKey}
           components={[

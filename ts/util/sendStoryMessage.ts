@@ -3,7 +3,10 @@
 
 import type { AttachmentType } from '../types/Attachment';
 import type { MessageAttributesType } from '../model-types.d';
-import type { SendStateByConversationId } from '../messages/MessageSendState';
+import type {
+  SendState,
+  SendStateByConversationId,
+} from '../messages/MessageSendState';
 import type { UUIDStringType } from '../types/UUID';
 import * as log from '../logging/log';
 import dataInterface from '../sql/Client';
@@ -24,6 +27,21 @@ import { isGroupV2 } from './whatTypeOfConversation';
 import { isNotNil } from './isNotNil';
 import { collect } from './iterables';
 import { DurationInSeconds } from './durations';
+import { sanitizeLinkPreview } from '../services/LinkPreview';
+
+function cleanLinkPreviewIfAny(attachment: AttachmentType): AttachmentType {
+  if (!attachment.textAttachment || !attachment.textAttachment.preview) {
+    return attachment;
+  }
+
+  return {
+    ...attachment,
+    textAttachment: {
+      ...attachment.textAttachment,
+      preview: undefined,
+    },
+  };
+}
 
 export async function sendStoryMessage(
   listIds: Array<string>,
@@ -135,7 +153,17 @@ export async function sendStoryMessage(
       sendStateByListId.set(distributionList.id, sendStateByConversationId);
     });
 
-  const attachments: Array<AttachmentType> = [attachment];
+  const cleanedAttachment = cleanLinkPreviewIfAny(attachment);
+  const attachments: Array<AttachmentType> = [cleanedAttachment];
+
+  const linkPreview = attachment?.textAttachment?.preview;
+  const sanitizedLinkPreview = linkPreview
+    ? sanitizeLinkPreview(linkPreview)
+    : undefined;
+  // If a text attachment has a link preview we remove it from the
+  // textAttachment data structure and instead process the preview and add
+  // it as a "preview" property for the message attributes.
+  const preview = sanitizedLinkPreview ? [sanitizedLinkPreview] : undefined;
 
   // * Gather all the job data we'll be sending to the sendStory job
   // * Create the message for each distribution list
@@ -161,6 +189,7 @@ export async function sendStoryMessage(
           expireTimer: DurationInSeconds.DAY,
           expirationStartTimestamp: Date.now(),
           id: UUID.generate().toString(),
+          preview,
           readStatus: ReadStatus.Read,
           received_at: incrementMessageCounter(),
           received_at_ms: timestamp,
@@ -222,7 +251,7 @@ export async function sendStoryMessage(
   for (const group of groupsToUpdate) {
     group.set('storySendMode', StorySendMode.Always);
   }
-  window.Signal.Data.updateConversations(
+  void window.Signal.Data.updateConversations(
     groupsToUpdate.map(group => group.attributes)
   );
   for (const group of groupsToUpdate) {
@@ -235,27 +264,29 @@ export async function sendStoryMessage(
       const groupTimestamp = timestamp + index + 1;
 
       const myId = window.ConversationController.getOurConversationIdOrThrow();
-      const sendState = {
+      const sendState: SendState = {
         status: SendStatus.Pending,
         updatedAt: groupTimestamp,
+        isAllowedToReplyToStory: true,
       };
 
-      const sendStateByConversationId = getRecipients(group.attributes).reduce(
-        (acc, id) => {
-          const conversation = window.ConversationController.get(id);
-          if (!conversation) {
-            return acc;
-          }
+      const sendStateByConversationId: SendStateByConversationId =
+        getRecipients(group.attributes).reduce(
+          (acc, id) => {
+            const conversation = window.ConversationController.get(id);
+            if (!conversation) {
+              return acc;
+            }
 
-          return {
-            ...acc,
-            [conversation.id]: sendState,
-          };
-        },
-        {
-          [myId]: sendState,
-        }
-      );
+            return {
+              ...acc,
+              [conversation.id]: sendState,
+            };
+          },
+          {
+            [myId]: sendState,
+          }
+        );
 
       const messageAttributes =
         await window.Signal.Migrations.upgradeMessageSchema({
@@ -290,7 +321,7 @@ export async function sendStoryMessage(
       const model = new window.Whisper.Message(messageAttributes);
       const message = window.MessageController.register(model.id, model);
 
-      ourConversation.addSingleMessage(model, { isJustSent: true });
+      void ourConversation.addSingleMessage(model, { isJustSent: true });
 
       log.info(
         `stories.sendStoryMessage: saving message ${messageAttributes.timestamp}`
@@ -341,7 +372,7 @@ export async function sendStoryMessage(
           const message = window.MessageController.register(model.id, model);
 
           const conversation = message.getConversation();
-          conversation?.addSingleMessage(model, { isJustSent: true });
+          void conversation?.addSingleMessage(model, { isJustSent: true });
 
           log.info(
             `stories.sendStoryMessage: saving message ${messageAttributes.timestamp}`

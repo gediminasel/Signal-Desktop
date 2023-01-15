@@ -1,4 +1,4 @@
-// Copyright 2019-2022 Signal Messenger, LLC
+// Copyright 2019 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { RefObject } from 'react';
@@ -13,9 +13,9 @@ import { getPreferredBadgeSelector } from '../selectors/badges';
 import { getIntl, getInteractionMode, getTheme } from '../selectors/user';
 import {
   getConversationSelector,
-  getMessageSelector,
   getSelectedMessage,
 } from '../selectors/conversations';
+import { getTimelineItem } from '../selectors/timeline';
 import {
   areMessagesInSameGroup,
   shouldCurrentMessageHideMetadata,
@@ -55,13 +55,13 @@ const mapStateToProps = (state: StateType, props: ExternalProps) => {
     unreadIndicatorPlacement,
   } = props;
 
-  const messageSelector = getMessageSelector(state);
-
-  const item = messageSelector(messageId);
+  const item = getTimelineItem(state, messageId);
   const previousItem = previousMessageId
-    ? messageSelector(previousMessageId)
+    ? getTimelineItem(state, previousMessageId)
     : undefined;
-  const nextItem = nextMessageId ? messageSelector(nextMessageId) : undefined;
+  const nextItem = nextMessageId
+    ? getTimelineItem(state, nextMessageId)
+    : undefined;
 
   const selectedMessage = getSelectedMessage(state);
   const isSelected = Boolean(

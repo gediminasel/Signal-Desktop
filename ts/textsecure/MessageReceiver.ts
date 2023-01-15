@@ -1,4 +1,4 @@
-// Copyright 2020-2022 Signal Messenger, LLC
+// Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /* eslint-disable no-bitwise */
@@ -37,9 +37,10 @@ import {
   SignedPreKeys,
 } from '../LibSignalStores';
 import { verifySignature } from '../Curve';
-import { strictAssert } from '../util/assert';
+import { assertDev, strictAssert } from '../util/assert';
 import type { BatcherType } from '../util/batcher';
 import { createBatcher } from '../util/batcher';
+import { drop } from '../util/drop';
 import { dropNull } from '../util/dropNull';
 import { normalizeUuid } from '../util/normalizeUuid';
 import { parseIntOrThrow } from '../util/parseIntOrThrow';
@@ -110,6 +111,7 @@ import {
   GroupEvent,
   GroupSyncEvent,
   StoryRecipientUpdateEvent,
+  CallEventSyncEvent,
 } from './messageReceiverEvents';
 import * as log from '../logging/log';
 import * as durations from '../util/durations';
@@ -312,7 +314,7 @@ export default class MessageReceiver
       processBatch: (items: Array<CacheAddItemType>) => {
         // Not returning the promise here because we don't want to stall
         // the batch.
-        this.decryptAndCacheBatch(items);
+        void this.decryptAndCacheBatch(items);
       },
     });
     this.cacheRemoveBatcher = createBatcher<string>({
@@ -337,13 +339,15 @@ export default class MessageReceiver
       request.respond(200, 'OK');
 
       if (request.verb === 'PUT' && request.path === '/api/v1/queue/empty') {
-        this.incomingQueue.add(
-          createTaskWithTimeout(
-            async () => {
-              this.onEmpty();
-            },
-            'incomingQueue/onEmpty',
-            TASK_WITH_TIMEOUT_OPTIONS
+        drop(
+          this.incomingQueue.add(
+            createTaskWithTimeout(
+              async () => {
+                this.onEmpty();
+              },
+              'incomingQueue/onEmpty',
+              TASK_WITH_TIMEOUT_OPTIONS
+            )
           )
         );
       }
@@ -422,22 +426,26 @@ export default class MessageReceiver
       }
     };
 
-    this.incomingQueue.add(
-      createTaskWithTimeout(
-        job,
-        'incomingQueue/websocket',
-        TASK_WITH_TIMEOUT_OPTIONS
+    drop(
+      this.incomingQueue.add(
+        createTaskWithTimeout(
+          job,
+          'incomingQueue/websocket',
+          TASK_WITH_TIMEOUT_OPTIONS
+        )
       )
     );
   }
 
   public reset(): void {
     // We always process our cache before processing a new websocket message
-    this.incomingQueue.add(
-      createTaskWithTimeout(
-        async () => this.queueAllCached(),
-        'incomingQueue/queueAllCached',
-        TASK_WITH_TIMEOUT_OPTIONS
+    drop(
+      this.incomingQueue.add(
+        createTaskWithTimeout(
+          async () => this.queueAllCached(),
+          'incomingQueue/queueAllCached',
+          TASK_WITH_TIMEOUT_OPTIONS
+        )
       )
     );
 
@@ -610,6 +618,11 @@ export default class MessageReceiver
     handler: (ev: StoryRecipientUpdateEvent) => void
   ): void;
 
+  public override addEventListener(
+    name: 'callEventSync',
+    handler: (ev: CallEventSyncEvent) => void
+  ): void;
+
   public override addEventListener(name: string, handler: EventHandler): void {
     return super.addEventListener(name, handler);
   }
@@ -626,11 +639,13 @@ export default class MessageReceiver
   //
 
   private async dispatchAndWait(id: string, event: Event): Promise<void> {
-    this.appQueue.add(
-      createTaskWithTimeout(
-        async () => Promise.all(this.dispatchEvent(event)),
-        `dispatchEvent(${event.type}, ${id})`,
-        TASK_WITH_TIMEOUT_OPTIONS
+    drop(
+      this.appQueue.add(
+        createTaskWithTimeout(
+          async () => Promise.all(this.dispatchEvent(event)),
+          `dispatchEvent(${event.type}, ${id})`,
+          TASK_WITH_TIMEOUT_OPTIONS
+        )
       )
     );
   }
@@ -707,16 +722,24 @@ export default class MessageReceiver
       );
 
       // We don't await here because we don't want this to gate future message processing
-      this.appQueue.add(
-        createTaskWithTimeout(emitEmpty, 'emitEmpty', TASK_WITH_TIMEOUT_OPTIONS)
+      drop(
+        this.appQueue.add(
+          createTaskWithTimeout(
+            emitEmpty,
+            'emitEmpty',
+            TASK_WITH_TIMEOUT_OPTIONS
+          )
+        )
       );
     };
 
     const waitForEncryptedQueue = async () => {
-      this.addToQueue(
-        waitForDecryptedQueue,
-        'onEmpty/waitForDecrypted',
-        TaskType.Decrypted
+      drop(
+        this.addToQueue(
+          waitForDecryptedQueue,
+          'onEmpty/waitForDecrypted',
+          TaskType.Decrypted
+        )
       );
     };
 
@@ -725,25 +748,29 @@ export default class MessageReceiver
       // Resetting count so everything from the websocket after this starts at zero
       this.count = 0;
 
-      this.addToQueue(
-        waitForEncryptedQueue,
-        'onEmpty/waitForEncrypted',
-        TaskType.Encrypted
+      drop(
+        this.addToQueue(
+          waitForEncryptedQueue,
+          'onEmpty/waitForEncrypted',
+          TaskType.Encrypted
+        )
       );
     };
 
     const waitForCacheAddBatcher = async () => {
       await this.decryptAndCacheBatcher.onIdle();
-      this.incomingQueue.add(
-        createTaskWithTimeout(
-          waitForIncomingQueue,
-          'onEmpty/waitForIncoming',
-          TASK_WITH_TIMEOUT_OPTIONS
+      drop(
+        this.incomingQueue.add(
+          createTaskWithTimeout(
+            waitForIncomingQueue,
+            'onEmpty/waitForIncoming',
+            TASK_WITH_TIMEOUT_OPTIONS
+          )
         )
       );
     };
 
-    waitForCacheAddBatcher();
+    drop(waitForCacheAddBatcher());
   }
 
   private updateProgress(count: number): void {
@@ -755,6 +782,13 @@ export default class MessageReceiver
   }
 
   private async queueAllCached(): Promise<void> {
+    if (this.stoppingProcessing) {
+      log.info(
+        'MessageReceiver.queueAllCached: not running due to stopped processing'
+      );
+      return;
+    }
+
     const items = await this.getAllFromCache();
     const max = items.length;
     for (let i = 0; i < max; i += 1) {
@@ -835,15 +869,20 @@ export default class MessageReceiver
         };
 
         // Maintain invariant: encrypted queue => decrypted queue
-        this.addToQueue(
-          async () => {
-            this.queueDecryptedEnvelope(decryptedEnvelope, payloadPlaintext);
-          },
-          `queueDecryptedEnvelope(${getEnvelopeId(decryptedEnvelope)})`,
-          TaskType.Encrypted
+        drop(
+          this.addToQueue(
+            async () => {
+              void this.queueDecryptedEnvelope(
+                decryptedEnvelope,
+                payloadPlaintext
+              );
+            },
+            `queueDecryptedEnvelope(${getEnvelopeId(decryptedEnvelope)})`,
+            TaskType.Encrypted
+          )
         );
       } else {
-        this.queueCachedEnvelope(item, envelope);
+        void this.queueCachedEnvelope(item, envelope);
       }
     } catch (error) {
       log.error(
@@ -876,11 +915,13 @@ export default class MessageReceiver
     if (this.isEmptied) {
       this.clearRetryTimeout();
       this.retryCachedTimeout = setTimeout(() => {
-        this.incomingQueue.add(
-          createTaskWithTimeout(
-            async () => this.queueAllCached(),
-            'queueAllCached',
-            TASK_WITH_TIMEOUT_OPTIONS
+        drop(
+          this.incomingQueue.add(
+            createTaskWithTimeout(
+              async () => this.queueAllCached(),
+              'queueAllCached',
+              TASK_WITH_TIMEOUT_OPTIONS
+            )
           )
         );
       }, RETRY_TIMEOUT);
@@ -1070,7 +1111,7 @@ export default class MessageReceiver
       id,
       version: 2,
 
-      attempts: 1,
+      attempts: 0,
       envelope: Bytes.toBase64(plaintext),
       messageAgeSec: envelope.messageAgeSec,
       receivedAtCounter: envelope.receivedAtCounter,
@@ -1155,11 +1196,13 @@ export default class MessageReceiver
       logId = getEnvelopeId(unsealedEnvelope);
 
       const taskId = `dispatchEvent(EnvelopeEvent(${logId}))`;
-      this.addToQueue(
-        async () =>
-          this.dispatchAndWait(taskId, new EnvelopeEvent(unsealedEnvelope)),
-        taskId,
-        TaskType.Decrypted
+      drop(
+        this.addToQueue(
+          async () =>
+            this.dispatchAndWait(taskId, new EnvelopeEvent(unsealedEnvelope)),
+          taskId,
+          TaskType.Decrypted
+        )
       );
 
       return this.decryptEnvelope(stores, unsealedEnvelope, uuidKind);
@@ -1887,10 +1930,12 @@ export default class MessageReceiver
         );
 
         // Avoid deadlocks by scheduling processing on decrypted queue
-        this.addToQueue(
-          async () => this.dispatchEvent(event),
-          `decrypted/dispatchEvent/DecryptionErrorEvent(${envelopeId})`,
-          TaskType.Decrypted
+        drop(
+          this.addToQueue(
+            async () => this.dispatchEvent(event),
+            `decrypted/dispatchEvent/DecryptionErrorEvent(${envelopeId})`,
+            TaskType.Decrypted
+          )
         );
       } else {
         this.removeFromCache(envelope);
@@ -2014,6 +2059,9 @@ export default class MessageReceiver
     }
 
     if (msg.textAttachment) {
+      // If a text attachment has a link preview we remove it from the
+      // textAttachment data structure and instead process the preview and add
+      // it as a "preview" property for the message attributes.
       const { text, preview: unprocessedPreview } = msg.textAttachment;
       if (unprocessedPreview) {
         preview = processPreview([unprocessedPreview]);
@@ -2099,7 +2147,7 @@ export default class MessageReceiver
         },
         this.removeFromCache.bind(this, envelope)
       );
-      this.dispatchAndWait(logId, ev);
+      void this.dispatchAndWait(logId, ev);
       return;
     }
 
@@ -2158,7 +2206,7 @@ export default class MessageReceiver
           },
           this.removeFromCache.bind(this, envelope)
         );
-        this.dispatchAndWait(logId, ev);
+        void this.dispatchAndWait(logId, ev);
       });
       return;
     }
@@ -2828,7 +2876,7 @@ export default class MessageReceiver
       }
 
       if (sentMessage.storyMessage) {
-        this.handleStoryMessage(
+        void this.handleStoryMessage(
           envelope,
           sentMessage.storyMessage,
           sentMessage
@@ -2867,7 +2915,7 @@ export default class MessageReceiver
       return this.handleContacts(envelope, syncMessage.contacts);
     }
     if (syncMessage.groups) {
-      this.handleGroups(envelope, syncMessage.groups);
+      void this.handleGroups(envelope, syncMessage.groups);
       return;
     }
     if (syncMessage.blocked) {
@@ -2915,6 +2963,9 @@ export default class MessageReceiver
     }
     if (syncMessage.viewed && syncMessage.viewed.length) {
       return this.handleViewed(envelope, syncMessage.viewed);
+    }
+    if (syncMessage.callEvent) {
+      return this.handleCallEvent(envelope, syncMessage.callEvent);
     }
 
     this.removeFromCache(envelope);
@@ -3177,6 +3228,64 @@ export default class MessageReceiver
     );
   }
 
+  private async handleCallEvent(
+    envelope: ProcessedEnvelope,
+    callEvent: Proto.SyncMessage.ICallEvent
+  ): Promise<void> {
+    const logId = getEnvelopeId(envelope);
+    log.info('MessageReceiver.handleCallEvent', logId);
+    const { peerUuid, callId } = callEvent;
+
+    if (!peerUuid) {
+      throw new Error('MessageReceiver.handleCallEvent: missing peerUuid');
+    }
+
+    if (!callId) {
+      throw new Error('MessageReceiver.handleCallEvent: missing callId');
+    }
+
+    logUnexpectedUrgentValue(envelope, 'callEventSync');
+
+    const peerUuidStr = bytesToUuid(peerUuid);
+
+    assertDev(
+      peerUuidStr != null,
+      'MessageReceiver.handleCallEvent: invalid peerUuid'
+    );
+
+    const { receivedAtCounter, timestamp } = envelope;
+
+    const wasIncoming =
+      callEvent.direction === Proto.SyncMessage.CallEvent.Direction.INCOMING;
+    const wasVideoCall =
+      callEvent.type === Proto.SyncMessage.CallEvent.Type.VIDEO_CALL;
+    const wasAccepted =
+      callEvent.event === Proto.SyncMessage.CallEvent.Event.ACCEPTED;
+    const wasDeclined =
+      callEvent.event === Proto.SyncMessage.CallEvent.Event.NOT_ACCEPTED;
+
+    const acceptedTime = wasAccepted ? timestamp : undefined;
+    const endedTime = wasDeclined ? timestamp : undefined;
+
+    const callEventSync = new CallEventSyncEvent(
+      {
+        timestamp: envelope.timestamp,
+        peerUuid: peerUuidStr,
+        callId: callId.toString(),
+        wasIncoming,
+        wasVideoCall,
+        wasDeclined,
+        acceptedTime,
+        endedTime,
+        receivedAtCounter,
+      },
+      this.removeFromCache.bind(this, envelope)
+    );
+    await this.dispatchAndWait(logId, callEventSync);
+
+    log.info('handleCallEvent: finished');
+  }
+
   private async handleContacts(
     envelope: ProcessedEnvelope,
     contacts: Proto.SyncMessage.IContacts
@@ -3333,7 +3442,7 @@ export default class MessageReceiver
     if (changed) {
       log.info('handleBlocked: Block list changed, forcing re-render.');
       const uniqueIdentifiers = Array.from(new Set(allIdentifiers));
-      window.ConversationController.forceRerender(uniqueIdentifiers);
+      void window.ConversationController.forceRerender(uniqueIdentifiers);
     }
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2015-2022 Signal Messenger, LLC
+// Copyright 2015 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -124,7 +124,7 @@ describe('SignalProtocolStore', () => {
 
   before(async () => {
     store = window.textsecure.storage.protocol;
-    store.hydrateCaches();
+    await store.hydrateCaches();
     identityKey = {
       pubKey: getPublicKey(),
       privKey: getPrivateKey(),
@@ -140,8 +140,10 @@ describe('SignalProtocolStore', () => {
     clampPrivateKey(identityKey.privKey);
     clampPrivateKey(testKey.privKey);
 
-    window.storage.put('registrationIdMap', { [ourUuid.toString()]: 1337 });
-    window.storage.put('identityKeyMap', {
+    await window.storage.put('registrationIdMap', {
+      [ourUuid.toString()]: 1337,
+    });
+    await window.storage.put('identityKeyMap', {
       [ourUuid.toString()]: {
         privKey: identityKey.privKey,
         pubKey: identityKey.pubKey,

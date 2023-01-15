@@ -1,4 +1,4 @@
-// Copyright 2018-2020 Signal Messenger, LLC
+// Copyright 2018 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { ipcMain } from 'electron';
@@ -87,10 +87,8 @@ async function cleanupOrphanedAttachments({
 
     let missing = 0;
     for (const known of attachments) {
-      if (!orphanedAttachments.delete(known)) {
-        missing += 1;
-      }
       if (
+        !orphanedAttachments.delete(known) ||
         !orphanedAttachments.delete(
           known
             .replaceAll('/', sep)
@@ -141,7 +139,15 @@ function deleteOrphanedAttachments({
         totalFound += attachments.length;
 
         for (const known of attachments) {
-          if (!orphanedAttachments.delete(known)) {
+          if (
+            !orphanedAttachments.delete(known) ||
+            !orphanedAttachments.delete(
+              known
+                .replaceAll('/', sep)
+                .replaceAll('\\', sep)
+                .replaceAll('%5C', sep)
+            )
+          ) {
             totalMissing += 1;
           }
         }
@@ -189,7 +195,7 @@ function deleteOrphanedAttachments({
   }
 
   // Intentionally not awaiting
-  runSafe();
+  void runSafe();
 }
 
 export function initialize({

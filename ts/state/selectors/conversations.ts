@@ -1,4 +1,4 @@
-// Copyright 2019-2022 Signal Messenger, LLC
+// Copyright 2019 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import memoizee from 'memoizee';
@@ -27,7 +27,6 @@ import { getOwn } from '../../util/getOwn';
 import type { UUIDFetchStateType } from '../../util/uuidFetchState';
 import { deconstructLookup } from '../../util/deconstructLookup';
 import type { PropsDataType as TimelinePropsType } from '../../components/conversation/Timeline';
-import type { TimelineItemType } from '../../components/conversation/TimelineItem';
 import { assertDev } from '../../util/assert';
 import { isConversationUnregistered } from '../../util/isConversationUnregistered';
 import { filterAndSortConversationsByRecent } from '../../util/filterAndSortConversations';
@@ -51,22 +50,14 @@ import {
   getRegionCode,
   getUserConversationId,
   getUserNumber,
-  getUserACI,
-  getUserPNI,
 } from './user';
 import { getPinnedConversationIds } from './items';
-import { getPropsForBubble } from './message';
-import type { CallSelectorType, CallStateType } from './calling';
-import { getActiveCall, getCallSelector } from './calling';
-import type { AccountSelectorType } from './accounts';
-import { getAccountSelector } from './accounts';
 import * as log from '../../logging/log';
 import { TimelineMessageLoadingState } from '../../util/timelineUtil';
 import { isSignalConversation } from '../../util/isSignalConversation';
 import { reduce } from '../../util/iterables';
 import { getConversationTitleForPanelType } from '../../util/getConversationTitleForPanelType';
-import type { ReactPanelRenderType, PanelRenderType } from '../../types/Panels';
-import { isPanelHandledByReact } from '../../types/Panels';
+import type { PanelRenderType } from '../../types/Panels';
 
 let placeholderContact: ConversationType;
 export const getPlaceholderContact = (): ConversationType => {
@@ -280,7 +271,7 @@ export const _getLeftPaneLists = (
   lookup: ConversationLookupType,
   comparator: (left: ConversationType, right: ConversationType) => number,
   selectedConversation?: string,
-  pinnedConversationIds?: Array<string>
+  pinnedConversationIds?: ReadonlyArray<string>
 ): {
   conversations: Array<ConversationType>;
   archivedConversations: Array<ConversationType>;
@@ -604,7 +595,7 @@ export const getFilteredComposeContacts = createSelector(
   getRegionCode,
   (
     searchTerm: string,
-    contacts: Array<ConversationType>,
+    contacts: ReadonlyArray<ConversationType>,
     regionCode: string | undefined
   ): Array<ConversationType> => {
     return filterAndSortConversationsByRecent(contacts, searchTerm, regionCode);
@@ -617,7 +608,7 @@ export const getFilteredComposeGroups = createSelector(
   getRegionCode,
   (
     searchTerm: string,
-    groups: Array<ConversationType>,
+    groups: ReadonlyArray<ConversationType>,
     regionCode: string | undefined
   ): Array<ConversationType> => {
     return filterAndSortConversationsByRecent(groups, searchTerm, regionCode);
@@ -639,7 +630,7 @@ const getGroupCreationComposerState = createSelector(
     groupName: string;
     groupAvatar: undefined | Uint8Array;
     groupExpireTimer: DurationInSeconds;
-    selectedConversationIds: Array<string>;
+    selectedConversationIds: ReadonlyArray<string>;
   } => {
     switch (composerState?.step) {
       case ComposerStep.ChooseGroupMembers:
@@ -773,18 +764,6 @@ export const getConversationByUuidSelector = createSelector(
       getOwn(conversationsByUuid, uuid)
 );
 
-// A little optimization to reset our selector cache whenever high-level application data
-//   changes: regionCode and userNumber.
-export const getCachedSelectorForMessage = createSelector(
-  getRegionCode,
-  getUserNumber,
-  (): typeof getPropsForBubble => {
-    // Note: memoizee will check all parameters provided, and only run our selector
-    //   if any of them have changed.
-    return memoizee(getPropsForBubble, { max: 2000 });
-  }
-);
-
 const getCachedConversationMemberColorsSelector = createSelector(
   getConversationSelector,
   getUserConversationId,
@@ -852,60 +831,6 @@ export const getContactNameColorSelector = createSelector(
         return ContactNameColors[0];
       }
       return color;
-    };
-  }
-);
-
-type GetMessageByIdType = (id: string) => TimelineItemType | undefined;
-export const getMessageSelector = createSelector(
-  getCachedSelectorForMessage,
-  getMessages,
-  getSelectedMessage,
-  getConversationSelector,
-  getRegionCode,
-  getUserNumber,
-  getUserACI,
-  getUserPNI,
-  getUserConversationId,
-  getCallSelector,
-  getActiveCall,
-  getAccountSelector,
-  getContactNameColorSelector,
-  (
-    messageSelector: typeof getPropsForBubble,
-    messageLookup: MessageLookupType,
-    selectedMessage: SelectedMessageType | undefined,
-    conversationSelector: GetConversationByIdType,
-    regionCode: string | undefined,
-    ourNumber: string | undefined,
-    ourACI: UUIDStringType | undefined,
-    ourPNI: UUIDStringType | undefined,
-    ourConversationId: string | undefined,
-    callSelector: CallSelectorType,
-    activeCall: undefined | CallStateType,
-    accountSelector: AccountSelectorType,
-    contactNameColorSelector: ContactNameColorSelectorType
-  ): GetMessageByIdType => {
-    return (id: string) => {
-      const message = messageLookup[id];
-      if (!message) {
-        return undefined;
-      }
-
-      return messageSelector(message, {
-        conversationSelector,
-        ourConversationId,
-        ourNumber,
-        ourACI,
-        ourPNI,
-        regionCode,
-        selectedMessageId: selectedMessage?.id,
-        selectedMessageCounter: selectedMessage?.counter,
-        contactNameColorSelector,
-        callSelector,
-        activeCall,
-        accountSelector,
-      });
     };
   }
 );
@@ -1034,8 +959,7 @@ export function isMissingRequiredProfileSharing(
     doesConversationRequireIt &&
       !conversation.profileSharing &&
       window.Signal.RemoteConfig.isEnabled('desktop.mandatoryProfileSharing') &&
-      conversation.messageCount &&
-      conversation.messageCount > 0
+      conversation.hasMessages
   );
 }
 
@@ -1135,28 +1059,12 @@ export const getHideStoryConversationIds = createSelector(
     )
 );
 
-const getTopPanel = createSelector(
+export const getTopPanel = createSelector(
   getConversations,
   (conversations): PanelRenderType | undefined =>
     conversations.selectedConversationPanels[
       conversations.selectedConversationPanels.length - 1
     ]
-);
-
-export const getTopPanelRenderableByReact = createSelector(
-  getConversations,
-  (conversations): ReactPanelRenderType | undefined => {
-    const topPanel =
-      conversations.selectedConversationPanels[
-        conversations.selectedConversationPanels.length - 1
-      ];
-
-    if (!isPanelHandledByReact(topPanel)) {
-      return;
-    }
-
-    return topPanel;
-  }
 );
 
 export const getConversationTitle = createSelector(

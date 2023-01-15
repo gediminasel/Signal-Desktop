@@ -1,4 +1,4 @@
-// Copyright 2020-2022 Signal Messenger, LLC
+// Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { Meta, Story } from '@storybook/react';
@@ -111,11 +111,9 @@ const defaultMessageProps: TimelineMessagesProps = {
   isMessageRequestAccepted: true,
   kickOffAttachmentDownload: action('default--kickOffAttachmentDownload'),
   markAttachmentAsCorrupted: action('default--markAttachmentAsCorrupted'),
-  markViewed: action('default--markViewed'),
   messageExpanded: action('default--message-expanded'),
   showConversation: action('default--showConversation'),
   openGiftBadge: action('openGiftBadge'),
-  openLink: action('default--openLink'),
   previews: [],
   reactToMessage: action('default--reactToMessage'),
   readStatus: ReadStatus.Read,
@@ -123,7 +121,7 @@ const defaultMessageProps: TimelineMessagesProps = {
   renderReactionPicker: () => <div />,
   renderAudioAttachment: () => <div>*AudioAttachment*</div>,
   setQuoteByMessageId: action('default--setQuoteByMessageId'),
-  retrySend: action('default--retrySend'),
+  retryMessageSend: action('default--retryMessageSend'),
   retryDeleteForEveryone: action('default--retryDeleteForEveryone'),
   saveAttachment: action('saveAttachment'),
   scrollToQuotedMessage: action('default--scrollToQuotedMessage'),
@@ -140,7 +138,6 @@ const defaultMessageProps: TimelineMessagesProps = {
     'showExpiredOutgoingTapToViewToast'
   ),
   toggleForwardMessageModal: action('default--toggleForwardMessageModal'),
-  showMessageDetail: action('default--showMessageDetail'),
   showLightbox: action('default--showLightbox'),
   startConversation: action('default--startConversation'),
   status: 'sent',

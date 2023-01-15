@@ -8,7 +8,9 @@ import type { ConversationType } from '../state/ducks/conversations';
 import { isConversationNameKnown } from './isConversationNameKnown';
 import { isInSystemContacts } from './isInSystemContacts';
 
-export type GroupNameCollisionsWithIdsByTitle = Record<string, Array<string>>;
+export type GroupNameCollisionsWithIdsByTitle = Readonly<
+  Record<string, Array<string>>
+>;
 export type GroupNameCollisionsWithConversationsByTitle = Record<
   string,
   Array<ConversationType>
@@ -30,7 +32,7 @@ export function getCollisionsFromMemberships(
   );
   const groupedByTitle = groupBy(candidateMembers, member => member.title);
   // This cast is here because `pickBy` returns a `Partial`, which is incompatible with
-  //   `Record`. [This demonstates the problem][0], but I don't believe it's an actual
+  //   `Record`. [This demonstrates the problem][0], but I don't believe it's an actual
   //   issue in the code.
   //
   // Alternatively, we could filter undefined keys or something like that.

@@ -1,4 +1,4 @@
-// Copyright 2016-2020 Signal Messenger, LLC
+// Copyright 2016 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { requestMicrophonePermissions } from '../util/requestMicrophonePermissions';
@@ -39,7 +39,7 @@ export class RecorderClass {
     this.stream = undefined;
 
     if (this.context) {
-      this.context.close();
+      void this.context.close();
       this.context = undefined;
     }
   }

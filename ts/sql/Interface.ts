@@ -1,4 +1,4 @@
-// Copyright 2020-2022 Signal Messenger, LLC
+// Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type {
@@ -471,7 +471,7 @@ export type DataInterface = {
     options: { forceSave?: boolean; ourUuid: UUIDStringType }
   ) => Promise<void>;
   removeMessage: (id: string) => Promise<void>;
-  removeMessages: (ids: Array<string>) => Promise<void>;
+  removeMessages: (ids: ReadonlyArray<string>) => Promise<void>;
   getTotalUnreadForConversation: (
     conversationId: string,
     options: {
@@ -506,9 +506,9 @@ export type DataInterface = {
   _getAllReactions: () => Promise<Array<ReactionType>>;
   _removeAllReactions: () => Promise<void>;
   getMessageBySender: (options: {
-    source: string;
-    sourceUuid: UUIDStringType;
-    sourceDevice: number;
+    source?: string;
+    sourceUuid?: UUIDStringType;
+    sourceDevice?: number;
     sent_at: number;
   }) => Promise<MessageType | undefined>;
   getMessageById: (id: string) => Promise<MessageType | undefined>;
@@ -550,6 +550,10 @@ export type DataInterface = {
   getLastConversationMessage(options: {
     conversationId: string;
   }): Promise<MessageType | undefined>;
+  getCallHistoryMessageByCallId(
+    conversationId: string,
+    callId: string
+  ): Promise<string | void>;
   hasGroupCallHistoryMessage: (
     conversationId: string,
     eraId: string

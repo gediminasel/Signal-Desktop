@@ -1,4 +1,4 @@
-// Copyright 2020-2022 Signal Messenger, LLC
+// Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 // Captures the globals put in place by preload.js, background.js and others
@@ -37,11 +37,7 @@ import type { ConversationController } from './ConversationController';
 import type { ReduxActions } from './state/types';
 import type { createStore } from './state/createStore';
 import type { createApp } from './state/roots/createApp';
-import type { createConversationDetails } from './state/roots/createConversationDetails';
-import type { createGroupV2JoinModal } from './state/roots/createGroupV2JoinModal';
-import type { createMessageDetail } from './state/roots/createMessageDetail';
 import type { createSafetyNumberViewer } from './state/roots/createSafetyNumberViewer';
-import type { createShortcutGuideModal } from './state/roots/createShortcutGuideModal';
 import type * as appDuck from './state/ducks/app';
 import type * as callingDuck from './state/ducks/calling';
 import type * as conversationsDuck from './state/ducks/conversations';
@@ -81,7 +77,6 @@ import type { Address } from './types/Address';
 import type { QualifiedAddress } from './types/QualifiedAddress';
 import type { CI } from './CI';
 import type { IPCEventsType } from './util/createIPCEvents';
-import type { ConversationView } from './views/conversation_view';
 import type { SignalContextType } from './windows/context';
 import type * as Message2 from './types/Message2';
 import type { initializeMigrations } from './signal';
@@ -161,11 +156,7 @@ export type SignalCoreType = {
     createStore: typeof createStore;
     Roots: {
       createApp: typeof createApp;
-      createConversationDetails: typeof createConversationDetails;
-      createGroupV2JoinModal: typeof createGroupV2JoinModal;
-      createMessageDetail: typeof createMessageDetail;
       createSafetyNumberViewer: typeof createSafetyNumberViewer;
-      createShortcutGuideModal: typeof createShortcutGuideModal;
     };
     Ducks: {
       app: typeof appDuck;
@@ -366,13 +357,4 @@ export type WhisperType = {
   deliveryReceiptQueue: PQueue;
   deliveryReceiptBatcher: BatcherType<Receipt>;
   events: Backbone.Events;
-
-  // Backbone views
-
-  ConversationView: typeof ConversationView;
-
-  // Note: we can no longer use 'View.extend' once we've moved to Typescript's preferred
-  //   'extend View' syntax. Thus, we'll need to typescriptify most of it at once.
-
-  InboxView: typeof Backbone.View;
 };

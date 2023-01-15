@@ -1,4 +1,4 @@
-// Copyright 2021-2022 Signal Messenger, LLC
+// Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { differenceWith, omit, partition } from 'lodash';
@@ -167,7 +167,7 @@ export async function sendContentMessageToGroup({
   isPartialSend?: boolean;
   messageId: string | undefined;
   online?: boolean;
-  recipients: Array<string>;
+  recipients: ReadonlyArray<string>;
   sendOptions?: SendOptionsType;
   sendTarget: SenderKeyTargetType;
   sendType: SendTypesType;
@@ -254,7 +254,7 @@ export async function sendToGroupViaSenderKey(options: {
   isPartialSend?: boolean;
   messageId: string | undefined;
   online?: boolean;
-  recipients: Array<string>;
+  recipients: ReadonlyArray<string>;
   recursionCount: number;
   sendOptions?: SendOptionsType;
   sendTarget: SenderKeyTargetType;
@@ -836,7 +836,7 @@ export function _shouldFailSend(error: unknown, logId: string): boolean {
   return false;
 }
 
-function getRecipients(options: GroupSendOptionsType): Array<string> {
+function getRecipients(options: GroupSendOptionsType): ReadonlyArray<string> {
   if (options.groupV2) {
     return options.groupV2.members;
   }
@@ -1305,7 +1305,7 @@ async function fetchKeysForIdentifier(
   );
 
   try {
-    // Note: we have no way to make an unrestricted unathenticated key fetch as part of a
+    // Note: we have no way to make an unrestricted unauthenticated key fetch as part of a
     //   story send, so we hardcode story=false.
     const { accessKeyFailed } = await getKeysForIdentifier(
       identifier,

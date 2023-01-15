@@ -1,4 +1,4 @@
-// Copyright 2020-2022 Signal Messenger, LLC
+// Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /* eslint-disable max-classes-per-file */
@@ -292,7 +292,7 @@ export type ConversationAttributesType = {
   discoveredUnregisteredAt?: number;
   firstUnregisteredAt?: number;
   draftChanged?: boolean;
-  draftAttachments?: Array<AttachmentDraftType>;
+  draftAttachments?: ReadonlyArray<AttachmentDraftType>;
   draftBodyRanges?: DraftBodyRangesType;
   draftTimestamp?: number | null;
   hideStory?: boolean;
@@ -318,7 +318,7 @@ export type ConversationAttributesType = {
   quotedMessageId?: string | null;
   sealedSender?: unknown;
   sentMessageCount?: number;
-  sharedGroupNames?: Array<string>;
+  sharedGroupNames?: ReadonlyArray<string>;
   voiceNotePlaybackRate?: number;
 
   id: string;
@@ -473,10 +473,13 @@ export declare class MessageModelCollectionType extends Backbone.Collection<Mess
 
 export type ReactionAttributesType = {
   emoji: string;
+  fromId: string;
   remove?: boolean;
+  source: ReactionSource;
+  // Necessary to put 1:1 story replies into the right conversation - not the same
+  //   conversation as the target message!
+  storyReactionMessage?: MessageModel;
   targetAuthorUuid: string;
   targetTimestamp: number;
-  fromId: string;
   timestamp: number;
-  source: ReactionSource;
 };

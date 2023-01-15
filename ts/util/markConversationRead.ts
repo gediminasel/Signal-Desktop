@@ -1,4 +1,4 @@
-// Copyright 2021-2022 Signal Messenger, LLC
+// Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { omit } from 'lodash';
@@ -13,6 +13,7 @@ import { tapToViewMessagesDeletionService } from '../services/tapToViewMessagesD
 import { isGroup, isDirectConversation } from './whatTypeOfConversation';
 import * as log from '../logging/log';
 import { getConversationIdForLogging } from './idForLogging';
+import { drop } from './drop';
 import { isConversationAccepted } from './isConversationAccepted';
 import { ReadStatus } from '../messages/MessageReadStatus';
 
@@ -133,7 +134,7 @@ export async function markConversationRead(
         'markConversationRead: We are primary device; not sending read syncs'
       );
     } else {
-      readSyncJobQueue.add({ readSyncs });
+      drop(readSyncJobQueue.add({ readSyncs }));
     }
 
     if (isConversationAccepted(conversationAttrs)) {
@@ -144,8 +145,8 @@ export async function markConversationRead(
     }
   }
 
-  expiringMessagesDeletionService.update();
-  tapToViewMessagesDeletionService.update();
+  void expiringMessagesDeletionService.update();
+  void tapToViewMessagesDeletionService.update();
 
   return true;
 }

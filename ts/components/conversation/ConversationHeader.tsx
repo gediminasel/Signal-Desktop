@@ -1,4 +1,4 @@
-// Copyright 2018-2022 Signal Messenger, LLC
+// Copyright 2018 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { ReactNode } from 'react';
@@ -20,6 +20,7 @@ import { InContactsIcon } from '../InContactsIcon';
 import type { LocalizerType, ThemeType } from '../../types/Util';
 import type {
   ConversationType,
+  PopPanelForConversationActionType,
   PushPanelForConversationActionType,
 } from '../../state/ducks/conversations';
 import type { BadgeType } from '../../badges/types';
@@ -85,17 +86,15 @@ export type PropsDataType = {
 
 export type PropsActionsType = {
   destroyMessages: (conversationId: string) => void;
-  onArchive: () => void;
-  onGoBack: () => void;
-  onMarkUnread: () => void;
-  onMoveToInbox: () => void;
+  onArchive: (conversationId: string) => void;
+  onMarkUnread: (conversationId: string) => void;
+  onMoveToInbox: (conversationId: string) => void;
   onOutgoingAudioCallInConversation: (conversationId: string) => void;
   onOutgoingVideoCallInConversation: (conversationId: string) => void;
-  onSearchInConversation: () => void;
-  onShowAllMedia: () => void;
-  onJumpToDate: (timestamp: number) => void;
-  onShowConversationDetails: () => void;
   pushPanelForConversation: PushPanelForConversationActionType;
+  popPanelForConversation: PopPanelForConversationActionType;
+  searchInConversation: (conversationId: string) => void;
+  jumpToDate: (conversationId: string, timestamp: number) => void;
   setDisappearingMessages: (
     conversationId: string,
     seconds: DurationInSeconds
@@ -158,12 +157,12 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
   }
 
   private renderBackButton(): ReactNode {
-    const { i18n, onGoBack, showBackButton } = this.props;
+    const { i18n, popPanelForConversation, showBackButton } = this.props;
 
     return (
       <button
         type="button"
-        onClick={onGoBack}
+        onClick={popPanelForConversation}
         className={classNames(
           'module-ConversationHeader__back-icon',
           showBackButton ? 'module-ConversationHeader__back-icon--show' : null
@@ -319,12 +318,12 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
   }
 
   private renderSearchButton(): ReactNode {
-    const { i18n, onSearchInConversation, showBackButton } = this.props;
+    const { i18n, id, searchInConversation, showBackButton } = this.props;
 
     return (
       <button
         type="button"
-        onClick={onSearchInConversation}
+        onClick={() => searchInConversation(id)}
         className={classNames(
           'module-ConversationHeader__button',
           'module-ConversationHeader__button--search',
@@ -354,9 +353,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
       onArchive,
       onMarkUnread,
       onMoveToInbox,
-      onShowAllMedia,
-      onJumpToDate,
-      onShowConversationDetails,
+      jumpToDate,
       pushPanelForConversation,
       setDisappearingMessages,
       setMuteExpiration,
@@ -479,7 +476,13 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
           ))}
         </SubMenu>
         {!isGroup || hasGV2AdminEnabled ? (
-          <MenuItem onClick={onShowConversationDetails}>
+          <MenuItem
+            onClick={() =>
+              pushPanelForConversation({
+                type: PanelType.ConversationDetails,
+              })
+            }
+          >
             {isGroup
               ? i18n('showConversationDetails')
               : i18n('showConversationDetails--direct')}
@@ -514,7 +517,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
                 isoDate.getDate()
               );
               localDate.setHours(0, 0, 0, 0);
-              onJumpToDate(localDate.getTime());
+              jumpToDate(id, localDate.getTime());
             }}
             ref={this.jumpToDateInputRef}
           />
@@ -522,23 +525,31 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
         {isGroup && !hasGV2AdminEnabled ? (
           <MenuItem
             onClick={() =>
-              pushPanelForConversation(id, { type: PanelType.GroupV1Members })
+              pushPanelForConversation({ type: PanelType.GroupV1Members })
             }
           >
             {i18n('showMembers')}
           </MenuItem>
         ) : null}
-        <MenuItem onClick={onShowAllMedia}>{i18n('viewRecentMedia')}</MenuItem>
+        <MenuItem
+          onClick={() => pushPanelForConversation({ type: PanelType.AllMedia })}
+        >
+          {i18n('viewRecentMedia')}
+        </MenuItem>
         <MenuItem divider />
         {!markedUnread ? (
-          <MenuItem onClick={onMarkUnread}>{i18n('markUnread')}</MenuItem>
+          <MenuItem onClick={() => onMarkUnread(id)}>
+            {i18n('markUnread')}
+          </MenuItem>
         ) : null}
         {isArchived ? (
-          <MenuItem onClick={onMoveToInbox}>
+          <MenuItem onClick={() => onMoveToInbox(id)}>
             {i18n('moveConversationToInbox')}
           </MenuItem>
         ) : (
-          <MenuItem onClick={onArchive}>{i18n('archiveConversation')}</MenuItem>
+          <MenuItem onClick={() => onArchive(id)}>
+            {i18n('archiveConversation')}
+          </MenuItem>
         )}
         <MenuItem
           onClick={() => this.setState({ hasDeleteMessagesConfirmation: true })}
@@ -590,7 +601,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
   }
 
   private renderHeader(): ReactNode {
-    const { conversationTitle, groupVersion, onShowConversationDetails, type } =
+    const { conversationTitle, groupVersion, pushPanelForConversation, type } =
       this.props;
 
     if (conversationTitle !== undefined) {
@@ -609,14 +620,16 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
     switch (type) {
       case 'direct':
         onClick = () => {
-          onShowConversationDetails();
+          pushPanelForConversation({ type: PanelType.ConversationDetails });
         };
         break;
       case 'group': {
         const hasGV2AdminEnabled = groupVersion === 2;
         onClick = hasGV2AdminEnabled
           ? () => {
-              onShowConversationDetails();
+              pushPanelForConversation({
+                type: PanelType.ConversationDetails,
+              });
             }
           : undefined;
         break;

@@ -1,4 +1,4 @@
-// Copyright 2018-2022 Signal Messenger, LLC
+// Copyright 2018 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 // The idea with this file is to make it webpackable for the style guide
@@ -24,12 +24,8 @@ import { StagedLinkPreview } from './components/conversation/StagedLinkPreview';
 import { DisappearingTimeDialog } from './components/DisappearingTimeDialog';
 
 // State
-import { createConversationDetails } from './state/roots/createConversationDetails';
 import { createApp } from './state/roots/createApp';
-import { createGroupV2JoinModal } from './state/roots/createGroupV2JoinModal';
-import { createMessageDetail } from './state/roots/createMessageDetail';
 import { createSafetyNumberViewer } from './state/roots/createSafetyNumberViewer';
-import { createShortcutGuideModal } from './state/roots/createShortcutGuideModal';
 
 import { createStore } from './state/createStore';
 import * as appDuck from './state/ducks/app';
@@ -395,11 +391,7 @@ export const setup = (options: {
 
   const Roots = {
     createApp,
-    createConversationDetails,
-    createGroupV2JoinModal,
-    createMessageDetail,
     createSafetyNumberViewer,
-    createShortcutGuideModal,
   };
 
   const Ducks = {

@@ -1,4 +1,4 @@
-// Copyright 2019-2022 Signal Messenger, LLC
+// Copyright 2019 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { isEmpty, mapValues, pick } from 'lodash';
@@ -8,10 +8,8 @@ import { connect } from 'react-redux';
 
 import { mapDispatchToProps } from '../actions';
 import type {
-  PropsActionsType as TimelineActionsType,
   ContactSpoofingReviewPropType,
   WarningType as TimelineWarningType,
-  PropsType as ComponentPropsType,
 } from '../../components/conversation/Timeline';
 import { Timeline } from '../../components/conversation/Timeline';
 import type { StateType } from '../reducer';
@@ -19,12 +17,12 @@ import type { ConversationType } from '../ducks/conversations';
 
 import { getIntl, getTheme } from '../selectors/user';
 import {
+  getMessages,
   getConversationByUuidSelector,
   getConversationMessagesSelector,
   getConversationSelector,
   getConversationsByTitleSelector,
   getInvitedContactsForNewlyCreatedGroup,
-  getMessageSelector,
   getSelectedMessage,
 } from '../selectors/conversations';
 
@@ -50,46 +48,12 @@ import { ContactSpoofingType } from '../../util/contactSpoofing';
 import type { UnreadIndicatorPlacement } from '../../util/timelineUtil';
 import type { WidthBreakpoint } from '../../components/_util';
 import { getPreferredBadgeSelector } from '../selectors/badges';
-import { markViewed } from '../ducks/conversations';
 
 type ExternalProps = {
   id: string;
-
-  // Note: most action creators are not wired into redux; for now they
-  //   are provided by ConversationView in setupTimeline().
 };
 
-export type TimelinePropsType = ExternalProps &
-  Pick<
-    ComponentPropsType,
-    | 'acknowledgeGroupMemberNameCollisions'
-    | 'contactSupport'
-    | 'blockGroupLinkRequests'
-    | 'downloadNewVersion'
-    | 'kickOffAttachmentDownload'
-    | 'learnMoreAboutDeliveryIssue'
-    | 'loadNewerMessages'
-    | 'loadNewestMessages'
-    | 'loadOlderMessages'
-    | 'markAttachmentAsCorrupted'
-    | 'markMessageRead'
-    | 'openGiftBadge'
-    | 'openLink'
-    | 'reactToMessage'
-    | 'removeMember'
-    | 'retryDeleteForEveryone'
-    | 'retrySend'
-    | 'scrollToQuotedMessage'
-    | 'showExpiredIncomingTapToViewToast'
-    | 'showExpiredOutgoingTapToViewToast'
-    | 'showMessageDetail'
-    | 'startConversation'
-    | 'unblurAvatar'
-    | 'updateSharedGroups'
-  >;
-
 function renderItem({
-  actionProps,
   containerElementRef,
   containerWidthBreakpoint,
   conversationId,
@@ -99,7 +63,6 @@ function renderItem({
   previousMessageId,
   unreadIndicatorPlacement,
 }: {
-  actionProps: TimelineActionsType;
   containerElementRef: RefObject<HTMLElement>;
   containerWidthBreakpoint: WidthBreakpoint;
   conversationId: string;
@@ -111,7 +74,6 @@ function renderItem({
 }): JSX.Element {
   return (
     <SmartTimelineItem
-      {...actionProps}
       containerElementRef={containerElementRef}
       containerWidthBreakpoint={containerWidthBreakpoint}
       conversationId={conversationId}
@@ -133,18 +95,8 @@ function renderContactSpoofingReviewDialog(
   return <SmartContactSpoofingReviewDialog {...props} />;
 }
 
-function renderHeroRow(
-  id: string,
-  unblurAvatar: () => void,
-  updateSharedGroups: () => unknown
-): JSX.Element {
-  return (
-    <SmartHeroRow
-      id={id}
-      unblurAvatar={unblurAvatar}
-      updateSharedGroups={updateSharedGroups}
-    />
-  );
+function renderHeroRow(id: string): JSX.Element {
+  return <SmartHeroRow id={id} />;
 }
 function renderTypingBubble(id: string): JSX.Element {
   return <SmartTypingBubble id={id} />;
@@ -270,16 +222,15 @@ const getContactSpoofingReview = (
 };
 
 const mapStateToProps = (state: StateType, props: ExternalProps) => {
-  const { id, ...actions } = props;
+  const { id } = props;
 
   const conversation = getConversationSelector(state)(id);
 
   const conversationMessages = getConversationMessagesSelector(state)(id);
   const selectedMessage = getSelectedMessage(state);
 
-  const messageSelector = getMessageSelector(state);
   const getTimestampForMessage = (messageId: string): undefined | number =>
-    messageSelector(messageId)?.timestamp;
+    getMessages(state)[messageId]?.timestamp;
 
   return {
     id,
@@ -306,8 +257,6 @@ const mapStateToProps = (state: StateType, props: ExternalProps) => {
     renderContactSpoofingReviewDialog,
     renderHeroRow,
     renderTypingBubble,
-    markViewed,
-    ...actions,
   };
 };
 

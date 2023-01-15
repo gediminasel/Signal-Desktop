@@ -1,4 +1,4 @@
-// Copyright 2021-2022 Signal Messenger, LLC
+// Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { ThunkAction, ThunkDispatch } from 'redux-thunk';
@@ -24,8 +24,8 @@ import dataInterface from '../../sql/Client';
 import { ReadStatus } from '../../messages/MessageReadStatus';
 import { SafetyNumberChangeSource } from '../../components/SafetyNumberChangeDialog';
 import { StoryViewDirectionType, StoryViewModeType } from '../../types/Stories';
-import { ToastReactionFailed } from '../../components/ToastReactionFailed';
-import { assertDev } from '../../util/assert';
+import { assertDev, strictAssert } from '../../util/assert';
+import { drop } from '../../util/drop';
 import { blockSendUntilConversationsAreVerified } from '../../util/blockSendUntilConversationsAreVerified';
 import { deleteStoryForEveryone as doDeleteStoryForEveryone } from '../../util/deleteStoryForEveryone';
 import { deleteGroupStoryReplyForEveryone as doDeleteGroupStoryReplyForEveryone } from '../../util/deleteGroupStoryReplyForEveryone';
@@ -35,7 +35,6 @@ import { markOnboardingStoryAsRead } from '../../util/markOnboardingStoryAsRead'
 import { markViewed } from '../../services/MessageUpdater';
 import { queueAttachmentDownloads } from '../../util/queueAttachmentDownloads';
 import { replaceIndex } from '../../util/replaceIndex';
-import { showToast } from '../../util/showToast';
 import type { DurationInSeconds } from '../../util/durations';
 import { hasFailed, isDownloaded, isDownloading } from '../../types/Attachment';
 import {
@@ -57,6 +56,9 @@ import { verifyStoryListMembers as doVerifyStoryListMembers } from '../../util/v
 import { viewSyncJobQueue } from '../../jobs/viewSyncJobQueue';
 import { viewedReceiptsJobQueue } from '../../jobs/viewedReceiptsJobQueue';
 import { getOwn } from '../../util/getOwn';
+import { SHOW_TOAST } from './toast';
+import { ToastType } from '../../types/Toast';
+import type { ShowToastActionType } from './toast';
 
 export type StoryDataType = {
   attachment?: AttachmentType;
@@ -369,18 +371,23 @@ function markStoryRead(
       log.warn(`markStoryRead: no message found ${messageId}`);
       return;
     }
+    const authorId = message.attributes.sourceUuid;
+    strictAssert(
+      authorId,
+      'markStoryRead: The message needs a sender to mark it read!'
+    );
 
     const isSignalOnboardingStory = message.get('sourceUuid') === SIGNAL_ACI;
 
     if (isSignalOnboardingStory) {
-      markOnboardingStoryAsRead();
+      void markOnboardingStoryAsRead();
       return;
     }
 
     const storyReadDate = Date.now();
 
     message.set(markViewed(message.attributes, storyReadDate));
-    window.Signal.Data.saveMessage(message.attributes, {
+    void window.Signal.Data.saveMessage(message.attributes, {
       ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
     });
 
@@ -394,15 +401,15 @@ function markStoryRead(
     const viewSyncs: Array<SyncType> = [viewedReceipt];
 
     if (!window.ConversationController.areWePrimaryDevice()) {
-      viewSyncJobQueue.add({ viewSyncs });
+      drop(viewSyncJobQueue.add({ viewSyncs }));
     }
 
     if (window.Events.getStoryViewReceiptsEnabled()) {
-      viewedReceiptsJobQueue.add({ viewedReceipt });
+      drop(viewedReceiptsJobQueue.add({ viewedReceipt }));
     }
 
     await dataInterface.addNewStoryRead({
-      authorId: message.attributes.sourceUuid,
+      authorId,
       conversationId: message.attributes.conversationId,
       storyId: messageId,
       storyReadDate,
@@ -492,7 +499,12 @@ function queueStoryDownload(
 function reactToStory(
   nextReaction: string,
   messageId: string
-): ThunkAction<void, RootStateType, unknown, NoopActionType> {
+): ThunkAction<
+  void,
+  RootStateType,
+  unknown,
+  ShowToastActionType | NoopActionType
+> {
   return async dispatch => {
     try {
       await enqueueReactionForSend({
@@ -500,15 +512,19 @@ function reactToStory(
         emoji: nextReaction,
         remove: false,
       });
+      dispatch({
+        type: 'NOOP',
+        payload: null,
+      });
     } catch (error) {
       log.error('Error enqueuing reaction', error, messageId, nextReaction);
-      showToast(ToastReactionFailed);
+      dispatch({
+        type: SHOW_TOAST,
+        payload: {
+          toastType: ToastType.ReactionFailed,
+        },
+      });
     }
-
-    dispatch({
-      type: 'NOOP',
-      payload: null,
-    });
   };
 }
 
@@ -588,7 +604,7 @@ function sendStoryMessage(
       'sendStoryMessage: sendStoryModalData is not defined, cannot send'
     );
 
-    log.info('sendStoryMessage: Verifing trust for all recipients');
+    log.info('sendStoryMessage: Verifying trust for all recipients');
 
     const result = await blockSendUntilConversationsAreVerified(
       sendStoryModalData,

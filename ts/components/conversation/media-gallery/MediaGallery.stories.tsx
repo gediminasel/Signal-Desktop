@@ -16,7 +16,6 @@ import {
 } from './AttachmentSection.stories';
 import type { Props } from './MediaGallery';
 import { MediaGallery } from './MediaGallery';
-import type { MediaItemType } from '../../../types/MediaItem';
 
 const i18n = setupI18n('en', enMessages);
 
@@ -24,16 +23,14 @@ export default {
   title: 'Components/Conversation/MediaGallery/MediaGallery',
 };
 
-export type PartialProps = Omit<Omit<Partial<Props>, 'media'>, 'documents'> & {
-  documents?: Array<MediaItemType>;
-  media?: Array<MediaItemType>;
-};
-
-const createProps = (overrideProps: PartialProps = {}): Props => ({
+const createProps = (overrideProps: Partial<Props> = {}): Props => ({
+  conversationId: '123',
+  documents: overrideProps.documents || [],
   i18n,
-  onItemClick: action('onItemClick'),
-  documents: async () => [overrideProps.documents || [], false],
-  media: async () => [overrideProps.media || [], false],
+  loadMediaItems: action('loadMediaItems'),
+  media: overrideProps.media || [],
+  saveAttachment: action('saveAttachment'),
+  showLightboxWithMedia: action('showLightboxWithMedia'),
 });
 
 export function Populated(): JSX.Element {

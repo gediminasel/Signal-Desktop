@@ -1,4 +1,4 @@
-// Copyright 2016-2022 Signal Messenger, LLC
+// Copyright 2016 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import PQueue from 'p-queue';
@@ -1105,7 +1105,7 @@ export class SignalProtocolStore extends EventEmitter {
 
   async getOpenDevices(
     ourUuid: UUID,
-    identifiers: Array<string>,
+    identifiers: ReadonlyArray<string>,
     { zone = GLOBAL_ZONE }: SessionTransactionOptions = {}
   ): Promise<{
     devices: Array<DeviceType>;
@@ -1419,7 +1419,7 @@ export class SignalProtocolStore extends EventEmitter {
     }
 
     sessionResets[id] = Date.now();
-    window.storage.put('sessionResets', sessionResets);
+    await window.storage.put('sessionResets', sessionResets);
 
     try {
       const { uuid } = qualifiedAddress;
@@ -1446,7 +1446,7 @@ export class SignalProtocolStore extends EventEmitter {
       // If we failed to do the session reset, then we'll allow another attempt sooner
       //   than one hour from now.
       delete sessionResets[id];
-      window.storage.put('sessionResets', sessionResets);
+      await window.storage.put('sessionResets', sessionResets);
 
       log.error(
         `lightSessionReset/${id}: Encountered error`,

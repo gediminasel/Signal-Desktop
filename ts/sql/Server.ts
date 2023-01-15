@@ -1,4 +1,4 @@
-// Copyright 2020-2022 Signal Messenger, LLC
+// Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /* eslint-disable camelcase */
@@ -257,6 +257,7 @@ const dataInterface: ServerInterface = {
   getConversationRangeCenteredOnMessage,
   getConversationMessageStats,
   getLastConversationMessage,
+  getCallHistoryMessageByCallId,
   hasGroupCallHistoryMessage,
   migrateConversationMessages,
 
@@ -1510,7 +1511,7 @@ async function updateConversations(
   })();
 }
 
-function removeConversationsSync(ids: Array<string>): void {
+function removeConversationsSync(ids: ReadonlyArray<string>): void {
   const db = getInstance();
 
   // Our node interface doesn't seem to allow you to replace one single ? with an array
@@ -2047,7 +2048,7 @@ async function removeMessage(id: string): Promise<void> {
   db.prepare<Query>('DELETE FROM messages WHERE id = $id;').run({ id });
 }
 
-function removeMessagesSync(ids: Array<string>): void {
+function removeMessagesSync(ids: ReadonlyArray<string>): void {
   const db = getInstance();
 
   db.prepare<ArrayQuery>(
@@ -2058,7 +2059,7 @@ function removeMessagesSync(ids: Array<string>): void {
   ).run(ids);
 }
 
-async function removeMessages(ids: Array<string>): Promise<void> {
+async function removeMessages(ids: ReadonlyArray<string>): Promise<void> {
   batchMultiVarQuery(getInstance(), ids, removeMessagesSync);
 }
 
@@ -2092,7 +2093,7 @@ async function getMessagesById(
   return batchMultiVarQuery(
     db,
     messageIds,
-    (batch: Array<string>): Array<MessageType> => {
+    (batch: ReadonlyArray<string>): Array<MessageType> => {
       const query = db.prepare<ArrayQuery>(
         `SELECT json FROM messages WHERE id IN (${Array(batch.length)
           .fill('?')
@@ -2132,9 +2133,9 @@ async function getMessageBySender({
   sourceDevice,
   sent_at,
 }: {
-  source: string;
-  sourceUuid: UUIDStringType;
-  sourceDevice: number;
+  source?: string;
+  sourceUuid?: UUIDStringType;
+  sourceDevice?: number;
   sent_at: number;
 }): Promise<MessageType | undefined> {
   const db = getInstance();
@@ -2148,9 +2149,9 @@ async function getMessageBySender({
     LIMIT 2;
     `
   ).all({
-    source,
-    sourceUuid,
-    sourceDevice,
+    source: source || null,
+    sourceUuid: sourceUuid || null,
+    sourceDevice: sourceDevice || null,
     sent_at,
   });
 
@@ -2182,7 +2183,7 @@ export function _storyIdPredicate(
     return '$storyId IS NULL';
   }
 
-  // In constrast to: replies to a specific story
+  // In contrast to: replies to a specific story
   return 'storyId IS $storyId';
 }
 
@@ -2326,7 +2327,7 @@ async function getUnreadReactionsAndMarkRead({
       });
 
     const idsToUpdate = unreadMessages.map(item => item.rowid);
-    batchMultiVarQuery(db, idsToUpdate, (ids: Array<number>): void => {
+    batchMultiVarQuery(db, idsToUpdate, (ids: ReadonlyArray<number>): void => {
       db.prepare<ArrayQuery>(
         `
         UPDATE reactions SET
@@ -3010,6 +3011,32 @@ async function getConversationRangeCenteredOnMessage({
   })();
 }
 
+async function getCallHistoryMessageByCallId(
+  conversationId: string,
+  callId: string
+): Promise<string | void> {
+  const db = getInstance();
+
+  const id: string | void = db
+    .prepare<Query>(
+      `
+      SELECT id
+      FROM messages
+      WHERE conversationId = $conversationId
+        AND type = 'call-history'
+        AND callMode = 'Direct'
+        AND callId = $callId
+    `
+    )
+    .pluck()
+    .get({
+      conversationId,
+      callId,
+    });
+
+  return id;
+}
+
 async function hasGroupCallHistoryMessage(
   conversationId: string,
   eraId: string
@@ -3235,7 +3262,10 @@ function saveUnprocessedSync(data: UnprocessedType): string {
     throw new Error('saveUnprocessedSync: id was falsey');
   }
 
-  if (attempts >= MAX_UNPROCESSED_ATTEMPTS) {
+  if (attempts > MAX_UNPROCESSED_ATTEMPTS) {
+    logger.warn(
+      `saveUnprocessedSync: not saving ${id} due to exhausted attempts`
+    );
     removeUnprocessedSync(id);
     return id;
   }
@@ -3402,7 +3432,7 @@ async function getAllUnprocessedAndIncrementAttempts(): Promise<
       .prepare<Query>(
         `
           DELETE FROM unprocessed
-          WHERE attempts >= $MAX_UNPROCESSED_ATTEMPTS
+          WHERE attempts > $MAX_UNPROCESSED_ATTEMPTS
         `
       )
       .run({ MAX_UNPROCESSED_ATTEMPTS });
@@ -3431,7 +3461,7 @@ async function getAllUnprocessedAndIncrementAttempts(): Promise<
   })();
 }
 
-function removeUnprocessedsSync(ids: Array<string>): void {
+function removeUnprocessedsSync(ids: ReadonlyArray<string>): void {
   const db = getInstance();
 
   db.prepare<ArrayQuery>(
@@ -4703,7 +4733,7 @@ function modifyStoryDistributionMembersSync(
     });
   }
 
-  batchMultiVarQuery(db, toRemove, (uuids: Array<UUIDStringType>) => {
+  batchMultiVarQuery(db, toRemove, (uuids: ReadonlyArray<UUIDStringType>) => {
     db.prepare<ArrayQuery>(
       `
       DELETE FROM storyDistributionMembers
@@ -5191,7 +5221,7 @@ async function getKnownMessageAttachments(
     const messages = batchMultiVarQuery(
       db,
       rowids,
-      (batch: Array<number>): Array<MessageType> => {
+      (batch: ReadonlyArray<number>): Array<MessageType> => {
         const query = db.prepare<ArrayQuery>(
           `SELECT json FROM messages WHERE rowid IN (${Array(batch.length)
             .fill('?')

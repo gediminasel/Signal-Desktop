@@ -1,4 +1,4 @@
-// Copyright 2018-2022 Signal Messenger, LLC
+// Copyright 2018 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { ReactNode } from 'react';
@@ -29,7 +29,7 @@ export type PropsType = {
   getConversation?: (id: string) => ConversationType;
   i18n: LocalizerType;
   isViewOnce?: boolean;
-  media: Array<MediaItemType>;
+  media: ReadonlyArray<MediaItemType>;
   onReply?: (messageId: string) => void;
   saveAttachment: SaveAttachmentActionCreatorType;
   selectedIndex?: number;
@@ -216,7 +216,7 @@ export function Lightbox({
     }
 
     if (videoElement.paused) {
-      videoElement.play();
+      void videoElement.play();
     } else {
       videoElement.pause();
     }

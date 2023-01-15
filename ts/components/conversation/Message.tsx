@@ -1,4 +1,4 @@
-// Copyright 2018-2022 Signal Messenger, LLC
+// Copyright 2018 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { ReactNode, RefObject } from 'react';
@@ -93,8 +93,9 @@ import type { AnyPaymentEvent } from '../../types/Payment';
 import { Emojify } from './Emojify';
 import { getPaymentEventDescription } from '../../messages/helpers';
 import { PanelType } from '../../types/Panels';
+import { openLinkInWebBrowser } from '../../util/openLinkInWebBrowser';
 
-const GUESS_METADATA_WIDTH_TIMESTAMP_SIZE = 10;
+const GUESS_METADATA_WIDTH_TIMESTAMP_SIZE = 16;
 const GUESS_METADATA_WIDTH_EXPIRE_TIMER_SIZE = 18;
 const GUESS_METADATA_WIDTH_OUTGOING_SIZE: Record<MessageStatusType, number> = {
   delivered: 24,
@@ -168,7 +169,7 @@ export type AudioAttachmentProps = {
   id: string;
   conversationId: string;
   played: boolean;
-  showMessageDetail: (id: string) => void;
+  pushPanelForConversation: PushPanelForConversationActionType;
   status?: MessageStatusType;
   textPending?: boolean;
   timestamp: number;
@@ -224,7 +225,7 @@ export type PropsData = {
   >;
   reducedMotion?: boolean;
   conversationType: ConversationTypeType;
-  attachments?: Array<AttachmentType>;
+  attachments?: ReadonlyArray<AttachmentType>;
   giftBadge?: GiftBadgeType;
   payment?: AnyPaymentEvent;
   quote?: {
@@ -257,7 +258,7 @@ export type PropsData = {
     storyId?: string;
     text: string;
   };
-  previews: Array<LinkPreviewType>;
+  previews: ReadonlyArray<LinkPreviewType>;
 
   isTapToView?: boolean;
   isTapToViewExpired?: boolean;
@@ -278,8 +279,10 @@ export type PropsData = {
   isMessageRequestAccepted: boolean;
   bodyRanges?: HydratedBodyRangesType;
 
-  menu: JSX.Element | undefined;
+  renderMenu?: () => JSX.Element | undefined;
   onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void;
+
+  item?: never;
 };
 
 export type PropsHousekeeping = {
@@ -303,8 +306,6 @@ export type PropsActions = {
   messageExpanded: (id: string, displayLimit: number) => unknown;
   checkForAccount: (phoneNumber: string) => unknown;
 
-  showMessageDetail: (id: string) => void;
-
   startConversation: (e164: string, uuid: UUIDStringType) => void;
   showConversation: ShowConversationType;
   openGiftBadge: (messageId: string) => void;
@@ -319,7 +320,6 @@ export type PropsActions = {
     attachment: AttachmentType;
     messageId: string;
   }) => void;
-  markViewed(messageId: string): void;
   saveAttachment: SaveAttachmentActionCreatorType;
   showLightbox: (options: {
     attachment: AttachmentType;
@@ -327,9 +327,9 @@ export type PropsActions = {
   }) => void;
   showLightboxForViewOnceMedia: (messageId: string) => unknown;
 
-  openLink: (url: string) => void;
   scrollToQuotedMessage: (options: {
     authorId: string;
+    conversationId: string;
     sentAt: number;
   }) => void;
   selectMessage?: (messageId: string, conversationId: string) => unknown;
@@ -766,15 +766,15 @@ export class Message extends React.PureComponent<Props, State> {
       direction,
       expirationLength,
       expirationTimestamp,
+      i18n,
+      id,
       isSticker,
       isTapToViewExpired,
+      pushPanelForConversation,
       status,
-      i18n,
       text,
       textAttachment,
       timestamp,
-      id,
-      showMessageDetail,
     } = this.props;
 
     const isStickerLike = isSticker || this.canRenderStickerLikeEmoji();
@@ -793,7 +793,7 @@ export class Message extends React.PureComponent<Props, State> {
         isSticker={isStickerLike}
         isTapToViewExpired={isTapToViewExpired}
         onWidthMeasured={isInline ? this.updateMetadataWidth : undefined}
-        showMessageDetail={showMessageDetail}
+        pushPanelForConversation={pushPanelForConversation}
         status={status}
         textPending={textAttachment?.pending}
         timestamp={timestamp}
@@ -878,24 +878,24 @@ export class Message extends React.PureComponent<Props, State> {
   public renderAttachment(): JSX.Element | null {
     const {
       attachments,
+      conversationId,
       direction,
       expirationLength,
       expirationTimestamp,
       i18n,
       id,
-      conversationId,
       isSticker,
       kickOffAttachmentDownload,
       markAttachmentAsCorrupted,
+      pushPanelForConversation,
       quote,
       readStatus,
       reducedMotion,
       renderAudioAttachment,
       renderingContext,
-      showMessageDetail,
-      showLightbox,
       shouldCollapseAbove,
       shouldCollapseBelow,
+      showLightbox,
       status,
       text,
       textAttachment,
@@ -1018,7 +1018,7 @@ export class Message extends React.PureComponent<Props, State> {
         id,
         conversationId,
         played,
-        showMessageDetail,
+        pushPanelForConversation,
         status,
         textPending: textAttachment?.pending,
         timestamp,
@@ -1122,7 +1122,6 @@ export class Message extends React.PureComponent<Props, State> {
       i18n,
       id,
       kickOffAttachmentDownload,
-      openLink,
       previews,
       quote,
       shouldCollapseAbove,
@@ -1186,7 +1185,7 @@ export class Message extends React.PureComponent<Props, State> {
             });
             return;
           }
-          openLink(first.url);
+          openLinkInWebBrowser(first.url);
         }
       : noop;
     const contents = (
@@ -1271,14 +1270,14 @@ export class Message extends React.PureComponent<Props, State> {
             event.stopPropagation();
             event.preventDefault();
 
-            openLink(first.url);
+            openLinkInWebBrowser(first.url);
           }
         }}
         onClick={(event: React.MouseEvent) => {
           event.stopPropagation();
           event.preventDefault();
 
-          openLink(first.url);
+          openLinkInWebBrowser(first.url);
         }}
       >
         {contents}
@@ -1518,6 +1517,7 @@ export class Message extends React.PureComponent<Props, State> {
   public renderQuote(): JSX.Element | null {
     const {
       conversationColor,
+      conversationId,
       conversationTitle,
       customColor,
       direction,
@@ -1540,6 +1540,7 @@ export class Message extends React.PureComponent<Props, State> {
       : () => {
           scrollToQuotedMessage({
             authorId: quote.authorId,
+            conversationId,
             sentAt: quote.sentAt,
           });
         };
@@ -1629,7 +1630,6 @@ export class Message extends React.PureComponent<Props, State> {
   public renderEmbeddedContact(): JSX.Element | null {
     const {
       contact,
-      conversationId,
       conversationType,
       direction,
       i18n,
@@ -1665,7 +1665,7 @@ export class Message extends React.PureComponent<Props, State> {
                 }
               : undefined;
 
-          pushPanelForConversation(conversationId, {
+          pushPanelForConversation({
             type: PanelType.ContactDetails,
             args: {
               contact,
@@ -1812,6 +1812,11 @@ export class Message extends React.PureComponent<Props, State> {
             : null
         )}
         dir={isRTL ? 'rtl' : undefined}
+        onDoubleClick={(event: React.MouseEvent) => {
+          // Prevent double-click interefering with interactions _inside_
+          // the bubble.
+          event.stopPropagation();
+        }}
       >
         <MessageBodyReadMore
           bodyRanges={bodyRanges}
@@ -2305,7 +2310,6 @@ export class Message extends React.PureComponent<Props, State> {
     const {
       attachments,
       contact,
-      conversationId,
       showLightboxForViewOnceMedia,
       direction,
       giftBadge,
@@ -2337,15 +2341,8 @@ export class Message extends React.PureComponent<Props, State> {
         return;
       }
 
-      if (attachments && !isDownloaded(attachments[0])) {
-        event.preventDefault();
-        event.stopPropagation();
-        kickOffAttachmentDownload({
-          attachment: attachments[0],
-          messageId: id,
-        });
-        return;
-      }
+      event.preventDefault();
+      event.stopPropagation();
 
       if (isTapToViewExpired) {
         const action =
@@ -2353,12 +2350,20 @@ export class Message extends React.PureComponent<Props, State> {
             ? showExpiredOutgoingTapToViewToast
             : showExpiredIncomingTapToViewToast;
         action();
-      } else {
-        event.preventDefault();
-        event.stopPropagation();
 
-        showLightboxForViewOnceMedia(id);
+        return;
       }
+
+      if (attachments && !isDownloaded(attachments[0])) {
+        kickOffAttachmentDownload({
+          attachment: attachments[0],
+          messageId: id,
+        });
+
+        return;
+      }
+
+      showLightboxForViewOnceMedia(id);
 
       return;
     }
@@ -2442,7 +2447,7 @@ export class Message extends React.PureComponent<Props, State> {
               uuid: contact.uuid,
             }
           : undefined;
-      pushPanelForConversation(conversationId, {
+      pushPanelForConversation({
         type: PanelType.ContactDetails,
         args: {
           contact,
@@ -2592,7 +2597,7 @@ export class Message extends React.PureComponent<Props, State> {
       isSticker,
       shouldCollapseAbove,
       shouldCollapseBelow,
-      menu,
+      renderMenu,
       onKeyDown,
     } = this.props;
     const { expired, expiring, isSelected, imageBroken } = this.state;
@@ -2626,7 +2631,7 @@ export class Message extends React.PureComponent<Props, State> {
         {this.renderError()}
         {this.renderAvatar()}
         {this.renderContainer()}
-        {menu}
+        {renderMenu?.()}
       </div>
     );
   }

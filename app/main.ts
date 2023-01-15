@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Signal Messenger, LLC
+// Copyright 2017 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { join, normalize } from 'path';
@@ -43,6 +43,7 @@ import { redactAll, addSensitivePath } from '../ts/util/privacy';
 import { createSupportUrl } from '../ts/util/createSupportUrl';
 import { missingCaseError } from '../ts/util/missingCaseError';
 import { strictAssert } from '../ts/util/assert';
+import { drop } from '../ts/util/drop';
 import { consoleLogger } from '../ts/util/consoleLogger';
 import type { ThemeSettingType } from '../ts/types/StorageUIKeys';
 import { ThemeType } from '../ts/types/Util';
@@ -134,8 +135,6 @@ function getMainWindow() {
 const development =
   getEnvironment() === Environment.Development ||
   getEnvironment() === Environment.Staging;
-
-const isThrottlingEnabled = development || !isProduction(app.getVersion());
 
 const enableCI = config.get<boolean>('enableCI');
 const forcePreloadBundle = config.get<boolean>('forcePreloadBundle');
@@ -447,8 +446,7 @@ async function prepareUrl(
   return setUrlSearchParams(url, { config: JSON.stringify(parsed.data) }).href;
 }
 
-async function handleUrl(event: Electron.Event, rawTarget: string) {
-  event.preventDefault();
+async function handleUrl(rawTarget: string) {
   const parsedUrl = maybeParseUrl(rawTarget);
   if (!parsedUrl) {
     return;
@@ -481,8 +479,15 @@ function handleCommonWindowEvents(
   window: BrowserWindow,
   titleBarOverlay: TitleBarOverlayOptions | false = false
 ) {
-  window.webContents.on('will-navigate', handleUrl);
-  window.webContents.on('new-window', handleUrl);
+  window.webContents.on('will-navigate', (event, rawTarget) => {
+    event.preventDefault();
+
+    drop(handleUrl(rawTarget));
+  });
+  window.webContents.setWindowOpenHandler(({ url }) => {
+    drop(handleUrl(url));
+    return { action: 'deny' };
+  });
   window.webContents.on(
     'preload-error',
     (_event: Electron.Event, preloadPath: string, error: Error) => {
@@ -520,9 +525,11 @@ function handleCommonWindowEvents(
       return;
     }
 
-    settingsChannel?.invokeCallbackInMainWindow('persistZoomFactor', [
-      zoomFactor,
-    ]);
+    drop(
+      settingsChannel?.invokeCallbackInMainWindow('persistZoomFactor', [
+        zoomFactor,
+      ])
+    );
 
     lastZoomFactor = zoomFactor;
   };
@@ -676,7 +683,7 @@ async function createWindow() {
           : '../ts/windows/main/preload.js'
       ),
       spellcheck: await getSpellCheckSetting(),
-      backgroundThrottling: isThrottlingEnabled,
+      backgroundThrottling: true,
       enablePreferredSizeMode: true,
       disableBlinkFeatures: 'Accelerated2dCanvas,AcceleratedSmallCanvases',
     },
@@ -793,12 +800,6 @@ async function createWindow() {
 
   mainWindow.on('resize', captureWindowStats);
   mainWindow.on('move', captureWindowStats);
-
-  if (getEnvironment() === Environment.Test) {
-    mainWindow.loadURL(await prepareFileUrl([__dirname, '../test/index.html']));
-  } else {
-    mainWindow.loadURL(await prepareFileUrl([__dirname, '../background.html']));
-  }
 
   if (!enableCI && config.get<boolean>('openDevTools')) {
     // Open the DevTools.
@@ -926,6 +927,16 @@ async function createWindow() {
       mainWindow.show();
     }
   });
+
+  if (getEnvironment() === Environment.Test) {
+    await mainWindow.loadURL(
+      await prepareFileUrl([__dirname, '../test/index.html'])
+    );
+  } else {
+    await mainWindow.loadURL(
+      await prepareFileUrl([__dirname, '../background.html'])
+    );
+  }
 }
 
 // Renderer asks if we are done with the database
@@ -982,10 +993,6 @@ ipc.on('set-is-call-active', (_event, isCallActive) => {
   preventDisplaySleepService.setEnabled(isCallActive);
 
   if (!mainWindow) {
-    return;
-  }
-
-  if (!isThrottlingEnabled) {
     return;
   }
 
@@ -1050,12 +1057,14 @@ const TEN_MINUTES = 10 * 60 * 1000;
 setTimeout(readyForUpdates, TEN_MINUTES);
 
 function openContactUs() {
-  shell.openExternal(createSupportUrl({ locale: app.getLocale() }));
+  drop(shell.openExternal(createSupportUrl({ locale: app.getLocale() })));
 }
 
 function openJoinTheBeta() {
   // If we omit the language, the site will detect the language and redirect
-  shell.openExternal('https://support.signal.org/hc/articles/360007318471');
+  drop(
+    shell.openExternal('https://support.signal.org/hc/articles/360007318471')
+  );
 }
 
 function openReleaseNotes() {
@@ -1064,18 +1073,22 @@ function openReleaseNotes() {
     return;
   }
 
-  shell.openExternal(
-    `https://github.com/signalapp/Signal-Desktop/releases/tag/v${app.getVersion()}`
+  drop(
+    shell.openExternal(
+      `https://github.com/signalapp/Signal-Desktop/releases/tag/v${app.getVersion()}`
+    )
   );
 }
 
 function openSupportPage() {
   // If we omit the language, the site will detect the language and redirect
-  shell.openExternal('https://support.signal.org/hc/sections/360001602812');
+  drop(
+    shell.openExternal('https://support.signal.org/hc/sections/360001602812')
+  );
 }
 
 function openForums() {
-  shell.openExternal('https://community.signalusers.org/');
+  drop(shell.openExternal('https://community.signalusers.org/'));
 }
 
 function showKeyboardShortcuts() {
@@ -1137,10 +1150,6 @@ async function showScreenShareWindow(sourceName: string) {
 
   handleCommonWindowEvents(screenShareWindow);
 
-  screenShareWindow.loadURL(
-    await prepareFileUrl([__dirname, '../screenShare.html'])
-  );
-
   screenShareWindow.on('closed', () => {
     screenShareWindow = undefined;
   });
@@ -1154,6 +1163,10 @@ async function showScreenShareWindow(sourceName: string) {
       );
     }
   });
+
+  await screenShareWindow.loadURL(
+    await prepareFileUrl([__dirname, '../screenShare.html'])
+  );
 }
 
 let aboutWindow: BrowserWindow | undefined;
@@ -1190,8 +1203,6 @@ async function showAbout() {
 
   handleCommonWindowEvents(aboutWindow, titleBarOverlay);
 
-  aboutWindow.loadURL(await prepareFileUrl([__dirname, '../about.html']));
-
   aboutWindow.on('closed', () => {
     aboutWindow = undefined;
   });
@@ -1201,6 +1212,8 @@ async function showAbout() {
       aboutWindow.show();
     }
   });
+
+  await aboutWindow.loadURL(await prepareFileUrl([__dirname, '../about.html']));
 }
 
 let settingsWindow: BrowserWindow | undefined;
@@ -1238,8 +1251,6 @@ async function showSettingsWindow() {
 
   handleCommonWindowEvents(settingsWindow, titleBarOverlay);
 
-  settingsWindow.loadURL(await prepareFileUrl([__dirname, '../settings.html']));
-
   settingsWindow.on('closed', () => {
     settingsWindow = undefined;
   });
@@ -1252,6 +1263,10 @@ async function showSettingsWindow() {
 
     settingsWindow.show();
   });
+
+  await settingsWindow.loadURL(
+    await prepareFileUrl([__dirname, '../settings.html'])
+  );
 }
 
 async function getIsLinked() {
@@ -1269,7 +1284,7 @@ async function showStickerCreator() {
   if (!(await getIsLinked())) {
     const message = getLocale().i18n('StickerCreator--Authentication--error');
 
-    dialog.showMessageBox({
+    await dialog.showMessageBox({
       type: 'warning',
       message,
     });
@@ -1321,8 +1336,6 @@ async function showStickerCreator() {
       )
     : prepareFileUrl([__dirname, '../sticker-creator/dist/index.html']);
 
-  stickerCreatorWindow.loadURL(await appUrl);
-
   stickerCreatorWindow.on('closed', () => {
     stickerCreatorWindow = undefined;
   });
@@ -1339,6 +1352,8 @@ async function showStickerCreator() {
       stickerCreatorWindow.webContents.openDevTools();
     }
   });
+
+  await stickerCreatorWindow.loadURL(await appUrl);
 }
 
 let debugLogWindow: BrowserWindow | undefined;
@@ -1381,10 +1396,6 @@ async function showDebugLogWindow() {
 
   handleCommonWindowEvents(debugLogWindow, titleBarOverlay);
 
-  debugLogWindow.loadURL(
-    await prepareFileUrl([__dirname, '../debug_log.html'])
-  );
-
   debugLogWindow.on('closed', () => {
     debugLogWindow = undefined;
   });
@@ -1397,6 +1408,10 @@ async function showDebugLogWindow() {
       debugLogWindow.center();
     }
   });
+
+  await debugLogWindow.loadURL(
+    await prepareFileUrl([__dirname, '../debug_log.html'])
+  );
 }
 
 let permissionsPopupWindow: BrowserWindow | undefined;
@@ -1440,13 +1455,6 @@ function showPermissionsPopupWindow(forCalling: boolean, forCamera: boolean) {
 
     handleCommonWindowEvents(permissionsPopupWindow);
 
-    permissionsPopupWindow.loadURL(
-      await prepareFileUrl([__dirname, '../permissions_popup.html'], {
-        forCalling,
-        forCamera,
-      })
-    );
-
     permissionsPopupWindow.on('closed', () => {
       removeDarkOverlay();
       permissionsPopupWindow = undefined;
@@ -1460,6 +1468,13 @@ function showPermissionsPopupWindow(forCalling: boolean, forCamera: boolean) {
         permissionsPopupWindow.show();
       }
     });
+
+    await permissionsPopupWindow.loadURL(
+      await prepareFileUrl([__dirname, '../permissions_popup.html'], {
+        forCalling,
+        forCamera,
+      })
+    );
   });
 }
 
@@ -1523,7 +1538,7 @@ async function initializeSQL(
   }
 
   // Only if we've initialized things successfully do we set up the corruption handler
-  runSQLCorruptionHandler();
+  drop(runSQLCorruptionHandler());
 
   return { ok: true, error: undefined };
 }
@@ -1533,7 +1548,7 @@ const onDatabaseError = async (error: string) => {
   ready = false;
 
   if (mainWindow) {
-    settingsChannel?.invokeCallbackInMainWindow('closeDB', []);
+    drop(settingsChannel?.invokeCallbackInMainWindow('closeDB', []));
     mainWindow.close();
   }
   mainWindow = undefined;
@@ -1571,7 +1586,7 @@ let sqlInitPromise:
   | undefined;
 
 ipc.on('database-error', (_event: Electron.Event, error: string) => {
-  onDatabaseError(error);
+  drop(onDatabaseError(error));
 });
 
 function getAppLocale(): string {
@@ -1748,46 +1763,50 @@ app.on('ready', async () => {
   // lookup should be done only in ephemeral config.
   const backgroundColor = await getBackgroundColor({ ephemeralOnly: true });
 
-  // eslint-disable-next-line more/no-then
-  Promise.race([sqlInitPromise, timeout]).then(async maybeTimeout => {
-    if (maybeTimeout !== 'timeout') {
-      return;
-    }
-
-    getLogger().info(
-      'sql.initialize is taking more than three seconds; showing loading dialog'
-    );
-
-    loadingWindow = new BrowserWindow({
-      show: false,
-      width: 300,
-      height: 265,
-      resizable: false,
-      frame: false,
-      backgroundColor,
-      webPreferences: {
-        ...defaultWebPrefs,
-        nodeIntegration: false,
-        sandbox: false,
-        contextIsolation: true,
-        preload: join(__dirname, '../ts/windows/loading/preload.js'),
-      },
-      icon: windowIcon,
-    });
-
-    loadingWindow.once('ready-to-show', async () => {
-      if (!loadingWindow) {
+  drop(
+    // eslint-disable-next-line more/no-then
+    Promise.race([sqlInitPromise, timeout]).then(async maybeTimeout => {
+      if (maybeTimeout !== 'timeout') {
         return;
       }
-      loadingWindow.show();
-      // Wait for sql initialization to complete, but ignore errors
-      await sqlInitPromise;
-      loadingWindow.destroy();
-      loadingWindow = undefined;
-    });
 
-    loadingWindow.loadURL(await prepareFileUrl([__dirname, '../loading.html']));
-  });
+      getLogger().info(
+        'sql.initialize is taking more than three seconds; showing loading dialog'
+      );
+
+      loadingWindow = new BrowserWindow({
+        show: false,
+        width: 300,
+        height: 265,
+        resizable: false,
+        frame: false,
+        backgroundColor,
+        webPreferences: {
+          ...defaultWebPrefs,
+          nodeIntegration: false,
+          sandbox: false,
+          contextIsolation: true,
+          preload: join(__dirname, '../ts/windows/loading/preload.js'),
+        },
+        icon: windowIcon,
+      });
+
+      loadingWindow.once('ready-to-show', async () => {
+        if (!loadingWindow) {
+          return;
+        }
+        loadingWindow.show();
+        // Wait for sql initialization to complete, but ignore errors
+        await sqlInitPromise;
+        loadingWindow.destroy();
+        loadingWindow = undefined;
+      });
+
+      await loadingWindow.loadURL(
+        await prepareFileUrl([__dirname, '../loading.html'])
+      );
+    })
+  );
 
   try {
     await attachments.clearTempPath(userDataPath);
@@ -1852,7 +1871,7 @@ app.on('ready', async () => {
     shouldMinimizeToSystemTray(await systemTraySettingCache.get())
   );
 
-  ensureFilePermissions([
+  await ensureFilePermissions([
     'config.json',
     'sql/db.sqlite',
     'sql/db.sqlite-wal',
@@ -1990,7 +2009,7 @@ app.on('activate', () => {
   if (mainWindow) {
     mainWindow.show();
   } else {
-    createWindow();
+    drop(createWindow());
   }
 });
 
@@ -2001,9 +2020,7 @@ app.on(
     contents.on('will-attach-webview', attachEvent => {
       attachEvent.preventDefault();
     });
-    contents.on('new-window', newEvent => {
-      newEvent.preventDefault();
-    });
+    contents.setWindowOpenHandler(() => ({ action: 'deny' }));
   }
 );
 
@@ -2118,7 +2135,7 @@ ipc.on('stop-screen-share', () => {
 });
 
 ipc.on('show-screen-share', (_event: Electron.Event, sourceName: string) => {
-  showScreenShareWindow(sourceName);
+  drop(showScreenShareWindow(sourceName));
 });
 
 ipc.on('update-tray-icon', (_event: Electron.Event, unreadCount: number) => {
@@ -2307,18 +2324,20 @@ async function ensureFilePermissions(onlyFiles?: Array<string>) {
 
   // Touch each file in a queue
   const q = new PQueue({ concurrency: 5, timeout: 1000 * 60 * 2 });
-  q.addAll(
-    files.map(f => async () => {
-      const isDir = f.endsWith('/');
-      try {
-        await chmod(normalize(f), isDir ? 0o700 : 0o600);
-      } catch (error) {
-        getLogger().error(
-          'ensureFilePermissions: Error from chmod',
-          error.message
-        );
-      }
-    })
+  drop(
+    q.addAll(
+      files.map(f => async () => {
+        const isDir = f.endsWith('/');
+        try {
+          await chmod(normalize(f), isDir ? 0o700 : 0o600);
+        } catch (error) {
+          getLogger().error(
+            'ensureFilePermissions: Error from chmod',
+            error.message
+          );
+        }
+      })
+    )
   );
 
   await q.onEmpty();
@@ -2341,7 +2360,7 @@ ipc.handle('set-auto-launch', async (_event, value) => {
 });
 
 ipc.on('show-message-box', (_event, { type, message }) => {
-  dialog.showMessageBox({ type, message });
+  drop(dialog.showMessageBox({ type, message }));
 });
 
 ipc.on('show-item-in-folder', (_event, folder) => {
@@ -2454,7 +2473,7 @@ ipc.handle('getMenuOptions', async () => {
 
 ipc.handle('executeMenuAction', async (_event, action: MenuActionType) => {
   if (action === 'forceUpdate') {
-    forceUpdate();
+    drop(forceUpdate());
   } else if (action === 'openContactUs') {
     openContactUs();
   } else if (action === 'openForums') {
@@ -2470,15 +2489,15 @@ ipc.handle('executeMenuAction', async (_event, action: MenuActionType) => {
   } else if (action === 'setupAsStandalone') {
     setupAsStandalone();
   } else if (action === 'showAbout') {
-    showAbout();
+    drop(showAbout());
   } else if (action === 'showDebugLog') {
-    showDebugLogWindow();
+    drop(showDebugLogWindow());
   } else if (action === 'showKeyboardShortcuts') {
     showKeyboardShortcuts();
   } else if (action === 'showSettings') {
-    showSettingsWindow();
+    drop(showSettingsWindow());
   } else if (action === 'showStickerCreator') {
-    showStickerCreator();
+    drop(showStickerCreator());
   } else if (action === 'showWindow') {
     showWindow();
   } else {

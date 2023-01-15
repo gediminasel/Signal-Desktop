@@ -6,9 +6,14 @@ import type { ThunkAction } from 'redux-thunk';
 import type { AttachmentType } from '../../types/Attachment';
 import type { BoundActionCreatorsMapObject } from '../../hooks/useBoundActions';
 import type { MediaItemType } from '../../types/MediaItem';
-import type { StateType as RootStateType } from '../reducer';
+import type {
+  MessageChangedActionType,
+  MessageDeletedActionType,
+  MessageExpiredActionType,
+} from './conversations';
 import type { ShowStickerPackPreviewActionType } from './globalModals';
 import type { ShowToastActionType } from './toast';
+import type { StateType as RootStateType } from '../reducer';
 
 import * as log from '../../logging/log';
 import { getMessageById } from '../../messages/getMessageById';
@@ -20,7 +25,12 @@ import {
 import { isTapToView } from '../selectors/message';
 import { SHOW_TOAST } from './toast';
 import { ToastType } from '../../types/Toast';
-import { saveAttachmentFromMessage } from './conversations';
+import {
+  MESSAGE_CHANGED,
+  MESSAGE_DELETED,
+  MESSAGE_EXPIRED,
+  saveAttachmentFromMessage,
+} from './conversations';
 import { showStickerPackPreview } from './globalModals';
 import { useBoundActions } from '../../hooks/useBoundActions';
 
@@ -31,7 +41,7 @@ export type LightboxStateType =
   | {
       isShowingLightbox: true;
       isViewOnce: boolean;
-      media: Array<MediaItemType>;
+      media: ReadonlyArray<MediaItemType>;
       selectedAttachmentPath: string | undefined;
     };
 
@@ -46,12 +56,17 @@ type ShowLightboxActionType = {
   type: typeof SHOW_LIGHTBOX;
   payload: {
     isViewOnce: boolean;
-    media: Array<MediaItemType>;
+    media: ReadonlyArray<MediaItemType>;
     selectedAttachmentPath: string | undefined;
   };
 };
 
-type LightboxActionType = CloseLightboxActionType | ShowLightboxActionType;
+type LightboxActionType =
+  | CloseLightboxActionType
+  | MessageChangedActionType
+  | MessageDeletedActionType
+  | MessageExpiredActionType
+  | ShowLightboxActionType;
 
 function closeLightbox(): ThunkAction<
   void,
@@ -73,36 +88,8 @@ function closeLightbox(): ThunkAction<
         if (!item.attachment.path) {
           return;
         }
-        window.Signal.Migrations.deleteTempFile(item.attachment.path);
+        void window.Signal.Migrations.deleteTempFile(item.attachment.path);
       });
-    }
-
-    dispatch({
-      type: CLOSE_LIGHTBOX,
-    });
-  };
-}
-
-function closeLightboxIfViewingExpiredMessage(
-  messageId: string
-): ThunkAction<void, RootStateType, unknown, CloseLightboxActionType> {
-  return (dispatch, getState) => {
-    const { lightbox } = getState();
-
-    if (!lightbox.isShowingLightbox) {
-      return;
-    }
-
-    const { isViewOnce, media } = lightbox;
-
-    if (!isViewOnce) {
-      return;
-    }
-
-    const hasExpiredMedia = media.some(item => item.message.id === messageId);
-
-    if (!hasExpiredMedia) {
-      return;
     }
 
     dispatch({
@@ -113,7 +100,7 @@ function closeLightboxIfViewingExpiredMessage(
 
 function showLightboxWithMedia(
   selectedAttachmentPath: string | undefined,
-  media: Array<MediaItemType>
+  media: ReadonlyArray<MediaItemType>
 ): ShowLightboxActionType {
   return {
     type: SHOW_LIGHTBOX,
@@ -180,7 +167,6 @@ function showLightboxForViewOnceMedia(
         objectURL: getAbsoluteTempPath(path),
         contentType,
         index: 0,
-        // TODO maybe we need to listen for message change?
         message: {
           attachments: message.get('attachments') || [],
           id: message.get('id'),
@@ -340,7 +326,6 @@ function showLightbox(opts: {
 
 export const actions = {
   closeLightbox,
-  closeLightboxIfViewingExpiredMessage,
   showLightbox,
   showLightboxForViewOnceMedia,
   showLightboxWithMedia,
@@ -368,6 +353,44 @@ export function reducer(
     return {
       ...action.payload,
       isShowingLightbox: true,
+    };
+  }
+
+  if (
+    action.type === MESSAGE_CHANGED ||
+    action.type === MESSAGE_DELETED ||
+    action.type === MESSAGE_EXPIRED
+  ) {
+    if (!state.isShowingLightbox) {
+      return state;
+    }
+
+    if (action.type === MESSAGE_EXPIRED && !state.isViewOnce) {
+      return state;
+    }
+
+    if (
+      action.type === MESSAGE_CHANGED &&
+      !action.payload.data.deletedForEveryone
+    ) {
+      return state;
+    }
+
+    const nextMedia = state.media.filter(
+      item => item.message.id !== action.payload.id
+    );
+
+    if (nextMedia.length === state.media.length) {
+      return state;
+    }
+
+    if (!nextMedia.length) {
+      return getEmptyState();
+    }
+
+    return {
+      ...state,
+      media: nextMedia,
     };
   }
 
