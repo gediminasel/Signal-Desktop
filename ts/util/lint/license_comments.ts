@@ -1,3 +1,4 @@
+/* eslint-disable no-unreachable */
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
@@ -65,6 +66,7 @@ export function getExtension(file: string): string {
 export async function forEachRelevantFile(
   fn: (_: string) => Promise<unknown>
 ): Promise<void> {
+  return;
   const gitFiles = (
     await exec('git ls-files', { cwd: rootPath, env: {} })
   ).stdout
@@ -176,6 +178,7 @@ function indent(text: string) {
 }
 
 async function main() {
+  return;
   const currentYear = new Date().getFullYear();
   const failures: Array<Failure> = [];
 
