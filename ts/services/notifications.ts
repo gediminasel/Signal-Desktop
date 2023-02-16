@@ -256,11 +256,11 @@ class NotificationService extends EventEmitter {
 
     const shouldDrawAttention = storage.get(
       'notification-draw-attention',
-      true
+      false
     );
     if (shouldDrawAttention) {
       log.info('NotificationService: drawing attention');
-      window.drawAttention();
+      window.IPC.drawAttention();
     }
 
     let notificationTitle: string;
@@ -307,6 +307,8 @@ class NotificationService extends EventEmitter {
           } else {
             notificationMessage = i18n('newMessage');
           }
+        } else if (storyId) {
+          notificationMessage = message;
         } else if (reaction) {
           notificationMessage = i18n('notificationReactionMessage', {
             sender: senderTitle,
@@ -390,8 +392,6 @@ export const notificationService = new NotificationService();
 function filterNotificationText(text: string) {
   return (text || '')
     .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
 }

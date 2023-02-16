@@ -78,6 +78,7 @@ import type {
   DeleteSentProtoRecipientOptionsType,
   DeleteSentProtoRecipientResultType,
   EmojiType,
+  FTSOptimizationStateType,
   GetAllStoriesResultType,
   GetConversationRangeCenteredOnMessageResultType,
   GetKnownMessageAttachmentsResultType,
@@ -262,7 +263,8 @@ const dataInterface: ServerInterface = {
   migrateConversationMessages,
 
   getUnprocessedCount,
-  getAllUnprocessedAndIncrementAttempts,
+  getUnprocessedByIdsAndIncrementAttempts,
+  getAllUnprocessedIds,
   updateUnprocessedWithData,
   updateUnprocessedsWithData,
   getUnprocessedById,
@@ -342,6 +344,8 @@ const dataInterface: ServerInterface = {
 
   getStatisticsForLogging,
 
+  optimizeFTS,
+
   // Server-only
 
   initialize,
@@ -362,7 +366,8 @@ const statementCache = new WeakMap<Database, DatabaseQueryCache>();
 
 function prepare<T extends Array<unknown> | Record<string, unknown>>(
   db: Database,
-  query: string
+  query: string,
+  { pluck = false }: { pluck?: boolean } = {}
 ): Statement<T> {
   let dbCache = statementCache.get(db);
   if (!dbCache) {
@@ -370,10 +375,14 @@ function prepare<T extends Array<unknown> | Record<string, unknown>>(
     statementCache.set(db, dbCache);
   }
 
-  let result = dbCache.get(query) as Statement<T>;
+  const cacheKey = `${pluck}:${query}`;
+  let result = dbCache.get(cacheKey) as Statement<T>;
   if (!result) {
     result = db.prepare<T>(query);
-    dbCache.set(query, result);
+    if (pluck === true) {
+      result.pluck();
+    }
+    dbCache.set(cacheKey, result);
   }
 
   return result;
@@ -500,6 +509,10 @@ let logger = consoleLogger;
 let globalInstanceRenderer: Database | undefined;
 let databaseFilePath: string | undefined;
 let indexedDBPath: string | undefined;
+
+SQL.setLogHandler((code, value) => {
+  logger.warn(`Database log code=${code}: ${value}`);
+});
 
 async function initialize({
   configDir,
@@ -1069,12 +1082,11 @@ async function deleteSentProtoRecipient(
       const remainingDevices = prepare(
         db,
         `
-        SELECT count(*) FROM sendLogRecipients
+        SELECT count(1) FROM sendLogRecipients
         WHERE payloadId = $id AND recipientUuid = $recipientUuid;
-        `
-      )
-        .pluck(true)
-        .get({ id, recipientUuid });
+        `,
+        { pluck: true }
+      ).get({ id, recipientUuid });
 
       // 4. If there are no remaining devices for this recipient and we included
       //    the pni signature in the proto - return the recipient to the caller.
@@ -1095,10 +1107,9 @@ async function deleteSentProtoRecipient(
       // 5. See how many more recipients there were for this payload.
       const remainingTotal = prepare(
         db,
-        'SELECT count(*) FROM sendLogRecipients WHERE payloadId = $id;'
-      )
-        .pluck(true)
-        .get({ id });
+        'SELECT count(1) FROM sendLogRecipients WHERE payloadId = $id;',
+        { pluck: true }
+      ).get({ id });
 
       strictAssert(
         isNumber(remainingTotal),
@@ -1749,7 +1760,7 @@ function getMessageCountSync(
   const count = db
     .prepare<Query>(
       `
-        SELECT count(*)
+        SELECT count(1)
         FROM messages
         WHERE conversationId = $conversationId;
         `
@@ -1765,7 +1776,7 @@ async function getStoryCount(conversationId: string): Promise<number> {
   return db
     .prepare<Query>(
       `
-        SELECT count(*)
+        SELECT count(1)
         FROM messages
         WHERE conversationId = $conversationId AND isStory = 1;
         `
@@ -1788,9 +1799,10 @@ function hasUserInitiatedMessages(conversationId: string): boolean {
       `
       SELECT EXISTS(
         SELECT 1 FROM messages
+        INDEXED BY message_user_initiated
         WHERE
-          conversationId = $conversationId AND
-          isUserInitiatedMessage = 1
+          conversationId IS $conversationId AND
+          isUserInitiatedMessage IS 1
       );
       `
     )
@@ -2115,7 +2127,10 @@ async function _getAllMessages(): Promise<Array<MessageType>> {
 }
 async function _removeAllMessages(): Promise<void> {
   const db = getInstance();
-  db.prepare<EmptyQuery>('DELETE from messages;').run();
+  db.exec(`
+    DELETE FROM messages;
+    INSERT INTO messages_fts(messages_fts) VALUES('optimize');
+  `);
 }
 
 async function getAllMessageIds(): Promise<Array<string>> {
@@ -2311,10 +2326,11 @@ async function getUnreadReactionsAndMarkRead({
         `
         SELECT reactions.rowid, targetAuthorUuid, targetTimestamp, messageId
         FROM reactions
+        INDEXED BY reactions_unread
         JOIN messages on messages.id IS reactions.messageId
         WHERE
-          unread > 0 AND
-          messages.conversationId IS $conversationId AND
+          reactions.conversationId IS $conversationId AND
+          reactions.unread > 0 AND
           messages.received_at <= $newestUnreadAt AND
           messages.storyId IS $storyId
         ORDER BY messageReceivedAt DESC;
@@ -2330,8 +2346,9 @@ async function getUnreadReactionsAndMarkRead({
     batchMultiVarQuery(db, idsToUpdate, (ids: ReadonlyArray<number>): void => {
       db.prepare<ArrayQuery>(
         `
-        UPDATE reactions SET
-        unread = 0 WHERE rowid IN ( ${ids.map(() => '?').join(', ')} );
+        UPDATE reactions
+        SET unread = 0
+        WHERE rowid IN ( ${ids.map(() => '?').join(', ')} );
         `
       ).run(ids);
     });
@@ -2638,7 +2655,7 @@ function getOldestMessageForConversation(
   const row = db
     .prepare<Query>(
       `
-      SELECT * FROM messages WHERE
+      SELECT received_at, sent_at, id FROM messages WHERE
         conversationId = $conversationId AND
         isStory IS 0 AND
         (${_storyIdPredicate(storyId, includeStoryReplies)})
@@ -2671,7 +2688,7 @@ function getNewestMessageForConversation(
   const row = db
     .prepare<Query>(
       `
-      SELECT * FROM messages WHERE
+      SELECT received_at, sent_at, id FROM messages WHERE
         conversationId = $conversationId AND
         isStory IS 0 AND
         (${_storyIdPredicate(storyId, includeStoryReplies)})
@@ -2705,8 +2722,9 @@ function getLastConversationActivity({
     db,
     `
       SELECT json FROM messages
+      INDEXED BY messages_activity
       WHERE
-        conversationId = $conversationId AND
+        conversationId IS $conversationId AND
         shouldAffectActivity IS 1 AND
         isTimerChangeFromSync IS 0 AND
         ${includeStoryReplies ? '' : 'storyId IS NULL AND'}
@@ -2732,34 +2750,38 @@ function getLastConversationPreview({
   conversationId: string;
   includeStoryReplies: boolean;
 }): MessageType | undefined {
+  type Row = Readonly<{
+    json: string;
+  }>;
+
   const db = getInstance();
-  const row = prepare(
+
+  const index = includeStoryReplies
+    ? 'messages_preview'
+    : 'messages_preview_without_story';
+
+  const row: Row | undefined = prepare(
     db,
     `
-      SELECT json FROM messages
-      WHERE
-        conversationId = $conversationId AND
-        shouldAffectPreview IS 1 AND
-        isGroupLeaveEventFromOther IS 0 AND
-        ${includeStoryReplies ? '' : 'storyId IS NULL AND'}
-        (
-          expiresAt IS NULL
-          OR
-          expiresAt > $now
-        )
-      ORDER BY received_at DESC, sent_at DESC
-      LIMIT 1;
-      `
+      SELECT json FROM (
+        SELECT json, expiresAt FROM messages
+        INDEXED BY ${index}
+        WHERE
+          conversationId IS $conversationId AND
+          shouldAffectPreview IS 1 AND
+          isGroupLeaveEventFromOther IS 0
+          ${includeStoryReplies ? '' : 'AND storyId IS NULL'}
+        ORDER BY received_at DESC, sent_at DESC
+      )
+      WHERE likely(expiresAt > $now)
+      LIMIT 1
+    `
   ).get({
     conversationId,
     now: Date.now(),
   });
 
-  if (!row) {
-    return undefined;
-  }
-
-  return jsonToObject(row.json);
+  return row ? jsonToObject(row.json) : undefined;
 }
 
 async function getConversationMessageStats({
@@ -2798,7 +2820,7 @@ async function getLastConversationMessage({
   const row = db
     .prepare<Query>(
       `
-      SELECT * FROM messages WHERE
+      SELECT json FROM messages WHERE
         conversationId = $conversationId
       ORDER BY received_at DESC, sent_at DESC
       LIMIT 1;
@@ -2829,7 +2851,7 @@ function getOldestUnseenMessageForConversation(
   const row = db
     .prepare<Query>(
       `
-      SELECT * FROM messages WHERE
+      SELECT received_at, sent_at, id FROM messages WHERE
         conversationId = $conversationId AND
         seenStatus = ${SeenStatus.Unseen} AND
         isStory IS 0 AND
@@ -2873,7 +2895,7 @@ function getTotalUnreadForConversationSync(
   const row = db
     .prepare<Query>(
       `
-      SELECT count(id)
+      SELECT count(1)
       FROM messages
       WHERE
         conversationId = $conversationId AND
@@ -2882,16 +2904,13 @@ function getTotalUnreadForConversationSync(
         (${_storyIdPredicate(storyId, includeStoryReplies)})
       `
     )
+    .pluck()
     .get({
       conversationId,
       storyId: storyId || null,
     });
 
-  if (!row) {
-    throw new Error('getTotalUnreadForConversation: Unable to get count');
-  }
-
-  return row['count(id)'];
+  return row;
 }
 function getTotalUnseenForConversationSync(
   conversationId: string,
@@ -2907,7 +2926,7 @@ function getTotalUnseenForConversationSync(
   const row = db
     .prepare<Query>(
       `
-      SELECT count(id)
+      SELECT count(1)
       FROM messages
       WHERE
         conversationId = $conversationId AND
@@ -2916,16 +2935,13 @@ function getTotalUnseenForConversationSync(
         (${_storyIdPredicate(storyId, includeStoryReplies)})
       `
     )
+    .pluck()
     .get({
       conversationId,
       storyId: storyId || null,
     });
 
-  if (!row) {
-    throw new Error('getTotalUnseenForConversationSync: Unable to get count');
-  }
-
-  return row['count(id)'];
+  return row;
 }
 
 async function getMessageMetricsForConversation(
@@ -3135,7 +3151,6 @@ async function getExpiredMessages(): Promise<Array<MessageType>> {
     .prepare<Query>(
       `
       SELECT json FROM messages WHERE
-        expiresAt IS NOT NULL AND
         expiresAt <= $now
       ORDER BY expiresAt ASC;
       `
@@ -3185,6 +3200,10 @@ async function getSoonestMessageExpiry(): Promise<undefined | number> {
     )
     .pluck(true)
     .get();
+
+  if (result != null && result >= Number.MAX_SAFE_INTEGER) {
+    return undefined;
+  }
 
   return result || undefined;
 }
@@ -3402,12 +3421,12 @@ async function getUnprocessedCount(): Promise<number> {
   return getCountFromTable(getInstance(), 'unprocessed');
 }
 
-async function getAllUnprocessedAndIncrementAttempts(): Promise<
-  Array<UnprocessedType>
-> {
+async function getAllUnprocessedIds(): Promise<Array<string>> {
+  log.info('getAllUnprocessedIds');
   const db = getInstance();
 
   return db.transaction(() => {
+    // cleanup first
     const { changes: deletedStaleCount } = db
       .prepare<Query>('DELETE FROM unprocessed WHERE timestamp < $monthAgo')
       .run({
@@ -3421,18 +3440,11 @@ async function getAllUnprocessedAndIncrementAttempts(): Promise<
       );
     }
 
-    db.prepare<EmptyQuery>(
-      `
-        UPDATE unprocessed
-        SET attempts = attempts + 1
-      `
-    ).run();
-
     const { changes: deletedInvalidCount } = db
       .prepare<Query>(
         `
           DELETE FROM unprocessed
-          WHERE attempts > $MAX_UNPROCESSED_ATTEMPTS
+          WHERE attempts >= $MAX_UNPROCESSED_ATTEMPTS
         `
       )
       .run({ MAX_UNPROCESSED_ATTEMPTS });
@@ -3447,21 +3459,56 @@ async function getAllUnprocessedAndIncrementAttempts(): Promise<
     return db
       .prepare<EmptyQuery>(
         `
+          SELECT id 
+          FROM unprocessed
+          ORDER BY receivedAtCounter ASC
+        `
+      )
+      .pluck()
+      .all();
+  })();
+}
+
+async function getUnprocessedByIdsAndIncrementAttempts(
+  ids: ReadonlyArray<string>
+): Promise<Array<UnprocessedType>> {
+  log.info('getUnprocessedByIdsAndIncrementAttempts', { totalIds: ids.length });
+
+  const db = getInstance();
+
+  batchMultiVarQuery(db, ids, batch => {
+    return db
+      .prepare<ArrayQuery>(
+        `
+          UPDATE unprocessed
+          SET attempts = attempts + 1
+          WHERE id IN (${batch.map(() => '?').join(', ')})
+        `
+      )
+      .run(batch);
+  });
+
+  return batchMultiVarQuery(db, ids, batch => {
+    return db
+      .prepare<ArrayQuery>(
+        `
           SELECT *
           FROM unprocessed
+          WHERE id IN (${batch.map(() => '?').join(', ')})
           ORDER BY receivedAtCounter ASC;
         `
       )
-      .all()
+      .all(batch)
       .map(row => ({
         ...row,
         urgent: isNumber(row.urgent) ? Boolean(row.urgent) : true,
         story: Boolean(row.story),
       }));
-  })();
+  });
 }
 
 function removeUnprocessedsSync(ids: ReadonlyArray<string>): void {
+  log.info('removeUnprocessedsSync', { totalIds: ids.length });
   const db = getInstance();
 
   db.prepare<ArrayQuery>(
@@ -3473,6 +3520,7 @@ function removeUnprocessedsSync(ids: ReadonlyArray<string>): void {
 }
 
 function removeUnprocessedSync(id: string | Array<string>): void {
+  log.info('removeUnprocessedSync', { id });
   const db = getInstance();
 
   if (!Array.isArray(id)) {
@@ -3997,20 +4045,15 @@ async function deleteStickerPackReference(
         packId,
       });
 
-      const countRow = db
+      const count = db
         .prepare<Query>(
           `
-          SELECT count(*) FROM sticker_references
+          SELECT count(1) FROM sticker_references
           WHERE packId = $packId;
           `
         )
+        .pluck()
         .get({ packId });
-      if (!countRow) {
-        throw new Error(
-          'deleteStickerPackReference: Unable to get count of references'
-        );
-      }
-      const count = countRow['count(*)'];
       if (count > 0) {
         return undefined;
       }
@@ -4179,7 +4222,7 @@ async function getInstalledStickerPacks(): Promise<Array<StickerPackType>> {
       SELECT *
       FROM sticker_packs
       WHERE
-        status IS "installed" OR
+        status IS 'installed' OR
         storageID IS NOT NULL
       ORDER BY id ASC
       `
@@ -4853,7 +4896,7 @@ async function countStoryReadsByConversation(
   return db
     .prepare<Query>(
       `
-      SELECT COUNT(storyId) FROM storyReads
+      SELECT count(1) FROM storyReads
       WHERE conversationId = $conversationId;
       `
     )
@@ -4894,6 +4937,8 @@ async function removeAll(): Promise<void> {
       DELETE FROM storyReads;
       DELETE FROM unprocessed;
       DELETE FROM uninstalled_sticker_packs;
+
+      INSERT INTO messages_fts(messages_fts) VALUES('optimize');
     `);
   })();
 }
@@ -5424,6 +5469,47 @@ async function removeKnownDraftAttachments(
   );
 
   return Object.keys(lookup);
+}
+
+// Default value of 'automerge'.
+// See: https://www.sqlite.org/fts5.html#the_automerge_configuration_option
+const OPTIMIZE_FTS_PAGE_COUNT = 4;
+
+// This query is incremental. It gets the `state` from the return value of
+// previous `optimizeFTS` call. When `state.done` is `true` - optimization is
+// complete.
+async function optimizeFTS(
+  state?: FTSOptimizationStateType
+): Promise<FTSOptimizationStateType | undefined> {
+  // See https://www.sqlite.org/fts5.html#the_merge_command
+  let pageCount = OPTIMIZE_FTS_PAGE_COUNT;
+  if (state === undefined) {
+    pageCount = -pageCount;
+  }
+
+  const db = getInstance();
+  const { changes } = prepare(
+    db,
+    `
+      INSERT INTO messages_fts(messages_fts, rank) VALUES ('merge', $pageCount);
+    `
+  ).run({ pageCount });
+
+  if (state === undefined) {
+    return {
+      changes,
+      steps: 1,
+    };
+  }
+
+  const { changes: prevChanges, steps } = state;
+
+  if (Math.abs(changes - prevChanges) < 2) {
+    return { changes, steps, done: true };
+  }
+
+  // More work is needed.
+  return { changes, steps: steps + 1 };
 }
 
 async function getJobsInQueue(queueType: string): Promise<Array<StoredJob>> {

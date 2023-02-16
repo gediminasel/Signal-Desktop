@@ -3,8 +3,12 @@
 
 import type { ThunkAction } from 'redux-thunk';
 
+import type { ReadonlyDeep } from 'type-fest';
 import type { UsernameReservationType } from '../../types/Username';
-import { ReserveUsernameError } from '../../types/Username';
+import {
+  ReserveUsernameError,
+  ConfirmUsernameResult,
+} from '../../types/Username';
 import * as usernameServices from '../../services/username';
 import type { ReserveUsernameResultType } from '../../services/username';
 import {
@@ -27,14 +31,14 @@ import { showToast } from './toast';
 import { ToastType } from '../../types/Toast';
 import type { ToastActionType } from './toast';
 
-export type UsernameReservationStateType = Readonly<{
+export type UsernameReservationStateType = ReadonlyDeep<{
   state: UsernameReservationState;
   reservation?: UsernameReservationType;
   error?: UsernameReservationError;
   abortController?: AbortController;
 }>;
 
-export type UsernameStateType = Readonly<{
+export type UsernameStateType = ReadonlyDeep<{
   // ProfileEditor
   editState: UsernameEditState;
 
@@ -52,44 +56,51 @@ const RESERVE_USERNAME = 'username/RESERVE_USERNAME';
 const CONFIRM_USERNAME = 'username/CONFIRM_USERNAME';
 const DELETE_USERNAME = 'username/DELETE_USERNAME';
 
-type SetUsernameEditStateActionType = {
+type SetUsernameEditStateActionType = ReadonlyDeep<{
   type: typeof SET_USERNAME_EDIT_STATE;
   payload: {
     editState: UsernameEditState;
   };
-};
+}>;
 
-type OpenUsernameReservationModalActionType = {
+type OpenUsernameReservationModalActionType = ReadonlyDeep<{
   type: typeof OPEN_USERNAME_RESERVATION_MODAL;
-};
+}>;
 
-type CloseUsernameReservationModalActionType = {
+type CloseUsernameReservationModalActionType = ReadonlyDeep<{
   type: typeof CLOSE_USERNAME_RESERVATION_MODAL;
-};
+}>;
 
-type SetUsernameReservationErrorActionType = {
+type SetUsernameReservationErrorActionType = ReadonlyDeep<{
   type: typeof SET_USERNAME_RESERVATION_ERROR;
   payload: {
     error: UsernameReservationError | undefined;
   };
-};
+}>;
 
-type ReserveUsernameActionType = PromiseAction<
-  typeof RESERVE_USERNAME,
-  ReserveUsernameResultType | undefined,
-  { abortController: AbortController }
+type ReserveUsernameActionType = ReadonlyDeep<
+  PromiseAction<
+    typeof RESERVE_USERNAME,
+    ReserveUsernameResultType | undefined,
+    { abortController: AbortController }
+  >
 >;
-type ConfirmUsernameActionType = PromiseAction<typeof CONFIRM_USERNAME, void>;
-type DeleteUsernameActionType = PromiseAction<typeof DELETE_USERNAME, void>;
+type ConfirmUsernameActionType = ReadonlyDeep<
+  PromiseAction<typeof CONFIRM_USERNAME, ConfirmUsernameResult>
+>;
+type DeleteUsernameActionType = ReadonlyDeep<
+  PromiseAction<typeof DELETE_USERNAME, void>
+>;
 
-export type UsernameActionType =
+export type UsernameActionType = ReadonlyDeep<
   | SetUsernameEditStateActionType
   | OpenUsernameReservationModalActionType
   | CloseUsernameReservationModalActionType
   | SetUsernameReservationErrorActionType
   | ReserveUsernameActionType
   | ConfirmUsernameActionType
-  | DeleteUsernameActionType;
+  | DeleteUsernameActionType
+>;
 
 export const actions = {
   setUsernameEditState,
@@ -133,7 +144,7 @@ export function setUsernameReservationError(
 
 const INPUT_DELAY_MS = 500;
 
-export type ReserveUsernameOptionsType = Readonly<{
+export type ReserveUsernameOptionsType = ReadonlyDeep<{
   doReserveUsername?: typeof usernameServices.reserveUsername;
   delay?: number;
 }>;
@@ -194,7 +205,7 @@ export function reserveUsername(
   };
 }
 
-export type ConfirmUsernameOptionsType = Readonly<{
+export type ConfirmUsernameOptionsType = ReadonlyDeep<{
   doConfirmUsername?: typeof usernameServices.confirmUsername;
 }>;
 
@@ -221,7 +232,7 @@ export function confirmUsername({
   };
 }
 
-export type DeleteUsernameOptionsType = Readonly<{
+export type DeleteUsernameOptionsType = ReadonlyDeep<{
   doDeleteUsername?: typeof usernameServices.deleteUsername;
 
   // Only for testing
@@ -417,12 +428,25 @@ export function reducer(
       'Must be reserving before resolving confirmation'
     );
 
-    return {
-      ...state,
-      usernameReservation: {
-        state: UsernameReservationState.Closed,
-      },
-    };
+    const { payload } = action;
+    if (payload === ConfirmUsernameResult.Ok) {
+      return {
+        ...state,
+        usernameReservation: {
+          state: UsernameReservationState.Closed,
+        },
+      };
+    }
+    if (payload === ConfirmUsernameResult.ConflictOrGone) {
+      return {
+        ...state,
+        usernameReservation: {
+          state: UsernameReservationState.Open,
+          error: UsernameReservationError.ConflictOrGone,
+        },
+      };
+    }
+    throw missingCaseError(payload);
   }
 
   if (action.type === 'username/CONFIRM_USERNAME_REJECTED') {

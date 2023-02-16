@@ -65,15 +65,15 @@
     "description": "Shown below the group name when selecting a group to invite a contact to, when the group item is disabled"
   },
   "Preferences__sent-media-quality": {
-    "message": "Sent media quality",
+    "message": "Chất lượng tập tin đa phương tiện đã gửi",
     "description": "Title for the sent media quality setting"
   },
   "sentMediaQualityStandard": {
-    "message": "Standard",
+    "message": "Tiêu chuẩn",
     "description": "Label text for standard media quality option"
   },
   "sentMediaQualityHigh": {
-    "message": "High",
+    "message": "Cao",
     "description": "Label text for high media quality option"
   },
   "softwareAcknowledgments": {
@@ -572,10 +572,20 @@
     "description": "Label for a button to accept a new safety number"
   },
   "verify": {
-    "message": "Đánh dấu đã xác minh"
+    "message": "Đánh dấu đã xác minh",
+    "description": "(deleted 2023/02/03)"
   },
   "unverify": {
-    "message": "Đánh dấu chưa xác minh"
+    "message": "Đánh dấu chưa xác minh",
+    "description": "(deleted 2023/02/03)"
+  },
+  "icu:SafetyNumberViewer__markAsVerified": {
+    "messageformat": "Đánh dấu đã xác minh",
+    "description": "Safety number viewer, verification toggle button, when not verified, sets verified"
+  },
+  "icu:SafetyNumberViewer__clearVerification": {
+    "messageformat": "Xóa xác nhận",
+    "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
   },
   "isVerified": {
     "message": "Bạn đã xác minh số an toàn của bạn với $name$",
@@ -687,7 +697,7 @@
     "description": "An error popup when the user has attempted to add an attachment"
   },
   "cannotSelectMultipleFileAttachments": {
-    "message": "You can only select one file at a time.",
+    "message": "Bạn chỉ có thể chọn một tập tin tại một thời điểm.",
     "description": "An error popup when the user has attempted to add multiple non-image attachments"
   },
   "maximumAttachments": {
@@ -699,7 +709,7 @@
     "description": "(deleted 2022/12/07) Shown in a toast if the user tries to attach too-large file"
   },
   "icu:fileSizeWarning": {
-    "messageformat": "Sorry, the selected file exceeds message size restrictions. {limit}{units}",
+    "messageformat": "Rất tiếc, tập tin đã chọn vượt quá giới hạn kích thước của tin nhắn. {limit} {units}",
     "description": "Shown in a toast if the user tries to attach too-large file"
   },
   "unableToLoadAttachment": {
@@ -851,7 +861,7 @@
   },
   "at-username": {
     "message": "@$username$",
-    "description": "@ added to username to signify it as a username. Should it be on the right in your language?"
+    "description": "(deleted 02/07/2023) @ added to username to signify it as a username. Should it be on the right in your language?"
   },
   "welcomeToSignal": {
     "message": "Chào mừng đến với Signal"
@@ -934,7 +944,7 @@
   },
   "originalMessageNotAvailable": {
     "message": "Tin nhắn ban đầu không còn khả dụng",
-    "description": "Shown in toast if user clicks on quote that references message no longer in database"
+    "description": "(deleted 02/07/2023) Shown in toast if user clicks on quote that references message no longer in database"
   },
   "messageFoundButNotLoaded": {
     "message": "Đã tìm thấy tin nhắn gốc, nhưng không tải dược. Cuộn lên để tải nó.",
@@ -989,7 +999,7 @@
     "description": "Shown in iOS theme when you or someone quotes to a message which is not from you"
   },
   "audioPermissionNeeded": {
-    "message": "To send voice messages, allow Signal Desktop to access your microphone.",
+    "message": "Để gửi tin nhắn thoại, cho phép Signal Desktop truy cập microphone.",
     "description": "Shown if the user attempts to send an audio message without audio permissions turned on"
   },
   "audioCallingPermissionNeeded": {
@@ -1109,9 +1119,25 @@
     "message": "Đến",
     "description": "Label for the receiver of a message"
   },
+  "icu:searchResultHeader--sender-to-group": {
+    "messageformat": "{sender} đến {receiverGroup}",
+    "description": "Shown for search result items - like 'Jon to Friends Group'"
+  },
+  "icu:searchResultHeader--sender-to-you": {
+    "messageformat": "{sender} gửi đến bạn",
+    "description": "Shown for search result items - like 'Jon to You"
+  },
+  "icu:searchResultHeader--you-to-group": {
+    "messageformat": "Bạn gửi đến {receiverGroup}",
+    "description": "Shown for search result items - like 'You to Friends Group'"
+  },
+  "icu:searchResultHeader--you-to-receiver": {
+    "messageformat": "Bạn gửi đến {receiverContact}",
+    "description": "Shown for search result items - like 'You to Jon'"
+  },
   "toJoiner": {
     "message": "đến",
-    "description": "Joiner for message search results - like 'Jon' to 'Friends Group'"
+    "description": "(deleted 2023/02/02) Joiner for message search results - like 'Jon' to 'Friends Group'"
   },
   "sent": {
     "message": "Đã gửi",
@@ -1133,6 +1159,10 @@
   },
   "showSafetyNumber": {
     "message": "Xem số an toàn"
+  },
+  "icu:ContactModal__showSafetyNumber": {
+    "messageformat": "Xem số an toàn",
+    "description": "Contact modal, label for button to show safety number modal"
   },
   "viewRecentMedia": {
     "message": "Xem các tập đa phương tiện gần đây",
@@ -1233,32 +1263,36 @@
     "description": "Shown in timeline when a member of a conversation changes their phone number"
   },
   "icu:ConversationMerge--notification": {
-    "messageformat": "{obsoleteConversationTitle} and {conversationTitle} are the same account. Your message history for both chats are here.",
+    "messageformat": "{obsoleteConversationTitle} và {conversationTitle} là cùng một tài khoản. Lịch sử tin nhắn của bạn của các cuộc trò chuyện ở hai bên đều ở đây.",
     "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way"
   },
-  "icu:ConversationMerge--notification--no-e164": {
-    "messageformat": "Your message history with {conversationTitle} and another chat that belonged to them has been merged.",
-    "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way, but we don't have the phone number for the old conversation"
+  "icu:ConversationMerge--notification--with-e164": {
+    "messageformat": "Lịch sử tin nhắn của bạn với {conversationTitle} và số điện thoại {obsoleteConversationNumber} của liên hệ này đã được hợp nhất.",
+    "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way, but we have the phone number for the old conversation"
+  },
+  "icu:ConversationMerge--notification--no-title": {
+    "messageformat": "Lịch sử tin nhắn của bạn với {conversationTitle} và một cuộc trò chuyện khác của liên hệ này đã được hợp nhất.",
+    "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way, but we don't have the title for the old conversation"
   },
   "icu:ConversationMerge--learn-more": {
-    "messageformat": "Learn More",
+    "messageformat": "Tìm hiểu thêm",
     "description": "Shown on a button below a 'conversations were merged' timeline notification"
   },
   "icu:ConversationMerge--explainer-dialog--line-1": {
-    "messageformat": "After messaging with {obsoleteConversationTitle} you learned this number belongs to {conversationTitle}. Their phone number is private.",
+    "messageformat": "Sau khi nhắn tin với {obsoleteConversationTitle} bạn biết số này thuộc về {conversationTitle}. Số điện thoại của người đó riêng tư.",
     "description": "Contents of a dialog shown after clicking 'learn more' button on a conversation merge event."
   },
   "icu:ConversationMerge--explainer-dialog--line-2": {
-    "messageformat": "Your message history for both conversations have been merged here.",
+    "messageformat": "Lịch sử tin nhắn của các cuộc trò chuyện của bạn đã được hợp nhất tại đây.",
     "description": "Contents of a dialog shown after clicking 'learn more' button on a conversation merge event."
   },
   "icu:PhoneNumberDiscovery--notification--withSharedGroup": {
-    "messageformat": "{phoneNumber} belongs to {conversationTitle}. You're both members of {sharedGroup}.",
-    "description": "Shown when we've discovered a phone number for a contact you've been communicating with."
+    "messageformat": "{phoneNumber} thuộc về {conversationTitle}. Các bạn đều là thành viên của {sharedGroup}.",
+    "description": "(deleted 2023/01/11) Shown when we've discovered a phone number for a contact you've been communicating with."
   },
   "icu:PhoneNumberDiscovery--notification--noSharedGroup": {
-    "messageformat": "{phoneNumber} belongs to {conversationTitle}",
-    "description": "Shown when we've discovered a phone number for a contact you've been communicating with, but you have no shared groups."
+    "messageformat": "{phoneNumber} thuộc về {conversationTitle}",
+    "description": "(deleted 2023/01/11) Shown when we've discovered a phone number for a contact you've been communicating with, but you have no shared groups."
   },
   "quoteThumbnailAlt": {
     "message": "Hình thu nhỏ của hình ảnh từ tin nhắn được trích dẫn",
@@ -1560,7 +1594,7 @@
     "description": "when you block someone and cannot view their video"
   },
   "calling__block-info": {
-    "message": "You won't receive their voice or video and they won't receive yours.",
+    "message": "Bạn sẽ không nhận được âm thanh hoặc video từ họ và họ sẽ không nhận được các dữ liệu này của bạn.",
     "description": "Shown in the modal dialog to describe how blocking works in a group call"
   },
   "calling__overflow__scroll-up": {
@@ -1692,7 +1726,7 @@
     "description": "Header of the full-screen delete data confirmation screen"
   },
   "deleteAllDataBody": {
-    "message": "Bạn sắp xóa tất cả thông tin tài khoản đã lưu của ứng dụng này, bao gồm tất cả các liên hệ và tất cả các tin nhắn. Bạn luôn có thể liên kết lại với thiết bị di động của mình, nhưng điều đó sẽ giúp không khôi phục các tin nhắn đã xóa.",
+    "message": "Bạn sắp xóa tất cả thông tin tài khoản đã lưu của ứng dụng này, bao gồm tất cả các liên hệ và tất cả các tin nhắn. Bạn luôn có thể liên kết lại với thiết bị di động của mình, nhưng điều đó sẽ không giúp khôi phục các tin nhắn đã xóa.",
     "description": "Text describing what exactly will happen if the user clicks the button to delete all data"
   },
   "deleteAllDataButton": {
@@ -1955,7 +1989,15 @@
   },
   "verifyNewNumber": {
     "message": "Xác minh Số An toàn",
-    "description": "Label on button included with safety number change notification in the conversation"
+    "description": "(deleted 2023/02/03) Label on button included with safety number change notification in the conversation"
+  },
+  "icu:ConversationDetails__viewSafetyNumber": {
+    "messageformat": "Xem Số An toàn",
+    "description": "In conversation details, label for button to view safety number, opens safety number modal"
+  },
+  "icu:SafetyNumberNotification__viewSafetyNumber": {
+    "messageformat": "Xem Số An toàn",
+    "description": "In conversation, safety number change notification, label for button to view safety number, opens safety number modal"
   },
   "cannotGenerateSafetyNumber": {
     "message": "Người dùng này không thể được xác minh cho tới khi bạn đã nhắn tin với họ.",
@@ -2158,7 +2200,8 @@
     "description": "Shown in update dialog when partial update fails and we have to ask user to download full update"
   },
   "autoUpdateNewVersionInstructions": {
-    "message": "Nhấn Khởi động lại Signal để áp dụng bản cập nhật."
+    "message": "Nhấn Khởi động lại Signal để áp dụng bản cập nhật.",
+    "description": "(deleted 2023/01/18)"
   },
   "autoUpdateRestartButtonLabel": {
     "message": "Khởi động lại Signal"
@@ -2278,99 +2321,175 @@
     "description": "Shown in a message's bubble when the message has been deleted for everyone."
   },
   "giftBadge--missing": {
-    "message": "Unable to fetch gift badge details",
-    "description": "Aria label for gift badge when we can't fetch the details"
+    "message": "Không thể lấy thông tin của huy hiệu quà tặng",
+    "description": "(deleted 2023/01/20) Aria label for gift badge when we can't fetch the details"
+  },
+  "icu:donation--missing": {
+    "messageformat": "Không thể lấy thông tin ủng hộ",
+    "description": "Aria label for donation when we can't fetch the details."
   },
   "message--giftBadge--unopened--incoming": {
     "message": "Xem tin nhắn này trên điện thoại để mở",
-    "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    "description": "(deleted 2023/01/20) Shown in a message's bubble when you've received a gift badge from a contact"
+  },
+  "icu:message--donation--unopened--incoming": {
+    "messageformat": "Xem tin nhắn này trên điện thoại để mở",
+    "description": "Shown in a message's bubble when you've received a donation badge from a contact"
   },
   "message--giftBadge--unopened--outgoing": {
     "message": "Nhấn vào tin nhắn này trên điện thoại để xem món quà của bạn",
-    "description": "Shown in a message's bubble when you've sent a gift badge to a contact"
+    "description": "(deleted 2023/01/20) Shown in a message's bubble when you've sent a gift badge to a contact"
+  },
+  "icu:message--donation--unopened--outgoing": {
+    "messageformat": "Nhấn vào tin nhắn này trên điện thoại để xem khoản ủng hộ của bạn",
+    "description": "Shown in a message's bubble when you've sent a donation badge to a contact."
   },
   "message--giftBadge--unopened--label": {
     "message": "Quà tặng",
-    "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    "description": "(deleted 2023/01/20) Shown in a message's bubble when you've received a gift badge from a contact"
+  },
+  "icu:message--donation--unopened--label": {
+    "messageformat": "{sender} đã thay mặt bạn ủng hộ Signal",
+    "description": "Shown in a message's bubble when you've received a donation badge from a contact."
   },
   "message--giftBadge--unopened--toast--incoming": {
     "message": "Kiểm tra điện thoại của bạn để mở quà",
-    "description": "Shown when you've clicked on an incoming gift badge you haven't yet redeemed"
+    "description": "(deleted 2023/01/20) Shown when you've clicked on an incoming gift badge you haven't yet redeemed"
+  },
+  "icu:message--donation--unopened--toast--incoming": {
+    "messageformat": "Kiểm tra điện thoại của bạn để mở khoản ủng hộ này",
+    "description": "Shown when you've clicked on an incoming donation you haven't yet redeemed."
   },
   "message--giftBadge--unopened--toast--outgoing": {
     "message": "Kiểm tra điện thoại của bạn để xem quà",
-    "description": "Shown when you've clicked on an outgoing gift badge"
+    "description": "(deleted 2023/01/20) Shown when you've clicked on an outgoing gift badge"
+  },
+  "icu:message--donation--unopened--toast--outgoing": {
+    "messageformat": "Kiểm tra điện thoại của bạn để xem khoản ủng hộ của bạn",
+    "description": "Shown when you've clicked on an outgoing donation badge."
   },
   "message--giftBadge--preview--unopened": {
     "message": "Bạn nhận được một món quà",
-    "description": "Shown to label the gift badge in notifications and the left pane"
+    "description": "(deleted 2023/01/20) Shown to label the gift badge in notifications and the left pane"
+  },
+  "icu:message--donation--preview--unopened": {
+    "messageformat": "{sender} đã ủng hộ thay cho bạn",
+    "description": "Shown to label the donation badge in notifications and the left pane."
   },
   "message--giftBadge--preview--redeemed": {
     "message": "Bạn đã nhận một huy hiệu quà tặng",
-    "description": "Shown to label the redeemed gift badge in notifications and the left pane"
+    "description": "(deleted 2023/01/20) Shown to label the redeemed gift badge in notifications and the left pane"
+  },
+  "icu:message--donation--preview--redeemed": {
+    "messageformat": "Bạn đã nhận một khoản ủng hộ",
+    "description": "Shown to label the redeemed donation badge in notifications and the left pane."
   },
   "message--giftBadge--preview--sent": {
     "message": "Bạn đã gửi một huy hiệu quà tặng",
-    "description": "Shown to label a gift badge you've sent in notifications and the left pane"
+    "description": "(deleted 2023/01/20) Shown to label a gift badge you've sent in notifications and the left pane"
+  },
+  "icu:message--donation--preview--sent": {
+    "messageformat": "Bạn đã ủng hộ thay cho {recipient}",
+    "description": "Shown to label a donation badge you've sent in notifications and the left pane"
   },
   "message--giftBadge": {
     "message": "Huy hiệu Quà tặng",
-    "description": "Shown to label the gift badge you've redeemed on another device"
+    "description": "(deleted 2023/01/20) Shown to label the gift badge you've redeemed on another device"
+  },
+  "icu:message--donation": {
+    "messageformat": "Khoản Ủng hộ",
+    "description": "Shown to label the donation badge you've redeemed on another device."
   },
   "quote--giftBadge": {
     "message": "Quà tặng",
-    "description": "Shown to label a gift badge you've replied to"
+    "description": "(deleted 2023/01/20) Shown to label a gift badge you've replied to"
+  },
+  "icu:quote--donation": {
+    "messageformat": "Khoản Ủng hộ",
+    "description": "Shown to label a donation badge you've replied to."
   },
   "message--giftBadge--remaining--days": {
     "message": "Còn $days$ ngày",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for days > 1)"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device (only rendered for days > 1)"
+  },
+  "icu:message--donation--remaining--days": {
+    "messageformat": "Còn {days} ngày",
+    "description": "Describes how long remains for the donation badge you've redeemed on another device (only rendered for days > 1)."
   },
   "message--giftBadge--remaining--hours": {
     "message": "Còn $hours$ giờ",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for hours > 1)"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device (only rendered for hours > 1)"
+  },
+  "icu:message--donation--remaining--hours": {
+    "messageformat": "Còn {hours} giờ",
+    "description": "Describes how long remains for the donation badge you've redeemed on another device (only rendered for hours > 1)"
   },
   "message--giftBadge--remaining--minutes": {
     "message": "Còn $minutes$ phút",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for minutes > 1)"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device (only rendered for minutes > 1)"
+  },
+  "icu:message--donation--remaining--minutes": {
+    "messageformat": "{minutes, plural, other {Còn {minutes,number} phút}}",
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device."
   },
   "message--giftBadge--remaining--one-minute": {
     "message": "Còn 1 phút",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device"
   },
   "message--giftBadge--expired": {
     "message": "Đã hết hạn",
-    "description": "Shows that a gift badge is expired"
+    "description": "(deleted 2023/01/20) Shows that a gift badge is expired"
+  },
+  "icu:message--donation--expired": {
+    "messageformat": "Đã hết hạn",
+    "description": "Shows that a donation badge is expired"
   },
   "message--giftBadge--view": {
     "message": "Xem",
     "description": "Shown when you've sent a gift badge to someone then opened it"
   },
+  "icu:message--donation--view": {
+    "messageformat": "Xem",
+    "description": "Shown when you've sent a donation badge to someone then opened it"
+  },
   "message--giftBadge--redeemed": {
     "message": "Đã nhận",
-    "description": "Shown when you've redeemed the gift badge on another device"
+    "description": "(deleted 2023/01/20) Shown when you've redeemed the gift badge on another device"
+  },
+  "icu:message--donation--redeemed": {
+    "messageformat": "Đã nhận",
+    "description": "Shown when you've redeemed the donation badge on another device"
   },
   "modal--giftBadge--title": {
     "message": "Cảm ơn bạn đã đống góp!",
-    "description": "The title of the outgoing gift badge detail dialog"
+    "description": "(deleted 2023/01/20) The title of the outgoing gift badge detail dialog"
+  },
+  "icu:modal--donation--title": {
+    "messageformat": "Cảm ơn bạn đã đóng góp!",
+    "description": "The title of the outgoing donation badge detail dialog"
   },
   "modal--giftBadge--description": {
     "message": "Bạn đã tặng một huy hiệu cho $name$. Khi chấp nhận, người đó sẽ có quyền chọn hiển thị hoặc ẩn huy hiệu của mình.",
-    "description": "The description of the outgoing gift badge detail dialog"
+    "description": "(deleted 2023/01/20) The description of the outgoing gift badge detail dialog"
+  },
+  "icu:modal--donation--description": {
+    "messageformat": "Bạn đã gửi một khoản ủng hộ cho Signal thay cho {name}. Họ sẽ có tuỳ chọn để thể hiện sự ủng hộ của mình trên hồ sơ.",
+    "description": "The description of the outgoing donation badge detail dialog"
   },
   "stickers--toast--InstallFailed": {
     "message": "Không thể cài đặt gói nhãn dán",
     "description": "Shown in a toast if the user attempts to install a sticker pack and it fails"
   },
   "stickers--StickerManager--title": {
-    "message": "Stickers",
+    "message": "Nhãn dán",
     "description": "Title for the sticker manager"
   },
   "stickers--StickerManager--Available": {
-    "message": "Available",
+    "message": "Sẵn có",
     "description": "Shown in the sticker pack manager as a tab for available stickers"
   },
   "stickers--StickerManager--InstalledPacks": {
-    "message": "Installed",
+    "message": "Đã cài đặt",
     "description": "Shown in the sticker pack manager above your installed sticker packs."
   },
   "stickers--StickerManager--InstalledPacks--Empty": {
@@ -2766,23 +2885,23 @@
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--accept-video-call": {
-    "message": "Answer call with video",
+    "message": "Trả lời cuộc gọi với video",
     "description": "(deleted 2023/01/09) Shown in the calling keyboard shortcuts guide"
   },
   "Keyboard--accept-audio-call": {
-    "message": "Answer call with audio",
+    "message": "Trả lời cuộc gọi với âm thanh",
     "description": "(deleted 2023/01/09) Shown in the calling keyboard shortcuts guide"
   },
   "icu:Keyboard--accept-video-call": {
-    "messageformat": "Answer call with video (video calls only)",
+    "messageformat": "Trả lời cuộc gọi với video (chỉ cuộc gọi video)",
     "description": "Shown in the calling keyboard shortcuts guide"
   },
   "icu:Keyboard--accept-call-without-video": {
-    "messageformat": "Answer call without video",
+    "messageformat": "Trả lời cuộc gọi không có video",
     "description": "Shown in the calling keyboard shortcuts guide"
   },
   "Keyboard--start-audio-call": {
-    "message": "Start voice call",
+    "message": "Bắt đầu cuộc gọi thoại",
     "description": "Shown in the calling keyboard shortcuts guide"
   },
   "Keyboard--start-video-call": {
@@ -2938,7 +3057,7 @@
     "description": "Text for the upload button in the confirmation dialog on the meta stage of the sticker creator"
   },
   "StickerCreator--MetaStage--ConfirmDialog--text": {
-    "message": "Bạn sẽ không thể chỉnh sửa hay xóa gói nhãn dán sau khi tải lên",
+    "message": "Bạn sẽ không thể chỉnh sửa hay xóa gói nhãn dán sau khi tải lên.",
     "description": "The text inside the confirmation dialog on the meta stage of the sticker creator"
   },
   "StickerCreator--UploadStage--title": {
@@ -3030,7 +3149,7 @@
     "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
   },
   "Reactions--remove": {
-    "message": "Gỡ biẻu cảm",
+    "message": "Gỡ biểu cảm",
     "describe": "Shown when you want to remove a reaction you've made"
   },
   "Reactions--error": {
@@ -3198,11 +3317,11 @@
     "description": "When a user has no common groups, show this warning"
   },
   "acceptCall": {
-    "message": "Answer call",
+    "message": "Trả lời cuộc gọi",
     "description": "Shown in tooltip for the button to accept a call (audio or video)"
   },
   "acceptCallWithoutVideo": {
-    "message": "Answer call without video",
+    "message": "Trả lời cuộc gọi không có video",
     "description": "Shown in tooltip for the button to accept a video call without video"
   },
   "declineCall": {
@@ -3210,7 +3329,7 @@
     "description": "Shown in tooltip for the button to decline a call (audio or video)"
   },
   "declinedIncomingAudioCall": {
-    "message": "You declined a voice call",
+    "message": "Bạn đã từ chối cuộc gọi thoại",
     "description": "Shown in conversation history when you declined an incoming voice call"
   },
   "declinedIncomingVideoCall": {
@@ -3218,7 +3337,7 @@
     "description": "Shown in conversation history when you declined an incoming video call"
   },
   "acceptedIncomingAudioCall": {
-    "message": "Incoming voice call",
+    "message": "Cuộc gọi thoại đến",
     "description": "Shown in conversation history when you accepted an incoming voice call"
   },
   "acceptedIncomingVideoCall": {
@@ -3226,7 +3345,7 @@
     "description": "Shown in conversation history when you accepted an incoming video call"
   },
   "missedIncomingAudioCall": {
-    "message": "Missed voice call",
+    "message": "Cuộc gọi thoại bị nhỡ",
     "description": "Shown in conversation history when you missed an incoming voice call"
   },
   "missedIncomingVideoCall": {
@@ -3234,7 +3353,7 @@
     "description": "Shown in conversation history when you missed an incoming video call"
   },
   "acceptedOutgoingAudioCall": {
-    "message": "Outgoing voice call",
+    "message": "Cuộc gọi thoại đi",
     "description": "Shown in conversation history when you made an outgoing voice call"
   },
   "acceptedOutgoingVideoCall": {
@@ -3242,7 +3361,7 @@
     "description": "Shown in conversation history when you made an outgoing video call"
   },
   "missedOrDeclinedOutgoingAudioCall": {
-    "message": "Unanswered voice call",
+    "message": "Cuộc gọi thoại không được trả lời",
     "description": "Shown in conversation history when your voice call is missed or declined"
   },
   "missedOrDeclinedOutgoingVideoCall": {
@@ -3258,7 +3377,7 @@
     "description": "Shown in a notification body when Signal is minimized to tray"
   },
   "incomingAudioCall": {
-    "message": "Incoming voice call...",
+    "message": "Cuộc gọi thoại đến…",
     "description": "Shown in both the incoming call bar and notification for an incoming voice call"
   },
   "incomingVideoCall": {
@@ -3610,7 +3729,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--title--remove--other": {
-    "message": "$memberName$ đã \u001Dgỡ bỏ tên nhóm.",
+    "message": "$memberName$ đã gỡ bỏ tên nhóm.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--title--remove--you": {
@@ -4130,7 +4249,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--summary": {
-    "messageformat": "This group's members or settings have changed.",
+    "messageformat": "Các thành viên của nhóm này hoặc các cài đặt đã thay đổi.",
     "description": "When rejoining a group, any detected changes are collapsed down into this summary"
   },
   "GroupV1--Migration--disabled": {
@@ -4282,7 +4401,7 @@
     "description": "Button text for send message button in Group Contact Details modal"
   },
   "ContactModal--rm-admin": {
-    "message": "Bỏ quyền quản trị",
+    "message": "Xóa với tư cách quản trị viên",
     "description": "Button text for removing as admin button in Group Contact Details modal"
   },
   "ContactModal--make-admin": {
@@ -4446,11 +4565,11 @@
     "description": "(deleted 2023/01/03) Title of the groups-in-common panel, in the contact details"
   },
   "icu:ConversationDetailsGroups--title": {
-    "messageformat": "{count, plural, one {1 group in common} other {{count,number} groups in common}}",
+    "messageformat": "{count, plural, other {{count,number} nhóm chung}}",
     "description": "Title of the groups-in-common panel, in the contact details"
   },
   "icu:ConversationDetailsGroups--title--with-zero-groups-in-common": {
-    "messageformat": "No groups in common",
+    "messageformat": "Không có nhóm chung",
     "description": "Title of the groups-in-common panel, in the contact details, with zero groups in common"
   },
   "ConversationDetailsGroups--add-to-group": {
@@ -4738,7 +4857,7 @@
     "description": "Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "TimelineDateHeader--date-older-than-6-months": {
-    "message": "MMM D, YYYY",
+    "message": "D MMM YYYY",
     "description": "Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "MessageRequestWarning__learn-more": {
@@ -4806,7 +4925,7 @@
     "description": "When confirming the removal of a group member, show this text in the button"
   },
   "RemoveGroupMemberConfirmation__description": {
-    "message": "Loại bỏ \"$name$\" khỏi nhóm?",
+    "message": "Xóa\"$name$\" khỏi nhóm?",
     "description": "When confirming the removal of a group member, show this text in the dialog"
   },
   "RemoveGroupMemberConfirmation__description__with-link": {
@@ -5104,6 +5223,10 @@
   "ProfileEditor--username--general-error": {
     "message": "Tên người dùng của bạn không thể lưu. Kiểm tra kết nối của bạn và thử lại.",
     "description": "Shown if something unknown has gone wrong with username save."
+  },
+  "icu:ProfileEditor--username--reservation-gone": {
+    "messageformat": "{username} is no longer available. A new set of digits will be paired with your username, please try saving it again.",
+    "description": "Shown if username reservation has expired and new one needs to be generated."
   },
   "ProfileEditor--username--delete-general-error": {
     "message": "Tên người dùng của bạn không thể xóa. Kiểm tra kết nối của bạn và thử lại.",
@@ -5985,6 +6108,10 @@
     "message": "Trả lời",
     "description": "Button label to reply to a story"
   },
+  "icu:StoryViewer__reply-placeholder": {
+    "messageformat": "Trả lời {firstName}",
+    "description": "Button label to reply to a story"
+  },
   "StoryViewer__reply-group": {
     "message": "Trả lời cho Nhóm",
     "description": "Button label to reply to a group story"
@@ -6055,7 +6182,7 @@
   },
   "StoryViewsNRepliesModal__react": {
     "message": "Bày tỏ cảm xúc với story",
-    "description": "aria-label for reaction button"
+    "description": "(deleted 01/25/23) aria-label for reaction button"
   },
   "StoryViewsNRepliesModal__reacted": {
     "message": "Đã bày tỏ cảm xúc với story",
@@ -6193,6 +6320,14 @@
     "message": "Thêm một đường dẫn cho người xem story của bạn",
     "description": "Empty state for the link preview"
   },
+  "icu:Stories__failed-send--full": {
+    "messageformat": "Không gửi được story",
+    "description": "Notification text whenever a story fails to send"
+  },
+  "icu:Stories__failed-send--partial": {
+    "messageformat": "Không gửi được story đến tất cả người nhận",
+    "description": "Notification text whenever a story partially fails to send"
+  },
   "TextAttachment__placeholder": {
     "message": "Thêm ký tự",
     "description": "Placeholder for the add text input"
@@ -6253,6 +6388,42 @@
     "message": "Các ký tự này giúp giữ bí mật tên người dùng của bạn giúp bạn tránh các tin nhắn ngoài ý muốn. Chỉ chia sẻ tên người dùng của bạn với những người hoặc nhóm bạn muốn trò chuyện. Nếu bạn đổi tên người dùng, bạn sẽ nhận được một dãy ký tự mới.",
     "description": "Body of the popup with information about discriminator in username"
   },
+  "icu:UsernameOnboardingModalBody__title": {
+    "messageformat": "Set up your Signal username",
+    "description": "Title of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__row__number": {
+    "messageformat": "Usernames are paired with a set of digits and aren’t shared on your profile",
+    "description": "Content of the first row of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__row__link": {
+    "messageformat": "Each username has a unique link you can share with your friends to start a chat with you",
+    "description": "Content of the second row of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__row__lock": {
+    "messageformat": "Turn off phone number discovery under Settings > Phone Number > Who can find my number, to use your username as the primary way others can contact you.",
+    "description": "Content of the third row of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__learn-more": {
+    "messageformat": "Learn More",
+    "description": "Text that open a popup with information about username onboarding"
+  },
+  "icu:UsernameOnboardingModalBody__continue": {
+    "messageformat": "Continue",
+    "description": "Text of the primary button on username onboarding modal"
+  },
+  "icu:UnsupportedOSWarningDialog__body": {
+    "messageformat": "Signal desktop sẽ sớm không còn hỗ trợ phiên bản hiện tại của hệ điều hành {OS} trên máy tính bạn. Để có thể tiếp tục sử dụng Signal, cập nhật phiên bản hệ điều hành trên máy tính bạn trước {expirationDate}. <learnMoreLink>Tìm hiểu thêm</learnMoreLink>",
+    "description": "Body of a dialog displayed on unsupported operating systems"
+  },
+  "icu:UnsupportedOSErrorDialog__body": {
+    "messageformat": "Signal desktop không còn hoạt động được trên máy tính này. Để có thể tiếp tục sử dụng Signal desktop, cập nhật phiên bản của hệ điều hành {OS} trên máy tính bạn. <learnMoreLink>Tìm hiểu thêm</learnMoreLink>",
+    "description": "Body of a dialog displayed on unsupported operating systems"
+  },
+  "icu:UnsupportedOSErrorToast": {
+    "messageformat": "Signal desktop không còn hoạt động được trên máy tính này. Để có thể tiếp tục sử dụng Signal desktop, cập nhật phiên bản của hệ điều hành {OS} trên máy tính bạn.",
+    "description": "Body of a dialog displayed on unsupported operating systems"
+  },
   "WhatsNew__modal-title": {
     "message": "Có gì mới",
     "description": "Title for the whats new modal"
@@ -6300,5 +6471,25 @@
   "WhatsNew__v6.1--1": {
     "message": "Khi bạn bắt đầu cuộc gọi nhóm cho nhóm nhỏ (đến 16 người), bạn có thể chọn thông báo bằng cách đổ chuông. Các thành viên nhóm sẽ nghe thấy tiếng chuông báo nếu đang sử dụng phiên bản iOS beta hoặc bản Desktop hay Android.",
     "description": "Release notes for v6.1"
+  },
+  "icu:WhatsNew__v6.3--0": {
+    "messageformat": "Nhấn đúp vào bất kỳ dòng tin nhắn nào để trả lời với trích dẫn. Một cách để nhanh chóng chia sẻ suy nghĩ của mình về một vấn đề được thảo luận ở trên. Cảm ơn thành viên {whynothugo} và cộng đồng Signal đã giúp triển khai và đóng góp phản hồi cho tính năng này.",
+    "description": "Release notes for v6.3"
+  },
+  "icu:WhatsNew__v6.3--1": {
+    "messageformat": "Giờ đây bạn có thể dễ dàng nhấn phía ngoài một bức ảnh để thoát khỏi chế độ xem ảnh lớn. Thao tác này trước đây chỉ giúp phóng to ảnh hơn. Cảm ơn thành viên {jojomatik} đã giúp khắc phục điểm này!",
+    "description": "Release notes for v6.3"
+  },
+  "icu:WhatsNew__v6.5--0": {
+    "messageformat": "Giúp thời gian phản hồi của bạn nhanh hơn. Giờ đây bạn có thể bày tỏ cảm xúc nhanh hơn bằng cách bấm vào bất kỳ emoji nào khi trả lời một story.",
+    "description": "Release notes for v6.5"
+  },
+  "icu:WhatsNew__v6.5--1": {
+    "messageformat": "Người dùng nay có thể tìm kiếm lịch sử tin nhắn bằng các ký tự riêng lẻ của tiếng Trung và tiếng Nhật.",
+    "description": "Release notes for v6.5"
+  },
+  "icu:WhatsNew__v6.6--0": {
+    "messageformat": "Giúp chúng tôi kiểm tra độ tin cậy và các cải thiện về mặt hiệu năng của cuộc gọi thoại và cuộc gọi video. Bản beta này cũng bao gồm một số sửa lỗi và cập nhật UI nhỏ (giao diện xem trước đường dẫn đã được nâng cấp!). Cảm ơn bạn vì đã giúp thử nghiệm bản beta, và hãy liên hệ với chúng tôi thông qua diễn đàn dành cho cộng đồng nếu bạn gặp bất kỳ lỗi nào.",
+    "description": "Release notes for v6.6"
   }
 }

@@ -65,7 +65,7 @@
     "description": "Shown below the group name when selecting a group to invite a contact to, when the group item is disabled"
   },
   "Preferences__sent-media-quality": {
-    "message": "Sent media quality",
+    "message": "Göndərilən media keyfiyyəti",
     "description": "Title for the sent media quality setting"
   },
   "sentMediaQualityStandard": {
@@ -73,7 +73,7 @@
     "description": "Label text for standard media quality option"
   },
   "sentMediaQualityHigh": {
-    "message": "High",
+    "message": "Yüksək",
     "description": "Label text for high media quality option"
   },
   "softwareAcknowledgments": {
@@ -572,10 +572,20 @@
     "description": "Label for a button to accept a new safety number"
   },
   "verify": {
-    "message": "Təsdiqləndi olaraq işarələ"
+    "message": "Təsdiqləndi olaraq işarələ",
+    "description": "(deleted 2023/02/03)"
   },
   "unverify": {
-    "message": "Təsdiqlənmədi olaraq işarələ"
+    "message": "Təsdiqlənmədi olaraq işarələ",
+    "description": "(deleted 2023/02/03)"
+  },
+  "icu:SafetyNumberViewer__markAsVerified": {
+    "messageformat": "Təsdiqləndi olaraq işarələ",
+    "description": "Safety number viewer, verification toggle button, when not verified, sets verified"
+  },
+  "icu:SafetyNumberViewer__clearVerification": {
+    "messageformat": "Təsdiqləməni təmizlə",
+    "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
   },
   "isVerified": {
     "message": "$name$ ilə olan güvənlik nömrəniz təsdiqləndi.",
@@ -687,7 +697,7 @@
     "description": "An error popup when the user has attempted to add an attachment"
   },
   "cannotSelectMultipleFileAttachments": {
-    "message": "You can only select one file at a time.",
+    "message": "Eyni anda yalnız bir fayl seçə bilərsiniz.",
     "description": "An error popup when the user has attempted to add multiple non-image attachments"
   },
   "maximumAttachments": {
@@ -699,7 +709,7 @@
     "description": "(deleted 2022/12/07) Shown in a toast if the user tries to attach too-large file"
   },
   "icu:fileSizeWarning": {
-    "messageformat": "Sorry, the selected file exceeds message size restrictions. {limit}{units}",
+    "messageformat": "Təəssüf ki, seçilmiş fayl, mesaj həcm məhdudiyyətlərini aşır. {limit} {units}",
     "description": "Shown in a toast if the user tries to attach too-large file"
   },
   "unableToLoadAttachment": {
@@ -851,7 +861,7 @@
   },
   "at-username": {
     "message": "@$username$",
-    "description": "@ added to username to signify it as a username. Should it be on the right in your language?"
+    "description": "(deleted 02/07/2023) @ added to username to signify it as a username. Should it be on the right in your language?"
   },
   "welcomeToSignal": {
     "message": "Signal-a xoş gəldiniz"
@@ -934,7 +944,7 @@
   },
   "originalMessageNotAvailable": {
     "message": "Orijinal mesaj artıq mövcud deyil",
-    "description": "Shown in toast if user clicks on quote that references message no longer in database"
+    "description": "(deleted 02/07/2023) Shown in toast if user clicks on quote that references message no longer in database"
   },
   "messageFoundButNotLoaded": {
     "message": "Orijinal mesaj tapıldı, ancaq yüklənmədi. Yükləmək üçün yuxarı çək.",
@@ -989,7 +999,7 @@
     "description": "Shown in iOS theme when you or someone quotes to a message which is not from you"
   },
   "audioPermissionNeeded": {
-    "message": "To send voice messages, allow Signal Desktop to access your microphone.",
+    "message": "Səsli mesaj göndərmək üçün \"Signal Masaüstü\"nün cihazın mikrofonuna daxil olmasına icazə verin.",
     "description": "Shown if the user attempts to send an audio message without audio permissions turned on"
   },
   "audioCallingPermissionNeeded": {
@@ -1094,11 +1104,11 @@
     "description": "Label for when something is turned off"
   },
   "deleteWarning": {
-    "message": "Bu mesaj, bu cihazdan silinəcək.",
+    "message": "Bu mesaj bu cihazdan silinəcək.",
     "description": "Text shown in the confirmation dialog for deleting a message locally"
   },
   "deleteForEveryoneWarning": {
-    "message": "Bu mesaj, bu danışıqda Signal-ın ən son versiyasına sahib olan hər kəs üçün silinəcək. Bir mesajı sildiyinizi görə bilərlər.",
+    "message": "Bu mesaj bu söhbətdə Signal-ın ən son versiyasına malik olan hər kəs üçün silinəcək. Bir mesajı sildiyinizi görə bilərlər.",
     "description": "Text shown in the confirmation dialog for deleting a message for everyone"
   },
   "from": {
@@ -1109,9 +1119,25 @@
     "message": "Alan",
     "description": "Label for the receiver of a message"
   },
+  "icu:searchResultHeader--sender-to-group": {
+    "messageformat": "{sender}, {receiverGroup} qrupuna",
+    "description": "Shown for search result items - like 'Jon to Friends Group'"
+  },
+  "icu:searchResultHeader--sender-to-you": {
+    "messageformat": "{sender} sizə göndərildi",
+    "description": "Shown for search result items - like 'Jon to You"
+  },
+  "icu:searchResultHeader--you-to-group": {
+    "messageformat": "Göndərdiniz: {receiverGroup}",
+    "description": "Shown for search result items - like 'You to Friends Group'"
+  },
+  "icu:searchResultHeader--you-to-receiver": {
+    "messageformat": "Göndərdiniz: {receiverContact}",
+    "description": "Shown for search result items - like 'You to Jon'"
+  },
   "toJoiner": {
     "message": "->",
-    "description": "Joiner for message search results - like 'Jon' to 'Friends Group'"
+    "description": "(deleted 2023/02/02) Joiner for message search results - like 'Jon' to 'Friends Group'"
   },
   "sent": {
     "message": "Göndərildi",
@@ -1133,6 +1159,10 @@
   },
   "showSafetyNumber": {
     "message": "Güvənlik nömrəsinə bax"
+  },
+  "icu:ContactModal__showSafetyNumber": {
+    "messageformat": "Güvənlik nömrəsinə bax",
+    "description": "Contact modal, label for button to show safety number modal"
   },
   "viewRecentMedia": {
     "message": "Son mediaya bax",
@@ -1233,32 +1263,36 @@
     "description": "Shown in timeline when a member of a conversation changes their phone number"
   },
   "icu:ConversationMerge--notification": {
-    "messageformat": "{obsoleteConversationTitle} and {conversationTitle} are the same account. Your message history for both chats are here.",
+    "messageformat": "{obsoleteConversationTitle} və {conversationTitle} eyni hesaba aiddir. Hər iki çat üçün mesaj tarixçəniz buradadır.",
     "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way"
   },
-  "icu:ConversationMerge--notification--no-e164": {
-    "messageformat": "Your message history with {conversationTitle} and another chat that belonged to them has been merged.",
-    "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way, but we don't have the phone number for the old conversation"
+  "icu:ConversationMerge--notification--with-e164": {
+    "messageformat": "{conversationTitle} ilə olan mesaj tarixçəniz və onun {obsoleteConversationNumber} əlaqə nömrəsi birləşdirildi.",
+    "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way, but we have the phone number for the old conversation"
+  },
+  "icu:ConversationMerge--notification--no-title": {
+    "messageformat": "{conversationTitle} ilə olan mesaj tarixçəniz və ona aid digər bir söhbət birləşdirildi.",
+    "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way, but we don't have the title for the old conversation"
   },
   "icu:ConversationMerge--learn-more": {
-    "messageformat": "Learn More",
+    "messageformat": "Daha ətraflı",
     "description": "Shown on a button below a 'conversations were merged' timeline notification"
   },
   "icu:ConversationMerge--explainer-dialog--line-1": {
-    "messageformat": "After messaging with {obsoleteConversationTitle} you learned this number belongs to {conversationTitle}. Their phone number is private.",
+    "messageformat": "{obsoleteConversationTitle} ilə mesajlaşdıqdan sonra siz bu nömrənin {conversationTitle} adlı istifadəçiyə aid olduğunu öyrəndiniz. Onun telefon nömrəsi məxfidir.",
     "description": "Contents of a dialog shown after clicking 'learn more' button on a conversation merge event."
   },
   "icu:ConversationMerge--explainer-dialog--line-2": {
-    "messageformat": "Your message history for both conversations have been merged here.",
+    "messageformat": "Hər iki söhbətdə olan mesaj tarixçəniz burada birləşdirilib.",
     "description": "Contents of a dialog shown after clicking 'learn more' button on a conversation merge event."
   },
   "icu:PhoneNumberDiscovery--notification--withSharedGroup": {
-    "messageformat": "{phoneNumber} belongs to {conversationTitle}. You're both members of {sharedGroup}.",
-    "description": "Shown when we've discovered a phone number for a contact you've been communicating with."
+    "messageformat": "{phoneNumber} nömrəsi {conversationTitle} adlı istifadəçiyə aiddir. Hər ikiniz də {sharedGroup} qrupunun üzvüsünüz.",
+    "description": "(deleted 2023/01/11) Shown when we've discovered a phone number for a contact you've been communicating with."
   },
   "icu:PhoneNumberDiscovery--notification--noSharedGroup": {
-    "messageformat": "{phoneNumber} belongs to {conversationTitle}",
-    "description": "Shown when we've discovered a phone number for a contact you've been communicating with, but you have no shared groups."
+    "messageformat": "{phoneNumber} nömrəsi {conversationTitle} adlı istifadəçiyə aiddir.",
+    "description": "(deleted 2023/01/11) Shown when we've discovered a phone number for a contact you've been communicating with, but you have no shared groups."
   },
   "quoteThumbnailAlt": {
     "message": "Sitat mesajdan təsvirin eskizi",
@@ -1560,7 +1594,7 @@
     "description": "when you block someone and cannot view their video"
   },
   "calling__block-info": {
-    "message": "You won't receive their voice or video and they won't receive yours.",
+    "message": "Nə o sizdən, nə də siz ondan səs və video almayacaqsınız.",
     "description": "Shown in the modal dialog to describe how blocking works in a group call"
   },
   "calling__overflow__scroll-up": {
@@ -1692,7 +1726,7 @@
     "description": "Header of the full-screen delete data confirmation screen"
   },
   "deleteAllDataBody": {
-    "message": "Bütün əlaqələr və mesajlar daxil olmaqla bu tətbiqin bütün saxlanılmış hesab məlumatlarını silməyə hazırlaşırsınız. İstənilən vaxt, mobil cihazınızla yenidən əlaqə yarada bilərsiniz, ancaq silinən mesajlar geri yüklənməyəcək.",
+    "message": "Bütün əlaqələr və mesajlar daxil olmaqla bu tətbiqin bütün saxlanılmış hesab məlumatlarını silməyə hazırlaşırsınız. İstənilən vaxt mobil cihazınızla yenidən əlaqə yarada bilərsiniz, ancaq silinən mesajlar geri yüklənməyəcək.",
     "description": "Text describing what exactly will happen if the user clicks the button to delete all data"
   },
   "deleteAllDataButton": {
@@ -1955,7 +1989,15 @@
   },
   "verifyNewNumber": {
     "message": "Güvənlik nömrəsini təsdiqlə",
-    "description": "Label on button included with safety number change notification in the conversation"
+    "description": "(deleted 2023/02/03) Label on button included with safety number change notification in the conversation"
+  },
+  "icu:ConversationDetails__viewSafetyNumber": {
+    "messageformat": "Güvənlik nömrəsinə bax",
+    "description": "In conversation details, label for button to view safety number, opens safety number modal"
+  },
+  "icu:SafetyNumberNotification__viewSafetyNumber": {
+    "messageformat": "Güvənlik nömrəsinə bax",
+    "description": "In conversation, safety number change notification, label for button to view safety number, opens safety number modal"
   },
   "cannotGenerateSafetyNumber": {
     "message": "Bu istifadəçi, onunla mesajlaşana qədər təsdiqlənə bilməz.",
@@ -2158,7 +2200,8 @@
     "description": "Shown in update dialog when partial update fails and we have to ask user to download full update"
   },
   "autoUpdateNewVersionInstructions": {
-    "message": "Yeniləmələri tətbiq etmək üçün \"Signal-ı yenidən başlat\"a basın."
+    "message": "Yeniləmələri tətbiq etmək üçün \"Signal-ı yenidən başlat\"a basın.",
+    "description": "(deleted 2023/01/18)"
   },
   "autoUpdateRestartButtonLabel": {
     "message": "Signal-ı yenidən başlat"
@@ -2278,99 +2321,175 @@
     "description": "Shown in a message's bubble when the message has been deleted for everyone."
   },
   "giftBadge--missing": {
-    "message": "Unable to fetch gift badge details",
-    "description": "Aria label for gift badge when we can't fetch the details"
+    "message": "Hədiyyə nişanı təfərrüatlarını almaq mümkün olmadı",
+    "description": "(deleted 2023/01/20) Aria label for gift badge when we can't fetch the details"
+  },
+  "icu:donation--missing": {
+    "messageformat": "İanə məlumatlarını əldə etmək mümkün olmadı",
+    "description": "Aria label for donation when we can't fetch the details."
   },
   "message--giftBadge--unopened--incoming": {
     "message": "Açmaq üçün bu mesaja mobil cihazınızda baxın",
-    "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    "description": "(deleted 2023/01/20) Shown in a message's bubble when you've received a gift badge from a contact"
+  },
+  "icu:message--donation--unopened--incoming": {
+    "messageformat": "Açmaq üçün bu mesaja mobil cihazınızda baxın",
+    "description": "Shown in a message's bubble when you've received a donation badge from a contact"
   },
   "message--giftBadge--unopened--outgoing": {
     "message": "Hədiyyənizi görmək üçün mobil telefonunuzda bu mesaja toxunun",
-    "description": "Shown in a message's bubble when you've sent a gift badge to a contact"
+    "description": "(deleted 2023/01/20) Shown in a message's bubble when you've sent a gift badge to a contact"
+  },
+  "icu:message--donation--unopened--outgoing": {
+    "messageformat": "İanənizə baxmaq üçün mobil cihazda bu mesaja toxunun",
+    "description": "Shown in a message's bubble when you've sent a donation badge to a contact."
   },
   "message--giftBadge--unopened--label": {
     "message": "Hədiyyə",
-    "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    "description": "(deleted 2023/01/20) Shown in a message's bubble when you've received a gift badge from a contact"
+  },
+  "icu:message--donation--unopened--label": {
+    "messageformat": "{sender} sizin adınızdan Signal-a ianə verdi",
+    "description": "Shown in a message's bubble when you've received a donation badge from a contact."
   },
   "message--giftBadge--unopened--toast--incoming": {
     "message": "Hədiyyəni açmaq üçün telefonda yoxlayın",
-    "description": "Shown when you've clicked on an incoming gift badge you haven't yet redeemed"
+    "description": "(deleted 2023/01/20) Shown when you've clicked on an incoming gift badge you haven't yet redeemed"
+  },
+  "icu:message--donation--unopened--toast--incoming": {
+    "messageformat": "Bu ianəni açmaq üçün telefonunuzu yoxlayın",
+    "description": "Shown when you've clicked on an incoming donation you haven't yet redeemed."
   },
   "message--giftBadge--unopened--toast--outgoing": {
     "message": "Hədiyyənizə baxmaq üçün telefonunuzu yoxlayın",
-    "description": "Shown when you've clicked on an outgoing gift badge"
+    "description": "(deleted 2023/01/20) Shown when you've clicked on an outgoing gift badge"
+  },
+  "icu:message--donation--unopened--toast--outgoing": {
+    "messageformat": "İanənizə baxmaq üçün telefonunuzu yoxlayın",
+    "description": "Shown when you've clicked on an outgoing donation badge."
   },
   "message--giftBadge--preview--unopened": {
     "message": "Bir hədiyyə aldınız",
-    "description": "Shown to label the gift badge in notifications and the left pane"
+    "description": "(deleted 2023/01/20) Shown to label the gift badge in notifications and the left pane"
+  },
+  "icu:message--donation--preview--unopened": {
+    "messageformat": "{sender} sizin üçün ianə verdi",
+    "description": "Shown to label the donation badge in notifications and the left pane."
   },
   "message--giftBadge--preview--redeemed": {
     "message": "Bir hədiyyə nişanı aldınız.",
-    "description": "Shown to label the redeemed gift badge in notifications and the left pane"
+    "description": "(deleted 2023/01/20) Shown to label the redeemed gift badge in notifications and the left pane"
+  },
+  "icu:message--donation--preview--redeemed": {
+    "messageformat": "Bir ianə aldınız",
+    "description": "Shown to label the redeemed donation badge in notifications and the left pane."
   },
   "message--giftBadge--preview--sent": {
     "message": "Bir nişan hədiyyə etdiniz",
-    "description": "Shown to label a gift badge you've sent in notifications and the left pane"
+    "description": "(deleted 2023/01/20) Shown to label a gift badge you've sent in notifications and the left pane"
+  },
+  "icu:message--donation--preview--sent": {
+    "messageformat": "{recipient} adlı şəxs üçün ianə verdiniz",
+    "description": "Shown to label a donation badge you've sent in notifications and the left pane"
   },
   "message--giftBadge": {
     "message": "Hədiyyə nişan",
-    "description": "Shown to label the gift badge you've redeemed on another device"
+    "description": "(deleted 2023/01/20) Shown to label the gift badge you've redeemed on another device"
+  },
+  "icu:message--donation": {
+    "messageformat": "İanə",
+    "description": "Shown to label the donation badge you've redeemed on another device."
   },
   "quote--giftBadge": {
     "message": "Hədiyyə",
-    "description": "Shown to label a gift badge you've replied to"
+    "description": "(deleted 2023/01/20) Shown to label a gift badge you've replied to"
+  },
+  "icu:quote--donation": {
+    "messageformat": "İanə",
+    "description": "Shown to label a donation badge you've replied to."
   },
   "message--giftBadge--remaining--days": {
     "message": "$days$ gün qalıb",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for days > 1)"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device (only rendered for days > 1)"
+  },
+  "icu:message--donation--remaining--days": {
+    "messageformat": "{days} gün qalıb",
+    "description": "Describes how long remains for the donation badge you've redeemed on another device (only rendered for days > 1)."
   },
   "message--giftBadge--remaining--hours": {
     "message": "$hours$ saat qalıb",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for hours > 1)"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device (only rendered for hours > 1)"
+  },
+  "icu:message--donation--remaining--hours": {
+    "messageformat": "{hours} saat qalıb",
+    "description": "Describes how long remains for the donation badge you've redeemed on another device (only rendered for hours > 1)"
   },
   "message--giftBadge--remaining--minutes": {
     "message": "$minutes$ dəqiqə qalıb",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for minutes > 1)"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device (only rendered for minutes > 1)"
+  },
+  "icu:message--donation--remaining--minutes": {
+    "messageformat": "{minutes, plural, one {1 dəqiqə qalıb} other {{minutes,number} dəqiqə qalıb}}",
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device."
   },
   "message--giftBadge--remaining--one-minute": {
     "message": "1 dəqiqə qalıb",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device"
   },
   "message--giftBadge--expired": {
     "message": "Başa çatdı",
-    "description": "Shows that a gift badge is expired"
+    "description": "(deleted 2023/01/20) Shows that a gift badge is expired"
+  },
+  "icu:message--donation--expired": {
+    "messageformat": "Başa çatdı",
+    "description": "Shows that a donation badge is expired"
   },
   "message--giftBadge--view": {
     "message": "Bax",
     "description": "Shown when you've sent a gift badge to someone then opened it"
   },
+  "icu:message--donation--view": {
+    "messageformat": "Baxış",
+    "description": "Shown when you've sent a donation badge to someone then opened it"
+  },
   "message--giftBadge--redeemed": {
     "message": "Alındı",
-    "description": "Shown when you've redeemed the gift badge on another device"
+    "description": "(deleted 2023/01/20) Shown when you've redeemed the gift badge on another device"
+  },
+  "icu:message--donation--redeemed": {
+    "messageformat": "Alındı",
+    "description": "Shown when you've redeemed the donation badge on another device"
   },
   "modal--giftBadge--title": {
     "message": "Dəstəyiniz üçün təşəkkürlər!",
-    "description": "The title of the outgoing gift badge detail dialog"
+    "description": "(deleted 2023/01/20) The title of the outgoing gift badge detail dialog"
+  },
+  "icu:modal--donation--title": {
+    "messageformat": "Dəstəyiniz üçün təşəkkürlər!",
+    "description": "The title of the outgoing donation badge detail dialog"
   },
   "modal--giftBadge--description": {
     "message": "$name$ üçün bir nişan hədiyyə etdiniz. Qəbul ediləndə ona nişanı göstərmə və ya gizlətmə seçimi təqdim olunur.",
-    "description": "The description of the outgoing gift badge detail dialog"
+    "description": "(deleted 2023/01/20) The description of the outgoing gift badge detail dialog"
+  },
+  "icu:modal--donation--description": {
+    "messageformat": "Siz {name} adından Signal-a ianə verdiniz. Ona öz dəstəyini profilində göstərmə imkanı veriləcək.",
+    "description": "The description of the outgoing donation badge detail dialog"
   },
   "stickers--toast--InstallFailed": {
     "message": "Stiker paketi quraşdırıla bilmədi",
     "description": "Shown in a toast if the user attempts to install a sticker pack and it fails"
   },
   "stickers--StickerManager--title": {
-    "message": "Stickers",
+    "message": "Stikerlər",
     "description": "Title for the sticker manager"
   },
   "stickers--StickerManager--Available": {
-    "message": "Available",
+    "message": "Aktivdir",
     "description": "Shown in the sticker pack manager as a tab for available stickers"
   },
   "stickers--StickerManager--InstalledPacks": {
-    "message": "Installed",
+    "message": "Quraşdırılıb",
     "description": "Shown in the sticker pack manager above your installed sticker packs."
   },
   "stickers--StickerManager--InstalledPacks--Empty": {
@@ -2766,23 +2885,23 @@
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--accept-video-call": {
-    "message": "Answer call with video",
+    "message": "Zəngə görüntülü cavab verin",
     "description": "(deleted 2023/01/09) Shown in the calling keyboard shortcuts guide"
   },
   "Keyboard--accept-audio-call": {
-    "message": "Answer call with audio",
+    "message": "Zəngə səsli cavab verin",
     "description": "(deleted 2023/01/09) Shown in the calling keyboard shortcuts guide"
   },
   "icu:Keyboard--accept-video-call": {
-    "messageformat": "Answer call with video (video calls only)",
+    "messageformat": "Zəngə görüntülü cavab verin (yalnız video zənglər)",
     "description": "Shown in the calling keyboard shortcuts guide"
   },
   "icu:Keyboard--accept-call-without-video": {
-    "messageformat": "Answer call without video",
+    "messageformat": "Zəngə görüntüsüz cavab verin",
     "description": "Shown in the calling keyboard shortcuts guide"
   },
   "Keyboard--start-audio-call": {
-    "message": "Start voice call",
+    "message": "Audio zəng edin",
     "description": "Shown in the calling keyboard shortcuts guide"
   },
   "Keyboard--start-video-call": {
@@ -3110,11 +3229,11 @@
     "description": "Shown as a button to let the user delete any message request"
   },
   "MessageRequests--delete-direct-confirm-title": {
-    "message": "Danışıq silinsin?",
+    "message": "Söhbət silinsin?",
     "description": "Shown as the title in the confirmation modal for deleting a private message request"
   },
   "MessageRequests--delete-direct-confirm-body": {
-    "message": "Bu danışıq, bütün cihazlarınızdan silinəcək.",
+    "message": "Bu söhbət bütün cihazlarınızdan silinəcək.",
     "description": "Shown as the body in the confirmation modal for deleting a private message request"
   },
   "MessageRequests--delete-group-confirm-title": {
@@ -3198,11 +3317,11 @@
     "description": "When a user has no common groups, show this warning"
   },
   "acceptCall": {
-    "message": "Answer call",
+    "message": "Zəngə cavab ver",
     "description": "Shown in tooltip for the button to accept a call (audio or video)"
   },
   "acceptCallWithoutVideo": {
-    "message": "Answer call without video",
+    "message": "Zəngə görüntüsüz cavab verin",
     "description": "Shown in tooltip for the button to accept a video call without video"
   },
   "declineCall": {
@@ -3210,7 +3329,7 @@
     "description": "Shown in tooltip for the button to decline a call (audio or video)"
   },
   "declinedIncomingAudioCall": {
-    "message": "You declined a voice call",
+    "message": "Bir audio zəngi rədd etdiniz",
     "description": "Shown in conversation history when you declined an incoming voice call"
   },
   "declinedIncomingVideoCall": {
@@ -3218,7 +3337,7 @@
     "description": "Shown in conversation history when you declined an incoming video call"
   },
   "acceptedIncomingAudioCall": {
-    "message": "Incoming voice call",
+    "message": "Gələn audio zəng",
     "description": "Shown in conversation history when you accepted an incoming voice call"
   },
   "acceptedIncomingVideoCall": {
@@ -3226,7 +3345,7 @@
     "description": "Shown in conversation history when you accepted an incoming video call"
   },
   "missedIncomingAudioCall": {
-    "message": "Missed voice call",
+    "message": "Buraxılmış audio zəng",
     "description": "Shown in conversation history when you missed an incoming voice call"
   },
   "missedIncomingVideoCall": {
@@ -3234,7 +3353,7 @@
     "description": "Shown in conversation history when you missed an incoming video call"
   },
   "acceptedOutgoingAudioCall": {
-    "message": "Outgoing voice call",
+    "message": "Gedən audio zəng",
     "description": "Shown in conversation history when you made an outgoing voice call"
   },
   "acceptedOutgoingVideoCall": {
@@ -3242,7 +3361,7 @@
     "description": "Shown in conversation history when you made an outgoing video call"
   },
   "missedOrDeclinedOutgoingAudioCall": {
-    "message": "Unanswered voice call",
+    "message": "Cavablanmamış audio zəng",
     "description": "Shown in conversation history when your voice call is missed or declined"
   },
   "missedOrDeclinedOutgoingVideoCall": {
@@ -3258,7 +3377,7 @@
     "description": "Shown in a notification body when Signal is minimized to tray"
   },
   "incomingAudioCall": {
-    "message": "Incoming voice call...",
+    "message": "Gələn audio zəng...",
     "description": "Shown in both the incoming call bar and notification for an incoming voice call"
   },
   "incomingVideoCall": {
@@ -3610,7 +3729,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--title--remove--other": {
-    "message": "$memberName$, qrup adını sildi.",
+    "message": "$memberName$ qrup adını sildi.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--title--remove--you": {
@@ -3634,7 +3753,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--avatar--remove--other": {
-    "message": "$memberName$  qrup avatarını çıxartdı.",
+    "message": "$memberName$ qrup avatarını çıxartdı.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--avatar--remove--you": {
@@ -3802,7 +3921,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--member-remove--other--other": {
-    "message": "$adminName$, $memberName$ üzvünü çıxartdı.",
+    "message": "$adminName$ $memberName$ üzvünü çıxartdı.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--member-remove--other--self": {
@@ -3814,7 +3933,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--member-remove--other--unknown": {
-    "message": "Bir üzv, $memberName$ üzvünü çıxartdı.",
+    "message": "Bir üzv $memberName$ üzvünü çıxartdı.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--member-remove--you--other": {
@@ -4086,7 +4205,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--description--remove--other": {
-    "message": "$memberName$, qrup açıqlamasını çıxartdı.",
+    "message": "$memberName$ qrup açıqlamasını çıxartdı.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--description--remove--unknown": {
@@ -4130,7 +4249,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--summary": {
-    "messageformat": "This group's members or settings have changed.",
+    "messageformat": "Bu qrupun üzvləri və ya parametrləri dəyişib.",
     "description": "When rejoining a group, any detected changes are collapsed down into this summary"
   },
   "GroupV1--Migration--disabled": {
@@ -4210,7 +4329,7 @@
     "description": "Shown in timeline when a group is upgraded and some people were invited, instead of added"
   },
   "GroupV1--Migration--removed--one": {
-    "message": "$contact$qrupdan çıxarıldı.",
+    "message": "$contact$ qrupdan çıxarıldı.",
     "description": "Shown in timeline when a group is upgraded and one person was removed entirely during the upgrade"
   },
   "GroupV1--Migration--removed--many": {
@@ -4446,11 +4565,11 @@
     "description": "(deleted 2023/01/03) Title of the groups-in-common panel, in the contact details"
   },
   "icu:ConversationDetailsGroups--title": {
-    "messageformat": "{count, plural, one {1 group in common} other {{count,number} groups in common}}",
+    "messageformat": "{count, plural, one {{count,number} ortaq qrupunuz var} other {{count,number} ortaq qrupunuz var}}",
     "description": "Title of the groups-in-common panel, in the contact details"
   },
   "icu:ConversationDetailsGroups--title--with-zero-groups-in-common": {
-    "messageformat": "No groups in common",
+    "messageformat": "Heç bir ortaq qrup yoxdur",
     "description": "Title of the groups-in-common panel, in the contact details, with zero groups in common"
   },
   "ConversationDetailsGroups--add-to-group": {
@@ -4738,7 +4857,7 @@
     "description": "Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "TimelineDateHeader--date-older-than-6-months": {
-    "message": "AAA G, İİİİ",
+    "message": "GG. AA. İİİİ",
     "description": "Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "MessageRequestWarning__learn-more": {
@@ -4810,7 +4929,7 @@
     "description": "When confirming the removal of a group member, show this text in the dialog"
   },
   "RemoveGroupMemberConfirmation__description__with-link": {
-    "message": "\"$name$\", qrupdan çıxarılsın? Qrup bağlantısı vasitəsilə yenidən qoşula bilməyəcək.",
+    "message": "\"$name$\" qrupdan çıxarılsın? Qrup bağlantısı vasitəsilə yenidən qoşula bilməyəcək.",
     "description": "When confirming the removal of a group member, show this text in the dialog"
   },
   "CaptchaDialog__title": {
@@ -4854,7 +4973,7 @@
     "description": "Confirm title for deleting custom color"
   },
   "ChatColorPicker__delete--message": {
-    "message": "Bu özəl rəng $num$ söhbətdə istifadə olunur. Onu bütün söhbətlərdən silmək istəyirsiniz?",
+    "message": "Bu fərdi rəng $num$ söhbətdə istifadə olunur. Onu bütün söhbətlərdən silmək istəyirsiniz?",
     "description": "Confirm message for deleting custom color"
   },
   "ChatColorPicker__global-chat-color": {
@@ -5104,6 +5223,10 @@
   "ProfileEditor--username--general-error": {
     "message": "İstifadəçi adınız yaddaşda saxlanıla bilmədi. İnternet bağlantınızı yoxlayıb yenidən sınayın.",
     "description": "Shown if something unknown has gone wrong with username save."
+  },
+  "icu:ProfileEditor--username--reservation-gone": {
+    "messageformat": "{username} is no longer available. A new set of digits will be paired with your username, please try saving it again.",
+    "description": "Shown if username reservation has expired and new one needs to be generated."
   },
   "ProfileEditor--username--delete-general-error": {
     "message": "İstifadəçi adınız silinə bilmədi. İnternet bağlantınızı yoxlayıb yenidən sınayın.",
@@ -5774,7 +5897,7 @@
     "description": "Description of checkbox to allow or disallow replies to your stories"
   },
   "StoriesSettings__delete-list": {
-    "message": "Xüsusi hekayəni sil",
+    "message": "Fərdi hekayəni sil",
     "description": "Button label to delete a custom distribution list"
   },
   "StoriesSettings__delete-list--confirm": {
@@ -5985,6 +6108,10 @@
     "message": "Cavabla",
     "description": "Button label to reply to a story"
   },
+  "icu:StoryViewer__reply-placeholder": {
+    "messageformat": "{firstName} hekayəsinə cavab ver",
+    "description": "Button label to reply to a story"
+  },
   "StoryViewer__reply-group": {
     "message": "Qrupa cavab ver",
     "description": "Button label to reply to a group story"
@@ -6055,7 +6182,7 @@
   },
   "StoryViewsNRepliesModal__react": {
     "message": "Hekayəyə reaksiya ver",
-    "description": "aria-label for reaction button"
+    "description": "(deleted 01/25/23) aria-label for reaction button"
   },
   "StoryViewsNRepliesModal__reacted": {
     "message": "Hekayəyə reaksiya verildi",
@@ -6193,6 +6320,14 @@
     "message": "Hekayənizə baxanlar üçün keçid əlavə edin",
     "description": "Empty state for the link preview"
   },
+  "icu:Stories__failed-send--full": {
+    "messageformat": "Hekayəni göndərmək mümkün olmadı",
+    "description": "Notification text whenever a story fails to send"
+  },
+  "icu:Stories__failed-send--partial": {
+    "messageformat": "Hekayəni bütün alıcılara göndərmək mümkün olmadı",
+    "description": "Notification text whenever a story partially fails to send"
+  },
   "TextAttachment__placeholder": {
     "message": "Mətn əlavə et",
     "description": "Placeholder for the add text input"
@@ -6253,6 +6388,42 @@
     "message": "Bu rəqəmlər istifadəçi adınızın məxfiliyini qorumağa və bununla da arzuolunmaz mesajlardan yayınmanıza kömək edir. İstifadəçi adınızı yalnız söhbət etmək istədiyiniz insanlar və qruplarla paylaşın. İstifadəçi adlarını dəyişsəniz, yeni rəqəmlər toplusu alacaqsınız.",
     "description": "Body of the popup with information about discriminator in username"
   },
+  "icu:UsernameOnboardingModalBody__title": {
+    "messageformat": "Set up your Signal username",
+    "description": "Title of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__row__number": {
+    "messageformat": "Usernames are paired with a set of digits and aren’t shared on your profile",
+    "description": "Content of the first row of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__row__link": {
+    "messageformat": "Each username has a unique link you can share with your friends to start a chat with you",
+    "description": "Content of the second row of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__row__lock": {
+    "messageformat": "Turn off phone number discovery under Settings > Phone Number > Who can find my number, to use your username as the primary way others can contact you.",
+    "description": "Content of the third row of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__learn-more": {
+    "messageformat": "Learn More",
+    "description": "Text that open a popup with information about username onboarding"
+  },
+  "icu:UsernameOnboardingModalBody__continue": {
+    "messageformat": "Continue",
+    "description": "Text of the primary button on username onboarding modal"
+  },
+  "icu:UnsupportedOSWarningDialog__body": {
+    "messageformat": "Signal desktop tezliklə kompüterinizin {OS} versiyasını artıq dəstəkləməyəcək. Signal-dan istifadəyə davam etmək üçün kompüterinizin əməliyyat sistemini {expirationDate} tarixinə qədər yeniləyin. <learnMoreLink>Daha ətraflı</learnMoreLink>",
+    "description": "Body of a dialog displayed on unsupported operating systems"
+  },
+  "icu:UnsupportedOSErrorDialog__body": {
+    "messageformat": "Signal desktop artıq bu kompüterdə işləmir. Signal desktop-dan yenidən istifadə etmək üçün kompüterinizin {OS} versiyasını yeniləyin. <learnMoreLink>Daha ətraflı</learnMoreLink>",
+    "description": "Body of a dialog displayed on unsupported operating systems"
+  },
+  "icu:UnsupportedOSErrorToast": {
+    "messageformat": "Signal desktop artıq bu kompüterdə işləmir. Signal desktop-dan yenidən istifadə etmək üçün kompüterinizin {OS} versiyasını yeniləyin.",
+    "description": "Body of a dialog displayed on unsupported operating systems"
+  },
   "WhatsNew__modal-title": {
     "message": "Yeni nə var",
     "description": "Title for the whats new modal"
@@ -6300,5 +6471,25 @@
   "WhatsNew__v6.1--1": {
     "message": "Kiçik qruplara (16 nəfərə qədər) qrup zəngi başlatdığınız zaman, zəng bildirişi göndərmə funksiyasını seçə bilərsiniz. Qrup üzvləri iOS beta, yaxud da Desktop və ya Android istifadə edirsə, bu zəngi görəcək.",
     "description": "Release notes for v6.1"
+  },
+  "icu:WhatsNew__v6.3--0": {
+    "messageformat": "Sitatlı cavaba başlamaq üçün bir söhbətdə istənilən mesaj sətirinə iki dəfə klikləyin. Bu, köhnə ideyalar haqqında yeni düşüncələr paylaşmaq üçün qısa yol kimidir. Bu funksiyanı tətbiq etdiyi və rəy bildirdiyi üçün {whynothugo} və Signal icmasına təşəkkür edirik.",
+    "description": "Release notes for v6.3"
+  },
+  "icu:WhatsNew__v6.3--1": {
+    "messageformat": "Artıq qalereya görüntüsündən asanlıqla çıxmaq üçün sadəcə bir şəklin xaricinə klikləmək kifayətdir. Bəzən ağlınıza gəlməyənlər başınıza gələ bilər. Bizi bu cür hallardan qoruduğun üçün təşəkkürlər {jojomatik}!",
+    "description": "Release notes for v6.3"
+  },
+  "icu:WhatsNew__v6.5--0": {
+    "messageformat": "Cavab vermə vaxtını qısaldın. Artıq bir hekayəyə cavab verərkən istənilən emojiyə toxunmaqla daha tez reaksiya göstərə bilərsiniz.",
+    "description": "Release notes for v6.5"
+  },
+  "icu:WhatsNew__v6.5--1": {
+    "messageformat": "Artıq mesaj tarixçəsində Çin və Yapon dillərində fərdi simvolları axtarmaq mümkündür.",
+    "description": "Release notes for v6.5"
+  },
+  "icu:WhatsNew__v6.6--0": {
+    "messageformat": "Audio və video zənglər üçün bir neçə etibarlı və effektiv təkmilləşmə metodlarını sınaqdan keçirməkdə bizə kömək edin. Bu beta versiyaya bəzi xəta düzəlişləri və kiçik UI yeniləmələri də daxildir (keçid önizləməsi ilə əlaqəli yeniliklərə nəzər salın!). Beta sınaq istifadəçisi olduğunuz üçün təşəkkürlər, hər hansı bir xəta aşkar etsəniz bizimlə icma formunda əlaqə saxlayın.",
+    "description": "Release notes for v6.6"
   }
 }

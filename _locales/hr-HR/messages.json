@@ -65,15 +65,15 @@
     "description": "Shown below the group name when selecting a group to invite a contact to, when the group item is disabled"
   },
   "Preferences__sent-media-quality": {
-    "message": "Sent media quality",
+    "message": "Kvaliteta poslanih medija",
     "description": "Title for the sent media quality setting"
   },
   "sentMediaQualityStandard": {
-    "message": "Standard",
+    "message": "Standardno",
     "description": "Label text for standard media quality option"
   },
   "sentMediaQualityHigh": {
-    "message": "High",
+    "message": "Visoko",
     "description": "Label text for high media quality option"
   },
   "softwareAcknowledgments": {
@@ -572,10 +572,20 @@
     "description": "Label for a button to accept a new safety number"
   },
   "verify": {
-    "message": "Označi kao provjereno"
+    "message": "Označi kao provjereno",
+    "description": "(deleted 2023/02/03)"
   },
   "unverify": {
-    "message": "Označi kao ne provjereno"
+    "message": "Označi kao ne provjereno",
+    "description": "(deleted 2023/02/03)"
+  },
+  "icu:SafetyNumberViewer__markAsVerified": {
+    "messageformat": "Označi kao provjereno",
+    "description": "Safety number viewer, verification toggle button, when not verified, sets verified"
+  },
+  "icu:SafetyNumberViewer__clearVerification": {
+    "messageformat": "Poništi provjeru",
+    "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
   },
   "isVerified": {
     "message": "Potvrdili ste vaš sigurnosni broj s $name$.",
@@ -687,7 +697,7 @@
     "description": "An error popup when the user has attempted to add an attachment"
   },
   "cannotSelectMultipleFileAttachments": {
-    "message": "You can only select one file at a time.",
+    "message": "Možete odabrati samo jednu po jednu datoteku.",
     "description": "An error popup when the user has attempted to add multiple non-image attachments"
   },
   "maximumAttachments": {
@@ -699,7 +709,7 @@
     "description": "(deleted 2022/12/07) Shown in a toast if the user tries to attach too-large file"
   },
   "icu:fileSizeWarning": {
-    "messageformat": "Sorry, the selected file exceeds message size restrictions. {limit}{units}",
+    "messageformat": "Nažalost odabrana datoteka premašuje ograničenja veličine poruke. {limit} {units}",
     "description": "Shown in a toast if the user tries to attach too-large file"
   },
   "unableToLoadAttachment": {
@@ -851,7 +861,7 @@
   },
   "at-username": {
     "message": "@$username$",
-    "description": "@ added to username to signify it as a username. Should it be on the right in your language?"
+    "description": "(deleted 02/07/2023) @ added to username to signify it as a username. Should it be on the right in your language?"
   },
   "welcomeToSignal": {
     "message": "Dobrodošli u Signal"
@@ -934,7 +944,7 @@
   },
   "originalMessageNotAvailable": {
     "message": "Originalna poruka više nije dostupna",
-    "description": "Shown in toast if user clicks on quote that references message no longer in database"
+    "description": "(deleted 02/07/2023) Shown in toast if user clicks on quote that references message no longer in database"
   },
   "messageFoundButNotLoaded": {
     "message": "Originalna poruka je pronađena, ali nije učitana. Povucite prema gore da biste je učitali.",
@@ -989,7 +999,7 @@
     "description": "Shown in iOS theme when you or someone quotes to a message which is not from you"
   },
   "audioPermissionNeeded": {
-    "message": "To send voice messages, allow Signal Desktop to access your microphone.",
+    "message": "Za slanje glasovnih poruka omogućite pristup vašem mikrofonu Signalu za Desktop.",
     "description": "Shown if the user attempts to send an audio message without audio permissions turned on"
   },
   "audioCallingPermissionNeeded": {
@@ -1094,11 +1104,11 @@
     "description": "Label for when something is turned off"
   },
   "deleteWarning": {
-    "message": "Ova poruka će biti izbrisana s ovog uređaja.",
+    "message": "Ova će poruka biti izbrisana s ovog uređaja.",
     "description": "Text shown in the confirmation dialog for deleting a message locally"
   },
   "deleteForEveryoneWarning": {
-    "message": "Ova poruka će biti trajno izbrisana za sve osobe u razgovoru ako su na najnovijoj verziji Signala. Moći će vidjeti da ste izbrisali poruku.",
+    "message": "Ova će poruka biti trajno izbrisana za sve osobe u razgovoru ako su na najnovijoj verziji Signala. Moći će vidjeti da ste izbrisali poruku.",
     "description": "Text shown in the confirmation dialog for deleting a message for everyone"
   },
   "from": {
@@ -1109,9 +1119,25 @@
     "message": "Za",
     "description": "Label for the receiver of a message"
   },
+  "icu:searchResultHeader--sender-to-group": {
+    "messageformat": "{sender} šalje priču grupi {receiverGroup}",
+    "description": "Shown for search result items - like 'Jon to Friends Group'"
+  },
+  "icu:searchResultHeader--sender-to-you": {
+    "messageformat": "Poslao korisnik {sender}",
+    "description": "Shown for search result items - like 'Jon to You"
+  },
+  "icu:searchResultHeader--you-to-group": {
+    "messageformat": "Poslano grupi {receiverGroup}",
+    "description": "Shown for search result items - like 'You to Friends Group'"
+  },
+  "icu:searchResultHeader--you-to-receiver": {
+    "messageformat": "Poslano korisniku {receiverContact}",
+    "description": "Shown for search result items - like 'You to Jon'"
+  },
   "toJoiner": {
     "message": "u",
-    "description": "Joiner for message search results - like 'Jon' to 'Friends Group'"
+    "description": "(deleted 2023/02/02) Joiner for message search results - like 'Jon' to 'Friends Group'"
   },
   "sent": {
     "message": "Poslano",
@@ -1133,6 +1159,10 @@
   },
   "showSafetyNumber": {
     "message": "Prikaži sigurnosni broj"
+  },
+  "icu:ContactModal__showSafetyNumber": {
+    "messageformat": "Prikaži sigurnosni broj",
+    "description": "Contact modal, label for button to show safety number modal"
   },
   "viewRecentMedia": {
     "message": "Prikaži nedavne medijske zapise",
@@ -1233,32 +1263,36 @@
     "description": "Shown in timeline when a member of a conversation changes their phone number"
   },
   "icu:ConversationMerge--notification": {
-    "messageformat": "{obsoleteConversationTitle} and {conversationTitle} are the same account. Your message history for both chats are here.",
+    "messageformat": "{obsoleteConversationTitle} i {conversationTitle} pripadaju istom računu. Vaša povijest poruka za oba razgovora nalazi se ovdje.",
     "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way"
   },
-  "icu:ConversationMerge--notification--no-e164": {
-    "messageformat": "Your message history with {conversationTitle} and another chat that belonged to them has been merged.",
-    "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way, but we don't have the phone number for the old conversation"
+  "icu:ConversationMerge--notification--with-e164": {
+    "messageformat": "Povijest vašeg razgovora s korisnikom {conversationTitle} sada je povezana s njegovim brojem {obsoleteConversationNumber}.",
+    "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way, but we have the phone number for the old conversation"
+  },
+  "icu:ConversationMerge--notification--no-title": {
+    "messageformat": "Povijest vašeg razgovora s korisnikom {conversationTitle} sada je povezana s drugim razgovorom s istim korisnikom.",
+    "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way, but we don't have the title for the old conversation"
   },
   "icu:ConversationMerge--learn-more": {
-    "messageformat": "Learn More",
+    "messageformat": "Saznajte više",
     "description": "Shown on a button below a 'conversations were merged' timeline notification"
   },
   "icu:ConversationMerge--explainer-dialog--line-1": {
-    "messageformat": "After messaging with {obsoleteConversationTitle} you learned this number belongs to {conversationTitle}. Their phone number is private.",
+    "messageformat": "Nakon razgovora s korisnikom {obsoleteConversationTitle} saznali ste da ovaj broj pripada korisniku {conversationTitle}. Taj je broj telefona privatan.",
     "description": "Contents of a dialog shown after clicking 'learn more' button on a conversation merge event."
   },
   "icu:ConversationMerge--explainer-dialog--line-2": {
-    "messageformat": "Your message history for both conversations have been merged here.",
+    "messageformat": "Vaša povijest poruka za oba razgovora spojena je i nalazi se ovdje.",
     "description": "Contents of a dialog shown after clicking 'learn more' button on a conversation merge event."
   },
   "icu:PhoneNumberDiscovery--notification--withSharedGroup": {
-    "messageformat": "{phoneNumber} belongs to {conversationTitle}. You're both members of {sharedGroup}.",
-    "description": "Shown when we've discovered a phone number for a contact you've been communicating with."
+    "messageformat": "Broj {phoneNumber} pripada korisniku {conversationTitle}. Oboje ste članovi grupe {sharedGroup}.",
+    "description": "(deleted 2023/01/11) Shown when we've discovered a phone number for a contact you've been communicating with."
   },
   "icu:PhoneNumberDiscovery--notification--noSharedGroup": {
-    "messageformat": "{phoneNumber} belongs to {conversationTitle}",
-    "description": "Shown when we've discovered a phone number for a contact you've been communicating with, but you have no shared groups."
+    "messageformat": "Broj {phoneNumber} pripada korisniku {conversationTitle}",
+    "description": "(deleted 2023/01/11) Shown when we've discovered a phone number for a contact you've been communicating with, but you have no shared groups."
   },
   "quoteThumbnailAlt": {
     "message": "Sličica fotografije iz citirane poruke",
@@ -1560,7 +1594,7 @@
     "description": "when you block someone and cannot view their video"
   },
   "calling__block-info": {
-    "message": "You won't receive their voice or video and they won't receive yours.",
+    "message": "Nećete primiti audio ili video blokiranog korisnika, a ni on vaš.",
     "description": "Shown in the modal dialog to describe how blocking works in a group call"
   },
   "calling__overflow__scroll-up": {
@@ -1692,7 +1726,7 @@
     "description": "Header of the full-screen delete data confirmation screen"
   },
   "deleteAllDataBody": {
-    "message": "Izbrisati će te sve spremljene podatke o računu u aplikaciji, uključujući sve kontakte i sve poruke. Uvijek se možete ponovo povezati s svojim mobilnim uređajem, ali to neće vratiti izbrisane poruke.",
+    "message": "Izbrisat ćete sve spremljene podatke o računu u aplikaciji, uključujući sve kontakte i sve poruke. Uvijek se možete ponovo povezati sa svojim mobilnim uređajem, ali to neće vratiti izbrisane poruke.",
     "description": "Text describing what exactly will happen if the user clicks the button to delete all data"
   },
   "deleteAllDataButton": {
@@ -1704,7 +1738,7 @@
     "description": "Message shown to user when app is disconnected and data deleted"
   },
   "deleteOldIndexedDBData": {
-    "message": "Imate zastarjele podatke iz prethodne instalacije Signala za Desktop. Ako odlučite nastaviti, biti će izbrisano i započeti će te ispočetka.",
+    "message": "Imate zastarjele podatke iz prethodne instalacije Signala za Desktop. Ako odlučite nastaviti, bit će izbrisani i započet ćete ispočetka.",
     "description": "Shown if user last ran Signal Desktop before October 2018"
   },
   "deleteOldData": {
@@ -1955,7 +1989,15 @@
   },
   "verifyNewNumber": {
     "message": "Provjeri sigurnosni broj",
-    "description": "Label on button included with safety number change notification in the conversation"
+    "description": "(deleted 2023/02/03) Label on button included with safety number change notification in the conversation"
+  },
+  "icu:ConversationDetails__viewSafetyNumber": {
+    "messageformat": "Prikaži sigurnosni broj",
+    "description": "In conversation details, label for button to view safety number, opens safety number modal"
+  },
+  "icu:SafetyNumberNotification__viewSafetyNumber": {
+    "messageformat": "Prikaži sigurnosni broj",
+    "description": "In conversation, safety number change notification, label for button to view safety number, opens safety number modal"
   },
   "cannotGenerateSafetyNumber": {
     "message": "Ovog korisnika nije moguće provjeriti dokle god ne razmijenite poruke s njim.",
@@ -2158,7 +2200,8 @@
     "description": "Shown in update dialog when partial update fails and we have to ask user to download full update"
   },
   "autoUpdateNewVersionInstructions": {
-    "message": "Kliknite Ponovno pokreni Signal za primjenu ažuriranja."
+    "message": "Kliknite Ponovno pokreni Signal za primjenu ažuriranja.",
+    "description": "(deleted 2023/01/18)"
   },
   "autoUpdateRestartButtonLabel": {
     "message": "Ponovno pokreni Signal"
@@ -2278,99 +2321,175 @@
     "description": "Shown in a message's bubble when the message has been deleted for everyone."
   },
   "giftBadge--missing": {
-    "message": "Unable to fetch gift badge details",
-    "description": "Aria label for gift badge when we can't fetch the details"
+    "message": "Nije moguće dohvatiti detalje poklonjene značke",
+    "description": "(deleted 2023/01/20) Aria label for gift badge when we can't fetch the details"
+  },
+  "icu:donation--missing": {
+    "messageformat": "Nije moguće učitati podatke o donaciji",
+    "description": "Aria label for donation when we can't fetch the details."
   },
   "message--giftBadge--unopened--incoming": {
     "message": "Otvorite ovu poruku na mobilnom uređaju da biste je pročitali",
-    "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    "description": "(deleted 2023/01/20) Shown in a message's bubble when you've received a gift badge from a contact"
+  },
+  "icu:message--donation--unopened--incoming": {
+    "messageformat": "Otvorite ovu poruku na mobilnom uređaju da biste je pročitali",
+    "description": "Shown in a message's bubble when you've received a donation badge from a contact"
   },
   "message--giftBadge--unopened--outgoing": {
     "message": "Dodirnite ovu poruku za prikaz vašeg poklona",
-    "description": "Shown in a message's bubble when you've sent a gift badge to a contact"
+    "description": "(deleted 2023/01/20) Shown in a message's bubble when you've sent a gift badge to a contact"
+  },
+  "icu:message--donation--unopened--outgoing": {
+    "messageformat": "Dodirnite ovu poruku na mobilnom uređaju za prikaz vaše donacije",
+    "description": "Shown in a message's bubble when you've sent a donation badge to a contact."
   },
   "message--giftBadge--unopened--label": {
     "message": "Poklon",
-    "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    "description": "(deleted 2023/01/20) Shown in a message's bubble when you've received a gift badge from a contact"
+  },
+  "icu:message--donation--unopened--label": {
+    "messageformat": "Korisnik {sender} donirao je Signalu u vaše ime",
+    "description": "Shown in a message's bubble when you've received a donation badge from a contact."
   },
   "message--giftBadge--unopened--toast--incoming": {
     "message": "Provjerite svoj telefon i otvorite poklon",
-    "description": "Shown when you've clicked on an incoming gift badge you haven't yet redeemed"
+    "description": "(deleted 2023/01/20) Shown when you've clicked on an incoming gift badge you haven't yet redeemed"
+  },
+  "icu:message--donation--unopened--toast--incoming": {
+    "messageformat": "Provjerite svoj telefon i otvorite donaciju",
+    "description": "Shown when you've clicked on an incoming donation you haven't yet redeemed."
   },
   "message--giftBadge--unopened--toast--outgoing": {
     "message": "Provjerite svoj telefon da biste vidjeli svoj poklon",
-    "description": "Shown when you've clicked on an outgoing gift badge"
+    "description": "(deleted 2023/01/20) Shown when you've clicked on an outgoing gift badge"
+  },
+  "icu:message--donation--unopened--toast--outgoing": {
+    "messageformat": "Provjerite svoj telefon za prikaz donacije",
+    "description": "Shown when you've clicked on an outgoing donation badge."
   },
   "message--giftBadge--preview--unopened": {
     "message": "Dobili ste poklon",
-    "description": "Shown to label the gift badge in notifications and the left pane"
+    "description": "(deleted 2023/01/20) Shown to label the gift badge in notifications and the left pane"
+  },
+  "icu:message--donation--preview--unopened": {
+    "messageformat": "Korisnik {sender} donirao je u vaše ime",
+    "description": "Shown to label the donation badge in notifications and the left pane."
   },
   "message--giftBadge--preview--redeemed": {
     "message": "Preuzeli ste poklonjenu značku",
-    "description": "Shown to label the redeemed gift badge in notifications and the left pane"
+    "description": "(deleted 2023/01/20) Shown to label the redeemed gift badge in notifications and the left pane"
+  },
+  "icu:message--donation--preview--redeemed": {
+    "messageformat": "Preuzeli ste donaciju",
+    "description": "Shown to label the redeemed donation badge in notifications and the left pane."
   },
   "message--giftBadge--preview--sent": {
     "message": "Poslali ste značku na poklon",
-    "description": "Shown to label a gift badge you've sent in notifications and the left pane"
+    "description": "(deleted 2023/01/20) Shown to label a gift badge you've sent in notifications and the left pane"
+  },
+  "icu:message--donation--preview--sent": {
+    "messageformat": "Izvršili ste donaciju u ime korisnika {recipient}",
+    "description": "Shown to label a donation badge you've sent in notifications and the left pane"
   },
   "message--giftBadge": {
     "message": "Značka na poklon",
-    "description": "Shown to label the gift badge you've redeemed on another device"
+    "description": "(deleted 2023/01/20) Shown to label the gift badge you've redeemed on another device"
+  },
+  "icu:message--donation": {
+    "messageformat": "Donacija",
+    "description": "Shown to label the donation badge you've redeemed on another device."
   },
   "quote--giftBadge": {
     "message": "Poklon",
-    "description": "Shown to label a gift badge you've replied to"
+    "description": "(deleted 2023/01/20) Shown to label a gift badge you've replied to"
+  },
+  "icu:quote--donation": {
+    "messageformat": "Donacija",
+    "description": "Shown to label a donation badge you've replied to."
   },
   "message--giftBadge--remaining--days": {
     "message": "Preostalo je $days$ dana",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for days > 1)"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device (only rendered for days > 1)"
+  },
+  "icu:message--donation--remaining--days": {
+    "messageformat": "Preostalo je {days} dana",
+    "description": "Describes how long remains for the donation badge you've redeemed on another device (only rendered for days > 1)."
   },
   "message--giftBadge--remaining--hours": {
     "message": "Preostalo sati: $hours$",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for hours > 1)"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device (only rendered for hours > 1)"
+  },
+  "icu:message--donation--remaining--hours": {
+    "messageformat": "Preostalo je {hours} sati",
+    "description": "Describes how long remains for the donation badge you've redeemed on another device (only rendered for hours > 1)"
   },
   "message--giftBadge--remaining--minutes": {
     "message": "Preostale minute: $minutes$",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for minutes > 1)"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device (only rendered for minutes > 1)"
+  },
+  "icu:message--donation--remaining--minutes": {
+    "messageformat": "{minutes, plural, one {Preostala je {minutes,number} minuta} few {Preostale su {minutes,number} minute} many {Preostalo je {minutes,number} minuta} other {Preostalo je {minutes,number} minuta}}",
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device."
   },
   "message--giftBadge--remaining--one-minute": {
     "message": "1 preostala minuta",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device"
   },
   "message--giftBadge--expired": {
     "message": "Isteklo",
-    "description": "Shows that a gift badge is expired"
+    "description": "(deleted 2023/01/20) Shows that a gift badge is expired"
+  },
+  "icu:message--donation--expired": {
+    "messageformat": "Isteklo",
+    "description": "Shows that a donation badge is expired"
   },
   "message--giftBadge--view": {
     "message": "Prikaz",
     "description": "Shown when you've sent a gift badge to someone then opened it"
   },
+  "icu:message--donation--view": {
+    "messageformat": "Pregled",
+    "description": "Shown when you've sent a donation badge to someone then opened it"
+  },
   "message--giftBadge--redeemed": {
     "message": "Preuzeto",
-    "description": "Shown when you've redeemed the gift badge on another device"
+    "description": "(deleted 2023/01/20) Shown when you've redeemed the gift badge on another device"
+  },
+  "icu:message--donation--redeemed": {
+    "messageformat": "Preuzeto",
+    "description": "Shown when you've redeemed the donation badge on another device"
   },
   "modal--giftBadge--title": {
     "message": "Hvala vam na podršci!",
-    "description": "The title of the outgoing gift badge detail dialog"
+    "description": "(deleted 2023/01/20) The title of the outgoing gift badge detail dialog"
+  },
+  "icu:modal--donation--title": {
+    "messageformat": "Hvala vam na podršci!",
+    "description": "The title of the outgoing donation badge detail dialog"
   },
   "modal--giftBadge--description": {
     "message": "Poklonili ste značku korisniku $name$. Kad ju prihvati, moći će izabrati hoće li ju prikazati ili sakriti.",
-    "description": "The description of the outgoing gift badge detail dialog"
+    "description": "(deleted 2023/01/20) The description of the outgoing gift badge detail dialog"
+  },
+  "icu:modal--donation--description": {
+    "messageformat": "Izvršili ste donaciju Signalu u ime korisnika {name}. Korisnik će moći izabrati hoće li iskazati podršku na svom profilu.",
+    "description": "The description of the outgoing donation badge detail dialog"
   },
   "stickers--toast--InstallFailed": {
     "message": "Paket naljepnica nije moguće instalirati",
     "description": "Shown in a toast if the user attempts to install a sticker pack and it fails"
   },
   "stickers--StickerManager--title": {
-    "message": "Stickers",
+    "message": "Naljepnice",
     "description": "Title for the sticker manager"
   },
   "stickers--StickerManager--Available": {
-    "message": "Available",
+    "message": "Dostupno",
     "description": "Shown in the sticker pack manager as a tab for available stickers"
   },
   "stickers--StickerManager--InstalledPacks": {
-    "message": "Installed",
+    "message": "Instalirano",
     "description": "Shown in the sticker pack manager above your installed sticker packs."
   },
   "stickers--StickerManager--InstalledPacks--Empty": {
@@ -2666,7 +2785,7 @@
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--delete-message": {
-    "message": "Izbriši odabrane poruke",
+    "message": "Izbriši odabranu poruku",
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--add-newline": {
@@ -2766,23 +2885,23 @@
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--accept-video-call": {
-    "message": "Answer call with video",
+    "message": "Odgovori na poziv s videom",
     "description": "(deleted 2023/01/09) Shown in the calling keyboard shortcuts guide"
   },
   "Keyboard--accept-audio-call": {
-    "message": "Answer call with audio",
+    "message": "Odgovori na poziv sa zvukom",
     "description": "(deleted 2023/01/09) Shown in the calling keyboard shortcuts guide"
   },
   "icu:Keyboard--accept-video-call": {
-    "messageformat": "Answer call with video (video calls only)",
+    "messageformat": "Odgovori na poziv s videom (samo videopozivi)",
     "description": "Shown in the calling keyboard shortcuts guide"
   },
   "icu:Keyboard--accept-call-without-video": {
-    "messageformat": "Answer call without video",
+    "messageformat": "Odgovori na poziv bez videa",
     "description": "Shown in the calling keyboard shortcuts guide"
   },
   "Keyboard--start-audio-call": {
-    "message": "Start voice call",
+    "message": "Započni glasovni poziv",
     "description": "Shown in the calling keyboard shortcuts guide"
   },
   "Keyboard--start-video-call": {
@@ -2938,7 +3057,7 @@
     "description": "Text for the upload button in the confirmation dialog on the meta stage of the sticker creator"
   },
   "StickerCreator--MetaStage--ConfirmDialog--text": {
-    "message": "Nakon izrade paketa naljepnica više ga nećete moći uređivati ili brisati.",
+    "message": "Nakon izrade paketa naljepnica više ga nećete moći uređivati niti brisati stavke.",
     "description": "The text inside the confirmation dialog on the meta stage of the sticker creator"
   },
   "StickerCreator--UploadStage--title": {
@@ -3130,7 +3249,7 @@
     "description": "Shown as a button to let the user delete a group message request"
   },
   "MessageRequests--delete-group-confirm-body": {
-    "message": "Napustiti će te ovu grupu i ona će biti izbrisana sa svih vaših uređaja.",
+    "message": "Napustit ćete ovu grupu i ona će biti izbrisana sa svih vaših uređaja.",
     "description": "Shown as the body in the confirmation modal for deleting a group message request"
   },
   "MessageRequests--accept": {
@@ -3198,11 +3317,11 @@
     "description": "When a user has no common groups, show this warning"
   },
   "acceptCall": {
-    "message": "Answer call",
+    "message": "Prihvati poziv",
     "description": "Shown in tooltip for the button to accept a call (audio or video)"
   },
   "acceptCallWithoutVideo": {
-    "message": "Answer call without video",
+    "message": "Odgovori na poziv bez videa",
     "description": "Shown in tooltip for the button to accept a video call without video"
   },
   "declineCall": {
@@ -3210,7 +3329,7 @@
     "description": "Shown in tooltip for the button to decline a call (audio or video)"
   },
   "declinedIncomingAudioCall": {
-    "message": "You declined a voice call",
+    "message": "Odbili ste glasovni poziv",
     "description": "Shown in conversation history when you declined an incoming voice call"
   },
   "declinedIncomingVideoCall": {
@@ -3218,7 +3337,7 @@
     "description": "Shown in conversation history when you declined an incoming video call"
   },
   "acceptedIncomingAudioCall": {
-    "message": "Incoming voice call",
+    "message": "Dolazni glasovni poziv",
     "description": "Shown in conversation history when you accepted an incoming voice call"
   },
   "acceptedIncomingVideoCall": {
@@ -3226,7 +3345,7 @@
     "description": "Shown in conversation history when you accepted an incoming video call"
   },
   "missedIncomingAudioCall": {
-    "message": "Missed voice call",
+    "message": "Propušteni glasovni poziv",
     "description": "Shown in conversation history when you missed an incoming voice call"
   },
   "missedIncomingVideoCall": {
@@ -3234,7 +3353,7 @@
     "description": "Shown in conversation history when you missed an incoming video call"
   },
   "acceptedOutgoingAudioCall": {
-    "message": "Outgoing voice call",
+    "message": "Odlazni glasovni poziv",
     "description": "Shown in conversation history when you made an outgoing voice call"
   },
   "acceptedOutgoingVideoCall": {
@@ -3242,7 +3361,7 @@
     "description": "Shown in conversation history when you made an outgoing video call"
   },
   "missedOrDeclinedOutgoingAudioCall": {
-    "message": "Unanswered voice call",
+    "message": "Propušteni glasovni poziv",
     "description": "Shown in conversation history when your voice call is missed or declined"
   },
   "missedOrDeclinedOutgoingVideoCall": {
@@ -3258,7 +3377,7 @@
     "description": "Shown in a notification body when Signal is minimized to tray"
   },
   "incomingAudioCall": {
-    "message": "Incoming voice call...",
+    "message": "Dolazni glasovni poziv…",
     "description": "Shown in both the incoming call bar and notification for an incoming voice call"
   },
   "incomingVideoCall": {
@@ -3514,7 +3633,7 @@
     "description": "Shown if you click a group link and you have been forbidden from joining via the link"
   },
   "GroupV2--join--link-forbidden": {
-    "message": "Ne možete se pridružiti ovoj grupi putem veze grupe jer vas je administrator uklonio.",
+    "message": "Ne možete se pridružiti ovoj grupi putem poveznice grupe jer vas je administrator uklonio.",
     "description": "Shown if you click a group link and you have been forbidden from joining via the link"
   },
   "GroupV2--join--prompt-with-approval": {
@@ -4130,7 +4249,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--summary": {
-    "messageformat": "This group's members or settings have changed.",
+    "messageformat": "Članovi ili postavke ove grupe su izmijenjeni.",
     "description": "When rejoining a group, any detected changes are collapsed down into this summary"
   },
   "GroupV1--Migration--disabled": {
@@ -4186,7 +4305,7 @@
     "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
   },
   "GroupV1--Migration--info--removed--before--one": {
-    "message": "Ovaj član nije u mogućnosti pridružiti se Novim grupama i biti će uklonjen iz grupe:",
+    "message": "Ovaj član nije u mogućnosti pridružiti se Novim grupama i bit će uklonjen iz grupe:",
     "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
   },
   "GroupV1--Migration--info--removed--after--many": {
@@ -4446,11 +4565,11 @@
     "description": "(deleted 2023/01/03) Title of the groups-in-common panel, in the contact details"
   },
   "icu:ConversationDetailsGroups--title": {
-    "messageformat": "{count, plural, one {1 group in common} other {{count,number} groups in common}}",
+    "messageformat": "{count, plural, one {{count,number} zajednička grupa} few {{count,number} zajedničke grupe} many {{count,number} zajedničkih grupa} other {{count,number} zajedničkih grupa}}",
     "description": "Title of the groups-in-common panel, in the contact details"
   },
   "icu:ConversationDetailsGroups--title--with-zero-groups-in-common": {
-    "messageformat": "No groups in common",
+    "messageformat": "Nema zajedničkih grupa",
     "description": "Title of the groups-in-common panel, in the contact details, with zero groups in common"
   },
   "ConversationDetailsGroups--add-to-group": {
@@ -5105,6 +5224,10 @@
     "message": "Nije moguće spremiti vaše korisničko ime. Provjerite internetsku vezu i pokušajte ponovo.",
     "description": "Shown if something unknown has gone wrong with username save."
   },
+  "icu:ProfileEditor--username--reservation-gone": {
+    "messageformat": "{username} is no longer available. A new set of digits will be paired with your username, please try saving it again.",
+    "description": "Shown if username reservation has expired and new one needs to be generated."
+  },
   "ProfileEditor--username--delete-general-error": {
     "message": "Nije bilo moguće ukloniti vaše korisničko ime. Provjerite vezu i pokušajte ponovno.",
     "description": "Shown if something unknown has gone wrong with username delete."
@@ -5122,7 +5245,7 @@
     "description": "Shown as aria label for spinner icon next to username"
   },
   "ProfileEditor--username--delete-username": {
-    "message": "Izbrisati korisničko ime",
+    "message": "Izbriši korisničko ime",
     "description": "Shown as aria label for trash icon next to username"
   },
   "ProfileEditor--username--confirm-delete-body": {
@@ -5985,6 +6108,10 @@
     "message": "Odgovori",
     "description": "Button label to reply to a story"
   },
+  "icu:StoryViewer__reply-placeholder": {
+    "messageformat": "Odgovori korisniku {firstName}",
+    "description": "Button label to reply to a story"
+  },
   "StoryViewer__reply-group": {
     "message": "Odgovorite grupi",
     "description": "Button label to reply to a group story"
@@ -6055,7 +6182,7 @@
   },
   "StoryViewsNRepliesModal__react": {
     "message": "Reagiraj na priču",
-    "description": "aria-label for reaction button"
+    "description": "(deleted 01/25/23) aria-label for reaction button"
   },
   "StoryViewsNRepliesModal__reacted": {
     "message": "Reakcija na priču",
@@ -6193,6 +6320,14 @@
     "message": "Dodajte link za gledatelje vaše priče",
     "description": "Empty state for the link preview"
   },
+  "icu:Stories__failed-send--full": {
+    "messageformat": "Slanje priče nije uspjelo",
+    "description": "Notification text whenever a story fails to send"
+  },
+  "icu:Stories__failed-send--partial": {
+    "messageformat": "Priču nije bilo moguće poslati svim primateljima",
+    "description": "Notification text whenever a story partially fails to send"
+  },
   "TextAttachment__placeholder": {
     "message": "Dodaj tekst",
     "description": "Placeholder for the add text input"
@@ -6253,6 +6388,42 @@
     "message": "Ove znamenke čuvaju privatnost vašeg korisničkog imena kako bi se izbjeglo primanje neželjenih poruka. Podijelite svoje korisničko ime samo s osobama i grupama s kojima želite razgovarati. Ako promijenite korisničko ime, dobit ćete novi skup znamenki.",
     "description": "Body of the popup with information about discriminator in username"
   },
+  "icu:UsernameOnboardingModalBody__title": {
+    "messageformat": "Set up your Signal username",
+    "description": "Title of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__row__number": {
+    "messageformat": "Usernames are paired with a set of digits and aren’t shared on your profile",
+    "description": "Content of the first row of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__row__link": {
+    "messageformat": "Each username has a unique link you can share with your friends to start a chat with you",
+    "description": "Content of the second row of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__row__lock": {
+    "messageformat": "Turn off phone number discovery under Settings > Phone Number > Who can find my number, to use your username as the primary way others can contact you.",
+    "description": "Content of the third row of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__learn-more": {
+    "messageformat": "Learn More",
+    "description": "Text that open a popup with information about username onboarding"
+  },
+  "icu:UsernameOnboardingModalBody__continue": {
+    "messageformat": "Continue",
+    "description": "Text of the primary button on username onboarding modal"
+  },
+  "icu:UnsupportedOSWarningDialog__body": {
+    "messageformat": "Signal uskoro više neće biti kompatibilan s verzijom {OS} na vašem računalu. Da biste nastavili koristiti Signal, ažurirajte operacijski sustav vašeg računala do {expirationDate}. <learnMoreLink>Saznajte više</learnMoreLink>",
+    "description": "Body of a dialog displayed on unsupported operating systems"
+  },
+  "icu:UnsupportedOSErrorDialog__body": {
+    "messageformat": "Signal za desktop više nije kompatibilan s ovim računalom. Ažurirajte verziju {OS} na svom računalu da biste ponovno koristili Signal za desktop. <learnMoreLink>Saznajte više</learnMoreLink>",
+    "description": "Body of a dialog displayed on unsupported operating systems"
+  },
+  "icu:UnsupportedOSErrorToast": {
+    "messageformat": "Signal za desktop više nije kompatibilan s ovim računalom. Ažurirajte verziju {OS} na svom računalu da biste ponovno koristili Signal za desktop.",
+    "description": "Body of a dialog displayed on unsupported operating systems"
+  },
   "WhatsNew__modal-title": {
     "message": "Novosti",
     "description": "Title for the whats new modal"
@@ -6300,5 +6471,25 @@
   "WhatsNew__v6.1--1": {
     "message": "Kada započnete grupni poziv za manje grupe (do 16 osoba), možete odabrati slanje zvučne obavijesti. Članovi grupe čut će zvučnu obavijest ako koriste beta verziju iOS-a, Desktop ili Android.",
     "description": "Release notes for v6.1"
+  },
+  "icu:WhatsNew__v6.3--0": {
+    "messageformat": "Dvaput kliknite na bilo koji red poruke u razgovoru da biste započeli citirani odgovor. To je poput prečaca za nove misli o starim idejama. Hvala {whynothugo} i zajednici Signal na implementaciji ove značajke i pružanju povratnih informacija.",
+    "description": "Release notes for v6.3"
+  },
+  "icu:WhatsNew__v6.3--1": {
+    "messageformat": "Sada je lakše kliknuti izvan slike za zatvaranje prikaza galerije bez nepotrebnog zumiranja. Ponekad ste samo htjeli zatvoriti sliku, a umjesto toga bi proradio zoom. Hvala {jojomatik} na ispravku!",
+    "description": "Release notes for v6.3"
+  },
+  "icu:WhatsNew__v6.5--0": {
+    "messageformat": "Dugo vam treba da odgovorite na poruku? Sada možete brže reagirati klikom na bilo koji emotikon kada odgovarate na priču.",
+    "description": "Release notes for v6.5"
+  },
+  "icu:WhatsNew__v6.5--1": {
+    "messageformat": "Sada je moguće pretraživati povijest poruka za pojedinačne znakove na kineskom i japanskom jeziku.",
+    "description": "Release notes for v6.5"
+  },
+  "icu:WhatsNew__v6.6--0": {
+    "messageformat": "Pomozite nam testirati poboljšanja u vidu pouzdanosti i performansa za glasovne pozive i videopozive. Ova beta verzija također uključuje ispravke programskih pogrešaka i manja ažuriranja korisničkog sučelja (pogledajte kako izgledaju naši poboljšani pregledi poveznica!). Hvala vam što sudjelujete u beta testiranju i molimo vas da nam se obratite na forumu zajednice ako uočite bilo kakve smetnje.",
+    "description": "Release notes for v6.6"
   }
 }

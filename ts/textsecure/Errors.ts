@@ -303,4 +303,8 @@ export class UnregisteredUserError extends Error {
 
 export class ConnectTimeoutError extends Error {}
 
+export class UnknownRecipientError extends Error {}
+
+export class IncorrectSenderKeyAuthError extends Error {}
+
 export class WarnOnlyError extends Error {}

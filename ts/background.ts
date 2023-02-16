@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { webFrame } from 'electron';
-import { isNumber, clone, debounce } from 'lodash';
+import { isNumber, throttle, groupBy } from 'lodash';
 import { bindActionCreators } from 'redux';
 import { render } from 'react-dom';
 import { batch as batchDispatch } from 'react-redux';
@@ -29,6 +29,7 @@ import * as Timers from './Timers';
 import * as indexedDb from './indexeddb';
 import type { MenuOptionsType } from './types/menu';
 import type { Receipt } from './types/Receipt';
+import { ReceiptType } from './types/Receipt';
 import { SocketStatus } from './types/SocketStatus';
 import { DEFAULT_CONVERSATION_COLOR } from './types/Colors';
 import { ThemeType } from './types/Util';
@@ -55,8 +56,9 @@ import { senderCertificateService } from './services/senderCertificate';
 import { GROUP_CREDENTIALS_KEY } from './services/groupCredentialFetcher';
 import * as KeyboardLayout from './services/keyboardLayout';
 import * as StorageService from './services/storage';
+import { optimizeFTS } from './services/ftsOptimizer';
 import { RoutineProfileRefresher } from './routineProfileRefresh';
-import { isMoreRecentThan, isOlderThan, toDayMillis } from './util/timestamp';
+import { isOlderThan, toDayMillis } from './util/timestamp';
 import { isValidReactionEmoji } from './reactions/isValidReactionEmoji';
 import type { ConversationModel } from './models/conversations';
 import { getContact, isIncoming } from './messages/helpers';
@@ -145,12 +147,13 @@ import { ToastCaptchaSolved } from './components/ToastCaptchaSolved';
 import { showToast } from './util/showToast';
 import { startInteractionMode } from './windows/startInteractionMode';
 import type { MainWindowStatsType } from './windows/context';
-import { deliveryReceiptsJobQueue } from './jobs/deliveryReceiptsJobQueue';
-import { updateOurUsernameAndPni } from './util/updateOurUsernameAndPni';
 import { ReactionSource } from './reactions/ReactionSource';
 import { singleProtoJobQueue } from './jobs/singleProtoJobQueue';
 import { getInitialState } from './state/getInitialState';
-import { conversationJobQueue } from './jobs/conversationJobQueue';
+import {
+  conversationJobQueue,
+  conversationQueueJobEnum,
+} from './jobs/conversationJobQueue';
 import { SeenStatus } from './MessageSeenStatus';
 import MessageSender from './textsecure/SendMessage';
 import type AccountManager from './textsecure/AccountManager';
@@ -161,9 +164,10 @@ import { clearConversationDraftAttachments } from './util/clearConversationDraft
 import { removeLinkPreview } from './services/LinkPreview';
 import { PanelType } from './types/Panels';
 import { getQuotedMessageSelector } from './state/selectors/composer';
+import { flushAttachmentDownloadQueue } from './util/attachmentDownloadQueue';
+import { StartupQueue } from './util/StartupQueue';
+import { showConfirmationDialog } from './util/showConfirmationDialog';
 import { onCallEventSync } from './util/onCallEventSync';
-
-const MAX_ATTACHMENT_DOWNLOAD_AGE = 3600 * 72 * 1000;
 
 export function isOverHourIntoPast(timestamp: number): boolean {
   const HOUR = 1000 * 60 * 60;
@@ -201,15 +205,11 @@ export async function startApp(): Promise<void> {
 
   await KeyboardLayout.initialize();
 
-  window.Whisper.events = clone(window.Backbone.Events);
-  window.Signal.Util.MessageController.install();
-  window.Signal.conversationControllerStart();
-  window.startupProcessingQueue = new window.Signal.Util.StartupQueue();
+  StartupQueue.initialize();
   notificationService.initialize({
     i18n: window.i18n,
     storage: window.storage,
   });
-  window.attachmentDownloadQueue = [];
 
   await window.Signal.Util.initializeMessageCounter();
 
@@ -249,8 +249,8 @@ export async function startApp(): Promise<void> {
       },
 
       requestChallenge(request) {
-        if (window.CI) {
-          window.CI.handleEvent('challenge', request);
+        if (window.SignalCI) {
+          window.SignalCI.handleEvent('challenge', request);
           return;
         }
         window.sendChallengeRequest(request);
@@ -486,7 +486,17 @@ export async function startApp(): Promise<void> {
       wait: 500,
       maxSize: 100,
       processBatch: async deliveryReceipts => {
-        await deliveryReceiptsJobQueue.add({ deliveryReceipts });
+        const groups = groupBy(deliveryReceipts, 'conversationId');
+        await Promise.all(
+          Object.keys(groups).map(async conversationId => {
+            await conversationJobQueue.add({
+              type: conversationQueueJobEnum.enum.Receipts,
+              conversationId,
+              receiptsType: ReceiptType.Delivery,
+              receipts: groups[conversationId],
+            });
+          })
+        );
       },
     });
 
@@ -494,7 +504,7 @@ export async function startApp(): Promise<void> {
     window.addEventListener('dblclick', (event: Event) => {
       const target = event.target as HTMLElement;
       if (isWindowDragElement(target)) {
-        window.titleBarDoubleClick();
+        window.IPC.titleBarDoubleClick();
       }
     });
   }
@@ -529,7 +539,7 @@ export async function startApp(): Promise<void> {
     }
   }
 
-  const builtInImages = await window.getBuiltInImages();
+  const builtInImages = await window.IPC.getBuiltInImages();
   preload(builtInImages);
 
   // We add this to window here because the default Node context is erased at the end
@@ -554,7 +564,7 @@ export async function startApp(): Promise<void> {
 
   document.documentElement.setAttribute(
     'lang',
-    window.getLocale().substring(0, 2)
+    window.getResolvedMessagesLocale().split(/[-_]/)[0]
   );
 
   KeyChangeListener.init(window.textsecure.storage.protocol);
@@ -608,7 +618,7 @@ export async function startApp(): Promise<void> {
 
         try {
           await new Promise<void>((resolve, reject) => {
-            window.showConfirmationDialog({
+            showConfirmationDialog({
               dialogName: 'deleteOldIndexedDBData',
               onTopOfEverything: true,
               cancelText: window.i18n('quit'),
@@ -624,7 +634,7 @@ export async function startApp(): Promise<void> {
             'User chose not to delete old data. Shutting down.',
             Errors.toLogFormat(error)
           );
-          window.shutdown();
+          window.IPC.shutdown();
           return;
         }
 
@@ -852,7 +862,7 @@ export async function startApp(): Promise<void> {
       // This one should always be last - it could restart the app
       if (window.isBeforeVersion(lastVersion, 'v5.30.0-alpha')) {
         await deleteAllLogs();
-        window.restart();
+        window.IPC.restart();
         return;
       }
     }
@@ -864,6 +874,8 @@ export async function startApp(): Promise<void> {
 
     if (newVersion) {
       await window.Signal.Data.cleanupOrphanedAttachments();
+
+      optimizeFTS();
 
       // Don't block on the following operation
       void window.Signal.Data.ensureFilePermissions();
@@ -1057,7 +1069,7 @@ export async function startApp(): Promise<void> {
       );
     } finally {
       initializeRedux({ mainWindowStats, menuOptions });
-      void start();
+      drop(start());
       window.Signal.Services.initializeNetworkObserver(
         window.reduxActions.network
       );
@@ -1073,7 +1085,7 @@ export async function startApp(): Promise<void> {
         window.getSfuUrl()
       );
       window.reduxActions.expiration.hydrateExpirationStatus(
-        window.Signal.Util.hasExpired()
+        window.getBuildExpiration()
       );
     }
   });
@@ -1170,11 +1182,30 @@ export async function startApp(): Promise<void> {
       onConversationClosed(id, 'removed');
       conversationRemoved(id);
     });
+
+    const addedConvoBatcher = createBatcher<ConversationModel>({
+      name: 'addedConvoBatcher',
+      processBatch(batch) {
+        batchDispatch(() => {
+          batch.forEach(conversation => {
+            conversationAdded(conversation.id, conversation.format());
+          });
+        });
+      },
+
+      // This delay ensures that the .format() call isn't synchronous as a
+      //   Backbone property is changed. Important because our _byUuid/_byE164
+      //   lookups aren't up-to-date as the change happens; just a little bit
+      //   after.
+      wait: 1,
+      maxSize: Infinity,
+    });
+
     convoCollection.on('add', conversation => {
       if (!conversation) {
         return;
       }
-      conversationAdded(conversation.id, conversation.format());
+      addedConvoBatcher.add(conversation);
     });
 
     const changedConvoBatcher = createBatcher<ConversationModel>({
@@ -1252,22 +1283,6 @@ export async function startApp(): Promise<void> {
         enqueueReconnectToWebSocket();
       }
     });
-
-    window.Whisper.events.on(
-      'setWindowStats',
-      ({
-        isFullScreen,
-        isMaximized,
-      }: {
-        isFullScreen: boolean;
-        isMaximized: boolean;
-      }) => {
-        window.reduxActions.user.userChanged({
-          isMainWindowMaximized: isMaximized,
-          isMainWindowFullScreen: isFullScreen,
-        });
-      }
-    );
 
     window.Whisper.events.on('setMenuOptions', (options: MenuOptionsType) => {
       window.reduxActions.user.userChanged({ menuOptions: options });
@@ -1677,7 +1692,7 @@ export async function startApp(): Promise<void> {
           event.preventDefault();
           event.stopPropagation();
 
-          window.showConfirmationDialog({
+          showConfirmationDialog({
             dialogName: 'deleteMessage',
             confirmStyle: 'negative',
             message: window.i18n('deleteWarning'),
@@ -1749,12 +1764,14 @@ export async function startApp(): Promise<void> {
 
   window.Whisper.events.on('powerMonitorSuspend', () => {
     log.info('powerMonitor: suspend');
+    server?.cancelInflightRequests('powerMonitorSuspend');
     suspendTasksWithTimeout();
   });
 
   window.Whisper.events.on('powerMonitorResume', () => {
     log.info('powerMonitor: resume');
     server?.checkSockets();
+    server?.cancelInflightRequests('powerMonitorResume');
     resumeTasksWithTimeout();
   });
 
@@ -1776,10 +1793,16 @@ export async function startApp(): Promise<void> {
     });
   };
 
-  window.Whisper.events.on(
-    'mightBeUnlinked',
-    debounce(enqueueReconnectToWebSocket, 1000, { maxWait: 5000 })
+  const throttledEnqueueReconnectToWebSocket = throttle(
+    enqueueReconnectToWebSocket,
+    1000
   );
+
+  window.Whisper.events.on('mightBeUnlinked', () => {
+    if (window.Signal.Util.Registration.everDone()) {
+      throttledEnqueueReconnectToWebSocket();
+    }
+  });
 
   window.Whisper.events.on('unlinkAndDisconnect', () => {
     void unlinkAndDisconnect(RemoveAllConfiguration.Full);
@@ -1895,8 +1918,8 @@ export async function startApp(): Promise<void> {
       document.getElementById('app-container')
     );
     const hideMenuBar = window.storage.get('hide-menu-bar', false);
-    window.setAutoHideMenuBar(hideMenuBar);
-    window.setMenuBarVisibility(!hideMenuBar);
+    window.IPC.setAutoHideMenuBar(hideMenuBar);
+    window.IPC.setMenuBarVisibility(!hideMenuBar);
 
     startTimeTravelDetector(() => {
       window.Whisper.events.trigger('timetravel');
@@ -1927,7 +1950,7 @@ export async function startApp(): Promise<void> {
     window.addEventListener('unload', () => notificationService.fastClear());
 
     notificationService.on('click', (id, messageId, storyId) => {
-      window.showWindow();
+      window.IPC.showWindow();
 
       if (id) {
         if (storyId) {
@@ -1976,9 +1999,6 @@ export async function startApp(): Promise<void> {
               'remoteBuildExpiration',
               remoteBuildExpirationTimestamp
             )
-          );
-          window.reduxActions.expiration.hydrateExpirationStatus(
-            window.Signal.Util.hasExpired()
           );
         }
       }
@@ -2162,9 +2182,6 @@ export async function startApp(): Promise<void> {
                 'remoteBuildExpiration',
                 remoteBuildExpirationTimestamp
               );
-              window.reduxActions.expiration.hydrateExpirationStatus(
-                window.Signal.Util.hasExpired()
-              );
             }
           }
         } catch (error) {
@@ -2285,18 +2302,15 @@ export async function startApp(): Promise<void> {
         try {
           // Note: we always have to register our capabilities all at once, so we do this
           //   after connect on every startup
-          await Promise.all([
-            server.registerCapabilities({
-              announcementGroup: true,
-              giftBadges: true,
-              'gv2-3': true,
-              senderKey: true,
-              changeNumber: true,
-              stories: true,
-              pni: isPnpEnabled(),
-            }),
-            updateOurUsernameAndPni(),
-          ]);
+          await server.registerCapabilities({
+            announcementGroup: true,
+            giftBadges: true,
+            'gv2-3': true,
+            senderKey: true,
+            changeNumber: true,
+            stories: true,
+            pni: isPnpEnabled(),
+          });
         } catch (error) {
           log.error(
             'Error: Unable to register our capabilities.',
@@ -2329,7 +2343,8 @@ export async function startApp(): Promise<void> {
             window.Whisper.events.once(event, () => resolve());
             return promise;
           },
-          'firstRun:waitForEvent'
+          'firstRun:waitForEvent',
+          { timeout: 2 * durations.MINUTE }
         );
 
         let storageServiceSyncComplete: Promise<void>;
@@ -2491,7 +2506,7 @@ export async function startApp(): Promise<void> {
       window.flushAllWaitBatchers(),
     ]);
     log.info('onEmpty: All outstanding database requests complete');
-    window.readyForUpdates();
+    window.IPC.readyForUpdates();
     window.ConversationController.onEmpty();
 
     // Start listeners here, after we get through our queue.
@@ -2512,7 +2527,7 @@ export async function startApp(): Promise<void> {
     window.reduxActions.app.initialLoadComplete();
 
     const processedCount = messageReceiver?.getAndResetProcessedCount() || 0;
-    window.logAppLoadedEvent?.({
+    window.IPC.logAppLoadedEvent?.({
       processedCount,
     });
     if (messageReceiver) {
@@ -2520,53 +2535,12 @@ export async function startApp(): Promise<void> {
     }
 
     window.Signal.Util.setBatchingStrategy(false);
-
-    const attachmentDownloadQueue = window.attachmentDownloadQueue || [];
-
-    // NOTE: ts/models/messages.ts expects this global to become undefined
-    // once we stop processing the queue.
-    window.attachmentDownloadQueue = undefined;
-
-    const MAX_ATTACHMENT_MSGS_TO_DOWNLOAD = 250;
-    const attachmentsToDownload = attachmentDownloadQueue.filter(
-      (message, index) =>
-        index <= MAX_ATTACHMENT_MSGS_TO_DOWNLOAD ||
-        isMoreRecentThan(
-          message.getReceivedAt(),
-          MAX_ATTACHMENT_DOWNLOAD_AGE
-        ) ||
-        // Stickers and long text attachments has to be downloaded for UI
-        // to display the message properly.
-        message.hasRequiredAttachmentDownloads()
-    );
-    log.info(
-      'Downloading recent attachments of total attachments',
-      attachmentsToDownload.length,
-      attachmentDownloadQueue.length
-    );
-
-    if (window.startupProcessingQueue) {
-      window.startupProcessingQueue.flush();
-      window.startupProcessingQueue = undefined;
-    }
-
-    const messagesWithDownloads = await Promise.all(
-      attachmentsToDownload.map(message => message.queueAttachmentDownloads())
-    );
-    const messagesToSave: Array<MessageAttributesType> = [];
-    messagesWithDownloads.forEach((shouldSave, messageKey) => {
-      if (shouldSave) {
-        const message = attachmentsToDownload[messageKey];
-        messagesToSave.push(message.attributes);
-      }
-    });
-    await window.Signal.Data.saveMessages(messagesToSave, {
-      ourUuid: storage.user.getCheckedUuid().toString(),
-    });
+    StartupQueue.flush();
+    await flushAttachmentDownloadQueue();
 
     // Process crash reports if any
     window.reduxActions.crashReports.setCrashReportCount(
-      await window.crashReports.getCount()
+      await window.IPC.crashReports.getCount()
     );
 
     // Kick off a profile refresh if necessary, but don't wait for it, as failure is
@@ -2679,16 +2653,12 @@ export async function startApp(): Promise<void> {
     if (!conversation && groupId) {
       conversation = window.ConversationController.get(groupId);
     }
-    if (!groupV2Id && !groupId && senderConversation) {
+    if (!groupV2Id && !groupId) {
       conversation = senderConversation;
     }
 
     const ourId = window.ConversationController.getOurConversationId();
 
-    if (!senderConversation) {
-      log.warn('onTyping: maybeMergeContacts returned falsey sender!');
-      return;
-    }
     if (!ourId) {
       log.warn("onTyping: Couldn't get our own id!");
       return;
@@ -2911,7 +2881,7 @@ export async function startApp(): Promise<void> {
   }: EnvelopeEvent): Promise<void> {
     const ourUuid = window.textsecure.storage.user.getUuid()?.toString();
     if (envelope.sourceUuid && envelope.sourceUuid !== ourUuid) {
-      const { mergePromises } =
+      const { mergePromises, conversation } =
         window.ConversationController.maybeMergeContacts({
           e164: envelope.source,
           aci: envelope.sourceUuid,
@@ -2920,6 +2890,10 @@ export async function startApp(): Promise<void> {
 
       if (mergePromises.length > 0) {
         await Promise.all(mergePromises);
+      }
+
+      if (envelope.reportingToken) {
+        await conversation.updateReportingToken(envelope.reportingToken);
       }
     }
   }
@@ -2931,7 +2905,6 @@ export async function startApp(): Promise<void> {
     const { data, confirm } = event;
 
     const messageDescriptor = getMessageDescriptor({
-      confirm,
       message: data.message,
       source: data.source,
       sourceUuid: data.sourceUuid,
@@ -3076,16 +3049,6 @@ export async function startApp(): Promise<void> {
       reason: 'onProfileKeyUpdate',
     });
 
-    if (!conversation) {
-      log.error(
-        'onProfileKeyUpdate: could not find conversation',
-        data.source,
-        data.sourceUuid
-      );
-      confirm();
-      return;
-    }
-
     if (!data.profileKey) {
       log.error('onProfileKeyUpdate: missing profileKey', data.profileKey);
       confirm();
@@ -3219,14 +3182,12 @@ export async function startApp(): Promise<void> {
   // Works with 'sent' and 'message' data sent from MessageReceiver, with a little massage
   //   at callsites to make sure both source and destination are populated.
   const getMessageDescriptor = ({
-    confirm,
     message,
     source,
     sourceUuid,
     destination,
     destinationUuid,
   }: {
-    confirm: () => unknown;
     message: ProcessedDataMessage;
     source?: string;
     sourceUuid?: string;
@@ -3300,7 +3261,7 @@ export async function startApp(): Promise<void> {
         });
 
       const conversationId = window.ConversationController.ensureGroup(id, {
-        addedBy: fromContact?.id,
+        addedBy: fromContact.id,
       });
 
       return {
@@ -3314,12 +3275,6 @@ export async function startApp(): Promise<void> {
       e164: destination,
       reason: `getMessageDescriptor(${message.timestamp}): private`,
     });
-    if (!conversation) {
-      confirm();
-      throw new Error(
-        `getMessageDescriptor/${message.timestamp}: maybeMergeContacts returned falsey conversation`
-      );
-    }
 
     return {
       type: Message.PRIVATE,
@@ -3338,7 +3293,6 @@ export async function startApp(): Promise<void> {
     strictAssert(source && sourceUuid, 'Missing user number and uuid');
 
     const messageDescriptor = getMessageDescriptor({
-      confirm,
       ...data,
 
       // 'sent' event: the sender is always us!
@@ -3514,12 +3468,14 @@ export async function startApp(): Promise<void> {
 
     const NUMBER_ID_KEY = 'number_id';
     const UUID_ID_KEY = 'uuid_id';
+    const PNI_KEY = 'pni';
     const VERSION_KEY = 'version';
     const LAST_PROCESSED_INDEX_KEY = 'attachmentMigration_lastProcessedIndex';
     const IS_MIGRATION_COMPLETE_KEY = 'attachmentMigration_isComplete';
 
     const previousNumberId = window.textsecure.storage.get(NUMBER_ID_KEY);
     const previousUuidId = window.textsecure.storage.get(UUID_ID_KEY);
+    const previousPni = window.textsecure.storage.get(PNI_KEY);
     const lastProcessedIndex = window.textsecure.storage.get(
       LAST_PROCESSED_INDEX_KEY
     );
@@ -3538,13 +3494,16 @@ export async function startApp(): Promise<void> {
         delete conversation.attributes.senderKeyInfo;
       });
 
-      // These two bits of data are important to ensure that the app loads up
+      // These three bits of data are important to ensure that the app loads up
       //   the conversation list, instead of showing just the QR code screen.
       if (previousNumberId !== undefined) {
         await window.textsecure.storage.put(NUMBER_ID_KEY, previousNumberId);
       }
       if (previousUuidId !== undefined) {
         await window.textsecure.storage.put(UUID_ID_KEY, previousUuidId);
+      }
+      if (previousPni !== undefined) {
+        await window.textsecure.storage.put(PNI_KEY, previousPni);
       }
 
       // These two are important to ensure we don't rip through every message
@@ -3620,10 +3579,7 @@ export async function startApp(): Promise<void> {
         log.info('onFetchLatestSync: fetching latest local profile');
         const ourUuid = window.textsecure.storage.user.getUuid()?.toString();
         const ourE164 = window.textsecure.storage.user.getNumber();
-        await Promise.all([
-          getProfile(ourUuid, ourE164),
-          updateOurUsernameAndPni(),
-        ]);
+        await getProfile(ourUuid, ourE164);
         break;
       }
       case FETCH_LATEST_ENUM.STORAGE_MANIFEST:
@@ -3756,10 +3712,6 @@ export async function startApp(): Promise<void> {
 
     event.confirm();
 
-    if (!sourceConversation) {
-      return;
-    }
-
     strictAssert(
       isValidUuid(sourceUuid),
       'onReadOrViewReceipt: Missing sourceUuid'
@@ -3888,11 +3840,6 @@ export async function startApp(): Promise<void> {
       timestamp,
       `wasSentEncrypted=${wasSentEncrypted}`
     );
-
-    if (!sourceConversation) {
-      log.info('onDeliveryReceipt: no conversation for', source, sourceUuid);
-      return;
-    }
 
     strictAssert(
       envelopeTimestamp,

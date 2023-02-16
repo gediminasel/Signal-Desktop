@@ -65,15 +65,15 @@
     "description": "Shown below the group name when selecting a group to invite a contact to, when the group item is disabled"
   },
   "Preferences__sent-media-quality": {
-    "message": "Sent media quality",
+    "message": "Saadetud meedia kvaliteet",
     "description": "Title for the sent media quality setting"
   },
   "sentMediaQualityStandard": {
-    "message": "Standard",
+    "message": "Standardne",
     "description": "Label text for standard media quality option"
   },
   "sentMediaQualityHigh": {
-    "message": "High",
+    "message": "Kõrge",
     "description": "Label text for high media quality option"
   },
   "softwareAcknowledgments": {
@@ -572,10 +572,20 @@
     "description": "Label for a button to accept a new safety number"
   },
   "verify": {
-    "message": "Märgi kinnitatuks"
+    "message": "Märgi kinnitatuks",
+    "description": "(deleted 2023/02/03)"
   },
   "unverify": {
-    "message": "Märgi mittekinnitatuks"
+    "message": "Märgi mittekinnitatuks",
+    "description": "(deleted 2023/02/03)"
+  },
+  "icu:SafetyNumberViewer__markAsVerified": {
+    "messageformat": "Märgi kinnitatuks",
+    "description": "Safety number viewer, verification toggle button, when not verified, sets verified"
+  },
+  "icu:SafetyNumberViewer__clearVerification": {
+    "messageformat": "Tühista kontrollimine",
+    "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
   },
   "isVerified": {
     "message": "Sa oled kinnitanud enda turvanumbri kasutajaga $name$.",
@@ -687,7 +697,7 @@
     "description": "An error popup when the user has attempted to add an attachment"
   },
   "cannotSelectMultipleFileAttachments": {
-    "message": "You can only select one file at a time.",
+    "message": "Korraga saad valida ainult ühe faili.",
     "description": "An error popup when the user has attempted to add multiple non-image attachments"
   },
   "maximumAttachments": {
@@ -699,7 +709,7 @@
     "description": "(deleted 2022/12/07) Shown in a toast if the user tries to attach too-large file"
   },
   "icu:fileSizeWarning": {
-    "messageformat": "Sorry, the selected file exceeds message size restrictions. {limit}{units}",
+    "messageformat": "Kahjuks ületab valitud fail sõnumi suuruse piirangu. {limit} {units}",
     "description": "Shown in a toast if the user tries to attach too-large file"
   },
   "unableToLoadAttachment": {
@@ -851,7 +861,7 @@
   },
   "at-username": {
     "message": "@$username$",
-    "description": "@ added to username to signify it as a username. Should it be on the right in your language?"
+    "description": "(deleted 02/07/2023) @ added to username to signify it as a username. Should it be on the right in your language?"
   },
   "welcomeToSignal": {
     "message": "Tere tulemast Signalisse"
@@ -934,7 +944,7 @@
   },
   "originalMessageNotAvailable": {
     "message": "Algne sõnum ei ole enam saadaval",
-    "description": "Shown in toast if user clicks on quote that references message no longer in database"
+    "description": "(deleted 02/07/2023) Shown in toast if user clicks on quote that references message no longer in database"
   },
   "messageFoundButNotLoaded": {
     "message": "Algne sõnum on leitud, kuid mitte laaditud. Keri üles selle laadimiseks.",
@@ -989,7 +999,7 @@
     "description": "Shown in iOS theme when you or someone quotes to a message which is not from you"
   },
   "audioPermissionNeeded": {
-    "message": "To send voice messages, allow Signal Desktop to access your microphone.",
+    "message": "Häälsõnumite saatmiseks luba Signal Desktopil oma mikrofoni kasutada.",
     "description": "Shown if the user attempts to send an audio message without audio permissions turned on"
   },
   "audioCallingPermissionNeeded": {
@@ -1109,9 +1119,25 @@
     "message": "Saaja",
     "description": "Label for the receiver of a message"
   },
+  "icu:searchResultHeader--sender-to-group": {
+    "messageformat": "Kasutajalt {sender} grupile {receiverGroup}",
+    "description": "Shown for search result items - like 'Jon to Friends Group'"
+  },
+  "icu:searchResultHeader--sender-to-you": {
+    "messageformat": "Kasutajalt {sender} sinule",
+    "description": "Shown for search result items - like 'Jon to You"
+  },
+  "icu:searchResultHeader--you-to-group": {
+    "messageformat": "Sinult kasutajale {receiverGroup}",
+    "description": "Shown for search result items - like 'You to Friends Group'"
+  },
+  "icu:searchResultHeader--you-to-receiver": {
+    "messageformat": "Sinult kasutajale {receiverContact}",
+    "description": "Shown for search result items - like 'You to Jon'"
+  },
   "toJoiner": {
     "message": "saajale",
-    "description": "Joiner for message search results - like 'Jon' to 'Friends Group'"
+    "description": "(deleted 2023/02/02) Joiner for message search results - like 'Jon' to 'Friends Group'"
   },
   "sent": {
     "message": "Saadetud",
@@ -1133,6 +1159,10 @@
   },
   "showSafetyNumber": {
     "message": "Näita turvanumbrit"
+  },
+  "icu:ContactModal__showSafetyNumber": {
+    "messageformat": "Näita turvanumbrit",
+    "description": "Contact modal, label for button to show safety number modal"
   },
   "viewRecentMedia": {
     "message": "Näita hiljutist meediat",
@@ -1233,32 +1263,36 @@
     "description": "Shown in timeline when a member of a conversation changes their phone number"
   },
   "icu:ConversationMerge--notification": {
-    "messageformat": "{obsoleteConversationTitle} and {conversationTitle} are the same account. Your message history for both chats are here.",
+    "messageformat": "{obsoleteConversationTitle} ja {conversationTitle} on sama konto. Sinu mõlema vestluse sõnumiajalugu on siin.",
     "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way"
   },
-  "icu:ConversationMerge--notification--no-e164": {
-    "messageformat": "Your message history with {conversationTitle} and another chat that belonged to them has been merged.",
-    "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way, but we don't have the phone number for the old conversation"
+  "icu:ConversationMerge--notification--with-e164": {
+    "messageformat": "Sinu sõnumiajalugu kasutajaga {conversationTitle} ja tema numbriga {obsoleteConversationNumber} on liidetud.",
+    "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way, but we have the phone number for the old conversation"
+  },
+  "icu:ConversationMerge--notification--no-title": {
+    "messageformat": "Sinu sõnumiajalugu kasutajaga {conversationTitle} ja tema teise vestlusega on liidetud.",
+    "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way, but we don't have the title for the old conversation"
   },
   "icu:ConversationMerge--learn-more": {
-    "messageformat": "Learn More",
+    "messageformat": "Uuri täpsemalt",
     "description": "Shown on a button below a 'conversations were merged' timeline notification"
   },
   "icu:ConversationMerge--explainer-dialog--line-1": {
-    "messageformat": "After messaging with {obsoleteConversationTitle} you learned this number belongs to {conversationTitle}. Their phone number is private.",
+    "messageformat": "Pärast sõnumite saatmist vestluses {obsoleteConversationTitle} said sa teada, et see number kuulub vestlusesse {conversationTitle}. Tema telefonumber on privaatne.",
     "description": "Contents of a dialog shown after clicking 'learn more' button on a conversation merge event."
   },
   "icu:ConversationMerge--explainer-dialog--line-2": {
-    "messageformat": "Your message history for both conversations have been merged here.",
+    "messageformat": "Sinu mõlema vestluse sõnumite ajalugu on siin liidetud.",
     "description": "Contents of a dialog shown after clicking 'learn more' button on a conversation merge event."
   },
   "icu:PhoneNumberDiscovery--notification--withSharedGroup": {
-    "messageformat": "{phoneNumber} belongs to {conversationTitle}. You're both members of {sharedGroup}.",
-    "description": "Shown when we've discovered a phone number for a contact you've been communicating with."
+    "messageformat": "{phoneNumber} kuulub vestlusesse {conversationTitle}. Olete mõlemad grupi {sharedGroup} liikmed.",
+    "description": "(deleted 2023/01/11) Shown when we've discovered a phone number for a contact you've been communicating with."
   },
   "icu:PhoneNumberDiscovery--notification--noSharedGroup": {
-    "messageformat": "{phoneNumber} belongs to {conversationTitle}",
-    "description": "Shown when we've discovered a phone number for a contact you've been communicating with, but you have no shared groups."
+    "messageformat": "{phoneNumber} kuulub vestlusesse {conversationTitle}",
+    "description": "(deleted 2023/01/11) Shown when we've discovered a phone number for a contact you've been communicating with, but you have no shared groups."
   },
   "quoteThumbnailAlt": {
     "message": "Tsiteeritud sõnumist pärit pildi pisipilt",
@@ -1560,7 +1594,7 @@
     "description": "when you block someone and cannot view their video"
   },
   "calling__block-info": {
-    "message": "You won't receive their voice or video and they won't receive yours.",
+    "message": "Sinule ei edastata tema heli- või videosõnumeid ega temale sinu omasid.",
     "description": "Shown in the modal dialog to describe how blocking works in a group call"
   },
   "calling__overflow__scroll-up": {
@@ -1955,7 +1989,15 @@
   },
   "verifyNewNumber": {
     "message": "Kinnita turvanumber",
-    "description": "Label on button included with safety number change notification in the conversation"
+    "description": "(deleted 2023/02/03) Label on button included with safety number change notification in the conversation"
+  },
+  "icu:ConversationDetails__viewSafetyNumber": {
+    "messageformat": "Näita turvanumbrit",
+    "description": "In conversation details, label for button to view safety number, opens safety number modal"
+  },
+  "icu:SafetyNumberNotification__viewSafetyNumber": {
+    "messageformat": "Näita turvanumbrit",
+    "description": "In conversation, safety number change notification, label for button to view safety number, opens safety number modal"
   },
   "cannotGenerateSafetyNumber": {
     "message": "Seda kasutajat pole võimalik kinnitada kuni sa pole temaga sõnumeid vahetanud.",
@@ -2158,7 +2200,8 @@
     "description": "Shown in update dialog when partial update fails and we have to ask user to download full update"
   },
   "autoUpdateNewVersionInstructions": {
-    "message": "Uuenduste paigaldamiseks vajuta \"Taaskäivita Signal\"."
+    "message": "Uuenduste paigaldamiseks vajuta \"Taaskäivita Signal\".",
+    "description": "(deleted 2023/01/18)"
   },
   "autoUpdateRestartButtonLabel": {
     "message": "Taaskäivita Signal"
@@ -2278,99 +2321,175 @@
     "description": "Shown in a message's bubble when the message has been deleted for everyone."
   },
   "giftBadge--missing": {
-    "message": "Unable to fetch gift badge details",
-    "description": "Aria label for gift badge when we can't fetch the details"
+    "message": "Kinkemärgi andmeid ei õnnestunud saada",
+    "description": "(deleted 2023/01/20) Aria label for gift badge when we can't fetch the details"
+  },
+  "icu:donation--missing": {
+    "messageformat": "Annetuse andmeid ei õnnestunud saada",
+    "description": "Aria label for donation when we can't fetch the details."
   },
   "message--giftBadge--unopened--incoming": {
     "message": "Sõnumi avamiseks vaata seda mobiiltelefonis",
-    "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    "description": "(deleted 2023/01/20) Shown in a message's bubble when you've received a gift badge from a contact"
+  },
+  "icu:message--donation--unopened--incoming": {
+    "messageformat": "Sõnumi avamiseks vaata seda mobiiltelefonis",
+    "description": "Shown in a message's bubble when you've received a donation badge from a contact"
   },
   "message--giftBadge--unopened--outgoing": {
     "message": "Kingituse nägemiseks toksa mobiilis seda sõnumit",
-    "description": "Shown in a message's bubble when you've sent a gift badge to a contact"
+    "description": "(deleted 2023/01/20) Shown in a message's bubble when you've sent a gift badge to a contact"
+  },
+  "icu:message--donation--unopened--outgoing": {
+    "messageformat": "Oma annetuse nägemiseks toksa mobiilis seda sõnumit",
+    "description": "Shown in a message's bubble when you've sent a donation badge to a contact."
   },
   "message--giftBadge--unopened--label": {
     "message": "Kingitus",
-    "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    "description": "(deleted 2023/01/20) Shown in a message's bubble when you've received a gift badge from a contact"
+  },
+  "icu:message--donation--unopened--label": {
+    "messageformat": "{sender} annetas Signalile sinu nimel",
+    "description": "Shown in a message's bubble when you've received a donation badge from a contact."
   },
   "message--giftBadge--unopened--toast--incoming": {
     "message": "Kingituse avamiseks kontrolli oma telefoni",
-    "description": "Shown when you've clicked on an incoming gift badge you haven't yet redeemed"
+    "description": "(deleted 2023/01/20) Shown when you've clicked on an incoming gift badge you haven't yet redeemed"
+  },
+  "icu:message--donation--unopened--toast--incoming": {
+    "messageformat": "Selle annetuse avamiseks kontrolli oma telefoni",
+    "description": "Shown when you've clicked on an incoming donation you haven't yet redeemed."
   },
   "message--giftBadge--unopened--toast--outgoing": {
     "message": "Oma kingituse vaatamiseks kontrolli oma telefoni",
-    "description": "Shown when you've clicked on an outgoing gift badge"
+    "description": "(deleted 2023/01/20) Shown when you've clicked on an outgoing gift badge"
+  },
+  "icu:message--donation--unopened--toast--outgoing": {
+    "messageformat": "Oma annetuse vaatamiseks kontrolli oma telefoni",
+    "description": "Shown when you've clicked on an outgoing donation badge."
   },
   "message--giftBadge--preview--unopened": {
     "message": "Said kingituse",
-    "description": "Shown to label the gift badge in notifications and the left pane"
+    "description": "(deleted 2023/01/20) Shown to label the gift badge in notifications and the left pane"
+  },
+  "icu:message--donation--preview--unopened": {
+    "messageformat": "{sender} annetas sinu nimel",
+    "description": "Shown to label the donation badge in notifications and the left pane."
   },
   "message--giftBadge--preview--redeemed": {
     "message": "Lunastasid kinkemärgi",
-    "description": "Shown to label the redeemed gift badge in notifications and the left pane"
+    "description": "(deleted 2023/01/20) Shown to label the redeemed gift badge in notifications and the left pane"
+  },
+  "icu:message--donation--preview--redeemed": {
+    "messageformat": "Lunastasid annetuse",
+    "description": "Shown to label the redeemed donation badge in notifications and the left pane."
   },
   "message--giftBadge--preview--sent": {
     "message": "Saatsid kinkemärgi",
-    "description": "Shown to label a gift badge you've sent in notifications and the left pane"
+    "description": "(deleted 2023/01/20) Shown to label a gift badge you've sent in notifications and the left pane"
+  },
+  "icu:message--donation--preview--sent": {
+    "messageformat": "Annetasid kasutaja {recipient} nimel",
+    "description": "Shown to label a donation badge you've sent in notifications and the left pane"
   },
   "message--giftBadge": {
     "message": "Kinkemärk",
-    "description": "Shown to label the gift badge you've redeemed on another device"
+    "description": "(deleted 2023/01/20) Shown to label the gift badge you've redeemed on another device"
+  },
+  "icu:message--donation": {
+    "messageformat": "Annetus",
+    "description": "Shown to label the donation badge you've redeemed on another device."
   },
   "quote--giftBadge": {
     "message": "Kingitus",
-    "description": "Shown to label a gift badge you've replied to"
+    "description": "(deleted 2023/01/20) Shown to label a gift badge you've replied to"
+  },
+  "icu:quote--donation": {
+    "messageformat": "Annetus",
+    "description": "Shown to label a donation badge you've replied to."
   },
   "message--giftBadge--remaining--days": {
     "message": "$days$ päeva jäänud",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for days > 1)"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device (only rendered for days > 1)"
+  },
+  "icu:message--donation--remaining--days": {
+    "messageformat": "{days} päeva jäänud",
+    "description": "Describes how long remains for the donation badge you've redeemed on another device (only rendered for days > 1)."
   },
   "message--giftBadge--remaining--hours": {
     "message": "$hours$ tundi jäänud",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for hours > 1)"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device (only rendered for hours > 1)"
+  },
+  "icu:message--donation--remaining--hours": {
+    "messageformat": "{hours} tundi jäänud",
+    "description": "Describes how long remains for the donation badge you've redeemed on another device (only rendered for hours > 1)"
   },
   "message--giftBadge--remaining--minutes": {
     "message": "$minutes$ minutit jäänud",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for minutes > 1)"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device (only rendered for minutes > 1)"
+  },
+  "icu:message--donation--remaining--minutes": {
+    "messageformat": "{minutes, plural, one {1 minut jäänud} other {{minutes,number} minutit jäänud}}",
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device."
   },
   "message--giftBadge--remaining--one-minute": {
     "message": "1 minut jäänud",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device"
   },
   "message--giftBadge--expired": {
     "message": "Aegunud",
-    "description": "Shows that a gift badge is expired"
+    "description": "(deleted 2023/01/20) Shows that a gift badge is expired"
+  },
+  "icu:message--donation--expired": {
+    "messageformat": "Aegunud",
+    "description": "Shows that a donation badge is expired"
   },
   "message--giftBadge--view": {
     "message": "Näita",
     "description": "Shown when you've sent a gift badge to someone then opened it"
   },
+  "icu:message--donation--view": {
+    "messageformat": "Vaata",
+    "description": "Shown when you've sent a donation badge to someone then opened it"
+  },
   "message--giftBadge--redeemed": {
     "message": "Lunastatud",
-    "description": "Shown when you've redeemed the gift badge on another device"
+    "description": "(deleted 2023/01/20) Shown when you've redeemed the gift badge on another device"
+  },
+  "icu:message--donation--redeemed": {
+    "messageformat": "Lunastatud",
+    "description": "Shown when you've redeemed the donation badge on another device"
   },
   "modal--giftBadge--title": {
     "message": "Aitäh sinu toetuse eest!",
-    "description": "The title of the outgoing gift badge detail dialog"
+    "description": "(deleted 2023/01/20) The title of the outgoing gift badge detail dialog"
+  },
+  "icu:modal--donation--title": {
+    "messageformat": "Aitäh sinu toetuse eest!",
+    "description": "The title of the outgoing donation badge detail dialog"
   },
   "modal--giftBadge--description": {
     "message": "Kinkisid kasutajale $name$ märgi. Kui ta selle vastu võtab, antakse talle valik, kas märki kuvada või mitte.",
-    "description": "The description of the outgoing gift badge detail dialog"
+    "description": "(deleted 2023/01/20) The description of the outgoing gift badge detail dialog"
+  },
+  "icu:modal--donation--description": {
+    "messageformat": "Tegid Signalile kasutaja {name} nimel annetuse. Pakume talle võimalust oma profiilil toetust avaldada.",
+    "description": "The description of the outgoing donation badge detail dialog"
   },
   "stickers--toast--InstallFailed": {
     "message": "Kleebisepaki paigaldamine ei õnnestunud",
     "description": "Shown in a toast if the user attempts to install a sticker pack and it fails"
   },
   "stickers--StickerManager--title": {
-    "message": "Stickers",
+    "message": "Kleebised",
     "description": "Title for the sticker manager"
   },
   "stickers--StickerManager--Available": {
-    "message": "Available",
+    "message": "Saadaval",
     "description": "Shown in the sticker pack manager as a tab for available stickers"
   },
   "stickers--StickerManager--InstalledPacks": {
-    "message": "Installed",
+    "message": "Paigaldatud",
     "description": "Shown in the sticker pack manager above your installed sticker packs."
   },
   "stickers--StickerManager--InstalledPacks--Empty": {
@@ -2766,23 +2885,23 @@
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--accept-video-call": {
-    "message": "Answer call with video",
+    "message": "Vasta kõnele videoga",
     "description": "(deleted 2023/01/09) Shown in the calling keyboard shortcuts guide"
   },
   "Keyboard--accept-audio-call": {
-    "message": "Answer call with audio",
+    "message": "Vasta kõnele häälega",
     "description": "(deleted 2023/01/09) Shown in the calling keyboard shortcuts guide"
   },
   "icu:Keyboard--accept-video-call": {
-    "messageformat": "Answer call with video (video calls only)",
+    "messageformat": "Vasta kõnele videoga (ainult videokõned)",
     "description": "Shown in the calling keyboard shortcuts guide"
   },
   "icu:Keyboard--accept-call-without-video": {
-    "messageformat": "Answer call without video",
+    "messageformat": "Vasta kõnele ilma videota",
     "description": "Shown in the calling keyboard shortcuts guide"
   },
   "Keyboard--start-audio-call": {
-    "message": "Start voice call",
+    "message": "Alusta häälkõnet",
     "description": "Shown in the calling keyboard shortcuts guide"
   },
   "Keyboard--start-video-call": {
@@ -3198,11 +3317,11 @@
     "description": "When a user has no common groups, show this warning"
   },
   "acceptCall": {
-    "message": "Answer call",
+    "message": "Vasta kõnele",
     "description": "Shown in tooltip for the button to accept a call (audio or video)"
   },
   "acceptCallWithoutVideo": {
-    "message": "Answer call without video",
+    "message": "Vasta kõnele ilma videota",
     "description": "Shown in tooltip for the button to accept a video call without video"
   },
   "declineCall": {
@@ -3210,7 +3329,7 @@
     "description": "Shown in tooltip for the button to decline a call (audio or video)"
   },
   "declinedIncomingAudioCall": {
-    "message": "You declined a voice call",
+    "message": "Sa keeldusid häälkõnest",
     "description": "Shown in conversation history when you declined an incoming voice call"
   },
   "declinedIncomingVideoCall": {
@@ -3218,7 +3337,7 @@
     "description": "Shown in conversation history when you declined an incoming video call"
   },
   "acceptedIncomingAudioCall": {
-    "message": "Incoming voice call",
+    "message": "Sissetulev häälkõne",
     "description": "Shown in conversation history when you accepted an incoming voice call"
   },
   "acceptedIncomingVideoCall": {
@@ -3226,7 +3345,7 @@
     "description": "Shown in conversation history when you accepted an incoming video call"
   },
   "missedIncomingAudioCall": {
-    "message": "Missed voice call",
+    "message": "Vastamata häälkõne",
     "description": "Shown in conversation history when you missed an incoming voice call"
   },
   "missedIncomingVideoCall": {
@@ -3234,7 +3353,7 @@
     "description": "Shown in conversation history when you missed an incoming video call"
   },
   "acceptedOutgoingAudioCall": {
-    "message": "Outgoing voice call",
+    "message": "Väljuv häälkõne",
     "description": "Shown in conversation history when you made an outgoing voice call"
   },
   "acceptedOutgoingVideoCall": {
@@ -3242,7 +3361,7 @@
     "description": "Shown in conversation history when you made an outgoing video call"
   },
   "missedOrDeclinedOutgoingAudioCall": {
-    "message": "Unanswered voice call",
+    "message": "Vastamata häälkõne",
     "description": "Shown in conversation history when your voice call is missed or declined"
   },
   "missedOrDeclinedOutgoingVideoCall": {
@@ -3258,7 +3377,7 @@
     "description": "Shown in a notification body when Signal is minimized to tray"
   },
   "incomingAudioCall": {
-    "message": "Incoming voice call...",
+    "message": "Sissetulev häälkõne …",
     "description": "Shown in both the incoming call bar and notification for an incoming voice call"
   },
   "incomingVideoCall": {
@@ -4130,7 +4249,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--summary": {
-    "messageformat": "This group's members or settings have changed.",
+    "messageformat": "Selle grupi liikmed või sätted on muutunud.",
     "description": "When rejoining a group, any detected changes are collapsed down into this summary"
   },
   "GroupV1--Migration--disabled": {
@@ -4446,11 +4565,11 @@
     "description": "(deleted 2023/01/03) Title of the groups-in-common panel, in the contact details"
   },
   "icu:ConversationDetailsGroups--title": {
-    "messageformat": "{count, plural, one {1 group in common} other {{count,number} groups in common}}",
+    "messageformat": "{count, plural, one {{count,number} ühine grupp} other {{count,number} ühist gruppi}}",
     "description": "Title of the groups-in-common panel, in the contact details"
   },
   "icu:ConversationDetailsGroups--title--with-zero-groups-in-common": {
-    "messageformat": "No groups in common",
+    "messageformat": "Ühised grupid puuduvad",
     "description": "Title of the groups-in-common panel, in the contact details, with zero groups in common"
   },
   "ConversationDetailsGroups--add-to-group": {
@@ -4738,7 +4857,7 @@
     "description": "Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "TimelineDateHeader--date-older-than-6-months": {
-    "message": "P. MMM, YYYY",
+    "message": "D. MMM, YYYY",
     "description": "Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "MessageRequestWarning__learn-more": {
@@ -5104,6 +5223,10 @@
   "ProfileEditor--username--general-error": {
     "message": "Sinu kasutajanime salvestamine ei õnnestunud. Kontrolli internetiühendust ja proovi uuesti.",
     "description": "Shown if something unknown has gone wrong with username save."
+  },
+  "icu:ProfileEditor--username--reservation-gone": {
+    "messageformat": "{username} is no longer available. A new set of digits will be paired with your username, please try saving it again.",
+    "description": "Shown if username reservation has expired and new one needs to be generated."
   },
   "ProfileEditor--username--delete-general-error": {
     "message": "Sinu kasutajanime eemaldamine ei õnnestunud. Kontrolli internetiühendust ja proovi uuesti.",
@@ -5985,6 +6108,10 @@
     "message": "Vasta",
     "description": "Button label to reply to a story"
   },
+  "icu:StoryViewer__reply-placeholder": {
+    "messageformat": "Vasta kasutajale {firstName}",
+    "description": "Button label to reply to a story"
+  },
   "StoryViewer__reply-group": {
     "message": "Vasta grupile",
     "description": "Button label to reply to a group story"
@@ -6055,7 +6182,7 @@
   },
   "StoryViewsNRepliesModal__react": {
     "message": "Reageeri loole",
-    "description": "aria-label for reaction button"
+    "description": "(deleted 01/25/23) aria-label for reaction button"
   },
   "StoryViewsNRepliesModal__reacted": {
     "message": "Reageeris loole",
@@ -6193,6 +6320,14 @@
     "message": "Lisa oma loo vaatajatele link",
     "description": "Empty state for the link preview"
   },
+  "icu:Stories__failed-send--full": {
+    "messageformat": "Loo saatmine nurjus",
+    "description": "Notification text whenever a story fails to send"
+  },
+  "icu:Stories__failed-send--partial": {
+    "messageformat": "Lugu ei saanud kõigile valitud saajatele saata",
+    "description": "Notification text whenever a story partially fails to send"
+  },
   "TextAttachment__placeholder": {
     "message": "Lisa tekst",
     "description": "Placeholder for the add text input"
@@ -6253,6 +6388,42 @@
     "message": "See numbrikombinatsioon aitab sinu kasutajanime privaatsena hoida, et saaksid soovimatuid sõnumeid vältida. Jaga oma kasutajanime ainult nende inimeste ja gruppidega, kellega soovid suhelda. Kui kasutajanime muudad, saadetakse sulle uus numbrikombinatsioon.",
     "description": "Body of the popup with information about discriminator in username"
   },
+  "icu:UsernameOnboardingModalBody__title": {
+    "messageformat": "Set up your Signal username",
+    "description": "Title of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__row__number": {
+    "messageformat": "Usernames are paired with a set of digits and aren’t shared on your profile",
+    "description": "Content of the first row of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__row__link": {
+    "messageformat": "Each username has a unique link you can share with your friends to start a chat with you",
+    "description": "Content of the second row of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__row__lock": {
+    "messageformat": "Turn off phone number discovery under Settings > Phone Number > Who can find my number, to use your username as the primary way others can contact you.",
+    "description": "Content of the third row of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__learn-more": {
+    "messageformat": "Learn More",
+    "description": "Text that open a popup with information about username onboarding"
+  },
+  "icu:UsernameOnboardingModalBody__continue": {
+    "messageformat": "Continue",
+    "description": "Text of the primary button on username onboarding modal"
+  },
+  "icu:UnsupportedOSWarningDialog__body": {
+    "messageformat": "Signali veebiversioon lõpetab varsti sinu arvuti {OS} versiooni toetamise. Kui soovid jätkata Signali kasutamist, uuenda oma arvuti operatsioonisüsteemi hiljemalt {expirationDate}. <learnMoreLink>Rohkem teavet</learnMoreLink>",
+    "description": "Body of a dialog displayed on unsupported operating systems"
+  },
+  "icu:UnsupportedOSErrorDialog__body": {
+    "messageformat": "Signali veebiversioon ei tööta enam selles arvutis. Kui soovid jätkata Signali kasutamist, uuenda oma arvuti {OS} versiooni. <learnMoreLink>Rohkem teavet</learnMoreLink>",
+    "description": "Body of a dialog displayed on unsupported operating systems"
+  },
+  "icu:UnsupportedOSErrorToast": {
+    "messageformat": "Signali veebiversioon ei tööta enam selles arvutis. Kui soovid jätkata Signali kasutamist, uuenda oma arvuti {OS} versiooni.",
+    "description": "Body of a dialog displayed on unsupported operating systems"
+  },
   "WhatsNew__modal-title": {
     "message": "Mis on uut",
     "description": "Title for the whats new modal"
@@ -6300,5 +6471,25 @@
   "WhatsNew__v6.1--1": {
     "message": "Kui alustad grupikõnet väikese grupiga (kuni 16 inimest), on sul võimalik saata heliteavitus. Grupi liikmed kuulevad helinat, kui nad kasutavad iOS betat, Desktopi või Androidi.",
     "description": "Release notes for v6.1"
+  },
+  "icu:WhatsNew__v6.3--0": {
+    "messageformat": "Kui soovid sõnumit tsiteerida ja sellele vastata, topeltklõpsa mis tahes sõnumireale vestluses. See on nagu otsetee, millega vanade ideede kohta uusi mõtteid väljendada. Täname selle funktsiooni elluviimise ja tagasisidestamise eest kasutajat {whynothugo} ja Signali kogukonda.",
+    "description": "Release notes for v6.3"
+  },
+  "icu:WhatsNew__v6.3--1": {
+    "messageformat": "Nüüd on lihtsam pildi välisservale toksata ja galeriivaatest väljuda, selle asemel et pilti suurendada. Enne kippus juhtuma, et kui sina püüdsid pilti sulgeda, näitas rakendus seda sulle veel lähemalt. Täname kasutajat {jojomatik}, kes asja korda tegi!",
+    "description": "Release notes for v6.3"
+  },
+  "icu:WhatsNew__v6.5--0": {
+    "messageformat": "Vasta kiiremini. Nüüd saad kiiremini reageerida. Selleks klõpsa loole vastates ükskõik millisele emojile.",
+    "description": "Release notes for v6.5"
+  },
+  "icu:WhatsNew__v6.5--1": {
+    "messageformat": "Nüüd saad oma sõnumite ajaloost otsida konkreetseid hiina ja jaapani kirjamärke.",
+    "description": "Release notes for v6.5"
+  },
+  "icu:WhatsNew__v6.6--0": {
+    "messageformat": "Aita meil testida hääl- ja videokõnede usaldusväärsust ja toimimist. Selles beetaväljalaskes on mõned veaparandused ja mõned väikesed kasutajaliidese uuendused (vt täiustusi uue lingi eelvaatest). Aitäh, et oled meie beetatestija ning palun anna meile kogukonnafoorumis märku, kui mõne vea leiad.",
+    "description": "Release notes for v6.6"
   }
 }

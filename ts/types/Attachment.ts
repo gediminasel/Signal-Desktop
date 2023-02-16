@@ -1,7 +1,6 @@
 // Copyright 2018 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import is from '@sindresorhus/is';
 import moment from 'moment';
 import {
   isNumber,
@@ -9,6 +8,7 @@ import {
   isTypedArray,
   isFunction,
   isUndefined,
+  isString,
   omit,
 } from 'lodash';
 import { blobToArrayBuffer } from 'blob-util';
@@ -256,7 +256,7 @@ const INVALID_CHARACTERS_PATTERN = new RegExp(
 export function _replaceUnicodeOrderOverridesSync(
   attachment: AttachmentType
 ): AttachmentType {
-  if (!is.string(attachment.fileName)) {
+  if (!isString(attachment.fileName)) {
     return attachment;
   }
 
@@ -285,7 +285,7 @@ const V2_UNWANTED_UNICODE = /[\u202A-\u202E\u2066-\u2069\u200E\u200F\u061C]/g;
 export async function replaceUnicodeV2(
   attachment: AttachmentType
 ): Promise<AttachmentType> {
-  if (!is.string(attachment.fileName)) {
+  if (!isString(attachment.fileName)) {
     return attachment;
   }
 
@@ -327,7 +327,7 @@ export function loadData(
 ): (
   attachment: Pick<AttachmentType, 'data' | 'path'>
 ) => Promise<AttachmentWithHydratedData> {
-  if (!is.function_(readAttachmentData)) {
+  if (!isFunction(readAttachmentData)) {
     throw new TypeError("'readAttachmentData' must be a function");
   }
 
@@ -341,7 +341,7 @@ export function loadData(
       return attachment as AttachmentWithHydratedData;
     }
 
-    if (!is.string(attachment.path)) {
+    if (!isString(attachment.path)) {
       throw new TypeError("'attachment.path' is required");
     }
 
@@ -353,7 +353,7 @@ export function loadData(
 export function deleteData(
   deleteOnDisk: (path: string) => Promise<void>
 ): (attachment?: AttachmentType) => Promise<void> {
-  if (!is.function_(deleteOnDisk)) {
+  if (!isFunction(deleteOnDisk)) {
     throw new TypeError('deleteData: deleteOnDisk must be a function');
   }
 
@@ -363,15 +363,15 @@ export function deleteData(
     }
 
     const { path, thumbnail, screenshot } = attachment;
-    if (is.string(path)) {
+    if (isString(path)) {
       await deleteOnDisk(path);
     }
 
-    if (thumbnail && is.string(thumbnail.path)) {
+    if (thumbnail && isString(thumbnail.path)) {
       await deleteOnDisk(thumbnail.path);
     }
 
-    if (screenshot && is.string(screenshot.path)) {
+    if (screenshot && isString(screenshot.path)) {
       await deleteOnDisk(screenshot.path);
     }
   };
@@ -690,7 +690,7 @@ export function isGIF(attachments?: ReadonlyArray<AttachmentType>): boolean {
   const flag = SignalService.AttachmentPointer.Flags.GIF;
   const hasFlag =
     // eslint-disable-next-line no-bitwise
-    !is.undefined(attachment.flags) && (attachment.flags & flag) === flag;
+    !isUndefined(attachment.flags) && (attachment.flags & flag) === flag;
 
   return hasFlag && isVideoAttachment(attachment);
 }
@@ -857,7 +857,7 @@ export function getAlt(
 export const isVisualMedia = (attachment: AttachmentType): boolean => {
   const { contentType } = attachment;
 
-  if (is.undefined(contentType)) {
+  if (isUndefined(contentType)) {
     return false;
   }
 
@@ -871,7 +871,7 @@ export const isVisualMedia = (attachment: AttachmentType): boolean => {
 export const isFile = (attachment: AttachmentType): boolean => {
   const { contentType } = attachment;
 
-  if (is.undefined(contentType)) {
+  if (isUndefined(contentType)) {
     return false;
   }
 
@@ -890,13 +890,13 @@ export const isVoiceMessage = (attachment: AttachmentType): boolean => {
   const flag = SignalService.AttachmentPointer.Flags.VOICE_MESSAGE;
   const hasFlag =
     // eslint-disable-next-line no-bitwise
-    !is.undefined(attachment.flags) && (attachment.flags & flag) === flag;
+    !isUndefined(attachment.flags) && (attachment.flags & flag) === flag;
   if (hasFlag) {
     return true;
   }
 
   const isLegacyAndroidVoiceMessage =
-    !is.undefined(attachment.contentType) &&
+    !isUndefined(attachment.contentType) &&
     MIME.isAudio(attachment.contentType) &&
     !attachment.fileName;
   if (isLegacyAndroidVoiceMessage) {

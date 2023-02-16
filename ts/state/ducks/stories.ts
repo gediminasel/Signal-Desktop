@@ -4,6 +4,7 @@
 import type { ThunkAction, ThunkDispatch } from 'redux-thunk';
 import { isEqual, pick } from 'lodash';
 
+import type { ReadonlyDeep } from 'type-fest';
 import * as Errors from '../../types/errors';
 import type { AttachmentType } from '../../types/Attachment';
 import type { DraftBodyRangesType } from '../../types/Util';
@@ -22,6 +23,7 @@ import * as log from '../../logging/log';
 import { SIGNAL_ACI } from '../../types/SignalConversation';
 import dataInterface from '../../sql/Client';
 import { ReadStatus } from '../../messages/MessageReadStatus';
+import { SendStatus } from '../../messages/MessageSendState';
 import { SafetyNumberChangeSource } from '../../components/SafetyNumberChangeDialog';
 import { StoryViewDirectionType, StoryViewModeType } from '../../types/Stories';
 import { assertDev, strictAssert } from '../../util/assert';
@@ -54,50 +56,56 @@ import type { BoundActionCreatorsMapObject } from '../../hooks/useBoundActions';
 import { useBoundActions } from '../../hooks/useBoundActions';
 import { verifyStoryListMembers as doVerifyStoryListMembers } from '../../util/verifyStoryListMembers';
 import { viewSyncJobQueue } from '../../jobs/viewSyncJobQueue';
-import { viewedReceiptsJobQueue } from '../../jobs/viewedReceiptsJobQueue';
 import { getOwn } from '../../util/getOwn';
 import { SHOW_TOAST } from './toast';
 import { ToastType } from '../../types/Toast';
 import type { ShowToastActionType } from './toast';
+import {
+  conversationJobQueue,
+  conversationQueueJobEnum,
+} from '../../jobs/conversationJobQueue';
+import { ReceiptType } from '../../types/Receipt';
 
-export type StoryDataType = {
-  attachment?: AttachmentType;
-  hasReplies?: boolean;
-  hasRepliesFromSelf?: boolean;
-  messageId: string;
-  startedDownload?: boolean;
-} & Pick<
-  MessageAttributesType,
-  | 'canReplyToStory'
-  | 'conversationId'
-  | 'deletedForEveryone'
-  | 'reactions'
-  | 'readAt'
-  | 'readStatus'
-  | 'sendStateByConversationId'
-  | 'source'
-  | 'sourceUuid'
-  | 'storyDistributionListId'
-  | 'timestamp'
-  | 'type'
-  | 'storyRecipientsVersion'
-> & {
-    // don't want the fields to be optional as in MessageAttributesType
-    expireTimer: DurationInSeconds | undefined;
-    expirationStartTimestamp: number | undefined;
-    sourceDevice: number;
-  };
+export type StoryDataType = ReadonlyDeep<
+  {
+    attachment?: AttachmentType;
+    hasReplies?: boolean;
+    hasRepliesFromSelf?: boolean;
+    messageId: string;
+    startedDownload?: boolean;
+  } & Pick<
+    MessageAttributesType,
+    | 'canReplyToStory'
+    | 'conversationId'
+    | 'deletedForEveryone'
+    | 'reactions'
+    | 'readAt'
+    | 'readStatus'
+    | 'sendStateByConversationId'
+    | 'source'
+    | 'sourceUuid'
+    | 'storyDistributionListId'
+    | 'timestamp'
+    | 'type'
+    | 'storyRecipientsVersion'
+  > & {
+      // don't want the fields to be optional as in MessageAttributesType
+      expireTimer: DurationInSeconds | undefined;
+      expirationStartTimestamp: number | undefined;
+      sourceDevice: number;
+    }
+>;
 
-export type SelectedStoryDataType = {
+export type SelectedStoryDataType = ReadonlyDeep<{
   currentIndex: number;
   messageId: string;
   numStories: number;
   storyViewMode: StoryViewModeType;
   unviewedStoryConversationIdsSorted: Array<string>;
   viewTarget?: StoryViewTargetType;
-};
+}>;
 
-export type AddStoryData =
+export type AddStoryData = ReadonlyDeep<
   | {
       type: 'Media';
       file: File;
@@ -107,8 +115,10 @@ export type AddStoryData =
       type: 'Text';
       sending?: boolean;
     }
-  | undefined;
+  | undefined
+>;
 
+// eslint-disable-next-line local-rules/type-alias-readonlydeep
 export type RecipientsByConversation = Record<
   string, // conversationId
   {
@@ -125,6 +135,7 @@ export type RecipientsByConversation = Record<
 
 // State
 
+// eslint-disable-next-line local-rules/type-alias-readonlydeep
 export type StoriesStateType = Readonly<{
   addStoryData: AddStoryData;
   hasAllStoriesUnmuted: boolean;
@@ -157,20 +168,21 @@ const SET_ADD_STORY_DATA = 'stories/SET_ADD_STORY_DATA';
 const SET_STORY_SENDING = 'stories/SET_STORY_SENDING';
 const SET_HAS_ALL_STORIES_UNMUTED = 'stories/SET_HAS_ALL_STORIES_UNMUTED';
 
-type DOEStoryActionType = {
+type DOEStoryActionType = ReadonlyDeep<{
   type: typeof DOE_STORY;
   payload: string;
-};
+}>;
 
-type ListMembersVerified = {
+type ListMembersVerified = ReadonlyDeep<{
   type: typeof LIST_MEMBERS_VERIFIED;
   payload: {
     conversationId: string;
     distributionId: string | undefined;
     uuids: Array<UUIDStringType>;
   };
-};
+}>;
 
+// eslint-disable-next-line local-rules/type-alias-readonlydeep
 type LoadStoryRepliesActionType = {
   type: typeof LOAD_STORY_REPLIES;
   payload: {
@@ -179,62 +191,63 @@ type LoadStoryRepliesActionType = {
   };
 };
 
-type MarkStoryReadActionType = {
+type MarkStoryReadActionType = ReadonlyDeep<{
   type: typeof MARK_STORY_READ;
   payload: {
     messageId: string;
     readAt: number;
   };
-};
+}>;
 
-type QueueStoryDownloadActionType = {
+type QueueStoryDownloadActionType = ReadonlyDeep<{
   type: typeof QUEUE_STORY_DOWNLOAD;
   payload: string;
-};
+}>;
 
-type SendStoryModalOpenStateChanged = {
+type SendStoryModalOpenStateChanged = ReadonlyDeep<{
   type: typeof SEND_STORY_MODAL_OPEN_STATE_CHANGED;
   payload: number | undefined;
-};
+}>;
 
-type StoryChangedActionType = {
+type StoryChangedActionType = ReadonlyDeep<{
   type: typeof STORY_CHANGED;
   payload: StoryDataType;
-};
+}>;
 
-type ToggleViewActionType = {
+type ToggleViewActionType = ReadonlyDeep<{
   type: typeof TOGGLE_VIEW;
-};
+}>;
 
-type ViewStoryActionType = {
+type ViewStoryActionType = ReadonlyDeep<{
   type: typeof VIEW_STORY;
   payload: SelectedStoryDataType | undefined;
-};
+}>;
 
-type StoryReplyDeletedActionType = {
+type StoryReplyDeletedActionType = ReadonlyDeep<{
   type: typeof STORY_REPLY_DELETED;
   payload: string;
-};
+}>;
 
-type RemoveAllStoriesActionType = {
+type RemoveAllStoriesActionType = ReadonlyDeep<{
   type: typeof REMOVE_ALL_STORIES;
-};
+}>;
 
-type SetAddStoryDataType = {
+type SetAddStoryDataType = ReadonlyDeep<{
   type: typeof SET_ADD_STORY_DATA;
   payload: AddStoryData;
-};
+}>;
 
-type SetStorySendingType = {
+type SetStorySendingType = ReadonlyDeep<{
   type: typeof SET_STORY_SENDING;
   payload: boolean;
-};
+}>;
 
-type SetHasAllStoriesUnmutedType = {
+type SetHasAllStoriesUnmutedType = ReadonlyDeep<{
   type: typeof SET_HAS_ALL_STORIES_UNMUTED;
   payload: boolean;
-};
+}>;
 
+// eslint-disable-next-line local-rules/type-alias-readonlydeep
 export type StoriesActionType =
   | DOEStoryActionType
   | ListMembersVerified
@@ -391,8 +404,11 @@ function markStoryRead(
       ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
     });
 
+    const conversationId = message.get('conversationId');
+
     const viewedReceipt = {
       messageId,
+      conversationId,
       senderE164: message.attributes.source,
       senderUuid: message.attributes.sourceUuid,
       timestamp: message.attributes.sent_at,
@@ -405,7 +421,14 @@ function markStoryRead(
     }
 
     if (window.Events.getStoryViewReceiptsEnabled()) {
-      drop(viewedReceiptsJobQueue.add({ viewedReceipt }));
+      drop(
+        conversationJobQueue.add({
+          type: conversationQueueJobEnum.enum.Receipts,
+          conversationId,
+          receiptsType: ReceiptType.Viewed,
+          receipts: [viewedReceipt],
+        })
+      );
     }
 
     await dataInterface.addNewStoryRead({
@@ -817,11 +840,13 @@ const getSelectedStoryDataForConversationId = (
   };
 };
 
-export type ViewUserStoriesActionCreatorType = (opts: {
-  conversationId: string;
-  storyViewMode?: StoryViewModeType;
-  viewTarget?: StoryViewTargetType;
-}) => unknown;
+export type ViewUserStoriesActionCreatorType = ReadonlyDeep<
+  (opts: {
+    conversationId: string;
+    storyViewMode?: StoryViewModeType;
+    viewTarget?: StoryViewTargetType;
+  }) => unknown
+>;
 
 const viewUserStories: ViewUserStoriesActionCreatorType = ({
   conversationId,
@@ -886,7 +911,7 @@ function removeAllStories(): RemoveAllStoriesActionType {
   };
 }
 
-type ViewStoryOptionsType =
+type ViewStoryOptionsType = ReadonlyDeep<
   | {
       closeViewer: true;
     }
@@ -895,15 +920,18 @@ type ViewStoryOptionsType =
       storyViewMode: StoryViewModeType;
       viewDirection?: StoryViewDirectionType;
       viewTarget?: StoryViewTargetType;
-    };
+    }
+>;
 
-export type ViewStoryActionCreatorType = (
-  opts: ViewStoryOptionsType
-) => unknown;
+export type ViewStoryActionCreatorType = ReadonlyDeep<
+  (opts: ViewStoryOptionsType) => unknown
+>;
 
-export type DispatchableViewStoryType = (
-  opts: ViewStoryOptionsType
-) => ThunkAction<void, RootStateType, unknown, ViewStoryActionType>;
+export type DispatchableViewStoryType = ReadonlyDeep<
+  (
+    opts: ViewStoryOptionsType
+  ) => ThunkAction<void, RootStateType, unknown, ViewStoryActionType>
+>;
 
 const viewStory: ViewStoryActionCreatorType = (
   opts
@@ -960,6 +988,10 @@ const viewStory: ViewStoryActionCreatorType = (
 
     // Go directly to the storyId selected
     if (!viewDirection) {
+      const hasFailedSend = Object.values(
+        story.sendStateByConversationId || {}
+      ).some(({ status }) => status === SendStatus.Failed);
+
       dispatch({
         type: VIEW_STORY,
         payload: {
@@ -968,7 +1000,7 @@ const viewStory: ViewStoryActionCreatorType = (
           numStories,
           storyViewMode,
           unviewedStoryConversationIdsSorted,
-          viewTarget,
+          viewTarget: hasFailedSend ? undefined : viewTarget,
         },
       });
       return;
@@ -1612,6 +1644,7 @@ export function reducer(
   if (action.type === DOE_STORY) {
     return {
       ...state,
+      selectedStoryData: undefined,
       stories: state.stories.filter(
         existingStory => existingStory.messageId !== action.payload
       ),

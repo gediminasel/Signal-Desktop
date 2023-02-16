@@ -12,6 +12,7 @@ export type PropsType = {
   hideToast: () => unknown;
   i18n: LocalizerType;
   openFileInFolder: (target: string) => unknown;
+  OS: string;
   onUndoArchive: (conversaetionId: string) => unknown;
   toast?: {
     toastType: ToastType;
@@ -26,6 +27,7 @@ export function ToastManager({
   i18n,
   openFileInFolder,
   onUndoArchive,
+  OS,
   toast,
 }: PropsType): JSX.Element | null {
   if (toast === undefined) {
@@ -80,7 +82,7 @@ export function ToastManager({
   if (toastType === ToastType.CannotOpenGiftBadgeIncoming) {
     return (
       <Toast onClose={hideToast}>
-        {i18n('message--giftBadge--unopened--toast--incoming')}
+        {i18n('icu:message--donation--unopened--toast--incoming')}
       </Toast>
     );
   }
@@ -88,7 +90,7 @@ export function ToastManager({
   if (toastType === ToastType.CannotOpenGiftBadgeOutgoing) {
     return (
       <Toast onClose={hideToast}>
-        {i18n('message--giftBadge--unopened--toast--outgoing')}
+        {i18n('icu:message--donation--unopened--toast--outgoing')}
       </Toast>
     );
   }
@@ -162,7 +164,7 @@ export function ToastManager({
         onClose={hideToast}
         toastAction={{
           label: i18n('Toast--error--action'),
-          onClick: () => window.showDebugLog(),
+          onClick: () => window.IPC.showDebugLog(),
         }}
       >
         {i18n('Toast--error')}
@@ -320,6 +322,14 @@ export function ToastManager({
     return (
       <Toast onClose={hideToast}>
         {i18n('cannotSelectMultipleFileAttachments')}
+      </Toast>
+    );
+  }
+
+  if (toastType === ToastType.UnsupportedOS) {
+    return (
+      <Toast onClose={hideToast}>
+        {i18n('icu:UnsupportedOSErrorToast', { OS })}
       </Toast>
     );
   }

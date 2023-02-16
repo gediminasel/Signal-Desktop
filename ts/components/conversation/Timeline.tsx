@@ -7,6 +7,7 @@ import type { ReactChild, ReactNode, RefObject } from 'react';
 import React from 'react';
 import Measure from 'react-measure';
 
+import type { ReadonlyDeep } from 'type-fest';
 import { ScrollDownButton } from './ScrollDownButton';
 
 import type { LocalizerType, ThemeType } from '../../types/Util';
@@ -49,7 +50,7 @@ const MIN_ROW_HEIGHT = 18;
 const SCROLL_DOWN_BUTTON_THRESHOLD = 8;
 const LOAD_NEWER_THRESHOLD = 5;
 
-export type WarningType =
+export type WarningType = ReadonlyDeep<
   | {
       type: ContactSpoofingType.DirectConversationWithSameTitle;
       safeConversation: ConversationType;
@@ -58,7 +59,8 @@ export type WarningType =
       type: ContactSpoofingType.MultipleGroupMembersWithSameTitle;
       acknowledgedGroupNameCollisions: GroupNameCollisionsWithIdsByTitle;
       groupNameCollisions: GroupNameCollisionsWithIdsByTitle;
-    };
+    }
+>;
 
 export type ContactSpoofingReviewPropType =
   | {
@@ -139,7 +141,7 @@ export type PropsActionsType = {
   // From Backbone
   acknowledgeGroupMemberNameCollisions: (
     conversationId: string,
-    groupNameCollisions: Readonly<GroupNameCollisionsWithIdsByTitle>
+    groupNameCollisions: ReadonlyDeep<GroupNameCollisionsWithIdsByTitle>
   ) => void;
   clearInvitedUuidsForNewlyCreatedGroup: () => void;
   clearSelectedMessage: () => unknown;
@@ -869,6 +871,7 @@ export class Timeline extends React.Component<
           key={messageId}
           data-item-index={itemIndex}
           data-message-id={messageId}
+          role="listitem"
         >
           <ErrorBoundary i18n={i18n} showDebugLog={showDebugLog}>
             {renderItem({
@@ -1045,7 +1048,7 @@ export class Timeline extends React.Component<
 
               {floatingHeader}
 
-              <div
+              <main
                 className="module-timeline__messages__container"
                 onScroll={this.onScroll}
                 ref={this.containerRef}
@@ -1057,6 +1060,7 @@ export class Timeline extends React.Component<
                     haveOldest && 'module-timeline__messages--have-oldest'
                   )}
                   ref={this.messagesRef}
+                  role="list"
                 >
                   {haveOldest && (
                     <>
@@ -1077,7 +1081,7 @@ export class Timeline extends React.Component<
                     style={AT_BOTTOM_DETECTOR_STYLE}
                   />
                 </div>
-              </div>
+              </main>
 
               {shouldShowScrollDownButton ? (
                 <ScrollDownButton
@@ -1147,5 +1151,5 @@ function getRowIndexFromElement(
 }
 
 function showDebugLog() {
-  window.showDebugLog();
+  window.IPC.showDebugLog();
 }

@@ -177,7 +177,6 @@ export type MessageAttributesType = {
     | 'incoming'
     | 'keychange'
     | 'outgoing'
-    | 'phone-number-discovery'
     | 'profile-change'
     | 'story'
     | 'timer-notification'
@@ -209,9 +208,6 @@ export type MessageAttributesType = {
     fromSync?: unknown;
     source?: string;
     sourceUuid?: string;
-  };
-  phoneNumberDiscovery?: {
-    e164: string;
   };
   conversationMerge?: {
     renderInfo: ConversationRenderInfoType;
@@ -334,6 +330,7 @@ export type ConversationAttributesType = {
   name?: string;
   systemGivenName?: string;
   systemFamilyName?: string;
+  systemNickname?: string;
   needsStorageServiceSync?: boolean;
   needsVerification?: boolean;
   profileSharing?: boolean;
@@ -360,6 +357,7 @@ export type ConversationAttributesType = {
   username?: string;
   shareMyPhoneNumber?: boolean;
   previousIdentityKey?: string;
+  reportingToken?: string;
 
   // Group-only
   groupId?: string;
@@ -427,6 +425,8 @@ export type ConversationRenderInfoType = Pick<
   | 'profileFamilyName'
   | 'profileName'
   | 'systemGivenName'
+  | 'systemFamilyName'
+  | 'systemNickname'
   | 'type'
   | 'username'
 >;

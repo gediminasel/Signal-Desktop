@@ -42,5 +42,6 @@ export enum ToastType {
   TapToViewExpiredOutgoing = 'TapToViewExpiredOutgoing',
   UnableToLoadAttachment = 'UnableToLoadAttachment',
   UnsupportedMultiAttachment = 'UnsupportedMultiAttachment',
+  UnsupportedOS = 'UnsupportedOS',
   UserAddedToGroup = 'UserAddedToGroup',
 }

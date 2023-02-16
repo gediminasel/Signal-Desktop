@@ -3,6 +3,7 @@
 
 import type { ThunkAction } from 'redux-thunk';
 
+import type { ReadonlyDeep } from 'type-fest';
 import * as log from '../../logging/log';
 import type { InMemoryAttachmentDraftType } from '../../types/Attachment';
 import { SignalService as Proto } from '../../protobuf';
@@ -13,25 +14,18 @@ import { stringToMIMEType } from '../../types/MIME';
 import type { BoundActionCreatorsMapObject } from '../../hooks/useBoundActions';
 import { useBoundActions } from '../../hooks/useBoundActions';
 import { getComposerStateForConversation } from './composer';
-
-export enum ErrorDialogAudioRecorderType {
-  Blur,
-  ErrorRecording,
-  Timeout,
-}
+import * as Errors from '../../types/errors';
+import {
+  ErrorDialogAudioRecorderType,
+  RecordingState,
+} from '../../types/AudioRecorder';
 
 // State
 
-export enum RecordingState {
-  Recording = 'recording',
-  Initializing = 'initializing',
-  Idle = 'idle',
-}
-
-export type AudioPlayerStateType = {
-  readonly recordingState: RecordingState;
-  readonly errorDialogAudioRecorderType?: ErrorDialogAudioRecorderType;
-};
+export type AudioPlayerStateType = ReadonlyDeep<{
+  recordingState: RecordingState;
+  errorDialogAudioRecorderType?: ErrorDialogAudioRecorderType;
+}>;
 
 // Actions
 
@@ -41,33 +35,34 @@ const ERROR_RECORDING = 'audioRecorder/ERROR_RECORDING';
 const NOW_RECORDING = 'audioRecorder/NOW_RECORDING';
 const START_RECORDING = 'audioRecorder/START_RECORDING';
 
-type CancelRecordingAction = {
+type CancelRecordingAction = ReadonlyDeep<{
   type: typeof CANCEL_RECORDING;
   payload: undefined;
-};
-type CompleteRecordingAction = {
+}>;
+type CompleteRecordingAction = ReadonlyDeep<{
   type: typeof COMPLETE_RECORDING;
   payload: undefined;
-};
-type ErrorRecordingAction = {
+}>;
+type ErrorRecordingAction = ReadonlyDeep<{
   type: typeof ERROR_RECORDING;
   payload: ErrorDialogAudioRecorderType;
-};
-type StartRecordingAction = {
+}>;
+type StartRecordingAction = ReadonlyDeep<{
   type: typeof START_RECORDING;
   payload: undefined;
-};
-type NowRecordingAction = {
+}>;
+type NowRecordingAction = ReadonlyDeep<{
   type: typeof NOW_RECORDING;
   payload: undefined;
-};
+}>;
 
-type AudioPlayerActionType =
+type AudioPlayerActionType = ReadonlyDeep<
   | CancelRecordingAction
   | CompleteRecordingAction
   | ErrorRecordingAction
   | NowRecordingAction
-  | StartRecordingAction;
+  | StartRecordingAction
+>;
 
 // Action Creators
 
@@ -122,6 +117,7 @@ function startRecording(
         });
       }
     } catch (err) {
+      log.error('AudioRecorder/ERROR_RECORDING', Errors.toLogFormat(err));
       dispatch({
         type: ERROR_RECORDING,
         payload: ErrorDialogAudioRecorderType.ErrorRecording,

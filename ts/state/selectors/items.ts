@@ -74,6 +74,12 @@ export const getUsernamesEnabled = createSelector(
     isRemoteConfigFlagEnabled(remoteConfig, 'desktop.usernames')
 );
 
+export const getHasCompletedUsernameOnboarding = createSelector(
+  getItems,
+  (state: ItemsStateType): boolean =>
+    Boolean(state.hasCompletedUsernameOnboarding)
+);
+
 export const isInternalUser = createSelector(
   getRemoteConfig,
   (remoteConfig: ConfigMapType): boolean => {
@@ -188,4 +194,18 @@ export const getHasStoryViewReceiptSetting = createSelector(
     Boolean(
       state.storyViewReceiptsEnabled ?? state['read-receipt-setting'] ?? false
     )
+);
+
+export const getRemoteBuildExpiration = createSelector(
+  getItems,
+  (state: ItemsStateType): number | undefined =>
+    state.remoteBuildExpiration === undefined
+      ? undefined
+      : Number(state.remoteBuildExpiration)
+);
+
+export const getAutoDownloadUpdate = createSelector(
+  getItems,
+  (state: ItemsStateType): boolean =>
+    Boolean(state['auto-download-update'] ?? true)
 );

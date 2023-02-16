@@ -65,15 +65,15 @@
     "description": "Shown below the group name when selecting a group to invite a contact to, when the group item is disabled"
   },
   "Preferences__sent-media-quality": {
-    "message": "Sent media quality",
+    "message": "Bidali media kalitatea",
     "description": "Title for the sent media quality setting"
   },
   "sentMediaQualityStandard": {
-    "message": "Standard",
+    "message": "Estandarra",
     "description": "Label text for standard media quality option"
   },
   "sentMediaQualityHigh": {
-    "message": "High",
+    "message": "Altua",
     "description": "Label text for high media quality option"
   },
   "softwareAcknowledgments": {
@@ -572,10 +572,20 @@
     "description": "Label for a button to accept a new safety number"
   },
   "verify": {
-    "message": "Markatu egiaztatu gisa"
+    "message": "Markatu egiaztatu gisa",
+    "description": "(deleted 2023/02/03)"
   },
   "unverify": {
-    "message": "Markatu ez egiaztatu gisa"
+    "message": "Markatu ez egiaztatu gisa",
+    "description": "(deleted 2023/02/03)"
+  },
+  "icu:SafetyNumberViewer__markAsVerified": {
+    "messageformat": "Markatu egiaztatutako gisa",
+    "description": "Safety number viewer, verification toggle button, when not verified, sets verified"
+  },
+  "icu:SafetyNumberViewer__clearVerification": {
+    "messageformat": "Garbitu egiaztapena",
+    "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
   },
   "isVerified": {
     "message": "$name$(r)ekin duzun segurtasun zenbakia egiaztatu duzu.",
@@ -687,7 +697,7 @@
     "description": "An error popup when the user has attempted to add an attachment"
   },
   "cannotSelectMultipleFileAttachments": {
-    "message": "You can only select one file at a time.",
+    "message": "Fitxategi bakarra hauta dezakezu aldi berean.",
     "description": "An error popup when the user has attempted to add multiple non-image attachments"
   },
   "maximumAttachments": {
@@ -699,7 +709,7 @@
     "description": "(deleted 2022/12/07) Shown in a toast if the user tries to attach too-large file"
   },
   "icu:fileSizeWarning": {
-    "messageformat": "Sorry, the selected file exceeds message size restrictions. {limit}{units}",
+    "messageformat": "Barkatu, aukeratutako fitxategiak ezarri den tamaina muga gainditzen du. {limit} {units}",
     "description": "Shown in a toast if the user tries to attach too-large file"
   },
   "unableToLoadAttachment": {
@@ -851,7 +861,7 @@
   },
   "at-username": {
     "message": "@$username$",
-    "description": "@ added to username to signify it as a username. Should it be on the right in your language?"
+    "description": "(deleted 02/07/2023) @ added to username to signify it as a username. Should it be on the right in your language?"
   },
   "welcomeToSignal": {
     "message": "Ongi etorri Signal-era"
@@ -934,7 +944,7 @@
   },
   "originalMessageNotAvailable": {
     "message": "Jatorrizko mezua ez dago eskuragarri jada",
-    "description": "Shown in toast if user clicks on quote that references message no longer in database"
+    "description": "(deleted 02/07/2023) Shown in toast if user clicks on quote that references message no longer in database"
   },
   "messageFoundButNotLoaded": {
     "message": "Jatorrizko mezua topatu da, baina ez da kargatu. Korritu gorantz kargatzeko.",
@@ -989,7 +999,7 @@
     "description": "Shown in iOS theme when you or someone quotes to a message which is not from you"
   },
   "audioPermissionNeeded": {
-    "message": "To send voice messages, allow Signal Desktop to access your microphone.",
+    "message": "Audio-mezuak bidaltzeko, eman mikrofonoa atzitzeko baimena Signal Desktop-i.",
     "description": "Shown if the user attempts to send an audio message without audio permissions turned on"
   },
   "audioCallingPermissionNeeded": {
@@ -997,7 +1007,7 @@
     "description": "Shown if the user attempts access the microphone for calling without audio permissions turned on"
   },
   "videoCallingPermissionNeeded": {
-    "message": "Bideo-deietarako, baimena eman behar diozu Signal-Desktop-i zure kamera erabiltzeko.",
+    "message": "Bideodeietarako, baimena eman behar diozu Signal-Desktop-i zure kamera erabiltzeko.",
     "description": "Shown if the user attempts access the camera for video calling without video permissions turned on"
   },
   "allowAccess": {
@@ -1098,7 +1108,7 @@
     "description": "Text shown in the confirmation dialog for deleting a message locally"
   },
   "deleteForEveryoneWarning": {
-    "message": "Mezu hau ezabatuko da solasaldian dagoen edonorentzat Signalen azkenengo bertsioetako bat erabiltzen badu. Mezua ezabatu duzula ikusteko gai izango dira.",
+    "message": "Elkarrizketan dauden eta Signal-en bertsio berri bat darabilten erabiltzaile guztientzat ezabatuko da mezu hau. Mezua ezabatu duzula ikusi ahalko dute.",
     "description": "Text shown in the confirmation dialog for deleting a message for everyone"
   },
   "from": {
@@ -1109,9 +1119,25 @@
     "message": "Hartzailea:",
     "description": "Label for the receiver of a message"
   },
+  "icu:searchResultHeader--sender-to-group": {
+    "messageformat": "{sender} erabiltzaileak hona: {receiverGroup}",
+    "description": "Shown for search result items - like 'Jon to Friends Group'"
+  },
+  "icu:searchResultHeader--sender-to-you": {
+    "messageformat": "{sender} erabiltzaileak zuri",
+    "description": "Shown for search result items - like 'Jon to You"
+  },
+  "icu:searchResultHeader--you-to-group": {
+    "messageformat": "Zuk {receiverGroup} erabiltzaileari",
+    "description": "Shown for search result items - like 'You to Friends Group'"
+  },
+  "icu:searchResultHeader--you-to-receiver": {
+    "messageformat": "Zuk {receiverContact} erabiltzaileari",
+    "description": "Shown for search result items - like 'You to Jon'"
+  },
   "toJoiner": {
     "message": "->",
-    "description": "Joiner for message search results - like 'Jon' to 'Friends Group'"
+    "description": "(deleted 2023/02/02) Joiner for message search results - like 'Jon' to 'Friends Group'"
   },
   "sent": {
     "message": "Bidalita",
@@ -1133,6 +1159,10 @@
   },
   "showSafetyNumber": {
     "message": "Segurtasun zenbakia ikusi"
+  },
+  "icu:ContactModal__showSafetyNumber": {
+    "messageformat": "Ikusi segurtasun-zenbakia",
+    "description": "Contact modal, label for button to show safety number modal"
   },
   "viewRecentMedia": {
     "message": "Ikusi arestiko medioak",
@@ -1161,7 +1191,7 @@
     "description": "Shown on the drop-down menu for an individual message, but only if it is an outgoing message that failed to send"
   },
   "retryDeleteForEveryone": {
-    "message": "Saiatu berriro denentzat ezabatzen",
+    "message": "Saiatu berriro guztientzat ezabatzen",
     "description": "Shown on the drop-down menu for an individual message, but only if a previous delete for everyone failed to send"
   },
   "forwardMessage": {
@@ -1181,7 +1211,7 @@
     "description": "Menu item for deleting messages, title case."
   },
   "deleteConversationConfirmation": {
-    "message": "Ezabatu betiko elkarrizketa hau?",
+    "message": "Elkarrizketa hau betiko ezabatu nahi duzu?",
     "description": "Confirmation dialog text that asks the user if they really wish to delete the conversation. Answer buttons use the strings 'ok' and 'cancel'. The deletion is permanent, i.e. it cannot be undone."
   },
   "sessionEnded": {
@@ -1233,32 +1263,36 @@
     "description": "Shown in timeline when a member of a conversation changes their phone number"
   },
   "icu:ConversationMerge--notification": {
-    "messageformat": "{obsoleteConversationTitle} and {conversationTitle} are the same account. Your message history for both chats are here.",
+    "messageformat": "{obsoleteConversationTitle} eta {conversationTitle} kontu bera dira. Bi txatetako mezuen historia hemen dago.",
     "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way"
   },
-  "icu:ConversationMerge--notification--no-e164": {
-    "messageformat": "Your message history with {conversationTitle} and another chat that belonged to them has been merged.",
-    "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way, but we don't have the phone number for the old conversation"
+  "icu:ConversationMerge--notification--with-e164": {
+    "messageformat": "Hauekin izandako mezuen historiak bateratu egin dira: {conversationTitle} eta haren zenbakia, {obsoleteConversationNumber}.",
+    "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way, but we have the phone number for the old conversation"
+  },
+  "icu:ConversationMerge--notification--no-title": {
+    "messageformat": "{conversationTitle} erabiltzailearekin izandako mezuen historia eta hari zegokion beste txat bat bateratu egin dira.",
+    "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way, but we don't have the title for the old conversation"
   },
   "icu:ConversationMerge--learn-more": {
-    "messageformat": "Learn More",
+    "messageformat": "Informazio gehiago",
     "description": "Shown on a button below a 'conversations were merged' timeline notification"
   },
   "icu:ConversationMerge--explainer-dialog--line-1": {
-    "messageformat": "After messaging with {obsoleteConversationTitle} you learned this number belongs to {conversationTitle}. Their phone number is private.",
+    "messageformat": "{obsoleteConversationTitle} erabiltzailearekin mezuak trukatu ondoren, zenbaki hau {conversationTitle} erabiltzailearena dela jakin duzu. Haren telefono zenbakia pribatua da.",
     "description": "Contents of a dialog shown after clicking 'learn more' button on a conversation merge event."
   },
   "icu:ConversationMerge--explainer-dialog--line-2": {
-    "messageformat": "Your message history for both conversations have been merged here.",
+    "messageformat": "Bi elkarrizketetako mezuen historiak hemen bateratu dira.",
     "description": "Contents of a dialog shown after clicking 'learn more' button on a conversation merge event."
   },
   "icu:PhoneNumberDiscovery--notification--withSharedGroup": {
-    "messageformat": "{phoneNumber} belongs to {conversationTitle}. You're both members of {sharedGroup}.",
-    "description": "Shown when we've discovered a phone number for a contact you've been communicating with."
+    "messageformat": "{phoneNumber} {conversationTitle} erabiltzailearena da. Biak zarete {sharedGroup} taldeko kideak.",
+    "description": "(deleted 2023/01/11) Shown when we've discovered a phone number for a contact you've been communicating with."
   },
   "icu:PhoneNumberDiscovery--notification--noSharedGroup": {
-    "messageformat": "{phoneNumber} belongs to {conversationTitle}",
-    "description": "Shown when we've discovered a phone number for a contact you've been communicating with, but you have no shared groups."
+    "messageformat": "{phoneNumber} {conversationTitle} erabiltzailearena da",
+    "description": "(deleted 2023/01/11) Shown when we've discovered a phone number for a contact you've been communicating with, but you have no shared groups."
   },
   "quoteThumbnailAlt": {
     "message": "Aipatutako mezuaren miniatura edo irudia",
@@ -1560,7 +1594,7 @@
     "description": "when you block someone and cannot view their video"
   },
   "calling__block-info": {
-    "message": "You won't receive their voice or video and they won't receive yours.",
+    "message": "Ez duzu jasoko haren ahots- edo bideo-mezurik, eta hark ere ez ditu zureak jasoko.",
     "description": "Shown in the modal dialog to describe how blocking works in a group call"
   },
   "calling__overflow__scroll-up": {
@@ -1688,11 +1722,11 @@
     "description": "Button in the settings dialog starting process to delete all data"
   },
   "deleteAllDataHeader": {
-    "message": "Garbitu datu guztiak?",
+    "message": "Datu guztiak garbitu nahi dituzu?",
     "description": "Header of the full-screen delete data confirmation screen"
   },
   "deleteAllDataBody": {
-    "message": "Aplikazio honek gordeta daukan kontu informazioa ezabatzeko puntuan zaude, barne hartuta kontaktuak eta mezuak. Zure mugikorrarekin lotu dezakezu berriro, baina hori egiteak ez du berreskuratuko ezabatutako mezuak.",
+    "message": "Aplikazio honek gordeta daukan kontu-informazioa ezabatzear zaude, kontaktuak eta mezuak barne. Geroago mugikorrarekin lot dezakezu berriro, baina horrek ez ditu leheneratuko ezabatutako mezuak.",
     "description": "Text describing what exactly will happen if the user clicks the button to delete all data"
   },
   "deleteAllDataButton": {
@@ -1704,7 +1738,7 @@
     "description": "Message shown to user when app is disconnected and data deleted"
   },
   "deleteOldIndexedDBData": {
-    "message": "Signal Desktop-en aurreko instalazio baten datu zaharkituak dauzkazu. Aurrera jarraituz gero, ezabatuko dira eta zerotik hasi beharko zara.",
+    "message": "Ordenagailurako Signal-en aurreko instalazio baten datu zaharkituak dauzkazu. Aurrera jarraituz gero, ezabatu egingo dira, eta zerotik hasi beharko duzu.",
     "description": "Shown if user last ran Signal Desktop before October 2018"
   },
   "deleteOldData": {
@@ -1955,7 +1989,15 @@
   },
   "verifyNewNumber": {
     "message": "Segurtasun zenbakia baieztatu",
-    "description": "Label on button included with safety number change notification in the conversation"
+    "description": "(deleted 2023/02/03) Label on button included with safety number change notification in the conversation"
+  },
+  "icu:ConversationDetails__viewSafetyNumber": {
+    "messageformat": "Erakutsi segurtasun-zenbakia",
+    "description": "In conversation details, label for button to view safety number, opens safety number modal"
+  },
+  "icu:SafetyNumberNotification__viewSafetyNumber": {
+    "messageformat": "Erakutsi segurtasun-zenbakia",
+    "description": "In conversation, safety number change notification, label for button to view safety number, opens safety number modal"
   },
   "cannotGenerateSafetyNumber": {
     "message": "Erabiltzaile hau ezin da egiaztatu elkarrekin mezuak trukatzen dituzuen arte.",
@@ -2158,7 +2200,8 @@
     "description": "Shown in update dialog when partial update fails and we have to ask user to download full update"
   },
   "autoUpdateNewVersionInstructions": {
-    "message": "Sakatu Berrabiarazi Signal egunerapenak egiteko."
+    "message": "Sakatu Berrabiarazi Signal egunerapenak egiteko.",
+    "description": "(deleted 2023/01/18)"
   },
   "autoUpdateRestartButtonLabel": {
     "message": "Berrabiarazi Signal"
@@ -2274,103 +2317,179 @@
     "description": "Shown in notifications and in the left pane when a message is a view once video. Also shown when quoting a view once video."
   },
   "message--deletedForEveryone": {
-    "message": "Mezu hau ezabatu da.",
+    "message": "Mezu hau ezabatu egin da.",
     "description": "Shown in a message's bubble when the message has been deleted for everyone."
   },
   "giftBadge--missing": {
-    "message": "Unable to fetch gift badge details",
-    "description": "Aria label for gift badge when we can't fetch the details"
+    "message": "Ezin dira eskuratu opari-bereizgarriaren xehetasunak",
+    "description": "(deleted 2023/01/20) Aria label for gift badge when we can't fetch the details"
+  },
+  "icu:donation--missing": {
+    "messageformat": "Ezin dira eskuratu dohaintzaren xehetasunak",
+    "description": "Aria label for donation when we can't fetch the details."
   },
   "message--giftBadge--unopened--incoming": {
     "message": "Mezu hau irekitzeko, ikus ezazu mugikorrean",
-    "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    "description": "(deleted 2023/01/20) Shown in a message's bubble when you've received a gift badge from a contact"
+  },
+  "icu:message--donation--unopened--incoming": {
+    "messageformat": "Mezu hau irekitzeko, ikusi mugikorrean",
+    "description": "Shown in a message's bubble when you've received a donation badge from a contact"
   },
   "message--giftBadge--unopened--outgoing": {
     "message": "Sakatu mezu hau mugikorrean oparia ikusteko",
-    "description": "Shown in a message's bubble when you've sent a gift badge to a contact"
+    "description": "(deleted 2023/01/20) Shown in a message's bubble when you've sent a gift badge to a contact"
+  },
+  "icu:message--donation--unopened--outgoing": {
+    "messageformat": "Dohaintza ikusteko, sakatu mezu hau mugikorrean",
+    "description": "Shown in a message's bubble when you've sent a donation badge to a contact."
   },
   "message--giftBadge--unopened--label": {
     "message": "Oparia",
-    "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    "description": "(deleted 2023/01/20) Shown in a message's bubble when you've received a gift badge from a contact"
+  },
+  "icu:message--donation--unopened--label": {
+    "messageformat": "{sender} erabiltzaileak dohaitza bat egin dio Signal-i zure izenean",
+    "description": "Shown in a message's bubble when you've received a donation badge from a contact."
   },
   "message--giftBadge--unopened--toast--incoming": {
     "message": "Oparia irekitzeko, eman begiratu bat telefonoari",
-    "description": "Shown when you've clicked on an incoming gift badge you haven't yet redeemed"
+    "description": "(deleted 2023/01/20) Shown when you've clicked on an incoming gift badge you haven't yet redeemed"
+  },
+  "icu:message--donation--unopened--toast--incoming": {
+    "messageformat": "Dohaintza hau irekitzeko, erabili telefonoa",
+    "description": "Shown when you've clicked on an incoming donation you haven't yet redeemed."
   },
   "message--giftBadge--unopened--toast--outgoing": {
     "message": "Oparia ikusteko, eman begiratu bat telefonoari",
-    "description": "Shown when you've clicked on an outgoing gift badge"
+    "description": "(deleted 2023/01/20) Shown when you've clicked on an outgoing gift badge"
+  },
+  "icu:message--donation--unopened--toast--outgoing": {
+    "messageformat": "Dohaintza ikusteko, erabili telefonoa",
+    "description": "Shown when you've clicked on an outgoing donation badge."
   },
   "message--giftBadge--preview--unopened": {
     "message": "Opari bat jaso duzu",
-    "description": "Shown to label the gift badge in notifications and the left pane"
+    "description": "(deleted 2023/01/20) Shown to label the gift badge in notifications and the left pane"
+  },
+  "icu:message--donation--preview--unopened": {
+    "messageformat": "{sender} erabiltzaileak dohaintza bat egin dizu",
+    "description": "Shown to label the donation badge in notifications and the left pane."
   },
   "message--giftBadge--preview--redeemed": {
     "message": "Opari-bereizgarri bat erabili duzu",
-    "description": "Shown to label the redeemed gift badge in notifications and the left pane"
+    "description": "(deleted 2023/01/20) Shown to label the redeemed gift badge in notifications and the left pane"
+  },
+  "icu:message--donation--preview--redeemed": {
+    "messageformat": "Dohaintza bat trukatu duzu",
+    "description": "Shown to label the redeemed donation badge in notifications and the left pane."
   },
   "message--giftBadge--preview--sent": {
     "message": "Opari-berreizgarri bat bidali duzu",
-    "description": "Shown to label a gift badge you've sent in notifications and the left pane"
+    "description": "(deleted 2023/01/20) Shown to label a gift badge you've sent in notifications and the left pane"
+  },
+  "icu:message--donation--preview--sent": {
+    "messageformat": "{recipient} erabiltzaileari dohaintza bat egin diozu",
+    "description": "Shown to label a donation badge you've sent in notifications and the left pane"
   },
   "message--giftBadge": {
     "message": "Opari-bereizgarria",
-    "description": "Shown to label the gift badge you've redeemed on another device"
+    "description": "(deleted 2023/01/20) Shown to label the gift badge you've redeemed on another device"
+  },
+  "icu:message--donation": {
+    "messageformat": "Dohaintza",
+    "description": "Shown to label the donation badge you've redeemed on another device."
   },
   "quote--giftBadge": {
     "message": "Oparia",
-    "description": "Shown to label a gift badge you've replied to"
+    "description": "(deleted 2023/01/20) Shown to label a gift badge you've replied to"
+  },
+  "icu:quote--donation": {
+    "messageformat": "Dohaintza",
+    "description": "Shown to label a donation badge you've replied to."
   },
   "message--giftBadge--remaining--days": {
     "message": "$days$ egun falta dira",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for days > 1)"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device (only rendered for days > 1)"
+  },
+  "icu:message--donation--remaining--days": {
+    "messageformat": "{days} egun falta dira",
+    "description": "Describes how long remains for the donation badge you've redeemed on another device (only rendered for days > 1)."
   },
   "message--giftBadge--remaining--hours": {
     "message": "$hours$ ordu falta dira",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for hours > 1)"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device (only rendered for hours > 1)"
+  },
+  "icu:message--donation--remaining--hours": {
+    "messageformat": "{hours} ordu falta dira",
+    "description": "Describes how long remains for the donation badge you've redeemed on another device (only rendered for hours > 1)"
   },
   "message--giftBadge--remaining--minutes": {
     "message": "$minutes$ minutu falta dira",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for minutes > 1)"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device (only rendered for minutes > 1)"
+  },
+  "icu:message--donation--remaining--minutes": {
+    "messageformat": "{minutes, plural, one {{minutes,number} minutu falta da} other {{minutes,number} minutu falta dira}}",
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device."
   },
   "message--giftBadge--remaining--one-minute": {
     "message": "Minutu bat falta da",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device"
   },
   "message--giftBadge--expired": {
     "message": "Iraungita",
-    "description": "Shows that a gift badge is expired"
+    "description": "(deleted 2023/01/20) Shows that a gift badge is expired"
+  },
+  "icu:message--donation--expired": {
+    "messageformat": "Iraungita",
+    "description": "Shows that a donation badge is expired"
   },
   "message--giftBadge--view": {
     "message": "Ikusi",
     "description": "Shown when you've sent a gift badge to someone then opened it"
   },
+  "icu:message--donation--view": {
+    "messageformat": "Ikusi",
+    "description": "Shown when you've sent a donation badge to someone then opened it"
+  },
   "message--giftBadge--redeemed": {
     "message": "Erabilita",
-    "description": "Shown when you've redeemed the gift badge on another device"
+    "description": "(deleted 2023/01/20) Shown when you've redeemed the gift badge on another device"
+  },
+  "icu:message--donation--redeemed": {
+    "messageformat": "Erabilita",
+    "description": "Shown when you've redeemed the donation badge on another device"
   },
   "modal--giftBadge--title": {
     "message": "Eskerrik asko laguntzeagatik!",
-    "description": "The title of the outgoing gift badge detail dialog"
+    "description": "(deleted 2023/01/20) The title of the outgoing gift badge detail dialog"
+  },
+  "icu:modal--donation--title": {
+    "messageformat": "Eskerrik asko laguntzeagatik!",
+    "description": "The title of the outgoing donation badge detail dialog"
   },
   "modal--giftBadge--description": {
     "message": "$name$(r)i bereizgarri bat oparitu diozu. Onartzen duenean, bereizgarria erakusteko edo ezkutatzeko aukera izango du.",
-    "description": "The description of the outgoing gift badge detail dialog"
+    "description": "(deleted 2023/01/20) The description of the outgoing gift badge detail dialog"
+  },
+  "icu:modal--donation--description": {
+    "messageformat": "Dohaintza bat egin diozu Signal-i {name} erabiltzailearen izenean. Bere profilean laguntza eman duela erakusteko aukera emango zaio.",
+    "description": "The description of the outgoing donation badge detail dialog"
   },
   "stickers--toast--InstallFailed": {
     "message": "Eranskailuen paketea ezin izan da instalatu",
     "description": "Shown in a toast if the user attempts to install a sticker pack and it fails"
   },
   "stickers--StickerManager--title": {
-    "message": "Stickers",
+    "message": "Eranskailuak",
     "description": "Title for the sticker manager"
   },
   "stickers--StickerManager--Available": {
-    "message": "Available",
+    "message": "Eskuragarri",
     "description": "Shown in the sticker pack manager as a tab for available stickers"
   },
   "stickers--StickerManager--InstalledPacks": {
-    "message": "Installed",
+    "message": "Instalatua",
     "description": "Shown in the sticker pack manager above your installed sticker packs."
   },
   "stickers--StickerManager--InstalledPacks--Empty": {
@@ -2686,11 +2805,11 @@
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--remove-draft-link-preview": {
-    "message": "Ezabatu zirriborroaren linkaren aurrebista",
+    "message": "Ezabatu zirriborroko esteka-aurrebista",
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--remove-draft-attachments": {
-    "message": "Ezabatu zirriborroen eranskin guztiak",
+    "message": "Ezabatu zirriborroko eranskin guztiak",
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--conversation-by-index": {
@@ -2766,23 +2885,23 @@
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--accept-video-call": {
-    "message": "Answer call with video",
+    "message": "Erantzun deiari bideoarekin",
     "description": "(deleted 2023/01/09) Shown in the calling keyboard shortcuts guide"
   },
   "Keyboard--accept-audio-call": {
-    "message": "Answer call with audio",
+    "message": "Erantzun deiari audioarekin",
     "description": "(deleted 2023/01/09) Shown in the calling keyboard shortcuts guide"
   },
   "icu:Keyboard--accept-video-call": {
-    "messageformat": "Answer call with video (video calls only)",
+    "messageformat": "Erantzun deiari bideoarekin (bideodeiak soilik)",
     "description": "Shown in the calling keyboard shortcuts guide"
   },
   "icu:Keyboard--accept-call-without-video": {
-    "messageformat": "Answer call without video",
+    "messageformat": "Erantzun deiari bideorik gabe",
     "description": "Shown in the calling keyboard shortcuts guide"
   },
   "Keyboard--start-audio-call": {
-    "message": "Start voice call",
+    "message": "Hasi ahots-deia",
     "description": "Shown in the calling keyboard shortcuts guide"
   },
   "Keyboard--start-video-call": {
@@ -2882,7 +3001,7 @@
     "description": "Title for the drop stage of the sticker creator"
   },
   "StickerCreator--DropStage--removeSticker": {
-    "message": "Ezabatu stickerra",
+    "message": "Ezabatu eranskailua",
     "description": "Label for the X button used to remove a staged sticker"
   },
   "StickerCreator--DropStage--dragDrop": {
@@ -2938,7 +3057,7 @@
     "description": "Text for the upload button in the confirmation dialog on the meta stage of the sticker creator"
   },
   "StickerCreator--MetaStage--ConfirmDialog--text": {
-    "message": "Eranskailu pakete bat sortu ondoren ezingo duzu editatu edo ezabatu.",
+    "message": "Eranskailu-pakete bat sortu ondoren, ezingo duzu editatu edo ezabatu.",
     "description": "The text inside the confirmation dialog on the meta stage of the sticker creator"
   },
   "StickerCreator--UploadStage--title": {
@@ -3110,15 +3229,15 @@
     "description": "Shown as a button to let the user delete any message request"
   },
   "MessageRequests--delete-direct-confirm-title": {
-    "message": "Solasaldia ezabatu?",
+    "message": "Elkarrizketa ezabatu nahi duzu?",
     "description": "Shown as the title in the confirmation modal for deleting a private message request"
   },
   "MessageRequests--delete-direct-confirm-body": {
-    "message": "Solasaldi hau zure gailu guztietatik ezabatuko da.",
+    "message": "Elkarrizketa hau gailu guztietatik ezabatuko da.",
     "description": "Shown as the body in the confirmation modal for deleting a private message request"
   },
   "MessageRequests--delete-group-confirm-title": {
-    "message": "Ezabatu eta Utzi $group$?",
+    "message": "$group$ ezabatu, eta bertatik irten nahi duzu?",
     "description": "Shown as the title in the confirmation modal for deleting a group message request"
   },
   "MessageRequests--delete-direct": {
@@ -3126,11 +3245,11 @@
     "description": "Shown as a button to let the user delete a direct message request"
   },
   "MessageRequests--delete-group": {
-    "message": "Ezabatu eta utzi",
+    "message": "Ezabatu eta irten",
     "description": "Shown as a button to let the user delete a group message request"
   },
   "MessageRequests--delete-group-confirm-body": {
-    "message": "Talde hau utziko duzu eta zure gailu guztietatik ezabatuko da.",
+    "message": "Talde honetatik irtengo zara, eta gailu guztietatik ezabatuko da.",
     "description": "Shown as the body in the confirmation modal for deleting a group message request"
   },
   "MessageRequests--accept": {
@@ -3198,11 +3317,11 @@
     "description": "When a user has no common groups, show this warning"
   },
   "acceptCall": {
-    "message": "Answer call",
+    "message": "Erantzun deia",
     "description": "Shown in tooltip for the button to accept a call (audio or video)"
   },
   "acceptCallWithoutVideo": {
-    "message": "Answer call without video",
+    "message": "Erantzun deiari bideorik gabe",
     "description": "Shown in tooltip for the button to accept a video call without video"
   },
   "declineCall": {
@@ -3210,15 +3329,15 @@
     "description": "Shown in tooltip for the button to decline a call (audio or video)"
   },
   "declinedIncomingAudioCall": {
-    "message": "You declined a voice call",
+    "message": "Ahots-dei bat baztertu duzu",
     "description": "Shown in conversation history when you declined an incoming voice call"
   },
   "declinedIncomingVideoCall": {
-    "message": "Bideo-dei bati uko egin diozu",
+    "message": "Bideodei bati uko egin diozu",
     "description": "Shown in conversation history when you declined an incoming video call"
   },
   "acceptedIncomingAudioCall": {
-    "message": "Incoming voice call",
+    "message": "Sarrerako ahots-deia",
     "description": "Shown in conversation history when you accepted an incoming voice call"
   },
   "acceptedIncomingVideoCall": {
@@ -3226,15 +3345,15 @@
     "description": "Shown in conversation history when you accepted an incoming video call"
   },
   "missedIncomingAudioCall": {
-    "message": "Missed voice call",
+    "message": "Ahots-dei galdua",
     "description": "Shown in conversation history when you missed an incoming voice call"
   },
   "missedIncomingVideoCall": {
-    "message": "Bideo-dei galdua",
+    "message": "Bideodei galdua",
     "description": "Shown in conversation history when you missed an incoming video call"
   },
   "acceptedOutgoingAudioCall": {
-    "message": "Outgoing voice call",
+    "message": "Irteerako ahots-deia",
     "description": "Shown in conversation history when you made an outgoing voice call"
   },
   "acceptedOutgoingVideoCall": {
@@ -3242,7 +3361,7 @@
     "description": "Shown in conversation history when you made an outgoing video call"
   },
   "missedOrDeclinedOutgoingAudioCall": {
-    "message": "Unanswered voice call",
+    "message": "Erantzun gabeko ahots-deia",
     "description": "Shown in conversation history when your voice call is missed or declined"
   },
   "missedOrDeclinedOutgoingVideoCall": {
@@ -3258,7 +3377,7 @@
     "description": "Shown in a notification body when Signal is minimized to tray"
   },
   "incomingAudioCall": {
-    "message": "Incoming voice call...",
+    "message": "Sarrerako ahots-deia…",
     "description": "Shown in both the incoming call bar and notification for an incoming voice call"
   },
   "incomingVideoCall": {
@@ -3294,7 +3413,7 @@
     "description": "Title for the call button in a conversation"
   },
   "makeOutgoingVideoCall": {
-    "message": "Hasi bideo-dei bat",
+    "message": "Hasi bideodei bat",
     "description": "Title for the video call button in a conversation"
   },
   "joinOngoingCall": {
@@ -3610,15 +3729,15 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--title--remove--other": {
-    "message": "$memberName$ erabiltzaileak taldeko izena ezabatu du.",
+    "message": "$memberName$ erabiltzaileak taldearen izena kendu du.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--title--remove--you": {
-    "message": "Taldearen izena ezabatu duzu.",
+    "message": "Taldearen izena kendu duzu.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--title--remove--unknown": {
-    "message": "Taldekide batek taldeko izena ezabatu du.",
+    "message": "Kide batek taldearen izena ezabatu du.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--avatar--change--other": {
@@ -3634,15 +3753,15 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--avatar--remove--other": {
-    "message": "$memberName$ erabiltzaileak taldearen abatarra ezabatu du.",
+    "message": "$memberName$ erabiltzaileak taldearen abatarra kendu du.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--avatar--remove--you": {
-    "message": "Taldearen abatarra ezabatu duzu.",
+    "message": "Taldearen abatarra kendu duzu.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--avatar--remove--unknown": {
-    "message": "Taldekide batek taldearen abatarra ezabatu du.",
+    "message": "Taldekide batek taldearen abatarra kendu du.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--access-attributes--admins--other": {
@@ -3802,7 +3921,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--member-remove--other--other": {
-    "message": "$adminName$ erabiltzaileak $memberName$ ezabatu du.",
+    "message": "$adminName$ erabiltzaileak $memberName$ kendu du.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--member-remove--other--self": {
@@ -3810,15 +3929,15 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--member-remove--other--you": {
-    "message": "$memberName$ ezabatu duzu.",
+    "message": "$memberName$ kendu duzu.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--member-remove--other--unknown": {
-    "message": "Taldekide batek $memberName$ ezabatu du.",
+    "message": "Kide batek $memberName$ kendu du.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--member-remove--you--other": {
-    "message": "$adminName$ erabiltzaileak ezabatu egin zaitu.",
+    "message": "$adminName$ erabiltzaileak kendu egin zaitu.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--member-remove--you--you": {
@@ -3826,7 +3945,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--member-remove--you--unknown": {
-    "message": "Taldetik ezabatua izan zara.",
+    "message": "Taldetik kendu zaituzte.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--member-privilege--promote--other--other": {
@@ -4086,7 +4205,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--description--remove--other": {
-    "message": "$memberName$(e)k taldearen deskribapena kendu du.",
+    "message": "$memberName$ erabiltzaileak taldearen deskribapena kendu du.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--description--remove--unknown": {
@@ -4130,7 +4249,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--summary": {
-    "messageformat": "This group's members or settings have changed.",
+    "messageformat": "Talde honen kideak edo ezarpenak aldatu egin dira.",
     "description": "When rejoining a group, any detected changes are collapsed down into this summary"
   },
   "GroupV1--Migration--disabled": {
@@ -4182,19 +4301,19 @@
     "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
   },
   "GroupV1--Migration--info--removed--before--many": {
-    "message": "Kide hauek ezin dira Talde Berrietara gehitu eta taldetik ezabatuko dira:",
+    "message": "Kide hauek ezin dira talde berrietan sartu, eta talde honetatik kenduko dira:",
     "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
   },
   "GroupV1--Migration--info--removed--before--one": {
-    "message": "Kide hau ezin da Talde Berrietan sartu, eta taldetik ezabatuko da:",
+    "message": "Kide hau ezin da talde berrietan sartu, eta talde honetatik kenduko da:",
     "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
   },
   "GroupV1--Migration--info--removed--after--many": {
-    "message": "Kide hauek ezin dira Talde Berrietara gehitu eta taldetik ezabatuko dira:",
+    "message": "Kide hauek ezin izan dira sartu talde berrietan, eta talde honetatik kendu dira:",
     "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
   },
   "GroupV1--Migration--info--removed--after--one": {
-    "message": "Kide hau ezin da Talde Berrietan sartu, eta taldetik ezabatuko da:",
+    "message": "Kide hau ezin izan da sartu talde berrietan, eta talde honetatik kendu da:",
     "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
   },
   "GroupV1--Migration--invited--you": {
@@ -4210,11 +4329,11 @@
     "description": "Shown in timeline when a group is upgraded and some people were invited, instead of added"
   },
   "GroupV1--Migration--removed--one": {
-    "message": "$contact$ erabiltzailea taldetik ezabatua izan da.",
+    "message": "$contact$ taldetik kendu da.",
     "description": "Shown in timeline when a group is upgraded and one person was removed entirely during the upgrade"
   },
   "GroupV1--Migration--removed--many": {
-    "message": "$count$ taldekide ezabatuak izan dira.",
+    "message": "$count$ kide taldetik kendu dira.",
     "description": "Shown in timeline when a group is upgraded and some people were removed entirely during the upgrade"
   },
   "close": {
@@ -4282,7 +4401,7 @@
     "description": "Button text for send message button in Group Contact Details modal"
   },
   "ContactModal--rm-admin": {
-    "message": "Administratzaile gisa ezabatu",
+    "message": "Kendu administratzaile-maila",
     "description": "Button text for removing as admin button in Group Contact Details modal"
   },
   "ContactModal--make-admin": {
@@ -4294,11 +4413,11 @@
     "description": "Shown in a confirmation dialog when you are about to grant admin privileges to someone"
   },
   "ContactModal--rm-admin-info": {
-    "message": "$contact$(r)i taldeko administratzaile-maila kendu nahi diozu?",
+    "message": "$contact$ erabiltzaileari taldeko administratzaile-maila kendu nahi diozu?",
     "description": "Shown in a confirmation dialog when you are about to remove admin privileges from someone"
   },
   "ContactModal--remove-from-group": {
-    "message": "Ezabatu taldetik",
+    "message": "Kendu taldetik",
     "description": "Button text for remove from group button in Group Contact Details modal"
   },
   "showChatColorEditor": {
@@ -4446,11 +4565,11 @@
     "description": "(deleted 2023/01/03) Title of the groups-in-common panel, in the contact details"
   },
   "icu:ConversationDetailsGroups--title": {
-    "messageformat": "{count, plural, one {1 group in common} other {{count,number} groups in common}}",
+    "messageformat": "{count, plural, one {Talde {count,number} komuna} other {{count,number} talde komun}}",
     "description": "Title of the groups-in-common panel, in the contact details"
   },
   "icu:ConversationDetailsGroups--title--with-zero-groups-in-common": {
-    "messageformat": "No groups in common",
+    "messageformat": "Ez duzue talde komunik",
     "description": "Title of the groups-in-common panel, in the contact details, with zero groups in common"
   },
   "ConversationDetailsGroups--add-to-group": {
@@ -4738,7 +4857,7 @@
     "description": "Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "TimelineDateHeader--date-older-than-6-months": {
-    "message": "MMM E, YYYY",
+    "message": "MMM D, YYYY",
     "description": "Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "MessageRequestWarning__learn-more": {
@@ -4802,15 +4921,15 @@
     "description": "In the group contact spoofing review dialog, this text is shown when someone has changed their name recently"
   },
   "RemoveGroupMemberConfirmation__remove-button": {
-    "message": "Ezabatu taldetik",
+    "message": "Kendu taldetik",
     "description": "When confirming the removal of a group member, show this text in the button"
   },
   "RemoveGroupMemberConfirmation__description": {
-    "message": "Ezabatu \"$name$\" kidea taldetik?",
+    "message": "\"$name$\" taldetik kendu nahi duzu?",
     "description": "When confirming the removal of a group member, show this text in the dialog"
   },
   "RemoveGroupMemberConfirmation__description__with-link": {
-    "message": "Ezabatu \"$name$\" taldetik? Ezin izango dira berriro sartu taldearen estekaren bidez.",
+    "message": "\"$name$\" taldetik kendu nahi duzu? Ezin izango da berriro sartu taldearen estekaren bidez.",
     "description": "When confirming the removal of a group member, show this text in the dialog"
   },
   "CaptchaDialog__title": {
@@ -4846,7 +4965,7 @@
     "description": "Displayed after unsuccessful captcha"
   },
   "deleteForEveryoneFailed": {
-    "message": "Ezin izan da ezabatu guztientzako mezua. Saiatu berriro geroago.",
+    "message": "Ezin izan da guztientzat ezabatu mezua. Saiatu berriro geroago.",
     "description": "Displayed when delete-for-everyone has failed to send to all recipients"
   },
   "ChatColorPicker__delete--title": {
@@ -4854,7 +4973,7 @@
     "description": "Confirm title for deleting custom color"
   },
   "ChatColorPicker__delete--message": {
-    "message": "Kolore pertsonalizatu hau $num$ txatetan erabilia izan da. Txat guztietarako ezabatu nahi duzu?",
+    "message": "Kolore pertsonalizatu hau $num$ txatetan erabili da. Txat guztietan ezabatu nahi duzu?",
     "description": "Confirm message for deleting custom color"
   },
   "ChatColorPicker__global-chat-color": {
@@ -5105,8 +5224,12 @@
     "message": "Ezin izan da zure erabiltzaile-izena gorde. Egiaztatu konexioa eta saiatu berriro.",
     "description": "Shown if something unknown has gone wrong with username save."
   },
+  "icu:ProfileEditor--username--reservation-gone": {
+    "messageformat": "{username} is no longer available. A new set of digits will be paired with your username, please try saving it again.",
+    "description": "Shown if username reservation has expired and new one needs to be generated."
+  },
   "ProfileEditor--username--delete-general-error": {
-    "message": "Ezin izan da zure erabiltzaile-izena gorde. Egiaztatu konexioa eta saiatu berriro.",
+    "message": "Ezin izan da zure gorde erabiltzaile-izena. Egiaztatu konexioa eta saiatu berriro.",
     "description": "Shown if something unknown has gone wrong with username delete."
   },
   "ProfileEditor--username--copied-username": {
@@ -5126,7 +5249,7 @@
     "description": "Shown as aria label for trash icon next to username"
   },
   "ProfileEditor--username--confirm-delete-body": {
-    "message": "Honek zure erabiltzaile-izena kenduko du eta beste erabiltzaile batzuek erreklamatu ahal izango dute. Ziur zaude?",
+    "message": "Honen bidez, zure erabiltzaile-izena kenduko da, eta beste erabiltzaile batzuek eskatu ahal izango dute. Ziur zaude?",
     "description": "Shown in dialog body if user has saved an empty string to delete their username"
   },
   "ProfileEditor--username--confirm-delete-button": {
@@ -5750,7 +5873,7 @@
     "description": "Button label to add a viewer to a story"
   },
   "StoriesSettings__remove--action": {
-    "message": "Ezabatu",
+    "message": "Kendu",
     "description": "Button to remove a member from a custom list"
   },
   "StoriesSettings__remove--title": {
@@ -5778,7 +5901,7 @@
     "description": "Button label to delete a custom distribution list"
   },
   "StoriesSettings__delete-list--confirm": {
-    "message": "Ziur \"$name$\" ezabatu nahi duzula? Istorio honetan partekatutako eguneraketak ere ezabatu egingo dira.",
+    "message": "Ziur \"$name$\" ezabatu nahi duzula? Istorio honetan partekatutako eguneratzeak ere ezabatu egingo dira.",
     "description": "Confirmation text to delete a custom distribution list"
   },
   "StoriesSettings__choose-viewers": {
@@ -5858,7 +5981,7 @@
     "descirption": "Stories settings > Group Story > button to remove group story"
   },
   "icu:StoriesSettings__remove_group--confirm": {
-    "messageformat": "Ziur \" {groupTitle} \" kendu nahi duzula?",
+    "messageformat": "Ziur \"{groupTitle}\" kendu nahi duzula?",
     "descirption": "Stories settings > Group Story > confirm to remove group story"
   },
   "SendStoryModal__choose-who-can-view": {
@@ -5938,7 +6061,7 @@
     "description": "Button label to delete a story"
   },
   "SendStoryModal__confirm-remove-group": {
-    "message": "Istorioa ezabatu nahi duzu? Istorioa zerrendatik ezabatuko da, baina talde honetatik istorioak ikusten jarraitu ahalko duzu.",
+    "message": "Istorioa ezabatu nahi duzu? Istorioa zerrendatik ezabatuko da, baina talde honetako istorioak ikusten jarraitu ahalko duzu.",
     "description": "Confirmation body for removing a group story"
   },
   "SendStoryModal__announcements-only": {
@@ -5983,6 +6106,10 @@
   },
   "StoryViewer__reply": {
     "message": "Erantzun",
+    "description": "Button label to reply to a story"
+  },
+  "icu:StoryViewer__reply-placeholder": {
+    "messageformat": "Erantzun {firstName} erabiltzaileari",
     "description": "Button label to reply to a story"
   },
   "StoryViewer__reply-group": {
@@ -6055,7 +6182,7 @@
   },
   "StoryViewsNRepliesModal__react": {
     "message": "Bidali istorioari buruzko erreakzio bat",
-    "description": "aria-label for reaction button"
+    "description": "(deleted 01/25/23) aria-label for reaction button"
   },
   "StoryViewsNRepliesModal__reacted": {
     "message": "Istorioari buruzko erreakzio bat bidali duzu",
@@ -6193,6 +6320,14 @@
     "message": "Gehitu istorioaren ikusleentzako esteka bat",
     "description": "Empty state for the link preview"
   },
+  "icu:Stories__failed-send--full": {
+    "messageformat": "Ezin izan da bidali istorioa",
+    "description": "Notification text whenever a story fails to send"
+  },
+  "icu:Stories__failed-send--partial": {
+    "messageformat": "Ezin izan zaie bidali istorioa hartzaile guztiei",
+    "description": "Notification text whenever a story partially fails to send"
+  },
   "TextAttachment__placeholder": {
     "message": "Gehitu testua",
     "description": "Placeholder for the add text input"
@@ -6253,6 +6388,42 @@
     "message": "Digitu hauei esker, erabiltzaile-izena pribatu mantentzen da, nahi ez dituzun mezuak jaso ez ditzazun. Partekatu zure erabiltzaile-izena txateatu nahi duzun pertsona eta taldeekin soilik. Erabiltzaile-izena aldatzen baduzu, digitu multzo berri bat esleituko zaizu.",
     "description": "Body of the popup with information about discriminator in username"
   },
+  "icu:UsernameOnboardingModalBody__title": {
+    "messageformat": "Set up your Signal username",
+    "description": "Title of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__row__number": {
+    "messageformat": "Usernames are paired with a set of digits and aren’t shared on your profile",
+    "description": "Content of the first row of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__row__link": {
+    "messageformat": "Each username has a unique link you can share with your friends to start a chat with you",
+    "description": "Content of the second row of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__row__lock": {
+    "messageformat": "Turn off phone number discovery under Settings > Phone Number > Who can find my number, to use your username as the primary way others can contact you.",
+    "description": "Content of the third row of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__learn-more": {
+    "messageformat": "Learn More",
+    "description": "Text that open a popup with information about username onboarding"
+  },
+  "icu:UsernameOnboardingModalBody__continue": {
+    "messageformat": "Continue",
+    "description": "Text of the primary button on username onboarding modal"
+  },
+  "icu:UnsupportedOSWarningDialog__body": {
+    "messageformat": "Ordenagailurako Signal aplikazioak laster ez du onartuko ordenagailuaren bertsioa ({OS}). Signal erabiltzen jarraitzeko, eguneratu ordenagailuaren sistema eragilea {expirationDate} aurretik. <learnMoreLink>Informazio gehiago</learnMoreLink>",
+    "description": "Body of a dialog displayed on unsupported operating systems"
+  },
+  "icu:UnsupportedOSErrorDialog__body": {
+    "messageformat": "Ordenagailuko Signal aplikazioak jada ez du funtzionatzen ordenagailu honetan. Ordenagailuko Signal aplikazioa berriro erabiltzeko, eguneratu ordenagailuaren bertsioa ({OS}). <learnMoreLink>Informazio gehiago</learnMoreLink>",
+    "description": "Body of a dialog displayed on unsupported operating systems"
+  },
+  "icu:UnsupportedOSErrorToast": {
+    "messageformat": "Ordenagailuko Signal aplikazioak jada ez du funtzionatzen ordenagailu honetan. Ordenagailuko Signal aplikazioa berriro erabiltzeko, eguneratu ordenagailuaren bertsioa ({OS}).",
+    "description": "Body of a dialog displayed on unsupported operating systems"
+  },
   "WhatsNew__modal-title": {
     "message": "Zer berri",
     "description": "Title for the whats new modal"
@@ -6300,5 +6471,25 @@
   "WhatsNew__v6.1--1": {
     "message": "Gehienez 16 pertsona dituen talde txiki batekin talde-dei bat hasten duzunean, tonu-jakinarazpen bat bidaltzea aukera dezakezu. Taldeko kideak iOS-erako beta, ordenagailua edo Android erabiltzen ari badira, tonu bat entzungo dute.",
     "description": "Release notes for v6.1"
+  },
+  "icu:WhatsNew__v6.3--0": {
+    "messageformat": "Aipamen batekin erantzuteko, egin klik bikoitza txat bateko edozein mezu-errenkadatan. Ideia zaharrei buruzko pentsamendu berrietarako lasterbide bat bezalakoa da. Eskerrik asko {whynothugo} eta Signal-eko komunitateari eginbide hau inplementatzeagatik eta iritzia emateagatik.",
+    "description": "Release notes for v6.3"
+  },
+  "icu:WhatsNew__v6.3--1": {
+    "messageformat": "Orain errazagoa da irudi batetik kanpo klik egitea galeriaren ikuspegitik irteteko, zooma handitu gabe. Lehen, irudi bat ixten saiatzean, itxi ordez handitu egiten zen batzuetan. Eskerrik asko, {jojomatik}, arazoa konpontzeagatik!",
+    "description": "Release notes for v6.3"
+  },
+  "icu:WhatsNew__v6.5--0": {
+    "messageformat": "Erantzun bizkorrago. Orain, bizkorrago erreakziona dezakezu, istorio bati erantzutean edozein emojiren gainean klik eginez.",
+    "description": "Release notes for v6.5"
+  },
+  "icu:WhatsNew__v6.5--1": {
+    "messageformat": "Orain, txinera eta japonierazko karaktere indibidualak bila daitezke mezuen historian.",
+    "description": "Release notes for v6.5"
+  },
+  "icu:WhatsNew__v6.6--0": {
+    "messageformat": "Lagun iezaguzu ahots-dei eta bideodeien hainbat fidagarritasun- eta errendimendu-hobekuntza probatzen. Beta-bertsio honek akats batzuk konpontzen ditu, eta interfazeko eguneraketa txiki batzuk ere badakartza (bilatu esteka-aurreikuspenen hobekuntza berriak!). Eskerrik asko beta-probatzaile izateagatik. Akatsen bat ikusten baduzu, jarri gurekin harremanetan komunitatearen foroan.",
+    "description": "Release notes for v6.6"
   }
 }

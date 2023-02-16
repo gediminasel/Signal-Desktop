@@ -72,6 +72,7 @@ import { migrateLegacyReadStatus } from '../messages/migrateLegacyReadStatus';
 import { migrateLegacySendAttributes } from '../messages/migrateLegacySendAttributes';
 import { getOwn } from '../util/getOwn';
 import { markRead, markViewed } from '../services/MessageUpdater';
+import { scheduleOptimizeFTS } from '../services/ftsOptimizer';
 import { isMessageUnread } from '../util/isMessageUnread';
 import {
   isDirectConversation,
@@ -83,6 +84,7 @@ import {
 import { handleMessageSend } from '../util/handleMessageSend';
 import { getSendOptions } from '../util/getSendOptions';
 import { findAndFormatContact } from '../util/findAndFormatContact';
+import { canConversationBeUnarchived } from '../util/canConversationBeUnarchived';
 import {
   getAttachmentsForMessage,
   getMessagePropStatus,
@@ -108,7 +110,6 @@ import {
   isVerifiedChange,
   processBodyRanges,
   isConversationMerge,
-  isPhoneNumberDiscovery,
 } from '../state/selectors/message';
 import {
   isInCall,
@@ -168,8 +169,11 @@ import { GiftBadgeStates } from '../components/conversation/Message';
 import { downloadAttachment } from '../util/downloadAttachment';
 import type { StickerWithHydratedData } from '../types/Stickers';
 import { getStringForConversationMerge } from '../util/getStringForConversationMerge';
-import { getStringForPhoneNumberDiscovery } from '../util/getStringForPhoneNumberDiscovery';
-import { getTitle, renderNumber } from '../util/getTitle';
+import {
+  addToAttachmentDownloadQueue,
+  shouldUseAttachmentDownloadQueue,
+} from '../util/attachmentDownloadQueue';
+import { getTitleNoDefault, getNumber } from '../util/getTitle';
 import dataInterface from '../sql/Client';
 
 function isSameUuid(
@@ -292,7 +296,11 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
   cachedOutgoingStickerData?: StickerWithHydratedData;
 
-  override initialize(attributes: unknown): void {
+  constructor(attributes: MessageAttributesType) {
+    super(attributes);
+
+    // Note that we intentionally don't use `initialize()` method because it
+    // isn't compatible with esnext output of esbuild.
     if (isObject(attributes)) {
       this.set(
         TypedMessage.initializeSchemaVersion({
@@ -338,10 +346,16 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
   }
 
   notifyRedux(): void {
+    if (!window.reduxActions) {
+      return;
+    }
+
     const { storyChanged } = window.reduxActions.stories;
 
     if (isStory(this.attributes)) {
-      const storyData = getStoryDataFromMessageAttributes(this.attributes);
+      const storyData = getStoryDataFromMessageAttributes({
+        ...this.attributes,
+      });
 
       if (!storyData) {
         return;
@@ -399,7 +413,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       !isGroupV1Migration(attributes) &&
       !isGroupV2Change(attributes) &&
       !isKeyChange(attributes) &&
-      !isPhoneNumberDiscovery(attributes) &&
       !isProfileChange(attributes) &&
       !isUniversalTimerNotification(attributes) &&
       !isUnsupportedMessage(attributes) &&
@@ -489,28 +502,13 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
       return {
         text: getStringForConversationMerge({
-          obsoleteConversationTitle: getTitle(
+          obsoleteConversationTitle: getTitleNoDefault(
+            attributes.conversationMerge.renderInfo
+          ),
+          obsoleteConversationNumber: getNumber(
             attributes.conversationMerge.renderInfo
           ),
           conversationTitle: conversation.getTitle(),
-          i18n: window.i18n,
-        }),
-      };
-    }
-
-    if (isPhoneNumberDiscovery(attributes)) {
-      const conversation = this.getConversation();
-      strictAssert(conversation, 'getNotificationData/isPhoneNumberDiscovery');
-      strictAssert(
-        attributes.phoneNumberDiscovery,
-        'getNotificationData/isPhoneNumberDiscovery/phoneNumberDiscovery'
-      );
-
-      return {
-        text: getStringForPhoneNumberDiscovery({
-          phoneNumber: renderNumber(attributes.phoneNumberDiscovery.e164),
-          conversationTitle: conversation.getTitle(),
-          sharedGroup: conversation.get('sharedGroupNames')?.[0],
           i18n: window.i18n,
         }),
       };
@@ -812,21 +810,29 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
     const giftBadge = this.get('giftBadge');
     if (giftBadge) {
-      const emoji = '🎁';
+      const emoji = '✨';
+      const fromContact = getContact(this.attributes);
 
       if (isOutgoing(this.attributes)) {
+        const recipient =
+          fromContact?.getTitle() ?? window.i18n('unknownContact');
         return {
           emoji,
-          text: window.i18n('message--giftBadge--preview--sent'),
+          text: window.i18n('icu:message--giftBadge--preview--sent', {
+            recipient,
+          }),
         };
       }
 
+      const sender = fromContact?.getTitle() ?? window.i18n('unknownContact');
       return {
         emoji,
         text:
           giftBadge.state === GiftBadgeStates.Unopened
-            ? window.i18n('message--giftBadge--preview--unopened')
-            : window.i18n('message--giftBadge--preview--redeemed'),
+            ? window.i18n('icu:message--giftBadge--preview--unopened', {
+                sender,
+              })
+            : window.i18n('icu:message--giftBadge--preview--redeemed'),
       };
     }
 
@@ -885,7 +891,14 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         });
       }
 
-      if (attributes.type === 'incoming') {
+      const ourUuid = window.textsecure.storage.user
+        .getCheckedUuid()
+        .toString();
+
+      if (
+        attributes.type === 'incoming' &&
+        attributes.storyReaction.targetAuthorUuid === ourUuid
+      ) {
         return window.i18n('Quote__story-reaction-notification--incoming', {
           emoji: attributes.storyReaction.emoji,
         });
@@ -1186,6 +1199,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     }
 
     await window.Signal.Data.deleteSentProtoByMessageId(this.id);
+
+    scheduleOptimizeFTS();
   }
 
   override isEmpty(): boolean {
@@ -1221,7 +1236,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     const isUniversalTimerNotificationValue =
       isUniversalTimerNotification(attributes);
     const isConversationMergeValue = isConversationMerge(attributes);
-    const isPhoneNumberDiscoveryValue = isPhoneNumberDiscovery(attributes);
 
     const isPayment = messageHasPaymentEvent(attributes);
 
@@ -1253,8 +1267,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       isKeyChangeValue ||
       isProfileChangeValue ||
       isUniversalTimerNotificationValue ||
-      isConversationMergeValue ||
-      isPhoneNumberDiscoveryValue;
+      isConversationMergeValue;
 
     return !hasSomethingToDisplay;
   }
@@ -1463,6 +1476,26 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         })
       )
     );
+
+    this.notifyStorySendFailed();
+  }
+
+  public notifyStorySendFailed(): void {
+    if (!isStory(this.attributes)) {
+      return;
+    }
+
+    notificationService.add({
+      conversationId: this.get('conversationId'),
+      storyId: this.id,
+      messageId: this.id,
+      senderTitle:
+        this.getConversation()?.getTitle() ?? window.i18n('Stories__mine'),
+      message: this.hasSuccessfulDelivery()
+        ? window.i18n('icu:Stories__failed-send--partial')
+        : window.i18n('icu:Stories__failed-send--full'),
+      isExpiringMessage: false,
+    });
   }
 
   removeOutgoingErrors(incomingIdentifier: string): CustomError {
@@ -1615,6 +1648,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
               updatedAt: Date.now(),
             }
           );
+          this.notifyStorySendFailed();
         }
       }
 
@@ -2034,6 +2068,18 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     return result;
   }
 
+  getQuoteBodyText(): string | undefined {
+    const storyReactionEmoji = this.get('storyReaction')?.emoji;
+    const body = this.get('body');
+    const embeddedContact = this.get('contact');
+    const embeddedContactName =
+      embeddedContact && embeddedContact.length > 0
+        ? EmbeddedContact.getName(embeddedContact[0])
+        : '';
+
+    return body || embeddedContactName || storyReactionEmoji;
+  }
+
   async copyQuoteContentFromOriginal(
     originalMessage: MessageModel,
     quote: QuotedMessageType
@@ -2082,7 +2128,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     quote.isViewOnce = false;
 
     // eslint-disable-next-line no-param-reassign
-    quote.text = originalMessage.get('body');
+    quote.text = originalMessage.getQuoteBodyText();
     if (firstAttachment) {
       firstAttachment.thumbnail = null;
     }
@@ -2480,6 +2526,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
           window.Whisper.deliveryReceiptQueue.add(() => {
             window.Whisper.deliveryReceiptBatcher.add({
               messageId,
+              conversationId,
               senderE164: source,
               senderUuid: sourceUuid,
               timestamp: this.get('sent_at'),
@@ -2969,8 +3016,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
             'getProfile: expected updatesUrl to be a defined string'
           );
           const userLanguages = getUserLanguages(
-            navigator.languages,
-            window.getLocale()
+            window.getPreferredSystemLocales(),
+            window.getResolvedMessagesLocale()
           );
           const { messaging } = window.textsecure;
           if (!messaging) {
@@ -3018,12 +3065,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
           (conversation.getAccepted() || isOutgoing(message.attributes)) &&
           !shouldHoldOffDownload
         ) {
-          if (window.attachmentDownloadQueue) {
-            window.attachmentDownloadQueue.unshift(message);
-            log.info(
-              `${idLog}: Adding to attachmentDownloadQueue`,
-              message.get('sent_at')
-            );
+          if (shouldUseAttachmentDownloadQueue()) {
+            addToAttachmentDownloadQueue(idLog, message);
           } else {
             await message.queueAttachmentDownloads();
           }
@@ -3222,11 +3265,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       const isGroupStoryReply =
         isGroup(conversation.attributes) && message.get('storyId');
 
-      const keepMutedChatsArchived =
-        window.storage.get('keepMutedChatsArchived') ?? false;
-      const keepThisConversationArchived =
-        keepMutedChatsArchived && conversation.isMuted();
-
       if (readSyncs.length !== 0 || viewSyncs.length !== 0) {
         const markReadAt = Math.min(
           Date.now(),
@@ -3269,7 +3307,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       } else if (
         isFirstRun &&
         !isGroupStoryReply &&
-        !keepThisConversationArchived
+        canConversationBeUnarchived(conversation.attributes)
       ) {
         conversation.setArchived(false);
       }
@@ -3437,6 +3475,18 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
             `${getMessageIdForLogging(storyMessage)} from this device`
         );
       } else {
+        if (isFromSomeoneElse) {
+          log.info(
+            'handleReaction: receiving story reaction to ' +
+              `${getMessageIdForLogging(storyMessage)} from someone else`
+          );
+        } else if (isFromSync) {
+          log.info(
+            'handleReaction: receiving story reaction to ' +
+              `${getMessageIdForLogging(storyMessage)} from another device`
+          );
+        }
+
         const generatedMessage = reaction.get('storyReactionMessage');
         strictAssert(
           generatedMessage,
@@ -3495,21 +3545,15 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
             );
           }
         }
-        if (isFromSomeoneElse) {
-          drop(targetConversation.notify(messageToAdd));
-        }
 
-        if (isFromSync) {
+        if (isFromSomeoneElse) {
           log.info(
-            'handleReaction: receiving story reaction to ' +
-              `${getMessageIdForLogging(storyMessage)} from another device`
-          );
-        } else {
-          log.info(
-            'handleReaction: receiving story reaction to ' +
+            'handleReaction: notifying for story reaction to ' +
               `${getMessageIdForLogging(storyMessage)} from someone else`
           );
-          void conversation.notify(this, reaction);
+          if (await shouldReplyNotifyUser(messageToAdd, targetConversation)) {
+            drop(targetConversation.notify(messageToAdd));
+          }
         }
       }
     } else {

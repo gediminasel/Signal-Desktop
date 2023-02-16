@@ -122,6 +122,8 @@ const rules = {
 
   'react/display-name': 'error',
 
+  'react/jsx-pascal-case': ['error', {allowNamespace: true}],
+
   // Allow returning values from promise executors for brevity.
   'no-promise-executor-return': 'off',
 
@@ -272,6 +274,12 @@ module.exports = {
         ...typescriptRules,
         'import/no-extraneous-dependencies': 'off',
         'react/no-array-index-key': 'off',
+      },
+    },
+    {
+      files: ['ts/state/ducks/**/*.ts'],
+      rules: {
+        'local-rules/type-alias-readonlydeep': 'error',
       },
     },
   ],

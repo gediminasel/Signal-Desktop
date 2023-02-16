@@ -65,15 +65,15 @@
     "description": "Shown below the group name when selecting a group to invite a contact to, when the group item is disabled"
   },
   "Preferences__sent-media-quality": {
-    "message": "Sent media quality",
+    "message": "मीडिया क्वालिटी भेजी गई",
     "description": "Title for the sent media quality setting"
   },
   "sentMediaQualityStandard": {
-    "message": "Standard",
+    "message": "मानक",
     "description": "Label text for standard media quality option"
   },
   "sentMediaQualityHigh": {
-    "message": "High",
+    "message": "उच्च",
     "description": "Label text for high media quality option"
   },
   "softwareAcknowledgments": {
@@ -105,7 +105,7 @@
     "description": "Shown in a popup if the database cannot start up properly"
   },
   "deleteAndRestart": {
-    "message": "सारा डेटा हटाएँ और रीस्टार्ट करें।",
+    "message": "सारा डेटा डिलीट करें और रीस्टार्ट करें",
     "description": "Shown in a popup if the database cannot start up properly; allows user to delete database and restart"
   },
   "mainMenuFile": {
@@ -572,10 +572,20 @@
     "description": "Label for a button to accept a new safety number"
   },
   "verify": {
-    "message": "साटिपिट होने का मार्क कीजीये"
+    "message": "साटिपिट होने का मार्क कीजीये",
+    "description": "(deleted 2023/02/03)"
   },
   "unverify": {
-    "message": "सत्यापित नहीं के रूप में मार्क करें"
+    "message": "सत्यापित नहीं के रूप में मार्क करें",
+    "description": "(deleted 2023/02/03)"
+  },
+  "icu:SafetyNumberViewer__markAsVerified": {
+    "messageformat": "साटिपिट होने का मार्क कीजीये",
+    "description": "Safety number viewer, verification toggle button, when not verified, sets verified"
+  },
+  "icu:SafetyNumberViewer__clearVerification": {
+    "messageformat": "जांच क्लियर करें",
+    "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
   },
   "isVerified": {
     "message": "आपने अपनी सुरक्षा संख्या को इसके साथ सत्यापित किया $name$",
@@ -687,7 +697,7 @@
     "description": "An error popup when the user has attempted to add an attachment"
   },
   "cannotSelectMultipleFileAttachments": {
-    "message": "You can only select one file at a time.",
+    "message": "आप एक बार में केवल एक फ़ाइल चुन सकते हैं।",
     "description": "An error popup when the user has attempted to add multiple non-image attachments"
   },
   "maximumAttachments": {
@@ -699,7 +709,7 @@
     "description": "(deleted 2022/12/07) Shown in a toast if the user tries to attach too-large file"
   },
   "icu:fileSizeWarning": {
-    "messageformat": "Sorry, the selected file exceeds message size restrictions. {limit}{units}",
+    "messageformat": "क्षमा करें, चयनित दस्तावेज का मेसेज माप प्रतिबंध से अधिक है। {limit} {units}",
     "description": "Shown in a toast if the user tries to attach too-large file"
   },
   "unableToLoadAttachment": {
@@ -851,7 +861,7 @@
   },
   "at-username": {
     "message": "@$username$",
-    "description": "@ added to username to signify it as a username. Should it be on the right in your language?"
+    "description": "(deleted 02/07/2023) @ added to username to signify it as a username. Should it be on the right in your language?"
   },
   "welcomeToSignal": {
     "message": "Signal में आपका स्वागत है"
@@ -934,7 +944,7 @@
   },
   "originalMessageNotAvailable": {
     "message": "मूल मेसेज अब उपलब्ध नहीं है",
-    "description": "Shown in toast if user clicks on quote that references message no longer in database"
+    "description": "(deleted 02/07/2023) Shown in toast if user clicks on quote that references message no longer in database"
   },
   "messageFoundButNotLoaded": {
     "message": "मूल मेसेज मिल गया पर लोड नहीं हुआ। लोड करने के लिये ऊपर स्क्रोल करें।",
@@ -989,7 +999,7 @@
     "description": "Shown in iOS theme when you or someone quotes to a message which is not from you"
   },
   "audioPermissionNeeded": {
-    "message": "To send voice messages, allow Signal Desktop to access your microphone.",
+    "message": "वॉयस मेसेज भेजने के लिए, Signal Desktop को अपने माइक्रोफ़ोन को ऐक्सेस करने की अनुमति दें।",
     "description": "Shown if the user attempts to send an audio message without audio permissions turned on"
   },
   "audioCallingPermissionNeeded": {
@@ -1067,7 +1077,7 @@
     "message": "मेसेज माहिती"
   },
   "delete": {
-    "message": "मिटाओ"
+    "message": "डिलीट करें"
   },
   "accept": {
     "message": "स्वीकृत"
@@ -1094,11 +1104,11 @@
     "description": "Label for when something is turned off"
   },
   "deleteWarning": {
-    "message": "यह संदेश इस डिवाइस से हटा दिया जाएगा।",
+    "message": "यह संदेश इस डिवाइस से डिलीट कर दिया जाएगा।",
     "description": "Text shown in the confirmation dialog for deleting a message locally"
   },
   "deleteForEveryoneWarning": {
-    "message": "यह मैसेज वार्तालाप में शामिल सभी के लिए मिटा दिया जाएगा यदि वे Signal के नवीनमत वर्ज़न पर हैं। वे देख सकेंगे कि आपने एक मैसेज को मिटा दिया है।",
+    "message": "यह मैसेज वार्तालाप में शामिल सभी के लिए डिलीट कर दिया जाएगा यदि वे Signal के नवीनमत वर्ज़न पर हैं। वे देख सकेंगे कि आपने एक मैसेज को डिलीट कर दिया है।",
     "description": "Text shown in the confirmation dialog for deleting a message for everyone"
   },
   "from": {
@@ -1109,9 +1119,25 @@
     "message": "किस को",
     "description": "Label for the receiver of a message"
   },
+  "icu:searchResultHeader--sender-to-group": {
+    "messageformat": "{sender} से {receiverGroup} को",
+    "description": "Shown for search result items - like 'Jon to Friends Group'"
+  },
+  "icu:searchResultHeader--sender-to-you": {
+    "messageformat": "{sender} से आपको",
+    "description": "Shown for search result items - like 'Jon to You"
+  },
+  "icu:searchResultHeader--you-to-group": {
+    "messageformat": "आपसे {receiverGroup} को",
+    "description": "Shown for search result items - like 'You to Friends Group'"
+  },
+  "icu:searchResultHeader--you-to-receiver": {
+    "messageformat": "आपसे {receiverContact} को",
+    "description": "Shown for search result items - like 'You to Jon'"
+  },
   "toJoiner": {
     "message": "से",
-    "description": "Joiner for message search results - like 'Jon' to 'Friends Group'"
+    "description": "(deleted 2023/02/02) Joiner for message search results - like 'Jon' to 'Friends Group'"
   },
   "sent": {
     "message": "भेज दिया",
@@ -1133,6 +1159,10 @@
   },
   "showSafetyNumber": {
     "message": "सुरक्षा नंबर देखें"
+  },
+  "icu:ContactModal__showSafetyNumber": {
+    "messageformat": "सुरक्षा नंबर देखें",
+    "description": "Contact modal, label for button to show safety number modal"
   },
   "viewRecentMedia": {
     "message": "हाल का मीडिया देखें",
@@ -1169,19 +1199,19 @@
     "description": "Shown on the drop-down menu for an individual message, forwards a message"
   },
   "deleteMessage": {
-    "message": "मेरे लिए मेसेज मिटाएँ",
+    "message": "मेरे लिए मेसेज डिलीट करें",
     "description": "Shown on the drop-down menu for an individual message, deletes single message"
   },
   "deleteMessageForEveryone": {
-    "message": "सभी के लिए मेसेज मिटाएँ",
+    "message": "सभी के लिए मेसेज डिलीट करें",
     "description": "Shown on the drop-down menu for an individual message, deletes single message for everyone"
   },
   "deleteMessages": {
-    "message": "हटाए",
+    "message": "डिलीट करें",
     "description": "Menu item for deleting messages, title case."
   },
   "deleteConversationConfirmation": {
-    "message": "इस वार्तालाप को स्थायी रूप से हटाएं?",
+    "message": "इस वार्तालाप को स्थायी रूप से डिलीट करें?",
     "description": "Confirmation dialog text that asks the user if they really wish to delete the conversation. Answer buttons use the strings 'ok' and 'cancel'. The deletion is permanent, i.e. it cannot be undone."
   },
   "sessionEnded": {
@@ -1233,32 +1263,36 @@
     "description": "Shown in timeline when a member of a conversation changes their phone number"
   },
   "icu:ConversationMerge--notification": {
-    "messageformat": "{obsoleteConversationTitle} and {conversationTitle} are the same account. Your message history for both chats are here.",
+    "messageformat": "{obsoleteConversationTitle} और {conversationTitle} एक ही अकाउंट हैं। दोनों चैट हेतु आपकी संदेश हिस्ट्री यहाँ हैं।",
     "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way"
   },
-  "icu:ConversationMerge--notification--no-e164": {
-    "messageformat": "Your message history with {conversationTitle} and another chat that belonged to them has been merged.",
-    "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way, but we don't have the phone number for the old conversation"
+  "icu:ConversationMerge--notification--with-e164": {
+    "messageformat": "{conversationTitle} के साथ आपके संदेश इतिहास को उनके नंबर {obsoleteConversationNumber} के साथ जोड़ दिया गया है।",
+    "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way, but we have the phone number for the old conversation"
+  },
+  "icu:ConversationMerge--notification--no-title": {
+    "messageformat": "{conversationTitle} के साथ आपके संदेश इतिहास को उनके साथ ही किसी अन्य चैट के साथ जोड़ दिया गया है।",
+    "description": "Shown when we've discovered that two local conversations are the same remote account in an unusual way, but we don't have the title for the old conversation"
   },
   "icu:ConversationMerge--learn-more": {
-    "messageformat": "Learn More",
+    "messageformat": "और जानें",
     "description": "Shown on a button below a 'conversations were merged' timeline notification"
   },
   "icu:ConversationMerge--explainer-dialog--line-1": {
-    "messageformat": "After messaging with {obsoleteConversationTitle} you learned this number belongs to {conversationTitle}. Their phone number is private.",
+    "messageformat": "{obsoleteConversationTitle} को मेसेज करने पर आपने जाना कि यह नंबर {conversationTitle} का है। उनका फ़ोन नंबर निजी है।",
     "description": "Contents of a dialog shown after clicking 'learn more' button on a conversation merge event."
   },
   "icu:ConversationMerge--explainer-dialog--line-2": {
-    "messageformat": "Your message history for both conversations have been merged here.",
+    "messageformat": "दोनों ही बातचीत हेतु आपकी मेसेज हिस्ट्री यहाँ मर्ज कर दी गई हैं।",
     "description": "Contents of a dialog shown after clicking 'learn more' button on a conversation merge event."
   },
   "icu:PhoneNumberDiscovery--notification--withSharedGroup": {
-    "messageformat": "{phoneNumber} belongs to {conversationTitle}. You're both members of {sharedGroup}.",
-    "description": "Shown when we've discovered a phone number for a contact you've been communicating with."
+    "messageformat": "{conversationTitle} का फ़ोन नंबर {phoneNumber} है। आप दोनों ही {sharedGroup} के सदस्य हैं।",
+    "description": "(deleted 2023/01/11) Shown when we've discovered a phone number for a contact you've been communicating with."
   },
   "icu:PhoneNumberDiscovery--notification--noSharedGroup": {
-    "messageformat": "{phoneNumber} belongs to {conversationTitle}",
-    "description": "Shown when we've discovered a phone number for a contact you've been communicating with, but you have no shared groups."
+    "messageformat": "{phoneNumber} {conversationTitle} का है",
+    "description": "(deleted 2023/01/11) Shown when we've discovered a phone number for a contact you've been communicating with, but you have no shared groups."
   },
   "quoteThumbnailAlt": {
     "message": "कोटेड मेसेज में से तस्वीर का थंबनेल",
@@ -1560,7 +1594,7 @@
     "description": "when you block someone and cannot view their video"
   },
   "calling__block-info": {
-    "message": "You won't receive their voice or video and they won't receive yours.",
+    "message": "न ही आपको उनकी वॉयस या वीडियो मिलेंगे, न ही उन्हें आपके।",
     "description": "Shown in the modal dialog to describe how blocking works in a group call"
   },
   "calling__overflow__scroll-up": {
@@ -1688,15 +1722,15 @@
     "description": "Button in the settings dialog starting process to delete all data"
   },
   "deleteAllDataHeader": {
-    "message": "सारा डाटा हटा दें?",
+    "message": "सारा डाटा डिलीट करें?",
     "description": "Header of the full-screen delete data confirmation screen"
   },
   "deleteAllDataBody": {
-    "message": "आप इस एप्लिकेशन के सारे खाते की जानकारी, संपर्क और मेसेज सहित हटाने जा रहे हैं। आप अपना मोबाइल डिवाइस फिर से लिंक कर सकते हैं पर उससे हटे हुए मेसेज वापस नहीं आएँगे।",
+    "message": "आप इस एप्लिकेशन के सारे अकाउंट की जानकारी, संपर्क और मेसेज सहित डिलीट करने जा रहे हैं। आप अपना मोबाइल डिवाइस फिर से लिंक कर सकते हैं पर उससे डिलीट करे हुए मेसेज वापस नहीं आएँगे।",
     "description": "Text describing what exactly will happen if the user clicks the button to delete all data"
   },
   "deleteAllDataButton": {
-    "message": "सारा डाटा हटा दें",
+    "message": "सारा डाटा डिलीट करें",
     "description": "Text of the button that deletes all data"
   },
   "deleteAllDataProgress": {
@@ -1704,11 +1738,11 @@
     "description": "Message shown to user when app is disconnected and data deleted"
   },
   "deleteOldIndexedDBData": {
-    "message": "आपके पास Signal Desktop के पिछले इंस्टॉलेशन से बेकार डेटा है। अगर आप जारी रखने का चयन करते हैं, तो इसे मिटा दिया जाएगा और आप दोबारा से शुरुआत करेंगे।",
+    "message": "आपके पास Signal Desktop के पिछले इंस्टॉलेशन से बेकार डेटा है। अगर आप जारी रखने का चयन करते हैं, तो इसे डिलीट कर दिया जाएगा और आप दोबारा से शुरुआत करेंगे।",
     "description": "Shown if user last ran Signal Desktop before October 2018"
   },
   "deleteOldData": {
-    "message": "पुराने डेटा को मिटाएँ",
+    "message": "पुराने डेटा को डिलीट करें",
     "description": "Button to make the delete happen"
   },
   "notifications": {
@@ -1955,7 +1989,15 @@
   },
   "verifyNewNumber": {
     "message": "सुरक्षा नंबर सत्यापित करें",
-    "description": "Label on button included with safety number change notification in the conversation"
+    "description": "(deleted 2023/02/03) Label on button included with safety number change notification in the conversation"
+  },
+  "icu:ConversationDetails__viewSafetyNumber": {
+    "messageformat": "सुरक्षा संख्या देखें",
+    "description": "In conversation details, label for button to view safety number, opens safety number modal"
+  },
+  "icu:SafetyNumberNotification__viewSafetyNumber": {
+    "messageformat": "सुरक्षा संख्या देखें",
+    "description": "In conversation, safety number change notification, label for button to view safety number, opens safety number modal"
   },
   "cannotGenerateSafetyNumber": {
     "message": "जब तक आप इस उपभोगकर्ता के साथ मेसेजों का आदान-प्रदान नहीं करेंगे तब तक वह सत्यापित नहीं हो पायेगा।",
@@ -2158,7 +2200,8 @@
     "description": "Shown in update dialog when partial update fails and we have to ask user to download full update"
   },
   "autoUpdateNewVersionInstructions": {
-    "message": "अपडेट लागू करने के लिये Signal फिर से शुरु करें"
+    "message": "अपडेट लागू करने के लिये Signal फिर से शुरु करें",
+    "description": "(deleted 2023/01/18)"
   },
   "autoUpdateRestartButtonLabel": {
     "message": "Signal पुनः आरंभ करे"
@@ -2274,103 +2317,179 @@
     "description": "Shown in notifications and in the left pane when a message is a view once video. Also shown when quoting a view once video."
   },
   "message--deletedForEveryone": {
-    "message": "यह मेसेज हटा दिया गया है।",
+    "message": "यह मेसेज डिलीट कर दिया गया है।",
     "description": "Shown in a message's bubble when the message has been deleted for everyone."
   },
   "giftBadge--missing": {
-    "message": "Unable to fetch gift badge details",
-    "description": "Aria label for gift badge when we can't fetch the details"
+    "message": "गिफ़्ट बैज का विवरण पाने में असमर्थ",
+    "description": "(deleted 2023/01/20) Aria label for gift badge when we can't fetch the details"
+  },
+  "icu:donation--missing": {
+    "messageformat": "दान विवरण प्राप्त करने में असमर्थ",
+    "description": "Aria label for donation when we can't fetch the details."
   },
   "message--giftBadge--unopened--incoming": {
     "message": "इस संदेश को खोलने के लिए इसे मोबाइल पर देखें",
-    "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    "description": "(deleted 2023/01/20) Shown in a message's bubble when you've received a gift badge from a contact"
+  },
+  "icu:message--donation--unopened--incoming": {
+    "messageformat": "इस संदेश को खोलने के लिए इसे मोबाइल पर देखें",
+    "description": "Shown in a message's bubble when you've received a donation badge from a contact"
   },
   "message--giftBadge--unopened--outgoing": {
     "message": "मोबाइल पर इस संदेश को टैप करके अपना गिफ़्ट देखें",
-    "description": "Shown in a message's bubble when you've sent a gift badge to a contact"
+    "description": "(deleted 2023/01/20) Shown in a message's bubble when you've sent a gift badge to a contact"
+  },
+  "icu:message--donation--unopened--outgoing": {
+    "messageformat": "अपना दान देखने के लिए मोबाइल पर इस संदेश को टैप करें",
+    "description": "Shown in a message's bubble when you've sent a donation badge to a contact."
   },
   "message--giftBadge--unopened--label": {
     "message": "गिफ़्ट",
-    "description": "Shown in a message's bubble when you've received a gift badge from a contact"
+    "description": "(deleted 2023/01/20) Shown in a message's bubble when you've received a gift badge from a contact"
+  },
+  "icu:message--donation--unopened--label": {
+    "messageformat": "{sender} ने आपकी ओर से Signal को दान दिया",
+    "description": "Shown in a message's bubble when you've received a donation badge from a contact."
   },
   "message--giftBadge--unopened--toast--incoming": {
     "message": "गिफ़्ट खोलने के लिए अपना फ़ोन जाँचें।",
-    "description": "Shown when you've clicked on an incoming gift badge you haven't yet redeemed"
+    "description": "(deleted 2023/01/20) Shown when you've clicked on an incoming gift badge you haven't yet redeemed"
+  },
+  "icu:message--donation--unopened--toast--incoming": {
+    "messageformat": "इस दान को खोलने के लिए अपना फोन देखें",
+    "description": "Shown when you've clicked on an incoming donation you haven't yet redeemed."
   },
   "message--giftBadge--unopened--toast--outgoing": {
     "message": "अपना गिफ़्ट देखने के लिए अपना फ़ोन जाँचें।",
-    "description": "Shown when you've clicked on an outgoing gift badge"
+    "description": "(deleted 2023/01/20) Shown when you've clicked on an outgoing gift badge"
+  },
+  "icu:message--donation--unopened--toast--outgoing": {
+    "messageformat": "अपना दान देखने के लिए अपना फोन देखें",
+    "description": "Shown when you've clicked on an outgoing donation badge."
   },
   "message--giftBadge--preview--unopened": {
     "message": "आपको एक गिफ़्ट मिला है",
-    "description": "Shown to label the gift badge in notifications and the left pane"
+    "description": "(deleted 2023/01/20) Shown to label the gift badge in notifications and the left pane"
+  },
+  "icu:message--donation--preview--unopened": {
+    "messageformat": "{sender} ने आपके लिए दान दिया",
+    "description": "Shown to label the donation badge in notifications and the left pane."
   },
   "message--giftBadge--preview--redeemed": {
     "message": "आपने एक गिफ़्ट बैज रिडीम किया",
-    "description": "Shown to label the redeemed gift badge in notifications and the left pane"
+    "description": "(deleted 2023/01/20) Shown to label the redeemed gift badge in notifications and the left pane"
+  },
+  "icu:message--donation--preview--redeemed": {
+    "messageformat": "आपने एक दान को रिडीम किया है",
+    "description": "Shown to label the redeemed donation badge in notifications and the left pane."
   },
   "message--giftBadge--preview--sent": {
     "message": "आपने एक गिफ़्ट बैज भेजा",
-    "description": "Shown to label a gift badge you've sent in notifications and the left pane"
+    "description": "(deleted 2023/01/20) Shown to label a gift badge you've sent in notifications and the left pane"
+  },
+  "icu:message--donation--preview--sent": {
+    "messageformat": "आपने {recipient} के लिए दान दिया",
+    "description": "Shown to label a donation badge you've sent in notifications and the left pane"
   },
   "message--giftBadge": {
     "message": "गिफ़्ट बैज",
-    "description": "Shown to label the gift badge you've redeemed on another device"
+    "description": "(deleted 2023/01/20) Shown to label the gift badge you've redeemed on another device"
+  },
+  "icu:message--donation": {
+    "messageformat": "दान",
+    "description": "Shown to label the donation badge you've redeemed on another device."
   },
   "quote--giftBadge": {
     "message": "गिफ़्ट",
-    "description": "Shown to label a gift badge you've replied to"
+    "description": "(deleted 2023/01/20) Shown to label a gift badge you've replied to"
+  },
+  "icu:quote--donation": {
+    "messageformat": "दान",
+    "description": "Shown to label a donation badge you've replied to."
   },
   "message--giftBadge--remaining--days": {
     "message": "$days$ दिन शेष",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for days > 1)"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device (only rendered for days > 1)"
+  },
+  "icu:message--donation--remaining--days": {
+    "messageformat": "{days} दिन शेष",
+    "description": "Describes how long remains for the donation badge you've redeemed on another device (only rendered for days > 1)."
   },
   "message--giftBadge--remaining--hours": {
     "message": "$hours$ घंटे शेष",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for hours > 1)"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device (only rendered for hours > 1)"
+  },
+  "icu:message--donation--remaining--hours": {
+    "messageformat": "{hours} घंटे शेष",
+    "description": "Describes how long remains for the donation badge you've redeemed on another device (only rendered for hours > 1)"
   },
   "message--giftBadge--remaining--minutes": {
     "message": "$minutes$ मिनट शेष",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device (only rendered for minutes > 1)"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device (only rendered for minutes > 1)"
+  },
+  "icu:message--donation--remaining--minutes": {
+    "messageformat": "{minutes, plural, one {{minutes,number} मिनट शेष} other {{minutes,number} मिनट सहेश हैं}}",
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device."
   },
   "message--giftBadge--remaining--one-minute": {
     "message": "1 मिनट शेष",
-    "description": "Describes how long remains for the gift badge you've redeemed on another device"
+    "description": "(deleted 2023/01/20) Describes how long remains for the donation badge you've redeemed on another device"
   },
   "message--giftBadge--expired": {
     "message": "समाप्त हो गया",
-    "description": "Shows that a gift badge is expired"
+    "description": "(deleted 2023/01/20) Shows that a gift badge is expired"
+  },
+  "icu:message--donation--expired": {
+    "messageformat": "समाप्त हो गया",
+    "description": "Shows that a donation badge is expired"
   },
   "message--giftBadge--view": {
     "message": "देखना",
     "description": "Shown when you've sent a gift badge to someone then opened it"
   },
+  "icu:message--donation--view": {
+    "messageformat": "राय",
+    "description": "Shown when you've sent a donation badge to someone then opened it"
+  },
   "message--giftBadge--redeemed": {
     "message": "रिडीम किया गया",
-    "description": "Shown when you've redeemed the gift badge on another device"
+    "description": "(deleted 2023/01/20) Shown when you've redeemed the gift badge on another device"
+  },
+  "icu:message--donation--redeemed": {
+    "messageformat": "रिडीम किया गया",
+    "description": "Shown when you've redeemed the donation badge on another device"
   },
   "modal--giftBadge--title": {
     "message": "आपके समर्थन के लिए शुक्रिया!",
-    "description": "The title of the outgoing gift badge detail dialog"
+    "description": "(deleted 2023/01/20) The title of the outgoing gift badge detail dialog"
+  },
+  "icu:modal--donation--title": {
+    "messageformat": "आपके समर्थन के लिए शुक्रिया!",
+    "description": "The title of the outgoing donation badge detail dialog"
   },
   "modal--giftBadge--description": {
     "message": "आपने $name$ को एक बैज गिफ़्ट किया है। जब वे इसे स्वीकार करेंगे तब उन्हें अपना बैज दिखाने या छिपाने का विकल्प दिया जाएगा।",
-    "description": "The description of the outgoing gift badge detail dialog"
+    "description": "(deleted 2023/01/20) The description of the outgoing gift badge detail dialog"
+  },
+  "icu:modal--donation--description": {
+    "messageformat": "आपने {name} की ओर से Signal को एक दान दिया है। उन्हें अपना सहयोग अपनी प्रोफ़ाइल पर दर्शाने का विकल्प दिया जाएगा।",
+    "description": "The description of the outgoing donation badge detail dialog"
   },
   "stickers--toast--InstallFailed": {
     "message": "स्टीकर पैक इंस्टॉल नहीं हो पाया",
     "description": "Shown in a toast if the user attempts to install a sticker pack and it fails"
   },
   "stickers--StickerManager--title": {
-    "message": "Stickers",
+    "message": "स्टिकर",
     "description": "Title for the sticker manager"
   },
   "stickers--StickerManager--Available": {
-    "message": "Available",
+    "message": "उपलब्ध",
     "description": "Shown in the sticker pack manager as a tab for available stickers"
   },
   "stickers--StickerManager--InstalledPacks": {
-    "message": "Installed",
+    "message": "इंस्टॉल किया गया",
     "description": "Shown in the sticker pack manager above your installed sticker packs."
   },
   "stickers--StickerManager--InstalledPacks--Empty": {
@@ -2666,7 +2785,7 @@
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--delete-message": {
-    "message": "चुने हुए मेसेज को हटाएँ",
+    "message": "चुने हुए मेसेज को डिलीट करें",
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--add-newline": {
@@ -2766,23 +2885,23 @@
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--accept-video-call": {
-    "message": "Answer call with video",
+    "message": "वीडियो से कॉल का जवाब दें",
     "description": "(deleted 2023/01/09) Shown in the calling keyboard shortcuts guide"
   },
   "Keyboard--accept-audio-call": {
-    "message": "Answer call with audio",
+    "message": "ऑडियो से कॉल का जवाब दें",
     "description": "(deleted 2023/01/09) Shown in the calling keyboard shortcuts guide"
   },
   "icu:Keyboard--accept-video-call": {
-    "messageformat": "Answer call with video (video calls only)",
+    "messageformat": "वीडियो से कॉल का जवाब दें (केवल वीडियो कॉल)",
     "description": "Shown in the calling keyboard shortcuts guide"
   },
   "icu:Keyboard--accept-call-without-video": {
-    "messageformat": "Answer call without video",
+    "messageformat": "वीडियो के बिना कॉल का जवाब दें",
     "description": "Shown in the calling keyboard shortcuts guide"
   },
   "Keyboard--start-audio-call": {
-    "message": "Start voice call",
+    "message": "वॉयस कॉल शुरू करें",
     "description": "Shown in the calling keyboard shortcuts guide"
   },
   "Keyboard--start-video-call": {
@@ -2882,7 +3001,7 @@
     "description": "Title for the drop stage of the sticker creator"
   },
   "StickerCreator--DropStage--removeSticker": {
-    "message": "स्टिकर हटाएं",
+    "message": "स्टिकर हटाएँ",
     "description": "Label for the X button used to remove a staged sticker"
   },
   "StickerCreator--DropStage--dragDrop": {
@@ -2938,7 +3057,7 @@
     "description": "Text for the upload button in the confirmation dialog on the meta stage of the sticker creator"
   },
   "StickerCreator--MetaStage--ConfirmDialog--text": {
-    "message": "आप फिर स्टिकर पैक बनाने के बाद उसे एडिट या मिटा नहीं पाएँगे।",
+    "message": "आप फिर स्टिकर पैक बनाने के बाद उसे एडिट या डिलीट नहीं कर पाएँगे।",
     "description": "The text inside the confirmation dialog on the meta stage of the sticker creator"
   },
   "StickerCreator--UploadStage--title": {
@@ -3030,7 +3149,7 @@
     "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
   },
   "Reactions--remove": {
-    "message": "प्रतिक्रिया को हटाएं",
+    "message": "प्रतिक्रिया को हटाएँ",
     "describe": "Shown when you want to remove a reaction you've made"
   },
   "Reactions--error": {
@@ -3106,23 +3225,23 @@
     "description": "Shown as the body in the confirmation modal for blocking a group message request"
   },
   "MessageRequests--delete": {
-    "message": "हटाए",
+    "message": "डिलीट करें",
     "description": "Shown as a button to let the user delete any message request"
   },
   "MessageRequests--delete-direct-confirm-title": {
-    "message": "संवाद हटाएं?",
+    "message": "संवाद डिलीट करें?",
     "description": "Shown as the title in the confirmation modal for deleting a private message request"
   },
   "MessageRequests--delete-direct-confirm-body": {
-    "message": "यह संवाद आपके सभी डिवाइस से हटा दिया जाएगा।",
+    "message": "यह संवाद आपके सभी डिवाइस से डिलीट कर दिया जाएगा।",
     "description": "Shown as the body in the confirmation modal for deleting a private message request"
   },
   "MessageRequests--delete-group-confirm-title": {
-    "message": "$group$ को मिटाना और छोड़ना है?",
+    "message": "$group$ को डिलीट कर के छोड़ना है?",
     "description": "Shown as the title in the confirmation modal for deleting a group message request"
   },
   "MessageRequests--delete-direct": {
-    "message": "हटाए",
+    "message": "डिलीट करें",
     "description": "Shown as a button to let the user delete a direct message request"
   },
   "MessageRequests--delete-group": {
@@ -3130,7 +3249,7 @@
     "description": "Shown as a button to let the user delete a group message request"
   },
   "MessageRequests--delete-group-confirm-body": {
-    "message": "आप इस ग्रूप को छोङ देंगे और यह ग्रूप आपके सभी डिवाइस से हटा दिया जाएगा।",
+    "message": "आप इस ग्रूप को छोङ देंगे और यह ग्रूप आपके सभी डिवाइस से डिलीट कर दिया जाएगा।",
     "description": "Shown as the body in the confirmation modal for deleting a group message request"
   },
   "MessageRequests--accept": {
@@ -3198,11 +3317,11 @@
     "description": "When a user has no common groups, show this warning"
   },
   "acceptCall": {
-    "message": "Answer call",
+    "message": "कॉल का उत्तर दें",
     "description": "Shown in tooltip for the button to accept a call (audio or video)"
   },
   "acceptCallWithoutVideo": {
-    "message": "Answer call without video",
+    "message": "वीडियो के बिना कॉल का जवाब दें",
     "description": "Shown in tooltip for the button to accept a video call without video"
   },
   "declineCall": {
@@ -3210,7 +3329,7 @@
     "description": "Shown in tooltip for the button to decline a call (audio or video)"
   },
   "declinedIncomingAudioCall": {
-    "message": "You declined a voice call",
+    "message": "आपने एक वॉयस कॉल काट दी",
     "description": "Shown in conversation history when you declined an incoming voice call"
   },
   "declinedIncomingVideoCall": {
@@ -3218,7 +3337,7 @@
     "description": "Shown in conversation history when you declined an incoming video call"
   },
   "acceptedIncomingAudioCall": {
-    "message": "Incoming voice call",
+    "message": "इनकमिंग वॉयस कॉल",
     "description": "Shown in conversation history when you accepted an incoming voice call"
   },
   "acceptedIncomingVideoCall": {
@@ -3226,7 +3345,7 @@
     "description": "Shown in conversation history when you accepted an incoming video call"
   },
   "missedIncomingAudioCall": {
-    "message": "Missed voice call",
+    "message": "छूटी हुई वॉयस कॉल",
     "description": "Shown in conversation history when you missed an incoming voice call"
   },
   "missedIncomingVideoCall": {
@@ -3234,7 +3353,7 @@
     "description": "Shown in conversation history when you missed an incoming video call"
   },
   "acceptedOutgoingAudioCall": {
-    "message": "Outgoing voice call",
+    "message": "आउटगोइंग वॉयस कॉल",
     "description": "Shown in conversation history when you made an outgoing voice call"
   },
   "acceptedOutgoingVideoCall": {
@@ -3242,7 +3361,7 @@
     "description": "Shown in conversation history when you made an outgoing video call"
   },
   "missedOrDeclinedOutgoingAudioCall": {
-    "message": "Unanswered voice call",
+    "message": "अनुत्तरित वॉयस कॉल",
     "description": "Shown in conversation history when your voice call is missed or declined"
   },
   "missedOrDeclinedOutgoingVideoCall": {
@@ -3258,7 +3377,7 @@
     "description": "Shown in a notification body when Signal is minimized to tray"
   },
   "incomingAudioCall": {
-    "message": "Incoming voice call...",
+    "message": "वॉयस कॉल आ रही है…",
     "description": "Shown in both the incoming call bar and notification for an incoming voice call"
   },
   "incomingVideoCall": {
@@ -3802,7 +3921,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--member-remove--other--other": {
-    "message": "$adminName$ ने $memberName$ को निकाल दिया।",
+    "message": "$adminName$ ने $memberName$ को हटा दिया।",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--member-remove--other--self": {
@@ -3810,15 +3929,15 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--member-remove--other--you": {
-    "message": "आपने $memberName$ को निकाल दिया।",
+    "message": "आपने $memberName$ को हटा दिया।",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--member-remove--other--unknown": {
-    "message": "एक मेंबर ने $memberName$ को निकाल दिया।",
+    "message": "एक मेंबर ने $memberName$ को हटा दिया।",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--member-remove--you--other": {
-    "message": "$adminName$ ने आपको निकाल दिया।",
+    "message": "$adminName$ ने आपको हटा दिया।",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--member-remove--you--you": {
@@ -4082,7 +4201,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--description--remove--you": {
-    "message": "आपने समूह विवरण निकाल दिया है.",
+    "message": "आपने समूह विवरण हटा दिया है।",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "GroupV2--description--remove--other": {
@@ -4130,7 +4249,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--summary": {
-    "messageformat": "This group's members or settings have changed.",
+    "messageformat": "इस समूह के सदस्य या सेटिंग बदल गए हैं।",
     "description": "When rejoining a group, any detected changes are collapsed down into this summary"
   },
   "GroupV1--Migration--disabled": {
@@ -4182,19 +4301,19 @@
     "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
   },
   "GroupV1--Migration--info--removed--before--many": {
-    "message": "ये मेंबर नए ग्रुपस में शामिल होने के योग्य नहीं हैं, और इन्हें ग्रुप में से निकाल दिया जाएगा:",
+    "message": "ये मेंबर नए ग्रुपस में शामिल होने के योग्य नहीं हैं, और इन्हें ग्रुप में से हटा दिया जाएगा:",
     "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
   },
   "GroupV1--Migration--info--removed--before--one": {
-    "message": "यह मेंबर नए ग्रुपस में शामिल होने के योग्य नहीं है, और इन्हें ग्रुप में से निकाल दिया जाएगा:",
+    "message": "यह मेंबर नए ग्रुपस में शामिल होने के योग्य नहीं है, और इन्हें ग्रुप में से हटा दिया जाएगा:",
     "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
   },
   "GroupV1--Migration--info--removed--after--many": {
-    "message": "ये मेंबर नए ग्रुप्स में शामिल होने के योग्य नहीं थे, और इन्हें ग्रुप में से निकाल दिया गया था:",
+    "message": "ये मेंबर नए ग्रुप्स में शामिल होने के योग्य नहीं थे, और इन्हें ग्रुप में से हटा दिया गया था:",
     "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
   },
   "GroupV1--Migration--info--removed--after--one": {
-    "message": "यह मेंबर नए ग्रुप्स में शामिल होने के योग्य नहीं था, और इन्हें ग्रुप में से निकाल दिया गया था:",
+    "message": "यह मेंबर नए ग्रुप्स में शामिल होने के योग्य नहीं था, और इन्हें ग्रुप में से हटा दिया गया था:",
     "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
   },
   "GroupV1--Migration--invited--you": {
@@ -4210,11 +4329,11 @@
     "description": "Shown in timeline when a group is upgraded and some people were invited, instead of added"
   },
   "GroupV1--Migration--removed--one": {
-    "message": "$contact$ को ग्रुप में से निकाल दिया गया था।",
+    "message": "$contact$ को ग्रुप में से हटा दिया गया था।",
     "description": "Shown in timeline when a group is upgraded and one person was removed entirely during the upgrade"
   },
   "GroupV1--Migration--removed--many": {
-    "message": "$count$ मेंबर्स को ग्रुप में से निकाल दिया गया था।",
+    "message": "$count$ मेंबर्स को ग्रुप में से हटा दिया गया था।",
     "description": "Shown in timeline when a group is upgraded and some people were removed entirely during the upgrade"
   },
   "close": {
@@ -4294,7 +4413,7 @@
     "description": "Shown in a confirmation dialog when you are about to grant admin privileges to someone"
   },
   "ContactModal--rm-admin-info": {
-    "message": "$contact$ को ग्रूप एडमिन के रूप में निकालें?",
+    "message": "$contact$ को ग्रूप एडमिन के रूप में हटाएँ?",
     "description": "Shown in a confirmation dialog when you are about to remove admin privileges from someone"
   },
   "ContactModal--remove-from-group": {
@@ -4446,11 +4565,11 @@
     "description": "(deleted 2023/01/03) Title of the groups-in-common panel, in the contact details"
   },
   "icu:ConversationDetailsGroups--title": {
-    "messageformat": "{count, plural, one {1 group in common} other {{count,number} groups in common}}",
+    "messageformat": "{count, plural, one {{count,number} साझा समूह} other {{count,number} साझा ग्रुप}}",
     "description": "Title of the groups-in-common panel, in the contact details"
   },
   "icu:ConversationDetailsGroups--title--with-zero-groups-in-common": {
-    "messageformat": "No groups in common",
+    "messageformat": "कोई साझा ग्रुप नहीं",
     "description": "Title of the groups-in-common panel, in the contact details, with zero groups in common"
   },
   "ConversationDetailsGroups--add-to-group": {
@@ -4850,7 +4969,7 @@
     "description": "Displayed when delete-for-everyone has failed to send to all recipients"
   },
   "ChatColorPicker__delete--title": {
-    "message": "रंग हटाएं",
+    "message": "रंग हटाएँ",
     "description": "Confirm title for deleting custom color"
   },
   "ChatColorPicker__delete--message": {
@@ -4914,7 +5033,7 @@
     "description": "Option in the custom color bubble context menu"
   },
   "ChatColorPicker__context--delete": {
-    "message": "हटाए",
+    "message": "डिलीट करें",
     "description": "Option in the custom color bubble context menu"
   },
   "CustomColorEditor__solid": {
@@ -5105,8 +5224,12 @@
     "message": "आपका यूज़र नाम सेव नहीं किया जा सका. अपने कनेक्शन की जांच करें और फिर से कोशिश करें.",
     "description": "Shown if something unknown has gone wrong with username save."
   },
+  "icu:ProfileEditor--username--reservation-gone": {
+    "messageformat": "{username} is no longer available. A new set of digits will be paired with your username, please try saving it again.",
+    "description": "Shown if username reservation has expired and new one needs to be generated."
+  },
   "ProfileEditor--username--delete-general-error": {
-    "message": "आपका यूज़र नाम हटाया नहीं जा सका. अपने कनेक्शन की जांच करें और फिर से कोशिश करें.",
+    "message": "आपका यूज़र नाम हटाया नहीं जा सका. अपने कनेक्शन की जांच करें और फिर से कोशिश करें।",
     "description": "Shown if something unknown has gone wrong with username delete."
   },
   "ProfileEditor--username--copied-username": {
@@ -5985,6 +6108,10 @@
     "message": "उत्तर",
     "description": "Button label to reply to a story"
   },
+  "icu:StoryViewer__reply-placeholder": {
+    "messageformat": "{firstName} को जवाब दें",
+    "description": "Button label to reply to a story"
+  },
   "StoryViewer__reply-group": {
     "message": "ग्रुप को जवाब दें",
     "description": "Button label to reply to a group story"
@@ -6055,7 +6182,7 @@
   },
   "StoryViewsNRepliesModal__react": {
     "message": "स्टोरी पर प्रतिक्रिया दें",
-    "description": "aria-label for reaction button"
+    "description": "(deleted 01/25/23) aria-label for reaction button"
   },
   "StoryViewsNRepliesModal__reacted": {
     "message": "स्टोरी पर प्रतिक्रिया दी",
@@ -6193,6 +6320,14 @@
     "message": "अपनी स्टोरी के व्यूअर्स के लिए कोई लिंक जोड़ें",
     "description": "Empty state for the link preview"
   },
+  "icu:Stories__failed-send--full": {
+    "messageformat": "स्टोरी भेजने में विफल",
+    "description": "Notification text whenever a story fails to send"
+  },
+  "icu:Stories__failed-send--partial": {
+    "messageformat": "स्टोरी सभी प्राप्तकर्ताओं को नहीं भेजी जा सकी",
+    "description": "Notification text whenever a story partially fails to send"
+  },
   "TextAttachment__placeholder": {
     "message": "टेक्स्ट शामिल करें",
     "description": "Placeholder for the add text input"
@@ -6253,6 +6388,42 @@
     "message": "यह अंक आपके यूज़रनेम को निजी रखने में मदद करते हैं ताकि आप अवांछित संदेशों से बच सकें। अपना यूज़रनेम केवल उन लोगों और ग्रुप्स के साथ साझा करें जिनसे आप चैट करना पसंद करते हैं। यदि आप यूज़रनेम बदलते हैं तो आपको अंकों का एक नया सेट मिलेगा।",
     "description": "Body of the popup with information about discriminator in username"
   },
+  "icu:UsernameOnboardingModalBody__title": {
+    "messageformat": "Set up your Signal username",
+    "description": "Title of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__row__number": {
+    "messageformat": "Usernames are paired with a set of digits and aren’t shared on your profile",
+    "description": "Content of the first row of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__row__link": {
+    "messageformat": "Each username has a unique link you can share with your friends to start a chat with you",
+    "description": "Content of the second row of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__row__lock": {
+    "messageformat": "Turn off phone number discovery under Settings > Phone Number > Who can find my number, to use your username as the primary way others can contact you.",
+    "description": "Content of the third row of username onboarding modal"
+  },
+  "icu:UsernameOnboardingModalBody__learn-more": {
+    "messageformat": "Learn More",
+    "description": "Text that open a popup with information about username onboarding"
+  },
+  "icu:UsernameOnboardingModalBody__continue": {
+    "messageformat": "Continue",
+    "description": "Text of the primary button on username onboarding modal"
+  },
+  "icu:UnsupportedOSWarningDialog__body": {
+    "messageformat": "Signal डेस्कटॉप जल्द ही आपके कंप्यूटर के {OS} संस्करण को सपोर्ट नहीं करेगा। Signal का इस्तेमाल जारी रखने के लिए, अपने कंप्यूटर के ऑपरेटिंग सिस्टम को {expirationDate} पर अपडेट करें। <learnMoreLink>अधिक जानें</learnMoreLink>",
+    "description": "Body of a dialog displayed on unsupported operating systems"
+  },
+  "icu:UnsupportedOSErrorDialog__body": {
+    "messageformat": "Signal डेस्कटॉप अब इस कंप्यूटर पर काम नहीं करता। Signal डेस्कटॉप दोबारा इस्तेमाल करने के लिए, अपने कंप्यूटर के {OS} के संस्करण को अपडेट करें। <learnMoreLink>अधिक जानें</learnMoreLink>",
+    "description": "Body of a dialog displayed on unsupported operating systems"
+  },
+  "icu:UnsupportedOSErrorToast": {
+    "messageformat": "Signal डेस्कटॉप अब इस कंप्यूटर पर काम नहीं करता। Signal डेस्कटॉप दोबारा इस्तेमाल करने के लिए, अपने कंप्यूटर के {OS} के संस्करण को अपडेट करें।",
+    "description": "Body of a dialog displayed on unsupported operating systems"
+  },
   "WhatsNew__modal-title": {
     "message": "नया क्या है",
     "description": "Title for the whats new modal"
@@ -6300,5 +6471,25 @@
   "WhatsNew__v6.1--1": {
     "message": "जब आप छोटे समूहों (16 लोगों तक वाले) के लिए ग्रुप कॉल शुरू करते हैं तब आप एक रिंग होनेवाला नोटिफ़िकेशन भेजने का चुनाव कर सकते हैं। समूह के सदस्य यही iOS बीटा पर हों या डेस्कटॉप या ऐंड्रॉयड का इस्तेमाल कर रहे हों तो उन्हें एक रिंग सुनाई देगी।",
     "description": "Release notes for v6.1"
+  },
+  "icu:WhatsNew__v6.3--0": {
+    "messageformat": "कुओटेड रिप्लाई शुरू करने के लिए चैट में किसी भी संदेश पंक्ति पर डबल-क्लिक करें। यह पुराने विचारों के बारे में नए विचारों के शॉर्टकट की तरह है। इस फ़ीचर को लागू करने और फीडबैक प्रदान करने के लिए {whynothugo} और Signal समुदाय का धन्यवाद।",
+    "description": "Release notes for v6.3"
+  },
+  "icu:WhatsNew__v6.3--1": {
+    "messageformat": "अब ज़ूम इन किए बिना गैलरी व्यू को डिसमिस करने के लिए छवि के बाहर क्लिक करना आसान हो गया है। कभी-कभी आप बस बंद करना चाहते थे, और इसके बजाये चीजें बहुत करीब आ गईं। इसे दुरुस्त करने के लिए {jojomatik} का धन्यवाद!",
+    "description": "Release notes for v6.3"
+  },
+  "icu:WhatsNew__v6.5--0": {
+    "messageformat": "तेजी से उत्तर दें। आप किसी स्टोरी का जवाब देते समय किसी भी इमोजी पर टैप करके तेजी से उत्तर दें सकते हैं।",
+    "description": "Release notes for v6.5"
+  },
+  "icu:WhatsNew__v6.5--1": {
+    "messageformat": "अब चीनी और जापानी भाषा में अलग-अलग कैरेक्टर के लिए अपना संदेश इतिहास खोजना संभव है।",
+    "description": "Release notes for v6.5"
+  },
+  "icu:WhatsNew__v6.6--0": {
+    "messageformat": "वॉयस और वीडियो कॉल के लिए कई विश्वसनीयता और प्रदर्शन सुधारों को टेस्ट करने में हमारी सहायता करें। इस बीटा रिलीज़ में कुछ बग फिक्स और कुछ छोटे UI अपडेट भी शामिल हैं (नए लिंक प्रीव्यू एन्हांसमेंट के लिए देखें!)। बीटा टेस्टर बनने के लिए धन्यवाद, और यदि आपको कोई बग दिखाई देता है तो कृपया कम्युनिटी फोरम पर हमसे संपर्क करें।",
+    "description": "Release notes for v6.6"
   }
 }

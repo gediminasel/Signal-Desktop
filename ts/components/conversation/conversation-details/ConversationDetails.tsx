@@ -484,13 +484,13 @@ export function ConversationDetails({
             onClick={() => toggleSafetyNumberModal(conversation.id)}
             icon={
               <ConversationDetailsIcon
-                ariaLabel={i18n('verifyNewNumber')}
+                ariaLabel={i18n('icu:ConversationDetails__viewSafetyNumber')}
                 icon={IconType.verify}
               />
             }
             label={
               <div className="ConversationDetails__safety-number">
-                {i18n('verifyNewNumber')}
+                {i18n('icu:ConversationDetails__viewSafetyNumber')}
               </div>
             }
           />

@@ -7,7 +7,6 @@ import filesize from 'filesize';
 import getDirection from 'direction';
 import emojiRegex from 'emoji-regex';
 import LinkifyIt from 'linkify-it';
-import { memoize } from '@indutny/sneequals';
 
 import type { StateType } from '../reducer';
 import type {
@@ -34,7 +33,6 @@ import type { PropsDataType as GroupV1MigrationPropsType } from '../../component
 import type { PropsDataType as DeliveryIssuePropsType } from '../../components/conversation/DeliveryIssueNotification';
 import type { PropsType as PaymentEventNotificationPropsType } from '../../components/conversation/PaymentEventNotification';
 import type { PropsDataType as ConversationMergePropsType } from '../../components/conversation/ConversationMergeNotification';
-import type { PropsDataType as PhoneNumberDiscoveryPropsType } from '../../components/conversation/PhoneNumberDiscoveryNotification';
 import type {
   PropsData as GroupNotificationProps,
   ChangeType,
@@ -119,7 +117,7 @@ import { calculateExpirationTimestamp } from '../../util/expirationTimer';
 import { isSignalConversation } from '../../util/isSignalConversation';
 import type { AnyPaymentEvent } from '../../types/Payment';
 import { isPaymentNotificationEvent } from '../../types/Payment';
-import { getTitle, renderNumber } from '../../util/getTitle';
+import { getTitleNoDefault, getNumber } from '../../util/getTitle';
 
 export { isIncoming, isOutgoing, isStory };
 
@@ -270,62 +268,58 @@ export function getConversation(
 
 // Message
 
-export const getAttachmentsForMessage = memoize(
-  ({
-    sticker,
-    attachments = [],
-  }: MessageWithUIFieldsType): Array<AttachmentType> => {
-    if (sticker && sticker.data) {
-      const { data } = sticker;
+export const getAttachmentsForMessage = ({
+  sticker,
+  attachments = [],
+}: MessageWithUIFieldsType): Array<AttachmentType> => {
+  if (sticker && sticker.data) {
+    const { data } = sticker;
 
-      // We don't show anything if we don't have the sticker or the blurhash...
-      if (!data.blurHash && (data.pending || !data.path)) {
-        return [];
-      }
-
-      return [
-        {
-          ...data,
-          // We want to show the blurhash for stickers, not the spinner
-          pending: false,
-          url: data.path
-            ? window.Signal.Migrations.getAbsoluteAttachmentPath(data.path)
-            : undefined,
-        },
-      ];
+    // We don't show anything if we don't have the sticker or the blurhash...
+    if (!data.blurHash && (data.pending || !data.path)) {
+      return [];
     }
 
-    return attachments
-      .filter(attachment => !attachment.error || canBeDownloaded(attachment))
-      .map(attachment => getPropsForAttachment(attachment))
-      .filter(isNotNil);
+    return [
+      {
+        ...data,
+        // We want to show the blurhash for stickers, not the spinner
+        pending: false,
+        url: data.path
+          ? window.Signal.Migrations.getAbsoluteAttachmentPath(data.path)
+          : undefined,
+      },
+    ];
   }
-);
 
-export const processBodyRanges = memoize(
-  (
-    { bodyRanges }: Pick<MessageWithUIFieldsType, 'bodyRanges'>,
-    options: { conversationSelector: GetConversationByIdType }
-  ): HydratedBodyRangesType | undefined => {
-    if (!bodyRanges) {
-      return undefined;
-    }
+  return attachments
+    .filter(attachment => !attachment.error || canBeDownloaded(attachment))
+    .map(attachment => getPropsForAttachment(attachment))
+    .filter(isNotNil);
+};
 
-    return bodyRanges
-      .filter(range => range.mentionUuid)
-      .map(range => {
-        const { conversationSelector } = options;
-        const conversation = conversationSelector(range.mentionUuid);
-
-        return {
-          ...range,
-          conversationID: conversation.id,
-          replacementText: conversation.title,
-        };
-      })
-      .sort((a, b) => b.start - a.start);
+export const processBodyRanges = (
+  { bodyRanges }: Pick<MessageWithUIFieldsType, 'bodyRanges'>,
+  options: { conversationSelector: GetConversationByIdType }
+): HydratedBodyRangesType | undefined => {
+  if (!bodyRanges) {
+    return undefined;
   }
-);
+
+  return bodyRanges
+    .filter(range => range.mentionUuid)
+    .map(range => {
+      const { conversationSelector } = options;
+      const conversation = conversationSelector(range.mentionUuid);
+
+      return {
+        ...range,
+        conversationID: conversation.id,
+        replacementText: conversation.title,
+      };
+    })
+    .sort((a, b) => b.start - a.start);
+};
 
 const getAuthorForMessage = (
   message: MessageWithUIFieldsType,
@@ -483,76 +477,74 @@ const getPropsForStoryReplyContext = (
   };
 };
 
-export const getPropsForQuote = memoize(
-  (
-    message: Pick<
-      MessageWithUIFieldsType,
-      'conversationId' | 'quote' | 'payment'
-    >,
-    {
-      conversationSelector,
-      ourConversationId,
-    }: {
-      conversationSelector: GetConversationByIdType;
-      ourConversationId?: string;
-    }
-  ): PropsData['quote'] => {
-    const { quote } = message;
-    if (!quote) {
-      return undefined;
-    }
-
-    const {
-      author,
-      authorUuid,
-      id: sentAt,
-      isViewOnce,
-      isGiftBadge: isTargetGiftBadge,
-      referencedMessageNotFound,
-      fromGroupName,
-      payment,
-      text = '',
-    } = quote;
-
-    const contact = conversationSelector(authorUuid || author);
-
-    const authorId = contact.id;
-    const authorName = contact.name;
-    const authorPhoneNumber = contact.phoneNumber;
-    const authorProfileName = contact.profileName;
-    const authorTitle = contact.title;
-    const isFromMe = authorId === ourConversationId;
-
-    const firstAttachment = quote.attachments && quote.attachments[0];
-    const conversation = getConversation(message, conversationSelector);
-
-    const { conversationColor, customColor } =
-      getConversationColorAttributes(conversation);
-
-    return {
-      authorId,
-      authorName,
-      authorPhoneNumber,
-      authorProfileName,
-      authorTitle,
-      bodyRanges: processBodyRanges(quote, { conversationSelector }),
-      conversationColor,
-      conversationTitle: conversation.title,
-      customColor,
-      isFromMe,
-      fromGroupName,
-      rawAttachment: firstAttachment
-        ? processQuoteAttachment(firstAttachment)
-        : undefined,
-      payment,
-      isGiftBadge: Boolean(isTargetGiftBadge),
-      isViewOnce,
-      referencedMessageNotFound,
-      sentAt: Number(sentAt),
-      text,
-    };
+export const getPropsForQuote = (
+  message: Pick<
+    MessageWithUIFieldsType,
+    'conversationId' | 'quote' | 'payment'
+  >,
+  {
+    conversationSelector,
+    ourConversationId,
+  }: {
+    conversationSelector: GetConversationByIdType;
+    ourConversationId?: string;
   }
-);
+): PropsData['quote'] => {
+  const { quote } = message;
+  if (!quote) {
+    return undefined;
+  }
+
+  const {
+    author,
+    authorUuid,
+    id: sentAt,
+    isViewOnce,
+    isGiftBadge: isTargetGiftBadge,
+    referencedMessageNotFound,
+    fromGroupName,
+    payment,
+    text = '',
+  } = quote;
+
+  const contact = conversationSelector(authorUuid || author);
+
+  const authorId = contact.id;
+  const authorName = contact.name;
+  const authorPhoneNumber = contact.phoneNumber;
+  const authorProfileName = contact.profileName;
+  const authorTitle = contact.title;
+  const isFromMe = authorId === ourConversationId;
+
+  const firstAttachment = quote.attachments && quote.attachments[0];
+  const conversation = getConversation(message, conversationSelector);
+
+  const { conversationColor, customColor } =
+    getConversationColorAttributes(conversation);
+
+  return {
+    authorId,
+    authorName,
+    authorPhoneNumber,
+    authorProfileName,
+    authorTitle,
+    bodyRanges: processBodyRanges(quote, { conversationSelector }),
+    conversationColor,
+    conversationTitle: conversation.title,
+    customColor,
+    isFromMe,
+    fromGroupName,
+    rawAttachment: firstAttachment
+      ? processQuoteAttachment(firstAttachment)
+      : undefined,
+    payment,
+    isGiftBadge: Boolean(isTargetGiftBadge),
+    isViewOnce,
+    referencedMessageNotFound,
+    sentAt: Number(sentAt),
+    text,
+  };
+};
 
 export type GetPropsForMessageOptions = Pick<
   GetPropsForBubbleOptions,
@@ -635,119 +627,116 @@ function getTextDirection(body?: string): TextDirection {
   }
 }
 
-export const getPropsForMessage = memoize(
-  (
-    message: MessageWithUIFieldsType,
-    options: GetPropsForMessageOptions
-  ): Omit<PropsForMessage, 'renderingContext' | 'menu' | 'contextMenu'> => {
-    const attachments = getAttachmentsForMessage(message);
-    const bodyRanges = processBodyRanges(message, options);
-    const author = getAuthorForMessage(message, options);
-    const previews = getPreviewsForMessage(message);
-    const reactions = getReactionsForMessage(message, options);
-    const quote = getPropsForQuote(message, options);
-    const storyReplyContext = getPropsForStoryReplyContext(message, options);
-    const textAttachment = getTextAttachment(message);
-    const payment = getPayment(message);
+export const getPropsForMessage = (
+  message: MessageWithUIFieldsType,
+  options: GetPropsForMessageOptions
+): Omit<PropsForMessage, 'renderingContext' | 'menu' | 'contextMenu'> => {
+  const attachments = getAttachmentsForMessage(message);
+  const bodyRanges = processBodyRanges(message, options);
+  const author = getAuthorForMessage(message, options);
+  const previews = getPreviewsForMessage(message);
+  const reactions = getReactionsForMessage(message, options);
+  const quote = getPropsForQuote(message, options);
+  const storyReplyContext = getPropsForStoryReplyContext(message, options);
+  const textAttachment = getTextAttachment(message);
+  const payment = getPayment(message);
 
-    const {
-      accountSelector,
-      conversationSelector,
+  const {
+    accountSelector,
+    conversationSelector,
+    ourConversationId,
+    ourNumber,
+    ourACI,
+    regionCode,
+    selectedMessageId,
+    selectedMessageCounter,
+    contactNameColorSelector,
+  } = options;
+
+  const { expireTimer, expirationStartTimestamp, conversationId } = message;
+  const expirationLength = expireTimer
+    ? DurationInSeconds.toMillis(expireTimer)
+    : undefined;
+
+  const conversation = getConversation(message, conversationSelector);
+  const isGroup = conversation.type === 'group';
+  const { sticker } = message;
+
+  const isMessageTapToView = isTapToView(message);
+
+  const isSelected = message.id === selectedMessageId;
+
+  const selectedReaction = (
+    (message.reactions || []).find(re => re.fromId === ourConversationId) || {}
+  ).emoji;
+
+  const authorId = getContactId(message, {
+    conversationSelector,
+    ourConversationId,
+    ourNumber,
+    ourACI,
+  });
+  const contactNameColor = contactNameColorSelector(conversationId, authorId);
+
+  const { conversationColor, customColor } =
+    getConversationColorAttributes(conversation);
+
+  return {
+    attachments,
+    author,
+    bodyRanges,
+    previews,
+    quote,
+    reactions,
+    storyReplyContext,
+    textAttachment,
+    payment,
+    canDeleteForEveryone: canDeleteForEveryone(message),
+    canDownload: canDownload(message, conversationSelector),
+    canReact: canReact(message, ourConversationId, conversationSelector),
+    canReply: canReply(message, ourConversationId, conversationSelector),
+    canReplyPrivately: canReplyPrivately(
+      message,
       ourConversationId,
-      ourNumber,
-      ourACI,
-      regionCode,
-      selectedMessageId,
-      selectedMessageCounter,
-      contactNameColorSelector,
-    } = options;
-
-    const { expireTimer, expirationStartTimestamp, conversationId } = message;
-    const expirationLength = expireTimer
-      ? DurationInSeconds.toMillis(expireTimer)
-      : undefined;
-
-    const conversation = getConversation(message, conversationSelector);
-    const isGroup = conversation.type === 'group';
-    const { sticker } = message;
-
-    const isMessageTapToView = isTapToView(message);
-
-    const isSelected = message.id === selectedMessageId;
-
-    const selectedReaction = (
-      (message.reactions || []).find(re => re.fromId === ourConversationId) ||
-      {}
-    ).emoji;
-
-    const authorId = getContactId(message, {
-      conversationSelector,
-      ourConversationId,
-      ourNumber,
-      ourACI,
-    });
-    const contactNameColor = contactNameColorSelector(conversationId, authorId);
-
-    const { conversationColor, customColor } =
-      getConversationColorAttributes(conversation);
-
-    return {
-      attachments,
-      author,
-      bodyRanges,
-      previews,
-      quote,
-      reactions,
-      storyReplyContext,
-      textAttachment,
-      payment,
-      canDeleteForEveryone: canDeleteForEveryone(message),
-      canDownload: canDownload(message, conversationSelector),
-      canReact: canReact(message, ourConversationId, conversationSelector),
-      canReply: canReply(message, ourConversationId, conversationSelector),
-      canReplyPrivately: canReplyPrivately(
-        message,
-        ourConversationId,
-        conversationSelector
-      ),
-      canRetry: hasErrors(message),
-      canRetryDeleteForEveryone: canRetryDeleteForEveryone(message),
-      contact: getPropsForEmbeddedContact(message, regionCode, accountSelector),
-      contactNameColor,
-      conversationColor,
-      conversationId,
-      conversationTitle: conversation.title,
-      conversationType: isGroup ? 'group' : 'direct',
-      customColor,
-      deletedForEveryone: message.deletedForEveryone || false,
-      direction: isIncoming(message) ? 'incoming' : 'outgoing',
-      displayLimit: message.displayLimit,
-      expirationLength,
-      expirationTimestamp: calculateExpirationTimestamp({
-        expireTimer,
-        expirationStartTimestamp,
-      }),
-      giftBadge: message.giftBadge,
-      id: message.id,
-      isBlocked: conversation.isBlocked || false,
-      isMessageRequestAccepted: conversation?.acceptedMessageRequest ?? true,
-      isSelected,
-      isSelectedCounter: isSelected ? selectedMessageCounter : undefined,
-      isSticker: Boolean(sticker),
-      isTapToView: isMessageTapToView,
-      isTapToViewError:
-        isMessageTapToView && isIncoming(message) && message.isTapToViewInvalid,
-      isTapToViewExpired: isMessageTapToView && message.isErased,
-      readStatus: message.readStatus ?? ReadStatus.Read,
-      selectedReaction,
-      lastSeenHere: message.lastSeenHere,
-      status: getMessagePropStatus(message, ourConversationId),
-      text: message.body,
-      textDirection: getTextDirection(message.body),
-      timestamp: message.sent_at,
-    };
-  }
-);
+      conversationSelector
+    ),
+    canRetry: hasErrors(message),
+    canRetryDeleteForEveryone: canRetryDeleteForEveryone(message),
+    contact: getPropsForEmbeddedContact(message, regionCode, accountSelector),
+    contactNameColor,
+    conversationColor,
+    conversationId,
+    conversationTitle: conversation.title,
+    conversationType: isGroup ? 'group' : 'direct',
+    customColor,
+    deletedForEveryone: message.deletedForEveryone || false,
+    direction: isIncoming(message) ? 'incoming' : 'outgoing',
+    displayLimit: message.displayLimit,
+    expirationLength,
+    expirationTimestamp: calculateExpirationTimestamp({
+      expireTimer,
+      expirationStartTimestamp,
+    }),
+    giftBadge: message.giftBadge,
+    id: message.id,
+    isBlocked: conversation.isBlocked || false,
+    isMessageRequestAccepted: conversation?.acceptedMessageRequest ?? true,
+    isSelected,
+    isSelectedCounter: isSelected ? selectedMessageCounter : undefined,
+    isSticker: Boolean(sticker),
+    isTapToView: isMessageTapToView,
+    isTapToViewError:
+      isMessageTapToView && isIncoming(message) && message.isTapToViewInvalid,
+    isTapToViewExpired: isMessageTapToView && message.isErased,
+    readStatus: message.readStatus ?? ReadStatus.Read,
+    selectedReaction,
+    lastSeenHere: message.lastSeenHere,
+    status: getMessagePropStatus(message, ourConversationId),
+    text: message.body,
+    textDirection: getTextDirection(message.body),
+    timestamp: message.sent_at,
+  };
+};
 
 // This is getPropsForMessage but wrapped in reselect's createSelector so that
 // we can derive all of the selector dependencies that getPropsForMessage
@@ -900,13 +889,6 @@ export function getPropsForBubble(
     return {
       type: 'conversationMerge',
       data: getPropsForConversationMerge(message, options),
-      timestamp,
-    };
-  }
-  if (isPhoneNumberDiscovery(message)) {
-    return {
-      type: 'phoneNumberDiscovery',
-      data: getPhoneNumberDiscovery(message, options),
       timestamp,
     };
   }
@@ -1083,7 +1065,7 @@ function getPropsForTimerNotification(
   const { expireTimer, fromSync, source, sourceUuid } = timerUpdate;
   const disabled = !expireTimer;
   const sourceId = sourceUuid || source;
-  const formattedContact = conversationSelector(sourceId);
+  const { id: formattedContactId, title } = conversationSelector(sourceId);
 
   // Pacify typescript
   type MaybeExpireTimerType =
@@ -1103,7 +1085,7 @@ function getPropsForTimerNotification(
       };
 
   const basicProps = {
-    ...formattedContact,
+    title,
     ...maybeExpireTimer,
     type: 'fromOther' as const,
   };
@@ -1114,7 +1096,7 @@ function getPropsForTimerNotification(
       type: 'fromSync' as const,
     };
   }
-  if (formattedContact.id === ourConversationId) {
+  if (formattedContactId === ourConversationId) {
     return {
       ...basicProps,
       type: 'fromMe' as const,
@@ -1430,36 +1412,15 @@ export function getPropsForConversationMerge(
   const conversation = getConversation(message, conversationSelector);
   const conversationTitle = conversation.title;
 
-  const { type, e164 } = conversationMerge.renderInfo;
-  const obsoleteConversationTitle = e164 ? getTitle({ type, e164 }) : undefined;
+  const { renderInfo } = conversationMerge;
+  const obsoleteConversationTitle = getTitleNoDefault(renderInfo);
+  const obsoleteConversationNumber = getNumber(renderInfo);
 
   return {
     conversationTitle,
     obsoleteConversationTitle,
+    obsoleteConversationNumber,
   };
-}
-export function isPhoneNumberDiscovery(
-  message: MessageWithUIFieldsType
-): boolean {
-  return message.type === 'phone-number-discovery';
-}
-export function getPhoneNumberDiscovery(
-  message: MessageWithUIFieldsType,
-  { conversationSelector }: GetPropsForBubbleOptions
-): PhoneNumberDiscoveryPropsType {
-  const { phoneNumberDiscovery } = message;
-  if (!phoneNumberDiscovery) {
-    throw new Error(
-      'getPhoneNumberDiscovery: message is missing phoneNumberDiscovery!'
-    );
-  }
-
-  const conversation = getConversation(message, conversationSelector);
-  const conversationTitle = conversation.title;
-  const sharedGroup = conversation.sharedGroupNames[0];
-  const phoneNumber = renderNumber(phoneNumberDiscovery.e164);
-
-  return { conversationTitle, sharedGroup, phoneNumber };
 }
 
 // Delivery Issue

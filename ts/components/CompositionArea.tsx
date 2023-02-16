@@ -9,8 +9,8 @@ import type {
   LocalizerType,
   ThemeType,
 } from '../types/Util';
-import type { ErrorDialogAudioRecorderType } from '../state/ducks/audioRecorder';
-import { RecordingState } from '../state/ducks/audioRecorder';
+import type { ErrorDialogAudioRecorderType } from '../types/AudioRecorder';
+import { RecordingState } from '../types/AudioRecorder';
 import type { imageToBlurHash } from '../util/imageToBlurHash';
 import { Spinner } from './Spinner';
 import type {
@@ -52,7 +52,6 @@ import { MandatoryProfileSharingActions } from './conversation/MandatoryProfileS
 import { MediaQualitySelector } from './MediaQualitySelector';
 import type { Props as QuoteProps } from './conversation/Quote';
 import { Quote } from './conversation/Quote';
-import { StagedLinkPreview } from './conversation/StagedLinkPreview';
 import { countStickers } from './stickers/lib';
 import {
   useAttachFileShortcut,
@@ -63,6 +62,7 @@ import { isImageTypeSupported } from '../util/GoogleChrome';
 import * as KeyboardLayout from '../services/keyboardLayout';
 import { usePrevious } from '../hooks/usePrevious';
 import { PanelType } from '../types/Panels';
+import { useEscapeHandling } from '../hooks/useEscapeHandling';
 
 export type OwnProps = Readonly<{
   acceptedMessageRequest?: boolean;
@@ -369,7 +369,7 @@ export function CompositionArea({
   const previousConversationId = usePrevious(conversationId, conversationId);
   useEffect(() => {
     if (!draftText) {
-      inputApiRef.current?.setText('');
+      inputApiRef.current?.setContents('');
       return;
     }
 
@@ -377,8 +377,8 @@ export function CompositionArea({
       return;
     }
 
-    inputApiRef.current?.setText(draftText, true);
-  }, [conversationId, draftText, previousConversationId]);
+    inputApiRef.current?.setContents(draftText, draftBodyRanges, true);
+  }, [conversationId, draftBodyRanges, draftText, previousConversationId]);
 
   const handleToggleLarge = useCallback(() => {
     setLarge(l => !l);
@@ -516,6 +516,14 @@ export function CompositionArea({
       document.removeEventListener('keydown', handler);
     };
   }, [setLarge]);
+
+  const clearQuote = useCallback(() => {
+    if (quotedMessageId) {
+      setQuoteByMessageId(conversationId, undefined);
+    }
+  }, [conversationId, quotedMessageId, setQuoteByMessageId]);
+
+  useEscapeHandling(clearQuote);
 
   if (isSignalConversation) {
     // TODO DESKTOP-4547
@@ -682,15 +690,6 @@ export function CompositionArea({
             />
           </div>
         )}
-        {linkPreviewLoading && linkPreviewResult && (
-          <div className="preview-wrapper">
-            <StagedLinkPreview
-              {...linkPreviewResult}
-              i18n={i18n}
-              onClose={() => onCloseLinkPreview(conversationId)}
-            />
-          </div>
-        )}
         {draftAttachments.length ? (
           <div className="CompositionArea__attachment-list">
             <AttachmentList
@@ -723,8 +722,8 @@ export function CompositionArea({
           )}
         >
           <CompositionInput
-            conversationId={conversationId}
             clearQuotedMessage={clearQuotedMessage}
+            conversationId={conversationId}
             disabled={isDisabled}
             draftBodyRanges={draftBodyRanges}
             draftText={draftText}
@@ -733,6 +732,9 @@ export function CompositionArea({
             i18n={i18n}
             inputApi={inputApiRef}
             large={large}
+            linkPreviewLoading={linkPreviewLoading}
+            linkPreviewResult={linkPreviewResult}
+            onCloseLinkPreview={onCloseLinkPreview}
             onDirtyChange={setDirty}
             onEditorStateChange={onEditorStateChange}
             onPickEmoji={onPickEmoji}
