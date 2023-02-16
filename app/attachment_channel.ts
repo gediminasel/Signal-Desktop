@@ -88,7 +88,7 @@ async function cleanupOrphanedAttachments({
     let missing = 0;
     for (const known of attachments) {
       if (
-        !orphanedAttachments.delete(known) ||
+        !orphanedAttachments.delete(known) &&
         !orphanedAttachments.delete(
           known
             .replaceAll('/', sep)
@@ -140,7 +140,7 @@ function deleteOrphanedAttachments({
 
         for (const known of attachments) {
           if (
-            !orphanedAttachments.delete(known) ||
+            !orphanedAttachments.delete(known) &&
             !orphanedAttachments.delete(
               known
                 .replaceAll('/', sep)
