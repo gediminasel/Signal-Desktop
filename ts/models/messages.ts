@@ -229,14 +229,12 @@ async function shouldReplyNotifyUser(
   // If the story is from a different user, only notify if the user has
   // replied or reacted to the story
 
-  const replies = await dataInterface.getOlderMessagesByConversation(
-    conversation.id,
-    {
-      limit: 9000,
-      storyId,
-      includeStoryReplies: true,
-    }
-  );
+  const replies = await dataInterface.getOlderMessagesByConversation({
+    conversationId: conversation.id,
+    limit: 9000,
+    storyId,
+    includeStoryReplies: true,
+  });
 
   const prevCurrentUserReply = replies.find(replyMessage => {
     return replyMessage.type === 'outgoing';
@@ -460,7 +458,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
     const attachments = getAttachmentsForMessage({ ...message });
     let attachment: AttachmentType | undefined = attachments?.[0];
-    if (attachment && !attachment.url) {
+    if (attachment && !attachment.url && !attachment.textAttachment) {
       attachment = undefined;
     }
 

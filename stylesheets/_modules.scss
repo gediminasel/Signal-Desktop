@@ -3523,7 +3523,7 @@ button.module-image__border-overlay:focus {
   }
 }
 
-.module-spinner__circle--on-captcha {
+.module-spinner__circle--on-primary-button {
   background-color: $color-white-alpha-40;
 }
 
@@ -3541,7 +3541,7 @@ button.module-image__border-overlay:focus {
 .module-spinner__arc--on-avatar {
   background-color: $color-white;
 }
-.module-spinner__arc--on-captcha {
+.module-spinner__arc--on-primary-button {
   background-color: $color-white;
 }
 
@@ -3972,6 +3972,28 @@ button.module-image__border-overlay:focus {
     border-radius: 5px;
     transform: translate(0, 0);
     transition: transform 200ms linear, width 200ms linear, height 200ms linear;
+
+    &:after {
+      content: '';
+      position: absolute;
+      z-index: $z-index-above-above-base;
+      width: 100%;
+      height: 100%;
+      border: 0 solid transparent;
+      border-radius: 5px;
+      transition-property: border-width, border-color;
+      // Turn on the transition when the user stops speaking to fade out.
+      transition-duration: 300ms;
+      transition-delay: 1000ms;
+      transition-timing-function: ease-in-out;
+    }
+    &--speaking:after {
+      border-width: 3px;
+      border-color: $color-white;
+      // Turn off the transition when the user starts speaking to appear instantly
+      transition-duration: 0ms;
+      transition-delay: 0ms;
+    }
 
     &__remote-video {
       // The background-color is seen while the video loads.
@@ -4980,11 +5002,6 @@ button.module-image__border-overlay:focus {
           min-width: 20px;
         }
       }
-
-      &__spinner__container {
-        margin-left: 16px;
-        margin-right: 16px;
-      }
     }
 
     &--header {
@@ -5419,6 +5436,10 @@ button.module-image__border-overlay:focus {
   }
 }
 
+.module-sticker-picker__recents--title {
+  color: $color-gray-05;
+}
+
 .module-sticker-picker__header__button {
   width: 28px;
   height: 28px;
@@ -5602,15 +5623,18 @@ button.module-image__border-overlay:focus {
 .module-sticker-picker__body {
   position: relative;
 
+  &__grid {
+    display: grid;
+    grid-gap: 8px;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 68px;
+  }
+
   &__content {
     width: 332px;
     height: 356px;
     padding: 8px 13px 16px 13px;
     overflow-y: auto;
-    display: grid;
-    grid-gap: 8px;
-    grid-template-columns: repeat(4, 1fr);
-    grid-auto-rows: 68px;
 
     &--under-text {
       height: 320px;
@@ -5705,6 +5729,45 @@ button.module-image__border-overlay:focus {
       top: 0;
     }
   }
+}
+
+.module-sticker-picker__time--digital {
+  @include time-fonts;
+  color: $color-white;
+  font-size: 28px;
+  line-height: 0px;
+}
+
+.module-sticker-picker__time--analog {
+  background: url(../images/analog-time/Arabic.svg) center no-repeat;
+  background-size: contain;
+  height: 64px;
+  position: relative;
+  width: 64px;
+}
+
+.module-sticker-picker__time--analog__hour {
+  background: url(../images/analog-time/Arabic-hour.svg) center no-repeat;
+  height: 14px;
+  left: 50%;
+  margin-left: -1px;
+  margin-top: -14px;
+  position: absolute;
+  top: 50%;
+  transform-origin: 50% 100%;
+  width: 2px;
+}
+
+.module-sticker-picker__time--analog__minute {
+  background: url(../images/analog-time/Arabic-minute.svg) center no-repeat;
+  height: 22px;
+  left: 50%;
+  margin-left: -1px;
+  margin-top: -22px;
+  position: absolute;
+  top: 50%;
+  transform-origin: 50% 100%;
+  width: 2px;
 }
 
 // Module: Sticker button (launches the sticker picker)

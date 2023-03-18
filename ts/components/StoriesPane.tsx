@@ -59,11 +59,13 @@ export type PropsType = {
   getPreferredBadge: PreferredBadgeSelectorType;
   hiddenStories: Array<ConversationStoryType>;
   i18n: LocalizerType;
+  maxAttachmentSizeInKb: number;
   me: ConversationType;
   myStories: Array<MyStoryType>;
   onAddStory: (file?: File) => unknown;
   onMyStoriesClicked: () => unknown;
   onStoriesSettings: () => unknown;
+  onMediaPlaybackStart: () => void;
   queueStoryDownload: (storyId: string) => unknown;
   showConversation: ShowConversationType;
   showToast: ShowToastActionCreatorType;
@@ -77,11 +79,13 @@ export function StoriesPane({
   getPreferredBadge,
   hiddenStories,
   i18n,
+  maxAttachmentSizeInKb,
   me,
   myStories,
   onAddStory,
   onMyStoriesClicked,
   onStoriesSettings,
+  onMediaPlaybackStart,
   queueStoryDownload,
   showConversation,
   showToast,
@@ -121,6 +125,7 @@ export function StoriesPane({
         </div>
         <StoriesAddStoryButton
           i18n={i18n}
+          maxAttachmentSizeInKb={maxAttachmentSizeInKb}
           moduleClassName="Stories__pane__add-story"
           onAddStory={onAddStory}
           showToast={showToast}
@@ -153,12 +158,14 @@ export function StoriesPane({
       <div className="Stories__pane__list">
         <MyStoryButton
           i18n={i18n}
+          maxAttachmentSizeInKb={maxAttachmentSizeInKb}
           me={me}
           myStories={myStories}
           onAddStory={onAddStory}
           onClick={onMyStoriesClicked}
           queueStoryDownload={queueStoryDownload}
           showToast={showToast}
+          onMediaPlaybackStart={onMediaPlaybackStart}
         />
         {renderedStories.map(story => (
           <StoryListItem
@@ -174,6 +181,7 @@ export function StoriesPane({
               toggleStoriesView();
             }}
             onHideStory={toggleHideStories}
+            onMediaPlaybackStart={onMediaPlaybackStart}
             queueStoryDownload={queueStoryDownload}
             story={story.storyView}
             viewUserStories={viewUserStories}
@@ -204,6 +212,7 @@ export function StoriesPane({
                     toggleStoriesView();
                   }}
                   onHideStory={toggleHideStories}
+                  onMediaPlaybackStart={onMediaPlaybackStart}
                   queueStoryDownload={queueStoryDownload}
                   story={story.storyView}
                   viewUserStories={viewUserStories}

@@ -3,6 +3,8 @@
 
 /* eslint-disable max-classes-per-file */
 
+import type { LibSignalErrorBase } from '@signalapp/libsignal-client';
+
 import { parseRetryAfter } from '../util/parseRetryAfter';
 
 import type { CallbackResultType } from './Types.d';
@@ -33,9 +35,10 @@ export class HTTPError extends Error {
       headers: HTTPErrorHeadersType;
       response?: unknown;
       stack?: string;
+      cause?: unknown;
     }
   ) {
-    super(`${message}; code: ${options.code}`);
+    super(`${message}; code: ${options.code}`, { cause: options.cause });
 
     const { code: providedCode, headers, response, stack } = options;
 
@@ -75,12 +78,13 @@ export class OutgoingIdentityKeyError extends ReplayableError {
   public readonly identifier: string;
 
   // Note: Data to resend message is no longer captured
-  constructor(incomingIdentifier: string) {
+  constructor(incomingIdentifier: string, cause?: LibSignalErrorBase) {
     const identifier = incomingIdentifier.split('.')[0];
 
     super({
       name: 'OutgoingIdentityKeyError',
       message: `The identity of ${identifier} has changed.`,
+      cause,
     });
 
     this.identifier = identifier;
@@ -308,3 +312,5 @@ export class UnknownRecipientError extends Error {}
 export class IncorrectSenderKeyAuthError extends Error {}
 
 export class WarnOnlyError extends Error {}
+
+export class NoSenderKeyError extends Error {}

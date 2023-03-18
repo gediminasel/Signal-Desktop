@@ -52,6 +52,14 @@
     "message": "Lägger till $contact$ …",
     "description": "Shown in toast while a user is being added to a group"
   },
+  "icu:RecordingComposer__cancel": {
+    "messageformat": "Avbryt",
+    "description": "Label of cancel button on voice note recording UI"
+  },
+  "icu:RecordingComposer__send": {
+    "messageformat": "Skicka",
+    "description": "Label of send button on voice note recording UI"
+  },
   "GroupListItem__message-default": {
     "message": "$count$ medlemmar",
     "description": "Shown below the group name when selecting a group to invite a contact to"
@@ -1446,7 +1454,7 @@
     "description": "Button label in the call lobby for returning to a call"
   },
   "calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
-    "message": "Mikrofonen är tystad på grund av samtalets storlek",
+    "message": "Mikrofonen är av på grund av samtalets storlek",
     "description": "Shown in a call lobby toast if there are a lot of people already on the call"
   },
   "calling__call-is-full": {
@@ -1470,7 +1478,7 @@
     "description": "Button tooltip label for turning on the camera"
   },
   "calling__button--audio__label": {
-    "message": "Tysta",
+    "message": "Ljud av",
     "description": "Label under the audio button"
   },
   "calling__button--audio-disabled": {
@@ -1881,26 +1889,34 @@
   },
   "timestampFormat_M": {
     "message": "D MMM",
-    "description": "Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+  },
+  "timestampFormat__long--today": {
+    "message": "Idag $time$",
+    "description": "Timestamp format string for displaying \"Today\" and the time"
+  },
+  "timestampFormat__long--yesterday": {
+    "message": "Igår $time$",
+    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "timestampFormat__long__today": {
     "message": "[Idag] LT",
-    "description": "Timestamp format string for displaying \"Today\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Today\" and the time"
   },
   "timestampFormat__long__yesterday": {
     "message": "[Igår] LT",
-    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "messageBodyTooLong": {
     "message": "Meddelandekroppen är för lång.",
     "description": "Shown if the user tries to send more than 64kb of text"
   },
   "unblockToSend": {
-    "message": "Sluta blockera den här kontakten för att skicka meddelanden.",
+    "message": "Avblockera den här kontakten för att skicka meddelanden.",
     "description": "Brief message shown when trying to message a blocked number"
   },
   "unblockGroupToSend": {
-    "message": "Sluta blockera den här gruppen för att skicka meddelanden.",
+    "message": "Avblockera den här gruppen för att skicka meddelanden.",
     "description": "Brief message shown when trying to message a blocked group"
   },
   "youChangedTheTimer": {
@@ -2181,7 +2197,7 @@
     "message": "Länka igen"
   },
   "autoUpdateNewVersionTitle": {
-    "message": "Uppdatering tillgänglig"
+    "message": "Update Available"
   },
   "autoUpdateRetry": {
     "message": "Försök att uppdatera igen"
@@ -2580,6 +2596,18 @@
     "message": "Nyligen använda klistermärken visas här.",
     "description": "Shown in the sticker picker when there are no recent stickers to show."
   },
+  "icu:stickers__StickerPicker__recent": {
+    "messageformat": "Senaste",
+    "description": "Title for all of the recent stickers"
+  },
+  "icu:stickers__StickerPicker__featured": {
+    "messageformat": "Utvalda",
+    "description": "Title for featured stickers"
+  },
+  "icu:stickers__StickerPicker__analog-time": {
+    "messageformat": "Analog tid",
+    "description": "aria-label for the analog time sticker"
+  },
   "stickers--StickerPreview--Title": {
     "message": "Klistermärkepaket",
     "description": "The title that appears in the sticker pack preview modal."
@@ -2777,7 +2805,7 @@
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--toggle-reaction-picker": {
-    "message": "Växla emojireaktionsväljare för valt meddelande",
+    "message": "Växla emoji-reaktionsväljare för valt meddelande",
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--save-attachment": {
@@ -2947,6 +2975,18 @@
   "conversationMarkedUnread": {
     "message": "Konversation markerad som oläst",
     "description": "A toast that shows up when user marks a conversation as unread"
+  },
+  "icu:AuthArtCreator--dialog--message": {
+    "messageformat": "Vill du öppna Skapare för Signal-klistermärkespaket?",
+    "description": "A body of the dialog that is presented when user tries to open Signal Sticker Pack Creator from a link"
+  },
+  "icu:AuthArtCreator--dialog--confirm": {
+    "messageformat": "Bekräfta",
+    "description": "A buttle title for confirming Signal Sticker Pack Creator dialog"
+  },
+  "icu:AuthArtCreator--dialog--dismiss": {
+    "messageformat": "Avfärda",
+    "description": "A buttle title for dismissing Signal Sticker Pack Creator dialog"
   },
   "StickerCreator--title": {
     "message": "Skapare av klistermärkepaket",
@@ -3148,6 +3188,10 @@
     "message": "Ställ in Signal på din telefon och ditt skrivbord för att använda skaparen av klistermärkepaket",
     "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
   },
+  "icu:ArtCreator--Authentication--error": {
+    "messageformat": "Ställ in Signal på din telefon och ditt skrivbord för att använda skaparen av klistermärkespaket",
+    "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
+  },
   "Reactions--remove": {
     "message": "Ta bort reaktionen",
     "describe": "Shown when you want to remove a reaction you've made"
@@ -3169,7 +3213,7 @@
     "description": "Shown as the message for a message request in a direct message"
   },
   "MessageRequests--message-direct-blocked": {
-    "message": "Tillåt att $name$ meddelar dig och dela ditt namn och foto med dem? Du får inte några meddelanden förrän du har slutat blockera personen.",
+    "message": "Tillåt att $name$ skickar meddelanden till dig och dela ditt namn och foto med dem? Du får inte några meddelanden förrän du har slutat blockera personen.",
     "description": "Shown as the message for a message request in a direct message with a blocked account"
   },
   "MessageRequests--message-group": {
@@ -3177,7 +3221,7 @@
     "description": "Shown as the message for a message request in a group"
   },
   "MessageRequests--message-group-blocked": {
-    "message": "Ta bort blockeringen av den här gruppen och dela ditt namn och foto med dess medlemmar? Du får inte några meddelanden förrän du har avblockerat gruppen.",
+    "message": "Avblockera den här gruppen och dela ditt namn och foto med dess medlemmar? Du får inte några meddelanden förrän du har avblockerat gruppen.",
     "description": "Shown as the message for a message request in a blocked group"
   },
   "MessageRequests--block": {
@@ -3185,11 +3229,11 @@
     "description": "Shown as a button to let the user block a message request"
   },
   "MessageRequests--unblock": {
-    "message": "Sluta blockera",
+    "message": "Avblockera",
     "description": "Shown as a button to let the user unblock a message request"
   },
   "MessageRequests--unblock-direct-confirm-title": {
-    "message": "Sluta blockera $name$?",
+    "message": "Avblockera $name$?",
     "description": "Shown as a button to let the user unblock a message request"
   },
   "MessageRequests--unblock-direct-confirm-body": {
@@ -3553,7 +3597,7 @@
     "description": "Label for muting the conversation"
   },
   "unmute": {
-    "message": "Av-tysta",
+    "message": "Avtysta",
     "description": "Label for unmuting the conversation"
   },
   "muteExpirationLabelAlways": {
@@ -4513,11 +4557,11 @@
     "description": "This is the modal button to confirm leaving a group"
   },
   "ConversationDetailsActions--unblock-group-modal-title": {
-    "message": "Avblockera \"$groupName$\"-gruppen?",
+    "message": "Avblockera gruppen \"$groupName$\"?",
     "description": "This is the modal title for confirming unblock of a group"
   },
   "ConversationDetailsActions--block-group-modal-title": {
-    "message": "Blockera och lämna \"$groupName$\"-gruppen?",
+    "message": "Blockera och lämna gruppen \"$groupName$\"?",
     "description": "This is the modal title for confirming blocking a group"
   },
   "ConversationDetailsActions--block-group-modal-content": {
@@ -4854,11 +4898,11 @@
   },
   "TimelineDateHeader--date-in-last-6-months": {
     "message": "ddd, MMM D",
-    "description": "Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "TimelineDateHeader--date-older-than-6-months": {
     "message": "D MMM YYYY",
-    "description": "Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "MessageRequestWarning__learn-more": {
     "message": "Läs mer",
@@ -5225,7 +5269,7 @@
     "description": "Shown if something unknown has gone wrong with username save."
   },
   "icu:ProfileEditor--username--reservation-gone": {
-    "messageformat": "{username} is no longer available. A new set of digits will be paired with your username, please try saving it again.",
+    "messageformat": "{username} är inte längre tillgängligt. En ny uppsättning siffror kommer paras ihop med ditt användarnamn, försök spara det igen.",
     "description": "Shown if username reservation has expired and new one needs to be generated."
   },
   "ProfileEditor--username--delete-general-error": {
@@ -5430,23 +5474,75 @@
   },
   "Preferences__who-can--title": {
     "message": "Vem kan …",
-    "description": "Title for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Title for the 'who can do X' setting"
   },
   "Preferences__privacy--description": {
     "message": "För att ändra dessa inställningar, öppna appen Signal på din mobila enhet och navigera till Inställningar > Integritet",
-    "description": "Description for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Description for the 'who can do X' setting"
   },
   "Preferences__who-can--everybody": {
     "message": "Alla",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--contacts": {
     "message": "Mina kontakter",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--nobody": {
     "message": "Ingen",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
+  },
+  "icu:Preferences__pnp__row--title": {
+    "messageformat": "Telefonnummer",
+    "description": "Title of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__row--body": {
+    "messageformat": "Välj vem som kan se ditt telefonnummer och vem som kan använda det för att kontakta dig på Signal.",
+    "description": "Body of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__sharing--title": {
+    "messageformat": "Vem kan se mitt nummer",
+    "description": "Title for the phone number sharing setting row"
+  },
+  "icu:Preferences__pnp__sharing--description--everyone": {
+    "messageformat": "Ditt telefonnummer kommer att vara synligt för personer och grupper som du skickar meddelanden till. Personer som har ditt nummer i sina telefonkontakter ser det också på Signal.",
+    "description": "Description for the phone number sharing setting row when the value is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody": {
+    "messageformat": "Ingen kommer att se ditt telefonnummer på Signal.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody"
+  },
+  "icu:Preferences__pnp--page-title": {
+    "messageformat": "Telefonnummer",
+    "description": "Title of the page in Phone Number Privacy settings"
+  },
+  "icu:Preferences__pnp__sharing__everyone": {
+    "messageformat": "Alla",
+    "description": "Option for sharing phone number with everyone"
+  },
+  "icu:Preferences__pnp__sharing__nobody": {
+    "messageformat": "Ingen",
+    "description": "Option for sharing phone number with nobody"
+  },
+  "icu:Preferences__pnp__discoverability--title": {
+    "messageformat": "Vem kan hitta mig med nummer",
+    "description": "Title for the phone number discoverability setting row"
+  },
+  "icu:Preferences__pnp__discoverability--description--everyone": {
+    "messageformat": "Alla som har ditt telefonnummer bland sina kontakter ser dig som en kontakt på Signal. Andra kommer att kunna nå dig med ditt telefonnummer när de startar en ny chatt eller grupp.",
+    "description": "Description for the phone number discoverability setting row wth the value is everyone"
+  },
+  "icu:Preferences__pnp__discoverability--description--nobody": {
+    "messageformat": "Ingen på Signal kommer kunna nå dig med ditt telefonnummer.",
+    "description": "Description for the phone number discoverability setting row wth the value is nobody"
+  },
+  "icu:Preferences__pnp__discoverability__everyone": {
+    "messageformat": "Alla",
+    "description": "Option for letting everyone discover you by phone number"
+  },
+  "icu:Preferences__pnp__discoverability__nobody": {
+    "messageformat": "Ingen",
+    "description": "Option for letting nobody discover you by phone number"
   },
   "Preferences--messaging": {
     "message": "Meddelanden",
@@ -5504,6 +5600,14 @@
     "message": "Uppdatering till version $version$ tillgänglig",
     "description": "Tooltip for new update available"
   },
+  "icu:DialogUpdate__downloading": {
+    "messageformat": "Downloading Update...",
+    "description": "The title of update dialog when update download is in progress."
+  },
+  "icu:DialogUpdate__downloaded": {
+    "messageformat": "Update Downloaded",
+    "description": "The title of update dialog when update download is completed."
+  },
   "NSIS__retry-dialog--first-line": {
     "message": "Signal går inte att stängas.",
     "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
@@ -5551,6 +5655,10 @@
   "CustomizingPreferredReactions__had-save-error": {
     "message": "Det uppstod ett fel när du sparade dina inställningar. Försök igen.",
     "description": "Shown if there is an error when saving your preferred reaction settings. Should be very rare to see this message."
+  },
+  "icu:MediaEditor__clock-more-styles": {
+    "messageformat": "Fler stilar",
+    "description": "Action button for switching up the clock styles"
   },
   "MediaEditor__control--draw": {
     "message": "Dra",
@@ -6121,7 +6229,7 @@
     "description": "Aria label for muting stories"
   },
   "StoryViewer__unmute": {
-    "message": "Av-tysta",
+    "message": "Avtysta",
     "description": "Aria label for unmuting stories"
   },
   "StoryViewer__views-off": {
@@ -6246,11 +6354,19 @@
   },
   "StoryCreator__error--video-too-long": {
     "message": "Det gick inte att publicera videon till storyn eftersom den är för lång",
-    "description": "Error string for when a video post to story fails"
+    "description": "(deleted 02/22/2023) Error string for when a video post to story fails"
   },
   "StoryCreator__error--video-unsupported": {
     "message": "Det gick inte att publicera videon till storyn eftersom den är i ett filformat som inte stöds.",
     "description": "Error string for when a video post to story fails"
+  },
+  "icu:StoryCreator__error--video-too-long": {
+    "messageformat": "{maxDurationInSec, plural, one {Det går inte att lägga upp video till story eftersom den är längre än 1 sekund.} other {Det går inte att lägga upp video till story eftersom den är längre än {maxDurationInSec,number} sekunder.}}",
+    "description": "Error string for when a video post to story fails because video's duration is too long"
+  },
+  "icu:StoryCreator__error--video-too-big": {
+    "messageformat": "Det går inte att lägga upp video till story eftersom den är större än {limit}{units}.",
+    "description": "Error string for when a video post to story fails because video's file size is too big"
   },
   "StoryCreator__error--video-error": {
     "message": "Det gick inte att ladda upp video",
@@ -6341,7 +6457,7 @@
     "description": "Title for replies to stories"
   },
   "Quote__story-reaction": {
-    "message": "Reagera på en story från $name$",
+    "message": "Reagerade på en story från $name$",
     "description": "Label for when a person reacts to a story"
   },
   "Quote__story-reaction--single": {
@@ -6389,27 +6505,27 @@
     "description": "Body of the popup with information about discriminator in username"
   },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "Set up your Signal username",
+    "messageformat": "Ställ in ditt Signal-användarnamn",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "Usernames are paired with a set of digits and aren’t shared on your profile",
+    "messageformat": "Användarnamn paras ihop med en uppsättning siffror och delas inte i din profil",
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Each username has a unique link you can share with your friends to start a chat with you",
+    "messageformat": "Varje användarnamn har en unik länk som du kan dela med dina vänner för att starta en chatt med dig",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "Turn off phone number discovery under Settings > Phone Number > Who can find my number, to use your username as the primary way others can contact you.",
+    "messageformat": "För att använda ditt användarnamn som det primära sättet andra kan kontakta dig på kan du stänga av upptäckt av telefonnummer under Inställningar > Telefonnummer > Vem kan hitta mitt nummer.",
     "description": "Content of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__learn-more": {
-    "messageformat": "Learn More",
+    "messageformat": "Läs mer",
     "description": "Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Continue",
+    "messageformat": "Fortsätt",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -6456,40 +6572,24 @@
     "message": "Små justeringer, buggfixar och prestandaförbättringar. Tack för att du använder Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "WhatsNew__v5.63--0": {
-    "message": "Vi jobbar hårt med buggfixar och att göra andra prestandaförbättringar för att appen ska fortsätta fungera bra för dig.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--0": {
+    "messageformat": "Klicka på valfri bild eller video och använd de nya knapparna Framåt och Bakåt i medievisaren för att ta en visuell vandring ner för minnenas allé.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v5.63--beta.2": {
-    "message": "Börja använda och testa vår nya berättelsefunktion. Du kan använda funktionen med andra beta-testare och låta oss veta hur den fungerar.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--1": {
+    "messageformat": "Röstmeddelanden sparas nu som utkast om du byter till en annan chatt medan en inspelning pågår.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.0": {
-    "message": "Nu finns Stories i Signal! Dela försvinnande text-, bild- och videouppdateringar med utvalda vänner eller grupper som automatiskt försvinner efter 24 timmar. För alla som älskar att dela stories, här är ett sätt att göra det privat och utan annonser. Om du inte vill se eller dela stories så kan du välja bort detta i dina Inställningar > Sekretess.",
-    "description": "Release notes for v6.0"
+  "icu:WhatsNew__v6.10--2": {
+    "messageformat": "Att skicka ett klistermärke rensar inte längre texten i utkast. Tack {lamemakes}!",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.1--1": {
-    "message": "När du startar ett gruppsamtal för små grupper (upp till 16 personer) kan du välja att skicka en ringsignal som avisering. Gruppmedlemmar kommer att höra en ringsignal om de använder iOS beta, Android eller skrivbordsversionen.",
-    "description": "Release notes for v6.1"
+  "icu:WhatsNew__v6.10--3": {
+    "messageformat": "Vi vill också tacka {norstbox} för att du fixade justeringen av ikoner i konversationssökningsfältet.",
+    "description": "Release notes for v6.10"
   },
-  "icu:WhatsNew__v6.3--0": {
-    "messageformat": "Dubbelklicka på valfri meddelanderad i en chatt för att starta ett citerat svar. Det är som en genväg för nya tankar om gamla idéer. Tack till {whynothugo} och Signal-communityn för implementerande av den här funktionen och delandet av feedback.",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.3--1": {
-    "messageformat": "Nu är det lättare att klicka utanför en bild för att avvisa gallerivyn utan att zooma in. Ibland ville du bara stänga, och istället kom saker för nära. Tack till {jojomatik} för fixande!",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.5--0": {
-    "messageformat": "Korta din svarstid. Nu kan du reagera snabbare genom att klicka på valfri emoji när du svarar på en story.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.5--1": {
-    "messageformat": "Nu kan du söka i din meddelandehistorik efter enskilda tecken på kinesiska och japanska.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.6--0": {
-    "messageformat": "Hjälp oss att testa flera förbättringar av tillförlitlighet och prestanda för röst- och videosamtal. Den här betaversionen innehåller även några buggfixar och små UI-uppdateringar (håll utkik efter de nya förbättringarna av länkförhandsgranskning). Tack för att du är en betatestare. Kontakta oss gärna på communityforumet om du hittar några buggar.",
-    "description": "Release notes for v6.6"
+  "icu:WhatsNew__v6.11--0": {
+    "messageformat": "Start talking to yourself even faster with a new icon that makes the “Note to Self” chat easier to find. Thanks to {hackerbirds} on GitHub for their contribution.",
+    "description": "Release notes for v6.11"
   }
 }

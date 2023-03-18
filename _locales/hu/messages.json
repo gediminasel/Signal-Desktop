@@ -52,6 +52,14 @@
     "message": "$contact$ hozzáadása…",
     "description": "Shown in toast while a user is being added to a group"
   },
+  "icu:RecordingComposer__cancel": {
+    "messageformat": "Mégse",
+    "description": "Label of cancel button on voice note recording UI"
+  },
+  "icu:RecordingComposer__send": {
+    "messageformat": "Küldés",
+    "description": "Label of send button on voice note recording UI"
+  },
   "GroupListItem__message-default": {
     "message": "$count$ tag",
     "description": "Shown below the group name when selecting a group to invite a contact to"
@@ -931,7 +939,7 @@
     "description": "Shown in a message's triple-dot menu if there isn't room for a dedicated download button"
   },
   "reactToMessage": {
-    "message": "Reagálás az üzenetre",
+    "message": "Reakció az üzenetre",
     "description": "Shown in triple-dot menu next to message to allow user to react to the associated message"
   },
   "replyToMessage": {
@@ -1446,7 +1454,7 @@
     "description": "Button label in the call lobby for returning to a call"
   },
   "calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
-    "message": "A résztvevők nagy száma miatt mikrofonod némítva lett",
+    "message": "A résztvevők nagy száma miatt a mikrofonod némítva lett",
     "description": "Shown in a call lobby toast if there are a lot of people already on the call"
   },
   "calling__call-is-full": {
@@ -1590,7 +1598,7 @@
     "description": "Shown in the participants list to describe how many people are in the call"
   },
   "calling__you-have-blocked": {
-    "message": "Letiltottad a $name$ nevű felhasználót",
+    "message": "Letiltottad $name$ nevű felhasználót",
     "description": "when you block someone and cannot view their video"
   },
   "calling__block-info": {
@@ -1778,10 +1786,10 @@
     "description": "Displayed in notifications for messages in a group"
   },
   "notificationReaction": {
-    "message": "$sender$  $emoji$ reakciót küldött az üzenetedre"
+    "message": "$sender$ $emoji$ reakciót küldött az üzenetedre"
   },
   "notificationReactionMessage": {
-    "message": "$sender$  $emoji$-val reagált a következő üzenetre:  $message$"
+    "message": "$sender$ $emoji$ reakciót küldött erre: $message$"
   },
   "sendFailed": {
     "message": "Küldés sikertelen",
@@ -1881,26 +1889,34 @@
   },
   "timestampFormat_M": {
     "message": "MMM D",
-    "description": "Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+  },
+  "timestampFormat__long--today": {
+    "message": "Ma $time$",
+    "description": "Timestamp format string for displaying \"Today\" and the time"
+  },
+  "timestampFormat__long--yesterday": {
+    "message": "Tegnap $time$",
+    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "timestampFormat__long__today": {
     "message": "[Ma] LT",
-    "description": "Timestamp format string for displaying \"Today\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Today\" and the time"
   },
   "timestampFormat__long__yesterday": {
     "message": "[Tegnap] LT",
-    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "messageBodyTooLong": {
     "message": "Az üzenet szövege túl hosszú.",
     "description": "Shown if the user tries to send more than 64kb of text"
   },
   "unblockToSend": {
-    "message": "Üzenet küldéséhez oldd fel partnered blokkolását!",
+    "message": "Üzenet küldéséhez oldd fel a névjegy letiltását.",
     "description": "Brief message shown when trying to message a blocked number"
   },
   "unblockGroupToSend": {
-    "message": "Üzenet küldéséhez oldd fel a csoport blokkolását!",
+    "message": "Üzenet küldéséhez oldd fel a csoport letiltását.",
     "description": "Brief message shown when trying to message a blocked group"
   },
   "youChangedTheTimer": {
@@ -2181,7 +2197,7 @@
     "message": "Újrapárosítás"
   },
   "autoUpdateNewVersionTitle": {
-    "message": "Frissítés érhető el"
+    "message": "Update Available"
   },
   "autoUpdateRetry": {
     "message": "Frissítés újra"
@@ -2580,6 +2596,18 @@
     "message": "A legutóbb használt matricák itt fognak megjelenni.",
     "description": "Shown in the sticker picker when there are no recent stickers to show."
   },
+  "icu:stickers__StickerPicker__recent": {
+    "messageformat": "Előzmények",
+    "description": "Title for all of the recent stickers"
+  },
+  "icu:stickers__StickerPicker__featured": {
+    "messageformat": "Kiemelt",
+    "description": "Title for featured stickers"
+  },
+  "icu:stickers__StickerPicker__analog-time": {
+    "messageformat": "Analóg idő",
+    "description": "aria-label for the analog time sticker"
+  },
   "stickers--StickerPreview--Title": {
     "message": "Matricsacsomag",
     "description": "The title that appears in the sticker pack preview modal."
@@ -2948,6 +2976,18 @@
     "message": "Beszélgetés megjelölve olvasatlanként",
     "description": "A toast that shows up when user marks a conversation as unread"
   },
+  "icu:AuthArtCreator--dialog--message": {
+    "messageformat": "Szeretnéd megnyitni a Signal matricacsomag-készítő alkalmazást?",
+    "description": "A body of the dialog that is presented when user tries to open Signal Sticker Pack Creator from a link"
+  },
+  "icu:AuthArtCreator--dialog--confirm": {
+    "messageformat": "Megerősítés",
+    "description": "A buttle title for confirming Signal Sticker Pack Creator dialog"
+  },
+  "icu:AuthArtCreator--dialog--dismiss": {
+    "messageformat": "Elvetés",
+    "description": "A buttle title for dismissing Signal Sticker Pack Creator dialog"
+  },
   "StickerCreator--title": {
     "message": "Matricacsomag-készítő",
     "description": "The title of the Sticker Pack Creator window"
@@ -3148,12 +3188,16 @@
     "message": "A matricacsomag létrehozásához állítsd be a Signalt telefonodon, valamint az asztali alkalmazáson is",
     "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
   },
+  "icu:ArtCreator--Authentication--error": {
+    "messageformat": "A matricacsomag létrehozásához állítsd be a Signalt a telefonodon, valamint az asztali alkalmazáson is",
+    "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
+  },
   "Reactions--remove": {
     "message": "Reakció eltávolítása",
     "describe": "Shown when you want to remove a reaction you've made"
   },
   "Reactions--error": {
-    "message": "Nem sikerült a reakció elküldése. Kérlek próbáld újra!",
+    "message": "Nem sikerült a reakció elküldése. Kérjük, próbáld újra!",
     "description": "Shown when a reaction fails to send"
   },
   "Reactions--more": {
@@ -3169,7 +3213,7 @@
     "description": "Shown as the message for a message request in a direct message"
   },
   "MessageRequests--message-direct-blocked": {
-    "message": "Engedélyezed, hogy $name$ üzenetet küldjön számodra és lássa a profilodat, valamint profilképedet? Nem fogsz üzenetet kapni tőle, amíg fel nem oldod a tiltást.",
+    "message": "Engedélyezed, hogy $name$ üzenetet küldjön számodra és lássa a neved, valamint profilképedet? Nem fogsz üzenetet kapni tőle, amíg fel nem oldod a tiltást.",
     "description": "Shown as the message for a message request in a direct message with a blocked account"
   },
   "MessageRequests--message-group": {
@@ -3177,7 +3221,7 @@
     "description": "Shown as the message for a message request in a group"
   },
   "MessageRequests--message-group-blocked": {
-    "message": "Feloldod a csoport tiltását és megosztod profilodat és profilképedet a tagokkal? Amíg nem oldod fel a tiltást, nem kapsz üzeneteket a csoportból.",
+    "message": "Feloldod a csoport tiltását és megosztod a neved és a profilképedet a tagokkal? Amíg nem oldod fel a tiltást, nem kapsz üzeneteket a csoportból.",
     "description": "Shown as the message for a message request in a blocked group"
   },
   "MessageRequests--block": {
@@ -3201,7 +3245,7 @@
     "description": "Shown as the body in the confirmation modal for unblocking a group message request"
   },
   "MessageRequests--block-and-report-spam": {
-    "message": "Kéretlen üzenet bejelentése és tiltás",
+    "message": "Kéretlen üzenet bejelentése és tiltása",
     "description": "Shown as a button to let the user block a message request and report spam"
   },
   "MessageRequests--block-and-report-spam-success-toast": {
@@ -4517,7 +4561,7 @@
     "description": "This is the modal title for confirming unblock of a group"
   },
   "ConversationDetailsActions--block-group-modal-title": {
-    "message": "Letiltod és kilépsz a \"$groupName$\" csoportból?",
+    "message": "Letiltod és kilépsz a(z) „$groupName$” csoportból?",
     "description": "This is the modal title for confirming blocking a group"
   },
   "ConversationDetailsActions--block-group-modal-content": {
@@ -4585,7 +4629,7 @@
     "description": "In the conversation notifications settings, this is the label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__info": {
-    "message": "Értesítsen, ha egy lenémított beszélgetésben megemlítenek",
+    "message": "Értesítsen, ha egy némított beszélgetésben megemlítenek",
     "description": "In the conversation notifications settings, this is the sub-label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__select__always-notify": {
@@ -4854,11 +4898,11 @@
   },
   "TimelineDateHeader--date-in-last-6-months": {
     "message": "MMM. D., ddd.",
-    "description": "Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "TimelineDateHeader--date-older-than-6-months": {
     "message": "YYYY MMM D",
-    "description": "Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "MessageRequestWarning__learn-more": {
     "message": "Tudj meg többet!",
@@ -5225,7 +5269,7 @@
     "description": "Shown if something unknown has gone wrong with username save."
   },
   "icu:ProfileEditor--username--reservation-gone": {
-    "messageformat": "{username} is no longer available. A new set of digits will be paired with your username, please try saving it again.",
+    "messageformat": "A {username} felhasználónév már nem elérhető. Új számjegysorozat került párosításra a felhasználóneveddel. Kérjük, próbáld meg újra elmenteni.",
     "description": "Shown if username reservation has expired and new one needs to be generated."
   },
   "ProfileEditor--username--delete-general-error": {
@@ -5430,23 +5474,75 @@
   },
   "Preferences__who-can--title": {
     "message": "Ki tud…",
-    "description": "Title for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Title for the 'who can do X' setting"
   },
   "Preferences__privacy--description": {
     "message": "A beállítások megváltoztatásához nyisd meg a Signal alkalmazást telefonodon, és navigálj a Beállítások > Beszélgetések menüponthoz!",
-    "description": "Description for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Description for the 'who can do X' setting"
   },
   "Preferences__who-can--everybody": {
     "message": "Mindenki",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--contacts": {
     "message": "Kontaktjaim",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--nobody": {
     "message": "Senki",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
+  },
+  "icu:Preferences__pnp__row--title": {
+    "messageformat": "Telefonszám",
+    "description": "Title of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__row--body": {
+    "messageformat": "Válaszd ki, hogy ki láthatja a telefonszámod, és ki léphet kapcsolatba veled a Signalon keresztül.",
+    "description": "Body of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__sharing--title": {
+    "messageformat": "Ki láthatja a telefonszámomat?",
+    "description": "Title for the phone number sharing setting row"
+  },
+  "icu:Preferences__pnp__sharing--description--everyone": {
+    "messageformat": "Telefonszámod látható lesz az ismerősök és csoportok számára, akikkel üzenetet váltasz. Azoknál, akinél szerepelsz készülékük kontaktlistájában, megjelensz Signal kontakjaik között is.",
+    "description": "Description for the phone number sharing setting row when the value is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody": {
+    "messageformat": "A Signalon senki nem láthatja a telefonszámod.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody"
+  },
+  "icu:Preferences__pnp--page-title": {
+    "messageformat": "Telefonszám",
+    "description": "Title of the page in Phone Number Privacy settings"
+  },
+  "icu:Preferences__pnp__sharing__everyone": {
+    "messageformat": "Mindenki",
+    "description": "Option for sharing phone number with everyone"
+  },
+  "icu:Preferences__pnp__sharing__nobody": {
+    "messageformat": "Senki",
+    "description": "Option for sharing phone number with nobody"
+  },
+  "icu:Preferences__pnp__discoverability--title": {
+    "messageformat": "Ki találhat meg a telefonszámom szerint?",
+    "description": "Title for the phone number discoverability setting row"
+  },
+  "icu:Preferences__pnp__discoverability--description--everyone": {
+    "messageformat": "Bárki, akinek a névjegyei között szerepel a telefonszámod, névjegyként fog látni téged a Signalon. Mások pedig a telefonszámodon keresztül érhetnek el téged, amikor új csevegést vagy csoportot indítanak.",
+    "description": "Description for the phone number discoverability setting row wth the value is everyone"
+  },
+  "icu:Preferences__pnp__discoverability--description--nobody": {
+    "messageformat": "A Signalon senki nem fog megtalálni a telefonszámod alapján.",
+    "description": "Description for the phone number discoverability setting row wth the value is nobody"
+  },
+  "icu:Preferences__pnp__discoverability__everyone": {
+    "messageformat": "Mindenki",
+    "description": "Option for letting everyone discover you by phone number"
+  },
+  "icu:Preferences__pnp__discoverability__nobody": {
+    "messageformat": "Senki",
+    "description": "Option for letting nobody discover you by phone number"
   },
   "Preferences--messaging": {
     "message": "Üzenetküldés",
@@ -5504,6 +5600,14 @@
     "message": "Elérhető frissítés a $version$ verzióra",
     "description": "Tooltip for new update available"
   },
+  "icu:DialogUpdate__downloading": {
+    "messageformat": "Downloading Update...",
+    "description": "The title of update dialog when update download is in progress."
+  },
+  "icu:DialogUpdate__downloaded": {
+    "messageformat": "Update Downloaded",
+    "description": "The title of update dialog when update download is completed."
+  },
   "NSIS__retry-dialog--first-line": {
     "message": "Nem sikerült bezárni a Signalt.",
     "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
@@ -5551,6 +5655,10 @@
   "CustomizingPreferredReactions__had-save-error": {
     "message": "Nem sikerült elmenteni a beállításokat. Próbáld újra!",
     "description": "Shown if there is an error when saving your preferred reaction settings. Should be very rare to see this message."
+  },
+  "icu:MediaEditor__clock-more-styles": {
+    "messageformat": "Több stílus",
+    "description": "Action button for switching up the clock styles"
   },
   "MediaEditor__control--draw": {
     "message": "Rajzolás",
@@ -6185,7 +6293,7 @@
     "description": "(deleted 01/25/23) aria-label for reaction button"
   },
   "StoryViewsNRepliesModal__reacted": {
-    "message": "Reakció elküldve a Történetre",
+    "message": "Reagált a Történetre",
     "description": "Description of someone reacting to a story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
@@ -6246,11 +6354,19 @@
   },
   "StoryCreator__error--video-too-long": {
     "message": "Nem tehető közzé a videó a Történetben, mert túl hosszú",
-    "description": "Error string for when a video post to story fails"
+    "description": "(deleted 02/22/2023) Error string for when a video post to story fails"
   },
   "StoryCreator__error--video-unsupported": {
     "message": "Nem tehető közzé a videó a Történetben, mert nem támogatott a fájlformátum",
     "description": "Error string for when a video post to story fails"
+  },
+  "icu:StoryCreator__error--video-too-long": {
+    "messageformat": "{maxDurationInSec, plural, one {Nem lehet videót feltölteni Történethez, mert az {maxDurationInSec,number} másodpercnél hosszabb.} other {Nem lehet videót feltölteni Történethez, mert az {maxDurationInSec,number} másodpercnél hosszabb.}}",
+    "description": "Error string for when a video post to story fails because video's duration is too long"
+  },
+  "icu:StoryCreator__error--video-too-big": {
+    "messageformat": "Nem lehet videót feltölteni Történethez, mert az hosszabb mint {limit} {units}.",
+    "description": "Error string for when a video post to story fails because video's file size is too big"
   },
   "StoryCreator__error--video-error": {
     "message": "A videó betöltése sikertelen",
@@ -6389,27 +6505,27 @@
     "description": "Body of the popup with information about discriminator in username"
   },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "Set up your Signal username",
+    "messageformat": "Állítsd be a Signal-felhasználóneved",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "Usernames are paired with a set of digits and aren’t shared on your profile",
+    "messageformat": "A felhasználónevek számjegyekkel vannak párosítva, és nem kerülnek megosztásra a profilodon",
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Each username has a unique link you can share with your friends to start a chat with you",
+    "messageformat": "Minden felhasználónévhez tartozik egy egyedi hivatkozás, amelyet megoszthatsz az ismerőseiddel, hogy csevegést kezdeményezhessenek veled",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "Turn off phone number discovery under Settings > Phone Number > Who can find my number, to use your username as the primary way others can contact you.",
+    "messageformat": "Kapcsold ki a telefonszám alapján történő elérés lehetőségét a Beállítások > Adatvédelem > Telefonszám > Ki láthatja a telefonszámomat? menüpontban, hogy a felhasználóneved legyen az elsődleges módja annak, hogy mások kapcsolatba léphessenek veled.",
     "description": "Content of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__learn-more": {
-    "messageformat": "Learn More",
+    "messageformat": "Tudj meg többet",
     "description": "Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Continue",
+    "messageformat": "Folytatás",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -6456,40 +6572,24 @@
     "message": "Apró finomítások, hibajavítások és teljesítménynövelések. Köszönjük, hogy a Signalt használod!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "WhatsNew__v5.63--0": {
-    "message": "Keményen dolgoztunk a hibák helyrehozásán és egyéb teljesítményjavításokon, hogy az alkalmazás zökkenőmentesen működjön.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--0": {
+    "messageformat": "Kattints bármelyik képre vagy videóra, és használd a médianézegető új Előre és Vissza gombjait, hogy zökkenőmentesen nosztalgiázhass.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v5.63--beta.2": {
-    "message": "Kezdd el használni és teszteld az új Történetfunkciót. A funkciót más béta tesztelőkkel is használhatod, és megoszthatod velünk, hogyan működik.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--1": {
+    "messageformat": "A hangüzeneteket a rendszer mostantól piszkozatként menti el, ha felvétel közben másik csevegésre váltasz.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.0": {
-    "message": "Megérkeztek a Történetek a Signalba! Ossz meg szövegeket, képeket és videókat az általad kiválasztott ismerőseiddel vagy csoportjaiddal, amelyek aztán 24 óra elteltével automatikusan eltűnnek. Mindenki számára, aki szeret Történeteket megosztani, itt a módja annak, hogy privátban, hirdetések nélkül tegye meg. Ha nem szeretnél Történeteket látni vagy megosztani, a Beállítások > Adatvédelem menüpontban kikapcsolhatod a funkciót.",
-    "description": "Release notes for v6.0"
+  "icu:WhatsNew__v6.10--2": {
+    "messageformat": "Matrica elküldése a továbbiakban nem törli a piszkozat szövegét. Köszi, {lamemakes}!",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.1--1": {
-    "message": "Amikor csoportos hívást indítasz kis csoportok számára (max. 16 fő), eldöntheted, hogy küldesz-e csengő értesítést. A csoport tagjai csengetést fognak hallani, ha iOS bétaverziót, asztali számítógépet vagy Android-eszközt használnak.",
-    "description": "Release notes for v6.1"
+  "icu:WhatsNew__v6.10--3": {
+    "messageformat": "Ezúton is szeretnénk köszönetet mondani {norstbox} számára, hogy visszaállította a beszélgetés keresősávjának ikonjait.",
+    "description": "Release notes for v6.10"
   },
-  "icu:WhatsNew__v6.3--0": {
-    "messageformat": "Kattints duplán bármelyik üzenetsorra a csevegésben az idézett válasz indításához. Olyan, mint egy parancsikon a régi ötletekkel kapcsolatos új gondolatokhoz. Köszönet {whynothugo} partnerünknek és a Signal-közösségnek a funkció megvalósításáért és a visszajelzésért.",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.3--1": {
-    "messageformat": "Mostantól egyszerűbb kikattintani egy képből, hogy nagyítás nélkül kilépj a Galérianézetből. Van, hogy csak be akarsz zárni valamit, de helyette ráközelítesz. Köszönjük a javítást, {jojomatik}!",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.5--0": {
-    "messageformat": "Gyorsítsd fel a válaszidőt. Mostantól gyorsabban reagálhatsz, ha rákattintasz valamely hangulatjelre, amikor válaszolsz egy Történetre.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.5--1": {
-    "messageformat": "Mostantól lehetőséged van rákeresni az egyes kínai és japán karakterekre az üzenetelőzményekben.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.6--0": {
-    "messageformat": "Segíts nekünk tesztelni a hang- és videohívások számos megbízhatósági és teljesítménybeli fejlesztését. Ez a béta verzió hibajavításokat és néhány kisebb felhasználói felület-frissítést is tartalmaz (keresd az új linkelőnézeti fejlesztéseket!). Köszönjük, hogy béta-tesztelő vagy! Ha hibát észlelsz, fordulj hozzánk a közösségi fórumon keresztül.",
-    "description": "Release notes for v6.6"
+  "icu:WhatsNew__v6.11--0": {
+    "messageformat": "Start talking to yourself even faster with a new icon that makes the “Note to Self” chat easier to find. Thanks to {hackerbirds} on GitHub for their contribution.",
+    "description": "Release notes for v6.11"
   }
 }

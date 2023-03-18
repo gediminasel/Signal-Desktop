@@ -52,6 +52,14 @@
     "message": "Pievieno $contact$…",
     "description": "Shown in toast while a user is being added to a group"
   },
+  "icu:RecordingComposer__cancel": {
+    "messageformat": "Atcelt",
+    "description": "Label of cancel button on voice note recording UI"
+  },
+  "icu:RecordingComposer__send": {
+    "messageformat": "Sūtīt",
+    "description": "Label of send button on voice note recording UI"
+  },
   "GroupListItem__message-default": {
     "message": "$count$ dalībnieki",
     "description": "Shown below the group name when selecting a group to invite a contact to"
@@ -1043,7 +1051,7 @@
     "description": "Shown in a button when a conversation is muted"
   },
   "mute": {
-    "message": "Atspējot ziņas",
+    "message": "Izslēgt",
     "description": "Shown in a button when a conversation is unmuted and can be muted"
   },
   "cannotUpdateDetail": {
@@ -1470,7 +1478,7 @@
     "description": "Button tooltip label for turning on the camera"
   },
   "calling__button--audio__label": {
-    "message": "Atspējot ziņas",
+    "message": "Izslēgt",
     "description": "Label under the audio button"
   },
   "calling__button--audio-disabled": {
@@ -1478,11 +1486,11 @@
     "description": "Button tooltip label when the microphone is disabled"
   },
   "calling__button--audio-off": {
-    "message": "Izslēgt mikrofona skaņu",
+    "message": "Izslēgt mikrofonu",
     "description": "Button tooltip label for turning off the microphone"
   },
   "calling__button--audio-on": {
-    "message": "Ieslēgt mikrofona skaņu",
+    "message": "Ieslēgt mikrofonu",
     "description": "Button tooltip label for turning on the microphone"
   },
   "calling__button--presenting__label": {
@@ -1781,7 +1789,7 @@
     "message": "$sender$ uz jūsu ziņu reaģēja ar $emoji$"
   },
   "notificationReactionMessage": {
-    "message": "$sender$ reaģēja ar$emoji$: $message$"
+    "message": "$sender$ reaģēja ar $emoji$ uz: $message$"
   },
   "sendFailed": {
     "message": "Sūtīšana neizidevās",
@@ -1881,26 +1889,34 @@
   },
   "timestampFormat_M": {
     "message": "D MMM",
-    "description": "Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+  },
+  "timestampFormat__long--today": {
+    "message": "Šodien, $time$",
+    "description": "Timestamp format string for displaying \"Today\" and the time"
+  },
+  "timestampFormat__long--yesterday": {
+    "message": "Vakar, $time$",
+    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "timestampFormat__long__today": {
     "message": "[Šodien], LT",
-    "description": "Timestamp format string for displaying \"Today\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Today\" and the time"
   },
   "timestampFormat__long__yesterday": {
     "message": "[Vakar], LT",
-    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "messageBodyTooLong": {
     "message": "Ziņas pamatteksts ir pārāk garš.",
     "description": "Shown if the user tries to send more than 64kb of text"
   },
   "unblockToSend": {
-    "message": "Atbloķēt šo kontaktpersonu, lai nosūtītu ziņu.",
+    "message": "Atbloķējiet šo kontaktu, lai nosūtītu ziņu.",
     "description": "Brief message shown when trying to message a blocked number"
   },
   "unblockGroupToSend": {
-    "message": "Atbloķēt šo grupu, lai nosūtītu ziņu.",
+    "message": "Atbloķējiet šo grupu, lai nosūtītu ziņu.",
     "description": "Brief message shown when trying to message a blocked group"
   },
   "youChangedTheTimer": {
@@ -2181,7 +2197,7 @@
     "message": "Atkārtoti saistīt"
   },
   "autoUpdateNewVersionTitle": {
-    "message": "Pieejams atjauninājums"
+    "message": "Update Available"
   },
   "autoUpdateRetry": {
     "message": "Vēlreiz mēģināt atjaunināt"
@@ -2580,6 +2596,18 @@
     "message": "Pēdējās izmantotās uzlīmes būs redzamas šeit.",
     "description": "Shown in the sticker picker when there are no recent stickers to show."
   },
+  "icu:stickers__StickerPicker__recent": {
+    "messageformat": "Pēdējās",
+    "description": "Title for all of the recent stickers"
+  },
+  "icu:stickers__StickerPicker__featured": {
+    "messageformat": "Piedāvātās",
+    "description": "Title for featured stickers"
+  },
+  "icu:stickers__StickerPicker__analog-time": {
+    "messageformat": "Analogais laiks",
+    "description": "aria-label for the analog time sticker"
+  },
   "stickers--StickerPreview--Title": {
     "message": "Uzlīmju komplekts",
     "description": "The title that appears in the sticker pack preview modal."
@@ -2777,7 +2805,7 @@
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--toggle-reaction-picker": {
-    "message": "Pārslēgt emociju izpausmes izvēli uz atlasīto ziņu",
+    "message": "Pārslēgt emociju reakciju izvēli atlasītajai ziņai",
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--save-attachment": {
@@ -2947,6 +2975,18 @@
   "conversationMarkedUnread": {
     "message": "Saruna atzīmēta kā nelasīta",
     "description": "A toast that shows up when user marks a conversation as unread"
+  },
+  "icu:AuthArtCreator--dialog--message": {
+    "messageformat": "Vai vēlaties atvērt Signal uzlīmju komplekta izveides programmu?",
+    "description": "A body of the dialog that is presented when user tries to open Signal Sticker Pack Creator from a link"
+  },
+  "icu:AuthArtCreator--dialog--confirm": {
+    "messageformat": "Apstiprināt",
+    "description": "A buttle title for confirming Signal Sticker Pack Creator dialog"
+  },
+  "icu:AuthArtCreator--dialog--dismiss": {
+    "messageformat": "Nerādīt",
+    "description": "A buttle title for dismissing Signal Sticker Pack Creator dialog"
   },
   "StickerCreator--title": {
     "message": "Uzlīmju komplekta izveides programma",
@@ -3148,12 +3188,16 @@
     "message": "Lai izmantotu uzlīmju komplekta veidotāju, iestatiet Signal savā tālrunī un datorā",
     "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
   },
+  "icu:ArtCreator--Authentication--error": {
+    "messageformat": "Lai izmantotu uzlīmju komplekta veidotāju, iestatiet Signal savā tālrunī un datorā",
+    "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
+  },
   "Reactions--remove": {
     "message": "Noņemt reakciju",
     "describe": "Shown when you want to remove a reaction you've made"
   },
   "Reactions--error": {
-    "message": "Neizdevās nosūtīt emociju izpausmi. Mēģiniet vēlreiz.",
+    "message": "Neizdevās nosūtīt reakciju. Mēģiniet vēlreiz.",
     "description": "Shown when a reaction fails to send"
   },
   "Reactions--more": {
@@ -3169,7 +3213,7 @@
     "description": "Shown as the message for a message request in a direct message"
   },
   "MessageRequests--message-direct-blocked": {
-    "message": "Vai atļaut $name$ jums sūtīt ziņas un kopīgot jūsu vārdu un fotoattēlu? Jūs nesaņemsiet nevienu ziņu, kamēr šo grupu neatbloķēsiet.",
+    "message": "Vai atļaut $name$ ar jums sazināties un kopīgot jūsu vārdu un attēlu? Jūs nesaņemsiet nevienu ziņu, kamēr šo grupu neatbloķēsiet.",
     "description": "Shown as the message for a message request in a direct message with a blocked account"
   },
   "MessageRequests--message-group": {
@@ -3177,7 +3221,7 @@
     "description": "Shown as the message for a message request in a group"
   },
   "MessageRequests--message-group-blocked": {
-    "message": "Atbloķēt šo grupu un dalīties ar savu vārdu un attēlu ar šiem dalībniekiem? Jūs nesaņemsiet nevienu ziņu, kamēr šo grupu neatbloķēsiet.",
+    "message": "Vai atbloķēt šo grupu un kopīgot savu vārdu un attēlu ar tās dalībniekiem? Jūs nesaņemsiet nevienu ziņu, kamēr šo grupu neatbloķēsiet.",
     "description": "Shown as the message for a message request in a blocked group"
   },
   "MessageRequests--block": {
@@ -3201,11 +3245,11 @@
     "description": "Shown as the body in the confirmation modal for unblocking a group message request"
   },
   "MessageRequests--block-and-report-spam": {
-    "message": "Ziņot par nevēlamu pastu un bloķēt",
+    "message": "Ziņot par surogātpastu un bloķēt",
     "description": "Shown as a button to let the user block a message request and report spam"
   },
   "MessageRequests--block-and-report-spam-success-toast": {
-    "message": "Lietotājs atzīmēts kā surogātpasta izplatītājs un bloķēts",
+    "message": "Lietotājs atzīmēts kā surogātpasta izplatītājs un bloķēts.",
     "description": "Shown in a toast when you successfully block a user and report them as spam"
   },
   "MessageRequests--block-direct-confirm-title": {
@@ -3213,11 +3257,11 @@
     "description": "Shown as the title in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-direct-confirm-body": {
-    "message": "Bloķēti lietotāji nevarēs Jums piezvanīt vai nosūtīt ziņojumu.",
+    "message": "Bloķēti lietotāji nevarēs jums piezvanīt vai nosūtīt ziņas.",
     "description": "Shown as the body in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-group-confirm-title": {
-    "message": "Vai bloķēt un izstāties no grupas $group$?",
+    "message": "Vai bloķēt un pamest grupu $group$?",
     "description": "Shown as the title in the confirmation modal for blocking a group message request"
   },
   "MessageRequests--block-group-confirm-body": {
@@ -3525,43 +3569,43 @@
     "description": "Shown when the device is the default device"
   },
   "muteNotificationsTitle": {
-    "message": "Noklusināt paziņojumus",
+    "message": "Izslēgt paziņojumus",
     "description": "Label for the mute notifications drop-down selector"
   },
   "notMuted": {
-    "message": "Nav atspējotas",
+    "message": "Nav izslēgti",
     "description": "Label when the conversation is not muted"
   },
   "muteHour": {
-    "message": "Atspējot ziņas uz vienu stundu",
+    "message": "Izslēgt paziņojumus uz vienu stundu",
     "description": "Label for muting the conversation"
   },
   "muteEightHours": {
-    "message": "Izslēgt skaņu uz astoņām stundām",
+    "message": "Izslēgt paziņojumus uz astoņām stundām",
     "description": "Label for muting the conversation"
   },
   "muteDay": {
-    "message": "Atspējot ziņas uz vienu dienu",
+    "message": "Izslēgt paziņojumus uz vienu dienu",
     "description": "Label for muting the conversation"
   },
   "muteWeek": {
-    "message": "Atspējot ziņas uz vienu nedēļu",
+    "message": "Izslēgt paziņojumus uz vienu nedēļu",
     "description": "Label for muting the conversation"
   },
   "muteAlways": {
-    "message": "Izslēgt skaņu vienmēr",
+    "message": "Izslēgt paziņojumus vienmēr",
     "description": "Label for muting the conversation"
   },
   "unmute": {
-    "message": "Ieslēgt ziņas",
+    "message": "Ieslēgt",
     "description": "Label for unmuting the conversation"
   },
   "muteExpirationLabelAlways": {
-    "message": "Skaņa izslēgta vienmēr",
+    "message": "Paziņojumi izslēgti vienmēr",
     "description": "Shown in the mute notifications submenu whenever a conversation has been muted"
   },
   "muteExpirationLabel": {
-    "message": "Skaņa izslēgta līdz $duration$",
+    "message": "Paziņojumi izslēgti līdz $duration$",
     "description": "Shown in the mute notifications submenu whenever a conversation has been muted"
   },
   "EmojiButton__label": {
@@ -4433,7 +4477,7 @@
     "description": "This is a button in the conversation context menu to show chat settings"
   },
   "ConversationDetails__unmute--title": {
-    "message": "Ieslēgt šīs sarunas paziņojumus?",
+    "message": "Vai ieslēgt šīs sarunas paziņojumus?",
     "description": "Title for the modal to unmute a chat"
   },
   "ConversationDetails--group-link": {
@@ -4517,7 +4561,7 @@
     "description": "This is the modal title for confirming unblock of a group"
   },
   "ConversationDetailsActions--block-group-modal-title": {
-    "message": "Vai bloķēt un izstāties no grupas \"$groupName$\"?",
+    "message": "Vai bloķēt un pamest grupu \"$groupName$\"?",
     "description": "This is the modal title for confirming blocking a group"
   },
   "ConversationDetailsActions--block-group-modal-content": {
@@ -4585,7 +4629,7 @@
     "description": "In the conversation notifications settings, this is the label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__info": {
-    "message": "Saņemt paziņojumus, kad jūs piemin apklusinātajās tērzēšanās",
+    "message": "Saņemt paziņojumus, kad jūs piemin apklusinātās sarunās",
     "description": "In the conversation notifications settings, this is the sub-label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__select__always-notify": {
@@ -4593,7 +4637,7 @@
     "description": "In the conversation notifications settings, this is the option that always notifies you for @mentions"
   },
   "ConversationNotificationsSettings__mentions__select__dont-notify-for-mentions-if-muted": {
-    "message": "Nepaziņot, ja izslēgta skaņa",
+    "message": "Nepaziņot, ja apklusināta",
     "description": "In the conversation notifications settings, this is the option that doesn't notify you for @mentions if the conversation is muted"
   },
   "GroupLinkManagement--clipboard": {
@@ -4697,7 +4741,7 @@
     "description": "Shown in timeline if users cancel their request to join a group via a group link"
   },
   "PendingRequests--block--title": {
-    "message": "Bloķēt pieprasījumu?",
+    "message": "Vai bloķēt pieprasījumu?",
     "description": "Title of dialog to block a user from requesting to join via the link again"
   },
   "PendingRequests--block--contents": {
@@ -4854,11 +4898,11 @@
   },
   "TimelineDateHeader--date-in-last-6-months": {
     "message": "ddd, D. MMM",
-    "description": "Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "TimelineDateHeader--date-older-than-6-months": {
     "message": "YYYY. gada D. MMM",
-    "description": "Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "MessageRequestWarning__learn-more": {
     "message": "Lasīt vairāk",
@@ -5225,7 +5269,7 @@
     "description": "Shown if something unknown has gone wrong with username save."
   },
   "icu:ProfileEditor--username--reservation-gone": {
-    "messageformat": "{username} is no longer available. A new set of digits will be paired with your username, please try saving it again.",
+    "messageformat": "{username} vairs nav pieejams. Jūsu lietotāja vārdam tiks piesaistīta jauna ciparu kombinācija, lūdzu, mēģiniet to saglabāt vēlreiz.",
     "description": "Shown if username reservation has expired and new one needs to be generated."
   },
   "ProfileEditor--username--delete-general-error": {
@@ -5430,23 +5474,75 @@
   },
   "Preferences__who-can--title": {
     "message": "Kas var…",
-    "description": "Title for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Title for the 'who can do X' setting"
   },
   "Preferences__privacy--description": {
     "message": "Lai mainītu šos iestatījumus, mobilajā ierīcē atveriet Signal lietotni un pārejiet uz sadaļu Iestatījumi > Privātums",
-    "description": "Description for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Description for the 'who can do X' setting"
   },
   "Preferences__who-can--everybody": {
     "message": "Katrs",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--contacts": {
     "message": "Manas kontaktpersonas",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--nobody": {
     "message": "Neviens",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
+  },
+  "icu:Preferences__pnp__row--title": {
+    "messageformat": "Tālruņa numurs",
+    "description": "Title of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__row--body": {
+    "messageformat": "Izvēlieties, kas var redzēt jūsu tālruņa numuru un kas var ar jums sazināties lietotnē Signal, izmantojot to.",
+    "description": "Body of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__sharing--title": {
+    "messageformat": "Kas var redzēt manu numuru",
+    "description": "Title for the phone number sharing setting row"
+  },
+  "icu:Preferences__pnp__sharing--description--everyone": {
+    "messageformat": "Jūsu tālruņa numurs būs redzams cilvēkiem un grupām, kurām sūtāt ziņojumu. Cilvēki, kuru tālruņa katologā ir jūsu numurs, to redzēs arī lietotnē Signal.",
+    "description": "Description for the phone number sharing setting row when the value is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody": {
+    "messageformat": "Neviens neredzēs jūsu tālruņa numuru lietotnē Signal.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody"
+  },
+  "icu:Preferences__pnp--page-title": {
+    "messageformat": "Tālruņa numurs",
+    "description": "Title of the page in Phone Number Privacy settings"
+  },
+  "icu:Preferences__pnp__sharing__everyone": {
+    "messageformat": "Ikviens",
+    "description": "Option for sharing phone number with everyone"
+  },
+  "icu:Preferences__pnp__sharing__nobody": {
+    "messageformat": "Neviens",
+    "description": "Option for sharing phone number with nobody"
+  },
+  "icu:Preferences__pnp__discoverability--title": {
+    "messageformat": "Kas var mani atrast pēc numura",
+    "description": "Title for the phone number discoverability setting row"
+  },
+  "icu:Preferences__pnp__discoverability--description--everyone": {
+    "messageformat": "Jebkura persona, kuras kontaktos ir saglabāts jūsu tālruņa numurs, redzēs jūs kā kontaktu lietotnē Signal. Citas personas varēs ar jums sazināties, izmantojot jūsu tālruņa numuru, kad izveidos jaunu sarunu vai grupu.",
+    "description": "Description for the phone number discoverability setting row wth the value is everyone"
+  },
+  "icu:Preferences__pnp__discoverability--description--nobody": {
+    "messageformat": "Neviens jūs lietotnē Signal nevarēs ar jums sazināties, izmantojot tālruņa numuru.",
+    "description": "Description for the phone number discoverability setting row wth the value is nobody"
+  },
+  "icu:Preferences__pnp__discoverability__everyone": {
+    "messageformat": "Ikviens",
+    "description": "Option for letting everyone discover you by phone number"
+  },
+  "icu:Preferences__pnp__discoverability__nobody": {
+    "messageformat": "Neviens",
+    "description": "Option for letting nobody discover you by phone number"
   },
   "Preferences--messaging": {
     "message": "Ziņapmaiņa",
@@ -5504,6 +5600,14 @@
     "message": "Pieejams atjauninājums uz versiju $version$",
     "description": "Tooltip for new update available"
   },
+  "icu:DialogUpdate__downloading": {
+    "messageformat": "Downloading Update...",
+    "description": "The title of update dialog when update download is in progress."
+  },
+  "icu:DialogUpdate__downloaded": {
+    "messageformat": "Update Downloaded",
+    "description": "The title of update dialog when update download is completed."
+  },
   "NSIS__retry-dialog--first-line": {
     "message": "Neizdodas aizvērt Signal.",
     "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
@@ -5541,7 +5645,7 @@
     "description": "A button label for erasure of the crash reporter data after a recent crash and continuing to start the app"
   },
   "CustomizingPreferredReactions__title": {
-    "message": "Pielāgot emociju izpausmes",
+    "message": "Pielāgot reakcijas",
     "description": "Shown in the header of the modal for customizing the preferred reactions. Also shown in the tooltip for the button that opens this modal."
   },
   "CustomizingPreferredReactions__subtitle": {
@@ -5551,6 +5655,10 @@
   "CustomizingPreferredReactions__had-save-error": {
     "message": "Iestatījumu saglabāšanas laikā radās kļūda. Lūdzu, mēģiniet vēlreiz.",
     "description": "Shown if there is an error when saving your preferred reaction settings. Should be very rare to see this message."
+  },
+  "icu:MediaEditor__clock-more-styles": {
+    "messageformat": "Citi stili",
+    "description": "Action button for switching up the clock styles"
   },
   "MediaEditor__control--draw": {
     "message": "Zīmēt",
@@ -6246,11 +6354,19 @@
   },
   "StoryCreator__error--video-too-long": {
     "message": "Video nevar publicēt stāstā, jo tas ir pārāk garš",
-    "description": "Error string for when a video post to story fails"
+    "description": "(deleted 02/22/2023) Error string for when a video post to story fails"
   },
   "StoryCreator__error--video-unsupported": {
     "message": "Video nevar publicēt stāstā, jo tā formāts netiek atbalstīts",
     "description": "Error string for when a video post to story fails"
+  },
+  "icu:StoryCreator__error--video-too-long": {
+    "messageformat": "{maxDurationInSec, plural, zero {Video nevar publicēt stāstā, jo tas ir garāks par {maxDurationInSec,number} sekundēm.} one {Video nevar publicēt stāstā, jo tas ir garāks par 1 sekundi.} other {Video nevar publicēt stāstā, jo tas ir garāks par {maxDurationInSec,number} sekundēm.}}",
+    "description": "Error string for when a video post to story fails because video's duration is too long"
+  },
+  "icu:StoryCreator__error--video-too-big": {
+    "messageformat": "Video nevar publicēt stāstā, jo tas ir lielāks par {limit} {units}.",
+    "description": "Error string for when a video post to story fails because video's file size is too big"
   },
   "StoryCreator__error--video-error": {
     "message": "Neizdevās ielādēt video",
@@ -6389,27 +6505,27 @@
     "description": "Body of the popup with information about discriminator in username"
   },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "Set up your Signal username",
+    "messageformat": "Izveidojiet savu Signal lietotāja vārdu",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "Usernames are paired with a set of digits and aren’t shared on your profile",
+    "messageformat": "Lietotāju vārdi tiek piesaistīti ciparu kombinācijām un netiek kopīgoti jūsu profilā",
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Each username has a unique link you can share with your friends to start a chat with you",
+    "messageformat": "Katram lietotāja vārdam ir unikāla saite, kuru varat kopīgot ar draugiem, lai sāktu sarunu",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "Turn off phone number discovery under Settings > Phone Number > Who can find my number, to use your username as the primary way others can contact you.",
+    "messageformat": "Izslēdziet tālruņa numura noteikšanu sadaļā Iestatījumi > Privātums > > Tālruņa numurs > Kas var atrast manu numuru, lai izmantotu jūsu lietotāja vārdu kā galveno veidu, kā citi var ar jums sazināties.",
     "description": "Content of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__learn-more": {
-    "messageformat": "Learn More",
+    "messageformat": "Uzzināt vairāk",
     "description": "Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Continue",
+    "messageformat": "Turpināt",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -6456,40 +6572,24 @@
     "message": "Nelielas izmaiņas, kļūdu labojumi un darbības uzlabojumi. Paldies, ka lietojat Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "WhatsNew__v5.63--0": {
-    "message": "Smagi strādājam pie kļūdu labojumiem un citiem darbības uzlabojumiem, lai jūs varētu netraucēti izmantot lietotni.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--0": {
+    "messageformat": "Noklikšķiniet uz jebkura attēla vai video un izmantojiet jaunās pogas Uz priekšu un Atpakaļ multivides skatītājā, lai vizuāli gremdētos atmiņās.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v5.63--beta.2": {
-    "message": "Sāciet izmantot un testēt mūsu jauno stāstu funkciju. Varat izmantot šo funkciju kopā ar citiem beta testētājiem un paziņot mums, kā tā darbojas.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--1": {
+    "messageformat": "Ja ierakstīšanas laikā pārslēdzaties uz citu sarunu, balss ziņas tagad tiek saglabātas kā melnraksti.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.0": {
-    "message": "Tagad Signal ir pieejami stāsti! Kopīgojiet tekstu, attēlus un video ar noteiktiem draugiem vai grupām. Kopīgotais saturs automātiski pazudīs pēc 24 stundām. Ikviens, kam patīk dalīties ar stāstiem, var to paveikt privāti un bez reklāmām. Ja nevēlaties redzēt vai kopīgot stāstus, varat atteikties no šīs funkcijas sadaļā Preferences > Privātums.",
-    "description": "Release notes for v6.0"
+  "icu:WhatsNew__v6.10--2": {
+    "messageformat": "Nosūtot uzlīmi, melnraksta teksts vairs netiek notīrīts. Paldies, {lamemakes}!",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.1--1": {
-    "message": "Kad sākat grupas zvanu nelielā grupā (līdz 16 personām), varat izvēlēties nosūtīt zvana paziņojumu. Grupas dalībnieki dzirdēs zvana signālu, ja viņi izmanto iOS beta, Desktop vai Android versiju.",
-    "description": "Release notes for v6.1"
+  "icu:WhatsNew__v6.10--3": {
+    "messageformat": "Vēlamies arī pateikties lietotājam {norstbox} par sarunu meklēšanas joslas ikonu izlīdzināšanu.",
+    "description": "Release notes for v6.10"
   },
-  "icu:WhatsNew__v6.3--0": {
-    "messageformat": "Veiciet dubultklikšķi uz jebkuras ziņas rindas sarunā, lai sāktu citēto atbildi. Tas ir ātrs veids, kā dalīties ar jaunām domām par vecajām idejām. Paldies {whynothugo} un Signal kopienai par šīs funkcijas ieviešanu un atsauksmju sniegšanu.",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.3--1": {
-    "messageformat": "Tagad ir vieglāk noklikšķināt ārpus attēla, lai aizvērtu galerijas skatu bez tuvināšanas. Iepriekš varēja gadīties, ka jūs vienkārši gribējāt aizvērt skatu, bet tā vietā pietuvinājāt attēlu. Paldies {jojomatik} par labojumu!",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.5--0": {
-    "messageformat": "Atbildiet ātrāk. Kad atbildat uz stāstu, varat reaģēt ātrāk, pieskaroties pie jebkuras emocijzīmes.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.5--1": {
-    "messageformat": "Tagad ziņu vēsturē ir iespējams meklēt atsevišķas rakstzīmes ķīniešu un japāņu valodā.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.6--0": {
-    "messageformat": "Palīdziet mums pārbaudīt vairākus balss un videozvanu stabilitātes un veiktspējas uzlabojumus. Šajā beta versijā ir iekļauti arī daži kļūdu labojumi un daži nelieli lietotāju interfeisa atjauninājumi (meklējiet jaunos saišu priekšskatījuma uzlabojumus!). Paldies, ka esat beta testētājs. Ja pamanāt kļūdas, lūdzu, sazinieties ar mums kopienas forumā.",
-    "description": "Release notes for v6.6"
+  "icu:WhatsNew__v6.11--0": {
+    "messageformat": "Start talking to yourself even faster with a new icon that makes the “Note to Self” chat easier to find. Thanks to {hackerbirds} on GitHub for their contribution.",
+    "description": "Release notes for v6.11"
   }
 }

@@ -24,7 +24,7 @@ export type IResource = {
 export type ConnectOptionsType<Resource extends IResource> = Readonly<{
   name: string;
   url: string;
-  certificateAuthority: string;
+  certificateAuthority?: string;
   version: string;
   proxyAgent?: ReturnType<typeof ProxyAgent>;
   timeout?: number;
@@ -100,17 +100,16 @@ export function connect<Resource extends IResource>({
     reject(translatedError);
   });
 
-  client.on('connectFailed', e => {
+  client.on('connectFailed', originalErr => {
     Timers.clearTimeout(timer);
 
-    reject(
-      new HTTPError('connectResource: connectFailed', {
-        code: -1,
-        headers: {},
-        response: e.toString(),
-        stack,
-      })
-    );
+    const err = new HTTPError('connectResource: connectFailed', {
+      code: -1,
+      headers: {},
+      stack,
+      cause: originalErr,
+    });
+    reject(err);
   });
 
   return new AbortableProcess<Resource>(

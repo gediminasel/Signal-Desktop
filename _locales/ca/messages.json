@@ -52,6 +52,14 @@
     "message": "Afegint $contact$…",
     "description": "Shown in toast while a user is being added to a group"
   },
+  "icu:RecordingComposer__cancel": {
+    "messageformat": "Cancel·la",
+    "description": "Label of cancel button on voice note recording UI"
+  },
+  "icu:RecordingComposer__send": {
+    "messageformat": "Envia",
+    "description": "Label of send button on voice note recording UI"
+  },
   "GroupListItem__message-default": {
     "message": "$count$ membres",
     "description": "Shown below the group name when selecting a group to invite a contact to"
@@ -931,7 +939,7 @@
     "description": "Shown in a message's triple-dot menu if there isn't room for a dedicated download button"
   },
   "reactToMessage": {
-    "message": "Reaccioneu al missatge",
+    "message": "Reaccionar al missatge",
     "description": "Shown in triple-dot menu next to message to allow user to react to the associated message"
   },
   "replyToMessage": {
@@ -1251,11 +1259,11 @@
     "description": "Shown on explainer dialog available from delivery issue timeline events"
   },
   "DeliveryIssue--summary": {
-    "message": "No s'ha pogut lliurar cap missatge, adhesiu, reacció, rebut de lectura o contingut multimèdia de $sender$. És possible que hagin intentat enviar-vos-ho directament o en grup.",
+    "message": "No se t'ha pogut entregar un missatge, sticker, reacció, confirmació de lectura o arxiu multimèdia de $sender$. És possible que hagin intentat enviar-t'ho directament o a través d'un grup.",
     "description": "Shown on explainer dialog available from delivery issue timeline events in 1:1 conversations"
   },
   "DeliveryIssue--summary--group": {
-    "message": "No se us ha pogut lliurar un missatge, adhesiu, reacció, rebut de lectura o mitjà de $sender$ en aquesta conversa.",
+    "message": "No se t'ha pogut entregar un missatge, sticker, reacció, confirmació de lectura o arxiu multimèdia de $sender$ en aquest xat.",
     "description": "Shown on explainer dialog available from delivery issue timeline events in groups"
   },
   "ChangeNumber--notification": {
@@ -1590,7 +1598,7 @@
     "description": "Shown in the participants list to describe how many people are in the call"
   },
   "calling__you-have-blocked": {
-    "message": "Heu blocat $name$",
+    "message": "Has bloquejat a $name$",
     "description": "when you block someone and cannot view their video"
   },
   "calling__block-info": {
@@ -1778,10 +1786,10 @@
     "description": "Displayed in notifications for messages in a group"
   },
   "notificationReaction": {
-    "message": "$sender$ ha reaccionat  $emoji$ al vostre missatge."
+    "message": "$sender$ ha reaccionat amb $emoji$ al teu missatge"
   },
   "notificationReactionMessage": {
-    "message": "$sender$ ha reaccionat  $emoji$ a: $message$"
+    "message": "$sender$ ha reaccionat amb $emoji$ a: $message$"
   },
   "sendFailed": {
     "message": "L'enviament ha fallat",
@@ -1881,26 +1889,34 @@
   },
   "timestampFormat_M": {
     "message": "D MMM",
-    "description": "Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+  },
+  "timestampFormat__long--today": {
+    "message": "Avui $time$",
+    "description": "Timestamp format string for displaying \"Today\" and the time"
+  },
+  "timestampFormat__long--yesterday": {
+    "message": "Ahir $time$",
+    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "timestampFormat__long__today": {
     "message": "[Today] LT",
-    "description": "Timestamp format string for displaying \"Today\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Today\" and the time"
   },
   "timestampFormat__long__yesterday": {
     "message": "[Yesterday] LT",
-    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "messageBodyTooLong": {
     "message": "El cos del missatge és massa llarg.",
     "description": "Shown if the user tries to send more than 64kb of text"
   },
   "unblockToSend": {
-    "message": "Desbloqueu aquest contacte per a enviar-li un missatge.",
+    "message": "Desbloqueja aquest contacte per a enviar-li un missatge.",
     "description": "Brief message shown when trying to message a blocked number"
   },
   "unblockGroupToSend": {
-    "message": "Desbloqueu aquest grup per a enviar-hi un missatge.",
+    "message": "Desbloqueja aquest grup per a enviar-hi un missatge.",
     "description": "Brief message shown when trying to message a blocked group"
   },
   "youChangedTheTimer": {
@@ -2020,7 +2036,7 @@
     "description": "Label text for system theme"
   },
   "noteToSelf": {
-    "message": "Notifica-m'ho",
+    "message": "Notes personals",
     "description": "Name for the conversation with your own phone number"
   },
   "noteToSelfHero": {
@@ -2181,7 +2197,7 @@
     "message": "Torna a enllaçar"
   },
   "autoUpdateNewVersionTitle": {
-    "message": "Actualització disponible"
+    "message": "Update Available"
   },
   "autoUpdateRetry": {
     "message": "Torneu a intentar d'actualitzar"
@@ -2580,6 +2596,18 @@
     "message": "Els adhesius usats recentment apareixeran aquí.",
     "description": "Shown in the sticker picker when there are no recent stickers to show."
   },
+  "icu:stickers__StickerPicker__recent": {
+    "messageformat": "Recents",
+    "description": "Title for all of the recent stickers"
+  },
+  "icu:stickers__StickerPicker__featured": {
+    "messageformat": "Destacats",
+    "description": "Title for featured stickers"
+  },
+  "icu:stickers__StickerPicker__analog-time": {
+    "messageformat": "Temps analògic",
+    "description": "aria-label for the analog time sticker"
+  },
   "stickers--StickerPreview--Title": {
     "message": "Paquet d'adhesius",
     "description": "The title that appears in the sticker pack preview modal."
@@ -2777,7 +2805,7 @@
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--toggle-reaction-picker": {
-    "message": "Commuta el selector de reaccions d'emoticones per al missatge seleccionat",
+    "message": "Commuta el seleccionador de reaccions d'emoticones per al missatge seleccionat",
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--save-attachment": {
@@ -2947,6 +2975,18 @@
   "conversationMarkedUnread": {
     "message": "Conversa marcada com a no llegida",
     "description": "A toast that shows up when user marks a conversation as unread"
+  },
+  "icu:AuthArtCreator--dialog--message": {
+    "messageformat": "Vols obrir el Creador de paquets de stickers?",
+    "description": "A body of the dialog that is presented when user tries to open Signal Sticker Pack Creator from a link"
+  },
+  "icu:AuthArtCreator--dialog--confirm": {
+    "messageformat": "Confirmar",
+    "description": "A buttle title for confirming Signal Sticker Pack Creator dialog"
+  },
+  "icu:AuthArtCreator--dialog--dismiss": {
+    "messageformat": "Descarta",
+    "description": "A buttle title for dismissing Signal Sticker Pack Creator dialog"
   },
   "StickerCreator--title": {
     "message": "Creador de paquets d'adhesius",
@@ -3148,12 +3188,16 @@
     "message": "Configureu el Signal del telèfon i de l'escriptori perquè usi el Creador de paquets d'adhesius.",
     "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
   },
+  "icu:ArtCreator--Authentication--error": {
+    "messageformat": "Configura Signal al telèfon i a la versió d'escriptori per poder utilitzar el Creador de paquets de stickers.",
+    "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
+  },
   "Reactions--remove": {
-    "message": "Suprimeix la reacció",
+    "message": "Elimina la reacció",
     "describe": "Shown when you want to remove a reaction you've made"
   },
   "Reactions--error": {
-    "message": "Ha fallat enviar la reacció. Torneu-ho a provar.",
+    "message": "No s'ha pogut enviar la reacció. Torna-ho a provar.",
     "description": "Shown when a reaction fails to send"
   },
   "Reactions--more": {
@@ -3169,7 +3213,7 @@
     "description": "Shown as the message for a message request in a direct message"
   },
   "MessageRequests--message-direct-blocked": {
-    "message": "Voleu permetre que $name$ us envii missatges i compartir-hi el nom i la fotografia? No rebreu cap missatge fins que no el desbloqueu.",
+    "message": "Vols permetre que $name$ t'enviï missatges i compartir-hi el nom i la fotografia? No rebràs cap missatge fins que no el desbloquegis.",
     "description": "Shown as the message for a message request in a direct message with a blocked account"
   },
   "MessageRequests--message-group": {
@@ -3177,19 +3221,19 @@
     "description": "Shown as the message for a message request in a group"
   },
   "MessageRequests--message-group-blocked": {
-    "message": "Voleu desblocar aquest grup i compartir el nom i la fotografia amb els seus membres? No rebreu cap missatge fins que no el desbloqueu.",
+    "message": "Vols desbloquejar aquest grup i compartir el nom i la fotografia amb els seus membres? No rebràs cap missatge fins que no el desbloquegis.",
     "description": "Shown as the message for a message request in a blocked group"
   },
   "MessageRequests--block": {
-    "message": "Bloca",
+    "message": "Bloquejar",
     "description": "Shown as a button to let the user block a message request"
   },
   "MessageRequests--unblock": {
-    "message": "Desbloca",
+    "message": "Desbloquejar",
     "description": "Shown as a button to let the user unblock a message request"
   },
   "MessageRequests--unblock-direct-confirm-title": {
-    "message": "Voleu desblocar $name$?",
+    "message": "Vols desbloquejar $name$?",
     "description": "Shown as a button to let the user unblock a message request"
   },
   "MessageRequests--unblock-direct-confirm-body": {
@@ -3201,23 +3245,23 @@
     "description": "Shown as the body in the confirmation modal for unblocking a group message request"
   },
   "MessageRequests--block-and-report-spam": {
-    "message": "Informeu de bloqueig i de correu brossa",
+    "message": "Informar de bloqueig i de correu spam",
     "description": "Shown as a button to let the user block a message request and report spam"
   },
   "MessageRequests--block-and-report-spam-success-toast": {
-    "message": "Se n'ha informat com a brossa i s'ha blocat.",
+    "message": "Se n'ha informat com a spam i s'ha bloquejat.",
     "description": "Shown in a toast when you successfully block a user and report them as spam"
   },
   "MessageRequests--block-direct-confirm-title": {
-    "message": "Voleu blocar $name$?",
+    "message": "Vols bloquejar $name$?",
     "description": "Shown as the title in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-direct-confirm-body": {
-    "message": "Les persones blocades no us podran trucar ni enviar missatges.",
+    "message": "Les persones bloquejades no et podran trucar ni enviar missatges.",
     "description": "Shown as the body in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-group-confirm-title": {
-    "message": "Voleu blocar i abandonar $group$?",
+    "message": "Vols bloquejar i abandonar $group$?",
     "description": "Shown as the title in the confirmation modal for blocking a group message request"
   },
   "MessageRequests--block-group-confirm-body": {
@@ -4433,7 +4477,7 @@
     "description": "This is a button in the conversation context menu to show chat settings"
   },
   "ConversationDetails__unmute--title": {
-    "message": "Voleu silenciar aquesta conversa?",
+    "message": "Vols silenciar aquesta conversa?",
     "description": "Title for the modal to unmute a chat"
   },
   "ConversationDetails--group-link": {
@@ -4489,11 +4533,11 @@
     "description": "This is a button to leave a group"
   },
   "ConversationDetailsActions--block-group": {
-    "message": "Bloca el grup",
+    "message": "Bloquejar el grup",
     "description": "This is a button to block a group"
   },
   "ConversationDetailsActions--unblock-group": {
-    "message": "Desbloca el grup",
+    "message": "Desbloquejar el grup",
     "description": "This is a button to unblock a group"
   },
   "ConversationDetailsActions--leave-group-must-choose-new-admin": {
@@ -4517,7 +4561,7 @@
     "description": "This is the modal title for confirming unblock of a group"
   },
   "ConversationDetailsActions--block-group-modal-title": {
-    "message": "Voleu blocar i abandonar el grup $groupName$?",
+    "message": "Vols bloquejar i abandonar el grup $groupName$?",
     "description": "This is the modal title for confirming blocking a group"
   },
   "ConversationDetailsActions--block-group-modal-content": {
@@ -4525,7 +4569,7 @@
     "description": "This is the modal content for confirming blocking a group"
   },
   "ConversationDetailsActions--block-group-modal-confirm": {
-    "message": "Bloca",
+    "message": "Bloquejar",
     "description": "This is the modal button to confirm blocking a group"
   },
   "ConversationDetailsActions--unblock-group-modal-content": {
@@ -4533,7 +4577,7 @@
     "description": "This is the modal content for confirming unblock of a group"
   },
   "ConversationDetailsActions--unblock-group-modal-confirm": {
-    "message": "Desbloca",
+    "message": "Desbloquejar",
     "description": "This is the modal button to confirm unblock of a group"
   },
   "ConversationDetailsHeader--members": {
@@ -4585,7 +4629,7 @@
     "description": "In the conversation notifications settings, this is the label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__info": {
-    "message": "Rebeu notificacions quan se us mencioni en converses silenciades",
+    "message": "Rep notificacions quan se't mencioni en converses silenciades",
     "description": "In the conversation notifications settings, this is the sub-label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__select__always-notify": {
@@ -4693,11 +4737,11 @@
     "description": "Information shown below the invite list"
   },
   "PendingRequests--block--button": {
-    "message": "Bloca la sol·licitud",
+    "message": "Bloquejar la sol·licitud",
     "description": "Shown in timeline if users cancel their request to join a group via a group link"
   },
   "PendingRequests--block--title": {
-    "message": "Bloqueig de la sol·licitud?",
+    "message": "Bloquejar la sol·licitud?",
     "description": "Title of dialog to block a user from requesting to join via the link again"
   },
   "PendingRequests--block--contents": {
@@ -4854,11 +4898,11 @@
   },
   "TimelineDateHeader--date-in-last-6-months": {
     "message": "ddd, MMM D",
-    "description": "Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "TimelineDateHeader--date-older-than-6-months": {
     "message": "D MMM YYYY",
-    "description": "Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "MessageRequestWarning__learn-more": {
     "message": "Més informació",
@@ -5225,7 +5269,7 @@
     "description": "Shown if something unknown has gone wrong with username save."
   },
   "icu:ProfileEditor--username--reservation-gone": {
-    "messageformat": "{username} is no longer available. A new set of digits will be paired with your username, please try saving it again.",
+    "messageformat": "{username} ja no està disponible. S'associarà un nou conjunt de dígits amb el teu àlies; prova de desar-lo de nou.",
     "description": "Shown if username reservation has expired and new one needs to be generated."
   },
   "ProfileEditor--username--delete-general-error": {
@@ -5417,7 +5461,7 @@
     "description": "Label for the notification content setting select box"
   },
   "Preferences--blocked": {
-    "message": "Blocat",
+    "message": "Bloquejat",
     "description": "Label for blocked contacts setting"
   },
   "Preferences--blocked-count-singular": {
@@ -5430,23 +5474,75 @@
   },
   "Preferences__who-can--title": {
     "message": "Qui pot…",
-    "description": "Title for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Title for the 'who can do X' setting"
   },
   "Preferences__privacy--description": {
     "message": "Per a canviar aquesta configuració, obriu l'aplicació del Signal al dispositiu mòbil i aneu a Configuració > Privadesa.",
-    "description": "Description for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Description for the 'who can do X' setting"
   },
   "Preferences__who-can--everybody": {
     "message": "Tothom",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--contacts": {
     "message": "Els meus contactes",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--nobody": {
     "message": "Ningú",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
+  },
+  "icu:Preferences__pnp__row--title": {
+    "messageformat": "Número de telèfon",
+    "description": "Title of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__row--body": {
+    "messageformat": "Tria qui pot veure el teu número de telèfon i qui pot contactar-te a Signal a través d'ell.",
+    "description": "Body of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__sharing--title": {
+    "messageformat": "Qui pot veure el meu número",
+    "description": "Title for the phone number sharing setting row"
+  },
+  "icu:Preferences__pnp__sharing--description--everyone": {
+    "messageformat": "El teu número de telèfon serà visible per a totes les persones i grups als quals enviïs un missatge. Les persones que tinguin el teu número als contactes del telèfon també et veuran a Signal.",
+    "description": "Description for the phone number sharing setting row when the value is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody": {
+    "messageformat": "Ningú no veurà el teu número de telèfon a Signal.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody"
+  },
+  "icu:Preferences__pnp--page-title": {
+    "messageformat": "Número de telèfon",
+    "description": "Title of the page in Phone Number Privacy settings"
+  },
+  "icu:Preferences__pnp__sharing__everyone": {
+    "messageformat": "Tothom",
+    "description": "Option for sharing phone number with everyone"
+  },
+  "icu:Preferences__pnp__sharing__nobody": {
+    "messageformat": "Ningú",
+    "description": "Option for sharing phone number with nobody"
+  },
+  "icu:Preferences__pnp__discoverability--title": {
+    "messageformat": "Qui pot trobar-me a través del meu número",
+    "description": "Title for the phone number discoverability setting row"
+  },
+  "icu:Preferences__pnp__discoverability--description--everyone": {
+    "messageformat": "Qualsevol persona que tingui el teu número de telèfon guardat als seus contactes podrà veure't com a contacte a Signal. Els altres podran posar-se en contacte amb tu a través del teu número de telèfon quan comencin un nou xat o grup.",
+    "description": "Description for the phone number discoverability setting row wth the value is everyone"
+  },
+  "icu:Preferences__pnp__discoverability--description--nobody": {
+    "messageformat": "Ningú a Signal podrà posar-se en contacte amb tu a través del teu número de telèfon.",
+    "description": "Description for the phone number discoverability setting row wth the value is nobody"
+  },
+  "icu:Preferences__pnp__discoverability__everyone": {
+    "messageformat": "Tothom",
+    "description": "Option for letting everyone discover you by phone number"
+  },
+  "icu:Preferences__pnp__discoverability__nobody": {
+    "messageformat": "Ningú",
+    "description": "Option for letting nobody discover you by phone number"
   },
   "Preferences--messaging": {
     "message": "Missatges",
@@ -5504,6 +5600,14 @@
     "message": "Actualització a la versió $version$ disponible",
     "description": "Tooltip for new update available"
   },
+  "icu:DialogUpdate__downloading": {
+    "messageformat": "Downloading Update...",
+    "description": "The title of update dialog when update download is in progress."
+  },
+  "icu:DialogUpdate__downloaded": {
+    "messageformat": "Update Downloaded",
+    "description": "The title of update dialog when update download is completed."
+  },
   "NSIS__retry-dialog--first-line": {
     "message": "No es pot tancar el Signal.",
     "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
@@ -5551,6 +5655,10 @@
   "CustomizingPreferredReactions__had-save-error": {
     "message": "Hi ha hagut un error en desar la configuració. Torneu-ho a provar.",
     "description": "Shown if there is an error when saving your preferred reaction settings. Should be very rare to see this message."
+  },
+  "icu:MediaEditor__clock-more-styles": {
+    "messageformat": "Més estils",
+    "description": "Action button for switching up the clock styles"
   },
   "MediaEditor__control--draw": {
     "message": "Dibuix",
@@ -6246,11 +6354,19 @@
   },
   "StoryCreator__error--video-too-long": {
     "message": "No s'ha pogut publicar aquest vídeo a la teva història perquè és massa llarg",
-    "description": "Error string for when a video post to story fails"
+    "description": "(deleted 02/22/2023) Error string for when a video post to story fails"
   },
   "StoryCreator__error--video-unsupported": {
     "message": "No s'ha pogut publicar aquest vídeo a la teva història perquè el format no és compatible",
     "description": "Error string for when a video post to story fails"
+  },
+  "icu:StoryCreator__error--video-too-long": {
+    "messageformat": "{maxDurationInSec, plural, one {No s'ha pogut publicar aquest vídeo a la teva història perquè dura més d'1 segon.} other {No s'ha pogut publicar aquest vídeo a la teva història perquè dura més de {maxDurationInSec,number} segons.}}",
+    "description": "Error string for when a video post to story fails because video's duration is too long"
+  },
+  "icu:StoryCreator__error--video-too-big": {
+    "messageformat": "No s'ha pogut publicar aquest vídeo a la teva història perquè és més gran de {limit}{units}.",
+    "description": "Error string for when a video post to story fails because video's file size is too big"
   },
   "StoryCreator__error--video-error": {
     "message": "No s'ha pogut carregar el vídeo",
@@ -6341,7 +6457,7 @@
     "description": "Title for replies to stories"
   },
   "Quote__story-reaction": {
-    "message": "Ha reaccionat a una història de$name$",
+    "message": "Ha reaccionat a una història de $name$",
     "description": "Label for when a person reacts to a story"
   },
   "Quote__story-reaction--single": {
@@ -6389,27 +6505,27 @@
     "description": "Body of the popup with information about discriminator in username"
   },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "Set up your Signal username",
+    "messageformat": "Configura el teu àlies de Signal",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "Usernames are paired with a set of digits and aren’t shared on your profile",
+    "messageformat": "Els àlies s'emparellen amb un conjunt de dígits i no es comparteixen al teu perfil",
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Each username has a unique link you can share with your friends to start a chat with you",
+    "messageformat": "Cada àlies té un enllaç únic que pots compartir amb els teus amics perquè iniciïn un xat amb tu",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "Turn off phone number discovery under Settings > Phone Number > Who can find my number, to use your username as the primary way others can contact you.",
+    "messageformat": "Desactiva el descobriment de números de telèfon a Ajustos > Privacitat > Número de telèfon > Qui pot trobar el meu número, per utilitzar el teu àlies com a manera principal de contactar amb tu.",
     "description": "Content of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__learn-more": {
-    "messageformat": "Learn More",
+    "messageformat": "Més informació",
     "description": "Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Continue",
+    "messageformat": "Continua",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -6456,40 +6572,24 @@
     "message": "Petits ajustos, correccions d'errors i tasques de millora de rendiment. Gràcies per utilitzar Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "WhatsNew__v5.63--0": {
-    "message": "Treballant força per tal de corregir errors i fer altres tasques de millora de rendiment per aconseguir que l'aplicació funcioni sense problemes.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--0": {
+    "messageformat": "Fes clic a qualsevol imatge o vídeo i utilitza els nous botons Endavant i Enrere del visualitzador d'arxius multimèdia per fer una passejada visual pels racons de la memòria.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v5.63--beta.2": {
-    "message": "Comença a utilitzar i provar la nostra nova funció d'històries. Pots fer servir la funció amb altres provadors beta i fer-nos saber com funciona.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--1": {
+    "messageformat": "Les notes de veu ara es desaran com a esborranys si canvies a un altre xat mentre hi ha una gravació en curs.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.0": {
-    "message": "Ja han arribat les històries a Signal! Comparteix històries de text, imatge i vídeo amb qui tu vulguis. Les històries desapareixeran automàticament al cap de 24 hores. Per a aquelles persones que no poden viure sense compartir històries, aquí hi ha la forma de fer-ho amb privacitat i sense anuncis. Si no vols veure o compartir històries, pots desactivar aquesta funció a Preferències > Privacitat.",
-    "description": "Release notes for v6.0"
+  "icu:WhatsNew__v6.10--2": {
+    "messageformat": "Enviar un sticker ja no farà que s'esborri el text que estaves escrivint. Gràcies, {lamemakes}!",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.1--1": {
-    "message": "A l'inici d'una trucada de grup per a grups petits (fins a 16 persones), tindràs l'opció d'enviar una notificació de trucada. Els membres del grup sentiran un timbre si tenen la versió beta d'iOS o si utilitzen les versions d'escriptori o Android.",
-    "description": "Release notes for v6.1"
+  "icu:WhatsNew__v6.10--3": {
+    "messageformat": "També ens agradaria donar les gràcies a{norstbox} per tornar a alinear les icones de la barra de cerca de converses.",
+    "description": "Release notes for v6.10"
   },
-  "icu:WhatsNew__v6.3--0": {
-    "messageformat": "Fes doble clic a qualsevol missatge d'un xat per iniciar una resposta citada. És com una drecera per afegir nous pensaments sobre idees velles. Gràcies a {whynothugo} i a la comunitat de Signal per implementar aquesta funció i enviar comentaris.",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.3--1": {
-    "messageformat": "Ara és més fàcil fer clic fora d'una imatge per sortit de la visualització de la galeria sense fer zoom. De vegades només volies tancar i, en canvi, augmentaves el contingut. Gràcies a {jojomatik} per la correcció!",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.5--0": {
-    "messageformat": "Accelera el teu temps de resposta. Ara pots reaccionar més ràpidament fent clic a qualsevol emoji quan responguis a una història.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.5--1": {
-    "messageformat": "Ara és possible cercar caràcters individuals a l'historial de missatges en xinès i japonès.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.6--0": {
-    "messageformat": "Ajuda'ns a provar diverses millores de fiabilitat i rendiment de les trucades de veu i de vídeo. Aquesta versió beta també inclou algunes correccions d'errors i algunes petites actualitzacions de la interfície d'usuari (descobreix les noves millores de previsualització d'enllaços!). Gràcies per ser un provador beta i, si detectes cap error, fes-nos-ho saber a través del fòrum de la comunitat.",
-    "description": "Release notes for v6.6"
+  "icu:WhatsNew__v6.11--0": {
+    "messageformat": "Start talking to yourself even faster with a new icon that makes the “Note to Self” chat easier to find. Thanks to {hackerbirds} on GitHub for their contribution.",
+    "description": "Release notes for v6.11"
   }
 }

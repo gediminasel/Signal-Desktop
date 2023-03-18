@@ -16,7 +16,7 @@ import {
 import { awaitObject } from '../../util/awaitObject';
 import { DurationInSeconds } from '../../util/durations';
 import { createSetting, createCallback } from '../../util/preload';
-import { startInteractionMode } from '../startInteractionMode';
+import { startInteractionMode } from '../../services/InteractionMode';
 
 function doneRendering() {
   ipcRenderer.send('settings-done-rendering');
@@ -58,12 +58,9 @@ const settingLinkPreview = createSetting('linkPreviewSetting', {
   setter: false,
 });
 const settingPhoneNumberDiscoverability = createSetting(
-  'phoneNumberDiscoverabilitySetting',
-  { setter: false }
+  'phoneNumberDiscoverabilitySetting'
 );
-const settingPhoneNumberSharing = createSetting('phoneNumberSharingSetting', {
-  setter: false,
-});
+const settingPhoneNumberSharing = createSetting('phoneNumberSharingSetting');
 const settingReadReceipts = createSetting('readReceiptSetting', {
   setter: false,
 });
@@ -362,6 +359,9 @@ const renderPreferences = async () => {
         DurationInSeconds.fromSeconds(newValue)
       );
     },
+
+    onWhoCanFindMeChange: reRender(settingPhoneNumberDiscoverability.setValue),
+    onWhoCanSeeMeChange: reRender(settingPhoneNumberSharing.setValue),
 
     // Zoom factor change doesn't require immediate rerender since it will:
     // 1. Update the zoom factor in the main window

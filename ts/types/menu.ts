@@ -10,11 +10,13 @@ export type MenuOptionsType = Readonly<{
   devTools: boolean;
   includeSetup: boolean;
   isProduction: boolean;
+  isStaging: boolean;
   platform: string;
 }>;
 
 export type MenuActionsType = Readonly<{
   forceUpdate: () => unknown;
+  openArtCreator: () => unknown;
   openContactUs: () => unknown;
   openForums: () => unknown;
   openJoinTheBeta: () => unknown;

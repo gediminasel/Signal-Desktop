@@ -7,7 +7,6 @@ import filesize from 'filesize';
 import getDirection from 'direction';
 import emojiRegex from 'emoji-regex';
 import LinkifyIt from 'linkify-it';
-
 import type { StateType } from '../reducer';
 import type {
   LastMessageStatus,
@@ -163,7 +162,7 @@ export function hasErrors(
 }
 
 export function getSource(
-  message: MessageWithUIFieldsType,
+  message: Pick<MessageAttributesType, 'type' | 'source'>,
   ourNumber: string | undefined
 ): string | undefined {
   if (isIncoming(message)) {
@@ -195,7 +194,7 @@ export function getSourceDevice(
 }
 
 export function getSourceUuid(
-  message: MessageWithUIFieldsType,
+  message: Pick<MessageAttributesType, 'type' | 'sourceUuid'>,
   ourACI: string | undefined
 ): string | undefined {
   if (isIncoming(message)) {
@@ -1562,11 +1561,14 @@ export function getPropsForEmbeddedContact(
 
   return embeddedContactSelector(firstContact, {
     regionCode,
-    getAbsoluteAttachmentPath:
-      window.Signal.Migrations.getAbsoluteAttachmentPath,
+    getAbsoluteAttachmentPath: getAttachmentUrlForPath,
     firstNumber,
     uuid: accountSelector(firstNumber),
   });
+}
+
+export function getAttachmentUrlForPath(path: string): string {
+  return window.Signal.Migrations.getAbsoluteAttachmentPath(path);
 }
 
 export function getPropsForAttachment(
@@ -1583,23 +1585,17 @@ export function getPropsForAttachment(
     fileSize: size ? filesize(size) : undefined,
     isVoiceMessage: isVoiceMessage(attachment),
     pending,
-    url: path
-      ? window.Signal.Migrations.getAbsoluteAttachmentPath(path)
-      : undefined,
+    url: path ? getAttachmentUrlForPath(path) : undefined,
     screenshot: screenshot?.path
       ? {
           ...screenshot,
-          url: window.Signal.Migrations.getAbsoluteAttachmentPath(
-            screenshot.path
-          ),
+          url: getAttachmentUrlForPath(screenshot.path),
         }
       : undefined,
     thumbnail: thumbnail?.path
       ? {
           ...thumbnail,
-          url: window.Signal.Migrations.getAbsoluteAttachmentPath(
-            thumbnail.path
-          ),
+          url: getAttachmentUrlForPath(thumbnail.path),
         }
       : undefined,
   };
@@ -1610,9 +1606,7 @@ function processQuoteAttachment(
 ): QuotedAttachmentType {
   const { thumbnail } = attachment;
   const path =
-    thumbnail &&
-    thumbnail.path &&
-    window.Signal.Migrations.getAbsoluteAttachmentPath(thumbnail.path);
+    thumbnail && thumbnail.path && getAttachmentUrlForPath(thumbnail.path);
   const objectUrl = thumbnail && thumbnail.objectUrl;
 
   const thumbnailWithObjectUrl =

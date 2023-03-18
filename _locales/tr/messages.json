@@ -52,6 +52,14 @@
     "message": "$contact$ ekleniyor…",
     "description": "Shown in toast while a user is being added to a group"
   },
+  "icu:RecordingComposer__cancel": {
+    "messageformat": "İptal",
+    "description": "Label of cancel button on voice note recording UI"
+  },
+  "icu:RecordingComposer__send": {
+    "messageformat": "Gönder",
+    "description": "Label of send button on voice note recording UI"
+  },
   "GroupListItem__message-default": {
     "message": "$count$ üye",
     "description": "Shown below the group name when selecting a group to invite a contact to"
@@ -931,7 +939,7 @@
     "description": "Shown in a message's triple-dot menu if there isn't room for a dedicated download button"
   },
   "reactToMessage": {
-    "message": "İletiye Karşılık Ver",
+    "message": "Mesaja Tepki Ver",
     "description": "Shown in triple-dot menu next to message to allow user to react to the associated message"
   },
   "replyToMessage": {
@@ -1039,11 +1047,11 @@
     "description": "Shown as the title of our update error dialogs on windows"
   },
   "muted": {
-    "message": "Sessize Alındı",
+    "message": "Sessize alındı",
     "description": "Shown in a button when a conversation is muted"
   },
   "mute": {
-    "message": "Sessiz",
+    "message": "Sessize al",
     "description": "Shown in a button when a conversation is unmuted and can be muted"
   },
   "cannotUpdateDetail": {
@@ -1251,11 +1259,11 @@
     "description": "Shown on explainer dialog available from delivery issue timeline events"
   },
   "DeliveryIssue--summary": {
-    "message": "$sender$ tarafından gönderilen bir ileti, çıkartma, tepki, okundu bilgisi veya medya size teslim edilemedi. Size doğrudan veya grup içerisinden göndermeye çalışmış olabilirler.",
+    "message": "$sender$ tarafından gönderilen bir ileti, çıkartma, tepki, okundu bilgisi veya medya sana teslim edilemedi. Sana doğrudan veya grup içerisinden göndermeye çalışmış olabilir.",
     "description": "Shown on explainer dialog available from delivery issue timeline events in 1:1 conversations"
   },
   "DeliveryIssue--summary--group": {
-    "message": "Bu konuşmada $sender$ tarafından gönderilen bir ileti, çıkartma, tepki, okundu bilgisi veya içerik size teslim edilemedi.",
+    "message": "Bu konuşmada $sender$ tarafından gönderilen bir ileti, çıkartma, tepki, okundu bilgisi veya içerik sana teslim edilemedi.",
     "description": "Shown on explainer dialog available from delivery issue timeline events in groups"
   },
   "ChangeNumber--notification": {
@@ -1446,7 +1454,7 @@
     "description": "Button label in the call lobby for returning to a call"
   },
   "calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
-    "message": "Mikrofon bu görüşmenin boyutundan dolayı sessize alındı",
+    "message": "Aramanın boyutundan dolayı mikrofon sessize alındı",
     "description": "Shown in a call lobby toast if there are a lot of people already on the call"
   },
   "calling__call-is-full": {
@@ -1590,7 +1598,7 @@
     "description": "Shown in the participants list to describe how many people are in the call"
   },
   "calling__you-have-blocked": {
-    "message": "$name$ kişisini engellediniz",
+    "message": "$name$ kişisini engelledin",
     "description": "when you block someone and cannot view their video"
   },
   "calling__block-info": {
@@ -1778,10 +1786,10 @@
     "description": "Displayed in notifications for messages in a group"
   },
   "notificationReaction": {
-    "message": "$sender$ iletinize  $emoji$ karşılığı verdi"
+    "message": "$sender$ mesajına $emoji$ tepkisi verdi"
   },
   "notificationReactionMessage": {
-    "message": "$sender$, ' $message$' iletisine  $emoji$ karşılığı verdi"
+    "message": "$sender$, ' $message$' iletisine $emoji$ tepkisi verdi"
   },
   "sendFailed": {
     "message": "Gönderme başarısız",
@@ -1881,26 +1889,34 @@
   },
   "timestampFormat_M": {
     "message": "D MMM",
-    "description": "Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+  },
+  "timestampFormat__long--today": {
+    "message": "Bugün $time$",
+    "description": "Timestamp format string for displaying \"Today\" and the time"
+  },
+  "timestampFormat__long--yesterday": {
+    "message": "Dün $time$",
+    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "timestampFormat__long__today": {
     "message": "[Bugün] LT",
-    "description": "Timestamp format string for displaying \"Today\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Today\" and the time"
   },
   "timestampFormat__long__yesterday": {
     "message": "[Dün] LT",
-    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "messageBodyTooLong": {
     "message": "İleti metni çok uzun.",
     "description": "Shown if the user tries to send more than 64kb of text"
   },
   "unblockToSend": {
-    "message": "İleti göndermek için bu kişinin engellenmesini kaldırın.",
+    "message": "Mesaj göndermek için bu kişinin engellemesini kaldır.",
     "description": "Brief message shown when trying to message a blocked number"
   },
   "unblockGroupToSend": {
-    "message": "İleti göndermek için bu grubun engellenmesini kaldırın.",
+    "message": "Mesaj göndermek için bu grubun engellemesini kaldır.",
     "description": "Brief message shown when trying to message a blocked group"
   },
   "youChangedTheTimer": {
@@ -2181,7 +2197,7 @@
     "message": "Yeniden bağla"
   },
   "autoUpdateNewVersionTitle": {
-    "message": "Güncelleme mevcut"
+    "message": "Update Available"
   },
   "autoUpdateRetry": {
     "message": "Güncellemeyi yeniden dene"
@@ -2580,6 +2596,18 @@
     "message": "Yakın zamanda kullanılan çıkartmalar burada gözükecektir.",
     "description": "Shown in the sticker picker when there are no recent stickers to show."
   },
+  "icu:stickers__StickerPicker__recent": {
+    "messageformat": "Yakınlarda",
+    "description": "Title for all of the recent stickers"
+  },
+  "icu:stickers__StickerPicker__featured": {
+    "messageformat": "Öne Çıkan",
+    "description": "Title for featured stickers"
+  },
+  "icu:stickers__StickerPicker__analog-time": {
+    "messageformat": "Analog zaman",
+    "description": "aria-label for the analog time sticker"
+  },
   "stickers--StickerPreview--Title": {
     "message": "Çıkartma Paketi",
     "description": "The title that appears in the sticker pack preview modal."
@@ -2948,6 +2976,18 @@
     "message": "Konuşma okunmadı olarak işaretlendi",
     "description": "A toast that shows up when user marks a conversation as unread"
   },
+  "icu:AuthArtCreator--dialog--message": {
+    "messageformat": "Signal Çıkartma Paketi Oluşturucu'yu açmak ister misin?",
+    "description": "A body of the dialog that is presented when user tries to open Signal Sticker Pack Creator from a link"
+  },
+  "icu:AuthArtCreator--dialog--confirm": {
+    "messageformat": "Onayla",
+    "description": "A buttle title for confirming Signal Sticker Pack Creator dialog"
+  },
+  "icu:AuthArtCreator--dialog--dismiss": {
+    "messageformat": "Kapat",
+    "description": "A buttle title for dismissing Signal Sticker Pack Creator dialog"
+  },
   "StickerCreator--title": {
     "message": "Çıkartma paketi oluşturucu",
     "description": "The title of the Sticker Pack Creator window"
@@ -3148,12 +3188,16 @@
     "message": "Çıkartma Paketi oluşturucusunu kullanmak için lütfen Signal'i telefonunuzda ve bilgisayarınızda kurun.",
     "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
   },
+  "icu:ArtCreator--Authentication--error": {
+    "messageformat": "Çıkartma Paketi Oluşturucu'yu kullanmak için lütfen Signal'i telefonunda ve bilgisayarında kur",
+    "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
+  },
   "Reactions--remove": {
     "message": "Tepkiyi kaldır",
     "describe": "Shown when you want to remove a reaction you've made"
   },
   "Reactions--error": {
-    "message": "Karşılık gönderilemedi. Lütfen tekrar deneyin.",
+    "message": "Tepki gönderilemedi. Lütfen tekrar dene.",
     "description": "Shown when a reaction fails to send"
   },
   "Reactions--more": {
@@ -3169,7 +3213,7 @@
     "description": "Shown as the message for a message request in a direct message"
   },
   "MessageRequests--message-direct-blocked": {
-    "message": "$name$ kişisinin sizinle yazışmasına ve adınızla fotoğrafınızı görmesine izin vermek istiyor musunuz? Engeli kaldırana kadar hiçbir ileti almayacaksınız.",
+    "message": "$name$ kişisinin seninle yazışmasına ve adınla fotoğrafını paylaşmasına izin vermek istiyor musun? Engelini kaldırana kadar hiçbir mesaj almayacaksın.",
     "description": "Shown as the message for a message request in a direct message with a blocked account"
   },
   "MessageRequests--message-group": {
@@ -3177,7 +3221,7 @@
     "description": "Shown as the message for a message request in a group"
   },
   "MessageRequests--message-group-blocked": {
-    "message": "Bu grubun engelini kaldırmak ve adınızla fotonuzu üyeleri ile paylaşmak istiyor musunuz? Engeli kaldırana kadar hiçbir ileti almayacaksınız.",
+    "message": "Bu grubun engelini kaldırmak ve adınla fotonu üyeleri ile paylaşmak istiyor musun? Engelini kaldırana kadar hiçbir mesaj almayacaksın.",
     "description": "Shown as the message for a message request in a blocked group"
   },
   "MessageRequests--block": {
@@ -3201,11 +3245,11 @@
     "description": "Shown as the body in the confirmation modal for unblocking a group message request"
   },
   "MessageRequests--block-and-report-spam": {
-    "message": "İstenmeyen olarak bildir ve Engelle",
+    "message": "İstenmeyen İleti Olarak Bildir ve Engelle",
     "description": "Shown as a button to let the user block a message request and report spam"
   },
   "MessageRequests--block-and-report-spam-success-toast": {
-    "message": "Gereksiz olarak bildirildi ve engellendi",
+    "message": "İstenmeyen ileti olarak bildirildi ve engellendi.",
     "description": "Shown in a toast when you successfully block a user and report them as spam"
   },
   "MessageRequests--block-direct-confirm-title": {
@@ -3213,7 +3257,7 @@
     "description": "Shown as the title in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-direct-confirm-body": {
-    "message": "Engellenen kişiler sizi arayamayacaklar veya ileti gönderemeyecekler.",
+    "message": "Engellenen kişiler seni arayamaz veya mesaj gönderemez.",
     "description": "Shown as the body in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-group-confirm-title": {
@@ -3529,7 +3573,7 @@
     "description": "Label for the mute notifications drop-down selector"
   },
   "notMuted": {
-    "message": "Sessizleştirilmedi",
+    "message": "Sessize alınmadı",
     "description": "Label when the conversation is not muted"
   },
   "muteHour": {
@@ -3537,7 +3581,7 @@
     "description": "Label for muting the conversation"
   },
   "muteEightHours": {
-    "message": "8 saatliğine sessize al",
+    "message": "Sekiz saatliğine sessize al",
     "description": "Label for muting the conversation"
   },
   "muteDay": {
@@ -3557,11 +3601,11 @@
     "description": "Label for unmuting the conversation"
   },
   "muteExpirationLabelAlways": {
-    "message": "Kalıcı olarak susturulmuş",
+    "message": "Kalıcı olarak sessize alındı",
     "description": "Shown in the mute notifications submenu whenever a conversation has been muted"
   },
   "muteExpirationLabel": {
-    "message": "$duration$ süresince susturuldu",
+    "message": "$duration$ tarihine kadar sessize alındı",
     "description": "Shown in the mute notifications submenu whenever a conversation has been muted"
   },
   "EmojiButton__label": {
@@ -4433,7 +4477,7 @@
     "description": "This is a button in the conversation context menu to show chat settings"
   },
   "ConversationDetails__unmute--title": {
-    "message": "Konuşmanın sesi açılsın mı?",
+    "message": "Bu konuşmanın sesi açılsın mı?",
     "description": "Title for the modal to unmute a chat"
   },
   "ConversationDetails--group-link": {
@@ -4513,11 +4557,11 @@
     "description": "This is the modal button to confirm leaving a group"
   },
   "ConversationDetailsActions--unblock-group-modal-title": {
-    "message": "\"$groupName$\" Grubu'nun engeli kaldırılsın mı?",
+    "message": "\"$groupName$\" grubunun engeli kaldırılsın mı?",
     "description": "This is the modal title for confirming unblock of a group"
   },
   "ConversationDetailsActions--block-group-modal-title": {
-    "message": "\"$groupName$\" Grubundan Ayrıl ve Engelle?",
+    "message": "\"$groupName$\" grubundan ayrıl ve engelle?",
     "description": "This is the modal title for confirming blocking a group"
   },
   "ConversationDetailsActions--block-group-modal-content": {
@@ -4585,7 +4629,7 @@
     "description": "In the conversation notifications settings, this is the label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__info": {
-    "message": "Sessize alınan konuşmalarda sizden söz edildiğinde bildirim gönderilsin",
+    "message": "Sessize alınan konuşmalarda senden söz edildiğinde bildirim gönderilsin",
     "description": "In the conversation notifications settings, this is the sub-label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__select__always-notify": {
@@ -4854,11 +4898,11 @@
   },
   "TimelineDateHeader--date-in-last-6-months": {
     "message": "ddd, MMM D",
-    "description": "Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "TimelineDateHeader--date-older-than-6-months": {
     "message": "D/MMM/YYYY",
-    "description": "Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "MessageRequestWarning__learn-more": {
     "message": "Dahasını öğrenin",
@@ -5225,7 +5269,7 @@
     "description": "Shown if something unknown has gone wrong with username save."
   },
   "icu:ProfileEditor--username--reservation-gone": {
-    "messageformat": "{username} is no longer available. A new set of digits will be paired with your username, please try saving it again.",
+    "messageformat": "{username} artık mevcut değil. Kullanıcı adınla yeni bir basamak grubu eşleştirilecek, lütfen tekrar kaydetmeyi dene.",
     "description": "Shown if username reservation has expired and new one needs to be generated."
   },
   "ProfileEditor--username--delete-general-error": {
@@ -5430,23 +5474,75 @@
   },
   "Preferences__who-can--title": {
     "message": "Kim…",
-    "description": "Title for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Title for the 'who can do X' setting"
   },
   "Preferences__privacy--description": {
     "message": "Bu ayarları değiştirmek için mobil cihazınızdaki Signal uygulamasını açın ve \"Ayarlar > Gizlilik\" yolunu izleyin",
-    "description": "Description for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Description for the 'who can do X' setting"
   },
   "Preferences__who-can--everybody": {
     "message": "Herkes",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--contacts": {
     "message": "Kişilerim",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--nobody": {
     "message": "Hiç kimse",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
+  },
+  "icu:Preferences__pnp__row--title": {
+    "messageformat": "Telefon Numarası",
+    "description": "Title of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__row--body": {
+    "messageformat": "Telefon numaranı kimlerin görebileceğini ve seninle kimlerin Signal üzerinden iletişim kurabileceğini seç.",
+    "description": "Body of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__sharing--title": {
+    "messageformat": "Numaramı kimler görebilir?",
+    "description": "Title for the phone number sharing setting row"
+  },
+  "icu:Preferences__pnp__sharing--description--everyone": {
+    "messageformat": "Telefon numaran, ileti gönderdiğin kişiler ve gruplar tarafından görülür. Numaranı kişilerine ekleyen insanlar da seni Signal'de görebilir.",
+    "description": "Description for the phone number sharing setting row when the value is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody": {
+    "messageformat": "Hiç kimse telefon numaranı Signal'de göremeyecek.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody"
+  },
+  "icu:Preferences__pnp--page-title": {
+    "messageformat": "Telefon Numarası",
+    "description": "Title of the page in Phone Number Privacy settings"
+  },
+  "icu:Preferences__pnp__sharing__everyone": {
+    "messageformat": "Herkes",
+    "description": "Option for sharing phone number with everyone"
+  },
+  "icu:Preferences__pnp__sharing__nobody": {
+    "messageformat": "Hiç kimse",
+    "description": "Option for sharing phone number with nobody"
+  },
+  "icu:Preferences__pnp__discoverability--title": {
+    "messageformat": "Kimler beni numaram ile bulabilir?",
+    "description": "Title for the phone number discoverability setting row"
+  },
+  "icu:Preferences__pnp__discoverability--description--everyone": {
+    "messageformat": "Kişilerinde telefon numaranın bulunduğu herkes seni Signal'de bir kişi olarak görür. Diğerleri ise yeni bir sohbet veya grup başlattıklarında telefon numaranla sana ulaşabilir.",
+    "description": "Description for the phone number discoverability setting row wth the value is everyone"
+  },
+  "icu:Preferences__pnp__discoverability--description--nobody": {
+    "messageformat": "Signal'deki hiç kimse telefon numaranla seni bulamaz.",
+    "description": "Description for the phone number discoverability setting row wth the value is nobody"
+  },
+  "icu:Preferences__pnp__discoverability__everyone": {
+    "messageformat": "Herkes",
+    "description": "Option for letting everyone discover you by phone number"
+  },
+  "icu:Preferences__pnp__discoverability__nobody": {
+    "messageformat": "Hiç kimse",
+    "description": "Option for letting nobody discover you by phone number"
   },
   "Preferences--messaging": {
     "message": "Yazışma",
@@ -5504,6 +5600,14 @@
     "message": "$version$ sürümüne güncelleme mevcut",
     "description": "Tooltip for new update available"
   },
+  "icu:DialogUpdate__downloading": {
+    "messageformat": "Downloading Update...",
+    "description": "The title of update dialog when update download is in progress."
+  },
+  "icu:DialogUpdate__downloaded": {
+    "messageformat": "Update Downloaded",
+    "description": "The title of update dialog when update download is completed."
+  },
   "NSIS__retry-dialog--first-line": {
     "message": "Signal kapatılamaz.",
     "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
@@ -5551,6 +5655,10 @@
   "CustomizingPreferredReactions__had-save-error": {
     "message": "Ayarlarınız kaydedilirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.",
     "description": "Shown if there is an error when saving your preferred reaction settings. Should be very rare to see this message."
+  },
+  "icu:MediaEditor__clock-more-styles": {
+    "messageformat": "Daha fazla model",
+    "description": "Action button for switching up the clock styles"
   },
   "MediaEditor__control--draw": {
     "message": "Çizim",
@@ -6246,11 +6354,19 @@
   },
   "StoryCreator__error--video-too-long": {
     "message": "Video çok uzun olduğu için hikayede kullanılamıyor",
-    "description": "Error string for when a video post to story fails"
+    "description": "(deleted 02/22/2023) Error string for when a video post to story fails"
   },
   "StoryCreator__error--video-unsupported": {
     "message": "Desteklenmeyen bir dosya biçimi olduğu için video hikayede kullanılamıyor",
     "description": "Error string for when a video post to story fails"
+  },
+  "icu:StoryCreator__error--video-too-long": {
+    "messageformat": "{maxDurationInSec, plural, one {Video 1 saniyeden uzun olduğu için hikayeye eklenemiyor.} other {Video {maxDurationInSec,number} saniyeden uzun olduğu için hikayeye eklenemiyor.}}",
+    "description": "Error string for when a video post to story fails because video's duration is too long"
+  },
+  "icu:StoryCreator__error--video-too-big": {
+    "messageformat": "Video {limit} {units} boyutundan büyük olduğu için hikayeye eklenemiyor.",
+    "description": "Error string for when a video post to story fails because video's file size is too big"
   },
   "StoryCreator__error--video-error": {
     "message": "Video yüklenemedi",
@@ -6389,27 +6505,27 @@
     "description": "Body of the popup with information about discriminator in username"
   },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "Set up your Signal username",
+    "messageformat": "Signal kullanıcı adını ayarla",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "Usernames are paired with a set of digits and aren’t shared on your profile",
+    "messageformat": "Kullanıcı adları bir dizi basamak ile eşleştirilir ve profilinde paylaşılmaz",
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Each username has a unique link you can share with your friends to start a chat with you",
+    "messageformat": "Her kullanıcı adının seninle sohbete başlamaları için arkadaşlarınla paylaşabileceğin benzersiz bir bağlantısı vardır",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "Turn off phone number discovery under Settings > Phone Number > Who can find my number, to use your username as the primary way others can contact you.",
+    "messageformat": "Kullanıcı adını başkalarının seninle iletişim kurmasının birincil yolu olarak kullanmak için Ayarlar > Gizlilik > Telefon Numarası > Numaramı kimler bulabilir bölümünden telefon numarası bulmayı kapat.",
     "description": "Content of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__learn-more": {
-    "messageformat": "Learn More",
+    "messageformat": "Daha Fazlasını Öğren",
     "description": "Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Continue",
+    "messageformat": "Devam",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -6456,40 +6572,24 @@
     "message": "Küçük ince ayarlar, hata düzeltmeleri ve performans geliştirmeleri yaptık. Signal'i kullandığın için teşekkürler!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "WhatsNew__v5.63--0": {
-    "message": "Uygulamanın sorunsuz çalışmasını sağlamak için hataları düzelttik ve performans iyileştirmeleri yaptık.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--0": {
+    "messageformat": "Herhangi bir resme veya videoya tıkla ve içerik görüntüleyicideki yeni İleri ve Geri düğmelerini kullanarak hafıza şeridinde görsel bir gezinti yapın.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v5.63--beta.2": {
-    "message": "Yeni hikayeler özelliğimizi kullanmaya ve test etmeye başla. Bu özelliği diğer beta test kullanıcıları ile kullanabilir ve bize yorumlarını bildirebilirsin.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--1": {
+    "messageformat": "Bir kayıt devam ederken başka bir sohbete geçersen sesli mesajlar artık taslak olarak kaydedilir.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.0": {
-    "message": "Hikayeler artık Signal'da! 24 saat sonra otomatik olarak kaybolan metin, resim ve videoları belirli arkadaşlarınla veya gruplarınla paylaş. Hikaye paylaşmayı seviyorsan, bunu gizli ve reklam görmeden yapmanın bir yolu var. Hikayeleri görmek veya paylaşmak istemiyorsan, Tercihler > Gizlilik bölümünden tümünü devre dışı bırakabilirsin.",
-    "description": "Release notes for v6.0"
+  "icu:WhatsNew__v6.10--2": {
+    "messageformat": "Çıkartma göndermek artık taslak metnin silinmesine neden olmaz. Teşekkürler {lamemakes}!",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.1--1": {
-    "message": "Küçük gruplar (16 kişiye kadar) için bir grup araması başlattığında sesli bir bildirim göndermeyi seçebilirsin. Grup üyeleri, iOS beta, Masaüstü veya Android kullanıyorlarsa bir zil sesi duyarlar.",
-    "description": "Release notes for v6.1"
+  "icu:WhatsNew__v6.10--3": {
+    "messageformat": "Görüşme arama çubuğu simgelerini tekrar hizaladığı için {norstbox} adlı kullanıcımıza da teşekkür etmek istiyoruz.",
+    "description": "Release notes for v6.10"
   },
-  "icu:WhatsNew__v6.3--0": {
-    "messageformat": "Alıntılanmış bir yanıt yazmak için sohbetteki herhangi bir mesaj satırına çift tıkla. Bunu daha önce bahsi geçen fikirler hakkında yeni şeyler yazabilmeni sağlayan bir kısa yol gibi düşünebilirsin. Bu özelliği uygulayıp geri bildirimde bulunduğu için {whynothugo} ve Signal topluluğuna teşekkür ederiz.",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.3--1": {
-    "messageformat": "Galeri görünümünü yakınlaştırmadan kapatmak için bir resmin dışına tıklamak artık daha kolay. Bazen sadece resmi kapatmak isterken bunun yerine yanlışlıkla her şeyi yakınlaştırırsın ya? Düzeltme için teşekkürler {jojomatik}!",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.5--0": {
-    "messageformat": "Yanıt süreni hızlandır. Artık bir hikayeyi yanıtlarken herhangi bir emojiye tıklayarak daha hızlı tepki verebilirsin.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.5--1": {
-    "messageformat": "Artık mesaj geçmişinde Çince ve Japonca karakterleri tek tek aramak mümkün.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.6--0": {
-    "messageformat": "Sesli ve görüntülü aramalar için çeşitli güvenilirlik ve performans iyileştirmelerini test etmemize yardımcı ol. Bu beta sürümü birkaç hata düzeltmesi ve bazı küçük kullanıcı arayüzü güncellemeleri de içerir (yeni bağlantı ön izleme geliştirmelerine göz atmayı unutma!). Bir beta test kullanıcısı olduğun için teşekkür ederiz, herhangi bir hata görürsen lütfen topluluk forumundan bize ulaş.",
-    "description": "Release notes for v6.6"
+  "icu:WhatsNew__v6.11--0": {
+    "messageformat": "Start talking to yourself even faster with a new icon that makes the “Note to Self” chat easier to find. Thanks to {hackerbirds} on GitHub for their contribution.",
+    "description": "Release notes for v6.11"
   }
 }

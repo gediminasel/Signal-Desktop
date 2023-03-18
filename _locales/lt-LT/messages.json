@@ -52,6 +52,14 @@
     "message": "Pridedama $contact$…",
     "description": "Shown in toast while a user is being added to a group"
   },
+  "icu:RecordingComposer__cancel": {
+    "messageformat": "Atšaukti",
+    "description": "Label of cancel button on voice note recording UI"
+  },
+  "icu:RecordingComposer__send": {
+    "messageformat": "Siųsti",
+    "description": "Label of send button on voice note recording UI"
+  },
   "GroupListItem__message-default": {
     "message": "Narių: $count$",
     "description": "Shown below the group name when selecting a group to invite a contact to"
@@ -1039,11 +1047,11 @@
     "description": "Shown as the title of our update error dialogs on windows"
   },
   "muted": {
-    "message": "Pranešimai išj.",
+    "message": "Nutildytas",
     "description": "Shown in a button when a conversation is muted"
   },
   "mute": {
-    "message": "Be garso",
+    "message": "Nutildyti",
     "description": "Shown in a button when a conversation is unmuted and can be muted"
   },
   "cannotUpdateDetail": {
@@ -1251,11 +1259,11 @@
     "description": "Shown on explainer dialog available from delivery issue timeline events"
   },
   "DeliveryIssue--summary": {
-    "message": "Nepavyko jums nuo $sender$ pristatyti žinutės, lipduko, reakcijos, pranešimo apie žinutės skaitymą ar medijos. Gali būti, kad šis žmogus bandė siųsti jums tiesiogiai arba grupėje.",
+    "message": "Nepavyko tau pristatyti žinutės, lipduko, reakcijos, perskaitymo pranešimo ar įrašo nuo $sender$. Gali būti, kad šis žmogus bandė tau siųsti tiesiogiai arba grupėje.",
     "description": "Shown on explainer dialog available from delivery issue timeline events in 1:1 conversations"
   },
   "DeliveryIssue--summary--group": {
-    "message": "Šiame pokalbyje nepavyko jums nuo $sender$ pristatyti žinutės, lipduko, reakcijos, pranešimo apie žinutės skaitymą ar medijos.",
+    "message": "Nepavyko tau pristatyti žinutės, lipduko, reakcijos, perskaitymo pranešimo ar įrašo nuo $sender$ šiame pokalbyje.",
     "description": "Shown on explainer dialog available from delivery issue timeline events in groups"
   },
   "ChangeNumber--notification": {
@@ -1446,7 +1454,7 @@
     "description": "Button label in the call lobby for returning to a call"
   },
   "calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
-    "message": "Mikrofonas nutildytas dėl skambutyje dalyvaujančių žmonių skaičiaus",
+    "message": "Mikrofonas išjungtas dėl skambučio dalyvių skaičiaus",
     "description": "Shown in a call lobby toast if there are a lot of people already on the call"
   },
   "calling__call-is-full": {
@@ -1470,7 +1478,7 @@
     "description": "Button tooltip label for turning on the camera"
   },
   "calling__button--audio__label": {
-    "message": "Išj. pranešimus",
+    "message": "Nutildyti",
     "description": "Label under the audio button"
   },
   "calling__button--audio-disabled": {
@@ -1590,7 +1598,7 @@
     "description": "Shown in the participants list to describe how many people are in the call"
   },
   "calling__you-have-blocked": {
-    "message": "Jūs esate užblokavę naudotoją $name$",
+    "message": "Tu užblokavai naudotoją $name$",
     "description": "when you block someone and cannot view their video"
   },
   "calling__block-info": {
@@ -1778,10 +1786,10 @@
     "description": "Displayed in notifications for messages in a group"
   },
   "notificationReaction": {
-    "message": "$sender$ sureagavo į jūsų žinutę:  $emoji$"
+    "message": "$sender$ sureagavo į tavo žinutę $emoji$"
   },
   "notificationReactionMessage": {
-    "message": "$sender$ sureagavo  $emoji$ į:  $message$"
+    "message": "$sender$ sureagavo $emoji$ į „$message$“"
   },
   "sendFailed": {
     "message": "Išsiuntimas nepavyko",
@@ -1881,26 +1889,34 @@
   },
   "timestampFormat_M": {
     "message": "MMM D",
-    "description": "Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+  },
+  "timestampFormat__long--today": {
+    "message": "Šiandien $time$",
+    "description": "Timestamp format string for displaying \"Today\" and the time"
+  },
+  "timestampFormat__long--yesterday": {
+    "message": "Vakar $time$",
+    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "timestampFormat__long__today": {
     "message": "[Šiandien] LT",
-    "description": "Timestamp format string for displaying \"Today\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Today\" and the time"
   },
   "timestampFormat__long__yesterday": {
     "message": "[Vakar] LT",
-    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "messageBodyTooLong": {
     "message": "Žinutės turinys yra per ilgas.",
     "description": "Shown if the user tries to send more than 64kb of text"
   },
   "unblockToSend": {
-    "message": "Atblokuokite šį adresatą, kad išsiųstumėte žinutę.",
+    "message": "Atblokuok šį adresatą, kad išsiųstum žinutę.",
     "description": "Brief message shown when trying to message a blocked number"
   },
   "unblockGroupToSend": {
-    "message": "Norėdami siųsti žinutę, atblokuokite šią grupę.",
+    "message": "Atblokuok šią grupę, kad išsiųstum žinutę.",
     "description": "Brief message shown when trying to message a blocked group"
   },
   "youChangedTheTimer": {
@@ -2020,7 +2036,7 @@
     "description": "Label text for system theme"
   },
   "noteToSelf": {
-    "message": "Pastabos sau",
+    "message": "Priminimas sau",
     "description": "Name for the conversation with your own phone number"
   },
   "noteToSelfHero": {
@@ -2181,7 +2197,7 @@
     "message": "Susieti iš naujo"
   },
   "autoUpdateNewVersionTitle": {
-    "message": "Yra prieinamas atnaujinimas"
+    "message": "Update Available"
   },
   "autoUpdateRetry": {
     "message": "Bandykite atnaujinti programą dar kartą"
@@ -2580,6 +2596,18 @@
     "message": "Čia bus rodomi paskiausiai naudoti lipdukai.",
     "description": "Shown in the sticker picker when there are no recent stickers to show."
   },
+  "icu:stickers__StickerPicker__recent": {
+    "messageformat": "Paskiausi",
+    "description": "Title for all of the recent stickers"
+  },
+  "icu:stickers__StickerPicker__featured": {
+    "messageformat": "Pagrindiniai",
+    "description": "Title for featured stickers"
+  },
+  "icu:stickers__StickerPicker__analog-time": {
+    "messageformat": "Analoginis laikas",
+    "description": "aria-label for the analog time sticker"
+  },
   "stickers--StickerPreview--Title": {
     "message": "Lipdukų paketas",
     "description": "The title that appears in the sticker pack preview modal."
@@ -2777,7 +2805,7 @@
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--toggle-reaction-picker": {
-    "message": "Perjungti šypsenėlių reakcijų parinkiklį pasirinktai žinutei",
+    "message": "Perjungti pasirinktos žinutės jaustukų reakcijų parinkiklį",
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--save-attachment": {
@@ -2877,7 +2905,7 @@
     "description": "Header of the keyboard shortcuts guide - calling section"
   },
   "Keyboard--toggle-audio": {
-    "message": "Perjungti nutildymą",
+    "message": "Įjungti ir išjungti nutildymą",
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--toggle-video": {
@@ -2947,6 +2975,18 @@
   "conversationMarkedUnread": {
     "message": "Pokalbis pažymėtas kaip neskaitytas",
     "description": "A toast that shows up when user marks a conversation as unread"
+  },
+  "icu:AuthArtCreator--dialog--message": {
+    "messageformat": "Ar nori atverti „Signal“ lipdukų paketo kūrimą?",
+    "description": "A body of the dialog that is presented when user tries to open Signal Sticker Pack Creator from a link"
+  },
+  "icu:AuthArtCreator--dialog--confirm": {
+    "messageformat": "Patvirtinti",
+    "description": "A buttle title for confirming Signal Sticker Pack Creator dialog"
+  },
+  "icu:AuthArtCreator--dialog--dismiss": {
+    "messageformat": "Atmesti",
+    "description": "A buttle title for dismissing Signal Sticker Pack Creator dialog"
   },
   "StickerCreator--title": {
     "message": "Lipdukų paketo kūrėjas",
@@ -3148,12 +3188,16 @@
     "message": "Norėdami naudoti lipdukų paketo kūrėją, nusistatykite Signal savo telefone ir staliniame kompiuteryje",
     "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
   },
+  "icu:ArtCreator--Authentication--error": {
+    "messageformat": "Jei nori naudoti lipdukų paketo kūrimo įrankį, įdiek „Signal“ telefone ir kompiuteryje",
+    "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
+  },
   "Reactions--remove": {
     "message": "Šalinti reakciją",
     "describe": "Shown when you want to remove a reaction you've made"
   },
   "Reactions--error": {
-    "message": "Nepavyko išsiųsti reakcijos. Bandykite dar kartą.",
+    "message": "Nepavyko išsiųsti reakcijos. Bandyk dar kartą.",
     "description": "Shown when a reaction fails to send"
   },
   "Reactions--more": {
@@ -3169,7 +3213,7 @@
     "description": "Shown as the message for a message request in a direct message"
   },
   "MessageRequests--message-direct-blocked": {
-    "message": "Ar norite leisti, kad $name$ rašytų jums žinutes, ir bendrinti savo vardą bei nuotrauką su šiuo naudotoju? Jūs negausite jokių žinučių tol, kol neatblokuosite šio naudotojo.",
+    "message": "Ar nori leisti, kad $name$ siųstų tau žinutes, ir bendrinti su šiuo žmogumi savo vardą bei nuotrauką? Negausi žinučių, kol jo (-os) neatblokuosi.",
     "description": "Shown as the message for a message request in a direct message with a blocked account"
   },
   "MessageRequests--message-group": {
@@ -3177,7 +3221,7 @@
     "description": "Shown as the message for a message request in a group"
   },
   "MessageRequests--message-group-blocked": {
-    "message": "Atblokuoti šią grupę ir bendrinti jūsų vardą bei nuotrauką su grupės nariais? Jūs negausite jokių žinučių tol, kol jų neatblokuosite.",
+    "message": "Atblokuoti šią grupę ir bendrinti tavo vardą bei nuotrauką su grupės nariais? Negausi jokių žinučių, kol neatblokuosi.",
     "description": "Shown as the message for a message request in a blocked group"
   },
   "MessageRequests--block": {
@@ -3201,11 +3245,11 @@
     "description": "Shown as the body in the confirmation modal for unblocking a group message request"
   },
   "MessageRequests--block-and-report-spam": {
-    "message": "Pranešti apie brukalą ir užblokuoti",
+    "message": "Pranešti apie šlamštą ir užblokuoti",
     "description": "Shown as a button to let the user block a message request and report spam"
   },
   "MessageRequests--block-and-report-spam-success-toast": {
-    "message": "Pranešta apie brukalą ir užblokuota.",
+    "message": "Pranešta apie šlamštą ir užblokuota.",
     "description": "Shown in a toast when you successfully block a user and report them as spam"
   },
   "MessageRequests--block-direct-confirm-title": {
@@ -3213,7 +3257,7 @@
     "description": "Shown as the title in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-direct-confirm-body": {
-    "message": "Užblokuoti žmonės negalės jums skambinti ar siųsti žinučių.",
+    "message": "Užblokuoti žmonės negalės tau skambinti ar siųsti žinučių.",
     "description": "Shown as the body in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-group-confirm-title": {
@@ -3525,43 +3569,43 @@
     "description": "Shown when the device is the default device"
   },
   "muteNotificationsTitle": {
-    "message": "Išjungti pranešimus",
+    "message": "Nutildyti pranešimus",
     "description": "Label for the mute notifications drop-down selector"
   },
   "notMuted": {
-    "message": "Pranešimai neišjungti",
+    "message": "Nenutildytas",
     "description": "Label when the conversation is not muted"
   },
   "muteHour": {
-    "message": "Išjungti pranešimus vienai valandai",
+    "message": "Nutildyti vienai valandai",
     "description": "Label for muting the conversation"
   },
   "muteEightHours": {
-    "message": "Išjungti pranešimus aštuonioms valandoms",
+    "message": "Nutildyti aštuonioms valandoms",
     "description": "Label for muting the conversation"
   },
   "muteDay": {
-    "message": "Išjungti pranešimus vienai dienai",
+    "message": "Nutildyti vienai dienai",
     "description": "Label for muting the conversation"
   },
   "muteWeek": {
-    "message": "Išjungti pranešimus vienai savaitei",
+    "message": "Nutildyti vienai savaitei",
     "description": "Label for muting the conversation"
   },
   "muteAlways": {
-    "message": "Visada išjungti pranešimus",
+    "message": "Visada nutildyti",
     "description": "Label for muting the conversation"
   },
   "unmute": {
-    "message": "Įjungti pranešimus",
+    "message": "Įjungti garsą",
     "description": "Label for unmuting the conversation"
   },
   "muteExpirationLabelAlways": {
-    "message": "Pranešimai visada išjungti",
+    "message": "Visada nutildytas",
     "description": "Shown in the mute notifications submenu whenever a conversation has been muted"
   },
   "muteExpirationLabel": {
-    "message": "Pranešimai išjungti iki $duration$",
+    "message": "Nutildyta iki $duration$",
     "description": "Shown in the mute notifications submenu whenever a conversation has been muted"
   },
   "EmojiButton__label": {
@@ -4393,7 +4437,7 @@
     "description": "Displayed while checking if the contact is SMS-only"
   },
   "countMutedConversationsDescription": {
-    "message": "Įtraukti pokalbius su išjungtais pranešimais į ženkliuke rodomą skaičių",
+    "message": "Įtraukti nutildytus pokalbius į ženkliuke rodomą skaičių",
     "description": "Description for counting muted conversations in badge setting"
   },
   "ContactModal--message": {
@@ -4433,7 +4477,7 @@
     "description": "This is a button in the conversation context menu to show chat settings"
   },
   "ConversationDetails__unmute--title": {
-    "message": "Įjungti šio pokalbio pranešimus?",
+    "message": "Įjungti šio pokalbio garsą?",
     "description": "Title for the modal to unmute a chat"
   },
   "ConversationDetails--group-link": {
@@ -4585,7 +4629,7 @@
     "description": "In the conversation notifications settings, this is the label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__info": {
-    "message": "Gauti pranešimus, kai jus pamini pokalbiuose, kuriuose pranešimai yra išjungti",
+    "message": "Gauti pranešimus, kai tave pamini nutildytuose pokalbiuose",
     "description": "In the conversation notifications settings, this is the sub-label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__select__always-notify": {
@@ -4593,7 +4637,7 @@
     "description": "In the conversation notifications settings, this is the option that always notifies you for @mentions"
   },
   "ConversationNotificationsSettings__mentions__select__dont-notify-for-mentions-if-muted": {
-    "message": "Nepranešti, jei pranešimai išjungti",
+    "message": "Nepranešti, jei nutildytas",
     "description": "In the conversation notifications settings, this is the option that doesn't notify you for @mentions if the conversation is muted"
   },
   "GroupLinkManagement--clipboard": {
@@ -4854,11 +4898,11 @@
   },
   "TimelineDateHeader--date-in-last-6-months": {
     "message": "ddd, MMM D",
-    "description": "Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "TimelineDateHeader--date-older-than-6-months": {
     "message": "YYYY MMM D",
-    "description": "Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "MessageRequestWarning__learn-more": {
     "message": "Sužinoti daugiau",
@@ -5225,7 +5269,7 @@
     "description": "Shown if something unknown has gone wrong with username save."
   },
   "icu:ProfileEditor--username--reservation-gone": {
-    "messageformat": "{username} is no longer available. A new set of digits will be paired with your username, please try saving it again.",
+    "messageformat": "{username} nebegalimas. Naujas skaitmenų derinys bus susietas su tavo naudotojo vardu, pabandyk jį išsaugoti dar kartą.",
     "description": "Shown if username reservation has expired and new one needs to be generated."
   },
   "ProfileEditor--username--delete-general-error": {
@@ -5417,7 +5461,7 @@
     "description": "Label for the notification content setting select box"
   },
   "Preferences--blocked": {
-    "message": "Užblokuotas",
+    "message": "Užblokuotieji",
     "description": "Label for blocked contacts setting"
   },
   "Preferences--blocked-count-singular": {
@@ -5430,23 +5474,75 @@
   },
   "Preferences__who-can--title": {
     "message": "Kas gali…",
-    "description": "Title for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Title for the 'who can do X' setting"
   },
   "Preferences__privacy--description": {
     "message": "Norėdami keisti šiuos nustatymus, atverkite Signal programėlę savo mobiliajame įrenginyje ir pereikite į Nustatymai > Privatumas",
-    "description": "Description for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Description for the 'who can do X' setting"
   },
   "Preferences__who-can--everybody": {
     "message": "Visi",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--contacts": {
     "message": "Mano adresatai",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--nobody": {
     "message": "Niekas",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
+  },
+  "icu:Preferences__pnp__row--title": {
+    "messageformat": "Telefono numeris",
+    "description": "Title of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__row--body": {
+    "messageformat": "Pasirink, kas gali matyti tavo tel. numerį, ir kas gali su tavimi susisiekti per „Signal“.",
+    "description": "Body of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__sharing--title": {
+    "messageformat": "Kas gali matyti mano tel. numerį",
+    "description": "Title for the phone number sharing setting row"
+  },
+  "icu:Preferences__pnp__sharing--description--everyone": {
+    "messageformat": "Tavo tel. numeris bus matomas tiems, kam rašysi, ir grupėms, kuriose rašysi žinutes. Žmonės, turintys tavo numerį tarp adresatų telefone, matys jį ir programėlėje „Signal“.",
+    "description": "Description for the phone number sharing setting row when the value is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody": {
+    "messageformat": "Niekas nematys tavo tel. numerio programėlėje „Signal“.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody"
+  },
+  "icu:Preferences__pnp--page-title": {
+    "messageformat": "Telefono numeris",
+    "description": "Title of the page in Phone Number Privacy settings"
+  },
+  "icu:Preferences__pnp__sharing__everyone": {
+    "messageformat": "Visi",
+    "description": "Option for sharing phone number with everyone"
+  },
+  "icu:Preferences__pnp__sharing__nobody": {
+    "messageformat": "Niekas",
+    "description": "Option for sharing phone number with nobody"
+  },
+  "icu:Preferences__pnp__discoverability--title": {
+    "messageformat": "Kas gali mane rasti pagal numerį",
+    "description": "Title for the phone number discoverability setting row"
+  },
+  "icu:Preferences__pnp__discoverability--description--everyone": {
+    "messageformat": "Bet kas, turintis tavo telefono numerį tarp savo adresatų, matys tave kaip „Signal“ adresatą. Kiti galės tave pasiekti tel. numeriu, kai pradės naują pokalbį ar kurs grupę.",
+    "description": "Description for the phone number discoverability setting row wth the value is everyone"
+  },
+  "icu:Preferences__pnp__discoverability--description--nobody": {
+    "messageformat": "„Signal“ naudotojai negalės tavęs pasiekti telefono numeriu.",
+    "description": "Description for the phone number discoverability setting row wth the value is nobody"
+  },
+  "icu:Preferences__pnp__discoverability__everyone": {
+    "messageformat": "Visi",
+    "description": "Option for letting everyone discover you by phone number"
+  },
+  "icu:Preferences__pnp__discoverability__nobody": {
+    "messageformat": "Niekas",
+    "description": "Option for letting nobody discover you by phone number"
   },
   "Preferences--messaging": {
     "message": "Susirašinėjimas",
@@ -5504,6 +5600,14 @@
     "message": "Yra prieinamas atnaujinimas į versiją $version$",
     "description": "Tooltip for new update available"
   },
+  "icu:DialogUpdate__downloading": {
+    "messageformat": "Downloading Update...",
+    "description": "The title of update dialog when update download is in progress."
+  },
+  "icu:DialogUpdate__downloaded": {
+    "messageformat": "Update Downloaded",
+    "description": "The title of update dialog when update download is completed."
+  },
   "NSIS__retry-dialog--first-line": {
     "message": "Nepavyksta užverti Signal.",
     "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
@@ -5551,6 +5655,10 @@
   "CustomizingPreferredReactions__had-save-error": {
     "message": "Įrašant jūsų nustatymus, įvyko klaida. Bandykite dar kartą.",
     "description": "Shown if there is an error when saving your preferred reaction settings. Should be very rare to see this message."
+  },
+  "icu:MediaEditor__clock-more-styles": {
+    "messageformat": "Daugiau stilių",
+    "description": "Action button for switching up the clock styles"
   },
   "MediaEditor__control--draw": {
     "message": "Piešti",
@@ -5893,7 +6001,7 @@
     "description": "Checkbox label to allow or disallow replies to your stories"
   },
   "StoriesSettings__replies-reactions--description": {
-    "message": "Leisk žmonėms, galintiems žiūrėti tavo istoriją, reaguoti ir atsakyti.",
+    "message": "Leisti žmonėms, galintiems žiūrėti tavo istoriją, reaguoti ir atsakyti.",
     "description": "Description of checkbox to allow or disallow replies to your stories"
   },
   "StoriesSettings__delete-list": {
@@ -6117,11 +6225,11 @@
     "description": "Button label to reply to a group story"
   },
   "StoryViewer__mute": {
-    "message": "Išjungti pranešimus",
+    "message": "Nutildyti",
     "description": "Aria label for muting stories"
   },
   "StoryViewer__unmute": {
-    "message": "Įjungti pranešimus",
+    "message": "Įjungti garsą",
     "description": "Aria label for unmuting stories"
   },
   "StoryViewer__views-off": {
@@ -6246,11 +6354,19 @@
   },
   "StoryCreator__error--video-too-long": {
     "message": "Negalima paskelbti vaizdo įrašo istorijoje: per ilgas",
-    "description": "Error string for when a video post to story fails"
+    "description": "(deleted 02/22/2023) Error string for when a video post to story fails"
   },
   "StoryCreator__error--video-unsupported": {
     "message": "Negalima paskelbti vaizdo įrašo istorijoje: nepalaikomas failo formatas",
     "description": "Error string for when a video post to story fails"
+  },
+  "icu:StoryCreator__error--video-too-long": {
+    "messageformat": "{maxDurationInSec, plural, one {Negalima paskelbti vaizdo įrašo istorijoje, nes jis ilgesnis nei 1 sek.} few {Negalima paskelbti vaizdo įrašo istorijoje, nes jis ilgesnis nei {maxDurationInSec,number} sek.} many {Negalima paskelbti vaizdo įrašo istorijoje, nes jis ilgesnis nei {maxDurationInSec,number} sek.} other {Negalima paskelbti vaizdo įrašo istorijoje, nes jis ilgesnis nei {maxDurationInSec,number} sek.}}",
+    "description": "Error string for when a video post to story fails because video's duration is too long"
+  },
+  "icu:StoryCreator__error--video-too-big": {
+    "messageformat": "Negalima paskelbti vaizdo įrašo istorijoje, nes jis didesnis nei {limit}{units}.",
+    "description": "Error string for when a video post to story fails because video's file size is too big"
   },
   "StoryCreator__error--video-error": {
     "message": "Nepavyko įkelti vaizdo įrašo",
@@ -6349,15 +6465,15 @@
     "description": "Used whenever we can't find a user's first name"
   },
   "Quote__story-reaction-notification--incoming": {
-    "message": "Sureagavo į tavo istoriją „$emoji$“",
+    "message": "Sureagavo į tavo istoriją $emoji$",
     "description": "Notification test for incoming story reactions"
   },
   "Quote__story-reaction-notification--outgoing": {
-    "message": "Tu sureagavai „$emoji$“ į istoriją, kurią paskelbė $name$",
+    "message": "Tu sureagavai $emoji$ į istoriją, kurią paskelbė $name$",
     "description": "Notification test for outgoing story reactions"
   },
   "Quote__story-reaction-notification--outgoing--nameless": {
-    "message": "Tu sureagavai „$emoji$“ į istoriją",
+    "message": "Tu sureagavai į istoriją $emoji$",
     "description": "Notification test for outgoing story reactions but no name"
   },
   "Quote__story-unavailable": {
@@ -6389,27 +6505,27 @@
     "description": "Body of the popup with information about discriminator in username"
   },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "Set up your Signal username",
+    "messageformat": "Sukurk savo „Signal“ naudotojo vardą",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "Usernames are paired with a set of digits and aren’t shared on your profile",
+    "messageformat": "Naudotojų vardai susiejami su skaitmenų deriniais ir nėra bendrinami profilyje",
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Each username has a unique link you can share with your friends to start a chat with you",
+    "messageformat": "Kiekvienas naudotojo vardas turi unikalią nuorodą, kurią gali bendrinti su draugais, kad pradėtų pokalbį su tavimi",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "Turn off phone number discovery under Settings > Phone Number > Who can find my number, to use your username as the primary way others can contact you.",
+    "messageformat": "Jei nori, kad naudotojo vardas būtų pagrindinis būdas su tavimi susisiekti, išjunk telefono numerio aptikimą per Nustatymus > Telefono numeris > Kas gali rasti mano numerį.",
     "description": "Content of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__learn-more": {
-    "messageformat": "Learn More",
+    "messageformat": "Sužinoti daugiau",
     "description": "Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Continue",
+    "messageformat": "Tęsti",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -6456,40 +6572,24 @@
     "message": "Smulkūs patobulinimai, klaidų pataisymai ir veikimo pagerinimas. Ačiū, kad naudoji „Signal“!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "WhatsNew__v5.63--0": {
-    "message": "Plušame taisydami klaidas ir kitaip gerindami programėlės veikimą, kad ir toliau ja sklandžiai naudotumeisi.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--0": {
+    "messageformat": "Spustelėk bet kurią nuotrauką ar vaizdo įrašą, ir nauji įrašų žiūryklės mygtukai „Pirmyn“ ir „Atgal“ leis tau patogiai paklaidžioti prisiminimuose.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v5.63--beta.2": {
-    "message": "Pradėk naudoti ir testuoti mūsų naują istorijų funkciją. Gali ją naudoti kartu su kitais mūsų beta testuotojais ir pranešti, kaip veikia.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--1": {
+    "messageformat": "Balso žinutės dabar išsaugomos kaip juodraščiai, jei pereini į kitą pokalbį, kol vyksta įrašymas.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.0": {
-    "message": "„Signal“ istorijos jau čia! Bendrink dingstančias žinutes, nuotraukas ir vaizdo įrašus su pasirinktais draugais ar grupėmis – viskas automatiškai dingsta po 24 val. Visi, kas mėgsta bendrinti istorijas, gali daryti tai privačiai ir be jokių reklamų. Jei nenori žiūrėti ar bendrinti istorijų, gali visa tai išjungti: eik į Parinktis ir pasirink Privatumą.",
-    "description": "Release notes for v6.0"
+  "icu:WhatsNew__v6.10--2": {
+    "messageformat": "Siunčiant lipduką, juodraštinis tekstas nebebus ištrinamas. Ačiū, {lamemakes}!",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.1--1": {
-    "message": "Kai inicijuoji grupės skambutį mažai grupei (iki 16 žmonių), gali pasirinkti siųsti skambėjimo pranešimą. Grupės nariai išgirs skambėjimą, jeigu turi „iOS“ beta versiją arba naudoja kompiuterį ar „Android“.",
-    "description": "Release notes for v6.1"
+  "icu:WhatsNew__v6.10--3": {
+    "messageformat": "Taip pat norime padėkoti {norstbox} už tai, kad vėl sulygiavo pokalbio paieškos juostos piktogramas.",
+    "description": "Release notes for v6.10"
   },
-  "icu:WhatsNew__v6.3--0": {
-    "messageformat": "Dukart spustelėk bet kurią pranešimo eilutę pokalbyje, jei nori pradėti atsakymą citata. Tai tarsi nuoroda į naujas mintis apie senas idėjas. Dėkojame {whynothugo} ir „Signal“ bendruomenei už šios funkcijos įdiegimą ir atsiliepimus.",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.3--1": {
-    "messageformat": "Dabar lengviau spustelėti už vaizdo ribų ir išjungti galerijos rodinį nepriartinant. Juk kartais norėdavai nebematyti, o vietoj to pamatydavai iš arčiau. Dėkojame {jojomatik} už pataisymą!",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.5--0": {
-    "messageformat": "Pagreitink atsakymų laiką. Dabar gali sureaguoti greičiau – tereikia spustelėti bet kurį jaustuką atsakant į istoriją.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.5--1": {
-    "messageformat": "Dabar pranešimų istorijoje galima ieškoti atskirų simbolių kinų ir japonų kalbomis.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.6--0": {
-    "messageformat": "Padėk mums išbandyti kelis balso ir vaizdo skambučių patikimumo bei veikimo patobulinimus. Šioje beta versijoje dar yra keletas klaidų pataisymų ir nedidelių vartotojo sąsajos atnaujinimų (ieškok naujų nuorodų peržiūros patobulinimų!). Ačiū už beta versijos testavimą, o jei pastebėsi klaidų – pranešk mums bendruomenės forume.",
-    "description": "Release notes for v6.6"
+  "icu:WhatsNew__v6.11--0": {
+    "messageformat": "Start talking to yourself even faster with a new icon that makes the “Note to Self” chat easier to find. Thanks to {hackerbirds} on GitHub for their contribution.",
+    "description": "Release notes for v6.11"
   }
 }

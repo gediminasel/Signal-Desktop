@@ -52,6 +52,14 @@
     "message": "Menambahkan $contact$…",
     "description": "Shown in toast while a user is being added to a group"
   },
+  "icu:RecordingComposer__cancel": {
+    "messageformat": "Batal",
+    "description": "Label of cancel button on voice note recording UI"
+  },
+  "icu:RecordingComposer__send": {
+    "messageformat": "Kirim",
+    "description": "Label of send button on voice note recording UI"
+  },
   "GroupListItem__message-default": {
     "message": "$count$ anggota",
     "description": "Shown below the group name when selecting a group to invite a contact to"
@@ -1039,11 +1047,11 @@
     "description": "Shown as the title of our update error dialogs on windows"
   },
   "muted": {
-    "message": "Disenyapkan",
+    "message": "Dibisukan",
     "description": "Shown in a button when a conversation is muted"
   },
   "mute": {
-    "message": "Senyap",
+    "message": "Bisukan",
     "description": "Shown in a button when a conversation is unmuted and can be muted"
   },
   "cannotUpdateDetail": {
@@ -1251,11 +1259,11 @@
     "description": "Shown on explainer dialog available from delivery issue timeline events"
   },
   "DeliveryIssue--summary": {
-    "message": "Sebuah pesan, stiker, tanggapan, tanda pesan terbaca atau media tidak dapat Anda terima dari$sender$. Mereka mungkin mencoba mengirimkannya secara langsung, atau di dalam grup.",
+    "message": "Sebuah pesan, stiker, tanggapan, bukti pesan terbaca, atau media tidak dapat Anda terima dari $sender$. Mereka mungkin mencoba mengirimkannya langsung kepada Anda, atau di dalam grup.",
     "description": "Shown on explainer dialog available from delivery issue timeline events in 1:1 conversations"
   },
   "DeliveryIssue--summary--group": {
-    "message": "Sebuah pesan, stiker, tanggapan, tanda pesan terbaca atau media tidak dapat dikirim ke Anda dari $sender$ dalam percakapan ini.",
+    "message": "Sebuah pesan, stiker, tanggapan, bukti pesan terbaca, atau media tidak dapat Anda terima dari $sender$ dalam obrolan ini.",
     "description": "Shown on explainer dialog available from delivery issue timeline events in groups"
   },
   "ChangeNumber--notification": {
@@ -1446,7 +1454,7 @@
     "description": "Button label in the call lobby for returning to a call"
   },
   "calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
-    "message": "Mikrofon disenyapkan karena ukurang panggilan",
+    "message": "Mikrofon dibisukan karena ukuran panggilan",
     "description": "Shown in a call lobby toast if there are a lot of people already on the call"
   },
   "calling__call-is-full": {
@@ -1470,7 +1478,7 @@
     "description": "Button tooltip label for turning on the camera"
   },
   "calling__button--audio__label": {
-    "message": "Senyap",
+    "message": "Bisukan",
     "description": "Label under the audio button"
   },
   "calling__button--audio-disabled": {
@@ -1778,10 +1786,10 @@
     "description": "Displayed in notifications for messages in a group"
   },
   "notificationReaction": {
-    "message": "$sender$ memberi tanggapan $emoji$ pada pesan Anda"
+    "message": "$sender$ menanggapi $emoji$ pada pesan Anda"
   },
   "notificationReactionMessage": {
-    "message": "$sender$ memberi tanggapan $emoji$ pada: $message$"
+    "message": "$sender$ menanggapi $emoji$ pada: $message$"
   },
   "sendFailed": {
     "message": "Pengiriman gagal",
@@ -1881,26 +1889,34 @@
   },
   "timestampFormat_M": {
     "message": "MMM D",
-    "description": "Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+  },
+  "timestampFormat__long--today": {
+    "message": "Hari ini $time$",
+    "description": "Timestamp format string for displaying \"Today\" and the time"
+  },
+  "timestampFormat__long--yesterday": {
+    "message": "Kemarin $time$",
+    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "timestampFormat__long__today": {
     "message": "[Hari Ini] LT",
-    "description": "Timestamp format string for displaying \"Today\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Today\" and the time"
   },
   "timestampFormat__long__yesterday": {
     "message": "[Kemarin] LT",
-    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "messageBodyTooLong": {
     "message": "Pesan terlalu panjang.",
     "description": "Shown if the user tries to send more than 64kb of text"
   },
   "unblockToSend": {
-    "message": "Lepaskan blokir kontak ini untuk mengirim pesan",
+    "message": "Buka blokir kontak ini untuk mengirim pesan.",
     "description": "Brief message shown when trying to message a blocked number"
   },
   "unblockGroupToSend": {
-    "message": "Buka blokir grup ini untuk mengirimkan pesan.",
+    "message": "Buka blokir grup ini untuk mengirim pesan.",
     "description": "Brief message shown when trying to message a blocked group"
   },
   "youChangedTheTimer": {
@@ -2181,7 +2197,7 @@
     "message": "Sambungkan kembali"
   },
   "autoUpdateNewVersionTitle": {
-    "message": "Pembaruan tersedia"
+    "message": "Update Available"
   },
   "autoUpdateRetry": {
     "message": "Ulangi pembaruan"
@@ -2580,6 +2596,18 @@
     "message": "Stiker yang baru digunakan akan muncul di sini.",
     "description": "Shown in the sticker picker when there are no recent stickers to show."
   },
+  "icu:stickers__StickerPicker__recent": {
+    "messageformat": "Terkini",
+    "description": "Title for all of the recent stickers"
+  },
+  "icu:stickers__StickerPicker__featured": {
+    "messageformat": "Unggulan",
+    "description": "Title for featured stickers"
+  },
+  "icu:stickers__StickerPicker__analog-time": {
+    "messageformat": "Waktu analog",
+    "description": "aria-label for the analog time sticker"
+  },
   "stickers--StickerPreview--Title": {
     "message": "Paket Stiker",
     "description": "The title that appears in the sticker pack preview modal."
@@ -2777,7 +2805,7 @@
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--toggle-reaction-picker": {
-    "message": "Alihkan pemilih tanggapan-emoji untuk pesan yang dipilih",
+    "message": "Ganti pemilih tanggapan emoji untuk pesan yang dipilih",
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--save-attachment": {
@@ -2877,7 +2905,7 @@
     "description": "Header of the keyboard shortcuts guide - calling section"
   },
   "Keyboard--toggle-audio": {
-    "message": "Ganti mode senyap nyala dan mati",
+    "message": "Aktifkan dan nonaktifkan mode bisu",
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--toggle-video": {
@@ -2947,6 +2975,18 @@
   "conversationMarkedUnread": {
     "message": "Percakapan ditandai belum dibaca",
     "description": "A toast that shows up when user marks a conversation as unread"
+  },
+  "icu:AuthArtCreator--dialog--message": {
+    "messageformat": "Ingin membuka Pembuat Paket Stiker Signal?",
+    "description": "A body of the dialog that is presented when user tries to open Signal Sticker Pack Creator from a link"
+  },
+  "icu:AuthArtCreator--dialog--confirm": {
+    "messageformat": "Konfirmasi",
+    "description": "A buttle title for confirming Signal Sticker Pack Creator dialog"
+  },
+  "icu:AuthArtCreator--dialog--dismiss": {
+    "messageformat": "Tutup",
+    "description": "A buttle title for dismissing Signal Sticker Pack Creator dialog"
   },
   "StickerCreator--title": {
     "message": "Pembuat Paket Stiker",
@@ -3148,12 +3188,16 @@
     "message": "Atur Signal pada ponsel dan komputer Anda untuk menggunakan Pembuat Paket Stiker",
     "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
   },
+  "icu:ArtCreator--Authentication--error": {
+    "messageformat": "Siapkan Signal di ponsel dan komputer Anda untuk menggunakan Pembuat Paket Stiker",
+    "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
+  },
   "Reactions--remove": {
     "message": "Hapus tanggapan",
     "describe": "Shown when you want to remove a reaction you've made"
   },
   "Reactions--error": {
-    "message": "Gagal mengirim tanggapan. Silahkan coba lagi.",
+    "message": "Gagal mengirim tanggapan. Silakan coba lagi.",
     "description": "Shown when a reaction fails to send"
   },
   "Reactions--more": {
@@ -3169,7 +3213,7 @@
     "description": "Shown as the message for a message request in a direct message"
   },
   "MessageRequests--message-direct-blocked": {
-    "message": "Izinkan $name$ mengirimkan Anda pesan dan berbagi nama dan foto Anda dengan mereka? Anda tidak akan menerima pesan apapun sampai Anda membuka blokir mereka.",
+    "message": "Izinkan $name$ mengirimi Anda pesan dan bagikan nama dan foto Anda dengan mereka? Anda tidak akan menerima pesan apa pun sampai Anda membuka blokir mereka.",
     "description": "Shown as the message for a message request in a direct message with a blocked account"
   },
   "MessageRequests--message-group": {
@@ -3177,7 +3221,7 @@
     "description": "Shown as the message for a message request in a group"
   },
   "MessageRequests--message-group-blocked": {
-    "message": "Buka blokir grup ini dan bagikan nama dan foto Anda dengan anggotanya? Anda tidak akan menerima pesan apapun sampai Anda membuka blokirnya.",
+    "message": "Buka blokir grup ini dan bagikan nama dan foto Anda dengan anggotanya? Anda tidak akan menerima pesan apa pun sampai Anda membuka blokirnya.",
     "description": "Shown as the message for a message request in a blocked group"
   },
   "MessageRequests--block": {
@@ -3213,7 +3257,7 @@
     "description": "Shown as the title in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-direct-confirm-body": {
-    "message": "Orang yang Anda blokir tidak akan dapat menelepon atau mengirim pesan pada Anda",
+    "message": "Orang yang diblokir tidak akan bisa menelepon Anda atau mengirimi Anda pesan.",
     "description": "Shown as the body in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-group-confirm-title": {
@@ -3525,43 +3569,43 @@
     "description": "Shown when the device is the default device"
   },
   "muteNotificationsTitle": {
-    "message": "Senyapkan pemberitahuan",
+    "message": "Bisukan notifikasi",
     "description": "Label for the mute notifications drop-down selector"
   },
   "notMuted": {
-    "message": "Tidak Senyap",
+    "message": "Tidak dibisukan",
     "description": "Label when the conversation is not muted"
   },
   "muteHour": {
-    "message": "Senyapkan selama satu jam",
+    "message": "Bisukan selama 1 jam",
     "description": "Label for muting the conversation"
   },
   "muteEightHours": {
-    "message": "Senyapkan selama 8 jam",
+    "message": "Bisukan selama 8 jam",
     "description": "Label for muting the conversation"
   },
   "muteDay": {
-    "message": "Senyap selama satu hari",
+    "message": "Bisukan selama 1 hari",
     "description": "Label for muting the conversation"
   },
   "muteWeek": {
-    "message": "Senyap selama satu minggu",
+    "message": "Bisukan selama 1 minggu",
     "description": "Label for muting the conversation"
   },
   "muteAlways": {
-    "message": "Senyapkan selalu",
+    "message": "Selalu bisukan",
     "description": "Label for muting the conversation"
   },
   "unmute": {
-    "message": "Tidak Senyap",
+    "message": "Bunyikan",
     "description": "Label for unmuting the conversation"
   },
   "muteExpirationLabelAlways": {
-    "message": "Disenyapkan selalu",
+    "message": "Selalu dibisukan",
     "description": "Shown in the mute notifications submenu whenever a conversation has been muted"
   },
   "muteExpirationLabel": {
-    "message": "Senyapkan sampai $duration$",
+    "message": "Dibisukan hingga $duration$",
     "description": "Shown in the mute notifications submenu whenever a conversation has been muted"
   },
   "EmojiButton__label": {
@@ -4433,7 +4477,7 @@
     "description": "This is a button in the conversation context menu to show chat settings"
   },
   "ConversationDetails__unmute--title": {
-    "message": "Bunyikan chat ini?",
+    "message": "Bunyikan obrolan ini?",
     "description": "Title for the modal to unmute a chat"
   },
   "ConversationDetails--group-link": {
@@ -4517,7 +4561,7 @@
     "description": "This is the modal title for confirming unblock of a group"
   },
   "ConversationDetailsActions--block-group-modal-title": {
-    "message": "Blokir dan Tinggalkan Grup \"$groupName$\" ?",
+    "message": "Blokir dan Keluar dari Grup \"$groupName$\"?",
     "description": "This is the modal title for confirming blocking a group"
   },
   "ConversationDetailsActions--block-group-modal-content": {
@@ -4585,7 +4629,7 @@
     "description": "In the conversation notifications settings, this is the label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__info": {
-    "message": "Terima pemberitahuan saat Anda disebut dalam percakapan senyap",
+    "message": "Terima notifikasi saat Anda disebut dalam obrolan yang dibisukan",
     "description": "In the conversation notifications settings, this is the sub-label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__select__always-notify": {
@@ -4593,7 +4637,7 @@
     "description": "In the conversation notifications settings, this is the option that always notifies you for @mentions"
   },
   "ConversationNotificationsSettings__mentions__select__dont-notify-for-mentions-if-muted": {
-    "message": "Matikan Pemberitahuan Jika Dalam Mode Senyap",
+    "message": "Nonaktifkan notifikasi jika dibisukan",
     "description": "In the conversation notifications settings, this is the option that doesn't notify you for @mentions if the conversation is muted"
   },
   "GroupLinkManagement--clipboard": {
@@ -4854,11 +4898,11 @@
   },
   "TimelineDateHeader--date-in-last-6-months": {
     "message": "hhh, BBB H",
-    "description": "Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "TimelineDateHeader--date-older-than-6-months": {
     "message": "D MMM, YYYY",
-    "description": "Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "MessageRequestWarning__learn-more": {
     "message": "Pelajari lebih lanjut",
@@ -5225,7 +5269,7 @@
     "description": "Shown if something unknown has gone wrong with username save."
   },
   "icu:ProfileEditor--username--reservation-gone": {
-    "messageformat": "{username} is no longer available. A new set of digits will be paired with your username, please try saving it again.",
+    "messageformat": "{username} tidak lagi tersedia. Satu set angka baru akan dipasangkan dengan nama pengguna Anda, silakan coba simpan lagi.",
     "description": "Shown if username reservation has expired and new one needs to be generated."
   },
   "ProfileEditor--username--delete-general-error": {
@@ -5417,7 +5461,7 @@
     "description": "Label for the notification content setting select box"
   },
   "Preferences--blocked": {
-    "message": "Terblokir",
+    "message": "Diblokir",
     "description": "Label for blocked contacts setting"
   },
   "Preferences--blocked-count-singular": {
@@ -5430,23 +5474,75 @@
   },
   "Preferences__who-can--title": {
     "message": "Siapa yang dapat…",
-    "description": "Title for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Title for the 'who can do X' setting"
   },
   "Preferences__privacy--description": {
     "message": "Untuk mengubah pengaturan ini, buka aplikasi Signal di ponsel Anda dan akses Pengaturan > Privasi",
-    "description": "Description for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Description for the 'who can do X' setting"
   },
   "Preferences__who-can--everybody": {
     "message": "Siapa Saja",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--contacts": {
     "message": "Kontak Saya",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--nobody": {
     "message": "Tak seorangpun",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
+  },
+  "icu:Preferences__pnp__row--title": {
+    "messageformat": "Nomor Telepon",
+    "description": "Title of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__row--body": {
+    "messageformat": "Pilih siapa yang bisa melihat nomor telepon Anda dan siapa yang bisa menghubungi Anda di Signal dengan nomor tersebut.",
+    "description": "Body of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__sharing--title": {
+    "messageformat": "Siapa bisa melihat nomor saya",
+    "description": "Title for the phone number sharing setting row"
+  },
+  "icu:Preferences__pnp__sharing--description--everyone": {
+    "messageformat": "Nomor telepon Anda akan terlihat oleh orang dan grup yang Anda kirimi pesan. Orang yang menyimpan nomor Anda di kontaknya juga akan dapat melihat nomor telepon Anda di Signal.",
+    "description": "Description for the phone number sharing setting row when the value is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody": {
+    "messageformat": "Tidak akan ada yang melihat nomor Anda di Signal.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody"
+  },
+  "icu:Preferences__pnp--page-title": {
+    "messageformat": "Nomor Telepon",
+    "description": "Title of the page in Phone Number Privacy settings"
+  },
+  "icu:Preferences__pnp__sharing__everyone": {
+    "messageformat": "Semua orang",
+    "description": "Option for sharing phone number with everyone"
+  },
+  "icu:Preferences__pnp__sharing__nobody": {
+    "messageformat": "Tidak ada",
+    "description": "Option for sharing phone number with nobody"
+  },
+  "icu:Preferences__pnp__discoverability--title": {
+    "messageformat": "Siapa bisa menemukan saya dengan nomor",
+    "description": "Title for the phone number discoverability setting row"
+  },
+  "icu:Preferences__pnp__discoverability--description--everyone": {
+    "messageformat": "Siapa pun yang punya nomor Anda dalam daftar kontak mereka dapat melihat Anda sebagai kontak di Signal. Pengguna lainnya bisa menghubungi Anda dengan nomor telepon Anda saat mereka memulai obrolan atau grup baru.",
+    "description": "Description for the phone number discoverability setting row wth the value is everyone"
+  },
+  "icu:Preferences__pnp__discoverability--description--nobody": {
+    "messageformat": "Tidak seorang pun di Signal bisa menghubungi Anda dengan nomor telepon.",
+    "description": "Description for the phone number discoverability setting row wth the value is nobody"
+  },
+  "icu:Preferences__pnp__discoverability__everyone": {
+    "messageformat": "Semua orang",
+    "description": "Option for letting everyone discover you by phone number"
+  },
+  "icu:Preferences__pnp__discoverability__nobody": {
+    "messageformat": "Tidak ada",
+    "description": "Option for letting nobody discover you by phone number"
   },
   "Preferences--messaging": {
     "message": "Olah pesan",
@@ -5504,6 +5600,14 @@
     "message": "Pembaruan $version$ tersedia",
     "description": "Tooltip for new update available"
   },
+  "icu:DialogUpdate__downloading": {
+    "messageformat": "Downloading Update...",
+    "description": "The title of update dialog when update download is in progress."
+  },
+  "icu:DialogUpdate__downloaded": {
+    "messageformat": "Update Downloaded",
+    "description": "The title of update dialog when update download is completed."
+  },
   "NSIS__retry-dialog--first-line": {
     "message": "Signal tidak dapat ditutup.",
     "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
@@ -5551,6 +5655,10 @@
   "CustomizingPreferredReactions__had-save-error": {
     "message": "Terjadi kesalahan saat menyimpan pengaturan Anda. Mohon coba lagi.",
     "description": "Shown if there is an error when saving your preferred reaction settings. Should be very rare to see this message."
+  },
+  "icu:MediaEditor__clock-more-styles": {
+    "messageformat": "Gaya lainnya",
+    "description": "Action button for switching up the clock styles"
   },
   "MediaEditor__control--draw": {
     "message": "Gambar",
@@ -6117,7 +6225,7 @@
     "description": "Button label to reply to a group story"
   },
   "StoryViewer__mute": {
-    "message": "Senyapkan",
+    "message": "Bisukan",
     "description": "Aria label for muting stories"
   },
   "StoryViewer__unmute": {
@@ -6246,11 +6354,19 @@
   },
   "StoryCreator__error--video-too-long": {
     "message": "Tidak bisa memposting video ke cerita karena terlalu panjang",
-    "description": "Error string for when a video post to story fails"
+    "description": "(deleted 02/22/2023) Error string for when a video post to story fails"
   },
   "StoryCreator__error--video-unsupported": {
     "message": "Tidak bisa memposting video ke cerita karena format file tidak didukung",
     "description": "Error string for when a video post to story fails"
+  },
+  "icu:StoryCreator__error--video-too-long": {
+    "messageformat": "{maxDurationInSec, plural, other {Tidak dapat memposting video ke cerita karena durasinya lebih dari {maxDurationInSec,number} detik.}}",
+    "description": "Error string for when a video post to story fails because video's duration is too long"
+  },
+  "icu:StoryCreator__error--video-too-big": {
+    "messageformat": "Tidak dapat memposting video ke cerita karena ukurannya lebih dari {limit} {units}.",
+    "description": "Error string for when a video post to story fails because video's file size is too big"
   },
   "StoryCreator__error--video-error": {
     "message": "Gagal memuat video",
@@ -6349,15 +6465,15 @@
     "description": "Used whenever we can't find a user's first name"
   },
   "Quote__story-reaction-notification--incoming": {
-    "message": "Memberi tanggapan $emoji$ ke cerita Anda",
+    "message": "Menanggapi $emoji$ pada cerita Anda",
     "description": "Notification test for incoming story reactions"
   },
   "Quote__story-reaction-notification--outgoing": {
-    "message": "Anda memberi tanggapan $emoji$ ke cerita $name$",
+    "message": "Anda menanggapi $emoji$ pada cerita $name$",
     "description": "Notification test for outgoing story reactions"
   },
   "Quote__story-reaction-notification--outgoing--nameless": {
-    "message": "Anda memberi tanggapan $emoji$ ke sebuah cerita",
+    "message": "Anda menanggapi $emoji$ pada sebuah cerita",
     "description": "Notification test for outgoing story reactions but no name"
   },
   "Quote__story-unavailable": {
@@ -6389,27 +6505,27 @@
     "description": "Body of the popup with information about discriminator in username"
   },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "Set up your Signal username",
+    "messageformat": "Buat nama pengguna Signal Anda",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "Usernames are paired with a set of digits and aren’t shared on your profile",
+    "messageformat": "Nama pengguna dipasangkan dengan satu set angka dan tidak dibagikan di profil Anda",
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Each username has a unique link you can share with your friends to start a chat with you",
+    "messageformat": "Setiap nama pengguna memiliki tautan unik yang dapat Anda bagikan dengan teman untuk memulai obrolan dengan Anda",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "Turn off phone number discovery under Settings > Phone Number > Who can find my number, to use your username as the primary way others can contact you.",
+    "messageformat": "Nonaktifkan penemuan nomor telepon di Pengaturan > Privasi > Nomor Telepon > Siapa bisa menemukan nomor saya, untuk menggunakan nama pengguna sebagai cara utama orang lain dapat menghubungi Anda.",
     "description": "Content of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__learn-more": {
-    "messageformat": "Learn More",
+    "messageformat": "Pelajari Lebih Lanjut",
     "description": "Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Continue",
+    "messageformat": "Lanjutkan",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -6456,40 +6572,24 @@
     "message": "Tambahan penyesuaian kecil, perbaikan bug, dan peningkatan performa. Terima kasih telah menggunakan Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "WhatsNew__v5.63--0": {
-    "message": "Kami berupaya memperbaiki bug dan memberikan peningkatan performa lain agar aplikasi bisa berjalan lancar untuk Anda.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--0": {
+    "messageformat": "Klik gambar atau video mana pun dan gunakan tombol Maju dan Mundur yang baru di penampil media untuk melihat-lihat kembali kenangan Anda.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v5.63--beta.2": {
-    "message": "Mulai gunakan dan uji fitur cerita baru kami. Anda bisa menggunakan fitur ini bersama para penguji beta lainnya dan beri tahu kami pengalaman Anda menggunakannya.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--1": {
+    "messageformat": "Pesan suara kini disimpan sebagai draf jika Anda beralih ke obrolan lain saat perekaman sedang berlangsung.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.0": {
-    "message": "Cerita kini hadir di Signal! Bagikan kabar dengan teman atau grup tertentu, berupa teks, gambar & video yang akan hilang otomatis setelah 24 jam. Bagi yang suka berbagi cerita, inilah cara untuk melakukannya secara privat dan tanpa melihat iklan apa pun. Jika Anda tidak ingin melihat atau membagikan cerita, Anda dapat menonaktifkannya di menu Preferensi > Privasi.",
-    "description": "Release notes for v6.0"
+  "icu:WhatsNew__v6.10--2": {
+    "messageformat": "Mengirim stiker tidak lagi menyebabkan teks draf terhapus. Terima kasih, {lamemakes}!",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.1--1": {
-    "message": "Saat Anda memulai panggilan grup untuk grup kecil (maksimal 16 orang), Anda dapat memilih untuk mengirimkan notifikasi dering. Anggota grup akan mendengar dering jika mereka menggunakan iOS beta atau menggunakan Desktop atau Android.",
-    "description": "Release notes for v6.1"
+  "icu:WhatsNew__v6.10--3": {
+    "messageformat": "Kami juga ingin berterima kasih kepada {norstbox} karena telah menyesuaikan kembali ikon bilah pencarian percakapan.",
+    "description": "Release notes for v6.10"
   },
-  "icu:WhatsNew__v6.3--0": {
-    "messageformat": "Klik dua kali baris pesan apa pun dalam obrolan untuk memulai balasan yang dikutip. Ini seperti jalan pintas untuk pemikiran baru tentang ide lama. Terima kasih kepada {whynothugo} dan komunitas Signal telah menerapkan fitur ini dan memberikan masukan.",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.3--1": {
-    "messageformat": "Sekarang lebih mudah mengeklik di luar gambar untuk menutup tampilan galeri tanpa memperbesar. Terkadang Anda hanya ingin menutup, tetapi justru jadi terlalu dekat. Terima kasih kepada {jojomatik} untuk perbaikannya!",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.5--0": {
-    "messageformat": "Percepat waktu respons Anda. Sekarang Anda dapat menanggapi lebih cepat dengan mengeklik emoji apa pun saat membalas cerita.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.5--1": {
-    "messageformat": "Kini Anda dapat mencari riwayat pesan untuk tiap karakter dalam bahasa Mandarin dan Jepang.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.6--0": {
-    "messageformat": "Bantu kami menguji beberapa penyempurnaan reliabilitas dan kinerja untuk panggilan suara dan video. Rilisan beta ini juga mencakup beberapa perbaikan bug dan beberapa pembaruan kecil pada UI (cari penyempurnaan pratinjau tautan baru!). Terima kasih telah menjadi penguji beta, dan hubungi kami di forum komunitas jika Anda menemukan bug apa pun.",
-    "description": "Release notes for v6.6"
+  "icu:WhatsNew__v6.11--0": {
+    "messageformat": "Start talking to yourself even faster with a new icon that makes the “Note to Self” chat easier to find. Thanks to {hackerbirds} on GitHub for their contribution.",
+    "description": "Release notes for v6.11"
   }
 }

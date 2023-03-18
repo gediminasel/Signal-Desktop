@@ -19,6 +19,7 @@ import type { SystemTraySetting } from '../types/SystemTraySetting';
 import { parseSystemTraySetting } from '../types/SystemTraySetting';
 
 import type { ConversationType } from '../state/ducks/conversations';
+import type { AuthorizeArtCreatorDataType } from '../state/ducks/globalModals';
 import { calling } from '../services/calling';
 import { getConversationsWithCustomColorSelector } from '../state/selectors/conversations';
 import { getCustomColors } from '../state/selectors/items';
@@ -28,7 +29,7 @@ import { renderClearingDataView } from '../shims/renderClearingDataView';
 import * as universalExpireTimer from './universalExpireTimer';
 import { PhoneNumberDiscoverability } from './phoneNumberDiscoverability';
 import { PhoneNumberSharingMode } from './phoneNumberSharingMode';
-import { assertDev } from './assert';
+import { strictAssert, assertDev } from './assert';
 import * as durations from './durations';
 import type { DurationInSeconds } from './durations';
 import { isPhoneNumberSharingEnabled } from './isPhoneNumberSharingEnabled';
@@ -85,6 +86,7 @@ export type IPCEventsValuesType = {
 };
 
 export type IPCEventsCallbacksType = {
+  openArtCreator(): Promise<void>;
   getAvailableIODevices(): Promise<{
     availableCameras: Array<
       Pick<MediaDeviceInfo, 'deviceId' | 'groupId' | 'kind' | 'label'>
@@ -94,6 +96,7 @@ export type IPCEventsCallbacksType = {
   }>;
   addCustomColor: (customColor: CustomColorType) => void;
   addDarkOverlay: () => void;
+  authorizeArtCreator: (data: AuthorizeArtCreatorDataType) => void;
   deleteAllData: () => Promise<void>;
   deleteAllMyStories: () => Promise<void>;
   closeDB: () => Promise<void>;
@@ -136,8 +139,6 @@ type ValuesWithSetters = Omit<
   | 'blockedCount'
   | 'defaultConversationColor'
   | 'linkPreviewSetting'
-  | 'phoneNumberDiscoverabilitySetting'
-  | 'phoneNumberSharingSetting'
   | 'readReceiptSetting'
   | 'typingIndicatorSetting'
   | 'deviceName'
@@ -177,12 +178,49 @@ export type IPCEventsType = IPCEventsGettersType &
 export function createIPCEvents(
   overrideEvents: Partial<IPCEventsType> = {}
 ): IPCEventsType {
+  const setPhoneNumberDiscoverabilitySetting = async (
+    newValue: PhoneNumberDiscoverability
+  ): Promise<void> => {
+    strictAssert(window.textsecure.server, 'WebAPI must be available');
+    await window.storage.put('phoneNumberDiscoverability', newValue);
+    await window.textsecure.server.setPhoneNumberDiscoverability(
+      newValue === PhoneNumberDiscoverability.Discoverable
+    );
+    const account = window.ConversationController.getOurConversationOrThrow();
+    account.captureChange('phoneNumberDiscoverability');
+  };
+
   return {
+    openArtCreator: async () => {
+      const auth = await window.textsecure.server?.getArtAuth();
+      if (!auth) {
+        return;
+      }
+
+      window.openArtCreator(auth);
+    },
+
     getDeviceName: () => window.textsecure.storage.user.getDeviceName(),
 
     getZoomFactor: () => window.storage.get('zoomFactor', 1),
     setZoomFactor: async (zoomFactor: ZoomFactorType) => {
       webFrame.setZoomFactor(zoomFactor);
+    },
+
+    setPhoneNumberDiscoverabilitySetting,
+    setPhoneNumberSharingSetting: async (newValue: PhoneNumberSharingMode) => {
+      const account = window.ConversationController.getOurConversationOrThrow();
+      const promises = new Array<Promise<void>>();
+      promises.push(window.storage.put('phoneNumberSharingMode', newValue));
+      if (newValue === PhoneNumberSharingMode.Everybody) {
+        promises.push(
+          setPhoneNumberDiscoverabilitySetting(
+            PhoneNumberDiscoverability.Discoverable
+          )
+        );
+      }
+      account.captureChange('phoneNumberSharingMode');
+      await Promise.all(promises);
     },
 
     getHasStoriesDisabled: () =>
@@ -202,6 +240,8 @@ export function createIPCEvents(
     },
     setStoryViewReceiptsEnabled: async (value: boolean) => {
       await window.storage.put('storyViewReceiptsEnabled', value);
+      const account = window.ConversationController.getOurConversationOrThrow();
+      account.captureChange('storyViewReceiptsEnabled');
     },
 
     getPreferredAudioInputDevice: () =>
@@ -410,6 +450,14 @@ export function createIPCEvents(
         newOverlay.remove();
       });
       document.body.prepend(newOverlay);
+    },
+    authorizeArtCreator: (data: AuthorizeArtCreatorDataType) => {
+      // We can get these events even if the user has never linked this instance.
+      if (!window.Signal.Util.Registration.everDone()) {
+        log.warn('authorizeArtCreator: Not registered, returning early');
+        return;
+      }
+      window.reduxActions.globalModals.showAuthorizeArtCreator(data);
     },
     removeDarkOverlay: () => {
       const elems = document.querySelectorAll('.dark-overlay');

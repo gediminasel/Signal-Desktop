@@ -48,6 +48,7 @@ import { consoleLogger } from '../ts/util/consoleLogger';
 import type { ThemeSettingType } from '../ts/types/StorageUIKeys';
 import { ThemeType } from '../ts/types/Util';
 import * as Errors from '../ts/types/errors';
+import { resolveCanonicalLocales } from '../ts/util/resolveCanonicalLocales';
 
 import './startup_config';
 
@@ -94,7 +95,7 @@ import type { MenuActionType } from '../ts/types/menu';
 import { createTemplate } from './menu';
 import { installFileHandler, installWebHandler } from './protocol_filter';
 import * as OS from '../ts/OS';
-import { isProduction } from '../ts/util/version';
+import { isProduction, isStaging } from '../ts/util/version';
 import {
   isSgnlHref,
   isCaptchaHref,
@@ -120,7 +121,7 @@ import type { LoggerType } from '../ts/types/Logging';
 
 const animationSettings = systemPreferences.getAnimationSettings();
 
-if (OS.isMacOS() && !isProduction(app.getVersion())) {
+if (OS.isMacOS()) {
   systemPreferences.setUserDefault(
     'SquirrelMacEnableDirectContentsWrite',
     'boolean',
@@ -417,6 +418,7 @@ async function prepareUrl(
     storageUrl: config.get<string>('storageUrl'),
     updatesUrl: config.get<string>('updatesUrl'),
     resourcesUrl: config.get<string>('resourcesUrl'),
+    artCreatorUrl: config.get<string>('artCreatorUrl'),
     cdnUrl0: config.get<ConfigType>('cdn').get<string>('0'),
     cdnUrl2: config.get<ConfigType>('cdn').get<string>('2'),
     certificateAuthority: config.get<string>('certificateAuthority'),
@@ -670,10 +672,20 @@ async function getTitleBarOverlay(): Promise<TitleBarOverlayOptions | false> {
 }
 
 async function safeLoadURL(window: BrowserWindow, url: string): Promise<void> {
+  let wasDestroyed = false;
+  const onDestroyed = () => {
+    wasDestroyed = true;
+  };
+
+  window.webContents.on('did-stop-loading', onDestroyed);
+  window.webContents.on('destroyed', onDestroyed);
   try {
     await window.loadURL(url);
   } catch (error) {
-    if (windowState.readyForShutdown() && error?.code === 'ERR_FAILED') {
+    if (
+      (wasDestroyed || windowState.readyForShutdown()) &&
+      error?.code === 'ERR_FAILED'
+    ) {
       getLogger().warn(
         'safeLoadURL: ignoring ERR_FAILED because we are shutting down',
         error
@@ -681,6 +693,14 @@ async function safeLoadURL(window: BrowserWindow, url: string): Promise<void> {
       return;
     }
     throw error;
+  } finally {
+    try {
+      window.webContents.removeListener('did-stop-loading', onDestroyed);
+      window.webContents.removeListener('destroyed', onDestroyed);
+    } catch {
+      // We already logged or thrown an error - don't bother with handling the
+      // error here.
+    }
   }
 }
 
@@ -991,6 +1011,11 @@ ipc.handle('database-ready', async () => {
   getLogger().info('sending `database-ready`');
 });
 
+ipc.handle('open-art-creator', (_event, { username, password }) => {
+  const baseUrl = config.get<string>('artCreatorUrl');
+  drop(shell.openExternal(`${baseUrl}/#auth=${username}:${password}`));
+});
+
 ipc.on('show-window', () => {
   showWindow();
 });
@@ -1228,7 +1253,7 @@ async function showAbout() {
       nodeIntegrationInWorker: false,
       sandbox: false,
       contextIsolation: true,
-      preload: join(__dirname, '../ts/windows/about/preload.js'),
+      preload: join(__dirname, '../about.preload.bundle.js'),
       nativeWindowOpen: true,
     },
   };
@@ -1268,7 +1293,7 @@ async function showSettingsWindow() {
     frame: true,
     resizable: false,
     title: getResolvedMessagesLocale().i18n('signalDesktopPreferences'),
-    titleBarStyle: nonMainTitleBarStyle,
+    titleBarStyle: mainTitleBarStyle,
     titleBarOverlay,
     autoHideMenuBar: true,
     backgroundColor: await getBackgroundColor(),
@@ -1394,6 +1419,25 @@ async function showStickerCreator() {
   });
 
   await safeLoadURL(stickerCreatorWindow, await appUrl);
+}
+
+async function openArtCreator() {
+  if (!(await getIsLinked())) {
+    const message = getResolvedMessagesLocale().i18n(
+      'icu:ArtCreator--Authentication--error'
+    );
+
+    await dialog.showMessageBox({
+      type: 'warning',
+      message,
+    });
+
+    return;
+  }
+
+  if (mainWindow) {
+    mainWindow.webContents.send('open-art-creator');
+  }
 }
 
 let debugLogWindow: BrowserWindow | undefined;
@@ -1535,6 +1579,20 @@ const runSQLCorruptionHandler = async () => {
   await onDatabaseError(Errors.toLogFormat(error));
 };
 
+const runSQLReadonlyHandler = async () => {
+  // This is a glorified event handler. Normally, this promise never resolves,
+  // but if there is a corruption error triggered by any query that we run
+  // against the database - the promise will resolve and we will call
+  // `onDatabaseError`.
+  const error = await sql.whenReadonly();
+
+  getLogger().error(
+    `Detected readonly sql database in main process: ${error.message}`
+  );
+
+  throw error;
+};
+
 async function initializeSQL(
   userDataPath: string
 ): Promise<{ ok: true; error: undefined } | { ok: false; error: Error }> {
@@ -1581,6 +1639,7 @@ async function initializeSQL(
 
   // Only if we've initialized things successfully do we set up the corruption handler
   drop(runSQLCorruptionHandler());
+  drop(runSQLReadonlyHandler());
 
   return { ok: true, error: undefined };
 }
@@ -1629,6 +1688,11 @@ let sqlInitPromise:
 
 ipc.on('database-error', (_event: Electron.Event, error: string) => {
   drop(onDatabaseError(error));
+});
+
+ipc.on('database-readonly', (_event: Electron.Event, error: string) => {
+  // Just let global_errors.ts handle it
+  throw new Error(error);
 });
 
 function loadPreferredSystemLocales(): Array<string> {
@@ -1691,7 +1755,10 @@ app.on('ready', async () => {
   await setupCrashReports(getLogger);
 
   if (!resolvedTranslationsLocale) {
-    preferredSystemLocales = loadPreferredSystemLocales();
+    preferredSystemLocales = resolveCanonicalLocales(
+      loadPreferredSystemLocales()
+    );
+
     logger.info(
       `app.ready: preferred system locales: ${preferredSystemLocales.join(
         ', '
@@ -1946,10 +2013,12 @@ function setupMenu(options?: Partial<CreateTemplateOptionsType>) {
     devTools: defaultWebPrefs.devTools,
     includeSetup: false,
     isProduction: isProduction(app.getVersion()),
+    isStaging: isStaging(app.getVersion()),
     platform,
 
     // actions
     forceUpdate,
+    openArtCreator,
     openContactUs,
     openForums,
     openJoinTheBeta,
@@ -2288,6 +2357,11 @@ ipc.on('locale-data', event => {
   event.returnValue = getResolvedMessagesLocale().messages;
 });
 
+ipc.on('getHasCustomTitleBar', event => {
+  // eslint-disable-next-line no-param-reassign
+  event.returnValue = OS.hasCustomTitleBar();
+});
+
 ipc.on('user-config-key', event => {
   // eslint-disable-next-line no-param-reassign
   event.returnValue = userConfig.get('key');
@@ -2335,6 +2409,14 @@ function handleSgnlHref(incomingHref: string) {
         ? Buffer.from(packKeyHex, 'hex').toString('base64')
         : '';
       mainWindow.webContents.send('show-sticker-pack', { packId, packKey });
+    } else if (command === 'art-auth') {
+      const token = args?.get('token');
+      const pubKeyBase64 = args?.get('pub_key');
+
+      mainWindow.webContents.send('authorize-art-creator', {
+        token,
+        pubKeyBase64,
+      });
     } else if (command === 'signal.group' && hash) {
       getLogger().info('Showing group from sgnl protocol link');
       mainWindow.webContents.send('show-group-via-link', { hash });
@@ -2536,6 +2618,8 @@ ipc.handle('getMenuOptions', async () => {
 ipc.handle('executeMenuAction', async (_event, action: MenuActionType) => {
   if (action === 'forceUpdate') {
     drop(forceUpdate());
+  } else if (action === 'openArtCreator') {
+    drop(openArtCreator());
   } else if (action === 'openContactUs') {
     openContactUs();
   } else if (action === 'openForums') {

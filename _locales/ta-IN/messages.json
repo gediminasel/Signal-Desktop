@@ -52,6 +52,14 @@
     "message": "$contact$ சேர்க்கப்படுகின்றன…",
     "description": "Shown in toast while a user is being added to a group"
   },
+  "icu:RecordingComposer__cancel": {
+    "messageformat": "ரத்துசெய்",
+    "description": "Label of cancel button on voice note recording UI"
+  },
+  "icu:RecordingComposer__send": {
+    "messageformat": "அனுப்புக",
+    "description": "Label of send button on voice note recording UI"
+  },
   "GroupListItem__message-default": {
     "message": "$count$ உறுப்பினர்கள்",
     "description": "Shown below the group name when selecting a group to invite a contact to"
@@ -931,7 +939,7 @@
     "description": "Shown in a message's triple-dot menu if there isn't room for a dedicated download button"
   },
   "reactToMessage": {
-    "message": "செய்திக்கு வினையாற்றவும்",
+    "message": "மெசேஜுக்கு எதிர்வினையாற்றவும்",
     "description": "Shown in triple-dot menu next to message to allow user to react to the associated message"
   },
   "replyToMessage": {
@@ -1039,11 +1047,11 @@
     "description": "Shown as the title of our update error dialogs on windows"
   },
   "muted": {
-    "message": "முடக்கியது",
+    "message": "ஒலியடக்கப்பட்டது",
     "description": "Shown in a button when a conversation is muted"
   },
   "mute": {
-    "message": "முடக்கு",
+    "message": "ஒலியடக்கு",
     "description": "Shown in a button when a conversation is unmuted and can be muted"
   },
   "cannotUpdateDetail": {
@@ -1251,11 +1259,11 @@
     "description": "Shown on explainer dialog available from delivery issue timeline events"
   },
   "DeliveryIssue--summary": {
-    "message": "ஒரு செய்தி, ஓட்டி, எதிர்வினை, ரசீதைப் படியுங்கள் அல்லது மீடியா உங்களிடமிருந்து வழங்க முடியவில்லை $sender$. அவர்கள் அதை உங்களுக்கு நேரடியாக அனுப்ப முயற்சித்திருக்கலாம், அல்லது ஒருகுழு.",
+    "message": "$sender$ -இடமிருந்து ஒரு மெசேஜ், ஸ்டிக்கர், எதிர்வினை, படித்த ரசீது அல்லது ஊடகத்தை உங்களிடம் வழங்க முடியவில்லை. அவர்கள் அதை உங்களுக்கு நேரடியாக அல்லது ஒரு குழு மூலமாக அனுப்ப முயற்சித்திருக்கலாம்.",
     "description": "Shown on explainer dialog available from delivery issue timeline events in 1:1 conversations"
   },
   "DeliveryIssue--summary--group": {
-    "message": "ஒரு செய்தி, ஓட்டி, எதிர்வினை, ரசீது வாசிக்கவும் அல்லது ஊடகம் இருந்து உங்களுக்கு வழங்க முடியவில்லை$sender$ இதில் அரட்டை.",
+    "message": "இந்த சாட்டில் $sender$ அனுப்பிய ஒரு மெசேஜ், ஸ்டிக்கர், எதிர்வினை, படித்த ரசீது அல்லது ஊடகத்தை உங்களிடம் டெலிவரி செய்ய முடியவில்லை.",
     "description": "Shown on explainer dialog available from delivery issue timeline events in groups"
   },
   "ChangeNumber--notification": {
@@ -1470,7 +1478,7 @@
     "description": "Button tooltip label for turning on the camera"
   },
   "calling__button--audio__label": {
-    "message": "முடக்கு",
+    "message": "ஒலியடக்கு",
     "description": "Label under the audio button"
   },
   "calling__button--audio-disabled": {
@@ -1478,11 +1486,11 @@
     "description": "Button tooltip label when the microphone is disabled"
   },
   "calling__button--audio-off": {
-    "message": "ஒலிவாங்கியை அணைக்கவும்",
+    "message": "மைக்கை ஒலியடக்கு",
     "description": "Button tooltip label for turning off the microphone"
   },
   "calling__button--audio-on": {
-    "message": "ஒலிவாங்கியை உயிர்ப்பிக்கவும்",
+    "message": "மைக் ஒலி இயக்கு",
     "description": "Button tooltip label for turning on the microphone"
   },
   "calling__button--presenting__label": {
@@ -1590,7 +1598,7 @@
     "description": "Shown in the participants list to describe how many people are in the call"
   },
   "calling__you-have-blocked": {
-    "message": "நீங்கள் தடுத்துள்ளீர்கள் $name$",
+    "message": "$name$ ஐத் தடைசெய்துள்ளீர்கள்",
     "description": "when you block someone and cannot view their video"
   },
   "calling__block-info": {
@@ -1778,10 +1786,10 @@
     "description": "Displayed in notifications for messages in a group"
   },
   "notificationReaction": {
-    "message": "$sender$ அவர்கள்  உங்கள் செய்திக்கு $emoji$என உணர்வினை வெளிப்படுத்தினார்"
+    "message": "$sender$ உங்கள் செய்திக்கு $emoji$ என்று எதிர்வினையாற்றினார்"
   },
   "notificationReactionMessage": {
-    "message": "$sender$ அவர்கள் $message$ உங்கள் செய்திக்கு $emoji$என உணர்வினை வெளிப்படுத்தினார்"
+    "message": "$sender$ $emoji$ என்று எதிர்வினையாற்றினார்: $message$"
   },
   "sendFailed": {
     "message": "அனுப்புவது தோல்வியுற்றது",
@@ -1881,26 +1889,34 @@
   },
   "timestampFormat_M": {
     "message": "எம்.எம்.எம் டி",
-    "description": "Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+  },
+  "timestampFormat__long--today": {
+    "message": "இன்று $time$",
+    "description": "Timestamp format string for displaying \"Today\" and the time"
+  },
+  "timestampFormat__long--yesterday": {
+    "message": "நேற்று $time$",
+    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "timestampFormat__long__today": {
     "message": "[இன்று] LT",
-    "description": "Timestamp format string for displaying \"Today\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Today\" and the time"
   },
   "timestampFormat__long__yesterday": {
     "message": "[நேற்று] LT",
-    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "messageBodyTooLong": {
     "message": "செய்தி உடல் மிக நீளமானது.",
     "description": "Shown if the user tries to send more than 64kb of text"
   },
   "unblockToSend": {
-    "message": "செய்தி அனுப்ப இந்த தொடர்பைத் விடுவிக்கவும்.",
+    "message": "மெசேஜை அனுப்ப இந்த தொடர்பைத் தடைநீக்கவும்.",
     "description": "Brief message shown when trying to message a blocked number"
   },
   "unblockGroupToSend": {
-    "message": "செய்தி அனுப்ப இந்த குழுவைத் விடுவிக்கவும்.",
+    "message": "மெசேஜை அனுப்ப இந்த குழுவைத் தடைநீக்கவும்.",
     "description": "Brief message shown when trying to message a blocked group"
   },
   "youChangedTheTimer": {
@@ -2181,7 +2197,7 @@
     "message": "இணைக்கவும்"
   },
   "autoUpdateNewVersionTitle": {
-    "message": "புதுப்பிப்பு கிடைக்கிறது"
+    "message": "Update Available"
   },
   "autoUpdateRetry": {
     "message": "புதுப்பிப்பை மீண்டும் முயற்சிக்கவும்"
@@ -2580,6 +2596,18 @@
     "message": "சமீபத்தில் பயன்படுத்தப்பட்ட ஸ்டிக்கர்கள் இங்கே தோன்றும்.",
     "description": "Shown in the sticker picker when there are no recent stickers to show."
   },
+  "icu:stickers__StickerPicker__recent": {
+    "messageformat": "அண்மையில்",
+    "description": "Title for all of the recent stickers"
+  },
+  "icu:stickers__StickerPicker__featured": {
+    "messageformat": "இடம்பெற்றது",
+    "description": "Title for featured stickers"
+  },
+  "icu:stickers__StickerPicker__analog-time": {
+    "messageformat": "அனலாக் நேரம்",
+    "description": "aria-label for the analog time sticker"
+  },
   "stickers--StickerPreview--Title": {
     "message": "ஸ்டிக்கர் பேக்",
     "description": "The title that appears in the sticker pack preview modal."
@@ -2777,7 +2805,7 @@
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--toggle-reaction-picker": {
-    "message": "தேர்ந்தெடுக்கப்பட்ட செய்திக்கு ஈமோஜி-எதிர்வினை தேர்வியை நிலைமாற்று",
+    "message": "தேர்ந்தெடுக்கப்பட்ட மெசேஜுக்கு ஈமோஜி-எதிர்வினை பிக்கரை நிலைமாற்றும்",
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--save-attachment": {
@@ -2877,7 +2905,7 @@
     "description": "Header of the keyboard shortcuts guide - calling section"
   },
   "Keyboard--toggle-audio": {
-    "message": "நிலைமாற்று: முடக்குதலை இயக்கவும் முடக்கவும்",
+    "message": "ஒலியடக்கம் ஆன் மற்றும் ஆஃப் நிலைமாற்று",
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--toggle-video": {
@@ -2947,6 +2975,18 @@
   "conversationMarkedUnread": {
     "message": "உரையாடல் படிக்கப்படாததாகக் குறிக்கப்பட்டுள்ளது",
     "description": "A toast that shows up when user marks a conversation as unread"
+  },
+  "icu:AuthArtCreator--dialog--message": {
+    "messageformat": "Signal ஸ்டிக்கர் பேக் கிரியேட்டரைத் திறக்க விரும்புகிறீர்களா?",
+    "description": "A body of the dialog that is presented when user tries to open Signal Sticker Pack Creator from a link"
+  },
+  "icu:AuthArtCreator--dialog--confirm": {
+    "messageformat": "உறுதிப்படுத்துக",
+    "description": "A buttle title for confirming Signal Sticker Pack Creator dialog"
+  },
+  "icu:AuthArtCreator--dialog--dismiss": {
+    "messageformat": "நிராகரி",
+    "description": "A buttle title for dismissing Signal Sticker Pack Creator dialog"
   },
   "StickerCreator--title": {
     "message": "ஓட்டி தொகுப்பு தயாரிப்பாளர்",
@@ -3148,12 +3188,16 @@
     "message": "ஓட்டி தொகுப்பு கிரியேட்டரைப் பயன்படுத்த உங்கள் தொலைபேசி மற்றும் டெஸ்க்டாப்பில் Signal சிக்னலை அமைக்கவும்",
     "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
   },
+  "icu:ArtCreator--Authentication--error": {
+    "messageformat": "ஸ்டிக்கர் பேக் கிரியேட்டரைப் பயன்படுத்த உங்கள் ஃபோன் மற்றும் டெஸ்க்டாப்பில் Signalஐ அமைக்கவும்",
+    "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
+  },
   "Reactions--remove": {
     "message": "எதிர்வினையை அகற்று",
     "describe": "Shown when you want to remove a reaction you've made"
   },
   "Reactions--error": {
-    "message": "உணர்வு வெளிப்பாடு அனுப்புவதில் தோல்வி. தயவுசெய்து மீண்டும் முயற்சி செய்க.",
+    "message": "எதிர்வினை அனுப்புவதில் தோல்வி. தயவுசெய்து மீண்டும் முயல்க.",
     "description": "Shown when a reaction fails to send"
   },
   "Reactions--more": {
@@ -3169,7 +3213,7 @@
     "description": "Shown as the message for a message request in a direct message"
   },
   "MessageRequests--message-direct-blocked": {
-    "message": "$name$ உங்களுக்கு செய்தி அனுப்பவும், உங்கள் பெயரையும் புகைப்படத்தையும் அவர்களுடன் பகிர்ந்து கொள்ளட்டும்? நீங்கள் அவற்றைத் தடைநீக்கு செய்யும் வரை எந்த செய்திகளையும் பெற மாட்டீர்கள்.",
+    "message": "$name$ உங்களுக்கு மெசேஜ் அனுப்பவும், உங்கள் பெயரையும் புகைப்படத்தையும் அவர்களுடன் பகிர்ந்து கொள்ள அனுமதிக்க வேண்டுமா? நீங்கள் அவற்றைத் தடைநீக்கம் செய்யும் வரை எந்த மெசேஜ்களையும் பெற மாட்டீர்கள்.",
     "description": "Shown as the message for a message request in a direct message with a blocked account"
   },
   "MessageRequests--message-group": {
@@ -3177,11 +3221,11 @@
     "description": "Shown as the message for a message request in a group"
   },
   "MessageRequests--message-group-blocked": {
-    "message": "இந்த குழுவைத் தடைசெய்து, உங்கள் பெயரையும் புகைப்படத்தையும் அதன் உறுப்பினர்களுடன் பகிர்ந்து கொள்ளலாமா? நீங்கள் அவற்றைத் தடைநீக்கு செய்யும் வரை எந்த செய்திகளையும் பெற மாட்டீர்கள்.",
+    "message": "இந்த குழுவைத் தடைநீக்கம் செய்து, உங்கள் பெயரையும் புகைப்படத்தையும் அதன் உறுப்பினர்களுடன் பகிர்ந்து கொள்ளலாமா? நீங்கள் அவற்றைத் தடைநீக்கம் செய்யும் வரை எந்த மெசேஜ்களையும் பெற மாட்டீர்கள்.",
     "description": "Shown as the message for a message request in a blocked group"
   },
   "MessageRequests--block": {
-    "message": "தடு",
+    "message": "தடைசெய்",
     "description": "Shown as a button to let the user block a message request"
   },
   "MessageRequests--unblock": {
@@ -3189,7 +3233,7 @@
     "description": "Shown as a button to let the user unblock a message request"
   },
   "MessageRequests--unblock-direct-confirm-title": {
-    "message": "$name$ அவரைத் தடைநீக்கு செய்க?",
+    "message": "$name$ அவரைத் தடைநீக்கம் செய்ய வேண்டுமா?",
     "description": "Shown as a button to let the user unblock a message request"
   },
   "MessageRequests--unblock-direct-confirm-body": {
@@ -3201,23 +3245,23 @@
     "description": "Shown as the body in the confirmation modal for unblocking a group message request"
   },
   "MessageRequests--block-and-report-spam": {
-    "message": "ஸ்பேம் மற்றும் தடுப்பைப் புகாரளிக்கவும்",
+    "message": "ஸ்பேம் மற்றும் தடையைப் புகாரளிக்கவும்",
     "description": "Shown as a button to let the user block a message request and report spam"
   },
   "MessageRequests--block-and-report-spam-success-toast": {
-    "message": "என புகாரளிக்கப்பட்டது ஸ்பேம் மற்றும் தடுக்கப்பட்டது.",
+    "message": "ஸ்பேம் எனப் புகாரளிக்கப்பட்டு தடுக்கப்பட்டது.",
     "description": "Shown in a toast when you successfully block a user and report them as spam"
   },
   "MessageRequests--block-direct-confirm-title": {
-    "message": "$name$ தடு?",
+    "message": "$name$ ஐத் தடைசெய்ய வேண்டுமா?",
     "description": "Shown as the title in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-direct-confirm-body": {
-    "message": "தடுக்கப்பட்ட நபர்கள் உங்களை அழைக்கவோ அல்லது செய்திகளை அனுப்பவோ முடியாது.",
+    "message": "தடைசெய்யப்பட்ட நபர்கள் உங்களை அழைக்கவோ அல்லது மெசேஜ்களை அனுப்பவோ முடியாது.",
     "description": "Shown as the body in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-group-confirm-title": {
-    "message": "$group$ குழுவைத் தடுத்து வெளியேறவும்?",
+    "message": "$group$ குழுவைத் தடுத்து வெளியேற வேண்டுமா?",
     "description": "Shown as the title in the confirmation modal for blocking a group message request"
   },
   "MessageRequests--block-group-confirm-body": {
@@ -3525,39 +3569,39 @@
     "description": "Shown when the device is the default device"
   },
   "muteNotificationsTitle": {
-    "message": "அறிவிப்பை ஊமையாக்கு ",
+    "message": "அறிவிப்புகளை ஒலியடக்கு",
     "description": "Label for the mute notifications drop-down selector"
   },
   "notMuted": {
-    "message": "முடக்கப்படவில்லை",
+    "message": "ஒலியடக்கப்படவில்லை",
     "description": "Label when the conversation is not muted"
   },
   "muteHour": {
-    "message": "ஒரு மணி நேரம் முடக்கு",
+    "message": "ஒரு மணி நேரம் ஒலியடக்கு",
     "description": "Label for muting the conversation"
   },
   "muteEightHours": {
-    "message": "எட்டு மணி நேரம் முடக்கு",
+    "message": "எட்டு மணி நேரம் ஒலியடக்கு",
     "description": "Label for muting the conversation"
   },
   "muteDay": {
-    "message": "ஒரு நாள் முடக்கு",
+    "message": "ஒரு நாள் ஒலியடக்கு",
     "description": "Label for muting the conversation"
   },
   "muteWeek": {
-    "message": "ஒரு வாரம் முடக்கு",
+    "message": "ஒரு வாரம் ஒலியடக்கு",
     "description": "Label for muting the conversation"
   },
   "muteAlways": {
-    "message": "எப்போதும் முடக்கு",
+    "message": "எப்போதும் ஒலியடக்கு",
     "description": "Label for muting the conversation"
   },
   "unmute": {
-    "message": "தடுப்புநீக்கு",
+    "message": "ஒலியடக்கம் நீக்கு",
     "description": "Label for unmuting the conversation"
   },
   "muteExpirationLabelAlways": {
-    "message": "எப்போதும் முடக்கியது",
+    "message": "எப்போதும் ஒலியடக்கு",
     "description": "Shown in the mute notifications submenu whenever a conversation has been muted"
   },
   "muteExpirationLabel": {
@@ -4393,7 +4437,7 @@
     "description": "Displayed while checking if the contact is SMS-only"
   },
   "countMutedConversationsDescription": {
-    "message": "பேட்ஜ் எண்ணிக்கையில் முடக்கிய உரையாடல்களைச் சேர்க்கவும்",
+    "message": "பேட்ஜ் எண்ணிக்கையில் ஒலியடக்கப்பட்ட உரையாடல்களைச் சேர்க்கவும்",
     "description": "Description for counting muted conversations in badge setting"
   },
   "ContactModal--message": {
@@ -4433,7 +4477,7 @@
     "description": "This is a button in the conversation context menu to show chat settings"
   },
   "ConversationDetails__unmute--title": {
-    "message": "இந்த அரட்டையை இயக்கவதா?",
+    "message": "இந்த சாட்டின் ஒலியடக்கத்தை நீக்க வேண்டுமா?",
     "description": "Title for the modal to unmute a chat"
   },
   "ConversationDetails--group-link": {
@@ -4513,11 +4557,11 @@
     "description": "This is the modal button to confirm leaving a group"
   },
   "ConversationDetailsActions--unblock-group-modal-title": {
-    "message": "\"$groupName$\" குழுவை தடைநீக்கலாமா?",
+    "message": "\"$groupName$\" குழுவைத் தடைநீக்கலாமா?",
     "description": "This is the modal title for confirming unblock of a group"
   },
   "ConversationDetailsActions--block-group-modal-title": {
-    "message": "தடு மற்றும் விடுங்கள் \"$groupName$\" குழு?",
+    "message": "\"$groupName$\" குழுவைத் தடுத்து விட்டு வெளியேற வேண்டுமா?",
     "description": "This is the modal title for confirming blocking a group"
   },
   "ConversationDetailsActions--block-group-modal-content": {
@@ -4525,7 +4569,7 @@
     "description": "This is the modal content for confirming blocking a group"
   },
   "ConversationDetailsActions--block-group-modal-confirm": {
-    "message": "தடு",
+    "message": "தடைசெய்",
     "description": "This is the modal button to confirm blocking a group"
   },
   "ConversationDetailsActions--unblock-group-modal-content": {
@@ -4585,7 +4629,7 @@
     "description": "In the conversation notifications settings, this is the label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__info": {
-    "message": "பெறு அறிவிப்புகள் முடக்கப்பட்ட அரட்டைகளில் நீங்கள் குறிப்பிடப்படும்போது",
+    "message": "ஒலியடக்கிய சாட்களில் நீங்கள் குறிப்பிடப்படும்போது அறிவிப்புகளைப் பெறுங்கள்",
     "description": "In the conversation notifications settings, this is the sub-label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__select__always-notify": {
@@ -4593,7 +4637,7 @@
     "description": "In the conversation notifications settings, this is the option that always notifies you for @mentions"
   },
   "ConversationNotificationsSettings__mentions__select__dont-notify-for-mentions-if-muted": {
-    "message": "முடக்கப்பட்டால் அறிவிக்க வேண்டாம்",
+    "message": "ஒலியடக்கப்பட்டிருந்தால் அறிவிக்க வேண்டாம்",
     "description": "In the conversation notifications settings, this is the option that doesn't notify you for @mentions if the conversation is muted"
   },
   "GroupLinkManagement--clipboard": {
@@ -4697,7 +4741,7 @@
     "description": "Shown in timeline if users cancel their request to join a group via a group link"
   },
   "PendingRequests--block--title": {
-    "message": "கோரிக்கையைத் தடை செய்யலாமா?",
+    "message": "கோரிக்கையைத் தடை செய்ய வேண்டுமா?",
     "description": "Title of dialog to block a user from requesting to join via the link again"
   },
   "PendingRequests--block--contents": {
@@ -4705,7 +4749,7 @@
     "description": "Details of dialog to block a user from requesting to join via the link again"
   },
   "PendingRequests--block--confirm": {
-    "message": "கோரிக்கையை ரத்து செய்யவும்",
+    "message": "கோரிக்கையைத் தடைசெய்",
     "description": "Confirmation button of dialog to block a user from requesting to join via the link again"
   },
   "AvatarInput--no-photo-label--group": {
@@ -4854,11 +4898,11 @@
   },
   "TimelineDateHeader--date-in-last-6-months": {
     "message": "ddd, MMM D",
-    "description": "Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "TimelineDateHeader--date-older-than-6-months": {
     "message": "D, MMM, YYYY",
-    "description": "Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "MessageRequestWarning__learn-more": {
     "message": "மேலும் அறிக",
@@ -5225,7 +5269,7 @@
     "description": "Shown if something unknown has gone wrong with username save."
   },
   "icu:ProfileEditor--username--reservation-gone": {
-    "messageformat": "{username} is no longer available. A new set of digits will be paired with your username, please try saving it again.",
+    "messageformat": "{username} இனி கிடைக்காது. புதிய இலக்கங்கள் உங்கள் பயனர்பெயருடன் இணைக்கப்படும், தயவுசெய்து அதை மீண்டும் சேமிக்க முயலவும்.",
     "description": "Shown if username reservation has expired and new one needs to be generated."
   },
   "ProfileEditor--username--delete-general-error": {
@@ -5417,7 +5461,7 @@
     "description": "Label for the notification content setting select box"
   },
   "Preferences--blocked": {
-    "message": "தடுக்கப்பட்ட",
+    "message": "தடைசெய்யப்பட்டது",
     "description": "Label for blocked contacts setting"
   },
   "Preferences--blocked-count-singular": {
@@ -5430,23 +5474,75 @@
   },
   "Preferences__who-can--title": {
     "message": "யாரால் முடியும்…",
-    "description": "Title for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Title for the 'who can do X' setting"
   },
   "Preferences__privacy--description": {
     "message": "இந்த அமைப்புகளை மாற்ற, உங்கள் மொபைல் சாதனத்தில் சிக்னல் பயன்பாட்டைத் திறந்து, அமைப்புகள் > தனியுரிமை என்பதற்குச் செல்லவும்",
-    "description": "Description for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Description for the 'who can do X' setting"
   },
   "Preferences__who-can--everybody": {
     "message": "எல்லோரும்",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--contacts": {
     "message": "எனது தொடர்புகள்",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--nobody": {
     "message": "ஒருவருமில்லை",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
+  },
+  "icu:Preferences__pnp__row--title": {
+    "messageformat": "ஃபோன் எண்",
+    "description": "Title of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__row--body": {
+    "messageformat": "உங்கள் ஃபோன் எண்ணை யார் பார்க்கலாம் மற்றும் யார் உங்களை Signal இல் தொடர்பு கொள்ளலாம் என்பதைத் தேர்வுசெய்யவும்.",
+    "description": "Body of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__sharing--title": {
+    "messageformat": "எனது எண்ணை யார் பார்க்கலாம்",
+    "description": "Title for the phone number sharing setting row"
+  },
+  "icu:Preferences__pnp__sharing--description--everyone": {
+    "messageformat": "நீங்கள் செய்தி அனுப்பும் நபர்களுக்கும் குழுக்களுக்கும் உங்கள் ஃபோன் எண் தெரியும். ஃபோன் தொடர்புகளில் உங்கள் எண்ணை வைத்திருப்பவர்கள் அதை Signal இலும் பார்ப்பார்கள்.",
+    "description": "Description for the phone number sharing setting row when the value is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody": {
+    "messageformat": "Signal இல் உங்கள் ஃபோன் எண்ணை யாரும் பார்க்க மாட்டார்கள்.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody"
+  },
+  "icu:Preferences__pnp--page-title": {
+    "messageformat": "ஃபோன் எண்",
+    "description": "Title of the page in Phone Number Privacy settings"
+  },
+  "icu:Preferences__pnp__sharing__everyone": {
+    "messageformat": "எல்லோரும்",
+    "description": "Option for sharing phone number with everyone"
+  },
+  "icu:Preferences__pnp__sharing__nobody": {
+    "messageformat": "ஒருவருமில்லை",
+    "description": "Option for sharing phone number with nobody"
+  },
+  "icu:Preferences__pnp__discoverability--title": {
+    "messageformat": "எண் மூலம் என்னை யார் கண்டுபிடிக்க முடியும்",
+    "description": "Title for the phone number discoverability setting row"
+  },
+  "icu:Preferences__pnp__discoverability--description--everyone": {
+    "messageformat": "உங்கள் ஃபோன் எண்ணை தங்கள் தொடர்புகளில் வைத்திருக்கும் எவரும் உங்களை Signal இல் ஒரு தொடர்பாக பார்ப்பார்கள். மற்றவர்கள் புதிய சாட் அல்லது குழுவைத் தொடங்கும்போது உங்கள் ஃபோன் எண்ணுடன் உங்களைத் தொடர்புகொள்ள முடியும்.",
+    "description": "Description for the phone number discoverability setting row wth the value is everyone"
+  },
+  "icu:Preferences__pnp__discoverability--description--nobody": {
+    "messageformat": "Signal இல் உள்ள யாரும் உங்கள் ஃபோன் எண்ணுடன் உங்களைத் தொடர்பு கொள்ள முடியாது.",
+    "description": "Description for the phone number discoverability setting row wth the value is nobody"
+  },
+  "icu:Preferences__pnp__discoverability__everyone": {
+    "messageformat": "எல்லோரும்",
+    "description": "Option for letting everyone discover you by phone number"
+  },
+  "icu:Preferences__pnp__discoverability__nobody": {
+    "messageformat": "ஒருவருமில்லை",
+    "description": "Option for letting nobody discover you by phone number"
   },
   "Preferences--messaging": {
     "message": "செய்தி அனுப்புதல்",
@@ -5504,6 +5600,14 @@
     "message": "பதிப்புக்குப் புதுப்பிக்கவும் $version$ கிடைக்கிறது",
     "description": "Tooltip for new update available"
   },
+  "icu:DialogUpdate__downloading": {
+    "messageformat": "Downloading Update...",
+    "description": "The title of update dialog when update download is in progress."
+  },
+  "icu:DialogUpdate__downloaded": {
+    "messageformat": "Update Downloaded",
+    "description": "The title of update dialog when update download is completed."
+  },
   "NSIS__retry-dialog--first-line": {
     "message": "சிக்னலை மூட முடியாது.",
     "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
@@ -5541,7 +5645,7 @@
     "description": "A button label for erasure of the crash reporter data after a recent crash and continuing to start the app"
   },
   "CustomizingPreferredReactions__title": {
-    "message": "தனிப்பயனாக்கலாம் எதிர்வினைகள்",
+    "message": "எதிர்வினைகளை தனிப்பயனாக்கவும்",
     "description": "Shown in the header of the modal for customizing the preferred reactions. Also shown in the tooltip for the button that opens this modal."
   },
   "CustomizingPreferredReactions__subtitle": {
@@ -5551,6 +5655,10 @@
   "CustomizingPreferredReactions__had-save-error": {
     "message": "உங்கள் அமைப்புகளைச் சேமிக்கும் போது பிழை ஏற்பட்டது. தயவுசெய்து மீண்டும் முயற்சி செய்க.",
     "description": "Shown if there is an error when saving your preferred reaction settings. Should be very rare to see this message."
+  },
+  "icu:MediaEditor__clock-more-styles": {
+    "messageformat": "மேலும் ஸ்டைல்கள்",
+    "description": "Action button for switching up the clock styles"
   },
   "MediaEditor__control--draw": {
     "message": "வரை",
@@ -5809,7 +5917,7 @@
     "description": "Toast message"
   },
   "Stories__toast--sending-reaction": {
-    "message": "எதிர்வினை அனுப்பப்படுகிறது…",
+    "message": "எதிர்வினை அனுப்பப்படுகிறது...",
     "description": "Toast message"
   },
   "Stories__toast--hasNoSound": {
@@ -6117,11 +6225,11 @@
     "description": "Button label to reply to a group story"
   },
   "StoryViewer__mute": {
-    "message": "முடக்கு",
+    "message": "ஒலியடக்கு",
     "description": "Aria label for muting stories"
   },
   "StoryViewer__unmute": {
-    "message": "ஒலியடக்கை நீக்கு",
+    "message": "ஒலியடக்கம் நீக்கு",
     "description": "Aria label for unmuting stories"
   },
   "StoryViewer__views-off": {
@@ -6181,7 +6289,7 @@
     "description": "Title for replies tab"
   },
   "StoryViewsNRepliesModal__react": {
-    "message": "ஒரு ஸ்டோரிக்கு எதிர்வினையாற்றவும்",
+    "message": "ஸ்டோரிக்கு எதிர்வினையாற்றவும்",
     "description": "(deleted 01/25/23) aria-label for reaction button"
   },
   "StoryViewsNRepliesModal__reacted": {
@@ -6246,11 +6354,19 @@
   },
   "StoryCreator__error--video-too-long": {
     "message": "வீடியோ மிக நீளமாக இருப்பதால் ஸ்டோரியில் போஸ்ட் போட முடியாது",
-    "description": "Error string for when a video post to story fails"
+    "description": "(deleted 02/22/2023) Error string for when a video post to story fails"
   },
   "StoryCreator__error--video-unsupported": {
     "message": "ஆதரிக்கப்படாத கோப்பு வடிவமாக இருப்பதால் வீடியோவை ஸ்டோரியில் போஸ்ட் போட முடியாது",
     "description": "Error string for when a video post to story fails"
+  },
+  "icu:StoryCreator__error--video-too-long": {
+    "messageformat": "{maxDurationInSec, plural, one {வீடியோ 1 வினாடிக்கு மேல் மிக நீளமாக இருப்பதால் ஸ்டோரியில் போஸ்ட் போட முடியாது.} other {வீடியோ {maxDurationInSec,number} வினாடிகளுக்கு மேல் மிக நீளமாக இருப்பதால் ஸ்டோரியில் போஸ்ட் போட முடியாது.}}",
+    "description": "Error string for when a video post to story fails because video's duration is too long"
+  },
+  "icu:StoryCreator__error--video-too-big": {
+    "messageformat": "{limit}{units} விட பெரியதாக இருப்பதால் வீடியோவை ஸ்டோரியில் போஸ்ட் போட முடியாது.",
+    "description": "Error string for when a video post to story fails because video's file size is too big"
   },
   "StoryCreator__error--video-error": {
     "message": "வீடியோவை ஏற்ற முடியவில்லை",
@@ -6341,7 +6457,7 @@
     "description": "Title for replies to stories"
   },
   "Quote__story-reaction": {
-    "message": "$name$-இடமிருந்து ஒரு ஸ்டோரிக்கு எதிர்வினையாற்றினார்",
+    "message": "$name$ -இடமிருந்து ஒரு ஸ்டோரிக்கு எதிர்வினையாற்றினார்",
     "description": "Label for when a person reacts to a story"
   },
   "Quote__story-reaction--single": {
@@ -6389,27 +6505,27 @@
     "description": "Body of the popup with information about discriminator in username"
   },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "Set up your Signal username",
+    "messageformat": "உங்கள் Signal பயனர் பெயரை அமைக்கவும்",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "Usernames are paired with a set of digits and aren’t shared on your profile",
+    "messageformat": "பயனர்பெயர்கள் இலக்கங்களின் தொகுப்புடன் இணைக்கப்பட்டு உங்கள் சுயவிவரத்தில் பகிரப்படாது",
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Each username has a unique link you can share with your friends to start a chat with you",
+    "messageformat": "உங்களுடன் சாட் செய்வதற்கு உங்கள் நண்பர்களுடன் பகிர்ந்து கொள்ள ஒவ்வொரு பயனர்பெயருக்கும் தனித்துவமான இணைப்பு உள்ளது",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "Turn off phone number discovery under Settings > Phone Number > Who can find my number, to use your username as the primary way others can contact you.",
+    "messageformat": "மற்றவர்கள் உங்களைத் தொடர்புகொள்வதற்கு உங்கள் பயனர்பெயரை முதன்மையாகப் பயன்படுத்த, அமைப்புகள் > தனியுரிமை > ஃபோன் எண் > எனது எண்ணை யார் கண்டறியலாம், என்பதன் கீழ் ஃபோன் எண் கண்டுபிடிப்பை முடக்கவும்.",
     "description": "Content of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__learn-more": {
-    "messageformat": "Learn More",
+    "messageformat": "மேலும் அறிக",
     "description": "Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Continue",
+    "messageformat": "தொடர்க",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -6456,40 +6572,24 @@
     "message": "சிறு மாற்றங்கள், பிழை திருத்தங்கள் மற்றும் செயல்திறன் மேம்பாடுகள். சிக்னலைப் பயன்படுத்தியதற்கு நன்றி!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "WhatsNew__v5.63--0": {
-    "message": "பிழை திருத்தம் செய்யவும் மற்றும் உங்களுக்காக ஆப்பை சீராக இயங்க வைப்பதற்கான செயல்திறன் மேம்பாடுகளைச் செய்யவும் கடினமாக உழைக்கிறோம்.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--0": {
+    "messageformat": "ஏதேனும் படம் அல்லது வீடியோவை கிளிக் செய்து, மீடியா வியூவரில் உள்ள புதிய முன்னோக்கி மற்றும் பின்னோக்கி பொத்தான்களைப் பயன்படுத்தி, நினைவகப் பாதையில் ஒரு காட்சிப் பாதையை எடுக்கவும்.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v5.63--beta.2": {
-    "message": "எங்களின் புதிய ஸ்டோரீஸ் அம்சத்தைப் பயன்படுத்தவும் சோதனை செய்யவும் தொடங்கவும். நீங்கள் மற்ற பீட்டா சோதனையாளர்களுடன் இந்த அம்சத்தைப் பயன்படுத்தலாம் மற்றும் அது எவ்வாறு செயல்படுகிறது என்பதை எங்களுக்குத் தெரியப்படுத்தலாம்.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--1": {
+    "messageformat": "ரெக்கார்டிங் நடந்துகொண்டிருக்கும்போது நீங்கள் வேறொரு சாட்டிற்கு மாறினால் குரல் செய்திகள் இப்போது வரைவுகளாகச் சேமிக்கப்படும்.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.0": {
-    "message": "இப்போது Signal இல் ஸ்டோரீஸ் கிடைக்கிறது! 24 மணிநேரத்திற்குப் பிறகு தானாகவே மறையும் உரை, படங்கள் மற்றும் வீடியோ புதுப்பிப்புகளைக் குறிப்பிட்ட நண்பர்கள் அல்லது குழுக்களுடன் பகிரவும். ஸ்டோரீஸைப் பகிர விரும்பும் அனைவருக்கும், எந்த விளம்பரங்களையும் காட்டாமல் தனிப்பட்ட முறையில் செய்ய இதோ ஒரு வழி. நீங்கள் ஸ்டோரீஸைப் பார்க்கவோ பகிரவோ விரும்பவில்லை என்றால், உங்கள் விருப்பத்தேர்வுகள் > தனியுரிமை என்பதில் அனைத்திலிருந்தும் விலகலாம்.",
-    "description": "Release notes for v6.0"
+  "icu:WhatsNew__v6.10--2": {
+    "messageformat": "ஸ்டிக்கரை அனுப்புவதால் இனியும் வரைவு உரை அழிக்கப்படாது. நன்றி, {lamemakes}!",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.1--1": {
-    "message": "சிறிய குழுக்களுக்கு (16 பேர் வரை) நீங்கள் ஒரு குழு அழைப்பைத் தொடங்கும்போது, ஒரு அழைப்பு அறிவிப்பை அனுப்ப நீங்கள் தேர்வு செய்யலாம். குழு உறுப்பினர்கள் ஐ.ஓ.எஸ் பீட்டாவில் இருந்தால் அல்லது டெஸ்க்டாப் அல்லது ஆண்ட்ராய்டைப் பயன்படுத்தினால் அவர்கள் ஒரு அழைப்பு ஒலியைக் கேட்பார்கள்.",
-    "description": "Release notes for v6.1"
+  "icu:WhatsNew__v6.10--3": {
+    "messageformat": "உரையாடல் தேடல் ஐகான்களை மீண்டும் சீரமைத்ததற்கு {norstbox} க்கும் நன்றி தெரிவிக்க விரும்புகிறோம்.",
+    "description": "Release notes for v6.10"
   },
-  "icu:WhatsNew__v6.3--0": {
-    "messageformat": "மேற்கோள் காட்டப்பட்ட பதிலைத் தொடங்க, சாட்டில் ஏதேனும் செய்தி வரிசையில் இருமுறை கிளிக் செய்யவும். பழைய யோசனைகளைப் பற்றிய புதிய எண்ணங்களுக்கு இது ஒரு குறுக்குவழி போன்றது. இந்த அம்சத்தை செயல்படுத்தி கருத்து வழங்கியதற்காக {whynothugo} மற்றும் சிக்னல் சமூகத்திற்கு நன்றி.",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.3--1": {
-    "messageformat": "இப்போது பெரிதாக்காமல் கேலரி காட்சியை நிராகரிக்க படத்தின் வெளியே கிளிக் செய்வது எளிது. சில நேரங்களில் நீங்கள் மூட முயன்றால், பதிலாக காட்சி மிக நெருக்கமாகிவிடுகின்றது. சரிசெய்ததற்கு {jojomatik} க்கு நன்றி!",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.5--0": {
-    "messageformat": "உங்கள் பதில் நேரத்தை விரைவுபடுத்துங்கள். இப்போது நீங்கள் ஒரு கதைக்கு பதிலளிக்கும் போது எந்த ஈமோஜியையும் கிளிக் செய்வதன் மூலம் விரைவாக செயல்படலாம்.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.5--1": {
-    "messageformat": "சீன மற்றும் ஜப்பானிய மொழிகளில் தனிப்பட்ட எழுத்துக்களுக்காக உங்கள் செய்தி வரலாற்றைத் தேடுவது இப்போது சாத்தியமாகும்.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.6--0": {
-    "messageformat": "குரல் மற்றும் வீடியோ அழைப்புகளுக்கான பல நம்பகத்தன்மை மற்றும் செயல்திறன் மேம்பாடுகளைச் சோதிக்க எங்களுக்கு உதவுங்கள். இந்த பீட்டா வெளியீட்டில் சில பிழைத் திருத்தங்கள் மற்றும் சில சிறிய UI புதுப்பிப்புகளும் அடங்கும் (புதிய இணைப்பு முன்னோட்ட மேம்பாடுகளைப் பார்க்கவும்!). பீட்டா சோதனையாளராக இருப்பதற்கு நன்றி, மேலும் ஏதேனும் பிழைகள் இருந்தால் சமூக மன்றத்தில் எங்களைத் தொடர்பு கொள்ளவும்.",
-    "description": "Release notes for v6.6"
+  "icu:WhatsNew__v6.11--0": {
+    "messageformat": "Start talking to yourself even faster with a new icon that makes the “Note to Self” chat easier to find. Thanks to {hackerbirds} on GitHub for their contribution.",
+    "description": "Release notes for v6.11"
   }
 }

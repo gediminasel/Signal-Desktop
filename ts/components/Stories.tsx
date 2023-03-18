@@ -35,10 +35,12 @@ export type PropsType = {
   i18n: LocalizerType;
   isStoriesSettingsVisible: boolean;
   isViewingStory: boolean;
+  maxAttachmentSizeInKb: number;
   me: ConversationType;
   myStories: Array<MyStoryType>;
   onForwardStory: (storyId: string) => unknown;
   onSaveStory: (story: StoryViewType) => unknown;
+  onMediaPlaybackStart: () => void;
   preferredWidthFromStorage: number;
   queueStoryDownload: (storyId: string) => unknown;
   renderStoryCreator: () => JSX.Element;
@@ -63,10 +65,12 @@ export function Stories({
   i18n,
   isStoriesSettingsVisible,
   isViewingStory,
+  maxAttachmentSizeInKb,
   me,
   myStories,
   onForwardStory,
   onSaveStory,
+  onMediaPlaybackStart,
   preferredWidthFromStorage,
   queueStoryDownload,
   renderStoryCreator,
@@ -110,6 +114,7 @@ export function Stories({
             onDelete={deleteStoryForEveryone}
             onForward={onForwardStory}
             onSave={onSaveStory}
+            onMediaPlaybackStart={onMediaPlaybackStart}
             queueStoryDownload={queueStoryDownload}
             retryMessageSend={retryMessageSend}
             viewStory={viewStory}
@@ -119,6 +124,7 @@ export function Stories({
             getPreferredBadge={getPreferredBadge}
             hiddenStories={hiddenStories}
             i18n={i18n}
+            maxAttachmentSizeInKb={maxAttachmentSizeInKb}
             me={me}
             myStories={myStories}
             onAddStory={file =>
@@ -134,6 +140,7 @@ export function Stories({
               }
             }}
             onStoriesSettings={showStoriesSettings}
+            onMediaPlaybackStart={onMediaPlaybackStart}
             queueStoryDownload={queueStoryDownload}
             showConversation={showConversation}
             showToast={showToast}

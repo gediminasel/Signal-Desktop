@@ -52,6 +52,14 @@
     "message": "$contact$ شامل کر رہے ہیں...",
     "description": "Shown in toast while a user is being added to a group"
   },
+  "icu:RecordingComposer__cancel": {
+    "messageformat": "منسوخ کریں",
+    "description": "Label of cancel button on voice note recording UI"
+  },
+  "icu:RecordingComposer__send": {
+    "messageformat": "بھیجیں",
+    "description": "Label of send button on voice note recording UI"
+  },
   "GroupListItem__message-default": {
     "message": "$count$ممبران",
     "description": "Shown below the group name when selecting a group to invite a contact to"
@@ -931,7 +939,7 @@
     "description": "Shown in a message's triple-dot menu if there isn't room for a dedicated download button"
   },
   "reactToMessage": {
-    "message": "پیغام پر ردعمل",
+    "message": "میسج پر ری ایکٹ کریں",
     "description": "Shown in triple-dot menu next to message to allow user to react to the associated message"
   },
   "replyToMessage": {
@@ -1039,11 +1047,11 @@
     "description": "Shown as the title of our update error dialogs on windows"
   },
   "muted": {
-    "message": "خاموش",
+    "message": "خاموش کردہ",
     "description": "Shown in a button when a conversation is muted"
   },
   "mute": {
-    "message": "خاموش",
+    "message": "خاموش کریں",
     "description": "Shown in a button when a conversation is unmuted and can be muted"
   },
   "cannotUpdateDetail": {
@@ -1251,11 +1259,11 @@
     "description": "Shown on explainer dialog available from delivery issue timeline events"
   },
   "DeliveryIssue--summary": {
-    "message": "$sender$ کا ایک پیغام ، اسٹیکر ، ردعمل ، پڑھنے کی رسید یا میڈیا آپ کو  نہیں پہنچایا جاسکا۔ ہوسکتا ہے کہ انہوں نے اسے براہ راست یا کسی گروپ میں آپ کو بھیجنے کی کوشش کی ہو۔",
+    "message": "$sender$ کی طرف سے کوئی میسج، اسٹیکر، ری ایکشن، میسج پڑھنے کا ثبوت یا میڈیا آپ کو ڈیلیور نہیں کیا جا سکا۔ انہوں نے یہ آپ کو براہ راست، یا کسی گروپ میں بھیجنے کی کوشش کی ہو گی۔",
     "description": "Shown on explainer dialog available from delivery issue timeline events in 1:1 conversations"
   },
   "DeliveryIssue--summary--group": {
-    "message": "اس چیٹ میں $sender$ سے آپ کو کوئی پیغام ، اسٹیکر ، ردعمل ، پڑھنے کی رسید یا میڈیا نہیں پہنچایا جاسکتا ہے۔",
+    "message": "اس چیٹ میں $sender$ کی طرف سے کوئی میسج، اسٹیکر، ری ایکشن، میسج پڑھنے کا ثبوت یا میڈیا آپ کو ڈیلیور نہیں کیا جا سکا۔",
     "description": "Shown on explainer dialog available from delivery issue timeline events in groups"
   },
   "ChangeNumber--notification": {
@@ -1446,7 +1454,7 @@
     "description": "Button label in the call lobby for returning to a call"
   },
   "calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
-    "message": "کال کے سائز کی وجہ سے مائیکرو فون خاموش کر دیا گیا ہے",
+    "message": "کال کے دورانیے کی وجہ سے مائیکروفون خاموش کر دیا گیا",
     "description": "Shown in a call lobby toast if there are a lot of people already on the call"
   },
   "calling__call-is-full": {
@@ -1470,7 +1478,7 @@
     "description": "Button tooltip label for turning on the camera"
   },
   "calling__button--audio__label": {
-    "message": "خاموش",
+    "message": "خاموش کریں",
     "description": "Label under the audio button"
   },
   "calling__button--audio-disabled": {
@@ -1482,7 +1490,7 @@
     "description": "Button tooltip label for turning off the microphone"
   },
   "calling__button--audio-on": {
-    "message": "مائیک کی خاموشی ختم کریں",
+    "message": "مائیک کو غیر خاموش کریں",
     "description": "Button tooltip label for turning on the microphone"
   },
   "calling__button--presenting__label": {
@@ -1590,7 +1598,7 @@
     "description": "Shown in the participants list to describe how many people are in the call"
   },
   "calling__you-have-blocked": {
-    "message": "آپ نے$name$ کو مسدود کردیا ہے",
+    "message": "آپ نے $name$ کو بلاک کر دیا ہے",
     "description": "when you block someone and cannot view their video"
   },
   "calling__block-info": {
@@ -1778,10 +1786,10 @@
     "description": "Displayed in notifications for messages in a group"
   },
   "notificationReaction": {
-    "message": "$sender$ نے آپ کے پیغام پر ردعمل$emoji$ ظاہر کیا"
+    "message": "$sender$ نے آپ کے میسج پر $emoji$ ری ایکٹ کیا"
   },
   "notificationReactionMessage": {
-    "message": "$sender$ نے اس$message$ پر رد عمل$emoji$ ظاہر کیا:"
+    "message": "$sender$ نے $emoji$ ری ایکٹ کیا: $message$ پر"
   },
   "sendFailed": {
     "message": "بھیجنے میں ناکام",
@@ -1881,26 +1889,34 @@
   },
   "timestampFormat_M": {
     "message": "ؐؐMMM D",
-    "description": "Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+  },
+  "timestampFormat__long--today": {
+    "message": "آج $time$",
+    "description": "Timestamp format string for displaying \"Today\" and the time"
+  },
+  "timestampFormat__long--yesterday": {
+    "message": "کل $time$",
+    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "timestampFormat__long__today": {
     "message": "[آج] LT",
-    "description": "Timestamp format string for displaying \"Today\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Today\" and the time"
   },
   "timestampFormat__long__yesterday": {
     "message": "[گزشتہ کل] LT",
-    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "messageBodyTooLong": {
     "message": "پیغام بازی بہت لمبی ہے۔",
     "description": "Shown if the user tries to send more than 64kb of text"
   },
   "unblockToSend": {
-    "message": "پیغام بھیجنے کے لئے اس کنٹکٹ کو ان بلاک کریں۔",
+    "message": "میسج بھیجنے کے لیے اس رابطے کو اَن بلاک کریں۔",
     "description": "Brief message shown when trying to message a blocked number"
   },
   "unblockGroupToSend": {
-    "message": "پیغام بھیجنے کے لئے اس گروپ کو ان بلاک کریں۔",
+    "message": "میسج بھیجنے کے لیے اس گروپ کو اَن بلاک کریں۔",
     "description": "Brief message shown when trying to message a blocked group"
   },
   "youChangedTheTimer": {
@@ -2020,7 +2036,7 @@
     "description": "Label text for system theme"
   },
   "noteToSelf": {
-    "message": "اپنے لئے نوٹ کریں",
+    "message": "خود کے لیے نوٹ",
     "description": "Name for the conversation with your own phone number"
   },
   "noteToSelfHero": {
@@ -2181,7 +2197,7 @@
     "message": "دوبارہ لنک کریں"
   },
   "autoUpdateNewVersionTitle": {
-    "message": "اپ ڈیٹ دستیاب ہے"
+    "message": "Update Available"
   },
   "autoUpdateRetry": {
     "message": "اپ ڈیٹ کی دوبارہ کوشش کریں"
@@ -2580,6 +2596,18 @@
     "message": "حال میں استعمال ہونے والے اسٹیکرز یہاں ظاہر ہو گے۔",
     "description": "Shown in the sticker picker when there are no recent stickers to show."
   },
+  "icu:stickers__StickerPicker__recent": {
+    "messageformat": "حالیہ",
+    "description": "Title for all of the recent stickers"
+  },
+  "icu:stickers__StickerPicker__featured": {
+    "messageformat": "فیچر کردہ",
+    "description": "Title for featured stickers"
+  },
+  "icu:stickers__StickerPicker__analog-time": {
+    "messageformat": "اینا لاگ وقت",
+    "description": "aria-label for the analog time sticker"
+  },
   "stickers--StickerPreview--Title": {
     "message": "اسٹیکر پیک",
     "description": "The title that appears in the sticker pack preview modal."
@@ -2777,7 +2805,7 @@
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--toggle-reaction-picker": {
-    "message": "منتخب کردہ پیغام کے لیئے ایموجی-رد عمل چنندہ کو ٹوگل کریں",
+    "message": "منتخب کردہ میسج کے لیے ایموجی-ری ایکشن پِکر کو ٹوگل کریں",
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--save-attachment": {
@@ -2947,6 +2975,18 @@
   "conversationMarkedUnread": {
     "message": "گفتگو کو پڑھے بغیر نشان زد کیا گیا",
     "description": "A toast that shows up when user marks a conversation as unread"
+  },
+  "icu:AuthArtCreator--dialog--message": {
+    "messageformat": "کیا آپ Signal اسٹیکر پیک کے تخلیق کار کو کھولنا چاہتے ہیں؟",
+    "description": "A body of the dialog that is presented when user tries to open Signal Sticker Pack Creator from a link"
+  },
+  "icu:AuthArtCreator--dialog--confirm": {
+    "messageformat": "تصدیق کریں",
+    "description": "A buttle title for confirming Signal Sticker Pack Creator dialog"
+  },
+  "icu:AuthArtCreator--dialog--dismiss": {
+    "messageformat": "منسوخ کریں",
+    "description": "A buttle title for dismissing Signal Sticker Pack Creator dialog"
   },
   "StickerCreator--title": {
     "message": "اسٹیکر پیک بنانے والا",
@@ -3148,12 +3188,16 @@
     "message": "براہ کرم اسٹیکر پیک تخلیق کار کو استعمال کرنے کے لیئے اپنے فون اور Desktop پر Signal ترتیب دیں",
     "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
   },
+  "icu:ArtCreator--Authentication--error": {
+    "messageformat": "براہ کرم اسٹیکر پیک تخلیق کار کو استعمال کرنے کے لیے اپنے فون اور ڈیسک ٹاپ پر Signal کو سیٹ اپ کریں",
+    "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
+  },
   "Reactions--remove": {
-    "message": "ردعمل ہٹائیں",
+    "message": "ری ایکشن ہٹائیں",
     "describe": "Shown when you want to remove a reaction you've made"
   },
   "Reactions--error": {
-    "message": "ردعمل بھیجنے میں ناکام۔ دوبارہ کوشش کریں.",
+    "message": "ری ایکشن بھیجنے میں ناکامی ہوئی۔ براہ کرم دوبارہ کوشش کریں۔",
     "description": "Shown when a reaction fails to send"
   },
   "Reactions--more": {
@@ -3169,7 +3213,7 @@
     "description": "Shown as the message for a message request in a direct message"
   },
   "MessageRequests--message-direct-blocked": {
-    "message": "آپ $name$ کو پیغام دیں اور ان کے ساتھ اپنا نام اور تصویر شئیر کریں؟ آپ کو کوئی پیغامات موصول نہیں ہوگا جب تک کہ آپ ان کو غیر مسدود نہیں کردیں گے۔",
+    "message": "آپ $name$ کو خود کو میسج بھیجنے اور ان کے ساتھ اپنا نام اور تصویر شیئر کرنے کی اجازت دیں؟ جب تک آپ ان کو اَن بلاک نہیں کرتے تب تک آپ کو کوئی میسجز موصول نہیں ہوں گے۔",
     "description": "Shown as the message for a message request in a direct message with a blocked account"
   },
   "MessageRequests--message-group": {
@@ -3177,19 +3221,19 @@
     "description": "Shown as the message for a message request in a group"
   },
   "MessageRequests--message-group-blocked": {
-    "message": "اس گروپ کو غیر مسدود کریں اور اس کے ممبروں کے ساتھ اپنا نام اور تصویر شئیر کریں؟ آپ کو کوئی پیغامات موصول نہیں ہوگا جب تک کہ آپ ان کو بلاک نہیں کردیں گے۔",
+    "message": "اس گروپ کو اَن بلاک کریں اور اس کے ممبرز کے ساتھ اپنا نام اور تصویر شیئر کریں؟ جب تک آپ ان کو اَن بلاک نہیں کرتے تب تک آپ کو کوئی میسجز موصول نہیں ہوں گے۔",
     "description": "Shown as the message for a message request in a blocked group"
   },
   "MessageRequests--block": {
-    "message": "بلاک",
+    "message": "بلاک کریں",
     "description": "Shown as a button to let the user block a message request"
   },
   "MessageRequests--unblock": {
-    "message": "ان بلاک",
+    "message": "اَن بلاک کریں",
     "description": "Shown as a button to let the user unblock a message request"
   },
   "MessageRequests--unblock-direct-confirm-title": {
-    "message": "غیر مسدود $name$؟",
+    "message": "$name$ کو اَن بلاک کریں؟",
     "description": "Shown as a button to let the user unblock a message request"
   },
   "MessageRequests--unblock-direct-confirm-body": {
@@ -3201,23 +3245,23 @@
     "description": "Shown as the body in the confirmation modal for unblocking a group message request"
   },
   "MessageRequests--block-and-report-spam": {
-    "message": "اسپام اور بلاک کی اطلاع دیں",
+    "message": "اسپام رپورٹ کریں اور بلاک کریں",
     "description": "Shown as a button to let the user block a message request and report spam"
   },
   "MessageRequests--block-and-report-spam-success-toast": {
-    "message": "اسپام کے بطور اطلاع دی گئی اور مسدود ہے۔",
+    "message": "اسپام کے طور پر رپورٹ کیا گیا اور بلاک کر دیا گیا۔",
     "description": "Shown in a toast when you successfully block a user and report them as spam"
   },
   "MessageRequests--block-direct-confirm-title": {
-    "message": "مسدود$name$؟",
+    "message": "$name$ کو بلاک کریں؟",
     "description": "Shown as the title in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-direct-confirm-body": {
-    "message": "مسدود افراد آپ کو کال کرنے یا پیغامات بھیجنے کے اہل نہیں ہوں گے۔",
+    "message": "بلاک کردہ افراد آپ کو کال کرنے یا آپ کو میسجز بھیجنے کے قابل نہیں ہوں گے۔",
     "description": "Shown as the body in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-group-confirm-title": {
-    "message": "مسدود $group$ اور چھوڑو؟",
+    "message": "$group$ کو بلاک کریں اور چھوڑ دیں؟",
     "description": "Shown as the title in the confirmation modal for blocking a group message request"
   },
   "MessageRequests--block-group-confirm-body": {
@@ -3525,43 +3569,43 @@
     "description": "Shown when the device is the default device"
   },
   "muteNotificationsTitle": {
-    "message": "خاموش اطلاعات",
+    "message": "اطلاعات کو خاموش کریں",
     "description": "Label for the mute notifications drop-down selector"
   },
   "notMuted": {
-    "message": "غیر خاموش",
+    "message": "غیر خاموش کریں",
     "description": "Label when the conversation is not muted"
   },
   "muteHour": {
-    "message": "ایک گھنٹے کیلئے خاموش",
+    "message": "ایک گھنٹے کے لیے خاموش کریں",
     "description": "Label for muting the conversation"
   },
   "muteEightHours": {
-    "message": "آٹھ گھنٹے خاموش کرو",
+    "message": "آٹھ گھنٹوں کے لیے خاموش کریں",
     "description": "Label for muting the conversation"
   },
   "muteDay": {
-    "message": "ایک دن کیلئے خاموش",
+    "message": "ایک دن کے لیے خاموش کریں",
     "description": "Label for muting the conversation"
   },
   "muteWeek": {
-    "message": "ایک ہفتے کیلئے خاموش",
+    "message": "ایک ہفتے کے لیے خاموش کریں",
     "description": "Label for muting the conversation"
   },
   "muteAlways": {
-    "message": "ہمیشہ خاموش کرو",
+    "message": "ہمیشہ کے لیے خاموش کریں",
     "description": "Label for muting the conversation"
   },
   "unmute": {
-    "message": "غیر خاموش",
+    "message": "غیر خاموش کریں",
     "description": "Label for unmuting the conversation"
   },
   "muteExpirationLabelAlways": {
-    "message": "ہمیشہ خاموش کیا",
+    "message": "ہمیشہ کے لیے خاموش کردہ",
     "description": "Shown in the mute notifications submenu whenever a conversation has been muted"
   },
   "muteExpirationLabel": {
-    "message": "$duration$ تک mute رہیں",
+    "message": "$duration$ تک خاموش کردہ",
     "description": "Shown in the mute notifications submenu whenever a conversation has been muted"
   },
   "EmojiButton__label": {
@@ -4393,7 +4437,7 @@
     "description": "Displayed while checking if the contact is SMS-only"
   },
   "countMutedConversationsDescription": {
-    "message": "بیج کاؤنٹ میں خاموش گفتگو شامل کریں",
+    "message": "بیج کاؤنٹ میں خاموش کردہ گفتگو شامل کریں",
     "description": "Description for counting muted conversations in badge setting"
   },
   "ContactModal--message": {
@@ -4489,11 +4533,11 @@
     "description": "This is a button to leave a group"
   },
   "ConversationDetailsActions--block-group": {
-    "message": "مسدود گروپ",
+    "message": "گروپ کو بلاک کریں",
     "description": "This is a button to block a group"
   },
   "ConversationDetailsActions--unblock-group": {
-    "message": "غیر مسدود گروپ",
+    "message": "گروپ کو اَن بلاک کریں",
     "description": "This is a button to unblock a group"
   },
   "ConversationDetailsActions--leave-group-must-choose-new-admin": {
@@ -4513,11 +4557,11 @@
     "description": "This is the modal button to confirm leaving a group"
   },
   "ConversationDetailsActions--unblock-group-modal-title": {
-    "message": "\"$groupName$\" کو ان بلاک کریں؟",
+    "message": "\"$groupName$\" گروپ کو اَن بلاک کریں؟",
     "description": "This is the modal title for confirming unblock of a group"
   },
   "ConversationDetailsActions--block-group-modal-title": {
-    "message": "\"$groupName$\" گروپ کو مسدود کریں اور چھوڑیں؟",
+    "message": "\"$groupName$\" گروپ کو بلاک کریں اور چھوڑ دیں؟",
     "description": "This is the modal title for confirming blocking a group"
   },
   "ConversationDetailsActions--block-group-modal-content": {
@@ -4525,7 +4569,7 @@
     "description": "This is the modal content for confirming blocking a group"
   },
   "ConversationDetailsActions--block-group-modal-confirm": {
-    "message": "بلاک",
+    "message": "بلاک کریں",
     "description": "This is the modal button to confirm blocking a group"
   },
   "ConversationDetailsActions--unblock-group-modal-content": {
@@ -4533,7 +4577,7 @@
     "description": "This is the modal content for confirming unblock of a group"
   },
   "ConversationDetailsActions--unblock-group-modal-confirm": {
-    "message": "ان بلاک",
+    "message": "اَن بلاک کریں",
     "description": "This is the modal button to confirm unblock of a group"
   },
   "ConversationDetailsHeader--members": {
@@ -4585,7 +4629,7 @@
     "description": "In the conversation notifications settings, this is the label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__info": {
-    "message": "خاموش کردہ چیٹس میں اپنا تذکرہ ہونے پر اطلاعات وصول کریں",
+    "message": "خاموش کردہ چیٹس میں خود کو مینشن کیے جانے پر اطلاعات موصول کریں",
     "description": "In the conversation notifications settings, this is the sub-label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__select__always-notify": {
@@ -4593,7 +4637,7 @@
     "description": "In the conversation notifications settings, this is the option that always notifies you for @mentions"
   },
   "ConversationNotificationsSettings__mentions__select__dont-notify-for-mentions-if-muted": {
-    "message": "اگر خاموش کیا گیا ہے تو اطلاع نہ دیں",
+    "message": "اگر خاموش کردہ ہے تو مطلع نہ کریں",
     "description": "In the conversation notifications settings, this is the option that doesn't notify you for @mentions if the conversation is muted"
   },
   "GroupLinkManagement--clipboard": {
@@ -4705,7 +4749,7 @@
     "description": "Details of dialog to block a user from requesting to join via the link again"
   },
   "PendingRequests--block--confirm": {
-    "message": "درخواست بلاک کریں",
+    "message": "بلاک کی درخواست",
     "description": "Confirmation button of dialog to block a user from requesting to join via the link again"
   },
   "AvatarInput--no-photo-label--group": {
@@ -4854,11 +4898,11 @@
   },
   "TimelineDateHeader--date-in-last-6-months": {
     "message": "ddd، MMM دن",
-    "description": "Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "TimelineDateHeader--date-older-than-6-months": {
     "message": "MMM D, YYYY",
-    "description": "Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "MessageRequestWarning__learn-more": {
     "message": "مزید پڑھیں",
@@ -5225,7 +5269,7 @@
     "description": "Shown if something unknown has gone wrong with username save."
   },
   "icu:ProfileEditor--username--reservation-gone": {
-    "messageformat": "{username} is no longer available. A new set of digits will be paired with your username, please try saving it again.",
+    "messageformat": "{username} مزید دستیاب نہیں ہے۔ ہندسوں کے ایک نئے سیٹ کو آپ کے یوزر نیم کے ساتھ ملایا جائے گا، اسے دوبارہ محفوظ کرنے کی کوشش کریں۔",
     "description": "Shown if username reservation has expired and new one needs to be generated."
   },
   "ProfileEditor--username--delete-general-error": {
@@ -5417,7 +5461,7 @@
     "description": "Label for the notification content setting select box"
   },
   "Preferences--blocked": {
-    "message": "بلاک ہوگیا",
+    "message": "بلاک کر دیا گیا",
     "description": "Label for blocked contacts setting"
   },
   "Preferences--blocked-count-singular": {
@@ -5430,23 +5474,75 @@
   },
   "Preferences__who-can--title": {
     "message": "جو کر سکتے ہیں...",
-    "description": "Title for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Title for the 'who can do X' setting"
   },
   "Preferences__privacy--description": {
     "message": "ان ترتیبات کو تبدیل کرنے کے لیے، اپنی موبائل ڈیوائس پر Signal ایپ کھولیں اور ترتیبات > رازداری پر نیویگیٹ کریں",
-    "description": "Description for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Description for the 'who can do X' setting"
   },
   "Preferences__who-can--everybody": {
     "message": "ہر ایک",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--contacts": {
     "message": "میرے رابطے",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--nobody": {
     "message": "کوئی نہیں",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
+  },
+  "icu:Preferences__pnp__row--title": {
+    "messageformat": "فون نمبر",
+    "description": "Title of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__row--body": {
+    "messageformat": "منتخب کریں کہ کون آپ کا فون نمبر دیکھ سکتا ہے اور کون اس کے ذریعے Signal پر آپ سے رابطہ کر سکتا ہے۔",
+    "description": "Body of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__sharing--title": {
+    "messageformat": "میرا نمبر کون دیکھ سکتا ہے",
+    "description": "Title for the phone number sharing setting row"
+  },
+  "icu:Preferences__pnp__sharing--description--everyone": {
+    "messageformat": "آپ کا فون نمبر ان لوگوں اور گروپس کو نظر آئے گا جنہیں آپ میسج کرتے ہیں۔ جن لوگوں کے فون رابطوں میں آپ کا نمبر محفوظ ہے وہ اسے Signal پر بھی دیکھیں گے۔",
+    "description": "Description for the phone number sharing setting row when the value is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody": {
+    "messageformat": "Signal پر کوئی بھی آپ کا فون نمبر نہیں دیکھ سکے گا۔",
+    "description": "Description for the phone number sharing setting row when the value is Nobody"
+  },
+  "icu:Preferences__pnp--page-title": {
+    "messageformat": "فون نمبر",
+    "description": "Title of the page in Phone Number Privacy settings"
+  },
+  "icu:Preferences__pnp__sharing__everyone": {
+    "messageformat": "ہر کوئی",
+    "description": "Option for sharing phone number with everyone"
+  },
+  "icu:Preferences__pnp__sharing__nobody": {
+    "messageformat": "کوئی نہیں",
+    "description": "Option for sharing phone number with nobody"
+  },
+  "icu:Preferences__pnp__discoverability--title": {
+    "messageformat": "کون مجھے میرے نمبر کے ذریعے تلاش کر سکتا ہے",
+    "description": "Title for the phone number discoverability setting row"
+  },
+  "icu:Preferences__pnp__discoverability--description--everyone": {
+    "messageformat": "کوئی بھی شخص جس کے رابطوں میں آپ کا فون نمبر محفوظ ہے وہ Signal پر آپ کو رابطے کے طور پر دیکھ سکے گا۔ ایک نئی چیٹ یا گروپ شروع کرتے وقت دیگر افراد آپ کے فون نمبر کے ذریعے آپ تک پہنچنے کے قابل ہوں گے۔",
+    "description": "Description for the phone number discoverability setting row wth the value is everyone"
+  },
+  "icu:Preferences__pnp__discoverability--description--nobody": {
+    "messageformat": "Signal پر کوئی بھی شخص آپ کو آپ کے نمبر کے ذریعے تلاش کرنے کے قابل نہیں ہو گا۔",
+    "description": "Description for the phone number discoverability setting row wth the value is nobody"
+  },
+  "icu:Preferences__pnp__discoverability__everyone": {
+    "messageformat": "ہر کوئی",
+    "description": "Option for letting everyone discover you by phone number"
+  },
+  "icu:Preferences__pnp__discoverability__nobody": {
+    "messageformat": "کوئی نہیں",
+    "description": "Option for letting nobody discover you by phone number"
   },
   "Preferences--messaging": {
     "message": "پیغام رسانی",
@@ -5504,6 +5600,14 @@
     "message": "ورژن $version$ پر اپ ڈیٹ دستیاب ہے",
     "description": "Tooltip for new update available"
   },
+  "icu:DialogUpdate__downloading": {
+    "messageformat": "Downloading Update...",
+    "description": "The title of update dialog when update download is in progress."
+  },
+  "icu:DialogUpdate__downloaded": {
+    "messageformat": "Update Downloaded",
+    "description": "The title of update dialog when update download is completed."
+  },
   "NSIS__retry-dialog--first-line": {
     "message": "Signal بند نہیں کی جا سکتی۔",
     "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
@@ -5541,7 +5645,7 @@
     "description": "A button label for erasure of the crash reporter data after a recent crash and continuing to start the app"
   },
   "CustomizingPreferredReactions__title": {
-    "message": "رد عمل کو اپنی مرضی کے مطابق بنائیں",
+    "message": "ری ایکشنز کو حسبِ ضرورت بنائیں",
     "description": "Shown in the header of the modal for customizing the preferred reactions. Also shown in the tooltip for the button that opens this modal."
   },
   "CustomizingPreferredReactions__subtitle": {
@@ -5551,6 +5655,10 @@
   "CustomizingPreferredReactions__had-save-error": {
     "message": "آپ کی ترتیبات محفوظ کرتے ہوئے ایک نقص واقع ہوا ہے۔ براہ کرم دوبارہ کوشش کریں۔",
     "description": "Shown if there is an error when saving your preferred reaction settings. Should be very rare to see this message."
+  },
+  "icu:MediaEditor__clock-more-styles": {
+    "messageformat": "مزید اسٹائلز",
+    "description": "Action button for switching up the clock styles"
   },
   "MediaEditor__control--draw": {
     "message": "ڈرا کریں",
@@ -5809,7 +5917,7 @@
     "description": "Toast message"
   },
   "Stories__toast--sending-reaction": {
-    "message": "ردعمل بھیج رہے ہیں...",
+    "message": "ری ایکشن بھیجا جا رہا ہے...",
     "description": "Toast message"
   },
   "Stories__toast--hasNoSound": {
@@ -5885,11 +5993,11 @@
     "description": "Body of the confirmation dialog to remove someone from a custom distribution list"
   },
   "StoriesSettings__replies-reactions--title": {
-    "message": "جوابات اور ردعمل",
+    "message": "جوابات اور ری ایکشنز",
     "description": "Title for the replies & reactions section"
   },
   "StoriesSettings__replies-reactions--label": {
-    "message": "جوابات اور ردعمل کی اجازت دیں",
+    "message": "جوابات اور ری ایکشنز کی اجازت دیں",
     "description": "Checkbox label to allow or disallow replies to your stories"
   },
   "StoriesSettings__replies-reactions--description": {
@@ -6117,11 +6225,11 @@
     "description": "Button label to reply to a group story"
   },
   "StoryViewer__mute": {
-    "message": "خاموش",
+    "message": "خاموش کریں",
     "description": "Aria label for muting stories"
   },
   "StoryViewer__unmute": {
-    "message": "غیر خاموش",
+    "message": "غیر خاموش کریں",
     "description": "Aria label for unmuting stories"
   },
   "StoryViewer__views-off": {
@@ -6181,11 +6289,11 @@
     "description": "Title for replies tab"
   },
   "StoryViewsNRepliesModal__react": {
-    "message": "سٹوری پر ردعمل دیں",
+    "message": "سٹوری پر ری ایکٹ کریں",
     "description": "(deleted 01/25/23) aria-label for reaction button"
   },
   "StoryViewsNRepliesModal__reacted": {
-    "message": "سٹوری پر ردعمل دیا",
+    "message": "سٹوری پر ری ایکٹ کیا",
     "description": "Description of someone reacting to a story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
@@ -6246,11 +6354,19 @@
   },
   "StoryCreator__error--video-too-long": {
     "message": "سٹوری پر یہ ویڈیو پوسٹ نہیں کر سکتے کیونکہ یہ بہت لمبی ہے",
-    "description": "Error string for when a video post to story fails"
+    "description": "(deleted 02/22/2023) Error string for when a video post to story fails"
   },
   "StoryCreator__error--video-unsupported": {
     "message": "سٹوری پر یہ ویڈیو پوسٹ نہیں کر سکتے کیونکہ یہ فائل فارمیٹ سپورٹ نہیں کیا جاتا",
     "description": "Error string for when a video post to story fails"
+  },
+  "icu:StoryCreator__error--video-too-long": {
+    "messageformat": "{maxDurationInSec, plural, one {سٹوری پر ویڈیو پوسٹ کرنے سے قاصر ہیں کیونکہ یہ 1 سیکنڈ سے زیادہ لمبی ہے۔} other {سٹوری پر ویڈیو پوسٹ کرنے سے قاصر ہیں کیونکہ یہ {maxDurationInSec,number} سیکنڈز سے زیادہ لمبی ہے۔}}",
+    "description": "Error string for when a video post to story fails because video's duration is too long"
+  },
+  "icu:StoryCreator__error--video-too-big": {
+    "messageformat": "سٹوری پر ویڈیو پوسٹ کرنے سے قاصر ہیں کیونکہ یہ {limit}{units} سے زیادہ بڑی ہے۔",
+    "description": "Error string for when a video post to story fails because video's file size is too big"
   },
   "StoryCreator__error--video-error": {
     "message": "ویڈیو لوڈ نہیں ہو سکی",
@@ -6341,23 +6457,23 @@
     "description": "Title for replies to stories"
   },
   "Quote__story-reaction": {
-    "message": "$name$ کی طرف سے کہانی پر ردعمل دیا",
+    "message": "$name$ کی سٹوری پر ری ایکٹ کیا",
     "description": "Label for when a person reacts to a story"
   },
   "Quote__story-reaction--single": {
-    "message": "سٹوری پر ردعمل دیا",
+    "message": "سٹوری پر ری ایکٹ کیا",
     "description": "Used whenever we can't find a user's first name"
   },
   "Quote__story-reaction-notification--incoming": {
-    "message": "آپ کی سٹوری پر $emoji$ ردعمل دیا",
+    "message": "آپ کی سٹوری پر $emoji$ ری ایکٹ کیا",
     "description": "Notification test for incoming story reactions"
   },
   "Quote__story-reaction-notification--outgoing": {
-    "message": "آپ نے $name$ کی سٹوری پر $emoji$ ردعمل دیا",
+    "message": "آپ نے $name$ کی سٹوری پر $emoji$ ری ایکٹ کیا",
     "description": "Notification test for outgoing story reactions"
   },
   "Quote__story-reaction-notification--outgoing--nameless": {
-    "message": "آپ نے سٹوری پر $emoji$ ردعمل دیا",
+    "message": "آپ نے سٹوری پر $emoji$ ری ایکٹ کیا",
     "description": "Notification test for outgoing story reactions but no name"
   },
   "Quote__story-unavailable": {
@@ -6389,27 +6505,27 @@
     "description": "Body of the popup with information about discriminator in username"
   },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "Set up your Signal username",
+    "messageformat": "اپنا Signal یوزر نیم سیٹ اپ کریں",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "Usernames are paired with a set of digits and aren’t shared on your profile",
+    "messageformat": "یوزر نیمز کو ہندسوں کے ایک سیٹ کے ساتھ ملایا جاتا ہے اور یہ آپ کی پروفائل پر شیئر نہیں کیے جاتے",
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Each username has a unique link you can share with your friends to start a chat with you",
+    "messageformat": "ہر یوزر نیم کا ایک منفرد لنک ہوتا ہے جسے آپ اپنے دوستوں کے ساتھ شیئر کر سکتے ہیں تاکہ وہ آپ کے ساتھ چیٹ شروع کر سکیں",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "Turn off phone number discovery under Settings > Phone Number > Who can find my number, to use your username as the primary way others can contact you.",
+    "messageformat": "سیٹنگز > پرائیویسی > فون نمبر > کون میرا نمبر تلاش کر سکتا ہے کے تحت فون نمبر کی تلاش کو آف کریں، تاکہ آپ کے یوزر نیم کو دوسروں کے آپ سے رابطہ کرنے کا بنیادی طریقہ بنایا جا سکے۔",
     "description": "Content of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__learn-more": {
-    "messageformat": "Learn More",
+    "messageformat": "مزید سیکھیں",
     "description": "Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Continue",
+    "messageformat": "جاری رکھیں",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -6456,40 +6572,24 @@
     "message": "معمولی تبدیلیاں کی گئیں، بگ ٹھیک کیے گئے، اور کارکردگی اور بھی بہتر بنائی گئی ہے۔ Signal استعمال کرنے کے لیے شکریہ!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "WhatsNew__v5.63--0": {
-    "message": "بگز کی درستگی کے لیے اور کارکردگی میں دیگر بہتریاں لانے کے کام میں محنتی تاکہ آپ کے لیے ایپ بلا خلل چلتی رہے۔",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--0": {
+    "messageformat": "اپنی پرانی یادوں کو بصری طور پر تازہ کرنے کے لیے کسی تصویر یا ویڈیو پر کلک کریں اور میڈیا ویور میں موجود نئے فارورڈ اور بیک ورڈ بٹنز استعمال کریں۔",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v5.63--beta.2": {
-    "message": "ہمارے نئے سٹوریز کے فیچر کا استعمال اور ٹیسٹنگ شروع کریں۔ آپ دیگر بی ٹا ٹیسٹرز کے ساتھ فیچر کا استعمال بھی کر سکتے اور ہمیں بتا سکتے ہیں کہ یہ کیسا کام کر رہا ہے۔",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--1": {
+    "messageformat": "اگرآپ ریکارڈنگ کے زیر عمل ہوتے ہوئے کسی دوسری چیٹ پر سوئچ کرتے ہیں تو وائس میسجز اب ڈرافٹس کے طور پر محفوظ ہوتے ہیں۔",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.0": {
-    "message": "سٹوریز اب Signal میں ہیں! منتخب کردہ دوست یا گروپس کے ساتھ غائب ہو جانے والا متن، تصاویر، اور ویڈیو اپ ڈیٹس کا اشتراک کریں جو 24 گھنٹے بعد خودکار طور پر غائب ہو جاتی ہیں۔ ہر وہ فرد جسے سٹوریز کا اشتراک کرنا پسند ہے، اس کے لیے نجی طور پر اور اشتہار دیکھے بغیر کرنے کا طریقہ یہاں ہے۔ اگر آپ سٹوریز دیکھنا یا اشتراک نہیں کرنا چاہتے، تو آپ اپنی ترجیحات > پرائیویسی میں ان سب سے آپٹ آؤٹ کر سکتے ہیں۔",
-    "description": "Release notes for v6.0"
+  "icu:WhatsNew__v6.10--2": {
+    "messageformat": "اسٹیکر بھیجنے سے ڈرافٹ کا متن اب مزید صاف نہیں ہوتا۔ شکریہ، {lamemakes}!",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.1--1": {
-    "message": "جب آپ چھوٹے گروپ (16 تک افراد) کے لیے گروپ کال شروع کرتے ہیں، تو آپ رنگنگ اطلاعات بھیجنے کا انتخاب کر سکتے ہیں۔ گروپ ممبرز اگر iOS بی ٹا پر ہیں یا Desktop یا Android استعمال کر رہے ہیں تو وہ رنگ سنیں گے۔",
-    "description": "Release notes for v6.1"
+  "icu:WhatsNew__v6.10--3": {
+    "messageformat": "گفتگو کے سرچ بار کے آئیکنز کو دوبارہ ترتیب دینے کے لیے ہم {norstbox} کا بھی شکریہ ادا کرنا چاہیں گے۔",
+    "description": "Release notes for v6.10"
   },
-  "icu:WhatsNew__v6.3--0": {
-    "messageformat": "حوالہ یافتہ جواب شروع کرنے کے لیے چیٹ میں کسی میسج کی قطار پر دو بار کلک کریں۔ یہ پرانے تصورات کے متعلق نئے خیالات کے لیے شارٹ کٹ جیسا ہے۔ اس فیچر کے نفاذ کرنے اور فیڈ بیک دینے کے لیے {whynothugo} اور Signal کمیونٹی کا شکریہ۔",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.3--1": {
-    "messageformat": "اب زوم ان کیے بغیر گیلری ویو کو ختم کرنے کے لیے تصویر کے باہر کلک کرنا مزید آسان ہو گیا ہے۔ کبھی کبھار آپ قریب ہونا چاہتے ہیں، لیکن چیزیں کہیں زیادہ قریب ہو جاتی ہیں۔ درستگی کے لیے {jojomatik} کا شکریہ!",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.5--0": {
-    "messageformat": "اپنے رد عمل کے وقت کی رفتار بڑھائیں۔ اب آپ سٹوری کا جواب دیتے وقت کسی ایموجی پر کلک کر کے زیادہ تیزی سے ری ایکٹ کر سکتے ہیں۔",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.5--1": {
-    "messageformat": "اب چینی اور جاپانی زبانوں میں انفرادی حروف کے حوالے سے اپنی میسج ہسٹری تلاش کرنا ممکن ہے۔",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.6--0": {
-    "messageformat": "وائس اور ویڈیو کالز کے لیے پائیداری اور کارکردگی کی متعدد بہتریوں کو ٹیسٹ کرنے میں ہماری کرتا ہے۔ اس بی ٹا ریلیز میں کچھ نقص کی درستگیاں اور کچھ چھوٹی UI اپ ڈیٹس شامل ہیں (نئے لنک کے پیش منظر کے اضافوں کو تلاش کریں!)۔ بی ٹا ٹیسٹر ہونے پر آپ کا شکریہ، اور اگر آپ کوئی نقائص دیکھیں تو براہ کرم ہم سے کمیونٹی فورم پر رابطہ کریں۔",
-    "description": "Release notes for v6.6"
+  "icu:WhatsNew__v6.11--0": {
+    "messageformat": "Start talking to yourself even faster with a new icon that makes the “Note to Self” chat easier to find. Thanks to {hackerbirds} on GitHub for their contribution.",
+    "description": "Release notes for v6.11"
   }
 }

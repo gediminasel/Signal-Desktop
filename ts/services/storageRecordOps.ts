@@ -296,9 +296,6 @@ export function toAccountRecord(
         PHONE_NUMBER_SHARING_MODE_ENUM.EVERYBODY;
       break;
     case PhoneNumberSharingMode.ContactsOnly:
-      accountRecord.phoneNumberSharingMode =
-        PHONE_NUMBER_SHARING_MODE_ENUM.CONTACTS_ONLY;
-      break;
     case PhoneNumberSharingMode.Nobody:
       accountRecord.phoneNumberSharingMode =
         PHONE_NUMBER_SHARING_MODE_ENUM.NOBODY;
@@ -1222,8 +1219,6 @@ export async function mergeAccountRecord(
       phoneNumberSharingModeToStore = PhoneNumberSharingMode.Everybody;
       break;
     case PHONE_NUMBER_SHARING_MODE_ENUM.CONTACTS_ONLY:
-      phoneNumberSharingModeToStore = PhoneNumberSharingMode.ContactsOnly;
-      break;
     case PHONE_NUMBER_SHARING_MODE_ENUM.NOBODY:
       phoneNumberSharingModeToStore = PhoneNumberSharingMode.Nobody;
       break;
@@ -1580,6 +1575,7 @@ export async function mergeStoryDistributionListRecord(
   );
 
   if (!needsUpdate) {
+    details.push('not updated');
     return {
       details: [...details, ...conflictDetails],
       hasConflict,
@@ -1589,6 +1585,7 @@ export async function mergeStoryDistributionListRecord(
   }
 
   if (needsUpdate) {
+    details.push('updated');
     await dataInterface.modifyStoryDistributionWithMembers(storyDistribution, {
       toAdd,
       toRemove,

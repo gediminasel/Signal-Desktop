@@ -71,6 +71,7 @@ import {
 import { updateSchema } from './migrations';
 
 import type {
+  AdjacentMessagesByConversationOptionsType,
   StoredAllItemsType,
   AttachmentDownloadJobType,
   ConversationMetricsType,
@@ -2213,7 +2214,7 @@ async function getUnreadByConversationAndMarkRead({
   conversationId: string;
   includeStoryReplies: boolean;
   newestUnreadAt: number;
-  storyId?: UUIDStringType;
+  storyId?: string;
   readAt?: number;
   now?: number;
 }): Promise<GetUnreadByConversationAndMarkReadResultType> {
@@ -2316,7 +2317,7 @@ async function getUnreadReactionsAndMarkRead({
 }: {
   conversationId: string;
   newestUnreadAt: number;
-  storyId?: UUIDStringType;
+  storyId?: string;
 }): Promise<Array<ReactionResultType>> {
   const db = getInstance();
 
@@ -2478,64 +2479,106 @@ async function _removeAllReactions(): Promise<void> {
   db.prepare<EmptyQuery>('DELETE from reactions;').run();
 }
 
-async function getOlderMessagesByConversation(
-  conversationId: string,
-  options: {
-    includeStoryReplies: boolean;
-    limit?: number;
-    messageId?: string;
-    receivedAt?: number;
-    sentAt?: number;
-    storyId: string | undefined;
-  }
-): Promise<Array<MessageTypeUnhydrated>> {
-  return getOlderMessagesByConversationSync(conversationId, options);
+enum AdjacentDirection {
+  Older = 'Older',
+  Newer = 'Newer',
 }
-function getOlderMessagesByConversationSync(
-  conversationId: string,
+
+function getAdjacentMessagesByConversationSync(
+  direction: AdjacentDirection,
   {
+    conversationId,
     includeStoryReplies,
     limit = 100,
     messageId,
-    receivedAt = Number.MAX_VALUE,
-    sentAt = Number.MAX_VALUE,
+    receivedAt = direction === AdjacentDirection.Older ? Number.MAX_VALUE : 0,
+    sentAt = direction === AdjacentDirection.Older ? Number.MAX_VALUE : 0,
+    requireVisualMediaAttachments,
     storyId,
-  }: {
-    includeStoryReplies: boolean;
-    limit?: number;
-    messageId?: string;
-    receivedAt?: number;
-    sentAt?: number;
-    storyId: string | undefined;
-  }
+  }: AdjacentMessagesByConversationOptionsType
 ): Array<MessageTypeUnhydrated> {
   const db = getInstance();
 
-  return db
-    .prepare<Query>(
-      `
-      SELECT json FROM messages WHERE
-        conversationId = $conversationId AND
-        ($messageId IS NULL OR id IS NOT $messageId) AND
-        isStory IS 0 AND
-        (${_storyIdPredicate(storyId, includeStoryReplies)}) AND
+  const timeFilter =
+    direction === AdjacentDirection.Older
+      ? `
+      (received_at = $received_at AND sent_at < $sent_at) OR
+      received_at < $received_at
+    `
+      : `
+      (received_at = $received_at AND sent_at > $sent_at) OR
+      received_at > $received_at
+    `;
+
+  const timeOrder = direction === AdjacentDirection.Older ? 'DESC' : 'ASC';
+
+  const requireDifferentMessage =
+    direction === AdjacentDirection.Older || requireVisualMediaAttachments;
+
+  let query = `
+    SELECT json FROM messages WHERE
+      conversationId = $conversationId AND
+      ${
+        requireDifferentMessage
+          ? '($messageId IS NULL OR id IS NOT $messageId) AND'
+          : ''
+      }
+      ${
+        requireVisualMediaAttachments
+          ? 'hasVisualMediaAttachments IS 1 AND'
+          : ''
+      }
+      isStory IS 0 AND
+      (${_storyIdPredicate(storyId, includeStoryReplies)}) AND
+      (
+        ${timeFilter}
+      )
+    ORDER BY received_at ${timeOrder}, sent_at ${timeOrder}
+  `;
+
+  // See `filterValidAttachments` in ts/state/ducks/lightbox.ts
+  if (requireVisualMediaAttachments) {
+    query = `
+      SELECT json
+      FROM (${query}) as messages
+      WHERE
         (
-          (received_at = $received_at AND sent_at < $sent_at) OR
-          received_at < $received_at
-        )
-      ORDER BY received_at DESC, sent_at DESC
+          SELECT COUNT(*)
+          FROM json_each(messages.json ->> 'attachments') AS attachment
+          WHERE
+            attachment.value ->> 'thumbnail' IS NOT NULL AND
+            attachment.value ->> 'pending' IS NOT 1 AND
+            attachment.value ->> 'error' IS NULL
+        ) > 0
       LIMIT $limit;
-      `
-    )
-    .all({
-      conversationId,
-      limit,
-      messageId: messageId || null,
-      received_at: receivedAt,
-      sent_at: sentAt,
-      storyId: storyId || null,
-    })
-    .reverse();
+    `;
+  } else {
+    query = `${query} LIMIT $limit`;
+  }
+
+  const results = db.prepare<Query>(query).all({
+    conversationId,
+    limit,
+    messageId: messageId || null,
+    received_at: receivedAt,
+    sent_at: sentAt,
+    storyId: storyId || null,
+  });
+
+  if (direction === AdjacentDirection.Older) {
+    results.reverse();
+  }
+
+  return results;
+}
+
+async function getOlderMessagesByConversation(
+  options: AdjacentMessagesByConversationOptionsType
+): Promise<Array<MessageTypeUnhydrated>> {
+  return getAdjacentMessagesByConversationSync(
+    AdjacentDirection.Older,
+    options
+  );
 }
 
 async function getAllStories({
@@ -2588,58 +2631,12 @@ async function getAllStories({
 }
 
 async function getNewerMessagesByConversation(
-  conversationId: string,
-  options: {
-    includeStoryReplies: boolean;
-    limit?: number;
-    receivedAt?: number;
-    sentAt?: number;
-    storyId: UUIDStringType | undefined;
-  }
+  options: AdjacentMessagesByConversationOptionsType
 ): Promise<Array<MessageTypeUnhydrated>> {
-  return getNewerMessagesByConversationSync(conversationId, options);
-}
-function getNewerMessagesByConversationSync(
-  conversationId: string,
-  {
-    includeStoryReplies,
-    limit = 100,
-    receivedAt = 0,
-    sentAt = 0,
-    storyId,
-  }: {
-    includeStoryReplies: boolean;
-    limit?: number;
-    receivedAt?: number;
-    sentAt?: number;
-    storyId: UUIDStringType | undefined;
-  }
-): Array<MessageTypeUnhydrated> {
-  const db = getInstance();
-  const rows: JSONRows = db
-    .prepare<Query>(
-      `
-      SELECT json FROM messages WHERE
-        conversationId = $conversationId AND
-        isStory IS 0 AND
-        (${_storyIdPredicate(storyId, includeStoryReplies)}) AND
-        (
-          (received_at = $received_at AND sent_at > $sent_at) OR
-          received_at > $received_at
-        )
-      ORDER BY received_at ASC, sent_at ASC
-      LIMIT $limit;
-      `
-    )
-    .all({
-      conversationId,
-      limit,
-      received_at: receivedAt,
-      sent_at: sentAt,
-      storyId: storyId || null,
-    });
-
-  return rows;
+  return getAdjacentMessagesByConversationSync(
+    AdjacentDirection.Newer,
+    options
+  );
 }
 function getOldestMessageForConversation(
   conversationId: string,
@@ -2647,7 +2644,7 @@ function getOldestMessageForConversation(
     storyId,
     includeStoryReplies,
   }: {
-    storyId?: UUIDStringType;
+    storyId?: string;
     includeStoryReplies: boolean;
   }
 ): MessageMetricsType | undefined {
@@ -2680,7 +2677,7 @@ function getNewestMessageForConversation(
     storyId,
     includeStoryReplies,
   }: {
-    storyId?: UUIDStringType;
+    storyId?: string;
     includeStoryReplies: boolean;
   }
 ): MessageMetricsType | undefined {
@@ -2843,7 +2840,7 @@ function getOldestUnseenMessageForConversation(
     storyId,
     includeStoryReplies,
   }: {
-    storyId?: UUIDStringType;
+    storyId?: string;
     includeStoryReplies: boolean;
   }
 ): MessageMetricsType | undefined {
@@ -2875,7 +2872,7 @@ function getOldestUnseenMessageForConversation(
 async function getTotalUnreadForConversation(
   conversationId: string,
   options: {
-    storyId: UUIDStringType | undefined;
+    storyId: string | undefined;
     includeStoryReplies: boolean;
   }
 ): Promise<number> {
@@ -2887,7 +2884,7 @@ function getTotalUnreadForConversationSync(
     storyId,
     includeStoryReplies,
   }: {
-    storyId: UUIDStringType | undefined;
+    storyId: string | undefined;
     includeStoryReplies: boolean;
   }
 ): number {
@@ -2918,7 +2915,7 @@ function getTotalUnseenForConversationSync(
     storyId,
     includeStoryReplies,
   }: {
-    storyId?: UUIDStringType;
+    storyId?: string;
     includeStoryReplies: boolean;
   }
 ): number {
@@ -2944,22 +2941,19 @@ function getTotalUnseenForConversationSync(
   return row;
 }
 
-async function getMessageMetricsForConversation(
-  conversationId: string,
-  options: {
-    storyId?: UUIDStringType;
-    includeStoryReplies: boolean;
-  }
-): Promise<ConversationMetricsType> {
-  return getMessageMetricsForConversationSync(conversationId, options);
+async function getMessageMetricsForConversation(options: {
+  conversationId: string;
+  storyId?: string;
+  includeStoryReplies: boolean;
+}): Promise<ConversationMetricsType> {
+  return getMessageMetricsForConversationSync(options);
 }
-function getMessageMetricsForConversationSync(
-  conversationId: string,
-  options: {
-    storyId?: UUIDStringType;
-    includeStoryReplies: boolean;
-  }
-): ConversationMetricsType {
+function getMessageMetricsForConversationSync(options: {
+  conversationId: string;
+  storyId?: string;
+  includeStoryReplies: boolean;
+}): ConversationMetricsType {
+  const { conversationId } = options;
   const oldest = getOldestMessageForConversation(conversationId, options);
   const newest = getNewestMessageForConversation(conversationId, options);
   const oldestUnseen = getOldestUnseenMessageForConversation(
@@ -2981,48 +2975,24 @@ function getMessageMetricsForConversationSync(
   };
 }
 
-async function getConversationRangeCenteredOnMessage({
-  conversationId,
-  includeStoryReplies,
-  limit,
-  messageId,
-  receivedAt,
-  sentAt,
-  storyId,
-}: {
-  conversationId: string;
-  includeStoryReplies: boolean;
-  limit?: number;
-  messageId: string;
-  receivedAt: number;
-  sentAt?: number;
-  storyId: UUIDStringType | undefined;
-}): Promise<
+async function getConversationRangeCenteredOnMessage(
+  options: AdjacentMessagesByConversationOptionsType
+): Promise<
   GetConversationRangeCenteredOnMessageResultType<MessageTypeUnhydrated>
 > {
   const db = getInstance();
 
   return db.transaction(() => {
     return {
-      older: getOlderMessagesByConversationSync(conversationId, {
-        includeStoryReplies,
-        limit,
-        messageId,
-        receivedAt,
-        sentAt,
-        storyId,
-      }),
-      newer: getNewerMessagesByConversationSync(conversationId, {
-        includeStoryReplies,
-        limit,
-        receivedAt,
-        sentAt,
-        storyId,
-      }),
-      metrics: getMessageMetricsForConversationSync(conversationId, {
-        storyId,
-        includeStoryReplies,
-      }),
+      older: getAdjacentMessagesByConversationSync(
+        AdjacentDirection.Older,
+        options
+      ),
+      newer: getAdjacentMessagesByConversationSync(
+        AdjacentDirection.Newer,
+        options
+      ),
+      metrics: getMessageMetricsForConversationSync(options),
     };
   })();
 }
@@ -3279,14 +3249,6 @@ function saveUnprocessedSync(data: UnprocessedType): string {
   } = data;
   if (!id) {
     throw new Error('saveUnprocessedSync: id was falsey');
-  }
-
-  if (attempts > MAX_UNPROCESSED_ATTEMPTS) {
-    logger.warn(
-      `saveUnprocessedSync: not saving ${id} due to exhausted attempts`
-    );
-    removeUnprocessedSync(id);
-    return id;
   }
 
   prepare(
@@ -5032,11 +4994,15 @@ async function getMessagesWithVisualMediaAttachments(
   const rows: JSONRows = db
     .prepare<Query>(
       `
-      SELECT json FROM messages WHERE
+      SELECT json FROM messages
+      INDEXED BY messages_hasVisualMediaAttachments
+      WHERE
         isStory IS 0 AND
         storyId IS NULL AND
         conversationId = $conversationId AND
-        hasVisualMediaAttachments = 1
+        -- Note that this check has to use 'IS' to utilize
+        -- 'messages_hasVisualMediaAttachments' INDEX
+        hasVisualMediaAttachments IS 1
       ORDER BY received_at DESC, sent_at DESC
       LIMIT $limit OFFSET $offset;
       `
@@ -5471,9 +5437,7 @@ async function removeKnownDraftAttachments(
   return Object.keys(lookup);
 }
 
-// Default value of 'automerge'.
-// See: https://www.sqlite.org/fts5.html#the_automerge_configuration_option
-const OPTIMIZE_FTS_PAGE_COUNT = 4;
+const OPTIMIZE_FTS_PAGE_COUNT = 64;
 
 // This query is incremental. It gets the `state` from the return value of
 // previous `optimizeFTS` call. When `state.done` is `true` - optimization is
@@ -5486,30 +5450,33 @@ async function optimizeFTS(
   if (state === undefined) {
     pageCount = -pageCount;
   }
-
   const db = getInstance();
-  const { changes } = prepare(
-    db,
-    `
-      INSERT INTO messages_fts(messages_fts, rank) VALUES ('merge', $pageCount);
-    `
-  ).run({ pageCount });
+  const getChanges = prepare(db, 'SELECT total_changes() as changes;', {
+    pluck: true,
+  });
 
-  if (state === undefined) {
-    return {
-      changes,
-      steps: 1,
-    };
-  }
+  const changeDifference = db.transaction(() => {
+    const before: number = getChanges.get({});
 
-  const { changes: prevChanges, steps } = state;
+    prepare(
+      db,
+      `
+        INSERT INTO messages_fts(messages_fts, rank) VALUES ('merge', $pageCount);
+      `
+    ).run({ pageCount });
 
-  if (Math.abs(changes - prevChanges) < 2) {
-    return { changes, steps, done: true };
-  }
+    const after: number = getChanges.get({});
 
-  // More work is needed.
-  return { changes, steps: steps + 1 };
+    return after - before;
+  })();
+
+  const nextSteps = (state?.steps ?? 0) + 1;
+
+  // From documentation:
+  // "If the difference is less than 2, then the 'merge' command was a no-op"
+  const done = changeDifference < 2;
+
+  return { steps: nextSteps, done };
 }
 
 async function getJobsInQueue(queueType: string): Promise<Array<StoredJob>> {

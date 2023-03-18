@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import * as React from 'react';
-import { isBoolean } from 'lodash';
+import { isBoolean, noop } from 'lodash';
 
 import { action } from '@storybook/addon-actions';
 import { boolean, number, select, text } from '@storybook/addon-knobs';
@@ -27,7 +27,7 @@ import {
 } from '../../types/MIME';
 import { ReadStatus } from '../../messages/MessageReadStatus';
 import { MessageAudio } from './MessageAudio';
-import { computePeaks } from '../GlobalAudioContext';
+import { computePeaks } from '../VoiceNotesPlaybackContext';
 import { setupI18n } from '../../util/setupI18n';
 import enMessages from '../../../_locales/en/messages.json';
 import { pngUrl } from '../../storybook/Fixtures';
@@ -89,6 +89,10 @@ const Template: Story<Partial<Props>> = args => {
   });
 };
 
+const messageIdToAudioUrl = {
+  'incompetech-com-Agnus-Dei-X': '/fixtures/incompetech-com-Agnus-Dei-X.mp3',
+};
+
 function getJoyReaction() {
   return {
     emoji: '😂',
@@ -130,11 +134,13 @@ function MessageAudioContainer({
   const [isActive, setIsActive] = React.useState<boolean>(false);
   const [currentTime, setCurrentTime] = React.useState<number>(0);
   const [playbackRate, setPlaybackRate] = React.useState<number>(1);
-  const [playing, setPlaying] = React.useState<boolean>(false);
+  const [isPlaying, setIsPlaying] = React.useState<boolean>(false);
   const [_played, setPlayed] = React.useState<boolean>(played);
 
-  const audio = React.useMemo(() => {
+  const audioPlayer = React.useMemo(() => {
     const a = new Audio();
+
+    let onLoadedData: () => void = noop;
 
     a.addEventListener('timeupdate', () => {
       setCurrentTime(a.currentTime);
@@ -144,73 +150,87 @@ function MessageAudioContainer({
       setIsActive(false);
     });
 
-    a.addEventListener('loadeddata', () => {
-      a.currentTime = currentTime;
-    });
+    a.addEventListener('loadeddata', () => onLoadedData());
 
-    return a;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    function play(positionAsRatio?: number) {
+      if (positionAsRatio !== undefined) {
+        a.currentTime = positionAsRatio * a.duration;
+      }
+      void a.play();
+    }
+
+    return {
+      loadAndPlay(url: string, positionAsRatio: number) {
+        onLoadedData = () => {
+          play(positionAsRatio);
+        };
+        a.src = url;
+      },
+      play,
+      pause() {
+        a.pause();
+      },
+      set playbackRate(rate: number) {
+        a.playbackRate = rate;
+      },
+      set currentTime(value: number) {
+        a.currentTime = value;
+      },
+      get duration() {
+        return a.duration;
+      },
+    };
   }, []);
 
-  const loadAndPlayMessageAudio = (
-    _id: string,
-    url: string,
-    _context: string,
-    position: number
-  ) => {
+  const handlePlayMessage = (id: string, positionAsRatio: number) => {
     if (!active) {
-      audio.src = url;
+      audioPlayer.loadAndPlay(
+        messageIdToAudioUrl[id as keyof typeof messageIdToAudioUrl],
+        positionAsRatio
+      );
       setIsActive(true);
-    }
-    if (!playing) {
-      void audio.play();
-      setPlaying(true);
+      setIsPlaying(true);
       setPlayed(true);
-    }
-
-    if (!Number.isNaN(audio.duration)) {
-      audio.currentTime = audio.duration * position;
-    }
-    if (!Number.isNaN(audio.currentTime)) {
-      setCurrentTime(audio.currentTime);
     }
   };
 
-  const setPlaybackRateAction = (_conversationId: string, rate: number) => {
-    audio.playbackRate = rate;
+  const setPlaybackRateAction = (rate: number) => {
+    audioPlayer.playbackRate = rate;
     setPlaybackRate(rate);
   };
 
   const setIsPlayingAction = (value: boolean) => {
     if (value) {
-      void audio.play();
+      audioPlayer.play();
     } else {
-      audio.pause();
+      audioPlayer.pause();
     }
-    setPlaying(value);
+    setIsPlaying(value);
   };
 
-  const setCurrentTimeAction = (value: number) => {
-    audio.currentTime = value;
-    setCurrentTime(currentTime);
+  const setPosition = (value: number) => {
+    audioPlayer.currentTime = value * audioPlayer.duration;
+    setCurrentTime(audioPlayer.currentTime);
   };
 
   const active = isActive
-    ? { playing, playbackRate, currentTime, duration: audio.duration }
+    ? {
+        playing: isPlaying,
+        playbackRate,
+        currentTime,
+        duration: audioPlayer.duration,
+      }
     : undefined;
 
   return (
     <MessageAudio
       {...props}
-      conversationId="some-conversation-id"
       active={active}
       computePeaks={computePeaks}
-      id="storybook"
-      loadAndPlayMessageAudio={loadAndPlayMessageAudio}
+      onPlayMessage={handlePlayMessage}
       played={_played}
       pushPanelForConversation={action('pushPanelForConversation')}
-      renderingContext="storybook"
-      setCurrentTime={setCurrentTimeAction}
+      setPosition={setPosition}
       setIsPlaying={setIsPlayingAction}
       setPlaybackRate={setPlaybackRateAction}
     />
@@ -428,11 +448,12 @@ export function EmojiMessages(): JSX.Element {
       <br />
       <TimelineMessage
         {...createProps({
+          id: 'incompetech-com-Agnus-Dei-X',
           attachments: [
             fakeAttachment({
               contentType: AUDIO_MP3,
               fileName: 'incompetech-com-Agnus-Dei-X.mp3',
-              url: '/fixtures/incompetech-com-Agnus-Dei-X.mp3',
+              url: messageIdToAudioUrl['incompetech-com-Agnus-Dei-X'],
             }),
           ],
           text: '😀',
@@ -737,6 +758,32 @@ Sticker.args = {
   ],
   isSticker: true,
   status: 'sent',
+};
+
+export const Quote = Template.bind({});
+Quote.args = {
+  quote: {
+    text: 'hello my good friend',
+    conversationColor: 'ultramarine',
+    conversationTitle: 'Convo',
+    fromGroupName: undefined,
+    isFromMe: false,
+    sentAt: 0,
+    authorId: '',
+    authorTitle: 'Author',
+    referencedMessageNotFound: false,
+    isViewOnce: false,
+    isGiftBadge: false,
+  },
+  author: {
+    id: '',
+    isMe: false,
+    title: 'Quoter Dude',
+    sharedGroupNames: [],
+    acceptedMessageRequest: true,
+    badges: [],
+  },
+  conversationType: 'group',
 };
 
 export function Deleted(): JSX.Element {
@@ -1330,11 +1377,12 @@ export const _Audio = (): JSX.Element => {
     const [isPlayed, setIsPlayed] = React.useState(false);
 
     const messageProps = createProps({
+      id: 'incompetech-com-Agnus-Dei-X',
       attachments: [
         fakeAttachment({
           contentType: AUDIO_MP3,
           fileName: 'incompetech-com-Agnus-Dei-X.mp3',
-          url: '/fixtures/incompetech-com-Agnus-Dei-X.mp3',
+          url: messageIdToAudioUrl['incompetech-com-Agnus-Dei-X'],
           path: 'somepath',
         }),
       ],

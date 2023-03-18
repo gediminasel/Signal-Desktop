@@ -52,6 +52,14 @@
     "message": "Се додава $contact$…",
     "description": "Shown in toast while a user is being added to a group"
   },
+  "icu:RecordingComposer__cancel": {
+    "messageformat": "Откажи",
+    "description": "Label of cancel button on voice note recording UI"
+  },
+  "icu:RecordingComposer__send": {
+    "messageformat": "Испрати",
+    "description": "Label of send button on voice note recording UI"
+  },
   "GroupListItem__message-default": {
     "message": "$count$ членови",
     "description": "Shown below the group name when selecting a group to invite a contact to"
@@ -1039,11 +1047,11 @@
     "description": "Shown as the title of our update error dialogs on windows"
   },
   "muted": {
-    "message": "Исклучен звук",
+    "message": "Исклучени известувања",
     "description": "Shown in a button when a conversation is muted"
   },
   "mute": {
-    "message": "Исклучи",
+    "message": "Исклучи известувања",
     "description": "Shown in a button when a conversation is unmuted and can be muted"
   },
   "cannotUpdateDetail": {
@@ -1251,11 +1259,11 @@
     "description": "Shown on explainer dialog available from delivery issue timeline events"
   },
   "DeliveryIssue--summary": {
-    "message": "Не можеше да се испрати до вас порака, налепница, реакција, потврда за прочитана порака или медиумска датотека од $sender$. Или се обиделе да ви ја испратат директно, или во група.",
+    "message": "Не можеше да се испрати до вас порака, налепница, реакција, потврда за прочитана порака или медиумска датотека од $sender$. Или се обиделе да ви ја испратат директно или во група.",
     "description": "Shown on explainer dialog available from delivery issue timeline events in 1:1 conversations"
   },
   "DeliveryIssue--summary--group": {
-    "message": "Не можеше да се испрати до вас порака, налепница, реакција, потврда за прочитана порака или медиумска датотека од $sender$во овој разговор.",
+    "message": "Не можеше да се испрати до вас порака, налепница, реакција, потврда за прочитана порака или медиумска датотека од $sender$ во овој разговор.",
     "description": "Shown on explainer dialog available from delivery issue timeline events in groups"
   },
   "ChangeNumber--notification": {
@@ -1590,7 +1598,7 @@
     "description": "Shown in the participants list to describe how many people are in the call"
   },
   "calling__you-have-blocked": {
-    "message": "$name$ е блокиран(а).",
+    "message": "Го блокиравте корисникот $name$",
     "description": "when you block someone and cannot view their video"
   },
   "calling__block-info": {
@@ -1778,10 +1786,10 @@
     "description": "Displayed in notifications for messages in a group"
   },
   "notificationReaction": {
-    "message": "$sender$ реагираше $emoji$ на Вашата порака"
+    "message": "$sender$ реагираше со $emoji$ на вашата порака"
   },
   "notificationReactionMessage": {
-    "message": "$sender$ реагираше $emoji$ на $message$"
+    "message": "$sender$ реагираше со $emoji$ на: $message$"
   },
   "sendFailed": {
     "message": "Испраќањето е неуспешно",
@@ -1881,26 +1889,34 @@
   },
   "timestampFormat_M": {
     "message": "МММ Д",
-    "description": "Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+  },
+  "timestampFormat__long--today": {
+    "message": "Денес $time$",
+    "description": "Timestamp format string for displaying \"Today\" and the time"
+  },
+  "timestampFormat__long--yesterday": {
+    "message": "Вчера $time$",
+    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "timestampFormat__long__today": {
     "message": "[Денес] LT",
-    "description": "Timestamp format string for displaying \"Today\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Today\" and the time"
   },
   "timestampFormat__long__yesterday": {
     "message": "[Вчера] LT ",
-    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "messageBodyTooLong": {
     "message": "Телото на пораката е предолго.",
     "description": "Shown if the user tries to send more than 64kb of text"
   },
   "unblockToSend": {
-    "message": "Одблокирајте го овој контакт за испраќање порака.",
+    "message": "Деблокирајте го овој контакт за да испратите порака.",
     "description": "Brief message shown when trying to message a blocked number"
   },
   "unblockGroupToSend": {
-    "message": "Одблокирај ја оваа група за испраќање порака.",
+    "message": "Деблокирајте ја оваа група за да испратите порака.",
     "description": "Brief message shown when trying to message a blocked group"
   },
   "youChangedTheTimer": {
@@ -2020,7 +2036,7 @@
     "description": "Label text for system theme"
   },
   "noteToSelf": {
-    "message": "Забелешка за себе",
+    "message": "Белешка за себе",
     "description": "Name for the conversation with your own phone number"
   },
   "noteToSelfHero": {
@@ -2181,7 +2197,7 @@
     "message": "Поврзи повторно"
   },
   "autoUpdateNewVersionTitle": {
-    "message": "Достапна е нова верзија"
+    "message": "Update Available"
   },
   "autoUpdateRetry": {
     "message": "Обидете се повторно да ажурирате"
@@ -2580,6 +2596,18 @@
     "message": "Скорешните стикери ќе се појават овде.",
     "description": "Shown in the sticker picker when there are no recent stickers to show."
   },
+  "icu:stickers__StickerPicker__recent": {
+    "messageformat": "Скорешни",
+    "description": "Title for all of the recent stickers"
+  },
+  "icu:stickers__StickerPicker__featured": {
+    "messageformat": "Истакнати",
+    "description": "Title for featured stickers"
+  },
+  "icu:stickers__StickerPicker__analog-time": {
+    "messageformat": "Аналогно време",
+    "description": "aria-label for the analog time sticker"
+  },
   "stickers--StickerPreview--Title": {
     "message": "Стикер пакет",
     "description": "The title that appears in the sticker pack preview modal."
@@ -2777,7 +2805,7 @@
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--toggle-reaction-picker": {
-    "message": "Вклучи/исклучи избирач на емоџи реакција за избраната порака",
+    "message": "Вклучи/исклучи избирач на реакција со емотикон за избраната порака",
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--save-attachment": {
@@ -2877,7 +2905,7 @@
     "description": "Header of the keyboard shortcuts guide - calling section"
   },
   "Keyboard--toggle-audio": {
-    "message": "Вклучи/исклучи звук",
+    "message": "Вклучете ги или исклучете известувањата",
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--toggle-video": {
@@ -2947,6 +2975,18 @@
   "conversationMarkedUnread": {
     "message": "Разговорот е обележан како непрочитан",
     "description": "A toast that shows up when user marks a conversation as unread"
+  },
+  "icu:AuthArtCreator--dialog--message": {
+    "messageformat": "Дали сакате да го отворите креаторот на пакет налепници на Signal?",
+    "description": "A body of the dialog that is presented when user tries to open Signal Sticker Pack Creator from a link"
+  },
+  "icu:AuthArtCreator--dialog--confirm": {
+    "messageformat": "Потврди",
+    "description": "A buttle title for confirming Signal Sticker Pack Creator dialog"
+  },
+  "icu:AuthArtCreator--dialog--dismiss": {
+    "messageformat": "Откажи",
+    "description": "A buttle title for dismissing Signal Sticker Pack Creator dialog"
   },
   "StickerCreator--title": {
     "message": "Креатор на пакет за стикери",
@@ -3148,12 +3188,16 @@
     "message": "Ве молиме поставете го Signal на Вашиот телефон и работна станица да го користи креаторот за пакети на стикери",
     "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
   },
+  "icu:ArtCreator--Authentication--error": {
+    "messageformat": "Ве молиме поставете го Signal на вашиот телефон и десктоп компјутер за да го користи креаторот за пакети на стикери",
+    "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
+  },
   "Reactions--remove": {
-    "message": "Отстранете реакција",
+    "message": "Отстрани реакција",
     "describe": "Shown when you want to remove a reaction you've made"
   },
   "Reactions--error": {
-    "message": "Не успеав да испратам реакција. Ве молиме пробајте пак.",
+    "message": "Не можеше да се испрати реакцијата. Ве молиме пробајте пак.",
     "description": "Shown when a reaction fails to send"
   },
   "Reactions--more": {
@@ -3169,7 +3213,7 @@
     "description": "Shown as the message for a message request in a direct message"
   },
   "MessageRequests--message-direct-blocked": {
-    "message": "Дали дозволувате $name$ да Ви испраќа пораки и да го гледа Вашето име и слика? Нема да примате пораки додека не го/ја деблокирате.",
+    "message": "Сакате да дозволите $name$ да може да ви пишува и да ви ги гледа името и сликата? Нема да добивате пораки додека не го дебклокирате овој контакт.",
     "description": "Shown as the message for a message request in a direct message with a blocked account"
   },
   "MessageRequests--message-group": {
@@ -3177,7 +3221,7 @@
     "description": "Shown as the message for a message request in a group"
   },
   "MessageRequests--message-group-blocked": {
-    "message": "Дали сакате да ја одблокирате оваа група и да ги споделите Вашето име и слика со нејзините членови? Нема да примате никакви пораки додека не ја одблокирате.",
+    "message": "Сакате да ја деблокирате оваа група и да ги споделите вашето име и слика со нејзините членови? Нема да добивате пораки додека не ја деблокирате групата.",
     "description": "Shown as the message for a message request in a blocked group"
   },
   "MessageRequests--block": {
@@ -3185,11 +3229,11 @@
     "description": "Shown as a button to let the user block a message request"
   },
   "MessageRequests--unblock": {
-    "message": "Одблокирај",
+    "message": "Деблокирај",
     "description": "Shown as a button to let the user unblock a message request"
   },
   "MessageRequests--unblock-direct-confirm-title": {
-    "message": "Одблокирање на $name$?",
+    "message": "Да се деблокира $name$?",
     "description": "Shown as a button to let the user unblock a message request"
   },
   "MessageRequests--unblock-direct-confirm-body": {
@@ -3201,7 +3245,7 @@
     "description": "Shown as the body in the confirmation modal for unblocking a group message request"
   },
   "MessageRequests--block-and-report-spam": {
-    "message": "Пријави спам и блокирај",
+    "message": "Пријавете како спам и блокирајте",
     "description": "Shown as a button to let the user block a message request and report spam"
   },
   "MessageRequests--block-and-report-spam-success-toast": {
@@ -3209,15 +3253,15 @@
     "description": "Shown in a toast when you successfully block a user and report them as spam"
   },
   "MessageRequests--block-direct-confirm-title": {
-    "message": "Блокирање на $name$?",
+    "message": "Да се блокира $name$?",
     "description": "Shown as the title in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-direct-confirm-body": {
-    "message": "Блокирани луѓе нема да можат да Ви се јават или да Ви испраќаат пораки.",
+    "message": "Лицата кои ги блокирате нема да можат да ви се јавуваат или да ви испраќаат пораки.",
     "description": "Shown as the body in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-group-confirm-title": {
-    "message": "Блокирање и напуштање на $group$?",
+    "message": "Да се блокира и напушти $group$?",
     "description": "Shown as the title in the confirmation modal for blocking a group message request"
   },
   "MessageRequests--block-group-confirm-body": {
@@ -3529,31 +3573,31 @@
     "description": "Label for the mute notifications drop-down selector"
   },
   "notMuted": {
-    "message": "Звукот не е исклучен",
+    "message": "Известувањата не се исклучени",
     "description": "Label when the conversation is not muted"
   },
   "muteHour": {
-    "message": "Исклучи звук на 1 час",
+    "message": "Исклучи известувања на 1 час",
     "description": "Label for muting the conversation"
   },
   "muteEightHours": {
-    "message": "Исклучи звук на осум часа",
+    "message": "Исклучи известувања на 8 часа",
     "description": "Label for muting the conversation"
   },
   "muteDay": {
-    "message": "Исклучи звук на 1 ден",
+    "message": "Исклучи известувања на 1 ден",
     "description": "Label for muting the conversation"
   },
   "muteWeek": {
-    "message": "Исклучи звук на 1 недела",
+    "message": "Исклучи известувања на 1 недела",
     "description": "Label for muting the conversation"
   },
   "muteAlways": {
-    "message": "Исклучете известувања секогаш",
+    "message": "Исклучени известувања секогаш",
     "description": "Label for muting the conversation"
   },
   "unmute": {
-    "message": "Вклучи звук",
+    "message": "Вклучи известувања",
     "description": "Label for unmuting the conversation"
   },
   "muteExpirationLabelAlways": {
@@ -3561,7 +3605,7 @@
     "description": "Shown in the mute notifications submenu whenever a conversation has been muted"
   },
   "muteExpirationLabel": {
-    "message": "Исклучени до $duration$",
+    "message": "Известувањата се исклучени до $duration$",
     "description": "Shown in the mute notifications submenu whenever a conversation has been muted"
   },
   "EmojiButton__label": {
@@ -4489,11 +4533,11 @@
     "description": "This is a button to leave a group"
   },
   "ConversationDetailsActions--block-group": {
-    "message": "Блокирај група",
+    "message": "Блокирај ја групата",
     "description": "This is a button to block a group"
   },
   "ConversationDetailsActions--unblock-group": {
-    "message": "Одблокирај група",
+    "message": "Деблокирај ја групата",
     "description": "This is a button to unblock a group"
   },
   "ConversationDetailsActions--leave-group-must-choose-new-admin": {
@@ -4513,7 +4557,7 @@
     "description": "This is the modal button to confirm leaving a group"
   },
   "ConversationDetailsActions--unblock-group-modal-title": {
-    "message": "Сакаш да ја одблокираш групата „$groupName$“?",
+    "message": "Сакате да ја деблокирате групата „$groupName$“?",
     "description": "This is the modal title for confirming unblock of a group"
   },
   "ConversationDetailsActions--block-group-modal-title": {
@@ -4533,7 +4577,7 @@
     "description": "This is the modal content for confirming unblock of a group"
   },
   "ConversationDetailsActions--unblock-group-modal-confirm": {
-    "message": "Одблокирај",
+    "message": "Деблокирај",
     "description": "This is the modal button to confirm unblock of a group"
   },
   "ConversationDetailsHeader--members": {
@@ -4585,7 +4629,7 @@
     "description": "In the conversation notifications settings, this is the label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__info": {
-    "message": "Добивајте известувања кога ќе ве спомнат во разговории чии известувања ги имате исклучено",
+    "message": "Добивајте известувања кога ќе ве спомнат во разговори чии известувања ги имате исклучено",
     "description": "In the conversation notifications settings, this is the sub-label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__select__always-notify": {
@@ -4693,11 +4737,11 @@
     "description": "Information shown below the invite list"
   },
   "PendingRequests--block--button": {
-    "message": "Блокирај барање",
+    "message": "Блокирај го барањето",
     "description": "Shown in timeline if users cancel their request to join a group via a group link"
   },
   "PendingRequests--block--title": {
-    "message": "Да го блокирам барањето?",
+    "message": "Сакате да го блокирате барањето?",
     "description": "Title of dialog to block a user from requesting to join via the link again"
   },
   "PendingRequests--block--contents": {
@@ -4854,11 +4898,11 @@
   },
   "TimelineDateHeader--date-in-last-6-months": {
     "message": "ddd, D MMM",
-    "description": "Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "TimelineDateHeader--date-older-than-6-months": {
     "message": "D MMM, YYYY",
-    "description": "Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "MessageRequestWarning__learn-more": {
     "message": "Дознајте повеќе",
@@ -5225,7 +5269,7 @@
     "description": "Shown if something unknown has gone wrong with username save."
   },
   "icu:ProfileEditor--username--reservation-gone": {
-    "messageformat": "{username} is no longer available. A new set of digits will be paired with your username, please try saving it again.",
+    "messageformat": "Корисничкото име {username} повеќе не е достапно. Нова низа бројки ќе биде спарена со вашето корисничко име, ве молиме обидете се да ја зачувате повторно.",
     "description": "Shown if username reservation has expired and new one needs to be generated."
   },
   "ProfileEditor--username--delete-general-error": {
@@ -5430,23 +5474,75 @@
   },
   "Preferences__who-can--title": {
     "message": "Кој може…",
-    "description": "Title for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Title for the 'who can do X' setting"
   },
   "Preferences__privacy--description": {
     "message": "За да го смените ова поставување, отворете ја апликацијата Signal на вашиот мобилен уред и одете до Поставувања > Приватност",
-    "description": "Description for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Description for the 'who can do X' setting"
   },
   "Preferences__who-can--everybody": {
     "message": "Сите",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--contacts": {
     "message": "Моите контакти",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--nobody": {
     "message": "Никој",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
+  },
+  "icu:Preferences__pnp__row--title": {
+    "messageformat": "Телефонски број",
+    "description": "Title of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__row--body": {
+    "messageformat": "Одберете кој може да го види вашиот телефонски број и да ве контактира на Signal со тој број.",
+    "description": "Body of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__sharing--title": {
+    "messageformat": "Кој може да го види мојот број",
+    "description": "Title for the phone number sharing setting row"
+  },
+  "icu:Preferences__pnp__sharing--description--everyone": {
+    "messageformat": "Вашиот телефонски број ќе биде видлив за луѓето и групите со кои се допишувате. Лицата кои го имаат вашиот број во контакти исто така ќе можат да го видат на Signal.",
+    "description": "Description for the phone number sharing setting row when the value is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody": {
+    "messageformat": "Никој нема да го види вашиот телефонски број на Signal.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody"
+  },
+  "icu:Preferences__pnp--page-title": {
+    "messageformat": "Телефонски број",
+    "description": "Title of the page in Phone Number Privacy settings"
+  },
+  "icu:Preferences__pnp__sharing__everyone": {
+    "messageformat": "Сите",
+    "description": "Option for sharing phone number with everyone"
+  },
+  "icu:Preferences__pnp__sharing__nobody": {
+    "messageformat": "Никој",
+    "description": "Option for sharing phone number with nobody"
+  },
+  "icu:Preferences__pnp__discoverability--title": {
+    "messageformat": "Кој може да ме пронајде со мојот телефонски број",
+    "description": "Title for the phone number discoverability setting row"
+  },
+  "icu:Preferences__pnp__discoverability--description--everyone": {
+    "messageformat": "Сите кои го имаат зачувано вашиот телефонски број во контакти ќе можат да ве видат како контакт на Signal. Останатите ќе можат да ве контактираат со вашиот телефонски број кога ќе започнат нов разговор или создадат нова група.",
+    "description": "Description for the phone number discoverability setting row wth the value is everyone"
+  },
+  "icu:Preferences__pnp__discoverability--description--nobody": {
+    "messageformat": "Никој на Signal нема да може да ве пронајде со вашиот телефонски број.",
+    "description": "Description for the phone number discoverability setting row wth the value is nobody"
+  },
+  "icu:Preferences__pnp__discoverability__everyone": {
+    "messageformat": "Сите",
+    "description": "Option for letting everyone discover you by phone number"
+  },
+  "icu:Preferences__pnp__discoverability__nobody": {
+    "messageformat": "Никој",
+    "description": "Option for letting nobody discover you by phone number"
   },
   "Preferences--messaging": {
     "message": "Пораки",
@@ -5504,6 +5600,14 @@
     "message": "Достапно ажурирање до верзија $version$",
     "description": "Tooltip for new update available"
   },
+  "icu:DialogUpdate__downloading": {
+    "messageformat": "Downloading Update...",
+    "description": "The title of update dialog when update download is in progress."
+  },
+  "icu:DialogUpdate__downloaded": {
+    "messageformat": "Update Downloaded",
+    "description": "The title of update dialog when update download is completed."
+  },
   "NSIS__retry-dialog--first-line": {
     "message": "Не може да се затвори Signal.",
     "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
@@ -5551,6 +5655,10 @@
   "CustomizingPreferredReactions__had-save-error": {
     "message": "Се појави грешка при зачувување на поставувањата. Ве молиме обидете се повторно.",
     "description": "Shown if there is an error when saving your preferred reaction settings. Should be very rare to see this message."
+  },
+  "icu:MediaEditor__clock-more-styles": {
+    "messageformat": "Повеќе стилови",
+    "description": "Action button for switching up the clock styles"
   },
   "MediaEditor__control--draw": {
     "message": "Цртај",
@@ -6121,7 +6229,7 @@
     "description": "Aria label for muting stories"
   },
   "StoryViewer__unmute": {
-    "message": "Вклучи",
+    "message": "Вклучи известувања",
     "description": "Aria label for unmuting stories"
   },
   "StoryViewer__views-off": {
@@ -6246,11 +6354,19 @@
   },
   "StoryCreator__error--video-too-long": {
     "message": "Видеото не може да се објави како приказна бидејќи е предолго",
-    "description": "Error string for when a video post to story fails"
+    "description": "(deleted 02/22/2023) Error string for when a video post to story fails"
   },
   "StoryCreator__error--video-unsupported": {
     "message": "Видеото не може да се објави како приказна бидејќи форматот на датотеката не е поддржан",
     "description": "Error string for when a video post to story fails"
+  },
+  "icu:StoryCreator__error--video-too-long": {
+    "messageformat": "{maxDurationInSec, plural, one {Видеото не може да се објави како приказна зашто е подолго од 1 секунда.} other {Видеото не може да се објави како приказна зашто е подолго од {maxDurationInSec,number} секунди.}}",
+    "description": "Error string for when a video post to story fails because video's duration is too long"
+  },
+  "icu:StoryCreator__error--video-too-big": {
+    "messageformat": "Видеото не може да се објави како приказна зашто е поголемо од {limit}{units}.",
+    "description": "Error string for when a video post to story fails because video's file size is too big"
   },
   "StoryCreator__error--video-error": {
     "message": "Вчитувањето на видеото е неуспешно",
@@ -6389,27 +6505,27 @@
     "description": "Body of the popup with information about discriminator in username"
   },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "Set up your Signal username",
+    "messageformat": "Поставете го вашето корисничко име на Signal",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "Usernames are paired with a set of digits and aren’t shared on your profile",
+    "messageformat": "Корисничките имиња се спаруваат со низа бројки и не се споделуваат на вашиот профил",
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Each username has a unique link you can share with your friends to start a chat with you",
+    "messageformat": "Секое корисничко име има единствен линк којшто можете да го споделите со вашите пријатели за да можат да започнат разговор со вас",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "Turn off phone number discovery under Settings > Phone Number > Who can find my number, to use your username as the primary way others can contact you.",
+    "messageformat": "Оневозможете откривање со телефонски број за вашето корисничко име да се користи како главниот начин на кој другите можат да ве контактираат, преку Поставувања > Приватност > Телефонски број > Кој може да го најде мојот број.",
     "description": "Content of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__learn-more": {
-    "messageformat": "Learn More",
+    "messageformat": "Дознајте повеќе",
     "description": "Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Continue",
+    "messageformat": "Продолжи",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -6456,40 +6572,24 @@
     "message": "Mали подобрувања, решени багови и подобрувања на перформансот. Ви благодариме што користите Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "WhatsNew__v5.63--0": {
-    "message": "Напорно работиме за да ги решиме баговите и да го подобриме перформансот за апликацијата да продолжи да работи беспрекорно за вас.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--0": {
+    "messageformat": "Кликнете на која било слика или видео и користете ги новите копчиња за Напред и Назад во прегледувачот на медиумски датотеки за да се навратите на спомените.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v5.63--beta.2": {
-    "message": "Започнете да ги користите и тестирате нашите нови функции за приказни. Можете да ја користите оваа функција со другите бета тестери и да ни кажете како работи.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--1": {
+    "messageformat": "Сега гласовните пораки ќе бидат зачувани како нацрт-пораки ако отворите друг разговор во текот на снимањето.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.0": {
-    "message": "Сега има приказни на Signal! Споделувајте фото, видео и текстуални новости кои исчезнуваат автоматски по 24 часа со одредени пријатели или групи. За сите кои сакаат да споделуваат приказни, еве начин тоа да се направи приватно и без гледање реклами. Ако не сакате да гледате или споделувате приказни, исклучете ги во Поставувања > Приватност.",
-    "description": "Release notes for v6.0"
+  "icu:WhatsNew__v6.10--2": {
+    "messageformat": "Испраќањето налепница повеќе нема да ги брише нацрт-пораките. Благодариме, {lamemakes}!",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.1--1": {
-    "message": "Кога почнувате групен повик со помали групи (до 16 лица), можете да одберете да испратите известување со ѕвонење. Членовите на групата ќе слушнат ѕвонење ако ја користат iOS бета верзијата или ако ja користат десктоп или Android верзијата.",
-    "description": "Release notes for v6.1"
+  "icu:WhatsNew__v6.10--3": {
+    "messageformat": "Исто така сакаме да се заблагодариме на {norstbox} што ги израмни иконите на лентите за пребарување во разговорите.",
+    "description": "Release notes for v6.10"
   },
-  "icu:WhatsNew__v6.3--0": {
-    "messageformat": "Кликнете двапати на која било порака во разговорот за да ја цитирате во одговор. Тоа е пократок начин за изразување нови мисли за стари идеи. Благодарност до {whynothugo} и Signal заедницата за воведување на оваа функција и давање фидбек.",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.3--1": {
-    "messageformat": "Сега е лесно да кликнете надвор од сликата за да не биде прикажана на цел екран, без истата да се зумира. Некогаш сакавте само да излезете од прозорецот, а не да го зголемите. Благодарност до {jojomatik} што го среди ова!",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.5--0": {
-    "messageformat": "Одговарајте побрзо. Сега можете побрзо да реагирате со кликање на кој било емотикон кога одговарате на приказна.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.5--1": {
-    "messageformat": "Сега можете да пребарувате индивидуални знаци на кинески и јапонски во вашата историја на разговори.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.6--0": {
-    "messageformat": "Помогнете ни да тестираме неколку подобрувања на сигурноста и перформансот на гласовни и видео повици. Оваа бета верзија исто така вклучува и неколку решени багови и мали ажурирања на интерфејсот (очекувајте ги новите подобрувања на можноста за преглед на линкови!). Ви благодариме што ја тестирате бета верзијата и ве молиме контактирајте нè на форумот на заедницата доколку забележите багови.",
-    "description": "Release notes for v6.6"
+  "icu:WhatsNew__v6.11--0": {
+    "messageformat": "Start talking to yourself even faster with a new icon that makes the “Note to Self” chat easier to find. Thanks to {hackerbirds} on GitHub for their contribution.",
+    "description": "Release notes for v6.11"
   }
 }

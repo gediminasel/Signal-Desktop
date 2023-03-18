@@ -52,6 +52,14 @@
     "message": "$contact$ кошулууда...",
     "description": "Shown in toast while a user is being added to a group"
   },
+  "icu:RecordingComposer__cancel": {
+    "messageformat": "Жок",
+    "description": "Label of cancel button on voice note recording UI"
+  },
+  "icu:RecordingComposer__send": {
+    "messageformat": "Жөнөтүү",
+    "description": "Label of send button on voice note recording UI"
+  },
   "GroupListItem__message-default": {
     "message": "$count$ мүчө",
     "description": "Shown below the group name when selecting a group to invite a contact to"
@@ -931,7 +939,7 @@
     "description": "Shown in a message's triple-dot menu if there isn't room for a dedicated download button"
   },
   "reactToMessage": {
-    "message": "Билдирүүгө реакция кылуу",
+    "message": "Билдирүүгө сезим билдирүү",
     "description": "Shown in triple-dot menu next to message to allow user to react to the associated message"
   },
   "replyToMessage": {
@@ -1251,11 +1259,11 @@
     "description": "Shown on explainer dialog available from delivery issue timeline events"
   },
   "DeliveryIssue--summary": {
-    "message": "$sender$ жөнөткөн билдирүү, стикер, реакция же окулду деген билдирме сизге жетпей калды. Ал бул нерселерди түздөн-түз сизге же кандайдыр бир топко жөнөткөнгө аракет кылган.",
+    "message": "$sender$ жөнөткөн билдирүү, стикер, билдирген сезим же окулду деген билдирме сизге жетпей калды. Ал бул нерселерди түздөн-түз сизге же кандайдыр бир топко жөнөткөнгө аракет кылган.",
     "description": "Shown on explainer dialog available from delivery issue timeline events in 1:1 conversations"
   },
   "DeliveryIssue--summary--group": {
-    "message": "Бул маекте $sender$ жөнөткөн билдирүү, стикер, реакция, окулду деген билдирме сизге жетпей калды.",
+    "message": "Бул маекте $sender$ жөнөткөн билдирүү, стикер, билдирген сезим, окулду деген билдирме сизге жетпей калды.",
     "description": "Shown on explainer dialog available from delivery issue timeline events in groups"
   },
   "ChangeNumber--notification": {
@@ -1446,7 +1454,7 @@
     "description": "Button label in the call lobby for returning to a call"
   },
   "calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
-    "message": "Чалуунун көлөмүнө байланыштуу микрофондун үнү өчүрүлдү",
+    "message": "Чалуудагы адамдардын санына жараша микрофондун үнү өчүрүлөт",
     "description": "Shown in a call lobby toast if there are a lot of people already on the call"
   },
   "calling__call-is-full": {
@@ -1590,7 +1598,7 @@
     "description": "Shown in the participants list to describe how many people are in the call"
   },
   "calling__you-have-blocked": {
-    "message": "Сиз $name$ байланышын бөгөттөдүңүз",
+    "message": "Бул байланышты бөгөттөдүңүз: $name$",
     "description": "when you block someone and cannot view their video"
   },
   "calling__block-info": {
@@ -1778,10 +1786,10 @@
     "description": "Displayed in notifications for messages in a group"
   },
   "notificationReaction": {
-    "message": "$sender$ билдирүүңүзгө $emoji$ реакция кылды"
+    "message": "$sender$ билдирүүңүзгө $emoji$ деген сезимин билдирди"
   },
   "notificationReactionMessage": {
-    "message": "$sender$ $message$ үчүн $emoji$ реакция кылды"
+    "message": "$sender$ $message$ үчүн $emoji$ деген сезимин билдирди"
   },
   "sendFailed": {
     "message": "Жөнөтүлбөй калды",
@@ -1881,15 +1889,23 @@
   },
   "timestampFormat_M": {
     "message": "D MMM",
-    "description": "Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+  },
+  "timestampFormat__long--today": {
+    "message": "Бүгүн $time$",
+    "description": "Timestamp format string for displaying \"Today\" and the time"
+  },
+  "timestampFormat__long--yesterday": {
+    "message": "Кечээ $time$",
+    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "timestampFormat__long__today": {
     "message": "[Бүгүн] LT",
-    "description": "Timestamp format string for displaying \"Today\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Today\" and the time"
   },
   "timestampFormat__long__yesterday": {
     "message": "[Кечээ] LT",
-    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "messageBodyTooLong": {
     "message": "Билдирүүнүн тексти өтө узун.",
@@ -2181,7 +2197,7 @@
     "message": "Кайра туташтыруу"
   },
   "autoUpdateNewVersionTitle": {
-    "message": "Жаңыртуу жеткиликтүү"
+    "message": "Update Available"
   },
   "autoUpdateRetry": {
     "message": "Жаңыртууну кайра аракет кылуу"
@@ -2580,6 +2596,18 @@
     "message": "Бул жерде жакында колдонулган стикерлер пайда болот.",
     "description": "Shown in the sticker picker when there are no recent stickers to show."
   },
+  "icu:stickers__StickerPicker__recent": {
+    "messageformat": "Соңкулар",
+    "description": "Title for all of the recent stickers"
+  },
+  "icu:stickers__StickerPicker__featured": {
+    "messageformat": "Өзгөчөлөнгөндөр",
+    "description": "Title for featured stickers"
+  },
+  "icu:stickers__StickerPicker__analog-time": {
+    "messageformat": "Аналог убакыты",
+    "description": "aria-label for the analog time sticker"
+  },
   "stickers--StickerPreview--Title": {
     "message": "Стикерлер топтому",
     "description": "The title that appears in the sticker pack preview modal."
@@ -2777,7 +2805,7 @@
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--toggle-reaction-picker": {
-    "message": "Тандалган билдирүү үчүн быйтыкча-реакция тилкесин көрсөтүү/жашыруу",
+    "message": "Тандалган билдирүүгө сезимди билдирген быйтыкчаларды көрсөтүү/жашыруу",
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--save-attachment": {
@@ -2947,6 +2975,18 @@
   "conversationMarkedUnread": {
     "message": "Сүйлөшүү окула элек деп белгиленди",
     "description": "A toast that shows up when user marks a conversation as unread"
+  },
+  "icu:AuthArtCreator--dialog--message": {
+    "messageformat": "Signal стикерлер топтомун түзгүчтү ачасызбы?",
+    "description": "A body of the dialog that is presented when user tries to open Signal Sticker Pack Creator from a link"
+  },
+  "icu:AuthArtCreator--dialog--confirm": {
+    "messageformat": "Ырастоо",
+    "description": "A buttle title for confirming Signal Sticker Pack Creator dialog"
+  },
+  "icu:AuthArtCreator--dialog--dismiss": {
+    "messageformat": "Жок",
+    "description": "A buttle title for dismissing Signal Sticker Pack Creator dialog"
   },
   "StickerCreator--title": {
     "message": "Стикерлер топтомун жаратуучусу",
@@ -3148,12 +3188,16 @@
     "message": "Стикерлер топтомун жаратуучуну колдонуу үчүн телефонуңузга жана иш тактаңызга Signal'ды орнотуңуз",
     "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
   },
+  "icu:ArtCreator--Authentication--error": {
+    "messageformat": "Стикерлер топтомун түзгүчтү колдонуу үчүн телефонуңузга жана компьютериңизге Signal'ды орнотуңуз",
+    "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
+  },
   "Reactions--remove": {
-    "message": "Реакцияны алып салуу",
+    "message": "Сезимди алып салуу",
     "describe": "Shown when you want to remove a reaction you've made"
   },
   "Reactions--error": {
-    "message": "Реакция жөнөтүлбөй калды. Сураныч, кайра аракет кылыңыз.",
+    "message": "Сезим жөнөтүлбөй калды. Кайталап көрүңүз.",
     "description": "Shown when a reaction fails to send"
   },
   "Reactions--more": {
@@ -3169,7 +3213,7 @@
     "description": "Shown as the message for a message request in a direct message"
   },
   "MessageRequests--message-direct-blocked": {
-    "message": "$name$ сизге билдирүү жөнөтүүгө уруксат берип, аты-жөнүңүздү жана сүрөтүңүздү алар менен бөлүшөсүзбү? Сиз кабыл алмайынча, алар алардын билдирүүлөрүн көргөнүңүздү билишпейт.",
+    "message": "Бул байланышка ($name$) сизге билдирүү жөнөтүүгө уруксат берип, аты-жөнүңүздү жана сүрөтүңүздү алар менен бөлүшөсүзбү? Аларды бөгөттөн чыгармайынча, эч кандай билдирүү албайсыз.",
     "description": "Shown as the message for a message request in a direct message with a blocked account"
   },
   "MessageRequests--message-group": {
@@ -3217,7 +3261,7 @@
     "description": "Shown as the body in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-group-confirm-title": {
-    "message": "$group$ тобун бөгөттөп, чыгасызбы ?",
+    "message": "$group$ тобун бөгөттөп, чыгасызбы?",
     "description": "Shown as the title in the confirmation modal for blocking a group message request"
   },
   "MessageRequests--block-group-confirm-body": {
@@ -4393,7 +4437,7 @@
     "description": "Displayed while checking if the contact is SMS-only"
   },
   "countMutedConversationsDescription": {
-    "message": "Үнсүз сүйлөшүүлөрдү төшбелги эсебине кошуу",
+    "message": "Үнү басылган сүйлөшүүлөрдү окула элек билдирүүлөр тизмесине кошуу",
     "description": "Description for counting muted conversations in badge setting"
   },
   "ContactModal--message": {
@@ -4433,7 +4477,7 @@
     "description": "This is a button in the conversation context menu to show chat settings"
   },
   "ConversationDetails__unmute--title": {
-    "message": "Бул маектин үнү чыгарылсынбы?",
+    "message": "Бул маектин үнүн чыгарасызбы?",
     "description": "Title for the modal to unmute a chat"
   },
   "ConversationDetails--group-link": {
@@ -4585,7 +4629,7 @@
     "description": "In the conversation notifications settings, this is the label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__info": {
-    "message": "Үнсүз маектерде сиз тууралуу билдирмелерди алып туруңуз",
+    "message": "Үнсүз маектерде сиз тууралуу сөз болгонун билип турасыз",
     "description": "In the conversation notifications settings, this is the sub-label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__select__always-notify": {
@@ -4593,7 +4637,7 @@
     "description": "In the conversation notifications settings, this is the option that always notifies you for @mentions"
   },
   "ConversationNotificationsSettings__mentions__select__dont-notify-for-mentions-if-muted": {
-    "message": "Үнү өчүрүлгөн болсо, билдирбеңиз",
+    "message": "Үнү өчүрүлгөн болсо, билгим келбейт",
     "description": "In the conversation notifications settings, this is the option that doesn't notify you for @mentions if the conversation is muted"
   },
   "GroupLinkManagement--clipboard": {
@@ -4705,7 +4749,7 @@
     "description": "Details of dialog to block a user from requesting to join via the link again"
   },
   "PendingRequests--block--confirm": {
-    "message": "Өтүнүчтү бөгөттөө",
+    "message": "Сурамды бөгөттөө",
     "description": "Confirmation button of dialog to block a user from requesting to join via the link again"
   },
   "AvatarInput--no-photo-label--group": {
@@ -4854,11 +4898,11 @@
   },
   "TimelineDateHeader--date-in-last-6-months": {
     "message": "ddd, D MMM",
-    "description": "Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "TimelineDateHeader--date-older-than-6-months": {
     "message": "D MMM YYYY",
-    "description": "Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "MessageRequestWarning__learn-more": {
     "message": "Кененирээк маалымат",
@@ -5225,7 +5269,7 @@
     "description": "Shown if something unknown has gone wrong with username save."
   },
   "icu:ProfileEditor--username--reservation-gone": {
-    "messageformat": "{username} is no longer available. A new set of digits will be paired with your username, please try saving it again.",
+    "messageformat": "{username} жок. Колдонуучу атыңызга жаңы сандардын топтому байланышат. Аны да сактап коюңуз.",
     "description": "Shown if username reservation has expired and new one needs to be generated."
   },
   "ProfileEditor--username--delete-general-error": {
@@ -5430,23 +5474,75 @@
   },
   "Preferences__who-can--title": {
     "message": "Ким...",
-    "description": "Title for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Title for the 'who can do X' setting"
   },
   "Preferences__privacy--description": {
     "message": "Бул тууралооңузду өзгөртүү үчүн мобилдик түзмөгүңүздө Signal колдонмосун ачып, Тууралоо > Купуялык дегенге өтүңүз",
-    "description": "Description for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Description for the 'who can do X' setting"
   },
   "Preferences__who-can--everybody": {
     "message": "Баары",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--contacts": {
     "message": "Менин байланыштарым",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--nobody": {
     "message": "Эч ким",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
+  },
+  "icu:Preferences__pnp__row--title": {
+    "messageformat": "Телефон номериңиз",
+    "description": "Title of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__row--body": {
+    "messageformat": "Телефон номериңиз кимдерге көрүнүп, Signal'да сиз менен кимдер байланыша алышат.",
+    "description": "Body of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__sharing--title": {
+    "messageformat": "Менин номерим кимге көрүнөт",
+    "description": "Title for the phone number sharing setting row"
+  },
+  "icu:Preferences__pnp__sharing--description--everyone": {
+    "messageformat": "Телефон номериңиз ким менен жазышсаңыз ошолорго көрүнөт. Байланыштар тизмесинде камтылган телефон номери Signal кызматында да көрүнөт.",
+    "description": "Description for the phone number sharing setting row when the value is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody": {
+    "messageformat": "Номериңиз Signal'да эч кимге көрүнбөйт.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody"
+  },
+  "icu:Preferences__pnp--page-title": {
+    "messageformat": "Телефон номериңиз",
+    "description": "Title of the page in Phone Number Privacy settings"
+  },
+  "icu:Preferences__pnp__sharing__everyone": {
+    "messageformat": "Баарына",
+    "description": "Option for sharing phone number with everyone"
+  },
+  "icu:Preferences__pnp__sharing__nobody": {
+    "messageformat": "Эч ким",
+    "description": "Option for sharing phone number with nobody"
+  },
+  "icu:Preferences__pnp__discoverability--title": {
+    "messageformat": "Номерим аркылуу мени ким таба алат",
+    "description": "Title for the phone number discoverability setting row"
+  },
+  "icu:Preferences__pnp__discoverability--description--everyone": {
+    "messageformat": "Байланыштар тизмесинде телефон номериңиз камтылган адамдарга сиз Signal байланышы катары көрүнөсүз. Башкалар жаңы маек же топ баштаганда, сиз менен телефон номериңиз аркылуу байланыша алышат.",
+    "description": "Description for the phone number discoverability setting row wth the value is everyone"
+  },
+  "icu:Preferences__pnp__discoverability--description--nobody": {
+    "messageformat": "Сизди эч ким Signal'да телефон номериңиз аркылуу таба албайт.",
+    "description": "Description for the phone number discoverability setting row wth the value is nobody"
+  },
+  "icu:Preferences__pnp__discoverability__everyone": {
+    "messageformat": "Баарына",
+    "description": "Option for letting everyone discover you by phone number"
+  },
+  "icu:Preferences__pnp__discoverability__nobody": {
+    "messageformat": "Эч ким",
+    "description": "Option for letting nobody discover you by phone number"
   },
   "Preferences--messaging": {
     "message": "Билдирүү алмашуу",
@@ -5504,6 +5600,14 @@
     "message": "$version$ версиясына жаңыртуу жеткиликтүү",
     "description": "Tooltip for new update available"
   },
+  "icu:DialogUpdate__downloading": {
+    "messageformat": "Downloading Update...",
+    "description": "The title of update dialog when update download is in progress."
+  },
+  "icu:DialogUpdate__downloaded": {
+    "messageformat": "Update Downloaded",
+    "description": "The title of update dialog when update download is completed."
+  },
   "NSIS__retry-dialog--first-line": {
     "message": "Сигнал жабылбай калды.",
     "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
@@ -5541,7 +5645,7 @@
     "description": "A button label for erasure of the crash reporter data after a recent crash and continuing to start the app"
   },
   "CustomizingPreferredReactions__title": {
-    "message": "Реакцияларды ыңгайлаштыруу",
+    "message": "Сезимдер топтомун ыңгайлаштыруу",
     "description": "Shown in the header of the modal for customizing the preferred reactions. Also shown in the tooltip for the button that opens this modal."
   },
   "CustomizingPreferredReactions__subtitle": {
@@ -5551,6 +5655,10 @@
   "CustomizingPreferredReactions__had-save-error": {
     "message": "Тууралооңузду сактоодо ката кетти. Сураныч, кайра аракет кылыңыз.",
     "description": "Shown if there is an error when saving your preferred reaction settings. Should be very rare to see this message."
+  },
+  "icu:MediaEditor__clock-more-styles": {
+    "messageformat": "Дагы башка стилдер",
+    "description": "Action button for switching up the clock styles"
   },
   "MediaEditor__control--draw": {
     "message": "Тартуу",
@@ -5809,7 +5917,7 @@
     "description": "Toast message"
   },
   "Stories__toast--sending-reaction": {
-    "message": "Реакция жөнөтүлүүдө...",
+    "message": "Сезим жөнөтүлүүдө...",
     "description": "Toast message"
   },
   "Stories__toast--hasNoSound": {
@@ -5893,7 +6001,7 @@
     "description": "Checkbox label to allow or disallow replies to your stories"
   },
   "StoriesSettings__replies-reactions--description": {
-    "message": "Окуяңызды көрө алган адамдарга жооп берүүгө жана реакция кылууга мүмкүнчүлүк бериңиз.",
+    "message": "Окуяңызды көрө алган адамдарга жооп берүүгө жана сезимдерин билдирүүгө мүмкүнчүлүк бересиз.",
     "description": "Description of checkbox to allow or disallow replies to your stories"
   },
   "StoriesSettings__delete-list": {
@@ -6181,11 +6289,11 @@
     "description": "Title for replies tab"
   },
   "StoryViewsNRepliesModal__react": {
-    "message": "Окуяга реакция кылуу",
+    "message": "Окуяга сезим билдирүү",
     "description": "(deleted 01/25/23) aria-label for reaction button"
   },
   "StoryViewsNRepliesModal__reacted": {
-    "message": "Окуяга реакция кылды",
+    "message": "Окуяга сезимин билдирди",
     "description": "Description of someone reacting to a story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
@@ -6246,11 +6354,19 @@
   },
   "StoryCreator__error--video-too-long": {
     "message": "Видео өтө узун болгондуктан, окуя катары жарыялоого болбойт",
-    "description": "Error string for when a video post to story fails"
+    "description": "(deleted 02/22/2023) Error string for when a video post to story fails"
   },
   "StoryCreator__error--video-unsupported": {
     "message": "Видеонун форматы колдоого алынбагандыктан, окуя катары жарыялоого болбойт",
     "description": "Error string for when a video post to story fails"
+  },
+  "icu:StoryCreator__error--video-too-long": {
+    "messageformat": "{maxDurationInSec, plural, other {Видеонун узактыгы {maxDurationInSec,number} секунддан ашып кеткендиктен, окуя катары жарыялай албайсыз.}}",
+    "description": "Error string for when a video post to story fails because video's duration is too long"
+  },
+  "icu:StoryCreator__error--video-too-big": {
+    "messageformat": "{limit}{units} ашып кеткендиктен, видеону окуя катары жарыялай албайсыз.",
+    "description": "Error string for when a video post to story fails because video's file size is too big"
   },
   "StoryCreator__error--video-error": {
     "message": "Видео жүктөлгөн жок",
@@ -6341,23 +6457,23 @@
     "description": "Title for replies to stories"
   },
   "Quote__story-reaction": {
-    "message": "$name$ окуясына реакция кылды",
+    "message": "$name$ түзгөн окуяга сезимин билдирди",
     "description": "Label for when a person reacts to a story"
   },
   "Quote__story-reaction--single": {
-    "message": "Окуяга реакция кылды",
+    "message": "Окуяга сезимин билдирди",
     "description": "Used whenever we can't find a user's first name"
   },
   "Quote__story-reaction-notification--incoming": {
-    "message": "Окуяңызга $emoji$ деп сезимин билдирди",
+    "message": "Окуяңызга $emoji$ деген сезимин билдирди",
     "description": "Notification test for incoming story reactions"
   },
   "Quote__story-reaction-notification--outgoing": {
-    "message": "$name$ жарыялаган окуяга $emoji$ деп сезимиңизди билдирдиңиз",
+    "message": "$name$ жарыялаган окуяга $emoji$ деген сезимиңизди билдирдиңиз",
     "description": "Notification test for outgoing story reactions"
   },
   "Quote__story-reaction-notification--outgoing--nameless": {
-    "message": "Окуяга $emoji$ деп сезимиңизди билдирдиңиз",
+    "message": "Окуяга $emoji$ деген сезимиңизди билдирдиңиз",
     "description": "Notification test for outgoing story reactions but no name"
   },
   "Quote__story-unavailable": {
@@ -6389,27 +6505,27 @@
     "description": "Body of the popup with information about discriminator in username"
   },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "Set up your Signal username",
+    "messageformat": "Signal'да колдонуучу атыңызды коюңуз",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "Usernames are paired with a set of digits and aren’t shared on your profile",
+    "messageformat": "Колдонуучу аттарыңыз сандар топтому менен байланышып, профилиңизде көрүнбөйт",
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Each username has a unique link you can share with your friends to start a chat with you",
+    "messageformat": "Ар бир колдонуучу атынын шилтемеси болуп, аны сиз менен маектешкиси келген досторуңуз менен бөлүшө аласыз",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "Turn off phone number discovery under Settings > Phone Number > Who can find my number, to use your username as the primary way others can contact you.",
+    "messageformat": "Телефон номерин табуу мүмкүнчүлүгүн Параметрлер > Телефон номери > Менин телефонумду кимдер таба алат деген бөлүмдө өчүрүп, башкалар сизди колдонуучу атыңыз аркылуу таба алгыдай кылсаңыз болот.",
     "description": "Content of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__learn-more": {
-    "messageformat": "Learn More",
+    "messageformat": "Кененирээк маалымат",
     "description": "Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Continue",
+    "messageformat": "Улантуу",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -6456,40 +6572,24 @@
     "message": "Майда-барат өзгөрүүлөрдү киргизип, мүчүлүштүктөрдү оңдоп, колдонмонун иштешин жакшыртып жатабыз. Signal'ды колдонгонуңуз үчүн чоң рахмат!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "WhatsNew__v5.63--0": {
-    "message": "Колдонмо үзгүлтүксүз иштеши үчүн мүчүлүштүктөрдү оңдоп, иштин майнаптуулугун арттыруучу өзгөрүүлөрдү киргизип, талыкпай эмгектенип жатабыз.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--0": {
+    "messageformat": "Каалаган сүрөттү же видеону басып, медиа ойноткучтагы жаңы Алдыга жана Артка баскычтарын колдонуп, өткөн күндөрдөгү жылуу учурларга көз чаптырып чыксаңыз болот.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v5.63--beta.2": {
-    "message": "Окуялардын жаңы функциясын колдонуп, сынап көрүңүз. Бул функцияны башка сыноочулар менен чогуу пайдаланып, анын кандай иштерин айта аласыз.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--1": {
+    "messageformat": "Билдирүү жазылып жаткан учурда башка маекке которулсаңыз, үн билдирүүлөрү долбоор катары сакталат.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.0": {
-    "message": "Окуялар эми Signal'да! Тандалган досторуңуз же топторуңуз менен тексттик билдирүү, сүрөт жана видеолоруңузду бөлүшсөңүз болот. Алар 24 сааттан кийин өзүлөрү өчүп калат. Окуяларды жакшы көргөндөр эми аларды жеке шартта, эч кандай жарнамасыз бөлүшө алышат. Эгер окуяларды көргүңүз да, бөлүшкүңүз да келбесе, Тууралоо > Купуялык бөлүмүнөн өчүрүп коюңуз.",
-    "description": "Release notes for v6.0"
+  "icu:WhatsNew__v6.10--2": {
+    "messageformat": "Стикер жөнөтсөңүз, долбоор катары сакталган текст өчпөйт. Чоң рахмат {lamemakes}!",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.1--1": {
-    "message": "Чакан (16 адамга чейин) топтун ичинде чалып баштасаңыз, чалуу билдирмесин жөнөтсөңүз болот. Топтун мүчөлөрү iOS сынамык версиясын же компьютерди же Android түзмөгүн колдонуп жатышкан болсо, шыңгырды угушат.",
-    "description": "Release notes for v6.1"
+  "icu:WhatsNew__v6.10--3": {
+    "messageformat": "Сүйлөшүүлөрдү издөө тилкесинин сүрөтчөлөрү кайтарылганы үчүн да {norstbox} терең ыраазычылыгыбызды билдиребиз.",
+    "description": "Release notes for v6.10"
   },
-  "icu:WhatsNew__v6.3--0": {
-    "messageformat": "Тырмакчага алып жооп берүү үчүн маектеги каалаган билдирүүнү эки жолу басыңыз. Мындай жол менен, кимдир бирөөнүн оюна өз пикириңизди ыкчам билдире аласыз. Ушул функцияны тартуулагандар: {whynothugo} менен Signal коомдоштугу.",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.3--1": {
-    "messageformat": "Эми сүрөттү кичирейтип отурбастан, анын четин басып туруп, галерея көрүнүшүнөн чыгып кетесиз. Кээде кандайдыр бир нерсени өзүңүзгө өтө жакындатпай туруп, жаап салганыңыз оң. Түзөткөнүңүз үчүн рахмат {jojomatik}!",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.5--0": {
-    "messageformat": "Ыкчам жооп бериңиз. Окуяга болгон сезимиңизди билдирүү үчүн жөн гана быйтыкчаны басып койсоңуз болот.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.5--1": {
-    "messageformat": "Кытай жана жапон тилдеринде билдирүүлөрдүн арасынан керектүүсүн белгилүү бир тамгалар менен издей аласыз.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.6--0": {
-    "messageformat": "Аудио жана видео чалуулардын ишенимдүүлүгүн жана майнаптуулугун жакшырткан бир катар мүмкүнчүлүктөрдү сынаганга жардам бериңиз. Бул бета версияда бир катар мүчүлүштүктөр оңдолуп, интерфейс бир аз жаңыланды (жаңы өзгөрүүлөр камтылган шилтемени караңыз). Бета версияны сынап бергениңиз үчүн чоң рахмат! Эгер кандайдыр бир мүчүлүштүктөрдү байкап калсаңыз, коомдоштук форумубуздан кабарлап коюңуз.",
-    "description": "Release notes for v6.6"
+  "icu:WhatsNew__v6.11--0": {
+    "messageformat": "Start talking to yourself even faster with a new icon that makes the “Note to Self” chat easier to find. Thanks to {hackerbirds} on GitHub for their contribution.",
+    "description": "Release notes for v6.11"
   }
 }

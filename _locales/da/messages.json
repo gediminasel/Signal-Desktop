@@ -52,6 +52,14 @@
     "message": "Tilføjer $contact$…",
     "description": "Shown in toast while a user is being added to a group"
   },
+  "icu:RecordingComposer__cancel": {
+    "messageformat": "Annullér",
+    "description": "Label of cancel button on voice note recording UI"
+  },
+  "icu:RecordingComposer__send": {
+    "messageformat": "Send",
+    "description": "Label of send button on voice note recording UI"
+  },
   "GroupListItem__message-default": {
     "message": "$count$ medlemmer",
     "description": "Shown below the group name when selecting a group to invite a contact to"
@@ -931,7 +939,7 @@
     "description": "Shown in a message's triple-dot menu if there isn't room for a dedicated download button"
   },
   "reactToMessage": {
-    "message": "Reagér på besked",
+    "message": "Reager på besked",
     "description": "Shown in triple-dot menu next to message to allow user to react to the associated message"
   },
   "replyToMessage": {
@@ -1251,11 +1259,11 @@
     "description": "Shown on explainer dialog available from delivery issue timeline events"
   },
   "DeliveryIssue--summary": {
-    "message": "En besked, klistermærke, reaktion, læsekvittering eller mediefil kunne ikke leveres til dig fra $sender$. De har muligvis forsøgt at sende direkte til dig eller i en gruppe.",
+    "message": "En besked, klistermærke, reaktion, kvittering for læsning eller mediefil kunne ikke leveres til dig fra $sender$. Vedkommende har muligvis forsøgt at sende dig elementet direkte eller i en gruppe.",
     "description": "Shown on explainer dialog available from delivery issue timeline events in 1:1 conversations"
   },
   "DeliveryIssue--summary--group": {
-    "message": "En besked, et klistermærke, en reaktion, en læsekvittering eller en mediefil kunne ikke leveres til dig fra $sender$ i denne samtale.",
+    "message": "En besked, et klistermærke, en reaktion, en kvittering for læsning eller en mediefil kunne ikke leveres til dig fra $sender$ i denne samtale.",
     "description": "Shown on explainer dialog available from delivery issue timeline events in groups"
   },
   "ChangeNumber--notification": {
@@ -1446,7 +1454,7 @@
     "description": "Button label in the call lobby for returning to a call"
   },
   "calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
-    "message": "Mikrofon slået fra på grund af størrelsen på opkaldet",
+    "message": "Mikrofon slået fra på grund af opkaldets størrelse",
     "description": "Shown in a call lobby toast if there are a lot of people already on the call"
   },
   "calling__call-is-full": {
@@ -1778,10 +1786,10 @@
     "description": "Displayed in notifications for messages in a group"
   },
   "notificationReaction": {
-    "message": "$sender$ reagerede $emoji$ på din besked"
+    "message": "$sender$ reagerede med $emoji$ på din besked"
   },
   "notificationReactionMessage": {
-    "message": "$sender$ reagerede $emoji$ på $message$"
+    "message": "$sender$ reagerede med $emoji$ på: $message$"
   },
   "sendFailed": {
     "message": "Send mislykkedes",
@@ -1881,22 +1889,30 @@
   },
   "timestampFormat_M": {
     "message": "D. MMM.",
-    "description": "Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+  },
+  "timestampFormat__long--today": {
+    "message": "I dag $time$",
+    "description": "Timestamp format string for displaying \"Today\" and the time"
+  },
+  "timestampFormat__long--yesterday": {
+    "message": "I går $time$",
+    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "timestampFormat__long__today": {
     "message": "[I dag] LT",
-    "description": "Timestamp format string for displaying \"Today\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Today\" and the time"
   },
   "timestampFormat__long__yesterday": {
     "message": "[I går] LT",
-    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "messageBodyTooLong": {
     "message": "Beskeden er for langt.",
     "description": "Shown if the user tries to send more than 64kb of text"
   },
   "unblockToSend": {
-    "message": "Fjern blokering af kontakten for at sende en besked.",
+    "message": "Fjern blokering af denne kontakt for at sende en besked.",
     "description": "Brief message shown when trying to message a blocked number"
   },
   "unblockGroupToSend": {
@@ -2020,7 +2036,7 @@
     "description": "Label text for system theme"
   },
   "noteToSelf": {
-    "message": "Egen note",
+    "message": "Personlig note",
     "description": "Name for the conversation with your own phone number"
   },
   "noteToSelfHero": {
@@ -2181,7 +2197,7 @@
     "message": "Tilkobl igen"
   },
   "autoUpdateNewVersionTitle": {
-    "message": "Opdatering tilgængelig"
+    "message": "Update Available"
   },
   "autoUpdateRetry": {
     "message": "Forsøg opdatering igen"
@@ -2580,6 +2596,18 @@
     "message": "Nylige anvendte klistermærker vises her.",
     "description": "Shown in the sticker picker when there are no recent stickers to show."
   },
+  "icu:stickers__StickerPicker__recent": {
+    "messageformat": "Seneste",
+    "description": "Title for all of the recent stickers"
+  },
+  "icu:stickers__StickerPicker__featured": {
+    "messageformat": "Featured",
+    "description": "Title for featured stickers"
+  },
+  "icu:stickers__StickerPicker__analog-time": {
+    "messageformat": "Analog tidsvisning",
+    "description": "aria-label for the analog time sticker"
+  },
   "stickers--StickerPreview--Title": {
     "message": "Klistermærkepakke",
     "description": "The title that appears in the sticker pack preview modal."
@@ -2948,6 +2976,18 @@
     "message": "Samtale markeret som ulæst",
     "description": "A toast that shows up when user marks a conversation as unread"
   },
+  "icu:AuthArtCreator--dialog--message": {
+    "messageformat": "Vil du gerne åbne Signal Sticker Pack Creator?",
+    "description": "A body of the dialog that is presented when user tries to open Signal Sticker Pack Creator from a link"
+  },
+  "icu:AuthArtCreator--dialog--confirm": {
+    "messageformat": "Bekræft",
+    "description": "A buttle title for confirming Signal Sticker Pack Creator dialog"
+  },
+  "icu:AuthArtCreator--dialog--dismiss": {
+    "messageformat": "Afvis",
+    "description": "A buttle title for dismissing Signal Sticker Pack Creator dialog"
+  },
   "StickerCreator--title": {
     "message": "Oprettelse af klistermærkepakke",
     "description": "The title of the Sticker Pack Creator window"
@@ -3148,6 +3188,10 @@
     "message": "Indstil venligst Signal på din telefon og computer til at bruge Sticker Pack Creator",
     "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
   },
+  "icu:ArtCreator--Authentication--error": {
+    "messageformat": "Opsæt Signal på din telefon og computer for at bruge Sticker Pack Creator",
+    "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
+  },
   "Reactions--remove": {
     "message": "Fjern reaktion",
     "describe": "Shown when you want to remove a reaction you've made"
@@ -3169,7 +3213,7 @@
     "description": "Shown as the message for a message request in a direct message"
   },
   "MessageRequests--message-direct-blocked": {
-    "message": "Lad $name$ sende dig beskeder og del dit navn og foto med vedkommende? Du modtager ingen beskeder, før du fjerner blokeringen.",
+    "message": "Giv $name$ tilladelse til at sende dig beskeder og del dit navn og foto med vedkommende? Du modtager ingen beskeder, før du fjerner blokeringen.",
     "description": "Shown as the message for a message request in a direct message with a blocked account"
   },
   "MessageRequests--message-group": {
@@ -3201,7 +3245,7 @@
     "description": "Shown as the body in the confirmation modal for unblocking a group message request"
   },
   "MessageRequests--block-and-report-spam": {
-    "message": "Rapportér spam og blokér",
+    "message": "Rapportér som spam og blokér",
     "description": "Shown as a button to let the user block a message request and report spam"
   },
   "MessageRequests--block-and-report-spam-success-toast": {
@@ -3213,7 +3257,7 @@
     "description": "Shown as the title in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-direct-confirm-body": {
-    "message": "Blokerede personer vil hverken kunne ringe eller sende beskeder til dig",
+    "message": "Blokerede personer vil hverken kunne ringe eller sende beskeder til dig.",
     "description": "Shown as the body in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-group-confirm-title": {
@@ -4393,7 +4437,7 @@
     "description": "Displayed while checking if the contact is SMS-only"
   },
   "countMutedConversationsDescription": {
-    "message": "Inkluder ignorerede samtaler i tæller på programikon.",
+    "message": "Inkluder ignorerede samtaler på programikon",
     "description": "Description for counting muted conversations in badge setting"
   },
   "ContactModal--message": {
@@ -4433,7 +4477,7 @@
     "description": "This is a button in the conversation context menu to show chat settings"
   },
   "ConversationDetails__unmute--title": {
-    "message": "Slå notifikationer til igen for denne samtale?",
+    "message": "Slå notifikationer til for denne chat?",
     "description": "Title for the modal to unmute a chat"
   },
   "ConversationDetails--group-link": {
@@ -4493,7 +4537,7 @@
     "description": "This is a button to block a group"
   },
   "ConversationDetailsActions--unblock-group": {
-    "message": "Ophæv blokering af gruppe",
+    "message": "Fjern blokering af gruppe",
     "description": "This is a button to unblock a group"
   },
   "ConversationDetailsActions--leave-group-must-choose-new-admin": {
@@ -4585,7 +4629,7 @@
     "description": "In the conversation notifications settings, this is the label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__info": {
-    "message": "Modtag underretninger, når du omtales i ignorerede samtaler",
+    "message": "Modtag notifikationer, når du bliver tagget i ignorerede samtaler",
     "description": "In the conversation notifications settings, this is the sub-label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__select__always-notify": {
@@ -4593,7 +4637,7 @@
     "description": "In the conversation notifications settings, this is the option that always notifies you for @mentions"
   },
   "ConversationNotificationsSettings__mentions__select__dont-notify-for-mentions-if-muted": {
-    "message": "Underret ikke hvis ignoreret",
+    "message": "Ingen notifikation hvis ignoreret",
     "description": "In the conversation notifications settings, this is the option that doesn't notify you for @mentions if the conversation is muted"
   },
   "GroupLinkManagement--clipboard": {
@@ -4693,11 +4737,11 @@
     "description": "Information shown below the invite list"
   },
   "PendingRequests--block--button": {
-    "message": "Bloker anmodning",
+    "message": "Blokér anmodning",
     "description": "Shown in timeline if users cancel their request to join a group via a group link"
   },
   "PendingRequests--block--title": {
-    "message": "Bloker anmodning?",
+    "message": "Blokér anmodning?",
     "description": "Title of dialog to block a user from requesting to join via the link again"
   },
   "PendingRequests--block--contents": {
@@ -4705,7 +4749,7 @@
     "description": "Details of dialog to block a user from requesting to join via the link again"
   },
   "PendingRequests--block--confirm": {
-    "message": "Bloker anmodning",
+    "message": "Blokér anmodning",
     "description": "Confirmation button of dialog to block a user from requesting to join via the link again"
   },
   "AvatarInput--no-photo-label--group": {
@@ -4854,11 +4898,11 @@
   },
   "TimelineDateHeader--date-in-last-6-months": {
     "message": "ddd, D. MMM",
-    "description": "Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "TimelineDateHeader--date-older-than-6-months": {
     "message": "D MMM, YYYY",
-    "description": "Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "MessageRequestWarning__learn-more": {
     "message": "Læs mere",
@@ -5225,7 +5269,7 @@
     "description": "Shown if something unknown has gone wrong with username save."
   },
   "icu:ProfileEditor--username--reservation-gone": {
-    "messageformat": "{username} is no longer available. A new set of digits will be paired with your username, please try saving it again.",
+    "messageformat": "{username} er ikke længere tilgængelig. Et nyt sæt cifre vil blive parret med dit brugernavn. Prøv at gemme det igen.",
     "description": "Shown if username reservation has expired and new one needs to be generated."
   },
   "ProfileEditor--username--delete-general-error": {
@@ -5430,23 +5474,75 @@
   },
   "Preferences__who-can--title": {
     "message": "Hvem kan…",
-    "description": "Title for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Title for the 'who can do X' setting"
   },
   "Preferences__privacy--description": {
     "message": "For at ændre disse indstillinger skal du åbne Signal-appen på din mobilenhed og navigere til Indstillinger > Privatliv",
-    "description": "Description for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Description for the 'who can do X' setting"
   },
   "Preferences__who-can--everybody": {
     "message": "Alle",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--contacts": {
     "message": "Mine kontakter",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--nobody": {
     "message": "Ingen",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
+  },
+  "icu:Preferences__pnp__row--title": {
+    "messageformat": "Telefonnummer",
+    "description": "Title of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__row--body": {
+    "messageformat": "Vælg, hvem der kan se dit telefonnummer, og hvem der kan kontakte dig på Signal med det.",
+    "description": "Body of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__sharing--title": {
+    "messageformat": "Personer, der kan se mit nummer",
+    "description": "Title for the phone number sharing setting row"
+  },
+  "icu:Preferences__pnp__sharing--description--everyone": {
+    "messageformat": "Dit telefonnummer vil være synligt for personer og grupper, du sender beskeder til. Personer, der har dit nummer i deres telefonkontakter, vil også se det på Signal.",
+    "description": "Description for the phone number sharing setting row when the value is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody": {
+    "messageformat": "Ingen kan se dit telefonnummer på Signal.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody"
+  },
+  "icu:Preferences__pnp--page-title": {
+    "messageformat": "Telefonnummer",
+    "description": "Title of the page in Phone Number Privacy settings"
+  },
+  "icu:Preferences__pnp__sharing__everyone": {
+    "messageformat": "Alle",
+    "description": "Option for sharing phone number with everyone"
+  },
+  "icu:Preferences__pnp__sharing__nobody": {
+    "messageformat": "Ingen",
+    "description": "Option for sharing phone number with nobody"
+  },
+  "icu:Preferences__pnp__discoverability--title": {
+    "messageformat": "Personer, der kan finde mig med mit nummer",
+    "description": "Title for the phone number discoverability setting row"
+  },
+  "icu:Preferences__pnp__discoverability--description--everyone": {
+    "messageformat": "Alle, der har dit telefonnummer i deres kontakter, kan se dig som en kontakt på Signal. Andre vil kunne kontakte dig med dit telefonnummer, når de starter en ny chat eller gruppe.",
+    "description": "Description for the phone number discoverability setting row wth the value is everyone"
+  },
+  "icu:Preferences__pnp__discoverability--description--nobody": {
+    "messageformat": "Ingen på Signal vil kunne få fat i dig med dit telefonnummer.",
+    "description": "Description for the phone number discoverability setting row wth the value is nobody"
+  },
+  "icu:Preferences__pnp__discoverability__everyone": {
+    "messageformat": "Alle",
+    "description": "Option for letting everyone discover you by phone number"
+  },
+  "icu:Preferences__pnp__discoverability__nobody": {
+    "messageformat": "Ingen",
+    "description": "Option for letting nobody discover you by phone number"
   },
   "Preferences--messaging": {
     "message": "Beskeder",
@@ -5504,6 +5600,14 @@
     "message": "Opdatering til version $version$ tilgængelig",
     "description": "Tooltip for new update available"
   },
+  "icu:DialogUpdate__downloading": {
+    "messageformat": "Downloading Update...",
+    "description": "The title of update dialog when update download is in progress."
+  },
+  "icu:DialogUpdate__downloaded": {
+    "messageformat": "Update Downloaded",
+    "description": "The title of update dialog when update download is completed."
+  },
   "NSIS__retry-dialog--first-line": {
     "message": "Signal kan ikke afsluttes",
     "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
@@ -5551,6 +5655,10 @@
   "CustomizingPreferredReactions__had-save-error": {
     "message": "Der opstod en fejl, da du gemte dine indstillinger. Prøv venligst igen.",
     "description": "Shown if there is an error when saving your preferred reaction settings. Should be very rare to see this message."
+  },
+  "icu:MediaEditor__clock-more-styles": {
+    "messageformat": "Flere looks",
+    "description": "Action button for switching up the clock styles"
   },
   "MediaEditor__control--draw": {
     "message": "Tegn",
@@ -6181,7 +6289,7 @@
     "description": "Title for replies tab"
   },
   "StoryViewsNRepliesModal__react": {
-    "message": "Reagér på historie",
+    "message": "Reager på historie",
     "description": "(deleted 01/25/23) aria-label for reaction button"
   },
   "StoryViewsNRepliesModal__reacted": {
@@ -6246,11 +6354,19 @@
   },
   "StoryCreator__error--video-too-long": {
     "message": "Kan ikke poste video til historie, da den er for lang",
-    "description": "Error string for when a video post to story fails"
+    "description": "(deleted 02/22/2023) Error string for when a video post to story fails"
   },
   "StoryCreator__error--video-unsupported": {
     "message": "Kan ikke poste video til historie, da filformatet ikke understøttes",
     "description": "Error string for when a video post to story fails"
+  },
+  "icu:StoryCreator__error--video-too-long": {
+    "messageformat": "{maxDurationInSec, plural, one {Kan ikke slå video op på din historie, da den er længere end 1 sekund.} other {Kan ikke slå video op på din historie, da den er længere end {maxDurationInSec,number} sekunder.}}",
+    "description": "Error string for when a video post to story fails because video's duration is too long"
+  },
+  "icu:StoryCreator__error--video-too-big": {
+    "messageformat": "Kan ikke slå video op på din historie, da den er større end {limit}{units}.",
+    "description": "Error string for when a video post to story fails because video's file size is too big"
   },
   "StoryCreator__error--video-error": {
     "message": "Fejl ved indlæsning af video",
@@ -6389,27 +6505,27 @@
     "description": "Body of the popup with information about discriminator in username"
   },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "Set up your Signal username",
+    "messageformat": "Angiv dit Signal-brugernavn",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "Usernames are paired with a set of digits and aren’t shared on your profile",
+    "messageformat": "Brugernavne er parret med et sæt cifre og deles ikke på din profil",
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Each username has a unique link you can share with your friends to start a chat with you",
+    "messageformat": "Hvert brugernavn har et unikt link, som du kan dele med dine venner for at starte en chat med dig",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "Turn off phone number discovery under Settings > Phone Number > Who can find my number, to use your username as the primary way others can contact you.",
+    "messageformat": "Slå opdagelse via telefonnummer fra under Indstillinger > Privatliv > Telefonnummer > Personer, der kan finde mit nummer for at bruge brugernavnet som den primære måde, hvorpå andre kan kontakte dig.",
     "description": "Content of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__learn-more": {
-    "messageformat": "Learn More",
+    "messageformat": "Lær mere",
     "description": "Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Continue",
+    "messageformat": "Fortsæt",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -6456,40 +6572,24 @@
     "message": "Små tweaks, rettelser og forbedringer af appens præstation. Tak fordi du bruger Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "WhatsNew__v5.63--0": {
-    "message": "Vi arbejder på at rette nogle bugs og forbedre appens præstation, så den kører uden problemer.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--0": {
+    "messageformat": "Klik på et billede eller en video, og brug de nye frem- og tilbageknapperne i medieviseren til at gå en visuel tur gennem dine minder.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v5.63--beta.2": {
-    "message": "Begynd at bruge og teste vores nye historiefunktion. Du kan bruge funktionen sammen med andre betatestere og fortælle os, om den fungerer ordentligt.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--1": {
+    "messageformat": "Stemmebeskeder gemmes nu som kladder, hvis du skifter til en anden chat, mens en optagelse er i gang.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.0": {
-    "message": "Nu tilbyder Signal historier! Del tekst, billeder og videoer, der automatisk forsvinder efter 24 timer, med udvalgte venner eller grupper. Alle, der elsker at dele historier, kan nu gøre det privat og uden at se nogen reklamer. Hvis du ikke vil se eller dele historier, kan du fravælge det hele i dine Præferencer > Privatliv.",
-    "description": "Release notes for v6.0"
+  "icu:WhatsNew__v6.10--2": {
+    "messageformat": "Når du sender et klistermærke, bliver kladdeteksten ikke længere slettet. Tak, {lamemakes}!",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.1--1": {
-    "message": "Når du starter et gruppeopkald for små grupper (op til 16 personer), kan du vælge at sende en ringenotifikation. Gruppemedlemmer vil høre en ringetone, hvis de bruger iOS-betaversionen, computer eller Android.",
-    "description": "Release notes for v6.1"
+  "icu:WhatsNew__v6.10--3": {
+    "messageformat": "Vi vil også gerne takke {norstbox} for at have bragt ikonerne i samtalesøgelinjen på plads.",
+    "description": "Release notes for v6.10"
   },
-  "icu:WhatsNew__v6.3--0": {
-    "messageformat": "Dobbeltklik på en meddelelse i en chat for at starte et citeret svar. Det er som en genvej til nye tanker om gamle idéer. Tak til {whynothugo} og Signal-fællesskabet for at have implementeret denne funktion og givet feedback.",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.3--1": {
-    "messageformat": "Nu er det nemmere at klikke uden for et billede for at afvise gallerivisningen uden at zoome ind. Nogle gange ville man bare gerne lukke, men i stedet kom man lidt for tæt på. Tak for rettelsen, {jojomatik}!",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.5--0": {
-    "messageformat": "Få en hurtigere svartid. Nu kan du reagere hurtigere ved at klikke på en emoji, når du svarer på en historie.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.5--1": {
-    "messageformat": "Det er nu muligt at søge efter individuelle tegn på kinesisk og japansk i din beskedhistorik.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.6--0": {
-    "messageformat": "Hjælp os med at teste flere forbedringer i pålideligheden og ydeevnen for stemme- og videoopkald. Denne betaversion indeholder også nogle fejlrettelser og små opdateringer af brugergrænsefladen (se den forbedrede forhåndsvisning af links!). Tak, fordi du betatester, og kontakt os endelig på fællesskabsforummet, hvis du finder nogen fejl undervejs.",
-    "description": "Release notes for v6.6"
+  "icu:WhatsNew__v6.11--0": {
+    "messageformat": "Start talking to yourself even faster with a new icon that makes the “Note to Self” chat easier to find. Thanks to {hackerbirds} on GitHub for their contribution.",
+    "description": "Release notes for v6.11"
   }
 }

@@ -15,6 +15,7 @@ import PQueue from 'p-queue';
 import { v4 as getGuid } from 'uuid';
 import { z } from 'zod';
 import type { Readable } from 'stream';
+import type { connection as WebSocket } from 'websocket';
 
 import { assertDev, strictAssert } from '../util/assert';
 import { isRecord } from '../util/isRecord';
@@ -477,7 +478,6 @@ const URL_CALLS = {
   config: 'v1/config',
   deliveryCert: 'v1/certificate/delivery',
   devices: 'v1/devices',
-  directoryAuth: 'v1/directory/auth',
   directoryAuthV2: 'v2/directory/auth',
   discovery: 'v1/discovery',
   getGroupAvatarUpload: 'v1/groups/avatar/form',
@@ -486,6 +486,7 @@ const URL_CALLS = {
   getOnboardingStoryManifest:
     'dynamic/desktop/stories/onboarding/manifest.json',
   getStickerPackUpload: 'v1/sticker/pack/form',
+  getArtAuth: 'v1/art/auth',
   groupLog: 'v1/groups/logs',
   groupJoinedAtVersion: 'v1/groups/joined_at_version',
   groups: 'v1/groups',
@@ -494,6 +495,7 @@ const URL_CALLS = {
   keys: 'v2/keys',
   messages: 'v1/messages',
   multiRecipient: 'v1/messages/multi_recipient',
+  phoneNumberDiscoverability: 'v2/accounts/phone_number_discoverability',
   profile: 'v1/profile',
   registerCapabilities: 'v1/devices/capabilities',
   reportMessage: 'v1/messages/report',
@@ -536,11 +538,13 @@ const WEBSOCKET_CALLS = new Set<keyof typeof URL_CALLS>([
   'supportUnauthenticatedDelivery',
 
   // Directory
-  'directoryAuth',
   'directoryAuthV2',
 
   // Storage
   'storageToken',
+
+  // Account V2
+  'phoneNumberDiscoverability',
 ]);
 
 type InitializeOptionsType = {
@@ -548,6 +552,7 @@ type InitializeOptionsType = {
   storageUrl: string;
   updatesUrl: string;
   resourcesUrl: string;
+  artCreatorUrl: string;
   cdnUrlObject: {
     readonly '0': string;
     readonly [propName: string]: string;
@@ -827,6 +832,13 @@ export type ReportMessageOptionsType = Readonly<{
   token?: string;
 }>;
 
+const artAuthZod = z.object({
+  username: z.string(),
+  password: z.string(),
+});
+
+export type ArtAuthType = z.infer<typeof artAuthZod>;
+
 export type WebAPIType = {
   startRegistration(): unknown;
   finishRegistration(baton: unknown): void;
@@ -844,6 +856,7 @@ export type WebAPIType = {
     version: string,
     imageFiles: Array<string>
   ) => Promise<Array<Uint8Array>>;
+  getArtAuth: () => Promise<ArtAuthType>;
   getAttachment: (cdnKey: string, cdnNumber?: number) => Promise<Uint8Array>;
   getAvatar: (path: string) => Promise<Uint8Array>;
   getDevices: () => Promise<GetDevicesResultType>;
@@ -897,6 +910,7 @@ export type WebAPIType = {
   getProvisioningResource: (
     handler: IRequestHandler
   ) => Promise<WebSocketResource>;
+  getArtProvisioningSocket: (token: string) => Promise<WebSocket>;
   getSenderCertificate: (
     withUuid?: boolean
   ) => Promise<GetSenderCertificateResultType>;
@@ -979,6 +993,7 @@ export type WebAPIType = {
       urgent?: boolean;
     }
   ) => Promise<MultiRecipient200ResponseType>;
+  setPhoneNumberDiscoverability: (newValue: boolean) => Promise<void>;
   setSignedPreKey: (
     signedPreKey: SignedPreKeyType,
     uuidKind: UUIDKind
@@ -1068,6 +1083,7 @@ export function initialize({
   storageUrl,
   updatesUrl,
   resourcesUrl,
+  artCreatorUrl,
   directoryConfig,
   cdnUrlObject,
   certificateAuthority,
@@ -1086,6 +1102,9 @@ export function initialize({
   }
   if (!isString(resourcesUrl)) {
     throw new Error('WebAPI.initialize: Invalid updatesUrl (general)');
+  }
+  if (!isString(artCreatorUrl)) {
+    throw new Error('WebAPI.initialize: Invalid artCreatorUrl');
   }
   if (!isObject(cdnUrlObject)) {
     throw new Error('WebAPI.initialize: Invalid cdnUrlObject');
@@ -1134,6 +1153,7 @@ export function initialize({
 
     const socketManager = new SocketManager({
       url,
+      artCreatorUrl,
       certificateAuthority,
       version,
       proxyUrl,
@@ -1219,6 +1239,8 @@ export function initialize({
       fetchLinkPreviewMetadata,
       finishRegistration,
       getAccountForUsername,
+      getArtAuth,
+      getArtProvisioningSocket,
       getAttachment,
       getAvatar,
       getBadgeImageFile,
@@ -1272,6 +1294,7 @@ export function initialize({
       sendMessages,
       sendMessagesUnauth,
       sendWithSenderKey,
+      setPhoneNumberDiscoverability,
       setSignedPreKey,
       startRegistration,
       unregisterRequestHandler,
@@ -2024,6 +2047,16 @@ export function initialize({
         urlParameters: `?${uuidKindToQuery(uuidKind)}`,
         httpType: 'PUT',
         jsonData: keys,
+      });
+    }
+
+    async function setPhoneNumberDiscoverability(newValue: boolean) {
+      await _ajax({
+        call: 'phoneNumberDiscoverability',
+        httpType: 'PUT',
+        jsonData: {
+          discoverableByPhoneNumber: newValue,
+        },
       });
     }
 
@@ -2966,6 +2999,15 @@ export function initialize({
       return socketManager.getProvisioningResource(handler);
     }
 
+    function getArtProvisioningSocket(token: string): Promise<WebSocket> {
+      return socketManager.connectExternalSocket({
+        url: `${artCreatorUrl}/api/socket?token=${token}`,
+        extraHeaders: {
+          origin: artCreatorUrl,
+        },
+      });
+    }
+
     async function cdsLookup({
       e164s,
       acis = [],
@@ -2978,6 +3020,20 @@ export function initialize({
         accessKeys,
         returnAcisWithoutUaks,
       });
+    }
+
+    //
+    // Art
+    //
+
+    async function getArtAuth(): Promise<ArtAuthType> {
+      const response = await _ajax({
+        call: 'getArtAuth',
+        httpType: 'GET',
+        responseType: 'json',
+      });
+
+      return artAuthZod.parse(response);
     }
   }
 }

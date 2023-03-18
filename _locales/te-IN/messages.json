@@ -52,6 +52,14 @@
     "message": "$contact$ ను జోడిస్తోంది...",
     "description": "Shown in toast while a user is being added to a group"
   },
+  "icu:RecordingComposer__cancel": {
+    "messageformat": "రద్దు",
+    "description": "Label of cancel button on voice note recording UI"
+  },
+  "icu:RecordingComposer__send": {
+    "messageformat": "పంపు",
+    "description": "Label of send button on voice note recording UI"
+  },
   "GroupListItem__message-default": {
     "message": "$count$ సభ్యులు",
     "description": "Shown below the group name when selecting a group to invite a contact to"
@@ -1043,7 +1051,7 @@
     "description": "Shown in a button when a conversation is muted"
   },
   "mute": {
-    "message": "నిశబ్ధం",
+    "message": "మ్యూట్",
     "description": "Shown in a button when a conversation is unmuted and can be muted"
   },
   "cannotUpdateDetail": {
@@ -1251,11 +1259,11 @@
     "description": "Shown on explainer dialog available from delivery issue timeline events"
   },
   "DeliveryIssue--summary": {
-    "message": "$sender$ నుండి సందేశం, స్టిక్కర్, ప్రతిచర్య, చదివిన రసీదులు లేదా మీడియా మీకు పంపబడవు. వారు మీకు నేరుగా లేదా సమూహంలో పంపించడానికి ప్రయత్నించారు.",
+    "message": "$sender$ నుంచి సందేశం, స్టిక్కర్, ప్రతిస్పందన, రీడ్ రిసిప్ట్ లేదా మీడియా మీకు పంపబడదు. వారు దానిని మీకు నేరుగా లేదా గ్రూప్‌లో పంపించడానికి ప్రయత్నించి ఉండవచ్చు.",
     "description": "Shown on explainer dialog available from delivery issue timeline events in 1:1 conversations"
   },
   "DeliveryIssue--summary--group": {
-    "message": "ఈ చాట్‌లో $sender$ నుంచి సందేశం, స్టిక్కర్, ప్రతిస్పందన, రీడ్ రిసిప్ట్ లేదా మీడియా డెలివరీ చేయబడదు.",
+    "message": "ఈ చాట్‌లో $sender$ నుంచి సందేశం, స్టిక్కర్, ప్రతిస్పందన, రీడ్ రిసిప్ట్ లేదా మీడియా మీకు పంపబడదు.",
     "description": "Shown on explainer dialog available from delivery issue timeline events in groups"
   },
   "ChangeNumber--notification": {
@@ -1446,7 +1454,7 @@
     "description": "Button label in the call lobby for returning to a call"
   },
   "calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
-    "message": "కాల్ యొక్క సైజు కారణంగా మైక్రోఫోన్ మ్యూట్ చేయబడింది",
+    "message": "కాల్ కాల వ్యవధి కారణంగా మైక్రోఫోన్ మ్యూట్ చేయబడింది",
     "description": "Shown in a call lobby toast if there are a lot of people already on the call"
   },
   "calling__call-is-full": {
@@ -1470,7 +1478,7 @@
     "description": "Button tooltip label for turning on the camera"
   },
   "calling__button--audio__label": {
-    "message": "నిశబ్ధం",
+    "message": "మ్యూట్",
     "description": "Label under the audio button"
   },
   "calling__button--audio-disabled": {
@@ -1590,7 +1598,7 @@
     "description": "Shown in the participants list to describe how many people are in the call"
   },
   "calling__you-have-blocked": {
-    "message": "మీరు $name$ని బ్లాక్ చేసారు",
+    "message": "మీరు $name$ను బ్లాక్ చేశారు",
     "description": "when you block someone and cannot view their video"
   },
   "calling__block-info": {
@@ -1778,10 +1786,10 @@
     "description": "Displayed in notifications for messages in a group"
   },
   "notificationReaction": {
-    "message": "$sender$ మీ సందేశానికి $emoji$ స్పందించింది"
+    "message": "$sender$ మీ సందేశానికి $emoji$ తో ప్రతిస్పందించారు"
   },
   "notificationReactionMessage": {
-    "message": "$sender$ $emoji$ నుండి $message$ వరకు స్పందించింది"
+    "message": "దీనికి $sender$ $emoji$ తో ప్రతిస్పందించారు: $message$"
   },
   "sendFailed": {
     "message": "పంపడం విఫలమైంది",
@@ -1881,26 +1889,34 @@
   },
   "timestampFormat_M": {
     "message": "MMM D",
-    "description": "Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+  },
+  "timestampFormat__long--today": {
+    "message": "ఈ రోజు $time$",
+    "description": "Timestamp format string for displaying \"Today\" and the time"
+  },
+  "timestampFormat__long--yesterday": {
+    "message": "నిన్న $time$",
+    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "timestampFormat__long__today": {
     "message": "[ఇవాల్టి] LT",
-    "description": "Timestamp format string for displaying \"Today\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Today\" and the time"
   },
   "timestampFormat__long__yesterday": {
     "message": "[నిన్న] LT",
-    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "messageBodyTooLong": {
     "message": "సందేశం బహు దీర్ఘముగా వుంది",
     "description": "Shown if the user tries to send more than 64kb of text"
   },
   "unblockToSend": {
-    "message": "సందేశం పంపడానికి ఈ పరిచయాన్ని అన్‌బ్లాక్ చేయండి.",
+    "message": "సందేశం పంపడానికి ఈ కాంటాక్ట్‌ను అన్‌బ్లాక్ చేయండి.",
     "description": "Brief message shown when trying to message a blocked number"
   },
   "unblockGroupToSend": {
-    "message": "సందేశం పంపడానికి ఈ గుంపును అన్‌బ్లాక్ చేయండి.",
+    "message": "సందేశం పంపడానికి ఈ గ్రూప్‌ను అన్‌బ్లాక్ చేయండి.",
     "description": "Brief message shown when trying to message a blocked group"
   },
   "youChangedTheTimer": {
@@ -2181,7 +2197,7 @@
     "message": "తిరిగి లింక్ చేయండి"
   },
   "autoUpdateNewVersionTitle": {
-    "message": "అప్‌డేట్ లభ్యమవుతోంది"
+    "message": "Update Available"
   },
   "autoUpdateRetry": {
     "message": "అప్‌డేట్ మళ్లీ ప్రయత్నించండి"
@@ -2580,6 +2596,18 @@
     "message": "ఇటీవల ఉపయోగించిన స్టిక్కర్లు ఇక్కడ కనిపిస్తాయి.",
     "description": "Shown in the sticker picker when there are no recent stickers to show."
   },
+  "icu:stickers__StickerPicker__recent": {
+    "messageformat": "ఇటీవలివి",
+    "description": "Title for all of the recent stickers"
+  },
+  "icu:stickers__StickerPicker__featured": {
+    "messageformat": "ఫీచర్ చేయబడింది",
+    "description": "Title for featured stickers"
+  },
+  "icu:stickers__StickerPicker__analog-time": {
+    "messageformat": "అనలాగ్ సమయం",
+    "description": "aria-label for the analog time sticker"
+  },
   "stickers--StickerPreview--Title": {
     "message": "స్టిక్కర్ ప్యాక్",
     "description": "The title that appears in the sticker pack preview modal."
@@ -2948,6 +2976,18 @@
     "message": "సంభాషణ చదవనిదిగా గుర్తించబడింది",
     "description": "A toast that shows up when user marks a conversation as unread"
   },
+  "icu:AuthArtCreator--dialog--message": {
+    "messageformat": "మీరు Signal స్టిక్కర్ ప్యాక్ క్రియేటర్‌ను తెరవాలని అనుకుంటున్నారా?",
+    "description": "A body of the dialog that is presented when user tries to open Signal Sticker Pack Creator from a link"
+  },
+  "icu:AuthArtCreator--dialog--confirm": {
+    "messageformat": "నిర్ధారించండి",
+    "description": "A buttle title for confirming Signal Sticker Pack Creator dialog"
+  },
+  "icu:AuthArtCreator--dialog--dismiss": {
+    "messageformat": "రద్దుచేసే",
+    "description": "A buttle title for dismissing Signal Sticker Pack Creator dialog"
+  },
   "StickerCreator--title": {
     "message": "స్టిక్కర్ ప్యాక్ సృష్టికర్త",
     "description": "The title of the Sticker Pack Creator window"
@@ -3148,12 +3188,16 @@
     "message": "స్టిక్కర్ ప్యాక్ సృష్టికర్తను ఉపయోగించడానికి దయచేసి మీ ఫోన్ మరియు డెస్క్‌టాప్‌లో Signal ను సెటప్ చేయండి",
     "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
   },
+  "icu:ArtCreator--Authentication--error": {
+    "messageformat": "స్టిక్కర్ ప్యాక్ క్రియేటర్‌ను ఉపయోగించడానికి దయచేసి మీ ఫోన్ మరియు డెస్క్‌టాప్‌లో Signal ను సెటప్ చేయండి",
+    "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
+  },
   "Reactions--remove": {
     "message": "ప్రతిస్పందనను తొలగించండి",
     "describe": "Shown when you want to remove a reaction you've made"
   },
   "Reactions--error": {
-    "message": "ప్రతిచర్య పంపడంలో విఫలమైంది. దయచేసి మళ్ళీ ప్రయత్నించండి.",
+    "message": "ప్రతిస్పందనను పంపడంలో విఫలమైంది. దయచేసి మళ్ళీ ప్రయత్నించండి.",
     "description": "Shown when a reaction fails to send"
   },
   "Reactions--more": {
@@ -3169,7 +3213,7 @@
     "description": "Shown as the message for a message request in a direct message"
   },
   "MessageRequests--message-direct-blocked": {
-    "message": "$name$మీకు సందేశం ఇవ్వనివ్వండి మరియు మీ పేరు మరియు ఫోటోను వారితో పంచుకోవాలా? మీరు వాటిని అన్‌బ్లాక్ చేసే వరకు మీకు సందేశాలు రావు.",
+    "message": "$name$ మీకు సందేశం పంపనివ్వండి మరియు మీ పేరు మరియు ఫోటోను వారితో పంచుకునేదా? మీరు వారిని అన్‌బ్లాక్ చేసేంతవరకు మీరు సందేశాలు అందుకోరు.",
     "description": "Shown as the message for a message request in a direct message with a blocked account"
   },
   "MessageRequests--message-group": {
@@ -3177,19 +3221,19 @@
     "description": "Shown as the message for a message request in a group"
   },
   "MessageRequests--message-group-blocked": {
-    "message": "ఈ గుంపును అన్‌బ్లాక్ చేసి, మీ పేరు మరియు ఫోటోను దాని సభ్యులతో పంచుకోవాలా? మీరు వాటిని అన్‌బ్లాక్ చేసే వరకు మీకు సందేశాలు రావు.",
+    "message": "ఈ గ్రూప్‌ను అన్‌బ్లాక్ చేసి, మీ పేరు మరియు ఫోటోను దాని సభ్యులతో పంచుకునేదా? మీరు వారిని అన్‌బ్లాక్ చేసేంతవరకు మీరు సందేశాలు అందుకోరు.",
     "description": "Shown as the message for a message request in a blocked group"
   },
   "MessageRequests--block": {
-    "message": "నిరోధించు",
+    "message": "బ్లాక్",
     "description": "Shown as a button to let the user block a message request"
   },
   "MessageRequests--unblock": {
-    "message": "అనుమతించు",
+    "message": "అన్‌బ్లాక్",
     "description": "Shown as a button to let the user unblock a message request"
   },
   "MessageRequests--unblock-direct-confirm-title": {
-    "message": "$name$ ని అన్‌బ్లాక్ చేయాలా?",
+    "message": "$name$ను అన్‌బ్లాక్ చేసేదా?",
     "description": "Shown as a button to let the user unblock a message request"
   },
   "MessageRequests--unblock-direct-confirm-body": {
@@ -3201,23 +3245,23 @@
     "description": "Shown as the body in the confirmation modal for unblocking a group message request"
   },
   "MessageRequests--block-and-report-spam": {
-    "message": "స్పామ్ మరియు బ్లాక్‌ను నివేదించండి",
+    "message": "స్పామ్‌ను నివేదించండి మరియు బ్లాక్ చేయండి",
     "description": "Shown as a button to let the user block a message request and report spam"
   },
   "MessageRequests--block-and-report-spam-success-toast": {
-    "message": "స్పామ్‌గా నివేదించబడింది మరియు నిరోధించబడింది.",
+    "message": "స్పామ్‌గా నివేదించబడింది మరియు బ్లాక్ చేయబడింది.",
     "description": "Shown in a toast when you successfully block a user and report them as spam"
   },
   "MessageRequests--block-direct-confirm-title": {
-    "message": "బ్లాక్ $name$?",
+    "message": "$name$ను బ్లాక్ చేసేదా?",
     "description": "Shown as the title in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-direct-confirm-body": {
-    "message": "అడ్డగింపబడిన వ్యక్తులు మీతో మాట్లాడడం లేదా మీకు సందేశములు పంపడం చేయలేరు.",
+    "message": "బ్లాక్ చేయబడిన వ్యక్తులు మీకు కాల్ చేయలేరు లేదా మీకు సందేశాలను పంపలేరు.",
     "description": "Shown as the body in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-group-confirm-title": {
-    "message": "బ్లాక్ చేసి $group$ వదిలివేయాలా?",
+    "message": "బ్లాక్ చేసి మరియు $group$ను వదిలి వెళ్ళేదా?",
     "description": "Shown as the title in the confirmation modal for blocking a group message request"
   },
   "MessageRequests--block-group-confirm-body": {
@@ -3525,27 +3569,27 @@
     "description": "Shown when the device is the default device"
   },
   "muteNotificationsTitle": {
-    "message": "ప్రకటనలను మ్యూట్లో ఉంచు",
+    "message": "నోటిఫికేషన్లను మ్యూట్ చేయండి",
     "description": "Label for the mute notifications drop-down selector"
   },
   "notMuted": {
-    "message": "మ్యూట్ చేయలేదు",
+    "message": "మ్యూట్ చేయబడలేదు",
     "description": "Label when the conversation is not muted"
   },
   "muteHour": {
-    "message": "ఒక గంట మ్యూట్ చేయండి",
+    "message": "ఒక గంట పాటు మ్యూట్ చేయండి",
     "description": "Label for muting the conversation"
   },
   "muteEightHours": {
-    "message": "ఎనిమిది గంటలు మ్యూట్ చేయండి",
+    "message": "ఎనిమిది గంటల పాటు మ్యూట్ చేయండి",
     "description": "Label for muting the conversation"
   },
   "muteDay": {
-    "message": "ఒక రోజు మ్యూట్ చేయండి",
+    "message": "ఒక రోజుంతా మ్యూట్ చేయండి",
     "description": "Label for muting the conversation"
   },
   "muteWeek": {
-    "message": "ఒక వారం మ్యూట్ చేయండి",
+    "message": "ఒక వారం పాటు మ్యూట్ చేయండి",
     "description": "Label for muting the conversation"
   },
   "muteAlways": {
@@ -3553,7 +3597,7 @@
     "description": "Label for muting the conversation"
   },
   "unmute": {
-    "message": "మ్యూట్ తీసివేయి",
+    "message": "అన్‌మ్యూట్",
     "description": "Label for unmuting the conversation"
   },
   "muteExpirationLabelAlways": {
@@ -4393,7 +4437,7 @@
     "description": "Displayed while checking if the contact is SMS-only"
   },
   "countMutedConversationsDescription": {
-    "message": "బ్యాడ్జి కౌంట్‌లో మ్యూట్ చేసిన సంభాషణలను జోడించండి",
+    "message": "బ్యాడ్జి కౌంట్‌లో మ్యూట్ చేయబడిన సంభాషణలను చేర్చండి",
     "description": "Description for counting muted conversations in badge setting"
   },
   "ContactModal--message": {
@@ -4433,7 +4477,7 @@
     "description": "This is a button in the conversation context menu to show chat settings"
   },
   "ConversationDetails__unmute--title": {
-    "message": "ఈ చాట్‌ని అన్‌మ్యూట్ చేయాలా?",
+    "message": "ఈ చాట్‌ను అన్‌మ్యూట్ చేసేదా?",
     "description": "Title for the modal to unmute a chat"
   },
   "ConversationDetails--group-link": {
@@ -4489,11 +4533,11 @@
     "description": "This is a button to leave a group"
   },
   "ConversationDetailsActions--block-group": {
-    "message": "బ్లాక్ సమూహం",
+    "message": "గ్రూప్‌ను బ్లాక్ చేయండి",
     "description": "This is a button to block a group"
   },
   "ConversationDetailsActions--unblock-group": {
-    "message": "సమూహాన్ని అన్‌బ్లాక్ చేయండి",
+    "message": "గ్రూప్‌ను అన్‌బ్లాక్ చేయండి",
     "description": "This is a button to unblock a group"
   },
   "ConversationDetailsActions--leave-group-must-choose-new-admin": {
@@ -4513,11 +4557,11 @@
     "description": "This is the modal button to confirm leaving a group"
   },
   "ConversationDetailsActions--unblock-group-modal-title": {
-    "message": "\"$groupName$\" గ్రూపును అన్‌బ్లాక్ చేయాలా?",
+    "message": "\"$groupName$\" గ్రూప్‌ను అన్‌బ్లాక్ చేసేదా?",
     "description": "This is the modal title for confirming unblock of a group"
   },
   "ConversationDetailsActions--block-group-modal-title": {
-    "message": "\"$groupName$\" సమూహాన్ని బ్లాక్ చేసి వదిలేయాలా?",
+    "message": "\"$groupName$\" గ్రూప్‌ను బ్లాక్ చేసి మరియు వదిలి వెళ్ళేదా?",
     "description": "This is the modal title for confirming blocking a group"
   },
   "ConversationDetailsActions--block-group-modal-content": {
@@ -4525,7 +4569,7 @@
     "description": "This is the modal content for confirming blocking a group"
   },
   "ConversationDetailsActions--block-group-modal-confirm": {
-    "message": "నిరోధించు",
+    "message": "బ్లాక్",
     "description": "This is the modal button to confirm blocking a group"
   },
   "ConversationDetailsActions--unblock-group-modal-content": {
@@ -4533,7 +4577,7 @@
     "description": "This is the modal content for confirming unblock of a group"
   },
   "ConversationDetailsActions--unblock-group-modal-confirm": {
-    "message": "అనుమతించు",
+    "message": "అన్‌బ్లాక్",
     "description": "This is the modal button to confirm unblock of a group"
   },
   "ConversationDetailsHeader--members": {
@@ -4585,7 +4629,7 @@
     "description": "In the conversation notifications settings, this is the label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__info": {
-    "message": "మ్యూటెడ్ చాట్‌ల్లో మిమ్మల్ని పేర్కొన్నప్పుడు నోటిఫికేషన్‌లను పొందండి",
+    "message": "మ్యూట్ చేయబడిన చాట్స్‌లో మీరు పేర్కొనబడినప్పుడు నోటిఫికేషన్‌లను అందుకోండి",
     "description": "In the conversation notifications settings, this is the sub-label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__select__always-notify": {
@@ -4593,7 +4637,7 @@
     "description": "In the conversation notifications settings, this is the option that always notifies you for @mentions"
   },
   "ConversationNotificationsSettings__mentions__select__dont-notify-for-mentions-if-muted": {
-    "message": "మ్యూట్ చేసినట్లయితే నోటిఫై చేయవద్దు",
+    "message": "ఒకవేళ మ్యూట్ చేయబడినట్లయితే తెలియచేయకండి",
     "description": "In the conversation notifications settings, this is the option that doesn't notify you for @mentions if the conversation is muted"
   },
   "GroupLinkManagement--clipboard": {
@@ -4693,11 +4737,11 @@
     "description": "Information shown below the invite list"
   },
   "PendingRequests--block--button": {
-    "message": "అభ్యర్ధన బ్లాక్ చేయండి",
+    "message": "అభ్యర్ధనను బ్లాక్ చేయండి",
     "description": "Shown in timeline if users cancel their request to join a group via a group link"
   },
   "PendingRequests--block--title": {
-    "message": "అభ్యర్ధన బ్లాక్ చేయాలా?",
+    "message": "అభ్యర్ధనను బ్లాక్ చేసేదా?",
     "description": "Title of dialog to block a user from requesting to join via the link again"
   },
   "PendingRequests--block--contents": {
@@ -4705,7 +4749,7 @@
     "description": "Details of dialog to block a user from requesting to join via the link again"
   },
   "PendingRequests--block--confirm": {
-    "message": "అభ్యర్ధన బ్లాక్ చేయండి",
+    "message": "అభ్యర్ధనను బ్లాక్ చేయండి",
     "description": "Confirmation button of dialog to block a user from requesting to join via the link again"
   },
   "AvatarInput--no-photo-label--group": {
@@ -4854,11 +4898,11 @@
   },
   "TimelineDateHeader--date-in-last-6-months": {
     "message": "ddd, MMM D",
-    "description": "Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "TimelineDateHeader--date-older-than-6-months": {
     "message": "MMM D YYYY",
-    "description": "Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "MessageRequestWarning__learn-more": {
     "message": "ఇంకా నేర్చుకో",
@@ -5225,7 +5269,7 @@
     "description": "Shown if something unknown has gone wrong with username save."
   },
   "icu:ProfileEditor--username--reservation-gone": {
-    "messageformat": "{username} is no longer available. A new set of digits will be paired with your username, please try saving it again.",
+    "messageformat": "{username} ఇక ఏమాత్రం అందుబాటులో లేదు. మీ యూజర్‌నేమ్‌తో కొత్త అంకెల సెట్ జతచేయబడుతుంది, దయచేసి దాన్ని మళ్ళీ సేవ్ చేయడానికి ప్రయత్నించండి.",
     "description": "Shown if username reservation has expired and new one needs to be generated."
   },
   "ProfileEditor--username--delete-general-error": {
@@ -5417,7 +5461,7 @@
     "description": "Label for the notification content setting select box"
   },
   "Preferences--blocked": {
-    "message": "నిరోధించిన\n ",
+    "message": "బ్లాక్ చేయబడింది",
     "description": "Label for blocked contacts setting"
   },
   "Preferences--blocked-count-singular": {
@@ -5430,23 +5474,75 @@
   },
   "Preferences__who-can--title": {
     "message": "ఎవరు చేయగలరు...",
-    "description": "Title for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Title for the 'who can do X' setting"
   },
   "Preferences__privacy--description": {
     "message": "ఈ సెట్టింగ్‌లను మార్చడానికి, మీ మొబైల్ పరికరంపై Signal యాప్‌ని ఓపెన్ చేయండి మరియు సెట్టింగ్‌లు > గోప్యతకు వెళ్లండి.",
-    "description": "Description for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Description for the 'who can do X' setting"
   },
   "Preferences__who-can--everybody": {
     "message": "ప్రతి ఒక్కరూ",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--contacts": {
     "message": "నా పరిచయాలు",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--nobody": {
     "message": "యెవరు లేరు",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
+  },
+  "icu:Preferences__pnp__row--title": {
+    "messageformat": "ఫోన్ నంబరు",
+    "description": "Title of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__row--body": {
+    "messageformat": "మీ ఫోన్ నంబర్‌ను ఎవరు చూడగలరు మరియు దానితో Signal లో మిమ్మల్ని ఎవరు సంప్రదించగలరో ఎంచుకోండి.",
+    "description": "Body of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__sharing--title": {
+    "messageformat": "నా నంబర్‌ను ఎవరు చూడగలరు",
+    "description": "Title for the phone number sharing setting row"
+  },
+  "icu:Preferences__pnp__sharing--description--everyone": {
+    "messageformat": "మీరు సందేశం పంపే వ్యక్తులు మరియు గ్రూప్‌లకు మీ ఫోన్ నంబర్ కనిపిస్తుంది. వారి ఫోన్ పరిచయాలలో మీ నంబర్ ఉన్న వ్యక్తులు కూడా దీన్ని Signal‌లో చూస్తారు.",
+    "description": "Description for the phone number sharing setting row when the value is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody": {
+    "messageformat": "Signal లో మీ ఫోన్ నంబర్‌ను ఎవరూ చూడలేరు.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody"
+  },
+  "icu:Preferences__pnp--page-title": {
+    "messageformat": "ఫోన్ నంబరు",
+    "description": "Title of the page in Phone Number Privacy settings"
+  },
+  "icu:Preferences__pnp__sharing__everyone": {
+    "messageformat": "ప్రతి ఒక్కరూ",
+    "description": "Option for sharing phone number with everyone"
+  },
+  "icu:Preferences__pnp__sharing__nobody": {
+    "messageformat": "ఎవరు కాదు",
+    "description": "Option for sharing phone number with nobody"
+  },
+  "icu:Preferences__pnp__discoverability--title": {
+    "messageformat": "నంబర్ ద్వారా నన్ను ఎవరు కనుగొనగలరు",
+    "description": "Title for the phone number discoverability setting row"
+  },
+  "icu:Preferences__pnp__discoverability--description--everyone": {
+    "messageformat": "వారి పరిచయాలలో మీ ఫోన్ నంబర్ ఉన్న ఎవరైనా మిమ్మల్ని Signal లో పరిచయంగా చూస్తారు. ఇతరులు కొత్త చాట్ లేదా గ్రూప్ ప్రారంభించినప్పుడు మీ ఫోన్ నంబర్‌తో మిమ్మల్ని సంప్రదించగలగుతారు.",
+    "description": "Description for the phone number discoverability setting row wth the value is everyone"
+  },
+  "icu:Preferences__pnp__discoverability--description--nobody": {
+    "messageformat": "Signal లో ఎవరూ కూడా మీ ఫోన్ నంబర్‌తో మిమ్మల్ని చేరుకోలేరు.",
+    "description": "Description for the phone number discoverability setting row wth the value is nobody"
+  },
+  "icu:Preferences__pnp__discoverability__everyone": {
+    "messageformat": "ప్రతి ఒక్కరూ",
+    "description": "Option for letting everyone discover you by phone number"
+  },
+  "icu:Preferences__pnp__discoverability__nobody": {
+    "messageformat": "ఎవరు కాదు",
+    "description": "Option for letting nobody discover you by phone number"
   },
   "Preferences--messaging": {
     "message": "సందేశం",
@@ -5504,6 +5600,14 @@
     "message": "వెర్షన్ $version$కు అప్‌డేట్ లభ్యమవుతోంది",
     "description": "Tooltip for new update available"
   },
+  "icu:DialogUpdate__downloading": {
+    "messageformat": "Downloading Update...",
+    "description": "The title of update dialog when update download is in progress."
+  },
+  "icu:DialogUpdate__downloaded": {
+    "messageformat": "Update Downloaded",
+    "description": "The title of update dialog when update download is completed."
+  },
   "NSIS__retry-dialog--first-line": {
     "message": "Signal ను క్లోజ్ చేయలేరు.",
     "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
@@ -5541,7 +5645,7 @@
     "description": "A button label for erasure of the crash reporter data after a recent crash and continuing to start the app"
   },
   "CustomizingPreferredReactions__title": {
-    "message": "కస్టమైజ్ రియాక్షన్‌లు",
+    "message": "ప్రతిస్పందనలను అనుకూలపరచండి",
     "description": "Shown in the header of the modal for customizing the preferred reactions. Also shown in the tooltip for the button that opens this modal."
   },
   "CustomizingPreferredReactions__subtitle": {
@@ -5551,6 +5655,10 @@
   "CustomizingPreferredReactions__had-save-error": {
     "message": "మీ సెట్టింగ్‌లను సేవ్ చేసేటప్పుడు ఒక దోషం ఏర్పడింది, దయచేసి మళ్లీ ప్రయత్నించండి.",
     "description": "Shown if there is an error when saving your preferred reaction settings. Should be very rare to see this message."
+  },
+  "icu:MediaEditor__clock-more-styles": {
+    "messageformat": "మరిన్ని స్టైల్స్",
+    "description": "Action button for switching up the clock styles"
   },
   "MediaEditor__control--draw": {
     "message": "డ్రా",
@@ -6117,11 +6225,11 @@
     "description": "Button label to reply to a group story"
   },
   "StoryViewer__mute": {
-    "message": "నిశబ్ధం",
+    "message": "మ్యూట్",
     "description": "Aria label for muting stories"
   },
   "StoryViewer__unmute": {
-    "message": "మ్యూట్ తీసివేయి",
+    "message": "అన్‌మ్యూట్",
     "description": "Aria label for unmuting stories"
   },
   "StoryViewer__views-off": {
@@ -6246,11 +6354,19 @@
   },
   "StoryCreator__error--video-too-long": {
     "message": "కథకు వీడియోను పోస్ట్ చేయలేము ఎందుకంటే ఇది చాలా పొడవుగా ఉంది",
-    "description": "Error string for when a video post to story fails"
+    "description": "(deleted 02/22/2023) Error string for when a video post to story fails"
   },
   "StoryCreator__error--video-unsupported": {
     "message": "ఇది మద్దతు లేని ఫైల్ ఫార్మాట్ కావడం వల్ల కథకు వీడియోను పోస్ట్ చేయలేము",
     "description": "Error string for when a video post to story fails"
+  },
+  "icu:StoryCreator__error--video-too-long": {
+    "messageformat": "{maxDurationInSec, plural, one {కథకు వీడియోను పోస్ట్ చేయలేము ఎందుకంటే ఇది 1 క్షణము కంటే ఎక్కువ సమయం ఉంది.} other {కథకు వీడియోను పోస్ట్ చేయలేము ఎందుకంటే ఇది {maxDurationInSec,number} క్షణాల కంటే ఎక్కువ సమయం ఉంది.}}",
+    "description": "Error string for when a video post to story fails because video's duration is too long"
+  },
+  "icu:StoryCreator__error--video-too-big": {
+    "messageformat": "కథకు వీడియోను పోస్ట్ చేయలేము ఎందుకంటే ఇది {limit}{units} కంటే పెద్దగా ఉంది.",
+    "description": "Error string for when a video post to story fails because video's file size is too big"
   },
   "StoryCreator__error--video-error": {
     "message": "వీడియోను లోడ్ చేసేందుకు విఫలమైంది",
@@ -6389,27 +6505,27 @@
     "description": "Body of the popup with information about discriminator in username"
   },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "Set up your Signal username",
+    "messageformat": "మీ Signal యూజర్‌నేమ్‌ను సెటప్ చేయండి",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "Usernames are paired with a set of digits and aren’t shared on your profile",
+    "messageformat": "యూజర్‌నేమ్స్ అంకెల సెట్‌తో జత చేయబడ్డాయి మరియు మీ ప్రొఫైల్‌లో పంచుకోబడవు",
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Each username has a unique link you can share with your friends to start a chat with you",
+    "messageformat": "మీతో చాట్ చేయడం ప్రారంభించడానికి మీ స్నేహితులతో పంచుకునేందుకు ప్రతి యూజర్‌నేమ్‌కు ఒక సాటిలేని లింక్ ఉంది",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "Turn off phone number discovery under Settings > Phone Number > Who can find my number, to use your username as the primary way others can contact you.",
+    "messageformat": "ఇతరులు మిమ్మల్ని సంప్రదించడానికి మీ యూజర్‌నేమ్‌ను ప్రాథమిక మార్గంగా ఉపయోగించడానికి, సెట్టింగ్‌లు > గోప్యత > ఫోన్ నంబర్ > నా నంబర్‌ను ఎవరు కనుగొనగలరు కింద ఫోన్ నంబర్ కనుగొనడాన్ని ఆఫ్ చేయండి.",
     "description": "Content of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__learn-more": {
-    "messageformat": "Learn More",
+    "messageformat": "మరింత తెలుసుకోండి",
     "description": "Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Continue",
+    "messageformat": "కొనసాగించండి",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -6456,40 +6572,24 @@
     "message": "చిన్న ట్వీక్‌లు, బగ్ ఫిక్స్‌లు, మరియు పనితీరు మెరుగుదలలు. Signal ఉపయోగించినందుకు మీకు ధన్యవాదాలు!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "WhatsNew__v5.63--0": {
-    "message": "మీ కొరకు యాప్ సజావుగా రన్ అయ్యేలా చేయడానికి బగ్‌లను ఫిక్స్ చేయడం మరియు ఇతర పనితీరు మెరుగుదలలు చేయడానికి ఎంతో కష్టపడి పనిచేశాం.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--0": {
+    "messageformat": "ఏదైనా చిత్రం లేదా వీడియోపై క్లిక్ చేయండి మరియు మెమరీ లేన్ గుండా దృశ్యమానంగా నడవడానికి మీడియా వీక్షణలో కొత్త ముందుకు మరియు వెనక్కు బటన్‌లను ఉపయోగించండి.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v5.63--beta.2": {
-    "message": "మా కొత్త కథల ఫీచర్‌ను ఉపయోగించడం మరియు పరీక్షించడం ప్రారంభించండి. ఇతర బీటా టెస్టర్లతో మీరు ఫీచర్‌ను ఉపయోగించవచ్చు మరియు అది ఎలా పనిచేస్తుందో మాకు తెలియజేయండి.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--1": {
+    "messageformat": "ఒక రికార్డింగ్ జరిగేటప్పుడు ఒకవేళ మీరు మరొక చాట్‌లోనికి మారితే స్వర సందేశాలు ఇప్పుడు ముసాయిదాలుగా సేవ్ చేయబడతాయి.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.0": {
-    "message": "Signal లో ఇప్పుడు కథలు ఉన్నాయి! 24 గంటల తరువాత ఆటోమేటిక్‌గా అదృశ్యమయ్యే టెక్స్ట్, చిత్రాలు, మరియు వీడియో అప్‌డేట్‌లను ఎంపిక చేసిన స్నేహితులు లేదా గ్రూప్‌లతో పంచుకోండి. కథలను పంచుకోవడానికి ఇష్టపడే ప్రతిఒక్కరి కొరకు, దీనిని గోప్యంగా మరియు ఎటువంటి ప్రకటనలు చూడకుండానే చేసే మార్గం ఇదిగో ఇక్కడ ఉంది. ఒకవేళ కథలను చూడటానికి లేదా పంచుకోవడానికి మీరు ఇష్టపడకపోతే, మీ ప్రాధాన్యతలు > గోప్యతలో మీరు వాటిని అన్నింటిని నిలిపివేయవచ్చు.",
-    "description": "Release notes for v6.0"
+  "icu:WhatsNew__v6.10--2": {
+    "messageformat": "స్టిక్కర్‌ను పంపడం వల్ల ఇకపై ముసాయిదా టెక్స్ట్ తొలగించబడేందుకు కారణం కాదు. ధన్యవాదాలు, {lamemakes}!",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.1--1": {
-    "message": "చిన్న గ్రూపుల కోసం (16 మంది వరకు) మీరు గ్రూప్ కాల్‌ను ప్రారంభించినప్పుడు, మీరు రింగింగ్ నోటిఫికేషన్‌ను పంపేందుకు ఎంచుకోవచ్చు. ఒకవేళ వారు iOS బీటాలో ఉన్నా లేదా డెస్క్‌టాప్ లేదా ఆండ్రాయిడ్ ఉపయోగిస్తున్నా గ్రూప్ సభ్యులు రింగ్ వింటారు.",
-    "description": "Release notes for v6.1"
+  "icu:WhatsNew__v6.10--3": {
+    "messageformat": "సంభాషణ శోధన బార్ ఐకాన్‌లను తిరిగి అమరిక లోనికి తీసుకొని వచ్చినందుకు మేము {norstbox} కి కూడా ధన్యవాదాలు చెప్పాలని అనుకుంటున్నాము.",
+    "description": "Release notes for v6.10"
   },
-  "icu:WhatsNew__v6.3--0": {
-    "messageformat": "కోట్ చేసిన ప్రత్యుత్తరాన్ని ప్రారంభించడానికి చాట్‌లోని ఏదైనా సందేశం వరుసపై డబుల్ క్లిక్ చేయండి. పాత ఆలోచనల గురించి కొత్త ఆలోచనల కొరకు ఇది షార్ట్‌కట్ వంటిది. ఈ ఫీచర్ అమలు చేసినందుకు మరియు అభిప్రాయాన్ని అందించినందుకు {whynothugo} కు మరియు Signal కమ్యూనిటీకి ధన్యవాదాలు.",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.3--1": {
-    "messageformat": "జూమ్ ఇన్ చేయకుండానే గ్యాలరీ వీక్షణను రద్దు చేయడానికి చిత్రం వెలుపల క్లిక్ చేయడం ఇప్పుడు సులభం. కొన్నిసార్లు మీరు కేవలం మూసివేయాలని అనుకుంటారు మరియు బదులుగా విషయాలు చాలా దగ్గరగా అవుతాయి. పరిష్కరించినందుకు {jojomatik} కు ధన్యవాదాలు!",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.5--0": {
-    "messageformat": "మీ ప్రతిస్పందన సమయాన్ని వేగవంతం చేయండి. ఒక కథకు ప్రత్యుత్తరము ఇచ్చేటప్పుడు ఏదైనా ఎమోజీపై క్లిక్ చేయడం ద్వారా ఇప్పుడు మీరు వేగంగా ప్రతిస్పందించవచ్చు.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.5--1": {
-    "messageformat": "చైనీస్ మరియు జపనీస్ భాషల్లో వ్యక్తిగత క్యారెక్టర్ల కొరకు మీ సందేశ చరిత్రను వెతకడం ఇప్పుడు సాధ్యం.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.6--0": {
-    "messageformat": "ధ్వని మరియు వీడియో కాల్స్ కోసం అనేక విశ్వసనీయత మరియు పనితీరు మెరుగుదలలను పరీక్షించడంలో మాకు సహాయపడండి. ఈ బీటా విడుదల కొన్ని బగ్ పరిష్కారాలు మరియు కొన్ని చిన్న UI అప్‌డేట్‌లను కూడా కలిగి ఉంది (కొత్త లింక్ ప్రివ్యూ మెరుగుదలల కోసం చూడండి!). బీటా పరీక్షకుడిగా ఉన్నందుకు మీకు ధన్యవాదాలు, మరియు ఒకవేళ మీరు ఏవైనా బగ్‌లను గుర్తించినట్లయితే కమ్యూనిటీ ఫోరమ్‌పై దయచేసి మమ్మల్ని సంప్రదించండి.",
-    "description": "Release notes for v6.6"
+  "icu:WhatsNew__v6.11--0": {
+    "messageformat": "Start talking to yourself even faster with a new icon that makes the “Note to Self” chat easier to find. Thanks to {hackerbirds} on GitHub for their contribution.",
+    "description": "Release notes for v6.11"
   }
 }

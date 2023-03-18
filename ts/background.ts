@@ -65,7 +65,10 @@ import { getContact, isIncoming } from './messages/helpers';
 import { migrateMessageData } from './messages/migrateMessageData';
 import { createBatcher } from './util/batcher';
 import { updateConversationsWithUuidLookup } from './updateConversationsWithUuidLookup';
-import { initializeAllJobQueues } from './jobs/initializeAllJobQueues';
+import {
+  initializeAllJobQueues,
+  shutdownAllJobQueues,
+} from './jobs/initializeAllJobQueues';
 import { removeStorageKeyJobQueue } from './jobs/removeStorageKeyJobQueue';
 import { ourProfileKeyService } from './services/ourProfileKey';
 import { notificationService } from './services/notifications';
@@ -145,7 +148,7 @@ import { deleteAllLogs } from './util/deleteAllLogs';
 import { ToastCaptchaFailed } from './components/ToastCaptchaFailed';
 import { ToastCaptchaSolved } from './components/ToastCaptchaSolved';
 import { showToast } from './util/showToast';
-import { startInteractionMode } from './windows/startInteractionMode';
+import { startInteractionMode } from './services/InteractionMode';
 import type { MainWindowStatsType } from './windows/context';
 import { ReactionSource } from './reactions/ReactionSource';
 import { singleProtoJobQueue } from './jobs/singleProtoJobQueue';
@@ -168,6 +171,8 @@ import { flushAttachmentDownloadQueue } from './util/attachmentDownloadQueue';
 import { StartupQueue } from './util/StartupQueue';
 import { showConfirmationDialog } from './util/showConfirmationDialog';
 import { onCallEventSync } from './util/onCallEventSync';
+import { sleeper } from './util/sleeper';
+import { MINUTE } from './util/durations';
 
 export function isOverHourIntoPast(timestamp: number): boolean {
   const HOUR = 1000 * 60 * 60;
@@ -730,6 +735,46 @@ export async function startApp(): Promise<void> {
           )
         );
 
+        sleeper.shutdown();
+
+        const shutdownQueues = async () => {
+          await Promise.allSettled([
+            StartupQueue.shutdown(),
+            shutdownAllJobQueues(),
+          ]);
+
+          await Promise.allSettled(
+            window.ConversationController.getAll().map(async convo => {
+              try {
+                await convo.shutdownJobQueue();
+              } catch (err) {
+                log.error(
+                  `background/shutdown: error waiting for conversation ${convo.idForLogging} job queue shutdown`,
+                  Errors.toLogFormat(err)
+                );
+              }
+            })
+          );
+        };
+
+        // wait for at most 2 minutes for startup queue and job queues to drain
+        let timeout: NodeJS.Timeout | undefined;
+        await Promise.race([
+          shutdownQueues(),
+          new Promise<void>((resolve, _) => {
+            timeout = setTimeout(() => {
+              log.warn(
+                'background/shutdown - timed out waiting for StartupQueue/JobQueues, continuing with shutdown'
+              );
+              timeout = undefined;
+              resolve();
+            }, 2 * MINUTE);
+          }),
+        ]);
+        if (timeout) {
+          clearTimeout(timeout);
+        }
+
         log.info('background/shutdown: waiting for all batchers');
 
         // A number of still-to-queue database queries might be waiting inside batchers.
@@ -1037,6 +1082,7 @@ export async function startApp(): Promise<void> {
       devTools: false,
       includeSetup: false,
       isProduction: true,
+      isStaging: false,
       platform: 'unknown',
     };
 
@@ -1182,30 +1228,11 @@ export async function startApp(): Promise<void> {
       onConversationClosed(id, 'removed');
       conversationRemoved(id);
     });
-
-    const addedConvoBatcher = createBatcher<ConversationModel>({
-      name: 'addedConvoBatcher',
-      processBatch(batch) {
-        batchDispatch(() => {
-          batch.forEach(conversation => {
-            conversationAdded(conversation.id, conversation.format());
-          });
-        });
-      },
-
-      // This delay ensures that the .format() call isn't synchronous as a
-      //   Backbone property is changed. Important because our _byUuid/_byE164
-      //   lookups aren't up-to-date as the change happens; just a little bit
-      //   after.
-      wait: 1,
-      maxSize: Infinity,
-    });
-
     convoCollection.on('add', conversation => {
       if (!conversation) {
         return;
       }
-      addedConvoBatcher.add(conversation);
+      conversationAdded(conversation.id, conversation.format());
     });
 
     const changedConvoBatcher = createBatcher<ConversationModel>({
@@ -1289,7 +1316,7 @@ export async function startApp(): Promise<void> {
     });
 
     document.addEventListener('keydown', event => {
-      const { ctrlKey, metaKey, shiftKey } = event;
+      const { ctrlKey, metaKey, shiftKey, altKey } = event;
 
       const commandKey = window.platform === 'darwin' && metaKey;
       const controlKey = window.platform !== 'darwin' && ctrlKey;
@@ -1305,7 +1332,7 @@ export async function startApp(): Promise<void> {
 
       // Show keyboard shortcuts - handled by Electron-managed keyboard shortcuts
       // However, on linux Ctrl+/ selects all text, so we prevent that
-      if (commandOrCtrl && key === '/') {
+      if (commandOrCtrl && !altKey && key === '/') {
         window.Events.showKeyboardShortcuts();
 
         event.stopPropagation();

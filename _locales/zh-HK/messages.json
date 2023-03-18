@@ -52,6 +52,14 @@
     "message": "正在加入 $contact$ ...",
     "description": "Shown in toast while a user is being added to a group"
   },
+  "icu:RecordingComposer__cancel": {
+    "messageformat": "取消",
+    "description": "Label of cancel button on voice note recording UI"
+  },
+  "icu:RecordingComposer__send": {
+    "messageformat": "傳送",
+    "description": "Label of send button on voice note recording UI"
+  },
   "GroupListItem__message-default": {
     "message": "$count$個成員",
     "description": "Shown below the group name when selecting a group to invite a contact to"
@@ -931,7 +939,7 @@
     "description": "Shown in a message's triple-dot menu if there isn't room for a dedicated download button"
   },
   "reactToMessage": {
-    "message": "對訊息的回應",
+    "message": "對訊息傳送心情回應",
     "description": "Shown in triple-dot menu next to message to allow user to react to the associated message"
   },
   "replyToMessage": {
@@ -1043,7 +1051,7 @@
     "description": "Shown in a button when a conversation is muted"
   },
   "mute": {
-    "message": "靜音對話",
+    "message": "靜音",
     "description": "Shown in a button when a conversation is unmuted and can be muted"
   },
   "cannotUpdateDetail": {
@@ -1251,11 +1259,11 @@
     "description": "Shown on explainer dialog available from delivery issue timeline events"
   },
   "DeliveryIssue--summary": {
-    "message": "無法從 $sender$向你傳送訊息、貼圖、回應、已讀回執或媒體。 他們可能已經嘗試將其直接傳送給你，或以群組形式傳送給你。",
+    "message": "系統無法將 $sender$ 的訊息、貼圖、心情回應、已讀標記或多媒體檔案傳送給你。他們可能是直接或透過群組向你傳送的。",
     "description": "Shown on explainer dialog available from delivery issue timeline events in 1:1 conversations"
   },
   "DeliveryIssue--summary--group": {
-    "message": "無法從$sender$聊天中向你傳送訊息、貼圖、回應、已讀回執或媒體檔。",
+    "message": "系統無法在此聊天中將 $sender$ 的訊息、貼圖、心情回應、已讀標記或多媒體檔案傳送給你。",
     "description": "Shown on explainer dialog available from delivery issue timeline events in groups"
   },
   "ChangeNumber--notification": {
@@ -1446,7 +1454,7 @@
     "description": "Button label in the call lobby for returning to a call"
   },
   "calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
-    "message": "麥克風依通話大小而靜音",
+    "message": "因通話人數眾多而將麥克風靜音",
     "description": "Shown in a call lobby toast if there are a lot of people already on the call"
   },
   "calling__call-is-full": {
@@ -1470,7 +1478,7 @@
     "description": "Button tooltip label for turning on the camera"
   },
   "calling__button--audio__label": {
-    "message": "靜音對話",
+    "message": "靜音",
     "description": "Label under the audio button"
   },
   "calling__button--audio-disabled": {
@@ -1482,7 +1490,7 @@
     "description": "Button tooltip label for turning off the microphone"
   },
   "calling__button--audio-on": {
-    "message": "麥克風關閉靜音",
+    "message": "取消麥克風靜音",
     "description": "Button tooltip label for turning on the microphone"
   },
   "calling__button--presenting__label": {
@@ -1778,10 +1786,10 @@
     "description": "Displayed in notifications for messages in a group"
   },
   "notificationReaction": {
-    "message": "$sender$回應了 $emoji$你的訊息"
+    "message": "$sender$ 對你的訊息表達了 $emoji$ 心情"
   },
   "notificationReactionMessage": {
-    "message": "$sender$ 對 $message$ 回應了 $emoji$"
+    "message": "$sender$ 表達 $emoji$ 心情的訊息：$message$"
   },
   "sendFailed": {
     "message": "傳送失敗",
@@ -1881,26 +1889,34 @@
   },
   "timestampFormat_M": {
     "message": "MMM D",
-    "description": "Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+  },
+  "timestampFormat__long--today": {
+    "message": "今天 $time$",
+    "description": "Timestamp format string for displaying \"Today\" and the time"
+  },
+  "timestampFormat__long--yesterday": {
+    "message": "昨天 $time$",
+    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "timestampFormat__long__today": {
     "message": "[今日] LT",
-    "description": "Timestamp format string for displaying \"Today\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Today\" and the time"
   },
   "timestampFormat__long__yesterday": {
     "message": "[昨日] LT",
-    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "messageBodyTooLong": {
     "message": "訊息本文太長",
     "description": "Shown if the user tries to send more than 64kb of text"
   },
   "unblockToSend": {
-    "message": "解鎖聯絡人來傳送訊息。",
+    "message": "解除封鎖此聯絡人以傳送訊息。",
     "description": "Brief message shown when trying to message a blocked number"
   },
   "unblockGroupToSend": {
-    "message": "解除此群組封鎖以傳送訊息。",
+    "message": "解除封鎖此群組以傳送訊息。",
     "description": "Brief message shown when trying to message a blocked group"
   },
   "youChangedTheTimer": {
@@ -2181,7 +2197,7 @@
     "message": "重新連結"
   },
   "autoUpdateNewVersionTitle": {
-    "message": "有可用更新"
+    "message": "Update Available"
   },
   "autoUpdateRetry": {
     "message": "再重試更新"
@@ -2580,6 +2596,18 @@
     "message": "最近使用的貼圖將在此顯示",
     "description": "Shown in the sticker picker when there are no recent stickers to show."
   },
+  "icu:stickers__StickerPicker__recent": {
+    "messageformat": "最近的",
+    "description": "Title for all of the recent stickers"
+  },
+  "icu:stickers__StickerPicker__featured": {
+    "messageformat": "精選",
+    "description": "Title for featured stickers"
+  },
+  "icu:stickers__StickerPicker__analog-time": {
+    "messageformat": "類比時間",
+    "description": "aria-label for the analog time sticker"
+  },
   "stickers--StickerPreview--Title": {
     "message": "貼圖包",
     "description": "The title that appears in the sticker pack preview modal."
@@ -2777,7 +2805,7 @@
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--toggle-reaction-picker": {
-    "message": "切換所選訊息的表情符號反應選擇器",
+    "message": "為所選訊息切換表情符號心情回應選擇器",
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--save-attachment": {
@@ -2877,7 +2905,7 @@
     "description": "Header of the keyboard shortcuts guide - calling section"
   },
   "Keyboard--toggle-audio": {
-    "message": "撥動靜音開或關",
+    "message": "切換靜音開關",
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--toggle-video": {
@@ -2947,6 +2975,18 @@
   "conversationMarkedUnread": {
     "message": "對話標記為未讀",
     "description": "A toast that shows up when user marks a conversation as unread"
+  },
+  "icu:AuthArtCreator--dialog--message": {
+    "messageformat": "你要開啟 Signal 貼圖包製作器嗎？",
+    "description": "A body of the dialog that is presented when user tries to open Signal Sticker Pack Creator from a link"
+  },
+  "icu:AuthArtCreator--dialog--confirm": {
+    "messageformat": "確認",
+    "description": "A buttle title for confirming Signal Sticker Pack Creator dialog"
+  },
+  "icu:AuthArtCreator--dialog--dismiss": {
+    "messageformat": "解除",
+    "description": "A buttle title for dismissing Signal Sticker Pack Creator dialog"
   },
   "StickerCreator--title": {
     "message": "貼圖包製作器",
@@ -3148,12 +3188,16 @@
     "message": "請在手機和桌上型電腦設定 Signal 以使用貼圖包編輯器",
     "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
   },
+  "icu:ArtCreator--Authentication--error": {
+    "messageformat": "請在手機和桌上型電腦設定 Signal 以使用貼圖包編輯器",
+    "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
+  },
   "Reactions--remove": {
-    "message": "移除回應",
+    "message": "移除心情回應",
     "describe": "Shown when you want to remove a reaction you've made"
   },
   "Reactions--error": {
-    "message": "傳送回應失敗。請再試一次。",
+    "message": "無法傳送心情回應。請再試一次。",
     "description": "Shown when a reaction fails to send"
   },
   "Reactions--more": {
@@ -3169,7 +3213,7 @@
     "description": "Shown as the message for a message request in a direct message"
   },
   "MessageRequests--message-direct-blocked": {
-    "message": "讓$name$將傳給你的訊息及分享你的名稱及照片與它們分享?你將無法接收任何訊息除非你解除封鎖他們。",
+    "message": "你是否允許 $name$ 與你通訊，並分享你的名字及相片？在解除封鎖之前，你都不會收到對方的任何訊息。",
     "description": "Shown as the message for a message request in a direct message with a blocked account"
   },
   "MessageRequests--message-group": {
@@ -3177,7 +3221,7 @@
     "description": "Shown as the message for a message request in a group"
   },
   "MessageRequests--message-group-blocked": {
-    "message": "取消封鎖此群組並與其成員分享你的名字和照片？ 除非你取消阻止它們，否則你將不會收到任何訊息。",
+    "message": "你是否要解除封鎖此群組，並與其成員分享你的名字和相片？在解除封鎖之前，你都不會收到對方的任何訊息。",
     "description": "Shown as the message for a message request in a blocked group"
   },
   "MessageRequests--block": {
@@ -3189,7 +3233,7 @@
     "description": "Shown as a button to let the user unblock a message request"
   },
   "MessageRequests--unblock-direct-confirm-title": {
-    "message": "解除封鎖$name$?",
+    "message": "要解除封鎖 $name$ 嗎？",
     "description": "Shown as a button to let the user unblock a message request"
   },
   "MessageRequests--unblock-direct-confirm-body": {
@@ -3201,23 +3245,23 @@
     "description": "Shown as the body in the confirmation modal for unblocking a group message request"
   },
   "MessageRequests--block-and-report-spam": {
-    "message": "回報為垃圾並封鎖",
+    "message": "舉報垃圾訊息並封鎖",
     "description": "Shown as a button to let the user block a message request and report spam"
   },
   "MessageRequests--block-and-report-spam-success-toast": {
-    "message": "已檢舉垃圾訊息並封鎖。",
+    "message": "已舉報垃圾訊息並封鎖。",
     "description": "Shown in a toast when you successfully block a user and report them as spam"
   },
   "MessageRequests--block-direct-confirm-title": {
-    "message": "封鎖$name$?",
+    "message": "要封鎖 $name$ 嗎？",
     "description": "Shown as the title in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-direct-confirm-body": {
-    "message": "被封鎖的人將無法給你打電話或向你傳送訊息。",
+    "message": "被封鎖的人將無法與你通話或傳送訊息。",
     "description": "Shown as the body in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-group-confirm-title": {
-    "message": "封鎖或離開$group$?",
+    "message": "要封鎖並離開 $group$ 嗎？",
     "description": "Shown as the title in the confirmation modal for blocking a group message request"
   },
   "MessageRequests--block-group-confirm-body": {
@@ -3525,11 +3569,11 @@
     "description": "Shown when the device is the default device"
   },
   "muteNotificationsTitle": {
-    "message": "將通知調整為靜音",
+    "message": "將通知設為靜音",
     "description": "Label for the mute notifications drop-down selector"
   },
   "notMuted": {
-    "message": "對話未靜音",
+    "message": "非靜音",
     "description": "Label when the conversation is not muted"
   },
   "muteHour": {
@@ -3537,7 +3581,7 @@
     "description": "Label for muting the conversation"
   },
   "muteEightHours": {
-    "message": "靜音八個小時",
+    "message": "靜音八小時",
     "description": "Label for muting the conversation"
   },
   "muteDay": {
@@ -3545,7 +3589,7 @@
     "description": "Label for muting the conversation"
   },
   "muteWeek": {
-    "message": "靜音一週",
+    "message": "靜音一星期",
     "description": "Label for muting the conversation"
   },
   "muteAlways": {
@@ -3557,11 +3601,11 @@
     "description": "Label for unmuting the conversation"
   },
   "muteExpirationLabelAlways": {
-    "message": "總是被靜音",
+    "message": "總是靜音",
     "description": "Shown in the mute notifications submenu whenever a conversation has been muted"
   },
   "muteExpirationLabel": {
-    "message": "靜音直到$duration$",
+    "message": "保持靜音，直到 $duration$",
     "description": "Shown in the mute notifications submenu whenever a conversation has been muted"
   },
   "EmojiButton__label": {
@@ -4433,7 +4477,7 @@
     "description": "This is a button in the conversation context menu to show chat settings"
   },
   "ConversationDetails__unmute--title": {
-    "message": "要解除此聊天的靜音?",
+    "message": "在此聊天中取消靜音嗎?",
     "description": "Title for the modal to unmute a chat"
   },
   "ConversationDetails--group-link": {
@@ -4513,11 +4557,11 @@
     "description": "This is the modal button to confirm leaving a group"
   },
   "ConversationDetailsActions--unblock-group-modal-title": {
-    "message": "要解鎖「$groupName$」群組嗎？",
+    "message": "要解除封鎖「$groupName$」群組嗎？",
     "description": "This is the modal title for confirming unblock of a group"
   },
   "ConversationDetailsActions--block-group-modal-title": {
-    "message": "封鎖並離開 “$groupName$” 群組嗎?",
+    "message": "封鎖並離開「$groupName$」群組嗎?",
     "description": "This is the modal title for confirming blocking a group"
   },
   "ConversationDetailsActions--block-group-modal-content": {
@@ -4585,7 +4629,7 @@
     "description": "In the conversation notifications settings, this is the label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__info": {
-    "message": "當你在靜音聊天中被提到時接收通知",
+    "message": "當靜音聊天中有人提及你時接收通知",
     "description": "In the conversation notifications settings, this is the sub-label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__select__always-notify": {
@@ -4854,11 +4898,11 @@
   },
   "TimelineDateHeader--date-in-last-6-months": {
     "message": "ddd, MMM D",
-    "description": "Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "TimelineDateHeader--date-older-than-6-months": {
     "message": "MMM D, YYYY",
-    "description": "Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "MessageRequestWarning__learn-more": {
     "message": "了解更多",
@@ -5225,7 +5269,7 @@
     "description": "Shown if something unknown has gone wrong with username save."
   },
   "icu:ProfileEditor--username--reservation-gone": {
-    "messageformat": "{username} is no longer available. A new set of digits will be paired with your username, please try saving it again.",
+    "messageformat": "{username} 不再適用。系統會用一組新的數字配對你的用戶名稱，請再儲存一次。",
     "description": "Shown if username reservation has expired and new one needs to be generated."
   },
   "ProfileEditor--username--delete-general-error": {
@@ -5430,23 +5474,75 @@
   },
   "Preferences__who-can--title": {
     "message": "誰可以...",
-    "description": "Title for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Title for the 'who can do X' setting"
   },
   "Preferences__privacy--description": {
     "message": "要變更這些設定，請在你的行動裝置上開啟 Signal 應用程式並至設定 > 隱私權",
-    "description": "Description for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Description for the 'who can do X' setting"
   },
   "Preferences__who-can--everybody": {
     "message": "每個人",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--contacts": {
     "message": "我的聯絡人",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--nobody": {
     "message": "沒有人",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
+  },
+  "icu:Preferences__pnp__row--title": {
+    "messageformat": "電話號碼",
+    "description": "Title of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__row--body": {
+    "messageformat": "選擇誰可以看到你的電話號碼，以及誰可以透過它在 Signal 上與你聯絡。",
+    "description": "Body of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__sharing--title": {
+    "messageformat": "誰可以看到我的號碼",
+    "description": "Title for the phone number sharing setting row"
+  },
+  "icu:Preferences__pnp__sharing--description--everyone": {
+    "messageformat": "與你通訊的人及群組將會看到你的電話號碼。在通訊錄中有你電話號碼的人亦可在 Signal 上看到。",
+    "description": "Description for the phone number sharing setting row when the value is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody": {
+    "messageformat": "沒有人會在 Signal 上看到你的電話號碼。",
+    "description": "Description for the phone number sharing setting row when the value is Nobody"
+  },
+  "icu:Preferences__pnp--page-title": {
+    "messageformat": "電話號碼",
+    "description": "Title of the page in Phone Number Privacy settings"
+  },
+  "icu:Preferences__pnp__sharing__everyone": {
+    "messageformat": "所有人",
+    "description": "Option for sharing phone number with everyone"
+  },
+  "icu:Preferences__pnp__sharing__nobody": {
+    "messageformat": "沒有人",
+    "description": "Option for sharing phone number with nobody"
+  },
+  "icu:Preferences__pnp__discoverability--title": {
+    "messageformat": "誰可以透過電話號碼找到我",
+    "description": "Title for the phone number discoverability setting row"
+  },
+  "icu:Preferences__pnp__discoverability--description--everyone": {
+    "messageformat": "只要對方在通訊錄內儲存了你的電話號碼，便可在 Signal 的聯絡人中看到你。其他人在開始新的聊天或群組時，則可透過你的電話號碼聯絡你。",
+    "description": "Description for the phone number discoverability setting row wth the value is everyone"
+  },
+  "icu:Preferences__pnp__discoverability--description--nobody": {
+    "messageformat": "沒有人可以在 Signal 透過你的電話號碼找到你。",
+    "description": "Description for the phone number discoverability setting row wth the value is nobody"
+  },
+  "icu:Preferences__pnp__discoverability__everyone": {
+    "messageformat": "所有人",
+    "description": "Option for letting everyone discover you by phone number"
+  },
+  "icu:Preferences__pnp__discoverability__nobody": {
+    "messageformat": "沒有人",
+    "description": "Option for letting nobody discover you by phone number"
   },
   "Preferences--messaging": {
     "message": "傳訊",
@@ -5504,6 +5600,14 @@
     "message": "更新到可用的 $version$ 版本",
     "description": "Tooltip for new update available"
   },
+  "icu:DialogUpdate__downloading": {
+    "messageformat": "Downloading Update...",
+    "description": "The title of update dialog when update download is in progress."
+  },
+  "icu:DialogUpdate__downloaded": {
+    "messageformat": "Update Downloaded",
+    "description": "The title of update dialog when update download is completed."
+  },
   "NSIS__retry-dialog--first-line": {
     "message": "Signal 無法關閉。",
     "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
@@ -5541,7 +5645,7 @@
     "description": "A button label for erasure of the crash reporter data after a recent crash and continuing to start the app"
   },
   "CustomizingPreferredReactions__title": {
-    "message": "自定義回應",
+    "message": "自訂心情回應",
     "description": "Shown in the header of the modal for customizing the preferred reactions. Also shown in the tooltip for the button that opens this modal."
   },
   "CustomizingPreferredReactions__subtitle": {
@@ -5551,6 +5655,10 @@
   "CustomizingPreferredReactions__had-save-error": {
     "message": "保存設定時出錯。 請再試一次。",
     "description": "Shown if there is an error when saving your preferred reaction settings. Should be very rare to see this message."
+  },
+  "icu:MediaEditor__clock-more-styles": {
+    "messageformat": "更多款式",
+    "description": "Action button for switching up the clock styles"
   },
   "MediaEditor__control--draw": {
     "message": "繪圖",
@@ -5809,7 +5917,7 @@
     "description": "Toast message"
   },
   "Stories__toast--sending-reaction": {
-    "message": "正在傳送反應…",
+    "message": "正在傳送心情回應…",
     "description": "Toast message"
   },
   "Stories__toast--hasNoSound": {
@@ -5885,15 +5993,15 @@
     "description": "Body of the confirmation dialog to remove someone from a custom distribution list"
   },
   "StoriesSettings__replies-reactions--title": {
-    "message": "回覆及反應",
+    "message": "回覆及心情回應",
     "description": "Title for the replies & reactions section"
   },
   "StoriesSettings__replies-reactions--label": {
-    "message": "允許回覆及反應",
+    "message": "允許回覆及心情回應",
     "description": "Checkbox label to allow or disallow replies to your stories"
   },
   "StoriesSettings__replies-reactions--description": {
-    "message": "允許看到你限時動態的人傳送心情回應和回覆內容。",
+    "message": "允許看到你限時動態的人傳送心情回應和回覆。",
     "description": "Description of checkbox to allow or disallow replies to your stories"
   },
   "StoriesSettings__delete-list": {
@@ -6121,7 +6229,7 @@
     "description": "Aria label for muting stories"
   },
   "StoryViewer__unmute": {
-    "message": "解除靜音",
+    "message": "取消靜音",
     "description": "Aria label for unmuting stories"
   },
   "StoryViewer__views-off": {
@@ -6181,11 +6289,11 @@
     "description": "Title for replies tab"
   },
   "StoryViewsNRepliesModal__react": {
-    "message": "對限時動態傳送心情回應",
+    "message": "對限時動態表達心情回應",
     "description": "(deleted 01/25/23) aria-label for reaction button"
   },
   "StoryViewsNRepliesModal__reacted": {
-    "message": "已對限時動態傳送心情回應",
+    "message": "對限時動態表達了心情回應",
     "description": "Description of someone reacting to a story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
@@ -6246,11 +6354,19 @@
   },
   "StoryCreator__error--video-too-long": {
     "message": "影片過長，因此無法發布至限時動態",
-    "description": "Error string for when a video post to story fails"
+    "description": "(deleted 02/22/2023) Error string for when a video post to story fails"
   },
   "StoryCreator__error--video-unsupported": {
     "message": "系統不支援此檔案格式，因此無法發布至限時動態",
     "description": "Error string for when a video post to story fails"
+  },
+  "icu:StoryCreator__error--video-too-long": {
+    "messageformat": "{maxDurationInSec, plural, other {由於影片超過 {maxDurationInSec,number} 秒，因此無法將影片發布至限時動態。}}",
+    "description": "Error string for when a video post to story fails because video's duration is too long"
+  },
+  "icu:StoryCreator__error--video-too-big": {
+    "messageformat": "由於影片的檔案大小超過 {limit}{units}，因此無法發布至限時動態。",
+    "description": "Error string for when a video post to story fails because video's file size is too big"
   },
   "StoryCreator__error--video-error": {
     "message": "無法載入影片",
@@ -6341,11 +6457,11 @@
     "description": "Title for replies to stories"
   },
   "Quote__story-reaction": {
-    "message": "已對 $name$ 的限時動態傳送心情回應",
+    "message": "對 $name$ 的限時動態表達了心情回應",
     "description": "Label for when a person reacts to a story"
   },
   "Quote__story-reaction--single": {
-    "message": "已對限時動態傳送心情回應",
+    "message": "對限時動態表達了心情回應",
     "description": "Used whenever we can't find a user's first name"
   },
   "Quote__story-reaction-notification--incoming": {
@@ -6389,27 +6505,27 @@
     "description": "Body of the popup with information about discriminator in username"
   },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "Set up your Signal username",
+    "messageformat": "設定你的 Signal 用戶名稱",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "Usernames are paired with a set of digits and aren’t shared on your profile",
+    "messageformat": "用戶名稱與一組數字配對，並且不會在你的個人檔案上公開",
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Each username has a unique link you can share with your friends to start a chat with you",
+    "messageformat": "每個用戶名稱都擁有獨一無二的連結，你可以與好友分享該連結以開始聊天",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "Turn off phone number discovery under Settings > Phone Number > Who can find my number, to use your username as the primary way others can contact you.",
+    "messageformat": "要關閉電話號碼搜索功能，請前往「設定」>「隱私」>「電話號碼」>「誰可以找到我的電話號碼」，以便使用你的用戶名稱作為其他人聯絡你的主要方式。",
     "description": "Content of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__learn-more": {
-    "messageformat": "Learn More",
+    "messageformat": "了解更多",
     "description": "Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Continue",
+    "messageformat": "繼續",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -6456,40 +6572,24 @@
     "message": "細微的調整、問題修復和效能改善。感謝各位使用 Signal！",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "WhatsNew__v5.63--0": {
-    "message": "努力修復問題並改善各項功能運作，讓 App 使用起來更順暢無礙。",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--0": {
+    "messageformat": "點擊任何圖片或影片，然後使用多媒體瀏覽器中新加入的「快轉」和「倒回」按鈕來回顧難忘的影像內容。",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v5.63--beta.2": {
-    "message": "開始使用和測試最新的限時動態功能。你可以與測試版的其他測試者一同使用該功能，並讓我們知道是否好用。",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--1": {
+    "messageformat": "如果你在錄製語音訊息時切換到另一個聊天，系統現在會將該語音訊息儲存為草稿。",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.0": {
-    "message": "Signal 現已推出限時動態功能！與選定的好友或群組分享自動銷毀的訊息、圖像和影片更新，這些內容會在 24 小時後自動消失。喜歡分享限時動態的你，可以透過這種方法私下分享，而無需看到任何廣告。如果你不想瀏覽或分享限時動態，可以在「偏好設定」>「隱私」關閉所有相關功能。",
-    "description": "Release notes for v6.0"
+  "icu:WhatsNew__v6.10--2": {
+    "messageformat": "現在即使發送貼圖都不會再令你的文字草稿遭到清除。{lamemakes}，謝謝你！",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.1--1": {
-    "message": "當您為小組（最多 16 人）發起群組通話時，您可以選擇發送響鈴通知。如果群組成員使用的是 iOS 測試版、桌面或 Android 裝置，他們將聽到響鈴聲。",
-    "description": "Release notes for v6.1"
+  "icu:WhatsNew__v6.10--3": {
+    "messageformat": "我們還要感謝 {norstbox} 將對話搜索欄的圖標重新對齊。",
+    "description": "Release notes for v6.10"
   },
-  "icu:WhatsNew__v6.3--0": {
-    "messageformat": "在聊天內任何一個訊息列上點按兩下，即可開始引用回覆。這猶如接通新舊想法的捷徑。全賴 {whynothugo} 和 Signal 社區積極推動此功能並提供意見。",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.3--1": {
-    "messageformat": "現在用戶只需點擊圖片以外的位置，無需放大畫面，即可輕鬆關閉圖庫檢視模式。有時候，你只希望將畫面關閉，不想將東西放得太大。感謝 {jojomatik} 協助修復此功能！",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.5--0": {
-    "messageformat": "加快您的回應時間。您現在可以點擊任何表情符號來迅速回覆限時動態。",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.5--1": {
-    "messageformat": "您現在可以在訊息紀錄中搜尋中文和日文單字。",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.6--0": {
-    "messageformat": "幫助我們測試多項語音和視訊通話的可靠性和性能改進。此測試版還包括一些錯誤修復和一些用戶介面的小更新 (查看全新的連結預覽增強功能！)。感謝您成為測試版的測試者。如果您發現任何錯誤，請在社群討論區上與我們聯絡。",
-    "description": "Release notes for v6.6"
+  "icu:WhatsNew__v6.11--0": {
+    "messageformat": "Start talking to yourself even faster with a new icon that makes the “Note to Self” chat easier to find. Thanks to {hackerbirds} on GitHub for their contribution.",
+    "description": "Release notes for v6.11"
   }
 }

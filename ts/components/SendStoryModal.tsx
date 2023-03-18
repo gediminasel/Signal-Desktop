@@ -8,6 +8,7 @@ import { SearchInput } from './SearchInput';
 import { filterAndSortConversationsByRecent } from '../util/filterAndSortConversations';
 
 import type { ConversationType } from '../state/ducks/conversations';
+import type { ConversationWithStoriesType } from '../state/selectors/conversations';
 import type { LocalizerType } from '../types/Util';
 import type { PreferredBadgeSelectorType } from '../state/selectors/badges';
 import type { PropsType as StoriesSettingsModalPropsType } from './StoriesSettingsModal';
@@ -46,7 +47,7 @@ export type PropsType = {
   distributionLists: Array<StoryDistributionListWithMembersDataType>;
   getPreferredBadge: PreferredBadgeSelectorType;
   groupConversations: Array<ConversationType>;
-  groupStories: Array<ConversationType>;
+  groupStories: Array<ConversationWithStoriesType>;
   hasFirstStoryPostExperience: boolean;
   ourConversationId: string | undefined;
   i18n: LocalizerType;
@@ -72,6 +73,7 @@ export type PropsType = {
     string,
     number
   >;
+  onMediaPlaybackStart: () => void;
 } & Pick<
   StoriesSettingsModalPropsType,
   | 'onHideMyStoriesFrom'
@@ -138,6 +140,7 @@ export function SendStoryModal({
   toggleGroupsForStorySend,
   mostRecentActiveStoryTimestampByGroupOrDistributionList,
   toggleSignalConnectionsModal,
+  onMediaPlaybackStart,
 }: PropsType): JSX.Element {
   const [page, setPage] = useState<PageType>(Page.SendStory);
 
@@ -710,6 +713,7 @@ export function SendStoryModal({
                     isMe
                     sharedGroupNames={me.sharedGroupNames}
                     size={AvatarSize.THIRTY_TWO}
+                    storyRing={undefined}
                     title={me.title}
                   />
                 ) : (
@@ -757,7 +761,7 @@ export function SendStoryModal({
       );
     };
 
-    const renderGroup = (group: ConversationType) => {
+    const renderGroup = (group: ConversationWithStoriesType) => {
       return (
         <Checkbox
           checked={selectedGroupIds.has(group.id)}
@@ -824,6 +828,7 @@ export function SendStoryModal({
                   isMe={false}
                   sharedGroupNames={[]}
                   size={AvatarSize.THIRTY_TWO}
+                  storyRing={group.hasStories}
                   title={group.title}
                 />
 
@@ -875,6 +880,7 @@ export function SendStoryModal({
             label="label"
             moduleClassName="SendStoryModal__story"
             attachment={attachment}
+            onMediaPlaybackStart={onMediaPlaybackStart}
           />
         </div>
         <div className="SendStoryModal__top-bar">

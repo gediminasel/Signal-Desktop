@@ -52,6 +52,14 @@
     "message": "$contact$ wird hinzugefügt …",
     "description": "Shown in toast while a user is being added to a group"
   },
+  "icu:RecordingComposer__cancel": {
+    "messageformat": "Abbrechen",
+    "description": "Label of cancel button on voice note recording UI"
+  },
+  "icu:RecordingComposer__send": {
+    "messageformat": "Senden",
+    "description": "Label of send button on voice note recording UI"
+  },
   "GroupListItem__message-default": {
     "message": "$count$ Mitglieder",
     "description": "Shown below the group name when selecting a group to invite a contact to"
@@ -1191,7 +1199,7 @@
     "description": "Shown on the drop-down menu for an individual message, but only if it is an outgoing message that failed to send"
   },
   "retryDeleteForEveryone": {
-    "message": "»Für jeden löschen« erneut versuchen",
+    "message": "»Für alle löschen« erneut versuchen",
     "description": "Shown on the drop-down menu for an individual message, but only if a previous delete for everyone failed to send"
   },
   "forwardMessage": {
@@ -1203,7 +1211,7 @@
     "description": "Shown on the drop-down menu for an individual message, deletes single message"
   },
   "deleteMessageForEveryone": {
-    "message": "Nachricht für jeden löschen",
+    "message": "Nachricht für alle löschen",
     "description": "Shown on the drop-down menu for an individual message, deletes single message for everyone"
   },
   "deleteMessages": {
@@ -1470,7 +1478,7 @@
     "description": "Button tooltip label for turning on the camera"
   },
   "calling__button--audio__label": {
-    "message": "Stumm​­schalten",
+    "message": "Stummschalten",
     "description": "Label under the audio button"
   },
   "calling__button--audio-disabled": {
@@ -1881,15 +1889,23 @@
   },
   "timestampFormat_M": {
     "message": "D. MMM",
-    "description": "Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+  },
+  "timestampFormat__long--today": {
+    "message": "Heute, $time$",
+    "description": "Timestamp format string for displaying \"Today\" and the time"
+  },
+  "timestampFormat__long--yesterday": {
+    "message": "Gestern, $time$",
+    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "timestampFormat__long__today": {
     "message": "[Heute] LT",
-    "description": "Timestamp format string for displaying \"Today\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Today\" and the time"
   },
   "timestampFormat__long__yesterday": {
     "message": "[Gestern] LT",
-    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "messageBodyTooLong": {
     "message": "Nachricht ist zu lang.",
@@ -2181,7 +2197,7 @@
     "message": "Erneut koppeln"
   },
   "autoUpdateNewVersionTitle": {
-    "message": "Aktualisierung verfügbar"
+    "message": "Update Available"
   },
   "autoUpdateRetry": {
     "message": "Versuche die Aktualisierung erneut"
@@ -2580,6 +2596,18 @@
     "message": "Hier werden die zuletzt verwendeten Sticker angezeigt.",
     "description": "Shown in the sticker picker when there are no recent stickers to show."
   },
+  "icu:stickers__StickerPicker__recent": {
+    "messageformat": "Letzte Anrufe",
+    "description": "Title for all of the recent stickers"
+  },
+  "icu:stickers__StickerPicker__featured": {
+    "messageformat": "Ausgewählt",
+    "description": "Title for featured stickers"
+  },
+  "icu:stickers__StickerPicker__analog-time": {
+    "messageformat": "Analoge Uhrzeit",
+    "description": "aria-label for the analog time sticker"
+  },
   "stickers--StickerPreview--Title": {
     "message": "Sticker-Set",
     "description": "The title that appears in the sticker pack preview modal."
@@ -2948,6 +2976,18 @@
     "message": "Unterhaltung als ungelesen markiert",
     "description": "A toast that shows up when user marks a conversation as unread"
   },
+  "icu:AuthArtCreator--dialog--message": {
+    "messageformat": "Möchtest du den Signal Sticker-Set-Creator öffnen?",
+    "description": "A body of the dialog that is presented when user tries to open Signal Sticker Pack Creator from a link"
+  },
+  "icu:AuthArtCreator--dialog--confirm": {
+    "messageformat": "Bestätigen",
+    "description": "A buttle title for confirming Signal Sticker Pack Creator dialog"
+  },
+  "icu:AuthArtCreator--dialog--dismiss": {
+    "messageformat": "Verwerfen",
+    "description": "A buttle title for dismissing Signal Sticker Pack Creator dialog"
+  },
   "StickerCreator--title": {
     "message": "Sticker-Set-Gestalter",
     "description": "The title of the Sticker Pack Creator window"
@@ -3148,6 +3188,10 @@
     "message": "Bitte richte Signal auf deinem Mobiltelefon und deinem Computer ein, um den Sticker-Set-Gestalter zu verwenden",
     "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
   },
+  "icu:ArtCreator--Authentication--error": {
+    "messageformat": "Bitte richte Signal auf deinem Mobiltelefon und deinem Computer ein, um den Sticker-Set-Creator zu verwenden",
+    "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
+  },
   "Reactions--remove": {
     "message": "Reaktion entfernen",
     "describe": "Shown when you want to remove a reaction you've made"
@@ -3169,7 +3213,7 @@
     "description": "Shown as the message for a message request in a direct message"
   },
   "MessageRequests--message-direct-blocked": {
-    "message": "Darf $name$ dir Nachrichten schreiben und deinen Namen und dein Foto sehen? Du wirst keine Nachrichten erhalten, bis du die Unterhaltung freigibst.",
+    "message": "Darf $name$ dir Nachrichten schreiben und deinen Namen und dein Foto sehen? Du wirst keine Nachrichten erhalten, es sei denn, du erteilst eine Freigabe.",
     "description": "Shown as the message for a message request in a direct message with a blocked account"
   },
   "MessageRequests--message-group": {
@@ -3177,7 +3221,7 @@
     "description": "Shown as the message for a message request in a group"
   },
   "MessageRequests--message-group-blocked": {
-    "message": "Möchtest du diese Gruppe freigeben und deinen Namen und dein Foto mit deren Mitgliedern teilen? Du wirst keine Nachrichten erhalten, bis du die Gruppe freigibst.",
+    "message": "Möchtest du diese Gruppe freigeben und deinen Namen und dein Foto mit deren Mitgliedern teilen? Du wirst keine Nachrichten erhalten, es sei denn, du erteilst eine Freigabe.",
     "description": "Shown as the message for a message request in a blocked group"
   },
   "MessageRequests--block": {
@@ -4393,7 +4437,7 @@
     "description": "Displayed while checking if the contact is SMS-only"
   },
   "countMutedConversationsDescription": {
-    "message": "Stummgeschaltete Unterhaltungen im Emblem mitzählen",
+    "message": "Stummgeschaltete Unterhaltungen im Abzeichen mitzählen",
     "description": "Description for counting muted conversations in badge setting"
   },
   "ContactModal--message": {
@@ -4513,7 +4557,7 @@
     "description": "This is the modal button to confirm leaving a group"
   },
   "ConversationDetailsActions--unblock-group-modal-title": {
-    "message": "Blockierung für Gruppe „$groupName$“ aufheben?",
+    "message": "Blockierung für Gruppe »$groupName$« aufheben?",
     "description": "This is the modal title for confirming unblock of a group"
   },
   "ConversationDetailsActions--block-group-modal-title": {
@@ -4854,11 +4898,11 @@
   },
   "TimelineDateHeader--date-in-last-6-months": {
     "message": "ddd, D. MMM",
-    "description": "Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "TimelineDateHeader--date-older-than-6-months": {
     "message": "D MMM YY",
-    "description": "Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "MessageRequestWarning__learn-more": {
     "message": "Mehr erfahren",
@@ -5225,7 +5269,7 @@
     "description": "Shown if something unknown has gone wrong with username save."
   },
   "icu:ProfileEditor--username--reservation-gone": {
-    "messageformat": "{username} is no longer available. A new set of digits will be paired with your username, please try saving it again.",
+    "messageformat": "{username} nicht mehr verfügbar. Mit deinem Nutzernamen wird eine neue Ziffernfolge gekoppelt, bitte versuche erneut, ihn zu speichern.",
     "description": "Shown if username reservation has expired and new one needs to be generated."
   },
   "ProfileEditor--username--delete-general-error": {
@@ -5430,23 +5474,75 @@
   },
   "Preferences__who-can--title": {
     "message": "Wer kann …",
-    "description": "Title for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Title for the 'who can do X' setting"
   },
   "Preferences__privacy--description": {
     "message": "Um diese Einstellung zu ändern, öffne die Signal-App auf deinem Mobilgerät und gehe dort zu »Einstellungen« → »Datenschutz«",
-    "description": "Description for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Description for the 'who can do X' setting"
   },
   "Preferences__who-can--everybody": {
     "message": "Jeder",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--contacts": {
     "message": "Meine Kontakte",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--nobody": {
     "message": "Niemand",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
+  },
+  "icu:Preferences__pnp__row--title": {
+    "messageformat": "Rufnummer",
+    "description": "Title of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__row--body": {
+    "messageformat": "Lege fest, wer deine Rufnummer sehen kann und wer dich auf Signal mit ihr kontaktieren kann.",
+    "description": "Body of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__sharing--title": {
+    "messageformat": "Wer meine Rufnummer sehen kann",
+    "description": "Title for the phone number sharing setting row"
+  },
+  "icu:Preferences__pnp__sharing--description--everyone": {
+    "messageformat": "Deine Rufnummer ist sichtbar für alle Personen und Gruppen, mit denen du dich unterhälst. Personen, die deine Rufnummer in ihren Telefonkontakten gespeichert haben, sehen diese auch in Signal.",
+    "description": "Description for the phone number sharing setting row when the value is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody": {
+    "messageformat": "Niemand wird deine Rufnummer in Signal sehen.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody"
+  },
+  "icu:Preferences__pnp--page-title": {
+    "messageformat": "Rufnummer",
+    "description": "Title of the page in Phone Number Privacy settings"
+  },
+  "icu:Preferences__pnp__sharing__everyone": {
+    "messageformat": "Alle",
+    "description": "Option for sharing phone number with everyone"
+  },
+  "icu:Preferences__pnp__sharing__nobody": {
+    "messageformat": "Niemand",
+    "description": "Option for sharing phone number with nobody"
+  },
+  "icu:Preferences__pnp__discoverability--title": {
+    "messageformat": "Wer mich anhand der Rufnummer finden kann",
+    "description": "Title for the phone number discoverability setting row"
+  },
+  "icu:Preferences__pnp__discoverability--description--everyone": {
+    "messageformat": "All diejenigen, die deine Telefonnummer in ihren Kontakten haben, sehen dich als Kontakt auf Signal. Andere können dich mit deiner Rufnummer erreichen, wenn sie eine neue Unterhaltung oder Gruppe starten.",
+    "description": "Description for the phone number discoverability setting row wth the value is everyone"
+  },
+  "icu:Preferences__pnp__discoverability--description--nobody": {
+    "messageformat": "Niemand auf Signal wird dich anhand deiner Rufnummer finden können.",
+    "description": "Description for the phone number discoverability setting row wth the value is nobody"
+  },
+  "icu:Preferences__pnp__discoverability__everyone": {
+    "messageformat": "Alle",
+    "description": "Option for letting everyone discover you by phone number"
+  },
+  "icu:Preferences__pnp__discoverability__nobody": {
+    "messageformat": "Niemand",
+    "description": "Option for letting nobody discover you by phone number"
   },
   "Preferences--messaging": {
     "message": "Nachrichtenübermittlung",
@@ -5504,6 +5600,14 @@
     "message": "Aktualisierung auf Version $version$ verfügbar",
     "description": "Tooltip for new update available"
   },
+  "icu:DialogUpdate__downloading": {
+    "messageformat": "Downloading Update...",
+    "description": "The title of update dialog when update download is in progress."
+  },
+  "icu:DialogUpdate__downloaded": {
+    "messageformat": "Update Downloaded",
+    "description": "The title of update dialog when update download is completed."
+  },
   "NSIS__retry-dialog--first-line": {
     "message": "Signal kann nicht geschlossen werden.",
     "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
@@ -5551,6 +5655,10 @@
   "CustomizingPreferredReactions__had-save-error": {
     "message": "Beim Speichern deiner Einstellungen ist ein Fehler aufgetreten. Versuche es bitte erneut.",
     "description": "Shown if there is an error when saving your preferred reaction settings. Should be very rare to see this message."
+  },
+  "icu:MediaEditor__clock-more-styles": {
+    "messageformat": "Weitere Designs",
+    "description": "Action button for switching up the clock styles"
   },
   "MediaEditor__control--draw": {
     "message": "Zeichnen",
@@ -5685,7 +5793,7 @@
     "description": "Number of replies your story has"
   },
   "MyStories__delete": {
-    "message": "Diese Story löschen? Sie wird auch für jeden gelöscht, der sie erhalten hat.",
+    "message": "Diese Story löschen? Sie wird auch für alle gelöscht, die sie erhalten haben.",
     "description": "Confirmation dialog description text for deleting a story"
   },
   "icu:payment-event-notification-message-you-label": {
@@ -6117,11 +6225,11 @@
     "description": "Button label to reply to a group story"
   },
   "StoryViewer__mute": {
-    "message": "Stumm­schalten",
+    "message": "Stummschalten",
     "description": "Aria label for muting stories"
   },
   "StoryViewer__unmute": {
-    "message": "Stumm­schaltung aufheben",
+    "message": "Stummschaltung aufheben",
     "description": "Aria label for unmuting stories"
   },
   "StoryViewer__views-off": {
@@ -6185,7 +6293,7 @@
     "description": "(deleted 01/25/23) aria-label for reaction button"
   },
   "StoryViewsNRepliesModal__reacted": {
-    "message": "Auf Story reagiert",
+    "message": "Hat auf Story reagiert",
     "description": "Description of someone reacting to a story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
@@ -6197,7 +6305,7 @@
     "description": "Shown as a menu item in the context menu of a story reply, to the author of the reply, for deleting the reply just for the author"
   },
   "icu:StoryViewsNRepliesModal__delete-reply-for-everyone": {
-    "messageformat": "Für jeden löschen",
+    "messageformat": "Für alle löschen",
     "description": "Shown as a menu item in the context menu of a story reply, to the author of the reply, for deleting the reply for everyone"
   },
   "icu:StoryViewsNRepliesModal__copy-reply-timestamp": {
@@ -6246,11 +6354,19 @@
   },
   "StoryCreator__error--video-too-long": {
     "message": "Kann das Video nicht in der Story posten, weil es zu lang ist",
-    "description": "Error string for when a video post to story fails"
+    "description": "(deleted 02/22/2023) Error string for when a video post to story fails"
   },
   "StoryCreator__error--video-unsupported": {
     "message": "Kann das Video nicht in der Story posten, weil es ein nicht unterstütztes Dateiformat ist",
     "description": "Error string for when a video post to story fails"
+  },
+  "icu:StoryCreator__error--video-too-long": {
+    "messageformat": "{maxDurationInSec, plural, one {Das Video kann nicht in Story gepostet werden, weil es länger als 1 Sekunde ist.} other {Das Video kann nicht in Story gepostet werden, weil es länger als {maxDurationInSec,number} Sekunden ist.}}",
+    "description": "Error string for when a video post to story fails because video's duration is too long"
+  },
+  "icu:StoryCreator__error--video-too-big": {
+    "messageformat": "Das Video kann nicht in Story gepostet werden, weil es größer als {limit} {units} ist.",
+    "description": "Error string for when a video post to story fails because video's file size is too big"
   },
   "StoryCreator__error--video-error": {
     "message": "Video kann nicht geladen werden",
@@ -6341,15 +6457,15 @@
     "description": "Title for replies to stories"
   },
   "Quote__story-reaction": {
-    "message": "Auf eine Story von $name$ reagiert",
+    "message": "Hat auf eine Story von $name$ reagiert",
     "description": "Label for when a person reacts to a story"
   },
   "Quote__story-reaction--single": {
-    "message": "Auf eine Story reagiert",
+    "message": "Hat auf eine Story reagiert",
     "description": "Used whenever we can't find a user's first name"
   },
   "Quote__story-reaction-notification--incoming": {
-    "message": "$emoji$ haben auf deine Story reagiert",
+    "message": "Hat mit $emoji$ auf deine Story reagiert",
     "description": "Notification test for incoming story reactions"
   },
   "Quote__story-reaction-notification--outgoing": {
@@ -6389,27 +6505,27 @@
     "description": "Body of the popup with information about discriminator in username"
   },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "Set up your Signal username",
+    "messageformat": "Richte deinen Signal-Nutzernamen ein",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "Usernames are paired with a set of digits and aren’t shared on your profile",
+    "messageformat": "Nutzernamen sind mit einer Reihe an Ziffern gekoppelt und werden auf deinem Profil nicht angezeigt",
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Each username has a unique link you can share with your friends to start a chat with you",
+    "messageformat": "Jeder Nutzername hat einen einzigartigen Link, den du mit Freunden teilen kannst, um einen Chat mit dir zu beginnen",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "Turn off phone number discovery under Settings > Phone Number > Who can find my number, to use your username as the primary way others can contact you.",
+    "messageformat": "Deaktiviere die Rufnummernerkennung unter Einstellungen > Datenschutz > Rufnummer > Wer kann meine Nummer finden, um deinen Nutzernamen als primäre Methode festzulegen, über die dich andere kontaktieren können.",
     "description": "Content of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__learn-more": {
-    "messageformat": "Learn More",
+    "messageformat": "Mehr erfahren",
     "description": "Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Continue",
+    "messageformat": "Fortfahren",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -6456,40 +6572,24 @@
     "message": "Kleine Optimierungen, Fehlerbehebungen und Leistungsverbesserungen. Danke, dass du Signal nutzt!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "WhatsNew__v5.63--0": {
-    "message": "Wir arbeiten hart daran, Fehler zu beheben und andere Leistungsverbesserungen vorzunehmen, damit die App für dich reibungslos läuft.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--0": {
+    "messageformat": "Klicke auf ein beliebiges Bild oder Video und benutze die neuen Schaltflächen »Vor« und »Zurück« im Medienbetrachter, um eine visuelle Reise in die Vergangenheit zu unternehmen.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v5.63--beta.2": {
-    "message": "Nutze und teste unsere neue Story-Funktion. Du kannst die Funktion mit anderen Beta-Testern nutzen und uns mitteilen, wie sie sich bewährt.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--1": {
+    "messageformat": "Sprachnachrichten werden jetzt als Entwürfe gespeichert, wenn du zu einer anderen Unterhaltung wechselst, während eine Aufnahme läuft.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.0": {
-    "message": "Jetzt gibt es Storys bei Signal! Teile Nachrichten, Bilder und Video-Updates, die nach 24 Stunden automatisch verschwinden, mit Freunden oder Gruppen. Für alle, die gerne Storys teilen, gibt es hier eine Möglichkeit, dies privat und ohne Werbung zu tun. Wenn du keine Storys sehen oder teilen möchtest, kannst du dies unter Einstellungen > Datenschutz deaktivieren.",
-    "description": "Release notes for v6.0"
+  "icu:WhatsNew__v6.10--2": {
+    "messageformat": "Das Senden eines Stickers führt nicht mehr dazu, dass der Textentwurf gelöscht wird. Danke, {lamemakes}!",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.1--1": {
-    "message": "Wenn du einen Gruppenanruf für kleine Gruppen (bis zu 16 Personen) startest, kannst du wählen, ob du eine Klingelbenachrichtigung senden möchtest. Die Gruppenmitglieder hören ein Klingeln, wenn sie auf iOS Beta sind bzw. wenn sie Desktop oder Android nutzen.",
-    "description": "Release notes for v6.1"
+  "icu:WhatsNew__v6.10--3": {
+    "messageformat": "Wir möchten uns auch bei {norstbox} für die Anpassung der Symbole in der Unterhaltungssuche bedanken.",
+    "description": "Release notes for v6.10"
   },
-  "icu:WhatsNew__v6.3--0": {
-    "messageformat": "Klicke zweimal auf eine beliebige Nachrichtenzeile in einer Unterhaltung, um eine zitierte Antwort zu erstellen. Das ist wie eine Abkürzung für neue Gedanken zu alten Ideen. Danke an {whynothugo} und die Signal-Community für die Implementierung dieser Funktion und das Feedback.",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.3--1": {
-    "messageformat": "Jetzt ist es einfacher, die Galerie-Ansicht durch Klicken außerhalb eines Bildes zu schließen, ohne hineinzuzoomen. Manchmal wolltest du einfach nur abschalten, aber stattdessen kamen dir die Dinge zu nahe. Danke an {jojomatik} für den Lösungsvorschlag!",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.5--0": {
-    "messageformat": "Verkürze deine Antwortzeit. Jetzt kannst du noch schneller reagieren, indem du auf ein beliebiges Emoji klickst, um auf eine Story zu antworten.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.5--1": {
-    "messageformat": "Es ist jetzt möglich, deinen Nachrichtenverlauf nach einzelnen Zeichen auf Chinesisch und Japanisch zu durchsuchen.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.6--0": {
-    "messageformat": "Hilf uns, verschiedene Verbesserungen hinsichtlich Zuverlässigkeit und Leistung bei Sprach- und Videoanrufen zu testen. Diese Beta-Version enthält außerdem einige Fehlerkorrekturen und kleine UI-Updates (achte auf die verbesserte Link-Vorschau!). Vielen Dank, dass du als Beta-Tester/in mitmachst. Bitte melde dich im Community-Forum, falls du irgendwelche Fehler entdeckst.",
-    "description": "Release notes for v6.6"
+  "icu:WhatsNew__v6.11--0": {
+    "messageformat": "Start talking to yourself even faster with a new icon that makes the “Note to Self” chat easier to find. Thanks to {hackerbirds} on GitHub for their contribution.",
+    "description": "Release notes for v6.11"
   }
 }

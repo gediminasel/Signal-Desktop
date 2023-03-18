@@ -136,15 +136,16 @@ import { UUIDKind } from '../../types/UUID';
 import { removeLinkPreview } from '../../services/LinkPreview';
 import type {
   ReplaceAttachmentsActionType,
+  ResetComposerActionType,
   SetFocusActionType,
   SetQuotedMessageActionType,
-  ResetComposerActionType,
 } from './composer';
 import {
   replaceAttachments,
   setComposerFocus,
   setQuoteByMessageId,
   resetComposer,
+  handleLeaveConversation,
 } from './composer';
 import { ReceiptType } from '../../types/Receipt';
 
@@ -2446,6 +2447,7 @@ function messageChanged(
     },
   };
 }
+
 function messageDeleted(
   id: string,
   conversationId: string
@@ -2458,6 +2460,7 @@ function messageDeleted(
     },
   };
 }
+
 function messageExpanded(
   id: string,
   displayLimit: number
@@ -2478,6 +2481,7 @@ function messageExpired(id: string): MessageExpiredActionType {
     },
   };
 }
+
 function messagesAdded({
   conversationId,
   isActive,
@@ -3512,7 +3516,7 @@ export type ShowConversationType = ReadonlyDeep<
   (options: ShowConversationArgsType) => unknown
 >;
 
-function showConversation({
+export function showConversation({
   conversationId,
   messageId,
   switchToAssociatedView,
@@ -3531,6 +3535,12 @@ function showConversation({
       }
 
       return;
+    }
+
+    // notify composer in case we need to stop recording a voice note
+    if (conversations.selectedConversationId) {
+      log.error('conversations - handleLeave');
+      dispatch(handleLeaveConversation(conversations.selectedConversationId));
     }
 
     dispatch({

@@ -52,6 +52,14 @@
     "message": "$contact$ ને ઉમેરી રહ્યાં છીએ...",
     "description": "Shown in toast while a user is being added to a group"
   },
+  "icu:RecordingComposer__cancel": {
+    "messageformat": "રદ કરો",
+    "description": "Label of cancel button on voice note recording UI"
+  },
+  "icu:RecordingComposer__send": {
+    "messageformat": "મોકલો",
+    "description": "Label of send button on voice note recording UI"
+  },
   "GroupListItem__message-default": {
     "message": "$count$ મેમ્બર્સ",
     "description": "Shown below the group name when selecting a group to invite a contact to"
@@ -931,7 +939,7 @@
     "description": "Shown in a message's triple-dot menu if there isn't room for a dedicated download button"
   },
   "reactToMessage": {
-    "message": "મેસેજ પર પ્રતિક્રિયા",
+    "message": "મેસેજ પર પ્રતિક્રિયા આપો",
     "description": "Shown in triple-dot menu next to message to allow user to react to the associated message"
   },
   "replyToMessage": {
@@ -1039,11 +1047,11 @@
     "description": "Shown as the title of our update error dialogs on windows"
   },
   "muted": {
-    "message": "મ્યુટ કરેલ છે",
+    "message": "મ્યૂટ કર્યા",
     "description": "Shown in a button when a conversation is muted"
   },
   "mute": {
-    "message": "મ્યુટ",
+    "message": "મ્યૂટ કરો",
     "description": "Shown in a button when a conversation is unmuted and can be muted"
   },
   "cannotUpdateDetail": {
@@ -1251,11 +1259,11 @@
     "description": "Shown on explainer dialog available from delivery issue timeline events"
   },
   "DeliveryIssue--summary": {
-    "message": "$sender$ તરફથી તમને મેસેજ, સ્ટીકર, રિએક્શન, રીસીપ્ટ અથવા મીડિયા પહોંચાડી શકાયું નથી. તેઓએ તેને સીધા તમને અથવા ગ્રુપ માં મોકલવાનો પ્રયત્ન કર્યો હશે.",
+    "message": "$sender$ તરફથી તમને મેસેજ, સ્ટિકર, પ્રતિક્રિયા, વાંચી લીધાનું નિશાન અથવા મીડિયા મોકલી શકાયું નથી. તેઓએ તેને સીધા તમને અથવા ગ્રૂપમાં મોકલવાનો પ્રયત્ન કર્યો હશે.",
     "description": "Shown on explainer dialog available from delivery issue timeline events in 1:1 conversations"
   },
   "DeliveryIssue--summary--group": {
-    "message": "આ ચેટ માં $sender$ તરફથી તમને મેસેજ, સ્ટીકર, રિએકશન, રીડ રસીદ અથવા મીડિયા પહોંચાડી શકાયું નથી.",
+    "message": "આ ચેટમાં $sender$ તરફથી તમને મેસેજ, સ્ટિકર, પ્રતિક્રિયા, વાંચ્યાની રસીદ અથવા મીડિયા ડિલિવર થઈ શકશે નહીં.",
     "description": "Shown on explainer dialog available from delivery issue timeline events in groups"
   },
   "ChangeNumber--notification": {
@@ -1470,7 +1478,7 @@
     "description": "Button tooltip label for turning on the camera"
   },
   "calling__button--audio__label": {
-    "message": "મ્યુટ",
+    "message": "મ્યૂટ કરો",
     "description": "Label under the audio button"
   },
   "calling__button--audio-disabled": {
@@ -1590,7 +1598,7 @@
     "description": "Shown in the participants list to describe how many people are in the call"
   },
   "calling__you-have-blocked": {
-    "message": "તમે $name$ અવરોધિત કર્યું છે",
+    "message": "તમે $name$ને બ્લૉક કર્યા છે",
     "description": "when you block someone and cannot view their video"
   },
   "calling__block-info": {
@@ -1778,10 +1786,10 @@
     "description": "Displayed in notifications for messages in a group"
   },
   "notificationReaction": {
-    "message": "તમારા મેસેજ પર $sender$ પ્રતિક્રિયા $emoji$"
+    "message": "$sender$ એ તમારા મેસેજ પર $emoji$ પ્રતિક્રિયા આપી"
   },
   "notificationReactionMessage": {
-    "message": "$sender$ એ $emoji$ ને પ્રતિક્રિયા આપી: $message$"
+    "message": "$sender$ એ $message$માં $emoji$ પ્રતિક્રિયા આપી"
   },
   "sendFailed": {
     "message": "મોકલવામાં નિષ્ફળ",
@@ -1881,15 +1889,23 @@
   },
   "timestampFormat_M": {
     "message": "MMM D",
-    "description": "Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+  },
+  "timestampFormat__long--today": {
+    "message": "આજે $time$ વાગ્યે",
+    "description": "Timestamp format string for displaying \"Today\" and the time"
+  },
+  "timestampFormat__long--yesterday": {
+    "message": "ગઈકાલે $time$ વાગ્યે",
+    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "timestampFormat__long__today": {
     "message": "[Today] LT",
-    "description": "Timestamp format string for displaying \"Today\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Today\" and the time"
   },
   "timestampFormat__long__yesterday": {
     "message": "[Yesterday] LT",
-    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "messageBodyTooLong": {
     "message": "મેસેજનો મુખ્ય ભાગ ખૂબ લાંબો છે.",
@@ -1900,7 +1916,7 @@
     "description": "Brief message shown when trying to message a blocked number"
   },
   "unblockGroupToSend": {
-    "message": "મેસેજ મોકલવા માટે આ ગ્રુપને અનબ્લૉક કરો.",
+    "message": "મેસેજ મોકલવા માટે આ ગ્રૂપને અનબ્લૉક કરો.",
     "description": "Brief message shown when trying to message a blocked group"
   },
   "youChangedTheTimer": {
@@ -2020,7 +2036,7 @@
     "description": "Label text for system theme"
   },
   "noteToSelf": {
-    "message": "પોતાના માટે નોટ",
+    "message": "પોતાના માટે નોંધ",
     "description": "Name for the conversation with your own phone number"
   },
   "noteToSelfHero": {
@@ -2181,7 +2197,7 @@
     "message": "ફરીથી લિંક કરો"
   },
   "autoUpdateNewVersionTitle": {
-    "message": "અપડેટ ઉપલબ્ધ છે"
+    "message": "Update Available"
   },
   "autoUpdateRetry": {
     "message": "અપડેટ કરવાનો ફરી પ્રયાસ કરો"
@@ -2580,6 +2596,18 @@
     "message": "કોઈ સ્ટીકર પેક મળ્યાં નથી",
     "description": "Shown in the sticker picker when there are no recent stickers to show."
   },
+  "icu:stickers__StickerPicker__recent": {
+    "messageformat": "તાજેતરનું",
+    "description": "Title for all of the recent stickers"
+  },
+  "icu:stickers__StickerPicker__featured": {
+    "messageformat": "ફીચર્ડ",
+    "description": "Title for featured stickers"
+  },
+  "icu:stickers__StickerPicker__analog-time": {
+    "messageformat": "એનાલોગ સમય",
+    "description": "aria-label for the analog time sticker"
+  },
   "stickers--StickerPreview--Title": {
     "message": "સ્ટીકર પેક",
     "description": "The title that appears in the sticker pack preview modal."
@@ -2777,7 +2805,7 @@
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--toggle-reaction-picker": {
-    "message": "પસંદ કરેલા મેસેજ માટે ઈમોજી-રિએક્શન પીકરને ટોગલ કરો",
+    "message": "પસંદ કરેલા મેસેજ માટે ઇમોજી-પ્રતિક્રિયા પીકરને ટોગલ કરો",
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--save-attachment": {
@@ -2877,7 +2905,7 @@
     "description": "Header of the keyboard shortcuts guide - calling section"
   },
   "Keyboard--toggle-audio": {
-    "message": "ટોગલ મ્યૂટ ચાલુ અને બંધ કરો",
+    "message": "મ્યૂટને ચાલુ અને બંધ કરવું",
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--toggle-video": {
@@ -2947,6 +2975,18 @@
   "conversationMarkedUnread": {
     "message": "વાતચીત ન વંચાયેલ તરીકે ચિહ્નિત કરી",
     "description": "A toast that shows up when user marks a conversation as unread"
+  },
+  "icu:AuthArtCreator--dialog--message": {
+    "messageformat": "શું તમે Signal સ્ટિકર પેક ક્રિએટર ખોલવા માગો છો?",
+    "description": "A body of the dialog that is presented when user tries to open Signal Sticker Pack Creator from a link"
+  },
+  "icu:AuthArtCreator--dialog--confirm": {
+    "messageformat": "કન્ફર્મ કરો",
+    "description": "A buttle title for confirming Signal Sticker Pack Creator dialog"
+  },
+  "icu:AuthArtCreator--dialog--dismiss": {
+    "messageformat": "કાઢી નાખો",
+    "description": "A buttle title for dismissing Signal Sticker Pack Creator dialog"
   },
   "StickerCreator--title": {
     "message": "સ્ટીકર પેક સર્જક",
@@ -3148,12 +3188,16 @@
     "message": "સ્ટીકર પેક સર્જકનો ઉપયોગ કરવા માટે કૃપા કરીને તમારા ફોન અને ડેસ્કટોપ પર Signal સેટ કરો",
     "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
   },
+  "icu:ArtCreator--Authentication--error": {
+    "messageformat": "સ્ટીકર પેક સર્જકનો ઉપયોગ કરવા માટે કૃપા કરીને તમારા ફોન અને ડેસ્કટોપ પર Signal સેટ કરો",
+    "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
+  },
   "Reactions--remove": {
     "message": "પ્રતિક્રિયા દૂર કરો",
     "describe": "Shown when you want to remove a reaction you've made"
   },
   "Reactions--error": {
-    "message": "પ્રતિક્રિયા મોકલવામાં નિષ્ફળ. મેહરબાની કરીને ફરીથી પ્રયાસ કરો.",
+    "message": "પ્રતિક્રિયા મોકલવામાં નિષ્ફળ. કૃપા કરીને ફરીથી પ્રયાસ કરો.",
     "description": "Shown when a reaction fails to send"
   },
   "Reactions--more": {
@@ -3169,7 +3213,7 @@
     "description": "Shown as the message for a message request in a direct message"
   },
   "MessageRequests--message-direct-blocked": {
-    "message": "$name$ ને તમને મેસેજ આપવા દો અને તમારું નામ અને ફોટો તેમની સાથે શેર કરો? જ્યાં સુધી તમે તેને અનબ્લોક નહીં કરો ત્યાં સુધી તમને કોઈ મેસેજ પ્રાપ્ત થશે નહીં.",
+    "message": "$name$ને તમને મેસેજ કરવા અને તેમની સાથે તમારું નામ અને ફોટો શેર કરવા દેવા છે? જ્યાં સુધી તમે તેમને અનબ્લૉક નહીં કરો ત્યાં સુધી તમને કોઈ મેસેજ પ્રાપ્ત થશે નહીં.",
     "description": "Shown as the message for a message request in a direct message with a blocked account"
   },
   "MessageRequests--message-group": {
@@ -3177,7 +3221,7 @@
     "description": "Shown as the message for a message request in a group"
   },
   "MessageRequests--message-group-blocked": {
-    "message": "આ અને ગ્રુપના સભ્યો સાથે તમારું નામ અને ફોટો શેર કરવા છે અને તેને અનબ્લોક કરવું છે? જ્યાં સુધી તમે તેમને અનબ્લોક નહીં કરો ત્યાં સુધી તમને કોઈ મેસેજ પ્રાપ્ત થશે નહીં.",
+    "message": "આ ગ્રૂપને અનબ્લૉક કરી અને તેના સભ્યો સાથે તમારું નામ અને ફોટો શેર કરવા છે? તમે તેમને અનબ્લૉક નહીં કરો ત્યાં સુધી તમને કોઈ મેસેજ પ્રાપ્ત થશે નહીં.",
     "description": "Shown as the message for a message request in a blocked group"
   },
   "MessageRequests--block": {
@@ -3185,7 +3229,7 @@
     "description": "Shown as a button to let the user block a message request"
   },
   "MessageRequests--unblock": {
-    "message": "અનબ્લોક કરો",
+    "message": "અનબ્લૉક કરો",
     "description": "Shown as a button to let the user unblock a message request"
   },
   "MessageRequests--unblock-direct-confirm-title": {
@@ -3205,19 +3249,19 @@
     "description": "Shown as a button to let the user block a message request and report spam"
   },
   "MessageRequests--block-and-report-spam-success-toast": {
-    "message": "સ્પામ તરીકે નોંધાયેલ છે અને બ્લૉક કરેલ છે.",
+    "message": "સ્પામ તરીકે જાણ કરી અને બ્લૉક કર્યા.",
     "description": "Shown in a toast when you successfully block a user and report them as spam"
   },
   "MessageRequests--block-direct-confirm-title": {
-    "message": "બ્લૉક $name$?",
+    "message": "$name$ને બ્લૉક કરવા છે?",
     "description": "Shown as the title in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-direct-confirm-body": {
-    "message": "અવરોધિત લોકો તમને કૉલ કરી શકશે નહીં અથવા તમને મેસેજ મોકલશે નહીં.",
+    "message": "બ્લૉક કરેલા લોકો તમને કૉલ કે મેસેજ કરી શકશે નહીં.",
     "description": "Shown as the body in the confirmation modal for blocking a private message request"
   },
   "MessageRequests--block-group-confirm-title": {
-    "message": "$group$ ને બ્લૉક કરો અને છોડો છો?",
+    "message": "$group$ને બ્લૉક કરીને છોડી દેવું છે?",
     "description": "Shown as the title in the confirmation modal for blocking a group message request"
   },
   "MessageRequests--block-group-confirm-body": {
@@ -3525,11 +3569,11 @@
     "description": "Shown when the device is the default device"
   },
   "muteNotificationsTitle": {
-    "message": "સૂચનાઓ મ્યૂટ કરો",
+    "message": "નોટિફિકેશન મ્યૂટ કરો",
     "description": "Label for the mute notifications drop-down selector"
   },
   "notMuted": {
-    "message": "મ્યૂટ નહીં",
+    "message": "મ્યૂટ કર્યું નથી",
     "description": "Label when the conversation is not muted"
   },
   "muteHour": {
@@ -3553,15 +3597,15 @@
     "description": "Label for muting the conversation"
   },
   "unmute": {
-    "message": "અનમ્યૂટ",
+    "message": "અનમ્યૂટ કરો",
     "description": "Label for unmuting the conversation"
   },
   "muteExpirationLabelAlways": {
-    "message": "હંમેશા મ્યૂટ",
+    "message": "હંમેશા માટે મ્યૂટ કરો",
     "description": "Shown in the mute notifications submenu whenever a conversation has been muted"
   },
   "muteExpirationLabel": {
-    "message": "$duration$ સુધી મ્યૂટ",
+    "message": "$duration$ સુધી મ્યૂટ કરેલ છે",
     "description": "Shown in the mute notifications submenu whenever a conversation has been muted"
   },
   "EmojiButton__label": {
@@ -4489,11 +4533,11 @@
     "description": "This is a button to leave a group"
   },
   "ConversationDetailsActions--block-group": {
-    "message": "ગ્રુપ બ્લૉક",
+    "message": "ગ્રૂપને બ્લૉક કરો",
     "description": "This is a button to block a group"
   },
   "ConversationDetailsActions--unblock-group": {
-    "message": "ગ્રુપને અનબ્લૉક કરો",
+    "message": "ગ્રૂપને અનબ્લૉક કરો",
     "description": "This is a button to unblock a group"
   },
   "ConversationDetailsActions--leave-group-must-choose-new-admin": {
@@ -4513,11 +4557,11 @@
     "description": "This is the modal button to confirm leaving a group"
   },
   "ConversationDetailsActions--unblock-group-modal-title": {
-    "message": "\"$groupName$\" ગ્રુપને અનબ્લૉક કરવું છે?",
+    "message": "\"$groupName$\" ગ્રૂપને અનબ્લૉક કરવું છે?",
     "description": "This is the modal title for confirming unblock of a group"
   },
   "ConversationDetailsActions--block-group-modal-title": {
-    "message": "\"$groupName$\" ગ્રુપને બ્લૉક કરો અને છોડો?",
+    "message": "\"$groupName$\" ગ્રૂપને બ્લૉક કરી અને છોડી દેવું છે?",
     "description": "This is the modal title for confirming blocking a group"
   },
   "ConversationDetailsActions--block-group-modal-content": {
@@ -4525,7 +4569,7 @@
     "description": "This is the modal content for confirming blocking a group"
   },
   "ConversationDetailsActions--block-group-modal-confirm": {
-    "message": "અવરોધિત કરો",
+    "message": "બ્લૉક કરો",
     "description": "This is the modal button to confirm blocking a group"
   },
   "ConversationDetailsActions--unblock-group-modal-content": {
@@ -4585,7 +4629,7 @@
     "description": "In the conversation notifications settings, this is the label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__info": {
-    "message": "મ્યૂટ કરેલ ચેટમાં તમારો ઉલ્લેખ કરવામાં આવે ત્યારે નોટિફિકેશન પ્રાપ્ત કરો",
+    "message": "મ્યૂટ કરેલ ચેટમાં તમારો ઉલ્લેખ કરવામાં આવે ત્યારે નોટિફિકેશન મેળવો",
     "description": "In the conversation notifications settings, this is the sub-label for the mentions option"
   },
   "ConversationNotificationsSettings__mentions__select__always-notify": {
@@ -4854,11 +4898,11 @@
   },
   "TimelineDateHeader--date-in-last-6-months": {
     "message": "ddd, MMM D",
-    "description": "Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "TimelineDateHeader--date-older-than-6-months": {
     "message": "D MMM, YYYY",
-    "description": "Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "MessageRequestWarning__learn-more": {
     "message": "વધુ શીખો",
@@ -5225,7 +5269,7 @@
     "description": "Shown if something unknown has gone wrong with username save."
   },
   "icu:ProfileEditor--username--reservation-gone": {
-    "messageformat": "{username} is no longer available. A new set of digits will be paired with your username, please try saving it again.",
+    "messageformat": "{username} હવે ઉપલબ્ધ નથી. અંકોનો એક નવો સમૂહ તમારા યુઝરનેમ સાથે જોડવામાં આવશે, કૃપા કરીને તેને ફરીથી સાચવવાનો પ્રયાસ કરો.",
     "description": "Shown if username reservation has expired and new one needs to be generated."
   },
   "ProfileEditor--username--delete-general-error": {
@@ -5417,7 +5461,7 @@
     "description": "Label for the notification content setting select box"
   },
   "Preferences--blocked": {
-    "message": "બ્લૉક કરેલ",
+    "message": "બ્લૉક કર્યા",
     "description": "Label for blocked contacts setting"
   },
   "Preferences--blocked-count-singular": {
@@ -5430,23 +5474,75 @@
   },
   "Preferences__who-can--title": {
     "message": "કોણ કરી શકે...",
-    "description": "Title for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Title for the 'who can do X' setting"
   },
   "Preferences__privacy--description": {
     "message": "આ સેટિંગ્સ બદલવા માટે, તમારા મોબાઇલ ડિવાઇસ પર Signal એપ્લિકેશન ખોલો અને સેટિંગ્સ > પ્રાઇવસી પર જાઓ",
-    "description": "Description for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Description for the 'who can do X' setting"
   },
   "Preferences__who-can--everybody": {
     "message": "પ્રત્યેક",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--contacts": {
     "message": "મારા સંપર્કો",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--nobody": {
     "message": "કોઈ નથી",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
+  },
+  "icu:Preferences__pnp__row--title": {
+    "messageformat": "ફોન નંબર",
+    "description": "Title of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__row--body": {
+    "messageformat": "તમારો ફોન નંબર કોણ જોઈ શકે અને Signal પર તેના વડે કોણ તમારો સંપર્ક કરી શકે તે પસંદ કરો.",
+    "description": "Body of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__sharing--title": {
+    "messageformat": "મારો નંબર કોણ જોઈ શકે",
+    "description": "Title for the phone number sharing setting row"
+  },
+  "icu:Preferences__pnp__sharing--description--everyone": {
+    "messageformat": "તમારો ફોન નંબર એ લોકો અને ગ્રૂપને દેખાશે જેમને તમે મેસેજ કરો છો. જે લોકોના ફોન સંપર્કોમાં તમારો નંબર હશે તેઓ પણ તેને Signal પર જોશે.",
+    "description": "Description for the phone number sharing setting row when the value is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody": {
+    "messageformat": "Signal પર કોઈ પણ તમારો ફોન નંબર જોશે નહીં.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody"
+  },
+  "icu:Preferences__pnp--page-title": {
+    "messageformat": "ફોન નંબર",
+    "description": "Title of the page in Phone Number Privacy settings"
+  },
+  "icu:Preferences__pnp__sharing__everyone": {
+    "messageformat": "બધા",
+    "description": "Option for sharing phone number with everyone"
+  },
+  "icu:Preferences__pnp__sharing__nobody": {
+    "messageformat": "કોઈ નહીં",
+    "description": "Option for sharing phone number with nobody"
+  },
+  "icu:Preferences__pnp__discoverability--title": {
+    "messageformat": "મને નંબરથી કોણ શોધી શકે",
+    "description": "Title for the phone number discoverability setting row"
+  },
+  "icu:Preferences__pnp__discoverability--description--everyone": {
+    "messageformat": "જે કોઈના સંપર્કોમાં તમારો ફોન નંબર હશે તે તમને Signal પર સંપર્ક તરીકે જોઈ શકશે. જ્યારે અન્ય લોકો નવી ચેટ અથવા ગ્રૂપ શરૂ કરશે ત્યારે તેઓ તમારા ફોન નંબર વડે તમારો સંપર્ક કરી શકશે.",
+    "description": "Description for the phone number discoverability setting row wth the value is everyone"
+  },
+  "icu:Preferences__pnp__discoverability--description--nobody": {
+    "messageformat": "Signal પર કોઈ પણ તમારા ફોન નંબરથી તમારા સુધી પહોંચી નહીં શકે.",
+    "description": "Description for the phone number discoverability setting row wth the value is nobody"
+  },
+  "icu:Preferences__pnp__discoverability__everyone": {
+    "messageformat": "બધા",
+    "description": "Option for letting everyone discover you by phone number"
+  },
+  "icu:Preferences__pnp__discoverability__nobody": {
+    "messageformat": "કોઈ નહીં",
+    "description": "Option for letting nobody discover you by phone number"
   },
   "Preferences--messaging": {
     "message": "મેસેજ કરી રહ્યા છીએ",
@@ -5504,6 +5600,14 @@
     "message": "વર્ઝન $version$ માટેનું અપડેટ ઉપલબ્ધ છે",
     "description": "Tooltip for new update available"
   },
+  "icu:DialogUpdate__downloading": {
+    "messageformat": "Downloading Update...",
+    "description": "The title of update dialog when update download is in progress."
+  },
+  "icu:DialogUpdate__downloaded": {
+    "messageformat": "Update Downloaded",
+    "description": "The title of update dialog when update download is completed."
+  },
   "NSIS__retry-dialog--first-line": {
     "message": "Signal બંધ ન થઈ શક્યું",
     "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
@@ -5541,7 +5645,7 @@
     "description": "A button label for erasure of the crash reporter data after a recent crash and continuing to start the app"
   },
   "CustomizingPreferredReactions__title": {
-    "message": "પ્રતિક્રિયાઓ કસ્ટમાઇઝ કરો",
+    "message": "પ્રતિક્રિયાઓ કસ્ટમાઇઝ કરો",
     "description": "Shown in the header of the modal for customizing the preferred reactions. Also shown in the tooltip for the button that opens this modal."
   },
   "CustomizingPreferredReactions__subtitle": {
@@ -5551,6 +5655,10 @@
   "CustomizingPreferredReactions__had-save-error": {
     "message": "તમારા સેટિંગ્સ સેવ કરવામાં એક ત્રુટિ આવી હતી. કૃપા કરીને ફરી પ્રયાસ કરો.",
     "description": "Shown if there is an error when saving your preferred reaction settings. Should be very rare to see this message."
+  },
+  "icu:MediaEditor__clock-more-styles": {
+    "messageformat": "વધુ સ્ટાઇલ",
+    "description": "Action button for switching up the clock styles"
   },
   "MediaEditor__control--draw": {
     "message": "દોરો",
@@ -6117,11 +6225,11 @@
     "description": "Button label to reply to a group story"
   },
   "StoryViewer__mute": {
-    "message": "મ્યુટ",
+    "message": "મ્યૂટ કરો",
     "description": "Aria label for muting stories"
   },
   "StoryViewer__unmute": {
-    "message": "અનમ્યુટ",
+    "message": "અનમ્યૂટ કરો",
     "description": "Aria label for unmuting stories"
   },
   "StoryViewer__views-off": {
@@ -6246,11 +6354,19 @@
   },
   "StoryCreator__error--video-too-long": {
     "message": "વીડિયો બહુ લાંબો હોવાથી તેને પોસ્ટ કરી શકતા નથી",
-    "description": "Error string for when a video post to story fails"
+    "description": "(deleted 02/22/2023) Error string for when a video post to story fails"
   },
   "StoryCreator__error--video-unsupported": {
     "message": "સ્ટોરીમાં વીડિયો પોસ્ટ કરી શકતા નથી કારણ કે તેનું ફાઇલ ફોર્મેટ સપોર્ટ થતું નથી.",
     "description": "Error string for when a video post to story fails"
+  },
+  "icu:StoryCreator__error--video-too-long": {
+    "messageformat": "{maxDurationInSec, plural, one {સ્ટોરીમાં વીડિયો પોસ્ટ કરી શકાતો નથી કારણ કે તે 1 સેકન્ડ કરતાં લાંબો છે.} other {સ્ટોરીમાં વીડિયો પોસ્ટ કરી શકાતો નથી કારણ કે તે {maxDurationInSec,number} સેકન્ડ કરતાં લાંબો છે.}}",
+    "description": "Error string for when a video post to story fails because video's duration is too long"
+  },
+  "icu:StoryCreator__error--video-too-big": {
+    "messageformat": "સ્ટોરીમાં વીડિયો પોસ્ટ કરી શકાતો નથી કારણ કે તે {limit}{units} કરતાં લાંબો છે.",
+    "description": "Error string for when a video post to story fails because video's file size is too big"
   },
   "StoryCreator__error--video-error": {
     "message": "વીડિયો લોડ ન કરી શક્યા",
@@ -6353,11 +6469,11 @@
     "description": "Notification test for incoming story reactions"
   },
   "Quote__story-reaction-notification--outgoing": {
-    "message": "તમે $name$ ની સ્ટોરી પર $emoji$ પ્રતિક્રિયા આપી",
+    "message": "તમે $name$ની સ્ટોરી પર $emoji$ પ્રતિક્રિયા આપી",
     "description": "Notification test for outgoing story reactions"
   },
   "Quote__story-reaction-notification--outgoing--nameless": {
-    "message": "તમે એક સ્ટોરી પર $emoji$ પ્રતિક્રિયા આપી",
+    "message": "તમે કોઈ સ્ટોરી પર $emoji$ પ્રતિક્રિયા આપી",
     "description": "Notification test for outgoing story reactions but no name"
   },
   "Quote__story-unavailable": {
@@ -6389,27 +6505,27 @@
     "description": "Body of the popup with information about discriminator in username"
   },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "Set up your Signal username",
+    "messageformat": "તમારું Signal યુઝરનેમ સેટ કરો",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "Usernames are paired with a set of digits and aren’t shared on your profile",
+    "messageformat": "યુઝરનેમને અંકોના સમૂહ સાથે જોડવામાં આવે છે અને તમારી પ્રોફાઇલ પર શેર કરવામાં આવતાં નથી",
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Each username has a unique link you can share with your friends to start a chat with you",
+    "messageformat": "દરેક યુઝરનેમમાં એક અનન્ય લિંક હોય છે જે તમે તમારા મિત્રો તમારી સાથે ચેટ શરૂ કરી શકે તે માટે તેમની સાથે શેર કરી શકો છો",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "Turn off phone number discovery under Settings > Phone Number > Who can find my number, to use your username as the primary way others can contact you.",
+    "messageformat": "અન્ય લોકો તમારો સંપર્ક કરી શકે તેની પ્રાથમિક રીત તરીકે તમારા યુઝરનેમનો ઉપયોગ કરવા માટે સેટિંગ્સ > ગોપનીયતા > ફોન નંબર > મારો નંબર કોણ શોધી શકે છે પર જઈને ફોન નંબરની શોધ બંધ કરો.",
     "description": "Content of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__learn-more": {
-    "messageformat": "Learn More",
+    "messageformat": "વધુ જાણો",
     "description": "Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Continue",
+    "messageformat": "ચાલુ રાખો",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -6456,40 +6572,24 @@
     "message": "નાના ફેરફારો, ભૂલ સુધારા અને પ્રદર્શનમાં વધારો. Signalનો ઉપયોગ કરવા બદલ આભાર!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "WhatsNew__v5.63--0": {
-    "message": "ઍપને તમારા માટે સરળતાથી ચાલતી રાખવા માટે ભૂલો સુધારવાનું અને અન્ય પ્રદર્શન સુધારણા કરવાનું કામ કરવામાં સખત મહેનત કરી.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--0": {
+    "messageformat": "યાદોના માર્ગ પર એક ઉડતી નજર કરવા માટે કોઈ પણ ચિત્ર અથવા વીડિયો પર ક્લિક કરો અને મીડિયા વ્યૂઅરમાં નવા ફોરવર્ડ અને બેકવર્ડ બટનનો ઉપયોગ કરો.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v5.63--beta.2": {
-    "message": "અમારા નવા સ્ટોરી ફીચરનો ઉપયોગ અને પરીક્ષણ કરવાનું શરૂ કરો. તમે અન્ય બીટા ટેસ્ટરો સાથે ફીચરનો ઉપયોગ કરી શકો છો અને અમને જણાવો કે તે કેવું કાર્ય કરે છે.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--1": {
+    "messageformat": "જો રેકોર્ડિંગ ચાલુ હોય ત્યારે તમે બીજી ચેટ પર સ્વિચ કરો છો તો વૉઇસ મેસેજ હવે ડ્રાફ્ટ તરીકે સેવ કરવામાં આવે છે.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.0": {
-    "message": "સ્ટોરી હવે Signalમાં છે! 24 કલાક પછી આપમેળે અદૃશ્ય થઈ જતાં ટેક્સ્ટ, ઇમેજ અને વીડિયો અપડેટને પસંદ કરેલા મિત્રો અથવા ગ્રુપ સાથે શેર કરો. સ્ટોરી શેર કરવાનું પસંદ હોય તેવા દરેક માટે, તેને ખાનગી રીતે અને કોઈપણ જાહેરાતો જોયા વગર કરવાની પણ એક રીત છે. જો તમે સ્ટોરી જોવા અથવા શેર કરવા માંગતા ન હો, તો તમે તમારી પસંદગીઓ > ગોપનીયતામાંથી આ બધું નાપસંદ કરી શકો છો.",
-    "description": "Release notes for v6.0"
+  "icu:WhatsNew__v6.10--2": {
+    "messageformat": "સ્ટિકર મોકલવાથી હવે ડ્રાફ્ટ ટેક્સ્ટ ક્લિયર થઈ જતો નથી. આભાર, {lamemakes}!",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.1--1": {
-    "message": "જ્યારે તમે નાના ગ્રુપ (16 લોકો સુધી) માટે ગ્રુપ કૉલ શરૂ કરો છો, ત્યારે તમે રિંગિંગ નોટિફિકેશન મોકલવાનું પસંદ કરી શકો છો. જો ગ્રુપના સભ્યો iOS બીટા પર હોય અથવા ડેસ્કટૉપ અથવા Androidનો ઉપયોગ કરતા હોય તો તેઓને રિંગ સંભળાશે.",
-    "description": "Release notes for v6.1"
+  "icu:WhatsNew__v6.10--3": {
+    "messageformat": "અમે વાતચીત શોધ બારના આઇકનને પાછા અલાઇન્મેન્ટમાં લાવવા બદલ {norstbox}નો પણ આભાર વ્યક્ત કરીએ છીએ.",
+    "description": "Release notes for v6.10"
   },
-  "icu:WhatsNew__v6.3--0": {
-    "messageformat": "અવતરિત જવાબ શરૂ કરવા માટે ચેટમાં મેસેજની કોઈ પણ પંક્તિ પર ડબલ-ક્લિક કરો. તે જૂની તરકીબો વિશેના નવા વિચારો માટેના શોર્ટકટ જેવું છે. આ ફીચરનો અમલ કરવા અને પ્રતિસાદ આપવા બદલ {whynothugo} અને Signal કોમ્યુનિટીનો આભાર.",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.3--1": {
-    "messageformat": "હવે ઝૂમ ઇન કર્યા વિના ગેલેરી વ્યૂને કાઢી નાખવા માટે ફોટાની બહાર ક્લિક કરવું વધુ સરળ છે. કેટલીક વાર તમે ફક્ત બંધ કરવા માગતા હતા અને તેના બદલે વસ્તુઓ ખૂબ નજીક આવી જતી હતી. આને ઉકેલવા માટે {jojomatik} નો આભાર!",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.5--0": {
-    "messageformat": "તમારા પ્રતિભાવ સમયને ઝડપી બનાવો. હવે તમે સ્ટોરીનો જવાબ આપતી વખતે કોઈપણ ઇમોજી પર ક્લિક કરીને ઝડપથી પ્રતિક્રિયા આપી શકો છો.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.5--1": {
-    "messageformat": "ચાઇનીઝ અને જાપાનીઝમાં વ્યક્તિગત અક્ષરો માટે તમારી મેસેજ હિસ્ટ્રીમાં શોધવાનું હવે શક્ય છે.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.6--0": {
-    "messageformat": "વોઇસ અને વીડિયો કૉલ માટે કેટલીક વિશ્વસનીયતા અને પ્રદર્શન સુધારણાઓનું પરીક્ષણ કરવામાં અમારી સહાય કરો. આ બીટા રિલીઝમાં થોડી ભૂલ સુધારણાઓ અને કેટલાક નાના UI અપડેટ પણ શામેલ છે (નવી લિંક પ્રિવ્યૂ એન્હાન્સમેન્ટ્સ જુઓ!). બીટા ટેસ્ટર બનવા બદલ આપનો આભાર, અને જો તમને કોઈ બગ દેખાય તો કૃપા કરીને કોમ્યુનિટી ફોરમ પર અમારો સંપર્ક કરો.",
-    "description": "Release notes for v6.6"
+  "icu:WhatsNew__v6.11--0": {
+    "messageformat": "Start talking to yourself even faster with a new icon that makes the “Note to Self” chat easier to find. Thanks to {hackerbirds} on GitHub for their contribution.",
+    "description": "Release notes for v6.11"
   }
 }

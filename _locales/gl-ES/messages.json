@@ -52,6 +52,14 @@
     "message": "Engadindo $contact$…",
     "description": "Shown in toast while a user is being added to a group"
   },
+  "icu:RecordingComposer__cancel": {
+    "messageformat": "Cancelar",
+    "description": "Label of cancel button on voice note recording UI"
+  },
+  "icu:RecordingComposer__send": {
+    "messageformat": "Enviar",
+    "description": "Label of send button on voice note recording UI"
+  },
   "GroupListItem__message-default": {
     "message": "$count$ membros",
     "description": "Shown below the group name when selecting a group to invite a contact to"
@@ -1039,7 +1047,7 @@
     "description": "Shown as the title of our update error dialogs on windows"
   },
   "muted": {
-    "message": "Silenciado",
+    "message": "En silencio",
     "description": "Shown in a button when a conversation is muted"
   },
   "mute": {
@@ -1251,11 +1259,11 @@
     "description": "Shown on explainer dialog available from delivery issue timeline events"
   },
   "DeliveryIssue--summary": {
-    "message": "Non recibiches ou unha mensaxe, un sticker, unha reacción, unha confirmación de lectura ou contido multimedia de $sender$, a través dunha mensaxe directa ou por un grupo.",
+    "message": "Non se che puido entregar unha mensaxe, un sticker, unha reacción, unha confirmación de lectura ou contido multimedia de $sender$. Puido ser unha entrega directa ou desde un grupo.",
     "description": "Shown on explainer dialog available from delivery issue timeline events in 1:1 conversations"
   },
   "DeliveryIssue--summary--group": {
-    "message": "Non recibiches unha mensaxe, un sticker, unha reacción, unha confirmación de lectura ou contido multimedia de $sender$ nesta conversa.",
+    "message": "Non se che puido entregar unha mensaxe, un sticker, unha reacción, unha confirmación de lectura ou contido multimedia de $sender$ nesta conversa.",
     "description": "Shown on explainer dialog available from delivery issue timeline events in groups"
   },
   "ChangeNumber--notification": {
@@ -1446,7 +1454,7 @@
     "description": "Button label in the call lobby for returning to a call"
   },
   "calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
-    "message": "Silenciouse o micrófono debido ao numero de persoas na chamada",
+    "message": "Silenciouse o micrófono debido ao número de persoas na chamada",
     "description": "Shown in a call lobby toast if there are a lot of people already on the call"
   },
   "calling__call-is-full": {
@@ -1778,7 +1786,7 @@
     "description": "Displayed in notifications for messages in a group"
   },
   "notificationReaction": {
-    "message": "$sender$ reaccionon con $emoji$ á túa mensaxe"
+    "message": "$sender$ reaccionou con $emoji$ á túa mensaxe"
   },
   "notificationReactionMessage": {
     "message": "$sender$ reaccionou con $emoji$ a: $message$"
@@ -1881,26 +1889,34 @@
   },
   "timestampFormat_M": {
     "message": "D MMM",
-    "description": "Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying month and day (but not the year) of a date within the current year, ex: use 'MMM D' for 'Aug 8', or 'D MMM' for '8 Aug'."
+  },
+  "timestampFormat__long--today": {
+    "message": "Hoxe $time$",
+    "description": "Timestamp format string for displaying \"Today\" and the time"
+  },
+  "timestampFormat__long--yesterday": {
+    "message": "Onte $time$",
+    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "timestampFormat__long__today": {
     "message": "[Hoxe] LT",
-    "description": "Timestamp format string for displaying \"Today\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Today\" and the time"
   },
   "timestampFormat__long__yesterday": {
     "message": "[Onte] LT",
-    "description": "Timestamp format string for displaying \"Yesterday\" and the time"
+    "description": "(deleted 01/25/2023) Timestamp format string for displaying \"Yesterday\" and the time"
   },
   "messageBodyTooLong": {
     "message": "A mensaxe de texto é demasiado longa.",
     "description": "Shown if the user tries to send more than 64kb of text"
   },
   "unblockToSend": {
-    "message": "Desbloquea o contacto para enviarlle mensaxes.",
+    "message": "Desbloquea este contacto para enviarlle mensaxes.",
     "description": "Brief message shown when trying to message a blocked number"
   },
   "unblockGroupToSend": {
-    "message": "Desbloquea o grupo para enviarlle mensaxes.",
+    "message": "Desbloquea este grupo para enviar mensaxes.",
     "description": "Brief message shown when trying to message a blocked group"
   },
   "youChangedTheTimer": {
@@ -2020,7 +2036,7 @@
     "description": "Label text for system theme"
   },
   "noteToSelf": {
-    "message": "Notificarmo",
+    "message": "Notas privadas",
     "description": "Name for the conversation with your own phone number"
   },
   "noteToSelfHero": {
@@ -2181,7 +2197,7 @@
     "message": "Relink"
   },
   "autoUpdateNewVersionTitle": {
-    "message": "Actualización dispoñible"
+    "message": "Update Available"
   },
   "autoUpdateRetry": {
     "message": "Volver intentar actualización"
@@ -2580,6 +2596,18 @@
     "message": "Aquí aparecerán os stickers recentes",
     "description": "Shown in the sticker picker when there are no recent stickers to show."
   },
+  "icu:stickers__StickerPicker__recent": {
+    "messageformat": "Recentes",
+    "description": "Title for all of the recent stickers"
+  },
+  "icu:stickers__StickerPicker__featured": {
+    "messageformat": "Destacados",
+    "description": "Title for featured stickers"
+  },
+  "icu:stickers__StickerPicker__analog-time": {
+    "messageformat": "Hora analóxica",
+    "description": "aria-label for the analog time sticker"
+  },
   "stickers--StickerPreview--Title": {
     "message": "Paquete de stickers",
     "description": "The title that appears in the sticker pack preview modal."
@@ -2777,7 +2805,7 @@
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--toggle-reaction-picker": {
-    "message": "Escoller emoticona para a mensaxe seleccionada",
+    "message": "Escoller emoticona de reacción para a mensaxe seleccionada",
     "description": "Shown in the shortcuts guide"
   },
   "Keyboard--save-attachment": {
@@ -2947,6 +2975,18 @@
   "conversationMarkedUnread": {
     "message": "Marcouse a conversa como sen ler",
     "description": "A toast that shows up when user marks a conversation as unread"
+  },
+  "icu:AuthArtCreator--dialog--message": {
+    "messageformat": "Queres abrir o creador de paquetes de stickers para Signal?",
+    "description": "A body of the dialog that is presented when user tries to open Signal Sticker Pack Creator from a link"
+  },
+  "icu:AuthArtCreator--dialog--confirm": {
+    "messageformat": "Confirmar",
+    "description": "A buttle title for confirming Signal Sticker Pack Creator dialog"
+  },
+  "icu:AuthArtCreator--dialog--dismiss": {
+    "messageformat": "Rexeitar",
+    "description": "A buttle title for dismissing Signal Sticker Pack Creator dialog"
   },
   "StickerCreator--title": {
     "message": "Creador de paquetes de stickers",
@@ -3148,6 +3188,10 @@
     "message": "Configura Signal no teu móbil e ordenador para empregar o creador de paquetes de stickers",
     "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
   },
+  "icu:ArtCreator--Authentication--error": {
+    "messageformat": "Configura Signal no teu móbil e ordenador para empregar o creador de paquetes de stickers",
+    "description": "The error message which appears when the user has not linked their account and attempts to use the Sticker Creator"
+  },
   "Reactions--remove": {
     "message": "Eliminar reacción",
     "describe": "Shown when you want to remove a reaction you've made"
@@ -3177,7 +3221,7 @@
     "description": "Shown as the message for a message request in a group"
   },
   "MessageRequests--message-group-blocked": {
-    "message": "Desbloquear este grupo e compartir cos seus membros o teu nome e fotografía? Non recibirás ningunha mensaxe ata que o desbloquees.",
+    "message": "Desbloquear este grupo e compartir cos seus membros o teu nome e foto? Non recibirás ningunha mensaxe ata que o desbloquees.",
     "description": "Shown as the message for a message request in a blocked group"
   },
   "MessageRequests--block": {
@@ -3537,7 +3581,7 @@
     "description": "Label for muting the conversation"
   },
   "muteEightHours": {
-    "message": "Silenciar durante oito horas",
+    "message": "Silenciar durante 8 horas",
     "description": "Label for muting the conversation"
   },
   "muteDay": {
@@ -3557,11 +3601,11 @@
     "description": "Label for unmuting the conversation"
   },
   "muteExpirationLabelAlways": {
-    "message": "Silenciado sempre",
+    "message": "En silencio sempre",
     "description": "Shown in the mute notifications submenu whenever a conversation has been muted"
   },
   "muteExpirationLabel": {
-    "message": "Silenciado por $duration$",
+    "message": "En silencio ata $duration$",
     "description": "Shown in the mute notifications submenu whenever a conversation has been muted"
   },
   "EmojiButton__label": {
@@ -4489,11 +4533,11 @@
     "description": "This is a button to leave a group"
   },
   "ConversationDetailsActions--block-group": {
-    "message": "Bloquear un grupo",
+    "message": "Bloquear grupo",
     "description": "This is a button to block a group"
   },
   "ConversationDetailsActions--unblock-group": {
-    "message": "Desbloquear un grupo",
+    "message": "Desbloquear grupo",
     "description": "This is a button to unblock a group"
   },
   "ConversationDetailsActions--leave-group-must-choose-new-admin": {
@@ -4593,7 +4637,7 @@
     "description": "In the conversation notifications settings, this is the option that always notifies you for @mentions"
   },
   "ConversationNotificationsSettings__mentions__select__dont-notify-for-mentions-if-muted": {
-    "message": "Non recibir notificacións en silencio",
+    "message": "Non recibir notificacións das conversas en silencio",
     "description": "In the conversation notifications settings, this is the option that doesn't notify you for @mentions if the conversation is muted"
   },
   "GroupLinkManagement--clipboard": {
@@ -4854,11 +4898,11 @@
   },
   "TimelineDateHeader--date-in-last-6-months": {
     "message": "D ddd, MMM",
-    "description": "Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates <6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "TimelineDateHeader--date-older-than-6-months": {
     "message": "D MMM, YYYY",
-    "description": "Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
+    "description": "(deleted 01/25/2023) Moment.js format for date headers in the message timeline, for dates >=6 months old. See https://momentjs.com/docs/#/displaying/format/."
   },
   "MessageRequestWarning__learn-more": {
     "message": "Saber máis",
@@ -5225,7 +5269,7 @@
     "description": "Shown if something unknown has gone wrong with username save."
   },
   "icu:ProfileEditor--username--reservation-gone": {
-    "messageformat": "{username} is no longer available. A new set of digits will be paired with your username, please try saving it again.",
+    "messageformat": "{username} xa non está dispoñible. Crearase un novo grupo de díxitos para emparellar co teu nome de usuario, tenta gardalo de novo.",
     "description": "Shown if username reservation has expired and new one needs to be generated."
   },
   "ProfileEditor--username--delete-general-error": {
@@ -5430,23 +5474,75 @@
   },
   "Preferences__who-can--title": {
     "message": "Quen pode…",
-    "description": "Title for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Title for the 'who can do X' setting"
   },
   "Preferences__privacy--description": {
     "message": "Para cambiar esta configuración, abre Signal no teu móbil e vai a Configuración > Privacidade",
-    "description": "Description for the 'who can do X' setting"
+    "description": "(deleted 2022/02/14) Description for the 'who can do X' setting"
   },
   "Preferences__who-can--everybody": {
     "message": "Todo o mundo",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--contacts": {
     "message": "Os meus contactos",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
   },
   "Preferences__who-can--nobody": {
     "message": "Ninguén",
-    "description": "Option for who can see my X select"
+    "description": "(deleted 2022/02/14) Option for who can see my X select"
+  },
+  "icu:Preferences__pnp__row--title": {
+    "messageformat": "Número de teléfono",
+    "description": "Title of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__row--body": {
+    "messageformat": "Escolle quen pode ver o teu número de teléfono e quen pode contactar contigo en Signal con el.",
+    "description": "Body of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__sharing--title": {
+    "messageformat": "Quen pode ver o meu número de teléfono",
+    "description": "Title for the phone number sharing setting row"
+  },
+  "icu:Preferences__pnp__sharing--description--everyone": {
+    "messageformat": "Poderán ver o teu número de teléfono as persoas ou grupos aos que envíes mensaxes. As persoas que teñan o teu número na súa lista de contactos tamén o poderán ver en Signal.",
+    "description": "Description for the phone number sharing setting row when the value is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody": {
+    "messageformat": "Ninguén poderá ver o teu número de teléfono en Signal.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody"
+  },
+  "icu:Preferences__pnp--page-title": {
+    "messageformat": "Número de teléfono",
+    "description": "Title of the page in Phone Number Privacy settings"
+  },
+  "icu:Preferences__pnp__sharing__everyone": {
+    "messageformat": "Todos",
+    "description": "Option for sharing phone number with everyone"
+  },
+  "icu:Preferences__pnp__sharing__nobody": {
+    "messageformat": "Ninguén",
+    "description": "Option for sharing phone number with nobody"
+  },
+  "icu:Preferences__pnp__discoverability--title": {
+    "messageformat": "Quen me pode atopar polo meu número",
+    "description": "Title for the phone number discoverability setting row"
+  },
+  "icu:Preferences__pnp__discoverability--description--everyone": {
+    "messageformat": "Calquera que teña o teu número de teléfono na súa lista de contactos pode verte como contacto en Signal. O resto poderán contactar contigo co teu número de teléfono cando inicien unha nova conversa ou grupo.",
+    "description": "Description for the phone number discoverability setting row wth the value is everyone"
+  },
+  "icu:Preferences__pnp__discoverability--description--nobody": {
+    "messageformat": "Ninguén en Signal poderá contactar contigo a través do teu número de teléfono.",
+    "description": "Description for the phone number discoverability setting row wth the value is nobody"
+  },
+  "icu:Preferences__pnp__discoverability__everyone": {
+    "messageformat": "Todos",
+    "description": "Option for letting everyone discover you by phone number"
+  },
+  "icu:Preferences__pnp__discoverability__nobody": {
+    "messageformat": "Ninguén",
+    "description": "Option for letting nobody discover you by phone number"
   },
   "Preferences--messaging": {
     "message": "Mensaxería",
@@ -5504,6 +5600,14 @@
     "message": "Actualizar á versión dispoñible $version$",
     "description": "Tooltip for new update available"
   },
+  "icu:DialogUpdate__downloading": {
+    "messageformat": "Downloading Update...",
+    "description": "The title of update dialog when update download is in progress."
+  },
+  "icu:DialogUpdate__downloaded": {
+    "messageformat": "Update Downloaded",
+    "description": "The title of update dialog when update download is completed."
+  },
   "NSIS__retry-dialog--first-line": {
     "message": "Non se pode pechar Signal.",
     "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
@@ -5551,6 +5655,10 @@
   "CustomizingPreferredReactions__had-save-error": {
     "message": "Ocorreu un erro ao gardar a configuración. Inténtao de novo.",
     "description": "Shown if there is an error when saving your preferred reaction settings. Should be very rare to see this message."
+  },
+  "icu:MediaEditor__clock-more-styles": {
+    "messageformat": "Máis estilos",
+    "description": "Action button for switching up the clock styles"
   },
   "MediaEditor__control--draw": {
     "message": "Debuxar",
@@ -6246,11 +6354,19 @@
   },
   "StoryCreator__error--video-too-long": {
     "message": "Non se pode publicar o vídeo na túa historia porque é demasiado longo",
-    "description": "Error string for when a video post to story fails"
+    "description": "(deleted 02/22/2023) Error string for when a video post to story fails"
   },
   "StoryCreator__error--video-unsupported": {
     "message": "Non se pode publicar o vídeo na túa historia porque non ten un formato compatible",
     "description": "Error string for when a video post to story fails"
+  },
+  "icu:StoryCreator__error--video-too-long": {
+    "messageformat": "{maxDurationInSec, plural, one {Non se pode publicar o vídeo na túa historia porque dura máis de 1 segundo.} other {Non se pode publicar o vídeo na túa historia porque dura máis de {maxDurationInSec,number} segundos.}}",
+    "description": "Error string for when a video post to story fails because video's duration is too long"
+  },
+  "icu:StoryCreator__error--video-too-big": {
+    "messageformat": "Non se pode publicar o vídeo na túa historia porque dura máis de {limit}{units}.",
+    "description": "Error string for when a video post to story fails because video's file size is too big"
   },
   "StoryCreator__error--video-error": {
     "message": "Erro ao cargar o vídeo",
@@ -6389,27 +6505,27 @@
     "description": "Body of the popup with information about discriminator in username"
   },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "Set up your Signal username",
+    "messageformat": "Configura o teu nome de usuario de Signal",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "Usernames are paired with a set of digits and aren’t shared on your profile",
+    "messageformat": "Os nome de usuario emparéllanse cun grupo de díxitos e non se publican no teu perfil",
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Each username has a unique link you can share with your friends to start a chat with you",
+    "messageformat": "Cada nome de usuario ten unha ligazón única que podes compartir cos teus amigos para iniciar unha conversa",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "Turn off phone number discovery under Settings > Phone Number > Who can find my number, to use your username as the primary way others can contact you.",
+    "messageformat": "Desactiva a busca de número de teléfono en «Configuración > Privacidade > Número de teléfono > Quen pode encontrar o meu número» para usar o teu nome de usuario como forma principal de contactar contigo.",
     "description": "Content of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__learn-more": {
-    "messageformat": "Learn More",
+    "messageformat": "Saber máis",
     "description": "Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Continue",
+    "messageformat": "Continuar",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -6456,40 +6572,24 @@
     "message": "Comprende pequenas modificacións e melloras no rendemento. Moitas grazas por empregar Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "WhatsNew__v5.63--0": {
-    "message": "Estamos a traballar sen parar arranxando todos os problemas e mellorando o rendemento para que poidas seguir empregando a aplicación sen interrupcións.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--0": {
+    "messageformat": "Preme en calquera imaxe ou vídeo e emprega os novos botóns Avanzar e Retroceder no visor de multimedia para somerxerte no teu baúl dos recordos.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v5.63--beta.2": {
-    "message": "Comeza a usar e probar a nova función de historias. Podes empregar esta función con outros probadores beta e informarnos de como está a funcionar.",
-    "description": "Release notes for v5.63"
+  "icu:WhatsNew__v6.10--1": {
+    "messageformat": "Agora as mensaxes de voz gárdanse como borrador se cambias a outra conversa mentres estás a gravar.",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.0": {
-    "message": "Xa chegaron as historias a Signal! Comparte textos, imaxes e vídeos temporais cos amigos ou grupos que elixas. Desaparecerán automaticamente tras 24 horas! Para todas aquelas persoas que queren compartir historias, temos a maneira perfecta de facelo coa privacidade que mereces e sen anuncios. Se non queres ver ou compartir historias, podes desactivalas en «Preferencias» > «Privacidade».",
-    "description": "Release notes for v6.0"
+  "icu:WhatsNew__v6.10--2": {
+    "messageformat": "Ao enviar un sticker xa non se elimina o texto do borrador. Grazas, {lamemakes}!",
+    "description": "Release notes for v6.10"
   },
-  "WhatsNew__v6.1--1": {
-    "message": "Cando comeces unha chamada de grupo de poucas persoas (máximo 16 persoas), podes elixir enviar unha notificación de son. Os membros do grupo escoitarán un timbre se teñen iOS beta ou se empregan Signal Desktop ou Android.",
-    "description": "Release notes for v6.1"
+  "icu:WhatsNew__v6.10--3": {
+    "messageformat": "Tamén queremos agradecer a {norstbox} por aliñar as iconas da barra de busca das conversas.",
+    "description": "Release notes for v6.10"
   },
-  "icu:WhatsNew__v6.3--0": {
-    "messageformat": "Preme dúas veces en calquera mensaxe dentro dunha conversa para crear unha resposta citada. É coma un atallo para xerar novas ideas de antigas ocorrencias. Grazas a {whynothugo} e á comunidade de Signal por implementar esta función e proporcionar suxestións.",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.3--1": {
-    "messageformat": "Agora é máis doado premer no exterior dunha imaxe para ignorar a vista de galería sen facer zoom. Ás veces só querías pechar algo e, polo contrario, só conseguías agrandalo. Grazas a {jojomatik} pola corrección!",
-    "description": "Release notes for v6.3"
-  },
-  "icu:WhatsNew__v6.5--0": {
-    "messageformat": "Mellora o teu tempo de resposta. Agora podes reaccionar máis rápido ao seleccionar calquera emoticona ao responder a unha historia.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.5--1": {
-    "messageformat": "Xa podes buscar no teu historial de mensaxes caracteres individuais en chinés e xaponés.",
-    "description": "Release notes for v6.5"
-  },
-  "icu:WhatsNew__v6.6--0": {
-    "messageformat": "Axúdanos a probar a fiabilidade e o rendemento das melloras que fixemos nas chamadas de voz e vídeo. Esta versión beta tamén inclúe algunhas correccións de pequenos erros e algunhas actualizacións menores da IU (busca a nova mellora de visualización de ligazón!). Grazas por probar esta versión beta. Non dubides en contactar connosco no foro da comunidade se detectas algún erro.",
-    "description": "Release notes for v6.6"
+  "icu:WhatsNew__v6.11--0": {
+    "messageformat": "Start talking to yourself even faster with a new icon that makes the “Note to Self” chat easier to find. Thanks to {hackerbirds} on GitHub for their contribution.",
+    "description": "Release notes for v6.11"
   }
 }

@@ -12,13 +12,15 @@ import type { LocaleMessagesType } from '../types/I18N';
 import type { NativeThemeType } from '../context/createNativeThemeListener';
 import type { SettingType } from '../util/preload';
 import type { RendererConfigType } from '../types/RendererConfig';
-import { ActiveWindowService } from '../services/ActiveWindowService';
 
 import { Bytes } from '../context/Bytes';
 import { Crypto } from '../context/Crypto';
 import { Timers } from '../context/Timers';
 
-import { setupI18n } from '../util/setupI18n';
+import type { ActiveWindowServiceType } from '../services/ActiveWindowService';
+import { config } from '../context/config';
+import { i18n } from '../context/i18n';
+import { activeWindowService } from '../context/activeWindowService';
 import {
   getEnvironment,
   parseEnvironment,
@@ -27,27 +29,15 @@ import {
 import { strictAssert } from '../util/assert';
 import { createSetting } from '../util/preload';
 import { initialize as initializeLogging } from '../logging/set_up_renderer_logging';
-import { waitForSettingsChange } from './waitForSettingsChange';
+import { waitForSettingsChange } from '../context/waitForSettingsChange';
 import { createNativeThemeListener } from '../context/createNativeThemeListener';
-import { isWindows, isLinux, isMacOS, hasCustomTitleBar } from '../OS';
-
-const activeWindowService = new ActiveWindowService();
-activeWindowService.initialize(window.document, ipcRenderer);
-
-const params = new URLSearchParams(document.location.search);
-const configParam = params.get('config');
-strictAssert(typeof configParam === 'string', 'config is not a string');
-const config: RendererConfigType = JSON.parse(configParam);
-
-const { resolvedTranslationsLocale } = config;
-strictAssert(
-  resolvedTranslationsLocale,
-  'locale could not be parsed from config'
-);
-strictAssert(
-  typeof resolvedTranslationsLocale === 'string',
-  'locale is not a string'
-);
+import {
+  isWindows,
+  isLinux,
+  isMacOS,
+  hasCustomTitleBar,
+  getClassName,
+} from '../OS';
 
 const localeMessages = ipcRenderer.sendSync('locale-data');
 setEnvironment(parseEnvironment(config.environment));
@@ -68,7 +58,7 @@ export type SignalContextType = {
   nativeThemeListener: NativeThemeType;
   setIsCallActive: (isCallActive: boolean) => unknown;
 
-  activeWindowService: typeof activeWindowService;
+  activeWindowService: ActiveWindowServiceType;
   Settings: {
     themeSetting: SettingType<IPCEventsValuesType['themeSetting']>;
     waitForChange: () => Promise<void>;
@@ -79,6 +69,7 @@ export type SignalContextType = {
     isLinux: typeof isLinux;
     isMacOS: typeof isMacOS;
     hasCustomTitleBar: typeof hasCustomTitleBar;
+    getClassName: typeof getClassName;
   };
   config: RendererConfigType;
   getAppInstance: () => string | undefined;
@@ -108,6 +99,7 @@ export const SignalContext: SignalContextType = {
     isLinux,
     isMacOS,
     hasCustomTitleBar,
+    getClassName,
   },
   bytes: new Bytes(),
   config,
@@ -120,7 +112,7 @@ export const SignalContext: SignalContextType = {
   getPath: (name: 'userData' | 'home'): string => {
     return String(config[`${name}Path`]);
   },
-  i18n: setupI18n(resolvedTranslationsLocale, localeMessages),
+  i18n,
   localeMessages,
   log: window.SignalContext.log,
   nativeThemeListener: createNativeThemeListener(ipcRenderer, window),

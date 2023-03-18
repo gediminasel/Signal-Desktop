@@ -19,6 +19,17 @@ import type { RemoveAllConfiguration } from '../types/RemoveAllConfiguration';
 import type { LoggerType } from '../types/Logging';
 import type { ReadStatus } from '../messages/MessageReadStatus';
 
+export type AdjacentMessagesByConversationOptionsType = Readonly<{
+  conversationId: string;
+  messageId?: string;
+  includeStoryReplies: boolean;
+  limit?: number;
+  receivedAt?: number;
+  sentAt?: number;
+  storyId: string | undefined;
+  requireVisualMediaAttachments?: boolean;
+}>;
+
 export type AttachmentDownloadJobTypeType =
   | 'long-message'
   | 'attachment'
@@ -362,7 +373,6 @@ export type GetAllStoriesResultType = ReadonlyArray<
 >;
 
 export type FTSOptimizationStateType = Readonly<{
-  changes: number;
   steps: number;
   done?: boolean;
 }>;
@@ -482,7 +492,7 @@ export type DataInterface = {
   getTotalUnreadForConversation: (
     conversationId: string,
     options: {
-      storyId: UUIDStringType | undefined;
+      storyId: string | undefined;
       includeStoryReplies: boolean;
     }
   ) => Promise<number>;
@@ -492,12 +502,12 @@ export type DataInterface = {
     newestUnreadAt: number;
     now?: number;
     readAt?: number;
-    storyId?: UUIDStringType;
+    storyId?: string;
   }) => Promise<GetUnreadByConversationAndMarkReadResultType>;
   getUnreadReactionsAndMarkRead: (options: {
     conversationId: string;
     newestUnreadAt: number;
-    storyId?: UUIDStringType;
+    storyId?: string;
   }) => Promise<Array<ReactionResultType>>;
   markReactionAsRead: (
     targetAuthorUuid: string,
@@ -541,13 +551,11 @@ export type DataInterface = {
     sourceUuid?: UUIDStringType;
   }) => Promise<GetAllStoriesResultType>;
   // getNewerMessagesByConversation is JSON on server, full message on Client
-  getMessageMetricsForConversation: (
-    conversationId: string,
-    options: {
-      storyId?: UUIDStringType;
-      includeStoryReplies: boolean;
-    }
-  ) => Promise<ConversationMetricsType>;
+  getMessageMetricsForConversation: (options: {
+    conversationId: string;
+    storyId?: string;
+    includeStoryReplies: boolean;
+  }) => Promise<ConversationMetricsType>;
   // getConversationRangeCenteredOnMessage is JSON on server, full message on client
   getConversationMessageStats: (options: {
     conversationId: string;
@@ -743,35 +751,14 @@ export type ServerInterface = DataInterface & {
   ) => Promise<Array<ServerSearchResultMessageType>>;
 
   getOlderMessagesByConversation: (
-    conversationId: string,
-    options: {
-      includeStoryReplies: boolean;
-      limit?: number;
-      messageId?: string;
-      receivedAt?: number;
-      sentAt?: number;
-      storyId: string | undefined;
-    }
+    options: AdjacentMessagesByConversationOptionsType
   ) => Promise<Array<MessageTypeUnhydrated>>;
   getNewerMessagesByConversation: (
-    conversationId: string,
-    options: {
-      includeStoryReplies: boolean;
-      limit?: number;
-      receivedAt?: number;
-      sentAt?: number;
-      storyId: UUIDStringType | undefined;
-    }
+    options: AdjacentMessagesByConversationOptionsType
   ) => Promise<Array<MessageTypeUnhydrated>>;
-  getConversationRangeCenteredOnMessage: (options: {
-    conversationId: string;
-    includeStoryReplies: boolean;
-    limit?: number;
-    messageId: string;
-    receivedAt: number;
-    sentAt?: number;
-    storyId: UUIDStringType | undefined;
-  }) => Promise<
+  getConversationRangeCenteredOnMessage: (
+    options: AdjacentMessagesByConversationOptionsType
+  ) => Promise<
     GetConversationRangeCenteredOnMessageResultType<MessageTypeUnhydrated>
   >;
 
@@ -848,35 +835,14 @@ export type ClientExclusiveInterface = {
   ) => Promise<Array<ClientSearchResultMessageType>>;
 
   getOlderMessagesByConversation: (
-    conversationId: string,
-    options: {
-      includeStoryReplies: boolean;
-      limit?: number;
-      messageId?: string;
-      receivedAt?: number;
-      sentAt?: number;
-      storyId: string | undefined;
-    }
+    options: AdjacentMessagesByConversationOptionsType
   ) => Promise<Array<MessageAttributesType>>;
   getNewerMessagesByConversation: (
-    conversationId: string,
-    options: {
-      includeStoryReplies: boolean;
-      limit?: number;
-      receivedAt?: number;
-      sentAt?: number;
-      storyId: UUIDStringType | undefined;
-    }
+    options: AdjacentMessagesByConversationOptionsType
   ) => Promise<Array<MessageAttributesType>>;
-  getConversationRangeCenteredOnMessage: (options: {
-    conversationId: string;
-    includeStoryReplies: boolean;
-    limit?: number;
-    messageId: string;
-    receivedAt: number;
-    sentAt?: number;
-    storyId: UUIDStringType | undefined;
-  }) => Promise<GetConversationRangeCenteredOnMessageResultType<MessageType>>;
+  getConversationRangeCenteredOnMessage: (
+    options: AdjacentMessagesByConversationOptionsType
+  ) => Promise<GetConversationRangeCenteredOnMessageResultType<MessageType>>;
 
   createOrUpdateIdentityKey: (data: IdentityKeyType) => Promise<void>;
   getIdentityKeyById: (

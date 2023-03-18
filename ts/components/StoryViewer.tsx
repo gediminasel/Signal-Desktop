@@ -96,6 +96,7 @@ export type PropsType = {
     story: StoryViewType
   ) => unknown;
   onUseEmoji: (_: EmojiPickDataType) => unknown;
+  onMediaPlaybackStart: () => void;
   preferredReactionEmoji: ReadonlyArray<string>;
   queueStoryDownload: (storyId: string) => unknown;
   recentEmojis?: ReadonlyArray<string>;
@@ -104,6 +105,7 @@ export type PropsType = {
   retryMessageSend: (messageId: string) => unknown;
   saveAttachment: SaveAttachmentActionCreatorType;
   setHasAllStoriesUnmuted: (isUnmuted: boolean) => unknown;
+  showContactModal: (contactId: string, conversationId?: string) => void;
   showToast: ShowToastActionCreatorType;
   skinTone?: number;
   story: StoryViewType;
@@ -148,6 +150,7 @@ export function StoryViewer({
   onSetSkinTone,
   onTextTooLong,
   onUseEmoji,
+  onMediaPlaybackStart,
   preferredReactionEmoji,
   queueStoryDownload,
   recentEmojis,
@@ -156,6 +159,7 @@ export function StoryViewer({
   retryMessageSend,
   saveAttachment,
   setHasAllStoriesUnmuted,
+  showContactModal,
   showToast,
   skinTone,
   story,
@@ -618,6 +622,7 @@ export function StoryViewer({
               moduleClassName="StoryViewer__story"
               queueStoryDownload={queueStoryDownload}
               storyId={messageId}
+              onMediaPlaybackStart={onMediaPlaybackStart}
             >
               {reactionEmoji && (
                 <div className="StoryViewer__animated-emojis">
@@ -802,15 +807,16 @@ export function StoryViewer({
               ))}
             </div>
             <div className="StoryViewer__actions">
-              {sendStatus === ResolvedSendStatus.Failed && !wasManuallyRetried && (
-                <button
-                  className="StoryViewer__actions__failed"
-                  onClick={doRetryMessageSend}
-                  type="button"
-                >
-                  {i18n('StoryViewer__failed')}
-                </button>
-              )}
+              {sendStatus === ResolvedSendStatus.Failed &&
+                !wasManuallyRetried && (
+                  <button
+                    className="StoryViewer__actions__failed"
+                    onClick={doRetryMessageSend}
+                    type="button"
+                  >
+                    {i18n('StoryViewer__failed')}
+                  </button>
+                )}
               {sendStatus === ResolvedSendStatus.PartiallySent &&
                 !wasManuallyRetried && (
                   <button
@@ -944,6 +950,7 @@ export function StoryViewer({
             recentEmojis={recentEmojis}
             renderEmojiPicker={renderEmojiPicker}
             replies={replies}
+            showContactModal={showContactModal}
             skinTone={skinTone}
             sortedGroupMembers={group?.sortedGroupMembers}
             views={views}

@@ -988,6 +988,8 @@ export const getFileExtension = (
   switch (attachment.contentType) {
     case 'video/quicktime':
       return 'mov';
+    case 'audio/mpeg':
+      return 'mp3';
     default:
       return attachment.contentType.split('/')[1];
   }

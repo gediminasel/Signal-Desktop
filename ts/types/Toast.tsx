@@ -36,7 +36,6 @@ export enum ToastType {
   StoryReact = 'StoryReact',
   StoryReply = 'StoryReply',
   StoryVideoError = 'StoryVideoError',
-  StoryVideoTooLong = 'StoryVideoTooLong',
   StoryVideoUnsupported = 'StoryVideoUnsupported',
   TapToViewExpiredIncoming = 'TapToViewExpiredIncoming',
   TapToViewExpiredOutgoing = 'TapToViewExpiredOutgoing',

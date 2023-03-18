@@ -31,7 +31,7 @@ import { normalizeUuid } from '../util/normalizeUuid';
 import { clearTimeoutIfNecessary } from '../util/clearTimeoutIfNecessary';
 import type { AttachmentType, ThumbnailType } from '../types/Attachment';
 import { toDayMillis } from '../util/timestamp';
-import { isGIF } from '../types/Attachment';
+import { isGIF, isVoiceMessage } from '../types/Attachment';
 import type { CallHistoryDetailsType } from '../types/Calling';
 import { CallMode } from '../types/Calling';
 import * as Conversation from '../types/Conversation';
@@ -272,6 +272,8 @@ export class ConversationModel extends window.Backbone
   private isInReduxBatch = false;
 
   private privVerifiedEnum?: typeof window.textsecure.storage.protocol.VerifiedStatus;
+
+  private isShuttingDown = false;
 
   override defaults(): Partial<ConversationAttributesType> {
     return {
@@ -1014,6 +1016,7 @@ export class ConversationModel extends window.Backbone
 
   hasDraft(): boolean {
     const draftAttachments = this.get('draftAttachments') || [];
+
     return (this.get('draft') ||
       this.get('quotedMessageId') ||
       draftAttachments.length > 0) as boolean;
@@ -1030,6 +1033,12 @@ export class ConversationModel extends window.Backbone
 
     const draftAttachments = this.get('draftAttachments') || [];
     if (draftAttachments.length > 0) {
+      if (isVoiceMessage(draftAttachments[0])) {
+        return window.i18n('message--getNotificationText--text-with-emoji', {
+          text: window.i18n('message--getNotificationText--voice-message'),
+          emoji: '🎤',
+        });
+      }
       return window.i18n('Conversation--getDraftPreview--attachment');
     }
 
@@ -1483,7 +1492,8 @@ export class ConversationModel extends window.Backbone
         }
       }
 
-      const metrics = await getMessageMetricsForConversation(conversationId, {
+      const metrics = await getMessageMetricsForConversation({
+        conversationId,
         includeStoryReplies: !isGroup(this.attributes),
       });
 
@@ -1503,7 +1513,8 @@ export class ConversationModel extends window.Backbone
         return;
       }
 
-      const messages = await getOlderMessagesByConversation(conversationId, {
+      const messages = await getOlderMessagesByConversation({
+        conversationId,
         includeStoryReplies: !isGroup(this.attributes),
         limit: MESSAGE_LOAD_CHUNK_SIZE,
         storyId: undefined,
@@ -1556,7 +1567,8 @@ export class ConversationModel extends window.Backbone
 
       const receivedAt = message.received_at;
       const sentAt = message.sent_at;
-      const models = await getOlderMessagesByConversation(conversationId, {
+      const models = await getOlderMessagesByConversation({
+        conversationId,
         includeStoryReplies: !isGroup(this.attributes),
         limit: MESSAGE_LOAD_CHUNK_SIZE,
         messageId: oldestMessageId,
@@ -1611,7 +1623,8 @@ export class ConversationModel extends window.Backbone
 
       const receivedAt = message.received_at;
       const sentAt = message.sent_at;
-      const models = await getNewerMessagesByConversation(conversationId, {
+      const models = await getNewerMessagesByConversation({
+        conversationId,
         includeStoryReplies: !isGroup(this.attributes),
         limit: MESSAGE_LOAD_CHUNK_SIZE,
         receivedAt,
@@ -2254,17 +2267,15 @@ export class ConversationModel extends window.Backbone
       const first = messages ? messages[0] : undefined;
 
       // eslint-disable-next-line no-await-in-loop
-      messages = await window.Signal.Data.getOlderMessagesByConversation(
-        this.get('id'),
-        {
-          includeStoryReplies: !isGroup(this.attributes),
-          limit: 100,
-          messageId: first ? first.id : undefined,
-          receivedAt: first ? first.received_at : undefined,
-          sentAt: first ? first.sent_at : undefined,
-          storyId: undefined,
-        }
-      );
+      messages = await window.Signal.Data.getOlderMessagesByConversation({
+        conversationId: this.get('id'),
+        includeStoryReplies: !isGroup(this.attributes),
+        limit: 100,
+        messageId: first ? first.id : undefined,
+        receivedAt: first ? first.received_at : undefined,
+        sentAt: first ? first.sent_at : undefined,
+        storyId: undefined,
+      });
 
       if (!messages.length) {
         return;
@@ -2726,8 +2737,10 @@ export class ConversationModel extends window.Backbone
       await this.initialPromise;
       const verified = await this.safeGetVerified();
 
-      if (this.get('verified') !== verified) {
+      const oldVerified = this.get('verified');
+      if (oldVerified !== verified) {
         this.set({ verified });
+        this.captureChange(`updateVerified from=${oldVerified} to=${verified}`);
         window.Signal.Data.updateConversation(this.attributes);
       }
 
@@ -2794,7 +2807,9 @@ export class ConversationModel extends window.Backbone
     window.Signal.Data.updateConversation(this.attributes);
 
     if (beginningVerified !== verified) {
-      this.captureChange(`verified from=${beginningVerified} to=${verified}`);
+      this.captureChange(
+        `_setVerified from=${beginningVerified} to=${verified}`
+      );
     }
 
     const didVerifiedChange = beginningVerified !== verified;
@@ -2925,7 +2940,9 @@ export class ConversationModel extends window.Backbone
       return;
     }
 
-    return window.textsecure.storage.protocol.setApproval(uuid, true);
+    return this.queueJob('setApproved', async () => {
+      return window.textsecure.storage.protocol.setApproval(uuid, true);
+    });
   }
 
   safeIsUntrusted(timestampThreshold?: number): boolean {
@@ -3300,11 +3317,25 @@ export class ConversationModel extends window.Backbone
 
     switch (callHistoryDetails.callMode) {
       case CallMode.Direct: {
+        const {
+          callId,
+          wasIncoming,
+          wasVideoCall,
+          wasDeclined,
+          acceptedTime,
+          endedTime,
+        } = callHistoryDetails;
         log.info(
-          `addCallHistory: Adding direct call to history (Call ID ${callHistoryDetails.callId})`
+          `addCallHistory: Call ID: ${callId}, ` +
+            'Direct, ' +
+            `Incoming: ${wasIncoming}, ` +
+            `Video: ${wasVideoCall}, ` +
+            `Declined: ${wasDeclined}, ` +
+            `Accepted: ${acceptedTime}, ` +
+            `Ended: ${endedTime}`
         );
-        const resolvedTime =
-          callHistoryDetails.acceptedTime ?? callHistoryDetails.endedTime;
+
+        const resolvedTime = acceptedTime ?? endedTime;
         assertDev(resolvedTime, 'Direct call must have accepted or ended time');
         timestamp = resolvedTime;
         unread =
@@ -3352,6 +3383,10 @@ export class ConversationModel extends window.Backbone
               `addCallHistory: Found existing call history message (Call ID ${callHistoryDetails.callId}, Message ID: ${messageId})`
             );
             message.id = messageId;
+          } else {
+            log.info(
+              `addCallHistory: No existing call history message found (Call ID ${callHistoryDetails.callId})`
+            );
           }
         }
 
@@ -3637,13 +3672,18 @@ export class ConversationModel extends window.Backbone
     return validateConversation(attributes);
   }
 
-  queueJob<T>(
+  async queueJob<T>(
     name: string,
     callback: (abortSignal: AbortSignal) => Promise<T>
   ): Promise<T> {
-    this.jobQueue = this.jobQueue || new PQueue({ concurrency: 1 });
-
     const logId = `conversation.queueJob(${this.idForLogging()}, ${name})`;
+
+    if (this.isShuttingDown) {
+      log.warn(`${logId}: shutting down, can't accept more work`);
+      throw new Error(`${logId}: shutting down, can't accept more work`);
+    }
+
+    this.jobQueue = this.jobQueue || new PQueue({ concurrency: 1 });
 
     const taskWithTimeout = createTaskWithTimeout(callback, logId);
 
@@ -4032,11 +4072,14 @@ export class ConversationModel extends window.Backbone
     };
 
     drop(
-      this.enqueueMessageForSend({
-        body: undefined,
-        attachments: [],
-        sticker,
-      })
+      this.enqueueMessageForSend(
+        {
+          body: undefined,
+          attachments: [],
+          sticker,
+        },
+        { dontClearDraft: true }
+      )
     );
     window.reduxActions.stickers.useSticker(packId, stickerId);
   }
@@ -4253,6 +4296,9 @@ export class ConversationModel extends window.Backbone
 
         this.doAddSingleMessage(model, { isJustSent: true });
 
+        log.info(
+          `enqueueMessageForSend(${this.idForLogging()}): clearDraft(${!dontClearDraft})`
+        );
         const draftProperties = dontClearDraft
           ? {}
           : {
@@ -4423,11 +4469,15 @@ export class ConversationModel extends window.Backbone
     }
 
     const currentTimestamp = this.get('timestamp') || null;
-    const timestamp = activityMessage
-      ? activityMessage.get('sent_at') ||
-        activityMessage.get('received_at') ||
-        currentTimestamp
-      : currentTimestamp;
+
+    let timestamp = currentTimestamp;
+    if (activityMessage) {
+      const receivedAt = activityMessage.get('received_at_ms');
+      timestamp = receivedAt
+        ? Math.min(activityMessage.get('sent_at'), receivedAt)
+        : activityMessage.get('sent_at');
+    }
+    timestamp = timestamp || currentTimestamp;
 
     this.set({
       lastMessage:
@@ -5749,6 +5799,30 @@ export class ConversationModel extends window.Backbone
     );
 
     return this.get('storySendMode') ?? StorySendMode.IfActive;
+  }
+
+  async shutdownJobQueue(): Promise<void> {
+    log.info(`conversation ${this.idForLogging()} jobQueue shutdown start`);
+
+    if (!this.jobQueue) {
+      log.info(`conversation ${this.idForLogging()} no jobQueue to shutdown`);
+      return;
+    }
+
+    // If the queue takes more than 10 seconds to get to idle, we force it by setting
+    // isShuttingDown = true which will reject incoming requests.
+    const to = setTimeout(() => {
+      log.warn(
+        `conversation ${this.idForLogging()} jobQueue stop accepting new work`
+      );
+      this.isShuttingDown = true;
+    }, 10 * SECOND);
+
+    await this.jobQueue.onIdle();
+    this.isShuttingDown = true;
+    clearTimeout(to);
+
+    log.info(`conversation ${this.idForLogging()} jobQueue shutdown complete`);
   }
 }
 

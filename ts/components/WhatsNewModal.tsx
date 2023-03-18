@@ -31,8 +31,10 @@ const releaseNotes: ReleaseNotesType = {
   version: window.getVersion?.(),
   features: [
     {
-      key: 'WhatsNew__bugfixes--5',
-      components: undefined,
+      key: 'icu:WhatsNew__v6.11--0',
+      components: {
+        hackerbirds: <a href="https://github.com/hackerbirds">@hackerbirds</a>,
+      },
     },
   ],
 };
