@@ -26,6 +26,7 @@ import * as log from '../../logging/log';
 import { formatDateTimeLong } from '../../util/timestamp';
 import { DurationInSeconds } from '../../util/durations';
 import { format as formatRelativeTime } from '../../util/expirationTimer';
+import { missingCaseError } from '../../util';
 
 export type Contact = Pick<
   ConversationType,
@@ -75,7 +76,7 @@ export type PropsSmartActions = Pick<MessagePropsType, 'renderAudioAttachment'>;
 export type PropsReduxActions = Pick<
   MessagePropsType,
   | 'checkForAccount'
-  | 'clearSelectedMessage'
+  | 'clearTargetedMessage'
   | 'doubleCheckMissingQuoteReference'
   | 'kickOffAttachmentDownload'
   | 'markAttachmentAsCorrupted'
@@ -200,24 +201,49 @@ export class MessageDetail extends React.Component<Props> {
     );
   }
 
+  private renderContactGroupHeaderText(
+    sendStatus: undefined | SendStatus
+  ): string {
+    const { i18n } = this.props;
+
+    if (sendStatus === undefined) {
+      return i18n('from');
+    }
+
+    switch (sendStatus) {
+      case SendStatus.Failed:
+        return i18n('MessageDetailsHeader--Failed');
+      case SendStatus.Pending:
+        return i18n('MessageDetailsHeader--Pending');
+      case SendStatus.Sent:
+        return i18n('MessageDetailsHeader--Sent');
+      case SendStatus.Delivered:
+        return i18n('MessageDetailsHeader--Delivered');
+      case SendStatus.Read:
+        return i18n('MessageDetailsHeader--Read');
+      case SendStatus.Viewed:
+        return i18n('MessageDetailsHeader--Viewed');
+      default:
+        throw missingCaseError(sendStatus);
+    }
+  }
+
   private renderContactGroup(
     sendStatus: undefined | SendStatus,
     contacts: undefined | ReadonlyArray<Contact>
   ): ReactNode {
-    const { i18n } = this.props;
     if (!contacts || !contacts.length) {
       return null;
     }
-
-    const i18nKey =
-      sendStatus === undefined ? 'from' : `MessageDetailsHeader--${sendStatus}`;
 
     const sortedContacts = [...contacts].sort((a, b) =>
       contactSortCollator.compare(a.title, b.title)
     );
 
+    const headerText = this.renderContactGroupHeaderText(sendStatus);
+
     return (
-      <div key={i18nKey} className="module-message-detail__contact-group">
+      <div key={headerText} className="module-message-detail__contact-group">
         <div
           className={classNames(
             'module-message-detail__contact-group__header',
@@ -225,8 +251,7 @@ export class MessageDetail extends React.Component<Props> {
               `module-message-detail__contact-group__header--${sendStatus}`
           )}
         >
-          {/* eslint-disable-next-line local-rules/valid-i18n-keys */}
-          {i18n(i18nKey)}
+          {headerText}
         </div>
         {sortedContacts.map(contact => this.renderContact(contact))}
       </div>
@@ -268,7 +293,7 @@ export class MessageDetail extends React.Component<Props> {
       sentAt,
 
       checkForAccount,
-      clearSelectedMessage,
+      clearTargetedMessage,
       contactNameColor,
       showLightboxForViewOnceMedia,
       doubleCheckMissingQuoteReference,
@@ -306,7 +331,7 @@ export class MessageDetail extends React.Component<Props> {
             {...message}
             renderingContext="conversation/MessageDetail"
             checkForAccount={checkForAccount}
-            clearSelectedMessage={clearSelectedMessage}
+            clearTargetedMessage={clearTargetedMessage}
             contactNameColor={contactNameColor}
             containerElementRef={this.messageContainerRef}
             containerWidthBreakpoint={WidthBreakpoint.Wide}
@@ -343,6 +368,8 @@ export class MessageDetail extends React.Component<Props> {
             startConversation={startConversation}
             theme={theme}
             viewStory={viewStory}
+            onToggleSelect={noop}
+            onReplyToMessage={noop}
           />
         </div>
         <table className="module-message-detail__info">

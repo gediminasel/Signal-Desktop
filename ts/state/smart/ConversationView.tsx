@@ -25,6 +25,7 @@ import { SmartTimeline } from './Timeline';
 import { getIntl } from '../selectors/user';
 import {
   getSelectedConversationId,
+  getSelectedMessageIds,
   getTopPanel,
 } from '../selectors/conversations';
 import { useComposerActions } from '../ducks/composer';
@@ -40,14 +41,28 @@ export function SmartConversationView(): JSX.Element {
   const topPanel = useSelector<StateType, PanelRenderType | undefined>(
     getTopPanel
   );
-  const { startConversation } = useConversationsActions();
+  const { startConversation, toggleSelectMode } = useConversationsActions();
+  const selectedMessageIds = useSelector(getSelectedMessageIds);
+  const isSelectMode = selectedMessageIds != null;
 
   const { processAttachments } = useComposerActions();
   const i18n = useSelector(getIntl);
 
+  const hasOpenModal = useSelector((state: StateType) => {
+    return (
+      state.globalModals.forwardMessagesProps != null ||
+      state.globalModals.hasConfirmationModal
+    );
+  });
+
   return (
     <ConversationView
       conversationId={conversationId}
+      hasOpenModal={hasOpenModal}
+      isSelectMode={isSelectMode}
+      onExitSelectMode={() => {
+        toggleSelectMode(false);
+      }}
       processAttachments={processAttachments}
       renderCompositionArea={() => <SmartCompositionArea id={conversationId} />}
       renderConversationHeader={() => (

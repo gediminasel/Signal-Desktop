@@ -10,7 +10,8 @@ import { ErrorModal } from '../../components/ErrorModal';
 import { GlobalModalContainer } from '../../components/GlobalModalContainer';
 import { SmartAddUserToAnotherGroupModal } from './AddUserToAnotherGroupModal';
 import { SmartContactModal } from './ContactModal';
-import { SmartForwardMessageModal } from './ForwardMessageModal';
+import { SmartEditHistoryMessagesModal } from './EditHistoryMessagesModal';
+import { SmartForwardMessagesModal } from './ForwardMessagesModal';
 import { SmartProfileEditorModal } from './ProfileEditorModal';
 import { SmartSafetyNumberModal } from './SafetyNumberModal';
 import { SmartSendAnywayDialog } from './SendAnywayDialog';
@@ -21,6 +22,10 @@ import { getConversationsStoppingSend } from '../selectors/conversations';
 import { getIntl, getTheme } from '../selectors/user';
 import { useGlobalModalActions } from '../ducks/globalModals';
 
+function renderEditHistoryMessagesModal(): JSX.Element {
+  return <SmartEditHistoryMessagesModal />;
+}
+
 function renderProfileEditor(): JSX.Element {
   return <SmartProfileEditorModal />;
 }
@@ -29,8 +34,8 @@ function renderContactModal(): JSX.Element {
   return <SmartContactModal />;
 }
 
-function renderForwardMessageModal(): JSX.Element {
-  return <SmartForwardMessageModal />;
+function renderForwardMessagesModal(): JSX.Element {
+  return <SmartForwardMessagesModal />;
 }
 
 function renderStoriesSettings(): JSX.Element {
@@ -55,8 +60,9 @@ export function SmartGlobalModalContainer(): JSX.Element {
   const {
     addUserToAnotherGroupModalContactId,
     contactModalState,
+    editHistoryMessages,
     errorModalProps,
-    forwardMessageProps,
+    forwardMessagesProps,
     isProfileEditorVisible,
     isShortcutGuideModalVisible,
     isSignalConnectionsVisible,
@@ -120,8 +126,9 @@ export function SmartGlobalModalContainer(): JSX.Element {
     <GlobalModalContainer
       addUserToAnotherGroupModalContactId={addUserToAnotherGroupModalContactId}
       contactModalState={contactModalState}
+      editHistoryMessages={editHistoryMessages}
       errorModalProps={errorModalProps}
-      forwardMessageProps={forwardMessageProps}
+      forwardMessagesProps={forwardMessagesProps}
       hasSafetyNumberChangeModal={hasSafetyNumberChangeModal}
       hideUserNotFoundModal={hideUserNotFoundModal}
       hideWhatsNewModal={hideWhatsNewModal}
@@ -133,8 +140,9 @@ export function SmartGlobalModalContainer(): JSX.Element {
       isWhatsNewVisible={isWhatsNewVisible}
       renderAddUserToAnotherGroup={renderAddUserToAnotherGroup}
       renderContactModal={renderContactModal}
+      renderEditHistoryMessagesModal={renderEditHistoryMessagesModal}
       renderErrorModal={renderErrorModal}
-      renderForwardMessageModal={renderForwardMessageModal}
+      renderForwardMessagesModal={renderForwardMessagesModal}
       renderProfileEditor={renderProfileEditor}
       renderSafetyNumber={renderSafetyNumber}
       renderSendAnywayDialog={renderSendAnywayDialog}

@@ -3,15 +3,15 @@
 
 import { assert } from 'chai';
 
+import type { TargetedConversationChangedActionType } from '../../../state/ducks/conversations';
 import {
-  SELECTED_CONVERSATION_CHANGED,
+  TARGETED_CONVERSATION_CHANGED,
   actions as conversationsActions,
 } from '../../../state/ducks/conversations';
 import { noopAction } from '../../../state/ducks/noop';
 
 import type { StateType } from '../../../state/reducer';
 import { reducer as rootReducer } from '../../../state/reducer';
-import type { SelectedConversationChangedActionType } from '../../../state/ducks/conversations';
 import { actions, AudioPlayerContent } from '../../../state/ducks/audioPlayer';
 import type { VoiceNoteAndConsecutiveForPlayback } from '../../../state/selectors/audioPlayer';
 
@@ -100,10 +100,11 @@ describe('both/state/ducks/audioPlayer', () => {
   it('active is not changed when changing the conversation', () => {
     const state = getInitializedState();
 
-    const updated = rootReducer(state, <SelectedConversationChangedActionType>{
-      type: SELECTED_CONVERSATION_CHANGED,
-      payload: { id: 'any' },
-    });
+    const action: TargetedConversationChangedActionType = {
+      type: TARGETED_CONVERSATION_CHANGED,
+      payload: { conversationId: 'any' },
+    };
+    const updated = rootReducer(state, action);
 
     const content = updated.audioPlayer.active?.content;
     assert.isTrue(content && AudioPlayerContent.isVoiceNote(content));

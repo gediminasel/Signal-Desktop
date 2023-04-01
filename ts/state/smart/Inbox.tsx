@@ -14,6 +14,7 @@ import { SmartLeftPane } from './LeftPane';
 import { useConversationsActions } from '../ducks/conversations';
 import { useGlobalModalActions } from '../ducks/globalModals';
 import { getIsCustomizingPreferredReactions } from '../selectors/preferredReactions';
+import { SmartMiniPlayer } from './MiniPlayer';
 
 function renderConversationView() {
   return <SmartConversationView />;
@@ -21,6 +22,10 @@ function renderConversationView() {
 
 function renderCustomizingPreferredReactionsModal() {
   return <SmartCustomizingPreferredReactionsModal />;
+}
+
+function renderMiniPlayer(options: { shouldFlow: boolean }) {
+  return <SmartMiniPlayer {...options} />;
 }
 
 function renderLeftPane() {
@@ -32,10 +37,16 @@ export function SmartInbox(): JSX.Element {
   const isCustomizingPreferredReactions = useSelector(
     getIsCustomizingPreferredReactions
   );
+  const envelopeTimestamp = useSelector<StateType, number | undefined>(
+    state => state.inbox.envelopeTimestamp
+  );
+  const firstEnvelopeTimestamp = useSelector<StateType, number | undefined>(
+    state => state.inbox.firstEnvelopeTimestamp
+  );
   const { hasInitialLoadCompleted } = useSelector<StateType, AppStateType>(
     state => state.app
   );
-  const { selectedConversationId, selectedMessage, selectedMessageSource } =
+  const { selectedConversationId, targetedMessage, targetedMessageSource } =
     useSelector<StateType, ConversationsStateType>(
       state => state.conversations
     );
@@ -49,6 +60,8 @@ export function SmartInbox(): JSX.Element {
 
   return (
     <Inbox
+      envelopeTimestamp={envelopeTimestamp}
+      firstEnvelopeTimestamp={firstEnvelopeTimestamp}
       hasInitialLoadCompleted={hasInitialLoadCompleted}
       i18n={i18n}
       isCustomizingPreferredReactions={isCustomizingPreferredReactions}
@@ -59,10 +72,11 @@ export function SmartInbox(): JSX.Element {
         renderCustomizingPreferredReactionsModal
       }
       renderLeftPane={renderLeftPane}
+      renderMiniPlayer={renderMiniPlayer}
       scrollToMessage={scrollToMessage}
       selectedConversationId={selectedConversationId}
-      selectedMessage={selectedMessage}
-      selectedMessageSource={selectedMessageSource}
+      targetedMessage={targetedMessage}
+      targetedMessageSource={targetedMessageSource}
       showConversation={showConversation}
       showWhatsNewModal={showWhatsNewModal}
     />

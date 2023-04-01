@@ -507,9 +507,9 @@ export function StoriesSettingsModal({
           }}
           theme={Theme.Dark}
         >
-          {i18n('StoriesSettings__delete-list--confirm', [
-            confirmDeleteList.name,
-          ])}
+          {i18n('StoriesSettings__delete-list--confirm', {
+            name: confirmDeleteList.name,
+          })}
         </ConfirmationDialog>
       )}
       {confirmRemoveGroup != null && (
@@ -627,7 +627,7 @@ export function DistributionListSettingsModal({
       {isMyStory && (
         <EditMyStoryPrivacy
           i18n={i18n}
-          learnMore="StoriesSettings__mine__disclaimer"
+          kind="mine"
           myStories={listToEdit}
           onClickExclude={() => {
             setPage(Page.HideStoryFrom);
@@ -687,9 +687,9 @@ export function DistributionListSettingsModal({
               </span>
 
               <button
-                aria-label={i18n('StoriesSettings__remove--title', [
-                  member.title,
-                ])}
+                aria-label={i18n('StoriesSettings__remove--title', {
+                  title: member.title,
+                })}
                 className="StoriesSettingsModal__list__delete"
                 onClick={() => {
                   strictAssert(member.uuid, 'Story member was missing uuid');
@@ -753,9 +753,9 @@ export function DistributionListSettingsModal({
             setConfirmRemoveMember(undefined);
           }}
           theme={Theme.Dark}
-          title={i18n('StoriesSettings__remove--title', [
-            confirmRemoveMember.title,
-          ])}
+          title={i18n('StoriesSettings__remove--title', {
+            title: confirmRemoveMember.title,
+          })}
         >
           {i18n('StoriesSettings__remove--body')}
         </ConfirmationDialog>
@@ -791,7 +791,7 @@ function CheckboxRender({
 type EditMyStoryPrivacyPropsType = {
   hasDisclaimerAbove?: boolean;
   i18n: LocalizerType;
-  learnMore: string;
+  kind: 'privacy' | 'mine';
   myStories: StoryDistributionListWithMembersDataType;
   onClickExclude: () => unknown;
   onClickOnlyShareWith: () => unknown;
@@ -805,7 +805,7 @@ type EditMyStoryPrivacyPropsType = {
 export function EditMyStoryPrivacy({
   hasDisclaimerAbove,
   i18n,
-  learnMore,
+  kind,
   myStories,
   onClickExclude,
   onClickOnlyShareWith,
@@ -814,24 +814,30 @@ export function EditMyStoryPrivacy({
   toggleSignalConnectionsModal,
   signalConnectionsCount,
 }: EditMyStoryPrivacyPropsType): JSX.Element {
+  const learnMore = (
+    <button
+      className="StoriesSettingsModal__disclaimer__learn-more"
+      onClick={toggleSignalConnectionsModal}
+      type="button"
+    >
+      {i18n('StoriesSettings__mine__disclaimer--learn-more')}
+    </button>
+  );
   const disclaimerElement = (
     <div className="StoriesSettingsModal__disclaimer">
-      {/* eslint-disable-next-line local-rules/valid-i18n-keys */}
-      <Intl
-        components={{
-          learnMore: (
-            <button
-              className="StoriesSettingsModal__disclaimer__learn-more"
-              onClick={toggleSignalConnectionsModal}
-              type="button"
-            >
-              {i18n('StoriesSettings__mine__disclaimer--learn-more')}
-            </button>
-          ),
-        }}
-        i18n={i18n}
-        id={learnMore}
-      />
+      {kind === 'mine' ? (
+        <Intl
+          components={{ learnMore }}
+          i18n={i18n}
+          id="StoriesSettings__mine__disclaimer"
+        />
+      ) : (
+        <Intl
+          components={{ learnMore }}
+          i18n={i18n}
+          id="SendStoryModal__privacy-disclaimer"
+        />
+      )}
     </div>
   );
 
@@ -840,7 +846,7 @@ export function EditMyStoryPrivacy({
       {hasDisclaimerAbove && disclaimerElement}
 
       <Checkbox
-        checked={!myStories.members.length}
+        checked={myStories.isBlockList && !myStories.members.length}
         isRadio
         label={i18n('StoriesSettings__mine__all--label')}
         moduleClassName="StoriesSettingsModal__checkbox"

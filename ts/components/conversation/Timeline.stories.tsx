@@ -62,6 +62,8 @@ function mockMessageTimelineItem(
       text: 'Hello there from the new world!',
       isBlocked: false,
       isMessageRequestAccepted: true,
+      isSelected: false,
+      isSelectMode: false,
       previews: [],
       readStatus: ReadStatus.Read,
       canRetryDeleteForEveryone: true,
@@ -271,15 +273,16 @@ const actions = () => ({
   loadNewerMessages: action('loadNewerMessages'),
   loadNewestMessages: action('loadNewestMessages'),
   markMessageRead: action('markMessageRead'),
-  selectMessage: action('selectMessage'),
-  clearSelectedMessage: action('clearSelectedMessage'),
+  toggleSelectMessage: action('toggleSelectMessage'),
+  targetMessage: action('targetMessage'),
+  clearTargetedMessage: action('clearTargetedMessage'),
   updateSharedGroups: action('updateSharedGroups'),
 
   reactToMessage: action('reactToMessage'),
   setQuoteByMessageId: action('setQuoteByMessageId'),
   retryDeleteForEveryone: action('retryDeleteForEveryone'),
   retryMessageSend: action('retryMessageSend'),
-  deleteMessage: action('deleteMessage'),
+  deleteMessages: action('deleteMessages'),
   deleteMessageForEveryone: action('deleteMessageForEveryone'),
   saveAttachment: action('saveAttachment'),
   pushPanelForConversation: action('pushPanelForConversation'),
@@ -301,7 +304,7 @@ const actions = () => ({
   showExpiredOutgoingTapToViewToast: action(
     'showExpiredOutgoingTapToViewToast'
   ),
-  toggleForwardMessageModal: action('toggleForwardMessageModal'),
+  toggleForwardMessagesModal: action('toggleForwardMessagesModal'),
 
   toggleSafetyNumberModal: action('toggleSafetyNumberModal'),
 
@@ -321,6 +324,8 @@ const actions = () => ({
   peekGroupCallIfItHasMembers: action('peekGroupCallIfItHasMembers'),
 
   viewStory: action('viewStory'),
+
+  onReplyToMessage: action('onReplyToMessage'),
 });
 
 const renderItem = ({
@@ -335,10 +340,7 @@ const renderItem = ({
   <TimelineItem
     getPreferredBadge={() => undefined}
     id=""
-    isSelected={false}
-    renderEmojiPicker={() => <div />}
-    renderReactionPicker={() => <div />}
-    item={items[messageId]}
+    isTargeted={false}
     i18n={i18n}
     interactionMode="keyboard"
     isNextItemCallingNotification={false}
@@ -346,11 +348,14 @@ const renderItem = ({
     containerElementRef={containerElementRef}
     containerWidthBreakpoint={containerWidthBreakpoint}
     conversationId=""
+    item={items[messageId]}
+    renderAudioAttachment={() => <div>*AudioAttachment*</div>}
     renderContact={() => '*ContactName*'}
+    renderEmojiPicker={() => <div />}
+    renderReactionPicker={() => <div />}
     renderUniversalTimerNotification={() => (
       <div>*UniversalTimerNotification*</div>
     )}
-    renderAudioAttachment={() => <div>*AudioAttachment*</div>}
     shouldCollapseAbove={false}
     shouldCollapseBelow={false}
     shouldHideMetadata={false}
@@ -437,6 +442,9 @@ const renderTypingBubble = () => (
     sharedGroupNames={[]}
   />
 );
+const renderMiniPlayer = () => (
+  <div>If active, this is where smart mini player would be</div>
+);
 
 const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
   discardMessages: action('discardMessages'),
@@ -456,6 +464,7 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
   messageChangeCounter: 0,
   scrollToIndex: overrideProps.scrollToIndex,
   scrollToIndexCounter: 0,
+  shouldShowMiniPlayer: Boolean(overrideProps.shouldShowMiniPlayer),
   totalUnseen: number('totalUnseen', overrideProps.totalUnseen || 0),
   oldestUnseenIndex:
     number('oldestUnseenIndex', overrideProps.oldestUnseenIndex || 0) ||
@@ -467,6 +476,7 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
   id: uuid(),
   renderItem,
   renderHeroRow,
+  renderMiniPlayer,
   renderTypingBubble,
   renderContactSpoofingReviewDialog,
   isSomeoneTyping: overrideProps.isSomeoneTyping || false,
@@ -621,3 +631,12 @@ export function WithSameNameInGroupConversationWarning(): JSX.Element {
 WithSameNameInGroupConversationWarning.story = {
   name: 'With "same name in group conversation" warning',
 };
+
+export function WithJustMiniPlayer(): JSX.Element {
+  const props = useProps({
+    shouldShowMiniPlayer: true,
+    items: [],
+  });
+
+  return <Timeline {...props} />;
+}

@@ -18,6 +18,8 @@ import type { BadgeType } from '../badges/types';
 import type { RemoveAllConfiguration } from '../types/RemoveAllConfiguration';
 import type { LoggerType } from '../types/Logging';
 import type { ReadStatus } from '../messages/MessageReadStatus';
+import type { GetMessagesBetweenOptions } from './Server';
+import type { MessageTimestamps } from '../state/ducks/conversations';
 
 export type AdjacentMessagesByConversationOptionsType = Readonly<{
   conversationId: string;
@@ -28,6 +30,14 @@ export type AdjacentMessagesByConversationOptionsType = Readonly<{
   sentAt?: number;
   storyId: string | undefined;
   requireVisualMediaAttachments?: boolean;
+}>;
+
+export type GetNearbyMessageFromDeletedSetOptionsType = Readonly<{
+  conversationId: string;
+  lastSelectedMessage: MessageTimestamps;
+  deletedMessageIds: ReadonlyArray<string>;
+  storyId: string | undefined;
+  includeStoryReplies: boolean;
 }>;
 
 export type AttachmentDownloadJobTypeType =
@@ -377,6 +387,13 @@ export type FTSOptimizationStateType = Readonly<{
   done?: boolean;
 }>;
 
+export type EditedMessageType = Readonly<{
+  fromId: string;
+  messageId: string;
+  sentAt: number;
+  readStatus: MessageType['readStatus'];
+}>;
+
 export type DataInterface = {
   close: () => Promise<void>;
   removeDB: () => Promise<void>;
@@ -504,6 +521,10 @@ export type DataInterface = {
     readAt?: number;
     storyId?: string;
   }) => Promise<GetUnreadByConversationAndMarkReadResultType>;
+  getUnreadEditedMessagesAndMarkRead: (options: {
+    fromId: string;
+    newestUnreadAt: number;
+  }) => Promise<GetUnreadByConversationAndMarkReadResultType>;
   getUnreadReactionsAndMarkRead: (options: {
     conversationId: string;
     newestUnreadAt: number;
@@ -529,8 +550,13 @@ export type DataInterface = {
     sent_at: number;
   }) => Promise<MessageType | undefined>;
   getMessageById: (id: string) => Promise<MessageType | undefined>;
-  getMessagesById: (messageIds: Array<string>) => Promise<Array<MessageType>>;
+  getMessagesById: (
+    messageIds: ReadonlyArray<string>
+  ) => Promise<Array<MessageType>>;
   _getAllMessages: () => Promise<Array<MessageType>>;
+  _getAllEditedMessages: () => Promise<
+    Array<{ messageId: string; sentAt: number }>
+  >;
   _removeAllMessages: () => Promise<void>;
   getAllMessageIds: () => Promise<Array<string>>;
   getMessageAfterDate: (
@@ -538,6 +564,9 @@ export type DataInterface = {
     conversationId: string
   ) => Promise<MessageType | null>;
   getMessagesBySentAt: (sentAt: number) => Promise<Array<MessageType>>;
+  getMessagesIncludingEditedBySentAt: (
+    sentAt: number
+  ) => Promise<Array<MessageType>>;
   getExpiredMessages: () => Promise<Array<MessageType>>;
   getMessagesUnexpectedlyMissingExpirationStartTimestamp: () => Promise<
     Array<MessageType>
@@ -577,7 +606,18 @@ export type DataInterface = {
     obsoleteId: string,
     currentId: string
   ) => Promise<void>;
-
+  getMessagesBetween: (
+    conversationId: string,
+    options: GetMessagesBetweenOptions
+  ) => Promise<Array<string>>;
+  getNearbyMessageFromDeletedSet: (
+    options: GetNearbyMessageFromDeletedSetOptionsType
+  ) => Promise<string | null>;
+  saveEditedMessage: (
+    mainMessage: MessageType,
+    ourUuid: UUIDStringType,
+    opts: EditedMessageType
+  ) => Promise<void>;
   getUnprocessedCount: () => Promise<number>;
   getUnprocessedByIdsAndIncrementAttempts: (
     ids: ReadonlyArray<string>

@@ -33,6 +33,7 @@ export enum AvatarSize {
   TWENTY_EIGHT = 28,
   THIRTY_TWO = 32,
   FORTY_EIGHT = 48,
+  FIFTY_TWO = 52,
   EIGHTY = 80,
 }
 
@@ -290,7 +291,9 @@ export function Avatar({
 
   return (
     <div
-      aria-label={i18n('contactAvatarAlt', [title])}
+      aria-label={i18n('contactAvatarAlt', {
+        name: title,
+      })}
       className={classNames(
         'module-Avatar',
         Boolean(storyRing) && 'module-Avatar--with-story',

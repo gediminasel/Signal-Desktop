@@ -88,6 +88,7 @@ export type PropsActionsType = {
   destroyMessages: (conversationId: string) => void;
   onArchive: (conversationId: string) => void;
   onMarkUnread: (conversationId: string) => void;
+  toggleSelectMode: (on: boolean) => void;
   onMoveToInbox: (conversationId: string) => void;
   onOutgoingAudioCallInConversation: (conversationId: string) => void;
   onOutgoingVideoCallInConversation: (conversationId: string) => void;
@@ -353,6 +354,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
       muteExpiresAt,
       onArchive,
       onMarkUnread,
+      toggleSelectMode,
       onMoveToInbox,
       jumpToDate,
       pushPanelForConversation,
@@ -543,6 +545,13 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
             {i18n('markUnread')}
           </MenuItem>
         ) : null}
+        <MenuItem
+          onClick={() => {
+            toggleSelectMode(true);
+          }}
+        >
+          {i18n('icu:ConversationHeader__menu__selectMessages')}
+        </MenuItem>
         {isArchived ? (
           <MenuItem onClick={() => onMoveToInbox(id)}>
             {i18n('moveConversationToInbox')}

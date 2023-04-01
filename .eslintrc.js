@@ -213,6 +213,16 @@ const typescriptRules = {
 
   '@typescript-eslint/consistent-type-imports': 'error',
 
+  // Future: Maybe switch to never and always use `satisfies`
+  '@typescript-eslint/consistent-type-assertions': [
+    'error',
+    {
+      assertionStyle: 'as',
+      // Future: Maybe switch to allow-as-parameter or never
+      objectLiteralTypeAssertions: 'allow',
+    },
+  ],
+
   // Already enforced by TypeScript
   'consistent-return': 'off',
 
@@ -241,8 +251,6 @@ module.exports = {
         'ts/**/*.ts',
         'ts/**/*.tsx',
         'app/**/*.ts',
-        'sticker-creator/**/*.ts',
-        'sticker-creator/**/*.tsx',
         'build/intl-linter/**/*.ts',
       ],
       parser: '@typescript-eslint/parser',

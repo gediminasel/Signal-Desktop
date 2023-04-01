@@ -620,8 +620,7 @@ function ConversationDetailsCallButton({
       onClick={onClick}
       variant={ButtonVariant.Details}
     >
-      {/* eslint-disable-next-line local-rules/valid-i18n-keys */}
-      {i18n(type)}
+      {type === 'audio' ? i18n('audio') : i18n('video')}
     </Button>
   );
 

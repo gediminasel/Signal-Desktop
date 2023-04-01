@@ -150,12 +150,12 @@ export class LeftPaneInboxHelper extends LeftPaneHelper<LeftPaneInboxPropsType> 
         case 0:
           return {
             type: RowType.Header,
-            i18nKey: 'LeftPane--pinned',
+            getHeaderText: i18n => i18n('LeftPane--pinned'),
           };
         case pinnedConversations.length + 1:
           return {
             type: RowType.Header,
-            i18nKey: 'LeftPane--chats',
+            getHeaderText: i18n => i18n('LeftPane--chats'),
           };
         case pinnedConversations.length + conversations.length + 2:
           if (archivedConversationsCount) {
@@ -267,7 +267,7 @@ export class LeftPaneInboxHelper extends LeftPaneHelper<LeftPaneInboxPropsType> 
   getConversationAndMessageInDirection(
     toFind: Readonly<ToFindType>,
     selectedConversationId: undefined | string,
-    _selectedMessageId: unknown
+    _targetedMessageId: unknown
   ): undefined | { conversationId: string } {
     return getConversationInDirection(
       [...this.pinnedConversations, ...this.conversations],

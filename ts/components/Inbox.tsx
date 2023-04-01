@@ -2,21 +2,23 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { ReactNode } from 'react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 
 import type { ShowConversationType } from '../state/ducks/conversations';
 import type { LocalizerType } from '../types/Util';
 
 import * as log from '../logging/log';
-import { SECOND } from '../util/durations';
+import { SECOND, DAY } from '../util/durations';
 import { ToastStickerPackInstallFailed } from './ToastStickerPackInstallFailed';
 import { WhatsNewLink } from './WhatsNewLink';
 import { showToast } from '../util/showToast';
 import { strictAssert } from '../util/assert';
-import { SelectedMessageSource } from '../state/ducks/conversationsEnums';
+import { TargetedMessageSource } from '../state/ducks/conversationsEnums';
 import { usePrevious } from '../hooks/usePrevious';
 
 export type PropsType = {
+  firstEnvelopeTimestamp: number | undefined;
+  envelopeTimestamp: number | undefined;
   hasInitialLoadCompleted: boolean;
   i18n: LocalizerType;
   isCustomizingPreferredReactions: boolean;
@@ -25,15 +27,18 @@ export type PropsType = {
   renderConversationView: () => JSX.Element;
   renderCustomizingPreferredReactionsModal: () => JSX.Element;
   renderLeftPane: () => JSX.Element;
+  renderMiniPlayer: (options: { shouldFlow: boolean }) => JSX.Element;
   scrollToMessage: (conversationId: string, messageId: string) => unknown;
   selectedConversationId?: string;
-  selectedMessage?: string;
-  selectedMessageSource?: SelectedMessageSource;
+  targetedMessage?: string;
+  targetedMessageSource?: TargetedMessageSource;
   showConversation: ShowConversationType;
   showWhatsNewModal: () => unknown;
 };
 
 export function Inbox({
+  firstEnvelopeTimestamp,
+  envelopeTimestamp,
   hasInitialLoadCompleted,
   i18n,
   isCustomizingPreferredReactions,
@@ -42,14 +47,14 @@ export function Inbox({
   renderConversationView,
   renderCustomizingPreferredReactionsModal,
   renderLeftPane,
+  renderMiniPlayer,
   scrollToMessage,
   selectedConversationId,
-  selectedMessage,
-  selectedMessageSource,
+  targetedMessage,
+  targetedMessageSource,
   showConversation,
   showWhatsNewModal,
 }: PropsType): JSX.Element {
-  const [loadingMessageCount, setLoadingMessageCount] = useState(0);
   const [internalHasInitialLoadCompleted, setInternalHasInitialLoadCompleted] =
     useState(hasInitialLoadCompleted);
 
@@ -58,6 +63,16 @@ export function Inbox({
     selectedConversationId
   );
 
+  const now = useMemo(() => Date.now(), []);
+  const midnight = useMemo(() => {
+    const date = new Date(now);
+    date.setHours(0);
+    date.setMinutes(0);
+    date.setSeconds(0);
+    date.setMilliseconds(0);
+    return date.getTime();
+  }, [now]);
+
   useEffect(() => {
     if (prevConversationId !== selectedConversationId) {
       if (prevConversationId) {
@@ -65,14 +80,14 @@ export function Inbox({
       }
 
       if (selectedConversationId) {
-        onConversationOpened(selectedConversationId, selectedMessage);
+        onConversationOpened(selectedConversationId, targetedMessage);
       }
     } else if (
       selectedConversationId &&
-      selectedMessage &&
-      selectedMessageSource !== SelectedMessageSource.Focus
+      targetedMessage &&
+      targetedMessageSource !== TargetedMessageSource.Focus
     ) {
-      scrollToMessage(selectedConversationId, selectedMessage);
+      scrollToMessage(selectedConversationId, targetedMessage);
     }
 
     if (!selectedConversationId) {
@@ -91,8 +106,8 @@ export function Inbox({
     prevConversationId,
     scrollToMessage,
     selectedConversationId,
-    selectedMessage,
-    selectedMessageSource,
+    targetedMessage,
+    targetedMessageSource,
   ]);
 
   useEffect(() => {
@@ -121,13 +136,11 @@ export function Inbox({
       showToast(ToastStickerPackInstallFailed);
     }
 
-    window.Whisper.events.on('loadingProgress', setLoadingMessageCount);
     window.Whisper.events.on('pack-install-failed', packInstallFailed);
     window.Whisper.events.on('refreshConversation', refreshConversation);
     window.Whisper.events.on('setupAsNewDevice', unload);
 
     return () => {
-      window.Whisper.events.off('loadingProgress', setLoadingMessageCount);
       window.Whisper.events.off('pack-install-failed', packInstallFailed);
       window.Whisper.events.off('refreshConversation', refreshConversation);
       window.Whisper.events.off('setupAsNewDevice', unload);
@@ -173,24 +186,52 @@ export function Inbox({
   }, [hasInitialLoadCompleted]);
 
   if (!internalHasInitialLoadCompleted) {
+    let loadingProgress = 0;
+    if (
+      firstEnvelopeTimestamp !== undefined &&
+      envelopeTimestamp !== undefined
+    ) {
+      loadingProgress =
+        Math.max(
+          0,
+          Math.min(
+            1,
+            Math.max(0, envelopeTimestamp - firstEnvelopeTimestamp) /
+              Math.max(1e-23, now - firstEnvelopeTimestamp)
+          )
+        ) * 100;
+    }
+
+    let message = i18n('loading');
+    if (envelopeTimestamp !== undefined) {
+      const daysBeforeMidnight = Math.ceil(
+        (midnight - envelopeTimestamp) / DAY
+      );
+
+      if (daysBeforeMidnight <= 0) {
+        message = i18n('icu:loadingMessages--today');
+      } else if (daysBeforeMidnight === 1) {
+        message = i18n('icu:loadingMessages--yesterday');
+      } else {
+        message = i18n('icu:loadingMessages--other', {
+          daysAgo: daysBeforeMidnight,
+        });
+      }
+    }
+
     return (
       <div className="app-loading-screen">
         <div className="module-title-bar-drag-area" />
 
-        <div className="content">
-          <div className="module-splash-screen__logo module-img--150" />
-          <div className="container">
-            <span className="dot" />
-            <span className="dot" />
-            <span className="dot" />
-          </div>
-          <div className="message">
-            {loadingMessageCount
-              ? i18n('loadingMessages', [String(loadingMessageCount)])
-              : i18n('loading')}
-          </div>
-          <div id="toast" />
+        <div className="module-splash-screen__logo module-img--150" />
+        <div className="app-loading-screen__progress--container">
+          <div
+            className="app-loading-screen__progress--bar"
+            style={{ transform: `translateX(${loadingProgress - 100}%)` }}
+          />
         </div>
+        <div className="message">{message}</div>
+        <div id="toast" />
       </div>
     );
   }
@@ -219,6 +260,7 @@ export function Inbox({
           )}
           {!prevConversationId && (
             <div className="no-conversation-open">
+              {renderMiniPlayer({ shouldFlow: false })}
               <div className="module-splash-screen__logo module-img--128 module-logo-blue" />
               <h3>{i18n('welcomeToSignal')}</h3>
               <p className="whats-new-placeholder">

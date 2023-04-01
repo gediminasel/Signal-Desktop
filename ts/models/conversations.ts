@@ -31,7 +31,7 @@ import { normalizeUuid } from '../util/normalizeUuid';
 import { clearTimeoutIfNecessary } from '../util/clearTimeoutIfNecessary';
 import type { AttachmentType, ThumbnailType } from '../types/Attachment';
 import { toDayMillis } from '../util/timestamp';
-import { isGIF, isVoiceMessage } from '../types/Attachment';
+import { isVoiceMessage } from '../types/Attachment';
 import type { CallHistoryDetailsType } from '../types/Calling';
 import { CallMode } from '../types/Calling';
 import * as Conversation from '../types/Conversation';
@@ -73,7 +73,7 @@ import { sniffImageMimeType } from '../util/sniffImageMimeType';
 import { isValidE164 } from '../util/isValidE164';
 import { canConversationBeUnarchived } from '../util/canConversationBeUnarchived';
 import type { MIMEType } from '../types/MIME';
-import { IMAGE_JPEG, IMAGE_GIF, IMAGE_WEBP } from '../types/MIME';
+import { IMAGE_JPEG, IMAGE_WEBP } from '../types/MIME';
 import { UUID, UUIDKind } from '../types/UUID';
 import type { UUIDStringType } from '../types/UUID';
 import {
@@ -108,15 +108,7 @@ import { ReadStatus } from '../messages/MessageReadStatus';
 import { SendStatus } from '../messages/MessageSendState';
 import type { LinkPreviewType } from '../types/message/LinkPreviews';
 import { MINUTE, SECOND, DurationInSeconds } from '../util/durations';
-import {
-  concat,
-  filter,
-  map,
-  take,
-  repeat,
-  zipObject,
-  collect,
-} from '../util/iterables';
+import { concat, filter, map, repeat, zipObject } from '../util/iterables';
 import * as universalExpireTimer from '../util/universalExpireTimer';
 import type { GroupNameCollisionsWithIdsByTitle } from '../util/groupMemberNameCollisions';
 import {
@@ -130,10 +122,8 @@ import { SignalService as Proto } from '../protobuf';
 import {
   getMessagePropStatus,
   hasErrors,
-  isGiftBadge,
   isIncoming,
   isStory,
-  isTapToView,
 } from '../state/selectors/message';
 import {
   conversationJobQueue,
@@ -163,6 +153,7 @@ import { removePendingMember } from '../util/removePendingMember';
 import { isMemberPending } from '../util/isMemberPending';
 import { imageToBlurHash } from '../util/imageToBlurHash';
 import { ReceiptType } from '../types/Receipt';
+import { getQuoteAttachment } from '../util/makeQuote';
 
 const EMPTY_ARRAY: Readonly<[]> = [];
 const EMPTY_GROUP_COLLISIONS: GroupNameCollisionsWithIdsByTitle = {};
@@ -176,7 +167,6 @@ const {
   deleteAttachmentData,
   doesAttachmentExist,
   getAbsoluteAttachmentPath,
-  loadAttachmentData,
   readStickerData,
   upgradeMessageSchema,
   writeNewAttachmentData,
@@ -191,6 +181,7 @@ const {
 } = window.Signal.Data;
 
 const FIVE_MINUTES = MINUTE * 5;
+const FETCH_TIMEOUT = SECOND * 30;
 
 const JOB_REPORTING_THRESHOLD_MS = 25;
 const SEND_REPORTING_THRESHOLD_MS = 25;
@@ -1367,10 +1358,12 @@ export class ConversationModel extends window.Backbone
       e164,
       reason: 'ConversationModel.onNewMessage',
     });
-    const typingToken = `${source?.id}.${sourceDevice}`;
+    if (source) {
+      const typingToken = `${source.id}.${sourceDevice}`;
 
-    // Clear typing indicator for a given contact if we receive a message from them
-    this.clearContactTypingTimer(typingToken);
+      // Clear typing indicator for a given contact if we receive a message from them
+      this.clearContactTypingTimer(typingToken);
+    }
 
     // If it's a group story reply or a story message, we don't want to update
     // the last message or add new messages to redux.
@@ -1452,10 +1445,18 @@ export class ConversationModel extends window.Backbone
       resolvePromise = resolve;
     });
 
+    let timeout: NodeJS.Timeout;
     const finish = () => {
       resolvePromise();
+      clearTimeout(timeout);
       this.inProgressFetch = undefined;
     };
+    timeout = setTimeout(() => {
+      log.warn(
+        `setInProgressFetch(${this.idForLogging()}): Calling finish manually after timeout`
+      );
+      finish();
+    }, FETCH_TIMEOUT);
 
     return finish;
   }
@@ -2220,9 +2221,12 @@ export class ConversationModel extends window.Backbone
     return false;
   }
 
-  decrementMessageCount(): void {
+  decrementMessageCount(numberOfMessages = 1): void {
     this.set({
-      messageCount: Math.max((this.get('messageCount') || 0) - 1, 0),
+      messageCount: Math.max(
+        (this.get('messageCount') || 0) - numberOfMessages,
+        0
+      ),
     });
     window.Signal.Data.updateConversation(this.attributes);
   }
@@ -2244,10 +2248,16 @@ export class ConversationModel extends window.Backbone
     return undefined;
   }
 
-  decrementSentMessageCount(): void {
+  decrementSentMessageCount(numberOfMessages = 1): void {
     this.set({
-      messageCount: Math.max((this.get('messageCount') || 0) - 1, 0),
-      sentMessageCount: Math.max((this.get('sentMessageCount') || 0) - 1, 0),
+      messageCount: Math.max(
+        (this.get('messageCount') || 0) - numberOfMessages,
+        0
+      ),
+      sentMessageCount: Math.max(
+        (this.get('sentMessageCount') || 0) - numberOfMessages,
+        0
+      ),
     });
     window.Signal.Data.updateConversation(this.attributes);
   }
@@ -3326,7 +3336,8 @@ export class ConversationModel extends window.Backbone
           endedTime,
         } = callHistoryDetails;
         log.info(
-          `addCallHistory: Call ID: ${callId}, ` +
+          `addCallHistory: Conversation ID: ${this.id}, ` +
+            `Call ID: ${callId}, ` +
             'Direct, ' +
             `Incoming: ${wasIncoming}, ` +
             `Video: ${wasVideoCall}, ` +
@@ -3359,19 +3370,22 @@ export class ConversationModel extends window.Backbone
     // awaited it would block on this forever.
     drop(
       this.queueJob('addCallHistory', async () => {
-        const message = {
+        const message: MessageAttributesType = {
+          id: generateGuid(),
           conversationId: this.id,
           type: 'call-history',
           sent_at: timestamp,
+          timestamp,
           received_at:
             receivedAtCounter || window.Signal.Util.incrementMessageCounter(),
           received_at_ms: timestamp,
           readStatus: unread ? ReadStatus.Unread : ReadStatus.Read,
           seenStatus: unread ? SeenStatus.Unseen : SeenStatus.NotApplicable,
           callHistoryDetails: detailsToSave,
-          // TODO: DESKTOP-722
-        } as unknown as MessageAttributesType;
+        };
 
+        // Force save if we're adding a new call history message for a direct call
+        let forceSave = true;
         if (callHistoryDetails.callMode === CallMode.Direct) {
           const messageId =
             await window.Signal.Data.getCallHistoryMessageByCallId(
@@ -3380,19 +3394,24 @@ export class ConversationModel extends window.Backbone
             );
           if (messageId != null) {
             log.info(
-              `addCallHistory: Found existing call history message (Call ID ${callHistoryDetails.callId}, Message ID: ${messageId})`
+              `addCallHistory: Found existing call history message (Call ID: ${callHistoryDetails.callId}, Message ID: ${messageId})`
             );
             message.id = messageId;
+            // We don't want to force save if we're updating an existing message
+            forceSave = false;
           } else {
             log.info(
-              `addCallHistory: No existing call history message found (Call ID ${callHistoryDetails.callId})`
+              `addCallHistory: No existing call history message found (Call ID: ${callHistoryDetails.callId})`
             );
           }
         }
 
         const id = await window.Signal.Data.saveMessage(message, {
           ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+          forceSave,
         });
+
+        log.info(`addCallHistory: Saved call history message (ID: ${id})`);
 
         const model = window.MessageController.register(
           id,
@@ -3906,119 +3925,7 @@ export class ConversationModel extends window.Backbone
       thumbnail: ThumbnailType | null;
     }>
   > {
-    if (attachments && attachments.length) {
-      const attachmentsToUse = Array.from(take(attachments, 1));
-      const isGIFQuote = isGIF(attachmentsToUse);
-
-      return Promise.all(
-        map(attachmentsToUse, async attachment => {
-          const { path, fileName, thumbnail, contentType } = attachment;
-
-          if (!path) {
-            return {
-              contentType: isGIFQuote ? IMAGE_GIF : contentType,
-              // Our protos library complains about this field being undefined, so we
-              //   force it to null
-              fileName: fileName || null,
-              thumbnail: null,
-            };
-          }
-
-          return {
-            contentType: isGIFQuote ? IMAGE_GIF : contentType,
-            // Our protos library complains about this field being undefined, so we force
-            //   it to null
-            fileName: fileName || null,
-            thumbnail: thumbnail
-              ? {
-                  ...(await loadAttachmentData(thumbnail)),
-                  objectUrl: thumbnail.path
-                    ? getAbsoluteAttachmentPath(thumbnail.path)
-                    : undefined,
-                }
-              : null,
-          };
-        })
-      );
-    }
-
-    if (preview && preview.length) {
-      const previewImages = collect(preview, prev => prev.image);
-      const previewImagesToUse = take(previewImages, 1);
-
-      return Promise.all(
-        map(previewImagesToUse, async image => {
-          const { contentType } = image;
-
-          return {
-            contentType,
-            // Our protos library complains about this field being undefined, so we
-            //   force it to null
-            fileName: null,
-            thumbnail: image
-              ? {
-                  ...(await loadAttachmentData(image)),
-                  objectUrl: image.path
-                    ? getAbsoluteAttachmentPath(image.path)
-                    : undefined,
-                }
-              : null,
-          };
-        })
-      );
-    }
-
-    if (sticker && sticker.data && sticker.data.path) {
-      const { path, contentType } = sticker.data;
-
-      return [
-        {
-          contentType,
-          // Our protos library complains about this field being undefined, so we
-          //   force it to null
-          fileName: null,
-          thumbnail: {
-            ...(await loadAttachmentData(sticker.data)),
-            objectUrl: path ? getAbsoluteAttachmentPath(path) : undefined,
-          },
-        },
-      ];
-    }
-
-    return [];
-  }
-
-  async makeQuote(
-    quotedMessage: MessageModel,
-    conversationId: string
-  ): Promise<QuotedMessageType> {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const contact = getContact(quotedMessage.attributes)!;
-    const attachments = quotedMessage.get('attachments');
-    const preview = quotedMessage.get('preview');
-    const sticker = quotedMessage.get('sticker');
-
-    const fromGroupName =
-      quotedMessage.get('conversationId') === conversationId
-        ? undefined
-        : window.ConversationController.get(
-            quotedMessage.get('conversationId')
-          )?.format()?.name;
-    return {
-      authorUuid: contact.get('uuid'),
-      attachments: isTapToView(quotedMessage.attributes)
-        ? [{ contentType: IMAGE_JPEG, fileName: null }]
-        : await this.getQuoteAttachment(attachments, preview, sticker),
-      payment: quotedMessage.get('payment'),
-      bodyRanges: quotedMessage.get('bodyRanges'),
-      id: quotedMessage.get('sent_at'),
-      fromGroupName,
-      isViewOnce: isTapToView(quotedMessage.attributes),
-      isGiftBadge: isGiftBadge(quotedMessage.attributes),
-      messageId: quotedMessage.get('id'),
-      referencedMessageNotFound: false,
-      text: quotedMessage.getQuoteBodyText(),
-    };
+    return getQuoteAttachment(attachments, preview, sticker);
   }
 
   async sendStickerMessage(packId: string, stickerId: number): Promise<void> {
@@ -5622,7 +5529,7 @@ export class ConversationModel extends window.Backbone
       return;
     }
 
-    const typingToken = `${senderId}.${senderDevice}`;
+    const typingToken = `${sender.id}.${senderDevice}`;
 
     this.contactTypingTimers = this.contactTypingTimers || {};
     const record = this.contactTypingTimers[typingToken];

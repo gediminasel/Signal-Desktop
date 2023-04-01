@@ -77,17 +77,18 @@ import { enqueueReactionForSend } from '../../reactions/enqueueReactionForSend';
 import { useBoundActions } from '../../hooks/useBoundActions';
 import {
   CONVERSATION_UNLOADED,
-  SELECTED_CONVERSATION_CHANGED,
+  TARGETED_CONVERSATION_CHANGED,
   showConversation,
 } from './conversations';
 import type {
   ConversationUnloadedActionType,
-  SelectedConversationChangedActionType,
+  TargetedConversationChangedActionType,
   ScrollToMessageActionType,
 } from './conversations';
 import { longRunningTaskWrapper } from '../../util/longRunningTaskWrapper';
 import { drop } from '../../util/drop';
 import { strictAssert } from '../../util/assert';
+import { makeQuote } from '../../util/makeQuote';
 
 // State
 // eslint-disable-next-line local-rules/type-alias-readonlydeep
@@ -204,7 +205,7 @@ type ComposerActionType =
   | RemoveLinkPreviewActionType
   | ReplaceAttachmentsActionType
   | ResetComposerActionType
-  | SelectedConversationChangedActionType
+  | TargetedConversationChangedActionType
   | SetComposerDisabledStateActionType
   | SetFocusActionType
   | SetHighQualitySettingActionType
@@ -639,7 +640,22 @@ export function setQuoteByMessageId(
     }
 
     if (message) {
-      const quote = await conversation.makeQuote(message, conversationId);
+      let fromGroupName;
+      if (message.attributes.conversationId !== conversationId) {
+        const originalConversation = window.ConversationController.get(
+          message.attributes.conversationId
+        );
+        if (originalConversation) {
+          fromGroupName = originalConversation.attributes.name;
+        }
+      }
+      const quote = await makeQuote(message.attributes, fromGroupName);
+
+      // In case the conversation changed while we were about to set the quote
+      if (getState().conversations.selectedConversationId !== conversationId) {
+        return;
+      }
+
       dispatch(
         setQuotedMessage(conversationId, {
           conversationId,
@@ -1270,7 +1286,7 @@ export function reducer(
     };
   }
 
-  if (action.type === SELECTED_CONVERSATION_CHANGED) {
+  if (action.type === TARGETED_CONVERSATION_CHANGED) {
     if (action.payload.conversationId) {
       return {
         ...state,

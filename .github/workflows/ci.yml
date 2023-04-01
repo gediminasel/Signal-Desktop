@@ -30,6 +30,16 @@ jobs:
       with:
         path: node_modules
         key: ${{ runner.os }}-${{ hashFiles('package.json', 'yarn.lock', 'patches/**') }}
+
+    - name: Restore cached .eslintcache and tsconfig.tsbuildinfo
+      uses: actions/cache/restore@v3
+      id: cache-lint
+      with:
+        path: |
+          .eslintcache
+          tsconfig.tsbuildinfo
+        key: lint-${{ runner.os }}-${{ hashFiles('package.json', 'yarn.lock', 'patches/**', '.eslintrc.js', '.eslint/**', 'tsconfig.json') }}
+
     - name: Install Desktop node_modules
       if: steps.cache-desktop-modules.outputs.cache-hit != 'true'
       run: yarn install --frozen-lockfile
@@ -42,10 +52,19 @@ jobs:
     - run: yarn lint-license-comments
     - run: git diff --exit-code
 
+    - name: Update cached .eslintcache and tsconfig.tsbuildinfo
+      uses: actions/cache/save@v3
+      if: github.ref == 'refs/heads/main'
+      with:
+        path: |
+          .eslintcache
+          tsconfig.tsbuildinfo
+        key: ${{ steps.cache-lint.outputs.cache-primary-key }}
+
   macos:
     needs: lint
     runs-on: macos-latest
-    if: github.ref == 'refs/heads/development' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'
     timeout-minutes: 30
 
     steps:
@@ -112,9 +131,21 @@ jobs:
 
     - run: yarn generate
     - run: yarn prepare-beta-build
-    - run: yarn build
+
+    - name: Create bundle
+      run: yarn build:esbuild:prod
+
+    - name: Build with packaging .deb file
+      run: yarn build:release
+      if: github.ref == 'refs/heads/main'
       env:
         DISABLE_INSPECT_FUSE: on
+    - name: Build without packaging .deb file
+      run: yarn build:release --linux dir
+      if: github.ref != 'refs/heads/main'
+      env:
+        DISABLE_INSPECT_FUSE: on
+
     - run: xvfb-run --auto-servernum yarn test-node
     - run: xvfb-run --auto-servernum yarn test-electron
       timeout-minutes: 5
@@ -158,9 +189,21 @@ jobs:
     - run: del package.json
     - run: type temp.json | findstr /v certificateSubjectName | findstr /v certificateSha1 > package.json
     - run: yarn prepare-beta-build
-    - run: yarn build
+
+    - name: Create bundle
+      run: yarn build:esbuild:prod
+
+    - name: Build with NSIS
+      run: yarn build:release
+      if: github.ref == 'refs/heads/main'
       env:
         DISABLE_INSPECT_FUSE: on
+    - name: Build without NSIS
+      run: yarn build:release --win dir
+      if: github.ref != 'refs/heads/main'
+      env:
+        DISABLE_INSPECT_FUSE: on
+
     - run: yarn test-electron
       timeout-minutes: 5
     - run: yarn test-release
@@ -208,7 +251,7 @@ jobs:
     - name: Build typescript
       run: yarn generate
     - name: Bundle
-      run: yarn build:webpack
+      run: yarn build:esbuild:prod
 
     - name: Run mock server tests
       run: |

@@ -49,11 +49,23 @@ export function MessageRequestActionsConfirmation({
           onChangeState(MessageRequestState.default);
         }}
         title={
-          <Intl
-            i18n={i18n}
-            id={`MessageRequests--block-${conversationType}-confirm-title`}
-            components={[<ContactName key="name" title={title} />]}
-          />
+          conversationType === 'direct' ? (
+            <Intl
+              i18n={i18n}
+              id="MessageRequests--block-direct-confirm-title"
+              components={{
+                title: <ContactName key="name" title={title} />,
+              }}
+            />
+          ) : (
+            <Intl
+              i18n={i18n}
+              id="MessageRequests--block-group-confirm-title"
+              components={{
+                title: <ContactName key="name" title={title} />,
+              }}
+            />
+          )
         }
         actions={[
           ...(conversationType === 'direct'
@@ -72,7 +84,9 @@ export function MessageRequestActionsConfirmation({
           },
         ]}
       >
-        {i18n(`MessageRequests--block-${conversationType}-confirm-body`)}
+        {conversationType === 'direct'
+          ? i18n('MessageRequests--block-direct-confirm-body')
+          : i18n('MessageRequests--block-group-confirm-body')}
       </ConfirmationDialog>
     );
   }
@@ -102,7 +116,9 @@ export function MessageRequestActionsConfirmation({
           },
         ]}
       >
-        {i18n(`MessageRequests--unblock-${conversationType}-confirm-body`)}
+        {conversationType === 'direct'
+          ? i18n('MessageRequests--unblock-direct-confirm-body')
+          : i18n('MessageRequests--unblock-group-confirm-body')}
       </ConfirmationDialog>
     );
   }
@@ -116,21 +132,38 @@ export function MessageRequestActionsConfirmation({
           onChangeState(MessageRequestState.default);
         }}
         title={
-          <Intl
-            i18n={i18n}
-            id={`MessageRequests--delete-${conversationType}-confirm-title`}
-            components={[<ContactName key="name" title={title} />]}
-          />
+          conversationType === 'direct' ? (
+            <Intl
+              i18n={i18n}
+              id="MessageRequests--delete-direct-confirm-title"
+              components={{
+                title: <ContactName key="name" title={title} />,
+              }}
+            />
+          ) : (
+            <Intl
+              i18n={i18n}
+              id="MessageRequests--delete-group-confirm-title"
+              components={{
+                title: <ContactName key="name" title={title} />,
+              }}
+            />
+          )
         }
         actions={[
           {
-            text: i18n(`MessageRequests--delete-${conversationType}`),
+            text:
+              conversationType === 'direct'
+                ? i18n('MessageRequests--delete-direct')
+                : i18n('MessageRequests--delete-group'),
             action: () => deleteConversation(conversationId),
             style: 'negative',
           },
         ]}
       >
-        {i18n(`MessageRequests--delete-${conversationType}-confirm-body`)}
+        {conversationType === 'direct'
+          ? i18n('MessageRequests--delete-direct-confirm-body')
+          : i18n('MessageRequests--delete-group-confirm-body')}
       </ConfirmationDialog>
     );
   }

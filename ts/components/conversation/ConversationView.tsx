@@ -4,10 +4,13 @@
 import React from 'react';
 import { join } from 'path';
 import { SignalContext } from '../../windows/context';
-import { SmartMiniPlayer } from '../../state/smart/MiniPlayer';
+import { useEscapeHandling } from '../../hooks/useEscapeHandling';
 
 export type PropsType = {
   conversationId: string;
+  hasOpenModal: boolean;
+  isSelectMode: boolean;
+  onExitSelectMode: () => void;
   processAttachments: (options: {
     conversationId: string;
     files: ReadonlyArray<File>;
@@ -20,6 +23,9 @@ export type PropsType = {
 
 export function ConversationView({
   conversationId,
+  hasOpenModal,
+  isSelectMode,
+  onExitSelectMode,
   processAttachments,
   renderCompositionArea,
   renderConversationHeader,
@@ -86,6 +92,10 @@ export function ConversationView({
     [conversationId, processAttachments]
   );
 
+  useEscapeHandling(
+    isSelectMode && !hasOpenModal ? onExitSelectMode : undefined
+  );
+
   return (
     <div className="ConversationView" onDrop={onDrop} onPaste={onPaste}>
       <div className="ConversationView__header">
@@ -100,7 +110,6 @@ export function ConversationView({
           backgroundPosition: 'center',
         }}
       >
-        <SmartMiniPlayer />
         <div className="ConversationView__timeline--container">
           <div aria-live="polite" className="ConversationView__timeline">
             {renderTimeline()}

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import React from 'react';
+import { get } from 'lodash';
 import type { LocalizerType, ReplacementValuesType } from '../types/Util';
 import { SECOND } from '../util/durations';
 import { Toast } from './Toast';
@@ -39,10 +40,9 @@ export function ToastManager({
   if (toastType === ToastType.AddingUserToGroup) {
     return (
       <Toast onClose={hideToast} timeout={SHORT_TIMEOUT}>
-        {i18n(
-          'AddUserToAnotherGroupModal__toast--adding-user-to-group',
-          toast.parameters
-        )}
+        {i18n('AddUserToAnotherGroupModal__toast--adding-user-to-group', {
+          ...toast.parameters,
+        })}
       </Toast>
     );
   }
@@ -69,6 +69,14 @@ export function ToastManager({
 
   if (toastType === ToastType.BlockedGroup) {
     return <Toast onClose={hideToast}>{i18n('unblockGroupToSend')}</Toast>;
+  }
+
+  if (toastType === ToastType.CannotForwardEmptyMessage) {
+    return (
+      <Toast onClose={hideToast}>
+        {i18n('icu:ForwardMessagesModal__toast--CannotForwardEmptyMessage')}
+      </Toast>
+    );
   }
 
   if (toastType === ToastType.CannotMixMultiAndNonMultiAttachments) {
@@ -98,7 +106,9 @@ export function ToastManager({
   if (toastType === ToastType.CannotStartGroupCall) {
     return (
       <Toast onClose={hideToast}>
-        {i18n('GroupV2--cannot-start-group-call', toast.parameters)}
+        {i18n('GroupV2--cannot-start-group-call', {
+          ...toast.parameters,
+        })}
       </Toast>
     );
   }
@@ -302,6 +312,16 @@ export function ToastManager({
     );
   }
 
+  if (toastType === ToastType.TooManyMessagesToForward) {
+    return (
+      <Toast onClose={hideToast}>
+        {i18n('icu:SelectModeActions__toast--TooManyMessagesToForward', {
+          count: get(toast.parameters, 'count'),
+        })}
+      </Toast>
+    );
+  }
+
   if (toastType === ToastType.UnableToLoadAttachment) {
     return <Toast onClose={hideToast}>{i18n('unableToLoadAttachment')}</Toast>;
   }
@@ -329,10 +349,9 @@ export function ToastManager({
   if (toastType === ToastType.UserAddedToGroup) {
     return (
       <Toast onClose={hideToast}>
-        {i18n(
-          'AddUserToAnotherGroupModal__toast--user-added-to-group',
-          toast.parameters
-        )}
+        {i18n('AddUserToAnotherGroupModal__toast--user-added-to-group', {
+          ...toast.parameters,
+        })}
       </Toast>
     );
   }

@@ -8,7 +8,6 @@ import { withKnobs, boolean, optionsKnob } from '@storybook/addon-knobs';
 import * as styles from './styles.scss';
 import messages from '../_locales/en/messages.json';
 import { ClassyProvider } from '../ts/components/PopperRootContext';
-import { I18n } from '../sticker-creator/util/i18n';
 import { StorybookThemeContext } from './StorybookThemeContext';
 import { ThemeType } from '../ts/types/Util';
 import { setupI18n } from '../ts/util/setupI18n';
@@ -48,8 +47,10 @@ const withModeAndThemeProvider = (Story, context) => {
   // Adding it to the body as well so that we can cover modals and other
   // components that are rendered outside of this decorator container
   if (theme === 'light') {
+    document.body.classList.add('light-theme');
     document.body.classList.remove('dark-theme');
   } else {
+    document.body.classList.remove('light-theme');
     document.body.classList.add('dark-theme');
   }
 
@@ -72,13 +73,7 @@ const withModeAndThemeProvider = (Story, context) => {
   );
 };
 
-const withI18n = (Story, context) => (
-  <I18n messages={messages} locale="en">
-    <Story {...context} />
-  </I18n>
-);
-
-export const decorators = [withModeAndThemeProvider, withI18n];
+export const decorators = [withModeAndThemeProvider];
 
 export const parameters = {
   axe: {

@@ -3,11 +3,12 @@
 
 import React from 'react';
 import type {
-  ContactModalStateType,
-  ForwardMessagePropsType,
-  UserNotFoundModalStateType,
-  SafetyNumberChangedBlockingDataType,
   AuthorizeArtCreatorDataType,
+  ContactModalStateType,
+  EditHistoryMessagesType,
+  ForwardMessagesPropsType,
+  SafetyNumberChangedBlockingDataType,
+  UserNotFoundModalStateType,
 } from '../state/ducks/globalModals';
 import type { LocalizerType, ThemeType } from '../types/Util';
 import { missingCaseError } from '../util/missingCaseError';
@@ -28,6 +29,9 @@ export type PropsType = {
   // ContactModal
   contactModalState: ContactModalStateType | undefined;
   renderContactModal: () => JSX.Element;
+  // EditHistoryMessagesModal
+  editHistoryMessages: EditHistoryMessagesType | undefined;
+  renderEditHistoryMessagesModal: () => JSX.Element;
   // ErrorModal
   errorModalProps: { description?: string; title?: string } | undefined;
   renderErrorModal: (opts: {
@@ -35,8 +39,8 @@ export type PropsType = {
     title?: string;
   }) => JSX.Element;
   // ForwardMessageModal
-  forwardMessageProps: ForwardMessagePropsType | undefined;
-  renderForwardMessageModal: () => JSX.Element;
+  forwardMessagesProps: ForwardMessagesPropsType | undefined;
+  renderForwardMessagesModal: () => JSX.Element;
   // ProfileEditor
   isProfileEditorVisible: boolean;
   renderProfileEditor: () => JSX.Element;
@@ -82,12 +86,15 @@ export function GlobalModalContainer({
   // ContactModal
   contactModalState,
   renderContactModal,
+  // EditHistoryMessages
+  editHistoryMessages,
+  renderEditHistoryMessagesModal,
   // ErrorModal
   errorModalProps,
   renderErrorModal,
   // ForwardMessageModal
-  forwardMessageProps,
-  renderForwardMessageModal,
+  forwardMessagesProps,
+  renderForwardMessagesModal,
   // ProfileEditor
   isProfileEditorVisible,
   renderProfileEditor,
@@ -147,8 +154,12 @@ export function GlobalModalContainer({
     return renderContactModal();
   }
 
-  if (forwardMessageProps) {
-    return renderForwardMessageModal();
+  if (editHistoryMessages) {
+    return renderEditHistoryMessagesModal();
+  }
+
+  if (forwardMessagesProps) {
+    return renderForwardMessagesModal();
   }
 
   if (isProfileEditorVisible) {

@@ -35,8 +35,10 @@ type BasePropsType = {
   getFrameBuffer: () => Buffer;
   getGroupCallVideoFrameSource: (demuxId: number) => VideoFrameSource;
   i18n: LocalizerType;
+  isActiveSpeakerInSpeakerView: boolean;
   onVisibilityChanged?: (demuxId: number, isVisible: boolean) => unknown;
   remoteParticipant: GroupCallRemoteParticipantType;
+  remoteParticipantsCount: number;
 };
 
 type InPipPropsType = {
@@ -65,6 +67,8 @@ export const GroupCallRemoteParticipant: React.FC<PropsType> = React.memo(
       getGroupCallVideoFrameSource,
       i18n,
       onVisibilityChanged,
+      remoteParticipantsCount,
+      isActiveSpeakerInSpeakerView,
     } = props;
 
     const {
@@ -265,7 +269,9 @@ export const GroupCallRemoteParticipant: React.FC<PropsType> = React.memo(
                 <Intl
                   i18n={i18n}
                   id="calling__you-have-blocked"
-                  components={[<ContactName key="name" title={title} />]}
+                  components={{
+                    name: <ContactName key="name" title={title} />,
+                  }}
                 />
               </div>
             }
@@ -278,6 +284,8 @@ export const GroupCallRemoteParticipant: React.FC<PropsType> = React.memo(
           className={classNames(
             'module-ongoing-call__group-call-remote-participant',
             isSpeaking &&
+              !isActiveSpeakerInSpeakerView &&
+              remoteParticipantsCount > 1 &&
               'module-ongoing-call__group-call-remote-participant--speaking'
           )}
           ref={intersectionRef}
