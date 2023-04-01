@@ -7,6 +7,14 @@ type Props = {
   label: string;
 };
 
-export function EmptyState({ label }: Props): JSX.Element {
-  return <div className="module-empty-state">{label}</div>;
+export function EmptyState({
+  label,
+  children,
+}: React.PropsWithChildren<Props>): JSX.Element {
+  return (
+    <div className="module-empty-state">
+      {label}
+      {children || null}
+    </div>
+  );
 }

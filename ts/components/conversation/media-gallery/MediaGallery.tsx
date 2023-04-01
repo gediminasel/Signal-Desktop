@@ -69,7 +69,15 @@ function MediaSection({
       }
     })();
 
-    return <EmptyState data-test="EmptyState" label={label} />;
+    return (
+      <EmptyState data-test="EmptyState" label={label}>
+        {prevPage ? (
+          <button style={{ flex: 1 }} type="button" onClick={prevPage}>
+            prev
+          </button>
+        ) : null}
+      </EmptyState>
+    );
   }
 
   const now = Date.now();
