@@ -78,23 +78,42 @@ type ParsedContentType =
 async function fetchWithRedirects(
   fetchFn: FetchFn,
   href: string,
-  options: RequestInit,
+  options: RequestInit & { headers: { [key: string]: string } },
   logger: Pick<LoggerType, 'warn'> = log
 ): Promise<Response> {
   const urlsSeen = new Set<string>();
+  const goLinkAddress =
+    window.localStorage && localStorage.getItem('realGoLinkAddress');
+  const goLinkAuthCookie =
+    window.localStorage && localStorage.getItem('goLinkAuthCookie');
 
   let nextHrefToLoad = href;
   for (let i = 0; i < MAX_REQUEST_COUNT_WITH_REDIRECTS; i += 1) {
+    if (goLinkAddress && nextHrefToLoad.startsWith(goLinkAddress)) {
+      const url = new URL(nextHrefToLoad);
+      url.searchParams.set('goLinkMeta', '1');
+      nextHrefToLoad = url.toString();
+    }
     if (urlsSeen.has(nextHrefToLoad)) {
       logger.warn('fetchWithRedirects: found a redirect loop');
       throw new Error('redirect loop');
     }
     urlsSeen.add(nextHrefToLoad);
 
+    const headers = options.headers ? { ...options.headers } : {};
+    if (
+      goLinkAddress &&
+      goLinkAuthCookie &&
+      nextHrefToLoad.startsWith(goLinkAddress)
+    ) {
+      headers.cookie = `${goLinkAuthCookie}`;
+    }
+
     // This `await` is deliberately inside of a loop.
     // eslint-disable-next-line no-await-in-loop
     const response = await fetchFn(nextHrefToLoad, {
       ...options,
+      headers,
       redirect: 'manual',
     });
 
