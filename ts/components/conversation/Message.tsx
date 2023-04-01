@@ -1276,7 +1276,14 @@ export class Message extends React.PureComponent<Props, State> {
           event.stopPropagation();
           event.preventDefault();
 
-          openLinkInWebBrowser(first.url);
+          if (isScreenshot) {
+            // redirect to screenshot source URL.
+            const url = new URL(first.url);
+            url.searchParams.set('r', '1');
+            openLinkInWebBrowser(url.toString());
+          } else {
+            openLinkInWebBrowser(first.url);
+          }
         }}
       >
         {contents}
