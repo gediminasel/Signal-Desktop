@@ -61,18 +61,18 @@ const getDefaultProps = () => ({
   isTargeted: false,
   interactionMode: 'keyboard' as const,
   theme: ThemeType.light,
+  platform: 'darwin',
   targetMessage: action('targetMessage'),
   toggleSelectMessage: action('toggleSelectMessage'),
   reactToMessage: action('reactToMessage'),
   replyPrivately: action('replyPrivately'),
   checkForAccount: action('checkForAccount'),
   clearTargetedMessage: action('clearTargetedMessage'),
+  setMessageToEdit: action('setMessageToEdit'),
   setQuoteByMessageId: action('setQuoteByMessageId'),
   retryDeleteForEveryone: action('retryDeleteForEveryone'),
   retryMessageSend: action('retryMessageSend'),
   blockGroupLinkRequests: action('blockGroupLinkRequests'),
-  deleteMessages: action('deleteMessages'),
-  deleteMessageForEveryone: action('deleteMessageForEveryone'),
   kickOffAttachmentDownload: action('kickOffAttachmentDownload'),
   markAttachmentAsCorrupted: action('markAttachmentAsCorrupted'),
   messageExpanded: action('messageExpanded'),
@@ -82,6 +82,7 @@ const getDefaultProps = () => ({
   pushPanelForConversation: action('pushPanelForConversation'),
   showContactModal: action('showContactModal'),
   showLightbox: action('showLightbox'),
+  toggleDeleteMessagesModal: action('toggleDeleteMessagesModal'),
   toggleForwardMessagesModal: action('toggleForwardMessagesModal'),
   showLightboxForViewOnceMedia: action('showLightboxForViewOnceMedia'),
   doubleCheckMissingQuoteReference: action('doubleCheckMissingQuoteReference'),
@@ -92,7 +93,7 @@ const getDefaultProps = () => ({
     'showExpiredIncomingTapToViewToast'
   ),
   scrollToQuotedMessage: action('scrollToQuotedMessage'),
-  toggleSafetyNumberModal: action('toggleSafetyNumberModal'),
+  showSpoiler: action('showSpoiler'),
   startCallingLobby: action('startCallingLobby'),
   startConversation: action('startConversation'),
   returnToActiveCall: action('returnToActiveCall'),
@@ -100,6 +101,7 @@ const getDefaultProps = () => ({
   shouldCollapseBelow: false,
   shouldHideMetadata: false,
   shouldRenderDateHeader: false,
+  toggleSafetyNumberModal: action('toggleSafetyNumberModal'),
 
   now: Date.now(),
 
@@ -152,6 +154,10 @@ export function Notification(): JSX.Element {
     },
     {
       type: 'chatSessionRefreshed',
+    },
+    {
+      type: 'contactRemovedNotification',
+      data: null,
     },
     {
       type: 'safetyNumberNotification',

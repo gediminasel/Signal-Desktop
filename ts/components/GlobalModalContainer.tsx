@@ -5,16 +5,20 @@ import React from 'react';
 import type {
   AuthorizeArtCreatorDataType,
   ContactModalStateType,
+  DeleteMessagesPropsType,
   EditHistoryMessagesType,
+  FormattingWarningDataType,
   ForwardMessagesPropsType,
   SafetyNumberChangedBlockingDataType,
   UserNotFoundModalStateType,
 } from '../state/ducks/globalModals';
 import type { LocalizerType, ThemeType } from '../types/Util';
+import type { ExplodePromiseResultType } from '../util/explodePromise';
 import { missingCaseError } from '../util/missingCaseError';
 
 import { ButtonVariant } from './Button';
 import { ConfirmationDialog } from './ConfirmationDialog';
+import { FormattingWarningModal } from './FormattingWarningModal';
 import { SignalConnectionsModal } from './SignalConnectionsModal';
 import { WhatsNewModal } from './WhatsNewModal';
 
@@ -38,6 +42,14 @@ export type PropsType = {
     description?: string;
     title?: string;
   }) => JSX.Element;
+  // DeleteMessageModal
+  deleteMessagesProps: DeleteMessagesPropsType | undefined;
+  renderDeleteMessagesModal: () => JSX.Element;
+  // FormattingWarningModal
+  showFormattingWarningModal: (
+    explodedPromise: ExplodePromiseResultType<boolean> | undefined
+  ) => void;
+  formattingWarningData: FormattingWarningDataType | undefined;
   // ForwardMessageModal
   forwardMessagesProps: ForwardMessagesPropsType | undefined;
   renderForwardMessagesModal: () => JSX.Element;
@@ -92,6 +104,12 @@ export function GlobalModalContainer({
   // ErrorModal
   errorModalProps,
   renderErrorModal,
+  // DeleteMessageModal
+  deleteMessagesProps,
+  renderDeleteMessagesModal,
+  // FormattingWarningModal
+  showFormattingWarningModal,
+  formattingWarningData,
   // ForwardMessageModal
   forwardMessagesProps,
   renderForwardMessagesModal,
@@ -158,6 +176,27 @@ export function GlobalModalContainer({
     return renderEditHistoryMessagesModal();
   }
 
+  if (deleteMessagesProps) {
+    return renderDeleteMessagesModal();
+  }
+
+  if (formattingWarningData) {
+    const { resolve } = formattingWarningData.explodedPromise;
+    return (
+      <FormattingWarningModal
+        i18n={i18n}
+        onSendAnyway={() => {
+          showFormattingWarningModal(undefined);
+          resolve(true);
+        }}
+        onCancel={() => {
+          showFormattingWarningModal(undefined);
+          resolve(false);
+        }}
+      />
+    );
+  }
+
   if (forwardMessagesProps) {
     return renderForwardMessagesModal();
   }
@@ -198,11 +237,11 @@ export function GlobalModalContainer({
   if (userNotFoundModalState) {
     let content: string;
     if (userNotFoundModalState.type === 'phoneNumber') {
-      content = i18n('startConversation--phone-number-not-found', {
+      content = i18n('icu:startConversation--phone-number-not-found', {
         phoneNumber: userNotFoundModalState.phoneNumber,
       });
     } else if (userNotFoundModalState.type === 'username') {
-      content = i18n('startConversation--username-not-found', {
+      content = i18n('icu:startConversation--username-not-found', {
         atUsername: userNotFoundModalState.username,
       });
     } else {
@@ -212,7 +251,7 @@ export function GlobalModalContainer({
     return (
       <ConfirmationDialog
         dialogName="GlobalModalContainer.userNotFound"
-        cancelText={i18n('ok')}
+        cancelText={i18n('icu:ok')}
         cancelButtonVariant={ButtonVariant.Secondary}
         i18n={i18n}
         onClose={hideUserNotFoundModal}

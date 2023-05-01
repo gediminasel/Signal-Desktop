@@ -678,7 +678,11 @@ export class Timeline extends React.Component<
       return;
     }
 
-    if (targetedMessageId && !commandOrCtrl && event.key === 'ArrowUp') {
+    if (
+      targetedMessageId &&
+      !commandOrCtrl &&
+      (event.key === 'ArrowUp' || event.key === 'PageUp')
+    ) {
       const targetedMessageIndex = items.findIndex(
         item => item === targetedMessageId
       );
@@ -686,7 +690,8 @@ export class Timeline extends React.Component<
         return;
       }
 
-      const targetIndex = targetedMessageIndex - 1;
+      const indexIncrement = event.key === 'PageUp' ? 10 : 1;
+      const targetIndex = targetedMessageIndex - indexIncrement;
       if (targetIndex < 0) {
         return;
       }
@@ -700,7 +705,11 @@ export class Timeline extends React.Component<
       return;
     }
 
-    if (targetedMessageId && !commandOrCtrl && event.key === 'ArrowDown') {
+    if (
+      targetedMessageId &&
+      !commandOrCtrl &&
+      (event.key === 'ArrowDown' || event.key === 'PageDown')
+    ) {
       const targetedMessageIndex = items.findIndex(
         item => item === targetedMessageId
       );
@@ -708,7 +717,8 @@ export class Timeline extends React.Component<
         return;
       }
 
-      const targetIndex = targetedMessageIndex + 1;
+      const indexIncrement = event.key === 'PageDown' ? 10 : 1;
+      const targetIndex = targetedMessageIndex + indexIncrement;
       if (targetIndex >= items.length) {
         return;
       }
@@ -722,7 +732,7 @@ export class Timeline extends React.Component<
       return;
     }
 
-    if (commandOrCtrl && event.key === 'ArrowUp') {
+    if (event.key === 'Home' || (commandOrCtrl && event.key === 'ArrowUp')) {
       const firstMessageId = first(items);
       if (firstMessageId) {
         targetMessage(firstMessageId, id);
@@ -732,7 +742,7 @@ export class Timeline extends React.Component<
       return;
     }
 
-    if (commandOrCtrl && event.key === 'ArrowDown') {
+    if (event.key === 'End' || (commandOrCtrl && event.key === 'ArrowDown')) {
       this.scrollDown(true);
       event.preventDefault();
       event.stopPropagation();
@@ -905,9 +915,11 @@ export class Timeline extends React.Component<
             text = (
               <Intl
                 i18n={i18n}
-                id="ContactSpoofing__same-name"
+                id="icu:ContactSpoofing__same-name--link"
                 components={{
-                  link: (
+                  // This is a render props, not a component
+                  // eslint-disable-next-line react/no-unstable-nested-components
+                  reviewRequestLink: parts => (
                     <TimelineWarning.Link
                       onClick={() => {
                         reviewMessageRequestNameCollision({
@@ -915,7 +927,7 @@ export class Timeline extends React.Component<
                         });
                       }}
                     >
-                      {i18n('ContactSpoofing__same-name__link')}
+                      {parts}
                     </TimelineWarning.Link>
                   ),
                 }}
@@ -932,21 +944,21 @@ export class Timeline extends React.Component<
             text = (
               <Intl
                 i18n={i18n}
-                id="ContactSpoofing__same-name-in-group"
+                id="icu:ContactSpoofing__same-name-in-group--link"
                 components={{
-                  count: Object.values(groupNameCollisions)
-                    .reduce(
-                      (result, conversations) => result + conversations.length,
-                      0
-                    )
-                    .toString(),
-                  link: (
+                  count: Object.values(groupNameCollisions).reduce(
+                    (result, conversations) => result + conversations.length,
+                    0
+                  ),
+                  // This is a render props, not a component
+                  // eslint-disable-next-line react/no-unstable-nested-components
+                  reviewRequestLink: parts => (
                     <TimelineWarning.Link
                       onClick={() => {
                         reviewGroupMemberNameCollision(id);
                       }}
                     >
-                      {i18n('ContactSpoofing__same-name-in-group__link')}
+                      {parts}
                     </TimelineWarning.Link>
                   ),
                 }}

@@ -28,7 +28,7 @@ import {
   getConversationSelector,
 } from './conversations';
 
-import type { BodyRangeType, HydratedBodyRangeType } from '../../types/Util';
+import { hydrateRanges } from '../../types/BodyRange';
 import * as log from '../../logging/log';
 import { getOwn } from '../../util/getOwn';
 
@@ -82,7 +82,7 @@ export const getSearchConversationName = createSelector(
     if (!conversation) {
       return undefined;
     }
-    return conversation.isMe ? i18n('noteToSelf') : conversation.title;
+    return conversation.isMe ? i18n('icu:noteToSelf') : conversation.title;
   }
 );
 
@@ -176,7 +176,6 @@ export const getCachedSelectorForMessageSearchResult = createSelector(
         searchConversationId?: string,
         targetedMessageId?: string
       ) => {
-        const bodyRanges = message.bodyRanges || [];
         return {
           from,
           to,
@@ -185,17 +184,8 @@ export const getCachedSelectorForMessageSearchResult = createSelector(
           conversationId: message.conversationId,
           sentAt: message.sent_at,
           snippet: message.snippet || '',
-          bodyRanges: bodyRanges.map(
-            (bodyRange: BodyRangeType): HydratedBodyRangeType => {
-              const conversation = conversationSelector(bodyRange.mentionUuid);
-
-              return {
-                ...bodyRange,
-                conversationID: conversation.id,
-                replacementText: conversation.title,
-              };
-            }
-          ),
+          bodyRanges:
+            hydrateRanges(message.bodyRanges, conversationSelector) || [],
           body: message.body || '',
 
           isSelected: Boolean(

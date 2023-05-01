@@ -5,9 +5,9 @@ import classnames from 'classnames';
 import React, { useCallback } from 'react';
 import type { LocalizerType } from '../types/Util';
 import { durationToPlaybackText } from '../util/durationToPlaybackText';
-import { Emojify } from './conversation/Emojify';
 import { PlaybackButton } from './PlaybackButton';
 import { PlaybackRateButton } from './PlaybackRateButton';
+import { UserText } from './UserText';
 
 export enum PlayerState {
   loading = 'loading',
@@ -67,15 +67,15 @@ export function MiniPlayer({
   let mod: 'play' | 'pause' | 'pending';
   switch (state) {
     case PlayerState.playing:
-      label = i18n('MessageAudio--pause');
+      label = i18n('icu:MessageAudio--pause');
       mod = 'pause';
       break;
     case PlayerState.paused:
-      label = i18n('MessageAudio--play');
+      label = i18n('icu:MessageAudio--play');
       mod = 'play';
       break;
     case PlayerState.loading:
-      label = i18n('MessageAudio--pending');
+      label = i18n('icu:MessageAudio--pending');
       mod = 'pending';
       break;
     default:
@@ -98,7 +98,7 @@ export function MiniPlayer({
       />
 
       <div className="MiniPlayer__state">
-        <Emojify text={title} />
+        <UserText text={title} />
         <span className="MiniPlayer__middot">&middot;</span>
         {duration !== undefined && (
           <span>
@@ -121,7 +121,7 @@ export function MiniPlayer({
         type="button"
         className="MiniPlayer__close-button"
         onClick={onClose}
-        aria-label={i18n('close')}
+        aria-label={i18n('icu:close')}
       />
     </div>
   );

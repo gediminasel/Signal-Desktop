@@ -32,12 +32,13 @@ import type { MainWindowStatsType } from '../windows/context';
 import type { MenuOptionsType } from '../types/menu';
 import type { StoryDataType } from './ducks/stories';
 import type { StoryDistributionListDataType } from './ducks/storyDistributionLists';
-import * as OS from '../OS';
+import OS from '../util/os/osMain';
 import { UUIDKind } from '../types/UUID';
 import { getEmojiReducerState as emojis } from '../util/loadRecentEmojis';
 import { getInitialState as stickers } from '../types/Stickers';
 import { getThemeType } from '../util/getThemeType';
 import { getInteractionMode } from '../services/InteractionMode';
+import { makeLookup } from '../util/makeLookup';
 
 export function getInitialState({
   badges,
@@ -91,26 +92,14 @@ export function getInitialState({
     composer: composer(),
     conversations: {
       ...conversations(),
-      conversationLookup: window.Signal.Util.makeLookup(
-        formattedConversations,
-        'id'
-      ),
-      conversationsByE164: window.Signal.Util.makeLookup(
-        formattedConversations,
-        'e164'
-      ),
+      conversationLookup: makeLookup(formattedConversations, 'id'),
+      conversationsByE164: makeLookup(formattedConversations, 'e164'),
       conversationsByUuid: {
-        ...window.Signal.Util.makeLookup(formattedConversations, 'uuid'),
-        ...window.Signal.Util.makeLookup(formattedConversations, 'pni'),
+        ...makeLookup(formattedConversations, 'uuid'),
+        ...makeLookup(formattedConversations, 'pni'),
       },
-      conversationsByGroupId: window.Signal.Util.makeLookup(
-        formattedConversations,
-        'groupId'
-      ),
-      conversationsByUsername: window.Signal.Util.makeLookup(
-        formattedConversations,
-        'username'
-      ),
+      conversationsByGroupId: makeLookup(formattedConversations, 'groupId'),
+      conversationsByUsername: makeLookup(formattedConversations, 'username'),
     },
     crashReports: crashReports(),
     emojis: emojis(),
@@ -143,7 +132,7 @@ export function getInitialState({
       interactionMode: getInteractionMode(),
       isMainWindowFullScreen: mainWindowStats.isFullScreen,
       isMainWindowMaximized: mainWindowStats.isMaximized,
-      localeMessages: window.SignalContext.localeMessages,
+      localeMessages: window.i18n.getLocaleMessages(),
       menuOptions,
       osName,
       ourACI,

@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 import React, { useState, useCallback } from 'react';
 
 import type { LocalizerType } from '../types/Util';
-import type { ShowToastActionCreatorType } from '../state/ducks/toast';
+import type { ShowToastAction } from '../state/ducks/toast';
 import { ContextMenu } from './ContextMenu';
 import { Theme } from '../util/theme';
 import { ToastType } from '../types/Toast';
@@ -22,7 +22,7 @@ export type PropsType = {
   moduleClassName?: string;
   onAddStory: (file?: File) => unknown;
   onContextMenuShowingChanged?: (value: boolean) => void;
-  showToast: ShowToastActionCreatorType;
+  showToast: ShowToastAction;
 };
 
 export function StoriesAddStoryButton({
@@ -55,7 +55,7 @@ export function StoriesAddStoryButton({
         result.reason === ReasonVideoNotGood.UnsupportedCodec ||
         result.reason === ReasonVideoNotGood.UnsupportedContainer
       ) {
-        showToast(ToastType.StoryVideoUnsupported);
+        showToast({ toastType: ToastType.StoryVideoUnsupported });
         return;
       }
 
@@ -70,13 +70,16 @@ export function StoriesAddStoryButton({
 
       if (result.reason === ReasonVideoNotGood.TooBig) {
         setError(
-          i18n('icu:StoryCreator__error--video-too-big', result.renderDetails)
+          i18n('icu:StoryCreator__error--video-too-big', {
+            limit: result.renderDetails.limit,
+            units: result.renderDetails.units,
+          })
         );
         return;
       }
 
       if (result.reason !== ReasonVideoNotGood.AllGoodNevermind) {
-        showToast(ToastType.StoryVideoError);
+        showToast({ toastType: ToastType.StoryVideoError });
         return;
       }
 
@@ -88,16 +91,16 @@ export function StoriesAddStoryButton({
   return (
     <>
       <ContextMenu
-        ariaLabel={i18n('Stories__add')}
+        ariaLabel={i18n('icu:Stories__add')}
         i18n={i18n}
         onMenuShowingChanged={onContextMenuShowingChanged}
         menuOptions={[
           {
-            label: i18n('Stories__add-story--media'),
+            label: i18n('icu:Stories__add-story--media'),
             onClick: onAddMedia,
           },
           {
-            label: i18n('Stories__add-story--text'),
+            label: i18n('icu:Stories__add-story--text'),
             onClick: () => onAddStory(),
           },
         ]}
@@ -120,7 +123,7 @@ export function StoriesAddStoryButton({
                 setError(undefined);
               },
               style: 'affirmative',
-              text: i18n('Confirmation--confirm'),
+              text: i18n('icu:Confirmation--confirm'),
             },
           ]}
           i18n={i18n}

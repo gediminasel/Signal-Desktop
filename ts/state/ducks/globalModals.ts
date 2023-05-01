@@ -45,8 +45,10 @@ import type { ShowToastActionType } from './toast';
 export type EditHistoryMessagesType = ReadonlyDeep<
   Array<MessageAttributesType>
 >;
-export type ConfirmDeleteForMeModalProps = ReadonlyDeep<{
-  count: number;
+export type DeleteMessagesPropsType = ReadonlyDeep<{
+  conversationId: string;
+  messageIds: ReadonlyArray<string>;
+  onDelete?: () => void;
 }>;
 export type ForwardMessagePropsType = ReadonlyDeep<MessagePropsType>;
 export type ForwardMessagesPropsType = ReadonlyDeep<{
@@ -56,6 +58,9 @@ export type ForwardMessagesPropsType = ReadonlyDeep<{
 export type SafetyNumberChangedBlockingDataType = ReadonlyDeep<{
   promiseUuid: UUIDStringType;
   source?: SafetyNumberChangeSource;
+}>;
+export type FormattingWarningDataType = ReadonlyDeep<{
+  explodedPromise: ExplodePromiseResultType<boolean>;
 }>;
 export type AuthorizeArtCreatorDataType =
   ReadonlyDeep<AuthorizeArtCreatorOptionsType>;
@@ -70,26 +75,28 @@ type MigrateToGV2PropsType = ReadonlyDeep<{
 
 export type GlobalModalsStateType = ReadonlyDeep<{
   addUserToAnotherGroupModalContactId?: string;
+  authArtCreatorData?: AuthorizeArtCreatorDataType;
   contactModalState?: ContactModalStateType;
+  deleteMessagesProps?: DeleteMessagesPropsType;
   editHistoryMessages?: EditHistoryMessagesType;
   errorModalProps?: {
     description?: string;
     title?: string;
   };
+  formattingWarningData?: FormattingWarningDataType;
   forwardMessagesProps?: ForwardMessagesPropsType;
   gv2MigrationProps?: MigrateToGV2PropsType;
   hasConfirmationModal: boolean;
+  isAuthorizingArtCreator?: boolean;
   isProfileEditorVisible: boolean;
-  isSignalConnectionsVisible: boolean;
   isShortcutGuideModalVisible: boolean;
+  isSignalConnectionsVisible: boolean;
   isStoriesSettingsVisible: boolean;
   isWhatsNewVisible: boolean;
   profileEditorHasError: boolean;
   safetyNumberChangedBlockingData?: SafetyNumberChangedBlockingDataType;
   safetyNumberModalContactId?: string;
   stickerPackPreviewId?: string;
-  isAuthorizingArtCreator?: boolean;
-  authArtCreatorData?: AuthorizeArtCreatorDataType;
   userNotFoundModalState?: UserNotFoundModalStateType;
 }>;
 
@@ -103,6 +110,8 @@ const HIDE_UUID_NOT_FOUND_MODAL = 'globalModals/HIDE_UUID_NOT_FOUND_MODAL';
 const SHOW_UUID_NOT_FOUND_MODAL = 'globalModals/SHOW_UUID_NOT_FOUND_MODAL';
 const SHOW_STORIES_SETTINGS = 'globalModals/SHOW_STORIES_SETTINGS';
 const HIDE_STORIES_SETTINGS = 'globalModals/HIDE_STORIES_SETTINGS';
+const TOGGLE_DELETE_MESSAGES_MODAL =
+  'globalModals/TOGGLE_DELETE_MESSAGES_MODAL';
 const TOGGLE_FORWARD_MESSAGES_MODAL =
   'globalModals/TOGGLE_FORWARD_MESSAGES_MODAL';
 const TOGGLE_PROFILE_EDITOR = 'globalModals/TOGGLE_PROFILE_EDITOR';
@@ -121,6 +130,8 @@ const SHOW_STICKER_PACK_PREVIEW = 'globalModals/SHOW_STICKER_PACK_PREVIEW';
 const CLOSE_STICKER_PACK_PREVIEW = 'globalModals/CLOSE_STICKER_PACK_PREVIEW';
 const CLOSE_ERROR_MODAL = 'globalModals/CLOSE_ERROR_MODAL';
 const SHOW_ERROR_MODAL = 'globalModals/SHOW_ERROR_MODAL';
+const SHOW_FORMATTING_WARNING_MODAL =
+  'globalModals/SHOW_FORMATTING_WARNING_MODAL';
 const CLOSE_SHORTCUT_GUIDE_MODAL = 'globalModals/CLOSE_SHORTCUT_GUIDE_MODAL';
 const SHOW_SHORTCUT_GUIDE_MODAL = 'globalModals/SHOW_SHORTCUT_GUIDE_MODAL';
 const SHOW_AUTH_ART_CREATOR = 'globalModals/SHOW_AUTH_ART_CREATOR';
@@ -175,6 +186,11 @@ export type ShowUserNotFoundModalActionType = ReadonlyDeep<{
   payload: UserNotFoundModalStateType;
 }>;
 
+type ToggleDeleteMessagesModalActionType = ReadonlyDeep<{
+  type: typeof TOGGLE_DELETE_MESSAGES_MODAL;
+  payload: DeleteMessagesPropsType | undefined;
+}>;
+
 type ToggleForwardMessagesModalActionType = ReadonlyDeep<{
   type: typeof TOGGLE_FORWARD_MESSAGES_MODAL;
   payload: ForwardMessagesPropsType | undefined;
@@ -209,6 +225,13 @@ type ToggleConfirmationModalActionType = ReadonlyDeep<{
 
 type ShowStoriesSettingsActionType = ReadonlyDeep<{
   type: typeof SHOW_STORIES_SETTINGS;
+}>;
+
+type ShowFormattingWarningModalActionType = ReadonlyDeep<{
+  type: typeof SHOW_FORMATTING_WARNING_MODAL;
+  payload: {
+    explodedPromise: ExplodePromiseResultType<boolean> | undefined;
+  };
 }>;
 
 type HideStoriesSettingsActionType = ReadonlyDeep<{
@@ -313,6 +336,7 @@ export type GlobalModalsActionType = ReadonlyDeep<
   | ShowContactModalActionType
   | ShowEditHistoryModalActionType
   | ShowErrorModalActionType
+  | ShowFormattingWarningModalActionType
   | ShowSendAnywayDialogActionType
   | ShowShortcutGuideModalActionType
   | ShowStickerPackPreviewActionType
@@ -321,12 +345,13 @@ export type GlobalModalsActionType = ReadonlyDeep<
   | ShowWhatsNewModalActionType
   | StartMigrationToGV2ActionType
   | ToggleAddUserToAnotherGroupModalActionType
+  | ToggleConfirmationModalActionType
+  | ToggleDeleteMessagesModalActionType
   | ToggleForwardMessagesModalActionType
   | ToggleProfileEditorActionType
   | ToggleProfileEditorErrorActionType
   | ToggleSafetyNumberModalActionType
   | ToggleSignalConnectionsModalActionType
-  | ToggleConfirmationModalActionType
 >;
 
 // Action Creators
@@ -349,6 +374,7 @@ export const actions = {
   showContactModal,
   showEditHistoryModal,
   showErrorModal,
+  showFormattingWarningModal,
   showGV2MigrationDialog,
   showShortcutGuideModal,
   showStickerPackPreview,
@@ -357,6 +383,7 @@ export const actions = {
   showWhatsNewModal,
   toggleAddUserToAnotherGroupModal,
   toggleConfirmationModal,
+  toggleDeleteMessagesModal,
   toggleForwardMessagesModal,
   toggleProfileEditor,
   toggleProfileEditorHasError,
@@ -422,6 +449,12 @@ function showStoriesSettings(): ShowStoriesSettingsActionType {
   return { type: SHOW_STORIES_SETTINGS };
 }
 
+function showFormattingWarningModal(
+  explodedPromise: ExplodePromiseResultType<boolean> | undefined
+): ShowFormattingWarningModalActionType {
+  return { type: SHOW_FORMATTING_WARNING_MODAL, payload: { explodedPromise } };
+}
+
 function showGV2MigrationDialog(
   conversationId: string
 ): ThunkAction<void, RootStateType, unknown, StartMigrationToGV2ActionType> {
@@ -470,6 +503,15 @@ function showGV2MigrationDialog(
 function closeGV2MigrationDialog(): CloseGV2MigrationDialogActionType {
   return {
     type: CLOSE_GV2_MIGRATION_DIALOG,
+  };
+}
+
+function toggleDeleteMessagesModal(
+  props: DeleteMessagesPropsType | undefined
+): ToggleDeleteMessagesModalActionType {
+  return {
+    type: TOGGLE_DELETE_MESSAGES_MODAL,
+    payload: props,
   };
 }
 
@@ -676,6 +718,10 @@ function copyOverMessageAttributesIntoEditHistory(
 
   return messageAttributes.editHistory.map(editedMessageAttributes => ({
     ...messageAttributes,
+    // Always take attachments from the edited message (they might be absent)
+    attachments: undefined,
+    quote: undefined,
+    preview: [],
     ...editedMessageAttributes,
     // For timestamp uniqueness of messages
     sent_at: editedMessageAttributes.timestamp,
@@ -855,6 +901,13 @@ export function reducer(
     };
   }
 
+  if (action.type === TOGGLE_DELETE_MESSAGES_MODAL) {
+    return {
+      ...state,
+      deleteMessagesProps: action.payload,
+    };
+  }
+
   if (action.type === TOGGLE_FORWARD_MESSAGES_MODAL) {
     return {
       ...state,
@@ -913,6 +966,21 @@ export function reducer(
     return {
       ...state,
       stickerPackPreviewId: undefined,
+    };
+  }
+
+  if (action.type === SHOW_FORMATTING_WARNING_MODAL) {
+    const { explodedPromise } = action.payload;
+    if (!explodedPromise) {
+      return {
+        ...state,
+        formattingWarningData: undefined,
+      };
+    }
+
+    return {
+      ...state,
+      formattingWarningData: { explodedPromise },
     };
   }
 

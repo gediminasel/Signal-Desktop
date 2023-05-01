@@ -14,7 +14,7 @@ import type {
 } from '../types/Stories';
 import type { LocalizerType } from '../types/Util';
 import type { PreferredBadgeSelectorType } from '../state/selectors/badges';
-import type { ShowToastActionCreatorType } from '../state/ducks/toast';
+import type { ShowToastAction } from '../state/ducks/toast';
 import type {
   AddStoryData,
   ViewUserStoriesActionCreatorType,
@@ -48,13 +48,15 @@ export type PropsType = {
   setAddStoryData: (data: AddStoryData) => unknown;
   showConversation: ShowConversationType;
   showStoriesSettings: () => unknown;
-  showToast: ShowToastActionCreatorType;
+  showToast: ShowToastAction;
   stories: Array<ConversationStoryType>;
   toggleHideStories: (conversationId: string) => unknown;
   toggleStoriesView: () => unknown;
   viewStory: ViewStoryActionCreatorType;
   viewUserStories: ViewUserStoriesActionCreatorType;
 };
+
+export const STORIES_COLOR_THEME = Theme.Dark;
 
 export function Stories({
   addStoryData,
@@ -102,7 +104,7 @@ export function Stories({
   );
 
   return (
-    <div className={classNames('Stories', themeClassName(Theme.Dark))}>
+    <div className={classNames('Stories', themeClassName(STORIES_COLOR_THEME))}>
       {addStoryData && renderStoryCreator()}
       <div className="Stories__pane" style={{ width }}>
         {isMyStories && myStories.length ? (
@@ -153,7 +155,7 @@ export function Stories({
       </div>
       <div className="Stories__placeholder">
         <div className="Stories__placeholder__stories" />
-        {i18n('Stories__placeholder--text')}
+        {i18n('icu:Stories__placeholder--text')}
       </div>
     </div>
   );

@@ -12,6 +12,7 @@ import { notificationService } from '../services/notifications';
 import * as log from '../logging/log';
 import * as Errors from '../types/errors';
 import { StartupQueue } from '../util/StartupQueue';
+import { queueUpdateMessage } from '../util/messageBatcher';
 
 export type ReadSyncAttributesType = {
   senderId: string;
@@ -82,10 +83,9 @@ export class ReadSyncs extends Collection {
 
   async onSync(sync: ReadSyncModel): Promise<void> {
     try {
-      const messages =
-        await window.Signal.Data.getMessagesIncludingEditedBySentAt(
-          sync.get('timestamp')
-        );
+      const messages = await window.Signal.Data.getMessagesBySentAt(
+        sync.get('timestamp')
+      );
 
       const found = messages.find(item => {
         const sender = window.ConversationController.lookupOrCreate({
@@ -146,7 +146,7 @@ export class ReadSyncs extends Collection {
         message.set({ expirationStartTimestamp });
       }
 
-      window.Signal.Util.queueUpdateMessage(message.attributes);
+      queueUpdateMessage(message.attributes);
 
       this.remove(sync);
     } catch (error) {

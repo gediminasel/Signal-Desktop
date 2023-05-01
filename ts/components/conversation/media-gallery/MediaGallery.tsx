@@ -59,10 +59,10 @@ function MediaSection({
     const label = (() => {
       switch (type) {
         case 'media':
-          return i18n('mediaEmptyState');
+          return i18n('icu:mediaEmptyState');
 
         case 'documents':
-          return i18n('documentsEmptyState');
+          return i18n('icu:documentsEmptyState');
 
         default:
           throw missingCaseError(type);
@@ -91,13 +91,13 @@ function MediaSection({
         case 'yearMonth':
           return date.format(MONTH_FORMAT);
         case 'today':
-          return i18n('today');
+          return i18n('icu:today');
         case 'yesterday':
-          return i18n('yesterday');
+          return i18n('icu:yesterday');
         case 'thisWeek':
-          return i18n('thisWeek');
+          return i18n('icu:thisWeek');
         case 'thisMonth':
-          return i18n('thisMonth');
+          return i18n('icu:thisMonth');
         default:
           throw missingCaseError(section);
       }
@@ -181,11 +181,11 @@ export function MediaGallery({
         tabs={[
           {
             id: TabViews.Media,
-            label: i18n('media'),
+            label: i18n('icu:media'),
           },
           {
             id: TabViews.Documents,
-            label: i18n('documents'),
+            label: i18n('icu:documents'),
           },
         ]}
         onTabChange={() => setPage(0)}

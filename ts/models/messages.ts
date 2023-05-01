@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  difference,
   isEmpty,
   isEqual,
   isNumber,
@@ -14,16 +13,15 @@ import {
   partition,
   pick,
   union,
-  without,
 } from 'lodash';
 import type {
   CustomError,
-  GroupV1Update,
   MessageAttributesType,
   MessageReactionType,
   QuotedMessageType,
 } from '../model-types.d';
 import { filter, map, reduce, repeat, zipObject } from '../util/iterables';
+import * as GoogleChrome from '../util/GoogleChrome';
 import type { DeleteModel } from '../messageModifiers/Deletes';
 import type { SentEventData } from '../textsecure/messageReceiverEvents';
 import { isNotNil } from '../util/isNotNil';
@@ -45,15 +43,12 @@ import * as expirationTimer from '../util/expirationTimer';
 import { getUserLanguages } from '../util/userLanguages';
 
 import type { ReactionType } from '../types/Reactions';
-import { isValidUuid, UUID, UUIDKind } from '../types/UUID';
+import { UUID, UUIDKind } from '../types/UUID';
 import * as reactionUtil from '../reactions/util';
 import * as Stickers from '../types/Stickers';
 import * as Errors from '../types/errors';
 import * as EmbeddedContact from '../types/EmbeddedContact';
-import type {
-  AttachmentType,
-  AttachmentWithHydratedData,
-} from '../types/Attachment';
+import type { AttachmentType } from '../types/Attachment';
 import { isImage, isVideo } from '../types/Attachment';
 import * as Attachment from '../types/Attachment';
 import { stringToMIMEType } from '../types/MIME';
@@ -77,7 +72,6 @@ import {
   isDirectConversation,
   isGroup,
   isGroupV1,
-  isGroupV2,
   isMe,
 } from '../util/whatTypeOfConversation';
 import { handleMessageSend } from '../util/handleMessageSend';
@@ -91,6 +85,7 @@ import {
   hasErrors,
   isCallHistory,
   isChatSessionRefreshed,
+  isContactRemovedNotification,
   isDeliveryIssue,
   isEndSession,
   isExpirationTimerUpdate,
@@ -107,8 +102,8 @@ import {
   isUniversalTimerNotification,
   isUnsupportedMessage,
   isVerifiedChange,
-  processBodyRanges,
   isConversationMerge,
+  extractHydratedMentions,
 } from '../state/selectors/message';
 import {
   isInCall,
@@ -133,21 +128,21 @@ import {
   conversationQueueJobEnum,
 } from '../jobs/conversationJobQueue';
 import { notificationService } from '../services/notifications';
-import type { LinkPreviewType } from '../types/message/LinkPreviews';
+import type {
+  LinkPreviewType,
+  LinkPreviewWithHydratedData,
+} from '../types/message/LinkPreviews';
 import * as log from '../logging/log';
-import * as Bytes from '../Bytes';
-import { computeHash } from '../Crypto';
 import { cleanupMessage, deleteMessageData } from '../util/cleanup';
 import {
   findMatchingQuote,
-  findMatchingQuote2,
   getContact,
-  getContactId,
   getSource,
   getSourceUuid,
   isCustomError,
   messageHasPaymentEvent,
   getPaymentEventNotificationText,
+  isQuoteAMatch,
 } from '../messages/helpers';
 import type { ReplacementValuesType } from '../types/I18N';
 import { viewOnceOpenJobQueue } from '../jobs/viewOnceOpenJobQueue';
@@ -160,12 +155,11 @@ import type { ConversationQueueJobData } from '../jobs/conversationJobQueue';
 import { getMessageById } from '../messages/getMessageById';
 import { shouldDownloadStory } from '../util/shouldDownloadStory';
 import { shouldShowStoriesView } from '../state/selectors/stories';
-import type { ContactWithHydratedAvatar } from '../textsecure/SendMessage';
+import type { EmbeddedContactWithHydratedAvatar } from '../types/EmbeddedContact';
 import { SeenStatus } from '../MessageSeenStatus';
 import { isNewReactionReplacingPrevious } from '../reactions/util';
 import { parseBoostBadgeListFromServer } from '../badges/parseBadgesFromServer';
 import { GiftBadgeStates } from '../components/conversation/Message';
-import { downloadAttachment } from '../util/downloadAttachment';
 import type { StickerWithHydratedData } from '../types/Stickers';
 import { getStringForConversationMerge } from '../util/getStringForConversationMerge';
 import {
@@ -178,6 +172,15 @@ import * as Edits from '../messageModifiers/Edits';
 import { handleEditMessage } from '../util/handleEditMessage';
 import { getQuoteBodyText } from '../util/getQuoteBodyText';
 import { shouldReplyNotifyUser } from '../util/shouldReplyNotifyUser';
+import { isConversationAccepted } from '../util/isConversationAccepted';
+import type { RawBodyRange } from '../types/BodyRange';
+import { BodyRange, applyRangesForText } from '../types/BodyRange';
+import { deleteForEveryone } from '../util/deleteForEveryone';
+import { getStringForProfileChange } from '../util/getStringForProfileChange';
+import {
+  queueUpdateMessage,
+  saveNewMessageBatcher,
+} from '../util/messageBatcher';
 
 /* eslint-disable more/no-then */
 
@@ -185,19 +188,9 @@ window.Whisper = window.Whisper || {};
 
 const { Message: TypedMessage } = window.Signal.Types;
 const { upgradeMessageSchema } = window.Signal.Migrations;
-const { getTextWithMentions, GoogleChrome } = window.Signal.Util;
 const { getMessageBySender } = window.Signal.Data;
 
 export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
-  static getLongMessageAttachment: (opts: {
-    attachments: Array<AttachmentWithHydratedData>;
-    body?: string;
-    now: number;
-  }) => {
-    body?: string;
-    attachments: Array<AttachmentWithHydratedData>;
-  };
-
   CURRENT_PROTOCOL_VERSION?: number;
 
   // Set when sending some sync messages, so we get the functionality of
@@ -217,9 +210,9 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
   syncPromise?: Promise<CallbackResultType | void>;
 
-  cachedOutgoingContactData?: Array<ContactWithHydratedAvatar>;
+  cachedOutgoingContactData?: Array<EmbeddedContactWithHydratedAvatar>;
 
-  cachedOutgoingPreviewData?: Array<LinkPreviewType>;
+  cachedOutgoingPreviewData?: Array<LinkPreviewWithHydratedData>;
 
   cachedOutgoingQuoteData?: QuotedMessageType;
 
@@ -335,6 +328,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     return (
       !isCallHistory(attributes) &&
       !isChatSessionRefreshed(attributes) &&
+      !isContactRemovedNotification(attributes) &&
       !isConversationMerge(attributes) &&
       !isEndSession(attributes) &&
       !isExpirationTimerUpdate(attributes) &&
@@ -407,14 +401,18 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     return window.ConversationController.get(this.get('conversationId'));
   }
 
-  getNotificationData(): { emoji?: string; text: string } {
+  getNotificationData(): {
+    emoji?: string;
+    text: string;
+    bodyRanges?: ReadonlyArray<RawBodyRange>;
+  } {
     // eslint-disable-next-line prefer-destructuring
     const attributes: MessageAttributesType = this.attributes;
 
     if (isDeliveryIssue(attributes)) {
       return {
         emoji: '⚠️',
-        text: window.i18n('DeliveryIssue--preview'),
+        text: window.i18n('icu:DeliveryIssue--preview'),
       };
     }
 
@@ -446,19 +444,19 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     if (isChatSessionRefreshed(attributes)) {
       return {
         emoji: '🔁',
-        text: window.i18n('ChatRefresh--notification'),
+        text: window.i18n('icu:ChatRefresh--notification'),
       };
     }
 
     if (isUnsupportedMessage(attributes)) {
       return {
-        text: window.i18n('message--getDescription--unsupported-message'),
+        text: window.i18n('icu:message--getDescription--unsupported-message'),
       };
     }
 
     if (isGroupV1Migration(attributes)) {
       return {
-        text: window.i18n('GroupV1--Migration--was-upgraded'),
+        text: window.i18n('icu:GroupV1--Migration--was-upgraded'),
       };
     }
 
@@ -471,11 +469,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       }
 
       return {
-        text: window.Signal.Util.getStringForProfileChange(
-          change,
-          changedContact,
-          window.i18n
-        ),
+        text: getStringForProfileChange(change, changedContact, window.i18n),
       };
     }
 
@@ -499,12 +493,12 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
             window.ConversationController.get(conversationId);
           return conversation
             ? conversation.getTitle()
-            : window.i18n('unknownContact');
+            : window.i18n('icu:unknownContact');
         },
         renderString: (
           key: string,
           _i18n: unknown,
-          components: ReplacementValuesType<string> | undefined
+          components: ReplacementValuesType<string | number> | undefined
         ) => {
           // eslint-disable-next-line local-rules/valid-i18n-keys
           return window.i18n(key, components);
@@ -534,25 +528,25 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     if (isTapToView(attributes)) {
       if (this.isErased()) {
         return {
-          text: window.i18n('message--getDescription--disappearing-media'),
+          text: window.i18n('icu:message--getDescription--disappearing-media'),
         };
       }
 
       if (Attachment.isImage(attachments)) {
         return {
-          text: window.i18n('message--getDescription--disappearing-photo'),
+          text: window.i18n('icu:message--getDescription--disappearing-photo'),
           emoji: '📷',
         };
       }
       if (Attachment.isVideo(attachments)) {
         return {
-          text: window.i18n('message--getDescription--disappearing-video'),
+          text: window.i18n('icu:message--getDescription--disappearing-video'),
           emoji: '🎥',
         };
       }
       // There should be an image or video attachment, but we have a fallback just in
       //   case.
-      return { text: window.i18n('mediaMessage'), emoji: '📎' };
+      return { text: window.i18n('icu:mediaMessage'), emoji: '📎' };
     }
 
     if (isGroupUpdate(attributes)) {
@@ -564,11 +558,11 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       }
 
       if (groupUpdate.left === 'You') {
-        return { text: window.i18n('youLeftTheGroup') };
+        return { text: window.i18n('icu:youLeftTheGroup') };
       }
       if (groupUpdate.left) {
         return {
-          text: window.i18n('leftTheGroup', {
+          text: window.i18n('icu:leftTheGroup', {
             name: this.getNameForNumber(groupUpdate.left),
           }),
         };
@@ -579,10 +573,10 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       }
 
       if (isMe(fromContact.attributes)) {
-        messages.push(window.i18n('youUpdatedTheGroup'));
+        messages.push(window.i18n('icu:youUpdatedTheGroup'));
       } else {
         messages.push(
-          window.i18n('updatedTheGroup', {
+          window.i18n('icu:updatedTheGroup', {
             name: fromContact.getTitle(),
           })
         );
@@ -598,7 +592,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
         if (joinedContacts.length > 1) {
           messages.push(
-            window.i18n('multipleJoinedTheGroup', {
+            window.i18n('icu:multipleJoinedTheGroup', {
               names: joinedWithoutMe
                 .map(contact => contact.getTitle())
                 .join(', '),
@@ -606,7 +600,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
           );
 
           if (joinedWithoutMe.length < joinedContacts.length) {
-            messages.push(window.i18n('youJoinedTheGroup'));
+            messages.push(window.i18n('icu:youJoinedTheGroup'));
           }
         } else {
           const joinedContact = window.ConversationController.getOrCreate(
@@ -614,10 +608,10 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
             'private'
           );
           if (isMe(joinedContact.attributes)) {
-            messages.push(window.i18n('youJoinedTheGroup'));
+            messages.push(window.i18n('icu:youJoinedTheGroup'));
           } else {
             messages.push(
-              window.i18n('joinedTheGroup', {
+              window.i18n('icu:joinedTheGroup', {
                 name: joinedContacts[0].getTitle(),
               })
             );
@@ -627,25 +621,26 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
       if (groupUpdate.name) {
         messages.push(
-          window.i18n('titleIsNow', {
+          window.i18n('icu:titleIsNow', {
             name: groupUpdate.name,
           })
         );
       }
       if (groupUpdate.avatarUpdated) {
-        messages.push(window.i18n('updatedGroupAvatar'));
+        messages.push(window.i18n('icu:updatedGroupAvatar'));
       }
 
       return { text: messages.join(' ') };
     }
     if (isEndSession(attributes)) {
-      return { text: window.i18n('sessionEnded') };
+      return { text: window.i18n('icu:sessionEnded') };
     }
     if (isIncoming(attributes) && hasErrors(attributes)) {
-      return { text: window.i18n('incomingError') };
+      return { text: window.i18n('icu:incomingError') };
     }
 
     const body = (this.get('body') || '').trim();
+    const bodyRanges = this.get('bodyRanges') || [];
 
     if (attachments.length) {
       // This should never happen but we want to be extra-careful.
@@ -654,38 +649,47 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
       if (contentType === MIME.IMAGE_GIF || Attachment.isGIF(attachments)) {
         return {
-          text: body || window.i18n('message--getNotificationText--gif'),
+          bodyRanges,
           emoji: '🎡',
+          text: body || window.i18n('icu:message--getNotificationText--gif'),
         };
       }
       if (Attachment.isImage(attachments)) {
         return {
-          text: body || window.i18n('message--getNotificationText--photo'),
+          bodyRanges,
           emoji: '📷',
+          text: body || window.i18n('icu:message--getNotificationText--photo'),
         };
       }
       if (Attachment.isVideo(attachments)) {
         return {
-          text: body || window.i18n('message--getNotificationText--video'),
+          bodyRanges,
           emoji: '🎥',
+          text: body || window.i18n('icu:message--getNotificationText--video'),
         };
       }
       if (Attachment.isVoiceMessage(attachment)) {
         return {
-          text:
-            body || window.i18n('message--getNotificationText--voice-message'),
+          bodyRanges,
           emoji: '🎤',
+          text:
+            body ||
+            window.i18n('icu:message--getNotificationText--voice-message'),
         };
       }
       if (Attachment.isAudio(attachments)) {
         return {
-          text:
-            body || window.i18n('message--getNotificationText--audio-message'),
+          bodyRanges,
           emoji: '🔈',
+          text:
+            body ||
+            window.i18n('icu:message--getNotificationText--audio-message'),
         };
       }
+
       return {
-        text: body || window.i18n('message--getNotificationText--file'),
+        bodyRanges,
+        text: body || window.i18n('icu:message--getNotificationText--file'),
         emoji: '📎',
       };
     }
@@ -700,7 +704,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         log.warn('Unable to get emoji for sticker');
       }
       return {
-        text: window.i18n('message--getNotificationText--stickers'),
+        text: window.i18n('icu:message--getNotificationText--stickers'),
         emoji: dropNull(emoji),
       };
     }
@@ -724,11 +728,11 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const { expireTimer } = this.get('expirationTimerUpdate')!;
       if (!expireTimer) {
-        return { text: window.i18n('disappearingMessagesDisabled') };
+        return { text: window.i18n('icu:disappearingMessagesDisabled') };
       }
 
       return {
-        text: window.i18n('timerSetTo', {
+        text: window.i18n('icu:timerSetTo', {
           time: expirationTimer.format(window.i18n, expireTimer),
         }),
       };
@@ -738,7 +742,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       const identifier = this.get('key_changed');
       const conversation = window.ConversationController.get(identifier);
       return {
-        text: window.i18n('safetyNumberChangedGroup', {
+        text: window.i18n('icu:safetyNumberChangedGroup', {
           name: conversation ? conversation.getTitle() : '',
         }),
       };
@@ -747,7 +751,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     if (contacts && contacts.length) {
       return {
         text:
-          EmbeddedContact.getName(contacts[0]) || window.i18n('unknownContact'),
+          EmbeddedContact.getName(contacts[0]) ||
+          window.i18n('icu:unknownContact'),
         emoji: '👤',
       };
     }
@@ -759,7 +764,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
       if (isOutgoing(this.attributes)) {
         const recipient =
-          fromContact?.getTitle() ?? window.i18n('unknownContact');
+          fromContact?.getTitle() ?? window.i18n('icu:unknownContact');
         return {
           emoji,
           text: window.i18n('icu:message--donation--preview--sent', {
@@ -768,7 +773,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         };
       }
 
-      const sender = fromContact?.getTitle() ?? window.i18n('unknownContact');
+      const sender =
+        fromContact?.getTitle() ?? window.i18n('icu:unknownContact');
       return {
         emoji,
         text:
@@ -781,30 +787,19 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     }
 
     if (body) {
-      return { text: body };
+      return {
+        text: body,
+        bodyRanges,
+      };
     }
 
     return { text: '' };
   }
 
-  getRawText(): string {
-    const body = (this.get('body') || '').trim();
-    const { attributes } = this;
-
-    const bodyRanges = processBodyRanges(attributes, {
-      conversationSelector: findAndFormatContact,
-    });
-    if (bodyRanges) {
-      return getTextWithMentions(bodyRanges, body);
-    }
-
-    return body;
-  }
-
   getAuthorText(): string | undefined {
     // if it's outgoing, it must be self-authored
     const selfAuthor = isOutgoing(this.attributes)
-      ? window.i18n('you')
+      ? window.i18n('icu:you')
       : undefined;
 
     // if it's not selfAuthor and there's no incoming contact,
@@ -816,20 +811,31 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     const { text, emoji } = this.getNotificationData();
     const { attributes } = this;
 
+    const conversation = this.getConversation();
+
+    strictAssert(
+      conversation != null,
+      'Conversation not found in ConversationController'
+    );
+
+    if (!isConversationAccepted(conversation.attributes)) {
+      return window.i18n('icu:message--getNotificationText--messageRequest');
+    }
+
     if (attributes.storyReaction) {
       if (attributes.type === 'outgoing') {
         const name = this.getConversation()?.get('profileName');
 
         if (!name) {
           return window.i18n(
-            'Quote__story-reaction-notification--outgoing--nameless',
+            'icu:Quote__story-reaction-notification--outgoing--nameless',
             {
               emoji: attributes.storyReaction.emoji,
             }
           );
         }
 
-        return window.i18n('Quote__story-reaction-notification--outgoing', {
+        return window.i18n('icu:Quote__story-reaction-notification--outgoing', {
           emoji: attributes.storyReaction.emoji,
           name,
         });
@@ -843,7 +849,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         attributes.type === 'incoming' &&
         attributes.storyReaction.targetAuthorUuid === ourUuid
       ) {
-        return window.i18n('Quote__story-reaction-notification--incoming', {
+        return window.i18n('icu:Quote__story-reaction-notification--incoming', {
           emoji: attributes.storyReaction.emoji,
         });
       }
@@ -852,29 +858,30 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         return attributes.storyReaction.emoji;
       }
 
-      return window.i18n('Quote__story-reaction--single');
+      return window.i18n('icu:Quote__story-reaction--single');
     }
 
-    let modifiedText = text;
-
-    const bodyRanges = processBodyRanges(attributes, {
-      conversationSelector: findAndFormatContact,
-    });
-
-    if (bodyRanges && bodyRanges.length) {
-      modifiedText = getTextWithMentions(bodyRanges, modifiedText);
-    }
+    const mentions =
+      extractHydratedMentions(attributes, {
+        conversationSelector: findAndFormatContact,
+      }) || [];
+    const spoilers = (attributes.bodyRanges || []).filter(
+      range =>
+        BodyRange.isFormatting(range) && range.style === BodyRange.Style.SPOILER
+    ) as Array<BodyRange<BodyRange.Formatting>>;
+    const modifiedText = applyRangesForText({ text, mentions, spoilers });
 
     // Linux emoji support is mixed, so we disable it. (Note that this doesn't touch
     //   the `text`, which can contain emoji.)
     const shouldIncludeEmoji = Boolean(emoji) && !window.Signal.OS.isLinux();
     if (shouldIncludeEmoji) {
-      return window.i18n('message--getNotificationText--text-with-emoji', {
+      return window.i18n('icu:message--getNotificationText--text-with-emoji', {
         text: modifiedText,
         emoji,
       });
     }
-    return modifiedText;
+
+    return modifiedText || '';
   }
 
   // General
@@ -931,12 +938,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
     const firstAttachment = attachments[0];
     if (
-      !window.Signal.Util.GoogleChrome.isImageTypeSupported(
-        firstAttachment.contentType
-      ) &&
-      !window.Signal.Util.GoogleChrome.isVideoTypeSupported(
-        firstAttachment.contentType
-      )
+      !GoogleChrome.isImageTypeSupported(firstAttachment.contentType) &&
+      !GoogleChrome.isVideoTypeSupported(firstAttachment.contentType)
     ) {
       return false;
     }
@@ -1056,16 +1059,25 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       const inMemoryMessages = window.MessageController.filterBySentAt(
         Number(sentAt)
       );
-      const matchingMessage = findMatchingQuote(
+      let matchingMessage = findMatchingQuote(
         inMemoryMessages,
         quote,
         this.get('conversationId')
       );
       if (!matchingMessage) {
+        const messages = await window.Signal.Data.getMessagesBySentAt(
+          Number(sentAt)
+        );
+        const found = messages.find(item => isQuoteAMatch(item, quote));
+        if (found) {
+          matchingMessage = window.MessageController.register(found.id, found);
+        }
+      }
+
+      if (!matchingMessage) {
         log.info(
           `doubleCheckMissingQuoteReference/${logId}: No match for ${sentAt}.`
         );
-
         return;
       }
 
@@ -1097,7 +1109,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
           referencedMessageNotFound: false,
         },
       });
-      window.Signal.Util.queueUpdateMessage(this.attributes);
+      queueUpdateMessage(this.attributes);
     }
   }
 
@@ -1435,7 +1447,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       storyId: this.id,
       messageId: this.id,
       senderTitle:
-        this.getConversation()?.getTitle() ?? window.i18n('Stories__mine'),
+        this.getConversation()?.getTitle() ?? window.i18n('icu:Stories__mine'),
       message: this.hasSuccessfulDelivery()
         ? window.i18n('icu:Stories__failed-send--partial')
         : window.i18n('icu:Stories__failed-send--full'),
@@ -1493,6 +1505,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     // This is used by sendSyncMessage, then set to null
     if ('dataMessage' in result.value && result.value.dataMessage) {
       attributesToUpdate.dataMessage = result.value.dataMessage;
+    } else if ('editMessage' in result.value && result.value.editMessage) {
+      attributesToUpdate.dataMessage = result.value.editMessage;
     }
 
     if (!this.doNotSave) {
@@ -1676,6 +1690,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     const isTotalSuccess: boolean =
       result.success && !this.get('errors')?.length;
     if (isTotalSuccess) {
+      delete this.cachedOutgoingContactData;
       delete this.cachedOutgoingPreviewData;
       delete this.cachedOutgoingQuoteData;
       delete this.cachedOutgoingStickerData;
@@ -1790,10 +1805,18 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         map(conversationsWithSealedSender, c => c.id)
       );
 
+      const isEditedMessage = Boolean(this.get('editHistory'));
+      const mainMessageTimestamp = this.get('sent_at') || this.get('timestamp');
+      const timestamp =
+        this.get('editMessageTimestamp') || mainMessageTimestamp;
+
       return handleMessageSend(
         messaging.sendSyncMessage({
           encodedDataMessage: dataMessage,
-          timestamp: this.get('sent_at'),
+          editedMessageTimestamp: isEditedMessage
+            ? mainMessageTimestamp
+            : undefined,
+          timestamp,
           destination: conv.get('e164'),
           destinationUuid: conv.get('uuid'),
           expirationStartTimestamp:
@@ -1943,30 +1966,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       id,
 
       attachments: quote.attachments.slice(),
-      bodyRanges: quote.bodyRanges
-        .map(({ start, length, mentionUuid }) => {
-          strictAssert(
-            start != null,
-            'Received quote with a bodyRange.start == null'
-          );
-          strictAssert(
-            length != null,
-            'Received quote with a bodyRange.length == null'
-          );
-          if (!isValidUuid(mentionUuid)) {
-            log.warn(
-              `copyFromQuotedMessage: invalid mentionUuid ${mentionUuid}`
-            );
-            return undefined;
-          }
-
-          return {
-            start,
-            length,
-            mentionUuid,
-          };
-        })
-        .filter(isNotNil),
+      bodyRanges: quote.bodyRanges?.slice(),
 
       // Just placeholder values for the fields
       fromGroupName: undefined,
@@ -1989,9 +1989,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       queryMessage = matchingMessage;
     } else {
       log.info('copyFromQuotedMessage: db lookup needed', id);
-      const messages =
-        await window.Signal.Data.getMessagesIncludingEditedBySentAt(id);
-      const found = findMatchingQuote2(messages, result, conversationId);
+      const messages = await window.Signal.Data.getMessagesBySentAt(id);
+      const found = messages.find(item => isQuoteAMatch(item, result));
 
       if (!found) {
         result.referencedMessageNotFound = true;
@@ -2155,7 +2154,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     const sourceUuid = message.get('sourceUuid');
     const type = message.get('type');
     const conversationId = message.get('conversationId');
-    const GROUP_TYPES = Proto.GroupContext.Type;
 
     const fromContact = getContact(this.attributes);
     if (fromContact) {
@@ -2368,9 +2366,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         reason: 'handleDataMessage',
       })!;
       const hasGroupV2Prop = Boolean(initialMessage.groupV2);
-      const isV1GroupUpdate =
-        initialMessage.group &&
-        initialMessage.group.type !== Proto.GroupContext.Type.DELIVER;
 
       // Drop if from blocked user. Only GroupV2 messages should need to be dropped here.
       const isBlocked =
@@ -2413,22 +2408,11 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         type === 'incoming' &&
         !isDirectConversation(conversation.attributes) &&
         !hasGroupV2Prop &&
-        !isV1GroupUpdate &&
         conversation.get('members') &&
         !areWeMember
       ) {
         log.warn(
           `Received message destined for group ${conversation.idForLogging()}, which we're not a part of. Dropping.`
-        );
-        confirm();
-        return;
-      }
-
-      // Because GroupV1 messages can now be multiplexed into GroupV2 conversations, we
-      //   drop GroupV1 updates in GroupV2 groups.
-      if (isV1GroupUpdate && isGroupV2(conversation.attributes)) {
-        log.warn(
-          `Received GroupV1 update in GroupV2 conversation ${conversation.idForLogging()}. Dropping.`
         );
         confirm();
         return;
@@ -2631,159 +2615,9 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         }
 
         if (isSupported) {
-          let attributes = {
+          const attributes = {
             ...conversation.attributes,
           };
-
-          // GroupV1
-          if (!hasGroupV2Prop && initialMessage.group) {
-            const pendingGroupUpdate: GroupV1Update = {};
-
-            const memberConversations: Array<ConversationModel> =
-              await Promise.all(
-                initialMessage.group.membersE164.map((e164: string) =>
-                  window.ConversationController.getOrCreateAndWait(
-                    e164,
-                    'private'
-                  )
-                )
-              );
-            const members = memberConversations.map(c => c.get('id'));
-            attributes = {
-              ...attributes,
-              type: 'group',
-              groupId: initialMessage.group.id,
-            };
-            if (initialMessage.group.type === GROUP_TYPES.UPDATE) {
-              attributes = {
-                ...attributes,
-                name: initialMessage.group.name,
-                members: union(members, conversation.get('members')),
-              };
-
-              if (initialMessage.group.name !== conversation.get('name')) {
-                pendingGroupUpdate.name = initialMessage.group.name;
-              }
-
-              const avatarAttachment = initialMessage.group.avatar;
-
-              let downloadedAvatar;
-              let hash;
-              if (avatarAttachment) {
-                try {
-                  downloadedAvatar = await downloadAttachment(avatarAttachment);
-
-                  if (downloadedAvatar) {
-                    const loadedAttachment =
-                      await window.Signal.Migrations.loadAttachmentData(
-                        downloadedAvatar
-                      );
-
-                    hash = computeHash(loadedAttachment.data);
-                  }
-                } catch (err) {
-                  log.info(`${idLog}: group avatar download failed`);
-                }
-              }
-
-              const existingAvatar = conversation.get('avatar');
-
-              if (
-                // Avatar added
-                (!existingAvatar && avatarAttachment) ||
-                // Avatar changed
-                (existingAvatar && existingAvatar.hash !== hash) ||
-                // Avatar removed
-                (existingAvatar && !avatarAttachment)
-              ) {
-                // Removes existing avatar from disk
-                if (existingAvatar && existingAvatar.path) {
-                  await window.Signal.Migrations.deleteAttachmentData(
-                    existingAvatar.path
-                  );
-                }
-
-                let avatar = null;
-                if (downloadedAvatar && avatarAttachment != null) {
-                  const onDiskAttachment =
-                    await Attachment.migrateDataToFileSystem(downloadedAvatar, {
-                      writeNewAttachmentData:
-                        window.Signal.Migrations.writeNewAttachmentData,
-                      logger: log,
-                    });
-                  avatar = {
-                    ...onDiskAttachment,
-                    hash,
-                  };
-                }
-
-                if (!avatar) {
-                  attributes.avatar = avatar;
-                } else {
-                  const { url, path } = avatar;
-                  strictAssert(url, 'Avatar needs url');
-                  strictAssert(path, 'Avatar needs path');
-                  attributes.avatar = {
-                    url,
-                    path,
-                    ...avatar,
-                  };
-                }
-
-                pendingGroupUpdate.avatarUpdated = true;
-              } else {
-                log.info(
-                  `${idLog}: Group avatar hash matched; not replacing group avatar`
-                );
-              }
-
-              const differentMembers = difference(
-                members,
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                conversation.get('members')!
-              );
-              if (differentMembers.length > 0) {
-                // Because GroupV1 groups are based on e164 only
-                const maybeE164s = map(differentMembers, id =>
-                  window.ConversationController.get(id)?.get('e164')
-                );
-                const e164s = filter(maybeE164s, isNotNil);
-                pendingGroupUpdate.joined = [...e164s];
-              }
-              if (conversation.get('left')) {
-                log.warn('re-added to a left group');
-                attributes.left = false;
-                conversation.set({ addedBy: getContactId(message.attributes) });
-              }
-            } else if (initialMessage.group.type === GROUP_TYPES.QUIT) {
-              const inGroup = Boolean(
-                sender &&
-                  (conversation.get('members') || []).includes(sender.id)
-              );
-              if (!inGroup) {
-                const senderString = sender ? sender.idForLogging() : null;
-                log.info(
-                  `${idLog}: Got 'left' message from someone not in group: ${senderString}. Dropping.`
-                );
-                return;
-              }
-
-              if (isMe(sender.attributes)) {
-                attributes.left = true;
-                pendingGroupUpdate.left = 'You';
-              } else {
-                pendingGroupUpdate.left = sender.get('id');
-              }
-              attributes.members = without(
-                conversation.get('members'),
-                sender.get('id')
-              );
-            }
-
-            if (!isEmpty(pendingGroupUpdate)) {
-              message.set('group_update', pendingGroupUpdate);
-            }
-          }
 
           // Drop empty messages after. This needs to happen after the initial
           // message.set call and after GroupV1 processing to make sure all possible
@@ -3023,7 +2857,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     conversation: ConversationModel,
     confirm: () => void
   ): Promise<void> {
-    await window.Signal.Util.saveNewMessageBatcher.add(this.attributes);
+    await saveNewMessageBatcher.add(this.attributes);
 
     log.info('Message saved', this.get('sent_at'));
 
@@ -3330,7 +3164,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     const deletes = Deletes.getSingleton().forMessage(message);
     await Promise.all(
       deletes.map(async del => {
-        await window.Signal.Util.deleteForEveryone(message, del, false);
+        await deleteForEveryone(message, del, false);
         changed = true;
       })
     );
@@ -3338,9 +3172,16 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     // We want to make sure the message is saved first before applying any edits
     if (!isFirstRun) {
       const edits = Edits.forMessage(message);
+      log.info(
+        `modifyTargetMessage/${this.idForLogging()}: ${
+          edits.length
+        } edits in second run`
+      );
       await Promise.all(
         edits.map(editAttributes =>
-          handleEditMessage(message.attributes, editAttributes)
+          conversation.queueJob('modifyTargetMessage/edits', () =>
+            handleEditMessage(message.attributes, editAttributes)
+          )
         )
       );
     }
@@ -3707,32 +3548,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 }
 
 window.Whisper.Message = MessageModel;
-
-window.Whisper.Message.getLongMessageAttachment = ({
-  body,
-  attachments,
-  now,
-}) => {
-  if (!body || body.length <= 2048) {
-    return {
-      body,
-      attachments,
-    };
-  }
-
-  const data = Bytes.fromString(body);
-  const attachment = {
-    contentType: MIME.LONG_MESSAGE,
-    fileName: `long-message-${now}.txt`,
-    data,
-    size: data.byteLength,
-  };
-
-  return {
-    body: body.slice(0, 2048),
-    attachments: [attachment, ...attachments],
-  };
-};
 
 window.Whisper.MessageCollection = window.Backbone.Collection.extend({
   model: window.Whisper.Message,

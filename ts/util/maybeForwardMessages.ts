@@ -3,7 +3,11 @@
 
 import { orderBy } from 'lodash';
 import type { AttachmentType } from '../types/Attachment';
-import type { LinkPreviewType } from '../types/message/LinkPreviews';
+import { isVoiceMessage } from '../types/Attachment';
+import type {
+  LinkPreviewType,
+  LinkPreviewWithHydratedData,
+} from '../types/message/LinkPreviews';
 import type { MessageAttributesType, QuotedMessageType } from '../model-types';
 import * as log from '../logging/log';
 import { SafetyNumberChangeSource } from '../components/SafetyNumberChangeDialog';
@@ -15,19 +19,23 @@ import {
 import { isNotNil } from './isNotNil';
 import { resetLinkPreview } from '../services/LinkPreview';
 import { getRecipientsByConversation } from './getRecipientsByConversation';
-import type { ContactWithHydratedAvatar } from '../textsecure/SendMessage';
-import type { BodyRangesType } from '../types/Util';
+import type { EmbeddedContactWithHydratedAvatar } from '../types/EmbeddedContact';
+import type {
+  DraftBodyRanges,
+  HydratedBodyRangesType,
+} from '../types/BodyRange';
 import type { StickerWithHydratedData } from '../types/Stickers';
 import { drop } from './drop';
 import { toLogFormat } from '../types/errors';
 
 export type MessageForwardDraft = Readonly<{
-  originalMessageId: string;
   attachments?: ReadonlyArray<AttachmentType>;
-  previews: ReadonlyArray<LinkPreviewType>;
-  isSticker: boolean;
+  bodyRanges?: HydratedBodyRangesType;
   hasContact: boolean;
+  isSticker: boolean;
   messageBody?: string;
+  originalMessageId: string;
+  previews: ReadonlyArray<LinkPreviewType>;
 }>;
 
 export type ForwardMessageData = Readonly<{
@@ -40,6 +48,10 @@ export function isDraftEditable(draft: MessageForwardDraft): boolean {
     return false;
   }
   if (draft.hasContact) {
+    return false;
+  }
+  const hasVoiceMessage = draft.attachments?.some(isVoiceMessage) ?? false;
+  if (hasVoiceMessage) {
     return false;
   }
   return true;
@@ -142,13 +154,15 @@ export async function maybeForwardMessages(
     loadStickerData,
   } = window.Signal.Migrations;
 
+  let timestampOffset = 0;
+
   // load any sticker data, attachments, or link previews that we need to
   // send along with the message and do the send to each conversation.
   const preparedMessages = await Promise.all(
     messages.map(async message => {
-      const { originalMessage, draft } = message;
+      const { draft, originalMessage } = message;
       const { sticker, contact } = originalMessage;
-      const { messageBody, previews, attachments } = draft;
+      const { attachments, bodyRanges, messageBody, previews } = draft;
 
       const idForLogging = getMessageIdForLogging(originalMessage);
       log.info(`maybeForwardMessage: Forwarding ${idForLogging}`);
@@ -165,9 +179,9 @@ export async function maybeForwardMessages(
       let enqueuedMessage: {
         attachments: Array<AttachmentType>;
         body: string | undefined;
-        contact?: Array<ContactWithHydratedAvatar>;
-        mentions?: BodyRangesType;
-        preview?: Array<LinkPreviewType>;
+        bodyRanges?: DraftBodyRanges;
+        contact?: Array<EmbeddedContactWithHydratedAvatar>;
+        preview?: Array<LinkPreviewWithHydratedData>;
         quote?: QuotedMessageType;
         sticker?: StickerWithHydratedData;
       };
@@ -213,6 +227,7 @@ export async function maybeForwardMessages(
 
         enqueuedMessage = {
           body: messageBody || undefined,
+          bodyRanges,
           attachments: attachmentsToSend,
           preview,
         };
@@ -228,12 +243,15 @@ export async function maybeForwardMessages(
   );
 
   // Actually send the messages
-  conversations.forEach((conversation, offset) => {
+  conversations.forEach(conversation => {
     if (conversation == null) {
       return;
     }
-    const timestamp = baseTimestamp + offset;
+
     sortedMessages.forEach(entry => {
+      const timestamp = baseTimestamp + timestampOffset;
+      timestampOffset += 1;
+
       const { enqueuedMessage, originalMessage } = entry;
       drop(
         conversation

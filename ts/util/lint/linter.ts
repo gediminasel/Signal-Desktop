@@ -24,8 +24,7 @@ const excludedFilesRegexp = RegExp(
   [
     '^release/',
     '^preload.bundle.js(LICENSE.txt|map)?',
-    '^about.browser.bundle.js(LICENSE.txt|map)?',
-    '^about.preload.bundle.js(LICENSE.txt|map)?',
+    '^bundles/',
     '^storybook-static/',
 
     // Non-distributed files
@@ -336,6 +335,9 @@ const excludedFilesRegexp = RegExp(
     '^node_modules/webpack-hot-middleware/.+',
     '^node_modules/webpack-merge/.+',
     '^node_modules/webpack/.+',
+
+    // Sticker Creator
+    '^sticker-creator/.+',
   ].join('|')
 );
 

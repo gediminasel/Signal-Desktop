@@ -37,6 +37,7 @@ import type {
 import { isConversationAccepted } from '../../util/isConversationAccepted';
 import { isConversationUnregistered } from '../../util/isConversationUnregistered';
 import type { LoggerType } from '../../types/Logging';
+import { sendToGroup } from '../../util/sendToGroup';
 
 export async function sendReaction(
   conversation: ConversationModel,
@@ -250,13 +251,10 @@ export async function sendReaction(
               groupV2Info.revision = revision;
             }
 
-            return window.Signal.Util.sendToGroup({
+            return sendToGroup({
               abortSignal,
               contentHint: ContentHint.RESENDABLE,
               groupSendOptions: {
-                groupV1: conversation.getGroupV1Info(
-                  recipientIdentifiersWithoutMe
-                ),
                 groupV2: groupV2Info,
                 reaction: reactionForSend,
                 timestamp: pendingReaction.timestamp,

@@ -19,16 +19,16 @@ describe('setupI18n', () => {
       assert.strictEqual(i18n('random'), '');
     });
     it('returns message for given string', () => {
-      assert.strictEqual(i18n('reportIssue'), 'Contact Support');
+      assert.strictEqual(i18n('icu:reportIssue'), 'Contact Support');
     });
     it('returns message with single substitution', () => {
-      const actual = i18n('migratingToSQLCipher', {
+      const actual = i18n('icu:migratingToSQLCipher', {
         status: '45/200',
       });
       assert.equal(actual, 'Optimizing messages... 45/200 complete.');
     });
     it('returns message with multiple substitutions', () => {
-      const actual = i18n('theyChangedTheTimer', {
+      const actual = i18n('icu:theyChangedTheTimer', {
         name: 'Someone',
         time: '5 minutes',
       });
@@ -38,13 +38,11 @@ describe('setupI18n', () => {
       );
     });
     it('returns a modern icu message formatted', () => {
-      const actual = i18n('icu:ProfileEditor--info', {
-        learnMore: 'LEARN MORE',
-      });
-      assert.equal(
-        actual,
-        'Your profile is encrypted. Your profile and changes to it will be visible to your contacts and when you start or accept new chats. LEARN MORE'
+      const actual = i18n(
+        'icu:AddUserToAnotherGroupModal__toast--adding-user-to-group',
+        { contact: 'CONTACT' }
       );
+      assert.equal(actual, 'Adding CONTACT...');
     });
   });
 
@@ -72,7 +70,11 @@ describe('setupI18n', () => {
 
   describe('isLegacyFormat', () => {
     it('returns false for new format', () => {
-      assert.isFalse(i18n.isLegacyFormat('icu:ProfileEditor--info'));
+      assert.isFalse(
+        i18n.isLegacyFormat(
+          'icu:AddUserToAnotherGroupModal__toast--adding-user-to-group'
+        )
+      );
       assert.isTrue(i18n.isLegacyFormat('softwareAcknowledgments'));
     });
   });

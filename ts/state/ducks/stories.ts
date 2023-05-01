@@ -7,7 +7,7 @@ import { isEqual, pick } from 'lodash';
 import type { ReadonlyDeep } from 'type-fest';
 import * as Errors from '../../types/errors';
 import type { AttachmentType } from '../../types/Attachment';
-import type { DraftBodyRangesType } from '../../types/Util';
+import type { DraftBodyRanges } from '../../types/BodyRange';
 import type { MessageAttributesType } from '../../model-types.d';
 import type {
   MessageChangedActionType,
@@ -77,6 +77,7 @@ export type StoryDataType = ReadonlyDeep<
     startedDownload?: boolean;
   } & Pick<
     MessageAttributesType,
+    | 'bodyRanges'
     | 'canReplyToStory'
     | 'conversationId'
     | 'deletedForEveryone'
@@ -395,8 +396,13 @@ function markStoryRead(
     const isSignalOnboardingStory = message.get('sourceUuid') === SIGNAL_ACI;
 
     if (isSignalOnboardingStory) {
-      drop(markOnboardingStoryAsRead());
-      return;
+      const updatedMessages = await markOnboardingStoryAsRead();
+      if (updatedMessages) {
+        return;
+      }
+      log.warn(
+        'markStoryRead: Failed to mark onboarding story read normally; failing over'
+      );
     }
 
     const storyReadDate = Date.now();
@@ -420,11 +426,17 @@ function markStoryRead(
     };
     const viewSyncs: Array<SyncType> = [viewedReceipt];
 
-    if (!window.ConversationController.areWePrimaryDevice()) {
+    if (
+      !isSignalOnboardingStory &&
+      !window.ConversationController.areWePrimaryDevice()
+    ) {
       drop(viewSyncJobQueue.add({ viewSyncs }));
     }
 
-    if (window.Events.getStoryViewReceiptsEnabled()) {
+    if (
+      !isSignalOnboardingStory &&
+      window.Events.getStoryViewReceiptsEnabled()
+    ) {
       drop(
         conversationJobQueue.add({
           type: conversationQueueJobEnum.enum.Receipts,
@@ -558,7 +570,7 @@ function reactToStory(
 function replyToStory(
   conversationId: string,
   messageBody: string,
-  mentions: DraftBodyRangesType,
+  bodyRanges: DraftBodyRanges,
   timestamp: number,
   story: StoryViewType
 ): ThunkAction<void, RootStateType, unknown, StoryChangedActionType> {
@@ -574,7 +586,7 @@ function replyToStory(
       {
         body: messageBody,
         attachments: [],
-        mentions,
+        bodyRanges,
       },
       {
         storyId: story.messageId,
@@ -1442,6 +1454,7 @@ export function reducer(
   if (action.type === STORY_CHANGED) {
     const newStory = pick(action.payload, [
       'attachment',
+      'bodyRanges',
       'canReplyToStory',
       'conversationId',
       'deletedForEveryone',
@@ -1468,17 +1481,24 @@ export function reducer(
     if (prevStoryIndex >= 0) {
       const prevStory = state.stories[prevStoryIndex];
 
-      // Stories rarely need to change, here are the following exceptions:
+      // Stories rarely need to change, here are the following exceptions...
+
+      // These only change because of initialization order - these fields are updated
+      //   after the model is created:
+      const bodyRangesChanged =
+        newStory.bodyRanges?.length !== prevStory.bodyRanges?.length;
+      const hasExpirationChanged =
+        (newStory.expirationStartTimestamp &&
+          !prevStory.expirationStartTimestamp) ||
+        (newStory.expireTimer && !prevStory.expireTimer);
+
+      // These reflect changes in status over time:
       const isDownloadingAttachment = isDownloading(newStory.attachment);
       const hasAttachmentDownloaded =
         !isDownloaded(prevStory.attachment) &&
         isDownloaded(newStory.attachment);
       const hasAttachmentFailed =
         hasFailed(newStory.attachment) && !hasFailed(prevStory.attachment);
-      const hasExpirationChanged =
-        (newStory.expirationStartTimestamp &&
-          !prevStory.expirationStartTimestamp) ||
-        (newStory.expireTimer && !prevStory.expireTimer);
       const readStatusChanged = prevStory.readStatus !== newStory.readStatus;
       const reactionsChanged =
         prevStory.reactions?.length !== newStory.reactions?.length;
@@ -1493,6 +1513,7 @@ export function reducer(
         prevStory.hasRepliesFromSelf !== newStory.hasRepliesFromSelf;
 
       const shouldReplace =
+        bodyRangesChanged ||
         isDownloadingAttachment ||
         hasAttachmentDownloaded ||
         hasAttachmentFailed ||

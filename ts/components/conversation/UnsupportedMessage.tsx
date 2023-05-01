@@ -44,34 +44,29 @@ function UnsupportedMessageContents({ canProcessNow, contact, i18n }: Props) {
     if (canProcessNow) {
       return (
         <Intl
-          id="Message--unsupported-message-ask-to-resend"
+          id="icu:Message--unsupported-message-ask-to-resend"
           components={{ contact: contactName }}
           i18n={i18n}
         />
       );
     }
-    return (
-      <Intl
-        id="Message--from-me-unsupported-message"
-        components={{ contact: contactName }}
-        i18n={i18n}
-      />
-    );
+    return <Intl id="icu:Message--from-me-unsupported-message" i18n={i18n} />;
   }
   if (canProcessNow) {
     return (
       <Intl
-        id="Message--from-me-unsupported-message-ask-to-resend"
-        components={{ contact: contactName }}
+        id="icu:Message--from-me-unsupported-message-ask-to-resend"
         i18n={i18n}
       />
     );
   }
   return (
     <Intl
-      id="Message--from-me-unsupported-message"
-      components={{ contact: contactName }}
+      id="icu:Message--unsupported-message"
       i18n={i18n}
+      components={{
+        contact: contactName,
+      }}
     />
   );
 }
@@ -101,7 +96,7 @@ export function UnsupportedMessage({
               size={ButtonSize.Small}
               variant={ButtonVariant.SystemMessage}
             >
-              {i18n('Message--update-signal')}
+              {i18n('icu:Message--update-signal')}
             </Button>
           </div>
         )

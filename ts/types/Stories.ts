@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { AttachmentType } from './Attachment';
-import type { HydratedBodyRangesType, LocalizerType } from './Util';
+import type { HydratedBodyRangesType } from './BodyRange';
+import type { LocalizerType } from './Util';
 import type { ContactNameColorType } from './Colors';
 import type { ConversationType } from '../state/ducks/conversations';
 import type { ReadStatus } from '../messages/MessageReadStatus';
@@ -71,6 +72,7 @@ export type StorySendStateType = {
 
 export type StoryViewType = {
   attachment?: AttachmentType;
+  bodyRanges?: HydratedBodyRangesType;
   canReply?: boolean;
   isHidden?: boolean;
   isUnread?: boolean;
@@ -146,7 +148,7 @@ export function getStoryDistributionListName(
   id: string,
   name: string
 ): string {
-  return id === MY_STORY_ID ? i18n('Stories__mine') : name;
+  return id === MY_STORY_ID ? i18n('icu:Stories__mine') : name;
 }
 
 export enum HasStories {

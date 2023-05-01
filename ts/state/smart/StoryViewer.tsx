@@ -16,9 +16,10 @@ import {
   getEmojiSkinTone,
   getHasStoryViewReceiptSetting,
   getPreferredReactionEmoji,
+  getTextFormattingEnabled,
   isInternalUser,
 } from '../selectors/items';
-import { getIntl } from '../selectors/user';
+import { getIntl, getPlatform } from '../selectors/user';
 import { getPreferredBadgeSelector } from '../selectors/badges';
 import {
   getSelectedStoryData,
@@ -39,6 +40,10 @@ import { useAudioPlayerActions } from '../ducks/audioPlayer';
 import { useGlobalModalActions } from '../ducks/globalModals';
 import { useStoriesActions } from '../ducks/stories';
 import { useIsWindowActive } from '../../hooks/useIsWindowActive';
+import {
+  getIsFormattingFlagEnabled,
+  getIsFormattingSpoilersFlagEnabled,
+} from '../selectors/composer';
 
 export function SmartStoryViewer(): JSX.Element | null {
   const storiesActions = useStoriesActions();
@@ -56,6 +61,7 @@ export function SmartStoryViewer(): JSX.Element | null {
   const isWindowActive = useIsWindowActive();
 
   const i18n = useSelector<StateType, LocalizerType>(getIntl);
+  const platform = useSelector(getPlatform);
   const getPreferredBadge = useSelector(getPreferredBadgeSelector);
   const preferredReactionEmoji = useSelector<StateType, ReadonlyArray<string>>(
     getPreferredReactionEmoji
@@ -88,6 +94,13 @@ export function SmartStoryViewer(): JSX.Element | null {
     getHasStoryViewReceiptSetting
   );
 
+  const isFormattingOptionEnabled = useSelector(getTextFormattingEnabled);
+  const isFormattingEnabled =
+    useSelector(getIsFormattingFlagEnabled) && isFormattingOptionEnabled;
+  const isFormattingSpoilersEnabled =
+    useSelector(getIsFormattingSpoilersFlagEnabled) &&
+    isFormattingOptionEnabled;
+
   const { pauseVoiceNotePlayer } = useAudioPlayerActions();
 
   const storyInfo = getStoryById(
@@ -111,8 +124,10 @@ export function SmartStoryViewer(): JSX.Element | null {
       hasAllStoriesUnmuted={hasAllStoriesUnmuted}
       hasViewReceiptSetting={hasViewReceiptSetting}
       i18n={i18n}
+      platform={platform}
       isInternalUser={internalUser}
-      saveAttachment={internalUser ? saveAttachment : asyncShouldNeverBeCalled}
+      isFormattingEnabled={isFormattingEnabled}
+      isFormattingSpoilersEnabled={isFormattingSpoilersEnabled}
       isSignalConversation={isSignalConversation({
         id: conversationStory.conversationId,
       })}
@@ -137,7 +152,9 @@ export function SmartStoryViewer(): JSX.Element | null {
         );
       }}
       onSetSkinTone={onSetSkinTone}
-      onTextTooLong={() => showToast(ToastType.MessageBodyTooLong)}
+      onTextTooLong={() => {
+        showToast({ toastType: ToastType.MessageBodyTooLong });
+      }}
       onUseEmoji={onUseEmoji}
       onMediaPlaybackStart={pauseVoiceNotePlayer}
       preferredReactionEmoji={preferredReactionEmoji}
@@ -145,6 +162,7 @@ export function SmartStoryViewer(): JSX.Element | null {
       renderEmojiPicker={renderEmojiPicker}
       replyState={replyState}
       retryMessageSend={retryMessageSend}
+      saveAttachment={internalUser ? saveAttachment : asyncShouldNeverBeCalled}
       showContactModal={showContactModal}
       showToast={showToast}
       skinTone={skinTone}

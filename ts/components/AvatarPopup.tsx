@@ -9,7 +9,7 @@ import { Avatar, AvatarSize } from './Avatar';
 import { useRestoreFocus } from '../hooks/useRestoreFocus';
 
 import type { LocalizerType, ThemeType } from '../types/Util';
-import { Emojify } from './conversation/Emojify';
+import { UserText } from './UserText';
 
 export type Props = {
   readonly i18n: LocalizerType;
@@ -61,7 +61,7 @@ export function AvatarPopup(props: Props): JSX.Element {
         <Avatar {...props} size={AvatarSize.FORTY_EIGHT} />
         <div className="module-avatar-popup__profile__text">
           <div className="module-avatar-popup__profile__name">
-            <Emojify text={profileName || title} />
+            <UserText text={profileName || title} />
           </div>
           {shouldShowNumber ? (
             <div className="module-avatar-popup__profile__number">
@@ -83,7 +83,7 @@ export function AvatarPopup(props: Props): JSX.Element {
           )}
         />
         <div className="module-avatar-popup__item__text">
-          {i18n('mainMenuSettings')}
+          {i18n('icu:mainMenuSettings')}
         </div>
       </button>
       <button
@@ -98,7 +98,7 @@ export function AvatarPopup(props: Props): JSX.Element {
           )}
         />
         <div className="module-avatar-popup__item__text">
-          {i18n('avatarMenuViewArchive')}
+          {i18n('icu:avatarMenuViewArchive')}
         </div>
       </button>
       {hasPendingUpdate && (
@@ -114,7 +114,7 @@ export function AvatarPopup(props: Props): JSX.Element {
             )}
           />
           <div className="module-avatar-popup__item__text">
-            {i18n('avatarMenuUpdateAvailable')}
+            {i18n('icu:avatarMenuUpdateAvailable')}
           </div>
           <div className="module-avatar-popup__item--badge" />
         </button>

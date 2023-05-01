@@ -3,14 +3,12 @@
 
 // Captures the globals put in place by preload.js, background.js and others
 
-import type { MenuItemConstructorOptions } from 'electron';
 import type { Store } from 'redux';
 import type * as Backbone from 'backbone';
 import type PQueue from 'p-queue/dist';
 import type { assert } from 'chai';
-
 import type { PhoneNumber, PhoneNumberFormat } from 'google-libphonenumber';
-import type * as Util from './util';
+
 import type {
   ConversationModelCollectionType,
   MessageModelCollectionType,
@@ -29,7 +27,7 @@ import type * as Groups from './groups';
 import type * as Crypto from './Crypto';
 import type * as Curve from './Curve';
 import type * as RemoteConfig from './RemoteConfig';
-import type * as OS from './OS';
+import type { OSType } from './util/os/shared';
 import type { getEnvironment } from './environment';
 import type { LocalizerType, ThemeType } from './types/Util';
 import type { Receipt } from './types/Receipt';
@@ -56,6 +54,9 @@ import type { IPCEventsType } from './util/createIPCEvents';
 import type { SignalContextType } from './windows/context';
 import type * as Message2 from './types/Message2';
 import type { initializeMigrations } from './signal';
+import type { RetryPlaceholders } from './util/retryPlaceholders';
+import type { PropsPreloadType as PreferencesPropsType } from './components/Preferences';
+import type { LocaleDirection } from '../app/locale';
 
 export { Long } from 'long';
 
@@ -102,30 +103,56 @@ export type FeatureFlagType = {
   GV2_MIGRATION_DISABLE_INVITE: boolean;
 };
 
-type AboutWindowType = {
+type AboutWindowPropsType = {
+  arch: string;
   environmentText: string;
-  executeMenuRole: (role: MenuItemConstructorOptions['role']) => Promise<void>;
-  hasCustomTitleBar: boolean;
-  i18n: LocalizerType;
-  version: string;
+  platform: string;
+};
+
+type DebugLogWindowPropsType = {
+  downloadLog: (text: string) => unknown;
+  fetchLogs: () => Promise<string>;
+  uploadLogs: (text: string) => Promise<string>;
+};
+
+type PermissionsWindowPropsType = {
+  forCamera: boolean;
+  forCalling: boolean;
+  onAccept: () => void;
+  onClose: () => void;
+};
+
+type ScreenShareWindowPropsType = {
+  onStopSharing: () => void;
+  presentedSourceName: string;
+};
+
+type SettingsOnRenderCallbackType = (props: PreferencesPropsType) => void;
+
+type SettingsWindowPropsType = {
+  onRender: (callback: SettingsOnRenderCallbackType) => void;
 };
 
 export type SignalCoreType = {
-  AboutWindow?: AboutWindowType;
+  AboutWindowProps?: AboutWindowPropsType;
   Crypto: typeof Crypto;
   Curve: typeof Curve;
   Data: typeof Data;
+  DebugLogWindowProps?: DebugLogWindowPropsType;
   Groups: typeof Groups;
+  PermissionsWindowProps?: PermissionsWindowPropsType;
   RemoteConfig: typeof RemoteConfig;
+  ScreenShareWindowProps?: ScreenShareWindowPropsType;
   Services: {
     calling: CallingClass;
     initializeGroupCredentialFetcher: () => Promise<void>;
     initializeNetworkObserver: (network: ReduxActions['network']) => void;
     initializeUpdateListener: (updates: ReduxActions['updates']) => void;
-    retryPlaceholders?: Util.RetryPlaceholders;
+    retryPlaceholders?: RetryPlaceholders;
     lightSessionResetQueue?: PQueue;
     storage: typeof StorageService;
   };
+  SettingsWindowProps?: SettingsWindowPropsType;
   Migrations: ReturnType<typeof initializeMigrations>;
   Types: {
     Message: typeof Message2;
@@ -133,11 +160,10 @@ export type SignalCoreType = {
     Address: typeof Address;
     QualifiedAddress: typeof QualifiedAddress;
   };
-  Util: typeof Util;
   Components: {
     ConfirmationDialog: typeof ConfirmationDialog;
   };
-  OS: typeof OS;
+  OS: OSType;
   State: {
     createStore: typeof createStore;
     Roots: {
@@ -170,6 +196,7 @@ declare global {
     getEnvironment: typeof getEnvironment;
     getHostName: () => string;
     getInteractionMode: () => 'mouse' | 'keyboard';
+    getResolvedMessagesLocaleDirection: () => LocaleDirection;
     getResolvedMessagesLocale: () => string;
     getPreferredSystemLocales: () => Array<string>;
     getServerPublicParams: () => string;
@@ -256,6 +283,8 @@ declare global {
     testUtilities: {
       onComplete: (info: unknown) => void;
       prepareTests: () => void;
+      installMessageController: () => void;
+      initializeMessageCounter: () => Promise<void>;
     };
   }
 

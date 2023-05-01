@@ -55,6 +55,7 @@
 @import './components/CompositionRecordingDraft.scss';
 @import './components/CompositionInput.scss';
 @import './components/CompositionTextArea.scss';
+@import './components/ContactListItem.scss';
 @import './components/ContactModal.scss';
 @import './components/ContactName.scss';
 @import './components/ContactPill.scss';
@@ -70,9 +71,11 @@
 @import './components/CustomColorEditor.scss';
 @import './components/CustomizingPreferredReactionsModal.scss';
 @import './components/DebugLogWindow.scss';
+@import './components/DeleteMessagesModal.scss';
 @import './components/DisappearingTimeDialog.scss';
 @import './components/DisappearingTimerSelect.scss';
 @import './components/EditConversationAttributesModal.scss';
+@import './components/EditHistoryMessagesModal.scss';
 @import './components/EditUsernameModalBody.scss';
 @import './components/ForwardMessageModal.scss';
 @import './components/GradientDial.scss';
@@ -97,6 +100,7 @@
 @import './components/MediaQualitySelector.scss';
 @import './components/MessageAudio.scss';
 @import './components/MessageBody.scss';
+@import './components/MessageTextRenderer.scss';
 @import './components/MessageDetail.scss';
 @import './components/MiniPlayer.scss';
 @import './components/Modal.scss';

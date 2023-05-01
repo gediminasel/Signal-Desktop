@@ -3,8 +3,10 @@
 
 import { z } from 'zod';
 
+import { Environment } from '../environment';
 import { themeSettingSchema } from './StorageUIKeys';
-import { environmentSchema } from '../environment';
+
+const environmentSchema = z.nativeEnum(Environment);
 
 const configRequiredStringSchema = z.string().nonempty();
 export type ConfigRequiredStringType = z.infer<
@@ -31,6 +33,7 @@ export const rendererConfigSchema = z.object({
   buildExpiration: z.number(),
   cdnUrl0: configRequiredStringSchema,
   cdnUrl2: configRequiredStringSchema,
+  challengeUrl: configRequiredStringSchema,
   certificateAuthority: configRequiredStringSchema,
   contentProxyUrl: configRequiredStringSchema,
   crashDumpsPath: configRequiredStringSchema,
@@ -38,12 +41,16 @@ export const rendererConfigSchema = z.object({
   environment: environmentSchema,
   homePath: configRequiredStringSchema,
   hostname: configRequiredStringSchema,
+  osRelease: configRequiredStringSchema,
+  osVersion: configRequiredStringSchema,
   resolvedTranslationsLocale: configRequiredStringSchema,
+  resolvedTranslationsLocaleDirection: z.enum(['ltr', 'rtl']),
   preferredSystemLocales: z.array(configRequiredStringSchema),
   name: configRequiredStringSchema,
   nodeVersion: configRequiredStringSchema,
   proxyUrl: configOptionalStringSchema,
   reducedMotionSetting: z.boolean(),
+  registrationChallengeUrl: configRequiredStringSchema,
   serverPublicParams: configRequiredStringSchema,
   serverTrustRoot: configRequiredStringSchema,
   serverUrl: configRequiredStringSchema,
@@ -62,10 +69,6 @@ export const rendererConfigSchema = z.object({
 
   // Only for tests
   argv: configOptionalStringSchema,
-
-  // Only for permission popup window
-  forCalling: z.boolean(),
-  forCamera: z.boolean(),
 });
 
 export type RendererConfigType = z.infer<typeof rendererConfigSchema>;

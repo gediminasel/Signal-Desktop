@@ -1,6 +1,7 @@
 // Copyright 2015 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import os from 'os';
 import { debounce } from 'lodash';
 import EventEmitter from 'events';
 import { Sound } from '../util/Sound';
@@ -9,7 +10,7 @@ import {
   getAudioNotificationSupport,
   shouldHideExpiringMessageBody,
 } from '../types/Settings';
-import * as OS from '../OS';
+import OS from '../util/os/osMain';
 import * as log from '../logging/log';
 import { makeEnumParser } from '../util/enum';
 import { missingCaseError } from '../util/missingCaseError';
@@ -144,7 +145,7 @@ class NotificationService extends EventEmitter {
 
     this.lastNotification?.close();
 
-    const audioNotificationSupport = getAudioNotificationSupport();
+    const audioNotificationSupport = getAudioNotificationSupport(OS);
 
     const notification = new window.Notification(title, {
       body: OS.isLinux() ? filterNotificationText(message) : message,
@@ -299,21 +300,24 @@ class NotificationService extends EventEmitter {
         notificationTitle = senderTitle;
         ({ notificationIconUrl } = notificationData);
 
-        if (isExpiringMessage && shouldHideExpiringMessageBody()) {
-          notificationMessage = i18n('newMessage');
+        if (
+          isExpiringMessage &&
+          shouldHideExpiringMessageBody(OS, os.release())
+        ) {
+          notificationMessage = i18n('icu:newMessage');
         } else if (userSetting === NotificationSetting.NameOnly) {
           if (reaction) {
-            notificationMessage = i18n('notificationReaction', {
+            notificationMessage = i18n('icu:notificationReaction', {
               sender: senderTitle,
               emoji: reaction.emoji,
             });
           } else {
-            notificationMessage = i18n('newMessage');
+            notificationMessage = i18n('icu:newMessage');
           }
         } else if (storyId) {
           notificationMessage = message;
         } else if (reaction) {
-          notificationMessage = i18n('notificationReactionMessage', {
+          notificationMessage = i18n('icu:notificationReactionMessage', {
             sender: senderTitle,
             emoji: reaction.emoji,
             message,
@@ -325,12 +329,12 @@ class NotificationService extends EventEmitter {
       }
       case NotificationSetting.NoNameOrMessage:
         notificationTitle = FALLBACK_NOTIFICATION_TITLE;
-        notificationMessage = i18n('newMessage');
+        notificationMessage = i18n('icu:newMessage');
         break;
       default:
         log.error(missingCaseError(userSetting));
         notificationTitle = FALLBACK_NOTIFICATION_TITLE;
-        notificationMessage = i18n('newMessage');
+        notificationMessage = i18n('icu:newMessage');
         break;
     }
 

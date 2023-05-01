@@ -6,6 +6,7 @@ import { createSelector } from 'reselect';
 import type { StateType } from '../reducer';
 import type { ComposerStateType, QuotedMessageType } from '../ducks/composer';
 import { getComposerStateForConversation } from '../ducks/composer';
+import { getRemoteConfig, isRemoteConfigFlagEnabled } from './items';
 
 export const getComposerState = (state: StateType): ComposerStateType =>
   state.composer;
@@ -21,4 +22,18 @@ export const getQuotedMessageSelector = createSelector(
   composerStateForConversationIdSelector =>
     (conversationId: string): QuotedMessageType | undefined =>
       composerStateForConversationIdSelector(conversationId).quotedMessage
+);
+
+export const getIsFormattingFlagEnabled = createSelector(
+  getRemoteConfig,
+  remoteConfig => {
+    return isRemoteConfigFlagEnabled(remoteConfig, 'desktop.internalUser');
+  }
+);
+
+export const getIsFormattingSpoilersFlagEnabled = createSelector(
+  getRemoteConfig,
+  remoteConfig => {
+    return isRemoteConfigFlagEnabled(remoteConfig, 'desktop.internalUser');
+  }
 );

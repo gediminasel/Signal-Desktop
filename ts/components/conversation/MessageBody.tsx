@@ -6,57 +6,35 @@ import React from 'react';
 
 import type { AttachmentType } from '../../types/Attachment';
 import { canBeDownloaded } from '../../types/Attachment';
-import type { SizeClassType } from '../emoji/lib';
 import { getSizeClass } from '../emoji/lib';
-import { AtMentionify } from './AtMentionify';
-import { Emojify } from './Emojify';
-import { AddNewLines } from './AddNewLines';
-import { Linkify } from './Linkify';
 
 import type { ShowConversationType } from '../../state/ducks/conversations';
-import type {
-  HydratedBodyRangesType,
-  LocalizerType,
-  RenderTextCallbackType,
-} from '../../types/Util';
-import { renderMarkdownFactory } from '../../util/renderMarkdown';
+import type { HydratedBodyRangesType } from '../../types/BodyRange';
+import type { LocalizerType } from '../../types/Util';
+import { MessageTextRenderer } from './MessageTextRenderer';
+import type { RenderLocation } from './MessageTextRenderer';
+import { UserText } from '../UserText';
 
 export type Props = {
   author?: string;
   bodyRanges?: HydratedBodyRangesType;
   direction?: 'incoming' | 'outgoing';
-  /** If set, all emoji will be the same size. Otherwise, just one emoji will be large. */
+  // If set, all emoji will be the same size. Otherwise, just one emoji will be large.
   disableJumbomoji?: boolean;
-  /** If set, links will be left alone instead of turned into clickable `<a>` tags. */
+  // If set, interactive elements will be left as plain text: links, mentions, spoilers
   disableLinks?: boolean;
   disableMarkdown?: boolean;
   i18n: LocalizerType;
+  isSpoilerExpanded: boolean;
   kickOffBodyDownload?: () => void;
+  onExpandSpoiler?: () => unknown;
   onIncreaseTextLength?: () => unknown;
+  prefix?: string;
+  renderLocation: RenderLocation;
   showConversation?: ShowConversationType;
   text: string;
   textAttachment?: Pick<AttachmentType, 'pending' | 'digest' | 'key'>;
 };
-
-const renderEmoji = ({
-  text,
-  key,
-  sizeClass,
-  renderNonEmoji,
-}: {
-  i18n: LocalizerType;
-  text: string;
-  key: number;
-  sizeClass?: SizeClassType;
-  renderNonEmoji: RenderTextCallbackType;
-}) => (
-  <Emojify
-    key={key}
-    text={text}
-    sizeClass={sizeClass}
-    renderNonEmoji={renderNonEmoji}
-  />
-);
 
 /**
  * This component makes it very easy to use all three of our message formatting
@@ -72,8 +50,12 @@ export function MessageBody({
   disableLinks,
   disableMarkdown,
   i18n,
+  isSpoilerExpanded,
   kickOffBodyDownload,
+  onExpandSpoiler,
   onIncreaseTextLength,
+  prefix,
+  renderLocation,
   showConversation,
   text,
   textAttachment,
@@ -83,63 +65,13 @@ export function MessageBody({
     textAttachment?.pending || hasReadMore ? `${text}...` : text;
 
   const sizeClass = disableJumbomoji ? undefined : getSizeClass(text);
-  const textWithMetions = AtMentionify.preprocessMentions(
-    textWithSuffix,
-    bodyRanges
-  );
-
-  const goLinkAddress =
-    window.localStorage && localStorage.getItem('realGoLinkAddress');
-  const processedText = goLinkAddress
-    ? textWithMetions.replace(
-        /(\s|^)(http:\/\/go|go)\/([\w-])/gmu,
-        `$1${goLinkAddress}$3`
-      )
-    : textWithMetions;
-
-  const renderMentions: RenderTextCallbackType = ({
-    text: innerText,
-    key: innerKey,
-  }) => (
-    <AtMentionify
-      key={innerKey}
-      bodyRanges={bodyRanges}
-      direction={direction}
-      showConversation={showConversation}
-      text={innerText}
-    />
-  );
-
-  const myDisableMarkdown = disableMarkdown || text.startsWith('NOMD');
-
-  const mdRenderred: RenderTextCallbackType =
-    !myDisableMarkdown && text.startsWith('```')
-      ? ({ text: t, key }) => (
-          <code key={key} style={{ fontWeight: 'bold' }}>
-            {renderMentions({ text: t, key })}
-          </code>
-        )
-      : renderMarkdownFactory(renderMentions);
-
-  const renderNewLines: RenderTextCallbackType = ({
-    text: textWithNewLines,
-    key,
-  }) => {
-    return (
-      <AddNewLines
-        key={key}
-        text={textWithNewLines}
-        renderNonNewLine={myDisableMarkdown ? renderMentions : mdRenderred}
-      />
-    );
-  };
 
   let pendingContent: React.ReactNode;
   if (hasReadMore) {
     pendingContent = null;
   } else if (textAttachment?.pending) {
     pendingContent = (
-      <span className="MessageBody__highlight"> {i18n('downloading')}</span>
+      <span className="MessageBody__highlight"> {i18n('icu:downloading')}</span>
     );
   } else if (
     textAttachment &&
@@ -162,7 +94,7 @@ export function MessageBody({
           tabIndex={0}
           type="button"
         >
-          {i18n('downloadFullMessage')}
+          {i18n('icu:downloadFullMessage')}
         </button>
       </span>
     );
@@ -173,39 +105,36 @@ export function MessageBody({
       {author && (
         <>
           <span className="MessageBody__author">
-            {renderEmoji({
-              i18n,
-              text: author,
-              sizeClass,
-              key: 0,
-              renderNonEmoji: renderNewLines,
-            })}
+            <UserText text={author} />
           </span>
           :{' '}
         </>
       )}
-      {disableLinks ? (
-        renderEmoji({
-          i18n,
-          text: processedText,
-          sizeClass,
-          key: 0,
-          renderNonEmoji: renderNewLines,
-        })
-      ) : (
-        <Linkify
-          text={processedText}
-          renderNonLink={({ key, text: nonLinkText }) => {
-            return renderEmoji({
-              i18n,
-              text: nonLinkText,
-              sizeClass,
-              key,
-              renderNonEmoji: renderNewLines,
-            });
-          }}
-        />
+      {prefix && (
+        <>
+          <span className="MessageBody__prefix">
+            <UserText text={prefix} />
+          </span>{' '}
+        </>
       )}
+
+      <MessageTextRenderer
+        bodyRanges={bodyRanges ?? []}
+        direction={direction}
+        disableLinks={disableLinks ?? false}
+        disableMarkdown={disableMarkdown ?? false}
+        emojiSizeClass={sizeClass}
+        i18n={i18n}
+        isSpoilerExpanded={isSpoilerExpanded}
+        messageText={textWithSuffix}
+        onMentionTrigger={conversationId =>
+          showConversation?.({ conversationId })
+        }
+        onExpandSpoiler={onExpandSpoiler}
+        renderLocation={renderLocation}
+        textLength={text.length}
+      />
+
       {pendingContent}
       {onIncreaseTextLength ? (
         <button
@@ -222,7 +151,7 @@ export function MessageBody({
           type="button"
         >
           {' '}
-          {i18n('MessageBody--read-more')}
+          {i18n('icu:MessageBody--read-more')}
         </button>
       ) : null}
     </span>

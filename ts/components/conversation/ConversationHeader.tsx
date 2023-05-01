@@ -12,7 +12,6 @@ import {
   SubMenu,
 } from 'react-contextmenu';
 
-import { Emojify } from './Emojify';
 import { DisappearingTimeDialog } from '../DisappearingTimeDialog';
 import { Avatar, AvatarSize } from '../Avatar';
 import { InContactsIcon } from '../InContactsIcon';
@@ -39,6 +38,7 @@ import {
   useKeyboardShortcuts,
 } from '../../hooks/useKeyboardShortcuts';
 import { PanelType } from '../../types/Panels';
+import { UserText } from '../UserText';
 
 export enum OutgoingCallButtonStyle {
   None,
@@ -169,7 +169,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
           showBackButton ? 'module-ConversationHeader__back-icon--show' : null
         )}
         disabled={!showBackButton}
-        aria-label={i18n('goBack')}
+        aria-label={i18n('icu:goBack')}
       />
     );
   }
@@ -180,7 +180,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
     if (isMe) {
       return (
         <div className="module-ConversationHeader__header__info__title">
-          {i18n('noteToSelf')}
+          {i18n('icu:noteToSelf')}
           <span className="ContactModal__official-badge" />
         </div>
       );
@@ -188,7 +188,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
 
     return (
       <div className="module-ConversationHeader__header__info__title">
-        <Emojify text={title} />
+        <UserText text={title} />
         {isInSystemContacts({ name, type }) ? (
           <InContactsIcon
             className="module-ConversationHeader__header__info__title__in-contacts-icon"
@@ -294,7 +294,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
 
     return (
       <div className="module-ConversationHeader__header__info__subtitle__verified">
-        {i18n('verified')}
+        {i18n('icu:verified')}
       </div>
     );
   }
@@ -313,7 +313,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
             showBackButton ? null : 'module-ConversationHeader__button--show'
           )}
           disabled={showBackButton}
-          aria-label={i18n('moreInfo')}
+          aria-label={i18n('icu:moreInfo')}
         />
       </ContextMenuTrigger>
     );
@@ -332,7 +332,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
           showBackButton ? null : 'module-ConversationHeader__button--show'
         )}
         disabled={showBackButton}
-        aria-label={i18n('search')}
+        aria-label={i18n('icu:search')}
       />
     );
   }
@@ -363,24 +363,25 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
       setPinned,
       type,
     } = this.props;
+    const isRTL = i18n.getLocaleDirection() === 'rtl';
 
     const muteOptions = getMuteOptions(muteExpiresAt, i18n);
 
-    const muteTitle = <span>{i18n('muteNotificationsTitle')}</span>;
+    const muteTitle = <span>{i18n('icu:muteNotificationsTitle')}</span>;
 
     if (isSignalConversation) {
       const isMuted = muteExpiresAt && isConversationMuted({ muteExpiresAt });
 
       return (
-        <ContextMenu id={triggerId}>
-          <SubMenu hoverDelay={1} title={muteTitle} rtl>
+        <ContextMenu id={triggerId} rtl={isRTL}>
+          <SubMenu hoverDelay={1} title={muteTitle} rtl={!isRTL}>
             {isMuted ? (
               <MenuItem
                 onClick={() => {
                   setMuteExpiration(id, 0);
                 }}
               >
-                {i18n('unmute')}
+                {i18n('icu:unmute')}
               </MenuItem>
             ) : (
               <MenuItem
@@ -388,7 +389,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
                   setMuteExpiration(id, Number.MAX_SAFE_INTEGER);
                 }}
               >
-                {i18n('muteAlways')}
+                {i18n('icu:muteAlways')}
               </MenuItem>
             )}
           </SubMenu>
@@ -407,6 +408,44 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
     );
 
     const hasGV2AdminEnabled = isGroup && groupVersion === 2;
+
+    if (isGroup && groupVersion !== 2) {
+      return (
+        <ContextMenu id={triggerId}>
+          <MenuItem
+            onClick={() =>
+              pushPanelForConversation({ type: PanelType.GroupV1Members })
+            }
+          >
+            {i18n('icu:showMembers')}
+          </MenuItem>
+          <MenuItem
+            onClick={() =>
+              pushPanelForConversation({ type: PanelType.AllMedia })
+            }
+          >
+            {i18n('icu:viewRecentMedia')}
+          </MenuItem>
+          <MenuItem divider />
+          {isArchived ? (
+            <MenuItem onClick={() => onMoveToInbox(id)}>
+              {i18n('icu:moveConversationToInbox')}
+            </MenuItem>
+          ) : (
+            <MenuItem onClick={() => onArchive(id)}>
+              {i18n('icu:archiveConversation')}
+            </MenuItem>
+          )}
+          <MenuItem
+            onClick={() =>
+              this.setState({ hasDeleteMessagesConfirmation: true })
+            }
+          >
+            {i18n('icu:deleteMessages')}
+          </MenuItem>
+        </ContextMenu>
+      );
+    }
 
     const isActiveExpireTimer = (value: number): boolean => {
       if (!expireTimer) {
@@ -427,7 +466,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
       let text: string;
 
       if (seconds === -1) {
-        text = i18n('customDisappearingTimeOption');
+        text = i18n('icu:customDisappearingTimeOption');
       } else {
         text = expirationTimer.format(i18n, seconds, {
           capitalizeOff: true,
@@ -459,13 +498,13 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
     });
 
     return (
-      <ContextMenu id={triggerId}>
+      <ContextMenu id={triggerId} rtl={isRTL}>
         {disableTimerChanges ? null : (
-          <SubMenu hoverDelay={1} title={disappearingTitle} rtl>
+          <SubMenu hoverDelay={1} title={disappearingTitle} rtl={!isRTL}>
             {expireDurations}
           </SubMenu>
         )}
-        <SubMenu hoverDelay={1} title={muteTitle} rtl>
+        <SubMenu hoverDelay={1} title={muteTitle} rtl={!isRTL}>
           {muteOptions.map(item => (
             <MenuItem
               key={item.name}
@@ -487,8 +526,8 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
             }
           >
             {isGroup
-              ? i18n('showConversationDetails')
-              : i18n('showConversationDetails--direct')}
+              ? i18n('icu:showConversationDetails')
+              : i18n('icu:showConversationDetails--direct')}
           </MenuItem>
         ) : null}
         <MenuItem
@@ -531,18 +570,18 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
               pushPanelForConversation({ type: PanelType.GroupV1Members })
             }
           >
-            {i18n('showMembers')}
+            {i18n('icu:showMembers')}
           </MenuItem>
         ) : null}
         <MenuItem
           onClick={() => pushPanelForConversation({ type: PanelType.AllMedia })}
         >
-          {i18n('viewRecentMedia')}
+          {i18n('icu:viewRecentMedia')}
         </MenuItem>
         <MenuItem divider />
         {!markedUnread ? (
           <MenuItem onClick={() => onMarkUnread(id)}>
-            {i18n('markUnread')}
+            {i18n('icu:markUnread')}
           </MenuItem>
         ) : null}
         <MenuItem
@@ -554,25 +593,25 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
         </MenuItem>
         {isArchived ? (
           <MenuItem onClick={() => onMoveToInbox(id)}>
-            {i18n('moveConversationToInbox')}
+            {i18n('icu:moveConversationToInbox')}
           </MenuItem>
         ) : (
           <MenuItem onClick={() => onArchive(id)}>
-            {i18n('archiveConversation')}
+            {i18n('icu:archiveConversation')}
           </MenuItem>
         )}
         <MenuItem
           onClick={() => this.setState({ hasDeleteMessagesConfirmation: true })}
         >
-          {i18n('deleteMessages')}
+          {i18n('icu:deleteMessages')}
         </MenuItem>
         {isPinned ? (
           <MenuItem onClick={() => setPinned(id, false)}>
-            {i18n('unpinConversation')}
+            {i18n('icu:unpinConversation')}
           </MenuItem>
         ) : (
           <MenuItem onClick={() => setPinned(id, true)}>
-            {i18n('pinConversation')}
+            {i18n('icu:pinConversation')}
           </MenuItem>
         )}
       </ContextMenu>
@@ -597,7 +636,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
               destroyMessages(id);
             },
             style: 'negative',
-            text: i18n('delete'),
+            text: i18n('icu:delete'),
           },
         ]}
         i18n={i18n}
@@ -605,7 +644,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
           this.setState({ hasDeleteMessagesConfirmation: false });
         }}
       >
-        {i18n('deleteConversationConfirmation')}
+        {i18n('icu:deleteConversationConfirmation')}
       </ConfirmationDialog>
     );
   }
@@ -789,7 +828,7 @@ function OutgoingCallButtons({
 >): JSX.Element | null {
   const videoButton = (
     <button
-      aria-label={i18n('makeOutgoingVideoCall')}
+      aria-label={i18n('icu:makeOutgoingVideoCall')}
       className={classNames(
         'module-ConversationHeader__button',
         'module-ConversationHeader__button--video',
@@ -828,14 +867,14 @@ function OutgoingCallButtons({
               showBackButton ? null : 'module-ConversationHeader__button--show'
             )}
             disabled={showBackButton}
-            aria-label={i18n('makeOutgoingCall')}
+            aria-label={i18n('icu:makeOutgoingCall')}
           />
         </>
       );
     case OutgoingCallButtonStyle.Join:
       return (
         <button
-          aria-label={i18n('joinOngoingCall')}
+          aria-label={i18n('icu:joinOngoingCall')}
           className={classNames(
             'module-ConversationHeader__button',
             'module-ConversationHeader__button--join-call',
@@ -845,7 +884,7 @@ function OutgoingCallButtons({
           onClick={() => onOutgoingVideoCallInConversation(id)}
           type="button"
         >
-          {isNarrow ? null : i18n('joinOngoingCall')}
+          {isNarrow ? null : i18n('icu:joinOngoingCall')}
         </button>
       );
     default:

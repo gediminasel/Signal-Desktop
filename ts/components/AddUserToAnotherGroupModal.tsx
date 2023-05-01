@@ -8,11 +8,7 @@ import Measure from 'react-measure';
 import type { ListRowProps } from 'react-virtualized';
 
 import type { ConversationType } from '../state/ducks/conversations';
-import type {
-  LocalizerType,
-  ReplacementValuesType,
-  ThemeType,
-} from '../types/Util';
+import type { LocalizerType, ThemeType } from '../types/Util';
 import { ToastType } from '../types/Toast';
 import { filterAndSortConversationsByRecent } from '../util/filterAndSortConversations';
 import { ConfirmationDialog } from './ConfirmationDialog';
@@ -26,6 +22,7 @@ import { SearchInput } from './SearchInput';
 import { useRestoreFocus } from '../hooks/useRestoreFocus';
 import { ListView } from './ListView';
 import { ListTile } from './ListTile';
+import type { ShowToastAction } from '../state/ducks/toast';
 
 type OwnProps = {
   i18n: LocalizerType;
@@ -45,7 +42,7 @@ type DispatchProps = {
       onFailure?: () => unknown;
     }
   ) => void;
-  showToast: (toastType: ToastType, parameters?: ReplacementValuesType) => void;
+  showToast: ShowToastAction;
 };
 
 export type Props = OwnProps & DispatchProps;
@@ -171,14 +168,14 @@ export function AddUserToAnotherGroupModal({
           hasXButton
           i18n={i18n}
           onClose={toggleAddUserToAnotherGroupModal}
-          title={i18n('AddUserToAnotherGroupModal__title')}
+          title={i18n('icu:AddUserToAnotherGroupModal__title')}
           moduleClassName="AddUserToAnotherGroupModal"
           padded={false}
         >
           <div className="AddUserToAnotherGroupModal__main-body">
             <SearchInput
               i18n={i18n}
-              placeholder={i18n('contactSearchPlaceholder')}
+              placeholder={i18n('icu:contactSearchPlaceholder')}
               onChange={handleSearchInputChange}
               ref={inputRef}
               value={searchTerm}
@@ -217,22 +214,28 @@ export function AddUserToAnotherGroupModal({
       {selectedGroupId && selectedGroup && (
         <ConfirmationDialog
           dialogName="AddUserToAnotherGroupModal__confirm"
-          title={i18n('AddUserToAnotherGroupModal__confirm-title')}
+          title={i18n('icu:AddUserToAnotherGroupModal__confirm-title')}
           i18n={i18n}
           onClose={() => setSelectedGroupId(undefined)}
           actions={[
             {
-              text: i18n('AddUserToAnotherGroupModal__confirm-add'),
+              text: i18n('icu:AddUserToAnotherGroupModal__confirm-add'),
               style: 'affirmative',
               action: () => {
-                showToast(ToastType.AddingUserToGroup, {
-                  contact: contact.title,
+                showToast({
+                  toastType: ToastType.AddingUserToGroup,
+                  parameters: {
+                    contact: contact.title,
+                  },
                 });
                 addMembersToGroup(selectedGroupId, [contact.id], {
                   onSuccess: () =>
-                    showToast(ToastType.UserAddedToGroup, {
-                      contact: contact.title,
-                      group: selectedGroup.title,
+                    showToast({
+                      toastType: ToastType.UserAddedToGroup,
+                      parameters: {
+                        contact: contact.title,
+                        group: selectedGroup.title,
+                      },
                     }),
                 });
                 toggleAddUserToAnotherGroupModal(undefined);
@@ -240,7 +243,7 @@ export function AddUserToAnotherGroupModal({
             },
           ]}
         >
-          {i18n('AddUserToAnotherGroupModal__confirm-message', {
+          {i18n('icu:AddUserToAnotherGroupModal__confirm-message', {
             contact: contact.title,
             group: selectedGroup.title,
           })}

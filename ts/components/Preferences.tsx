@@ -1,11 +1,18 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import type { AudioDevice } from '@signalapp/ringrtc';
 import type { ReactNode } from 'react';
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import focusableSelectors from 'focusable-selectors';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { noop } from 'lodash';
 import classNames from 'classnames';
-import type { AudioDevice } from '@signalapp/ringrtc';
 import uuid from 'uuid';
 
 import type { MediaDeviceSettings } from '../types/Calling';
@@ -15,6 +22,19 @@ import type {
   ZoomFactorType,
 } from '../types/Storage.d';
 import type { ThemeSettingType } from '../types/StorageUIKeys';
+import type { ConversationType } from '../state/ducks/conversations';
+import type {
+  ConversationColorType,
+  CustomColorType,
+  DefaultConversationColorType,
+} from '../types/Colors';
+import type {
+  LocalizerType,
+  SentMediaQualityType,
+  ThemeType,
+} from '../types/Util';
+import type { ExecuteMenuRoleType } from './TitleBarContainer';
+
 import { Button, ButtonVariant } from './Button';
 import { ChatColorPicker } from './ChatColorPicker';
 import { Checkbox } from './Checkbox';
@@ -23,24 +43,12 @@ import {
   Variant as CircleCheckboxVariant,
 } from './CircleCheckbox';
 import { ConfirmationDialog } from './ConfirmationDialog';
-import type { ConversationType } from '../state/ducks/conversations';
-import type {
-  ConversationColorType,
-  CustomColorType,
-  DefaultConversationColorType,
-} from '../types/Colors';
 import { DisappearingTimeDialog } from './DisappearingTimeDialog';
-import type {
-  LocalizerType,
-  SentMediaQualityType,
-  ThemeType,
-} from '../types/Util';
 import { PhoneNumberDiscoverability } from '../util/phoneNumberDiscoverability';
 import { PhoneNumberSharingMode } from '../util/phoneNumberSharingMode';
 import { Select } from './Select';
 import { Spinner } from './Spinner';
 import { TitleBarContainer } from './TitleBarContainer';
-import type { ExecuteMenuRoleType } from './TitleBarContainer';
 import { getCustomColorStyle } from '../util/getCustomColorStyle';
 import {
   DEFAULT_DURATIONS_IN_SECONDS,
@@ -80,6 +88,7 @@ export type PropsDataType = {
   hasRelayCalls?: boolean;
   hasSpellCheck: boolean;
   hasStoriesDisabled: boolean;
+  hasTextFormatting: boolean;
   hasTypingIndicators: boolean;
   lastSyncTime?: number;
   notificationContent: NotificationSettingType;
@@ -97,6 +106,9 @@ export type PropsDataType = {
   hasCustomTitleBar: boolean;
   initialSpellCheckSetting: boolean;
   shouldShowStoriesSettings: boolean;
+
+  // Feature flags
+  isFormattingFlagEnabled: boolean;
 
   // Limited support features
   isAudioNotificationsSupported: boolean;
@@ -162,6 +174,7 @@ type PropsFunctionType = {
   onSelectedSpeakerChange: SelectChangeHandlerType<AudioDevice | undefined>;
   onSentMediaQualityChange: SelectChangeHandlerType<SentMediaQualityType>;
   onSpellCheckChange: CheckboxChangeHandlerType;
+  onTextFormattingChange: CheckboxChangeHandlerType;
   onThemeChange: SelectChangeHandlerType<ThemeType>;
   onUniversalExpireTimerChange: SelectChangeHandlerType<number>;
   onWhoCanSeeMeChange: SelectChangeHandlerType<PhoneNumberSharingMode>;
@@ -173,6 +186,8 @@ type PropsFunctionType = {
 };
 
 export type PropsType = PropsDataType & PropsFunctionType;
+
+export type PropsPreloadType = Omit<PropsType, 'i18n'>;
 
 enum Page {
   // Accessible through left nav
@@ -245,12 +260,14 @@ export function Preferences({
   hasRelayCalls,
   hasSpellCheck,
   hasStoriesDisabled,
+  hasTextFormatting,
   hasTypingIndicators,
   i18n,
   initialSpellCheckSetting,
   isAudioNotificationsSupported,
   isAutoDownloadUpdatesSupported,
   isAutoLaunchSupported,
+  isFormattingFlagEnabled,
   isHideMenuBarSupported,
   isPhoneNumberSharingSupported,
   isNotificationAttentionSupported,
@@ -284,6 +301,7 @@ export function Preferences({
   onSelectedSpeakerChange,
   onSentMediaQualityChange,
   onSpellCheckChange,
+  onTextFormattingChange,
   onThemeChange,
   onUniversalExpireTimerChange,
   onWhoCanSeeMeChange,
@@ -343,6 +361,27 @@ export function Preferences({
     [onSelectedMicrophoneChange, availableMicrophones]
   );
 
+  const selectors = useMemo(() => focusableSelectors.join(','), []);
+  const settingsPaneRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const settingsPane = settingsPaneRef.current;
+    if (!settingsPane) {
+      return;
+    }
+
+    const elements = settingsPane.querySelectorAll<
+      | HTMLAnchorElement
+      | HTMLButtonElement
+      | HTMLInputElement
+      | HTMLSelectElement
+      | HTMLTextAreaElement
+    >(selectors);
+    if (!elements.length) {
+      return;
+    }
+    elements[0]?.focus();
+  }, [page, selectors]);
+
   const onAudioOutputSelectChange = useCallback(
     (value: string) => {
       if (value === 'undefined') {
@@ -360,17 +399,20 @@ export function Preferences({
       <>
         <div className="Preferences__title">
           <div className="Preferences__title--header">
-            {i18n('Preferences__button--general')}
+            {i18n('icu:Preferences__button--general')}
           </div>
         </div>
         <SettingsRow>
-          <Control left={i18n('Preferences--device-name')} right={deviceName} />
+          <Control
+            left={i18n('icu:Preferences--device-name')}
+            right={deviceName}
+          />
         </SettingsRow>
-        <SettingsRow title={i18n('Preferences--system')}>
+        <SettingsRow title={i18n('icu:Preferences--system')}>
           {isAutoLaunchSupported && (
             <Checkbox
               checked={hasAutoLaunch}
-              label={i18n('autoLaunchDescription')}
+              label={i18n('icu:autoLaunchDescription')}
               moduleClassName="Preferences__checkbox"
               name="autoLaunch"
               onChange={onAutoLaunchChange}
@@ -379,7 +421,7 @@ export function Preferences({
           {isHideMenuBarSupported && (
             <Checkbox
               checked={hasHideMenuBar}
-              label={i18n('hideMenuBar')}
+              label={i18n('icu:hideMenuBar')}
               moduleClassName="Preferences__checkbox"
               name="hideMenuBar"
               onChange={onHideMenuBarChange}
@@ -389,7 +431,7 @@ export function Preferences({
             <>
               <Checkbox
                 checked={hasMinimizeToSystemTray}
-                label={i18n('SystemTraySetting__minimize-to-system-tray')}
+                label={i18n('icu:SystemTraySetting__minimize-to-system-tray')}
                 moduleClassName="Preferences__checkbox"
                 name="system-tray-setting-minimize-to-system-tray"
                 onChange={onMinimizeToSystemTrayChange}
@@ -399,7 +441,7 @@ export function Preferences({
                   checked={hasMinimizeToAndStartInSystemTray}
                   disabled={!hasMinimizeToSystemTray}
                   label={i18n(
-                    'SystemTraySetting__minimize-to-and-start-in-system-tray'
+                    'icu:SystemTraySetting__minimize-to-and-start-in-system-tray'
                   )}
                   moduleClassName="Preferences__checkbox"
                   name="system-tray-setting-minimize-to-and-start-in-system-tray"
@@ -409,27 +451,27 @@ export function Preferences({
             </>
           )}
         </SettingsRow>
-        <SettingsRow title={i18n('permissions')}>
+        <SettingsRow title={i18n('icu:permissions')}>
           <Checkbox
             checked={hasMediaPermissions}
-            label={i18n('mediaPermissionsDescription')}
+            label={i18n('icu:mediaPermissionsDescription')}
             moduleClassName="Preferences__checkbox"
             name="mediaPermissions"
             onChange={onMediaPermissionsChange}
           />
           <Checkbox
             checked={hasMediaCameraPermissions}
-            label={i18n('mediaCameraPermissionsDescription')}
+            label={i18n('icu:mediaCameraPermissionsDescription')}
             moduleClassName="Preferences__checkbox"
             name="mediaCameraPermissions"
             onChange={onMediaCameraPermissionsChange}
           />
         </SettingsRow>
         {isAutoDownloadUpdatesSupported && (
-          <SettingsRow title={i18n('Preferences--updates')}>
+          <SettingsRow title={i18n('icu:Preferences--updates')}>
             <Checkbox
               checked={hasAutoDownloadUpdate}
-              label={i18n('Preferences__download-update')}
+              label={i18n('icu:Preferences__download-update')}
               moduleClassName="Preferences__checkbox"
               name="autoDownloadUpdate"
               onChange={onAutoDownloadUpdateChange}
@@ -455,14 +497,14 @@ export function Preferences({
       <>
         <div className="Preferences__title">
           <div className="Preferences__title--header">
-            {i18n('Preferences__button--appearance')}
+            {i18n('icu:Preferences__button--appearance')}
           </div>
         </div>
         <SettingsRow>
           <Control
             left={
               <label htmlFor={themeSelectId}>
-                {i18n('Preferences--theme')}
+                {i18n('icu:Preferences--theme')}
               </label>
             }
             right={
@@ -471,15 +513,15 @@ export function Preferences({
                 onChange={onThemeChange}
                 options={[
                   {
-                    text: i18n('themeSystem'),
+                    text: i18n('icu:themeSystem'),
                     value: 'system',
                   },
                   {
-                    text: i18n('themeLight'),
+                    text: i18n('icu:themeLight'),
                     value: 'light',
                   },
                   {
-                    text: i18n('themeDark'),
+                    text: i18n('icu:themeDark'),
                     value: 'dark',
                   },
                 ]}
@@ -488,7 +530,7 @@ export function Preferences({
             }
           />
           <Control
-            left={i18n('showChatColorEditor')}
+            left={i18n('icu:showChatColorEditor')}
             onClick={() => {
               setPage(Page.ChatColor);
             }}
@@ -505,7 +547,9 @@ export function Preferences({
           />
           <Control
             left={
-              <label htmlFor={zoomSelectId}>{i18n('Preferences--zoom')}</label>
+              <label htmlFor={zoomSelectId}>
+                {i18n('icu:Preferences--zoom')}
+              </label>
             }
             right={
               <Select
@@ -523,8 +567,8 @@ export function Preferences({
     let spellCheckDirtyText: string | undefined;
     if (initialSpellCheckSetting !== hasSpellCheck) {
       spellCheckDirtyText = hasSpellCheck
-        ? i18n('spellCheckWillBeEnabled')
-        : i18n('spellCheckWillBeDisabled');
+        ? i18n('icu:spellCheckWillBeEnabled')
+        : i18n('icu:spellCheckWillBeDisabled');
     }
 
     const lastSyncDate = new Date(lastSyncTime || 0);
@@ -533,39 +577,48 @@ export function Preferences({
       <>
         <div className="Preferences__title">
           <div className="Preferences__title--header">
-            {i18n('Preferences__button--chats')}
+            {i18n('icu:Preferences__button--chats')}
           </div>
         </div>
-        <SettingsRow title={i18n('Preferences__button--chats')}>
+        <SettingsRow title={i18n('icu:Preferences__button--chats')}>
           <Checkbox
             checked={hasSpellCheck}
             description={spellCheckDirtyText}
-            label={i18n('spellCheckDescription')}
+            label={i18n('icu:spellCheckDescription')}
             moduleClassName="Preferences__checkbox"
             name="spellcheck"
             onChange={onSpellCheckChange}
           />
+          {isFormattingFlagEnabled && (
+            <Checkbox
+              checked={hasTextFormatting}
+              label={i18n('icu:textFormattingDescripton')}
+              moduleClassName="Preferences__checkbox"
+              name="textFormatting"
+              onChange={onTextFormattingChange}
+            />
+          )}
           <Checkbox
             checked={hasLinkPreviews}
-            description={i18n('Preferences__link-previews--description')}
+            description={i18n('icu:Preferences__link-previews--description')}
             disabled
-            label={i18n('Preferences__link-previews--title')}
+            label={i18n('icu:Preferences__link-previews--title')}
             moduleClassName="Preferences__checkbox"
             name="linkPreviews"
             onChange={noop}
           />
           <Control
-            left={i18n('Preferences__sent-media-quality')}
+            left={i18n('icu:Preferences__sent-media-quality')}
             right={
               <Select
                 onChange={onSentMediaQualityChange}
                 options={[
                   {
-                    text: i18n('sentMediaQualityStandard'),
+                    text: i18n('icu:sentMediaQualityStandard'),
                     value: 'standard',
                   },
                   {
-                    text: i18n('sentMediaQualityHigh'),
+                    text: i18n('icu:sentMediaQualityHigh'),
                     value: 'high',
                   },
                 ]}
@@ -579,17 +632,17 @@ export function Preferences({
             <Control
               left={
                 <>
-                  <div>{i18n('sync')}</div>
+                  <div>{i18n('icu:sync')}</div>
                   <div className="Preferences__description">
-                    {i18n('syncExplanation')}{' '}
-                    {i18n('Preferences--lastSynced', {
+                    {i18n('icu:syncExplanation')}{' '}
+                    {i18n('icu:Preferences--lastSynced', {
                       date: lastSyncDate.toLocaleDateString(),
                       time: lastSyncDate.toLocaleTimeString(),
                     })}
                   </div>
                   {showSyncFailed && (
                     <div className="Preferences__description Preferences__description--error">
-                      {i18n('syncFailed')}
+                      {i18n('icu:syncFailed')}
                     </div>
                   )}
                 </>
@@ -612,7 +665,11 @@ export function Preferences({
                     }}
                     variant={ButtonVariant.SecondaryAffirmative}
                   >
-                    {nowSyncing ? <Spinner svgSize="small" /> : i18n('syncNow')}
+                    {nowSyncing ? (
+                      <Spinner svgSize="small" />
+                    ) : (
+                      i18n('icu:syncNow')
+                    )}
                   </Button>
                 </div>
               }
@@ -626,34 +683,34 @@ export function Preferences({
       <>
         <div className="Preferences__title">
           <div className="Preferences__title--header">
-            {i18n('Preferences__button--calls')}
+            {i18n('icu:Preferences__button--calls')}
           </div>
         </div>
-        <SettingsRow title={i18n('calling')}>
+        <SettingsRow title={i18n('icu:calling')}>
           <Checkbox
             checked={hasIncomingCallNotifications}
-            label={i18n('incomingCallNotificationDescription')}
+            label={i18n('icu:incomingCallNotificationDescription')}
             moduleClassName="Preferences__checkbox"
             name="incomingCallNotification"
             onChange={onIncomingCallNotificationsChange}
           />
           <Checkbox
             checked={hasCallRingtoneNotification}
-            label={i18n('callRingtoneNotificationDescription')}
+            label={i18n('icu:callRingtoneNotificationDescription')}
             moduleClassName="Preferences__checkbox"
             name="callRingtoneNotification"
             onChange={onCallRingtoneNotificationChange}
           />
         </SettingsRow>
-        <SettingsRow title={i18n('Preferences__devices')}>
+        <SettingsRow title={i18n('icu:Preferences__devices')}>
           <Control
             left={
               <>
                 <label className="Preferences__select-title" htmlFor="video">
-                  {i18n('callingDeviceSelection__label--video')}
+                  {i18n('icu:callingDeviceSelection__label--video')}
                 </label>
                 <Select
-                  ariaLabel={i18n('callingDeviceSelection__label--video')}
+                  ariaLabel={i18n('icu:callingDeviceSelection__label--video')}
                   disabled={!availableCameras.length}
                   moduleClassName="Preferences__select"
                   name="video"
@@ -667,7 +724,7 @@ export function Preferences({
                       : [
                           {
                             text: i18n(
-                              'callingDeviceSelection__select--no-device'
+                              'icu:callingDeviceSelection__select--no-device'
                             ),
                             value: 'undefined',
                           },
@@ -686,10 +743,12 @@ export function Preferences({
                   className="Preferences__select-title"
                   htmlFor="audio-input"
                 >
-                  {i18n('callingDeviceSelection__label--audio-input')}
+                  {i18n('icu:callingDeviceSelection__label--audio-input')}
                 </label>
                 <Select
-                  ariaLabel={i18n('callingDeviceSelection__label--audio-input')}
+                  ariaLabel={i18n(
+                    'icu:callingDeviceSelection__label--audio-input'
+                  )}
                   disabled={!availableMicrophones.length}
                   moduleClassName="Preferences__select"
                   name="audio-input"
@@ -703,7 +762,7 @@ export function Preferences({
                       : [
                           {
                             text: i18n(
-                              'callingDeviceSelection__select--no-device'
+                              'icu:callingDeviceSelection__select--no-device'
                             ),
                             value: 'undefined',
                           },
@@ -722,11 +781,11 @@ export function Preferences({
                   className="Preferences__select-title"
                   htmlFor="audio-output"
                 >
-                  {i18n('callingDeviceSelection__label--audio-output')}
+                  {i18n('icu:callingDeviceSelection__label--audio-output')}
                 </label>
                 <Select
                   ariaLabel={i18n(
-                    'callingDeviceSelection__label--audio-output'
+                    'icu:callingDeviceSelection__label--audio-output'
                   )}
                   disabled={!availableSpeakers.length}
                   moduleClassName="Preferences__select"
@@ -741,7 +800,7 @@ export function Preferences({
                       : [
                           {
                             text: i18n(
-                              'callingDeviceSelection__select--no-device'
+                              'icu:callingDeviceSelection__select--no-device'
                             ),
                             value: 'undefined',
                           },
@@ -754,11 +813,11 @@ export function Preferences({
             right={<div />}
           />
         </SettingsRow>
-        <SettingsRow title={i18n('Preferences--advanced')}>
+        <SettingsRow title={i18n('icu:Preferences--advanced')}>
           <Checkbox
             checked={hasRelayCalls}
-            description={i18n('alwaysRelayCallsDetail')}
-            label={i18n('alwaysRelayCallsDescription')}
+            description={i18n('icu:alwaysRelayCallsDetail')}
+            label={i18n('icu:alwaysRelayCallsDescription')}
             moduleClassName="Preferences__checkbox"
             name="relayCalls"
             onChange={onRelayCallsChange}
@@ -771,20 +830,20 @@ export function Preferences({
       <>
         <div className="Preferences__title">
           <div className="Preferences__title--header">
-            {i18n('Preferences__button--notifications')}
+            {i18n('icu:Preferences__button--notifications')}
           </div>
         </div>
         <SettingsRow>
           <Checkbox
             checked={hasNotifications}
-            label={i18n('Preferences__enable-notifications')}
+            label={i18n('icu:Preferences__enable-notifications')}
             moduleClassName="Preferences__checkbox"
             name="notifications"
             onChange={onNotificationsChange}
           />
           <Checkbox
             checked={hasCallNotifications}
-            label={i18n('callSystemNotificationDescription')}
+            label={i18n('icu:callSystemNotificationDescription')}
             moduleClassName="Preferences__checkbox"
             name="callSystemNotification"
             onChange={onCallNotificationsChange}
@@ -792,7 +851,7 @@ export function Preferences({
           {isNotificationAttentionSupported && (
             <Checkbox
               checked={hasNotificationAttention}
-              label={i18n('notificationDrawAttention')}
+              label={i18n('icu:notificationDrawAttention')}
               moduleClassName="Preferences__checkbox"
               name="notificationDrawAttention"
               onChange={onNotificationAttentionChange}
@@ -801,7 +860,7 @@ export function Preferences({
           {isAudioNotificationsSupported && (
             <Checkbox
               checked={hasAudioNotifications}
-              label={i18n('audioNotificationDescription')}
+              label={i18n('icu:audioNotificationDescription')}
               moduleClassName="Preferences__checkbox"
               name="audioNotification"
               onChange={onAudioNotificationsChange}
@@ -809,7 +868,7 @@ export function Preferences({
           )}
           <Checkbox
             checked={hasCountMutedConversations}
-            label={i18n('countMutedConversationsDescription')}
+            label={i18n('icu:countMutedConversationsDescription')}
             moduleClassName="Preferences__checkbox"
             name="countMutedConversations"
             onChange={onCountMutedConversationsChange}
@@ -817,23 +876,23 @@ export function Preferences({
         </SettingsRow>
         <SettingsRow>
           <Control
-            left={i18n('Preferences--notification-content')}
+            left={i18n('icu:Preferences--notification-content')}
             right={
               <Select
-                ariaLabel={i18n('Preferences--notification-content')}
+                ariaLabel={i18n('icu:Preferences--notification-content')}
                 disabled={!hasNotifications}
                 onChange={onNotificationContentChange}
                 options={[
                   {
-                    text: i18n('nameAndMessage'),
+                    text: i18n('icu:nameAndMessage'),
                     value: 'message',
                   },
                   {
-                    text: i18n('nameOnly'),
+                    text: i18n('icu:nameOnly'),
                     value: 'name',
                   },
                   {
-                    text: i18n('noNameOrMessage'),
+                    text: i18n('icu:noNameOrMessage'),
                     value: 'count',
                   },
                 ]}
@@ -852,7 +911,7 @@ export function Preferences({
       <>
         <div className="Preferences__title">
           <div className="Preferences__title--header">
-            {i18n('Preferences__button--privacy')}
+            {i18n('icu:Preferences__button--privacy')}
           </div>
         </div>
         {isPhoneNumberSharingSupported ? (
@@ -871,23 +930,17 @@ export function Preferences({
         ) : null}
         <SettingsRow>
           <Control
-            left={i18n('Preferences--blocked')}
-            right={
-              blockedCount === 1
-                ? i18n('Preferences--blocked-count-singular', {
-                    num: String(blockedCount),
-                  })
-                : i18n('Preferences--blocked-count-plural', {
-                    num: String(blockedCount || 0),
-                  })
-            }
+            left={i18n('icu:Preferences--blocked')}
+            right={i18n('icu:Preferences--blocked-count', {
+              num: blockedCount,
+            })}
           />
         </SettingsRow>
-        <SettingsRow title={i18n('Preferences--messaging')}>
+        <SettingsRow title={i18n('icu:Preferences--messaging')}>
           <Checkbox
             checked={hasReadReceipts}
             disabled
-            label={i18n('Preferences--read-receipts')}
+            label={i18n('icu:Preferences--read-receipts')}
             moduleClassName="Preferences__checkbox"
             name="readReceipts"
             onChange={noop}
@@ -895,14 +948,14 @@ export function Preferences({
           <Checkbox
             checked={hasTypingIndicators}
             disabled
-            label={i18n('Preferences--typing-indicators')}
+            label={i18n('icu:Preferences--typing-indicators')}
             moduleClassName="Preferences__checkbox"
             name="typingIndicators"
             onChange={noop}
           />
           <div className="Preferences__padding">
             <div className="Preferences__description">
-              {i18n('Preferences__privacy--description')}
+              {i18n('icu:Preferences__privacy--description')}
             </div>
           </div>
         </SettingsRow>
@@ -919,16 +972,18 @@ export function Preferences({
             left={
               <>
                 <div>
-                  {i18n('settings__DisappearingMessages__timer__label')}
+                  {i18n('icu:settings__DisappearingMessages__timer__label')}
                 </div>
                 <div className="Preferences__description">
-                  {i18n('settings__DisappearingMessages__footer')}
+                  {i18n('icu:settings__DisappearingMessages__footer')}
                 </div>
               </>
             }
             right={
               <Select
-                ariaLabel={i18n('settings__DisappearingMessages__timer__label')}
+                ariaLabel={i18n(
+                  'icu:settings__DisappearingMessages__timer__label'
+                )}
                 onChange={value => {
                   if (
                     value === String(universalExpireTimer) ||
@@ -955,7 +1010,7 @@ export function Preferences({
                       : DurationInSeconds.fromSeconds(-1),
                     text: isCustomDisappearingMessageValue
                       ? formatExpirationTimer(i18n, universalExpireTimer)
-                      : i18n('selectedCustomDisappearingTimeOption'),
+                      : i18n('icu:selectedCustomDisappearingTimeOption'),
                   },
                 ])}
                 value={universalExpireTimer}
@@ -964,13 +1019,13 @@ export function Preferences({
           />
         </SettingsRow>
         {shouldShowStoriesSettings && (
-          <SettingsRow title={i18n('Stories__title')}>
+          <SettingsRow title={i18n('icu:Stories__title')}>
             <Control
               left={
                 <label htmlFor={storiesId}>
-                  <div>{i18n('Stories__settings-toggle--title')}</div>
+                  <div>{i18n('icu:Stories__settings-toggle--title')}</div>
                   <div className="Preferences__description">
-                    {i18n('Stories__settings-toggle--description')}
+                    {i18n('icu:Stories__settings-toggle--description')}
                   </div>
                 </label>
               }
@@ -980,7 +1035,7 @@ export function Preferences({
                     onClick={() => onHasStoriesDisabledChanged(false)}
                     variant={ButtonVariant.Secondary}
                   >
-                    {i18n('Preferences__turn-stories-on')}
+                    {i18n('icu:Preferences__turn-stories-on')}
                   </Button>
                 ) : (
                   <Button
@@ -988,7 +1043,7 @@ export function Preferences({
                     onClick={() => setConfirmStoriesOff(true)}
                     variant={ButtonVariant.SecondaryDestructive}
                   >
-                    {i18n('Preferences__turn-stories-off')}
+                    {i18n('icu:Preferences__turn-stories-off')}
                   </Button>
                 )
               }
@@ -999,9 +1054,9 @@ export function Preferences({
           <Control
             left={
               <>
-                <div>{i18n('clearDataHeader')}</div>
+                <div>{i18n('icu:clearDataHeader')}</div>
                 <div className="Preferences__description">
-                  {i18n('clearDataExplanation')}
+                  {i18n('icu:clearDataExplanation')}
                 </div>
               </>
             }
@@ -1011,7 +1066,7 @@ export function Preferences({
                   onClick={() => setConfirmDelete(true)}
                   variant={ButtonVariant.SecondaryDestructive}
                 >
-                  {i18n('clearDataButton')}
+                  {i18n('icu:clearDataButton')}
                 </Button>
               </div>
             }
@@ -1024,16 +1079,16 @@ export function Preferences({
               {
                 action: doDeleteAllData,
                 style: 'negative',
-                text: i18n('clearDataButton'),
+                text: i18n('icu:clearDataButton'),
               },
             ]}
             i18n={i18n}
             onClose={() => {
               setConfirmDelete(false);
             }}
-            title={i18n('deleteAllDataHeader')}
+            title={i18n('icu:deleteAllDataHeader')}
           >
-            {i18n('deleteAllDataBody')}
+            {i18n('icu:deleteAllDataBody')}
           </ConfirmationDialog>
         ) : null}
         {confirmStoriesOff ? (
@@ -1043,7 +1098,7 @@ export function Preferences({
               {
                 action: () => onHasStoriesDisabledChanged(true),
                 style: 'negative',
-                text: i18n('Preferences__turn-stories-off--action'),
+                text: i18n('icu:Preferences__turn-stories-off--action'),
               },
             ]}
             i18n={i18n}
@@ -1051,7 +1106,7 @@ export function Preferences({
               setConfirmStoriesOff(false);
             }}
           >
-            {i18n('Preferences__turn-stories-off--body')}
+            {i18n('icu:Preferences__turn-stories-off--body')}
           </ConfirmationDialog>
         ) : null}
       </>
@@ -1061,13 +1116,13 @@ export function Preferences({
       <>
         <div className="Preferences__title">
           <button
-            aria-label={i18n('goBack')}
+            aria-label={i18n('icu:goBack')}
             className="Preferences__back-icon"
             onClick={() => setPage(Page.Appearance)}
             type="button"
           />
           <div className="Preferences__title--header">
-            {i18n('ChatColorPicker__menu-title')}
+            {i18n('icu:ChatColorPicker__menu-title')}
           </div>
         </div>
         <ChatColorPicker
@@ -1094,7 +1149,7 @@ export function Preferences({
       <>
         <div className="Preferences__title">
           <button
-            aria-label={i18n('goBack')}
+            aria-label={i18n('icu:goBack')}
             className="Preferences__back-icon"
             onClick={() => setPage(Page.Privacy)}
             type="button"
@@ -1191,7 +1246,7 @@ export function Preferences({
             })}
             onClick={() => setPage(Page.General)}
           >
-            {i18n('Preferences__button--general')}
+            {i18n('icu:Preferences__button--general')}
           </button>
           <button
             type="button"
@@ -1203,7 +1258,7 @@ export function Preferences({
             })}
             onClick={() => setPage(Page.Appearance)}
           >
-            {i18n('Preferences__button--appearance')}
+            {i18n('icu:Preferences__button--appearance')}
           </button>
           <button
             type="button"
@@ -1214,7 +1269,7 @@ export function Preferences({
             })}
             onClick={() => setPage(Page.Chats)}
           >
-            {i18n('Preferences__button--chats')}
+            {i18n('icu:Preferences__button--chats')}
           </button>
           <button
             type="button"
@@ -1225,7 +1280,7 @@ export function Preferences({
             })}
             onClick={() => setPage(Page.Calls)}
           >
-            {i18n('Preferences__button--calls')}
+            {i18n('icu:Preferences__button--calls')}
           </button>
           <button
             type="button"
@@ -1236,7 +1291,7 @@ export function Preferences({
             })}
             onClick={() => setPage(Page.Notifications)}
           >
-            {i18n('Preferences__button--notifications')}
+            {i18n('icu:Preferences__button--notifications')}
           </button>
           <button
             type="button"
@@ -1248,10 +1303,12 @@ export function Preferences({
             })}
             onClick={() => setPage(Page.Privacy)}
           >
-            {i18n('Preferences__button--privacy')}
+            {i18n('icu:Preferences__button--privacy')}
           </button>
         </div>
-        <div className="Preferences__settings-pane">{settings}</div>
+        <div className="Preferences__settings-pane" ref={settingsPaneRef}>
+          {settings}
+        </div>
       </div>
     </TitleBarContainer>
   );
@@ -1352,7 +1409,7 @@ function localizeDefault(i18n: LocalizerType, deviceLabel: string): string {
   return deviceLabel.toLowerCase().startsWith('default')
     ? deviceLabel.replace(
         /default/i,
-        i18n('callingDeviceSelection__select--default')
+        i18n('icu:callingDeviceSelection__select--default')
       )
     : deviceLabel;
 }

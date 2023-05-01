@@ -33,6 +33,7 @@ const CHECKBOX_CLASS_NAME = `${BASE_CLASS_NAME}__checkbox`;
 export const SPINNER_CLASS_NAME = `${BASE_CLASS_NAME}__spinner`;
 
 type PropsType = {
+  buttonAriaLabel?: string;
   checked?: boolean;
   conversationType: 'group' | 'direct';
   disabled?: boolean;
@@ -79,6 +80,7 @@ export const BaseConversationListItem: FunctionComponent<PropsType> =
       acceptedMessageRequest,
       avatarPath,
       avatarSize,
+      buttonAriaLabel,
       checked,
       color,
       conversationType,
@@ -132,15 +134,15 @@ export const BaseConversationListItem: FunctionComponent<PropsType> =
     } else if (isCheckbox) {
       let ariaLabel: string;
       if (disabled) {
-        ariaLabel = i18n('cannotSelectContact', {
+        ariaLabel = i18n('icu:cannotSelectContact', {
           name: title,
         });
       } else if (checked) {
-        ariaLabel = i18n('deselectContact', {
+        ariaLabel = i18n('icu:deselectContact', {
           name: title,
         });
       } else {
-        ariaLabel = i18n('selectContact', {
+        ariaLabel = i18n('icu:selectContact', {
           name: title,
         });
       }
@@ -250,7 +252,12 @@ export const BaseConversationListItem: FunctionComponent<PropsType> =
     if (onClick) {
       return (
         <button
-          aria-label={i18n('BaseConversationListItem__aria-label', { title })}
+          aria-label={
+            buttonAriaLabel ||
+            i18n('icu:BaseConversationListItem__aria-label', {
+              title,
+            })
+          }
           className={classNames(
             commonClassNames,
             `${BASE_CLASS_NAME}--is-button`

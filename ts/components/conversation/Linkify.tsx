@@ -10,7 +10,7 @@ import { isLinkSneaky, shouldLinkifyMessage } from '../../types/LinkPreview';
 import { splitByEmoji } from '../../util/emoji';
 import { missingCaseError } from '../../util/missingCaseError';
 
-const linkify = LinkifyIt()
+export const linkify = LinkifyIt()
   // This is all TLDs in place in 2010, according to [IANA's root zone database][0]
   //   except for those domains marked as [a test domain][1].
   //
@@ -319,92 +319,86 @@ export type Props = {
   renderNonLink?: RenderTextCallbackType;
 };
 
-const SUPPORTED_PROTOCOLS = /^(http|https):/i;
+export const SUPPORTED_PROTOCOLS = /^(http|https):/i;
 
 const defaultRenderNonLink: RenderTextCallbackType = ({ text }) => text;
 
-export class Linkify extends React.Component<Props> {
-  public override render():
-    | JSX.Element
-    | string
-    | null
-    | Array<JSX.Element | string | null> {
-    const { text, renderNonLink = defaultRenderNonLink } = this.props;
+export function Linkify(props: Props): JSX.Element {
+  const { text, renderNonLink = defaultRenderNonLink } = props;
 
-    if (!shouldLinkifyMessage(text)) {
-      return renderNonLink({ text, key: 1 });
+  if (!shouldLinkifyMessage(text)) {
+    return <>{renderNonLink({ text, key: 1 })}</>;
+  }
+
+  const chunkData: Array<{
+    chunk: string;
+    matchData: ReadonlyArray<LinkifyIt.Match>;
+  }> = splitByEmoji(text).map(({ type, value: chunk }) => {
+    if (type === 'text') {
+      return { chunk, matchData: linkify.match(chunk) || [] };
     }
 
-    const chunkData: Array<{
-      chunk: string;
-      matchData: ReadonlyArray<LinkifyIt.Match>;
-    }> = splitByEmoji(text).map(({ type, value: chunk }) => {
-      if (type === 'text') {
-        return { chunk, matchData: linkify.match(chunk) || [] };
-      }
+    if (type === 'emoji') {
+      return { chunk, matchData: [] };
+    }
 
-      if (type === 'emoji') {
-        return { chunk, matchData: [] };
-      }
+    throw missingCaseError(type);
+  });
 
-      throw missingCaseError(type);
-    });
+  const results: Array<JSX.Element | string> = [];
+  let count = 1;
 
-    const results: Array<JSX.Element | string> = [];
-    let count = 1;
+  const screenshotServer =
+    window.localStorage && localStorage.getItem('screenshotServerUrl');
+  const goLinkAddress =
+    window.localStorage && localStorage.getItem('realGoLinkAddress');
+  chunkData.forEach(({ chunk, matchData }) => {
+    if (matchData.length === 0) {
+      count += 1;
+      results.push(renderNonLink({ text: chunk, key: count }));
+      return;
+    }
 
-    const screenshotServer =
-      window.localStorage && localStorage.getItem('screenshotServerUrl');
-    const goLinkAddress =
-      window.localStorage && localStorage.getItem('realGoLinkAddress');
-    chunkData.forEach(({ chunk, matchData }) => {
-      if (matchData.length === 0) {
+    let chunkLastIndex = 0;
+    matchData.forEach(match => {
+      if (chunkLastIndex < match.index) {
+        const textWithNoLink = chunk.slice(chunkLastIndex, match.index);
         count += 1;
-        results.push(renderNonLink({ text: chunk, key: count }));
-        return;
+        results.push(renderNonLink({ text: textWithNoLink, key: count }));
       }
 
-      let chunkLastIndex = 0;
-      matchData.forEach(match => {
-        if (chunkLastIndex < match.index) {
-          const textWithNoLink = chunk.slice(chunkLastIndex, match.index);
-          count += 1;
-          results.push(renderNonLink({ text: textWithNoLink, key: count }));
+      const { url } = match;
+      let { text: originalText } = match;
+      count += 1;
+      if (SUPPORTED_PROTOCOLS.test(url) && !isLinkSneaky(url)) {
+        if (screenshotServer && originalText.startsWith(screenshotServer)) {
+          originalText = originalText.replace(screenshotServer, 's/');
         }
-
-        const { url } = match;
-        let { text: originalText } = match;
-        count += 1;
-        if (SUPPORTED_PROTOCOLS.test(url) && !isLinkSneaky(url)) {
-          if (screenshotServer && originalText.startsWith(screenshotServer)) {
-            originalText = originalText.replace(screenshotServer, 's/');
-          }
-          if (goLinkAddress && goLinkAddress.startsWith(goLinkAddress)) {
-            originalText = originalText.replace(goLinkAddress, 'go/');
-          }
-          results.push(
-            <a key={count} href={url}>
-              {originalText}
-            </a>
-          );
-        } else {
-          results.push(renderNonLink({ text: originalText, key: count }));
+        if (goLinkAddress && goLinkAddress.startsWith(goLinkAddress)) {
+          originalText = originalText.replace(goLinkAddress, 'go/');
         }
-
-        chunkLastIndex = match.lastIndex;
-      });
-
-      if (chunkLastIndex < chunk.length) {
-        count += 1;
         results.push(
-          renderNonLink({
-            text: chunk.slice(chunkLastIndex),
-            key: count,
-          })
+          <a key={count} href={url}>
+            {originalText}
+          </a>
         );
+      } else {
+        results.push(renderNonLink({ text: originalText, key: count }));
       }
+
+      chunkLastIndex = match.lastIndex;
     });
 
-    return results;
-  }
+    if (chunkLastIndex < chunk.length) {
+      count += 1;
+      results.push(
+        renderNonLink({
+          text: chunk.slice(chunkLastIndex),
+          key: count,
+        })
+      );
+    }
+  });
+
+  return <>{results}</>;
 }

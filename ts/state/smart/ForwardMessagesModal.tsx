@@ -3,16 +3,12 @@
 
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import type {
-  ForwardMessagePropsType,
-  ForwardMessagesPropsType,
-} from '../ducks/globalModals';
+import type { ForwardMessagesPropsType } from '../ducks/globalModals';
 import type { StateType } from '../reducer';
 import * as log from '../../logging/log';
 import { ForwardMessagesModal } from '../../components/ForwardMessagesModal';
 import { LinkPreviewSourceType } from '../../types/LinkPreview';
 import * as Errors from '../../types/errors';
-import type { GetConversationByIdType } from '../selectors/conversations';
 import {
   getAllComposableConversations,
   getConversationSelector,
@@ -32,31 +28,9 @@ import {
 } from '../../services/LinkPreview';
 import { useGlobalModalActions } from '../ducks/globalModals';
 import { useLinkPreviewActions } from '../ducks/linkPreviews';
-import { processBodyRanges } from '../selectors/message';
-import { getTextWithMentions } from '../../util/getTextWithMentions';
 import { SmartCompositionTextArea } from './CompositionTextArea';
 import { useToastActions } from '../ducks/toast';
-
-function renderMentions(
-  message: ForwardMessagePropsType,
-  conversationSelector: GetConversationByIdType
-): string | undefined {
-  const { text } = message;
-
-  if (!text) {
-    return text;
-  }
-
-  const bodyRanges = processBodyRanges(message, {
-    conversationSelector,
-  });
-
-  if (bodyRanges && bodyRanges.length) {
-    return getTextWithMentions(bodyRanges, text);
-  }
-
-  return text;
-}
+import { hydrateRanges } from '../../types/BodyRange';
 
 export function SmartForwardMessagesModal(): JSX.Element | null {
   const forwardMessagesProps = useSelector<
@@ -80,11 +54,12 @@ export function SmartForwardMessagesModal(): JSX.Element | null {
       return (
         forwardMessagesProps?.messages.map((props): MessageForwardDraft => {
           return {
-            originalMessageId: props.id,
             attachments: props.attachments ?? [],
-            messageBody: renderMentions(props, getConversation),
-            isSticker: Boolean(props.isSticker),
+            bodyRanges: hydrateRanges(props.bodyRanges, getConversation),
             hasContact: Boolean(props.contact),
+            isSticker: Boolean(props.isSticker),
+            messageBody: props.text,
+            originalMessageId: props.id,
             previews: props.previews ?? [],
           };
         }) ?? []

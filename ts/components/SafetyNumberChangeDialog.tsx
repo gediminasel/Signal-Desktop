@@ -22,6 +22,7 @@ import { Theme } from '../util/theme';
 import { isNotNil } from '../util/isNotNil';
 import { MY_STORY_ID } from '../types/Stories';
 import type { UUIDStringType } from '../types/UUID';
+import { UserText } from './UserText';
 
 export enum SafetyNumberChangeSource {
   Calling = 'Calling',
@@ -150,11 +151,11 @@ export function SafetyNumberChangeDialog({
   ) {
     let text: string;
     if (dialogState === DialogState.ExplicitReviewStep) {
-      text = i18n('safetyNumberChangeDialog_done');
+      text = i18n('icu:safetyNumberChangeDialog_done');
     } else if (allVerified || totalCount === 0) {
-      text = confirmText || i18n('safetyNumberChangeDialog_send');
+      text = confirmText || i18n('icu:safetyNumberChangeDialog_send');
     } else {
-      text = confirmText || i18n('sendAnyway');
+      text = confirmText || i18n('icu:sendAnyway');
     }
 
     return (
@@ -183,10 +184,10 @@ export function SafetyNumberChangeDialog({
       >
         <div className="module-SafetyNumberChangeDialog__shield-icon" />
         <div className="module-SafetyNumberChangeDialog__title">
-          {i18n('safetyNumberChanges')}
+          {i18n('icu:safetyNumberChanges')}
         </div>
         <div className="module-SafetyNumberChangeDialog__message">
-          {i18n('safetyNumberChangeDialog__message')}
+          {i18n('icu:safetyNumberChangeDialog__message')}
         </div>
         {contacts.map((section: StoryContacts) => (
           <ContactSection
@@ -205,9 +206,9 @@ export function SafetyNumberChangeDialog({
 
   let text: string;
   if (dialogState === DialogState.ExplicitReviewNeeded) {
-    text = confirmText || i18n('sendAnyway');
+    text = confirmText || i18n('icu:sendAnyway');
   } else if (dialogState === DialogState.ExplicitReviewComplete) {
-    text = confirmText || i18n('safetyNumberChangeDialog_send');
+    text = confirmText || i18n('icu:safetyNumberChangeDialog_send');
   } else {
     throw missingCaseError(dialogState);
   }
@@ -223,7 +224,7 @@ export function SafetyNumberChangeDialog({
   if (dialogState === DialogState.ExplicitReviewNeeded) {
     actions.unshift({
       action: () => setDialogState(DialogState.ExplicitReviewStep),
-      text: i18n('safetyNumberChangeDialog__review'),
+      text: i18n('icu:safetyNumberChangeDialog__review'),
     });
   }
 
@@ -242,7 +243,7 @@ export function SafetyNumberChangeDialog({
     >
       <div className="module-SafetyNumberChangeDialog__shield-icon" />
       <div className="module-SafetyNumberChangeDialog__title">
-        {i18n('safetyNumberChanges')}
+        {i18n('icu:safetyNumberChanges')}
       </div>
       <div
         className={classNames(
@@ -256,7 +257,7 @@ export function SafetyNumberChangeDialog({
           ? i18n('icu:safetyNumberChangeDialog__many-contacts', {
               count: totalCount,
             })
-          : i18n('safetyNumberChangeDialog__post-review')}
+          : i18n('icu:safetyNumberChangeDialog__post-review')}
       </div>
     </ConfirmationDialog>
   );
@@ -310,7 +311,9 @@ function ContactSection({
   const { distributionId } = section.story;
   const uuids = section.contacts.map(contact => contact.uuid).filter(isNotNil);
   const sectionName =
-    distributionId === MY_STORY_ID ? i18n('Stories__mine') : section.story.name;
+    distributionId === MY_STORY_ID
+      ? i18n('icu:Stories__mine')
+      : section.story.name;
 
   return (
     <div className="module-SafetyNumberChangeDialog__section">
@@ -320,7 +323,7 @@ function ContactSection({
         </div>
         {distributionId && removeFromStory && uuids.length > 1 && (
           <SectionButtonWithMenu
-            ariaLabel={i18n('safetyNumberChangeDialog__actions-story', {
+            ariaLabel={i18n('icu:safetyNumberChangeDialog__actions-story', {
               story: sectionName,
             })}
             i18n={i18n}
@@ -381,7 +384,7 @@ function SectionButtonWithMenu({
         menuOptions={[
           {
             icon: 'module-SafetyNumberChangeDialog__menu-icon--delete',
-            label: i18n('safetyNumberChangeDialog__remove-all'),
+            label: i18n('icu:safetyNumberChangeDialog__remove-all'),
             onClick: () => setIsConfirming(true),
           },
         ]}
@@ -398,7 +401,7 @@ function SectionButtonWithMenu({
                 removeFromStory();
                 setIsConfirming(false);
               },
-              text: i18n('safetyNumberChangeDialog__remove-all'),
+              text: i18n('icu:safetyNumberChangeDialog__remove-all'),
               style: 'affirmative',
             },
           ]}
@@ -461,7 +464,7 @@ function ContactRow({
       />
       <div className="module-SafetyNumberChangeDialog__row--wrapper">
         <div className="module-SafetyNumberChangeDialog__row--name">
-          {contact.title}
+          <UserText text={contact.title} />
           {isInSystemContacts(contact) && (
             <span>
               {' '}
@@ -483,7 +486,7 @@ function ContactRow({
             )}
             {contact.isVerified && (
               <span className="module-SafetyNumberChangeDialog__rtl-span">
-                {i18n('verified')}
+                {i18n('icu:verified')}
               </span>
             )}
           </div>
@@ -491,7 +494,7 @@ function ContactRow({
       </div>
       {distributionId && removeFromStory && uuid ? (
         <RowButtonWithMenu
-          ariaLabel={i18n('safetyNumberChangeDialog__actions-contact', {
+          ariaLabel={i18n('icu:safetyNumberChangeDialog__actions-contact', {
             contact: contact.title,
           })}
           i18n={i18n}
@@ -508,7 +511,7 @@ function ContactRow({
           tabIndex={0}
           type="button"
         >
-          {i18n('view')}
+          {i18n('icu:view')}
         </button>
       )}
     </li>
@@ -535,12 +538,12 @@ function RowButtonWithMenu({
       menuOptions={[
         {
           icon: 'module-SafetyNumberChangeDialog__menu-icon--verify',
-          label: i18n('safetyNumberChangeDialog__verify-number'),
+          label: i18n('icu:safetyNumberChangeDialog__verify-number'),
           onClick: verifyContact,
         },
         {
           icon: 'module-SafetyNumberChangeDialog__menu-icon--delete',
-          label: i18n('safetyNumberChangeDialog__remove'),
+          label: i18n('icu:safetyNumberChangeDialog__remove'),
           onClick: removeFromStory,
         },
       ]}

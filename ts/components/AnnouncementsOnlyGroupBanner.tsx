@@ -33,12 +33,12 @@ export function AnnouncementsOnlyGroupBanner({
           modalName="AnnouncmentsOnlyGroupBanner"
           i18n={i18n}
           onClose={() => setIsShowingAdmins(false)}
-          title={i18n('AnnouncementsOnlyGroupBanner--modal')}
+          title={i18n('icu:AnnouncementsOnlyGroupBanner--modal')}
         >
           {groupAdmins.map(admin => (
             <ConversationListItem
               {...admin}
-              draftPreview=""
+              draftPreview={undefined}
               i18n={i18n}
               lastMessage={undefined}
               lastUpdated={undefined}
@@ -53,7 +53,7 @@ export function AnnouncementsOnlyGroupBanner({
       <div className="AnnouncementsOnlyGroupBanner__banner">
         <Intl
           i18n={i18n}
-          id="AnnouncementsOnlyGroupBanner--announcements-only"
+          id="icu:AnnouncementsOnlyGroupBanner--announcements-only"
           components={{
             admins: (
               <button
@@ -61,7 +61,7 @@ export function AnnouncementsOnlyGroupBanner({
                 type="button"
                 onClick={() => setIsShowingAdmins(true)}
               >
-                {i18n('AnnouncementsOnlyGroupBanner--admins')}
+                {i18n('icu:AnnouncementsOnlyGroupBanner--admins')}
               </button>
             ),
           }}

@@ -32,6 +32,7 @@ import {
   UnregisteredUserError,
 } from '../../textsecure/Errors';
 import { shouldSendToConversation } from './shouldSendToConversation';
+import { sendToGroup } from '../../util/sendToGroup';
 
 export function canAllErrorsBeIgnored(
   conversation: ConversationAttributesType,
@@ -147,11 +148,10 @@ export async function sendProfileKey(
       groupV2Info.revision = revision;
     }
 
-    sendPromise = window.Signal.Util.sendToGroup({
+    sendPromise = sendToGroup({
       contentHint,
       groupSendOptions: {
         flags: Proto.DataMessage.Flags.PROFILE_KEY_UPDATE,
-        groupV1: conversation.getGroupV1Info(),
         groupV2: groupV2Info,
         profileKey,
         timestamp,

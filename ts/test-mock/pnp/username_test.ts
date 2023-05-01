@@ -255,7 +255,7 @@ describe('pnp/username', function needsName() {
     const window = await app.getWindow();
 
     debug('entering username into search field');
-    await window.locator('button[aria-label="New conversation"]').click();
+    await window.locator('button[aria-label="New chat"]').click();
 
     const searchInput = window.locator('.module-SearchInput__container input');
     await searchInput.type(`@${CARL_USERNAME}`);
@@ -265,12 +265,7 @@ describe('pnp/username', function needsName() {
 
     debug('sending a message');
     {
-      const composeArea = window.locator(
-        '.composition-area-wrapper, .conversation .ConversationView'
-      );
-      const compositionInput = composeArea.locator(
-        '[data-testid=CompositionInput]'
-      );
+      const compositionInput = await app.waitForEnabledComposer();
 
       await compositionInput.type('Hello Carl');
       await compositionInput.press('Enter');

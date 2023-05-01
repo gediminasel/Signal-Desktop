@@ -257,7 +257,6 @@ const dataInterface: ServerInterface = {
   _removeAllMessages,
   getAllMessageIds,
   getMessagesBySentAt,
-  getMessagesIncludingEditedBySentAt,
   getUnreadEditedMessagesAndMarkRead,
   getMessageAfterDate,
   getExpiredMessages,
@@ -1734,7 +1733,7 @@ async function searchMessages(
         `
         SELECT
           messages.json,
-          snippet(messages_fts, -1, '<<left>>', '<<right>>', '...', 10)
+          snippet(messages_fts, -1, '<<left>>', '<<right>>', '<<truncation>>', 10)
             AS snippet
         FROM tmp_filtered_results
         INNER JOIN messages_fts
@@ -3137,17 +3136,19 @@ async function getMessagesBySentAt(
   sentAt: number
 ): Promise<Array<MessageType>> {
   const db = getInstance();
-  const rows: JSONRows = db
-    .prepare<Query>(
-      `
-      SELECT json FROM messages
-      WHERE sent_at = $sent_at
-      ORDER BY received_at DESC, sent_at DESC;
-      `
-    )
-    .all({
-      sent_at: sentAt,
-    });
+
+  const [query, params] = sql`
+      SELECT messages.json, received_at, sent_at FROM edited_messages
+      INNER JOIN messages ON
+        messages.id = edited_messages.messageId
+      WHERE edited_messages.sentAt = ${sentAt}
+      UNION
+      SELECT json, received_at, sent_at FROM messages
+      WHERE sent_at = ${sentAt}
+      ORDER BY messages.received_at DESC, messages.sent_at DESC;
+    `;
+
+  const rows = db.prepare(query).all(params);
 
   return rows.map(row => jsonToObject(row.json));
 }
@@ -5744,27 +5745,6 @@ async function saveEditedMessage(
 
     db.prepare(query).run(params);
   })();
-}
-
-async function getMessagesIncludingEditedBySentAt(
-  sentAt: number
-): Promise<Array<MessageType>> {
-  const db = getInstance();
-
-  const [query, params] = sql`
-    SELECT messages.json, received_at, sent_at FROM edited_messages
-    INNER JOIN messages ON
-      messages.id = edited_messages.messageId
-    WHERE edited_messages.sentAt = ${sentAt}
-    UNION
-    SELECT json, received_at, sent_at FROM messages
-    WHERE sent_at = ${sentAt}
-    ORDER BY messages.received_at DESC, messages.sent_at DESC;
-  `;
-
-  const rows = db.prepare(query).all(params);
-
-  return rows.map(row => jsonToObject(row.json));
 }
 
 async function _getAllEditedMessages(): Promise<

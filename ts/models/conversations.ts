@@ -38,11 +38,8 @@ import * as Conversation from '../types/Conversation';
 import type { StickerType, StickerWithHydratedData } from '../types/Stickers';
 import * as Stickers from '../types/Stickers';
 import { StorySendMode } from '../types/Stories';
-import type {
-  ContactWithHydratedAvatar,
-  GroupV1InfoType,
-  GroupV2InfoType,
-} from '../textsecure/SendMessage';
+import type { EmbeddedContactWithHydratedAvatar } from '../types/EmbeddedContact';
+import type { GroupV2InfoType } from '../textsecure/SendMessage';
 import createTaskWithTimeout from '../textsecure/TaskWithTimeout';
 import MessageSender from '../textsecure/SendMessage';
 import type {
@@ -51,6 +48,7 @@ import type {
 } from '../textsecure/Types.d';
 import type {
   ConversationType,
+  DraftPreviewType,
   LastMessageType,
 } from '../state/ducks/conversations';
 import type {
@@ -83,8 +81,8 @@ import {
   deriveAccessKey,
 } from '../Crypto';
 import * as Bytes from '../Bytes';
-import type { BodyRangesType, DraftBodyRangesType } from '../types/Util';
-import { getTextWithMentions } from '../util/getTextWithMentions';
+import type { DraftBodyRanges } from '../types/BodyRange';
+import { BodyRange, hydrateRanges } from '../types/BodyRange';
 import { migrateColor } from '../util/migrateColor';
 import { isNotNil } from '../util/isNotNil';
 import { dropNull } from '../util/dropNull';
@@ -106,7 +104,10 @@ import { getConversationMembers } from '../util/getConversationMembers';
 import { updateConversationsWithUuidLookup } from '../updateConversationsWithUuidLookup';
 import { ReadStatus } from '../messages/MessageReadStatus';
 import { SendStatus } from '../messages/MessageSendState';
-import type { LinkPreviewType } from '../types/message/LinkPreviews';
+import type {
+  LinkPreviewType,
+  LinkPreviewWithHydratedData,
+} from '../types/message/LinkPreviews';
 import { MINUTE, SECOND, DurationInSeconds } from '../util/durations';
 import { concat, filter, map, repeat, zipObject } from '../util/iterables';
 import * as universalExpireTimer from '../util/universalExpireTimer';
@@ -139,6 +140,7 @@ import * as log from '../logging/log';
 import * as Errors from '../types/errors';
 import { isMessageUnread } from '../util/isMessageUnread';
 import type { SenderKeyTargetType } from '../util/sendToGroup';
+import { sendContentMessageToGroup } from '../util/sendToGroup';
 import { singleProtoJobQueue } from '../jobs/singleProtoJobQueue';
 import { TimelineMessageLoadingState } from '../util/timelineUtil';
 import { SeenStatus } from '../MessageSeenStatus';
@@ -154,6 +156,11 @@ import { isMemberPending } from '../util/isMemberPending';
 import { imageToBlurHash } from '../util/imageToBlurHash';
 import { ReceiptType } from '../types/Receipt';
 import { getQuoteAttachment } from '../util/makeQuote';
+import { stripNewlinesForLeftPane } from '../util/stripNewlinesForLeftPane';
+import { findAndFormatContact } from '../util/findAndFormatContact';
+import { deriveProfileKeyVersion } from '../util/zkgroup';
+import { incrementMessageCounter } from '../util/incrementMessageCounter';
+import { queueUpdateMessage } from '../util/messageBatcher';
 
 const EMPTY_ARRAY: Readonly<[]> = [];
 const EMPTY_GROUP_COLLISIONS: GroupNameCollisionsWithIdsByTitle = {};
@@ -161,7 +168,6 @@ const EMPTY_GROUP_COLLISIONS: GroupNameCollisionsWithIdsByTitle = {};
 /* eslint-disable more/no-then */
 window.Whisper = window.Whisper || {};
 
-const { Util } = window.Signal;
 const { Message } = window.Signal.Types;
 const {
   deleteAttachmentData,
@@ -975,6 +981,81 @@ export class ConversationModel extends window.Backbone
     return unblocked;
   }
 
+  async removeContact({
+    viaStorageServiceSync = false,
+    shouldSave = true,
+  } = {}): Promise<void> {
+    const logId = `removeContact(${this.idForLogging()}) storage? ${viaStorageServiceSync}`;
+
+    if (!isDirectConversation(this.attributes)) {
+      log.warn(`${logId}: not direct conversation`);
+      return;
+    }
+
+    if (this.get('removalStage')) {
+      log.warn(`${logId}: already removed`);
+      return;
+    }
+
+    // Don't show message request state until first incoming message.
+    log.info(`${logId}: updating`);
+    this.set({ removalStage: 'justNotification' });
+
+    if (!viaStorageServiceSync) {
+      this.captureChange('removeContact');
+    }
+
+    this.disableProfileSharing({ viaStorageServiceSync });
+
+    // Drop existing message request state to avoid sending receipts and
+    // display MR actions.
+    const messageRequestEnum = Proto.SyncMessage.MessageRequestResponse.Type;
+    await this.applyMessageRequestResponse(messageRequestEnum.UNKNOWN, {
+      viaStorageServiceSync,
+      shouldSave: false,
+    });
+
+    // Add notification
+    drop(this.queueJob('removeContact', () => this.maybeSetContactRemoved()));
+
+    if (shouldSave) {
+      await window.Signal.Data.updateConversation(this.attributes);
+    }
+  }
+
+  async restoreContact({
+    viaStorageServiceSync = false,
+    shouldSave = true,
+  } = {}): Promise<void> {
+    const logId = `restoreContact(${this.idForLogging()}) storage? ${viaStorageServiceSync}`;
+
+    if (!isDirectConversation(this.attributes)) {
+      log.warn(`${logId}: not direct conversation`);
+      return;
+    }
+
+    if (this.get('removalStage') === undefined) {
+      if (!viaStorageServiceSync) {
+        log.warn(`${logId}: not removed`);
+      }
+      return;
+    }
+
+    log.info(`${logId}: updating`);
+    this.set({ removalStage: undefined });
+
+    if (!viaStorageServiceSync) {
+      this.captureChange('restoreContact');
+    }
+
+    // Remove notification since the conversation isn't hidden anymore
+    await this.maybeClearContactRemoved();
+
+    if (shouldSave) {
+      await window.Signal.Data.updateConversation(this.attributes);
+    }
+  }
+
   enableProfileSharing({ viaStorageServiceSync = false } = {}): void {
     log.info(
       `enableProfileSharing: ${this.idForLogging()} storage? ${viaStorageServiceSync}`
@@ -1013,32 +1094,42 @@ export class ConversationModel extends window.Backbone
       draftAttachments.length > 0) as boolean;
   }
 
-  getDraftPreview(): string {
+  getDraftPreview(): DraftPreviewType {
     const draft = this.get('draft');
 
-    if (draft) {
-      const bodyRanges = this.get('draftBodyRanges') || [];
+    const rawBodyRanges = this.get('draftBodyRanges') || [];
+    const bodyRanges = hydrateRanges(rawBodyRanges, findAndFormatContact);
 
-      return getTextWithMentions(bodyRanges, draft);
+    if (draft) {
+      return {
+        text: stripNewlinesForLeftPane(draft),
+        bodyRanges,
+      };
     }
 
     const draftAttachments = this.get('draftAttachments') || [];
     if (draftAttachments.length > 0) {
       if (isVoiceMessage(draftAttachments[0])) {
-        return window.i18n('message--getNotificationText--text-with-emoji', {
-          text: window.i18n('message--getNotificationText--voice-message'),
-          emoji: '🎤',
-        });
+        return {
+          text: window.i18n('icu:message--getNotificationText--voice-message'),
+          prefix: '🎤',
+        };
       }
-      return window.i18n('Conversation--getDraftPreview--attachment');
+      return {
+        text: window.i18n('icu:Conversation--getDraftPreview--attachment'),
+      };
     }
 
     const quotedMessageId = this.get('quotedMessageId');
     if (quotedMessageId) {
-      return window.i18n('Conversation--getDraftPreview--quote');
+      return {
+        text: window.i18n('icu:Conversation--getDraftPreview--quote'),
+      };
     }
 
-    return window.i18n('Conversation--getDraftPreview--draft');
+    return {
+      text: window.i18n('icu:Conversation--getDraftPreview--draft'),
+    };
   }
 
   bumpTyping(): void {
@@ -1220,24 +1311,6 @@ export class ConversationModel extends window.Backbone
     };
   }
 
-  getGroupV1Info(members?: Array<string>): GroupV1InfoType | undefined {
-    const groupId = this.get('groupId');
-    const groupVersion = this.get('groupVersion');
-
-    if (
-      isDirectConversation(this.attributes) ||
-      !groupId ||
-      (groupVersion && groupVersion > 0)
-    ) {
-      return undefined;
-    }
-
-    return {
-      id: groupId,
-      members: members || this.getRecipients(),
-    };
-  }
-
   getGroupIdBuffer(): Uint8Array | undefined {
     const groupIdString = this.get('groupId');
 
@@ -1330,7 +1403,7 @@ export class ConversationModel extends window.Backbone
         );
       } else {
         await handleMessageSend(
-          window.Signal.Util.sendContentMessageToGroup({
+          sendContentMessageToGroup({
             contentHint: ContentHint.IMPLICIT,
             contentMessage,
             messageId: undefined,
@@ -1373,6 +1446,17 @@ export class ConversationModel extends window.Backbone
       return;
     }
 
+    // Change to message request state if contact was removed and sent message.
+    if (
+      this.get('removalStage') === 'justNotification' &&
+      isIncoming(message.attributes)
+    ) {
+      this.set({
+        removalStage: 'messageRequest',
+      });
+      window.Signal.Data.updateConversation(this.attributes);
+    }
+
     void this.addSingleMessage(message);
   }
 
@@ -1395,7 +1479,7 @@ export class ConversationModel extends window.Backbone
     if (!this.newMessageQueue) {
       this.newMessageQueue = new PQueue({
         concurrency: 1,
-        timeout: MINUTE * 30,
+        timeout: FETCH_TIMEOUT * 2,
       });
     }
 
@@ -1439,7 +1523,10 @@ export class ConversationModel extends window.Backbone
     }
   }
 
-  setInProgressFetch(): () => unknown {
+  private setInProgressFetch(): () => unknown {
+    const logId = `setInProgressFetch(${this.idForLogging()})`;
+    const start = Date.now();
+
     let resolvePromise: (value?: unknown) => void;
     this.inProgressFetch = new Promise(resolve => {
       resolvePromise = resolve;
@@ -1447,14 +1534,17 @@ export class ConversationModel extends window.Backbone
 
     let timeout: NodeJS.Timeout;
     const finish = () => {
+      const duration = Date.now() - start;
+      if (duration > 500) {
+        log.warn(`${logId}: in progress fetch took ${duration}ms`);
+      }
+
       resolvePromise();
       clearTimeout(timeout);
       this.inProgressFetch = undefined;
     };
     timeout = setTimeout(() => {
-      log.warn(
-        `setInProgressFetch(${this.idForLogging()}): Calling finish manually after timeout`
-      );
+      log.warn(`${logId}: Calling finish manually after timeout`);
       finish();
     }, FETCH_TIMEOUT);
 
@@ -1465,6 +1555,8 @@ export class ConversationModel extends window.Backbone
     newestMessageId: string | undefined,
     setFocus: boolean | undefined
   ): Promise<void> {
+    const logId = `loadNewestMessages/${this.idForLogging()}`;
+
     const { messagesReset, setMessageLoadingState } =
       window.reduxActions.conversations;
     const conversationId = this.id;
@@ -1502,12 +1594,21 @@ export class ConversationModel extends window.Backbone
       //   oldest messages, to ensure that the ConversationHero is shown. We don't want to
       //   scroll directly to the oldest message, because that could scroll the hero off
       //   the screen.
-      if (!newestMessageId && !this.getAccepted() && metrics.oldest) {
+      if (
+        !newestMessageId &&
+        !this.getAccepted() &&
+        this.get('removalStage') !== 'justNotification' &&
+        metrics.oldest
+      ) {
+        log.info(`${logId}: scrolling to oldest ${metrics.oldest.sent_at}`);
         void this.loadAndScroll(metrics.oldest.id, { disableScroll: true });
         return;
       }
 
       if (scrollToLatestUnread && metrics.oldestUnseen) {
+        log.info(
+          `${logId}: scrolling to oldest unseen ${metrics.oldestUnseen.sent_at}`
+        );
         void this.loadAndScroll(metrics.oldestUnseen.id, {
           disableScroll: !setFocus,
         });
@@ -1524,6 +1625,11 @@ export class ConversationModel extends window.Backbone
       const cleaned: Array<MessageModel> = await this.cleanModels(messages);
       const scrollToMessageId =
         setFocus && metrics.newest ? metrics.newest.id : undefined;
+
+      log.info(
+        `${logId}: loaded ${cleaned.length} messages, ` +
+          `latest timestamp=${cleaned.at(-1)?.get('sent_at')}`
+      );
 
       // Because our `getOlderMessages` fetch above didn't specify a receivedAt, we got
       //   the most recent N messages in the conversation. If it has a conflict with
@@ -1548,6 +1654,8 @@ export class ConversationModel extends window.Backbone
     }
   }
   async loadOlderMessages(oldestMessageId: string): Promise<void> {
+    const logId = `loadOlderMessages/${this.idForLogging()}`;
+
     const { messagesAdded, setMessageLoadingState, repairOldestMessage } =
       window.reduxActions.conversations;
     const conversationId = this.id;
@@ -1561,9 +1669,7 @@ export class ConversationModel extends window.Backbone
     try {
       const message = await getMessageById(oldestMessageId);
       if (!message) {
-        throw new Error(
-          `loadOlderMessages: failed to load message ${oldestMessageId}`
-        );
+        throw new Error(`${logId}: failed to load message ${oldestMessageId}`);
       }
 
       const receivedAt = message.received_at;
@@ -1579,12 +1685,17 @@ export class ConversationModel extends window.Backbone
       });
 
       if (models.length < 1) {
-        log.warn('loadOlderMessages: requested, but loaded no messages');
+        log.warn(`${logId}: requested, but loaded no messages`);
         repairOldestMessage(conversationId);
         return;
       }
 
       const cleaned = await this.cleanModels(models);
+
+      log.info(
+        `${logId}: loaded ${cleaned.length} messages, ` +
+          `first timestamp=${cleaned.at(0)?.get('sent_at')}`
+      );
 
       messagesAdded({
         conversationId,
@@ -1808,6 +1919,7 @@ export class ConversationModel extends window.Backbone
     const draftTimestamp = this.get('draftTimestamp');
     const draftPreview = this.getDraftPreview();
     const draftText = dropNull(this.get('draft'));
+    const draftEditMessage = this.get('draftEditMessage');
     const shouldShowDraft = Boolean(
       this.hasDraft() && draftTimestamp && draftTimestamp >= timestamp
     );
@@ -1885,6 +1997,7 @@ export class ConversationModel extends window.Backbone
       draftBodyRanges: this.getDraftBodyRanges(),
       draftPreview,
       draftText,
+      draftEditMessage,
       familyName: this.get('profileFamilyName'),
       firstName: this.get('profileName'),
       groupDescription: this.get('description'),
@@ -1895,6 +2008,7 @@ export class ConversationModel extends window.Backbone
       inboxPosition,
       isArchived: this.get('isArchived'),
       isBlocked: this.isBlocked(),
+      removalStage: this.get('removalStage'),
       isMe: isMe(this.attributes),
       isGroupV1AndDisabled: this.isGroupV1AndDisabled(),
       isPinned: this.get('isPinned'),
@@ -1939,7 +2053,7 @@ export class ConversationModel extends window.Backbone
       titleNoDefault: this.getTitleNoDefault(),
       typingContactId: typingMostRecent?.senderId,
       searchableTitle: isMe(this.attributes)
-        ? window.i18n('noteToSelf')
+        ? window.i18n('icu:noteToSelf')
         : this.getTitle(),
       unreadCount: this.get('unreadCount') || 0,
       ...(isDirectConversation(this.attributes)
@@ -2180,7 +2294,7 @@ export class ConversationModel extends window.Backbone
             'lastSeenHere',
             [...prevSeen].filter(x => x !== this.id)
           );
-          window.Signal.Util.queueUpdateMessage(prevMsg.attributes);
+          queueUpdateMessage(prevMsg.attributes);
         } else {
           log.error(
             `failed to load last seen message with id ${lastSeenMsg.id}.`
@@ -2197,7 +2311,7 @@ export class ConversationModel extends window.Backbone
       if (updateMessage) {
         const prevSeenHereList = message.get('lastSeenHere') || [];
         message.set('lastSeenHere', [...prevSeenHereList, this.id]);
-        window.Signal.Util.queueUpdateMessage(message.attributes);
+        queueUpdateMessage(message.attributes);
       }
 
       if (updateMessage) {
@@ -2329,7 +2443,7 @@ export class ConversationModel extends window.Backbone
 
   async applyMessageRequestResponse(
     response: number,
-    { fromSync = false, viaStorageServiceSync = false } = {}
+    { fromSync = false, viaStorageServiceSync = false, shouldSave = true } = {}
   ): Promise<void> {
     try {
       const messageRequestEnum = Proto.SyncMessage.MessageRequestResponse.Type;
@@ -2346,6 +2460,9 @@ export class ConversationModel extends window.Backbone
 
       if (response === messageRequestEnum.ACCEPT) {
         this.unblock({ viaStorageServiceSync });
+        if (!viaStorageServiceSync) {
+          await this.restoreContact({ shouldSave: false });
+        }
         this.enableProfileSharing({ viaStorageServiceSync });
 
         // We really don't want to call this if we don't have to. It can take a lot of
@@ -2402,9 +2519,7 @@ export class ConversationModel extends window.Backbone
         this.disableProfileSharing({ viaStorageServiceSync });
 
         if (isLocalAction) {
-          if (isGroupV1(this.attributes)) {
-            await this.leaveGroup();
-          } else if (isGroupV2(this.attributes)) {
+          if (isGroupV2(this.attributes)) {
             await this.leaveGroupV2();
           }
         }
@@ -2422,9 +2537,7 @@ export class ConversationModel extends window.Backbone
             'deleted from message request'
           );
 
-          if (isGroupV1(this.attributes)) {
-            await this.leaveGroup();
-          } else if (isGroupV2(this.attributes)) {
+          if (isGroupV2(this.attributes)) {
             await this.leaveGroupV2();
           }
         }
@@ -2444,15 +2557,15 @@ export class ConversationModel extends window.Backbone
             'blocked and deleted from message request'
           );
 
-          if (isGroupV1(this.attributes)) {
-            await this.leaveGroup();
-          } else if (isGroupV2(this.attributes)) {
+          if (isGroupV2(this.attributes)) {
             await this.leaveGroupV2();
           }
         }
       }
     } finally {
-      window.Signal.Data.updateConversation(this.attributes);
+      if (shouldSave) {
+        window.Signal.Data.updateConversation(this.attributes);
+      }
     }
   }
 
@@ -2698,10 +2811,13 @@ export class ConversationModel extends window.Backbone
     }
   }
 
-  async syncMessageRequestResponse(response: number): Promise<void> {
+  async syncMessageRequestResponse(
+    response: number,
+    { shouldSave = true } = {}
+  ): Promise<void> {
     // In GroupsV2, this may modify the server. We only want to continue if those
     //   server updates were successful.
-    await this.applyMessageRequestResponse(response);
+    await this.applyMessageRequestResponse(response, { shouldSave });
 
     const groupId = this.getGroupIdBuffer();
 
@@ -3024,7 +3140,7 @@ export class ConversationModel extends window.Backbone
       return text;
     }
 
-    return window.i18n('message--getNotificationText--text-with-emoji', {
+    return window.i18n('icu:message--getNotificationText--text-with-emoji', {
       text,
       emoji,
     });
@@ -3162,7 +3278,7 @@ export class ConversationModel extends window.Backbone
         type: 'keychange',
         sent_at: timestamp,
         timestamp,
-        received_at: window.Signal.Util.incrementMessageCounter(),
+        received_at: incrementMessageCounter(),
         received_at_ms: timestamp,
         key_changed: keyChangedIdString,
         readStatus: ReadStatus.Read,
@@ -3215,6 +3331,10 @@ export class ConversationModel extends window.Backbone
         this.set('senderKeyInfo', updatedSenderKeyInfo);
         window.Signal.Data.updateConversation(this.attributes);
       }
+
+      if (isDirectConversation(this.attributes)) {
+        this.captureChange(`addKeyChange(${reason})`);
+      }
     });
   }
 
@@ -3232,7 +3352,7 @@ export class ConversationModel extends window.Backbone
       type: 'conversation-merge',
       sent_at: timestamp,
       timestamp,
-      received_at: window.Signal.Util.incrementMessageCounter(),
+      received_at: incrementMessageCounter(),
       received_at_ms: timestamp,
       conversationMerge: {
         renderInfo,
@@ -3284,7 +3404,7 @@ export class ConversationModel extends window.Backbone
       local: Boolean(options.local),
       readStatus: shouldBeUnseen ? ReadStatus.Unread : ReadStatus.Read,
       received_at_ms: timestamp,
-      received_at: window.Signal.Util.incrementMessageCounter(),
+      received_at: incrementMessageCounter(),
       seenStatus: shouldBeUnseen ? SeenStatus.Unseen : SeenStatus.Unseen,
       sent_at: lastMessage,
       timestamp,
@@ -3376,8 +3496,7 @@ export class ConversationModel extends window.Backbone
           type: 'call-history',
           sent_at: timestamp,
           timestamp,
-          received_at:
-            receivedAtCounter || window.Signal.Util.incrementMessageCounter(),
+          received_at: receivedAtCounter || incrementMessageCounter(),
           received_at_ms: timestamp,
           readStatus: unread ? ReadStatus.Unread : ReadStatus.Read,
           seenStatus: unread ? SeenStatus.Unseen : SeenStatus.NotApplicable,
@@ -3475,7 +3594,7 @@ export class ConversationModel extends window.Backbone
       conversationId: this.id,
       type: 'profile-change',
       sent_at: now,
-      received_at: window.Signal.Util.incrementMessageCounter(),
+      received_at: incrementMessageCounter(),
       received_at_ms: now,
       readStatus: ReadStatus.Read,
       seenStatus: SeenStatus.NotApplicable,
@@ -3518,7 +3637,7 @@ export class ConversationModel extends window.Backbone
       conversationId: this.id,
       type,
       sent_at: now,
-      received_at: window.Signal.Util.incrementMessageCounter(),
+      received_at: incrementMessageCounter(),
       received_at_ms: now,
       readStatus: ReadStatus.Read,
       seenStatus: SeenStatus.NotApplicable,
@@ -3622,6 +3741,44 @@ export class ConversationModel extends window.Backbone
     if (message) {
       await window.Signal.Data.removeMessage(message.id);
     }
+    return true;
+  }
+
+  async maybeSetContactRemoved(): Promise<void> {
+    if (!isDirectConversation(this.attributes)) {
+      return;
+    }
+
+    if (this.get('pendingRemovedContactNotification')) {
+      return;
+    }
+
+    log.info(
+      `maybeSetContactRemoved(${this.idForLogging()}): added notification`
+    );
+    const notificationId = await this.addNotification(
+      'contact-removed-notification'
+    );
+    this.set('pendingRemovedContactNotification', notificationId);
+    await window.Signal.Data.updateConversation(this.attributes);
+  }
+
+  async maybeClearContactRemoved(): Promise<boolean> {
+    const notificationId = this.get('pendingRemovedContactNotification');
+    if (!notificationId) {
+      return false;
+    }
+
+    this.set('pendingRemovedContactNotification', undefined);
+    log.info(
+      `maybeClearContactRemoved(${this.idForLogging()}): removed notification`
+    );
+
+    const message = window.MessageController.getById(notificationId);
+    if (message) {
+      await window.Signal.Data.removeMessage(message.id);
+    }
+
     return true;
   }
 
@@ -3769,7 +3926,7 @@ export class ConversationModel extends window.Backbone
   }
 
   private getDraftBodyRanges = memoizeByThis(
-    (): DraftBodyRangesType | undefined => {
+    (): DraftBodyRanges | undefined => {
       return this.get('draftBodyRanges');
     }
   );
@@ -3782,11 +3939,20 @@ export class ConversationModel extends window.Backbone
     if (!lastMessageText) {
       return undefined;
     }
+
+    const rawBodyRanges = this.get('lastMessageBodyRanges') || [];
+    const bodyRanges = hydrateRanges(rawBodyRanges, findAndFormatContact);
+
+    const text = stripNewlinesForLeftPane(lastMessageText);
+    const prefix = this.get('lastMessagePrefix');
+
     return {
-      status: dropNull(this.get('lastMessageStatus')),
-      text: lastMessageText,
       author: dropNull(this.get('lastMessageAuthor')),
+      bodyRanges,
       deletedForEveryone: false,
+      prefix,
+      status: dropNull(this.get('lastMessageStatus')),
+      text,
     };
   });
 
@@ -3921,8 +4087,8 @@ export class ConversationModel extends window.Backbone
   ): Promise<
     Array<{
       contentType: MIMEType;
-      fileName: string | null;
-      thumbnail: ThumbnailType | null;
+      fileName?: string | null;
+      thumbnail?: ThumbnailType | null;
     }>
   > {
     return getQuoteAttachment(attachments, preview, sticker);
@@ -4018,26 +4184,105 @@ export class ConversationModel extends window.Backbone
     }
   }
 
+  batchReduxChanges(callback: () => void): void {
+    strictAssert(!this.isInReduxBatch, 'Nested redux batching is not allowed');
+    this.isInReduxBatch = true;
+    batchDispatch(() => {
+      try {
+        callback();
+      } finally {
+        this.isInReduxBatch = false;
+      }
+    });
+  }
+
+  beforeMessageSend({
+    message,
+    dontAddMessage,
+    dontClearDraft,
+    now,
+    extraReduxActions,
+  }: {
+    message: MessageModel;
+    dontAddMessage: boolean;
+    dontClearDraft: boolean;
+    now: number;
+    extraReduxActions?: () => void;
+  }): void {
+    this.batchReduxChanges(() => {
+      const { clearUnreadMetrics } = window.reduxActions.conversations;
+      clearUnreadMetrics(this.id);
+
+      const mandatoryProfileSharingEnabled =
+        window.Signal.RemoteConfig.isEnabled('desktop.mandatoryProfileSharing');
+      const enabledProfileSharing = Boolean(
+        mandatoryProfileSharingEnabled && !this.get('profileSharing')
+      );
+      const unarchivedConversation = Boolean(this.get('isArchived'));
+
+      log.info(
+        `beforeMessageSend(${this.idForLogging()}): ` +
+          `clearDraft(${!dontClearDraft}) addMessage(${!dontAddMessage})`
+      );
+
+      if (!dontAddMessage) {
+        this.doAddSingleMessage(message, { isJustSent: true });
+      }
+      const draftProperties = dontClearDraft
+        ? {}
+        : {
+            draft: '',
+            draftEditMessage: undefined,
+            draftBodyRanges: [],
+            draftTimestamp: null,
+            quotedMessageId: undefined,
+            lastMessageAuthor: message.getAuthorText(),
+            lastMessage: message.getNotificationText(),
+            lastMessageStatus: 'sending' as const,
+          };
+
+      this.set({
+        ...draftProperties,
+        ...(enabledProfileSharing ? { profileSharing: true } : {}),
+        ...(dontAddMessage
+          ? {}
+          : this.incrementSentMessageCount({ dry: true })),
+        active_at: now,
+        timestamp: now,
+        ...(unarchivedConversation ? { isArchived: false } : {}),
+      });
+
+      if (enabledProfileSharing) {
+        this.captureChange('beforeMessageSend/mandatoryProfileSharing');
+      }
+      if (unarchivedConversation) {
+        this.captureChange('beforeMessageSend/unarchive');
+      }
+
+      extraReduxActions?.();
+    });
+  }
+
   async enqueueMessageForSend(
     {
       attachments,
       body,
       contact,
-      mentions,
+      bodyRanges,
       preview,
       quote,
       sticker,
     }: {
       attachments: Array<AttachmentType>;
       body: string | undefined;
-      contact?: Array<ContactWithHydratedAvatar>;
-      mentions?: BodyRangesType;
-      preview?: Array<LinkPreviewType>;
+      contact?: Array<EmbeddedContactWithHydratedAvatar>;
+      bodyRanges?: DraftBodyRanges;
+      preview?: Array<LinkPreviewWithHydratedData>;
       quote?: QuotedMessageType;
       sticker?: StickerWithHydratedData;
     },
     {
-      dontClearDraft,
+      dontClearDraft = false,
       sendHQImages,
       storyId,
       timestamp,
@@ -4069,10 +4314,6 @@ export class ConversationModel extends window.Backbone
 
     this.clearTypingTimers();
 
-    const mandatoryProfileSharingEnabled = window.Signal.RemoteConfig.isEnabled(
-      'desktop.mandatoryProfileSharing'
-    );
-
     let expirationStartTimestamp: number | undefined;
     let expireTimer: DurationInSeconds | undefined;
 
@@ -4080,6 +4321,7 @@ export class ConversationModel extends window.Backbone
     if (!storyId || isDirectConversation(this.attributes)) {
       await this.maybeApplyUniversalTimer();
       expireTimer = this.get('expireTimer');
+      await this.restoreContact();
     }
 
     const recipientMaybeConversations = map(
@@ -4121,14 +4363,14 @@ export class ConversationModel extends window.Backbone
       preview,
       attachments: attachmentsToSend,
       sent_at: now,
-      received_at: window.Signal.Util.incrementMessageCounter(),
+      received_at: incrementMessageCounter(),
       received_at_ms: now,
       expirationStartTimestamp,
       expireTimer,
       readStatus: ReadStatus.Read,
       seenStatus: SeenStatus.NotApplicable,
       sticker,
-      bodyRanges: mentions,
+      bodyRanges,
       sendHQImages,
       sendStateByConversationId: zipObject(
         recipientConversationIds,
@@ -4143,7 +4385,24 @@ export class ConversationModel extends window.Backbone
     const model = new window.Whisper.Message(attributes);
     const message = window.MessageController.register(model.id, model);
     message.cachedOutgoingContactData = contact;
-    message.cachedOutgoingPreviewData = preview;
+
+    // Attach path to preview images so that sendNormalMessage can use them to
+    // update digests on attachments.
+    if (preview) {
+      message.cachedOutgoingPreviewData = preview.map((item, index) => {
+        if (!item.image) {
+          return item;
+        }
+
+        return {
+          ...item,
+          image: {
+            ...item.image,
+            path: attributes.preview?.at(index)?.image?.path,
+          },
+        };
+      });
+    }
     message.cachedOutgoingQuoteData = quote;
     message.cachedOutgoingStickerData = sticker;
 
@@ -4190,53 +4449,12 @@ export class ConversationModel extends window.Backbone
       await addStickerPackReference(model.id, sticker.packId);
     }
 
-    this.isInReduxBatch = true;
-    batchDispatch(() => {
-      try {
-        const { clearUnreadMetrics } = window.reduxActions.conversations;
-        clearUnreadMetrics(this.id);
-
-        const enabledProfileSharing = Boolean(
-          mandatoryProfileSharingEnabled && !this.get('profileSharing')
-        );
-        const unarchivedConversation = Boolean(this.get('isArchived'));
-
-        this.doAddSingleMessage(model, { isJustSent: true });
-
-        log.info(
-          `enqueueMessageForSend(${this.idForLogging()}): clearDraft(${!dontClearDraft})`
-        );
-        const draftProperties = dontClearDraft
-          ? {}
-          : {
-              draft: '',
-              draftBodyRanges: [],
-              draftTimestamp: null,
-              lastMessageAuthor: model.getAuthorText(),
-              lastMessage: model.getNotificationText(),
-              lastMessageStatus: 'sending' as const,
-            };
-
-        this.set({
-          ...draftProperties,
-          ...(enabledProfileSharing ? { profileSharing: true } : {}),
-          ...this.incrementSentMessageCount({ dry: true }),
-          active_at: now,
-          timestamp: now,
-          ...(unarchivedConversation ? { isArchived: false } : {}),
-        });
-
-        if (enabledProfileSharing) {
-          this.captureChange('enqueueMessageForSend/mandatoryProfileSharing');
-        }
-        if (unarchivedConversation) {
-          this.captureChange('enqueueMessageForSend/unarchive');
-        }
-
-        extraReduxActions?.();
-      } finally {
-        this.isInReduxBatch = false;
-      }
+    this.beforeMessageSend({
+      message: model,
+      dontClearDraft,
+      dontAddMessage: false,
+      now,
+      extraReduxActions,
     });
 
     const renderDuration = Date.now() - renderStart;
@@ -4386,9 +4604,13 @@ export class ConversationModel extends window.Backbone
     }
     timestamp = timestamp || currentTimestamp;
 
+    const notificationData = previewMessage?.getNotificationData();
+
     this.set({
       lastMessage:
-        (previewMessage ? previewMessage.getNotificationText() : '') || '',
+        notificationData?.text || previewMessage?.getNotificationText() || '',
+      lastMessageBodyRanges: notificationData?.bodyRanges,
+      lastMessagePrefix: notificationData?.emoji,
       lastMessageAuthor: previewMessage?.getAuthorText(),
       lastMessageStatus:
         (previewMessage
@@ -4732,7 +4954,7 @@ export class ConversationModel extends window.Backbone
       flags: Proto.DataMessage.Flags.EXPIRATION_TIMER_UPDATE,
       readStatus: shouldBeRead ? ReadStatus.Read : ReadStatus.Unread,
       received_at_ms: receivedAtMS,
-      received_at: receivedAt ?? window.Signal.Util.incrementMessageCounter(),
+      received_at: receivedAt ?? incrementMessageCounter(),
       seenStatus: shouldBeRead ? SeenStatus.Seen : SeenStatus.Unseen,
       sent_at: sentAt,
       type: 'timer-notification',
@@ -4759,59 +4981,6 @@ export class ConversationModel extends window.Backbone
 
   isSearchable(): boolean {
     return !this.get('left');
-  }
-
-  // Deprecated: only applies to GroupV1
-  async leaveGroup(): Promise<void> {
-    const { messaging } = window.textsecure;
-    if (!messaging) {
-      throw new Error('leaveGroup: Cannot leave v1 group when offline!');
-    }
-
-    if (!isGroupV1(this.attributes)) {
-      throw new Error(
-        `leaveGroup: Group ${this.idForLogging()} is not GroupV1!`
-      );
-    }
-
-    const now = Date.now();
-    const groupId = this.get('groupId');
-
-    if (!groupId) {
-      throw new Error(`leaveGroup/${this.idForLogging()}: No groupId!`);
-    }
-
-    const groupIdentifiers = this.getRecipients();
-    this.set({ left: true });
-    window.Signal.Data.updateConversation(this.attributes);
-
-    const model = new window.Whisper.Message({
-      conversationId: this.id,
-      group_update: { left: 'You' },
-      readStatus: ReadStatus.Read,
-      received_at_ms: now,
-      received_at: window.Signal.Util.incrementMessageCounter(),
-      seenStatus: SeenStatus.NotApplicable,
-      sent_at: now,
-      type: 'group',
-      // TODO: DESKTOP-722
-    } as unknown as MessageAttributesType);
-
-    const id = await window.Signal.Data.saveMessage(model.attributes, {
-      ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
-    });
-    model.set({ id });
-
-    const message = window.MessageController.register(model.id, model);
-    void this.addSingleMessage(message);
-
-    const options = await getSendOptions(this.attributes);
-    void message.send(
-      handleMessageSend(
-        messaging.leaveGroup(groupId, groupIdentifiers, options),
-        { messageIds: [], sendType: 'legacyGroupChange' }
-      )
-    );
   }
 
   async markRead(
@@ -5069,10 +5238,7 @@ export class ConversationModel extends window.Backbone
       return lastProfile.profileKeyVersion;
     }
 
-    const profileKeyVersion = Util.zkgroup.deriveProfileKeyVersion(
-      profileKey,
-      uuid
-    );
+    const profileKeyVersion = deriveProfileKeyVersion(profileKey, uuid);
     if (!profileKeyVersion) {
       log.warn(
         'deriveProfileKeyVersion: Failed to derive profile key version, ' +
@@ -5425,7 +5591,7 @@ export class ConversationModel extends window.Backbone
 
       const ourUuid = window.textsecure.storage.user.getUuid()?.toString();
       const mentionsMe = (message.get('bodyRanges') || []).some(
-        range => range.mentionUuid && range.mentionUuid === ourUuid
+        range => BodyRange.isMention(range) && range.mentionUuid === ourUuid
       );
       if (!mentionsMe) {
         return;
@@ -5444,10 +5610,10 @@ export class ConversationModel extends window.Backbone
       : getContact(message.attributes);
     const senderName = sender
       ? sender.getTitle()
-      : window.i18n('unknownContact');
+      : window.i18n('icu:unknownContact');
     const senderTitle = isMessageInDirectConversation
       ? senderName
-      : window.i18n('notificationSenderInGroup', {
+      : window.i18n('icu:notificationSenderInGroup', {
           sender: senderName,
           group: this.getTitle(),
         });

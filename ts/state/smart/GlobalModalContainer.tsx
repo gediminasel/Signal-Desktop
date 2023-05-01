@@ -21,6 +21,7 @@ import { SmartStoriesSettingsModal } from './StoriesSettingsModal';
 import { getConversationsStoppingSend } from '../selectors/conversations';
 import { getIntl, getTheme } from '../selectors/user';
 import { useGlobalModalActions } from '../ducks/globalModals';
+import { SmartDeleteMessagesModal } from './DeleteMessagesModal';
 
 function renderEditHistoryMessagesModal(): JSX.Element {
   return <SmartEditHistoryMessagesModal />;
@@ -32,6 +33,10 @@ function renderProfileEditor(): JSX.Element {
 
 function renderContactModal(): JSX.Element {
   return <SmartContactModal />;
+}
+
+function renderDeleteMessagesModal(): JSX.Element {
+  return <SmartDeleteMessagesModal />;
 }
 
 function renderForwardMessagesModal(): JSX.Element {
@@ -62,6 +67,8 @@ export function SmartGlobalModalContainer(): JSX.Element {
     contactModalState,
     editHistoryMessages,
     errorModalProps,
+    deleteMessagesProps,
+    formattingWarningData,
     forwardMessagesProps,
     isProfileEditorVisible,
     isShortcutGuideModalVisible,
@@ -79,12 +86,13 @@ export function SmartGlobalModalContainer(): JSX.Element {
   );
 
   const {
-    closeErrorModal,
-    hideWhatsNewModal,
-    hideUserNotFoundModal,
-    toggleSignalConnectionsModal,
     cancelAuthorizeArtCreator,
+    closeErrorModal,
     confirmAuthorizeArtCreator,
+    hideUserNotFoundModal,
+    hideWhatsNewModal,
+    showFormattingWarningModal,
+    toggleSignalConnectionsModal,
   } = useGlobalModalActions();
 
   const renderAddUserToAnotherGroup = useCallback(() => {
@@ -128,6 +136,8 @@ export function SmartGlobalModalContainer(): JSX.Element {
       contactModalState={contactModalState}
       editHistoryMessages={editHistoryMessages}
       errorModalProps={errorModalProps}
+      deleteMessagesProps={deleteMessagesProps}
+      formattingWarningData={formattingWarningData}
       forwardMessagesProps={forwardMessagesProps}
       hasSafetyNumberChangeModal={hasSafetyNumberChangeModal}
       hideUserNotFoundModal={hideUserNotFoundModal}
@@ -142,6 +152,7 @@ export function SmartGlobalModalContainer(): JSX.Element {
       renderContactModal={renderContactModal}
       renderEditHistoryMessagesModal={renderEditHistoryMessagesModal}
       renderErrorModal={renderErrorModal}
+      renderDeleteMessagesModal={renderDeleteMessagesModal}
       renderForwardMessagesModal={renderForwardMessagesModal}
       renderProfileEditor={renderProfileEditor}
       renderSafetyNumber={renderSafetyNumber}
@@ -151,6 +162,7 @@ export function SmartGlobalModalContainer(): JSX.Element {
       renderStoriesSettings={renderStoriesSettings}
       safetyNumberChangedBlockingData={safetyNumberChangedBlockingData}
       safetyNumberModalContactId={safetyNumberModalContactId}
+      showFormattingWarningModal={showFormattingWarningModal}
       stickerPackPreviewId={stickerPackPreviewId}
       theme={theme}
       toggleSignalConnectionsModal={toggleSignalConnectionsModal}

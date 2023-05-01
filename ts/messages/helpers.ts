@@ -112,7 +112,7 @@ export function getPaymentEventDescription(
 
 export function isQuoteAMatch(
   message: MessageAttributesType | null | undefined,
-  quote: QuotedMessageType
+  quote: Pick<QuotedMessageType, 'id' | 'authorUuid' | 'author'>
 ): message is MessageAttributesType {
   if (!message) {
     return false;
@@ -125,9 +125,12 @@ export function isQuoteAMatch(
     reason: 'helpers.isQuoteAMatch',
   });
 
-  return (
-    message.sent_at === id && getContactId(message) === authorConversation?.id
-  );
+  const isSameTimestamp =
+    message.sent_at === id ||
+    message.editHistory?.some(({ timestamp }) => timestamp === id) ||
+    false;
+
+  return isSameTimestamp && getContactId(message) === authorConversation?.id;
 }
 
 export function findMatchingQuote(
@@ -152,31 +155,6 @@ export function findMatchingQuote(
         isQuoteAMatch(item.attributes, quote) &&
         quote.text !== undefined &&
         item.attributes.body?.localeCompare(quote.text) === 0
-    )
-  );
-}
-
-export function findMatchingQuote2(
-  messages: Iterable<MessageAttributesType>,
-  quote: QuotedMessageType,
-  conversationId: string
-): MessageAttributesType | undefined {
-  if (!messages) {
-    return undefined;
-  }
-
-  return (
-    find(
-      messages,
-      item =>
-        isQuoteAMatch(item, quote) && item.conversationId === conversationId
-    ) ||
-    find(
-      messages,
-      item =>
-        isQuoteAMatch(item, quote) &&
-        quote.text !== undefined &&
-        item.body?.localeCompare(quote.text) === 0
     )
   );
 }

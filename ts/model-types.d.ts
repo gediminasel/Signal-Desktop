@@ -6,7 +6,7 @@
 import * as Backbone from 'backbone';
 
 import type { GroupV2ChangeType } from './groups';
-import type { DraftBodyRangesType, BodyRangesType } from './types/Util';
+import type { DraftBodyRanges, RawBodyRange } from './types/BodyRange';
 import type { CallHistoryDetailsFromDiskType } from './types/Calling';
 import type { CustomColorType, ConversationColorType } from './types/Colors';
 import type { DeviceType } from './textsecure/Types.d';
@@ -76,13 +76,13 @@ export type QuotedAttachment = {
 export type QuotedMessageType = {
   // TODO DESKTOP-3826
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  attachments: Array<any>;
+  attachments: ReadonlyArray<any>;
   payment?: AnyPaymentEvent;
   // `author` is an old attribute that holds the author's E164. We shouldn't use it for
   //   new messages, but old messages might have this attribute.
   author?: string;
   authorUuid?: string;
-  bodyRanges?: BodyRangesType;
+  bodyRanges?: ReadonlyArray<RawBodyRange>;
   id: number;
   isGiftBadge?: boolean;
   isViewOnce: boolean;
@@ -124,14 +124,15 @@ export type MessageReactionType = {
 export type EditHistoryType = {
   attachments?: Array<AttachmentType>;
   body?: string;
-  bodyRanges?: BodyRangesType;
+  bodyRanges?: ReadonlyArray<RawBodyRange>;
   preview?: Array<LinkPreviewType>;
+  quote?: QuotedMessageType;
   timestamp: number;
 };
 
 export type MessageAttributesType = {
   bodyAttachment?: AttachmentType;
-  bodyRanges?: BodyRangesType;
+  bodyRanges?: ReadonlyArray<RawBodyRange>;
   callHistoryDetails?: CallHistoryDetailsFromDiskType;
   canReplyToStory?: boolean;
   changedId?: string;
@@ -191,6 +192,7 @@ export type MessageAttributesType = {
     | 'story'
     | 'timer-notification'
     | 'universal-timer-notification'
+    | 'contact-removed-notification'
     | 'verified-change';
   body?: string;
   attachments?: Array<AttachmentType>;
@@ -279,6 +281,16 @@ export type ValidateConversationType = Pick<
   'e164' | 'uuid' | 'type' | 'groupId'
 >;
 
+export type DraftEditMessageType = {
+  editHistoryLength: number;
+  attachmentThumbnail?: string;
+  bodyRanges?: DraftBodyRanges;
+  body: string;
+  preview?: LinkPreviewType;
+  targetMessageId: string;
+  quote?: QuotedMessageType;
+};
+
 export type ConversationAttributesType = {
   accessKey?: string | null;
   addedBy?: string;
@@ -299,15 +311,24 @@ export type ConversationAttributesType = {
   firstUnregisteredAt?: number;
   draftChanged?: boolean;
   draftAttachments?: ReadonlyArray<AttachmentDraftType>;
-  draftBodyRanges?: DraftBodyRangesType;
+  draftBodyRanges?: DraftBodyRanges;
   draftTimestamp?: number | null;
   hideStory?: boolean;
   inbox_position?: number;
+  // When contact is removed - it is initially placed into `justNotification`
+  // removal stage. In this stage user can still send messages (which will
+  // set `removalStage` to `undefined`), but if a new incoming message arrives -
+  // the stage will progress to `messageRequest` and composition area will be
+  // replaced with a message request.
+  removalStage?: 'justNotification' | 'messageRequest';
   isPinned?: boolean;
   lastMessageDeletedForEveryone?: boolean;
+  lastMessage?: string | null;
+  lastMessageBodyRanges?: ReadonlyArray<RawBodyRange>;
+  lastMessagePrefix?: string;
+  lastMessageAuthor?: string | null;
   lastMessageStatus?: LastMessageStatus | null;
   lastMessagesSeen?: Record<string, { receivedAt: number; id: string }>;
-  lastMessageAuthor?: string | null;
   markedUnread?: boolean;
   messageCount?: number;
   messageCountBeforeMessageRequests?: number | null;
@@ -334,9 +355,9 @@ export type ConversationAttributesType = {
   // Shared fields
   active_at?: number | null;
   draft?: string | null;
+  draftEditMessage?: DraftEditMessageType;
   hasPostedStory?: boolean;
   isArchived?: boolean;
-  lastMessage?: string | null;
   name?: string;
   systemGivenName?: string;
   systemFamilyName?: string;
@@ -364,6 +385,7 @@ export type ConversationAttributesType = {
   verified?: number;
   profileLastFetchedAt?: number;
   pendingUniversalTimer?: string;
+  pendingRemovedContactNotification?: string;
   username?: string;
   shareMyPhoneNumber?: boolean;
   previousIdentityKey?: string;

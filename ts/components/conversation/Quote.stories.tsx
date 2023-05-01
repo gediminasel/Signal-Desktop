@@ -44,6 +44,9 @@ export default {
     i18n: {
       defaultValue: i18n,
     },
+    platform: {
+      defautlValue: 'darwin',
+    },
     isFromMe: {
       control: { type: 'checkbox' },
       defaultValue: false,
@@ -80,6 +83,7 @@ const defaultMessageProps: TimelineMessagesProps = {
     id: 'some-id',
     title: 'Person X',
   }),
+  canEditMessage: true,
   canReact: true,
   canReply: true,
   canReplyPrivately: true,
@@ -95,8 +99,6 @@ const defaultMessageProps: TimelineMessagesProps = {
   conversationId: 'conversationId',
   conversationTitle: 'Conversation Title',
   conversationType: 'direct', // override
-  deleteMessages: action('default--deleteMessages'),
-  deleteMessageForEveryone: action('default--deleteMessageForEveryone'),
   direction: 'incoming',
   showLightboxForViewOnceMedia: action('default--showLightboxForViewOnceMedia'),
   doubleCheckMissingQuoteReference: action(
@@ -104,6 +106,7 @@ const defaultMessageProps: TimelineMessagesProps = {
   ),
   getPreferredBadge: () => undefined,
   i18n,
+  platform: 'darwin',
   id: 'messageId',
   // renderingContext: 'storybook',
   interactionMode: 'keyboard',
@@ -111,6 +114,7 @@ const defaultMessageProps: TimelineMessagesProps = {
   isMessageRequestAccepted: true,
   isSelected: false,
   isSelectMode: false,
+  isSpoilerExpanded: false,
   toggleSelectMessage: action('toggleSelectMessage'),
   kickOffAttachmentDownload: action('default--kickOffAttachmentDownload'),
   markAttachmentAsCorrupted: action('default--markAttachmentAsCorrupted'),
@@ -123,6 +127,7 @@ const defaultMessageProps: TimelineMessagesProps = {
   renderEmojiPicker: () => <div />,
   renderReactionPicker: () => <div />,
   renderAudioAttachment: () => <div>*AudioAttachment*</div>,
+  setMessageToEdit: action('setMessageToEdit'),
   setQuoteByMessageId: action('default--setQuoteByMessageId'),
   retryMessageSend: action('default--retryMessageSend'),
   retryDeleteForEveryone: action('default--retryDeleteForEveryone'),
@@ -132,6 +137,7 @@ const defaultMessageProps: TimelineMessagesProps = {
   shouldCollapseAbove: false,
   shouldCollapseBelow: false,
   shouldHideMetadata: false,
+  showSpoiler: action('showSpoiler'),
   pushPanelForConversation: action('default--pushPanelForConversation'),
   showContactModal: action('default--showContactModal'),
   showExpiredIncomingTapToViewToast: action(
@@ -140,6 +146,7 @@ const defaultMessageProps: TimelineMessagesProps = {
   showExpiredOutgoingTapToViewToast: action(
     'showExpiredOutgoingTapToViewToast'
   ),
+  toggleDeleteMessagesModal: action('default--toggleDeleteMessagesModal'),
   toggleForwardMessagesModal: action('default--toggleForwardMessagesModal'),
   showLightbox: action('default--showLightbox'),
   startConversation: action('default--startConversation'),

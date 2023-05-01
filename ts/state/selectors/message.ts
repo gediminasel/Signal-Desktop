@@ -7,6 +7,8 @@ import filesize from 'filesize';
 import getDirection from 'direction';
 import emojiRegex from 'emoji-regex';
 import LinkifyIt from 'linkify-it';
+import type { ReadonlyDeep } from 'type-fest';
+
 import type { StateType } from '../reducer';
 import type {
   LastMessageStatus,
@@ -44,7 +46,12 @@ import type { UUIDStringType } from '../../types/UUID';
 
 import type { EmbeddedContactType } from '../../types/EmbeddedContact';
 import { embeddedContactSelector } from '../../types/EmbeddedContact';
-import type { AssertProps, HydratedBodyRangesType } from '../../types/Util';
+import type {
+  HydratedBodyRangeMention,
+  HydratedBodyRangesType,
+} from '../../types/BodyRange';
+import { BodyRange, hydrateRanges } from '../../types/BodyRange';
+import type { AssertProps } from '../../types/Util';
 import type { LinkPreviewType } from '../../types/message/LinkPreviews';
 import { getMentionsRegex } from '../../types/Message';
 import { CallMode } from '../../types/Calling';
@@ -61,6 +68,7 @@ import { isNotNil } from '../../util/isNotNil';
 import { isMoreRecentThan } from '../../util/timestamp';
 import * as iterables from '../../util/iterables';
 import { strictAssert } from '../../util/assert';
+import { canEditMessages } from '../../util/canEditMessages';
 
 import { getAccountSelector } from './accounts';
 import {
@@ -69,6 +77,7 @@ import {
   getSelectedMessageIds,
   getTargetedMessage,
   isMissingRequiredProfileSharing,
+  getMessages,
 } from './conversations';
 import {
   getIntl,
@@ -121,6 +130,7 @@ import { getTitleNoDefault, getNumber } from '../../util/getTitle';
 
 export { isIncoming, isOutgoing, isStory };
 
+const MAX_EDIT_COUNT = 10;
 const THREE_HOURS = 3 * HOUR;
 const linkify = LinkifyIt();
 
@@ -311,8 +321,21 @@ export const processBodyRanges = (
     return undefined;
   }
 
+  return hydrateRanges(bodyRanges, options.conversationSelector)?.sort(
+    (a, b) => b.start - a.start
+  );
+};
+
+export const extractHydratedMentions = (
+  { bodyRanges }: Pick<MessageWithUIFieldsType, 'bodyRanges'>,
+  options: { conversationSelector: GetConversationByIdType }
+): ReadonlyArray<HydratedBodyRangeMention> | undefined => {
+  if (!bodyRanges) {
+    return undefined;
+  }
+
   return bodyRanges
-    .filter(range => range.mentionUuid)
+    .filter(BodyRange.isMention)
     .map(range => {
       const { conversationSelector } = options;
       const conversation = conversationSelector(range.mentionUuid);
@@ -483,9 +506,8 @@ const getPropsForStoryReplyContext = (
 };
 
 export const getPropsForQuote = (
-  message: Pick<
-    MessageWithUIFieldsType,
-    'conversationId' | 'quote' | 'payment'
+  message: ReadonlyDeep<
+    Pick<MessageWithUIFieldsType, 'conversationId' | 'quote'>
   >,
   {
     conversationSelector,
@@ -700,6 +722,7 @@ export const getPropsForMessage = (
     storyReplyContext,
     textAttachment,
     payment,
+    canEditMessage: canEditMessage(message),
     canDeleteForEveryone: canDeleteForEveryone(message),
     canDownload: canDownload(message, conversationSelector),
     canReact: canReact(message, ourConversationId, conversationSelector),
@@ -731,11 +754,12 @@ export const getPropsForMessage = (
     isBlocked: conversation.isBlocked || false,
     isEditedMessage: Boolean(message.editHistory),
     isMessageRequestAccepted: conversation?.acceptedMessageRequest ?? true,
-    isTargeted,
-    isTargetedCounter: isTargeted ? targetedMessageCounter : undefined,
     isSelected,
     isSelectMode,
+    isSpoilerExpanded: message.isSpoilerExpanded,
     isSticker: Boolean(sticker),
+    isTargeted,
+    isTargetedCounter: isTargeted ? targetedMessageCounter : undefined,
     isTapToView: isMessageTapToView,
     isTapToViewError:
       isMessageTapToView && isIncoming(message) && message.isTapToViewInvalid,
@@ -875,6 +899,13 @@ export function getPropsForBubble(
   if (isUniversalTimerNotification(message)) {
     return {
       type: 'universalTimerNotification',
+      data: null,
+      timestamp,
+    };
+  }
+  if (isContactRemovedNotification(message)) {
+    return {
+      type: 'contactRemovedNotification',
       data: null,
       timestamp,
     };
@@ -1382,6 +1413,16 @@ export function isUniversalTimerNotification(
   return message.type === 'universal-timer-notification';
 }
 
+// Contact Removed Notification
+
+// Note: smart, so props not generated here
+
+export function isContactRemovedNotification(
+  message: MessageWithUIFieldsType
+): boolean {
+  return message.type === 'contact-removed-notification';
+}
+
 // Change Number Notification
 
 export function isChangeNumberNotification(
@@ -1781,6 +1822,16 @@ export function canDeleteForEveryone(
   );
 }
 
+export const canDeleteMessagesForEveryone = createSelector(
+  [getMessages, (_state, messageIds: ReadonlyArray<string>) => messageIds],
+  (messagesLookup, messageIds) => {
+    return messageIds.every(messageId => {
+      const message = getOwn(messagesLookup, messageId);
+      return message != null && canDeleteForEveryone(message);
+    });
+  }
+);
+
 export function canRetryDeleteForEveryone(
   message: Pick<
     MessageWithUIFieldsType,
@@ -1792,6 +1843,18 @@ export function canRetryDeleteForEveryone(
       message.deletedForEveryoneFailed &&
       // Is it too old to delete?
       isMoreRecentThan(message.sent_at, DAY)
+  );
+}
+
+export function canEditMessage(message: MessageWithUIFieldsType): boolean {
+  return (
+    canEditMessages() &&
+    !message.deletedForEveryone &&
+    isOutgoing(message) &&
+    isMoreRecentThan(message.sent_at, THREE_HOURS) &&
+    (message.editHistory?.length ?? 0) <= MAX_EDIT_COUNT &&
+    someSendStatus(message.sendStateByConversationId, isSent) &&
+    Boolean(message.body)
   );
 }
 
@@ -1931,7 +1994,7 @@ export const getMessageDetails = createSelector(
       if (error.name === OUTGOING_KEY_ERROR) {
         return {
           ...error,
-          message: i18n('newIdentity'),
+          message: i18n('icu:newIdentity'),
         };
       }
 

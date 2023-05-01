@@ -40,6 +40,7 @@ import type { AttachmentType } from '../types/Attachment';
 import { useConfirmDiscard } from '../hooks/useConfirmDiscard';
 import { getStoryBackground } from '../util/getStoryBackground';
 import { makeObjectUrl, revokeObjectUrl } from '../types/VisualAttachment';
+import { UserText } from './UserText';
 
 export type PropsType = {
   draftAttachment: AttachmentType;
@@ -247,7 +248,7 @@ export function SendStoryModal({
     () => ({
       allowsReplies: true,
       id: MY_STORY_ID,
-      name: i18n('Stories__mine'),
+      name: i18n('icu:Stories__mine'),
       isBlockList: ogMyStories?.isBlockList ?? true,
       members: ogMyStories?.members || [],
     }),
@@ -299,7 +300,7 @@ export function SendStoryModal({
             onClick={() => setPage(Page.SendStory)}
             variant={ButtonVariant.Secondary}
           >
-            {i18n('cancel')}
+            {i18n('icu:cancel')}
           </Button>
           <Button
             onClick={() => {
@@ -322,7 +323,7 @@ export function SendStoryModal({
             }}
             variant={ButtonVariant.Primary}
           >
-            {i18n('save')}
+            {i18n('icu:save')}
           </Button>
         </div>
       </>
@@ -331,7 +332,7 @@ export function SendStoryModal({
     modal = handleClose => (
       <ModalPage
         modalName="SendStoryModal__my-stories-privacy"
-        title={i18n('SendStoryModal__my-stories-privacy')}
+        title={i18n('icu:SendStoryModal__my-stories-privacy')}
         modalFooter={footer}
         onClose={handleClose}
         {...modalCommonProps}
@@ -489,7 +490,7 @@ export function SendStoryModal({
         <div className="SendStoryModal__selected-lists">{selectedNames}</div>
         {selectedNames.length > 0 && (
           <button
-            aria-label={i18n('ok')}
+            aria-label={i18n('icu:ok')}
             className="SendStoryModal__ok"
             disabled={!chosenGroupIds.size}
             onClick={async () => {
@@ -507,7 +508,7 @@ export function SendStoryModal({
     modal = handleClose => (
       <ModalPage
         modalName="SendStoryModal__choose-groups"
-        title={i18n('SendStoryModal__choose-groups')}
+        title={i18n('icu:SendStoryModal__choose-groups')}
         moduleClassName="SendStoryModal"
         modalFooter={footer}
         onClose={handleClose}
@@ -516,7 +517,7 @@ export function SendStoryModal({
         <SearchInput
           disabled={groupConversations.length === 0}
           i18n={i18n}
-          placeholder={i18n('contactSearchPlaceholder')}
+          placeholder={i18n('icu:contactSearchPlaceholder')}
           moduleClassName="StoriesSettingsModal__search"
           onChange={event => {
             setSearchTerm(event.target.value);
@@ -568,7 +569,7 @@ export function SendStoryModal({
 
                     <div className="SendStoryModal__distribution-list__info">
                       <div className="SendStoryModal__distribution-list__name">
-                        {group.title}
+                        <UserText text={group.title} />
                       </div>
 
                       <div className="SendStoryModal__distribution-list__description">
@@ -585,7 +586,7 @@ export function SendStoryModal({
           ))
         ) : (
           <div className="module-ForwardMessageModal__no-candidate-contacts">
-            {i18n('noGroupsFound')}
+            {i18n('icu:noGroupsFound')}
           </div>
         )}
       </ModalPage>
@@ -596,7 +597,7 @@ export function SendStoryModal({
         <div className="SendStoryModal__selected-lists">{selectedNames}</div>
         {selectedNames.length > 0 && (
           <button
-            aria-label={i18n('SendStoryModal__send')}
+            aria-label={i18n('icu:SendStoryModal__send')}
             className="SendStoryModal__send"
             disabled={!selectedListIds.size && !selectedGroupIds.size}
             onClick={() => {
@@ -672,19 +673,19 @@ export function SendStoryModal({
                 list.id === MY_STORY_ID
                   ? [
                       {
-                        label: i18n('StoriesSettings__context-menu'),
+                        label: i18n('icu:StoriesSettings__context-menu'),
                         icon: 'SendStoryModal__icon--delete',
                         onClick: () => setListIdToEdit(list.id),
                       },
                     ]
                   : [
                       {
-                        label: i18n('StoriesSettings__context-menu'),
+                        label: i18n('icu:StoriesSettings__context-menu'),
                         icon: 'SendStoryModal__icon--settings',
                         onClick: () => setListIdToEdit(list.id),
                       },
                       {
-                        label: i18n('SendStoryModal__delete-story'),
+                        label: i18n('icu:SendStoryModal__delete-story'),
                         icon: 'SendStoryModal__icon--delete',
                         onClick: () => setConfirmDeleteList(list),
                       },
@@ -731,13 +732,13 @@ export function SendStoryModal({
 
                   <div className="SendStoryModal__distribution-list__description">
                     {hasFirstStoryPostExperience && list.id === MY_STORY_ID ? (
-                      i18n('SendStoryModal__choose-who-can-view')
+                      i18n('icu:SendStoryModal__choose-who-can-view')
                     ) : (
                       <>
                         <span className="SendStoryModal__rtl-span">
                           {list.id === MY_STORY_ID
                             ? getI18nForMyStory(list, i18n)
-                            : i18n('SendStoryModal__custom-story')}
+                            : i18n('icu:SendStoryModal__custom-story')}
                         </span>
                         <span className="SendStoryModal__rtl-span">
                           &nbsp;&middot;&nbsp;
@@ -801,7 +802,7 @@ export function SendStoryModal({
               i18n={i18n}
               menuOptions={[
                 {
-                  label: i18n('SendStoryModal__delete-story'),
+                  label: i18n('icu:SendStoryModal__delete-story'),
                   icon: 'SendStoryModal__icon--delete',
                   onClick: () => setConfirmRemoveGroupId(group.id),
                 },
@@ -834,12 +835,12 @@ export function SendStoryModal({
 
                 <div className="SendStoryModal__distribution-list__info">
                   <div className="SendStoryModal__distribution-list__name">
-                    {group.title}
+                    <UserText text={group.title} />
                   </div>
 
                   <div className="SendStoryModal__distribution-list__description">
                     <span className="SendStoryModal__rtl-span">
-                      {i18n('SendStoryModal__group-story')}
+                      {i18n('icu:SendStoryModal__group-story')}
                     </span>
                     <span className="SendStoryModal__rtl-span">
                       &nbsp;&middot;&nbsp;
@@ -862,7 +863,7 @@ export function SendStoryModal({
     modal = handleClose => (
       <ModalPage
         modalName="SendStoryModal__title"
-        title={i18n('SendStoryModal__title')}
+        title={i18n('icu:SendStoryModal__title')}
         moduleClassName="SendStoryModal"
         modalFooter={footer}
         onClose={handleClose}
@@ -874,7 +875,7 @@ export function SendStoryModal({
         >
           <StoryImage
             i18n={i18n}
-            firstName={i18n('you')}
+            firstName={i18n('icu:you')}
             queueStoryDownload={noop}
             storyId="story-id"
             label="label"
@@ -884,20 +885,22 @@ export function SendStoryModal({
           />
         </div>
         <div className="SendStoryModal__top-bar">
-          {i18n('stories')}
+          {i18n('icu:stories')}
           <ContextMenu
-            aria-label={i18n('SendStoryModal__new')}
+            aria-label={i18n('icu:SendStoryModal__new')}
             i18n={i18n}
             menuOptions={[
               {
-                label: i18n('SendStoryModal__new-custom--title'),
-                description: i18n('SendStoryModal__new-custom--description'),
+                label: i18n('icu:SendStoryModal__new-custom--title'),
+                description: i18n(
+                  'icu:SendStoryModal__new-custom--description'
+                ),
                 icon: 'SendStoryModal__icon--custom',
                 onClick: () => setPage(Page.ChooseViewers),
               },
               {
-                label: i18n('SendStoryModal__new-group--title'),
-                description: i18n('SendStoryModal__new-group--description'),
+                label: i18n('icu:SendStoryModal__new-group--title'),
+                description: i18n('icu:SendStoryModal__new-group--description'),
                 icon: 'SendStoryModal__icon--group',
                 onClick: () => setPage(Page.ChooseGroups),
               },
@@ -919,7 +922,7 @@ export function SendStoryModal({
                   onClick={openMenu}
                   onKeyDown={onKeyDown}
                 >
-                  {i18n('SendStoryModal__new')}
+                  {i18n('icu:SendStoryModal__new')}
                 </Button>
                 {menuNode}
               </div>
@@ -949,7 +952,7 @@ export function SendStoryModal({
       )}
       {hasAnnouncementsOnlyAlert && (
         <Alert
-          body={i18n('SendStoryModal__announcements-only')}
+          body={i18n('icu:SendStoryModal__announcements-only')}
           i18n={i18n}
           onClose={() => setHasAnnouncementsOnlyAlert(false)}
           theme={Theme.Dark}
@@ -965,7 +968,7 @@ export function SendStoryModal({
                 setConfirmRemoveGroupId(undefined);
               },
               style: 'negative',
-              text: i18n('delete'),
+              text: i18n('icu:delete'),
             },
           ]}
           i18n={i18n}
@@ -974,7 +977,7 @@ export function SendStoryModal({
           }}
           theme={Theme.Dark}
         >
-          {i18n('SendStoryModal__confirm-remove-group')}
+          {i18n('icu:SendStoryModal__confirm-remove-group')}
         </ConfirmationDialog>
       )}
       {confirmDeleteList && (
@@ -987,7 +990,7 @@ export function SendStoryModal({
                 setConfirmDeleteList(undefined);
               },
               style: 'negative',
-              text: i18n('delete'),
+              text: i18n('icu:delete'),
             },
           ]}
           i18n={i18n}
@@ -996,7 +999,7 @@ export function SendStoryModal({
           }}
           theme={Theme.Dark}
         >
-          {i18n('StoriesSettings__delete-list--confirm', {
+          {i18n('icu:StoriesSettings__delete-list--confirm', {
             name: confirmDeleteList.name,
           })}
         </ConfirmationDialog>

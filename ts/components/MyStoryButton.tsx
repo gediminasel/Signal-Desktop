@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import type { ConversationType } from '../state/ducks/conversations';
 import type { LocalizerType } from '../types/Util';
 import type { MyStoryType, StoryViewType } from '../types/Stories';
-import type { ShowToastActionCreatorType } from '../state/ducks/toast';
+import type { ShowToastAction } from '../state/ducks/toast';
 import { Avatar, AvatarSize } from './Avatar';
 import { HasStories, ResolvedSendStatus } from '../types/Stories';
 import { MessageTimestamp } from './conversation/MessageTimestamp';
@@ -24,7 +24,7 @@ export type PropsType = {
   onClick: () => unknown;
   onMediaPlaybackStart: () => void;
   queueStoryDownload: (storyId: string) => unknown;
-  showToast: ShowToastActionCreatorType;
+  showToast: ShowToastAction;
 };
 
 function getNewestMyStory(story: MyStoryType): StoryViewType {
@@ -85,10 +85,10 @@ export function MyStoryButton({
         </div>
         <div className="StoryListItem__info">
           <div className="StoryListItem__info--title">
-            {i18n('Stories__mine')}
+            {i18n('icu:Stories__mine')}
           </div>
           <div className="StoryListItem__info--timestamp">
-            {i18n('Stories__add')}
+            {i18n('icu:Stories__add')}
           </div>
         </div>
       </StoriesAddStoryButton>
@@ -153,21 +153,21 @@ export function MyStoryButton({
       >
         <div className="StoryListItem__info">
           <div className="StoryListItem__info--title StoryListItem__chevron">
-            {i18n('MyStories__list_item')}
+            {i18n('icu:MyStories__list_item')}
           </div>
           {reducedSendStatus === ResolvedSendStatus.Sending && (
             <span className="StoryListItem__info--sending">
-              {i18n('Stories__list--sending')}
+              {i18n('icu:Stories__list--sending')}
             </span>
           )}
           {reducedSendStatus === ResolvedSendStatus.Failed && (
             <span className="StoryListItem__info--send_failed">
-              {i18n('Stories__list--send_failed')}
+              {i18n('icu:Stories__list--send_failed')}
             </span>
           )}
           {reducedSendStatus === ResolvedSendStatus.PartiallySent && (
             <span className="StoryListItem__info--send_failed">
-              {i18n('Stories__list--partially-sent')}
+              {i18n('icu:Stories__list--partially-sent')}
             </span>
           )}
           {reducedSendStatus === ResolvedSendStatus.Sent && (
@@ -180,7 +180,7 @@ export function MyStoryButton({
           )}
         </div>
         <div
-          aria-label={i18n('StoryListItem__label')}
+          aria-label={i18n('icu:StoryListItem__label')}
           className={classNames('StoryListItem__previews', {
             'StoryListItem__previews--multiple': hasMultiple,
           })}
@@ -188,7 +188,7 @@ export function MyStoryButton({
           {hasMultiple && <div className="StoryListItem__previews--more" />}
           <StoryImage
             attachment={newestStory.attachment}
-            firstName={i18n('you')}
+            firstName={i18n('icu:you')}
             i18n={i18n}
             isMe
             isThumbnail

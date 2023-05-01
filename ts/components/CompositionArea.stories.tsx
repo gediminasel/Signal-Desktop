@@ -34,10 +34,21 @@ export default {
 const useProps = (overrideProps: Partial<Props> = {}): Props => ({
   addAttachment: action('addAttachment'),
   conversationId: '123',
+  discardEditMessage: action('discardEditMessage'),
   focusCounter: 0,
+  sendCounter: 0,
   i18n,
   isDisabled: false,
+  isFormattingSpoilersEnabled:
+    overrideProps.isFormattingSpoilersEnabled === false
+      ? overrideProps.isFormattingSpoilersEnabled
+      : true,
+  isFormattingEnabled:
+    overrideProps.isFormattingEnabled === false
+      ? overrideProps.isFormattingEnabled
+      : true,
   messageCompositionId: '456',
+  sendEditedMessage: action('sendEditedMessage'),
   sendMultiMediaMessage: action('sendMultiMediaMessage'),
   processAttachments: action('processAttachments'),
   removeAttachment: action('removeAttachment'),
@@ -131,7 +142,6 @@ const useProps = (overrideProps: Partial<Props> = {}): Props => ({
   renderSmartCompositionRecordingDraft: _ => <div>RECORDING DRAFT</div>,
   // Select mode
   selectedMessageIds: undefined,
-  lastSelectedMessage: undefined,
   toggleSelectMode: action('toggleSelectMode'),
   toggleForwardMessagesModal: action('toggleForwardMessagesModal'),
 });
@@ -281,3 +291,13 @@ export function QuoteWithPayment(): JSX.Element {
 QuoteWithPayment.story = {
   name: 'Quote with payment',
 };
+
+export function NoFormatting(): JSX.Element {
+  return <CompositionArea {...useProps({ isFormattingEnabled: false })} />;
+}
+
+export function NoSpoilerFormatting(): JSX.Element {
+  return (
+    <CompositionArea {...useProps({ isFormattingSpoilersEnabled: false })} />
+  );
+}

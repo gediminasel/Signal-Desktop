@@ -11,14 +11,19 @@ import type { DeltaStatic, KeyboardStatic, RangeStatic } from 'quill';
 import Quill from 'quill';
 
 import { MentionCompletion } from '../quill/mentions/completion';
+import { FormattingMenu, QuillFormattingStyle } from '../quill/formatting/menu';
+import { MonospaceBlot } from '../quill/formatting/monospaceBlot';
+import { SpoilerBlot } from '../quill/formatting/spoilerBlot';
 import { EmojiBlot, EmojiCompletion } from '../quill/emoji';
 import type { EmojiPickDataType } from './emoji/EmojiPicker';
 import { convertShortName } from './emoji/lib';
 import type {
-  LocalizerType,
-  DraftBodyRangesType,
-  ThemeType,
-} from '../types/Util';
+  DraftBodyRanges,
+  HydratedBodyRangesType,
+  RangeNode,
+} from '../types/BodyRange';
+import { collapseRangeTree, insertRange } from '../types/BodyRange';
+import type { LocalizerType, ThemeType } from '../types/Util';
 import type { ConversationType } from '../state/ducks/conversations';
 import type { PreferredBadgeSelectorType } from '../state/selectors/badges';
 import { isValidUuid } from '../types/UUID';
@@ -33,11 +38,11 @@ import { matchMention } from '../quill/mentions/matchers';
 import { MemberRepository } from '../quill/memberRepository';
 import {
   getDeltaToRemoveStaleMentions,
-  getTextAndMentionsFromOps,
+  getTextAndRangesFromOps,
   isMentionBlot,
   getDeltaToRestartMention,
-  insertMentionOps,
   insertEmojiOps,
+  insertFormattingAndMentionsOps,
 } from '../quill/util';
 import { SignalClipboard } from '../quill/signal-clipboard';
 import { DirectionalBlot } from '../quill/block/blot';
@@ -46,12 +51,17 @@ import * as log from '../logging/log';
 import { useRefMerger } from '../hooks/useRefMerger';
 import type { LinkPreviewType } from '../types/message/LinkPreviews';
 import { StagedLinkPreview } from './conversation/StagedLinkPreview';
+import type { DraftEditMessageType } from '../model-types.d';
+import { usePrevious } from '../hooks/usePrevious';
 
 Quill.register('formats/emoji', EmojiBlot);
 Quill.register('formats/mention', MentionBlot);
 Quill.register('formats/block', DirectionalBlot);
+Quill.register('formats/monospace', MonospaceBlot);
+Quill.register('formats/spoiler', SpoilerBlot);
 Quill.register('modules/emojiCompletion', EmojiCompletion);
 Quill.register('modules/mentionCompletion', MentionCompletion);
+Quill.register('modules/formattingMenu', FormattingMenu);
 Quill.register('modules/signalClipboard', SignalClipboard);
 
 type HistoryStatic = {
@@ -64,7 +74,7 @@ export type InputApi = {
   insertEmoji: (e: EmojiPickDataType) => void;
   setContents: (
     text: string,
-    draftBodyRanges?: DraftBodyRangesType,
+    draftBodyRanges?: HydratedBodyRangesType,
     cursorToEnd?: boolean
   ) => void;
   reset: () => void;
@@ -76,29 +86,34 @@ export type Props = Readonly<{
   conversationId?: string;
   i18n: LocalizerType;
   disabled?: boolean;
+  draftEditMessage?: DraftEditMessageType;
   getPreferredBadge: PreferredBadgeSelectorType;
   large?: boolean;
   inputApi?: React.MutableRefObject<InputApi | undefined>;
+  isFormattingEnabled: boolean;
+  isFormattingSpoilersEnabled: boolean;
+  sendCounter: number;
   skinTone?: EmojiPickDataType['skinTone'];
   draftText?: string;
-  draftBodyRanges?: DraftBodyRangesType;
+  draftBodyRanges?: HydratedBodyRangesType;
   moduleClassName?: string;
   theme: ThemeType;
   placeholder?: string;
   sortedGroupMembers?: ReadonlyArray<ConversationType>;
   scrollerRef?: React.RefObject<HTMLDivElement>;
   onDirtyChange?(dirty: boolean): unknown;
-  onEditorStateChange?(
-    conversationId: string | undefined,
-    messageText: string,
-    bodyRanges: DraftBodyRangesType,
-    caretLocation?: number
-  ): unknown;
+  onEditorStateChange?(options: {
+    bodyRanges: DraftBodyRanges;
+    caretLocation?: number;
+    conversationId: string | undefined;
+    messageText: string;
+    sendCounter: number;
+  }): unknown;
   onTextTooLong(): unknown;
   onPickEmoji(o: EmojiPickDataType): unknown;
   onSubmit(
     message: string,
-    mentions: DraftBodyRangesType,
+    bodyRanges: DraftBodyRanges,
     timestamp: number
   ): unknown;
   onScroll?: (ev: React.UIEvent<HTMLElement>) => void;
@@ -119,11 +134,14 @@ export function CompositionInput(props: Props): React.ReactElement {
     conversationId,
     disabled,
     draftBodyRanges,
+    draftEditMessage,
     draftText,
     getPreferredBadge,
     getQuotedMessage,
     i18n,
     inputApi,
+    isFormattingEnabled,
+    isFormattingSpoilersEnabled,
     large,
     linkPreviewLoading,
     linkPreviewResult,
@@ -134,6 +152,7 @@ export function CompositionInput(props: Props): React.ReactElement {
     onSubmit,
     placeholder,
     skinTone,
+    sendCounter,
     sortedGroupMembers,
     theme,
   } = props;
@@ -141,6 +160,8 @@ export function CompositionInput(props: Props): React.ReactElement {
   const refMerger = useRefMerger();
 
   const [emojiCompletionElement, setEmojiCompletionElement] =
+    React.useState<JSX.Element>();
+  const [formattingChooserElement, setFormattingChooserElement] =
     React.useState<JSX.Element>();
   const [lastSelectionRange, setLastSelectionRange] =
     React.useState<RangeStatic | null>(null);
@@ -161,35 +182,45 @@ export function CompositionInput(props: Props): React.ReactElement {
 
   const generateDelta = (
     text: string,
-    bodyRanges: DraftBodyRangesType
+    bodyRanges: HydratedBodyRangesType
   ): Delta => {
-    const initialOps = [{ insert: text }];
-    const opsWithMentions = insertMentionOps(initialOps, bodyRanges);
-    const opsWithEmojis = insertEmojiOps(opsWithMentions);
+    const textLength = text.length;
+    const tree = bodyRanges.reduce<ReadonlyArray<RangeNode>>((acc, range) => {
+      if (range.start < textLength) {
+        return insertRange(range, acc);
+      }
+      return acc;
+    }, []);
+    const nodes = collapseRangeTree({ tree, text });
+    const opsWithFormattingAndMentions = insertFormattingAndMentionsOps(nodes);
+    const opsWithEmojis = insertEmojiOps(opsWithFormattingAndMentions);
 
     return new Delta(opsWithEmojis);
   };
 
-  const getTextAndMentions = (): [string, DraftBodyRangesType] => {
+  const getTextAndRanges = (): {
+    text: string;
+    bodyRanges: DraftBodyRanges;
+  } => {
     const quill = quillRef.current;
 
     if (quill === undefined) {
-      return ['', []];
+      return { text: '', bodyRanges: [] };
     }
 
     const contents = quill.getContents();
 
     if (contents === undefined) {
-      return ['', []];
+      return { text: '', bodyRanges: [] };
     }
 
     const { ops } = contents;
 
     if (ops === undefined) {
-      return ['', []];
+      return { text: '', bodyRanges: [] };
     }
 
-    return getTextAndMentionsFromOps(ops);
+    return getTextAndRangesFromOps(ops);
   };
 
   const focus = () => {
@@ -248,7 +279,7 @@ export function CompositionInput(props: Props): React.ReactElement {
 
   const setContents = (
     text: string,
-    bodyRanges?: DraftBodyRangesType,
+    bodyRanges?: HydratedBodyRangesType,
     cursorToEnd?: boolean
   ) => {
     const quill = quillRef.current;
@@ -285,13 +316,13 @@ export function CompositionInput(props: Props): React.ReactElement {
       return;
     }
 
-    const [text, mentions] = getTextAndMentions();
+    const { text, bodyRanges } = getTextAndRanges();
 
     log.info(
-      `CompositionInput: Submitting message ${timestamp} with ${mentions.length} mentions`
+      `CompositionInput: Submitting message ${timestamp} with ${bodyRanges.length} ranges`
     );
     canSendRef.current = false;
-    onSubmit(text, mentions, timestamp);
+    onSubmit(text, bodyRanges, timestamp);
   };
 
   if (inputApi) {
@@ -316,6 +347,39 @@ export function CompositionInput(props: Props): React.ReactElement {
     submit();
     return false;
   };
+
+  const previousFormattingEnabled = usePrevious(
+    isFormattingEnabled,
+    isFormattingEnabled
+  );
+  const previousFormattingSpoilersEnabled = usePrevious(
+    isFormattingSpoilersEnabled,
+    isFormattingSpoilersEnabled
+  );
+
+  React.useEffect(() => {
+    const formattingChanged =
+      typeof previousFormattingEnabled === 'boolean' &&
+      previousFormattingEnabled !== isFormattingEnabled;
+    const spoilersChanged =
+      typeof previousFormattingSpoilersEnabled === 'boolean' &&
+      previousFormattingSpoilersEnabled !== isFormattingSpoilersEnabled;
+
+    const quill = quillRef.current;
+    const changed = formattingChanged || spoilersChanged;
+    if (quill && changed) {
+      quill.getModule('formattingMenu').updateOptions({
+        isEnabled: isFormattingEnabled,
+        isSpoilersEnabled: isFormattingSpoilersEnabled,
+      });
+    }
+  }, [
+    isFormattingEnabled,
+    isFormattingSpoilersEnabled,
+    previousFormattingEnabled,
+    previousFormattingSpoilersEnabled,
+    quillRef,
+  ]);
 
   const onEnter = (): boolean => {
     const quill = quillRef.current;
@@ -436,7 +500,7 @@ export function CompositionInput(props: Props): React.ReactElement {
   const onChange = (): void => {
     const quill = quillRef.current;
 
-    const [text, mentions] = getTextAndMentions();
+    const { text, bodyRanges } = getTextAndRanges();
 
     if (quill !== undefined) {
       const historyModule: HistoryStatic = quill.getModule('history');
@@ -458,12 +522,13 @@ export function CompositionInput(props: Props): React.ReactElement {
         setTimeout(() => {
           const selection = quill.getSelection();
 
-          onEditorStateChange(
+          onEditorStateChange({
+            bodyRanges,
+            caretLocation: selection ? selection.index : undefined,
             conversationId,
-            text,
-            mentions,
-            selection ? selection.index : undefined
-          );
+            messageText: text,
+            sendCounter,
+          });
         }, 0);
       }
     }
@@ -610,6 +675,12 @@ export function CompositionInput(props: Props): React.ReactElement {
                 callbacksRef.current.onPickEmoji(emoji),
               skinTone,
             },
+            formattingMenu: {
+              i18n,
+              isEnabled: isFormattingEnabled,
+              isSpoilersEnabled: isFormattingSpoilersEnabled,
+              setFormattingChooserElement,
+            },
             mentionCompletion: {
               getPreferredBadge,
               me: sortedGroupMembers
@@ -621,8 +692,26 @@ export function CompositionInput(props: Props): React.ReactElement {
               theme,
             },
           }}
-          formats={['emoji', 'mention']}
-          placeholder={placeholder || i18n('sendMessage')}
+          formats={[
+            // For image replacement (local-only)
+            'emoji',
+            // @mentions
+            'mention',
+            ...(isFormattingEnabled
+              ? [
+                  // Custom
+                  ...(isFormattingSpoilersEnabled
+                    ? [QuillFormattingStyle.spoiler]
+                    : []),
+                  QuillFormattingStyle.monospace,
+                  // Built-in
+                  QuillFormattingStyle.bold,
+                  QuillFormattingStyle.italic,
+                  QuillFormattingStyle.strike,
+                ]
+              : []),
+          ]}
+          placeholder={placeholder || i18n('icu:sendMessage')}
           readOnly={disabled}
           ref={element => {
             if (element) {
@@ -694,7 +783,23 @@ export function CompositionInput(props: Props): React.ReactElement {
             className={getClassName('__input')}
             ref={ref}
             data-testid="CompositionInput"
+            data-enabled={disabled ? 'false' : 'true'}
           >
+            {draftEditMessage && (
+              <div className={getClassName('__editing-message')}>
+                {i18n('icu:CompositionInput__editing-message')}
+              </div>
+            )}
+            {draftEditMessage?.attachmentThumbnail && (
+              <div className={getClassName('__editing-message__attachment')}>
+                <img
+                  alt={i18n('icu:stagedImageAttachment', {
+                    path: draftEditMessage.attachmentThumbnail,
+                  })}
+                  src={draftEditMessage.attachmentThumbnail}
+                />
+              </div>
+            )}
             {conversationId && linkPreviewLoading && linkPreviewResult && (
               <StagedLinkPreview
                 {...linkPreviewResult}
@@ -723,6 +828,7 @@ export function CompositionInput(props: Props): React.ReactElement {
             >
               {reactQuill}
               {emojiCompletionElement}
+              {formattingChooserElement}
               {mentionCompletionElement}
             </div>
           </div>

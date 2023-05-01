@@ -3,44 +3,62 @@
 
 import type { BrowserWindow } from 'electron';
 import { Menu, clipboard, nativeImage } from 'electron';
-import { uniq } from 'lodash';
 import { fileURLToPath } from 'url';
+import * as LocaleMatcher from '@formatjs/intl-localematcher';
 
 import { maybeParseUrl } from '../ts/util/url';
-import type { LocaleType } from './locale';
 
 import type { MenuListType } from '../ts/types/menu';
+import type { LocalizerType } from '../ts/types/Util';
 
 export function getLanguages(
-  userLocale: string,
-  availableLocales: ReadonlyArray<string>
+  preferredSystemLocales: ReadonlyArray<string>,
+  availableLocales: ReadonlyArray<string>,
+  defaultLocale: string
 ): Array<string> {
-  // First attempt to find the exact locale
-  const candidateLocales = uniq([userLocale, userLocale]).filter(l =>
-    availableLocales.includes(l)
-  );
-  if (candidateLocales.length > 0) {
-    return candidateLocales;
+  const matchedLocales = [];
+
+  preferredSystemLocales.forEach(preferredSystemLocale => {
+    if (preferredSystemLocale === defaultLocale) {
+      matchedLocales.push(defaultLocale);
+      return;
+    }
+    const matchedLocale = LocaleMatcher.match(
+      [preferredSystemLocale],
+      availableLocales as Array<string>, // bad types
+      defaultLocale,
+      { algorithm: 'best fit' }
+    );
+    if (matchedLocale !== defaultLocale) {
+      matchedLocales.push(matchedLocale);
+    }
+  });
+
+  if (matchedLocales.length === 0) {
+    matchedLocales.push(defaultLocale);
   }
 
-  // If no languages were found then return all locales that start with the base
-  const baseLocale = userLocale.split('-')[0];
-  return uniq(availableLocales.filter(l => l.startsWith(baseLocale)));
+  return matchedLocales;
 }
 
 export const setup = (
   browserWindow: BrowserWindow,
-  { name: userLocale, i18n }: LocaleType
+  preferredSystemLocales: ReadonlyArray<string>,
+  i18n: LocalizerType
 ): void => {
   const { session } = browserWindow.webContents;
   const availableLocales = session.availableSpellCheckerLanguages;
-  const languages = getLanguages(userLocale, availableLocales);
-  console.log(`spellcheck: user locale: ${userLocale}`);
+  const languages = getLanguages(
+    preferredSystemLocales,
+    availableLocales,
+    'en'
+  );
+  console.log('spellcheck: user locales:', preferredSystemLocales);
   console.log(
-    'spellcheck: available spellchecker languages: ',
+    'spellcheck: available spellchecker languages:',
     availableLocales
   );
-  console.log('spellcheck: setting languages to: ', languages);
+  console.log('spellcheck: setting languages to:', languages);
   session.setSpellCheckerLanguages(languages);
 
   browserWindow.webContents.on('context-menu', (_event, params) => {
@@ -68,7 +86,7 @@ export const setup = (
           );
         } else {
           template.push({
-            label: i18n('contextMenuNoSuggestions'),
+            label: i18n('icu:contextMenuNoSuggestions'),
             enabled: false,
           });
         }
@@ -77,18 +95,18 @@ export const setup = (
 
       if (params.isEditable) {
         if (editFlags.canUndo) {
-          template.push({ label: i18n('editMenuUndo'), role: 'undo' });
+          template.push({ label: i18n('icu:editMenuUndo'), role: 'undo' });
         }
         // This is only ever `true` if undo was triggered via the context menu
         // (not ctrl/cmd+z)
         if (editFlags.canRedo) {
-          template.push({ label: i18n('editMenuRedo'), role: 'redo' });
+          template.push({ label: i18n('icu:editMenuRedo'), role: 'redo' });
         }
         if (editFlags.canUndo || editFlags.canRedo) {
           template.push({ type: 'separator' });
         }
         if (editFlags.canCut) {
-          template.push({ label: i18n('editMenuCut'), role: 'cut' });
+          template.push({ label: i18n('icu:editMenuCut'), role: 'cut' });
         }
       }
 
@@ -100,8 +118,15 @@ export const setup = (
           click = () => {
             clipboard.writeText(params.linkURL);
           };
-          label = i18n('contextMenuCopyLink');
+          label = i18n('icu:contextMenuCopyLink');
         } else if (isImage) {
+          const urlIsViewOnce =
+            params.srcURL?.includes('/temp/') ||
+            params.srcURL?.includes('\\temp\\');
+          if (urlIsViewOnce) {
+            return;
+          }
+
           click = () => {
             const parsedSrcUrl = maybeParseUrl(params.srcURL);
             if (!parsedSrcUrl || parsedSrcUrl.protocol !== 'file:') {
@@ -113,9 +138,9 @@ export const setup = (
             );
             clipboard.writeImage(image);
           };
-          label = i18n('contextMenuCopyImage');
+          label = i18n('icu:contextMenuCopyImage');
         } else {
-          label = i18n('editMenuCopy');
+          label = i18n('icu:editMenuCopy');
         }
 
         template.push({
@@ -126,12 +151,12 @@ export const setup = (
       }
 
       if (editFlags.canPaste && !isImage) {
-        template.push({ label: i18n('editMenuPaste'), role: 'paste' });
+        template.push({ label: i18n('icu:editMenuPaste'), role: 'paste' });
       }
 
       if (editFlags.canPaste && !isImage) {
         template.push({
-          label: i18n('editMenuPasteAndMatchStyle'),
+          label: i18n('icu:editMenuPasteAndMatchStyle'),
           role: 'pasteAndMatchStyle',
         });
       }
@@ -140,7 +165,7 @@ export const setup = (
       // results in all the UI being selected
       if (editFlags.canSelectAll && params.isEditable) {
         template.push({
-          label: i18n('editMenuSelectAll'),
+          label: i18n('icu:editMenuSelectAll'),
           role: 'selectAll',
         });
       }

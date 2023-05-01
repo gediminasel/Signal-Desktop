@@ -104,9 +104,12 @@ function convertMenu(
     // `app/main.ts`.
     accelerator = accelerator?.replace(
       /CommandOrControl|CmdOrCtrl/g,
-      i18n('Keyboard--Key--ctrl')
+      i18n('icu:Keyboard--Key--ctrl')
     );
-    accelerator = accelerator?.replace(/Shift/g, i18n('Keyboard--Key--shift'));
+    accelerator = accelerator?.replace(
+      /Shift/g,
+      i18n('icu:Keyboard--Key--shift')
+    );
 
     return {
       type,
@@ -256,7 +259,7 @@ export function TitleBarContainer(props: PropsType): JSX.Element {
       <TitleBar
         className="TitleBarContainer__title"
         platform="win32"
-        iconSrc="images/icon_32.png"
+        iconSrc="images/titlebar_icon.svg"
         theme={titleBarTheme}
         maximized={isMaximized}
         menu={maybeMenu}

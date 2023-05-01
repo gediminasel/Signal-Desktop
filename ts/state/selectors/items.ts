@@ -5,6 +5,7 @@ import { createSelector } from 'reselect';
 import { isInteger } from 'lodash';
 
 import { ITEM_NAME as UNIVERSAL_EXPIRE_TIMER_ITEM } from '../../util/universalExpireTimer';
+import { SecurityNumberIdentifierType } from '../../util/safetyNumber';
 import { innerIsBucketValueEnabled } from '../../RemoteConfig';
 import type { ConfigKeyType, ConfigMapType } from '../../RemoteConfig';
 import type { StateType } from '../reducer';
@@ -47,7 +48,7 @@ export const getUniversalExpireTimer = createSelector(
     DurationInSeconds.fromSeconds(state[UNIVERSAL_EXPIRE_TIMER_ITEM] || 0)
 );
 
-const isRemoteConfigFlagEnabled = (
+export const isRemoteConfigFlagEnabled = (
   config: Readonly<ConfigMapType>,
   key: ConfigKeyType
 ): boolean => Boolean(config[key]?.enabled);
@@ -121,6 +122,46 @@ export const getStoriesEnabled = createSelector(
     }
 
     return false;
+  }
+);
+
+export const getContactManagementEnabled = createSelector(
+  getRemoteConfig,
+  (remoteConfig: ConfigMapType): boolean => {
+    if (isRemoteConfigFlagEnabled(remoteConfig, 'desktop.contactManagement')) {
+      return true;
+    }
+
+    if (
+      isRemoteConfigFlagEnabled(
+        remoteConfig,
+        'desktop.contactManagement.beta'
+      ) &&
+      isBeta(window.getVersion())
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+);
+
+export const getSecurityNumberIdentifierType = createSelector(
+  getRemoteConfig,
+  (_state: StateType, { now }: { now: number }) => now,
+  (remoteConfig: ConfigMapType, now: number): SecurityNumberIdentifierType => {
+    if (isRemoteConfigFlagEnabled(remoteConfig, 'desktop.safetyNumberUUID')) {
+      return SecurityNumberIdentifierType.UUIDIdentifier;
+    }
+
+    const timestamp = remoteConfig['desktop.safetyNumberUUID.timestamp']?.value;
+    if (typeof timestamp !== 'number') {
+      return SecurityNumberIdentifierType.E164Identifier;
+    }
+
+    return now >= timestamp
+      ? SecurityNumberIdentifierType.UUIDIdentifier
+      : SecurityNumberIdentifierType.E164Identifier;
   }
 );
 
@@ -208,4 +249,9 @@ export const getAutoDownloadUpdate = createSelector(
   getItems,
   (state: ItemsStateType): boolean =>
     Boolean(state['auto-download-update'] ?? true)
+);
+
+export const getTextFormattingEnabled = createSelector(
+  getItems,
+  (state: ItemsStateType): boolean => Boolean(state.textFormatting ?? true)
 );

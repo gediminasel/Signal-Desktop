@@ -49,6 +49,7 @@ function mockMessageTimelineItem(
       author: getDefaultConversation({}),
       canDeleteForEveryone: false,
       canDownload: true,
+      canEditMessage: true,
       canReact: true,
       canReply: true,
       canReplyPrivately: true,
@@ -64,6 +65,7 @@ function mockMessageTimelineItem(
       isMessageRequestAccepted: true,
       isSelected: false,
       isSelectMode: false,
+      isSpoilerExpanded: false,
       previews: [],
       readStatus: ReadStatus.Read,
       canRetryDeleteForEveryone: true,
@@ -279,11 +281,10 @@ const actions = () => ({
   updateSharedGroups: action('updateSharedGroups'),
 
   reactToMessage: action('reactToMessage'),
+  setMessageToEdit: action('setMessageToEdit'),
   setQuoteByMessageId: action('setQuoteByMessageId'),
   retryDeleteForEveryone: action('retryDeleteForEveryone'),
   retryMessageSend: action('retryMessageSend'),
-  deleteMessages: action('deleteMessages'),
-  deleteMessageForEveryone: action('deleteMessageForEveryone'),
   saveAttachment: action('saveAttachment'),
   pushPanelForConversation: action('pushPanelForConversation'),
   showContactDetail: action('showContactDetail'),
@@ -292,6 +293,7 @@ const actions = () => ({
   kickOffAttachmentDownload: action('kickOffAttachmentDownload'),
   markAttachmentAsCorrupted: action('markAttachmentAsCorrupted'),
   messageExpanded: action('messageExpanded'),
+  showSpoiler: action('showSpoiler'),
   showLightbox: action('showLightbox'),
   showLightboxForViewOnceMedia: action('showLightboxForViewOnceMedia'),
   doubleCheckMissingQuoteReference: action('doubleCheckMissingQuoteReference'),
@@ -304,6 +306,7 @@ const actions = () => ({
   showExpiredOutgoingTapToViewToast: action(
     'showExpiredOutgoingTapToViewToast'
   ),
+  toggleDeleteMessagesModal: action('toggleDeleteMessagesModal'),
   toggleForwardMessagesModal: action('toggleForwardMessagesModal'),
 
   toggleSafetyNumberModal: action('toggleSafetyNumberModal'),
@@ -345,6 +348,7 @@ const renderItem = ({
     interactionMode="keyboard"
     isNextItemCallingNotification={false}
     theme={ThemeType.light}
+    platform="darwin"
     containerElementRef={containerElementRef}
     containerWidthBreakpoint={containerWidthBreakpoint}
     conversationId=""

@@ -9,6 +9,7 @@ import type { GiftBadgeStates } from '../components/conversation/Message';
 import type { MIMEType } from '../types/MIME';
 import type { DurationInSeconds } from '../util/durations';
 import type { AnyPaymentEvent } from '../types/Payment';
+import type { RawBodyRange } from '../types/BodyRange';
 
 export {
   IdentityKeyType,
@@ -117,17 +118,6 @@ export type ProcessedAttachment = {
   textAttachment?: Omit<TextAttachmentType, 'preview'>;
 };
 
-export type ProcessedGroupContext = {
-  id: string;
-  type: Proto.GroupContext.Type;
-  name?: string;
-  membersE164: ReadonlyArray<string>;
-  avatar?: ProcessedAttachment;
-
-  // Computed fields
-  derivedGroupV2Id: string;
-};
-
 export type ProcessedGroupV2Context = {
   masterKey: string;
   revision?: number;
@@ -150,7 +140,7 @@ export type ProcessedQuote = {
   authorUuid?: string;
   text?: string;
   attachments: ReadonlyArray<ProcessedQuoteAttachment>;
-  bodyRanges: ReadonlyArray<ProcessedBodyRange>;
+  bodyRanges?: ReadonlyArray<ProcessedBodyRange>;
   type: Proto.DataMessage.Quote.Type;
 };
 
@@ -190,7 +180,7 @@ export type ProcessedDelete = {
   targetSentTimestamp?: number;
 };
 
-export type ProcessedBodyRange = Proto.DataMessage.IBodyRange;
+export type ProcessedBodyRange = RawBodyRange;
 
 export type ProcessedGroupCallUpdate = Proto.DataMessage.IGroupCallUpdate;
 
@@ -207,7 +197,6 @@ export type ProcessedGiftBadge = {
 export type ProcessedDataMessage = {
   body?: string;
   attachments: ReadonlyArray<ProcessedAttachment>;
-  group?: ProcessedGroupContext;
   groupV2?: ProcessedGroupV2Context;
   flags: number;
   expireTimer: DurationInSeconds;
@@ -262,6 +251,7 @@ export type CallbackResultType = {
   errors?: Array<CustomError>;
   unidentifiedDeliveries?: Array<string>;
   dataMessage?: Uint8Array;
+  editMessage?: Uint8Array;
 
   // If this send is not the final step in a multi-step send, we shouldn't treat its
   //   results we would treat a one-step send.

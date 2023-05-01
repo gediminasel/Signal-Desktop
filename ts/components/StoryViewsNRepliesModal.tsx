@@ -11,7 +11,8 @@ import React, {
 import classNames from 'classnames';
 import { noop } from 'lodash';
 
-import type { DraftBodyRangesType, LocalizerType } from '../types/Util';
+import type { DraftBodyRanges } from '../types/BodyRange';
+import type { LocalizerType } from '../types/Util';
 import type { ConversationType } from '../state/ducks/conversations';
 import type { EmojiPickDataType } from './emoji/EmojiPicker';
 import type { InputApi } from './CompositionInput';
@@ -58,6 +59,7 @@ const MESSAGE_DEFAULT_PROPS = {
   openGiftBadge: shouldNeverBeCalled,
   openLink: shouldNeverBeCalled,
   previews: [],
+  retryMessageSend: shouldNeverBeCalled,
   pushPanelForConversation: shouldNeverBeCalled,
   renderAudioAttachment: () => <div />,
   saveAttachment: shouldNeverBeCalled,
@@ -87,13 +89,16 @@ export type PropsType = {
   hasViewReceiptSetting: boolean;
   hasViewsCapability: boolean;
   i18n: LocalizerType;
+  platform: string;
+  isFormattingEnabled: boolean;
+  isFormattingSpoilersEnabled: boolean;
   isInternalUser?: boolean;
   onChangeViewTarget: (target: StoryViewTargetType) => unknown;
   onClose: () => unknown;
   onReact: (emoji: string) => unknown;
   onReply: (
     message: string,
-    mentions: DraftBodyRangesType,
+    bodyRanges: DraftBodyRanges,
     timestamp: number
   ) => unknown;
   onSetSkinTone: (tone: number) => unknown;
@@ -120,6 +125,9 @@ export function StoryViewsNRepliesModal({
   hasViewReceiptSetting,
   hasViewsCapability,
   i18n,
+  platform,
+  isFormattingEnabled,
+  isFormattingSpoilersEnabled,
   isInternalUser,
   onChangeViewTarget,
   onClose,
@@ -144,6 +152,14 @@ export function StoryViewsNRepliesModal({
   const [deleteForEveryoneReplyId, setDeleteForEveryoneReplyId] = useState<
     string | undefined
   >(undefined);
+
+  // These states aren't in redux; they are meant to last only as long as this dialog.
+  const [revealedSpoilersById, setRevealedSpoilersById] = useState<
+    Record<string, boolean | undefined>
+  >({});
+  const [displayLimitById, setDisplayLimitById] = useState<
+    Record<string, number | undefined>
+  >({});
 
   const containerElementRef = useRef<HTMLDivElement | null>(null);
   const inputApiRef = useRef<InputApi | undefined>();
@@ -222,8 +238,11 @@ export function StoryViewsNRepliesModal({
               getPreferredBadge={getPreferredBadge}
               i18n={i18n}
               inputApi={inputApiRef}
+              isFormattingEnabled={isFormattingEnabled}
+              isFormattingSpoilersEnabled={isFormattingSpoilersEnabled}
               moduleClassName="StoryViewsNRepliesModal__input"
-              onEditorStateChange={(_conversationId, messageText) => {
+              onCloseLinkPreview={noop}
+              onEditorStateChange={({ messageText }) => {
                 setMessageBodyText(messageText);
               }}
               onPickEmoji={onUseEmoji}
@@ -235,11 +254,12 @@ export function StoryViewsNRepliesModal({
               onTextTooLong={onTextTooLong}
               placeholder={
                 group
-                  ? i18n('StoryViewer__reply-group')
+                  ? i18n('icu:StoryViewer__reply-group')
                   : i18n('icu:StoryViewer__reply-placeholder', {
                       firstName: authorTitle,
                     })
               }
+              sendCounter={0}
               sortedGroupMembers={sortedGroupMembers}
               theme={ThemeType.dark}
             >
@@ -284,14 +304,31 @@ export function StoryViewsNRepliesModal({
               deleteGroupStoryReplyForEveryone={() =>
                 setDeleteForEveryoneReplyId(reply.id)
               }
+              displayLimit={displayLimitById[reply.id]}
               getPreferredBadge={getPreferredBadge}
               i18n={i18n}
+              platform={platform}
               id={reply.id}
               isInternalUser={isInternalUser}
+              isSpoilerExpanded={revealedSpoilersById[reply.id] || false}
+              messageExpanded={(messageId, displayLimit) => {
+                const update = {
+                  ...displayLimitById,
+                  [messageId]: displayLimit,
+                };
+                setDisplayLimitById(update);
+              }}
               reply={reply}
               shouldCollapseAbove={shouldCollapse(reply, replies[index - 1])}
               shouldCollapseBelow={shouldCollapse(reply, replies[index + 1])}
               showContactModal={showContactModal}
+              showSpoiler={messageId => {
+                const update = {
+                  ...revealedSpoilersById,
+                  [messageId]: true,
+                };
+                setRevealedSpoilersById(update);
+              }}
             />
           );
         })}
@@ -301,7 +338,7 @@ export function StoryViewsNRepliesModal({
   } else if (group) {
     repliesElement = (
       <div className="StoryViewsNRepliesModal__replies--none">
-        {i18n('StoryViewsNRepliesModal__no-replies')}
+        {i18n('icu:StoryViewsNRepliesModal__no-replies')}
       </div>
     );
   }
@@ -310,7 +347,7 @@ export function StoryViewsNRepliesModal({
   if (hasViewsCapability && !hasViewReceiptSetting) {
     viewsElement = (
       <div className="StoryViewsNRepliesModal__read-receipts-off">
-        {i18n('StoryViewsNRepliesModal__read-receipts-off')}
+        {i18n('icu:StoryViewsNRepliesModal__read-receipts-off')}
       </div>
     );
   } else if (views.length) {
@@ -353,7 +390,7 @@ export function StoryViewsNRepliesModal({
   } else if (hasViewsCapability) {
     viewsElement = (
       <div className="StoryViewsNRepliesModal__replies--none">
-        {i18n('StoryViewsNRepliesModal__no-views')}
+        {i18n('icu:StoryViewsNRepliesModal__no-views')}
       </div>
     );
   }
@@ -367,11 +404,11 @@ export function StoryViewsNRepliesModal({
         tabs={[
           {
             id: StoryViewsNRepliesTab.Views,
-            label: i18n('StoryViewsNRepliesModal__tab--views'),
+            label: i18n('icu:StoryViewsNRepliesModal__tab--views'),
           },
           {
             id: StoryViewsNRepliesTab.Replies,
-            label: i18n('StoryViewsNRepliesModal__tab--replies'),
+            label: i18n('icu:StoryViewsNRepliesModal__tab--replies'),
           },
         ]}
       >
@@ -423,12 +460,12 @@ export function StoryViewsNRepliesModal({
           dialogName="confirmDialog"
           actions={[
             {
-              text: i18n('delete'),
+              text: i18n('icu:delete'),
               action: () => deleteGroupStoryReply(deleteReplyId),
               style: 'negative',
             },
           ]}
-          title={i18n('deleteWarning')}
+          title={i18n('icu:deleteWarning')}
           onClose={() => setDeleteReplyId(undefined)}
           onCancel={() => setDeleteReplyId(undefined)}
         />
@@ -440,17 +477,17 @@ export function StoryViewsNRepliesModal({
           dialogName="confirmDialog"
           actions={[
             {
-              text: i18n('delete'),
+              text: i18n('icu:delete'),
               action: () =>
                 deleteGroupStoryReplyForEveryone(deleteForEveryoneReplyId),
               style: 'negative',
             },
           ]}
-          title={i18n('deleteWarning')}
+          title={i18n('icu:deleteWarning')}
           onClose={() => setDeleteForEveryoneReplyId(undefined)}
           onCancel={() => setDeleteForEveryoneReplyId(undefined)}
         >
-          {i18n('deleteForEveryoneWarning')}
+          {i18n('icu:deleteForEveryoneWarning')}
         </ConfirmationDialog>
       )}
     </>
@@ -461,29 +498,39 @@ type ReplyOrReactionMessageProps = {
   containerElementRef: React.RefObject<HTMLElement>;
   deleteGroupStoryReply: (replyId: string) => void;
   deleteGroupStoryReplyForEveryone: (replyId: string) => void;
+  displayLimit: number | undefined;
   getPreferredBadge: PreferredBadgeSelectorType;
   i18n: LocalizerType;
+  platform: string;
   id: string;
   isInternalUser?: boolean;
+  isSpoilerExpanded: boolean;
   onContextMenu?: (ev: React.MouseEvent) => void;
   reply: ReplyType;
   shouldCollapseAbove: boolean;
   shouldCollapseBelow: boolean;
   showContactModal: (contactId: string, conversationId?: string) => void;
+  messageExpanded: (messageId: string, displayLimit: number) => void;
+  showSpoiler: (messageId: string) => void;
 };
 
 function ReplyOrReactionMessage({
+  containerElementRef,
+  deleteGroupStoryReply,
+  deleteGroupStoryReplyForEveryone,
+  displayLimit,
+  getPreferredBadge,
   i18n,
   id,
   isInternalUser,
+  isSpoilerExpanded,
+  messageExpanded,
+  platform,
   reply,
-  deleteGroupStoryReply,
-  deleteGroupStoryReplyForEveryone,
-  containerElementRef,
-  getPreferredBadge,
   shouldCollapseAbove,
   shouldCollapseBelow,
   showContactModal,
+  showSpoiler,
 }: ReplyOrReactionMessageProps) {
   const renderContent = (onContextMenu?: (ev: React.MouseEvent) => void) => {
     if (reply.reactionEmoji && !reply.deletedForEveryone) {
@@ -512,10 +559,12 @@ function ReplyOrReactionMessage({
               <div className="StoryViewsNRepliesModal__reply--title">
                 <ContactName
                   contactNameColor={reply.contactNameColor}
-                  title={reply.author.isMe ? i18n('you') : reply.author.title}
+                  title={
+                    reply.author.isMe ? i18n('icu:you') : reply.author.title
+                  }
                 />
               </div>
-              {i18n('StoryViewsNRepliesModal__reacted')}
+              {i18n('icu:StoryViewsNRepliesModal__reacted')}
               <MessageTimestamp
                 i18n={i18n}
                 isRelativeTime
@@ -541,20 +590,25 @@ function ReplyOrReactionMessage({
           conversationId={reply.conversationId}
           conversationTitle={reply.author.title}
           conversationType="group"
-          direction="incoming"
           deletedForEveryone={reply.deletedForEveryone}
-          renderMenu={undefined}
-          onContextMenu={onContextMenu}
+          direction="incoming"
+          displayLimit={displayLimit}
           getPreferredBadge={getPreferredBadge}
           i18n={i18n}
+          platform={platform}
           id={reply.id}
           interactionMode="mouse"
+          isSpoilerExpanded={isSpoilerExpanded}
+          messageExpanded={messageExpanded}
+          onContextMenu={onContextMenu}
           readStatus={reply.readStatus}
           renderingContext="StoryViewsNRepliesModal"
+          renderMenu={undefined}
           shouldCollapseAbove={shouldCollapseAbove}
           shouldCollapseBelow={shouldCollapseBelow}
           shouldHideMetadata={false}
           showContactModal={showContactModal}
+          showSpoiler={showSpoiler}
           text={reply.body}
           textDirection={TextDirection.Default}
           timestamp={reply.timestamp}

@@ -52,12 +52,12 @@ export function SafetyNumberNotification({
       contents={
         isGroup ? (
           <Intl
-            id="safetyNumberChangedGroup"
+            id="icu:safetyNumberChangedGroup"
             components={{ name }}
             i18n={i18n}
           />
         ) : (
-          <Intl id="safetyNumberChanged" components={{ name }} i18n={i18n} />
+          <Intl id="icu:safetyNumberChanged" i18n={i18n} />
         )
       }
       button={

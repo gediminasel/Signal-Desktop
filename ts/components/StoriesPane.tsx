@@ -12,7 +12,7 @@ import type {
 import type { ConversationStoryType, MyStoryType } from '../types/Stories';
 import type { LocalizerType } from '../types/Util';
 import type { PreferredBadgeSelectorType } from '../state/selectors/badges';
-import type { ShowToastActionCreatorType } from '../state/ducks/toast';
+import type { ShowToastAction } from '../state/ducks/toast';
 import type { ViewUserStoriesActionCreatorType } from '../state/ducks/stories';
 import { ContextMenu } from './ContextMenu';
 import { MyStoryButton } from './MyStoryButton';
@@ -68,7 +68,7 @@ export type PropsType = {
   onMediaPlaybackStart: () => void;
   queueStoryDownload: (storyId: string) => unknown;
   showConversation: ShowConversationType;
-  showToast: ShowToastActionCreatorType;
+  showToast: ShowToastAction;
   stories: Array<ConversationStoryType>;
   toggleHideStories: (conversationId: string) => unknown;
   toggleStoriesView: () => unknown;
@@ -114,14 +114,14 @@ export function StoriesPane({
       <div className="Stories__pane__header">
         <button
           ref={focusRef}
-          aria-label={i18n('back')}
+          aria-label={i18n('icu:back')}
           className="Stories__pane__header--back"
           onClick={toggleStoriesView}
           tabIndex={0}
           type="button"
         />
         <div className="Stories__pane__header--title">
-          {i18n('Stories__title')}
+          {i18n('icu:Stories__title')}
         </div>
         <StoriesAddStoryButton
           i18n={i18n}
@@ -134,7 +134,7 @@ export function StoriesPane({
           i18n={i18n}
           menuOptions={[
             {
-              label: i18n('StoriesSettings__context-menu'),
+              label: i18n('icu:StoriesSettings__context-menu'),
               onClick: () => onStoriesSettings(),
             },
           ]}
@@ -152,7 +152,7 @@ export function StoriesPane({
         onChange={event => {
           setSearchTerm(event.target.value);
         }}
-        placeholder={i18n('search')}
+        placeholder={i18n('icu:search')}
         value={searchTerm}
       />
       <div className="Stories__pane__list">
@@ -196,7 +196,7 @@ export function StoriesPane({
               onClick={() => setIsShowingHiddenStories(!isShowingHiddenStories)}
               type="button"
             >
-              {i18n('Stories__hidden-stories')}
+              {i18n('icu:Stories__hidden-stories')}
             </button>
             {isShowingHiddenStories &&
               hiddenStories.map(story => (
@@ -222,7 +222,7 @@ export function StoriesPane({
         )}
         {!stories.length && (
           <div className="Stories__pane__list--empty">
-            {i18n('Stories__list-empty')}
+            {i18n('icu:Stories__list-empty')}
           </div>
         )}
       </div>

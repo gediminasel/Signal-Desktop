@@ -245,6 +245,7 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   attachments: overrideProps.attachments,
   author: overrideProps.author || getDefaultConversation(),
   bodyRanges: overrideProps.bodyRanges,
+  canEditMessage: true,
   canReact: true,
   canReply: true,
   canReplyPrivately: true,
@@ -266,8 +267,6 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   conversationType: overrideProps.conversationType || 'direct',
   contact: overrideProps.contact,
   deletedForEveryone: overrideProps.deletedForEveryone,
-  deleteMessages: action('deleteMessages'),
-  deleteMessageForEveryone: action('deleteMessageForEveryone'),
   // disableMenu: overrideProps.disableMenu,
   disableScroll: overrideProps.disableScroll,
   direction: overrideProps.direction || 'incoming',
@@ -282,6 +281,7 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   getPreferredBadge: overrideProps.getPreferredBadge || (() => undefined),
   giftBadge: overrideProps.giftBadge,
   i18n,
+  platform: 'darwin',
   id: text('id', overrideProps.id || 'random-message-id'),
   // renderingContext: 'storybook',
   interactionMode: overrideProps.interactionMode || 'keyboard',
@@ -299,6 +299,9 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
     : false,
   isSelectMode: isBoolean(overrideProps.isSelectMode)
     ? overrideProps.isSelectMode
+    : false,
+  isSpoilerExpanded: isBoolean(overrideProps.isSpoilerExpanded)
+    ? overrideProps.isSpoilerExpanded
     : false,
   isTapToView: overrideProps.isTapToView,
   isTapToViewError: overrideProps.isTapToViewError,
@@ -329,6 +332,7 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
     overrideProps.toggleSelectMessage == null
       ? action('toggleSelectMessage')
       : overrideProps.toggleSelectMessage,
+  setMessageToEdit: action('setMessageToEdit'),
   shouldCollapseAbove: isBoolean(overrideProps.shouldCollapseAbove)
     ? overrideProps.shouldCollapseAbove
     : false,
@@ -338,6 +342,7 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   shouldHideMetadata: isBoolean(overrideProps.shouldHideMetadata)
     ? overrideProps.shouldHideMetadata
     : false,
+  showSpoiler: action('showSpoiler'),
   pushPanelForConversation: action('pushPanelForConversation'),
   showContactModal: action('showContactModal'),
   showExpiredIncomingTapToViewToast: action(
@@ -346,6 +351,7 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   showExpiredOutgoingTapToViewToast: action(
     'showExpiredOutgoingTapToViewToast'
   ),
+  toggleDeleteMessagesModal: action('toggleDeleteMessagesModal'),
   toggleForwardMessagesModal: action('toggleForwardMessagesModal'),
   showLightbox: action('showLightbox'),
   startConversation: action('startConversation'),
@@ -873,6 +879,13 @@ export const Error = Template.bind({});
 Error.args = {
   status: 'error',
   // canRetry: true,
+  text: 'I hope you get this.',
+};
+
+export const EditError = Template.bind({});
+EditError.args = {
+  status: 'error',
+  isEditedMessage: true,
   text: 'I hope you get this.',
 };
 

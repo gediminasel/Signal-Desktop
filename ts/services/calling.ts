@@ -105,6 +105,7 @@ import {
 } from './notifications';
 import * as log from '../logging/log';
 import { assertDev } from '../util/assert';
+import { sendContentMessageToGroup, sendToGroup } from '../util/sendToGroup';
 
 const {
   processGroupCallRingCancellation,
@@ -200,12 +201,12 @@ function translateSourceName(
   }
 
   if (name === 'Entire Screen') {
-    return i18n('calling__SelectPresentingSourcesModal--entireScreen');
+    return i18n('icu:calling__SelectPresentingSourcesModal--entireScreen');
   }
 
   const match = name.match(/^Screen (\d+)$/);
   if (match) {
-    return i18n('calling__SelectPresentingSourcesModal--screen', {
+    return i18n('icu:calling__SelectPresentingSourcesModal--screen', {
       id: match[1],
     });
   }
@@ -1056,7 +1057,7 @@ export class CallingClass {
       messageIds: [],
       send: () =>
         conversation.queueJob('sendGroupCallUpdateMessage', () =>
-          window.Signal.Util.sendToGroup({
+          sendToGroup({
             contentHint: ContentHint.DEFAULT,
             groupSendOptions: {
               groupCallUpdate: { eraId },
@@ -1276,14 +1277,14 @@ export class CallingClass {
       ipcRenderer.send('show-screen-share', source.name);
       notificationService.notify({
         icon: 'images/icons/v2/video-solid-24.svg',
-        message: window.i18n('calling__presenting--notification-body'),
+        message: window.i18n('icu:calling__presenting--notification-body'),
         onNotificationClick: () => {
           if (this.reduxInterface) {
             this.reduxInterface.setPresenting();
           }
         },
         silent: true,
-        title: window.i18n('calling__presenting--notification-title'),
+        title: window.i18n('icu:calling__presenting--notification-title'),
       });
     } else {
       ipcRenderer.send('close-screen-share-controller');
@@ -1696,7 +1697,7 @@ export class CallingClass {
     const { ContentHint } = Proto.UnidentifiedSenderMessage.Message;
     await conversation.queueJob('handleSendCallMessageToGroup', async () =>
       handleMessageSend(
-        window.Signal.Util.sendContentMessageToGroup({
+        sendContentMessageToGroup({
           contentHint: ContentHint.DEFAULT,
           contentMessage,
           isPartialSend: false,
@@ -2270,7 +2271,7 @@ export class CallingClass {
       case NotificationSetting.NoNameOrMessage:
         notificationTitle = FALLBACK_NOTIFICATION_TITLE;
         notificationMessage = window.i18n(
-          'calling__call-notification__started-by-someone'
+          'icu:calling__call-notification__started-by-someone'
         );
         break;
       default:
@@ -2278,10 +2279,10 @@ export class CallingClass {
         notificationTitle =
           conversation?.getTitle() || FALLBACK_NOTIFICATION_TITLE;
         notificationMessage = creatorConversation
-          ? window.i18n('calling__call-notification__started', {
+          ? window.i18n('icu:calling__call-notification__started', {
               name: creatorConversation.getTitle(),
             })
-          : window.i18n('calling__call-notification__started-by-someone');
+          : window.i18n('icu:calling__call-notification__started-by-someone');
         break;
     }
 

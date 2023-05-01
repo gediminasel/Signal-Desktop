@@ -202,7 +202,7 @@ export function Inbox({
         ) * 100;
     }
 
-    let message = i18n('loading');
+    let message: string | undefined;
     if (envelopeTimestamp !== undefined) {
       const daysBeforeMidnight = Math.ceil(
         (midnight - envelopeTimestamp) / DAY
@@ -224,13 +224,25 @@ export function Inbox({
         <div className="module-title-bar-drag-area" />
 
         <div className="module-splash-screen__logo module-img--150" />
-        <div className="app-loading-screen__progress--container">
-          <div
-            className="app-loading-screen__progress--bar"
-            style={{ transform: `translateX(${loadingProgress - 100}%)` }}
-          />
-        </div>
-        <div className="message">{message}</div>
+        {envelopeTimestamp === undefined ? (
+          <div className="container">
+            <span className="dot" />
+            <span className="dot" />
+            <span className="dot" />
+          </div>
+        ) : (
+          <div className="app-loading-screen__progress--container">
+            <div
+              className="app-loading-screen__progress--bar"
+              style={{ transform: `translateX(${loadingProgress - 100}%)` }}
+            />
+          </div>
+        )}
+        {message === undefined ? (
+          <div className="message-placeholder" />
+        ) : (
+          <div className="message">{message}</div>
+        )}
         <div id="toast" />
       </div>
     );
@@ -262,7 +274,7 @@ export function Inbox({
             <div className="no-conversation-open">
               {renderMiniPlayer({ shouldFlow: false })}
               <div className="module-splash-screen__logo module-img--128 module-logo-blue" />
-              <h3>{i18n('welcomeToSignal')}</h3>
+              <h3>{i18n('icu:welcomeToSignal')}</h3>
               <p className="whats-new-placeholder">
                 <WhatsNewLink
                   i18n={i18n}

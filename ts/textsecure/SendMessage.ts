@@ -13,7 +13,6 @@ import {
   SenderKeyDistributionMessage,
 } from '@signalapp/libsignal-client';
 
-import type { QuotedMessageType } from '../model-types.d';
 import type { ConversationModel } from '../models/conversations';
 import { GLOBAL_ZONE } from '../SignalProtocolStore';
 import { assertDev, strictAssert } from '../util/assert';
@@ -21,9 +20,10 @@ import { parseIntOrThrow } from '../util/parseIntOrThrow';
 import { Address } from '../types/Address';
 import { QualifiedAddress } from '../types/QualifiedAddress';
 import { SenderKeys } from '../LibSignalStores';
-import type { LinkPreviewType } from '../types/message/LinkPreviews';
-import { MIMETypeToString } from '../types/MIME';
-import type * as Attachment from '../types/Attachment';
+import type {
+  TextAttachmentType,
+  UploadedAttachmentType,
+} from '../types/Attachment';
 import type { UUID } from '../types/UUID';
 import type {
   ChallengeType,
@@ -49,7 +49,7 @@ import type {
 } from './OutgoingMessage';
 import OutgoingMessage from './OutgoingMessage';
 import * as Bytes from '../Bytes';
-import { getRandomBytes, getZeroes, encryptAttachment } from '../Crypto';
+import { getRandomBytes } from '../Crypto';
 import {
   MessageError,
   SignedPreKeyRotationError,
@@ -57,7 +57,9 @@ import {
   HTTPError,
   NoSenderKeyError,
 } from './Errors';
-import type { BodyRangesType, StoryContextType } from '../types/Util';
+import { BodyRange } from '../types/BodyRange';
+import type { RawBodyRange } from '../types/BodyRange';
+import type { StoryContextType } from '../types/Util';
 import type {
   LinkPreviewImage,
   LinkPreviewMetadata,
@@ -69,13 +71,13 @@ import { uuidToBytes } from '../util/uuidToBytes';
 import type { DurationInSeconds } from '../util/durations';
 import { SignalService as Proto } from '../protobuf';
 import * as log from '../logging/log';
-import type { Avatar, EmbeddedContactType } from '../types/EmbeddedContact';
+import type { EmbeddedContactWithUploadedAvatar } from '../types/EmbeddedContact';
 import {
   numberToPhoneType,
   numberToEmailType,
   numberToAddressType,
 } from '../types/EmbeddedContact';
-import type { StickerWithHydratedData } from '../types/Stickers';
+import { missingCaseError } from '../util/missingCaseError';
 
 export type SendMetadataType = {
   [identifier: string]: {
@@ -89,9 +91,33 @@ export type SendOptionsType = {
   online?: boolean;
 };
 
-type QuoteAttachmentType = {
-  thumbnail?: AttachmentType;
-  attachmentPointer?: Proto.IAttachmentPointer;
+export type OutgoingQuoteAttachmentType = Readonly<{
+  contentType: string;
+  fileName?: string;
+  thumbnail: UploadedAttachmentType;
+}>;
+
+export type OutgoingQuoteType = Readonly<{
+  isGiftBadge?: boolean;
+  id?: number;
+  authorUuid?: string;
+  text?: string;
+  attachments: ReadonlyArray<OutgoingQuoteAttachmentType>;
+  bodyRanges?: ReadonlyArray<RawBodyRange>;
+}>;
+
+export type OutgoingLinkPreviewType = Readonly<{
+  title?: string;
+  description?: string;
+  domain?: string;
+  url: string;
+  isStickerPack?: boolean;
+  image?: Readonly<UploadedAttachmentType>;
+  date?: number;
+}>;
+
+export type OutgoingTextAttachmentType = Omit<TextAttachmentType, 'preview'> & {
+  preview?: OutgoingLinkPreviewType;
 };
 
 export type GroupV2InfoType = {
@@ -100,40 +126,24 @@ export type GroupV2InfoType = {
   revision: number;
   members: ReadonlyArray<string>;
 };
-export type GroupV1InfoType = {
-  id: string;
-  members: ReadonlyArray<string>;
-};
 
 type GroupCallUpdateType = {
   eraId: string;
 };
 
-export type StickerType = StickerWithHydratedData & {
-  attachmentPointer?: Proto.IAttachmentPointer;
-};
+export type OutgoingStickerType = Readonly<{
+  packId: string;
+  packKey: string;
+  stickerId: number;
+  emoji?: string;
+  data: Readonly<UploadedAttachmentType>;
+}>;
 
 export type ReactionType = {
   emoji?: string;
   remove?: boolean;
   targetAuthorUuid?: string;
   targetTimestamp?: number;
-};
-
-export type AttachmentType = {
-  size: number;
-  data: Uint8Array;
-  contentType: string;
-
-  fileName?: string;
-  flags?: number;
-  width?: number;
-  height?: number;
-  caption?: string;
-
-  attachmentPointer?: Proto.IAttachmentPointer;
-
-  blurHash?: string;
 };
 
 export const singleProtoJobDataSchema = z.object({
@@ -148,34 +158,12 @@ export const singleProtoJobDataSchema = z.object({
 
 export type SingleProtoJobData = z.infer<typeof singleProtoJobDataSchema>;
 
-function makeAttachmentSendReady(
-  attachment: Attachment.AttachmentType
-): AttachmentType | undefined {
-  const { data } = attachment;
-
-  if (!data) {
-    throw new Error(
-      'makeAttachmentSendReady: Missing data, returning undefined'
-    );
-  }
-
-  return {
-    ...attachment,
-    contentType: MIMETypeToString(attachment.contentType),
-    data,
-  };
-}
-
-export type ContactWithHydratedAvatar = EmbeddedContactType & {
-  avatar?: Avatar & {
-    attachmentPointer?: Proto.IAttachmentPointer;
-  };
-};
-
 export type MessageOptionsType = {
-  attachments?: ReadonlyArray<AttachmentType> | null;
+  attachments?: ReadonlyArray<UploadedAttachmentType>;
   body?: string;
-  contact?: Array<ContactWithHydratedAvatar>;
+  bodyRanges?: ReadonlyArray<RawBodyRange>;
+  contact?: ReadonlyArray<EmbeddedContactWithUploadedAvatar>;
+  editedMessageTimestamp?: number;
   expireTimer?: DurationInSeconds;
   flags?: number;
   group?: {
@@ -184,44 +172,45 @@ export type MessageOptionsType = {
   };
   groupV2?: GroupV2InfoType;
   needsSync?: boolean;
-  preview?: ReadonlyArray<LinkPreviewType>;
+  preview?: ReadonlyArray<OutgoingLinkPreviewType>;
   profileKey?: Uint8Array;
-  quote?: QuotedMessageType | null;
+  quote?: OutgoingQuoteType;
   recipients: ReadonlyArray<string>;
-  sticker?: StickerWithHydratedData;
+  sticker?: OutgoingStickerType;
   reaction?: ReactionType;
   deletedForEveryoneTimestamp?: number;
   timestamp: number;
-  mentions?: BodyRangesType;
   groupCallUpdate?: GroupCallUpdateType;
   storyContext?: StoryContextType;
 };
 export type GroupSendOptionsType = {
-  attachments?: Array<AttachmentType>;
-  contact?: Array<ContactWithHydratedAvatar>;
+  attachments?: ReadonlyArray<UploadedAttachmentType>;
+  bodyRanges?: ReadonlyArray<RawBodyRange>;
+  contact?: ReadonlyArray<EmbeddedContactWithUploadedAvatar>;
   deletedForEveryoneTimestamp?: number;
+  editedMessageTimestamp?: number;
   expireTimer?: DurationInSeconds;
   flags?: number;
   groupCallUpdate?: GroupCallUpdateType;
-  groupV1?: GroupV1InfoType;
   groupV2?: GroupV2InfoType;
-  mentions?: BodyRangesType;
   messageText?: string;
-  preview?: ReadonlyArray<LinkPreviewType>;
+  preview?: ReadonlyArray<OutgoingLinkPreviewType>;
   profileKey?: Uint8Array;
-  quote?: QuotedMessageType | null;
+  quote?: OutgoingQuoteType;
   reaction?: ReactionType;
-  sticker?: StickerWithHydratedData;
+  sticker?: OutgoingStickerType;
   storyContext?: StoryContextType;
   timestamp: number;
 };
 
 class Message {
-  attachments: ReadonlyArray<AttachmentType>;
+  attachments: ReadonlyArray<UploadedAttachmentType>;
 
   body?: string;
 
-  contact?: Array<ContactWithHydratedAvatar>;
+  bodyRanges?: ReadonlyArray<RawBodyRange>;
+
+  contact?: ReadonlyArray<EmbeddedContactWithUploadedAvatar>;
 
   expireTimer?: DurationInSeconds;
 
@@ -236,15 +225,15 @@ class Message {
 
   needsSync?: boolean;
 
-  preview?: ReadonlyArray<LinkPreviewType>;
+  preview?: ReadonlyArray<OutgoingLinkPreviewType>;
 
   profileKey?: Uint8Array;
 
-  quote?: QuotedMessageType | null;
+  quote?: OutgoingQuoteType;
 
   recipients: ReadonlyArray<string>;
 
-  sticker?: StickerType;
+  sticker?: OutgoingStickerType;
 
   reaction?: ReactionType;
 
@@ -252,11 +241,7 @@ class Message {
 
   dataMessage?: Proto.DataMessage;
 
-  attachmentPointers: Array<Proto.IAttachmentPointer> = [];
-
   deletedForEveryoneTimestamp?: number;
-
-  mentions?: BodyRangesType;
 
   groupCallUpdate?: GroupCallUpdateType;
 
@@ -265,6 +250,7 @@ class Message {
   constructor(options: MessageOptionsType) {
     this.attachments = options.attachments || [];
     this.body = options.body;
+    this.bodyRanges = options.bodyRanges;
     this.contact = options.contact;
     this.expireTimer = options.expireTimer;
     this.flags = options.flags;
@@ -279,7 +265,6 @@ class Message {
     this.reaction = options.reaction;
     this.timestamp = options.timestamp;
     this.deletedForEveryoneTimestamp = options.deletedForEveryoneTimestamp;
-    this.mentions = options.mentions;
     this.groupCallUpdate = options.groupCallUpdate;
     this.storyContext = options.storyContext;
 
@@ -348,18 +333,26 @@ class Message {
     const proto = new Proto.DataMessage();
 
     proto.timestamp = Long.fromNumber(this.timestamp);
-    proto.attachments = this.attachmentPointers;
+    proto.attachments = this.attachments.slice();
 
     if (this.body) {
       proto.body = this.body;
 
-      const mentionCount = this.mentions ? this.mentions.length : 0;
+      const mentionCount = this.bodyRanges
+        ? this.bodyRanges.filter(BodyRange.isMention).length
+        : 0;
+      const otherRangeCount = this.bodyRanges
+        ? this.bodyRanges.length - mentionCount
+        : 0;
       const placeholders = this.body.match(/\uFFFC/g);
       const placeholderCount = placeholders ? placeholders.length : 0;
+      const storyInfo = this.storyContext
+        ? `, story: ${this.storyContext.timestamp}`
+        : '';
       log.info(
-        `Sending a message with ${mentionCount} mentions and ${placeholderCount} placeholders${
-          this.storyContext ? `, story: ${this.storyContext.timestamp}` : ''
-        }`
+        `Sending a message with ${mentionCount} mentions, ` +
+          `${placeholderCount} placeholders, ` +
+          `and ${otherRangeCount} other ranges${storyInfo}`
       );
     }
     if (this.flags) {
@@ -370,10 +363,6 @@ class Message {
       proto.groupV2.masterKey = this.groupV2.masterKey;
       proto.groupV2.revision = this.groupV2.revision;
       proto.groupV2.groupChange = this.groupV2.groupChange || null;
-    } else if (this.group) {
-      proto.group = new Proto.GroupContext();
-      proto.group.id = Bytes.fromString(this.group.id);
-      proto.group.type = this.group.type;
     }
     if (this.sticker) {
       proto.sticker = new Proto.DataMessage.Sticker();
@@ -381,10 +370,7 @@ class Message {
       proto.sticker.packKey = Bytes.fromBase64(this.sticker.packKey);
       proto.sticker.stickerId = this.sticker.stickerId;
       proto.sticker.emoji = this.sticker.emoji;
-
-      if (this.sticker.attachmentPointer) {
-        proto.sticker.data = this.sticker.attachmentPointer;
-      }
+      proto.sticker.data = this.sticker.data;
     }
     if (this.reaction) {
       proto.reaction = new Proto.DataMessage.Reaction();
@@ -404,83 +390,84 @@ class Message {
         item.url = preview.url;
         item.description = preview.description || null;
         item.date = preview.date || null;
-        if (preview.attachmentPointer) {
-          item.image = preview.attachmentPointer;
+        if (preview.image) {
+          item.image = preview.image;
         }
         return item;
       });
     }
     if (Array.isArray(this.contact)) {
-      proto.contact = this.contact.map(contact => {
-        const contactProto = new Proto.DataMessage.Contact();
-        if (contact.name) {
-          const nameProto: Proto.DataMessage.Contact.IName = {
-            givenName: contact.name.givenName,
-            familyName: contact.name.familyName,
-            prefix: contact.name.prefix,
-            suffix: contact.name.suffix,
-            middleName: contact.name.middleName,
-            displayName: contact.name.displayName,
-          };
-          contactProto.name = new Proto.DataMessage.Contact.Name(nameProto);
-        }
-        if (Array.isArray(contact.number)) {
-          contactProto.number = contact.number.map(number => {
-            const numberProto: Proto.DataMessage.Contact.IPhone = {
-              value: number.value,
-              type: numberToPhoneType(number.type),
-              label: number.label,
+      proto.contact = this.contact.map(
+        (contact: EmbeddedContactWithUploadedAvatar) => {
+          const contactProto = new Proto.DataMessage.Contact();
+          if (contact.name) {
+            const nameProto: Proto.DataMessage.Contact.IName = {
+              givenName: contact.name.givenName,
+              familyName: contact.name.familyName,
+              prefix: contact.name.prefix,
+              suffix: contact.name.suffix,
+              middleName: contact.name.middleName,
+              displayName: contact.name.displayName,
             };
+            contactProto.name = new Proto.DataMessage.Contact.Name(nameProto);
+          }
+          if (Array.isArray(contact.number)) {
+            contactProto.number = contact.number.map(number => {
+              const numberProto: Proto.DataMessage.Contact.IPhone = {
+                value: number.value,
+                type: numberToPhoneType(number.type),
+                label: number.label,
+              };
 
-            return new Proto.DataMessage.Contact.Phone(numberProto);
-          });
-        }
-        if (Array.isArray(contact.email)) {
-          contactProto.email = contact.email.map(email => {
-            const emailProto: Proto.DataMessage.Contact.IEmail = {
-              value: email.value,
-              type: numberToEmailType(email.type),
-              label: email.label,
-            };
+              return new Proto.DataMessage.Contact.Phone(numberProto);
+            });
+          }
+          if (Array.isArray(contact.email)) {
+            contactProto.email = contact.email.map(email => {
+              const emailProto: Proto.DataMessage.Contact.IEmail = {
+                value: email.value,
+                type: numberToEmailType(email.type),
+                label: email.label,
+              };
 
-            return new Proto.DataMessage.Contact.Email(emailProto);
-          });
-        }
-        if (Array.isArray(contact.address)) {
-          contactProto.address = contact.address.map(address => {
-            const addressProto: Proto.DataMessage.Contact.IPostalAddress = {
-              type: numberToAddressType(address.type),
-              label: address.label,
-              street: address.street,
-              pobox: address.pobox,
-              neighborhood: address.neighborhood,
-              city: address.city,
-              region: address.region,
-              postcode: address.postcode,
-              country: address.country,
-            };
+              return new Proto.DataMessage.Contact.Email(emailProto);
+            });
+          }
+          if (Array.isArray(contact.address)) {
+            contactProto.address = contact.address.map(address => {
+              const addressProto: Proto.DataMessage.Contact.IPostalAddress = {
+                type: numberToAddressType(address.type),
+                label: address.label,
+                street: address.street,
+                pobox: address.pobox,
+                neighborhood: address.neighborhood,
+                city: address.city,
+                region: address.region,
+                postcode: address.postcode,
+                country: address.country,
+              };
 
-            return new Proto.DataMessage.Contact.PostalAddress(addressProto);
-          });
-        }
-        if (contact.avatar && contact.avatar.attachmentPointer) {
-          const avatarProto = new Proto.DataMessage.Contact.Avatar();
-          avatarProto.avatar = contact.avatar.attachmentPointer;
-          avatarProto.isProfile = Boolean(contact.avatar.isProfile);
-          contactProto.avatar = avatarProto;
-        }
+              return new Proto.DataMessage.Contact.PostalAddress(addressProto);
+            });
+          }
+          if (contact.avatar?.avatar) {
+            const avatarProto = new Proto.DataMessage.Contact.Avatar();
+            avatarProto.avatar = contact.avatar.avatar;
+            avatarProto.isProfile = Boolean(contact.avatar.isProfile);
+            contactProto.avatar = avatarProto;
+          }
 
-        if (contact.organization) {
-          contactProto.organization = contact.organization;
-        }
+          if (contact.organization) {
+            contactProto.organization = contact.organization;
+          }
 
-        return contactProto;
-      });
+          return contactProto;
+        }
+      );
     }
 
     if (this.quote) {
-      const { QuotedAttachment } = Proto.DataMessage.Quote;
-      const { BodyRange, Quote } = Proto.DataMessage;
+      const { BodyRange: ProtoBodyRange, Quote } = Proto.DataMessage;
 
       proto.quote = new Quote();
       const { quote } = proto;
@@ -495,28 +482,18 @@ class Message {
         this.quote.id === undefined ? null : Long.fromNumber(this.quote.id);
       quote.authorUuid = this.quote.authorUuid || null;
       quote.text = this.quote.text || null;
-      quote.attachments = (this.quote.attachments || []).map(
-        (attachment: AttachmentType) => {
-          const quotedAttachment = new QuotedAttachment();
-
-          quotedAttachment.contentType = attachment.contentType;
-          if (attachment.fileName) {
-            quotedAttachment.fileName = attachment.fileName;
-          }
-          if (attachment.attachmentPointer) {
-            quotedAttachment.thumbnail = attachment.attachmentPointer;
-          }
-
-          return quotedAttachment;
-        }
-      );
-      const bodyRanges: BodyRangesType = this.quote.bodyRanges || [];
+      quote.attachments = this.quote.attachments.slice() || [];
+      const bodyRanges = this.quote.bodyRanges || [];
       quote.bodyRanges = bodyRanges.map(range => {
-        const bodyRange = new BodyRange();
+        const bodyRange = new ProtoBodyRange();
         bodyRange.start = range.start;
         bodyRange.length = range.length;
-        if (range.mentionUuid !== undefined) {
+        if (BodyRange.isMention(range)) {
           bodyRange.mentionUuid = range.mentionUuid;
+        } else if (BodyRange.isFormatting(range)) {
+          bodyRange.style = range.style;
+        } else {
+          throw missingCaseError(range);
         }
         return bodyRange;
       });
@@ -541,16 +518,28 @@ class Message {
         targetSentTimestamp: Long.fromNumber(this.deletedForEveryoneTimestamp),
       };
     }
-    if (this.mentions) {
+    if (this.bodyRanges) {
       proto.requiredProtocolVersion =
         Proto.DataMessage.ProtocolVersion.MENTIONS;
-      proto.bodyRanges = this.mentions.map(
-        ({ start, length, mentionUuid }) => ({
-          start,
-          length,
-          mentionUuid,
-        })
-      );
+      proto.bodyRanges = this.bodyRanges.map(bodyRange => {
+        const { start, length } = bodyRange;
+
+        if (BodyRange.isMention(bodyRange)) {
+          return {
+            start,
+            length,
+            mentionUuid: bodyRange.mentionUuid,
+          };
+        }
+        if (BodyRange.isFormatting(bodyRange)) {
+          return {
+            start,
+            length,
+            style: bodyRange.style,
+          };
+        }
+        throw missingCaseError(bodyRange);
+      });
     }
 
     if (this.groupCallUpdate) {
@@ -647,13 +636,6 @@ export default class MessageSender {
 
   // Attachment upload functions
 
-  _getAttachmentSizeBucket(size: number): number {
-    return Math.max(
-      541,
-      Math.floor(1.05 ** Math.ceil(Math.log(size) / Math.log(1.05)))
-    );
-  }
-
   static getRandomPadding(): Uint8Array {
     // Generate a random int from 1 and 512
     const buffer = getRandomBytes(2);
@@ -663,216 +645,11 @@ export default class MessageSender {
     return getRandomBytes(paddingLength);
   }
 
-  getPaddedAttachment(data: Readonly<Uint8Array>): Uint8Array {
-    const size = data.byteLength;
-    const paddedSize = this._getAttachmentSizeBucket(size);
-    const padding = getZeroes(paddedSize - size);
-
-    return Bytes.concatenate([data, padding]);
-  }
-
-  async makeAttachmentPointer(
-    attachment: Readonly<
-      Partial<AttachmentType> &
-        Pick<AttachmentType, 'data' | 'size' | 'contentType'>
-    >
-  ): Promise<Proto.IAttachmentPointer> {
-    assertDev(
-      typeof attachment === 'object' && attachment != null,
-      'Got null attachment in `makeAttachmentPointer`'
-    );
-
-    const { data, size, contentType } = attachment;
-    if (!(data instanceof Uint8Array)) {
-      throw new Error(
-        `makeAttachmentPointer: data was a '${typeof data}' instead of Uint8Array`
-      );
-    }
-    if (data.byteLength !== size) {
-      throw new Error(
-        `makeAttachmentPointer: Size ${size} did not match data.byteLength ${data.byteLength}`
-      );
-    }
-    if (typeof contentType !== 'string') {
-      throw new Error(
-        `makeAttachmentPointer: contentType ${contentType} was not a string`
-      );
-    }
-
-    const padded = this.getPaddedAttachment(data);
-    const key = getRandomBytes(64);
-
-    const result = encryptAttachment(padded, key);
-    const id = await this.server.putAttachment(result.ciphertext);
-
-    const proto = new Proto.AttachmentPointer();
-    proto.cdnId = Long.fromString(id);
-    proto.contentType = attachment.contentType;
-    proto.key = key;
-    proto.size = data.byteLength;
-    proto.digest = result.digest;
-
-    if (attachment.fileName) {
-      proto.fileName = attachment.fileName;
-    }
-    if (attachment.flags) {
-      proto.flags = attachment.flags;
-    }
-    if (attachment.width) {
-      proto.width = attachment.width;
-    }
-    if (attachment.height) {
-      proto.height = attachment.height;
-    }
-    if (attachment.caption) {
-      proto.caption = attachment.caption;
-    }
-    if (attachment.blurHash) {
-      proto.blurHash = attachment.blurHash;
-    }
-
-    return proto;
-  }
-
-  async uploadAttachments(message: Message): Promise<void> {
-    try {
-      // eslint-disable-next-line no-param-reassign
-      message.attachmentPointers = await Promise.all(
-        message.attachments.map(attachment =>
-          this.makeAttachmentPointer(attachment)
-        )
-      );
-    } catch (error) {
-      if (error instanceof HTTPError) {
-        throw new MessageError(message, error);
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  async uploadLinkPreviews(message: Message): Promise<void> {
-    try {
-      const preview = await Promise.all(
-        (message.preview || []).map(async (item: Readonly<LinkPreviewType>) => {
-          if (!item.image) {
-            return item;
-          }
-          const attachment = makeAttachmentSendReady(item.image);
-          if (!attachment) {
-            return item;
-          }
-
-          return {
-            ...item,
-            attachmentPointer: await this.makeAttachmentPointer(attachment),
-          };
-        })
-      );
-      // eslint-disable-next-line no-param-reassign
-      message.preview = preview;
-    } catch (error) {
-      if (error instanceof HTTPError) {
-        throw new MessageError(message, error);
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  async uploadSticker(message: Message): Promise<void> {
-    try {
-      const { sticker } = message;
-
-      if (!sticker) {
-        return;
-      }
-      if (!sticker.data) {
-        throw new Error('uploadSticker: No sticker data to upload!');
-      }
-
-      // eslint-disable-next-line no-param-reassign
-      message.sticker = {
-        ...sticker,
-        attachmentPointer: await this.makeAttachmentPointer(sticker.data),
-      };
-    } catch (error) {
-      if (error instanceof HTTPError) {
-        throw new MessageError(message, error);
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  async uploadContactAvatar(message: Message): Promise<void> {
-    const { contact } = message;
-    if (!contact || contact.length === 0) {
-      return;
-    }
-
-    try {
-      await Promise.all(
-        contact.map(async (item: ContactWithHydratedAvatar) => {
-          const itemAvatar = item?.avatar;
-          const avatar = itemAvatar?.avatar;
-
-          if (!itemAvatar || !avatar || !avatar.data) {
-            return;
-          }
-
-          const attachment = makeAttachmentSendReady(avatar);
-          if (!attachment) {
-            return;
-          }
-
-          itemAvatar.attachmentPointer = await this.makeAttachmentPointer(
-            attachment
-          );
-        })
-      );
-    } catch (error) {
-      if (error instanceof HTTPError) {
-        throw new MessageError(message, error);
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  async uploadThumbnails(message: Message): Promise<void> {
-    const { quote } = message;
-    if (!quote || !quote.attachments || quote.attachments.length === 0) {
-      return;
-    }
-
-    try {
-      await Promise.all(
-        quote.attachments.map(async (attachment: QuoteAttachmentType) => {
-          if (!attachment.thumbnail) {
-            return;
-          }
-
-          // eslint-disable-next-line no-param-reassign
-          attachment.attachmentPointer = await this.makeAttachmentPointer(
-            attachment.thumbnail
-          );
-        })
-      );
-    } catch (error) {
-      if (error instanceof HTTPError) {
-        throw new MessageError(message, error);
-      } else {
-        throw error;
-      }
-    }
-  }
-
   // Proto assembly
 
-  async getTextAttachmentProto(
-    attachmentAttrs: Attachment.TextAttachmentType
-  ): Promise<Proto.TextAttachment> {
+  getTextAttachmentProto(
+    attachmentAttrs: OutgoingTextAttachmentType
+  ): Proto.TextAttachment {
     const textAttachment = new Proto.TextAttachment();
 
     if (attachmentAttrs.text) {
@@ -892,15 +669,8 @@ export default class MessageSender {
     }
 
     if (attachmentAttrs.preview) {
-      const previewImage = attachmentAttrs.preview.image;
-      // This cast is OK because we're ensuring that previewImage.data is truthy
-      const image =
-        previewImage && previewImage.data
-          ? await this.makeAttachmentPointer(previewImage as AttachmentType)
-          : undefined;
-
       textAttachment.preview = {
-        image,
+        image: attachmentAttrs.preview.image,
         title: attachmentAttrs.preview.title,
         url: attachmentAttrs.preview.url,
       };
@@ -932,23 +702,20 @@ export default class MessageSender {
     textAttachment,
   }: {
     allowsReplies?: boolean;
-    fileAttachment?: AttachmentType;
+    fileAttachment?: UploadedAttachmentType;
     groupV2?: GroupV2InfoType;
     profileKey: Uint8Array;
-    textAttachment?: Attachment.TextAttachmentType;
+    textAttachment?: OutgoingTextAttachmentType;
   }): Promise<Proto.StoryMessage> {
     const storyMessage = new Proto.StoryMessage();
     storyMessage.profileKey = profileKey;
 
     if (fileAttachment) {
       try {
-        const attachmentPointer = await this.makeAttachmentPointer(
-          fileAttachment
-        );
-        storyMessage.fileAttachment = attachmentPointer;
+        storyMessage.fileAttachment = fileAttachment;
       } catch (error) {
         if (error instanceof HTTPError) {
-          throw new MessageError(message, error);
+          throw new MessageError(storyMessage, error);
         } else {
           throw error;
         }
@@ -956,9 +723,7 @@ export default class MessageSender {
     }
 
     if (textAttachment) {
-      storyMessage.textAttachment = await this.getTextAttachmentProto(
-        textAttachment
-      );
+      storyMessage.textAttachment = this.getTextAttachmentProto(textAttachment);
     }
 
     if (groupV2) {
@@ -988,7 +753,16 @@ export default class MessageSender {
     const dataMessage = message.toProto();
 
     const contentMessage = new Proto.Content();
-    contentMessage.dataMessage = dataMessage;
+    if (options.editedMessageTimestamp) {
+      const editMessage = new Proto.EditMessage();
+      editMessage.dataMessage = dataMessage;
+      editMessage.targetSentTimestamp = Long.fromNumber(
+        options.editedMessageTimestamp
+      );
+      contentMessage.editMessage = editMessage;
+    } else {
+      contentMessage.dataMessage = dataMessage;
+    }
 
     const { includePniSignatureMessage } = options;
     if (includePniSignatureMessage) {
@@ -1015,13 +789,6 @@ export default class MessageSender {
     attributes: Readonly<MessageOptionsType>
   ): Promise<Message> {
     const message = new Message(attributes);
-    await Promise.all([
-      this.uploadAttachments(message),
-      this.uploadContactAvatar(message),
-      this.uploadThumbnails(message),
-      this.uploadLinkPreviews(message),
-      this.uploadSticker(message),
-    ]);
 
     return message;
   }
@@ -1073,14 +840,14 @@ export default class MessageSender {
   ): MessageOptionsType {
     const {
       attachments,
+      bodyRanges,
       contact,
       deletedForEveryoneTimestamp,
+      editedMessageTimestamp,
       expireTimer,
       flags,
       groupCallUpdate,
-      groupV1,
       groupV2,
-      mentions,
       messageText,
       preview,
       profileKey,
@@ -1091,16 +858,16 @@ export default class MessageSender {
       timestamp,
     } = options;
 
-    if (!groupV1 && !groupV2) {
+    if (!groupV2) {
       throw new Error(
-        'getAttrsFromGroupOptions: Neither group1 nor groupv2 information provided!'
+        'getAttrsFromGroupOptions: No groupv2 information provided!'
       );
     }
 
     const myE164 = window.textsecure.storage.user.getNumber();
     const myUuid = window.textsecure.storage.user.getUuid()?.toString();
 
-    const groupMembers = groupV2?.members || groupV1?.members || [];
+    const groupMembers = groupV2?.members || [];
 
     // We should always have a UUID but have this check just in case we don't.
     let isNotMe: (recipient: string) => boolean;
@@ -1123,20 +890,15 @@ export default class MessageSender {
 
     return {
       attachments,
+      bodyRanges,
       body: messageText,
       contact,
       deletedForEveryoneTimestamp,
+      editedMessageTimestamp,
       expireTimer,
       flags,
       groupCallUpdate,
       groupV2,
-      group: groupV1
-        ? {
-            id: groupV1.id,
-            type: Proto.GroupContext.Type.DELIVER,
-          }
-        : undefined,
-      mentions,
       preview,
       profileKey,
       quote,
@@ -1338,9 +1100,11 @@ export default class MessageSender {
   //   message to just one person.
   async sendMessageToIdentifier({
     attachments,
+    bodyRanges,
     contact,
     contentHint,
     deletedForEveryoneTimestamp,
+    editedMessageTimestamp,
     expireTimer,
     groupId,
     identifier,
@@ -1357,20 +1121,22 @@ export default class MessageSender {
     urgent,
     includePniSignatureMessage,
   }: Readonly<{
-    attachments: ReadonlyArray<AttachmentType> | undefined;
-    contact?: Array<ContactWithHydratedAvatar>;
+    attachments: ReadonlyArray<UploadedAttachmentType> | undefined;
+    bodyRanges?: ReadonlyArray<RawBodyRange>;
+    contact?: ReadonlyArray<EmbeddedContactWithUploadedAvatar>;
     contentHint: number;
     deletedForEveryoneTimestamp: number | undefined;
+    editedMessageTimestamp?: number;
     expireTimer: DurationInSeconds | undefined;
     groupId: string | undefined;
     identifier: string;
     messageText: string | undefined;
     options?: SendOptionsType;
-    preview?: ReadonlyArray<LinkPreviewType> | undefined;
+    preview?: ReadonlyArray<OutgoingLinkPreviewType> | undefined;
     profileKey?: Uint8Array;
-    quote?: QuotedMessageType | null;
+    quote?: OutgoingQuoteType;
     reaction?: ReactionType;
-    sticker?: StickerWithHydratedData;
+    sticker?: OutgoingStickerType;
     storyContext?: StoryContextType;
     story?: boolean;
     timestamp: number;
@@ -1380,9 +1146,11 @@ export default class MessageSender {
     return this.sendMessage({
       messageOptions: {
         attachments,
+        bodyRanges,
         body: messageText,
         contact,
         deletedForEveryoneTimestamp,
+        editedMessageTimestamp,
         expireTimer,
         preview,
         profileKey,
@@ -1407,6 +1175,7 @@ export default class MessageSender {
   // Note: this is used for sending real messages to your other devices after sending a
   //   message to others.
   async sendSyncMessage({
+    editedMessageTimestamp,
     encodedDataMessage,
     timestamp,
     destination,
@@ -1420,6 +1189,7 @@ export default class MessageSender {
     storyMessage,
     storyMessageRecipients,
   }: Readonly<{
+    editedMessageTimestamp?: number;
     encodedDataMessage?: Uint8Array;
     timestamp: number;
     destination: string | undefined;
@@ -1438,7 +1208,13 @@ export default class MessageSender {
     const sentMessage = new Proto.SyncMessage.Sent();
     sentMessage.timestamp = Long.fromNumber(timestamp);
 
-    if (encodedDataMessage) {
+    if (editedMessageTimestamp && encodedDataMessage) {
+      const dataMessage = Proto.DataMessage.decode(encodedDataMessage);
+      const editMessage = new Proto.EditMessage();
+      editMessage.dataMessage = dataMessage;
+      editMessage.targetSentTimestamp = Long.fromNumber(editedMessageTimestamp);
+      sentMessage.editMessage = editMessage;
+    } else if (encodedDataMessage) {
       const dataMessage = Proto.DataMessage.decode(encodedDataMessage);
       sentMessage.message = dataMessage;
     }
@@ -2391,50 +2167,6 @@ export default class MessageSender {
       story,
       timestamp,
       urgent,
-    });
-  }
-
-  // GroupV1-only functions; not to be used in the future
-
-  async leaveGroup(
-    groupId: string,
-    groupIdentifiers: Array<string>,
-    options?: SendOptionsType
-  ): Promise<CallbackResultType> {
-    const timestamp = Date.now();
-    const proto = new Proto.Content({
-      dataMessage: {
-        group: {
-          id: Bytes.fromString(groupId),
-          type: Proto.GroupContext.Type.QUIT,
-        },
-      },
-    });
-
-    const { ContentHint } = Proto.UnidentifiedSenderMessage.Message;
-
-    const contentHint = ContentHint.RESENDABLE;
-    const sendLogCallback =
-      groupIdentifiers.length > 1
-        ? this.makeSendLogCallback({
-            contentHint,
-            proto: Buffer.from(Proto.Content.encode(proto).finish()),
-            sendType: 'legacyGroupChange',
-            timestamp,
-            urgent: false,
-            hasPniSignatureMessage: false,
-          })
-        : undefined;
-
-    return this.sendGroupProto({
-      contentHint,
-      groupId: undefined, // only for GV2 ids
-      options,
-      proto,
-      recipients: groupIdentifiers,
-      sendLogCallback,
-      timestamp,
-      urgent: false,
     });
   }
 

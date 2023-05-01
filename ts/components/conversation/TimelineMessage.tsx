@@ -26,12 +26,13 @@ import type {
 import type { PushPanelForConversationActionType } from '../../state/ducks/conversations';
 import { doesMessageBodyOverflow } from './MessageBodyReadMore';
 import type { Props as ReactionPickerProps } from './ReactionPicker';
-import { ConfirmationDialog } from '../ConfirmationDialog';
 import { useToggleReactionPicker } from '../../hooks/useKeyboardShortcuts';
 import { PanelType } from '../../types/Panels';
+import type { DeleteMessagesPropsType } from '../../state/ducks/globalModals';
 
 export type PropsData = {
   canDownload: boolean;
+  canEditMessage: boolean;
   canRetry: boolean;
   canRetryDeleteForEveryone: boolean;
   canReact: boolean;
@@ -42,19 +43,16 @@ export type PropsData = {
 } & Omit<MessagePropsData, 'renderingContext' | 'menu'>;
 
 export type PropsActions = {
-  deleteMessages: (options: {
-    conversationId: string;
-    messageIds: ReadonlyArray<string>;
-  }) => void;
-  deleteMessageForEveryone: (id: string) => void;
   pushPanelForConversation: PushPanelForConversationActionType;
-  toggleForwardMessagesModal: (id: Array<string>) => void;
+  toggleDeleteMessagesModal: (props: DeleteMessagesPropsType) => void;
+  toggleForwardMessagesModal: (messageIds: Array<string>) => void;
   reactToMessage: (
     id: string,
     { emoji, remove }: { emoji: string; remove: boolean }
   ) => void;
   retryMessageSend: (id: string) => void;
   retryDeleteForEveryone: (id: string) => void;
+  setMessageToEdit: (conversationId: string, messageId: string) => unknown;
   setQuoteByMessageId: (conversationId: string, messageId: string) => void;
   toggleSelectMessage: (
     conversationId: string,
@@ -84,8 +82,8 @@ export function TimelineMessage(props: Props): JSX.Element {
   const {
     attachments,
     author,
-    canDeleteForEveryone,
     canDownload,
+    canEditMessage,
     canReact,
     canReply,
     canReplyPrivately,
@@ -95,8 +93,6 @@ export function TimelineMessage(props: Props): JSX.Element {
     containerElementRef,
     containerWidthBreakpoint,
     conversationId,
-    deleteMessages,
-    deleteMessageForEveryone,
     deletedForEveryone,
     direction,
     giftBadge,
@@ -116,8 +112,10 @@ export function TimelineMessage(props: Props): JSX.Element {
     saveAttachment,
     selectedReaction,
     setQuoteByMessageId,
+    setMessageToEdit,
     text,
     timestamp,
+    toggleDeleteMessagesModal,
     toggleForwardMessagesModal,
     toggleSelectMessage,
   } = props;
@@ -282,9 +280,6 @@ export function TimelineMessage(props: Props): JSX.Element {
     }
   }, [canReact, toggleReactionPicker]);
 
-  const [hasDOEConfirmation, setHasDOEConfirmation] = useState(false);
-  const [hasDeleteConfirmation, setHasDeleteConfirmation] = useState(false);
-
   const toggleReactionPickerKeyboard = useToggleReactionPicker(
     handleReact || noop
   );
@@ -366,48 +361,6 @@ export function TimelineMessage(props: Props): JSX.Element {
 
   return (
     <>
-      {hasDOEConfirmation && canDeleteForEveryone && (
-        <ConfirmationDialog
-          actions={[
-            {
-              action: () => deleteMessageForEveryone(id),
-              style: 'negative',
-              text: i18n('delete'),
-            },
-          ]}
-          dialogName="TimelineMessage/deleteMessageForEveryone"
-          i18n={i18n}
-          onClose={() => setHasDOEConfirmation(false)}
-        >
-          {i18n('deleteForEveryoneWarning')}
-        </ConfirmationDialog>
-      )}
-      {hasDeleteConfirmation && (
-        <ConfirmationDialog
-          actions={[
-            {
-              action: () =>
-                deleteMessages({
-                  conversationId,
-                  messageIds: [id],
-                }),
-              style: 'negative',
-              text: i18n('icu:ConfirmDeleteForMeModal--confirm'),
-            },
-          ]}
-          dialogName="ConfirmDeleteForMeModal"
-          i18n={i18n}
-          onClose={() => setHasDeleteConfirmation(false)}
-          title={i18n('icu:ConfirmDeleteForMeModal--title', {
-            count: 1,
-          })}
-        >
-          {i18n('icu:ConfirmDeleteForMeModal--description', {
-            count: 1,
-          })}
-        </ConfirmationDialog>
-      )}
-
       <Message
         {...props}
         renderingContext="conversation/TimelineItem"
@@ -424,6 +377,11 @@ export function TimelineMessage(props: Props): JSX.Element {
         triggerId={triggerId}
         shouldShowAdditional={shouldShowAdditional}
         onDownload={handleDownload}
+        onEdit={
+          canEditMessage
+            ? () => setMessageToEdit(conversationId, id)
+            : undefined
+        }
         onReplyToMessage={handleReplyToMessage}
         onReplyPrivately={handleReplyPrivately}
         onReact={handleReact}
@@ -437,10 +395,12 @@ export function TimelineMessage(props: Props): JSX.Element {
         onForward={
           canForward ? () => toggleForwardMessagesModal([id]) : undefined
         }
-        onDeleteForMe={() => setHasDeleteConfirmation(true)}
-        onDeleteForEveryone={
-          canDeleteForEveryone ? () => setHasDOEConfirmation(true) : undefined
-        }
+        onDeleteMessage={() => {
+          toggleDeleteMessagesModal({
+            conversationId,
+            messageIds: [id],
+          });
+        }}
         onMoreInfo={() =>
           pushPanelForConversation({
             type: PanelType.MessageDetails,
@@ -495,7 +455,7 @@ function MessageMenu({
                 ref={maybePopperRef}
                 role="button"
                 onClick={showMenu}
-                aria-label={i18n('messageContextMenuButton')}
+                aria-label={i18n('icu:messageContextMenuButton')}
                 className={classNames(
                   'module-message__buttons__menu',
                   `module-message__buttons__download--${direction}`
@@ -546,7 +506,7 @@ function MessageMenu({
                     }}
                     role="button"
                     className="module-message__buttons__react"
-                    aria-label={i18n('reactToMessage')}
+                    aria-label={i18n('icu:reactToMessage')}
                     onDoubleClick={ev => {
                       // Prevent double click from triggering the replyToMessage action
                       ev.stopPropagation();
@@ -564,7 +524,7 @@ function MessageMenu({
             <div
               onClick={onDownload}
               role="button"
-              aria-label={i18n('downloadAttachment')}
+              aria-label={i18n('icu:downloadAttachment')}
               className={classNames(
                 'module-message__buttons__download',
                 `module-message__buttons__download--${direction}`
@@ -589,7 +549,7 @@ function MessageMenu({
               }}
               // This a menu meant for mouse use only
               role="button"
-              aria-label={i18n('replyToMessage')}
+              aria-label={i18n('icu:replyToMessage')}
               className={classNames(
                 'module-message__buttons__reply',
                 `module-message__buttons__download--${direction}`
@@ -613,14 +573,14 @@ type MessageContextProps = {
   shouldShowAdditional: boolean;
 
   onDownload: (() => void) | undefined;
+  onEdit: (() => void) | undefined;
   onReplyToMessage: (() => void) | undefined;
   onReplyPrivately: (() => void) | undefined;
   onReact: (() => void) | undefined;
   onRetryMessageSend: (() => void) | undefined;
   onRetryDeleteForEveryone: (() => void) | undefined;
   onForward: (() => void) | undefined;
-  onDeleteForMe: () => void;
-  onDeleteForEveryone: (() => void) | undefined;
+  onDeleteMessage: () => void;
   onMoreInfo: () => void;
   onSelect: () => void;
 };
@@ -630,6 +590,7 @@ const MessageContextMenu = ({
   triggerId,
   shouldShowAdditional,
   onDownload,
+  onEdit,
   onReplyToMessage,
   onReplyPrivately,
   onReact,
@@ -638,8 +599,7 @@ const MessageContextMenu = ({
   onRetryMessageSend,
   onRetryDeleteForEveryone,
   onForward,
-  onDeleteForMe,
-  onDeleteForEveryone,
+  onDeleteMessage,
 }: MessageContextProps): JSX.Element => {
   const menu = (
     <ContextMenu id={triggerId}>
@@ -653,7 +613,7 @@ const MessageContextMenu = ({
               }}
               onClick={onDownload}
             >
-              {i18n('downloadAttachment')}
+              {i18n('icu:downloadAttachment')}
             </MenuItem>
           )}
           {onReplyToMessage && (
@@ -669,7 +629,7 @@ const MessageContextMenu = ({
                 onReplyToMessage();
               }}
             >
-              {i18n('replyToMessage')}
+              {i18n('icu:replyToMessage')}
             </MenuItem>
           )}
           {onReact && (
@@ -685,7 +645,7 @@ const MessageContextMenu = ({
                 onReact();
               }}
             >
-              {i18n('reactToMessage')}
+              {i18n('icu:reactToMessage')}
             </MenuItem>
           )}
         </>
@@ -702,7 +662,7 @@ const MessageContextMenu = ({
           onMoreInfo();
         }}
       >
-        {i18n('moreInfo')}
+        {i18n('icu:moreInfo')}
       </MenuItem>
       <MenuItem
         attributes={{
@@ -728,7 +688,7 @@ const MessageContextMenu = ({
             onRetryMessageSend();
           }}
         >
-          {i18n('retrySend')}
+          {i18n('icu:retrySend')}
         </MenuItem>
       )}
       {onRetryDeleteForEveryone && (
@@ -744,7 +704,7 @@ const MessageContextMenu = ({
             onRetryDeleteForEveryone();
           }}
         >
-          {i18n('retryDeleteForEveryone')}
+          {i18n('icu:retryDeleteForEveryone')}
         </MenuItem>
       )}
       {onForward && (
@@ -760,7 +720,7 @@ const MessageContextMenu = ({
             onForward();
           }}
         >
-          {i18n('forwardMessage')}
+          {i18n('icu:forwardMessage')}
         </MenuItem>
       )}
       {onReplyPrivately && (
@@ -779,6 +739,22 @@ const MessageContextMenu = ({
           Reply privately
         </MenuItem>
       )}
+      {onEdit && (
+        <MenuItem
+          attributes={{
+            className:
+              'module-message__context--icon module-message__context__edit-message',
+          }}
+          onClick={(event: React.MouseEvent) => {
+            event.stopPropagation();
+            event.preventDefault();
+
+            onEdit();
+          }}
+        >
+          {i18n('icu:edit')}
+        </MenuItem>
+      )}
       <MenuItem
         attributes={{
           className:
@@ -788,27 +764,11 @@ const MessageContextMenu = ({
           event.stopPropagation();
           event.preventDefault();
 
-          onDeleteForMe();
+          onDeleteMessage();
         }}
       >
-        {i18n('deleteMessage')}
+        {i18n('icu:MessageContextMenu__deleteMessage')}
       </MenuItem>
-      {onDeleteForEveryone && (
-        <MenuItem
-          attributes={{
-            className:
-              'module-message__context--icon module-message__context__delete-message-for-everyone',
-          }}
-          onClick={(event: React.MouseEvent) => {
-            event.stopPropagation();
-            event.preventDefault();
-
-            onDeleteForEveryone();
-          }}
-        >
-          {i18n('deleteMessageForEveryone')}
-        </MenuItem>
-      )}
     </ContextMenu>
   );
 

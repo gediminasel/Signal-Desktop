@@ -24,6 +24,7 @@ import { formatDuration } from '../util/formatDuration';
 import { isGIF } from '../types/Attachment';
 import { useRestoreFocus } from '../hooks/useRestoreFocus';
 import { usePrevious } from '../hooks/usePrevious';
+import { arrow } from '../util/keyboard';
 
 export type PropsType = {
   children?: ReactNode;
@@ -214,11 +215,11 @@ export function Lightbox({
           break;
         }
 
-        case 'ArrowLeft':
+        case arrow('start'):
           onPrevious(event);
           break;
 
-        case 'ArrowRight':
+        case arrow('end'):
           onNext(event);
           break;
 
@@ -300,14 +301,14 @@ export function Lightbox({
     () => INITIAL_IMAGE_TRANSFORM
   );
 
-  const thumbnailsMarginLeft =
+  const thumbnailsMarginInlineStart =
     0 - (selectedIndex * THUMBNAIL_FULL_WIDTH + THUMBNAIL_WIDTH / 2);
 
   const [thumbnailsStyle, thumbnailsAnimation] = useSpring(
     {
       config: THUMBNAIL_SPRING_CONFIG,
       to: {
-        marginLeft: thumbnailsMarginLeft,
+        marginInlineStart: thumbnailsMarginInlineStart,
         opacity: hasThumbnails ? 1 : 0,
       },
     },
@@ -321,19 +322,19 @@ export function Lightbox({
 
     thumbnailsAnimation.stop();
     thumbnailsAnimation.set({
-      marginLeft:
-        thumbnailsMarginLeft +
+      marginInlineStart:
+        thumbnailsMarginInlineStart +
         (selectedIndex === 0 ? 1 : -1) * THUMBNAIL_FULL_WIDTH,
       opacity: 0,
     });
     thumbnailsAnimation.start({
-      marginLeft: thumbnailsMarginLeft,
+      marginInlineStart: thumbnailsMarginInlineStart,
       opacity: 1,
     });
   }, [
     needsAnimation,
     selectedIndex,
-    thumbnailsMarginLeft,
+    thumbnailsMarginInlineStart,
     thumbnailsAnimation,
   ]);
 
@@ -517,7 +518,7 @@ export function Lightbox({
               type="button"
             >
               <img
-                alt={i18n('lightboxImageAlt')}
+                alt={i18n('icu:lightboxImageAlt')}
                 className="Lightbox__object"
                 onContextMenu={(ev: React.MouseEvent<HTMLImageElement>) => {
                   // These are the only image types supported by Electron's NativeImage
@@ -538,7 +539,7 @@ export function Lightbox({
       } else {
         content = (
           <button
-            aria-label={i18n('lightboxImageAlt')}
+            aria-label={i18n('icu:lightboxImageAlt')}
             className={classNames({
               Lightbox__object: true,
               Lightbox__unsupported: true,
@@ -568,7 +569,7 @@ export function Lightbox({
     } else if (isUnsupportedImageType || isUnsupportedVideoType) {
       content = (
         <button
-          aria-label={i18n('unsupportedAttachment')}
+          aria-label={i18n('icu:unsupportedAttachment')}
           className={classNames({
             Lightbox__object: true,
             Lightbox__unsupported: true,
@@ -584,7 +585,7 @@ export function Lightbox({
 
       content = (
         <button
-          aria-label={i18n('unsupportedAttachment')}
+          aria-label={i18n('icu:unsupportedAttachment')}
           className="Lightbox__object Lightbox__unsupported Lightbox__unsupported--file"
           onClick={onClose}
           type="button"
@@ -642,7 +643,7 @@ export function Lightbox({
                 <div className="Lightbox__controls">
                   {!isViewOnce && onReply ? (
                     <button
-                      aria-label={i18n('replyToMessage')}
+                      aria-label={i18n('icu:replyToMessage')}
                       className="Lightbox__button Lightbox__button--reply"
                       onClick={handleReply}
                       type="button"
@@ -650,7 +651,7 @@ export function Lightbox({
                   ) : null}
                   {!isViewOnce ? (
                     <button
-                      aria-label={i18n('forwardMessage')}
+                      aria-label={i18n('icu:forwardMessage')}
                       className="Lightbox__button Lightbox__button--forward"
                       onClick={handleForward}
                       type="button"
@@ -658,14 +659,14 @@ export function Lightbox({
                   ) : null}
                   {!isViewOnce ? (
                     <button
-                      aria-label={i18n('save')}
+                      aria-label={i18n('icu:save')}
                       className="Lightbox__button Lightbox__button--save"
                       onClick={handleSave}
                       type="button"
                     />
                   ) : null}
                   <button
-                    aria-label={i18n('close')}
+                    aria-label={i18n('icu:close')}
                     className="Lightbox__button Lightbox__button--close"
                     onClick={closeLightbox}
                     type="button"
@@ -689,7 +690,7 @@ export function Lightbox({
                 {hasPrevious && (
                   <div className="Lightbox__nav-prev">
                     <button
-                      aria-label={i18n('previous')}
+                      aria-label={i18n('icu:previous')}
                       className="Lightbox__button Lightbox__button--previous"
                       onClick={onPrevious}
                       type="button"
@@ -699,7 +700,7 @@ export function Lightbox({
                 {hasNext && (
                   <div className="Lightbox__nav-next">
                     <button
-                      aria-label={i18n('next')}
+                      aria-label={i18n('icu:next')}
                       className="Lightbox__button Lightbox__button--next"
                       onClick={onNext}
                       type="button"
@@ -746,7 +747,7 @@ export function Lightbox({
                         >
                           {item.thumbnailObjectUrl ? (
                             <img
-                              alt={i18n('lightboxImageAlt')}
+                              alt={i18n('icu:lightboxImageAlt')}
                               src={item.thumbnailObjectUrl}
                             />
                           ) : (

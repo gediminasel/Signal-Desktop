@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
+
 import { mapDispatchToProps } from '../actions';
 import type { Props as ComponentPropsType } from '../../components/CompositionArea';
 import { CompositionArea } from '../../components/CompositionArea';
@@ -15,11 +16,10 @@ import { imageToBlurHash } from '../../util/imageToBlurHash';
 import { getPreferredBadgeSelector } from '../selectors/badges';
 import { selectRecentEmojis } from '../selectors/emojis';
 import { getIntl, getTheme, getUserConversationId } from '../selectors/user';
-import { getEmojiSkinTone } from '../selectors/items';
+import { getEmojiSkinTone, getTextFormattingEnabled } from '../selectors/items';
 import {
   getConversationSelector,
   getGroupAdminsSelector,
-  getLastSelectedMessage,
   getSelectedMessageIds,
   isMissingRequiredProfileSharing,
 } from '../selectors/conversations';
@@ -33,11 +33,16 @@ import {
   getRecentStickers,
 } from '../selectors/stickers';
 import { isSignalConversation } from '../../util/isSignalConversation';
-import { getComposerStateForConversationIdSelector } from '../selectors/composer';
+import {
+  getComposerStateForConversationIdSelector,
+  getIsFormattingFlagEnabled,
+  getIsFormattingSpoilersFlagEnabled,
+} from '../selectors/composer';
 import type { SmartCompositionRecordingProps } from './CompositionRecording';
 import { SmartCompositionRecording } from './CompositionRecording';
 import type { SmartCompositionRecordingDraftProps } from './CompositionRecordingDraft';
 import { SmartCompositionRecordingDraft } from './CompositionRecordingDraft';
+import { BodyRange } from '../../types/BodyRange';
 
 type ExternalProps = {
   id: string;
@@ -54,8 +59,13 @@ const mapStateToProps = (state: StateType, props: ExternalProps) => {
     throw new Error(`Conversation id ${id} not found!`);
   }
 
-  const { announcementsOnly, areWeAdmin, draftText, draftBodyRanges } =
-    conversation;
+  const {
+    announcementsOnly,
+    areWeAdmin,
+    draftEditMessage,
+    draftText,
+    draftBodyRanges,
+  } = conversation;
 
   const receivedPacks = getReceivedStickerPacks(state);
   const installedPacks = getInstalledStickerPacks(state);
@@ -78,6 +88,7 @@ const mapStateToProps = (state: StateType, props: ExternalProps) => {
   const composerStateForConversationIdSelector =
     getComposerStateForConversationIdSelector(state);
 
+  const composerState = composerStateForConversationIdSelector(id);
   const {
     attachments: draftAttachments,
     focusCounter,
@@ -85,23 +96,40 @@ const mapStateToProps = (state: StateType, props: ExternalProps) => {
     linkPreviewLoading,
     linkPreviewResult,
     messageCompositionId,
-    quotedMessage,
+    sendCounter,
     shouldSendHighQualityAttachments,
-  } = composerStateForConversationIdSelector(id);
+  } = composerState;
+
+  let { quotedMessage } = composerState;
+  if (!quotedMessage && draftEditMessage?.quote) {
+    quotedMessage = {
+      conversationId: id,
+      quote: draftEditMessage.quote,
+    };
+  }
 
   const recentEmojis = selectRecentEmojis(state);
 
   const selectedMessageIds = getSelectedMessageIds(state);
-  const lastSelectedMessage = getLastSelectedMessage(state);
+
+  const isFormattingEnabled =
+    getIsFormattingFlagEnabled(state) && getTextFormattingEnabled(state);
+  const isFormattingSpoilersEnabled =
+    getIsFormattingSpoilersFlagEnabled(state) &&
+    getTextFormattingEnabled(state);
 
   return {
     // Base
     conversationId: id,
+    draftEditMessage,
     focusCounter,
     getPreferredBadge: getPreferredBadgeSelector(state),
     i18n: getIntl(state),
     isDisabled,
+    isFormattingSpoilersEnabled,
+    isFormattingEnabled,
     messageCompositionId,
+    sendCounter,
     theme: getTheme(state),
 
     // AudioCapture
@@ -128,6 +156,8 @@ const mapStateToProps = (state: StateType, props: ExternalProps) => {
           ourConversationId: getUserConversationId(state),
         })
       : undefined,
+    quotedMessageAuthorUuid: quotedMessage?.quote?.authorUuid,
+    quotedMessageSentAt: quotedMessage?.quote?.id,
     // Emojis
     recentEmojis,
     skinTone: getEmojiSkinTone(state),
@@ -154,7 +184,19 @@ const mapStateToProps = (state: StateType, props: ExternalProps) => {
     groupAdmins: getGroupAdminsSelector(state)(conversation.id),
 
     draftText: dropNull(draftText),
-    draftBodyRanges,
+    draftBodyRanges: draftBodyRanges?.map(bodyRange => {
+      if (BodyRange.isMention(bodyRange)) {
+        const mentionConvo = conversationSelector(bodyRange.mentionUuid);
+
+        return {
+          ...bodyRange,
+          conversationID: mentionConvo.id,
+          replacementText: mentionConvo.title,
+        };
+      }
+
+      return bodyRange;
+    }),
     renderSmartCompositionRecording: (
       recProps: SmartCompositionRecordingProps
     ) => {
@@ -168,7 +210,6 @@ const mapStateToProps = (state: StateType, props: ExternalProps) => {
 
     // Select Mode
     selectedMessageIds,
-    lastSelectedMessage,
   };
 };
 

@@ -42,6 +42,7 @@ const defaultMessage: MessageDataPropsType = {
   isMessageRequestAccepted: true,
   isSelected: false,
   isSelectMode: false,
+  isSpoilerExpanded: false,
   previews: [],
   readStatus: ReadStatus.Read,
   status: 'sent',
@@ -68,6 +69,7 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
 
   getPreferredBadge: () => getFakeBadge(),
   i18n,
+  platform: 'darwin',
   interactionMode: 'keyboard',
   theme: ThemeType.light,
 
@@ -79,10 +81,13 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   doubleCheckMissingQuoteReference: action('doubleCheckMissingQuoteReference'),
   kickOffAttachmentDownload: action('kickOffAttachmentDownload'),
   markAttachmentAsCorrupted: action('markAttachmentAsCorrupted'),
+  messageExpanded: action('messageExpanded'),
   showConversation: action('showConversation'),
   openGiftBadge: action('openGiftBadge'),
   renderAudioAttachment: () => <div>*AudioAttachment*</div>,
   saveAttachment: action('saveAttachment'),
+  showSpoiler: action('showSpoiler'),
+  retryMessageSend: action('retryMessageSend'),
   pushPanelForConversation: action('pushPanelForConversation'),
   showContactModal: action('showContactModal'),
   showExpiredIncomingTapToViewToast: action(

@@ -8,6 +8,8 @@ import type { LocalizerType } from '../types/Util';
 
 export type Props = {
   hasInstalledStickers: boolean;
+  isFormattingFlagEnabled: boolean;
+  isFormattingSpoilersFlagEnabled: boolean;
   platform: string;
   readonly close: () => unknown;
   readonly i18n: LocalizerType;
@@ -26,11 +28,15 @@ type KeyType =
   | ','
   | '.'
   | 'A'
+  | 'B'
   | 'C'
   | 'D'
   | 'E'
   | 'F'
+  | 'G'
+  | 'I'
   | 'J'
+  | 'K'
   | 'L'
   | 'M'
   | 'N'
@@ -53,12 +59,12 @@ function getNavigationShortcuts(i18n: LocalizerType): Array<ShortcutType> {
   return [
     {
       id: 'Keyboard--navigate-by-section',
-      description: i18n('Keyboard--navigate-by-section'),
+      description: i18n('icu:Keyboard--navigate-by-section'),
       keys: [['commandOrCtrl', 'T']],
     },
     {
       id: 'Keyboard--previous-conversation',
-      description: i18n('Keyboard--previous-conversation'),
+      description: i18n('icu:Keyboard--previous-conversation'),
       keys: [
         ['optionOrAlt', '↑'],
         ['ctrl', 'shift', 'tab'],
@@ -66,7 +72,7 @@ function getNavigationShortcuts(i18n: LocalizerType): Array<ShortcutType> {
     },
     {
       id: 'Keyboard--next-conversation',
-      description: i18n('Keyboard--next-conversation'),
+      description: i18n('icu:Keyboard--next-conversation'),
       keys: [
         ['optionOrAlt', '↓'],
         ['ctrl', 'tab'],
@@ -74,92 +80,92 @@ function getNavigationShortcuts(i18n: LocalizerType): Array<ShortcutType> {
     },
     {
       id: 'Keyboard--previous-unread-conversation',
-      description: i18n('Keyboard--previous-unread-conversation'),
+      description: i18n('icu:Keyboard--previous-unread-conversation'),
       keys: [['optionOrAlt', 'shift', '↑']],
     },
     {
       id: 'Keyboard--next-unread-conversation',
-      description: i18n('Keyboard--next-unread-conversation'),
+      description: i18n('icu:Keyboard--next-unread-conversation'),
       keys: [['optionOrAlt', 'shift', '↓']],
     },
     {
       id: 'Keyboard--conversation-by-index',
-      description: i18n('Keyboard--conversation-by-index'),
+      description: i18n('icu:Keyboard--conversation-by-index'),
       keys: [['commandOrCtrl', '1 to 9']],
     },
     {
       id: 'Keyboard--preferences',
-      description: i18n('Keyboard--preferences'),
+      description: i18n('icu:Keyboard--preferences'),
       keys: [['commandOrCtrl', ',']],
     },
     {
       id: 'Keyboard--open-conversation-menu',
-      description: i18n('Keyboard--open-conversation-menu'),
+      description: i18n('icu:Keyboard--open-conversation-menu'),
       keys: [['commandOrCtrl', 'shift', 'L']],
     },
     {
       id: 'Keyboard--new-conversation',
-      description: i18n('Keyboard--new-conversation'),
+      description: i18n('icu:Keyboard--new-conversation'),
       keys: [['commandOrCtrl', 'N']],
     },
     {
       id: 'Keyboard--search',
-      description: i18n('Keyboard--search'),
+      description: i18n('icu:Keyboard--search'),
       keys: [['commandOrCtrl', 'F']],
     },
     {
       id: 'Keyboard--search-in-conversation',
-      description: i18n('Keyboard--search-in-conversation'),
+      description: i18n('icu:Keyboard--search-in-conversation'),
       keys: [['commandOrCtrl', 'shift', 'F']],
     },
     {
       id: 'Keyboard--focus-composer',
-      description: i18n('Keyboard--focus-composer'),
+      description: i18n('icu:Keyboard--focus-composer'),
       keys: [['commandOrCtrl', 'shift', 'T']],
     },
     {
       id: 'Keyboard--open-all-media-view',
-      description: i18n('Keyboard--open-all-media-view'),
+      description: i18n('icu:Keyboard--open-all-media-view'),
       keys: [['commandOrCtrl', 'shift', 'M']],
     },
     {
       id: 'Keyboard--open-emoji-chooser',
-      description: i18n('Keyboard--open-emoji-chooser'),
+      description: i18n('icu:Keyboard--open-emoji-chooser'),
       keys: [['commandOrCtrl', 'shift', 'J']],
     },
     {
       id: 'Keyboard--open-sticker-chooser',
-      description: i18n('Keyboard--open-sticker-chooser'),
-      keys: [['commandOrCtrl', 'shift', 'S']],
+      description: i18n('icu:Keyboard--open-sticker-chooser'),
+      keys: [['commandOrCtrl', 'shift', 'G']],
     },
     {
       id: 'Keyboard--begin-recording-voice-note',
-      description: i18n('Keyboard--begin-recording-voice-note'),
+      description: i18n('icu:Keyboard--begin-recording-voice-note'),
       keys: [['commandOrCtrl', 'shift', 'V']],
     },
     {
       id: 'Keyboard--archive-conversation',
-      description: i18n('Keyboard--archive-conversation'),
+      description: i18n('icu:Keyboard--archive-conversation'),
       keys: [['commandOrCtrl', 'shift', 'A']],
     },
     {
       id: 'Keyboard--unarchive-conversation',
-      description: i18n('Keyboard--unarchive-conversation'),
+      description: i18n('icu:Keyboard--unarchive-conversation'),
       keys: [['commandOrCtrl', 'shift', 'U']],
     },
     {
       id: 'Keyboard--scroll-to-top',
-      description: i18n('Keyboard--scroll-to-top'),
+      description: i18n('icu:Keyboard--scroll-to-top'),
       keys: [['commandOrCtrl', '↑']],
     },
     {
       id: 'Keyboard--scroll-to-bottom',
-      description: i18n('Keyboard--scroll-to-bottom'),
+      description: i18n('icu:Keyboard--scroll-to-bottom'),
       keys: [['commandOrCtrl', '↓']],
     },
     {
       id: 'Keyboard--close-curent-conversation',
-      description: i18n('Keyboard--close-curent-conversation'),
+      description: i18n('icu:Keyboard--close-curent-conversation'),
       keys: [['commandOrCtrl', 'shift', 'C']],
     },
   ];
@@ -169,82 +175,124 @@ function getMessageShortcuts(i18n: LocalizerType): Array<ShortcutType> {
   return [
     {
       id: 'Keyboard--default-message-action',
-      description: i18n('Keyboard--default-message-action'),
+      description: i18n('icu:Keyboard--default-message-action'),
       keys: [['enter']],
     },
     {
       id: 'Keyboard--view-details-for-selected-message',
-      description: i18n('Keyboard--view-details-for-selected-message'),
+      description: i18n('icu:Keyboard--view-details-for-selected-message'),
       keys: [['commandOrCtrl', 'D']],
     },
     {
       id: 'Keyboard--toggle-reply',
-      description: i18n('Keyboard--toggle-reply'),
+      description: i18n('icu:Keyboard--toggle-reply'),
       keys: [['commandOrCtrl', 'shift', 'R']],
     },
     {
       id: 'Keyboard--toggle-reaction-picker',
-      description: i18n('Keyboard--toggle-reaction-picker'),
+      description: i18n('icu:Keyboard--toggle-reaction-picker'),
       keys: [['commandOrCtrl', 'shift', 'E']],
     },
     {
       id: 'Keyboard--save-attachment',
-      description: i18n('Keyboard--save-attachment'),
+      description: i18n('icu:Keyboard--save-attachment'),
       keys: [['commandOrCtrl', 'S']],
     },
     {
-      id: 'Keyboard--delete-message',
-      description: i18n('Keyboard--delete-message'),
+      id: 'Keyboard--delete-messages',
+      description: i18n('icu:Keyboard--delete-messages'),
       keys: [['commandOrCtrl', 'shift', 'D']],
+    },
+    {
+      id: 'Keyboard--forward-messages',
+      description: i18n('icu:Keyboard--forward-messages'),
+      keys: [['commandOrCtrl', 'shift', 'S']],
     },
   ];
 }
 
-function getComposerShortcuts(i18n: LocalizerType): Array<ShortcutType> {
-  return [
+function getComposerShortcuts(
+  i18n: LocalizerType,
+  isFormattingFlagEnabled: boolean,
+  isFormattingSpoilersFlagEnabled: boolean
+): Array<ShortcutType> {
+  const shortcuts: Array<ShortcutType> = [
     {
       id: 'Keyboard--add-newline',
-      description: i18n('Keyboard--add-newline'),
+      description: i18n('icu:Keyboard--add-newline'),
       keys: [['shift', 'enter']],
     },
     {
       id: 'Keyboard--expand-composer',
-      description: i18n('Keyboard--expand-composer'),
-      keys: [['commandOrCtrl', 'shift', 'X']],
+      description: i18n('icu:Keyboard--expand-composer'),
+      keys: [['commandOrCtrl', 'shift', 'K']],
     },
     {
       id: 'Keyboard--send-in-expanded-composer',
-      description: i18n('Keyboard--send-in-expanded-composer'),
+      description: i18n('icu:Keyboard--send-in-expanded-composer'),
       keys: [['commandOrCtrl', 'enter']],
     },
     {
       id: 'Keyboard--attach-file',
-      description: i18n('Keyboard--attach-file'),
+      description: i18n('icu:Keyboard--attach-file'),
       keys: [['commandOrCtrl', 'U']],
     },
     {
       id: 'Keyboard--remove-draft-link-preview',
-      description: i18n('Keyboard--remove-draft-link-preview'),
+      description: i18n('icu:Keyboard--remove-draft-link-preview'),
       keys: [['commandOrCtrl', 'P']],
     },
     {
       id: 'Keyboard--remove-draft-attachments',
-      description: i18n('Keyboard--remove-draft-attachments'),
+      description: i18n('icu:Keyboard--remove-draft-attachments'),
       keys: [['commandOrCtrl', 'shift', 'P']],
     },
   ];
+
+  if (isFormattingFlagEnabled) {
+    shortcuts.push({
+      id: 'Keyboard--composer--bold',
+      description: i18n('icu:Keyboard--composer--bold'),
+      keys: [['commandOrCtrl', 'B']],
+    });
+    shortcuts.push({
+      id: 'Keyboard--composer--italic',
+      description: i18n('icu:Keyboard--composer--italic'),
+      keys: [['commandOrCtrl', 'I']],
+    });
+    shortcuts.push({
+      id: 'Keyboard--composer--strikethrough',
+      description: i18n('icu:Keyboard--composer--strikethrough'),
+      keys: [['commandOrCtrl', 'shift', 'X']],
+    });
+    shortcuts.push({
+      id: 'Keyboard--composer--monospace',
+      description: i18n('icu:Keyboard--composer--monospace'),
+      keys: [['commandOrCtrl', 'E']],
+    });
+
+    if (isFormattingSpoilersFlagEnabled) {
+      shortcuts.push({
+        id: 'Keyboard--composer--spoiler',
+        description: i18n('icu:Keyboard--composer--spoiler'),
+        keys: [['commandOrCtrl', 'shift', 'B']],
+      });
+    }
+  }
+
+  return shortcuts;
 }
 
 function getCallingShortcuts(i18n: LocalizerType): Array<ShortcutType> {
   return [
     {
       id: 'Keyboard--toggle-audio',
-      description: i18n('Keyboard--toggle-audio'),
+      description: i18n('icu:Keyboard--toggle-audio'),
       keys: [['shift', 'M']],
     },
     {
       id: 'Keyboard--toggle-video',
-      description: i18n('Keyboard--toggle-video'),
+      description: i18n('icu:Keyboard--toggle-video'),
       keys: [['shift', 'V']],
     },
     {
@@ -259,29 +307,36 @@ function getCallingShortcuts(i18n: LocalizerType): Array<ShortcutType> {
     },
     {
       id: 'Keyboard--decline-call',
-      description: i18n('Keyboard--decline-call'),
+      description: i18n('icu:Keyboard--decline-call'),
       keys: [['ctrlOrAlt', 'shift', 'D']],
     },
     {
       id: 'Keyboard--start-audio-call',
-      description: i18n('Keyboard--start-audio-call'),
+      description: i18n('icu:Keyboard--start-audio-call'),
       keys: [['ctrlOrAlt', 'shift', 'C']],
     },
     {
       id: 'Keyboard--start-video-call',
-      description: i18n('Keyboard--start-video-call'),
+      description: i18n('icu:Keyboard--start-video-call'),
       keys: [['ctrlOrAlt', 'shift', 'Y']],
     },
     {
       id: 'Keyboard--hang-up',
-      description: i18n('Keyboard--hang-up'),
+      description: i18n('icu:Keyboard--hang-up'),
       keys: [['ctrlOrAlt', 'shift', 'E']],
     },
   ];
 }
 
 export function ShortcutGuide(props: Props): JSX.Element {
-  const { i18n, close, hasInstalledStickers, platform } = props;
+  const {
+    i18n,
+    close,
+    hasInstalledStickers,
+    isFormattingFlagEnabled,
+    isFormattingSpoilersFlagEnabled,
+    platform,
+  } = props;
   const isMacOS = platform === 'darwin';
 
   // Restore focus on teardown
@@ -291,13 +346,13 @@ export function ShortcutGuide(props: Props): JSX.Element {
     <div className="module-shortcut-guide">
       <div className="module-shortcut-guide__header">
         <div className="module-shortcut-guide__header-text">
-          {i18n('Keyboard--header')}
+          {i18n('icu:Keyboard--header')}
         </div>
         <button
-          aria-label={i18n('close-popup')}
+          aria-label={i18n('icu:close-popup')}
           className="module-shortcut-guide__header-close"
           onClick={close}
-          title={i18n('close-popup')}
+          title={i18n('icu:close-popup')}
           type="button"
         />
       </div>
@@ -309,7 +364,7 @@ export function ShortcutGuide(props: Props): JSX.Element {
         <div className="module-shortcut-guide__section-container">
           <div className="module-shortcut-guide__section">
             <div className="module-shortcut-guide__section-header">
-              {i18n('Keyboard--navigation-header')}
+              {i18n('icu:Keyboard--navigation-header')}
             </div>
             <div className="module-shortcut-guide__section-list">
               {getNavigationShortcuts(i18n).map((shortcut, index) => {
@@ -326,7 +381,7 @@ export function ShortcutGuide(props: Props): JSX.Element {
           </div>
           <div className="module-shortcut-guide__section">
             <div className="module-shortcut-guide__section-header">
-              {i18n('Keyboard--messages-header')}
+              {i18n('icu:Keyboard--messages-header')}
             </div>
             <div className="module-shortcut-guide__section-list">
               {getMessageShortcuts(i18n).map((shortcut, index) =>
@@ -336,17 +391,21 @@ export function ShortcutGuide(props: Props): JSX.Element {
           </div>
           <div className="module-shortcut-guide__section">
             <div className="module-shortcut-guide__section-header">
-              {i18n('Keyboard--composer-header')}
+              {i18n('icu:Keyboard--composer-header')}
             </div>
             <div className="module-shortcut-guide__section-list">
-              {getComposerShortcuts(i18n).map((shortcut, index) =>
+              {getComposerShortcuts(
+                i18n,
+                isFormattingFlagEnabled,
+                isFormattingSpoilersFlagEnabled
+              ).map((shortcut, index) =>
                 renderShortcut(shortcut, index, isMacOS, i18n)
               )}
             </div>
           </div>
           <div className="module-shortcut-guide__section">
             <div className="module-shortcut-guide__section-header">
-              {i18n('Keyboard--calling-header')}
+              {i18n('icu:Keyboard--calling-header')}
             </div>
             <div className="module-shortcut-guide__section-list">
               {getCallingShortcuts(i18n).map((shortcut, index) =>
@@ -385,43 +444,43 @@ function renderShortcut(
                 label = '⌘';
               }
               if (key === 'commandOrCtrl' && !isMacOS) {
-                label = i18n('Keyboard--Key--ctrl');
+                label = i18n('icu:Keyboard--Key--ctrl');
                 isSquare = false;
               }
               if (key === 'ctrlOrAlt' && isMacOS) {
-                label = i18n('Keyboard--Key--ctrl');
+                label = i18n('icu:Keyboard--Key--ctrl');
                 isSquare = false;
               }
               if (key === 'ctrlOrAlt' && !isMacOS) {
-                label = i18n('Keyboard--Key--alt');
+                label = i18n('icu:Keyboard--Key--alt');
                 isSquare = false;
               }
               if (key === 'optionOrAlt' && isMacOS) {
-                label = i18n('Keyboard--Key--option');
+                label = i18n('icu:Keyboard--Key--option');
                 isSquare = false;
               }
               if (key === 'optionOrAlt' && !isMacOS) {
-                label = i18n('Keyboard--Key--alt');
+                label = i18n('icu:Keyboard--Key--alt');
                 isSquare = false;
               }
               if (key === 'ctrl') {
-                label = i18n('Keyboard--Key--ctrl');
+                label = i18n('icu:Keyboard--Key--ctrl');
                 isSquare = false;
               }
               if (key === 'shift') {
-                label = i18n('Keyboard--Key--shift');
+                label = i18n('icu:Keyboard--Key--shift');
                 isSquare = false;
               }
               if (key === 'enter') {
-                label = i18n('Keyboard--Key--enter');
+                label = i18n('icu:Keyboard--Key--enter');
                 isSquare = false;
               }
               if (key === 'tab') {
-                label = i18n('Keyboard--Key--tab');
+                label = i18n('icu:Keyboard--Key--tab');
                 isSquare = false;
               }
               if (key === '1 to 9') {
-                label = i18n('Keyboard--Key--one-to-nine-range');
+                label = i18n('icu:Keyboard--Key--one-to-nine-range');
                 isSquare = false;
               }
 

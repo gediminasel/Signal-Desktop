@@ -15,6 +15,7 @@ import { notificationService } from '../services/notifications';
 import { queueAttachmentDownloads } from '../util/queueAttachmentDownloads';
 import * as log from '../logging/log';
 import { GiftBadgeStates } from '../components/conversation/Message';
+import { queueUpdateMessage } from '../util/messageBatcher';
 
 export type ViewSyncAttributesType = {
   senderId: string;
@@ -62,10 +63,9 @@ export class ViewSyncs extends Collection {
 
   async onSync(sync: ViewSyncModel): Promise<void> {
     try {
-      const messages =
-        await window.Signal.Data.getMessagesIncludingEditedBySentAt(
-          sync.get('timestamp')
-        );
+      const messages = await window.Signal.Data.getMessagesBySentAt(
+        sync.get('timestamp')
+      );
 
       const found = messages.find(item => {
         const sender = window.ConversationController.lookupOrCreate({
@@ -122,7 +122,7 @@ export class ViewSyncs extends Collection {
       }
 
       if (didChangeMessage) {
-        window.Signal.Util.queueUpdateMessage(message.attributes);
+        queueUpdateMessage(message.attributes);
       }
 
       this.remove(sync);

@@ -64,6 +64,7 @@ type ContactRowType = {
   type: RowType.Contact;
   contact: ContactListItemPropsType;
   isClickable?: boolean;
+  hasContextMenu?: boolean;
 };
 
 type ContactCheckboxRowType = {
@@ -175,12 +176,16 @@ export type PropsType = {
   i18n: LocalizerType;
   theme: ThemeType;
 
+  blockConversation: (conversationId: string) => void;
   onClickArchiveButton: () => void;
   onClickContactCheckbox: (
     conversationId: string,
     disabledReason: undefined | ContactCheckboxDisabledReason
   ) => void;
   onSelectConversation: (conversationId: string, messageId?: string) => void;
+  onOutgoingAudioCallInConversation: (conversationId: string) => void;
+  onOutgoingVideoCallInConversation: (conversationId: string) => void;
+  removeConversation?: (conversationId: string) => void;
   renderMessageSearchResult?: (id: string) => JSX.Element;
   showChooseGroupMembers: () => void;
   showConversation: ShowConversationType;
@@ -195,9 +200,13 @@ export function ConversationList({
   getPreferredBadge,
   getRow,
   i18n,
+  blockConversation,
   onClickArchiveButton,
   onClickContactCheckbox,
   onSelectConversation,
+  onOutgoingAudioCallInConversation,
+  onOutgoingVideoCallInConversation,
+  removeConversation,
   renderMessageSearchResult,
   rowCount,
   scrollBehavior = ScrollBehavior.Default,
@@ -247,14 +256,14 @@ export function ConversationList({
         case RowType.ArchiveButton:
           result = (
             <button
-              aria-label={i18n('archivedConversations')}
+              aria-label={i18n('icu:archivedConversations')}
               className="module-conversation-list__item--archive-button"
               onClick={onClickArchiveButton}
               type="button"
             >
               <div className="module-conversation-list__item--archive-button__icon" />
               <span className="module-conversation-list__item--archive-button__text">
-                {i18n('archivedConversations')}
+                {i18n('icu:archivedConversations')}
               </span>
               <span className="module-conversation-list__item--archive-button__archived-count">
                 {row.archivedConversationsCount}
@@ -266,7 +275,7 @@ export function ConversationList({
           result = undefined;
           break;
         case RowType.Contact: {
-          const { isClickable = true } = row;
+          const { isClickable = true, hasContextMenu = false } = row;
           result = (
             <ContactListItem
               {...row.contact}
@@ -274,6 +283,15 @@ export function ConversationList({
               onClick={isClickable ? onSelectConversation : undefined}
               i18n={i18n}
               theme={theme}
+              hasContextMenu={hasContextMenu}
+              onAudioCall={
+                isClickable ? onOutgoingAudioCallInConversation : undefined
+              }
+              onVideoCall={
+                isClickable ? onOutgoingVideoCallInConversation : undefined
+              }
+              onBlock={isClickable ? blockConversation : undefined}
+              onRemove={isClickable ? removeConversation : undefined}
             />
           );
           break;
@@ -343,6 +361,7 @@ export function ConversationList({
             'muteExpiresAt',
             'phoneNumber',
             'profileName',
+            'removalStage',
             'sharedGroupNames',
             'shouldShowDraft',
             'title',
@@ -354,24 +373,21 @@ export function ConversationList({
           ]);
           const { badges, title, unreadCount, lastMessage } = itemProps;
           result = (
-            <div
-              aria-label={i18n('ConversationList__aria-label', {
+            <ConversationListItem
+              {...itemProps}
+              buttonAriaLabel={i18n('icu:ConversationList__aria-label', {
                 lastMessage:
                   get(lastMessage, 'text') ||
-                  i18n('ConversationList__last-message-undefined'),
+                  i18n('icu:ConversationList__last-message-undefined'),
                 title,
-                unreadCount: String(unreadCount),
+                unreadCount,
               })}
-            >
-              <ConversationListItem
-                {...itemProps}
-                key={key}
-                badge={getPreferredBadge(badges)}
-                onClick={onSelectConversation}
-                i18n={i18n}
-                theme={theme}
-              />
-            </div>
+              key={key}
+              badge={getPreferredBadge(badges)}
+              onClick={onSelectConversation}
+              i18n={i18n}
+              theme={theme}
+            />
           );
           break;
         }
@@ -452,18 +468,22 @@ export function ConversationList({
       );
     },
     [
+      blockConversation,
       getPreferredBadge,
       getRow,
       i18n,
+      lookupConversationWithoutUuid,
       onClickArchiveButton,
       onClickContactCheckbox,
+      onOutgoingAudioCallInConversation,
+      onOutgoingVideoCallInConversation,
       onSelectConversation,
-      lookupConversationWithoutUuid,
-      showUserNotFoundModal,
-      setIsFetchingUUID,
+      removeConversation,
       renderMessageSearchResult,
+      setIsFetchingUUID,
       showChooseGroupMembers,
       showConversation,
+      showUserNotFoundModal,
       theme,
     ]
   );
