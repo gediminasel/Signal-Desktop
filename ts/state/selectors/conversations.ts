@@ -61,6 +61,8 @@ import { getConversationTitleForPanelType } from '../../util/getConversationTitl
 import type { PanelRenderType } from '../../types/Panels';
 import type { HasStories } from '../../types/Stories';
 import { getHasStoriesSelector } from './stories2';
+import { canEditMessage } from '../../util/canEditMessage';
+import { isOutgoing } from '../../messages/helpers';
 
 export type ConversationWithStoriesType = ConversationType & {
   hasStories?: HasStories;
@@ -118,6 +120,12 @@ export const getConversationsByGroupId = createSelector(
   getConversations,
   (state: ConversationsStateType): ConversationLookupType => {
     return state.conversationsByGroupId;
+  }
+);
+export const getTargetedConversationsPanelsCount = createSelector(
+  getConversations,
+  (state: ConversationsStateType): number => {
+    return state.targetedConversationPanels.length;
   }
 );
 export const getConversationsByUsername = createSelector(
@@ -241,6 +249,17 @@ export const getMessagesByConversation = createSelector(
   getConversations,
   (state: ConversationsStateType): MessagesByConversationType => {
     return state.messagesByConversation;
+  }
+);
+
+export const getConversationMessages = createSelector(
+  getSelectedConversationId,
+  getMessagesByConversation,
+  (
+    conversationId,
+    messagesByConversation
+  ): ConversationMessageType | undefined => {
+    return conversationId ? messagesByConversation[conversationId] : undefined;
   }
 );
 
@@ -1120,4 +1139,29 @@ export const getConversationTitle = createSelector(
   getTopPanel,
   (i18n, panel): string | undefined =>
     getConversationTitleForPanelType(i18n, panel?.type)
+);
+
+export const getLastEditableMessageId = createSelector(
+  getConversationMessages,
+  getMessages,
+  (conversationMessages, messagesLookup): string | undefined => {
+    if (!conversationMessages) {
+      return;
+    }
+
+    for (let i = conversationMessages.messageIds.length - 1; i >= 0; i -= 1) {
+      const messageId = conversationMessages.messageIds[i];
+      const message = messagesLookup[messageId];
+
+      if (!message) {
+        continue;
+      }
+
+      if (isOutgoing(message)) {
+        return canEditMessage(message) ? message.id : undefined;
+      }
+    }
+
+    return undefined;
+  }
 );

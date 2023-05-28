@@ -9,8 +9,10 @@ import { strictAssert } from '../util/assert';
 import { isDirectConversation } from '../util/whatTypeOfConversation';
 import { incrementMessageCounter } from '../util/incrementMessageCounter';
 import { repeat, zipObject } from '../util/iterables';
+import { getMessageSentTimestamp } from '../util/getMessageSentTimestamp';
 import { SendStatus } from '../messages/MessageSendState';
 import { UUID } from '../types/UUID';
+import * as log from '../logging/log';
 
 export async function enqueueReactionForSend({
   emoji,
@@ -30,7 +32,9 @@ export async function enqueueReactionForSend({
     `enqueueReactionForSend: message ${message.idForLogging()} had no source UUID`
   );
 
-  const targetTimestamp = message.get('sent_at') || message.get('timestamp');
+  const targetTimestamp = getMessageSentTimestamp(message.attributes, {
+    log,
+  });
   strictAssert(
     targetTimestamp,
     `enqueueReactionForSend: message ${message.idForLogging()} had no timestamp`
@@ -43,9 +47,9 @@ export async function enqueueReactionForSend({
     'enqueueReactionForSend: No conversation extracted from target message'
   );
 
+  const isMessageAStory = isStory(message.attributes);
   const targetConversation =
-    isStory(message.attributes) &&
-    isDirectConversation(messageConversation.attributes)
+    isMessageAStory && isDirectConversation(messageConversation.attributes)
       ? window.ConversationController.get(targetAuthorUuid)
       : messageConversation;
   strictAssert(
@@ -53,6 +57,10 @@ export async function enqueueReactionForSend({
     'enqueueReactionForSend: Did not find a targetConversation'
   );
 
+  const expireTimer =
+    !isMessageAStory || isDirectConversation(targetConversation.attributes)
+      ? targetConversation.get('expireTimer')
+      : undefined;
   const storyMessage = isStory(message.attributes)
     ? message.attributes
     : undefined;
@@ -67,7 +75,7 @@ export async function enqueueReactionForSend({
         received_at: incrementMessageCounter(),
         received_at_ms: timestamp,
         timestamp,
-        expireTimer: targetConversation.get('expireTimer'),
+        expireTimer,
         sendStateByConversationId: zipObject(
           targetConversation.getMemberConversationIds(),
           repeat({

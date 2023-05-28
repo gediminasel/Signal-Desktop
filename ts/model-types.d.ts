@@ -148,6 +148,7 @@ export type MessageAttributesType = {
   hasAttachments?: boolean | 0 | 1;
   hasFileAttachments?: boolean | 0 | 1;
   hasVisualMediaAttachments?: boolean | 0 | 1;
+  mentionsMe?: boolean | 0 | 1;
   isErased?: boolean;
   isTapToViewInvalid?: boolean;
   isViewOnce?: boolean;
@@ -369,6 +370,7 @@ export type ConversationAttributesType = {
   storageVersion?: number;
   storageUnknownFields?: string;
   unreadCount?: number;
+  unreadMentionsCount?: number;
   version: number;
 
   // Private core info

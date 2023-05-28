@@ -267,7 +267,9 @@ const dataInterface: ServerInterface = {
   getOlderMessagesByConversation,
   getAllStories,
   getNewerMessagesByConversation,
+  getOldestUnreadMentionOfMeForConversation,
   getTotalUnreadForConversation,
+  getTotalUnreadMentionsOfMeForConversation,
   getMessageMetricsForConversation,
   getConversationRangeCenteredOnMessage,
   getConversationMessageStats,
@@ -366,7 +368,6 @@ const dataInterface: ServerInterface = {
   // Server-only
 
   initialize,
-  initializeRenderer,
 
   getKnownMessageAttachments,
   finishGetKnownMessageAttachments,
@@ -430,14 +431,6 @@ function rowToSticker(row: StickerRow): StickerType {
     isCoverOnly: Boolean(row.isCoverOnly),
     emoji: dropNull(row.emoji),
   };
-}
-
-function isRenderer() {
-  if (typeof process === 'undefined' || !process) {
-    return true;
-  }
-
-  return process.type === 'renderer';
 }
 
 function keyDatabase(db: Database, key: string): void {
@@ -523,7 +516,6 @@ function openAndSetUpSQLCipher(filePath: string, { key }: { key: string }) {
 
 let globalInstance: Database | undefined;
 let logger = consoleLogger;
-let globalInstanceRenderer: Database | undefined;
 let databaseFilePath: string | undefined;
 let indexedDBPath: string | undefined;
 
@@ -584,63 +576,13 @@ async function initialize({
   }
 }
 
-async function initializeRenderer({
-  configDir,
-  key,
-}: {
-  configDir: string;
-  key: string;
-}): Promise<void> {
-  if (!isRenderer()) {
-    throw new Error('Cannot call from main process.');
-  }
-  if (globalInstanceRenderer) {
-    throw new Error('Cannot initialize more than once!');
-  }
-  if (!isString(configDir)) {
-    throw new Error('initialize: configDir is required!');
-  }
-  if (!isString(key)) {
-    throw new Error('initialize: key is required!');
-  }
-
-  if (!indexedDBPath) {
-    indexedDBPath = join(configDir, 'IndexedDB');
-  }
-
-  const dbDir = join(configDir, 'sql');
-
-  if (!databaseFilePath) {
-    databaseFilePath = join(dbDir, 'db.sqlite');
-  }
-
-  let promisified: Database | undefined;
-
-  try {
-    promisified = openAndSetUpSQLCipher(databaseFilePath, { key });
-
-    // At this point we can allow general access to the database
-    globalInstanceRenderer = promisified;
-
-    // test database
-    getMessageCountSync();
-  } catch (error) {
-    log.error('Database startup error:', error.stack);
-    throw error;
-  }
-}
-
 async function close(): Promise<void> {
-  for (const dbRef of [globalInstanceRenderer, globalInstance]) {
-    // SQLLite documentation suggests that we run `PRAGMA optimize` right
-    // before closing the database connection.
-    dbRef?.pragma('optimize');
+  // SQLLite documentation suggests that we run `PRAGMA optimize` right
+  // before closing the database connection.
+  globalInstance?.pragma('optimize');
 
-    dbRef?.close();
-  }
-
+  globalInstance?.close();
   globalInstance = undefined;
-  globalInstanceRenderer = undefined;
 }
 
 async function removeDB(): Promise<void> {
@@ -677,13 +619,6 @@ async function removeIndexedDBFiles(): Promise<void> {
 }
 
 function getInstance(): Database {
-  if (isRenderer()) {
-    if (!globalInstanceRenderer) {
-      throw new Error('getInstance: globalInstanceRenderer not set!');
-    }
-    return globalInstanceRenderer;
-  }
-
   if (!globalInstance) {
     throw new Error('getInstance: globalInstance not set!');
   }
@@ -1868,6 +1803,7 @@ function saveMessageSync(
     id,
     isErased,
     isViewOnce,
+    mentionsMe,
     received_at,
     schemaVersion,
     sent_at,
@@ -1918,6 +1854,7 @@ function saveMessageSync(
     isChangeCreatedByUs: groupV2Change?.from === ourUuid ? 1 : 0,
     isErased: isErased ? 1 : 0,
     isViewOnce: isViewOnce ? 1 : 0,
+    mentionsMe: mentionsMe ? 1 : 0,
     received_at: received_at || null,
     schemaVersion: schemaVersion || 0,
     serverGuid: serverGuid || null,
@@ -1949,6 +1886,7 @@ function saveMessageSync(
         isChangeCreatedByUs = $isChangeCreatedByUs,
         isErased = $isErased,
         isViewOnce = $isViewOnce,
+        mentionsMe = $mentionsMe,
         received_at = $received_at,
         schemaVersion = $schemaVersion,
         serverGuid = $serverGuid,
@@ -1993,6 +1931,7 @@ function saveMessageSync(
       isChangeCreatedByUs,
       isErased,
       isViewOnce,
+      mentionsMe,
       received_at,
       schemaVersion,
       serverGuid,
@@ -2018,6 +1957,7 @@ function saveMessageSync(
       $isChangeCreatedByUs,
       $isErased,
       $isViewOnce,
+      $mentionsMe,
       $received_at,
       $schemaVersion,
       $serverGuid,
@@ -2503,26 +2443,27 @@ function getAdjacentMessagesByConversationSync(
 ): Array<MessageTypeUnhydrated> {
   const db = getInstance();
 
-  const timeFilter =
-    direction === AdjacentDirection.Older
-      ? sqlFragment`
-        (received_at = ${receivedAt} AND sent_at < ${sentAt}) OR
-        received_at < ${receivedAt}
-      `
-      : sqlFragment`
-        (received_at = ${receivedAt} AND sent_at > ${sentAt}) OR
-        received_at > ${receivedAt}
-      `;
+  let timeFilters: { first: QueryFragment; second: QueryFragment };
+  let timeOrder: QueryFragment;
 
-  const timeOrder =
-    direction === AdjacentDirection.Older
-      ? sqlFragment`DESC`
-      : sqlFragment`ASC`;
+  if (direction === AdjacentDirection.Older) {
+    timeFilters = {
+      first: sqlFragment`received_at = ${receivedAt} AND sent_at < ${sentAt}`,
+      second: sqlFragment`received_at < ${receivedAt}`,
+    };
+    timeOrder = sqlFragment`DESC`;
+  } else {
+    timeFilters = {
+      first: sqlFragment`received_at = ${receivedAt} AND sent_at > ${sentAt}`,
+      second: sqlFragment`received_at > ${receivedAt}`,
+    };
+    timeOrder = sqlFragment`ASC`;
+  }
 
   const requireDifferentMessage =
     direction === AdjacentDirection.Older || requireVisualMediaAttachments;
 
-  let template = sqlFragment`
+  const createQuery = (timeFilter: QueryFragment): QueryFragment => sqlFragment`
     SELECT json FROM messages WHERE
       conversationId = ${conversationId} AND
       ${
@@ -2540,7 +2481,13 @@ function getAdjacentMessagesByConversationSync(
       (
         ${timeFilter}
       )
-    ORDER BY received_at ${timeOrder}, sent_at ${timeOrder}
+      ORDER BY received_at ${timeOrder}, sent_at ${timeOrder}
+  `;
+
+  let template = sqlFragment`
+    SELECT first.json FROM (${createQuery(timeFilters.first)}) as first
+    UNION ALL
+    SELECT second.json FROM (${createQuery(timeFilters.second)}) as second
   `;
 
   // See `filterValidAttachments` in ts/state/ducks/lightbox.ts
@@ -2946,6 +2893,38 @@ function getOldestUnseenMessageForConversation(
   return row;
 }
 
+async function getOldestUnreadMentionOfMeForConversation(
+  conversationId: string,
+  options: {
+    storyId?: string;
+    includeStoryReplies: boolean;
+  }
+): Promise<MessageMetricsType | undefined> {
+  return getOldestUnreadMentionOfMeForConversationSync(conversationId, options);
+}
+
+export function getOldestUnreadMentionOfMeForConversationSync(
+  conversationId: string,
+  options: {
+    storyId?: string;
+    includeStoryReplies: boolean;
+  }
+): MessageMetricsType | undefined {
+  const db = getInstance();
+  const [query, params] = sql`
+      SELECT received_at, sent_at, id FROM messages WHERE
+        conversationId = ${conversationId} AND
+        readStatus = ${ReadStatus.Unread} AND
+        mentionsMe IS 1 AND
+        isStory IS 0 AND
+        (${_storyIdPredicate(options.storyId, options.includeStoryReplies)})
+      ORDER BY received_at ASC, sent_at ASC
+      LIMIT 1;
+      `;
+
+  return db.prepare(query).get(params);
+}
+
 async function getTotalUnreadForConversation(
   conversationId: string,
   options: {
@@ -2972,6 +2951,40 @@ function getTotalUnreadForConversationSync(
     WHERE
       conversationId = ${conversationId} AND
       readStatus = ${ReadStatus.Unread} AND
+      isStory IS 0 AND
+      (${_storyIdPredicate(storyId, includeStoryReplies)})
+  `;
+  const row = db.prepare(query).pluck().get(params);
+
+  return row;
+}
+async function getTotalUnreadMentionsOfMeForConversation(
+  conversationId: string,
+  options: {
+    storyId?: string;
+    includeStoryReplies: boolean;
+  }
+): Promise<number> {
+  return getTotalUnreadMentionsOfMeForConversationSync(conversationId, options);
+}
+function getTotalUnreadMentionsOfMeForConversationSync(
+  conversationId: string,
+  {
+    storyId,
+    includeStoryReplies,
+  }: {
+    storyId?: string;
+    includeStoryReplies: boolean;
+  }
+): number {
+  const db = getInstance();
+  const [query, params] = sql`
+    SELECT count(1)
+    FROM messages
+    WHERE
+      conversationId = ${conversationId} AND
+      readStatus = ${ReadStatus.Unread} AND
+      mentionsMe IS 1 AND
       isStory IS 0 AND
       (${_storyIdPredicate(storyId, includeStoryReplies)})
   `;
@@ -4183,7 +4196,15 @@ async function getAllStickerPacks(): Promise<Array<StickerPackType>> {
     )
     .all();
 
-  return rows || [];
+  return rows.map(row => {
+    return {
+      ...row,
+      // The columns have STRING type so if they have numeric value, sqlite
+      // will return integers.
+      author: String(row.author),
+      title: String(row.title),
+    };
+  });
 }
 function addUninstalledStickerPackSync(pack: UninstalledStickerPackType): void {
   const db = getInstance();
@@ -5717,7 +5738,7 @@ async function removeAllProfileKeyCredentials(): Promise<void> {
 async function saveEditedMessage(
   mainMessage: MessageType,
   ourUuid: UUIDStringType,
-  { fromId, messageId, readStatus, sentAt }: EditedMessageType
+  { conversationId, messageId, readStatus, sentAt }: EditedMessageType
 ): Promise<void> {
   const db = getInstance();
 
@@ -5731,12 +5752,12 @@ async function saveEditedMessage(
 
     const [query, params] = sql`
       INSERT INTO edited_messages (
-        fromId,
+        conversationId,
         messageId,
         sentAt,
         readStatus
       ) VALUES (
-        ${fromId},
+        ${conversationId},
         ${messageId},
         ${sentAt},
         ${readStatus}
@@ -5762,10 +5783,10 @@ async function _getAllEditedMessages(): Promise<
 }
 
 async function getUnreadEditedMessagesAndMarkRead({
-  fromId,
+  conversationId,
   newestUnreadAt,
 }: {
-  fromId: string;
+  conversationId: string;
   newestUnreadAt: number;
 }): Promise<GetUnreadByConversationAndMarkReadResultType> {
   const db = getInstance();
@@ -5782,7 +5803,7 @@ async function getUnreadEditedMessagesAndMarkRead({
         ON messages.id = edited_messages.messageId
       WHERE
         edited_messages.readStatus = ${ReadStatus.Unread} AND
-        edited_messages.fromId = ${fromId} AND
+        edited_messages.conversationId = ${conversationId} AND
         received_at <= ${newestUnreadAt}
       ORDER BY messages.received_at DESC, messages.sent_at DESC;
     `;
@@ -5798,7 +5819,7 @@ async function getUnreadEditedMessagesAndMarkRead({
             readStatus = ${ReadStatus.Read}
           WHERE
             readStatus = ${ReadStatus.Unread} AND
-            fromId = ${fromId} AND
+            conversationId = ${conversationId} AND
             sentAt <= ${newestSentAt};
       `;
 

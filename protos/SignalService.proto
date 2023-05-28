@@ -512,11 +512,6 @@ message SyncMessage {
     optional bytes storageService = 1;
   }
 
-  message PniIdentity {
-    optional bytes publicKey = 1;
-    optional bytes privateKey = 2;
-  }
-
   message Read {
     optional string sender     = 1;
     optional string senderUuid = 3;
@@ -585,6 +580,7 @@ message SyncMessage {
     optional bytes identityKeyPair = 1; // Serialized libsignal-client IdentityKeyPair
     optional bytes signedPreKey    = 2; // Serialized libsignal-client SignedPreKeyRecord
     optional uint32 registrationId = 3;
+    optional string newE164        = 4; // The e164 we have changed our number to
   }
 
   message CallEvent {
@@ -630,7 +626,7 @@ message SyncMessage {
   optional MessageRequestResponse messageRequestResponse = 14;
   reserved                                                 15; // not yet added
   repeated Viewed                 viewed                 = 16;
-  optional PniIdentity            pniIdentity            = 17;
+  reserved                                                 17; // pniIdentity
   optional PniChangeNumber        pniChangeNumber        = 18;
   optional CallEvent              callEvent              = 19;
 }

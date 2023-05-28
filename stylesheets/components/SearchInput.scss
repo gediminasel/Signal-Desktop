@@ -17,33 +17,16 @@
     width: 16px;
 
     @include light-theme {
-      @include color-svg('../images/icons/v2/search-16.svg', $color-gray-45);
+      @include color-svg(
+        '../images/icons/v3/search/search-compact-light.svg',
+        $color-gray-45
+      );
     }
     @include dark-theme {
-      @include color-svg('../images/icons/v2/search-16.svg', $color-gray-25);
-    }
-  }
-
-  &__input {
-    background: transparent;
-    border: none;
-    padding-inline-start: 16px;
-    width: 100%;
-
-    &:placeholder {
-      color: $color-gray-45;
-    }
-
-    @include light-theme {
-      color: $color-black;
-    }
-
-    @include dark-theme {
-      color: $color-gray-05;
-    }
-
-    &:focus {
-      outline: none;
+      @include color-svg(
+        '../images/icons/v3/search/search-compact-light.svg',
+        $color-gray-25
+      );
     }
   }
 
@@ -56,7 +39,7 @@
     width: 100%;
 
     @include light-theme {
-      background-color: $color-black-alpha-08;
+      background-color: $color-black-alpha-06;
       color: $color-gray-90;
 
       &:placeholder {
@@ -85,17 +68,17 @@
   }
 
   &__cancel {
-    height: 18px;
+    height: 16px;
     position: absolute;
     inset-inline-end: 8px;
-    top: 5px;
-    width: 18px;
+    top: 6px;
+    width: 16px;
 
     @include light-theme {
-      @include color-svg('../images/icons/v2/x-24.svg', $color-gray-60);
+      @include color-svg('../images/icons/v3/x/x-compact.svg', $color-gray-60);
     }
     @include dark-theme {
-      @include color-svg('../images/icons/v2/x-24.svg', $color-gray-25);
+      @include color-svg('../images/icons/v3/x/x-compact.svg', $color-gray-25);
     }
   }
 }

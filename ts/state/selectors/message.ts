@@ -68,7 +68,7 @@ import { isNotNil } from '../../util/isNotNil';
 import { isMoreRecentThan } from '../../util/timestamp';
 import * as iterables from '../../util/iterables';
 import { strictAssert } from '../../util/assert';
-import { canEditMessages } from '../../util/canEditMessages';
+import { canEditMessage } from '../../util/canEditMessage';
 
 import { getAccountSelector } from './accounts';
 import {
@@ -130,7 +130,6 @@ import { getTitleNoDefault, getNumber } from '../../util/getTitle';
 
 export { isIncoming, isOutgoing, isStory };
 
-const MAX_EDIT_COUNT = 10;
 const THREE_HOURS = 3 * HOUR;
 const linkify = LinkifyIt();
 
@@ -722,6 +721,7 @@ export const getPropsForMessage = (
     storyReplyContext,
     textAttachment,
     payment,
+    canCopy: canCopy(message),
     canEditMessage: canEditMessage(message),
     canDeleteForEveryone: canDeleteForEveryone(message),
     canDownload: canDownload(message, conversationSelector),
@@ -1804,6 +1804,12 @@ export function canReact(
   return canReplyOrReact(message, ourConversationId, conversation);
 }
 
+export function canCopy(
+  message: Pick<MessageWithUIFieldsType, 'body' | 'deletedForEveryone'>
+): boolean {
+  return !message.deletedForEveryone && Boolean(message.body);
+}
+
 export function canDeleteForEveryone(
   message: Pick<
     MessageWithUIFieldsType,
@@ -1843,18 +1849,6 @@ export function canRetryDeleteForEveryone(
       message.deletedForEveryoneFailed &&
       // Is it too old to delete?
       isMoreRecentThan(message.sent_at, DAY)
-  );
-}
-
-export function canEditMessage(message: MessageWithUIFieldsType): boolean {
-  return (
-    canEditMessages() &&
-    !message.deletedForEveryone &&
-    isOutgoing(message) &&
-    isMoreRecentThan(message.sent_at, THREE_HOURS) &&
-    (message.editHistory?.length ?? 0) <= MAX_EDIT_COUNT &&
-    someSendStatus(message.sendStateByConversationId, isSent) &&
-    Boolean(message.body)
   );
 }
 

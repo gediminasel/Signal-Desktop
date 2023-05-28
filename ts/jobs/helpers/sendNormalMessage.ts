@@ -15,6 +15,7 @@ import { SignalService as Proto } from '../../protobuf';
 import { handleMessageSend } from '../../util/handleMessageSend';
 import { findAndFormatContact } from '../../util/findAndFormatContact';
 import { uploadAttachment } from '../../util/uploadAttachment';
+import { getMessageSentTimestamp } from '../../util/getMessageSentTimestamp';
 import type { CallbackResultType } from '../../textsecure/Types.d';
 import { isSent } from '../../messages/MessageSendState';
 import { isOutgoing, canReact } from '../../state/selectors/message';
@@ -68,7 +69,7 @@ export async function sendNormalMessage(
 ): Promise<void> {
   const { Message } = window.Signal.Types;
 
-  const { messageId, revision } = data;
+  const { messageId, revision, editedMessageTimestamp } = data;
   const message = await getMessageById(messageId);
   if (!message) {
     log.info(
@@ -164,7 +165,6 @@ export async function sendNormalMessage(
       body,
       contact,
       deletedForEveryoneTimestamp,
-      editedMessageTimestamp,
       expireTimer,
       bodyRanges,
       messageTimestamp,
@@ -489,7 +489,6 @@ async function getMessageSendData({
   body: undefined | string;
   contact?: Array<EmbeddedContactWithUploadedAvatar>;
   deletedForEveryoneTimestamp: undefined | number;
-  editedMessageTimestamp: number | undefined;
   expireTimer: undefined | DurationInSeconds;
   bodyRanges: undefined | ReadonlyArray<RawBodyRange>;
   messageTimestamp: number;
@@ -501,22 +500,11 @@ async function getMessageSendData({
   storyContext?: StoryContextType;
 }> {
   const editMessageTimestamp = message.get('editMessageTimestamp');
-  const sentAt = message.get('sent_at');
-  const timestamp = message.get('timestamp');
 
-  let mainMessageTimestamp: number;
-  if (sentAt) {
-    mainMessageTimestamp = sentAt;
-  } else if (timestamp) {
-    log.error('message lacked sent_at. Falling back to timestamp');
-    mainMessageTimestamp = timestamp;
-  } else {
-    log.error(
-      'message lacked sent_at and timestamp. Falling back to current time'
-    );
-    mainMessageTimestamp = Date.now();
-  }
-
+  const mainMessageTimestamp = getMessageSentTimestamp(message.attributes, {
+    includeEdits: false,
+    log,
+  });
   const messageTimestamp = editMessageTimestamp || mainMessageTimestamp;
 
   const storyId = message.get('storyId');
@@ -571,8 +559,6 @@ async function getMessageSendData({
 
   const storyReaction = message.get('storyReaction');
 
-  const isEditedMessage = Boolean(message.get('editHistory'));
-
   return {
     attachments: [
       ...(maybeUploadedLongAttachment ? [maybeUploadedLongAttachment] : []),
@@ -581,7 +567,6 @@ async function getMessageSendData({
     body,
     contact,
     deletedForEveryoneTimestamp: message.get('deletedForEveryoneTimestamp'),
-    editedMessageTimestamp: isEditedMessage ? mainMessageTimestamp : undefined,
     expireTimer: message.get('expireTimer'),
     // TODO: we want filtration here if feature flag doesn't allow format/spoiler sends
     bodyRanges: message.get('bodyRanges'),

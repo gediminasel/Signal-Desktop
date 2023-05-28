@@ -32,6 +32,7 @@ import type { DeleteMessagesPropsType } from '../../state/ducks/globalModals';
 
 export type PropsData = {
   canDownload: boolean;
+  canCopy: boolean;
   canEditMessage: boolean;
   canRetry: boolean;
   canRetryDeleteForEveryone: boolean;
@@ -51,6 +52,7 @@ export type PropsActions = {
     { emoji, remove }: { emoji: string; remove: boolean }
   ) => void;
   retryMessageSend: (id: string) => void;
+  copyMessageText: (id: string) => void;
   retryDeleteForEveryone: (id: string) => void;
   setMessageToEdit: (conversationId: string, messageId: string) => unknown;
   setQuoteByMessageId: (conversationId: string, messageId: string) => void;
@@ -83,6 +85,7 @@ export function TimelineMessage(props: Props): JSX.Element {
     attachments,
     author,
     canDownload,
+    canCopy,
     canEditMessage,
     canReact,
     canReply,
@@ -103,6 +106,7 @@ export function TimelineMessage(props: Props): JSX.Element {
     isTapToView,
     kickOffAttachmentDownload,
     payment,
+    copyMessageText,
     pushPanelForConversation,
     reactToMessage,
     renderEmojiPicker,
@@ -391,6 +395,7 @@ export function TimelineMessage(props: Props): JSX.Element {
             ? () => retryDeleteForEveryone(id)
             : undefined
         }
+        onCopy={canCopy ? () => copyMessageText(id) : undefined}
         onSelect={() => toggleSelectMessage(conversationId, id, false, true)}
         onForward={
           canForward ? () => toggleForwardMessagesModal([id]) : undefined
@@ -579,6 +584,7 @@ type MessageContextProps = {
   onReact: (() => void) | undefined;
   onRetryMessageSend: (() => void) | undefined;
   onRetryDeleteForEveryone: (() => void) | undefined;
+  onCopy: (() => void) | undefined;
   onForward: (() => void) | undefined;
   onDeleteMessage: () => void;
   onMoreInfo: () => void;
@@ -592,11 +598,12 @@ const MessageContextMenu = ({
   onDownload,
   onEdit,
   onReplyToMessage,
-  onReplyPrivately,
   onReact,
   onMoreInfo,
+  onCopy,
   onSelect,
   onRetryMessageSend,
+  onReplyPrivately,
   onRetryDeleteForEveryone,
   onForward,
   onDeleteMessage,
@@ -613,7 +620,7 @@ const MessageContextMenu = ({
               }}
               onClick={onDownload}
             >
-              {i18n('icu:downloadAttachment')}
+              {i18n('icu:MessageContextMenu__download')}
             </MenuItem>
           )}
           {onReplyToMessage && (
@@ -629,7 +636,7 @@ const MessageContextMenu = ({
                 onReplyToMessage();
               }}
             >
-              {i18n('icu:replyToMessage')}
+              {i18n('icu:MessageContextMenu__reply')}
             </MenuItem>
           )}
           {onReact && (
@@ -645,67 +652,10 @@ const MessageContextMenu = ({
                 onReact();
               }}
             >
-              {i18n('icu:reactToMessage')}
+              {i18n('icu:MessageContextMenu__react')}
             </MenuItem>
           )}
         </>
-      )}
-      <MenuItem
-        attributes={{
-          className:
-            'module-message__context--icon module-message__context__more-info',
-        }}
-        onClick={(event: React.MouseEvent) => {
-          event.stopPropagation();
-          event.preventDefault();
-
-          onMoreInfo();
-        }}
-      >
-        {i18n('icu:moreInfo')}
-      </MenuItem>
-      <MenuItem
-        attributes={{
-          className:
-            'module-message__context--icon module-message__context__select',
-        }}
-        onClick={() => {
-          onSelect();
-        }}
-      >
-        {i18n('icu:MessageContextMenu__select')}
-      </MenuItem>
-      {onRetryMessageSend && (
-        <MenuItem
-          attributes={{
-            className:
-              'module-message__context--icon module-message__context__retry-send',
-          }}
-          onClick={(event: React.MouseEvent) => {
-            event.stopPropagation();
-            event.preventDefault();
-
-            onRetryMessageSend();
-          }}
-        >
-          {i18n('icu:retrySend')}
-        </MenuItem>
-      )}
-      {onRetryDeleteForEveryone && (
-        <MenuItem
-          attributes={{
-            className:
-              'module-message__context--icon module-message__context__delete-message-for-everyone',
-          }}
-          onClick={(event: React.MouseEvent) => {
-            event.stopPropagation();
-            event.preventDefault();
-
-            onRetryDeleteForEveryone();
-          }}
-        >
-          {i18n('icu:retryDeleteForEveryone')}
-        </MenuItem>
       )}
       {onForward && (
         <MenuItem
@@ -720,7 +670,7 @@ const MessageContextMenu = ({
             onForward();
           }}
         >
-          {i18n('icu:forwardMessage')}
+          {i18n('icu:MessageContextMenu__forward')}
         </MenuItem>
       )}
       {onReplyPrivately && (
@@ -758,6 +708,44 @@ const MessageContextMenu = ({
       <MenuItem
         attributes={{
           className:
+            'module-message__context--icon module-message__context__select',
+        }}
+        onClick={() => {
+          onSelect();
+        }}
+      >
+        {i18n('icu:MessageContextMenu__select')}
+      </MenuItem>
+      {onCopy && (
+        <MenuItem
+          attributes={{
+            className:
+              'module-message__context--icon module-message__context__copy-timestamp',
+          }}
+          onClick={() => {
+            onCopy();
+          }}
+        >
+          {i18n('icu:copy')}
+        </MenuItem>
+      )}
+      <MenuItem
+        attributes={{
+          className:
+            'module-message__context--icon module-message__context__more-info',
+        }}
+        onClick={(event: React.MouseEvent) => {
+          event.stopPropagation();
+          event.preventDefault();
+
+          onMoreInfo();
+        }}
+      >
+        {i18n('icu:MessageContextMenu__info')}
+      </MenuItem>
+      <MenuItem
+        attributes={{
+          className:
             'module-message__context--icon module-message__context__delete-message',
         }}
         onClick={(event: React.MouseEvent) => {
@@ -769,6 +757,38 @@ const MessageContextMenu = ({
       >
         {i18n('icu:MessageContextMenu__deleteMessage')}
       </MenuItem>
+      {onRetryMessageSend && (
+        <MenuItem
+          attributes={{
+            className:
+              'module-message__context--icon module-message__context__retry-send',
+          }}
+          onClick={(event: React.MouseEvent) => {
+            event.stopPropagation();
+            event.preventDefault();
+
+            onRetryMessageSend();
+          }}
+        >
+          {i18n('icu:retrySend')}
+        </MenuItem>
+      )}
+      {onRetryDeleteForEveryone && (
+        <MenuItem
+          attributes={{
+            className:
+              'module-message__context--icon module-message__context__delete-message-for-everyone',
+          }}
+          onClick={(event: React.MouseEvent) => {
+            event.stopPropagation();
+            event.preventDefault();
+
+            onRetryDeleteForEveryone();
+          }}
+        >
+          {i18n('icu:retryDeleteForEveryone')}
+        </MenuItem>
+      )}
     </ContextMenu>
   );
 

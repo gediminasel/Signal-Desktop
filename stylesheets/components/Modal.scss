@@ -42,8 +42,8 @@
   &__back-button {
     @include button-reset;
     border-radius: 4px;
-    height: 24px;
-    width: 24px;
+    height: 20px;
+    width: 20px;
 
     &::before {
       content: '';
@@ -53,35 +53,30 @@
 
       @include light-theme {
         @include color-svg(
-          '../images/icons/v2/chevron-left-24.svg',
+          '../images/icons/v3/chevron/chevron-left.svg',
           $color-gray-75
         );
       }
 
       @include dark-theme {
         @include color-svg(
-          '../images/icons/v2/chevron-left-24.svg',
+          '../images/icons/v3/chevron/chevron-left.svg',
           $color-gray-15
         );
       }
     }
 
-    @include light-theme {
-      &:hover,
-      &:focus {
-        background: $color-gray-02;
-      }
-      &:active {
-        background: $color-gray-05;
+    &:hover,
+    &:focus {
+      background: $color-gray-45;
+      &::before {
+        background-color: $color-ultramarine;
       }
     }
-    @include dark-theme {
-      &:hover,
-      &:focus {
-        background: $color-gray-80;
-      }
-      &:active {
-        background: $color-gray-75;
+    &:active {
+      background: $color-gray-45;
+      &::before {
+        background-color: $color-ultramarine;
       }
     }
   }
@@ -90,8 +85,8 @@
     @include button-reset;
 
     border-radius: 4px;
-    height: 24px;
-    width: 24px;
+    height: 20px;
+    width: 20px;
 
     &::before {
       content: '';
@@ -100,31 +95,17 @@
       height: 100%;
 
       @include light-theme {
-        @include color-svg('../images/icons/v2/x-24.svg', $color-gray-75);
+        @include color-svg('../images/icons/v3/x/x.svg', $color-gray-75);
       }
 
       @include dark-theme {
-        @include color-svg('../images/icons/v2/x-24.svg', $color-gray-15);
+        @include color-svg('../images/icons/v3/x/x.svg', $color-gray-15);
       }
     }
 
-    @include light-theme {
-      &:hover,
-      &:focus {
-        background: $color-gray-02;
-      }
-      &:active {
-        background: $color-gray-05;
-      }
-    }
-    @include dark-theme {
-      &:hover,
-      &:focus {
-        background: $color-gray-80;
-      }
-      &:active {
-        background: $color-gray-75;
-      }
+    &:hover,
+    &:focus {
+      box-shadow: 0 0 0 2px $color-ultramarine;
     }
   }
 

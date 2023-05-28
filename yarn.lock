@@ -2264,7 +2264,7 @@
     bindings "^1.5.0"
     tar "^6.1.0"
 
-"@signalapp/libsignal-client@0.22.0", "@signalapp/libsignal-client@^0.22.0":
+"@signalapp/libsignal-client@0.22.0":
   version "0.22.0"
   resolved "https://registry.yarnpkg.com/@signalapp/libsignal-client/-/libsignal-client-0.22.0.tgz#d57441612df46f90df68fc5d9ad45b857b9d2c44"
   integrity sha512-f1PJuxpcbmhvHxzbf0BvSJhNA3sqXrwnTf2GtfFB2CQoqTEiGCRYfyFZjwUBByiFFI5mTWKER6WGAw5AvG/3+A==
@@ -2272,12 +2272,20 @@
     node-gyp-build "^4.2.3"
     uuid "^8.3.0"
 
-"@signalapp/mock-server@2.18.0":
-  version "2.18.0"
-  resolved "https://registry.yarnpkg.com/@signalapp/mock-server/-/mock-server-2.18.0.tgz#fc0d14227c4807ebfb3b701963f1b0746cf6b31f"
-  integrity sha512-/zXdAlw32Fr/vR34w/Loni9UrYNmTKU4kifzJWbZppqYpV6rauFkiOmSmlTU6UDeRS+mNMZ1oY03BmMyi2d67g==
+"@signalapp/libsignal-client@^0.24.0":
+  version "0.24.0"
+  resolved "https://registry.yarnpkg.com/@signalapp/libsignal-client/-/libsignal-client-0.24.0.tgz#4c52194071f1b0f7e0ad27a3f091c881d624897a"
+  integrity sha512-8IjvfD1wdkKcxwwM4KC1m8yWly5NJVAUaoiGMKiok9L+sD7HnY5DKpBXb/dpgkiSfSMdr3r4219+zFG1tq2UQQ==
   dependencies:
-    "@signalapp/libsignal-client" "^0.22.0"
+    node-gyp-build "^4.2.3"
+    uuid "^8.3.0"
+
+"@signalapp/mock-server@2.21.1":
+  version "2.21.1"
+  resolved "https://registry.yarnpkg.com/@signalapp/mock-server/-/mock-server-2.21.1.tgz#31ac756a8db0509cf6065b7c6b8139c7dc54c24d"
+  integrity sha512-pycdxIyv8/vPJSl5GZkTTbeFHVq3keefpfuqhVN6ZnP7UfKc0EJ5n3STcTN1V6AdNkdntK82pt47836ln9Wmrg==
+  dependencies:
+    "@signalapp/libsignal-client" "^0.24.0"
     debug "^4.3.2"
     long "^4.0.0"
     micro "^9.3.4"
@@ -2289,10 +2297,10 @@
     ws "^8.4.2"
     zod "^3.20.2"
 
-"@signalapp/ringrtc@2.26.2":
-  version "2.26.2"
-  resolved "https://registry.yarnpkg.com/@signalapp/ringrtc/-/ringrtc-2.26.2.tgz#6ca91cd4b2d3ed545eb87c4aaddcb3f8735ad85a"
-  integrity sha512-Z80SrSuZl8EufG5cS6PEKo+vYYTKQ6mXD7Ybc1L8ambIYf2PsmLDI++ZN+NsEQVFXPQr9nwie/oQJGi145ffLQ==
+"@signalapp/ringrtc@2.27.0":
+  version "2.27.0"
+  resolved "https://registry.yarnpkg.com/@signalapp/ringrtc/-/ringrtc-2.27.0.tgz#f9fd646b3e9ea5e4b9ecee76c73a8cceddda2965"
+  integrity sha512-lYTH/DrZWiWPzWI4ChyY/k8abbM3dYPcNRXHh9v0tDFG0rCWn/9P6T2PRmEWo2flYMIqFgxD2ULWIb2DSwi7Jw==
   dependencies:
     tar "^6.1.0"
 
@@ -4140,12 +4148,12 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.17.tgz#a8ddf6e0c2341718d74ee3dc413a13a042c45a0c"
   integrity sha512-e8PUNQy1HgJGV3iU/Bp2+D/DXh3PYeyli8LgIwsQcs1Ar1LoaWHSIT6Rw+H2rNJmiq6SNWiDytfx8+gYj7wDHw==
 
-"@types/node@16.18.3":
-  version "16.18.3"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.18.3.tgz#d7f7ba828ad9e540270f01ce00d391c54e6e0abc"
-  integrity sha512-jh6m0QUhIRcZpNv7Z/rpN+ZWXOicUUQbSoWks7Htkbb9IjFQj4kzcX/xFCkjstCj5flMsN8FiSvt+q+Tcs4Llg==
+"@types/node@18.15.11", "@types/node@^18.11.18":
+  version "18.15.11"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.15.11.tgz#b3b790f09cb1696cffcec605de025b088fa4225f"
+  integrity sha512-E5Kwq2n4SbMzQOn6wnmBjuK9ouqlURrcZDVfbo9ftDDTFt3nk7ZKK4GMOzoYgnpQJKcxwQw+lGaBvvlMo0qN/Q==
 
-"@types/node@^14.0.10 || ^16.0.0", "@types/node@^14.14.20 || ^16.0.0", "@types/node@^16.11.26":
+"@types/node@^14.0.10 || ^16.0.0", "@types/node@^14.14.20 || ^16.0.0":
   version "16.11.38"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.38.tgz#be0edd097b23eace6c471c525a74b3f98803017f"
   integrity sha512-hjO/0K140An3GWDw2HJfq7gko3wWeznbjXgg+rzPdVzhe198hp4x2i1dgveAOEiFKd8sOilAxzoSJiVv5P/CUg==
@@ -8204,13 +8212,13 @@ electron-window@^0.8.0:
   dependencies:
     is-electron-renderer "^2.0.0"
 
-electron@22.3.5:
-  version "22.3.5"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-22.3.5.tgz#a53a318cbb25a44914dfedd30a9ad6120632197f"
-  integrity sha512-CTdnoTbO3sDiMv47TX3ZO640Ca57v1qpiqGChFF8oZbtfHuQjTPPaE4hsoynf22wwnBiyJNL41DpB/pfp9USnA==
+electron@24.3.0:
+  version "24.3.0"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-24.3.0.tgz#d1ef519b0d6d86cc4992519b49821372cb957fe6"
+  integrity sha512-M7PpfpOzGdLeZPr2xhxXuvJeoXPEHMH40Rtv8BCGleRPolwna9BepAGc0H0F+Uz5kGKOv3xcm99fTurvXUH0nw==
   dependencies:
     "@electron/get" "^2.0.0"
-    "@types/node" "^16.11.26"
+    "@types/node" "^18.11.18"
     extract-zip "^2.0.1"
 
 element-resize-detector@^1.2.2:
@@ -9487,11 +9495,6 @@ focus-trap@^6.7.1:
   integrity sha512-a6czHbT9twVpy2RpkWQA9vIgwQgB9Nx1PIxNNUxQT4nugG/3QibwxO+tWTh9i+zSY2SFiX4pnYhTaFaQF/6ZAg==
   dependencies:
     tabbable "^5.2.1"
-
-focusable-selectors@0.8.0:
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/focusable-selectors/-/focusable-selectors-0.8.0.tgz#aecfd7ce2ac369fd808289d4bcf474ac2bf03562"
-  integrity sha512-lKyq/Cth8mTEzJk2CLHLdMDYl2zmMicQflfrUMs0CZ3Boc5Ca/63d7z+GgKV3nKm79KqrPtCWrwTdoV9RTjVCA==
 
 follow-redirects@^1.0.0:
   version "1.14.9"
@@ -14524,17 +14527,17 @@ pkg-dir@^5.0.0:
   dependencies:
     find-up "^5.0.0"
 
-playwright-core@1.31.2:
-  version "1.31.2"
-  resolved "https://registry.yarnpkg.com/playwright-core/-/playwright-core-1.31.2.tgz#debf4b215d14cb619adb7e511c164d068075b2ed"
-  integrity sha512-a1dFgCNQw4vCsG7bnojZjDnPewZcw7tZUNFN0ZkcLYKj+mPmXvg4MpaaKZ5SgqPsOmqIf2YsVRkgqiRDxD+fDQ==
+playwright-core@1.33.0:
+  version "1.33.0"
+  resolved "https://registry.yarnpkg.com/playwright-core/-/playwright-core-1.33.0.tgz#269efe29a927cd6d144d05f3c2d2f72bd72447a1"
+  integrity sha512-aizyPE1Cj62vAECdph1iaMILpT0WUDCq3E6rW6I+dleSbBoGbktvJtzS6VHkZ4DKNEOG9qJpiom/ZxO+S15LAw==
 
-playwright@1.31.2:
-  version "1.31.2"
-  resolved "https://registry.yarnpkg.com/playwright/-/playwright-1.31.2.tgz#4252280586c596746122cd1fdf9f8ff6a63fa852"
-  integrity sha512-jpC47n2PKQNtzB7clmBuWh6ftBRS/Bt5EGLigJ9k2QAKcNeYXZkEaDH5gmvb6+AbcE0DO6GnXdbl9ogG6Eh+og==
+playwright@1.33.0:
+  version "1.33.0"
+  resolved "https://registry.yarnpkg.com/playwright/-/playwright-1.33.0.tgz#88df1cffe97718ab8a02303e12c9133681ec7fab"
+  integrity sha512-+zzU3V2TslRX2ETBRgQKsKytYBkJeLZ2xzUj4JohnZnxQnivoUvOvNbRBYWSYykQTO0Y4zb8NwZTYFUO+EpPBQ==
   dependencies:
-    playwright-core "1.31.2"
+    playwright-core "1.33.0"
 
 plist@^3.0.1, plist@^3.0.4:
   version "3.0.5"
@@ -18474,9 +18477,9 @@ vm-browserify@^1.0.1:
   integrity sha512-iq+S7vZJE60yejDYM0ek6zg308+UZsdtPExWP9VZoCFCz1zkJoXFnAX7aZfd/ZwrkidzdUZL0C/ryW+JwAiIGw==
 
 vm2@^3.9.3:
-  version "3.9.11"
-  resolved "https://registry.yarnpkg.com/vm2/-/vm2-3.9.11.tgz#a880f510a606481719ec3f9803b940c5805a06fe"
-  integrity sha512-PFG8iJRSjvvBdisowQ7iVF580DXb1uCIiGaXgm7tynMR1uTBlv7UJlB1zdv5KJ+Tmq1f0Upnj3fayoEOPpCBKg==
+  version "3.9.19"
+  resolved "https://registry.yarnpkg.com/vm2/-/vm2-3.9.19.tgz#be1e1d7a106122c6c492b4d51c2e8b93d3ed6a4a"
+  integrity sha512-J637XF0DHDMV57R6JyVsTak7nIL8gy5KH4r1HiwWLf/4GBbb5MKL5y7LpmF4A8E2nR6XmzpmMFQ7V7ppPTmUQg==
   dependencies:
     acorn "^8.7.0"
     acorn-walk "^8.2.0"

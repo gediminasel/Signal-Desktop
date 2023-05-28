@@ -220,7 +220,7 @@ export type PropsData = {
   isTargetedCounter?: number;
   isSelected: boolean;
   isSelectMode: boolean;
-  isSpoilerExpanded?: boolean;
+  isSpoilerExpanded?: Record<number, boolean>;
   direction: DirectionType;
   timestamp: number;
   status?: MessageStatusType;
@@ -328,7 +328,7 @@ export type PropsActions = {
   pushPanelForConversation: PushPanelForConversationActionType;
   retryMessageSend: (messageId: string) => unknown;
   showContactModal: (contactId: string, conversationId?: string) => void;
-  showSpoiler: (messageId: string) => void;
+  showSpoiler: (messageId: string, data: Record<number, boolean>) => void;
 
   kickOffAttachmentDownload: (options: {
     attachment: AttachmentType;
@@ -1879,7 +1879,7 @@ export class Message extends React.PureComponent<Props, State> {
           displayLimit={displayLimit}
           i18n={i18n}
           id={id}
-          isSpoilerExpanded={isSpoilerExpanded || false}
+          isSpoilerExpanded={isSpoilerExpanded || {}}
           kickOffBodyDownload={() => {
             if (!textAttachment) {
               return;
@@ -1892,7 +1892,7 @@ export class Message extends React.PureComponent<Props, State> {
           messageExpanded={messageExpanded}
           showConversation={showConversation}
           renderLocation={RenderLocation.Timeline}
-          onExpandSpoiler={() => showSpoiler(id)}
+          onExpandSpoiler={data => showSpoiler(id, data)}
           text={contents || ''}
           textAttachment={textAttachment}
         />
@@ -2183,11 +2183,33 @@ export class Message extends React.PureComponent<Props, State> {
       ['desc', 'desc']
     );
     // Take the first three groups for rendering
-    const toRender = take(ordered, 3).map(res => ({
-      emoji: res[0].emoji,
-      count: res.length,
-      isMe: res.some(re => Boolean(re.from.isMe)),
-    }));
+    const toRender = take(ordered, 3).map(res => {
+      const isMe = res.some(re => Boolean(re.from.isMe));
+      const count = res.length;
+      const { emoji } = res[0];
+
+      let label: string;
+      if (isMe) {
+        label = i18n('icu:Message__reaction-emoji-label--you', { emoji });
+      } else if (count === 1) {
+        label = i18n('icu:Message__reaction-emoji-label--single', {
+          title: res[0].from.title,
+          emoji,
+        });
+      } else {
+        label = i18n('icu:Message__reaction-emoji-label--many', {
+          count,
+          emoji,
+        });
+      }
+
+      return {
+        count,
+        emoji,
+        isMe,
+        label,
+      };
+    });
     const someNotRendered = ordered.length > 3;
     // We only drop two here because the third emoji would be replaced by the
     // more button
@@ -2230,6 +2252,7 @@ export class Message extends React.PureComponent<Props, State> {
 
                 return (
                   <button
+                    aria-label={re.label}
                     type="button"
                     // eslint-disable-next-line react/no-array-index-key
                     key={`${re.emoji}-${i}`}

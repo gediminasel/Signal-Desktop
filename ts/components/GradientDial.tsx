@@ -5,6 +5,7 @@ import type { CSSProperties, KeyboardEvent } from 'react';
 import React, { useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { arrow } from '../util/keyboard';
+import type { LocalizerType } from '../types/Util';
 
 export enum KnobType {
   start = 'start',
@@ -13,6 +14,7 @@ export enum KnobType {
 
 export type PropsType = {
   deg?: number;
+  i18n: LocalizerType;
   knob1Style: CSSProperties;
   knob2Style: CSSProperties;
   onChange: (deg: number) => unknown;
@@ -187,6 +189,7 @@ function getKnobCoordinates(
 
 export function GradientDial({
   deg = 180,
+  i18n,
   knob1Style,
   knob2Style,
   onChange,
@@ -244,17 +247,21 @@ export function GradientDial({
   };
 
   const handleKeyDown = (ev: KeyboardEvent) => {
-    let add = 1;
-
     if (ev.key === 'ArrowDown' || ev.key === arrow('start')) {
-      add = 1;
+      onChange(Math.min(360, Math.max(0, deg + 1)));
     }
 
     if (ev.key === 'ArrowUp' || ev.key === arrow('end')) {
-      add = -1;
+      onChange(Math.min(360, Math.max(0, deg - 1)));
     }
 
-    onChange(Math.min(360, Math.max(0, deg + add)));
+    if (ev.key === 'Enter' && ev.target instanceof HTMLElement) {
+      if (ev.target.ariaLabel === '0') {
+        onClick(KnobType.start);
+      } else if (ev.target.ariaLabel === '1') {
+        onClick(KnobType.end);
+      }
+    }
   };
 
   useEffect(() => {
@@ -270,7 +277,7 @@ export function GradientDial({
     <div className="GradientDial__container" ref={containerRef}>
       {knobDim.start && (
         <div
-          aria-label="0"
+          aria-label={i18n('icu:GradientDial__knob-start')}
           className={classNames('GradientDial__knob', {
             'GradientDial__knob--selected': selectedKnob === KnobType.start,
           })}
@@ -293,7 +300,7 @@ export function GradientDial({
       )}
       {knobDim.end && (
         <div
-          aria-label="1"
+          aria-label={i18n('icu:GradientDial__knob-end')}
           className={classNames('GradientDial__knob', {
             'GradientDial__knob--selected': selectedKnob === KnobType.end,
           })}

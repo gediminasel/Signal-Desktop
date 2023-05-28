@@ -693,9 +693,8 @@
     "rule": "thenify-multiArgs",
     "path": "node_modules/default-browser-id/node_modules/pify/index.js",
     "line": "\t\t\t\t} else if (opts.multiArgs) {",
-    "reasonCategory": "falseMatch|testCode|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
-    "updated": "2023-04-20T16:43:40.643Z",
-    "reasonDetail": "<optional>"
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-04-20T16:43:40.643Z"
   },
   {
     "rule": "DOM-outerHTML",
@@ -1082,6 +1081,20 @@
   {
     "rule": "DOM-innerHTML",
     "path": "node_modules/quill/dist/quill.core.js",
+    "line": "        this.container.innerHTML = html.replace(/\\>\\r?\\n +\\</g, '><'); // Remove spaces between tags",
+    "reasonCategory": "notExercisedByOurApp",
+    "updated": "2023-05-17T16:29:59.196Z"
+  },
+  {
+    "rule": "DOM-innerHTML",
+    "path": "node_modules/quill/dist/quill.core.js",
+    "line": "      this.container.innerHTML = '';",
+    "reasonCategory": "notExercisedByOurApp",
+    "updated": "2023-05-17T16:29:59.196Z"
+  },
+  {
+    "rule": "DOM-innerHTML",
+    "path": "node_modules/quill/dist/quill.core.js",
     "line": "    var html = this.container.innerHTML.trim();",
     "reasonCategory": "usageTrusted",
     "updated": "2020-10-13T18:36:57.012Z",
@@ -1091,22 +1104,6 @@
     "rule": "DOM-innerHTML",
     "path": "node_modules/quill/dist/quill.core.js",
     "line": "    this.container.innerHTML = '';",
-    "reasonCategory": "usageTrusted",
-    "updated": "2020-10-13T18:36:57.012Z",
-    "reasonDetail": "necessary for quill"
-  },
-  {
-    "rule": "DOM-innerHTML",
-    "path": "node_modules/quill/dist/quill.core.js",
-    "line": "        this.container.innerHTML = html.replace(/\\>\\r?\\n +\\</g, '><'); // Remove spaces between tags",
-    "reasonCategory": "usageTrusted",
-    "updated": "2020-10-13T18:36:57.012Z",
-    "reasonDetail": "necessary for quill"
-  },
-  {
-    "rule": "DOM-innerHTML",
-    "path": "node_modules/quill/dist/quill.core.js",
-    "line": "        this.container.innerHTML = '';",
     "reasonCategory": "usageTrusted",
     "updated": "2020-10-13T18:36:57.012Z",
     "reasonDetail": "necessary for quill"
@@ -1130,15 +1127,28 @@
   {
     "rule": "DOM-innerHTML",
     "path": "node_modules/quill/dist/quill.js",
-    "line": "    var html = this.container.innerHTML.trim();",
-    "reasonCategory": "usageTrusted",
-    "updated": "2020-10-13T18:36:57.012Z",
-    "reasonDetail": "necessary for quill"
+    "line": "        // this.container.innerHTML = html.replace(/\\>\\r?\\n +\\</g, '><'); // Remove spaces between tags",
+    "reasonCategory": "falseMatch",
+    "updated": "2023-05-17T01:41:49.734Z"
   },
   {
     "rule": "DOM-innerHTML",
     "path": "node_modules/quill/dist/quill.js",
-    "line": "    this.container.innerHTML = '';",
+    "line": "      //  this.container.innerHTML = '';",
+    "reasonCategory": "falseMatch",
+    "updated": "2023-05-17T01:41:49.734Z"
+  },
+  {
+    "rule": "DOM-innerHTML",
+    "path": "node_modules/quill/dist/quill.js",
+    "line": "      // this.container.innerHTML = '';",
+    "reasonCategory": "falseMatch",
+    "updated": "2023-05-17T01:41:49.734Z"
+  },
+  {
+    "rule": "DOM-innerHTML",
+    "path": "node_modules/quill/dist/quill.js",
+    "line": "    var html = this.container.innerHTML.trim();",
     "reasonCategory": "usageTrusted",
     "updated": "2020-10-13T18:36:57.012Z",
     "reasonDetail": "necessary for quill"
@@ -1178,14 +1188,6 @@
   {
     "rule": "DOM-innerHTML",
     "path": "node_modules/quill/dist/quill.js",
-    "line": "        this.container.innerHTML = html.replace(/\\>\\r?\\n +\\</g, '><'); // Remove spaces between tags",
-    "reasonCategory": "usageTrusted",
-    "updated": "2020-10-13T18:36:57.012Z",
-    "reasonDetail": "necessary for quill"
-  },
-  {
-    "rule": "DOM-innerHTML",
-    "path": "node_modules/quill/dist/quill.js",
     "line": "        this.container.innerHTML = '';",
     "reasonCategory": "usageTrusted",
     "updated": "2020-10-13T18:36:57.012Z",
@@ -1195,14 +1197,6 @@
     "rule": "DOM-innerHTML",
     "path": "node_modules/quill/dist/quill.js",
     "line": "      debug.log('convert', this.container.innerHTML, delta);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2020-10-13T18:36:57.012Z",
-    "reasonDetail": "necessary for quill"
-  },
-  {
-    "rule": "DOM-innerHTML",
-    "path": "node_modules/quill/dist/quill.js",
-    "line": "      this.container.innerHTML = '';",
     "reasonCategory": "usageTrusted",
     "updated": "2020-10-13T18:36:57.012Z",
     "reasonDetail": "necessary for quill"
@@ -2378,9 +2372,8 @@
     "rule": "React-useRef",
     "path": "ts/components/conversation/InlineNotificationWrapper.tsx",
     "line": "  const focusRef = useRef<HTMLDivElement>(null);",
-    "reasonCategory": "falseMatch|testCode|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
-    "updated": "2023-04-12T15:51:28.066Z",
-    "reasonDetail": "<optional>"
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-04-12T15:51:28.066Z"
   },
   {
     "rule": "React-createRef",
@@ -2410,17 +2403,15 @@
     "rule": "React-useRef",
     "path": "ts/components/conversation/MessageDetail.tsx",
     "line": "  const focusRef = useRef<HTMLDivElement>(null);",
-    "reasonCategory": "falseMatch|testCode|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
-    "updated": "2023-04-12T15:51:28.066Z",
-    "reasonDetail": "<optional>"
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-04-12T15:51:28.066Z"
   },
   {
     "rule": "React-useRef",
     "path": "ts/components/conversation/MessageDetail.tsx",
     "line": "  const messageContainerRef = useRef<HTMLDivElement>(null);",
-    "reasonCategory": "falseMatch|testCode|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
-    "updated": "2023-04-12T15:51:28.066Z",
-    "reasonDetail": "<optional>"
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-04-12T15:51:28.066Z"
   },
   {
     "rule": "React-useRef",
@@ -2554,12 +2545,28 @@
     "updated": "2021-10-22T00:52:39.251Z"
   },
   {
-    "rule": "DOM-innerHTML",
-    "path": "ts/quill/signal-clipboard/index.ts",
-    "line": "  return div.innerHTML;",
+    "rule": "React-useRef",
+    "path": "ts/quill/formatting/menu.tsx",
+    "line": "  const buttonRef = React.useRef<HTMLButtonElement | null>(null);",
     "reasonCategory": "usageTrusted",
-    "updated": "2020-11-06T17:43:07.381Z",
-    "reasonDetail": "used for figuring out clipboard contents"
+    "updated": "2023-04-22T00:07:56.294Z",
+    "reasonDetail": "Popper needs to reference the button"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/quill/formatting/menu.tsx",
+    "line": "  const timerRef = React.useRef<NodeJS.Timeout | undefined>();",
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-04-22T00:07:56.294Z",
+    "reasonDetail": "We need a persistent timer to track long-hovers"
+  },
+  {
+    "rule": "DOM-innerHTML",
+    "path": "ts/quill/signal-clipboard/util.ts",
+    "line": "  event.clipboardData?.setData('text/signal', container.innerHTML);",
+    "reasonCategory": "regexMatchedSafeCode",
+    "updated": "2023-05-22T23:45:02.074Z",
+    "reasonDetail": "Reading from innerHTML, not setting it"
   },
   {
     "rule": "React-useRef",

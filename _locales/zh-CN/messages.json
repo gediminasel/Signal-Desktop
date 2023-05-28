@@ -621,7 +621,7 @@
     "description": "Shown in a context menu for a contact, allows the user to start the conversation with the contact"
   },
   "icu:ContactListItem__menu__audio-call": {
-    "messageformat": "音频通话",
+    "messageformat": "语音通话",
     "description": "Shown in a context menu for a contact, allows the user to start the audio call with the contact"
   },
   "icu:ContactListItem__menu__video-call": {
@@ -1563,6 +1563,10 @@
     "message": "表情包创建器",
     "description": "(deleted 03/15/2023) Title of the window that pops up with Signal Desktop preferences in it"
   },
+  "icu:signalDesktopStickerCreator": {
+    "messageformat": "表情包创建器",
+    "description": "Title of the window that pops up with Signal Desktop preferences in it"
+  },
   "aboutSignalDesktop": {
     "message": "关于 Signal Desktop",
     "description": "(deleted 03/29/2023) Item under the Help menu, which opens a small about window"
@@ -2158,6 +2162,9 @@
   "icu:accept": {
     "messageformat": "接受"
   },
+  "icu:edit": {
+    "messageformat": "编辑"
+  },
   "forward": {
     "message": "转发",
     "description": "(deleted 03/29/2023)"
@@ -2346,6 +2353,10 @@
     "messageformat": "更多信息",
     "description": "Shown on the drop-down menu for an individual message, takes you to message detail screen"
   },
+  "icu:copy": {
+    "messageformat": "复制文本",
+    "description": "Shown on the drop-down menu for an individual message, copies the message text to the clipboard"
+  },
   "icu:MessageContextMenu__select": {
     "messageformat": "选择",
     "description": "Shown on the drop-down menu for an individual message, opens the conversation in select mode with the current message selected"
@@ -2394,9 +2405,29 @@
     "messageformat": "对每个人删除消息",
     "description": "(deleted 04/06/2023) Shown on the drop-down menu for an individual message, deletes single message for everyone"
   },
+  "icu:MessageContextMenu__reply": {
+    "messageformat": "回复",
+    "description": "Shown on the drop-down menu for an individual message when there isnt room for a dedicated button, focuses the composer with a reply to the current message"
+  },
+  "icu:MessageContextMenu__react": {
+    "messageformat": "回应",
+    "description": "Shown on the drop-down menu for an individual message when there isnt room for a dedicated button, opens the react picker for the current message"
+  },
+  "icu:MessageContextMenu__download": {
+    "messageformat": "下载",
+    "description": "Shown on the drop-down menu for an individual message when there isnt room for a dedicated button and when there's only a single attachment, downloads an attachment"
+  },
   "icu:MessageContextMenu__deleteMessage": {
-    "messageformat": "删除消息",
+    "messageformat": "删除",
     "description": "Show on the drop-down menu for an individual message, opens a modal to select if you want to 'delete for me' or 'delete for everyone'"
+  },
+  "icu:MessageContextMenu__forward": {
+    "messageformat": "转发",
+    "description": "Show on the drop-down menu for an individual message, opens a modal to forward a message"
+  },
+  "icu:MessageContextMenu__info": {
+    "messageformat": "信息",
+    "description": "Shown on the drop-down menu for an individual message, takes you to message detail screen"
   },
   "deleteMessages": {
     "message": "删除",
@@ -2634,6 +2665,10 @@
     "message": "扫描您手机上的 Signal 应用中的此二维码",
     "description": "(deleted 03/29/2023) Title of the device link screen. Also used as alt text for the QR code on the device link screen"
   },
+  "icu:Install__learn-more": {
+    "messageformat": "了解更多",
+    "description": "Button text for learn more button during error screen"
+  },
   "icu:Install__scan-this-code": {
     "messageformat": "扫描您手机上的 Signal 应用中的此二维码",
     "description": "Title of the device link screen. Also used as alt text for the QR code on the device link screen"
@@ -2671,7 +2706,11 @@
     "description": "Instructions on the device link screen"
   },
   "icu:Install__qr-failed": {
-    "messageformat": "无法加载此二维码。请检查您的网络并重试。<learnMoreLink>了解详情</learnMoreLink>",
+    "messageformat": "(deleted 05/09/2023) The QR code couldn't load. Check your internet and try again. <learnMoreLink>Learn more</learnMoreLink>",
+    "description": "Shown on the install screen if the QR code fails to load"
+  },
+  "icu:Install__qr-failed-load": {
+    "messageformat": "无法加载此二维码。请检查您的网络并重试。<retry>重试</retry>",
     "description": "Shown on the install screen if the QR code fails to load"
   },
   "Install__support-link": {
@@ -3325,8 +3364,8 @@
     "messageformat": "检查消息输入框中的文字拼写",
     "description": "Description of the spell check setting"
   },
-  "icu:textFormattingDescripton": {
-    "messageformat": "选中文本时启用文本格式弹出菜单",
+  "icu:textFormattingDescription": {
+    "messageformat": "选中文本时显示文本格式弹出菜单",
     "description": "Description of the text-formatting popover menu setting"
   },
   "spellCheckWillBeEnabled": {
@@ -3534,6 +3573,10 @@
   "icu:deleteFailed": {
     "messageformat": "删除失败",
     "description": "Shown on a message which was deleted for everyone if the delete wasn't successfully sent to anyone"
+  },
+  "icu:editFailed": {
+    "messageformat": "编辑失败，点击查看详情",
+    "description": "Shown on a message which was edited if the edit wasn't successfully sent to anyone"
   },
   "sendPaused": {
     "message": "发送已暂停",
@@ -3852,7 +3895,7 @@
     "description": "(deleted 03/29/2023) Description for audio notification setting"
   },
   "icu:audioNotificationDescription": {
-    "messageformat": "播放通知提示音",
+    "messageformat": "推送通知音效",
     "description": "Description for audio notification setting"
   },
   "callRingtoneNotificationDescription": {
@@ -4098,6 +4141,10 @@
   "icu:Toast--failed-to-fetch-phone-number": {
     "messageformat": "无法获取电话号码。请检查您的网络连接并重试。",
     "description": "Shown if request to Signal servers to find phone number fails"
+  },
+  "icu:ToastManager__CannotEditMessage": {
+    "messageformat": "您只能在发送此消息的 3 小时以内进行编辑。",
+    "description": "Error message when you try to send an edit after message becomes too old"
   },
   "startConversation--username-not-found": {
     "message": "未找到此用户。$atUsername$不是 Signal 用户；请确认您输入的是完整用户名。",
@@ -4928,6 +4975,10 @@
     "message": "搜索表情",
     "description": "(deleted 03/29/2023) Shown as a placeholder inside the emoji picker search field."
   },
+  "icu:EmojiPicker--search-close": {
+    "messageformat": "关闭表情符号搜索",
+    "description": "Button title to cancel the emoji search."
+  },
   "icu:EmojiPicker--search-placeholder": {
     "messageformat": "搜索表情",
     "description": "Shown as a placeholder inside the emoji picker search field."
@@ -5019,6 +5070,22 @@
   "icu:confirmation-dialog--Cancel": {
     "messageformat": "取消",
     "description": "Appears on the cancel button in confirmation dialogs."
+  },
+  "icu:Message__reaction-emoji-label--you": {
+    "messageformat": "您用 {emoji} 进行了回应",
+    "description": "aria-label for reaction emoji (you)"
+  },
+  "icu:Message__reaction-emoji-label--single": {
+    "messageformat": "{title}用 {emoji} 进行了回应",
+    "description": "aria-label for reaction emoji when one person reacts with an emoji"
+  },
+  "icu:Message__reaction-emoji-label--many": {
+    "messageformat": "{count} 人用 {emoji} 进行了回应",
+    "description": "Used as an aria-label for when many people react to a message. Count is always greater than 1"
+  },
+  "icu:Message__role-description": {
+    "messageformat": "消息",
+    "description": "aria-roledescription of a message"
   },
   "MessageBody--read-more": {
     "message": "阅读全文",
@@ -5135,6 +5202,10 @@
   "icu:Conversation--getDraftPreview--draft": {
     "messageformat": "（草稿）",
     "description": "Text shown in left pane as preview for conversation with saved a saved draft message"
+  },
+  "icu:Keyboard--focus-most-recent-message": {
+    "messageformat": "聚焦最早的未读消息或最后一条消息",
+    "description": "Shown in shortcuts guide"
   },
   "Keyboard--navigate-by-section": {
     "message": "部分浏览",
@@ -5384,6 +5455,10 @@
     "messageformat": "跳至聊天",
     "description": "A shortcut allowing direct navigation to conversations 1 to 9 in list"
   },
+  "icu:Keyboard--edit-last-message": {
+    "messageformat": "编辑上一条消息",
+    "description": "Shown in the shortcuts guide"
+  },
   "Keyboard--Key--ctrl": {
     "message": "Ctrl",
     "description": "(deleted 03/29/2023) Key shown in shortcut combination in shortcuts guide"
@@ -5491,6 +5566,26 @@
   "icu:Keyboard--composer--spoiler": {
     "messageformat": "将所选文本设为防剧透格式",
     "description": "Description of command to bold text in composer"
+  },
+  "icu:FormatMenu--guide--bold": {
+    "messageformat": "加粗",
+    "description": "Shown when you hover over the bold button in the popup formatting menu"
+  },
+  "icu:FormatMenu--guide--italic": {
+    "messageformat": "斜体",
+    "description": "Shown when you hover over the bold button in the popup formatting menu"
+  },
+  "icu:FormatMenu--guide--strikethrough": {
+    "messageformat": "删除线",
+    "description": "Shown when you hover over the bold button in the popup formatting menu"
+  },
+  "icu:FormatMenu--guide--monospace": {
+    "messageformat": "等宽字体",
+    "description": "Shown when you hover over the bold button in the popup formatting menu"
+  },
+  "icu:FormatMenu--guide--spoiler": {
+    "messageformat": "防剧透",
+    "description": "Shown when you hover over the bold button in the popup formatting menu"
   },
   "Keyboard--scroll-to-top": {
     "message": "滚动到列表顶部",
@@ -8352,6 +8447,18 @@
     "messageformat": "正在检查联系人的注册状态",
     "description": "Displayed while checking if the contact is SMS-only"
   },
+  "icu:CompositionArea__edit-action--discard": {
+    "messageformat": "放弃消息",
+    "description": "aria-label for discard edit button"
+  },
+  "icu:CompositionArea__edit-action--send": {
+    "messageformat": "发送已编辑消息",
+    "description": "aria-label for send edit button"
+  },
+  "icu:CompositionInput__editing-message": {
+    "messageformat": "编辑消息",
+    "description": "Status text displayed above composition input when editing a message"
+  },
   "countMutedConversationsDescription": {
     "message": "未读消息数量显示包含已静音的对话",
     "description": "(deleted 03/29/2023) Description for counting muted conversations in badge setting"
@@ -9397,8 +9504,12 @@
     "description": "(deleted 04/04/2023) Shown in the timeline warning when you multiple group members have the same name"
   },
   "icu:ContactSpoofing__same-name-in-group--link": {
-    "messageformat": "{count, plural, other {{count,number} 个群组成员同名。<reviewRequestLink>审查请求</reviewRequestLink>}}",
+    "messageformat": "{count, plural, other {{count,number} 个群组成员同名。<reviewRequestLink>查看成员</reviewRequestLink>}}",
     "description": "Shown in the timeline warning when you multiple group members have the same name"
+  },
+  "icu:ContactSpoofing__same-names-in-group--link": {
+    "messageformat": "{count, plural, other {此群组中存在 {count,number} 个名称冲突。<reviewRequestLink>查看成员</reviewRequestLink>}}",
+    "description": "Shown in the timeline warning when multiple names are shared by members of a group."
   },
   "ContactSpoofing__same-name__link": {
     "message": "审查请求",
@@ -9414,7 +9525,7 @@
   },
   "icu:ContactSpoofing__same-name-in-group__link": {
     "messageformat": "点击查看",
-    "description": "Shown in the timeline warning when you multiple group members have the same name"
+    "description": "(deleted 05/04/2023) Shown in the timeline warning when you multiple group members have the same name"
   },
   "ContactSpoofingReviewDialog__title": {
     "message": "审查请求",
@@ -9463,6 +9574,10 @@
   "icu:ContactSpoofingReviewDialog__group__description": {
     "messageformat": "{count, plural, other {{count,number} 个群组成员名称相似。请查看下方成员或选择操作。}}",
     "description": "Description for the group contact spoofing review dialog"
+  },
+  "icu:ContactSpoofingReviewDialog__group__multiple-conflicts__description": {
+    "messageformat": "{count, plural, other {此群组中存在 {count,number} 个名称冲突。请查看下方的成员或采取行动。}}",
+    "description": "Description for the group contact spoofing review dialog when there are multiple shared names"
   },
   "ContactSpoofingReviewDialog__group__members-header": {
     "message": "成员",
@@ -9751,6 +9866,14 @@
   "icu:CustomColorEditor__title": {
     "messageformat": "自定义颜色",
     "description": "Modal title for the custom color editor"
+  },
+  "icu:GradientDial__knob-start": {
+    "messageformat": "渐变开始",
+    "description": "aria-label for the custom color gradient creator knob"
+  },
+  "icu:GradientDial__knob-end": {
+    "messageformat": "渐变结束",
+    "description": "aria-label for the custom color gradient creator knob"
   },
   "customDisappearingTimeOption": {
     "message": "自定义时间……",
@@ -10367,6 +10490,14 @@
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "群组头像",
     "description": "Title for the avatar picker in the group creation flow"
+  },
+  "icu:Preferences__message-audio-title": {
+    "messageformat": "聊天消息音效",
+    "description": "Title for message audio setting"
+  },
+  "icu:Preferences__message-audio-description": {
+    "messageformat": "在聊天中发送和收到消息时听到通知声。",
+    "description": "Description for message audio setting"
   },
   "Preferences__button--general": {
     "message": "通用",
@@ -12360,6 +12491,14 @@
     "messageformat": "编辑历史",
     "description": "Modal title for the edit history messages modal"
   },
+  "icu:ResendMessageEdit__body": {
+    "messageformat": "此编辑无法发送，请检查您的网络连接并重试",
+    "description": "Modal body for the confirmation dialog shown to user when attempting to resend message edit"
+  },
+  "icu:ResendMessageEdit__button": {
+    "messageformat": "重新发送",
+    "description": "Button text for the confirmation dialog shown to user when attempting to resend message edit"
+  },
   "WhatsNew__modal-title": {
     "message": "最新消息",
     "description": "(deleted 03/29/2023) Title for the whats new modal"
@@ -12424,24 +12563,36 @@
     "messageformat": "我们进行了功能微调、漏洞修复和性能强化。感谢使用 Signal！",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.11--0": {
-    "messageformat": "备忘录新图标可以让您更快找到备忘录聊天页面，方便您更快随手进行记录。感谢{hackerbirds}在 GitHub 上帮助我们在这方面进行了优化。",
-    "description": "Release notes for v6.11"
+  "icu:WhatsNew__v6.18--0": {
+    "messageformat": "新快捷键（⌘/Ctrl+T & ⌘/Ctrl+F6）可以让您轻松前往应用中的不同分区。这就像超级英雄版的 Tab 键，样子低调却蕴含巨大能量，可以让您更快抵达目的地。",
+    "description": "Release notes for v6.18"
   },
-  "icu:WhatsNew__v6.12--0": {
-    "messageformat": "现在您可以选择多条消息，然后一次性将其转发或删除。",
-    "description": "Release notes for v6.12"
+  "icu:WhatsNew__v6.18--1": {
+    "messageformat": "我们添加了一个设置选项，让您在打开的聊天页面中可以听到收发消息的通知音效（设置 > 通知）。",
+    "description": "Release notes for v6.18"
   },
-  "icu:WhatsNew__v6.12--1": {
-    "messageformat": "我们更新了贴纸创建器，对设计进行了一些调整，同时为创作热情高涨的贴纸艺术家添加了一些有用的提示。现在您可以在网络浏览器中打开贴纸创建器，这让桌面版 Signal 更加轻量化，能够给您的硬盘腾出更多空间，方便您尽情保存喜爱的贴纸包。",
-    "description": "Release notes for v6.12"
+  "icu:WhatsNew__v6.18--2": {
+    "messageformat": "我们新推出的另一个快捷键（(⌘/Ctrl+J)）可以让您跳转到聊天页面中的最新未读消息处。",
+    "description": "Release notes for v6.18"
   },
-  "icu:WhatsNew__v6.13--0": {
-    "messageformat": "进度报告：新的进度栏已上线。每当启动桌面版 Signal 时，您都能快速查看加载过程的更多信息。",
-    "description": "Release notes for v6.13"
+  "icu:WhatsNew__v6.18--3": {
+    "messageformat": "更新的图标让应用拥有了焕然一新的外观。",
+    "description": "Release notes for v6.18"
   },
-  "icu:WhatsNew__v6.13--1": {
-    "messageformat": "主题模式偏好现在可以在 Signal 设置中应用于复选框啦。感谢{rakleed}在 GitHub 上帮我们勾掉了待办事项：让夜间模式来得更彻底一些。",
-    "description": "Release notes for v6.13"
+  "icu:WhatsNew__v6.18--4": {
+    "messageformat": "三点菜单中新增了一个“复制文本”选项。谢谢，{yusufsahinhamza}！",
+    "description": "Release notes for v6.18"
+  },
+  "icu:WhatsNew__v6.19--0": {
+    "messageformat": "沉默并非永远金贵，但这次它确实有一个新图标。我们更新了语音和视频通话中的相机和静音按钮，方便大家更轻松地判断它们处于启用还是禁用状态。",
+    "description": "Release notes for v6.19"
+  },
+  "icu:WhatsNew__v6.19--1": {
+    "messageformat": "我们对本地化功能进行了优化，能够在消息编辑字段中更好地处理右对齐语言。谢谢，{sha265}！",
+    "description": "Release notes for v6.19"
+  },
+  "icu:WhatsNew__v6.19--2": {
+    "messageformat": "如果您使用的是 Windows 10 之前的 Windows 版本，或者是 20.04 LTS 之前的 Ubuntu 版本，那么您需要更新操作系统才能继续使用 Signal： {supportLink}",
+    "description": "Release notes for v6.19"
   }
 }

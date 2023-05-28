@@ -52,6 +52,7 @@ type PropsType = {
   onClick?: () => void;
   shouldShowSpinner?: boolean;
   unreadCount?: number;
+  unreadMentionsCount?: number;
   avatarSize?: AvatarSize;
   testId?: string;
 } & Pick<
@@ -107,6 +108,7 @@ export const BaseConversationListItem: FunctionComponent<PropsType> =
       title,
       unblurredAvatarPath,
       unreadCount,
+      unreadMentionsCount,
       uuid,
     } = props;
 
@@ -166,6 +168,27 @@ export const BaseConversationListItem: FunctionComponent<PropsType> =
       );
     }
 
+    const unreadIndicators = (() => {
+      if (!isUnread) {
+        return null;
+      }
+      return (
+        <div className={`${CONTENT_CLASS_NAME}__unread-indicators`}>
+          {unreadMentionsCount ? (
+            <UnreadIndicator variant={UnreadIndicatorVariant.UNREAD_MENTIONS} />
+          ) : null}
+          {unreadCount ? (
+            <UnreadIndicator
+              variant={UnreadIndicatorVariant.UNREAD_MESSAGES}
+              count={unreadCount}
+            />
+          ) : (
+            <UnreadIndicator variant={UnreadIndicatorVariant.MARKED_UNREAD} />
+          )}
+        </div>
+      );
+    })();
+
     const contents = (
       <>
         <div className={AVATAR_CONTAINER_CLASS_NAME}>
@@ -189,7 +212,7 @@ export const BaseConversationListItem: FunctionComponent<PropsType> =
               ? { badge: props.badge, theme: props.theme }
               : { badge: undefined })}
           />
-          <UnreadIndicator count={unreadCount} isUnread={isUnread} />
+          {unreadIndicators}
         </div>
         <div
           className={classNames(
@@ -216,7 +239,7 @@ export const BaseConversationListItem: FunctionComponent<PropsType> =
                 </div>
               )}
               {messageStatusIcon}
-              <UnreadIndicator count={unreadCount} isUnread={isUnread} />
+              {unreadIndicators}
             </div>
           ) : null}
         </div>
@@ -315,17 +338,53 @@ function Timestamp({
   );
 }
 
-function UnreadIndicator({
-  count = 0,
-  isUnread,
-}: Readonly<{ count?: number; isUnread: boolean }>) {
-  if (!isUnread) {
-    return null;
+enum UnreadIndicatorVariant {
+  MARKED_UNREAD = 'marked-unread',
+  UNREAD_MESSAGES = 'unread-messages',
+  UNREAD_MENTIONS = 'unread-mentions',
+}
+
+type UnreadIndicatorPropsType =
+  | {
+      variant: UnreadIndicatorVariant.MARKED_UNREAD;
+    }
+  | {
+      variant: UnreadIndicatorVariant.UNREAD_MESSAGES;
+      count: number;
+    }
+  | { variant: UnreadIndicatorVariant.UNREAD_MENTIONS };
+
+function UnreadIndicator(props: UnreadIndicatorPropsType) {
+  let content: React.ReactNode;
+
+  switch (props.variant) {
+    case UnreadIndicatorVariant.MARKED_UNREAD:
+      content = null;
+      break;
+    case UnreadIndicatorVariant.UNREAD_MESSAGES:
+      content = props.count > 0 && props.count;
+      break;
+    case UnreadIndicatorVariant.UNREAD_MENTIONS:
+      content = (
+        <div
+          className={classNames(
+            `${BASE_CLASS_NAME}__unread-indicator--${props.variant}__icon`
+          )}
+        />
+      );
+      break;
+    default:
+      throw new Error('Unexpected variant');
   }
 
   return (
-    <div className={classNames(`${BASE_CLASS_NAME}__unread-indicator`)}>
-      {Boolean(count) && count}
+    <div
+      className={classNames(
+        `${BASE_CLASS_NAME}__unread-indicator`,
+        `${BASE_CLASS_NAME}__unread-indicator--${props.variant}`
+      )}
+    >
+      {content}
     </div>
   );
 }

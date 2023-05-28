@@ -70,6 +70,7 @@ const getDefaultProps = () => ({
   clearTargetedMessage: action('clearTargetedMessage'),
   setMessageToEdit: action('setMessageToEdit'),
   setQuoteByMessageId: action('setQuoteByMessageId'),
+  copyMessageText: action('copyMessageText'),
   retryDeleteForEveryone: action('retryDeleteForEveryone'),
   retryMessageSend: action('retryMessageSend'),
   blockGroupLinkRequests: action('blockGroupLinkRequests'),
@@ -144,6 +145,15 @@ export function Notification(): JSX.Element {
       data: {
         phoneNumber: '(202) 555-0000',
         expireTimer: DurationInSeconds.MINUTE,
+        ...getDefaultConversation(),
+        type: 'fromOther',
+      },
+    },
+    {
+      type: 'timerNotification',
+      data: {
+        phoneNumber: '(202) 555-0000',
+        disabled: true,
         ...getDefaultConversation(),
         type: 'fromOther',
       },
@@ -534,6 +544,14 @@ export function Notification(): JSX.Element {
         type: 'markNotVerified',
         isLocal: true,
         contact: getDefaultConversation(),
+      },
+    },
+    {
+      type: 'conversationMerge',
+      data: {
+        conversationTitle: 'Alice',
+        obsoleteConversationTitle: 'Nancy',
+        obsoleteConversationNumber: '+121255501234',
       },
     },
   ];

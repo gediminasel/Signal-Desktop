@@ -8,7 +8,7 @@ import React from 'react';
 import Measure from 'react-measure';
 
 import type { ReadonlyDeep } from 'type-fest';
-import { ScrollDownButton } from './ScrollDownButton';
+import { ScrollDownButton, ScrollDownButtonVariant } from './ScrollDownButton';
 
 import type { LocalizerType, ThemeType } from '../../types/Util';
 import type { ConversationType } from '../../state/ducks/conversations';
@@ -19,6 +19,7 @@ import { clearTimeoutIfNecessary } from '../../util/clearTimeoutIfNecessary';
 import { WidthBreakpoint } from '../_util';
 
 import { ErrorBoundary } from './ErrorBoundary';
+import type { FullJSXType } from '../Intl';
 import { Intl } from '../Intl';
 import { TimelineWarning } from './TimelineWarning';
 import { TimelineWarnings } from './TimelineWarnings';
@@ -99,6 +100,7 @@ type PropsHousekeepingType = {
   isIncomingMessageRequest: boolean;
   isSomeoneTyping: boolean;
   unreadCount?: number;
+  unreadMentionsCount?: number;
 
   targetedMessageId?: string;
   invitedContactsForNewlyCreatedGroup: Array<ConversationType>;
@@ -167,6 +169,7 @@ export type PropsActionsType = {
       safeConversationId: string;
     }>
   ) => void;
+  scrollToOldestUnreadMention: (conversationId: string) => unknown;
 };
 
 export type PropsType = PropsDataType &
@@ -775,10 +778,12 @@ export class Timeline extends React.Component<
       renderTypingBubble,
       reviewGroupMemberNameCollision,
       reviewMessageRequestNameCollision,
+      scrollToOldestUnreadMention,
       shouldShowMiniPlayer,
       theme,
       totalUnseen,
       unreadCount,
+      unreadMentionsCount,
     } = this.props;
     const {
       hasRecentlyScrolled,
@@ -814,7 +819,7 @@ export class Timeline extends React.Component<
         areAnyMessagesUnread &&
         areAnyMessagesBelowCurrentPosition
     );
-    const shouldShowScrollDownButton = Boolean(
+    const shouldShowScrollDownButtons = Boolean(
       areThereAnyMessages &&
         (areUnreadBelowCurrentPosition || areSomeMessagesBelowCurrentPosition)
     );
@@ -884,6 +889,15 @@ export class Timeline extends React.Component<
       messageNodes.push(
         <div
           key={messageId}
+          className={
+            itemIndex === items.length - 1
+              ? 'module-timeline__last-message'
+              : undefined
+          }
+          data-supertab={
+            oldestUnseenIndex === itemIndex ||
+            (!oldestUnseenIndex && itemIndex === items.length - 1)
+          }
           data-item-index={itemIndex}
           data-message-id={messageId}
           role="listitem"
@@ -941,29 +955,42 @@ export class Timeline extends React.Component<
             break;
           case ContactSpoofingType.MultipleGroupMembersWithSameTitle: {
             const { groupNameCollisions } = warning;
-            text = (
-              <Intl
-                i18n={i18n}
-                id="icu:ContactSpoofing__same-name-in-group--link"
-                components={{
-                  count: Object.values(groupNameCollisions).reduce(
-                    (result, conversations) => result + conversations.length,
-                    0
-                  ),
-                  // This is a render props, not a component
-                  // eslint-disable-next-line react/no-unstable-nested-components
-                  reviewRequestLink: parts => (
-                    <TimelineWarning.Link
-                      onClick={() => {
-                        reviewGroupMemberNameCollision(id);
-                      }}
-                    >
-                      {parts}
-                    </TimelineWarning.Link>
-                  ),
+            const numberOfSharedNames = Object.keys(groupNameCollisions).length;
+            const reviewRequestLink: FullJSXType = parts => (
+              <TimelineWarning.Link
+                onClick={() => {
+                  reviewGroupMemberNameCollision(id);
                 }}
-              />
+              >
+                {parts}
+              </TimelineWarning.Link>
             );
+            if (numberOfSharedNames === 1) {
+              text = (
+                <Intl
+                  i18n={i18n}
+                  id="icu:ContactSpoofing__same-name-in-group--link"
+                  components={{
+                    count: Object.values(groupNameCollisions).reduce(
+                      (result, conversations) => result + conversations.length,
+                      0
+                    ),
+                    reviewRequestLink,
+                  }}
+                />
+              );
+            } else {
+              text = (
+                <Intl
+                  i18n={i18n}
+                  id="icu:ContactSpoofing__same-names-in-group--link"
+                  components={{
+                    count: numberOfSharedNames,
+                    reviewRequestLink,
+                  }}
+                />
+              );
+            }
             onClose = () => {
               acknowledgeGroupMemberNameCollisions(id, groupNameCollisions);
             };
@@ -1104,14 +1131,24 @@ export class Timeline extends React.Component<
                   />
                 </div>
               </main>
+              {shouldShowScrollDownButtons ? (
+                <div className="module-timeline__scrolldown-buttons">
+                  {unreadMentionsCount ? (
+                    <ScrollDownButton
+                      variant={ScrollDownButtonVariant.UNREAD_MENTIONS}
+                      count={unreadMentionsCount}
+                      onClick={() => scrollToOldestUnreadMention(id)}
+                      i18n={i18n}
+                    />
+                  ) : null}
 
-              {shouldShowScrollDownButton ? (
-                <ScrollDownButton
-                  conversationId={id}
-                  unreadCount={areUnreadBelowCurrentPosition ? unreadCount : 0}
-                  scrollDown={this.onClickScrollDownButton}
-                  i18n={i18n}
-                />
+                  <ScrollDownButton
+                    variant={ScrollDownButtonVariant.UNREAD_MESSAGES}
+                    count={areUnreadBelowCurrentPosition ? unreadCount : 0}
+                    onClick={this.onClickScrollDownButton}
+                    i18n={i18n}
+                  />
+                </div>
               ) : null}
             </div>
           )}

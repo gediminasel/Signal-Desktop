@@ -4,12 +4,15 @@
 import Delta from 'quill-delta';
 import { insertEmojiOps } from '../util';
 
-export const matchEmojiImage = (node: Element): Delta => {
-  if (node.classList.contains('emoji')) {
-    const emoji = node.getAttribute('title');
+export const matchEmojiImage = (node: Element, delta: Delta): Delta => {
+  if (
+    node.classList.contains('emoji') ||
+    node.classList.contains('module-emoji__image--16px')
+  ) {
+    const emoji = node.getAttribute('aria-label');
     return new Delta().insert({ emoji });
   }
-  return new Delta();
+  return delta;
 };
 
 export const matchEmojiBlot = (node: HTMLElement, delta: Delta): Delta => {
@@ -20,15 +23,11 @@ export const matchEmojiBlot = (node: HTMLElement, delta: Delta): Delta => {
   return delta;
 };
 
-export const matchReactEmoji = (node: HTMLElement, delta: Delta): Delta => {
-  if (node.classList.contains('module-emoji')) {
-    const emoji = node.innerText.trim();
-    return new Delta().insert({ emoji });
-  }
-  return delta;
-};
-
 export const matchEmojiText = (node: Text): Delta => {
+  if (node.data.replace(/(\n|\r\n)/g, '') === '') {
+    return new Delta();
+  }
+
   const nodeAsInsert = { insert: node.data };
 
   return new Delta(insertEmojiOps([nodeAsInsert]));

@@ -81,15 +81,16 @@ async function notifyForCall(
   notificationService.notify({
     title: notificationTitle,
     icon: isVideoCall
-      ? 'images/icons/v2/video-solid-24.svg'
-      : 'images/icons/v2/phone-hard-solid-24.svg',
+      ? 'images/icons/v3/video/video-fill.svg'
+      : 'images/icons/v3/phone/phone-fill.svg',
     message: isVideoCall
       ? window.i18n('icu:incomingVideoCall')
       : window.i18n('icu:incomingAudioCall'),
     onNotificationClick: () => {
       window.IPC.showWindow();
     },
-    silent: false,
+    // The ringtone plays so we don't need sound for the notification
+    silent: true,
   });
 }
 

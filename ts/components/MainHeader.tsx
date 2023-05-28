@@ -13,6 +13,8 @@ import type { AvatarColorType } from '../types/Colors';
 import type { BadgeType } from '../badges/types';
 import { handleOutsideClick } from '../util/handleOutsideClick';
 
+const EMPTY_OBJECT = Object.freeze(Object.create(null));
+
 export type PropsType = {
   areStoriesEnabled: boolean;
   avatarPath?: string;
@@ -118,9 +120,12 @@ export function MainHeader({
     <div className="module-main-header">
       <div
         className="module-main-header__avatar--container"
+        data-supertab
         ref={setTargetElement}
       >
         <Avatar
+          aria-expanded={showAvatarPopup}
+          aria-owns="MainHeader__AvatarPopup"
           acceptedMessageRequest
           avatarPath={avatarPath}
           badge={badge}
@@ -149,6 +154,7 @@ export function MainHeader({
         portalElement != null &&
         createPortal(
           <div
+            id="MainHeader__AvatarPopup"
             ref={setPopperElement}
             style={{ ...popper.styles.popper, zIndex: 10 }}
             {...popper.attributes.popper}
@@ -167,11 +173,14 @@ export function MainHeader({
               title={title}
               avatarPath={avatarPath}
               hasPendingUpdate={hasPendingUpdate}
-              startUpdate={startUpdate}
               // See the comment above about `sharedGroupNames`.
               sharedGroupNames={[]}
               onEditProfile={() => {
                 toggleProfileEditor();
+                setShowAvatarPopup(false);
+              }}
+              onStartUpdate={() => {
+                startUpdate();
                 setShowAvatarPopup(false);
               }}
               onViewPreferences={() => {
@@ -182,12 +191,12 @@ export function MainHeader({
                 showArchivedConversations();
                 setShowAvatarPopup(false);
               }}
-              style={{}}
+              style={EMPTY_OBJECT}
             />
           </div>,
           portalElement
         )}
-      <div className="module-main-header__icon-container">
+      <div className="module-main-header__icon-container" data-supertab>
         {areStoriesEnabled && (
           <button
             aria-label={i18n('icu:stories')}

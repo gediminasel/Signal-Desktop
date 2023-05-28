@@ -25,9 +25,9 @@ export type Props = {
   disableLinks?: boolean;
   disableMarkdown?: boolean;
   i18n: LocalizerType;
-  isSpoilerExpanded: boolean;
+  isSpoilerExpanded: Record<string, boolean>;
   kickOffBodyDownload?: () => void;
-  onExpandSpoiler?: () => unknown;
+  onExpandSpoiler?: (data: Record<number, boolean>) => unknown;
   onIncreaseTextLength?: () => unknown;
   prefix?: string;
   renderLocation: RenderLocation;

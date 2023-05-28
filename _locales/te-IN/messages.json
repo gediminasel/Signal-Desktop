@@ -621,7 +621,7 @@
     "description": "Shown in a context menu for a contact, allows the user to start the conversation with the contact"
   },
   "icu:ContactListItem__menu__audio-call": {
-    "messageformat": "ఆడియో కాల్",
+    "messageformat": "స్వర కాల్",
     "description": "Shown in a context menu for a contact, allows the user to start the audio call with the contact"
   },
   "icu:ContactListItem__menu__video-call": {
@@ -1563,6 +1563,10 @@
     "message": "స్టిక్కర్ ప్యాక్ సృష్టికర్త",
     "description": "(deleted 03/15/2023) Title of the window that pops up with Signal Desktop preferences in it"
   },
+  "icu:signalDesktopStickerCreator": {
+    "messageformat": "స్టిక్కర్ ప్యాక్ సృష్టికర్త",
+    "description": "Title of the window that pops up with Signal Desktop preferences in it"
+  },
   "aboutSignalDesktop": {
     "message": "Signal Desktop గురించి",
     "description": "(deleted 03/29/2023) Item under the Help menu, which opens a small about window"
@@ -2158,6 +2162,9 @@
   "icu:accept": {
     "messageformat": "అంగీకరించండి"
   },
+  "icu:edit": {
+    "messageformat": "సవరించండి"
+  },
   "forward": {
     "message": "బదలాయించు",
     "description": "(deleted 03/29/2023)"
@@ -2346,6 +2353,10 @@
     "messageformat": "మరింత సమాచారం",
     "description": "Shown on the drop-down menu for an individual message, takes you to message detail screen"
   },
+  "icu:copy": {
+    "messageformat": "మూల గ్రంథము అనుకరణ",
+    "description": "Shown on the drop-down menu for an individual message, copies the message text to the clipboard"
+  },
   "icu:MessageContextMenu__select": {
     "messageformat": "ఎంచుకోండి",
     "description": "Shown on the drop-down menu for an individual message, opens the conversation in select mode with the current message selected"
@@ -2394,9 +2405,29 @@
     "messageformat": "ప్రతిఒక్కరి కోసం సందేశాన్ని తొలగించండి",
     "description": "(deleted 04/06/2023) Shown on the drop-down menu for an individual message, deletes single message for everyone"
   },
+  "icu:MessageContextMenu__reply": {
+    "messageformat": "స్పంధించు",
+    "description": "Shown on the drop-down menu for an individual message when there isnt room for a dedicated button, focuses the composer with a reply to the current message"
+  },
+  "icu:MessageContextMenu__react": {
+    "messageformat": "ప్రతిస్పందించండి",
+    "description": "Shown on the drop-down menu for an individual message when there isnt room for a dedicated button, opens the react picker for the current message"
+  },
+  "icu:MessageContextMenu__download": {
+    "messageformat": "దిగుమతి",
+    "description": "Shown on the drop-down menu for an individual message when there isnt room for a dedicated button and when there's only a single attachment, downloads an attachment"
+  },
   "icu:MessageContextMenu__deleteMessage": {
-    "messageformat": "సందేశాన్ని తొలగించండి",
+    "messageformat": "తొలగించండి",
     "description": "Show on the drop-down menu for an individual message, opens a modal to select if you want to 'delete for me' or 'delete for everyone'"
+  },
+  "icu:MessageContextMenu__forward": {
+    "messageformat": "బదలాయించు",
+    "description": "Show on the drop-down menu for an individual message, opens a modal to forward a message"
+  },
+  "icu:MessageContextMenu__info": {
+    "messageformat": "సమాచారం",
+    "description": "Shown on the drop-down menu for an individual message, takes you to message detail screen"
   },
   "deleteMessages": {
     "message": "తొలగించండి",
@@ -2634,6 +2665,10 @@
     "message": "మీ ఫోన్ మీద Signal యాప్‌లో ఈ కోడ్‌ని స్కాన్ చేయండి",
     "description": "(deleted 03/29/2023) Title of the device link screen. Also used as alt text for the QR code on the device link screen"
   },
+  "icu:Install__learn-more": {
+    "messageformat": "ఇంకా నేర్చుకో",
+    "description": "Button text for learn more button during error screen"
+  },
   "icu:Install__scan-this-code": {
     "messageformat": "మీ ఫోన్ మీద Signal యాప్‌లో ఈ కోడ్‌ని స్కాన్ చేయండి",
     "description": "Title of the device link screen. Also used as alt text for the QR code on the device link screen"
@@ -2671,7 +2706,11 @@
     "description": "Instructions on the device link screen"
   },
   "icu:Install__qr-failed": {
-    "messageformat": "QR కోడ్ లోడ్ కాలేకపోయింది. మీ ఇంటర్నెట్‌ను తనిఖీ చేయండి మరియు మళ్లీ ప్రయత్నించండి. <learnMoreLink>మరింత తెలుసుకోండి</learnMoreLink>",
+    "messageformat": "(deleted 05/09/2023) The QR code couldn't load. Check your internet and try again. <learnMoreLink>Learn more</learnMoreLink>",
+    "description": "Shown on the install screen if the QR code fails to load"
+  },
+  "icu:Install__qr-failed-load": {
+    "messageformat": "QR కోడ్ లోడ్ కాలేకపోయింది. మీ ఇంటర్నెట్‌ను తనిఖీ చేయండి మరియు మళ్ళీ ప్రయత్నించండి. <retry>మళ్ళీ ప్రయత్నించండి</retry>",
     "description": "Shown on the install screen if the QR code fails to load"
   },
   "Install__support-link": {
@@ -3325,8 +3364,8 @@
     "messageformat": "స్పెల్ చెక్ టెక్ట్స్ సందేశం కంపోజిషన్ బాక్స్‌లో నమోదు చేయబడింది.",
     "description": "Description of the spell check setting"
   },
-  "icu:textFormattingDescripton": {
-    "messageformat": "టెక్స్ట్ ఎంపిక చేయబడినప్పుడు టెక్స్ట్ ఫార్మాటింగ్ పాప్‌ఓవర్‌ను ప్రారంభించండి",
+  "icu:textFormattingDescription": {
+    "messageformat": "టెక్స్ట్ ఎంచుకోబడినప్పుడు టెక్స్ట్ ఫార్మాటింగ్ పాప్‌ఓవర్‌ను చూపించండి",
     "description": "Description of the text-formatting popover menu setting"
   },
   "spellCheckWillBeEnabled": {
@@ -3534,6 +3573,10 @@
   "icu:deleteFailed": {
     "messageformat": "తొలగించడం విఫలమైంది",
     "description": "Shown on a message which was deleted for everyone if the delete wasn't successfully sent to anyone"
+  },
+  "icu:editFailed": {
+    "messageformat": "సవరణ విఫలమైంది, వివరాల కొరకు క్లిక్ చేయండి",
+    "description": "Shown on a message which was edited if the edit wasn't successfully sent to anyone"
   },
   "sendPaused": {
     "message": "పంపండి పాజ్ చేయబడింది",
@@ -3852,7 +3895,7 @@
     "description": "(deleted 03/29/2023) Description for audio notification setting"
   },
   "icu:audioNotificationDescription": {
-    "messageformat": "నోటిఫికేషన్ సౌండ్‌లను ప్లే చేయండి",
+    "messageformat": "పుష్ నోటిఫికేషన్ ధ్వనులు",
     "description": "Description for audio notification setting"
   },
   "callRingtoneNotificationDescription": {
@@ -4098,6 +4141,10 @@
   "icu:Toast--failed-to-fetch-phone-number": {
     "messageformat": "ఫోన్ నెంబర్ పొందడం విఫలమైంది. మీ కనెక్షన్ చెక్ చేసి, మళ్లీ ప్రయత్నించండి.",
     "description": "Shown if request to Signal servers to find phone number fails"
+  },
+  "icu:ToastManager__CannotEditMessage": {
+    "messageformat": "ఈ సందేశాన్ని మీరు పంపిన సమయం నుంచి 3 గంటలలోపు మాత్రమే సవరణలు వర్తింపజేయబడతాయి.",
+    "description": "Error message when you try to send an edit after message becomes too old"
   },
   "startConversation--username-not-found": {
     "message": "యూజర్ కనుగొనబడలేదు. $atUsername$ Signal యూజర్ కాదు; మీరు యూజర్‌నేమ్ పూర్తిగా నమోదు చేసినట్లుగా ధృవీకరించుకోండి.",
@@ -4928,6 +4975,10 @@
     "message": "ఎమోజిని శోధించండి",
     "description": "(deleted 03/29/2023) Shown as a placeholder inside the emoji picker search field."
   },
+  "icu:EmojiPicker--search-close": {
+    "messageformat": "ఎమోజీ శోధన మూసివేయండి",
+    "description": "Button title to cancel the emoji search."
+  },
   "icu:EmojiPicker--search-placeholder": {
     "messageformat": "ఎమోజిని శోధించండి",
     "description": "Shown as a placeholder inside the emoji picker search field."
@@ -5019,6 +5070,22 @@
   "icu:confirmation-dialog--Cancel": {
     "messageformat": "రద్దు",
     "description": "Appears on the cancel button in confirmation dialogs."
+  },
+  "icu:Message__reaction-emoji-label--you": {
+    "messageformat": "మీరు {emoji} తో ప్రతిస్పందించారు",
+    "description": "aria-label for reaction emoji (you)"
+  },
+  "icu:Message__reaction-emoji-label--single": {
+    "messageformat": "{title} {emoji} తో ప్రతిస్పందించారు",
+    "description": "aria-label for reaction emoji when one person reacts with an emoji"
+  },
+  "icu:Message__reaction-emoji-label--many": {
+    "messageformat": "{count} వ్యక్తులు {emoji} తో ప్రతిస్పందించారు",
+    "description": "Used as an aria-label for when many people react to a message. Count is always greater than 1"
+  },
+  "icu:Message__role-description": {
+    "messageformat": "సందేశం",
+    "description": "aria-roledescription of a message"
   },
   "MessageBody--read-more": {
     "message": "మరింత చదవండి",
@@ -5135,6 +5202,10 @@
   "icu:Conversation--getDraftPreview--draft": {
     "messageformat": "(చిత్తు పత్రం)",
     "description": "Text shown in left pane as preview for conversation with saved a saved draft message"
+  },
+  "icu:Keyboard--focus-most-recent-message": {
+    "messageformat": "అత్యంత పాత చదవని లేదా చివరి సందేశంపై దృష్టి పెట్టండి",
+    "description": "Shown in shortcuts guide"
   },
   "Keyboard--navigate-by-section": {
     "message": "విభాగం వారీగా నావిగేట్ చేయండి",
@@ -5384,6 +5455,10 @@
     "messageformat": "చాట్‌కు వెళ్లండి",
     "description": "A shortcut allowing direct navigation to conversations 1 to 9 in list"
   },
+  "icu:Keyboard--edit-last-message": {
+    "messageformat": "మునుపటి సందేశాన్ని సవరించండి",
+    "description": "Shown in the shortcuts guide"
+  },
   "Keyboard--Key--ctrl": {
     "message": "క్టర్ల",
     "description": "(deleted 03/29/2023) Key shown in shortcut combination in shortcuts guide"
@@ -5491,6 +5566,26 @@
   "icu:Keyboard--composer--spoiler": {
     "messageformat": "ఎంపిక చేసిన టెక్స్ట్‌ను స్పాయిలర్ లాగా గుర్తు పెట్టండి",
     "description": "Description of command to bold text in composer"
+  },
+  "icu:FormatMenu--guide--bold": {
+    "messageformat": "బోల్డ్",
+    "description": "Shown when you hover over the bold button in the popup formatting menu"
+  },
+  "icu:FormatMenu--guide--italic": {
+    "messageformat": "ఇటాలిక్",
+    "description": "Shown when you hover over the bold button in the popup formatting menu"
+  },
+  "icu:FormatMenu--guide--strikethrough": {
+    "messageformat": "స్ట్రైక్‌త్రూ",
+    "description": "Shown when you hover over the bold button in the popup formatting menu"
+  },
+  "icu:FormatMenu--guide--monospace": {
+    "messageformat": "మోనోస్పేస్",
+    "description": "Shown when you hover over the bold button in the popup formatting menu"
+  },
+  "icu:FormatMenu--guide--spoiler": {
+    "messageformat": "స్పాయిలర్",
+    "description": "Shown when you hover over the bold button in the popup formatting menu"
   },
   "Keyboard--scroll-to-top": {
     "message": "జాబితా పైకి స్క్రోల్ చేయండి",
@@ -8352,6 +8447,18 @@
     "messageformat": "పరిచయం యొక్క నమోదు స్థితిని తనిఖీ చేస్తోంది",
     "description": "Displayed while checking if the contact is SMS-only"
   },
+  "icu:CompositionArea__edit-action--discard": {
+    "messageformat": "సందేశాన్ని తీసేయండి",
+    "description": "aria-label for discard edit button"
+  },
+  "icu:CompositionArea__edit-action--send": {
+    "messageformat": "సవరించిన సందేశాన్ని పంపండి",
+    "description": "aria-label for send edit button"
+  },
+  "icu:CompositionInput__editing-message": {
+    "messageformat": "సందేశాన్ని సవరించండి",
+    "description": "Status text displayed above composition input when editing a message"
+  },
   "countMutedConversationsDescription": {
     "message": "బ్యాడ్జి కౌంట్‌లో మ్యూట్ చేయబడిన సంభాషణలను చేర్చండి",
     "description": "(deleted 03/29/2023) Description for counting muted conversations in badge setting"
@@ -9385,7 +9492,7 @@
     "description": "(deleted 03/29/2023) Shown in the timeline warning when you have a message request from someone with the same name as someone else"
   },
   "icu:ContactSpoofing__same-name--link": {
-    "messageformat": "అభ్యర్థనలను జాగ్రత్తగా సమీక్షించండి. అదే పేరుతో Signal మరొక పరిచయాన్ని కనుగొంది. <reviewRequestLink>అభ్యర్థనను సమీక్షించండి</reviewRequestLink>",
+    "messageformat": "అభ్యర్థనలను జాగ్రత్తగా సమీక్షించండి. అదే పేరుతో మరొక పరిచయాన్ని Signal కనుగొంది. <reviewRequestLink>అభ్యర్థనను సమీక్షించండి</reviewRequestLink>",
     "description": "Shown in the timeline warning when you have a message request from someone with the same name as someone else"
   },
   "ContactSpoofing__same-name-in-group": {
@@ -9397,8 +9504,12 @@
     "description": "(deleted 04/04/2023) Shown in the timeline warning when you multiple group members have the same name"
   },
   "icu:ContactSpoofing__same-name-in-group--link": {
-    "messageformat": "{count, plural, one {{count,number} గ్రూపు సభ్యునికి అదే పేరు ఉంది. <reviewRequestLink>అభ్యర్థనను సమీక్షించండి</reviewRequestLink>} other {{count,number} గ్రూపు సభ్యులకు అదే పేరు ఉంది. <reviewRequestLink>అభ్యర్థనను సమీక్షించండి</reviewRequestLink>}}",
+    "messageformat": "{count, plural, one {{count,number} గ్రూపు సభ్యునికి అదే పేరు ఉంది. <reviewRequestLink>సభ్యులను సమీక్షించండి</reviewRequestLink>} other {{count,number} గ్రూపు సభ్యులకు అదే పేరు ఉంది. <reviewRequestLink>సభ్యులను సమీక్షించండి</reviewRequestLink>}}",
     "description": "Shown in the timeline warning when you multiple group members have the same name"
+  },
+  "icu:ContactSpoofing__same-names-in-group--link": {
+    "messageformat": "{count, plural, one {ఈ గ్రూపులో {count,number} పేరు వైరుధ్యం కనుగొనబడింది. <reviewRequestLink>సభ్యులను సమీక్షించండి</reviewRequestLink>} other {ఈ గ్రూపులో {count,number} పేరు వైరుధ్యాలు కనుగొనబడినవి. <reviewRequestLink>సభ్యులను సమీక్షించండి</reviewRequestLink>}}",
+    "description": "Shown in the timeline warning when multiple names are shared by members of a group."
   },
   "ContactSpoofing__same-name__link": {
     "message": "అభ్యర్థనను సమీక్షించండి",
@@ -9414,7 +9525,7 @@
   },
   "icu:ContactSpoofing__same-name-in-group__link": {
     "messageformat": "సమీక్షించడానికి క్లిక్ చేయండి",
-    "description": "Shown in the timeline warning when you multiple group members have the same name"
+    "description": "(deleted 05/04/2023) Shown in the timeline warning when you multiple group members have the same name"
   },
   "ContactSpoofingReviewDialog__title": {
     "message": "అభ్యర్థనను సమీక్షించండి",
@@ -9463,6 +9574,10 @@
   "icu:ContactSpoofingReviewDialog__group__description": {
     "messageformat": "{count, plural, one {{count,number} గ్రూపు సభ్యునికి ఒకే విధమైన పేర్లు ఉన్నాయి, దిగువ సభ్యులను సమీక్షించండి లేదా చర్య తీసుకోవడానికి ఎంచుకోండి.} other {{count,number} గ్రూపు సభ్యులకు ఒకే విధమైన పేర్లు ఉన్నాయి, దిగువ సభ్యులను సమీక్షించండి లేదా చర్య తీసుకోవడానికి ఎంచుకోండి.}}",
     "description": "Description for the group contact spoofing review dialog"
+  },
+  "icu:ContactSpoofingReviewDialog__group__multiple-conflicts__description": {
+    "messageformat": "{count, plural, one {ఈ గ్రూపులో {count,number} పేరు వైరుధ్యం కనుగొనబడింది. దిగువ సభ్యులను సమీక్షించండి లేదా చర్య తీసుకోవడానికి ఎంచుకోండి.} other {ఈ గ్రూపులో {count,number} పేరు వైరుధ్యాలు కనుగొనబడినవి. దిగువ సభ్యులను సమీక్షించండి లేదా చర్య తీసుకోవడానికి ఎంచుకోండి.}}",
+    "description": "Description for the group contact spoofing review dialog when there are multiple shared names"
   },
   "ContactSpoofingReviewDialog__group__members-header": {
     "message": "సభ్యులు",
@@ -9751,6 +9866,14 @@
   "icu:CustomColorEditor__title": {
     "messageformat": "అనుకూల రంగు",
     "description": "Modal title for the custom color editor"
+  },
+  "icu:GradientDial__knob-start": {
+    "messageformat": "గ్రేడియెంట్ మొదలు",
+    "description": "aria-label for the custom color gradient creator knob"
+  },
+  "icu:GradientDial__knob-end": {
+    "messageformat": "గ్రేడియెంట్ చివర",
+    "description": "aria-label for the custom color gradient creator knob"
   },
   "customDisappearingTimeOption": {
     "message": "అనుకూల సమయం",
@@ -10367,6 +10490,14 @@
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "గ్రూపు అవతార్",
     "description": "Title for the avatar picker in the group creation flow"
+  },
+  "icu:Preferences__message-audio-title": {
+    "messageformat": "చాట్‌లో సందేశ ధ్వనులు",
+    "description": "Title for message audio setting"
+  },
+  "icu:Preferences__message-audio-description": {
+    "messageformat": "చాట్‌లో ఉన్నప్పుడు పంపిన మరియు అందుకున్న సందేశాల కొరకు నోటిఫికేషన్ ధ్వనిని వినండి.",
+    "description": "Description for message audio setting"
   },
   "Preferences__button--general": {
     "message": "సాధారణం",
@@ -12360,6 +12491,14 @@
     "messageformat": "సవరణ చరిత్ర",
     "description": "Modal title for the edit history messages modal"
   },
+  "icu:ResendMessageEdit__body": {
+    "messageformat": "ఈ సవరణ పంపడం వీలుకాలేదు. మీ కనెక్షన్‌ను తనిఖీ చేయండి మరియు మళ్ళీ ప్రయత్నించండి",
+    "description": "Modal body for the confirmation dialog shown to user when attempting to resend message edit"
+  },
+  "icu:ResendMessageEdit__button": {
+    "messageformat": "మరల పంపు",
+    "description": "Button text for the confirmation dialog shown to user when attempting to resend message edit"
+  },
   "WhatsNew__modal-title": {
     "message": "కొత్తది ఏమిటి",
     "description": "(deleted 03/29/2023) Title for the whats new modal"
@@ -12424,24 +12563,36 @@
     "messageformat": "చిన్న ట్వీక్‌లు, బగ్ ఫిక్స్‌లు, మరియు పనితీరు మెరుగుదలలు. Signal ఉపయోగించినందుకు మీకు ధన్యవాదాలు!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.11--0": {
-    "messageformat": "\"నోట్ టు సెల్ఫ్\" చాట్ కనుగొనడం సులభతరం చేసే కొత్త ఐకాన్‌తో మరింత వేగంగా మీతో మీరు మాట్లాడటం ప్రారంభించండి. వారి సహకారం కొరకు GitHub పై {hackerbirds} కు ధన్యవాదాలు.",
-    "description": "Release notes for v6.11"
+  "icu:WhatsNew__v6.18--0": {
+    "messageformat": "యాప్ యొక్క విభిన్న విభాగాల గుండా త్వరగా నావిగేట్ చేయడానికి కొత్త కీబోర్డ్ షార్ట్‌కట్‌లు (⌘/Ctrl+T & ⌘/Ctrl+F6) మీకు సహాయపడగలవు. ఇది ట్యాబ్ కీ యొక్క సూపర్‌హీరో వెర్షన్ లాంటిది, ఇది దాని తేలికపాటి ప్రవర్తన కలిగిన ఆల్టర్ ఇగో కంటే మరింత ఎక్కువ మరియు వేగంగా ఎగరగలదు.",
+    "description": "Release notes for v6.18"
   },
-  "icu:WhatsNew__v6.12--0": {
-    "messageformat": "ఇప్పుడు మీరు ఒకటి కంటే ఎక్కువ సందేశాలను ఎంచుకుని ఒకేసారి ఫార్వర్డ్ చేయడం లేదా తొలగించడం చేయవచ్చు.",
-    "description": "Release notes for v6.12"
+  "icu:WhatsNew__v6.18--1": {
+    "messageformat": "చాట్ తెరిచి ఉన్నప్పుడు పంపిన మరియు అందుకున్న సందేశాల కోసం నోటిఫికేషన్ ధ్వనులను ప్లే చేయడానికి మేము ఒక ఐచ్ఛిక సెట్టింగ్‌ను జోడించాము (సెట్టింగ్స్ > నోటిఫికేషన్‌లు).",
+    "description": "Release notes for v6.18"
   },
-  "icu:WhatsNew__v6.12--1": {
-    "messageformat": "మేము స్టిక్కర్ క్రియేటర్‌కు కొన్ని డిజైన్ మార్పులు చేసి అప్‌డేట్ చేశాము, స్టిక్కర్ ఆర్టిస్ట్ అవ్వాలనుకుంటున్న వారి కోసం కొన్ని ఉపయోగకరమైన చిట్కాలను జోడించాము. స్టిక్కర్ క్రియేటర్‌ను ఇప్పుడు మీ వెబ్ బ్రౌజర్‌లో తెరవవచ్చు దీని వలన Signal డెస్క్‌టాప్ కొద్దిగా చిన్నది అయ్యి, మీకు ఇష్టమైన అన్ని స్టిక్కర్ ప్యాక్‌ల కోసం మీ హార్డ్ డ్రైవ్‌లో కొంచెం ఎక్కువ స్థలం మిగులుతుంది.",
-    "description": "Release notes for v6.12"
+  "icu:WhatsNew__v6.18--2": {
+    "messageformat": "మరొక కొత్త కీబోర్డ్ షార్ట్‌కట్‌ను (⌘/Ctrl+J) ఉపయోగించి చాట్‌లో తాజా చదవని సందేశానికి వెళ్ళండి.",
+    "description": "Release notes for v6.18"
   },
-  "icu:WhatsNew__v6.13--0": {
-    "messageformat": "ప్రోగ్రెస్ రిపోర్ట్: కొత్త ప్రోగ్రెస్ బార్ సిద్ధంగా ఉంది. మీరు Signal డెస్క్‌టాప్‌ను ప్రారంభించినప్పుడల్లా లోడింగ్ ప్రక్రియ గురించి మరింత సమాచారాన్ని త్వరగా చూడండి.",
-    "description": "Release notes for v6.13"
+  "icu:WhatsNew__v6.18--3": {
+    "messageformat": "అప్‌డేట్ చేయబడిన ఐకాన్లు యాప్‌కు కొత్త రూపాన్ని అందిస్తాయి.",
+    "description": "Release notes for v6.18"
   },
-  "icu:WhatsNew__v6.13--1": {
-    "messageformat": "థీమ్ ప్రాధాన్యతలు ఇప్పుడు Signal సెట్టింగ్‌లలోని చెక్‌బాక్స్‌లకు కూడా వర్తిస్తాయి. GitHubలోని {rakleed} కారణంగా మేము \"డార్క్ థీమ్ ముదురు రంగు పూర్తిగా ఆకళింపు చేసుకోవడం\" మా TODO లిస్ట్ నుండి తీసివేయగలిగాము.",
-    "description": "Release notes for v6.13"
+  "icu:WhatsNew__v6.18--4": {
+    "messageformat": "మూడు-చుక్కల మెనూలోనూ ఒక కొత్త \"టెక్స్ట్ కాపీ\" ఐచ్ఛికం ఉంది. ధన్యవాదాలు, {yusufsahinhamza}!",
+    "description": "Release notes for v6.18"
+  },
+  "icu:WhatsNew__v6.19--0": {
+    "messageformat": "నిశ్శబ్ధం ఎప్పుడూ బంగారం కాదు, కానీ దానికి ఒక కొత్త ఐకాన్ ఉంది. మేము స్వర మరియు వీడియో కాల్స్‌లో కెమెరా మరియు మ్యూట్ బటన్‌లను అప్‌డేట్ చేశాము తద్వారా అవి ప్రారంభించబడినప్పుడు లేదా నిలిపివేయబడినప్పుడు చూడటం మరింత సులభం.",
+    "description": "Release notes for v6.19"
+  },
+  "icu:WhatsNew__v6.19--1": {
+    "messageformat": "స్థానికీకరణ మెరుగుదలలు, మరియు సందేశం కంపోజ్ చేసే ఫీల్డ్‌లో కుడి-నుంచి-ఎడమ భాషలను మెరుగ్గా నిర్వహించడం. ధన్యవాదాలు, {sha265}!",
+    "description": "Release notes for v6.19"
+  },
+  "icu:WhatsNew__v6.19--2": {
+    "messageformat": "మీరు Windows 10 కంటే ముందు Windows వెర్షన్ లేదా 20.04 LTS కంటే ముందు Ubuntu వెర్షన్‌లో ఉంటే, Signal ఉపయోగించడాన్ని కొనసాగించడానికి మీరు మీ ఆపరేటింగ్ సిస్టమ్‌ను అప్‌డేట్ చేయాల్సి ఉంటుంది: {supportLink}",
+    "description": "Release notes for v6.19"
   }
 }

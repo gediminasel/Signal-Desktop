@@ -389,7 +389,7 @@ export type FTSOptimizationStateType = Readonly<{
 }>;
 
 export type EditedMessageType = Readonly<{
-  fromId: string;
+  conversationId: string;
   messageId: string;
   sentAt: number;
   readStatus: MessageType['readStatus'];
@@ -514,6 +514,20 @@ export type DataInterface = {
       includeStoryReplies: boolean;
     }
   ) => Promise<number>;
+  getTotalUnreadMentionsOfMeForConversation: (
+    conversationId: string,
+    options: {
+      storyId?: string;
+      includeStoryReplies: boolean;
+    }
+  ) => Promise<number>;
+  getOldestUnreadMentionOfMeForConversation(
+    conversationId: string,
+    options: {
+      storyId?: string;
+      includeStoryReplies: boolean;
+    }
+  ): Promise<MessageMetricsType | undefined>;
   getUnreadByConversationAndMarkRead: (options: {
     conversationId: string;
     includeStoryReplies: boolean;
@@ -523,7 +537,7 @@ export type DataInterface = {
     storyId?: string;
   }) => Promise<GetUnreadByConversationAndMarkReadResultType>;
   getUnreadEditedMessagesAndMarkRead: (options: {
-    fromId: string;
+    conversationId: string;
     newestUnreadAt: number;
   }) => Promise<GetUnreadByConversationAndMarkReadResultType>;
   getUnreadReactionsAndMarkRead: (options: {
@@ -834,10 +848,6 @@ export type ServerInterface = DataInterface & {
     key: string;
     logger: LoggerType;
   }) => Promise<void>;
-  initializeRenderer: (options: {
-    configDir: string;
-    key: string;
-  }) => Promise<void>;
 
   getKnownMessageAttachments: (
     cursor?: MessageAttachmentsCursorType
@@ -917,11 +927,6 @@ export type ClientExclusiveInterface = {
   removeOtherData: () => Promise<void>;
   cleanupOrphanedAttachments: () => Promise<void>;
   ensureFilePermissions: () => Promise<void>;
-
-  // To decide whether to use IPC to use the database in the main process or
-  //   use the db already running in the renderer.
-  goBackToMainProcess: () => Promise<void>;
-  startInRendererProcess: (isTesting?: boolean) => Promise<void>;
 };
 
 export type ClientInterface = DataInterface & ClientExclusiveInterface;

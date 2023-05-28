@@ -15,7 +15,6 @@ installCallback('resetDefaultChatColor');
 installCallback('setGlobalDefaultConversationColor');
 installCallback('getDefaultConversationColor');
 installCallback('persistZoomFactor');
-installCallback('closeDB');
 
 // Getters only. These are set by the primary device
 installSetting('blockedCount', {
@@ -39,6 +38,7 @@ installCallback('shouldShowStoriesSettings');
 installCallback('syncRequest');
 
 installSetting('alwaysRelayCalls');
+installSetting('audioMessage');
 installSetting('audioNotification');
 installSetting('autoDownloadUpdate');
 installSetting('autoLaunch');

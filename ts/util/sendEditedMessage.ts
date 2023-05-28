@@ -13,7 +13,7 @@ import { ErrorWithToast } from '../types/ErrorWithToast';
 import { SendStatus } from '../messages/MessageSendState';
 import { ToastType } from '../types/Toast';
 import { UUID } from '../types/UUID';
-import { canEditMessage } from '../state/selectors/message';
+import { canEditMessage } from './canEditMessage';
 import {
   conversationJobQueue,
   conversationQueueJobEnum,
@@ -30,6 +30,7 @@ import { isSignalConversation } from './isSignalConversation';
 import { strictAssert } from './assert';
 import { timeAndLogIfTooLong } from './timeAndLogIfTooLong';
 import { makeQuote } from './makeQuote';
+import { getMessageSentTimestamp } from './getMessageSentTimestamp';
 
 const SEND_REPORT_THRESHOLD_MS = 25;
 
@@ -82,8 +83,14 @@ export async function sendEditedMessage(
   }
 
   const timestamp = Date.now();
+  const targetSentTimestamp = getMessageSentTimestamp(
+    targetMessage.attributes,
+    {
+      log,
+    }
+  );
 
-  log.info(`${idLog}: sending ${timestamp}`);
+  log.info(`${idLog}: edited(${timestamp}) original(${targetSentTimestamp})`);
 
   conversation.clearTypingTimers();
 
@@ -192,9 +199,7 @@ export async function sendEditedMessage(
     conversationId,
     fromId,
     message: tmpMessage,
-    targetSentTimestamp:
-      targetMessage.attributes.editMessageTimestamp ??
-      targetMessage.attributes.timestamp,
+    targetSentTimestamp,
   };
 
   // Takes care of putting the message in the edit history, replacing the
@@ -211,6 +216,7 @@ export async function sendEditedMessage(
           conversationId,
           messageId: targetMessageId,
           revision: conversation.get('revision'),
+          editedMessageTimestamp: targetSentTimestamp,
         },
         async jobToInsert => {
           log.info(

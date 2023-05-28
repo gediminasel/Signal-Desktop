@@ -3,7 +3,7 @@
 
 /* eslint-disable no-bitwise */
 
-import { isBoolean, isNumber, omit } from 'lodash';
+import { isBoolean, isNumber, isString, omit } from 'lodash';
 import PQueue from 'p-queue';
 import { v4 as getGuid } from 'uuid';
 
@@ -38,7 +38,7 @@ import {
   SignedPreKeys,
 } from '../LibSignalStores';
 import { verifySignature } from '../Curve';
-import { strictAssert } from '../util/assert';
+import { strictAssert, assertDev } from '../util/assert';
 import type { BatcherType } from '../util/batcher';
 import { createBatcher } from '../util/batcher';
 import { drop } from '../util/drop';
@@ -96,6 +96,7 @@ import {
   DecryptionErrorEvent,
   SentEvent,
   ProfileKeyUpdateEvent,
+  InvalidPlaintextEvent,
   MessageEvent,
   RetryRequestEvent,
   ReadEvent,
@@ -158,6 +159,12 @@ type DecryptResult = Readonly<
 type DecryptSealedSenderResult = Readonly<{
   plaintext?: Uint8Array;
   unsealedPlaintext?: SealedSenderDecryptionResult;
+  wasEncrypted: boolean;
+}>;
+
+type InnerDecryptResultType = Readonly<{
+  plaintext: Uint8Array;
+  wasEncrypted: boolean;
 }>;
 
 type CacheAddItemType = {
@@ -531,6 +538,11 @@ export default class MessageReceiver
   public override addEventListener(
     name: 'decryption-error',
     handler: (ev: DecryptionErrorEvent) => void
+  ): void;
+
+  public override addEventListener(
+    name: 'invalid-plaintext',
+    handler: (ev: InvalidPlaintextEvent) => void
   ): void;
 
   public override addEventListener(
@@ -1395,17 +1407,19 @@ export default class MessageReceiver
     }
 
     log.info(logId);
-    const plaintext = await this.decrypt(
+    const decryptResult = await this.decrypt(
       stores,
       envelope,
       ciphertext,
       uuidKind
     );
 
-    if (!plaintext) {
+    if (!decryptResult) {
       log.warn(`${logId}: plaintext was falsey`);
-      return { plaintext, envelope };
+      return { plaintext: undefined, envelope };
     }
+
+    const { plaintext, wasEncrypted } = decryptResult;
 
     // Note: we need to process this as part of decryption, because we might need this
     //   sender key to decrypt the next message in the queue!
@@ -1414,6 +1428,32 @@ export default class MessageReceiver
     let inProgressMessageType = '';
     try {
       const content = Proto.Content.decode(plaintext);
+      if (!wasEncrypted && Bytes.isEmpty(content.decryptionErrorMessage)) {
+        log.warn(
+          `${logId}: dropping plaintext envelope without decryption error message`
+        );
+
+        const event = new InvalidPlaintextEvent({
+          senderDevice: envelope.sourceDevice ?? 1,
+          senderUuid: envelope.sourceUuid,
+          timestamp: envelope.timestamp,
+        });
+
+        this.removeFromCache(envelope);
+
+        const envelopeId = getEnvelopeId(envelope);
+
+        // Avoid deadlocks by scheduling processing on decrypted queue
+        drop(
+          this.addToQueue(
+            async () => this.dispatchEvent(event),
+            `decrypted/dispatchEvent/InvalidPlaintextEvent(${envelopeId})`,
+            TaskType.Decrypted
+          )
+        );
+
+        return { plaintext: undefined, envelope };
+      }
 
       isGroupV2 =
         Boolean(content.dataMessage?.groupV2) ||
@@ -1493,13 +1533,6 @@ export default class MessageReceiver
       // Some sync messages have to be fully processed in the middle of
       // decryption queue since subsequent envelopes use their key material.
       const { syncMessage } = content;
-      if (syncMessage?.pniIdentity) {
-        inProgressMessageType = 'pni identity';
-        await this.handlePNIIdentity(envelope, syncMessage.pniIdentity);
-        this.removeFromCache(envelope);
-        return { plaintext: undefined, envelope };
-      }
-
       if (syncMessage?.pniChangeNumber) {
         inProgressMessageType = 'pni change number';
         await this.handlePNIChangeNumber(envelope, syncMessage.pniChangeNumber);
@@ -1661,6 +1694,7 @@ export default class MessageReceiver
 
       return {
         plaintext: plaintextContent.body(),
+        wasEncrypted: false,
       };
     }
 
@@ -1692,7 +1726,7 @@ export default class MessageReceiver
           ),
         zone
       );
-      return { plaintext };
+      return { plaintext, wasEncrypted: true };
     }
 
     log.info(
@@ -1734,7 +1768,7 @@ export default class MessageReceiver
       zone
     );
 
-    return { unsealedPlaintext };
+    return { unsealedPlaintext, wasEncrypted: true };
   }
 
   private async innerDecrypt(
@@ -1742,7 +1776,7 @@ export default class MessageReceiver
     envelope: UnsealedEnvelope,
     ciphertext: Uint8Array,
     uuidKind: UUIDKind
-  ): Promise<Uint8Array | undefined> {
+  ): Promise<InnerDecryptResultType | undefined> {
     const { sessionStore, identityKeyStore, zone } = stores;
 
     const logId = getEnvelopeId(envelope);
@@ -1784,7 +1818,10 @@ export default class MessageReceiver
       const buffer = Buffer.from(ciphertext);
       const plaintextContent = PlaintextContent.deserialize(buffer);
 
-      return this.unpad(plaintextContent.body());
+      return {
+        plaintext: this.unpad(plaintextContent.body()),
+        wasEncrypted: false,
+      };
     }
     if (envelope.type === envelopeTypeEnum.CIPHERTEXT) {
       log.info(`decrypt/${logId}: ciphertext message`);
@@ -1813,7 +1850,7 @@ export default class MessageReceiver
           ),
         zone
       );
-      return plaintext;
+      return { plaintext, wasEncrypted: true };
     }
     if (envelope.type === envelopeTypeEnum.PREKEY_BUNDLE) {
       log.info(`decrypt/${logId}: prekey message`);
@@ -1846,18 +1883,15 @@ export default class MessageReceiver
           ),
         zone
       );
-      return plaintext;
+      return { plaintext, wasEncrypted: true };
     }
     if (envelope.type === envelopeTypeEnum.UNIDENTIFIED_SENDER) {
       log.info(`decrypt/${logId}: unidentified message`);
-      const { plaintext, unsealedPlaintext } = await this.decryptSealedSender(
-        stores,
-        envelope,
-        ciphertext
-      );
+      const { plaintext, unsealedPlaintext, wasEncrypted } =
+        await this.decryptSealedSender(stores, envelope, ciphertext);
 
       if (plaintext) {
-        return this.unpad(plaintext);
+        return { plaintext: this.unpad(plaintext), wasEncrypted };
       }
 
       if (unsealedPlaintext) {
@@ -1871,7 +1905,7 @@ export default class MessageReceiver
 
         // Return just the content because that matches the signature of the other
         //   decrypt methods used above.
-        return this.unpad(content);
+        return { plaintext: this.unpad(content), wasEncrypted };
       }
 
       throw new Error('Unexpected lack of plaintext from unidentified sender');
@@ -1884,7 +1918,7 @@ export default class MessageReceiver
     envelope: UnsealedEnvelope,
     ciphertext: Uint8Array,
     uuidKind: UUIDKind
-  ): Promise<Uint8Array | undefined> {
+  ): Promise<InnerDecryptResultType | undefined> {
     try {
       return await this.innerDecrypt(stores, envelope, ciphertext, uuidKind);
     } catch (error) {
@@ -2179,12 +2213,20 @@ export default class MessageReceiver
           'handleStoryMessage.destinationUuid'
         );
 
-        recipient.distributionListIds?.forEach(listId => {
-          const sentUuids: Set<string> =
-            distributionListToSentUuid.get(listId) || new Set();
-          sentUuids.add(normalizedDestinationUuid);
-          distributionListToSentUuid.set(listId, sentUuids);
-        });
+        if (recipient.distributionListIds) {
+          recipient.distributionListIds.forEach(listId => {
+            const sentUuids: Set<string> =
+              distributionListToSentUuid.get(listId) || new Set();
+            sentUuids.add(normalizedDestinationUuid);
+            distributionListToSentUuid.set(listId, sentUuids);
+          });
+        } else {
+          assertDev(
+            false,
+            `MessageReceiver.handleStoryMessage(${logId}): missing ` +
+              `distribution list id for: ${destinationUuid}`
+          );
+        }
 
         isAllowedToReply.set(
           normalizedDestinationUuid,
@@ -2847,9 +2889,6 @@ export default class MessageReceiver
     if (envelope.sourceDevice == ourDeviceId) {
       throw new Error('Received sync message from our own device');
     }
-    if (syncMessage.pniIdentity) {
-      return;
-    }
     if (syncMessage.sent) {
       const sentMessage = syncMessage.sent;
 
@@ -3160,30 +3199,13 @@ export default class MessageReceiver
   }
 
   // Runs on TaskType.Encrypted queue
-  private async handlePNIIdentity(
-    envelope: ProcessedEnvelope,
-    { publicKey, privateKey }: Proto.SyncMessage.IPniIdentity
-  ): Promise<void> {
-    log.info('MessageReceiver: got pni identity sync message');
-
-    logUnexpectedUrgentValue(envelope, 'pniIdentitySync');
-
-    if (!publicKey || !privateKey) {
-      log.warn('MessageReceiver: empty pni identity sync message');
-      return;
-    }
-
-    const manager = window.getAccountManager();
-    await manager.updatePNIIdentity({ privKey: privateKey, pubKey: publicKey });
-  }
-
-  // Runs on TaskType.Encrypted queue
   private async handlePNIChangeNumber(
     envelope: ProcessedEnvelope,
     {
       identityKeyPair,
       signedPreKey,
       registrationId,
+      newE164,
     }: Proto.SyncMessage.IPniChangeNumber
   ): Promise<void> {
     log.info('MessageReceiver: got pni change number sync message');
@@ -3199,7 +3221,8 @@ export default class MessageReceiver
     if (
       !Bytes.isNotEmpty(identityKeyPair) ||
       !Bytes.isNotEmpty(signedPreKey) ||
-      !isNumber(registrationId)
+      !isNumber(registrationId) ||
+      !isString(newE164)
     ) {
       log.warn('MessageReceiver: empty pni change number sync message');
       return;
@@ -3211,6 +3234,7 @@ export default class MessageReceiver
       signedPreKey,
       registrationId,
     });
+    await window.storage.user.setNumber(newE164);
   }
 
   private async handleStickerPackOperation(
@@ -3447,12 +3471,14 @@ export default class MessageReceiver
     const allIdentifiers = [];
     let changed = false;
 
+    const logId = `handleBlocked(${getEnvelopeId(envelope)})`;
+
     logUnexpectedUrgentValue(envelope, 'blockSync');
 
     if (blocked.numbers) {
       const previous = this.storage.get('blocked', []);
 
-      log.info('handleBlocked: Blocking these numbers:', blocked.numbers);
+      log.info(`${logId}: Blocking these numbers:`, blocked.numbers);
       await this.storage.put('blocked', blocked.numbers);
 
       if (!areArraysMatchingSets(previous, blocked.numbers)) {
@@ -3466,7 +3492,7 @@ export default class MessageReceiver
       const uuids = blocked.uuids.map((uuid, index) => {
         return normalizeUuid(uuid, `handleBlocked.uuids.${index}`);
       });
-      log.info('handleBlocked: Blocking these uuids:', uuids);
+      log.info(`${logId}: Blocking these uuids:`, uuids);
       await this.storage.put('blocked-uuids', uuids);
 
       if (!areArraysMatchingSets(previous, uuids)) {
@@ -3484,11 +3510,11 @@ export default class MessageReceiver
         if (groupId.byteLength === GROUPV2_ID_LENGTH) {
           groupIds.push(Bytes.toBase64(groupId));
         } else {
-          log.error('handleBlocked: Received invalid groupId value');
+          log.error(`${logId}: Received invalid groupId value`);
         }
       });
       log.info(
-        'handleBlocked: Blocking these groups - v2:',
+        `${logId}: Blocking these groups - v2:`,
         groupIds.map(groupId => `groupv2(${groupId})`)
       );
 
@@ -3504,7 +3530,7 @@ export default class MessageReceiver
     this.removeFromCache(envelope);
 
     if (changed) {
-      log.info('handleBlocked: Block list changed, forcing re-render.');
+      log.info(`${logId}: Block list changed, forcing re-render.`);
       const uniqueIdentifiers = Array.from(new Set(allIdentifiers));
       void window.ConversationController.forceRerender(uniqueIdentifiers);
     }

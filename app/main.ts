@@ -1529,7 +1529,6 @@ const onDatabaseError = async (error: string) => {
   ready = false;
 
   if (mainWindow) {
-    drop(settingsChannel?.invokeCallbackInMainWindow('closeDB', []));
     mainWindow.close();
   }
   mainWindow = undefined;
@@ -2219,27 +2218,6 @@ ipc.on('delete-all-data', () => {
   }
   if (mainWindow && mainWindow.webContents) {
     mainWindow.webContents.send('delete-all-data');
-  }
-});
-
-ipc.on('get-built-in-images', async () => {
-  if (!mainWindow) {
-    getLogger().warn('ipc/get-built-in-images: No mainWindow!');
-    return;
-  }
-
-  try {
-    const images = await attachments.getBuiltInImages();
-    mainWindow.webContents.send('get-success-built-in-images', null, images);
-  } catch (error) {
-    if (mainWindow && mainWindow.webContents) {
-      mainWindow.webContents.send('get-success-built-in-images', error.message);
-    } else {
-      getLogger().error(
-        'Error handling get-built-in-images:',
-        Errors.toLogFormat(error)
-      );
-    }
   }
 });
 

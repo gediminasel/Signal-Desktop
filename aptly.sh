@@ -22,23 +22,30 @@ APTLY_SOURCE=${APTLY_SOURCE:-desktop/apt}
 
 FIRST_RUN=false
 
-if [ ! -d ~/.aptly ] ; then
+if [ ! -d ~/.aptly/public ] ; then
   echo
-  echo "aptly.sh: Detected first run"
+  echo "aptly.sh: Detected first run, creating repo"
+  aptly repo create signal-desktop
   FIRST_RUN=true
 fi
 
-if [ "$FIRST_RUN" = true ] ; then
+if [ "${DISABLE_APTLY_DOWNLOAD}" != "true" ] ; then
   echo
-  echo "aptly.sh: (first run) Setting up repo and mirror"
-  aptly repo create signal-desktop
-  aptly mirror create -ignore-signatures backfill-mirror "https://updates.signal.org/$APTLY_SOURCE" xenial
-fi
+  echo "aptly.sh: Fetching latest released files so we don't erase anything"
+  
+  if ! aptly mirror show backfill-mirror; then
+    echo "aptly.sh: No existing mirror, setting it up"
+    aptly mirror create -ignore-signatures backfill-mirror "https://updates.signal.org/$APTLY_SOURCE" xenial
+  else
+    echo "aptly.sh: Mirror is already in place"
+  fi
 
-echo
-echo "aptly.sh: Fetching latest released files so we don't erase anything"
-aptly mirror update -ignore-signatures backfill-mirror
-aptly repo import backfill-mirror signal-desktop signal-desktop signal-desktop-beta
+  echo "aptly.sh: Updating mirror"
+  aptly mirror update -ignore-signatures backfill-mirror
+
+  echo "aptly.sh: Importing existing releases"
+  aptly repo import backfill-mirror signal-desktop signal-desktop signal-desktop-beta
+fi
 
 echo
 echo "aptly.sh: Adding newly-built deb to repo"
@@ -52,12 +59,12 @@ if [ "$FIRST_RUN" = true ] ; then
   # https://www.aptly.info/doc/aptly/publish/snapshot/
   echo
   echo "aptly.sh: (first run) Setting up local publish with current snapshot"
-  aptly publish snapshot -gpg-key="$GPG_KEYID" -distribution="$CURRENT" "$SNAPSHOT"
+  aptly publish snapshot -passphrase-file=gpg-passphrase.txt -batch=true -gpg-key="$GPG_KEYID" -distribution="$CURRENT" "$SNAPSHOT"
 else
   # https://www.aptly.info/doc/aptly/publish/switch/
   echo
   echo "aptly.sh: (later runs) Switching local publish to current snapshot"
-  aptly publish switch -gpg-key="$GPG_KEYID" "$CURRENT" "$SNAPSHOT"
+  aptly publish switch -passphrase-file=gpg-passphrase.txt -batch=true -gpg-key="$GPG_KEYID" "$CURRENT" "$SNAPSHOT"
 fi
 
 echo

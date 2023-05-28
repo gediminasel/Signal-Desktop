@@ -50,6 +50,7 @@ type NotificationSettingType = 'message' | 'name' | 'count' | 'off';
 export type IPCEventsValuesType = {
   alwaysRelayCalls: boolean | undefined;
   audioNotification: boolean | undefined;
+  audioMessage: boolean;
   autoDownloadUpdate: boolean;
   autoLaunch: boolean;
   callRingtoneNotification: boolean;
@@ -102,7 +103,6 @@ export type IPCEventsCallbacksType = {
   authorizeArtCreator: (data: AuthorizeArtCreatorDataType) => void;
   deleteAllData: () => Promise<void>;
   deleteAllMyStories: () => Promise<void>;
-  closeDB: () => Promise<void>;
   editCustomColor: (colorId: string, customColor: CustomColorType) => void;
   getConversationsWithCustomColor: (x: string) => Array<ConversationType>;
   installStickerPack: (packId: string, key: string) => Promise<void>;
@@ -372,6 +372,8 @@ export function createIPCEvents(
       window.storage.get('notification-draw-attention', false),
     setNotificationDrawAttention: value =>
       window.storage.put('notification-draw-attention', value),
+    getAudioMessage: () => window.storage.get('audioMessage', false),
+    setAudioMessage: value => window.storage.put('audioMessage', value),
     getAudioNotification: () => window.storage.get('audio-notification'),
     setAudioNotification: value =>
       window.storage.put('audio-notification', value),
@@ -477,13 +479,7 @@ export function createIPCEvents(
       window.reduxActions.globalModals.showShortcutGuideModal(),
 
     deleteAllData: async () => {
-      await window.Signal.Data.goBackToMainProcess();
-
       renderClearingDataView();
-    },
-
-    closeDB: async () => {
-      await window.Signal.Data.goBackToMainProcess();
     },
 
     showStickerPack: (packId, key) => {

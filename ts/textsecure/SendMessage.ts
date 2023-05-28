@@ -696,21 +696,27 @@ export default class MessageSender {
 
   async getStoryMessage({
     allowsReplies,
+    bodyRanges,
     fileAttachment,
     groupV2,
     profileKey,
     textAttachment,
   }: {
     allowsReplies?: boolean;
+    bodyRanges?: Array<RawBodyRange>;
     fileAttachment?: UploadedAttachmentType;
     groupV2?: GroupV2InfoType;
     profileKey: Uint8Array;
     textAttachment?: OutgoingTextAttachmentType;
   }): Promise<Proto.StoryMessage> {
     const storyMessage = new Proto.StoryMessage();
+
     storyMessage.profileKey = profileKey;
 
     if (fileAttachment) {
+      if (bodyRanges) {
+        storyMessage.bodyRanges = bodyRanges;
+      }
       try {
         storyMessage.fileAttachment = fileAttachment;
       } catch (error) {
@@ -1175,8 +1181,8 @@ export default class MessageSender {
   // Note: this is used for sending real messages to your other devices after sending a
   //   message to others.
   async sendSyncMessage({
-    editedMessageTimestamp,
     encodedDataMessage,
+    encodedEditMessage,
     timestamp,
     destination,
     destinationUuid,
@@ -1189,8 +1195,8 @@ export default class MessageSender {
     storyMessage,
     storyMessageRecipients,
   }: Readonly<{
-    editedMessageTimestamp?: number;
     encodedDataMessage?: Uint8Array;
+    encodedEditMessage?: Uint8Array;
     timestamp: number;
     destination: string | undefined;
     destinationUuid: string | null | undefined;
@@ -1208,11 +1214,8 @@ export default class MessageSender {
     const sentMessage = new Proto.SyncMessage.Sent();
     sentMessage.timestamp = Long.fromNumber(timestamp);
 
-    if (editedMessageTimestamp && encodedDataMessage) {
-      const dataMessage = Proto.DataMessage.decode(encodedDataMessage);
-      const editMessage = new Proto.EditMessage();
-      editMessage.dataMessage = dataMessage;
-      editMessage.targetSentTimestamp = Long.fromNumber(editedMessageTimestamp);
+    if (encodedEditMessage) {
+      const editMessage = Proto.EditMessage.decode(encodedEditMessage);
       sentMessage.editMessage = editMessage;
     } else if (encodedDataMessage) {
       const dataMessage = Proto.DataMessage.decode(encodedDataMessage);
@@ -1374,30 +1377,6 @@ export default class MessageSender {
         Proto.Content.encode(contentMessage).finish()
       ),
       type: 'contactSyncRequest',
-      urgent: true,
-    };
-  }
-
-  static getRequestPniIdentitySyncMessage(): SingleProtoJobData {
-    const myUuid = window.textsecure.storage.user.getCheckedUuid();
-
-    const request = new Proto.SyncMessage.Request();
-    request.type = Proto.SyncMessage.Request.Type.PNI_IDENTITY;
-    const syncMessage = this.createSyncMessage();
-    syncMessage.request = request;
-    const contentMessage = new Proto.Content();
-    contentMessage.syncMessage = syncMessage;
-
-    const { ContentHint } = Proto.UnidentifiedSenderMessage.Message;
-
-    return {
-      contentHint: ContentHint.RESENDABLE,
-      identifier: myUuid.toString(),
-      isSyncMessage: true,
-      protoBase64: Bytes.toBase64(
-        Proto.Content.encode(contentMessage).finish()
-      ),
-      type: 'pniIdentitySyncRequest',
       urgent: true,
     };
   }
@@ -2021,8 +2000,13 @@ export default class MessageSender {
         ? Proto.DataMessage.encode(proto.dataMessage).finish()
         : undefined;
 
+      const editMessage = proto.editMessage
+        ? Proto.EditMessage.encode(proto.editMessage).finish()
+        : undefined;
+
       return Promise.resolve({
         dataMessage,
+        editMessage,
         errors: [],
         failoverIdentifiers: [],
         successfulIdentifiers: [],

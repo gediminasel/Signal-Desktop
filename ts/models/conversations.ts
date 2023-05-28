@@ -29,6 +29,7 @@ import { memoizeByThis } from '../util/memoizeByThis';
 import { getInitials } from '../util/getInitials';
 import { normalizeUuid } from '../util/normalizeUuid';
 import { clearTimeoutIfNecessary } from '../util/clearTimeoutIfNecessary';
+import { getMessageSentTimestamp } from '../util/getMessageSentTimestamp';
 import type { AttachmentType, ThumbnailType } from '../types/Attachment';
 import { toDayMillis } from '../util/timestamp';
 import { isVoiceMessage } from '../types/Attachment';
@@ -161,6 +162,7 @@ import { findAndFormatContact } from '../util/findAndFormatContact';
 import { deriveProfileKeyVersion } from '../util/zkgroup';
 import { incrementMessageCounter } from '../util/incrementMessageCounter';
 import { queueUpdateMessage } from '../util/messageBatcher';
+import { validateTransition } from '../util/callHistoryDetails';
 
 const EMPTY_ARRAY: Readonly<[]> = [];
 const EMPTY_GROUP_COLLISIONS: GroupNameCollisionsWithIdsByTitle = {};
@@ -756,12 +758,14 @@ export class ConversationModel extends window.Backbone
     extraConversationsForSend,
     inviteLinkPassword,
     name,
+    syncMessageOnly,
   }: {
     usingCredentialsFrom: ReadonlyArray<ConversationModel>;
     createGroupChange: () => Promise<Proto.GroupChange.Actions | undefined>;
     extraConversationsForSend?: ReadonlyArray<string>;
     inviteLinkPassword?: string;
     name: string;
+    syncMessageOnly?: boolean;
   }): Promise<void> {
     await window.Signal.Groups.modifyGroupV2({
       conversation: this,
@@ -770,6 +774,7 @@ export class ConversationModel extends window.Backbone
       extraConversationsForSend,
       inviteLinkPassword,
       name,
+      syncMessageOnly,
     });
   }
 
@@ -1454,6 +1459,7 @@ export class ConversationModel extends window.Backbone
       this.set({
         removalStage: 'messageRequest',
       });
+      await this.maybeClearContactRemoved();
       window.Signal.Data.updateConversation(this.attributes);
     }
 
@@ -2056,6 +2062,7 @@ export class ConversationModel extends window.Backbone
         ? window.i18n('icu:noteToSelf')
         : this.getTitle(),
       unreadCount: this.get('unreadCount') || 0,
+      unreadMentionsCount: this.get('unreadMentionsCount'),
       ...(isDirectConversation(this.attributes)
         ? {
             type: 'direct' as const,
@@ -2335,16 +2342,6 @@ export class ConversationModel extends window.Backbone
     return false;
   }
 
-  decrementMessageCount(numberOfMessages = 1): void {
-    this.set({
-      messageCount: Math.max(
-        (this.get('messageCount') || 0) - numberOfMessages,
-        0
-      ),
-    });
-    window.Signal.Data.updateConversation(this.attributes);
-  }
-
   incrementSentMessageCount({ dry = false }: { dry?: boolean } = {}):
     | Partial<ConversationAttributesType>
     | undefined {
@@ -2360,20 +2357,6 @@ export class ConversationModel extends window.Backbone
     window.Signal.Data.updateConversation(this.attributes);
 
     return undefined;
-  }
-
-  decrementSentMessageCount(numberOfMessages = 1): void {
-    this.set({
-      messageCount: Math.max(
-        (this.get('messageCount') || 0) - numberOfMessages,
-        0
-      ),
-      sentMessageCount: Math.max(
-        (this.get('sentMessageCount') || 0) - numberOfMessages,
-        0
-      ),
-    });
-    window.Signal.Data.updateConversation(this.attributes);
   }
 
   /**
@@ -2420,7 +2403,7 @@ export class ConversationModel extends window.Backbone
             conversationId,
             senderE164: m.source,
             senderUuid: m.sourceUuid,
-            timestamp: m.sent_at,
+            timestamp: getMessageSentTimestamp(m, { log }),
             isDirectConversation: isDirectConversation(this.attributes),
           })),
         });
@@ -2694,6 +2677,7 @@ export class ConversationModel extends window.Backbone
         name: 'delete',
         usingCredentialsFrom: [],
         createGroupChange: () => this.removePendingMember([ourPNI]),
+        syncMessageOnly: true,
       });
     } else {
       const logId = this.idForLogging();
@@ -3485,26 +3469,13 @@ export class ConversationModel extends window.Backbone
       default:
         throw missingCaseError(callHistoryDetails);
     }
-
     // This is sometimes called inside of another conversation queue job so if
     // awaited it would block on this forever.
     drop(
       this.queueJob('addCallHistory', async () => {
-        const message: MessageAttributesType = {
-          id: generateGuid(),
-          conversationId: this.id,
-          type: 'call-history',
-          sent_at: timestamp,
-          timestamp,
-          received_at: receivedAtCounter || incrementMessageCounter(),
-          received_at_ms: timestamp,
-          readStatus: unread ? ReadStatus.Unread : ReadStatus.Read,
-          seenStatus: unread ? SeenStatus.Unseen : SeenStatus.NotApplicable,
-          callHistoryDetails: detailsToSave,
-        };
-
         // Force save if we're adding a new call history message for a direct call
         let forceSave = true;
+        let previousMessage: MessageAttributesType | void;
         if (callHistoryDetails.callMode === CallMode.Direct) {
           const messageId =
             await window.Signal.Data.getCallHistoryMessageByCallId(
@@ -3515,15 +3486,41 @@ export class ConversationModel extends window.Backbone
             log.info(
               `addCallHistory: Found existing call history message (Call ID: ${callHistoryDetails.callId}, Message ID: ${messageId})`
             );
-            message.id = messageId;
             // We don't want to force save if we're updating an existing message
             forceSave = false;
+            previousMessage = await window.Signal.Data.getMessageById(
+              messageId
+            );
           } else {
             log.info(
               `addCallHistory: No existing call history message found (Call ID: ${callHistoryDetails.callId})`
             );
           }
         }
+
+        if (
+          !validateTransition(
+            previousMessage?.callHistoryDetails,
+            callHistoryDetails,
+            log
+          )
+        ) {
+          log.info("addCallHistory: Transition isn't valid, not saving");
+          return;
+        }
+
+        const message: MessageAttributesType = {
+          id: previousMessage?.id ?? generateGuid(),
+          conversationId: this.id,
+          type: 'call-history',
+          sent_at: timestamp,
+          timestamp,
+          received_at: receivedAtCounter || incrementMessageCounter(),
+          received_at_ms: timestamp,
+          readStatus: unread ? ReadStatus.Unread : ReadStatus.Read,
+          seenStatus: unread ? SeenStatus.Unseen : SeenStatus.NotApplicable,
+          callHistoryDetails,
+        };
 
         const id = await window.Signal.Data.saveMessage(message, {
           ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
@@ -3540,11 +3537,24 @@ export class ConversationModel extends window.Backbone
           })
         );
 
+        if (
+          detailsToSave.callMode === CallMode.Direct &&
+          !detailsToSave.wasIncoming
+        ) {
+          this.incrementSentMessageCount();
+        } else {
+          this.incrementMessageCount();
+        }
+
         this.trigger('newmessage', model);
+
         void this.updateUnread();
+        this.set('active_at', timestamp);
 
         if (canConversationBeUnarchived(this.attributes)) {
           this.setArchived(false);
+        } else {
+          window.Signal.Data.updateConversation(this.attributes);
         }
       })
     );
@@ -4237,6 +4247,7 @@ export class ConversationModel extends window.Backbone
             draftTimestamp: null,
             quotedMessageId: undefined,
             lastMessageAuthor: message.getAuthorText(),
+            lastMessageBodyRanges: message.get('bodyRanges'),
             lastMessage: message.getNotificationText(),
             lastMessageStatus: 'sending' as const,
           };
@@ -4998,17 +5009,28 @@ export class ConversationModel extends window.Backbone
   }
 
   async updateUnread(): Promise<void> {
-    const unreadCount = await window.Signal.Data.getTotalUnreadForConversation(
-      this.id,
-      {
-        storyId: undefined,
-        includeStoryReplies: !isGroup(this.attributes),
-      }
-    );
+    const options = {
+      storyId: undefined,
+      includeStoryReplies: !isGroup(this.attributes),
+    };
+    const [unreadCount, unreadMentionsCount] = await Promise.all([
+      window.Signal.Data.getTotalUnreadForConversation(this.id, options),
+      window.Signal.Data.getTotalUnreadMentionsOfMeForConversation(
+        this.id,
+        options
+      ),
+    ]);
 
     const prevUnreadCount = this.get('unreadCount');
-    if (prevUnreadCount !== unreadCount) {
-      this.set({ unreadCount });
+    const prevUnreadMentionsCount = this.get('unreadMentionsCount');
+    if (
+      prevUnreadCount !== unreadCount ||
+      prevUnreadMentionsCount !== unreadMentionsCount
+    ) {
+      this.set({
+        unreadCount,
+        unreadMentionsCount,
+      });
       window.Signal.Data.updateConversation(this.attributes);
     }
   }
@@ -5619,9 +5641,9 @@ export class ConversationModel extends window.Backbone
         });
 
     let notificationIconUrl;
-    const avatar = this.get('avatar') || this.get('profileAvatar');
-    if (avatar && avatar.path) {
-      notificationIconUrl = getAbsoluteAttachmentPath(avatar.path);
+    const avatarPath = this.getAvatarPath();
+    if (avatarPath) {
+      notificationIconUrl = getAbsoluteAttachmentPath(avatarPath);
     } else if (isMessageInDirectConversation) {
       notificationIconUrl = await this.getIdenticon();
     } else {
