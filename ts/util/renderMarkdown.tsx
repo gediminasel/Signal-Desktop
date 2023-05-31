@@ -90,9 +90,13 @@ export function renderMarkdownFactory(
         } else {
           const f = markdown[nextSymbol];
           childKey += 1;
-          res.push(
-            f(renderMarkdownMy({ text: result[1], depth: myDepth }), childKey)
-          );
+          if (nextSymbol === '`') {
+            res.push(f(<>{result[1]}</>, childKey));
+          } else {
+            res.push(
+              f(renderMarkdownMy({ text: result[1], depth: myDepth }), childKey)
+            );
+          }
         }
       } else {
         res.push(nextSymbol);

@@ -25,7 +25,7 @@ import { isLinkSneaky } from '../../types/LinkPreview';
 import { Emojify } from './Emojify';
 import { AddNewLines } from './AddNewLines';
 import type { SizeClassType } from '../emoji/lib';
-import type { LocalizerType } from '../../types/Util';
+import type { LocalizerType, RenderTextCallbackType } from '../../types/Util';
 import { renderMarkdownFactory } from '../../util/renderMarkdown';
 
 const EMOJI_REGEXP = emojiRegex();
@@ -108,7 +108,7 @@ export function MessageTextRenderer({
         renderNode({
           direction,
           disableLinks,
-          disableMarkdown,
+          disableMarkdown: disableMarkdown || messageText.startsWith('```'),
           emojiSizeClass,
           i18n,
           isInvisible: false,
@@ -257,6 +257,7 @@ function renderNode({
     mentions: node.mentions,
     onMentionTrigger,
     text: nodeText,
+    disableMarkdown,
   });
 
   // We use separate elements for these because we want screenreaders to understand them
@@ -305,11 +306,13 @@ function renderMentions({
   mentions,
   onMentionTrigger,
   text,
+  disableMarkdown,
 }: {
   emojiSizeClass: SizeClassType | undefined;
   isInvisible: boolean;
   mentions: ReadonlyArray<HydratedBodyRangeMention>;
   text: string;
+  disableMarkdown: boolean;
   disableLinks: boolean;
   direction: 'incoming' | 'outgoing' | undefined;
   onMentionTrigger: ((conversationId: string) => void) | undefined;
@@ -327,6 +330,7 @@ function renderMentions({
           key: result.length.toString(),
           emojiSizeClass,
           text: text.slice(offset, mention.start),
+          disableMarkdown,
         })
       );
     }
@@ -353,6 +357,7 @@ function renderMentions({
       key: result.length.toString(),
       emojiSizeClass,
       text: text.slice(offset, text.length),
+      disableMarkdown,
     })
   );
 
@@ -409,27 +414,33 @@ function renderMention({
     />
   );
 }
+
+const renderLines: RenderTextCallbackType = ({
+  text: innerText,
+  key: innerKey,
+}) => <AddNewLines key={innerKey} text={innerText} />;
+
+const renderMarkdownLines = renderMarkdownFactory(renderLines);
+
 /** Render text that does not contain body ranges or is in between body ranges */
 function renderText({
   text,
   emojiSizeClass,
   isInvisible,
   key,
+  disableMarkdown,
 }: {
   text: string;
   emojiSizeClass: SizeClassType | undefined;
   isInvisible: boolean;
   key: string;
+  disableMarkdown: boolean;
 }) {
   return (
     <Emojify
       key={key}
       isInvisible={isInvisible}
-      renderNonEmoji={renderMarkdownFactory(
-        ({ text: innerText, key: innerKey }) => (
-          <AddNewLines key={innerKey} text={innerText} />
-        )
-      )}
+      renderNonEmoji={disableMarkdown ? renderLines : renderMarkdownLines}
       sizeClass={emojiSizeClass}
       text={text}
     />
