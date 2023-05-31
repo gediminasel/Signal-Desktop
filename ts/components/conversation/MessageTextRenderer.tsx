@@ -69,18 +69,7 @@ export function MessageTextRenderer({
   textLength,
 }: Props): JSX.Element {
   const finalNodes = React.useMemo(() => {
-    const goLinkAddress =
-      window.localStorage &&
-      !disableLinks &&
-      localStorage.getItem('realGoLinkAddress');
-    const processedText = goLinkAddress
-      ? messageText.replace(
-          /(\s|^)(http:\/\/go|go)\/([\w-])/gmu,
-          `$1${goLinkAddress}$3`
-        )
-      : messageText;
-
-    const links = disableLinks ? [] : extractLinks(processedText);
+    const links = disableLinks ? [] : extractLinks(messageText);
 
     // We need mentions to come last; they can't have children for proper rendering
     const sortedRanges = sortBy(bodyRanges, range =>
@@ -443,21 +432,42 @@ function renderText({
 export function extractLinks(
   messageText: string
 ): ReadonlyArray<BodyRange<{ url: string }>> {
+  const goLinkAddress =
+    window.localStorage && localStorage.getItem('realGoLinkAddress');
+
   // to support emojis immediately before links
   // we replace emojis with a space for each byte
   const matches = linkify.match(
     messageText.replace(EMOJI_REGEXP, s => ' '.repeat(s.length))
   );
 
-  if (matches == null) {
-    return [];
+  let result: Array<{ start: number; length: number; url: string }> = [];
+
+  if (matches != null) {
+    result = matches.map(match => {
+      return {
+        start: match.index,
+        length: match.lastIndex - match.index,
+        url: match.url,
+      };
+    });
   }
 
-  return matches.map(match => {
-    return {
-      start: match.index,
-      length: match.lastIndex - match.index,
-      url: match.url,
-    };
-  });
+  if (goLinkAddress) {
+    for (const match of messageText.matchAll(/(\s|^)go\/(?<val>\S+)/dgmu)) {
+      const { indices } = match as unknown as {
+        indices: Array<[number, number]>;
+      };
+      if (!indices || !match.groups) {
+        continue;
+      }
+      result.push({
+        start: indices[1][1],
+        length: indices[2][1] - indices[1][1],
+        url: goLinkAddress + match.groups.val,
+      });
+    }
+  }
+
+  return result;
 }
