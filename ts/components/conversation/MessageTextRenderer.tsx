@@ -72,9 +72,16 @@ export function MessageTextRenderer({
     const links = disableLinks ? [] : extractLinks(messageText);
 
     // We need mentions to come last; they can't have children for proper rendering
-    const sortedRanges = sortBy(bodyRanges, range =>
-      BodyRange.isMention(range) ? 1 : 0
-    );
+    const sortedRanges = messageText.startsWith('```')
+      ? bodyRanges.filter(r => BodyRange.isMention(r))
+      : sortBy(bodyRanges, range => (BodyRange.isMention(range) ? 1 : 0));
+    if (messageText.startsWith('```')) {
+      sortedRanges.unshift({
+        start: 0,
+        length: messageText.length,
+        style: BodyRange.Style.MONOSPACE,
+      });
+    }
 
     // Create range tree, dropping bodyRanges that don't apply. Read More means truncated
     //   strings.
