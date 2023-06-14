@@ -486,6 +486,6 @@ export function extractLinks(
       });
     }
   }
-
+  result.sort((a, b) => a.start - b.start);
   return result;
 }
