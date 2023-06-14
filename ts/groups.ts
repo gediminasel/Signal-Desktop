@@ -68,6 +68,7 @@ import { getGroupSizeHardLimit } from './groups/limits';
 import {
   isGroupV1 as getIsGroupV1,
   isGroupV2 as getIsGroupV2,
+  isGroupV2,
   isMe,
 } from './util/whatTypeOfConversation';
 import * as Bytes from './Bytes';
@@ -356,14 +357,20 @@ export async function getPreJoinGroupInfo(
   });
 }
 
-export function buildGroupLink(conversation: ConversationModel): string {
-  const { masterKey, groupInviteLinkPassword } = conversation.attributes;
+export function buildGroupLink(
+  conversation: ConversationAttributesType
+): string | undefined {
+  if (!isGroupV2(conversation)) {
+    return undefined;
+  }
+
+  const { masterKey, groupInviteLinkPassword } = conversation;
+
+  if (!groupInviteLinkPassword) {
+    return undefined;
+  }
 
   strictAssert(masterKey, 'buildGroupLink requires the master key!');
-  strictAssert(
-    groupInviteLinkPassword,
-    'buildGroupLink requires the groupInviteLinkPassword!'
-  );
 
   const bytes = Proto.GroupInviteLink.encode({
     v1Contents: {
@@ -4946,13 +4953,6 @@ async function applyGroupChange({
       timestamp: added.timestamp,
       role: added.member.role || MEMBER_ROLE_ENUM.DEFAULT,
     };
-
-    if (added.member && added.member.profileKey) {
-      newProfileKeys.push({
-        profileKey: added.member.profileKey,
-        uuid: addedUuid,
-      });
-    }
   });
 
   // deletePendingMembers?: Array<
@@ -5590,21 +5590,7 @@ async function applyGroupState({
         }
 
         const previousMember = pendingMembers[member.member.userId];
-        if (
-          member.member.profileKey &&
-          (!previousMember ||
-            profileKeyHasChanged(
-              member.member.userId,
-              member.member.profileKey
-            ))
-        ) {
-          newProfileKeys.push({
-            profileKey: member.member.profileKey,
-            uuid: UUID.cast(member.member.userId),
-          });
-        } else if (!previousMember) {
-          otherChanges = true;
-        }
+        otherChanges = true;
 
         if (
           previousMember &&
@@ -6817,7 +6803,6 @@ type DecryptedMemberPendingProfileKey = {
   timestamp: number;
   member: {
     userId: string;
-    profileKey?: Uint8Array;
     role?: Proto.Member.Role;
   };
 };
@@ -6866,6 +6851,10 @@ function decryptMemberPendingProfileKey(
   }
 
   const { userId, profileKey } = member.member;
+  strictAssert(
+    Bytes.isEmpty(profileKey),
+    'decryptMemberPendingProfileKey: member has profileKey'
+  );
 
   // userId
   strictAssert(
@@ -6895,30 +6884,6 @@ function decryptMemberPendingProfileKey(
     return undefined;
   }
 
-  // profileKey
-  let decryptedProfileKey: Uint8Array | undefined;
-  if (Bytes.isNotEmpty(profileKey)) {
-    try {
-      decryptedProfileKey = decryptProfileKey(
-        clientZkGroupCipher,
-        profileKey,
-        UUID.cast(decryptedUserId)
-      );
-    } catch (error) {
-      log.warn(
-        `decryptMemberPendingProfileKey/${logId}: Unable to decrypt pending member profileKey. Dropping profileKey.`,
-        Errors.toLogFormat(error)
-      );
-    }
-
-    if (!isValidProfileKey(decryptedProfileKey)) {
-      log.warn(
-        `decryptMemberPendingProfileKey/${logId}: Dropping profileKey, since it was invalid`
-      );
-      decryptedProfileKey = undefined;
-    }
-  }
-
   // role
   const role = dropNull(member.member.role);
 
@@ -6932,7 +6897,6 @@ function decryptMemberPendingProfileKey(
     timestamp,
     member: {
       userId: decryptedUserId,
-      profileKey: decryptedProfileKey,
       role,
     },
   };

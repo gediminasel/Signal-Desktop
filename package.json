@@ -4,7 +4,7 @@
   "description": "Private messaging from your desktop",
   "desktopName": "signal.desktop",
   "repository": "https://github.com/signalapp/Signal-Desktop.git",
-  "version": "6.25.2-lel",
+  "version": "6.26.0-lel",
   "license": "AGPL-3.0-only",
   "author": {
     "name": "Signal Messenger, LLC",
@@ -37,7 +37,6 @@
     "prepare-alpha-version": "node scripts/prepare_alpha_version.js",
     "prepare-staging-build": "node scripts/prepare_staging_build.js",
     "prepare-windows-cert": "node scripts/prepare_windows_cert.js",
-    "publish-to-apt": "NAME=$npm_package_name VERSION=$npm_package_version ./aptly.sh",
     "test": "yarn test-node && yarn test-electron && yarn test-lint-intl && yarn test-eslint",
     "test-electron": "node ts/scripts/test-electron.js",
     "test-release": "node ts/scripts/test-release.js",
@@ -92,7 +91,7 @@
     "@react-spring/web": "9.5.5",
     "@signalapp/better-sqlite3": "8.4.3",
     "@signalapp/libsignal-client": "0.22.0",
-    "@signalapp/ringrtc": "2.27.0",
+    "@signalapp/ringrtc": "2.28.0",
     "@types/fabric": "4.5.3",
     "backbone": "1.4.0",
     "blob-util": "2.0.2",
@@ -328,6 +327,7 @@
       "darkModeSupport": true,
       "hardenedRuntime": true,
       "entitlements": "./build/entitlements.mac.plist",
+      "entitlementsInherit": "./build/entitlements.mac.inherit.plist",
       "icon": "build/icons/mac/icon.icns",
       "publish": [
         {
@@ -407,7 +407,7 @@
         "libnss3",
         "libasound2",
         "libxss1",
-        "libc6 (>= 2.28)"
+        "libc6 (>= 2.31)"
       ]
     },
     "protocols": {

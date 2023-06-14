@@ -23,6 +23,7 @@ import {
   CallState,
   CanvasVideoRenderer,
   ConnectionState,
+  DataMode,
   JoinState,
   HttpMethod,
   GroupCall,
@@ -36,7 +37,6 @@ import {
   RingCancelReason,
   RingRTC,
   RingUpdate,
-  BandwidthMode,
 } from '@signalapp/ringrtc';
 import { uniqBy, noop } from 'lodash';
 import Long from 'long';
@@ -357,12 +357,6 @@ export class CallingClass {
 
     ipcRenderer.on('stop-screen-share', () => {
       reduxInterface.setPresenting();
-    });
-
-    ipcRenderer.on('quit', () => {
-      for (const conversationId of Object.keys(this.callsByConversation)) {
-        this.hangup(conversationId, 'ipcRenderer quit');
-      }
     });
 
     void this.cleanExpiredGroupCallRingsAndLoop();
@@ -1164,6 +1158,12 @@ export class CallingClass {
     });
 
     log.info('hangup: Done.');
+  }
+
+  hangupAllCalls(reason: string): void {
+    for (const conversationId of Object.keys(this.callsByConversation)) {
+      this.hangup(conversationId, reason);
+    }
   }
 
   setOutgoingAudio(conversationId: string, enabled: boolean): void {
@@ -2116,7 +2116,7 @@ export class CallingClass {
         urls: iceServer.urls.slice(),
       },
       hideIp: shouldRelayCalls || isContactUnknown,
-      bandwidthMode: BandwidthMode.Normal,
+      dataMode: DataMode.Normal,
       // TODO: DESKTOP-3101
       // audioLevelsIntervalMillis: AUDIO_LEVEL_INTERVAL_MS,
     };

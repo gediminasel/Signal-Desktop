@@ -187,7 +187,7 @@ import { setBatchingStrategy } from './util/messageBatcher';
 import { parseRemoteClientExpiration } from './util/parseRemoteClientExpiration';
 import { makeLookup } from './util/makeLookup';
 import { addGlobalKeyboardShortcuts } from './services/addGlobalKeyboardShortcuts';
-import { handleCopyEvent } from './quill/signal-clipboard/util';
+import { createEventHandler } from './quill/signal-clipboard/util';
 
 export function isOverHourIntoPast(timestamp: number): boolean {
   return isNumber(timestamp) && isOlderThan(timestamp, HOUR);
@@ -551,7 +551,14 @@ export async function startApp(): Promise<void> {
   );
 
   // Intercept clipboard copies to add our custom text/signal data
-  document.addEventListener('copy', handleCopyEvent);
+  document.addEventListener(
+    'copy',
+    createEventHandler({ deleteSelection: false })
+  );
+  document.addEventListener(
+    'cut',
+    createEventHandler({ deleteSelection: true })
+  );
 
   startInteractionMode();
 
@@ -722,6 +729,11 @@ export async function startApp(): Promise<void> {
         log.info('background/shutdown');
 
         flushMessageCounter();
+
+        // Hangup active calls
+        window.Signal.Services.calling.hangupAllCalls(
+          'background/shutdown: shutdown requested'
+        );
 
         // Stop background processing
         void AttachmentDownloads.stop();
@@ -2577,6 +2589,7 @@ export async function startApp(): Promise<void> {
       const editAttributes: EditAttributesType = {
         conversationId: message.attributes.conversationId,
         fromId: fromConversation.id,
+        fromDevice: data.sourceDevice ?? 1,
         message: copyDataMessageIntoMessage(data.message, message.attributes),
         targetSentTimestamp: editedMessageTimestamp,
       };
@@ -2900,6 +2913,7 @@ export async function startApp(): Promise<void> {
       const editAttributes: EditAttributesType = {
         conversationId: message.attributes.conversationId,
         fromId: window.ConversationController.getOurConversationIdOrThrow(),
+        fromDevice: window.storage.user.getDeviceId() ?? 1,
         message: copyDataMessageIntoMessage(data.message, message.attributes),
         targetSentTimestamp: editedMessageTimestamp,
       };

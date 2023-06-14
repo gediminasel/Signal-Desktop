@@ -182,6 +182,7 @@ import {
   queueUpdateMessage,
   saveNewMessageBatcher,
 } from '../util/messageBatcher';
+import { normalizeUuid } from '../util/normalizeUuid';
 
 /* eslint-disable more/no-then */
 
@@ -761,11 +762,13 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     const giftBadge = this.get('giftBadge');
     if (giftBadge) {
       const emoji = '✨';
-      const fromContact = getContact(this.attributes);
 
       if (isOutgoing(this.attributes)) {
+        const toContact = window.ConversationController.get(
+          this.attributes.conversationId
+        );
         const recipient =
-          fromContact?.getTitle() ?? window.i18n('icu:unknownContact');
+          toContact?.getTitle() ?? window.i18n('icu:unknownContact');
         return {
           emoji,
           text: window.i18n('icu:message--donation--preview--sent', {
@@ -774,6 +777,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         };
       }
 
+      const fromContact = getContact(this.attributes);
       const sender =
         fromContact?.getTitle() ?? window.i18n('icu:unknownContact');
       return {
@@ -2489,12 +2493,18 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         if (!storyQuoteIsFromSelf) {
           return true;
         }
+
+        // The sender is not a recipient for this story
         if (sendState === undefined) {
           return false;
         }
+
+        // Group replies are always allowed
         if (!isDirectConversation(conversation.attributes)) {
-          return false;
+          return true;
         }
+
+        // For 1:1 stories, we need to check if they can be replied to
         return sendState.isAllowedToReplyToStory !== false;
       });
 
@@ -2620,7 +2630,12 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
             if (!BodyRange.isMention(bodyRange)) {
               return false;
             }
-            return ourUuids.has(bodyRange.mentionUuid);
+            return ourUuids.has(
+              normalizeUuid(
+                bodyRange.mentionUuid,
+                'handleDataMessage: mentionsMe check'
+              )
+            );
           }),
           preview,
           requiredProtocolVersion:
