@@ -1457,6 +1457,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         ? window.i18n('icu:Stories__failed-send--partial')
         : window.i18n('icu:Stories__failed-send--full'),
       isExpiringMessage: false,
+      sentAt: this.get('timestamp'),
     });
   }
 
@@ -1778,7 +1779,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       if (!dataMessage) {
         return;
       }
-      const isUpdate = Boolean(this.get('synced'));
+      const isEditedMessage = Boolean(this.get('editHistory'));
+      const isUpdate = Boolean(this.get('synced')) && !isEditedMessage;
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const conv = this.getConversation()!;
 
@@ -1810,7 +1812,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         map(conversationsWithSealedSender, c => c.id)
       );
 
-      const isEditedMessage = Boolean(this.get('editHistory'));
       const timestamp = getMessageSentTimestamp(this.attributes, { log });
 
       const encodedContent = isEditedMessage

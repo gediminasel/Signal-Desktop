@@ -665,22 +665,25 @@ export function CompositionArea({
     emojiButtonRef.current?.close();
   }, [emojiButtonRef]);
 
-  const clearQuote = useCallback(() => {
-    if (quotedMessageId) {
-      setQuoteByMessageId(conversationId, undefined);
-    }
-    if (draftEditMessage) {
+  const handleEscape = useCallback(() => {
+    if (linkPreviewResult) {
+      onCloseLinkPreview(conversationId);
+    } else if (draftEditMessage) {
       discardEditMessage(conversationId);
+    } else if (quotedMessageId) {
+      setQuoteByMessageId(conversationId, undefined);
     }
   }, [
     conversationId,
     discardEditMessage,
     draftEditMessage,
+    linkPreviewResult,
+    onCloseLinkPreview,
     quotedMessageId,
     setQuoteByMessageId,
   ]);
 
-  useEscapeHandling(clearQuote);
+  useEscapeHandling(handleEscape);
 
   if (isSignalConversation) {
     // TODO DESKTOP-4547
@@ -893,9 +896,13 @@ export function CompositionArea({
                   ? () => scrollToMessage(conversationId, quotedMessageId)
                   : undefined
               }
-              onClose={() => {
-                setQuoteByMessageId(conversationId, undefined);
-              }}
+              onClose={
+                draftEditMessage
+                  ? undefined
+                  : () => {
+                      setQuoteByMessageId(conversationId, undefined);
+                    }
+              }
             />
           </div>
         )}

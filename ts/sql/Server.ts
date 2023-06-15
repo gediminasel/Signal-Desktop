@@ -3305,7 +3305,7 @@ async function getTapToViewMessagesNeedingErase(): Promise<Array<MessageType>> {
   return rows.map(row => jsonToObject(row.json));
 }
 
-const MAX_UNPROCESSED_ATTEMPTS = 3;
+const MAX_UNPROCESSED_ATTEMPTS = 10;
 
 function saveUnprocessedSync(data: UnprocessedType): string {
   const db = getInstance();
