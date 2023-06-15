@@ -26,7 +26,6 @@ import { Emojify } from './Emojify';
 import { AddNewLines } from './AddNewLines';
 import type { SizeClassType } from '../emoji/lib';
 import type { LocalizerType, RenderTextCallbackType } from '../../types/Util';
-import { renderMarkdownFactory } from '../../util/renderMarkdown';
 
 const EMOJI_REGEXP = emojiRegex();
 export enum RenderLocation {
@@ -42,7 +41,6 @@ type Props = {
   bodyRanges: BodyRangesForDisplayType;
   direction: 'incoming' | 'outgoing' | undefined;
   disableLinks: boolean;
-  disableMarkdown: boolean;
   emojiSizeClass: SizeClassType | undefined;
   i18n: LocalizerType;
   isSpoilerExpanded: Record<number, boolean>;
@@ -58,7 +56,6 @@ export function MessageTextRenderer({
   bodyRanges,
   direction,
   disableLinks,
-  disableMarkdown,
   emojiSizeClass,
   i18n,
   isSpoilerExpanded,
@@ -108,7 +105,6 @@ export function MessageTextRenderer({
         renderNode({
           direction,
           disableLinks,
-          disableMarkdown: disableMarkdown || messageText.startsWith('```'),
           emojiSizeClass,
           i18n,
           isInvisible: false,
@@ -126,7 +122,6 @@ export function MessageTextRenderer({
 function renderNode({
   direction,
   disableLinks,
-  disableMarkdown,
   emojiSizeClass,
   i18n,
   isInvisible,
@@ -138,7 +133,6 @@ function renderNode({
 }: {
   direction: 'incoming' | 'outgoing' | undefined;
   disableLinks: boolean;
-  disableMarkdown: boolean;
   emojiSizeClass: SizeClassType | undefined;
   i18n: LocalizerType;
   isInvisible: boolean;
@@ -158,7 +152,6 @@ function renderNode({
       renderNode({
         direction,
         disableLinks,
-        disableMarkdown,
         emojiSizeClass,
         i18n,
         isInvisible: isSpoilerHidden,
@@ -257,7 +250,6 @@ function renderNode({
     mentions: node.mentions,
     onMentionTrigger,
     text: nodeText,
-    disableMarkdown,
   });
 
   // We use separate elements for these because we want screenreaders to understand them
@@ -306,13 +298,11 @@ function renderMentions({
   mentions,
   onMentionTrigger,
   text,
-  disableMarkdown,
 }: {
   emojiSizeClass: SizeClassType | undefined;
   isInvisible: boolean;
   mentions: ReadonlyArray<HydratedBodyRangeMention>;
   text: string;
-  disableMarkdown: boolean;
   disableLinks: boolean;
   direction: 'incoming' | 'outgoing' | undefined;
   onMentionTrigger: ((conversationId: string) => void) | undefined;
@@ -330,7 +320,6 @@ function renderMentions({
           key: result.length.toString(),
           emojiSizeClass,
           text: text.slice(offset, mention.start),
-          disableMarkdown,
         })
       );
     }
@@ -357,7 +346,6 @@ function renderMentions({
       key: result.length.toString(),
       emojiSizeClass,
       text: text.slice(offset, text.length),
-      disableMarkdown,
     })
   );
 
@@ -420,27 +408,23 @@ const renderLines: RenderTextCallbackType = ({
   key: innerKey,
 }) => <AddNewLines key={innerKey} text={innerText} />;
 
-const renderMarkdownLines = renderMarkdownFactory(renderLines);
-
 /** Render text that does not contain body ranges or is in between body ranges */
 function renderText({
   text,
   emojiSizeClass,
   isInvisible,
   key,
-  disableMarkdown,
 }: {
   text: string;
   emojiSizeClass: SizeClassType | undefined;
   isInvisible: boolean;
   key: string;
-  disableMarkdown: boolean;
 }) {
   return (
     <Emojify
       key={key}
       isInvisible={isInvisible}
-      renderNonEmoji={disableMarkdown ? renderLines : renderMarkdownLines}
+      renderNonEmoji={renderLines}
       sizeClass={emojiSizeClass}
       text={text}
     />

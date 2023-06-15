@@ -167,7 +167,6 @@ export const MessageSearchResult: FunctionComponent<PropsType> = React.memo(
         bodyRanges={displayBodyRanges}
         direction={undefined}
         disableLinks
-        disableMarkdown
         emojiSizeClass={undefined}
         i18n={i18n}
         isSpoilerExpanded={EMPTY_OBJECT}

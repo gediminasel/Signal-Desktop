@@ -23,7 +23,6 @@ export type Props = {
   disableJumbomoji?: boolean;
   // If set, interactive elements will be left as plain text: links, mentions, spoilers
   disableLinks?: boolean;
-  disableMarkdown?: boolean;
   i18n: LocalizerType;
   isSpoilerExpanded: Record<string, boolean>;
   kickOffBodyDownload?: () => void;
@@ -48,7 +47,6 @@ export function MessageBody({
   direction,
   disableJumbomoji,
   disableLinks,
-  disableMarkdown,
   i18n,
   isSpoilerExpanded,
   kickOffBodyDownload,
@@ -122,7 +120,6 @@ export function MessageBody({
         bodyRanges={bodyRanges ?? []}
         direction={direction}
         disableLinks={disableLinks ?? false}
-        disableMarkdown={disableMarkdown ?? false}
         emojiSizeClass={sizeClass}
         i18n={i18n}
         isSpoilerExpanded={isSpoilerExpanded}

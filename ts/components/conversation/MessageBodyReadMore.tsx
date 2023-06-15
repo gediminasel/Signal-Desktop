@@ -69,7 +69,6 @@ export function MessageBodyReadMore({
       bodyRanges={bodyRanges}
       direction={direction}
       disableLinks={disableLinks}
-      disableMarkdown={hasReadMore}
       i18n={i18n}
       isSpoilerExpanded={isSpoilerExpanded}
       kickOffBodyDownload={kickOffBodyDownload}
