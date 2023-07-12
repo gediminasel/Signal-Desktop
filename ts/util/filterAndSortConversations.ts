@@ -1,12 +1,12 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import Fuse from 'fuse.js';
+import type Fuse from 'fuse.js';
 
 import type { ConversationType } from '../state/ducks/conversations';
 import { parseAndFormatPhoneNumber } from './libphonenumberInstance';
 import { WEEK } from './durations';
-import { removeDiacritics } from './removeDiacritics';
+import { fuseGetFnRemoveDiacritics, getCachedFuseIndex } from './fuse';
 
 // Fuse.js scores have order of 0.01
 const ACTIVE_AT_SCORE_FACTOR = (1 / WEEK) * 0.01;
@@ -45,24 +45,8 @@ const FUSE_OPTIONS: Fuse.IFuseOptions<ConversationType> = {
       weight: 0.5,
     },
   ],
-  getFn: (...args) => {
-    const text = Fuse.config.getFn(...args);
-    if (!text) {
-      return text;
-    }
-
-    if (typeof text === 'string') {
-      return removeDiacritics(text);
-    }
-
-    return text.map(removeDiacritics);
-  },
+  getFn: fuseGetFnRemoveDiacritics,
 };
-
-const cachedIndices = new WeakMap<
-  ReadonlyArray<ConversationType>,
-  Fuse<ConversationType>
->();
 
 type CommandRunnerType = (
   conversations: ReadonlyArray<ConversationType>,
@@ -106,6 +90,10 @@ function searchConversations(
 
   const phoneNumber = parseAndFormatPhoneNumber(searchTerm, regionCode);
 
+  const currentConversations = conversations.filter(conversation => {
+    return !conversation.left && !conversation.hiddenFromConversationSearch;
+  });
+
   // Escape the search term
   let extendedSearchTerm = searchTerm;
 
@@ -114,11 +102,7 @@ function searchConversations(
     extendedSearchTerm += ` | ${phoneNumber.e164}`;
   }
 
-  let index = cachedIndices.get(conversations);
-  if (!index) {
-    index = new Fuse<ConversationType>(conversations, FUSE_OPTIONS);
-    cachedIndices.set(conversations, index);
-  }
+  const index = getCachedFuseIndex(currentConversations, FUSE_OPTIONS);
 
   return index.search(extendedSearchTerm);
 }
@@ -162,4 +146,41 @@ export function filterAndSortConversationsByRecent(
 
     return a.activeAt && !b.activeAt ? -1 : 1;
   });
+}
+
+function startsWithLetter(title: string) {
+  // Uses \p, the unicode character class escape, to check if a the first character is a
+  // letter
+  return /^\p{Letter}/u.test(title);
+}
+
+function sortAlphabetically(a: ConversationType, b: ConversationType) {
+  // Sort alphabetically with conversations starting with a letter first (and phone
+  // numbers last)
+  const aStartsWithLetter = startsWithLetter(a.title);
+  const bStartsWithLetter = startsWithLetter(b.title);
+  if (aStartsWithLetter && !bStartsWithLetter) {
+    return -1;
+  }
+  if (!aStartsWithLetter && bStartsWithLetter) {
+    return 1;
+  }
+  return a.title.localeCompare(b.title);
+}
+
+export function filterAndSortConversationsAlphabetically(
+  conversations: ReadonlyArray<ConversationType>,
+  searchTerm: string,
+  regionCode: string | undefined
+): Array<ConversationType> {
+  if (searchTerm.length) {
+    const withoutUnknown = conversations.filter(item => item.titleNoDefault);
+
+    return searchConversations(withoutUnknown, searchTerm, regionCode)
+      .slice()
+      .map(result => result.item)
+      .sort(sortAlphabetically);
+  }
+
+  return conversations.concat().sort(sortAlphabetically);
 }

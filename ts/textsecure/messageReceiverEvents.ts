@@ -5,7 +5,7 @@
 import type { PublicKey } from '@signalapp/libsignal-client';
 
 import type { SignalService as Proto } from '../protobuf';
-import type { UUIDStringType } from '../types/UUID';
+import type { UUIDStringType, TaggedUUIDStringType } from '../types/UUID';
 import type {
   ProcessedEnvelope,
   ProcessedDataMessage,
@@ -104,9 +104,17 @@ export class GroupSyncEvent extends Event {
   }
 }
 
-export class EnvelopeEvent extends Event {
+// Emitted right before we do full decrypt on a message, but after Sealed Sender unseal
+export class EnvelopeUnsealedEvent extends Event {
   constructor(public readonly envelope: ProcessedEnvelope) {
-    super('envelope');
+    super('envelopeUnsealed');
+  }
+}
+
+// Emitted when we queue previously-decrypted events from the cache
+export class EnvelopeQueuedEvent extends Event {
+  constructor(public readonly envelope: ProcessedEnvelope) {
+    super('envelopeQueued');
   }
 }
 
@@ -193,7 +201,7 @@ export class RetryRequestEvent extends ConfirmableEvent {
 
 export type SentEventData = Readonly<{
   destination?: string;
-  destinationUuid?: string;
+  destinationUuid?: TaggedUUIDStringType;
   timestamp?: number;
   serverTimestamp?: number;
   device: number | undefined;

@@ -83,7 +83,8 @@ import type {
   ConfigurationEvent,
   DecryptionErrorEvent,
   DeliveryEvent,
-  EnvelopeEvent,
+  EnvelopeQueuedEvent,
+  EnvelopeUnsealedEvent,
   ErrorEvent,
   FetchLatestEvent,
   GroupEvent,
@@ -149,6 +150,7 @@ import { themeChanged } from './shims/themeChanged';
 import { createIPCEvents } from './util/createIPCEvents';
 import { RemoveAllConfiguration } from './types/RemoveAllConfiguration';
 import { isValidUuid, UUIDKind, UUID } from './types/UUID';
+import type { TaggedUUIDStringType } from './types/UUID';
 import * as log from './logging/log';
 import { loadRecentEmojis } from './util/loadRecentEmojis';
 import { deleteAllLogs } from './util/deleteAllLogs';
@@ -338,8 +340,12 @@ export async function startApp(): Promise<void> {
     }
 
     messageReceiver.addEventListener(
-      'envelope',
-      queuedEventListener(onEnvelopeReceived, false)
+      'envelopeUnsealed',
+      queuedEventListener(onEnvelopeUnsealed, false)
+    );
+    messageReceiver.addEventListener(
+      'envelopeQueued',
+      queuedEventListener(onEnvelopeQueued, false)
     );
     messageReceiver.addEventListener(
       'message',
@@ -1772,7 +1778,9 @@ export async function startApp(): Promise<void> {
         } catch (error) {
           log.error(
             'connect: Error refreshing remote config:',
-            Errors.toLogFormat(error)
+            isNumber(error.code)
+              ? `code: ${error.code}`
+              : Errors.toLogFormat(error)
           );
         }
       }
@@ -2427,9 +2435,15 @@ export async function startApp(): Promise<void> {
     { leading: false }
   );
 
-  async function onEnvelopeReceived({
+  async function onEnvelopeQueued({
     envelope,
-  }: EnvelopeEvent): Promise<void> {
+  }: EnvelopeQueuedEvent): Promise<void> {
+    throttledSetInboxEnvelopeTimestamp(envelope.serverTimestamp);
+  }
+
+  async function onEnvelopeUnsealed({
+    envelope,
+  }: EnvelopeUnsealedEvent): Promise<void> {
     throttledSetInboxEnvelopeTimestamp(envelope.serverTimestamp);
 
     const ourUuid = window.textsecure.storage.user.getUuid()?.toString();
@@ -2438,7 +2452,7 @@ export async function startApp(): Promise<void> {
         window.ConversationController.maybeMergeContacts({
           e164: envelope.source,
           aci: envelope.sourceUuid,
-          reason: `onEnvelopeReceived(${envelope.timestamp})`,
+          reason: `onEnvelopeUnsealed(${envelope.timestamp})`,
         });
 
       if (mergePromises.length > 0) {
@@ -2461,7 +2475,9 @@ export async function startApp(): Promise<void> {
       message: data.message,
       // 'message' event: for 1:1 converations, the conversation is same as sender
       destination: data.source,
-      destinationUuid: data.sourceUuid,
+      destinationUuid: {
+        aci: data.sourceUuid,
+      },
     });
 
     const { PROFILE_KEY_UPDATE } = Proto.DataMessage.Flags;
@@ -2697,11 +2713,9 @@ export async function startApp(): Promise<void> {
           result: SendStateByConversationId,
           { destinationUuid, destination, isAllowedToReplyToStory }
         ) => {
-          const conversation = window.ConversationController.lookupOrCreate({
-            uuid: destinationUuid,
-            e164: destination,
-            reason: 'createSentMessage',
-          });
+          const conversation = window.ConversationController.get(
+            destinationUuid?.aci || destinationUuid?.pni || destination
+          );
           if (!conversation || conversation.id === ourId) {
             return result;
           }
@@ -2727,7 +2741,12 @@ export async function startApp(): Promise<void> {
     if (unidentifiedStatus.length) {
       unidentifiedDeliveries = unidentifiedStatus
         .filter(item => Boolean(item.unidentified))
-        .map(item => item.destinationUuid || item.destination)
+        .map(
+          item =>
+            item.destinationUuid?.aci ||
+            item.destinationUuid?.pni ||
+            item.destination
+        )
         .filter(isNotNil);
     }
 
@@ -2768,7 +2787,7 @@ export async function startApp(): Promise<void> {
   }: {
     message: ProcessedDataMessage;
     destination?: string;
-    destinationUuid?: string;
+    destinationUuid?: TaggedUUIDStringType;
   }): MessageDescriptor => {
     if (message.groupV2) {
       const { id } = message.groupV2;
@@ -2808,11 +2827,9 @@ export async function startApp(): Promise<void> {
       };
     }
 
-    const conversation = window.ConversationController.lookupOrCreate({
-      uuid: destinationUuid,
-      e164: destination,
-      reason: `getMessageDescriptor(${message.timestamp}): private`,
-    });
+    const conversation = window.ConversationController.get(
+      destinationUuid?.aci || destinationUuid?.pni || destination
+    );
     strictAssert(conversation, 'Destination conversation cannot be created');
 
     return {

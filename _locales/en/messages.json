@@ -368,11 +368,11 @@
     "description": "Undoes Archive Conversation action, and moves archived conversation back to the main conversation list"
   },
   "icu:pinConversation": {
-    "messageformat": "Pin Chat",
+    "messageformat": "Pin chat",
     "description": "Shown in menu for conversation, and pins the conversation to the top of the conversation list"
   },
   "icu:unpinConversation": {
-    "messageformat": "Unpin Chat",
+    "messageformat": "Unpin chat",
     "description": "Undoes Archive Conversation action, and unpins the conversation from the top of the conversation list"
   },
   "icu:pinnedConversationsFull": {
@@ -1282,7 +1282,35 @@
   },
   "icu:deleteConversationConfirmation": {
     "messageformat": "Permanently delete this chat?",
-    "description": "Confirmation dialog text that asks the user if they really wish to delete the conversation. Answer buttons use the strings 'ok' and 'cancel'. The deletion is permanent, i.e. it cannot be undone."
+    "description": "(deleted 06/27/2023) Confirmation dialog text that asks the user if they really wish to delete the conversation. Answer buttons use the strings 'ok' and 'cancel'. The deletion is permanent, i.e. it cannot be undone."
+  },
+  "icu:ConversationHeader__DeleteMessagesConfirmation__title": {
+    "messageformat": "Delete chat?",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__DeleteMessagesConfirmation__description": {
+    "messageformat": "This chat will be deleted from this device.",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
+    "messageformat": "Leave group",
+    "description": "This is a button to leave a group"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__title": {
+    "messageformat": "Do you really want to leave?",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__description": {
+    "messageformat": "You will no longer be able to send or receive messages in this group.",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__confirmButton": {
+    "messageformat": "Leave",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Confirm Button"
+  },
+  "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
+    "messageformat": "Before you leave, you must choose at least one new admin for this group.",
+    "description": "Conversation Header > Leave Group Action > Cannot Leave Group Because You Are Last Admin Alert > Description"
   },
   "icu:sessionEnded": {
     "messageformat": "Secure session reset",
@@ -2933,6 +2961,10 @@
   "icu:Keyboard--composer--spoiler": {
     "messageformat": "Mark selected text as a spoiler",
     "description": "Description of command to bold text in composer"
+  },
+  "icu:Keyboard--open-context-menu": {
+    "messageformat": "Open context menu for selected message",
+    "description": "Shown in shortcuts guide"
   },
   "icu:FormatMenu--guide--bold": {
     "messageformat": "Bold",
@@ -5150,6 +5182,10 @@
     "messageformat": "Disappears in",
     "description": "In the message details screen, shown as a label of how long it will be before the message disappears"
   },
+  "icu:MessageDetail__view-edits": {
+    "messageformat": "View edit history",
+    "description": "Link to view a message's edit history"
+  },
   "icu:ProfileEditor--about": {
     "messageformat": "About",
     "description": "Default text for about field"
@@ -6478,20 +6514,10 @@
     "messageformat": "Small tweaks, bug fixes, and performance enhancements. Thanks for using Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.21--0": {
-    "messageformat": "Get a better look at yourself while a 1-on-1 call is ringing. Individual video calls now use the same full-screen view that previously only appeared at the beginning of a new group call. When it comes to being consistent, we try to be persistent (not resistant) and now the discrepancy is nonexistent because these things are no longer different.",
-    "description": "Release notes for v6.21"
+  "icu:WhatsNew__v6.24--0": {
+    "messageformat": "Now you can search your @ mentions too. \"Thanks for adding this feature,\" you might say. \"Don't mention it,\" we'll reply."
   },
-  "icu:WhatsNew__v6.21--1": {
-    "messageformat": "We'd also like to express our appreciation to {complexspaces} for their help and feedback while working on this release.",
-    "description": "Release notes for v6.21"
-  },
-  "icu:WhatsNew__v6.22--0": {
-    "messageformat": "Format text in your messages by selecting any text in the message composition field. Make a bold statement that's actually bold, send M. Night Shyamalan a twist ending with a spoiler effect, emphasize a name by writing \"Alex\" in italics, put a line through a rejected dinner idea with strikethrough, or share code in monospace.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.22--1": {
-    "messageformat": "We added support for the latest emoji characters, so now you can express your excitement with \"Shaking Face\" (<emojify>🫨</emojify>) or react with a \"Pea Pod\" (<emojify>🫛</emojify>) when someone asks you how close you are to your friends.",
-    "description": "Release notes for v6.22"
+  "icu:WhatsNew__v6.25--0": {
+    "messageformat": "Now that the calling and conversation headers are draggable, repositioning your Signal window won't be such a drag."
   }
 }

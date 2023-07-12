@@ -2297,10 +2297,10 @@
     ws "^8.4.2"
     zod "^3.20.2"
 
-"@signalapp/ringrtc@2.28.0":
-  version "2.28.0"
-  resolved "https://registry.yarnpkg.com/@signalapp/ringrtc/-/ringrtc-2.28.0.tgz#154b5d444c12426144dd55d505a027c10d182750"
-  integrity sha512-YDA/0uFnyJbvioYODEyLElGObaBJ0PAjgxQApLeFkPUm7zo1nvm0lYnJVOINHalJ/97V/kukMueX4e+7EhRwtQ==
+"@signalapp/ringrtc@2.28.1":
+  version "2.28.1"
+  resolved "https://registry.yarnpkg.com/@signalapp/ringrtc/-/ringrtc-2.28.1.tgz#15785854f986c9a7a52b4dec2cc9145b8c5fbf00"
+  integrity sha512-7G8Gbg1JtRjwfjk9bChQjnDFEFgNphkcHaS8K6xhRfRVcubgaIZzxmHNUShiJ5JG98wxdcsL9K3UgX/2G2M78A==
   dependencies:
     tar "^6.1.0"
 
@@ -8212,10 +8212,10 @@ electron-window@^0.8.0:
   dependencies:
     is-electron-renderer "^2.0.0"
 
-electron@24.3.0:
-  version "24.3.0"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-24.3.0.tgz#d1ef519b0d6d86cc4992519b49821372cb957fe6"
-  integrity sha512-M7PpfpOzGdLeZPr2xhxXuvJeoXPEHMH40Rtv8BCGleRPolwna9BepAGc0H0F+Uz5kGKOv3xcm99fTurvXUH0nw==
+electron@25.2.0:
+  version "25.2.0"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-25.2.0.tgz#ff832d88f78481a82cf9feb72e605ec43553d4ba"
+  integrity sha512-I/rhcW2sV2fyiveVSBr2N7v5ZiCtdGY0UiNCDZgk2fpSC+irQjbeh7JT2b4vWmJ2ogOXBjqesrN9XszTIG6DHg==
   dependencies:
     "@electron/get" "^2.0.0"
     "@types/node" "^18.11.18"
@@ -17993,7 +17993,12 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-typescript@4.9.5, typescript@^4.9.5:
+typescript@5.1.3:
+  version "5.1.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.1.3.tgz#8d84219244a6b40b6fb2b33cc1c062f715b9e826"
+  integrity sha512-XH627E9vkeqhlZFQuL+UsyAXEnibT0kWR2FWONlr4sTjvxyJYnyefgrkyECLzM5NenmKzRAy2rR/OlYLA1HkZw==
+
+typescript@^4.9.5:
   version "4.9.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.9.5.tgz#095979f9bcc0d09da324d58d03ce8f8374cbe65a"
   integrity sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==

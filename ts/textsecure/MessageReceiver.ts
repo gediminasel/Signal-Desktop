@@ -52,7 +52,7 @@ import { bytesToUuid } from '../Crypto';
 import type { DownloadedAttachmentType } from '../types/Attachment';
 import { Address } from '../types/Address';
 import { QualifiedAddress } from '../types/QualifiedAddress';
-import type { UUIDStringType } from '../types/UUID';
+import type { UUIDStringType, TaggedUUIDStringType } from '../types/UUID';
 import { UUID, UUIDKind } from '../types/UUID';
 import * as Errors from '../types/errors';
 
@@ -88,7 +88,8 @@ import type {
 } from './Types.d';
 import {
   EmptyEvent,
-  EnvelopeEvent,
+  EnvelopeQueuedEvent,
+  EnvelopeUnsealedEvent,
   ProgressEvent,
   TypingEvent,
   ErrorEvent,
@@ -631,8 +632,13 @@ export default class MessageReceiver
   ): void;
 
   public override addEventListener(
-    name: 'envelope',
-    handler: (ev: EnvelopeEvent) => void
+    name: 'envelopeQueued',
+    handler: (ev: EnvelopeQueuedEvent) => void
+  ): void;
+
+  public override addEventListener(
+    name: 'envelopeUnsealed',
+    handler: (ev: EnvelopeUnsealedEvent) => void
   ): void;
 
   public override addEventListener(
@@ -896,6 +902,19 @@ export default class MessageReceiver
         };
 
         // Maintain invariant: encrypted queue => decrypted queue
+        const envelopeId = getEnvelopeId(decryptedEnvelope);
+        const taskId = `queueCached(EnvelopeEvent(${envelopeId}))`;
+        drop(
+          this.addToQueue(
+            async () =>
+              this.dispatchAndWait(
+                taskId,
+                new EnvelopeQueuedEvent(decryptedEnvelope)
+              ),
+            taskId,
+            TaskType.Decrypted
+          )
+        );
         drop(
           this.addToQueue(
             async () => {
@@ -1225,11 +1244,14 @@ export default class MessageReceiver
 
       logId = getEnvelopeId(unsealedEnvelope);
 
-      const taskId = `dispatchEvent(EnvelopeEvent(${logId}))`;
+      const taskId = `dispatchEvent(EnvelopeUnsealedEvent(${logId}))`;
       drop(
         this.addToQueue(
           async () =>
-            this.dispatchAndWait(taskId, new EnvelopeEvent(unsealedEnvelope)),
+            this.dispatchAndWait(
+              taskId,
+              new EnvelopeUnsealedEvent(unsealedEnvelope)
+            ),
           taskId,
           TaskType.Decrypted
         )
@@ -2028,8 +2050,9 @@ export default class MessageReceiver
 
     let p: Promise<void> = Promise.resolve();
     if (msg.flags && msg.flags & Proto.DataMessage.Flags.END_SESSION) {
-      if (destinationUuid) {
-        p = this.handleEndSession(envelope, new UUID(destinationUuid));
+      const anyUuid = destinationUuid?.aci ?? destinationUuid?.pni;
+      if (anyUuid) {
+        p = this.handleEndSession(envelope, new UUID(anyUuid));
       } else if (destination) {
         const theirUuid = UUID.lookup(destination);
         if (theirUuid) {
@@ -2061,8 +2084,7 @@ export default class MessageReceiver
     const ev = new SentEvent(
       {
         destination: dropNull(destination),
-        destinationUuid:
-          dropNull(destinationUuid) || envelope.destinationUuid.toString(),
+        destinationUuid,
         timestamp: timestamp?.toNumber(),
         serverTimestamp: envelope.serverTimestamp,
         device: envelope.sourceDevice,
@@ -2168,7 +2190,9 @@ export default class MessageReceiver
     if (sentMessage && message.groupV2) {
       const ev = new SentEvent(
         {
-          destinationUuid: envelope.destinationUuid.toString(),
+          destinationUuid: {
+            aci: envelope.destinationUuid.toString(),
+          },
           device: envelope.sourceDevice,
           isRecipientUpdate: Boolean(sentMessage.isRecipientUpdate),
           message,
@@ -2183,10 +2207,7 @@ export default class MessageReceiver
               }
 
               return {
-                destinationUuid: normalizeUuid(
-                  destinationUuid,
-                  'handleStoryMessage.destinationUuid'
-                ),
+                destinationUuid,
                 isAllowedToReplyToStory: Boolean(isAllowedToReply),
               };
             })
@@ -2202,25 +2223,26 @@ export default class MessageReceiver
       const { storyMessageRecipients } = sentMessage;
       const recipients = storyMessageRecipients ?? [];
 
-      const isAllowedToReply = new Map<string, boolean>();
-      const distributionListToSentUuid = new Map<string, Set<string>>();
+      const isAllowedToReply = new Map<UUIDStringType, boolean>();
+      const distributionListToSentUuid = new Map<
+        string,
+        Map<UUIDStringType, TaggedUUIDStringType>
+      >();
 
       recipients.forEach(recipient => {
         const { destinationUuid } = recipient;
-        if (!destinationUuid) {
+        if (!destinationUuid?.aci && !destinationUuid?.pni) {
           return;
         }
 
-        const normalizedDestinationUuid = normalizeUuid(
-          destinationUuid,
-          'handleStoryMessage.destinationUuid'
-        );
+        const destinationUuidString =
+          destinationUuid?.aci || destinationUuid?.pni;
 
         if (recipient.distributionListIds) {
           recipient.distributionListIds.forEach(listId => {
-            const sentUuids: Set<string> =
-              distributionListToSentUuid.get(listId) || new Set();
-            sentUuids.add(normalizedDestinationUuid);
+            const sentUuids: Map<UUIDStringType, TaggedUUIDStringType> =
+              distributionListToSentUuid.get(listId) || new Map();
+            sentUuids.set(destinationUuidString, destinationUuid);
             distributionListToSentUuid.set(listId, sentUuids);
           });
         } else {
@@ -2232,7 +2254,7 @@ export default class MessageReceiver
         }
 
         isAllowedToReply.set(
-          normalizedDestinationUuid,
+          destinationUuidString,
           recipient.isAllowedToReply !== false
         );
       });
@@ -2240,14 +2262,22 @@ export default class MessageReceiver
       distributionListToSentUuid.forEach((sentToUuids, listId) => {
         const ev = new SentEvent(
           {
-            destinationUuid: envelope.destinationUuid.toString(),
+            destinationUuid: {
+              aci: envelope.destinationUuid.toString(),
+              pni: undefined,
+            },
             timestamp: envelope.timestamp,
             serverTimestamp: envelope.serverTimestamp,
             device: envelope.sourceDevice,
-            unidentifiedStatus: Array.from(sentToUuids).map(
+            unidentifiedStatus: Array.from(sentToUuids.values()).map(
               destinationUuid => ({
                 destinationUuid,
-                isAllowedToReplyToStory: isAllowedToReply.get(destinationUuid),
+                isAllowedToReplyToStory: Boolean(
+                  (destinationUuid.aci &&
+                    isAllowedToReply.get(destinationUuid.aci)) ||
+                    (destinationUuid.pni &&
+                      isAllowedToReply.get(destinationUuid.pni))
+                ),
               })
             ),
             message,
@@ -2867,11 +2897,15 @@ export default class MessageReceiver
     return undefined;
   }
 
-  private getDestination(sentMessage: Proto.SyncMessage.ISent) {
+  private getDestination(sentMessage: ProcessedSent) {
     if (sentMessage.message && sentMessage.message.groupV2) {
       return `groupv2(${this.getGroupId(sentMessage.message)})`;
     }
-    return sentMessage.destination || sentMessage.destinationUuid;
+    return (
+      sentMessage.destination ||
+      sentMessage.destinationUuid?.aci ||
+      sentMessage.destinationUuid?.pni
+    );
   }
 
   private async handleSyncMessage(
@@ -3067,8 +3101,7 @@ export default class MessageReceiver
     const ev = new SentEvent(
       {
         destination: dropNull(destination),
-        destinationUuid:
-          dropNull(destinationUuid) || envelope.destinationUuid.toString(),
+        destinationUuid,
         timestamp: envelope.timestamp,
         serverTimestamp: envelope.serverTimestamp,
         device: envelope.sourceDevice,

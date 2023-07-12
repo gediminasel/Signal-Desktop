@@ -13,6 +13,9 @@ import { Modal } from './Modal';
 import { WidthBreakpoint } from './_util';
 import { shouldNeverBeCalled } from '../util/shouldNeverBeCalled';
 import { useTheme } from '../hooks/useTheme';
+import { isSameDay } from '../util/timestamp';
+import { TimelineDateHeader } from './conversation/TimelineDateHeader';
+import { drop } from '../util/drop';
 
 export type PropsType = {
   closeEditHistoryModal: () => unknown;
@@ -55,10 +58,10 @@ const MESSAGE_DEFAULT_PROPS = {
   scrollToQuotedMessage: shouldNeverBeCalled,
   shouldCollapseAbove: false,
   shouldCollapseBelow: false,
-  shouldHideMetadata: true,
+  shouldHideMetadata: false,
   showContactModal: shouldNeverBeCalled,
   showConversation: noop,
-  showEditHistoryModal: shouldNeverBeCalled,
+  showEditHistoryModal: noop,
   showExpiredIncomingTapToViewToast: shouldNeverBeCalled,
   showExpiredOutgoingTapToViewToast: shouldNeverBeCalled,
   showLightboxForViewOnceMedia: shouldNeverBeCalled,
@@ -98,6 +101,8 @@ export function EditHistoryMessagesModal({
   const [currentMessage, ...pastEdits] = editHistoryMessages;
   const currentMessageId = `${currentMessage.id}.${currentMessage.timestamp}`;
 
+  let previousItem = currentMessage;
+
   return (
     <Modal
       hasXButton
@@ -108,6 +113,7 @@ export function EditHistoryMessagesModal({
       noTransform
     >
       <div ref={containerElementRef}>
+        <TimelineDateHeader i18n={i18n} timestamp={currentMessage.timestamp} />
         <Message
           {...MESSAGE_DEFAULT_PROPS}
           {...currentMessage}
@@ -116,6 +122,7 @@ export function EditHistoryMessagesModal({
           displayLimit={displayLimitById[currentMessageId]}
           getPreferredBadge={getPreferredBadge}
           i18n={i18n}
+          isEditedMessage
           isSpoilerExpanded={revealedSpoilersById[currentMessageId] || {}}
           key={currentMessage.timestamp}
           kickOffAttachmentDownload={kickOffAttachmentDownload}
@@ -125,6 +132,13 @@ export function EditHistoryMessagesModal({
               [messageId]: displayLimit,
             };
             setDisplayLimitById(update);
+          }}
+          onContextMenu={() => {
+            drop(
+              window.navigator.clipboard.writeText(
+                String(currentMessage.timestamp)
+              )
+            );
           }}
           platform={platform}
           showLightbox={closeAndShowLightbox}
@@ -147,36 +161,60 @@ export function EditHistoryMessagesModal({
         {pastEdits.map(messageAttributes => {
           const syntheticId = `${messageAttributes.id}.${messageAttributes.timestamp}`;
 
-          return (
-            <Message
-              {...MESSAGE_DEFAULT_PROPS}
-              {...messageAttributes}
-              id={syntheticId}
-              containerElementRef={containerElementRef}
-              displayLimit={displayLimitById[syntheticId]}
-              getPreferredBadge={getPreferredBadge}
+          const shouldShowDateHeader = Boolean(
+            !previousItem ||
+              // This comparison avoids strange header behavior for out-of-order messages.
+              (messageAttributes.timestamp > previousItem.timestamp &&
+                !isSameDay(previousItem.timestamp, messageAttributes.timestamp))
+          );
+          const dateHeaderElement = shouldShowDateHeader ? (
+            <TimelineDateHeader
               i18n={i18n}
-              isSpoilerExpanded={revealedSpoilersById[syntheticId] || {}}
-              key={messageAttributes.timestamp}
-              kickOffAttachmentDownload={kickOffAttachmentDownload}
-              messageExpanded={(messageId, displayLimit) => {
-                const update = {
-                  ...displayLimitById,
-                  [messageId]: displayLimit,
-                };
-                setDisplayLimitById(update);
-              }}
-              platform={platform}
-              showLightbox={closeAndShowLightbox}
-              showSpoiler={(messageId, data) => {
-                const update = {
-                  ...revealedSpoilersById,
-                  [messageId]: data,
-                };
-                setRevealedSpoilersById(update);
-              }}
-              theme={theme}
+              timestamp={messageAttributes.timestamp}
             />
+          ) : null;
+
+          previousItem = messageAttributes;
+
+          return (
+            <React.Fragment key={messageAttributes.timestamp}>
+              {dateHeaderElement}
+              <Message
+                {...MESSAGE_DEFAULT_PROPS}
+                {...messageAttributes}
+                id={syntheticId}
+                containerElementRef={containerElementRef}
+                displayLimit={displayLimitById[syntheticId]}
+                getPreferredBadge={getPreferredBadge}
+                i18n={i18n}
+                isSpoilerExpanded={revealedSpoilersById[syntheticId] || {}}
+                kickOffAttachmentDownload={kickOffAttachmentDownload}
+                messageExpanded={(messageId, displayLimit) => {
+                  const update = {
+                    ...displayLimitById,
+                    [messageId]: displayLimit,
+                  };
+                  setDisplayLimitById(update);
+                }}
+                onContextMenu={() => {
+                  drop(
+                    window.navigator.clipboard.writeText(
+                      String(messageAttributes.timestamp)
+                    )
+                  );
+                }}
+                platform={platform}
+                showLightbox={closeAndShowLightbox}
+                showSpoiler={(messageId, data) => {
+                  const update = {
+                    ...revealedSpoilersById,
+                    [messageId]: data,
+                  };
+                  setRevealedSpoilersById(update);
+                }}
+                theme={theme}
+              />
+            </React.Fragment>
           );
         })}
       </div>

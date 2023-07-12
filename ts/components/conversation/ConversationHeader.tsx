@@ -39,6 +39,7 @@ import {
 } from '../../hooks/useKeyboardShortcuts';
 import { PanelType } from '../../types/Panels';
 import { UserText } from '../UserText';
+import { Alert } from '../Alert';
 
 export enum OutgoingCallButtonStyle {
   None,
@@ -49,6 +50,7 @@ export enum OutgoingCallButtonStyle {
 
 export type PropsDataType = {
   badge?: BadgeType;
+  cannotLeaveBecauseYouAreLastAdmin: boolean;
   conversationTitle?: string;
   hasStories?: HasStories;
   isMissingMandatoryProfileSharing?: boolean;
@@ -86,6 +88,7 @@ export type PropsDataType = {
 
 export type PropsActionsType = {
   destroyMessages: (conversationId: string) => void;
+  leaveGroup: (conversationId: string) => void;
   onArchive: (conversationId: string) => void;
   onMarkUnread: (conversationId: string) => void;
   toggleSelectMode: (on: boolean) => void;
@@ -120,6 +123,8 @@ enum ModalState {
 
 type StateType = {
   hasDeleteMessagesConfirmation: boolean;
+  hasLeaveGroupConfirmation: boolean;
+  hasCannotLeaveGroupBecauseYouAreLastAdminAlert: boolean;
   isNarrow: boolean;
   modalState: ModalState;
 };
@@ -141,6 +146,8 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
 
     this.state = {
       hasDeleteMessagesConfirmation: false,
+      hasLeaveGroupConfirmation: false,
+      hasCannotLeaveGroupBecauseYouAreLastAdminAlert: false,
       isNarrow: false,
       modalState: ModalState.NothingOpen,
     };
@@ -341,6 +348,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
     const {
       acceptedMessageRequest,
       canChangeTimer,
+      cannotLeaveBecauseYouAreLastAdmin,
       expireTimer,
       groupVersion,
       i18n,
@@ -579,11 +587,6 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
           {i18n('icu:viewRecentMedia')}
         </MenuItem>
         <MenuItem divider />
-        {!markedUnread ? (
-          <MenuItem onClick={() => onMarkUnread(id)}>
-            {i18n('icu:markUnread')}
-          </MenuItem>
-        ) : null}
         <MenuItem
           onClick={() => {
             toggleSelectMode(true);
@@ -591,6 +594,21 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
         >
           {i18n('icu:ConversationHeader__menu__selectMessages')}
         </MenuItem>
+        <MenuItem divider />
+        {!markedUnread ? (
+          <MenuItem onClick={() => onMarkUnread(id)}>
+            {i18n('icu:markUnread')}
+          </MenuItem>
+        ) : null}
+        {isPinned ? (
+          <MenuItem onClick={() => setPinned(id, false)}>
+            {i18n('icu:unpinConversation')}
+          </MenuItem>
+        ) : (
+          <MenuItem onClick={() => setPinned(id, true)}>
+            {i18n('icu:pinConversation')}
+          </MenuItem>
+        )}
         {isArchived ? (
           <MenuItem onClick={() => onMoveToInbox(id)}>
             {i18n('icu:moveConversationToInbox')}
@@ -605,20 +623,28 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
         >
           {i18n('icu:deleteMessages')}
         </MenuItem>
-        {isPinned ? (
-          <MenuItem onClick={() => setPinned(id, false)}>
-            {i18n('icu:unpinConversation')}
-          </MenuItem>
-        ) : (
-          <MenuItem onClick={() => setPinned(id, true)}>
-            {i18n('icu:pinConversation')}
+        {isGroup && (
+          <MenuItem
+            onClick={() => {
+              if (cannotLeaveBecauseYouAreLastAdmin) {
+                this.setState({
+                  hasCannotLeaveGroupBecauseYouAreLastAdminAlert: true,
+                });
+              } else {
+                this.setState({ hasLeaveGroupConfirmation: true });
+              }
+            }}
+          >
+            {i18n(
+              'icu:ConversationHeader__ContextMenu__LeaveGroupAction__title'
+            )}
           </MenuItem>
         )}
       </ContextMenu>
     );
   }
 
-  private renderConfirmationDialog(): ReactNode {
+  private renderDeleteMessagesConfirmationDialog(): ReactNode {
     const { hasDeleteMessagesConfirmation } = this.state;
     const { destroyMessages, i18n, id } = this.props;
 
@@ -629,6 +655,9 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
     return (
       <ConfirmationDialog
         dialogName="ConversationHeader.destroyMessages"
+        title={i18n(
+          'icu:ConversationHeader__DeleteMessagesConfirmation__title'
+        )}
         actions={[
           {
             action: () => {
@@ -644,8 +673,76 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
           this.setState({ hasDeleteMessagesConfirmation: false });
         }}
       >
-        {i18n('icu:deleteConversationConfirmation')}
+        {i18n(
+          'icu:ConversationHeader__DeleteMessagesConfirmation__description'
+        )}
       </ConfirmationDialog>
+    );
+  }
+
+  private renderLeaveGroupConfirmationDialog(): ReactNode {
+    const { hasLeaveGroupConfirmation } = this.state;
+    const { cannotLeaveBecauseYouAreLastAdmin, leaveGroup, i18n, id } =
+      this.props;
+
+    if (!hasLeaveGroupConfirmation) {
+      return;
+    }
+
+    return (
+      <ConfirmationDialog
+        dialogName="ConversationHeader.leaveGroup"
+        title={i18n('icu:ConversationHeader__LeaveGroupConfirmation__title')}
+        actions={[
+          {
+            disabled: cannotLeaveBecauseYouAreLastAdmin,
+            action: () => {
+              this.setState({ hasLeaveGroupConfirmation: false });
+              if (!cannotLeaveBecauseYouAreLastAdmin) {
+                leaveGroup(id);
+              } else {
+                this.setState({
+                  hasLeaveGroupConfirmation: false,
+                  hasCannotLeaveGroupBecauseYouAreLastAdminAlert: true,
+                });
+              }
+            },
+            style: 'negative',
+            text: i18n(
+              'icu:ConversationHeader__LeaveGroupConfirmation__confirmButton'
+            ),
+          },
+        ]}
+        i18n={i18n}
+        onClose={() => {
+          this.setState({ hasLeaveGroupConfirmation: false });
+        }}
+      >
+        {i18n('icu:ConversationHeader__LeaveGroupConfirmation__description')}
+      </ConfirmationDialog>
+    );
+  }
+
+  private renderCannotLeaveGroupBecauseYouAreLastAdminAlert() {
+    const { hasCannotLeaveGroupBecauseYouAreLastAdminAlert } = this.state;
+    const { i18n } = this.props;
+
+    if (!hasCannotLeaveGroupBecauseYouAreLastAdminAlert) {
+      return;
+    }
+
+    return (
+      <Alert
+        i18n={i18n}
+        body={i18n(
+          'icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description'
+        )}
+        onClose={() => {
+          this.setState({
+            hasCannotLeaveGroupBecauseYouAreLastAdminAlert: false,
+          });
+        }}
+      />
     );
   }
 
@@ -699,13 +796,15 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
       return (
         <div className="module-ConversationHeader__header">
           {avatar}
-          <button
-            type="button"
-            className="module-ConversationHeader__header--clickable"
-            onClick={onClick}
-          >
-            {contents}
-          </button>
+          <div>
+            <button
+              type="button"
+              className="module-ConversationHeader__header--clickable"
+              onClick={onClick}
+            >
+              {contents}
+            </button>
+          </div>
         </div>
       );
     }
@@ -758,7 +857,9 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
     return (
       <>
         {modalNode}
-        {this.renderConfirmationDialog()}
+        {this.renderDeleteMessagesConfirmationDialog()}
+        {this.renderLeaveGroupConfirmationDialog()}
+        {this.renderCannotLeaveGroupBecauseYouAreLastAdminAlert()}
         <Measure
           bounds
           onResize={({ bounds }) => {

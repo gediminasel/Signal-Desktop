@@ -42,6 +42,7 @@ import { SendMessageProtoError } from '../textsecure/Errors';
 import * as expirationTimer from '../util/expirationTimer';
 import { getUserLanguages } from '../util/userLanguages';
 import { getMessageSentTimestamp } from '../util/getMessageSentTimestamp';
+import { getTaggedConversationUuid } from '../util/getConversationUuid';
 
 import type { ReactionType } from '../types/Reactions';
 import { UUID, UUIDKind } from '../types/UUID';
@@ -1827,7 +1828,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
           ...encodedContent,
           timestamp,
           destination: conv.get('e164'),
-          destinationUuid: conv.get('uuid'),
+          destinationUuid: getTaggedConversationUuid(conv.attributes),
           expirationStartTimestamp:
             this.get('expirationStartTimestamp') || null,
           conversationIdsSentTo,
@@ -2232,14 +2233,16 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
           unidentifiedStatus.forEach(
             ({ destinationUuid, destination, unidentified }) => {
-              const identifier = destinationUuid || destination;
+              const identifier =
+                destinationUuid?.aci || destinationUuid?.pni || destination;
               if (!identifier) {
                 return;
               }
 
               const { conversation: destinationConversation } =
                 window.ConversationController.maybeMergeContacts({
-                  aci: destinationUuid,
+                  aci: destinationUuid?.aci,
+                  pni: destinationUuid?.pni,
                   e164: destination || undefined,
                   reason: `handleDataMessage(${initialMessage.timestamp})`,
                 });

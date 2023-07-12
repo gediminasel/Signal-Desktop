@@ -363,6 +363,7 @@ export class ConversationModel extends window.Backbone
     this.unset('tokens');
 
     this.on('change:members change:membersV2', this.fetchContacts);
+    this.on('change:isArchived', this.onArchiveChange);
 
     this.typingRefreshTimer = null;
     this.typingPauseTimer = null;
@@ -3155,7 +3156,9 @@ export class ConversationModel extends window.Backbone
         assertDev(resolvedTime, 'Direct call must have accepted or ended time');
         timestamp = resolvedTime;
         unread =
-          !callHistoryDetails.wasDeclined && !callHistoryDetails.acceptedTime;
+          callHistoryDetails.wasIncoming &&
+          !callHistoryDetails.wasDeclined &&
+          !callHistoryDetails.acceptedTime;
         detailsToSave = {
           ...callHistoryDetails,
           callMode: CallMode.Direct,
@@ -3176,7 +3179,7 @@ export class ConversationModel extends window.Backbone
       this.queueJob('addCallHistory', async () => {
         // Force save if we're adding a new call history message for a direct call
         let forceSave = true;
-        let previousMessage: MessageAttributesType | void;
+        let previousMessage: MessageAttributesType | null = null;
         if (callHistoryDetails.callMode === CallMode.Direct) {
           const messageId =
             await window.Signal.Data.getCallHistoryMessageByCallId(
@@ -3189,9 +3192,8 @@ export class ConversationModel extends window.Backbone
             );
             // We don't want to force save if we're updating an existing message
             forceSave = false;
-            previousMessage = await window.Signal.Data.getMessageById(
-              messageId
-            );
+            previousMessage =
+              (await window.Signal.Data.getMessageById(messageId)) ?? null;
           } else {
             log.info(
               `addCallHistory: No existing call history message found (Call ID: ${callHistoryDetails.callId})`
@@ -3867,14 +3869,18 @@ export class ConversationModel extends window.Backbone
             lastMessageStatus: 'sending' as const,
           };
 
+      const isEditMessage = Boolean(message.get('editHistory'));
+
       this.set({
         ...draftProperties,
         ...(enabledProfileSharing ? { profileSharing: true } : {}),
         ...(dontAddMessage
           ? {}
           : this.incrementSentMessageCount({ dry: true })),
-        active_at: now,
-        timestamp: now,
+        // If it's an edit message we don't want to optimistically set the
+        // active_at & timestamp to now. We want it to stay the same.
+        active_at: isEditMessage ? this.get('active_at') : now,
+        timestamp: isEditMessage ? this.get('timestamp') : now,
         ...(unarchivedConversation ? { isArchived: false } : {}),
       });
 
@@ -4265,6 +4271,17 @@ export class ConversationModel extends window.Backbone
       }
       this.captureChange('isArchived');
     }
+  }
+
+  private onArchiveChange() {
+    const isArchived = this.get('isArchived');
+    if (isArchived) {
+      return;
+    }
+    if (!this.get('hiddenFromConversationSearch')) {
+      return;
+    }
+    this.set('hiddenFromConversationSearch', false);
   }
 
   setMarkedUnread(markedUnread: boolean): void {
@@ -4963,6 +4980,9 @@ export class ConversationModel extends window.Backbone
       active_at: null,
       pendingUniversalTimer: undefined,
     });
+    if (isGroup(this.attributes)) {
+      this.set('hiddenFromConversationSearch', true);
+    }
     window.Signal.Data.updateConversation(this.attributes);
 
     await window.Signal.Data.removeAllMessagesInConversation(this.id, {
