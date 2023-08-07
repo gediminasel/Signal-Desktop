@@ -15,6 +15,7 @@ import { showToast } from '../util/showToast';
 import { strictAssert } from '../util/assert';
 import { TargetedMessageSource } from '../state/ducks/conversationsEnums';
 import { usePrevious } from '../hooks/usePrevious';
+import { Environment, getEnvironment } from '../environment';
 
 export type PropsType = {
   firstEnvelopeTimestamp: number | undefined;
@@ -185,6 +186,12 @@ export function Inbox({
     setInternalHasInitialLoadCompleted(hasInitialLoadCompleted);
   }, [hasInitialLoadCompleted]);
 
+  useEffect(() => {
+    if (!selectedConversationId) {
+      window.SignalCI?.handleEvent('empty-inbox:rendered', null);
+    }
+  }, [selectedConversationId]);
+
   if (!internalHasInitialLoadCompleted) {
     let loadingProgress = 0;
     if (
@@ -258,24 +265,28 @@ export function Inbox({
       <div className="Inbox">
         <div className="module-title-bar-drag-area" />
 
-        <div className="left-pane-wrapper">{renderLeftPane()}</div>
+        <div id="LeftPane">{renderLeftPane()}</div>
 
-        <div className="conversation-stack">
+        <div className="Inbox__conversation-stack">
           <div id="toast" />
           {selectedConversationId && (
             <div
-              className="conversation"
+              className="Inbox__conversation"
               id={`conversation-${selectedConversationId}`}
             >
               {renderConversationView()}
             </div>
           )}
           {!prevConversationId && (
-            <div className="no-conversation-open">
+            <div className="Inbox__no-conversation-open">
               {renderMiniPlayer({ shouldFlow: false })}
               <div className="module-splash-screen__logo module-img--128 module-logo-blue" />
-              <h3>{i18n('icu:welcomeToSignal')}</h3>
-              <p className="whats-new-placeholder">
+              <h3>
+                {getEnvironment() !== Environment.Staging
+                  ? i18n('icu:welcomeToSignal')
+                  : 'THIS IS A STAGING DESKTOP'}
+              </h3>
+              <p>
                 <WhatsNewLink
                   i18n={i18n}
                   showWhatsNewModal={showWhatsNewModal}

@@ -635,6 +635,26 @@
     "messageformat": "સ્વીકાર",
     "description": "Label for a button to accept a new safety number"
   },
+  "icu:SafetyNumberViewer__migration__text": {
+    "messageformat": "સેફ્ટી નંબર અપડેટ કરવામાં આવી રહ્યાં છે.",
+    "description": "An explanatory note in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__migration__learn_more": {
+    "messageformat": "વધુ શીખો",
+    "description": "A link text in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__card__prev": {
+    "messageformat": "અગાઉનો સેફ્ટી નંબર",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__card__next": {
+    "messageformat": "આગામી સેફ્ટી નંબર",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__carousel__dot": {
+    "messageformat": "સેફ્ટી નંબર વર્ઝન, {total,number}માંથી {index,number}",
+    "description": "An ARIA label for safety number carousel button."
+  },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "ચકાસાયેલ તરીકે માર્ક કરો",
     "description": "Safety number viewer, verification toggle button, when not verified, sets verified"
@@ -642,6 +662,42 @@
   "icu:SafetyNumberViewer__clearVerification": {
     "messageformat": "ચકાસણી દૂર કરો",
     "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
+  },
+  "icu:SafetyNumberViewer__hint--migration": {
+    "messageformat": "{name} સાથે તમારા એન્ડ-ટૂ-એન્ડ એન્ક્રિપ્શનની સુરક્ષાની ખાતરી કરવા માટે, ઉપર દર્શાવેલ કલર કાર્ડને તેમના ડિવાઇસ સાથે મેચ કરો અને નંબરની સાથે સરખાવો. જો આ મેચ ન થતાં હોય, તો સેફ્ટી નંબરોની બીજી જોડી અજમાવી જુઓ. ફક્ત એક જ જોડી મેચ કરવાની જરૂર છે.",
+    "description": "Safety number viewer, text of the hint during migration period"
+  },
+  "icu:SafetyNumberViewer__hint--normal": {
+    "messageformat": "{name} સાથે તમારા એન્ડ-ટૂ-એન્ડ એન્ક્રિપ્શનની ખાતરી કરવા, ઉપર દર્શાવેલા નંબર તેમના ડિવાઇસ સાથે સરખાવો. તેઓ તેમના ડિવાઇસથી પણ તમારો કોડ સ્કેન કરી શકે છે.",
+    "description": "Safety number viewer, text of the hint after migration period"
+  },
+  "icu:SafetyNumberOnboarding__title": {
+    "messageformat": "સેફ્ટી નંબરોમાં ફેરફારો",
+    "description": "Title of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p1": {
+    "messageformat": "Signal પર આવનારા ગોપનીયતા ફીચરને સક્ષમ કરવા માટે ફેરફારના સમયગાળા દરમિયાન સેફ્ટી નંબરો અપડેટ કરવામાં આવી રહ્યાં છે.",
+    "description": "Paragraph 1 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p2": {
+    "messageformat": "સેફ્ટી નંબરોની ખાતરી કરવા માટે, તમારા સંપર્કના ડિવાઇસ સાથે કલર કાર્ડને મેચ કરો. જો આ મેચ ન થતાં હોય, તો સેફ્ટી નંબરોની બીજી જોડી અજમાવી જુઓ. ફક્ત એક જ જોડી મેચ કરવાની જરૂર છે.",
+    "description": "Paragraph 2 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__help": {
+    "messageformat": "મદદ જોઈએ છે?",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__close": {
+    "messageformat": "સમજાઈ ગયું",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberNotReady__body": {
+    "messageformat": "તમે આ વ્યક્તિ સાથે મેસેજની આપ-લે કર્યા પછી તેની સાથે એક સેફ્ટી નંબર બનાવવામાં આવશે.",
+    "description": "Body of SafetyNumberNotReady modal"
+  },
+  "icu:SafetyNumberNotReady__learn-more": {
+    "messageformat": "વધુ શીખો",
+    "description": "Text of 'Learn more' button of SafetyNumberNotReady modal"
   },
   "icu:isVerified": {
     "messageformat": "તમે {name} સાથે તમારો સલામતી નંબર ચકાસી લીધો છે.",
@@ -1212,7 +1268,8 @@
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
   "icu:verifyHelp": {
-    "messageformat": "{name} સાથે તમારા એન્ડ-ટુ-એન્ડ એન્ક્રિપ્શનની ચકાસણી કરવા, ઉપર દર્શાવેલા નંબર તેમના ડિવાઇસ સાથે સરખાવો."
+    "messageformat": "{name} સાથે તમારા એન્ડ-ટૂ-એન્ડ એન્ક્રિપ્શનની સુરક્ષાની ખાતરી કરવા, ઉપર દર્શાવેલા નંબર તેમના ડિવાઇસ સાથે સરખાવો. તેઓ ઉપર દર્શાવેલ QR કોડ પણ સ્કેન કરી શકે છે.",
+    "description": "(deleted 07/05/2023)"
   },
   "icu:theirIdentityUnknown": {
     "messageformat": "તમે હજી સુધી આ સંપર્ક સાથે કોઈ મેસેજની આપલે કરી નથી. પ્રથમ મેસેજ પછી તેમની સાથે તમારો સલામતી નંબર ઉપલબ્ધ થશે."
@@ -1281,9 +1338,33 @@
     "messageformat": "ડિલીટ કરો",
     "description": "Menu item for deleting messages, title case."
   },
-  "icu:deleteConversationConfirmation": {
-    "messageformat": "આ ચેટને કાયમીરૂપે ડિલીટ કરવી છે?",
-    "description": "Confirmation dialog text that asks the user if they really wish to delete the conversation. Answer buttons use the strings 'ok' and 'cancel'. The deletion is permanent, i.e. it cannot be undone."
+  "icu:ConversationHeader__DeleteMessagesConfirmation__title": {
+    "messageformat": "ચેટ ડિલીટ કરવી છે?",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__DeleteMessagesConfirmation__description": {
+    "messageformat": "આ ડિવાઇસમાંથી આ ચેટને ડિલીટ કરવામાં આવશે.",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
+    "messageformat": "ગ્રૂપ છોડો",
+    "description": "This is a button to leave a group"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__title": {
+    "messageformat": "શું તમે ખરેખર છોડવા માગો છો?",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__description": {
+    "messageformat": "તમે હવે આ ગ્રૂપમાં મેસેજ મોકલી કે મેળવવી શકશો નહીં.",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__confirmButton": {
+    "messageformat": "છોડો",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Confirm Button"
+  },
+  "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
+    "messageformat": "તમે ગ્રૂપ છોડો તે પહેલાં, તમારે આ ગ્રૂપ માટે ઓછામાં ઓછા એક નવા એડમિન પસંદ કરવા આવશ્યક છે.",
+    "description": "Conversation Header > Leave Group Action > Cannot Leave Group Because You Are Last Admin Alert > Description"
   },
   "icu:sessionEnded": {
     "messageformat": "સુરક્ષિત સત્ર રીસેટ કરો.",
@@ -4335,6 +4416,10 @@
     "messageformat": "{contact}ને ગ્રુપ એડમિનના પદેથી દૂર કરવા છે?",
     "description": "Shown in a confirmation dialog when you are about to remove admin privileges from someone"
   },
+  "icu:ContactModal--add-to-group": {
+    "messageformat": "અન્ય ગ્રુપ માં ઉમેરો",
+    "description": "Button text for adding contact to another group in Group Contact Details modal"
+  },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "ગ્રુપમાંથી દૂર કરો",
     "description": "Button text for remove from group button in Group Contact Details modal"
@@ -5167,6 +5252,18 @@
     "messageformat": "યુઝરનેમ",
     "description": "Default text for username field"
   },
+  "icu:ProfileEditor__username-link": {
+    "messageformat": "QR કોડ અથવા લિંક",
+    "description": "Label of a profile editor row that navigates to username link and qr code modal"
+  },
+  "icu:ProfileEditor__username-link__tooltip__title": {
+    "messageformat": "તમારું યુઝરનેમ શેર કરો",
+    "description": "Title of tooltip displayed under 'QR code or link' button for getting username link"
+  },
+  "icu:ProfileEditor__username-link__tooltip__body": {
+    "messageformat": "તમારો વિશિષ્ટ QR કોડ કે લિંક શેર કરીને અન્ય લોકોને તમારી સાથે ચેટ શરૂ કરવા દો.",
+    "description": "Body of tooltip displayed under 'QR code or link' button for getting username link"
+  },
   "icu:ProfileEditor--username--title": {
     "messageformat": "તમારું યુઝરનેમ પસંદ કરો",
     "description": "Title text for username modal"
@@ -5225,6 +5322,10 @@
   },
   "icu:ProfileEditor--username--confirm-delete-body": {
     "messageformat": "આમ કરવાથી તમારું યુઝરનેમ દૂર થઈ જશે, અને અન્ય ઉપયોગકર્તાઓ તેને લઈ શકશે. તમે ખરેખર આમ કરવા માગો છો?",
+    "description": "(deleted 07/10/2023) Shown in dialog body if user has saved an empty string to delete their username"
+  },
+  "icu:ProfileEditor--username--confirm-delete-body-2": {
+    "messageformat": "This will remove your username and disable your QR code and link. “{username}” will be available for others to claim. Are you sure?",
     "description": "Shown in dialog body if user has saved an empty string to delete their username"
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
@@ -6403,6 +6504,42 @@
     "messageformat": "આ અંકો તમારા યુઝરનેમને ખાનગી રાખવામાં મદદ કરે છે જેથી તમે અનિચ્છનીય મેસેજને ટાળી શકો. તમારું યુઝરનેમ ફક્ત એ લોકો અને ગ્રૂપ સાથે જ શેર કરો જેમની સાથે તમને ચેટ કરવું ગમે છે. જો તમે યુઝરનેમ બદલો છો તો તમને નવા અંકો મળશે.",
     "description": "Body of the popup with information about discriminator in username"
   },
+  "icu:EditUsernameModalBody__change-confirmation": {
+    "messageformat": "Changing your username will reset your existing QR code and link. Are you sure?",
+    "description": "Body of the confirmation dialog displayed when user is about to change their username"
+  },
+  "icu:EditUsernameModalBody__change-confirmation__continue": {
+    "messageformat": "ચાલુ રાખો",
+    "description": "Text of the primary button on username change confirmation modal"
+  },
+  "icu:UsernameLinkModalBody__save": {
+    "messageformat": "સેવ કરો",
+    "description": "Name of the button for saving username link QR code to disk in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color": {
+    "messageformat": "રંગ",
+    "description": "Name of the button for changing the username link QR code color in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__copy": {
+    "messageformat": "ક્લિપબોર્ડમાં કૉપિ કરો",
+    "description": "ARIA label of the button for copying the username link to clipboard in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__help": {
+    "messageformat": "Only share your QR code and link with people you trust. When shared others will be able to view your username and start a chat with you.",
+    "description": "Text of disclaimer at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__reset": {
+    "messageformat": "ફરીથી સેટ કરો",
+    "description": "Text of button at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color__radio": {
+    "messageformat": "Username link color, {index,number} of {total,number}",
+    "description": "ARIA label of button for selecting username link color"
+  },
+  "icu:UsernameLinkModalBody__reset__confirm": {
+    "messageformat": "If you reset your QR code, your existing QR code and link will no longer work.",
+    "description": "Text of confirmation modal when resetting the username link"
+  },
   "icu:UsernameOnboardingModalBody__title": {
     "messageformat": "તમારું Signal યુઝરનેમ સેટ કરો",
     "description": "Title of username onboarding modal"
@@ -6412,7 +6549,7 @@
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "દરેક યુઝરનેમમાં એક અનન્ય લિંક હોય છે જે તમે તમારા મિત્રો તમારી સાથે ચેટ શરૂ કરી શકે તે માટે તેમની સાથે શેર કરી શકો છો",
+    "messageformat": "દરેક યુઝરનેમમાં એક અનન્ય QR કોડ અને લિંક હોય છે જે તમે તમારા મિત્રો તમારી સાથે ચેટ શરૂ કરી શકે તે માટે તેમની સાથે શેર કરી શકો છો",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
@@ -6487,24 +6624,10 @@
     "messageformat": "નાના ફેરફારો, ભૂલ સુધારા અને પ્રદર્શનમાં વધારો. Signalનો ઉપયોગ કરવા બદલ આભાર!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.21--0": {
-    "messageformat": "જ્યારે 1-ઓન-1 કૉલ રિંગ થઈ રહ્યો હોય ત્યારે પોતાને વધુ સારી રીતે જુઓ. વ્યક્તિગત વીડિયો કૉલ હવે તે જ ફૂલ-સ્ક્રીન વ્યૂનો ઉપયોગ કરે છે જે અગાઉ ફક્ત નવા ગ્રૂપ કૉલની શરૂઆતમાં જ દેખાતા હતા. જ્યારે સુસંગત રહેવાની વાત આવે છે, ત્યારે અમે એકસરખા (પ્રતિરોધક નહીં) રહેવાનો પ્રયત્ન કરીએ છીએ અને હવે વિસંગતતા અસ્તિત્વમાં નથી કારણ કે આ વસ્તુઓ હવે અલગ નથી.",
-    "description": "Release notes for v6.21"
+  "icu:WhatsNew__v6.27--0": {
+    "messageformat": "આ અપડેટમાં વોઇસ અને વીડિયો કૉલ માટે થોડા સુધારાઓ અને કેટલાક નાના દસ્તાવેજીકરણ અપડેટનો સમાવેશ થાય છે (આભાર, {linkToGithub}!)."
   },
-  "icu:WhatsNew__v6.21--1": {
-    "messageformat": "અમે આ રિલીઝ પર કામ કરતી વખતે {complexspaces}ની મદદ અને પ્રતિસાદ બદલ તેમના માટે અમારી પ્રશંસા પણ વ્યક્ત કરવા માગીએ છીએ.",
-    "description": "Release notes for v6.21"
-  },
-  "icu:WhatsNew__v6.22--0": {
-    "messageformat": "મેસેજ કમ્પોઝ કરવાના ફીલ્ડમાં કોઈ પણ ટેક્સ્ટ પસંદ કરીને તમારા મેસેજમાં રહેલા ટેક્સ્ટને ફોર્મેટ કરો.\n\nએવું બોલ્ડ સ્ટેટમેન્ટ બનાવો જે ખરેખર બોલ્ડ હોય, એમ. નાઇટ શ્યામલનને સ્પોઇલર ઇફેક્ટ સાથે સમાપ્ત થતો ટ્વિસ્ટ મોકલો, ત્રાંસા અક્ષરોમાં \"એલેક્સ\" લખીને નામ પર ભાર આપો, નકારવામાં આવેલા ડિનર આઇડિયામાં સ્ટ્રાઇકથ્રુ સાથે વચ્ચે એક લીટી મૂકો અથવા મોનોસ્પેસમાં કોડ શેર કરો.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.22--1": {
-    "messageformat": "અમે લેટેસ્ટ ઇમોજી અક્ષરો માટે સપોર્ટ ઉમેર્યો છે, તેથી હવે તમે &quot;શેકિંગ ફેસ&quot; (<emojify>🫨</emojify>) સાથે તમારી ઉત્તેજના વ્યક્ત કરી શકો છો અથવા જ્યારે કોઈ તમને પૂછે કે તમે તમારા મિત્રોની કેટલી નજીક છો ત્યારે &quot;પી પોડ&quot; (<emojify>🫛</emojify>) સાથે પ્રતિક્રિયા આપી શકો છો.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.23--1": {
-    "messageformat": "બગ ફિક્સના નાના વર્ગીકરણ ઉપરાંત, આ રિલીઝમાં વિકાસકર્તા દસ્તાવેજીકરણ અપડેટ (આભાર, {d108}!) અને મેસેજ ફોરવર્ડિંગ ઇન્ટરફેસના કેટલાક ડિઝાઇન સુધારાઓ (આભાર, {hackerbirds}!) સામેલ છે.",
-    "description": "Release notes for v6.23"
+  "icu:WhatsNew__v6.28--0": {
+    "messageformat": "We modified the notification icons that appear for group updates, like when someone new joins a group. These icons help improve legibility, especially if you live within the darkness of the Dark Theme. The previous icons merely adopted the dark. The new icons were born in it, molded by it."
   }
 }

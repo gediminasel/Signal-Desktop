@@ -369,11 +369,11 @@
     "description": "Undoes Archive Conversation action, and moves archived conversation back to the main conversation list"
   },
   "icu:pinConversation": {
-    "messageformat": "சாட்டை பின் செய்க",
+    "messageformat": "சாட்டை பின் செய்",
     "description": "Shown in menu for conversation, and pins the conversation to the top of the conversation list"
   },
   "icu:unpinConversation": {
-    "messageformat": "அரட்டையில் பின்னை அகற்று",
+    "messageformat": "சாட்டின் பின்னை அகற்று",
     "description": "Undoes Archive Conversation action, and unpins the conversation from the top of the conversation list"
   },
   "icu:pinnedConversationsFull": {
@@ -635,6 +635,26 @@
     "messageformat": "ஒப்புக்கொள்",
     "description": "Label for a button to accept a new safety number"
   },
+  "icu:SafetyNumberViewer__migration__text": {
+    "messageformat": "பாதுகாப்பு எண்கள் புதுப்பிக்கப்படுகின்றன.",
+    "description": "An explanatory note in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__migration__learn_more": {
+    "messageformat": "மேலும் அறிக",
+    "description": "A link text in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__card__prev": {
+    "messageformat": "முந்தைய பாதுகாப்பு எண்",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__card__next": {
+    "messageformat": "அடுத்த பாதுகாப்பு எண்",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__carousel__dot": {
+    "messageformat": "பாதுகாப்பு எண் பதிப்பு, {index,number} / {total,number}",
+    "description": "An ARIA label for safety number carousel button."
+  },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "சரிபார்க்கப்பட்டதாகக் குறி",
     "description": "Safety number viewer, verification toggle button, when not verified, sets verified"
@@ -642,6 +662,42 @@
   "icu:SafetyNumberViewer__clearVerification": {
     "messageformat": "சரிபார்ப்பை நீக்கு",
     "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
+  },
+  "icu:SafetyNumberViewer__hint--migration": {
+    "messageformat": "{name} இன் எண்ட்-டு-எண்ட் என்க்ரிப்ஷனைச் சரிபார்க்க, மேலே உள்ள வண்ண அட்டையை அவற்றின் டிவைஸ் உடன் பொருத்தி எண்களை ஒப்பிடவும். இவை பொருந்தவில்லை என்றால், மற்ற பாதுகாப்பு எண்கள் ஜோடியை முயற்சிக்கவும். ஒரு ஜோடி மட்டுமே பொருந்த வேண்டும்.",
+    "description": "Safety number viewer, text of the hint during migration period"
+  },
+  "icu:SafetyNumberViewer__hint--normal": {
+    "messageformat": "{name} இன் எண்ட்-டு-எண்ட் என்க்ரிப்ஷனைச் சரிபார்க்க, மேலே உள்ள எண்களை அவற்றின் டிவைஸ் உடன் ஒப்பிடவும். அவர்கள் தங்கள் டிவைசில் இருக்கும் உங்கள் குறியீட்டை ஸ்கேன் செய்யலாம்.",
+    "description": "Safety number viewer, text of the hint after migration period"
+  },
+  "icu:SafetyNumberOnboarding__title": {
+    "messageformat": "பாதுகாப்பு எண்களில் மாற்றங்கள்",
+    "description": "Title of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p1": {
+    "messageformat": "Signal இல் வரவிருக்கும் தனியுரிமை அம்சங்களை இயக்க, பாதுகாப்பு எண்கள் குறிப்பிட்ட நிலை மாற்றப்படும் காலத்தில் புதுப்பிக்கப்படவுள்ளன.",
+    "description": "Paragraph 1 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p2": {
+    "messageformat": "பாதுகாப்பு எண்களைச் சரிபார்க்க, உங்கள் தொடர்பின் டிவைஸ் உடன் வண்ண அட்டையைப் பொருத்தவும். இவை பொருந்தவில்லை என்றால், மற்ற பாதுகாப்பு எண்கள் ஜோடியை முயற்சிக்கவும். ஒரு ஜோடி மட்டுமே பொருந்த வேண்டும்.",
+    "description": "Paragraph 2 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__help": {
+    "messageformat": "உங்களுக்கு உதவி வேண்டுமா?",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__close": {
+    "messageformat": "அறிந்துகொண்டேன்",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberNotReady__body": {
+    "messageformat": "இவருடன் நீங்கள் செய்திகளைப் பரிமாறிய பிறகு அவருடன் ஒரு பாதுகாப்பு எண் உருவாக்கப்படும்.",
+    "description": "Body of SafetyNumberNotReady modal"
+  },
+  "icu:SafetyNumberNotReady__learn-more": {
+    "messageformat": "மேலும் அறிக",
+    "description": "Text of 'Learn more' button of SafetyNumberNotReady modal"
   },
   "icu:isVerified": {
     "messageformat": "உங்கள் பாதுகாப்பு எண்ணை {name} with உடன் சரிபார்த்துள்ளீர்கள்.",
@@ -1212,7 +1268,8 @@
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
   "icu:verifyHelp": {
-    "messageformat": "{name} உடன் உங்கள் எண்ட்-டு-எண்ட் என்க்ரிப்ஷனின் பாதுகாப்பைச் சரிபார்க்க, மேலே உள்ள எண்களை அவற்றின் சாதனத்துடன் ஒப்பிடவும்."
+    "messageformat": "{name} உடன் உங்கள் எண்ட்-டு-எண்ட் என்க்ரிப்ஷனின் பாதுகாப்பைச் சரிபார்க்க, மேலே உள்ள எண்களை அவற்றின் டிவைஸ் உடன் ஒப்பிடவும். மேலே உள்ள QR குறியீட்டையும் அவர்கள் ஸ்கேன் செய்யலாம்.",
+    "description": "(deleted 07/05/2023)"
   },
   "icu:theirIdentityUnknown": {
     "messageformat": "இந்த தொடர்புடன் நீங்கள் இதுவரை எந்த செய்திகளையும் பரிமாறவில்லை. அவர்களுடனான உங்கள் பாதுகாப்பு எண் முதல் செய்திக்குப் பிறகு கிடைக்கும்."
@@ -1281,9 +1338,33 @@
     "messageformat": "நீக்கு",
     "description": "Menu item for deleting messages, title case."
   },
-  "icu:deleteConversationConfirmation": {
-    "messageformat": "இந்தச் சாட்டை நிரந்தரமாக நீக்க வேண்டுமா?",
-    "description": "Confirmation dialog text that asks the user if they really wish to delete the conversation. Answer buttons use the strings 'ok' and 'cancel'. The deletion is permanent, i.e. it cannot be undone."
+  "icu:ConversationHeader__DeleteMessagesConfirmation__title": {
+    "messageformat": "சாட்டை நீக்க வேண்டுமா?",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__DeleteMessagesConfirmation__description": {
+    "messageformat": "இது அரட்டை இந்த டிவைசிலிருந்து நீக்கப்படும்.",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
+    "messageformat": "குழுவிலுருந்து விலகு",
+    "description": "This is a button to leave a group"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__title": {
+    "messageformat": "நீங்கள் உண்மையிலேயே வெளியேற விரும்புகிறீர்களா?",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__description": {
+    "messageformat": "இந்தக் குழுவில் நீங்கள் இனிமேல் மெசேஜ்களை அனுப்பவோ பெறவோ முடியாது.",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__confirmButton": {
+    "messageformat": "விலகு",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Confirm Button"
+  },
+  "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
+    "messageformat": "நீங்கள் வெளியேறுவதற்கு முன், இந்த குழுவிற்கு குறைந்தபட்சம் ஒரு புதிய நிர்வாகியையாவது தேர்வு செய்ய வேண்டும்.",
+    "description": "Conversation Header > Leave Group Action > Cannot Leave Group Because You Are Last Admin Alert > Description"
   },
   "icu:sessionEnded": {
     "messageformat": "பாதுகாப்பான அமர்வு மீட்டமைப்பு",
@@ -4335,6 +4416,10 @@
     "messageformat": "{contact}-ஐ குழு நிர்வாகியிலிருந்து நீக்குவதா?",
     "description": "Shown in a confirmation dialog when you are about to remove admin privileges from someone"
   },
+  "icu:ContactModal--add-to-group": {
+    "messageformat": "மற்றொரு குழுவில் சேர்க்கவும்",
+    "description": "Button text for adding contact to another group in Group Contact Details modal"
+  },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "குழுவிலிருந்து அகற்று",
     "description": "Button text for remove from group button in Group Contact Details modal"
@@ -5167,6 +5252,18 @@
     "messageformat": "பயனர்பெயர்",
     "description": "Default text for username field"
   },
+  "icu:ProfileEditor__username-link": {
+    "messageformat": "QR code or link",
+    "description": "Label of a profile editor row that navigates to username link and qr code modal"
+  },
+  "icu:ProfileEditor__username-link__tooltip__title": {
+    "messageformat": "Share your username",
+    "description": "Title of tooltip displayed under 'QR code or link' button for getting username link"
+  },
+  "icu:ProfileEditor__username-link__tooltip__body": {
+    "messageformat": "Let others start a chat with you by sharing your unique QR code or link.",
+    "description": "Body of tooltip displayed under 'QR code or link' button for getting username link"
+  },
   "icu:ProfileEditor--username--title": {
     "messageformat": "உங்கள் பயனர்பெயரைத் தேர்வு செய்யவும்",
     "description": "Title text for username modal"
@@ -5225,6 +5322,10 @@
   },
   "icu:ProfileEditor--username--confirm-delete-body": {
     "messageformat": "இது உங்கள் பயனர்பெயரை அகற்றி, பிற பயனர்கள் அதை உரிமைகோர அனுமதிக்கும். நீங்கள் உறுதியாக உள்ளீர்களா?",
+    "description": "(deleted 07/10/2023) Shown in dialog body if user has saved an empty string to delete their username"
+  },
+  "icu:ProfileEditor--username--confirm-delete-body-2": {
+    "messageformat": "This will remove your username and disable your QR code and link. “{username}” will be available for others to claim. Are you sure?",
     "description": "Shown in dialog body if user has saved an empty string to delete their username"
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
@@ -6403,6 +6504,42 @@
     "messageformat": "இந்த இலக்கங்கள் உங்கள் பயனர்பெயரை தனிப்பட்டதாக வைத்திருக்க உதவுவதால் தேவையற்ற செய்திகளைத் தவிர்க்கலாம். நீங்கள் சாட் செய்ய விரும்பும் நபர்கள் மற்றும் குழுக்களுடன் மட்டும் உங்கள் பயனர் பெயரைப் பகிரவும். நீங்கள் பயனர்பெயர்களை மாற்றினால், புதிய இலக்கங்களின் தொகுப்பைப் பெறுவீர்கள்.",
     "description": "Body of the popup with information about discriminator in username"
   },
+  "icu:EditUsernameModalBody__change-confirmation": {
+    "messageformat": "Changing your username will reset your existing QR code and link. Are you sure?",
+    "description": "Body of the confirmation dialog displayed when user is about to change their username"
+  },
+  "icu:EditUsernameModalBody__change-confirmation__continue": {
+    "messageformat": "தொடர்க",
+    "description": "Text of the primary button on username change confirmation modal"
+  },
+  "icu:UsernameLinkModalBody__save": {
+    "messageformat": "சேமி",
+    "description": "Name of the button for saving username link QR code to disk in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color": {
+    "messageformat": "நிறம்",
+    "description": "Name of the button for changing the username link QR code color in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__copy": {
+    "messageformat": "நகலெடுக்கவும் கிளிப்போர்டுக்கு",
+    "description": "ARIA label of the button for copying the username link to clipboard in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__help": {
+    "messageformat": "Only share your QR code and link with people you trust. When shared others will be able to view your username and start a chat with you.",
+    "description": "Text of disclaimer at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__reset": {
+    "messageformat": "மீட்டமைக்க",
+    "description": "Text of button at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color__radio": {
+    "messageformat": "Username link color, {index,number} of {total,number}",
+    "description": "ARIA label of button for selecting username link color"
+  },
+  "icu:UsernameLinkModalBody__reset__confirm": {
+    "messageformat": "If you reset your QR code, your existing QR code and link will no longer work.",
+    "description": "Text of confirmation modal when resetting the username link"
+  },
   "icu:UsernameOnboardingModalBody__title": {
     "messageformat": "உங்கள் Signal பயனர் பெயரை அமைக்கவும்",
     "description": "Title of username onboarding modal"
@@ -6412,7 +6549,7 @@
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "உங்களுடன் சாட் செய்வதற்கு உங்கள் நண்பர்களுடன் பகிர்ந்து கொள்ள ஒவ்வொரு பயனர்பெயருக்கும் தனித்துவமான இணைப்பு உள்ளது",
+    "messageformat": "ஒவ்வொரு பயனர்பெயருக்கும் தனிப்பட்ட QR குறியீடு மற்றும் இணைப்பு உள்ளது, உங்களுடன் சாட் செய்ய நண்பர்களுடன் பகிர்ந்து கொள்ளலாம்",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
@@ -6487,24 +6624,10 @@
     "messageformat": "சிறு மாற்றங்கள், பிழை திருத்தங்கள் மற்றும் செயல்திறன் மேம்பாடுகள். சிக்னலைப் பயன்படுத்தியதற்கு நன்றி!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.21--0": {
-    "messageformat": "1-ஆன்-1 அழைப்பு ஒலிக்கும்போது உங்களை மேம்பட்ட தோற்றத்தில் பாருங்கள். தனிப்பட்ட வீடியோ அழைப்புகள் இப்போது புதிய குழு அழைப்பின் தொடக்கத்தில் மட்டும் தோன்றிய அதே முழுத்திரை காட்சியைப் பயன்படுத்துகின்றன. தொடர்ந்து ஒரே சீராக இருக்க வேண்டிய நிலையில், நாங்கள் தொடர் முயற்சியை மேற்கொள்கிறோம் (தடையாக இருப்பதில்லை), இப்போது இவை இனி வித்தியாசமாக இருக்காது என்பதால் இல்லாமல் இருப்பதே முரண்பாடாக உள்ளது.",
-    "description": "Release notes for v6.21"
+  "icu:WhatsNew__v6.27--0": {
+    "messageformat": "இந்த புதுப்பிப்பில் குரல் மற்றும் வீடியோ அழைப்புகளுக்கான சில மேம்பாடுகள் மற்றும் சில சிறிய ஆவணப் புதுப்பிப்புகள் ஆகியவை அடங்கும் (நன்றி, {linkToGithub}!)."
   },
-  "icu:WhatsNew__v6.21--1": {
-    "messageformat": "இந்த வெளியீட்டில் பணிபுரியும் போது {complexspaces} வழங்கிய உதவி மற்றும் கருத்துக்காக அவர்களுக்கு எங்கள் பாராட்டுகளைத் தெரிவிக்க விரும்புகிறோம்.",
-    "description": "Release notes for v6.21"
-  },
-  "icu:WhatsNew__v6.22--0": {
-    "messageformat": "மெசேஜ் எழுதும் புலத்தில் ஏதேனும் உரையைத் தேர்ந்தெடுப்பதன் மூலம் உங்கள் மெசேஜ்களில் உரையை வடிவமைக்கவும்.\n\nஉங்கள் கதை யோசனையைத் தைரியமாக உண்மையிலேயே போல்டு செய்யப்பட்ட எழுத்தில் ஸ்பாய்லர் எஃபக்ட் கொண்ட ட்விஸ்ட்டுடன் எம். நைட் ஷியாமளனுக்கு அனுப்புங்கள், \"Alex\" என சாய்வெழுத்தில் எழுதி, டின்னர் ஐடியாவை திட்டத்தை ரத்துசெய்ததாகக் குறுக்கே கோடு போட்டு அடித்து அல்லது மோனோஸ்பேஸில் பகிர்வுக் குறியீட்டுடன் அனுப்புங்கள்.\n",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.22--1": {
-    "messageformat": "சமீபத்திய ஈமோஜி கேரக்டர்களுக்கான ஆதரவைச் சேர்த்துள்ளோம், எனவே உங்கள் நண்பர்களுடன் நீங்கள் எவ்வளவு நெருக்கமாக இருக்கிறீர்கள் என்று யாராவது உங்களிடம் கேட்டால், இப்போது உங்கள் உற்சாகத்தை &quot;ஷேக்கிங் ஃபேஸ்&quot; (<emojify>🫨</emojify>) மூலம் வெளிப்படுத்தலாம் அல்லது &quot;பட்டாணி பருப்பு&quot; மூலம் எதிர்வினையாற்றலாம் (<emojify>🫛</emojify>).",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.23--1": {
-    "messageformat": "பிழைத் திருத்தங்களுக்கான சிறிய சேர்க்கைகளுடன், இந்த வெளியீட்டில் டெவலப்பருக்கான ஆவணப் புதுப்பிப்புகளும் (நன்றி, {d108}!) மெசேஜ் ஃபார்வேடு செய்வதற்கான இடைமுகத்தில் சில வடிவமைப்பு மேம்படுத்தல்களும் (நன்றி, {hackerbirds}!) செய்யப்பட்டுள்ளன.",
-    "description": "Release notes for v6.23"
+  "icu:WhatsNew__v6.28--0": {
+    "messageformat": "We modified the notification icons that appear for group updates, like when someone new joins a group. These icons help improve legibility, especially if you live within the darkness of the Dark Theme. The previous icons merely adopted the dark. The new icons were born in it, molded by it."
   }
 }

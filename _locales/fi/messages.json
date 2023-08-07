@@ -635,6 +635,26 @@
     "messageformat": "Hyväksy",
     "description": "Label for a button to accept a new safety number"
   },
+  "icu:SafetyNumberViewer__migration__text": {
+    "messageformat": "Turvanumeroita päivitetään.",
+    "description": "An explanatory note in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__migration__learn_more": {
+    "messageformat": "Lue lisää",
+    "description": "A link text in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__card__prev": {
+    "messageformat": "Edellinen turvanumero",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__card__next": {
+    "messageformat": "Seuraava turvanumero",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__carousel__dot": {
+    "messageformat": "Turvanumeroversio, {index,number}/{total,number}",
+    "description": "An ARIA label for safety number carousel button."
+  },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "Merkitse vahvistetuksi",
     "description": "Safety number viewer, verification toggle button, when not verified, sets verified"
@@ -642,6 +662,42 @@
   "icu:SafetyNumberViewer__clearVerification": {
     "messageformat": "Poista varmennus",
     "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
+  },
+  "icu:SafetyNumberViewer__hint--migration": {
+    "messageformat": "Varmenna päästä päähän -salaus henkilön {name} kanssa vertaamalla, että numero yllä olevassa värikortissa vastaa hänen laitettaan. Jos numerot eivät vastaa, kokeile toista turvanumeroparia. Vain yhden parin on vastattava.",
+    "description": "Safety number viewer, text of the hint during migration period"
+  },
+  "icu:SafetyNumberViewer__hint--normal": {
+    "messageformat": "Varmenna päästä päähän -salaus henkilön {name} kanssa vertaamalla yllä olevia numeroita hänen laitteeseensa. Henkilö voi myös skannata koodisi laitteellaan.",
+    "description": "Safety number viewer, text of the hint after migration period"
+  },
+  "icu:SafetyNumberOnboarding__title": {
+    "messageformat": "Muutoksia turvanumeroihin",
+    "description": "Title of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p1": {
+    "messageformat": "Turvanumeroita päivitetään siirtymäkauden aikana, jotta Signalin tulevat yksityisyysominaisuudet voidaan ottaa käyttöön.",
+    "description": "Paragraph 1 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p2": {
+    "messageformat": "Tarkista turvanumerot varmistamalla, että värikortin numero vastaa yhteystietosi laitetta. Jos numerot eivät vastaa, kokeile toista turvanumeroparia. Vain yhden parin on vastattava.",
+    "description": "Paragraph 2 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__help": {
+    "messageformat": "Tarvitsetko apua?",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__close": {
+    "messageformat": "Selvä",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberNotReady__body": {
+    "messageformat": "Tälle henkilölle luodaan turvanumero, kun olet vaihtanut viestejä hänen kanssaan.",
+    "description": "Body of SafetyNumberNotReady modal"
+  },
+  "icu:SafetyNumberNotReady__learn-more": {
+    "messageformat": "Lue lisää",
+    "description": "Text of 'Learn more' button of SafetyNumberNotReady modal"
   },
   "icu:isVerified": {
     "messageformat": "Olet vahvistanut turvanumerosi yhteystiedon {name} kanssa.",
@@ -1212,7 +1268,8 @@
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
   "icu:verifyHelp": {
-    "messageformat": "Vertaa yllä olevia lukuja {name} kanssa varmistaaksesi päästä päähän -salauksen turvallisuus."
+    "messageformat": "Varmenna päästä päähän -salauksen turvallisuus henkilön {name} kanssa vertaamalla yllä olevia numeroita hänen laitteeseensa. Henkilö voi myös skannata yllä olevan QR-koodin.",
+    "description": "(deleted 07/05/2023)"
   },
   "icu:theirIdentityUnknown": {
     "messageformat": "Et ole lähettänyt tai vastaanottanut vielä viestejä tämän yhteystiedon kanssa. Turvanumero on saatavilla vasta ensimmäisen viestin jälkeen."
@@ -1281,9 +1338,33 @@
     "messageformat": "Poista",
     "description": "Menu item for deleting messages, title case."
   },
-  "icu:deleteConversationConfirmation": {
-    "messageformat": "Poistetaanko tämä keskustelu pysyvästi?",
-    "description": "Confirmation dialog text that asks the user if they really wish to delete the conversation. Answer buttons use the strings 'ok' and 'cancel'. The deletion is permanent, i.e. it cannot be undone."
+  "icu:ConversationHeader__DeleteMessagesConfirmation__title": {
+    "messageformat": "Poistetaanko keskustelu?",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__DeleteMessagesConfirmation__description": {
+    "messageformat": "Tämä keskustelu poistetaan tältä laitteelta.",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
+    "messageformat": "Poistu ryhmästä",
+    "description": "This is a button to leave a group"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__title": {
+    "messageformat": "Haluatko varmasti poistua?",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__description": {
+    "messageformat": "Et voi enää lähettää tai vastaanottaa viestejä tässä ryhmässä.",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__confirmButton": {
+    "messageformat": "Poistu",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Confirm Button"
+  },
+  "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
+    "messageformat": "Ennen kuin poistut, valitse tälle ryhmälle vähintään yksi uusi järjestelmänvalvoja.",
+    "description": "Conversation Header > Leave Group Action > Cannot Leave Group Because You Are Last Admin Alert > Description"
   },
   "icu:sessionEnded": {
     "messageformat": "Suojattu istunto alustettu",
@@ -4335,6 +4416,10 @@
     "messageformat": "Poistetaanko {contact} ryhmän ylläpitäjistä?",
     "description": "Shown in a confirmation dialog when you are about to remove admin privileges from someone"
   },
+  "icu:ContactModal--add-to-group": {
+    "messageformat": "Lisää toiseen ryhmään",
+    "description": "Button text for adding contact to another group in Group Contact Details modal"
+  },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Poista ryhmästä",
     "description": "Button text for remove from group button in Group Contact Details modal"
@@ -5167,6 +5252,18 @@
     "messageformat": "Käyttäjänimi",
     "description": "Default text for username field"
   },
+  "icu:ProfileEditor__username-link": {
+    "messageformat": "QR-koodi tai linkki",
+    "description": "Label of a profile editor row that navigates to username link and qr code modal"
+  },
+  "icu:ProfileEditor__username-link__tooltip__title": {
+    "messageformat": "Jaa käyttäjänimesi",
+    "description": "Title of tooltip displayed under 'QR code or link' button for getting username link"
+  },
+  "icu:ProfileEditor__username-link__tooltip__body": {
+    "messageformat": "Jaa yksilöllinen QR-koodi tai linkki, jotta muut voivat aloittaa keskustelun kanssasi.",
+    "description": "Body of tooltip displayed under 'QR code or link' button for getting username link"
+  },
   "icu:ProfileEditor--username--title": {
     "messageformat": "Valitse käyttäjänimi",
     "description": "Title text for username modal"
@@ -5225,6 +5322,10 @@
   },
   "icu:ProfileEditor--username--confirm-delete-body": {
     "messageformat": "Tämä poistaa käyttäjätunnuksesi antaen muiden käyttäjien ottaa se käyttöön. Oletko varma?",
+    "description": "(deleted 07/10/2023) Shown in dialog body if user has saved an empty string to delete their username"
+  },
+  "icu:ProfileEditor--username--confirm-delete-body-2": {
+    "messageformat": "This will remove your username and disable your QR code and link. “{username}” will be available for others to claim. Are you sure?",
     "description": "Shown in dialog body if user has saved an empty string to delete their username"
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
@@ -6403,6 +6504,42 @@
     "messageformat": "Nämä numerot auttavat suojaamaan yksityisyyttäsi, jotta voit välttää ei-toivottuja viestejä. Jaa käyttäjänimesi vain niille henkilöille ja ryhmille, joiden kanssa haluat keskustella. Jos vaihdat käyttäjänimeä, saat uuden numerosarjan.",
     "description": "Body of the popup with information about discriminator in username"
   },
+  "icu:EditUsernameModalBody__change-confirmation": {
+    "messageformat": "Changing your username will reset your existing QR code and link. Are you sure?",
+    "description": "Body of the confirmation dialog displayed when user is about to change their username"
+  },
+  "icu:EditUsernameModalBody__change-confirmation__continue": {
+    "messageformat": "Jatka",
+    "description": "Text of the primary button on username change confirmation modal"
+  },
+  "icu:UsernameLinkModalBody__save": {
+    "messageformat": "Tallenna",
+    "description": "Name of the button for saving username link QR code to disk in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color": {
+    "messageformat": "Väri",
+    "description": "Name of the button for changing the username link QR code color in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__copy": {
+    "messageformat": "Kopioi leikepöydälle",
+    "description": "ARIA label of the button for copying the username link to clipboard in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__help": {
+    "messageformat": "Only share your QR code and link with people you trust. When shared others will be able to view your username and start a chat with you.",
+    "description": "Text of disclaimer at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__reset": {
+    "messageformat": "Palauta alkuasetuksiin",
+    "description": "Text of button at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color__radio": {
+    "messageformat": "Username link color, {index,number} of {total,number}",
+    "description": "ARIA label of button for selecting username link color"
+  },
+  "icu:UsernameLinkModalBody__reset__confirm": {
+    "messageformat": "If you reset your QR code, your existing QR code and link will no longer work.",
+    "description": "Text of confirmation modal when resetting the username link"
+  },
   "icu:UsernameOnboardingModalBody__title": {
     "messageformat": "Määritä Signal-käyttäjänimesi",
     "description": "Title of username onboarding modal"
@@ -6412,7 +6549,7 @@
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Jokaisella käyttäjänimellä on yksilöllinen linkki, jonka voit jakaa ystävillesi, jotta he voivat aloittaa keskustelun kanssasi",
+    "messageformat": "Jokaisella käyttäjänimellä on yksilöllinen QR-koodi ja linkki, jotka voit jakaa ystävillesi, jotta he voivat aloittaa keskustelun kanssasi",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
@@ -6487,24 +6624,10 @@
     "messageformat": "Pieniä säätöjä, virheenkorjauksia ja suorituskykyparannuksia. Kiitos, että käytät Signalia!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.21--0": {
-    "messageformat": "Kahdenkeskisissä videopuheluissa käytetään nyt puhelun soidessa samaa koko näytön näkymää kuin ryhmäpuheluissa.",
-    "description": "Release notes for v6.21"
+  "icu:WhatsNew__v6.27--0": {
+    "messageformat": "Tämä päivitys sisältää muutamia ääni- ja videopuheluiden parannuksia sekä joitakin pieniä dokumentaatiopäivityksiä (kiitos {linkToGithub}!)."
   },
-  "icu:WhatsNew__v6.21--1": {
-    "messageformat": "Haluamme myös kiittää henkilöä {complexspaces} tähän julkaisuun liittyvästä avusta ja palautteesta.",
-    "description": "Release notes for v6.21"
-  },
-  "icu:WhatsNew__v6.22--0": {
-    "messageformat": "Voit muotoilla viestiesi tekstiä. Valitse vain haluamasi teksti viestinkirjoituskentässä ja lisää lihavointi, kursiivi, yliviivaus tai muu tekstitehoste.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.22--1": {
-    "messageformat": "Lisäsimme tuen uusille emojihahmoille.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.23--1": {
-    "messageformat": "Muutamien virhekorjausten lisäksi tämä julkaisu sisältää myös kehittäjien dokumentaatiopäivityksiä (kiitos, {d108}!) ja joitain suunnitteluparannuksia viestien edelleen lähettämisen käyttöliittymään (kiitos, {hackerbirds}!).",
-    "description": "Release notes for v6.23"
+  "icu:WhatsNew__v6.28--0": {
+    "messageformat": "We modified the notification icons that appear for group updates, like when someone new joins a group. These icons help improve legibility, especially if you live within the darkness of the Dark Theme. The previous icons merely adopted the dark. The new icons were born in it, molded by it."
   }
 }

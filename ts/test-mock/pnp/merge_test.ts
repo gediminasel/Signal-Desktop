@@ -92,10 +92,7 @@ describe('pnp/merge', function needsName() {
   });
 
   afterEach(async function after() {
-    if (this.currentTest?.state !== 'passed') {
-      await bootstrap.saveLogs(app);
-    }
-
+    await bootstrap.maybeSaveLogs(this.currentTest, app);
     await app.close();
     await bootstrap.teardown();
   });
@@ -112,7 +109,7 @@ describe('pnp/merge', function needsName() {
         const { phone } = bootstrap;
 
         const window = await app.getWindow();
-        const leftPane = window.locator('.left-pane-wrapper');
+        const leftPane = window.locator('#LeftPane');
 
         debug('opening conversation with the aci contact');
         await leftPane
@@ -249,7 +246,7 @@ describe('pnp/merge', function needsName() {
     }
 
     const window = await app.getWindow();
-    const leftPane = window.locator('.left-pane-wrapper');
+    const leftPane = window.locator('#LeftPane');
 
     debug('opening conversation with the merged contact');
     await leftPane
@@ -347,7 +344,7 @@ describe('pnp/merge', function needsName() {
     }
 
     const window = await app.getWindow();
-    const leftPane = window.locator('.left-pane-wrapper');
+    const leftPane = window.locator('#LeftPane');
 
     debug('opening conversation with the merged contact');
     await leftPane

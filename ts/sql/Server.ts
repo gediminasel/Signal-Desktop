@@ -93,6 +93,7 @@ import type {
   GetAllStoriesResultType,
   GetConversationRangeCenteredOnMessageResultType,
   GetKnownMessageAttachmentsResultType,
+  GetRecentStoryRepliesOptionsType,
   GetUnreadByConversationAndMarkReadResultType,
   IdentityKeyIdType,
   StoredIdentityKeyType,
@@ -133,6 +134,7 @@ import type {
   UnprocessedType,
   UnprocessedUpdateType,
   GetNearbyMessageFromDeletedSetOptionsType,
+  StoredKyberPreKeyType,
 } from './Interface';
 import { SeenStatus } from '../MessageSeenStatus';
 import {
@@ -172,6 +174,14 @@ const dataInterface: ServerInterface = {
   removeIdentityKeyById,
   removeAllIdentityKeys,
   getAllIdentityKeys,
+
+  createOrUpdateKyberPreKey,
+  getKyberPreKeyById,
+  bulkAddKyberPreKeys,
+  removeKyberPreKeyById,
+  removeKyberPreKeysByUuid,
+  removeAllKyberPreKeys,
+  getAllKyberPreKeys,
 
   createOrUpdatePreKey,
   getPreKeyById,
@@ -242,6 +252,7 @@ const dataInterface: ServerInterface = {
 
   getMessageCount,
   getStoryCount,
+  getRecentStoryReplies,
   saveMessage,
   saveMessages,
   removeMessage,
@@ -656,6 +667,40 @@ async function getAllIdentityKeys(): Promise<Array<StoredIdentityKeyType>> {
   return getAllFromTable(getInstance(), IDENTITY_KEYS_TABLE);
 }
 
+const KYBER_PRE_KEYS_TABLE = 'kyberPreKeys';
+async function createOrUpdateKyberPreKey(
+  data: StoredKyberPreKeyType
+): Promise<void> {
+  return createOrUpdate(getInstance(), KYBER_PRE_KEYS_TABLE, data);
+}
+async function getKyberPreKeyById(
+  id: PreKeyIdType
+): Promise<StoredKyberPreKeyType | undefined> {
+  return getById(getInstance(), KYBER_PRE_KEYS_TABLE, id);
+}
+async function bulkAddKyberPreKeys(
+  array: Array<StoredKyberPreKeyType>
+): Promise<void> {
+  return bulkAdd(getInstance(), KYBER_PRE_KEYS_TABLE, array);
+}
+async function removeKyberPreKeyById(
+  id: PreKeyIdType | Array<PreKeyIdType>
+): Promise<void> {
+  return removeById(getInstance(), KYBER_PRE_KEYS_TABLE, id);
+}
+async function removeKyberPreKeysByUuid(uuid: UUIDStringType): Promise<void> {
+  const db = getInstance();
+  db.prepare<Query>('DELETE FROM kyberPreKeys WHERE ourUuid IS $uuid;').run({
+    uuid,
+  });
+}
+async function removeAllKyberPreKeys(): Promise<void> {
+  return removeAllFromTable(getInstance(), KYBER_PRE_KEYS_TABLE);
+}
+async function getAllKyberPreKeys(): Promise<Array<StoredKyberPreKeyType>> {
+  return getAllFromTable(getInstance(), KYBER_PRE_KEYS_TABLE);
+}
+
 const PRE_KEYS_TABLE = 'preKeys';
 async function createOrUpdatePreKey(data: StoredPreKeyType): Promise<void> {
   return createOrUpdate(getInstance(), PRE_KEYS_TABLE, data);
@@ -668,7 +713,9 @@ async function getPreKeyById(
 async function bulkAddPreKeys(array: Array<StoredPreKeyType>): Promise<void> {
   return bulkAdd(getInstance(), PRE_KEYS_TABLE, array);
 }
-async function removePreKeyById(id: PreKeyIdType): Promise<void> {
+async function removePreKeyById(
+  id: PreKeyIdType | Array<PreKeyIdType>
+): Promise<void> {
   return removeById(getInstance(), PRE_KEYS_TABLE, id);
 }
 async function removePreKeysByUuid(uuid: UUIDStringType): Promise<void> {
@@ -700,7 +747,9 @@ async function bulkAddSignedPreKeys(
 ): Promise<void> {
   return bulkAdd(getInstance(), SIGNED_PRE_KEYS_TABLE, array);
 }
-async function removeSignedPreKeyById(id: SignedPreKeyIdType): Promise<void> {
+async function removeSignedPreKeyById(
+  id: SignedPreKeyIdType | Array<SignedPreKeyIdType>
+): Promise<void> {
   return removeById(getInstance(), SIGNED_PRE_KEYS_TABLE, id);
 }
 async function removeSignedPreKeysByUuid(uuid: UUIDStringType): Promise<void> {
@@ -756,7 +805,9 @@ async function getAllItems(): Promise<StoredAllItemsType> {
 
   return result as unknown as StoredAllItemsType;
 }
-async function removeItemById(id: ItemKeyType): Promise<void> {
+async function removeItemById(
+  id: ItemKeyType | Array<ItemKeyType>
+): Promise<void> {
   return removeById(getInstance(), ITEMS_TABLE, id);
 }
 async function removeAllItems(): Promise<void> {
@@ -1870,8 +1921,14 @@ function saveMessageSync(
 
   if (attachments) {
     strictAssert(
-      attachments.every(attachment => !attachment.data),
-      'Attempting to save a hydrated message'
+      attachments.every(
+        attachment =>
+          !attachment.data &&
+          !attachment.screenshotData &&
+          !attachment.screenshot?.data &&
+          !attachment.thumbnail?.data
+      ),
+      'Attempting to save a message with binary attachment data'
     );
   }
 
@@ -2474,6 +2531,53 @@ async function _removeAllReactions(): Promise<void> {
 enum AdjacentDirection {
   Older = 'Older',
   Newer = 'Newer',
+}
+
+async function getRecentStoryReplies(
+  storyId: string,
+  options?: GetRecentStoryRepliesOptionsType
+): Promise<Array<MessageTypeUnhydrated>> {
+  return getRecentStoryRepliesSync(storyId, options);
+}
+
+// This function needs to pull story replies from all conversations, because when we send
+//   a story to one or more distribution lists, each reply to it will be in the sender's
+//   1:1 conversation with us.
+function getRecentStoryRepliesSync(
+  storyId: string,
+  {
+    limit = 100,
+    messageId,
+    receivedAt = Number.MAX_VALUE,
+    sentAt = Number.MAX_VALUE,
+  }: GetRecentStoryRepliesOptionsType = {}
+): Array<MessageTypeUnhydrated> {
+  const db = getInstance();
+  const timeFilters = {
+    first: sqlFragment`received_at = ${receivedAt} AND sent_at < ${sentAt}`,
+    second: sqlFragment`received_at < ${receivedAt}`,
+  };
+
+  const createQuery = (timeFilter: QueryFragment): QueryFragment => sqlFragment`
+    SELECT json FROM messages WHERE
+      (${messageId} IS NULL OR id IS NOT ${messageId}) AND
+      isStory IS 0 AND
+      storyId IS ${storyId} AND
+      (
+        ${timeFilter}
+      )
+      ORDER BY received_at DESC, sent_at DESC
+  `;
+
+  const template = sqlFragment`
+    SELECT first.json FROM (${createQuery(timeFilters.first)}) as first
+    UNION ALL
+    SELECT second.json FROM (${createQuery(timeFilters.second)}) as second
+  `;
+
+  const [query, params] = sql`${template} LIMIT ${limit}`;
+
+  return db.prepare(query).all(params);
 }
 
 function getAdjacentMessagesByConversationSync(
@@ -5015,6 +5119,7 @@ async function removeAll(): Promise<void> {
       DELETE FROM identityKeys;
       DELETE FROM items;
       DELETE FROM jobs;
+      DELETE FROM kyberPreKeys;
       DELETE FROM messages_fts;
       DELETE FROM messages;
       DELETE FROM preKeys;
@@ -5050,6 +5155,7 @@ async function removeAllConfiguration(
       `
       DELETE FROM identityKeys;
       DELETE FROM jobs;
+      DELETE FROM kyberPreKeys;
       DELETE FROM preKeys;
       DELETE FROM senderKeys;
       DELETE FROM sendLogMessageIds;

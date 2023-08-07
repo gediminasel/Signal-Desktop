@@ -5,7 +5,8 @@
 import assert from 'assert';
 import type { PrimaryDevice } from '@signalapp/mock-server';
 
-import { Bootstrap, debug, stats, RUN_COUNT, DISCARD_COUNT } from './fixtures';
+import { Bootstrap, debug, RUN_COUNT, DISCARD_COUNT } from './fixtures';
+import { stats } from '../../util/benchmark/stats';
 
 const CONVERSATION_SIZE = 1000; // messages
 const DELAY = 50; // milliseconds
@@ -55,7 +56,7 @@ Bootstrap.benchmark(async (bootstrap: Bootstrap): Promise<void> => {
     assert(app);
     const window = await app.getWindow();
 
-    const leftPane = window.locator('.left-pane-wrapper');
+    const leftPane = window.locator('#LeftPane');
 
     const openConvo = async (contact: PrimaryDevice): Promise<void> => {
       debug('opening conversation', contact.profileName);

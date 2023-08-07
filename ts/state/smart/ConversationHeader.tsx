@@ -14,15 +14,12 @@ import { getPreferredBadgeSelector } from '../selectors/badges';
 import {
   getConversationByUuidSelector,
   getConversationSelector,
-  getConversationTitle,
+  getHasPanelOpen,
   isMissingRequiredProfileSharing,
 } from '../selectors/conversations';
 import { CallMode } from '../../types/Calling';
-import {
-  getActiveCall,
-  isAnybodyElseInGroupCall,
-  useCallingActions,
-} from '../ducks/calling';
+import { getActiveCall, useCallingActions } from '../ducks/calling';
+import { isAnybodyElseInGroupCall } from '../ducks/callingHelpers';
 import {
   getConversationCallMode,
   useConversationsActions,
@@ -88,11 +85,8 @@ export function SmartConversationHeader({ id }: OwnProps): JSX.Element {
 
   const badgeSelector = useSelector(getPreferredBadgeSelector);
   const badge = badgeSelector(conversation.badges);
-  const conversationTitle = useSelector(getConversationTitle);
   const i18n = useSelector(getIntl);
-  const showBackButton = useSelector<StateType, boolean>(
-    state => state.conversations.targetedConversationPanels.length > 0
-  );
+  const hasPanelShowing = useSelector<StateType, boolean>(getHasPanelOpen);
   const outgoingCallButtonStyle = useSelector<
     StateType,
     OutgoingCallButtonStyle
@@ -156,8 +150,8 @@ export function SmartConversationHeader({ id }: OwnProps): JSX.Element {
       ])}
       badge={badge}
       cannotLeaveBecauseYouAreLastAdmin={cannotLeaveBecauseYouAreLastAdmin}
-      conversationTitle={conversationTitle}
       destroyMessages={destroyMessages}
+      hasPanelShowing={hasPanelShowing}
       hasStories={hasStories}
       i18n={i18n}
       id={id}
@@ -180,7 +174,6 @@ export function SmartConversationHeader({ id }: OwnProps): JSX.Element {
       setDisappearingMessages={setDisappearingMessages}
       setMuteExpiration={setMuteExpiration}
       setPinned={setPinned}
-      showBackButton={showBackButton}
       theme={theme}
       toggleSelectMode={toggleSelectMode}
       viewUserStories={viewUserStories}

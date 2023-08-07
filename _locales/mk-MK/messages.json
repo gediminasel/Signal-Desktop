@@ -635,6 +635,26 @@
     "messageformat": "Прифати",
     "description": "Label for a button to accept a new safety number"
   },
+  "icu:SafetyNumberViewer__migration__text": {
+    "messageformat": "Се ажурира начинот на кој функционираат безбедносните бројки.",
+    "description": "An explanatory note in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__migration__learn_more": {
+    "messageformat": "Дознајте повеќе",
+    "description": "A link text in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__card__prev": {
+    "messageformat": "Претходен безбедносен број",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__card__next": {
+    "messageformat": "Следен безбедносен број",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__carousel__dot": {
+    "messageformat": "Верзија на безбедносен број, {index,number} од {total,number}",
+    "description": "An ARIA label for safety number carousel button."
+  },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "Означи како проверено",
     "description": "Safety number viewer, verification toggle button, when not verified, sets verified"
@@ -642,6 +662,42 @@
   "icu:SafetyNumberViewer__clearVerification": {
     "messageformat": "Отстрани проверка",
     "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
+  },
+  "icu:SafetyNumberViewer__hint--migration": {
+    "messageformat": "За да ја потврдите целосната шифрираност со {name}, спојте ја картичката со боја погоре со уредот на {name} и споредете ги бројките. Доколку не се совпаѓаат, пробајте со друг пар безбедносни бројки. Само еден пар треба да се совпаѓа.",
+    "description": "Safety number viewer, text of the hint during migration period"
+  },
+  "icu:SafetyNumberViewer__hint--normal": {
+    "messageformat": "За да ја проверите безбедноста на целосното шифрирање со {name}, споредете ги бројките горе со уредот на {name}. Исто така може да го скенираат вашиот код со нивниот уред.",
+    "description": "Safety number viewer, text of the hint after migration period"
+  },
+  "icu:SafetyNumberOnboarding__title": {
+    "messageformat": "Промени на безбедносните броеви",
+    "description": "Title of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p1": {
+    "messageformat": "Се ажурира начинот на кој функционираат безбедносните бројки во текот на преоден период за да се овозможат претстојните функции за приватност на Signal.\n\n",
+    "description": "Paragraph 1 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p2": {
+    "messageformat": "За да ги потврдите безбедносните броеви, спојте ја картичката со боја со уредот на вашиот контакт. Ако не се совпаѓаат, повлечете и обидете се со друг пар безбедносни бројки. Само еден пар треба да се совпаѓа.",
+    "description": "Paragraph 2 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__help": {
+    "messageformat": "Потребна Ви е помош?",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__close": {
+    "messageformat": "Во ред",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberNotReady__body": {
+    "messageformat": "Ќе се создаде безбедносен број за оваа личност откако ќе размените пораки.",
+    "description": "Body of SafetyNumberNotReady modal"
+  },
+  "icu:SafetyNumberNotReady__learn-more": {
+    "messageformat": "Дознајте повеќе",
+    "description": "Text of 'Learn more' button of SafetyNumberNotReady modal"
   },
   "icu:isVerified": {
     "messageformat": "Успешна проверка на безбедносниот број со {name}.",
@@ -1212,7 +1268,8 @@
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
   "icu:verifyHelp": {
-    "messageformat": "За да ја проверите безбедноста на целосното шифрирање со {name}, споредете ги бројките горе со нивниот уред."
+    "messageformat": "За да ја проверите безбедноста на целосното шифрирање со {name}, споредете ги бројките горе со уредот на {name}. Исто така можат да го скенираат QR кодот погоре.",
+    "description": "(deleted 07/05/2023)"
   },
   "icu:theirIdentityUnknown": {
     "messageformat": "Сѐ уште немате разменето пораки со овој контакт. Вашиот безбедносен број за овој контакт ќе стане достапен по испраќањето на првата порака."
@@ -1281,9 +1338,33 @@
     "messageformat": "Избриши",
     "description": "Menu item for deleting messages, title case."
   },
-  "icu:deleteConversationConfirmation": {
-    "messageformat": "Дали сакате трајно да го избришете овој разговор?",
-    "description": "Confirmation dialog text that asks the user if they really wish to delete the conversation. Answer buttons use the strings 'ok' and 'cancel'. The deletion is permanent, i.e. it cannot be undone."
+  "icu:ConversationHeader__DeleteMessagesConfirmation__title": {
+    "messageformat": "Да се избрише разговорот?",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__DeleteMessagesConfirmation__description": {
+    "messageformat": "Овој разговор ќе биде избришан од овој уред.",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
+    "messageformat": "Напушти ја групата",
+    "description": "This is a button to leave a group"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__title": {
+    "messageformat": "Навистина сакате да ја напуштите групата?",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__description": {
+    "messageformat": "Нема да можете да праќате и да примате пораки во оваа група.",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__confirmButton": {
+    "messageformat": "Напушти",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Confirm Button"
+  },
+  "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
+    "messageformat": "Пред да ја напуштите групата мора да одберете барем еден нов администратор за оваа група.",
+    "description": "Conversation Header > Leave Group Action > Cannot Leave Group Because You Are Last Admin Alert > Description"
   },
   "icu:sessionEnded": {
     "messageformat": "Безбедната сесија е ресетирана",
@@ -4335,6 +4416,10 @@
     "messageformat": "Дали сакате да се отстрани {contact} како администратор на групата?",
     "description": "Shown in a confirmation dialog when you are about to remove admin privileges from someone"
   },
+  "icu:ContactModal--add-to-group": {
+    "messageformat": "Додај во друга група",
+    "description": "Button text for adding contact to another group in Group Contact Details modal"
+  },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Отстрани од група",
     "description": "Button text for remove from group button in Group Contact Details modal"
@@ -5167,6 +5252,18 @@
     "messageformat": "Корисничко име",
     "description": "Default text for username field"
   },
+  "icu:ProfileEditor__username-link": {
+    "messageformat": "QR code or link",
+    "description": "Label of a profile editor row that navigates to username link and qr code modal"
+  },
+  "icu:ProfileEditor__username-link__tooltip__title": {
+    "messageformat": "Share your username",
+    "description": "Title of tooltip displayed under 'QR code or link' button for getting username link"
+  },
+  "icu:ProfileEditor__username-link__tooltip__body": {
+    "messageformat": "Let others start a chat with you by sharing your unique QR code or link.",
+    "description": "Body of tooltip displayed under 'QR code or link' button for getting username link"
+  },
   "icu:ProfileEditor--username--title": {
     "messageformat": "Одберете корисничко име",
     "description": "Title text for username modal"
@@ -5225,6 +5322,10 @@
   },
   "icu:ProfileEditor--username--confirm-delete-body": {
     "messageformat": "Со ова ќе се отстрани вашето корисничко име, овозможувајќи им на други корисници да го употребат. Дали сте сигурни?",
+    "description": "(deleted 07/10/2023) Shown in dialog body if user has saved an empty string to delete their username"
+  },
+  "icu:ProfileEditor--username--confirm-delete-body-2": {
+    "messageformat": "This will remove your username and disable your QR code and link. “{username}” will be available for others to claim. Are you sure?",
     "description": "Shown in dialog body if user has saved an empty string to delete their username"
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
@@ -6403,6 +6504,42 @@
     "messageformat": "Со помош на овие бројки вашето корисничко име останува приватно, со што можете да избегнете непосакувани пораки. Споделувајте го вашето корисничко име само со луѓето и групите со кои сакате да разговарате. Ако го смените корисничкото име, ќе добиете нова низа бројки.",
     "description": "Body of the popup with information about discriminator in username"
   },
+  "icu:EditUsernameModalBody__change-confirmation": {
+    "messageformat": "Changing your username will reset your existing QR code and link. Are you sure?",
+    "description": "Body of the confirmation dialog displayed when user is about to change their username"
+  },
+  "icu:EditUsernameModalBody__change-confirmation__continue": {
+    "messageformat": "Продолжи",
+    "description": "Text of the primary button on username change confirmation modal"
+  },
+  "icu:UsernameLinkModalBody__save": {
+    "messageformat": "Зачувај",
+    "description": "Name of the button for saving username link QR code to disk in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color": {
+    "messageformat": "Боја",
+    "description": "Name of the button for changing the username link QR code color in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__copy": {
+    "messageformat": "Copy to Clipboard",
+    "description": "ARIA label of the button for copying the username link to clipboard in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__help": {
+    "messageformat": "Only share your QR code and link with people you trust. When shared others will be able to view your username and start a chat with you.",
+    "description": "Text of disclaimer at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__reset": {
+    "messageformat": "Ресетираj",
+    "description": "Text of button at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color__radio": {
+    "messageformat": "Username link color, {index,number} of {total,number}",
+    "description": "ARIA label of button for selecting username link color"
+  },
+  "icu:UsernameLinkModalBody__reset__confirm": {
+    "messageformat": "If you reset your QR code, your existing QR code and link will no longer work.",
+    "description": "Text of confirmation modal when resetting the username link"
+  },
   "icu:UsernameOnboardingModalBody__title": {
     "messageformat": "Поставете го вашето корисничко име на Signal",
     "description": "Title of username onboarding modal"
@@ -6412,7 +6549,7 @@
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Секое корисничко име има единствен линк којшто можете да го споделите со вашите пријатели за да можат да започнат разговор со вас",
+    "messageformat": "Секое корисничко име има единствен QR код којшто можете да го споделите со вашите пријатели за да можат да започнат разговор со вас",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
@@ -6487,24 +6624,10 @@
     "messageformat": "Mали подобрувања, решени багови и подобрувања на перформансот. Ви благодариме што користите Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.21--0": {
-    "messageformat": "Погледнете се подобро додека имате повик еден на еден. Индивидуалните видео повици сега го имаат истиот преглед на целосен екран што претходно го имаше само на почетотокот на групните повици. Кога станува збор за доследност, пробуваме да бидеме истрајни (а не да пружаме отпор) и сега не постои разлика.",
-    "description": "Release notes for v6.21"
+  "icu:WhatsNew__v6.27--0": {
+    "messageformat": "Оваа верзија вклучува неколку подобрувања за гласовни и видео повици, а и некои мали ажурирања на документацијата (благодариме, {linkToGithub}!)."
   },
-  "icu:WhatsNew__v6.21--1": {
-    "messageformat": "Исто така сакаме да изразиме благодарност до {complexspaces} за помошта и фидбекот додека работевме на оваа верзија.",
-    "description": "Release notes for v6.21"
-  },
-  "icu:WhatsNew__v6.22--0": {
-    "messageformat": "Форматирајте го текстот во вашите пораки со селектирање на кој било текст во полето за составување пораки за да ги задебелите, закосите, пречкртате буквите, или за други ефекти.\n\n",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.22--1": {
-    "messageformat": "Додадовме поддршка за најновите емотикони.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.23--1": {
-    "messageformat": "Покрај малиот асортиман поправени багови, во оваа верзија се вклучени и ажурирања на документацијата за програмери (благодариме, {d108}!) и некои подобрувања на дизајнот на интерфејсот за проследување пораки (благодариме, {hackerbirds}!).",
-    "description": "Release notes for v6.23"
+  "icu:WhatsNew__v6.28--0": {
+    "messageformat": "We modified the notification icons that appear for group updates, like when someone new joins a group. These icons help improve legibility, especially if you live within the darkness of the Dark Theme. The previous icons merely adopted the dark. The new icons were born in it, molded by it."
   }
 }

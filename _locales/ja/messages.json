@@ -635,6 +635,26 @@
     "messageformat": "承認する",
     "description": "Label for a button to accept a new safety number"
   },
+  "icu:SafetyNumberViewer__migration__text": {
+    "messageformat": "安全番号を更新中です。",
+    "description": "An explanatory note in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__migration__learn_more": {
+    "messageformat": "さらに詳しく",
+    "description": "A link text in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__card__prev": {
+    "messageformat": "前回の安全番号",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__card__next": {
+    "messageformat": "次の安全番号",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__carousel__dot": {
+    "messageformat": "安全番号のバージョンは、 {total,number}の{index,number}です",
+    "description": "An ARIA label for safety number carousel button."
+  },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "検証済みにする",
     "description": "Safety number viewer, verification toggle button, when not verified, sets verified"
@@ -642,6 +662,42 @@
   "icu:SafetyNumberViewer__clearVerification": {
     "messageformat": "未検証にする",
     "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
+  },
+  "icu:SafetyNumberViewer__hint--migration": {
+    "messageformat": "{name}とのやりとりがエンドツーエンドで暗号化されているかを検証するには、お互いの端末で、上部のカラーカード（色がついた枠内）の数字が一致するかを確認してください。数字が一致しない場合は、別の安全番号を表示させてください。一致する数字は一つだけでかまいません。",
+    "description": "Safety number viewer, text of the hint during migration period"
+  },
+  "icu:SafetyNumberViewer__hint--normal": {
+    "messageformat": "{name} とのやりとりがエンドツーエンドで暗号化されているかを検証するには、お互いの端末で、上記の番号が相手端末上の番号と同じか確認してください。相手の端末であなたのコードをスキャンしてもらう方法もあります。",
+    "description": "Safety number viewer, text of the hint after migration period"
+  },
+  "icu:SafetyNumberOnboarding__title": {
+    "messageformat": "安全番号の変更",
+    "description": "Title of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p1": {
+    "messageformat": "Signal のプライバシー機能を以後も有効にするために、安全番号は移行期間中に更新されます。",
+    "description": "Paragraph 1 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p2": {
+    "messageformat": "安全番号を検証するために、カラーカード（色がついた枠内）の数字が一致するか相手の端末を確認してください。数字が一致しない場合は、別の安全番号を表示させてください。一致する数字は一つだけでかまいません。",
+    "description": "Paragraph 2 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__help": {
+    "messageformat": "お困りですか？",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__close": {
+    "messageformat": "わかりました",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberNotReady__body": {
+    "messageformat": "メッセージ交換をすると、相手との間に安全番号が作成されます。",
+    "description": "Body of SafetyNumberNotReady modal"
+  },
+  "icu:SafetyNumberNotReady__learn-more": {
+    "messageformat": "さらに詳しく",
+    "description": "Text of 'Learn more' button of SafetyNumberNotReady modal"
   },
   "icu:isVerified": {
     "messageformat": "{name} に対する安全番号を検証しました。",
@@ -1212,7 +1268,8 @@
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
   "icu:verifyHelp": {
-    "messageformat": "{name} とのエンドツーエンド暗号化の安全性を検証するには、上記の番号が相手端末上の番号と同じか確認してください。"
+    "messageformat": "{name} とのやりとりがエンドツーエンドで暗号化されているかの安全性を検証するには、お互いの端末で、上記の番号が相手端末上の番号と同じか確認してください。上部のQRコードをスキャンする方法もあります。",
+    "description": "(deleted 07/05/2023)"
   },
   "icu:theirIdentityUnknown": {
     "messageformat": "この連絡先とまだメッセージを交換していません。安全番号は最初のメッセージのあとに利用可能になります。"
@@ -1281,9 +1338,33 @@
     "messageformat": "消去",
     "description": "Menu item for deleting messages, title case."
   },
-  "icu:deleteConversationConfirmation": {
-    "messageformat": "このチャットを完全に消去しますか？",
-    "description": "Confirmation dialog text that asks the user if they really wish to delete the conversation. Answer buttons use the strings 'ok' and 'cancel'. The deletion is permanent, i.e. it cannot be undone."
+  "icu:ConversationHeader__DeleteMessagesConfirmation__title": {
+    "messageformat": "チャットを消去しますか？",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__DeleteMessagesConfirmation__description": {
+    "messageformat": "このチャットはこの端末から消去されます。",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
+    "messageformat": "グループを退出する",
+    "description": "This is a button to leave a group"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__title": {
+    "messageformat": "本当に退出しますか？",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__description": {
+    "messageformat": "このグループでのメッセージ送受信が出来なくなります。",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__confirmButton": {
+    "messageformat": "退出する",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Confirm Button"
+  },
+  "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
+    "messageformat": "グループから退出する前に、新しい管理者を1人以上選択する必要があります。",
+    "description": "Conversation Header > Leave Group Action > Cannot Leave Group Because You Are Last Admin Alert > Description"
   },
   "icu:sessionEnded": {
     "messageformat": "セキュアセッションがリセットされました",
@@ -4335,6 +4416,10 @@
     "messageformat": "{contact} をグループ管理者から外しますか？",
     "description": "Shown in a confirmation dialog when you are about to remove admin privileges from someone"
   },
+  "icu:ContactModal--add-to-group": {
+    "messageformat": "他のグループに追加",
+    "description": "Button text for adding contact to another group in Group Contact Details modal"
+  },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "グループから削除",
     "description": "Button text for remove from group button in Group Contact Details modal"
@@ -5167,6 +5252,18 @@
     "messageformat": "ユーザーネーム",
     "description": "Default text for username field"
   },
+  "icu:ProfileEditor__username-link": {
+    "messageformat": "QR コードもしくはリンク",
+    "description": "Label of a profile editor row that navigates to username link and qr code modal"
+  },
+  "icu:ProfileEditor__username-link__tooltip__title": {
+    "messageformat": "ユーザーネームを共有する",
+    "description": "Title of tooltip displayed under 'QR code or link' button for getting username link"
+  },
+  "icu:ProfileEditor__username-link__tooltip__body": {
+    "messageformat": "QRコードかリンクを共有すると、相手はあなたとチャットを開始できます。",
+    "description": "Body of tooltip displayed under 'QR code or link' button for getting username link"
+  },
   "icu:ProfileEditor--username--title": {
     "messageformat": "ユーザーネームを選択してください",
     "description": "Title text for username modal"
@@ -5225,6 +5322,10 @@
   },
   "icu:ProfileEditor--username--confirm-delete-body": {
     "messageformat": "これにより、あなたのユーザー名が削除され、他のユーザーがそのユーザー名を使用できるようになります。よろしいですか？",
+    "description": "(deleted 07/10/2023) Shown in dialog body if user has saved an empty string to delete their username"
+  },
+  "icu:ProfileEditor--username--confirm-delete-body-2": {
+    "messageformat": "This will remove your username and disable your QR code and link. “{username}” will be available for others to claim. Are you sure?",
     "description": "Shown in dialog body if user has saved an empty string to delete their username"
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
@@ -6403,6 +6504,42 @@
     "messageformat": "これらの数字は、ユーザーネームを非公開にし、不要なメッセージを避けるのに役立ちます。ユーザーネームは、チャットをしたい人やグループとだけ共有してください。ユーザーネームを変更すると、新しい数字に更新されます。",
     "description": "Body of the popup with information about discriminator in username"
   },
+  "icu:EditUsernameModalBody__change-confirmation": {
+    "messageformat": "Changing your username will reset your existing QR code and link. Are you sure?",
+    "description": "Body of the confirmation dialog displayed when user is about to change their username"
+  },
+  "icu:EditUsernameModalBody__change-confirmation__continue": {
+    "messageformat": "続ける",
+    "description": "Text of the primary button on username change confirmation modal"
+  },
+  "icu:UsernameLinkModalBody__save": {
+    "messageformat": "保存",
+    "description": "Name of the button for saving username link QR code to disk in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color": {
+    "messageformat": "色",
+    "description": "Name of the button for changing the username link QR code color in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__copy": {
+    "messageformat": "クリップボードにコピー",
+    "description": "ARIA label of the button for copying the username link to clipboard in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__help": {
+    "messageformat": "Only share your QR code and link with people you trust. When shared others will be able to view your username and start a chat with you.",
+    "description": "Text of disclaimer at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__reset": {
+    "messageformat": "リセットする",
+    "description": "Text of button at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color__radio": {
+    "messageformat": "Username link color, {index,number} of {total,number}",
+    "description": "ARIA label of button for selecting username link color"
+  },
+  "icu:UsernameLinkModalBody__reset__confirm": {
+    "messageformat": "If you reset your QR code, your existing QR code and link will no longer work.",
+    "description": "Text of confirmation modal when resetting the username link"
+  },
   "icu:UsernameOnboardingModalBody__title": {
     "messageformat": "Signalユーザーネームを設定する",
     "description": "Title of username onboarding modal"
@@ -6412,7 +6549,7 @@
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "各ユーザーネームには固有のリンクがあり、友達と共有することでチャットを開始することができます",
+    "messageformat": "各ユーザーネームには固有の QR コードとリンクがあり、友達と共有することでチャットを開始することができます",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
@@ -6487,24 +6624,10 @@
     "messageformat": "細かな微調整、バグ修正、パフォーマンスの向上。 Signalをご利用いただきありがとうございます。",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.21--0": {
-    "messageformat": "1対1の通話で呼び出し音が鳴っている間、ご自分の姿が大きく見えるようになりました。新しいグループ通話の開始時にのみ表示されていた全画面表示が、1対1のビデオ通話でも使用されるようになりました。一貫性を保つことに対して、私たちは反発せず粘り強く努力をしてきました。そしてやっと達成することができました。もう1対1でもグループ通話でも表示に違いはありません。",
-    "description": "Release notes for v6.21"
+  "icu:WhatsNew__v6.27--0": {
+    "messageformat": "このアップデートでは、音声通話とビデオ通話に関する複数の改善とドキュメントの一部の更新がおこなわれました（ありがとう、 {linkToGithub}！）"
   },
-  "icu:WhatsNew__v6.21--1": {
-    "messageformat": "また、このリリースに取り組んでいる間、ヘルプとフィードバックをお寄せいただいた {complexspaces} に感謝いたします。",
-    "description": "Release notes for v6.21"
-  },
-  "icu:WhatsNew__v6.22--0": {
-    "messageformat": "メッセージ作成フィールド内の任意のテキストを選択して、メッセージの書式設定をすることができます。\n\nメッセージ作成フィールド内の任意のテキストを選択して、太字、斜体、取り消し線、その他のテキスト効果を加えて、メッセージの書式設定をすることができます。",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.22--1": {
-    "messageformat": "最新の絵文字に対応しました。以後は「震える顔」 (<emojify>🫨</emojify>) で感動を表現できます。「エンドウ豆のさや」 (<emojify>🫛</emojify>) なんかもあります。",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.23--1": {
-    "messageformat": "このリリースには、さまざまな細かいバグ修正に加えて、開発者向けドキュメントの更新(ありがとう、{d108}！)と、いくつかのメッセージ転送インターフェイスのデザイン改良(ありがとう、{hackerbirds}！)も含まれています。",
-    "description": "Release notes for v6.23"
+  "icu:WhatsNew__v6.28--0": {
+    "messageformat": "We modified the notification icons that appear for group updates, like when someone new joins a group. These icons help improve legibility, especially if you live within the darkness of the Dark Theme. The previous icons merely adopted the dark. The new icons were born in it, molded by it."
   }
 }

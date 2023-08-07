@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import React from 'react';
+import classNames from 'classnames';
 import { join } from 'path';
 import { SignalContext } from '../../windows/context';
 import { useEscapeHandling } from '../../hooks/useEscapeHandling';
@@ -19,6 +20,7 @@ export type PropsType = {
   renderConversationHeader: () => JSX.Element;
   renderTimeline: () => JSX.Element;
   renderPanel: () => JSX.Element | undefined;
+  shouldHideConversationView?: boolean;
 };
 
 export function ConversationView({
@@ -31,6 +33,7 @@ export function ConversationView({
   renderConversationHeader,
   renderTimeline,
   renderPanel,
+  shouldHideConversationView,
 }: PropsType): JSX.Element {
   const url = encodeURIComponent(
     join(SignalContext.config.userDataPath, 'bgs', `${conversationId}.png`)
@@ -97,26 +100,36 @@ export function ConversationView({
   );
 
   return (
-    <div className="ConversationView" onDrop={onDrop} onPaste={onPaste}>
-      <div className="ConversationView__header">
-        {renderConversationHeader()}
-      </div>
+    <div
+      className="ConversationView ConversationPanel"
+      onDrop={onDrop}
+      onPaste={onPaste}
+    >
       <div
-        className="ConversationView__pane main panel"
-        style={{
-          backgroundImage: `url('file:///${url}')`,
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
+        className={classNames('ConversationPanel', {
+          ConversationPanel__hidden: shouldHideConversationView,
+        })}
       >
-        <div className="ConversationView__timeline--container">
-          <div aria-live="polite" className="ConversationView__timeline">
-            {renderTimeline()}
-          </div>
+        <div className="ConversationView__header">
+          {renderConversationHeader()}
         </div>
-        <div className="ConversationView__composition-area">
-          {renderCompositionArea()}
+        <div
+          className="ConversationView__pane"
+          style={{
+            backgroundImage: `url('file:///${url}')`,
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        >
+          <div className="ConversationView__timeline--container">
+            <div aria-live="polite" className="ConversationView__timeline">
+              {renderTimeline()}
+            </div>
+          </div>
+          <div className="ConversationView__composition-area">
+            {renderCompositionArea()}
+          </div>
         </div>
       </div>
       {renderPanel()}

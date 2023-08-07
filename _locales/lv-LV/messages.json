@@ -635,6 +635,26 @@
     "messageformat": "Apstiprināt",
     "description": "Label for a button to accept a new safety number"
   },
+  "icu:SafetyNumberViewer__migration__text": {
+    "messageformat": "Drošības numuri tiek atjaunināti.",
+    "description": "An explanatory note in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__migration__learn_more": {
+    "messageformat": "Lasīt vairāk",
+    "description": "A link text in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__card__prev": {
+    "messageformat": "Iepriekšējais drošības numurs",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__card__next": {
+    "messageformat": "Nākamais drošības numurs",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__carousel__dot": {
+    "messageformat": "Drošības numura versija, {index,number}. no {total,number}",
+    "description": "An ARIA label for safety number carousel button."
+  },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "Atzīmēt kā apstiprinātu",
     "description": "Safety number viewer, verification toggle button, when not verified, sets verified"
@@ -642,6 +662,42 @@
   "icu:SafetyNumberViewer__clearVerification": {
     "messageformat": "Dzēst verifikāciju",
     "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
+  },
+  "icu:SafetyNumberViewer__hint--migration": {
+    "messageformat": "Lai pārbaudītu pilnīgu šifrēšanu sarunai ar {name}, saskaņojiet augstāk redzamo krāsu karti ar šīs personas ierīcē redzamo un salīdziniet numurus. Ja tie nesakrīt, pavelciet un izmēģiniet otru drošības numuru pāri. Ir jāsakrīt tikai vienam pārim.",
+    "description": "Safety number viewer, text of the hint during migration period"
+  },
+  "icu:SafetyNumberViewer__hint--normal": {
+    "messageformat": "Lai pārbaudītu pilnīgu šifrēšanu sarunai ar {name}, salīdziniet augstāk redzamos ciparus ar šīs personas ierīcē redzamajiem. Šis sarunu biedrs var arī skenēt jūsu kodu ar savu ierīci.",
+    "description": "Safety number viewer, text of the hint after migration period"
+  },
+  "icu:SafetyNumberOnboarding__title": {
+    "messageformat": "Drošības numuru izmaiņas",
+    "description": "Title of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p1": {
+    "messageformat": "Drošības numuri tiek atjaunināti pārejas periodā, lai nodrošinātu gaidāmās privātuma funkcijas pakalpojumā Signal.",
+    "description": "Paragraph 1 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p2": {
+    "messageformat": "Lai pārbaudītu drošības numurus, saskaņojiet krāsu karti ar kontaktpersonas ierīcē redzamo. Ja tie nesakrīt, pavelciet un izmēģiniet otru drošības numuru pāri. Ir jāsakrīt tikai vienam pārim.",
+    "description": "Paragraph 2 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__help": {
+    "messageformat": "Nepieciešama palīdzība?",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__close": {
+    "messageformat": "Skaidrs",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberNotReady__body": {
+    "messageformat": "Drošības numurs ar šo personu tiks izveidots pēc tam, kad būsiet nosūtījuši viens otram ziņas.",
+    "description": "Body of SafetyNumberNotReady modal"
+  },
+  "icu:SafetyNumberNotReady__learn-more": {
+    "messageformat": "Lasīt vairāk",
+    "description": "Text of 'Learn more' button of SafetyNumberNotReady modal"
   },
   "icu:isVerified": {
     "messageformat": "Jūs pārbaudījāt savu drošības kodu ar {name}.",
@@ -1212,7 +1268,8 @@
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
   "icu:verifyHelp": {
-    "messageformat": "Lai apstiprinātu pilnīgo šifrēšanu ar {name}, salīdziniet augstāk redzamos ciparus ar sarunas biedra ierīci."
+    "messageformat": "Lai pārbaudītu pilnīgās šifrēšanas drošību sarunai ar {name}, salīdziniet augstāk redzamos ciparus ar šīs personas ierīcē redzamajiem. Šis sarunu biedrs var arī noskenēt augstāk redzamo QR kodu.",
+    "description": "(deleted 07/05/2023)"
   },
   "icu:theirIdentityUnknown": {
     "messageformat": "Jūs vēl neesat apmainījies ar ziņām ar šo kontaktpersonu. Jūsu drošības numurs ar viņu būs pieejams pēc pirmās ziņas."
@@ -1281,9 +1338,33 @@
     "messageformat": "Dzēst",
     "description": "Menu item for deleting messages, title case."
   },
-  "icu:deleteConversationConfirmation": {
-    "messageformat": "Vai dzēst šo sarunu pavisam?",
-    "description": "Confirmation dialog text that asks the user if they really wish to delete the conversation. Answer buttons use the strings 'ok' and 'cancel'. The deletion is permanent, i.e. it cannot be undone."
+  "icu:ConversationHeader__DeleteMessagesConfirmation__title": {
+    "messageformat": "Vai dzēst sarunu?",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__DeleteMessagesConfirmation__description": {
+    "messageformat": "Šī tērzēšana tiks dzēsta no šīs ierīces.",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
+    "messageformat": "Pamest grupu",
+    "description": "This is a button to leave a group"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__title": {
+    "messageformat": "Vai tiešām vēlaties izstāties no šīs grupas?",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__description": {
+    "messageformat": "Jūs vairs nevarēsiet sūtīt vai saņemt ziņas šajā grupā.",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__confirmButton": {
+    "messageformat": "Pamest",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Confirm Button"
+  },
+  "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
+    "messageformat": "Pirms aiziešanas šai grupai jāizvēlas vismaz viens jauns administrators.",
+    "description": "Conversation Header > Leave Group Action > Cannot Leave Group Because You Are Last Admin Alert > Description"
   },
   "icu:sessionEnded": {
     "messageformat": "Drošās sesijas atstatīšana",
@@ -4335,6 +4416,10 @@
     "messageformat": "Vai noņemt lietotāju {contact} kā grupas administratoru?",
     "description": "Shown in a confirmation dialog when you are about to remove admin privileges from someone"
   },
+  "icu:ContactModal--add-to-group": {
+    "messageformat": "Pievienot citai grupai",
+    "description": "Button text for adding contact to another group in Group Contact Details modal"
+  },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Noņemt no grupas",
     "description": "Button text for remove from group button in Group Contact Details modal"
@@ -5167,6 +5252,18 @@
     "messageformat": "Lietotājvārds",
     "description": "Default text for username field"
   },
+  "icu:ProfileEditor__username-link": {
+    "messageformat": "QR code or link",
+    "description": "Label of a profile editor row that navigates to username link and qr code modal"
+  },
+  "icu:ProfileEditor__username-link__tooltip__title": {
+    "messageformat": "Share your username",
+    "description": "Title of tooltip displayed under 'QR code or link' button for getting username link"
+  },
+  "icu:ProfileEditor__username-link__tooltip__body": {
+    "messageformat": "Let others start a chat with you by sharing your unique QR code or link.",
+    "description": "Body of tooltip displayed under 'QR code or link' button for getting username link"
+  },
   "icu:ProfileEditor--username--title": {
     "messageformat": "Izvēlieties lietotājvārdu",
     "description": "Title text for username modal"
@@ -5225,6 +5322,10 @@
   },
   "icu:ProfileEditor--username--confirm-delete-body": {
     "messageformat": "Ar šo darbību tiks noņemts jūsu lietotājvārds, un to varēs izmantot citi lietotāji. Vai esat pārliecināts(-a)?",
+    "description": "(deleted 07/10/2023) Shown in dialog body if user has saved an empty string to delete their username"
+  },
+  "icu:ProfileEditor--username--confirm-delete-body-2": {
+    "messageformat": "This will remove your username and disable your QR code and link. “{username}” will be available for others to claim. Are you sure?",
     "description": "Shown in dialog body if user has saved an empty string to delete their username"
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
@@ -6403,6 +6504,42 @@
     "messageformat": "Šie cipari palīdz saglabāt jūsu lietotājvārdu slepenībā un izvairīties no nevēlamām ziņām. Izpaudiet savu lietotājvārdu tikai lietotājiem un grupām, ar kurām vēlaties čatot. Ja mainīsiet lietotājvārdu, saņemsiet jaunu ciparu virkni.",
     "description": "Body of the popup with information about discriminator in username"
   },
+  "icu:EditUsernameModalBody__change-confirmation": {
+    "messageformat": "Changing your username will reset your existing QR code and link. Are you sure?",
+    "description": "Body of the confirmation dialog displayed when user is about to change their username"
+  },
+  "icu:EditUsernameModalBody__change-confirmation__continue": {
+    "messageformat": "Turpināt",
+    "description": "Text of the primary button on username change confirmation modal"
+  },
+  "icu:UsernameLinkModalBody__save": {
+    "messageformat": "Saglabāt",
+    "description": "Name of the button for saving username link QR code to disk in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color": {
+    "messageformat": "Krāsa",
+    "description": "Name of the button for changing the username link QR code color in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__copy": {
+    "messageformat": "Kopēt starpliktuvē",
+    "description": "ARIA label of the button for copying the username link to clipboard in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__help": {
+    "messageformat": "Only share your QR code and link with people you trust. When shared others will be able to view your username and start a chat with you.",
+    "description": "Text of disclaimer at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__reset": {
+    "messageformat": "Atstatīt",
+    "description": "Text of button at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color__radio": {
+    "messageformat": "Username link color, {index,number} of {total,number}",
+    "description": "ARIA label of button for selecting username link color"
+  },
+  "icu:UsernameLinkModalBody__reset__confirm": {
+    "messageformat": "If you reset your QR code, your existing QR code and link will no longer work.",
+    "description": "Text of confirmation modal when resetting the username link"
+  },
   "icu:UsernameOnboardingModalBody__title": {
     "messageformat": "Izveidojiet savu Signal lietotāja vārdu",
     "description": "Title of username onboarding modal"
@@ -6412,7 +6549,7 @@
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Katram lietotāja vārdam ir unikāla saite, kuru varat kopīgot ar draugiem, lai sāktu sarunu",
+    "messageformat": "Katram lietotāja vārdam ir unikāls QR kods, kuru varat kopīgot ar draugiem, lai sāktu sarunu",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
@@ -6487,24 +6624,10 @@
     "messageformat": "Nelielas izmaiņas, kļūdu labojumi un darbības uzlabojumi. Paldies, ka lietojat Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.21--0": {
-    "messageformat": "Redziet sevi labāk individuālo sarunu laikā. Individuālie videozvani tagad izmanto tādu pašu pilnekrāna skatu kā grupas zvani. Mēs cenšamies būt konsekventi, un tagad šie zvani vairs neatšķiras viens no otra.",
-    "description": "Release notes for v6.21"
+  "icu:WhatsNew__v6.27--0": {
+    "messageformat": "Šajā atjauninājumā ir iekļauti daži balss un video zvanu uzlabojumi, kā arī daži nelieli dokumentācijas atjauninājumi (paldies, {linkToGithub}!)."
   },
-  "icu:WhatsNew__v6.21--1": {
-    "messageformat": "Mēs vēlamies arī pateikties {complexspaces} par sniegto palīdzību un atsauksmēm, strādājot pie šī versijas.",
-    "description": "Release notes for v6.21"
-  },
-  "icu:WhatsNew__v6.22--0": {
-    "messageformat": "Formatējiet ziņu tekstu, ziņu sastādīšanas laukā atlasot jebkuru tekstu.\n\nUzlieciet treknu uzsvaru svarīgiem tekstiem, nosūtiet M. Naitam Šjāmalānam ziņu par negaidītu sižeta pavērsienu ar spoilera efektu, izceliet vārdu ar kursīvu, pārsvītrojiet noraidītu vakariņu ideju vai kopīgojiet kodu vienplatuma formatējumā.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.22--1": {
-    "messageformat": "Mēs pievienojām atbalstu jaunākajām emocijzīmju rakstzīmēm, tāpēc tagad varat paust savu sajūsmu ar &quot;trīcošu seju&quot; (<emojify>🫨</emojify>) vai reaģēt ar &quot;zirņu pāksti&quot; (<emojify>🫛</emojify>), kad kāds prasa, cik tuvi draugi jūs esat.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.23--1": {
-    "messageformat": "Papildus nelielam kļūdu labojumu klāstam šajā laidienā ir iekļauti arī izstrādātāju dokumentācijas atjauninājumi (paldies, {d108}!) un daži ziņu pārsūtīšanas saskarnes dizaina uzlabojumi (paldies, {hackerbirds}!).",
-    "description": "Release notes for v6.23"
+  "icu:WhatsNew__v6.28--0": {
+    "messageformat": "We modified the notification icons that appear for group updates, like when someone new joins a group. These icons help improve legibility, especially if you live within the darkness of the Dark Theme. The previous icons merely adopted the dark. The new icons were born in it, molded by it."
   }
 }

@@ -3,7 +3,6 @@
 
 import type { ReactNode } from 'react';
 import React from 'react';
-import Measure from 'react-measure';
 import classNames from 'classnames';
 import {
   ContextMenu,
@@ -40,6 +39,7 @@ import {
 import { PanelType } from '../../types/Panels';
 import { UserText } from '../UserText';
 import { Alert } from '../Alert';
+import { SizeObserver } from '../../hooks/useSizeObserver';
 
 export enum OutgoingCallButtonStyle {
   None,
@@ -51,11 +51,10 @@ export enum OutgoingCallButtonStyle {
 export type PropsDataType = {
   badge?: BadgeType;
   cannotLeaveBecauseYouAreLastAdmin: boolean;
-  conversationTitle?: string;
+  hasPanelShowing?: boolean;
   hasStories?: HasStories;
   isMissingMandatoryProfileSharing?: boolean;
   outgoingCallButtonStyle: OutgoingCallButtonStyle;
-  showBackButton?: boolean;
   isSMSOnly?: boolean;
   isSignalConversation?: boolean;
   theme: ThemeType;
@@ -162,23 +161,6 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
     if (this.menuTriggerRef.current) {
       this.menuTriggerRef.current.handleContextClick(event);
     }
-  }
-
-  private renderBackButton(): ReactNode {
-    const { i18n, popPanelForConversation, showBackButton } = this.props;
-
-    return (
-      <button
-        type="button"
-        onClick={popPanelForConversation}
-        className={classNames(
-          'module-ConversationHeader__back-icon',
-          showBackButton ? 'module-ConversationHeader__back-icon--show' : null
-        )}
-        disabled={!showBackButton}
-        aria-label={i18n('icu:goBack')}
-      />
-    );
   }
 
   private renderHeaderInfoTitle(): ReactNode {
@@ -307,7 +289,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
   }
 
   private renderMoreButton(triggerId: string): ReactNode {
-    const { i18n, showBackButton } = this.props;
+    const { i18n } = this.props;
 
     return (
       <ContextMenuTrigger id={triggerId} ref={this.menuTriggerRef}>
@@ -316,10 +298,8 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
           onClick={this.showMenuBound}
           className={classNames(
             'module-ConversationHeader__button',
-            'module-ConversationHeader__button--more',
-            showBackButton ? null : 'module-ConversationHeader__button--show'
+            'module-ConversationHeader__button--more'
           )}
-          disabled={showBackButton}
           aria-label={i18n('icu:moreInfo')}
         />
       </ContextMenuTrigger>
@@ -327,7 +307,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
   }
 
   private renderSearchButton(): ReactNode {
-    const { i18n, id, searchInConversation, showBackButton } = this.props;
+    const { i18n, id, searchInConversation } = this.props;
 
     return (
       <button
@@ -335,10 +315,8 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
         onClick={() => searchInConversation(id)}
         className={classNames(
           'module-ConversationHeader__button',
-          'module-ConversationHeader__button--search',
-          showBackButton ? null : 'module-ConversationHeader__button--show'
+          'module-ConversationHeader__button--search'
         )}
-        disabled={showBackButton}
         aria-label={i18n('icu:search')}
       />
     );
@@ -747,20 +725,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
   }
 
   private renderHeader(): ReactNode {
-    const { conversationTitle, groupVersion, pushPanelForConversation, type } =
-      this.props;
-
-    if (conversationTitle !== undefined) {
-      return (
-        <div className="module-ConversationHeader__header">
-          <div className="module-ConversationHeader__header__info">
-            <div className="module-ConversationHeader__header__info__title">
-              {conversationTitle}
-            </div>
-          </div>
-        </div>
-      );
-    }
+    const { groupVersion, pushPanelForConversation, type } = this.props;
 
     let onClick: undefined | (() => void);
     switch (type) {
@@ -822,6 +787,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
       announcementsOnly,
       areWeAdmin,
       expireTimer,
+      hasPanelShowing,
       i18n,
       id,
       isSMSOnly,
@@ -830,8 +796,12 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
       onOutgoingVideoCallInConversation,
       outgoingCallButtonStyle,
       setDisappearingMessages,
-      showBackButton,
     } = this.props;
+
+    if (hasPanelShowing) {
+      return null;
+    }
+
     const { isNarrow, modalState } = this.state;
     const triggerId = `conversation-${id}`;
 
@@ -860,23 +830,18 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
         {this.renderDeleteMessagesConfirmationDialog()}
         {this.renderLeaveGroupConfirmationDialog()}
         {this.renderCannotLeaveGroupBecauseYouAreLastAdminAlert()}
-        <Measure
-          bounds
-          onResize={({ bounds }) => {
-            if (!bounds || !bounds.width) {
-              return;
-            }
-            this.setState({ isNarrow: bounds.width < 500 });
+        <SizeObserver
+          onSizeChange={size => {
+            this.setState({ isNarrow: size.width < 500 });
           }}
         >
-          {({ measureRef }) => (
+          {measureRef => (
             <div
               className={classNames('module-ConversationHeader', {
                 'module-ConversationHeader--narrow': isNarrow,
               })}
               ref={measureRef}
             >
-              {this.renderBackButton()}
               {this.renderHeader()}
               {!isSMSOnly && !isSignalConversation && (
                 <OutgoingCallButtons
@@ -892,7 +857,6 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
                     onOutgoingVideoCallInConversation
                   }
                   outgoingCallButtonStyle={outgoingCallButtonStyle}
-                  showBackButton={showBackButton}
                 />
               )}
               {this.renderSearchButton()}
@@ -900,7 +864,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
               {this.renderMenu(triggerId)}
             </div>
           )}
-        </Measure>
+        </SizeObserver>
       </>
     );
   }
@@ -915,7 +879,6 @@ function OutgoingCallButtons({
   onOutgoingAudioCallInConversation,
   onOutgoingVideoCallInConversation,
   outgoingCallButtonStyle,
-  showBackButton,
 }: { isNarrow: boolean } & Pick<
   PropsType,
   | 'announcementsOnly'
@@ -925,7 +888,6 @@ function OutgoingCallButtons({
   | 'onOutgoingAudioCallInConversation'
   | 'onOutgoingVideoCallInConversation'
   | 'outgoingCallButtonStyle'
-  | 'showBackButton'
 >): JSX.Element | null {
   const videoButton = (
     <button
@@ -933,12 +895,10 @@ function OutgoingCallButtons({
       className={classNames(
         'module-ConversationHeader__button',
         'module-ConversationHeader__button--video',
-        showBackButton ? null : 'module-ConversationHeader__button--show',
-        !showBackButton && announcementsOnly && !areWeAdmin
+        announcementsOnly && !areWeAdmin
           ? 'module-ConversationHeader__button--show-disabled'
           : undefined
       )}
-      disabled={showBackButton}
       onClick={() => onOutgoingVideoCallInConversation(id)}
       type="button"
     />
@@ -964,10 +924,8 @@ function OutgoingCallButtons({
             onClick={() => onOutgoingAudioCallInConversation(id)}
             className={classNames(
               'module-ConversationHeader__button',
-              'module-ConversationHeader__button--audio',
-              showBackButton ? null : 'module-ConversationHeader__button--show'
+              'module-ConversationHeader__button--audio'
             )}
-            disabled={showBackButton}
             aria-label={i18n('icu:makeOutgoingCall')}
           />
         </>
@@ -979,9 +937,10 @@ function OutgoingCallButtons({
           className={classNames(
             'module-ConversationHeader__button',
             'module-ConversationHeader__button--join-call',
-            showBackButton ? null : 'module-ConversationHeader__button--show'
+            announcementsOnly && !areWeAdmin
+              ? 'module-ConversationHeader__button--show-disabled'
+              : undefined
           )}
-          disabled={showBackButton}
           onClick={() => onOutgoingVideoCallInConversation(id)}
           type="button"
         >

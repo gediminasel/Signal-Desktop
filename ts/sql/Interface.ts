@@ -109,21 +109,35 @@ export type MessageType = MessageAttributesType;
 export type MessageTypeUnhydrated = {
   json: string;
 };
+
+export type PreKeyIdType = `${UUIDStringType}:${number}`;
+export type KyberPreKeyType = {
+  id: PreKeyIdType;
+
+  createdAt: number;
+  data: Uint8Array;
+  isConfirmed: boolean;
+  isLastResort: boolean;
+  keyId: number;
+  ourUuid: UUIDStringType;
+};
+export type StoredKyberPreKeyType = KyberPreKeyType & {
+  data: string;
+};
 export type PreKeyType = {
-  id: `${UUIDStringType}:${number}`;
+  id: PreKeyIdType;
+
+  createdAt: number;
   keyId: number;
   ourUuid: UUIDStringType;
   privateKey: Uint8Array;
   publicKey: Uint8Array;
 };
-export type StoredPreKeyType = {
-  id: `${UUIDStringType}:${number}`;
-  keyId: number;
-  ourUuid: UUIDStringType;
+
+export type StoredPreKeyType = PreKeyType & {
   privateKey: string;
   publicKey: string;
 };
-export type PreKeyIdType = PreKeyType['id'];
 export type ServerSearchResultMessageType = {
   json: string;
 
@@ -410,16 +424,24 @@ export type DataInterface = {
   removeIdentityKeyById: (id: IdentityKeyIdType) => Promise<void>;
   removeAllIdentityKeys: () => Promise<void>;
 
-  removePreKeyById: (id: PreKeyIdType) => Promise<void>;
+  removeKyberPreKeyById: (
+    id: PreKeyIdType | Array<PreKeyIdType>
+  ) => Promise<void>;
+  removeKyberPreKeysByUuid: (uuid: UUIDStringType) => Promise<void>;
+  removeAllKyberPreKeys: () => Promise<void>;
+
+  removePreKeyById: (id: PreKeyIdType | Array<PreKeyIdType>) => Promise<void>;
   removePreKeysByUuid: (uuid: UUIDStringType) => Promise<void>;
   removeAllPreKeys: () => Promise<void>;
 
-  removeSignedPreKeyById: (id: SignedPreKeyIdType) => Promise<void>;
+  removeSignedPreKeyById: (
+    id: SignedPreKeyIdType | Array<SignedPreKeyIdType>
+  ) => Promise<void>;
   removeSignedPreKeysByUuid: (uuid: UUIDStringType) => Promise<void>;
   removeAllSignedPreKeys: () => Promise<void>;
 
   removeAllItems: () => Promise<void>;
-  removeItemById: (id: ItemKeyType) => Promise<void>;
+  removeItemById: (id: ItemKeyType | Array<ItemKeyType>) => Promise<void>;
 
   createOrUpdateSenderKey: (key: SenderKeyType) => Promise<void>;
   getSenderKeyById: (id: SenderKeyIdType) => Promise<SenderKeyType | undefined>;
@@ -807,6 +829,11 @@ export type ServerInterface = DataInterface & {
     options?: { limit?: number };
     contactUuidsMatchingQuery?: Array<string>;
   }) => Promise<Array<ServerSearchResultMessageType>>;
+
+  getRecentStoryReplies(
+    storyId: string,
+    options?: GetRecentStoryRepliesOptionsType
+  ): Promise<Array<MessageTypeUnhydrated>>;
   getOlderMessagesByConversation: (
     options: AdjacentMessagesByConversationOptionsType
   ) => Promise<Array<MessageTypeUnhydrated>>;
@@ -825,6 +852,13 @@ export type ServerInterface = DataInterface & {
   ) => Promise<StoredIdentityKeyType | undefined>;
   bulkAddIdentityKeys: (array: Array<StoredIdentityKeyType>) => Promise<void>;
   getAllIdentityKeys: () => Promise<Array<StoredIdentityKeyType>>;
+
+  createOrUpdateKyberPreKey: (data: StoredKyberPreKeyType) => Promise<void>;
+  getKyberPreKeyById: (
+    id: PreKeyIdType
+  ) => Promise<StoredKyberPreKeyType | undefined>;
+  bulkAddKyberPreKeys: (array: Array<StoredKyberPreKeyType>) => Promise<void>;
+  getAllKyberPreKeys: () => Promise<Array<StoredKyberPreKeyType>>;
 
   createOrUpdatePreKey: (data: StoredPreKeyType) => Promise<void>;
   getPreKeyById: (id: PreKeyIdType) => Promise<StoredPreKeyType | undefined>;
@@ -870,6 +904,13 @@ export type ServerInterface = DataInterface & {
   getAllBadgeImageFileLocalPaths: () => Promise<Set<string>>;
 };
 
+export type GetRecentStoryRepliesOptionsType = {
+  limit?: number;
+  messageId?: string;
+  receivedAt?: number;
+  sentAt?: number;
+};
+
 // Differing signature on client/server
 export type ClientExclusiveInterface = {
   // Differing signature on client/server
@@ -888,6 +929,11 @@ export type ClientExclusiveInterface = {
     options?: { limit?: number };
     contactUuidsMatchingQuery?: Array<string>;
   }) => Promise<Array<ClientSearchResultMessageType>>;
+
+  getRecentStoryReplies(
+    storyId: string,
+    options?: GetRecentStoryRepliesOptionsType
+  ): Promise<Array<MessageAttributesType>>;
   getOlderMessagesByConversation: (
     options: AdjacentMessagesByConversationOptionsType
   ) => Promise<Array<MessageAttributesType>>;
@@ -904,6 +950,13 @@ export type ClientExclusiveInterface = {
   ) => Promise<IdentityKeyType | undefined>;
   bulkAddIdentityKeys: (array: Array<IdentityKeyType>) => Promise<void>;
   getAllIdentityKeys: () => Promise<Array<IdentityKeyType>>;
+
+  createOrUpdateKyberPreKey: (data: KyberPreKeyType) => Promise<void>;
+  getKyberPreKeyById: (
+    id: PreKeyIdType
+  ) => Promise<KyberPreKeyType | undefined>;
+  bulkAddKyberPreKeys: (array: Array<KyberPreKeyType>) => Promise<void>;
+  getAllKyberPreKeys: () => Promise<Array<KyberPreKeyType>>;
 
   createOrUpdatePreKey: (data: PreKeyType) => Promise<void>;
   getPreKeyById: (id: PreKeyIdType) => Promise<PreKeyType | undefined>;

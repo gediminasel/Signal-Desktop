@@ -635,6 +635,26 @@
     "messageformat": "Прийняти",
     "description": "Label for a button to accept a new safety number"
   },
+  "icu:SafetyNumberViewer__migration__text": {
+    "messageformat": "Коди безпеки оновлюються.",
+    "description": "An explanatory note in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__migration__learn_more": {
+    "messageformat": "Дізнатись більше",
+    "description": "A link text in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__card__prev": {
+    "messageformat": "Попередній код безпеки",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__card__next": {
+    "messageformat": "Наступний код безпеки",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__carousel__dot": {
+    "messageformat": "Версія коду безпеки, {index,number} з {total,number}",
+    "description": "An ARIA label for safety number carousel button."
+  },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "Відмітити як перевірений",
     "description": "Safety number viewer, verification toggle button, when not verified, sets verified"
@@ -642,6 +662,42 @@
   "icu:SafetyNumberViewer__clearVerification": {
     "messageformat": "Чітка верифікація",
     "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
+  },
+  "icu:SafetyNumberViewer__hint--migration": {
+    "messageformat": "Щоб перевірити наявність наскрізного шифрування з користувачем {name}, порівняйте кольорову картку вище з карткою на пристрої користувача і перевірте, чи збігаються цифри. Якщо цифри не збігаються, спробуйте іншу пару кодів безпеки. Для успішної перевірки достатньо збігу в одній парі.",
+    "description": "Safety number viewer, text of the hint during migration period"
+  },
+  "icu:SafetyNumberViewer__hint--normal": {
+    "messageformat": "Щоб перевірити наявність наскрізного шифрування з користувачем {name}, порівняйте наведені вище цифри із цифрами на пристрої вашого співрозмовника. Користувач також може відсканувати ваш код за допомогою свого пристрою.",
+    "description": "Safety number viewer, text of the hint after migration period"
+  },
+  "icu:SafetyNumberOnboarding__title": {
+    "messageformat": "Зміни номерів безпеки",
+    "description": "Title of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p1": {
+    "messageformat": "Номери безпеки оновлюються протягом перехідного періоду, щоби нові функції конфіденційності Signal могли запрацювати.",
+    "description": "Paragraph 1 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p2": {
+    "messageformat": "Щоб перевірити коди безпеки, порівняйте кольорову картку з карткою на пристрої вашого контакту. Якщо цифри не збігаються, спробуйте іншу пару кодів безпеки. Для успішної перевірки достатньо збігу в одній парі.",
+    "description": "Paragraph 2 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__help": {
+    "messageformat": "Потрібна допомога?",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__close": {
+    "messageformat": "Зрозуміло",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberNotReady__body": {
+    "messageformat": "Код безпеки з'явиться після обміну повідомленнями із цим користувачем.",
+    "description": "Body of SafetyNumberNotReady modal"
+  },
+  "icu:SafetyNumberNotReady__learn-more": {
+    "messageformat": "Дізнатись більше",
+    "description": "Text of 'Learn more' button of SafetyNumberNotReady modal"
   },
   "icu:isVerified": {
     "messageformat": "Ви підтвердили код безпеки, який {name} використовує для зв’язку з вами.",
@@ -1212,7 +1268,8 @@
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
   "icu:verifyHelp": {
-    "messageformat": "Щоб перевірити безпеку вашого наскрізного шифрування з {name}, порівняйте наведені вище числа з їхнім пристроєм."
+    "messageformat": "Щоб перевірити безпеку вашого наскрізного шифрування з користувачем {name}, порівняйте наведені вище цифри із цифрами на пристрої вашого співрозмовника. Користувач також може відсканувати QR-код вище.",
+    "description": "(deleted 07/05/2023)"
   },
   "icu:theirIdentityUnknown": {
     "messageformat": "Ви ще не обмінювалися повідомленнями з даними співрозмовником. Код безпеки стане доступний після першого надсилання повідомлення."
@@ -1281,9 +1338,33 @@
     "messageformat": "Видалити",
     "description": "Menu item for deleting messages, title case."
   },
-  "icu:deleteConversationConfirmation": {
-    "messageformat": "Видалити цей чат назавжди?",
-    "description": "Confirmation dialog text that asks the user if they really wish to delete the conversation. Answer buttons use the strings 'ok' and 'cancel'. The deletion is permanent, i.e. it cannot be undone."
+  "icu:ConversationHeader__DeleteMessagesConfirmation__title": {
+    "messageformat": "Видалити чат?",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__DeleteMessagesConfirmation__description": {
+    "messageformat": "Чат буде видалено з пристрою.",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
+    "messageformat": "Покинути групу",
+    "description": "This is a button to leave a group"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__title": {
+    "messageformat": "Дійсно покинути групу?",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__description": {
+    "messageformat": "Ви більше не зможете надсилати чи одержувати повідомлення в цій групі.",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__confirmButton": {
+    "messageformat": "Покинути",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Confirm Button"
+  },
+  "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
+    "messageformat": "Перш ніж покинути цю групу, необхідно обрати щонайменше одного нового адміністратора.",
+    "description": "Conversation Header > Leave Group Action > Cannot Leave Group Because You Are Last Admin Alert > Description"
   },
   "icu:sessionEnded": {
     "messageformat": "Захищену сесію перезапущено",
@@ -4335,6 +4416,10 @@
     "messageformat": "Видалити {contact} як адміністратора групи?",
     "description": "Shown in a confirmation dialog when you are about to remove admin privileges from someone"
   },
+  "icu:ContactModal--add-to-group": {
+    "messageformat": "Додати до іншої групи",
+    "description": "Button text for adding contact to another group in Group Contact Details modal"
+  },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Видалити з групи",
     "description": "Button text for remove from group button in Group Contact Details modal"
@@ -5167,6 +5252,18 @@
     "messageformat": "Ім'я користувача",
     "description": "Default text for username field"
   },
+  "icu:ProfileEditor__username-link": {
+    "messageformat": "QR-код чи посилання",
+    "description": "Label of a profile editor row that navigates to username link and qr code modal"
+  },
+  "icu:ProfileEditor__username-link__tooltip__title": {
+    "messageformat": "Поділіться своїм іменем користувача",
+    "description": "Title of tooltip displayed under 'QR code or link' button for getting username link"
+  },
+  "icu:ProfileEditor__username-link__tooltip__body": {
+    "messageformat": "Поділіться своїм унікальним QR-кодом чи посиланням з людиною, із якою хочете створити чат.",
+    "description": "Body of tooltip displayed under 'QR code or link' button for getting username link"
+  },
   "icu:ProfileEditor--username--title": {
     "messageformat": "Виберіть ім’я користувача",
     "description": "Title text for username modal"
@@ -5225,6 +5322,10 @@
   },
   "icu:ProfileEditor--username--confirm-delete-body": {
     "messageformat": "Це вилучить ваше ім'я користувача та дозволить іншим користувачам використовувати його. Ви впевнені?",
+    "description": "(deleted 07/10/2023) Shown in dialog body if user has saved an empty string to delete their username"
+  },
+  "icu:ProfileEditor--username--confirm-delete-body-2": {
+    "messageformat": "This will remove your username and disable your QR code and link. “{username}” will be available for others to claim. Are you sure?",
     "description": "Shown in dialog body if user has saved an empty string to delete their username"
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
@@ -6403,6 +6504,42 @@
     "messageformat": "Ці цифри зберігають конфіденційність вашого імені користувача і допомагають захистити вас від небажаних повідомлень. Діліться своїм іменем користувача тільки з тими людьми і групами, з якими ви хочете спілкуватись у чаті. Якщо змінити ім'я користувача, цифри також зміняться.",
     "description": "Body of the popup with information about discriminator in username"
   },
+  "icu:EditUsernameModalBody__change-confirmation": {
+    "messageformat": "Changing your username will reset your existing QR code and link. Are you sure?",
+    "description": "Body of the confirmation dialog displayed when user is about to change their username"
+  },
+  "icu:EditUsernameModalBody__change-confirmation__continue": {
+    "messageformat": "Продовжити",
+    "description": "Text of the primary button on username change confirmation modal"
+  },
+  "icu:UsernameLinkModalBody__save": {
+    "messageformat": "Зберегти",
+    "description": "Name of the button for saving username link QR code to disk in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color": {
+    "messageformat": "Колір",
+    "description": "Name of the button for changing the username link QR code color in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__copy": {
+    "messageformat": "Копіювати до буферу обміну",
+    "description": "ARIA label of the button for copying the username link to clipboard in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__help": {
+    "messageformat": "Only share your QR code and link with people you trust. When shared others will be able to view your username and start a chat with you.",
+    "description": "Text of disclaimer at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__reset": {
+    "messageformat": "Скинути",
+    "description": "Text of button at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color__radio": {
+    "messageformat": "Username link color, {index,number} of {total,number}",
+    "description": "ARIA label of button for selecting username link color"
+  },
+  "icu:UsernameLinkModalBody__reset__confirm": {
+    "messageformat": "If you reset your QR code, your existing QR code and link will no longer work.",
+    "description": "Text of confirmation modal when resetting the username link"
+  },
   "icu:UsernameOnboardingModalBody__title": {
     "messageformat": "Встановіть ім'я користувача Signal",
     "description": "Title of username onboarding modal"
@@ -6412,7 +6549,7 @@
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Кожне ім’я користувача має унікальне посилання, яким можна поділитися з друзями, щоб вони могли розпочати з вами розмову",
+    "messageformat": "Кожне ім’я користувача має унікальний QR-код і посилання, якими можна поділитися з друзями, щоб вони могли розпочати з вами розмову",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
@@ -6487,24 +6624,10 @@
     "messageformat": "Дрібні поліпшення, виправлення помилок і покращення роботи застосунку. Дякуємо, що ви з Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.21--0": {
-    "messageformat": "Дотримуватися режиму буває корисно. Тому тепер ми будемо дотримуватися одного повноекранного режиму на початку дзвінка як в групових, так і в індивідуальних викликах. Тож поки на виклик ще не відповіли, ви матимете змогу добре себе розгледіти.",
-    "description": "Release notes for v6.21"
+  "icu:WhatsNew__v6.27--0": {
+    "messageformat": "Це оновлення містить кілька покращень відеовикликів і голосових викликів, а також невеликі зміни документації (дякуємо, {linkToGithub}!)."
   },
-  "icu:WhatsNew__v6.21--1": {
-    "messageformat": "Ми також хочемо щиро подякувати {complexspaces} за допомогу і відгуки під час роботи над цим оновленням.",
-    "description": "Release notes for v6.21"
-  },
-  "icu:WhatsNew__v6.22--0": {
-    "messageformat": "Відформатуйте текст повідомлень, просто вибравши потрібну частину в полі створення.\n\nАкцентуйте увагу на головній думці за допомогою жирного шрифту, обговоріть новий серіал, турботливо приховавши спойлери, додайте витонченості з курсивом, перекресліть відхилену ідею щодо вечері або поділіться кодом у моноширинному форматуванні.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.22--1": {
-    "messageformat": "Ми додали підтримку нових емодзі, тож тепер ви зможете належно відреагувати за допомогою <emojify>🫨</emojify> чи <emojify>🫛</emojify>, коли хтось запитає вас, наскільки ви близькі зі своїми друзями.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.23--1": {
-    "messageformat": "Окрім невеликої кількості виправлень помилок, це оновлення також містить доповнення документації розробника (дякуємо, {d108}!) і декілька поліпшень дизайну в інтерфейсі пересилання повідомлень (дякуємо, {hackerbirds}!).",
-    "description": "Release notes for v6.23"
+  "icu:WhatsNew__v6.28--0": {
+    "messageformat": "We modified the notification icons that appear for group updates, like when someone new joins a group. These icons help improve legibility, especially if you live within the darkness of the Dark Theme. The previous icons merely adopted the dark. The new icons were born in it, molded by it."
   }
 }

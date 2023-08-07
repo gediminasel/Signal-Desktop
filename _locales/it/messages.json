@@ -635,6 +635,26 @@
     "messageformat": "Accetta",
     "description": "Label for a button to accept a new safety number"
   },
+  "icu:SafetyNumberViewer__migration__text": {
+    "messageformat": "Stiamo aggiornando i codici di sicurezza.",
+    "description": "An explanatory note in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__migration__learn_more": {
+    "messageformat": "Scopri di più",
+    "description": "A link text in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__card__prev": {
+    "messageformat": "Codice di sicurezza precedente",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__card__next": {
+    "messageformat": "Codice di sicurezza successivo",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__carousel__dot": {
+    "messageformat": "Versione del codice di sicurezza, {index,number} di {total,number}",
+    "description": "An ARIA label for safety number carousel button."
+  },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "Segna come verificato",
     "description": "Safety number viewer, verification toggle button, when not verified, sets verified"
@@ -642,6 +662,42 @@
   "icu:SafetyNumberViewer__clearVerification": {
     "messageformat": "Rimuovi verifica",
     "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
+  },
+  "icu:SafetyNumberViewer__hint--migration": {
+    "messageformat": "Per verificare la sicurezza della tua crittografia end-to-end con {name}, fai combaciare i codici di sicurezza presenti sulla scheda colorata che vedi con quelli presenti sulla scheda colorata dell'altra persona. Se i codici non combaciano, continua a scorrere e prova un'altra coppia di codici di sicurezza. Ricorda che deve combaciare una sola coppia.",
+    "description": "Safety number viewer, text of the hint during migration period"
+  },
+  "icu:SafetyNumberViewer__hint--normal": {
+    "messageformat": "Per verificare la sicurezza della tua crittografia end-to-end con {name}, confronta i numeri qui in alto con quelli sul dispositivo dell'altra persona. È possibile scansionare il tuo codice qui sopra per velocizzare il processo.",
+    "description": "Safety number viewer, text of the hint after migration period"
+  },
+  "icu:SafetyNumberOnboarding__title": {
+    "messageformat": "Cambiamenti nei codici di sicurezza",
+    "description": "Title of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p1": {
+    "messageformat": "Stiamo aggiornando il sistema dei codici di sicurezza in vista di un periodo di transizione che ci porterà a introdurre nuove funzioni per la privacy su Signal.",
+    "description": "Paragraph 1 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p2": {
+    "messageformat": "Per verificare i codici di sicurezza, fai combaciare i codici di sicurezza presenti sulla scheda colorata che vedi con quelli presenti sulla scheda colorata che vede l'altra persona. Se i codici non combaciano, continua a scorrere e prova un'altra coppia di codici di sicurezza. Ricorda che deve combaciare una sola coppia.",
+    "description": "Paragraph 2 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__help": {
+    "messageformat": "Hai bisogno di aiuto?",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__close": {
+    "messageformat": "Capito",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberNotReady__body": {
+    "messageformat": "Verrà creato un codice di sicurezza per questa persona dopo che avrai inviato dei messaggi in chat.",
+    "description": "Body of SafetyNumberNotReady modal"
+  },
+  "icu:SafetyNumberNotReady__learn-more": {
+    "messageformat": "Scopri di più",
+    "description": "Text of 'Learn more' button of SafetyNumberNotReady modal"
   },
   "icu:isVerified": {
     "messageformat": "Hai verificato il codice di sicurezza con {name}.",
@@ -1212,7 +1268,8 @@
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
   "icu:verifyHelp": {
-    "messageformat": "Per verificare la sicurezza della tua codifica end-to-end con {name}, confronta i numeri qui sopra con il loro dispositivo."
+    "messageformat": "Per verificare la sicurezza della tua crittografia end-to-end con {name}, confronta i numeri qui sopra con quelli che vedono loro sul proprio dispositivo. È possibile scansionare il codice QR qui sopra per velocizzare il processo.",
+    "description": "(deleted 07/05/2023)"
   },
   "icu:theirIdentityUnknown": {
     "messageformat": "Non hai ancora scambiato alcun messaggio con questo contatto. Il codice di sicurezza sarà disponibile dopo il primo messaggio."
@@ -1281,9 +1338,33 @@
     "messageformat": "Elimina",
     "description": "Menu item for deleting messages, title case."
   },
-  "icu:deleteConversationConfirmation": {
-    "messageformat": "Vuoi eliminare definitivamente questa chat?",
-    "description": "Confirmation dialog text that asks the user if they really wish to delete the conversation. Answer buttons use the strings 'ok' and 'cancel'. The deletion is permanent, i.e. it cannot be undone."
+  "icu:ConversationHeader__DeleteMessagesConfirmation__title": {
+    "messageformat": "Vuoi eliminare la chat?",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__DeleteMessagesConfirmation__description": {
+    "messageformat": "Questa chat verrà eliminata da questo dispositivo.",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
+    "messageformat": "Abbandona il gruppo",
+    "description": "This is a button to leave a group"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__title": {
+    "messageformat": "Vuoi davvero abbandonare?",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__description": {
+    "messageformat": "Non potrai più inviare o ricevere messaggi in questo gruppo.",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__confirmButton": {
+    "messageformat": "Abbandona",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Confirm Button"
+  },
+  "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
+    "messageformat": "Prima di abbandonare il gruppo, devi scegliere almeno un nuovo amministratore.",
+    "description": "Conversation Header > Leave Group Action > Cannot Leave Group Because You Are Last Admin Alert > Description"
   },
   "icu:sessionEnded": {
     "messageformat": "Ripristina la sessione sicura",
@@ -4335,6 +4416,10 @@
     "messageformat": "Rimuovere {contact} come amministratore del gruppo?",
     "description": "Shown in a confirmation dialog when you are about to remove admin privileges from someone"
   },
+  "icu:ContactModal--add-to-group": {
+    "messageformat": "Aggiungi a un altro gruppo",
+    "description": "Button text for adding contact to another group in Group Contact Details modal"
+  },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Rimuovi dal gruppo",
     "description": "Button text for remove from group button in Group Contact Details modal"
@@ -5167,6 +5252,18 @@
     "messageformat": "Nome utente",
     "description": "Default text for username field"
   },
+  "icu:ProfileEditor__username-link": {
+    "messageformat": "Codice QR o link",
+    "description": "Label of a profile editor row that navigates to username link and qr code modal"
+  },
+  "icu:ProfileEditor__username-link__tooltip__title": {
+    "messageformat": "Condividi il tuo nome utente",
+    "description": "Title of tooltip displayed under 'QR code or link' button for getting username link"
+  },
+  "icu:ProfileEditor__username-link__tooltip__body": {
+    "messageformat": "Consenti ad altre persone di iniziare una chat con te condividendo il tuo codice QR o link.",
+    "description": "Body of tooltip displayed under 'QR code or link' button for getting username link"
+  },
   "icu:ProfileEditor--username--title": {
     "messageformat": "Scegli il tuo nome utente",
     "description": "Title text for username modal"
@@ -5225,6 +5322,10 @@
   },
   "icu:ProfileEditor--username--confirm-delete-body": {
     "messageformat": "Questo rimuoverà il tuo nome utente, permettendo ad altri utenti di usarlo. Vuoi procedere comunque?",
+    "description": "(deleted 07/10/2023) Shown in dialog body if user has saved an empty string to delete their username"
+  },
+  "icu:ProfileEditor--username--confirm-delete-body-2": {
+    "messageformat": "This will remove your username and disable your QR code and link. “{username}” will be available for others to claim. Are you sure?",
     "description": "Shown in dialog body if user has saved an empty string to delete their username"
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
@@ -6403,6 +6504,42 @@
     "messageformat": "Questi numeri fanno in modo che il tuo nome utente rimanga privato, così da evitare di ricevere messaggi indesiderati. Ti consigliamo di condividere il tuo nome utente solamente con le persone e i gruppi con cui vuoi chattare. Se cambi il nome utente, riceverai una nuova serie di numeri.",
     "description": "Body of the popup with information about discriminator in username"
   },
+  "icu:EditUsernameModalBody__change-confirmation": {
+    "messageformat": "Changing your username will reset your existing QR code and link. Are you sure?",
+    "description": "Body of the confirmation dialog displayed when user is about to change their username"
+  },
+  "icu:EditUsernameModalBody__change-confirmation__continue": {
+    "messageformat": "Continua",
+    "description": "Text of the primary button on username change confirmation modal"
+  },
+  "icu:UsernameLinkModalBody__save": {
+    "messageformat": "Salva",
+    "description": "Name of the button for saving username link QR code to disk in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color": {
+    "messageformat": "Colore",
+    "description": "Name of the button for changing the username link QR code color in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__copy": {
+    "messageformat": "Copia negli appunti",
+    "description": "ARIA label of the button for copying the username link to clipboard in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__help": {
+    "messageformat": "Only share your QR code and link with people you trust. When shared others will be able to view your username and start a chat with you.",
+    "description": "Text of disclaimer at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__reset": {
+    "messageformat": "Resetta",
+    "description": "Text of button at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color__radio": {
+    "messageformat": "Username link color, {index,number} of {total,number}",
+    "description": "ARIA label of button for selecting username link color"
+  },
+  "icu:UsernameLinkModalBody__reset__confirm": {
+    "messageformat": "If you reset your QR code, your existing QR code and link will no longer work.",
+    "description": "Text of confirmation modal when resetting the username link"
+  },
   "icu:UsernameOnboardingModalBody__title": {
     "messageformat": "Imposta il tuo nome utente per Signal",
     "description": "Title of username onboarding modal"
@@ -6412,7 +6549,7 @@
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Ogni nome utente ha un link univoco che puoi condividere con chi vuoi per iniziare a chattare",
+    "messageformat": "Ogni nome utente ha un codice QR univoco e un link che puoi condividere con chi vuoi per iniziare una chat",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
@@ -6487,24 +6624,10 @@
     "messageformat": "Altre piccole modifiche e correzioni di bug per far funzionare l'app senza problemi. Grazie per usare Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.21--0": {
-    "messageformat": "Che ne dici di avere una panoramica più \"ampia\" quando fai le chiamate su Signal? Le videochiamate uno a uno ora usano la stessa modalità di visione a schermo intero mentre squillano, prima disponibile solo per le chiamate di gruppo. Perché le videochiamate di gruppo non sono meglio di quelle individuali, ecco.",
-    "description": "Release notes for v6.21"
+  "icu:WhatsNew__v6.27--0": {
+    "messageformat": "Questo aggiornamento include una serie di miglioramenti per le chiamate vocali e video, oltre a degli aggiornamenti minori nella documentazione di Signal (grazie, {linkToGithub}!)."
   },
-  "icu:WhatsNew__v6.21--1": {
-    "messageformat": "Vorremmo anche ringraziare {complexspaces} per il suo aiuto e il feedback fornito durante il nostro lavoro per questo aggiornamento.",
-    "description": "Release notes for v6.21"
-  },
-  "icu:WhatsNew__v6.22--0": {
-    "messageformat": "Formatta i testi dei tuoi messaggi selezionando il testo direttamente nel campo di scrittura.\n\nChe sia grassetto, corsivo o barrato, potrai scegliere subito il font da applicare per rendere il tuo messaggio unico!",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.22--1": {
-    "messageformat": "Abbiamo aggiunto il supporto alle ultime emoji introdotte, così avrai ancora più libertà di scelta fra le emoji da inviare o le reazioni da lasciare ai messaggi!",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.23--1": {
-    "messageformat": "Oltre a risolvere una serie di piccoli bug fastidiosi, questa versione include degli aggiornamenti alla documentazione del team di sviluppo (grazie mille, {d108}!). Inoltre, abbiamo anche migliorato il design dell'interfaccia per inoltrare i messaggi (grazie a {hackerbirds}!).",
-    "description": "Release notes for v6.23"
+  "icu:WhatsNew__v6.28--0": {
+    "messageformat": "We modified the notification icons that appear for group updates, like when someone new joins a group. These icons help improve legibility, especially if you live within the darkness of the Dark Theme. The previous icons merely adopted the dark. The new icons were born in it, molded by it."
   }
 }

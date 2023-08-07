@@ -369,11 +369,11 @@
     "description": "Undoes Archive Conversation action, and moves archived conversation back to the main conversation list"
   },
   "icu:pinConversation": {
-    "messageformat": "Ghim Trò chuyện",
+    "messageformat": "Ghim trò chuyện",
     "description": "Shown in menu for conversation, and pins the conversation to the top of the conversation list"
   },
   "icu:unpinConversation": {
-    "messageformat": "Bỏ ghim Trò chuyện",
+    "messageformat": "Bỏ ghim trò chuyện",
     "description": "Undoes Archive Conversation action, and unpins the conversation from the top of the conversation list"
   },
   "icu:pinnedConversationsFull": {
@@ -635,6 +635,26 @@
     "messageformat": "Chấp nhận",
     "description": "Label for a button to accept a new safety number"
   },
+  "icu:SafetyNumberViewer__migration__text": {
+    "messageformat": "Các mã số an toàn đang được cập nhật.",
+    "description": "An explanatory note in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__migration__learn_more": {
+    "messageformat": "Tìm hiểu thêm",
+    "description": "A link text in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__card__prev": {
+    "messageformat": "Mã số an toàn trước",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__card__next": {
+    "messageformat": "Mã số an toàn tiếp theo",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__carousel__dot": {
+    "messageformat": "Phiên bản của mã số an toàn, {index,number} trên tổng số {total,number}",
+    "description": "An ARIA label for safety number carousel button."
+  },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "Đánh dấu đã xác minh",
     "description": "Safety number viewer, verification toggle button, when not verified, sets verified"
@@ -642,6 +662,42 @@
   "icu:SafetyNumberViewer__clearVerification": {
     "messageformat": "Xóa xác nhận",
     "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
+  },
+  "icu:SafetyNumberViewer__hint--migration": {
+    "messageformat": "Để xác minh bảo mật đầu cuối với {name}, hãy khớp thẻ màu này với thiết bị của họ và so sánh các số. Nếu các số này không khớp, hãy thử các cặp mã số an toàn khác. Chỉ cần một cặp khớp nhau.",
+    "description": "Safety number viewer, text of the hint during migration period"
+  },
+  "icu:SafetyNumberViewer__hint--normal": {
+    "messageformat": "Để xác minh bảo mật đầu cuối với {name}, hãy so sánh các số ở trên với thiết bị của họ. Người đó cũng có thể quét mã của bạn với thiết bị của họ.",
+    "description": "Safety number viewer, text of the hint after migration period"
+  },
+  "icu:SafetyNumberOnboarding__title": {
+    "messageformat": "Các thay đổi đối với Mã số an toàn",
+    "description": "Title of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p1": {
+    "messageformat": "Các mã số an toàn đang được cập nhật qua một giai đoạn chuyển giao để hỗ trợ các tính năng quyền riêng tư sắp ra mắt trong Signal.",
+    "description": "Paragraph 1 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p2": {
+    "messageformat": "Để xác minh các mã số an toàn, hãy khớp thẻ màu này với thiết bị của liên hệ của bạn. Nếu các số này không khớp, hãy thử các cặp mã số an toàn khác. Chỉ cần một cặp khớp nhau.",
+    "description": "Paragraph 2 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__help": {
+    "messageformat": "Cần hỗ trợ?",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__close": {
+    "messageformat": "Đã hiểu",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberNotReady__body": {
+    "messageformat": "Một mã số an toàn sẽ được tạo với người này sau khi hai bạn nhắn tin.",
+    "description": "Body of SafetyNumberNotReady modal"
+  },
+  "icu:SafetyNumberNotReady__learn-more": {
+    "messageformat": "Tìm hiểu thêm",
+    "description": "Text of 'Learn more' button of SafetyNumberNotReady modal"
   },
   "icu:isVerified": {
     "messageformat": "Bạn đã xác minh số an toàn của bạn với {name}",
@@ -1212,7 +1268,8 @@
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
   "icu:verifyHelp": {
-    "messageformat": "Để xác minh tính bảo mật của mã hóa end-to-end của bạn với {name}, hãy so sánh các số ở trên với thiết bị của họ."
+    "messageformat": "Để xác minh bảo mật đầu cuối với {name}, hãy so sánh các số ở trên với thiết bị của họ. Người đó cũng có thể quét mã QR trên.",
+    "description": "(deleted 07/05/2023)"
   },
   "icu:theirIdentityUnknown": {
     "messageformat": "Bạn chưa trao đổi tin nhắn nào với liên hệ này. Số an toàn của bạn với họ sẽ được cung cấp sau tin nhắn đầu tiên."
@@ -1281,9 +1338,33 @@
     "messageformat": "Xóa",
     "description": "Menu item for deleting messages, title case."
   },
-  "icu:deleteConversationConfirmation": {
-    "messageformat": "Xóa cuộc trò chuyện này vĩnh viễn?",
-    "description": "Confirmation dialog text that asks the user if they really wish to delete the conversation. Answer buttons use the strings 'ok' and 'cancel'. The deletion is permanent, i.e. it cannot be undone."
+  "icu:ConversationHeader__DeleteMessagesConfirmation__title": {
+    "messageformat": "Xóa cuộc trò chuyện?",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__DeleteMessagesConfirmation__description": {
+    "messageformat": "Trò chuyện này sẽ bị xóa khỏi thiết bị này.",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
+    "messageformat": "Rời nhóm",
+    "description": "This is a button to leave a group"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__title": {
+    "messageformat": "Bạn có chắc chắn muốn rời khỏi nhóm?",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__description": {
+    "messageformat": "Bạn sẽ không thể gửi hoặc nhận tin nhắn trong nhóm này nữa.",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__confirmButton": {
+    "messageformat": "Rời",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Confirm Button"
+  },
+  "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
+    "messageformat": "Trước khi rời nhóm, bạn phải chọn ít nhất một quản trị viên mới cho nhóm này.",
+    "description": "Conversation Header > Leave Group Action > Cannot Leave Group Because You Are Last Admin Alert > Description"
   },
   "icu:sessionEnded": {
     "messageformat": "Thiết lập lại phiên bảo mật",
@@ -4335,6 +4416,10 @@
     "messageformat": "Xóa {contact} với tư cách quản trị viên của nhóm?",
     "description": "Shown in a confirmation dialog when you are about to remove admin privileges from someone"
   },
+  "icu:ContactModal--add-to-group": {
+    "messageformat": "Thêm vào một nhóm khác",
+    "description": "Button text for adding contact to another group in Group Contact Details modal"
+  },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Xóa khỏi nhóm",
     "description": "Button text for remove from group button in Group Contact Details modal"
@@ -5167,6 +5252,18 @@
     "messageformat": "Tên người dùng",
     "description": "Default text for username field"
   },
+  "icu:ProfileEditor__username-link": {
+    "messageformat": "Mã QR hoặc Đường Dẫn",
+    "description": "Label of a profile editor row that navigates to username link and qr code modal"
+  },
+  "icu:ProfileEditor__username-link__tooltip__title": {
+    "messageformat": "Chia sẻ Tên Người Dùng của bạn",
+    "description": "Title of tooltip displayed under 'QR code or link' button for getting username link"
+  },
+  "icu:ProfileEditor__username-link__tooltip__body": {
+    "messageformat": "Cho phép người khác bắt đầu một cuộc trò chuyện với bạn bằng cách chia sẻ mã QR hoặc đường dẫn riêng của bạn.",
+    "description": "Body of tooltip displayed under 'QR code or link' button for getting username link"
+  },
   "icu:ProfileEditor--username--title": {
     "messageformat": "Chọn tên người dùng của bạn",
     "description": "Title text for username modal"
@@ -5225,6 +5322,10 @@
   },
   "icu:ProfileEditor--username--confirm-delete-body": {
     "messageformat": "Thao tác này sẽ xóa tên người dùng của bạn, cho phép người dùng khác xác nhận quyền sở hữu. Bạn có chắc không?",
+    "description": "(deleted 07/10/2023) Shown in dialog body if user has saved an empty string to delete their username"
+  },
+  "icu:ProfileEditor--username--confirm-delete-body-2": {
+    "messageformat": "This will remove your username and disable your QR code and link. “{username}” will be available for others to claim. Are you sure?",
     "description": "Shown in dialog body if user has saved an empty string to delete their username"
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
@@ -6403,6 +6504,42 @@
     "messageformat": "Các ký tự này giúp giữ bí mật tên người dùng của bạn giúp bạn tránh các tin nhắn ngoài ý muốn. Chỉ chia sẻ tên người dùng của bạn với những người hoặc nhóm bạn muốn trò chuyện. Nếu bạn đổi tên người dùng, bạn sẽ nhận được một dãy ký tự mới.",
     "description": "Body of the popup with information about discriminator in username"
   },
+  "icu:EditUsernameModalBody__change-confirmation": {
+    "messageformat": "Changing your username will reset your existing QR code and link. Are you sure?",
+    "description": "Body of the confirmation dialog displayed when user is about to change their username"
+  },
+  "icu:EditUsernameModalBody__change-confirmation__continue": {
+    "messageformat": "Tiếp tục",
+    "description": "Text of the primary button on username change confirmation modal"
+  },
+  "icu:UsernameLinkModalBody__save": {
+    "messageformat": "Lưu",
+    "description": "Name of the button for saving username link QR code to disk in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color": {
+    "messageformat": "Màu",
+    "description": "Name of the button for changing the username link QR code color in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__copy": {
+    "messageformat": "Sao chép vào Bảng kẹp",
+    "description": "ARIA label of the button for copying the username link to clipboard in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__help": {
+    "messageformat": "Only share your QR code and link with people you trust. When shared others will be able to view your username and start a chat with you.",
+    "description": "Text of disclaimer at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__reset": {
+    "messageformat": "Đặt lại",
+    "description": "Text of button at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color__radio": {
+    "messageformat": "Username link color, {index,number} of {total,number}",
+    "description": "ARIA label of button for selecting username link color"
+  },
+  "icu:UsernameLinkModalBody__reset__confirm": {
+    "messageformat": "If you reset your QR code, your existing QR code and link will no longer work.",
+    "description": "Text of confirmation modal when resetting the username link"
+  },
   "icu:UsernameOnboardingModalBody__title": {
     "messageformat": "Đặt tên người dùng Signal của bạn",
     "description": "Title of username onboarding modal"
@@ -6412,7 +6549,7 @@
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Mỗi tên người dùng có một liên kết độc nhất bạn có thể chia sẻ với bạn mình để bắt đầu trò chuyện",
+    "messageformat": "Mỗi tên người dùng có một mã QR độc nhất cùng đường dẫn bạn có thể chia sẻ để bạn bè có thể bắt đầu trò chuyện với bạn",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
@@ -6487,24 +6624,10 @@
     "messageformat": "Các tinh chỉnh, sửa lỗi, và cải thiện hiệu năng. Cảm ơn bạn đã sử dụng Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.21--0": {
-    "messageformat": "Nhìn bản thân bạn rõ hơn khi cuộc gọi trực tiếp 1-1 đang đổ chuông. Cuộc gọi video cá nhân hiện nay cũng sử dụng chế độ xem toàn màn hình, vốn trước đây chỉ xuất hiện khi bắt đầu một cuộc gọi nhóm mới. Chúng tôi hướng tới sự nhất quán, và giờ có thể nhất chí rằng sự khác biệt đã không còn tồn tại vì những điểm bên trên đã được đồng nhất.",
-    "description": "Release notes for v6.21"
+  "icu:WhatsNew__v6.27--0": {
+    "messageformat": "Bản cập nhật này bao gồm một số nâng cấp cho cuộc gọi thoại và cuộc gọi video cùng một số cập nhật nhỏ cho phần tài liệu của ứng dụng (xin cảm ơn, {linkToGithub}!)."
   },
-  "icu:WhatsNew__v6.21--1": {
-    "messageformat": "Chúng tôi cũng muốn thể hiện sự trân trọng tới {complexspaces} vì sự giúp đỡ và phản hồi khi chúng tôi thực hiện bản cập nhật này.",
-    "description": "Release notes for v6.21"
-  },
-  "icu:WhatsNew__v6.22--0": {
-    "messageformat": "Định dạng văn bản trong tin nhắn của bạn bằng cách lựa chọn bất kỳ đoạn chữ nào trong hộp soạn tin nhắn để in đậm, in nghiêng, gạch ngang, và các hiệu ứng văn bản khác.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.22--1": {
-    "messageformat": "Chúng tôi đã hỗ trợ thêm các emoji mới nhất và giờ đây bạn có thể bày tỏ sự hào hứng của mình với emoji &quot;Shaking Face&quot; (<emojify>🫨</emojify>) hoặc bày tỏ cảm xúc với emoji &quot;Pea Pod&quot; (<emojify>🫛</emojify>) mới ra mắt trong năm nay.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.23--1": {
-    "messageformat": "Ngoài một số lỗi nhỏ đã được sửa, bản cập nhật này cũng kết hợp danh sách các cập nhật từ nhà phát triển (cảm ơn {d108}!) và cải thiện thiết kế của giao diện chuyển tiếp tin nhắn (cảm ơn {hackerbirds}!).",
-    "description": "Release notes for v6.23"
+  "icu:WhatsNew__v6.28--0": {
+    "messageformat": "We modified the notification icons that appear for group updates, like when someone new joins a group. These icons help improve legibility, especially if you live within the darkness of the Dark Theme. The previous icons merely adopted the dark. The new icons were born in it, molded by it."
   }
 }

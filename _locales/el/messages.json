@@ -373,7 +373,7 @@
     "description": "Shown in menu for conversation, and pins the conversation to the top of the conversation list"
   },
   "icu:unpinConversation": {
-    "messageformat": "Κατάργηση καρφίτσας σε συνομιλία",
+    "messageformat": "Κατάργηση καρφιτσώματος",
     "description": "Undoes Archive Conversation action, and unpins the conversation from the top of the conversation list"
   },
   "icu:pinnedConversationsFull": {
@@ -635,6 +635,26 @@
     "messageformat": "Αποδοχή",
     "description": "Label for a button to accept a new safety number"
   },
+  "icu:SafetyNumberViewer__migration__text": {
+    "messageformat": "Οι αριθμοί ασφαλείας ενημερώνονται.",
+    "description": "An explanatory note in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__migration__learn_more": {
+    "messageformat": "Μάθε περισσότερα",
+    "description": "A link text in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__card__prev": {
+    "messageformat": "Προηγούμενος αριθμός ασφαλείας",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__card__next": {
+    "messageformat": "Επόμενος αριθμός ασφαλείας",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__carousel__dot": {
+    "messageformat": "Έκδοση αριθμού ασφαλείας, {index,number} από {total,number}",
+    "description": "An ARIA label for safety number carousel button."
+  },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "Σημείωση ως επιβεβαιωμένο",
     "description": "Safety number viewer, verification toggle button, when not verified, sets verified"
@@ -642,6 +662,42 @@
   "icu:SafetyNumberViewer__clearVerification": {
     "messageformat": "Αφαίρεση επιβεβαίωσης",
     "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
+  },
+  "icu:SafetyNumberViewer__hint--migration": {
+    "messageformat": "Για να επαληθεύσεις την κρυπτογράφηση από άκρο σε άκρο με τον χρήστη {name}, αντιστοίχισε την έγχρωμη κάρτα παραπάνω με τη συσκευή του και συγκρίνετε τους αριθμούς. Εάν δεν ταιριάζουν, δοκίμασε το άλλο ζεύγος αριθμών ασφαλείας. Μόνο ένα ζευγάρι χρειάζεται να ταιριάζει.",
+    "description": "Safety number viewer, text of the hint during migration period"
+  },
+  "icu:SafetyNumberViewer__hint--normal": {
+    "messageformat": "Για να επαληθεύσεις την κρυπτογράφηση από άκρο σε άκρο με τον χρήστη {name}, σύγκρινε τους παραπάνω αριθμούς με αυτούς στη συσκευή του. Μπορεί επίσης να σκανάρει τον κωδικό σου με τη συσκευή του.",
+    "description": "Safety number viewer, text of the hint after migration period"
+  },
+  "icu:SafetyNumberOnboarding__title": {
+    "messageformat": "Αλλαγές στους Αριθμούς Ασφαλείας",
+    "description": "Title of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p1": {
+    "messageformat": "Οι αριθμοί ασφαλείας ενημερώνονται κατά τη διάρκεια μιας μεταβατικής περιόδου για να ενεργοποιηθούν οι επερχόμενες λειτουργίες απορρήτου στο Signal.",
+    "description": "Paragraph 1 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p2": {
+    "messageformat": "Για να επαληθεύσεις τους αριθμούς ασφαλείας, αντιστοίχισε την έγχρωμη κάρτα με τη συσκευή της επαφής σου. Εάν δεν ταιριάζουν, δοκίμασε το άλλο ζεύγος αριθμών ασφαλείας. Μόνο ένα ζευγάρι χρειάζεται να ταιριάζει.",
+    "description": "Paragraph 2 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__help": {
+    "messageformat": "Χρειάζεσαι βοήθεια;",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__close": {
+    "messageformat": "Εντάξει",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberNotReady__body": {
+    "messageformat": "Θα δημιουργηθεί ένας αριθμός ασφαλείας με αυτό το άτομο αφού ανταλλάξετε μηνύματα μεταξύ σας.",
+    "description": "Body of SafetyNumberNotReady modal"
+  },
+  "icu:SafetyNumberNotReady__learn-more": {
+    "messageformat": "Μάθε περισσότερα",
+    "description": "Text of 'Learn more' button of SafetyNumberNotReady modal"
   },
   "icu:isVerified": {
     "messageformat": "Επιβεβαίωσες τον αριθμό ασφαλείας με τον/την {name}.",
@@ -1212,7 +1268,8 @@
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
   "icu:verifyHelp": {
-    "messageformat": "Για να επιβεβαιωθεί η κρυπτογράφηση από άκρο σε άκρο με τον/την {name}, σύγκρινε τους παραπάνω αριθμούς με αυτούς στη συσκευή του/της."
+    "messageformat": "Για να επαληθεύσεις την κρυπτογράφηση από άκρο σε άκρο με τον χρήστη {name}, σύγκρινε τους παραπάνω αριθμούς με αυτούς στη συσκευή του. Μπορεί επίσης να σκανάρει τον κωδικό qr παραπάνω.",
+    "description": "(deleted 07/05/2023)"
   },
   "icu:theirIdentityUnknown": {
     "messageformat": "Δεν έχεις ανταλλάξει ακόμα μηνύματα με αυτήν την επαφή. Ο αριθμός ασφαλείας σου με αυτή θα είναι διαθέσιμος μετά το πρώτο μήνυμα."
@@ -1281,9 +1338,33 @@
     "messageformat": "Διαγραφή",
     "description": "Menu item for deleting messages, title case."
   },
-  "icu:deleteConversationConfirmation": {
-    "messageformat": "Θες να διαγραφεί μόνιμα αυτή η συνομιλία;",
-    "description": "Confirmation dialog text that asks the user if they really wish to delete the conversation. Answer buttons use the strings 'ok' and 'cancel'. The deletion is permanent, i.e. it cannot be undone."
+  "icu:ConversationHeader__DeleteMessagesConfirmation__title": {
+    "messageformat": "Διαγραφή συνομιλίας;",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__DeleteMessagesConfirmation__description": {
+    "messageformat": "Αυτή η συνομιλία θα διαγραφεί από αυτή τη συσκευή.",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
+    "messageformat": "Αποχώρηση απ' την ομάδα",
+    "description": "This is a button to leave a group"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__title": {
+    "messageformat": "Θέλεις όντως να αποχωρήσεις;",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__description": {
+    "messageformat": "Δεν θα μπορείς πια να στείλεις ή να λάβεις μηνύματα σε αυτή την ομάδα.",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__confirmButton": {
+    "messageformat": "Αποχώρηση",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Confirm Button"
+  },
+  "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
+    "messageformat": "Πριν αποχωρήσεις, θα πρέπει να επιλέξεις τουλάχιστον νέο διαχειριστή ή διαχειρίστρια για την ομάδα.",
+    "description": "Conversation Header > Leave Group Action > Cannot Leave Group Because You Are Last Admin Alert > Description"
   },
   "icu:sessionEnded": {
     "messageformat": "Η ασφαλής σύνδεση επανεκκινήθηκε",
@@ -4335,6 +4416,10 @@
     "messageformat": "Αφαίρεση του/της {contact} από διαχειριστή της ομάδας;",
     "description": "Shown in a confirmation dialog when you are about to remove admin privileges from someone"
   },
+  "icu:ContactModal--add-to-group": {
+    "messageformat": "Προσθήκη σε άλλη ομάδα",
+    "description": "Button text for adding contact to another group in Group Contact Details modal"
+  },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Αφαίρεση από την ομάδα",
     "description": "Button text for remove from group button in Group Contact Details modal"
@@ -5167,6 +5252,18 @@
     "messageformat": "Όνομα χρήστη",
     "description": "Default text for username field"
   },
+  "icu:ProfileEditor__username-link": {
+    "messageformat": "Κωδικός QR ή Σύνδεσμος",
+    "description": "Label of a profile editor row that navigates to username link and qr code modal"
+  },
+  "icu:ProfileEditor__username-link__tooltip__title": {
+    "messageformat": "Μοιράσου το όνομα χρήστη σου",
+    "description": "Title of tooltip displayed under 'QR code or link' button for getting username link"
+  },
+  "icu:ProfileEditor__username-link__tooltip__body": {
+    "messageformat": "Άσε τους άλλους να ξεκινήσουν μια συνομιλία μαζί σου κοινοποιώντας τον μοναδικό κωδικό QR ή τον σύνδεσμό σου.",
+    "description": "Body of tooltip displayed under 'QR code or link' button for getting username link"
+  },
   "icu:ProfileEditor--username--title": {
     "messageformat": "Διάλεξε όνομα χρήστη",
     "description": "Title text for username modal"
@@ -5225,6 +5322,10 @@
   },
   "icu:ProfileEditor--username--confirm-delete-body": {
     "messageformat": "Αυτή η ενέργεια θα αφαιρέσει το όνομα χρήστη σου και άλλοι χρήστες θα μπορούν να το χρησιμοποιήσουν. Είσαι σίγουρος/η;",
+    "description": "(deleted 07/10/2023) Shown in dialog body if user has saved an empty string to delete their username"
+  },
+  "icu:ProfileEditor--username--confirm-delete-body-2": {
+    "messageformat": "This will remove your username and disable your QR code and link. “{username}” will be available for others to claim. Are you sure?",
     "description": "Shown in dialog body if user has saved an empty string to delete their username"
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
@@ -6403,6 +6504,42 @@
     "messageformat": "Αυτά τα ψηφία διατηρούν απόρρητο το δικό σου όνομα χρήστη, ώστε να μη λαμβάνεις ανεπιθύμητα μηνύματα. Να μοιράζεσαι το όνομα χρήστη σου μόνο με άτομα και ομάδες που θέλεις να συνομιλείς. Εάν θέλεις να αλλάξεις όνομα χρήστη, θα λάβεις ένα νέο σετ ψηφίων.",
     "description": "Body of the popup with information about discriminator in username"
   },
+  "icu:EditUsernameModalBody__change-confirmation": {
+    "messageformat": "Changing your username will reset your existing QR code and link. Are you sure?",
+    "description": "Body of the confirmation dialog displayed when user is about to change their username"
+  },
+  "icu:EditUsernameModalBody__change-confirmation__continue": {
+    "messageformat": "Συνέχεια",
+    "description": "Text of the primary button on username change confirmation modal"
+  },
+  "icu:UsernameLinkModalBody__save": {
+    "messageformat": "Αποθήκευση",
+    "description": "Name of the button for saving username link QR code to disk in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color": {
+    "messageformat": "Χρώμα",
+    "description": "Name of the button for changing the username link QR code color in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__copy": {
+    "messageformat": "Αντιγραφή στο πρόχειρο",
+    "description": "ARIA label of the button for copying the username link to clipboard in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__help": {
+    "messageformat": "Only share your QR code and link with people you trust. When shared others will be able to view your username and start a chat with you.",
+    "description": "Text of disclaimer at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__reset": {
+    "messageformat": "Επαναφορά",
+    "description": "Text of button at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color__radio": {
+    "messageformat": "Username link color, {index,number} of {total,number}",
+    "description": "ARIA label of button for selecting username link color"
+  },
+  "icu:UsernameLinkModalBody__reset__confirm": {
+    "messageformat": "If you reset your QR code, your existing QR code and link will no longer work.",
+    "description": "Text of confirmation modal when resetting the username link"
+  },
   "icu:UsernameOnboardingModalBody__title": {
     "messageformat": "Ρύθμισε το όνομα χρήστη σου στο Signal",
     "description": "Title of username onboarding modal"
@@ -6412,7 +6549,7 @@
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Κάθε όνομα χρήστη έχει έναν μοναδικό σύνδεσμο που μπορείς να μοιραστείς με τους φίλους σου για να ξεκινήσουν μια συνομιλία μαζί σου",
+    "messageformat": "Κάθε όνομα χρήστη έχει έναν μοναδικό κωδικό και σύνδεσμο QR που μπορείς να μοιραστείς με τους φίλους σου για να ξεκινήσουν μια συνομιλία μαζί σου",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
@@ -6487,24 +6624,10 @@
     "messageformat": "Μικρές τροποποιήσεις, επιδιορθώσεις σφαλμάτων και βελτιώσεις απόδοσης. Ευχαριστούμε που χρησιμοποιείς το Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.21--0": {
-    "messageformat": "Εμφάνιση πλήρους οθόνης πριν από ιδιωτική κλήση Οι ιδιωτικές βιντεοκλήσεις χρησιμοποιούν πλέον την ίδια εμφάνιση πλήρους οθόνης που πριν εμφανιζόταν μόνο στην αρχή μιας ομαδικής κλήσης. Έχουμε αγάπη για τη συνέπεια (όχι την απροθυμία), και γι' αυτό οι ομαδικές και ιδιωτικές βιντεοκλήσεις δεν έχουν πλέον διαφορά (πέρα από τον αριθμό συμμετεχόντων).",
-    "description": "Release notes for v6.21"
+  "icu:WhatsNew__v6.27--0": {
+    "messageformat": "Αυτή η ενημέρωση περιλαμβάνει μερικές βελτιώσεις για φωνητικές κλήσεις και βιντεοκλήσεις, καθώς και ορισμένες μικρές ενημερώσεις τεκμηρίωσης (ευχαριστούμε, {linkToGithub}!)."
   },
-  "icu:WhatsNew__v6.21--1": {
-    "messageformat": "{complexspaces}: Θερμές ευχαριστίες για τη βοήθεια και τα πολύτιμα σχόλια ενώ εργαζόμαστε σε αυτή την έκδοση.",
-    "description": "Release notes for v6.21"
-  },
-  "icu:WhatsNew__v6.22--0": {
-    "messageformat": "Διαμόρφωσε το κείμενο στα μηνύματά σου: επίλεξε το τμήμα που θέλεις στο πεδίο σύνθεσης μηνύματος.Κάνε μια έντονη δήλωση με έντονη γραφή, στείλε την πρότασή σου για διαφορετικό τέλος ταινίας στον αγαπημένο σου σκηνοθέτη με εφέ θαμπώματος, τόνισε με πλάγια γραφή το όνομα που σε ενδιαφέρει και σβήσε με διακριτή διαγραφή την ιδέα για γεύμα που απορρίψατε ή στείλε κωδικοποιημένα με monospace.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.22--1": {
-    "messageformat": "Παρέχουμε υποστήριξη για τους πιο πρόσφατους χαρακτήρες emoji, οπότε μπορείς πλέον να εκφράσεις τον ενθουσιασμό σου με το «Τρεμάμενο Πρόσωπο» (<emojify>🫨</emojify>) ή να αντιδράσεις με ένα «Φασόλι» (<emojify>🫛</emojify>) όταν κάποιος σε ρωτά πόσο κοντά είσαι με τους φίλους σου.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.23--1": {
-    "messageformat": "Πέρα από μια σειρά με διορθώσεις σφαλμάτων, αυτή η έκδοση ενσωματώνει επίσης ενημερώσεις της τεκμηρίωσης προγραμματιστών (ευχαριστούμε, {d108}!) και κάποιες σχεδιαστικές βελτιώσεις στο περιβάλλον προώθησης μηνυμάτων (να 'σαι καλά, {hackerbirds})!",
-    "description": "Release notes for v6.23"
+  "icu:WhatsNew__v6.28--0": {
+    "messageformat": "We modified the notification icons that appear for group updates, like when someone new joins a group. These icons help improve legibility, especially if you live within the darkness of the Dark Theme. The previous icons merely adopted the dark. The new icons were born in it, molded by it."
   }
 }

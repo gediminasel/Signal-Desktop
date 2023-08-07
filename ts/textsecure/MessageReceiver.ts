@@ -32,6 +32,7 @@ import {
 
 import {
   IdentityKeys,
+  KyberPreKeys,
   PreKeys,
   SenderKeys,
   Sessions,
@@ -71,7 +72,7 @@ import type { EventHandler } from './EventTarget';
 import EventTarget from './EventTarget';
 import { downloadAttachment } from './downloadAttachment';
 import type { IncomingWebSocketRequest } from './WebsocketResources';
-import { ContactBuffer, GroupBuffer } from './ContactsParser';
+import { ContactBuffer } from './ContactsParser';
 import type { WebAPIType } from './WebAPI';
 import type { Storage } from './Storage';
 import { WarnOnlyError } from './Errors';
@@ -111,8 +112,6 @@ import {
   ReadSyncEvent,
   ViewSyncEvent,
   ContactSyncEvent,
-  GroupEvent,
-  GroupSyncEvent,
   StoryRecipientUpdateEvent,
   CallEventSyncEvent,
 } from './messageReceiverEvents';
@@ -619,16 +618,6 @@ export default class MessageReceiver
   public override addEventListener(
     name: 'contactSync',
     handler: (ev: ContactSyncEvent) => void
-  ): void;
-
-  public override addEventListener(
-    name: 'group',
-    handler: (ev: GroupEvent) => void
-  ): void;
-
-  public override addEventListener(
-    name: 'groupSync',
-    handler: (ev: GroupSyncEvent) => void
   ): void;
 
   public override addEventListener(
@@ -1758,6 +1747,7 @@ export default class MessageReceiver
 
     const preKeyStore = new PreKeys({ ourUuid: destinationUuid });
     const signedPreKeyStore = new SignedPreKeys({ ourUuid: destinationUuid });
+    const kyberPreKeyStore = new KyberPreKeys({ ourUuid: destinationUuid });
 
     const sealedSenderIdentifier = envelope.sourceUuid;
     strictAssert(
@@ -1786,7 +1776,8 @@ export default class MessageReceiver
           sessionStore,
           identityKeyStore,
           preKeyStore,
-          signedPreKeyStore
+          signedPreKeyStore,
+          kyberPreKeyStore
         ),
       zone
     );
@@ -1811,6 +1802,7 @@ export default class MessageReceiver
     const { destinationUuid } = envelope;
     const preKeyStore = new PreKeys({ ourUuid: destinationUuid });
     const signedPreKeyStore = new SignedPreKeys({ ourUuid: destinationUuid });
+    const kyberPreKeyStore = new KyberPreKeys({ ourUuid: destinationUuid });
 
     strictAssert(identifier !== undefined, 'Empty identifier');
     strictAssert(sourceDevice !== undefined, 'Empty source device');
@@ -1903,7 +1895,8 @@ export default class MessageReceiver
               sessionStore,
               identityKeyStore,
               preKeyStore,
-              signedPreKeyStore
+              signedPreKeyStore,
+              kyberPreKeyStore
             )
           ),
         zone
@@ -2105,17 +2098,18 @@ export default class MessageReceiver
     msg: Proto.IStoryMessage,
     sentMessage?: ProcessedSent
   ): Promise<void> {
-    const logId = getEnvelopeId(envelope);
+    const envelopeId = getEnvelopeId(envelope);
+    const logId = `MessageReceiver.handleStoryMessage(${envelopeId})`;
 
     logUnexpectedUrgentValue(envelope, 'story');
 
     if (getStoriesBlocked()) {
-      log.info('MessageReceiver.handleStoryMessage: dropping', logId);
+      log.info(`${logId}: dropping`);
       this.removeFromCache(envelope);
       return;
     }
 
-    log.info('MessageReceiver.handleStoryMessage', logId);
+    log.info(`${logId} starting`);
 
     const attachments: Array<ProcessedAttachment> = [];
     let preview: ReadonlyArray<ProcessedPreview> | undefined;
@@ -2150,11 +2144,7 @@ export default class MessageReceiver
 
     const groupV2 = msg.group ? processGroupV2Context(msg.group) : undefined;
     if (groupV2 && this.isGroupBlocked(groupV2.id)) {
-      log.warn(
-        `MessageReceiver.handleStoryMessage: envelope ${getEnvelopeId(
-          envelope
-        )} ignored; destined for blocked group`
-      );
+      log.warn(`${logId}: ignored; destined for blocked group`);
       this.removeFromCache(envelope);
       return;
     }
@@ -2165,10 +2155,7 @@ export default class MessageReceiver
     );
 
     if (timeRemaining <= 0) {
-      log.info(
-        'MessageReceiver.handleStoryMessage: story already expired',
-        logId
-      );
+      log.info(`${logId}: story already expired`);
       this.removeFromCache(envelope);
       return;
     }
@@ -2188,6 +2175,7 @@ export default class MessageReceiver
     };
 
     if (sentMessage && message.groupV2) {
+      log.warn(`${logId}: envelope is a sent group story`);
       const ev = new SentEvent(
         {
           destinationUuid: {
@@ -2220,6 +2208,7 @@ export default class MessageReceiver
     }
 
     if (sentMessage) {
+      log.warn(`${logId}: envelope is a sent distribution list story`);
       const { storyMessageRecipients } = sentMessage;
       const recipients = storyMessageRecipients ?? [];
 
@@ -2248,8 +2237,7 @@ export default class MessageReceiver
         } else {
           assertDev(
             false,
-            `MessageReceiver.handleStoryMessage(${logId}): missing ` +
-              `distribution list id for: ${destinationUuid}`
+            `${logId}: missing distribution list id for: ${destinationUuid}`
           );
         }
 
@@ -2296,6 +2284,7 @@ export default class MessageReceiver
       return;
     }
 
+    log.warn(`${logId}: envelope is a received story`);
     const ev = new MessageEvent(
       {
         source: envelope.source,
@@ -2997,10 +2986,6 @@ export default class MessageReceiver
       // before moving on since it updates conversation state.
       return this.handleContacts(envelope, syncMessage.contacts);
     }
-    if (syncMessage.groups) {
-      void this.handleGroups(envelope, syncMessage.groups);
-      return;
-    }
     if (syncMessage.blocked) {
       return this.handleBlocked(envelope, syncMessage.blocked);
     }
@@ -3241,6 +3226,7 @@ export default class MessageReceiver
     {
       identityKeyPair,
       signedPreKey,
+      lastResortKyberPreKey,
       registrationId,
       newE164,
     }: Proto.SyncMessage.IPniChangeNumber
@@ -3255,6 +3241,7 @@ export default class MessageReceiver
       return;
     }
 
+    // TDOO: DESKTOP-5652
     if (
       !Bytes.isNotEmpty(identityKeyPair) ||
       !Bytes.isNotEmpty(signedPreKey) ||
@@ -3268,6 +3255,7 @@ export default class MessageReceiver
     const manager = window.getAccountManager();
     await manager.setPni(updatedPni.toString(), {
       identityKeyPair,
+      lastResortKyberPreKey: dropNull(lastResortKyberPreKey),
       signedPreKey,
       registrationId,
     });
@@ -3448,63 +3436,6 @@ export default class MessageReceiver
     await this.dispatchAndWait(logId, contactSync);
 
     log.info('handleContacts: finished');
-  }
-
-  private async handleGroups(
-    envelope: ProcessedEnvelope,
-    groups: Proto.SyncMessage.IGroups
-  ): Promise<void> {
-    const logId = getEnvelopeId(envelope);
-    log.info('group sync');
-    log.info(`MessageReceiver: handleGroups ${logId}`);
-    const { blob } = groups;
-
-    this.removeFromCache(envelope);
-
-    logUnexpectedUrgentValue(envelope, 'groupSync');
-
-    if (!blob) {
-      throw new Error('MessageReceiver.handleGroups: blob field was missing');
-    }
-
-    // Note: we do not return here because we don't want to block the next message on
-    //   this attachment download and a lot of processing of that attachment.
-    const attachmentPointer = await this.handleAttachment(blob, {
-      disableRetries: true,
-      timeout: 90 * SECOND,
-    });
-    const groupBuffer = new GroupBuffer(attachmentPointer.data);
-    let groupDetails = groupBuffer.next();
-    const promises = [];
-    while (groupDetails) {
-      const { id } = groupDetails;
-      strictAssert(id, 'Group details without id');
-
-      if (id.byteLength !== 16) {
-        log.error(
-          `onGroupReceived: Id was ${id} bytes, expected 16 bytes. Dropping group.`
-        );
-        continue;
-      }
-
-      const ev = new GroupEvent(
-        {
-          ...groupDetails,
-          id: Bytes.toBinary(id),
-        },
-        envelope.receivedAtCounter
-      );
-      const promise = this.dispatchAndWait(logId, ev).catch(e => {
-        log.error('error processing group', e);
-      });
-      groupDetails = groupBuffer.next();
-      promises.push(promise);
-    }
-
-    await Promise.all(promises);
-
-    const ev = new GroupSyncEvent();
-    return this.dispatchAndWait(logId, ev);
   }
 
   private async handleBlocked(

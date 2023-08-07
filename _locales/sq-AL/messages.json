@@ -635,6 +635,26 @@
     "messageformat": "Pranoje",
     "description": "Label for a button to accept a new safety number"
   },
+  "icu:SafetyNumberViewer__migration__text": {
+    "messageformat": "Numrat e sigurisë po përditësohen.",
+    "description": "An explanatory note in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__migration__learn_more": {
+    "messageformat": "Mësoni më tepër",
+    "description": "A link text in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__card__prev": {
+    "messageformat": "Numri i mëparshëm i sigurisë",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__card__next": {
+    "messageformat": "Numri tjetër i sigurisë",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__carousel__dot": {
+    "messageformat": "Versioni i numrit të sigurisë, {index,number} nga {total,number}",
+    "description": "An ARIA label for safety number carousel button."
+  },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "Vëri shenjë si i verifikuar",
     "description": "Safety number viewer, verification toggle button, when not verified, sets verified"
@@ -642,6 +662,42 @@
   "icu:SafetyNumberViewer__clearVerification": {
     "messageformat": "Spastroje verifikimin",
     "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
+  },
+  "icu:SafetyNumberViewer__hint--migration": {
+    "messageformat": "Për të verifikuar kodimin nga skaji në skaj me {name}, përputh kartën e mësipërme të ngjyrave me pajisjen e tyre dhe krahaso numrat. Nëse këto nuk përputhen, provo çiftin tjetër të numrave të sigurisë. Vetëm një palë duhet të përputhet.",
+    "description": "Safety number viewer, text of the hint during migration period"
+  },
+  "icu:SafetyNumberViewer__hint--normal": {
+    "messageformat": "Për të verifikuar kodimin nga skaji në skaj me {name}, krahaso numrat e mësipërm me pajisjen e tyre. Ata gjithashtu mund të skanojnë kodin tënd me pajisjen e tyre.",
+    "description": "Safety number viewer, text of the hint after migration period"
+  },
+  "icu:SafetyNumberOnboarding__title": {
+    "messageformat": "Ndryshimet në numrat e sigurisë",
+    "description": "Title of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p1": {
+    "messageformat": "Numrat e sigurisë po përditësohen gjatë një periudhe tranzicioni për të aktivizuar veçoritë e ardhshme të privatësisë në Signal.",
+    "description": "Paragraph 1 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p2": {
+    "messageformat": "Për të verifikuar numrat e sigurisë, përputh kartën e ngjyrave me pajisjen e kontaktit tënd. Nëse këto nuk përputhen, provo çiftin tjetër të numrave të sigurisë. Vetëm një palë duhet të përputhet.",
+    "description": "Paragraph 2 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__help": {
+    "messageformat": "Ju duhet ndihmë?",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__close": {
+    "messageformat": "E kuptova",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberNotReady__body": {
+    "messageformat": "Një numër sigurie do të krijohet me këtë person pasi të shkëmbeni mesazhe me të.",
+    "description": "Body of SafetyNumberNotReady modal"
+  },
+  "icu:SafetyNumberNotReady__learn-more": {
+    "messageformat": "Mësoni më tepër",
+    "description": "Text of 'Learn more' button of SafetyNumberNotReady modal"
   },
   "icu:isVerified": {
     "messageformat": "E verifikuat numrin tuaj të sigurisë me {name}.",
@@ -1212,7 +1268,8 @@
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
   "icu:verifyHelp": {
-    "messageformat": "Që të verifikoni sigurinë e fshehtëzimit tuaj skaj-më-skaj me {name}, krahasoni numrat më sipër me pajisjen e tyre."
+    "messageformat": "Për të verifikuar sigurinë e kodimit tënd nga skaji në skaj me {name}, krahaso numrat e mësipërm me pajisjen e tyre. Ata gjithashtu mund të skanojnë kodin e mësipërm QR.",
+    "description": "(deleted 07/05/2023)"
   },
   "icu:theirIdentityUnknown": {
     "messageformat": "S’keni shkëmbyer ende ndonjë mesazh me këtë grup. Numri juaj i sigurisë me të do të jetë i passhëm pas mesazhit të parë."
@@ -1281,9 +1338,33 @@
     "messageformat": "Fshije",
     "description": "Menu item for deleting messages, title case."
   },
-  "icu:deleteConversationConfirmation": {
-    "messageformat": "Dëshiron të fshish përgjithmonë këtë bisedë?",
-    "description": "Confirmation dialog text that asks the user if they really wish to delete the conversation. Answer buttons use the strings 'ok' and 'cancel'. The deletion is permanent, i.e. it cannot be undone."
+  "icu:ConversationHeader__DeleteMessagesConfirmation__title": {
+    "messageformat": "Të fshihet biseda?",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__DeleteMessagesConfirmation__description": {
+    "messageformat": "Kjo bisedë do të fshihet nga kjo pajisjeje.",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
+    "messageformat": "Largohu nga grupi",
+    "description": "This is a button to leave a group"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__title": {
+    "messageformat": "Dëshiron vërtet të largohesh?",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__description": {
+    "messageformat": "Nuk do të jesh më në gjendje të dërgosh apo marrësh mesazhe në këtë grup.",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__confirmButton": {
+    "messageformat": "Largohu",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Confirm Button"
+  },
+  "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
+    "messageformat": "Përpara se të largohesh, duhet të zgjedhësh të paktën një administrator të ri për këtë grup.",
+    "description": "Conversation Header > Leave Group Action > Cannot Leave Group Because You Are Last Admin Alert > Description"
   },
   "icu:sessionEnded": {
     "messageformat": "U rinis sesion i siguruar",
@@ -4335,6 +4416,10 @@
     "messageformat": "Të hiqet {contact} nga përgjegjës grupi?",
     "description": "Shown in a confirmation dialog when you are about to remove admin privileges from someone"
   },
+  "icu:ContactModal--add-to-group": {
+    "messageformat": "Shtojeni në grup tjetër",
+    "description": "Button text for adding contact to another group in Group Contact Details modal"
+  },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Hiqe nga grup",
     "description": "Button text for remove from group button in Group Contact Details modal"
@@ -5167,6 +5252,18 @@
     "messageformat": "Emër përdoruesi",
     "description": "Default text for username field"
   },
+  "icu:ProfileEditor__username-link": {
+    "messageformat": "QR code or link",
+    "description": "Label of a profile editor row that navigates to username link and qr code modal"
+  },
+  "icu:ProfileEditor__username-link__tooltip__title": {
+    "messageformat": "Share your username",
+    "description": "Title of tooltip displayed under 'QR code or link' button for getting username link"
+  },
+  "icu:ProfileEditor__username-link__tooltip__body": {
+    "messageformat": "Let others start a chat with you by sharing your unique QR code or link.",
+    "description": "Body of tooltip displayed under 'QR code or link' button for getting username link"
+  },
   "icu:ProfileEditor--username--title": {
     "messageformat": "Zgjidh emrin e përdoruesit",
     "description": "Title text for username modal"
@@ -5225,6 +5322,10 @@
   },
   "icu:ProfileEditor--username--confirm-delete-body": {
     "messageformat": "Kjo do të heqë emrin e përdoruesit, duke u lejuar përdoruesve të tjerë ta përdorin. Je i sigurt?",
+    "description": "(deleted 07/10/2023) Shown in dialog body if user has saved an empty string to delete their username"
+  },
+  "icu:ProfileEditor--username--confirm-delete-body-2": {
+    "messageformat": "This will remove your username and disable your QR code and link. “{username}” will be available for others to claim. Are you sure?",
     "description": "Shown in dialog body if user has saved an empty string to delete their username"
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
@@ -6403,6 +6504,42 @@
     "messageformat": "Këto shifra ndihmojnë të ruash fshehtësinë e emrit të përdoruesit, që të shmangësh mesazhet e padëshiruara. Ndaj emrin e përdoruesit vetëm me personat dhe grupet me të cilat dëshiron të bisedosh. Nëse ndryshon emrin e përdoruesit, atëherë do të marrësh një set të ri shifrash.",
     "description": "Body of the popup with information about discriminator in username"
   },
+  "icu:EditUsernameModalBody__change-confirmation": {
+    "messageformat": "Changing your username will reset your existing QR code and link. Are you sure?",
+    "description": "Body of the confirmation dialog displayed when user is about to change their username"
+  },
+  "icu:EditUsernameModalBody__change-confirmation__continue": {
+    "messageformat": "Vazhdo",
+    "description": "Text of the primary button on username change confirmation modal"
+  },
+  "icu:UsernameLinkModalBody__save": {
+    "messageformat": "Ruaje",
+    "description": "Name of the button for saving username link QR code to disk in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color": {
+    "messageformat": "Ngjyrë",
+    "description": "Name of the button for changing the username link QR code color in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__copy": {
+    "messageformat": "Kopjoje në të Papastër",
+    "description": "ARIA label of the button for copying the username link to clipboard in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__help": {
+    "messageformat": "Only share your QR code and link with people you trust. When shared others will be able to view your username and start a chat with you.",
+    "description": "Text of disclaimer at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__reset": {
+    "messageformat": "Riktheje",
+    "description": "Text of button at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color__radio": {
+    "messageformat": "Username link color, {index,number} of {total,number}",
+    "description": "ARIA label of button for selecting username link color"
+  },
+  "icu:UsernameLinkModalBody__reset__confirm": {
+    "messageformat": "If you reset your QR code, your existing QR code and link will no longer work.",
+    "description": "Text of confirmation modal when resetting the username link"
+  },
   "icu:UsernameOnboardingModalBody__title": {
     "messageformat": "Vendos emrin tënd të përdoruesit në Signal",
     "description": "Title of username onboarding modal"
@@ -6412,7 +6549,7 @@
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Çdo emër përdoruesi ka një lidhje unike që mund ta ndash me miqtë e tu për të nisur një bisedë",
+    "messageformat": "Çdo emër përdoruesi ka një kod unik QR dhe një lidhje që mund ta ndash me miqtë për të filluar bisedën",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
@@ -6487,24 +6624,10 @@
     "messageformat": "Rregullme të vogla, riparime të gabimeve dhe përmirësime të mbarëvajtjes.  Faleminderit që përdorni Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.21--0": {
-    "messageformat": "Shiko më mirë veten ndërkohë që bie zilja për një thirrje kokë më kokë. Telefonatat individuale me video tani përdorin të njëjtën pamje në ekran të plotë që më parë shfaqej vetëm në fillim të një telefonate të re në grup. Kur flitet për qëndrueshmëri, ne përpiqemi të jemi këmbëngulës (jo rezistentë) dhe tani nuk ka mospërputhje, sepse mes tyre tani nuk ka më ndryshim.",
-    "description": "Release notes for v6.21"
+  "icu:WhatsNew__v6.27--0": {
+    "messageformat": "Ky përditësim përfshin disa përmirësime për thirrjet zanore e video dhe disa përditësime të vogla dokumentacioni (faleminderit, {linkToGithub}!)."
   },
-  "icu:WhatsNew__v6.21--1": {
-    "messageformat": "Ne dëshirojmë të shprehim vlerësimin tonë edhe për {complexspaces} për ndihmën dhe raportimet gjatë punës për këtë version.",
-    "description": "Release notes for v6.21"
-  },
-  "icu:WhatsNew__v6.22--0": {
-    "messageformat": "Përpuno tekstin e mesazheve të tua duke zgjedhur tekstin që do në fushën e shkrimit të mesazhit. Bëj një deklaratë të guximshme me shkronja të zeza, dërgoji M. Night Shyamalan një përfundim të papritur zbulues, thekso një emër duke shkruar \"Aleks\" me shkronja të pjerrëta, vendos një vijë përmes tekstit të një darke të refuzuar me mesvijëzues ose ndaje kodin me hapësira.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.22--1": {
-    "messageformat": "Ne shtuam mbështetje për personazhet më të fundit të emoji-ve, kështu që tani mund të shprehësh emocionet e tua me &quot;Shaking Face&quot; (<emojify>🫨</emojify>) ose reago me një &quot;Pea Pod&quot; (<emojify>🫛</emojify>) kur dikush të pyet se sa i afërt je me miqtë e tu.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.23--1": {
-    "messageformat": "Përveç një shumëllojshmërie të vogël rregullimesh të gabimeve, ky version përfshin edhe përditësime të dokumentacionit të zhvilluesit (faleminderit, {d108}!) dhe disa përmirësime të dizajnit në ndërfaqen e përcjelljes së mesazheve (faleminderit, {hackerbirds}!).",
-    "description": "Release notes for v6.23"
+  "icu:WhatsNew__v6.28--0": {
+    "messageformat": "We modified the notification icons that appear for group updates, like when someone new joins a group. These icons help improve legibility, especially if you live within the darkness of the Dark Theme. The previous icons merely adopted the dark. The new icons were born in it, molded by it."
   }
 }

@@ -195,6 +195,7 @@ export enum GiftBadgeStates {
   Opened = 'Opened',
   Redeemed = 'Redeemed',
 }
+
 export type GiftBadgeType = {
   expiration: number;
   id: string | undefined;
@@ -394,6 +395,8 @@ export class Message extends React.PureComponent<Props, State> {
   private hasSelectedTextRef: React.MutableRefObject<boolean> = {
     current: false,
   };
+
+  private metadataRef: React.RefObject<HTMLDivElement> = React.createRef();
 
   public reactionsContainerRefMerger = createRefMerger();
 
@@ -743,8 +746,14 @@ export class Message extends React.PureComponent<Props, State> {
   }
 
   private canRenderStickerLikeEmoji(): boolean {
-    const { text, quote, storyReplyContext, attachments, previews } =
-      this.props;
+    const {
+      attachments,
+      bodyRanges,
+      previews,
+      quote,
+      storyReplyContext,
+      text,
+    } = this.props;
 
     return Boolean(
       text &&
@@ -753,6 +762,7 @@ export class Message extends React.PureComponent<Props, State> {
         !quote &&
         !storyReplyContext &&
         (!attachments || !attachments.length) &&
+        (!bodyRanges || !bodyRanges.length) &&
         (!previews || !previews.length)
     );
   }
@@ -835,6 +845,7 @@ export class Message extends React.PureComponent<Props, State> {
         isTapToViewExpired={isTapToViewExpired}
         onWidthMeasured={isInline ? this.updateMetadataWidth : undefined}
         pushPanelForConversation={pushPanelForConversation}
+        ref={this.metadataRef}
         retryMessageSend={retryMessageSend}
         showEditHistoryModal={showEditHistoryModal}
         status={status}
@@ -1244,7 +1255,7 @@ export class Message extends React.PureComponent<Props, State> {
             onClick={onPreviewImageClick}
           />
         ) : null}
-        <div className="module-message__link-preview__content">
+        <div dir="auto" className="module-message__link-preview__content">
           {first.image &&
           first.domain &&
           previewHasImage &&
@@ -1274,7 +1285,6 @@ export class Message extends React.PureComponent<Props, State> {
             </div>
           ) : null}
           <div
-            dir="auto"
             className={classNames(
               'module-message__link-preview__text',
               previewHasImage && !isFullSizeImage
@@ -1855,7 +1865,7 @@ export class Message extends React.PureComponent<Props, State> {
     }
 
     return (
-      <div
+      <div // eslint-disable-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
         className={classNames(
           'module-message__text',
           `module-message__text--${direction}`,
@@ -1866,6 +1876,18 @@ export class Message extends React.PureComponent<Props, State> {
             ? 'module-message__text--delete-for-everyone'
             : null
         )}
+        onClick={e => {
+          // Prevent metadata from being selected on triple clicks.
+          const clickCount = e.detail;
+          const range = window.getSelection()?.getRangeAt(0);
+          if (
+            clickCount === 3 &&
+            this.metadataRef.current &&
+            range?.intersectsNode(this.metadataRef.current)
+          ) {
+            range.setEndBefore(this.metadataRef.current);
+          }
+        }}
         onDoubleClick={(event: React.MouseEvent) => {
           // Prevent double-click interefering with interactions _inside_
           // the bubble.

@@ -635,6 +635,26 @@
     "messageformat": "យល់ព្រម",
     "description": "Label for a button to accept a new safety number"
   },
+  "icu:SafetyNumberViewer__migration__text": {
+    "messageformat": "លេខសុវត្ថិភាពកំពុងត្រូវបានធ្វើបច្ចុប្បន្នភាព។",
+    "description": "An explanatory note in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__migration__learn_more": {
+    "messageformat": "សិក្សាបន្ថែម",
+    "description": "A link text in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__card__prev": {
+    "messageformat": "លេខសុវត្ថិភាពពីមុន",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__card__next": {
+    "messageformat": "លេខសុវត្ថិភាពបន្ទាប់",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__carousel__dot": {
+    "messageformat": "កំណែលេខសុវត្ថិភាព {index,number} នៃ {total,number}",
+    "description": "An ARIA label for safety number carousel button."
+  },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "សម្គាល់ថាបានផ្ទៀងផ្ទាត់",
     "description": "Safety number viewer, verification toggle button, when not verified, sets verified"
@@ -642,6 +662,42 @@
   "icu:SafetyNumberViewer__clearVerification": {
     "messageformat": "សម្អាតការផ្ទៀងផ្ទាត់",
     "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
+  },
+  "icu:SafetyNumberViewer__hint--migration": {
+    "messageformat": "ដើម្បីផ្ទៀងផ្ទាត់ការអ៊ីនគ្រីបទាំងសងខាងជាមួយ {name} សូមផ្គូផ្គងកាតពណ៌ខាងលើជាមួយឧបករណ៍របស់ពួកគេ ហើយប្រៀបធៀបលេខ។ ប្រសិនបើលេខទាំងនេះមិនត្រូវគ្នាទេ សូមសាកល្បងលេខសុវត្ថិភាពគូផ្សេងទៀត។ មានតែមួយគូប៉ុណ្ណោះដែលត្រូវផ្គូផ្គង។",
+    "description": "Safety number viewer, text of the hint during migration period"
+  },
+  "icu:SafetyNumberViewer__hint--normal": {
+    "messageformat": "ដើម្បីផ្ទៀងផ្ទាត់ការអ៊ីនគ្រីបទាំងសងខាងជាមួយ {name} សូមប្រៀបធៀបលេខខាងលើជាមួយឧបករណ៍របស់ពួកគេ។ ពួកគេក៏អាចស្គែនកូដរបស់អ្នកដោយប្រើឧបករណ៍របស់ពួកគេផងដែរ។",
+    "description": "Safety number viewer, text of the hint after migration period"
+  },
+  "icu:SafetyNumberOnboarding__title": {
+    "messageformat": "ការផ្លាស់ប្តូរចំពោះលេខសុវត្ថិភាព",
+    "description": "Title of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p1": {
+    "messageformat": "លេខសុវត្ថិភាពកំពុងត្រូវបានធ្វើបច្ចុប្បន្នភាពក្នុងរយៈពេលផ្លាស់ប្តូរ ដើម្បីបើកមុខងារឯកជនភាពនាពេលខាងមុខនៅក្នុង Signal។",
+    "description": "Paragraph 1 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p2": {
+    "messageformat": "ដើម្បីផ្ទៀងផ្ទាត់លេខសុវត្ថិភាព សូមផ្គូផ្គងកាតពណ៌ជាមួយឧបករណ៍នៃឈ្មោះទំនាក់ទំនងរបស់អ្នក។ ប្រសិនបើលេខទាំងនេះមិនត្រូវគ្នាទេ សូមសាកល្បងលេខសុវត្ថិភាពគូផ្សេងទៀត។ មានតែមួយគូប៉ុណ្ណោះដែលត្រូវផ្គូផ្គង។",
+    "description": "Paragraph 2 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__help": {
+    "messageformat": "ត្រូវការជំនួយ?",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__close": {
+    "messageformat": "យល់ហើយ",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberNotReady__body": {
+    "messageformat": "លេខសុវត្ថិភាពមួយនឹងត្រូវបានបង្កើតឡើងជាមួយបុគ្គលនេះ បន្ទាប់ពីអ្នកផ្ញើសារទៅវិញទៅមកជាមួយគេ។",
+    "description": "Body of SafetyNumberNotReady modal"
+  },
+  "icu:SafetyNumberNotReady__learn-more": {
+    "messageformat": "សិក្សាបន្ថែម",
+    "description": "Text of 'Learn more' button of SafetyNumberNotReady modal"
   },
   "icu:isVerified": {
     "messageformat": "អ្នកបានផ្ទៀងផ្ទាត់លេខសុវត្ថិភាពរបស់អ្នកជាមួយ {name}.",
@@ -1212,7 +1268,8 @@
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
   "icu:verifyHelp": {
-    "messageformat": "ដើម្បីផ្ទៀងផ្ទាត់សុវត្ថិភាពនៃការអ៊ិនគ្រីបទាំងសងខាងរបស់អ្នកជាមួយ {name} សូមប្រៀបធៀបលេខខាងលើជាមួយឧបករណ៍របស់ពួកគេ។"
+    "messageformat": "ដើម្បីផ្ទៀងផ្ទាត់សុវត្ថិភាពនៃការអ៊ីនគ្រីបទាំងសងខាងរបស់អ្នកជាមួយ {name} សូមប្រៀបធៀបលេខខាងលើជាមួយឧបករណ៍របស់ពួកគេ។ ពួកគេក៏អាចស្គែនកូដ QR ខាងលើផងដែរ។",
+    "description": "(deleted 07/05/2023)"
   },
   "icu:theirIdentityUnknown": {
     "messageformat": "អ្នកមិនទាន់បានផ្តោះប្តូរសារណាមួយជាមួយលេខទំនាក់ទំនងនេះទេ។ លេខសុវត្ថិភាពរបស់អ្នកជាមួយគេ នឹងមានបន្ទាប់ពីផ្ញើសារដំបូង។"
@@ -1281,9 +1338,33 @@
     "messageformat": "លុប",
     "description": "Menu item for deleting messages, title case."
   },
-  "icu:deleteConversationConfirmation": {
-    "messageformat": "លុបការជជែកនេះជារៀងរហូតឬ?",
-    "description": "Confirmation dialog text that asks the user if they really wish to delete the conversation. Answer buttons use the strings 'ok' and 'cancel'. The deletion is permanent, i.e. it cannot be undone."
+  "icu:ConversationHeader__DeleteMessagesConfirmation__title": {
+    "messageformat": "លុបការជជែកឬ?",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__DeleteMessagesConfirmation__description": {
+    "messageformat": "ការជជែកនេះនឹងត្រូវលុបចេញពីឧបករណ៍នេះ។",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
+    "messageformat": "ចាកចេញពីក្រុម",
+    "description": "This is a button to leave a group"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__title": {
+    "messageformat": "តើអ្នកពិតជាចង់ចាកចេញឬ?",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__description": {
+    "messageformat": "អ្នកនឹងមិនអាចផ្ញើ ឬទទួលសារក្នុងក្រុមនេះទៀតទេ។",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__confirmButton": {
+    "messageformat": "ចាកចេញ",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Confirm Button"
+  },
+  "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
+    "messageformat": "មុនពេលអ្នកចាកចេញ អ្នកត្រូវជ្រើសរើសអ្នកគ្រប់គ្រងថ្មីយ៉ាងហោចណាស់ម្នាក់សម្រាប់ក្រុមនេះ។",
+    "description": "Conversation Header > Leave Group Action > Cannot Leave Group Because You Are Last Admin Alert > Description"
   },
   "icu:sessionEnded": {
     "messageformat": "កំណត់ការប្រើប្រាស់សុវត្ថិភាពឡើងវិញ",
@@ -4335,6 +4416,10 @@
     "messageformat": "ដក {contact} ចេញពីសិទ្ធិជាអ្នកគ្រប់គ្រងក្រុម?",
     "description": "Shown in a confirmation dialog when you are about to remove admin privileges from someone"
   },
+  "icu:ContactModal--add-to-group": {
+    "messageformat": "បន្ថែមទៅក្រុមផ្សេង",
+    "description": "Button text for adding contact to another group in Group Contact Details modal"
+  },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "ដកចេញពីក្រុម",
     "description": "Button text for remove from group button in Group Contact Details modal"
@@ -5167,6 +5252,18 @@
     "messageformat": "ឈ្មោះអ្នកប្រើ",
     "description": "Default text for username field"
   },
+  "icu:ProfileEditor__username-link": {
+    "messageformat": "QR code or link",
+    "description": "Label of a profile editor row that navigates to username link and qr code modal"
+  },
+  "icu:ProfileEditor__username-link__tooltip__title": {
+    "messageformat": "Share your username",
+    "description": "Title of tooltip displayed under 'QR code or link' button for getting username link"
+  },
+  "icu:ProfileEditor__username-link__tooltip__body": {
+    "messageformat": "Let others start a chat with you by sharing your unique QR code or link.",
+    "description": "Body of tooltip displayed under 'QR code or link' button for getting username link"
+  },
   "icu:ProfileEditor--username--title": {
     "messageformat": "ជ្រើសរើសឈ្មោះអ្នកប្រើរបស់អ្នក",
     "description": "Title text for username modal"
@@ -5225,6 +5322,10 @@
   },
   "icu:ProfileEditor--username--confirm-delete-body": {
     "messageformat": "ការធ្វើបែបនេះនឹងលុបឈ្មោះអ្នកប្រើរបស់អ្នក ហើយធ្វើឲ្យអ្នកប្រើផ្សេងទៀតយកវាទៅប្រើបាន។ តើអ្នកច្បាស់អត់?",
+    "description": "(deleted 07/10/2023) Shown in dialog body if user has saved an empty string to delete their username"
+  },
+  "icu:ProfileEditor--username--confirm-delete-body-2": {
+    "messageformat": "This will remove your username and disable your QR code and link. “{username}” will be available for others to claim. Are you sure?",
     "description": "Shown in dialog body if user has saved an empty string to delete their username"
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
@@ -6403,6 +6504,42 @@
     "messageformat": "លេខទាំងនេះជួយរក្សាឲ្យឈ្មោះអ្នកប្រើរបស់អ្នកស្ថិតក្នុងភាពឯកជន ដើម្បីឲ្យអ្នកអាចជៀសវាងនូវការទទួលសារដែលមិនចង់បាន។ សូមចែករំលែកឈ្មោះអ្នកប្រើរបស់អ្នកតែជាមួយមនុស្ស និងក្រុមដែលអ្នកចង់ជជែកជាមួយប៉ុណ្ណោះ។ ប្រសិនបើអ្នកប្តូរឈ្មោះអ្នកប្រើ អ្នកនឹងទទួលបានសំណុំលេខថ្មី។",
     "description": "Body of the popup with information about discriminator in username"
   },
+  "icu:EditUsernameModalBody__change-confirmation": {
+    "messageformat": "Changing your username will reset your existing QR code and link. Are you sure?",
+    "description": "Body of the confirmation dialog displayed when user is about to change their username"
+  },
+  "icu:EditUsernameModalBody__change-confirmation__continue": {
+    "messageformat": "បន្ត",
+    "description": "Text of the primary button on username change confirmation modal"
+  },
+  "icu:UsernameLinkModalBody__save": {
+    "messageformat": "រក្សាទុក",
+    "description": "Name of the button for saving username link QR code to disk in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color": {
+    "messageformat": "ពណ៌",
+    "description": "Name of the button for changing the username link QR code color in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__copy": {
+    "messageformat": "ចម្លងទៅ Clipboard",
+    "description": "ARIA label of the button for copying the username link to clipboard in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__help": {
+    "messageformat": "Only share your QR code and link with people you trust. When shared others will be able to view your username and start a chat with you.",
+    "description": "Text of disclaimer at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__reset": {
+    "messageformat": "កំណត់ឡើងវិញ",
+    "description": "Text of button at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color__radio": {
+    "messageformat": "Username link color, {index,number} of {total,number}",
+    "description": "ARIA label of button for selecting username link color"
+  },
+  "icu:UsernameLinkModalBody__reset__confirm": {
+    "messageformat": "If you reset your QR code, your existing QR code and link will no longer work.",
+    "description": "Text of confirmation modal when resetting the username link"
+  },
   "icu:UsernameOnboardingModalBody__title": {
     "messageformat": "បង្កើតឈ្មោះអ្នកប្រើ Signal របស់អ្នក",
     "description": "Title of username onboarding modal"
@@ -6412,7 +6549,7 @@
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "ឈ្មោះអ្នកប្រើនីមួយៗមានតំណភ្ជាប់តែមួយគត់ដែលអ្នកអាចចែករំលែកជាមួយមិត្តភក្តិរបស់អ្នកដើម្បីចាប់ផ្តើមជជែកជាមួយអ្នក",
+    "messageformat": "ឈ្មោះអ្នកប្រើនីមួយៗមានកូដ QR និងតំណភ្ជាប់តែមួយគត់ដែលអ្នកអាចចែករំលែកជាមួយមិត្តភក្តិរបស់អ្នកដើម្បីចាប់ផ្តើមជជែកជាមួយអ្នក",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
@@ -6487,24 +6624,10 @@
     "messageformat": "ការកែប្រែបន្តិចបន្តួច ការដោះស្រាយបញ្ហា និងការបង្កើនប្រតិបត្តិការ។ សូមអរគុណចំពោះការប្រើប្រាស់ Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.21--0": {
-    "messageformat": "មើលឃើញខ្លួនឯងបានកាន់តែច្បាស់ជាងមុន ពេលកំពុងមានសំឡេងរោទ៍ហៅទូរសព្ទនិយាយគ្នាមួយទល់មួយ។ ឥឡូវនេះ ការហៅជាវីដេអូជាលក្ខណៈបុគ្គលប្រើទិដ្ឋភាពអេក្រង់ពេញដូចគ្នាដែលពីមុនបង្ហាញតែនៅពេលចាប់ផ្ដើមការហៅជាក្រុមថ្មីប៉ុណ្ណោះ។ នៅពេលនិយាយអំពីភាពស៊ីសង្វាក់គ្នា យើងបានព្យាយាមតស៊ូខ្នះខ្នែង (មិនមែនរឹងទទឹងទេ) ហើយឥឡូវនេះមិនមានភាពខុសគ្នាទេ ដោយសារចំណុចទាំងនេះលែងខុសគ្នាទៀតហើយ។",
-    "description": "Release notes for v6.21"
+  "icu:WhatsNew__v6.27--0": {
+    "messageformat": "ការធ្វើបច្ចុប្បន្នភាពនេះរួមបញ្ចូលនូវការកែលម្អមួយចំនួនសម្រាប់ការហៅជាសំឡេង និងជាវីដេអូ និងការធ្វើបច្ចុប្បន្នភាពតិចតួចមួយចំនួនលើសំណុំឯកសារ (អរគុណ {linkToGithub}!)។"
   },
-  "icu:WhatsNew__v6.21--1": {
-    "messageformat": "យើងក៏សូមសម្តែងនូវអំណរគុណចំពោះ {complexspaces} ផងដែរដែលបានផ្តល់ជំនួយ និងមតិកែលម្អរបស់ពួកគេ ខណៈពេលដែលកំពុងធ្វើការលើការចេញផ្សាយនេះ។",
-    "description": "Release notes for v6.21"
-  },
-  "icu:WhatsNew__v6.22--0": {
-    "messageformat": "កំណត់ទម្រង់អត្ថបទនៅក្នុងសាររបស់អ្នកដោយជ្រើសរើសអត្ថបទណាមួយនៅក្នុងប្រអប់សរសេរសារ។\n\nធ្វើសេចក្តីអះអាងមួយដ៏មុតមាំក្នុងទម្រង់ជាអក្សរដិត សាងភាពភ្ញាក់ផ្អើលដល់ M. Night Shyamalan តាមរយៈបែបផែនព្រាល/ច្បាស់ សង្កត់ធ្ងន់ទៅលើឈ្មោះដោយសរសេរ \"Alex\" ជាអក្សរទ្រេត គូសបន្ទាត់មួយកាត់គំនិតអំពីអាហារពេលល្ងាចដែលត្រូវគេបដិសេធដោយគូសឆ្នូតមួយ ឬចែករំលែកកូដជាអក្សរម៉ូណូស្ប៉េស។",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.22--1": {
-    "messageformat": "យើងបានបន្ថែមជំនួយសម្រាប់តួអង្គរូបអារម្មណ៍ចុងក្រោយបំផុត ដូច្នេះឥឡូវអ្នកអាចបង្ហាញពីក្តីរំភើបរបស់អ្នកបានដោយប្រើរូប &quot;មុខរង្គើ&quot; (<emojify>🫨</emojify>) ឬប្រតិកម្មដោយប្រើរូប &quot;សណ្តែកកួរ&quot; (<emojify>🫛</emojify>) នៅពេលនរណាម្នាក់សួរអ្នកថាតើអ្នកជិតស្និទ្ធនឹងមិត្តភក្តិរបស់អ្នកកម្រិតណា។",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.23--1": {
-    "messageformat": "ក្រៅពីការកែបញ្ហាមួយចំនួនតូច ការចេញផ្សាយនេះក៏រួមបញ្ចូលផងដែរនូវការធ្វើបច្ចុប្បន្នភាពឯកសាររបស់អ្នកអភិវឌ្ឍន៍ (អរគុណ {d108}!) និងការកែលម្អទៅលើការរចនាមួយចំនួនចំពោះអ៊ីនធើហ្វេសបញ្ជូនសារបន្ត (អរគុណ {hackerbirds}!)។",
-    "description": "Release notes for v6.23"
+  "icu:WhatsNew__v6.28--0": {
+    "messageformat": "We modified the notification icons that appear for group updates, like when someone new joins a group. These icons help improve legibility, especially if you live within the darkness of the Dark Theme. The previous icons merely adopted the dark. The new icons were born in it, molded by it."
   }
 }

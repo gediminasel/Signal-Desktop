@@ -1097,7 +1097,9 @@ function processAttachments({
     await Promise.all(
       filesToProcess.map(async file => {
         try {
-          const attachment = await processAttachment(file);
+          const attachment = await processAttachment(file, {
+            generateScreenshot: true,
+          });
           if (!attachment) {
             removeAttachment(conversationId, file.path)(
               dispatch,
@@ -1323,7 +1325,7 @@ export function resetComposer(conversationId: string): ResetComposerActionType {
     },
   };
 }
-const debouncedSaveDraft = debounce(saveDraft);
+const debouncedSaveDraft = debounce(saveDraft, 100);
 
 function saveDraft(
   conversationId: string,

@@ -635,6 +635,26 @@
     "messageformat": "అంగీకరించండి",
     "description": "Label for a button to accept a new safety number"
   },
+  "icu:SafetyNumberViewer__migration__text": {
+    "messageformat": "భద్రతా సంఖ్యలు అప్‌డేట్ చేయబడుతున్నాయి.",
+    "description": "An explanatory note in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__migration__learn_more": {
+    "messageformat": "ఇంకా నేర్చుకో",
+    "description": "A link text in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__card__prev": {
+    "messageformat": "మునుపటి భద్రతా సంఖ్య",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__card__next": {
+    "messageformat": "తదుపరి భద్రతా సంఖ్య",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__carousel__dot": {
+    "messageformat": "భద్రతా సంఖ్య వెర్షన్, {total,number} లో {index,number}",
+    "description": "An ARIA label for safety number carousel button."
+  },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "ధృవీకరించబడినట్లు గుర్తు పెట్టండి",
     "description": "Safety number viewer, verification toggle button, when not verified, sets verified"
@@ -642,6 +662,42 @@
   "icu:SafetyNumberViewer__clearVerification": {
     "messageformat": "ధృవీకరణను క్లియర్ చేయండి",
     "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
+  },
+  "icu:SafetyNumberViewer__hint--migration": {
+    "messageformat": "{name}‌తో పూర్తి స్థాయి ఎన్‌క్రిప్షన్‌ను ధృవీకరించడానికి, పైన ఉన్న రంగు కార్డును వారి పరికరంతో మ్యాచ్ చేయండి మరియు సంఖ్యలను పోల్చండి. ఒకవేళ ఇవి మ్యాచ్ కాకపోతే, భద్రతా సంఖ్యల మరో జతను ప్రయత్నించండి. కేవలం ఒక జత మాత్రమే మ్యాచ్ కావాలి.",
+    "description": "Safety number viewer, text of the hint during migration period"
+  },
+  "icu:SafetyNumberViewer__hint--normal": {
+    "messageformat": "{name}‌తో పూర్తి స్థాయి ఎన్‌క్రిప్షన్‌ను ధృవీకరించడానికి, పైన ఉన్న సంఖ్యలను వాటి పరికరంతో పోల్చండి. వారు మీ కోడ్‌ను వారి పరికరంతో కూడా స్కాన్ చేయవచ్చు.",
+    "description": "Safety number viewer, text of the hint after migration period"
+  },
+  "icu:SafetyNumberOnboarding__title": {
+    "messageformat": "భద్రతా సంఖ్యలకు మార్పులు",
+    "description": "Title of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p1": {
+    "messageformat": "Signal లో రాబోయే గోప్యతా విలక్షణతలను ప్రారంభించడానికి పరివర్తన వ్యవధిలో భద్రతా సంఖ్యలు అప్‌డేట్ చేయబడుతున్నాయి.",
+    "description": "Paragraph 1 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p2": {
+    "messageformat": "భద్రతా సంఖ్యలను ధృవీకరించడానికి, మీ కాంటాక్ట్ యొక్క పరికరంతో రంగు కార్డును మ్యాచ్ చేయండి. ఒకవేళ ఇవి మ్యాచ్ కాకపోతే, భద్రతా సంఖ్యల మరో జతను ప్రయత్నించండి. కేవలం ఒక జత మాత్రమే మ్యాచ్ కావాలి.",
+    "description": "Paragraph 2 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__help": {
+    "messageformat": "సాయం అవసరమా?",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__close": {
+    "messageformat": "అర్థమైంది",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberNotReady__body": {
+    "messageformat": "మీరు ఈ వ్యక్తితో సందేశాలను మార్పిడి చేసిన తర్వాత వారితో భద్రతా సంఖ్య సృష్టించబడుతుంది.",
+    "description": "Body of SafetyNumberNotReady modal"
+  },
+  "icu:SafetyNumberNotReady__learn-more": {
+    "messageformat": "ఇంకా నేర్చుకో",
+    "description": "Text of 'Learn more' button of SafetyNumberNotReady modal"
   },
   "icu:isVerified": {
     "messageformat": "మీరు మీ భద్రతా నంబర్‌ను {name}తో ధృవీకరించారు",
@@ -1212,7 +1268,8 @@
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
   "icu:verifyHelp": {
-    "messageformat": "{name}తో మీ ఎండ్ టూ ఎండ్ ఎన్‌క్రిప్షన్‌ని ధృవీకరించడానికి, పైన నెంబర్లను వారి పరికరంతో పోల్చండి."
+    "messageformat": "{name}‌తో మీ పూర్తి స్థాయి ఎన్‌క్రిప్షన్ యొక్క భద్రతను ధృవీకరించడానికి, పైన ఉన్న సంఖ్యలను వారి పరికరంతో పోల్చండి. పైన ఉన్న qr కోడ్‌ను కూడా వారు స్కాన్ చేయవచ్చు.",
+    "description": "(deleted 07/05/2023)"
   },
   "icu:theirIdentityUnknown": {
     "messageformat": "ఈ పరిచయంతో మీరు ఇంకా సందేశాలను మార్పిడి చేయలేదు. వారితో మీ భద్రతా సంఖ్య మొదటి సందేశం తర్వాత అందుబాటులో ఉంటుంది."
@@ -1281,9 +1338,33 @@
     "messageformat": "తొలగించండి",
     "description": "Menu item for deleting messages, title case."
   },
-  "icu:deleteConversationConfirmation": {
-    "messageformat": "ఈ చాట్‌ను శాశ్వతంగా తొలగించేదా?",
-    "description": "Confirmation dialog text that asks the user if they really wish to delete the conversation. Answer buttons use the strings 'ok' and 'cancel'. The deletion is permanent, i.e. it cannot be undone."
+  "icu:ConversationHeader__DeleteMessagesConfirmation__title": {
+    "messageformat": "చాట్ తొలగించేదా?",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__DeleteMessagesConfirmation__description": {
+    "messageformat": "ఈ పరికరం నుండి ఈ చాట్ తొలగించబడుతుంది.",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
+    "messageformat": "గ్రూప్‌ను వదిలేయండి",
+    "description": "This is a button to leave a group"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__title": {
+    "messageformat": "మీరు నిజంగా వదిలేయాలని అనుకుంటున్నారా?",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__description": {
+    "messageformat": "మీరు ఇకపై ఈ గ్రూప్‌లో సందేశాలను పంపలేరు లేదా అందుకోలేరు.",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__confirmButton": {
+    "messageformat": "వదిలేయండి",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Confirm Button"
+  },
+  "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
+    "messageformat": "మీరు వదిలేసే ముందు, ఈ గ్రూప్ కోసం కనీసం ఒక క్రొత్త అడ్మిన్‌ను మీరు ఎంచుకోవాలి.",
+    "description": "Conversation Header > Leave Group Action > Cannot Leave Group Because You Are Last Admin Alert > Description"
   },
   "icu:sessionEnded": {
     "messageformat": "సురక్షిత సెషన్ పునరుద్ధరించు.",
@@ -4335,6 +4416,10 @@
     "messageformat": "{contact}ను గ్రూప్ అడ్మిన్ లాగా తొలగించేదా?",
     "description": "Shown in a confirmation dialog when you are about to remove admin privileges from someone"
   },
+  "icu:ContactModal--add-to-group": {
+    "messageformat": "మరొక సమూహానికి జోడించండి",
+    "description": "Button text for adding contact to another group in Group Contact Details modal"
+  },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "గ్రూప్ నుండి తొలగించండి",
     "description": "Button text for remove from group button in Group Contact Details modal"
@@ -5167,6 +5252,18 @@
     "messageformat": "యూజర్‌నేమ్",
     "description": "Default text for username field"
   },
+  "icu:ProfileEditor__username-link": {
+    "messageformat": "QR code or link",
+    "description": "Label of a profile editor row that navigates to username link and qr code modal"
+  },
+  "icu:ProfileEditor__username-link__tooltip__title": {
+    "messageformat": "Share your username",
+    "description": "Title of tooltip displayed under 'QR code or link' button for getting username link"
+  },
+  "icu:ProfileEditor__username-link__tooltip__body": {
+    "messageformat": "Let others start a chat with you by sharing your unique QR code or link.",
+    "description": "Body of tooltip displayed under 'QR code or link' button for getting username link"
+  },
   "icu:ProfileEditor--username--title": {
     "messageformat": "మీ యూజర్‌నేమ్‌ను ఎంచుకోండి",
     "description": "Title text for username modal"
@@ -5225,6 +5322,10 @@
   },
   "icu:ProfileEditor--username--confirm-delete-body": {
     "messageformat": "ఇది మీ యూజర్‌నేమ్‌ను తొలగిస్తుంది, ఇతర యూజర్‌లు దానికి క్లెయిం చేయడానికి అనుమతిస్తుంది. మీరు ఖచ్చితంగా అనుకుంటున్నారా?",
+    "description": "(deleted 07/10/2023) Shown in dialog body if user has saved an empty string to delete their username"
+  },
+  "icu:ProfileEditor--username--confirm-delete-body-2": {
+    "messageformat": "This will remove your username and disable your QR code and link. “{username}” will be available for others to claim. Are you sure?",
     "description": "Shown in dialog body if user has saved an empty string to delete their username"
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
@@ -6403,6 +6504,42 @@
     "messageformat": "ఈ అంకెలు మీ యూజర్‌నేమ్‌ను గోప్యంగా ఉంచడానికి సహాయపడతాయి, కాబట్టి మీరు అవాంఛిత సందేశాలను నివారించవచ్చు. మీరు చాట్ చేయడానికి ఇష్టపడే వ్యక్తులు మరియు గ్రూపులతో మాత్రమే మీ యూజర్‌నేమ్‌ను పంచుకోండి. ఒకవేళ మీరు యూజర్‌నేమ్‌లను మార్చితే, మీరు కొత్త అంకెల సెట్‌ను పొందుతారు.",
     "description": "Body of the popup with information about discriminator in username"
   },
+  "icu:EditUsernameModalBody__change-confirmation": {
+    "messageformat": "Changing your username will reset your existing QR code and link. Are you sure?",
+    "description": "Body of the confirmation dialog displayed when user is about to change their username"
+  },
+  "icu:EditUsernameModalBody__change-confirmation__continue": {
+    "messageformat": "కొనసాగించండి",
+    "description": "Text of the primary button on username change confirmation modal"
+  },
+  "icu:UsernameLinkModalBody__save": {
+    "messageformat": "భద్రపరుచు",
+    "description": "Name of the button for saving username link QR code to disk in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color": {
+    "messageformat": "రంగు",
+    "description": "Name of the button for changing the username link QR code color in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__copy": {
+    "messageformat": "తాత్కాలికంగా  భద్రపరుచు  ప్రదేశముకు నకలు చెయ్యి",
+    "description": "ARIA label of the button for copying the username link to clipboard in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__help": {
+    "messageformat": "Only share your QR code and link with people you trust. When shared others will be able to view your username and start a chat with you.",
+    "description": "Text of disclaimer at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__reset": {
+    "messageformat": "పునరుద్ధరించు",
+    "description": "Text of button at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color__radio": {
+    "messageformat": "Username link color, {index,number} of {total,number}",
+    "description": "ARIA label of button for selecting username link color"
+  },
+  "icu:UsernameLinkModalBody__reset__confirm": {
+    "messageformat": "If you reset your QR code, your existing QR code and link will no longer work.",
+    "description": "Text of confirmation modal when resetting the username link"
+  },
   "icu:UsernameOnboardingModalBody__title": {
     "messageformat": "మీ Signal యూజర్‌నేమ్‌ను సెటప్ చేయండి",
     "description": "Title of username onboarding modal"
@@ -6412,7 +6549,7 @@
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "మీతో చాట్ చేయడం ప్రారంభించడానికి మీ స్నేహితులతో పంచుకునేందుకు ప్రతి యూజర్‌నేమ్‌కు ఒక సాటిలేని లింక్ ఉంది",
+    "messageformat": "మీతో చాట్ ప్రారంభించడానికి మీరు స్నేహితులతో పంచుకోగల సాటిలేని QR కోడ్ మరియు లింక్ ప్రతి యూజర్‌నేమ్‌కు ఉంటుంది",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
@@ -6487,24 +6624,10 @@
     "messageformat": "చిన్న ట్వీక్‌లు, బగ్ ఫిక్స్‌లు, మరియు పనితీరు మెరుగుదలలు. Signal ఉపయోగించినందుకు మీకు ధన్యవాదాలు!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.21--0": {
-    "messageformat": "1-ఆన్-1 కాల్ రింగ్ అయ్యేటప్పుడు మీ యొక్క మెరుగైన రూపంతో కనిపించండి. గతంలో కొత్త గ్రూప్ కాల్ ప్రారంభంలో మాత్రమే కనిపించిన అదే పూర్తి స్క్రీన్ వీక్షణను వ్యక్తిగత వీడియో కాల్స్ ఇప్పుడు ఉపయోగిస్తాయి. స్థిరంగా ఉండే విషయానికి వస్తే, మేము పట్టువిడవకుండా ఉండేందుకు ప్రయత్నిస్తాము (నిరోధకం కాదు) మరియు ఇప్పుడు వైరుధ్యం ఉనికిలో లేదు ఎందుకంటే ఈ విషయాలు ఇకపై భిన్నంగా లేవు.",
-    "description": "Release notes for v6.21"
+  "icu:WhatsNew__v6.27--0": {
+    "messageformat": "ఈ అప్‌డేట్ స్వర మరియు వీడియో కాల్స్ కోసం కొన్ని మెరుగుదలలు మరియు కొన్ని చిన్న డాక్యుమెంటేషన్ అప్‌డేట్‌లను కలిగిఉంది (ధన్యవాదాలు, {linkToGithub}!)."
   },
-  "icu:WhatsNew__v6.21--1": {
-    "messageformat": "ఈ విడుదలపై పనిచేసేటప్పుడు వారి సహాయం మరియు ఫీడ్‌బ్యాక్ అందించినందుకు {complexspaces} కు మేము మా ప్రశంసలను తెలియజేయాలని కూడా కోరుకుంటున్నాం.",
-    "description": "Release notes for v6.21"
-  },
-  "icu:WhatsNew__v6.22--0": {
-    "messageformat": "సందేశం కంపోజిషన్ ఫీల్డ్‌లోని ఏదైనా టెక్స్ట్‌ను ఎంచుకోవడం ద్వారా మీ సందేశాలలోని టెక్స్ట్‌ను ఫార్మాట్ చేయండి.\n\nబోల్డ్, ఇటాలిక్స్, స్ట్రైక్ త్రూ మరియు ఇతర టెక్స్ట్ ప్రభావాలను జోడించడానికి సందేశం కంపోజిషన్ ఫీల్డ్‌లోని ఏదైనా టెక్స్ట్‌ను ఎంచుకోవడం ద్వారా మీ సందేశాలలోని టెక్స్ట్‌ను ఫార్మాట్ చేయండి.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.22--1": {
-    "messageformat": "మేము తాజా ఎమోజి క్యారెక్టర్‌లకు మద్దతును జోడించాము, అందువల్ల మీ స్నేహితులతో మీరు ఎంత సన్నిహితంగా ఉన్నారని ఎవరైనా మిమ్మల్ని అడిగినప్పుడు ఇప్పుడు మీరు &quot;షేకింగ్ ఫేస్&quot; (<emojify>🫨</emojify>) తో మీ ఉత్సాహాన్ని వ్యక్తీకరించవచ్చు లేదా &quot;పీ పాడ్&quot; (<emojify>🫛</emojify>) తో ప్రతిస్పందించండి.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.23--1": {
-    "messageformat": "బగ్ పరిష్కారాల యొక్క చిన్న వర్గీకరణతో పాటు, ఈ విడుదల డెవలపర్ డాక్యుమెంటేషన్ అప్‌డేట్‌లు (ధన్యవాదాలు, {d108}!) మరియు సందేశం ఫార్వర్డింగ్ ఇంటర్‌ఫేస్‌కు కొన్ని డిజైన్ మెరుగుదలలను కూడా కలిగి ఉంటుంది (ధన్యవాదాలు, {hackerbirds}!).",
-    "description": "Release notes for v6.23"
+  "icu:WhatsNew__v6.28--0": {
+    "messageformat": "We modified the notification icons that appear for group updates, like when someone new joins a group. These icons help improve legibility, especially if you live within the darkness of the Dark Theme. The previous icons merely adopted the dark. The new icons were born in it, molded by it."
   }
 }

@@ -99,10 +99,7 @@ describe('storage service', function needsName() {
       return;
     }
 
-    if (this.currentTest?.state !== 'passed') {
-      await bootstrap.saveLogs(app);
-    }
-
+    await bootstrap.maybeSaveLogs(this.currentTest, app);
     await app.close();
     await bootstrap.teardown();
   });
@@ -113,9 +110,9 @@ describe('storage service', function needsName() {
 
     const window = await app.getWindow();
 
-    const leftPane = window.locator('.left-pane-wrapper');
+    const leftPane = window.locator('#LeftPane');
     const conversationView = window.locator(
-      '.conversation > .ConversationView'
+      '.Inbox__conversation > .ConversationView'
     );
 
     debug('sending two sticker pack links');

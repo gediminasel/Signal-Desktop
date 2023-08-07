@@ -44,6 +44,7 @@ window.getTitle = () => title;
 window.getResolvedMessagesLocale = () => config.resolvedTranslationsLocale;
 window.getResolvedMessagesLocaleDirection = () =>
   config.resolvedTranslationsLocaleDirection;
+window.getHourCyclePreference = () => config.hourCyclePreference;
 window.getPreferredSystemLocales = () => config.preferredSystemLocales;
 window.getEnvironment = getEnvironment;
 window.getAppInstance = () => config.appInstance;
@@ -165,7 +166,7 @@ window.logAuthenticatedConnect = () => {
 window.open = () => null;
 
 // Playwright uses `eval` for `.evaluate()` API
-if (!config.enableCI && config.environment !== 'test') {
+if (config.ciMode !== 'full' && config.environment !== 'test') {
   // eslint-disable-next-line no-eval, no-multi-assign
   window.eval = global.eval = () => null;
 }

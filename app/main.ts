@@ -122,6 +122,7 @@ import type { LocaleType } from './locale';
 import { load as loadLocale } from './locale';
 
 import type { LoggerType } from '../ts/types/Logging';
+import { HourCyclePreference } from '../ts/types/I18N';
 
 const STICKER_CREATOR_PARTITION = 'sticker-creator';
 
@@ -161,7 +162,7 @@ const development =
   getEnvironment() === Environment.Development ||
   getEnvironment() === Environment.Staging;
 
-const enableCI = config.get<boolean>('enableCI');
+const ciMode = config.get<'full' | 'benchmark' | false>('ciMode');
 const forcePreloadBundle = config.get<boolean>('forcePreloadBundle');
 
 const preventDisplaySleepService = new PreventDisplaySleepService(
@@ -408,6 +409,19 @@ function getResolvedMessagesLocale(): LocaleType {
   return resolvedTranslationsLocale;
 }
 
+function getHourCyclePreference(): HourCyclePreference {
+  if (process.platform !== 'darwin') {
+    return HourCyclePreference.UnknownPreference;
+  }
+  if (systemPreferences.getUserDefault('AppleICUForce24HourTime', 'boolean')) {
+    return HourCyclePreference.Prefer24;
+  }
+  if (systemPreferences.getUserDefault('AppleICUForce12HourTime', 'boolean')) {
+    return HourCyclePreference.Prefer12;
+  }
+  return HourCyclePreference.UnknownPreference;
+}
+
 type PrepareUrlOptions = {
   forCalling?: boolean;
   forCamera?: boolean;
@@ -539,8 +553,8 @@ function handleCommonWindowEvents(
   }
 }
 
-const DEFAULT_WIDTH = enableCI ? 1024 : 800;
-const DEFAULT_HEIGHT = enableCI ? 1024 : 610;
+const DEFAULT_WIDTH = ciMode ? 1024 : 800;
+const DEFAULT_HEIGHT = ciMode ? 1024 : 610;
 
 // We allow for smaller sizes because folks with OS-level zoom and HighDPI/Large Text
 //   can really cause weirdness around window pixel-sizes. The app is very broken if you
@@ -822,7 +836,7 @@ async function createWindow() {
   mainWindow.on('resize', captureWindowStats);
   mainWindow.on('move', captureWindowStats);
 
-  if (!enableCI && config.get<boolean>('openDevTools')) {
+  if (!ciMode && config.get<boolean>('openDevTools')) {
     // Open the DevTools.
     mainWindow.webContents.openDevTools();
   }
@@ -1686,6 +1700,9 @@ app.on('ready', async () => {
       loadPreferredSystemLocales()
     );
 
+    const hourCyclePreference = getHourCyclePreference();
+    logger.info(`app.ready: hour cycle preference: ${hourCyclePreference}`);
+
     logger.info(
       `app.ready: preferred system locales: ${preferredSystemLocales.join(
         ', '
@@ -1693,6 +1710,7 @@ app.on('ready', async () => {
     );
     resolvedTranslationsLocale = loadLocale({
       preferredSystemLocales,
+      hourCyclePreference,
       logger: getLogger(),
     });
   }
@@ -2264,6 +2282,7 @@ ipc.on('get-config', async event => {
     name: packageJson.productName,
     resolvedTranslationsLocale: getResolvedMessagesLocale().name,
     resolvedTranslationsLocaleDirection: getResolvedMessagesLocale().direction,
+    hourCyclePreference: getResolvedMessagesLocale().hourCyclePreference,
     preferredSystemLocales: getPreferredSystemLocales(),
     version: app.getVersion(),
     buildCreation: config.get<number>('buildCreation'),
@@ -2276,9 +2295,13 @@ ipc.on('get-config', async event => {
     artCreatorUrl: config.get<string>('artCreatorUrl'),
     cdnUrl0: config.get<ConfigType>('cdn').get<string>('0'),
     cdnUrl2: config.get<ConfigType>('cdn').get<string>('2'),
+    cdnUrl3: config.get<ConfigType>('cdn').get<string>('3'),
     certificateAuthority: config.get<string>('certificateAuthority'),
-    environment: enableCI ? Environment.Production : getEnvironment(),
-    enableCI,
+    environment:
+      !isTestEnvironment(getEnvironment()) && ciMode
+        ? Environment.Production
+        : getEnvironment(),
+    ciMode,
     nodeVersion: process.versions.node,
     hostname: os.hostname(),
     osRelease: os.release(),
@@ -2287,7 +2310,7 @@ ipc.on('get-config', async event => {
     proxyUrl: process.env.HTTPS_PROXY || process.env.https_proxy || undefined,
     contentProxyUrl: config.get<string>('contentProxyUrl'),
     sfuUrl: config.get('sfuUrl'),
-    reducedMotionSetting: animationSettings.prefersReducedMotion,
+    reducedMotionSetting: DISABLE_GPU || animationSettings.prefersReducedMotion,
     registrationChallengeUrl: config.get<string>('registrationChallengeUrl'),
     serverPublicParams: config.get<string>('serverPublicParams'),
     serverTrustRoot: config.get<string>('serverTrustRoot'),

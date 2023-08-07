@@ -67,15 +67,12 @@ describe('editing', function needsName() {
       return;
     }
 
-    if (this.currentTest?.state !== 'passed') {
-      await bootstrap.saveLogs(app);
-    }
-
+    await bootstrap.maybeSaveLogs(this.currentTest, app);
     await app.close();
     await bootstrap.teardown();
   });
 
-  it('handles outgoing edited messages phone -> desktop', async () => {
+  it('handles outgoing edited messages phone to desktop', async () => {
     const { phone, desktop } = bootstrap;
 
     const window = await app.getWindow();
@@ -96,7 +93,7 @@ describe('editing', function needsName() {
     }
 
     debug('opening conversation');
-    const leftPane = window.locator('.left-pane-wrapper');
+    const leftPane = window.locator('#LeftPane');
     await leftPane
       .locator('.module-conversation-list__item--contact-or-conversation')
       .first()
@@ -133,7 +130,7 @@ describe('editing', function needsName() {
     assert.strictEqual(await messages.count(), 1, 'message count');
   });
 
-  it('handles incoming edited messages contact -> desktop', async () => {
+  it('handles incoming edited messages contact to desktop', async () => {
     const { contacts, desktop } = bootstrap;
 
     const window = await app.getWindow();
@@ -156,7 +153,7 @@ describe('editing', function needsName() {
     }
 
     debug('opening conversation');
-    const leftPane = window.locator('.left-pane-wrapper');
+    const leftPane = window.locator('#LeftPane');
     await leftPane
       .locator('.module-conversation-list__item--contact-or-conversation')
       .first()
@@ -226,7 +223,7 @@ describe('editing', function needsName() {
     });
 
     debug('opening conversation');
-    const leftPane = window.locator('.left-pane-wrapper');
+    const leftPane = window.locator('#LeftPane');
     await leftPane
       .locator('.module-conversation-list__item--contact-or-conversation')
       .first()

@@ -7,12 +7,14 @@ import type { WebAPIType } from './textsecure/WebAPI';
 import * as log from './logging/log';
 import type { UUIDStringType } from './types/UUID';
 import { parseIntOrThrow } from './util/parseIntOrThrow';
+import { SECOND, HOUR } from './util/durations';
+import { uuidToBytes } from './util/uuidToBytes';
 import * as Bytes from './Bytes';
-import { hash, uuidToBytes } from './Crypto';
 import { HashType } from './types/Crypto';
 import { getCountryCode } from './types/PhoneNumber';
 
 export type ConfigKeyType =
+  | 'cds.disableCompatibilityMode'
   | 'desktop.announcementGroup'
   | 'desktop.calling.audioLevelForSpeaking'
   | 'desktop.cdsi.returnAcisWithoutUaks'
@@ -29,8 +31,8 @@ export type ConfigKeyType =
   | 'desktop.messageRequests'
   | 'desktop.pnp'
   | 'desktop.retryRespondMaxAge'
-  | 'desktop.safetyNumberUUID.timestamp'
-  | 'desktop.safetyNumberUUID'
+  | 'desktop.safetyNumberAci'
+  | 'desktop.safetyNumberAci.beta'
   | 'desktop.senderKey.retry'
   | 'desktop.senderKey.send'
   | 'desktop.senderKeyMaxAge'
@@ -47,7 +49,8 @@ export type ConfigKeyType =
   | 'global.groupsv2.groupSizeHardLimit'
   | 'global.groupsv2.maxGroupSize'
   | 'global.nicknames.max'
-  | 'global.nicknames.min';
+  | 'global.nicknames.min'
+  | 'global.safetyNumberAci';
 
 type ConfigValueType = {
   name: ConfigKeyType;
@@ -88,7 +91,15 @@ export const refreshRemoteConfig = async (
   server: WebAPIType
 ): Promise<void> => {
   const now = Date.now();
-  const newConfig = await server.getConfig();
+  const { config: newConfig, serverEpochTime } = await server.getConfig();
+  const serverTimeSkew = serverEpochTime * SECOND - now;
+
+  if (Math.abs(serverTimeSkew) > HOUR) {
+    log.warn(
+      'Remote Config: sever clock skew detected. ' +
+        `Server time ${serverEpochTime * SECOND}, local time ${now}`
+    );
+  }
 
   // Process new configuration in light of the old configuration
   // The old configuration is not set as the initial value in reduce because
@@ -129,6 +140,7 @@ export const refreshRemoteConfig = async (
   }, {});
 
   await window.storage.put('remoteConfig', config);
+  await window.storage.put('serverTimeSkew', serverTimeSkew);
 };
 
 export const maybeRefreshRemoteConfig = throttle(
@@ -223,8 +235,10 @@ export function getBucketValue(uuid: UUIDStringType, flagName: string): number {
     Bytes.fromString(`${flagName}.`),
     uuidToBytes(uuid),
   ]);
-  const hashResult = hash(HashType.size256, hashInput);
-  const buffer = Buffer.from(hashResult.slice(0, 8));
+  const hashResult = window.SignalContext.crypto.hash(
+    HashType.size256,
+    hashInput
+  );
 
-  return Number(buffer.readBigUint64BE() % 1_000_000n);
+  return Number(Bytes.readBigUint64BE(hashResult.slice(0, 8)) % 1_000_000n);
 }

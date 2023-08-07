@@ -5,6 +5,7 @@ import { z } from 'zod';
 
 import { Environment } from '../environment';
 import { themeSettingSchema } from './StorageUIKeys';
+import { HourCyclePreferenceSchema } from './I18N';
 
 const environmentSchema = z.nativeEnum(Environment);
 
@@ -33,11 +34,12 @@ export const rendererConfigSchema = z.object({
   buildExpiration: z.number(),
   cdnUrl0: configRequiredStringSchema,
   cdnUrl2: configRequiredStringSchema,
+  cdnUrl3: configRequiredStringSchema,
   challengeUrl: configRequiredStringSchema,
   certificateAuthority: configRequiredStringSchema,
   contentProxyUrl: configRequiredStringSchema,
   crashDumpsPath: configRequiredStringSchema,
-  enableCI: z.boolean(),
+  ciMode: z.enum(['full', 'benchmark']).or(z.literal(false)),
   environment: environmentSchema,
   homePath: configRequiredStringSchema,
   hostname: configRequiredStringSchema,
@@ -45,6 +47,7 @@ export const rendererConfigSchema = z.object({
   osVersion: configRequiredStringSchema,
   resolvedTranslationsLocale: configRequiredStringSchema,
   resolvedTranslationsLocaleDirection: z.enum(['ltr', 'rtl']),
+  hourCyclePreference: HourCyclePreferenceSchema,
   preferredSystemLocales: z.array(configRequiredStringSchema),
   name: configRequiredStringSchema,
   nodeVersion: configRequiredStringSchema,

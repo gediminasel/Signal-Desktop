@@ -54,10 +54,7 @@ describe('senderKey', function needsName() {
       return;
     }
 
-    if (this.currentTest?.state !== 'passed') {
-      await bootstrap.saveLogs(app);
-    }
-
+    await bootstrap.maybeSaveLogs(this.currentTest, app);
     await app.close();
     await bootstrap.teardown();
   });
@@ -78,12 +75,12 @@ describe('senderKey', function needsName() {
       distributionId,
     });
 
-    const leftPane = window.locator('.left-pane-wrapper');
+    const leftPane = window.locator('#LeftPane');
 
     debug('Opening group');
     await leftPane.locator(`[data-testid="${group.id}"]`).click();
 
-    const conversationStack = window.locator('.conversation-stack');
+    const conversationStack = window.locator('.Inbox__conversation-stack');
 
     debug('Verifying message');
     await conversationStack

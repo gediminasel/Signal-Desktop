@@ -520,6 +520,7 @@ const URL_CALLS = {
   username: 'v1/accounts/username_hash',
   reserveUsername: 'v1/accounts/username_hash/reserve',
   confirmUsername: 'v1/accounts/username_hash/confirm',
+  usernameLink: 'v1/accounts/username_link',
   whoami: 'v1/accounts/whoami',
 };
 
@@ -686,6 +687,18 @@ const uploadAvatarHeadersZod = z.object({
 });
 export type UploadAvatarHeadersType = z.infer<typeof uploadAvatarHeadersZod>;
 
+const remoteConfigResponseZod = z.object({
+  config: z
+    .object({
+      name: z.string(),
+      enabled: z.boolean(),
+      value: z.string().or(z.null()).optional(),
+    })
+    .array(),
+  serverEpochTime: z.number(),
+});
+export type RemoteConfigResponseType = z.infer<typeof remoteConfigResponseZod>;
+
 export type ProfileType = Readonly<{
   identityKey?: string;
   name?: string;
@@ -811,9 +824,14 @@ export type ReserveUsernameOptionsType = Readonly<{
   abortSignal?: AbortSignal;
 }>;
 
+export type ReplaceUsernameLinkOptionsType = Readonly<{
+  encryptedUsername: Uint8Array;
+}>;
+
 export type ConfirmUsernameOptionsType = Readonly<{
   hash: Uint8Array;
   proof: Uint8Array;
+  encryptedUsername: Uint8Array;
   abortSignal?: AbortSignal;
 }>;
 
@@ -824,6 +842,29 @@ const reserveUsernameResultZod = z.object({
 });
 export type ReserveUsernameResultType = z.infer<
   typeof reserveUsernameResultZod
+>;
+
+const confirmUsernameResultZod = z.object({
+  usernameLinkHandle: z.string(),
+});
+export type ConfirmUsernameResultType = z.infer<
+  typeof confirmUsernameResultZod
+>;
+
+const replaceUsernameLinkResultZod = z.object({
+  usernameLinkHandle: z.string(),
+});
+export type ReplaceUsernameLinkResultType = z.infer<
+  typeof replaceUsernameLinkResultZod
+>;
+
+const resolveUsernameLinkResultZod = z.object({
+  usernameLinkEncryptedValue: z
+    .string()
+    .transform(x => Bytes.fromBase64(fromWebSafeBase64(x))),
+});
+export type ResolveUsernameLinkResultType = z.infer<
+  typeof resolveUsernameLinkResultZod
 >;
 
 export type ConfirmCodeOptionsType = Readonly<{
@@ -857,6 +898,11 @@ const attachmentV3Response = z.object({
 });
 
 export type AttachmentV3ResponseType = z.infer<typeof attachmentV3Response>;
+
+export type ServerKeyCountType = {
+  count: number;
+  pqCount: number;
+};
 
 export type WebAPIType = {
   startRegistration(): unknown;
@@ -913,7 +959,7 @@ export type WebAPIType = {
     deviceId?: number,
     options?: { accessKey?: string }
   ) => Promise<ServerKeysType>;
-  getMyKeys: (uuidKind: UUIDKind) => Promise<number>;
+  getMyKeyCounts: (uuidKind: UUIDKind) => Promise<ServerKeyCountType>;
   getOnboardingStoryManifest: () => Promise<{
     version: string;
     languages: Record<string, Array<string>>;
@@ -984,9 +1030,18 @@ export type WebAPIType = {
   reserveUsername: (
     options: ReserveUsernameOptionsType
   ) => Promise<ReserveUsernameResultType>;
-  confirmUsername(options: ConfirmUsernameOptionsType): Promise<void>;
+  confirmUsername(
+    options: ConfirmUsernameOptionsType
+  ): Promise<ConfirmUsernameResultType>;
+  replaceUsernameLink: (
+    options: ReplaceUsernameLinkOptionsType
+  ) => Promise<ReplaceUsernameLinkResultType>;
+  deleteUsernameLink: () => Promise<void>;
+  resolveUsernameLink: (
+    serverId: string
+  ) => Promise<ResolveUsernameLinkResultType>;
   registerCapabilities: (capabilities: CapabilitiesUploadType) => Promise<void>;
-  registerKeys: (genKeys: KeysType, uuidKind: UUIDKind) => Promise<void>;
+  registerKeys: (genKeys: UploadKeysType, uuidKind: UUIDKind) => Promise<void>;
   registerSupportForUnauthenticatedDelivery: () => Promise<void>;
   reportMessage: (options: ReportMessageOptionsType) => Promise<void>;
   requestVerificationSMS: (number: string, token: string) => Promise<void>;
@@ -1020,10 +1075,6 @@ export type WebAPIType = {
     }
   ) => Promise<MultiRecipient200ResponseType>;
   setPhoneNumberDiscoverability: (newValue: boolean) => Promise<void>;
-  setSignedPreKey: (
-    signedPreKey: SignedPreKeyType,
-    uuidKind: UUIDKind
-  ) => Promise<void>;
   updateDeviceName: (deviceName: string) => Promise<void>;
   uploadAvatar: (
     uploadAvatarRequestHeaders: UploadAvatarHeadersType,
@@ -1035,9 +1086,7 @@ export type WebAPIType = {
   ) => Promise<string>;
   whoami: () => Promise<WhoamiResultType>;
   sendChallengeResponse: (challengeResponse: ChallengeType) => Promise<void>;
-  getConfig: () => Promise<
-    Array<{ name: string; enabled: boolean; value: string | null }>
-  >;
+  getConfig: () => Promise<RemoteConfigResponseType>;
   authenticate: (credentials: WebAPICredentials) => Promise<void>;
   logout: () => Promise<void>;
   getSocketStatus: () => SocketStatus;
@@ -1050,33 +1099,46 @@ export type WebAPIType = {
   reconnect: () => Promise<void>;
 };
 
-export type SignedPreKeyType = {
+export type UploadSignedPreKeyType = {
   keyId: number;
   publicKey: Uint8Array;
   signature: Uint8Array;
 };
+export type UploadPreKeyType = {
+  keyId: number;
+  publicKey: Uint8Array;
+};
+export type UploadKyberPreKeyType = UploadSignedPreKeyType;
 
-export type KeysType = {
+export type UploadKeysType = {
   identityKey: Uint8Array;
-  signedPreKey: SignedPreKeyType;
-  preKeys: Array<{
-    keyId: number;
-    publicKey: Uint8Array;
-  }>;
+
+  // If a field is not provided, the server won't update its data.
+  preKeys?: Array<UploadPreKeyType>;
+  pqPreKeys?: Array<UploadSignedPreKeyType>;
+  pqLastResortPreKey?: UploadSignedPreKeyType;
+  signedPreKey?: UploadSignedPreKeyType;
 };
 
 export type ServerKeysType = {
   devices: Array<{
     deviceId: number;
     registrationId: number;
-    signedPreKey: {
+
+    // We'll get a 404 if none of these keys are provided; we'll have at least one
+    preKey?: {
+      keyId: number;
+      publicKey: Uint8Array;
+    };
+    signedPreKey?: {
       keyId: number;
       publicKey: Uint8Array;
       signature: Uint8Array;
     };
-    preKey?: {
+    pqPreKey?: {
       keyId: number;
       publicKey: Uint8Array;
+      signature: Uint8Array;
     };
   }>;
   identityKey: Uint8Array;
@@ -1140,6 +1202,9 @@ export function initialize({
   }
   if (!isString(cdnUrlObject['2'])) {
     throw new Error('WebAPI.initialize: Missing CDN 2 configuration');
+  }
+  if (!isString(cdnUrlObject['3'])) {
+    throw new Error('WebAPI.initialize: Missing CDN 3 configuration');
   }
   if (!isString(certificateAuthority)) {
     throw new Error('WebAPI.initialize: Invalid certificateAuthority');
@@ -1260,6 +1325,7 @@ export function initialize({
       confirmUsername,
       createGroup,
       deleteUsername,
+      deleteUsernameLink,
       downloadOnboardingStories,
       fetchLinkPreviewImage,
       fetchLinkPreviewMetadata,
@@ -1283,7 +1349,7 @@ export function initialize({
       getIceServers,
       getKeysForIdentifier,
       getKeysForIdentifierUnauth,
-      getMyKeys,
+      getMyKeyCounts,
       getOnboardingStoryManifest,
       getProfile,
       getProfileUnauth,
@@ -1312,6 +1378,8 @@ export function initialize({
       registerKeys,
       registerRequestHandler,
       registerSupportForUnauthenticatedDelivery,
+      resolveUsernameLink,
+      replaceUsernameLink,
       reportMessage,
       requestVerificationSMS,
       requestVerificationVoice,
@@ -1321,7 +1389,6 @@ export function initialize({
       sendMessagesUnauth,
       sendWithSenderKey,
       setPhoneNumberDiscoverability,
-      setSignedPreKey,
       startRegistration,
       unregisterRequestHandler,
       updateDeviceName,
@@ -1488,19 +1555,22 @@ export function initialize({
     }
 
     async function getConfig() {
-      type ResType = {
-        config: Array<{ name: string; enabled: boolean; value: string | null }>;
-      };
-      const res = (await _ajax({
+      const rawRes = await _ajax({
         call: 'config',
         httpType: 'GET',
         responseType: 'json',
-      })) as ResType;
+      });
+      const res = remoteConfigResponseZod.parse(rawRes);
 
-      return res.config.filter(
-        ({ name }: { name: string }) =>
-          name.startsWith('desktop.') || name.startsWith('global.')
-      );
+      return {
+        ...res,
+        config: res.config.filter(
+          ({ name }: { name: string }) =>
+            name.startsWith('desktop.') ||
+            name.startsWith('global.') ||
+            name.startsWith('cds.')
+        ),
+      };
     }
 
     async function getSenderCertificate(omitE164?: boolean) {
@@ -1861,17 +1931,60 @@ export function initialize({
     async function confirmUsername({
       hash,
       proof,
+      encryptedUsername,
       abortSignal,
     }: ConfirmUsernameOptionsType) {
-      await _ajax({
+      const response = await _ajax({
         call: 'confirmUsername',
         httpType: 'PUT',
         jsonData: {
           usernameHash: toWebSafeBase64(Bytes.toBase64(hash)),
           zkProof: toWebSafeBase64(Bytes.toBase64(proof)),
+          encryptedUsername: toWebSafeBase64(Bytes.toBase64(encryptedUsername)),
         },
+        responseType: 'json',
         abortSignal,
       });
+      return confirmUsernameResultZod.parse(response);
+    }
+
+    async function replaceUsernameLink({
+      encryptedUsername,
+    }: ReplaceUsernameLinkOptionsType): Promise<ReplaceUsernameLinkResultType> {
+      return replaceUsernameLinkResultZod.parse(
+        await _ajax({
+          call: 'usernameLink',
+          httpType: 'PUT',
+          responseType: 'json',
+          jsonData: {
+            usernameLinkEncryptedValue: toWebSafeBase64(
+              Bytes.toBase64(encryptedUsername)
+            ),
+          },
+        })
+      );
+    }
+
+    async function deleteUsernameLink(): Promise<void> {
+      await _ajax({
+        call: 'usernameLink',
+        httpType: 'DELETE',
+      });
+    }
+
+    async function resolveUsernameLink(
+      serverId: string
+    ): Promise<ResolveUsernameLinkResultType> {
+      return resolveUsernameLinkResultZod.parse(
+        await _ajax({
+          httpType: 'GET',
+          call: 'usernameLink',
+          urlParameters: `/${encodeURIComponent(serverId)}`,
+          responseType: 'json',
+          unauthenticated: true,
+          accessKey: undefined,
+        })
+      );
     }
 
     async function reportMessage({
@@ -2041,30 +2154,74 @@ export function initialize({
       publicKey: string;
       signature: string;
     };
+    type JSONPreKeyType = {
+      keyId: number;
+      publicKey: string;
+    };
+    type JSONKyberPreKeyType = {
+      keyId: number;
+      publicKey: string;
+      signature: string;
+    };
 
     type JSONKeysType = {
       identityKey: string;
-      signedPreKey: JSONSignedPreKeyType;
-      preKeys: Array<{
-        keyId: number;
-        publicKey: string;
-      }>;
+      preKeys?: Array<JSONPreKeyType>;
+      pqPreKeys?: Array<JSONKyberPreKeyType>;
+      pqLastResortPreKey?: JSONKyberPreKeyType;
+      signedPreKey?: JSONSignedPreKeyType;
     };
 
-    async function registerKeys(genKeys: KeysType, uuidKind: UUIDKind) {
-      const preKeys = genKeys.preKeys.map(key => ({
+    async function registerKeys(genKeys: UploadKeysType, uuidKind: UUIDKind) {
+      const preKeys = genKeys.preKeys?.map(key => ({
         keyId: key.keyId,
         publicKey: Bytes.toBase64(key.publicKey),
       }));
+      const pqPreKeys = genKeys.pqPreKeys?.map(key => ({
+        keyId: key.keyId,
+        publicKey: Bytes.toBase64(key.publicKey),
+        signature: Bytes.toBase64(key.signature),
+      }));
+
+      if (
+        !preKeys?.length &&
+        !pqPreKeys?.length &&
+        !genKeys.pqLastResortPreKey &&
+        !genKeys.signedPreKey
+      ) {
+        throw new Error(
+          'registerKeys: None of the four potential key types were provided!'
+        );
+      }
+      if (preKeys && preKeys.length === 0) {
+        throw new Error('registerKeys: Attempting to upload zero preKeys!');
+      }
+      if (pqPreKeys && pqPreKeys.length === 0) {
+        throw new Error('registerKeys: Attempting to upload zero pqPreKeys!');
+      }
 
       const keys: JSONKeysType = {
         identityKey: Bytes.toBase64(genKeys.identityKey),
-        signedPreKey: {
-          keyId: genKeys.signedPreKey.keyId,
-          publicKey: Bytes.toBase64(genKeys.signedPreKey.publicKey),
-          signature: Bytes.toBase64(genKeys.signedPreKey.signature),
-        },
         preKeys,
+        pqPreKeys,
+        ...(genKeys.pqLastResortPreKey
+          ? {
+              pqLastResortPreKey: {
+                keyId: genKeys.pqLastResortPreKey.keyId,
+                publicKey: Bytes.toBase64(genKeys.pqLastResortPreKey.publicKey),
+                signature: Bytes.toBase64(genKeys.pqLastResortPreKey.signature),
+              },
+            }
+          : null),
+        ...(genKeys.signedPreKey
+          ? {
+              signedPreKey: {
+                keyId: genKeys.signedPreKey.keyId,
+                publicKey: Bytes.toBase64(genKeys.signedPreKey.publicKey),
+                signature: Bytes.toBase64(genKeys.signedPreKey.signature),
+              },
+            }
+          : null),
       };
 
       await _ajax({
@@ -2086,50 +2243,39 @@ export function initialize({
       });
     }
 
-    async function setSignedPreKey(
-      signedPreKey: SignedPreKeyType,
+    async function getMyKeyCounts(
       uuidKind: UUIDKind
-    ) {
-      await _ajax({
-        call: 'signed',
-        urlParameters: `?${uuidKindToQuery(uuidKind)}`,
-        httpType: 'PUT',
-        jsonData: {
-          keyId: signedPreKey.keyId,
-          publicKey: Bytes.toBase64(signedPreKey.publicKey),
-          signature: Bytes.toBase64(signedPreKey.signature),
-        },
-      });
-    }
-
-    type ServerKeyCountType = {
-      count: number;
-    };
-
-    async function getMyKeys(uuidKind: UUIDKind): Promise<number> {
+    ): Promise<ServerKeyCountType> {
       const result = (await _ajax({
         call: 'keys',
         urlParameters: `?${uuidKindToQuery(uuidKind)}`,
         httpType: 'GET',
         responseType: 'json',
-        validateResponse: { count: 'number' },
+        validateResponse: { count: 'number', pqCount: 'number' },
       })) as ServerKeyCountType;
 
-      return result.count;
+      return result;
     }
 
     type ServerKeyResponseType = {
       devices: Array<{
         deviceId: number;
         registrationId: number;
-        signedPreKey: {
+
+        // We'll get a 404 if none of these keys are provided; we'll have at least one
+        preKey?: {
+          keyId: number;
+          publicKey: string;
+        };
+        signedPreKey?: {
           keyId: number;
           publicKey: string;
           signature: string;
         };
-        preKey?: {
+        pqPreKey?: {
           keyId: number;
           publicKey: string;
+          signature: string;
         };
       }>;
       identityKey: string;
@@ -2169,12 +2315,25 @@ export function initialize({
         return {
           deviceId: device.deviceId,
           registrationId: device.registrationId,
-          preKey,
-          signedPreKey: {
-            keyId: device.signedPreKey.keyId,
-            publicKey: Bytes.fromBase64(device.signedPreKey.publicKey),
-            signature: Bytes.fromBase64(device.signedPreKey.signature),
-          },
+          ...(preKey ? { preKey } : null),
+          ...(device.signedPreKey
+            ? {
+                signedPreKey: {
+                  keyId: device.signedPreKey.keyId,
+                  publicKey: Bytes.fromBase64(device.signedPreKey.publicKey),
+                  signature: Bytes.fromBase64(device.signedPreKey.signature),
+                },
+              }
+            : null),
+          ...(device.pqPreKey
+            ? {
+                pqPreKey: {
+                  keyId: device.pqPreKey.keyId,
+                  publicKey: Bytes.fromBase64(device.pqPreKey.publicKey),
+                  signature: Bytes.fromBase64(device.pqPreKey.signature),
+                },
+              }
+            : null),
         };
       });
 
@@ -2188,7 +2347,7 @@ export function initialize({
       const keys = (await _ajax({
         call: 'keys',
         httpType: 'GET',
-        urlParameters: `/${identifier}/${deviceId || '*'}`,
+        urlParameters: `/${identifier}/${deviceId || '*'}?pq=true`,
         responseType: 'json',
         validateResponse: { identityKey: 'string', devices: 'object' },
       })) as ServerKeyResponseType;
@@ -2203,7 +2362,7 @@ export function initialize({
       const keys = (await _ajax({
         call: 'keys',
         httpType: 'GET',
-        urlParameters: `/${identifier}/${deviceId || '*'}`,
+        urlParameters: `/${identifier}/${deviceId || '*'}?pq=true`,
         responseType: 'json',
         validateResponse: { identityKey: 'string', devices: 'object' },
         unauthenticated: true,
@@ -2499,7 +2658,7 @@ export function initialize({
       const abortController = new AbortController();
 
       const cdnUrl = isNumber(cdnNumber)
-        ? cdnUrlObject[cdnNumber] || cdnUrlObject['0']
+        ? cdnUrlObject[cdnNumber] ?? cdnUrlObject['0']
         : cdnUrlObject['0'];
       // This is going to the CDN, not the service, so we use _outerAjax
       const stream = await _outerAjax(`${cdnUrl}/attachments/${cdnKey}`, {

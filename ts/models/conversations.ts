@@ -967,6 +967,14 @@ export class ConversationModel extends window.Backbone
       shouldSave: false,
     });
 
+    window.reduxActions?.stories.removeAllContactStories(this.id);
+    const uuid = this.get('uuid');
+    if (uuid) {
+      window.reduxActions?.storyDistributionLists.removeMemberFromAllDistributionLists(
+        uuid
+      );
+    }
+
     // Add notification
     drop(this.queueJob('removeContact', () => this.maybeSetContactRemoved()));
 
@@ -1389,7 +1397,7 @@ export class ConversationModel extends window.Backbone
   }
 
   private async beforeAddSingleMessage(message: MessageModel): Promise<void> {
-    await message.hydrateStoryContext();
+    await message.hydrateStoryContext(undefined, { shouldSave: true });
 
     if (!this.newMessageQueue) {
       this.newMessageQueue = new PQueue({
@@ -1772,7 +1780,11 @@ export class ConversationModel extends window.Backbone
       log.warn(`cleanModels: Upgraded schema of ${upgraded} messages`);
     }
 
-    await Promise.all(result.map(model => model.hydrateStoryContext()));
+    await Promise.all(
+      result.map(model =>
+        model.hydrateStoryContext(undefined, { shouldSave: true })
+      )
+    );
 
     return result;
   }
@@ -2989,6 +3001,10 @@ export class ConversationModel extends window.Backbone
       // Group calls are always with folks that have a UUID
       if (isUntrusted && uuid) {
         window.reduxActions.calling.keyChanged({ uuid });
+      }
+
+      if (isDirectConversation(this.attributes)) {
+        window.reduxActions?.safetyNumber.clearSafetyNumber(this.id);
       }
 
       if (isDirectConversation(this.attributes) && uuid) {

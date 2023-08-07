@@ -635,6 +635,26 @@
     "messageformat": "Elfogadás",
     "description": "Label for a button to accept a new safety number"
   },
+  "icu:SafetyNumberViewer__migration__text": {
+    "messageformat": "A biztonsági számok frissítése folyamatban van.",
+    "description": "An explanatory note in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__migration__learn_more": {
+    "messageformat": "Tudj meg többet!",
+    "description": "A link text in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__card__prev": {
+    "messageformat": "Előző biztonsági szám",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__card__next": {
+    "messageformat": "Következő biztonsági szám",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__carousel__dot": {
+    "messageformat": "Biztonsági szám verzió, {index,number}/{total,number}",
+    "description": "An ARIA label for safety number carousel button."
+  },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "Megjelölés ellenőrzöttként",
     "description": "Safety number viewer, verification toggle button, when not verified, sets verified"
@@ -642,6 +662,42 @@
   "icu:SafetyNumberViewer__clearVerification": {
     "messageformat": "Ellenőrzött állapot törlése",
     "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
+  },
+  "icu:SafetyNumberViewer__hint--migration": {
+    "messageformat": "A végpontok közötti titkosítás ellenőrzéséhez {name} felhasználóval, párosítsd össze a fent látható színkártyát az ő készülékén megjelenő színkártyával, és hasonlítsd össze a számokat. Ha nem egyeznek, próbálkozz a másik biztonsági számpárral. Csak egy párnak kell egyeznie.",
+    "description": "Safety number viewer, text of the hint during migration period"
+  },
+  "icu:SafetyNumberViewer__hint--normal": {
+    "messageformat": "A végpontok közötti titkosítás ellenőrzéséhez {name} felhasználóval, hasonlítsd össze a fent látható számokat az ő készülékén megjelenő számokkal. A kódodat akár az ő készülékével is beolvashatja.",
+    "description": "Safety number viewer, text of the hint after migration period"
+  },
+  "icu:SafetyNumberOnboarding__title": {
+    "messageformat": "Változások a biztonsági számokban",
+    "description": "Title of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p1": {
+    "messageformat": "A biztonsági számok egy átmeneti időszak alatt frissülnek, hogy lehetővé tegyék a Signal közelgő adatvédelmi funkcióit.",
+    "description": "Paragraph 1 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p2": {
+    "messageformat": "A biztonsági számok ellenőrzéséhez párosítsd össze a színkártyát az ő készülékén megjelenő színkártyával. Ha nem egyeznek, próbálkozz a másik biztonsági számpárral. Csak egy párnak kell egyeznie.",
+    "description": "Paragraph 2 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__help": {
+    "messageformat": "Segítségre van szükséged?",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__close": {
+    "messageformat": "Rendben",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberNotReady__body": {
+    "messageformat": "A rendszer létrehoz egy biztonsági számot ezzel a személlyel, miután üzenetet váltott vele.",
+    "description": "Body of SafetyNumberNotReady modal"
+  },
+  "icu:SafetyNumberNotReady__learn-more": {
+    "messageformat": "Tudj meg többet!",
+    "description": "Text of 'Learn more' button of SafetyNumberNotReady modal"
   },
   "icu:isVerified": {
     "messageformat": "Biztonsági számodat {name} nevű partnereddel már hitelesítetted.",
@@ -1212,7 +1268,8 @@
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
   "icu:verifyHelp": {
-    "messageformat": "A {name} nevű partnereddel kialakított végpontok közti titkosítás ellenőrzése érdekében hasonlítsd össze a fenti számokat az ő eszközén megjelenő számokkal!"
+    "messageformat": "A végpontok közötti titkosítás biztonságának ellenőrzéséhez {name} felhasználóval, hasonlítsd össze a fent látható számokat az ő készülékén megjelenő számokkal. A fent látható QR-kódot akár be is olvashatja.",
+    "description": "(deleted 07/05/2023)"
   },
   "icu:theirIdentityUnknown": {
     "messageformat": "Még nem váltottál üzenetet ezzel a partnerrel. Biztonsági számod az első üzenet elküldését követően lesz elérhető."
@@ -1281,9 +1338,33 @@
     "messageformat": "Törlés",
     "description": "Menu item for deleting messages, title case."
   },
-  "icu:deleteConversationConfirmation": {
-    "messageformat": "Véglegesen törlöd ezt a csevegést?",
-    "description": "Confirmation dialog text that asks the user if they really wish to delete the conversation. Answer buttons use the strings 'ok' and 'cancel'. The deletion is permanent, i.e. it cannot be undone."
+  "icu:ConversationHeader__DeleteMessagesConfirmation__title": {
+    "messageformat": "Csevegés törlése?",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__DeleteMessagesConfirmation__description": {
+    "messageformat": "A csevegés ezen az eszközön törlésre kerül.",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
+    "messageformat": "Kilépés a csoportból",
+    "description": "This is a button to leave a group"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__title": {
+    "messageformat": "Tényleg ki akarsz lépni?",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__description": {
+    "messageformat": "Többé nem fogsz tudni üzeneteket vagy hívásokat küldeni és fogadni ebben a csoportban.",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__confirmButton": {
+    "messageformat": "Kilépés",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Confirm Button"
+  },
+  "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
+    "messageformat": "Kilépés előtt ki kell jelölnöd legalább egy új admint.",
+    "description": "Conversation Header > Leave Group Action > Cannot Leave Group Because You Are Last Admin Alert > Description"
   },
   "icu:sessionEnded": {
     "messageformat": "A biztonságos munkamenet újra lett indítva",
@@ -4335,6 +4416,10 @@
     "messageformat": "Elveszed {contact} csoportadmin-jogosultságát?",
     "description": "Shown in a confirmation dialog when you are about to remove admin privileges from someone"
   },
+  "icu:ContactModal--add-to-group": {
+    "messageformat": "Hozzadás egy másik csoporthoz",
+    "description": "Button text for adding contact to another group in Group Contact Details modal"
+  },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Eltávolítás a csoportból",
     "description": "Button text for remove from group button in Group Contact Details modal"
@@ -5167,6 +5252,18 @@
     "messageformat": "Felhasználónév",
     "description": "Default text for username field"
   },
+  "icu:ProfileEditor__username-link": {
+    "messageformat": "QR kód vagy link",
+    "description": "Label of a profile editor row that navigates to username link and qr code modal"
+  },
+  "icu:ProfileEditor__username-link__tooltip__title": {
+    "messageformat": "Felhasználónév megosztása",
+    "description": "Title of tooltip displayed under 'QR code or link' button for getting username link"
+  },
+  "icu:ProfileEditor__username-link__tooltip__body": {
+    "messageformat": "A profilodhoz tartozó egyedi QR kód vagy link megosztásával más felhasználók csevegést kezdeményezhetnek veled.",
+    "description": "Body of tooltip displayed under 'QR code or link' button for getting username link"
+  },
   "icu:ProfileEditor--username--title": {
     "messageformat": "Válaszd ki a felhasználóneved",
     "description": "Title text for username modal"
@@ -5225,6 +5322,10 @@
   },
   "icu:ProfileEditor--username--confirm-delete-body": {
     "messageformat": "Ezzel eltávolítod a felhasználónevedet, ami így más számára elérhetővé válik. Biztos vagy benne?",
+    "description": "(deleted 07/10/2023) Shown in dialog body if user has saved an empty string to delete their username"
+  },
+  "icu:ProfileEditor--username--confirm-delete-body-2": {
+    "messageformat": "This will remove your username and disable your QR code and link. “{username}” will be available for others to claim. Are you sure?",
     "description": "Shown in dialog body if user has saved an empty string to delete their username"
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
@@ -6403,6 +6504,42 @@
     "messageformat": "Ezek a számok segítenek megőrizni a felhasználóneved privát jellegét, hogy elkerüld a nem kívánt üzeneteket. Csak azokkal az emberekkel és csoportokkal oszd meg a felhasználóneved, akikkel csevegni szeretnél. Ha módosítod a felhasználóneved, új számsort kapsz.",
     "description": "Body of the popup with information about discriminator in username"
   },
+  "icu:EditUsernameModalBody__change-confirmation": {
+    "messageformat": "Changing your username will reset your existing QR code and link. Are you sure?",
+    "description": "Body of the confirmation dialog displayed when user is about to change their username"
+  },
+  "icu:EditUsernameModalBody__change-confirmation__continue": {
+    "messageformat": "Folytatás",
+    "description": "Text of the primary button on username change confirmation modal"
+  },
+  "icu:UsernameLinkModalBody__save": {
+    "messageformat": "Mentés",
+    "description": "Name of the button for saving username link QR code to disk in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color": {
+    "messageformat": "Szín",
+    "description": "Name of the button for changing the username link QR code color in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__copy": {
+    "messageformat": "Másolás vágólapra",
+    "description": "ARIA label of the button for copying the username link to clipboard in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__help": {
+    "messageformat": "Only share your QR code and link with people you trust. When shared others will be able to view your username and start a chat with you.",
+    "description": "Text of disclaimer at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__reset": {
+    "messageformat": "Visszaállítás",
+    "description": "Text of button at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color__radio": {
+    "messageformat": "Username link color, {index,number} of {total,number}",
+    "description": "ARIA label of button for selecting username link color"
+  },
+  "icu:UsernameLinkModalBody__reset__confirm": {
+    "messageformat": "If you reset your QR code, your existing QR code and link will no longer work.",
+    "description": "Text of confirmation modal when resetting the username link"
+  },
   "icu:UsernameOnboardingModalBody__title": {
     "messageformat": "Állítsd be a Signal-felhasználóneved",
     "description": "Title of username onboarding modal"
@@ -6412,7 +6549,7 @@
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Minden felhasználónévhez tartozik egy egyedi hivatkozás, amelyet megoszthatsz az ismerőseiddel, hogy csevegést kezdeményezhessenek veled",
+    "messageformat": "Minden felhasználónévhez tartozik egy egyedi QR-kód, amelyet megoszthatsz az ismerőseiddel, hogy csevegést kezdeményezhessenek veled",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
@@ -6487,24 +6624,10 @@
     "messageformat": "Apró finomítások, hibajavítások és teljesítménynövelések. Köszönjük, hogy a Signalt használod!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.21--0": {
-    "messageformat": "Nézd meg magad jobban, amikor valaki hív téged. Az egyéni videohívásoknál mostantól ugyanaz a teljes képernyős nézet érhető el, amely korábban csak az új csoportos hívások elején jelent meg. Ami a következetességet illeti, megpróbálunk kitartóak (nem pedig ellenállók) lenni, és ez az eltérés már nem létezik, mivel már nincs különbség a kettő között.",
-    "description": "Release notes for v6.21"
+  "icu:WhatsNew__v6.27--0": {
+    "messageformat": "Ennek a frissítésnek hála jobb hang- és videohívások várnak, valamint néhány kisebb dokumentációfrissítést is végrehajtottunk (köszönjük {linkToGithub}!)."
   },
-  "icu:WhatsNew__v6.21--1": {
-    "messageformat": "Ezúton is szeretnénk kifejezni köszönetünket {complexspaces} felé a kiadáson végzett munkája során nyújtott segítségért és visszajelzésért.",
-    "description": "Release notes for v6.21"
-  },
-  "icu:WhatsNew__v6.22--0": {
-    "messageformat": "Az üzenetek szövegének formázásához válaszd ki a szöveget az üzenetírás mezőben.\n\nMostantól formázhatod az üzenet szövegét, ha kijelölöd az üzenetírás mezőben. Félkövér, dőlt, áthúzott és egyéb szövegeffektusokat adhatsz hozzá.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.22--1": {
-    "messageformat": "Támogatást adtunk a legújabb hangulatjel-karakterekhez, így most már kifejezheted izgatottságod a „reszkető arc” (<emojify>🫨</emojify>) hangulatjellel, vagy reagálhatsz egy „borsóval meg a héjával” (<emojify>🫛</emojify>), amikor valaki megkérdezi, mennyire állsz közel a barátaidhoz.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.23--1": {
-    "messageformat": "Néhány hibajavításon kívül ez a kiadás a fejlesztői dokumentáció frissítéseit (köszönjük, {d108}!) és az üzenettovábbítási felület néhány tervezési fejlesztését is tartalmazza (köszönjük, {hackerbirds}!).",
-    "description": "Release notes for v6.23"
+  "icu:WhatsNew__v6.28--0": {
+    "messageformat": "We modified the notification icons that appear for group updates, like when someone new joins a group. These icons help improve legibility, especially if you live within the darkness of the Dark Theme. The previous icons merely adopted the dark. The new icons were born in it, molded by it."
   }
 }

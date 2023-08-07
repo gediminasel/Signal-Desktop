@@ -118,10 +118,7 @@ describe('story/messaging', function unknownContacts() {
       return;
     }
 
-    if (this.currentTest?.state !== 'passed') {
-      await bootstrap.saveLogs(app);
-    }
-
+    await bootstrap.maybeSaveLogs(this.currentTest, app);
     await app.close();
     await bootstrap.teardown();
   });
@@ -152,12 +149,12 @@ describe('story/messaging', function unknownContacts() {
             },
             storyMessageRecipients: [
               {
-                destinationUuid: first.device.uuid,
+                destinationServiceId: first.device.uuid,
                 distributionListIds: [DISTRIBUTION1],
                 isAllowedToReply: true,
               },
               {
-                destinationUuid: second.device.uuid,
+                destinationServiceId: second.device.uuid,
                 distributionListIds: [DISTRIBUTION2],
                 isAllowedToReply: true,
               },
@@ -198,7 +195,7 @@ describe('story/messaging', function unknownContacts() {
       { timestamp: sentAt + 2 }
     );
 
-    const leftPane = window.locator('.left-pane-wrapper');
+    const leftPane = window.locator('#LeftPane');
 
     debug('Finding both replies');
     await leftPane
@@ -217,7 +214,7 @@ describe('story/messaging', function unknownContacts() {
     debug('waiting for storage service sync to complete');
     await app.waitForStorageService();
 
-    const leftPane = window.locator('.left-pane-wrapper');
+    const leftPane = window.locator('#LeftPane');
 
     debug('Create and send a story to the group');
     await leftPane.getByRole('button', { name: 'Stories' }).click();

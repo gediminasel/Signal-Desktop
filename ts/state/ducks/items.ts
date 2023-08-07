@@ -13,8 +13,6 @@ import { drop } from '../../util/drop';
 import type {
   ConversationColorType,
   CustomColorType,
-  CustomColorsItemType,
-  DefaultConversationColorType,
 } from '../../types/Colors';
 import { ConversationColors } from '../../types/Colors';
 import { reloadSelectedConversation } from '../../shims/reloadSelectedConversation';
@@ -24,24 +22,26 @@ import type { ConfigMapType as RemoteConfigType } from '../../RemoteConfig';
 
 // State
 
-export type ItemsStateType = ReadonlyDeep<{
-  universalExpireTimer?: number;
+export type ItemsStateType = ReadonlyDeep<
+  {
+    [key: string]: unknown;
 
-  [key: string]: unknown;
-
-  remoteConfig?: RemoteConfigType;
-
-  // This property should always be set and this is ensured in background.ts
-  defaultConversationColor?: DefaultConversationColorType;
-
-  customColors?: CustomColorsItemType;
-
-  preferredLeftPaneWidth?: number;
-
-  preferredReactionEmoji?: Array<string>;
-
-  areWeASubscriber?: boolean;
-}>;
+    remoteConfig?: RemoteConfigType;
+    serverTimeSkew?: number;
+  } & Partial<
+    Pick<
+      StorageAccessType,
+      | 'universalExpireTimer'
+      | 'defaultConversationColor'
+      | 'customColors'
+      | 'preferredLeftPaneWidth'
+      | 'preferredReactionEmoji'
+      | 'areWeASubscriber'
+      | 'usernameLinkColor'
+      | 'usernameLink'
+    >
+  >
+>;
 
 // Actions
 
@@ -85,6 +85,7 @@ export type ItemsActionType = ReadonlyDeep<
 export const actions = {
   addCustomColor,
   editCustomColor,
+  markHasCompletedSafetyNumberOnboarding,
   removeCustomColor,
   resetDefaultChatColor,
   savePreferredLeftPaneWidth,
@@ -277,6 +278,17 @@ function savePreferredLeftPaneWidth(
 ): ThunkAction<void, RootStateType, unknown, ItemPutAction> {
   return dispatch => {
     dispatch(putItem('preferredLeftPaneWidth', preferredWidth));
+  };
+}
+
+function markHasCompletedSafetyNumberOnboarding(): ThunkAction<
+  void,
+  RootStateType,
+  unknown,
+  ItemPutAction
+> {
+  return dispatch => {
+    dispatch(putItem('hasCompletedSafetyNumberOnboarding', true));
   };
 }
 

@@ -13,11 +13,11 @@ import {
 import {
   Bootstrap,
   debug,
-  stats,
   RUN_COUNT,
   GROUP_SIZE,
   DISCARD_COUNT,
 } from './fixtures';
+import { stats } from '../../util/benchmark/stats';
 
 const CONVERSATION_SIZE = 500; // messages
 const LAST_MESSAGE = 'start sending messages now';
@@ -106,7 +106,7 @@ Bootstrap.benchmark(async (bootstrap: Bootstrap): Promise<void> => {
 
   debug('opening conversation');
   {
-    const leftPane = window.locator('.left-pane-wrapper');
+    const leftPane = window.locator('#LeftPane');
 
     const item = leftPane
       .locator(
@@ -118,7 +118,7 @@ Bootstrap.benchmark(async (bootstrap: Bootstrap): Promise<void> => {
   }
 
   const timeline = window.locator(
-    '.timeline-wrapper, .conversation .ConversationView'
+    '.timeline-wrapper, .Inbox__conversation .ConversationView'
   );
 
   const deltaList = new Array<number>();

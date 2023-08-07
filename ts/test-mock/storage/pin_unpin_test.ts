@@ -26,10 +26,7 @@ describe('storage service', function needsName() {
       return;
     }
 
-    if (this.currentTest?.state !== 'passed') {
-      await bootstrap.saveLogs(app);
-    }
-
+    await bootstrap.maybeSaveLogs(this.currentTest, app);
     await app.close();
     await bootstrap.teardown();
   });
@@ -39,8 +36,8 @@ describe('storage service', function needsName() {
 
     const window = await app.getWindow();
 
-    const leftPane = window.locator('.left-pane-wrapper');
-    const conversationStack = window.locator('.conversation-stack');
+    const leftPane = window.locator('#LeftPane');
+    const conversationStack = window.locator('.Inbox__conversation-stack');
 
     debug('Verifying that the group is pinned on startup');
     await leftPane.locator(`[data-testid="${group.id}"]`).waitFor();

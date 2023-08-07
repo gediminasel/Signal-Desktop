@@ -6,7 +6,8 @@ import assert from 'assert';
 
 import { ReceiptType } from '@signalapp/mock-server';
 
-import { Bootstrap, debug, stats, RUN_COUNT, DISCARD_COUNT } from './fixtures';
+import { Bootstrap, debug, RUN_COUNT, DISCARD_COUNT } from './fixtures';
+import { stats } from '../../util/benchmark/stats';
 
 const CONVERSATION_SIZE = 500; // messages
 
@@ -64,7 +65,7 @@ Bootstrap.benchmark(async (bootstrap: Bootstrap): Promise<void> => {
 
   debug('opening conversation');
   {
-    const leftPane = window.locator('.left-pane-wrapper');
+    const leftPane = window.locator('#LeftPane');
     const item = leftPane.locator(
       `[data-testid="${first.toContact().uuid}"] >> text=${LAST_MESSAGE}`
     );
@@ -72,7 +73,7 @@ Bootstrap.benchmark(async (bootstrap: Bootstrap): Promise<void> => {
   }
 
   const timeline = window.locator(
-    '.timeline-wrapper, .conversation .ConversationView'
+    '.timeline-wrapper, .Inbox__conversation .ConversationView'
   );
 
   const deltaList = new Array<number>();

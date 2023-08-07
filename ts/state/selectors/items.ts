@@ -5,7 +5,7 @@ import { createSelector } from 'reselect';
 import { isInteger } from 'lodash';
 
 import { ITEM_NAME as UNIVERSAL_EXPIRE_TIMER_ITEM } from '../../util/universalExpireTimer';
-import { SecurityNumberIdentifierType } from '../../util/safetyNumber';
+import { SafetyNumberMode } from '../../types/safetyNumber';
 import { innerIsBucketValueEnabled } from '../../RemoteConfig';
 import type { ConfigKeyType, ConfigMapType } from '../../RemoteConfig';
 import type { StateType } from '../reducer';
@@ -19,6 +19,8 @@ import { DEFAULT_CONVERSATION_COLOR } from '../../types/Colors';
 import { getPreferredReactionEmoji as getPreferredReactionEmojiFromStoredValue } from '../../reactions/preferredReactionEmoji';
 import { isBeta } from '../../util/version';
 import { DurationInSeconds } from '../../util/durations';
+import { generateUsernameLink } from '../../util/sgnlHref';
+import * as Bytes from '../../Bytes';
 import { getUserNumber, getUserACI } from './user';
 
 const DEFAULT_PREFERRED_LEFT_PANE_WIDTH = 320;
@@ -69,6 +71,11 @@ export const getRemoteConfig = createSelector(
   (state: ItemsStateType): ConfigMapType => state.remoteConfig || {}
 );
 
+export const getServerTimeSkew = createSelector(
+  getItems,
+  (state: ItemsStateType): number => state.serverTimeSkew || 0
+);
+
 export const getUsernamesEnabled = createSelector(
   getRemoteConfig,
   (remoteConfig: ConfigMapType): boolean =>
@@ -79,6 +86,41 @@ export const getHasCompletedUsernameOnboarding = createSelector(
   getItems,
   (state: ItemsStateType): boolean =>
     Boolean(state.hasCompletedUsernameOnboarding)
+);
+
+export const getHasCompletedUsernameLinkOnboarding = createSelector(
+  getItems,
+  (state: ItemsStateType): boolean =>
+    Boolean(state.hasCompletedUsernameLinkOnboarding)
+);
+
+export const getHasCompletedSafetyNumberOnboarding = createSelector(
+  getItems,
+  (state: ItemsStateType): boolean =>
+    Boolean(state.hasCompletedSafetyNumberOnboarding)
+);
+
+export const getUsernameLinkColor = createSelector(
+  getItems,
+  (state: ItemsStateType): number | undefined => state.usernameLinkColor
+);
+
+export const getUsernameLink = createSelector(
+  getItems,
+  ({ usernameLink }: ItemsStateType): string | undefined => {
+    if (!usernameLink) {
+      return undefined;
+    }
+    const { entropy, serverId } = usernameLink;
+
+    if (!entropy.length || !serverId.length) {
+      return undefined;
+    }
+
+    const content = Bytes.concatenate([entropy, serverId]);
+
+    return generateUsernameLink(Bytes.toBase64(content));
+  }
 );
 
 export const isInternalUser = createSelector(
@@ -146,22 +188,37 @@ export const getContactManagementEnabled = createSelector(
   }
 );
 
-export const getSecurityNumberIdentifierType = createSelector(
+export const getSafetyNumberMode = createSelector(
   getRemoteConfig,
+  getServerTimeSkew,
   (_state: StateType, { now }: { now: number }) => now,
-  (remoteConfig: ConfigMapType, now: number): SecurityNumberIdentifierType => {
-    if (isRemoteConfigFlagEnabled(remoteConfig, 'desktop.safetyNumberUUID')) {
-      return SecurityNumberIdentifierType.UUIDIdentifier;
+  (
+    remoteConfig: ConfigMapType,
+    serverTimeSkew: number,
+    now: number
+  ): SafetyNumberMode => {
+    if (
+      !isRemoteConfigFlagEnabled(remoteConfig, 'desktop.safetyNumberAci') &&
+      !(
+        isRemoteConfigFlagEnabled(
+          remoteConfig,
+          'desktop.safetyNumberAci.beta'
+        ) && isBeta(window.getVersion())
+      )
+    ) {
+      return SafetyNumberMode.JustE164;
     }
 
-    const timestamp = remoteConfig['desktop.safetyNumberUUID.timestamp']?.value;
+    const timestamp = remoteConfig['global.safetyNumberAci']?.value;
     if (typeof timestamp !== 'number') {
-      return SecurityNumberIdentifierType.E164Identifier;
+      return SafetyNumberMode.DefaultE164AndThenACI;
     }
 
-    return now >= timestamp
-      ? SecurityNumberIdentifierType.UUIDIdentifier
-      : SecurityNumberIdentifierType.E164Identifier;
+    // Note: serverTimeSkew is a difference between server time and local time,
+    // so we have to add local time to it to correct it for a skew.
+    return now + serverTimeSkew >= timestamp
+      ? SafetyNumberMode.DefaultACIAndMaybeE164
+      : SafetyNumberMode.DefaultE164AndThenACI;
   }
 );
 

@@ -635,6 +635,26 @@
     "messageformat": "സ്വീകരിക്കുക",
     "description": "Label for a button to accept a new safety number"
   },
+  "icu:SafetyNumberViewer__migration__text": {
+    "messageformat": "സുരക്ഷാ നമ്പറുകൾ അപ്ഡേറ്റ് ചെയ്യുകയാണ്.",
+    "description": "An explanatory note in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__migration__learn_more": {
+    "messageformat": "കൂടുതൽ അറിയുക",
+    "description": "A link text in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__card__prev": {
+    "messageformat": "മുമ്പത്തെ സുരക്ഷാ നമ്പർ",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__card__next": {
+    "messageformat": "അടുത്ത സുരക്ഷാ നമ്പർ",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__carousel__dot": {
+    "messageformat": "സുരക്ഷാ നമ്പർ പതിപ്പ്, {total,number}-ൽ {index,number}",
+    "description": "An ARIA label for safety number carousel button."
+  },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "പരിശോധിച്ചതായി അടയാളപ്പെടുത്തുക",
     "description": "Safety number viewer, verification toggle button, when not verified, sets verified"
@@ -642,6 +662,42 @@
   "icu:SafetyNumberViewer__clearVerification": {
     "messageformat": "പരിശോധന പൂർത്തിയാക്കുക",
     "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
+  },
+  "icu:SafetyNumberViewer__hint--migration": {
+    "messageformat": "{name} എന്നയാളുമായി ആദ്യാവസാനം എൻക്രിപ്റ്റ് ചെയ്യൽ പരിശോധിച്ചുറപ്പിക്കാൻ, അവരുടെ ഉപകരണവുമായി മുകളിലുള്ള കളർ കാർഡ് പൊരുത്തപ്പെടുത്തുകയും അക്കങ്ങൾ താരതമ്യം ചെയ്യുകയും ചെയ്യൂ. ഇവ പൊരുത്തപ്പെടുന്നില്ലെങ്കിൽ, സുരക്ഷാ നമ്പറുകളുടെ അടുത്ത പെയർ പരീക്ഷിച്ചു നോക്കുക. ഒരു പെയർ പൊരുത്തപ്പെട്ടാൽ മതി.",
+    "description": "Safety number viewer, text of the hint during migration period"
+  },
+  "icu:SafetyNumberViewer__hint--normal": {
+    "messageformat": "{name} എന്നയാളുമായി ആദ്യവസാനം എൻക്രിപ്റ്റ് ചെയ്യൽ പരിശോധിച്ചുറപ്പിക്കാൻ അവരുടെ ഉപകരണവുമായി മുകളിലുള്ള അക്കങ്ങൾ താരതമ്യം ചെയ്യുക. അവരുടെ ഉപകരണം ഉപയോഗിച്ച് നിങ്ങളുടെ കോഡ് സ്‌കാൻ ചെയ്യുകയും ചെയ്യാം.",
+    "description": "Safety number viewer, text of the hint after migration period"
+  },
+  "icu:SafetyNumberOnboarding__title": {
+    "messageformat": "സുരക്ഷാ നമ്പറുകളിലെ മാറ്റങ്ങൾ",
+    "description": "Title of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p1": {
+    "messageformat": "Signal-ൽ വരാനിരിക്കുന്ന സ്വകാര്യതാ നയങ്ങൾ പ്രവർത്തനക്ഷമമാക്കാൻ സുരക്ഷാ നമ്പറുകൾ കാലാനുസൃതമായി അപ്ഡേറ്റ് ചെയ്യുന്നു.",
+    "description": "Paragraph 1 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p2": {
+    "messageformat": "സുരക്ഷാ നമ്പറുകൾ പരിശോധിച്ചുറപ്പിക്കാൻ, നിങ്ങളുടെ കോൺടാക്റ്റിന്റെ ഉപകരണവുമായി കളർ കാർഡ് പൊരുത്തപ്പെടുത്തുക. ഇവ പൊരുത്തപ്പെടുന്നില്ലെങ്കിൽ, സുരക്ഷാ നമ്പറുകളുടെ അടുത്ത പെയർ പരീക്ഷിച്ചു നോക്കുക. ഒരു പെയർ പൊരുത്തപ്പെട്ടാൽ മതി.",
+    "description": "Paragraph 2 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__help": {
+    "messageformat": "സഹായം ആവശ്യമുണ്ടോ?",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__close": {
+    "messageformat": "മനസ്സിലായി",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberNotReady__body": {
+    "messageformat": "നിങ്ങൾ ഈ വ്യക്തിയുമായി സന്ദേശങ്ങൾ കൈമാറി കഴിയുമ്പോൾ സുരക്ഷാ നമ്പർ സൃഷ്ടിക്കപ്പെടും.",
+    "description": "Body of SafetyNumberNotReady modal"
+  },
+  "icu:SafetyNumberNotReady__learn-more": {
+    "messageformat": "കൂടുതൽ അറിയുക",
+    "description": "Text of 'Learn more' button of SafetyNumberNotReady modal"
   },
   "icu:isVerified": {
     "messageformat": "{name} ഉപയോഗിച്ച് നിങ്ങളുടെ സുരക്ഷാ നമ്പർ നിങ്ങൾ പരിശോധിച്ചുറപ്പിച്ചിട്ടുണ്ട്.",
@@ -1212,7 +1268,8 @@
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
   "icu:verifyHelp": {
-    "messageformat": "{name} എന്നതുമായുള്ള നിങ്ങളുടെ എൻഡ്-ടു-എൻഡ് എൻക്രിപ്‌ഷൻ പരിശോധിച്ചുറപ്പിക്കുന്നതിന്, മുകളിൽ നൽകിയിട്ടുള്ള നമ്പരുകൾ അവരുടെ ഉപകരണത്തിലെ നമ്പരുകളുമായി ഒത്ത് നോക്കുക."
+    "messageformat": "{name} എന്നതുമായുള്ള നിങ്ങളുടെ എൻഡ്-ടു-എൻഡ് എൻക്രിപ്‌ഷൻ പരിശോധിച്ചുറപ്പിക്കുന്നതിന്, മുകളിൽ നൽകിയിട്ടുള്ള നമ്പരുകൾ അവരുടെ ഉപകരണത്തിലെ നമ്പരുകളുമായി ഒത്ത് നോക്കുക. അവർക്ക് മുകളിലുള്ള ക്യൂആർ കോഡ് സ്‌കാൻ ചെയ്യുകയും ചെയ്യാം.",
+    "description": "(deleted 07/05/2023)"
   },
   "icu:theirIdentityUnknown": {
     "messageformat": "ഈ കോൺ‌ടാക്റ്റുമായി നിങ്ങൾ ഇതുവരെ ഒരു സന്ദേശങ്ങള്‍-ഉം കൈമാറിയിട്ടില്ല. ആദ്യ സന്ദേശം-ത്തിന് ശേഷം അവരുമായുള്ള നിങ്ങളുടെ സുരക്ഷാ നമ്പർ ലഭ്യമാകും."
@@ -1281,9 +1338,33 @@
     "messageformat": "ഇല്ലാതാക്കൂ",
     "description": "Menu item for deleting messages, title case."
   },
-  "icu:deleteConversationConfirmation": {
-    "messageformat": "ഈ ചാറ്റ് ശാശ്വതമായി ഇല്ലാതാക്കണോ?",
-    "description": "Confirmation dialog text that asks the user if they really wish to delete the conversation. Answer buttons use the strings 'ok' and 'cancel'. The deletion is permanent, i.e. it cannot be undone."
+  "icu:ConversationHeader__DeleteMessagesConfirmation__title": {
+    "messageformat": "ചാറ്റ് ഇല്ലാതാക്കണോ?",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__DeleteMessagesConfirmation__description": {
+    "messageformat": "ഈ ചാറ്റ് ഈ ഉപകരണത്തിൽ നിന്ന് ഇല്ലാതാക്കും.",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
+    "messageformat": "ഗ്രൂപ്പ് വിടുക",
+    "description": "This is a button to leave a group"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__title": {
+    "messageformat": "നിങ്ങൾക്ക് ശരിക്കും വിട്ടുപോകണോ?",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__description": {
+    "messageformat": "നിങ്ങൾക്ക് ഈ ഗ്രൂപ്പിൽ മെസേജുകൾ അയയ്ക്കാനോ സ്വീകരിക്കാനോ കഴിയില്ല.",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__confirmButton": {
+    "messageformat": "വിട്ട് പോകുക",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Confirm Button"
+  },
+  "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
+    "messageformat": "നിങ്ങൾ പോകുന്നതിനുമുമ്പ്, ഈ ഗ്രൂപ്പിനായി പുതിയ ഒരു അഡ്‌മിനെയെങ്കിലും തിരഞ്ഞെടുക്കണം.",
+    "description": "Conversation Header > Leave Group Action > Cannot Leave Group Because You Are Last Admin Alert > Description"
   },
   "icu:sessionEnded": {
     "messageformat": "സെഷൻ പുനഃക്രമീകരിക്കുക സുരക്ഷിതമാക്കുക ",
@@ -4335,6 +4416,10 @@
     "messageformat": "{contact} എന്നയാളെ ഗ്രൂപ്പ് അഡ്‌മിൻ സ്ഥാനത്ത് നിന്ന് നീക്കം ചെയ്യണോ?",
     "description": "Shown in a confirmation dialog when you are about to remove admin privileges from someone"
   },
+  "icu:ContactModal--add-to-group": {
+    "messageformat": "മറ്റൊരു ഗ്രൂപ്പിലേക്ക് ചേർക്കുക",
+    "description": "Button text for adding contact to another group in Group Contact Details modal"
+  },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "ഗ്രൂപ്പിൽ നിന്ന് നീക്കം ചെയ്യൂ",
     "description": "Button text for remove from group button in Group Contact Details modal"
@@ -5167,6 +5252,18 @@
     "messageformat": "ഉപയോക്തൃനാമം",
     "description": "Default text for username field"
   },
+  "icu:ProfileEditor__username-link": {
+    "messageformat": "QR code or link",
+    "description": "Label of a profile editor row that navigates to username link and qr code modal"
+  },
+  "icu:ProfileEditor__username-link__tooltip__title": {
+    "messageformat": "Share your username",
+    "description": "Title of tooltip displayed under 'QR code or link' button for getting username link"
+  },
+  "icu:ProfileEditor__username-link__tooltip__body": {
+    "messageformat": "Let others start a chat with you by sharing your unique QR code or link.",
+    "description": "Body of tooltip displayed under 'QR code or link' button for getting username link"
+  },
   "icu:ProfileEditor--username--title": {
     "messageformat": "നിങ്ങളുടെ ഉപയോക്തൃനാമം തിരഞ്ഞെടുക്കുക",
     "description": "Title text for username modal"
@@ -5225,6 +5322,10 @@
   },
   "icu:ProfileEditor--username--confirm-delete-body": {
     "messageformat": "ഇത് നിങ്ങളുടെ ഉപയോക്തൃനാമം നീക്കം ചെയ്യും, അതോടെ മറ്റ് ഉപയോക്താക്കൾക്ക് അത് അവകാശപ്പെടാനാകും. നിങ്ങൾക്ക് ഉറപ്പാണോ?",
+    "description": "(deleted 07/10/2023) Shown in dialog body if user has saved an empty string to delete their username"
+  },
+  "icu:ProfileEditor--username--confirm-delete-body-2": {
+    "messageformat": "This will remove your username and disable your QR code and link. “{username}” will be available for others to claim. Are you sure?",
     "description": "Shown in dialog body if user has saved an empty string to delete their username"
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
@@ -6403,6 +6504,42 @@
     "messageformat": "അനാവശ്യ സന്ദേശങ്ങൾ ഒഴിവാക്കുന്നതിന്, ഈ അക്കങ്ങൾ നിങ്ങളുടെ ഉപയോക്തൃനാമം സ്വകാര്യമായി സൂക്ഷിക്കാൻ സഹായിക്കുന്നു. നിങ്ങൾ ചാറ്റ് ചെയ്യാൻ ആഗ്രഹിക്കുന്ന ആളുകളുമായും ഗ്രൂപ്പുകളുമായും മാത്രം നിങ്ങളുടെ ഉപയോക്തൃനാമം പങ്കിടുക. ഉപയോക്തൃനാമങ്ങൾ മാറ്റുകയാണെങ്കിൽ, നിങ്ങൾക്ക് ഒരു കൂട്ടം പുതിയ അക്കങ്ങൾ ലഭിക്കും.",
     "description": "Body of the popup with information about discriminator in username"
   },
+  "icu:EditUsernameModalBody__change-confirmation": {
+    "messageformat": "Changing your username will reset your existing QR code and link. Are you sure?",
+    "description": "Body of the confirmation dialog displayed when user is about to change their username"
+  },
+  "icu:EditUsernameModalBody__change-confirmation__continue": {
+    "messageformat": "തുടരുക",
+    "description": "Text of the primary button on username change confirmation modal"
+  },
+  "icu:UsernameLinkModalBody__save": {
+    "messageformat": "സംരക്ഷിക്കൂ",
+    "description": "Name of the button for saving username link QR code to disk in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color": {
+    "messageformat": "നിറം",
+    "description": "Name of the button for changing the username link QR code color in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__copy": {
+    "messageformat": "ക്ലിപ്പ്ബോർഡിലേയ്ക്ക് പകർത്തുക",
+    "description": "ARIA label of the button for copying the username link to clipboard in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__help": {
+    "messageformat": "Only share your QR code and link with people you trust. When shared others will be able to view your username and start a chat with you.",
+    "description": "Text of disclaimer at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__reset": {
+    "messageformat": "പുനഃക്രമീകരിക്കുക",
+    "description": "Text of button at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color__radio": {
+    "messageformat": "Username link color, {index,number} of {total,number}",
+    "description": "ARIA label of button for selecting username link color"
+  },
+  "icu:UsernameLinkModalBody__reset__confirm": {
+    "messageformat": "If you reset your QR code, your existing QR code and link will no longer work.",
+    "description": "Text of confirmation modal when resetting the username link"
+  },
   "icu:UsernameOnboardingModalBody__title": {
     "messageformat": "നിങ്ങളുടെ Signal ഉപയോക്തൃനാമം സജ്ജീകരിക്കുക",
     "description": "Title of username onboarding modal"
@@ -6412,7 +6549,7 @@
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "നിങ്ങളുമായി ചാറ്റ് ചെയ്ത് തുടങ്ങാനായി സുഹൃത്തുക്കൾക്ക് അയച്ചു കൊടുക്കാൻ കഴിയുന്ന തനതായൊരു ലിങ്ക് ഓരോ ഉപയോക്തൃനാമത്തിനുമുണ്ട്",
+    "messageformat": "ഓരോ ഉപയോക്തൃനാമത്തിനും തനതായൊരു QR കോഡ് ഉണ്ടാകും, നിങ്ങളുമായി ചാറ്റ് ചെയ്ത് തുടങ്ങാൻ ഇത് സുഹൃത്തുക്കളുമായി പങ്കിടാനാകും",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
@@ -6487,24 +6624,10 @@
     "messageformat": "ചെറിയ മാറ്റങ്ങളും ബഗ് പരിഹരിക്കലുകളും പ്രകടന മെച്ചപ്പെടുത്തലുകളും. Signal ഉപയോഗിക്കുന്നതിന് നന്ദി!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.21--0": {
-    "messageformat": "മറ്റൊരാളുമായുള്ള കോൾ റിംഗ് ചെയ്യുമ്പോൾ തന്നെ നിങ്ങളുടെ രൂപം എങ്ങനെയുണ്ടെന്ന് നോക്കൂ. പുതിയ ഗ്രൂപ്പ് കോളിന്റെ തുടക്കത്തിൽ മാത്രം പ്രത്യക്ഷപ്പെട്ടിരുന്ന ഫുൾ സ്ക്രീൻ കാഴ്‌ച ഇപ്പോൾ വ്യക്തിഗത വീഡിയോ കോളുകളിലും ഉപയോഗിക്കുന്നു. സ്ഥിരതയുടെ കാര്യത്തിൽ ഞങ്ങൾ ശാഠ്യക്കാരാണ് (പ്രതിരോധിക്കാറില്ല), ഇക്കാര്യത്തിൽ ഇപ്പോൾ വൈരുദ്ധ്യങ്ങൾക്ക് ഇടവുമില്ല.",
-    "description": "Release notes for v6.21"
+  "icu:WhatsNew__v6.27--0": {
+    "messageformat": "ഈ അപ്ഡേറ്റിൽ ശബ്ദ, വീഡിയോ കോളുകൾക്കുള്ള ഏതാനും മെച്ചപ്പെടുത്തലുകൾ, ഏതാനും ഡോക്യുമെന്റേഷൻ അപ്ഡേറ്റുകൾ എന്നിവ ഉൾപ്പെടുന്നു (നന്ദി, {linkToGithub}!)."
   },
-  "icu:WhatsNew__v6.21--1": {
-    "messageformat": "ഈ റിലീസിനായി സഹായിക്കുകയും ഫീഡ്ബാക്ക് നൽകുകയും ചെയ്‌ത {complexspaces} എന്നതിന് ഞങ്ങൾ നന്ദി അറിയിക്കുന്നു.",
-    "description": "Release notes for v6.21"
-  },
-  "icu:WhatsNew__v6.22--0": {
-    "messageformat": "സന്ദേശം എഴുതാനുള്ള ഫീൽഡിൽ ഏതെങ്കിലും ടെക്സ്റ്റ് തിരഞ്ഞെടുത്ത് ടെക്സ്റ്റ് ഫോർമാറ്റ് ചെയ്യുക.\n\nബോൾഡായ പ്രസ്താവന ബോൾഡിൽ തന്നെ അയയ്ക്കൂ. നൈറ്റ് ശ്യാമളന് സ്പോയിലർ എഫക്റ്റോട് കൂടി അവസാനിക്കുന്നൊരു ട്വിസ്റ്റ് അയയ്ക്കൂ, \"Alex\" എന്ന് ഇറ്റാലിക്സിൽ എഴുതി പേര് എടുത്തു കാണിക്കൂ, സ്ട്രൈക്ക്ത്രൂ ഉപയോഗിച്ച് ടെക്സ്റ്റ് വെട്ടിക്കളഞ്ഞത് പോലെയാക്കൂ, അല്ലെങ്കിൽ മോണോസ്പേസിൽ കോഡ് പങ്കിടൂ.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.22--1": {
-    "messageformat": "ഏറ്റവും പുതിയ ഇമോജികൾക്ക് ഞങ്ങൾ പിന്തുണ ചേർത്തു, ഇനിയിപ്പോൾ ആരെങ്കിലും സുഹൃത്തുക്കളെക്കുറിച്ച് ചോദിച്ചാൽ നിങ്ങൾക്കിപ്പോൾ &quot;ഷെയ്ക്കിംഗ് ഫേസ്&quot; (1🫨1) അല്ലെങ്കിൽ &quot;പീ പോഡ്&quot; (2🫛2) ഉപയോഗിച്ച് പ്രതികരണങ്ങൾ നൽകാം.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.23--1": {
-    "messageformat": "ഏതാനും ബഗ് ഫിക്‌സുകൾക്ക് പുറമെ, ഈ റിലീസിൽ ഡെവലപ്പർ ഡോക്യുമെന്റേഷൻ അപ്ഡേറ്റുകളും (നന്ദി, {d108}!) സന്ദേശം കൈമാറുന്ന ഇന്റർഫേസ് ഡിസൈനിൽ മെച്ചപ്പെടുത്തലുകളും (നന്ദി, {hackerbirds}!) വരുത്തിയിട്ടുണ്ട്.",
-    "description": "Release notes for v6.23"
+  "icu:WhatsNew__v6.28--0": {
+    "messageformat": "We modified the notification icons that appear for group updates, like when someone new joins a group. These icons help improve legibility, especially if you live within the darkness of the Dark Theme. The previous icons merely adopted the dark. The new icons were born in it, molded by it."
   }
 }

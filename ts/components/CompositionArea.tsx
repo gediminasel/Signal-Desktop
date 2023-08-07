@@ -54,7 +54,7 @@ import { countStickers } from './stickers/lib';
 import {
   useAttachFileShortcut,
   useEditLastMessageSent,
-  useKeyboardShortcuts,
+  useKeyboardShortcutsConditionally,
 } from '../hooks/useKeyboardShortcuts';
 import { MediaEditor } from './MediaEditor';
 import { isImageTypeSupported } from '../util/GoogleChrome';
@@ -416,9 +416,15 @@ export function CompositionArea({
     setMessageToEdit,
   ]);
 
+  const [hasFocus, setHasFocus] = useState(false);
+
   const attachFileShortcut = useAttachFileShortcut(launchAttachmentPicker);
   const editLastMessageSent = useEditLastMessageSent(maybeEditMessage);
-  useKeyboardShortcuts(attachFileShortcut, editLastMessageSent);
+  useKeyboardShortcutsConditionally(
+    hasFocus,
+    attachFileShortcut,
+    editLastMessageSent
+  );
 
   // Focus input on first mount
   const previousFocusCounter = usePrevious<number | undefined>(
@@ -563,7 +569,7 @@ export function CompositionArea({
   const editMessageFragment = draftEditMessage ? (
     <>
       {large && <div className="CompositionArea__placeholder" />}
-      <div className="CompositionArea__button-cell">
+      <div className="CompositionArea__button-cell CompositionArea__button-edit">
         <button
           aria-label={i18n('icu:CompositionArea__edit-action--discard')}
           className="CompositionArea__edit-button CompositionArea__edit-button--discard"
@@ -954,6 +960,8 @@ export function CompositionArea({
             large={large}
             linkPreviewLoading={linkPreviewLoading}
             linkPreviewResult={linkPreviewResult}
+            onBlur={() => setHasFocus(false)}
+            onFocus={() => setHasFocus(true)}
             onCloseLinkPreview={onCloseLinkPreview}
             onDirtyChange={setDirty}
             onEditorStateChange={onEditorStateChange}

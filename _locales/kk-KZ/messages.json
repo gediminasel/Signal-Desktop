@@ -635,6 +635,26 @@
     "messageformat": "Қабылдау",
     "description": "Label for a button to accept a new safety number"
   },
+  "icu:SafetyNumberViewer__migration__text": {
+    "messageformat": "Қауіпсіздік нөмірлері жаңартылып жатыр.",
+    "description": "An explanatory note in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__migration__learn_more": {
+    "messageformat": "Толық ақпарат",
+    "description": "A link text in SafetyNumberViewer describing the safety number migration process."
+  },
+  "icu:SafetyNumberViewer__card__prev": {
+    "messageformat": "Алдыңғы қауіпсіздік нөмірі",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__card__next": {
+    "messageformat": "Келесі қауіпсіздік нөмірі",
+    "description": "An ARIA label for safety number navigation button."
+  },
+  "icu:SafetyNumberViewer__carousel__dot": {
+    "messageformat": "Қауіпсіздік нөмірінің нұсқасы, {index,number}/{total,number}",
+    "description": "An ARIA label for safety number carousel button."
+  },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "Верификациядан өтті деп белгілеу",
     "description": "Safety number viewer, verification toggle button, when not verified, sets verified"
@@ -642,6 +662,42 @@
   "icu:SafetyNumberViewer__clearVerification": {
     "messageformat": "Верификацияны тазалау",
     "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
+  },
+  "icu:SafetyNumberViewer__hint--migration": {
+    "messageformat": "{name} деген пайдаланушымен өтпелі шифрлау функциясын тексеру үшін, жоғарыдағы түрлі түсті картаны оның құрылғысымен қатар қойып, нөмірлерді салыстырыңыз. Егер нөмірлері сәйкес келмесе, қауіпсіздік нөмірлерінің басқа жұбын қолданып көріңіз. Тек бір жұп сәйкес келуі керек.",
+    "description": "Safety number viewer, text of the hint during migration period"
+  },
+  "icu:SafetyNumberViewer__hint--normal": {
+    "messageformat": "{name} деген контактімен өтпелі шифрлау қауіпсіздігін тексеру үшін, жоғарыдағы сандарды оның құрылғысымен салыстырып көріңіз. Сонымен қатар ол өз құрылғысымен сіздің кодыңызды сканерлей алады.",
+    "description": "Safety number viewer, text of the hint after migration period"
+  },
+  "icu:SafetyNumberOnboarding__title": {
+    "messageformat": "Қауіпсіздік нөмірлерінің өзгерістері",
+    "description": "Title of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p1": {
+    "messageformat": "Signal қолданбасындағы құпиялылықтың жаңа функцияларын қосу үшін қауіпсіздік нөмірлері ауысым кезеңінде жаңартылады.\n\n",
+    "description": "Paragraph 1 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__p2": {
+    "messageformat": "Қауіпсіздік нөмірлерін тексеру үшін түрлі түсті картаны контактінің құрылғысымен қатар қойыңыз. Егер нөмірлері сәйкес келмесе, қауіпсіздік нөмірлерінің басқа жұбын қолданып көріңіз. Тек бір жұп сәйкес келуі керек.",
+    "description": "Paragraph 2 of Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__help": {
+    "messageformat": "Көмек керек пе?",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberOnboarding__close": {
+    "messageformat": "Түсінікті",
+    "description": "Text of a secondary button in Safety number onboarding modal"
+  },
+  "icu:SafetyNumberNotReady__body": {
+    "messageformat": "Сіз осы кісімен хат алмасқан соң, қауіпсіздік нөмірі осы адаммен жасалады.",
+    "description": "Body of SafetyNumberNotReady modal"
+  },
+  "icu:SafetyNumberNotReady__learn-more": {
+    "messageformat": "Толық ақпарат",
+    "description": "Text of 'Learn more' button of SafetyNumberNotReady modal"
   },
   "icu:isVerified": {
     "messageformat": "Сіздің {name} араңыздағы қауіпсіздік нөміріңізге верификация жасалды.",
@@ -1212,7 +1268,8 @@
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
   "icu:verifyHelp": {
-    "messageformat": "{name} деген контактімен өтпелі шифрлау қауіпсіздігін тексеру үшін, жоғарыдағы сандарды оның құрылғысымен салыстырып көріңіз."
+    "messageformat": "{name} арқылы өтпелі шифрлаудың қауіпсіздігін тексеру үшін, жоғарыдағы сандарды осы құрылғымен салыстырыңыз. Сонымен қатар ол жоғарыдағы QR кодын сканерлей алады.",
+    "description": "(deleted 07/05/2023)"
   },
   "icu:theirIdentityUnknown": {
     "messageformat": "Бұл контактімен әлі хат алмаспадыңыз. Онымен қауіпсіздік нөміріңіз бірінші хат алмасқаннан кейін болады."
@@ -1281,9 +1338,33 @@
     "messageformat": "Жою",
     "description": "Menu item for deleting messages, title case."
   },
-  "icu:deleteConversationConfirmation": {
-    "messageformat": "Бұл чатты біржола жою керек пе?",
-    "description": "Confirmation dialog text that asks the user if they really wish to delete the conversation. Answer buttons use the strings 'ok' and 'cancel'. The deletion is permanent, i.e. it cannot be undone."
+  "icu:ConversationHeader__DeleteMessagesConfirmation__title": {
+    "messageformat": "Чатты жою керек пе?",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__DeleteMessagesConfirmation__description": {
+    "messageformat": "Бұл чат құрылғыдан жойылады.",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
+    "messageformat": "Топтан шығып кету",
+    "description": "This is a button to leave a group"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__title": {
+    "messageformat": "Шынымен де шыққыңыз келе ме?",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__description": {
+    "messageformat": "Сіз енді бұл топта хаттарды жібере немесе қабылдай алмайсыз.",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__LeaveGroupConfirmation__confirmButton": {
+    "messageformat": "Шығып кету",
+    "description": "Conversation Header > Leave Group Action > Leave Group Confirmation Modal > Confirm Button"
+  },
+  "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
+    "messageformat": "Топтан шықпас бұрын, бұл топ үшін кемінде бір жаңа әкімші таңдауыңыз керек.",
+    "description": "Conversation Header > Leave Group Action > Cannot Leave Group Because You Are Last Admin Alert > Description"
   },
   "icu:sessionEnded": {
     "messageformat": "Қауіпсіз сеанс қалпына келтірілді",
@@ -4335,6 +4416,10 @@
     "messageformat": "{contact} топ әкімшісінен өшіру керек пе?",
     "description": "Shown in a confirmation dialog when you are about to remove admin privileges from someone"
   },
+  "icu:ContactModal--add-to-group": {
+    "messageformat": "Басқа топқа қосу",
+    "description": "Button text for adding contact to another group in Group Contact Details modal"
+  },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Топтан өшіру",
     "description": "Button text for remove from group button in Group Contact Details modal"
@@ -5167,6 +5252,18 @@
     "messageformat": "Пайдаланушы аты",
     "description": "Default text for username field"
   },
+  "icu:ProfileEditor__username-link": {
+    "messageformat": "QR code or link",
+    "description": "Label of a profile editor row that navigates to username link and qr code modal"
+  },
+  "icu:ProfileEditor__username-link__tooltip__title": {
+    "messageformat": "Share your username",
+    "description": "Title of tooltip displayed under 'QR code or link' button for getting username link"
+  },
+  "icu:ProfileEditor__username-link__tooltip__body": {
+    "messageformat": "Let others start a chat with you by sharing your unique QR code or link.",
+    "description": "Body of tooltip displayed under 'QR code or link' button for getting username link"
+  },
   "icu:ProfileEditor--username--title": {
     "messageformat": "Пайдаланушы атын таңдау",
     "description": "Title text for username modal"
@@ -5225,6 +5322,10 @@
   },
   "icu:ProfileEditor--username--confirm-delete-body": {
     "messageformat": "Бұл функция сіздің пайдаланушы атыңызды өшіреді, сондықтан оны басқа пайдаланушылар ала алады. Сенімдісіз бе?",
+    "description": "(deleted 07/10/2023) Shown in dialog body if user has saved an empty string to delete their username"
+  },
+  "icu:ProfileEditor--username--confirm-delete-body-2": {
+    "messageformat": "This will remove your username and disable your QR code and link. “{username}” will be available for others to claim. Are you sure?",
     "description": "Shown in dialog body if user has saved an empty string to delete their username"
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
@@ -6403,6 +6504,42 @@
     "messageformat": "Бұл цифрлар пайдаланушы атыңызды құпия сақтайды, соның арқасында қажетсіз хаттар алмайсыз. Пайдаланушы атыңызды тек сөйлескіңіз келетін адамдармен және топтармен бөлісіңіз. Пайдаланушы атыңызды өзгертсеңіз, сізге жаңа цифрлар жинағы беріледі.",
     "description": "Body of the popup with information about discriminator in username"
   },
+  "icu:EditUsernameModalBody__change-confirmation": {
+    "messageformat": "Changing your username will reset your existing QR code and link. Are you sure?",
+    "description": "Body of the confirmation dialog displayed when user is about to change their username"
+  },
+  "icu:EditUsernameModalBody__change-confirmation__continue": {
+    "messageformat": "Жалғастыру",
+    "description": "Text of the primary button on username change confirmation modal"
+  },
+  "icu:UsernameLinkModalBody__save": {
+    "messageformat": "Сақтау",
+    "description": "Name of the button for saving username link QR code to disk in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color": {
+    "messageformat": "Түс",
+    "description": "Name of the button for changing the username link QR code color in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__copy": {
+    "messageformat": "Copy to Clipboard",
+    "description": "ARIA label of the button for copying the username link to clipboard in the username link modal"
+  },
+  "icu:UsernameLinkModalBody__help": {
+    "messageformat": "Only share your QR code and link with people you trust. When shared others will be able to view your username and start a chat with you.",
+    "description": "Text of disclaimer at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__reset": {
+    "messageformat": "Бастапқы күйге қайтару",
+    "description": "Text of button at the bottom of the username link modal"
+  },
+  "icu:UsernameLinkModalBody__color__radio": {
+    "messageformat": "Username link color, {index,number} of {total,number}",
+    "description": "ARIA label of button for selecting username link color"
+  },
+  "icu:UsernameLinkModalBody__reset__confirm": {
+    "messageformat": "If you reset your QR code, your existing QR code and link will no longer work.",
+    "description": "Text of confirmation modal when resetting the username link"
+  },
   "icu:UsernameOnboardingModalBody__title": {
     "messageformat": "Signal-дағы пайдаланушы атыңызды орнатыңыз",
     "description": "Title of username onboarding modal"
@@ -6412,7 +6549,7 @@
     "description": "Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Әр пайдаланушы атының бірегей сілтемесі болады. Оны ортақ чат ашу үшін достарыңызға жіберіңіз",
+    "messageformat": "Әрбір пайдаланушы атында бірегей QR коды және сілтемесі бар, оларды достарыңызбен бөлісіп, чатты бастап кете аласыз",
     "description": "Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
@@ -6487,24 +6624,10 @@
     "messageformat": "Кішігірім түзетпелер жасалды, ақаулар жөнделді және жұмысы жақсартылды. Signal-ды қолданғаныңыз үшін рақмет!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.21--0": {
-    "messageformat": "Бетпе-бет қоңырау шалынып жатқанда, өзіңіздің бейнеңізді жақсырақ көріңіз. Жеке видео қоңырауларда енді толық экранды көріністі қолдануға болады, бұрын ол жаңа топтық қоңыраудың басында ғана пайда болатын. Бірізділікті сақтауға келгенде, біз қарсылық танытудың орнына табанды болуға тырысамыз. Енді сәйкессіздік деген ұғымды ұмытуға болады, себебі олардың бір-бірінен еш айырмашылығы жоқ.",
-    "description": "Release notes for v6.21"
+  "icu:WhatsNew__v6.27--0": {
+    "messageformat": "Бұл нұсқада дауыстық қоңырауларға және видеоқоңырауларға бірқатар өзгерістер енгізілді және құжаттамада аздаған өзгерістер бар (рақмет, {linkToGithub}!)."
   },
-  "icu:WhatsNew__v6.21--1": {
-    "messageformat": "Осы шығарылыммен жұмыс істеп, көрсеткен көмектері мен пікірлері үшін {complexspaces} деген пайдаланушыға алғысымызды білдіргіміз келеді.",
-    "description": "Release notes for v6.21"
-  },
-  "icu:WhatsNew__v6.22--0": {
-    "messageformat": "Хат жазу өрісіндегі кез келген мәтінді таңдап, хаттарыңыздағы мәтіннің форматын өзгертіңіз.\n\nМаңызды мәлімдемені қалың қаріппен жазып қойыңыз, Қуаныш Қарабай мырзаға спойлермен аяқталатын твист жіберіңіз, \"Әлібек\" деген есімді қиғаш қаріппен жазып, ерекшелеп қойыңыз, бас тартқан кешкі астың үстін сызып тастаңыз немесе аралықтары бірқалыпты кодты бөлісіңіз.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.22--1": {
-    "messageformat": "Енді ең соңғы эмодзилерге қолдау көрсетіледі, сондықтан біреу достарыңызбен қаншалықты жақын араласатыныңызды сұрағанда, &quot;Басты шайқау&quot; (<emojify>🫨</emojify>) немесе &quot;Бір қауыздағы асбұршақтар&quot; (<emojify>🫛</emojify>) сияқты эмодзилермен жауап бере аласыз.",
-    "description": "Release notes for v6.22"
-  },
-  "icu:WhatsNew__v6.23--1": {
-    "messageformat": "Болмашы түзетпелерден бөлек, бұл нұсқада жаңартылған әзірлеуші құжаттамасы бар ({d108}, рақмет!) және хаттың мекенжайын өзгерту интерфейсінің дизайнына бірқатар өзгерістер енгізілді ({hackerbirds}, рақмет!).",
-    "description": "Release notes for v6.23"
+  "icu:WhatsNew__v6.28--0": {
+    "messageformat": "We modified the notification icons that appear for group updates, like when someone new joins a group. These icons help improve legibility, especially if you live within the darkness of the Dark Theme. The previous icons merely adopted the dark. The new icons were born in it, molded by it."
   }
 }

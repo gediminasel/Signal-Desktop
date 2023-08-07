@@ -5,9 +5,11 @@
 
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
+const { usernames } = require('@signalapp/libsignal-client');
 
 const { Crypto } = require('../ts/context/Crypto');
 const { setEnvironment, Environment } = require('../ts/environment');
+const { HourCyclePreference } = require('../ts/types/I18N');
 
 chai.use(chaiAsPromised);
 
@@ -21,6 +23,7 @@ global.window = {
   performance,
   SignalContext: {
     crypto: new Crypto(),
+    usernames,
     log: {
       info: (...args) => console.log(...args),
       warn: (...args) => console.warn(...args),
@@ -33,6 +36,7 @@ global.window = {
     put: async (key, value) => storageMap.set(key, value),
   },
   getPreferredSystemLocales: () => ['en'],
+  getHourCyclePreference: () => HourCyclePreference.UnknownPreference,
 };
 
 // For ducks/network.getEmptyState()

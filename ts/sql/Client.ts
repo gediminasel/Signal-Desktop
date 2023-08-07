@@ -36,6 +36,7 @@ import type {
   ClientSearchResultMessageType,
   ConversationType,
   GetConversationRangeCenteredOnMessageResultType,
+  GetRecentStoryRepliesOptionsType,
   IdentityKeyIdType,
   IdentityKeyType,
   StoredIdentityKeyType,
@@ -52,6 +53,8 @@ import type {
   SignedPreKeyIdType,
   SignedPreKeyType,
   StoredSignedPreKeyType,
+  KyberPreKeyType,
+  StoredKyberPreKeyType,
 } from './Interface';
 import { MINUTE } from '../util/durations';
 import { getMessageIdForLogging } from '../util/idForLogging';
@@ -73,6 +76,11 @@ const exclusiveInterface: ClientExclusiveInterface = {
   bulkAddIdentityKeys,
   getAllIdentityKeys,
 
+  createOrUpdateKyberPreKey,
+  getKyberPreKeyById,
+  bulkAddKyberPreKeys,
+  getAllKyberPreKeys,
+
   createOrUpdatePreKey,
   getPreKeyById,
   bulkAddPreKeys,
@@ -92,6 +100,7 @@ const exclusiveInterface: ClientExclusiveInterface = {
 
   searchMessages,
 
+  getRecentStoryReplies,
   getOlderMessagesByConversation,
   getConversationRangeCenteredOnMessage,
   getNewerMessagesByConversation,
@@ -184,6 +193,30 @@ export function _cleanMessageData(data: MessageType): MessageType {
         return omit(attachment, ['data']);
       }
 
+      if (attachment.screenshotData) {
+        assertDev(
+          false,
+          `_cleanMessageData/${logId}: Attachment ${index} had screenshotData field; deleting`
+        );
+        return omit(attachment, ['screenshotData']);
+      }
+
+      if (attachment.screenshot?.data) {
+        assertDev(
+          false,
+          `_cleanMessageData/${logId}: Attachment ${index} had screenshot.data field; deleting`
+        );
+        return omit(attachment, ['screenshot.data']);
+      }
+
+      if (attachment.thumbnail?.data) {
+        assertDev(
+          false,
+          `_cleanMessageData/${logId}: Attachment ${index} had thumbnail.data field; deleting`
+        );
+        return omit(attachment, ['thumbnail.data']);
+      }
+
       return attachment;
     });
   }
@@ -246,6 +279,37 @@ async function getAllIdentityKeys(): Promise<Array<IdentityKeyType>> {
   const keys = await channels.getAllIdentityKeys();
 
   return keys.map(key => specToBytes(IDENTITY_KEY_SPEC, key));
+}
+
+// Kyber Pre Keys
+
+const KYBER_PRE_KEY_SPEC = ['data'];
+async function createOrUpdateKyberPreKey(data: KyberPreKeyType): Promise<void> {
+  const updated: StoredKyberPreKeyType = specFromBytes(
+    KYBER_PRE_KEY_SPEC,
+    data
+  );
+  await channels.createOrUpdateKyberPreKey(updated);
+}
+async function getKyberPreKeyById(
+  id: PreKeyIdType
+): Promise<KyberPreKeyType | undefined> {
+  const data = await channels.getPreKeyById(id);
+
+  return specToBytes(KYBER_PRE_KEY_SPEC, data);
+}
+async function bulkAddKyberPreKeys(
+  array: Array<KyberPreKeyType>
+): Promise<void> {
+  const updated: Array<StoredKyberPreKeyType> = map(array, data =>
+    specFromBytes(KYBER_PRE_KEY_SPEC, data)
+  );
+  await channels.bulkAddKyberPreKeys(updated);
+}
+async function getAllKyberPreKeys(): Promise<Array<KyberPreKeyType>> {
+  const keys = await channels.getAllKyberPreKeys();
+
+  return keys.map(key => specToBytes(KYBER_PRE_KEY_SPEC, key));
 }
 
 // Pre Keys
@@ -317,6 +381,13 @@ const ITEM_SPECS: Partial<Record<ItemKeyType, ObjectMappingSpecType>> = {
   senderCertificate: ['value.serialized'],
   senderCertificateNoE164: ['value.serialized'],
   subscriberId: ['value'],
+  usernameLink: {
+    key: 'value',
+    valueSpec: {
+      isMap: true,
+      valueSpec: ['entropy', 'serverId'],
+    },
+  },
 };
 async function createOrUpdateItem<K extends ItemKeyType>(
   data: ItemType<K>
@@ -540,6 +611,15 @@ async function getNewerMessagesByConversation(
   options: AdjacentMessagesByConversationOptionsType
 ): Promise<Array<MessageType>> {
   const messages = await channels.getNewerMessagesByConversation(options);
+
+  return handleMessageJSON(messages);
+}
+
+async function getRecentStoryReplies(
+  storyId: string,
+  options?: GetRecentStoryRepliesOptionsType
+): Promise<Array<MessageType>> {
+  const messages = await channels.getRecentStoryReplies(storyId, options);
 
   return handleMessageJSON(messages);
 }
