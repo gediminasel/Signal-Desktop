@@ -30,7 +30,7 @@ export const MinimalSignalContext: MinimalSignalContextType = {
     config.appInstance ? String(config.appInstance) : undefined,
   getEnvironment: () => environment,
   getNodeVersion: (): string => String(config.nodeVersion),
-  getPath: (name: 'userData' | 'home'): string => {
+  getPath: (name: 'userData' | 'home' | 'install'): string => {
     return String(config[`${name}Path`]);
   },
   getVersion: (): string => String(config.version),
@@ -42,6 +42,13 @@ export const MinimalSignalContext: MinimalSignalContextType = {
   },
   getI18nLocale: () => config.resolvedTranslationsLocale,
   getI18nLocaleMessages: () => localeMessages,
+
+  getResolvedMessagesLocale: () => config.resolvedTranslationsLocale,
+  getResolvedMessagesLocaleDirection: () =>
+    config.resolvedTranslationsLocaleDirection,
+  getHourCyclePreference: () => config.hourCyclePreference,
+  getPreferredSystemLocales: () => config.preferredSystemLocales,
+
   nativeThemeListener: createNativeThemeListener(ipcRenderer, window),
   OS: {
     getClassName: () => ipcRenderer.sendSync('OS.getClassName'),

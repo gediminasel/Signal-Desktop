@@ -21,7 +21,7 @@ import type {
 } from '../model-types.d';
 import { filter, map, repeat, zipObject } from '../util/iterables';
 import * as GoogleChrome from '../util/GoogleChrome';
-import type { DeleteModel } from '../messageModifiers/Deletes';
+import type { DeleteAttributesType } from '../messageModifiers/Deletes';
 import type { SentEventData } from '../textsecure/messageReceiverEvents';
 import { isNotNil } from '../util/isNotNil';
 import { isNormalNumber } from '../util/isNormalNumber';
@@ -118,7 +118,10 @@ import {
   conversationJobQueue,
   conversationQueueJobEnum,
 } from '../jobs/conversationJobQueue';
-import { notificationService } from '../services/notifications';
+import {
+  NotificationType,
+  notificationService,
+} from '../services/notifications';
 import type {
   LinkPreviewType,
   LinkPreviewWithHydratedData,
@@ -1456,6 +1459,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         : window.i18n('icu:Stories__failed-send--full'),
       isExpiringMessage: false,
       sentAt: this.get('timestamp'),
+      type: NotificationType.Message,
     });
   }
 
@@ -2820,8 +2824,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
             'getProfile: expected updatesUrl to be a defined string'
           );
           const userLanguages = getUserLanguages(
-            window.getPreferredSystemLocales(),
-            window.getResolvedMessagesLocale()
+            window.SignalContext.getPreferredSystemLocales(),
+            window.SignalContext.getResolvedMessagesLocale()
           );
           const { messaging } = window.textsecure;
           if (!messaging) {
@@ -3244,7 +3248,10 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
   }
 
   async handleDeleteForEveryone(
-    del: DeleteModel,
+    del: Pick<
+      DeleteAttributesType,
+      'fromId' | 'targetSentTimestamp' | 'serverTimestamp'
+    >,
     shouldPersist = true
   ): Promise<void> {
     if (this.deletingForEveryone || this.get('deletedForEveryone')) {
@@ -3253,10 +3260,10 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
     log.info('Handling DOE.', {
       messageId: this.id,
-      fromId: del.get('fromId'),
-      targetSentTimestamp: del.get('targetSentTimestamp'),
+      fromId: del.fromId,
+      targetSentTimestamp: del.targetSentTimestamp,
       messageServerTimestamp: this.get('serverTimestamp'),
-      deleteServerTimestamp: del.get('serverTimestamp'),
+      deleteServerTimestamp: del.serverTimestamp,
     });
 
     try {

@@ -2026,6 +2026,20 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@nodert-win10-rs4/windows.data.xml.dom@0.4.4":
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/@nodert-win10-rs4/windows.data.xml.dom/-/windows.data.xml.dom-0.4.4.tgz#84b749671e26033031c3d8324766bf9746a8b12e"
+  integrity sha512-DxnuNqQC1Fot/bLpOVqeykVGfLKXe0+staMRlh08aUYOFqSSGa4LLxhKvgCHlt65zhZJ89nip0Dw4HJSUPS2uA==
+  dependencies:
+    nan latest
+
+"@nodert-win10-rs4/windows.ui.notifications@0.4.4":
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/@nodert-win10-rs4/windows.ui.notifications/-/windows.ui.notifications-0.4.4.tgz#7c34e179f5e57d473c4b0ca904759e476899f5df"
+  integrity sha512-C03i5bj7LdE2Ta9ei7GiTPGb54bPd+ON8xqFAFfwPEeg+KTQEtG9R8JdTfiGJACYM583KiclMT1tKq8uyfZLcA==
+  dependencies:
+    nan latest
+
 "@npmcli/fs@^1.0.0":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@npmcli/fs/-/fs-1.1.1.tgz#72f719fe935e687c56a4faecf3c03d06ba593257"
@@ -2314,6 +2328,14 @@
   integrity sha512-i03NAUwDMdEsfJh8Or8SyLCfTvDzlmxSc1kriZgyIY9SUv9dO8jN0F1X9TEJ2WGQbq7n9squPuiDm3wrPjmEtQ==
   dependencies:
     tar "^6.1.0"
+
+"@signalapp/windows-dummy-keystroke@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@signalapp/windows-dummy-keystroke/-/windows-dummy-keystroke-1.0.0.tgz#4c7a216a71ccdd87e7628656af8e3f7938af2f7d"
+  integrity sha512-52C8p5sitWYGUIQ5iDt8uGls60JNc2xiYpx48Z4x70KnuIdHPjIe8KkXjXfvhK1bRoKde/hvq/Oa8H+nDGHd6Q==
+  dependencies:
+    bindings "^1.5.0"
+    nan "^2.17.0"
 
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
@@ -8253,10 +8275,10 @@ electron-window@^0.8.0:
   dependencies:
     is-electron-renderer "^2.0.0"
 
-electron@25.3.2:
-  version "25.3.2"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-25.3.2.tgz#4ca096ea85abf05cbbc42e60da9e2c3a7b87dd80"
-  integrity sha512-xiktJvXraaE/ARf2OVHFyTze1TksSbsbJgOaBtdIiBvUduez6ipATEPIec8Msz1n6eQ+xqYb6YF8tDuIZtJSPw==
+electron@25.4.0:
+  version "25.4.0"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-25.4.0.tgz#d45b1cf3e4e96eb5bff5fee704d7aa13b532f3a5"
+  integrity sha512-VLTRxDhL4UvQbqM7pTNENnJo62cdAPZT92N+B7BZQ5Xfok1wuVPEewIjBot4K7U3EpLUuHn1veeLzho3ihiP+Q==
   dependencies:
     "@electron/get" "^2.0.0"
     "@types/node" "^18.11.18"
@@ -13455,6 +13477,11 @@ nan@^2.12.1:
   version "2.14.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.0.tgz#7818f722027b2459a86f0295d434d1fc2336c52c"
   integrity sha512-INOFj37C7k3AfaNTtX8RhsTw7qRy7eLET14cROi9+5HAVbbHuIWUHEauBv5qT4Av2tWasiTY1Jw6puUNqRJXQg==
+
+nan@^2.17.0, nan@latest:
+  version "2.17.0"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.17.0.tgz#c0150a2368a182f033e9aa5195ec76ea41a199cb"
+  integrity sha512-2ZTgtl0nJsO0KQCjEpxcIr5D+Yv90plTitZt9JBfQvVJDS5seMl3FOvsh3+9CoYWXf/1l5OaZzzF6nDm4cagaQ==
 
 nanoid@3.1.25:
   version "3.1.25"

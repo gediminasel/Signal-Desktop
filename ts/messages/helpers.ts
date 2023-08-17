@@ -160,7 +160,7 @@ export function findMatchingQuote(
 }
 
 export function getContactId(
-  message: MessageAttributesType
+  message: Pick<MessageAttributesType, 'type' | 'source' | 'sourceUuid'>
 ): string | undefined {
   const source = getSource(message);
   const sourceUuid = getSourceUuid(message);

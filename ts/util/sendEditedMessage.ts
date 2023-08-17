@@ -99,9 +99,7 @@ export async function sendEditedMessage(
   const fromId = ourConversation.id;
 
   const recipientMaybeConversations = map(
-    conversation.getRecipients({
-      isStoryReply: false,
-    }),
+    conversation.getRecipients(),
     identifier => window.ConversationController.get(identifier)
   );
   const recipientConversations = filter(recipientMaybeConversations, isNotNil);
@@ -194,18 +192,14 @@ export async function sendEditedMessage(
     type: 'outgoing',
   };
 
-  // Building up the dependencies for handling the edit message
-  const editAttributes = {
+  // Takes care of putting the message in the edit history, replacing the
+  // main message's values, and updating the conversation's properties.
+  await handleEditMessage(targetMessage.attributes, {
     conversationId,
     fromId,
     fromDevice: window.storage.user.getDeviceId() ?? 1,
     message: tmpMessage,
-    targetSentTimestamp,
-  };
-
-  // Takes care of putting the message in the edit history, replacing the
-  // main message's values, and updating the conversation's properties.
-  await handleEditMessage(targetMessage.attributes, editAttributes);
+  });
 
   // Inserting the send into a job and saving it to the message
   await timeAndLogIfTooLong(

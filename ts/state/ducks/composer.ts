@@ -20,13 +20,17 @@ import type { BoundActionCreatorsMapObject } from '../../hooks/useBoundActions';
 import type { DraftBodyRanges } from '../../types/BodyRange';
 import { BodyRange } from '../../types/BodyRange';
 import type { LinkPreviewType } from '../../types/message/LinkPreviews';
-import type { MessageAttributesType } from '../../model-types.d';
+import type {
+  DraftEditMessageType,
+  MessageAttributesType,
+} from '../../model-types.d';
 import type { NoopActionType } from './noop';
 import type { ShowToastActionType } from './toast';
 import type { StateType as RootStateType } from '../reducer';
 import type { UUIDStringType } from '../../types/UUID';
 import * as log from '../../logging/log';
 import * as Errors from '../../types/errors';
+import * as LinkPreview from '../../types/LinkPreview';
 import {
   ADD_PREVIEW as ADD_LINK_PREVIEW,
   REMOVE_PREVIEW as REMOVE_LINK_PREVIEW,
@@ -251,6 +255,24 @@ export const actions = {
   setQuoteByMessageId,
   setQuotedMessage,
 };
+
+function hadSameLinkPreviewDismissed(
+  messageText: string,
+  draftEditMessage: DraftEditMessageType | undefined
+): boolean {
+  if (!draftEditMessage) {
+    return false;
+  }
+
+  const currentLink = LinkPreview.findLinks(messageText).find(
+    LinkPreview.shouldPreviewHref
+  );
+  const prevLink = LinkPreview.findLinks(draftEditMessage.body).find(
+    LinkPreview.shouldPreviewHref
+  );
+
+  return currentLink === prevLink && !draftEditMessage.preview;
+}
 
 function incrementSendCounter(conversationId: string): IncrementSendActionType {
   return {
@@ -1012,9 +1034,10 @@ function onEditorStateChange({
         includePending: true,
       }) ||
       Boolean(conversation.attributes.draftEditMessage?.attachmentThumbnail) ||
-      // If we already didn't have a preview attached, don't fetch another one
-      (conversation.attributes.draftEditMessage &&
-        !conversation.attributes.draftEditMessage.preview)
+      hadSameLinkPreviewDismissed(
+        messageText,
+        conversation.attributes.draftEditMessage
+      )
     ) {
       return;
     }
@@ -1057,6 +1080,11 @@ function processAttachments({
     const conversation = window.ConversationController.get(conversationId);
     if (!conversation) {
       throw new Error('processAttachments: Unable to find conv');
+    }
+
+    const draftEditMessage = conversation.get('draftEditMessage');
+    if (draftEditMessage) {
+      return;
     }
 
     const state = getState();

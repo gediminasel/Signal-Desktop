@@ -8,7 +8,7 @@ import type { SendStateByConversationId } from '../messages/MessageSendState';
 
 import * as Edits from '../messageModifiers/Edits';
 import * as log from '../logging/log';
-import { Deletes } from '../messageModifiers/Deletes';
+import * as Deletes from '../messageModifiers/Deletes';
 import {
   MessageReceipts,
   MessageReceiptType,
@@ -306,7 +306,7 @@ export async function modifyTargetMessage(
 
   // Does message message have any pending, previously-received associated
   // delete for everyone messages?
-  const deletes = Deletes.getSingleton().forMessage(message);
+  const deletes = Deletes.forMessage(message.attributes);
   await Promise.all(
     deletes.map(async del => {
       await deleteForEveryone(message, del, false);
@@ -316,7 +316,7 @@ export async function modifyTargetMessage(
 
   // We want to make sure the message is saved first before applying any edits
   if (!isFirstRun && !skipEdits) {
-    const edits = Edits.forMessage(message);
+    const edits = Edits.forMessage(message.attributes);
     log.info(`${logId}: ${edits.length} edits in second run`);
     await Promise.all(
       edits.map(editAttributes =>

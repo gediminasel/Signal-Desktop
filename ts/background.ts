@@ -113,7 +113,7 @@ import type { BadgesStateType } from './state/ducks/badges';
 import { areAnyCallsActiveOrRinging } from './state/selectors/calling';
 import { badgeImageFileDownloader } from './badges/badgeImageFileDownloader';
 import { actionCreators } from './state/actions';
-import { Deletes } from './messageModifiers/Deletes';
+import * as Deletes from './messageModifiers/Deletes';
 import type { EditAttributesType } from './messageModifiers/Edits';
 import * as Edits from './messageModifiers/Edits';
 import {
@@ -167,7 +167,6 @@ import { SeenStatus } from './MessageSeenStatus';
 import MessageSender from './textsecure/SendMessage';
 import type AccountManager from './textsecure/AccountManager';
 import { onStoryRecipientUpdate } from './util/onStoryRecipientUpdate';
-import { StoryViewModeType, StoryViewTargetType } from './types/Stories';
 import { downloadOnboardingStory } from './util/downloadOnboardingStory';
 import { flushAttachmentDownloadQueue } from './util/attachmentDownloadQueue';
 import { StartupQueue } from './util/StartupQueue';
@@ -574,12 +573,12 @@ export async function startApp(): Promise<void> {
 
   document.documentElement.setAttribute(
     'lang',
-    window.getResolvedMessagesLocale().split(/[-_]/)[0]
+    window.SignalContext.getResolvedMessagesLocale().split(/[-_]/)[0]
   );
 
   document.documentElement.setAttribute(
     'dir',
-    window.getResolvedMessagesLocaleDirection()
+    window.SignalContext.getResolvedMessagesLocaleDirection()
   );
 
   KeyChangeListener.init(window.textsecure.storage.protocol);
@@ -1540,27 +1539,6 @@ export async function startApp(): Promise<void> {
     activeWindowService.registerForActive(() => notificationService.clear());
     window.addEventListener('unload', () => notificationService.fastClear());
 
-    notificationService.on('click', (id, messageId, storyId) => {
-      window.IPC.showWindow();
-
-      if (id) {
-        if (storyId) {
-          window.reduxActions.stories.viewStory({
-            storyId,
-            storyViewMode: StoryViewModeType.Single,
-            viewTarget: StoryViewTargetType.Replies,
-          });
-        } else {
-          window.reduxActions.conversations.showConversation({
-            conversationId: id,
-            messageId,
-          });
-        }
-      } else {
-        window.reduxActions.app.openInbox();
-      }
-    });
-
     // Maybe refresh remote configuration when we become active
     activeWindowService.registerForActive(async () => {
       strictAssert(server !== undefined, 'WebAPI not ready');
@@ -1872,12 +1850,6 @@ export async function startApp(): Promise<void> {
           // Note: we always have to register our capabilities all at once, so we do this
           //   after connect on every startup
           await server.registerCapabilities({
-            announcementGroup: true,
-            giftBadges: true,
-            'gv2-3': true,
-            senderKey: true,
-            changeNumber: true,
-            stories: true,
             pni: isPnpEnabled(),
           });
         } catch (error) {
@@ -2504,16 +2476,14 @@ export async function startApp(): Promise<void> {
       strictAssert(fromConversation, 'Delete missing fromConversation');
 
       const attributes: DeleteAttributesType = {
+        envelopeId: data.envelopeId,
         targetSentTimestamp: del.targetSentTimestamp,
         serverTimestamp: data.serverTimestamp,
         fromId: fromConversation.id,
+        removeFromMessageReceiverCache: confirm,
       };
-      const deleteModel = Deletes.getSingleton().add(attributes);
+      drop(Deletes.onDelete(attributes));
 
-      // Note: We do not wait for completion here
-      void Deletes.getSingleton().onDelete(deleteModel);
-
-      confirm();
       return;
     }
 
@@ -2534,16 +2504,17 @@ export async function startApp(): Promise<void> {
       });
 
       const editAttributes: EditAttributesType = {
+        envelopeId: data.envelopeId,
         conversationId: message.attributes.conversationId,
         fromId: fromConversation.id,
         fromDevice: data.sourceDevice ?? 1,
         message: copyDataMessageIntoMessage(data.message, message.attributes),
         targetSentTimestamp: editedMessageTimestamp,
+        removeFromMessageReceiverCache: confirm,
       };
 
       drop(Edits.onEdit(editAttributes));
 
-      confirm();
       return;
     }
 
@@ -2837,14 +2808,13 @@ export async function startApp(): Promise<void> {
       log.info('Queuing sent DOE for', del.targetSentTimestamp);
 
       const attributes: DeleteAttributesType = {
+        envelopeId: data.envelopeId,
         targetSentTimestamp: del.targetSentTimestamp,
         serverTimestamp: data.serverTimestamp,
         fromId: window.ConversationController.getOurConversationIdOrThrow(),
+        removeFromMessageReceiverCache: confirm,
       };
-      const deleteModel = Deletes.getSingleton().add(attributes);
-      // Note: We do not wait for completion here
-      void Deletes.getSingleton().onDelete(deleteModel);
-      confirm();
+      drop(Deletes.onDelete(attributes));
       return;
     }
 
@@ -2859,16 +2829,16 @@ export async function startApp(): Promise<void> {
       });
 
       const editAttributes: EditAttributesType = {
+        envelopeId: data.envelopeId,
         conversationId: message.attributes.conversationId,
         fromId: window.ConversationController.getOurConversationIdOrThrow(),
         fromDevice: window.storage.user.getDeviceId() ?? 1,
         message: copyDataMessageIntoMessage(data.message, message.attributes),
         targetSentTimestamp: editedMessageTimestamp,
+        removeFromMessageReceiverCache: confirm,
       };
 
       drop(Edits.onEdit(editAttributes));
-
-      confirm();
       return;
     }
 
