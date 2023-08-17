@@ -238,7 +238,9 @@ function renderNode({
       !disableLinks &&
       localStorage.getItem('realGoLinkAddress');
     if (goLinkAddress && goLinkAddress.startsWith(goLinkAddress)) {
-      nodeText = nodeText.replace(goLinkAddress, 'go/');
+      nodeText = nodeText
+        .replace(goLinkAddress, 'go/')
+        .replace(/^http:\/\/go\//, 'go/');
     }
   }
 
@@ -450,7 +452,9 @@ export function extractLinks(
       return {
         start: match.index,
         length: match.lastIndex - match.index,
-        url: match.url,
+        url: goLinkAddress
+          ? match.url.replace(/^http:\/\/go\//, goLinkAddress)
+          : match.url,
       };
     });
   }
