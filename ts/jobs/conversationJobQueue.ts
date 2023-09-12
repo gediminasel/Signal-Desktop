@@ -35,10 +35,11 @@ import { explodePromise } from '../util/explodePromise';
 import type { Job } from './Job';
 import type { ParsedJob } from './types';
 import type SendMessage from '../textsecure/SendMessage';
-import type { UUIDStringType } from '../types/UUID';
+import type { ServiceIdString } from '../types/ServiceId';
 import { commonShouldJobContinue } from './helpers/commonShouldJobContinue';
 import { sleeper } from '../util/sleeper';
 import { receiptSchema, ReceiptType } from '../types/Receipt';
+import { serviceIdSchema, aciSchema } from '../types/ServiceId';
 import { sendResendRequest } from './helpers/sendResendRequest';
 import { sendNullMessage } from './helpers/sendNullMessage';
 import { sendSenderKeyDistribution } from './helpers/sendSenderKeyDistribution';
@@ -82,12 +83,7 @@ const deleteStoryForEveryoneJobDataSchema = z.object({
   updatedStoryRecipients: z
     .array(
       z.object({
-        // TODO: DESKTOP-5630
-        destinationUuid: z.string().optional(),
-        legacyDestinationUuid: z.string().optional(),
-
-        destinationAci: z.string().optional(),
-        destinationPni: z.string().optional(),
+        destinationServiceId: serviceIdSchema.optional(),
         distributionListIds: z.array(z.string()),
         isAllowedToReply: z.boolean(),
       })
@@ -162,7 +158,7 @@ const resendRequestJobDataSchema = z.object({
   plaintext: z.string(),
   receivedAtCounter: z.number(),
   receivedAtDate: z.number(),
-  senderUuid: z.string(),
+  senderAci: aciSchema,
   senderDevice: z.number(),
   timestamp: z.number(),
 });
@@ -503,7 +499,7 @@ export class ConversationJobQueue extends JobQueue<ConversationQueueJobData> {
         }
       }
     } catch (error: unknown) {
-      const untrustedUuids: Array<UUIDStringType> = [];
+      const untrustedServiceIds: Array<ServiceIdString> = [];
 
       const processError = (toProcess: unknown) => {
         if (toProcess instanceof OutgoingIdentityKeyError) {
@@ -512,14 +508,14 @@ export class ConversationJobQueue extends JobQueue<ConversationQueueJobData> {
             'private'
           );
           strictAssert(failedConversation, 'Conversation should be created');
-          const uuid = failedConversation.get('uuid');
-          if (!uuid) {
+          const serviceId = failedConversation.getServiceId();
+          if (!serviceId) {
             log.error(
-              `failedConversation: Conversation ${failedConversation.idForLogging()} missing UUID!`
+              `failedConversation: Conversation ${failedConversation.idForLogging()} missing serviceId!`
             );
             return;
           }
-          untrustedUuids.push(uuid);
+          untrustedServiceIds.push(serviceId);
         } else if (toProcess instanceof SendMessageChallengeError) {
           void window.Signal.challengeHandler?.register(
             {
@@ -541,29 +537,29 @@ export class ConversationJobQueue extends JobQueue<ConversationQueueJobData> {
         (error.errors || []).forEach(processError);
       }
 
-      if (untrustedUuids.length) {
+      if (untrustedServiceIds.length) {
         if (type === jobSet.ProfileKey) {
           log.warn(
-            `Cancelling profile share, since there were ${untrustedUuids.length} untrusted send targets.`
+            `Cancelling profile share, since there were ${untrustedServiceIds.length} untrusted send targets.`
           );
           return;
         }
 
         if (type === jobSet.Receipts) {
           log.warn(
-            `Cancelling receipt send, since there were ${untrustedUuids.length} untrusted send targets.`
+            `Cancelling receipt send, since there were ${untrustedServiceIds.length} untrusted send targets.`
           );
           return;
         }
 
         log.error(
-          `Send failed because ${untrustedUuids.length} conversation(s) were untrusted. Adding to verification list.`
+          `Send failed because ${untrustedServiceIds.length} conversation(s) were untrusted. Adding to verification list.`
         );
 
         window.reduxActions.conversations.conversationStoppedByMissingVerification(
           {
             conversationId: conversation.id,
-            untrustedUuids,
+            untrustedServiceIds,
           }
         );
       }

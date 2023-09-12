@@ -1,6 +1,8 @@
 // Copyright 2023 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { v4 as generateUuid } from 'uuid';
+
 import type { DraftBodyRanges } from '../types/BodyRange';
 import type { LinkPreviewType } from '../types/message/LinkPreviews';
 import type {
@@ -12,7 +14,7 @@ import type { AttachmentType } from '../types/Attachment';
 import { ErrorWithToast } from '../types/ErrorWithToast';
 import { SendStatus } from '../messages/MessageSendState';
 import { ToastType } from '../types/Toast';
-import { UUID } from '../types/UUID';
+import type { AciString } from '../types/ServiceId';
 import { canEditMessage } from './canEditMessage';
 import {
   conversationJobQueue,
@@ -41,14 +43,14 @@ export async function sendEditedMessage(
     bodyRanges,
     preview,
     quoteSentAt,
-    quoteAuthorUuid,
+    quoteAuthorAci,
     targetMessageId,
   }: {
     body?: string;
     bodyRanges?: DraftBodyRanges;
     preview: Array<LinkPreviewType>;
     quoteSentAt?: number;
-    quoteAuthorUuid?: string;
+    quoteAuthorAci?: AciString;
     targetMessageId: string;
   }
 ): Promise<void> {
@@ -94,30 +96,6 @@ export async function sendEditedMessage(
 
   conversation.clearTypingTimers();
 
-  const ourConversation =
-    window.ConversationController.getOurConversationOrThrow();
-  const fromId = ourConversation.id;
-
-  const recipientMaybeConversations = map(
-    conversation.getRecipients(),
-    identifier => window.ConversationController.get(identifier)
-  );
-  const recipientConversations = filter(recipientMaybeConversations, isNotNil);
-  const recipientConversationIds = concat(
-    map(recipientConversations, c => c.id),
-    [fromId]
-  );
-  const sendStateByConversationId = zipObject(
-    recipientConversationIds,
-    repeat({
-      status: SendStatus.Pending,
-      updatedAt: timestamp,
-    })
-  );
-
-  // Resetting send state for the target message
-  targetMessage.set({ sendStateByConversationId });
-
   // Can't send both preview and attachments
   const attachments =
     preview && preview.length ? [] : targetMessage.get('attachments') || [];
@@ -141,7 +119,7 @@ export async function sendEditedMessage(
   };
 
   let quote: QuotedMessageType | undefined;
-  if (quoteSentAt !== undefined && quoteAuthorUuid !== undefined) {
+  if (quoteSentAt !== undefined && quoteAuthorAci !== undefined) {
     const existingQuote = targetMessage.get('quote');
 
     // Keep the quote if unchanged.
@@ -154,7 +132,7 @@ export async function sendEditedMessage(
       const matchingMessage = find(messages, item =>
         isQuoteAMatch(item, {
           id: quoteSentAt,
-          authorUuid: quoteAuthorUuid,
+          authorAci: quoteAuthorAci,
         })
       );
 
@@ -163,6 +141,28 @@ export async function sendEditedMessage(
       }
     }
   }
+
+  const ourConversation =
+    window.ConversationController.getOurConversationOrThrow();
+  const fromId = ourConversation.id;
+
+  // Create the send state for later use
+  const recipientMaybeConversations = map(
+    conversation.getRecipients(),
+    identifier => window.ConversationController.get(identifier)
+  );
+  const recipientConversations = filter(recipientMaybeConversations, isNotNil);
+  const recipientConversationIds = concat(
+    map(recipientConversations, c => c.id),
+    [fromId]
+  );
+  const sendStateByConversationId = zipObject(
+    recipientConversationIds,
+    repeat({
+      status: SendStatus.Pending,
+      updatedAt: timestamp,
+    })
+  );
 
   // An ephemeral message that we just use to handle the edit
   const tmpMessage: MessageAttributesType = {
@@ -183,10 +183,11 @@ export async function sendEditedMessage(
         image,
       };
     }),
-    id: UUID.generate().toString(),
+    id: generateUuid(),
     quote,
     received_at: incrementMessageCounter(),
     received_at_ms: timestamp,
+    sendStateByConversationId,
     sent_at: timestamp,
     timestamp,
     type: 'outgoing',
@@ -200,6 +201,9 @@ export async function sendEditedMessage(
     fromDevice: window.storage.user.getDeviceId() ?? 1,
     message: tmpMessage,
   });
+
+  // Reset send state prior to send
+  targetMessage.set({ sendStateByConversationId });
 
   // Inserting the send into a job and saving it to the message
   await timeAndLogIfTooLong(
@@ -219,7 +223,7 @@ export async function sendEditedMessage(
           );
           await window.Signal.Data.saveMessage(targetMessage.attributes, {
             jobToInsert,
-            ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+            ourAci: window.textsecure.storage.user.getCheckedAci(),
           });
         }
       ),

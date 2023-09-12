@@ -300,6 +300,42 @@
     "messageformat": "ಚಾಟ್‌‌ ಗಳು",
     "description": "Shown as a header for non-pinned conversations in the left pane"
   },
+  "icu:NavTabsToggle__showTabs": {
+    "messageformat": "ಟ್ಯಾಬ್‌ಗಳನ್ನು ತೋರಿಸಿ",
+    "description": "Show in the left pane when the nav tabs are hidden, shows the nav tabs"
+  },
+  "icu:NavTabsToggle__hideTabs": {
+    "messageformat": "ಟ್ಯಾಬ್‌ಗಳನ್ನು ಮರೆ ಮಾಡಿ",
+    "description": "Show in the nav tabs when the nav tabs are visible, hides the nav tabs"
+  },
+  "icu:NavTabs__ItemIconLabel--HasError": {
+    "messageformat": "ಒಂದು ದೋಷ ಉಂಟಾಗಿದೆ",
+    "description": "Nav Tabs > Tab has error > Accessibility Text"
+  },
+  "icu:NavTabs__ItemIconLabel--UnreadCount": {
+    "messageformat": "{count,number} ಓದಿಲ್ಲ",
+    "description": "Nav Tabs > Unread badge > Accessibility Text"
+  },
+  "icu:NavTabs__ItemIconLabel--MarkedUnread": {
+    "messageformat": "ಓದಿಲ್ಲ ಎಂದು ಗುರುತಿಸಲಾಗಿದೆ",
+    "description": "Nav Tabs > Unread badge > when conversation is marked unread > Accessibility Text"
+  },
+  "icu:NavTabs__ItemLabel--Settings": {
+    "messageformat": "ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+    "description": "Nav Tabs > Settings Button > Label & Accessibility Text"
+  },
+  "icu:NavTabs__ItemLabel--Update": {
+    "messageformat": "Signal ಅನ್ನು ನವೀಕರಿಸಿ",
+    "description": "Nav Tabs > Settings Button > Label & Accessibility Text"
+  },
+  "icu:NavTabs__ItemLabel--Profile": {
+    "messageformat": "ಪ್ರೊಫೈಲ್",
+    "description": "Nav Tabs > Profile Button > Accessibility Text"
+  },
+  "icu:NavSidebar__BackButtonLabel": {
+    "messageformat": "ಹಿಂದಕ್ಕೆ",
+    "description": "Shown in the sidebar header when on a nested panel within the current sidebar, takes the user back to the previous step or default sidebar state"
+  },
   "icu:archiveHelperText": {
     "messageformat": "ಈ ಚಾಟ್‌ಗಳನ್ನು ಆರ್ಕೈವ್ ಮಾಡಲಾಗಿದೆ ಮತ್ತು ಹೊಸ ಮೆಸೇಜ್‌ಗಳನ್ನು ಸ್ವೀಕರಿಸಿದರೆ ಮಾತ್ರ ಇನ್‌ಬಾಕ್ಸ್‌ನಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ.",
     "description": "Shown at the top of the archived conversations list in the left pane"
@@ -1267,10 +1303,6 @@
     "messageformat": "ಇತ್ತೀಚಿನ ಮಾಧ್ಯಮವನ್ನು ನೋಡಿ",
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
-  "icu:verifyHelp": {
-    "messageformat": "{name} ಅವರೊಂದಿಗಿನ ನಿಮ್ಮ ಎಂಡ್ ಟು ಎಂಡ್ ಎನ್‌ಕ್ರಿಪ್ಶನ್ ಭದ್ರತೆಯನ್ನು ದೃಢೀಕರಿಸಲು, ಅವರ ಸಾಧನಗಳೊಂದಿಗೆ ಮೇಲಿನ ಸಂಖ್ಯೆಗಳನ್ನು ಹೋಲಿಕೆ ಮಾಡಿ. ಅವರು ಕೂಡಾ ಮೇಲಿನ ಕ್ಯೂಆರ್ ಕೋಡ್ ಅನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡಬಹುದು.",
-    "description": "(deleted 07/05/2023)"
-  },
   "icu:theirIdentityUnknown": {
     "messageformat": "ನೀವು ಇನ್ನೂ ಈ ಸಂಪರ್ಕದೊಂದಿಗೆ ಯಾವುದೇ ಸಂದೇಶಗಳನ್ನು ವಿನಿಮಯ ಮಾಡಿಲ್ಲ. ಅವರೊಂದಿಗೆ ನಿಮ್ಮ ಸುರಕ್ಷತಾ ಸಂಖ್ಯೆ ಮೊದಲ ಸಂದೇಶದ ನಂತರ ಲಭ್ಯವಿರುತ್ತದೆ."
   },
@@ -2146,6 +2178,10 @@
   "icu:ConversationDetails__viewSafetyNumber": {
     "messageformat": "ಸುರಕ್ಷತಾ ಸಂಖ್ಯೆ ವೀಕ್ಷಿಸಿ",
     "description": "In conversation details, label for button to view safety number, opens safety number modal"
+  },
+  "icu:ConversationDetails__HeaderButton--Message": {
+    "messageformat": "ಮೆಸೇಜ್",
+    "description": "In conversation details, label for button to switch to the conversation view in order to draft a message in that converation"
   },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "ಸುರಕ್ಷತಾ ಸಂಖ್ಯೆ ವೀಕ್ಷಿಸಿ",
@@ -3122,10 +3158,18 @@
   },
   "icu:SendEdit--dialog--title": {
     "messageformat": "Signal ಬೀಟಾ ಮಾತ್ರ",
-    "description": "Title of the modal shown before sending your first edit message"
+    "description": "(deleted 8/30) Title of the modal shown before sending your first edit message"
   },
   "icu:SendEdit--dialog--body": {
     "messageformat": "ಮೆಸೇಜ್‌ಗಳನ್ನು ಎಡಿಟ್ ಮಾಡುವಿಕೆಯು Signal ಬೀಟಾ ಬಳಕೆದಾರರಿಗೆ ಮಾತ್ರ ಲಭ್ಯವಿದೆ. ಮೆಸೇಜ್ ಅನ್ನು ನೀವು ಎಡಿಟ್ ಮಾಡಿದರೆ, ಅದು Signal ಬೀಟಾದ ಇತ್ತೀಚಿನ ಆವೃತ್ತಿಯಲ್ಲಿರುವವರಿಗೆ ಮಾತ್ರ ಕಾಣುತ್ತದೆ.",
+    "description": "(deleted 8/30) Body text of the modal shown before sending your first edit message"
+  },
+  "icu:SendEdit--dialog--title2": {
+    "messageformat": "Edit Message",
+    "description": "Title of the modal shown before sending your first edit message"
+  },
+  "icu:SendEdit--dialog--body2": {
+    "messageformat": "If you edit a message, it will only be visible to people who are on the latest versions of Signal. They will be able to see you edited a message.",
     "description": "Body text of the modal shown before sending your first edit message"
   },
   "icu:SendFormatting--dialog--title": {
@@ -3379,6 +3423,14 @@
   "icu:incomingVideoCall": {
     "messageformat": "ಒಳಬರುವ ವೀಡಿಯೊ ಕರೆ…",
     "description": "Shown in both the incoming call bar and notification for an incoming video call"
+  },
+  "icu:outgoingAudioCall": {
+    "messageformat": "ಹೊರಹೋಗುವ ವಾಯ್ಸ್ ಕಾಲ್",
+    "description": "Shown in the timeline for an outgoing voice call"
+  },
+  "icu:outgoingVideoCall": {
+    "messageformat": "ಹೊರಹೋಗುವ ವೀಡಿಯೊ ಕಾಲ್",
+    "description": "Shown in the timeline for an outgoing video call"
   },
   "icu:incomingGroupCall__ringing-you": {
     "messageformat": "{ringer} ಅವರು ನಿಮಗೆ ಕರೆ ಮಾಡುತ್ತಿದ್ದಾರೆೆ",
@@ -5320,10 +5372,6 @@
     "messageformat": "ಯೂಸರ್‌ನೇಮ್ ಅಳಿಸಿ",
     "description": "Shown as aria label for trash icon next to username"
   },
-  "icu:ProfileEditor--username--confirm-delete-body": {
-    "messageformat": "ಇದು ನಿಮ್ಮ ಯೂಸರ್‌ನೇಮ್ ಅನ್ನು ತೆಗೆದುಹಾಕಲಿದೆ, ಇದನ್ನು ಬೇರೆ ಬಳಕೆದಾರರು ಕ್ಲೈಮ್ ಮಾಡಲು ಅವಕಾಶ ನೀಡಲಾಗುತ್ತದೆ. ನೀವು ಖಚಿತವಾಗಿದ್ದೀರಾ?",
-    "description": "(deleted 07/10/2023) Shown in dialog body if user has saved an empty string to delete their username"
-  },
   "icu:ProfileEditor--username--confirm-delete-body-2": {
     "messageformat": "ಇದು ನಿಮ್ಮ ಯೂಸರ್‌ನೇಮ್ ಅನ್ನು ತೆಗೆದುಹಾಕುತ್ತದೆ ಮತ್ತು ನಿಮ್ಮ QR ಕೋಡ್ ಮತ್ತು ಲಿಂಕ್ ಅನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸುತ್ತದೆ. ಇತರರಿಗೆ ಕ್ಲೈಮ್ ಮಾಡಲು “{username}” ಲಭ್ಯವಾಗಲಿದೆ. ನಿಮಗೆ ಖಾತ್ರಿಯಿದೆಯೇ?",
     "description": "Shown in dialog body if user has saved an empty string to delete their username"
@@ -6532,6 +6580,10 @@
     "messageformat": "ಮರುಹೊಂದಿಸಿ",
     "description": "Text of button at the bottom of the username link modal"
   },
+  "icu:UsernameLinkModalBody__done": {
+    "messageformat": "ಮುಗಿದಿದೆ",
+    "description": "Text of button at the bottom of the username link modal"
+  },
   "icu:UsernameLinkModalBody__color__radio": {
     "messageformat": "ಯೂಸರ್‌ನೇಮ್ ಲಿಂಕ್ ಬಣ್ಣ, {total,number} ನ {index,number}",
     "description": "ARIA label of button for selecting username link color"
@@ -6592,6 +6644,110 @@
     "messageformat": "ಪುನಃ ಕಳುಹಿಸಿ",
     "description": "Button text for the confirmation dialog shown to user when attempting to resend message edit"
   },
+  "icu:StoriesTab__MoreActionsLabel": {
+    "messageformat": "ಇನ್ನಷ್ಟು ಕ್ರಮಗಳು",
+    "description": "Stories Tab > More Actions Button (opens context menu) > Accessibility Label"
+  },
+  "icu:CallsTab__HeaderTitle--CallsList": {
+    "messageformat": "ಕರೆಗಳು",
+    "description": "Calls Tab > Header > Title > On Calls List screen"
+  },
+  "icu:CallsTab__HeaderTitle--NewCall": {
+    "messageformat": "ಹೊಸ ಕರೆ",
+    "description": "Calls Tab > Header > Title > On New Call screen"
+  },
+  "icu:CallsTab__NewCallActionLabel": {
+    "messageformat": "ಹೊಸ ಕರೆ",
+    "description": "Calls Tab > New Call Action Button > Accessibility Label"
+  },
+  "icu:CallsTab__MoreActionsLabel": {
+    "messageformat": "ಇನ್ನಷ್ಟು ಕ್ರಮಗಳು",
+    "description": "Calls Tab > More Actions Button (opens context menu) > Accessibility Label"
+  },
+  "icu:CallsTab__ClearCallHistoryLabel": {
+    "messageformat": "ಕರೆ ಇತಿಹಾಸ ತೆರವುಗೊಳಿಸಿ",
+    "description": "Calls Tab > More Actions Context Menu > Clear Call History Button Label"
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Title": {
+    "messageformat": "ಕರೆ ಇತಿಹಾಸ ತೆರವುಗೊಳಿಸಬೇಕೆ?",
+    "description": "Calls Tab > Confirm Clear Call History Dialog > Title"
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Body": {
+    "messageformat": "ಇದು ಎಲ್ಲಾ ಕರೆ ಇತಿಹಾಸವನ್ನು ಶಾಶ್ವತವಾಗಿ ಅಳಿಸುತ್ತದೆ",
+    "description": "Calls Tab > Confirm Clear Call History Dialog > Body Text"
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
+    "messageformat": "ತೆರವುಗೊಳಿಸಿ",
+    "description": "Calls Tab > Confirm Clear Call History Dialog > Confirm Button"
+  },
+  "icu:CallsTab__ToastCallHistoryCleared": {
+    "messageformat": "ಕರೆ ಇತಿಹಾಸವನ್ನು ತೆರವುಗೊಳಿಸಲಾಗಿದೆ",
+    "description": "Calls Tab > Clear Call History > Toast"
+  },
+  "icu:CallsTab__EmptyStateText": {
+    "messageformat": "ಕರೆಯನ್ನು ವೀಕ್ಷಿಸಲು ಅಥವಾ ಪ್ರಾಂಭಿಸಲು ಕ್ಲಿಕ್ ಮಾಡಿ",
+    "description": "Calls Tab > When no call is selected > Empty state > Call to action text"
+  },
+  "icu:CallsList__SearchInputPlaceholder": {
+    "messageformat": "ಹುಡುಕಿ",
+    "description": "Calls Tab > Calls List > Search Input > Placeholder"
+  },
+  "icu:CallsList__ToggleFilterByMissedLabel": {
+    "messageformat": "ತಪ್ಪಿ ಹೋದವುಗಳು ಎಂಬುದಾಗಿ ಫಿಲ್ಟರ್ ಮಾಡಿ",
+    "description": "Calls Tab > Calls List > Toggle search filter by missed > Accessibility label"
+  },
+  "icu:CallsList__ToggleFilterByMissed__RoleDescription": {
+    "messageformat": "ಟಾಗಲ್",
+    "description": "Calls Tab > Calls List > Toggle search filter by missed > Accessibility role description ('A toggle button')"
+  },
+  "icu:CallsList__EmptyState--noQuery": {
+    "messageformat": "ಇತ್ತೀಚಿನ ಯಾವುದೇ ಕರೆಗಳಿಲ್ಲ. ಸ್ನೇಹಿತರಿಗೆ ಕರೆ ಮಾಡುವ ಮೂಲಕ ಪ್ರಾರಂಭಿಸಿ.",
+    "description": "Calls Tab > Calls List > When no results found > With no search query"
+  },
+  "icu:CallsList__EmptyState--hasQuery": {
+    "messageformat": "{query} ಗೆ ಫಲಿತಾಂಶಗಳು ಲಭ್ಯವಿಲ್ಲ",
+    "description": "Calls Tab > Calls List > When no results found > With a search query"
+  },
+  "icu:CallsList__ItemCallInfo--Incoming": {
+    "messageformat": "ಒಳಬರುವ",
+    "description": "Calls Tab > Calls List > Call Item > Call Status > When call was accepted and was incoming"
+  },
+  "icu:CallsList__ItemCallInfo--Outgoing": {
+    "messageformat": "ಹೊರಹೋಗುವ",
+    "description": "Calls Tab > Calls List > Call Item > Call Status > When call was accepted and was outgoing"
+  },
+  "icu:CallsList__ItemCallInfo--Missed": {
+    "messageformat": "ತಪ್ಪಿಹೋದ",
+    "description": "Calls Tab > Calls List > Call Item > Call Status > When call was missed"
+  },
+  "icu:CallsList__ItemCallInfo--GroupCall": {
+    "messageformat": "ಗ್ರೂಪ್ ಕಾಲ್",
+    "description": "Calls Tab > Calls List > Call Item > Call Status > When group call is in its default state"
+  },
+  "icu:CallsNewCall__EmptyState--noQuery": {
+    "messageformat": "ಇತ್ತೀಚಿನ ಯಾವುದೇ ಸಂಭಾಷಣೆಗಳಿಲ್ಲ.",
+    "description": "Calls Tab > New Call > Conversations List > When no results found > With no search query"
+  },
+  "icu:CallsNewCall__EmptyState--hasQuery": {
+    "messageformat": "{query} ಗೆ ಫಲಿತಾಂಶಗಳು ಲಭ್ಯವಿಲ್ಲ",
+    "description": "Calls Tab > New Call > Conversations List > When no results found > With a search query"
+  },
+  "icu:CallHistory__Description--Default": {
+    "messageformat": "{type, select, Audio {{direction, select, Outgoing {ಹೊರಹೋಗುವ ವಾಯ್ಸ್ ಕಾಲ್} other {ಒಳಬರುವ ವಾಯ್ಸ್ ಕಾಲ್}}} Video {{direction, select, Outgoing {ಹೊರಹೋಗುವ ವೀಡಿಯೊ ಕಾಲ್} other {ಒಳಬರುವ ವೀಡಿಯೊ ಕಾಲ್}}} Group {{direction, select, Outgoing {ಹೊರಹೋಗುವ ಗ್ರೂಪ್ ಕರೆ} other {ಒಳಬರುವ ಗ್ರೂಪ್ ಕರೆ}}} other {{direction, select, Outgoing {ಹೊರಹೋಗುವ ಕರೆ} other {ಒಳಬರುವ ಕರೆ}}}}",
+    "description": "Call History > Short description of call > When call was not missed or declined (generally accepted)"
+  },
+  "icu:CallHistory__Description--Missed": {
+    "messageformat": "{type, select, Audio {ಮಿಸ್ಡ್ ವಾಯ್ಸ್ ಕಾಲ್} Video {ಮಿಸ್ಡ್ ವೀಡಿಯೊ ಕಾಲ್} Group {ತಪ್ಪಿದ ಗ್ರೂಪ್ ಕರೆ} other {ತಪ್ಪಿದ ಕರೆ}}",
+    "description": "Call History > Short description of call > When incoming call was missed"
+  },
+  "icu:CallHistory__Description--Unanswered": {
+    "messageformat": "{type, select, Audio {ಉತ್ತರಿಸದ ವಾಯ್ಸ್ ಕಾಲ್} Video {ಉತ್ತರಿಸದ ವೀಡಿಯೊ ಕಾಲ್} Group {ಉತ್ತರಿಸದ ಗ್ರೂಪ್ ಕರೆ} other {ಉತ್ತರಿಸದ  ಕರೆ}}",
+    "description": "Call History > Short description of call > When outgoing call was unanswered"
+  },
+  "icu:CallHistory__Description--Declined": {
+    "messageformat": "{type, select, Audio {ನಿರಾಕರಿಸಿದ ಧ್ವನಿ ಕರೆ} Video {ನಿರಾಕರಿಸಿದ ವೀಡಿಯೊ ಕರೆ} Group {ನಿರಾಕರಿಸಿದ ಗ್ರೂಪ್ ಕರೆ} other {ನಿರಾಕರಿಸಿದ  ಕರೆ}}",
+    "description": "Call History > Short description of call > When call was declined"
+  },
   "icu:WhatsNew__modal-title": {
     "messageformat": "ಹೊಸತೇನಿದೆ",
     "description": "Title for the whats new modal"
@@ -6624,10 +6780,13 @@
     "messageformat": "ಸಣ್ಣ ಟ್ವೀಕ್‌ಗಳು, ಬಗ್ ಫಿಕ್ಸ್‌ಗಳು ಮತ್ತು ಕಾರ್ಯಕ್ಷಮತೆ ವರ್ಧನೆಗಳು. Signal ಬಳಸುತ್ತಿರುವುದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.27--0": {
-    "messageformat": "ಈ ನವೀಕರಣವು ಧ್ವನಿ ಮತ್ತು ವೀಡಿಯೊ ಕರೆಗಳಿಗೆ ಕೆಲವು ಸುಧಾರಣೆಗಳನ್ನು ಒಳಗೊಂಡಿದೆ ಮತ್ತು ಕೆಲವು ಸಣ್ಣ ಡಾಕ್ಯುಮೆಂಟೇಶನ್ ನವೀಕರಣಗಳನ್ನು ಒಳಗೊಂಡಿದೆ (ಧನ್ಯವಾದಗಳು, {linkToGithub}!)."
+  "icu:WhatsNew__v6.29--0": {
+    "messageformat": "ಚಾಟ್ ಬಣ್ಣದ ಕಸ್ಟಮೈಸೇಶನ್ ಸ್ಕ್ರೀನ್ ಈಗ ವಿವಿಧ ಭಾಷೆಗಳು ಮತ್ತು ಆಯ್ದ ಸ್ಥಳಗಳಾದ್ಯಂತ ಸರಿಯಾಗಿ ಪ್ರದರ್ಶನಗೊಳ್ಳುತ್ತದೆ."
   },
-  "icu:WhatsNew__v6.28--0": {
-    "messageformat": "ಯಾರಾದರೂ ಹೊಸದಾಗಿ ಗ್ರೂಪ್‌ಗೆ ಸೇರಿದಾಗ ಕಾಣಿಸಿಕೊಳ್ಳುವಂತಹ ಗ್ರೂಪ್ ಅಪ್‌ಡೇಟ್‌ಗಳ ಅಧಿಸೂಚನೆ ಐಕಾನ್‌ಗಳನ್ನು ನಾವು ಮಾರ್ಪಡಿಸಿದ್ದೇವೆ. ಈ ಐಕಾನ್‌ಗಳು, ವಿಶೇಷವಾಗಿ ನೀವು ಡಾರ್ಕ್ ಥೀಮ್‌ನ ಡಾರ್ಕ್‌ನೆಸ್‌‍ನೊಳಗೆ ಇದ್ದರೆ ಸ್ಪಷ್ಟತೆಯನ್ನು ಸುಧಾರಿಸಲು ನೆರವಾಗುತ್ತವೆ. ಹಿಂದಿನ ಐಕಾನ್‌ಗಳು ಕೇವಲ ಡಾರ್ಕ್ ಅನ್ನು ಅಳವಡಿಸಿಕೊಂಡಿವೆ. ಹೊಸ ಐಕಾನ್‌ಗಳು ಅದರಲ್ಲೇ ಹುಟ್ಟಿ, ಅದರಿಂದಲೇ ರೂಪುಗೊಂಡಿವೆ."
+  "icu:WhatsNew__v6.29--1": {
+    "messageformat": "Windows ನಲ್ಲಿ ಅಧಿಸೂಚನೆ ಬೆಂಬಲವನ್ನು ನಾವು ಸುಧಾರಿಸಿದ್ದೇವೆ. ಅಧಿಸೂಚನೆ ಮೊದಲು ಬಂದಾಗ, ನೀವು ಅದನ್ನು ಕ್ಲಿಕ್ ಮಾಡದೇ ಇದ್ದಲ್ಲಿ, ಇತ್ತೀಚಿನ ತಪ್ಪಿಹೋದ ಅಧಿಸೂಚನೆಯು Windows ಅಧಿಸೂಚನೆ ಕೇಂದ್ರದಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ. ಈಗ ಅಧಿಸೂಚನೆಯ ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿದಾಗ ಅದು ಆ ಚಾಟ್‌ಗೆ ನೇರವಾಗಿ ಜಿಗಿಯುತ್ತದೆ. ತಮ್ಮ ಪ್ರತಿಕ್ರಿಯೆ ನೀಡಿದ ಜ್ಯುಲಿಯನ್ ರಿಚರ್ಡ್ ಅವರಿಗೆ ನಾವು ಧನ್ಯವಾದ ಸಲ್ಲಿಸಲು ಬಯಸುತ್ತೇವೆ."
+  },
+  "icu:WhatsNew__v6.30--0": {
+    "messageformat": "ಹೊಸ ಕರೆಗಳ ಟ್ಯಾಬ್ ಬಳಸಿ ನಿಮ್ಮ ಕರೆಗಳ ಮೇಲೆ ಟ್ಯಾಬ್‌ಗಳನ್ನು ಇರಿಸಿ. ಸಂಬಂಧಿತ ಚಾಟ್ ಕಂಡುಕೊಳ್ಳುವ ಅಗತ್ಯವಿಲ್ಲದೆ ತಪ್ಪಿಹೋದ ಕರೆಗಳಿಗೆ ಮರಳಿ ಅಥವಾ ಹೊಸ ಕರೆಯನ್ನು ಪ್ರಾರಂಭಿಸಿ. ಈಗ ನೀವು ಆ ಥ್ರೆಡ್‌ನಲ್ಲಿನ ಓದದಿರುವ ಮೆಸೇಜ್‌ಗಳಿಗೆ ವಿದಾಯ ಹೇಳದೆಯೂ ನಿಮ್ಮ ಧ್ವನಿಯಲ್ಲಿ ಹಲೋ ಹೇಳಬಹುದು."
   }
 }

@@ -3,7 +3,6 @@
 
 import { PublicKey, Fingerprint } from '@signalapp/libsignal-client';
 import type { ConversationType } from '../state/ducks/conversations';
-import { UUID, UUIDKind } from '../types/UUID';
 
 import { assertDev } from './assert';
 import { isNotNil } from './isNotNil';
@@ -16,10 +15,11 @@ import {
   SafetyNumberIdentifierType,
   SafetyNumberMode,
 } from '../types/safetyNumber';
+import { isAciString } from '../types/ServiceId';
 
 const ITERATION_COUNT = 5200;
 const E164_VERSION = 1;
-const UUID_VERSION = 2;
+const SERVICE_ID_VERSION = 2;
 
 // Number of digits in a safety number block
 const BLOCK_SIZE = 5;
@@ -33,14 +33,16 @@ export async function generateSafetyNumbers(
 
   const { storage } = window.textsecure;
   const ourNumber = storage.user.getNumber();
-  const ourAci = storage.user.getCheckedUuid(UUIDKind.ACI);
+  const ourAci = storage.user.getCheckedAci();
 
   const us = storage.protocol.getIdentityRecord(ourAci);
   const ourKeyBuffer = us ? us.publicKey : null;
 
-  const theirAci = contact.pni !== contact.uuid ? contact.uuid : undefined;
+  const theirAci = isAciString(contact.serviceId)
+    ? contact.serviceId
+    : undefined;
   const them = theirAci
-    ? await storage.protocol.getOrMigrateIdentityRecord(new UUID(theirAci))
+    ? await storage.protocol.getOrMigrateIdentityRecord(theirAci)
     : undefined;
   const theirKeyBuffer = them?.publicKey;
 
@@ -95,11 +97,11 @@ export async function generateSafetyNumbers(
           theirKey
         );
       } else if (identifierType === SafetyNumberIdentifierType.ACIIdentifier) {
-        assertDev(theirAci, 'Should have their uuid');
+        assertDev(theirAci, 'Should have their serviceId');
         fingerprint = Fingerprint.new(
           ITERATION_COUNT,
-          UUID_VERSION,
-          Buffer.from(uuidToBytes(ourAci.toString())),
+          SERVICE_ID_VERSION,
+          Buffer.from(uuidToBytes(ourAci)),
           ourKey,
           Buffer.from(uuidToBytes(theirAci)),
           theirKey

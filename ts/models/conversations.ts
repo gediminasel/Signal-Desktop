@@ -19,7 +19,6 @@ import { getConversation } from '../util/getConversation';
 import { drop } from '../util/drop';
 import { isShallowEqual } from '../util/isShallowEqual';
 import { getInitials } from '../util/getInitials';
-import { normalizeUuid } from '../util/normalizeUuid';
 import { clearTimeoutIfNecessary } from '../util/clearTimeoutIfNecessary';
 import { getMessageSentTimestamp } from '../util/getMessageSentTimestamp';
 import type { AttachmentType, ThumbnailType } from '../types/Attachment';
@@ -30,8 +29,6 @@ import { getAboutText } from '../util/getAboutText';
 import { getAvatarPath } from '../util/avatarUtils';
 import { getDraftPreview } from '../util/getDraftPreview';
 import { hasDraft } from '../util/hasDraft';
-import type { CallHistoryDetailsType } from '../types/Calling';
-import { CallMode } from '../types/Calling';
 import * as Conversation from '../types/Conversation';
 import type { StickerType, StickerWithHydratedData } from '../types/Stickers';
 import * as Stickers from '../types/Stickers';
@@ -55,7 +52,7 @@ import type {
 } from '../types/Colors';
 import type { MessageModel } from './messages';
 import { getContact } from '../messages/helpers';
-import { assertDev, strictAssert } from '../util/assert';
+import { strictAssert } from '../util/assert';
 import { isConversationMuted } from '../util/isConversationMuted';
 import { isConversationSMSOnly } from '../util/isConversationSMSOnly';
 import {
@@ -63,14 +60,17 @@ import {
   isConversationUnregistered,
   isConversationUnregisteredAndStale,
 } from '../util/isConversationUnregistered';
-import { missingCaseError } from '../util/missingCaseError';
 import { sniffImageMimeType } from '../util/sniffImageMimeType';
 import { isValidE164 } from '../util/isValidE164';
-import { canConversationBeUnarchived } from '../util/canConversationBeUnarchived';
 import type { MIMEType } from '../types/MIME';
 import { IMAGE_JPEG, IMAGE_WEBP } from '../types/MIME';
-import { UUID, UUIDKind } from '../types/UUID';
-import type { UUIDStringType } from '../types/UUID';
+import type { AciString, PniString, ServiceIdString } from '../types/ServiceId';
+import {
+  ServiceIdKind,
+  isAciString,
+  normalizeServiceId,
+  normalizePni,
+} from '../types/ServiceId';
 import {
   constantTimeEqual,
   decryptProfile,
@@ -129,7 +129,7 @@ import {
   conversationJobQueue,
   conversationQueueJobEnum,
 } from '../jobs/conversationJobQueue';
-import type { ReactionModel } from '../messageModifiers/Reactions';
+import type { ReactionAttributesType } from '../messageModifiers/Reactions';
 import { isAnnouncementGroupReady } from '../util/isAnnouncementGroupReady';
 import { getProfile } from '../util/getProfile';
 import { SEALED_SENDER } from '../types/SealedSender';
@@ -162,7 +162,6 @@ import { getQuoteAttachment } from '../util/makeQuote';
 import { deriveProfileKeyVersion } from '../util/zkgroup';
 import { incrementMessageCounter } from '../util/incrementMessageCounter';
 import { queueUpdateMessage } from '../util/messageBatcher';
-import { validateTransition } from '../util/callHistoryDetails';
 import OS from '../util/os/osMain';
 
 /* eslint-disable more/no-then */
@@ -226,7 +225,7 @@ export class ConversationModel extends window.Backbone
 
   contactCollection?: Backbone.Collection<ConversationModel>;
 
-  debouncedUpdateLastMessage?: (() => void) & { flush(): void };
+  debouncedUpdateLastMessage: (() => void) & { flush(): void };
 
   initialPromise?: Promise<unknown>;
 
@@ -258,8 +257,6 @@ export class ConversationModel extends window.Backbone
 
   throttledUpdateSharedGroups?: () => Promise<void>;
 
-  private cachedLatestGroupCallEraId?: string;
-
   private cachedIdenticon?: CachedIdenticon;
 
   public isFetchingUUID?: boolean;
@@ -287,9 +284,7 @@ export class ConversationModel extends window.Backbone
     return getConversationIdForLogging(this.attributes);
   }
 
-  // This is one of the few times that we want to collapse our uuid/e164 pair down into
-  //   just one bit of data. If we have a UUID, we'll send using it.
-  getSendTarget(): string | undefined {
+  getSendTarget(): ServiceIdString | undefined {
     return getSendTarget(this.attributes);
   }
 
@@ -310,19 +305,20 @@ export class ConversationModel extends window.Backbone
 
     // Note that we intentionally don't use `initialize()` method because it
     // isn't compatible with esnext output of esbuild.
-    const uuid = this.get('uuid');
-    const normalizedUuid =
-      uuid && normalizeUuid(uuid, 'ConversationModel.initialize');
-    if (uuid && normalizedUuid !== uuid) {
+    const serviceId = this.getServiceId();
+    const normalizedServiceId =
+      serviceId &&
+      normalizeServiceId(serviceId, 'ConversationModel.initialize');
+    if (serviceId && normalizedServiceId !== serviceId) {
       log.warn(
-        'ConversationModel.initialize: normalizing uuid from ' +
-          `${uuid} to ${normalizedUuid}`
+        'ConversationModel.initialize: normalizing serviceId from ' +
+          `${serviceId} to ${normalizedServiceId}`
       );
-      this.set('uuid', normalizedUuid);
+      this.set('serviceId', normalizedServiceId);
     }
 
     if (isValidE164(attributes.id, false)) {
-      this.set({ id: UUID.generate().toString(), e164: attributes.id });
+      this.set({ id: generateGuid(), e164: attributes.id });
     }
 
     this.storeName = 'conversations';
@@ -442,7 +438,7 @@ export class ConversationModel extends window.Backbone
     return {
       getGroupId: () => this.get('groupId'),
       getMembers: () => this.getMembers(),
-      hasMember: (uuid: UUIDStringType) => this.hasMember(new UUID(uuid)),
+      hasMember: (serviceId: ServiceIdString) => this.hasMember(serviceId),
       idForLogging: () => this.idForLogging(),
       isGroupV2: () => isGroupV2(this.attributes),
       isValid: () => isGroupV2(this.attributes),
@@ -460,20 +456,20 @@ export class ConversationModel extends window.Backbone
     return this.privVerifiedEnum;
   }
 
-  private isMemberRequestingToJoin(uuid: UUID): boolean {
-    return isMemberRequestingToJoin(this.attributes, uuid);
+  private isMemberRequestingToJoin(serviceId: ServiceIdString): boolean {
+    return isMemberRequestingToJoin(this.attributes, serviceId);
   }
 
-  isMemberPending(uuid: UUID): boolean {
-    return isMemberPending(this.attributes, uuid);
+  isMemberPending(serviceId: ServiceIdString): boolean {
+    return isMemberPending(this.attributes, serviceId);
   }
 
-  isMemberAwaitingApproval(uuid: UUID): boolean {
-    return isMemberAwaitingApproval(this.attributes, uuid);
+  isMemberAwaitingApproval(serviceId: ServiceIdString): boolean {
+    return isMemberAwaitingApproval(this.attributes, serviceId);
   }
 
-  isMember(uuid: UUID): boolean {
-    return isMember(this.attributes, uuid);
+  isMember(serviceId: ServiceIdString): boolean {
+    return isMember(this.attributes, serviceId);
   }
 
   async updateExpirationTimerInGroupV2(
@@ -497,17 +493,17 @@ export class ConversationModel extends window.Backbone
   }
 
   private async promotePendingMember(
-    uuidKind: UUIDKind
+    serviceIdKind: ServiceIdKind
   ): Promise<Proto.GroupChange.Actions | undefined> {
     const idLog = this.idForLogging();
 
     const us = window.ConversationController.getOurConversationOrThrow();
-    const uuid = window.storage.user.getCheckedUuid(uuidKind);
+    const serviceId = window.storage.user.getCheckedServiceId(serviceIdKind);
 
     // This user's pending state may have changed in the time between the user's
     //   button press and when we get here. It's especially important to check here
     //   in conflict/retry cases.
-    if (!this.isMemberPending(uuid)) {
+    if (!this.isMemberPending(serviceId)) {
       log.warn(
         `promotePendingMember/${idLog}: we are not a pending member of group. Returning early.`
       );
@@ -524,7 +520,7 @@ export class ConversationModel extends window.Backbone
     const profileKeyCredentialBase64 = us.get('profileKeyCredential');
     strictAssert(profileKeyCredentialBase64, 'Must have profileKeyCredential');
 
-    if (uuidKind === UUIDKind.ACI) {
+    if (serviceIdKind === ServiceIdKind.ACI) {
       return window.Signal.Groups.buildPromoteMemberChange({
         group: this.attributes,
         isPendingPniAciProfileKey: false,
@@ -533,7 +529,10 @@ export class ConversationModel extends window.Backbone
       });
     }
 
-    strictAssert(uuidKind === UUIDKind.PNI, 'Must be a PNI promotion');
+    strictAssert(
+      serviceIdKind === ServiceIdKind.PNI,
+      'Must be a PNI promotion'
+    );
 
     return window.Signal.Groups.buildPromoteMemberChange({
       group: this.attributes,
@@ -544,27 +543,27 @@ export class ConversationModel extends window.Backbone
   }
 
   private async denyPendingApprovalRequest(
-    uuid: UUID
+    aci: AciString
   ): Promise<Proto.GroupChange.Actions | undefined> {
     const idLog = this.idForLogging();
 
     // This user's pending state may have changed in the time between the user's
     //   button press and when we get here. It's especially important to check here
     //   in conflict/retry cases.
-    if (!this.isMemberRequestingToJoin(uuid)) {
+    if (!this.isMemberRequestingToJoin(aci)) {
       log.warn(
-        `denyPendingApprovalRequest/${idLog}: ${uuid} is not requesting ` +
+        `denyPendingApprovalRequest/${idLog}: ${aci} is not requesting ` +
           'to join the group. Returning early.'
       );
       return undefined;
     }
 
-    const ourUuid = window.textsecure.storage.user.getCheckedUuid(UUIDKind.ACI);
+    const ourAci = window.textsecure.storage.user.getCheckedAci();
 
     return window.Signal.Groups.buildDeletePendingAdminApprovalMemberChange({
       group: this.attributes,
-      ourUuid,
-      uuid,
+      ourAci,
+      aci,
     });
   }
 
@@ -584,7 +583,9 @@ export class ConversationModel extends window.Backbone
       );
     }
 
-    const uuid = toRequest.getCheckedUuid(`addPendingApprovalRequest/${idLog}`);
+    const serviceId = toRequest.getCheckedServiceId(
+      `addPendingApprovalRequest/${idLog}`
+    );
 
     // We need the user's profileKeyCredential, which requires a roundtrip with the
     //   server, and most definitely their profileKey. A getProfiles() call will
@@ -604,7 +605,7 @@ export class ConversationModel extends window.Backbone
     // This user's pending state may have changed in the time between the user's
     //   button press and when we get here. It's especially important to check here
     //   in conflict/retry cases.
-    if (this.isMemberAwaitingApproval(uuid)) {
+    if (this.isMemberAwaitingApproval(serviceId)) {
       log.warn(
         `addPendingApprovalRequest/${idLog}: ` +
           `${toRequest.idForLogging()} already in pending approval.`
@@ -619,12 +620,16 @@ export class ConversationModel extends window.Backbone
     });
   }
 
-  async addMember(uuid: UUID): Promise<Proto.GroupChange.Actions | undefined> {
+  async addMember(
+    serviceId: ServiceIdString
+  ): Promise<Proto.GroupChange.Actions | undefined> {
     const idLog = this.idForLogging();
 
-    const toRequest = window.ConversationController.get(uuid.toString());
+    const toRequest = window.ConversationController.get(serviceId);
     if (!toRequest) {
-      throw new Error(`addMember/${idLog}: No conversation found for ${uuid}`);
+      throw new Error(
+        `addMember/${idLog}: No conversation found for ${serviceId}`
+      );
     }
 
     // We need the user's profileKeyCredential, which requires a roundtrip with the
@@ -645,7 +650,7 @@ export class ConversationModel extends window.Backbone
     // This user's pending state may have changed in the time between the user's
     //   button press and when we get here. It's especially important to check here
     //   in conflict/retry cases.
-    if (this.isMember(uuid)) {
+    if (this.isMember(serviceId)) {
       log.warn(
         `addMember/${idLog}: ${toRequest.idForLogging()} ` +
           'is already a member.'
@@ -657,42 +662,42 @@ export class ConversationModel extends window.Backbone
       group: this.attributes,
       profileKeyCredentialBase64,
       serverPublicParamsBase64: window.getServerPublicParams(),
-      uuid,
+      serviceId,
     });
   }
 
   private async removePendingMember(
-    uuids: ReadonlyArray<UUID>
+    serviceIds: ReadonlyArray<ServiceIdString>
   ): Promise<Proto.GroupChange.Actions | undefined> {
-    return removePendingMember(this.attributes, uuids);
+    return removePendingMember(this.attributes, serviceIds);
   }
 
   private async removeMember(
-    uuid: UUID
+    serviceId: ServiceIdString
   ): Promise<Proto.GroupChange.Actions | undefined> {
     const idLog = this.idForLogging();
 
     // This user's pending state may have changed in the time between the user's
     //   button press and when we get here. It's especially important to check here
     //   in conflict/retry cases.
-    if (!this.isMember(uuid)) {
+    if (!this.isMember(serviceId)) {
       log.warn(
-        `removeMember/${idLog}: ${uuid} is not a pending member of group. Returning early.`
+        `removeMember/${idLog}: ${serviceId} is not a pending member of group. Returning early.`
       );
       return undefined;
     }
 
-    const ourUuid = window.textsecure.storage.user.getCheckedUuid(UUIDKind.ACI);
+    const ourAci = window.textsecure.storage.user.getCheckedAci();
 
     return window.Signal.Groups.buildDeleteMemberChange({
       group: this.attributes,
-      ourUuid,
-      uuid,
+      ourAci,
+      serviceId,
     });
   }
 
   private async toggleAdminChange(
-    uuid: UUID
+    serviceId: ServiceIdString
   ): Promise<Proto.GroupChange.Actions | undefined> {
     if (!isGroupV2(this.attributes)) {
       return undefined;
@@ -700,22 +705,22 @@ export class ConversationModel extends window.Backbone
 
     const idLog = this.idForLogging();
 
-    if (!this.isMember(uuid)) {
+    if (!this.isMember(serviceId)) {
       log.warn(
-        `toggleAdminChange/${idLog}: ${uuid} is not a pending member of group. Returning early.`
+        `toggleAdminChange/${idLog}: ${serviceId} is not a pending member of group. Returning early.`
       );
       return undefined;
     }
 
     const MEMBER_ROLES = Proto.Member.Role;
 
-    const role = this.isAdmin(uuid)
+    const role = this.isAdmin(serviceId)
       ? MEMBER_ROLES.DEFAULT
       : MEMBER_ROLES.ADMINISTRATOR;
 
     return window.Signal.Groups.buildModifyMemberRoleChange({
       group: this.attributes,
-      uuid,
+      serviceId,
       role,
     });
   }
@@ -802,8 +807,8 @@ export class ConversationModel extends window.Backbone
     }
 
     const e164 = this.get('e164');
-    const pni = this.get('pni');
-    const aci = this.get('uuid');
+    const pni = this.getPni();
+    const aci = this.getServiceId();
     if (e164 && pni && aci && pni !== aci) {
       this.updateE164(undefined);
       this.updatePni(undefined);
@@ -875,9 +880,9 @@ export class ConversationModel extends window.Backbone
     let blocked = false;
     const wasBlocked = this.isBlocked();
 
-    const uuid = this.get('uuid');
-    if (uuid) {
-      drop(window.storage.blocked.addBlockedUuid(uuid));
+    const serviceId = this.getServiceId();
+    if (serviceId) {
+      drop(window.storage.blocked.addBlockedServiceId(serviceId));
       blocked = true;
     }
 
@@ -907,9 +912,9 @@ export class ConversationModel extends window.Backbone
     let unblocked = false;
     const wasBlocked = this.isBlocked();
 
-    const uuid = this.get('uuid');
-    if (uuid) {
-      drop(window.storage.blocked.removeBlockedUuid(uuid));
+    const serviceId = this.getServiceId();
+    if (serviceId) {
+      drop(window.storage.blocked.removeBlockedServiceId(serviceId));
       unblocked = true;
     }
 
@@ -974,10 +979,10 @@ export class ConversationModel extends window.Backbone
     });
 
     window.reduxActions?.stories.removeAllContactStories(this.id);
-    const uuid = this.get('uuid');
-    if (uuid) {
+    const serviceId = this.getServiceId();
+    if (serviceId) {
       window.reduxActions?.storyDistributionLists.removeMemberFromAllDistributionLists(
-        uuid
+        serviceId
       );
     }
 
@@ -1159,7 +1164,7 @@ export class ConversationModel extends window.Backbone
       );
     }
 
-    if (!this.get('uuid')) {
+    if (!this.getServiceId()) {
       return;
     }
 
@@ -1219,7 +1224,7 @@ export class ConversationModel extends window.Backbone
             includePendingMembers?: boolean;
             extraConversationsForSend?: ReadonlyArray<string>;
           }
-        | { members: ReadonlyArray<string> }
+        | { members: ReadonlyArray<ServiceIdString> }
       )
     > = {}
   ): GroupV2InfoType | undefined {
@@ -1350,12 +1355,12 @@ export class ConversationModel extends window.Backbone
   }
 
   async onNewMessage(message: MessageModel): Promise<void> {
-    const uuid = message.get('sourceUuid');
+    const serviceId = message.get('sourceServiceId');
     const e164 = message.get('source');
     const sourceDevice = message.get('sourceDevice');
 
     const source = window.ConversationController.lookupOrCreate({
-      uuid,
+      serviceId,
       e164,
       reason: 'ConversationModel.onNewMessage',
     });
@@ -1397,9 +1402,7 @@ export class ConversationModel extends window.Backbone
   ): Promise<void> {
     await this.beforeAddSingleMessage(message);
     this.doAddSingleMessage(message, { isJustSent });
-
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.debouncedUpdateLastMessage!();
+    this.debouncedUpdateLastMessage();
   }
 
   private async beforeAddSingleMessage(message: MessageModel): Promise<void> {
@@ -1764,7 +1767,7 @@ export class ConversationModel extends window.Backbone
     if (eliminated > 0) {
       log.warn(`cleanModels: Eliminated ${eliminated} messages without an id`);
     }
-    const ourUuid = window.textsecure.storage.user.getCheckedUuid().toString();
+    const ourAci = window.textsecure.storage.user.getCheckedAci();
 
     let upgraded = 0;
     for (let max = result.length, i = 0; i < max; i += 1) {
@@ -1778,7 +1781,7 @@ export class ConversationModel extends window.Backbone
         const upgradedMessage = await upgradeMessageSchema(attributes);
         message.set(upgradedMessage);
         // eslint-disable-next-line no-await-in-loop
-        await window.Signal.Data.saveMessage(upgradedMessage, { ourUuid });
+        await window.Signal.Data.saveMessage(upgradedMessage, { ourAci });
         upgraded += 1;
       }
     }
@@ -1852,28 +1855,29 @@ export class ConversationModel extends window.Backbone
     this.captureChange('updateE164');
   }
 
-  updateUuid(uuid?: string): void {
-    const oldValue = this.get('uuid');
-    if (uuid === oldValue) {
+  updateServiceId(serviceId?: ServiceIdString): void {
+    const oldValue = this.getServiceId();
+    if (serviceId === oldValue) {
       return;
     }
 
-    this.set('uuid', uuid ? UUID.cast(uuid.toLowerCase()) : undefined);
+    this.set(
+      'serviceId',
+      serviceId
+        ? normalizeServiceId(serviceId, 'Conversation.updateServiceId')
+        : undefined
+    );
     window.Signal.Data.updateConversation(this.attributes);
-    this.trigger('idUpdated', this, 'uuid', oldValue);
+    this.trigger('idUpdated', this, 'serviceId', oldValue);
 
     // We should delete the old sessions and identity information in all situations except
     //   for the case where we need to do old and new PNI comparisons. We'll wait
     //   for the PNI update to do that.
-    if (oldValue && oldValue !== this.get('pni')) {
-      drop(
-        window.textsecure.storage.protocol.removeIdentityKey(
-          UUID.cast(oldValue)
-        )
-      );
+    if (oldValue && oldValue !== this.getPni()) {
+      drop(window.textsecure.storage.protocol.removeIdentityKey(oldValue));
     }
 
-    this.captureChange('updateUuid');
+    this.captureChange('updateServiceId');
   }
 
   trackPreviousIdentityKey(publicKey: Uint8Array): void {
@@ -1899,18 +1903,21 @@ export class ConversationModel extends window.Backbone
     window.Signal.Data.updateConversation(this.attributes);
   }
 
-  updatePni(pni?: string): void {
-    const oldValue = this.get('pni');
+  updatePni(pni?: PniString): void {
+    const oldValue = this.getPni();
     if (pni === oldValue) {
       return;
     }
 
-    this.set('pni', pni ? UUID.cast(pni.toLowerCase()) : undefined);
+    this.set(
+      'pni',
+      pni ? normalizePni(pni, 'Conversation.updatePni') : undefined
+    );
 
     const pniIsPrimaryId =
-      !this.get('uuid') ||
-      this.get('uuid') === oldValue ||
-      this.get('uuid') === pni;
+      !this.getServiceId() ||
+      this.getServiceId() === oldValue ||
+      this.getServiceId() === pni;
     const haveSentMessage = Boolean(
       this.get('profileSharing') || this.get('sentMessageCount')
     );
@@ -1919,13 +1926,9 @@ export class ConversationModel extends window.Backbone
       // We're going from an old PNI to a new PNI
       if (pni) {
         const oldIdentityRecord =
-          window.textsecure.storage.protocol.getIdentityRecord(
-            UUID.cast(oldValue)
-          );
+          window.textsecure.storage.protocol.getIdentityRecord(oldValue);
         const newIdentityRecord =
-          window.textsecure.storage.protocol.getIdentityRecord(
-            UUID.checkedLookup(pni)
-          );
+          window.textsecure.storage.protocol.getIdentityRecord(pni);
 
         if (
           newIdentityRecord &&
@@ -1944,9 +1947,7 @@ export class ConversationModel extends window.Backbone
       // We're just dropping the PNI
       if (!pni) {
         const oldIdentityRecord =
-          window.textsecure.storage.protocol.getIdentityRecord(
-            UUID.cast(oldValue)
-          );
+          window.textsecure.storage.protocol.getIdentityRecord(oldValue);
 
         if (oldIdentityRecord) {
           this.trackPreviousIdentityKey(oldIdentityRecord.publicKey);
@@ -1956,16 +1957,12 @@ export class ConversationModel extends window.Backbone
 
     // If this PNI is going away or going to someone else, we'll delete all its sessions
     if (oldValue) {
-      drop(
-        window.textsecure.storage.protocol.removeIdentityKey(
-          UUID.cast(oldValue)
-        )
-      );
+      drop(window.textsecure.storage.protocol.removeIdentityKey(oldValue));
     }
 
-    if (pni && !this.get('uuid')) {
+    if (pni && !this.getServiceId()) {
       log.warn(
-        `updatePni/${this.idForLogging()}: pni field set to ${pni}, but uuid field is empty!`
+        `updatePni/${this.idForLogging()}: pni field set to ${pni}, but service id field is empty!`
       );
     }
 
@@ -2101,7 +2098,7 @@ export class ConversationModel extends window.Backbone
     options: { isLocalAction?: boolean } = {}
   ): Promise<void> {
     const { isLocalAction } = options;
-    const ourUuid = window.textsecure.storage.user.getCheckedUuid().toString();
+    const ourAci = window.textsecure.storage.user.getCheckedAci();
 
     let messages: Array<MessageAttributesType> | undefined;
     do {
@@ -2132,14 +2129,19 @@ export class ConversationModel extends window.Backbone
           type: conversationQueueJobEnum.enum.Receipts,
           conversationId: this.get('id'),
           receiptsType: ReceiptType.Read,
-          receipts: readMessages.map(m => ({
-            messageId: m.id,
-            conversationId,
-            senderE164: m.source,
-            senderUuid: m.sourceUuid,
-            timestamp: getMessageSentTimestamp(m, { log }),
-            isDirectConversation: isDirectConversation(this.attributes),
-          })),
+          receipts: readMessages.map(m => {
+            const { sourceServiceId: senderAci } = m;
+            strictAssert(isAciString(senderAci), "Can't send receipt to PNI");
+
+            return {
+              messageId: m.id,
+              conversationId,
+              senderE164: m.source,
+              senderAci,
+              timestamp: getMessageSentTimestamp(m, { log }),
+              isDirectConversation: isDirectConversation(this.attributes),
+            };
+          }),
         });
       }
 
@@ -2150,7 +2152,7 @@ export class ConversationModel extends window.Backbone
           const shouldSave = await registered.queueAttachmentDownloads();
           if (shouldSave) {
             await window.Signal.Data.saveMessage(registered.attributes, {
-              ourUuid,
+              ourAci,
             });
           }
         })
@@ -2189,10 +2191,8 @@ export class ConversationModel extends window.Backbone
         }
 
         if (isLocalAction) {
-          const ourACI = window.textsecure.storage.user.getCheckedUuid(
-            UUIDKind.ACI
-          );
-          const ourPNI = window.textsecure.storage.user.getUuid(UUIDKind.PNI);
+          const ourAci = window.textsecure.storage.user.getCheckedAci();
+          const ourPni = window.textsecure.storage.user.getPni();
           const ourConversation =
             window.ConversationController.getOurConversationOrThrow();
 
@@ -2203,24 +2203,26 @@ export class ConversationModel extends window.Backbone
             void this.sendProfileKeyUpdate();
           } else if (
             isGroupV2(this.attributes) &&
-            this.isMemberPending(ourACI)
+            this.isMemberPending(ourAci)
           ) {
             await this.modifyGroupV2({
               name: 'promotePendingMember',
               usingCredentialsFrom: [ourConversation],
-              createGroupChange: () => this.promotePendingMember(UUIDKind.ACI),
+              createGroupChange: () =>
+                this.promotePendingMember(ServiceIdKind.ACI),
             });
           } else if (
-            ourPNI &&
+            ourPni &&
             isGroupV2(this.attributes) &&
-            this.isMemberPending(ourPNI)
+            this.isMemberPending(ourPni)
           ) {
             await this.modifyGroupV2({
               name: 'promotePendingMember',
               usingCredentialsFrom: [ourConversation],
-              createGroupChange: () => this.promotePendingMember(UUIDKind.PNI),
+              createGroupChange: () =>
+                this.promotePendingMember(ServiceIdKind.PNI),
             });
-          } else if (isGroupV2(this.attributes) && this.isMember(ourACI)) {
+          } else if (isGroupV2(this.attributes) && this.isMember(ourAci)) {
             log.info(
               'applyMessageRequestResponse/accept: Already a member of v2 group'
             );
@@ -2310,7 +2312,7 @@ export class ConversationModel extends window.Backbone
     inviteLinkPassword: string;
     approvalRequired: boolean;
   }): Promise<void> {
-    const ourACI = window.textsecure.storage.user.getCheckedUuid();
+    const ourAci = window.textsecure.storage.user.getCheckedAci();
     const ourConversation =
       window.ConversationController.getOurConversationOrThrow();
     try {
@@ -2326,7 +2328,7 @@ export class ConversationModel extends window.Backbone
           name: 'joinGroup',
           usingCredentialsFrom: [ourConversation],
           inviteLinkPassword,
-          createGroupChange: () => this.addMember(ourACI),
+          createGroupChange: () => this.addMember(ourAci),
         });
       }
     } catch (error) {
@@ -2345,7 +2347,7 @@ export class ConversationModel extends window.Backbone
           this.set({
             pendingAdminApprovalV2: [
               {
-                uuid: ourACI.toString(),
+                aci: ourAci,
                 timestamp: Date.now(),
               },
             ],
@@ -2366,7 +2368,7 @@ export class ConversationModel extends window.Backbone
   }
 
   async cancelJoinRequest(): Promise<void> {
-    const ourACI = window.storage.user.getCheckedUuid(UUIDKind.ACI);
+    const ourAci = window.storage.user.getCheckedAci();
 
     const inviteLinkPassword = this.get('groupInviteLinkPassword');
     if (!inviteLinkPassword) {
@@ -2379,7 +2381,7 @@ export class ConversationModel extends window.Backbone
       name: 'cancelJoinRequest',
       usingCredentialsFrom: [],
       inviteLinkPassword,
-      createGroupChange: () => this.denyPendingApprovalRequest(ourACI),
+      createGroupChange: () => this.denyPendingApprovalRequest(ourAci),
     });
   }
 
@@ -2388,29 +2390,29 @@ export class ConversationModel extends window.Backbone
       return;
     }
 
-    const ourACI = window.textsecure.storage.user.getCheckedUuid(UUIDKind.ACI);
-    const ourPNI = window.textsecure.storage.user.getUuid(UUIDKind.PNI);
+    const ourAci = window.textsecure.storage.user.getCheckedAci();
+    const ourPni = window.textsecure.storage.user.getPni();
     const ourConversation =
       window.ConversationController.getOurConversationOrThrow();
 
-    if (this.isMemberPending(ourACI)) {
+    if (this.isMemberPending(ourAci)) {
       await this.modifyGroupV2({
         name: 'delete',
         usingCredentialsFrom: [],
-        createGroupChange: () => this.removePendingMember([ourACI]),
+        createGroupChange: () => this.removePendingMember([ourAci]),
       });
-    } else if (this.isMember(ourACI)) {
+    } else if (this.isMember(ourAci)) {
       await this.modifyGroupV2({
         name: 'delete',
         usingCredentialsFrom: [ourConversation],
-        createGroupChange: () => this.removeMember(ourACI),
+        createGroupChange: () => this.removeMember(ourAci),
       });
       // Keep PNI in pending if ACI was a member.
-    } else if (ourPNI && this.isMemberPending(ourPNI)) {
+    } else if (ourPni && this.isMemberPending(ourPni)) {
       await this.modifyGroupV2({
         name: 'delete',
         usingCredentialsFrom: [],
-        createGroupChange: () => this.removePendingMember([ourPNI]),
+        createGroupChange: () => this.removePendingMember([ourPni]),
         syncMessageOnly: true,
       });
     } else {
@@ -2423,21 +2425,21 @@ export class ConversationModel extends window.Backbone
   }
 
   async addBannedMember(
-    uuid: UUID
+    serviceId: ServiceIdString
   ): Promise<Proto.GroupChange.Actions | undefined> {
-    if (this.isMember(uuid)) {
+    if (this.isMember(serviceId)) {
       log.warn('addBannedMember: Member is a part of the group!');
 
       return;
     }
 
-    if (this.isMemberPending(uuid)) {
+    if (this.isMemberPending(serviceId)) {
       log.warn('addBannedMember: Member is pending to be added to group!');
 
       return;
     }
 
-    if (isMemberBanned(this.attributes, uuid)) {
+    if (isMemberBanned(this.attributes, serviceId)) {
       log.warn('addBannedMember: Member is already banned!');
 
       return;
@@ -2445,15 +2447,15 @@ export class ConversationModel extends window.Backbone
 
     return window.Signal.Groups.buildAddBannedMemberChange({
       group: this.attributes,
-      uuid,
+      serviceId,
     });
   }
 
-  async blockGroupLinkRequests(uuid: UUIDStringType): Promise<void> {
+  async blockGroupLinkRequests(serviceId: ServiceIdString): Promise<void> {
     await this.modifyGroupV2({
       name: 'addBannedMember',
       usingCredentialsFrom: [],
-      createGroupChange: async () => this.addBannedMember(new UUID(uuid)),
+      createGroupChange: async () => this.addBannedMember(serviceId),
     });
   }
 
@@ -2470,9 +2472,9 @@ export class ConversationModel extends window.Backbone
       return;
     }
 
-    const uuid = member.getCheckedUuid(`toggleAdmin/${logId}`);
+    const serviceId = member.getCheckedServiceId(`toggleAdmin/${logId}`);
 
-    if (!this.isMember(uuid)) {
+    if (!this.isMember(serviceId)) {
       log.error(
         `toggleAdmin: Member ${conversationId} is not a member of the group`
       );
@@ -2482,7 +2484,7 @@ export class ConversationModel extends window.Backbone
     await this.modifyGroupV2({
       name: 'toggleAdmin',
       usingCredentialsFrom: [member],
-      createGroupChange: () => this.toggleAdminChange(uuid),
+      createGroupChange: () => this.toggleAdminChange(serviceId),
     });
   }
 
@@ -2499,27 +2501,30 @@ export class ConversationModel extends window.Backbone
       );
     }
 
-    const uuid = pendingMember.getCheckedUuid(`removeFromGroupV2/${logId}`);
+    const serviceId = pendingMember.getCheckedServiceId(
+      `removeFromGroupV2/${logId}`
+    );
 
-    if (this.isMemberRequestingToJoin(uuid)) {
+    if (this.isMemberRequestingToJoin(serviceId)) {
+      strictAssert(isAciString(serviceId), 'Requesting member is not  ACI');
       await this.modifyGroupV2({
         name: 'denyPendingApprovalRequest',
         usingCredentialsFrom: [],
-        createGroupChange: () => this.denyPendingApprovalRequest(uuid),
+        createGroupChange: () => this.denyPendingApprovalRequest(serviceId),
         extraConversationsForSend: [conversationId],
       });
-    } else if (this.isMemberPending(uuid)) {
+    } else if (this.isMemberPending(serviceId)) {
       await this.modifyGroupV2({
         name: 'removePendingMember',
         usingCredentialsFrom: [],
-        createGroupChange: () => this.removePendingMember([uuid]),
+        createGroupChange: () => this.removePendingMember([serviceId]),
         extraConversationsForSend: [conversationId],
       });
-    } else if (this.isMember(uuid)) {
+    } else if (this.isMember(serviceId)) {
       await this.modifyGroupV2({
         name: 'removeFromGroup',
         usingCredentialsFrom: [pendingMember],
-        createGroupChange: () => this.removeMember(uuid),
+        createGroupChange: () => this.removeMember(serviceId),
         extraConversationsForSend: [conversationId],
       });
     } else {
@@ -2550,7 +2555,7 @@ export class ConversationModel extends window.Backbone
       await singleProtoJobQueue.add(
         MessageSender.getMessageRequestResponseSync({
           threadE164: this.get('e164'),
-          threadUuid: this.get('uuid'),
+          threadAci: this.getAci(),
           groupId,
           type: response,
         })
@@ -2564,13 +2569,13 @@ export class ConversationModel extends window.Backbone
   }
 
   async safeGetVerified(): Promise<number> {
-    const uuid = this.getUuid();
-    if (!uuid) {
+    const serviceId = this.getServiceId();
+    if (!serviceId) {
       return this.verifiedEnum.DEFAULT;
     }
 
     try {
-      return await window.textsecure.storage.protocol.getVerified(uuid);
+      return await window.textsecure.storage.protocol.getVerified(serviceId);
     } catch {
       return this.verifiedEnum.DEFAULT;
     }
@@ -2630,20 +2635,20 @@ export class ConversationModel extends window.Backbone
       );
     }
 
-    const uuid = this.getUuid();
+    const aci = this.getAci();
     const beginningVerified = this.get('verified') ?? DEFAULT;
     const keyChange = false;
-    if (uuid) {
+    if (aci) {
       if (verified === this.verifiedEnum.DEFAULT) {
-        await window.textsecure.storage.protocol.setVerified(uuid, verified);
+        await window.textsecure.storage.protocol.setVerified(aci, verified);
       } else {
-        await window.textsecure.storage.protocol.setVerified(uuid, verified, {
+        await window.textsecure.storage.protocol.setVerified(aci, verified, {
           firstUse: false,
           nonblockingApproval: true,
         });
       }
     } else {
-      log.warn(`_setVerified(${this.id}): no uuid to update protocol storage`);
+      log.warn(`_setVerified(${this.id}): no aci to update protocol storage`);
     }
 
     this.set({ verified });
@@ -2671,8 +2676,8 @@ export class ConversationModel extends window.Backbone
         local: isExplicitUserAction,
       });
     }
-    if (isExplicitUserAction && uuid) {
-      await this.sendVerifySyncMessage(this.get('e164'), uuid, verified);
+    if (isExplicitUserAction && aci) {
+      await this.sendVerifySyncMessage(this.get('e164'), aci, verified);
     }
 
     return keyChange;
@@ -2680,16 +2685,9 @@ export class ConversationModel extends window.Backbone
 
   async sendVerifySyncMessage(
     e164: string | undefined,
-    uuid: UUID,
+    aci: AciString,
     state: number
   ): Promise<CallbackResultType | void> {
-    const identifier = uuid ? uuid.toString() : e164;
-    if (!identifier) {
-      throw new Error(
-        'sendVerifySyncMessage: Neither e164 nor UUID were provided'
-      );
-    }
-
     if (window.ConversationController.areWePrimaryDevice()) {
       log.warn(
         'sendVerifySyncMessage: We are primary device; not sending sync'
@@ -2697,18 +2695,16 @@ export class ConversationModel extends window.Backbone
       return;
     }
 
-    const key = await window.textsecure.storage.protocol.loadIdentityKey(
-      UUID.checkedLookup(identifier)
-    );
+    const key = await window.textsecure.storage.protocol.loadIdentityKey(aci);
     if (!key) {
       throw new Error(
-        `sendVerifySyncMessage: No identity key found for identifier ${identifier}`
+        `sendVerifySyncMessage: No identity key found for aci ${aci}`
       );
     }
 
     try {
       await singleProtoJobQueue.add(
-        MessageSender.getVerificationSync(e164, uuid.toString(), state, key)
+        MessageSender.getVerificationSync(e164, aci, state, key)
       );
     } catch (error) {
       log.error(
@@ -2778,23 +2774,23 @@ export class ConversationModel extends window.Backbone
       );
     }
 
-    const uuid = this.getUuid();
-    if (!uuid) {
-      log.warn(`setApproved(${this.id}): no uuid, ignoring`);
+    const serviceId = this.getServiceId();
+    if (!serviceId) {
+      log.warn(`setApproved(${this.id}): no serviceId, ignoring`);
       return;
     }
 
     return this.queueJob('setApproved', async () => {
-      return window.textsecure.storage.protocol.setApproval(uuid, true);
+      return window.textsecure.storage.protocol.setApproval(serviceId, true);
     });
   }
 
   safeIsUntrusted(timestampThreshold?: number): boolean {
     try {
-      const uuid = this.getUuid();
-      strictAssert(uuid, `No uuid for conversation: ${this.id}`);
+      const serviceId = this.getServiceId();
+      strictAssert(serviceId, `No serviceId for conversation: ${this.id}`);
       return window.textsecure.storage.protocol.isUntrusted(
-        uuid,
+        serviceId,
         timestampThreshold
       );
     } catch (err) {
@@ -2896,7 +2892,7 @@ export class ConversationModel extends window.Backbone
     } as unknown as MessageAttributesType;
 
     const id = await window.Signal.Data.saveMessage(message, {
-      ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+      ourAci: window.textsecure.storage.user.getCheckedAci(),
     });
     const model = window.MessageController.register(
       id,
@@ -2913,23 +2909,23 @@ export class ConversationModel extends window.Backbone
   async addDeliveryIssue({
     receivedAt,
     receivedAtCounter,
-    senderUuid,
+    senderAci,
     sentAt,
   }: {
     receivedAt: number;
     receivedAtCounter: number;
-    senderUuid: string;
+    senderAci: AciString;
     sentAt: number;
   }): Promise<void> {
     log.info(`addDeliveryIssue: adding for ${this.idForLogging()}`, {
       sentAt,
-      senderUuid,
+      senderAci,
     });
 
     const message = {
       conversationId: this.id,
       type: 'delivery-issue',
-      sourceUuid: senderUuid,
+      sourceServiceId: senderAci,
       sent_at: receivedAt,
       received_at: receivedAtCounter,
       received_at_ms: receivedAt,
@@ -2940,7 +2936,7 @@ export class ConversationModel extends window.Backbone
     } as unknown as MessageAttributesType;
 
     const id = await window.Signal.Data.saveMessage(message, {
-      ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+      ourAci: window.textsecure.storage.user.getCheckedAci(),
     });
     const model = window.MessageController.register(
       id,
@@ -2956,14 +2952,16 @@ export class ConversationModel extends window.Backbone
     void this.updateUnread();
   }
 
-  async addKeyChange(reason: string, keyChangedId?: UUID): Promise<void> {
-    const keyChangedIdString = keyChangedId?.toString();
-    return this.queueJob(`addKeyChange(${keyChangedIdString})`, async () => {
+  async addKeyChange(
+    reason: string,
+    keyChangedId?: ServiceIdString
+  ): Promise<void> {
+    return this.queueJob(`addKeyChange(${keyChangedId})`, async () => {
       log.info(
         'adding key change advisory in',
         this.idForLogging(),
         'for',
-        keyChangedIdString || 'this conversation',
+        keyChangedId || 'this conversation',
         this.get('timestamp'),
         'reason:',
         reason
@@ -2984,14 +2982,14 @@ export class ConversationModel extends window.Backbone
         timestamp,
         received_at: incrementMessageCounter(),
         received_at_ms: timestamp,
-        key_changed: keyChangedIdString,
+        key_changed: keyChangedId,
         readStatus: ReadStatus.Read,
         seenStatus: SeenStatus.Unseen,
         schemaVersion: Message.VERSION_NEEDED_FOR_DISPLAY,
       };
 
       await window.Signal.Data.saveMessage(message, {
-        ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+        ourAci: window.textsecure.storage.user.getCheckedAci(),
         forceSave: true,
       });
       const model = window.MessageController.register(
@@ -3003,24 +3001,23 @@ export class ConversationModel extends window.Backbone
 
       this.trigger('newmessage', model);
 
-      const uuid = this.get('uuid');
-      // Group calls are always with folks that have a UUID
-      if (isUntrusted && uuid) {
-        window.reduxActions.calling.keyChanged({ uuid });
+      const serviceId = this.getServiceId();
+      // Group calls are always with folks that have a serviceId
+      if (isUntrusted && isAciString(serviceId)) {
+        window.reduxActions.calling.keyChanged({ aci: serviceId });
       }
 
       if (isDirectConversation(this.attributes)) {
         window.reduxActions?.safetyNumber.clearSafetyNumber(this.id);
       }
 
-      if (isDirectConversation(this.attributes) && uuid) {
-        const parsedUuid = UUID.checkedLookup(uuid);
+      if (isDirectConversation(this.attributes) && serviceId) {
         const groups =
-          await window.ConversationController.getAllGroupsInvolvingUuid(
-            parsedUuid
+          await window.ConversationController.getAllGroupsInvolvingServiceId(
+            serviceId
           );
         groups.forEach(group => {
-          void group.addKeyChange('addKeyChange - group fan-out', parsedUuid);
+          void group.addKeyChange('addKeyChange - group fan-out', serviceId);
         });
       }
 
@@ -3030,8 +3027,8 @@ export class ConversationModel extends window.Backbone
         const updatedSenderKeyInfo = {
           ...senderKeyInfo,
           memberDevices: senderKeyInfo.memberDevices.filter(
-            ({ identifier }) => {
-              return identifier !== keyChangedIdString;
+            ({ serviceId: memberServiceId }) => {
+              return memberServiceId !== keyChangedId;
             }
           ),
         };
@@ -3071,7 +3068,7 @@ export class ConversationModel extends window.Backbone
     };
 
     const id = await window.Signal.Data.saveMessage(message, {
-      ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+      ourAci: window.textsecure.storage.user.getCheckedAci(),
       forceSave: true,
     });
     const model = window.MessageController.register(
@@ -3122,7 +3119,7 @@ export class ConversationModel extends window.Backbone
     };
 
     await window.Signal.Data.saveMessage(message, {
-      ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+      ourAci: window.textsecure.storage.user.getCheckedAci(),
       forceSave: true,
     });
     const model = window.MessageController.register(
@@ -3133,191 +3130,16 @@ export class ConversationModel extends window.Backbone
     this.trigger('newmessage', model);
     void this.updateUnread();
 
-    const uuid = this.getUuid();
-    if (isDirectConversation(this.attributes) && uuid) {
-      void window.ConversationController.getAllGroupsInvolvingUuid(uuid).then(
-        groups => {
-          groups.forEach(group => {
-            void group.addVerifiedChange(this.id, verified, options);
-          });
-        }
-      );
-    }
-  }
-
-  async addCallHistory(
-    callHistoryDetails: CallHistoryDetailsType,
-    receivedAtCounter: number | undefined
-  ): Promise<void> {
-    let timestamp: number;
-    let unread: boolean;
-    let detailsToSave: CallHistoryDetailsType;
-
-    switch (callHistoryDetails.callMode) {
-      case CallMode.Direct: {
-        const {
-          callId,
-          wasIncoming,
-          wasVideoCall,
-          wasDeclined,
-          acceptedTime,
-          endedTime,
-        } = callHistoryDetails;
-        log.info(
-          `addCallHistory: Conversation ID: ${this.id}, ` +
-            `Call ID: ${callId}, ` +
-            'Direct, ' +
-            `Incoming: ${wasIncoming}, ` +
-            `Video: ${wasVideoCall}, ` +
-            `Declined: ${wasDeclined}, ` +
-            `Accepted: ${acceptedTime}, ` +
-            `Ended: ${endedTime}`
-        );
-
-        const resolvedTime = acceptedTime ?? endedTime;
-        assertDev(resolvedTime, 'Direct call must have accepted or ended time');
-        timestamp = resolvedTime;
-        unread =
-          callHistoryDetails.wasIncoming &&
-          !callHistoryDetails.wasDeclined &&
-          !callHistoryDetails.acceptedTime;
-        detailsToSave = {
-          ...callHistoryDetails,
-          callMode: CallMode.Direct,
-        };
-        break;
-      }
-      case CallMode.Group:
-        timestamp = callHistoryDetails.startedTime;
-        unread = false;
-        detailsToSave = callHistoryDetails;
-        break;
-      default:
-        throw missingCaseError(callHistoryDetails);
-    }
-    // This is sometimes called inside of another conversation queue job so if
-    // awaited it would block on this forever.
-    drop(
-      this.queueJob('addCallHistory', async () => {
-        // Force save if we're adding a new call history message for a direct call
-        let forceSave = true;
-        let previousMessage: MessageAttributesType | null = null;
-        if (callHistoryDetails.callMode === CallMode.Direct) {
-          const messageId =
-            await window.Signal.Data.getCallHistoryMessageByCallId(
-              this.id,
-              callHistoryDetails.callId
-            );
-          if (messageId != null) {
-            log.info(
-              `addCallHistory: Found existing call history message (Call ID: ${callHistoryDetails.callId}, Message ID: ${messageId})`
-            );
-            // We don't want to force save if we're updating an existing message
-            forceSave = false;
-            previousMessage =
-              (await window.Signal.Data.getMessageById(messageId)) ?? null;
-          } else {
-            log.info(
-              `addCallHistory: No existing call history message found (Call ID: ${callHistoryDetails.callId})`
-            );
-          }
-        }
-
-        if (
-          !validateTransition(
-            previousMessage?.callHistoryDetails,
-            callHistoryDetails,
-            log
-          )
-        ) {
-          log.info("addCallHistory: Transition isn't valid, not saving");
-          return;
-        }
-
-        const message: MessageAttributesType = {
-          id: previousMessage?.id ?? generateGuid(),
-          conversationId: this.id,
-          type: 'call-history',
-          sent_at: timestamp,
-          timestamp,
-          received_at: receivedAtCounter || incrementMessageCounter(),
-          received_at_ms: timestamp,
-          readStatus: unread ? ReadStatus.Unread : ReadStatus.Read,
-          seenStatus: unread ? SeenStatus.Unseen : SeenStatus.NotApplicable,
-          callHistoryDetails,
-        };
-
-        const id = await window.Signal.Data.saveMessage(message, {
-          ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
-          forceSave,
+    const serviceId = this.getServiceId();
+    if (isDirectConversation(this.attributes) && serviceId) {
+      void window.ConversationController.getAllGroupsInvolvingServiceId(
+        serviceId
+      ).then(groups => {
+        groups.forEach(group => {
+          void group.addVerifiedChange(this.id, verified, options);
         });
-
-        log.info(`addCallHistory: Saved call history message (ID: ${id})`);
-
-        const model = window.MessageController.register(
-          id,
-          new window.Whisper.Message({
-            ...message,
-            id,
-          })
-        );
-
-        if (
-          detailsToSave.callMode === CallMode.Direct &&
-          !detailsToSave.wasIncoming
-        ) {
-          this.incrementSentMessageCount();
-        } else {
-          this.incrementMessageCount();
-        }
-
-        this.trigger('newmessage', model);
-
-        void this.updateUnread();
-        this.set('active_at', timestamp);
-
-        if (canConversationBeUnarchived(this.attributes)) {
-          this.setArchived(false);
-        } else {
-          window.Signal.Data.updateConversation(this.attributes);
-        }
-      })
-    );
-  }
-
-  /**
-   * Adds a group call history message if one is needed. It won't add history messages for
-   * the same group call era ID.
-   *
-   * Resolves with `true` if a new message was added, and `false` otherwise.
-   */
-  async updateCallHistoryForGroupCall(
-    eraId: string,
-    creatorUuid: string
-  ): Promise<boolean> {
-    // We want to update the cache quickly in case this function is called multiple times.
-    const oldCachedEraId = this.cachedLatestGroupCallEraId;
-    this.cachedLatestGroupCallEraId = eraId;
-
-    const alreadyHasMessage =
-      (oldCachedEraId && oldCachedEraId === eraId) ||
-      (await window.Signal.Data.hasGroupCallHistoryMessage(this.id, eraId));
-
-    if (alreadyHasMessage) {
-      void this.updateLastMessage();
-      return false;
+      });
     }
-
-    await this.addCallHistory(
-      {
-        callMode: CallMode.Group,
-        creatorUuid,
-        eraId,
-        startedTime: Date.now(),
-      },
-      undefined
-    );
-    return true;
   }
 
   async addProfileChange(
@@ -3339,7 +3161,7 @@ export class ConversationModel extends window.Backbone
     } as unknown as MessageAttributesType;
 
     const id = await window.Signal.Data.saveMessage(message, {
-      ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+      ourAci: window.textsecure.storage.user.getCheckedAci(),
     });
     const model = window.MessageController.register(
       id,
@@ -3351,15 +3173,15 @@ export class ConversationModel extends window.Backbone
 
     this.trigger('newmessage', model);
 
-    const uuid = this.getUuid();
-    if (isDirectConversation(this.attributes) && uuid) {
-      void window.ConversationController.getAllGroupsInvolvingUuid(uuid).then(
-        groups => {
-          groups.forEach(group => {
-            void group.addProfileChange(profileChange, this.id);
-          });
-        }
-      );
+    const serviceId = this.getServiceId();
+    if (isDirectConversation(this.attributes) && serviceId) {
+      void window.ConversationController.getAllGroupsInvolvingServiceId(
+        serviceId
+      ).then(groups => {
+        groups.forEach(group => {
+          void group.addProfileChange(profileChange, this.id);
+        });
+      });
     }
   }
 
@@ -3384,7 +3206,7 @@ export class ConversationModel extends window.Backbone
       // TODO: DESKTOP-722
       message as MessageAttributesType,
       {
-        ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+        ourAci: window.textsecure.storage.user.getCheckedAci(),
       }
     );
     const model = window.MessageController.register(
@@ -3521,12 +3343,15 @@ export class ConversationModel extends window.Backbone
     oldValue: string,
     newValue: string
   ): Promise<void> {
-    const sourceUuid = this.getCheckedUuid(
-      'Change number notification without uuid'
+    const sourceServiceId = this.getCheckedServiceId(
+      'Change number notification without service id'
     );
 
     const { storage } = window.textsecure;
-    if (storage.user.getOurUuidKind(sourceUuid) !== UUIDKind.Unknown) {
+    if (
+      storage.user.getOurServiceIdKind(sourceServiceId) !==
+      ServiceIdKind.Unknown
+    ) {
       log.info(
         `Conversation ${this.idForLogging()}: not adding change number ` +
           'notification for ourselves'
@@ -3536,13 +3361,13 @@ export class ConversationModel extends window.Backbone
 
     log.info(
       `Conversation ${this.idForLogging()}: adding change number ` +
-        `notification for ${sourceUuid.toString()} from ${oldValue} to ${newValue}`
+        `notification for ${sourceServiceId} from ${oldValue} to ${newValue}`
     );
 
     const convos = [
       this,
-      ...(await window.ConversationController.getAllGroupsInvolvingUuid(
-        sourceUuid
+      ...(await window.ConversationController.getAllGroupsInvolvingServiceId(
+        sourceServiceId
       )),
     ];
 
@@ -3551,7 +3376,7 @@ export class ConversationModel extends window.Backbone
         return convo.addNotification('change-number-notification', {
           readStatus: ReadStatus.Read,
           seenStatus: SeenStatus.Unseen,
-          sourceUuid: sourceUuid.toString(),
+          sourceServiceId,
         });
       })
     );
@@ -3625,13 +3450,13 @@ export class ConversationModel extends window.Backbone
     });
   }
 
-  isAdmin(uuid: UUID): boolean {
+  isAdmin(serviceId: ServiceIdString): boolean {
     if (!isGroupV2(this.attributes)) {
       return false;
     }
 
     const members = this.get('membersV2') || [];
-    const member = members.find(x => x.uuid === uuid.toString());
+    const member = members.find(x => x.aci === serviceId);
     if (!member) {
       return false;
     }
@@ -3641,23 +3466,32 @@ export class ConversationModel extends window.Backbone
     return member.role === MEMBER_ROLES.ADMINISTRATOR;
   }
 
-  getUuid(): UUID | undefined {
-    try {
-      const value = this.get('uuid');
-      return value ? new UUID(value) : undefined;
-    } catch (err) {
-      log.warn(
-        `getUuid(): failed to obtain conversation(${this.id}) uuid due to`,
-        Errors.toLogFormat(err)
-      );
-      return undefined;
-    }
+  getServiceId(): ServiceIdString | undefined {
+    return this.get('serviceId');
   }
 
-  getCheckedUuid(reason: string): UUID {
-    const result = this.getUuid();
-    strictAssert(result !== undefined, reason);
-    return result;
+  getCheckedServiceId(reason: string): ServiceIdString {
+    const serviceId = this.getServiceId();
+    strictAssert(serviceId !== undefined, reason);
+    return serviceId;
+  }
+
+  getAci(): AciString | undefined {
+    const value = this.getServiceId();
+    if (value && isAciString(value)) {
+      return value;
+    }
+    return undefined;
+  }
+
+  getCheckedAci(reason: string): AciString {
+    const aci = this.getAci();
+    strictAssert(aci !== undefined, reason);
+    return aci;
+  }
+
+  getPni(): PniString | undefined {
+    return this.get('pni');
   }
 
   getGroupLink(): string | undefined {
@@ -3699,13 +3533,6 @@ export class ConversationModel extends window.Backbone
     return members.map(member => member.id);
   }
 
-  getMemberUuids(): Array<UUID> {
-    const members = this.getMembers();
-    return members.map(member => {
-      return member.getCheckedUuid('Group member without uuid');
-    });
-  }
-
   getRecipients({
     includePendingMembers,
     extraConversationsForSend,
@@ -3713,7 +3540,7 @@ export class ConversationModel extends window.Backbone
     includePendingMembers?: boolean;
     extraConversationsForSend?: ReadonlyArray<string>;
     isStoryReply?: boolean;
-  } = {}): Array<string> {
+  } = {}): Array<ServiceIdString> {
     return getRecipients(this.attributes, {
       includePendingMembers,
       extraConversationsForSend,
@@ -4005,7 +3832,7 @@ export class ConversationModel extends window.Backbone
 
     // Here we move attachments to disk
     const attributes = await upgradeMessageSchema({
-      id: UUID.generate().toString(),
+      id: generateGuid(),
       timestamp: now,
       type: 'outgoing',
       body,
@@ -4079,7 +3906,7 @@ export class ConversationModel extends window.Backbone
         await window.Signal.Data.saveMessage(message.attributes, {
           jobToInsert,
           forceSave: true,
-          ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+          ourAci: window.textsecure.storage.user.getCheckedAci(),
         });
       }
     );
@@ -4203,11 +4030,9 @@ export class ConversationModel extends window.Backbone
 
     const conversationId = this.id;
 
-    const ourUuid = window.textsecure.storage.user.getCheckedUuid().toString();
     const stats = await window.Signal.Data.getConversationMessageStats({
       conversationId,
       includeStoryReplies: !isGroup(this.attributes),
-      ourUuid,
     });
 
     // This runs as a job to avoid race conditions
@@ -4625,7 +4450,7 @@ export class ConversationModel extends window.Backbone
     } as unknown as MessageAttributesType);
 
     const id = await window.Signal.Data.saveMessage(model.attributes, {
-      ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+      ourAci: window.textsecure.storage.user.getCheckedAci(),
     });
 
     model.set({ id });
@@ -4684,6 +4509,7 @@ export class ConversationModel extends window.Backbone
         unreadMentionsCount,
       });
       window.Signal.Data.updateConversation(this.attributes);
+      window.reduxActions.callHistory.updateCallHistoryUnreadCount();
     }
   }
 
@@ -4697,16 +4523,18 @@ export class ConversationModel extends window.Backbone
       return;
     }
 
-    const ourUuid = window.textsecure.storage.user.getCheckedUuid();
-    const theirUuid = this.getUuid();
-    if (!theirUuid) {
+    const ourAci = window.textsecure.storage.user.getCheckedAci();
+    const theirAci = this.getAci();
+    if (!theirAci) {
       return;
     }
 
     const ourGroups =
-      await window.ConversationController.getAllGroupsInvolvingUuid(ourUuid);
+      await window.ConversationController.getAllGroupsInvolvingServiceId(
+        ourAci
+      );
     const sharedGroups = ourGroups
-      .filter(c => c.hasMember(ourUuid) && c.hasMember(theirUuid))
+      .filter(c => c.hasMember(ourAci) && c.hasMember(theirAci))
       .sort(
         (left, right) =>
           (right.get('timestamp') || 0) - (left.get('timestamp') || 0)
@@ -4732,7 +4560,7 @@ export class ConversationModel extends window.Backbone
 
     await Promise.all(
       conversations.map(conversation =>
-        getProfile(conversation.get('uuid'), conversation.get('e164'))
+        getProfile(conversation.getServiceId(), conversation.get('e164'))
       )
     );
   }
@@ -4902,8 +4730,8 @@ export class ConversationModel extends window.Backbone
       return;
     }
 
-    const uuid = this.get('uuid');
-    if (!uuid) {
+    const serviceId = this.getServiceId();
+    if (!serviceId) {
       return;
     }
 
@@ -4912,7 +4740,7 @@ export class ConversationModel extends window.Backbone
       return lastProfile.profileKeyVersion;
     }
 
-    const profileKeyVersion = deriveProfileKeyVersion(profileKey, uuid);
+    const profileKeyVersion = deriveProfileKeyVersion(profileKey, serviceId);
     if (!profileKeyVersion) {
       log.warn(
         'deriveProfileKeyVersion: Failed to derive profile key version, ' +
@@ -4979,10 +4807,10 @@ export class ConversationModel extends window.Backbone
     await window.Signal.Data.updateConversation(this.attributes);
   }
 
-  hasMember(uuid: UUID): boolean {
+  hasMember(serviceId: ServiceIdString): boolean {
     const members = this.getMembers();
 
-    return members.some(member => member.get('uuid') === uuid.toString());
+    return members.some(member => member.getServiceId() === serviceId);
   }
 
   fetchContacts(): void {
@@ -5067,7 +4895,7 @@ export class ConversationModel extends window.Backbone
   }
 
   // Set of items to captureChanges on:
-  // [-] uuid
+  // [-] serviceId
   // [-] e164
   // [X] profileKey
   // [-] identityKey
@@ -5146,7 +4974,7 @@ export class ConversationModel extends window.Backbone
 
   async notify(
     message: Readonly<MessageModel>,
-    reaction?: Readonly<ReactionModel>
+    reaction?: Readonly<ReactionAttributesType>
   ): Promise<void> {
     // As a performance optimization don't perform any work if notifications are
     // disabled.
@@ -5159,23 +4987,16 @@ export class ConversationModel extends window.Backbone
         return;
       }
 
-      const ourACI = window.textsecure.storage.user.getCheckedUuid(
-        UUIDKind.ACI
-      );
-      const ourPNI = window.textsecure.storage.user.getCheckedUuid(
-        UUIDKind.PNI
-      );
-      const ourUuids: Set<string> = new Set([
-        ourACI.toString(),
-        ourPNI.toString(),
-      ]);
+      const ourAci = window.textsecure.storage.user.getCheckedAci();
+      const ourPni = window.textsecure.storage.user.getCheckedPni();
+      const ourServiceIds: Set<ServiceIdString> = new Set([ourAci, ourPni]);
 
       const mentionsMe = (message.get('bodyRanges') || []).some(bodyRange => {
         if (!BodyRange.isMention(bodyRange)) {
           return false;
         }
-        return ourUuids.has(
-          normalizeUuid(bodyRange.mentionUuid, 'notify: mentionsMe check')
+        return ourServiceIds.has(
+          normalizeServiceId(bodyRange.mentionAci, 'notify: mentionsMe check')
         );
       });
       if (!mentionsMe) {
@@ -5191,7 +5012,7 @@ export class ConversationModel extends window.Backbone
     const isMessageInDirectConversation = isDirectConversation(this.attributes);
 
     const sender = reaction
-      ? window.ConversationController.get(reaction.get('fromId'))
+      ? window.ConversationController.get(reaction.fromId)
       : getContact(message.attributes);
     const senderName = sender
       ? sender.getTitle()
@@ -5220,7 +5041,13 @@ export class ConversationModel extends window.Backbone
       isExpiringMessage,
       message: message.getNotificationText(),
       messageId,
-      reaction: reaction ? reaction.toJSON() : null,
+      reaction: reaction
+        ? {
+            emoji: reaction.emoji,
+            targetAuthorAci: reaction.targetAuthorAci,
+            targetTimestamp: reaction.targetTimestamp,
+          }
+        : undefined,
       sentAt: message.get('timestamp'),
       type: reaction ? NotificationType.Reaction : NotificationType.Message,
     });
@@ -5315,14 +5142,14 @@ export class ConversationModel extends window.Backbone
       return;
     }
 
-    const senderUuid = sender.getUuid();
-    if (!senderUuid) {
+    const senderServiceId = sender.getServiceId();
+    if (!senderServiceId) {
       return;
     }
 
     // Drop typing indicators for announcement only groups where the sender
     // is not an admin
-    if (this.get('announcementsOnly') && !this.isAdmin(senderUuid)) {
+    if (this.get('announcementsOnly') && !this.isAdmin(senderServiceId)) {
       return;
     }
 
@@ -5468,7 +5295,7 @@ export class ConversationModel extends window.Backbone
 
   async flushDebouncedUpdates(): Promise<void> {
     try {
-      await this.debouncedUpdateLastMessage?.flush();
+      this.debouncedUpdateLastMessage.flush();
     } catch (error) {
       const logId = this.idForLogging();
       log.error(
@@ -5537,7 +5364,7 @@ window.Whisper.ConversationCollection = window.Backbone.Collection.extend({
 
   /**
    * window.Backbone defines a `_byId` field. Here we set up additional `_byE164`,
-   * `_byUuid`, and `_byGroupId` fields so we can track conversations by more
+   * `_byServiceId`, and `_byGroupId` fields so we can track conversations by more
    * than just their id.
    */
   initialize() {
@@ -5550,8 +5377,8 @@ window.Whisper.ConversationCollection = window.Backbone.Collection.extend({
           if (idProp === 'e164') {
             delete this._byE164[oldValue];
           }
-          if (idProp === 'uuid') {
-            delete this._byUuid[oldValue];
+          if (idProp === 'serviceId') {
+            delete this._byServiceId[oldValue];
           }
           if (idProp === 'pni') {
             delete this._byPni[oldValue];
@@ -5564,11 +5391,11 @@ window.Whisper.ConversationCollection = window.Backbone.Collection.extend({
         if (e164) {
           this._byE164[e164] = model;
         }
-        const uuid = model.get('uuid');
-        if (uuid) {
-          this._byUuid[uuid] = model;
+        const serviceId = model.getServiceId();
+        if (serviceId) {
+          this._byServiceId[serviceId] = model;
         }
-        const pni = model.get('pni');
+        const pni = model.getPni();
         if (pni) {
           this._byPni[pni] = model;
         }
@@ -5596,28 +5423,28 @@ window.Whisper.ConversationCollection = window.Backbone.Collection.extend({
       if (e164) {
         const existing = this._byE164[e164];
 
-        // Prefer the contact with both e164 and uuid
-        if (!existing || (existing && !existing.get('uuid'))) {
+        // Prefer the contact with both e164 and serviceId
+        if (!existing || (existing && !existing.getServiceId())) {
           this._byE164[e164] = model;
         }
       }
 
-      const uuid = model.get('uuid');
-      if (uuid) {
-        const existing = this._byUuid[uuid];
+      const serviceId = model.getServiceId();
+      if (serviceId) {
+        const existing = this._byServiceId[serviceId];
 
-        // Prefer the contact with both e164 and uuid
+        // Prefer the contact with both e164 and seviceId
         if (!existing || (existing && !existing.get('e164'))) {
-          this._byUuid[uuid] = model;
+          this._byServiceId[serviceId] = model;
         }
       }
 
-      const pni = model.get('pni');
+      const pni = model.getPni();
       if (pni) {
         const existing = this._byPni[pni];
 
-        // Prefer the contact with both uuid and pni
-        if (!existing || (existing && !existing.get('uuid'))) {
+        // Prefer the contact with both serviceId and pni
+        if (!existing || (existing && !existing.getServiceId())) {
           this._byPni[pni] = model;
         }
       }
@@ -5631,7 +5458,7 @@ window.Whisper.ConversationCollection = window.Backbone.Collection.extend({
 
   eraseLookups() {
     this._byE164 = Object.create(null);
-    this._byUuid = Object.create(null);
+    this._byServiceId = Object.create(null);
     this._byPni = Object.create(null);
     this._byGroupId = Object.create(null);
   },
@@ -5683,7 +5510,7 @@ window.Whisper.ConversationCollection = window.Backbone.Collection.extend({
 
   /**
    * window.Backbone collections have a `_byId` field that `get` defers to. Here, we
-   * override `get` to first access our custom `_byE164`, `_byUuid`, and
+   * override `get` to first access our custom `_byE164`, `_byServiceId`, and
    * `_byGroupId` functions, followed by falling back to the original
    * window.Backbone implementation.
    */
@@ -5691,7 +5518,7 @@ window.Whisper.ConversationCollection = window.Backbone.Collection.extend({
     return (
       this._byE164[id] ||
       this._byE164[`+${id}`] ||
-      this._byUuid[id] ||
+      this._byServiceId[id] ||
       this._byPni[id] ||
       this._byGroupId[id] ||
       window.Backbone.Collection.prototype.get.call(this, id)

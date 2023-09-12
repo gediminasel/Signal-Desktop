@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { assert } from 'chai';
-import { UUIDKind, StorageState, Proto } from '@signalapp/mock-server';
+import { ServiceIdKind, StorageState, Proto } from '@signalapp/mock-server';
 import type { PrimaryDevice } from '@signalapp/mock-server';
 import createDebug from 'debug';
 
 import * as durations from '../../util/durations';
+import { generatePni } from '../../types/ServiceId';
 import { Bootstrap } from '../bootstrap';
 import type { App } from '../bootstrap';
-import { UUID } from '../../types/UUID';
 
 export const debug = createDebug('mock:test:pni-change');
 
@@ -46,15 +46,15 @@ describe('pnp/PNI Change', function needsName() {
       {
         whitelisted: true,
         serviceE164: contactA.device.number,
-        identityKey: contactA.getPublicKey(UUIDKind.PNI).serialize(),
-        pni: contactA.device.getUUIDByKind(UUIDKind.PNI),
+        identityKey: contactA.getPublicKey(ServiceIdKind.PNI).serialize(),
+        pni: contactA.device.getServiceIdByKind(ServiceIdKind.PNI),
         givenName: 'ContactA',
       },
-      UUIDKind.PNI
+      ServiceIdKind.PNI
     );
 
     // Just to make PNI Contact visible in the left pane
-    state = state.pin(contactA, UUIDKind.PNI);
+    state = state.pin(contactA, ServiceIdKind.PNI);
 
     await phone.setStorageState(state);
 
@@ -78,7 +78,9 @@ describe('pnp/PNI Change', function needsName() {
 
       await leftPane
         .locator(
-          `[data-testid="${contactA.device.getUUIDByKind(UUIDKind.PNI)}"]`
+          `[data-testid="${contactA.device.getServiceIdByKind(
+            ServiceIdKind.PNI
+          )}"]`
         )
         .click();
 
@@ -122,15 +124,15 @@ describe('pnp/PNI Change', function needsName() {
 
     debug('Update pni on contactA via storage service');
     {
-      const updatedUuid = UUID.generate().toString();
+      const updatedPni = generatePni();
 
       const state = await phone.expectStorageState('consistency check');
       const updated = await phone.setStorageState(
         state
           .removeRecord(
             item =>
-              item.record.contact?.serviceUuid ===
-              contactA.device.getUUIDByKind(UUIDKind.PNI)
+              item.record.contact?.pni ===
+              contactA.device.getServiceIdByKind(ServiceIdKind.PNI)
           )
           .addContact(
             contactA,
@@ -138,11 +140,11 @@ describe('pnp/PNI Change', function needsName() {
               identityState: Proto.ContactRecord.IdentityState.DEFAULT,
               whitelisted: true,
               serviceE164: contactA.device.number,
-              serviceUuid: updatedUuid,
-              pni: updatedUuid,
-              identityKey: contactA.getPublicKey(UUIDKind.PNI).serialize(),
+              aci: updatedPni,
+              pni: updatedPni,
+              identityKey: contactA.getPublicKey(ServiceIdKind.PNI).serialize(),
             },
-            UUIDKind.PNI
+            ServiceIdKind.PNI
           )
       );
 
@@ -178,7 +180,9 @@ describe('pnp/PNI Change', function needsName() {
 
       await leftPane
         .locator(
-          `[data-testid="${contactA.device.getUUIDByKind(UUIDKind.PNI)}"]`
+          `[data-testid="${contactA.device.getServiceIdByKind(
+            ServiceIdKind.PNI
+          )}"]`
         )
         .click();
 
@@ -227,8 +231,8 @@ describe('pnp/PNI Change', function needsName() {
         state
           .removeRecord(
             item =>
-              item.record.contact?.serviceUuid ===
-              contactA.device.getUUIDByKind(UUIDKind.PNI)
+              item.record.contact?.pni ===
+              contactA.device.getServiceIdByKind(ServiceIdKind.PNI)
           )
           .addContact(
             contactB,
@@ -236,12 +240,12 @@ describe('pnp/PNI Change', function needsName() {
               identityState: Proto.ContactRecord.IdentityState.DEFAULT,
               whitelisted: true,
               serviceE164: contactA.device.number,
-              pni: contactB.device.getUUIDByKind(UUIDKind.PNI),
+              pni: contactB.device.getServiceIdByKind(ServiceIdKind.PNI),
 
               // Key change - different identity key
               identityKey: contactB.publicKey.serialize(),
             },
-            UUIDKind.PNI
+            ServiceIdKind.PNI
           )
       );
 
@@ -280,7 +284,9 @@ describe('pnp/PNI Change', function needsName() {
 
       await leftPane
         .locator(
-          `[data-testid="${contactA.device.getUUIDByKind(UUIDKind.PNI)}"]`
+          `[data-testid="${contactA.device.getServiceIdByKind(
+            ServiceIdKind.PNI
+          )}"]`
         )
         .click();
 
@@ -329,8 +335,8 @@ describe('pnp/PNI Change', function needsName() {
         state
           .removeRecord(
             item =>
-              item.record.contact?.serviceUuid ===
-              contactA.device.getUUIDByKind(UUIDKind.PNI)
+              item.record.contact?.pni ===
+              contactA.device.getServiceIdByKind(ServiceIdKind.PNI)
           )
           .addContact(
             contactB,
@@ -338,11 +344,11 @@ describe('pnp/PNI Change', function needsName() {
               identityState: Proto.ContactRecord.IdentityState.DEFAULT,
               whitelisted: true,
               serviceE164: contactA.device.number,
-              pni: contactB.device.getUUIDByKind(UUIDKind.PNI),
+              pni: contactB.device.getServiceIdByKind(ServiceIdKind.PNI),
 
               // Note: No identityKey key provided here!
             },
-            UUIDKind.PNI
+            ServiceIdKind.PNI
           )
       );
 
@@ -412,7 +418,9 @@ describe('pnp/PNI Change', function needsName() {
 
       await leftPane
         .locator(
-          `[data-testid="${contactA.device.getUUIDByKind(UUIDKind.PNI)}"]`
+          `[data-testid="${contactA.device.getServiceIdByKind(
+            ServiceIdKind.PNI
+          )}"]`
         )
         .click();
 
@@ -461,8 +469,8 @@ describe('pnp/PNI Change', function needsName() {
         state
           .removeRecord(
             item =>
-              item.record.contact?.serviceUuid ===
-              contactA.device.getUUIDByKind(UUIDKind.PNI)
+              item.record.contact?.pni ===
+              contactA.device.getServiceIdByKind(ServiceIdKind.PNI)
           )
           .addContact(
             contactB,
@@ -470,11 +478,11 @@ describe('pnp/PNI Change', function needsName() {
               identityState: Proto.ContactRecord.IdentityState.DEFAULT,
               whitelisted: true,
               serviceE164: contactA.device.number,
-              pni: contactB.device.getUUIDByKind(UUIDKind.PNI),
+              pni: contactB.device.getServiceIdByKind(ServiceIdKind.PNI),
 
               // Note: No identityKey key provided here!
             },
-            UUIDKind.PNI
+            ServiceIdKind.PNI
           )
       );
 
@@ -494,8 +502,8 @@ describe('pnp/PNI Change', function needsName() {
         state
           .removeRecord(
             item =>
-              item.record.contact?.serviceUuid ===
-              contactB.device.getUUIDByKind(UUIDKind.PNI)
+              item.record.contact?.pni ===
+              contactB.device.getServiceIdByKind(ServiceIdKind.PNI)
           )
           .addContact(
             contactB,
@@ -503,9 +511,9 @@ describe('pnp/PNI Change', function needsName() {
               identityState: Proto.ContactRecord.IdentityState.DEFAULT,
               whitelisted: true,
               serviceE164: contactA.device.number,
-              pni: contactA.device.getUUIDByKind(UUIDKind.PNI),
+              pni: contactA.device.getServiceIdByKind(ServiceIdKind.PNI),
             },
-            UUIDKind.PNI
+            ServiceIdKind.PNI
           )
       );
 

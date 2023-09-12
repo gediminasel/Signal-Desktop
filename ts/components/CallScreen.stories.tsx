@@ -14,6 +14,7 @@ import {
   GroupCallConnectionState,
   GroupCallJoinState,
 } from '../types/Calling';
+import { generateAci } from '../types/ServiceId';
 import type { ConversationType } from '../state/ducks/conversations';
 import { AvatarColors } from '../types/Colors';
 import type { PropsType } from './CallScreen';
@@ -22,7 +23,7 @@ import { setupI18n } from '../util/setupI18n';
 import { missingCaseError } from '../util/missingCaseError';
 import {
   getDefaultConversation,
-  getDefaultConversationWithUuid,
+  getDefaultConversationWithServiceId,
 } from '../test-both/helpers/getDefaultConversation';
 import { fakeGetGroupCallVideoFrameSource } from '../test-both/helpers/fakeGetGroupCallVideoFrameSource';
 import enMessages from '../../_locales/en/messages.json';
@@ -174,7 +175,7 @@ const createProps = (
     name: 'Morty Smith',
     profileName: 'Morty Smith',
     title: 'Morty Smith',
-    uuid: '3c134598-eecb-42ab-9ad3-2b0873f771b2',
+    serviceId: generateAci(),
   }),
   openSystemPreferencesAction: action('open-system-preferences-action'),
   setGroupCallVideoRequest: action('set-group-call-video-request'),
@@ -303,6 +304,7 @@ export function GroupCall1(): JSX.Element {
         callMode: CallMode.Group,
         remoteParticipants: [
           {
+            aci: generateAci(),
             demuxId: 0,
             hasRemoteAudio: true,
             hasRemoteVideo: true,
@@ -311,7 +313,7 @@ export function GroupCall1(): JSX.Element {
             videoAspectRatio: 1.3,
             ...getDefaultConversation({
               isBlocked: false,
-              uuid: '72fa60e5-25fb-472d-8a56-e56867c57dda',
+              serviceId: generateAci(),
               title: 'Tyler',
             }),
           },
@@ -327,13 +329,14 @@ GroupCall1.story = {
 
 // We generate these upfront so that the list is stable when you move the slider.
 const allRemoteParticipants = times(MAX_PARTICIPANTS).map(index => ({
+  aci: generateAci(),
   demuxId: index,
   hasRemoteAudio: index % 3 !== 0,
   hasRemoteVideo: index % 4 !== 0,
   presenting: false,
   sharingScreen: false,
   videoAspectRatio: 1.3,
-  ...getDefaultConversationWithUuid({
+  ...getDefaultConversationWithServiceId({
     isBlocked: index === 10 || index === MAX_PARTICIPANTS - 1,
     title: `Participant ${index + 1}`,
   }),
@@ -370,6 +373,7 @@ export function GroupCallReconnecting(): JSX.Element {
         connectionState: GroupCallConnectionState.Reconnecting,
         remoteParticipants: [
           {
+            aci: generateAci(),
             demuxId: 0,
             hasRemoteAudio: true,
             hasRemoteVideo: true,
@@ -379,7 +383,7 @@ export function GroupCallReconnecting(): JSX.Element {
             ...getDefaultConversation({
               isBlocked: false,
               title: 'Tyler',
-              uuid: '33871c64-0c22-45ce-8aa4-0ec237ac4a31',
+              serviceId: generateAci(),
             }),
           },
         ],

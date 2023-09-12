@@ -13,6 +13,7 @@ import classNames from 'classnames';
 import { noop } from 'lodash';
 import { sep } from 'path';
 
+import { filterDOMProps } from '@react-aria/utils';
 import type { AvatarColorType } from '../types/Colors';
 import type { BadgeType } from '../badges/types';
 import type { LocalizerType } from '../types/Util';
@@ -38,6 +39,7 @@ export enum AvatarSize {
   TWENTY = 20,
   TWENTY_EIGHT = 28,
   THIRTY_TWO = 32,
+  THIRTY_SIX = 36,
   FORTY_EIGHT = 48,
   FIFTY_TWO = 52,
   EIGHTY = 80,
@@ -247,7 +249,7 @@ export function Avatar({
   if (onClick) {
     contents = (
       <button
-        {...ariaProps}
+        {...filterDOMProps(ariaProps)}
         className={contentsClassName}
         type="button"
         onClick={onClick}

@@ -194,7 +194,11 @@ const defaultWebPrefs = {
     getEnvironment() !== Environment.Production ||
     !isProduction(app.getVersion()),
   spellcheck: false,
-  enableBlinkFeatures: 'CSSPseudoDir,CSSLogical',
+  // https://chromium.googlesource.com/chromium/src/+/main/third_party/blink/renderer/platform/runtime_enabled_features.json5
+  enableBlinkFeatures: [
+    'CSSPseudoDir', // status=experimental, needed for RTL (ex: :dir(rtl))
+    'CSSLogical', // status=experimental, needed for RTL (ex: margin-inline-start)
+  ].join(','),
 };
 
 const DISABLE_GPU =
@@ -1371,13 +1375,28 @@ async function openArtCreator() {
 let debugLogWindow: BrowserWindow | undefined;
 async function showDebugLogWindow() {
   if (debugLogWindow) {
-    debugLogWindow.show();
+    doShowDebugLogWindow();
     return;
+  }
+
+  function doShowDebugLogWindow() {
+    if (debugLogWindow) {
+      // Electron has [a macOS bug][0] that causes parent windows to become unresponsive
+      //   if it's fullscreen and opens a fullscreen child window. Until that's fixed, we
+      //   only set the parent on MacOS is if the mainWindow is not fullscreen
+      // [0]: https://github.com/electron/electron/issues/32374
+      if (OS.isMacOS() && mainWindow?.isFullScreen()) {
+        debugLogWindow.setParentWindow(null);
+      } else {
+        debugLogWindow.setParentWindow(mainWindow ?? null);
+      }
+      debugLogWindow.show();
+    }
   }
 
   const titleBarOverlay = await getTitleBarOverlay();
 
-  const options = {
+  const options: Electron.BrowserWindowConstructorOptions = {
     width: 700,
     height: 500,
     resizable: false,
@@ -1394,14 +1413,8 @@ async function showDebugLogWindow() {
       sandbox: true,
       contextIsolation: true,
       preload: join(__dirname, '../bundles/debuglog/preload.js'),
-      nativeWindowOpen: true,
     },
     parent: mainWindow,
-    // Electron has [a macOS bug][0] that causes parent windows to become unresponsive if
-    //   it's fullscreen and opens a fullscreen child window. Until that's fixed, we
-    //   prevent the child window from being fullscreenable, which sidesteps the problem.
-    // [0]: https://github.com/electron/electron/issues/32374
-    fullscreenable: !OS.isMacOS(),
   };
 
   debugLogWindow = new BrowserWindow(options);
@@ -1414,7 +1427,7 @@ async function showDebugLogWindow() {
 
   debugLogWindow.once('ready-to-show', () => {
     if (debugLogWindow) {
-      debugLogWindow.show();
+      doShowDebugLogWindow();
 
       // Electron sometimes puts the window in a strange spot until it's shown.
       debugLogWindow.center();
@@ -2128,9 +2141,22 @@ app.on('will-finish-launching', () => {
   });
 });
 
-ipc.on('set-badge-count', (_event: Electron.Event, count: number) => {
-  app.badgeCount = count;
-});
+ipc.on(
+  'set-badge',
+  (_event: Electron.Event, badge: number | 'marked-unread') => {
+    if (badge === 'marked-unread') {
+      if (process.platform === 'darwin') {
+        // Will show a ● on macOS when undefined
+        app.setBadgeCount(undefined);
+      } else {
+        // All other OS's need a number
+        app.setBadgeCount(1);
+      }
+    } else {
+      app.setBadgeCount(badge);
+    }
+  }
+);
 
 ipc.on('remove-setup-menu-items', () => {
   setupMenu();
@@ -2389,7 +2415,8 @@ ipc.handle(
       process.versions.node,
       app.getVersion(),
       os.version(),
-      userAgent
+      userAgent,
+      OS.getLinuxName()
     );
   }
 );

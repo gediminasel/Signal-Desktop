@@ -300,6 +300,42 @@
     "messageformat": "ချက်(တ်)များ",
     "description": "Shown as a header for non-pinned conversations in the left pane"
   },
+  "icu:NavTabsToggle__showTabs": {
+    "messageformat": "တက်ဘ်များကို ပြသရန်",
+    "description": "Show in the left pane when the nav tabs are hidden, shows the nav tabs"
+  },
+  "icu:NavTabsToggle__hideTabs": {
+    "messageformat": "တက်ဘ်များကို ဖျောက်ထားရန်",
+    "description": "Show in the nav tabs when the nav tabs are visible, hides the nav tabs"
+  },
+  "icu:NavTabs__ItemIconLabel--HasError": {
+    "messageformat": "ချို့ယွင်းချက် ဖြစ်ပေါ်ခဲ့ပါသည်",
+    "description": "Nav Tabs > Tab has error > Accessibility Text"
+  },
+  "icu:NavTabs__ItemIconLabel--UnreadCount": {
+    "messageformat": "{count,number} ခု မဖတ်ရသေး",
+    "description": "Nav Tabs > Unread badge > Accessibility Text"
+  },
+  "icu:NavTabs__ItemIconLabel--MarkedUnread": {
+    "messageformat": "မဖတ်ရသေးဟု မှတ်ပြီး",
+    "description": "Nav Tabs > Unread badge > when conversation is marked unread > Accessibility Text"
+  },
+  "icu:NavTabs__ItemLabel--Settings": {
+    "messageformat": "အပြင်အဆင်များ",
+    "description": "Nav Tabs > Settings Button > Label & Accessibility Text"
+  },
+  "icu:NavTabs__ItemLabel--Update": {
+    "messageformat": "Signal အားအဆင့်မြှင့်မယ်",
+    "description": "Nav Tabs > Settings Button > Label & Accessibility Text"
+  },
+  "icu:NavTabs__ItemLabel--Profile": {
+    "messageformat": "ပရိုဖိုင်",
+    "description": "Nav Tabs > Profile Button > Accessibility Text"
+  },
+  "icu:NavSidebar__BackButtonLabel": {
+    "messageformat": "နောက်သို့",
+    "description": "Shown in the sidebar header when on a nested panel within the current sidebar, takes the user back to the previous step or default sidebar state"
+  },
   "icu:archiveHelperText": {
     "messageformat": "ထိုချက်(တ်)များကို မှတ်တမ်းတင်ထားပြီး မက်ဆေ့ချ်အသစ်များ လက်ခံရရှိခဲ့လျှင်သာ ဝင်စာပုံးထဲတွင် ပေါ်နေပါလိမ့်မည်။",
     "description": "Shown at the top of the archived conversations list in the left pane"
@@ -1267,10 +1303,6 @@
     "messageformat": "မကြာမီက မီဒီယာကို ကြည့်ရန်",
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
-  "icu:verifyHelp": {
-    "messageformat": "{name} နှင့် သင်၏ ဟိုဘက်သည်ဘက် ကုဒ်ပြောင်းဝှက်မှု လုံခြုံရေးကို စိစစ်အတည်ပြုရန် အထက်ပါနံပါတ်များကို ၎င်း၏စက်နှင့် နှိုင်းယှဉ်ပါ။ ၎င်းအနေဖြင့် အထက်ပါ qr ကုဒ်ကိုလည်း စကန်ဖတ်နိုင်ပါသည်။",
-    "description": "(deleted 07/05/2023)"
-  },
   "icu:theirIdentityUnknown": {
     "messageformat": "You haven't exchanged any messages with this contact yet. Your safety number with them will be available after the first message."
   },
@@ -2146,6 +2178,10 @@
   "icu:ConversationDetails__viewSafetyNumber": {
     "messageformat": "လုံခြုံရေးနံပါတ် ကြည့်ရန်",
     "description": "In conversation details, label for button to view safety number, opens safety number modal"
+  },
+  "icu:ConversationDetails__HeaderButton--Message": {
+    "messageformat": "မက်ဆေ့ချ်",
+    "description": "In conversation details, label for button to switch to the conversation view in order to draft a message in that converation"
   },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "လုံခြုံရေးနံပါတ် ကြည့်ရန်",
@@ -3122,10 +3158,18 @@
   },
   "icu:SendEdit--dialog--title": {
     "messageformat": "Signal Beta သီးသန့်",
-    "description": "Title of the modal shown before sending your first edit message"
+    "description": "(deleted 8/30) Title of the modal shown before sending your first edit message"
   },
   "icu:SendEdit--dialog--body": {
     "messageformat": "မက်ဆေ့ချ်များ တည်းဖြတ်ခြင်းကို Signal Beta သုံးစွဲသူများအတွက်သာ ရရှိနိုင်ပါသည်။ မက်ဆေ့ချ်တစ်စောင်ကို တည်းဖြတ်ပါက ၎င်းကို Signal Beta နောက်ဆုံးထွက်ဗားရှင်းရှိသူများသာ မြင်ရပါမည်။",
+    "description": "(deleted 8/30) Body text of the modal shown before sending your first edit message"
+  },
+  "icu:SendEdit--dialog--title2": {
+    "messageformat": "Edit Message",
+    "description": "Title of the modal shown before sending your first edit message"
+  },
+  "icu:SendEdit--dialog--body2": {
+    "messageformat": "If you edit a message, it will only be visible to people who are on the latest versions of Signal. They will be able to see you edited a message.",
     "description": "Body text of the modal shown before sending your first edit message"
   },
   "icu:SendFormatting--dialog--title": {
@@ -3379,6 +3423,14 @@
   "icu:incomingVideoCall": {
     "messageformat": "ဗီဒီယိုကောလ် ဝင်နေသည်...",
     "description": "Shown in both the incoming call bar and notification for an incoming video call"
+  },
+  "icu:outgoingAudioCall": {
+    "messageformat": "အထွက် အော်ဒီယိုကောလ်",
+    "description": "Shown in the timeline for an outgoing voice call"
+  },
+  "icu:outgoingVideoCall": {
+    "messageformat": "ဗီဒီယိုကောလ် အထွက်",
+    "description": "Shown in the timeline for an outgoing video call"
   },
   "icu:incomingGroupCall__ringing-you": {
     "messageformat": "{ringer} က သင့်ကို ခေါ်နေသည်",
@@ -5320,10 +5372,6 @@
     "messageformat": "သုံးစွဲသူအမည်ကို ဖျက်ရန်",
     "description": "Shown as aria label for trash icon next to username"
   },
-  "icu:ProfileEditor--username--confirm-delete-body": {
-    "messageformat": "ဤသည်မှာ သင်၏ သုံးစွဲသူအမည်ကို ဖယ်ရှားပြီး အခြားသုံးစွဲသူများအား ၎င်းကို ရယူသုံးစွဲခွင့်ပြုနိုင်ပါသည်။ လုပ်လိုသည်မှာ သေချာပါသလား။",
-    "description": "(deleted 07/10/2023) Shown in dialog body if user has saved an empty string to delete their username"
-  },
   "icu:ProfileEditor--username--confirm-delete-body-2": {
     "messageformat": "၎င်းသည် သင်၏ သုံးစွဲသူအမည်ကို ဖယ်ရှားလိုက်မည်ဖြစ်ပြီး သင့် QR ကုဒ်နှင့် လင့်ခ်ကို ဖျက်လိုက်ပါမည်။ \"{username}\" ကို အခြားသူများ အသုံးပြု၍ရသွားပါလိမ့်မည်။ သေချာပါသလား။",
     "description": "Shown in dialog body if user has saved an empty string to delete their username"
@@ -6532,6 +6580,10 @@
     "messageformat": "ရီဆက်ချမည်",
     "description": "Text of button at the bottom of the username link modal"
   },
+  "icu:UsernameLinkModalBody__done": {
+    "messageformat": "ပြီးပါပြီ",
+    "description": "Text of button at the bottom of the username link modal"
+  },
   "icu:UsernameLinkModalBody__color__radio": {
     "messageformat": "သုံးစွဲသူအမည်အတွက် လင့်ခ်အရောင်၊ {index,number} / {total,number}",
     "description": "ARIA label of button for selecting username link color"
@@ -6592,6 +6644,110 @@
     "messageformat": "နောက်တစ်ကြိမ် ပို့ပါ",
     "description": "Button text for the confirmation dialog shown to user when attempting to resend message edit"
   },
+  "icu:StoriesTab__MoreActionsLabel": {
+    "messageformat": "နောက်ထပ် လုပ်ဆောင်မှုများ",
+    "description": "Stories Tab > More Actions Button (opens context menu) > Accessibility Label"
+  },
+  "icu:CallsTab__HeaderTitle--CallsList": {
+    "messageformat": "ဖုန်းခေါ်ဆိုမှုများ",
+    "description": "Calls Tab > Header > Title > On Calls List screen"
+  },
+  "icu:CallsTab__HeaderTitle--NewCall": {
+    "messageformat": "ကောလ်အသစ်",
+    "description": "Calls Tab > Header > Title > On New Call screen"
+  },
+  "icu:CallsTab__NewCallActionLabel": {
+    "messageformat": "ကောလ်အသစ်",
+    "description": "Calls Tab > New Call Action Button > Accessibility Label"
+  },
+  "icu:CallsTab__MoreActionsLabel": {
+    "messageformat": "နောက်ထပ် လုပ်ဆောင်မှုများ",
+    "description": "Calls Tab > More Actions Button (opens context menu) > Accessibility Label"
+  },
+  "icu:CallsTab__ClearCallHistoryLabel": {
+    "messageformat": "ကောလ်မှတ်တမ်းကို ရှင်းရန်",
+    "description": "Calls Tab > More Actions Context Menu > Clear Call History Button Label"
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Title": {
+    "messageformat": "ကောလ်မှတ်တမ်းကို ရှင်းမည်လား။",
+    "description": "Calls Tab > Confirm Clear Call History Dialog > Title"
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Body": {
+    "messageformat": "ဤသို့လုပ်ဆောင်ခြင်းဖြင့် ကောလ်မှတ်တမ်း အားလုံးကို အပြီးတိုင် ဖျက်ပစ်လိုက်ပါမည်။",
+    "description": "Calls Tab > Confirm Clear Call History Dialog > Body Text"
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
+    "messageformat": "ဖယ်ရှားမည်",
+    "description": "Calls Tab > Confirm Clear Call History Dialog > Confirm Button"
+  },
+  "icu:CallsTab__ToastCallHistoryCleared": {
+    "messageformat": "ကောလ်မှတ်တမ်း ရှင်းလင်းပြီး",
+    "description": "Calls Tab > Clear Call History > Toast"
+  },
+  "icu:CallsTab__EmptyStateText": {
+    "messageformat": "ကောလ်တစ်ခုကို ကြည့်ရှုရန် သို့မဟုတ် စတင်ရန် နှိပ်ပါ",
+    "description": "Calls Tab > When no call is selected > Empty state > Call to action text"
+  },
+  "icu:CallsList__SearchInputPlaceholder": {
+    "messageformat": "ရှာရန်",
+    "description": "Calls Tab > Calls List > Search Input > Placeholder"
+  },
+  "icu:CallsList__ToggleFilterByMissedLabel": {
+    "messageformat": "လွတ်သွားသည်များကို စစ်ထုတ်ရန်",
+    "description": "Calls Tab > Calls List > Toggle search filter by missed > Accessibility label"
+  },
+  "icu:CallsList__ToggleFilterByMissed__RoleDescription": {
+    "messageformat": "ပုံစံပြောင်းရန်",
+    "description": "Calls Tab > Calls List > Toggle search filter by missed > Accessibility role description ('A toggle button')"
+  },
+  "icu:CallsList__EmptyState--noQuery": {
+    "messageformat": "လတ်တလော ခေါ်ဆိုမှုများမရှိ။ သူငယ်ချင်းတစ်ယောက်ကို ခေါ်ဆိုခြင်းဖြင့် စတင်လိုက်ပါ။",
+    "description": "Calls Tab > Calls List > When no results found > With no search query"
+  },
+  "icu:CallsList__EmptyState--hasQuery": {
+    "messageformat": "“{query}” အတွက် ရလဒ်မရှိပါ",
+    "description": "Calls Tab > Calls List > When no results found > With a search query"
+  },
+  "icu:CallsList__ItemCallInfo--Incoming": {
+    "messageformat": "အဝင်",
+    "description": "Calls Tab > Calls List > Call Item > Call Status > When call was accepted and was incoming"
+  },
+  "icu:CallsList__ItemCallInfo--Outgoing": {
+    "messageformat": "အထွက်",
+    "description": "Calls Tab > Calls List > Call Item > Call Status > When call was accepted and was outgoing"
+  },
+  "icu:CallsList__ItemCallInfo--Missed": {
+    "messageformat": "လွတ်သွားသည်",
+    "description": "Calls Tab > Calls List > Call Item > Call Status > When call was missed"
+  },
+  "icu:CallsList__ItemCallInfo--GroupCall": {
+    "messageformat": "အဖွဲ့လိုက် ခေါ်ဆိုမှု",
+    "description": "Calls Tab > Calls List > Call Item > Call Status > When group call is in its default state"
+  },
+  "icu:CallsNewCall__EmptyState--noQuery": {
+    "messageformat": "လတ်တလော စကားပြောဆိုမှုများ မရှိပါ။",
+    "description": "Calls Tab > New Call > Conversations List > When no results found > With no search query"
+  },
+  "icu:CallsNewCall__EmptyState--hasQuery": {
+    "messageformat": "“{query}” အတွက် ရလဒ်မရှိပါ",
+    "description": "Calls Tab > New Call > Conversations List > When no results found > With a search query"
+  },
+  "icu:CallHistory__Description--Default": {
+    "messageformat": "{type, select, Audio {{direction, select, Outgoing {အထွက် အော်ဒီယိုကောလ်} other {အဝင် အော်ဒီယိုကောလ်}}} Video {{direction, select, Outgoing {ဗီဒီယိုကောလ် အထွက်} other {ဗီဒီယိုကောလ် အဝင်}}} Group {{direction, select, Outgoing {အထွက် အဖွဲ့ကောလ်} other {အဝင် အဖွဲ့ကောလ်}}} other {{direction, select, Outgoing {ဖုန်းခေါ်ဆိုမှု} other {အဝင်ဖုန်းလာသည်}}}}",
+    "description": "Call History > Short description of call > When call was not missed or declined (generally accepted)"
+  },
+  "icu:CallHistory__Description--Missed": {
+    "messageformat": "{type, select, Audio {လွတ်သွားသော အော်ဒီယိုကောလ်} Video {ဗီဒီယိုခေါ်ဆိုမှုလွဲချော်} Group {လွတ်သွားသော အဖွဲ့ကောလ်} other {လွတ်သွားသော ဖုန်းခေါ်ဆိုမှု}}",
+    "description": "Call History > Short description of call > When incoming call was missed"
+  },
+  "icu:CallHistory__Description--Unanswered": {
+    "messageformat": "{type, select, Audio {မဖြေဆိုသော အော်ဒီယိုကောလ်} Video {မဖြေဆိုသော ဗီဒီယိုကောလ်} Group {မဖြေဆိုခဲ့သော အဖွဲ့ကောလ်} other {မဖြေဆိုခဲ့သော  ကောလ်}}",
+    "description": "Call History > Short description of call > When outgoing call was unanswered"
+  },
+  "icu:CallHistory__Description--Declined": {
+    "messageformat": "{type, select, Audio {ငြင်းပယ်ခဲ့သော အော်ဒီယိုကောလ်} Video {ငြင်းပယ်ခဲ့သော ဗီဒီယိုကောလ်} Group {ငြင်းပယ်ခဲ့သော အဖွဲ့ကောလ်} other {ငြင်းပယ်ခဲ့သော  ကောလ်}}",
+    "description": "Call History > Short description of call > When call was declined"
+  },
   "icu:WhatsNew__modal-title": {
     "messageformat": "အသစ်များ",
     "description": "Title for the whats new modal"
@@ -6624,10 +6780,13 @@
     "messageformat": "အနေအထား ပြုပြင်မှုလေးများ၊ ချို့ယွင်းချက် ပြင်ဆင်မှုများနှင့် စွမ်းဆောင်ရည် မြှင့်တင်မှုများ။ Signal ကို သုံးသည့်အတွက် ကျေးဇူးတင်ပါသည်။",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.27--0": {
-    "messageformat": "ယခုအပ်ဒိတ်တွင် အော်ဒီယိုနှင့် ဗီဒီယို ကောလ်များအတွက် တိုးတက်မှုအနည်းငယ်နှင့် စာရွက်စာတမ်းဆိုင်ရာ အသေးစားအပ်ဒိတ်အချို့ ပါဝင်ပါသည် (ကျေးဇူးပါ၊ {linkToGithub})။"
+  "icu:WhatsNew__v6.29--0": {
+    "messageformat": "ယခုအခါ ချက်(တ်)အရောင် စိတ်ကြိုက်သတ်မှတ်မှု မျက်နှာပြင်ကို မတူညီသော ဘာသာစကားများနှင့် ရွေးချယ်ထားသော ဒေသများတွင် မှန်ကန်စွာ ပြသနေပြီဖြစ်ပါသည်။"
   },
-  "icu:WhatsNew__v6.28--0": {
-    "messageformat": "အဖွဲ့ အသိပေးချက်အိုင်ကွန်အချို့ကို ကျွန်ုပ်တို့ အပ်ဒိတ်လုပ်ထားပါသည်။ ထိုအိုင်ကွန်များသည် အထူးသဖြင့် အမှောင် Theme ကို အသုံးပြုပါက ပို၍ရှင်းလင်းပီသစေရန် အကူအညီပေးပါသည်။ ယခင်အိုင်ကွန်များသည် အလင်းမှ အမှောင်သို့ ပြောင်းလိုက်ရုံမျှ ဖြစ်ပါသည်။ အိုင်ကွန်အသစ်များမှာမူ အမှောင်ဖြင့်သုံးရန် ချိန်ညှိဖန်တီးထားခြင်း ဖြစ်ပါသည်။"
+  "icu:WhatsNew__v6.29--1": {
+    "messageformat": "Windows တွင် အသိပေးချက်ဆိုင်ရာ ပံ့ပိုးမှုကို ပိုကောင်းအောင်လုပ်ထားပါသည်။ အသိပေးချက်တစ်ခု စတင်ရောက်ရှိလာချိန်တွင် ၎င်းကို သင် မနှိပ်ပါက နောက်ဆုံး လွတ်သွားသော အသိပေးချက်မှာ Windows အသိပေးချက်စင်တာတွင် ပေါ်နေပါမည်။ ယခုအခါ ထိုအသိပေးချက်ကို နှိပ်လိုက်လျှင် ထိုချက်(တ်)သို့ တိုက်ရိုက်ရောက်ရှိသွားပါမည်။ Julien Richard ကို ၎င်း၏တုံ့ပြန်အကြံပြုချက်အတွက် ကျေးဇူးတင်ပါသည်။"
+  },
+  "icu:WhatsNew__v6.30--0": {
+    "messageformat": "ကောလ်တက်ဘ်အသစ်သည် ကောလ်အသစ်စခြင်း သို့မဟုတ် လွတ်သွားသောကောလ်ကို ပြန်ခေါ်ခြင်းအား လွယ်ကူစွာပြုလုပ်နိုင်ရန် သင့်ကို ကူညီပေးပါသည်။"
   }
 }

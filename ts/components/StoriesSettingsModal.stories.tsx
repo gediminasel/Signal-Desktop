@@ -54,7 +54,7 @@ export default {
     setMyStoriesToAllSignalConnections: { action: true },
     toggleSignalConnectionsModal: { action: true },
     setStoriesDisabled: { action: true },
-    getConversationByUuid: {
+    getConversationByServiceId: {
       defaultValue: () => getDefaultGroup(),
     },
   },
@@ -115,7 +115,9 @@ export const SingleList = Template.bind({});
       },
       {
         ...fakeDistroList,
-        members: fakeDistroList.memberUuids.map(() => getDefaultConversation()),
+        members: fakeDistroList.memberServiceIds.map(() =>
+          getDefaultConversation()
+        ),
       },
     ],
   };

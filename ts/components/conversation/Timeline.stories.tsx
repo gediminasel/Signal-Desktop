@@ -268,8 +268,8 @@ const actions = () => ({
   ),
   blockGroupLinkRequests: action('blockGroupLinkRequests'),
   checkForAccount: action('checkForAccount'),
-  clearInvitedUuidsForNewlyCreatedGroup: action(
-    'clearInvitedUuidsForNewlyCreatedGroup'
+  clearInvitedServiceIdsForNewlyCreatedGroup: action(
+    'clearInvitedServiceIdsForNewlyCreatedGroup'
   ),
   setIsNearBottom: action('setIsNearBottom'),
   loadOlderMessages: action('loadOlderMessages'),
@@ -314,7 +314,12 @@ const actions = () => ({
 
   toggleSafetyNumberModal: action('toggleSafetyNumberModal'),
 
-  startCallingLobby: action('startCallingLobby'),
+  onOutgoingAudioCallInConversation: action(
+    'onOutgoingAudioCallInConversation'
+  ),
+  onOutgoingVideoCallInConversation: action(
+    'onOutgoingVideoCallInConversation'
+  ),
   startConversation: action('startConversation'),
   returnToActiveCall: action('returnToActiveCall'),
 

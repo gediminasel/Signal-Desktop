@@ -67,7 +67,9 @@ jobs:
 
     - run: yarn generate
     - run: yarn prepare-beta-build
-    - run: yarn build
+    - name: Create bundle
+      run: yarn build:esbuild:prod
+    - run: yarn build:release -- --publish=never
       env:
         DISABLE_INSPECT_FUSE: on
     - run: xvfb-run --auto-servernum yarn test-node

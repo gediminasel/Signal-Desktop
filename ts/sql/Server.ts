@@ -10,6 +10,8 @@ import { randomBytes } from 'crypto';
 import type { Database, Statement } from '@signalapp/better-sqlite3';
 import SQL from '@signalapp/better-sqlite3';
 import pProps from 'p-props';
+import { v4 as generateUuid } from 'uuid';
+import { z } from 'zod';
 
 import type { Dictionary } from 'lodash';
 import {
@@ -32,8 +34,9 @@ import { ReadStatus } from '../messages/MessageReadStatus';
 import type { GroupV2MemberType } from '../model-types.d';
 import type { ReactionType } from '../types/Reactions';
 import { STORAGE_UI_KEYS } from '../types/StorageUIKeys';
-import { UUID } from '../types/UUID';
-import type { UUIDStringType } from '../types/UUID';
+import type { StoryDistributionIdString } from '../types/StoryDistributionId';
+import type { ServiceIdString, AciString } from '../types/ServiceId';
+import { isServiceIdString } from '../types/ServiceId';
 import type { StoredJob } from '../jobs/types';
 import { assertDev, assertSync, strictAssert } from '../util/assert';
 import { combineNames } from '../util/combineNames';
@@ -60,6 +63,7 @@ import type {
   QueryFragment,
 } from './util';
 import {
+  sqlConstant,
   sqlJoin,
   sqlFragment,
   sql,
@@ -142,6 +146,19 @@ import {
   SNIPPET_RIGHT_PLACEHOLDER,
   SNIPPET_TRUNCATION_PLACEHOLDER,
 } from '../util/search';
+import type {
+  CallHistoryDetails,
+  CallHistoryFilter,
+  CallHistoryGroup,
+  CallHistoryPagination,
+} from '../types/CallDisposition';
+import {
+  DirectCallStatus,
+  callHistoryGroupSchema,
+  CallHistoryFilterStatus,
+  callHistoryDetailsSchema,
+  CallDirection,
+} from '../types/CallDisposition';
 
 type ConversationRow = Readonly<{
   json: string;
@@ -179,7 +196,7 @@ const dataInterface: ServerInterface = {
   getKyberPreKeyById,
   bulkAddKyberPreKeys,
   removeKyberPreKeyById,
-  removeKyberPreKeysByUuid,
+  removeKyberPreKeysByServiceId,
   removeAllKyberPreKeys,
   getAllKyberPreKeys,
 
@@ -187,7 +204,7 @@ const dataInterface: ServerInterface = {
   getPreKeyById,
   bulkAddPreKeys,
   removePreKeyById,
-  removePreKeysByUuid,
+  removePreKeysByServiceId,
   removeAllPreKeys,
   getAllPreKeys,
 
@@ -195,7 +212,7 @@ const dataInterface: ServerInterface = {
   getSignedPreKeyById,
   bulkAddSignedPreKeys,
   removeSignedPreKeyById,
-  removeSignedPreKeysByUuid,
+  removeSignedPreKeysByServiceId,
   removeAllSignedPreKeys,
   getAllSignedPreKeys,
 
@@ -228,11 +245,10 @@ const dataInterface: ServerInterface = {
   bulkAddSessions,
   removeSessionById,
   removeSessionsByConversation,
-  removeSessionsByUUID,
+  removeSessionsByServiceId,
   removeAllSessions,
   getAllSessions,
 
-  eraseStorageServiceStateFromConversations,
   getConversationCount,
   saveConversation,
   saveConversations,
@@ -246,7 +262,7 @@ const dataInterface: ServerInterface = {
 
   getAllConversations,
   getAllConversationIds,
-  getAllGroupsInvolvingUuid,
+  getAllGroupsInvolvingServiceId,
 
   searchMessages,
 
@@ -289,7 +305,16 @@ const dataInterface: ServerInterface = {
   getConversationRangeCenteredOnMessage,
   getConversationMessageStats,
   getLastConversationMessage,
+  getAllCallHistory,
+  clearCallHistory,
+  getCallHistoryUnreadCount,
+  markCallHistoryRead,
+  markAllCallHistoryRead,
   getCallHistoryMessageByCallId,
+  getCallHistory,
+  getCallHistoryGroupsCount,
+  getCallHistoryGroups,
+  saveCallHistory,
   hasGroupCallHistoryMessage,
   migrateConversationMessages,
   getMessagesBetween,
@@ -360,6 +385,7 @@ const dataInterface: ServerInterface = {
 
   removeAll,
   removeAllConfiguration,
+  eraseStorageServiceState,
 
   getMessagesNeedingUpgrade,
   getMessagesWithVisualMediaAttachments,
@@ -688,10 +714,14 @@ async function removeKyberPreKeyById(
 ): Promise<void> {
   return removeById(getInstance(), KYBER_PRE_KEYS_TABLE, id);
 }
-async function removeKyberPreKeysByUuid(uuid: UUIDStringType): Promise<void> {
+async function removeKyberPreKeysByServiceId(
+  serviceId: ServiceIdString
+): Promise<void> {
   const db = getInstance();
-  db.prepare<Query>('DELETE FROM kyberPreKeys WHERE ourUuid IS $uuid;').run({
-    uuid,
+  db.prepare<Query>(
+    'DELETE FROM kyberPreKeys WHERE ourServiceId IS $serviceId;'
+  ).run({
+    serviceId,
   });
 }
 async function removeAllKyberPreKeys(): Promise<void> {
@@ -718,10 +748,14 @@ async function removePreKeyById(
 ): Promise<void> {
   return removeById(getInstance(), PRE_KEYS_TABLE, id);
 }
-async function removePreKeysByUuid(uuid: UUIDStringType): Promise<void> {
+async function removePreKeysByServiceId(
+  serviceId: ServiceIdString
+): Promise<void> {
   const db = getInstance();
-  db.prepare<Query>('DELETE FROM preKeys WHERE ourUuid IS $uuid;').run({
-    uuid,
+  db.prepare<Query>(
+    'DELETE FROM preKeys WHERE ourServiceId IS $serviceId;'
+  ).run({
+    serviceId,
   });
 }
 async function removeAllPreKeys(): Promise<void> {
@@ -752,10 +786,14 @@ async function removeSignedPreKeyById(
 ): Promise<void> {
   return removeById(getInstance(), SIGNED_PRE_KEYS_TABLE, id);
 }
-async function removeSignedPreKeysByUuid(uuid: UUIDStringType): Promise<void> {
+async function removeSignedPreKeysByServiceId(
+  serviceId: ServiceIdString
+): Promise<void> {
   const db = getInstance();
-  db.prepare<Query>('DELETE FROM signedPreKeys WHERE ourUuid IS $uuid;').run({
-    uuid,
+  db.prepare<Query>(
+    'DELETE FROM signedPreKeys WHERE ourServiceId IS $serviceId;'
+  ).run({
+    serviceId,
   });
 }
 async function removeAllSignedPreKeys(): Promise<void> {
@@ -912,24 +950,28 @@ async function insertSentProto(
       `
       INSERT INTO sendLogRecipients (
         payloadId,
-        recipientUuid,
+        recipientServiceId,
         deviceId
       ) VALUES (
         $id,
-        $recipientUuid,
+        $recipientServiceId,
         $deviceId
       );
       `
     );
 
-    const recipientUuids = Object.keys(recipients);
-    for (const recipientUuid of recipientUuids) {
-      const deviceIds = recipients[recipientUuid];
+    const recipientServiceIds = Object.keys(recipients);
+    for (const recipientServiceId of recipientServiceIds) {
+      strictAssert(
+        isServiceIdString(recipientServiceId),
+        'Recipient must be a service id'
+      );
+      const deviceIds = recipients[recipientServiceId];
 
       for (const deviceId of deviceIds) {
         recipientStatement.run({
           id,
-          recipientUuid,
+          recipientServiceId,
           deviceId,
         });
       }
@@ -994,11 +1036,11 @@ async function deleteSentProtoByMessageId(messageId: string): Promise<void> {
 
 async function insertProtoRecipients({
   id,
-  recipientUuid,
+  recipientServiceId,
   deviceIds,
 }: {
   id: number;
-  recipientUuid: string;
+  recipientServiceId: ServiceIdString;
   deviceIds: Array<number>;
 }): Promise<void> {
   const db = getInstance();
@@ -1009,11 +1051,11 @@ async function insertProtoRecipients({
       `
       INSERT INTO sendLogRecipients (
         payloadId,
-        recipientUuid,
+        recipientServiceId,
         deviceId
       ) VALUES (
         $id,
-        $recipientUuid,
+        $recipientServiceId,
         $deviceId
       );
       `
@@ -1022,7 +1064,7 @@ async function insertProtoRecipients({
     for (const deviceId of deviceIds) {
       statement.run({
         id,
-        recipientUuid,
+        recipientServiceId,
         deviceId,
       });
     }
@@ -1042,10 +1084,10 @@ async function deleteSentProtoRecipient(
   // returned row.
 
   return db.transaction(() => {
-    const successfulPhoneNumberShares = new Array<string>();
+    const successfulPhoneNumberShares = new Array<ServiceIdString>();
 
     for (const item of items) {
-      const { timestamp, recipientUuid, deviceId } = item;
+      const { timestamp, recipientServiceId, deviceId } = item;
 
       // 1. Figure out what payload we're talking about.
       const rows = prepare(
@@ -1057,10 +1099,10 @@ async function deleteSentProtoRecipient(
           ON sendLogRecipients.payloadId = sendLogPayloads.id
         WHERE
           sendLogPayloads.timestamp = $timestamp AND
-          sendLogRecipients.recipientUuid = $recipientUuid AND
+          sendLogRecipients.recipientServiceId = $recipientServiceId AND
           sendLogRecipients.deviceId = $deviceId;
        `
-      ).all({ timestamp, recipientUuid, deviceId });
+      ).all({ timestamp, recipientServiceId, deviceId });
       if (!rows.length) {
         continue;
       }
@@ -1080,30 +1122,30 @@ async function deleteSentProtoRecipient(
         DELETE FROM sendLogRecipients
         WHERE
           payloadId = $id AND
-          recipientUuid = $recipientUuid AND
+          recipientServiceId = $recipientServiceId AND
           deviceId = $deviceId;
         `
-      ).run({ id, recipientUuid, deviceId });
+      ).run({ id, recipientServiceId, deviceId });
 
       // 3. See how many more recipient devices there were for this payload.
       const remainingDevices = prepare(
         db,
         `
         SELECT count(1) FROM sendLogRecipients
-        WHERE payloadId = $id AND recipientUuid = $recipientUuid;
+        WHERE payloadId = $id AND recipientServiceId = $recipientServiceId;
         `,
         { pluck: true }
-      ).get({ id, recipientUuid });
+      ).get({ id, recipientServiceId });
 
       // 4. If there are no remaining devices for this recipient and we included
       //    the pni signature in the proto - return the recipient to the caller.
       if (remainingDevices === 0 && hasPniSignatureMessage) {
         logger.info(
           'deleteSentProtoRecipient: ' +
-            `Successfully shared phone number with ${recipientUuid} ` +
+            `Successfully shared phone number with ${recipientServiceId} ` +
             `through message ${timestamp}`
         );
-        successfulPhoneNumberShares.push(recipientUuid);
+        successfulPhoneNumberShares.push(recipientServiceId);
       }
 
       strictAssert(
@@ -1144,11 +1186,11 @@ async function deleteSentProtoRecipient(
 
 async function getSentProtoByRecipient({
   now,
-  recipientUuid,
+  recipientServiceId,
   timestamp,
 }: {
   now: number;
-  recipientUuid: string;
+  recipientServiceId: ServiceIdString;
   timestamp: number;
 }): Promise<SentProtoWithMessageIdsType | undefined> {
   const db = getInstance();
@@ -1169,12 +1211,12 @@ async function getSentProtoByRecipient({
     LEFT JOIN sendLogMessageIds ON sendLogMessageIds.payloadId = sendLogPayloads.id
     WHERE
       sendLogPayloads.timestamp = $timestamp AND
-      sendLogRecipients.recipientUuid = $recipientUuid
+      sendLogRecipients.recipientServiceId = $recipientServiceId
     GROUP BY sendLogPayloads.id;
     `
   ).get({
     timestamp,
-    recipientUuid,
+    recipientServiceId,
   });
 
   if (!row) {
@@ -1231,7 +1273,7 @@ async function _getAllSentProtoMessageIds(): Promise<Array<SentMessageDBType>> {
 const SESSIONS_TABLE = 'sessions';
 function createOrUpdateSessionSync(data: SessionType): void {
   const db = getInstance();
-  const { id, conversationId, ourUuid, uuid } = data;
+  const { id, conversationId, ourServiceId, serviceId } = data;
   if (!id) {
     throw new Error(
       'createOrUpdateSession: Provided data did not have a truthy id'
@@ -1249,22 +1291,22 @@ function createOrUpdateSessionSync(data: SessionType): void {
     INSERT OR REPLACE INTO sessions (
       id,
       conversationId,
-      ourUuid,
-      uuid,
+      ourServiceId,
+      serviceId,
       json
     ) values (
       $id,
       $conversationId,
-      $ourUuid,
-      $uuid,
+      $ourServiceId,
+      $serviceId,
       $json
     )
     `
   ).run({
     id,
     conversationId,
-    ourUuid,
-    uuid,
+    ourServiceId,
+    serviceId,
     json: objectToJSON(data),
   });
 }
@@ -1329,15 +1371,17 @@ async function removeSessionsByConversation(
     conversationId,
   });
 }
-async function removeSessionsByUUID(uuid: UUIDStringType): Promise<void> {
+async function removeSessionsByServiceId(
+  serviceId: ServiceIdString
+): Promise<void> {
   const db = getInstance();
   db.prepare<Query>(
     `
     DELETE FROM sessions
-    WHERE uuid = $uuid;
+    WHERE serviceId = $serviceId;
     `
   ).run({
-    uuid,
+    serviceId,
   });
 }
 async function removeAllSessions(): Promise<void> {
@@ -1354,7 +1398,7 @@ async function getConversationCount(): Promise<number> {
 
 function getConversationMembersList({ members, membersV2 }: ConversationType) {
   if (membersV2) {
-    return membersV2.map((item: GroupV2MemberType) => item.uuid).join(' ');
+    return membersV2.map((item: GroupV2MemberType) => item.aci).join(' ');
   }
   if (members) {
     return members.join(' ');
@@ -1376,7 +1420,7 @@ function saveConversationSync(
     profileName,
     profileLastFetchedAt,
     type,
-    uuid,
+    serviceId,
   } = data;
 
   const membersList = getConversationMembersList(data);
@@ -1388,7 +1432,7 @@ function saveConversationSync(
       json,
 
       e164,
-      uuid,
+      serviceId,
       groupId,
 
       active_at,
@@ -1404,7 +1448,7 @@ function saveConversationSync(
       $json,
 
       $e164,
-      $uuid,
+      $serviceId,
       $groupId,
 
       $active_at,
@@ -1424,7 +1468,7 @@ function saveConversationSync(
     ),
 
     e164: e164 || null,
-    uuid: uuid || null,
+    serviceId: serviceId || null,
     groupId: groupId || null,
 
     active_at: active_at || null,
@@ -1470,7 +1514,7 @@ function updateConversationSync(
     profileFamilyName,
     profileLastFetchedAt,
     e164,
-    uuid,
+    serviceId,
   } = data;
 
   const membersList = getConversationMembersList(data);
@@ -1481,7 +1525,7 @@ function updateConversationSync(
       json = $json,
 
       e164 = $e164,
-      uuid = $uuid,
+      serviceId = $serviceId,
 
       active_at = $active_at,
       type = $type,
@@ -1500,7 +1544,7 @@ function updateConversationSync(
     ),
 
     e164: e164 || null,
-    uuid: uuid || null,
+    serviceId: serviceId || null,
 
     active_at: active_at || null,
     type,
@@ -1579,18 +1623,6 @@ async function getConversationById(
   return jsonToObject(row.json);
 }
 
-async function eraseStorageServiceStateFromConversations(): Promise<void> {
-  const db = getInstance();
-
-  db.prepare<EmptyQuery>(
-    `
-    UPDATE conversations
-    SET
-      json = json_remove(json, '$.storageID', '$.needsStorageServiceSync', '$.unknownFields', '$.storageProfileKey');
-    `
-  ).run();
-}
-
 function getAllConversationsSync(db = getInstance()): Array<ConversationType> {
   const rows: ConversationRows = db
     .prepare<EmptyQuery>(
@@ -1622,8 +1654,8 @@ async function getAllConversationIds(): Promise<Array<string>> {
   return rows.map(row => row.id);
 }
 
-async function getAllGroupsInvolvingUuid(
-  uuid: UUIDStringType
+async function getAllGroupsInvolvingServiceId(
+  serviceId: ServiceIdString
 ): Promise<Array<ConversationType>> {
   const db = getInstance();
   const rows: ConversationRows = db
@@ -1632,12 +1664,12 @@ async function getAllGroupsInvolvingUuid(
       SELECT json, profileLastFetchedAt
       FROM conversations WHERE
         type = 'group' AND
-        members LIKE $uuid
+        members LIKE $serviceId
       ORDER BY id ASC;
       `
     )
     .all({
-      uuid: `%${uuid}%`,
+      serviceId: `%${serviceId}%`,
     });
 
   return rows.map(row => rowToConversation(row));
@@ -1647,12 +1679,12 @@ async function searchMessages({
   query,
   options,
   conversationId,
-  contactUuidsMatchingQuery,
+  contactServiceIdsMatchingQuery,
 }: {
   query: string;
   options?: { limit?: number };
   conversationId?: string;
-  contactUuidsMatchingQuery?: Array<string>;
+  contactServiceIdsMatchingQuery?: Array<ServiceIdString>;
 }): Promise<Array<ServerSearchResultMessageType>> {
   const { limit = conversationId ? 100 : 500 } = options ?? {};
 
@@ -1745,43 +1777,43 @@ async function searchMessages({
 
     let result: Array<ServerSearchResultMessageType>;
 
-    if (!contactUuidsMatchingQuery?.length) {
+    if (!contactServiceIdsMatchingQuery?.length) {
       const [sqlQuery, params] = sql`${ftsFragment};`;
       result = db.prepare(sqlQuery).all(params);
     } else {
-      // If contactUuidsMatchingQuery is not empty, we due an OUTER JOIN between:
-      // 1) the messages that mention at least one of contactUuidsMatchingQuery, and
+      // If contactServiceIdsMatchingQuery is not empty, we due an OUTER JOIN between:
+      // 1) the messages that mention at least one of contactServiceIdsMatchingQuery, and
       // 2) the messages that match all the search terms via FTS
       //
       // Note: this groups the results by rowid, so even if one message mentions multiple
       // matching UUIDs, we only return one to be highlighted
       const [sqlQuery, params] = sql`
-        SELECT 
+        SELECT
           messages.rowid as rowid,
-          COALESCE(messages.json, ftsResults.json) as json, 
+          COALESCE(messages.json, ftsResults.json) as json,
           COALESCE(messages.sent_at, ftsResults.sent_at) as sent_at,
           COALESCE(messages.received_at, ftsResults.received_at) as received_at,
-          ftsResults.ftsSnippet, 
-          mentionUuid, 
-          start as mentionStart, 
+          ftsResults.ftsSnippet,
+          mentionAci,
+          start as mentionStart,
           length as mentionLength
         FROM mentions
-        INNER JOIN messages 
-        ON 
-          messages.id = mentions.messageId 
-          AND mentions.mentionUuid IN (
-            ${sqlJoin(contactUuidsMatchingQuery, ', ')}
-          ) 
+        INNER JOIN messages
+        ON
+          messages.id = mentions.messageId
+          AND mentions.mentionAci IN (
+            ${sqlJoin(contactServiceIdsMatchingQuery, ', ')}
+          )
           AND ${
             conversationId
               ? sqlFragment`messages.conversationId = ${conversationId}`
               : '1 IS 1'
           }
-          AND messages.isViewOnce IS NOT 1 
+          AND messages.isViewOnce IS NOT 1
           AND messages.storyId IS NULL
         FULL OUTER JOIN (
           ${ftsFragment}
-        ) as ftsResults 
+        ) as ftsResults
         USING (rowid)
         GROUP BY rowid
         ORDER BY received_at DESC, sent_at DESC
@@ -1870,7 +1902,7 @@ function saveMessageSync(
     db?: Database;
     forceSave?: boolean;
     jobToInsert?: StoredJob;
-    ourUuid: UUIDStringType;
+    ourAci: AciString;
   }
 ): string {
   const {
@@ -1878,7 +1910,7 @@ function saveMessageSync(
     db = getInstance(),
     forceSave,
     jobToInsert,
-    ourUuid,
+    ourAci,
   } = options;
 
   if (!alreadyInTransaction) {
@@ -1908,7 +1940,7 @@ function saveMessageSync(
     sent_at,
     serverGuid,
     source,
-    sourceUuid,
+    sourceServiceId,
     sourceDevice,
     storyId,
     type,
@@ -1956,7 +1988,7 @@ function saveMessageSync(
     hasAttachments: hasAttachments ? 1 : 0,
     hasFileAttachments: hasFileAttachments ? 1 : 0,
     hasVisualMediaAttachments: hasVisualMediaAttachments ? 1 : 0,
-    isChangeCreatedByUs: groupV2Change?.from === ourUuid ? 1 : 0,
+    isChangeCreatedByUs: groupV2Change?.from === ourAci ? 1 : 0,
     isErased: isErased ? 1 : 0,
     isViewOnce: isViewOnce ? 1 : 0,
     mentionsMe: mentionsMe ? 1 : 0,
@@ -1965,7 +1997,7 @@ function saveMessageSync(
     serverGuid: serverGuid || null,
     sent_at: sent_at || null,
     source: source || null,
-    sourceUuid: sourceUuid || null,
+    sourceServiceId: sourceServiceId || null,
     sourceDevice: sourceDevice || null,
     storyId: storyId || null,
     type: type || null,
@@ -1997,7 +2029,7 @@ function saveMessageSync(
         serverGuid = $serverGuid,
         sent_at = $sent_at,
         source = $source,
-        sourceUuid = $sourceUuid,
+        sourceServiceId = $sourceServiceId,
         sourceDevice = $sourceDevice,
         storyId = $storyId,
         type = $type,
@@ -2016,7 +2048,7 @@ function saveMessageSync(
 
   const toCreate = {
     ...data,
-    id: id || UUID.generate().toString(),
+    id: id || generateUuid(),
   };
 
   prepare(
@@ -2042,7 +2074,7 @@ function saveMessageSync(
       serverGuid,
       sent_at,
       source,
-      sourceUuid,
+      sourceServiceId,
       sourceDevice,
       storyId,
       type,
@@ -2068,7 +2100,7 @@ function saveMessageSync(
       $serverGuid,
       $sent_at,
       $source,
-      $sourceUuid,
+      $sourceServiceId,
       $sourceDevice,
       $storyId,
       $type,
@@ -2095,7 +2127,7 @@ async function saveMessage(
     jobToInsert?: StoredJob;
     forceSave?: boolean;
     alreadyInTransaction?: boolean;
-    ourUuid: UUIDStringType;
+    ourAci: AciString;
   }
 ): Promise<string> {
   return saveMessageSync(data, options);
@@ -2103,7 +2135,7 @@ async function saveMessage(
 
 async function saveMessages(
   arrayOfMessages: ReadonlyArray<MessageType>,
-  options: { forceSave?: boolean; ourUuid: UUIDStringType }
+  options: { forceSave?: boolean; ourAci: AciString }
 ): Promise<void> {
   const db = getInstance();
 
@@ -2206,12 +2238,12 @@ async function getAllMessageIds(): Promise<Array<string>> {
 
 async function getMessageBySender({
   source,
-  sourceUuid,
+  sourceServiceId,
   sourceDevice,
   sent_at,
 }: {
   source?: string;
-  sourceUuid?: UUIDStringType;
+  sourceServiceId?: ServiceIdString;
   sourceDevice?: number;
   sent_at: number;
 }): Promise<MessageType | undefined> {
@@ -2220,14 +2252,14 @@ async function getMessageBySender({
     db,
     `
     SELECT json FROM messages WHERE
-      (source = $source OR sourceUuid = $sourceUuid) AND
+      (source = $source OR sourceServiceId = $sourceServiceId) AND
       sourceDevice = $sourceDevice AND
       sent_at = $sent_at
     LIMIT 2;
     `
   ).all({
     source: source || null,
-    sourceUuid: sourceUuid || null,
+    sourceServiceId: sourceServiceId || null,
     sourceDevice: sourceDevice || null,
     sent_at,
   });
@@ -2236,7 +2268,7 @@ async function getMessageBySender({
     log.warn('getMessageBySender: More than one message found for', {
       sent_at,
       source,
-      sourceUuid,
+      sourceServiceId,
       sourceDevice,
     });
   }
@@ -2351,7 +2383,7 @@ async function getUnreadByConversationAndMarkRead({
           'id',
           'sent_at',
           'source',
-          'sourceUuid',
+          'sourceServiceId',
           'type',
         ]),
       };
@@ -2374,7 +2406,7 @@ async function getUnreadReactionsAndMarkRead({
     const unreadMessages: Array<ReactionResultType> = db
       .prepare<Query>(
         `
-        SELECT reactions.rowid, targetAuthorUuid, targetTimestamp, messageId
+        SELECT reactions.rowid, targetAuthorAci, targetTimestamp, messageId
         FROM reactions
         INDEXED BY reactions_unread
         JOIN messages on messages.id IS reactions.messageId
@@ -2408,7 +2440,7 @@ async function getUnreadReactionsAndMarkRead({
 }
 
 async function markReactionAsRead(
-  targetAuthorUuid: string,
+  targetAuthorServiceId: ServiceIdString,
   targetTimestamp: number
 ): Promise<ReactionType | undefined> {
   const db = getInstance();
@@ -2419,7 +2451,7 @@ async function markReactionAsRead(
           SELECT *
           FROM reactions
           WHERE
-            targetAuthorUuid = $targetAuthorUuid AND
+            targetAuthorAci = $targetAuthorAci AND
             targetTimestamp = $targetTimestamp AND
             unread = 1
           ORDER BY rowId DESC
@@ -2427,7 +2459,7 @@ async function markReactionAsRead(
         `
       )
       .get({
-        targetAuthorUuid,
+        targetAuthorAci: targetAuthorServiceId,
         targetTimestamp,
       });
 
@@ -2435,11 +2467,11 @@ async function markReactionAsRead(
       `
         UPDATE reactions SET
         unread = 0 WHERE
-        targetAuthorUuid = $targetAuthorUuid AND
+        targetAuthorAci = $targetAuthorAci AND
         targetTimestamp = $targetTimestamp;
       `
     ).run({
-      targetAuthorUuid,
+      targetAuthorAci: targetAuthorServiceId,
       targetTimestamp,
     });
 
@@ -2453,7 +2485,7 @@ async function addReaction({
   fromId,
   messageId,
   messageReceivedAt,
-  targetAuthorUuid,
+  targetAuthorAci,
   targetTimestamp,
 }: ReactionType): Promise<void> {
   const db = getInstance();
@@ -2465,7 +2497,7 @@ async function addReaction({
       fromId,
       messageId,
       messageReceivedAt,
-      targetAuthorUuid,
+      targetAuthorAci,
       targetTimestamp,
       unread
     ) VALUES (
@@ -2474,7 +2506,7 @@ async function addReaction({
       $fromId,
       $messageId,
       $messageReceivedAt,
-      $targetAuthorUuid,
+      $targetAuthorAci,
       $targetTimestamp,
       $unread
     );`
@@ -2485,7 +2517,7 @@ async function addReaction({
       fromId,
       messageId,
       messageReceivedAt,
-      targetAuthorUuid,
+      targetAuthorAci,
       targetTimestamp,
       unread: 1,
     });
@@ -2494,12 +2526,12 @@ async function addReaction({
 async function removeReactionFromConversation({
   emoji,
   fromId,
-  targetAuthorUuid,
+  targetAuthorServiceId,
   targetTimestamp,
 }: {
   emoji: string;
   fromId: string;
-  targetAuthorUuid: string;
+  targetAuthorServiceId: ServiceIdString;
   targetTimestamp: number;
 }): Promise<void> {
   const db = getInstance();
@@ -2508,13 +2540,13 @@ async function removeReactionFromConversation({
       `DELETE FROM reactions WHERE
       emoji = $emoji AND
       fromId = $fromId AND
-      targetAuthorUuid = $targetAuthorUuid AND
+      targetAuthorAci = $targetAuthorAci AND
       targetTimestamp = $targetTimestamp;`
     )
     .run({
       emoji,
       fromId,
-      targetAuthorUuid,
+      targetAuthorAci: targetAuthorServiceId,
       targetTimestamp,
     });
 }
@@ -2684,10 +2716,10 @@ async function getOlderMessagesByConversation(
 
 async function getAllStories({
   conversationId,
-  sourceUuid,
+  sourceServiceId,
 }: {
   conversationId?: string;
-  sourceUuid?: UUIDStringType;
+  sourceServiceId?: ServiceIdString;
 }): Promise<GetAllStoriesResultType> {
   const db = getInstance();
   const rows: ReadonlyArray<{
@@ -2715,13 +2747,13 @@ async function getAllStories({
       WHERE
         type IS 'story' AND
         ($conversationId IS NULL OR conversationId IS $conversationId) AND
-        ($sourceUuid IS NULL OR sourceUuid IS $sourceUuid)
+        ($sourceServiceId IS NULL OR sourceServiceId IS $sourceServiceId)
       ORDER BY received_at ASC, sent_at ASC;
       `
     )
     .all({
       conversationId: conversationId || null,
-      sourceUuid: sourceUuid || null,
+      sourceServiceId: sourceServiceId || null,
     });
 
   return rows.map(row => ({
@@ -2888,11 +2920,9 @@ async function getNearbyMessageFromDeletedSet({
 function getLastConversationActivity({
   conversationId,
   includeStoryReplies,
-  ourUuid,
 }: {
   conversationId: string;
   includeStoryReplies: boolean;
-  ourUuid: UUIDStringType;
 }): MessageType | undefined {
   const db = getInstance();
   const row = prepare(
@@ -2911,7 +2941,6 @@ function getLastConversationActivity({
       `
   ).get({
     conversationId,
-    ourUuid,
   });
 
   if (!row) {
@@ -2964,11 +2993,9 @@ function getLastConversationPreview({
 async function getConversationMessageStats({
   conversationId,
   includeStoryReplies,
-  ourUuid,
 }: {
   conversationId: string;
   includeStoryReplies: boolean;
-  ourUuid: UUIDStringType;
 }): Promise<ConversationMessageStatsType> {
   const db = getInstance();
 
@@ -2977,7 +3004,6 @@ async function getConversationMessageStats({
       activity: getLastConversationActivity({
         conversationId,
         includeStoryReplies,
-        ourUuid,
       }),
       preview: getLastConversationPreview({
         conversationId,
@@ -3225,30 +3251,429 @@ async function getConversationRangeCenteredOnMessage(
   })();
 }
 
-async function getCallHistoryMessageByCallId(
-  conversationId: string,
-  callId: string
-): Promise<string | void> {
+async function getAllCallHistory(): Promise<ReadonlyArray<CallHistoryDetails>> {
+  const db = getInstance();
+  const [query] = sql`
+    SELECT * FROM callsHistory;
+  `;
+  return db.prepare(query).all();
+}
+
+async function clearCallHistory(
+  beforeTimestamp: number
+): Promise<Array<string>> {
+  const db = getInstance();
+  return db.transaction(() => {
+    const whereMessages = sqlFragment`
+      WHERE messages.type IS 'call-history'
+      AND messages.sent_at <= ${beforeTimestamp};
+    `;
+
+    const [selectMessagesQuery, selectMessagesParams] = sql`
+      SELECT id FROM messages ${whereMessages}
+    `;
+    const [clearMessagesQuery, clearMessagesParams] = sql`
+      DELETE FROM messages ${whereMessages}
+    `;
+    const [clearCallsHistoryQuery, clearCallsHistoryParams] = sql`
+      UPDATE callsHistory
+      SET
+        status = ${DirectCallStatus.Deleted},
+        timestamp = ${Date.now()}
+      WHERE callsHistory.timestamp <= ${beforeTimestamp};
+    `;
+
+    const messageIds = db
+      .prepare(selectMessagesQuery)
+      .pluck()
+      .all(selectMessagesParams);
+    db.prepare(clearMessagesQuery).run(clearMessagesParams);
+    try {
+      db.prepare(clearCallsHistoryQuery).run(clearCallsHistoryParams);
+    } catch (error) {
+      logger.error(error, error.message);
+      throw error;
+    }
+
+    return messageIds;
+  })();
+}
+
+async function getCallHistoryMessageByCallId(options: {
+  conversationId: string;
+  callId: string;
+}): Promise<MessageType | undefined> {
+  const db = getInstance();
+  const [query, params] = sql`
+    SELECT json
+    FROM messages
+    WHERE conversationId = ${options.conversationId}
+      AND type = 'call-history'
+      AND callId = ${options.callId}
+  `;
+  const row = db.prepare(query).get(params);
+  if (row == null) {
+    return;
+  }
+  return jsonToObject(row.json);
+}
+
+async function getCallHistory(
+  callId: string,
+  peerId: ServiceIdString | string
+): Promise<CallHistoryDetails | undefined> {
   const db = getInstance();
 
-  const id: string | void = db
-    .prepare<Query>(
-      `
-      SELECT id
-      FROM messages
-      WHERE conversationId = $conversationId
-        AND type = 'call-history'
-        AND callMode = 'Direct'
-        AND callId = $callId
-    `
-    )
-    .pluck()
-    .get({
-      conversationId,
-      callId,
-    });
+  const [query, params] = sql`
+    SELECT * FROM callsHistory
+    WHERE callId IS ${callId}
+    AND peerId IS ${peerId};
+  `;
 
-  return id;
+  const row = db.prepare(query).get(params);
+
+  if (row == null) {
+    return;
+  }
+
+  return callHistoryDetailsSchema.parse(row);
+}
+
+const READ_STATUS_UNREAD = sqlConstant(ReadStatus.Unread);
+const READ_STATUS_READ = sqlConstant(ReadStatus.Read);
+const CALL_STATUS_MISSED = sqlConstant(DirectCallStatus.Missed);
+const CALL_STATUS_DELETED = sqlConstant(DirectCallStatus.Deleted);
+const CALL_STATUS_INCOMING = sqlConstant(CallDirection.Incoming);
+const FOUR_HOURS_IN_MS = sqlConstant(4 * 60 * 60 * 1000);
+
+async function getCallHistoryUnreadCount(): Promise<number> {
+  const db = getInstance();
+  const [query, params] = sql`
+    SELECT count(*) FROM messages
+    LEFT JOIN callsHistory ON callsHistory.callId = messages.callId
+    WHERE messages.type IS 'call-history'
+      AND messages.readStatus IS ${READ_STATUS_UNREAD}
+      AND callsHistory.status IS ${CALL_STATUS_MISSED}
+      AND callsHistory.direction IS ${CALL_STATUS_INCOMING}
+  `;
+  const row = db.prepare(query).pluck().get(params);
+  return row;
+}
+
+async function markCallHistoryRead(callId: string): Promise<void> {
+  const db = getInstance();
+  const [query, params] = sql`
+    UPDATE messages
+    SET readStatus = ${READ_STATUS_READ}
+    WHERE type IS 'call-history'
+    AND callId IS ${callId}
+  `;
+  db.prepare(query).run(params);
+}
+
+async function markAllCallHistoryRead(): Promise<ReadonlyArray<string>> {
+  const db = getInstance();
+
+  return db.transaction(() => {
+    const where = sqlFragment`
+      WHERE messages.type IS 'call-history'
+        AND messages.readStatus IS ${READ_STATUS_UNREAD}
+    `;
+
+    const [selectQuery, selectParams] = sql`
+      SELECT DISTINCT conversationId
+      FROM messages
+      ${where};
+    `;
+
+    const conversationIds = db.prepare(selectQuery).pluck().all(selectParams);
+
+    const [updateQuery, updateParams] = sql`
+      UPDATE messages
+      SET readStatus = ${READ_STATUS_READ}
+      ${where};
+    `;
+
+    db.prepare(updateQuery).run(updateParams);
+
+    return conversationIds;
+  })();
+}
+
+function getCallHistoryGroupDataSync(
+  db: Database,
+  isCount: boolean,
+  filter: CallHistoryFilter,
+  pagination: CallHistoryPagination
+): unknown {
+  return db.transaction(() => {
+    const { limit, offset } = pagination;
+    const { status, conversationIds } = filter;
+
+    if (conversationIds != null) {
+      strictAssert(conversationIds.length > 0, "can't filter by empty array");
+
+      const [createTempTable] = sql`
+        CREATE TEMP TABLE temp_callHistory_filtered_conversations (
+          id TEXT,
+          serviceId TEXT,
+          groupId TEXT
+        );
+      `;
+
+      db.exec(createTempTable);
+
+      batchMultiVarQuery(db, conversationIds, ids => {
+        const idList = sqlJoin(
+          ids.map(id => sqlFragment`${id}`),
+          ','
+        );
+
+        const [insertQuery, insertParams] = sql`
+          INSERT INTO temp_callHistory_filtered_conversations
+            (id, serviceId, groupId)
+          SELECT id, serviceId, groupId
+          FROM conversations
+          WHERE conversations.id IN (${idList});
+        `;
+
+        db.prepare(insertQuery).run(insertParams);
+      });
+    }
+
+    const innerJoin =
+      conversationIds != null
+        ? // peerId can be a conversation id (legacy), a serviceId, or a groupId
+          sqlFragment`
+            INNER JOIN temp_callHistory_filtered_conversations ON (
+              temp_callHistory_filtered_conversations.id IS c.peerId
+              OR temp_callHistory_filtered_conversations.serviceId IS c.peerId
+              OR temp_callHistory_filtered_conversations.groupId IS c.peerId
+            )
+          `
+        : sqlFragment``;
+
+    const filterClause =
+      status === CallHistoryFilterStatus.All
+        ? sqlFragment`status IS NOT ${CALL_STATUS_DELETED}`
+        : sqlFragment`
+            direction IS ${CALL_STATUS_INCOMING} AND
+            status IS ${CALL_STATUS_MISSED} AND status IS NOT ${CALL_STATUS_DELETED}
+          `;
+
+    const offsetLimit =
+      limit > 0 ? sqlFragment`LIMIT ${limit} OFFSET ${offset}` : sqlFragment``;
+
+    const projection = isCount
+      ? sqlFragment`COUNT(*) AS count`
+      : sqlFragment`peerId, ringerId, mode, type, direction, status, timestamp, possibleChildren, inPeriod`;
+
+    const [query, params] = sql`
+      SELECT
+        ${projection}
+      FROM (
+        -- 1. 'callAndGroupInfo': This section collects metadata to determine the
+        -- parent and children of each call. We can identify the real parents of calls
+        -- within the query, but we need to build the children at runtime.
+        WITH callAndGroupInfo AS (
+          SELECT
+            *,
+            -- 1a. 'possibleParent': This identifies the first call that _could_ be
+            -- considered the current call's parent. Note: The 'possibleParent' is not
+            -- necessarily the true parent if there is another call between them that
+            -- isn't a part of the group.
+            (
+              SELECT callId
+              FROM callsHistory
+              WHERE
+                callsHistory.direction IS c.direction
+                AND callsHistory.type IS c.type
+                AND callsHistory.peerId IS c.peerId
+                AND (callsHistory.timestamp - ${FOUR_HOURS_IN_MS}) <= c.timestamp
+                AND callsHistory.timestamp >= c.timestamp
+                -- Tracking Android & Desktop separately to make the queries easier to compare
+                -- Android Constraints:
+                AND (
+                  (callsHistory.status IS c.status AND callsHistory.status IS ${CALL_STATUS_MISSED}) OR
+                  (callsHistory.status IS NOT ${CALL_STATUS_MISSED} AND c.status IS NOT ${CALL_STATUS_MISSED})
+                )
+                -- Desktop Constraints:
+                AND callsHistory.status IS c.status
+                AND ${filterClause}
+              ORDER BY timestamp DESC
+            ) as possibleParent,
+            -- 1b. 'possibleChildren': This identifies all possible calls that can
+            -- be grouped with the current call. Note: This current call is not
+            -- necessarily the parent, and not all possible children will end up as
+            -- children as they might have another parent
+            (
+              SELECT JSON_GROUP_ARRAY(
+                JSON_OBJECT(
+                  'callId', callId,
+                  'timestamp', timestamp
+                )
+              )
+              FROM callsHistory
+              WHERE
+                callsHistory.direction IS c.direction
+                AND callsHistory.type IS c.type
+                AND callsHistory.peerId IS c.peerId
+                AND (c.timestamp - ${FOUR_HOURS_IN_MS}) <= callsHistory.timestamp
+                AND c.timestamp >= callsHistory.timestamp
+                -- Tracking Android & Desktop separately to make the queries easier to compare
+                -- Android Constraints:
+                AND (
+                  (callsHistory.status IS c.status AND callsHistory.status IS ${CALL_STATUS_MISSED}) OR
+                  (callsHistory.status IS NOT ${CALL_STATUS_MISSED} AND c.status IS NOT ${CALL_STATUS_MISSED})
+                )
+                -- Desktop Constraints:
+                AND callsHistory.status IS c.status
+                AND ${filterClause}
+              ORDER BY timestamp DESC
+            ) as possibleChildren,
+
+            -- 1c. 'inPeriod': This identifies all calls in a time period after the
+            -- current call. They may or may not be a part of the group.
+            (
+              SELECT GROUP_CONCAT(callId)
+              FROM callsHistory
+              WHERE
+                (c.timestamp - ${FOUR_HOURS_IN_MS}) <= callsHistory.timestamp
+                AND c.timestamp >= callsHistory.timestamp
+                AND ${filterClause}
+            ) AS inPeriod
+          FROM callsHistory AS c
+          ${innerJoin}
+          WHERE
+            ${filterClause}
+          ORDER BY timestamp DESC
+        )
+        -- 2. 'isParent': We need to identify the true parent of the group in cases
+        -- where the previous call is not a part of the group.
+        SELECT
+          *,
+          CASE
+            WHEN LAG (possibleParent, 1, 0) OVER (
+              -- Note: This is an optimization assuming that we've already got 'timestamp DESC' ordering
+              -- from the query above. If we find that ordering isn't always correct, we can uncomment this:
+              -- ORDER BY timestamp DESC
+            ) != possibleParent THEN callId
+            ELSE possibleParent
+          END AS parent
+        FROM callAndGroupInfo
+      ) AS parentCallAndGroupInfo
+      WHERE parent = parentCallAndGroupInfo.callId
+      ORDER BY parentCallAndGroupInfo.timestamp DESC
+      ${offsetLimit};
+    `;
+
+    const result = isCount
+      ? db.prepare(query).pluck(true).get(params)
+      : db.prepare(query).all(params);
+
+    if (conversationIds != null) {
+      const [dropTempTableQuery] = sql`
+        DROP TABLE temp_callHistory_filtered_conversations;
+      `;
+
+      db.exec(dropTempTableQuery);
+    }
+
+    return result;
+  })();
+}
+
+const countSchema = z.number().int().nonnegative();
+
+async function getCallHistoryGroupsCount(
+  filter: CallHistoryFilter
+): Promise<number> {
+  const db = getInstance();
+  const result = getCallHistoryGroupDataSync(db, true, filter, {
+    limit: 0,
+    offset: 0,
+  });
+  return countSchema.parse(result);
+}
+
+const groupsDataSchema = z.array(
+  callHistoryGroupSchema.omit({ children: true }).extend({
+    possibleChildren: z.string(),
+    inPeriod: z.string(),
+  })
+);
+
+const possibleChildrenSchema = z.array(
+  callHistoryDetailsSchema.pick({
+    callId: true,
+    timestamp: true,
+  })
+);
+
+async function getCallHistoryGroups(
+  filter: CallHistoryFilter,
+  pagination: CallHistoryPagination
+): Promise<Array<CallHistoryGroup>> {
+  const db = getInstance();
+  const groupsData = groupsDataSchema.parse(
+    getCallHistoryGroupDataSync(db, false, filter, pagination)
+  );
+
+  const taken = new Set<string>();
+
+  return groupsData
+    .map(groupData => {
+      return {
+        ...groupData,
+        possibleChildren: possibleChildrenSchema.parse(
+          JSON.parse(groupData.possibleChildren)
+        ),
+        inPeriod: new Set(groupData.inPeriod.split(',')),
+      };
+    })
+    .reverse()
+    .map(group => {
+      const { possibleChildren, inPeriod, ...rest } = group;
+      const children = [];
+
+      for (const child of possibleChildren) {
+        if (!taken.has(child.callId) && inPeriod.has(child.callId)) {
+          children.push(child);
+          taken.add(child.callId);
+        }
+      }
+
+      return callHistoryGroupSchema.parse({ ...rest, children });
+    })
+    .reverse();
+}
+
+async function saveCallHistory(callHistory: CallHistoryDetails): Promise<void> {
+  const db = getInstance();
+
+  const [insertQuery, insertParams] = sql`
+    INSERT OR REPLACE INTO callsHistory (
+      callId,
+      peerId,
+      ringerId,
+      mode,
+      type,
+      direction,
+      status,
+      timestamp
+    ) VALUES (
+      ${callHistory.callId},
+      ${callHistory.peerId},
+      ${callHistory.ringerId},
+      ${callHistory.mode},
+      ${callHistory.type},
+      ${callHistory.direction},
+      ${callHistory.status},
+      ${callHistory.timestamp}
+    );
+  `;
+
+  db.prepare(insertQuery).run(insertParams);
 }
 
 async function hasGroupCallHistoryMessage(
@@ -3469,7 +3894,7 @@ function saveUnprocessedSync(data: UnprocessedType): string {
     attempts,
     envelope,
     source,
-    sourceUuid,
+    sourceServiceId,
     sourceDevice,
     serverGuid,
     serverTimestamp,
@@ -3492,7 +3917,7 @@ function saveUnprocessedSync(data: UnprocessedType): string {
       attempts,
       envelope,
       source,
-      sourceUuid,
+      sourceServiceId,
       sourceDevice,
       serverGuid,
       serverTimestamp,
@@ -3507,7 +3932,7 @@ function saveUnprocessedSync(data: UnprocessedType): string {
       $attempts,
       $envelope,
       $source,
-      $sourceUuid,
+      $sourceServiceId,
       $sourceDevice,
       $serverGuid,
       $serverTimestamp,
@@ -3524,7 +3949,7 @@ function saveUnprocessedSync(data: UnprocessedType): string {
     attempts,
     envelope: envelope || null,
     source: source || null,
-    sourceUuid: sourceUuid || null,
+    sourceServiceId: sourceServiceId || null,
     sourceDevice: sourceDevice || null,
     serverGuid: serverGuid || null,
     serverTimestamp: serverTimestamp || null,
@@ -3543,7 +3968,7 @@ function updateUnprocessedWithDataSync(
   const db = getInstance();
   const {
     source,
-    sourceUuid,
+    sourceServiceId,
     sourceDevice,
     serverGuid,
     serverTimestamp,
@@ -3555,7 +3980,7 @@ function updateUnprocessedWithDataSync(
     `
     UPDATE unprocessed SET
       source = $source,
-      sourceUuid = $sourceUuid,
+      sourceServiceId = $sourceServiceId,
       sourceDevice = $sourceDevice,
       serverGuid = $serverGuid,
       serverTimestamp = $serverTimestamp,
@@ -3565,7 +3990,7 @@ function updateUnprocessedWithDataSync(
   ).run({
     id,
     source: source || null,
-    sourceUuid: sourceUuid || null,
+    sourceServiceId: sourceServiceId || null,
     sourceDevice: sourceDevice || null,
     serverGuid: serverGuid || null,
     serverTimestamp: serverTimestamp || null,
@@ -4858,18 +5283,18 @@ async function createNewStoryDistribution(
       `
       INSERT OR REPLACE INTO storyDistributionMembers (
         listId,
-        uuid
+        serviceId
       ) VALUES (
         $listId,
-        $uuid
+        $serviceId
       );
       `
     );
 
-    for (const uuid of members) {
+    for (const serviceId of members) {
       memberInsertStatement.run({
         listId,
-        uuid,
+        serviceId,
       });
     }
   })();
@@ -4884,7 +5309,7 @@ async function getAllStoryDistributionsWithMembers(): Promise<
 
   return allDistributions.map(list => ({
     ...list,
-    members: (byListId[list.id] || []).map(member => member.uuid),
+    members: (byListId[list.id] || []).map(member => member.serviceId),
   }));
 }
 async function getStoryDistributionWithMembers(
@@ -4911,7 +5336,7 @@ async function getStoryDistributionWithMembers(
 
   return {
     ...hydrateStoryDistribution(storyDistribution),
-    members: members.map(({ uuid }) => uuid),
+    members: members.map(({ serviceId }) => serviceId),
   };
 }
 function modifyStoryDistributionSync(
@@ -4954,43 +5379,47 @@ function modifyStoryDistributionMembersSync(
   {
     toAdd,
     toRemove,
-  }: { toAdd: Array<UUIDStringType>; toRemove: Array<UUIDStringType> }
+  }: { toAdd: Array<ServiceIdString>; toRemove: Array<ServiceIdString> }
 ) {
   const memberInsertStatement = prepare(
     db,
     `
     INSERT OR REPLACE INTO storyDistributionMembers (
       listId,
-      uuid
+      serviceId
     ) VALUES (
       $listId,
-      $uuid
+      $serviceId
     );
     `
   );
 
-  for (const uuid of toAdd) {
+  for (const serviceId of toAdd) {
     memberInsertStatement.run({
       listId,
-      uuid,
+      serviceId,
     });
   }
 
-  batchMultiVarQuery(db, toRemove, (uuids: ReadonlyArray<UUIDStringType>) => {
-    db.prepare<ArrayQuery>(
-      `
-      DELETE FROM storyDistributionMembers
-      WHERE listId = ? AND uuid IN ( ${uuids.map(() => '?').join(', ')} );
-      `
-    ).run([listId, ...uuids]);
-  });
+  batchMultiVarQuery(
+    db,
+    toRemove,
+    (serviceIds: ReadonlyArray<ServiceIdString>) => {
+      const serviceIdSet = sqlJoin(serviceIds, '?');
+      const [sqlQuery, sqlParams] = sql`
+        DELETE FROM storyDistributionMembers
+        WHERE listId = ${listId} AND serviceId IN (${serviceIdSet});
+      `;
+      db.prepare(sqlQuery).run(sqlParams);
+    }
+  );
 }
 async function modifyStoryDistributionWithMembers(
   distribution: StoryDistributionType,
   {
     toAdd,
     toRemove,
-  }: { toAdd: Array<UUIDStringType>; toRemove: Array<UUIDStringType> }
+  }: { toAdd: Array<ServiceIdString>; toRemove: Array<ServiceIdString> }
 ): Promise<void> {
   const payload = freezeStoryDistribution(distribution);
   const db = getInstance();
@@ -5016,7 +5445,7 @@ async function modifyStoryDistributionMembers(
   {
     toAdd,
     toRemove,
-  }: { toAdd: Array<UUIDStringType>; toRemove: Array<UUIDStringType> }
+  }: { toAdd: Array<ServiceIdString>; toRemove: Array<ServiceIdString> }
 ): Promise<void> {
   const db = getInstance();
 
@@ -5024,7 +5453,9 @@ async function modifyStoryDistributionMembers(
     modifyStoryDistributionMembersSync(db, listId, { toAdd, toRemove });
   })();
 }
-async function deleteStoryDistribution(id: UUIDStringType): Promise<void> {
+async function deleteStoryDistribution(
+  id: StoryDistributionIdString
+): Promise<void> {
   const db = getInstance();
   db.prepare<Query>('DELETE FROM storyDistributions WHERE id = $id;').run({
     id,
@@ -5064,8 +5495,8 @@ async function getLastStoryReadsForAuthor({
   conversationId,
   limit: initialLimit,
 }: {
-  authorId: UUIDStringType;
-  conversationId?: UUIDStringType;
+  authorId: ServiceIdString;
+  conversationId?: string;
   limit?: number;
 }): Promise<Array<StoryReadType>> {
   const limit = initialLimit || 5;
@@ -5110,9 +5541,13 @@ async function removeAll(): Promise<void> {
 
   db.transaction(() => {
     db.exec(`
+      --- Remove messages delete trigger for performance
+      DROP   TRIGGER messages_on_delete;
+
       DELETE FROM attachment_downloads;
       DELETE FROM badgeImageFiles;
       DELETE FROM badges;
+      DELETE FROM callsHistory;
       DELETE FROM conversations;
       DELETE FROM emojis;
       DELETE FROM groupCallRingCancellations;
@@ -5140,6 +5575,21 @@ async function removeAll(): Promise<void> {
       DELETE FROM uninstalled_sticker_packs;
 
       INSERT INTO messages_fts(messages_fts) VALUES('optimize');
+
+      --- Re-create the messages delete trigger
+      --- See migration 45
+      CREATE TRIGGER messages_on_delete AFTER DELETE ON messages BEGIN
+        DELETE FROM messages_fts WHERE rowid = old.rowid;
+        DELETE FROM sendLogPayloads WHERE id IN (
+          SELECT payloadId FROM sendLogMessageIds
+          WHERE messageId = old.id
+        );
+        DELETE FROM reactions WHERE rowid IN (
+          SELECT rowid FROM reactions
+          WHERE messageId = old.id
+        );
+        DELETE FROM storyReads WHERE storyId = old.storyId;
+      END;
     `);
   })();
 }
@@ -5193,6 +5643,40 @@ async function removeAllConfiguration(
       "UPDATE conversations SET json = json_remove(json, '$.senderKeyInfo');"
     );
   })();
+}
+
+async function eraseStorageServiceState(): Promise<void> {
+  const db = getInstance();
+
+  db.exec(`
+    -- Conversations
+    UPDATE conversations
+    SET
+      json = json_remove(json, '$.storageID', '$.needsStorageServiceSync', '$.storageUnknownFields');
+
+    -- Stickers
+    UPDATE sticker_packs
+    SET
+      storageID = null,
+      storageVersion = null,
+      storageUnknownFields = null,
+      storageNeedsSync = 0;
+
+    UPDATE uninstalled_sticker_packs
+    SET
+      storageID = null,
+      storageVersion = null,
+      storageUnknownFields = null,
+      storageNeedsSync = 0;
+
+    -- Story Distribution Lists
+    UPDATE storyDistributions
+    SET
+      storageID = null,
+      storageVersion = null,
+      storageUnknownFields = null,
+      storageNeedsSync = 0;
+  `);
 }
 
 const MAX_MESSAGE_MIGRATION_ATTEMPTS = 5;
@@ -5891,7 +6375,7 @@ async function removeAllProfileKeyCredentials(): Promise<void> {
 
 async function saveEditedMessage(
   mainMessage: MessageType,
-  ourUuid: UUIDStringType,
+  ourAci: AciString,
   { conversationId, messageId, readStatus, sentAt }: EditedMessageType
 ): Promise<void> {
   const db = getInstance();
@@ -5899,7 +6383,7 @@ async function saveEditedMessage(
   db.transaction(() => {
     assertSync(
       saveMessageSync(mainMessage, {
-        ourUuid,
+        ourAci,
         alreadyInTransaction: true,
       })
     );
@@ -5991,7 +6475,7 @@ async function getUnreadEditedMessagesAndMarkRead({
           'id',
           'sent_at',
           'source',
-          'sourceUuid',
+          'sourceServiceId',
           'type',
         ]),
         // Use the edited message timestamp

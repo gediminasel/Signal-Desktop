@@ -16,6 +16,7 @@ import { ReadStatus } from '../messages/MessageReadStatus';
 import dataInterface from '../sql/Client';
 import { drop } from './drop';
 import { getAttachmentSignature, isVoiceMessage } from '../types/Attachment';
+import { isAciString } from '../types/ServiceId';
 import { getMessageIdForLogging } from './idForLogging';
 import { hasErrors } from '../state/selectors/message';
 import { isIncoming, isOutgoing } from '../messages/helpers';
@@ -44,6 +45,15 @@ export async function handleEditMessage(
   }
 
   log.info(idLog);
+
+  // Use local aci for outgoing messages and sourceServiceId for incoming.
+  const senderAci = isOutgoing(mainMessage)
+    ? window.storage.user.getCheckedAci()
+    : mainMessage.sourceServiceId;
+  if (!isAciString(senderAci)) {
+    log.warn(`${idLog}: Cannot edit a message from PNI source`);
+    return;
+  }
 
   // Verify that we can safely apply an edit to this type of message
   if (mainMessage.deletedForEveryone) {
@@ -74,9 +84,9 @@ export async function handleEditMessage(
   if (
     serverTimestamp &&
     !isNoteToSelf &&
-    isOlderThan(serverTimestamp, durations.DAY)
+    isOlderThan(serverTimestamp, durations.DAY * 2)
   ) {
-    log.warn(`${idLog}: cannot edit message older than 24h`, serverTimestamp);
+    log.warn(`${idLog}: cannot edit message older than 48h`, serverTimestamp);
     return;
   }
 
@@ -94,6 +104,7 @@ export async function handleEditMessage(
       bodyRanges: mainMessage.bodyRanges,
       preview: mainMessage.preview,
       quote: mainMessage.quote,
+      sendStateByConversationId: { ...mainMessage.sendStateByConversationId },
       timestamp: mainMessage.timestamp,
     },
   ];
@@ -224,6 +235,8 @@ export async function handleEditMessage(
     body: upgradedEditedMessageData.body,
     bodyRanges: upgradedEditedMessageData.bodyRanges,
     preview: nextEditedMessagePreview,
+    sendStateByConversationId:
+      upgradedEditedMessageData.sendStateByConversationId,
     timestamp: upgradedEditedMessageData.timestamp,
     quote: nextEditedMessageQuote,
   };
@@ -273,7 +286,7 @@ export async function handleEditMessage(
           messageId: mainMessage.id,
           conversationId: editAttributes.conversationId,
           senderE164: editAttributes.message.source,
-          senderUuid: editAttributes.message.sourceUuid,
+          senderAci,
           timestamp: editAttributes.message.timestamp,
           isDirectConversation: isDirectConversation(conversation.attributes),
         });
@@ -292,7 +305,7 @@ export async function handleEditMessage(
   drop(
     dataInterface.saveEditedMessage(
       mainMessageModel.attributes,
-      window.textsecure.storage.user.getCheckedUuid().toString(),
+      window.textsecure.storage.user.getCheckedAci(),
       {
         conversationId: editAttributes.conversationId,
         messageId: mainMessage.id,
@@ -313,8 +326,9 @@ export async function handleEditMessage(
     drop(mainMessageConversation.updateLastMessage());
     // Apply any other operations, excluding edits that target this message
     await modifyTargetMessage(mainMessageModel, mainMessageConversation, {
-      isFirstRun: true,
+      isFirstRun: false,
       skipEdits: true,
+      skipSave: true,
     });
   }
 

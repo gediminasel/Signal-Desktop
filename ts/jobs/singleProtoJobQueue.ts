@@ -67,7 +67,7 @@ export class SingleProtoJobQueue extends JobQueue<SingleProtoJobData> {
 
     const {
       contentHint,
-      identifier,
+      serviceId,
       isSyncMessage,
       messageIds = [],
       protoBase64,
@@ -75,14 +75,12 @@ export class SingleProtoJobQueue extends JobQueue<SingleProtoJobData> {
       urgent,
     } = data;
     log.info(
-      `starting ${type} send to ${identifier} with timestamp ${timestamp}`
+      `starting ${type} send to ${serviceId} with timestamp ${timestamp}`
     );
 
-    const conversation = window.ConversationController.get(identifier);
+    const conversation = window.ConversationController.get(serviceId);
     if (!conversation) {
-      throw new Error(
-        `Failed to get conversation for identifier ${identifier}`
-      );
+      throw new Error(`Failed to get conversation for serviceId ${serviceId}`);
     }
 
     if (!isConversationAccepted(conversation.attributes)) {
@@ -118,7 +116,7 @@ export class SingleProtoJobQueue extends JobQueue<SingleProtoJobData> {
       await handleMessageSend(
         messaging.sendIndividualProto({
           contentHint,
-          identifier,
+          serviceId,
           options,
           proto,
           timestamp,

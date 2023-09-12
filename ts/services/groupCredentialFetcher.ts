@@ -12,7 +12,7 @@ import * as durations from '../util/durations';
 import { BackOff } from '../util/BackOff';
 import { sleep } from '../util/sleep';
 import { toDayMillis } from '../util/timestamp';
-import { UUIDKind } from '../types/UUID';
+import { toAciObject, toPniObject, toTaggedPni } from '../types/ServiceId';
 import * as log from '../logging/log';
 
 export const GROUP_CREDENTIALS_KEY = 'groupCredentials';
@@ -121,7 +121,7 @@ export function getCheckedCredentialsForToday(
 export async function maybeFetchNewCredentials(): Promise<void> {
   const logId = 'maybeFetchNewCredentials';
 
-  const aci = window.textsecure.storage.user.getUuid(UUIDKind.ACI)?.toString();
+  const aci = window.textsecure.storage.user.getAci();
   if (!aci) {
     log.info(`${logId}: no ACI, returning early`);
     return;
@@ -151,22 +151,27 @@ export async function maybeFetchNewCredentials(): Promise<void> {
     serverPublicParamsBase64
   );
 
-  const { pni, credentials: rawCredentials } = await server.getGroupCredentials(
-    { startDayInMs, endDayInMs }
+  // Received credentials depend on us knowing up-to-date PNI. Use the latest
+  //   value from the server and log error on mismatch.
+  const { pni: untaggedPni, credentials: rawCredentials } =
+    await server.getGroupCredentials({ startDayInMs, endDayInMs });
+  strictAssert(
+    untaggedPni,
+    'Server must give pni along with group credentials'
   );
-  strictAssert(pni, 'Server must give pni along with group credentials');
+  const pni = toTaggedPni(untaggedPni);
 
-  const localPni = window.storage.user.getUuid(UUIDKind.PNI);
-  if (pni !== localPni?.toString()) {
+  const localPni = window.storage.user.getPni();
+  if (pni !== localPni) {
     log.error(`${logId}: local PNI ${localPni}, does not match remote ${pni}`);
   }
 
   const newCredentials = sortCredentials(rawCredentials).map(
     (item: GroupCredentialType) => {
       const authCredential =
-        clientZKAuthOperations.receiveAuthCredentialWithPni(
-          aci,
-          pni,
+        clientZKAuthOperations.receiveAuthCredentialWithPniAsServiceId(
+          toAciObject(aci),
+          toPniObject(pni),
           item.redemptionTime,
           new AuthCredentialWithPniResponse(
             Buffer.from(item.credential, 'base64')

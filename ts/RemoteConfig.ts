@@ -5,11 +5,11 @@ import { get, throttle } from 'lodash';
 
 import type { WebAPIType } from './textsecure/WebAPI';
 import * as log from './logging/log';
-import type { UUIDStringType } from './types/UUID';
+import type { AciString } from './types/ServiceId';
 import { parseIntOrThrow } from './util/parseIntOrThrow';
 import { SECOND, HOUR } from './util/durations';
-import { uuidToBytes } from './util/uuidToBytes';
 import * as Bytes from './Bytes';
+import { uuidToBytes } from './util/uuidToBytes';
 import { HashType } from './types/Crypto';
 import { getCountryCode } from './types/PhoneNumber';
 
@@ -30,6 +30,7 @@ export type ConfigKeyType =
   | 'desktop.messageCleanup'
   | 'desktop.messageRequests'
   | 'desktop.pnp'
+  | 'desktop.pnp.accountE164Deprecation'
   | 'desktop.retryRespondMaxAge'
   | 'desktop.safetyNumberAci'
   | 'desktop.safetyNumberAci.beta'
@@ -162,18 +163,18 @@ export function getValue(name: ConfigKeyType): string | undefined {
 export function isBucketValueEnabled(
   name: ConfigKeyType,
   e164: string | undefined,
-  uuid: UUIDStringType | undefined
+  aci: AciString | undefined
 ): boolean {
-  return innerIsBucketValueEnabled(name, getValue(name), e164, uuid);
+  return innerIsBucketValueEnabled(name, getValue(name), e164, aci);
 }
 
 export function innerIsBucketValueEnabled(
   name: ConfigKeyType,
   flagValue: unknown,
   e164: string | undefined,
-  uuid: UUIDStringType | undefined
+  aci: AciString | undefined
 ): boolean {
-  if (e164 == null || uuid == null) {
+  if (e164 == null || aci == null) {
     return false;
   }
 
@@ -191,7 +192,7 @@ export function innerIsBucketValueEnabled(
     return false;
   }
 
-  const bucketValue = getBucketValue(uuid, name);
+  const bucketValue = getBucketValue(aci, name);
   return bucketValue < remoteConfigValue;
 }
 
@@ -230,10 +231,10 @@ export function getCountryCodeValue(
   return wildcard;
 }
 
-export function getBucketValue(uuid: UUIDStringType, flagName: string): number {
+export function getBucketValue(aci: AciString, flagName: string): number {
   const hashInput = Bytes.concatenate([
     Bytes.fromString(`${flagName}.`),
-    uuidToBytes(uuid),
+    uuidToBytes(aci),
   ]);
   const hashResult = window.SignalContext.crypto.hash(
     HashType.size256,

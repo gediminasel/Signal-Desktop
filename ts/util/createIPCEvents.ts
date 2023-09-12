@@ -39,7 +39,7 @@ import {
   parseE164FromSignalDotMeHash,
   parseUsernameBase64FromSignalDotMeHash,
 } from './sgnlHref';
-import { lookupConversationWithoutUuid } from './lookupConversationWithoutUuid';
+import { lookupConversationWithoutServiceId } from './lookupConversationWithoutServiceId';
 import * as log from '../logging/log';
 import { deleteAllMyStories } from './deleteAllMyStories';
 import { isEnabled } from '../RemoteConfig';
@@ -315,7 +315,7 @@ export function createIPCEvents(
       };
     },
     getBlockedCount: () =>
-      window.storage.blocked.getBlockedUuids().length +
+      window.storage.blocked.getBlockedServiceIds().length +
       window.storage.blocked.getBlockedGroups().length,
     getDefaultConversationColor: () =>
       window.storage.get(
@@ -548,7 +548,7 @@ export function createIPCEvents(
 
       const maybeE164 = parseE164FromSignalDotMeHash(hash);
       if (maybeE164) {
-        const convoId = await lookupConversationWithoutUuid({
+        const convoId = await lookupConversationWithoutServiceId({
           type: 'e164',
           e164: maybeE164,
           phoneNumber: maybeE164,
@@ -566,10 +566,13 @@ export function createIPCEvents(
       }
 
       const maybeUsernameBase64 = parseUsernameBase64FromSignalDotMeHash(hash);
+      let username: string | undefined;
       if (maybeUsernameBase64) {
-        const username = await resolveUsernameByLinkBase64(maybeUsernameBase64);
+        username = await resolveUsernameByLinkBase64(maybeUsernameBase64);
+      }
 
-        const convoId = await lookupConversationWithoutUuid({
+      if (username) {
+        const convoId = await lookupConversationWithoutServiceId({
           type: 'username',
           username,
           showUserNotFoundModal,

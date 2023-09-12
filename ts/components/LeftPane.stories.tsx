@@ -31,9 +31,9 @@ import { DialogType } from '../types/Dialogs';
 import { SocketStatus } from '../types/SocketStatus';
 import { StorybookThemeContext } from '../../.storybook/StorybookThemeContext';
 import {
-  makeFakeLookupConversationWithoutUuid,
+  makeFakeLookupConversationWithoutServiceId,
   useUuidFetchState,
-} from '../test-both/helpers/fakeLookupConversationWithoutUuid';
+} from '../test-both/helpers/fakeLookupConversationWithoutServiceId';
 import type { GroupListItemConversationType } from './conversationList/GroupListItem';
 
 const i18n = setupI18n('en', enMessages);
@@ -133,6 +133,11 @@ const useProps = (overrideProps: OverridePropsType = {}): PropsType => {
   );
 
   return {
+    otherTabsUnreadStats: {
+      unreadCount: 0,
+      unreadMentionsCount: 0,
+      markedUnread: false,
+    },
     clearConversationSearch: action('clearConversationSearch'),
     clearGroupCreationError: action('clearGroupCreationError'),
     clearSearch: action('clearSearch'),
@@ -143,6 +148,8 @@ const useProps = (overrideProps: OverridePropsType = {}): PropsType => {
     composeSaveAvatarToDisk: action('composeSaveAvatarToDisk'),
     createGroup: action('createGroup'),
     getPreferredBadge: () => undefined,
+    hasFailedStorySends: false,
+    hasPendingUpdate: false,
     i18n,
     isMacOS: boolean('isMacOS', false),
     preferredWidthFromStorage: 320,
@@ -165,9 +172,11 @@ const useProps = (overrideProps: OverridePropsType = {}): PropsType => {
     ),
     isUpdateDownloaded,
     isContactManagementEnabled,
+    navTabsCollapsed: boolean('navTabsCollapsed', false),
 
     setChallengeStatus: action('setChallengeStatus'),
-    lookupConversationWithoutUuid: makeFakeLookupConversationWithoutUuid(),
+    lookupConversationWithoutServiceId:
+      makeFakeLookupConversationWithoutServiceId(),
     showUserNotFoundModal: action('showUserNotFoundModal'),
     setIsFetchingUUID,
     showConversation: action('showConversation'),
@@ -179,7 +188,6 @@ const useProps = (overrideProps: OverridePropsType = {}): PropsType => {
       'onOutgoingVideoCallInConversation'
     ),
     removeConversation: action('removeConversation'),
-    renderMainHeader: () => <div />,
     renderMessageSearchResult: (id: string) => (
       <MessageSearchResult
         body="Lorem ipsum wow"
@@ -273,6 +281,7 @@ const useProps = (overrideProps: OverridePropsType = {}): PropsType => {
     toggleConversationInChooseMembers: action(
       'toggleConversationInChooseMembers'
     ),
+    toggleNavTabsCollapse: action('toggleNavTabsCollapse'),
     updateSearchTerm: action('updateSearchTerm'),
 
     ...overrideProps,

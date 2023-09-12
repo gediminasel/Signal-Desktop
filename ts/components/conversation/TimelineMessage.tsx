@@ -267,10 +267,10 @@ export function TimelineMessage(props: Props): JSX.Element {
       return;
     }
     const message = window.MessageController.getById(id);
-    if (message && message.get('sourceUuid')) {
+    if (message && message.get('sourceServiceId')) {
       const conversation = window.ConversationController.lookupOrCreate({
         e164: null,
-        uuid: message.get('sourceUuid'),
+        serviceId: message.get('sourceServiceId'),
         reason: 'private reply',
       });
       if (conversation) {
@@ -321,8 +321,8 @@ export function TimelineMessage(props: Props): JSX.Element {
           menuTriggerRef={menuTriggerRef}
           showMenu={handleContextMenu}
           onDownload={handleDownload}
-          onReplyToMessage={handleReplyToMessage}
-          onReact={handleReact}
+          onReplyToMessage={canReply ? handleReplyToMessage : undefined}
+          onReact={canReact ? handleReact : undefined}
         />
         {reactionPickerRoot &&
           createPortal(
@@ -360,9 +360,10 @@ export function TimelineMessage(props: Props): JSX.Element {
     isWindowWidthNotNarrow,
     direction,
     menuTriggerRef,
+    canReply,
+    canReact,
     handleContextMenu,
     handleDownload,
-
     handleReplyToMessage,
     handleReact,
     reactionPickerRoot,

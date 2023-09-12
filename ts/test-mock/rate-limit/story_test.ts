@@ -47,7 +47,7 @@ describe('story/no-sender-key', function needsName() {
           identifier: uuidToBytes(MY_STORY_ID),
           isBlockList: true,
           name: MY_STORY_ID,
-          recipientUuids: [],
+          recipientServiceIds: [],
         },
       },
     });
@@ -71,7 +71,7 @@ describe('story/no-sender-key', function needsName() {
     } = bootstrap;
 
     for (const contact of contacts) {
-      server.rateLimit({ source: desktop.uuid, target: contact.device.uuid });
+      server.rateLimit({ source: desktop.aci, target: contact.device.aci });
     }
 
     const window = await app.getWindow();
@@ -79,8 +79,9 @@ describe('story/no-sender-key', function needsName() {
     debug('Posting a new story');
     {
       const storiesPane = window.locator('.Stories');
+      const storiesCreator = window.locator('.StoryCreator');
 
-      await window.locator('button.module-main-header__stories-icon').click();
+      await window.getByTestId('NavTabsItem--Stories').click();
 
       await storiesPane
         .locator('button.Stories__pane__add-story__button')
@@ -93,13 +94,15 @@ describe('story/no-sender-key', function needsName() {
         .click();
 
       debug('Focusing textarea');
-      await storiesPane.locator('.TextAttachment__story').click();
+      await storiesCreator.locator('.TextAttachment__story').click();
 
       debug('Entering text');
-      await storiesPane.locator('.TextAttachment__text__textarea').type('123');
+      await storiesCreator
+        .locator('.TextAttachment__text__textarea')
+        .type('123');
 
       debug('Clicking "Next"');
-      await storiesPane
+      await storiesCreator
         .locator('.StoryCreator__toolbar button >> "Next"')
         .click();
 

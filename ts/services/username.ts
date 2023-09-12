@@ -11,8 +11,7 @@ import { singleProtoJobQueue } from '../jobs/singleProtoJobQueue';
 import { strictAssert } from '../util/assert';
 import { sleep } from '../util/sleep';
 import { getMinNickname, getMaxNickname } from '../util/Username';
-import { bytesToUuid } from '../Crypto';
-import { uuidToBytes } from '../util/uuidToBytes';
+import { bytesToUuid, uuidToBytes } from '../util/uuidToBytes';
 import type { UsernameReservationType } from '../types/Username';
 import { ReserveUsernameError, ConfirmUsernameResult } from '../types/Username';
 import * as Errors from '../types/errors';
@@ -275,7 +274,7 @@ const USERNAME_LINK_ENTROPY_SIZE = 32;
 
 export async function resolveUsernameByLinkBase64(
   base64: string
-): Promise<string> {
+): Promise<string | undefined> {
   const { server } = window.textsecure;
   if (!server) {
     throw new Error('server interface is not available!');
@@ -289,12 +288,19 @@ export async function resolveUsernameByLinkBase64(
   strictAssert(serverId, 'Failed to re-encode server id as uuid');
 
   strictAssert(window.textsecure.server, 'WebAPI must be available');
-  const { usernameLinkEncryptedValue } = await server.resolveUsernameLink(
-    serverId
-  );
+  try {
+    const { usernameLinkEncryptedValue } = await server.resolveUsernameLink(
+      serverId
+    );
 
-  return usernames.decryptUsernameLink({
-    entropy: Buffer.from(entropy),
-    encryptedUsername: Buffer.from(usernameLinkEncryptedValue),
-  });
+    return usernames.decryptUsernameLink({
+      entropy: Buffer.from(entropy),
+      encryptedUsername: Buffer.from(usernameLinkEncryptedValue),
+    });
+  } catch (error) {
+    if (error instanceof HTTPError && error.code === 404) {
+      return undefined;
+    }
+    throw error;
+  }
 }

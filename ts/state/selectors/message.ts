@@ -42,7 +42,11 @@ import type { PropsType as ProfileChangeNotificationPropsType } from '../../comp
 import type { QuotedAttachmentType } from '../../components/conversation/Quote';
 
 import { getDomain, isStickerPack } from '../../types/LinkPreview';
-import type { UUIDStringType } from '../../types/UUID';
+import type {
+  AciString,
+  PniString,
+  ServiceIdString,
+} from '../../types/ServiceId';
 
 import type { EmbeddedContactType } from '../../types/EmbeddedContact';
 import { embeddedContactSelector } from '../../types/EmbeddedContact';
@@ -54,14 +58,13 @@ import { BodyRange, hydrateRanges } from '../../types/BodyRange';
 import type { AssertProps } from '../../types/Util';
 import type { LinkPreviewType } from '../../types/message/LinkPreviews';
 import { getMentionsRegex } from '../../types/Message';
-import { CallMode } from '../../types/Calling';
 import { SignalService as Proto } from '../../protobuf';
 import type { AttachmentType } from '../../types/Attachment';
 import { isVoiceMessage, canBeDownloaded } from '../../types/Attachment';
+import type { DefaultConversationColorType } from '../../types/Colors';
 import { ReadStatus } from '../../messages/MessageReadStatus';
 
 import type { CallingNotificationType } from '../../util/callingNotification';
-import { missingCaseError } from '../../util/missingCaseError';
 import { getRecipients } from '../../util/getRecipients';
 import { getOwn } from '../../util/getOwn';
 import { isNotNil } from '../../util/isNotNil';
@@ -71,6 +74,7 @@ import { strictAssert } from '../../util/assert';
 import { canEditMessage } from '../../util/canEditMessage';
 
 import { getAccountSelector } from './accounts';
+import { getDefaultConversationColor } from './items';
 import {
   getContactNameColorSelector,
   getConversationSelector,
@@ -83,9 +87,9 @@ import {
   getIntl,
   getRegionCode,
   getUserACI,
+  getUserPNI,
   getUserConversationId,
   getUserNumber,
-  getUserPNI,
 } from './user';
 
 import type {
@@ -128,6 +132,10 @@ import type { AnyPaymentEvent } from '../../types/Payment';
 import { isPaymentNotificationEvent } from '../../types/Payment';
 import { getTitleNoDefault, getNumber } from '../../util/getTitle';
 import { getMessageSentTimestamp } from '../../util/getMessageSentTimestamp';
+import type { CallHistorySelectorType } from './callHistory';
+import { CallMode } from '../../types/Calling';
+import { CallDirection } from '../../types/CallDisposition';
+import { getCallIdFromEra } from '../../util/callDisposition';
 
 export { isIncoming, isOutgoing, isStory };
 
@@ -159,16 +167,18 @@ export type GetPropsForBubbleOptions = Readonly<{
   conversationSelector: GetConversationByIdType;
   ourConversationId?: string;
   ourNumber?: string;
-  ourACI?: UUIDStringType;
-  ourPNI?: UUIDStringType;
+  ourAci: AciString | undefined;
+  ourPni: PniString | undefined;
   targetedMessageId?: string;
   targetedMessageCounter?: number;
   selectedMessageIds: ReadonlyArray<string> | undefined;
   regionCode?: string;
   callSelector: CallSelectorType;
+  callHistorySelector: CallHistorySelectorType;
   activeCall?: CallStateType;
   accountSelector: AccountSelectorType;
   contactNameColorSelector: ContactNameColorSelectorType;
+  defaultConversationColor: DefaultConversationColorType;
 }>;
 
 export function hasErrors(
@@ -209,29 +219,25 @@ export function getSourceDevice(
   return sourceDevice || ourDeviceId;
 }
 
-export function getSourceUuid(
-  message: Pick<MessageAttributesType, 'type' | 'sourceUuid'>,
-  ourACI: string | undefined
-): string | undefined {
+export function getSourceServiceId(
+  message: Pick<MessageAttributesType, 'type' | 'sourceServiceId'>,
+  ourAci: AciString | undefined
+): ServiceIdString | undefined {
   if (isIncoming(message)) {
-    return message.sourceUuid;
+    return message.sourceServiceId;
   }
   if (!isOutgoing(message)) {
     log.warn(
-      'message.getSourceUuid: Called for non-incoming/non-outoing message'
+      'message.getSourceServiceId: Called for non-incoming/non-outoing message'
     );
   }
 
-  return ourACI;
+  return ourAci;
 }
 
 export type GetContactOptions = Pick<
   GetPropsForBubbleOptions,
-  | 'conversationSelector'
-  | 'ourConversationId'
-  | 'ourNumber'
-  | 'ourACI'
-  | 'ourPNI'
+  'conversationSelector' | 'ourConversationId' | 'ourNumber' | 'ourAci'
 >;
 
 export function getContactId(
@@ -240,17 +246,17 @@ export function getContactId(
     conversationSelector,
     ourConversationId,
     ourNumber,
-    ourACI,
+    ourAci,
   }: GetContactOptions
 ): string | undefined {
   const source = getSource(message, ourNumber);
-  const sourceUuid = getSourceUuid(message, ourACI);
+  const sourceServiceId = getSourceServiceId(message, ourAci);
 
-  if (!source && !sourceUuid) {
+  if (!source && !sourceServiceId) {
     return ourConversationId;
   }
 
-  const conversation = conversationSelector(sourceUuid || source);
+  const conversation = conversationSelector(sourceServiceId || source);
   return conversation.id;
 }
 
@@ -261,17 +267,17 @@ export function getContact(
     conversationSelector,
     ourConversationId,
     ourNumber,
-    ourACI,
+    ourAci,
   }: GetContactOptions
 ): ConversationType {
   const source = getSource(message, ourNumber);
-  const sourceUuid = getSourceUuid(message, ourACI);
+  const sourceServiceId = getSourceServiceId(message, ourAci);
 
-  if (!source && !sourceUuid) {
+  if (!source && !sourceServiceId) {
     return conversationSelector(ourConversationId);
   }
 
-  return conversationSelector(sourceUuid || source);
+  return conversationSelector(sourceServiceId || source);
 }
 
 export function getConversation(
@@ -338,7 +344,7 @@ export const extractHydratedMentions = (
     .filter(BodyRange.isMention)
     .map(range => {
       const { conversationSelector } = options;
-      const conversation = conversationSelector(range.mentionUuid);
+      const conversation = conversationSelector(range.mentionAci);
 
       return {
         ...range,
@@ -471,9 +477,11 @@ const getPropsForStoryReplyContext = (
   {
     conversationSelector,
     ourConversationId,
+    defaultConversationColor,
   }: {
     conversationSelector: GetConversationByIdType;
     ourConversationId?: string;
+    defaultConversationColor: DefaultConversationColorType;
   }
 ): PropsData['storyReplyContext'] => {
   const { storyReaction, storyReplyContext } = message;
@@ -481,15 +489,17 @@ const getPropsForStoryReplyContext = (
     return undefined;
   }
 
-  const contact = conversationSelector(storyReplyContext.authorUuid);
+  const contact = conversationSelector(storyReplyContext.authorAci);
 
   const authorTitle = contact.firstName || contact.title;
   const isFromMe = contact.id === ourConversationId;
 
   const conversation = getConversation(message, conversationSelector);
 
-  const { conversationColor, customColor } =
-    getConversationColorAttributes(conversation);
+  const { conversationColor, customColor } = getConversationColorAttributes(
+    conversation,
+    defaultConversationColor
+  );
 
   return {
     authorTitle,
@@ -512,9 +522,11 @@ export const getPropsForQuote = (
   {
     conversationSelector,
     ourConversationId,
+    defaultConversationColor,
   }: {
     conversationSelector: GetConversationByIdType;
     ourConversationId?: string;
+    defaultConversationColor: DefaultConversationColorType;
   }
 ): PropsData['quote'] => {
   const { quote } = message;
@@ -524,7 +536,7 @@ export const getPropsForQuote = (
 
   const {
     author,
-    authorUuid,
+    authorAci,
     id: sentAt,
     isViewOnce,
     isGiftBadge: isTargetGiftBadge,
@@ -534,7 +546,7 @@ export const getPropsForQuote = (
     text = '',
   } = quote;
 
-  const contact = conversationSelector(authorUuid || author);
+  const contact = conversationSelector(authorAci || author);
 
   const authorId = contact.id;
   const authorName = contact.name;
@@ -546,8 +558,10 @@ export const getPropsForQuote = (
   const firstAttachment = quote.attachments && quote.attachments[0];
   const conversation = getConversation(message, conversationSelector);
 
-  const { conversationColor, customColor } =
-    getConversationColorAttributes(conversation);
+  const { conversationColor, customColor } = getConversationColorAttributes(
+    conversation,
+    defaultConversationColor
+  );
 
   return {
     authorId,
@@ -577,8 +591,8 @@ export type GetPropsForMessageOptions = Pick<
   GetPropsForBubbleOptions,
   | 'conversationSelector'
   | 'ourConversationId'
-  | 'ourACI'
-  | 'ourPNI'
+  | 'ourAci'
+  | 'ourPni'
   | 'ourNumber'
   | 'targetedMessageId'
   | 'targetedMessageCounter'
@@ -586,6 +600,7 @@ export type GetPropsForMessageOptions = Pick<
   | 'regionCode'
   | 'accountSelector'
   | 'contactNameColorSelector'
+  | 'defaultConversationColor'
 >;
 
 function getTextAttachment(
@@ -674,12 +689,13 @@ export const getPropsForMessage = (
     conversationSelector,
     ourConversationId,
     ourNumber,
-    ourACI,
+    ourAci,
     regionCode,
     targetedMessageId,
     targetedMessageCounter,
     selectedMessageIds,
     contactNameColorSelector,
+    defaultConversationColor,
   } = options;
 
   const { expireTimer, expirationStartTimestamp, conversationId } = message;
@@ -705,12 +721,14 @@ export const getPropsForMessage = (
     conversationSelector,
     ourConversationId,
     ourNumber,
-    ourACI,
+    ourAci,
   });
   const contactNameColor = contactNameColorSelector(conversationId, authorId);
 
-  const { conversationColor, customColor } =
-    getConversationColorAttributes(conversation);
+  const { conversationColor, customColor } = getConversationColorAttributes(
+    conversation,
+    defaultConversationColor
+  );
 
   return {
     attachments,
@@ -790,17 +808,19 @@ export const getMessagePropsSelector = createSelector(
   getContactNameColorSelector,
   getTargetedMessage,
   getSelectedMessageIds,
+  getDefaultConversationColor,
   (
       conversationSelector,
       ourConversationId,
-      ourACI,
-      ourPNI,
+      ourAci,
+      ourPni,
       ourNumber,
       regionCode,
       accountSelector,
       contactNameColorSelector,
       targetedMessage,
-      selectedMessageIds
+      selectedMessageIds,
+      defaultConversationColor
     ) =>
     (message: MessageWithUIFieldsType) => {
       return getPropsForMessage(message, {
@@ -809,12 +829,13 @@ export const getMessagePropsSelector = createSelector(
         conversationSelector,
         ourConversationId,
         ourNumber,
-        ourACI,
-        ourPNI,
+        ourAci,
+        ourPni,
         regionCode,
         targetedMessageCounter: targetedMessage?.counter,
         targetedMessageId: targetedMessage?.id,
         selectedMessageIds,
+        defaultConversationColor,
       });
     }
 );
@@ -965,7 +986,7 @@ function getPropsForPaymentEvent(
   { conversationSelector }: GetPropsForBubbleOptions
 ): Omit<PaymentEventNotificationPropsType, 'i18n'> {
   return {
-    sender: conversationSelector(message.sourceUuid),
+    sender: conversationSelector(message.sourceServiceId),
     conversation: getConversation(message, conversationSelector),
     event: message.payment,
   };
@@ -1013,7 +1034,7 @@ export function isGroupV2Change(message: MessageWithUIFieldsType): boolean {
 
 function getPropsForGroupV2Change(
   message: MessageWithUIFieldsType,
-  { conversationSelector, ourACI, ourPNI }: GetPropsForBubbleOptions
+  { conversationSelector, ourAci, ourPni }: GetPropsForBubbleOptions
 ): GroupsV2Props {
   const change = message.groupV2Change;
 
@@ -1029,8 +1050,8 @@ function getPropsForGroupV2Change(
     groupName: conversation?.type === 'group' ? conversation?.name : undefined,
     groupMemberships: conversation.memberships,
     groupBannedMemberships: conversation.bannedMemberships,
-    ourACI,
-    ourPNI,
+    ourAci,
+    ourPni,
     change,
   };
 }
@@ -1109,9 +1130,9 @@ function getPropsForTimerNotification(
     );
   }
 
-  const { expireTimer, fromSync, source, sourceUuid } = timerUpdate;
+  const { expireTimer, fromSync, source, sourceServiceId } = timerUpdate;
   const disabled = !expireTimer;
-  const sourceId = sourceUuid || source;
+  const sourceId = sourceServiceId || source;
   const { id: formattedContactId, title } = conversationSelector(sourceId);
 
   // Pacify typescript
@@ -1315,69 +1336,94 @@ export function isCallHistory(message: MessageWithUIFieldsType): boolean {
 
 export type GetPropsForCallHistoryOptions = Pick<
   GetPropsForBubbleOptions,
-  'conversationSelector' | 'callSelector' | 'activeCall'
+  | 'callSelector'
+  | 'activeCall'
+  | 'callHistorySelector'
+  | 'conversationSelector'
+  | 'ourConversationId'
 >;
+
+const emptyCallNotification: CallingNotificationType = {
+  callHistory: null,
+  callCreator: null,
+  activeConversationId: null,
+  groupCallEnded: null,
+  maxDevices: Infinity,
+  deviceCount: 0,
+};
 
 export function getPropsForCallHistory(
   message: MessageWithUIFieldsType,
   {
-    conversationSelector,
     callSelector,
+    callHistorySelector,
     activeCall,
+    conversationSelector,
+    ourConversationId,
   }: GetPropsForCallHistoryOptions
 ): CallingNotificationType {
-  const { callHistoryDetails } = message;
-  if (!callHistoryDetails) {
-    throw new Error('getPropsForCallHistory: Missing callHistoryDetails');
+  const { callId } = message;
+  if (callId == null) {
+    log.error('getPropsForCallHistory: Missing callId');
+    return emptyCallNotification;
+  }
+  const callHistory = callHistorySelector(callId);
+  if (callHistory == null) {
+    log.error('getPropsForCallHistory: Missing callHistory');
+    return emptyCallNotification;
   }
 
-  const activeCallConversationId = activeCall?.conversationId;
+  const activeConversationId = activeCall?.conversationId ?? null;
 
-  switch (callHistoryDetails.callMode) {
-    // Old messages weren't saved with a call mode.
-    case undefined:
-    case CallMode.Direct:
-      return {
-        ...callHistoryDetails,
-        activeCallConversationId,
-        callMode: CallMode.Direct,
-      };
-    case CallMode.Group: {
-      const { conversationId } = message;
-      if (!conversationId) {
-        throw new Error('getPropsForCallHistory: missing conversation ID');
-      }
+  const conversation = conversationSelector(callHistory.peerId);
+  strictAssert(
+    conversation != null,
+    'getPropsForCallHistory: Missing conversation'
+  );
 
-      let call = callSelector(conversationId);
-      if (call && call.callMode !== CallMode.Group) {
-        log.error(
-          'getPropsForCallHistory: there is an unexpected non-group call; pretending it does not exist'
-        );
-        call = undefined;
-      }
-
-      const creator = conversationSelector(callHistoryDetails.creatorUuid);
-      const deviceCount = call?.peekInfo?.deviceCount ?? 0;
-
-      return {
-        activeCallConversationId,
-        callMode: CallMode.Group,
-        conversationId,
-        creator,
-        deviceCount,
-        ended:
-          callHistoryDetails.eraId !== call?.peekInfo?.eraId || !deviceCount,
-        maxDevices: call?.peekInfo?.maxDevices ?? Infinity,
-        startedTime: callHistoryDetails.startedTime,
-      };
-    }
-    default:
-      throw new Error(
-        `getPropsForCallHistory: missing case ${missingCaseError(
-          callHistoryDetails
-        )}`
-      );
+  let callCreator: ConversationType | null = null;
+  if (callHistory.ringerId) {
+    callCreator = conversationSelector(callHistory.ringerId);
+  } else if (callHistory.direction === CallDirection.Outgoing) {
+    callCreator = conversationSelector(ourConversationId);
   }
+
+  if (callHistory.mode === CallMode.Direct) {
+    return {
+      callHistory,
+      callCreator,
+      activeConversationId,
+      groupCallEnded: false,
+      deviceCount: 0,
+      maxDevices: Infinity,
+    };
+  }
+
+  // This could be a later call in the conversation
+  const conversationCall = callSelector(conversation.id);
+
+  if (conversationCall != null) {
+    strictAssert(
+      conversationCall?.callMode === CallMode.Group,
+      'getPropsForCallHistory: Call was expected to be a group call'
+    );
+  }
+
+  const conversationCallId =
+    conversationCall?.peekInfo?.eraId != null &&
+    getCallIdFromEra(conversationCall.peekInfo.eraId);
+
+  const deviceCount = conversationCall?.peekInfo?.deviceCount ?? 0;
+  const maxDevices = conversationCall?.peekInfo?.maxDevices ?? Infinity;
+
+  return {
+    callHistory,
+    callCreator,
+    activeConversationId,
+    groupCallEnded: callId !== conversationCallId || deviceCount === 0,
+    deviceCount,
+    maxDevices,
+  };
 }
 
 // Profile Change
@@ -1437,7 +1483,7 @@ function getPropsForChangeNumberNotification(
   { conversationSelector }: GetPropsForBubbleOptions
 ): ChangeNumberNotificationProps {
   return {
-    sender: conversationSelector(message.sourceUuid),
+    sender: conversationSelector(message.sourceServiceId),
     timestamp: message.sent_at,
   };
 }
@@ -1490,7 +1536,7 @@ function getPropsForDeliveryIssue(
   message: MessageWithUIFieldsType,
   { conversationSelector }: GetPropsForBubbleOptions
 ): DeliveryIssuePropsType {
-  const sender = conversationSelector(message.sourceUuid);
+  const sender = conversationSelector(message.sourceServiceId);
   const conversation = getConversation(message, conversationSelector);
 
   return {
@@ -1606,7 +1652,7 @@ export function getMessagePropStatus(
 export function getPropsForEmbeddedContact(
   message: MessageWithUIFieldsType,
   regionCode: string | undefined,
-  accountSelector: (identifier?: string) => UUIDStringType | undefined
+  accountSelector: (identifier?: string) => ServiceIdString | undefined
 ): EmbeddedContactType | undefined {
   const contacts = message.contact;
   if (!contacts || !contacts.length) {
@@ -1621,7 +1667,7 @@ export function getPropsForEmbeddedContact(
     regionCode,
     getAbsoluteAttachmentPath: getAttachmentUrlForPath,
     firstNumber,
-    uuid: accountSelector(firstNumber),
+    serviceId: accountSelector(firstNumber),
   });
 }
 
@@ -1922,6 +1968,7 @@ export const getMessageDetails = createSelector(
   getUserConversationId,
   getUserNumber,
   getSelectedMessageIds,
+  getDefaultConversationColor,
   (
     accountSelector,
     contactNameColorSelector,
@@ -1929,11 +1976,12 @@ export const getMessageDetails = createSelector(
     i18n,
     regionCode,
     message,
-    ourACI,
-    ourPNI,
+    ourAci,
+    ourPni,
     ourConversationId,
     ourNumber,
-    selectedMessageIds
+    selectedMessageIds,
+    defaultConversationColor
   ): SmartMessageDetailPropsType | undefined => {
     if (!message || !ourConversationId) {
       return;
@@ -1961,7 +2009,7 @@ export const getMessageDetails = createSelector(
           conversationSelector,
           ourConversationId,
           ourNumber,
-          ourACI,
+          ourAci,
         }),
       ].filter(isNotNil);
     } else if (!isEmpty(sendStateByConversationId)) {
@@ -2003,15 +2051,15 @@ export const getMessageDetails = createSelector(
     // If an error has a specific number it's associated with, we'll show it next to
     //   that contact. Otherwise, it will be a standalone entry.
     const errors = allErrors.filter(error =>
-      Boolean(error.identifier || error.number)
+      Boolean(error.serviceId || error.number)
     );
     const errorsGroupedById = groupBy(allErrors, error => {
-      const identifier = error.identifier || error.number;
-      if (!identifier) {
+      const serviceId = error.serviceId || error.number;
+      if (!serviceId) {
         return null;
       }
 
-      return window.ConversationController.getConversationId(identifier);
+      return window.ConversationController.getConversationId(serviceId);
     });
 
     const hasUnidentifiedDeliveryIndicators = window.storage.get(
@@ -2063,12 +2111,13 @@ export const getMessageDetails = createSelector(
         accountSelector,
         contactNameColorSelector,
         conversationSelector,
-        ourACI,
+        ourAci,
+        ourPni,
         ourConversationId,
         ourNumber,
-        ourPNI,
         regionCode,
         selectedMessageIds,
+        defaultConversationColor,
       }),
       receivedAt: Number(message.received_at_ms || message.received_at),
     };

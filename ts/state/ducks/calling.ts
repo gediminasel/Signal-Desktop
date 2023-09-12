@@ -3,7 +3,6 @@
 
 import { ipcRenderer } from 'electron';
 import type { ThunkAction, ThunkDispatch } from 'redux-thunk';
-import { CallEndedReason } from '@signalapp/ringrtc';
 import {
   hasScreenCapturePermission,
   openSystemPreferences,
@@ -26,6 +25,7 @@ import type {
   PresentableSource,
 } from '../../types/Calling';
 import {
+  CallEndedReason,
   CallingDeviceType,
   CallMode,
   CallViewMode,
@@ -38,7 +38,7 @@ import { requestCameraPermissions } from '../../util/callingPermissions';
 import { isGroupCallOutboundRingEnabled } from '../../util/isGroupCallOutboundRingEnabled';
 import { sleep } from '../../util/sleep';
 import { LatestQueue } from '../../util/LatestQueue';
-import type { UUIDStringType } from '../../types/UUID';
+import type { AciString } from '../../types/ServiceId';
 import type {
   ConversationChangedActionType,
   ConversationRemovedActionType,
@@ -53,17 +53,16 @@ import { isDirectConversation } from '../../util/whatTypeOfConversation';
 import { SHOW_TOAST } from './toast';
 import { ToastType } from '../../types/Toast';
 import type { ShowToastActionType } from './toast';
-import { singleProtoJobQueue } from '../../jobs/singleProtoJobQueue';
-import MessageSender from '../../textsecure/SendMessage';
 import type { BoundActionCreatorsMapObject } from '../../hooks/useBoundActions';
 import { useBoundActions } from '../../hooks/useBoundActions';
 import { isAnybodyElseInGroupCall } from './callingHelpers';
+import { SafetyNumberChangeSource } from '../../components/SafetyNumberChangeDialog';
 
 // State
 
 export type GroupCallPeekInfoType = ReadonlyDeep<{
-  uuids: Array<UUIDStringType>;
-  creatorUuid?: UUIDStringType;
+  acis: Array<AciString>;
+  creatorAci?: AciString;
   eraId?: string;
   maxDevices: number;
   deviceCount: number;
@@ -71,7 +70,7 @@ export type GroupCallPeekInfoType = ReadonlyDeep<{
 
 // eslint-disable-next-line local-rules/type-alias-readonlydeep
 export type GroupCallParticipantInfoType = {
-  uuid: UUIDStringType;
+  aci: AciString;
   demuxId: number;
   hasRemoteAudio: boolean;
   hasRemoteVideo: boolean;
@@ -96,11 +95,11 @@ export type DirectCallStateType = {
 type GroupCallRingStateType = ReadonlyDeep<
   | {
       ringId?: undefined;
-      ringerUuid?: undefined;
+      ringerAci?: undefined;
     }
   | {
       ringId: bigint;
-      ringerUuid: UUIDStringType;
+      ringerAci: AciString;
     }
 >;
 
@@ -127,7 +126,7 @@ export type ActiveCallStateType = {
   pip: boolean;
   presentingSource?: PresentedSource;
   presentingSourcesAvailable?: Array<PresentableSource>;
-  safetyNumberChangedUuids: Array<UUIDStringType>;
+  safetyNumberChangedAcis: Array<AciString>;
   settingsDialogOpen: boolean;
   showNeedsScreenRecordingPermissionsWarning?: boolean;
   showParticipantsList: boolean;
@@ -150,15 +149,10 @@ export type AcceptCallType = ReadonlyDeep<{
 }>;
 
 export type CallStateChangeType = ReadonlyDeep<{
-  remoteUserId: string; // TODO: Remove
-  callId: string; // TODO: Remove
   conversationId: string;
   acceptedTime?: number;
   callState: CallState;
   callEndedReason?: CallEndedReason;
-  isIncoming: boolean;
-  isVideoCall: boolean;
-  title: string;
 }>;
 
 export type CancelCallType = ReadonlyDeep<{
@@ -188,7 +182,7 @@ type GroupCallStateChangeArgumentType = {
 // eslint-disable-next-line local-rules/type-alias-readonlydeep
 type GroupCallStateChangeActionPayloadType =
   GroupCallStateChangeArgumentType & {
-    ourUuid: UUIDStringType;
+    ourAci: AciString;
   };
 
 type HangUpActionPayloadType = ReadonlyDeep<{
@@ -196,7 +190,7 @@ type HangUpActionPayloadType = ReadonlyDeep<{
 }>;
 
 type KeyChangedType = ReadonlyDeep<{
-  uuid: UUIDStringType;
+  aci: AciString;
 }>;
 
 export type KeyChangeOkType = ReadonlyDeep<{
@@ -211,7 +205,7 @@ export type IncomingDirectCallType = ReadonlyDeep<{
 type IncomingGroupCallType = ReadonlyDeep<{
   conversationId: string;
   ringId: bigint;
-  ringerUuid: UUIDStringType;
+  ringerAci: AciString;
 }>;
 
 type PeekNotConnectedGroupCallType = ReadonlyDeep<{
@@ -303,7 +297,7 @@ const getGroupCallRingState = (
 ): GroupCallRingStateType =>
   call?.ringId === undefined
     ? {}
-    : { ringId: call.ringId, ringerUuid: call.ringerUuid };
+    : { ringId: call.ringId, ringerAci: call.ringerAci };
 
 // We might call this function many times in rapid succession (for example, if lots of
 //   people are joining and leaving at once). We want to make sure to update eventually
@@ -352,9 +346,13 @@ const doGroupCallPeek = (
       conversationId
     );
     if (
-      existingCall?.callMode === CallMode.Group &&
+      existingCall != null &&
+      existingCall.callMode === CallMode.Group &&
       existingCall.connectionState !== GroupCallConnectionState.NotConnected
     ) {
+      log.info(
+        `doGroupCallPeek/groupv2: Not peeking because the connection state is ${existingCall.connectionState}`
+      );
       return;
     }
 
@@ -363,7 +361,7 @@ const doGroupCallPeek = (
     //   to only be peeking once.
     await Promise.all([sleep(1000), waitForOnline(navigator, window)]);
 
-    let peekInfo;
+    let peekInfo = null;
     try {
       peekInfo = await calling.peekGroupCall(conversationId);
     } catch (err) {
@@ -379,7 +377,21 @@ const doGroupCallPeek = (
       `doGroupCallPeek/groupv2(${conversation.groupId}): Found ${peekInfo.deviceCount} devices`
     );
 
-    await calling.updateCallHistoryForGroupCall(conversationId, peekInfo);
+    const joinState =
+      existingCall?.callMode === CallMode.Group ? existingCall.joinState : null;
+
+    try {
+      await calling.updateCallHistoryForGroupCall(
+        conversationId,
+        joinState,
+        peekInfo
+      );
+    } catch (error) {
+      log.error(
+        'doGroupCallPeek/groupv2: Failed to update call history',
+        Errors.toLogFormat(error)
+      );
+    }
 
     const formattedPeekInfo = calling.formatGroupCallPeekInfoForRedux(peekInfo);
 
@@ -508,7 +520,7 @@ type IncomingGroupCallActionType = ReadonlyDeep<{
 type KeyChangedActionType = {
   type: 'calling/MARK_CALL_UNTRUSTED';
   payload: {
-    safetyNumberChangedUuids: Array<UUIDStringType>;
+    safetyNumberChangedAcis: Array<AciString>;
   };
 };
 
@@ -689,37 +701,17 @@ function callStateChange(
   CallStateChangeFulfilledActionType
 > {
   return async dispatch => {
-    const {
-      callId,
-      callState,
-      isVideoCall,
-      isIncoming,
-      acceptedTime,
-      callEndedReason,
-      remoteUserId,
-    } = payload;
+    const { callState, acceptedTime, callEndedReason } = payload;
 
     if (callState === CallState.Ended) {
       ipcRenderer.send('close-screen-share-controller');
     }
 
-    const isOutgoing = !isIncoming;
     const wasAccepted = acceptedTime != null;
-    const isConnected = callState === CallState.Accepted; // "connected"
     const isEnded = callState === CallState.Ended && callEndedReason != null;
 
     const isLocalHangup = callEndedReason === CallEndedReason.LocalHangup;
     const isRemoteHangup = callEndedReason === CallEndedReason.RemoteHangup;
-
-    const answered = isConnected && wasAccepted;
-    const notAnswered = isEnded && !wasAccepted;
-
-    const isOutgoingRemoteAccept = isOutgoing && isConnected && answered;
-    const isIncomingLocalAccept = isIncoming && isConnected && answered;
-    const isOutgoingLocalHangup = isOutgoing && isLocalHangup && notAnswered;
-    const isIncomingLocalHangup = isIncoming && isLocalHangup && notAnswered;
-    const isOutgoingRemoteHangup = isOutgoing && isRemoteHangup && notAnswered;
-    const isIncomingRemoteHangup = isIncoming && isRemoteHangup && notAnswered;
 
     // Play the hangup noise if:
     if (
@@ -731,37 +723,6 @@ function callStateChange(
       (isEnded && !wasAccepted && isRemoteHangup)
     ) {
       await callingTones.playEndCall();
-    }
-
-    if (isIncomingRemoteHangup) {
-      // This is considered just another "missed" event
-      log.info(
-        `callStateChange: not syncing hangup from self (Call ID: ${callId}))`
-      );
-    } else if (
-      isOutgoingRemoteAccept ||
-      isIncomingLocalAccept ||
-      isOutgoingLocalHangup ||
-      isIncomingLocalHangup ||
-      isOutgoingRemoteHangup
-    ) {
-      log.info(`callStateChange: syncing call event (Call ID: ${callId})`);
-      try {
-        await singleProtoJobQueue.add(
-          MessageSender.getCallEventSync(
-            remoteUserId,
-            callId,
-            isVideoCall,
-            isIncoming,
-            acceptedTime != null
-          )
-        );
-      } catch (error) {
-        log.error(
-          'callStateChange: Failed to queue sync message',
-          Errors.toLogFormat(error)
-        );
-      }
     }
 
     dispatch({
@@ -922,14 +883,20 @@ function groupCallStateChange(
       didSomeoneStartPresenting = false;
     }
 
-    const { ourACI: ourUuid } = getState().user;
-    strictAssert(ourUuid, 'groupCallStateChange failed to fetch our uuid');
+    const { ourAci } = getState().user;
+    strictAssert(ourAci, 'groupCallStateChange failed to fetch our ACI');
 
+    log.info(
+      'groupCallStateChange:',
+      payload.conversationId,
+      GroupCallConnectionState[payload.connectionState],
+      GroupCallJoinState[payload.joinState]
+    );
     dispatch({
       type: GROUP_CALL_STATE_CHANGE,
       payload: {
         ...payload,
-        ourUuid,
+        ourAci,
       },
     });
 
@@ -986,23 +953,23 @@ function keyChanged(
     }
 
     if (activeCall.callMode === CallMode.Group) {
-      const uuidsChanged = new Set(activeCallState.safetyNumberChangedUuids);
+      const acisChanged = new Set(activeCallState.safetyNumberChangedAcis);
 
-      // Iterate over each participant to ensure that the uuid passed in
+      // Iterate over each participant to ensure that the service id passed in
       // matches one of the participants in the group call.
       activeCall.remoteParticipants.forEach(participant => {
-        if (participant.uuid === payload.uuid) {
-          uuidsChanged.add(participant.uuid);
+        if (participant.aci === payload.aci) {
+          acisChanged.add(participant.aci);
         }
       });
 
-      const safetyNumberChangedUuids = Array.from(uuidsChanged);
+      const safetyNumberChangedAcis = Array.from(acisChanged);
 
-      if (safetyNumberChangedUuids.length) {
+      if (safetyNumberChangedAcis.length) {
         dispatch({
           type: MARK_CALL_UNTRUSTED,
           payload: {
-            safetyNumberChangedUuids,
+            safetyNumberChangedAcis,
           },
         });
       }
@@ -1293,24 +1260,20 @@ function onOutgoingVideoCallInConversation(
 
     log.info('onOutgoingVideoCallInConversation: about to start a video call');
 
-    // if it's a group call on an announcementsOnly group
-    // only allow join if the call has already been started (presumably by the admin)
+    const call = getOwn(getState().calling.callsByConversation, conversationId);
+
+    // Technically not necessary, but isAnybodyElseInGroupCall requires it
+    const ourAci = window.storage.user.getCheckedAci();
+    const isOngoingGroupCall =
+      call &&
+      ourAci &&
+      call.callMode === CallMode.Group &&
+      call.peekInfo &&
+      isAnybodyElseInGroupCall(call.peekInfo, ourAci);
+
+    // If it's a group call on an announcementsOnly group, only allow join if the call
+    //   has already been started (presumably by the admin)
     if (conversation.get('announcementsOnly') && !conversation.areWeAdmin()) {
-      const call = getOwn(
-        getState().calling.callsByConversation,
-        conversationId
-      );
-
-      // technically not necessary, but isAnybodyElseInGroupCall requires it
-      const ourUuid = window.storage.user.getCheckedUuid().toString();
-
-      const isOngoingGroupCall =
-        call &&
-        ourUuid &&
-        call.callMode === CallMode.Group &&
-        call.peekInfo &&
-        isAnybodyElseInGroupCall(call.peekInfo, ourUuid);
-
       if (!isOngoingGroupCall) {
         dispatch({
           type: SHOW_TOAST,
@@ -1322,14 +1285,20 @@ function onOutgoingVideoCallInConversation(
       }
     }
 
-    if (await isCallSafe(conversation.attributes)) {
+    const source = isOngoingGroupCall
+      ? SafetyNumberChangeSource.JoinCall
+      : SafetyNumberChangeSource.InitiateCall;
+
+    if (await isCallSafe(conversation.attributes, source)) {
       log.info(
         'onOutgoingVideoCallInConversation: call is deemed "safe". Making call'
       );
-      startCallingLobby({
-        conversationId,
-        isVideoCall: true,
-      })(dispatch, getState, undefined);
+      dispatch(
+        startCallingLobby({
+          conversationId,
+          isVideoCall: true,
+        })
+      );
       log.info('onOutgoingVideoCallInConversation: started the call');
     } else {
       log.info(
@@ -1355,10 +1324,13 @@ function onOutgoingAudioCallInConversation(
         `onOutgoingAudioCallInConversation: Conversation ${conversation.idForLogging()} is not 1:1`
       );
     }
+    // Because audio calls are currently restricted to 1:1 conversations, this will always
+    //   be a new call we are initiating.
+    const source = SafetyNumberChangeSource.InitiateCall;
 
     log.info('onOutgoingAudioCallInConversation: about to start an audio call');
 
-    if (await isCallSafe(conversation.attributes)) {
+    if (await isCallSafe(conversation.attributes, source)) {
       log.info(
         'onOutgoingAudioCallInConversation: call is deemed "safe". Making call'
       );
@@ -1639,7 +1611,7 @@ export function reducer(
           joinState: action.payload.joinState,
           peekInfo: action.payload.peekInfo ||
             existingCall?.peekInfo || {
-              uuids: action.payload.remoteParticipants.map(({ uuid }) => uuid),
+              acis: action.payload.remoteParticipants.map(({ aci }) => aci),
               maxDevices: Infinity,
               deviceCount: action.payload.remoteParticipants.length,
             },
@@ -1649,7 +1621,7 @@ export function reducer(
         outgoingRing =
           isGroupCallOutboundRingEnabled() &&
           !ringState.ringId &&
-          !call.peekInfo?.uuids.length &&
+          !call.peekInfo?.acis.length &&
           !call.remoteParticipants.length &&
           !action.payload.isConversationTooBigToRing;
         break;
@@ -1671,7 +1643,7 @@ export function reducer(
         localAudioLevel: 0,
         viewMode: CallViewMode.Grid,
         pip: false,
-        safetyNumberChangedUuids: [],
+        safetyNumberChangedAcis: [],
         settingsDialogOpen: false,
         showParticipantsList: false,
         outgoingRing,
@@ -1699,7 +1671,7 @@ export function reducer(
         localAudioLevel: 0,
         viewMode: CallViewMode.Grid,
         pip: false,
-        safetyNumberChangedUuids: [],
+        safetyNumberChangedAcis: [],
         settingsDialogOpen: false,
         showParticipantsList: false,
         outgoingRing: true,
@@ -1722,7 +1694,7 @@ export function reducer(
         localAudioLevel: 0,
         viewMode: CallViewMode.Grid,
         pip: false,
-        safetyNumberChangedUuids: [],
+        safetyNumberChangedAcis: [],
         settingsDialogOpen: false,
         showParticipantsList: false,
         outgoingRing: false,
@@ -1762,7 +1734,7 @@ export function reducer(
       ...state,
       callsByConversation: {
         ...callsByConversation,
-        [conversationId]: omit(groupCall, ['ringId', 'ringerUuid']),
+        [conversationId]: omit(groupCall, ['ringId', 'ringerAci']),
       },
     };
   }
@@ -1811,12 +1783,12 @@ export function reducer(
   }
 
   if (action.type === INCOMING_GROUP_CALL) {
-    const { conversationId, ringId, ringerUuid } = action.payload;
+    const { conversationId, ringId, ringerAci } = action.payload;
 
     let groupCall: GroupCallStateType;
     const existingGroupCall = getGroupCall(conversationId, state);
     if (existingGroupCall) {
-      if (existingGroupCall.ringerUuid) {
+      if (existingGroupCall.ringerAci) {
         log.info('Group call was already ringing');
         return state;
       }
@@ -1828,7 +1800,7 @@ export function reducer(
       groupCall = {
         ...existingGroupCall,
         ringId,
-        ringerUuid,
+        ringerAci,
       };
     } else {
       groupCall = {
@@ -1837,13 +1809,13 @@ export function reducer(
         connectionState: GroupCallConnectionState.NotConnected,
         joinState: GroupCallJoinState.NotJoined,
         peekInfo: {
-          uuids: [],
+          acis: [],
           maxDevices: Infinity,
           deviceCount: 0,
         },
         remoteParticipants: [],
         ringId,
-        ringerUuid,
+        ringerAci,
       };
     }
 
@@ -1876,7 +1848,7 @@ export function reducer(
         localAudioLevel: 0,
         viewMode: CallViewMode.Grid,
         pip: false,
-        safetyNumberChangedUuids: [],
+        safetyNumberChangedAcis: [],
         settingsDialogOpen: false,
         showParticipantsList: false,
         outgoingRing: true,
@@ -1985,7 +1957,7 @@ export function reducer(
       hasLocalAudio,
       hasLocalVideo,
       joinState,
-      ourUuid,
+      ourAci,
       peekInfo,
       remoteParticipants,
     } = action.payload;
@@ -1995,7 +1967,7 @@ export function reducer(
 
     const newPeekInfo = peekInfo ||
       existingCall?.peekInfo || {
-        uuids: remoteParticipants.map(({ uuid }) => uuid),
+        acis: remoteParticipants.map(({ aci }) => aci),
         maxDevices: Infinity,
         deviceCount: remoteParticipants.length,
       };
@@ -2018,7 +1990,7 @@ export function reducer(
       newActiveCallState &&
       newActiveCallState.outgoingRing &&
       newActiveCallState.conversationId === conversationId &&
-      isAnybodyElseInGroupCall(newPeekInfo, ourUuid)
+      isAnybodyElseInGroupCall(newPeekInfo, ourAci)
     ) {
       newActiveCallState = {
         ...newActiveCallState,
@@ -2063,7 +2035,7 @@ export function reducer(
       connectionState: GroupCallConnectionState.NotConnected,
       joinState: GroupCallJoinState.NotJoined,
       peekInfo: {
-        uuids: [],
+        acis: [],
         maxDevices: Infinity,
         deviceCount: 0,
       },
@@ -2407,14 +2379,14 @@ export function reducer(
       return state;
     }
 
-    const { safetyNumberChangedUuids } = action.payload;
+    const { safetyNumberChangedAcis } = action.payload;
 
     return {
       ...state,
       activeCallState: {
         ...activeCallState,
         pip: false,
-        safetyNumberChangedUuids,
+        safetyNumberChangedAcis,
         settingsDialogOpen: false,
         showParticipantsList: false,
       },
@@ -2432,7 +2404,7 @@ export function reducer(
       ...state,
       activeCallState: {
         ...activeCallState,
-        safetyNumberChangedUuids: [],
+        safetyNumberChangedAcis: [],
       },
     };
   }

@@ -82,7 +82,7 @@ function loadMediaItems(
     // into memory right away. Revisit this once we have infinite scrolling:
     const DEFAULT_FETCH_COUNT = 150;
 
-    const ourUuid = window.textsecure.storage.user.getCheckedUuid().toString();
+    const ourAci = window.textsecure.storage.user.getCheckedAci();
 
     const rawMedia = await dataInterface.getMessagesWithVisualMediaAttachments(
       conversationId,
@@ -109,7 +109,7 @@ function loadMediaItems(
           const upgradedMsgAttributes = await upgradeMessageSchema(message);
           model.set(upgradedMsgAttributes);
 
-          await dataInterface.saveMessage(upgradedMsgAttributes, { ourUuid });
+          await dataInterface.saveMessage(upgradedMsgAttributes, { ourAci });
         }
       })
     );
@@ -144,7 +144,7 @@ function loadMediaItems(
                 attachments: message.attachments || [],
                 conversationId:
                   window.ConversationController.lookupOrCreate({
-                    uuid: message.sourceUuid,
+                    serviceId: message.sourceServiceId,
                     e164: message.source,
                     reason: 'conversation_view.showAllMedia',
                   })?.id || message.conversationId,

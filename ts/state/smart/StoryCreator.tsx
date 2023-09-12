@@ -4,7 +4,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import type { LocalizerType } from '../../types/Util';
+import { ThemeType, type LocalizerType } from '../../types/Util';
 import type { StateType } from '../reducer';
 import { LinkPreviewSourceType } from '../../types/LinkPreview';
 import { SmartCompositionTextArea } from './CompositionTextArea';
@@ -35,7 +35,7 @@ import { processAttachment } from '../../util/processAttachment';
 import { useConversationsActions } from '../ducks/conversations';
 import { useActions as useEmojisActions } from '../ducks/emojis';
 import { useGlobalModalActions } from '../ducks/globalModals';
-import { useActions as useItemsActions } from '../ducks/items';
+import { useItemsActions } from '../ducks/items';
 import { useLinkPreviewActions } from '../ducks/linkPreviews';
 import { useRecentEmojis } from '../selectors/emojis';
 import { useStoriesActions } from '../ducks/stories';
@@ -140,6 +140,7 @@ export function SmartStoryCreator(): JSX.Element | null {
       setMyStoriesToAllSignalConnections={setMyStoriesToAllSignalConnections}
       signalConnections={signalConnections}
       skinTone={skinTone}
+      theme={ThemeType.dark}
       toggleGroupsForStorySend={toggleGroupsForStorySend}
       toggleSignalConnectionsModal={toggleSignalConnectionsModal}
     />

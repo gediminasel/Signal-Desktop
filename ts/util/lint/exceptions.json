@@ -623,6 +623,13 @@
   },
   {
     "rule": "eval",
+    "path": "node_modules/@tootallnate/quickjs-emscripten/dist/context.js",
+    "line": "     * Like [`eval(code)`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval#Description).",
+    "reasonCategory": "falseMatch",
+    "updated": "2023-08-29T19:25:52.732Z"
+  },
+  {
+    "rule": "eval",
     "path": "node_modules/agentkeepalive/node_modules/depd/index.js",
     "line": "  var deprecatedfn = eval('(function (' + args + ') {\\n' +",
     "reasonCategory": "usageTrusted",
@@ -757,13 +764,6 @@
     "reasonCategory": "falseMatch",
     "updated": "2020-08-26T00:10:28.628Z",
     "reasonDetail": "isn't react"
-  },
-  {
-    "rule": "thenify-multiArgs",
-    "path": "node_modules/find-cache-dir/node_modules/pify/index.js",
-    "line": "\t\tif (options.multiArgs) {",
-    "reasonCategory": "falseMatch",
-    "updated": "2020-08-25T00:30:50.619Z"
   },
   {
     "rule": "React-findDOMNode",
@@ -1134,6 +1134,13 @@
     "updated": "2023-06-29T17:01:25.145Z"
   },
   {
+    "rule": "thenify-multiArgs",
+    "path": "node_modules/make-dir/node_modules/pify/index.js",
+    "line": "\t\tif (options.multiArgs) {",
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-08-21T18:28:53.361Z"
+  },
+  {
     "rule": "DOM-innerHTML",
     "path": "node_modules/min-document/serialize.js",
     "line": "        } else if (elem.innerHTML) {",
@@ -1198,20 +1205,6 @@
     "line": "\t\tconst value = options.multiArgs ? args : args[0];",
     "reasonCategory": "falseMatch",
     "updated": "2022-06-04T00:50:49.405Z"
-  },
-  {
-    "rule": "eval",
-    "path": "node_modules/pac-proxy-agent/node_modules/depd/index.js",
-    "line": "  var deprecatedfn = eval('(function (' + args + ') {\\n' +",
-    "reasonCategory": "usageTrusted",
-    "updated": "2022-12-13T00:55:48.389Z"
-  },
-  {
-    "rule": "DOM-innerHTML",
-    "path": "node_modules/package-json/node_modules/@sindresorhus/is/dist/index.js",
-    "line": "        'innerHTML',",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-11-13T01:24:25.496Z"
   },
   {
     "rule": "DOM-innerHTML",
@@ -1944,22 +1937,6 @@
   },
   {
     "rule": "eval",
-    "path": "node_modules/vm2/lib/nodevm.js",
-    "line": "\t * @param {boolean} [options.eval=true] - Allow the dynamic evaluation of code via eval(code) or Function(code)().<br>",
-    "reasonCategory": "falseMatch",
-    "updated": "2022-02-16T15:30:35.122Z",
-    "reasonDetail": "falseMatch"
-  },
-  {
-    "rule": "eval",
-    "path": "node_modules/vm2/lib/vm.js",
-    "line": "\t * @param {boolean} [options.eval=true] - Allow the dynamic evaluation of code via eval(code) or Function(code)().<br>",
-    "reasonCategory": "falseMatch",
-    "updated": "2022-02-16T15:30:35.122Z",
-    "reasonDetail": "This is a comment."
-  },
-  {
-    "rule": "eval",
     "path": "node_modules/workerpool/dist/worker.js",
     "line": "var requireFoolWebpack = eval('typeof require !== \\'undefined\\'' + ' ? require' + ' : function (module) { throw new Error(\\'Module \" + module + \" not found.\\') }');",
     "reasonCategory": "usageTrusted",
@@ -2105,6 +2082,29 @@
     "line": "  const timeoutRef = useRef<NodeJS.Timeout | null>(null);",
     "reasonCategory": "usageTrusted",
     "updated": "2021-07-30T16:57:33.618Z"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/CallsList.tsx",
+    "line": "  const infiniteLoaderRef = useRef<InfiniteLoader>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-08-02T00:21:37.858Z",
+    "reasonDetail": "<optional>"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/CallsList.tsx",
+    "line": "  const listRef = useRef<List>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-08-02T00:21:37.858Z",
+    "reasonDetail": "<optional>"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/CallsList.tsx",
+    "line": "  const prevOptionsRef = useRef<CallHistoryFilterOptions | null>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-08-18T19:09:30.283Z"
   },
   {
     "rule": "React-useRef",
@@ -2336,6 +2336,13 @@
   },
   {
     "rule": "React-useRef",
+    "path": "ts/components/LeftPane.tsx",
+    "line": "  const measureRef = useRef<HTMLDivElement>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-08-09T21:48:42.602Z"
+  },
+  {
+    "rule": "React-useRef",
     "path": "ts/components/LeftPaneSearchInput.tsx",
     "line": "  const inputRef = useRef<null | HTMLInputElement>(null);",
     "reasonCategory": "usageTrusted",
@@ -2394,25 +2401,23 @@
   {
     "rule": "React-useRef",
     "path": "ts/components/Modal.tsx",
+    "line": "  const modalRef = useRef<HTMLDivElement | null>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2021-08-05T00:22:31.660Z"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/Modal.tsx",
     "line": "  const bodyRef = useRef<HTMLDivElement>(null);",
-    "reasonCategory": "falseMatch|testCode|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
-    "updated": "2023-07-25T21:55:26.191Z",
-    "reasonDetail": "<optional>"
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-07-25T21:55:26.191Z"
   },
   {
     "rule": "React-useRef",
     "path": "ts/components/Modal.tsx",
     "line": "  const bodyInnerRef = useRef<HTMLDivElement>(null);",
-    "reasonCategory": "falseMatch|testCode|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
-    "updated": "2023-07-25T21:55:26.191Z",
-    "reasonDetail": "<optional>"
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/Modal.tsx",
-    "line": "  const modalRef = useRef<HTMLDivElement | null>(null);",
     "reasonCategory": "usageTrusted",
-    "updated": "2021-08-05T00:22:31.660Z"
+    "updated": "2023-07-25T21:55:26.191Z"
   },
   {
     "rule": "React-useRef",
@@ -2505,24 +2510,21 @@
     "path": "ts/components/StoryViewer.tsx",
     "line": "  const progressBarRef = useRef<HTMLDivElement>(null);",
     "reasonCategory": "usageTrusted",
-    "updated": "2022-10-13T15:18:21.267Z",
-    "reasonDetail": "<optional>"
+    "updated": "2022-10-13T15:18:21.267Z"
   },
   {
     "rule": "React-useRef",
     "path": "ts/components/StoryViewer.tsx",
     "line": "  const animationRef = useRef<Animation | null>(null);",
     "reasonCategory": "usageTrusted",
-    "updated": "2022-10-13T15:18:21.267Z",
-    "reasonDetail": "<optional>"
+    "updated": "2022-10-13T15:18:21.267Z"
   },
   {
     "rule": "React-useRef",
     "path": "ts/components/StoryViewer.tsx",
     "line": "  const onFinishRef = useRef<(() => void) | null>(null);",
     "reasonCategory": "usageTrusted",
-    "updated": "2022-10-13T15:18:21.267Z",
-    "reasonDetail": "<optional>"
+    "updated": "2022-10-13T15:18:21.267Z"
   },
   {
     "rule": "React-useRef",
@@ -2555,14 +2557,6 @@
   {
     "rule": "React-useRef",
     "path": "ts/components/TextAttachment.tsx",
-    "line": "    const ref = useRef<HTMLDivElement>(null);",
-    "reasonCategory": "falseMatch|testCode|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
-    "updated": "2023-07-25T21:55:26.191Z",
-    "reasonDetail": "<optional>"
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/TextAttachment.tsx",
     "line": "  const linkPreview = useRef<HTMLDivElement | null>(null);",
     "reasonCategory": "usageTrusted",
     "updated": "2022-04-06T00:59:17.194Z"
@@ -2573,6 +2567,13 @@
     "line": "  const textEditorRef = useRef<HTMLTextAreaElement | null>(null);",
     "reasonCategory": "usageTrusted",
     "updated": "2022-06-16T23:23:32.306Z"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/TextAttachment.tsx",
+    "line": "    const ref = useRef<HTMLDivElement>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-07-25T21:55:26.191Z"
   },
   {
     "rule": "React-useRef",
@@ -2587,6 +2588,13 @@
     "line": "  const wrapperRef = React.useRef<HTMLSpanElement | null>(null);",
     "reasonCategory": "usageTrusted",
     "updated": "2021-07-30T16:57:33.618Z"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/Tooltip.tsx",
+    "line": "  const timeoutRef = useRef<NodeJS.Timeout | undefined>();",
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-08-10T00:23:35.320Z"
   },
   {
     "rule": "React-createRef",
@@ -2664,13 +2672,6 @@
     "reasonCategory": "usageTrusted",
     "updated": "2023-06-30T22:12:49.259Z",
     "reasonDetail": "Used for excluding the message metadata from triple-click selections."
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/conversation/MessageDetail.tsx",
-    "line": "  const focusRef = useRef<HTMLDivElement>(null);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2023-04-12T15:51:28.066Z"
   },
   {
     "rule": "React-useRef",
@@ -2814,73 +2815,50 @@
     "rule": "React-useRef",
     "path": "ts/hooks/useSizeObserver.tsx",
     "line": "  const sizeRef = useRef<Size | null>(null);",
-    "reasonCategory": "falseMatch|testCode|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
-    "updated": "2023-07-25T21:55:26.191Z",
-    "reasonDetail": "<optional>"
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-07-25T21:55:26.191Z"
   },
   {
     "rule": "React-useRef",
     "path": "ts/hooks/useSizeObserver.tsx",
     "line": "  const onSizeChangeRef = useRef<SizeChangeHandler | void>(onSizeChange);",
-    "reasonCategory": "falseMatch|testCode|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
-    "updated": "2023-07-25T21:55:26.191Z",
-    "reasonDetail": "<optional>"
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-07-25T21:55:26.191Z"
   },
   {
     "rule": "React-useRef",
     "path": "ts/hooks/useSizeObserver.tsx",
     "line": "  const ref = useRef<any>();",
-    "reasonCategory": "falseMatch|testCode|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
-    "updated": "2023-07-25T21:55:26.191Z",
-    "reasonDetail": "<optional>"
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-07-25T21:55:26.191Z"
   },
   {
     "rule": "React-useRef",
     "path": "ts/hooks/useSizeObserver.tsx",
     "line": " * const scrollerRef = useRef()",
-    "reasonCategory": "falseMatch|testCode|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
-    "updated": "2023-07-25T21:55:26.191Z",
-    "reasonDetail": "<optional>"
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-07-25T21:55:26.191Z"
   },
   {
     "rule": "React-useRef",
     "path": "ts/hooks/useSizeObserver.tsx",
     "line": " * const scrollerInnerRef = useRef()",
-    "reasonCategory": "falseMatch|testCode|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
-    "updated": "2023-07-25T21:55:26.191Z",
-    "reasonDetail": "<optional>"
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-07-25T21:55:26.191Z"
   },
   {
     "rule": "React-useRef",
     "path": "ts/hooks/useSizeObserver.tsx",
     "line": "  const scrollRef = useRef<Scroll | null>(null);",
-    "reasonCategory": "falseMatch|testCode|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
-    "updated": "2023-07-25T21:55:26.191Z",
-    "reasonDetail": "<optional>"
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-07-25T21:55:26.191Z"
   },
   {
     "rule": "React-useRef",
     "path": "ts/hooks/useSizeObserver.tsx",
     "line": "  const onScrollChangeRef = useRef<ScrollChangeHandler>(onScrollChange);",
-    "reasonCategory": "falseMatch|testCode|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
-    "updated": "2023-07-25T21:55:26.191Z",
-    "reasonDetail": "<optional>"
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/quill/formatting/menu.tsx",
-    "line": "  const fadeOutTimerRef = React.useRef<NodeJS.Timeout | undefined>();",
-    "reasonCategory": "falseMatch|testCode|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
-    "updated": "2023-08-02T19:01:24.771Z",
-    "reasonDetail": "We need a persistent timer to know when to remove after fade-out"
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/quill/formatting/menu.tsx",
-    "line": "  const hoverTimerRef = React.useRef<NodeJS.Timeout | undefined>();",
-    "reasonCategory": "falseMatch|testCode|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
-    "updated": "2023-08-02T19:01:24.771Z",
-    "reasonDetail": "We need a persistent timer to track long-hovers"
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-07-25T21:55:26.191Z"
   },
   {
     "rule": "React-useRef",
@@ -2891,12 +2869,35 @@
     "reasonDetail": "Popper needs to reference the button"
   },
   {
+    "rule": "React-useRef",
+    "path": "ts/quill/formatting/menu.tsx",
+    "line": "  const fadeOutTimerRef = React.useRef<NodeJS.Timeout | undefined>();",
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-08-02T19:01:24.771Z",
+    "reasonDetail": "We need a persistent timer to know when to remove after fade-out"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/quill/formatting/menu.tsx",
+    "line": "  const hoverTimerRef = React.useRef<NodeJS.Timeout | undefined>();",
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-08-02T19:01:24.771Z",
+    "reasonDetail": "We need a persistent timer to track long-hovers"
+  },
+  {
     "rule": "DOM-innerHTML",
     "path": "ts/quill/signal-clipboard/util.ts",
     "line": "    event.clipboardData?.setData('text/signal', container.innerHTML);",
     "reasonCategory": "regexMatchedSafeCode",
     "updated": "2023-06-02T00:37:19.861Z",
     "reasonDetail": "Reading from innerHTML, not setting it"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/state/smart/ChatsTab.tsx",
+    "line": "  const lastOpenedConversationId = useRef<string | undefined>();",
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-08-25T17:37:23.002Z"
   },
   {
     "rule": "React-useRef",
@@ -2918,6 +2919,13 @@
     "line": "  const focusRef = useRef<HTMLDivElement | null>(null);",
     "reasonCategory": "usageTrusted",
     "updated": "2023-07-13T23:34:39.367Z"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/state/smart/ConversationPanel.tsx",
+    "line": "  const wasAnimatedRef = useRef(wasAnimated);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-08-20T22:14:52.008Z"
   },
   {
     "rule": "React-useRef",

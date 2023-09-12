@@ -7,6 +7,7 @@ export enum ToastType {
   AlreadyRequestedToJoin = 'AlreadyRequestedToJoin',
   Blocked = 'Blocked',
   BlockedGroup = 'BlockedGroup',
+  CallHistoryCleared = 'CallHistoryCleared',
   CannotEditMessage = 'CannotEditMessage',
   CannotForwardEmptyMessage = 'CannotForwardEmptyMessage',
   CannotMixMultiAndNonMultiAttachments = 'CannotMixMultiAndNonMultiAttachments',
@@ -56,6 +57,7 @@ export type AnyToast =
   | { toastType: ToastType.AlreadyRequestedToJoin }
   | { toastType: ToastType.Blocked }
   | { toastType: ToastType.BlockedGroup }
+  | { toastType: ToastType.CallHistoryCleared }
   | { toastType: ToastType.CannotEditMessage }
   | { toastType: ToastType.CannotForwardEmptyMessage }
   | { toastType: ToastType.CannotMixMultiAndNonMultiAttachments }

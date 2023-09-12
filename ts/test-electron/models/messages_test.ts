@@ -3,6 +3,8 @@
 
 import { assert } from 'chai';
 import * as sinon from 'sinon';
+import { v4 as generateUuid } from 'uuid';
+
 import { setupI18n } from '../../util/setupI18n';
 import enMessages from '../../../_locales/en/messages.json';
 import { SendStatus } from '../../messages/MessageSendState';
@@ -10,7 +12,7 @@ import MessageSender from '../../textsecure/SendMessage';
 import type { WebAPIType } from '../../textsecure/WebAPI';
 import type { CallbackResultType } from '../../textsecure/Types.d';
 import type { StorageAccessType } from '../../types/Storage.d';
-import { UUID } from '../../types/UUID';
+import { generateAci } from '../../types/ServiceId';
 import { SignalService as Proto } from '../../protobuf';
 import { getContact } from '../../messages/helpers';
 import type { ConversationModel } from '../../models/conversations';
@@ -35,7 +37,7 @@ describe('Message', () => {
 
   const source = '+1 415-555-5555';
   const me = '+14155555556';
-  const ourUuid = UUID.generate().toString();
+  const ourServiceId = generateAci();
 
   function createMessage(attrs: { [key: string]: unknown }) {
     const messages = new window.Whisper.MessageCollection();
@@ -59,7 +61,7 @@ describe('Message', () => {
       oldStorageValues.set(key, window.textsecure.storage.get(key));
     });
     await window.textsecure.storage.put('number_id', `${me}.2`);
-    await window.textsecure.storage.put('uuid_id', `${ourUuid}.2`);
+    await window.textsecure.storage.put('uuid_id', `${ourServiceId}.2`);
   });
 
   after(async () => {
@@ -150,18 +152,18 @@ describe('Message', () => {
       });
 
       const fakeDataMessage = new Uint8Array(0);
-      const conversation1Uuid = conversation1.get('uuid');
-      const ignoredUuid = UUID.generate().toString();
+      const conversation1Uuid = conversation1.getServiceId();
+      const ignoredUuid = generateAci();
 
       if (!conversation1Uuid) {
         throw new Error('Test setup failed: conversation1 should have a UUID');
       }
 
       const promise = Promise.resolve<CallbackResultType>({
-        successfulIdentifiers: [conversation1Uuid, ignoredUuid],
+        successfulServiceIds: [conversation1Uuid, ignoredUuid],
         errors: [
           Object.assign(new Error('failed'), {
-            identifier: conversation2.get('uuid'),
+            serviceId: conversation2.getServiceId(),
           }),
         ],
         dataMessage: fakeDataMessage,
@@ -240,19 +242,19 @@ describe('Message', () => {
     let eve: ConversationModel | undefined;
     before(() => {
       alice = window.ConversationController.getOrCreate(
-        UUID.generate().toString(),
+        generateUuid(),
         'private'
       );
       alice.set({ systemGivenName: 'Alice' });
 
       bob = window.ConversationController.getOrCreate(
-        UUID.generate().toString(),
+        generateUuid(),
         'private'
       );
       bob.set({ systemGivenName: 'Bob' });
 
       eve = window.ConversationController.getOrCreate(
-        UUID.generate().toString(),
+        generateUuid(),
         'private'
       );
       eve.set({ systemGivenName: 'Eve' });
@@ -340,7 +342,7 @@ describe('Message', () => {
           type: 'incoming',
           source,
           group_update: {
-            left: alice?.get('uuid'),
+            left: alice?.getServiceId(),
           },
         }),
         { text: 'Alice left the group.' }
@@ -351,7 +353,7 @@ describe('Message', () => {
       assert.deepEqual(
         createMessageAndGetNotificationData({
           type: 'incoming',
-          source: alice?.get('uuid'),
+          source: alice?.getServiceId(),
           group_update: {},
         }),
         { text: 'Alice updated the group.' }
@@ -415,7 +417,7 @@ describe('Message', () => {
         createMessageAndGetNotificationData({
           type: 'incoming',
           source,
-          group_update: { joined: [bob?.get('uuid')] },
+          group_update: { joined: [bob?.getServiceId()] },
         }),
         {
           text: '+1 415-555-5555 updated the group. Bob joined the group.',
@@ -429,7 +431,11 @@ describe('Message', () => {
           type: 'incoming',
           source,
           group_update: {
-            joined: [bob?.get('uuid'), alice?.get('uuid'), eve?.get('uuid')],
+            joined: [
+              bob?.getServiceId(),
+              alice?.getServiceId(),
+              eve?.getServiceId(),
+            ],
           },
         }),
         {
@@ -445,10 +451,10 @@ describe('Message', () => {
           source,
           group_update: {
             joined: [
-              bob?.get('uuid'),
+              bob?.getServiceId(),
               me,
-              alice?.get('uuid'),
-              eve?.get('uuid'),
+              alice?.getServiceId(),
+              eve?.getServiceId(),
             ],
           },
         }),
@@ -463,7 +469,7 @@ describe('Message', () => {
         createMessageAndGetNotificationData({
           type: 'incoming',
           source,
-          group_update: { joined: [bob?.get('uuid')], name: 'blerg' },
+          group_update: { joined: [bob?.getServiceId()], name: 'blerg' },
         }),
         {
           text: "+1 415-555-5555 updated the group. Bob joined the group. Group name is now 'blerg'.",
@@ -633,7 +639,7 @@ describe('Message', () => {
         createMessage({
           conversationId: (
             await window.ConversationController.getOrCreateAndWait(
-              UUID.generate().toString(),
+              generateUuid(),
               'private'
             )
           ).id,
@@ -657,7 +663,7 @@ describe('Message', () => {
         createMessage({
           conversationId: (
             await window.ConversationController.getOrCreateAndWait(
-              UUID.generate().toString(),
+              generateUuid(),
               'private'
             )
           ).id,
@@ -685,7 +691,7 @@ describe('Message', () => {
         createMessage({
           conversationId: (
             await window.ConversationController.getOrCreateAndWait(
-              UUID.generate().toString(),
+              generateUuid(),
               'private'
             )
           ).id,

@@ -21,7 +21,11 @@ import {
   getTheme,
   getUserConversationId,
 } from '../selectors/user';
-import { getEmojiSkinTone, getTextFormattingEnabled } from '../selectors/items';
+import {
+  getDefaultConversationColor,
+  getEmojiSkinTone,
+  getTextFormattingEnabled,
+} from '../selectors/items';
 import {
   getConversationSelector,
   getGroupAdminsSelector,
@@ -169,9 +173,10 @@ const mapStateToProps = (state: StateType, props: ExternalProps) => {
       ? getPropsForQuote(quotedMessage, {
           conversationSelector,
           ourConversationId: getUserConversationId(state),
+          defaultConversationColor: getDefaultConversationColor(state),
         })
       : undefined,
-    quotedMessageAuthorUuid: quotedMessage?.quote?.authorUuid,
+    quotedMessageAuthorAci: quotedMessage?.quote?.authorAci,
     quotedMessageSentAt: quotedMessage?.quote?.id,
     // Emojis
     recentEmojis,
@@ -201,7 +206,7 @@ const mapStateToProps = (state: StateType, props: ExternalProps) => {
     draftText: dropNull(draftText),
     draftBodyRanges: draftBodyRanges?.map(bodyRange => {
       if (BodyRange.isMention(bodyRange)) {
-        const mentionConvo = conversationSelector(bodyRange.mentionUuid);
+        const mentionConvo = conversationSelector(bodyRange.mentionAci);
 
         return {
           ...bodyRange,

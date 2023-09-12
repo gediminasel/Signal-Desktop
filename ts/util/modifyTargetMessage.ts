@@ -9,28 +9,25 @@ import type { SendStateByConversationId } from '../messages/MessageSendState';
 import * as Edits from '../messageModifiers/Edits';
 import * as log from '../logging/log';
 import * as Deletes from '../messageModifiers/Deletes';
-import {
-  MessageReceipts,
-  MessageReceiptType,
-} from '../messageModifiers/MessageReceipts';
-import { Reactions } from '../messageModifiers/Reactions';
+import * as MessageReceipts from '../messageModifiers/MessageReceipts';
+import * as Reactions from '../messageModifiers/Reactions';
+import * as ReadSyncs from '../messageModifiers/ReadSyncs';
+import * as ViewOnceOpenSyncs from '../messageModifiers/ViewOnceOpenSyncs';
+import * as ViewSyncs from '../messageModifiers/ViewSyncs';
 import { ReadStatus } from '../messages/MessageReadStatus';
-import { ReadSyncs } from '../messageModifiers/ReadSyncs';
 import { SeenStatus } from '../MessageSeenStatus';
 import {
   SendActionType,
   sendStateReducer,
   SendStatus,
 } from '../messages/MessageSendState';
-import { ViewOnceOpenSyncs } from '../messageModifiers/ViewOnceOpenSyncs';
-import { ViewSyncs } from '../messageModifiers/ViewSyncs';
 import { canConversationBeUnarchived } from './canConversationBeUnarchived';
 import { deleteForEveryone } from './deleteForEveryone';
 import { handleEditMessage } from './handleEditMessage';
 import { isGroup } from './whatTypeOfConversation';
 import { isStory, isTapToView } from '../state/selectors/message';
 import { getOwn } from './getOwn';
-import { getSourceUuid } from '../messages/helpers';
+import { getSourceServiceId } from '../messages/helpers';
 import { missingCaseError } from './missingCaseError';
 import { reduce } from './iterables';
 import { strictAssert } from './assert';
@@ -41,29 +38,33 @@ import { strictAssert } from './assert';
 export async function modifyTargetMessage(
   message: MessageModel,
   conversation: ConversationModel,
-  options?: { isFirstRun: boolean; skipEdits: boolean }
+  options?: { isFirstRun: boolean; skipEdits: boolean; skipSave: boolean }
 ): Promise<void> {
-  const { isFirstRun = false, skipEdits = false } = options ?? {};
+  const {
+    isFirstRun = false,
+    skipEdits = false,
+    skipSave = false,
+  } = options ?? {};
 
   const logId = `modifyTargetMessage/${message.idForLogging()}`;
   const type = message.get('type');
   let changed = false;
-  const ourUuid = window.textsecure.storage.user.getCheckedUuid().toString();
-  const sourceUuid = getSourceUuid(message.attributes);
+  const ourAci = window.textsecure.storage.user.getCheckedAci();
+  const sourceServiceId = getSourceServiceId(message.attributes);
 
-  if (type === 'outgoing' || (type === 'story' && ourUuid === sourceUuid)) {
-    const receipts = MessageReceipts.getSingleton().forMessage(message);
+  if (type === 'outgoing' || (type === 'story' && ourAci === sourceServiceId)) {
+    const receipts = MessageReceipts.forMessage(message);
     const sendActions = receipts.map(receipt => {
       let sendActionType: SendActionType;
-      const receiptType = receipt.get('type');
+      const receiptType = receipt.type;
       switch (receiptType) {
-        case MessageReceiptType.Delivery:
+        case MessageReceipts.MessageReceiptType.Delivery:
           sendActionType = SendActionType.GotDeliveryReceipt;
           break;
-        case MessageReceiptType.Read:
+        case MessageReceipts.MessageReceiptType.Read:
           sendActionType = SendActionType.GotReadReceipt;
           break;
-        case MessageReceiptType.View:
+        case MessageReceipts.MessageReceiptType.View:
           sendActionType = SendActionType.GotViewedReceipt;
           break;
         default:
@@ -71,10 +72,10 @@ export async function modifyTargetMessage(
       }
 
       return {
-        destinationConversationId: receipt.get('sourceConversationId'),
+        destinationConversationId: receipt.sourceConversationId,
         action: {
           type: sendActionType,
-          updatedAt: receipt.get('receiptTimestamp'),
+          updatedAt: receipt.receiptTimestamp,
         },
       };
     });
@@ -113,9 +114,8 @@ export async function modifyTargetMessage(
     const conversationId = message.get('conversationId');
 
     for (const receipt of receipts) {
-      const sourceConversationId = receipt.get('sourceConversationId');
-      const myType = receipt.get('type');
-      if (myType === MessageReceiptType.Read) {
+      const { sourceConversationId, type: myType } = receipt;
+      if (myType === MessageReceipts.MessageReceiptType.Read) {
         const recipient =
           window.ConversationController.get(sourceConversationId);
         if (recipient) {
@@ -175,10 +175,10 @@ export async function modifyTargetMessage(
   if (type === 'incoming') {
     // In a followup (see DESKTOP-2100), we want to make `ReadSyncs#forMessage` return
     //   an array, not an object. This array wrapping makes that future a bit easier.
-    const readSync = ReadSyncs.getSingleton().forMessage(message);
+    const readSync = ReadSyncs.forMessage(message);
     const readSyncs = readSync ? [readSync] : [];
 
-    const viewSyncs = ViewSyncs.getSingleton().forMessage(message);
+    const viewSyncs = ViewSyncs.forMessage(message);
 
     const isGroupStoryReply =
       isGroup(conversation.attributes) && message.get('storyId');
@@ -186,8 +186,8 @@ export async function modifyTargetMessage(
     if (readSyncs.length !== 0 || viewSyncs.length !== 0) {
       const markReadAt = Math.min(
         Date.now(),
-        ...readSyncs.map(sync => sync.get('readAt')),
-        ...viewSyncs.map(sync => sync.get('viewedAt'))
+        ...readSyncs.map(sync => sync.readAt),
+        ...viewSyncs.map(sync => sync.viewedAt)
       );
 
       if (message.get('expireTimer')) {
@@ -245,8 +245,7 @@ export async function modifyTargetMessage(
 
     // Check for out-of-order view once open syncs
     if (isTapToView(message.attributes)) {
-      const viewOnceOpenSync =
-        ViewOnceOpenSyncs.getSingleton().forMessage(message);
+      const viewOnceOpenSync = ViewOnceOpenSyncs.forMessage(message);
       if (viewOnceOpenSync) {
         await message.markViewOnceMessageViewed({ fromSync: true });
         changed = true;
@@ -255,7 +254,7 @@ export async function modifyTargetMessage(
   }
 
   if (isStory(message.attributes)) {
-    const viewSyncs = ViewSyncs.getSingleton().forMessage(message);
+    const viewSyncs = ViewSyncs.forMessage(message);
 
     if (viewSyncs.length !== 0) {
       message.set({
@@ -266,7 +265,7 @@ export async function modifyTargetMessage(
 
       const markReadAt = Math.min(
         Date.now(),
-        ...viewSyncs.map(sync => sync.get('viewedAt'))
+        ...viewSyncs.map(sync => sync.viewedAt)
       );
       message.setPendingMarkRead(
         Math.min(message.getPendingMarkRead() ?? Date.now(), markReadAt)
@@ -284,12 +283,12 @@ export async function modifyTargetMessage(
   }
 
   // Does message message have any pending, previously-received associated reactions?
-  const reactions = Reactions.getSingleton().forMessage(message);
+  const reactions = Reactions.forMessage(message);
   await Promise.all(
     reactions.map(async reaction => {
       if (isStory(message.attributes)) {
         // We don't set changed = true here, because we don't modify the original story
-        const generatedMessage = reaction.get('storyReactionMessage');
+        const generatedMessage = reaction.storyReactionMessage;
         strictAssert(
           generatedMessage,
           'Story reactions must provide storyReactionMessage'
@@ -327,10 +326,10 @@ export async function modifyTargetMessage(
     );
   }
 
-  if (changed && !isFirstRun) {
+  if (!skipSave && changed && !isFirstRun) {
     log.info(`${logId}: Changes in second run; saving.`);
     await window.Signal.Data.saveMessage(message.attributes, {
-      ourUuid: window.textsecure.storage.user.getCheckedUuid().toString(),
+      ourAci,
     });
   }
 }

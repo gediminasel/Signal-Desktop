@@ -3,10 +3,10 @@
 
 import type { AudioDevice } from '@signalapp/ringrtc';
 import type { ConversationType } from '../state/ducks/conversations';
+import type { AciString, ServiceIdString } from './ServiceId';
 
 // These are strings (1) for the database (2) for Storybook.
 export enum CallMode {
-  None = 'None',
   Direct = 'Direct',
   Group = 'Group',
 }
@@ -59,7 +59,10 @@ export type ActiveDirectCallType = ActiveCallBaseType & {
       hasRemoteVideo: boolean;
       presenting: boolean;
       title: string;
-      uuid?: string;
+      // Note that the field name/type has to match the
+      //   GroupCallRemoteParticipantType below (which is based on
+      //   ConversationType).
+      serviceId?: ServiceIdString;
     }
   ];
 };
@@ -113,7 +116,6 @@ export enum CallEndedReason {
   AcceptedOnAnotherDevice = 'AcceptedOnAnotherDevice',
   DeclinedOnAnotherDevice = 'DeclinedOnAnotherDevice',
   BusyOnAnotherDevice = 'BusyOnAnotherDevice',
-  CallerIsNotMultiring = 'CallerIsNotMultiring',
 }
 
 // Must be kept in sync with RingRTC's ConnectionState
@@ -128,10 +130,12 @@ export enum GroupCallConnectionState {
 export enum GroupCallJoinState {
   NotJoined = 0,
   Joining = 1,
-  Joined = 2,
+  Pending = 2,
+  Joined = 3,
 }
 
 export type GroupCallRemoteParticipantType = ConversationType & {
+  aci: AciString;
   demuxId: number;
   hasRemoteAudio: boolean;
   hasRemoteVideo: boolean;
@@ -165,33 +169,6 @@ export type MediaDeviceSettings = AvailableIODevicesType & {
   selectedSpeaker: AudioDevice | undefined;
   selectedCamera: string | undefined;
 };
-
-type DirectCallHistoryDetailsType = {
-  callId: string;
-  callMode: CallMode.Direct;
-  wasIncoming: boolean;
-  wasVideoCall: boolean;
-  wasDeclined: boolean;
-  acceptedTime?: number;
-  endedTime?: number;
-};
-
-type GroupCallHistoryDetailsType = {
-  callMode: CallMode.Group;
-  creatorUuid: string;
-  eraId: string;
-  startedTime: number;
-};
-
-export type CallHistoryDetailsType =
-  | DirectCallHistoryDetailsType
-  | GroupCallHistoryDetailsType;
-
-// Old messages weren't saved with a `callMode`.
-export type CallHistoryDetailsFromDiskType =
-  | (Omit<DirectCallHistoryDetailsType, 'callMode'> &
-      Partial<Pick<DirectCallHistoryDetailsType, 'callMode'>>)
-  | GroupCallHistoryDetailsType;
 
 export type ChangeIODevicePayloadType =
   | { type: CallingDeviceType.CAMERA; selectedDevice: string }

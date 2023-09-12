@@ -15,10 +15,10 @@ import { assertDev, softAssert } from '../util/assert';
 import { mapObjectWithSpec } from '../util/mapObjectWithSpec';
 import type { ObjectMappingSpecType } from '../util/mapObjectWithSpec';
 import { cleanDataForIpc } from './cleanDataForIpc';
-import type { UUIDStringType } from '../types/UUID';
+import type { AciString, ServiceIdString } from '../types/ServiceId';
 import createTaskWithTimeout from '../textsecure/TaskWithTimeout';
 import * as log from '../logging/log';
-import { isValidUuid } from '../types/UUID';
+import { isValidUuid } from '../util/isValidUuid';
 import * as Errors from '../types/errors';
 
 import type { StoredJob } from '../jobs/types';
@@ -106,6 +106,8 @@ const exclusiveInterface: ClientExclusiveInterface = {
   getNewerMessagesByConversation,
 
   // Client-side only
+
+  flushUpdateConversationBatcher,
 
   shutdown,
   removeAllMessagesInConversation,
@@ -381,13 +383,7 @@ const ITEM_SPECS: Partial<Record<ItemKeyType, ObjectMappingSpecType>> = {
   senderCertificate: ['value.serialized'],
   senderCertificateNoE164: ['value.serialized'],
   subscriberId: ['value'],
-  usernameLink: {
-    key: 'value',
-    valueSpec: {
-      isMap: true,
-      valueSpec: ['entropy', 'serverId'],
-    },
-  },
+  usernameLink: ['value.entropy', 'value.serverId'],
 };
 async function createOrUpdateItem<K extends ItemKeyType>(
   data: ItemType<K>
@@ -412,7 +408,12 @@ async function getItemById<K extends ItemKeyType>(
   const spec = ITEM_SPECS[id];
   const data = await channels.getItemById(id);
 
-  return spec ? specToBytes(spec, data) : (data as unknown as ItemType<K>);
+  try {
+    return spec ? specToBytes(spec, data) : (data as unknown as ItemType<K>);
+  } catch (error) {
+    log.warn(`getItemById(${id}): Failed to parse item from spec`, error);
+    return undefined;
+  }
 }
 async function getAllItems(): Promise<AllItemsType> {
   const items = await channels.getAllItems();
@@ -425,11 +426,15 @@ async function getAllItems(): Promise<AllItemsType> {
 
     const keys = ITEM_SPECS[key];
 
-    const deserializedValue = keys
-      ? (specToBytes(keys, { value }) as ItemType<typeof key>).value
-      : value;
+    try {
+      const deserializedValue = keys
+        ? (specToBytes(keys, { value }) as ItemType<typeof key>).value
+        : value;
 
-    result[key] = deserializedValue;
+      result[key] = deserializedValue;
+    } catch (error) {
+      log.warn(`getAllItems(${id}): Failed to parse item from spec`, error);
+    }
   }
 
   return result;
@@ -457,6 +462,9 @@ const updateConversationBatcher = createBatcher<ConversationType>({
 
 function updateConversation(data: ConversationType): void {
   updateConversationBatcher.add(data);
+}
+async function flushUpdateConversationBatcher(): Promise<void> {
+  await updateConversationBatcher.flushAndWait();
 }
 
 async function updateConversations(
@@ -514,19 +522,19 @@ function handleSearchMessageJSON(
 async function searchMessages({
   query,
   options,
-  contactUuidsMatchingQuery,
+  contactServiceIdsMatchingQuery,
   conversationId,
 }: {
   query: string;
   options?: { limit?: number };
-  contactUuidsMatchingQuery?: Array<string>;
+  contactServiceIdsMatchingQuery?: Array<ServiceIdString>;
   conversationId?: string;
 }): Promise<Array<ClientSearchResultMessageType>> {
   const messages = await channels.searchMessages({
     query,
     conversationId,
     options,
-    contactUuidsMatchingQuery,
+    contactServiceIdsMatchingQuery,
   });
 
   return handleSearchMessageJSON(messages);
@@ -539,7 +547,7 @@ async function saveMessage(
   options: {
     jobToInsert?: Readonly<StoredJob>;
     forceSave?: boolean;
-    ourUuid: UUIDStringType;
+    ourAci: AciString;
   }
 ): Promise<string> {
   const id = await channels.saveMessage(_cleanMessageData(data), {
@@ -557,7 +565,7 @@ async function saveMessage(
 
 async function saveMessages(
   arrayOfMessages: ReadonlyArray<MessageType>,
-  options: { forceSave?: boolean; ourUuid: UUIDStringType }
+  options: { forceSave?: boolean; ourAci: AciString }
 ): Promise<void> {
   await channels.saveMessages(
     arrayOfMessages.map(message => _cleanMessageData(message)),

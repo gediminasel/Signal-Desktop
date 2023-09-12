@@ -4,20 +4,16 @@
 import { isEqual, isNumber } from 'lodash';
 import Long from 'long';
 
-import {
-  uuidToBytes,
-  bytesToUuid,
-  deriveMasterKeyFromGroupV1,
-} from '../Crypto';
+import { uuidToBytes, bytesToUuid } from '../util/uuidToBytes';
+import { deriveMasterKeyFromGroupV1 } from '../Crypto';
 import * as Bytes from '../Bytes';
 import {
   deriveGroupFields,
   waitThenMaybeUpdateGroup,
   waitThenRespondToGroupV2Migration,
 } from '../groups';
-import { assertDev } from '../util/assert';
+import { assertDev, strictAssert } from '../util/assert';
 import { dropNull } from '../util/dropNull';
-import { normalizeUuid } from '../util/normalizeUuid';
 import { missingCaseError } from '../util/missingCaseError';
 import { isNotNil } from '../util/isNotNil';
 import {
@@ -28,6 +24,7 @@ import {
   PhoneNumberDiscoverability,
   parsePhoneNumberDiscoverability,
 } from '../util/phoneNumberDiscoverability';
+import { isPnpEnabled } from '../util/isPnpEnabled';
 import { arePinnedConversationsEqual } from '../util/arePinnedConversationsEqual';
 import type { ConversationModel } from '../models/conversations';
 import {
@@ -42,11 +39,18 @@ import {
 import { ourProfileKeyService } from './ourProfileKey';
 import { isGroupV1, isGroupV2 } from '../util/whatTypeOfConversation';
 import { DurationInSeconds } from '../util/durations';
-import { isValidUuid, UUID, UUIDKind } from '../types/UUID';
 import * as preferredReactionEmoji from '../reactions/preferredReactionEmoji';
 import { SignalService as Proto } from '../protobuf';
 import * as log from '../logging/log';
-import type { UUIDStringType } from '../types/UUID';
+import { normalizeStoryDistributionId } from '../types/StoryDistributionId';
+import type { StoryDistributionIdString } from '../types/StoryDistributionId';
+import type { ServiceIdString } from '../types/ServiceId';
+import {
+  normalizeServiceId,
+  normalizeAci,
+  normalizePni,
+  ServiceIdKind,
+} from '../types/ServiceId';
 import * as Stickers from '../types/Stickers';
 import type {
   StoryDistributionWithMembersType,
@@ -56,6 +60,8 @@ import dataInterface from '../sql/Client';
 import { MY_STORY_ID, StorySendMode } from '../types/Stories';
 import * as RemoteConfig from '../RemoteConfig';
 import { findAndDeleteOnboardingStoryIfExists } from '../util/findAndDeleteOnboardingStoryIfExists';
+import { downloadOnboardingStory } from '../util/downloadOnboardingStory';
+import { drop } from '../util/drop';
 
 const MY_STORY_BYTES = uuidToBytes(MY_STORY_ID);
 
@@ -150,9 +156,9 @@ export async function toContactRecord(
   conversation: ConversationModel
 ): Promise<Proto.ContactRecord> {
   const contactRecord = new Proto.ContactRecord();
-  const uuid = conversation.getUuid();
-  if (uuid) {
-    contactRecord.serviceUuid = uuid.toString();
+  const aci = conversation.getAci();
+  if (aci) {
+    contactRecord.aci = aci;
   }
   const e164 = conversation.get('e164');
   if (e164) {
@@ -163,7 +169,7 @@ export async function toContactRecord(
   if (username && canHaveUsername(conversation.attributes, ourID)) {
     contactRecord.username = username;
   }
-  const pni = conversation.get('pni');
+  const pni = conversation.getPni();
   if (pni && RemoteConfig.isEnabled('desktop.pnp')) {
     contactRecord.pni = pni;
   }
@@ -172,8 +178,9 @@ export async function toContactRecord(
     contactRecord.profileKey = Bytes.fromBase64(String(profileKey));
   }
 
-  const identityKey = uuid
-    ? await window.textsecure.storage.protocol.loadIdentityKey(uuid)
+  const serviceId = aci ?? pni;
+  const identityKey = serviceId
+    ? await window.textsecure.storage.protocol.loadIdentityKey(serviceId)
     : undefined;
   if (identityKey) {
     contactRecord.identityKey = identityKey;
@@ -331,7 +338,7 @@ export function toAccountRecord(
         if (pinnedConversation.get('type') === 'private') {
           pinnedConversationRecord.identifier = 'contact';
           pinnedConversationRecord.contact = {
-            uuid: pinnedConversation.get('uuid'),
+            serviceId: pinnedConversation.getServiceId(),
             e164: pinnedConversation.get('e164'),
           };
         } else if (isGroupV1(pinnedConversation.attributes)) {
@@ -513,7 +520,8 @@ export function toStoryDistributionListRecord(
   storyDistributionListRecord.isBlockList = Boolean(
     storyDistributionList.isBlockList
   );
-  storyDistributionListRecord.recipientUuids = storyDistributionList.members;
+  storyDistributionListRecord.recipientServiceIds =
+    storyDistributionList.members;
 
   if (storyDistributionList.storageUnknownFields) {
     storyDistributionListRecord.$unknownFields = [
@@ -637,12 +645,8 @@ function doRecordsConflict(
     // false, empty string, or 0 for these records we do not count them as
     // conflicting.
     if (
-      // eslint-disable-next-line eqeqeq
-      remoteValue === null &&
-      (localValue === false ||
-        localValue === '' ||
-        localValue === 0 ||
-        (Long.isLong(localValue) && localValue.toNumber() === 0))
+      (!remoteValue || (Long.isLong(remoteValue) && remoteValue.isZero())) &&
+      (!localValue || (Long.isLong(localValue) && localValue.isZero()))
     ) {
       continue;
     }
@@ -965,46 +969,45 @@ export async function mergeContactRecord(
   const contactRecord = {
     ...originalContactRecord,
 
-    serviceUuid: originalContactRecord.serviceUuid
-      ? normalizeUuid(
-          originalContactRecord.serviceUuid,
-          'ContactRecord.serviceUuid'
-        )
+    aci: originalContactRecord.aci
+      ? normalizeAci(originalContactRecord.aci, 'ContactRecord.aci')
+      : undefined,
+    pni: originalContactRecord.pni
+      ? normalizePni(originalContactRecord.pni, 'ContactRecord.pni')
       : undefined,
   };
 
   const isPniSupported = RemoteConfig.isEnabled('desktop.pnp');
 
   const e164 = dropNull(contactRecord.serviceE164);
-  const uuid = dropNull(contactRecord.serviceUuid);
+  const { aci } = contactRecord;
   const pni = isPniSupported ? dropNull(contactRecord.pni) : undefined;
+  const serviceId = aci || pni;
 
   // All contacts must have UUID
-  if (!uuid) {
+  if (!serviceId) {
     return { hasConflict: false, shouldDrop: true, details: ['no uuid'] };
   }
 
-  if (!isValidUuid(uuid)) {
-    return { hasConflict: false, shouldDrop: true, details: ['invalid uuid'] };
-  }
-
-  if (window.storage.user.getOurUuidKind(new UUID(uuid)) !== UUIDKind.Unknown) {
+  if (
+    window.storage.user.getOurServiceIdKind(serviceId) !== ServiceIdKind.Unknown
+  ) {
     return { hasConflict: false, shouldDrop: true, details: ['our own uuid'] };
   }
 
   const { conversation } = window.ConversationController.maybeMergeContacts({
-    aci: uuid,
+    aci,
     e164,
     pni,
     reason: 'mergeContactRecord',
   });
 
   // We're going to ignore this; it's likely a PNI-only contact we've already merged
-  if (conversation.get('uuid') !== uuid) {
+  if (conversation.getServiceId() !== serviceId) {
     log.warn(
       `mergeContactRecord: ${conversation.idForLogging()} ` +
         `with storageId ${conversation.get('storageID')} ` +
-        `had uuid that didn't match provided uuid ${uuid}`
+        `had serviceId that didn't match provided serviceId ${serviceId}`
     );
     return {
       hasConflict: false,
@@ -1064,7 +1067,7 @@ export async function mergeContactRecord(
 
     const needsNotification =
       await window.textsecure.storage.protocol.updateIdentityAfterSync(
-        new UUID(uuid),
+        serviceId,
         newVerified,
         contactRecord.identityKey
       );
@@ -1217,9 +1220,13 @@ export async function mergeAccountRecord(
     await window.storage.put('primarySendsSms', primarySendsSms);
   }
 
-  if (typeof accountE164 === 'string' && accountE164) {
+  if (typeof accountE164 === 'string') {
     await window.storage.put('accountE164', accountE164);
-    if (!RemoteConfig.isEnabled('desktop.pnp')) {
+    if (
+      !RemoteConfig.isEnabled('desktop.pnp') &&
+      !RemoteConfig.isEnabled('desktop.pnp.accountE164Deprecation') &&
+      !isPnpEnabled()
+    ) {
       await window.storage.user.setNumber(accountE164);
     }
   }
@@ -1319,14 +1326,19 @@ export async function mergeAccountRecord(
         let conversation: ConversationModel | undefined;
 
         if (contact) {
-          if (!contact.uuid && !contact.e164) {
+          if (!contact.serviceId && !contact.e164) {
             log.error(
-              'storageService.mergeAccountRecord: No uuid or e164 on contact'
+              'storageService.mergeAccountRecord: No serviceId or e164 on contact'
             );
             return undefined;
           }
           conversation = window.ConversationController.lookupOrCreate({
-            uuid: contact.uuid,
+            serviceId: contact.serviceId
+              ? normalizeServiceId(
+                  contact.serviceId,
+                  'AccountRecord.pin.serviceId'
+                )
+              : undefined,
             e164: contact.e164,
             reason: 'storageService.mergeAccountRecord',
           });
@@ -1409,7 +1421,9 @@ export async function mergeAccountRecord(
       hasViewedOnboardingStoryBool
     );
     if (hasViewedOnboardingStoryBool) {
-      void findAndDeleteOnboardingStoryIfExists();
+      drop(findAndDeleteOnboardingStoryIfExists());
+    } else {
+      drop(downloadOnboardingStory());
     }
   }
   {
@@ -1529,20 +1543,24 @@ export async function mergeStoryDistributionListRecord(
     storyDistributionListRecord.identifier
   );
 
-  const listId = isMyStory
-    ? MY_STORY_ID
-    : bytesToUuid(storyDistributionListRecord.identifier);
-
-  if (!listId) {
-    throw new Error('Could not parse distribution list id');
+  let listId: StoryDistributionIdString;
+  if (isMyStory) {
+    listId = MY_STORY_ID;
+  } else {
+    const uuid = bytesToUuid(storyDistributionListRecord.identifier);
+    strictAssert(uuid, 'mergeStoryDistributionListRecord: no distribution id');
+    listId = normalizeStoryDistributionId(
+      uuid,
+      'mergeStoryDistributionListRecord'
+    );
   }
 
   const localStoryDistributionList =
     await dataInterface.getStoryDistributionWithMembers(listId);
 
-  const remoteListMembers: Array<UUIDStringType> = (
-    storyDistributionListRecord.recipientUuids || []
-  ).map(UUID.cast);
+  const remoteListMembers: Array<ServiceIdString> = (
+    storyDistributionListRecord.recipientServiceIds || []
+  ).map(id => normalizeServiceId(id, 'mergeStoryDistributionListRecord'));
 
   if (storyDistributionListRecord.$unknownFields) {
     details.push('adding unknown fields');
@@ -1611,14 +1629,14 @@ export async function mergeStoryDistributionListRecord(
   );
 
   const localMembersListSet = new Set(localStoryDistributionList.members);
-  const toAdd: Array<UUIDStringType> = remoteListMembers.filter(
-    uuid => !localMembersListSet.has(uuid)
+  const toAdd: Array<ServiceIdString> = remoteListMembers.filter(
+    serviceId => !localMembersListSet.has(serviceId)
   );
 
   const remoteMemberListSet = new Set(remoteListMembers);
-  const toRemove: Array<UUIDStringType> =
+  const toRemove: Array<ServiceIdString> =
     localStoryDistributionList.members.filter(
-      uuid => !remoteMemberListSet.has(uuid)
+      serviceId => !remoteMemberListSet.has(serviceId)
     );
 
   details.push('updated');

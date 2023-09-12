@@ -19,6 +19,7 @@ import {
   groupDecrypt,
   PlaintextContent,
   PreKeySignalMessage,
+  Pni,
   processSenderKeyDistributionMessage,
   ProtocolAddress,
   PublicKey,
@@ -44,17 +45,25 @@ import type { BatcherType } from '../util/batcher';
 import { createBatcher } from '../util/batcher';
 import { drop } from '../util/drop';
 import { dropNull } from '../util/dropNull';
-import { normalizeUuid } from '../util/normalizeUuid';
 import { parseIntOrThrow } from '../util/parseIntOrThrow';
 import { clearTimeoutIfNecessary } from '../util/clearTimeoutIfNecessary';
 import { Zone } from '../util/Zone';
 import { DurationInSeconds, SECOND } from '../util/durations';
-import { bytesToUuid } from '../Crypto';
 import type { DownloadedAttachmentType } from '../types/Attachment';
 import { Address } from '../types/Address';
 import { QualifiedAddress } from '../types/QualifiedAddress';
-import type { UUIDStringType, TaggedUUIDStringType } from '../types/UUID';
-import { UUID, UUIDKind } from '../types/UUID';
+import { normalizeStoryDistributionId } from '../types/StoryDistributionId';
+import type { ServiceIdString } from '../types/ServiceId';
+import {
+  ServiceIdKind,
+  normalizeAci,
+  normalizeServiceId,
+  normalizePni,
+  isAciString,
+  isPniString,
+  isServiceIdString,
+  fromPniObject,
+} from '../types/ServiceId';
 import * as Errors from '../types/errors';
 
 import { SignalService as Proto } from '../protobuf';
@@ -88,6 +97,7 @@ import type {
   UnprocessedType,
 } from './Types.d';
 import {
+  CallEventSyncEvent,
   EmptyEvent,
   EnvelopeQueuedEvent,
   EnvelopeUnsealedEvent,
@@ -113,7 +123,7 @@ import {
   ViewSyncEvent,
   ContactSyncEvent,
   StoryRecipientUpdateEvent,
-  CallEventSyncEvent,
+  CallLogEventSyncEvent,
 } from './messageReceiverEvents';
 import * as log from '../logging/log';
 import * as durations from '../util/durations';
@@ -128,13 +138,16 @@ import { isOlderThan } from '../util/timestamp';
 import { inspectUnknownFieldTags } from '../util/inspectProtobufs';
 import { incrementMessageCounter } from '../util/incrementMessageCounter';
 import { filterAndClean } from '../types/BodyRange';
+import { getCallEventForProto } from '../util/callDisposition';
+import { checkOurPniIdentityKey } from '../util/checkOurPniIdentityKey';
+import { CallLogEvent } from '../types/CallDisposition';
 
 const GROUPV2_ID_LENGTH = 32;
 const RETRY_TIMEOUT = 2 * 60 * 1000;
 
 type UnsealedEnvelope = Readonly<
-  Omit<ProcessedEnvelope, 'sourceUuid'> & {
-    sourceUuid: UUIDStringType;
+  Omit<ProcessedEnvelope, 'sourceServiceId'> & {
+    sourceServiceId: ServiceIdString;
     unidentifiedDeliveryReceived?: boolean;
     contentHint?: number;
     groupId?: string;
@@ -241,12 +254,12 @@ function getEnvelopeId(envelope: ProcessedEnvelope): string {
 
   let prefix = '';
 
-  if (envelope.sourceUuid || envelope.source) {
-    const sender = envelope.sourceUuid || envelope.source;
+  if (envelope.sourceServiceId || envelope.source) {
+    const sender = envelope.sourceServiceId || envelope.source;
     prefix += `${sender}.${envelope.sourceDevice} `;
   }
 
-  prefix += `> ${envelope.destinationUuid.toString()}`;
+  prefix += `> ${envelope.destinationServiceId}`;
 
   return `${prefix} ${timestamp} (${envelope.id})`;
 }
@@ -285,6 +298,8 @@ export default class MessageReceiver
   private serverTrustRoot: Uint8Array;
 
   private stoppingProcessing?: boolean;
+
+  private pniIdentityKeyCheckRequired?: boolean;
 
   constructor({ server, storage, serverTrustRoot }: MessageReceiverOptions) {
     super();
@@ -381,7 +396,7 @@ export default class MessageReceiver
         const decoded = Proto.Envelope.decode(plaintext);
         const serverTimestamp = decoded.serverTimestamp?.toNumber();
 
-        const ourUuid = this.storage.user.getCheckedUuid();
+        const ourAci = this.storage.user.getCheckedAci();
 
         const envelope: ProcessedEnvelope = {
           // Make non-private envelope IDs dashless so they don't get redacted
@@ -394,27 +409,23 @@ export default class MessageReceiver
 
           // Proto.Envelope fields
           type: decoded.type,
-          sourceUuid: decoded.sourceUuid
-            ? normalizeUuid(
-                decoded.sourceUuid,
-                'MessageReceiver.handleRequest.sourceUuid'
+          sourceServiceId: decoded.sourceServiceId
+            ? normalizeServiceId(
+                decoded.sourceServiceId,
+                'MessageReceiver.handleRequest.sourceServiceId'
               )
             : undefined,
           sourceDevice: decoded.sourceDevice,
-          destinationUuid: decoded.destinationUuid
-            ? new UUID(
-                normalizeUuid(
-                  decoded.destinationUuid,
-                  'MessageReceiver.handleRequest.destinationUuid'
-                )
+          destinationServiceId: decoded.destinationServiceId
+            ? normalizeServiceId(
+                decoded.destinationServiceId,
+                'MessageReceiver.handleRequest.destinationServiceId'
               )
-            : ourUuid,
+            : ourAci,
           updatedPni: decoded.updatedPni
-            ? new UUID(
-                normalizeUuid(
-                  decoded.updatedPni,
-                  'MessageReceiver.handleRequest.updatedPni'
-                )
+            ? normalizePni(
+                decoded.updatedPni,
+                'MessageReceiver.handleRequest.updatedPni'
               )
             : undefined,
           timestamp: decoded.timestamp?.toNumber(),
@@ -640,6 +651,11 @@ export default class MessageReceiver
     handler: (ev: CallEventSyncEvent) => void
   ): void;
 
+  public override addEventListener(
+    name: 'callLogEventSync',
+    handler: (ev: CallLogEventSyncEvent) => void
+  ): void;
+
   public override addEventListener(name: string, handler: EventHandler): void {
     return super.addEventListener(name, handler);
   }
@@ -725,6 +741,15 @@ export default class MessageReceiver
         this.decryptAndCacheBatcher.flushAndWait(),
         this.cacheRemoveBatcher.flushAndWait(),
       ]);
+
+      if (this.pniIdentityKeyCheckRequired) {
+        log.warn(
+          "MessageReceiver: got 'empty' event, " +
+            'running scheduled pni identity key check'
+        );
+        drop(checkOurPniIdentityKey());
+      }
+      this.pniIdentityKeyCheckRequired = false;
 
       log.info("MessageReceiver: emitting 'empty' event");
       this.dispatchEvent(new EmptyEvent());
@@ -833,7 +858,7 @@ export default class MessageReceiver
 
       const decoded = Proto.Envelope.decode(envelopePlaintext);
 
-      const ourUuid = this.storage.user.getCheckedUuid();
+      const ourAci = this.storage.user.getCheckedAci();
 
       const envelope: ProcessedEnvelope = {
         id: item.id,
@@ -845,15 +870,17 @@ export default class MessageReceiver
         // Proto.Envelope fields
         type: decoded.type,
         source: item.source,
-        sourceUuid:
-          item.sourceUuid ||
-          (decoded.sourceUuid ? UUID.cast(decoded.sourceUuid) : undefined),
+        sourceServiceId: normalizeServiceId(
+          item.sourceServiceId || decoded.sourceServiceId,
+          'CachedEnvelope.sourceServiceId'
+        ),
         sourceDevice: decoded.sourceDevice || item.sourceDevice,
-        destinationUuid: new UUID(
-          decoded.destinationUuid || item.destinationUuid || ourUuid.toString()
+        destinationServiceId: normalizeServiceId(
+          decoded.destinationServiceId || item.destinationServiceId || ourAci,
+          'CachedEnvelope.destinationServiceId'
         ),
         updatedPni: decoded.updatedPni
-          ? new UUID(decoded.updatedPni)
+          ? normalizePni(decoded.updatedPni, 'CachedEnvelope.updatedPni')
           : undefined,
         timestamp: decoded.timestamp?.toNumber(),
         content: dropNull(decoded.content),
@@ -880,14 +907,14 @@ export default class MessageReceiver
         }
 
         strictAssert(
-          envelope.sourceUuid,
+          envelope.sourceServiceId,
           'Decrypted envelope must have source uuid'
         );
 
         // Pacify typescript
         const decryptedEnvelope = {
           ...envelope,
-          sourceUuid: envelope.sourceUuid,
+          sourceServiceId: envelope.sourceServiceId,
         };
 
         // Maintain invariant: encrypted queue => decrypted queue
@@ -1001,7 +1028,7 @@ export default class MessageReceiver
         pendingUnprocessed: true,
       });
 
-      const storesMap = new Map<UUIDStringType, LockedStores>();
+      const storesMap = new Map<ServiceIdString, LockedStores>();
       const failed: Array<UnprocessedType> = [];
 
       // Below we:
@@ -1017,26 +1044,26 @@ export default class MessageReceiver
         await Promise.all<void>(
           items.map(async ({ data, envelope }) => {
             try {
-              const { destinationUuid } = envelope;
+              const { destinationServiceId } = envelope;
 
-              let stores = storesMap.get(destinationUuid.toString());
+              let stores = storesMap.get(destinationServiceId);
               if (!stores) {
                 stores = {
                   senderKeyStore: new SenderKeys({
-                    ourUuid: destinationUuid,
+                    ourServiceId: destinationServiceId,
                     zone,
                   }),
                   sessionStore: new Sessions({
                     zone,
-                    ourUuid: destinationUuid,
+                    ourServiceId: destinationServiceId,
                   }),
                   identityKeyStore: new IdentityKeys({
                     zone,
-                    ourUuid: destinationUuid,
+                    ourServiceId: destinationServiceId,
                   }),
                   zone,
                 };
-                storesMap.set(destinationUuid.toString(), stores);
+                storesMap.set(destinationServiceId, stores);
               }
 
               const result = await this.queueEncryptedEnvelope(
@@ -1074,10 +1101,10 @@ export default class MessageReceiver
               ...data,
 
               source: envelope.source,
-              sourceUuid: envelope.sourceUuid,
+              sourceServiceId: envelope.sourceServiceId,
               sourceDevice: envelope.sourceDevice,
-              destinationUuid: envelope.destinationUuid.toString(),
-              updatedPni: envelope.updatedPni?.toString(),
+              destinationServiceId: envelope.destinationServiceId,
+              updatedPni: envelope.updatedPni,
               serverGuid: envelope.serverGuid,
               serverTimestamp: envelope.serverTimestamp,
               decrypted: Bytes.toBase64(plaintext),
@@ -1209,13 +1236,14 @@ export default class MessageReceiver
     log.info('queueing envelope', logId);
 
     const task = async (): Promise<DecryptResult> => {
-      const { destinationUuid } = envelope;
-      const uuidKind = this.storage.user.getOurUuidKind(destinationUuid);
-      if (uuidKind === UUIDKind.Unknown) {
+      const { destinationServiceId } = envelope;
+      const serviceIdKind =
+        this.storage.user.getOurServiceIdKind(destinationServiceId);
+      if (serviceIdKind === ServiceIdKind.Unknown) {
         log.warn(
           'MessageReceiver.decryptAndCacheBatch: ' +
             `Rejecting envelope ${getEnvelopeId(envelope)}, ` +
-            `unknown uuid: ${destinationUuid}`
+            `unknown serviceId: ${destinationServiceId}`
         );
         return { plaintext: undefined, envelope: undefined };
       }
@@ -1223,7 +1251,7 @@ export default class MessageReceiver
       const unsealedEnvelope = await this.unsealEnvelope(
         stores,
         envelope,
-        uuidKind
+        serviceIdKind
       );
 
       // Dropped early
@@ -1246,7 +1274,7 @@ export default class MessageReceiver
         )
       );
 
-      return this.decryptEnvelope(stores, unsealedEnvelope, uuidKind);
+      return this.decryptEnvelope(stores, unsealedEnvelope, serviceIdKind);
     };
 
     try {
@@ -1309,7 +1337,7 @@ export default class MessageReceiver
   private async unsealEnvelope(
     stores: LockedStores,
     envelope: ProcessedEnvelope,
-    uuidKind: UUIDKind
+    serviceIdKind: ServiceIdKind
   ): Promise<UnsealedEnvelope | undefined> {
     const logId = getEnvelopeId(envelope);
 
@@ -1320,23 +1348,26 @@ export default class MessageReceiver
 
     if (envelope.type !== Proto.Envelope.Type.UNIDENTIFIED_SENDER) {
       strictAssert(
-        envelope.sourceUuid,
+        envelope.sourceServiceId,
         'Unsealed envelope must have source uuid'
       );
       return {
         ...envelope,
-        sourceUuid: envelope.sourceUuid,
+        sourceServiceId: envelope.sourceServiceId,
         cipherTextBytes: envelope.content,
         cipherTextType: envelopeTypeToCiphertextType(envelope.type),
       };
     }
 
-    if (uuidKind === UUIDKind.PNI) {
+    if (serviceIdKind === ServiceIdKind.PNI) {
       log.warn(`MessageReceiver.unsealEnvelope(${logId}): dropping for PNI`);
       return undefined;
     }
 
-    strictAssert(uuidKind === UUIDKind.ACI, 'Sealed non-ACI envelope');
+    strictAssert(
+      serviceIdKind === ServiceIdKind.ACI,
+      'Sealed non-ACI envelope'
+    );
 
     const ciphertext = envelope.content;
     if (!ciphertext) {
@@ -1355,7 +1386,7 @@ export default class MessageReceiver
     const certificate = messageContent.senderCertificate();
 
     const originalSource = envelope.source;
-    const originalSourceUuid = envelope.sourceUuid;
+    const originalSourceUuid = envelope.sourceServiceId;
 
     const newEnvelope: UnsealedEnvelope = {
       ...envelope,
@@ -1365,9 +1396,9 @@ export default class MessageReceiver
 
       // Overwrite Envelope fields
       source: dropNull(certificate.senderE164()),
-      sourceUuid: normalizeUuid(
+      sourceServiceId: normalizeServiceId(
         certificate.senderUuid(),
-        'MessageReceiver.unsealEnvelope.UNIDENTIFIED_SENDER.sourceUuid'
+        'MessageReceiver.unsealEnvelope.UNIDENTIFIED_SENDER.sourceServiceId'
       ),
       sourceDevice: certificate.senderDeviceId(),
 
@@ -1388,7 +1419,7 @@ export default class MessageReceiver
   private async decryptEnvelope(
     stores: LockedStores,
     envelope: UnsealedEnvelope,
-    uuidKind: UUIDKind
+    serviceIdKind: ServiceIdKind
   ): Promise<DecryptResult> {
     const logId = `MessageReceiver.decryptEnvelope(${getEnvelopeId(envelope)})`;
 
@@ -1399,8 +1430,8 @@ export default class MessageReceiver
 
     if (envelope.type === Proto.Envelope.Type.RECEIPT) {
       strictAssert(
-        envelope.sourceUuid,
-        'Unsealed delivery receipt must have sourceUuid'
+        envelope.sourceServiceId,
+        'Unsealed delivery receipt must have sourceServiceId'
       );
       await this.onDeliveryReceipt(envelope);
       return { plaintext: undefined, envelope };
@@ -1422,7 +1453,7 @@ export default class MessageReceiver
       stores,
       envelope,
       ciphertext,
-      uuidKind
+      serviceIdKind
     );
 
     if (!decryptResult) {
@@ -1444,9 +1475,12 @@ export default class MessageReceiver
           `${logId}: dropping plaintext envelope without decryption error message`
         );
 
+        const { sourceServiceId: senderAci } = envelope;
+        strictAssert(isAciString(senderAci), 'Sender uuid must be an ACI');
+
         const event = new InvalidPlaintextEvent({
           senderDevice: envelope.sourceDevice ?? 1,
-          senderUuid: envelope.sourceUuid,
+          senderAci,
           timestamp: envelope.timestamp,
         });
 
@@ -1519,7 +1553,7 @@ export default class MessageReceiver
       }
 
       const sender = window.ConversationController.get(
-        envelope.sourceUuid || envelope.source
+        envelope.sourceServiceId || envelope.source
       );
       if (
         (isStoryReply || isStory) &&
@@ -1563,7 +1597,8 @@ export default class MessageReceiver
     if (
       !isGroupV2 &&
       ((envelope.source && this.isBlocked(envelope.source)) ||
-        (envelope.sourceUuid && this.isUuidBlocked(envelope.sourceUuid)))
+        (envelope.sourceServiceId &&
+          this.isServiceIdBlocked(envelope.sourceServiceId)))
     ) {
       log.info(`${logId}: Dropping non-GV2 message from blocked sender`);
       this.removeFromCache(envelope);
@@ -1640,10 +1675,11 @@ export default class MessageReceiver
       getEnvelopeId(envelope),
       new DeliveryEvent(
         {
+          envelopeId: envelope.id,
           timestamp: envelope.timestamp,
           envelopeTimestamp: envelope.timestamp,
           source: envelope.source,
-          sourceUuid: envelope.sourceUuid,
+          sourceServiceId: envelope.sourceServiceId,
           sourceDevice: envelope.sourceDevice,
           wasSentEncrypted: false,
         },
@@ -1671,7 +1707,7 @@ export default class MessageReceiver
     ciphertext: Uint8Array
   ): Promise<DecryptSealedSenderResult> {
     const localE164 = this.storage.user.getNumber();
-    const { destinationUuid } = envelope;
+    const { destinationServiceId } = envelope;
     const localDeviceId = parseIntOrThrow(
       this.storage.user.getDeviceId(),
       'MessageReceiver.decryptSealedSender: localDeviceId'
@@ -1719,8 +1755,12 @@ export default class MessageReceiver
       const sealedSenderIdentifier = certificate.senderUuid();
       const sealedSenderSourceDevice = certificate.senderDeviceId();
 
+      strictAssert(
+        isServiceIdString(sealedSenderIdentifier),
+        'Sealed sender identifier is service id'
+      );
       const address = new QualifiedAddress(
-        destinationUuid,
+        destinationServiceId,
         Address.create(sealedSenderIdentifier, sealedSenderSourceDevice)
       );
 
@@ -1745,11 +1785,15 @@ export default class MessageReceiver
         'unidentified message/passing to sealedSenderDecryptMessage'
     );
 
-    const preKeyStore = new PreKeys({ ourUuid: destinationUuid });
-    const signedPreKeyStore = new SignedPreKeys({ ourUuid: destinationUuid });
-    const kyberPreKeyStore = new KyberPreKeys({ ourUuid: destinationUuid });
+    const preKeyStore = new PreKeys({ ourServiceId: destinationServiceId });
+    const signedPreKeyStore = new SignedPreKeys({
+      ourServiceId: destinationServiceId,
+    });
+    const kyberPreKeyStore = new KyberPreKeys({
+      ourServiceId: destinationServiceId,
+    });
 
-    const sealedSenderIdentifier = envelope.sourceUuid;
+    const sealedSenderIdentifier = envelope.sourceServiceId;
     strictAssert(
       sealedSenderIdentifier !== undefined,
       'Empty sealed sender identifier'
@@ -1759,7 +1803,7 @@ export default class MessageReceiver
       'Empty sealed sender device'
     );
     const address = new QualifiedAddress(
-      destinationUuid,
+      destinationServiceId,
       Address.create(sealedSenderIdentifier, envelope.sourceDevice)
     );
     const unsealedPlaintext = await this.storage.protocol.enqueueSessionJob(
@@ -1771,7 +1815,7 @@ export default class MessageReceiver
           PublicKey.deserialize(Buffer.from(this.serverTrustRoot)),
           envelope.serverTimestamp,
           localE164 || null,
-          destinationUuid.toString(),
+          destinationServiceId,
           localDeviceId,
           sessionStore,
           identityKeyStore,
@@ -1789,31 +1833,35 @@ export default class MessageReceiver
     stores: LockedStores,
     envelope: UnsealedEnvelope,
     ciphertext: Uint8Array,
-    uuidKind: UUIDKind
+    serviceIdKind: ServiceIdKind
   ): Promise<InnerDecryptResultType | undefined> {
     const { sessionStore, identityKeyStore, zone } = stores;
 
     const logId = getEnvelopeId(envelope);
     const envelopeTypeEnum = Proto.Envelope.Type;
 
-    const identifier = envelope.sourceUuid;
+    const identifier = envelope.sourceServiceId;
     const { sourceDevice } = envelope;
 
-    const { destinationUuid } = envelope;
-    const preKeyStore = new PreKeys({ ourUuid: destinationUuid });
-    const signedPreKeyStore = new SignedPreKeys({ ourUuid: destinationUuid });
-    const kyberPreKeyStore = new KyberPreKeys({ ourUuid: destinationUuid });
+    const { destinationServiceId } = envelope;
+    const preKeyStore = new PreKeys({ ourServiceId: destinationServiceId });
+    const signedPreKeyStore = new SignedPreKeys({
+      ourServiceId: destinationServiceId,
+    });
+    const kyberPreKeyStore = new KyberPreKeys({
+      ourServiceId: destinationServiceId,
+    });
 
     strictAssert(identifier !== undefined, 'Empty identifier');
     strictAssert(sourceDevice !== undefined, 'Empty source device');
 
     const address = new QualifiedAddress(
-      destinationUuid,
+      destinationServiceId,
       Address.create(identifier, sourceDevice)
     );
 
     if (
-      uuidKind === UUIDKind.PNI &&
+      serviceIdKind === ServiceIdKind.PNI &&
       envelope.type !== envelopeTypeEnum.PREKEY_BUNDLE
     ) {
       log.warn(
@@ -1824,8 +1872,9 @@ export default class MessageReceiver
     }
 
     strictAssert(
-      uuidKind === UUIDKind.PNI || uuidKind === UUIDKind.ACI,
-      `Unsupported uuidKind: ${uuidKind}`
+      serviceIdKind === ServiceIdKind.PNI ||
+        serviceIdKind === ServiceIdKind.ACI,
+      `Unsupported serviceIdKind: ${serviceIdKind}`
     );
 
     if (envelope.type === envelopeTypeEnum.PLAINTEXT_CONTENT) {
@@ -1935,16 +1984,21 @@ export default class MessageReceiver
     stores: LockedStores,
     envelope: UnsealedEnvelope,
     ciphertext: Uint8Array,
-    uuidKind: UUIDKind
+    serviceIdKind: ServiceIdKind
   ): Promise<InnerDecryptResultType | undefined> {
     try {
-      return await this.innerDecrypt(stores, envelope, ciphertext, uuidKind);
+      return await this.innerDecrypt(
+        stores,
+        envelope,
+        ciphertext,
+        serviceIdKind
+      );
     } catch (error) {
-      const uuid = envelope.sourceUuid;
+      const uuid = envelope.sourceServiceId;
       const deviceId = envelope.sourceDevice;
 
-      const ourUuid = this.storage.user.getCheckedUuid().toString();
-      const isFromMe = ourUuid === uuid;
+      const ourAci = this.storage.user.getCheckedAci();
+      const isFromMe = ourAci === uuid;
 
       // Job timed out, not a decryption error
       if (
@@ -1970,7 +2024,8 @@ export default class MessageReceiver
 
       if (
         (envelope.source && this.isBlocked(envelope.source)) ||
-        (envelope.sourceUuid && this.isUuidBlocked(envelope.sourceUuid))
+        (envelope.sourceServiceId &&
+          this.isServiceIdBlocked(envelope.sourceServiceId))
       ) {
         log.info(
           'MessageReceiver.decrypt: Error from blocked sender; no further processing'
@@ -1982,6 +2037,25 @@ export default class MessageReceiver
       const envelopeId = getEnvelopeId(envelope);
 
       if (uuid && deviceId) {
+        const senderAci = uuid;
+        if (!isAciString(senderAci)) {
+          log.info(
+            'MessageReceiver.decrypt: Error from PNI; no further processing'
+          );
+          this.removeFromCache(envelope);
+          throw error;
+        }
+
+        if (serviceIdKind === ServiceIdKind.PNI) {
+          log.info(
+            'MessageReceiver.decrypt: Error on PNI; no further processing; ' +
+              'queueing pni identity check'
+          );
+          this.pniIdentityKeyCheckRequired = true;
+          this.removeFromCache(envelope);
+          throw error;
+        }
+
         const { cipherTextBytes, cipherTextType } = envelope;
         const event = new DecryptionErrorEvent(
           {
@@ -1994,7 +2068,7 @@ export default class MessageReceiver
             receivedAtCounter: envelope.receivedAtCounter,
             receivedAtDate: envelope.receivedAtDate,
             senderDevice: deviceId,
-            senderUuid: uuid,
+            senderAci,
             timestamp: envelope.timestamp,
           },
           () => this.removeFromCache(envelope)
@@ -2029,7 +2103,7 @@ export default class MessageReceiver
 
     const {
       destination,
-      destinationUuid,
+      destinationServiceId,
       timestamp,
       message: msg,
       expirationStartTimestamp,
@@ -2041,26 +2115,16 @@ export default class MessageReceiver
       throw new Error('MessageReceiver.handleSentMessage: message was falsey!');
     }
 
-    let p: Promise<void> = Promise.resolve();
+    // TODO: DESKTOP-5804
     if (msg.flags && msg.flags & Proto.DataMessage.Flags.END_SESSION) {
-      const anyUuid = destinationUuid?.aci ?? destinationUuid?.pni;
-      if (anyUuid) {
-        p = this.handleEndSession(envelope, new UUID(anyUuid));
-      } else if (destination) {
-        const theirUuid = UUID.lookup(destination);
-        if (theirUuid) {
-          p = this.handleEndSession(envelope, theirUuid);
-        } else {
-          log.warn(`handleSentMessage: uuid not found for ${destination}`);
-          p = Promise.resolve();
-        }
+      if (destinationServiceId) {
+        await this.handleEndSession(envelope, destinationServiceId);
       } else {
         throw new Error(
           'MessageReceiver.handleSentMessage: Cannot end session with falsey destination'
         );
       }
     }
-    await p;
 
     const message = this.processDecrypted(envelope, msg);
     const groupId = this.getProcessedGroupId(message);
@@ -2078,7 +2142,7 @@ export default class MessageReceiver
       {
         envelopeId: envelope.id,
         destination: dropNull(destination),
-        destinationUuid,
+        destinationServiceId,
         timestamp: timestamp?.toNumber(),
         serverTimestamp: envelope.serverTimestamp,
         device: envelope.sourceDevice,
@@ -2111,6 +2175,12 @@ export default class MessageReceiver
     }
 
     log.info(`${logId} starting`);
+
+    const { sourceServiceId: sourceAci } = envelope;
+    strictAssert(
+      isAciString(sourceAci),
+      'MessageReceiver.handleEditMesage: received message from PNI'
+    );
 
     const attachments: Array<ProcessedAttachment> = [];
     let preview: ReadonlyArray<ProcessedPreview> | undefined;
@@ -2180,9 +2250,7 @@ export default class MessageReceiver
       const ev = new SentEvent(
         {
           envelopeId: envelope.id,
-          destinationUuid: {
-            aci: envelope.destinationUuid.toString(),
-          },
+          destinationServiceId: envelope.destinationServiceId,
           device: envelope.sourceDevice,
           isRecipientUpdate: Boolean(sentMessage.isRecipientUpdate),
           message,
@@ -2191,13 +2259,13 @@ export default class MessageReceiver
           serverTimestamp: envelope.serverTimestamp,
           timestamp: envelope.timestamp,
           unidentifiedStatus: sentMessage.storyMessageRecipients
-            ?.map(({ destinationUuid, isAllowedToReply }) => {
-              if (!destinationUuid) {
+            ?.map(({ destinationServiceId, isAllowedToReply }) => {
+              if (!destinationServiceId) {
                 return;
               }
 
               return {
-                destinationUuid,
+                destinationServiceId,
                 isAllowedToReplyToStory: Boolean(isAllowedToReply),
               };
             })
@@ -2214,68 +2282,58 @@ export default class MessageReceiver
       const { storyMessageRecipients } = sentMessage;
       const recipients = storyMessageRecipients ?? [];
 
-      const isAllowedToReply = new Map<UUIDStringType, boolean>();
-      const distributionListToSentUuid = new Map<
+      const isAllowedToReply = new Map<ServiceIdString, boolean>();
+      const distributionListToSentServiceId = new Map<
         string,
-        Map<UUIDStringType, TaggedUUIDStringType>
+        Set<ServiceIdString>
       >();
 
       recipients.forEach(recipient => {
-        const { destinationUuid } = recipient;
-        if (!destinationUuid?.aci && !destinationUuid?.pni) {
+        const { destinationServiceId } = recipient;
+        if (!destinationServiceId) {
           return;
         }
 
-        const destinationUuidString =
-          destinationUuid?.aci || destinationUuid?.pni;
-
         if (recipient.distributionListIds) {
           recipient.distributionListIds.forEach(listId => {
-            const sentUuids: Map<UUIDStringType, TaggedUUIDStringType> =
-              distributionListToSentUuid.get(listId) || new Map();
-            sentUuids.set(destinationUuidString, destinationUuid);
-            distributionListToSentUuid.set(listId, sentUuids);
+            const sentServiceIds: Set<ServiceIdString> =
+              distributionListToSentServiceId.get(listId) || new Set();
+            sentServiceIds.add(destinationServiceId);
+            distributionListToSentServiceId.set(listId, sentServiceIds);
           });
         } else {
           assertDev(
             false,
-            `${logId}: missing distribution list id for: ${destinationUuid}`
+            `${logId}: missing distribution list id for: ${destinationServiceId}`
           );
         }
 
         isAllowedToReply.set(
-          destinationUuidString,
+          destinationServiceId,
           recipient.isAllowedToReply !== false
         );
       });
 
-      distributionListToSentUuid.forEach((sentToUuids, listId) => {
+      distributionListToSentServiceId.forEach((sentToServiceIds, listId) => {
         const ev = new SentEvent(
           {
             envelopeId: envelope.id,
-            destinationUuid: {
-              aci: envelope.destinationUuid.toString(),
-              pni: undefined,
-            },
+            destinationServiceId: envelope.destinationServiceId,
             timestamp: envelope.timestamp,
             serverTimestamp: envelope.serverTimestamp,
             device: envelope.sourceDevice,
-            unidentifiedStatus: Array.from(sentToUuids.values()).map(
-              destinationUuid => ({
-                destinationUuid,
-                isAllowedToReplyToStory: Boolean(
-                  (destinationUuid.aci &&
-                    isAllowedToReply.get(destinationUuid.aci)) ||
-                    (destinationUuid.pni &&
-                      isAllowedToReply.get(destinationUuid.pni))
-                ),
+            unidentifiedStatus: Array.from(sentToServiceIds).map(
+              destinationServiceId => ({
+                destinationServiceId,
+                isAllowedToReplyToStory:
+                  isAllowedToReply.has(destinationServiceId),
               })
             ),
             message,
             isRecipientUpdate: Boolean(sentMessage.isRecipientUpdate),
             receivedAtCounter: envelope.receivedAtCounter,
             receivedAtDate: envelope.receivedAtDate,
-            storyDistributionListId: normalizeUuid(
+            storyDistributionListId: normalizeStoryDistributionId(
               listId,
               'storyDistributionListId'
             ),
@@ -2292,9 +2350,9 @@ export default class MessageReceiver
       {
         envelopeId: envelope.id,
         source: envelope.source,
-        sourceUuid: envelope.sourceUuid,
+        sourceAci,
         sourceDevice: envelope.sourceDevice,
-        destinationUuid: envelope.destinationUuid.toString(),
+        destinationServiceId: envelope.destinationServiceId,
         timestamp: envelope.timestamp,
         serverGuid: envelope.serverGuid,
         serverTimestamp: envelope.serverTimestamp,
@@ -2332,9 +2390,9 @@ export default class MessageReceiver
     }
 
     // Timing check
-    if (isOlderThan(envelope.serverTimestamp, durations.DAY)) {
+    if (isOlderThan(envelope.serverTimestamp, durations.DAY * 2)) {
       log.info(
-        'MessageReceiver.handleEditMessage: cannot edit message older than 24h',
+        'MessageReceiver.handleEditMessage: cannot edit message older than 48h',
         logId,
         envelope.serverTimestamp
       );
@@ -2354,13 +2412,19 @@ export default class MessageReceiver
       return;
     }
 
+    const { sourceServiceId: sourceAci } = envelope;
+    strictAssert(
+      isAciString(sourceAci),
+      'MessageReceiver.handleEditMesage: received message from PNI'
+    );
+
     const ev = new MessageEvent(
       {
         envelopeId: envelope.id,
         source: envelope.source,
-        sourceUuid: envelope.sourceUuid,
+        sourceAci,
         sourceDevice: envelope.sourceDevice,
-        destinationUuid: envelope.destinationUuid.toString(),
+        destinationServiceId: envelope.destinationServiceId,
         timestamp: envelope.timestamp,
         serverGuid: envelope.serverGuid,
         serverTimestamp: envelope.serverTimestamp,
@@ -2395,12 +2459,17 @@ export default class MessageReceiver
     }
 
     let p: Promise<void> = Promise.resolve();
-    const destination = envelope.sourceUuid;
-    if (!destination) {
+    const { sourceServiceId: sourceAci } = envelope;
+    if (!sourceAci) {
       throw new Error(
-        'MessageReceiver.handleDataMessage: source and sourceUuid were falsey'
+        'MessageReceiver.handleDataMessage: sourceAci was falsey'
       );
     }
+
+    strictAssert(
+      isAciString(sourceAci),
+      'MessageReceiver.handleDataMessage: received message from PNI'
+    );
 
     if (this.isInvalidGroupData(msg, envelope)) {
       this.removeFromCache(envelope);
@@ -2408,7 +2477,7 @@ export default class MessageReceiver
     }
 
     if (msg.flags && msg.flags & Proto.DataMessage.Flags.END_SESSION) {
-      p = this.handleEndSession(envelope, new UUID(destination));
+      p = this.handleEndSession(envelope, sourceAci);
     }
 
     if (msg.flags && msg.flags & Proto.DataMessage.Flags.PROFILE_KEY_UPDATE) {
@@ -2422,7 +2491,7 @@ export default class MessageReceiver
       const ev = new ProfileKeyUpdateEvent(
         {
           source: envelope.source,
-          sourceUuid: envelope.sourceUuid,
+          sourceAci,
           profileKey: Bytes.toBase64(msg.profileKey),
         },
         this.removeFromCache.bind(this, envelope)
@@ -2466,9 +2535,9 @@ export default class MessageReceiver
       {
         envelopeId: envelope.id,
         source: envelope.source,
-        sourceUuid: envelope.sourceUuid,
+        sourceAci,
         sourceDevice: envelope.sourceDevice,
-        destinationUuid: envelope.destinationUuid.toString(),
+        destinationServiceId: envelope.destinationServiceId,
         timestamp: envelope.timestamp,
         serverGuid: envelope.serverGuid,
         serverTimestamp: envelope.serverTimestamp,
@@ -2495,14 +2564,14 @@ export default class MessageReceiver
     }
 
     const { timestamp } = envelope;
-    const identifier = envelope.groupId || envelope.sourceUuid;
+    const identifier = envelope.groupId || envelope.sourceServiceId;
     const conversation = window.ConversationController.get(identifier);
 
     try {
       if (!conversation) {
         const idForLogging = envelope.groupId
           ? `groupv2(${envelope.groupId})`
-          : envelope.sourceUuid;
+          : envelope.sourceServiceId;
         log.info(
           `maybeUpdateTimestamp/${timestamp}: No conversation found for identifier ${idForLogging}`
         );
@@ -2611,18 +2680,20 @@ export default class MessageReceiver
     const buffer = Buffer.from(decryptionError);
     const request = DecryptionErrorMessage.deserialize(buffer);
 
-    const { sourceUuid, sourceDevice } = envelope;
-    if (!sourceUuid || !sourceDevice) {
+    const { sourceServiceId: sourceAci, sourceDevice } = envelope;
+    if (!sourceAci || !sourceDevice) {
       log.error(`handleDecryptionError/${logId}: Missing uuid or device!`);
       this.removeFromCache(envelope);
       return;
     }
 
+    strictAssert(isAciString(sourceAci), 'Source uuid must be ACI');
+
     const event = new RetryRequestEvent(
       {
         groupId: envelope.groupId,
         requesterDevice: sourceDevice,
-        requesterUuid: sourceUuid,
+        requesterAci: sourceAci,
         ratchetKey: request.ratchetKey(),
         senderDevice: request.deviceId(),
         sentAt: request.timestamp(),
@@ -2645,23 +2716,27 @@ export default class MessageReceiver
     // Note: we don't call removeFromCache here because this message can be combined
     //   with a dataMessage, for example. That processing will dictate cache removal.
 
-    const identifier = envelope.sourceUuid;
-    const { sourceDevice } = envelope;
+    const { sourceServiceId, sourceDevice } = envelope;
+    if (!sourceServiceId) {
+      throw new Error(
+        `handleSenderKeyDistributionMessage: Missing sourceServiceId for envelope ${envelopeId}`
+      );
+    }
     if (!isNumber(sourceDevice)) {
       throw new Error(
         `handleSenderKeyDistributionMessage: Missing sourceDevice for envelope ${envelopeId}`
       );
     }
 
-    const sender = ProtocolAddress.new(identifier, sourceDevice);
+    const sender = ProtocolAddress.new(sourceServiceId, sourceDevice);
     const senderKeyDistributionMessage =
       SenderKeyDistributionMessage.deserialize(
         Buffer.from(distributionMessage)
       );
-    const { destinationUuid } = envelope;
+    const { destinationServiceId } = envelope;
     const address = new QualifiedAddress(
-      destinationUuid,
-      Address.create(identifier, sourceDevice)
+      destinationServiceId,
+      Address.create(sourceServiceId, sourceDevice)
     );
 
     await this.storage.protocol.enqueueSenderKeyJob(
@@ -2687,17 +2762,21 @@ export default class MessageReceiver
     // Note: we don't call removeFromCache here because this message can be combined
     //   with a dataMessage, for example. That processing will dictate cache removal.
 
-    const aci = envelope.sourceUuid;
+    const aci = envelope.sourceServiceId;
 
     const { pni: pniBytes, signature } = pniSignatureMessage;
     strictAssert(Bytes.isNotEmpty(pniBytes), `${logId}: missing PNI bytes`);
-    const pni = bytesToUuid(pniBytes);
+    const pni = fromPniObject(
+      Pni.parseFromServiceIdBinary(Buffer.from(pniBytes))
+    );
     strictAssert(pni, `${logId}: missing PNI`);
     strictAssert(Bytes.isNotEmpty(signature), `${logId}: empty signature`);
+    strictAssert(isAciString(aci), `${logId}: invalid ACI`);
+    strictAssert(isPniString(pni), `${logId}: invalid PNI`);
 
     const isValid = await this.storage.protocol.verifyAlternateIdentity({
-      aci: new UUID(aci),
-      pni: new UUID(pni),
+      aci,
+      pni,
       signature,
     });
 
@@ -2728,7 +2807,8 @@ export default class MessageReceiver
 
     if (
       (envelope.source && this.isBlocked(envelope.source)) ||
-      (envelope.sourceUuid && this.isUuidBlocked(envelope.sourceUuid))
+      (envelope.sourceServiceId &&
+        this.isServiceIdBlocked(envelope.sourceServiceId))
     ) {
       const logId = getEnvelopeId(envelope);
 
@@ -2778,10 +2858,11 @@ export default class MessageReceiver
       receiptMessage.timestamp.map(async rawTimestamp => {
         const ev = new EventClass(
           {
+            envelopeId: envelope.id,
             timestamp: rawTimestamp?.toNumber(),
             envelopeTimestamp: envelope.timestamp,
             source: envelope.source,
-            sourceUuid: envelope.sourceUuid,
+            sourceServiceId: envelope.sourceServiceId,
             sourceDevice: envelope.sourceDevice,
             wasSentEncrypted: true,
           },
@@ -2816,6 +2897,10 @@ export default class MessageReceiver
       envelope.sourceDevice !== undefined,
       'TypingMessage requires sourceDevice in the envelope'
     );
+    strictAssert(
+      isAciString(envelope.sourceServiceId),
+      'Sender of typing indicator must be an ACI'
+    );
 
     const { groupId, timestamp, action } = typingMessage;
 
@@ -2829,7 +2914,7 @@ export default class MessageReceiver
     this.dispatchEvent(
       new TypingEvent({
         sender: envelope.source,
-        senderUuid: envelope.sourceUuid,
+        senderAci: envelope.sourceServiceId,
         senderDevice: envelope.sourceDevice,
         typing: {
           groupV2Id: groupV2IdString,
@@ -2896,11 +2981,7 @@ export default class MessageReceiver
     if (sentMessage.message && sentMessage.message.groupV2) {
       return `groupv2(${this.getGroupId(sentMessage.message)})`;
     }
-    return (
-      sentMessage.destination ||
-      sentMessage.destinationUuid?.aci ||
-      sentMessage.destinationUuid?.pni
-    );
+    return sentMessage.destinationServiceId;
   }
 
   private async handleSyncMessage(
@@ -2908,11 +2989,11 @@ export default class MessageReceiver
     syncMessage: ProcessedSyncMessage
   ): Promise<void> {
     const ourNumber = this.storage.user.getNumber();
-    const ourUuid = this.storage.user.getCheckedUuid();
+    const ourAci = this.storage.user.getCheckedAci();
 
     const fromSelfSource = envelope.source && envelope.source === ourNumber;
     const fromSelfSourceUuid =
-      envelope.sourceUuid && envelope.sourceUuid === ourUuid.toString();
+      envelope.sourceServiceId && envelope.sourceServiceId === ourAci;
     if (!fromSelfSource && !fromSelfSourceUuid) {
       throw new Error('Received sync message from another number');
     }
@@ -2945,7 +3026,7 @@ export default class MessageReceiver
         );
         const ev = new StoryRecipientUpdateEvent(
           {
-            destinationUuid: envelope.destinationUuid.toString(),
+            destinationServiceId: envelope.destinationServiceId,
             timestamp: envelope.timestamp,
             storyMessageRecipients: sentMessage.storyMessageRecipients,
           },
@@ -3041,6 +3122,9 @@ export default class MessageReceiver
     if (syncMessage.callEvent) {
       return this.handleCallEvent(envelope, syncMessage.callEvent);
     }
+    if (syncMessage.callLogEvent) {
+      return this.handleCallLogEvent(envelope, syncMessage.callLogEvent);
+    }
 
     this.removeFromCache(envelope);
     const envelopeId = getEnvelopeId(envelope);
@@ -3081,7 +3165,7 @@ export default class MessageReceiver
 
     const {
       destination,
-      destinationUuid,
+      destinationServiceId,
       expirationStartTimestamp,
       unidentifiedStatus,
       isRecipientUpdate,
@@ -3093,7 +3177,7 @@ export default class MessageReceiver
       {
         envelopeId: envelope.id,
         destination: dropNull(destination),
-        destinationUuid,
+        destinationServiceId,
         timestamp: envelope.timestamp,
         serverTimestamp: envelope.serverTimestamp,
         device: envelope.sourceDevice,
@@ -3140,8 +3224,8 @@ export default class MessageReceiver
     const ev = new ViewOnceOpenSyncEvent(
       {
         source: dropNull(sync.sender),
-        sourceUuid: sync.senderUuid
-          ? normalizeUuid(sync.senderUuid, 'handleViewOnceOpen.senderUuid')
+        sourceAci: sync.senderAci
+          ? normalizeAci(sync.senderAci, 'handleViewOnceOpen.senderUuid')
           : undefined,
         timestamp: sync.timestamp?.toNumber(),
       },
@@ -3173,10 +3257,11 @@ export default class MessageReceiver
 
     const ev = new MessageRequestResponseEvent(
       {
+        envelopeId: envelope.id,
         threadE164: dropNull(sync.threadE164),
-        threadUuid: sync.threadUuid
-          ? normalizeUuid(
-              sync.threadUuid,
+        threadAci: sync.threadAci
+          ? normalizeAci(
+              sync.threadAci,
               'handleMessageRequestResponse.threadUuid'
             )
           : undefined,
@@ -3259,8 +3344,13 @@ export default class MessageReceiver
       return;
     }
 
+    if (this.pniIdentityKeyCheckRequired) {
+      log.warn('MessageReceiver: canceling pni identity key check');
+    }
+    this.pniIdentityKeyCheckRequired = false;
+
     const manager = window.getAccountManager();
-    await manager.setPni(updatedPni.toString(), {
+    await manager.setPni(updatedPni, {
       identityKeyPair,
       lastResortKyberPreKey: dropNull(lastResortKyberPreKey),
       signedPreKey,
@@ -3303,14 +3393,15 @@ export default class MessageReceiver
     logUnexpectedUrgentValue(envelope, 'readSync');
 
     const results = [];
-    for (const { timestamp, sender, senderUuid } of read) {
+    for (const { timestamp, sender, senderAci } of read) {
       const ev = new ReadSyncEvent(
         {
+          envelopeId: envelope.id,
           envelopeTimestamp: envelope.timestamp,
           timestamp: timestamp?.toNumber(),
           sender: dropNull(sender),
-          senderUuid: senderUuid
-            ? normalizeUuid(senderUuid, 'handleRead.senderUuid')
+          senderAci: senderAci
+            ? normalizeAci(senderAci, 'handleRead.senderAci')
             : undefined,
         },
         this.removeFromCache.bind(this, envelope)
@@ -3330,14 +3421,15 @@ export default class MessageReceiver
     logUnexpectedUrgentValue(envelope, 'viewSync');
 
     await Promise.all(
-      viewed.map(async ({ timestamp, senderE164, senderUuid }) => {
+      viewed.map(async ({ timestamp, senderE164, senderAci }) => {
         const ev = new ViewSyncEvent(
           {
+            envelopeId: envelope.id,
             envelopeTimestamp: envelope.timestamp,
             timestamp: timestamp?.toNumber(),
             senderE164: dropNull(senderE164),
-            senderUuid: senderUuid
-              ? normalizeUuid(senderUuid, 'handleViewed.senderUuid')
+            senderAci: senderAci
+              ? normalizeAci(senderAci, 'handleViewed.senderAci')
               : undefined,
           },
           this.removeFromCache.bind(this, envelope)
@@ -3353,57 +3445,16 @@ export default class MessageReceiver
   ): Promise<void> {
     const logId = getEnvelopeId(envelope);
     log.info('MessageReceiver.handleCallEvent', logId);
-    const { peerUuid, callId, type } = callEvent;
-
-    if (!peerUuid) {
-      throw new Error('MessageReceiver.handleCallEvent: missing peerUuid');
-    }
-
-    if (!callId) {
-      throw new Error('MessageReceiver.handleCallEvent: missing callId');
-    }
 
     logUnexpectedUrgentValue(envelope, 'callEventSync');
 
-    if (
-      type !== Proto.SyncMessage.CallEvent.Type.VIDEO_CALL &&
-      type !== Proto.SyncMessage.CallEvent.Type.AUDIO_CALL
-    ) {
-      log.warn('MessageReceiver.handleCallEvent: unknown call type');
-      return;
-    }
+    const { receivedAtCounter } = envelope;
 
-    const peerUuidStr = bytesToUuid(peerUuid);
-
-    strictAssert(
-      peerUuidStr != null,
-      'MessageReceiver.handleCallEvent: invalid peerUuid'
-    );
-
-    const { receivedAtCounter, timestamp } = envelope;
-
-    const wasIncoming =
-      callEvent.direction === Proto.SyncMessage.CallEvent.Direction.INCOMING;
-    const wasVideoCall =
-      callEvent.type === Proto.SyncMessage.CallEvent.Type.VIDEO_CALL;
-    const wasAccepted =
-      callEvent.event === Proto.SyncMessage.CallEvent.Event.ACCEPTED;
-    const wasDeclined =
-      callEvent.event === Proto.SyncMessage.CallEvent.Event.NOT_ACCEPTED;
-
-    const acceptedTime = wasAccepted ? timestamp : undefined;
-    const endedTime = wasDeclined ? timestamp : undefined;
+    const callEventDetails = getCallEventForProto(callEvent);
 
     const callEventSync = new CallEventSyncEvent(
       {
-        timestamp: envelope.timestamp,
-        peerUuid: peerUuidStr,
-        callId: callId.toString(),
-        wasIncoming,
-        wasVideoCall,
-        wasDeclined,
-        acceptedTime,
-        endedTime,
+        callEventDetails,
         receivedAtCounter,
       },
       this.removeFromCache.bind(this, envelope)
@@ -3411,6 +3462,49 @@ export default class MessageReceiver
     await this.dispatchAndWait(logId, callEventSync);
 
     log.info('handleCallEvent: finished');
+  }
+
+  private async handleCallLogEvent(
+    envelope: ProcessedEnvelope,
+    callLogEvent: Proto.SyncMessage.ICallLogEvent
+  ): Promise<void> {
+    const logId = getEnvelopeId(envelope);
+    log.info('MessageReceiver.handleCallLogEvent', logId);
+
+    logUnexpectedUrgentValue(envelope, 'callLogEventSync');
+
+    const { receivedAtCounter } = envelope;
+
+    let event: CallLogEvent;
+    if (callLogEvent.type == null) {
+      throw new Error('MessageReceiver.handleCallLogEvent: type was null');
+    } else if (
+      callLogEvent.type === Proto.SyncMessage.CallLogEvent.Type.CLEAR
+    ) {
+      event = CallLogEvent.Clear;
+    } else {
+      throw new Error(
+        `MessageReceiver.handleCallLogEvent: unknown type ${callLogEvent.type}`
+      );
+    }
+
+    if (callLogEvent.timestamp == null) {
+      throw new Error('MessageReceiver.handleCallLogEvent: timestamp was null');
+    }
+    const timestamp = callLogEvent.timestamp.toNumber();
+
+    const callLogEventSync = new CallLogEventSyncEvent(
+      {
+        event,
+        timestamp,
+        receivedAtCounter,
+      },
+      this.removeFromCache.bind(this, envelope)
+    );
+
+    await this.dispatchAndWait(logId, callLogEventSync);
+
+    log.info('handleCallLogEvent: finished');
   }
 
   private async handleContacts(
@@ -3468,18 +3562,18 @@ export default class MessageReceiver
         allIdentifiers.push(...blocked.numbers);
       }
     }
-    if (blocked.uuids) {
+    if (blocked.acis) {
       const previous = this.storage.get('blocked-uuids', []);
-      const uuids = blocked.uuids.map((uuid, index) => {
-        return normalizeUuid(uuid, `handleBlocked.uuids.${index}`);
+      const acis = blocked.acis.map((aci, index) => {
+        return normalizeAci(aci, `handleBlocked.acis.${index}`);
       });
-      log.info(`${logId}: Blocking these uuids:`, uuids);
-      await this.storage.put('blocked-uuids', uuids);
+      log.info(`${logId}: Blocking these acis:`, acis);
+      await this.storage.put('blocked-uuids', acis);
 
-      if (!areArraysMatchingSets(previous, uuids)) {
+      if (!areArraysMatchingSets(previous, acis)) {
         changed = true;
         allIdentifiers.push(...previous);
-        allIdentifiers.push(...blocked.uuids);
+        allIdentifiers.push(...blocked.acis);
       }
     }
 
@@ -3521,8 +3615,8 @@ export default class MessageReceiver
     return this.storage.blocked.isBlocked(number);
   }
 
-  private isUuidBlocked(uuid: string): boolean {
-    return this.storage.blocked.isUuidBlocked(uuid);
+  private isServiceIdBlocked(serviceId: ServiceIdString): boolean {
+    return this.storage.blocked.isServiceIdBlocked(serviceId);
   }
 
   private isGroupBlocked(groupId: string): boolean {
@@ -3539,13 +3633,13 @@ export default class MessageReceiver
 
   private async handleEndSession(
     envelope: ProcessedEnvelope,
-    theirUuid: UUID
+    theirServiceId: ServiceIdString
   ): Promise<void> {
-    log.info(`handleEndSession: closing sessions for ${theirUuid.toString()}`);
+    log.info(`handleEndSession: closing sessions for ${theirServiceId}`);
 
     logUnexpectedUrgentValue(envelope, 'resetSession');
 
-    await this.storage.protocol.archiveAllSessions(theirUuid);
+    await this.storage.protocol.archiveAllSessions(theirServiceId);
   }
 
   private processDecrypted(
