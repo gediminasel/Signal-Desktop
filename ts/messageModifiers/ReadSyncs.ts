@@ -13,6 +13,7 @@ import { isIncoming } from '../state/selectors/message';
 import { isMessageUnread } from '../util/isMessageUnread';
 import { notificationService } from '../services/notifications';
 import { queueUpdateMessage } from '../util/messageBatcher';
+import { strictAssert } from '../util/assert';
 
 export type ReadSyncAttributesType = {
   envelopeId: string;
@@ -41,10 +42,21 @@ async function maybeItIsAReactionReadSync(
     Number(sync.timestamp)
   );
 
-  if (!readReaction) {
+  if (
+    !readReaction ||
+    readReaction?.targetAuthorAci !== window.storage.user.getCheckedAci()
+  ) {
     log.info(`${logId} not found:`, sync.senderId, sync.sender, sync.senderAci);
     return;
   }
+
+  log.info(
+    `${logId} read reaction sync found:`,
+    readReaction.conversationId,
+    sync.senderId,
+    sync.sender,
+    sync.senderAci
+  );
 
   remove(sync);
 
@@ -113,8 +125,13 @@ export async function onSync(sync: ReadSyncAttributesType): Promise<void> {
 
     notificationService.removeBy({ messageId: found.id });
 
-    const message = window.MessageController.register(found.id, found);
+    const message = window.MessageCache.__DEPRECATED$register(
+      found.id,
+      found,
+      'ReadSyncs.onSync'
+    );
     const readAt = Math.min(sync.readAt, Date.now());
+    const newestSentAt = sync.timestamp;
 
     // If message is unread, we mark it read. Otherwise, we update the expiration
     //   timer to the time specified by the read sync if it's earlier than
@@ -124,28 +141,33 @@ export async function onSync(sync: ReadSyncAttributesType): Promise<void> {
       message.markRead(readAt, { skipSave: true });
 
       const updateConversation = async () => {
+        const conversation = message.getConversation();
+        strictAssert(conversation, `${logId}: conversation not found`);
         // onReadMessage may result in messages older than this one being
         //   marked read. We want those messages to have the same expire timer
         //   start time as this one, so we pass the readAt value through.
-        drop(message.getConversation()?.onReadMessage(message, readAt));
+        drop(conversation.onReadMessage(message, readAt, newestSentAt));
       };
 
       // only available during initialization
       if (StartupQueue.isAvailable()) {
         const conversation = message.getConversation();
-        if (conversation) {
-          StartupQueue.add(
-            conversation.get('id'),
-            message.get('sent_at'),
-            updateConversation
-          );
-        }
+        strictAssert(
+          conversation,
+          `${logId}: conversation not found (StartupQueue)`
+        );
+        StartupQueue.add(
+          conversation.get('id'),
+          message.get('sent_at'),
+          updateConversation
+        );
       } else {
         // not awaiting since we don't want to block work happening in the
         // eventHandlerQueue
         drop(updateConversation());
       }
     } else {
+      log.info(`${logId}: updating expiration`);
       const now = Date.now();
       const existingTimestamp = message.get('expirationStartTimestamp');
       const expirationStartTimestamp = Math.min(

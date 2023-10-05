@@ -10,6 +10,14 @@ import * as log from '../logging/log';
 export async function cleanupMessage(
   message: MessageAttributesType
 ): Promise<void> {
+  cleanupMessageFromMemory(message);
+  await deleteMessageData(message);
+}
+
+/** Removes a message from redux caches & backbone, but does NOT delete files on disk,
+ * story replies, edit histories, attachments, etc. Should ONLY be called in conjunction
+ * with deleteMessageData.  */
+export function cleanupMessageFromMemory(message: MessageAttributesType): void {
   const { id, conversationId } = message;
 
   window.reduxActions?.conversations.messageDeleted(id, conversationId);
@@ -17,9 +25,7 @@ export async function cleanupMessage(
   const parentConversation = window.ConversationController.get(conversationId);
   parentConversation?.debouncedUpdateLastMessage();
 
-  window.MessageController.unregister(id);
-
-  await deleteMessageData(message);
+  window.MessageCache.__DEPRECATED$unregister(id);
 }
 
 async function cleanupStoryReplies(
@@ -66,9 +72,10 @@ async function cleanupStoryReplies(
     // Cleanup all group replies
     await Promise.all(
       replies.map(reply => {
-        const replyMessageModel = window.MessageController.register(
+        const replyMessageModel = window.MessageCache.__DEPRECATED$register(
           reply.id,
-          reply
+          reply,
+          'cleanupStoryReplies/group'
         );
         return replyMessageModel.eraseContents();
       })
@@ -77,7 +84,11 @@ async function cleanupStoryReplies(
     // Refresh the storyReplyContext data for 1:1 conversations
     await Promise.all(
       replies.map(async reply => {
-        const model = window.MessageController.register(reply.id, reply);
+        const model = window.MessageCache.__DEPRECATED$register(
+          reply.id,
+          reply,
+          'cleanupStoryReplies/1:1'
+        );
         model.unset('storyReplyContext');
         await model.hydrateStoryContext(story, { shouldSave: true });
       })

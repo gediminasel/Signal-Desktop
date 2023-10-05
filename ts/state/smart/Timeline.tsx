@@ -98,8 +98,8 @@ function renderHeroRow(id: string): JSX.Element {
 function renderMiniPlayer(options: { shouldFlow: boolean }): JSX.Element {
   return <SmartMiniPlayer {...options} />;
 }
-function renderTypingBubble(id: string): JSX.Element {
-  return <SmartTypingBubble id={id} />;
+function renderTypingBubble(conversationId: string): JSX.Element {
+  return <SmartTypingBubble conversationId={conversationId} />;
 }
 
 const getWarning = (
@@ -241,13 +241,16 @@ const mapStateToProps = (state: StateType, props: ExternalProps) => {
       'unreadCount',
       'unreadMentionsCount',
       'isGroupV1AndDisabled',
+      'typingContactIdTimestamps',
     ]),
     isConversationSelected: state.conversations.selectedConversationId === id,
     isIncomingMessageRequest: Boolean(
       conversation.messageRequestsEnabled &&
         !conversation.acceptedMessageRequest
     ),
-    isSomeoneTyping: Boolean(conversation.typingContactId),
+    isSomeoneTyping: Boolean(
+      Object.keys(conversation.typingContactIdTimestamps ?? {}).length > 0
+    ),
     ...conversationMessages,
 
     invitedContactsForNewlyCreatedGroup:

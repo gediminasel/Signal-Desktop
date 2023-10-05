@@ -1384,6 +1384,67 @@ $message-padding-horizontal: 12px;
   &--with-reactions {
     padding-bottom: 15px;
   }
+
+  &--typing {
+    flex-direction: row-reverse;
+    overflow-y: clip;
+  }
+}
+
+.module-message__container-outer--typing-bubble {
+  overflow-y: clip;
+}
+
+.module-message__typing-avatar-container {
+  flex-direction: row-reverse;
+  overflow-y: clip;
+}
+
+.module-message__typing-avatar {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  z-index: $z-index-base;
+
+  &:not(:last-child) {
+    margin-inline-start: -4px;
+  }
+
+  &--overflow-count {
+    .module-Avatar__contents {
+      @include light-theme() {
+        background: $color-gray-05;
+        color: $color-gray-60;
+      }
+
+      @include dark-theme() {
+        background: $color-gray-75;
+        color: $color-gray-25;
+      }
+    }
+
+    .module-Avatar__label {
+      @include font-caption-bold;
+    }
+  }
+
+  .module-Avatar {
+    min-width: 28px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .module-Avatar__contents {
+    outline: 3px solid;
+
+    @include light-theme() {
+      outline-color: $color-white;
+    }
+
+    @include dark-theme() {
+      outline-color: $color-gray-95;
+    }
+  }
 }
 
 .module-message__unopened-gift-badge {
@@ -1671,8 +1732,9 @@ $message-padding-horizontal: 12px;
   }
 }
 
-.module-message__typing-container {
+.module-message__typing-animation-container {
   height: 16px;
+  overflow-y: clip;
 
   display: flex;
   flex-direction: row;
@@ -2623,6 +2685,7 @@ button.ConversationDetails__action-button {
 
   video {
     cursor: pointer;
+    object-fit: cover;
   }
 }
 
@@ -2781,6 +2844,10 @@ button.module-image__border-overlay:focus {
   height: 8px;
   width: 38px;
   padding-inline: 1px;
+}
+
+.module-message__typing-animation-container .module-typing-animation {
+  width: 30px;
 }
 
 .module-typing-animation__dot {
@@ -4381,22 +4448,6 @@ button.module-image__border-overlay:focus {
         &:disabled {
           cursor: inherit;
         }
-
-        &:hover:not(:disabled),
-        &:focus:not(:disabled) {
-          @include light-theme {
-            background-color: $color-gray-05;
-            #{$unread-indicator} {
-              border-color: $color-gray-05;
-            }
-          }
-          @include dark-theme {
-            background-color: $color-gray-75;
-            #{$unread-indicator} {
-              border-color: $color-gray-75;
-            }
-          }
-        }
       }
 
       &--is-checkbox {
@@ -4405,15 +4456,20 @@ button.module-image__border-overlay:focus {
         &--disabled {
           cursor: not-allowed;
         }
+      }
 
-        $disabled-selector: '#{&}--disabled';
-        &:hover:not(#{$disabled-selector}),
-        &:focus:not(#{$disabled-selector}) {
-          @include light-theme {
-            background-color: $color-gray-05;
+      &:hover:not(:disabled, &--disabled, &--is-selected),
+      &:focus:not(:disabled, &--disabled, &--is-selected) {
+        @include light-theme {
+          background-color: $color-gray-05;
+          #{$unread-indicator} {
+            border-color: $color-gray-05;
           }
-          @include dark-theme {
-            background-color: $color-gray-75;
+        }
+        @include dark-theme {
+          background-color: $color-gray-75;
+          #{$unread-indicator} {
+            border-color: $color-gray-75;
           }
         }
       }
@@ -5226,15 +5282,16 @@ button.module-image__border-overlay:focus {
 
   // This is a modified version of ["Pin Scrolling to Bottom"][0].
   // [0]: https://css-tricks.com/books/greatest-css-tricks/pin-scrolling-to-bottom/
-  &--have-newest {
+  &::after {
+    content: '';
+    height: 1px; // Always show the element to not mess with the height of the scroll area
+    display: block;
+  }
+  &--have-newest:not(&--scroll-locked) {
     & > * {
       overflow-anchor: none;
     }
-
     &::after {
-      content: '';
-      height: 1px;
-      display: block;
       overflow-anchor: auto;
     }
   }

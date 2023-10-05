@@ -62,16 +62,19 @@ import updateToSchemaVersion83 from './83-mentions';
 import updateToSchemaVersion84 from './84-all-mentions';
 import updateToSchemaVersion85 from './85-add-kyber-keys';
 import updateToSchemaVersion86 from './86-story-replies-index';
+import updateToSchemaVersion87 from './87-cleanup';
 import updateToSchemaVersion88 from './88-service-ids';
 import updateToSchemaVersion89 from './89-call-history';
 import updateToSchemaVersion90 from './90-delete-story-reply-screenshot';
 import updateToSchemaVersion91 from './91-clean-keys';
 import { updateToSchemaVersion920 } from './920-clean-more-keys';
 import { updateToSchemaVersion930 } from './930-fts5-secure-delete';
+import { updateToSchemaVersion940 } from './940-fts5-revert';
+import { updateToSchemaVersion950 } from './950-fts5-secure-delete';
 import {
   version as MAX_VERSION,
-  updateToSchemaVersion940,
-} from './940-fts5-revert';
+  updateToSchemaVersion960,
+} from './960-untag-pni';
 
 function updateToSchemaVersion1(
   currentVersion: number,
@@ -775,13 +778,7 @@ function updateToSchemaVersion17(
       );
     }
 
-    try {
-      db.exec('DROP INDEX messages_view_once;');
-    } catch (error) {
-      logger.info(
-        'updateToSchemaVersion17: Index messages_view_once did not already exist'
-      );
-    }
+    db.exec('DROP INDEX IF EXISTS messages_view_once;');
 
     db.exec(`
       CREATE INDEX messages_view_once ON messages (
@@ -2004,7 +2001,7 @@ export const SCHEMA_VERSIONS = [
   updateToSchemaVersion84,
   updateToSchemaVersion85,
   updateToSchemaVersion86,
-  // version 87 was dropped
+  updateToSchemaVersion87,
   updateToSchemaVersion88,
   updateToSchemaVersion89,
 
@@ -2014,7 +2011,13 @@ export const SCHEMA_VERSIONS = [
   updateToSchemaVersion920,
   updateToSchemaVersion930,
   updateToSchemaVersion940,
+  updateToSchemaVersion950,
+  updateToSchemaVersion960,
 ];
+
+export class DBVersionFromFutureError extends Error {
+  override name = 'DBVersionFromFutureError';
+}
 
 export function updateSchema(db: Database, logger: LoggerType): void {
   const sqliteVersion = getSQLiteVersion(db);
@@ -2032,9 +2035,9 @@ export function updateSchema(db: Database, logger: LoggerType): void {
   );
 
   if (startingVersion > MAX_VERSION) {
-    throw new Error(
+    throw new DBVersionFromFutureError(
       `SQL: User version is ${startingVersion} but the expected maximum version ` +
-        `is ${MAX_VERSION}. Did you try to start an old version of Signal?`
+        `is ${MAX_VERSION}.`
     );
   }
 

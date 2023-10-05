@@ -6,7 +6,7 @@ import type { MessageModel } from '../models/messages';
 import type { SignalService as Proto } from '../protobuf';
 import type { AciString } from '../types/ServiceId';
 import * as log from '../logging/log';
-import { normalizeAci } from '../types/ServiceId';
+import { normalizeAci } from './normalizeAci';
 import { filter } from './iterables';
 import { getContactId } from '../messages/helpers';
 import { getTimestampFromLong } from './timestampLongUtils';
@@ -31,7 +31,8 @@ export async function findStoryMessages(
   const ourConversationId =
     window.ConversationController.getOurConversationIdOrThrow();
 
-  const inMemoryMessages = window.MessageController.filterBySentAt(sentAt);
+  const inMemoryMessages =
+    window.MessageCache.__DEPRECATED$filterBySentAt(sentAt);
   const matchingMessages = [
     ...filter(inMemoryMessages, item =>
       isStoryAMatch(
@@ -60,7 +61,11 @@ export async function findStoryMessages(
   }
 
   const result = found.map(attributes =>
-    window.MessageController.register(attributes.id, attributes)
+    window.MessageCache.__DEPRECATED$register(
+      attributes.id,
+      attributes,
+      'findStoryMessages'
+    )
   );
   return result;
 }

@@ -23,7 +23,7 @@ import {
 } from '../jobs/conversationJobQueue';
 import { ReceiptType } from '../types/Receipt';
 import type { AciString } from '../types/ServiceId';
-import { isAciString } from '../types/ServiceId';
+import { isAciString } from './isAciString';
 
 export async function markConversationRead(
   conversationAttrs: ConversationAttributesType,
@@ -102,7 +102,9 @@ export async function markConversationRead(
 
   const allReadMessagesSync = allUnreadMessages
     .map(messageSyncData => {
-      const message = window.MessageController.getById(messageSyncData.id);
+      const message = window.MessageCache.__DEPRECATED$getById(
+        messageSyncData.id
+      );
       // we update the in-memory MessageModel with the fresh database call data
       if (message) {
         message.set(omit(messageSyncData, 'originalReadStatus'));

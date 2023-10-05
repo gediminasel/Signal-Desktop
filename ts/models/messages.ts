@@ -27,11 +27,10 @@ import type { DeleteAttributesType } from '../messageModifiers/Deletes';
 import type { SentEventData } from '../textsecure/messageReceiverEvents';
 import { isNotNil } from '../util/isNotNil';
 import { isNormalNumber } from '../util/isNormalNumber';
-import { softAssert, strictAssert } from '../util/assert';
+import { strictAssert } from '../util/assert';
+import { hydrateStoryContext } from '../util/hydrateStoryContext';
 import { drop } from '../util/drop';
-import { dropNull } from '../util/dropNull';
 import type { ConversationModel } from './conversations';
-import { getCallingNotificationText } from '../util/callingNotification';
 import type {
   ProcessedDataMessage,
   ProcessedQuote,
@@ -39,23 +38,20 @@ import type {
   CallbackResultType,
 } from '../textsecure/Types.d';
 import { SendMessageProtoError } from '../textsecure/Errors';
-import * as expirationTimer from '../util/expirationTimer';
 import { getUserLanguages } from '../util/userLanguages';
 import { getMessageSentTimestamp } from '../util/getMessageSentTimestamp';
+import { copyCdnFields } from '../util/attachments';
 
 import type { ReactionType } from '../types/Reactions';
 import type { ServiceIdString } from '../types/ServiceId';
-import { isAciString, normalizeServiceId } from '../types/ServiceId';
+import { normalizeServiceId } from '../types/ServiceId';
+import { isAciString } from '../util/isAciString';
 import * as reactionUtil from '../reactions/util';
-import * as Stickers from '../types/Stickers';
 import * as Errors from '../types/errors';
-import * as EmbeddedContact from '../types/EmbeddedContact';
 import type { AttachmentType } from '../types/Attachment';
 import { isImage, isVideo } from '../types/Attachment';
-import * as Attachment from '../types/Attachment';
 import { stringToMIMEType } from '../types/MIME';
 import * as MIME from '../types/MIME';
-import * as GroupChange from '../groupChange';
 import { ReadStatus } from '../messages/MessageReadStatus';
 import type { SendStateByConversationId } from '../messages/MessageSendState';
 import {
@@ -69,7 +65,6 @@ import { migrateLegacyReadStatus } from '../messages/migrateLegacyReadStatus';
 import { migrateLegacySendAttributes } from '../messages/migrateLegacySendAttributes';
 import { getOwn } from '../util/getOwn';
 import { markRead, markViewed } from '../services/MessageUpdater';
-import { scheduleOptimizeFTS } from '../services/ftsOptimizer';
 import {
   isDirectConversation,
   isGroup,
@@ -78,12 +73,9 @@ import {
 } from '../util/whatTypeOfConversation';
 import { handleMessageSend } from '../util/handleMessageSend';
 import { getSendOptions } from '../util/getSendOptions';
-import { findAndFormatContact } from '../util/findAndFormatContact';
 import { modifyTargetMessage } from '../util/modifyTargetMessage';
 import {
-  getAttachmentsForMessage,
   getMessagePropStatus,
-  getPropsForCallHistory,
   hasErrors,
   isCallHistory,
   isChatSessionRefreshed,
@@ -105,14 +97,9 @@ import {
   isUnsupportedMessage,
   isVerifiedChange,
   isConversationMerge,
-  extractHydratedMentions,
 } from '../state/selectors/message';
-import {
-  isInCall,
-  getCallSelector,
-  getActiveCall,
-} from '../state/selectors/calling';
 import type { ReactionAttributesType } from '../messageModifiers/Reactions';
+import { isInCall } from '../state/selectors/calling';
 import { ReactionSource } from '../reactions/ReactionSource';
 import * as LinkPreview from '../types/LinkPreview';
 import { SignalService as Proto } from '../protobuf';
@@ -137,10 +124,8 @@ import {
   getSourceServiceId,
   isCustomError,
   messageHasPaymentEvent,
-  getPaymentEventNotificationText,
   isQuoteAMatch,
 } from '../messages/helpers';
-import type { ReplacementValuesType } from '../types/I18N';
 import { viewOnceOpenJobQueue } from '../jobs/viewOnceOpenJobQueue';
 import { getMessageIdForLogging } from '../util/idForLogging';
 import { hasAttachmentDownloads } from '../util/hasAttachmentDownloads';
@@ -148,33 +133,29 @@ import { queueAttachmentDownloads } from '../util/queueAttachmentDownloads';
 import { findStoryMessages } from '../util/findStoryMessage';
 import { getStoryDataFromMessageAttributes } from '../services/storyLoader';
 import type { ConversationQueueJobData } from '../jobs/conversationJobQueue';
-import { getMessageById } from '../messages/getMessageById';
 import { shouldDownloadStory } from '../util/shouldDownloadStory';
 import type { EmbeddedContactWithHydratedAvatar } from '../types/EmbeddedContact';
 import { SeenStatus } from '../MessageSeenStatus';
 import { isNewReactionReplacingPrevious } from '../reactions/util';
 import { parseBoostBadgeListFromServer } from '../badges/parseBadgesFromServer';
-import { GiftBadgeStates } from '../components/conversation/Message';
 import type { StickerWithHydratedData } from '../types/Stickers';
-import { getStringForConversationMerge } from '../util/getStringForConversationMerge';
 import {
   addToAttachmentDownloadQueue,
   shouldUseAttachmentDownloadQueue,
 } from '../util/attachmentDownloadQueue';
-import { getTitleNoDefault, getNumber } from '../util/getTitle';
 import dataInterface from '../sql/Client';
 import { getQuoteBodyText } from '../util/getQuoteBodyText';
 import { shouldReplyNotifyUser } from '../util/shouldReplyNotifyUser';
-import { isConversationAccepted } from '../util/isConversationAccepted';
 import type { RawBodyRange } from '../types/BodyRange';
-import { BodyRange, applyRangesForText } from '../types/BodyRange';
-import { getStringForProfileChange } from '../util/getStringForProfileChange';
+import { BodyRange } from '../types/BodyRange';
 import {
   queueUpdateMessage,
   saveNewMessageBatcher,
 } from '../util/messageBatcher';
-import { getCallHistorySelector } from '../state/selectors/callHistory';
-import { getConversationSelector } from '../state/selectors/conversations';
+import { getSenderIdentifier } from '../util/getSenderIdentifier';
+import { getNotificationDataForMessage } from '../util/getNotificationDataForMessage';
+import { getNotificationTextForMessage } from '../util/getNotificationTextForMessage';
+import { getMessageAuthorText } from '../util/getMessageAuthorText';
 
 /* eslint-disable more/no-then */
 
@@ -212,8 +193,16 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
   cachedOutgoingStickerData?: StickerWithHydratedData;
 
+  public registerLocations: Set<string>;
+
   constructor(attributes: MessageAttributesType) {
     super(attributes);
+
+    if (!this.id && attributes.id) {
+      this.id = attributes.id;
+    }
+
+    this.registerLocations = new Set();
 
     // Note that we intentionally don't use `initialize()` method because it
     // isn't compatible with esnext output of esbuild.
@@ -266,6 +255,12 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       return;
     }
 
+    window.MessageCache.setAttributes({
+      messageId: this.id,
+      messageAttributes: this.attributes,
+      skipSaveToDatabase: true,
+    });
+
     const { storyChanged } = window.reduxActions.stories;
 
     if (isStory(this.attributes)) {
@@ -293,19 +288,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
   }
 
   getSenderIdentifier(): string {
-    const sentAt = this.get('sent_at');
-    const source = this.get('source');
-    const sourceServiceId = this.get('sourceServiceId');
-    const sourceDevice = this.get('sourceDevice');
-
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const conversation = window.ConversationController.lookupOrCreate({
-      e164: source,
-      serviceId: sourceServiceId,
-      reason: 'MessageModel.getSenderIdentifier',
-    })!;
-
-    return `${conversation?.id}.${sourceDevice}-${sentAt}`;
+    return getSenderIdentifier(this.attributes);
   }
 
   getReceivedAt(): number {
@@ -345,63 +328,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       shouldSave?: boolean;
     } = {}
   ): Promise<void> {
-    const ourAci = window.textsecure.storage.user.getCheckedAci();
-    const storyId = this.get('storyId');
-    if (!storyId) {
-      return;
-    }
-
-    const context = this.get('storyReplyContext');
-    // We'll continue trying to get the attachment as long as the message still exists
-    if (context && (context.attachment?.url || !context.messageId)) {
-      return;
-    }
-
-    const message =
-      inMemoryMessage === undefined
-        ? (await getMessageById(storyId))?.attributes
-        : inMemoryMessage;
-
-    if (!message) {
-      const conversation = this.getConversation();
-      softAssert(
-        conversation && isDirectConversation(conversation.attributes),
-        'hydrateStoryContext: Not a type=direct conversation'
-      );
-      this.set({
-        storyReplyContext: {
-          attachment: undefined,
-          // This is ok to do because story replies only show in 1:1 conversations
-          // so the story that was quoted should be from the same conversation.
-          authorAci: conversation?.getAci(),
-          // No messageId, referenced story not found!
-          messageId: '',
-        },
-      });
-      if (shouldSave) {
-        await window.Signal.Data.saveMessage(this.attributes, { ourAci });
-      }
-      return;
-    }
-
-    const attachments = getAttachmentsForMessage({ ...message });
-    let attachment: AttachmentType | undefined = attachments?.[0];
-    if (attachment && !attachment.url && !attachment.textAttachment) {
-      attachment = undefined;
-    }
-
-    const { sourceServiceId: authorAci } = message;
-    strictAssert(isAciString(authorAci), 'Story message from pni');
-    this.set({
-      storyReplyContext: {
-        attachment: omit(attachment, 'screenshotData'),
-        authorAci,
-        messageId: message.id,
-      },
-    });
-    if (shouldSave) {
-      await window.Signal.Data.saveMessage(this.attributes, { ourAci });
-    }
+    await hydrateStoryContext(this.id, inMemoryMessage, { shouldSave });
   }
 
   // Dependencies of prop-generation functions
@@ -414,486 +341,11 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     text: string;
     bodyRanges?: ReadonlyArray<RawBodyRange>;
   } {
-    // eslint-disable-next-line prefer-destructuring
-    const attributes: MessageAttributesType = this.attributes;
-
-    if (isDeliveryIssue(attributes)) {
-      return {
-        emoji: '⚠️',
-        text: window.i18n('icu:DeliveryIssue--preview'),
-      };
-    }
-
-    if (isConversationMerge(attributes)) {
-      const conversation = this.getConversation();
-      strictAssert(
-        conversation,
-        'getNotificationData/isConversationMerge/conversation'
-      );
-      strictAssert(
-        attributes.conversationMerge,
-        'getNotificationData/isConversationMerge/conversationMerge'
-      );
-
-      return {
-        text: getStringForConversationMerge({
-          obsoleteConversationTitle: getTitleNoDefault(
-            attributes.conversationMerge.renderInfo
-          ),
-          obsoleteConversationNumber: getNumber(
-            attributes.conversationMerge.renderInfo
-          ),
-          conversationTitle: conversation.getTitle(),
-          i18n: window.i18n,
-        }),
-      };
-    }
-
-    if (isChatSessionRefreshed(attributes)) {
-      return {
-        emoji: '🔁',
-        text: window.i18n('icu:ChatRefresh--notification'),
-      };
-    }
-
-    if (isUnsupportedMessage(attributes)) {
-      return {
-        text: window.i18n('icu:message--getDescription--unsupported-message'),
-      };
-    }
-
-    if (isGroupV1Migration(attributes)) {
-      return {
-        text: window.i18n('icu:GroupV1--Migration--was-upgraded'),
-      };
-    }
-
-    if (isProfileChange(attributes)) {
-      const change = this.get('profileChange');
-      const changedId = this.get('changedId');
-      const changedContact = findAndFormatContact(changedId);
-      if (!change) {
-        throw new Error('getNotificationData: profileChange was missing!');
-      }
-
-      return {
-        text: getStringForProfileChange(change, changedContact, window.i18n),
-      };
-    }
-
-    if (isGroupV2Change(attributes)) {
-      const change = this.get('groupV2Change');
-      strictAssert(
-        change,
-        'getNotificationData: isGroupV2Change true, but no groupV2Change!'
-      );
-
-      const changes = GroupChange.renderChange<string>(change, {
-        i18n: window.i18n,
-        ourAci: window.textsecure.storage.user.getCheckedAci(),
-        ourPni: window.textsecure.storage.user.getCheckedPni(),
-        renderContact: (conversationId: string) => {
-          const conversation =
-            window.ConversationController.get(conversationId);
-          return conversation
-            ? conversation.getTitle()
-            : window.i18n('icu:unknownContact');
-        },
-        renderString: (
-          key: string,
-          _i18n: unknown,
-          components: ReplacementValuesType<string | number> | undefined
-        ) => {
-          // eslint-disable-next-line local-rules/valid-i18n-keys
-          return window.i18n(key, components);
-        },
-      });
-
-      return { text: changes.map(({ text }) => text).join(' ') };
-    }
-
-    if (messageHasPaymentEvent(attributes)) {
-      const sender = findAndFormatContact(attributes.sourceServiceId);
-      const conversation = findAndFormatContact(attributes.conversationId);
-      return {
-        text: getPaymentEventNotificationText(
-          attributes.payment,
-          sender.title,
-          conversation.title,
-          sender.isMe,
-          window.i18n
-        ),
-        emoji: '💳',
-      };
-    }
-
-    const attachments = this.get('attachments') || [];
-
-    if (isTapToView(attributes)) {
-      if (this.isErased()) {
-        return {
-          text: window.i18n('icu:message--getDescription--disappearing-media'),
-        };
-      }
-
-      if (Attachment.isImage(attachments)) {
-        return {
-          text: window.i18n('icu:message--getDescription--disappearing-photo'),
-          emoji: '📷',
-        };
-      }
-      if (Attachment.isVideo(attachments)) {
-        return {
-          text: window.i18n('icu:message--getDescription--disappearing-video'),
-          emoji: '🎥',
-        };
-      }
-      // There should be an image or video attachment, but we have a fallback just in
-      //   case.
-      return { text: window.i18n('icu:mediaMessage'), emoji: '📎' };
-    }
-
-    if (isGroupUpdate(attributes)) {
-      const groupUpdate = this.get('group_update');
-      const fromContact = getContact(this.attributes);
-      const messages = [];
-      if (!groupUpdate) {
-        throw new Error('getNotificationData: Missing group_update');
-      }
-
-      if (groupUpdate.left === 'You') {
-        return { text: window.i18n('icu:youLeftTheGroup') };
-      }
-      if (groupUpdate.left) {
-        return {
-          text: window.i18n('icu:leftTheGroup', {
-            name: this.getNameForNumber(groupUpdate.left),
-          }),
-        };
-      }
-
-      if (!fromContact) {
-        return { text: '' };
-      }
-
-      if (isMe(fromContact.attributes)) {
-        messages.push(window.i18n('icu:youUpdatedTheGroup'));
-      } else {
-        messages.push(
-          window.i18n('icu:updatedTheGroup', {
-            name: fromContact.getTitle(),
-          })
-        );
-      }
-
-      if (groupUpdate.joined && groupUpdate.joined.length) {
-        const joinedContacts = groupUpdate.joined.map(item =>
-          window.ConversationController.getOrCreate(item, 'private')
-        );
-        const joinedWithoutMe = joinedContacts.filter(
-          contact => !isMe(contact.attributes)
-        );
-
-        if (joinedContacts.length > 1) {
-          messages.push(
-            window.i18n('icu:multipleJoinedTheGroup', {
-              names: joinedWithoutMe
-                .map(contact => contact.getTitle())
-                .join(', '),
-            })
-          );
-
-          if (joinedWithoutMe.length < joinedContacts.length) {
-            messages.push(window.i18n('icu:youJoinedTheGroup'));
-          }
-        } else {
-          const joinedContact = window.ConversationController.getOrCreate(
-            groupUpdate.joined[0],
-            'private'
-          );
-          if (isMe(joinedContact.attributes)) {
-            messages.push(window.i18n('icu:youJoinedTheGroup'));
-          } else {
-            messages.push(
-              window.i18n('icu:joinedTheGroup', {
-                name: joinedContacts[0].getTitle(),
-              })
-            );
-          }
-        }
-      }
-
-      if (groupUpdate.name) {
-        messages.push(
-          window.i18n('icu:titleIsNow', {
-            name: groupUpdate.name,
-          })
-        );
-      }
-      if (groupUpdate.avatarUpdated) {
-        messages.push(window.i18n('icu:updatedGroupAvatar'));
-      }
-
-      return { text: messages.join(' ') };
-    }
-    if (isEndSession(attributes)) {
-      return { text: window.i18n('icu:sessionEnded') };
-    }
-    if (isIncoming(attributes) && hasErrors(attributes)) {
-      return { text: window.i18n('icu:incomingError') };
-    }
-
-    const body = (this.get('body') || '').trim();
-    const bodyRanges = this.get('bodyRanges') || [];
-
-    if (attachments.length) {
-      // This should never happen but we want to be extra-careful.
-      const attachment = attachments[0] || {};
-      const { contentType } = attachment;
-
-      if (contentType === MIME.IMAGE_GIF || Attachment.isGIF(attachments)) {
-        return {
-          bodyRanges,
-          emoji: '🎡',
-          text: body || window.i18n('icu:message--getNotificationText--gif'),
-        };
-      }
-      if (Attachment.isImage(attachments)) {
-        return {
-          bodyRanges,
-          emoji: '📷',
-          text: body || window.i18n('icu:message--getNotificationText--photo'),
-        };
-      }
-      if (Attachment.isVideo(attachments)) {
-        return {
-          bodyRanges,
-          emoji: '🎥',
-          text: body || window.i18n('icu:message--getNotificationText--video'),
-        };
-      }
-      if (Attachment.isVoiceMessage(attachment)) {
-        return {
-          bodyRanges,
-          emoji: '🎤',
-          text:
-            body ||
-            window.i18n('icu:message--getNotificationText--voice-message'),
-        };
-      }
-      if (Attachment.isAudio(attachments)) {
-        return {
-          bodyRanges,
-          emoji: '🔈',
-          text:
-            body ||
-            window.i18n('icu:message--getNotificationText--audio-message'),
-        };
-      }
-
-      return {
-        bodyRanges,
-        text: body || window.i18n('icu:message--getNotificationText--file'),
-        emoji: '📎',
-      };
-    }
-
-    const stickerData = this.get('sticker');
-    if (stickerData) {
-      const emoji =
-        Stickers.getSticker(stickerData.packId, stickerData.stickerId)?.emoji ||
-        stickerData?.emoji;
-
-      if (!emoji) {
-        log.warn('Unable to get emoji for sticker');
-      }
-      return {
-        text: window.i18n('icu:message--getNotificationText--stickers'),
-        emoji: dropNull(emoji),
-      };
-    }
-
-    if (isCallHistory(attributes)) {
-      const state = window.reduxStore.getState();
-      const callingNotification = getPropsForCallHistory(attributes, {
-        callSelector: getCallSelector(state),
-        activeCall: getActiveCall(state),
-        callHistorySelector: getCallHistorySelector(state),
-        conversationSelector: getConversationSelector(state),
-      });
-      if (callingNotification) {
-        const text = getCallingNotificationText(
-          callingNotification,
-          window.i18n
-        );
-        if (text != null) {
-          return {
-            text,
-          };
-        }
-      }
-
-      log.error("This call history message doesn't have valid call history");
-    }
-    if (isExpirationTimerUpdate(attributes)) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const { expireTimer } = this.get('expirationTimerUpdate')!;
-      if (!expireTimer) {
-        return { text: window.i18n('icu:disappearingMessagesDisabled') };
-      }
-
-      return {
-        text: window.i18n('icu:timerSetTo', {
-          time: expirationTimer.format(window.i18n, expireTimer),
-        }),
-      };
-    }
-
-    if (isKeyChange(attributes)) {
-      const identifier = this.get('key_changed');
-      const conversation = window.ConversationController.get(identifier);
-      return {
-        text: window.i18n('icu:safetyNumberChangedGroup', {
-          name: conversation ? conversation.getTitle() : '',
-        }),
-      };
-    }
-    const contacts = this.get('contact');
-    if (contacts && contacts.length) {
-      return {
-        text:
-          EmbeddedContact.getName(contacts[0]) ||
-          window.i18n('icu:unknownContact'),
-        emoji: '👤',
-      };
-    }
-
-    const giftBadge = this.get('giftBadge');
-    if (giftBadge) {
-      const emoji = '✨';
-
-      if (isOutgoing(this.attributes)) {
-        const toContact = window.ConversationController.get(
-          this.attributes.conversationId
-        );
-        const recipient =
-          toContact?.getTitle() ?? window.i18n('icu:unknownContact');
-        return {
-          emoji,
-          text: window.i18n('icu:message--donation--preview--sent', {
-            recipient,
-          }),
-        };
-      }
-
-      const fromContact = getContact(this.attributes);
-      const sender =
-        fromContact?.getTitle() ?? window.i18n('icu:unknownContact');
-      return {
-        emoji,
-        text:
-          giftBadge.state === GiftBadgeStates.Unopened
-            ? window.i18n('icu:message--donation--preview--unopened', {
-                sender,
-              })
-            : window.i18n('icu:message--donation--preview--redeemed'),
-      };
-    }
-
-    if (body) {
-      return {
-        text: body,
-        bodyRanges,
-      };
-    }
-
-    return { text: '' };
-  }
-
-  getAuthorText(): string | undefined {
-    // if it's outgoing, it must be self-authored
-    const selfAuthor = isOutgoing(this.attributes)
-      ? window.i18n('icu:you')
-      : undefined;
-
-    // if it's not selfAuthor and there's no incoming contact,
-    // it might be a group notification, so we return undefined
-    return selfAuthor ?? this.getIncomingContact()?.getTitle({ isShort: true });
+    return getNotificationDataForMessage(this.attributes);
   }
 
   getNotificationText(): string {
-    const { text, emoji } = this.getNotificationData();
-    const { attributes } = this;
-
-    const conversation = this.getConversation();
-
-    strictAssert(
-      conversation != null,
-      'Conversation not found in ConversationController'
-    );
-
-    if (!isConversationAccepted(conversation.attributes)) {
-      return window.i18n('icu:message--getNotificationText--messageRequest');
-    }
-
-    if (attributes.storyReaction) {
-      if (attributes.type === 'outgoing') {
-        const name = this.getConversation()?.get('profileName');
-
-        if (!name) {
-          return window.i18n(
-            'icu:Quote__story-reaction-notification--outgoing--nameless',
-            {
-              emoji: attributes.storyReaction.emoji,
-            }
-          );
-        }
-
-        return window.i18n('icu:Quote__story-reaction-notification--outgoing', {
-          emoji: attributes.storyReaction.emoji,
-          name,
-        });
-      }
-
-      const ourAci = window.textsecure.storage.user.getCheckedAci();
-
-      if (
-        attributes.type === 'incoming' &&
-        attributes.storyReaction.targetAuthorAci === ourAci
-      ) {
-        return window.i18n('icu:Quote__story-reaction-notification--incoming', {
-          emoji: attributes.storyReaction.emoji,
-        });
-      }
-
-      if (!window.Signal.OS.isLinux()) {
-        return attributes.storyReaction.emoji;
-      }
-
-      return window.i18n('icu:Quote__story-reaction--single');
-    }
-
-    const mentions =
-      extractHydratedMentions(attributes, {
-        conversationSelector: findAndFormatContact,
-      }) || [];
-    const spoilers = (attributes.bodyRanges || []).filter(
-      range =>
-        BodyRange.isFormatting(range) && range.style === BodyRange.Style.SPOILER
-    ) as Array<BodyRange<BodyRange.Formatting>>;
-    const modifiedText = applyRangesForText({ text, mentions, spoilers });
-
-    // Linux emoji support is mixed, so we disable it. (Note that this doesn't touch
-    //   the `text`, which can contain emoji.)
-    const shouldIncludeEmoji = Boolean(emoji) && !window.Signal.OS.isLinux();
-    if (shouldIncludeEmoji) {
-      return window.i18n('icu:message--getNotificationText--text-with-emoji', {
-        text: modifiedText,
-        emoji,
-      });
-    }
-
-    return modifiedText || '';
+    return getNotificationTextForMessage(this.attributes);
   }
 
   // General
@@ -919,14 +371,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
   merge(model: MessageModel): void {
     const attributes = model.attributes || model;
     this.set(attributes);
-  }
-
-  getNameForNumber(number: string): string {
-    const conversation = window.ConversationController.get(number);
-    if (!conversation) {
-      return number;
-    }
-    return conversation.getTitle();
   }
 
   async cleanup(): Promise<void> {
@@ -1041,7 +485,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         `doubleCheckMissingQuoteReference/${logId}: missing story reference`
       );
 
-      const message = window.MessageController.getById(storyId);
+      const message = window.MessageCache.__DEPRECATED$getById(storyId);
       if (!message) {
         return;
       }
@@ -1068,7 +512,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       log.info(
         `doubleCheckMissingQuoteReference/${logId}: Verifying reference to ${sentAt}`
       );
-      const inMemoryMessages = window.MessageController.filterBySentAt(
+      const inMemoryMessages = window.MessageCache.__DEPRECATED$filterBySentAt(
         Number(sentAt)
       );
       let matchingMessage = findMatchingQuote(
@@ -1082,7 +526,11 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         );
         const found = messages.find(item => isQuoteAMatch(item, quote));
         if (found) {
-          matchingMessage = window.MessageController.register(found.id, found);
+          matchingMessage = window.MessageCache.__DEPRECATED$register(
+            found.id,
+            found,
+            'doubleCheckMissingQuoteReference'
+          );
         }
       }
 
@@ -1168,8 +616,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     }
 
     await window.Signal.Data.deleteSentProtoByMessageId(this.id);
-
-    scheduleOptimizeFTS();
   }
 
   override isEmpty(): boolean {
@@ -1302,21 +748,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
   markRead(readAt?: number, options = {}): void {
     this.set(markRead(this.attributes, readAt, options));
-  }
-
-  getIncomingContact(): ConversationModel | undefined | null {
-    if (!isIncoming(this.attributes)) {
-      return null;
-    }
-    const sourceServiceId = this.get('sourceServiceId');
-    if (!sourceServiceId) {
-      return null;
-    }
-
-    return window.ConversationController.getOrCreate(
-      sourceServiceId,
-      'private'
-    );
   }
 
   async retrySend(): Promise<void> {
@@ -1984,7 +1415,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       messageId: '',
     };
 
-    const inMemoryMessages = window.MessageController.filterBySentAt(id);
+    const inMemoryMessages =
+      window.MessageCache.__DEPRECATED$filterBySentAt(id);
     const matchingMessage = findMatchingQuote(
       inMemoryMessages,
       result,
@@ -2004,7 +1436,11 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         result.referencedMessageNotFound = true;
         return result;
       }
-      queryMessage = window.MessageController.register(found.id, found);
+      queryMessage = window.MessageCache.__DEPRECATED$register(
+        found.id,
+        found,
+        'copyFromQuotedMessage'
+      );
     }
 
     if (queryMessage && queryMessage.get('conversationId') !== conversationId) {
@@ -2027,6 +1463,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
   ): Promise<void> {
     const { attachments } = quote;
     const firstAttachment = attachments ? attachments[0] : undefined;
+    const firstThumbnailCdnFields = copyCdnFields(firstAttachment?.thumbnail);
 
     if (messageHasPaymentEvent(originalMessage.attributes)) {
       // eslint-disable-next-line no-param-reassign
@@ -2120,6 +1557,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
       if (thumbnail && thumbnail.path) {
         firstAttachment.thumbnail = {
+          ...firstThumbnailCdnFields,
           ...thumbnail,
           copied: true,
         };
@@ -2133,6 +1571,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
       if (image && image.path) {
         firstAttachment.thumbnail = {
+          ...firstThumbnailCdnFields,
           ...image,
           copied: true,
         };
@@ -2142,6 +1581,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     const sticker = originalMessage.get('sticker');
     if (sticker && sticker.data && sticker.data.path) {
       firstAttachment.thumbnail = {
+        ...firstThumbnailCdnFields,
         ...sticker.data,
         copied: true,
       };
@@ -2161,7 +1601,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     //   3. in rare cases, an incoming message can be retried, though it will
     //      still go through one of the previous two codepaths
     // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const message = this;
+    let message: MessageModel = this;
     const source = message.get('source');
     const sourceServiceId = message.get('sourceServiceId');
     const type = message.get('type');
@@ -2179,9 +1619,9 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       log.info(`${idLog}: starting processing in queue`);
 
       // First, check for duplicates. If we find one, stop processing here.
-      const inMemoryMessage = window.MessageController.findBySender(
+      const inMemoryMessage = window.MessageCache.findBySender(
         this.getSenderIdentifier()
-      )?.attributes;
+      );
       if (inMemoryMessage) {
         log.info(`${idLog}: cache hit`, this.getSenderIdentifier());
       } else {
@@ -2212,9 +1652,10 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
             `${idLog}: Updating message ${message.idForLogging()} with received transcript`
           );
 
-          const toUpdate = window.MessageController.register(
+          const toUpdate = window.MessageCache.__DEPRECATED$register(
             existingMessage.id,
-            existingMessage
+            existingMessage,
+            'handleDataMessage/outgoing/toUpdate'
           );
 
           const unidentifiedDeliveriesSet = new Set<string>(
@@ -2609,6 +2050,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         const ourPni = window.textsecure.storage.user.getCheckedPni();
         const ourServiceIds: Set<ServiceIdString> = new Set([ourAci, ourPni]);
 
+        window.MessageCache.toMessageAttributes(this.attributes);
         message.set({
           id: messageId,
           attachments: dataMessage.attachments,
@@ -2801,12 +2243,16 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         ) {
           conversation.set({
             lastMessage: message.getNotificationText(),
-            lastMessageAuthor: message.getAuthorText(),
+            lastMessageAuthor: getMessageAuthorText(message.attributes),
             timestamp: message.get('sent_at'),
           });
         }
 
-        window.MessageController.register(message.id, message);
+        message = window.MessageCache.__DEPRECATED$register(
+          message.id,
+          message,
+          'handleDataMessage/message'
+        );
         conversation.incrementMessageCount();
 
         // If we sent a message in a given conversation, unarchive it!
@@ -2907,7 +2353,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     const isFirstRun = false;
     await this.modifyTargetMessage(conversation, isFirstRun);
 
-    if (await shouldReplyNotifyUser(this, conversation)) {
+    if (await shouldReplyNotifyUser(this.attributes, conversation)) {
       await conversation.notify(this);
     }
 
@@ -3057,9 +2503,10 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
           timestamp: reaction.timestamp,
         });
 
-        const messageToAdd = window.MessageController.register(
+        const messageToAdd = window.MessageCache.__DEPRECATED$register(
           generatedMessage.id,
-          generatedMessage
+          generatedMessage,
+          'generatedMessage'
         );
         if (isDirectConversation(targetConversation.attributes)) {
           await targetConversation.addSingleMessage(messageToAdd);
@@ -3078,7 +2525,12 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
             'handleReaction: notifying for story reaction to ' +
               `${getMessageIdForLogging(storyMessage)} from someone else`
           );
-          if (await shouldReplyNotifyUser(messageToAdd, targetConversation)) {
+          if (
+            await shouldReplyNotifyUser(
+              messageToAdd.attributes,
+              targetConversation
+            )
+          ) {
             drop(targetConversation.notify(messageToAdd));
           }
         }
@@ -3203,9 +2655,10 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         });
 
         void conversation.addSingleMessage(
-          window.MessageController.register(
+          window.MessageCache.__DEPRECATED$register(
             generatedMessage.id,
-            generatedMessage
+            generatedMessage,
+            'generatedMessage2'
           )
         );
 
@@ -3300,14 +2753,3 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 }
 
 window.Whisper.Message = MessageModel;
-
-window.Whisper.MessageCollection = window.Backbone.Collection.extend({
-  model: window.Whisper.Message,
-  comparator(left: Readonly<MessageModel>, right: Readonly<MessageModel>) {
-    if (left.get('received_at') === right.get('received_at')) {
-      return (left.get('sent_at') || 0) - (right.get('sent_at') || 0);
-    }
-
-    return (left.get('received_at') || 0) - (right.get('received_at') || 0);
-  },
-});

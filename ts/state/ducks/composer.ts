@@ -67,7 +67,7 @@ import { resolveAttachmentDraftData } from '../../util/resolveAttachmentDraftDat
 import { resolveDraftAttachmentOnDisk } from '../../util/resolveDraftAttachmentOnDisk';
 import { shouldShowInvalidMessageToast } from '../../util/shouldShowInvalidMessageToast';
 import { writeDraftAttachment } from '../../util/writeDraftAttachment';
-import { getMessageById } from '../../messages/getMessageById';
+import { __DEPRECATED$getMessageById } from '../../messages/getMessageById';
 import { canReply } from '../selectors/message';
 import { getContactId } from '../../messages/helpers';
 import { getConversationSelector } from '../selectors/conversations';
@@ -756,7 +756,9 @@ export function setQuoteByMessageId(
       return;
     }
 
-    const message = messageId ? await getMessageById(messageId) : undefined;
+    const message = messageId
+      ? await __DEPRECATED$getMessageById(messageId)
+      : undefined;
     const state = getState();
 
     if (
@@ -1153,14 +1155,6 @@ function preProcessAttachment(
     return;
   }
 
-  const limitKb = getMaximumAttachmentSizeInKb(getRemoteConfigValue);
-  if (file.size / KIBIBYTE > limitKb) {
-    return {
-      toastType: ToastType.FileSize,
-      parameters: getRenderDetailsForLimit(limitKb),
-    };
-  }
-
   if (isFileDangerous(file.name)) {
     return { toastType: ToastType.DangerousFileType };
   }
@@ -1187,6 +1181,16 @@ function preProcessAttachment(
   // You can't add a non-image attachment if you already have attachments staged
   if (!imageOrVideo && draftAttachments.length > 0) {
     return { toastType: ToastType.CannotMixMultiAndNonMultiAttachments };
+  }
+
+  // Putting this after everything else because the other checks are more
+  // important to show to the user.
+  const limitKb = getMaximumAttachmentSizeInKb(getRemoteConfigValue);
+  if (file.size / KIBIBYTE > limitKb) {
+    return {
+      toastType: ToastType.FileSize,
+      parameters: getRenderDetailsForLimit(limitKb),
+    };
   }
 
   return undefined;

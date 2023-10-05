@@ -7,7 +7,7 @@ import PQueue from 'p-queue';
 import * as Errors from '../../types/errors';
 import { strictAssert } from '../../util/assert';
 import type { MessageModel } from '../../models/messages';
-import { getMessageById } from '../../messages/getMessageById';
+import { __DEPRECATED$getMessageById } from '../../messages/getMessageById';
 import type { ConversationModel } from '../../models/conversations';
 import { isGroup, isGroupV2, isMe } from '../../util/whatTypeOfConversation';
 import { getSendOptions } from '../../util/getSendOptions';
@@ -31,6 +31,7 @@ import type {
   UploadedAttachmentType,
   AttachmentWithHydratedData,
 } from '../../types/Attachment';
+import { copyCdnFields } from '../../util/attachments';
 import { LONG_MESSAGE, MIMETypeToString } from '../../types/MIME';
 import type { RawBodyRange } from '../../types/BodyRange';
 import type {
@@ -51,7 +52,7 @@ import { isConversationAccepted } from '../../util/isConversationAccepted';
 import { sendToGroup } from '../../util/sendToGroup';
 import type { DurationInSeconds } from '../../util/durations';
 import type { ServiceIdString } from '../../types/ServiceId';
-import { normalizeAci } from '../../types/ServiceId';
+import { normalizeAci } from '../../util/normalizeAci';
 import * as Bytes from '../../Bytes';
 
 const LONG_ATTACHMENT_LIMIT = 2048;
@@ -71,7 +72,7 @@ export async function sendNormalMessage(
   const { Message } = window.Signal.Types;
 
   const { messageId, revision, editedMessageTimestamp } = data;
-  const message = await getMessageById(messageId);
+  const message = await __DEPRECATED$getMessageById(messageId);
   if (!message) {
     log.info(
       `message ${messageId} was not found, maybe because it was deleted. Giving up on sending it`
@@ -550,7 +551,7 @@ async function getMessageSendData({
     uploadMessagePreviews(message, uploadQueue),
     uploadMessageQuote(message, uploadQueue),
     uploadMessageSticker(message, uploadQueue),
-    storyId ? getMessageById(storyId) : undefined,
+    storyId ? __DEPRECATED$getMessageById(storyId) : undefined,
   ]);
 
   // Save message after uploading attachments
@@ -628,7 +629,10 @@ async function uploadSingleAttachment(
   );
 
   const newAttachments = [...oldAttachments];
-  newAttachments[index].digest = Bytes.toBase64(uploaded.digest);
+  newAttachments[index] = {
+    ...newAttachments[index],
+    ...copyCdnFields(uploaded),
+  };
 
   message.set('attachments', newAttachments);
 
@@ -698,14 +702,11 @@ async function uploadMessageQuote(
 
       const attachmentAfterThumbnailUpload =
         attachmentsAfterThumbnailUpload[index];
-      const digest = attachmentAfterThumbnailUpload.thumbnail
-        ? Bytes.toBase64(attachmentAfterThumbnailUpload.thumbnail.digest)
-        : undefined;
       return {
         ...attachment,
         thumbnail: {
           ...attachment.thumbnail,
-          digest,
+          ...copyCdnFields(attachmentAfterThumbnailUpload.thumbnail),
         },
       };
     }),
@@ -783,7 +784,7 @@ async function uploadMessagePreviews(
       ...preview,
       image: {
         ...preview.image,
-        digest: Bytes.toBase64(uploaded.image.digest),
+        ...copyCdnFields(uploaded.image),
       },
     };
   });
@@ -829,7 +830,7 @@ async function uploadMessageSticker(
     ...existingSticker,
     data: {
       ...existingSticker.data,
-      digest: Bytes.toBase64(uploaded.digest),
+      ...copyCdnFields(uploaded),
     },
   });
 
@@ -917,7 +918,7 @@ async function uploadMessageContacts(
         ...contact.avatar,
         avatar: {
           ...contact.avatar.avatar,
-          digest: Bytes.toBase64(uploaded.avatar.avatar.digest),
+          ...copyCdnFields(uploaded.avatar.avatar),
         },
       },
     };

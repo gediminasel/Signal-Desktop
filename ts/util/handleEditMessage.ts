@@ -10,22 +10,35 @@ import type {
 } from '../model-types.d';
 import type { LinkPreviewType } from '../types/message/LinkPreviews';
 import * as Edits from '../messageModifiers/Edits';
-import * as durations from './durations';
 import * as log from '../logging/log';
 import { ReadStatus } from '../messages/MessageReadStatus';
 import dataInterface from '../sql/Client';
 import { drop } from './drop';
 import { getAttachmentSignature, isVoiceMessage } from '../types/Attachment';
-import { isAciString } from '../types/ServiceId';
+import { isAciString } from './isAciString';
 import { getMessageIdForLogging } from './idForLogging';
 import { hasErrors } from '../state/selectors/message';
 import { isIncoming, isOutgoing } from '../messages/helpers';
-import { isOlderThan } from './timestamp';
 import { isDirectConversation } from './whatTypeOfConversation';
+import { isTooOldToModifyMessage } from './isTooOldToModifyMessage';
 import { queueAttachmentDownloads } from './queueAttachmentDownloads';
 import { modifyTargetMessage } from './modifyTargetMessage';
 
 const RECURSION_LIMIT = 15;
+
+function getAttachmentSignatureSafe(
+  attachment: AttachmentType
+): string | undefined {
+  try {
+    return getAttachmentSignature(attachment);
+  } catch {
+    log.warn(
+      'handleEditMessage: attachment was missing digest',
+      attachment.blurHash
+    );
+    return undefined;
+  }
+}
 
 export async function handleEditMessage(
   mainMessage: MessageAttributesType,
@@ -84,15 +97,16 @@ export async function handleEditMessage(
   if (
     serverTimestamp &&
     !isNoteToSelf &&
-    isOlderThan(serverTimestamp, durations.DAY * 2)
+    isTooOldToModifyMessage(serverTimestamp, mainMessage)
   ) {
     log.warn(`${idLog}: cannot edit message older than 48h`, serverTimestamp);
     return;
   }
 
-  const mainMessageModel = window.MessageController.register(
+  const mainMessageModel = window.MessageCache.__DEPRECATED$register(
     mainMessage.id,
-    mainMessage
+    mainMessage,
+    'handleEditMessage'
   );
 
   // Pull out the edit history from the main message. If this is the first edit
@@ -129,7 +143,7 @@ export async function handleEditMessage(
   const quoteSignatures: Map<string, AttachmentType> = new Map();
 
   mainMessage.attachments?.forEach(attachment => {
-    const signature = getAttachmentSignature(attachment);
+    const signature = getAttachmentSignatureSafe(attachment);
     if (signature) {
       attachmentSignatures.set(signature, attachment);
     }
@@ -138,7 +152,7 @@ export async function handleEditMessage(
     if (!preview.image) {
       return;
     }
-    const signature = getAttachmentSignature(preview.image);
+    const signature = getAttachmentSignatureSafe(preview.image);
     if (signature) {
       previewSignatures.set(signature, preview);
     }
@@ -148,7 +162,7 @@ export async function handleEditMessage(
       if (!attachment.thumbnail) {
         continue;
       }
-      const signature = getAttachmentSignature(attachment.thumbnail);
+      const signature = getAttachmentSignatureSafe(attachment.thumbnail);
       if (signature) {
         quoteSignatures.set(signature, attachment);
       }
@@ -158,7 +172,7 @@ export async function handleEditMessage(
   let newAttachments = 0;
   const nextEditedMessageAttachments =
     upgradedEditedMessageData.attachments?.map(attachment => {
-      const signature = getAttachmentSignature(attachment);
+      const signature = getAttachmentSignatureSafe(attachment);
       const existingAttachment = signature
         ? attachmentSignatures.get(signature)
         : undefined;
@@ -178,7 +192,7 @@ export async function handleEditMessage(
         return preview;
       }
 
-      const signature = getAttachmentSignature(preview.image);
+      const signature = getAttachmentSignatureSafe(preview.image);
       const existingPreview = signature
         ? previewSignatures.get(signature)
         : undefined;
@@ -208,7 +222,7 @@ export async function handleEditMessage(
         if (!attachment.thumbnail) {
           return attachment;
         }
-        const signature = getAttachmentSignature(attachment.thumbnail);
+        const signature = getAttachmentSignatureSafe(attachment.thumbnail);
         const existingThumbnail = signature
           ? quoteSignatures.get(signature)
           : undefined;

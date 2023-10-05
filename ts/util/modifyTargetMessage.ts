@@ -23,6 +23,7 @@ import {
 } from '../messages/MessageSendState';
 import { canConversationBeUnarchived } from './canConversationBeUnarchived';
 import { deleteForEveryone } from './deleteForEveryone';
+import { drop } from './drop';
 import { handleEditMessage } from './handleEditMessage';
 import { isGroup } from './whatTypeOfConversation';
 import { isStory, isTapToView } from '../state/selectors/message';
@@ -232,6 +233,7 @@ export async function modifyTargetMessage(
     if (!isFirstRun && message.getPendingMarkRead()) {
       const markReadAt = message.getPendingMarkRead();
       message.setPendingMarkRead(undefined);
+      const newestSentAt = readSync?.timestamp;
 
       // This is primarily to allow the conversation to mark all older
       // messages as read, as is done when we receive a read sync for
@@ -240,7 +242,11 @@ export async function modifyTargetMessage(
       // We run message when `isFirstRun` is false so that it triggers when the
       // message and the other ones accompanying it in the batch are fully in
       // the database.
-      void message.getConversation()?.onReadMessage(message, markReadAt);
+      drop(
+        message
+          .getConversation()
+          ?.onReadMessage(message, markReadAt, newestSentAt)
+      );
     }
 
     // Check for out-of-order view once open syncs

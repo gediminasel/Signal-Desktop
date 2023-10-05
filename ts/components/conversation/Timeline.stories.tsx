@@ -19,7 +19,6 @@ import { StorybookThemeContext } from '../../../.storybook/StorybookThemeContext
 import { ConversationHero } from './ConversationHero';
 import type { PropsType as SmartContactSpoofingReviewDialogPropsType } from '../../state/smart/ContactSpoofingReviewDialog';
 import { getDefaultConversation } from '../../test-both/helpers/getDefaultConversation';
-import { getRandomColor } from '../../test-both/helpers/getRandomColor';
 import { TypingBubble } from './TypingBubble';
 import { ContactSpoofingType } from '../../util/contactSpoofing';
 import { ReadStatus } from '../../messages/MessageReadStatus';
@@ -442,16 +441,16 @@ const renderHeroRow = () => {
 };
 const renderTypingBubble = () => (
   <TypingBubble
-    acceptedMessageRequest
-    badge={undefined}
-    color={getRandomColor()}
+    typingContactIdTimestamps={{ [getDefaultConversation().id]: Date.now() }}
+    lastItemAuthorId="123"
+    lastItemTimestamp={undefined}
+    conversationId="123"
     conversationType="direct"
-    phoneNumber="+18005552222"
+    getConversation={() => getDefaultConversation()}
+    getPreferredBadge={() => undefined}
+    showContactModal={action('showContactModal')}
     i18n={i18n}
-    isMe={false}
-    title="title"
     theme={ThemeType.light}
-    sharedGroupNames={[]}
   />
 );
 const renderMiniPlayer = () => (

@@ -11,6 +11,7 @@ import {
   SubMenu,
 } from 'react-contextmenu';
 
+import { createPortal } from 'react-dom';
 import { DisappearingTimeDialog } from '../DisappearingTimeDialog';
 import { Avatar, AvatarSize } from '../Avatar';
 import { InContactsIcon } from '../InContactsIcon';
@@ -483,7 +484,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
       );
     });
 
-    return (
+    return createPortal(
       <ContextMenu id={triggerId} rtl={isRTL}>
         {disableTimerChanges ? null : (
           <SubMenu hoverDelay={1} title={disappearingTitle} rtl={!isRTL}>
@@ -618,7 +619,8 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
             )}
           </MenuItem>
         )}
-      </ContextMenu>
+      </ContextMenu>,
+      document.body
     );
   }
 

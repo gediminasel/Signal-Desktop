@@ -70,7 +70,8 @@ import {
   findBestMatchingCameraId,
 } from '../calling/findBestMatchingDevice';
 import type { LocalizerType } from '../types/Util';
-import { normalizeAci, isAciString } from '../types/ServiceId';
+import { normalizeAci } from '../util/normalizeAci';
+import { isAciString } from '../util/isAciString';
 import * as Errors from '../types/errors';
 import type { ConversationModel } from '../models/conversations';
 import * as Bytes from '../Bytes';
@@ -95,6 +96,7 @@ import {
 import { callingMessageToProto } from '../util/callingMessageToProto';
 import { getSendOptions } from '../util/getSendOptions';
 import { requestMicrophonePermissions } from '../util/requestMicrophonePermissions';
+import OS from '../util/os/osMain';
 import { SignalService as Proto } from '../protobuf';
 import dataInterface from '../sql/Client';
 import {
@@ -823,6 +825,12 @@ export class CallingClass {
             remoteDeviceStates,
           });
         },
+        onLowBandwidthForVideo: (_groupCall, _recovered) => {
+          // TODO: Implement handling of "low outgoing bandwidth for video" notification.
+        },
+        onReactions: (_groupCall, _reactions) => {
+          // TODO: Implement handling of reactions.
+        },
         onPeekChanged: groupCall => {
           const localDeviceState = groupCall.getLocalDeviceState();
           const peekInfo = groupCall.getPeekInfo() ?? null;
@@ -1329,8 +1337,20 @@ export class CallingClass {
   }
 
   async getPresentingSources(): Promise<Array<PresentableSource>> {
+    // There's a Linux Wayland Electron bug where requesting desktopCapturer.
+    // getSources() with types as ['screen', 'window'] (the default) pops 2
+    // OS permissions dialogs in an unusable state (Dialog 1 for Share Window
+    // is the foreground and ignores input; Dialog 2 for Share Screen is background
+    // and requires input. As a workaround, request both sources sequentially.
+    // https://github.com/signalapp/Signal-Desktop/issues/5350#issuecomment-1688614149
     const sources: ReadonlyArray<DesktopCapturerSource> =
-      await ipcRenderer.invoke('getScreenCaptureSources');
+      OS.isLinux() && OS.isWaylandEnabled()
+        ? (
+            await ipcRenderer.invoke('getScreenCaptureSources', ['screen'])
+          ).concat(
+            await ipcRenderer.invoke('getScreenCaptureSources', ['window'])
+          )
+        : await ipcRenderer.invoke('getScreenCaptureSources');
 
     const presentableSources: Array<PresentableSource> = [];
 
@@ -1677,7 +1697,7 @@ export class CallingClass {
       );
 
       const message = new CallingMessage();
-      message.legacyHangup = hangup;
+      message.hangup = hangup;
 
       await this.handleOutgoingSignaling(remoteUserId, message);
 
@@ -2087,8 +2107,14 @@ export class CallingClass {
       return;
     }
 
+    let acceptedTime: number | null = null;
+
     // eslint-disable-next-line no-param-reassign
     call.handleStateChanged = async () => {
+      if (call.state === CallState.Accepted) {
+        acceptedTime = acceptedTime ?? Date.now();
+      }
+
       if (call.state === CallState.Ended) {
         this.stopDeviceReselectionTimer();
         this.lastMediaDeviceSettings = undefined;
@@ -2107,6 +2133,7 @@ export class CallingClass {
         conversationId: conversation.id,
         callState: call.state,
         callEndedReason: call.endedReason,
+        acceptedTime,
       });
     };
 
@@ -2124,6 +2151,11 @@ export class CallingClass {
         conversationId: conversation.id,
         isSharingScreen: Boolean(call.remoteSharingScreen),
       });
+    };
+
+    // eslint-disable-next-line no-param-reassign
+    call.handleLowBandwidthForVideo = _recovered => {
+      // TODO: Implement handling of "low outgoing bandwidth for video" notification.
     };
   }
 

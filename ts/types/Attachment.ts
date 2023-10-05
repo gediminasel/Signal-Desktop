@@ -73,6 +73,7 @@ export type AttachmentType = {
   cdnNumber?: number;
   cdnId?: string;
   cdnKey?: string;
+  key?: string;
   data?: Uint8Array;
   textAttachment?: TextAttachmentType;
 
@@ -81,9 +82,6 @@ export type AttachmentType = {
 
   /** Legacy field, used long ago for migrating attachments to disk. */
   schemaVersion?: number;
-
-  /** Removed once we download the attachment */
-  key?: string;
 };
 
 export type UploadedAttachmentType = Proto.IAttachmentPointer &

@@ -1354,27 +1354,6 @@
   {
     "rule": "DOM-innerHTML",
     "path": "node_modules/quill/dist/quill.js",
-    "line": "        // this.container.innerHTML = html.replace(/\\>\\r?\\n +\\</g, '><'); // Remove spaces between tags",
-    "reasonCategory": "falseMatch",
-    "updated": "2023-05-17T01:41:49.734Z"
-  },
-  {
-    "rule": "DOM-innerHTML",
-    "path": "node_modules/quill/dist/quill.js",
-    "line": "      //  this.container.innerHTML = '';",
-    "reasonCategory": "falseMatch",
-    "updated": "2023-05-17T01:41:49.734Z"
-  },
-  {
-    "rule": "DOM-innerHTML",
-    "path": "node_modules/quill/dist/quill.js",
-    "line": "      // this.container.innerHTML = '';",
-    "reasonCategory": "falseMatch",
-    "updated": "2023-05-17T01:41:49.734Z"
-  },
-  {
-    "rule": "DOM-innerHTML",
-    "path": "node_modules/quill/dist/quill.js",
     "line": "    var html = this.container.innerHTML.trim();",
     "reasonCategory": "usageTrusted",
     "updated": "2020-10-13T18:36:57.012Z",
@@ -1467,6 +1446,27 @@
     "reasonCategory": "usageTrusted",
     "updated": "2020-10-13T18:36:57.012Z",
     "reasonDetail": "necessary for quill"
+  },
+  {
+    "rule": "DOM-innerHTML",
+    "path": "node_modules/quill/dist/quill.js",
+    "line": "        // this.container.innerHTML = html.replace(/\\>\\r?\\n +\\</g, '><'); // Remove spaces between tags",
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-09-28T00:50:24.377Z"
+  },
+  {
+    "rule": "DOM-innerHTML",
+    "path": "node_modules/quill/dist/quill.js",
+    "line": "      //  this.container.innerHTML = '';",
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-09-28T00:50:24.377Z"
+  },
+  {
+    "rule": "DOM-innerHTML",
+    "path": "node_modules/quill/dist/quill.js",
+    "line": "      // this.container.innerHTML = '';",
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-09-28T00:50:24.377Z"
   },
   {
     "rule": "DOM-innerHTML",
@@ -2006,13 +2006,6 @@
   },
   {
     "rule": "React-useRef",
-    "path": "ts/components/AddCaptionModal.tsx",
-    "line": "  const scrollerRef = React.useRef<HTMLDivElement>(null);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2022-10-03T16:06:12.837Z"
-  },
-  {
-    "rule": "React-useRef",
     "path": "ts/components/AvatarTextEditor.tsx",
     "line": "  const measureElRef = useRef<null | HTMLDivElement>(null);",
     "reasonCategory": "usageTrusted",
@@ -2392,6 +2385,13 @@
   },
   {
     "rule": "React-useRef",
+    "path": "ts/components/MediaEditor.tsx",
+    "line": "  const inputApiRef = useRef<InputApi | undefined>();",
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-09-11T20:19:18.681Z"
+  },
+  {
+    "rule": "React-useRef",
     "path": "ts/components/MediaQualitySelector.tsx",
     "line": "  const buttonRef = React.useRef<HTMLButtonElement | null>(null);",
     "reasonCategory": "usageTrusted",
@@ -2676,9 +2676,10 @@
   {
     "rule": "React-useRef",
     "path": "ts/components/conversation/MessageDetail.tsx",
-    "line": "  const messageContainerRef = useRef<HTMLDivElement>(null);",
+    "line": "  const messageDetailRef = useRef<HTMLDivElement>(null);",
     "reasonCategory": "usageTrusted",
-    "updated": "2023-04-12T15:51:28.066Z"
+    "updated": "2023-09-11T22:53:43.464Z",
+    "reasonDetail": "Used to pass ref of MessageDetail to Message. Used for ReactionViewer overflow detection."
   },
   {
     "rule": "React-useRef",
@@ -2694,6 +2695,14 @@
     "line": "  const menuTriggerRef = useRef<Trigger | null>(null);",
     "reasonCategory": "usageTrusted",
     "updated": "2022-11-03T14:21:47.456Z"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/conversation/TypingBubble.tsx",
+    "line": "  const prevTypingContactIds = React.useRef<",
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-09-28T21:48:57.488Z",
+    "reasonDetail": "Used to track change of typing contacts while a conversation is actively viewed."
   },
   {
     "rule": "React-useRef",
@@ -2810,6 +2819,13 @@
     "line": "  const lastFocusedRef = React.useRef<HTMLElement | null>(null);",
     "reasonCategory": "usageTrusted",
     "updated": "2021-10-22T00:52:39.251Z"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/hooks/useScrollLock.tsx",
+    "line": "  const onUserInterruptRef = useRef(onUserInterrupt);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2023-09-19T17:05:51.321Z"
   },
   {
     "rule": "React-useRef",

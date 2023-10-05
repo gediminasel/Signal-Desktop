@@ -123,6 +123,7 @@ import { load as loadLocale } from './locale';
 
 import type { LoggerType } from '../ts/types/Logging';
 import { HourCyclePreference } from '../ts/types/I18N';
+import { DBVersionFromFutureError } from '../ts/sql/migrations';
 
 const STICKER_CREATOR_PARTITION = 'sticker-creator';
 
@@ -319,30 +320,32 @@ type GetThemeSettingOptionsType = Readonly<{
 async function getThemeSetting({
   ephemeralOnly = false,
 }: GetThemeSettingOptionsType = {}): Promise<ThemeSettingType> {
+  let result: unknown;
+
   const fastValue = ephemeralConfig.get('theme-setting');
   if (fastValue !== undefined) {
     getLogger().info('got fast theme-setting value', fastValue);
-    return fastValue as ThemeSettingType;
-  }
-
-  if (ephemeralOnly) {
+    result = fastValue;
+  } else if (ephemeralOnly) {
     return 'system';
-  }
+  } else {
+    const json = await sql.sqlCall('getItemById', 'theme-setting');
 
-  const json = await sql.sqlCall('getItemById', 'theme-setting');
+    result = json?.value;
+  }
 
   // Default to `system` if setting doesn't exist or is invalid
-  const setting: unknown = json?.value;
-  const slowValue =
-    setting === 'light' || setting === 'dark' || setting === 'system'
-      ? setting
+  const validatedResult =
+    result === 'light' || result === 'dark' || result === 'system'
+      ? result
       : 'system';
 
-  ephemeralConfig.set('theme-setting', slowValue);
+  if (fastValue !== validatedResult) {
+    ephemeralConfig.set('theme-setting', validatedResult);
+    getLogger().info('got slow theme-setting value', result);
+  }
 
-  getLogger().info('got slow theme-setting value', slowValue);
-
-  return slowValue;
+  return validatedResult;
 }
 
 async function getResolvedThemeSetting(
@@ -529,7 +532,7 @@ function handleCommonWindowEvents(
   const focusInterval = setInterval(setWindowFocus, 10000);
   window.on('closed', () => clearInterval(focusInterval));
 
-  // Works only for mainWindow because it has `enablePreferredSizeMode`
+  // Works only for mainWindow and settings because they have `enablePreferredSizeMode`
   let lastZoomFactor = window.webContents.getZoomFactor();
   const onZoomChanged = () => {
     if (
@@ -545,15 +548,38 @@ function handleCommonWindowEvents(
       return;
     }
 
-    drop(
-      settingsChannel?.invokeCallbackInMainWindow('persistZoomFactor', [
-        zoomFactor,
-      ])
-    );
-
     lastZoomFactor = zoomFactor;
+    if (!mainWindow) {
+      return;
+    }
+
+    if (window === mainWindow) {
+      drop(
+        settingsChannel?.invokeCallbackInMainWindow('persistZoomFactor', [
+          zoomFactor,
+        ])
+      );
+    } else {
+      mainWindow.webContents.setZoomFactor(zoomFactor);
+    }
   };
-  window.webContents.on('preferred-size-changed', onZoomChanged);
+  window.on('show', () => {
+    // Install handler here after we init zoomFactor otherwise an initial
+    // preferred-size-changed event emits with an undesired zoomFactor.
+    window.webContents.on('preferred-size-changed', onZoomChanged);
+  });
+
+  // Workaround to apply zoomFactor because webPreferences does not handle it
+  // https://github.com/electron/electron/issues/10572
+  // But main window emits ready-to-show before window.Events is available
+  // so set main window zoom in background.ts
+  if (window !== mainWindow) {
+    window.once('ready-to-show', async () => {
+      const zoomFactor =
+        (await settingsChannel?.getSettingFromMainWindow('zoomFactor')) ?? 1;
+      window.webContents.setZoomFactor(zoomFactor);
+    });
+  }
 
   nativeThemeNotifier.addWindow(window);
 
@@ -755,8 +781,9 @@ async function createWindow() {
   }
 
   const startInTray =
+    isTestEnvironment(getEnvironment()) ||
     (await systemTraySettingCache.get()) ===
-    SystemTraySetting.MinimizeToAndStartInSystemTray;
+      SystemTraySetting.MinimizeToAndStartInSystemTray;
 
   const visibleOnAnyScreen = some(screen.getAllDisplays(), display => {
     if (
@@ -794,7 +821,8 @@ async function createWindow() {
   setupSpellChecker(
     mainWindow,
     getPreferredSystemLocales(),
-    getResolvedMessagesLocale().i18n
+    getResolvedMessagesLocale().i18n,
+    getLogger()
   );
   if (!startInTray && windowConfig && windowConfig.maximized) {
     mainWindow.maximize();
@@ -1319,6 +1347,7 @@ async function showSettingsWindow() {
       contextIsolation: true,
       preload: join(__dirname, '../bundles/settings/preload.js'),
       nativeWindowOpen: true,
+      enablePreferredSizeMode: true,
     },
   };
 
@@ -1594,28 +1623,69 @@ const onDatabaseError = async (error: string) => {
   }
   mainWindow = undefined;
 
+  const { i18n } = getResolvedMessagesLocale();
+
+  let deleteAllDataButtonIndex: number | undefined;
+  let messageDetail: string;
+
+  const buttons = [i18n('icu:copyErrorAndQuit')];
+  const copyErrorAndQuitButtonIndex = 0;
+
+  if (error.includes(DBVersionFromFutureError.name)) {
+    // If the DB version is too new, the user likely opened an older version of Signal,
+    // and they would almost never want to delete their data as a result, so we don't show
+    // that option
+    messageDetail = i18n('icu:databaseError__startOldVersion');
+  } else {
+    // Otherwise, this is some other kind of DB error, let's give them the option to
+    // delete.
+    messageDetail = i18n('icu:databaseError__detail');
+
+    buttons.push(i18n('icu:deleteAndRestart'));
+    deleteAllDataButtonIndex = 1;
+  }
+
   const buttonIndex = dialog.showMessageBoxSync({
-    buttons: [
-      getResolvedMessagesLocale().i18n('icu:deleteAndRestart'),
-      getResolvedMessagesLocale().i18n('icu:copyErrorAndQuit'),
-    ],
-    defaultId: 1,
-    cancelId: 1,
-    detail: redactAll(error),
-    message: getResolvedMessagesLocale().i18n('icu:databaseError'),
+    buttons,
+    defaultId: copyErrorAndQuitButtonIndex,
+    cancelId: copyErrorAndQuitButtonIndex,
+    message: i18n('icu:databaseError'),
+    detail: messageDetail,
     noLink: true,
     type: 'error',
   });
 
-  if (buttonIndex === 1) {
+  if (buttonIndex === copyErrorAndQuitButtonIndex) {
     clipboard.writeText(`Database startup error:\n\n${redactAll(error)}`);
-  } else {
-    await sql.removeDB();
-    userConfig.remove();
-    getLogger().error(
-      'onDatabaseError: Requesting immediate restart after quit'
-    );
-    app.relaunch();
+  } else if (
+    typeof deleteAllDataButtonIndex === 'number' &&
+    buttonIndex === deleteAllDataButtonIndex
+  ) {
+    const confirmationButtons = [
+      i18n('icu:cancel'),
+      i18n('icu:deleteAndRestart'),
+    ];
+    const cancelButtonIndex = 0;
+    const confirmDeleteAllDataButtonIndex = 1;
+    const confirmationButtonIndex = dialog.showMessageBoxSync({
+      buttons: confirmationButtons,
+      defaultId: cancelButtonIndex,
+      cancelId: cancelButtonIndex,
+      message: i18n('icu:databaseError__deleteDataConfirmation'),
+      detail: i18n('icu:databaseError__deleteDataConfirmation__detail'),
+      noLink: true,
+      type: 'warning',
+    });
+
+    if (confirmationButtonIndex === confirmDeleteAllDataButtonIndex) {
+      getLogger().error('onDatabaseError: Deleting all data');
+      await sql.removeDB();
+      userConfig.remove();
+      getLogger().error(
+        'onDatabaseError: Requesting immediate restart after quit'
+      );
+      app.relaunch();
+    }
   }
 
   getLogger().error('onDatabaseError: Quitting application');
@@ -2628,13 +2698,16 @@ ipc.handle('show-save-dialog', async (_event, { defaultPath }) => {
   return { canceled: false, filePath: finalFilePath };
 });
 
-ipc.handle('getScreenCaptureSources', async () => {
-  return desktopCapturer.getSources({
-    fetchWindowIcons: true,
-    thumbnailSize: { height: 102, width: 184 },
-    types: ['window', 'screen'],
-  });
-});
+ipc.handle(
+  'getScreenCaptureSources',
+  async (_event, types: Array<'screen' | 'window'> = ['screen', 'window']) => {
+    return desktopCapturer.getSources({
+      fetchWindowIcons: true,
+      thumbnailSize: { height: 102, width: 184 },
+      types,
+    });
+  }
+);
 
 ipc.handle('executeMenuRole', async ({ sender }, untypedRole) => {
   const role = untypedRole as MenuItemConstructorOptions['role'];
@@ -2815,6 +2888,10 @@ async function showStickerCreatorWindow() {
 }
 
 if (isTestEnvironment(getEnvironment())) {
+  ipc.handle('ci:test-electron:debug', async (_event, info) => {
+    process.stdout.write(`ci:test-electron:debug=${JSON.stringify(info)}\n`);
+  });
+
   ipc.handle('ci:test-electron:done', async (_event, info) => {
     if (!process.env.TEST_QUIT_ON_COMPLETE) {
       return;

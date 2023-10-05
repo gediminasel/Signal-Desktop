@@ -12,7 +12,6 @@ import type {
   ConversationRenderInfoType,
 } from './model-types.d';
 import type { ConversationModel } from './models/conversations';
-import type { MessageModel } from './models/messages';
 
 import dataInterface from './sql/Client';
 import * as log from './logging/log';
@@ -25,10 +24,10 @@ import { isGroupV1, isGroupV2 } from './util/whatTypeOfConversation';
 import type { ServiceIdString, AciString, PniString } from './types/ServiceId';
 import {
   isServiceIdString,
-  normalizeAci,
   normalizePni,
   normalizeServiceId,
 } from './types/ServiceId';
+import { normalizeAci } from './util/normalizeAci';
 import { sleep } from './util/sleep';
 import { isNotNil } from './util/isNotNil';
 import { MINUTE, SECOND } from './util/durations';
@@ -1127,13 +1126,11 @@ export class ConversationController {
       });
     }
 
-    log.warn(`${logId}: Update cached messages in MessageController`);
-    window.MessageController.update((message: MessageModel) => {
-      if (message.get('conversationId') === obsoleteId) {
-        message.set({ conversationId: currentId });
-      }
+    log.warn(`${logId}: Update cached messages in MessageCache`);
+    window.MessageCache.replaceAllObsoleteConversationIds({
+      conversationId: currentId,
+      obsoleteId,
     });
-
     log.warn(`${logId}: Update messages table`);
     await migrateConversationMessages(obsoleteId, currentId);
 

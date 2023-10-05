@@ -70,7 +70,7 @@ import type {
   AciString,
   PniString,
 } from '../../types/ServiceId';
-import { isAciString } from '../../types/ServiceId';
+import { isAciString } from '../../util/isAciString';
 import { MY_STORY_ID, StorySendMode } from '../../types/Stories';
 import * as Errors from '../../types/errors';
 import {
@@ -137,7 +137,7 @@ import {
   buildUpdateAttributesChange,
   initiateMigrationToGroupV2 as doInitiateMigrationToGroupV2,
 } from '../../groups';
-import { getMessageById } from '../../messages/getMessageById';
+import { __DEPRECATED$getMessageById } from '../../messages/getMessageById';
 import type { PanelRenderType, PanelRequestType } from '../../types/Panels';
 import type { ConversationQueueJobData } from '../../jobs/conversationJobQueue';
 import { isOlderThan } from '../../util/timestamp';
@@ -298,7 +298,7 @@ export type ConversationType = ReadonlyDeep<
     unreadMentionsCount?: number;
     isSelected?: boolean;
     isFetchingUUID?: boolean;
-    typingContactId?: string;
+    typingContactIdTimestamps?: Record<string, number>;
     recentMediaItems?: ReadonlyArray<MediaItemType>;
     profileSharing?: boolean;
 
@@ -1133,6 +1133,7 @@ export const actions = {
   unblurAvatar,
   updateConversationModelSharedGroups,
   updateGroupAttributes,
+  updateLastMessage,
   updateSharedGroups,
   verifyConversationsStoppingSend,
 };
@@ -1329,7 +1330,7 @@ function markMessageRead(
       return;
     }
 
-    const message = await getMessageById(messageId);
+    const message = await __DEPRECATED$getMessageById(messageId);
     if (!message) {
       throw new Error(`markMessageRead: failed to load message ${messageId}`);
     }
@@ -1674,7 +1675,7 @@ function deleteMessages({
 
     await Promise.all(
       messageIds.map(async messageId => {
-        const message = await getMessageById(messageId);
+        const message = await __DEPRECATED$getMessageById(messageId);
         if (!message) {
           throw new Error(`deleteMessages: Message ${messageId} missing!`);
         }
@@ -1778,7 +1779,7 @@ function setMessageToEdit(
       return;
     }
 
-    const message = (await getMessageById(messageId))?.attributes;
+    const message = (await __DEPRECATED$getMessageById(messageId))?.attributes;
     if (!message) {
       return;
     }
@@ -1855,7 +1856,7 @@ function generateNewGroupLink(
  * replace it with an actual action that fits in with the redux approach.
  */
 export const markViewed = (messageId: string): void => {
-  const message = window.MessageController.getById(messageId);
+  const message = window.MessageCache.__DEPRECATED$getById(messageId);
   if (!message) {
     throw new Error(`markViewed: Message ${messageId} missing!`);
   }
@@ -2126,7 +2127,7 @@ function kickOffAttachmentDownload(
   options: Readonly<{ messageId: string }>
 ): ThunkAction<void, RootStateType, unknown, NoopActionType> {
   return async dispatch => {
-    const message = await getMessageById(options.messageId);
+    const message = await __DEPRECATED$getMessageById(options.messageId);
     if (!message) {
       throw new Error(
         `kickOffAttachmentDownload: Message ${options.messageId} missing!`
@@ -2158,7 +2159,7 @@ function markAttachmentAsCorrupted(
   options: AttachmentOptions
 ): ThunkAction<void, RootStateType, unknown, NoopActionType> {
   return async dispatch => {
-    const message = await getMessageById(options.messageId);
+    const message = await __DEPRECATED$getMessageById(options.messageId);
     if (!message) {
       throw new Error(
         `markAttachmentAsCorrupted: Message ${options.messageId} missing!`
@@ -2177,7 +2178,7 @@ function openGiftBadge(
   messageId: string
 ): ThunkAction<void, RootStateType, unknown, ShowToastActionType> {
   return async dispatch => {
-    const message = await getMessageById(messageId);
+    const message = await __DEPRECATED$getMessageById(messageId);
     if (!message) {
       throw new Error(`openGiftBadge: Message ${messageId} missing!`);
     }
@@ -2197,7 +2198,7 @@ function retryMessageSend(
   messageId: string
 ): ThunkAction<void, RootStateType, unknown, NoopActionType> {
   return async dispatch => {
-    const message = await getMessageById(messageId);
+    const message = await __DEPRECATED$getMessageById(messageId);
     if (!message) {
       throw new Error(`retryMessageSend: Message ${messageId} missing!`);
     }
@@ -2214,7 +2215,7 @@ export function copyMessageText(
   messageId: string
 ): ThunkAction<void, RootStateType, unknown, NoopActionType> {
   return async dispatch => {
-    const message = await getMessageById(messageId);
+    const message = await __DEPRECATED$getMessageById(messageId);
     if (!message) {
       throw new Error(`copy: Message ${messageId} missing!`);
     }
@@ -2233,7 +2234,7 @@ export function retryDeleteForEveryone(
   messageId: string
 ): ThunkAction<void, RootStateType, unknown, NoopActionType> {
   return async dispatch => {
-    const message = await getMessageById(messageId);
+    const message = await __DEPRECATED$getMessageById(messageId);
     if (!message) {
       throw new Error(`retryDeleteForEveryone: Message ${messageId} missing!`);
     }
@@ -2737,7 +2738,7 @@ function conversationStoppedByMissingVerification(payload: {
   };
 }
 
-function messageChanged(
+export function messageChanged(
   id: string,
   conversationId: string,
   data: MessageAttributesType
@@ -2962,7 +2963,7 @@ function pushPanelForConversation(
 
       const message =
         state.conversations.messagesLookup[messageId] ||
-        (await getMessageById(messageId))?.attributes;
+        (await __DEPRECATED$getMessageById(messageId))?.attributes;
       if (!message) {
         throw new Error(
           'pushPanelForConversation: could not find message for MessageDetails'
@@ -3038,7 +3039,7 @@ function deleteMessagesForEveryone(
     await Promise.all(
       messageIds.map(async messageId => {
         try {
-          const message = window.MessageController.getById(messageId);
+          const message = window.MessageCache.__DEPRECATED$getById(messageId);
           if (!message) {
             throw new Error(
               `deleteMessageForEveryone: Message ${messageId} missing!`
@@ -3394,7 +3395,11 @@ function loadRecentMediaItems(
 
     // Cache these messages in memory to ensure Lightbox can find them
     messages.forEach(message => {
-      window.MessageController.register(message.id, message);
+      window.MessageCache.__DEPRECATED$register(
+        message.id,
+        message,
+        'loadRecentMediaItems'
+      );
     });
 
     const recentMediaItems = messages
@@ -3492,7 +3497,7 @@ export function saveAttachmentFromMessage(
   providedAttachment?: AttachmentType
 ): ThunkAction<void, RootStateType, unknown, ShowToastActionType> {
   return async (dispatch, getState) => {
-    const message = await getMessageById(messageId);
+    const message = await __DEPRECATED$getMessageById(messageId);
     if (!message) {
       throw new Error(
         `saveAttachmentFromMessage: Message ${messageId} missing!`
@@ -3585,7 +3590,7 @@ export function scrollToMessage(
       throw new Error('scrollToMessage: No conversation found');
     }
 
-    const message = await getMessageById(messageId);
+    const message = await __DEPRECATED$getMessageById(messageId);
     if (!message) {
       throw new Error(`scrollToMessage: failed to load message ${messageId}`);
     }
@@ -3599,7 +3604,7 @@ export function scrollToMessage(
 
     let isInMemory = true;
 
-    if (!window.MessageController.getById(messageId)) {
+    if (!window.MessageCache.__DEPRECATED$getById(messageId)) {
       isInMemory = false;
     }
 
@@ -3954,9 +3959,14 @@ export function showConversation({
     }
 
     if (conversationId === conversations.selectedConversationId) {
-      if (conversationId && messageId) {
+      if (!conversationId) {
+        return;
+      }
+
+      if (messageId) {
         dispatch(scrollToMessage(conversationId, messageId));
       }
+      dispatch(setComposerFocus(conversationId));
 
       return;
     }
@@ -4004,7 +4014,7 @@ function onConversationOpened(
     conversation.onOpenStart();
 
     if (messageId) {
-      const message = await getMessageById(messageId);
+      const message = await __DEPRECATED$getMessageById(messageId);
 
       if (message) {
         drop(conversation.loadAndScroll(messageId));
@@ -4133,7 +4143,7 @@ function showArchivedConversations(): ShowArchivedConversationsActionType {
 }
 
 function doubleCheckMissingQuoteReference(messageId: string): NoopActionType {
-  const message = window.MessageController.getById(messageId);
+  const message = window.MessageCache.__DEPRECATED$getById(messageId);
   if (message) {
     void message.doubleCheckMissingQuoteReference();
   }
@@ -4447,6 +4457,20 @@ function maybeUpdateSelectedMessageForDetails(
   return {
     ...state,
     targetedMessageForDetails,
+  };
+}
+
+export function updateLastMessage(
+  conversationId: string
+): ThunkAction<void, RootStateType, unknown, never> {
+  return async () => {
+    const conversationModel = window.ConversationController.get(conversationId);
+    if (conversationModel == null) {
+      throw new Error(
+        `updateLastMessage: Could not find conversation ${conversationId}`
+      );
+    }
+    await conversationModel.updateLastMessage();
   };
 }
 
@@ -5063,16 +5087,16 @@ export function reducer(
       return state;
     }
 
-    const toIncrement =
-      data.reactions?.length ||
-      existingMessage.editHistory?.length !== data.editHistory?.length
-        ? 1
-        : 0;
+    const hasNewEdit =
+      existingMessage.editHistory?.length !== data.editHistory?.length ? 1 : 0;
+    const toIncrement = data.reactions?.length || hasNewEdit;
 
     const updatedMessage = {
       ...data,
       displayLimit: existingMessage.displayLimit,
-      isSpoilerExpanded: existingMessage.isSpoilerExpanded,
+      isSpoilerExpanded: hasNewEdit
+        ? undefined
+        : existingMessage.isSpoilerExpanded,
     };
 
     return {

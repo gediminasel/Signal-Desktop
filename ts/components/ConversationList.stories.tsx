@@ -381,7 +381,9 @@ ConversationsMessageStatuses.story = {
 
 export const ConversationTypingStatus = (): JSX.Element =>
   renderConversation({
-    typingContactId: generateUuid(),
+    typingContactIdTimestamps: {
+      [generateUuid()]: date('timestamp', new Date()),
+    },
   });
 
 ConversationTypingStatus.story = {

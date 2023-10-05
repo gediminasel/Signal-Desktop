@@ -56,14 +56,16 @@ import { normalizeStoryDistributionId } from '../types/StoryDistributionId';
 import type { ServiceIdString } from '../types/ServiceId';
 import {
   ServiceIdKind,
-  normalizeAci,
   normalizeServiceId,
   normalizePni,
-  isAciString,
   isPniString,
+  isUntaggedPniString,
   isServiceIdString,
   fromPniObject,
+  toTaggedPni,
 } from '../types/ServiceId';
+import { normalizeAci } from '../util/normalizeAci';
+import { isAciString } from '../util/isAciString';
 import * as Errors from '../types/errors';
 
 import { SignalService as Proto } from '../protobuf';
@@ -134,7 +136,6 @@ import type { SendTypesType } from '../util/handleMessageSend';
 import { getStoriesBlocked } from '../util/stories';
 import { isNotNil } from '../util/isNotNil';
 import { chunk } from '../util/iterables';
-import { isOlderThan } from '../util/timestamp';
 import { inspectUnknownFieldTags } from '../util/inspectProtobufs';
 import { incrementMessageCounter } from '../util/incrementMessageCounter';
 import { filterAndClean } from '../types/BodyRange';
@@ -422,12 +423,13 @@ export default class MessageReceiver
                 'MessageReceiver.handleRequest.destinationServiceId'
               )
             : ourAci,
-          updatedPni: decoded.updatedPni
-            ? normalizePni(
-                decoded.updatedPni,
-                'MessageReceiver.handleRequest.updatedPni'
-              )
-            : undefined,
+          updatedPni:
+            decoded.updatedPni && isUntaggedPniString(decoded.updatedPni)
+              ? normalizePni(
+                  toTaggedPni(decoded.updatedPni),
+                  'MessageReceiver.handleRequest.updatedPni'
+                )
+              : undefined,
           timestamp: decoded.timestamp?.toNumber(),
           content: dropNull(decoded.content),
           serverGuid: decoded.serverGuid,
@@ -879,8 +881,11 @@ export default class MessageReceiver
           decoded.destinationServiceId || item.destinationServiceId || ourAci,
           'CachedEnvelope.destinationServiceId'
         ),
-        updatedPni: decoded.updatedPni
-          ? normalizePni(decoded.updatedPni, 'CachedEnvelope.updatedPni')
+        updatedPni: isUntaggedPniString(decoded.updatedPni)
+          ? normalizePni(
+              toTaggedPni(decoded.updatedPni),
+              'CachedEnvelope.updatedPni'
+            )
           : undefined,
         timestamp: decoded.timestamp?.toNumber(),
         content: dropNull(decoded.content),
@@ -2389,17 +2394,6 @@ export default class MessageReceiver
       return;
     }
 
-    // Timing check
-    if (isOlderThan(envelope.serverTimestamp, durations.DAY * 2)) {
-      log.info(
-        'MessageReceiver.handleEditMessage: cannot edit message older than 48h',
-        logId,
-        envelope.serverTimestamp
-      );
-      this.removeFromCache(envelope);
-      return;
-    }
-
     const message = this.processDecrypted(envelope, msg.dataMessage);
     const groupId = this.getProcessedGroupId(message);
     const isBlocked = groupId ? this.isGroupBlocked(groupId) : false;
@@ -2766,9 +2760,7 @@ export default class MessageReceiver
 
     const { pni: pniBytes, signature } = pniSignatureMessage;
     strictAssert(Bytes.isNotEmpty(pniBytes), `${logId}: missing PNI bytes`);
-    const pni = fromPniObject(
-      Pni.parseFromServiceIdBinary(Buffer.from(pniBytes))
-    );
+    const pni = fromPniObject(Pni.fromUuidBytes(Buffer.from(pniBytes)));
     strictAssert(pni, `${logId}: missing PNI`);
     strictAssert(Bytes.isNotEmpty(signature), `${logId}: empty signature`);
     strictAssert(isAciString(aci), `${logId}: invalid ACI`);

@@ -21,7 +21,7 @@ import type { StoryViewTargetType, StoryViewType } from '../../types/Stories';
 import type { SyncType } from '../../jobs/helpers/syncHelpers';
 import type { StoryDistributionIdString } from '../../types/StoryDistributionId';
 import type { ServiceIdString } from '../../types/ServiceId';
-import { isAciString } from '../../types/ServiceId';
+import { isAciString } from '../../util/isAciString';
 import * as log from '../../logging/log';
 import { TARGETED_CONVERSATION_CHANGED } from './conversations';
 import { SIGNAL_ACI } from '../../types/SignalConversation';
@@ -36,7 +36,7 @@ import { blockSendUntilConversationsAreVerified } from '../../util/blockSendUnti
 import { deleteStoryForEveryone as doDeleteStoryForEveryone } from '../../util/deleteStoryForEveryone';
 import { deleteGroupStoryReplyForEveryone as doDeleteGroupStoryReplyForEveryone } from '../../util/deleteGroupStoryReplyForEveryone';
 import { enqueueReactionForSend } from '../../reactions/enqueueReactionForSend';
-import { getMessageById } from '../../messages/getMessageById';
+import { __DEPRECATED$getMessageById } from '../../messages/getMessageById';
 import { markOnboardingStoryAsRead } from '../../util/markOnboardingStoryAsRead';
 import { markViewed } from '../../services/MessageUpdater';
 import { queueAttachmentDownloads } from '../../util/queueAttachmentDownloads';
@@ -387,7 +387,7 @@ function markStoryRead(
       return;
     }
 
-    const message = await getMessageById(messageId);
+    const message = await __DEPRECATED$getMessageById(messageId);
 
     if (!message) {
       log.warn(`markStoryRead: no message found ${messageId}`);
@@ -520,7 +520,7 @@ function queueStoryDownload(
       return;
     }
 
-    const message = await getMessageById(storyId);
+    const message = await __DEPRECATED$getMessageById(storyId);
 
     if (message) {
       // We want to ensure that we re-hydrate the story reply context with the
@@ -1395,7 +1395,7 @@ function removeAllContactStories(
     const messages = (
       await Promise.all(
         messageIds.map(async messageId => {
-          const message = await getMessageById(messageId);
+          const message = await __DEPRECATED$getMessageById(messageId);
 
           if (!message) {
             log.warn(`${logId}: no message found ${messageId}`);

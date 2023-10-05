@@ -67,10 +67,10 @@ import { IMAGE_JPEG, IMAGE_WEBP } from '../types/MIME';
 import type { AciString, PniString, ServiceIdString } from '../types/ServiceId';
 import {
   ServiceIdKind,
-  isAciString,
   normalizeServiceId,
   normalizePni,
 } from '../types/ServiceId';
+import { isAciString } from '../util/isAciString';
 import {
   constantTimeEqual,
   decryptProfile,
@@ -87,7 +87,6 @@ import {
   notificationService,
 } from '../services/notifications';
 import { storageServiceUploadJob } from '../services/storage';
-import { scheduleOptimizeFTS } from '../services/ftsOptimizer';
 import { getSendOptions } from '../util/getSendOptions';
 import { isConversationAccepted } from '../util/isConversationAccepted';
 import {
@@ -147,7 +146,7 @@ import { getSendTarget } from '../util/getSendTarget';
 import { getRecipients } from '../util/getRecipients';
 import { validateConversation } from '../util/validateConversation';
 import { isSignalConversation } from '../util/isSignalConversation';
-import { getMessageById as getMessageByIdLazy } from '../messages/getMessageById';
+import { __DEPRECATED$getMessageById as getMessageByIdLazy } from '../messages/getMessageById';
 import { removePendingMember } from '../util/removePendingMember';
 import {
   isMember,
@@ -163,6 +162,7 @@ import { deriveProfileKeyVersion } from '../util/zkgroup';
 import { incrementMessageCounter } from '../util/incrementMessageCounter';
 import { queueUpdateMessage } from '../util/messageBatcher';
 import OS from '../util/os/osMain';
+import { getMessageAuthorText } from '../util/getMessageAuthorText';
 
 /* eslint-disable more/no-then */
 window.Whisper = window.Whisper || {};
@@ -220,7 +220,11 @@ export class ConversationModel extends window.Backbone
 
   contactTypingTimers?: Record<
     string,
-    { senderId: string; timer: NodeJS.Timer }
+    {
+      senderId: string;
+      timer: NodeJS.Timer;
+      timestamp: number;
+    }
   >;
 
   contactCollection?: Backbone.Collection<ConversationModel>;
@@ -1438,7 +1442,10 @@ export class ConversationModel extends window.Backbone
       newestId && messageIds && messageIds[messageIds.length - 1] === newestId;
 
     if (isJustSent && existingConversation && !isLatestInMemory) {
-      void this.loadNewestMessages(undefined, undefined);
+      // The message is being sent before the user has scrolled down to load the newest
+      // messages into memory; in that case, we scroll the user all the way down by
+      // loading the newest message
+      drop(this.loadNewestMessages(newestId, undefined));
     } else if (
       // The message has to be not a story or has to be a story reply in direct
       // conversation.
@@ -1761,7 +1768,13 @@ export class ConversationModel extends window.Backbone
   ): Promise<Array<MessageModel>> {
     const result = messages
       .filter(message => Boolean(message.id))
-      .map(message => window.MessageController.register(message.id, message));
+      .map(message =>
+        window.MessageCache.__DEPRECATED$register(
+          message.id,
+          message,
+          'cleanModels'
+        )
+      );
 
     const eliminated = messages.length - result.length;
     if (eliminated > 0) {
@@ -2026,7 +2039,11 @@ export class ConversationModel extends window.Backbone
       if (lastSeenMsg.id) {
         const prevMsg = await getMessageByIdLazy(lastSeenMsg.id);
         if (prevMsg) {
-          window.MessageController.register(prevMsg.id, prevMsg);
+          window.MessageCache.__DEPRECATED$register(
+            prevMsg.id,
+            prevMsg,
+            'updateLastSeenMessage'
+          );
           const prevSeen = prevMsg.get('lastSeenHere') || [];
           prevMsg.set(
             'lastSeenHere',
@@ -2148,7 +2165,11 @@ export class ConversationModel extends window.Backbone
       // eslint-disable-next-line no-await-in-loop
       await Promise.all(
         readMessages.map(async m => {
-          const registered = window.MessageController.register(m.id, m);
+          const registered = window.MessageCache.__DEPRECATED$register(
+            m.id,
+            m,
+            'handleReadAndDownloadAttachments'
+          );
           const shouldSave = await registered.queueAttachmentDownloads();
           if (shouldSave) {
             await window.Signal.Data.saveMessage(registered.attributes, {
@@ -2894,12 +2915,13 @@ export class ConversationModel extends window.Backbone
     const id = await window.Signal.Data.saveMessage(message, {
       ourAci: window.textsecure.storage.user.getCheckedAci(),
     });
-    const model = window.MessageController.register(
+    const model = window.MessageCache.__DEPRECATED$register(
       id,
       new window.Whisper.Message({
         ...message,
         id,
-      })
+      }),
+      'addChatSessionRefreshed'
     );
 
     this.trigger('newmessage', model);
@@ -2938,12 +2960,13 @@ export class ConversationModel extends window.Backbone
     const id = await window.Signal.Data.saveMessage(message, {
       ourAci: window.textsecure.storage.user.getCheckedAci(),
     });
-    const model = window.MessageController.register(
+    const model = window.MessageCache.__DEPRECATED$register(
       id,
       new window.Whisper.Message({
         ...message,
         id,
-      })
+      }),
+      'addDeliveryIssue'
     );
 
     this.trigger('newmessage', model);
@@ -2992,9 +3015,10 @@ export class ConversationModel extends window.Backbone
         ourAci: window.textsecure.storage.user.getCheckedAci(),
         forceSave: true,
       });
-      const model = window.MessageController.register(
+      const model = window.MessageCache.__DEPRECATED$register(
         message.id,
-        new window.Whisper.Message(message)
+        new window.Whisper.Message(message),
+        'addKeyChange'
       );
 
       const isUntrusted = await this.isUntrusted();
@@ -3071,12 +3095,13 @@ export class ConversationModel extends window.Backbone
       ourAci: window.textsecure.storage.user.getCheckedAci(),
       forceSave: true,
     });
-    const model = window.MessageController.register(
+    const model = window.MessageCache.__DEPRECATED$register(
       id,
       new window.Whisper.Message({
         ...message,
         id,
-      })
+      }),
+      'addConversationMerge'
     );
 
     this.trigger('newmessage', model);
@@ -3122,9 +3147,10 @@ export class ConversationModel extends window.Backbone
       ourAci: window.textsecure.storage.user.getCheckedAci(),
       forceSave: true,
     });
-    const model = window.MessageController.register(
+    const model = window.MessageCache.__DEPRECATED$register(
       message.id,
-      new window.Whisper.Message(message)
+      new window.Whisper.Message(message),
+      'addVerifiedChange'
     );
 
     this.trigger('newmessage', model);
@@ -3163,12 +3189,13 @@ export class ConversationModel extends window.Backbone
     const id = await window.Signal.Data.saveMessage(message, {
       ourAci: window.textsecure.storage.user.getCheckedAci(),
     });
-    const model = window.MessageController.register(
+    const model = window.MessageCache.__DEPRECATED$register(
       id,
       new window.Whisper.Message({
         ...message,
         id,
-      })
+      }),
+      'addProfileChange'
     );
 
     this.trigger('newmessage', model);
@@ -3209,12 +3236,13 @@ export class ConversationModel extends window.Backbone
         ourAci: window.textsecure.storage.user.getCheckedAci(),
       }
     );
-    const model = window.MessageController.register(
+    const model = window.MessageCache.__DEPRECATED$register(
       id,
       new window.Whisper.Message({
         ...(message as MessageAttributesType),
         id,
-      })
+      }),
+      'addNotification'
     );
 
     this.trigger('newmessage', model);
@@ -3294,7 +3322,7 @@ export class ConversationModel extends window.Backbone
       `maybeRemoveUniversalTimer(${this.idForLogging()}): removed notification`
     );
 
-    const message = window.MessageController.getById(notificationId);
+    const message = window.MessageCache.__DEPRECATED$getById(notificationId);
     if (message) {
       await window.Signal.Data.removeMessage(message.id);
     }
@@ -3331,7 +3359,7 @@ export class ConversationModel extends window.Backbone
       `maybeClearContactRemoved(${this.idForLogging()}): removed notification`
     );
 
-    const message = window.MessageController.getById(notificationId);
+    const message = window.MessageCache.__DEPRECATED$getById(notificationId);
     if (message) {
       await window.Signal.Data.removeMessage(message.id);
     }
@@ -3382,7 +3410,11 @@ export class ConversationModel extends window.Backbone
     );
   }
 
-  async onReadMessage(message: MessageModel, readAt?: number): Promise<void> {
+  async onReadMessage(
+    message: MessageModel,
+    readAt?: number,
+    newestSentAt?: number
+  ): Promise<void> {
     // We mark as read everything older than this message - to clean up old stuff
     //   still marked unread in the database. If the user generally doesn't read in
     //   the desktop app, so the desktop app only gets read syncs, we can very
@@ -3397,7 +3429,7 @@ export class ConversationModel extends window.Backbone
     return this.queueJob('onReadMessage', () =>
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       this.markRead(message.get('received_at')!, {
-        newestSentAt: message.get('sent_at'),
+        newestSentAt: newestSentAt || message.get('sent_at'),
         sendReadReceipts: false,
         readAt,
       })
@@ -3709,7 +3741,7 @@ export class ConversationModel extends window.Backbone
             draftBodyRanges: [],
             draftTimestamp: null,
             quotedMessageId: undefined,
-            lastMessageAuthor: message.getAuthorText(),
+            lastMessageAuthor: getMessageAuthorText(message.attributes),
             lastMessageBodyRanges: message.get('bodyRanges'),
             lastMessage:
               notificationData?.text || message.getNotificationText() || '',
@@ -3800,7 +3832,6 @@ export class ConversationModel extends window.Backbone
     if (!storyId || isDirectConversation(this.attributes)) {
       await this.maybeApplyUniversalTimer();
       expireTimer = this.get('expireTimer');
-      await this.restoreContact();
     }
 
     const recipientMaybeConversations = map(
@@ -3862,7 +3893,11 @@ export class ConversationModel extends window.Backbone
     });
 
     const model = new window.Whisper.Message(attributes);
-    const message = window.MessageController.register(model.id, model);
+    const message = window.MessageCache.__DEPRECATED$register(
+      model.id,
+      model,
+      'enqueueMessageForSend'
+    );
     message.cachedOutgoingContactData = contact;
 
     // Attach path to preview images so that sendNormalMessage can use them to
@@ -3935,6 +3970,12 @@ export class ConversationModel extends window.Backbone
       now,
       extraReduxActions,
     });
+
+    // The call above enables profile sharing so we have to restore contact
+    // afterwards, otherwise Message Request state will flash.
+    if (!storyId || isDirectConversation(this.attributes)) {
+      await this.restoreContact();
+    }
 
     const renderDuration = Date.now() - renderStart;
 
@@ -4046,17 +4087,22 @@ export class ConversationModel extends window.Backbone
     let previewMessage: MessageModel | undefined;
     let activityMessage: MessageModel | undefined;
 
-    // Register the message with MessageController so that if it already exists
+    // Register the message with MessageCache so that if it already exists
     // in memory we use that data instead of the data from the db which may
     // be out of date.
     if (preview) {
-      previewMessage = window.MessageController.register(preview.id, preview);
+      previewMessage = window.MessageCache.__DEPRECATED$register(
+        preview.id,
+        preview,
+        'previewMessage'
+      );
     }
 
     if (activity) {
-      activityMessage = window.MessageController.register(
+      activityMessage = window.MessageCache.__DEPRECATED$register(
         activity.id,
-        activity
+        activity,
+        'activityMessage'
       );
     }
 
@@ -4088,7 +4134,7 @@ export class ConversationModel extends window.Backbone
         notificationData?.text || previewMessage?.getNotificationText() || '',
       lastMessageBodyRanges: notificationData?.bodyRanges,
       lastMessagePrefix: notificationData?.emoji,
-      lastMessageAuthor: previewMessage?.getAuthorText(),
+      lastMessageAuthor: getMessageAuthorText(previewMessage?.attributes),
       lastMessageStatus:
         (previewMessage
           ? getMessagePropStatus(previewMessage.attributes, ourConversationId)
@@ -4455,7 +4501,11 @@ export class ConversationModel extends window.Backbone
 
     model.set({ id });
 
-    const message = window.MessageController.register(id, model);
+    const message = window.MessageCache.__DEPRECATED$register(
+      id,
+      model,
+      'updateExpirationTimer'
+    );
 
     void this.addSingleMessage(message);
     void this.updateUnread();
@@ -4836,8 +4886,6 @@ export class ConversationModel extends window.Backbone
     await window.Signal.Data.removeAllMessagesInConversation(this.id, {
       logId: this.idForLogging(),
     });
-
-    scheduleOptimizeFTS();
   }
 
   getTitle(options?: { isShort?: boolean }): string {
@@ -5175,8 +5223,8 @@ export class ConversationModel extends window.Backbone
         this.clearContactTypingTimer.bind(this, typingToken),
         15 * 1000
       );
+      // User was not previously typing before. State change!
       if (!record) {
-        // User was not previously typing before. State change!
         this.trigger('change', this, { force: true });
       }
     } else {

@@ -3355,10 +3355,10 @@
     "@react-types/overlays" "^3.7.1"
     "@react-types/shared" "^3.18.0"
 
-"@signalapp/better-sqlite3@8.5.1":
-  version "8.5.1"
-  resolved "https://registry.yarnpkg.com/@signalapp/better-sqlite3/-/better-sqlite3-8.5.1.tgz#b2bcf69d29f4d01cfecf2ad940ecd138f32470b3"
-  integrity sha512-s9NDufkbTAuKShFmEg7eOew4cprdLI7mn5ISQFKgcFSiA/TG3wgLJW5wUff9S2vednIV9utyqRJZXrwcSAEQUg==
+"@signalapp/better-sqlite3@8.5.2":
+  version "8.5.2"
+  resolved "https://registry.yarnpkg.com/@signalapp/better-sqlite3/-/better-sqlite3-8.5.2.tgz#910669f44e76a46d06df45fabefcd3ac2e7c4cce"
+  integrity sha512-t7XalDxuRP115EratM6i1kbvIXJvzETcl8wqnt3NlWZdzil7kelS/RYz+PE1G+z8ZwtFyn/ViAFMt76AsArifw==
   dependencies:
     bindings "^1.5.0"
     tar "^6.1.0"
@@ -3379,10 +3379,10 @@
     node-gyp-build "^4.2.3"
     uuid "^8.3.0"
 
-"@signalapp/mock-server@4.1.0":
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/@signalapp/mock-server/-/mock-server-4.1.0.tgz#2a96981a3e375df0cbab37476fa448b99df3d143"
-  integrity sha512-sVcw384ZjkymsQ4f8GSgUTaF3IIhaMBIYqW76Trzf0U46Uw8gD3hhGjBSBb5GAJQWgJKcAusirXhx/D5mF8z3Q==
+"@signalapp/mock-server@4.1.2":
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/@signalapp/mock-server/-/mock-server-4.1.2.tgz#3f497d4cc5cc6613d2a860173ee1d9cee24ce9cd"
+  integrity sha512-vOFJ8bVQdhII6ZGc34wurxJZ9roeoq4ch0VeorImcyavL5p7d9VbNwpWyOA/VAlfTaUgaiXegVmzK3t52lCQTw==
   dependencies:
     "@signalapp/libsignal-client" "^0.30.2"
     debug "^4.3.2"
@@ -3395,10 +3395,10 @@
     ws "^8.4.2"
     zod "^3.20.2"
 
-"@signalapp/ringrtc@2.31.2":
-  version "2.31.2"
-  resolved "https://registry.yarnpkg.com/@signalapp/ringrtc/-/ringrtc-2.31.2.tgz#d05aad031fa3c7f8f0d090fc32c3fb461f0abf5d"
-  integrity sha512-e4l3QSKz+I8C47XsR01ki207mL79JUYzUFJ6+DYv2lcIjSLTmApuf2FWPk6nQUaXZE2CynZO+DDcZiYqH+8mjg==
+"@signalapp/ringrtc@2.33.0":
+  version "2.33.0"
+  resolved "https://registry.yarnpkg.com/@signalapp/ringrtc/-/ringrtc-2.33.0.tgz#a18baa71c43e4a4d5ea996febcdfaac4e5a62f51"
+  integrity sha512-PEgvEkcSzliN74hnCA3ffFDmmjCcAck4Xwu3sFqMTrVJ/XGcZqfcuGX6q/+3+P8UlsWrCeMgg6t7Ept1KqVOTg==
   dependencies:
     tar "^6.1.0"
 
@@ -9269,10 +9269,10 @@ electron-window@^0.8.0:
   dependencies:
     is-electron-renderer "^2.0.0"
 
-electron@25.4.0:
-  version "25.4.0"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-25.4.0.tgz#d45b1cf3e4e96eb5bff5fee704d7aa13b532f3a5"
-  integrity sha512-VLTRxDhL4UvQbqM7pTNENnJo62cdAPZT92N+B7BZQ5Xfok1wuVPEewIjBot4K7U3EpLUuHn1veeLzho3ihiP+Q==
+electron@25.8.4:
+  version "25.8.4"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-25.8.4.tgz#b50877aac7d96323920437baf309ad86382cb455"
+  integrity sha512-hUYS3RGdaa6E1UWnzeGnsdsBYOggwMMg4WGxNGvAoWtmRrr6J1BsjFW/yRq4WsJHJce2HdzQXtz4OGXV6yUCLg==
   dependencies:
     "@electron/get" "^2.0.0"
     "@types/node" "^18.11.18"

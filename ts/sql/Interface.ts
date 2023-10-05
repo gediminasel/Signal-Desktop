@@ -411,11 +411,6 @@ export type GetAllStoriesResultType = ReadonlyArray<
   }
 >;
 
-export type FTSOptimizationStateType = Readonly<{
-  steps: number;
-  done?: boolean;
-}>;
-
 export type EditedMessageType = Readonly<{
   conversationId: string;
   messageId: string;
@@ -639,6 +634,7 @@ export type DataInterface = {
   }): Promise<MessageType | undefined>;
   getAllCallHistory: () => Promise<ReadonlyArray<CallHistoryDetails>>;
   clearCallHistory: (beforeTimestamp: number) => Promise<Array<string>>;
+  cleanupCallHistoryMessages: () => Promise<void>;
   getCallHistoryUnreadCount(): Promise<number>;
   markCallHistoryRead(callId: string): Promise<void>;
   markAllCallHistoryRead(): Promise<ReadonlyArray<string>>;
@@ -827,10 +823,6 @@ export type DataInterface = {
   getMaxMessageCounter(): Promise<number | undefined>;
 
   getStatisticsForLogging(): Promise<Record<string, string>>;
-
-  optimizeFTS: (
-    state?: FTSOptimizationStateType
-  ) => Promise<FTSOptimizationStateType | undefined>;
 };
 
 export type ServerInterface = DataInterface & {

@@ -3,11 +3,12 @@
 
 import { v4 as generateUuid } from 'uuid';
 import { z } from 'zod';
-import { Aci, Pni, ServiceId } from '@signalapp/libsignal-client';
+import type { ServiceId, Aci, Pni } from '@signalapp/libsignal-client';
 
 import { isValidUuid } from '../util/isValidUuid';
 import * as log from '../logging/log';
 import type { LoggerType } from './Logging';
+import { isAciString } from '../util/isAciString';
 
 export enum ServiceIdKind {
   ACI = 'ACI',
@@ -24,10 +25,6 @@ export function isServiceIdString(
   value?: string | null
 ): value is ServiceIdString {
   return isAciString(value) || isPniString(value);
-}
-
-export function isAciString(value?: string | null): value is AciString {
-  return isValidUuid(value);
 }
 
 export function isPniString(value?: string | null): value is PniString {
@@ -50,6 +47,10 @@ export function isUntaggedPniString(
 
 export function toTaggedPni(untagged: UntaggedPniString): PniString {
   return `PNI:${untagged}` as PniString;
+}
+
+export function toUntaggedPni(pni: PniString): UntaggedPniString {
+  return pni.replace(/^PNI:/i, '') as UntaggedPniString;
 }
 
 export function normalizeServiceId(
@@ -87,41 +88,6 @@ export function normalizeServiceId(
   return result;
 }
 
-export function normalizeAci(
-  rawAci: string,
-  context: string,
-  logger?: Pick<LoggerType, 'warn'>
-): AciString;
-
-export function normalizeAci(
-  rawAci: string | undefined | null,
-  context: string,
-  logger?: Pick<LoggerType, 'warn'>
-): AciString | undefined;
-
-export function normalizeAci(
-  rawAci: string | undefined | null,
-  context: string,
-  logger: Pick<LoggerType, 'warn'> = log
-): AciString | undefined {
-  if (rawAci == null) {
-    return undefined;
-  }
-
-  const result = rawAci.toLowerCase();
-
-  if (!isAciString(result)) {
-    logger.warn(
-      `Normalizing invalid serviceId: ${rawAci} to ${result} in context "${context}"`
-    );
-
-    // Cast anyway we don't want to throw here
-    return result as AciString;
-  }
-
-  return result;
-}
-
 export function normalizePni(
   rawPni: string,
   context: string,
@@ -144,10 +110,9 @@ export function normalizePni(
   }
 
   const result = rawPni.toLowerCase().replace(/^pni:/, 'PNI:');
-
   if (!isPniString(result)) {
     logger.warn(
-      `Normalizing invalid serviceId: ${rawPni} to ${result} in context "${context}"`
+      `Normalizing invalid pni: ${rawPni} to ${result} in context "${context}"`
     );
 
     // Cast anyway we don't want to throw here
@@ -203,18 +168,6 @@ export const serviceIdSchema = z
     }
     return x;
   });
-
-export function toServiceIdObject(serviceId: ServiceIdString): ServiceId {
-  return ServiceId.parseFromServiceIdString(serviceId);
-}
-
-export function toAciObject(aci: AciString): Aci {
-  return Aci.parseFromServiceIdString(aci);
-}
-
-export function toPniObject(pni: PniString): Pni {
-  return Pni.parseFromServiceIdString(pni);
-}
 
 // Note: getServiceIdString() returns normalized string so we can cast it
 //   without normalizing.

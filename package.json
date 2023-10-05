@@ -4,7 +4,7 @@
   "description": "Private messaging from your desktop",
   "desktopName": "signal.desktop",
   "repository": "https://github.com/signalapp/Signal-Desktop.git",
-  "version": "6.36.0-lel",
+  "version": "6.39.0-lel",
   "license": "AGPL-3.0-only",
   "author": {
     "name": "Signal Messenger, LLC",
@@ -93,9 +93,9 @@
     "@popperjs/core": "2.11.6",
     "@react-aria/utils": "3.16.0",
     "@react-spring/web": "9.5.5",
-    "@signalapp/better-sqlite3": "8.5.1",
+    "@signalapp/better-sqlite3": "8.5.2",
     "@signalapp/libsignal-client": "0.31.0",
-    "@signalapp/ringrtc": "2.31.2",
+    "@signalapp/ringrtc": "2.33.0",
     "@signalapp/windows-dummy-keystroke": "1.0.0",
     "@types/fabric": "4.5.3",
     "backbone": "1.4.0",
@@ -196,7 +196,7 @@
     "@electron/fuses": "1.5.0",
     "@formatjs/intl": "2.6.7",
     "@mixer/parallel-prettier": "2.0.3",
-    "@signalapp/mock-server": "4.1.0",
+    "@signalapp/mock-server": "4.1.2",
     "@storybook/addon-a11y": "6.5.6",
     "@storybook/addon-actions": "6.5.6",
     "@storybook/addon-controls": "6.5.6",
@@ -270,7 +270,7 @@
     "css-loader": "3.2.0",
     "danger": "11.1.2",
     "debug": "4.3.3",
-    "electron": "25.4.0",
+    "electron": "25.8.4",
     "electron-builder": "24.6.3",
     "electron-mocha": "11.0.2",
     "electron-notarize": "1.2.1",
@@ -417,7 +417,10 @@
         "libnss3",
         "libasound2",
         "libxss1",
-        "libc6 (>= 2.31)"
+        "libc6 (>= 2.31)",
+        "libgtk-3-0",
+        "libgbm1",
+        "libx11-xcb1"
       ]
     },
     "protocols": {
