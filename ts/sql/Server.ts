@@ -93,6 +93,7 @@ import type {
   DeleteSentProtoRecipientResultType,
   EditedMessageType,
   EmojiType,
+  FTSOptimizationStateType,
   GetAllStoriesResultType,
   GetConversationRangeCenteredOnMessageResultType,
   GetKnownMessageAttachmentsResultType,
@@ -404,6 +405,8 @@ const dataInterface: ServerInterface = {
 
   getStatisticsForLogging,
 
+  optimizeFTS,
+
   // Server-only
 
   initialize,
@@ -414,6 +417,8 @@ const dataInterface: ServerInterface = {
   removeKnownStickers,
   removeKnownDraftAttachments,
   getAllBadgeImageFileLocalPaths,
+
+  runCorruptionChecks,
 };
 export default dataInterface;
 
@@ -573,10 +578,12 @@ SQL.setLogHandler((code, value) => {
 });
 
 async function initialize({
+  appVersion,
   configDir,
   key,
   logger: suppliedLogger,
 }: {
+  appVersion: string;
   configDir: string;
   key: string;
   logger: LoggerType;
@@ -613,7 +620,7 @@ async function initialize({
     // For profiling use:
     // db.pragma('cipher_profile=\'sqlcipher.log\'');
 
-    updateSchema(writable, logger);
+    updateSchema(writable, logger, appVersion);
 
     readonly = openAndSetUpSQLCipher(databaseFilePath, { key, readonly: true });
 
@@ -699,6 +706,27 @@ async function getWritableInstance(): Promise<Database> {
   return globalWritableInstance;
 }
 
+// This is okay to use for queries that:
+//
+// - Don't modify persistent tables, but create and do work in temporary
+//   tables
+// - Integrity checks
+//
+function getUnsafeWritableInstance(
+  reason: 'only temp table use' | 'integrity check'
+): Database {
+  // Not actually used
+  void reason;
+
+  if (!globalWritableInstance) {
+    throw new Error(
+      'getUnsafeWritableInstance: globalWritableInstance not set!'
+    );
+  }
+
+  return globalWritableInstance;
+}
+
 const IDENTITY_KEYS_TABLE = 'identityKeys';
 async function createOrUpdateIdentityKey(
   data: StoredIdentityKeyType
@@ -715,10 +743,10 @@ async function bulkAddIdentityKeys(
 ): Promise<void> {
   return bulkAdd(await getWritableInstance(), IDENTITY_KEYS_TABLE, array);
 }
-async function removeIdentityKeyById(id: IdentityKeyIdType): Promise<void> {
+async function removeIdentityKeyById(id: IdentityKeyIdType): Promise<number> {
   return removeById(await getWritableInstance(), IDENTITY_KEYS_TABLE, id);
 }
-async function removeAllIdentityKeys(): Promise<void> {
+async function removeAllIdentityKeys(): Promise<number> {
   return removeAllFromTable(await getWritableInstance(), IDENTITY_KEYS_TABLE);
 }
 async function getAllIdentityKeys(): Promise<Array<StoredIdentityKeyType>> {
@@ -747,7 +775,7 @@ async function bulkAddKyberPreKeys(
 }
 async function removeKyberPreKeyById(
   id: PreKeyIdType | Array<PreKeyIdType>
-): Promise<void> {
+): Promise<number> {
   return removeById(await getWritableInstance(), KYBER_PRE_KEYS_TABLE, id);
 }
 async function removeKyberPreKeysByServiceId(
@@ -760,7 +788,7 @@ async function removeKyberPreKeysByServiceId(
     serviceId,
   });
 }
-async function removeAllKyberPreKeys(): Promise<void> {
+async function removeAllKyberPreKeys(): Promise<number> {
   return removeAllFromTable(await getWritableInstance(), KYBER_PRE_KEYS_TABLE);
 }
 async function getAllKyberPreKeys(): Promise<Array<StoredKyberPreKeyType>> {
@@ -781,7 +809,7 @@ async function bulkAddPreKeys(array: Array<StoredPreKeyType>): Promise<void> {
 }
 async function removePreKeyById(
   id: PreKeyIdType | Array<PreKeyIdType>
-): Promise<void> {
+): Promise<number> {
   return removeById(await getWritableInstance(), PRE_KEYS_TABLE, id);
 }
 async function removePreKeysByServiceId(
@@ -794,7 +822,7 @@ async function removePreKeysByServiceId(
     serviceId,
   });
 }
-async function removeAllPreKeys(): Promise<void> {
+async function removeAllPreKeys(): Promise<number> {
   return removeAllFromTable(await getWritableInstance(), PRE_KEYS_TABLE);
 }
 async function getAllPreKeys(): Promise<Array<StoredPreKeyType>> {
@@ -823,7 +851,7 @@ async function bulkAddSignedPreKeys(
 }
 async function removeSignedPreKeyById(
   id: SignedPreKeyIdType | Array<SignedPreKeyIdType>
-): Promise<void> {
+): Promise<number> {
   return removeById(await getWritableInstance(), SIGNED_PRE_KEYS_TABLE, id);
 }
 async function removeSignedPreKeysByServiceId(
@@ -836,7 +864,7 @@ async function removeSignedPreKeysByServiceId(
     serviceId,
   });
 }
-async function removeAllSignedPreKeys(): Promise<void> {
+async function removeAllSignedPreKeys(): Promise<number> {
   return removeAllFromTable(await getWritableInstance(), SIGNED_PRE_KEYS_TABLE);
 }
 async function getAllSignedPreKeys(): Promise<Array<StoredSignedPreKeyType>> {
@@ -885,10 +913,10 @@ async function getAllItems(): Promise<StoredAllItemsType> {
 }
 async function removeItemById(
   id: ItemKeyType | Array<ItemKeyType>
-): Promise<void> {
+): Promise<number> {
   return removeById(await getWritableInstance(), ITEMS_TABLE, id);
 }
-async function removeAllItems(): Promise<void> {
+async function removeAllItems(): Promise<number> {
   return removeAllFromTable(await getWritableInstance(), ITEMS_TABLE);
 }
 
@@ -1394,7 +1422,7 @@ async function commitDecryptResult({
 async function bulkAddSessions(array: Array<SessionType>): Promise<void> {
   return bulkAdd(await getWritableInstance(), SESSIONS_TABLE, array);
 }
-async function removeSessionById(id: SessionIdType): Promise<void> {
+async function removeSessionById(id: SessionIdType): Promise<number> {
   return removeById(await getWritableInstance(), SESSIONS_TABLE, id);
 }
 async function removeSessionsByConversation(
@@ -1423,7 +1451,7 @@ async function removeSessionsByServiceId(
     serviceId,
   });
 }
-async function removeAllSessions(): Promise<void> {
+async function removeAllSessions(): Promise<number> {
   return removeAllFromTable(await getWritableInstance(), SESSIONS_TABLE);
 }
 async function getAllSessions(): Promise<Array<SessionType>> {
@@ -1723,9 +1751,7 @@ async function searchMessages({
 }): Promise<Array<ServerSearchResultMessageType>> {
   const { limit = conversationId ? 100 : 500 } = options ?? {};
 
-  // We don't actually write to the database, but temporary tables below
-  // require write access.
-  const db = await getWritableInstance();
+  const db = getUnsafeWritableInstance('only temp table use');
 
   // sqlite queries with a join on a virtual table (like FTS5) are de-optimized
   // and can't use indices for ordering results. Instead an in-memory index of
@@ -2254,6 +2280,7 @@ async function _removeAllMessages(): Promise<void> {
   const db = await getWritableInstance();
   db.exec(`
     DELETE FROM messages;
+    INSERT INTO messages_fts(messages_fts) VALUES('optimize');
   `);
 }
 
@@ -3638,7 +3665,7 @@ async function getCallHistoryGroupsCount(
 ): Promise<number> {
   // getCallHistoryGroupDataSync creates a temporary table and thus requires
   // write access.
-  const db = await getWritableInstance();
+  const db = getUnsafeWritableInstance('only temp table use');
   const result = getCallHistoryGroupDataSync(db, true, filter, {
     limit: 0,
     offset: 0,
@@ -3666,7 +3693,7 @@ async function getCallHistoryGroups(
 ): Promise<Array<CallHistoryGroup>> {
   // getCallHistoryGroupDataSync creates a temporary table and thus requires
   // write access.
-  const db = await getWritableInstance();
+  const db = getUnsafeWritableInstance('only temp table use');
   const groupsData = groupsDataSchema.parse(
     getCallHistoryGroupDataSync(db, false, filter, pagination)
   );
@@ -4330,14 +4357,14 @@ async function resetAttachmentDownloadPending(): Promise<void> {
     `
   ).run();
 }
-function removeAttachmentDownloadJobSync(db: Database, id: string): void {
+function removeAttachmentDownloadJobSync(db: Database, id: string): number {
   return removeById(db, ATTACHMENT_DOWNLOADS_TABLE, id);
 }
-async function removeAttachmentDownloadJob(id: string): Promise<void> {
+async function removeAttachmentDownloadJob(id: string): Promise<number> {
   const db = await getWritableInstance();
   return removeAttachmentDownloadJobSync(db, id);
 }
-async function removeAllAttachmentDownloadJobs(): Promise<void> {
+async function removeAllAttachmentDownloadJobs(): Promise<number> {
   return removeAllFromTable(
     await getWritableInstance(),
     ATTACHMENT_DOWNLOADS_TABLE
@@ -5217,6 +5244,32 @@ async function getAllBadgeImageFileLocalPaths(): Promise<Set<string>> {
   return new Set(localPaths);
 }
 
+function runCorruptionChecks(): void {
+  const db = getUnsafeWritableInstance('integrity check');
+  try {
+    const result = db.pragma('integrity_check');
+    if (result.length === 1 && result.at(0)?.integrity_check === 'ok') {
+      logger.info('runCorruptionChecks: general integrity is ok');
+    } else {
+      logger.error('runCorruptionChecks: general integrity is not ok', result);
+    }
+  } catch (error) {
+    logger.error(
+      'runCorruptionChecks: general integrity check error',
+      Errors.toLogFormat(error)
+    );
+  }
+  try {
+    db.exec("INSERT INTO messages_fts(messages_fts) VALUES('integrity-check')");
+    logger.info('runCorruptionChecks: FTS5 integrity ok');
+  } catch (error) {
+    logger.error(
+      'runCorruptionChecks: FTS5 integrity check error.',
+      Errors.toLogFormat(error)
+    );
+  }
+}
+
 type StoryDistributionForDatabase = Readonly<
   {
     allowsReplies: 0 | 1;
@@ -5635,6 +5688,8 @@ async function removeAll(): Promise<void> {
       DELETE FROM unprocessed;
       DELETE FROM uninstalled_sticker_packs;
 
+      INSERT INTO messages_fts(messages_fts) VALUES('optimize');
+
       --- Re-create the messages delete trigger
       --- See migration 45
       CREATE TRIGGER messages_on_delete AFTER DELETE ON messages BEGIN
@@ -5699,7 +5754,10 @@ async function removeAllConfiguration(
     }
 
     db.exec(
-      "UPDATE conversations SET json = json_remove(json, '$.senderKeyInfo');"
+      `
+      UPDATE conversations SET json = json_remove(json, '$.senderKeyInfo');
+      UPDATE storyDistributions SET senderKeyInfoJson = NULL;
+      `
     );
   })();
 }
@@ -6218,6 +6276,48 @@ async function removeKnownDraftAttachments(
   );
 
   return Object.keys(lookup);
+}
+
+const OPTIMIZE_FTS_PAGE_COUNT = 64;
+
+// This query is incremental. It gets the `state` from the return value of
+// previous `optimizeFTS` call. When `state.done` is `true` - optimization is
+// complete.
+async function optimizeFTS(
+  state?: FTSOptimizationStateType
+): Promise<FTSOptimizationStateType | undefined> {
+  // See https://www.sqlite.org/fts5.html#the_merge_command
+  let pageCount = OPTIMIZE_FTS_PAGE_COUNT;
+  if (state === undefined) {
+    pageCount = -pageCount;
+  }
+  const db = await getWritableInstance();
+  const getChanges = prepare(db, 'SELECT total_changes() as changes;', {
+    pluck: true,
+  });
+
+  const changeDifference = db.transaction(() => {
+    const before: number = getChanges.get({});
+
+    prepare(
+      db,
+      `
+        INSERT INTO messages_fts(messages_fts, rank) VALUES ('merge', $pageCount);
+      `
+    ).run({ pageCount });
+
+    const after: number = getChanges.get({});
+
+    return after - before;
+  })();
+
+  const nextSteps = (state?.steps ?? 0) + 1;
+
+  // From documentation:
+  // "If the difference is less than 2, then the 'merge' command was a no-op"
+  const done = changeDifference < 2;
+
+  return { steps: nextSteps, done };
 }
 
 async function getJobsInQueue(queueType: string): Promise<Array<StoredJob>> {

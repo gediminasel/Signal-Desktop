@@ -13,8 +13,6 @@ import { getBytesSubarray } from './util/uuidToBytes';
 
 export { HashType, CipherType };
 
-export const UUID_BYTE_SIZE = 16;
-
 const PROFILE_IV_LENGTH = 12; // bytes
 const PROFILE_KEY_LENGTH = 32; // bytes
 
@@ -127,6 +125,10 @@ export function decryptDeviceName(
   }
 
   return Bytes.toString(plaintext);
+}
+
+export function deriveStorageServiceKey(masterKey: Uint8Array): Uint8Array {
+  return hmacSha256(masterKey, Bytes.fromString('Storage Service Encryption'));
 }
 
 export function deriveStorageManifestKey(

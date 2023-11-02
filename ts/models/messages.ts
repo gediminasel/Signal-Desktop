@@ -65,6 +65,7 @@ import { migrateLegacyReadStatus } from '../messages/migrateLegacyReadStatus';
 import { migrateLegacySendAttributes } from '../messages/migrateLegacySendAttributes';
 import { getOwn } from '../util/getOwn';
 import { markRead, markViewed } from '../services/MessageUpdater';
+import { scheduleOptimizeFTS } from '../services/ftsOptimizer';
 import {
   isDirectConversation,
   isGroup,
@@ -491,7 +492,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       }
 
       if (this.get('storyReplyContext')) {
-        this.unset('storyReplyContext');
+        this.set('storyReplyContext', undefined);
       }
       await this.hydrateStoryContext(message.attributes, { shouldSave: true });
       return;
@@ -616,6 +617,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     }
 
     await window.Signal.Data.deleteSentProtoByMessageId(this.id);
+
+    scheduleOptimizeFTS();
   }
 
   override isEmpty(): boolean {
@@ -2280,7 +2283,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
           if (!messaging) {
             throw new Error(`${idLog}: messaging is not available`);
           }
-          const response = await messaging.server.getBoostBadgesFromServer(
+          const response = await messaging.server.getSubscriptionConfiguration(
             userLanguages
           );
           const boostBadgesByLevel = parseBoostBadgeListFromServer(
@@ -2382,7 +2385,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     return modifyTargetMessage(this, conversation, {
       isFirstRun,
       skipEdits: false,
-      skipSave: false,
     });
   }
 

@@ -6808,13 +6808,13 @@
     "messageformat": "تغییرات کوچک، رفع اشکالات و بهبود عملکرد. بابت استفاده از سیگنال سپاسگزاریم!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.33--0": {
-    "messageformat": "حالا می‌توانید با کلیک راست روی هر پیام ارسالی یا با فشار دادن دکمه فلش بالا روی کیبوردتان، هرآن‌چه گفته‌اید را ویرایش کنید! غلط‌های املایی را تصحیح کنید، مورد جاافتاده از مواد مورد نیاز شیرینی شکلاتی مادربزرگ را اضافه کنید، یا لطیفه‌ای را که با عجله فرستاده‌اید و ناتمام مانده تکمیل کنید. انتخاب با شماست. اینکه پیام ویرایش شده است همیشه نشان داده می‌شود و می‌توانید با کلیک روی نشانگر Edited (ویرایش‌شده)، کل تاریخچۀ ویرایش را برای هر پیام ویرایش‌شده مشاهده کنید."
+  "icu:WhatsNew__v6.35--0": {
+    "messageformat": "رفع اشکال‌ها و بهبود رابط کاربری."
   },
-  "icu:WhatsNew__v6.34--0": {
-    "messageformat": "Typing indicators in group chats will now display multiple profile pictures if more than one person is typing. James Cameron convinced us that we didn't need to stop after one avatar."
+  "icu:WhatsNew__v6.36--0": {
+    "messageformat": "We updated the user interface to better indicate when a group video call is reconnecting. Now you'll see blurred thumbnails instead of what used to look like an elaborate prank where everyone pretended to freeze at the same time."
   },
-  "icu:WhatsNew__v6.34--1": {
-    "messageformat": "Now you can right-click on any sent message or press the up arrow on your keyboard to edit what you just said! Fix a tpyo, include the missing ingredient in grandma's chocolate chip cookie recipe, or add the punchline to a joke if you hit the send button too quickly. The choice is yours. Messages will always show when they have been edited, and you can click on the \"Edited\" indicator to see the full edit history for any edited messages. Update the past in the present to prevent future confusion today!"
+  "icu:WhatsNew__v6.36--1": {
+    "messageformat": "The system tray icon will no longer appear pixelated on Ubuntu Linux, unless you've managed to get Ubuntu Linux running on an old smart refrigerator with a low-res screen."
   }
 }

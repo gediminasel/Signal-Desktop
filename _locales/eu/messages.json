@@ -6808,13 +6808,13 @@
     "messageformat": "Doikuntza txikiak, akats-konponketak eta errendimendu-hobekuntzak. Eskerrik asko Signal erabiltzeagatik!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.33--0": {
-    "messageformat": "Orain, bidali ondoren ere edita ditzakezu mezuak, eskuineko botoiarekin klik eginda! Bidaltzeko botoia bizkorregi sakatu baduzu, ez kezkatu: zuzendu akatzak, gehitu falta den osagaia amonaren gazta-tartaren errezetan, edo azaldu hobeto txiste bat. Aukera zurea da. Mezu bat editatuta badago, hala dela adieraziko da. Halako mezuetan, \"Editatuta\" adierazlean klik egin ahalko duzu edizio-historia osoa ikusteko. Eguneratu iragana orainaldian etorkizuneko nahasketa saihesteko!"
+  "icu:WhatsNew__v6.35--0": {
+    "messageformat": "Geure buruari esan genion ez genuela horrelakorik egingo, ez ginela izango beste aplikazioak bezalakoak, beren kaleratze ohar eskasekin, baina eguneratze honek \"akatsen konponketak eta UX hobekuntzak\" barne hartzen ditu."
   },
-  "icu:WhatsNew__v6.34--0": {
-    "messageformat": "Typing indicators in group chats will now display multiple profile pictures if more than one person is typing. James Cameron convinced us that we didn't need to stop after one avatar."
+  "icu:WhatsNew__v6.36--0": {
+    "messageformat": "We updated the user interface to better indicate when a group video call is reconnecting. Now you'll see blurred thumbnails instead of what used to look like an elaborate prank where everyone pretended to freeze at the same time."
   },
-  "icu:WhatsNew__v6.34--1": {
-    "messageformat": "Now you can right-click on any sent message or press the up arrow on your keyboard to edit what you just said! Fix a tpyo, include the missing ingredient in grandma's chocolate chip cookie recipe, or add the punchline to a joke if you hit the send button too quickly. The choice is yours. Messages will always show when they have been edited, and you can click on the \"Edited\" indicator to see the full edit history for any edited messages. Update the past in the present to prevent future confusion today!"
+  "icu:WhatsNew__v6.36--1": {
+    "messageformat": "The system tray icon will no longer appear pixelated on Ubuntu Linux, unless you've managed to get Ubuntu Linux running on an old smart refrigerator with a low-res screen."
   }
 }

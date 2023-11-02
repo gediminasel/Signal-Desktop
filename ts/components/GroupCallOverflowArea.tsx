@@ -15,10 +15,11 @@ const OVERFLOW_SCROLL_BUTTON_RATIO = 0.75;
 // This should be an integer, as sub-pixel widths can cause performance issues.
 export const OVERFLOW_PARTICIPANT_WIDTH = 140;
 
-type PropsType = {
+export type PropsType = {
   getFrameBuffer: () => Buffer;
   getGroupCallVideoFrameSource: (demuxId: number) => VideoFrameSource;
   i18n: LocalizerType;
+  isCallReconnecting: boolean;
   onParticipantVisibilityChanged: (
     demuxId: number,
     isVisible: boolean
@@ -32,6 +33,7 @@ export function GroupCallOverflowArea({
   getFrameBuffer,
   getGroupCallVideoFrameSource,
   i18n,
+  isCallReconnecting,
   onParticipantVisibilityChanged,
   overflowedParticipants,
   remoteAudioLevels,
@@ -127,6 +129,7 @@ export function GroupCallOverflowArea({
             remoteParticipant={remoteParticipant}
             remoteParticipantsCount={remoteParticipantsCount}
             isActiveSpeakerInSpeakerView={false}
+            isCallReconnecting={isCallReconnecting}
           />
         ))}
       </div>

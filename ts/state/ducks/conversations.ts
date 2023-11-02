@@ -162,11 +162,11 @@ import {
   handleLeaveConversation,
 } from './composer';
 import { ReceiptType } from '../../types/Receipt';
-import { sortByMessageOrder } from '../../util/maybeForwardMessages';
 import { Sound, SoundType } from '../../util/Sound';
 import { canEditMessage } from '../../util/canEditMessage';
 import type { ChangeNavTabActionType } from './nav';
 import { CHANGE_NAV_TAB, NavTab, actions as navActions } from './nav';
+import { sortByMessageOrder } from '../../types/ForwardDraft';
 
 // State
 
@@ -3402,16 +3402,17 @@ function loadRecentMediaItems(
       );
     });
 
+    let index = 0;
     const recentMediaItems = messages
       .filter(message => message.attachments !== undefined)
       .reduce(
         (acc, message) => [
           ...acc,
           ...(message.attachments || []).map(
-            (attachment: AttachmentType, index: number): MediaItemType => {
+            (attachment: AttachmentType): MediaItemType => {
               const { thumbnail } = attachment;
 
-              return {
+              const result = {
                 objectURL: getAbsoluteAttachmentPath(attachment.path || ''),
                 thumbnailObjectUrl: thumbnail?.path
                   ? getAbsoluteAttachmentPath(thumbnail.path)
@@ -3430,6 +3431,10 @@ function loadRecentMediaItems(
                   sent_at: message.sent_at,
                 },
               };
+
+              index += 1;
+
+              return result;
             }
           ),
         ],

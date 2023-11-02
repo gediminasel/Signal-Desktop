@@ -52,6 +52,7 @@ import { senderCertificateService } from './services/senderCertificate';
 import { GROUP_CREDENTIALS_KEY } from './services/groupCredentialFetcher';
 import * as KeyboardLayout from './services/keyboardLayout';
 import * as StorageService from './services/storage';
+import { optimizeFTS } from './services/ftsOptimizer';
 import { RoutineProfileRefresher } from './routineProfileRefresh';
 import { isOlderThan, toDayMillis } from './util/timestamp';
 import { isValidReactionEmoji } from './reactions/isValidReactionEmoji';
@@ -188,6 +189,7 @@ import {
   getCallIdFromEra,
   updateLocalGroupCallHistoryTimestamp,
 } from './util/callDisposition';
+import { deriveStorageServiceKey } from './Crypto';
 
 export function isOverHourIntoPast(timestamp: number): boolean {
   return isNumber(timestamp) && isOlderThan(timestamp, HOUR);
@@ -980,6 +982,8 @@ export async function startApp(): Promise<void> {
     if (newVersion) {
       await window.Signal.Data.cleanupOrphanedAttachments();
 
+      optimizeFTS();
+
       drop(window.Signal.Data.ensureFilePermissions());
     }
 
@@ -1347,22 +1351,6 @@ export async function startApp(): Promise<void> {
 
   async function runStorageService() {
     StorageService.enableStorageService();
-
-    if (window.ConversationController.areWePrimaryDevice()) {
-      log.warn(
-        'background/runStorageService: We are primary device; not sending key sync request'
-      );
-      return;
-    }
-
-    try {
-      await singleProtoJobQueue.add(MessageSender.getRequestKeySyncMessage());
-    } catch (error) {
-      log.error(
-        'runStorageService: Failed to queue sync message',
-        Errors.toLogFormat(error)
-      );
-    }
   }
 
   async function start() {
@@ -1818,6 +1806,26 @@ export async function startApp(): Promise<void> {
       }
 
       if (firstRun === true && deviceId !== 1) {
+        if (!window.storage.get('masterKey')) {
+          const lastSent = window.storage.get('masterKeyLastRequestTime') ?? 0;
+          const now = Date.now();
+
+          // If we last attempted sync one day in the past, or if we time
+          // traveled.
+          if (isOlderThan(lastSent, DAY) || lastSent > now) {
+            log.warn('connect: masterKey not captured, requesting sync');
+            await singleProtoJobQueue.add(
+              MessageSender.getRequestKeySyncMessage()
+            );
+            await window.storage.put('masterKeyLastRequestTime', now);
+          } else {
+            log.warn(
+              'connect: masterKey not captured, but sync requested recently.' +
+                'Not running'
+            );
+          }
+        }
+
         const hasThemeSetting = Boolean(window.storage.get('theme-setting'));
         if (
           !hasThemeSetting &&
@@ -3043,7 +3051,17 @@ export async function startApp(): Promise<void> {
   async function onKeysSync(ev: KeysEvent) {
     ev.confirm();
 
-    const { storageServiceKey } = ev;
+    const { masterKey } = ev;
+    let { storageServiceKey } = ev;
+
+    if (masterKey == null) {
+      log.info('onKeysSync: deleting window.masterKey');
+      await window.storage.remove('masterKey');
+    } else {
+      // Override provided storageServiceKey because it is deprecated.
+      storageServiceKey = deriveStorageServiceKey(masterKey);
+      await window.storage.put('masterKey', Bytes.toBase64(masterKey));
+    }
 
     if (storageServiceKey == null) {
       log.info('onKeysSync: deleting window.storageKey');
@@ -3285,13 +3303,14 @@ export async function startApp(): Promise<void> {
       'onDeliveryReceipt: missing valid sourceServiceId'
     );
     strictAssert(sourceDevice, 'onDeliveryReceipt: missing sourceDevice');
+    strictAssert(sourceConversation, 'onDeliveryReceipt: missing conversation');
 
     const attributes: MessageReceiptAttributesType = {
       envelopeId: ev.deliveryReceipt.envelopeId,
       removeFromMessageReceiverCache: ev.confirm,
       messageSentAt: timestamp,
       receiptTimestamp: envelopeTimestamp,
-      sourceConversationId: sourceConversation?.id,
+      sourceConversationId: sourceConversation.id,
       sourceServiceId,
       sourceDevice,
       type: MessageReceipts.MessageReceiptType.Delivery,

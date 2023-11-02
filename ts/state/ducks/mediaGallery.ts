@@ -118,13 +118,11 @@ function loadMediaItems(
       })
     );
 
+    let index = 0;
     const media: Array<MediaType> = rawMedia
       .flatMap(message => {
         return (message.attachments || []).map(
-          (
-            attachment: AttachmentType,
-            index: number
-          ): MediaType | undefined => {
+          (attachment: AttachmentType): MediaType | undefined => {
             if (
               !attachment.path ||
               !attachment.thumbnail ||
@@ -135,7 +133,7 @@ function loadMediaItems(
             }
 
             const { thumbnail } = attachment;
-            return {
+            const result = {
               path: attachment.path,
               objectURL: getAbsoluteAttachmentPath(attachment.path),
               thumbnailObjectUrl: thumbnail?.path
@@ -158,6 +156,10 @@ function loadMediaItems(
                 sent_at: message.sent_at,
               },
             };
+
+            index += 1;
+
+            return result;
           }
         );
       })
