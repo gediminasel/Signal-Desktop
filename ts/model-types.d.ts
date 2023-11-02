@@ -182,6 +182,7 @@ export type MessageAttributesType = {
     | 'incoming'
     | 'keychange'
     | 'outgoing'
+    | 'phone-number-discovery'
     | 'profile-change'
     | 'story'
     | 'timer-notification'
@@ -214,6 +215,9 @@ export type MessageAttributesType = {
     fromSync?: unknown;
     source?: string;
     sourceServiceId?: ServiceIdString;
+  };
+  phoneNumberDiscovery?: {
+    e164: string;
   };
   conversationMerge?: {
     renderInfo: ConversationRenderInfoType;

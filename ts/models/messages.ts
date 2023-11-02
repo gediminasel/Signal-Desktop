@@ -98,6 +98,7 @@ import {
   isUnsupportedMessage,
   isVerifiedChange,
   isConversationMerge,
+  isPhoneNumberDiscovery,
 } from '../state/selectors/message';
 import type { ReactionAttributesType } from '../messageModifiers/Reactions';
 import { isInCall } from '../state/selectors/calling';
@@ -132,7 +133,6 @@ import { getMessageIdForLogging } from '../util/idForLogging';
 import { hasAttachmentDownloads } from '../util/hasAttachmentDownloads';
 import { queueAttachmentDownloads } from '../util/queueAttachmentDownloads';
 import { findStoryMessages } from '../util/findStoryMessage';
-import { getStoryDataFromMessageAttributes } from '../services/storyLoader';
 import type { ConversationQueueJobData } from '../jobs/conversationJobQueue';
 import { shouldDownloadStory } from '../util/shouldDownloadStory';
 import type { EmbeddedContactWithHydratedAvatar } from '../types/EmbeddedContact';
@@ -140,6 +140,7 @@ import { SeenStatus } from '../MessageSeenStatus';
 import { isNewReactionReplacingPrevious } from '../reactions/util';
 import { parseBoostBadgeListFromServer } from '../badges/parseBadgesFromServer';
 import type { StickerWithHydratedData } from '../types/Stickers';
+
 import {
   addToAttachmentDownloadQueue,
   shouldUseAttachmentDownloadQueue,
@@ -248,44 +249,15 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     this.CURRENT_PROTOCOL_VERSION = Proto.DataMessage.ProtocolVersion.CURRENT;
     this.INITIAL_PROTOCOL_VERSION = Proto.DataMessage.ProtocolVersion.INITIAL;
 
-    this.on('change', this.notifyRedux);
+    this.on('change', this.updateMessageCache);
   }
 
-  notifyRedux(): void {
-    if (!window.reduxActions) {
-      return;
-    }
-
+  updateMessageCache(): void {
     window.MessageCache.setAttributes({
       messageId: this.id,
       messageAttributes: this.attributes,
       skipSaveToDatabase: true,
     });
-
-    const { storyChanged } = window.reduxActions.stories;
-
-    if (isStory(this.attributes)) {
-      const storyData = getStoryDataFromMessageAttributes({
-        ...this.attributes,
-      });
-
-      if (!storyData) {
-        return;
-      }
-
-      storyChanged(storyData);
-
-      // We don't want messageChanged to run
-      return;
-    }
-
-    const { messageChanged } = window.reduxActions.conversations;
-
-    if (messageChanged) {
-      const conversationId = this.get('conversationId');
-      // Note: The clone is important for triggering a re-run of selectors
-      messageChanged(this.id, conversationId, { ...this.attributes });
-    }
   }
 
   getSenderIdentifier(): string {
@@ -314,6 +286,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       !isGroupV1Migration(attributes) &&
       !isGroupV2Change(attributes) &&
       !isKeyChange(attributes) &&
+      !isPhoneNumberDiscovery(attributes) &&
       !isProfileChange(attributes) &&
       !isUniversalTimerNotification(attributes) &&
       !isUnsupportedMessage(attributes) &&
@@ -654,6 +627,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     const isUniversalTimerNotificationValue =
       isUniversalTimerNotification(attributes);
     const isConversationMergeValue = isConversationMerge(attributes);
+    const isPhoneNumberDiscoveryValue = isPhoneNumberDiscovery(attributes);
 
     const isPayment = messageHasPaymentEvent(attributes);
 
@@ -685,7 +659,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       isKeyChangeValue ||
       isProfileChangeValue ||
       isUniversalTimerNotificationValue ||
-      isConversationMergeValue;
+      isConversationMergeValue ||
+      isPhoneNumberDiscoveryValue;
 
     return !hasSomethingToDisplay;
   }

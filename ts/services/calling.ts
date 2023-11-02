@@ -6,7 +6,6 @@ import { ipcRenderer } from 'electron';
 import type {
   AudioDevice,
   CallId,
-  CallMessageUrgency,
   DeviceId,
   PeekInfo,
   UserId,
@@ -18,6 +17,7 @@ import {
   BusyMessage,
   Call,
   CallingMessage,
+  CallMessageUrgency,
   CallLogLevel,
   CallState,
   CanvasVideoRenderer,
@@ -127,6 +127,7 @@ import {
 } from '../util/callDisposition';
 import { isNormalNumber } from '../util/isNormalNumber';
 import { LocalCallEvent } from '../types/CallDisposition';
+import { isInSystemContacts } from '../util/isInSystemContacts';
 
 const {
   processGroupCallRingCancellation,
@@ -170,6 +171,7 @@ type CallingReduxInterface = Pick<
   | 'remoteVideoChange'
   | 'setPresenting'
   | 'startCallingLobby'
+  | 'peekNotConnectedGroupCall'
 > & {
   areAnyCallsActiveOrRinging(): boolean;
 };
@@ -831,6 +833,9 @@ export class CallingClass {
         onReactions: (_groupCall, _reactions) => {
           // TODO: Implement handling of reactions.
         },
+        onRaisedHands: (_groupCall, _raisedHands) => {
+          // TODO: Implement handling of raised hands.
+        },
         onPeekChanged: groupCall => {
           const localDeviceState = groupCall.getLocalDeviceState();
           const peekInfo = groupCall.getPeekInfo() ?? null;
@@ -1143,6 +1148,7 @@ export class CallingClass {
     });
   }
 
+  // Used specifically to send updates about in-progress group calls, nothing else
   private async sendGroupCallUpdateMessage(
     conversationId: string,
     eraId: string
@@ -1185,7 +1191,7 @@ export class CallingClass {
             sendOptions,
             sendTarget: conversation.toSenderKeyTarget(),
             sendType: 'callingMessage',
-            urgent: false,
+            urgent: true,
           })
         ),
       sendType: 'callingMessage',
@@ -1819,6 +1825,7 @@ export class CallingClass {
     return this.handleOutgoingSignaling(userId, message, urgency);
   }
 
+  // Used to send a variety of group call messages, including the initial call message
   private async handleSendCallMessageToGroup(
     groupIdBytes: Buffer,
     data: Buffer,
@@ -1842,6 +1849,10 @@ export class CallingClass {
       urgency
     );
 
+    // If this message isn't droppable, we'll wake up recipient devices. The important one
+    //   is the first message to start the call.
+    const urgent = urgency === CallMessageUrgency.HandleImmediately;
+
     // We "fire and forget" because sending this message is non-essential.
     // We also don't sync this message.
     const { ContentHint } = Proto.UnidentifiedSenderMessage.Message;
@@ -1857,7 +1868,7 @@ export class CallingClass {
           sendTarget: conversation.toSenderKeyTarget(),
           sendType: 'callingMessage',
           timestamp,
-          urgent: false,
+          urgent,
         }),
         { messageIds: [], sendType: 'callingMessage' }
       )
@@ -1885,6 +1896,12 @@ export class CallingClass {
     if (!conversation) {
       log.error('handleGroupCallRingUpdate(): could not find conversation');
       return;
+    }
+
+    if (update === RingUpdate.Requested) {
+      this.reduxInterface?.peekNotConnectedGroupCall({
+        conversationId: conversation.id,
+      });
     }
 
     const logId = `handleGroupCallRingUpdate(${conversation.idForLogging()})`;
@@ -1963,6 +1980,7 @@ export class CallingClass {
     }
   }
 
+  // Used for all 1:1 call messages, including the initial message to start the call
   private async handleOutgoingSignaling(
     remoteUserId: UserId,
     message: CallingMessage,
@@ -1978,12 +1996,18 @@ export class CallingClass {
       return false;
     }
 
+    // We want 1:1 call initiate messages to wake up recipient devices, but not others
+    const urgent =
+      urgency === CallMessageUrgency.HandleImmediately ||
+      Boolean(message.offer);
+
     try {
       assertDev(isAciString(remoteUserId), 'remoteUserId is not a aci');
       const result = await handleMessageSend(
         window.textsecure.messaging.sendCallingMessage(
           remoteUserId,
           callingMessageToProto(message, urgency),
+          urgent,
           sendOptions
         ),
         { messageIds: [], sendType: 'callingMessage' }
@@ -2271,15 +2295,15 @@ export class CallingClass {
       return false;
     }
 
-    // If the peer is 'unknown', i.e. not in the contact list, force IP hiding.
-    const isContactUnknown = !conversation.isFromOrAddedByTrustedContact();
+    // If the peer is not in the user's system contacts, force IP hiding.
+    const isContactUntrusted = !isInSystemContacts(conversation.attributes);
 
     const callSettings = {
       iceServer: {
         ...iceServer,
         urls: iceServer.urls.slice(),
       },
-      hideIp: shouldRelayCalls || isContactUnknown,
+      hideIp: shouldRelayCalls || isContactUntrusted,
       dataMode: DataMode.Normal,
       // TODO: DESKTOP-3101
       // audioLevelsIntervalMillis: AUDIO_LEVEL_INTERVAL_MS,
