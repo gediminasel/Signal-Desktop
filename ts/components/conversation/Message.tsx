@@ -223,6 +223,7 @@ export type PropsData = {
   isSpoilerExpanded?: Record<number, boolean>;
   direction: DirectionType;
   timestamp: number;
+  receivedAtMS?: number;
   status?: MessageStatusType;
   contact?: EmbeddedContactType;
   author: Pick<
@@ -288,6 +289,7 @@ export type PropsData = {
   reactions?: ReactionViewerProps['reactions'];
 
   deletedForEveryone?: boolean;
+  attachmentDroppedDueToSize?: boolean;
 
   canDeleteForEveryone: boolean;
   isBlocked: boolean;
@@ -570,6 +572,7 @@ export class Message extends React.PureComponent<Props, State> {
   private getMetadataPlacement(
     {
       attachments,
+      attachmentDroppedDueToSize,
       deletedForEveryone,
       direction,
       expirationLength,
@@ -604,10 +607,14 @@ export class Message extends React.PureComponent<Props, State> {
       return MetadataPlacement.Bottom;
     }
 
-    if (!text && !deletedForEveryone) {
+    if (!text && !deletedForEveryone && !attachmentDroppedDueToSize) {
       return isAudio(attachments)
         ? MetadataPlacement.RenderedByMessageAudioComponent
         : MetadataPlacement.Bottom;
+    }
+
+    if (!text && attachmentDroppedDueToSize) {
+      return MetadataPlacement.InlineWithText;
     }
 
     if (this.canRenderStickerLikeEmoji()) {
@@ -808,6 +815,7 @@ export class Message extends React.PureComponent<Props, State> {
         break;
     }
     const {
+      attachmentDroppedDueToSize,
       deletedForEveryone,
       direction,
       expirationLength,
@@ -834,11 +842,14 @@ export class Message extends React.PureComponent<Props, State> {
         direction={direction}
         expirationLength={expirationLength}
         expirationTimestamp={expirationTimestamp}
-        hasText={Boolean(text)}
+        hasText={Boolean(text || attachmentDroppedDueToSize)}
         i18n={i18n}
         id={id}
         isEditedMessage={isEditedMessage}
         isInline={isInline}
+        isOutlineOnlyBubble={
+          deletedForEveryone || (attachmentDroppedDueToSize && !text)
+        }
         isShowingImage={this.isShowingImage()}
         isSticker={isStickerLike}
         isTapToViewExpired={isTapToViewExpired}
@@ -931,6 +942,7 @@ export class Message extends React.PureComponent<Props, State> {
   public renderAttachment(): JSX.Element | null {
     const {
       attachments,
+      attachmentDroppedDueToSize,
       conversationId,
       direction,
       expirationLength,
@@ -965,7 +977,7 @@ export class Message extends React.PureComponent<Props, State> {
     const firstAttachment = attachments[0];
 
     // For attachments which aren't full-frame
-    const withContentBelow = Boolean(text);
+    const withContentBelow = Boolean(text || attachmentDroppedDueToSize);
     const withContentAbove = Boolean(quote) || this.shouldRenderAuthor();
     const displayImage = canDisplayImage(attachments);
 
@@ -1344,6 +1356,62 @@ export class Message extends React.PureComponent<Props, State> {
       </div>
     ) : (
       <div className={className}>{contents}</div>
+    );
+  }
+
+  public renderAttachmentTooBig(): JSX.Element | null {
+    const {
+      attachments,
+      attachmentDroppedDueToSize,
+      direction,
+      i18n,
+      quote,
+      shouldCollapseAbove,
+      shouldCollapseBelow,
+      text,
+    } = this.props;
+    const { metadataWidth } = this.state;
+
+    if (!attachmentDroppedDueToSize) {
+      return null;
+    }
+
+    const labelText = attachments?.length
+      ? i18n('icu:message--attachmentTooBig--multiple')
+      : i18n('icu:message--attachmentTooBig--one');
+
+    const isContentAbove = quote || attachments?.length;
+    const isContentBelow = Boolean(text);
+    const willCollapseAbove = shouldCollapseAbove && !isContentAbove;
+    const willCollapseBelow = shouldCollapseBelow && !isContentBelow;
+
+    const maybeSpacer = text
+      ? undefined
+      : this.getMetadataPlacement() === MetadataPlacement.InlineWithText && (
+          <MessageTextMetadataSpacer metadataWidth={metadataWidth} />
+        );
+
+    return (
+      <div
+        className={classNames(
+          'module-message__attachment-too-big',
+          isContentAbove
+            ? 'module-message__attachment-too-big--content-above'
+            : null,
+          isContentBelow
+            ? 'module-message__attachment-too-big--content-below'
+            : null,
+          willCollapseAbove
+            ? `module-message__attachment-too-big--collapse-above--${direction}`
+            : null,
+          willCollapseBelow
+            ? `module-message__attachment-too-big--collapse-below--${direction}`
+            : null
+        )}
+      >
+        {labelText}
+        {maybeSpacer}
+      </div>
     );
   }
 
@@ -1833,6 +1901,19 @@ export class Message extends React.PureComponent<Props, State> {
     );
   }
 
+  private getContents(): string | undefined {
+    const { deletedForEveryone, direction, i18n, status, text } = this.props;
+
+    if (deletedForEveryone) {
+      return i18n('icu:message--deletedForEveryone');
+    }
+    if (direction === 'incoming' && status === 'error') {
+      return i18n('icu:incomingError');
+    }
+
+    return text;
+  }
+
   public renderText(): JSX.Element | null {
     const {
       bodyRanges,
@@ -1848,17 +1929,12 @@ export class Message extends React.PureComponent<Props, State> {
       showConversation,
       showSpoiler,
       status,
-      text,
+
       textAttachment,
     } = this.props;
     const { metadataWidth } = this.state;
 
-    // eslint-disable-next-line no-nested-ternary
-    const contents = deletedForEveryone
-      ? i18n('icu:message--deletedForEveryone')
-      : direction === 'incoming' && status === 'error'
-      ? i18n('icu:incomingError')
-      : text;
+    const contents = this.getContents();
 
     if (!contents) {
       return null;
@@ -2372,7 +2448,7 @@ export class Message extends React.PureComponent<Props, State> {
   }
 
   public renderContents(): JSX.Element | null {
-    const { giftBadge, isTapToView, deletedForEveryone } = this.props;
+    const { deletedForEveryone, giftBadge, isTapToView } = this.props;
 
     if (deletedForEveryone) {
       return (
@@ -2402,6 +2478,7 @@ export class Message extends React.PureComponent<Props, State> {
         {this.renderStoryReplyContext()}
         {this.renderAttachment()}
         {this.renderPreview()}
+        {this.renderAttachmentTooBig()}
         {this.renderPayment()}
         {this.renderEmbeddedContact()}
         {this.renderText()}
@@ -2610,6 +2687,7 @@ export class Message extends React.PureComponent<Props, State> {
   public renderContainer(): JSX.Element {
     const {
       attachments,
+      attachmentDroppedDueToSize,
       conversationColor,
       customColor,
       deletedForEveryone,
@@ -2673,7 +2751,12 @@ export class Message extends React.PureComponent<Props, State> {
     const containerStyles = {
       width: shouldUseWidth ? width : undefined,
     };
-    if (!isStickerLike && !deletedForEveryone && direction === 'outgoing') {
+    if (
+      !isStickerLike &&
+      !deletedForEveryone &&
+      !(attachmentDroppedDueToSize && !text) &&
+      direction === 'outgoing'
+    ) {
       Object.assign(containerStyles, getCustomColorStyle(customColor));
     }
 

@@ -38,6 +38,8 @@ const MIN_HEIGHT = 50;
 
 // Used for display
 
+export class AttachmentSizeError extends Error {}
+
 export type AttachmentType = {
   error?: boolean;
   blurHash?: string;
@@ -76,6 +78,7 @@ export type AttachmentType = {
   key?: string;
   data?: Uint8Array;
   textAttachment?: TextAttachmentType;
+  wasTooBig?: boolean;
 
   /** Legacy field. Used only for downloading old attachments */
   id?: number;
@@ -1014,9 +1017,9 @@ export const defaultBlurHash = (theme: ThemeType = ThemeType.light): string => {
 };
 
 export const canBeDownloaded = (
-  attachment: Pick<AttachmentType, 'key' | 'digest'>
+  attachment: Pick<AttachmentType, 'digest' | 'key' | 'wasTooBig'>
 ): boolean => {
-  return Boolean(attachment.key && attachment.digest);
+  return Boolean(attachment.digest && attachment.key && !attachment.wasTooBig);
 };
 
 export function getAttachmentSignature(attachment: AttachmentType): string {

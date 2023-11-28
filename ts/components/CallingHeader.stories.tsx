@@ -8,6 +8,7 @@ import type { PropsType } from './CallingHeader';
 import { CallingHeader } from './CallingHeader';
 import { setupI18n } from '../util/setupI18n';
 import enMessages from '../../_locales/en/messages.json';
+import { CallViewMode } from '../types/Calling';
 
 const i18n = setupI18n('en', enMessages);
 
@@ -17,16 +18,14 @@ export default {
   argTypes: {
     isGroupCall: { control: { type: 'boolean' } },
     participantCount: { control: { type: 'number' } },
-    title: { control: { type: 'text' } },
   },
   args: {
     i18n,
     isGroupCall: false,
-    message: '',
     participantCount: 0,
-    title: 'With Someone',
     togglePip: action('toggle-pip'),
-    toggleSettings: action('toggle-settings'),
+    callViewMode: CallViewMode.Paginated,
+    changeCallView: action('change-call-view'),
   },
 } satisfies Meta<PropsType>;
 
@@ -38,32 +37,8 @@ export function LobbyStyle(args: PropsType): JSX.Element {
   return (
     <CallingHeader
       {...args}
-      title={undefined}
       togglePip={undefined}
       onCancel={action('onClose')}
     />
-  );
-}
-
-export function WithParticipants(args: PropsType): JSX.Element {
-  return <CallingHeader {...args} isGroupCall participantCount={10} />;
-}
-
-export function WithParticipantsShown(args: PropsType): JSX.Element {
-  return <CallingHeader {...args} isGroupCall participantCount={10} />;
-}
-
-export function LongTitle(args: PropsType): JSX.Element {
-  return (
-    <CallingHeader
-      {...args}
-      title="What do I got to, what do I got to do to wake you up? To shake you up, to break the structure up?"
-    />
-  );
-}
-
-export function TitleWithMessage(args: PropsType): JSX.Element {
-  return (
-    <CallingHeader {...args} title="Hello world" message="Goodbye earth" />
   );
 }

@@ -100,15 +100,6 @@ import { createTemplate } from './menu';
 import { installFileHandler, installWebHandler } from './protocol_filter';
 import OS from '../ts/util/os/osMain';
 import { isProduction } from '../ts/util/version';
-import {
-  isSgnlHref,
-  isCaptchaHref,
-  isSignalHttpsLink,
-  parseSgnlHref,
-  parseCaptchaHref,
-  parseSignalHttpsLink,
-  rewriteSignalHrefsIfNecessary,
-} from '../ts/util/sgnlHref';
 import { clearTimeoutIfNecessary } from '../ts/util/clearTimeoutIfNecessary';
 import { toggleMaximizedBrowserWindow } from '../ts/util/toggleMaximizedBrowserWindow';
 import { ChallengeMainHandler } from '../ts/main/challengeMain';
@@ -124,6 +115,8 @@ import { load as loadLocale } from './locale';
 import type { LoggerType } from '../ts/types/Logging';
 import { HourCyclePreference } from '../ts/types/I18N';
 import { DBVersionFromFutureError } from '../ts/sql/migrations';
+import type { ParsedSignalRoute } from '../ts/util/signalRoutes';
+import { parseSignalRoute } from '../ts/util/signalRoutes';
 
 const STICKER_CREATOR_PARTITION = 'sticker-creator';
 
@@ -150,6 +143,7 @@ const consoleLogger = createBufferedConsoleLogger();
 // These will be set after app fires the 'ready' event
 let logger: LoggerType | undefined;
 let preferredSystemLocales: Array<string> | undefined;
+let localeOverride: string | null | undefined;
 let resolvedTranslationsLocale: LocaleType | undefined;
 let settingsChannel: SettingsChannel | undefined;
 
@@ -270,18 +264,10 @@ if (!process.mas) {
         return;
       }
 
-      const incomingCaptchaHref = getIncomingCaptchaHref(argv);
-      if (incomingCaptchaHref) {
-        const { captcha } = parseCaptchaHref(incomingCaptchaHref, getLogger());
-        challengeHandler.handleCaptcha(captcha);
-        return true;
+      const route = maybeGetIncomingSignalRoute(argv);
+      if (route != null) {
+        handleSignalRoute(route);
       }
-      // Are they trying to open a sgnl:// href?
-      const incomingHref = getIncomingHref(argv);
-      if (incomingHref) {
-        handleSgnlHref(incomingHref);
-      }
-      // Handled
       return true;
     });
   }
@@ -374,6 +360,26 @@ async function getBackgroundColor(
   throw missingCaseError(theme);
 }
 
+async function getLocaleOverrideSetting(): Promise<string | null> {
+  const fastValue = ephemeralConfig.get('localeOverride');
+  // eslint-disable-next-line eqeqeq -- Checking for null explicitly
+  if (typeof fastValue === 'string' || fastValue === null) {
+    getLogger().info('got fast localeOverride setting', fastValue);
+    return fastValue;
+  }
+
+  const json = await sql.sqlCall('getItemById', 'localeOverride');
+
+  // Default to `null` if setting doesn't exist yet
+  const slowValue = typeof json?.value === 'string' ? json.value : null;
+
+  ephemeralConfig.set('localeOverride', slowValue);
+
+  getLogger().info('got slow localeOverride setting', slowValue);
+
+  return slowValue;
+}
+
 let systemTrayService: SystemTrayService | undefined;
 const systemTraySettingCache = new SystemTraySettingCache(
   sql,
@@ -426,6 +432,13 @@ function getPreferredSystemLocales(): Array<string> {
   return preferredSystemLocales;
 }
 
+function getLocaleOverride(): string | null {
+  if (typeof localeOverride === 'undefined') {
+    throw new Error('getLocaleOverride: Locale not yet initialized!');
+  }
+  return localeOverride;
+}
+
 function getResolvedMessagesLocale(): LocaleType {
   if (!resolvedTranslationsLocale) {
     throw new Error('getResolvedMessagesLocale: Locale not yet initialized!');
@@ -475,23 +488,21 @@ async function handleUrl(rawTarget: string) {
     return;
   }
 
-  const target = rewriteSignalHrefsIfNecessary(rawTarget);
+  const signalRoute = parseSignalRoute(rawTarget);
+
+  // We only want to specially handle urls that aren't requesting the dev server
+  if (signalRoute != null) {
+    handleSignalRoute(signalRoute);
+    return;
+  }
 
   const { protocol, hostname } = parsedUrl;
   const isDevServer =
     process.env.SIGNAL_ENABLE_HTTP && hostname === 'localhost';
-  // We only want to specially handle urls that aren't requesting the dev server
-  if (
-    isSgnlHref(target, getLogger()) ||
-    isSignalHttpsLink(target, getLogger())
-  ) {
-    handleSgnlHref(target);
-    return;
-  }
 
   if ((protocol === 'http:' || protocol === 'https:') && !isDevServer) {
     try {
-      await shell.openExternal(target);
+      await shell.openExternal(rawTarget);
     } catch (error) {
       getLogger().error(`Failed to open url: ${Errors.toLogFormat(error)}`);
     }
@@ -821,6 +832,7 @@ async function createWindow() {
   setupSpellChecker(
     mainWindow,
     getPreferredSystemLocales(),
+    getLocaleOverride(),
     getResolvedMessagesLocale().i18n,
     getLogger()
   );
@@ -1008,6 +1020,8 @@ async function createWindow() {
       return;
     }
 
+    mainWindow.webContents.send('ci:event', 'db-initialized', {});
+
     const shouldShowWindow =
       !app.getLoginItemSettings().wasOpenedAsHidden && !startInTray;
 
@@ -1125,9 +1139,9 @@ async function readyForUpdates() {
   isReadyForUpdates = true;
 
   // First, install requested sticker pack
-  const incomingHref = getIncomingHref(process.argv);
+  const incomingHref = maybeGetIncomingSignalRoute(process.argv);
   if (incomingHref) {
-    handleSgnlHref(incomingHref);
+    handleSignalRoute(incomingHref);
   }
 
   // Second, start checking for app updates
@@ -1631,6 +1645,7 @@ const onDatabaseError = async (error: string) => {
 
   const buttons = [i18n('icu:copyErrorAndQuit')];
   const copyErrorAndQuitButtonIndex = 0;
+  const SIGNAL_SUPPORT_LINK = 'https://support.signal.org/error';
 
   if (error.includes(DBVersionFromFutureError.name)) {
     // If the DB version is too new, the user likely opened an older version of Signal,
@@ -1640,7 +1655,9 @@ const onDatabaseError = async (error: string) => {
   } else {
     // Otherwise, this is some other kind of DB error, let's give them the option to
     // delete.
-    messageDetail = i18n('icu:databaseError__detail');
+    messageDetail = i18n('icu:databaseError__detail', {
+      link: SIGNAL_SUPPORT_LINK,
+    });
 
     buttons.push(i18n('icu:deleteAndRestart'));
     deleteAllDataButtonIndex = 1;
@@ -1797,10 +1814,14 @@ app.on('ready', async () => {
   // Write buffered information into newly created logger.
   consoleLogger.writeBufferInto(logger);
 
+  sqlInitPromise = initializeSQL(userDataPath);
+
   if (!resolvedTranslationsLocale) {
     preferredSystemLocales = resolveCanonicalLocales(
       loadPreferredSystemLocales()
     );
+
+    localeOverride = await getLocaleOverrideSetting();
 
     const hourCyclePreference = getHourCyclePreference();
     logger.info(`app.ready: hour cycle preference: ${hourCyclePreference}`);
@@ -1812,12 +1833,11 @@ app.on('ready', async () => {
     );
     resolvedTranslationsLocale = loadLocale({
       preferredSystemLocales,
+      localeOverride,
       hourCyclePreference,
       logger: getLogger(),
     });
   }
-
-  sqlInitPromise = initializeSQL(userDataPath);
 
   // First run: configure Signal to minimize to tray. Additionally, on Windows
   // enable auto-start with start-in-tray so that starting from a Desktop icon
@@ -2197,18 +2217,10 @@ app.on('will-finish-launching', () => {
   // https://stackoverflow.com/a/43949291
   app.on('open-url', (event, incomingHref) => {
     event.preventDefault();
-
-    if (isCaptchaHref(incomingHref, getLogger())) {
-      const { captcha } = parseCaptchaHref(incomingHref, getLogger());
-      challengeHandler.handleCaptcha(captcha);
-
-      // Show window after handling captcha
-      showWindow();
-
-      return;
+    const route = parseSignalRoute(incomingHref);
+    if (route != null) {
+      handleSignalRoute(route);
     }
-
-    handleSgnlHref(incomingHref);
   });
 });
 
@@ -2395,10 +2407,12 @@ ipc.on('get-config', async event => {
 
   const parsed = rendererConfigSchema.safeParse({
     name: packageJson.productName,
+    availableLocales: getResolvedMessagesLocale().availableLocales,
     resolvedTranslationsLocale: getResolvedMessagesLocale().name,
     resolvedTranslationsLocaleDirection: getResolvedMessagesLocale().direction,
     hourCyclePreference: getResolvedMessagesLocale().hourCyclePreference,
     preferredSystemLocales: getPreferredSystemLocales(),
+    localeOverride: getLocaleOverride(),
     version: app.getVersion(),
     buildCreation: config.get<number>('buildCreation'),
     buildExpiration: config.get<number>('buildExpiration'),
@@ -2466,6 +2480,12 @@ ipc.on('locale-data', event => {
   event.returnValue = getResolvedMessagesLocale().messages;
 });
 
+// Ingested in preload.js via a sendSync call
+ipc.on('locale-display-names', event => {
+  // eslint-disable-next-line no-param-reassign
+  event.returnValue = getResolvedMessagesLocale().localeDisplayNames;
+});
+
 // TODO DESKTOP-5241
 ipc.on('OS.getHasCustomTitleBar', event => {
   // eslint-disable-next-line no-param-reassign
@@ -2519,78 +2539,71 @@ ipc.on('preferences-changed', () => {
   }
 });
 
-function getIncomingHref(argv: Array<string>) {
-  return argv.find(arg => isSgnlHref(arg, getLogger()));
+function maybeGetIncomingSignalRoute(argv: Array<string>) {
+  for (const arg of argv) {
+    const route = parseSignalRoute(arg);
+    if (route != null) {
+      return route;
+    }
+  }
+  return null;
 }
 
-function getIncomingCaptchaHref(argv: Array<string>) {
-  return argv.find(arg => isCaptchaHref(arg, getLogger()));
-}
+function handleSignalRoute(route: ParsedSignalRoute) {
+  const log = getLogger();
 
-function handleSgnlHref(incomingHref: string) {
-  let command;
-  let args;
-  let hash;
-
-  if (isSgnlHref(incomingHref, getLogger())) {
-    ({ command, args, hash } = parseSgnlHref(incomingHref, getLogger()));
-  } else if (isSignalHttpsLink(incomingHref, getLogger())) {
-    ({ command, args, hash } = parseSignalHttpsLink(incomingHref, getLogger()));
+  if (mainWindow == null || !mainWindow.webContents) {
+    log.error('handleSignalRoute: mainWindow is null or missing webContents');
+    return;
   }
 
-  if (mainWindow && mainWindow.webContents) {
-    if (command === 'addstickers') {
-      getLogger().info('Opening sticker pack from sgnl protocol link');
-      const packId = args?.get('pack_id');
-      const packKeyHex = args?.get('pack_key');
-      const packKey = packKeyHex
-        ? Buffer.from(packKeyHex, 'hex').toString('base64')
-        : '';
-      mainWindow.webContents.send('show-sticker-pack', { packId, packKey });
-    } else if (command === 'art-auth') {
-      const token = args?.get('token');
-      const pubKeyBase64 = args?.get('pub_key');
+  log.info('handleSignalRoute: Matched signal route:', route.key);
 
-      mainWindow.webContents.send('authorize-art-creator', {
-        token,
-        pubKeyBase64,
-      });
-    } else if (command === 'signal.group' && hash) {
-      getLogger().info('Showing group from sgnl protocol link');
-      mainWindow.webContents.send('show-group-via-link', { hash });
-    } else if (command === 'signal.me' && hash) {
-      getLogger().info('Showing conversation from sgnl protocol link');
-      mainWindow.webContents.send('show-conversation-via-signal.me', { hash });
-    } else if (
-      command === 'show-conversation' &&
-      args &&
-      args.get('conversationId')
-    ) {
-      getLogger().info('Showing conversation from notification');
-      mainWindow.webContents.send('show-conversation-via-notification', {
-        conversationId: args.get('conversationId'),
-        messageId: args.get('messageId'),
-        storyId: args.get('storyId'),
-      });
-    } else if (
-      command === 'start-call-lobby' &&
-      args &&
-      args.get('conversationId')
-    ) {
-      getLogger().info('Starting call lobby from notification');
-      mainWindow.webContents.send('start-call-lobby', {
-        conversationId: args.get('conversationId'),
-      });
-    } else if (command === 'show-window') {
-      mainWindow.webContents.send('show-window');
-    } else if (command === 'set-is-presenting') {
-      mainWindow.webContents.send('set-is-presenting');
-    } else {
-      getLogger().info('Showing warning that we cannot process link');
-      mainWindow.webContents.send('unknown-sgnl-link');
-    }
+  if (route.key === 'artAddStickers') {
+    mainWindow.webContents.send('show-sticker-pack', {
+      packId: route.args.packId,
+      packKey: Buffer.from(route.args.packKey, 'hex').toString('base64'),
+    });
+  } else if (route.key === 'artAuth') {
+    mainWindow.webContents.send('authorize-art-creator', {
+      token: route.args.token,
+      pubKeyBase64: route.args.pubKey,
+    });
+  } else if (route.key === 'groupInvites') {
+    mainWindow.webContents.send('show-group-via-link', {
+      value: route.args.inviteCode,
+    });
+  } else if (route.key === 'contactByPhoneNumber') {
+    mainWindow.webContents.send('show-conversation-via-signal.me', {
+      kind: 'phoneNumber',
+      value: route.args.phoneNumber,
+    });
+  } else if (route.key === 'contactByEncryptedUsername') {
+    mainWindow.webContents.send('show-conversation-via-signal.me', {
+      kind: 'encryptedUsername',
+      value: route.args.encryptedUsername,
+    });
+  } else if (route.key === 'showConversation') {
+    mainWindow.webContents.send('show-conversation-via-notification', {
+      conversationId: route.args.conversationId,
+      messageId: route.args.messageId,
+      storyId: route.args.storyId,
+    });
+  } else if (route.key === 'startCallLobby') {
+    mainWindow.webContents.send('start-call-lobby', {
+      conversationId: route.args.conversationId,
+    });
+  } else if (route.key === 'showWindow') {
+    mainWindow.webContents.send('show-window');
+  } else if (route.key === 'setIsPresenting') {
+    mainWindow.webContents.send('set-is-presenting');
+  } else if (route.key === 'captcha') {
+    challengeHandler.handleCaptcha(route.args.captchaId);
+    // Show window after handling captcha
+    showWindow();
   } else {
-    getLogger().error('Unhandled sgnl link');
+    log.info('handleSignalRoute: Unknown signal route:', route.key);
+    mainWindow.webContents.send('unknown-sgnl-link');
   }
 }
 
@@ -2650,6 +2663,15 @@ async function ensureFilePermissions(onlyFiles?: Array<string>) {
 
   getLogger().info(`Finish ensuring permissions in ${Date.now() - start}ms`);
 }
+
+ipc.handle('get-media-access-status', async (_event, value) => {
+  // This function is not supported on Linux
+  if (!systemPreferences.getMediaAccessStatus) {
+    return undefined;
+  }
+
+  return systemPreferences.getMediaAccessStatus(value);
+});
 
 ipc.handle('get-auto-launch', async () => {
   return app.getLoginItemSettings(await getDefaultLoginItemSettings())

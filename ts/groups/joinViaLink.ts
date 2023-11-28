@@ -29,12 +29,13 @@ import { isAccessControlEnabled } from './util';
 import { isGroupV1 } from '../util/whatTypeOfConversation';
 import { longRunningTaskWrapper } from '../util/longRunningTaskWrapper';
 import { sleep } from '../util/sleep';
+import { dropNull } from '../util/dropNull';
 
-export async function joinViaLink(hash: string): Promise<void> {
+export async function joinViaLink(value: string): Promise<void> {
   let inviteLinkPassword: string;
   let masterKey: string;
   try {
-    ({ inviteLinkPassword, masterKey } = parseGroupLink(hash));
+    ({ inviteLinkPassword, masterKey } = parseGroupLink(value));
   } catch (error: unknown) {
     const errorString = Errors.toLogFormat(error);
     log.error(`joinViaLink: Failed to parse group link ${errorString}`);
@@ -116,7 +117,7 @@ export async function joinViaLink(hash: string): Promise<void> {
     return;
   }
 
-  if (!isAccessControlEnabled(result.addFromInviteLink)) {
+  if (!isAccessControlEnabled(dropNull(result.addFromInviteLink))) {
     log.error(
       `joinViaLink/${logId}: addFromInviteLink value of ${result.addFromInviteLink} is invalid`
     );
@@ -138,10 +139,10 @@ export async function joinViaLink(hash: string): Promise<void> {
     result.addFromInviteLink ===
     Proto.AccessControl.AccessRequired.ADMINISTRATOR;
   const title =
-    decryptGroupTitle(result.title, secretParams) ||
+    decryptGroupTitle(dropNull(result.title), secretParams) ||
     window.i18n('icu:unknownGroup');
   const groupDescription = decryptGroupDescription(
-    result.descriptionBytes,
+    dropNull(result.descriptionBytes),
     secretParams
   );
 
@@ -316,7 +317,7 @@ export async function joinViaLink(hash: string): Promise<void> {
                 groupInviteLinkPassword: inviteLinkPassword,
                 left: true,
                 name: title,
-                revision: result.version,
+                revision: dropNull(result.version),
                 temporaryMemberCount: memberCount,
                 timestamp,
               });

@@ -113,7 +113,7 @@
     "description": "Title of a popup if the database cannot start up properly"
   },
   "icu:databaseError__detail": {
-    "messageformat": "தரவுத்தளப் பிழை ஏற்பட்டது. நீங்கள் பிழையை நகலெடுத்து, சிக்கலைச் சரிசெய்ய Signal ஆதரவைத் தொடர்புகொள்ளலாம். நீங்கள் உடனடியாக Signalஐப் பயன்படுத்த வேண்டுமென்றால், உங்கள் தரவை நீக்கிவிட்டு மீண்டும் தொடங்கவும்.\n\nஆதரவை இங்கே தொடர்புகொள்ளவும்: https://support.signal.org/hc/requests/new?desktop",
+    "messageformat": "A database error occurred. You can copy the error and contact Signal support to help fix the issue. If you need to use Signal right away, you can delete your data and restart.\n\nContact support by visiting: {link}",
     "description": "Description shown in a popup if the database cannot start up properly"
   },
   "icu:deleteAndRestart": {
@@ -316,6 +316,22 @@
     "messageformat": "சாட்ஸ்",
     "description": "Shown as a header for non-pinned conversations in the left pane"
   },
+  "icu:LeftPane--corrupted-username--text": {
+    "messageformat": "உங்கள் பயனர்பெயரில் ஏதோ தவறு நடந்து விட்டது, இனி ஒருபோதும் உங்கள் கணக்கில் நியமிக்கப்படவில்லை. நீங்கள் முயன்று மீண்டும் அமைக்கலாம் அல்லது புதியதைத் தேர்ந்தெடுக்கலாம்.",
+    "description": "Text of corrupted username banner in the left pane"
+  },
+  "icu:LeftPane--corrupted-username--action-text": {
+    "messageformat": "இப்பொழுதே சரிபார்",
+    "description": "Text of the button in the corrupted username banner in the left pane"
+  },
+  "icu:LeftPane--corrupted-username-link--text": {
+    "messageformat": "உங்கள் QR குறியீடு மற்றும் பயனர்பெயர் இணைப்பில் ஏதோ தவறு நடந்துவிட்டது, அது இனி செல்லுபடியாகாது. மற்றவர்களுடன் பகிர புதிய இணைப்பை உருவாக்கவும்.",
+    "description": "Text of corrupted username link banner in the left pane"
+  },
+  "icu:LeftPane--corrupted-username-link--action-text": {
+    "messageformat": "இப்பொழுதே சரிபார்",
+    "description": "Text of the button in the corrupted username link banner in the left pane"
+  },
   "icu:NavTabsToggle__showTabs": {
     "messageformat": "தாவல்களைக் காட்டு",
     "description": "Show in the left pane when the nav tabs are hidden, shows the nav tabs"
@@ -335,6 +351,18 @@
   "icu:NavTabs__ItemIconLabel--MarkedUnread": {
     "messageformat": "படிக்காததாகக் குறிக்கப்பட்டது",
     "description": "Nav Tabs > Unread badge > when conversation is marked unread > Accessibility Text"
+  },
+  "icu:NavTabs__ItemLabel--Chats": {
+    "messageformat": "சாட்ஸ்",
+    "description": "Nav Tabs > Chats Button > Label & Accessibility Text"
+  },
+  "icu:NavTabs__ItemLabel--Calls": {
+    "messageformat": "அழைப்புகள்",
+    "description": "Nav Tabs > Calls Button > Label & Accessibility Text"
+  },
+  "icu:NavTabs__ItemLabel--Stories": {
+    "messageformat": "ஸ்டோரீஸ்",
+    "description": "Nav Tabs > Stories Button > Label & Accessibility Text"
   },
   "icu:NavTabs__ItemLabel--Settings": {
     "messageformat": "அமைப்புகள்",
@@ -693,23 +721,23 @@
   },
   "icu:SafetyNumberViewer__migration__text": {
     "messageformat": "பாதுகாப்பு எண்கள் புதுப்பிக்கப்படுகின்றன.",
-    "description": "An explanatory note in SafetyNumberViewer describing the safety number migration process."
+    "description": "(Deleted 11/01/2023) An explanatory note in SafetyNumberViewer describing the safety number migration process."
   },
   "icu:SafetyNumberViewer__migration__learn_more": {
     "messageformat": "மேலும் அறிக",
-    "description": "A link text in SafetyNumberViewer describing the safety number migration process."
+    "description": "(Deleted 11/01/2023) A link text in SafetyNumberViewer describing the safety number migration process."
   },
   "icu:SafetyNumberViewer__card__prev": {
     "messageformat": "முந்தைய பாதுகாப்பு எண்",
-    "description": "An ARIA label for safety number navigation button."
+    "description": "(Deleted 11/01/2023) An ARIA label for safety number navigation button."
   },
   "icu:SafetyNumberViewer__card__next": {
     "messageformat": "அடுத்த பாதுகாப்பு எண்",
-    "description": "An ARIA label for safety number navigation button."
+    "description": "(Deleted 11/01/2023) An ARIA label for safety number navigation button."
   },
   "icu:SafetyNumberViewer__carousel__dot": {
     "messageformat": "பாதுகாப்பு எண் பதிப்பு, {index,number} / {total,number}",
-    "description": "An ARIA label for safety number carousel button."
+    "description": "(Deleted 11/01/2023) An ARIA label for safety number carousel button."
   },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "சரிபார்க்கப்பட்டதாகக் குறி",
@@ -719,33 +747,41 @@
     "messageformat": "சரிபார்ப்பை நீக்கு",
     "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
   },
+  "icu:SafetyNumberViewer__hint": {
+    "messageformat": "{name} இன் எண்ட்-டு-எண்ட் என்க்ரிப்ஷனைச் சரிபார்க்க, மேலே உள்ள எண்களை அவற்றின் டிவைஸ் உடன் ஒப்பிடவும். அவர்கள் தங்கள் டிவைசில் இருக்கும் உங்கள் குறியீட்டை ஸ்கேன் செய்யலாம்.",
+    "description": "Safety number viewer, text of the hint"
+  },
+  "icu:SafetyNumberViewer__learn_more": {
+    "messageformat": "மேலும் அறிக",
+    "description": "Text of 'Learn more' button of SafetyNumberViewerModal modal"
+  },
   "icu:SafetyNumberViewer__hint--migration": {
     "messageformat": "{name} இன் எண்ட்-டு-எண்ட் என்க்ரிப்ஷனைச் சரிபார்க்க, மேலே உள்ள வண்ண அட்டையை அவற்றின் டிவைஸ் உடன் பொருத்தி எண்களை ஒப்பிடவும். இவை பொருந்தவில்லை என்றால், மற்ற பாதுகாப்பு எண்கள் ஜோடியை முயற்சிக்கவும். ஒரு ஜோடி மட்டுமே பொருந்த வேண்டும்.",
-    "description": "Safety number viewer, text of the hint during migration period"
+    "description": "(Deleted 11/01/2023). Safety number viewer, text of the hint during migration period"
   },
   "icu:SafetyNumberViewer__hint--normal": {
     "messageformat": "{name} இன் எண்ட்-டு-எண்ட் என்க்ரிப்ஷனைச் சரிபார்க்க, மேலே உள்ள எண்களை அவற்றின் டிவைஸ் உடன் ஒப்பிடவும். அவர்கள் தங்கள் டிவைசில் இருக்கும் உங்கள் குறியீட்டை ஸ்கேன் செய்யலாம்.",
-    "description": "Safety number viewer, text of the hint after migration period"
+    "description": "(Deleted 11/01/2023). Safety number viewer, text of the hint after migration period"
   },
   "icu:SafetyNumberOnboarding__title": {
     "messageformat": "பாதுகாப்பு எண்களில் மாற்றங்கள்",
-    "description": "Title of Safety number onboarding modal"
+    "description": "(Deleted 11/01/2023) Title of Safety number onboarding modal"
   },
   "icu:SafetyNumberOnboarding__p1": {
     "messageformat": "Signal இல் வரவிருக்கும் தனியுரிமை அம்சங்களை இயக்க, பாதுகாப்பு எண்கள் குறிப்பிட்ட நிலை மாற்றப்படும் காலத்தில் புதுப்பிக்கப்படவுள்ளன.",
-    "description": "Paragraph 1 of Safety number onboarding modal"
+    "description": "(Deleted 11/01/2023) Paragraph 1 of Safety number onboarding modal"
   },
   "icu:SafetyNumberOnboarding__p2": {
     "messageformat": "பாதுகாப்பு எண்களைச் சரிபார்க்க, உங்கள் தொடர்பின் டிவைஸ் உடன் வண்ண அட்டையைப் பொருத்தவும். இவை பொருந்தவில்லை என்றால், மற்ற பாதுகாப்பு எண்கள் ஜோடியை முயற்சிக்கவும். ஒரு ஜோடி மட்டுமே பொருந்த வேண்டும்.",
-    "description": "Paragraph 2 of Safety number onboarding modal"
+    "description": "(Deleted 11/01/2023) Paragraph 2 of Safety number onboarding modal"
   },
   "icu:SafetyNumberOnboarding__help": {
     "messageformat": "உங்களுக்கு உதவி வேண்டுமா?",
-    "description": "Text of a secondary button in Safety number onboarding modal"
+    "description": "(Deleted 11/01/2023) Text of a secondary button in Safety number onboarding modal"
   },
   "icu:SafetyNumberOnboarding__close": {
     "messageformat": "அறிந்துகொண்டேன்",
-    "description": "Text of a secondary button in Safety number onboarding modal"
+    "description": "(Deleted 11/01/2023) Text of a secondary button in Safety number onboarding modal"
   },
   "icu:SafetyNumberNotReady__body": {
     "messageformat": "இவருடன் நீங்கள் செய்திகளைப் பரிமாறிய பிறகு அவருடன் ஒரு பாதுகாப்பு எண் உருவாக்கப்படும்.",
@@ -1388,15 +1424,27 @@
   },
   "icu:deleteMessages": {
     "messageformat": "நீக்கு",
-    "description": "Menu item for deleting messages, title case."
+    "description": "(deleted 2023/10/26) Menu item for deleting messages, title case."
+  },
+  "icu:deleteMessagesInConversation": {
+    "messageformat": "மெசேஜ்களை நீக்கு",
+    "description": "Menu item for deleting all messages in a conversation from your device"
   },
   "icu:ConversationHeader__DeleteMessagesConfirmation__title": {
     "messageformat": "சாட்டை நீக்க வேண்டுமா?",
-    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+    "description": "(deleted 2023/10/26) Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
+    "messageformat": "மெசேஜ்களை நீக்க வேண்டுமா?",
+    "description": "Title for confirmation modal to delete all messages in a conversation"
   },
   "icu:ConversationHeader__DeleteMessagesConfirmation__description": {
     "messageformat": "இது அரட்டை இந்த டிவைசிலிருந்து நீக்கப்படும்.",
-    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+    "description": "(deleted 2023/10/26) Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
+    "messageformat": "இந்த சாட்டில் உள்ள மெசேஜ்கள் இந்த டிவைஸிலிருந்து நீக்கப்படும். மெசேஜ்களை நீக்கிய பிறகும் நீங்கள் இந்த சாட்டைத் தேடலாம்.",
+    "description": "Description for confirmation modal to delete all messages in a conversation"
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "குழுவிலுருந்து விலகு",
@@ -1489,6 +1537,14 @@
   "icu:ConversationMerge--explainer-dialog--line-2": {
     "messageformat": "இரண்டு சாட்களுக்கான உங்கள் மெசேஜ் வரலாறு இங்கே இணைக்கப்பட்டுள்ளது.",
     "description": "Contents of a dialog shown after clicking 'learn more' button on a conversation merge event."
+  },
+  "icu:PhoneNumberDiscovery--notification--withSharedGroup": {
+    "messageformat": "{phoneNumber} {conversationTitle} க்கு சொந்தமானது. நீங்கள் இருவரும் {sharedGroup} இன் உறுப்பினர்கள்.",
+    "description": "Shown when we've discovered a phone number for a contact you've been communicating with."
+  },
+  "icu:PhoneNumberDiscovery--notification--noSharedGroup": {
+    "messageformat": "{phoneNumber} {conversationTitle} க்கு சொந்தமானது",
+    "description": "Shown when we've discovered a phone number for a contact you've been communicating with, but you have no shared groups."
   },
   "icu:quoteThumbnailAlt": {
     "messageformat": "மேற்கோள் செய்தியிலிருந்து படத்தின் சிறு உருவம்",
@@ -1637,10 +1693,6 @@
     "messageformat": "மீண்டும் அழை",
     "description": "Button to call someone again"
   },
-  "icu:calling__start": {
-    "messageformat": "அழைப்பைத் தொடங்கு",
-    "description": "Button label in the call lobby for starting a call"
-  },
   "icu:calling__join": {
     "messageformat": "அழைப்பில் சேர்",
     "description": "Button label in the call lobby for joining a call"
@@ -1653,13 +1705,25 @@
     "messageformat": "அழைப்பின் அளவு காரணமாக மைக்ரோஃபோன் ஒலியடக்கப்பட்டது",
     "description": "Shown in a call lobby toast if there are a lot of people already on the call"
   },
+  "icu:calling__toasts--aria-label": {
+    "messageformat": "அழைப்பு அறிவிப்புகள்",
+    "description": "Aria label for region of toasts shown during a call (for, e.g. reconnecting, person joined, audio device changed notifications)"
+  },
   "icu:calling__call-is-full": {
     "messageformat": "அழைப்பு நிரம்பியுள்ளது",
     "description": "Text in the call lobby when you can't join because the call is full"
   },
-  "icu:calling__button--video__label": {
-    "messageformat": "புகைப்பட கருவி",
-    "description": "Label under the video button"
+  "icu:CallingLobbyJoinButton--join": {
+    "messageformat": "இணைக",
+    "description": "Button label in the call lobby for joining a call"
+  },
+  "icu:CallingLobbyJoinButton--start": {
+    "messageformat": "தொடங்கு",
+    "description": "Button label in the call lobby for starting a call"
+  },
+  "icu:CallingLobbyJoinButton--call-full": {
+    "messageformat": "கால் ஃபுல்",
+    "description": "Button in the call lobby when you can't join because the call is full"
   },
   "icu:calling__button--video-disabled": {
     "messageformat": "புகைப்பட கருவி முடக்கப்பட்டது",
@@ -1673,10 +1737,6 @@
     "messageformat": "புகைப்பட கருவியை தயார் செய்க",
     "description": "Button tooltip label for turning on the camera"
   },
-  "icu:calling__button--audio__label": {
-    "messageformat": "ஒலியடக்கு",
-    "description": "Label under the audio button"
-  },
   "icu:calling__button--audio-disabled": {
     "messageformat": "மைக்ரோஃபோன் முடக்கப்பட்டது",
     "description": "Button tooltip label when the microphone is disabled"
@@ -1688,10 +1748,6 @@
   "icu:calling__button--audio-on": {
     "messageformat": "மைக் ஒலி இயக்கு",
     "description": "Button tooltip label for turning on the microphone"
-  },
-  "icu:calling__button--presenting__label": {
-    "messageformat": "பகிர்",
-    "description": "Label under the share screen button"
   },
   "icu:calling__button--presenting-disabled": {
     "messageformat": "வழங்குதல் முடக்கப்பட்டது",
@@ -1705,10 +1761,6 @@
     "messageformat": "வழங்குவதை நிறுத்துங்கள்",
     "description": "Button tooltip label for stopping screen sharing"
   },
-  "icu:calling__button--ring__label": {
-    "messageformat": "அழை",
-    "description": "Label under the ring button"
-  },
   "icu:calling__button--ring__disabled-because-group-is-too-large": {
     "messageformat": "எண்ணிக்கை கூடியதால் குழுவில் உள்ள அனைவரையும் அழைக்க இயலாது",
     "description": "Button tooltip label when you can't ring because the group is too large"
@@ -1719,6 +1771,14 @@
   },
   "icu:calling__button--ring__on": {
     "messageformat": "அழைப்பை இயக்கு",
+    "description": "Button tooltip label for turning ringing on"
+  },
+  "icu:CallingButton__ring-off": {
+    "messageformat": "ரிங்கிங்கை ஆஃப் செய்யும்",
+    "description": "Button tooltip label for turning ringing off"
+  },
+  "icu:CallingButton--ring-on": {
+    "messageformat": "ரிங்கிங்கை ஆன் செய்யும்",
     "description": "Button tooltip label for turning ringing on"
   },
   "icu:calling__your-video-is-off": {
@@ -2293,6 +2353,10 @@
   },
   "icu:ToastManager__CannotEditMessage": {
     "messageformat": "நீங்கள் இந்த மெசேஜை அனுப்பியதிலிருந்து 3 மணிநேரத்திற்குள் மட்டுமே திருத்தங்களைப் பயன்படுத்த முடியும்.",
+    "description": "(deleted 2023/10/26) Error message when you try to send an edit after message becomes too old"
+  },
+  "icu:ToastManager__CannotEditMessage_24": {
+    "messageformat": "நீங்கள் இந்த மெசேஜை அனுப்பியதிலிருந்து 24 மணிநேரத்திற்குள் மட்டுமே திருத்தங்களைச் செய்ய முடியும்.",
     "description": "Error message when you try to send an edit after message becomes too old"
   },
   "icu:startConversation--username-not-found": {
@@ -2535,6 +2599,14 @@
   "icu:message--deletedForEveryone": {
     "messageformat": "இந்த மெசேஜ் நீக்கப்பட்டது.",
     "description": "Shown in a message's bubble when the message has been deleted for everyone."
+  },
+  "icu:message--attachmentTooBig--one": {
+    "messageformat": "காட்ட முடியாத அளவுக்கு இணைப்பு பெரிதாக உள்ளது.",
+    "description": "Shown in a message bubble if no attachments are left on message when too-large attachments are dropped"
+  },
+  "icu:message--attachmentTooBig--multiple": {
+    "messageformat": "சில இணைப்புகள் காட்ட முடியாத அளவுக்கு பெரிதாக உள்ளன.",
+    "description": "Shown in a message bubble if any attachments are left on message when too-large attachments are dropped"
   },
   "icu:donation--missing": {
     "messageformat": "நன்கொடை விவரங்களைப் பெற முடியவில்லை",
@@ -3496,9 +3568,37 @@
     "messageformat": "மீண்டும் இணைக்கிறது…",
     "description": "Shown in the call screen when the call is reconnecting due to network issues"
   },
-  "icu:callDuration": {
-    "messageformat": "Signal சிக்னல் அழைப்பு காலம் {duration}",
-    "description": "Shown in the call screen to indicate how long the call has been connected"
+  "icu:CallControls__InfoDisplay--participants": {
+    "messageformat": "{count, plural, one {{count,number} நபர்} other {{count,number} நபர்கள்}}",
+    "description": "Shown in the call screen and lobby for group calls to specify the number of members in the call or in the group. Count is at always at least 1."
+  },
+  "icu:CallControls__InfoDisplay--audio-call": {
+    "messageformat": "ஆடியோ அழைப்பு",
+    "description": "Shown in the call lobby for a direct 1:1 call when the caller's video is disabled, to specify that an audio call will be placed when clicking the Start button."
+  },
+  "icu:CallControls__JoinLeaveButton--hangup-1-1": {
+    "messageformat": "முடிவு",
+    "description": "Title for the hangup button for a direct 1:1 call with only 2 participants."
+  },
+  "icu:CallControls__JoinLeaveButton--hangup-group": {
+    "messageformat": "விலகு",
+    "description": "Title for the hangup button for a group call."
+  },
+  "icu:CallControls__MutedToast--muted": {
+    "messageformat": "மைக் ஆஃப்",
+    "description": "Shown in a call when the user mutes their audio input using the Mute toggle button."
+  },
+  "icu:CallControls__MutedToast--unmuted": {
+    "messageformat": "மைக் ஆன்",
+    "description": "Shown in a call when the user is muted and then unmutes their audio input using the Mute toggle button."
+  },
+  "icu:CallControls__RingingToast--ringing-on": {
+    "messageformat": "ரிங்கிங் ஆன்",
+    "description": "Shown in a group call lobby when call ringing is disabled, then the user enables ringing using the Ringing toggle button."
+  },
+  "icu:CallControls__RingingToast--ringing-off": {
+    "messageformat": "ரிங்கிங்கை ஆஃப் செய்யும்",
+    "description": "Shown in a group call lobby when call ringing is enabled, then the user disables ringing using the Ringing toggle button."
   },
   "icu:callingDeviceSelection__settings": {
     "messageformat": "அமைப்புகள்",
@@ -3540,13 +3640,25 @@
     "messageformat": "முழுத்திரை அழைப்பு",
     "description": "Title for picture-in-picture toggle"
   },
-  "icu:calling__switch-view--to-grid": {
-    "messageformat": "கட்டத்திற்கு மாறவும் பார்வை",
-    "description": "Title for grid/speaker view toggle when on a call"
+  "icu:calling__change-view": {
+    "messageformat": "Change view",
+    "description": "Tooltip for changing the in-call layout of remote participants in a group call"
   },
-  "icu:calling__switch-view--to-speaker": {
-    "messageformat": "ஸ்பீக்கருக்கு மாறவும்பார்வை",
-    "description": "Title for grid/speaker view toggle when on a call"
+  "icu:calling__view_mode--paginated": {
+    "messageformat": "Grid view",
+    "description": "Label for option to view participants in a group call in a paginated grid view"
+  },
+  "icu:calling__view_mode--overflow": {
+    "messageformat": "Sidebar view",
+    "description": "Label for option to view participants in a group call where videos that don't fit onto the page are put into a scrollable overflow sidebar"
+  },
+  "icu:calling__view_mode--speaker": {
+    "messageformat": "Speaker view",
+    "description": "Label for option to view participants where only the current speaker's video is fully visible and all others are put into a scrollable overflow sidebar"
+  },
+  "icu:calling__view_mode--updated": {
+    "messageformat": "View updated",
+    "description": "Toast shown whenver the calling view mode is changed (e.g. paginated view -> speaker view)"
   },
   "icu:calling__hangup": {
     "messageformat": "அழைப்பை விடுங்கள்",
@@ -3647,6 +3759,14 @@
   "icu:Confirmation--confirm": {
     "messageformat": "சரி",
     "description": "Button to dismiss popup dialog when user-initiated task has gone wrong"
+  },
+  "icu:MessageMaxEditsModal__Title": {
+    "messageformat": "மெசேஜை திருத்தம் செய்ய முடியாது",
+    "description": "Title in popup dialog when attempting to edit a message too many times."
+  },
+  "icu:MessageMaxEditsModal__Description": {
+    "messageformat": "இந்த மெசேஜில் {max,number} முறை மட்டுமே திருத்தம் செய்ய முடியும்.",
+    "description": "Description text in popup dialog when attempting to edit a message too many times."
   },
   "icu:unknown-sgnl-link": {
     "messageformat": "மன்னிக்கவும், அந்த sgnl:// இணைப்பு புரியவில்லை!",
@@ -5324,9 +5444,29 @@
     "messageformat": "பயனர்பெயர்",
     "description": "Default text for username field"
   },
+  "icu:ProfileEditor--username--corrupted--body": {
+    "messageformat": "உங்கள் பயனர்பெயரில் ஏதோ தவறு நடந்து விட்டது, இனி ஒருபோதும் உங்கள் கணக்கில் நியமிக்கப்படவில்லை.",
+    "description": "Text of confirmation modal when the username gets corrupted"
+  },
+  "icu:ProfileEditor--username--corrupted--delete-button": {
+    "messageformat": "பயனர் பெயரை நீக்கவும்",
+    "description": "Button text for deletion of the username in case of corruption"
+  },
+  "icu:ProfileEditor--username--corrupted--create-button": {
+    "messageformat": "பயனர்பெயரை உருவாக்கவும்",
+    "description": "Button text for creation of a new username in case of corruption"
+  },
   "icu:ProfileEditor__username-link": {
     "messageformat": "QR குறியீடு அல்லது இணைப்பு",
     "description": "Label of a profile editor row that navigates to username link and qr code modal"
+  },
+  "icu:ProfileEditor__username__error-icon": {
+    "messageformat": "பயனர்பெயரை மீட்டமைக்க வேண்டும்",
+    "description": "Accessibility title of an icon in profile editor"
+  },
+  "icu:ProfileEditor__username-link__error-icon": {
+    "messageformat": "பயனர்பெயர் இணைப்பை மீட்டமைக்க வேண்டும்",
+    "description": "Accessibility title of an icon in profile editor"
   },
   "icu:ProfileEditor__username-link__tooltip__title": {
     "messageformat": "உங்கள் பயனர்பெயரைப் பகிரவும்",
@@ -5679,6 +5819,42 @@
   "icu:Preferences__turn-stories-off--body": {
     "messageformat": "இனி உங்களால் ஸ்டோரீக்களைப் பகிரவோ பார்க்கவோ முடியாது. சமீபத்தில் நீங்கள் பகிர்ந்த ஸ்டோரி புதுப்பிப்புகளும் நீக்கப்படும்.",
     "description": "Confirmation modal body for disabling stories"
+  },
+  "icu:Preferences__Language__Label": {
+    "messageformat": "மொழி",
+    "description": "Language setting label"
+  },
+  "icu:Preferences__Language__ModalTitle": {
+    "messageformat": "மொழி",
+    "description": "Language setting modal title"
+  },
+  "icu:Preferences__Language__SystemLanguage": {
+    "messageformat": "சிஸ்டம் மொழி",
+    "description": "Option for system language"
+  },
+  "icu:Preferences__Language__SearchLanguages": {
+    "messageformat": "மொழிகளைத் தேடு",
+    "description": "Placholder for language preference search box"
+  },
+  "icu:Preferences__Language__NoResults": {
+    "messageformat": "''{searchTerm}\"-க்கான முடிவுகள் எதுவும் கிடைக்கவில்லை",
+    "description": "When no results are found for language preference search"
+  },
+  "icu:Preferences__LanguageModal__Set": {
+    "messageformat": "அமைக்கவும்",
+    "description": "Button to set language preference"
+  },
+  "icu:Preferences__LanguageModal__Restart__Title": {
+    "messageformat": "பயன்படுத்த Signalஐ ரீஸ்டார்ட் செய்யவும்",
+    "description": "Title for restart Signal modal to apply language changes"
+  },
+  "icu:Preferences__LanguageModal__Restart__Description": {
+    "messageformat": "மொழியை மாற்ற, செயலியை ரீஸ்டார்ட் செய்ய வேண்டும்.",
+    "description": "Description for restart Signal modal to apply language changes"
+  },
+  "icu:Preferences__LanguageModal__Restart__Button": {
+    "messageformat": "ரீஸ்டார்ட்",
+    "description": "Button to restart Signal to apply language changes"
   },
   "icu:DialogUpdate--version-available": {
     "messageformat": "பதிப்புக்குப் புதுப்பிக்கவும் {version} கிடைக்கிறது",
@@ -6616,6 +6792,14 @@
     "messageformat": "உங்கள் QR குறியீட்டை மீட்டமைத்தால், உங்கள் தற்போதைய QR குறியீடு மற்றும் இணைப்பு இனி ஒருபோதும் வேலை செய்யாது.",
     "description": "Text of confirmation modal when resetting the username link"
   },
+  "icu:UsernameLinkModalBody__resetting-link": {
+    "messageformat": "இணைப்பை மீட்டமைக்கிறது...",
+    "description": "Text shown when resetting the username link"
+  },
+  "icu:UsernameLinkModalBody__error__text": {
+    "messageformat": "QR குறியீடு மற்றும் இணைப்பு அமைக்கப்படவில்லை. உங்கள் நெட்வொர்க் இணைப்பைச் சரிபார்த்து, மீண்டும் முயலவும்.",
+    "description": "Text of the confirmation dialog shown on username link error"
+  },
   "icu:UsernameOnboardingModalBody__title": {
     "messageformat": "உங்கள் Signal பயனர் பெயரை அமைக்கவும்",
     "description": "Title of username onboarding modal"
@@ -6808,13 +6992,13 @@
     "messageformat": "சிறு மாற்றங்கள், பிழை திருத்தங்கள் மற்றும் செயல்திறன் மேம்பாடுகள். சிக்னலைப் பயன்படுத்தியதற்கு நன்றி!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.35--0": {
-    "messageformat": "இதை ஒருபோதும் செய்யக்கூடாது எனத் தீர்மானித்துள்ளோம், அதாவது மற்ற செயலிகளைப் போல் சோம்பலான ரிலீஸ் குறிப்புகளைப் போல் இருக்கக்கூடாது என்று, ஆனால் இந்தப் புதுப்பிப்பில் நிஜமாகவே \"பிழை திருத்தங்களும் UX மேம்படுத்தல்களும்\" உள்ளன."
+  "icu:WhatsNew__v6.38--0": {
+    "messageformat": "இந்த வெளியீட்டில் Signal குரல் மற்றும் வீடியோ அழைப்புகளுக்கான மேம்படுத்தப்பட்ட வடிவமைப்பு உள்ளது. உங்கள் கேமரா இயங்காமல் இருந்தாலும், உங்களுடைய அழகிய பிரதிபலிப்பை உங்களால் பார்க்க முடியாவிட்டாலும், இப்போது காலிங் யூசர் இண்டர்ஃபேஸ் இன்னும் அழகாக இருக்கும்."
   },
-  "icu:WhatsNew__v6.36--0": {
-    "messageformat": "ஒரு குரூப் வீடியோ அழைப்பு எப்போது மீண்டும் இணைக்கப்படுகிறது என்பதைக் குறிக்க பயனர் இடைமுகத்தைப் புதுப்பித்துள்ளோம். எல்லாமே உறைந்ததுபோல் திகைக்கச் செய்த தோற்றத்துக்குப் பதில் இப்போது மங்கலான சிறுபடங்களைப் பார்ப்பீர்கள்."
+  "icu:WhatsNew__v6.39--0": {
+    "messageformat": "இப்போது உங்கள் சிஸ்டம் அமைப்புகளை மாற்றாமலேயே நீங்கள் தேர்ந்தெடுத்த மொழியை Signal இல் மாற்றலாம் (Signal அமைப்புகள் > தோற்றம் > மொழி)."
   },
-  "icu:WhatsNew__v6.36--1": {
-    "messageformat": "குறைந்த தெளிவுத்திறன் கொண்ட திரையில் பழைய ஸ்மார்ட் ஃபிரிட்ஜில் Ubuntu Linux இயங்கிக் கொண்டிருந்தால் ஒழிய, Ubuntu Linux இல் சிஸ்டம் டிரே ஐகான் இனி பிக்சலேட்டடாகத் தோன்றாது."
+  "icu:WhatsNew__v6.39--1": {
+    "messageformat": "சில சமயங்களில் macOS சாதனங்களில் அழைப்பு லாபியில் சேரும்போது ஏற்படும் ஒரு சிறிய தாமதத்தை நாங்கள் சரி செய்து விட்டோம்."
   }
 }

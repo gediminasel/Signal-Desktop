@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { PrimaryDevice } from '@signalapp/mock-server';
+import { Proto } from '@signalapp/mock-server';
 import createDebug from 'debug';
 import Long from 'long';
 import type { Page } from 'playwright';
@@ -14,7 +15,6 @@ export const debug = createDebug('mock:test:edit');
 
 describe('unknown contacts', function (this: Mocha.Suite) {
   this.timeout(durations.MINUTE);
-  this.retries(4);
 
   let bootstrap: Bootstrap;
   let app: App;
@@ -49,6 +49,8 @@ describe('unknown contacts', function (this: Mocha.Suite) {
       callingMessage: {
         offer: {
           callId: new Long(Math.floor(Math.random() * 1e10)),
+          type: Proto.CallingMessage.Offer.Type.OFFER_AUDIO_CALL,
+          opaque: new Uint8Array(0),
         },
       },
     });

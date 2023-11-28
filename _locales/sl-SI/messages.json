@@ -113,7 +113,7 @@
     "description": "Title of a popup if the database cannot start up properly"
   },
   "icu:databaseError__detail": {
-    "messageformat": "Prišlo je do napake v zbirki podatkov. Napako lahko kopirate in se obrnete na podporo za Signal, da vam pomaga odpraviti težavo. Če morate Signal uporabiti takoj, lahko izbrišete podatke in ga znova zaženete.\n\nObrnite se na podporo tako, da obiščete: https://support.signal.org/hc/requests/new?desktop",
+    "messageformat": "A database error occurred. You can copy the error and contact Signal support to help fix the issue. If you need to use Signal right away, you can delete your data and restart.\n\nContact support by visiting: {link}",
     "description": "Description shown in a popup if the database cannot start up properly"
   },
   "icu:deleteAndRestart": {
@@ -316,6 +316,22 @@
     "messageformat": "Klepeti",
     "description": "Shown as a header for non-pinned conversations in the left pane"
   },
+  "icu:LeftPane--corrupted-username--text": {
+    "messageformat": "Nekaj je šlo narobe z vašim uporabniškim imenom, ni več dodeljeno vašemu računu. Lahko ga poskusite znova nastaviti ali izberete novega.",
+    "description": "Text of corrupted username banner in the left pane"
+  },
+  "icu:LeftPane--corrupted-username--action-text": {
+    "messageformat": "Popravi",
+    "description": "Text of the button in the corrupted username banner in the left pane"
+  },
+  "icu:LeftPane--corrupted-username-link--text": {
+    "messageformat": "Nekaj je šlo narobe z vašo QR kodo in vaša povezava z uporabniškim imenom ni več veljavna. Ustvarite novo povezavo za skupno rabo z drugimi.",
+    "description": "Text of corrupted username link banner in the left pane"
+  },
+  "icu:LeftPane--corrupted-username-link--action-text": {
+    "messageformat": "Popravi",
+    "description": "Text of the button in the corrupted username link banner in the left pane"
+  },
   "icu:NavTabsToggle__showTabs": {
     "messageformat": "Prikaži zavihke",
     "description": "Show in the left pane when the nav tabs are hidden, shows the nav tabs"
@@ -335,6 +351,18 @@
   "icu:NavTabs__ItemIconLabel--MarkedUnread": {
     "messageformat": "Označeno kot neprebrano",
     "description": "Nav Tabs > Unread badge > when conversation is marked unread > Accessibility Text"
+  },
+  "icu:NavTabs__ItemLabel--Chats": {
+    "messageformat": "Klepeti",
+    "description": "Nav Tabs > Chats Button > Label & Accessibility Text"
+  },
+  "icu:NavTabs__ItemLabel--Calls": {
+    "messageformat": "Klici",
+    "description": "Nav Tabs > Calls Button > Label & Accessibility Text"
+  },
+  "icu:NavTabs__ItemLabel--Stories": {
+    "messageformat": "Zgodbe",
+    "description": "Nav Tabs > Stories Button > Label & Accessibility Text"
   },
   "icu:NavTabs__ItemLabel--Settings": {
     "messageformat": "Nastavitve",
@@ -693,23 +721,23 @@
   },
   "icu:SafetyNumberViewer__migration__text": {
     "messageformat": "Varnostne številke se posodabljajo.",
-    "description": "An explanatory note in SafetyNumberViewer describing the safety number migration process."
+    "description": "(Deleted 11/01/2023) An explanatory note in SafetyNumberViewer describing the safety number migration process."
   },
   "icu:SafetyNumberViewer__migration__learn_more": {
     "messageformat": "Preberite več",
-    "description": "A link text in SafetyNumberViewer describing the safety number migration process."
+    "description": "(Deleted 11/01/2023) A link text in SafetyNumberViewer describing the safety number migration process."
   },
   "icu:SafetyNumberViewer__card__prev": {
     "messageformat": "Prejšnja varnostna številka",
-    "description": "An ARIA label for safety number navigation button."
+    "description": "(Deleted 11/01/2023) An ARIA label for safety number navigation button."
   },
   "icu:SafetyNumberViewer__card__next": {
     "messageformat": "Naslednja varnostna številka",
-    "description": "An ARIA label for safety number navigation button."
+    "description": "(Deleted 11/01/2023) An ARIA label for safety number navigation button."
   },
   "icu:SafetyNumberViewer__carousel__dot": {
     "messageformat": "Različica varnostne številke, {index,number} od {total,number}",
-    "description": "An ARIA label for safety number carousel button."
+    "description": "(Deleted 11/01/2023) An ARIA label for safety number carousel button."
   },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "Označi kot potrjeno",
@@ -719,33 +747,41 @@
     "messageformat": "Izbris potrditve",
     "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
   },
+  "icu:SafetyNumberViewer__hint": {
+    "messageformat": "Če želite preveriti šifriranje od-konca-do-konca z uporabnikom_co {name}, primerjajte zgornje številke s tistimi na njegovi/njeni napravi. S svojo napravo lahko tudi skenira vašo kodo.",
+    "description": "Safety number viewer, text of the hint"
+  },
+  "icu:SafetyNumberViewer__learn_more": {
+    "messageformat": "Preberite več",
+    "description": "Text of 'Learn more' button of SafetyNumberViewerModal modal"
+  },
   "icu:SafetyNumberViewer__hint--migration": {
     "messageformat": "Če želite preveriti šifriranje od-konca-do-konca z uporabnikom_co {name}, povežite zgornjo barvno kartico z njegovo/njeno napravo in primerjajte številki. Če se ne ujemata, podrsajte in poskusite z drugim parom varnostnih številk. Samo en par se mora ujemati.",
-    "description": "Safety number viewer, text of the hint during migration period"
+    "description": "(Deleted 11/01/2023). Safety number viewer, text of the hint during migration period"
   },
   "icu:SafetyNumberViewer__hint--normal": {
     "messageformat": "Če želite preveriti šifriranje od-konca-do-konca z uporabnikom_co {name}, primerjajte zgornje številke s tistimi na njegovi/njeni napravi. S svojo napravo lahko tudi skenira vašo kodo.",
-    "description": "Safety number viewer, text of the hint after migration period"
+    "description": "(Deleted 11/01/2023). Safety number viewer, text of the hint after migration period"
   },
   "icu:SafetyNumberOnboarding__title": {
     "messageformat": "Spremembe varnostnih številk",
-    "description": "Title of Safety number onboarding modal"
+    "description": "(Deleted 11/01/2023) Title of Safety number onboarding modal"
   },
   "icu:SafetyNumberOnboarding__p1": {
     "messageformat": "Varnostne številke se v prehodnem obdobju posodabljajo, da omogočijo prihajajoče funkcije zasebnosti v Signalu.\n\n",
-    "description": "Paragraph 1 of Safety number onboarding modal"
+    "description": "(Deleted 11/01/2023) Paragraph 1 of Safety number onboarding modal"
   },
   "icu:SafetyNumberOnboarding__p2": {
     "messageformat": "Če želite preveriti varnostne številke, uskladite barvno kartico z napravo vašega kontakta. Če se ne ujemata, podrsajte in poskusite z drugim parom varnostnih številk. Samo en par se mora ujemati.",
-    "description": "Paragraph 2 of Safety number onboarding modal"
+    "description": "(Deleted 11/01/2023) Paragraph 2 of Safety number onboarding modal"
   },
   "icu:SafetyNumberOnboarding__help": {
     "messageformat": "Potrebujete pomoč?",
-    "description": "Text of a secondary button in Safety number onboarding modal"
+    "description": "(Deleted 11/01/2023) Text of a secondary button in Safety number onboarding modal"
   },
   "icu:SafetyNumberOnboarding__close": {
     "messageformat": "Razumem",
-    "description": "Text of a secondary button in Safety number onboarding modal"
+    "description": "(Deleted 11/01/2023) Text of a secondary button in Safety number onboarding modal"
   },
   "icu:SafetyNumberNotReady__body": {
     "messageformat": "Varnostna številka s to osebo bo ustvarjena, potem ko bo z vami izmenjala sporočila.",
@@ -1388,15 +1424,27 @@
   },
   "icu:deleteMessages": {
     "messageformat": "Izbriši",
-    "description": "Menu item for deleting messages, title case."
+    "description": "(deleted 2023/10/26) Menu item for deleting messages, title case."
+  },
+  "icu:deleteMessagesInConversation": {
+    "messageformat": "Izbriši sporočila",
+    "description": "Menu item for deleting all messages in a conversation from your device"
   },
   "icu:ConversationHeader__DeleteMessagesConfirmation__title": {
     "messageformat": "Želite izbrisati klepet?",
-    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+    "description": "(deleted 2023/10/26) Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
+    "messageformat": "Izbrišem sporočila?",
+    "description": "Title for confirmation modal to delete all messages in a conversation"
   },
   "icu:ConversationHeader__DeleteMessagesConfirmation__description": {
     "messageformat": "Ta klepet bo izbrisan s te naprave.",
-    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+    "description": "(deleted 2023/10/26) Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
+    "messageformat": "Sporočila v tem klepetu bodo izbrisana iz te naprave. Ko izbrišete sporočila, lahko še vedno iščete ta klepet.",
+    "description": "Description for confirmation modal to delete all messages in a conversation"
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Zapusti skupino",
@@ -1489,6 +1537,14 @@
   "icu:ConversationMerge--explainer-dialog--line-2": {
     "messageformat": "Vaša zgodovina sporočil za oba klepeta je bila združena tukaj.",
     "description": "Contents of a dialog shown after clicking 'learn more' button on a conversation merge event."
+  },
+  "icu:PhoneNumberDiscovery--notification--withSharedGroup": {
+    "messageformat": "{phoneNumber} pripada {conversationTitle}. Oba_e sta člana_ici {sharedGroup}.",
+    "description": "Shown when we've discovered a phone number for a contact you've been communicating with."
+  },
+  "icu:PhoneNumberDiscovery--notification--noSharedGroup": {
+    "messageformat": "{phoneNumber} pripada {conversationTitle}",
+    "description": "Shown when we've discovered a phone number for a contact you've been communicating with, but you have no shared groups."
   },
   "icu:quoteThumbnailAlt": {
     "messageformat": "Predogled slike citiranega sporočila",
@@ -1637,10 +1693,6 @@
     "messageformat": "Ponovni klic",
     "description": "Button to call someone again"
   },
-  "icu:calling__start": {
-    "messageformat": "Začni klic",
-    "description": "Button label in the call lobby for starting a call"
-  },
   "icu:calling__join": {
     "messageformat": "Pridruži se klicu",
     "description": "Button label in the call lobby for joining a call"
@@ -1653,13 +1705,25 @@
     "messageformat": "Mikrofon je utišan zaradi obsega klica",
     "description": "Shown in a call lobby toast if there are a lot of people already on the call"
   },
+  "icu:calling__toasts--aria-label": {
+    "messageformat": "Obvestila o klicih",
+    "description": "Aria label for region of toasts shown during a call (for, e.g. reconnecting, person joined, audio device changed notifications)"
+  },
   "icu:calling__call-is-full": {
     "messageformat": "Klic je polno zaseden",
     "description": "Text in the call lobby when you can't join because the call is full"
   },
-  "icu:calling__button--video__label": {
-    "messageformat": "Kamera",
-    "description": "Label under the video button"
+  "icu:CallingLobbyJoinButton--join": {
+    "messageformat": "Pridruži se",
+    "description": "Button label in the call lobby for joining a call"
+  },
+  "icu:CallingLobbyJoinButton--start": {
+    "messageformat": "Začni",
+    "description": "Button label in the call lobby for starting a call"
+  },
+  "icu:CallingLobbyJoinButton--call-full": {
+    "messageformat": "Klic je poln",
+    "description": "Button in the call lobby when you can't join because the call is full"
   },
   "icu:calling__button--video-disabled": {
     "messageformat": "Kamera onemogočena",
@@ -1673,10 +1737,6 @@
     "messageformat": "Vklop kamere",
     "description": "Button tooltip label for turning on the camera"
   },
-  "icu:calling__button--audio__label": {
-    "messageformat": "Utišaj",
-    "description": "Label under the audio button"
-  },
   "icu:calling__button--audio-disabled": {
     "messageformat": "Mikrofon onemogočen",
     "description": "Button tooltip label when the microphone is disabled"
@@ -1688,10 +1748,6 @@
   "icu:calling__button--audio-on": {
     "messageformat": "Prekini utišanje",
     "description": "Button tooltip label for turning on the microphone"
-  },
-  "icu:calling__button--presenting__label": {
-    "messageformat": "Deli",
-    "description": "Label under the share screen button"
   },
   "icu:calling__button--presenting-disabled": {
     "messageformat": "Predvajanje onemogočeno",
@@ -1705,10 +1761,6 @@
     "messageformat": "Zaključi predvajanje",
     "description": "Button tooltip label for stopping screen sharing"
   },
-  "icu:calling__button--ring__label": {
-    "messageformat": "Zvonjenje",
-    "description": "Label under the ring button"
-  },
   "icu:calling__button--ring__disabled-because-group-is-too-large": {
     "messageformat": "Skupina je prevelika za zvonjenje vsem udeležencem.",
     "description": "Button tooltip label when you can't ring because the group is too large"
@@ -1719,6 +1771,14 @@
   },
   "icu:calling__button--ring__on": {
     "messageformat": "Zvonjenje",
+    "description": "Button tooltip label for turning ringing on"
+  },
+  "icu:CallingButton__ring-off": {
+    "messageformat": "Izklopi zvonjenje",
+    "description": "Button tooltip label for turning ringing off"
+  },
+  "icu:CallingButton--ring-on": {
+    "messageformat": "Vključi zvonjenje",
     "description": "Button tooltip label for turning ringing on"
   },
   "icu:calling__your-video-is-off": {
@@ -2293,6 +2353,10 @@
   },
   "icu:ToastManager__CannotEditMessage": {
     "messageformat": "Urejanje je mogoče uporabiti samo v 3 urah od trenutka, ko ste poslali to sporočilo.",
+    "description": "(deleted 2023/10/26) Error message when you try to send an edit after message becomes too old"
+  },
+  "icu:ToastManager__CannotEditMessage_24": {
+    "messageformat": "Urejanje je mogoče uporabiti samo v 24 urah od trenutka, ko ste poslali to sporočilo.",
     "description": "Error message when you try to send an edit after message becomes too old"
   },
   "icu:startConversation--username-not-found": {
@@ -2535,6 +2599,14 @@
   "icu:message--deletedForEveryone": {
     "messageformat": "Sporočilo je bilo izbrisano.",
     "description": "Shown in a message's bubble when the message has been deleted for everyone."
+  },
+  "icu:message--attachmentTooBig--one": {
+    "messageformat": "Priloga je prevelika za prikaz.",
+    "description": "Shown in a message bubble if no attachments are left on message when too-large attachments are dropped"
+  },
+  "icu:message--attachmentTooBig--multiple": {
+    "messageformat": "Nekatere priloge so prevelike za prikaz.",
+    "description": "Shown in a message bubble if any attachments are left on message when too-large attachments are dropped"
   },
   "icu:donation--missing": {
     "messageformat": "Podatkov o donaciji ni mogoče pridobiti",
@@ -3496,9 +3568,37 @@
     "messageformat": "Ponovno povezovanje ...",
     "description": "Shown in the call screen when the call is reconnecting due to network issues"
   },
-  "icu:callDuration": {
-    "messageformat": "Signal {duration}",
-    "description": "Shown in the call screen to indicate how long the call has been connected"
+  "icu:CallControls__InfoDisplay--participants": {
+    "messageformat": "{count, plural, one {{count,number} oseba} two {{count,number} osebi} few {{count,number} osebe} other {{count,number} ljudi}}",
+    "description": "Shown in the call screen and lobby for group calls to specify the number of members in the call or in the group. Count is at always at least 1."
+  },
+  "icu:CallControls__InfoDisplay--audio-call": {
+    "messageformat": "Zvočni klic",
+    "description": "Shown in the call lobby for a direct 1:1 call when the caller's video is disabled, to specify that an audio call will be placed when clicking the Start button."
+  },
+  "icu:CallControls__JoinLeaveButton--hangup-1-1": {
+    "messageformat": "Končaj",
+    "description": "Title for the hangup button for a direct 1:1 call with only 2 participants."
+  },
+  "icu:CallControls__JoinLeaveButton--hangup-group": {
+    "messageformat": "Zapusti",
+    "description": "Title for the hangup button for a group call."
+  },
+  "icu:CallControls__MutedToast--muted": {
+    "messageformat": "Mikrofon je izključen",
+    "description": "Shown in a call when the user mutes their audio input using the Mute toggle button."
+  },
+  "icu:CallControls__MutedToast--unmuted": {
+    "messageformat": "Mikrofon je vključen",
+    "description": "Shown in a call when the user is muted and then unmutes their audio input using the Mute toggle button."
+  },
+  "icu:CallControls__RingingToast--ringing-on": {
+    "messageformat": "Zvonjenje je vključeno",
+    "description": "Shown in a group call lobby when call ringing is disabled, then the user enables ringing using the Ringing toggle button."
+  },
+  "icu:CallControls__RingingToast--ringing-off": {
+    "messageformat": "Zvonjenje je izključeno",
+    "description": "Shown in a group call lobby when call ringing is enabled, then the user disables ringing using the Ringing toggle button."
   },
   "icu:callingDeviceSelection__settings": {
     "messageformat": "Nastavitve",
@@ -3540,13 +3640,25 @@
     "messageformat": "Celostranski klic",
     "description": "Title for picture-in-picture toggle"
   },
-  "icu:calling__switch-view--to-grid": {
-    "messageformat": "Preklop na mrežni pogled",
-    "description": "Title for grid/speaker view toggle when on a call"
+  "icu:calling__change-view": {
+    "messageformat": "Change view",
+    "description": "Tooltip for changing the in-call layout of remote participants in a group call"
   },
-  "icu:calling__switch-view--to-speaker": {
-    "messageformat": "Preklop na govorčev pogled",
-    "description": "Title for grid/speaker view toggle when on a call"
+  "icu:calling__view_mode--paginated": {
+    "messageformat": "Grid view",
+    "description": "Label for option to view participants in a group call in a paginated grid view"
+  },
+  "icu:calling__view_mode--overflow": {
+    "messageformat": "Sidebar view",
+    "description": "Label for option to view participants in a group call where videos that don't fit onto the page are put into a scrollable overflow sidebar"
+  },
+  "icu:calling__view_mode--speaker": {
+    "messageformat": "Speaker view",
+    "description": "Label for option to view participants where only the current speaker's video is fully visible and all others are put into a scrollable overflow sidebar"
+  },
+  "icu:calling__view_mode--updated": {
+    "messageformat": "View updated",
+    "description": "Toast shown whenver the calling view mode is changed (e.g. paginated view -> speaker view)"
   },
   "icu:calling__hangup": {
     "messageformat": "Zapusti klic",
@@ -3647,6 +3759,14 @@
   "icu:Confirmation--confirm": {
     "messageformat": "Okej",
     "description": "Button to dismiss popup dialog when user-initiated task has gone wrong"
+  },
+  "icu:MessageMaxEditsModal__Title": {
+    "messageformat": "Sporočila ni mogoče urediti",
+    "description": "Title in popup dialog when attempting to edit a message too many times."
+  },
+  "icu:MessageMaxEditsModal__Description": {
+    "messageformat": "To sporočilo je mogoče urediti le {max,number}x.",
+    "description": "Description text in popup dialog when attempting to edit a message too many times."
   },
   "icu:unknown-sgnl-link": {
     "messageformat": "Oprostite, ta povezava sgnl:// ni imela smisla!",
@@ -5324,9 +5444,29 @@
     "messageformat": "Uporabniško ime",
     "description": "Default text for username field"
   },
+  "icu:ProfileEditor--username--corrupted--body": {
+    "messageformat": "Nekaj je šlo narobe z vašim uporabniškim imenom, ni več dodeljeno vašemu računu.",
+    "description": "Text of confirmation modal when the username gets corrupted"
+  },
+  "icu:ProfileEditor--username--corrupted--delete-button": {
+    "messageformat": "Izbriši uporabniško ime",
+    "description": "Button text for deletion of the username in case of corruption"
+  },
+  "icu:ProfileEditor--username--corrupted--create-button": {
+    "messageformat": "Ustvarite uporabniško ime",
+    "description": "Button text for creation of a new username in case of corruption"
+  },
   "icu:ProfileEditor__username-link": {
     "messageformat": "QR koda ali povezava",
     "description": "Label of a profile editor row that navigates to username link and qr code modal"
+  },
+  "icu:ProfileEditor__username__error-icon": {
+    "messageformat": "Uporabniško ime je treba ponastaviti",
+    "description": "Accessibility title of an icon in profile editor"
+  },
+  "icu:ProfileEditor__username-link__error-icon": {
+    "messageformat": "Povezavo uporabniškega imena je treba ponastaviti",
+    "description": "Accessibility title of an icon in profile editor"
   },
   "icu:ProfileEditor__username-link__tooltip__title": {
     "messageformat": "Delite svoje uporabniško ime",
@@ -5679,6 +5819,42 @@
   "icu:Preferences__turn-stories-off--body": {
     "messageformat": "Zgodb ne boste mogli več deliti ali si jih ogledovati. Izbrisane bodo tudi posodobitve zgodb, ki ste jih nedavno delili.",
     "description": "Confirmation modal body for disabling stories"
+  },
+  "icu:Preferences__Language__Label": {
+    "messageformat": "Jezik",
+    "description": "Language setting label"
+  },
+  "icu:Preferences__Language__ModalTitle": {
+    "messageformat": "Jezik",
+    "description": "Language setting modal title"
+  },
+  "icu:Preferences__Language__SystemLanguage": {
+    "messageformat": "Sistemski jezik",
+    "description": "Option for system language"
+  },
+  "icu:Preferences__Language__SearchLanguages": {
+    "messageformat": "Iskanje jezikov",
+    "description": "Placholder for language preference search box"
+  },
+  "icu:Preferences__Language__NoResults": {
+    "messageformat": "Ni rezultatov za “{searchTerm}”",
+    "description": "When no results are found for language preference search"
+  },
+  "icu:Preferences__LanguageModal__Set": {
+    "messageformat": "Nastavi",
+    "description": "Button to set language preference"
+  },
+  "icu:Preferences__LanguageModal__Restart__Title": {
+    "messageformat": "Za uporabo znova zaženite Signal",
+    "description": "Title for restart Signal modal to apply language changes"
+  },
+  "icu:Preferences__LanguageModal__Restart__Description": {
+    "messageformat": "Za spremembo jezika se mora aplikacija znova zagnati.",
+    "description": "Description for restart Signal modal to apply language changes"
+  },
+  "icu:Preferences__LanguageModal__Restart__Button": {
+    "messageformat": "Ponovni zagon",
+    "description": "Button to restart Signal to apply language changes"
   },
   "icu:DialogUpdate--version-available": {
     "messageformat": "Na voljo je nadgradnja na različico {version}",
@@ -6616,6 +6792,14 @@
     "messageformat": "Če ponastavite svojo QR kodo, vaša obstoječa QR koda in povezava ne bosta več delovali.",
     "description": "Text of confirmation modal when resetting the username link"
   },
+  "icu:UsernameLinkModalBody__resetting-link": {
+    "messageformat": "Ponastavitev povezave ...",
+    "description": "Text shown when resetting the username link"
+  },
+  "icu:UsernameLinkModalBody__error__text": {
+    "messageformat": "QR koda in povezava nista nastavljeni. Preverite omrežno povezavo in poskusite znova.",
+    "description": "Text of the confirmation dialog shown on username link error"
+  },
   "icu:UsernameOnboardingModalBody__title": {
     "messageformat": "Nastavite svoje uporabniško ime za Signal",
     "description": "Title of username onboarding modal"
@@ -6808,13 +6992,13 @@
     "messageformat": "Majhne prilagoditve, popravki napak in izboljšave zmogljivosti. Hvala, da uporabljate Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.35--0": {
-    "messageformat": "Rekli smo si, da tega ne bomo nikoli počeli, da ne bomo kot druge aplikacije objavljali lenih opomb ob izdaji, vendar ta posodobitev res vključuje \"popravke napak in izboljšave uporabniškega vmesnika.\""
+  "icu:WhatsNew__v6.38--0": {
+    "messageformat": "Ta izdaja vključuje posodobljeno zasnovo za glasovne in video klice Signal. Zdaj bo uporabniški vmesnik za klicanje še vedno videti fantastično, tudi če vaša kamera ni vklopljena in ne morete strmeti v svoj čudovit odsev."
   },
-  "icu:WhatsNew__v6.36--0": {
-    "messageformat": "Posodobili smo uporabniški vmesnik za boljši prikaz, ko se skupinski video klic ponovno vzpostavi. Zdaj boste videli zamegljene sličice namesto tega, kar je bilo videti kot dovršena potegavščina, kjer so se vsi hkrati pretvarjali, da so zmrznili."
+  "icu:WhatsNew__v6.39--0": {
+    "messageformat": "Zdaj lahko spremenite izbrani jezik v Signalu, ne da bi spremenili sistemske nastavitve (Nastavitve signala > Videz > Jezik)."
   },
-  "icu:WhatsNew__v6.36--1": {
-    "messageformat": "Ikona sistemske vrstice v Ubuntu Linuxu ne bo več pikselizirana, razen če ste uspeli zagnati Ubuntu Linux na starem pametnem hladilniku z zaslonom z nizko ločljivostjo."
+  "icu:WhatsNew__v6.39--1": {
+    "messageformat": "Popravili smo kratko zamudo, do katere je včasih prišlo med pridružitvijo preddverju klicev v napravah macOS, kar bi moralo odpraviti vsaj en izgovor za polsekundno zamudo na sestanek."
   }
 }

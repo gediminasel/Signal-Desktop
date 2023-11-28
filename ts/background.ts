@@ -38,7 +38,6 @@ import { isWindowDragElement } from './util/isWindowDragElement';
 import { assertDev, strictAssert } from './util/assert';
 import { filter } from './util/iterables';
 import { isNotNil } from './util/isNotNil';
-import { isPnpEnabled } from './util/isPnpEnabled';
 import { setAppLoadingScreenMessage } from './setAppLoadingScreenMessage';
 import { IdleDetector } from './IdleDetector';
 import { expiringMessagesDeletionService } from './services/expiringMessagesDeletion';
@@ -52,7 +51,7 @@ import { senderCertificateService } from './services/senderCertificate';
 import { GROUP_CREDENTIALS_KEY } from './services/groupCredentialFetcher';
 import * as KeyboardLayout from './services/keyboardLayout';
 import * as StorageService from './services/storage';
-import { optimizeFTS } from './services/ftsOptimizer';
+import { usernameIntegrity } from './services/usernameIntegrity';
 import { RoutineProfileRefresher } from './routineProfileRefresh';
 import { isOlderThan, toDayMillis } from './util/timestamp';
 import { isValidReactionEmoji } from './reactions/isValidReactionEmoji';
@@ -138,7 +137,6 @@ import {
 } from './util/handleRetry';
 import { themeChanged } from './shims/themeChanged';
 import { createIPCEvents } from './util/createIPCEvents';
-import { RemoveAllConfiguration } from './types/RemoveAllConfiguration';
 import type { ServiceIdString } from './types/ServiceId';
 import { ServiceIdKind, isServiceIdString } from './types/ServiceId';
 import { isAciString } from './util/isAciString';
@@ -254,10 +252,6 @@ export async function startApp(): Promise<void> {
     });
     window.textsecure.server = server;
     window.textsecure.messaging = new window.textsecure.MessageSender(server);
-
-    initializeAllJobQueues({
-      server,
-    });
 
     challengeHandler = new ChallengeHandler({
       storage: window.storage,
@@ -854,7 +848,7 @@ export async function startApp(): Promise<void> {
       log.warn(
         `This instance has not been used for 30 days. Last heartbeat: ${lastHeartbeat}. Last startup: ${previousLastStartup}.`
       );
-      await unlinkAndDisconnect(RemoveAllConfiguration.Soft);
+      await unlinkAndDisconnect();
     }
 
     // Start heartbeat timer
@@ -966,10 +960,14 @@ export async function startApp(): Promise<void> {
         await window.Signal.Data.removeAllProfileKeyCredentials();
       }
 
+      if (window.isBeforeVersion(lastVersion, 'v6.38.0-beta.1')) {
+        await window.storage.remove('hasCompletedSafetyNumberOnboarding');
+      }
+
       // This one should always be last - it could restart the app
       if (window.isBeforeVersion(lastVersion, 'v5.30.0-alpha')) {
         await deleteAllLogs();
-        window.IPC.restart();
+        window.SignalContext.restartApp();
         return;
       }
     }
@@ -981,8 +979,6 @@ export async function startApp(): Promise<void> {
 
     if (newVersion) {
       await window.Signal.Data.cleanupOrphanedAttachments();
-
-      optimizeFTS();
 
       drop(window.Signal.Data.ensureFilePermissions());
     }
@@ -1346,7 +1342,7 @@ export async function startApp(): Promise<void> {
   });
 
   window.Whisper.events.on('unlinkAndDisconnect', () => {
-    void unlinkAndDisconnect(RemoveAllConfiguration.Full);
+    void unlinkAndDisconnect();
   });
 
   async function runStorageService() {
@@ -1355,6 +1351,11 @@ export async function startApp(): Promise<void> {
 
   async function start() {
     // Storage is ready because `start()` is called from `storage.onready()`
+
+    strictAssert(server !== undefined, 'start: server not initialized');
+    initializeAllJobQueues({
+      server,
+    });
 
     strictAssert(challengeHandler, 'start: challengeHandler');
     await challengeHandler.load();
@@ -1782,7 +1783,7 @@ export async function startApp(): Promise<void> {
 
       if (!window.textsecure.storage.user.getAci()) {
         log.error('UUID not captured during registration, unlinking');
-        return unlinkAndDisconnect(RemoveAllConfiguration.Full);
+        return unlinkAndDisconnect();
       }
 
       if (connectCount === 1) {
@@ -1790,7 +1791,7 @@ export async function startApp(): Promise<void> {
           // Note: we always have to register our capabilities all at once, so we do this
           //   after connect on every startup
           await server.registerCapabilities({
-            pni: isPnpEnabled(),
+            pni: true,
           });
         } catch (error) {
           log.error(
@@ -1802,7 +1803,7 @@ export async function startApp(): Promise<void> {
 
       if (!window.textsecure.storage.user.getPni()) {
         log.error('PNI not captured during registration, unlinking softly');
-        return unlinkAndDisconnect(RemoveAllConfiguration.Soft);
+        return unlinkAndDisconnect();
       }
 
       if (firstRun === true && deviceId !== 1) {
@@ -2051,6 +2052,8 @@ export async function startApp(): Promise<void> {
 
       void routineProfileRefresher.start();
     }
+
+    drop(usernameIntegrity.start());
   }
 
   let initialStartupCount = 0;
@@ -2888,9 +2891,7 @@ export async function startApp(): Promise<void> {
     return false;
   }
 
-  async function unlinkAndDisconnect(
-    mode: RemoveAllConfiguration
-  ): Promise<void> {
+  async function unlinkAndDisconnect(): Promise<void> {
     window.Whisper.events.trigger('unauthorized');
 
     log.warn(
@@ -2930,7 +2931,7 @@ export async function startApp(): Promise<void> {
     );
 
     try {
-      log.info(`unlinkAndDisconnect: removing configuration, mode ${mode}`);
+      log.info('unlinkAndDisconnect: removing configuration');
 
       // First, make changes to conversations in memory
       window.getConversations().forEach(conversation => {
@@ -2944,7 +2945,7 @@ export async function startApp(): Promise<void> {
       await window.Signal.Data.getItemById('manifestVersion');
 
       // Finally, conversations in the database, and delete all config tables
-      await window.textsecure.storage.protocol.removeAllConfiguration(mode);
+      await window.textsecure.storage.protocol.removeAllConfiguration();
 
       // These three bits of data are important to ensure that the app loads up
       //   the conversation list, instead of showing just the QR code screen.
@@ -2997,7 +2998,7 @@ export async function startApp(): Promise<void> {
       error instanceof HTTPError &&
       (error.code === 401 || error.code === 403)
     ) {
-      void unlinkAndDisconnect(RemoveAllConfiguration.Full);
+      void unlinkAndDisconnect();
       return;
     }
 

@@ -558,6 +558,60 @@ $message-padding-horizontal: 12px;
   }
 }
 
+.module-message__attachment-too-big {
+  user-select: none;
+
+  margin-inline: -$message-padding-horizontal;
+  margin-top: -$message-padding-vertical;
+  margin-bottom: -$message-padding-vertical;
+  padding-top: $message-padding-vertical;
+  padding-bottom: $message-padding-vertical;
+  padding-inline: $message-padding-horizontal;
+
+  border-radius: 18px;
+
+  @include font-body-1-italic;
+
+  @include light-theme {
+    color: $color-gray-90;
+    border: 1px solid $color-gray-05;
+    background-color: $color-white;
+    background-image: none;
+  }
+
+  @include dark-theme {
+    color: $color-gray-05;
+    border: 1px solid $color-gray-75;
+    background-color: $color-gray-95;
+    background-image: none;
+  }
+}
+
+.module-message__attachment-too-big--content-above {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+.module-message__attachment-too-big--content-below {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+
+  border-bottom: none;
+  margin-bottom: 7px;
+}
+
+.module-message__attachment-too-big--collapse-above--incoming {
+  border-top-left-radius: 4px;
+}
+.module-message__attachment-too-big--collapse-above--outgoing {
+  border-top-right-radius: 4px;
+}
+.module-message__attachment-too-big--collapse-below--incoming {
+  border-bottom-left-radius: 4px;
+}
+.module-message__attachment-too-big--collapse-below--outgoing {
+  border-bottom-right-radius: 4px;
+}
+
 .module-message__tap-to-view {
   margin-top: 2px;
   display: flex;
@@ -1165,7 +1219,7 @@ $message-padding-horizontal: 12px;
   pointer-events: none;
 }
 
-.module-message__metadata--deleted-for-everyone {
+.module-message__metadata--outline-only-bubble {
   @include light-theme {
     color: $color-gray-60;
   }
@@ -1207,7 +1261,7 @@ $message-padding-horizontal: 12px;
     color: $color-white-alpha-80;
   }
 }
-.module-message__metadata__date--deleted-for-everyone {
+.module-message__metadata__date--outline-only-bubble {
   @include light-theme {
     color: $color-gray-60;
   }
@@ -1319,7 +1373,7 @@ $message-padding-horizontal: 12px;
   }
 }
 
-.module-message__metadata__status-icon--deleted-for-everyone {
+.module-message__metadata__status-icon--outline-only-bubble {
   @include light-theme {
     background-color: $color-gray-60;
   }
@@ -1916,7 +1970,7 @@ $timer-icons: '55', '50', '45', '40', '35', '30', '25', '20', '15', '10', '05',
   }
 }
 
-.module-expire-timer--deleted-for-everyone {
+.module-expire-timer--outline-only-bubble {
   @include light-theme {
     background-color: $color-gray-60;
   }
@@ -2662,7 +2716,7 @@ button.ConversationDetails__action-button {
 
 .module-image__border-overlay--with-border {
   @include light-theme {
-    box-shadow: inset 0px 0px 0px 1px $color-black-alpha-20;
+    box-shadow: inset 0px 0px 0px 1px $color-black-alpha-085;
   }
   @include dark-theme {
     box-shadow: inset 0px 0px 0px 1px $color-white-alpha-20;
@@ -3545,28 +3599,11 @@ button.module-image__border-overlay:focus {
     height: var(--window-height);
     justify-content: center;
     position: fixed;
+    /* stylelint-disable-next-line liberty/use-logical-spec */
+    left: 0;
+    top: 0;
     width: 100%;
     z-index: $z-index-calling;
-  }
-
-  &__header {
-    color: #ffffff;
-    font-style: normal;
-    padding-bottom: 24px;
-    padding-top: calc(24px + var(--title-bar-drag-area-height));
-    text-align: center;
-    @include calling-text-shadow;
-    width: 100%;
-
-    &--header-name {
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: -0.009em;
-      line-height: 21px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
   }
 
   &__background {
@@ -3587,32 +3624,51 @@ button.module-image__border-overlay:focus {
       height: 100%;
       position: absolute;
       width: 100%;
+      // Improve appearance of blurred edges by reducing edge gradient effect
+      transform: scale(1.2, 1.2);
     }
   }
 
   &__camera-is-off {
     @include calling-text-shadow;
-    @include font-body-1;
+    align-items: center;
     color: $color-white;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    flex-grow: 1;
+    font-size: 15px;
+    line-height: 20px;
+    margin-block-start: 15px;
+    margin-block-end: 15px;
+    justify-content: center;
+    text-align: center;
+    transition: opacity 100ms ease-out;
+    user-select: none;
     z-index: $z-index-base;
-    margin-top: 10px;
-
-    // To match the icon height in ::before
-    line-height: 24px;
 
     &::before {
       content: '';
       display: block;
-      background-image: url('../images/icons/v3/video/video-slash-fill-white.svg');
-      background-size: 100%;
-      -webkit-filter: drop-shadow(0 0 4px $color-black-alpha-40);
-      height: 20px;
-      margin-inline-end: 10px;
-      width: 20px;
+      background-color: $color-white;
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      -webkit-mask-size: 100%;
+      -webkit-mask-image: url('../images/icons/v3/video/video-slash-light.svg');
+      height: 24px;
+      width: 24px;
+      margin-block-end: 12px;
     }
   }
+
+  &__camera-is-off-spacer {
+    flex-basis: 120px;
+  }
+}
+
+.module-calling__spacer {
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 1;
 }
 
 @keyframes module-ongoing-call__controls--fade-in {
@@ -3632,9 +3688,33 @@ button.module-image__border-overlay:focus {
     opacity: 0;
   }
 }
+@mixin module-ongoing-call__controls--fade-in {
+  animation: {
+    name: module-ongoing-call__controls--fade-in;
+    duration: 1200ms;
+    timing-function: $ease-out-expo;
+    fill-mode: forwards;
+  }
+}
 
+@mixin module-ongoing-call__controls--fade-out {
+  animation: {
+    name: module-ongoing-call__controls--fade-out;
+    duration: 1200ms;
+    timing-function: $ease-out-expo;
+    fill-mode: forwards;
+  }
+  pointer-events: none;
+}
+
+.module-ongoing-call__container--hide-controls {
+  .module-ongoing-call__prev-page,
+  .module-ongoing-call__next-page {
+    @include module-ongoing-call__controls--fade-out;
+  }
+}
 .module-ongoing-call {
-  $local-preview-width: 107px;
+  $local-preview-width: 108px;
   $local-preview-height: 80px;
 
   &__remote-video-enabled {
@@ -3657,30 +3737,51 @@ button.module-image__border-overlay:focus {
 
   &__container {
     &--direct:not(&--call-not-started) {
-      .module-ongoing-call__header {
-        position: absolute;
-      }
       .module-ongoing-call__footer {
         position: absolute;
       }
     }
   }
 
-  &__header {
-    background: linear-gradient($color-black-alpha-40, transparent);
-    top: 0;
-    width: 100%;
-    z-index: $z-index-above-base;
-    padding-bottom: 1rem;
-    -webkit-app-region: drag;
+  &__next-page,
+  &__prev-page {
+    @include button-reset;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 32px;
+    width: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background-color: $color-gray-78;
+    z-index: $z-index-above-above-base;
+
+    &--arrow {
+      width: 20px;
+      height: 20px;
+    }
   }
 
-  &__header-message {
-    font-weight: normal;
-    font-size: 13px;
-    font-variant: tabular-nums;
-    line-height: 18px;
-    letter-spacing: -0.0025em;
+  &__next-page {
+    inset-inline-end: 4px;
+    &--arrow {
+      @include color-svg(
+        '../images/icons/v3/chevron/chevron-right.svg',
+        $color-white
+      );
+    }
+  }
+
+  &__prev-page {
+    inset-inline-start: 4px;
+    &--arrow {
+      @include color-svg(
+        '../images/icons/v3/chevron/chevron-left.svg',
+        $color-white
+      );
+    }
   }
 
   &__direct-call-ringing-spacer {
@@ -3691,6 +3792,17 @@ button.module-image__border-overlay:focus {
     display: flex;
     flex: 1 1 0;
     width: 100%;
+    margin-block-start: 24px;
+    z-index: $z-index-above-base;
+    -webkit-app-region: no-drag;
+
+    &__grid--wrapper {
+      margin-block-start: 26px;
+      margin-block-end: 16px;
+      margin-inline: 16px;
+      display: flex;
+      width: 100%;
+    }
 
     &__grid {
       flex-grow: 1;
@@ -3700,7 +3812,7 @@ button.module-image__border-overlay:focus {
     &__overflow {
       flex: 0 0 auto;
       position: relative;
-      margin-inline: 16px;
+      margin-inline-end: 16px;
 
       &__inner {
         position: absolute;
@@ -3744,7 +3856,7 @@ button.module-image__border-overlay:focus {
           &::before {
             @include color-svg(
               '../images/icons/v3/chevron/chevron-down.svg',
-              $color-white
+              $color-gray-15
             );
 
             content: '';
@@ -3753,17 +3865,16 @@ button.module-image__border-overlay:focus {
             width: 100%;
           }
 
-          background: $color-gray-60;
+          background: $color-gray-78;
           border-radius: 100%;
           border: 0;
-          box-shadow: 0 0 5px rgba($color-gray-95, 0.5);
-          height: 28px;
-          margin-block: 12px;
+          height: 24px;
+          padding-inline: 4px;
           margin-inline: 0;
           opacity: 0;
           outline: none;
           transition: opacity 200ms ease-out;
-          width: 28px;
+          width: 24px;
         }
 
         &--top {
@@ -3775,6 +3886,7 @@ button.module-image__border-overlay:focus {
           );
 
           #{$scroll-marker-selector}__button {
+            margin-block-start: 60px;
             transform: rotate(180deg);
           }
         }
@@ -3787,12 +3899,44 @@ button.module-image__border-overlay:focus {
             transparent 20px,
             transparent
           );
+
+          #{$scroll-marker-selector}__button {
+            margin-block-end: 16px;
+          }
         }
       }
 
       &:hover &__scroll-marker__button {
         opacity: 1;
       }
+    }
+  }
+
+  &__group-call--pagination-tile {
+    @include button-reset;
+    position: absolute;
+    border-radius: 10px;
+    background-color: $color-gray-78;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    @include font-body-1;
+    color: $color-gray-20;
+    &--next-arrow {
+      @include color-svg(
+        '../images/icons/v3/chevron/chevron-right.svg',
+        $color-gray-20
+      );
+      height: 16px;
+      width: 16px;
+    }
+    &--prev-arrow {
+      @include color-svg(
+        '../images/icons/v3/chevron/chevron-left.svg',
+        $color-gray-20
+      );
+      height: 16px;
+      width: 16px;
     }
   }
 
@@ -3804,9 +3948,8 @@ button.module-image__border-overlay:focus {
     line-height: 0;
     overflow: hidden;
     border-radius: 10px;
-    // stylelint-disable-next-line declaration-property-value-disallowed-list
-    transform: translate(0, 0);
-    transition: transform 200ms linear, width 200ms linear, height 200ms linear;
+    transition: top 200ms linear, inset-inline-start 200ms linear,
+      transform 200ms linear, width 200ms linear, height 200ms linear;
 
     &:after {
       content: '';
@@ -3864,27 +4007,27 @@ button.module-image__border-overlay:focus {
     }
 
     &__info {
-      @include font-caption;
       align-items: flex-end;
       bottom: 0;
       display: flex;
-      height: 48px;
-      justify-content: space-between;
-      padding: 6px;
       position: absolute;
+      height: 60px;
+      justify-content: space-between;
+      padding-block: 0 16px;
+      padding-inline: 16px;
       user-select: none;
       width: 100%;
       z-index: $z-index-above-base;
 
       &__contact-name {
-        font-size: 12px;
+        font-size: 13px;
+        line-height: 18px;
         color: $color-white;
         margin-inline-end: 20px;
         overflow: hidden;
         text-overflow: ellipsis;
         visibility: hidden;
         white-space: nowrap;
-        margin-bottom: 2px;
       }
     }
 
@@ -3925,7 +4068,6 @@ button.module-image__border-overlay:focus {
   }
 
   &__footer {
-    background: linear-gradient(transparent, $color-black-alpha-40);
     bottom: 0;
     display: flex;
     justify-content: space-between;
@@ -3939,24 +4081,20 @@ button.module-image__border-overlay:focus {
       justify-content: center;
     }
 
-    // This layout-only element is not ideal, but lets us keep the actions centered until
-    //   until they'd overlap with the video, at which point they start to move.
-    &__local-preview-offset {
-      flex: 1 0;
-      max-width: $local-preview-width;
-      margin-inline-start: 16px;
-      visibility: hidden;
-    }
-
     &__local-preview {
       border-radius: 10px;
       display: flex;
+      flex-shrink: 0;
       height: $local-preview-height;
       margin-block-end: 16px;
       margin-inline: 0 16px;
       overflow: hidden;
       position: relative;
       width: $local-preview-width;
+
+      &--active {
+        box-shadow: 0px 4px 14px 0px $color-black-alpha-40;
+      }
 
       &__video {
         // The background-color is seen while the video loads.
@@ -3969,48 +4107,35 @@ button.module-image__border-overlay:focus {
           transform: inherit;
         }
       }
-
-      .CallingAudioIndicator {
-        bottom: 6px;
-        position: absolute;
-        inset-inline-end: 6px;
-        z-index: $z-index-base;
-      }
     }
   }
 
   &__controls--fadeIn {
-    animation: {
-      name: module-ongoing-call__controls--fade-in;
-      duration: 400ms;
-      timing-function: $ease-out-expo;
-      fill-mode: forwards;
-    }
+    @include module-ongoing-call__controls--fade-in;
   }
 
   &__controls--fadeOut {
-    animation: {
-      name: module-ongoing-call__controls--fade-out;
-      duration: 1200ms;
-      timing-function: $ease-out-expo;
-      fill-mode: forwards;
-    }
+    @include module-ongoing-call__controls--fade-out;
   }
 }
 
 .module-calling-tools {
-  display: flex;
-  justify-content: flex-end;
   position: absolute;
-  top: calc(24px + var(--title-bar-drag-area-height));
-  width: 100%;
+  top: calc(32px + var(--title-bar-drag-area-height));
+  inset-inline-end: 0;
+  z-index: $z-index-above-above-base;
+  display: flex;
 
   &__button {
-    margin-inline-end: 16px;
+    margin-inline-end: 12px;
   }
 
   &__button:last-child {
     margin-inline-end: 24px;
+  }
+  .ContextMenu__container {
+    background: none;
+    text-wrap: nowrap;
   }
 }
 
@@ -5285,6 +5410,12 @@ button.module-image__border-overlay:focus {
   overflow-y: overlay;
   display: flex;
   flex-direction: column;
+
+  // Unset this for buttons in the timeline so that it doesn't prevent the higher z-index
+  // ConversationHeader from being draggable
+  button {
+    -webkit-app-region: initial;
+  }
 }
 
 .module-timeline__messages {

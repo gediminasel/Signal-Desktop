@@ -44,12 +44,10 @@ import { consoleLogger } from '../util/consoleLogger';
 import { dropNull } from '../util/dropNull';
 import { isNormalNumber } from '../util/isNormalNumber';
 import { isNotNil } from '../util/isNotNil';
-import { missingCaseError } from '../util/missingCaseError';
 import { parseIntOrThrow } from '../util/parseIntOrThrow';
 import * as durations from '../util/durations';
 import { formatCountForLogging } from '../logging/formatCountForLogging';
 import type { ConversationColorType, CustomColorType } from '../types/Colors';
-import { RemoveAllConfiguration } from '../types/RemoveAllConfiguration';
 import type { BadgeType, BadgeImageType } from '../badges/types';
 import { parseBadgeCategory } from '../badges/BadgeCategory';
 import { parseBadgeImageTheme } from '../badges/BadgeImageTheme';
@@ -578,7 +576,6 @@ SQL.setLogHandler((code, value) => {
 });
 
 async function initialize({
-  appVersion,
   configDir,
   key,
   logger: suppliedLogger,
@@ -620,7 +617,7 @@ async function initialize({
     // For profiling use:
     // db.pragma('cipher_profile=\'sqlcipher.log\'');
 
-    updateSchema(writable, logger, appVersion);
+    updateSchema(writable, logger);
 
     readonly = openAndSetUpSQLCipher(databaseFilePath, { key, readonly: true });
 
@@ -5245,7 +5242,16 @@ async function getAllBadgeImageFileLocalPaths(): Promise<Set<string>> {
 }
 
 function runCorruptionChecks(): void {
-  const db = getUnsafeWritableInstance('integrity check');
+  let db: Database;
+  try {
+    db = getUnsafeWritableInstance('integrity check');
+  } catch (error) {
+    logger.error(
+      'runCorruptionChecks: not running the check, no writable instance',
+      Errors.toLogFormat(error)
+    );
+    return;
+  }
   try {
     const result = db.pragma('integrity_check');
     if (result.length === 1 && result.at(0)?.integrity_check === 'ok') {
@@ -5709,9 +5715,7 @@ async function removeAll(): Promise<void> {
 }
 
 // Anything that isn't user-visible data
-async function removeAllConfiguration(
-  mode = RemoveAllConfiguration.Full
-): Promise<void> {
+async function removeAllConfiguration(): Promise<void> {
   const db = await getWritableInstance();
 
   db.transaction(() => {
@@ -5731,26 +5735,16 @@ async function removeAllConfiguration(
       `
     );
 
-    if (mode === RemoveAllConfiguration.Full) {
-      db.exec(
-        `
-        DELETE FROM items;
-        `
-      );
-    } else if (mode === RemoveAllConfiguration.Soft) {
-      const itemIds: ReadonlyArray<string> = db
-        .prepare<EmptyQuery>('SELECT id FROM items')
-        .pluck(true)
-        .all();
+    const itemIds: ReadonlyArray<string> = db
+      .prepare<EmptyQuery>('SELECT id FROM items')
+      .pluck(true)
+      .all();
 
-      const allowedSet = new Set<string>(STORAGE_UI_KEYS);
-      for (const id of itemIds) {
-        if (!allowedSet.has(id)) {
-          removeById(db, 'items', id);
-        }
+    const allowedSet = new Set<string>(STORAGE_UI_KEYS);
+    for (const id of itemIds) {
+      if (!allowedSet.has(id)) {
+        removeById(db, 'items', id);
       }
-    } else {
-      throw missingCaseError(mode);
     }
 
     db.exec(

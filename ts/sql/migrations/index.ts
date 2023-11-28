@@ -6,7 +6,6 @@ import { keyBy } from 'lodash';
 import { v4 as generateUuid } from 'uuid';
 
 import type { LoggerType } from '../../types/Logging';
-import { isProduction } from '../../util/version';
 import {
   getSchemaVersion,
   getUserVersion,
@@ -72,10 +71,11 @@ import { updateToSchemaVersion920 } from './920-clean-more-keys';
 import { updateToSchemaVersion930 } from './930-fts5-secure-delete';
 import { updateToSchemaVersion940 } from './940-fts5-revert';
 import { updateToSchemaVersion950 } from './950-fts5-secure-delete';
+import { updateToSchemaVersion960 } from './960-untag-pni';
 import {
   version as MAX_VERSION,
-  updateToSchemaVersion960,
-} from './960-untag-pni';
+  updateToSchemaVersion970,
+} from './970-fts5-optimize';
 
 function updateToSchemaVersion1(
   currentVersion: number,
@@ -2014,17 +2014,14 @@ export const SCHEMA_VERSIONS = [
   updateToSchemaVersion940,
   updateToSchemaVersion950,
   updateToSchemaVersion960,
+  updateToSchemaVersion970,
 ];
 
 export class DBVersionFromFutureError extends Error {
   override name = 'DBVersionFromFutureError';
 }
 
-export function lazyFTS5SecureDelete(
-  db: Database,
-  logger: LoggerType,
-  enabled: boolean
-): void {
+export function enableFTS5SecureDelete(db: Database, logger: LoggerType): void {
   const isEnabled =
     db
       .prepare(
@@ -2035,23 +2032,8 @@ export function lazyFTS5SecureDelete(
       .pluck()
       .get() === 1;
 
-  if (isEnabled && !enabled) {
-    logger.info('lazyFTS5SecureDelete: disabling, rebuilding fts5 index');
-    db.exec(`
-      -- Disable secure-delete
-      INSERT INTO messages_fts
-      (messages_fts, rank)
-      VALUES
-      ('secure-delete', 0);
-
-      --- Rebuild the index to fix the corruption
-      INSERT INTO messages_fts
-      (messages_fts)
-      VALUES
-      ('rebuild');
-    `);
-  } else if (!isEnabled && enabled) {
-    logger.info('lazyFTS5SecureDelete: enabling');
+  if (!isEnabled) {
+    logger.info('enableFTS5SecureDelete: enabling');
     db.exec(`
       -- Enable secure-delete
       INSERT INTO messages_fts
@@ -2062,11 +2044,7 @@ export function lazyFTS5SecureDelete(
   }
 }
 
-export function updateSchema(
-  db: Database,
-  logger: LoggerType,
-  appVersion: string
-): void {
+export function updateSchema(db: Database, logger: LoggerType): void {
   const sqliteVersion = getSQLiteVersion(db);
   const sqlcipherVersion = getSQLCipherVersion(db);
   const startingVersion = getUserVersion(db);
@@ -2094,7 +2072,7 @@ export function updateSchema(
     runSchemaUpdate(startingVersion, db, logger);
   }
 
-  lazyFTS5SecureDelete(db, logger, !isProduction(appVersion));
+  enableFTS5SecureDelete(db, logger);
 
   if (startingVersion !== MAX_VERSION) {
     const start = Date.now();

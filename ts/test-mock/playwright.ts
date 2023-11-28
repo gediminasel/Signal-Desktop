@@ -81,6 +81,10 @@ export class App extends EventEmitter {
     return this.waitForEvent('provisioning-url');
   }
 
+  public async waitForDbInitialized(): Promise<void> {
+    return this.waitForEvent('db-initialized');
+  }
+
   public async waitUntilLoaded(): Promise<AppLoadedInfoType> {
     return this.waitForEvent('app-loaded');
   }
@@ -130,6 +134,13 @@ export class App extends EventEmitter {
 
   public async getWindow(): Promise<Page> {
     return this.app.firstWindow();
+  }
+
+  public async openSignalRoute(url: URL | string): Promise<void> {
+    const window = await this.getWindow();
+    await window.evaluate(
+      `window.SignalCI.openSignalRoute(${JSON.stringify(url.toString())})`
+    );
   }
 
   // EventEmitter types

@@ -113,7 +113,7 @@
     "description": "Title of a popup if the database cannot start up properly"
   },
   "icu:databaseError__detail": {
-    "messageformat": "Tapahtui tietokantavirhe. Voit kopioida virheen tiedot ja ottaa yhteyttä Signal-tukeen ongelman korjaamiseksi. Jos sinun on käytettävä Signalia heti, voit poistaa Signalin tiedot ja käynnistää ohjelman uudelleen.\n\nOta yhteyttä tukeen osoitteessa: https://support.signal.org/hc/requests/new?desktop",
+    "messageformat": "A database error occurred. You can copy the error and contact Signal support to help fix the issue. If you need to use Signal right away, you can delete your data and restart.\n\nContact support by visiting: {link}",
     "description": "Description shown in a popup if the database cannot start up properly"
   },
   "icu:deleteAndRestart": {
@@ -316,6 +316,22 @@
     "messageformat": "Keskustelut",
     "description": "Shown as a header for non-pinned conversations in the left pane"
   },
+  "icu:LeftPane--corrupted-username--text": {
+    "messageformat": "Jokin meni vikaan käyttäjänimessä. Se ei ole enää liitetty tiliisi. Voit yrittää asettaa sen uudelleen tai valita uuden käyttäjänimen.",
+    "description": "Text of corrupted username banner in the left pane"
+  },
+  "icu:LeftPane--corrupted-username--action-text": {
+    "messageformat": "Korjaa nyt",
+    "description": "Text of the button in the corrupted username banner in the left pane"
+  },
+  "icu:LeftPane--corrupted-username-link--text": {
+    "messageformat": "Jokin meni vikaan käyttäjänimesi QR-koodissa ja linkissä. Linkki ei ole enää kelvollinen. Luo uusi linkki, jonka voit jakaa muille.",
+    "description": "Text of corrupted username link banner in the left pane"
+  },
+  "icu:LeftPane--corrupted-username-link--action-text": {
+    "messageformat": "Korjaa nyt",
+    "description": "Text of the button in the corrupted username link banner in the left pane"
+  },
   "icu:NavTabsToggle__showTabs": {
     "messageformat": "Näytä välilehdet",
     "description": "Show in the left pane when the nav tabs are hidden, shows the nav tabs"
@@ -335,6 +351,18 @@
   "icu:NavTabs__ItemIconLabel--MarkedUnread": {
     "messageformat": "Merkitty lukemattomaksi",
     "description": "Nav Tabs > Unread badge > when conversation is marked unread > Accessibility Text"
+  },
+  "icu:NavTabs__ItemLabel--Chats": {
+    "messageformat": "Keskustelut",
+    "description": "Nav Tabs > Chats Button > Label & Accessibility Text"
+  },
+  "icu:NavTabs__ItemLabel--Calls": {
+    "messageformat": "Puhelut",
+    "description": "Nav Tabs > Calls Button > Label & Accessibility Text"
+  },
+  "icu:NavTabs__ItemLabel--Stories": {
+    "messageformat": "Tarinat",
+    "description": "Nav Tabs > Stories Button > Label & Accessibility Text"
   },
   "icu:NavTabs__ItemLabel--Settings": {
     "messageformat": "Asetukset",
@@ -693,23 +721,23 @@
   },
   "icu:SafetyNumberViewer__migration__text": {
     "messageformat": "Turvanumeroita päivitetään.",
-    "description": "An explanatory note in SafetyNumberViewer describing the safety number migration process."
+    "description": "(Deleted 11/01/2023) An explanatory note in SafetyNumberViewer describing the safety number migration process."
   },
   "icu:SafetyNumberViewer__migration__learn_more": {
     "messageformat": "Lue lisää",
-    "description": "A link text in SafetyNumberViewer describing the safety number migration process."
+    "description": "(Deleted 11/01/2023) A link text in SafetyNumberViewer describing the safety number migration process."
   },
   "icu:SafetyNumberViewer__card__prev": {
     "messageformat": "Edellinen turvanumero",
-    "description": "An ARIA label for safety number navigation button."
+    "description": "(Deleted 11/01/2023) An ARIA label for safety number navigation button."
   },
   "icu:SafetyNumberViewer__card__next": {
     "messageformat": "Seuraava turvanumero",
-    "description": "An ARIA label for safety number navigation button."
+    "description": "(Deleted 11/01/2023) An ARIA label for safety number navigation button."
   },
   "icu:SafetyNumberViewer__carousel__dot": {
     "messageformat": "Turvanumeroversio, {index,number}/{total,number}",
-    "description": "An ARIA label for safety number carousel button."
+    "description": "(Deleted 11/01/2023) An ARIA label for safety number carousel button."
   },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "Merkitse vahvistetuksi",
@@ -719,33 +747,41 @@
     "messageformat": "Poista varmennus",
     "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
   },
+  "icu:SafetyNumberViewer__hint": {
+    "messageformat": "Varmenna päästä päähän -salaus henkilön {name} kanssa vertaamalla yllä olevia numeroita hänen laitteeseensa. Henkilö voi myös skannata koodisi laitteellaan.",
+    "description": "Safety number viewer, text of the hint"
+  },
+  "icu:SafetyNumberViewer__learn_more": {
+    "messageformat": "Lue lisää",
+    "description": "Text of 'Learn more' button of SafetyNumberViewerModal modal"
+  },
   "icu:SafetyNumberViewer__hint--migration": {
     "messageformat": "Varmenna päästä päähän -salaus henkilön {name} kanssa vertaamalla, että numero yllä olevassa värikortissa vastaa hänen laitettaan. Jos numerot eivät vastaa, kokeile toista turvanumeroparia. Vain yhden parin on vastattava.",
-    "description": "Safety number viewer, text of the hint during migration period"
+    "description": "(Deleted 11/01/2023). Safety number viewer, text of the hint during migration period"
   },
   "icu:SafetyNumberViewer__hint--normal": {
     "messageformat": "Varmenna päästä päähän -salaus henkilön {name} kanssa vertaamalla yllä olevia numeroita hänen laitteeseensa. Henkilö voi myös skannata koodisi laitteellaan.",
-    "description": "Safety number viewer, text of the hint after migration period"
+    "description": "(Deleted 11/01/2023). Safety number viewer, text of the hint after migration period"
   },
   "icu:SafetyNumberOnboarding__title": {
     "messageformat": "Muutoksia turvanumeroihin",
-    "description": "Title of Safety number onboarding modal"
+    "description": "(Deleted 11/01/2023) Title of Safety number onboarding modal"
   },
   "icu:SafetyNumberOnboarding__p1": {
     "messageformat": "Turvanumeroita päivitetään siirtymäkauden aikana, jotta Signalin tulevat yksityisyysominaisuudet voidaan ottaa käyttöön.",
-    "description": "Paragraph 1 of Safety number onboarding modal"
+    "description": "(Deleted 11/01/2023) Paragraph 1 of Safety number onboarding modal"
   },
   "icu:SafetyNumberOnboarding__p2": {
     "messageformat": "Tarkista turvanumerot varmistamalla, että värikortin numero vastaa yhteystietosi laitetta. Jos numerot eivät vastaa, kokeile toista turvanumeroparia. Vain yhden parin on vastattava.",
-    "description": "Paragraph 2 of Safety number onboarding modal"
+    "description": "(Deleted 11/01/2023) Paragraph 2 of Safety number onboarding modal"
   },
   "icu:SafetyNumberOnboarding__help": {
     "messageformat": "Tarvitsetko apua?",
-    "description": "Text of a secondary button in Safety number onboarding modal"
+    "description": "(Deleted 11/01/2023) Text of a secondary button in Safety number onboarding modal"
   },
   "icu:SafetyNumberOnboarding__close": {
     "messageformat": "Selvä",
-    "description": "Text of a secondary button in Safety number onboarding modal"
+    "description": "(Deleted 11/01/2023) Text of a secondary button in Safety number onboarding modal"
   },
   "icu:SafetyNumberNotReady__body": {
     "messageformat": "Tälle henkilölle luodaan turvanumero, kun olet vaihtanut viestejä hänen kanssaan.",
@@ -1388,15 +1424,27 @@
   },
   "icu:deleteMessages": {
     "messageformat": "Poista",
-    "description": "Menu item for deleting messages, title case."
+    "description": "(deleted 2023/10/26) Menu item for deleting messages, title case."
+  },
+  "icu:deleteMessagesInConversation": {
+    "messageformat": "Poista viestit",
+    "description": "Menu item for deleting all messages in a conversation from your device"
   },
   "icu:ConversationHeader__DeleteMessagesConfirmation__title": {
     "messageformat": "Poistetaanko keskustelu?",
-    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+    "description": "(deleted 2023/10/26) Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
+    "messageformat": "Poistetaanko viesti?",
+    "description": "Title for confirmation modal to delete all messages in a conversation"
   },
   "icu:ConversationHeader__DeleteMessagesConfirmation__description": {
     "messageformat": "Tämä keskustelu poistetaan tältä laitteelta.",
-    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+    "description": "(deleted 2023/10/26) Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
+    "messageformat": "Tämän keskustelun viestit poistetaan tästä laitteesta. Voit edelleen etsiä tätä keskustelua viestien poistamisen jälkeen.",
+    "description": "Description for confirmation modal to delete all messages in a conversation"
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Poistu ryhmästä",
@@ -1489,6 +1537,14 @@
   "icu:ConversationMerge--explainer-dialog--line-2": {
     "messageformat": "Molempien keskusteluiden viestihistoria on yhdistetty tähän.",
     "description": "Contents of a dialog shown after clicking 'learn more' button on a conversation merge event."
+  },
+  "icu:PhoneNumberDiscovery--notification--withSharedGroup": {
+    "messageformat": "{phoneNumber} kuuluu keskusteluun {conversationTitle}. Olette molemmat ryhmän {sharedGroup} jäseniä.",
+    "description": "Shown when we've discovered a phone number for a contact you've been communicating with."
+  },
+  "icu:PhoneNumberDiscovery--notification--noSharedGroup": {
+    "messageformat": "{phoneNumber} kuuluu keskusteluun {conversationTitle}",
+    "description": "Shown when we've discovered a phone number for a contact you've been communicating with, but you have no shared groups."
   },
   "icu:quoteThumbnailAlt": {
     "messageformat": "Lainatun kuvaviestin pikkukuva",
@@ -1637,10 +1693,6 @@
     "messageformat": "Soita uudelleen",
     "description": "Button to call someone again"
   },
-  "icu:calling__start": {
-    "messageformat": "Aloita puhelu",
-    "description": "Button label in the call lobby for starting a call"
-  },
   "icu:calling__join": {
     "messageformat": "Liity puheluun",
     "description": "Button label in the call lobby for joining a call"
@@ -1653,13 +1705,25 @@
     "messageformat": "Mikrofonisi on mykistetty, koska puhelussa on paljon osanottajia",
     "description": "Shown in a call lobby toast if there are a lot of people already on the call"
   },
+  "icu:calling__toasts--aria-label": {
+    "messageformat": "Puheluilmoitukset",
+    "description": "Aria label for region of toasts shown during a call (for, e.g. reconnecting, person joined, audio device changed notifications)"
+  },
   "icu:calling__call-is-full": {
     "messageformat": "Puhelu on täynnä",
     "description": "Text in the call lobby when you can't join because the call is full"
   },
-  "icu:calling__button--video__label": {
-    "messageformat": "Kamera",
-    "description": "Label under the video button"
+  "icu:CallingLobbyJoinButton--join": {
+    "messageformat": "Liity",
+    "description": "Button label in the call lobby for joining a call"
+  },
+  "icu:CallingLobbyJoinButton--start": {
+    "messageformat": "Aloita",
+    "description": "Button label in the call lobby for starting a call"
+  },
+  "icu:CallingLobbyJoinButton--call-full": {
+    "messageformat": "Puhelu täynnä",
+    "description": "Button in the call lobby when you can't join because the call is full"
   },
   "icu:calling__button--video-disabled": {
     "messageformat": "Kamera poistettu käytöstä",
@@ -1673,10 +1737,6 @@
     "messageformat": "Käynnistä kamera",
     "description": "Button tooltip label for turning on the camera"
   },
-  "icu:calling__button--audio__label": {
-    "messageformat": "Mykistä",
-    "description": "Label under the audio button"
-  },
   "icu:calling__button--audio-disabled": {
     "messageformat": "Mikrofoni poistettu käytöstä",
     "description": "Button tooltip label when the microphone is disabled"
@@ -1688,10 +1748,6 @@
   "icu:calling__button--audio-on": {
     "messageformat": "Poista mikrofonin mykistys",
     "description": "Button tooltip label for turning on the microphone"
-  },
-  "icu:calling__button--presenting__label": {
-    "messageformat": "Jaa",
-    "description": "Label under the share screen button"
   },
   "icu:calling__button--presenting-disabled": {
     "messageformat": "Esitys estetty",
@@ -1705,10 +1761,6 @@
     "messageformat": "Lopeta esitys",
     "description": "Button tooltip label for stopping screen sharing"
   },
-  "icu:calling__button--ring__label": {
-    "messageformat": "Soita",
-    "description": "Label under the ring button"
-  },
   "icu:calling__button--ring__disabled-because-group-is-too-large": {
     "messageformat": "Ryhmä on liian suuri soittaaksesi osallistujille.",
     "description": "Button tooltip label when you can't ring because the group is too large"
@@ -1719,6 +1771,14 @@
   },
   "icu:calling__button--ring__on": {
     "messageformat": "Salli soittaminen",
+    "description": "Button tooltip label for turning ringing on"
+  },
+  "icu:CallingButton__ring-off": {
+    "messageformat": "Laita soittoääni pois päältä",
+    "description": "Button tooltip label for turning ringing off"
+  },
+  "icu:CallingButton--ring-on": {
+    "messageformat": "Laita soittoääni päälle",
     "description": "Button tooltip label for turning ringing on"
   },
   "icu:calling__your-video-is-off": {
@@ -2293,6 +2353,10 @@
   },
   "icu:ToastManager__CannotEditMessage": {
     "messageformat": "Muokkauksia voidaan tehdä vain 3 tunnin kuluessa tämän viestin lähettämisestä.",
+    "description": "(deleted 2023/10/26) Error message when you try to send an edit after message becomes too old"
+  },
+  "icu:ToastManager__CannotEditMessage_24": {
+    "messageformat": "Muokkauksia voidaan tehdä vain 24 tunnin kuluessa tämän viestin lähettämisestä.",
     "description": "Error message when you try to send an edit after message becomes too old"
   },
   "icu:startConversation--username-not-found": {
@@ -2535,6 +2599,14 @@
   "icu:message--deletedForEveryone": {
     "messageformat": "Tämä viesti poistettiin.",
     "description": "Shown in a message's bubble when the message has been deleted for everyone."
+  },
+  "icu:message--attachmentTooBig--one": {
+    "messageformat": "Liitetiedosto on liian suuri näytettäväksi.",
+    "description": "Shown in a message bubble if no attachments are left on message when too-large attachments are dropped"
+  },
+  "icu:message--attachmentTooBig--multiple": {
+    "messageformat": "Jotkin liitetiedostot ovat liian suuria näytettäviksi.",
+    "description": "Shown in a message bubble if any attachments are left on message when too-large attachments are dropped"
   },
   "icu:donation--missing": {
     "messageformat": "Lahjoituksen tietoja ei voitu noutaa",
@@ -3496,9 +3568,37 @@
     "messageformat": "Yhdistetään uudelleen…",
     "description": "Shown in the call screen when the call is reconnecting due to network issues"
   },
-  "icu:callDuration": {
-    "messageformat": "Signal {duration}",
-    "description": "Shown in the call screen to indicate how long the call has been connected"
+  "icu:CallControls__InfoDisplay--participants": {
+    "messageformat": "{count, plural, one {{count,number} henkilöä} other {{count,number} henkilöä}}",
+    "description": "Shown in the call screen and lobby for group calls to specify the number of members in the call or in the group. Count is at always at least 1."
+  },
+  "icu:CallControls__InfoDisplay--audio-call": {
+    "messageformat": "Äänipuhelu",
+    "description": "Shown in the call lobby for a direct 1:1 call when the caller's video is disabled, to specify that an audio call will be placed when clicking the Start button."
+  },
+  "icu:CallControls__JoinLeaveButton--hangup-1-1": {
+    "messageformat": "Lopeta",
+    "description": "Title for the hangup button for a direct 1:1 call with only 2 participants."
+  },
+  "icu:CallControls__JoinLeaveButton--hangup-group": {
+    "messageformat": "Poistu",
+    "description": "Title for the hangup button for a group call."
+  },
+  "icu:CallControls__MutedToast--muted": {
+    "messageformat": "Mikrofoni pois päältä",
+    "description": "Shown in a call when the user mutes their audio input using the Mute toggle button."
+  },
+  "icu:CallControls__MutedToast--unmuted": {
+    "messageformat": "Mikrofoni päällä",
+    "description": "Shown in a call when the user is muted and then unmutes their audio input using the Mute toggle button."
+  },
+  "icu:CallControls__RingingToast--ringing-on": {
+    "messageformat": "Soittoääni päällä",
+    "description": "Shown in a group call lobby when call ringing is disabled, then the user enables ringing using the Ringing toggle button."
+  },
+  "icu:CallControls__RingingToast--ringing-off": {
+    "messageformat": "Soittoääni pois päältä",
+    "description": "Shown in a group call lobby when call ringing is enabled, then the user disables ringing using the Ringing toggle button."
   },
   "icu:callingDeviceSelection__settings": {
     "messageformat": "Asetukset",
@@ -3540,13 +3640,25 @@
     "messageformat": "Koko näytön puhelu",
     "description": "Title for picture-in-picture toggle"
   },
-  "icu:calling__switch-view--to-grid": {
-    "messageformat": "Vaihda ruutunäkymään",
-    "description": "Title for grid/speaker view toggle when on a call"
+  "icu:calling__change-view": {
+    "messageformat": "Change view",
+    "description": "Tooltip for changing the in-call layout of remote participants in a group call"
   },
-  "icu:calling__switch-view--to-speaker": {
-    "messageformat": "Vaihda kaiutinnäkymään",
-    "description": "Title for grid/speaker view toggle when on a call"
+  "icu:calling__view_mode--paginated": {
+    "messageformat": "Grid view",
+    "description": "Label for option to view participants in a group call in a paginated grid view"
+  },
+  "icu:calling__view_mode--overflow": {
+    "messageformat": "Sidebar view",
+    "description": "Label for option to view participants in a group call where videos that don't fit onto the page are put into a scrollable overflow sidebar"
+  },
+  "icu:calling__view_mode--speaker": {
+    "messageformat": "Speaker view",
+    "description": "Label for option to view participants where only the current speaker's video is fully visible and all others are put into a scrollable overflow sidebar"
+  },
+  "icu:calling__view_mode--updated": {
+    "messageformat": "View updated",
+    "description": "Toast shown whenver the calling view mode is changed (e.g. paginated view -> speaker view)"
   },
   "icu:calling__hangup": {
     "messageformat": "Poistu puhelusta",
@@ -3647,6 +3759,14 @@
   "icu:Confirmation--confirm": {
     "messageformat": "Selvä",
     "description": "Button to dismiss popup dialog when user-initiated task has gone wrong"
+  },
+  "icu:MessageMaxEditsModal__Title": {
+    "messageformat": "Viestiä ei voi muokata",
+    "description": "Title in popup dialog when attempting to edit a message too many times."
+  },
+  "icu:MessageMaxEditsModal__Description": {
+    "messageformat": "Tähän viestiin voidaan tehdä vain {max,number} muokkausta.",
+    "description": "Description text in popup dialog when attempting to edit a message too many times."
   },
   "icu:unknown-sgnl-link": {
     "messageformat": "Pahoittelut! Tämä sgnl:// -linkki ei toimi.",
@@ -5324,9 +5444,29 @@
     "messageformat": "Käyttäjänimi",
     "description": "Default text for username field"
   },
+  "icu:ProfileEditor--username--corrupted--body": {
+    "messageformat": "Jokin meni vikaan käyttäjänimessä. Se ei ole enää liitetty tiliisi.",
+    "description": "Text of confirmation modal when the username gets corrupted"
+  },
+  "icu:ProfileEditor--username--corrupted--delete-button": {
+    "messageformat": "Poista käyttäjätunnus",
+    "description": "Button text for deletion of the username in case of corruption"
+  },
+  "icu:ProfileEditor--username--corrupted--create-button": {
+    "messageformat": "Luo käyttäjätunnus",
+    "description": "Button text for creation of a new username in case of corruption"
+  },
   "icu:ProfileEditor__username-link": {
     "messageformat": "QR-koodi tai linkki",
     "description": "Label of a profile editor row that navigates to username link and qr code modal"
+  },
+  "icu:ProfileEditor__username__error-icon": {
+    "messageformat": "Käyttäjänimi on nollattava",
+    "description": "Accessibility title of an icon in profile editor"
+  },
+  "icu:ProfileEditor__username-link__error-icon": {
+    "messageformat": "Käyttäjänimen linkki on nollattava",
+    "description": "Accessibility title of an icon in profile editor"
   },
   "icu:ProfileEditor__username-link__tooltip__title": {
     "messageformat": "Jaa käyttäjänimesi",
@@ -5679,6 +5819,42 @@
   "icu:Preferences__turn-stories-off--body": {
     "messageformat": "Et voi enää jakaa tai nähdä tarinoita. Myös viimeksi jakamasi tarinoiden päivitykset poistetaan.",
     "description": "Confirmation modal body for disabling stories"
+  },
+  "icu:Preferences__Language__Label": {
+    "messageformat": "Kieli",
+    "description": "Language setting label"
+  },
+  "icu:Preferences__Language__ModalTitle": {
+    "messageformat": "Kieli",
+    "description": "Language setting modal title"
+  },
+  "icu:Preferences__Language__SystemLanguage": {
+    "messageformat": "Järjestelmän kieli",
+    "description": "Option for system language"
+  },
+  "icu:Preferences__Language__SearchLanguages": {
+    "messageformat": "Hae kieliä",
+    "description": "Placholder for language preference search box"
+  },
+  "icu:Preferences__Language__NoResults": {
+    "messageformat": "Ei tuloksia haulle \"{searchTerm}\"",
+    "description": "When no results are found for language preference search"
+  },
+  "icu:Preferences__LanguageModal__Set": {
+    "messageformat": "Aseta",
+    "description": "Button to set language preference"
+  },
+  "icu:Preferences__LanguageModal__Restart__Title": {
+    "messageformat": "Ota käyttöön käynnistämällä Signal uudelleen",
+    "description": "Title for restart Signal modal to apply language changes"
+  },
+  "icu:Preferences__LanguageModal__Restart__Description": {
+    "messageformat": "Jos haluat vaihtaa kielen, sovellus on käynnistettävä uudelleen.",
+    "description": "Description for restart Signal modal to apply language changes"
+  },
+  "icu:Preferences__LanguageModal__Restart__Button": {
+    "messageformat": "Käynnistä uudelleen",
+    "description": "Button to restart Signal to apply language changes"
   },
   "icu:DialogUpdate--version-available": {
     "messageformat": "Päivitä saatavilla olevaan versioon {version}",
@@ -6616,6 +6792,14 @@
     "messageformat": "Jos nollaat QR-koodin, nykyinen QR-koodisi ja linkkisi eivät enää toimi.",
     "description": "Text of confirmation modal when resetting the username link"
   },
+  "icu:UsernameLinkModalBody__resetting-link": {
+    "messageformat": "Nollataan linkkiä…",
+    "description": "Text shown when resetting the username link"
+  },
+  "icu:UsernameLinkModalBody__error__text": {
+    "messageformat": "QR-koodia ja linkkiä ei ole asetettu. Tarkista verkkoyhteys ja yritä uudelleen.",
+    "description": "Text of the confirmation dialog shown on username link error"
+  },
   "icu:UsernameOnboardingModalBody__title": {
     "messageformat": "Määritä Signal-käyttäjänimesi",
     "description": "Title of username onboarding modal"
@@ -6808,13 +6992,13 @@
     "messageformat": "Pieniä säätöjä, virheenkorjauksia ja suorituskykyparannuksia. Kiitos, että käytät Signalia!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.35--0": {
-    "messageformat": "Virheenkorjauksia ja suorituskyvyn parannuksia."
+  "icu:WhatsNew__v6.38--0": {
+    "messageformat": "Tämä julkaisu sisältää Signalin ääni- ja videopuheluiden päivitetyn designin."
   },
-  "icu:WhatsNew__v6.36--0": {
-    "messageformat": "Päivitimme käyttöliittymää ilmaisemaan paremmin, milloin ryhmävideopuhelu muodostaa yhteyden uudelleen."
+  "icu:WhatsNew__v6.39--0": {
+    "messageformat": "Nyt voit vaihtaa valitsemasi kielen Signalissa ilman, että muutat järjestelmäasetuksia (Signalin asetukset > Ulkoasu > Kieli)."
   },
-  "icu:WhatsNew__v6.36--1": {
-    "messageformat": "Ilmaisinalueen kuvake ei enää näy pikselöitynä Ubuntu Linuxissa."
+  "icu:WhatsNew__v6.39--1": {
+    "messageformat": "Korjasimme lyhyen viiveen, joka esiintyi joskus puhelun aulaan liittymisen jälkeen macOS-laitteilla."
   }
 }

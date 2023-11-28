@@ -14,7 +14,7 @@ import type {
   SetRendererCanvasType,
 } from '../state/ducks/calling';
 import { Avatar, AvatarSize } from './Avatar';
-import { CallingHeader } from './CallingHeader';
+import { CallingHeader, getCallViewIconClassname } from './CallingHeader';
 import { CallingPreCallInfo, RingMode } from './CallingPreCallInfo';
 import { CallingButton, CallingButtonType } from './CallingButton';
 import { Button, ButtonVariant } from './Button';
@@ -35,8 +35,7 @@ import {
 import { AvatarColors } from '../types/Colors';
 import type { ConversationType } from '../state/ducks/conversations';
 import {
-  useMutedToast,
-  useReconnectingToast,
+  CallingButtonToastsContainer,
   useScreenSharingStoppedToast,
 } from './CallingToastManager';
 import { DirectCallRemoteParticipant } from './DirectCallRemoteParticipant';
@@ -46,7 +45,10 @@ import type { LocalizerType } from '../types/Util';
 import { NeedsScreenRecordingPermissionsModal } from './NeedsScreenRecordingPermissionsModal';
 import { missingCaseError } from '../util/missingCaseError';
 import * as KeyboardLayout from '../services/keyboardLayout';
-import { useActivateSpeakerViewOnPresenting } from '../hooks/useActivateSpeakerViewOnPresenting';
+import {
+  usePresenter,
+  useActivateSpeakerViewOnPresenting,
+} from '../hooks/useActivateSpeakerViewOnPresenting';
 import {
   CallingAudioIndicator,
   SPEAKING_LINGER_MS,
@@ -57,6 +59,9 @@ import {
 } from '../hooks/useKeyboardShortcuts';
 import { useValueAtFixedRate } from '../hooks/useValueAtFixedRate';
 import { isReconnecting as callingIsReconnecting } from '../util/callingIsReconnecting';
+import { usePrevious } from '../hooks/usePrevious';
+import { PersistentCallingToast, useCallingToasts } from './CallingToast';
+import { Spinner } from './Spinner';
 
 export type PropsType = {
   activeCall: ActiveCallType;
@@ -83,7 +88,7 @@ export type PropsType = {
   togglePip: () => void;
   toggleScreenRecordingPermissionsDialog: () => unknown;
   toggleSettings: () => void;
-  toggleSpeakerView: () => void;
+  changeCallView: (mode: CallViewMode) => void;
 };
 
 export const isInSpeakerView = (
@@ -123,6 +128,7 @@ function CallDuration({
 
 export function CallScreen({
   activeCall,
+  changeCallView,
   getGroupCallVideoFrameSource,
   getPresentingSources,
   groupMembers,
@@ -143,7 +149,6 @@ export function CallScreen({
   togglePip,
   toggleScreenRecordingPermissionsDialog,
   toggleSettings,
-  toggleSpeakerView,
 }: PropsType): JSX.Element {
   const {
     conversation,
@@ -251,9 +256,8 @@ export function CallScreen({
     };
   }, [toggleAudio, toggleVideo]);
 
-  useMutedToast(hasLocalAudio, i18n);
-  useReconnectingToast({ activeCall, i18n });
   useScreenSharingStoppedToast({ activeCall, i18n });
+  useViewModeChangedToast({ activeCall, i18n });
 
   const currentPresenter = remoteParticipants.find(
     participant => participant.presenting
@@ -268,7 +272,6 @@ export function CallScreen({
 
   let isRinging: boolean;
   let hasCallStarted: boolean;
-  let headerTitle: string | undefined;
   let isConnected: boolean;
   let participantCount: number;
   let remoteParticipantsElement: ReactNode;
@@ -302,23 +305,13 @@ export function CallScreen({
       hasCallStarted = activeCall.joinState !== GroupCallJoinState.NotJoined;
       participantCount = activeCall.remoteParticipants.length + 1;
 
-      if (isRinging) {
-        headerTitle = undefined;
-      } else if (currentPresenter) {
-        headerTitle = i18n('icu:calling__presenting--person-ongoing', {
-          name: currentPresenter.title,
-        });
-      } else if (!activeCall.remoteParticipants.length) {
-        headerTitle = i18n('icu:calling__in-this-call--zero');
-      }
-
       isConnected =
         activeCall.connectionState === GroupCallConnectionState.Connected;
       remoteParticipantsElement = (
         <GroupCallRemoteParticipants
+          callViewMode={activeCall.viewMode}
           getGroupCallVideoFrameSource={getGroupCallVideoFrameSource}
           i18n={i18n}
-          isInSpeakerView={isInSpeakerView(activeCall)}
           remoteParticipants={activeCall.remoteParticipants}
           setGroupCallVideoRequest={setGroupCallVideoRequest}
           remoteAudioLevels={activeCall.remoteAudioLevels}
@@ -348,23 +341,7 @@ export function CallScreen({
           <video ref={localVideoRef} autoPlay />
         ) : (
           <CallBackgroundBlur avatarPath={me.avatarPath} color={me.color}>
-            <Avatar
-              acceptedMessageRequest
-              avatarPath={me.avatarPath}
-              badge={undefined}
-              color={me.color || AvatarColors[0]}
-              noteToSelf={false}
-              conversationType="direct"
-              i18n={i18n}
-              isMe
-              phoneNumber={me.phoneNumber}
-              profileName={me.profileName}
-              title={me.title}
-              // `sharedGroupNames` makes no sense for yourself, but `<Avatar>` needs it
-              //   to determine blurring.
-              sharedGroupNames={[]}
-              size={AvatarSize.EIGHTY}
-            />
+            <div className="module-calling__spacer module-calling__camera-is-off-spacer" />
             <div className="module-calling__camera-is-off">
               {i18n('icu:calling__your-video-is-off')}
             </div>
@@ -399,7 +376,7 @@ export function CallScreen({
           title={me.title}
           // See comment above about `sharedGroupNames`.
           sharedGroupNames={[]}
-          size={AvatarSize.EIGHTY}
+          size={AvatarSize.FORTY}
         />
       </CallBackgroundBlur>
     );
@@ -487,7 +464,8 @@ export function CallScreen({
         )}`,
         `module-ongoing-call__container--${
           hasCallStarted ? 'call-started' : 'call-not-started'
-        }`
+        }`,
+        { 'module-ongoing-call__container--hide-controls': !showControls }
       )}
       onFocus={() => {
         setShowControls(true);
@@ -497,6 +475,29 @@ export function CallScreen({
       }}
       role="group"
     >
+      {isReconnecting ? (
+        <PersistentCallingToast>
+          <span className="CallingToast__reconnecting">
+            <Spinner svgSize="small" size="16px" />
+            {i18n('icu:callReconnecting')}
+          </span>
+        </PersistentCallingToast>
+      ) : null}
+
+      {isLonelyInCall && !isRinging ? (
+        <PersistentCallingToast>
+          {i18n('icu:calling__in-this-call--zero')}
+        </PersistentCallingToast>
+      ) : null}
+
+      {currentPresenter ? (
+        <PersistentCallingToast>
+          {i18n('icu:calling__presenting--person-ongoing', {
+            name: currentPresenter.title,
+          })}
+        </PersistentCallingToast>
+      ) : null}
+
       {showNeedsScreenRecordingPermissionsWarning ? (
         <NeedsScreenRecordingPermissionsModal
           toggleScreenRecordingPermissionsDialog={
@@ -506,35 +507,33 @@ export function CallScreen({
           openSystemPreferencesAction={openSystemPreferencesAction}
         />
       ) : null}
-      <div
-        className={classNames('module-ongoing-call__header', controlsFadeClass)}
-      >
+      <div className={controlsFadeClass}>
         <CallingHeader
+          callViewMode={activeCall.viewMode}
+          changeCallView={changeCallView}
           i18n={i18n}
-          isInSpeakerView={isInSpeakerView(activeCall)}
           isGroupCall={isGroupCall}
           participantCount={participantCount}
-          title={headerTitle}
           togglePip={togglePip}
           toggleSettings={toggleSettings}
-          toggleSpeakerView={toggleSpeakerView}
         />
       </div>
       {isRinging && (
-        <CallingPreCallInfo
-          conversation={conversation}
-          groupMembers={groupMembers}
-          i18n={i18n}
-          me={me}
-          ringMode={RingMode.IsRinging}
-        />
+        <>
+          <div className="module-CallingPreCallInfo-spacer " />
+          <CallingPreCallInfo
+            conversation={conversation}
+            groupMembers={groupMembers}
+            i18n={i18n}
+            me={me}
+            ringMode={RingMode.IsRinging}
+          />
+        </>
       )}
       {remoteParticipantsElement}
       {lonelyInCallNode}
       <div className="module-ongoing-call__footer">
-        {/* This layout-only element is not ideal.
-            See the comment in _modules.css for more. */}
-        <div className="module-ongoing-call__footer__local-preview-offset" />
+        <div className="module-calling__spacer CallControls__OuterSpacer" />
         <div
           className={classNames(
             'CallControls',
@@ -546,6 +545,13 @@ export function CallScreen({
             <div className="CallControls__CallTitle">{conversation.title}</div>
             <div className="CallControls__Status">{callStatus}</div>
           </div>
+
+          <CallingButtonToastsContainer
+            hasLocalAudio={hasLocalAudio}
+            outgoingRing={undefined}
+            i18n={i18n}
+          />
+
           <div className="CallControls__ButtonContainer">
             <CallingButton
               buttonType={presentingButtonType}
@@ -588,14 +594,21 @@ export function CallScreen({
             </Button>
           </div>
         </div>
-        <div className="module-ongoing-call__footer__local-preview">
-          {localPreviewNode}
-          <CallingAudioIndicator
-            hasAudio={hasLocalAudio}
-            audioLevel={localAudioLevel}
-            shouldShowSpeaking={isSpeaking}
-          />
-        </div>
+        {localPreviewNode ? (
+          <div className="module-ongoing-call__footer__local-preview module-ongoing-call__footer__local-preview--active">
+            {localPreviewNode}
+            {!isSendingVideo && (
+              <div className="CallingStatusIndicator CallingStatusIndicator--Video" />
+            )}
+            <CallingAudioIndicator
+              hasAudio={hasLocalAudio}
+              audioLevel={localAudioLevel}
+              shouldShowSpeaking={isSpeaking}
+            />
+          </div>
+        ) : (
+          <div className="module-ongoing-call__footer__local-preview" />
+        )}
       </div>
     </div>
   );
@@ -626,4 +639,57 @@ function renderDuration(ms: number): string {
     return `${hours}:${mins}:${secs}`;
   }
   return `${mins}:${secs}`;
+}
+
+function useViewModeChangedToast({
+  activeCall,
+  i18n,
+}: {
+  activeCall: ActiveCallType;
+  i18n: LocalizerType;
+}): void {
+  const { viewMode } = activeCall;
+  const previousViewMode = usePrevious(viewMode, viewMode);
+  const presenterAci = usePresenter(activeCall.remoteParticipants);
+
+  const VIEW_MODE_CHANGED_TOAST_KEY = 'view-mode-changed';
+  const { showToast, hideToast } = useCallingToasts();
+
+  useEffect(() => {
+    if (viewMode !== previousViewMode) {
+      if (
+        // If this is an automated change to presentation mode, don't show toast
+        viewMode === CallViewMode.Presentation ||
+        // if this is an automated change away from presentation mode, don't show toast
+        (previousViewMode === CallViewMode.Presentation && !presenterAci)
+      ) {
+        return;
+      }
+
+      hideToast(VIEW_MODE_CHANGED_TOAST_KEY);
+      showToast({
+        key: VIEW_MODE_CHANGED_TOAST_KEY,
+        content: (
+          <div className="CallingToast__viewChanged">
+            <span
+              className={classNames(
+                'CallingToast__viewChanged__icon',
+                getCallViewIconClassname(viewMode)
+              )}
+            />
+            {i18n('icu:calling__view_mode--updated')}
+          </div>
+        ),
+        autoClose: true,
+      });
+    }
+  }, [
+    showToast,
+    hideToast,
+    i18n,
+    activeCall,
+    viewMode,
+    previousViewMode,
+    presenterAci,
+  ]);
 }

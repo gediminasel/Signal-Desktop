@@ -6,6 +6,8 @@
 import { isBoolean, isNumber, isString, omit } from 'lodash';
 import PQueue from 'p-queue';
 import { v4 as getGuid } from 'uuid';
+import { existsSync } from 'fs';
+import { removeSync } from 'fs-extra';
 
 import type {
   SealedSenderDecryptionResult,
@@ -49,7 +51,7 @@ import { parseIntOrThrow } from '../util/parseIntOrThrow';
 import { clearTimeoutIfNecessary } from '../util/clearTimeoutIfNecessary';
 import { Zone } from '../util/Zone';
 import { DurationInSeconds, SECOND } from '../util/durations';
-import type { DownloadedAttachmentType } from '../types/Attachment';
+import type { AttachmentType } from '../types/Attachment';
 import { Address } from '../types/Address';
 import { QualifiedAddress } from '../types/QualifiedAddress';
 import { normalizeStoryDistributionId } from '../types/StoryDistributionId';
@@ -81,9 +83,10 @@ import {
 import { processSyncMessage } from './processSyncMessage';
 import type { EventHandler } from './EventTarget';
 import EventTarget from './EventTarget';
-import { downloadAttachment } from './downloadAttachment';
+import { downloadAttachmentV2 } from './downloadAttachment';
 import type { IncomingWebSocketRequest } from './WebsocketResources';
-import { ContactBuffer } from './ContactsParser';
+import type { ContactDetailsWithAvatar } from './ContactsParser';
+import { parseContactsV2 } from './ContactsParser';
 import type { WebAPIType } from './WebAPI';
 import type { Storage } from './Storage';
 import { WarnOnlyError } from './Errors';
@@ -395,7 +398,7 @@ export default class MessageReceiver
 
       try {
         const decoded = Proto.Envelope.decode(plaintext);
-        const serverTimestamp = decoded.serverTimestamp?.toNumber();
+        const serverTimestamp = decoded.serverTimestamp?.toNumber() ?? 0;
 
         const ourAci = this.storage.user.getCheckedAci();
 
@@ -409,14 +412,14 @@ export default class MessageReceiver
           messageAgeSec: this.calculateMessageAge(headers, serverTimestamp),
 
           // Proto.Envelope fields
-          type: decoded.type,
+          type: decoded.type ?? Proto.Envelope.Type.UNKNOWN,
           sourceServiceId: decoded.sourceServiceId
             ? normalizeServiceId(
                 decoded.sourceServiceId,
                 'MessageReceiver.handleRequest.sourceServiceId'
               )
             : undefined,
-          sourceDevice: decoded.sourceDevice,
+          sourceDevice: decoded.sourceDevice ?? 1,
           destinationServiceId: decoded.destinationServiceId
             ? normalizeServiceId(
                 decoded.destinationServiceId,
@@ -430,12 +433,12 @@ export default class MessageReceiver
                   'MessageReceiver.handleRequest.updatedPni'
                 )
               : undefined,
-          timestamp: decoded.timestamp?.toNumber(),
+          timestamp: decoded.timestamp?.toNumber() ?? 0,
           content: dropNull(decoded.content),
-          serverGuid: decoded.serverGuid,
+          serverGuid: decoded.serverGuid ?? getGuid(),
           serverTimestamp,
           urgent: isBoolean(decoded.urgent) ? decoded.urgent : true,
-          story: decoded.story,
+          story: decoded.story ?? false,
           reportingToken: decoded.reportingToken?.length
             ? decoded.reportingToken
             : undefined,
@@ -870,7 +873,7 @@ export default class MessageReceiver
         messageAgeSec: item.messageAgeSec || 0,
 
         // Proto.Envelope fields
-        type: decoded.type,
+        type: decoded.type ?? Proto.Envelope.Type.UNKNOWN,
         source: item.source,
         sourceServiceId: normalizeServiceId(
           item.sourceServiceId || decoded.sourceServiceId,
@@ -887,11 +890,11 @@ export default class MessageReceiver
               'CachedEnvelope.updatedPni'
             )
           : undefined,
-        timestamp: decoded.timestamp?.toNumber(),
+        timestamp: decoded.timestamp?.toNumber() ?? 0,
         content: dropNull(decoded.content),
-        serverGuid: decoded.serverGuid,
+        serverGuid: decoded.serverGuid ?? getGuid(),
         serverTimestamp:
-          item.serverTimestamp || decoded.serverTimestamp?.toNumber(),
+          item.serverTimestamp || decoded.serverTimestamp?.toNumber() || 0,
         urgent: isBoolean(item.urgent) ? item.urgent : true,
         story: Boolean(item.story),
         reportingToken: item.reportingToken
@@ -3298,8 +3301,10 @@ export default class MessageReceiver
 
     const ev = new KeysEvent(
       {
-        storageServiceKey: dropNull(sync.storageService),
-        masterKey: dropNull(sync.master),
+        storageServiceKey: Bytes.isNotEmpty(sync.storageService)
+          ? sync.storageService
+          : undefined,
+        masterKey: Bytes.isNotEmpty(sync.master) ? sync.master : undefined,
       },
       this.removeFromCache.bind(this, envelope)
     );
@@ -3504,11 +3509,11 @@ export default class MessageReceiver
 
   private async handleContacts(
     envelope: ProcessedEnvelope,
-    contacts: Proto.SyncMessage.IContacts
+    contactSyncProto: Proto.SyncMessage.IContacts
   ): Promise<void> {
     const logId = getEnvelopeId(envelope);
     log.info(`MessageReceiver: handleContacts ${logId}`);
-    const { blob } = contacts;
+    const { blob } = contactSyncProto;
     if (!blob) {
       throw new Error('MessageReceiver.handleContacts: blob field was missing');
     }
@@ -3517,21 +3522,50 @@ export default class MessageReceiver
 
     this.removeFromCache(envelope);
 
-    const attachmentPointer = await this.handleAttachment(blob, {
-      disableRetries: true,
-      timeout: 90 * SECOND,
-    });
-    const contactBuffer = new ContactBuffer(attachmentPointer.data);
+    let attachment: AttachmentType | undefined;
+    try {
+      attachment = await this.handleAttachmentV2(blob, {
+        disableRetries: true,
+        timeout: 90 * SECOND,
+      });
 
-    const contactSync = new ContactSyncEvent(
-      Array.from(contactBuffer),
-      Boolean(contacts.complete),
-      envelope.receivedAtCounter,
-      envelope.timestamp
-    );
-    await this.dispatchAndWait(logId, contactSync);
+      const { path } = attachment;
+      if (!path) {
+        throw new Error('Failed no path field in returned attachment');
+      }
+      const absolutePath =
+        window.Signal.Migrations.getAbsoluteAttachmentPath(path);
+      if (!existsSync(absolutePath)) {
+        throw new Error(
+          'Contact sync attachment had path, but it was not found on disk'
+        );
+      }
 
-    log.info('handleContacts: finished');
+      let contacts: ReadonlyArray<ContactDetailsWithAvatar>;
+      try {
+        contacts = await parseContactsV2({
+          absolutePath,
+        });
+      } finally {
+        if (absolutePath) {
+          removeSync(absolutePath);
+        }
+      }
+
+      const contactSync = new ContactSyncEvent(
+        contacts,
+        Boolean(contactSyncProto.complete),
+        envelope.receivedAtCounter,
+        envelope.timestamp
+      );
+      await this.dispatchAndWait(logId, contactSync);
+
+      log.info('handleContacts: finished');
+    } finally {
+      if (attachment?.path) {
+        await window.Signal.Migrations.deleteAttachmentData(attachment.path);
+      }
+    }
   }
 
   private async handleBlocked(
@@ -3618,12 +3652,12 @@ export default class MessageReceiver
     return this.storage.blocked.isGroupBlocked(groupId);
   }
 
-  private async handleAttachment(
+  private async handleAttachmentV2(
     attachment: Proto.IAttachmentPointer,
     options?: { timeout?: number; disableRetries?: boolean }
-  ): Promise<DownloadedAttachmentType> {
+  ): Promise<AttachmentType> {
     const cleaned = processAttachment(attachment);
-    return downloadAttachment(this.server, cleaned, options);
+    return downloadAttachmentV2(this.server, cleaned, options);
   }
 
   private async handleEndSession(

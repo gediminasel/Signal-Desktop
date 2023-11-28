@@ -24,7 +24,7 @@ import {
   PhoneNumberDiscoverability,
   parsePhoneNumberDiscoverability,
 } from '../util/phoneNumberDiscoverability';
-import { isPnpEnabled } from '../util/isPnpEnabled';
+import { isPnpCapable } from '../util/isPnpCapable';
 import { arePinnedConversationsEqual } from '../util/arePinnedConversationsEqual';
 import type { ConversationModel } from '../models/conversations';
 import {
@@ -281,7 +281,10 @@ export function toAccountRecord(
   }
 
   const accountE164 = window.storage.get('accountE164');
-  if (accountE164 !== undefined) {
+  // Once account becomes PNP capable - we want to stop populating this field
+  // because it is deprecated in PNP world and we don't want to cause storage
+  // service thrashing.
+  if (accountE164 !== undefined && !isPnpCapable()) {
     accountRecord.e164 = accountE164;
   }
 
@@ -1234,15 +1237,13 @@ export async function mergeAccountRecord(
     await window.storage.put('primarySendsSms', primarySendsSms);
   }
 
+  // Store AccountRecord.e164 in an auxiliary field that isn't used for any
+  // other purpose in the app. This is required only while we are deprecating
+  // the AccountRecord.e164.
   if (typeof accountE164 === 'string') {
     await window.storage.put('accountE164', accountE164);
-    if (
-      !RemoteConfig.isEnabled('desktop.pnp') &&
-      !RemoteConfig.isEnabled('desktop.pnp.accountE164Deprecation') &&
-      !isPnpEnabled()
-    ) {
-      await window.storage.user.setNumber(accountE164);
-    }
+  } else {
+    await window.storage.remove('accountE164');
   }
 
   if (preferredReactionEmoji.canBeSynced(rawPreferredReactionEmoji)) {
@@ -1469,6 +1470,17 @@ export async function mergeAccountRecord(
   }
 
   if (usernameLink?.entropy?.length && usernameLink?.serverId?.length) {
+    const oldLink = window.storage.get('usernameLink');
+    if (
+      window.storage.get('usernameLinkCorrupted') &&
+      (!oldLink ||
+        !Bytes.areEqual(usernameLink.entropy, oldLink.entropy) ||
+        !Bytes.areEqual(usernameLink.serverId, oldLink.serverId))
+    ) {
+      details.push('clearing username link corruption');
+      await window.storage.remove('usernameLinkCorrupted');
+    }
+
     await Promise.all([
       usernameLink.color &&
         window.storage.put('usernameLinkColor', usernameLink.color),
@@ -1499,6 +1511,14 @@ export async function mergeAccountRecord(
 
   const oldStorageID = conversation.get('storageID');
   const oldStorageVersion = conversation.get('storageVersion');
+
+  if (
+    window.storage.get('usernameCorrupted') &&
+    username !== conversation.get('username')
+  ) {
+    details.push('clearing username corruption');
+    await window.storage.remove('usernameCorrupted');
+  }
 
   conversation.set({
     isArchived: Boolean(noteToSelfArchived),

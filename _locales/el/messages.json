@@ -113,7 +113,7 @@
     "description": "Title of a popup if the database cannot start up properly"
   },
   "icu:databaseError__detail": {
-    "messageformat": "Προέκυψε σφάλμα βάσης δεδομένων. Μπορείς να αντιγράψεις το σφάλμα και να επικοινωνήσεις με την υποστήριξη Signal για να επιλυθεί το πρόβλημα. Εάν πρέπει να χρησιμοποιήσεις το Signal αμέσως, μπορείς να διαγράψεις τα δεδομένα σου και να κάνεις επανεκκίνηση.\n\nΕπικοινώνησε με την υποστήριξη στο: https://support.signal.org/hc/requests/new?desktop",
+    "messageformat": "A database error occurred. You can copy the error and contact Signal support to help fix the issue. If you need to use Signal right away, you can delete your data and restart.\n\nContact support by visiting: {link}",
     "description": "Description shown in a popup if the database cannot start up properly"
   },
   "icu:deleteAndRestart": {
@@ -316,6 +316,22 @@
     "messageformat": "Συνομιλίες",
     "description": "Shown as a header for non-pinned conversations in the left pane"
   },
+  "icu:LeftPane--corrupted-username--text": {
+    "messageformat": "Κάτι πήγε στραβά με το όνομα χρήστη σου, δεν αντιστοιχεί πλέον στον λογαριασμό σου. Μπορείς να δοκιμάσεις να το ρυθμίσεις ξανά ή να επιλέξεις ένα νέο.",
+    "description": "Text of corrupted username banner in the left pane"
+  },
+  "icu:LeftPane--corrupted-username--action-text": {
+    "messageformat": "Διόρθωση τώρα",
+    "description": "Text of the button in the corrupted username banner in the left pane"
+  },
+  "icu:LeftPane--corrupted-username-link--text": {
+    "messageformat": "Κάτι πήγε στραβά με τον κωδικό QR και τον σύνδεσμο του ονόματος χρήστη σου, δεν ισχύει πλέον. Δημιούργησε έναν νέο σύνδεσμο για κοινή χρήση με άλλα άτομα.",
+    "description": "Text of corrupted username link banner in the left pane"
+  },
+  "icu:LeftPane--corrupted-username-link--action-text": {
+    "messageformat": "Διόρθωση τώρα",
+    "description": "Text of the button in the corrupted username link banner in the left pane"
+  },
   "icu:NavTabsToggle__showTabs": {
     "messageformat": "Εμφάνιση καρτελών",
     "description": "Show in the left pane when the nav tabs are hidden, shows the nav tabs"
@@ -335,6 +351,18 @@
   "icu:NavTabs__ItemIconLabel--MarkedUnread": {
     "messageformat": "Επισημάνθηκε ως μη αναγνωσμένο",
     "description": "Nav Tabs > Unread badge > when conversation is marked unread > Accessibility Text"
+  },
+  "icu:NavTabs__ItemLabel--Chats": {
+    "messageformat": "Συνομιλίες",
+    "description": "Nav Tabs > Chats Button > Label & Accessibility Text"
+  },
+  "icu:NavTabs__ItemLabel--Calls": {
+    "messageformat": "Κλήσεις",
+    "description": "Nav Tabs > Calls Button > Label & Accessibility Text"
+  },
+  "icu:NavTabs__ItemLabel--Stories": {
+    "messageformat": "Ιστορίες",
+    "description": "Nav Tabs > Stories Button > Label & Accessibility Text"
   },
   "icu:NavTabs__ItemLabel--Settings": {
     "messageformat": "Ρυθμίσεις",
@@ -693,23 +721,23 @@
   },
   "icu:SafetyNumberViewer__migration__text": {
     "messageformat": "Οι αριθμοί ασφαλείας ενημερώνονται.",
-    "description": "An explanatory note in SafetyNumberViewer describing the safety number migration process."
+    "description": "(Deleted 11/01/2023) An explanatory note in SafetyNumberViewer describing the safety number migration process."
   },
   "icu:SafetyNumberViewer__migration__learn_more": {
     "messageformat": "Μάθε περισσότερα",
-    "description": "A link text in SafetyNumberViewer describing the safety number migration process."
+    "description": "(Deleted 11/01/2023) A link text in SafetyNumberViewer describing the safety number migration process."
   },
   "icu:SafetyNumberViewer__card__prev": {
     "messageformat": "Προηγούμενος αριθμός ασφαλείας",
-    "description": "An ARIA label for safety number navigation button."
+    "description": "(Deleted 11/01/2023) An ARIA label for safety number navigation button."
   },
   "icu:SafetyNumberViewer__card__next": {
     "messageformat": "Επόμενος αριθμός ασφαλείας",
-    "description": "An ARIA label for safety number navigation button."
+    "description": "(Deleted 11/01/2023) An ARIA label for safety number navigation button."
   },
   "icu:SafetyNumberViewer__carousel__dot": {
     "messageformat": "Έκδοση αριθμού ασφαλείας, {index,number} από {total,number}",
-    "description": "An ARIA label for safety number carousel button."
+    "description": "(Deleted 11/01/2023) An ARIA label for safety number carousel button."
   },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "Σημείωση ως επιβεβαιωμένο",
@@ -719,33 +747,41 @@
     "messageformat": "Αφαίρεση επιβεβαίωσης",
     "description": "Safety number viewer, verification toggle button, when verified, clears verification state"
   },
+  "icu:SafetyNumberViewer__hint": {
+    "messageformat": "Για να επαληθεύσεις την κρυπτογράφηση από άκρο σε άκρο με τον χρήστη {name}, σύγκρινε τους παραπάνω αριθμούς με αυτούς στη συσκευή του. Μπορεί επίσης να σκανάρει τον κωδικό σου με τη συσκευή του.",
+    "description": "Safety number viewer, text of the hint"
+  },
+  "icu:SafetyNumberViewer__learn_more": {
+    "messageformat": "Μάθε περισσότερα",
+    "description": "Text of 'Learn more' button of SafetyNumberViewerModal modal"
+  },
   "icu:SafetyNumberViewer__hint--migration": {
     "messageformat": "Για να επαληθεύσεις την κρυπτογράφηση από άκρο σε άκρο με τον χρήστη {name}, αντιστοίχισε την έγχρωμη κάρτα παραπάνω με τη συσκευή του και συγκρίνετε τους αριθμούς. Εάν δεν ταιριάζουν, δοκίμασε το άλλο ζεύγος αριθμών ασφαλείας. Μόνο ένα ζευγάρι χρειάζεται να ταιριάζει.",
-    "description": "Safety number viewer, text of the hint during migration period"
+    "description": "(Deleted 11/01/2023). Safety number viewer, text of the hint during migration period"
   },
   "icu:SafetyNumberViewer__hint--normal": {
     "messageformat": "Για να επαληθεύσεις την κρυπτογράφηση από άκρο σε άκρο με τον χρήστη {name}, σύγκρινε τους παραπάνω αριθμούς με αυτούς στη συσκευή του. Μπορεί επίσης να σκανάρει τον κωδικό σου με τη συσκευή του.",
-    "description": "Safety number viewer, text of the hint after migration period"
+    "description": "(Deleted 11/01/2023). Safety number viewer, text of the hint after migration period"
   },
   "icu:SafetyNumberOnboarding__title": {
     "messageformat": "Αλλαγές στους Αριθμούς Ασφαλείας",
-    "description": "Title of Safety number onboarding modal"
+    "description": "(Deleted 11/01/2023) Title of Safety number onboarding modal"
   },
   "icu:SafetyNumberOnboarding__p1": {
     "messageformat": "Οι αριθμοί ασφαλείας ενημερώνονται κατά τη διάρκεια μιας μεταβατικής περιόδου για να ενεργοποιηθούν οι επερχόμενες λειτουργίες απορρήτου στο Signal.",
-    "description": "Paragraph 1 of Safety number onboarding modal"
+    "description": "(Deleted 11/01/2023) Paragraph 1 of Safety number onboarding modal"
   },
   "icu:SafetyNumberOnboarding__p2": {
     "messageformat": "Για να επαληθεύσεις τους αριθμούς ασφαλείας, αντιστοίχισε την έγχρωμη κάρτα με τη συσκευή της επαφής σου. Εάν δεν ταιριάζουν, δοκίμασε το άλλο ζεύγος αριθμών ασφαλείας. Μόνο ένα ζευγάρι χρειάζεται να ταιριάζει.",
-    "description": "Paragraph 2 of Safety number onboarding modal"
+    "description": "(Deleted 11/01/2023) Paragraph 2 of Safety number onboarding modal"
   },
   "icu:SafetyNumberOnboarding__help": {
     "messageformat": "Χρειάζεσαι βοήθεια;",
-    "description": "Text of a secondary button in Safety number onboarding modal"
+    "description": "(Deleted 11/01/2023) Text of a secondary button in Safety number onboarding modal"
   },
   "icu:SafetyNumberOnboarding__close": {
     "messageformat": "Εντάξει",
-    "description": "Text of a secondary button in Safety number onboarding modal"
+    "description": "(Deleted 11/01/2023) Text of a secondary button in Safety number onboarding modal"
   },
   "icu:SafetyNumberNotReady__body": {
     "messageformat": "Θα δημιουργηθεί ένας αριθμός ασφαλείας με αυτό το άτομο αφού ανταλλάξετε μηνύματα μεταξύ σας.",
@@ -1388,15 +1424,27 @@
   },
   "icu:deleteMessages": {
     "messageformat": "Διαγραφή",
-    "description": "Menu item for deleting messages, title case."
+    "description": "(deleted 2023/10/26) Menu item for deleting messages, title case."
+  },
+  "icu:deleteMessagesInConversation": {
+    "messageformat": "Διαγραφή μηνυμάτων",
+    "description": "Menu item for deleting all messages in a conversation from your device"
   },
   "icu:ConversationHeader__DeleteMessagesConfirmation__title": {
     "messageformat": "Διαγραφή συνομιλίας;",
-    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+    "description": "(deleted 2023/10/26) Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
+  },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
+    "messageformat": "Διαγραφή μηνυμάτων;",
+    "description": "Title for confirmation modal to delete all messages in a conversation"
   },
   "icu:ConversationHeader__DeleteMessagesConfirmation__description": {
     "messageformat": "Αυτή η συνομιλία θα διαγραφεί από αυτή τη συσκευή.",
-    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+    "description": "(deleted 2023/10/26) Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
+  },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
+    "messageformat": "Τα μηνύματα σε αυτή τη συνομιλία θα διαγραφούν από αυτή τη συσκευή. Μπορείς ακόμα να κάνεις αναζήτηση αυτής της συνομιλίας αφού διαγράψεις μηνύματα.",
+    "description": "Description for confirmation modal to delete all messages in a conversation"
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Αποχώρηση απ' την ομάδα",
@@ -1489,6 +1537,14 @@
   "icu:ConversationMerge--explainer-dialog--line-2": {
     "messageformat": "Το ιστορικό μηνυμάτων σου και για τις δύο συνομιλίες έχει συγχωνευτεί εδώ.",
     "description": "Contents of a dialog shown after clicking 'learn more' button on a conversation merge event."
+  },
+  "icu:PhoneNumberDiscovery--notification--withSharedGroup": {
+    "messageformat": "Ο αριθμός {phoneNumber} ανήκει στον χρήστη {conversationTitle}. Είστε και οι δύο μέλη της ομάδας {sharedGroup}.",
+    "description": "Shown when we've discovered a phone number for a contact you've been communicating with."
+  },
+  "icu:PhoneNumberDiscovery--notification--noSharedGroup": {
+    "messageformat": "Ο αριθμός {phoneNumber} ανήκει στον χρήστη {conversationTitle}",
+    "description": "Shown when we've discovered a phone number for a contact you've been communicating with, but you have no shared groups."
   },
   "icu:quoteThumbnailAlt": {
     "messageformat": "Μικρογραφία της εικόνας από το αναφερόμενο μήνυμα",
@@ -1637,10 +1693,6 @@
     "messageformat": "Επανάκληση",
     "description": "Button to call someone again"
   },
-  "icu:calling__start": {
-    "messageformat": "Έναρξη κλήσης",
-    "description": "Button label in the call lobby for starting a call"
-  },
   "icu:calling__join": {
     "messageformat": "Είσοδος στην κλήση",
     "description": "Button label in the call lobby for joining a call"
@@ -1653,13 +1705,25 @@
     "messageformat": "Το μικρόφωνο είναι σε σίγαση λόγω του μεγέθους αυτής της κλήσης",
     "description": "Shown in a call lobby toast if there are a lot of people already on the call"
   },
+  "icu:calling__toasts--aria-label": {
+    "messageformat": "Ειδοποιήσεις κλήσεων",
+    "description": "Aria label for region of toasts shown during a call (for, e.g. reconnecting, person joined, audio device changed notifications)"
+  },
   "icu:calling__call-is-full": {
     "messageformat": "Η κλήση είναι γεμάτη",
     "description": "Text in the call lobby when you can't join because the call is full"
   },
-  "icu:calling__button--video__label": {
-    "messageformat": "Κάμερα",
-    "description": "Label under the video button"
+  "icu:CallingLobbyJoinButton--join": {
+    "messageformat": "Συμμετοχή",
+    "description": "Button label in the call lobby for joining a call"
+  },
+  "icu:CallingLobbyJoinButton--start": {
+    "messageformat": "Εκκίνηση",
+    "description": "Button label in the call lobby for starting a call"
+  },
+  "icu:CallingLobbyJoinButton--call-full": {
+    "messageformat": "Η κλήση είναι γεμάτη",
+    "description": "Button in the call lobby when you can't join because the call is full"
   },
   "icu:calling__button--video-disabled": {
     "messageformat": "Κάμερα απενεργοποιημένη",
@@ -1673,10 +1737,6 @@
     "messageformat": "Ενεργοποίηση κάμερας",
     "description": "Button tooltip label for turning on the camera"
   },
-  "icu:calling__button--audio__label": {
-    "messageformat": "Σίγαση",
-    "description": "Label under the audio button"
-  },
   "icu:calling__button--audio-disabled": {
     "messageformat": "Μικρόφωνο απενεργοποιημένο",
     "description": "Button tooltip label when the microphone is disabled"
@@ -1688,10 +1748,6 @@
   "icu:calling__button--audio-on": {
     "messageformat": "Ενεργοποίηση μικροφώνου",
     "description": "Button tooltip label for turning on the microphone"
-  },
-  "icu:calling__button--presenting__label": {
-    "messageformat": "Μοιράσου",
-    "description": "Label under the share screen button"
   },
   "icu:calling__button--presenting-disabled": {
     "messageformat": "Η παρουσίαση είναι απενεργοποιημένη",
@@ -1705,10 +1761,6 @@
     "messageformat": "Λήξη παρουσίασης",
     "description": "Button tooltip label for stopping screen sharing"
   },
-  "icu:calling__button--ring__label": {
-    "messageformat": "Κουδούνισμα",
-    "description": "Label under the ring button"
-  },
   "icu:calling__button--ring__disabled-because-group-is-too-large": {
     "messageformat": "Η ομάδα είναι πολύ μεγάλη ώστε να καλέσουμε με κουδούνισμα τους συμμετέχοντες.",
     "description": "Button tooltip label when you can't ring because the group is too large"
@@ -1718,6 +1770,14 @@
     "description": "Button tooltip label for turning ringing off"
   },
   "icu:calling__button--ring__on": {
+    "messageformat": "Ενεργοποίηση κουδουνίσματος",
+    "description": "Button tooltip label for turning ringing on"
+  },
+  "icu:CallingButton__ring-off": {
+    "messageformat": "Απενεργοποίηση κουδουνίσματος",
+    "description": "Button tooltip label for turning ringing off"
+  },
+  "icu:CallingButton--ring-on": {
     "messageformat": "Ενεργοποίηση κουδουνίσματος",
     "description": "Button tooltip label for turning ringing on"
   },
@@ -2293,6 +2353,10 @@
   },
   "icu:ToastManager__CannotEditMessage": {
     "messageformat": "Οι τροποποιήσεις μπορούν να εφαρμοστούν μόνο εντός 3 ωρών από τη στιγμή που έστειλες αυτό το μήνυμα.",
+    "description": "(deleted 2023/10/26) Error message when you try to send an edit after message becomes too old"
+  },
+  "icu:ToastManager__CannotEditMessage_24": {
+    "messageformat": "Οι τροποποιήσεις μπορούν να εφαρμοστούν μόνο εντός 24 ωρών από τη στιγμή που έστειλες αυτό το μήνυμα.",
     "description": "Error message when you try to send an edit after message becomes too old"
   },
   "icu:startConversation--username-not-found": {
@@ -2535,6 +2599,14 @@
   "icu:message--deletedForEveryone": {
     "messageformat": "Αυτό το μήνυμα διαγράφτηκε.",
     "description": "Shown in a message's bubble when the message has been deleted for everyone."
+  },
+  "icu:message--attachmentTooBig--one": {
+    "messageformat": "Το συνημμένο είναι πολύ μεγάλο για εμφάνιση.",
+    "description": "Shown in a message bubble if no attachments are left on message when too-large attachments are dropped"
+  },
+  "icu:message--attachmentTooBig--multiple": {
+    "messageformat": "Ορισμένα συνημμένα είναι πολύ μεγάλα για εμφάνιση.",
+    "description": "Shown in a message bubble if any attachments are left on message when too-large attachments are dropped"
   },
   "icu:donation--missing": {
     "messageformat": "Αδυναμία ανάκτησης στοιχείων δωρεάς",
@@ -3496,9 +3568,37 @@
     "messageformat": "Επανασύνδεση…",
     "description": "Shown in the call screen when the call is reconnecting due to network issues"
   },
-  "icu:callDuration": {
-    "messageformat": "Signal {duration}",
-    "description": "Shown in the call screen to indicate how long the call has been connected"
+  "icu:CallControls__InfoDisplay--participants": {
+    "messageformat": "{count, plural, one {{count,number} άτομο} other {{count,number} άτομα}}",
+    "description": "Shown in the call screen and lobby for group calls to specify the number of members in the call or in the group. Count is at always at least 1."
+  },
+  "icu:CallControls__InfoDisplay--audio-call": {
+    "messageformat": "Ηχητική κλήση",
+    "description": "Shown in the call lobby for a direct 1:1 call when the caller's video is disabled, to specify that an audio call will be placed when clicking the Start button."
+  },
+  "icu:CallControls__JoinLeaveButton--hangup-1-1": {
+    "messageformat": "Τέλος",
+    "description": "Title for the hangup button for a direct 1:1 call with only 2 participants."
+  },
+  "icu:CallControls__JoinLeaveButton--hangup-group": {
+    "messageformat": "Αποχώρηση",
+    "description": "Title for the hangup button for a group call."
+  },
+  "icu:CallControls__MutedToast--muted": {
+    "messageformat": "Μικρόφωνο ανενεργό",
+    "description": "Shown in a call when the user mutes their audio input using the Mute toggle button."
+  },
+  "icu:CallControls__MutedToast--unmuted": {
+    "messageformat": "Μικρόφωνο ενεργό",
+    "description": "Shown in a call when the user is muted and then unmutes their audio input using the Mute toggle button."
+  },
+  "icu:CallControls__RingingToast--ringing-on": {
+    "messageformat": "Κουδούνισμα ενεργό",
+    "description": "Shown in a group call lobby when call ringing is disabled, then the user enables ringing using the Ringing toggle button."
+  },
+  "icu:CallControls__RingingToast--ringing-off": {
+    "messageformat": "Κουδούνισμα ανενεργό",
+    "description": "Shown in a group call lobby when call ringing is enabled, then the user disables ringing using the Ringing toggle button."
   },
   "icu:callingDeviceSelection__settings": {
     "messageformat": "Ρυθμίσεις",
@@ -3540,13 +3640,25 @@
     "messageformat": "Κλήση σε πλήρη οθόνη",
     "description": "Title for picture-in-picture toggle"
   },
-  "icu:calling__switch-view--to-grid": {
-    "messageformat": "Αλλαγή σε προβολή σε πλέγμα",
-    "description": "Title for grid/speaker view toggle when on a call"
+  "icu:calling__change-view": {
+    "messageformat": "Change view",
+    "description": "Tooltip for changing the in-call layout of remote participants in a group call"
   },
-  "icu:calling__switch-view--to-speaker": {
-    "messageformat": "Αλλαγή σε προβολή ομιλητή",
-    "description": "Title for grid/speaker view toggle when on a call"
+  "icu:calling__view_mode--paginated": {
+    "messageformat": "Grid view",
+    "description": "Label for option to view participants in a group call in a paginated grid view"
+  },
+  "icu:calling__view_mode--overflow": {
+    "messageformat": "Sidebar view",
+    "description": "Label for option to view participants in a group call where videos that don't fit onto the page are put into a scrollable overflow sidebar"
+  },
+  "icu:calling__view_mode--speaker": {
+    "messageformat": "Speaker view",
+    "description": "Label for option to view participants where only the current speaker's video is fully visible and all others are put into a scrollable overflow sidebar"
+  },
+  "icu:calling__view_mode--updated": {
+    "messageformat": "View updated",
+    "description": "Toast shown whenver the calling view mode is changed (e.g. paginated view -> speaker view)"
   },
   "icu:calling__hangup": {
     "messageformat": "Αποχώρηση από την κλήση",
@@ -3647,6 +3759,14 @@
   "icu:Confirmation--confirm": {
     "messageformat": "Εντάξει",
     "description": "Button to dismiss popup dialog when user-initiated task has gone wrong"
+  },
+  "icu:MessageMaxEditsModal__Title": {
+    "messageformat": "Δεν είναι δυνατή η επεξεργασία του μηνύματος",
+    "description": "Title in popup dialog when attempting to edit a message too many times."
+  },
+  "icu:MessageMaxEditsModal__Description": {
+    "messageformat": "Μπορεί να γίνει επεξεργασία σε αυτό το μήνυμα μόνο {max,number} φορές.",
+    "description": "Description text in popup dialog when attempting to edit a message too many times."
   },
   "icu:unknown-sgnl-link": {
     "messageformat": "Συγγνώμη, αυτός ο σύνδεσμος sgnl:// δεν βγάζει νόημα!",
@@ -5324,9 +5444,29 @@
     "messageformat": "Όνομα χρήστη",
     "description": "Default text for username field"
   },
+  "icu:ProfileEditor--username--corrupted--body": {
+    "messageformat": "Κάτι πήγε στραβά με το όνομα χρήστη σου, δεν αντιστοιχεί πλέον στον λογαριασμό σου.",
+    "description": "Text of confirmation modal when the username gets corrupted"
+  },
+  "icu:ProfileEditor--username--corrupted--delete-button": {
+    "messageformat": "Διαγραφή ονόματος χρήστη",
+    "description": "Button text for deletion of the username in case of corruption"
+  },
+  "icu:ProfileEditor--username--corrupted--create-button": {
+    "messageformat": "Δημιουργία ονόματος χρήστη",
+    "description": "Button text for creation of a new username in case of corruption"
+  },
   "icu:ProfileEditor__username-link": {
     "messageformat": "Κωδικός QR ή Σύνδεσμος",
     "description": "Label of a profile editor row that navigates to username link and qr code modal"
+  },
+  "icu:ProfileEditor__username__error-icon": {
+    "messageformat": "Το όνομα χρήστη χρειάζεται επαναφορά",
+    "description": "Accessibility title of an icon in profile editor"
+  },
+  "icu:ProfileEditor__username-link__error-icon": {
+    "messageformat": "Ο σύνδεσμος ονόματος χρήστη χρειάζεται επαναφορά",
+    "description": "Accessibility title of an icon in profile editor"
   },
   "icu:ProfileEditor__username-link__tooltip__title": {
     "messageformat": "Μοιράσου το όνομα χρήστη σου",
@@ -5679,6 +5819,42 @@
   "icu:Preferences__turn-stories-off--body": {
     "messageformat": "Δεν θα μπορείς πλέον να μοιράζεσαι ή να βλέπεις ιστορίες. Οι ενημερώσεις ιστορίας που κοινοποίησες πρόσφατα θα διαγραφούν επίσης.",
     "description": "Confirmation modal body for disabling stories"
+  },
+  "icu:Preferences__Language__Label": {
+    "messageformat": "Γλώσσα",
+    "description": "Language setting label"
+  },
+  "icu:Preferences__Language__ModalTitle": {
+    "messageformat": "Γλώσσα",
+    "description": "Language setting modal title"
+  },
+  "icu:Preferences__Language__SystemLanguage": {
+    "messageformat": "Γλώσσα συστήματος",
+    "description": "Option for system language"
+  },
+  "icu:Preferences__Language__SearchLanguages": {
+    "messageformat": "Αναζήτηση γλωσσών",
+    "description": "Placholder for language preference search box"
+  },
+  "icu:Preferences__Language__NoResults": {
+    "messageformat": "Δεν βρέθηκαν αποτελέσματα για “{searchTerm}”",
+    "description": "When no results are found for language preference search"
+  },
+  "icu:Preferences__LanguageModal__Set": {
+    "messageformat": "Ορισμός",
+    "description": "Button to set language preference"
+  },
+  "icu:Preferences__LanguageModal__Restart__Title": {
+    "messageformat": "Κάνε επανεκκίνηση το Signal για να γίνει εφαρμογή",
+    "description": "Title for restart Signal modal to apply language changes"
+  },
+  "icu:Preferences__LanguageModal__Restart__Description": {
+    "messageformat": "Για να αλλάξει η γλώσσα, πρέπει να γίνει επανεκκίνηση της εφαρμογής.",
+    "description": "Description for restart Signal modal to apply language changes"
+  },
+  "icu:Preferences__LanguageModal__Restart__Button": {
+    "messageformat": "Επανεκκίνηση",
+    "description": "Button to restart Signal to apply language changes"
   },
   "icu:DialogUpdate--version-available": {
     "messageformat": "Αναβάθμιση στη διαθέσιμη έκδοση {version}",
@@ -6616,6 +6792,14 @@
     "messageformat": "Εάν επαναφέρεις τον κωδικό QR σου, ο υπάρχων κωδικός QR και ο σύνδεσμός σου δεν θα λειτουργούν πλέον.",
     "description": "Text of confirmation modal when resetting the username link"
   },
+  "icu:UsernameLinkModalBody__resetting-link": {
+    "messageformat": "Επαναφορά συνδέσμου...",
+    "description": "Text shown when resetting the username link"
+  },
+  "icu:UsernameLinkModalBody__error__text": {
+    "messageformat": "Ο κωδικός QR και ο σύνδεσμος δεν έχουν οριστεί. Έλεγξε τη σύνδεσή σου στο δίκτυο και δοκίμασε πάλι.",
+    "description": "Text of the confirmation dialog shown on username link error"
+  },
   "icu:UsernameOnboardingModalBody__title": {
     "messageformat": "Ρύθμισε το όνομα χρήστη σου στο Signal",
     "description": "Title of username onboarding modal"
@@ -6808,13 +6992,13 @@
     "messageformat": "Μικρές τροποποιήσεις, επιδιορθώσεις σφαλμάτων και βελτιώσεις απόδοσης. Ευχαριστούμε που χρησιμοποιείς το Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.35--0": {
-    "messageformat": "• Διορθώσεις σφαλμάτων και βελτιώσεις στην επιφάνεια εργασίας χρήστη."
+  "icu:WhatsNew__v6.38--0": {
+    "messageformat": "Αυτή η έκδοση περιλαμβάνει ενημερωμένο σχεδιασμό για τις φωνητικές κλήσεις και βιντεοκλήσεις Signal. Τώρα το περιβάλλον του χρήστη στην κλήση θα είναι φανταστικό ακόμα κι αν η κάμερα δεν είναι ενεργή και δεν μπορείς να βλέπεις το υπέροχο πρόσωπό σου."
   },
-  "icu:WhatsNew__v6.36--0": {
-    "messageformat": "Ενημερώσαμε το περιβάλλον εργασίας χρήστη για να φαίνεται καλύτερα πότε γίνεται επανασύνδεση σε μια ομαδική βιντεοκλήση. Πλέον θα βλέπεις θολές μικρογραφίες."
+  "icu:WhatsNew__v6.39--0": {
+    "messageformat": "Τώρα μπορείς να αλλάξεις την επιλεγμένη γλώσσα στο Signal χωρίς να αλλάξεις τις ρυθμίσεις του συστήματός σου (Ρυθμίσεις Signal > Εμφάνιση > Γλώσσα)."
   },
-  "icu:WhatsNew__v6.36--1": {
-    "messageformat": "Το εικονίδιο του δίσκου συστήματος δεν θα εμφανίζεται πλέον με pixel στο Ubuntu Linux."
+  "icu:WhatsNew__v6.39--1": {
+    "messageformat": "Διορθώσαμε μια μικρή καθυστέρηση που υπήρχε μερικές φορές κατά τη συμμετοχή σε ομαδικές κλήσεις σε συσκευές macOS."
   }
 }

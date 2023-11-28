@@ -95,6 +95,7 @@ import { ReadStatus } from './messages/MessageReadStatus';
 import { SeenStatus } from './MessageSeenStatus';
 import { incrementMessageCounter } from './util/incrementMessageCounter';
 import { sleep } from './util/sleep';
+import { groupInvitesRoute } from './util/signalRoutes';
 
 type AccessRequiredEnum = Proto.AccessControl.AccessRequired;
 
@@ -383,16 +384,16 @@ export function buildGroupLink(
     },
   }).finish();
 
-  const hash = toWebSafeBase64(Bytes.toBase64(bytes));
+  const inviteCode = toWebSafeBase64(Bytes.toBase64(bytes));
 
-  return `https://signal.group/#${hash}`;
+  return groupInvitesRoute.toWebUrl({ inviteCode }).toString();
 }
 
-export function parseGroupLink(hash: string): {
+export function parseGroupLink(value: string): {
   masterKey: string;
   inviteLinkPassword: string;
 } {
-  const base64 = fromWebSafeBase64(hash);
+  const base64 = fromWebSafeBase64(value);
   const buffer = Bytes.fromBase64(base64);
 
   const inviteLinkProto = Proto.GroupInviteLink.decode(buffer);
@@ -1750,7 +1751,7 @@ export async function fetchMembershipProof({
     secretParams,
     request: (sender, options) => sender.getGroupMembershipToken(options),
   });
-  return response.token;
+  return dropNull(response.token);
 }
 
 // Creating a group
@@ -3453,8 +3454,12 @@ async function getGroupUpdates({
     if (isChangeSupported) {
       if (!wrappedGroupChange.isTrusted) {
         strictAssert(
-          groupChange.serverSignature && groupChange.actions,
+          groupChange.serverSignature,
           'Server signature must be present in untrusted group change'
+        );
+        strictAssert(
+          groupChange.actions,
+          'Actions must be present in untrusted group change'
         );
         try {
           verifyNotarySignature(
@@ -3612,10 +3617,10 @@ async function updateGroupViaPreJoinInfo({
   const newAttributes: ConversationAttributesType = {
     ...group,
     description: decryptGroupDescription(
-      preJoinInfo.descriptionBytes,
+      dropNull(preJoinInfo.descriptionBytes),
       secretParams
     ),
-    name: decryptGroupTitle(preJoinInfo.title, secretParams),
+    name: decryptGroupTitle(dropNull(preJoinInfo.title), secretParams),
     left: true,
     members: group.members || [],
     pendingMembersV2: group.pendingMembersV2 || [],
@@ -3625,7 +3630,7 @@ async function updateGroupViaPreJoinInfo({
         timestamp: Date.now(),
       },
     ],
-    revision: preJoinInfo.version,
+    revision: dropNull(preJoinInfo.version),
 
     temporaryMemberCount: preJoinInfo.memberCount || 1,
   };
@@ -3862,7 +3867,7 @@ async function generateLeftGroupChanges(
         masterKey
       );
 
-      revision = preJoinInfo.version;
+      revision = dropNull(preJoinInfo.version);
     }
   } catch (error) {
     log.warn(
@@ -6598,9 +6603,13 @@ function decryptGroupState(
     const { accessControl } = groupState;
     strictAssert(accessControl, 'No accessControl field found');
 
-    const attributes = dropNull(accessControl.attributes);
-    const members = dropNull(accessControl.members);
-    const addFromInviteLink = dropNull(accessControl.addFromInviteLink);
+    const attributes =
+      accessControl.attributes ?? Proto.AccessControl.AccessRequired.UNKNOWN;
+    const members =
+      accessControl.members ?? Proto.AccessControl.AccessRequired.UNKNOWN;
+    const addFromInviteLink =
+      accessControl.addFromInviteLink ??
+      Proto.AccessControl.AccessRequired.UNKNOWN;
 
     strictAssert(
       isValidAccess(attributes),
@@ -6623,11 +6632,12 @@ function decryptGroupState(
   }
 
   // version
+  const version = groupState.version ?? 0;
   strictAssert(
-    isNumber(groupState.version),
-    `decryptGroupState: Expected version to be a number; it was ${groupState.version}`
+    isNumber(version),
+    `decryptGroupState: Expected version to be a number or null; it was ${groupState.version}`
   );
-  result.version = groupState.version;
+  result.version = version;
 
   // members
   if (groupState.members) {

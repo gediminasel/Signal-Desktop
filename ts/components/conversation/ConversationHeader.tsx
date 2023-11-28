@@ -206,7 +206,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
     return null;
   }
 
-  private renderAvatar(): ReactNode {
+  private renderAvatar(onClickFallback: undefined | (() => void)): ReactNode {
     const {
       acceptedMessageRequest,
       avatarPath,
@@ -245,7 +245,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
                     storyViewMode: StoryViewModeType.User,
                   });
                 }
-              : undefined
+              : onClickFallback
           }
           phoneNumber={phoneNumber}
           profileName={profileName}
@@ -428,7 +428,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
               this.setState({ hasDeleteMessagesConfirmation: true })
             }
           >
-            {i18n('icu:deleteMessages')}
+            {i18n('icu:deleteMessagesInConversation')}
           </MenuItem>
         </ContextMenu>
       );
@@ -600,7 +600,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
         <MenuItem
           onClick={() => this.setState({ hasDeleteMessagesConfirmation: true })}
         >
-          {i18n('icu:deleteMessages')}
+          {i18n('icu:deleteMessagesInConversation')}
         </MenuItem>
         {isGroup && (
           <MenuItem
@@ -636,7 +636,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
       <ConfirmationDialog
         dialogName="ConversationHeader.destroyMessages"
         title={i18n(
-          'icu:ConversationHeader__DeleteMessagesConfirmation__title'
+          'icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title'
         )}
         actions={[
           {
@@ -654,7 +654,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
         }}
       >
         {i18n(
-          'icu:ConversationHeader__DeleteMessagesConfirmation__description'
+          'icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description'
         )}
       </ConfirmationDialog>
     );
@@ -751,7 +751,7 @@ export class ConversationHeader extends React.Component<PropsType, StateType> {
         throw missingCaseError(type);
     }
 
-    const avatar = this.renderAvatar();
+    const avatar = this.renderAvatar(onClick);
     const contents = (
       <div className="module-ConversationHeader__header__info">
         {this.renderHeaderInfoTitle()}
