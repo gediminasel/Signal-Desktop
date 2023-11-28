@@ -72,9 +72,12 @@ function MediaSection({
     return (
       <EmptyState data-test="EmptyState" label={label}>
         {prevPage ? (
-          <button style={{ flex: 1 }} type="button" onClick={prevPage}>
-            prev
-          </button>
+          <div>
+            &nbsp;
+            <button type="button" onClick={prevPage}>
+              back
+            </button>
+          </div>
         ) : null}
       </EmptyState>
     );

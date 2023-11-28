@@ -150,7 +150,11 @@ export async function modifyTargetMessage(
           const receivedAt = message.get('received_at');
           const lastSeenMap = recipient.get('lastMessagesSeen') || {};
           const lastSeenMsg = lastSeenMap[conversationId];
-          if (lastSeenMsg && lastSeenMsg.receivedAt === receivedAt) {
+          if (
+            lastSeenMsg &&
+            lastSeenMsg.receivedAt === receivedAt &&
+            lastSeenMsg.id !== message.id
+          ) {
             const prevSeenHereList = message.get('lastSeenHere') || [];
             message.set('lastSeenHere', [...prevSeenHereList, recipient.id]);
             changed = true;
