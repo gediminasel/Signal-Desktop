@@ -113,7 +113,7 @@
     "description": "Title of a popup if the database cannot start up properly"
   },
   "icu:databaseError__detail": {
-    "messageformat": "A database error occurred. You can copy the error and contact Signal support to help fix the issue. If you need to use Signal right away, you can delete your data and restart.\n\nContact support by visiting: {link}",
+    "messageformat": "Er is een databasefout opgetreden. Je kunt de foutmelding kopiëren en contact opnemen met Signal-support om het probleem op te lossen. Als je Signal meteen wilt gebruiken, kun je je gegevens wissen en opnieuw opstarten.\n\nGa naar {link} voor contact met support",
     "description": "Description shown in a popup if the database cannot start up properly"
   },
   "icu:deleteAndRestart": {
@@ -121,7 +121,7 @@
     "description": "Text of a button shown in a popup if the database cannot start up properly; allows user to delete all data in their database and restart"
   },
   "icu:databaseError__deleteDataConfirmation": {
-    "messageformat": "Alle gegevens definitief verwijderen?",
+    "messageformat": "Alle gegevens definitief wissen?",
     "description": "Header of a confirmation popup shown if the database cannot start up properly and the user selects 'delete data and restart'"
   },
   "icu:databaseError__deleteDataConfirmation__detail": {
@@ -952,7 +952,7 @@
     "description": "View menu item to force the app to update download and install"
   },
   "icu:helpMenuShowKeyboardShortcuts": {
-    "messageformat": "Toetsenbord-snelkoppelingen weergeven",
+    "messageformat": "Sneltoetsen weergeven",
     "description": "Item under the help menu, pops up a screen showing the application's keyboard shortcuts"
   },
   "icu:contactUs": {
@@ -1269,7 +1269,7 @@
     "messageformat": "Berichtdetails"
   },
   "icu:delete": {
-    "messageformat": "Wissen"
+    "messageformat": "Verwijderen"
   },
   "icu:accept": {
     "messageformat": "Gesprek aanvaarden"
@@ -1299,7 +1299,7 @@
     "description": "Label for when something is turned off"
   },
   "icu:deleteWarning": {
-    "messageformat": "Dit bericht zal alleen van dit apparaat gewist worden.",
+    "messageformat": "Dit bericht zal alleen van dit apparaat verwijderd worden.",
     "description": "Text shown in the confirmation dialog for deleting a message locally"
   },
   "icu:deleteForEveryoneWarning": {
@@ -1391,7 +1391,7 @@
     "description": "Shown on the drop-down menu for an individual message, but only if it is an outgoing message that failed to send"
   },
   "icu:retryDeleteForEveryone": {
-    "messageformat": "Opnieuw proberen voor iedereen te wissen",
+    "messageformat": "Opnieuw proberen voor iedereen te verwijderen",
     "description": "Shown on the drop-down menu for an individual message, but only if a previous delete for everyone failed to send"
   },
   "icu:forwardMessage": {
@@ -1411,7 +1411,7 @@
     "description": "Shown on the drop-down menu for an individual message when there isnt room for a dedicated button and when there's only a single attachment, downloads an attachment"
   },
   "icu:MessageContextMenu__deleteMessage": {
-    "messageformat": "Wissen",
+    "messageformat": "Verwijderen",
     "description": "Show on the drop-down menu for an individual message, opens a modal to select if you want to 'delete for me' or 'delete for everyone'"
   },
   "icu:MessageContextMenu__forward": {
@@ -1422,25 +1422,13 @@
     "messageformat": "Bericht­details",
     "description": "Shown on the drop-down menu for an individual message, takes you to message detail screen"
   },
-  "icu:deleteMessages": {
-    "messageformat": "Wissen",
-    "description": "(deleted 2023/10/26) Menu item for deleting messages, title case."
-  },
   "icu:deleteMessagesInConversation": {
-    "messageformat": "Berichten wissen",
+    "messageformat": "Berichten verwijderen",
     "description": "Menu item for deleting all messages in a conversation from your device"
   },
-  "icu:ConversationHeader__DeleteMessagesConfirmation__title": {
-    "messageformat": "Chat verwijderen?",
-    "description": "(deleted 2023/10/26) Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
-  },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
-    "messageformat": "Berichten wissen?",
+    "messageformat": "Berichten verwijderen?",
     "description": "Title for confirmation modal to delete all messages in a conversation"
-  },
-  "icu:ConversationHeader__DeleteMessagesConfirmation__description": {
-    "messageformat": "Deze chat wordt alleen op dit apparaat verwijderd.",
-    "description": "(deleted 2023/10/26) Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
     "messageformat": "Berichten in deze chat worden van dit apparaat verwijderd. Je kunt nog steeds naar deze chat zoeken nadat je berichten hebt verwijderd.",
@@ -1781,32 +1769,44 @@
     "messageformat": "Bellen inschakelen",
     "description": "Button tooltip label for turning ringing on"
   },
+  "icu:CallingButton--more-options": {
+    "messageformat": "Meer opties",
+    "description": "Tooltip label for button in the calling screen that opens a menu with other call actions such as React or Raise Hand."
+  },
+  "icu:CallingRaisedHandsList__Title": {
+    "messageformat": "{count, plural, one {Opgestoken hand · {count,number} persoon} other {Opgestoken hand · {count,number} personen}}",
+    "description": "Shown in the call raised hands list to describe how many people have active raised hands"
+  },
+  "icu:CallingReactions--me": {
+    "messageformat": "Jij",
+    "description": "Label next to in-call reactions to indicate that the current user sent that reaction."
+  },
   "icu:calling__your-video-is-off": {
     "messageformat": "Je camera staat uit",
     "description": "Label in the calling lobby indicating that your camera is off"
   },
   "icu:calling__pre-call-info--empty-group": {
-    "messageformat": "Er is niemand in de groepsoproep. Klik op ‘Oproep beginnen’ om een oproep te beginnen.",
+    "messageformat": "Er is niemand hier",
     "description": "Shown in the calling lobby to describe who is in the call"
   },
   "icu:calling__pre-call-info--1-person-in-call": {
-    "messageformat": "{first} is aanwezig in de oproep. Klik op ‘Aan oproep deelnemen’ om zelf deel te nemen.",
+    "messageformat": "{first} is aanwezig in de oproep.",
     "description": "Shown in the calling lobby to describe who is in the call"
   },
   "icu:calling__pre-call-info--another-device-in-call": {
-    "messageformat": "Een van je andere apparaten neemt deel aan deze oproep. Klik op ‘Aan oproep deelnemen’ om ook vanaf dit apparaat deel te nemen.",
+    "messageformat": "Een van je andere apparaten neemt deel aan deze oproep.",
     "description": "Shown in the calling lobby to describe when it is just you"
   },
   "icu:calling__pre-call-info--2-people-in-call": {
-    "messageformat": "{first} en {second} zijn aanwezig in deze oproep. Klik op ‘Aan oproep deelnemen’ om zelf deel te nemen.",
+    "messageformat": "{first} en {second} zijn aanwezig in deze oproep.",
     "description": "Shown in the calling lobby to describe who is in the call"
   },
   "icu:calling__pre-call-info--3-people-in-call": {
-    "messageformat": "{first}, {second} en {third} zijn aanwezig in deze oproep. Klik op ‘Aan oproep deelnemen’ om zelf deel te nemen.",
+    "messageformat": "{first}, {second} en {third} zijn aanwezig in deze oproep.",
     "description": "Shown in the calling lobby to describe who is in the call"
   },
   "icu:calling__pre-call-info--many-people-in-call": {
-    "messageformat": "{first}, {second} en {others} anderen zijn aanwezig in deze oproep. Klik op ‘Aan oproep deelnemen’ om zelf deel te nemen.",
+    "messageformat": "{first}, {second}, and {others, plural, other {#}} others are in this call",
     "description": "Shown in the calling lobby to describe who is in the call"
   },
   "icu:calling__pre-call-info--will-ring-1": {
@@ -1822,7 +1822,7 @@
     "description": "Shown in the calling lobby to describe who will be rang"
   },
   "icu:calling__pre-call-info--will-ring-many": {
-    "messageformat": "Als je doorgaat zul je {first}, {second} en nog {others} anderen bellen",
+    "messageformat": "Signal will ring {first}, {second}, and {others, plural, other {#}} others",
     "description": "Shown in the calling lobby to describe who will be rang"
   },
   "icu:calling__pre-call-info--will-notify-1": {
@@ -1838,11 +1838,11 @@
     "description": "Shown in the calling lobby to describe who will be notified"
   },
   "icu:calling__pre-call-info--will-notify-many": {
-    "messageformat": "Als je doorgaat zullen {first}, {second} en {others} anderen een melding krijgen",
+    "messageformat": "{first}, {second}, and {others, plural, other {#}} others will be notified",
     "description": "Shown in the calling lobby to describe who will be notified"
   },
   "icu:calling__in-this-call--zero": {
-    "messageformat": "Er is niemand in de groepsoproep. Klik op ‘Oproep beginnen’ om een oproep te beginnen.",
+    "messageformat": "Er is niemand hier",
     "description": "Shown in the participants list to describe how many people are in the call"
   },
   "icu:calling__in-this-call--one": {
@@ -1938,11 +1938,11 @@
     "description": "Header for permissions section of settings"
   },
   "icu:mediaPermissionsDescription": {
-    "messageformat": "Ik geef de Signal-app toestemming om mijn microfoon te gebruiken",
+    "messageformat": "Toegang tot de microfoon toestaan",
     "description": "Description of the media permission description"
   },
   "icu:mediaCameraPermissionsDescription": {
-    "messageformat": "Ik geef de Signal-app toestemming om mijn camera te gebruiken",
+    "messageformat": "Toegang tot de camera toestaan",
     "description": "Description of the media permission description"
   },
   "icu:general": {
@@ -1978,15 +1978,15 @@
     "description": "Description for the automatic launch setting"
   },
   "icu:clearDataHeader": {
-    "messageformat": "Applicatiegegevens wissen",
+    "messageformat": "Delete application data",
     "description": "Header in the settings dialog for the section dealing with data deletion"
   },
   "icu:clearDataExplanation": {
-    "messageformat": "Dit wist alle gegevens in de toepassing: alle berichten, alle opgeslagen voorkeuren en alle profielinformatie.",
+    "messageformat": "This will delete all data in the application, removing all messages and saved account information.",
     "description": "Text describing what the clear data button will do."
   },
   "icu:clearDataButton": {
-    "messageformat": "Gegevens wissen",
+    "messageformat": "Delete data",
     "description": "Button in the settings dialog starting process to delete all data"
   },
   "icu:deleteAllDataHeader": {
@@ -1994,7 +1994,7 @@
     "description": "Header of the full-screen delete data confirmation screen"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "Je staat op het punt alle opgeslagen gegevens van deze applicatie te wissen, inclusief alle contacten en alle berichten. Je kunt altijd opnieuw koppelen met je mobiele apparaat, maar je gewiste berichten kunnen niet hersteld worden.",
+    "messageformat": "Delete all data and messages from this version of Signal Desktop? You can always relink this desktop, but your messages will not restore. Your Signal account and data on your phone or other linked devices will not be deleted.",
     "description": "Text describing what exactly will happen if the user clicks the button to delete all data"
   },
   "icu:deleteAllDataButton": {
@@ -2056,7 +2056,7 @@
     "description": "Shown on outgoing message if it fails to send"
   },
   "icu:deleteFailed": {
-    "messageformat": "Wissen is mislukt",
+    "messageformat": "Verwijderen is mislukt",
     "description": "Shown on a message which was deleted for everyone if the delete wasn't successfully sent to anyone"
   },
   "icu:editFailed": {
@@ -2072,7 +2072,7 @@
     "description": "Shown on outgoing message if it is partially sent"
   },
   "icu:partiallyDeleted": {
-    "messageformat": "Gedeeltelijk gewist, klik hier om het opnieuw te proberen",
+    "messageformat": "Gedeeltelijk verwijderd, klik hier om het opnieuw te proberen",
     "description": "Shown on a message which was deleted for everyone if the delete wasn't successfully sent to everyone"
   },
   "icu:showMore": {
@@ -2248,7 +2248,7 @@
     "description": "A notification shown in the conversation when a contact reinstalls"
   },
   "icu:safetyNumberChanges": {
-    "messageformat": "Veiligheidsnummer veranderingen",
+    "messageformat": "Veranderingen in veiligheidsnummer",
     "description": "Title for safety number changed modal"
   },
   "icu:safetyNumberChangedGroup": {
@@ -2284,7 +2284,7 @@
     "description": "Label text for dark theme"
   },
   "icu:themeSystem": {
-    "messageformat": "Systeemstandaard volgen",
+    "messageformat": "Systeemstandaard",
     "description": "Label text for system theme"
   },
   "icu:noteToSelf": {
@@ -2350,10 +2350,6 @@
   "icu:Toast--failed-to-fetch-phone-number": {
     "messageformat": "Het ophalen van het telefoonnummer is mislukt. Ga na dat je apparaat met het internet is verbonden en probeer het opnieuw.",
     "description": "Shown if request to Signal servers to find phone number fails"
-  },
-  "icu:ToastManager__CannotEditMessage": {
-    "messageformat": "Bewerkingen kunnen alleen worden toegepast binnen 3 uur vanaf het moment dat je dit bericht hebt verstuurd.",
-    "description": "(deleted 2023/10/26) Error message when you try to send an edit after message becomes too old"
   },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "Berichten kunnen alleen binnen 24 uur na verzenden bewerkt worden.",
@@ -2529,7 +2525,7 @@
     "description": "Aria label for the conversation list item"
   },
   "icu:ConversationList__last-message-undefined": {
-    "messageformat": "Het meest recente bericht is mogelijk gewist.",
+    "messageformat": "Het meest recente bericht is mogelijk verwijderd.",
     "description": "For aria-label within conversation list. Describes if last message is not defined."
   },
   "icu:BaseConversationListItem__aria-label": {
@@ -2597,7 +2593,7 @@
     "description": "Shown in notifications and in the left pane when a message is a view once video. Also shown when quoting a view once video."
   },
   "icu:message--deletedForEveryone": {
-    "messageformat": "Dit bericht is gewist.",
+    "messageformat": "Dit bericht is verwijderd.",
     "description": "Shown in a message's bubble when the message has been deleted for everyone."
   },
   "icu:message--attachmentTooBig--one": {
@@ -3041,7 +3037,7 @@
     "description": "Shown in the shortcuts guide"
   },
   "icu:Keyboard--delete-messages": {
-    "messageformat": "Geselecteerde berichten wissen",
+    "messageformat": "Geselecteerde berichten verwijderen",
     "description": "Shown in the shortcuts guide"
   },
   "icu:Keyboard--forward-messages": {
@@ -3109,7 +3105,7 @@
     "description": "Expresses that 1, 2, 3, up to 9 are available shortcut keys"
   },
   "icu:Keyboard--header": {
-    "messageformat": "Toetsenbord-snelkoppelingen",
+    "messageformat": "Sneltoetsen",
     "description": "Title header of the keyboard shortcuts guide"
   },
   "icu:Keyboard--navigation-header": {
@@ -3201,7 +3197,7 @@
     "description": "Shown in the calling keyboard shortcuts guide"
   },
   "icu:Keyboard--start-audio-call": {
-    "messageformat": "Spraakoproep beginnen?",
+    "messageformat": "Spraakoproep beginnen",
     "description": "Shown in the calling keyboard shortcuts guide"
   },
   "icu:Keyboard--start-video-call": {
@@ -3369,7 +3365,7 @@
     "description": "Shown as the body in the confirmation modal for blocking a group message request"
   },
   "icu:MessageRequests--delete": {
-    "messageformat": "Wissen",
+    "messageformat": "Verwijderen",
     "description": "Shown as a button to let the user delete any message request"
   },
   "icu:MessageRequests--delete-direct-confirm-title": {
@@ -3385,7 +3381,7 @@
     "description": "Shown as the title in the confirmation modal for deleting a group message request"
   },
   "icu:MessageRequests--delete-direct": {
-    "messageformat": "Wissen",
+    "messageformat": "Verwijderen",
     "description": "Shown as a button to let the user delete a direct message request"
   },
   "icu:MessageRequests--delete-group": {
@@ -3433,7 +3429,7 @@
     "description": "Shown in the conversation hero to indicate this user is a member of four mutual groups"
   },
   "icu:member-of-more-than-3-groups--multiple-more": {
-    "messageformat": "Lid van {group1}, {group2}, {group3} en {remainingCount,number} andere groepen",
+    "messageformat": "Member of {group1}, {group2}, {group3} and {remainingCount, plural, other {#}} more",
     "description": "Shown in the conversation hero to indicate this user is a member of 5+ mutual groups."
   },
   "icu:ConversationHero--membership-added": {
@@ -3600,6 +3596,38 @@
     "messageformat": "Bellen uit",
     "description": "Shown in a group call lobby when call ringing is enabled, then the user disables ringing using the Ringing toggle button."
   },
+  "icu:CallControls__RaiseHandsToast--you": {
+    "messageformat": "Je hebt je hand opgestoken.",
+    "description": "Shown in a call when the user raises their hand."
+  },
+  "icu:CallControls__RaiseHandsToast--one": {
+    "messageformat": "{name} steekt hand op.",
+    "description": "Shown in a call when someone else raises their hand."
+  },
+  "icu:CallControls__RaiseHandsToast--two": {
+    "messageformat": "{name} en {otherName} steken hun hand op.",
+    "description": "Shown in a call when 2 persons raise their hands."
+  },
+  "icu:CallControls__RaiseHandsToast--more": {
+    "messageformat": "{name}, {otherName}, and {overflowCount, plural, other {#}} more raised a hand.",
+    "description": "Shown in a call when 3 or more persons raise their hands."
+  },
+  "icu:CallControls__RaiseHands--open-queue": {
+    "messageformat": "Wachtrij openen",
+    "description": "Link in call raised hands list and in toast shown when someone else raises their hand. Link opens the list of all raised hands."
+  },
+  "icu:CallControls__RaiseHands--lower": {
+    "messageformat": "Omlaag doen",
+    "description": "Link in call raised hands list and in toast shown when user raises their hand. Link allows user to lower their hand."
+  },
+  "icu:CallControls__MenuItemRaiseHand": {
+    "messageformat": "Hand opsteken",
+    "description": "Menu item to raise your hand during a call."
+  },
+  "icu:CallControls__MenuItemRaiseHand--lower": {
+    "messageformat": "Hand omlaag doen",
+    "description": "Menu item to lower your previously raised hand during a call."
+  },
   "icu:callingDeviceSelection__settings": {
     "messageformat": "Instellingen",
     "description": "Title for device selection settings"
@@ -3641,23 +3669,23 @@
     "description": "Title for picture-in-picture toggle"
   },
   "icu:calling__change-view": {
-    "messageformat": "Change view",
+    "messageformat": "Weergave wijzigen",
     "description": "Tooltip for changing the in-call layout of remote participants in a group call"
   },
   "icu:calling__view_mode--paginated": {
-    "messageformat": "Grid view",
+    "messageformat": "Rasterweergave",
     "description": "Label for option to view participants in a group call in a paginated grid view"
   },
   "icu:calling__view_mode--overflow": {
-    "messageformat": "Sidebar view",
+    "messageformat": "Zijbalkweergave",
     "description": "Label for option to view participants in a group call where videos that don't fit onto the page are put into a scrollable overflow sidebar"
   },
   "icu:calling__view_mode--speaker": {
-    "messageformat": "Speaker view",
+    "messageformat": "Sprekerweergave",
     "description": "Label for option to view participants where only the current speaker's video is fully visible and all others are put into a scrollable overflow sidebar"
   },
   "icu:calling__view_mode--updated": {
-    "messageformat": "View updated",
+    "messageformat": "Weergave bijgewerkt",
     "description": "Toast shown whenver the calling view mode is changed (e.g. paginated view -> speaker view)"
   },
   "icu:calling__hangup": {
@@ -3765,7 +3793,7 @@
     "description": "Title in popup dialog when attempting to edit a message too many times."
   },
   "icu:MessageMaxEditsModal__Description": {
-    "messageformat": "Dit bericht kan maximaal {max,number} keer bewerkt worden.",
+    "messageformat": "Only {max, plural, other {#}} edits can be applied to this message.",
     "description": "Description text in popup dialog when attempting to edit a message too many times."
   },
   "icu:unknown-sgnl-link": {
@@ -3829,7 +3857,7 @@
     "description": "Shown when you click on a group link to confirm, if it requires admin approval"
   },
   "icu:GroupV2--join--join-button": {
-    "messageformat": "Aan oproep deelnemen",
+    "messageformat": "Deelnemen",
     "description": "The button to join the group"
   },
   "icu:GroupV2--join--request-to-join-button": {
@@ -3993,27 +4021,27 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--access-invite-link--disabled--you": {
-    "messageformat": "Je hebt de beheerderstoestemming-vereiste om via de groepslink lid te mogen worden uitgeschakeld.",
+    "messageformat": "Je hebt beheerdersgoedkeuring van nieuwe leden uitgeschakeld voor de groepslink.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--access-invite-link--disabled--other": {
-    "messageformat": "{adminName} heeft de beheerderstoestemming-vereiste om via de groepslink lid te mogen worden van de groep uitgeschakeld.",
+    "messageformat": "{adminName} heeft beheerdersgoedkeuring van nieuwe leden uitgeschakeld voor de groepslink.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--access-invite-link--disabled--unknown": {
-    "messageformat": "De beheerderstoestemming-vereiste om via de groepslink lid te mogen worden van de groep is uitgeschakeld.",
+    "messageformat": "Beheerdersgoedkeuring van nieuwe leden is uitgeschakeld voor de groepslink.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--access-invite-link--enabled--you": {
-    "messageformat": "Je hebt de beheerderstoestemming-vereiste om via de groepslink lid te mogen worden van de groep ingeschakeld.",
+    "messageformat": "Je hebt beheerdersgoedkeuring van nieuwe leden ingeschakeld voor de groepslink.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--access-invite-link--enabled--other": {
-    "messageformat": "{adminName} heeft de beheerderstoestemming-vereiste voor personen die lid willen worden via de groepslink ingeschakeld.",
+    "messageformat": "{adminName} heeft beheerdersgoedkeuring van nieuwe leden ingeschakeld voor de groepslink.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--access-invite-link--enabled--unknown": {
-    "messageformat": "De beheerderstoestemming-vereiste om via de groepslink lid te mogen worden van de groep is ingeschakeld.",
+    "messageformat": "Beheerdersgoedkeuring van nieuwe leden is ingeschakeld voor de groepslink.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--member-add--invited--you": {
@@ -4189,7 +4217,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-add--many--other": {
-    "messageformat": "{memberName} heeft {count,number} personen uitgenodigd om lid te worden van de groep.",
+    "messageformat": "{memberName} invited {count, plural, other {#}} people to the group.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-add--many--you": {
@@ -4197,7 +4225,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-add--many--unknown": {
-    "messageformat": "{count,number} nieuwe personen zijn uitgenodigd om lid te worden van de groep.",
+    "messageformat": "{count, plural, other {#}} people were invited to the group.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-remove--decline--other": {
@@ -4273,7 +4301,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--other": {
-    "messageformat": "{adminName} weigerde de uitnodigingen voor {count,number} personen om lid te worden van de groep, uitgenodigd door {memberName}.",
+    "messageformat": "{adminName} revoked invitations to the group for {count, plural, other {#}} people invited by {memberName}.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--you": {
@@ -4333,27 +4361,27 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--group-link-add--disabled--you": {
-    "messageformat": "Je hebt de groepslink ingeschakeld zonder beheerderstoestemming-vereiste om lid te mogen worden.",
+    "messageformat": "Je hebt de groepslink zonder beheerdersgoedkeuring van nieuwe leden ingeschakeld.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--group-link-add--disabled--other": {
-    "messageformat": "{adminName} heeft de groepslink ingeschakeld zonder beheerderstoestemming-vereiste om lid te mogen worden.",
+    "messageformat": "{adminName} heeft de groepslink zonder beheerdersgoedkeuring van nieuwe leden ingeschakeld.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--group-link-add--disabled--unknown": {
-    "messageformat": "De groepslink is ingeschakeld zonder beheerderstoestemming-vereiste om lid te mogen worden.",
+    "messageformat": "De groepslink zonder beheerdersgoedkeuring van nieuwe leden is ingeschakeld.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--group-link-add--enabled--you": {
-    "messageformat": "Je hebt de groepslink ingeschakeld met beheerderstoestemming-vereiste om lid te mogen worden ook ingeschakeld.",
+    "messageformat": "Je hebt de groepslink met beheerdersgoedkeuring van nieuwe leden ingeschakeld.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--group-link-add--enabled--other": {
-    "messageformat": "{adminName} heeft de groepslink ingeschakeld met beheerderstoestemming-vereiste om lid te mogen worden ook ingeschakeld.",
+    "messageformat": "{adminName} heeft de groepslink met beheerdersgoedkeuring van nieuwe leden ingeschakeld.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--group-link-add--enabled--unknown": {
-    "messageformat": "De groepslink is ingeschakeld met beheerderstoestemming-vereiste om lid te mogen worden ook ingeschakeld.",
+    "messageformat": "De groepslink met beheerdersgoedkeuring van nieuwe leden is ingeschakeld.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--group-link-remove--you": {
@@ -4513,7 +4541,7 @@
     "description": "Shown in timeline when a group is upgraded and one person was removed entirely during the upgrade"
   },
   "icu:GroupV1--Migration--removed--many": {
-    "messageformat": "{count,number} leden zijn uit de groep verwijderd.",
+    "messageformat": "{count, plural, other {#}} members were removed from the group.",
     "description": "Shown in timeline when a group is upgraded and some people were removed entirely during the upgrade"
   },
   "icu:close": {
@@ -4797,7 +4825,7 @@
     "description": "This lets users share their group link"
   },
   "icu:GroupLinkManagement--confirm-reset": {
-    "messageformat": "Weet je zeker dat je de groepslink wilt vernieuwen? Als je de link vernieuwt zullen mensen niet langer lid kunnen worden via de huidige link.",
+    "messageformat": "Weet je zeker dat je de groepslink wilt vernieuwen? Als je de link vernieuwt kunnen mensen niet langer lid worden via de huidige link.",
     "description": "Shown in the confirmation dialog when an admin is about to reset the group link"
   },
   "icu:GroupLinkManagement--reset": {
@@ -4805,11 +4833,11 @@
     "description": "This lets users generate a new group link"
   },
   "icu:GroupLinkManagement--approve-label": {
-    "messageformat": "Beheerderstoestemming vereisen",
+    "messageformat": "Nieuwe leden goedkeuren",
     "description": "Title for the approve new members select area"
   },
   "icu:GroupLinkManagement--approve-info": {
-    "messageformat": "Vereis voor iedere persoon die via de groepslink lid wil worden eerst toestemming van een beheerder",
+    "messageformat": "Vereis voor iedere persoon die via de groepslink lid wil worden eerst goedkeuring van een beheerder",
     "description": "Description for the approve new members select area"
   },
   "icu:PendingInvites--tab-requests": {
@@ -4901,11 +4929,11 @@
     "description": "conversation > in select mode > composition area actions > exit select mode > accessibility label"
   },
   "icu:SelectModeActions--selectedMessages": {
-    "messageformat": "{count,number} geselecteerd",
+    "messageformat": "{count, plural, other {#}} selected",
     "description": "conversation > in select mode > composition area actions > count of selected messsages"
   },
   "icu:SelectModeActions--deleteSelectedMessages": {
-    "messageformat": "Geselecteerde berichten wissen",
+    "messageformat": "Geselecteerde berichten verwijderen",
     "description": "conversation > in select mode > composition area actions > delete selected messsages action > accessibility label"
   },
   "icu:SelectModeActions--forwardSelectedMessages": {
@@ -4925,7 +4953,7 @@
     "description": "within note to self conversation > delete selected messages > confirmation modal > description"
   },
   "icu:DeleteMessagesModal--deleteForMe": {
-    "messageformat": "Voor mij wissen",
+    "messageformat": "Verwijderen voor mezelf",
     "description": "delete selected messages > confirmation modal > delete for me"
   },
   "icu:DeleteMessagesModal--deleteFromThisDevice": {
@@ -4933,7 +4961,7 @@
     "description": "within note to self conversation > delete selected messages > confirmation modal > delete from this device (same as delete for me)"
   },
   "icu:DeleteMessagesModal--deleteForEveryone": {
-    "messageformat": "Wissen voor iedereen",
+    "messageformat": "Verwijderen voor iedereen",
     "description": "delete selected messages > confirmation modal > delete for everyone"
   },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
@@ -5201,15 +5229,15 @@
     "description": "Displayed after unsuccessful captcha"
   },
   "icu:deleteForEveryoneFailed": {
-    "messageformat": "Het is niet gelukt om dit bericht voor alle ontvangers te wissen. Probeer het later opnieuw.",
+    "messageformat": "Het is niet gelukt om dit bericht voor alle ontvangers te verwijderen. Probeer het later opnieuw.",
     "description": "Displayed when delete-for-everyone has failed to send to all recipients"
   },
   "icu:ChatColorPicker__delete--title": {
-    "messageformat": "Kleur wissen",
+    "messageformat": "Kleur verwijderen",
     "description": "Confirm title for deleting custom color"
   },
   "icu:ChatColorPicker__delete--message": {
-    "messageformat": "{num, plural, one {Deze zelfgekozen kleur wordt in {num,number} chat gebruikt. Wil je het voor alle chats wissen?} other {Deze zelfgekozen kleur wordt in {num,number} chats gebruikt. Wil je het voor alle chats wissen?}}",
+    "messageformat": "{num, plural, one {Deze zelfgekozen kleur wordt in {num,number} chat gebruikt. Wil je het voor alle chats verwijderen?} other {Deze zelfgekozen kleur wordt in {num,number} chats gebruikt. Wil je het voor alle chats verwijderen?}}",
     "description": "Confirm message for deleting custom color"
   },
   "icu:ChatColorPicker__global-chat-color": {
@@ -5269,7 +5297,7 @@
     "description": "Option in the custom color bubble context menu"
   },
   "icu:ChatColorPicker__context--delete": {
-    "messageformat": "Wissen",
+    "messageformat": "Verwijderen",
     "description": "Option in the custom color bubble context menu"
   },
   "icu:CustomColorEditor__solid": {
@@ -5525,7 +5553,7 @@
     "description": "Shown when username link is copied to clipboard."
   },
   "icu:ProfileEditor--username--deleting-username": {
-    "messageformat": "Gebruikersnaam aan het wissen",
+    "messageformat": "Gebruikersnaam aan het verwijderen",
     "description": "Shown as aria label for spinner icon next to username"
   },
   "icu:ProfileEditor--username--delete-username": {
@@ -5537,7 +5565,7 @@
     "description": "Shown in dialog body if user has saved an empty string to delete their username"
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
-    "messageformat": "Wissen",
+    "messageformat": "Verwijderen",
     "description": "Shown in dialog button if user has saved an empty string to delete their username"
   },
   "icu:ProfileEditor--username--context-menu": {
@@ -5553,7 +5581,7 @@
     "description": "Shown as a button in context menu next to username. The action of the button is to put a username link into the clipboard."
   },
   "icu:ProfileEditor--username--delete": {
-    "messageformat": "Wissen",
+    "messageformat": "Verwijderen",
     "description": "Shown as a button in context menu next to username. The action of the button is to open a confirmation dialog for deleting username."
   },
   "icu:ProfileEditor--about-placeholder": {
@@ -5817,7 +5845,7 @@
     "description": "Label in confirmation modal to disable stories"
   },
   "icu:Preferences__turn-stories-off--body": {
-    "messageformat": "Je kunt geen verhalen meer delen of bekijken. Updates die je recent op je verhaal hebt gedeeld, worden ook gewist.",
+    "messageformat": "Je kunt geen verhalen meer delen of bekijken. Updates die je recent op je verhaal hebt gedeeld, worden ook verwijderd.",
     "description": "Confirmation modal body for disabling stories"
   },
   "icu:Preferences__Language__Label": {
@@ -6073,7 +6101,7 @@
     "description": "Number of replies your story has"
   },
   "icu:MyStories__delete": {
-    "messageformat": "Dit verhaal wissen? Het zal ook worden gewist voor iedereen die het al heeft ontvangen.",
+    "messageformat": "Dit verhaal verwijderen? Het zal ook worden verwijderd voor iedereen die het al heeft ontvangen.",
     "description": "Confirmation dialog description text for deleting a story"
   },
   "icu:payment-event-notification-message-you-label": {
@@ -6273,11 +6301,11 @@
     "description": "Description of checkbox to allow or disallow replies to your stories"
   },
   "icu:StoriesSettings__delete-list": {
-    "messageformat": "Aangepast verhaal wissen",
+    "messageformat": "Aangepast verhaal verwijderen",
     "description": "Button label to delete a custom distribution list"
   },
   "icu:StoriesSettings__delete-list--confirm": {
-    "messageformat": "Weet je zeker dat je \"{name}\" wilt wissen? Updates gedeeld in dit verhaal worden ook gewist.",
+    "messageformat": "Weet je zeker dat je \"{name}\" wilt verwijderen? Updates gedeeld in dit verhaal worden ook verwijderd.",
     "description": "Confirmation text to delete a custom distribution list"
   },
   "icu:StoriesSettings__choose-viewers": {
@@ -6309,7 +6337,7 @@
     "description": "Input label to create a block list"
   },
   "icu:StoriesSettings__mine__exclude--description": {
-    "messageformat": "Voor {num,number} personen verborgen",
+    "messageformat": "{num, plural, other {#}} people excluded",
     "description": "Description of how many people are excluded in a list"
   },
   "icu:StoriesSettings__mine__only--label": {
@@ -6421,7 +6449,7 @@
     "description": "Disclaimer on how changes to story settings work"
   },
   "icu:SendStoryModal__delete-story": {
-    "messageformat": "Verhaal wissen",
+    "messageformat": "Verhaal verwijderen",
     "description": "Button label to delete a story"
   },
   "icu:SendStoryModal__confirm-remove-group": {
@@ -6553,11 +6581,11 @@
     "description": "Shown in the composer area of the reply-to-story modal when a user can't make a reply because they are no longer a member"
   },
   "icu:StoryViewsNRepliesModal__delete-reply": {
-    "messageformat": "Voor mij wissen",
+    "messageformat": "Verwijderen voor mezelf",
     "description": "Shown as a menu item in the context menu of a story reply, to the author of the reply, for deleting the reply just for the author"
   },
   "icu:StoryViewsNRepliesModal__delete-reply-for-everyone": {
-    "messageformat": "Wissen voor iedereen",
+    "messageformat": "Verwijderen voor iedereen",
     "description": "Shown as a menu item in the context menu of a story reply, to the author of the reply, for deleting the reply for everyone"
   },
   "icu:StoryViewsNRepliesModal__copy-reply-timestamp": {
@@ -6581,7 +6609,7 @@
     "description": "Label for menu item to go to conversation"
   },
   "icu:StoryListItem__delete": {
-    "messageformat": "Wissen",
+    "messageformat": "Verwijderen",
     "description": "Label for menu item to delete a story"
   },
   "icu:StoryListItem__info": {
@@ -6777,7 +6805,7 @@
     "description": "Text of disclaimer at the bottom of the username link modal"
   },
   "icu:UsernameLinkModalBody__reset": {
-    "messageformat": "Standaardinstelling herstellen",
+    "messageformat": "QR-code vernieuwen",
     "description": "Text of button at the bottom of the username link modal"
   },
   "icu:UsernameLinkModalBody__done": {
@@ -6789,11 +6817,11 @@
     "description": "ARIA label of button for selecting username link color"
   },
   "icu:UsernameLinkModalBody__reset__confirm": {
-    "messageformat": "Als je je QR-code reset, werken je bestaande QR-code en link niet meer.",
+    "messageformat": "Als je je QR-code vernieuwd, werken je bestaande QR-code en link niet meer.",
     "description": "Text of confirmation modal when resetting the username link"
   },
   "icu:UsernameLinkModalBody__resetting-link": {
-    "messageformat": "Link aan het resetten…",
+    "messageformat": "Link aan het vernieuwen…",
     "description": "Text shown when resetting the username link"
   },
   "icu:UsernameLinkModalBody__error__text": {
@@ -6881,11 +6909,11 @@
     "description": "Calls Tab > Confirm Clear Call History Dialog > Title"
   },
   "icu:CallsTab__ConfirmClearCallHistory__Body": {
-    "messageformat": "Hiermee wordt de oproepgeschiedenis voorgoed verwijderd",
+    "messageformat": "Hiermee wordt de oproepgeschiedenis voorgoed gewist",
     "description": "Calls Tab > Confirm Clear Call History Dialog > Body Text"
   },
   "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
-    "messageformat": "Verwijderen",
+    "messageformat": "Wissen",
     "description": "Calls Tab > Confirm Clear Call History Dialog > Confirm Button"
   },
   "icu:CallsTab__ToastCallHistoryCleared": {
@@ -6961,7 +6989,7 @@
     "description": "Group chat multiple person typing indicator when space isn't available to show every avatar, this is the count of avatars hidden."
   },
   "icu:WhatsNew__modal-title": {
-    "messageformat": "wat er nieuw is",
+    "messageformat": "Wat er nieuw is",
     "description": "Title for the whats new modal"
   },
   "icu:WhatsNew__bugfixes": {
@@ -6992,13 +7020,22 @@
     "messageformat": "Kleine aanpassingen, bugfixes en prestatieverbeteringen. Bedankt dat je Signal gebruikt!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.38--0": {
-    "messageformat": "Deze release bevat een bijgewerkt ontwerp voor video- en spraakoproepen in Signal. De gebruikersinterface waarmee je belt, ziet er nog steeds geweldig uit. Zelfs als je camera uitstaat en je niet naar je eigen, mooie spiegelbeeld kunt kijken."
+  "icu:WhatsNew__v6.42--0": {
+    "messageformat": "We hebben een bug opgelost waarbij geciteerde antwoorden op video's werden weergegeven alsof het geciteerde antwoorden op foto's waren, ook al is elke video eigenlijk slechts een aaneenschakeling van foto's als je erover nadenkt."
   },
-  "icu:WhatsNew__v6.39--0": {
-    "messageformat": "Je kunt nu je geselecteerde taal in Signal wijzigen zonder je systeeminstellingen te wijzigen (Signal-instellingen > Uiterlijk > Taal)."
+  "icu:WhatsNew__v6.42--1": {
+    "messageformat": "Dank aan {linkToGithub1} en {linkToGithub2} voor hun hulp bij deze release."
   },
-  "icu:WhatsNew__v6.39--1": {
-    "messageformat": "We hebben een korte vertraging opgelost die soms optrad tijdens het wachten in het wachtscherm op macOS-apparaten. Nu is er in ieder geval één excuus minder om een halve seconde te laat te zijn voor de vergadering."
+  "icu:WhatsNew__v6.43--0": {
+    "messageformat": "Turn a missed call into something that won't be missed. Now you can right-click on any call event and delete it from a chat."
+  },
+  "icu:WhatsNew__v6.43--1": {
+    "messageformat": "The default font for Persian has been updated to Vazirmatn to improve readability when that language is selected (Signal Settings > Appearance > Language). Thanks, {linkToGithub1}!"
+  },
+  "icu:WhatsNew__v6.43--2": {
+    "messageformat": "The playback speed indicators in voice messages have a slightly new look. X marks the spot. Thanks, {linkToGithub1}!"
+  },
+  "icu:WhatsNew__v6.43--3": {
+    "messageformat": "We would also like to thank {linkToGithub1}, {linkToGithub2}, and {linkToGithub3} for their contributions to this release."
   }
 }

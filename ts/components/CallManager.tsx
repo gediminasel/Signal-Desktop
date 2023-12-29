@@ -33,6 +33,8 @@ import type {
   CancelCallType,
   DeclineCallType,
   KeyChangeOkType,
+  SendGroupCallRaiseHandType,
+  SendGroupCallReactionType,
   SetGroupCallVideoRequestType,
   SetLocalAudioType,
   SetLocalPreviewType,
@@ -43,6 +45,8 @@ import type {
 import type { LocalizerType, ThemeType } from '../types/Util';
 import { missingCaseError } from '../util/missingCaseError';
 import { CallingToastProvider } from './CallingToast';
+import type { SmartReactionPicker } from '../state/smart/ReactionPicker';
+import type { Props as ReactionPickerProps } from './conversation/ReactionPicker';
 
 const GROUP_CALL_RING_DURATION = 60 * 1000;
 
@@ -72,6 +76,9 @@ export type PropsType = {
       };
   keyChangeOk: (_: KeyChangeOkType) => void;
   renderDeviceSelection: () => JSX.Element;
+  renderReactionPicker: (
+    props: React.ComponentProps<typeof SmartReactionPicker>
+  ) => JSX.Element;
   renderSafetyNumberViewer: (props: SafetyNumberProps) => JSX.Element;
   startCall: (payload: StartCallType) => void;
   toggleParticipants: () => void;
@@ -80,7 +87,8 @@ export type PropsType = {
   bounceAppIconStop: () => unknown;
   declineCall: (_: DeclineCallType) => void;
   i18n: LocalizerType;
-  isGroupCallOutboundRingEnabled: boolean;
+  isGroupCallRaiseHandEnabled: boolean;
+  isGroupCallReactionsEnabled: boolean;
   me: ConversationType;
   notifyForCall: (
     conversationId: string,
@@ -89,6 +97,8 @@ export type PropsType = {
   ) => unknown;
   openSystemPreferencesAction: () => unknown;
   playRingtone: () => unknown;
+  sendGroupCallRaiseHand: (payload: SendGroupCallRaiseHandType) => void;
+  sendGroupCallReaction: (payload: SendGroupCallReactionType) => void;
   setGroupCallVideoRequest: (_: SetGroupCallVideoRequestType) => void;
   setIsCallActive: (_: boolean) => void;
   setLocalAudio: (_: SetLocalAudioType) => void;
@@ -107,7 +117,7 @@ export type PropsType = {
   toggleSettings: () => void;
   isConversationTooBigToRing: boolean;
   pauseVoiceNotePlayer: () => void;
-};
+} & Pick<ReactionPickerProps, 'renderEmojiPicker'>;
 
 type ActiveCallManagerPropsType = PropsType & {
   activeCall: ActiveCallType;
@@ -121,7 +131,8 @@ function ActiveCallManager({
   closeNeedPermissionScreen,
   hangUpActiveCall,
   i18n,
-  isGroupCallOutboundRingEnabled,
+  isGroupCallRaiseHandEnabled,
+  isGroupCallReactionsEnabled,
   keyChangeOk,
   getGroupCallVideoFrameSource,
   getPreferredBadge,
@@ -129,7 +140,11 @@ function ActiveCallManager({
   me,
   openSystemPreferencesAction,
   renderDeviceSelection,
+  renderEmojiPicker,
+  renderReactionPicker,
   renderSafetyNumberViewer,
+  sendGroupCallRaiseHand,
+  sendGroupCallReaction,
   setGroupCallVideoRequest,
   setLocalAudio,
   setLocalPreview,
@@ -254,7 +269,6 @@ function ActiveCallManager({
           hasLocalVideo={hasLocalVideo}
           i18n={i18n}
           isGroupCall={activeCall.callMode === CallMode.Group}
-          isGroupCallOutboundRingEnabled={isGroupCallOutboundRingEnabled}
           isCallFull={isCallFull}
           isConversationTooBigToRing={isConvoTooBigToRing}
           me={me}
@@ -329,8 +343,14 @@ function ActiveCallManager({
         groupMembers={groupMembers}
         hangUpActiveCall={hangUpActiveCall}
         i18n={i18n}
+        isGroupCallRaiseHandEnabled={isGroupCallRaiseHandEnabled}
+        isGroupCallReactionsEnabled={isGroupCallReactionsEnabled}
         me={me}
         openSystemPreferencesAction={openSystemPreferencesAction}
+        renderEmojiPicker={renderEmojiPicker}
+        renderReactionPicker={renderReactionPicker}
+        sendGroupCallRaiseHand={sendGroupCallRaiseHand}
+        sendGroupCallReaction={sendGroupCallReaction}
         setGroupCallVideoRequest={setGroupCallVideoRequestForConversation}
         setLocalPreview={setLocalPreview}
         setRendererCanvas={setRendererCanvas}

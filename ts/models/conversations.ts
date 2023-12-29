@@ -129,7 +129,6 @@ import {
   conversationQueueJobEnum,
 } from '../jobs/conversationJobQueue';
 import type { ReactionAttributesType } from '../messageModifiers/Reactions';
-import { isAnnouncementGroupReady } from '../util/isAnnouncementGroupReady';
 import { getProfile } from '../util/getProfile';
 import { SEALED_SENDER } from '../types/SealedSender';
 import { createIdenticon } from '../util/createIdenticon';
@@ -3608,10 +3607,6 @@ export class ConversationModel extends window.Backbone
       return false;
     }
 
-    if (!isAnnouncementGroupReady()) {
-      return false;
-    }
-
     return true;
   }
 
@@ -3772,11 +3767,7 @@ export class ConversationModel extends window.Backbone
       const { clearUnreadMetrics } = window.reduxActions.conversations;
       clearUnreadMetrics(this.id);
 
-      const mandatoryProfileSharingEnabled =
-        window.Signal.RemoteConfig.isEnabled('desktop.mandatoryProfileSharing');
-      const enabledProfileSharing = Boolean(
-        mandatoryProfileSharingEnabled && !this.get('profileSharing')
-      );
+      const enabledProfileSharing = Boolean(!this.get('profileSharing'));
       const unarchivedConversation = Boolean(this.get('isArchived'));
 
       log.info(

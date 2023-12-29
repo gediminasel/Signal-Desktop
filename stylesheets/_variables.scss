@@ -1,9 +1,9 @@
 // Copyright 2015 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-$inter: Inter, 'Helvetica Neue', 'Source Sans Pro', 'Source Han Sans SC',
-  'Source Han Sans CN', 'Hiragino Sans GB', 'Hiragino Kaku Gothic',
-  'Microsoft Yahei UI', Helvetica, Arial, sans-serif;
+// Note: Add language-specific fallbacks in @localized-fonts mixin
+$inter: Inter, 'Source Sans Pro', 'Source Han Sans', -apple-system, system-ui,
+  'Segoe UI', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
 // Note: This font-family is checked for in matchMonospace, to support paste scenarios
 $monospace: 'SF Mono', SFMono-Regular, ui-monospace, 'DejaVu Sans Mono', Menlo,
@@ -68,6 +68,7 @@ $color-ultramarine-dark: #1851b4;
 $color-ultramarine-icon: #3a76f0;
 $color-ultramarine-light: #6191f3;
 $color-ultramarine-dawn: #406ec9;
+$color-ultramarine-pastel: #abc4f8;
 $color-ultramarine: #2c6bed;
 
 // Flat colors
@@ -291,3 +292,6 @@ $NavTabs__width: 80px;
 $NavTabs__Item__blockPadding: 2px;
 $NavTabs__Toggle__blockPadding: 8px;
 $NavTabs__ItemButton__blockPadding: 10px;
+$CallControls__height: 80px;
+$CallControls__max-width: 600px;
+$CallControls__initial-width: 440px;

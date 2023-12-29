@@ -1049,12 +1049,12 @@ export function isMissingRequiredProfileSharing(
   const doesConversationRequireIt =
     !conversation.isMe &&
     !conversation.left &&
+    !conversation.removalStage &&
     (isGroupV1(conversation) || isDirectConversation(conversation));
 
   return Boolean(
     doesConversationRequireIt &&
       !conversation.profileSharing &&
-      window.Signal.RemoteConfig.isEnabled('desktop.mandatoryProfileSharing') &&
       conversation.hasMessages
   );
 }

@@ -113,7 +113,7 @@
     "description": "Title of a popup if the database cannot start up properly"
   },
   "icu:databaseError__detail": {
-    "messageformat": "A database error occurred. You can copy the error and contact Signal support to help fix the issue. If you need to use Signal right away, you can delete your data and restart.\n\nContact support by visiting: {link}",
+    "messageformat": "سانداندا خاتالىق كۆرۈلدى. خاتالىقنى كۆچۈرىۋالالايسىز ۋە ئۇنى ئوڭشاش ئۈچۈن Signal ياردەم بىلەن ئالاقىلىشىڭ. ئەگەر Signalنى دەرھال ئىشلەتمەكچى بولسىڭىز، سانلىق مەلۇماتلىرىڭىزنى ئۆچۈرۈپ، قايتا قوزغاتسىڭىز بولىدۇ.\n\nياردەم ئالاقىلىشىش ئۇسۇلى:{link}",
     "description": "Description shown in a popup if the database cannot start up properly"
   },
   "icu:deleteAndRestart": {
@@ -1422,25 +1422,13 @@
     "messageformat": "ئۇچۇر",
     "description": "Shown on the drop-down menu for an individual message, takes you to message detail screen"
   },
-  "icu:deleteMessages": {
-    "messageformat": "ئۆچۈر",
-    "description": "(deleted 2023/10/26) Menu item for deleting messages, title case."
-  },
   "icu:deleteMessagesInConversation": {
     "messageformat": "ئۇچۇر ئۆچۈرۈش",
     "description": "Menu item for deleting all messages in a conversation from your device"
   },
-  "icu:ConversationHeader__DeleteMessagesConfirmation__title": {
-    "messageformat": "سۆھبەتنى ئۆچۈرەمسىز؟",
-    "description": "(deleted 2023/10/26) Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title"
-  },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
     "messageformat": "ئۇچۇرنى ئۆچۈرەمسىز؟",
     "description": "Title for confirmation modal to delete all messages in a conversation"
-  },
-  "icu:ConversationHeader__DeleteMessagesConfirmation__description": {
-    "messageformat": "بۇ پاراڭ بۇ ئۈسكۈنىدىن ئۆچۈرۈلىدۇ.",
-    "description": "(deleted 2023/10/26) Conversation Header > Delete Action > Delete Messages Confirmation Modal > Description"
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
     "messageformat": "بۇ پاراڭدىكى ئۇچۇرلار بۇ ئۈسكۈنىدىن ئۆچۈرۈلىدۇ. ئۇچۇرلارنى ئۆچۈرگەندىن كېيىنمۇ بۇ پاراڭنى يەنىلا تاپالايسىز.",
@@ -1781,6 +1769,18 @@
     "messageformat": "قوڭغۇراقنى ئېچىش",
     "description": "Button tooltip label for turning ringing on"
   },
+  "icu:CallingButton--more-options": {
+    "messageformat": "تېخىمۇ كۆپ تاللاش",
+    "description": "Tooltip label for button in the calling screen that opens a menu with other call actions such as React or Raise Hand."
+  },
+  "icu:CallingRaisedHandsList__Title": {
+    "messageformat": "{count, plural, other {قول كۆتۈرگەنلەر· {count,number} كىشى}}",
+    "description": "Shown in the call raised hands list to describe how many people have active raised hands"
+  },
+  "icu:CallingReactions--me": {
+    "messageformat": "سىز",
+    "description": "Label next to in-call reactions to indicate that the current user sent that reaction."
+  },
   "icu:calling__your-video-is-off": {
     "messageformat": "كامېرا تاقاق",
     "description": "Label in the calling lobby indicating that your camera is off"
@@ -1806,7 +1806,7 @@
     "description": "Shown in the calling lobby to describe who is in the call"
   },
   "icu:calling__pre-call-info--many-people-in-call": {
-    "messageformat": "{first}, {second}, ۋە {others} قاتارلىقلار بۇ چاقىرىقتا",
+    "messageformat": "{first}, {second}, and {others, plural, other {#}} others are in this call",
     "description": "Shown in the calling lobby to describe who is in the call"
   },
   "icu:calling__pre-call-info--will-ring-1": {
@@ -1822,7 +1822,7 @@
     "description": "Shown in the calling lobby to describe who will be rang"
   },
   "icu:calling__pre-call-info--will-ring-many": {
-    "messageformat": "‏Signal {first}، {second} ۋە {others}قاتارلىقلارنى چاقىرىدۇ",
+    "messageformat": "Signal will ring {first}, {second}, and {others, plural, other {#}} others",
     "description": "Shown in the calling lobby to describe who will be rang"
   },
   "icu:calling__pre-call-info--will-notify-1": {
@@ -1838,7 +1838,7 @@
     "description": "Shown in the calling lobby to describe who will be notified"
   },
   "icu:calling__pre-call-info--will-notify-many": {
-    "messageformat": "{first}، {second} ۋە  {others} قاتارلىقلارغا ئۇقتۇرۇش قىلىنىدۇ",
+    "messageformat": "{first}, {second}, and {others, plural, other {#}} others will be notified",
     "description": "Shown in the calling lobby to describe who will be notified"
   },
   "icu:calling__in-this-call--zero": {
@@ -1978,15 +1978,15 @@
     "description": "Description for the automatic launch setting"
   },
   "icu:clearDataHeader": {
-    "messageformat": "ئەپ سانلىق مەلۇماتىنى تازىلاش",
+    "messageformat": "Delete application data",
     "description": "Header in the settings dialog for the section dealing with data deletion"
   },
   "icu:clearDataExplanation": {
-    "messageformat": "بۇ مەشغۇلات ئەپنىڭ بارلىق سانلىق مەلۇماتىنى تازىلاپ، بارلىق ئۇچۇرلارنى ۋە ساقلانغان ھېسابات ئۇچۇرلىرىنى ئۆچۈرىدۇ.",
+    "messageformat": "This will delete all data in the application, removing all messages and saved account information.",
     "description": "Text describing what the clear data button will do."
   },
   "icu:clearDataButton": {
-    "messageformat": "سانلىق مەلۇماتنى تازىلاش",
+    "messageformat": "Delete data",
     "description": "Button in the settings dialog starting process to delete all data"
   },
   "icu:deleteAllDataHeader": {
@@ -1994,7 +1994,7 @@
     "description": "Header of the full-screen delete data confirmation screen"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "سىز ئەپتە ساقلانغان بارلىق ھېسابات ئۇچۇرلىرىنى ئۆچۈرمەكچى بولۇۋاتسىز. بۇ ئۇچۇرلار بارلىق ئالاقىداشلار ۋە ئۇچۇرلىشىش خاتىرىسىنى ئۆز ئىچىگە ئالغان. كۆچمە ئۈسكۈنىڭىزنى خالىغان ۋاقىتتا ئۇلىسىڭىز بولىدۇ، ئەمما بۇ ئۆچۈرۈلگەن ئۇچۇرلارنى ئەسلىگە كەلتۈرگىلى بولمايدۇ.",
+    "messageformat": "Delete all data and messages from this version of Signal Desktop? You can always relink this desktop, but your messages will not restore. Your Signal account and data on your phone or other linked devices will not be deleted.",
     "description": "Text describing what exactly will happen if the user clicks the button to delete all data"
   },
   "icu:deleteAllDataButton": {
@@ -2350,10 +2350,6 @@
   "icu:Toast--failed-to-fetch-phone-number": {
     "messageformat": "تېلېفون نومۇرىغا ئېرىشەلمىدى. تور ئۇلىنىشىڭىزنى تەكشۈرۈپ قايتا سىناڭ.",
     "description": "Shown if request to Signal servers to find phone number fails"
-  },
-  "icu:ToastManager__CannotEditMessage": {
-    "messageformat": "بۇ ئۇچۇرنى يوللاپ پەقەت 3 سائەت ئىچىدىلا تەھرىرلەشكە بولىدۇ.",
-    "description": "(deleted 2023/10/26) Error message when you try to send an edit after message becomes too old"
   },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "بۇ ئۇچۇرنى يوللاپ 24 سائەت ئىچىدىلا تەھرىرلەشكە بولىدۇ.",
@@ -3433,7 +3429,7 @@
     "description": "Shown in the conversation hero to indicate this user is a member of four mutual groups"
   },
   "icu:member-of-more-than-3-groups--multiple-more": {
-    "messageformat": "{group1}، {group2}، {group3} ۋە باشقا «{remainingCount,number}» نىڭ ئەزاسى",
+    "messageformat": "Member of {group1}, {group2}, {group3} and {remainingCount, plural, other {#}} more",
     "description": "Shown in the conversation hero to indicate this user is a member of 5+ mutual groups."
   },
   "icu:ConversationHero--membership-added": {
@@ -3600,6 +3596,38 @@
     "messageformat": "قوڭغۇراق ئېتىك",
     "description": "Shown in a group call lobby when call ringing is enabled, then the user disables ringing using the Ringing toggle button."
   },
+  "icu:CallControls__RaiseHandsToast--you": {
+    "messageformat": "سىز قول كۆتۈردىڭىز.",
+    "description": "Shown in a call when the user raises their hand."
+  },
+  "icu:CallControls__RaiseHandsToast--one": {
+    "messageformat": "{name} قول كۆتۈردى.",
+    "description": "Shown in a call when someone else raises their hand."
+  },
+  "icu:CallControls__RaiseHandsToast--two": {
+    "messageformat": "{name} ۋە {otherName} قول كۆتۈردى.",
+    "description": "Shown in a call when 2 persons raise their hands."
+  },
+  "icu:CallControls__RaiseHandsToast--more": {
+    "messageformat": "{name}, {otherName}, and {overflowCount, plural, other {#}} more raised a hand.",
+    "description": "Shown in a call when 3 or more persons raise their hands."
+  },
+  "icu:CallControls__RaiseHands--open-queue": {
+    "messageformat": "ئۆچىرەتنى ئېچىش",
+    "description": "Link in call raised hands list and in toast shown when someone else raises their hand. Link opens the list of all raised hands."
+  },
+  "icu:CallControls__RaiseHands--lower": {
+    "messageformat": "چۈشۈرۈش",
+    "description": "Link in call raised hands list and in toast shown when user raises their hand. Link allows user to lower their hand."
+  },
+  "icu:CallControls__MenuItemRaiseHand": {
+    "messageformat": "قول كۆتۈرۈش",
+    "description": "Menu item to raise your hand during a call."
+  },
+  "icu:CallControls__MenuItemRaiseHand--lower": {
+    "messageformat": "قول چۈشۈرۈش",
+    "description": "Menu item to lower your previously raised hand during a call."
+  },
   "icu:callingDeviceSelection__settings": {
     "messageformat": "تەڭشەكلەر",
     "description": "Title for device selection settings"
@@ -3641,23 +3669,23 @@
     "description": "Title for picture-in-picture toggle"
   },
   "icu:calling__change-view": {
-    "messageformat": "Change view",
+    "messageformat": "كۆرۈنۈشنى ئۆزگەرتىش",
     "description": "Tooltip for changing the in-call layout of remote participants in a group call"
   },
   "icu:calling__view_mode--paginated": {
-    "messageformat": "Grid view",
+    "messageformat": "سېتكا كۆرۈنۈش",
     "description": "Label for option to view participants in a group call in a paginated grid view"
   },
   "icu:calling__view_mode--overflow": {
-    "messageformat": "Sidebar view",
+    "messageformat": "يانبالداق كۆرۈنۈش",
     "description": "Label for option to view participants in a group call where videos that don't fit onto the page are put into a scrollable overflow sidebar"
   },
   "icu:calling__view_mode--speaker": {
-    "messageformat": "Speaker view",
+    "messageformat": "سۆزلىگۈچى كۆرۈنۈشى",
     "description": "Label for option to view participants where only the current speaker's video is fully visible and all others are put into a scrollable overflow sidebar"
   },
   "icu:calling__view_mode--updated": {
-    "messageformat": "View updated",
+    "messageformat": "كۆرۈنۈش يېڭىلاندى",
     "description": "Toast shown whenver the calling view mode is changed (e.g. paginated view -> speaker view)"
   },
   "icu:calling__hangup": {
@@ -3765,7 +3793,7 @@
     "description": "Title in popup dialog when attempting to edit a message too many times."
   },
   "icu:MessageMaxEditsModal__Description": {
-    "messageformat": "بۇ ئۇچۇرغا پەقەت {max,number} تەھرىرلەشنى قوللانغىلى بولىدۇ.",
+    "messageformat": "Only {max, plural, other {#}} edits can be applied to this message.",
     "description": "Description text in popup dialog when attempting to edit a message too many times."
   },
   "icu:unknown-sgnl-link": {
@@ -4189,7 +4217,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-add--many--other": {
-    "messageformat": "بۇ گۇرۇپپىغا {count,number} كىشىنى {memberName}تەكلىپ قىلدى.",
+    "messageformat": "{memberName} invited {count, plural, other {#}} people to the group.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-add--many--you": {
@@ -4197,7 +4225,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-add--many--unknown": {
-    "messageformat": "بۇ گۇرۇپپىغا {count,number} كىشى تەكلىپ قىلىندى.",
+    "messageformat": "{count, plural, other {#}} people were invited to the group.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-remove--decline--other": {
@@ -4273,7 +4301,7 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--other": {
-    "messageformat": "{adminName} {memberName} گۇرۇپپىغا قاتنىشىشقا تەكلىپ قىلغان {count,number} كىشىنىڭ تەكلىپىنى بىكار قىلدى.",
+    "messageformat": "{adminName} revoked invitations to the group for {count, plural, other {#}} people invited by {memberName}.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--you": {
@@ -4513,7 +4541,7 @@
     "description": "Shown in timeline when a group is upgraded and one person was removed entirely during the upgrade"
   },
   "icu:GroupV1--Migration--removed--many": {
-    "messageformat": "{count,number} ئەزا گۇرۇپپىدىن چىقىرىۋېتىلدى.",
+    "messageformat": "{count, plural, other {#}} members were removed from the group.",
     "description": "Shown in timeline when a group is upgraded and some people were removed entirely during the upgrade"
   },
   "icu:close": {
@@ -4901,7 +4929,7 @@
     "description": "conversation > in select mode > composition area actions > exit select mode > accessibility label"
   },
   "icu:SelectModeActions--selectedMessages": {
-    "messageformat": "{count,number} تاللانغان",
+    "messageformat": "{count, plural, other {#}} selected",
     "description": "conversation > in select mode > composition area actions > count of selected messsages"
   },
   "icu:SelectModeActions--deleteSelectedMessages": {
@@ -6309,7 +6337,7 @@
     "description": "Input label to create a block list"
   },
   "icu:StoriesSettings__mine__exclude--description": {
-    "messageformat": "{num,number} كىشى چىقىرىۋېتىلدى",
+    "messageformat": "{num, plural, other {#}} people excluded",
     "description": "Description of how many people are excluded in a list"
   },
   "icu:StoriesSettings__mine__only--label": {
@@ -6992,13 +7020,22 @@
     "messageformat": "كىچىك ئۆزگەرتىشلەر كىرگۈزۈلدى، كاشىلا ھەل قىلىندى ۋە ئىقتىدار ئەلالاشتۇرۇلدى. Signal نى ئىشلەتكەنلىكىڭىزگە رەھمەت!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.38--0": {
-    "messageformat": "بۇ نۇسخىدا Signal ئاۋازى ۋە ئاۋازلىق چاقىرىقىغا يېڭىلاش كىرگۈزۈلدى."
+  "icu:WhatsNew__v6.42--0": {
+    "messageformat": "ۋىدېيوغا تىلغا ئېلىپ جاۋاب قايتۇرغاندا رەسىمدە تىلغا ئېلىپ جاۋاب قايتۇرغاندەك چىقىۋېلىش مەسىلىسىنى ھەل قىلدۇق."
   },
-  "icu:WhatsNew__v6.39--0": {
-    "messageformat": "ئەمدى Signal دا تۆۋەندىكى ئۇسۇل بىلەن سىستېما تىلىنى ئۆزگەرتمەي تۇرۇپمۇ تاللىغان تىلىڭىزنى ئۆزگەرتەلەيسىز (Signal تەڭشەك > كۆرۈنۈش > تىل)."
+  "icu:WhatsNew__v6.42--1": {
+    "messageformat": "بۇ يېڭى نەشرىنى ئېلان قىلىشتا {linkToGithub1} ۋە {linkToGithub2} نىڭ ياردىمىگە رەھمەت ئېيتىمىز."
   },
-  "icu:WhatsNew__v6.39--1": {
-    "messageformat": "چاقىرىق زالىغا قوشۇلغاندا macOS ئۈسكۈنىلەردە بەزى ۋاقىتلاردا كۆرۈلىدىغان كېچىكىش مەسىلىسىنى ھەل قىلدۇق."
+  "icu:WhatsNew__v6.43--0": {
+    "messageformat": "Turn a missed call into something that won't be missed. Now you can right-click on any call event and delete it from a chat."
+  },
+  "icu:WhatsNew__v6.43--1": {
+    "messageformat": "The default font for Persian has been updated to Vazirmatn to improve readability when that language is selected (Signal Settings > Appearance > Language). Thanks, {linkToGithub1}!"
+  },
+  "icu:WhatsNew__v6.43--2": {
+    "messageformat": "The playback speed indicators in voice messages have a slightly new look. X marks the spot. Thanks, {linkToGithub1}!"
+  },
+  "icu:WhatsNew__v6.43--3": {
+    "messageformat": "We would also like to thank {linkToGithub1}, {linkToGithub2}, and {linkToGithub3} for their contributions to this release."
   }
 }

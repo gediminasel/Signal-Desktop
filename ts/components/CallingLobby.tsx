@@ -49,7 +49,6 @@ export type PropsType = {
   i18n: LocalizerType;
   isConversationTooBigToRing: boolean;
   isGroupCall: boolean;
-  isGroupCallOutboundRingEnabled: boolean;
   isCallFull?: boolean;
   me: Readonly<
     Pick<ConversationType, 'avatarPath' | 'color' | 'id' | 'serviceId'>
@@ -75,7 +74,6 @@ export function CallingLobby({
   hasLocalVideo,
   i18n,
   isGroupCall = false,
-  isGroupCallOutboundRingEnabled,
   isCallFull = false,
   isConversationTooBigToRing,
   me,
@@ -157,7 +155,6 @@ export function CallingLobby({
 
   const isRingButtonVisible: boolean =
     isGroupCall &&
-    isGroupCallOutboundRingEnabled &&
     peekedParticipants.length === 0 &&
     (groupMembers || []).length > 1;
 
@@ -232,7 +229,7 @@ export function CallingLobby({
 
   return (
     <FocusTrap>
-      <div className="module-calling__container">
+      <div className="module-calling__container dark-theme">
         {shouldShowLocalVideo ? (
           <video
             className="module-CallingLobby__local-preview module-CallingLobby__local-preview--camera-is-on"
@@ -277,6 +274,11 @@ export function CallingLobby({
           {i18n('icu:calling__your-video-is-off')}
         </div>
 
+        <CallingButtonToastsContainer
+          hasLocalAudio={hasLocalAudio}
+          outgoingRing={outgoingRing}
+          i18n={i18n}
+        />
         <div className="CallingLobby__Footer">
           <div className="module-calling__spacer CallControls__OuterSpacer" />
           <div className="CallControls">
@@ -286,11 +288,6 @@ export function CallingLobby({
               </div>
               <div className="CallControls__Status">{callStatus}</div>
             </div>
-            <CallingButtonToastsContainer
-              hasLocalAudio={hasLocalAudio}
-              outgoingRing={outgoingRing}
-              i18n={i18n}
-            />
             <div className="CallControls__ButtonContainer">
               <CallingButton
                 buttonType={videoButtonType}

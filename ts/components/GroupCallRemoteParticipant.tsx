@@ -1,7 +1,7 @@
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { CSSProperties } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import React, {
   useState,
   useRef,
@@ -37,6 +37,7 @@ type BasePropsType = {
   i18n: LocalizerType;
   isActiveSpeakerInSpeakerView: boolean;
   isCallReconnecting: boolean;
+  onClickRaisedHand?: () => void;
   onVisibilityChanged?: (demuxId: number, isVisible: boolean) => unknown;
   remoteParticipant: GroupCallRemoteParticipantType;
   remoteParticipantsCount: number;
@@ -67,6 +68,7 @@ export const GroupCallRemoteParticipant: React.FC<PropsType> = React.memo(
       getFrameBuffer,
       getGroupCallVideoFrameSource,
       i18n,
+      onClickRaisedHand,
       onVisibilityChanged,
       remoteParticipantsCount,
       isActiveSpeakerInSpeakerView,
@@ -80,6 +82,7 @@ export const GroupCallRemoteParticipant: React.FC<PropsType> = React.memo(
       demuxId,
       hasRemoteAudio,
       hasRemoteVideo,
+      isHandRaised,
       isBlocked,
       isMe,
       profileName,
@@ -237,6 +240,7 @@ export const GroupCallRemoteParticipant: React.FC<PropsType> = React.memo(
     }
 
     let avatarSize: number;
+    let footerInfoElement: ReactNode;
 
     if (props.isInPip) {
       containerStyles = canvasStyles;
@@ -260,6 +264,32 @@ export const GroupCallRemoteParticipant: React.FC<PropsType> = React.memo(
         containerStyles.position = 'absolute';
         containerStyles.insetInlineStart = `${props.left}px`;
         containerStyles.top = `${props.top}px`;
+      }
+
+      const nameElement = (
+        <ContactName
+          module="module-ongoing-call__group-call-remote-participant__info__contact-name"
+          title={title}
+        />
+      );
+
+      if (isHandRaised) {
+        footerInfoElement = (
+          <button
+            className="module-ongoing-call__group-call-remote-participant__info module-ongoing-call__group-call-remote-participant__info--clickable"
+            onClick={onClickRaisedHand}
+            type="button"
+          >
+            <div className="CallingStatusIndicator CallingStatusIndicator--HandRaised" />
+            {nameElement}
+          </button>
+        );
+      } else {
+        footerInfoElement = (
+          <div className="module-ongoing-call__group-call-remote-participant__info">
+            {nameElement}
+          </div>
+        );
       }
     }
 
@@ -295,7 +325,9 @@ export const GroupCallRemoteParticipant: React.FC<PropsType> = React.memo(
             isSpeaking &&
               !isActiveSpeakerInSpeakerView &&
               remoteParticipantsCount > 1 &&
-              'module-ongoing-call__group-call-remote-participant--speaking'
+              'module-ongoing-call__group-call-remote-participant--speaking',
+            isHandRaised &&
+              'module-ongoing-call__group-call-remote-participant--hand-raised'
           )}
           ref={intersectionRef}
           style={containerStyles}
@@ -307,15 +339,8 @@ export const GroupCallRemoteParticipant: React.FC<PropsType> = React.memo(
                 audioLevel={props.audioLevel}
                 shouldShowSpeaking={isSpeaking}
               />
-              <div
-                className={classNames(
-                  'module-ongoing-call__group-call-remote-participant__info'
-                )}
-              >
-                <ContactName
-                  module="module-ongoing-call__group-call-remote-participant__info__contact-name"
-                  title={title}
-                />
+              <div className="module-ongoing-call__group-call-remote-participant__footer">
+                {footerInfoElement}
               </div>
             </>
           )}

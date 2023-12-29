@@ -12,8 +12,8 @@
   }
   /* Farsi (Persian) */
   &:lang(fa) {
-    font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI',
-      Tahoma, 'Noto Sans Arabic', Helvetica, Arial, sans-serif;
+    font-family: 'Vazirmatn', -apple-system, system-ui, BlinkMacSystemFont,
+      'Segoe UI', Tahoma, 'Noto Sans Arabic', Helvetica, Arial, sans-serif;
   }
 }
 
@@ -660,13 +660,13 @@ $rtl-icon-map: (
 @mixin color-bubble($bubble-size) {
   background-clip: content-box;
   border-color: transparent;
-  border-radius: $bubble-size + 12px;
+  border-radius: $bubble-size;
   border-style: solid;
   border-width: 4px;
   cursor: pointer;
-  height: $bubble-size + 12px;
+  height: $bubble-size;
   padding: 2px;
-  width: $bubble-size + 12px;
+  width: $bubble-size;
 
   @each $color, $value in $conversation-colors {
     &--#{$color} {
@@ -874,5 +874,12 @@ $rtl-icon-map: (
     @include dark-theme {
       border-color: $color-gray-80;
     }
+  }
+}
+
+@mixin draggable-region {
+  -webkit-app-region: drag;
+  body.context-menu-open & {
+    -webkit-app-region: no-drag;
   }
 }

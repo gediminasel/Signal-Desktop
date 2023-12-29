@@ -163,8 +163,10 @@ type CallingReduxInterface = Pick<
   | 'callStateChange'
   | 'cancelIncomingGroupCallRing'
   | 'groupCallAudioLevelsChange'
+  | 'groupCallRaisedHandsChange'
   | 'groupCallStateChange'
   | 'outgoingCall'
+  | 'receiveGroupCallReactions'
   | 'receiveIncomingDirectCall'
   | 'receiveIncomingGroupCall'
   | 'refreshIODevices'
@@ -835,11 +837,22 @@ export class CallingClass {
         onLowBandwidthForVideo: (_groupCall, _recovered) => {
           // TODO: Implement handling of "low outgoing bandwidth for video" notification.
         },
-        onReactions: (_groupCall, _reactions) => {
-          // TODO: Implement handling of reactions.
+
+        /**
+         * @param reactions A list of reactions received by the client ordered
+         * from oldest to newest.
+         */
+        onReactions: (_groupCall, reactions) => {
+          this.reduxInterface?.receiveGroupCallReactions({
+            conversationId,
+            reactions,
+          });
         },
-        onRaisedHands: (_groupCall, _raisedHands) => {
-          // TODO: Implement handling of raised hands.
+        onRaisedHands: (_groupCall, raisedHands) => {
+          this.reduxInterface?.groupCallRaisedHandsChange({
+            conversationId,
+            raisedHands,
+          });
         },
         onPeekChanged: groupCall => {
           const localDeviceState = groupCall.getLocalDeviceState();
@@ -1093,6 +1106,7 @@ export class CallingClass {
       joinState,
       hasLocalAudio: !localDeviceState.audioMuted,
       hasLocalVideo: !localDeviceState.videoMuted,
+      localDemuxId: localDeviceState.demuxId,
       peekInfo: peekInfo
         ? this.formatGroupCallPeekInfoForRedux(peekInfo)
         : undefined,
@@ -1141,6 +1155,22 @@ export class CallingClass {
       throw new Error('Could not find matching call');
     }
     groupCall.resendMediaKeys();
+  }
+
+  public sendGroupCallRaiseHand(conversationId: string, raise: boolean): void {
+    const groupCall = this.getGroupCall(conversationId);
+    if (!groupCall) {
+      throw new Error('Could not find matching call');
+    }
+    groupCall.raiseHand(raise);
+  }
+
+  public sendGroupCallReaction(conversationId: string, value: string): void {
+    const groupCall = this.getGroupCall(conversationId);
+    if (!groupCall) {
+      throw new Error('Could not find matching call');
+    }
+    groupCall.react(value);
   }
 
   private syncGroupCallToRedux(

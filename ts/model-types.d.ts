@@ -111,9 +111,12 @@ export type MessageReactionType = {
   fromId: string;
   targetTimestamp: number;
   timestamp: number;
+  receivedAtDate: undefined | number;
   isSentByConversationId?: Record<string, boolean>;
 };
 
+// Note: when adding to the set of things that can change via edits, sendNormalMessage.ts
+//   needs more usage of get/setPropForTimestamp.
 export type EditHistoryType = {
   attachments?: Array<AttachmentType>;
   body?: string;

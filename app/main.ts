@@ -109,7 +109,7 @@ import { SettingsChannel } from '../ts/main/settingsChannel';
 import { maybeParseUrl, setUrlSearchParams } from '../ts/util/url';
 import { getHeicConverter } from '../ts/workers/heicConverterMain';
 
-import type { LocaleType } from './locale';
+import type { LocaleDirection, LocaleType } from './locale';
 import { load as loadLocale } from './locale';
 
 import type { LoggerType } from '../ts/types/Logging';
@@ -144,6 +144,7 @@ const consoleLogger = createBufferedConsoleLogger();
 let logger: LoggerType | undefined;
 let preferredSystemLocales: Array<string> | undefined;
 let localeOverride: string | null | undefined;
+
 let resolvedTranslationsLocale: LocaleType | undefined;
 let settingsChannel: SettingsChannel | undefined;
 
@@ -159,6 +160,11 @@ const development =
 
 const ciMode = config.get<'full' | 'benchmark' | false>('ciMode');
 const forcePreloadBundle = config.get<boolean>('forcePreloadBundle');
+const localeDirectionTestingOverride = config.has(
+  'localeDirectionTestingOverride'
+)
+  ? config.get<LocaleDirection>('localeDirectionTestingOverride')
+  : null;
 
 const preventDisplaySleepService = new PreventDisplaySleepService(
   powerSaveBlocker
@@ -215,7 +221,7 @@ if (OS.isWindows()) {
     sendDummyKeystroke = windowsNotifications.sendDummyKeystroke;
   } catch (error) {
     getLogger().error(
-      'Failed to initalize Windows Notifications:',
+      'Failed to initialize Windows Notifications:',
       error.stack
     );
   }
@@ -269,6 +275,14 @@ if (!process.mas) {
         handleSignalRoute(route);
       }
       return true;
+    });
+
+    app.on('open-url', (event, incomingHref) => {
+      event.preventDefault();
+      const route = parseSignalRoute(incomingHref);
+      if (route != null) {
+        handleSignalRoute(route);
+      }
     });
   }
 }
@@ -990,6 +1004,7 @@ async function createWindow() {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
+    getLogger().info('main window closed event');
     mainWindow = undefined;
     if (settingsChannel) {
       settingsChannel.setMainWindow(mainWindow);
@@ -1000,11 +1015,13 @@ async function createWindow() {
   });
 
   mainWindow.on('enter-full-screen', () => {
+    getLogger().info('mainWindow enter-full-screen event');
     if (mainWindow) {
       mainWindow.webContents.send('full-screen-change', true);
     }
   });
   mainWindow.on('leave-full-screen', () => {
+    getLogger().info('mainWindow leave-full-screen event');
     if (mainWindow) {
       mainWindow.webContents.send('full-screen-change', false);
     }
@@ -1150,7 +1167,17 @@ async function readyForUpdates() {
       settingsChannel !== undefined,
       'SettingsChannel must be initialized'
     );
-    await updater.start(settingsChannel, getLogger(), getMainWindow);
+    await updater.start({
+      settingsChannel,
+      logger: getLogger(),
+      getMainWindow,
+      canRunSilently: () => {
+        return (
+          systemTrayService?.isVisible() === true &&
+          mainWindow?.isVisible() === false
+        );
+      },
+    });
   } catch (error) {
     getLogger().error(
       'Error starting update checks:',
@@ -1762,7 +1789,10 @@ async function getDefaultLoginItemSettings(): Promise<LoginItemSettingsOptions> 
 
 // Signal doesn't really use media keys so we set this switch here to unblock
 // them so that other apps can use them if they need to.
-app.commandLine.appendSwitch('disable-features', 'HardwareMediaKeyHandling');
+const featuresToDisable = `HardwareMediaKeyHandling,${app.commandLine.getSwitchValue(
+  'disable-features'
+)}`;
+app.commandLine.appendSwitch('disable-features', featuresToDisable);
 
 // If we don't set this, Desktop will ask for access to keychain/keyring on startup
 app.commandLine.appendSwitch('password-store', 'basic');
@@ -1834,6 +1864,7 @@ app.on('ready', async () => {
     resolvedTranslationsLocale = loadLocale({
       preferredSystemLocales,
       localeOverride,
+      localeDirectionTestingOverride,
       hourCyclePreference,
       logger: getLogger(),
     });
@@ -2159,14 +2190,40 @@ async function requestShutdown() {
   }
 }
 
-app.on('before-quit', () => {
+function getWindowDebugInfo() {
+  const windows = BrowserWindow.getAllWindows();
+
+  return {
+    windowCount: windows.length,
+    mainWindowExists: windows.some(win => win === mainWindow),
+    mainWindowIsFullScreen: mainWindow?.isFullScreen(),
+  };
+}
+
+app.on('before-quit', e => {
   getLogger().info('before-quit event', {
     readyForShutdown: windowState.readyForShutdown(),
     shouldQuit: windowState.shouldQuit(),
+    hasEventBeenPrevented: e.defaultPrevented,
+    ...getWindowDebugInfo(),
   });
 
   systemTrayService?.markShouldQuit();
   windowState.markShouldQuit();
+});
+
+app.on('will-quit', e => {
+  getLogger().info('will-quit event', {
+    hasEventBeenPrevented: e.defaultPrevented,
+    ...getWindowDebugInfo(),
+  });
+});
+
+app.on('quit', e => {
+  getLogger().info('quit event', {
+    hasEventBeenPrevented: e.defaultPrevented,
+    ...getWindowDebugInfo(),
+  });
 });
 
 // Quit when all windows are closed.
@@ -2211,18 +2268,6 @@ app.on(
 
 app.setAsDefaultProtocolClient('sgnl');
 app.setAsDefaultProtocolClient('signalcaptcha');
-
-app.on('will-finish-launching', () => {
-  // open-url must be set from within will-finish-launching for macOS
-  // https://stackoverflow.com/a/43949291
-  app.on('open-url', (event, incomingHref) => {
-    event.preventDefault();
-    const route = parseSignalRoute(incomingHref);
-    if (route != null) {
-      handleSignalRoute(route);
-    }
-  });
-});
 
 ipc.on(
   'set-badge',

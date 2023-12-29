@@ -39,7 +39,6 @@ import type {
 } from '../textsecure/Types.d';
 import { SendMessageProtoError } from '../textsecure/Errors';
 import { getUserLanguages } from '../util/userLanguages';
-import { getMessageSentTimestamp } from '../util/getMessageSentTimestamp';
 import { copyCdnFields } from '../util/attachments';
 
 import type { ReactionType } from '../types/Reactions';
@@ -157,6 +156,8 @@ import { getSenderIdentifier } from '../util/getSenderIdentifier';
 import { getNotificationDataForMessage } from '../util/getNotificationDataForMessage';
 import { getNotificationTextForMessage } from '../util/getNotificationTextForMessage';
 import { getMessageAuthorText } from '../util/getMessageAuthorText';
+import { getPropForTimestamp, setPropForTimestamp } from '../util/editHelpers';
+import { getMessageSentTimestamp } from '../util/getMessageSentTimestamp';
 
 /* eslint-disable more/no-then */
 
@@ -842,17 +843,39 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
    * Change any Pending send state to Failed. Note that this will not mark successful
    * sends failed.
    */
-  public markFailed(): void {
+  public markFailed(editMessageTimestamp?: number): void {
     const now = Date.now();
-    this.set(
-      'sendStateByConversationId',
-      mapValues(this.get('sendStateByConversationId') || {}, sendState =>
+
+    const targetTimestamp = editMessageTimestamp || this.get('timestamp');
+    const sendStateByConversationId = getPropForTimestamp({
+      log,
+      message: this,
+      prop: 'sendStateByConversationId',
+      targetTimestamp,
+    });
+
+    const newSendStateByConversationId = mapValues(
+      sendStateByConversationId || {},
+      sendState =>
         sendStateReducer(sendState, {
           type: SendActionType.Failed,
           updatedAt: now,
         })
-      )
     );
+
+    setPropForTimestamp({
+      log,
+      message: this,
+      prop: 'sendStateByConversationId',
+      targetTimestamp,
+      value: newSendStateByConversationId,
+    });
+
+    // We aren't trying to send this message anymore, so we'll delete these caches
+    delete this.cachedOutgoingContactData;
+    delete this.cachedOutgoingPreviewData;
+    delete this.cachedOutgoingQuoteData;
+    delete this.cachedOutgoingStickerData;
 
     this.notifyStorySendFailed();
   }
@@ -897,10 +920,15 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     return errors[0][0];
   }
 
-  async send(
-    promise: Promise<CallbackResultType | void | null>,
-    saveErrors?: (errors: Array<Error>) => void
-  ): Promise<void> {
+  async send({
+    promise,
+    saveErrors,
+    targetTimestamp,
+  }: {
+    promise: Promise<CallbackResultType | void | null>;
+    saveErrors?: (errors: Array<Error>) => void;
+    targetTimestamp: number;
+  }): Promise<void> {
     const updateLeftPane =
       this.getConversation()?.debouncedUpdateLastMessage ?? noop;
 
@@ -937,7 +965,12 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     }
 
     const sendStateByConversationId = {
-      ...(this.get('sendStateByConversationId') || {}),
+      ...(getPropForTimestamp({
+        log,
+        message: this,
+        prop: 'sendStateByConversationId',
+        targetTimestamp,
+      }) || {}),
     };
 
     const sendIsNotFinal =
@@ -981,9 +1014,13 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     });
 
     // Integrate sends via sealed sender
+    const latestEditTimestamp = this.get('editMessageTimestamp');
+    const sendIsLatest =
+      !latestEditTimestamp || targetTimestamp === latestEditTimestamp;
     const previousUnidentifiedDeliveries =
       this.get('unidentifiedDeliveries') || [];
     const newUnidentifiedDeliveries =
+      sendIsLatest &&
       sendIsFinal &&
       'unidentifiedDeliveries' in result.value &&
       Array.isArray(result.value.unidentifiedDeliveries)
@@ -1062,7 +1099,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       }
     });
 
-    attributesToUpdate.sendStateByConversationId = sendStateByConversationId;
     // Only update the expirationStartTimestamp if we don't already have one set
     if (!this.get('expirationStartTimestamp')) {
       attributesToUpdate.expirationStartTimestamp = sentToAtLeastOneRecipient
@@ -1084,6 +1120,14 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       void this.saveErrors(errorsToSave, { skipSave: true });
     }
 
+    setPropForTimestamp({
+      log,
+      message: this,
+      prop: 'sendStateByConversationId',
+      targetTimestamp,
+      value: sendStateByConversationId,
+    });
+
     if (!this.doNotSave) {
       await window.Signal.Data.saveMessage(this.attributes, {
         ourAci: window.textsecure.storage.user.getCheckedAci(),
@@ -1093,13 +1137,14 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     updateLeftPane();
 
     if (sentToAtLeastOneRecipient && !this.doNotSendSyncMessage) {
-      promises.push(this.sendSyncMessage());
+      promises.push(this.sendSyncMessage(targetTimestamp));
     }
 
     await Promise.all(promises);
 
     const isTotalSuccess: boolean =
       result.success && !this.get('errors')?.length;
+
     if (isTotalSuccess) {
       delete this.cachedOutgoingContactData;
       delete this.cachedOutgoingPreviewData;
@@ -1110,10 +1155,15 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     updateLeftPane();
   }
 
-  async sendSyncMessageOnly(
-    dataMessage: Uint8Array,
-    saveErrors?: (errors: Array<Error>) => void
-  ): Promise<CallbackResultType | void> {
+  async sendSyncMessageOnly({
+    targetTimestamp,
+    dataMessage,
+    saveErrors,
+  }: {
+    targetTimestamp: number;
+    dataMessage: Uint8Array;
+    saveErrors?: (errors: Array<Error>) => void;
+  }): Promise<CallbackResultType | void> {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const conv = this.getConversation()!;
     this.set({ dataMessage });
@@ -1126,7 +1176,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         expirationStartTimestamp: Date.now(),
         errors: [],
       });
-      const result = await this.sendSyncMessage();
+      const result = await this.sendSyncMessage(targetTimestamp);
       this.set({
         // We have to do this afterward, since we didn't have a previous send!
         unidentifiedDeliveries:
@@ -1158,7 +1208,9 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     }
   }
 
-  async sendSyncMessage(): Promise<CallbackResultType | void> {
+  async sendSyncMessage(
+    targetTimestamp: number
+  ): Promise<CallbackResultType | void> {
     const ourConversation =
       window.ConversationController.getOurConversationOrThrow();
     const sendOptions = await getSendOptions(ourConversation.attributes, {
@@ -1184,8 +1236,14 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       if (!dataMessage) {
         return;
       }
-      const isEditedMessage = Boolean(this.get('editHistory'));
-      const isUpdate = Boolean(this.get('synced')) && !isEditedMessage;
+
+      const originalTimestamp = getMessageSentTimestamp(this.attributes, {
+        includeEdits: false,
+        log,
+      });
+      const isSendingEdit = targetTimestamp !== originalTimestamp;
+
+      const isUpdate = Boolean(this.get('synced')) && !isSendingEdit;
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const conv = this.getConversation()!;
 
@@ -1217,9 +1275,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         map(conversationsWithSealedSender, c => c.id)
       );
 
-      const timestamp = getMessageSentTimestamp(this.attributes, { log });
-
-      const encodedContent = isEditedMessage
+      const encodedContent = isSendingEdit
         ? {
             encodedEditMessage: dataMessage,
           }
@@ -1230,7 +1286,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       return handleMessageSend(
         messaging.sendSyncMessage({
           ...encodedContent,
-          timestamp,
+          timestamp: targetTimestamp,
           destination: conv.get('e164'),
           destinationServiceId: conv.getServiceId(),
           expirationStartTimestamp:
@@ -2408,6 +2464,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       fromId: reaction.fromId,
       targetTimestamp: reaction.targetTimestamp,
       timestamp: reaction.timestamp,
+      receivedAtDate: reaction.receivedAtDate,
       isSentByConversationId: isFromThisDevice
         ? zipObject(conversation.getMemberConversationIds(), repeat(false))
         : undefined,

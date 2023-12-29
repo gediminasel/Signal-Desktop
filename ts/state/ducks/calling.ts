@@ -9,6 +9,7 @@ import {
 } from 'mac-screen-capture-permissions';
 import { has, omit } from 'lodash';
 import type { ReadonlyDeep } from 'type-fest';
+import type { Reaction as CallReaction } from '@signalapp/ringrtc';
 import { getOwn } from '../../util/getOwn';
 import * as Errors from '../../types/errors';
 import { getPlatform } from '../selectors/user';
@@ -18,6 +19,8 @@ import { calling } from '../../services/calling';
 import { truncateAudioLevel } from '../../calling/truncateAudioLevel';
 import type { StateType as RootStateType } from '../reducer';
 import type {
+  ActiveCallReaction,
+  ActiveCallReactionsType,
   ChangeIODevicePayloadType,
   GroupCallVideoRequest,
   MediaDeviceSettings,
@@ -25,6 +28,8 @@ import type {
   PresentableSource,
 } from '../../types/Calling';
 import {
+  CALLING_REACTIONS_LIFETIME,
+  MAX_CALLING_REACTIONS,
   CallEndedReason,
   CallingDeviceType,
   CallMode,
@@ -35,7 +40,6 @@ import {
 } from '../../types/Calling';
 import { callingTones } from '../../util/callingTones';
 import { requestCameraPermissions } from '../../util/callingPermissions';
-import { isGroupCallOutboundRingEnabled } from '../../util/isGroupCallOutboundRingEnabled';
 import { sleep } from '../../util/sleep';
 import { LatestQueue } from '../../util/LatestQueue';
 import type { AciString } from '../../types/ServiceId';
@@ -108,8 +112,10 @@ export type GroupCallStateType = {
   callMode: CallMode.Group;
   conversationId: string;
   connectionState: GroupCallConnectionState;
+  localDemuxId: number | undefined;
   joinState: GroupCallJoinState;
   peekInfo?: GroupCallPeekInfoType;
+  raisedHands?: Array<number>;
   remoteParticipants: Array<GroupCallParticipantInfoType>;
   remoteAudioLevels?: Map<number, number>;
 } & GroupCallRingStateType;
@@ -131,6 +137,7 @@ export type ActiveCallStateType = {
   settingsDialogOpen: boolean;
   showNeedsScreenRecordingPermissionsWarning?: boolean;
   showParticipantsList: boolean;
+  reactions?: ActiveCallReactionsType;
 };
 
 // eslint-disable-next-line local-rules/type-alias-readonlydeep
@@ -176,9 +183,15 @@ type GroupCallStateChangeArgumentType = {
   hasLocalAudio: boolean;
   hasLocalVideo: boolean;
   joinState: GroupCallJoinState;
+  localDemuxId: number | undefined;
   peekInfo?: GroupCallPeekInfoType;
   remoteParticipants: Array<GroupCallParticipantInfoType>;
 };
+
+type GroupCallReactionsReceivedArgumentType = ReadonlyDeep<{
+  conversationId: string;
+  reactions: Array<CallReaction>;
+}>;
 
 // eslint-disable-next-line local-rules/type-alias-readonlydeep
 type GroupCallStateChangeActionPayloadType =
@@ -207,6 +220,21 @@ type IncomingGroupCallType = ReadonlyDeep<{
   conversationId: string;
   ringId: bigint;
   ringerAci: AciString;
+}>;
+
+export type SendGroupCallRaiseHandType = ReadonlyDeep<{
+  conversationId: string;
+  raise: boolean;
+}>;
+
+export type SendGroupCallReactionType = ReadonlyDeep<{
+  conversationId: string;
+  value: string;
+}>;
+type SendGroupCallReactionLocalCopyType = ReadonlyDeep<{
+  conversationId: string;
+  value: string;
+  timestamp: number;
 }>;
 
 type PeekNotConnectedGroupCallType = ReadonlyDeep<{
@@ -421,7 +449,10 @@ const CHANGE_IO_DEVICE_FULFILLED = 'calling/CHANGE_IO_DEVICE_FULFILLED';
 const CLOSE_NEED_PERMISSION_SCREEN = 'calling/CLOSE_NEED_PERMISSION_SCREEN';
 const DECLINE_DIRECT_CALL = 'calling/DECLINE_DIRECT_CALL';
 const GROUP_CALL_AUDIO_LEVELS_CHANGE = 'calling/GROUP_CALL_AUDIO_LEVELS_CHANGE';
+const GROUP_CALL_RAISED_HANDS_CHANGE = 'calling/GROUP_CALL_RAISED_HANDS_CHANGE';
 const GROUP_CALL_STATE_CHANGE = 'calling/GROUP_CALL_STATE_CHANGE';
+const GROUP_CALL_REACTIONS_RECEIVED = 'calling/GROUP_CALL_REACTIONS_RECEIVED';
+const GROUP_CALL_REACTIONS_EXPIRED = 'calling/GROUP_CALL_REACTIONS_EXPIRED';
 const HANG_UP = 'calling/HANG_UP';
 const INCOMING_DIRECT_CALL = 'calling/INCOMING_DIRECT_CALL';
 const INCOMING_GROUP_CALL = 'calling/INCOMING_GROUP_CALL';
@@ -429,10 +460,12 @@ const MARK_CALL_TRUSTED = 'calling/MARK_CALL_TRUSTED';
 const MARK_CALL_UNTRUSTED = 'calling/MARK_CALL_UNTRUSTED';
 const OUTGOING_CALL = 'calling/OUTGOING_CALL';
 const PEEK_GROUP_CALL_FULFILLED = 'calling/PEEK_GROUP_CALL_FULFILLED';
+const RAISE_HAND_GROUP_CALL = 'calling/RAISE_HAND_GROUP_CALL';
 const REFRESH_IO_DEVICES = 'calling/REFRESH_IO_DEVICES';
 const REMOTE_SHARING_SCREEN_CHANGE = 'calling/REMOTE_SHARING_SCREEN_CHANGE';
 const REMOTE_VIDEO_CHANGE = 'calling/REMOTE_VIDEO_CHANGE';
 const RETURN_TO_ACTIVE_CALL = 'calling/RETURN_TO_ACTIVE_CALL';
+const SEND_GROUP_CALL_REACTION = 'calling/SEND_GROUP_CALL_REACTION';
 const SET_LOCAL_AUDIO_FULFILLED = 'calling/SET_LOCAL_AUDIO_FULFILLED';
 const SET_LOCAL_VIDEO_FULFILLED = 'calling/SET_LOCAL_VIDEO_FULFILLED';
 const SET_OUTGOING_RING = 'calling/SET_OUTGOING_RING';
@@ -498,11 +531,42 @@ type GroupCallAudioLevelsChangeActionType = ReadonlyDeep<{
   payload: GroupCallAudioLevelsChangeActionPayloadType;
 }>;
 
+type GroupCallRaisedHandsChangeActionPayloadType = ReadonlyDeep<{
+  conversationId: string;
+  raisedHands: ReadonlyArray<number>;
+}>;
+
+type GroupCallRaisedHandsChangeActionType = ReadonlyDeep<{
+  type: 'calling/GROUP_CALL_RAISED_HANDS_CHANGE';
+  payload: GroupCallRaisedHandsChangeActionPayloadType;
+}>;
+
 // eslint-disable-next-line local-rules/type-alias-readonlydeep
 export type GroupCallStateChangeActionType = {
   type: 'calling/GROUP_CALL_STATE_CHANGE';
   payload: GroupCallStateChangeActionPayloadType;
 };
+
+type GroupCallReactionsReceivedActionPayloadType = ReadonlyDeep<{
+  conversationId: string;
+  reactions: Array<CallReaction>;
+  timestamp: number;
+}>;
+
+type GroupCallReactionsExpiredActionPayloadType = ReadonlyDeep<{
+  conversationId: string;
+  timestamp: number;
+}>;
+
+export type GroupCallReactionsReceivedActionType = ReadonlyDeep<{
+  type: 'calling/GROUP_CALL_REACTIONS_RECEIVED';
+  payload: GroupCallReactionsReceivedActionPayloadType;
+}>;
+
+type GroupCallReactionsExpiredActionType = ReadonlyDeep<{
+  type: 'calling/GROUP_CALL_REACTIONS_EXPIRED';
+  payload: GroupCallReactionsExpiredActionPayloadType;
+}>;
 
 type HangUpActionType = ReadonlyDeep<{
   type: 'calling/HANG_UP';
@@ -530,6 +594,16 @@ type KeyChangedActionType = {
 type KeyChangeOkActionType = ReadonlyDeep<{
   type: 'calling/MARK_CALL_TRUSTED';
   payload: null;
+}>;
+
+type SendGroupCallRaiseHandActionType = ReadonlyDeep<{
+  type: 'calling/RAISE_HAND_GROUP_CALL';
+  payload: SendGroupCallRaiseHandType;
+}>;
+
+export type SendGroupCallReactionActionType = ReadonlyDeep<{
+  type: 'calling/SEND_GROUP_CALL_REACTION';
+  payload: SendGroupCallReactionLocalCopyType;
 }>;
 
 type OutgoingCallActionType = ReadonlyDeep<{
@@ -639,7 +713,10 @@ export type CallingActionType =
   | ConversationRemovedActionType
   | DeclineCallActionType
   | GroupCallAudioLevelsChangeActionType
+  | GroupCallRaisedHandsChangeActionType
   | GroupCallStateChangeActionType
+  | GroupCallReactionsReceivedActionType
+  | GroupCallReactionsExpiredActionType
   | HangUpActionType
   | IncomingDirectCallActionType
   | IncomingGroupCallActionType
@@ -651,6 +728,7 @@ export type CallingActionType =
   | RemoteSharingScreenChangeActionType
   | RemoteVideoChangeActionType
   | ReturnToActiveCallActionType
+  | SendGroupCallReactionActionType
   | SetLocalAudioActionType
   | SetLocalVideoFulfilledActionType
   | SetPresentingSourcesActionType
@@ -869,6 +947,37 @@ function groupCallAudioLevelsChange(
   return { type: GROUP_CALL_AUDIO_LEVELS_CHANGE, payload };
 }
 
+function receiveGroupCallReactions(
+  payload: GroupCallReactionsReceivedArgumentType
+): ThunkAction<
+  void,
+  RootStateType,
+  unknown,
+  GroupCallReactionsReceivedActionType | GroupCallReactionsExpiredActionType
+> {
+  return async dispatch => {
+    const { conversationId } = payload;
+    const timestamp = Date.now();
+
+    dispatch({
+      type: GROUP_CALL_REACTIONS_RECEIVED,
+      payload: { ...payload, timestamp },
+    });
+    await sleep(CALLING_REACTIONS_LIFETIME);
+
+    dispatch({
+      type: GROUP_CALL_REACTIONS_EXPIRED,
+      payload: { conversationId, timestamp },
+    });
+  };
+}
+
+function groupCallRaisedHandsChange(
+  payload: GroupCallRaisedHandsChangeActionPayloadType
+): GroupCallRaisedHandsChangeActionType {
+  return { type: GROUP_CALL_RAISED_HANDS_CHANGE, payload };
+}
+
 function groupCallStateChange(
   payload: GroupCallStateChangeArgumentType
 ): ThunkAction<void, RootStateType, unknown, GroupCallStateChangeActionType> {
@@ -990,6 +1099,45 @@ function keyChangeOk(
     dispatch({
       type: MARK_CALL_TRUSTED,
       payload: null,
+    });
+  };
+}
+
+function sendGroupCallRaiseHand(
+  payload: SendGroupCallRaiseHandType
+): ThunkAction<void, RootStateType, unknown, SendGroupCallRaiseHandActionType> {
+  return dispatch => {
+    calling.sendGroupCallRaiseHand(payload.conversationId, payload.raise);
+
+    dispatch({
+      type: RAISE_HAND_GROUP_CALL,
+      payload,
+    });
+  };
+}
+
+function sendGroupCallReaction(
+  payload: SendGroupCallReactionType
+): ThunkAction<
+  void,
+  RootStateType,
+  unknown,
+  SendGroupCallReactionActionType | GroupCallReactionsExpiredActionType
+> {
+  return async dispatch => {
+    const { conversationId } = payload;
+    const timestamp = Date.now();
+
+    calling.sendGroupCallReaction(payload.conversationId, payload.value);
+    dispatch({
+      type: SEND_GROUP_CALL_REACTION,
+      payload: { ...payload, timestamp },
+    });
+    await sleep(CALLING_REACTIONS_LIFETIME);
+
+    dispatch({
+      type: GROUP_CALL_REACTIONS_EXPIRED,
+      payload: { conversationId, timestamp },
     });
   };
 }
@@ -1424,7 +1572,7 @@ function startCall(
 
         const state = getState();
         const { activeCallState } = state.calling;
-        if (isGroupCallOutboundRingEnabled() && activeCallState?.outgoingRing) {
+        if (activeCallState?.outgoingRing) {
           const conversation = getOwn(
             state.conversations.conversationLookup,
             activeCallState.conversationId
@@ -1505,6 +1653,7 @@ export const actions = {
   declineCall,
   getPresentingSources,
   groupCallAudioLevelsChange,
+  groupCallRaisedHandsChange,
   groupCallStateChange,
   hangUpActiveCall,
   keyChangeOk,
@@ -1516,12 +1665,15 @@ export const actions = {
   peekGroupCallForTheFirstTime,
   peekGroupCallIfItHasMembers,
   peekNotConnectedGroupCall,
+  receiveGroupCallReactions,
   receiveIncomingDirectCall,
   receiveIncomingGroupCall,
   refreshIODevices,
   remoteSharingScreenChange,
   remoteVideoChange,
   returnToActiveCall,
+  sendGroupCallRaiseHand,
+  sendGroupCallReaction,
   setGroupCallVideoRequest,
   setIsCallActive,
   setLocalAudio,
@@ -1613,6 +1765,7 @@ export function reducer(
           conversationId,
           connectionState: action.payload.connectionState,
           joinState: action.payload.joinState,
+          localDemuxId: undefined,
           peekInfo: action.payload.peekInfo ||
             existingCall?.peekInfo || {
               acis: action.payload.remoteParticipants.map(({ aci }) => aci),
@@ -1623,7 +1776,6 @@ export function reducer(
           ...ringState,
         };
         outgoingRing =
-          isGroupCallOutboundRingEnabled() &&
           !ringState.ringId &&
           !call.peekInfo?.acis.length &&
           !call.remoteParticipants.length &&
@@ -1815,6 +1967,7 @@ export function reducer(
         conversationId,
         connectionState: GroupCallConnectionState.NotConnected,
         joinState: GroupCallJoinState.NotJoined,
+        localDemuxId: undefined,
         peekInfo: {
           acis: [],
           maxDevices: Infinity,
@@ -1964,6 +2117,7 @@ export function reducer(
       conversationId,
       hasLocalAudio,
       hasLocalVideo,
+      localDemuxId,
       joinState,
       ourAci,
       peekInfo,
@@ -2022,8 +2176,10 @@ export function reducer(
           conversationId,
           connectionState,
           joinState,
+          localDemuxId,
           peekInfo: newPeekInfo,
           remoteParticipants,
+          raisedHands: existingCall?.raisedHands ?? [],
           ...newRingState,
         },
       },
@@ -2042,6 +2198,7 @@ export function reducer(
       conversationId,
       connectionState: GroupCallConnectionState.NotConnected,
       joinState: GroupCallJoinState.NotJoined,
+      localDemuxId: undefined,
       peekInfo: {
         acis: [],
         maxDevices: Infinity,
@@ -2071,6 +2228,107 @@ export function reducer(
           ...existingCall,
           peekInfo,
         },
+      },
+    };
+  }
+
+  if (
+    action.type === SEND_GROUP_CALL_REACTION ||
+    action.type === GROUP_CALL_REACTIONS_RECEIVED
+  ) {
+    const { conversationId, timestamp } = action.payload;
+    if (state.activeCallState?.conversationId !== conversationId) {
+      return state;
+    }
+
+    let recentReactions: Array<ActiveCallReaction> = [];
+    if (action.type === GROUP_CALL_REACTIONS_RECEIVED) {
+      recentReactions = action.payload.reactions.map(({ demuxId, value }) => {
+        return { timestamp, demuxId, value };
+      });
+    } else {
+      // When sending reactions, ringrtc doesn't automatically receive back a copy of
+      // the reaction you just sent. We handle it here and add a local copy to state.
+      const existingGroupCall = getGroupCall(conversationId, state);
+      if (!existingGroupCall) {
+        log.warn(
+          'Unable to update group call reactions after send reaction because existing group call is missing.'
+        );
+        return state;
+      }
+
+      // This should never happen -- localDemuxId is set when a call enters the
+      // Joining state, and Reactions are only usable from the CallScreen which is
+      // shown when the call is in the Joined state (after Joining).
+      if (!existingGroupCall.localDemuxId) {
+        log.warn(
+          'Unable to update group call reactions after send reaction because localDemuxId is missing.'
+        );
+        return state;
+      }
+
+      recentReactions = [
+        {
+          timestamp,
+          demuxId: existingGroupCall.localDemuxId,
+          value: action.payload.value,
+        },
+      ];
+    }
+
+    return {
+      ...state,
+      activeCallState: {
+        ...state.activeCallState,
+        reactions: [
+          ...(state.activeCallState.reactions ?? []),
+          ...recentReactions,
+        ].slice(-MAX_CALLING_REACTIONS),
+      },
+    };
+  }
+
+  if (action.type === GROUP_CALL_REACTIONS_EXPIRED) {
+    const { conversationId, timestamp: receivedAt } = action.payload;
+    if (
+      state.activeCallState?.conversationId !== conversationId ||
+      !state.activeCallState?.reactions
+    ) {
+      return state;
+    }
+
+    const expireAt = receivedAt + CALLING_REACTIONS_LIFETIME;
+
+    return {
+      ...state,
+      activeCallState: {
+        ...state.activeCallState,
+        reactions: state.activeCallState.reactions.filter(({ timestamp }) => {
+          return timestamp > expireAt;
+        }),
+      },
+    };
+  }
+
+  if (action.type === GROUP_CALL_RAISED_HANDS_CHANGE) {
+    const { conversationId, raisedHands } = action.payload;
+
+    const { activeCallState } = state;
+    const existingCall = getGroupCall(conversationId, state);
+
+    if (
+      state.activeCallState?.conversationId !== conversationId ||
+      !activeCallState ||
+      !existingCall
+    ) {
+      return state;
+    }
+
+    return {
+      ...state,
+      callsByConversation: {
+        ...callsByConversation,
+        [conversationId]: { ...existingCall, raisedHands: [...raisedHands] },
       },
     };
   }

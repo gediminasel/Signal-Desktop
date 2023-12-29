@@ -138,6 +138,7 @@ import type { CallHistorySelectorType } from './callHistory';
 import { CallMode } from '../../types/Calling';
 import { CallDirection } from '../../types/CallDisposition';
 import { getCallIdFromEra } from '../../util/callDisposition';
+import { LONG_MESSAGE } from '../../types/MIME';
 
 export { isIncoming, isOutgoing, isStory };
 
@@ -313,11 +314,15 @@ export const getAttachmentsForMessage = ({
       },
     ];
   }
-
-  return attachments
-    .filter(attachment => !attachment.error || canBeDownloaded(attachment))
-    .map(attachment => getPropsForAttachment(attachment))
-    .filter(isNotNil);
+  return (
+    attachments
+      .filter(attachment => !attachment.error || canBeDownloaded(attachment))
+      // Long message attachments are removed from message.attachments quickly,
+      // but in case they are still around, let's make sure not to show them
+      .filter(attachment => attachment.contentType !== LONG_MESSAGE)
+      .map(attachment => getPropsForAttachment(attachment))
+      .filter(isNotNil)
+  );
 };
 
 export const processBodyRanges = (
@@ -1331,6 +1336,8 @@ export type GetPropsForCallHistoryOptions = Pick<
   | 'callHistorySelector'
   | 'conversationSelector'
   | 'ourConversationId'
+  | 'selectedMessageIds'
+  | 'targetedMessageId'
 >;
 
 const emptyCallNotification: CallingNotificationType = {
@@ -1340,6 +1347,8 @@ const emptyCallNotification: CallingNotificationType = {
   groupCallEnded: null,
   maxDevices: Infinity,
   deviceCount: 0,
+  isSelectMode: false,
+  isTargeted: false,
 };
 
 export function getPropsForCallHistory(
@@ -1350,6 +1359,8 @@ export function getPropsForCallHistory(
     activeCall,
     conversationSelector,
     ourConversationId,
+    selectedMessageIds,
+    targetedMessageId,
   }: GetPropsForCallHistoryOptions
 ): CallingNotificationType {
   const { callId } = message;
@@ -1371,6 +1382,8 @@ export function getPropsForCallHistory(
     'getPropsForCallHistory: Missing conversation'
   );
 
+  const isSelectMode = selectedMessageIds != null;
+
   let callCreator: ConversationType | null = null;
   if (callHistory.ringerId) {
     callCreator = conversationSelector(callHistory.ringerId);
@@ -1386,6 +1399,8 @@ export function getPropsForCallHistory(
       groupCallEnded: false,
       deviceCount: 0,
       maxDevices: Infinity,
+      isSelectMode,
+      isTargeted: message.id === targetedMessageId,
     };
   }
 
@@ -1413,6 +1428,8 @@ export function getPropsForCallHistory(
     groupCallEnded: callId !== conversationCallId || deviceCount === 0,
     deviceCount,
     maxDevices,
+    isSelectMode,
+    isTargeted: message.id === targetedMessageId,
   };
 }
 
@@ -1769,7 +1786,10 @@ function canReplyOrReact(
     return false;
   }
 
-  if (!conversation.acceptedMessageRequest) {
+  if (
+    !conversation.acceptedMessageRequest &&
+    conversation.removalStage !== 'justNotification'
+  ) {
     return false;
   }
 

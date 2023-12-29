@@ -48,6 +48,12 @@ import {
 
 const INTERVAL = 30 * durations.MINUTE;
 
+type JSONVendorSchema = {
+  minOSVersion?: string;
+  requireManualUpdate?: 'true' | 'false';
+  requireUserConfirmation?: 'true' | 'false';
+};
+
 type JSONUpdateSchema = {
   version: string;
   files: Array<{
@@ -59,10 +65,7 @@ type JSONUpdateSchema = {
   path: string;
   sha512: string;
   releaseDate: string;
-  vendor?: {
-    requireManualUpdate?: boolean;
-    minOSVersion?: string;
-  };
+  vendor?: JSONVendorSchema;
 };
 
 export type UpdateInformationType = {
@@ -71,6 +74,7 @@ export type UpdateInformationType = {
   version: string;
   sha512: string;
   differentialData: DifferentialDownloadDataType | undefined;
+  vendor?: JSONVendorSchema;
 };
 
 enum DownloadMode {
@@ -84,6 +88,13 @@ type DownloadUpdateResultType = Readonly<{
   signature: Buffer;
 }>;
 
+export type UpdaterOptionsType = Readonly<{
+  settingsChannel: SettingsChannel;
+  logger: LoggerType;
+  getMainWindow: () => BrowserWindow | undefined;
+  canRunSilently: () => boolean;
+}>;
+
 export abstract class Updater {
   protected fileName: string | undefined;
 
@@ -91,17 +102,31 @@ export abstract class Updater {
 
   protected cachedDifferentialData: DifferentialDownloadDataType | undefined;
 
+  protected readonly logger: LoggerType;
+
+  private readonly settingsChannel: SettingsChannel;
+
+  protected readonly getMainWindow: () => BrowserWindow | undefined;
+
   private throttledSendDownloadingUpdate: (downloadedSize: number) => void;
 
   private activeDownload: Promise<boolean> | undefined;
 
   private markedCannotUpdate = false;
 
-  constructor(
-    protected readonly logger: LoggerType,
-    private readonly settingsChannel: SettingsChannel,
-    protected readonly getMainWindow: () => BrowserWindow | undefined
-  ) {
+  private readonly canRunSilently: () => boolean;
+
+  constructor({
+    settingsChannel,
+    logger,
+    getMainWindow,
+    canRunSilently,
+  }: UpdaterOptionsType) {
+    this.settingsChannel = settingsChannel;
+    this.logger = logger;
+    this.getMainWindow = getMainWindow;
+    this.canRunSilently = canRunSilently;
+
     this.throttledSendDownloadingUpdate = throttle((downloadedSize: number) => {
       const mainWindow = this.getMainWindow();
       mainWindow?.webContents.send(
@@ -141,7 +166,10 @@ export abstract class Updater {
 
   protected abstract deletePreviousInstallers(): Promise<void>;
 
-  protected abstract installUpdate(updateFilePath: string): Promise<void>;
+  protected abstract installUpdate(
+    updateFilePath: string,
+    isSilent: boolean
+  ): Promise<void>;
 
   //
   // Protected methods
@@ -255,7 +283,11 @@ export abstract class Updater {
         );
       }
 
-      await this.installUpdate(updateFilePath);
+      await this.installUpdate(
+        updateFilePath,
+        updateInfo.vendor?.requireUserConfirmation !== 'true' &&
+          this.canRunSilently()
+      );
 
       const mainWindow = this.getMainWindow();
       if (mainWindow) {
@@ -371,7 +403,7 @@ export abstract class Updater {
 
     const { vendor } = parsedYaml;
     if (vendor) {
-      if (vendor.requireManualUpdate) {
+      if (vendor.requireManualUpdate === 'true') {
         this.logger.warn('checkForUpdates: manual update required');
         this.markCannotUpdate(
           new Error('yaml file has requireManualUpdate flag'),
@@ -475,6 +507,7 @@ export abstract class Updater {
       version,
       sha512,
       differentialData,
+      vendor,
     };
   }
 

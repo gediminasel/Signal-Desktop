@@ -1,9 +1,12 @@
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { AudioDevice } from '@signalapp/ringrtc';
+import type { AudioDevice, Reaction as CallReaction } from '@signalapp/ringrtc';
 import type { ConversationType } from '../state/ducks/conversations';
 import type { AciString, ServiceIdString } from './ServiceId';
+
+export const MAX_CALLING_REACTIONS = 5;
+export const CALLING_REACTIONS_LIFETIME = 4000;
 
 // These are strings (1) for the database (2) for Storybook.
 export enum CallMode {
@@ -34,6 +37,16 @@ export type PresentedSource = {
   name: string;
 };
 
+// export type ActiveCallReactionsType = {
+//   [timestamp: number]: ReadonlyArray<CallReaction>;
+// };
+
+export type ActiveCallReaction = {
+  timestamp: number;
+} & CallReaction;
+
+export type ActiveCallReactionsType = ReadonlyArray<ActiveCallReaction>;
+
 export type ActiveCallBaseType = {
   conversation: ConversationType;
   hasLocalAudio: boolean;
@@ -50,6 +63,7 @@ export type ActiveCallBaseType = {
   settingsDialogOpen: boolean;
   showNeedsScreenRecordingPermissionsWarning?: boolean;
   showParticipantsList: boolean;
+  reactions?: ActiveCallReactionsType;
 };
 
 export type ActiveDirectCallType = ActiveCallBaseType & {
@@ -73,13 +87,16 @@ export type ActiveDirectCallType = ActiveCallBaseType & {
 export type ActiveGroupCallType = ActiveCallBaseType & {
   callMode: CallMode.Group;
   connectionState: GroupCallConnectionState;
+  conversationsByDemuxId: ConversationsByDemuxIdType;
   conversationsWithSafetyNumberChanges: Array<ConversationType>;
   joinState: GroupCallJoinState;
+  localDemuxId: number | undefined;
   maxDevices: number;
   deviceCount: number;
   groupMembers: Array<Pick<ConversationType, 'id' | 'firstName' | 'title'>>;
   isConversationTooBigToRing: boolean;
   peekedParticipants: Array<ConversationType>;
+  raisedHands: Set<number>;
   remoteParticipants: Array<GroupCallRemoteParticipantType>;
   remoteAudioLevels: Map<number, number>;
 };
@@ -142,11 +159,14 @@ export type GroupCallRemoteParticipantType = ConversationType & {
   demuxId: number;
   hasRemoteAudio: boolean;
   hasRemoteVideo: boolean;
+  isHandRaised: boolean;
   presenting: boolean;
   sharingScreen: boolean;
   speakerTime?: number;
   videoAspectRatio: number;
 };
+
+export type ConversationsByDemuxIdType = Map<number, ConversationType>;
 
 // Similar to RingRTC's `VideoRequest` but without the `framerate` property.
 export type GroupCallVideoRequest = {

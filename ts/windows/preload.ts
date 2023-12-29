@@ -31,10 +31,8 @@ installSetting('typingIndicatorSetting', {
 });
 
 installCallback('deleteAllMyStories');
-installCallback('isFormattingFlagEnabled');
 installCallback('isPhoneNumberSharingEnabled');
 installCallback('isPrimary');
-installCallback('shouldShowStoriesSettings');
 installCallback('syncRequest');
 
 installSetting('alwaysRelayCalls');

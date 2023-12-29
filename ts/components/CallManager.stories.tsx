@@ -14,7 +14,10 @@ import {
   GroupCallConnectionState,
   GroupCallJoinState,
 } from '../types/Calling';
-import type { ConversationTypeType } from '../state/ducks/conversations';
+import type {
+  ConversationType,
+  ConversationTypeType,
+} from '../state/ducks/conversations';
 import { AvatarColors } from '../types/Colors';
 import { generateAci } from '../types/ServiceId';
 import { getDefaultConversation } from '../test-both/helpers/getDefaultConversation';
@@ -70,7 +73,8 @@ const createProps = (storyProps: Partial<PropsType> = {}): PropsType => ({
   getPresentingSources: action('get-presenting-sources'),
   hangUpActiveCall: action('hang-up-active-call'),
   i18n,
-  isGroupCallOutboundRingEnabled: true,
+  isGroupCallRaiseHandEnabled: true,
+  isGroupCallReactionsEnabled: true,
   keyChangeOk: action('key-change-ok'),
   me: {
     ...getDefaultConversation({
@@ -83,7 +87,11 @@ const createProps = (storyProps: Partial<PropsType> = {}): PropsType => ({
   openSystemPreferencesAction: action('open-system-preferences-action'),
   playRingtone: action('play-ringtone'),
   renderDeviceSelection: () => <div />,
+  renderEmojiPicker: () => <>EmojiPicker</>,
+  renderReactionPicker: () => <div />,
   renderSafetyNumberViewer: (_: SafetyNumberProps) => <div />,
+  sendGroupCallRaiseHand: action('send-group-call-raise-hand'),
+  sendGroupCallReaction: action('send-group-call-reaction'),
   setGroupCallVideoRequest: action('set-group-call-video-request'),
   setIsCallActive: action('set-is-call-active'),
   setLocalAudio: action('set-local-audio'),
@@ -144,12 +152,15 @@ export function OngoingGroupCall(): JSX.Element {
           callMode: CallMode.Group,
           connectionState: GroupCallConnectionState.Connected,
           conversationsWithSafetyNumberChanges: [],
+          conversationsByDemuxId: new Map<number, ConversationType>(),
           deviceCount: 0,
           joinState: GroupCallJoinState.Joined,
+          localDemuxId: 1,
           maxDevices: 5,
           groupMembers: [],
           isConversationTooBigToRing: false,
           peekedParticipants: [],
+          raisedHands: new Set<number>(),
           remoteParticipants: [],
           remoteAudioLevels: new Map<number, number>(),
         },
@@ -230,12 +241,15 @@ export function GroupCallSafetyNumberChanged(): JSX.Element {
               }),
             },
           ],
+          conversationsByDemuxId: new Map<number, ConversationType>(),
           deviceCount: 0,
           joinState: GroupCallJoinState.Joined,
+          localDemuxId: 1,
           maxDevices: 5,
           groupMembers: [],
           isConversationTooBigToRing: false,
           peekedParticipants: [],
+          raisedHands: new Set<number>(),
           remoteParticipants: [],
           remoteAudioLevels: new Map<number, number>(),
         },
