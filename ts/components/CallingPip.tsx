@@ -83,6 +83,8 @@ export function CallingPip({
   switchFromPresentationView,
   togglePip,
 }: PropsType): JSX.Element {
+  const isRTL = i18n.getLocaleDirection() === 'rtl';
+
   const videoContainerRef = React.useRef<null | HTMLDivElement>(null);
   const localVideoRef = React.useRef(null);
 
@@ -133,14 +135,24 @@ export function CallingPip({
       const offsetX = mouseX - dragOffsetX;
       const offsetY = mouseY - dragOffsetY;
 
+      let distanceToLeftEdge: number;
+      let distanceToRightEdge: number;
+      if (isRTL) {
+        distanceToLeftEdge = innerWidth - (offsetX + pipWidth);
+        distanceToRightEdge = offsetX;
+      } else {
+        distanceToLeftEdge = offsetX;
+        distanceToRightEdge = innerWidth - (offsetX + pipWidth);
+      }
+
       const snapCandidates: Array<SnapCandidate> = [
         {
           mode: PositionMode.SnapToLeft,
-          distanceToEdge: offsetX,
+          distanceToEdge: distanceToLeftEdge,
         },
         {
           mode: PositionMode.SnapToRight,
-          distanceToEdge: innerWidth - (offsetX + pipWidth),
+          distanceToEdge: distanceToRightEdge,
         },
         {
           mode: PositionMode.SnapToTop,
@@ -170,14 +182,14 @@ export function CallingPip({
         case PositionMode.SnapToBottom:
           setPositionState({
             mode: snapTo.mode,
-            offsetX,
+            offsetX: isRTL ? innerWidth - (offsetX + pipWidth) : offsetX,
           });
           break;
         default:
           throw missingCaseError(snapTo.mode);
       }
     }
-  }, [positionState, setPositionState, pipHeight, pipWidth]);
+  }, [isRTL, positionState, setPositionState, pipHeight, pipWidth]);
 
   React.useEffect(() => {
     if (positionState.mode === PositionMode.BeingDragged) {
@@ -214,7 +226,11 @@ export function CallingPip({
     switch (positionState.mode) {
       case PositionMode.BeingDragged:
         return [
-          positionState.mouseX - positionState.dragOffsetX,
+          isRTL
+            ? windowWidth -
+              positionState.mouseX -
+              (pipWidth - positionState.dragOffsetX)
+            : positionState.mouseX - positionState.dragOffsetX,
           positionState.mouseY - positionState.dragOffsetY,
         ];
       case PositionMode.SnapToLeft:
@@ -246,7 +262,8 @@ export function CallingPip({
       default:
         throw missingCaseError(positionState);
     }
-  }, [windowWidth, windowHeight, positionState, pipHeight, pipWidth]);
+  }, [isRTL, windowWidth, windowHeight, positionState, pipHeight, pipWidth]);
+  const localizedTranslateX = isRTL ? -translateX : translateX;
 
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
@@ -257,6 +274,7 @@ export function CallingPip({
         if (!node) {
           return;
         }
+
         const rect = node.getBoundingClientRect();
         const dragOffsetX = ev.clientX - rect.left;
         const dragOffsetY = ev.clientY - rect.top;
@@ -280,7 +298,7 @@ export function CallingPip({
           positionState.mode === PositionMode.BeingDragged
             ? '-webkit-grabbing'
             : '-webkit-grab',
-        transform: `translate3d(${translateX}px,calc(${translateY}px - var(--titlebar-height)), 0)`,
+        transform: `translate3d(${localizedTranslateX}px,calc(${translateY}px - var(--titlebar-height)), 0)`,
         transition:
           positionState.mode === PositionMode.BeingDragged
             ? 'none'

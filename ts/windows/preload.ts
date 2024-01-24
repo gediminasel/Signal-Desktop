@@ -14,7 +14,6 @@ installCallback('resetAllChatColors');
 installCallback('resetDefaultChatColor');
 installCallback('setGlobalDefaultConversationColor');
 installCallback('getDefaultConversationColor');
-installCallback('persistZoomFactor');
 
 // Getters only. These are set by the primary device
 installSetting('blockedCount', {
@@ -38,6 +37,7 @@ installCallback('syncRequest');
 installSetting('alwaysRelayCalls');
 installSetting('audioMessage');
 installSetting('audioNotification');
+installSetting('autoConvertEmoji');
 installSetting('autoDownloadUpdate');
 installSetting('autoLaunch');
 installSetting('callRingtoneNotification');

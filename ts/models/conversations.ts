@@ -145,7 +145,6 @@ import { getSendTarget } from '../util/getSendTarget';
 import { getRecipients } from '../util/getRecipients';
 import { validateConversation } from '../util/validateConversation';
 import { isSignalConversation } from '../util/isSignalConversation';
-import { __DEPRECATED$getMessageById as getMessageByIdLazy } from '../messages/getMessageById';
 import { removePendingMember } from '../util/removePendingMember';
 import {
   isMember,
@@ -159,7 +158,6 @@ import { ReceiptType } from '../types/Receipt';
 import { getQuoteAttachment } from '../util/makeQuote';
 import { deriveProfileKeyVersion } from '../util/zkgroup';
 import { incrementMessageCounter } from '../util/incrementMessageCounter';
-import { queueUpdateMessage } from '../util/messageBatcher';
 import OS from '../util/os/osMain';
 import { getMessageAuthorText } from '../util/getMessageAuthorText';
 
@@ -1860,7 +1858,7 @@ export class ConversationModel extends window.Backbone
     this.set('e164', e164 || undefined);
 
     // This user changed their phone number
-    if (oldValue && e164) {
+    if (oldValue && e164 && !this.get('notSharingPhoneNumber')) {
       void this.addChangeNumberNotification(oldValue, e164);
     }
 
@@ -2011,84 +2009,6 @@ export class ConversationModel extends window.Backbone
       messageCount: (this.get('messageCount') || 0) + 1,
     });
     window.Signal.Data.updateConversation(this.attributes);
-  }
-
-  async updateLastSeenMessage(
-    message: MessageModel,
-    conversationId: string,
-    updateMessage = true
-  ): Promise<boolean> {
-    try {
-      const receivedAt = message.get('received_at');
-      let lastSeenMap = this.get('lastMessagesSeen') || {};
-      let lastSeenMsg = lastSeenMap[conversationId] || {
-        receivedAt: 0,
-        id: '',
-      };
-      if (lastSeenMsg.receivedAt >= receivedAt) {
-        return false;
-      }
-
-      this.set('lastMessagesSeen', {
-        ...lastSeenMap,
-        [conversationId]: {
-          receivedAt,
-          id: '',
-        },
-      });
-
-      if (lastSeenMsg.id) {
-        const prevMsg = await getMessageByIdLazy(lastSeenMsg.id);
-        if (prevMsg) {
-          window.MessageCache.__DEPRECATED$register(
-            prevMsg.id,
-            prevMsg,
-            'updateLastSeenMessage'
-          );
-          const prevSeen = prevMsg.get('lastSeenHere') || [];
-          prevMsg.set(
-            'lastSeenHere',
-            [...prevSeen].filter(x => x !== this.id)
-          );
-          queueUpdateMessage(prevMsg.attributes);
-        } else {
-          log.error(
-            `failed to load last seen message with id ${lastSeenMsg.id}.`
-          );
-        }
-        // we awaited so lastSeen may have changed (probably)
-        lastSeenMap = this.get('lastMessagesSeen') || {};
-        lastSeenMsg = lastSeenMap[conversationId] || { receivedAt: 0, id: '' };
-        if (lastSeenMsg.receivedAt > receivedAt) {
-          return false;
-        }
-      }
-
-      if (updateMessage) {
-        const prevSeenHereList = message.get('lastSeenHere') || [];
-        message.set('lastSeenHere', [...prevSeenHereList, this.id]);
-        queueUpdateMessage(message.attributes);
-      }
-
-      if (updateMessage) {
-        this.set('lastMessagesSeen', {
-          ...lastSeenMap,
-          [conversationId]: {
-            receivedAt,
-            id: message.id,
-          },
-        });
-        window.Signal.Data.updateConversation(this.attributes);
-      }
-
-      return true;
-    } catch (err: unknown) {
-      log.error(
-        `failed to update last seen for message with id ${message.id} ` +
-          `due to error ${Errors.toLogFormat(err)}`
-      );
-    }
-    return false;
   }
 
   incrementSentMessageCount({ dry = false }: { dry?: boolean } = {}):

@@ -3970,10 +3970,10 @@
     node-gyp-build "^4.2.3"
     uuid "^8.3.0"
 
-"@signalapp/mock-server@4.3.0":
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/@signalapp/mock-server/-/mock-server-4.3.0.tgz#501d1e0bc9f9fe811189690e7b053dfe9bac7c88"
-  integrity sha512-zE8+EhuKsQ0byXG1Prkw5hoH0pMySwf+AJNf2sdOTsIJSKLx8/GOP4uG3m/vSOW3m4BoAmVnpNzJryRIjpfAbw==
+"@signalapp/mock-server@4.4.1":
+  version "4.4.1"
+  resolved "https://registry.yarnpkg.com/@signalapp/mock-server/-/mock-server-4.4.1.tgz#8e7dd69ae69bdf60f4f1f8609066ffc9163f16a6"
+  integrity sha512-aexMLAjQiEhcxLr+XhU7Rsrohgn3xMU1SdIbM1UPUIrpGQqLFfA+X+E0huQqBED6k3KgArCQ6zmy4uJ65acHVQ==
   dependencies:
     "@signalapp/libsignal-client" "^0.30.2"
     debug "^4.3.2"
@@ -3986,10 +3986,10 @@
     ws "^8.4.2"
     zod "^3.20.2"
 
-"@signalapp/ringrtc@2.34.5":
-  version "2.34.5"
-  resolved "https://registry.yarnpkg.com/@signalapp/ringrtc/-/ringrtc-2.34.5.tgz#33855d02845b0e8b476d7b611774127215966512"
-  integrity sha512-ORR3LI8Jn4MGosxa45cqjFyoggaOnJASa3rPx8FghfymWW+VClRYgh14jEouJpNwB6u9rviKOWyz7bF19uxn7w==
+"@signalapp/ringrtc@2.36.0":
+  version "2.36.0"
+  resolved "https://registry.yarnpkg.com/@signalapp/ringrtc/-/ringrtc-2.36.0.tgz#67d1b48bd4c1ea31c155ea14a0bd28f04e46eff5"
+  integrity sha512-KDQYkSjXQMDoXt+4qSIXyAbWGbb6vV7OjFCDCmSwEmZJ7/XSr4XtQXtnspF8WrxeMVAFqJqpZho7iOy40u565A==
   dependencies:
     https-proxy-agent "7.0.1"
     tar "^6.1.0"
@@ -9079,10 +9079,10 @@ electron-window@^0.8.0:
   dependencies:
     is-electron-renderer "^2.0.0"
 
-electron@27.1.3:
-  version "27.1.3"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-27.1.3.tgz#3fd6decda95c1dd0a7e51a9ac77ee0ba37b7c5c6"
-  integrity sha512-7eD8VMhhlL5J531OOawn00eMthUkX1e3qN5Nqd7eMK8bg5HxQBrn8bdPlvUEnCano9KhrVwaDnGeuzWoDOGpjQ==
+electron@27.2.0:
+  version "27.2.0"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-27.2.0.tgz#d5bdc006768a6de87dcd077f617d6085a1c69641"
+  integrity sha512-no/iMICVLI/5G0IqgKFbB89HDN88DWwKeRO+dPfJPkpJISdEX8Cx/sMEOFuuRa4VNInNe5CKCqRWExK5z3AdcQ==
   dependencies:
     "@electron/get" "^2.0.0"
     "@types/node" "^18.11.18"

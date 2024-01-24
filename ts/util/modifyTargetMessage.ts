@@ -16,11 +16,7 @@ import * as ViewOnceOpenSyncs from '../messageModifiers/ViewOnceOpenSyncs';
 import * as ViewSyncs from '../messageModifiers/ViewSyncs';
 import { ReadStatus } from '../messages/MessageReadStatus';
 import { SeenStatus } from '../MessageSeenStatus';
-import {
-  SendActionType,
-  sendStateReducer,
-  SendStatus,
-} from '../messages/MessageSendState';
+import { SendActionType, sendStateReducer } from '../messages/MessageSendState';
 import { canConversationBeUnarchived } from './canConversationBeUnarchived';
 import { deleteForEveryone } from './deleteForEveryone';
 import { drop } from './drop';
@@ -32,6 +28,7 @@ import { getSourceServiceId } from '../messages/helpers';
 import { missingCaseError } from './missingCaseError';
 import { reduce } from './iterables';
 import { strictAssert } from './assert';
+import { getNewLastSeenByUser } from '../messageModifiers/MessageReceipts';
 
 // This function is called twice - once from handleDataMessage, and then again from
 //    saveAndNotify, a function called at the end of handleDataMessage as a cleanup for
@@ -108,68 +105,17 @@ export async function modifyTargetMessage(
       changed = true;
     }
 
-    const conversationId = message.get('conversationId');
+    const newLastSeenMessageByUser = getNewLastSeenByUser(
+      conversation.get('lastSeenMessageByUser'),
+      newSendStateByConversationId,
+      message.attributes
+    );
 
-    for (const receipt of receipts) {
-      const { sourceConversationId, type: myType } = receipt;
-      if (myType === MessageReceipts.MessageReceiptType.Read) {
-        const recipient =
-          window.ConversationController.get(sourceConversationId);
-        if (recipient) {
-          if (
-            // eslint-disable-next-line no-await-in-loop
-            await recipient.updateLastSeenMessage(
-              message,
-              conversationId,
-              false
-            )
-          ) {
-            changed = true;
-          }
-        } else {
-          log.error(
-            `failed to find conversation with id ${sourceConversationId}`
-          );
-        }
-      }
-    }
-
-    if (!isFirstRun) {
-      for (const sourceConversationId of Object.keys(
-        newSendStateByConversationId
-      )) {
-        if (
-          newSendStateByConversationId[sourceConversationId].status !==
-          SendStatus.Read
-        ) {
-          continue;
-        }
-        const recipient =
-          window.ConversationController.get(sourceConversationId);
-        if (recipient) {
-          const receivedAt = message.get('received_at');
-          const lastSeenMap = recipient.get('lastMessagesSeen') || {};
-          const lastSeenMsg = lastSeenMap[conversationId];
-          if (
-            lastSeenMsg &&
-            lastSeenMsg.receivedAt === receivedAt &&
-            lastSeenMsg.id !== message.id
-          ) {
-            const prevSeenHereList = message.get('lastSeenHere') || [];
-            message.set('lastSeenHere', [...prevSeenHereList, recipient.id]);
-            changed = true;
-
-            const newMap = { ...lastSeenMap };
-            newMap[conversationId] = { receivedAt, id: message.id };
-            recipient.set('lastMessagesSeen', newMap);
-            window.Signal.Data.updateConversation(recipient.attributes);
-          }
-        } else {
-          log.error(
-            `failed to find conversation with id ${sourceConversationId}`
-          );
-        }
-      }
+    if (newLastSeenMessageByUser) {
+      conversation.set('lastSeenMessageByUser', {
+        ...conversation.get('lastSeenMessageByUser'),
+        ...newLastSeenMessageByUser,
+      });
     }
   }
 

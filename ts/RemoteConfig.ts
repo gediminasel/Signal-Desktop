@@ -16,7 +16,6 @@ import { getCountryCode } from './types/PhoneNumber';
 
 export type ConfigKeyType =
   | 'cds.disableCompatibilityMode'
-  | 'desktop.calling.sendScreenShare1800'
   | 'desktop.cdsi.returnAcisWithoutUaks'
   | 'desktop.clientExpiration'
   | 'desktop.groupMultiTypingIndicators'
@@ -35,7 +34,8 @@ export type ConfigKeyType =
   | 'global.groupsv2.groupSizeHardLimit'
   | 'global.groupsv2.maxGroupSize'
   | 'global.nicknames.max'
-  | 'global.nicknames.min';
+  | 'global.nicknames.min'
+  | 'global.textAttachmentLimitBytes';
 
 type ConfigValueType = {
   name: ConfigKeyType;

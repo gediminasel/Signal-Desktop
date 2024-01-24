@@ -37,6 +37,7 @@ import {
   GroupCallConnectionState,
   GroupCallJoinState,
 } from '../types/Calling';
+import type { ServiceIdString } from '../types/ServiceId';
 import { AvatarColors } from '../types/Colors';
 import type { ConversationType } from '../state/ducks/conversations';
 import {
@@ -76,6 +77,11 @@ import type { Props as ReactionPickerProps } from './conversation/ReactionPicker
 import type { SmartReactionPicker } from '../state/smart/ReactionPicker';
 import { Emoji } from './emoji/Emoji';
 import { CallingRaisedHandsList } from './CallingRaisedHandsList';
+import type { CallReactionBurstType } from './CallReactionBurst';
+import {
+  CallReactionBurstProvider,
+  useCallReactionBursts,
+} from './CallReactionBurst';
 
 export type PropsType = {
   activeCall: ActiveCallType;
@@ -124,6 +130,20 @@ export const isInSpeakerView = (
 const REACTIONS_TOASTS_TRANSITION_FROM = {
   opacity: 0,
 };
+
+// How many reactions of the same emoji must occur before a burst.
+const REACTIONS_BURST_THRESHOLD = 3;
+
+// Timeframe in which multiple of the same emoji must occur before a burst.
+const REACTIONS_BURST_WINDOW = 4000;
+
+// Timeframe after a burst where new reactions of the same emoji are ignored for
+// bursting. They are considered part of the recent burst.
+const REACTIONS_BURST_TRAILING_WINDOW = 2000;
+
+// Max number of bursts in a short timeframe to avoid overwhelming the user.
+const REACTIONS_BURST_MAX_IN_SHORT_WINDOW = 3;
+const REACTIONS_BURST_SHORT_WINDOW = 4000;
 
 function CallDuration({
   joinedAt,
@@ -995,11 +1015,27 @@ type CallingReactionsToastsType = {
   i18n: LocalizerType;
 };
 
-function useReactionsToast(props: CallingReactionsToastsType): void {
-  const { reactions, conversationsByDemuxId, localDemuxId, i18n } = props;
+type UseReactionsToastType = CallingReactionsToastsType & {
+  showBurst: (toast: CallReactionBurstType) => string;
+};
+
+function useReactionsToast(props: UseReactionsToastType): void {
+  const { reactions, conversationsByDemuxId, localDemuxId, i18n, showBurst } =
+    props;
+  const ourServiceId: ServiceIdString | undefined = localDemuxId
+    ? conversationsByDemuxId.get(localDemuxId)?.serviceId
+    : undefined;
+
   const [previousReactions, setPreviousReactions] = React.useState<
     ActiveCallReactionsType | undefined
   >(undefined);
+  const reactionsShown = useRef<
+    Map<
+      string,
+      { value: string; isBursted: boolean; expireAt: number; demuxId: number }
+    >
+  >(new Map());
+  const burstsShown = useRef<Map<string, number>>(new Map());
   const { showToast } = useCallingToasts();
 
   useEffect(() => {
@@ -1011,28 +1047,124 @@ function useReactionsToast(props: CallingReactionsToastsType): void {
       return;
     }
 
+    const time = Date.now();
+    let anyReactionWasShown = false;
     reactions.forEach(({ timestamp, demuxId, value }) => {
+      const conversation = conversationsByDemuxId.get(demuxId);
+      const key = `reactions-${timestamp}-${demuxId}`;
       showToast({
-        key: `reactions-${timestamp}-${demuxId}`,
+        key,
         onlyShowOnce: true,
         autoClose: true,
         content: (
           <span className="CallingReactionsToasts__reaction">
             <Emoji size={28} emoji={value} />
-            {demuxId === localDemuxId
+            {demuxId === localDemuxId ||
+            (ourServiceId && conversation?.serviceId === ourServiceId)
               ? i18n('icu:CallingReactions--me')
-              : conversationsByDemuxId.get(demuxId)?.title}
+              : conversation?.title}
           </span>
         ),
       });
+
+      // Track shown reactions for burst purposes. Skip if it's already tracked.
+      if (reactionsShown.current.has(key)) {
+        return;
+      }
+
+      // If there's a recent burst for this emoji, treat it as part of that burst.
+      const recentBurstTime = burstsShown.current.get(value);
+      const isBursted = !!(
+        recentBurstTime &&
+        recentBurstTime + REACTIONS_BURST_TRAILING_WINDOW > time
+      );
+      reactionsShown.current.set(key, {
+        value,
+        isBursted,
+        expireAt: timestamp + REACTIONS_BURST_WINDOW,
+        demuxId,
+      });
+      anyReactionWasShown = true;
     });
+
+    if (!anyReactionWasShown) {
+      return;
+    }
+
+    const unburstedEmojis = new Map<string, Set<string>>();
+    const unburstedEmojisReactorIds = new Map<
+      string,
+      Set<ServiceIdString | number>
+    >();
+    reactionsShown.current.forEach(
+      ({ value, isBursted, expireAt, demuxId }, key) => {
+        if (expireAt < time) {
+          reactionsShown.current.delete(key);
+          return;
+        }
+
+        if (isBursted) {
+          return;
+        }
+
+        const reactionKeys = unburstedEmojis.get(value) ?? new Set();
+        reactionKeys.add(key);
+        unburstedEmojis.set(value, reactionKeys);
+
+        // Only burst when enough unique people react.
+        const conversation = conversationsByDemuxId.get(demuxId);
+        const reactorId = conversation?.serviceId || demuxId;
+        const reactorIdSet = unburstedEmojisReactorIds.get(value) ?? new Set();
+        reactorIdSet.add(reactorId);
+        unburstedEmojisReactorIds.set(value, reactorIdSet);
+      }
+    );
+
+    burstsShown.current.forEach((timestamp, value) => {
+      if (timestamp < time - REACTIONS_BURST_SHORT_WINDOW) {
+        burstsShown.current.delete(value);
+      }
+    });
+
+    if (burstsShown.current.size >= REACTIONS_BURST_MAX_IN_SHORT_WINDOW) {
+      return;
+    }
+
+    for (const [value, reactorIds] of unburstedEmojisReactorIds.entries()) {
+      if (reactorIds.size < REACTIONS_BURST_THRESHOLD) {
+        continue;
+      }
+
+      const reactionKeys = unburstedEmojis.get(value);
+      if (!reactionKeys) {
+        unburstedEmojisReactorIds.delete(value);
+        continue;
+      }
+
+      burstsShown.current.set(value, time);
+      reactionKeys.forEach(key => {
+        const reactionShown = reactionsShown.current.get(key);
+        if (!reactionShown) {
+          return;
+        }
+
+        reactionShown.isBursted = true;
+      });
+      showBurst({ value });
+
+      if (burstsShown.current.size >= REACTIONS_BURST_MAX_IN_SHORT_WINDOW) {
+        break;
+      }
+    }
   }, [
     reactions,
     previousReactions,
+    showBurst,
     showToast,
     conversationsByDemuxId,
     localDemuxId,
     i18n,
+    ourServiceId,
   ]);
 }
 
@@ -1041,6 +1173,8 @@ function CallingReactionsToastsContainer(
 ): JSX.Element {
   const { i18n } = props;
   const toastRegionRef = useRef<HTMLDivElement>(null);
+  const burstRegionRef = useRef<HTMLDivElement>(null);
+
   return (
     <CallingToastProvider
       i18n={i18n}
@@ -1049,14 +1183,18 @@ function CallingReactionsToastsContainer(
       lifetime={CALLING_REACTIONS_LIFETIME}
       transitionFrom={REACTIONS_TOASTS_TRANSITION_FROM}
     >
-      <div className="CallingReactionsToasts" ref={toastRegionRef} />
-      <CallingReactionsToasts {...props} />
+      <CallReactionBurstProvider region={burstRegionRef}>
+        <div className="CallingReactionsToasts" ref={toastRegionRef} />
+        <div className="CallingReactionsBurstToasts" ref={burstRegionRef} />
+        <CallingReactionsToasts {...props} />
+      </CallReactionBurstProvider>
     </CallingToastProvider>
   );
 }
 
 function CallingReactionsToasts(props: CallingReactionsToastsType) {
-  useReactionsToast(props);
+  const { showBurst } = useCallReactionBursts();
+  useReactionsToast({ ...props, showBurst });
   return null;
 }
 

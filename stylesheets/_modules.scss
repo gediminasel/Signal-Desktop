@@ -2323,6 +2323,7 @@ $timer-icons: '55', '50', '45', '40', '35', '30', '25', '20', '15', '10', '05',
   max-width: 750px;
   margin-block: 0;
   margin-inline: auto;
+  user-select: none;
 
   @at-root .conversation #{&} {
     overflow-y: auto;
@@ -4039,7 +4040,7 @@ button.module-image__border-overlay:focus {
       &__contact-name {
         flex-grow: 1;
         font-size: 13px;
-        line-height: 18px;
+        line-height: 13px;
         color: $color-white;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -4439,7 +4440,10 @@ button.module-image__border-overlay:focus {
   flex-direction: column;
   height: var(--window-height);
   justify-content: center;
-  position: relative;
+  position: fixed;
+  top: 0;
+  /* stylelint-disable-next-line liberty/use-logical-spec */
+  left: 0;
   width: 100%;
 
   &__text {

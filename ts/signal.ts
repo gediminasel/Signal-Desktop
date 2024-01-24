@@ -111,7 +111,7 @@ type MigrationsModuleType = {
   }>;
   upgradeMessageSchema: (
     attributes: MessageAttributesType,
-    options?: { maxVersion?: number }
+    options?: { maxVersion?: number; keepOnDisk?: boolean }
   ) => Promise<MessageAttributesType>;
   writeMessageAttachments: (
     message: MessageAttributesType
@@ -247,6 +247,7 @@ export function initializeMigrations({
         getImageDimensions,
         makeImageThumbnail,
         makeVideoScreenshot,
+        deleteOnDisk,
         logger,
       }),
     processNewSticker: (stickerData: Uint8Array) =>
@@ -265,23 +266,26 @@ export function initializeMigrations({
       }),
     upgradeMessageSchema: (
       message: MessageAttributesType,
-      options: { maxVersion?: number } = {}
+      options: { maxVersion?: number; keepOnDisk?: boolean } = {}
     ) => {
-      const { maxVersion } = options;
+      const { maxVersion, keepOnDisk } = options;
 
       return MessageType.upgradeSchema(message, {
-        writeNewAttachmentData,
-        getRegionCode,
+        deleteOnDisk,
         getAbsoluteAttachmentPath,
-        makeObjectUrl,
-        revokeObjectUrl,
+        getAbsoluteStickerPath,
         getImageDimensions,
+        getRegionCode,
         makeImageThumbnail,
+        makeObjectUrl,
         makeVideoScreenshot,
+        revokeObjectUrl,
+        writeNewAttachmentData,
+        writeNewStickerData,
+
+        keepOnDisk,
         logger,
         maxVersion,
-        getAbsoluteStickerPath,
-        writeNewStickerData,
       });
     },
     writeMessageAttachments: MessageType.createAttachmentDataWriter({

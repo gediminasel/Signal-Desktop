@@ -1,7 +1,7 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { contextBridge, ipcRenderer, webFrame } from 'electron';
+import { contextBridge, ipcRenderer } from 'electron';
 import { MinimalSignalContext } from '../minimalContext';
 
 import type { PropsPreloadType } from '../../components/Preferences';
@@ -22,6 +22,7 @@ function doneRendering() {
 
 const settingMessageAudio = createSetting('audioMessage');
 const settingAudioNotification = createSetting('audioNotification');
+const settingAutoConvertEmoji = createSetting('autoConvertEmoji');
 const settingAutoDownloadUpdate = createSetting('autoDownloadUpdate');
 const settingAutoLaunch = createSetting('autoLaunch');
 const settingCallRingtoneNotification = createSetting(
@@ -140,6 +141,7 @@ async function renderPreferences() {
     blockedCount,
     deviceName,
     hasAudioNotifications,
+    hasAutoConvertEmoji,
     hasAutoDownloadUpdate,
     hasAutoLaunch,
     hasCallNotifications,
@@ -181,6 +183,7 @@ async function renderPreferences() {
     blockedCount: settingBlockedCount.getValue(),
     deviceName: settingDeviceName.getValue(),
     hasAudioNotifications: settingAudioNotification.getValue(),
+    hasAutoConvertEmoji: settingAutoConvertEmoji.getValue(),
     hasAutoDownloadUpdate: settingAutoDownloadUpdate.getValue(),
     hasAutoLaunch: settingAutoLaunch.getValue(),
     hasCallNotifications: settingCallSystemNotification.getValue(),
@@ -247,6 +250,7 @@ async function renderPreferences() {
     defaultConversationColor,
     deviceName,
     hasAudioNotifications,
+    hasAutoConvertEmoji,
     hasAutoDownloadUpdate,
     hasAutoLaunch,
     hasCallNotifications,
@@ -319,6 +323,9 @@ async function renderPreferences() {
     // Change handlers
     onAudioNotificationsChange: attachRenderCallback(
       settingAudioNotification.setValue
+    ),
+    onAutoConvertEmojiChange: attachRenderCallback(
+      settingAutoConvertEmoji.setValue
     ),
     onAutoDownloadUpdateChange: attachRenderCallback(
       settingAutoDownloadUpdate.setValue
@@ -416,16 +423,8 @@ async function renderPreferences() {
     onWhoCanSeeMeChange: attachRenderCallback(
       settingPhoneNumberSharing.setValue
     ),
-
-    // Zoom factor change doesn't require immediate rerender since it will:
-    // 1. Update the zoom factor in the main window
-    // 2. Trigger `preferred-size-changed` in the main process
-    // 3. Finally result in `window.storage` update which will cause the
-    //    rerender.
-    onZoomFactorChange: (value: number) => {
-      // Update Settings window zoom factor to match the selected value.
-      webFrame.setZoomFactor(value);
-      return settingZoomFactor.setValue(value);
+    onZoomFactorChange: (zoomFactorValue: number) => {
+      ipcRenderer.send('setZoomFactor', zoomFactorValue);
     },
 
     hasCustomTitleBar: MinimalSignalContext.OS.hasCustomTitleBar(),
@@ -435,7 +434,8 @@ async function renderPreferences() {
   renderInBrowser(props);
 }
 
-ipcRenderer.on('preferences-changed', () => renderPreferences());
+ipcRenderer.on('preferences-changed', renderPreferences);
+ipcRenderer.on('zoomFactorChanged', renderPreferences);
 
 const Signal = {
   SettingsWindowProps: {

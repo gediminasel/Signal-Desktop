@@ -1,7 +1,6 @@
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { webFrame } from 'electron';
 import { isNumber, throttle, groupBy } from 'lodash';
 import { render } from 'react-dom';
 import { batch as batchDispatch } from 'react-redux';
@@ -819,14 +818,13 @@ export async function startApp(): Promise<void> {
       },
     });
 
-    const zoomFactor = window.Events.getZoomFactor();
-    webFrame.setZoomFactor(zoomFactor);
+    const zoomFactor = await window.Events.getZoomFactor();
     document.body.style.setProperty('--zoom-factor', zoomFactor.toString());
 
-    window.addEventListener('resize', () => {
+    window.Events.onZoomFactorChange(newZoomFactor => {
       document.body.style.setProperty(
         '--zoom-factor',
-        webFrame.getZoomFactor().toString()
+        newZoomFactor.toString()
       );
     });
 
@@ -875,6 +873,12 @@ export async function startApp(): Promise<void> {
           `Clearing remoteBuildExpiration. Previous value was ${remoteBuildExpiration}`
         );
         await window.storage.remove('remoteBuildExpiration');
+      }
+
+      if (window.isBeforeVersion(lastVersion, '6.45.0-alpha')) {
+        await removeStorageKeyJobQueue.add({
+          key: 'previousAudioDeviceModule',
+        });
       }
 
       if (window.isBeforeVersion(lastVersion, '6.25.0-alpha')) {
@@ -970,6 +974,14 @@ export async function startApp(): Promise<void> {
         window.SignalContext.restartApp();
         return;
       }
+    }
+
+    if (
+      window.storage.get('autoConvertEmoji') === undefined &&
+      newVersion &&
+      !lastVersion
+    ) {
+      await window.storage.put('autoConvertEmoji', true);
     }
 
     setAppLoadingScreenMessage(
@@ -2260,7 +2272,7 @@ export async function startApp(): Promise<void> {
     maxSize: Infinity,
   });
 
-  const throttledSetInboxEnvelopeTimestamp = throttle(
+  const _throttledSetInboxEnvelopeTimestamp = throttle(
     serverTimestamp => {
       window.reduxActions.inbox.setInboxEnvelopeTimestamp(serverTimestamp);
     },
@@ -2268,16 +2280,24 @@ export async function startApp(): Promise<void> {
     { leading: false }
   );
 
+  function setInboxEnvelopeTimestamp(timestamp: number): void {
+    // This timestamp is only used in the loading screen UI. If the app has loaded, let's
+    // not set it to avoid unnecessary renders
+    if (!window.reduxStore.getState().app.hasInitialLoadCompleted) {
+      _throttledSetInboxEnvelopeTimestamp(timestamp);
+    }
+  }
+
   async function onEnvelopeQueued({
     envelope,
   }: EnvelopeQueuedEvent): Promise<void> {
-    throttledSetInboxEnvelopeTimestamp(envelope.serverTimestamp);
+    setInboxEnvelopeTimestamp(envelope.serverTimestamp);
   }
 
   async function onEnvelopeUnsealed({
     envelope,
   }: EnvelopeUnsealedEvent): Promise<void> {
-    throttledSetInboxEnvelopeTimestamp(envelope.serverTimestamp);
+    setInboxEnvelopeTimestamp(envelope.serverTimestamp);
 
     const ourAci = window.textsecure.storage.user.getAci();
     if (

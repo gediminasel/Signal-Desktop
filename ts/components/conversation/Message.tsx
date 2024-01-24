@@ -774,7 +774,7 @@ export class Message extends React.PureComponent<Props, State> {
   }
 
   private lastSeenHereSorted = memoize((lastSeenHere: Array<string>) => {
-    const users = lastSeenHere
+    const users: Array<ConversationType> = lastSeenHere
       .map(myId => window.ConversationController.get(myId)?.format())
       .filter((u): u is ConversationType => u !== undefined);
     users.sort((a, b) => a.id.localeCompare(b.id));

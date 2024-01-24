@@ -30,14 +30,18 @@ import {
   getAttachmentSizeBucket,
   getRandomBytes,
   getZeroes,
+  sha256,
 } from './Crypto';
 import { Environment } from './environment';
+import type { AttachmentType } from './types/Attachment';
+import type { ContextType } from './types/Message2';
 
 // This file was split from ts/Crypto.ts because it pulls things in from node, and
 //   too many things pull in Crypto.ts, so it broke storybook.
 
 export const IV_LENGTH = 16;
 export const KEY_LENGTH = 32;
+export const DIGEST_LENGTH = 32;
 export const ATTACHMENT_MAC_LENGTH = 32;
 
 export type EncryptedAttachmentV2 = {
@@ -125,12 +129,20 @@ export async function encryptAttachmentV2({
   }
 
   const { digest: plaintextHash } = plaintextHashTransform;
-  if (!plaintextHash || !plaintextHash.byteLength) {
+  if (
+    !plaintextHash ||
+    !plaintextHash.byteLength ||
+    plaintextHash.byteLength !== DIGEST_LENGTH
+  ) {
     throw new Error(`${logId}: Failed to generate plaintext hash!`);
   }
 
   const { digest: ourDigest } = digestTransform;
-  if (!ourDigest || !ourDigest.byteLength) {
+  if (
+    !ourDigest ||
+    !ourDigest.byteLength ||
+    ourDigest.byteLength !== DIGEST_LENGTH
+  ) {
     throw new Error(`${logId}: Failed to generate ourDigest!`);
   }
 
@@ -218,10 +230,18 @@ export async function decryptAttachmentV2({
 
   const { ourMac } = macTransform;
   const { theirMac } = coreDecryptionTransform;
-  if (!ourMac || !ourMac.byteLength) {
+  if (
+    !ourMac ||
+    !ourMac.byteLength ||
+    ourMac.byteLength !== ATTACHMENT_MAC_LENGTH
+  ) {
     throw new Error(`${logId}: Failed to generate ourMac!`);
   }
-  if (!theirMac || !theirMac.byteLength) {
+  if (
+    !theirMac ||
+    !theirMac.byteLength ||
+    theirMac.byteLength !== ATTACHMENT_MAC_LENGTH
+  ) {
     throw new Error(`${logId}: Failed to find theirMac!`);
   }
   if (!constantTimeEqual(ourMac, theirMac)) {
@@ -229,8 +249,19 @@ export async function decryptAttachmentV2({
   }
 
   const { digest: ourDigest } = digestTransform;
-  if (!ourDigest || !ourDigest.byteLength) {
+  if (
+    !ourDigest ||
+    !ourDigest.byteLength ||
+    ourDigest.byteLength !== DIGEST_LENGTH
+  ) {
     throw new Error(`${logId}: Failed to generate ourDigest!`);
+  }
+  if (
+    !theirDigest ||
+    !theirDigest.byteLength ||
+    theirDigest.byteLength !== DIGEST_LENGTH
+  ) {
+    throw new Error(`${logId}: Failed to find theirDigest!`);
   }
   if (!constantTimeEqual(ourDigest, theirDigest)) {
     throw new Error(`${logId}: Bad digest`);
@@ -805,4 +836,58 @@ class AddMacTransform extends Transform {
 
     done();
   }
+}
+
+// Called during message schema migration. New messages downloaded should have
+// plaintextHash added automatically during decryption / writing to file system.
+export async function addPlaintextHashToAttachment(
+  attachment: AttachmentType,
+  { getAbsoluteAttachmentPath }: ContextType
+): Promise<AttachmentType> {
+  if (!attachment.path) {
+    return attachment;
+  }
+
+  const plaintextHash = await getPlaintextHashForAttachmentOnDisk(
+    getAbsoluteAttachmentPath(attachment.path)
+  );
+
+  if (!plaintextHash) {
+    log.error('addPlaintextHashToAttachment: Failed to generate hash');
+    return attachment;
+  }
+
+  return {
+    ...attachment,
+    plaintextHash,
+  };
+}
+
+async function getPlaintextHashForAttachmentOnDisk(
+  absolutePath: string
+): Promise<string | undefined> {
+  const readStream = createReadStream(absolutePath);
+  const hash = createHash(HashType.size256);
+  try {
+    await pipeline(readStream, hash);
+    const plaintextHash = hash.digest();
+    if (!plaintextHash) {
+      log.error(
+        'addPlaintextHashToAttachment: no hash generated from file; is the file empty?'
+      );
+      return;
+    }
+    return Buffer.from(plaintextHash).toString('hex');
+  } catch (error) {
+    log.error('addPlaintextHashToAttachment: error during file read', error);
+    return undefined;
+  } finally {
+    readStream.close();
+  }
+}
+
+export function getPlaintextHashForInMemoryAttachment(
+  data: Uint8Array
+): string {
+  return Buffer.from(sha256(data)).toString('hex');
 }

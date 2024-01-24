@@ -257,7 +257,6 @@ export type MessageAttributesType = {
   // Should only be present for incoming messages and errors
   readAt?: number;
   readStatus?: ReadStatus;
-  lastSeenHere?: Array<string>;
   // Used for all kinds of notifications, as well as incoming messages
   seenStatus?: SeenStatus;
 
@@ -329,13 +328,14 @@ export type ConversationAttributesType = {
   lastMessagePrefix?: string;
   lastMessageAuthor?: string | null;
   lastMessageStatus?: LastMessageStatus | null;
-  lastMessagesSeen?: Record<string, { receivedAt: number; id: string }>;
+  lastSeenMessageByUser?: Record<string, { receivedAt: number; id: string }>;
   markedUnread?: boolean;
   messageCount?: number;
   messageCountBeforeMessageRequests?: number | null;
   messageRequestResponseType?: number;
   muteExpiresAt?: number;
   dontNotifyForMentionsIfMuted?: boolean;
+  notSharingPhoneNumber?: boolean;
   profileAvatar?: ContactAvatarType | null;
   profileKeyCredential?: string | null;
   profileKeyCredentialExpiration?: number | null;

@@ -9,7 +9,6 @@ import { autoOrientJPEG } from '../util/attachments';
 import {
   captureDimensionsAndScreenshot,
   hasData,
-  migrateDataToFileSystem,
   removeSchemaVersion,
   replaceUnicodeOrderOverrides,
   replaceUnicodeV2,
@@ -34,6 +33,8 @@ import type {
   LinkPreviewWithHydratedData,
 } from './message/LinkPreviews';
 import type { StickerType, StickerWithHydratedData } from './Stickers';
+import { addPlaintextHashToAttachment } from '../AttachmentCrypto';
+import { migrateDataToFileSystem } from '../util/attachments/migrateDataToFilesystem';
 
 export { hasExpiration } from './Message';
 
@@ -51,6 +52,7 @@ export type ContextType = {
     height: number;
   }>;
   getRegionCode: () => string | undefined;
+  keepOnDisk?: boolean;
   logger: LoggerType;
   makeImageThumbnail: (params: {
     size: number;
@@ -71,6 +73,7 @@ export type ContextType = {
   revokeObjectUrl: (objectUrl: string) => void;
   writeNewAttachmentData: (data: Uint8Array) => Promise<string>;
   writeNewStickerData: (data: Uint8Array) => Promise<string>;
+  deleteOnDisk: (path: string) => Promise<void>;
 };
 
 type WriteExistingAttachmentDataType = (
@@ -118,6 +121,8 @@ export type ContextWithMessageType = ContextType & {
 //     attachment filenames
 // Version 10
 //   - Preview: A new type of attachment can be included in a message.
+// Version 11
+//   - Attachments: add sha256 plaintextHash
 
 const INITIAL_SCHEMA_VERSION = 0;
 
@@ -370,7 +375,31 @@ const toVersion0 = async (
 ) => initializeSchemaVersion({ message, logger: context.logger });
 const toVersion1 = _withSchemaVersion({
   schemaVersion: 1,
-  upgrade: _mapAttachments(autoOrientJPEG),
+  upgrade: _mapAttachments(
+    async (
+      attachment: AttachmentType,
+      context,
+      options
+    ): Promise<AttachmentType> => {
+      const { deleteOnDisk, keepOnDisk } = context;
+      const rotatedAttachment = await autoOrientJPEG(
+        attachment,
+        context,
+        options
+      );
+
+      if (
+        !keepOnDisk &&
+        attachment !== rotatedAttachment &&
+        rotatedAttachment.data &&
+        attachment.path
+      ) {
+        await deleteOnDisk(attachment.path);
+      }
+
+      return rotatedAttachment;
+    }
+  ),
 });
 const toVersion2 = _withSchemaVersion({
   schemaVersion: 2,
@@ -438,6 +467,11 @@ const toVersion10 = _withSchemaVersion({
   },
 });
 
+const toVersion11 = _withSchemaVersion({
+  schemaVersion: 11,
+  upgrade: _mapAttachments(addPlaintextHashToAttachment),
+});
+
 const VERSIONS = [
   toVersion0,
   toVersion1,
@@ -450,6 +484,7 @@ const VERSIONS = [
   toVersion8,
   toVersion9,
   toVersion10,
+  toVersion11,
 ];
 export const CURRENT_SCHEMA_VERSION = VERSIONS.length - 1;
 
@@ -470,6 +505,8 @@ export const upgradeSchema = async (
     makeImageThumbnail,
     makeVideoScreenshot,
     writeNewStickerData,
+    deleteOnDisk,
+    keepOnDisk,
     logger,
     maxVersion = CURRENT_SCHEMA_VERSION,
   }: ContextType
@@ -507,6 +544,9 @@ export const upgradeSchema = async (
   if (!isFunction(writeNewStickerData)) {
     throw new TypeError('context.writeNewStickerData is required');
   }
+  if (!isFunction(deleteOnDisk)) {
+    throw new TypeError('context.deleteOnDisk is required');
+  }
 
   let message = rawMessage;
   for (let index = 0, max = VERSIONS.length; index < max; index += 1) {
@@ -526,10 +566,12 @@ export const upgradeSchema = async (
       getImageDimensions,
       makeImageThumbnail,
       makeVideoScreenshot,
+      keepOnDisk,
       logger,
       getAbsoluteStickerPath,
       getRegionCode,
       writeNewStickerData,
+      deleteOnDisk,
     });
   }
 
@@ -548,6 +590,7 @@ export const processNewAttachment = async (
     getImageDimensions,
     makeImageThumbnail,
     makeVideoScreenshot,
+    deleteOnDisk,
     logger,
   }: Pick<
     ContextType,
@@ -559,6 +602,7 @@ export const processNewAttachment = async (
     | 'makeImageThumbnail'
     | 'makeVideoScreenshot'
     | 'logger'
+    | 'deleteOnDisk'
   >
 ): Promise<AttachmentType> => {
   if (!isFunction(writeNewAttachmentData)) {
@@ -603,6 +647,10 @@ export const processNewAttachment = async (
       writeNewAttachmentData,
       logger,
     });
+
+    if (rotatedAttachment !== attachment && attachment.path) {
+      await deleteOnDisk(attachment.path);
+    }
   }
 
   const finalAttachment = await captureDimensionsAndScreenshot(

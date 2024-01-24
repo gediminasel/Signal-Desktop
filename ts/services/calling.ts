@@ -40,7 +40,6 @@ import {
 import { uniqBy, noop } from 'lodash';
 
 import Long from 'long';
-import * as RemoteConfig from '../RemoteConfig';
 import type {
   ActionsType as CallingReduxActionsType,
   GroupCallParticipantInfoType,
@@ -61,11 +60,6 @@ import {
   GroupCallConnectionState,
   GroupCallJoinState,
 } from '../types/Calling';
-import {
-  AudioDeviceModule,
-  getAudioDeviceModule,
-  parseAudioDeviceModule,
-} from '../calling/audioDeviceModule';
 import {
   findBestMatchingAudioDeviceIndex,
   findBestMatchingCameraId,
@@ -244,10 +238,8 @@ function protoToCallingMessage({
   offer,
   answer,
   iceCandidates,
-  legacyHangup,
   busy,
   hangup,
-  supportsMultiRing,
   destinationDeviceId,
   opaque,
 }: Proto.ICallingMessage): CallingMessage {
@@ -279,14 +271,6 @@ function protoToCallingMessage({
         ? new AnswerMessage(answer.callId, Buffer.from(answer.opaque))
         : undefined,
     iceCandidates: newIceCandidates.length > 0 ? newIceCandidates : undefined,
-    legacyHangup:
-      legacyHangup && legacyHangup.callId
-        ? new HangupMessage(
-            legacyHangup.callId,
-            dropNull(legacyHangup.type) as number,
-            legacyHangup.deviceId || 0
-          )
-        : undefined,
     busy: busy && busy.callId ? new BusyMessage(busy.callId) : undefined,
     hangup:
       hangup && hangup.callId
@@ -296,7 +280,6 @@ function protoToCallingMessage({
             hangup.deviceId || 0
           )
         : undefined,
-    supportsMultiRing: dropNull(supportsMultiRing),
     destinationDeviceId: dropNull(destinationDeviceId),
     opaque: opaque
       ? {
@@ -316,10 +299,6 @@ export class CallingClass {
   public _sfuUrl?: string;
 
   private lastMediaDeviceSettings?: MediaDeviceSettings;
-
-  private previousAudioDeviceModule?: AudioDeviceModule;
-
-  private currentAudioDeviceModule?: AudioDeviceModule;
 
   private deviceReselectionTimer?: NodeJS.Timeout;
 
@@ -346,20 +325,7 @@ export class CallingClass {
 
     this._sfuUrl = sfuUrl;
 
-    this.previousAudioDeviceModule = parseAudioDeviceModule(
-      window.storage.get('previousAudioDeviceModule')
-    );
-    this.currentAudioDeviceModule = getAudioDeviceModule();
-    drop(
-      window.storage.put(
-        'previousAudioDeviceModule',
-        this.currentAudioDeviceModule
-      )
-    );
-
     RingRTC.setConfig({
-      use_new_audio_device_module:
-        this.currentAudioDeviceModule === AudioDeviceModule.WindowsAdm2,
       field_trials: undefined,
     });
 
@@ -752,7 +718,8 @@ export class CallingClass {
                 );
                 const callEvent = getCallEventDetails(
                   callDetails,
-                  localCallEvent
+                  localCallEvent,
+                  'RingRTC.onLocalDeviceStateChanged'
                 );
                 drop(updateCallHistoryFromLocalEvent(callEvent, null));
               }
@@ -1430,20 +1397,13 @@ export class CallingClass {
     this.videoCapturer.disable();
     if (source) {
       this.hadLocalVideoBeforePresenting = hasLocalVideo;
-      const options = {
+      this.videoCapturer.enableCaptureAndSend(call, {
         // 15fps is much nicer but takes up a lot more CPU.
         maxFramerate: 5,
-        maxHeight: 1080,
-        maxWidth: 1920,
+        maxHeight: 1800,
+        maxWidth: 2880,
         screenShareSourceId: source.id,
-      };
-
-      if (RemoteConfig.isEnabled('desktop.calling.sendScreenShare1800')) {
-        options.maxWidth = 2880;
-        options.maxHeight = 1800;
-      }
-
-      this.videoCapturer.enableCaptureAndSend(call, options);
+      });
       this.setOutgoingVideo(conversationId, true);
     } else {
       this.setOutgoingVideo(
@@ -1601,13 +1561,6 @@ export class CallingClass {
   }
 
   async getMediaDeviceSettings(): Promise<MediaDeviceSettings> {
-    const { previousAudioDeviceModule, currentAudioDeviceModule } = this;
-    if (!previousAudioDeviceModule || !currentAudioDeviceModule) {
-      throw new Error(
-        'Calling#getMediaDeviceSettings cannot be called before audio device settings are set'
-      );
-    }
-
     const { availableCameras, availableMicrophones, availableSpeakers } =
       await this.getAvailableIODevices();
 
@@ -1615,8 +1568,6 @@ export class CallingClass {
     const selectedMicIndex = findBestMatchingAudioDeviceIndex({
       available: availableMicrophones,
       preferred: preferredMicrophone,
-      previousAudioDeviceModule,
-      currentAudioDeviceModule,
     });
     const selectedMicrophone =
       selectedMicIndex !== undefined
@@ -1627,8 +1578,6 @@ export class CallingClass {
     const selectedSpeakerIndex = findBestMatchingAudioDeviceIndex({
       available: availableSpeakers,
       preferred: preferredSpeaker,
-      previousAudioDeviceModule,
-      currentAudioDeviceModule,
     });
     const selectedSpeaker =
       selectedSpeakerIndex !== undefined
@@ -1757,12 +1706,16 @@ export class CallingClass {
       const callDetails = getCallDetailsFromEndedDirectCall(
         callId.toString(),
         peerId,
-        peerId, // Incoming call
+        remoteUserId, // Incoming call
         wasVideoCall,
         envelope.timestamp
       );
       const localCallEvent = LocalCallEvent.Missed;
-      const callEvent = getCallEventDetails(callDetails, localCallEvent);
+      const callEvent = getCallEventDetails(
+        callDetails,
+        localCallEvent,
+        'CallingClass.handleCallingMessage'
+      );
       await updateCallHistoryFromLocalEvent(
         callEvent,
         envelope.receivedAtCounter
@@ -2016,7 +1969,8 @@ export class CallingClass {
       });
       const callEvent = getCallEventDetails(
         callDetails,
-        shouldRing ? LocalCallEvent.Ringing : LocalCallEvent.Started
+        shouldRing ? LocalCallEvent.Ringing : LocalCallEvent.Started,
+        'CallingClass.handleGroupCallRingUpdate'
       );
       await updateCallHistoryFromLocalEvent(callEvent, null);
     }
@@ -2108,7 +2062,11 @@ export class CallingClass {
         const localCallEvent = LocalCallEvent.Missed;
         const peerId = getPeerIdFromConversation(conversation.attributes);
         const callDetails = getCallDetailsFromDirectCall(peerId, call);
-        const callEvent = getCallEventDetails(callDetails, localCallEvent);
+        const callEvent = getCallEventDetails(
+          callDetails,
+          localCallEvent,
+          'CallingClass.handleIncomingCall'
+        );
         await updateCallHistoryFromLocalEvent(callEvent, null);
 
         return false;
@@ -2161,7 +2119,11 @@ export class CallingClass {
     );
     const localCallEvent =
       getLocalCallEventFromCallEndedReason(callEndedReason);
-    const callEvent = getCallEventDetails(callDetails, localCallEvent);
+    const callEvent = getCallEventDetails(
+      callDetails,
+      localCallEvent,
+      'CallingClass.handleAutoEndedIncomingCallRequest'
+    );
     await updateCallHistoryFromLocalEvent(callEvent, receivedAtCounter ?? null);
   }
 
@@ -2191,7 +2153,11 @@ export class CallingClass {
       if (localCallEvent != null) {
         const peerId = getPeerIdFromConversation(conversation.attributes);
         const callDetails = getCallDetailsFromDirectCall(peerId, call);
-        const callEvent = getCallEventDetails(callDetails, localCallEvent);
+        const callEvent = getCallEventDetails(
+          callDetails,
+          localCallEvent,
+          'call.handleStateChanged'
+        );
         await updateCallHistoryFromLocalEvent(callEvent, null);
       }
 
@@ -2397,7 +2363,11 @@ export class CallingClass {
           peerId,
           groupCallMeta
         );
-        const callEvent = getCallEventDetails(callDetails, localCallEvent);
+        const callEvent = getCallEventDetails(
+          callDetails,
+          localCallEvent,
+          'CallingClass.updateCallHistoryForGroupCall'
+        );
         await updateCallHistoryFromLocalEvent(callEvent, null);
       }
     }

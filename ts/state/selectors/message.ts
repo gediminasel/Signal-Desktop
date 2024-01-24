@@ -716,6 +716,10 @@ export const getPropsForMessage = (
     defaultConversationColor
   );
 
+  const lastSeenHere = Object.entries(conversation.lastSeenMessageByUser || {})
+    .filter(([, info]) => info.id === message.id)
+    .map(([userId]) => userId);
+
   return {
     attachments,
     attachmentDroppedDueToSize,
@@ -729,7 +733,7 @@ export const getPropsForMessage = (
     payment,
     canCopy: canCopy(message),
     canEditMessage: canEditMessage(message),
-    canDeleteForEveryone: canDeleteForEveryone(message),
+    canDeleteForEveryone: canDeleteForEveryone(message, conversation.isMe),
     canDownload: canDownload(message, conversationSelector),
     canReact: canReact(message, ourConversationId, conversationSelector),
     canReply: canReply(message, ourConversationId, conversationSelector),
@@ -772,7 +776,7 @@ export const getPropsForMessage = (
     isTapToViewExpired: isMessageTapToView && message.isErased,
     readStatus: message.readStatus ?? ReadStatus.Read,
     selectedReaction,
-    lastSeenHere: message.lastSeenHere,
+    lastSeenHere,
     status: getMessagePropStatus(message, ourConversationId),
     text: message.body,
     textDirection: getTextDirection(message.body),
@@ -1903,26 +1907,31 @@ export function canDeleteForEveryone(
   message: Pick<
     MessageWithUIFieldsType,
     'type' | 'deletedForEveryone' | 'sent_at' | 'sendStateByConversationId'
-  >
+  >,
+  isMe: boolean
 ): boolean {
   return (
     // Is this a message I sent?
     isOutgoing(message) &&
     // Has the message already been deleted?
     !message.deletedForEveryone &&
-    // Is it too old to delete?
-    isMoreRecentThan(message.sent_at, DAY) &&
+    // Is it too old to delete? (we relax that requirement in Note to Self)
+    (isMoreRecentThan(message.sent_at, DAY) || isMe) &&
     // Is it sent to anyone?
     someSendStatus(message.sendStateByConversationId, isSent)
   );
 }
 
 export const canDeleteMessagesForEveryone = createSelector(
-  [getMessages, (_state, messageIds: ReadonlyArray<string>) => messageIds],
-  (messagesLookup, messageIds) => {
-    return messageIds.every(messageId => {
+  [
+    getMessages,
+    (_state, options: { messageIds: ReadonlyArray<string>; isMe: boolean }) =>
+      options,
+  ],
+  (messagesLookup, options) => {
+    return options.messageIds.every(messageId => {
       const message = getOwn(messagesLookup, messageId);
-      return message != null && canDeleteForEveryone(message);
+      return message != null && canDeleteForEveryone(message, options.isMe);
     });
   }
 );
