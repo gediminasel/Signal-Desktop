@@ -15,6 +15,11 @@
     font-family: 'Vazirmatn', -apple-system, system-ui, BlinkMacSystemFont,
       'Segoe UI', Tahoma, 'Noto Sans Arabic', Helvetica, Arial, sans-serif;
   }
+  /* Urdu */
+  &:lang(ur) {
+    font-family: 'Noto Nastaliq Urdu', Gulzar, 'Jameel Noori Nastaleeq',
+      'Faiz Lahori Nastaleeq', 'Urdu Typesetting', Helvetica, Arial, sans-serif;
+  }
 }
 
 @mixin font-family {
@@ -779,8 +784,8 @@ $rtl-icon-map: (
 @mixin install-screen {
   align-items: center;
   display: flex;
-  width: var(--window-width);
-  height: var(--window-height);
+  width: 100vw;
+  height: 100vh;
   justify-content: center;
   line-height: 30px;
   user-select: none;

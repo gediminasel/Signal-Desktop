@@ -26,6 +26,7 @@ function createParticipant(
     hasRemoteAudio: Boolean(participantProps.hasRemoteAudio),
     hasRemoteVideo: Boolean(participantProps.hasRemoteVideo),
     isHandRaised: Boolean(participantProps.isHandRaised),
+    mediaKeysReceived: Boolean(participantProps.mediaKeysReceived),
     presenting: Boolean(participantProps.presenting),
     sharingScreen: Boolean(participantProps.sharingScreen),
     videoAspectRatio: 1.3,
@@ -75,6 +76,7 @@ export function ManyParticipants(): JSX.Element {
       }),
       createParticipant({
         hasRemoteAudio: true,
+        hasRemoteVideo: true,
         presenting: true,
         name: 'Rage Trunks',
         title: 'Rage Trunks',
@@ -90,7 +92,17 @@ export function ManyParticipants(): JSX.Element {
         title: 'Goku Black',
       }),
       createParticipant({
+        isHandRaised: true,
         title: 'Supreme Kai Zamasu',
+      }),
+      createParticipant({
+        hasRemoteAudio: false,
+        hasRemoteVideo: true,
+        isHandRaised: true,
+        title: 'Chi Chi',
+      }),
+      createParticipant({
+        title: 'Someone With A Really Long Name',
       }),
     ],
   });

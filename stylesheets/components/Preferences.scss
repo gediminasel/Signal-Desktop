@@ -101,7 +101,7 @@
   }
 
   &__settings-pane {
-    height: var(--window-height);
+    height: 100vh;
     overflow: overlay;
     width: 100%;
 
@@ -296,6 +296,10 @@
     align-items: center;
     &:last-child {
       margin-bottom: 8px;
+    }
+
+    &--readonly {
+      opacity: 0.4;
     }
   }
 }

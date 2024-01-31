@@ -22,6 +22,8 @@ import type {
   ZoomFactorType,
 } from '../types/Storage.d';
 import type { ThemeSettingType } from '../types/StorageUIKeys';
+import type { AnyToast } from '../types/Toast';
+import { ToastType } from '../types/Toast';
 import type { ConversationType } from '../state/ducks/conversations';
 import type {
   ConversationColorType,
@@ -33,7 +35,6 @@ import type {
   SentMediaQualityType,
   ThemeType,
 } from '../types/Util';
-import type { ExecuteMenuRoleType } from './TitleBarContainer';
 
 import { Button, ButtonVariant } from './Button';
 import { ChatColorPicker } from './ChatColorPicker';
@@ -48,8 +49,9 @@ import { PhoneNumberDiscoverability } from '../util/phoneNumberDiscoverability';
 import { PhoneNumberSharingMode } from '../util/phoneNumberSharingMode';
 import { Select } from './Select';
 import { Spinner } from './Spinner';
-import { TitleBarContainer } from './TitleBarContainer';
+import { ToastManager } from './ToastManager';
 import { getCustomColorStyle } from '../util/getCustomColorStyle';
+import { shouldNeverBeCalled } from '../util/shouldNeverBeCalled';
 import {
   DEFAULT_DURATIONS_IN_SECONDS,
   DEFAULT_DURATIONS_SET,
@@ -58,7 +60,6 @@ import {
 import { DurationInSeconds } from '../util/durations';
 import { useEscapeHandling } from '../hooks/useEscapeHandling';
 import { useUniqueId } from '../hooks/useUniqueId';
-import { useTheme } from '../hooks/useTheme';
 import { focusableSelectors } from '../util/focusableSelectors';
 import { Modal } from './Modal';
 import { SearchInput } from './SearchInput';
@@ -116,7 +117,6 @@ export type PropsDataType = {
   resolvedLocale: string;
 
   // Other props
-  hasCustomTitleBar: boolean;
   initialSpellCheckSetting: boolean;
 
   // Limited support features
@@ -141,7 +141,6 @@ type PropsFunctionType = {
   doDeleteAllData: () => unknown;
   doneRendering: () => unknown;
   editCustomColor: (colorId: string, color: CustomColorType) => unknown;
-  executeMenuRole: ExecuteMenuRoleType;
   getConversationsWithCustomColor: (
     colorId: string
   ) => Promise<Array<ConversationType>>;
@@ -256,7 +255,6 @@ export function Preferences({
   doDeleteAllData,
   doneRendering,
   editCustomColor,
-  executeMenuRole,
   getConversationsWithCustomColor,
   hasAudioNotifications,
   hasAutoConvertEmoji,
@@ -291,7 +289,6 @@ export function Preferences({
   isSyncSupported,
   isSystemTraySupported,
   isMinimizeToAndStartInSystemTraySupported,
-  hasCustomTitleBar,
   lastSyncTime,
   makeSyncRequest,
   notificationContent,
@@ -364,7 +361,7 @@ export function Preferences({
     string | null
   >(localeOverride);
   const [languageSearchInput, setLanguageSearchInput] = useState('');
-  const theme = useTheme();
+  const [toast, setToast] = useState<AnyToast | undefined>();
 
   function closeLanguageDialog() {
     setLanguageDialog(null);
@@ -1472,16 +1469,16 @@ export function Preferences({
                 text: i18n('icu:Preferences__pnp__discoverability__everyone'),
                 value: PhoneNumberDiscoverability.Discoverable,
               },
-              ...(whoCanSeeMe === PhoneNumberSharingMode.Nobody
-                ? [
-                    {
-                      text: i18n(
-                        'icu:Preferences__pnp__discoverability__nobody'
-                      ),
-                      value: PhoneNumberDiscoverability.NotDiscoverable,
-                    },
-                  ]
-                : []),
+              {
+                text: i18n('icu:Preferences__pnp__discoverability__nobody'),
+                value: PhoneNumberDiscoverability.NotDiscoverable,
+                readOnly: whoCanSeeMe === PhoneNumberSharingMode.Everybody,
+                onClick:
+                  whoCanSeeMe === PhoneNumberSharingMode.Everybody
+                    ? () =>
+                        setToast({ toastType: ToastType.WhoCanFindMeReadOnly })
+                    : noop,
+              },
             ]}
             value={whoCanFindMe}
           />
@@ -1502,11 +1499,7 @@ export function Preferences({
   }
 
   return (
-    <TitleBarContainer
-      hasCustomTitleBar={hasCustomTitleBar}
-      theme={theme}
-      executeMenuRole={executeMenuRole}
-    >
+    <>
       <div className="module-title-bar-drag-area" />
       <div className="Preferences">
         <div className="Preferences__page-selector">
@@ -1584,7 +1577,15 @@ export function Preferences({
           {settings}
         </div>
       </div>
-    </TitleBarContainer>
+      <ToastManager
+        OS="unused"
+        hideToast={() => setToast(undefined)}
+        i18n={i18n}
+        onUndoArchive={shouldNeverBeCalled}
+        openFileInFolder={shouldNeverBeCalled}
+        toast={toast}
+      />
+    </>
   );
 }
 
@@ -1650,6 +1651,8 @@ function Control({
 type SettingsRadioOptionType<Enum> = Readonly<{
   text: string;
   value: Enum;
+  readOnly?: boolean;
+  onClick?: () => void;
 }>;
 
 function SettingsRadio<Enum>({
@@ -1667,11 +1670,13 @@ function SettingsRadio<Enum>({
 
   return (
     <div className="Preferences__padding">
-      {options.map(({ text, value: optionValue }, i) => {
+      {options.map(({ text, value: optionValue, readOnly, onClick }, i) => {
         const htmlId = htmlIds[i];
         return (
           <label
-            className="Preferences__settings-radio__label"
+            className={classNames('Preferences__settings-radio__label', {
+              'Preferences__settings-radio__label--readonly': readOnly,
+            })}
             key={htmlId}
             htmlFor={htmlId}
           >
@@ -1680,7 +1685,8 @@ function SettingsRadio<Enum>({
               variant={CircleCheckboxVariant.Small}
               id={htmlId}
               checked={value === optionValue}
-              onChange={() => onChange(optionValue)}
+              onClick={onClick}
+              onChange={readOnly ? noop : () => onChange(optionValue)}
             />
             {text}
           </label>

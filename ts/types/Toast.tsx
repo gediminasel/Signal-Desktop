@@ -49,6 +49,7 @@ export enum ToastType {
   UnsupportedMultiAttachment = 'UnsupportedMultiAttachment',
   UnsupportedOS = 'UnsupportedOS',
   UserAddedToGroup = 'UserAddedToGroup',
+  WhoCanFindMeReadOnly = 'WhoCanFindMeReadOnly',
 }
 
 export type AnyToast =
@@ -110,4 +111,5 @@ export type AnyToast =
   | {
       toastType: ToastType.UserAddedToGroup;
       parameters: { contact: string; group: string };
-    };
+    }
+  | { toastType: ToastType.WhoCanFindMeReadOnly };

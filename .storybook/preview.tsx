@@ -7,7 +7,6 @@ import React from 'react';
 
 import 'sanitize.css';
 import '../stylesheets/manifest.scss';
-import '../node_modules/@indutny/frameless-titlebar/dist/styles.css';
 
 import * as styles from './styles.scss';
 import messages from '../_locales/en/messages.json';
@@ -45,6 +44,17 @@ export const globalTypes = {
       dynamicTitle: true,
       icon: 'circlehollow',
       items: ['light', 'dark'],
+      showName: true,
+    },
+  },
+  direction: {
+    name: 'Direction',
+    description: 'Direction of text',
+    defaultValue: 'auto',
+    toolbar: {
+      dynamicTitle: true,
+      icon: 'circlehollow',
+      items: ['auto', 'ltr', 'rtl'],
       showName: true,
     },
   },
@@ -97,7 +107,6 @@ window.SignalContext = {
     waitForChange: () => new Promise(noop),
   },
   OS: {
-    hasCustomTitleBar: () => false,
     getClassName: () => '',
     platform: '',
     release: '',
@@ -120,10 +129,11 @@ window.ConversationController.isSignalConversationId = () => false;
 window.ConversationController.onConvoMessageMount = noop;
 window.reduxStore = mockStore;
 
-const withModeAndThemeProvider = (Story, context) => {
+const withGlobalTypesProvider = (Story, context) => {
   const theme =
     context.globals.theme === 'light' ? ThemeType.light : ThemeType.dark;
   const mode = context.globals.mode;
+  const direction = context.globals.direction ?? 'auto';
 
   // Adding it to the body as well so that we can cover modals and other
   // components that are rendered outside of this decorator container
@@ -144,6 +154,8 @@ const withModeAndThemeProvider = (Story, context) => {
   }
 
   document.body.classList.add('page-is-visible');
+
+  document.documentElement.setAttribute('dir', direction);
 
   return (
     <div className={styles.container}>
@@ -173,7 +185,7 @@ function withScrollLockProvider(Story, context) {
 }
 
 export const decorators = [
-  withModeAndThemeProvider,
+  withGlobalTypesProvider,
   withMockStoreProvider,
   withScrollLockProvider,
 ];

@@ -26,6 +26,7 @@ import { isGIF } from '../types/Attachment';
 import { useRestoreFocus } from '../hooks/useRestoreFocus';
 import { usePrevious } from '../hooks/usePrevious';
 import { arrow } from '../util/keyboard';
+import { drop } from '../util/drop';
 import { isCmdOrCtrl } from '../hooks/useKeyboardShortcuts';
 
 export type PropsType = {
@@ -340,10 +341,14 @@ export function Lightbox({
         (selectedIndex === 0 ? 1 : -1) * THUMBNAIL_FULL_WIDTH,
       opacity: 0,
     });
-    thumbnailsAnimation.start({
-      marginInlineStart: thumbnailsMarginInlineStart,
-      opacity: 1,
-    });
+    drop(
+      Promise.all(
+        thumbnailsAnimation.start({
+          marginInlineStart: thumbnailsMarginInlineStart,
+          opacity: 1,
+        })
+      )
+    );
   }, [
     needsAnimation,
     selectedIndex,
@@ -388,11 +393,15 @@ export function Lightbox({
       const posY = offsetY * ZOOM_SCALE;
       const [x, y] = maxBoundsLimiter(posX, posY);
 
-      springApi.start({
-        scale: ZOOM_SCALE,
-        translateX: shouldTranslateX ? x : undefined,
-        translateY: shouldTranslateY ? y : undefined,
-      });
+      drop(
+        Promise.all(
+          springApi.start({
+            scale: ZOOM_SCALE,
+            translateX: shouldTranslateX ? x : undefined,
+            translateY: shouldTranslateY ? y : undefined,
+          })
+        )
+      );
     },
     [maxBoundsLimiter, springApi]
   );
@@ -427,11 +436,15 @@ export function Lightbox({
       const x = dragCache.translateX + deltaX;
       const y = dragCache.translateY + deltaY;
 
-      springApi.start({
-        scale: ZOOM_SCALE,
-        translateX: x,
-        translateY: y,
-      });
+      drop(
+        Promise.all(
+          springApi.start({
+            scale: ZOOM_SCALE,
+            translateX: x,
+            translateY: y,
+          })
+        )
+      );
     },
     [springApi]
   );
@@ -472,15 +485,19 @@ export function Lightbox({
         const posY = -offsetY * ZOOM_SCALE + translateY.get();
         const [x, y] = maxBoundsLimiter(posX, posY);
 
-        springApi.start({
-          scale: ZOOM_SCALE,
-          translateX: shouldTranslateX ? x : undefined,
-          translateY: shouldTranslateY ? y : undefined,
-        });
+        drop(
+          Promise.all(
+            springApi.start({
+              scale: ZOOM_SCALE,
+              translateX: shouldTranslateX ? x : undefined,
+              translateY: shouldTranslateY ? y : undefined,
+            })
+          )
+        );
 
         setIsZoomed(true);
       } else {
-        springApi.start(INITIAL_IMAGE_TRANSFORM);
+        drop(Promise.all(springApi.start(INITIAL_IMAGE_TRANSFORM)));
         setIsZoomed(false);
       }
     },

@@ -132,6 +132,8 @@ function getToast(toastType: ToastType): AnyToast {
           group: 'Hike Group 🏔',
         },
       };
+    case ToastType.WhoCanFindMeReadOnly:
+      return { toastType: ToastType.WhoCanFindMeReadOnly };
     default:
       throw missingCaseError(toastType);
   }

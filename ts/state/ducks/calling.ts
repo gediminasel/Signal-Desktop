@@ -15,6 +15,7 @@ import * as Errors from '../../types/errors';
 import { getPlatform } from '../selectors/user';
 import { isConversationTooBigToRing } from '../../conversations/isConversationTooBigToRing';
 import { missingCaseError } from '../../util/missingCaseError';
+import { drop } from '../../util/drop';
 import { calling } from '../../services/calling';
 import { truncateAudioLevel } from '../../calling/truncateAudioLevel';
 import type { StateType as RootStateType } from '../reducer';
@@ -75,9 +76,11 @@ export type GroupCallPeekInfoType = ReadonlyDeep<{
 // eslint-disable-next-line local-rules/type-alias-readonlydeep
 export type GroupCallParticipantInfoType = {
   aci: AciString;
+  addedTime?: number;
   demuxId: number;
   hasRemoteAudio: boolean;
   hasRemoteVideo: boolean;
+  mediaKeysReceived: boolean;
   presenting: boolean;
   sharingScreen: boolean;
   speakerTime?: number;
@@ -974,8 +977,26 @@ function receiveGroupCallReactions(
 
 function groupCallRaisedHandsChange(
   payload: GroupCallRaisedHandsChangeActionPayloadType
-): GroupCallRaisedHandsChangeActionType {
-  return { type: GROUP_CALL_RAISED_HANDS_CHANGE, payload };
+): ThunkAction<
+  void,
+  RootStateType,
+  unknown,
+  GroupCallRaisedHandsChangeActionType
+> {
+  return async (dispatch, getState) => {
+    const { conversationId, raisedHands } = payload;
+
+    const existingCall = getGroupCall(conversationId, getState().calling);
+    const isFirstHandRaised =
+      existingCall &&
+      !existingCall.raisedHands?.length &&
+      raisedHands.length > 0;
+    if (isFirstHandRaised) {
+      drop(callingTones.handRaised());
+    }
+
+    dispatch({ type: GROUP_CALL_RAISED_HANDS_CHANGE, payload });
+  };
 }
 
 function groupCallStateChange(

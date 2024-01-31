@@ -3587,7 +3587,7 @@ button.module-image__border-overlay:focus {
   // - size themselves in relation to viewport (position: fixed)
   &__modal-container {
     position: fixed;
-    top: var(--titlebar-height);
+    top: 0;
     inset-inline-start: 0;
     z-index: $z-index-calling-container;
   }
@@ -3597,12 +3597,12 @@ button.module-image__border-overlay:focus {
     background-color: $calling-background-color;
     display: flex;
     flex-direction: column;
-    height: var(--window-height);
+    height: 100vh;
     justify-content: center;
     position: fixed;
     /* stylelint-disable-next-line liberty/use-logical-spec */
     left: 0;
-    top: var(--titlebar-height);
+    top: 0;
     width: 100%;
     z-index: $z-index-calling;
   }
@@ -3729,7 +3729,7 @@ button.module-image__border-overlay:focus {
 
   &__remote-video-disabled {
     background-color: $color-gray-95;
-    height: var(--window-height);
+    height: 100vh;
     width: 100%;
     display: flex;
     align-items: center;
@@ -3814,11 +3814,40 @@ button.module-image__border-overlay:focus {
         display: block;
         visibility: visible;
       }
+
+      .module-ongoing-call__group-call-remote-participant {
+        // Only apply container-type: size to grid column to prevent size collapse
+        // for implicitly sized participants (PiP)
+        container-type: size;
+
+        @container (min-width: 180px) or (min-height: 180px) {
+          .module-ongoing-call__group-call-remote-participant__footer {
+            padding-block: 0 14px;
+            padding-inline: 16px;
+          }
+
+          .module-ongoing-call__group-call-remote-participant__error-icon {
+            margin-block-end: 16px;
+          }
+
+          .module-ongoing-call__group-call-remote-participant__error {
+            display: block;
+          }
+        }
+
+        &--hand-raised {
+          .module-ongoing-call__group-call-remote-participant__footer {
+            padding-block: 0 8px;
+            padding-inline: 8px;
+          }
+        }
+      }
     }
 
     &__overflow {
       flex: 0 0 auto;
       position: relative;
+      margin-block-start: calc(60px + var(--title-bar-drag-area-height));
       margin-inline-end: 16px;
 
       &__inner {
@@ -3839,6 +3868,19 @@ button.module-image__border-overlay:focus {
       & .module-ongoing-call__group-call-remote-participant {
         width: 100%;
         margin-bottom: 1rem;
+
+        &__footer {
+          height: 40px;
+          padding-block: 0 8px;
+          padding-inline: 10px;
+        }
+
+        &--hand-raised {
+          .module-ongoing-call__group-call-remote-participant__footer {
+            padding-block: 0 6px;
+            padding-inline: 6px;
+          }
+        }
       }
 
       &__scroll-marker {
@@ -3893,7 +3935,7 @@ button.module-image__border-overlay:focus {
           );
 
           #{$scroll-marker-selector}__button {
-            margin-block-start: 60px;
+            margin-block-start: 16px;
             transform: rotate(180deg);
           }
         }
@@ -3993,23 +4035,42 @@ button.module-image__border-overlay:focus {
       }
     }
 
-    &__blocked {
-      @include color-svg('../images/icons/v3/block/block.svg', $color-white);
-      height: 24px;
-      margin-bottom: 16px;
-      width: 24px;
+    &-background.module-calling__background--no-avatar {
+      background-color: $color-gray-78;
+    }
 
-      &--info {
-        @include button-reset;
-        background-color: $color-gray-75;
-        border-radius: 16px;
-        color: $color-white;
-        line-height: 16px;
-        padding-block: 3px;
-        padding-inline: 10px;
-      }
+    &-background .module-calling__background--blur {
+      pointer-events: none;
+    }
 
-      &--modal-title {
+    &__error {
+      // Hide it here in the general case, and reveal it in the grid layout
+      // when @container size is big enough
+      display: none;
+
+      margin-block-end: 12px;
+      margin-inline: 8px;
+      font-size: 12px;
+      line-height: 16px;
+      color: $color-white;
+      text-align: center;
+      z-index: $z-index-base;
+    }
+
+    &__more-info {
+      @include button-reset;
+      padding-block: 3px;
+      padding-inline: 10px;
+      border-radius: 16px;
+      background-color: $color-gray-75;
+      color: $color-white;
+      font-size: 12px;
+      line-height: 16px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      z-index: $z-index-above-base;
+
+      &-modal-title {
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
         display: -webkit-box;
@@ -4018,13 +4079,30 @@ button.module-image__border-overlay:focus {
       }
     }
 
+    &__error-icon {
+      width: 24px;
+      height: 24px;
+      margin-block-end: 8px;
+
+      &--blocked {
+        @include color-svg('../images/icons/v3/block/block.svg', $color-white);
+      }
+
+      &--missing-media-keys {
+        @include color-svg(
+          '../images/icons/v3/error/error-circle-solid.svg',
+          $color-white
+        );
+      }
+    }
+
     &__footer {
       display: flex;
       position: absolute;
       bottom: 0;
       height: 60px;
-      padding-block: 0 16px;
-      padding-inline: 16px;
+      padding-block: 0 10px;
+      padding-inline: 12px;
       user-select: none;
       width: 100%;
       z-index: $z-index-above-base;
@@ -4040,7 +4118,7 @@ button.module-image__border-overlay:focus {
       &__contact-name {
         flex-grow: 1;
         font-size: 13px;
-        line-height: 13px;
+        line-height: 18px;
         color: $color-white;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -4056,8 +4134,6 @@ button.module-image__border-overlay:focus {
 
     &--hand-raised &__footer {
       background: transparent;
-      padding-block: 0 8px;
-      padding-inline: 8px;
     }
 
     &--hand-raised &__info {
@@ -4115,6 +4191,7 @@ button.module-image__border-overlay:focus {
   &__footer {
     bottom: 0;
     display: flex;
+    flex-direction: row-reverse;
     justify-content: space-between;
     width: 100%;
     z-index: $z-index-above-base;
@@ -4216,6 +4293,10 @@ button.module-image__border-overlay:focus {
         -webkit-user-drag: none;
         -webkit-user-select: none;
       }
+
+      .module-calling__background--no-avatar {
+        background: transparent;
+      }
     }
 
     &--local {
@@ -4300,8 +4381,8 @@ button.module-image__border-overlay:focus {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: var(--window-width);
-    height: var(--window-height);
+    width: 100vw;
+    height: 100vh;
     justify-content: flex-end;
     inset-inline-start: 0;
     z-index: $z-index-calling;
@@ -4336,10 +4417,10 @@ button.module-image__border-overlay:focus {
     @include font-body-1;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     margin-block: 2px;
-    padding-block: 5px;
-    padding-inline: 10px;
+    padding-block: 8px;
+    padding-inline-start: 10px;
+    padding-inline-end: 2px;
     list-style-type: none;
     border-radius: 6px;
     &:hover {
@@ -4349,8 +4430,9 @@ button.module-image__border-overlay:focus {
 
   &__avatar-and-name {
     display: flex;
+    flex-grow: 1;
+    min-width: 0;
     align-items: center;
-    max-width: 172px;
   }
 
   &__name {
@@ -4388,12 +4470,19 @@ button.module-image__border-overlay:focus {
     }
   }
 
-  &__status {
+  &__status-icon {
     display: flex;
-    flex-basis: 64px;
-    flex-shrink: 0;
-    align-items: center;
-    justify-content: end;
+    flex: none;
+    margin-inline: 8px;
+    height: 16px;
+    width: 16px;
+  }
+
+  &__hand-raised {
+    @include color-svg(
+      '../images/icons/v3/raise_hand/raise_hand-light.svg',
+      $color-white
+    );
   }
 
   &__muted {
@@ -4402,10 +4491,6 @@ button.module-image__border-overlay:focus {
         '../images/icons/v3/video/video-slash-compact-light.svg',
         $color-white
       );
-      display: inline-block;
-      margin-inline-start: 16px;
-      height: 16px;
-      width: 16px;
     }
 
     &--audio {
@@ -4413,10 +4498,6 @@ button.module-image__border-overlay:focus {
         '../images/icons/v3/mic/mic-slash-compact-light.svg',
         $color-white
       );
-      display: inline-block;
-      margin-inline-start: 16px;
-      height: 16px;
-      width: 16px;
     }
   }
 
@@ -4425,10 +4506,6 @@ button.module-image__border-overlay:focus {
       '../images/icons/v3/share_screen/share_screen-fill-light.svg',
       $color-white
     );
-    display: inline-block;
-    margin-inline-start: 16px;
-    height: 16px;
-    width: 16px;
   }
 }
 
@@ -4438,7 +4515,7 @@ button.module-image__border-overlay:focus {
   color: $color-gray-05;
   display: flex;
   flex-direction: column;
-  height: var(--window-height);
+  height: 100vh;
   justify-content: center;
   position: fixed;
   top: 0;
@@ -6778,10 +6855,10 @@ button.module-image__border-overlay:focus {
 
 .module-modal-host__overlay {
   background: $color-black-alpha-40;
-  width: var(--window-width);
-  height: var(--window-height);
-  inset-inline-start: var(--window-border);
-  top: var(--titlebar-height);
+  width: 100vw;
+  height: 100vh;
+  inset-inline-start: 0;
+  top: 0;
   position: fixed;
   z-index: $z-index-modal-host;
 }
@@ -6789,10 +6866,10 @@ button.module-image__border-overlay:focus {
 .module-modal-host__overlay-container {
   display: flex;
   flex-direction: row;
-  width: var(--window-width);
-  height: var(--window-height);
-  inset-inline-start: var(--window-border);
-  top: var(--titlebar-height);
+  width: 100vw;
+  height: 100vh;
+  inset-inline-start: 0;
+  top: 0;
   justify-content: center;
   align-items: center;
   overflow: hidden;
@@ -6938,10 +7015,10 @@ button.module-image__border-overlay:focus {
 .module-progress-dialog__overlay {
   background: $color-black-alpha-40;
   position: fixed;
-  inset-inline-start: var(--window-border);
-  top: var(--titlebar-height);
-  width: var(--window-width);
-  height: var(--window-height);
+  inset-inline-start: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -7022,6 +7099,8 @@ button.module-image__border-overlay:focus {
 
   .module-tooltip-arrow {
     position: absolute;
+    /* stylelint-disable-next-line declaration-property-value-disallowed-list */
+    direction: ltr;
   }
 
   .module-tooltip-arrow::after {

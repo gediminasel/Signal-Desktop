@@ -99,6 +99,7 @@ function _validateResponse(response: any, schema: any) {
         case 'object':
         case 'string':
         case 'number':
+          // eslint-disable-next-line valid-typeof
           if (typeof response[i] !== schema[i]) {
             return false;
           }
@@ -766,6 +767,7 @@ export type CdsLookupOptionsType = Readonly<{
   e164s: ReadonlyArray<string>;
   acisAndAccessKeys?: ReadonlyArray<{ aci: AciString; accessKey: string }>;
   returnAcisWithoutUaks?: boolean;
+  useLibsignal?: boolean;
 }>;
 
 type GetProfileCommonOptionsType = Readonly<
@@ -827,6 +829,7 @@ export type ReserveUsernameOptionsType = Readonly<{
 
 export type ReplaceUsernameLinkOptionsType = Readonly<{
   encryptedUsername: Uint8Array;
+  keepLinkHandle: boolean;
 }>;
 
 export type ConfirmUsernameOptionsType = Readonly<{
@@ -2035,6 +2038,7 @@ export function initialize({
 
     async function replaceUsernameLink({
       encryptedUsername,
+      keepLinkHandle,
     }: ReplaceUsernameLinkOptionsType): Promise<ReplaceUsernameLinkResultType> {
       return replaceUsernameLinkResultZod.parse(
         await _ajax({
@@ -2045,6 +2049,7 @@ export function initialize({
             usernameLinkEncryptedValue: toWebSafeBase64(
               Bytes.toBase64(encryptedUsername)
             ),
+            keepLinkHandle,
           },
         })
       );
@@ -3485,11 +3490,13 @@ export function initialize({
       e164s,
       acisAndAccessKeys = [],
       returnAcisWithoutUaks,
+      useLibsignal,
     }: CdsLookupOptionsType): Promise<CDSResponseType> {
       return cds.request({
         e164s,
         acisAndAccessKeys,
         returnAcisWithoutUaks,
+        useLibsignal,
       });
     }
 
