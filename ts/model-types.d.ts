@@ -120,6 +120,7 @@ export type MessageReactionType = {
 export type EditHistoryType = {
   attachments?: Array<AttachmentType>;
   body?: string;
+  bodyAttachment?: AttachmentType;
   bodyRanges?: ReadonlyArray<RawBodyRange>;
   preview?: Array<LinkPreviewType>;
   quote?: QuotedMessageType;
@@ -372,6 +373,7 @@ export type ConversationAttributesType = {
   // Private core info
   serviceId?: ServiceIdString;
   pni?: PniString;
+  pniSignatureVerified?: boolean;
   e164?: string;
 
   // Private other fields

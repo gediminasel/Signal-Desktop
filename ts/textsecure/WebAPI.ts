@@ -640,8 +640,7 @@ export type CapabilitiesType = {
   pni: boolean;
 };
 export type CapabilitiesUploadType = {
-  // true in staging, false in production
-  pni: boolean;
+  pni: true;
 };
 
 type StickerPackManifestType = Uint8Array;
@@ -2548,7 +2547,7 @@ export function initialize({
       const keys = (await _ajax({
         call: 'keys',
         httpType: 'GET',
-        urlParameters: `/${serviceId}/${deviceId || '*'}?pq=true`,
+        urlParameters: `/${serviceId}/${deviceId || '*'}`,
         responseType: 'json',
         validateResponse: { identityKey: 'string', devices: 'object' },
       })) as ServerKeyResponseType;
@@ -2563,7 +2562,7 @@ export function initialize({
       const keys = (await _ajax({
         call: 'keys',
         httpType: 'GET',
-        urlParameters: `/${serviceId}/${deviceId || '*'}?pq=true`,
+        urlParameters: `/${serviceId}/${deviceId || '*'}`,
         responseType: 'json',
         validateResponse: { identityKey: 'string', devices: 'object' },
         unauthenticated: true,

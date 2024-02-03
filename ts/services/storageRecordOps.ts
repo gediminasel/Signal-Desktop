@@ -62,7 +62,6 @@ import type {
 } from '../sql/Interface';
 import dataInterface from '../sql/Client';
 import { MY_STORY_ID, StorySendMode } from '../types/Stories';
-import * as RemoteConfig from '../RemoteConfig';
 import { findAndDeleteOnboardingStoryIfExists } from '../util/findAndDeleteOnboardingStoryIfExists';
 import { downloadOnboardingStory } from '../util/downloadOnboardingStory';
 import { drop } from '../util/drop';
@@ -174,9 +173,11 @@ export async function toContactRecord(
     contactRecord.username = username;
   }
   const pni = conversation.getPni();
-  if (pni && RemoteConfig.isEnabled('desktop.pnp')) {
+  if (pni) {
     contactRecord.pni = toUntaggedPni(pni);
   }
+  contactRecord.pniSignatureVerified =
+    conversation.get('pniSignatureVerified') ?? false;
   const profileKey = conversation.get('profileKey');
   if (profileKey) {
     contactRecord.profileKey = Bytes.fromBase64(String(profileKey));
@@ -989,11 +990,10 @@ export async function mergeContactRecord(
         : undefined,
   };
 
-  const isPniSupported = RemoteConfig.isEnabled('desktop.pnp');
-
   const e164 = dropNull(contactRecord.serviceE164);
   const { aci } = contactRecord;
-  const pni = isPniSupported ? dropNull(contactRecord.pni) : undefined;
+  const pni = dropNull(contactRecord.pni);
+  const pniSignatureVerified = contactRecord.pniSignatureVerified || false;
   const serviceId = aci || pni;
 
   // All contacts must have UUID
@@ -1016,6 +1016,7 @@ export async function mergeContactRecord(
     aci,
     e164,
     pni,
+    fromPniSignature: pniSignatureVerified,
     reason: 'mergeContactRecord',
   });
 
