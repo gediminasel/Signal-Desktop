@@ -162,7 +162,7 @@ import { StartupQueue } from './util/StartupQueue';
 import { showConfirmationDialog } from './util/showConfirmationDialog';
 import { onCallEventSync } from './util/onCallEventSync';
 import { sleeper } from './util/sleeper';
-import { DAY, HOUR, MINUTE } from './util/durations';
+import { DAY, HOUR, SECOND } from './util/durations';
 import { copyDataMessageIntoMessage } from './util/copyDataMessageIntoMessage';
 import {
   flushMessageCounter,
@@ -645,6 +645,7 @@ export async function startApp(): Promise<void> {
           await new Promise<void>((resolve, reject) => {
             showConfirmationDialog({
               dialogName: 'deleteOldIndexedDBData',
+              noMouseClose: true,
               onTopOfEverything: true,
               cancelText: window.i18n('icu:quit'),
               confirmStyle: 'negative',
@@ -797,7 +798,7 @@ export async function startApp(): Promise<void> {
               );
               timeout = undefined;
               resolve();
-            }, 1 * MINUTE);
+            }, 10 * SECOND);
           }),
         ]);
         if (timeout) {
@@ -976,14 +977,6 @@ export async function startApp(): Promise<void> {
         window.SignalContext.restartApp();
         return;
       }
-    }
-
-    if (
-      window.storage.get('autoConvertEmoji') === undefined &&
-      newVersion &&
-      !lastVersion
-    ) {
-      await window.storage.put('autoConvertEmoji', true);
     }
 
     setAppLoadingScreenMessage(
@@ -1339,6 +1332,10 @@ export async function startApp(): Promise<void> {
         return;
       }
 
+      if (remotelyExpired) {
+        return;
+      }
+
       log.info('reconnectToWebSocket starting...');
       await server.reconnect();
     });
@@ -1359,8 +1356,19 @@ export async function startApp(): Promise<void> {
     void unlinkAndDisconnect();
   });
 
+  window.Whisper.events.on('httpResponse499', () => {
+    if (remotelyExpired) {
+      return;
+    }
+
+    log.warn('background: remote expiration detected, disabling reconnects');
+    remotelyExpired = true;
+    onOffline();
+  });
+
   async function runStorageService() {
     StorageService.enableStorageService();
+    StorageService.runStorageServiceSyncJob();
   }
 
   async function start() {
@@ -1450,6 +1458,9 @@ export async function startApp(): Promise<void> {
       drop(window.Signal.RemoteConfig.maybeRefreshRemoteConfig(server));
 
       drop(connect(true));
+
+      // Run storage service after linking
+      drop(runStorageService());
     });
 
     cancelInitializationMessage();
@@ -1561,6 +1572,10 @@ export async function startApp(): Promise<void> {
   }
 
   function onOnline() {
+    if (remotelyExpired) {
+      return;
+    }
+
     log.info('online');
 
     window.removeEventListener('online', onOnline);
@@ -1611,9 +1626,15 @@ export async function startApp(): Promise<void> {
 
   let connectCount = 0;
   let connecting = false;
+  let remotelyExpired = false;
   async function connect(firstRun?: boolean) {
     if (connecting) {
       log.warn('connect already running', { connectCount });
+      return;
+    }
+
+    if (remotelyExpired) {
+      log.warn('remotely expired, not reconnecting');
       return;
     }
 
@@ -1718,7 +1739,9 @@ export async function startApp(): Promise<void> {
       server.registerRequestHandler(messageReceiver);
 
       // If coming here after `offline` event - connect again.
-      await server.onOnline();
+      if (!remotelyExpired) {
+        await server.onOnline();
+      }
 
       void AttachmentDownloads.start({
         logger: log,
@@ -1783,9 +1806,7 @@ export async function startApp(): Promise<void> {
         try {
           // Note: we always have to register our capabilities all at once, so we do this
           //   after connect on every startup
-          await server.registerCapabilities({
-            pni: true,
-          });
+          await server.registerCapabilities({});
         } catch (error) {
           log.error(
             'Error: Unable to register our capabilities.',
@@ -2919,7 +2940,6 @@ export async function startApp(): Promise<void> {
     const NUMBER_ID_KEY = 'number_id';
     const UUID_ID_KEY = 'uuid_id';
     const PNI_KEY = 'pni';
-    const VERSION_KEY = 'version';
     const LAST_PROCESSED_INDEX_KEY = 'attachmentMigration_lastProcessedIndex';
     const IS_MIGRATION_COMPLETE_KEY = 'attachmentMigration_isComplete';
 
@@ -2976,7 +2996,6 @@ export async function startApp(): Promise<void> {
       } else {
         await window.textsecure.storage.remove(LAST_PROCESSED_INDEX_KEY);
       }
-      await window.textsecure.storage.put(VERSION_KEY, window.getVersion());
 
       // Re-hydrate items from memory; removeAllConfiguration above changed database
       await window.storage.fetch();
@@ -3023,13 +3042,15 @@ export async function startApp(): Promise<void> {
     drop(ViewOnceOpenSyncs.onSync(attributes));
   }
 
-  async function onFetchLatestSync(ev: FetchLatestEvent): Promise<void> {
-    ev.confirm();
+  function onFetchLatestSync(ev: FetchLatestEvent): void {
+    // Don't block on fetchLatestSync events
+    drop(doFetchLatestSync(ev));
+  }
 
+  async function doFetchLatestSync(ev: FetchLatestEvent): Promise<void> {
     const { eventType } = ev;
 
     const FETCH_LATEST_ENUM = Proto.SyncMessage.FetchLatest.Type;
-
     switch (eventType) {
       case FETCH_LATEST_ENUM.LOCAL_PROFILE: {
         log.info('onFetchLatestSync: fetching latest local profile');
@@ -3040,7 +3061,7 @@ export async function startApp(): Promise<void> {
       }
       case FETCH_LATEST_ENUM.STORAGE_MANIFEST:
         log.info('onFetchLatestSync: fetching latest manifest');
-        await StorageService.runStorageServiceSyncJob();
+        StorageService.runStorageServiceSyncJob();
         break;
       case FETCH_LATEST_ENUM.SUBSCRIPTION_STATUS:
         log.info('onFetchLatestSync: fetching latest subscription status');
@@ -3050,6 +3071,8 @@ export async function startApp(): Promise<void> {
       default:
         log.info(`onFetchLatestSync: Unknown type encountered ${eventType}`);
     }
+
+    ev.confirm();
   }
 
   async function onKeysSync(ev: KeysEvent) {

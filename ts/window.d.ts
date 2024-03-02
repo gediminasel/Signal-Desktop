@@ -61,7 +61,7 @@ export type IPCType = {
   closeAbout: () => void;
   crashReports: {
     getCount: () => Promise<number>;
-    upload: () => Promise<void>;
+    writeToLog: () => Promise<void>;
     erase: () => Promise<void>;
   };
   drawAttention: () => void;
@@ -193,6 +193,7 @@ declare global {
     getHostName: () => string;
     getInteractionMode: () => 'mouse' | 'keyboard';
     getServerPublicParams: () => string;
+    getGenericServerPublicParams: () => string;
     getSfuUrl: () => string;
     getSocketStatus: () => SocketStatus;
     getSyncRequest: (timeoutMillis?: number) => SyncRequest;

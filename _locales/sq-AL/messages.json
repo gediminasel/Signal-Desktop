@@ -44,6 +44,10 @@
     "messageformat": "Shto \"{contact}\" në grupin \"{group}\"",
     "description": "Shown in the confirmation dialog body when adding a contact to a group"
   },
+  "icu:AddUserToAnotherGroupModal__search-placeholder": {
+    "messageformat": "Kërko",
+    "description": "Placeholder to use when searching for groups in the AddUserToAnotherGroupModal"
+  },
   "icu:AddUserToAnotherGroupModal__toast--user-added-to-group": {
     "messageformat": "{contact} qe shtuar te {group}",
     "description": "Shown in toast after a user is added to an existing group"
@@ -317,7 +321,7 @@
     "description": "Shown as a header for non-pinned conversations in the left pane"
   },
   "icu:LeftPane--corrupted-username--text": {
-    "messageformat": "Ndodhi një gabim me emrin tënd të përdoruesit; nuk lidhet më me llogarinë tënde. Mund të provosh dhe ta vendosësh sërish ose zgjidh një të ri.",
+    "messageformat": "Ndodhi një gabim me emrin tënd të përdoruesit; nuk lidhet më me llogarinë tënde.q Mund të provosh dhe ta vendosësh sërish ose zgjidh një të ri.",
     "description": "Text of corrupted username banner in the left pane"
   },
   "icu:LeftPane--corrupted-username--action-text": {
@@ -331,6 +335,42 @@
   "icu:LeftPane--corrupted-username-link--action-text": {
     "messageformat": "Rregulloje tani",
     "description": "Text of the button in the corrupted username link banner in the left pane"
+  },
+  "icu:LeftPane__compose__findByUsername": {
+    "messageformat": "Gjej sipas emrit të përdoruesit",
+    "description": "Text of the button displayed when clicking compose button in left pane"
+  },
+  "icu:LeftPane__compose__findByPhoneNumber": {
+    "messageformat": "Gjeni sipas numrit të telefonit",
+    "description": "Text of the button displayed when clicking compose button in left pane"
+  },
+  "icu:LeftPaneFindByHelper__title--findByUsername": {
+    "messageformat": "Gjej sipas emrit të përdoruesit",
+    "description": "Title of the left pane when looking up someone by username"
+  },
+  "icu:LeftPaneFindByHelper__title--findByPhoneNumber": {
+    "messageformat": "Gjeni sipas numrit të telefonit",
+    "description": "Title of the left pane when looking up someone by phone number"
+  },
+  "icu:LeftPaneFindByHelper__placeholder--findByUsername": {
+    "messageformat": "Emri i përdoruesit",
+    "description": "Placeholder of the search input in left pane when looking up someone by username"
+  },
+  "icu:LeftPaneFindByHelper__placeholder--findByPhoneNumber": {
+    "messageformat": "Numër telefoni",
+    "description": "Placeholder of the search input in left pane when looking up someone by phone number"
+  },
+  "icu:LeftPaneFindByHelper__description--findByUsername": {
+    "messageformat": "Vendos emrin e përdoruesit me pikën dhe numrat.",
+    "description": "Description displayed under search input in left pane when looking up someone by username"
+  },
+  "icu:CountryCodeSelect__placeholder": {
+    "messageformat": "Kod vendi",
+    "description": "Placeholder displayed as default value of country code select element"
+  },
+  "icu:CountryCodeSelect__Modal__title": {
+    "messageformat": "Kod vendi",
+    "description": "Title of the country code modal"
   },
   "icu:NavTabsToggle__showTabs": {
     "messageformat": "Shfaq skedat",
@@ -1052,11 +1092,11 @@
     "description": "Shown to separate the types of search results"
   },
   "icu:findByUsernameHeader": {
-    "messageformat": "Gjeni sipas emri përdoruesi",
+    "messageformat": "Gjej sipas emrit të përdoruesit",
     "description": "Shown when search could be a valid username, with one sub-item that will kick off the search"
   },
   "icu:findByPhoneNumberHeader": {
-    "messageformat": "Gjeni sipas numri telefoni",
+    "messageformat": "Gjeni sipas numrit të telefonit",
     "description": "Shown when search could be a valid phone number, with one sub-item that will kick off the search"
   },
   "icu:welcomeToSignal": {
@@ -1351,6 +1391,38 @@
   "icu:showSafetyNumber": {
     "messageformat": "Shih numrin e sigurisë"
   },
+  "icu:AboutContactModal__title": {
+    "messageformat": "Rreth",
+    "description": "Title of About modal"
+  },
+  "icu:AboutContactModal__title--myself": {
+    "messageformat": "Ti",
+    "description": "Title of About modal when viewing your own information"
+  },
+  "icu:AboutContactModal__verified": {
+    "messageformat": "I verifikuar",
+    "description": "Text of a button on About modal leading to a safety number modal"
+  },
+  "icu:AboutContactModal__blocked": {
+    "messageformat": "{name} është bllokuar",
+    "description": "Text of a row on About modal when user is blocked"
+  },
+  "icu:AboutContactModal__message-request": {
+    "messageformat": "Kërkesë për mesazh në pritje",
+    "description": "Text of a row on About modal when user is in message request state"
+  },
+  "icu:AboutContactModal__no-dms": {
+    "messageformat": "Nuk ka mesazhe të drejtpërdrejta me {name}",
+    "description": "Text of a row on About modal when there are no direct messages with a user"
+  },
+  "icu:AboutContactModal__signal-connection": {
+    "messageformat": "Kontaktet e Signal",
+    "description": "Text of a button on About modal leading to an education modal"
+  },
+  "icu:AboutContactModal__system-contact": {
+    "messageformat": "{name} është në kontaktet e sistemit",
+    "description": "Text of a row in the About modal describing that the contact is in system contacts"
+  },
   "icu:ContactModal__showSafetyNumber": {
     "messageformat": "Shih numrin e sigurisë",
     "description": "Contact modal, label for button to show safety number modal"
@@ -1626,6 +1698,10 @@
     "messageformat": "Kompjuteri Im",
     "description": "The placeholder for the 'choose device name' input"
   },
+  "icu:Preferences--phone-number": {
+    "messageformat": "Numër telefoni",
+    "description": "The label in settings panel shown for the phone number associated with user's account"
+  },
   "icu:Preferences--device-name": {
     "messageformat": "Emër pajisjeje",
     "description": "The label in settings panel shown for the user-provided name for this desktop instance"
@@ -1700,6 +1776,54 @@
   "icu:calling__call-is-full": {
     "messageformat": "Thirrja është plot",
     "description": "Text in the call lobby when you can't join because the call is full"
+  },
+  "icu:calling__cant-join": {
+    "messageformat": "Can't join call",
+    "description": "Modal dialog title when you can't join a call"
+  },
+  "icu:calling__dialog-already-in-call": {
+    "messageformat": "You are already in a call.",
+    "description": "Error message when clicking a call link to join a call, but you're in a call already."
+  },
+  "icu:calling__call-link-connection-issues": {
+    "messageformat": "Could not fetch call link information. Please check your network connection and try again.",
+    "description": "Error message when unable to fetch call link info from server."
+  },
+  "icu:calling__call-link-copied": {
+    "messageformat": "Call link copied.",
+    "description": "Toast shown when a call link is copied to the clipboard."
+  },
+  "icu:calling__call-link-no-longer-valid": {
+    "messageformat": "This call link is no longer valid.",
+    "description": "Error message when a call link has been revoked or expires."
+  },
+  "icu:calling__call-link-default-title": {
+    "messageformat": "Signal Call",
+    "description": "Default title for Signal call links."
+  },
+  "icu:calling__join-request-denied": {
+    "messageformat": "Your request to join this call has been denied.",
+    "description": "Error message when a request to join a call link call was rejected by a call admin."
+  },
+  "icu:calling__join-request-denied-title": {
+    "messageformat": "Join request denied",
+    "description": "Title of error when a request to join a call link call was rejected by a call admin."
+  },
+  "icu:calling__removed-from-call": {
+    "messageformat": "Someone has removed you from the call.",
+    "description": "Error message when in a call then a call admin removes you."
+  },
+  "icu:calling__removed-from-call-title": {
+    "messageformat": "Removed from call",
+    "description": "Title of error when in a call then a call admin removes you."
+  },
+  "icu:CallingLobby__CallLinkNotice": {
+    "messageformat": "Anyone who joins this call via the link will see your name and photo.",
+    "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared."
+  },
+  "icu:CallingLobby__CallLinkNotice--phone-sharing": {
+    "messageformat": "Anyone who joins this call via the link will see your name, photo, and phone number.",
+    "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared, when the phone number sharing account setting is enabled."
   },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "Bashkohu",
@@ -2328,7 +2452,7 @@
     "description": "Label for header to go to stories view"
   },
   "icu:contactSearchPlaceholder": {
-    "messageformat": "Kërkoni sipas emrash ose numrash telefoni",
+    "messageformat": "Emër, emër përdoruesi, ose numër",
     "description": "Placeholder to use when searching for contacts in the composer"
   },
   "icu:noContactsFound": {
@@ -2356,11 +2480,11 @@
     "description": "Label for the error toast button"
   },
   "icu:Toast--failed-to-fetch-username": {
-    "messageformat": "S’u arrit të sillet emër përdoruesi. Kontrolloni lidhjen tuaj dhe riprovoni.",
+    "messageformat": "Gjetja e emrit të përdoruesit dështoi. Kontrollo lidhjen e internetit dhe provo sërish.",
     "description": "Shown if request to Signal servers to find username fails"
   },
   "icu:Toast--failed-to-fetch-phone-number": {
-    "messageformat": "S’u arrit të sillej numër telefoni. Kontrolloni lidhjen tuaj dhe riprovoni.",
+    "messageformat": "Gjetja e emrit të përdoruesit dështoi. Kontrollo lidhjen e internetit dhe provo sërish.",
     "description": "Shown if request to Signal servers to find phone number fails"
   },
   "icu:ToastManager__CannotEditMessage_24": {
@@ -2368,7 +2492,7 @@
     "description": "Error message when you try to send an edit after message becomes too old"
   },
   "icu:startConversation--username-not-found": {
-    "messageformat": "S’u gjet përdorues. {atUsername} s’është përdorues Signal-i; sigurohuni se e keni dhënë të plotë emrin e përdoruesit.",
+    "messageformat": "{atUsername} nuk është përdorues i Signal. Sigurohu që ke vendosur emrin e plotë të përdoruesit.",
     "description": "Shown in dialog if username is not found. Note that 'username' will be the output of at-username"
   },
   "icu:startConversation--phone-number-not-found": {
@@ -2615,6 +2739,10 @@
   "icu:message--attachmentTooBig--multiple": {
     "messageformat": "Disa bashkëngjitje janë shumë të mëdha për t'u shfaqur.",
     "description": "Shown in a message bubble if any attachments are left on message when too-large attachments are dropped"
+  },
+  "icu:message--call-link-description": {
+    "messageformat": "Use this link to join a Signal call",
+    "description": "Shown in message previews for Signal call links."
   },
   "icu:donation--missing": {
     "messageformat": "Detajet e dhurimit nuk mund të shfaqen",
@@ -3588,6 +3716,14 @@
     "messageformat": "Thirrje me audio",
     "description": "Shown in the call lobby for a direct 1:1 call when the caller's video is disabled, to specify that an audio call will be placed when clicking the Start button."
   },
+  "icu:CallControls__InfoDisplay--adhoc-call": {
+    "messageformat": "Call link",
+    "description": "Shown in the call lobby for a call link."
+  },
+  "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
+    "messageformat": "Waiting to be let in",
+    "description": "Shown in the call lobby for call link calls when requesting to join a call which requires admin approval."
+  },
   "icu:CallControls__JoinLeaveButton--hangup-1-1": {
     "messageformat": "Përfundo",
     "description": "Title for the hangup button for a direct 1:1 call with only 2 participants."
@@ -3727,6 +3863,10 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "Një dritare",
     "description": "Title for the select your screen sharing sources modal"
+  },
+  "icu:CallingAdhocCallInfo__CopyLink": {
+    "messageformat": "Copy link",
+    "description": "Menu item in the in-call info popup for call link calls. The action is to add the call link to the clipboard."
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video",
@@ -5189,7 +5329,7 @@
     "description": "Title for the contact name spoofing review dialog in groups"
   },
   "icu:ContactSpoofingReviewDialog__group__description": {
-    "messageformat": "{count, plural, one {{count,number} anëtar grupi ka emër të ngjashëm. Shqyrto anëtarët më poshtë ose zgjidh të ndërmerret një veprim.} other {{count,number} anëtarë grupi kanë emra të ngjashëm. Shqyrto anëtarët më poshtë ose zgjidh të ndërmerret një veprim.}}",
+    "messageformat": "{count, plural, one {1 anëtar grupi ka të njëjtin emër me dikë, shqyrtoni anëtarin më poshtë, ose zgjidhni kryerjen e një veprimi.} other {{count,number} anëtarë grupi kanë të njëjtin emër, shqyrtoni anëtarët më poshtë, ose zgjidhni kryerjen e një veprimi.}}",
     "description": "Description for the group contact spoofing review dialog"
   },
   "icu:ContactSpoofingReviewDialog__group__multiple-conflicts__description": {
@@ -5198,7 +5338,15 @@
   },
   "icu:ContactSpoofingReviewDialog__group__members-header": {
     "messageformat": "Anëtarë",
-    "description": "Header in the group contact spoofing review dialog. After this header, there will be a list of members"
+    "description": "(Deleted 01/31/2024) Header in the group contact spoofing review dialog. After this header, there will be a list of members"
+  },
+  "icu:ContactSpoofingReviewDialog__group__members__no-shared-groups": {
+    "messageformat": "Nuk ka grupe të tjera të përbashkëta",
+    "description": "Informational text displayed next to a contact on ContactSpoofingReviewDialog"
+  },
+  "icu:ContactSpoofingReviewDialog__signal-connection": {
+    "messageformat": "Kontaktet e Signal",
+    "description": "Text of a button on ContactSpoofingReviewDialog leading to an education modal"
   },
   "icu:ContactSpoofingReviewDialog__group__name-change-info": {
     "messageformat": "Ndryshoi së fundi emrin e vet të profilit nga {oldName} në {newName}",
@@ -5489,19 +5637,23 @@
     "description": "Default text for about field"
   },
   "icu:ProfileEditor--username": {
-    "messageformat": "Emër përdoruesi",
+    "messageformat": "Emri i përdoruesit",
     "description": "Default text for username field"
   },
   "icu:ProfileEditor--username--corrupted--body": {
-    "messageformat": "Ndodhi një gabim me emrin tënd të përdoruesit; nuk lidhet më me llogarinë tënde.",
+    "messageformat": "Ndodhi një gabim me emrin tënd të përdoruesit; nuk lidhet më me llogarinë tënde. Mund të provosh dhe ta vendosësh sërish ose zgjidh një të ri.",
     "description": "Text of confirmation modal when the username gets corrupted"
   },
   "icu:ProfileEditor--username--corrupted--delete-button": {
     "messageformat": "Fshije emrin e përdoruesit",
-    "description": "Button text for deletion of the username in case of corruption"
+    "description": "(Deleted 02/01/2024) Button text for deletion of the username in case of corruption"
   },
   "icu:ProfileEditor--username--corrupted--create-button": {
-    "messageformat": "Krijoni Emër Përdoruesi",
+    "messageformat": "Krijoni emrin e përdoruesit",
+    "description": "(Deleted 02/01/2024) Button text for creation of a new username in case of corruption"
+  },
+  "icu:ProfileEditor--username--corrupted--fix-button": {
+    "messageformat": "Rregulloje tani",
     "description": "Button text for creation of a new username in case of corruption"
   },
   "icu:ProfileEditor__username-link": {
@@ -5529,11 +5681,11 @@
     "description": "Title text for username modal"
   },
   "icu:ProfileEditor--username--check-characters": {
-    "messageformat": "Emra e përdoruesve mund të përmbajnë vetëm a-z, 0-9 dhe _",
+    "messageformat": "Emrat e përdoruesve mund të përmbajnë vetëm a-z, 0-9 dhe _",
     "description": "Shown if user has attempted to use forbidden characters in username"
   },
   "icu:ProfileEditor--username--check-starting-character": {
-    "messageformat": "Emrat e përdoruesve s’mund të fillojnë me një numër.",
+    "messageformat": "Emrat e përdoruesve nuk mund të fillojnë me numër.",
     "description": "Shown if user has attempted to begin their username with a number"
   },
   "icu:ProfileEditor--username--check-character-min": {
@@ -5553,8 +5705,12 @@
     "description": "Shown if user has attempted to enter a username with 00 as discriminator"
   },
   "icu:ProfileEditor--username--check-discriminator-leading-zero": {
-    "messageformat": "Numri nuk mund të fillojë me 00. Vendos një shifër nga 1-9",
+    "messageformat": "Numrat me më shumë se 2 shifra nuk mund të fillojnë me 0",
     "description": "Shown if user has attempted to enter a username with leading 0 in discriminator"
+  },
+  "icu:ProfileEditor--username--too-many-attempts": {
+    "messageformat": "Provo më vonë pasi ke bërë shumë tentativa",
+    "description": "Shown if user has made too many attempts to pick a username and has to wait before retrying"
   },
   "icu:ProfileEditor--username--unavailable": {
     "messageformat": "Ky emër përdoruesi nuk është i lirë",
@@ -5565,7 +5721,7 @@
     "description": "Shown if user has attempted to save a username which is not available"
   },
   "icu:ProfileEditor--username--general-error": {
-    "messageformat": "Emri juaj i përdoruesit s’u ruajt dot. Kontrolloni lidhjen tuaj dhe riprovoni.",
+    "messageformat": "Emri i përdoruesit nuk u ruajt. Kontrollo lidhjen dhe riprovo.",
     "description": "Shown if something unknown has gone wrong with username save."
   },
   "icu:ProfileEditor--username--reservation-gone": {
@@ -5573,7 +5729,7 @@
     "description": "Shown if username reservation has expired and new one needs to be generated."
   },
   "icu:ProfileEditor--username--delete-general-error": {
-    "messageformat": "Emri yt i përdoruesit s’u hoq dot. Kontrollo lidhjen dhe riprovo.",
+    "messageformat": "Emri i përdoruesit nuk u hoq. Kontrollo lidhjen dhe riprovo.",
     "description": "Shown if something unknown has gone wrong with username delete."
   },
   "icu:ProfileEditor--username--copied-username": {
@@ -5589,7 +5745,7 @@
     "description": "Shown as aria label for spinner icon next to username"
   },
   "icu:ProfileEditor--username--delete-username": {
-    "messageformat": "Fshije emrin e përdoruesit",
+    "messageformat": "Fshij emrin e përdoruesit",
     "description": "Shown as aria label for trash icon next to username"
   },
   "icu:ProfileEditor--username--confirm-delete-body-2": {
@@ -5599,6 +5755,10 @@
   "icu:ProfileEditor--username--confirm-delete-button": {
     "messageformat": "Fshije",
     "description": "Shown in dialog button if user has saved an empty string to delete their username"
+  },
+  "icu:ProfileEditor--username--delete-unavailable-notice": {
+    "messageformat": "Për të fshirë emrin e përdoruesit, hap Signal në telefon dhe shko te Parametrat > Profili.",
+    "description": "Shown in dialog body if user is trying to delete username, but it is only supported on mobile"
   },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "Kopjo ose fshi emrin e përdoruesit",
@@ -5632,9 +5792,33 @@
     "messageformat": "Doni të hidhen tej këto ndryshime?",
     "description": "ConfirmationDialog text for discarding changes"
   },
+  "icu:ConfirmationDialog__Title--in-call-close-requested": {
+    "messageformat": "Close Signal and end the call?",
+    "description": "ConfirmationDialog title when trying to close the app while in a call."
+  },
+  "icu:ConfirmationDialog__Title--close-requested-not-now": {
+    "messageformat": "Not Now",
+    "description": "Confirmation dialog button to cancel closing the app, while in a call and trying to close the app."
+  },
+  "icu:ProfileEditor--edit-photo": {
+    "messageformat": "Përpunoni foton",
+    "description": "Text of a button on profile editor that leads to the avatar editor"
+  },
   "icu:ProfileEditor--info--link": {
     "messageformat": "Profili yt është i koduar. Profili dhe ndryshimet që i bën do të jenë të dukshme për kontaktet e tua kur të nisësh apo të pranosh biseda të reja. Mëso më shumë",
-    "description": "Information shown at the bottom of the profile editor section"
+    "description": "(Deleted 02/01/2024) Information shown at the bottom of the profile editor section"
+  },
+  "icu:ProfileEditor--info--general": {
+    "messageformat": "Profili dhe ndryshimet e tij do t'u shfaqen personave që u shkruan, kontakteve dhe grupeve.",
+    "description": "Information shown in profile editor below profile name and about fields"
+  },
+  "icu:ProfileEditor--info--pnp": {
+    "messageformat": "Emri i përdoruesit, kodi QR dhe lidhja nuk shfaqen në profil. Ndaj vetëm me njerëzit e besueshëm.",
+    "description": "Information shown in profile editor below pnp settings when username is set"
+  },
+  "icu:ProfileEditor--info--pnp--no-username": {
+    "messageformat": "Tani njerëzit mund të të dërgojnë mesazhe duke përdorur emrin tënd opsional të përdoruesit që të mos kesh nevojë të japësh numrin e telefonit.",
+    "description": "Information shown in profile editor below pnp settings when no username is set"
   },
   "icu:Bio--speak-freely": {
     "messageformat": "Flisni Lirisht",
@@ -5673,7 +5857,7 @@
     "description": "Title for profile avatar editing"
   },
   "icu:ProfileEditorModal--username": {
-    "messageformat": "Emër përdoruesi",
+    "messageformat": "Emri i përdoruesit",
     "description": "Title for username editing"
   },
   "icu:ProfileEditorModal--error": {
@@ -5717,7 +5901,7 @@
     "description": "Button to switch the settings view"
   },
   "icu:Preferences__button--appearance": {
-    "messageformat": "Dukje",
+    "messageformat": "Paraqitja",
     "description": "Button to switch the settings view"
   },
   "icu:Preferences__button--chats": {
@@ -5792,6 +5976,10 @@
     "messageformat": "Zgjidh se kush mund ta shohë numrin tënd të telefonit dhe kush mund të të kontaktojë nëpërmjet tij në Signal.",
     "description": "Body of Phone Number row in Privacy section of Preferences window"
   },
+  "icu:Preferences__pnp__row--button": {
+    "messageformat": "Ndrysho…",
+    "description": "Text of Phone Number row button in Privacy section of Preferences window"
+  },
   "icu:Preferences__pnp__sharing--title": {
     "messageformat": "Kush mund të shohë numrin tim",
     "description": "Title for the phone number sharing setting row"
@@ -5801,8 +5989,12 @@
     "description": "Description for the phone number sharing setting row when the value is Everyone"
   },
   "icu:Preferences__pnp__sharing--description--nobody": {
-    "messageformat": "Askush nuk do ta shohë numrin e telefonit në Signal, madje edhe kur ti je duke iu shkruar.",
-    "description": "Description for the phone number sharing setting row when the value is Nobody"
+    "messageformat": "Numri i telefonit nuk do t'i shfaqet askujt, përveç nëse personat e kanë atë të ruajtur në kontaktet e tyre të telefonit.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody and phone number discoverability setting is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody--not-discoverable": {
+    "messageformat": "Numri i telefonit nuk do t'i shfaqet askujt.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody and phone number discoverability setting is Nobody"
   },
   "icu:Preferences__pnp--page-title": {
     "messageformat": "Numër telefoni",
@@ -6513,11 +6705,11 @@
     "description": "Alert body for groups that non-admins cannot send stories to"
   },
   "icu:SendStoryModal__my-stories-description-all": {
-    "messageformat": "{viewersCount, plural, one {All Signal Connections · 1 Viewer} other {All Signal Connections · {viewersCount,number} Viewers}}",
+    "messageformat": "{viewersCount, plural, one {Të gjitha kontaktet e Signal · {viewersCount,number} shikues} other {Të gjitha kontaktet e Signal · {viewersCount,number} shikuesa}}",
     "description": "Shown as a subtitle under My Stories option in the send-story-to dialog when not exluding anyone"
   },
   "icu:SendStoryModal__my-stories-description-excluding": {
-    "messageformat": "{excludedCount, plural, one {All Signal Connections · 1 Excluded} other {All Signal Connections · {excludedCount,number} Excluded}}",
+    "messageformat": "{excludedCount, plural, one {Të gjitha kontaktet e Signal · {excludedCount,number} i përjashtuar} other {Të gjitha kontaktet e Signal · {excludedCount,number} të përjashtuar}}",
     "description": "Shown as a subtitle under My Stories option in the send-story-to dialog when excluding some"
   },
   "icu:SendStoryModal__private-story-description": {
@@ -6788,6 +6980,10 @@
     "messageformat": "Reagoi ndaj një postimi të përkohshëm të {name}",
     "description": "Label for when a person reacts to a story"
   },
+  "icu:Quote__story-reaction--you": {
+    "messageformat": "Reacted to your story",
+    "description": "Label for when someone reacts to your story"
+  },
   "icu:Quote__story-reaction--single": {
     "messageformat": "Reagoi ndaj një postimi të përkohshëm",
     "description": "Used whenever we can't find a user's first name"
@@ -6813,11 +7009,11 @@
     "description": "Default aria-label for the context menu buttons"
   },
   "icu:EditUsernameModalBody__username-placeholder": {
-    "messageformat": "Emër përdoruesi",
+    "messageformat": "Emri i përdoruesit",
     "description": "Placeholder for the username field"
   },
   "icu:EditUsernameModalBody__username-helper": {
-    "messageformat": "Emrat e përdoruesve lejojnë që të tjerët të të dërgojnë mesazhe, pa pasur nevojë për numrin tënd të telefonit. Ata binjakëzohen me një bashkësi shifrash për ruajtur fshehtësinë e adresës tënde.",
+    "messageformat": "Emrat e përdoruesve bashkohen gjithmonë me një grup numrash.",
     "description": "Shown on the edit username screen"
   },
   "icu:EditUsernameModalBody__learn-more": {
@@ -6840,8 +7036,16 @@
     "messageformat": "Vazhdo",
     "description": "Text of the primary button on username change confirmation modal"
   },
+  "icu:EditUsernameModalBody__recover-confirmation": {
+    "messageformat": "Rivendosja e emrit të përdoruesit do të rivendosë edhe kodin QR me lidhjen ekzistuese. Je i sigurt?",
+    "description": "Body of the confirmation dialog displayed when user is about to recover their username"
+  },
+  "icu:EditUsernameModalBody__username-recovered__text": {
+    "messageformat": "Kodi QR dhe lidhja u rivendosën; emri yt i përdoruesit është {username}",
+    "description": "Text of toast displayed upon successful recovery of username"
+  },
   "icu:UsernameLinkModalBody__hint": {
-    "messageformat": "Scan this QR code with your phone to chat with me on Signal.",
+    "messageformat": "Skano kodin QR nga telefoni për të biseduar me mua në Signal.",
     "descrption": "Text of the hint displayed below generated QR code on the printable image."
   },
   "icu:UsernameLinkModalBody__save": {
@@ -6873,7 +7077,7 @@
     "description": "ARIA label of button for selecting username link color"
   },
   "icu:UsernameLinkModalBody__reset__confirm": {
-    "messageformat": "Nëse rivendos kodin QR, kodi QR dhe lidhja ekzistuese nuk do të funksionojnë më.",
+    "messageformat": "Nëse rivendos lidhjen dhe kodin QR, atëherë kodi QR dhe lidhja ekzistuese nuk do të funksionojnë më.",
     "description": "Text of confirmation modal when resetting the username link"
   },
   "icu:UsernameLinkModalBody__resetting-link": {
@@ -6881,35 +7085,43 @@
     "description": "Text shown when resetting the username link"
   },
   "icu:UsernameLinkModalBody__error__text": {
-    "messageformat": "Kodi QR dhe lidhja nuk janë vendosur. Kontrollo lidhjen e rrjetit dhe provo sërish.",
+    "messageformat": "Ndodhi një gabim me lidhjen dhe kodin QR; nuk janë më të vlefshëm. Provo ta rivendosësh për të krijuar lidhje dhe kod QR të ri.",
     "description": "Text of the confirmation dialog shown on username link error"
   },
+  "icu:UsernameLinkModalBody__error__fix-now": {
+    "messageformat": "Rregulloje tani",
+    "description": "Text of the button in a confirmation dialog shown on username link error"
+  },
+  "icu:UsernameLinkModalBody__recovered__text": {
+    "messageformat": "Lidhja dhe kodi QR janë rivendosur dhe është krijuar lidhje dhe kod QR i ri.",
+    "description": "Text of the confirmation dialog shown on successful username link recovery"
+  },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "New ways to connect",
+    "messageformat": "Mënyra të reja për t'u lidhur",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number__title": {
-    "messageformat": "Phone number privacy",
+    "messageformat": "Privatësia për numrin e telefonit",
     "description": "Title of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number__body": {
-    "messageformat": "Your phone number is no longer visible in chats. If your number is saved to a friend’s contacts, they will still see it.",
+    "messageformat": "Numri i telefonit nuk shfaqet më te bisedat. Nëse numri është i ruajtur në kontaktet e një shoku, atëherë ai do ta shohë përsëri atë.",
     "description": "Body of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__username__title": {
-    "messageformat": "Usernames",
+    "messageformat": "Emrat e përdoruesve",
     "description": "Title of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__username__body": {
-    "messageformat": "People can now message you using your optional username so you don’t have to give out your phone number. Usernames aren’t visible on your profile.",
+    "messageformat": "Tani njerëzit mund të të dërgojnë mesazhe duke përdorur emrin tënd opsional të përdoruesit që të mos kesh nevojë të japësh numrin e telefonit. Emrat e përdoruesve nuk shfaqen në profil.",
     "description": "Body of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__qr__title": {
-    "messageformat": "QR codes and links",
+    "messageformat": "Kodet QR dhe lidhjet",
     "description": "Title of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__qr__body": {
-    "messageformat": "Usernames have a unique QR code and link you can share with friends to quickly start a chat with you.",
+    "messageformat": "Emrat e përdoruesve kanë kod unik QR dhe lidhje unike për ta ndarë me miqtë që të të shkruajnë sa më shpejt.",
     "description": "Body of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
@@ -6929,27 +7141,27 @@
     "description": "(Deleted 01/16/2023) Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Set up username",
+    "messageformat": "Konfiguro emrin e përdoruesit",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__skip": {
-    "messageformat": "Not now",
+    "messageformat": "Jo tani",
     "description": "Text of the secondary button on username onboarding modal"
   },
   "icu:UsernameMegaphone__title": {
-    "messageformat": "New ways to connect",
+    "messageformat": "Mënyra të reja për t'u lidhur",
     "description": "Title of username megaphone"
   },
   "icu:UsernameMegaphone__body": {
-    "messageformat": "Introducing phone number privacy, optional usernames and links.",
+    "messageformat": "Prezantimi i privatësisë së numrave të telefonit, emrave opsionalë të përdoruesve dhe lidhjeve.",
     "description": "Body of username megaphone"
   },
   "icu:UsernameMegaphone__learn-more": {
-    "messageformat": "Learn more",
+    "messageformat": "Mëso më shumë",
     "description": "Text of the primary button on username megaphone"
   },
   "icu:UsernameMegaphone__dismiss": {
-    "messageformat": "Dismiss",
+    "messageformat": "Kaloje",
     "description": "Text of the secondary button on username megaphone"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -7124,13 +7336,7 @@
     "messageformat": "Rregullme të vogla, riparime të gabimeve dhe përmirësime të mbarëvajtjes.  Faleminderit që përdorni Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.46--0": {
-    "messageformat": "Shkrimet e paracaktuara për gjuhën Urdu janë përditësuar për të përmirësuar lexueshmërinë kur gjuha zgjidhet (Parametrat e Signal > Pamja > Gjuha). Faleminderit, {linkToGithub}!"
-  },
-  "icu:WhatsNew__v6.47--0": {
-    "messageformat": "If you spend a lot of time trying to pick out the perfect emoji reaction for every situation, you'll be <emojify>🎉</emojify> to know that we fixed a bug with typing indicators that sometimes caused the emoji selection box to disappear while you were in the middle of pondering your choices."
-  },
-  "icu:WhatsNew__v6.47--1": {
-    "messageformat": "Signal will now match your selected title bar color on Microsoft Windows. When all of your windows in Windows look the same, that's a common theme."
+  "icu:WhatsNew__v7.1--0": {
+    "messageformat": "This update enables support for all of the new emoji characters in Emoji version 15.1. People keep asking us what our favorite new emoji is, but answering that question is a “lime” we won't cross."
   }
 }

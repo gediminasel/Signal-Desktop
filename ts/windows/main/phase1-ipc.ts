@@ -21,6 +21,7 @@ import type {
   NotificationClickData,
   WindowsNotificationData,
 } from '../../services/notifications';
+import { isAdhocCallingEnabled } from '../../util/isAdhocCallingEnabled';
 
 // It is important to call this as early as possible
 window.i18n = SignalContext.i18n;
@@ -52,6 +53,7 @@ window.getBuildExpiration = () => config.buildExpiration;
 window.getHostName = () => config.hostname;
 window.getServerTrustRoot = () => config.serverTrustRoot;
 window.getServerPublicParams = () => config.serverPublicParams;
+window.getGenericServerPublicParams = () => config.genericServerPublicParams;
 window.getSfuUrl = () => config.sfuUrl;
 window.isBehindProxy = () => Boolean(config.proxyUrl);
 
@@ -78,7 +80,7 @@ const IPC: IPCType = {
   closeAbout: () => ipc.send('close-about'),
   crashReports: {
     getCount: () => ipc.invoke('crash-reports:get-count'),
-    upload: () => ipc.invoke('crash-reports:upload'),
+    writeToLog: () => ipc.invoke('crash-reports:write-to-log'),
     erase: () => ipc.invoke('crash-reports:erase'),
   },
   drawAttention: () => {
@@ -239,6 +241,16 @@ ipc.on('power-channel:lock-screen', () => {
   window.Whisper.events.trigger('powerMonitorLockScreen');
 });
 
+ipc.on(
+  'set-media-playback-disabled',
+  (_event: unknown, playbackDisabled: unknown) => {
+    const { setMediaPlaybackDisabled } = window.Events || {};
+    if (setMediaPlaybackDisabled) {
+      setMediaPlaybackDisabled(Boolean(playbackDisabled));
+    }
+  }
+);
+
 ipc.on('window:set-window-stats', (_event, stats) => {
   if (!window.reduxActions) {
     return;
@@ -319,6 +331,19 @@ ipc.on('start-call-lobby', (_event, { conversationId }) => {
   });
 });
 
+ipc.on('start-call-link', (_event, { key }) => {
+  if (isAdhocCallingEnabled()) {
+    window.reduxActions?.calling?.startCallLinkLobby({
+      rootKey: key,
+    });
+  } else {
+    const { unknownSignalLink } = window.Events;
+    if (unknownSignalLink) {
+      unknownSignalLink();
+    }
+  }
+});
+
 ipc.on('show-window', () => {
   window.IPC.showWindow();
 });
@@ -376,6 +401,19 @@ ipc.on('get-ready-for-shutdown', async () => {
   } catch (error) {
     ipc.send('now-ready-for-shutdown', Errors.toLogFormat(error));
   }
+});
+
+ipc.on('maybe-request-close-confirmation', async () => {
+  const { maybeRequestCloseConfirmation } = window.Events;
+  if (!maybeRequestCloseConfirmation) {
+    ipc.send('received-close-confirmation', true);
+    return;
+  }
+
+  log.info('Requesting close confirmation.');
+  ipc.send('requested-close-confirmation');
+  const result = await maybeRequestCloseConfirmation();
+  ipc.send('received-close-confirmation', result);
 });
 
 ipc.on('show-release-notes', () => {

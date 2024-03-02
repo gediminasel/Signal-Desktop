@@ -1,17 +1,13 @@
 // Copyright 2019 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { isEmpty, mapValues, pick } from 'lodash';
-import type { RefObject } from 'react';
+import { isEmpty, pick } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 
 import type { ReadonlyDeep } from 'type-fest';
 import { mapDispatchToProps } from '../actions';
-import type {
-  ContactSpoofingReviewPropType,
-  WarningType as TimelineWarningType,
-} from '../../components/conversation/Timeline';
+import type { WarningType as TimelineWarningType } from '../../components/conversation/Timeline';
 import { Timeline } from '../../components/conversation/Timeline';
 import type { StateType } from '../reducer';
 import type { ConversationType } from '../ducks/conversations';
@@ -22,30 +18,27 @@ import {
   getConversationByServiceIdSelector,
   getConversationMessagesSelector,
   getConversationSelector,
-  getConversationsByTitleSelector,
   getInvitedContactsForNewlyCreatedGroup,
+  getSafeConversationWithSameTitle,
   getTargetedMessage,
 } from '../selectors/conversations';
 import { selectAudioPlayerActive } from '../selectors/audioPlayer';
 
-import { SmartTimelineItem } from './TimelineItem';
+import { SmartTimelineItem, type SmartTimelineItemProps } from './TimelineItem';
+import { SmartCollidingAvatars } from './CollidingAvatars';
+import type { PropsType as SmartCollidingAvatarsPropsType } from './CollidingAvatars';
 import { SmartContactSpoofingReviewDialog } from './ContactSpoofingReviewDialog';
 import type { PropsType as SmartContactSpoofingReviewDialogPropsType } from './ContactSpoofingReviewDialog';
 import { SmartTypingBubble } from './TypingBubble';
 import { SmartHeroRow } from './HeroRow';
 
-import { getOwn } from '../../util/getOwn';
-import { assertDev } from '../../util/assert';
 import { missingCaseError } from '../../util/missingCaseError';
 import { getGroupMemberships } from '../../util/getGroupMemberships';
 import {
   dehydrateCollisionsWithConversations,
   getCollisionsFromMemberships,
-  invertIdsByTitle,
 } from '../../util/groupMemberNameCollisions';
 import { ContactSpoofingType } from '../../util/contactSpoofing';
-import type { UnreadIndicatorPlacement } from '../../util/timelineUtil';
-import type { WidthBreakpoint } from '../../components/_util';
 import { getPreferredBadgeSelector } from '../selectors/badges';
 import { SmartMiniPlayer } from './MiniPlayer';
 
@@ -62,16 +55,7 @@ function renderItem({
   nextMessageId,
   previousMessageId,
   unreadIndicatorPlacement,
-}: {
-  containerElementRef: RefObject<HTMLElement>;
-  containerWidthBreakpoint: WidthBreakpoint;
-  conversationId: string;
-  isOldestTimelineItem: boolean;
-  messageId: string;
-  nextMessageId: undefined | string;
-  previousMessageId: undefined | string;
-  unreadIndicatorPlacement: undefined | UnreadIndicatorPlacement;
-}): JSX.Element {
+}: SmartTimelineItemProps): JSX.Element {
   return (
     <SmartTimelineItem
       containerElementRef={containerElementRef}
@@ -84,6 +68,12 @@ function renderItem({
       unreadIndicatorPlacement={unreadIndicatorPlacement}
     />
   );
+}
+
+function renderCollidingAvatars(
+  props: SmartCollidingAvatarsPropsType
+): JSX.Element {
+  return <SmartCollidingAvatars {...props} />;
 }
 
 function renderContactSpoofingReviewDialog(
@@ -109,27 +99,14 @@ const getWarning = (
   switch (conversation.type) {
     case 'direct':
       if (!conversation.acceptedMessageRequest && !conversation.isBlocked) {
-        const getConversationsWithTitle =
-          getConversationsByTitleSelector(state);
-        const conversationsWithSameTitle = getConversationsWithTitle(
-          conversation.title
-        );
-        assertDev(
-          conversationsWithSameTitle.length,
-          'Expected at least 1 conversation with the same title (this one)'
-        );
-
-        const safeConversation = conversationsWithSameTitle.find(
-          otherConversation =>
-            otherConversation.acceptedMessageRequest &&
-            otherConversation.type === 'direct' &&
-            otherConversation.id !== conversation.id
-        );
+        const safeConversation = getSafeConversationWithSameTitle(state, {
+          possiblyUnsafeConversation: conversation,
+        });
 
         if (safeConversation) {
           return {
             type: ContactSpoofingType.DirectConversationWithSameTitle,
-            safeConversation,
+            safeConversationId: safeConversation.id,
           };
         }
       }
@@ -162,63 +139,6 @@ const getWarning = (
     }
     default:
       throw missingCaseError(conversation);
-  }
-};
-
-const getContactSpoofingReview = (
-  selectedConversationId: string,
-  state: Readonly<StateType>
-): undefined | ContactSpoofingReviewPropType => {
-  const { contactSpoofingReview } = state.conversations;
-  if (!contactSpoofingReview) {
-    return undefined;
-  }
-
-  const conversationSelector = getConversationSelector(state);
-  const getConversationByServiceId = getConversationByServiceIdSelector(state);
-
-  const currentConversation = conversationSelector(selectedConversationId);
-
-  switch (contactSpoofingReview.type) {
-    case ContactSpoofingType.DirectConversationWithSameTitle:
-      return {
-        type: ContactSpoofingType.DirectConversationWithSameTitle,
-        possiblyUnsafeConversation: currentConversation,
-        safeConversation: conversationSelector(
-          contactSpoofingReview.safeConversationId
-        ),
-      };
-    case ContactSpoofingType.MultipleGroupMembersWithSameTitle: {
-      assertDev(
-        currentConversation.type === 'group',
-        'MultipleGroupMembersWithSameTitle: expects group conversation'
-      );
-      const { memberships } = getGroupMemberships(
-        currentConversation,
-        getConversationByServiceId
-      );
-      const groupNameCollisions = getCollisionsFromMemberships(memberships);
-
-      const previouslyAcknowledgedTitlesById = invertIdsByTitle(
-        currentConversation.acknowledgedGroupNameCollisions
-      );
-
-      const collisionInfoByTitle = mapValues(
-        groupNameCollisions,
-        conversations =>
-          conversations.map(conversation => ({
-            conversation,
-            oldName: getOwn(previouslyAcknowledgedTitlesById, conversation.id),
-          }))
-      );
-
-      return {
-        type: ContactSpoofingType.MultipleGroupMembersWithSameTitle,
-        collisionInfoByTitle,
-      };
-    }
-    default:
-      throw missingCaseError(contactSpoofingReview);
   }
 };
 
@@ -259,13 +179,14 @@ const mapStateToProps = (state: StateType, props: ExternalProps) => {
     shouldShowMiniPlayer,
 
     warning: getWarning(conversation, state),
-    contactSpoofingReview: getContactSpoofingReview(id, state),
+    hasContactSpoofingReview: state.conversations.hasContactSpoofingReview,
 
     getTimestampForMessage,
     getPreferredBadge: getPreferredBadgeSelector(state),
     i18n: getIntl(state),
     theme: getTheme(state),
 
+    renderCollidingAvatars,
     renderContactSpoofingReviewDialog,
     renderHeroRow,
     renderItem,

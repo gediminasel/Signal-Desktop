@@ -38,6 +38,7 @@ import type { ContactNameColorType } from '../../types/Colors';
 import { ContactNameColors } from '../../types/Colors';
 import type { AvatarDataType } from '../../types/Avatar';
 import type { AciString, ServiceIdString } from '../../types/ServiceId';
+import { normalizeServiceId } from '../../types/ServiceId';
 import { isInSystemContacts } from '../../util/isInSystemContacts';
 import { isSignalConnection } from '../../util/getSignalConnections';
 import { sortByTitle } from '../../util/sortByTitle';
@@ -153,11 +154,34 @@ export const getAllSignalConnections = createSelector(
     conversations.filter(isSignalConnection)
 );
 
-export const getConversationsByTitleSelector = createSelector(
+export const getSafeConversationWithSameTitle = createSelector(
   getAllConversations,
-  (conversations): ((title: string) => Array<ConversationType>) =>
-    (title: string) =>
-      conversations.filter(conversation => conversation.title === title)
+  (
+    _state: StateType,
+    {
+      possiblyUnsafeConversation,
+    }: {
+      possiblyUnsafeConversation: ConversationType;
+    }
+  ) => possiblyUnsafeConversation,
+  (conversations, possiblyUnsafeConversation): ConversationType | undefined => {
+    const conversationsWithSameTitle = conversations.filter(conversation => {
+      return conversation.title === possiblyUnsafeConversation.title;
+    });
+    assertDev(
+      conversationsWithSameTitle.length,
+      'Expected at least 1 conversation with the same title (this one)'
+    );
+
+    const safeConversation = conversationsWithSameTitle.find(
+      otherConversation =>
+        otherConversation.acceptedMessageRequest &&
+        otherConversation.type === 'direct' &&
+        otherConversation.id !== possiblyUnsafeConversation.id
+    );
+
+    return safeConversation;
+  }
 );
 
 export const getSelectedConversationId = createSelector(
@@ -447,6 +471,24 @@ export const getComposerConversationSearchTerm = createSelector(
   }
 );
 
+export const getComposerSelectedRegion = createSelector(
+  getComposerState,
+  (composer): string => {
+    if (!composer) {
+      assertDev(false, 'getComposerSelectedRegion: composer is not open');
+      return '';
+    }
+    if (composer.step !== ComposerStep.FindByPhoneNumber) {
+      assertDev(
+        false,
+        'getComposerSelectedRegion: composer does not have a selected region'
+      );
+      return '';
+    }
+    return composer.selectedRegion;
+  }
+);
+
 export const getComposerUUIDFetchState = createSelector(
   getComposerState,
   (composer): UUIDFetchStateType => {
@@ -456,6 +498,8 @@ export const getComposerUUIDFetchState = createSelector(
     }
     if (
       composer.step !== ComposerStep.StartDirectConversation &&
+      composer.step !== ComposerStep.FindByUsername &&
+      composer.step !== ComposerStep.FindByPhoneNumber &&
       composer.step !== ComposerStep.ChooseGroupMembers
     ) {
       assertDev(
@@ -821,7 +865,7 @@ export const getConversationSelector = createSelector(
 
       const onServiceId = getOwn(
         byServiceId,
-        id.toLowerCase ? id.toLowerCase() : id
+        normalizeServiceId(id, 'getConversationSelector')
       );
       if (onServiceId) {
         return selector(onServiceId);
@@ -860,7 +904,7 @@ export const getConversationByServiceIdSelector = createSelector(
       getOwn(conversationsByServiceId, serviceId)
 );
 
-const getCachedConversationMemberColorsSelector = createSelector(
+export const getCachedConversationMemberColorsSelector = createSelector(
   getConversationSelector,
   getUserConversationId,
   (
@@ -914,22 +958,29 @@ export const getContactNameColorSelector = createSelector(
       conversationId: string,
       contactId: string | undefined
     ): ContactNameColorType => {
-      if (!contactId) {
-        log.warn('No color generated for missing contactId');
-        return ContactNameColors[0];
-      }
-
       const contactNameColors =
         conversationMemberColorsSelector(conversationId);
-      const color = contactNameColors.get(contactId);
-      if (!color) {
-        log.warn(`No color generated for contact ${contactId}`);
-        return ContactNameColors[0];
-      }
-      return color;
+      return getContactNameColor(contactNameColors, contactId);
     };
   }
 );
+
+export const getContactNameColor = (
+  contactNameColors: Map<string, string>,
+  contactId: string | undefined
+): string => {
+  if (!contactId) {
+    log.warn('No color generated for missing contactId');
+    return ContactNameColors[0];
+  }
+
+  const color = contactNameColors.get(contactId);
+  if (!color) {
+    log.warn(`No color generated for contact ${contactId}`);
+    return ContactNameColors[0];
+  }
+  return color;
+};
 
 export function _conversationMessagesSelector(
   conversation: ConversationMessageType

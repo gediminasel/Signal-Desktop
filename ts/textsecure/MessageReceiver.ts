@@ -343,9 +343,7 @@ export default class MessageReceiver
       wait: 75,
       maxSize: 30,
       processBatch: (items: Array<CacheAddItemType>) => {
-        // Not returning the promise here because we don't want to stall
-        // the batch.
-        void this.decryptAndCacheBatch(items);
+        return this.decryptAndCacheBatch(items);
       },
     });
     this.cacheRemoveBatcher = createBatcher<string>({
@@ -699,7 +697,7 @@ export default class MessageReceiver
       let it = headers.length;
       // eslint-disable-next-line no-plusplus
       while (--it >= 0) {
-        const match = headers[it].match(/^X-Signal-Timestamp:\s*(\d+)\s*$/);
+        const match = headers[it].match(/^X-Signal-Timestamp:\s*(\d+)\s*$/i);
         if (match && match.length === 2) {
           const timestamp = Number(match[1]);
 
@@ -1150,6 +1148,16 @@ export default class MessageReceiver
       return;
     }
 
+    // Now, queue and process decrypted envelopes. We drop the promise so that the next
+    // decryptAndCacheBatch batch does not have to wait for the decrypted envelopes to be
+    // processed, which can be an asynchronous blocking operation
+    drop(this.queueAllDecryptedEnvelopes(decrypted));
+  }
+
+  // The final step in decryptAndCacheBatch: queue the decrypted envelopes for processing
+  private async queueAllDecryptedEnvelopes(
+    decrypted: Array<Required<DecryptResult>>
+  ): Promise<void> {
     await Promise.all(
       decrypted.map(async ({ envelope, plaintext }) => {
         try {
@@ -2899,10 +2907,12 @@ export default class MessageReceiver
     const { groupId, timestamp, action } = typingMessage;
 
     let groupV2IdString: string | undefined;
-    if (groupId && groupId.byteLength === GROUPV2_ID_LENGTH) {
-      groupV2IdString = Bytes.toBase64(groupId);
-    } else {
-      log.error('handleTypingMessage: Received invalid groupId value');
+    if (groupId?.byteLength) {
+      if (groupId.byteLength === GROUPV2_ID_LENGTH) {
+        groupV2IdString = Bytes.toBase64(groupId);
+      } else {
+        log.error('handleTypingMessage: Received invalid groupId value');
+      }
     }
 
     this.dispatchEvent(
@@ -3004,7 +3014,10 @@ export default class MessageReceiver
         return this.handleSentEditMessage(envelope, sentMessage);
       }
 
-      if (sentMessage.storyMessageRecipients && sentMessage.isRecipientUpdate) {
+      if (
+        sentMessage.storyMessageRecipients?.length &&
+        sentMessage.isRecipientUpdate
+      ) {
         if (getStoriesBlocked()) {
           log.info(
             'MessageReceiver.handleSyncMessage: dropping story recipients update',
@@ -3241,12 +3254,14 @@ export default class MessageReceiver
     const { groupId } = sync;
 
     let groupV2IdString: string | undefined;
-    if (groupId && groupId.byteLength === GROUPV2_ID_LENGTH) {
-      groupV2IdString = Bytes.toBase64(groupId);
-    } else {
-      this.removeFromCache(envelope);
-      log.error('Received message request with invalid groupId');
-      return undefined;
+    if (groupId?.byteLength) {
+      if (groupId.byteLength === GROUPV2_ID_LENGTH) {
+        groupV2IdString = Bytes.toBase64(groupId);
+      } else {
+        this.removeFromCache(envelope);
+        log.error('Received message request with invalid groupId');
+        return undefined;
+      }
     }
 
     const ev = new MessageRequestResponseEvent(

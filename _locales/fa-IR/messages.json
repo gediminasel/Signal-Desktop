@@ -44,6 +44,10 @@
     "messageformat": "«{contact}» به گروه «{group}» افزوده شود؟",
     "description": "Shown in the confirmation dialog body when adding a contact to a group"
   },
+  "icu:AddUserToAnotherGroupModal__search-placeholder": {
+    "messageformat": "جستجو",
+    "description": "Placeholder to use when searching for groups in the AddUserToAnotherGroupModal"
+  },
   "icu:AddUserToAnotherGroupModal__toast--user-added-to-group": {
     "messageformat": "{contact} به {group} اضافه شد.",
     "description": "Shown in toast after a user is added to an existing group"
@@ -331,6 +335,42 @@
   "icu:LeftPane--corrupted-username-link--action-text": {
     "messageformat": "اکنون اصلاح شود",
     "description": "Text of the button in the corrupted username link banner in the left pane"
+  },
+  "icu:LeftPane__compose__findByUsername": {
+    "messageformat": "جستجو با نام کاربری",
+    "description": "Text of the button displayed when clicking compose button in left pane"
+  },
+  "icu:LeftPane__compose__findByPhoneNumber": {
+    "messageformat": "جستجو با شماره تلفن",
+    "description": "Text of the button displayed when clicking compose button in left pane"
+  },
+  "icu:LeftPaneFindByHelper__title--findByUsername": {
+    "messageformat": "جستجو با نام کاربری",
+    "description": "Title of the left pane when looking up someone by username"
+  },
+  "icu:LeftPaneFindByHelper__title--findByPhoneNumber": {
+    "messageformat": "جستجو با شماره تلفن",
+    "description": "Title of the left pane when looking up someone by phone number"
+  },
+  "icu:LeftPaneFindByHelper__placeholder--findByUsername": {
+    "messageformat": "نام کاربری",
+    "description": "Placeholder of the search input in left pane when looking up someone by username"
+  },
+  "icu:LeftPaneFindByHelper__placeholder--findByPhoneNumber": {
+    "messageformat": "شماره تلفن",
+    "description": "Placeholder of the search input in left pane when looking up someone by phone number"
+  },
+  "icu:LeftPaneFindByHelper__description--findByUsername": {
+    "messageformat": "یک نام کاربری و سپس یک نقطه و مجموعۀ اعداد آن را وارد کنید.",
+    "description": "Description displayed under search input in left pane when looking up someone by username"
+  },
+  "icu:CountryCodeSelect__placeholder": {
+    "messageformat": "کد کشور",
+    "description": "Placeholder displayed as default value of country code select element"
+  },
+  "icu:CountryCodeSelect__Modal__title": {
+    "messageformat": "کد کشور",
+    "description": "Title of the country code modal"
   },
   "icu:NavTabsToggle__showTabs": {
     "messageformat": "نمایش زبانه‌ها",
@@ -1351,6 +1391,38 @@
   "icu:showSafetyNumber": {
     "messageformat": "دیدن شماره ایمنی"
   },
+  "icu:AboutContactModal__title": {
+    "messageformat": "درباره",
+    "description": "Title of About modal"
+  },
+  "icu:AboutContactModal__title--myself": {
+    "messageformat": "شما",
+    "description": "Title of About modal when viewing your own information"
+  },
+  "icu:AboutContactModal__verified": {
+    "messageformat": "تایید شده",
+    "description": "Text of a button on About modal leading to a safety number modal"
+  },
+  "icu:AboutContactModal__blocked": {
+    "messageformat": "{name} مسدود شده است",
+    "description": "Text of a row on About modal when user is blocked"
+  },
+  "icu:AboutContactModal__message-request": {
+    "messageformat": "درخواست پیام در حال انتظار",
+    "description": "Text of a row on About modal when user is in message request state"
+  },
+  "icu:AboutContactModal__no-dms": {
+    "messageformat": "پیام مستقیمی با {name} وجود ندارد",
+    "description": "Text of a row on About modal when there are no direct messages with a user"
+  },
+  "icu:AboutContactModal__signal-connection": {
+    "messageformat": "آشنا در سیگنال",
+    "description": "Text of a button on About modal leading to an education modal"
+  },
+  "icu:AboutContactModal__system-contact": {
+    "messageformat": "‏{name} در مخاطبان سیستم شما است",
+    "description": "Text of a row in the About modal describing that the contact is in system contacts"
+  },
   "icu:ContactModal__showSafetyNumber": {
     "messageformat": "دیدن شماره ایمنی",
     "description": "Contact modal, label for button to show safety number modal"
@@ -1626,6 +1698,10 @@
     "messageformat": "کامپیوتر من",
     "description": "The placeholder for the 'choose device name' input"
   },
+  "icu:Preferences--phone-number": {
+    "messageformat": "شماره تلفن",
+    "description": "The label in settings panel shown for the phone number associated with user's account"
+  },
   "icu:Preferences--device-name": {
     "messageformat": "نام دستگاه",
     "description": "The label in settings panel shown for the user-provided name for this desktop instance"
@@ -1700,6 +1776,54 @@
   "icu:calling__call-is-full": {
     "messageformat": "ظرفیت تماس تکمیل است",
     "description": "Text in the call lobby when you can't join because the call is full"
+  },
+  "icu:calling__cant-join": {
+    "messageformat": "Can't join call",
+    "description": "Modal dialog title when you can't join a call"
+  },
+  "icu:calling__dialog-already-in-call": {
+    "messageformat": "You are already in a call.",
+    "description": "Error message when clicking a call link to join a call, but you're in a call already."
+  },
+  "icu:calling__call-link-connection-issues": {
+    "messageformat": "Could not fetch call link information. Please check your network connection and try again.",
+    "description": "Error message when unable to fetch call link info from server."
+  },
+  "icu:calling__call-link-copied": {
+    "messageformat": "Call link copied.",
+    "description": "Toast shown when a call link is copied to the clipboard."
+  },
+  "icu:calling__call-link-no-longer-valid": {
+    "messageformat": "This call link is no longer valid.",
+    "description": "Error message when a call link has been revoked or expires."
+  },
+  "icu:calling__call-link-default-title": {
+    "messageformat": "Signal Call",
+    "description": "Default title for Signal call links."
+  },
+  "icu:calling__join-request-denied": {
+    "messageformat": "Your request to join this call has been denied.",
+    "description": "Error message when a request to join a call link call was rejected by a call admin."
+  },
+  "icu:calling__join-request-denied-title": {
+    "messageformat": "Join request denied",
+    "description": "Title of error when a request to join a call link call was rejected by a call admin."
+  },
+  "icu:calling__removed-from-call": {
+    "messageformat": "Someone has removed you from the call.",
+    "description": "Error message when in a call then a call admin removes you."
+  },
+  "icu:calling__removed-from-call-title": {
+    "messageformat": "Removed from call",
+    "description": "Title of error when in a call then a call admin removes you."
+  },
+  "icu:CallingLobby__CallLinkNotice": {
+    "messageformat": "Anyone who joins this call via the link will see your name and photo.",
+    "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared."
+  },
+  "icu:CallingLobby__CallLinkNotice--phone-sharing": {
+    "messageformat": "Anyone who joins this call via the link will see your name, photo, and phone number.",
+    "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared, when the phone number sharing account setting is enabled."
   },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "پیوستن",
@@ -2244,11 +2368,11 @@
     "description": "Description for incoming calls setting"
   },
   "icu:contactChangedProfileName": {
-    "messageformat": "{sender} نام پروفایل خود را از {oldProfile}  به {newProfile} تغییر داد.",
+    "messageformat": "{sender} نام نمایه خود را از {oldProfile} به {newProfile} تغییر داد.",
     "description": "Description for incoming calls setting"
   },
   "icu:changedProfileName": {
-    "messageformat": "{oldProfile}نام پروفایل خود را  به {newProfile} تغییر داد.",
+    "messageformat": "{oldProfile} نام نمایه خود را به {newProfile} تغییر داد.",
     "description": "Shown when a contact not in your address book changes their profile name"
   },
   "icu:SafetyNumberModal__title": {
@@ -2328,7 +2452,7 @@
     "description": "Label for header to go to stories view"
   },
   "icu:contactSearchPlaceholder": {
-    "messageformat": "جستجو از طریق نام یا شماره تلفن",
+    "messageformat": "نام ، نام کاربری، یا شماره",
     "description": "Placeholder to use when searching for contacts in the composer"
   },
   "icu:noContactsFound": {
@@ -2368,7 +2492,7 @@
     "description": "Error message when you try to send an edit after message becomes too old"
   },
   "icu:startConversation--username-not-found": {
-    "messageformat": "کاربر یافت نشد. ‌{atUsername}کاربر سیگنال نیست. مطمئن شوید که نام کاربری را کامل وارد کرده اید.",
+    "messageformat": "‏{atUsername} کاربر سیگنال نیست. مطمئن شوید که نام کاربری را کامل وارد کرده‌اید.",
     "description": "Shown in dialog if username is not found. Note that 'username' will be the output of at-username"
   },
   "icu:startConversation--phone-number-not-found": {
@@ -2452,7 +2576,7 @@
     "description": "Label underneath number informing user that SMS is not supported on desktop"
   },
   "icu:newPhoneNumber": {
-    "messageformat": "Enter a phone number to add a contact.",
+    "messageformat": "برای افزودن مخاطب، شماره تلفن اضافه کنید.",
     "description": "Placeholder for adding a new number to a contact"
   },
   "icu:invalidNumberError": {
@@ -2615,6 +2739,10 @@
   "icu:message--attachmentTooBig--multiple": {
     "messageformat": "برخی فایل‌های پیوست برای نمایش خیلی بزرگ هستند.",
     "description": "Shown in a message bubble if any attachments are left on message when too-large attachments are dropped"
+  },
+  "icu:message--call-link-description": {
+    "messageformat": "Use this link to join a Signal call",
+    "description": "Shown in message previews for Signal call links."
   },
   "icu:donation--missing": {
     "messageformat": "دریافت جزئیات کمک مالی امکان‌پذیر نیست",
@@ -3588,6 +3716,14 @@
     "messageformat": "تماس صوتی",
     "description": "Shown in the call lobby for a direct 1:1 call when the caller's video is disabled, to specify that an audio call will be placed when clicking the Start button."
   },
+  "icu:CallControls__InfoDisplay--adhoc-call": {
+    "messageformat": "Call link",
+    "description": "Shown in the call lobby for a call link."
+  },
+  "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
+    "messageformat": "Waiting to be let in",
+    "description": "Shown in the call lobby for call link calls when requesting to join a call which requires admin approval."
+  },
   "icu:CallControls__JoinLeaveButton--hangup-1-1": {
     "messageformat": "قطع",
     "description": "Title for the hangup button for a direct 1:1 call with only 2 participants."
@@ -3727,6 +3863,10 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "یک پنجره",
     "description": "Title for the select your screen sharing sources modal"
+  },
+  "icu:CallingAdhocCallInfo__CopyLink": {
+    "messageformat": "Copy link",
+    "description": "Menu item in the in-call info popup for call link calls. The action is to add the call link to the clipboard."
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "ویدئو",
@@ -5189,7 +5329,7 @@
     "description": "Title for the contact name spoofing review dialog in groups"
   },
   "icu:ContactSpoofingReviewDialog__group__description": {
-    "messageformat": "{count, plural, one {{count,number} عضو گروه نام‌های مشابهی دارند. اعضای زیر را مرور کنید یا اقدام لازم را انجام دهید.} other {{count,number} عضو گروه نام‌های مشابهی دارند. اعضای زیر را مرور کنید یا اقدام لازم را انجام دهید.}}",
+    "messageformat": "{count, plural, one {{count,number} عضو گروه نام یکسان دارند، عضو را در پایین مرور کنید یا اقدام لازم را انجام دهید.} other {{count,number} عضو گروه نام‌های یکسان دارند، اعضا را در پایین مرور کنید یا اقدام لازم را انجام دهید.}}",
     "description": "Description for the group contact spoofing review dialog"
   },
   "icu:ContactSpoofingReviewDialog__group__multiple-conflicts__description": {
@@ -5198,10 +5338,18 @@
   },
   "icu:ContactSpoofingReviewDialog__group__members-header": {
     "messageformat": "اعضا",
-    "description": "Header in the group contact spoofing review dialog. After this header, there will be a list of members"
+    "description": "(Deleted 01/31/2024) Header in the group contact spoofing review dialog. After this header, there will be a list of members"
+  },
+  "icu:ContactSpoofingReviewDialog__group__members__no-shared-groups": {
+    "messageformat": "گروه مشترک دیگری وجود ندارد",
+    "description": "Informational text displayed next to a contact on ContactSpoofingReviewDialog"
+  },
+  "icu:ContactSpoofingReviewDialog__signal-connection": {
+    "messageformat": "آشنا در سیگنال",
+    "description": "Text of a button on ContactSpoofingReviewDialog leading to an education modal"
   },
   "icu:ContactSpoofingReviewDialog__group__name-change-info": {
-    "messageformat": "به تازگی نام پروفایل خود را از {oldName} به {newName} تغییر دادند",
+    "messageformat": "به‌تازگی نام نمایه خود را از {oldName} به {newName} تغییر داد",
     "description": "In the group contact spoofing review dialog, this text is shown when someone has changed their name recently"
   },
   "icu:RemoveGroupMemberConfirmation__remove-button": {
@@ -5493,15 +5641,19 @@
     "description": "Default text for username field"
   },
   "icu:ProfileEditor--username--corrupted--body": {
-    "messageformat": "خطایی در مورد نام کاربری شما رخ داد، این نام دیگر به حساب شما تعلق ندارد.",
+    "messageformat": "خطایی در مورد نام کاربری شما رخ داد، این نام دیگر به حساب شما تعلق ندارد. می‌توانید سعی کنید و دوباره آن را برگزینید یا نام کاربری جدیدی انتخاب کنید.",
     "description": "Text of confirmation modal when the username gets corrupted"
   },
   "icu:ProfileEditor--username--corrupted--delete-button": {
     "messageformat": "پاک کردن نام کاربری",
-    "description": "Button text for deletion of the username in case of corruption"
+    "description": "(Deleted 02/01/2024) Button text for deletion of the username in case of corruption"
   },
   "icu:ProfileEditor--username--corrupted--create-button": {
     "messageformat": "ایجاد نام کاربری",
+    "description": "(Deleted 02/01/2024) Button text for creation of a new username in case of corruption"
+  },
+  "icu:ProfileEditor--username--corrupted--fix-button": {
+    "messageformat": "اکنون اصلاح شود",
     "description": "Button text for creation of a new username in case of corruption"
   },
   "icu:ProfileEditor__username-link": {
@@ -5529,19 +5681,19 @@
     "description": "Title text for username modal"
   },
   "icu:ProfileEditor--username--check-characters": {
-    "messageformat": "نام کاربری فقط میتواند شامل حروف، 0-9 و _ باشد",
+    "messageformat": "نام کاربری فقط می‌تواند شامل حروفA تا Z، اعداد ۰ تا ۹ و _ باشد",
     "description": "Shown if user has attempted to use forbidden characters in username"
   },
   "icu:ProfileEditor--username--check-starting-character": {
-    "messageformat": "نام های کاربری نمی توانند با یک عدد آغاز شوند.",
+    "messageformat": "نام‌های کاربری نمی‌توانند با یک عدد آغاز شوند.",
     "description": "Shown if user has attempted to begin their username with a number"
   },
   "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "نام کاربری حتما باید دارای حداقل {min,number}کاراکتر باشد",
+    "messageformat": "نام کاربری حتما باید حداقل {min,number} نویسه داشته باشد.",
     "description": "Shown if user has attempted to enter a username with too few characters - currently min is 3"
   },
   "icu:ProfileEditor--username--check-character-max": {
-    "messageformat": "نام کاربری حتما باید دارای حداکثر {max,number}کاراکتر باشد",
+    "messageformat": "نام کاربری حتما باید حداکثر {max,number} نویسه داشته باشد.",
     "description": "Shown if user has attempted to enter a username with too many characters - currently min is 25"
   },
   "icu:ProfileEditor--username--check-discriminator-min": {
@@ -5553,8 +5705,12 @@
     "description": "Shown if user has attempted to enter a username with 00 as discriminator"
   },
   "icu:ProfileEditor--username--check-discriminator-leading-zero": {
-    "messageformat": "این عدد نمی‌تواند با ۰۰ شروع شود. رقمی بین ۱ تا ۹ انتخاب کنید",
+    "messageformat": "اعداد دارای بیش از ۲ رقم نمی‌توانند با ۰ شروع شوند",
     "description": "Shown if user has attempted to enter a username with leading 0 in discriminator"
+  },
+  "icu:ProfileEditor--username--too-many-attempts": {
+    "messageformat": "تعداد تلاش‌های ناموفق بیش از حد مجاز بود؛ لطفاً بعداً دوباره امتحان کنید",
+    "description": "Shown if user has made too many attempts to pick a username and has to wait before retrying"
   },
   "icu:ProfileEditor--username--unavailable": {
     "messageformat": "این نام کاربری در دسترس نیست",
@@ -5585,7 +5741,7 @@
     "description": "Shown when username link is copied to clipboard."
   },
   "icu:ProfileEditor--username--deleting-username": {
-    "messageformat": "در حال حذف نام کاربری",
+    "messageformat": "در حال پاک کردن نام کاربری",
     "description": "Shown as aria label for spinner icon next to username"
   },
   "icu:ProfileEditor--username--delete-username": {
@@ -5599,6 +5755,10 @@
   "icu:ProfileEditor--username--confirm-delete-button": {
     "messageformat": "پاک کردن",
     "description": "Shown in dialog button if user has saved an empty string to delete their username"
+  },
+  "icu:ProfileEditor--username--delete-unavailable-notice": {
+    "messageformat": "برای پاک کردن نام کاربری خود، سیگنال را در تلفن‌تان باز کنید و به «تنظیمات > نمایه» بروید.",
+    "description": "Shown in dialog body if user is trying to delete username, but it is only supported on mobile"
   },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "کپی یا پاک کردن نام کاربری",
@@ -5632,9 +5792,33 @@
     "messageformat": "آیا می‌خواهید این تغییرات را دور بیاندازید؟",
     "description": "ConfirmationDialog text for discarding changes"
   },
+  "icu:ConfirmationDialog__Title--in-call-close-requested": {
+    "messageformat": "Close Signal and end the call?",
+    "description": "ConfirmationDialog title when trying to close the app while in a call."
+  },
+  "icu:ConfirmationDialog__Title--close-requested-not-now": {
+    "messageformat": "Not Now",
+    "description": "Confirmation dialog button to cancel closing the app, while in a call and trying to close the app."
+  },
+  "icu:ProfileEditor--edit-photo": {
+    "messageformat": "ویرایش عکس",
+    "description": "Text of a button on profile editor that leads to the avatar editor"
+  },
   "icu:ProfileEditor--info--link": {
     "messageformat": "نمایه شما رمزگذاری شده است. نمایه شما و تغییرات آن برای مخاطبان‌تان و وقتی گفتگوهای جدیدی را شروع می‌کنید یا می‌پذیرید، قابل مشاهده خواهد بود. <learnMoreLink>اطلاعات بیشتر</learnMoreLink>",
-    "description": "Information shown at the bottom of the profile editor section"
+    "description": "(Deleted 02/01/2024) Information shown at the bottom of the profile editor section"
+  },
+  "icu:ProfileEditor--info--general": {
+    "messageformat": "نمایۀ شما و تغییرات آن برای کسانی که به آن‌ها پیام می‌دهید، مخاطبان‌تان و گروه‌ها قابل مشاهده خواهد بود.",
+    "description": "Information shown in profile editor below profile name and about fields"
+  },
+  "icu:ProfileEditor--info--pnp": {
+    "messageformat": "نام کاربری، پیوند و کد QR شما در نمایه‌تان قابل مشاهده نیست. آن‌ها را فقط با کسانی به اشتراک بگذارید که به آن‌ها اعتماد دارید.",
+    "description": "Information shown in profile editor below pnp settings when username is set"
+  },
+  "icu:ProfileEditor--info--pnp--no-username": {
+    "messageformat": "اکنون افراد می‌توانند با استفاده از نام کاربری اختیاری‌تان به شما پیام بدهند، پس دیگر لازم نیست شماره تلفن خود را به کسی بدهید.",
+    "description": "Information shown in profile editor below pnp settings when no username is set"
   },
   "icu:Bio--speak-freely": {
     "messageformat": "آزادانه صحبت کنید",
@@ -5792,6 +5976,10 @@
     "messageformat": "انتخاب کنید که چه‌کسی بتواند شماره تلفن شما را ببیند و از طریق شماره تلفن‌تان در سیگنال با شما تماس بگیرد.",
     "description": "Body of Phone Number row in Privacy section of Preferences window"
   },
+  "icu:Preferences__pnp__row--button": {
+    "messageformat": "تغییر…",
+    "description": "Text of Phone Number row button in Privacy section of Preferences window"
+  },
   "icu:Preferences__pnp__sharing--title": {
     "messageformat": "چه‌کسی می‌تواند شماره من را ببیند",
     "description": "Title for the phone number sharing setting row"
@@ -5801,8 +5989,12 @@
     "description": "Description for the phone number sharing setting row when the value is Everyone"
   },
   "icu:Preferences__pnp__sharing--description--nobody": {
-    "messageformat": "هیچ‌کسی قادر به مشاهدۀ شماره تلفن شما در سیگنال نیست، حتی وقتی به آن‌ها پیام دهید.",
-    "description": "Description for the phone number sharing setting row when the value is Nobody"
+    "messageformat": "شماره تلفن شما برای هیچ‌کس قابل مشاهده نیست، به‌جز کسانی که شما را در مخاطبان تلفن خود ذخیره کرده‌اند.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody and phone number discoverability setting is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody--not-discoverable": {
+    "messageformat": "شماره تلفن شما برای هیچ‌کس قابل مشاهده نیست.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody and phone number discoverability setting is Nobody"
   },
   "icu:Preferences__pnp--page-title": {
     "messageformat": "شماره تلفن",
@@ -5841,11 +6033,11 @@
     "description": "Title for the messaging settings"
   },
   "icu:Preferences--see-me": {
-    "messageformat": "دیدن شماره‌تلفن من",
+    "messageformat": "دیدن شماره تلفن من",
     "description": "Label for the see my phone number setting"
   },
   "icu:Preferences--find-me": {
-    "messageformat": "پیدا کردن من با شماره‌تلفن",
+    "messageformat": "پیدا کردن من با شماره تلفن",
     "description": "Label for the find me by my phone number setting"
   },
   "icu:Preferences--read-receipts": {
@@ -6213,7 +6405,7 @@
     "description": "A way that signal connection is formed"
   },
   "icu:SignalConnectionsModal__bullet--3": {
-    "messageformat": "بودن آن‌ها در مخاطبین سیستم شما",
+    "messageformat": "بودن آن‌ها در مخاطبان سیستم شما",
     "description": "A way that signal connection is formed"
   },
   "icu:SignalConnectionsModal__footer": {
@@ -6788,6 +6980,10 @@
     "messageformat": "به استوری {name} واکنش نشان داد",
     "description": "Label for when a person reacts to a story"
   },
+  "icu:Quote__story-reaction--you": {
+    "messageformat": "Reacted to your story",
+    "description": "Label for when someone reacts to your story"
+  },
   "icu:Quote__story-reaction--single": {
     "messageformat": "به یک استوری واکنش نشان داد",
     "description": "Used whenever we can't find a user's first name"
@@ -6817,7 +7013,7 @@
     "description": "Placeholder for the username field"
   },
   "icu:EditUsernameModalBody__username-helper": {
-    "messageformat": "نام کاربری به دیگران اجازه می‌دهد بدون نیاز به شماره تلفن‌تان به شما پیام بدهند. نام کاربری با مجموعه‌ای از ارقام ادغام می‌شود تا کمک کند نشانی شما خصوصی بماند.",
+    "messageformat": "نام کاربری همیشه با مجموعه‌ای از اعداد همراه است.",
     "description": "Shown on the edit username screen"
   },
   "icu:EditUsernameModalBody__learn-more": {
@@ -6840,8 +7036,16 @@
     "messageformat": "ادامه",
     "description": "Text of the primary button on username change confirmation modal"
   },
+  "icu:EditUsernameModalBody__recover-confirmation": {
+    "messageformat": "بازیابی نام کاربری‌تان موجب بازنشانی پیوند و کد QR فعلی شما می‌شود. مطمئن هستید؟",
+    "description": "Body of the confirmation dialog displayed when user is about to recover their username"
+  },
+  "icu:EditUsernameModalBody__username-recovered__text": {
+    "messageformat": "پیوند و کد QR شما بازنشانی شده و نام کاربری شما {username} است",
+    "description": "Text of toast displayed upon successful recovery of username"
+  },
   "icu:UsernameLinkModalBody__hint": {
-    "messageformat": "Scan this QR code with your phone to chat with me on Signal.",
+    "messageformat": "برای گفتگو با من در سیگنال، این کد QR را با تلفن خود اسکن کنید.",
     "descrption": "Text of the hint displayed below generated QR code on the printable image."
   },
   "icu:UsernameLinkModalBody__save": {
@@ -6873,7 +7077,7 @@
     "description": "ARIA label of button for selecting username link color"
   },
   "icu:UsernameLinkModalBody__reset__confirm": {
-    "messageformat": "اگر کد QR خود را بازنشانی کنید، کد و پیوند QR فعلی دیگر کار نخواهد کرد.",
+    "messageformat": "اگر پیوند و کد QR خود را بازنشانی کنید، پیوند و کد QR فعلی‌تان دیگر کار نخواهد کرد.",
     "description": "Text of confirmation modal when resetting the username link"
   },
   "icu:UsernameLinkModalBody__resetting-link": {
@@ -6881,35 +7085,43 @@
     "description": "Text shown when resetting the username link"
   },
   "icu:UsernameLinkModalBody__error__text": {
-    "messageformat": "پیوند و کد QR تنظیم نشده است. اتصال شبکه خود را بررسی کنید و دوباره امتحان کنید.",
+    "messageformat": "خطایی در پیوند و کد QR شما رخ داد و دیگر معتبر نیستند. برای ایجاد پیوند و کد QR جدید، آن را بازنشانی کنید.",
     "description": "Text of the confirmation dialog shown on username link error"
   },
+  "icu:UsernameLinkModalBody__error__fix-now": {
+    "messageformat": "اکنون اصلاح شود",
+    "description": "Text of the button in a confirmation dialog shown on username link error"
+  },
+  "icu:UsernameLinkModalBody__recovered__text": {
+    "messageformat": "پیوند و کد QR شما بازنشانی شده و پیوند و کد QR جدیدتان ایجاد شده است.",
+    "description": "Text of the confirmation dialog shown on successful username link recovery"
+  },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "New ways to connect",
+    "messageformat": "روش‌های جدید برقراری ارتباط",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number__title": {
-    "messageformat": "Phone number privacy",
+    "messageformat": "حریم شخصی شماره تلفن",
     "description": "Title of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number__body": {
-    "messageformat": "Your phone number is no longer visible in chats. If your number is saved to a friend’s contacts, they will still see it.",
+    "messageformat": "شماره تلفن شما دیگر در گفتگوها قابل مشاهده نیست. اگر شمارۀ شما در مخاطبان دوستتان ذخیره شده باشد، همچنان قادر به دیدنش خواهند بود.",
     "description": "Body of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__username__title": {
-    "messageformat": "Usernames",
+    "messageformat": "نام‌های کاربری",
     "description": "Title of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__username__body": {
-    "messageformat": "People can now message you using your optional username so you don’t have to give out your phone number. Usernames aren’t visible on your profile.",
+    "messageformat": "اکنون افراد می‌توانند با استفاده از نام کاربری اختیاری‌تان به شما پیام بدهند، پس دیگر لازم نیست شماره تلفن خود را به کسی بدهید. نام کاربری در نمایه‌تان قابل مشاهده نیست.",
     "description": "Body of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__qr__title": {
-    "messageformat": "QR codes and links",
+    "messageformat": "پیوندها و کدهای QR",
     "description": "Title of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__qr__body": {
-    "messageformat": "Usernames have a unique QR code and link you can share with friends to quickly start a chat with you.",
+    "messageformat": "هر نام کاربری یک کد QR و پیوندی منحصربه‌فرد دارد که می‌توانید با دوستانتان به اشتراک بگذارید تا از آن برای شروع سریع گفتگو با شما استفاده کنند.",
     "description": "Body of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
@@ -6929,27 +7141,27 @@
     "description": "(Deleted 01/16/2023) Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Set up username",
+    "messageformat": "راه‌اندازی نام کاربری",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__skip": {
-    "messageformat": "Not now",
+    "messageformat": "حالا نه",
     "description": "Text of the secondary button on username onboarding modal"
   },
   "icu:UsernameMegaphone__title": {
-    "messageformat": "New ways to connect",
+    "messageformat": "روش‌های جدید برقراری ارتباط",
     "description": "Title of username megaphone"
   },
   "icu:UsernameMegaphone__body": {
-    "messageformat": "Introducing phone number privacy, optional usernames and links.",
+    "messageformat": "معرفی حریم شخصی شماره تلفن، نام کاربری انتخابی و پیوندها.",
     "description": "Body of username megaphone"
   },
   "icu:UsernameMegaphone__learn-more": {
-    "messageformat": "Learn more",
+    "messageformat": "بیشتر بدانید",
     "description": "Text of the primary button on username megaphone"
   },
   "icu:UsernameMegaphone__dismiss": {
-    "messageformat": "Dismiss",
+    "messageformat": "رد کردن",
     "description": "Text of the secondary button on username megaphone"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -7124,13 +7336,7 @@
     "messageformat": "تغییرات کوچک، رفع اشکالات و بهبود عملکرد. بابت استفاده از سیگنال سپاسگزاریم!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.46--0": {
-    "messageformat": "قلم پیش‌فرض برای اردو به‌روزرسانی شده تا وقتی این زبان انتخاب می‌شود (تنظیمات سیگنال > نمای ظاهری > زبان)، خوانش آن راحت‌تر باشد. با سپاس از {linkToGithub}!"
-  },
-  "icu:WhatsNew__v6.47--0": {
-    "messageformat": "If you spend a lot of time trying to pick out the perfect emoji reaction for every situation, you'll be <emojify>🎉</emojify> to know that we fixed a bug with typing indicators that sometimes caused the emoji selection box to disappear while you were in the middle of pondering your choices."
-  },
-  "icu:WhatsNew__v6.47--1": {
-    "messageformat": "Signal will now match your selected title bar color on Microsoft Windows. When all of your windows in Windows look the same, that's a common theme."
+  "icu:WhatsNew__v7.1--0": {
+    "messageformat": "This update enables support for all of the new emoji characters in Emoji version 15.1. People keep asking us what our favorite new emoji is, but answering that question is a “lime” we won't cross."
   }
 }

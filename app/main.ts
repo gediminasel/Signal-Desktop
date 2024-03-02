@@ -29,16 +29,14 @@ import {
   systemPreferences,
   Notification,
 } from 'electron';
-import type {
-  MenuItemConstructorOptions,
-  LoginItemSettingsOptions,
-} from 'electron';
+import type { MenuItemConstructorOptions, Settings } from 'electron';
 import { z } from 'zod';
 
 import packageJson from '../package.json';
 import * as GlobalErrors from './global_errors';
 import { setup as setupCrashReports } from './crashReports';
 import { setup as setupSpellChecker } from './spell_check';
+import { getDNSFallback } from './dns-fallback';
 import { redactAll, addSensitivePath } from '../ts/util/privacy';
 import { createSupportUrl } from '../ts/util/createSupportUrl';
 import { missingCaseError } from '../ts/util/missingCaseError';
@@ -55,7 +53,6 @@ import { explodePromise } from '../ts/util/explodePromise';
 
 import './startup_config';
 
-import type { ConfigType } from './config';
 import type { RendererConfigType } from '../ts/types/RendererConfig';
 import {
   directoryConfigSchema,
@@ -115,6 +112,7 @@ import { HourCyclePreference } from '../ts/types/I18N';
 import { DBVersionFromFutureError } from '../ts/sql/migrations';
 import type { ParsedSignalRoute } from '../ts/util/signalRoutes';
 import { parseSignalRoute } from '../ts/util/signalRoutes';
+import * as dns from '../ts/util/dns';
 import { ZoomFactorService } from '../ts/services/ZoomFactorService';
 
 const STICKER_CREATOR_PARTITION = 'sticker-creator';
@@ -211,7 +209,7 @@ const FORCE_ENABLE_CRASH_REPORTS = process.argv.some(
 
 const CLI_LANG = cliOptions.lang as string | undefined;
 
-setupCrashReports(getLogger, FORCE_ENABLE_CRASH_REPORTS);
+setupCrashReports(getLogger, showDebugLogWindow, FORCE_ENABLE_CRASH_REPORTS);
 
 let sendDummyKeystroke: undefined | (() => void);
 if (OS.isWindows()) {
@@ -832,6 +830,12 @@ async function createWindow() {
   // App dock icon bounce
   bounce.init(mainWindow);
 
+  mainWindow.on('hide', () => {
+    if (mainWindow && !windowState.shouldQuit()) {
+      mainWindow.webContents.send('set-media-playback-disabled', true);
+    }
+  });
+
   // Emitted when the window is about to be closed.
   // Note: We do most of our shutdown logic here because all windows are closed by
   //   Electron before the app quits.
@@ -855,6 +859,22 @@ async function createWindow() {
 
     // Prevent the shutdown
     e.preventDefault();
+
+    // In certain cases such as during an active call, we ask the user to confirm close
+    // which includes shutdown, clicking X on MacOS or closing to tray.
+    let shouldClose = true;
+    try {
+      shouldClose = await maybeRequestCloseConfirmation();
+    } catch (error) {
+      getLogger().warn(
+        'Error while requesting close confirmation.',
+        Errors.toLogFormat(error)
+      );
+    }
+    if (!shouldClose) {
+      updater.onRestartCancelled();
+      return;
+    }
 
     /**
      * if the user is in fullscreen mode and closes the window, not the
@@ -937,6 +957,12 @@ async function createWindow() {
     }
   });
 
+  mainWindow.on('show', () => {
+    if (mainWindow) {
+      mainWindow.webContents.send('set-media-playback-disabled', false);
+    }
+  });
+
   mainWindow.once('ready-to-show', async () => {
     getLogger().info('main window is ready-to-show');
 
@@ -960,7 +986,7 @@ async function createWindow() {
 
   await safeLoadURL(
     mainWindow,
-    getEnvironment() === Environment.Test
+    process.env.TEST_ELECTRON_SCRIPT != null
       ? await prepareFileUrl([__dirname, '../test/index.html'])
       : await prepareFileUrl([__dirname, '../background.html'])
   );
@@ -1668,7 +1694,7 @@ function loadPreferredSystemLocales(): Array<string> {
   return app.getPreferredSystemLanguages();
 }
 
-async function getDefaultLoginItemSettings(): Promise<LoginItemSettingsOptions> {
+async function getDefaultLoginItemSettings(): Promise<Settings> {
   if (!OS.isWindows()) {
     return {};
   }
@@ -1709,6 +1735,8 @@ if (DISABLE_GPU) {
 // Some APIs can only be used after this event occurs.
 let ready = false;
 app.on('ready', async () => {
+  dns.setFallback(await getDNSFallback());
+
   const [userDataPath, crashDumpsPath, installPath] = await Promise.all([
     realpath(app.getPath('userData')),
     realpath(app.getPath('crashDumps')),
@@ -2045,6 +2073,59 @@ function setupMenu(options?: Partial<CreateTemplateOptionsType>) {
   });
 }
 
+async function maybeRequestCloseConfirmation(): Promise<boolean> {
+  if (!mainWindow || !mainWindow.webContents) {
+    return true;
+  }
+
+  getLogger().info(
+    'maybeRequestCloseConfirmation: Checking to see if close confirmation is needed'
+  );
+  const request = new Promise<boolean>(resolveFn => {
+    let timeout: NodeJS.Timeout | undefined;
+
+    if (!mainWindow) {
+      resolveFn(true);
+      return;
+    }
+
+    ipc.once('received-close-confirmation', (_event, result) => {
+      getLogger().info('maybeRequestCloseConfirmation: Response received');
+
+      clearTimeoutIfNecessary(timeout);
+      resolveFn(result);
+    });
+
+    ipc.once('requested-close-confirmation', () => {
+      getLogger().info(
+        'maybeRequestCloseConfirmation: Confirmation dialog shown, waiting for user.'
+      );
+      clearTimeoutIfNecessary(timeout);
+    });
+
+    mainWindow.webContents.send('maybe-request-close-confirmation');
+
+    // Wait a short time then proceed. Normally the dialog should be
+    // shown right away.
+    timeout = setTimeout(() => {
+      getLogger().error(
+        'maybeRequestCloseConfirmation: Response never received; continuing with close.'
+      );
+      resolveFn(true);
+    }, 10 * 1000);
+  });
+
+  try {
+    return await request;
+  } catch (error) {
+    getLogger().error(
+      'maybeRequestCloseConfirmation error:',
+      Errors.toLogFormat(error)
+    );
+    return true;
+  }
+}
+
 async function requestShutdown() {
   if (!mainWindow || !mainWindow.webContents) {
     return;
@@ -2371,15 +2452,17 @@ ipc.on('get-config', async event => {
     updatesUrl: config.get<string>('updatesUrl'),
     resourcesUrl: config.get<string>('resourcesUrl'),
     artCreatorUrl: config.get<string>('artCreatorUrl'),
-    cdnUrl0: config.get<ConfigType>('cdn').get<string>('0'),
-    cdnUrl2: config.get<ConfigType>('cdn').get<string>('2'),
-    cdnUrl3: config.get<ConfigType>('cdn').get<string>('3'),
+    cdnUrl0: config.get<string>('cdn.0'),
+    cdnUrl2: config.get<string>('cdn.2'),
+    cdnUrl3: config.get<string>('cdn.3'),
     certificateAuthority: config.get<string>('certificateAuthority'),
     environment:
       !isTestEnvironment(getEnvironment()) && ciMode
         ? Environment.Production
         : getEnvironment(),
     ciMode,
+    // Should be already computed and cached at this point
+    dnsFallback: await getDNSFallback(),
     nodeVersion: process.versions.node,
     hostname: os.hostname(),
     osRelease: os.release(),
@@ -2392,6 +2475,7 @@ ipc.on('get-config', async event => {
     registrationChallengeUrl: config.get<string>('registrationChallengeUrl'),
     serverPublicParams: config.get<string>('serverPublicParams'),
     serverTrustRoot: config.get<string>('serverTrustRoot'),
+    genericServerPublicParams: config.get<string>('genericServerPublicParams'),
     theme,
     appStartInitialSpellcheckSetting,
 
@@ -2433,6 +2517,12 @@ ipc.on('locale-data', event => {
 ipc.on('locale-display-names', event => {
   // eslint-disable-next-line no-param-reassign
   event.returnValue = getResolvedMessagesLocale().localeDisplayNames;
+});
+
+// Ingested in preload.js via a sendSync call
+ipc.on('country-display-names', event => {
+  // eslint-disable-next-line no-param-reassign
+  event.returnValue = getResolvedMessagesLocale().countryDisplayNames;
 });
 
 // TODO DESKTOP-5241
@@ -2535,6 +2625,10 @@ function handleSignalRoute(route: ParsedSignalRoute) {
   } else if (route.key === 'startCallLobby') {
     mainWindow.webContents.send('start-call-lobby', {
       conversationId: route.args.conversationId,
+    });
+  } else if (route.key === 'linkCall') {
+    mainWindow.webContents.send('start-call-link', {
+      key: route.args.key,
     });
   } else if (route.key === 'showWindow') {
     mainWindow.webContents.send('show-window');

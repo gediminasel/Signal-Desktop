@@ -88,6 +88,7 @@ import {
 } from '../services/notifications';
 import { storageServiceUploadJob } from '../services/storage';
 import { getSendOptions } from '../util/getSendOptions';
+import type { IsConversationAcceptedOptionsType } from '../util/isConversationAccepted';
 import { isConversationAccepted } from '../util/isConversationAccepted';
 import {
   getNumber,
@@ -136,7 +137,7 @@ import * as log from '../logging/log';
 import * as Errors from '../types/errors';
 import { isMessageUnread } from '../util/isMessageUnread';
 import type { SenderKeyTargetType } from '../util/sendToGroup';
-import { sendContentMessageToGroup } from '../util/sendToGroup';
+import { resetSenderKey, sendContentMessageToGroup } from '../util/sendToGroup';
 import { singleProtoJobQueue } from '../jobs/singleProtoJobQueue';
 import { TimelineMessageLoadingState } from '../util/timelineUtil';
 import { SeenStatus } from '../MessageSeenStatus';
@@ -1858,7 +1859,7 @@ export class ConversationModel extends window.Backbone
     this.set('e164', e164 || undefined);
 
     // This user changed their phone number
-    if (oldValue && e164 && !this.get('notSharingPhoneNumber')) {
+    if (oldValue && e164 && this.get('sharingPhoneNumber')) {
       void this.addChangeNumberNotification(oldValue, e164);
     }
 
@@ -2801,8 +2802,8 @@ export class ConversationModel extends window.Backbone
    * Determine if this conversation should be considered "accepted" in terms
    * of message requests
    */
-  getAccepted(): boolean {
-    return isConversationAccepted(this.attributes);
+  getAccepted(options?: IsConversationAcceptedOptionsType): boolean {
+    return isConversationAccepted(this.attributes, options);
   }
 
   onMemberVerifiedChange(): void {
@@ -2975,20 +2976,10 @@ export class ConversationModel extends window.Backbone
         });
       }
 
-      // Drop a member from sender key distribution list.
+      // Reset sender key for next send
       const senderKeyInfo = this.get('senderKeyInfo');
       if (senderKeyInfo) {
-        const updatedSenderKeyInfo = {
-          ...senderKeyInfo,
-          memberDevices: senderKeyInfo.memberDevices.filter(
-            ({ serviceId: memberServiceId }) => {
-              return memberServiceId !== keyChangedId;
-            }
-          ),
-        };
-
-        this.set('senderKeyInfo', updatedSenderKeyInfo);
-        window.Signal.Data.updateConversation(this.attributes);
+        await resetSenderKey(this.toSenderKeyTarget());
       }
 
       if (isDirectConversation(this.attributes)) {
@@ -3184,6 +3175,8 @@ export class ConversationModel extends window.Backbone
 
     const serviceId = this.getServiceId();
     if (isDirectConversation(this.attributes) && serviceId) {
+      this.set({ profileLastUpdatedAt: Date.now() });
+
       void window.ConversationController.getAllGroupsInvolvingServiceId(
         serviceId
       ).then(groups => {
@@ -4440,7 +4433,9 @@ export class ConversationModel extends window.Backbone
     const shouldBeRead =
       (isInitialSync && isFromSyncOperation) || isFromMe || isNoteToSelf;
 
+    const id = generateGuid();
     const model = new window.Whisper.Message({
+      id,
       conversationId: this.id,
       expirationTimerUpdate: {
         expireTimer,
@@ -4458,11 +4453,9 @@ export class ConversationModel extends window.Backbone
       // TODO: DESKTOP-722
     } as unknown as MessageAttributesType);
 
-    const id = await window.Signal.Data.saveMessage(model.attributes, {
+    await window.Signal.Data.saveMessage(model.attributes, {
       ourAci: window.textsecure.storage.user.getCheckedAci(),
     });
-
-    model.set({ id });
 
     const message = window.MessageCache.__DEPRECATED$register(
       id,

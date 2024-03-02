@@ -13,12 +13,12 @@ import type { StateType } from '../reducer';
 import { getIntl } from '../selectors/user';
 import {
   getEmojiSkinTone,
-  getUsernamesEnabled,
   getHasCompletedUsernameLinkOnboarding,
   getUsernameCorrupted,
   getUsernameLinkColor,
   getUsernameLink,
   getUsernameLinkCorrupted,
+  isInternalUser,
 } from '../selectors/items';
 import { getMe } from '../selectors/conversations';
 import { selectRecentEmojis } from '../selectors/emojis';
@@ -28,6 +28,7 @@ import {
 } from '../selectors/username';
 
 function renderEditUsernameModalBody(props: {
+  isRootModal: boolean;
   onClose: () => void;
 }): JSX.Element {
   return <SmartEditUsernameModalBody {...props} />;
@@ -46,12 +47,10 @@ function mapStateToProps(
     firstName,
     familyName,
     id: conversationId,
-    phoneNumber,
     username,
   } = getMe(state);
   const recentEmojis = selectRecentEmojis(state);
   const skinTone = getEmojiSkinTone(state);
-  const isUsernameFlagEnabled = getUsernamesEnabled(state);
   const hasCompletedUsernameLinkOnboarding =
     getHasCompletedUsernameLinkOnboarding(state);
   const usernameEditState = getUsernameEditState(state);
@@ -73,10 +72,8 @@ function mapStateToProps(
     hasError: state.globalModals.profileEditorHasError,
     initialEditState: state.globalModals.profileEditorInitialEditState,
     i18n: getIntl(state),
-    isUsernameFlagEnabled,
     recentEmojis,
     skinTone,
-    phoneNumber,
     userAvatarData,
     username,
     usernameCorrupted,
@@ -85,6 +82,7 @@ function mapStateToProps(
     usernameLinkColor,
     usernameLinkCorrupted,
     usernameLink,
+    isUsernameDeletionEnabled: isInternalUser(state),
 
     renderEditUsernameModalBody,
   };

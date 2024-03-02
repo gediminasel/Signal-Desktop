@@ -6,8 +6,10 @@ import { useSelector } from 'react-redux';
 
 import type { GlobalModalsStateType } from '../ducks/globalModals';
 import type { StateType } from '../reducer';
+import type { ButtonVariant } from '../../components/Button';
 import { ErrorModal } from '../../components/ErrorModal';
 import { GlobalModalContainer } from '../../components/GlobalModalContainer';
+import { SmartAboutContactModal } from './AboutContactModal';
 import { SmartAddUserToAnotherGroupModal } from './AddUserToAnotherGroupModal';
 import { SmartContactModal } from './ContactModal';
 import { SmartEditHistoryMessagesModal } from './EditHistoryMessagesModal';
@@ -60,6 +62,10 @@ function renderShortcutGuideModal(): JSX.Element {
   return <SmartShortcutGuideModal />;
 }
 
+function renderAboutContactModal(): JSX.Element {
+  return <SmartAboutContactModal />;
+}
+
 export function SmartGlobalModalContainer(): JSX.Element {
   const conversationsStoppingSend = useSelector(getConversationsStoppingSend);
   const i18n = useSelector(getIntl);
@@ -68,6 +74,7 @@ export function SmartGlobalModalContainer(): JSX.Element {
   const hasSafetyNumberChangeModal = conversationsStoppingSend.length > 0;
 
   const {
+    aboutContactModalContactId,
     addUserToAnotherGroupModalContactId,
     authArtCreatorData,
     contactModalState,
@@ -127,10 +134,19 @@ export function SmartGlobalModalContainer(): JSX.Element {
   );
 
   const renderErrorModal = useCallback(
-    ({ description, title }: { description?: string; title?: string }) => (
+    ({
+      buttonVariant,
+      description,
+      title,
+    }: {
+      buttonVariant?: ButtonVariant;
+      description?: string;
+      title?: string;
+    }) => (
       <ErrorModal
-        title={title}
+        buttonVariant={buttonVariant}
         description={description}
+        title={title}
         i18n={i18n}
         onClose={closeErrorModal}
       />
@@ -151,11 +167,13 @@ export function SmartGlobalModalContainer(): JSX.Element {
       hideUserNotFoundModal={hideUserNotFoundModal}
       hideWhatsNewModal={hideWhatsNewModal}
       i18n={i18n}
+      isAboutContactModalVisible={aboutContactModalContactId != null}
       isProfileEditorVisible={isProfileEditorVisible}
       isShortcutGuideModalVisible={isShortcutGuideModalVisible}
       isSignalConnectionsVisible={isSignalConnectionsVisible}
       isStoriesSettingsVisible={isStoriesSettingsVisible}
       isWhatsNewVisible={isWhatsNewVisible}
+      renderAboutContactModal={renderAboutContactModal}
       renderAddUserToAnotherGroup={renderAddUserToAnotherGroup}
       renderContactModal={renderContactModal}
       renderEditHistoryMessagesModal={renderEditHistoryMessagesModal}

@@ -265,6 +265,14 @@ export async function modifyTargetMessage(
     })
   );
 
+  // We save here before handling any edits because handleEditMessage does its own saves
+  if (changed && !isFirstRun) {
+    log.info(`${logId}: Changes in second run; saving.`);
+    await window.Signal.Data.saveMessage(message.attributes, {
+      ourAci,
+    });
+  }
+
   // We want to make sure the message is saved first before applying any edits
   if (!isFirstRun && !skipEdits) {
     const edits = Edits.forMessage(message.attributes);
@@ -276,12 +284,5 @@ export async function modifyTargetMessage(
         )
       )
     );
-  }
-
-  if (changed && !isFirstRun) {
-    log.info(`${logId}: Changes in second run; saving.`);
-    await window.Signal.Data.saveMessage(message.attributes, {
-      ourAci,
-    });
   }
 }

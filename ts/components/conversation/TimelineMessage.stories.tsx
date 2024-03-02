@@ -427,6 +427,7 @@ export function EmojiMessages(): JSX.Element {
                 width: 320,
               }),
               isStickerPack: false,
+              isCallLink: false,
               title: 'Signal',
               description:
                 'Say "hello" to a different messaging experience. An unexpected focus on privacy, combined with all of the features you expect.',
@@ -896,6 +897,7 @@ LinkPreviewInGroup.args = {
         width: 320,
       }),
       isStickerPack: false,
+      isCallLink: false,
       title: 'Signal',
       description:
         'Say "hello" to a different messaging experience. An unexpected focus on privacy, combined with all of the features you expect.',
@@ -934,6 +936,7 @@ LinkPreviewWithQuote.args = {
         width: 320,
       }),
       isStickerPack: false,
+      isCallLink: false,
       title: 'Signal',
       description:
         'Say "hello" to a different messaging experience. An unexpected focus on privacy, combined with all of the features you expect.',
@@ -959,6 +962,7 @@ LinkPreviewWithSmallImage.args = {
         width: 50,
       }),
       isStickerPack: false,
+      isCallLink: false,
       title: 'Signal',
       description:
         'Say "hello" to a different messaging experience. An unexpected focus on privacy, combined with all of the features you expect.',
@@ -976,6 +980,7 @@ LinkPreviewWithoutImage.args = {
     {
       domain: 'signal.org',
       isStickerPack: false,
+      isCallLink: false,
       title: 'Signal',
       description:
         'Say "hello" to a different messaging experience. An unexpected focus on privacy, combined with all of the features you expect.',
@@ -993,6 +998,7 @@ LinkPreviewWithNoDescription.args = {
     {
       domain: 'signal.org',
       isStickerPack: false,
+      isCallLink: false,
       title: 'Signal',
       url: 'https://www.signal.org',
       date: Date.now(),
@@ -1008,6 +1014,7 @@ LinkPreviewWithLongDescription.args = {
     {
       domain: 'signal.org',
       isStickerPack: false,
+      isCallLink: false,
       title: 'Signal',
       description: Array(10)
         .fill(
@@ -1035,6 +1042,7 @@ LinkPreviewWithSmallImageLongDescription.args = {
         width: 50,
       }),
       isStickerPack: false,
+      isCallLink: false,
       title: 'Signal',
       description: Array(10)
         .fill(
@@ -1062,6 +1070,7 @@ LinkPreviewWithNoDate.args = {
         width: 320,
       }),
       isStickerPack: false,
+      isCallLink: false,
       title: 'Signal',
       description:
         'Say "hello" to a different messaging experience. An unexpected focus on privacy, combined with all of the features you expect.',
@@ -1085,6 +1094,7 @@ LinkPreviewWithTooNewADate.args = {
         width: 320,
       }),
       isStickerPack: false,
+      isCallLink: false,
       title: 'Signal',
       description:
         'Say "hello" to a different messaging experience. An unexpected focus on privacy, combined with all of the features you expect.',
@@ -1094,6 +1104,23 @@ LinkPreviewWithTooNewADate.args = {
   ],
   status: 'sent',
   text: 'Be sure to look at https://www.signal.org',
+};
+
+export const LinkPreviewWithCallLink = Template.bind({});
+LinkPreviewWithCallLink.args = {
+  previews: [
+    {
+      url: 'https://signal.link/call/#key=hzcn-pcff-ctsc-bdbf-stcr-tzpc-bhqx-kghh',
+      title: 'Camping Prep',
+      description: 'Use this link to join a Signal call',
+      image: undefined,
+      date: undefined,
+      isCallLink: true,
+      isStickerPack: false,
+    },
+  ],
+  status: 'sent',
+  text: 'Use this link to join a Signal call: https://signal.link/call/#key=hzcn-pcff-ctsc-bdbf-stcr-tzpc-bhqx-kghh',
 };
 
 export function Image(): JSX.Element {
@@ -1675,6 +1702,7 @@ NotApprovedWithLinkPreview.args = {
         width: 320,
       }),
       isStickerPack: false,
+      isCallLink: false,
       title: 'Signal',
       description:
         'Say "hello" to a different messaging experience. An unexpected focus on privacy, combined with all of the features you expect.',
@@ -1814,8 +1842,8 @@ export const StoryReplyYours = (): JSX.Element => {
 export const StoryReplyEmoji = (): JSX.Element => {
   const conversation = getDefaultConversation();
 
-  return renderThree({
-    ...createProps({ direction: 'outgoing', text: 'Wow!' }),
+  return renderBothDirections({
+    ...createProps({ text: 'Wow!' }),
     storyReplyContext: {
       authorTitle: conversation.firstName || conversation.title,
       conversationColor: ConversationColors[0],

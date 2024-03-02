@@ -12,6 +12,7 @@ import {
   values,
   without,
 } from 'lodash';
+import type { PhoneNumber } from 'google-libphonenumber';
 
 import { clipboard } from 'electron';
 import type { ReadonlyDeep } from 'type-fest';
@@ -27,6 +28,7 @@ import type { DurationInSeconds } from '../../util/durations';
 import * as universalExpireTimer from '../../util/universalExpireTimer';
 import * as Attachment from '../../types/Attachment';
 import { isFileDangerous } from '../../util/isFileDangerous';
+import { instance as libphonenumberInstance } from '../../util/libphonenumberInstance';
 import type {
   ShowSendAnywayDialogActionType,
   ShowErrorModalActionType,
@@ -83,7 +85,6 @@ import {
 import { isMessageUnread } from '../../util/isMessageUnread';
 import { toggleSelectedContactForGroupAddition } from '../../groups/toggleSelectedContactForGroupAddition';
 import type { GroupNameCollisionsWithIdsByTitle } from '../../util/groupMemberNameCollisions';
-import { ContactSpoofingType } from '../../util/contactSpoofing';
 import { writeProfile } from '../../services/writeProfile';
 import {
   getConversationServiceIdsStoppingSend,
@@ -93,7 +94,10 @@ import {
   getMessagesByConversation,
 } from '../selectors/conversations';
 import { getIntl } from '../selectors/user';
-import type { AvatarDataType, AvatarUpdateType } from '../../types/Avatar';
+import type {
+  AvatarDataType,
+  AvatarUpdateOptionsType,
+} from '../../types/Avatar';
 import { getDefaultAvatars } from '../../types/Avatar';
 import { getAvatarData } from '../../util/getAvatarData';
 import { isSameAvatarData } from '../../util/isSameAvatarData';
@@ -237,6 +241,7 @@ export type ConversationType = ReadonlyDeep<
     familyName?: string;
     firstName?: string;
     profileName?: string;
+    profileLastUpdatedAt?: number;
     username?: string;
     about?: string;
     aboutText?: string;
@@ -309,7 +314,7 @@ export type ConversationType = ReadonlyDeep<
     typingContactIdTimestamps?: Record<string, number>;
     recentMediaItems?: ReadonlyArray<MediaItemType>;
     profileSharing?: boolean;
-    notSharingPhoneNumber?: boolean;
+    sharingPhoneNumber?: boolean;
 
     shouldShowDraft?: boolean;
     // Full information for re-hydrating composition area
@@ -446,9 +451,15 @@ type VerificationDataByConversation = ReadonlyDeep<
 
 type ComposerStateType = ReadonlyDeep<
   | {
-      step: ComposerStep.StartDirectConversation;
+      step: ComposerStep.StartDirectConversation | ComposerStep.FindByUsername;
       searchTerm: string;
       uuidFetchState: UUIDFetchStateType;
+    }
+  | {
+      step: ComposerStep.FindByPhoneNumber;
+      searchTerm: string;
+      uuidFetchState: UUIDFetchStateType;
+      selectedRegion: string;
     }
   | ({
       step: ComposerStep.ChooseGroupMembers;
@@ -463,17 +474,6 @@ type ComposerStateType = ReadonlyDeep<
         | { isCreating: false; hasError: boolean }
         | { isCreating: true; hasError: false }
       ))
->;
-
-type ContactSpoofingReviewStateType = ReadonlyDeep<
-  | {
-      type: ContactSpoofingType.DirectConversationWithSameTitle;
-      safeConversationId: string;
-    }
-  | {
-      type: ContactSpoofingType.MultipleGroupMembersWithSameTitle;
-      groupConversationId: string;
-    }
 >;
 
 // eslint-disable-next-line local-rules/type-alias-readonlydeep -- FIXME
@@ -503,7 +503,7 @@ export type ConversationsStateType = Readonly<{
 
   showArchived: boolean;
   composer?: ComposerStateType;
-  contactSpoofingReview?: ContactSpoofingReviewStateType;
+  hasContactSpoofingReview: boolean;
 
   /**
    * Each key is a conversation ID. Each value is a value representing the state of
@@ -851,17 +851,8 @@ export type TargetedConversationChangedActionType = ReadonlyDeep<{
     switchToAssociatedView?: boolean;
   };
 }>;
-type ReviewGroupMemberNameCollisionActionType = ReadonlyDeep<{
-  type: 'REVIEW_GROUP_MEMBER_NAME_COLLISION';
-  payload: {
-    groupConversationId: string;
-  };
-}>;
-type ReviewMessageRequestNameCollisionActionType = ReadonlyDeep<{
-  type: 'REVIEW_MESSAGE_REQUEST_NAME_COLLISION';
-  payload: {
-    safeConversationId: string;
-  };
+type ReviewConversationNameCollisionActionType = ReadonlyDeep<{
+  type: 'REVIEW_CONVERSATION_NAME_COLLISION';
 }>;
 type ShowInboxActionType = ReadonlyDeep<{
   type: 'SHOW_INBOX';
@@ -887,6 +878,10 @@ type SetComposeSearchTermActionType = ReadonlyDeep<{
   type: 'SET_COMPOSE_SEARCH_TERM';
   payload: { searchTerm: string };
 }>;
+type SetComposeSelectedRegionActionType = ReadonlyDeep<{
+  type: 'SET_COMPOSE_SELECTED_REGION';
+  payload: { selectedRegion: string };
+}>;
 type SetIsFetchingUUIDActionType = ReadonlyDeep<{
   type: 'SET_IS_FETCHING_UUID';
   payload: {
@@ -909,6 +904,12 @@ type StartComposingActionType = ReadonlyDeep<{
 }>;
 type ShowChooseGroupMembersActionType = ReadonlyDeep<{
   type: 'SHOW_CHOOSE_GROUP_MEMBERS';
+}>;
+type ShowFindByUsername = ReadonlyDeep<{
+  type: 'SHOW_FIND_BY_USERNAME';
+}>;
+type ShowFindByPhoneNumber = ReadonlyDeep<{
+  type: 'SHOW_FIND_BY_PHONE_NUMBER';
 }>;
 type StartSettingGroupMetadataActionType = ReadonlyDeep<{
   type: 'START_SETTING_GROUP_METADATA';
@@ -990,14 +991,14 @@ export type ConversationActionType =
   | RepairNewestMessageActionType
   | RepairOldestMessageActionType
   | ReplaceAvatarsActionType
-  | ReviewGroupMemberNameCollisionActionType
-  | ReviewMessageRequestNameCollisionActionType
+  | ReviewConversationNameCollisionActionType
   | ScrollToMessageActionType
   | TargetedConversationChangedActionType
   | SetComposeGroupAvatarActionType
   | SetComposeGroupExpireTimerActionType
   | SetComposeGroupNameActionType
   | SetComposeSearchTermActionType
+  | SetComposeSelectedRegionActionType
   | SetIsFetchingUUIDActionType
   | SetIsNearBottomActionType
   | SetMessageLoadingStateActionType
@@ -1005,6 +1006,8 @@ export type ConversationActionType =
   | SetRecentMediaItemsActionType
   | ShowArchivedConversationsActionType
   | ShowChooseGroupMembersActionType
+  | ShowFindByUsername
+  | ShowFindByPhoneNumber
   | ShowInboxActionType
   | ShowSendAnywayDialogActionType
   | ShowSpoilerActionType
@@ -1094,8 +1097,7 @@ export const actions = {
   copyMessageText,
   retryDeleteForEveryone,
   retryMessageSend,
-  reviewGroupMemberNameCollision,
-  reviewMessageRequestNameCollision,
+  reviewConversationNameCollision,
   revokePendingMembershipsFromGroupV2,
   saveAttachment,
   saveAttachmentFromMessage,
@@ -1112,6 +1114,7 @@ export const actions = {
   setComposeGroupExpireTimer,
   setComposeGroupName,
   setComposeSearchTerm,
+  setComposeSelectedRegion,
   setDisappearingMessages,
   setDontNotifyForMentionsIfMuted,
   setIsFetchingUUID,
@@ -1127,6 +1130,8 @@ export const actions = {
   showConversation,
   showExpiredIncomingTapToViewToast,
   showExpiredOutgoingTapToViewToast,
+  showFindByUsername,
+  showFindByPhoneNumber,
   showInbox,
   startComposing,
   startConversation,
@@ -2053,7 +2058,7 @@ function saveAvatarToDisk(
 
 function myProfileChanged(
   profileData: ProfileDataType,
-  avatar: AvatarUpdateType
+  avatarUpdateOptions: AvatarUpdateOptionsType
 ): ThunkAction<
   void,
   RootStateType,
@@ -2069,7 +2074,7 @@ function myProfileChanged(
           ...conversation,
           ...profileData,
         },
-        avatar
+        avatarUpdateOptions
       );
 
       // writeProfile above updates the backbone model which in turn updates
@@ -2091,17 +2096,13 @@ function removeCustomColorOnConversations(
 ): ThunkAction<void, RootStateType, unknown, CustomColorRemovedActionType> {
   return async dispatch => {
     const conversationsToUpdate: Array<ConversationAttributesType> = [];
-    // We don't want to trigger a model change because we're updating redux
-    // here manually ourselves. Au revoir Backbone!
     window.getConversations().forEach(conversation => {
       if (conversation.get('customColorId') === colorId) {
-        // eslint-disable-next-line no-param-reassign
-        delete conversation.attributes.conversationColor;
-        // eslint-disable-next-line no-param-reassign
-        delete conversation.attributes.customColor;
-        // eslint-disable-next-line no-param-reassign
-        delete conversation.attributes.customColorId;
-
+        conversation.set({
+          conversationColor: undefined,
+          customColor: undefined,
+          customColorId: undefined,
+        });
         conversationsToUpdate.push(conversation.attributes);
       }
     });
@@ -2129,15 +2130,12 @@ function resetAllChatColors(): ThunkAction<
     // Calling this with no args unsets all the colors in the db
     await window.Signal.Data.updateAllConversationColors();
 
-    // We don't want to trigger a model change because we're updating redux
-    // here manually ourselves. Au revoir Backbone!
     window.getConversations().forEach(conversation => {
-      // eslint-disable-next-line no-param-reassign
-      delete conversation.attributes.conversationColor;
-      // eslint-disable-next-line no-param-reassign
-      delete conversation.attributes.customColor;
-      // eslint-disable-next-line no-param-reassign
-      delete conversation.attributes.customColorId;
+      conversation.set({
+        conversationColor: undefined,
+        customColor: undefined,
+        customColorId: undefined,
+      });
     });
 
     dispatch({
@@ -2318,11 +2316,9 @@ export function setVoiceNotePlaybackRate({
   return async dispatch => {
     const conversationModel = window.ConversationController.get(conversationId);
     if (conversationModel) {
-      if (rate === 1) {
-        delete conversationModel.attributes.voiceNotePlaybackRate;
-      } else {
-        conversationModel.attributes.voiceNotePlaybackRate = rate;
-      }
+      conversationModel.set({
+        voiceNotePlaybackRate: rate === 1 ? undefined : rate,
+      });
       window.Signal.Data.updateConversation(conversationModel.attributes);
     }
 
@@ -2354,23 +2350,27 @@ function colorSelected({
   ColorSelectedActionType
 > {
   return async dispatch => {
-    // We don't want to trigger a model change because we're updating redux
-    // here manually ourselves. Au revoir Backbone!
     const conversation = window.ConversationController.get(conversationId);
     if (conversation) {
       if (conversationColor) {
-        conversation.attributes.conversationColor = conversationColor;
+        conversation.set({ conversationColor });
         if (customColorData) {
-          conversation.attributes.customColor = customColorData.value;
-          conversation.attributes.customColorId = customColorData.id;
+          conversation.set({
+            customColor: customColorData.value,
+            customColorId: customColorData.id,
+          });
         } else {
-          delete conversation.attributes.customColor;
-          delete conversation.attributes.customColorId;
+          conversation.set({
+            customColor: undefined,
+            customColorId: undefined,
+          });
         }
       } else {
-        delete conversation.attributes.conversationColor;
-        delete conversation.attributes.customColor;
-        delete conversation.attributes.customColorId;
+        conversation.set({
+          conversationColor: undefined,
+          customColor: undefined,
+          customColorId: undefined,
+        });
       }
 
       window.Signal.Data.updateConversation(conversation.attributes);
@@ -2887,21 +2887,10 @@ function repairOldestMessage(
   };
 }
 
-function reviewGroupMemberNameCollision(
-  groupConversationId: string
-): ReviewGroupMemberNameCollisionActionType {
+function reviewConversationNameCollision(): ReviewConversationNameCollisionActionType {
   return {
-    type: 'REVIEW_GROUP_MEMBER_NAME_COLLISION',
-    payload: { groupConversationId },
+    type: 'REVIEW_CONVERSATION_NAME_COLLISION',
   };
-}
-
-function reviewMessageRequestNameCollision(
-  payload: Readonly<{
-    safeConversationId: string;
-  }>
-): ReviewMessageRequestNameCollisionActionType {
-  return { type: 'REVIEW_MESSAGE_REQUEST_NAME_COLLISION', payload };
 }
 
 // eslint-disable-next-line local-rules/type-alias-readonlydeep
@@ -3704,12 +3693,29 @@ function setComposeSearchTerm(
   };
 }
 
+function setComposeSelectedRegion(
+  selectedRegion: string
+): SetComposeSelectedRegionActionType {
+  return {
+    type: 'SET_COMPOSE_SELECTED_REGION',
+    payload: { selectedRegion },
+  };
+}
+
 function startComposing(): StartComposingActionType {
   return { type: 'START_COMPOSING' };
 }
 
 function showChooseGroupMembers(): ShowChooseGroupMembersActionType {
   return { type: 'SHOW_CHOOSE_GROUP_MEMBERS' };
+}
+
+function showFindByUsername(): ShowFindByUsername {
+  return { type: 'SHOW_FIND_BY_USERNAME' };
+}
+
+function showFindByPhoneNumber(): ShowFindByPhoneNumber {
+  return { type: 'SHOW_FIND_BY_PHONE_NUMBER' };
 }
 
 function startSettingGroupMetadata(): StartSettingGroupMetadataActionType {
@@ -4226,6 +4232,7 @@ export function getEmptyState(): ConversationsStateType {
     lastSelectedMessage: undefined,
     selectedMessageIds: undefined,
     showArchived: false,
+    hasContactSpoofingReview: false,
     targetedConversationPanels: {
       isAnimating: false,
       wasAnimated: false,
@@ -4609,7 +4616,10 @@ export function reducer(
   }
 
   if (action.type === 'CLOSE_CONTACT_SPOOFING_REVIEW') {
-    return omit(state, 'contactSpoofingReview');
+    return {
+      ...state,
+      hasContactSpoofingReview: false,
+    };
   }
 
   if (action.type === 'CLOSE_MAXIMUM_GROUP_SIZE_MODAL') {
@@ -4731,6 +4741,7 @@ export function reducer(
     }
 
     const keysToOmit: Array<keyof ConversationsStateType> = [];
+    const keyValuesToAdd: { hasContactSpoofingReview?: false } = {};
 
     if (selectedConversationId === id) {
       // Archived -> Inbox: we go back to the normal inbox view
@@ -4746,12 +4757,13 @@ export function reducer(
       }
 
       if (!existing.isBlocked && data.isBlocked) {
-        keysToOmit.push('contactSpoofingReview');
+        keyValuesToAdd.hasContactSpoofingReview = false;
       }
     }
 
     return {
       ...omit(state, keysToOmit),
+      ...keyValuesToAdd,
       selectedConversationId,
       showArchived,
       conversationLookup: {
@@ -4793,7 +4805,8 @@ export function reducer(
         : undefined;
 
     return {
-      ...omit(state, 'contactSpoofingReview'),
+      ...state,
+      hasContactSpoofingReview: false,
       selectedConversationId,
       targetedConversationPanels: {
         isAnimating: false,
@@ -5512,23 +5525,10 @@ export function reducer(
     };
   }
 
-  if (action.type === 'REVIEW_GROUP_MEMBER_NAME_COLLISION') {
+  if (action.type === 'REVIEW_CONVERSATION_NAME_COLLISION') {
     return {
       ...state,
-      contactSpoofingReview: {
-        type: ContactSpoofingType.MultipleGroupMembersWithSameTitle,
-        ...action.payload,
-      },
-    };
-  }
-
-  if (action.type === 'REVIEW_MESSAGE_REQUEST_NAME_COLLISION') {
-    return {
-      ...state,
-      contactSpoofingReview: {
-        type: ContactSpoofingType.DirectConversationWithSameTitle,
-        ...action.payload,
-      },
+      hasContactSpoofingReview: true,
     };
   }
 
@@ -5701,7 +5701,8 @@ export function reducer(
     }
 
     const nextState = {
-      ...omit(state, 'contactSpoofingReview'),
+      ...state,
+      hasContactSpoofingReview: false,
       selectedConversationId: conversationId,
       targetedMessage: messageId,
       targetedMessageSource: TargetedMessageSource.NavigateToMessage,
@@ -5912,6 +5913,31 @@ export function reducer(
     };
   }
 
+  if (action.type === 'SHOW_FIND_BY_USERNAME') {
+    return {
+      ...state,
+      showArchived: false,
+      composer: {
+        step: ComposerStep.FindByUsername,
+        searchTerm: '',
+        uuidFetchState: {},
+      },
+    };
+  }
+
+  if (action.type === 'SHOW_FIND_BY_PHONE_NUMBER') {
+    return {
+      ...state,
+      showArchived: false,
+      composer: {
+        step: ComposerStep.FindByPhoneNumber,
+        searchTerm: '',
+        selectedRegion: '',
+        uuidFetchState: {},
+      },
+    };
+  }
+
   if (action.type === 'START_SETTING_GROUP_METADATA') {
     const { composer } = state;
 
@@ -6018,8 +6044,69 @@ export function reducer(
     }
     if (
       composer.step !== ComposerStep.StartDirectConversation &&
+      composer.step !== ComposerStep.FindByUsername &&
+      composer.step !== ComposerStep.FindByPhoneNumber &&
       composer.step !== ComposerStep.ChooseGroupMembers
     ) {
+      assertDev(
+        false,
+        `Setting compose search term at step ${composer.step} is a no-op`
+      );
+      return state;
+    }
+
+    const { searchTerm } = action.payload;
+
+    // Basic state that we return if we can't parse the term.
+    const withUpdatedSearchTerm = {
+      ...state,
+      composer: {
+        ...composer,
+        searchTerm,
+      },
+    };
+
+    if (composer.step === ComposerStep.FindByPhoneNumber) {
+      const { selectedRegion } = composer;
+      let result: PhoneNumber;
+      try {
+        result = libphonenumberInstance.parse(searchTerm, selectedRegion);
+      } catch {
+        return withUpdatedSearchTerm;
+      }
+
+      const region = libphonenumberInstance.getRegionCodeForNumber(result);
+      if (!result.hasCountryCode() || !region || region === selectedRegion) {
+        return withUpdatedSearchTerm;
+      }
+
+      result.clearCountryCode();
+      const withoutCountryCode =
+        libphonenumberInstance.formatInOriginalFormat(result);
+
+      return {
+        ...state,
+        composer: {
+          ...composer,
+          selectedRegion: region,
+          searchTerm: withoutCountryCode,
+        },
+      };
+    }
+
+    return withUpdatedSearchTerm;
+  }
+
+  if (action.type === 'SET_COMPOSE_SELECTED_REGION') {
+    const { composer } = state;
+    if (!composer) {
+      assertDev(
+        false,
+        'Setting compose search term with the composer closed is a no-op'
+      );
+      return state;
+    }
+    if (composer.step !== ComposerStep.FindByPhoneNumber) {
       assertDev(
         false,
         `Setting compose search term at step ${composer.step} is a no-op`
@@ -6031,7 +6118,7 @@ export function reducer(
       ...state,
       composer: {
         ...composer,
-        searchTerm: action.payload.searchTerm,
+        selectedRegion: action.payload.selectedRegion,
       },
     };
   }
@@ -6047,6 +6134,8 @@ export function reducer(
     }
     if (
       composer.step !== ComposerStep.StartDirectConversation &&
+      composer.step !== ComposerStep.FindByUsername &&
+      composer.step !== ComposerStep.FindByPhoneNumber &&
       composer.step !== ComposerStep.ChooseGroupMembers
     ) {
       assertDev(

@@ -31,20 +31,32 @@ const defaultGroup: ConversationType = getDefaultConversation({
 export default {
   title: 'Components/Conversation/ContactModal',
   component: ContactModal,
+  argTypes: {
+    hasActiveCall: { control: { type: 'boolean' } },
+  },
   args: {
     i18n,
     areWeASubscriber: false,
     areWeAdmin: false,
     badges: [],
+    blockConversation: action('blockConversation'),
     contact: defaultContact,
     conversation: defaultGroup,
+    hasActiveCall: false,
     hasStories: undefined,
     hideContactModal: action('hideContactModal'),
     isAdmin: false,
     isMember: true,
+    onOutgoingAudioCallInConversation: action(
+      'onOutgoingAudioCallInConversation'
+    ),
+    onOutgoingVideoCallInConversation: action(
+      'onOutgoingVideoCallInConversation'
+    ),
     removeMemberFromGroup: action('removeMemberFromGroup'),
     showConversation: action('showConversation'),
     theme: ThemeType.light,
+    toggleAboutContactModal: action('AboutContactModal'),
     toggleAdmin: action('toggleAdmin'),
     toggleSafetyNumberModal: action('toggleSafetyNumberModal'),
     updateConversationModelSharedGroups: action(

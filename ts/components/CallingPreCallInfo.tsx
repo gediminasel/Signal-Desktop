@@ -3,6 +3,7 @@
 
 import React from 'react';
 import type { ConversationType } from '../state/ducks/conversations';
+import type { CallingConversationType } from '../types/Calling';
 import type { LocalizerType } from '../types/Util';
 import { Avatar, AvatarSize } from './Avatar';
 import { getParticipantName } from '../util/callingGetParticipantName';
@@ -17,7 +18,7 @@ export enum RingMode {
 
 export type PropsType = {
   conversation: Pick<
-    ConversationType,
+    CallingConversationType,
     | 'acceptedMessageRequest'
     | 'avatarPath'
     | 'color'
@@ -25,6 +26,8 @@ export type PropsType = {
     | 'phoneNumber'
     | 'profileName'
     | 'sharedGroupNames'
+    | 'systemGivenName'
+    | 'systemNickname'
     | 'title'
     | 'type'
     | 'unblurredAvatarPath'
@@ -34,10 +37,18 @@ export type PropsType = {
   ringMode: RingMode;
 
   // The following should only be set for group conversations.
-  groupMembers?: Array<Pick<ConversationType, 'id' | 'firstName' | 'title'>>;
+  groupMembers?: Array<
+    Pick<
+      ConversationType,
+      'id' | 'firstName' | 'systemGivenName' | 'systemNickname' | 'title'
+    >
+  >;
   isCallFull?: boolean;
   peekedParticipants?: Array<
-    Pick<ConversationType, 'firstName' | 'title' | 'serviceId'>
+    Pick<
+      ConversationType,
+      'firstName' | 'systemGivenName' | 'systemNickname' | 'title' | 'serviceId'
+    >
   >;
 };
 
@@ -104,6 +115,7 @@ export function CallingPreCallInfo({
         memberNames = [getParticipantName(conversation)];
         break;
       case 'group':
+      case 'callLink':
         memberNames = groupMembers
           .filter(member => member.id !== me.id)
           .map(getParticipantName);

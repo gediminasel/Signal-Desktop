@@ -138,11 +138,10 @@ export async function reserveUsername(
         return { ok: false, error: ReserveUsernameError.Conflict };
       }
       if (error.code === 413 || error.code === 429) {
-        const time = findRetryAfterTimeFromError(error);
-        log.warn(`reserveUsername: got ${error.code}, waiting ${time}ms`);
-        await sleep(time, abortSignal);
-
-        return reserveUsername(options);
+        return {
+          ok: false,
+          error: ReserveUsernameError.TooManyAttempts,
+        };
       }
     }
     if (error instanceof LibSignalErrorBase) {
@@ -245,10 +244,10 @@ export async function confirmUsername(
   const { hash } = reservation;
   strictAssert(usernames.hash(username).equals(hash), 'username hash mismatch');
 
+  const wasCorrupted = window.storage.get('usernameCorrupted');
+
   try {
     await window.storage.remove('usernameLink');
-    await window.storage.remove('usernameCorrupted');
-    await window.storage.remove('usernameLinkCorrupted');
 
     let serverIdString: string;
     let entropy: Buffer;
@@ -288,6 +287,8 @@ export async function confirmUsername(
     });
 
     await updateUsernameAndSyncProfile(username);
+    await window.storage.remove('usernameCorrupted');
+    await window.storage.remove('usernameLinkCorrupted');
   } catch (error) {
     if (error instanceof HTTPError) {
       if (error.code === 413 || error.code === 429) {
@@ -305,7 +306,9 @@ export async function confirmUsername(
     throw error;
   }
 
-  return ConfirmUsernameResult.Ok;
+  return wasCorrupted
+    ? ConfirmUsernameResult.OkRecovered
+    : ConfirmUsernameResult.Ok;
 }
 
 export async function deleteUsername(
@@ -324,8 +327,8 @@ export async function deleteUsername(
   }
 
   await window.storage.remove('usernameLink');
-  await window.storage.remove('usernameCorrupted');
   await server.deleteUsername(abortSignal);
+  await window.storage.remove('usernameCorrupted');
   await updateUsernameAndSyncProfile(undefined);
 }
 
@@ -344,7 +347,6 @@ export async function resetLink(username: string): Promise<void> {
   const { entropy, encryptedUsername } = usernames.createUsernameLink(username);
 
   await window.storage.remove('usernameLink');
-  await window.storage.remove('usernameLinkCorrupted');
 
   const { usernameLinkHandle: serverIdString } =
     await server.replaceUsernameLink({
@@ -356,6 +358,7 @@ export async function resetLink(username: string): Promise<void> {
     entropy,
     serverId: uuidToBytes(serverIdString),
   });
+  await window.storage.remove('usernameLinkCorrupted');
 
   me.captureChange('usernameLink');
   storageServiceUploadJob();

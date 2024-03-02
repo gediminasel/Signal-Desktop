@@ -44,6 +44,10 @@
     "messageformat": "添加“{contact}”到“{group}”群组",
     "description": "Shown in the confirmation dialog body when adding a contact to a group"
   },
+  "icu:AddUserToAnotherGroupModal__search-placeholder": {
+    "messageformat": "搜索",
+    "description": "Placeholder to use when searching for groups in the AddUserToAnotherGroupModal"
+  },
   "icu:AddUserToAnotherGroupModal__toast--user-added-to-group": {
     "messageformat": "{contact} 受邀入群{group}。",
     "description": "Shown in toast after a user is added to an existing group"
@@ -331,6 +335,42 @@
   "icu:LeftPane--corrupted-username-link--action-text": {
     "messageformat": "立刻解决",
     "description": "Text of the button in the corrupted username link banner in the left pane"
+  },
+  "icu:LeftPane__compose__findByUsername": {
+    "messageformat": "按用户名查找",
+    "description": "Text of the button displayed when clicking compose button in left pane"
+  },
+  "icu:LeftPane__compose__findByPhoneNumber": {
+    "messageformat": "按手机号码查找",
+    "description": "Text of the button displayed when clicking compose button in left pane"
+  },
+  "icu:LeftPaneFindByHelper__title--findByUsername": {
+    "messageformat": "按用户名查找",
+    "description": "Title of the left pane when looking up someone by username"
+  },
+  "icu:LeftPaneFindByHelper__title--findByPhoneNumber": {
+    "messageformat": "按手机号码查找",
+    "description": "Title of the left pane when looking up someone by phone number"
+  },
+  "icu:LeftPaneFindByHelper__placeholder--findByUsername": {
+    "messageformat": "用户名",
+    "description": "Placeholder of the search input in left pane when looking up someone by username"
+  },
+  "icu:LeftPaneFindByHelper__placeholder--findByPhoneNumber": {
+    "messageformat": "手机号码",
+    "description": "Placeholder of the search input in left pane when looking up someone by phone number"
+  },
+  "icu:LeftPaneFindByHelper__description--findByUsername": {
+    "messageformat": "请输入带有一个点和一组匹配数字的用户名。",
+    "description": "Description displayed under search input in left pane when looking up someone by username"
+  },
+  "icu:CountryCodeSelect__placeholder": {
+    "messageformat": "国家代码",
+    "description": "Placeholder displayed as default value of country code select element"
+  },
+  "icu:CountryCodeSelect__Modal__title": {
+    "messageformat": "国家代码",
+    "description": "Title of the country code modal"
   },
   "icu:NavTabsToggle__showTabs": {
     "messageformat": "显示选项卡",
@@ -1056,7 +1096,7 @@
     "description": "Shown when search could be a valid username, with one sub-item that will kick off the search"
   },
   "icu:findByPhoneNumberHeader": {
-    "messageformat": "按电话号码查找",
+    "messageformat": "按手机号码查找",
     "description": "Shown when search could be a valid phone number, with one sub-item that will kick off the search"
   },
   "icu:welcomeToSignal": {
@@ -1351,6 +1391,38 @@
   "icu:showSafetyNumber": {
     "messageformat": "查看安全码"
   },
+  "icu:AboutContactModal__title": {
+    "messageformat": "详情",
+    "description": "Title of About modal"
+  },
+  "icu:AboutContactModal__title--myself": {
+    "messageformat": "您",
+    "description": "Title of About modal when viewing your own information"
+  },
+  "icu:AboutContactModal__verified": {
+    "messageformat": "已验证",
+    "description": "Text of a button on About modal leading to a safety number modal"
+  },
+  "icu:AboutContactModal__blocked": {
+    "messageformat": "{name}已被屏蔽",
+    "description": "Text of a row on About modal when user is blocked"
+  },
+  "icu:AboutContactModal__message-request": {
+    "messageformat": "有待处理的消息请求",
+    "description": "Text of a row on About modal when user is in message request state"
+  },
+  "icu:AboutContactModal__no-dms": {
+    "messageformat": "与{name}没有私聊消息",
+    "description": "Text of a row on About modal when there are no direct messages with a user"
+  },
+  "icu:AboutContactModal__signal-connection": {
+    "messageformat": "Signal 密友",
+    "description": "Text of a button on About modal leading to an education modal"
+  },
+  "icu:AboutContactModal__system-contact": {
+    "messageformat": "{name}在您的系统通讯录中",
+    "description": "Text of a row in the About modal describing that the contact is in system contacts"
+  },
   "icu:ContactModal__showSafetyNumber": {
     "messageformat": "查看安全码",
     "description": "Contact modal, label for button to show safety number modal"
@@ -1499,7 +1571,7 @@
     "description": "Shown on explainer dialog available from delivery issue timeline events in groups"
   },
   "icu:ChangeNumber--notification": {
-    "messageformat": "{sender}已更改电话号码",
+    "messageformat": "{sender}已更改手机号码",
     "description": "Shown in timeline when a member of a conversation changes their phone number"
   },
   "icu:ConversationMerge--notification": {
@@ -1519,7 +1591,7 @@
     "description": "Shown on a button below a 'conversations were merged' timeline notification"
   },
   "icu:ConversationMerge--explainer-dialog--line-1": {
-    "messageformat": "给{obsoleteConversationTitle}发消息后，您得知此号码属于{conversationTitle}。对方的电话号码是私密号码。",
+    "messageformat": "给{obsoleteConversationTitle}发消息后，您得知此号码属于{conversationTitle}。对方的手机号码是私密号码。",
     "description": "Contents of a dialog shown after clicking 'learn more' button on a conversation merge event."
   },
   "icu:ConversationMerge--explainer-dialog--line-2": {
@@ -1626,6 +1698,10 @@
     "messageformat": "我的计算机",
     "description": "The placeholder for the 'choose device name' input"
   },
+  "icu:Preferences--phone-number": {
+    "messageformat": "手机号码",
+    "description": "The label in settings panel shown for the phone number associated with user's account"
+  },
   "icu:Preferences--device-name": {
     "messageformat": "设备名称",
     "description": "The label in settings panel shown for the user-provided name for this desktop instance"
@@ -1700,6 +1776,54 @@
   "icu:calling__call-is-full": {
     "messageformat": "通话人数已满",
     "description": "Text in the call lobby when you can't join because the call is full"
+  },
+  "icu:calling__cant-join": {
+    "messageformat": "Can't join call",
+    "description": "Modal dialog title when you can't join a call"
+  },
+  "icu:calling__dialog-already-in-call": {
+    "messageformat": "You are already in a call.",
+    "description": "Error message when clicking a call link to join a call, but you're in a call already."
+  },
+  "icu:calling__call-link-connection-issues": {
+    "messageformat": "Could not fetch call link information. Please check your network connection and try again.",
+    "description": "Error message when unable to fetch call link info from server."
+  },
+  "icu:calling__call-link-copied": {
+    "messageformat": "Call link copied.",
+    "description": "Toast shown when a call link is copied to the clipboard."
+  },
+  "icu:calling__call-link-no-longer-valid": {
+    "messageformat": "This call link is no longer valid.",
+    "description": "Error message when a call link has been revoked or expires."
+  },
+  "icu:calling__call-link-default-title": {
+    "messageformat": "Signal Call",
+    "description": "Default title for Signal call links."
+  },
+  "icu:calling__join-request-denied": {
+    "messageformat": "Your request to join this call has been denied.",
+    "description": "Error message when a request to join a call link call was rejected by a call admin."
+  },
+  "icu:calling__join-request-denied-title": {
+    "messageformat": "Join request denied",
+    "description": "Title of error when a request to join a call link call was rejected by a call admin."
+  },
+  "icu:calling__removed-from-call": {
+    "messageformat": "Someone has removed you from the call.",
+    "description": "Error message when in a call then a call admin removes you."
+  },
+  "icu:calling__removed-from-call-title": {
+    "messageformat": "Removed from call",
+    "description": "Title of error when in a call then a call admin removes you."
+  },
+  "icu:CallingLobby__CallLinkNotice": {
+    "messageformat": "Anyone who joins this call via the link will see your name and photo.",
+    "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared."
+  },
+  "icu:CallingLobby__CallLinkNotice--phone-sharing": {
+    "messageformat": "Anyone who joins this call via the link will see your name, photo, and phone number.",
+    "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared, when the phone number sharing account setting is enabled."
   },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "加入",
@@ -2244,11 +2368,11 @@
     "description": "Description for incoming calls setting"
   },
   "icu:contactChangedProfileName": {
-    "messageformat": "{sender} 将其个人页面名称从 {oldProfile} 更改为 {newProfile}。",
+    "messageformat": "{sender}已将其昵称从{oldProfile}更改为{newProfile}。",
     "description": "Description for incoming calls setting"
   },
   "icu:changedProfileName": {
-    "messageformat": "{oldProfile} 将其个人页面名称更改为 {newProfile}。",
+    "messageformat": "{oldProfile}已将其昵称更改为{newProfile}。",
     "description": "Shown when a contact not in your address book changes their profile name"
   },
   "icu:SafetyNumberModal__title": {
@@ -2328,7 +2452,7 @@
     "description": "Label for header to go to stories view"
   },
   "icu:contactSearchPlaceholder": {
-    "messageformat": "搜索姓名或手机号码",
+    "messageformat": "姓名、用户名或手机号码",
     "description": "Placeholder to use when searching for contacts in the composer"
   },
   "icu:noContactsFound": {
@@ -2360,7 +2484,7 @@
     "description": "Shown if request to Signal servers to find username fails"
   },
   "icu:Toast--failed-to-fetch-phone-number": {
-    "messageformat": "无法获取电话号码。请检查您的网络连接并重试。",
+    "messageformat": "无法获取手机号码。请检查您的网络连接并重试。",
     "description": "Shown if request to Signal servers to find phone number fails"
   },
   "icu:ToastManager__CannotEditMessage_24": {
@@ -2368,7 +2492,7 @@
     "description": "Error message when you try to send an edit after message becomes too old"
   },
   "icu:startConversation--username-not-found": {
-    "messageformat": "未找到此用户。{atUsername}不是 Signal 用户；请确认您输入的是完整用户名。",
+    "messageformat": "{atUsername} 不是 Signal 用户。请确认您输入了完整的用户名。",
     "description": "Shown in dialog if username is not found. Note that 'username' will be the output of at-username"
   },
   "icu:startConversation--phone-number-not-found": {
@@ -2376,7 +2500,7 @@
     "description": "Shown in dialog if phone number is not found."
   },
   "icu:startConversation--phone-number-not-valid": {
-    "messageformat": "未找到此用户。“{phoneNumber}”不是有效的电话号码。",
+    "messageformat": "未找到此用户。“{phoneNumber}”不是有效的手机号码。",
     "description": "Shown in dialog if phone number is not valid."
   },
   "icu:chooseGroupMembers__title": {
@@ -2452,7 +2576,7 @@
     "description": "Label underneath number informing user that SMS is not supported on desktop"
   },
   "icu:newPhoneNumber": {
-    "messageformat": "键入电话号码来添加联系人",
+    "messageformat": "输入手机号码来添加联系人。",
     "description": "Placeholder for adding a new number to a contact"
   },
   "icu:invalidNumberError": {
@@ -2615,6 +2739,10 @@
   "icu:message--attachmentTooBig--multiple": {
     "messageformat": "有些附件由于太大而无法显示。",
     "description": "Shown in a message bubble if any attachments are left on message when too-large attachments are dropped"
+  },
+  "icu:message--call-link-description": {
+    "messageformat": "Use this link to join a Signal call",
+    "description": "Shown in message previews for Signal call links."
   },
   "icu:donation--missing": {
     "messageformat": "无法获取捐款详情",
@@ -3588,6 +3716,14 @@
     "messageformat": "音频通话",
     "description": "Shown in the call lobby for a direct 1:1 call when the caller's video is disabled, to specify that an audio call will be placed when clicking the Start button."
   },
+  "icu:CallControls__InfoDisplay--adhoc-call": {
+    "messageformat": "Call link",
+    "description": "Shown in the call lobby for a call link."
+  },
+  "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
+    "messageformat": "Waiting to be let in",
+    "description": "Shown in the call lobby for call link calls when requesting to join a call which requires admin approval."
+  },
   "icu:CallControls__JoinLeaveButton--hangup-1-1": {
     "messageformat": "结束",
     "description": "Title for the hangup button for a direct 1:1 call with only 2 participants."
@@ -3727,6 +3863,10 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "窗口",
     "description": "Title for the select your screen sharing sources modal"
+  },
+  "icu:CallingAdhocCallInfo__CopyLink": {
+    "messageformat": "Copy link",
+    "description": "Menu item in the in-call info popup for call link calls. The action is to add the call link to the clipboard."
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "视频",
@@ -5189,7 +5329,7 @@
     "description": "Title for the contact name spoofing review dialog in groups"
   },
   "icu:ContactSpoofingReviewDialog__group__description": {
-    "messageformat": "{count, plural, other {{count,number} 个群组成员名称相似。请查看下方成员或选择操作。}}",
+    "messageformat": "{count, plural, other {{count,number} 个群组成员名称相同，请查看下方的成员或选择成员采取行动。}}",
     "description": "Description for the group contact spoofing review dialog"
   },
   "icu:ContactSpoofingReviewDialog__group__multiple-conflicts__description": {
@@ -5198,10 +5338,18 @@
   },
   "icu:ContactSpoofingReviewDialog__group__members-header": {
     "messageformat": "成员",
-    "description": "Header in the group contact spoofing review dialog. After this header, there will be a list of members"
+    "description": "(Deleted 01/31/2024) Header in the group contact spoofing review dialog. After this header, there will be a list of members"
+  },
+  "icu:ContactSpoofingReviewDialog__group__members__no-shared-groups": {
+    "messageformat": "没有其它共同群组",
+    "description": "Informational text displayed next to a contact on ContactSpoofingReviewDialog"
+  },
+  "icu:ContactSpoofingReviewDialog__signal-connection": {
+    "messageformat": "Signal 密友",
+    "description": "Text of a button on ContactSpoofingReviewDialog leading to an education modal"
   },
   "icu:ContactSpoofingReviewDialog__group__name-change-info": {
-    "messageformat": "最近将其个人资料名称从 {oldName} 更改为 {newName}",
+    "messageformat": "最近已将其昵称从{oldName}更改为{newName}",
     "description": "In the group contact spoofing review dialog, this text is shown when someone has changed their name recently"
   },
   "icu:RemoveGroupMemberConfirmation__remove-button": {
@@ -5493,15 +5641,19 @@
     "description": "Default text for username field"
   },
   "icu:ProfileEditor--username--corrupted--body": {
-    "messageformat": "您的用户名出问题了，它已不再分配给您的账户。",
+    "messageformat": "您的用户名出问题了，它已不再分配给您的账户。您可以尝试重新设置，或选择一个新用户名。",
     "description": "Text of confirmation modal when the username gets corrupted"
   },
   "icu:ProfileEditor--username--corrupted--delete-button": {
     "messageformat": "删除用户名",
-    "description": "Button text for deletion of the username in case of corruption"
+    "description": "(Deleted 02/01/2024) Button text for deletion of the username in case of corruption"
   },
   "icu:ProfileEditor--username--corrupted--create-button": {
     "messageformat": "创建用户名",
+    "description": "(Deleted 02/01/2024) Button text for creation of a new username in case of corruption"
+  },
+  "icu:ProfileEditor--username--corrupted--fix-button": {
+    "messageformat": "立刻解决",
     "description": "Button text for creation of a new username in case of corruption"
   },
   "icu:ProfileEditor__username-link": {
@@ -5553,8 +5705,12 @@
     "description": "Shown if user has attempted to enter a username with 00 as discriminator"
   },
   "icu:ProfileEditor--username--check-discriminator-leading-zero": {
-    "messageformat": "该数字不能以 00 开头。请输入 1 到 9 之间的数字",
+    "messageformat": "两位数以上的数字不能以 0 开头",
     "description": "Shown if user has attempted to enter a username with leading 0 in discriminator"
+  },
+  "icu:ProfileEditor--username--too-many-attempts": {
+    "messageformat": "尝试次数过多，请稍候再试",
+    "description": "Shown if user has made too many attempts to pick a username and has to wait before retrying"
   },
   "icu:ProfileEditor--username--unavailable": {
     "messageformat": "该用户名不可用",
@@ -5600,6 +5756,10 @@
     "messageformat": "删除",
     "description": "Shown in dialog button if user has saved an empty string to delete their username"
   },
+  "icu:ProfileEditor--username--delete-unavailable-notice": {
+    "messageformat": "如要删除您的用户名，请打开您手机上的 Signal，然后前往“设置 > 个人资料”。",
+    "description": "Shown in dialog body if user is trying to delete username, but it is only supported on mobile"
+  },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "复制或删除用户名",
     "description": "Shown as aria label for context menu next to username"
@@ -5632,9 +5792,33 @@
     "messageformat": "您是否要撤销这些修改？",
     "description": "ConfirmationDialog text for discarding changes"
   },
+  "icu:ConfirmationDialog__Title--in-call-close-requested": {
+    "messageformat": "Close Signal and end the call?",
+    "description": "ConfirmationDialog title when trying to close the app while in a call."
+  },
+  "icu:ConfirmationDialog__Title--close-requested-not-now": {
+    "messageformat": "Not Now",
+    "description": "Confirmation dialog button to cancel closing the app, while in a call and trying to close the app."
+  },
+  "icu:ProfileEditor--edit-photo": {
+    "messageformat": "编辑照片",
+    "description": "Text of a button on profile editor that leads to the avatar editor"
+  },
   "icu:ProfileEditor--info--link": {
     "messageformat": "您的个人资料已加密。您的联系人以及您发起或接受新聊天的聊天对象将能看到您的个人资料以及您对个人资料所做的更改。<learnMoreLink>了解更多</learnMoreLink>",
-    "description": "Information shown at the bottom of the profile editor section"
+    "description": "(Deleted 02/01/2024) Information shown at the bottom of the profile editor section"
+  },
+  "icu:ProfileEditor--info--general": {
+    "messageformat": "您的个人资料以及您对其做的更改将会对您发送消息的对象、联系人及群组可见。",
+    "description": "Information shown in profile editor below profile name and about fields"
+  },
+  "icu:ProfileEditor--info--pnp": {
+    "messageformat": "您的用户名、二维码和链接在个人资料中不可见。请仅将它们分享给您信任的人。",
+    "description": "Information shown in profile editor below pnp settings when username is set"
+  },
+  "icu:ProfileEditor--info--pnp--no-username": {
+    "messageformat": "用户现在可以通过您的可选用户名给您发送消息，因此您无需给其他用户分享您的手机号码。",
+    "description": "Information shown in profile editor below pnp settings when no username is set"
   },
   "icu:Bio--speak-freely": {
     "messageformat": "畅所欲言",
@@ -5785,27 +5969,35 @@
     "description": "Description for the 'who can do X' setting"
   },
   "icu:Preferences__pnp__row--title": {
-    "messageformat": "电话号码",
+    "messageformat": "手机号码",
     "description": "Title of Phone Number row in Privacy section of Preferences window"
   },
   "icu:Preferences__pnp__row--body": {
-    "messageformat": "选择谁可以在 Signal 上看到您的电话号码，以及谁可以通过您的电话号码与您联系。",
+    "messageformat": "选择谁可以在 Signal 上看到您的手机号码，以及谁可以通过您的手机号码与您联系。",
     "description": "Body of Phone Number row in Privacy section of Preferences window"
+  },
+  "icu:Preferences__pnp__row--button": {
+    "messageformat": "更改…",
+    "description": "Text of Phone Number row button in Privacy section of Preferences window"
   },
   "icu:Preferences__pnp__sharing--title": {
     "messageformat": "谁可以看到我的电话号码",
     "description": "Title for the phone number sharing setting row"
   },
   "icu:Preferences__pnp__sharing--description--everyone": {
-    "messageformat": "您的电话号码将对您发送消息的用户和群组可见。",
+    "messageformat": "您的手机号码将对您发送消息的用户和群组可见。",
     "description": "Description for the phone number sharing setting row when the value is Everyone"
   },
   "icu:Preferences__pnp__sharing--description--nobody": {
-    "messageformat": "没有人能在 Signal 中看到您的电话号码，即使您与对方互发消息。",
-    "description": "Description for the phone number sharing setting row when the value is Nobody"
+    "messageformat": "您的手机号码将对任何人不可见，除非对方已将其保存在自己的手机通讯录中。",
+    "description": "Description for the phone number sharing setting row when the value is Nobody and phone number discoverability setting is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody--not-discoverable": {
+    "messageformat": "您的手机号码将对任何人不可见。",
+    "description": "Description for the phone number sharing setting row when the value is Nobody and phone number discoverability setting is Nobody"
   },
   "icu:Preferences__pnp--page-title": {
-    "messageformat": "电话号码",
+    "messageformat": "手机号码",
     "description": "Title of the page in Phone Number Privacy settings"
   },
   "icu:Preferences__pnp__sharing__everyone": {
@@ -5821,7 +6013,7 @@
     "description": "Title for the phone number discoverability setting row"
   },
   "icu:Preferences__pnp__discoverability--description--everyone": {
-    "messageformat": "知道您的电话号码的任何人均可以在 Signal 上看到您的上线状态，并可以开始跟您聊天。",
+    "messageformat": "知道您的手机号码的任何人均可以在 Signal 上看到您的上线状态，并可以开始跟您聊天。",
     "description": "Description for the phone number discoverability setting row wth the value is everyone"
   },
   "icu:Preferences__pnp__discoverability--description--nobody": {
@@ -5841,11 +6033,11 @@
     "description": "Title for the messaging settings"
   },
   "icu:Preferences--see-me": {
-    "messageformat": "查看我的电话号码",
+    "messageformat": "查看我的手机号码",
     "description": "Label for the see my phone number setting"
   },
   "icu:Preferences--find-me": {
-    "messageformat": "通过我的电话号码找到我",
+    "messageformat": "通过我的手机号码找到我",
     "description": "Label for the find me by my phone number setting"
   },
   "icu:Preferences--read-receipts": {
@@ -6197,7 +6389,7 @@
     "description": "Payment event notification check device label"
   },
   "icu:SignalConnectionsModal__title": {
-    "messageformat": "Signal 联系人",
+    "messageformat": "Signal 密友",
     "description": "The phrase/term: 'Signal Connections'"
   },
   "icu:SignalConnectionsModal__header": {
@@ -6377,7 +6569,7 @@
     "description": "Modal title when hiding people from my stories"
   },
   "icu:StoriesSettings__mine__all--label": {
-    "messageformat": "所有 Signal 联系人",
+    "messageformat": "所有 Signal 密友",
     "description": "Input label to describe all signal connections"
   },
   "icu:StoriesSettings__mine__all--description": {
@@ -6788,6 +6980,10 @@
     "messageformat": "回应了{name}的动态",
     "description": "Label for when a person reacts to a story"
   },
+  "icu:Quote__story-reaction--you": {
+    "messageformat": "Reacted to your story",
+    "description": "Label for when someone reacts to your story"
+  },
   "icu:Quote__story-reaction--single": {
     "messageformat": "回应了动态",
     "description": "Used whenever we can't find a user's first name"
@@ -6817,7 +7013,7 @@
     "description": "Placeholder for the username field"
   },
   "icu:EditUsernameModalBody__username-helper": {
-    "messageformat": "用户名可以让其他会员无需您的电话号码也能给您发送消息。系统会将用户名与一组数字配对，从而将您的地址保密。",
+    "messageformat": "用户名始终搭配一组数字。",
     "description": "Shown on the edit username screen"
   },
   "icu:EditUsernameModalBody__learn-more": {
@@ -6840,8 +7036,16 @@
     "messageformat": "继续",
     "description": "Text of the primary button on username change confirmation modal"
   },
+  "icu:EditUsernameModalBody__recover-confirmation": {
+    "messageformat": "恢复您的用户名将会重置您现有的二维码和链接。确定要恢复吗？",
+    "description": "Body of the confirmation dialog displayed when user is about to recover their username"
+  },
+  "icu:EditUsernameModalBody__username-recovered__text": {
+    "messageformat": "您的二维码和链接已重置，您的用户名是{username}",
+    "description": "Text of toast displayed upon successful recovery of username"
+  },
   "icu:UsernameLinkModalBody__hint": {
-    "messageformat": "Scan this QR code with your phone to chat with me on Signal.",
+    "messageformat": "如要在 Signal 上与我聊天，请扫描此二维码吧。",
     "descrption": "Text of the hint displayed below generated QR code on the printable image."
   },
   "icu:UsernameLinkModalBody__save": {
@@ -6873,7 +7077,7 @@
     "description": "ARIA label of button for selecting username link color"
   },
   "icu:UsernameLinkModalBody__reset__confirm": {
-    "messageformat": "如果重置二维码，您现有的二维码和链接将会失效。",
+    "messageformat": "如果重置二维码和链接，您现有的二维码和链接将会失效。",
     "description": "Text of confirmation modal when resetting the username link"
   },
   "icu:UsernameLinkModalBody__resetting-link": {
@@ -6881,35 +7085,43 @@
     "description": "Text shown when resetting the username link"
   },
   "icu:UsernameLinkModalBody__error__text": {
-    "messageformat": "二维码和链接未设置。请检查您的互联网连接并重试。",
+    "messageformat": "您的二维码和链接出问题了，它们已经失效。请尝试重置以创建新的二维码和链接。",
     "description": "Text of the confirmation dialog shown on username link error"
   },
+  "icu:UsernameLinkModalBody__error__fix-now": {
+    "messageformat": "立刻解决",
+    "description": "Text of the button in a confirmation dialog shown on username link error"
+  },
+  "icu:UsernameLinkModalBody__recovered__text": {
+    "messageformat": "您的二维码和链接已重置，新的二维码和链接已创建。",
+    "description": "Text of the confirmation dialog shown on successful username link recovery"
+  },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "New ways to connect",
+    "messageformat": "联系有新招",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number__title": {
-    "messageformat": "Phone number privacy",
+    "messageformat": "手机号码隐私",
     "description": "Title of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number__body": {
-    "messageformat": "Your phone number is no longer visible in chats. If your number is saved to a friend’s contacts, they will still see it.",
+    "messageformat": "您的手机号码在聊天中不再对好友可见。如果您的好友将您的手机号码保存到了通讯录中，那么对方仍然可以看到您的手机号码。",
     "description": "Body of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__username__title": {
-    "messageformat": "Usernames",
+    "messageformat": "用户名",
     "description": "Title of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__username__body": {
-    "messageformat": "People can now message you using your optional username so you don’t have to give out your phone number. Usernames aren’t visible on your profile.",
+    "messageformat": "用户现在可以通过您的可选用户名给您发送消息，因此您无需给其他用户分享您的手机号码。用户名在您的个人资料中不可见。",
     "description": "Body of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__qr__title": {
-    "messageformat": "QR codes and links",
+    "messageformat": "二维码和链接",
     "description": "Title of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__qr__body": {
-    "messageformat": "Usernames have a unique QR code and link you can share with friends to quickly start a chat with you.",
+    "messageformat": "用户名有一个唯一的二维码和链接，您可以将其分享给您的朋友以快速开始聊天。",
     "description": "Body of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
@@ -6921,7 +7133,7 @@
     "description": "(Deleted 01/16/2023) Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "您可以在“设置 > 隐私 > 电话号码 >谁可以查找我的电话号码”中关闭电话号码搜索功能，将您的用户名用作其他人联系您的主要方式。",
+    "messageformat": "您可以在“设置 > 隐私 > 手机号码 >谁可以查找我的手机号码”中关闭手机号码搜索功能，将您的用户名用作其他人联系您的主要方式。",
     "description": "(Deleted 01/16/2023) Content of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__learn-more": {
@@ -6929,27 +7141,27 @@
     "description": "(Deleted 01/16/2023) Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Set up username",
+    "messageformat": "设置用户名",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__skip": {
-    "messageformat": "Not now",
+    "messageformat": "稍后再说",
     "description": "Text of the secondary button on username onboarding modal"
   },
   "icu:UsernameMegaphone__title": {
-    "messageformat": "New ways to connect",
+    "messageformat": "联系有新招",
     "description": "Title of username megaphone"
   },
   "icu:UsernameMegaphone__body": {
-    "messageformat": "Introducing phone number privacy, optional usernames and links.",
+    "messageformat": "我们推出了手机号码隐私、可选用户名和链接功能。",
     "description": "Body of username megaphone"
   },
   "icu:UsernameMegaphone__learn-more": {
-    "messageformat": "Learn more",
+    "messageformat": "了解更多",
     "description": "Text of the primary button on username megaphone"
   },
   "icu:UsernameMegaphone__dismiss": {
-    "messageformat": "Dismiss",
+    "messageformat": "不予考虑",
     "description": "Text of the secondary button on username megaphone"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -7124,13 +7336,7 @@
     "messageformat": "我们进行了功能微调、漏洞修复和性能强化。感谢使用 Signal！",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.46--0": {
-    "messageformat": "乌尔都语的默认字体已更新，以提高选择该语言时的可读性（Signal 设置 > 外观 > 语言）。对此我们要感谢{linkToGithub}！"
-  },
-  "icu:WhatsNew__v6.47--0": {
-    "messageformat": "If you spend a lot of time trying to pick out the perfect emoji reaction for every situation, you'll be <emojify>🎉</emojify> to know that we fixed a bug with typing indicators that sometimes caused the emoji selection box to disappear while you were in the middle of pondering your choices."
-  },
-  "icu:WhatsNew__v6.47--1": {
-    "messageformat": "Signal will now match your selected title bar color on Microsoft Windows. When all of your windows in Windows look the same, that's a common theme."
+  "icu:WhatsNew__v7.1--0": {
+    "messageformat": "This update enables support for all of the new emoji characters in Emoji version 15.1. People keep asking us what our favorite new emoji is, but answering that question is a “lime” we won't cross."
   }
 }

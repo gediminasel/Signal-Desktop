@@ -44,6 +44,10 @@
     "messageformat": "“{group}” ഗ്രൂപ്പിലേക്ക് “{contact}” എന്നയാളെ ചേർക്കുക",
     "description": "Shown in the confirmation dialog body when adding a contact to a group"
   },
+  "icu:AddUserToAnotherGroupModal__search-placeholder": {
+    "messageformat": "തിരയൽ",
+    "description": "Placeholder to use when searching for groups in the AddUserToAnotherGroupModal"
+  },
   "icu:AddUserToAnotherGroupModal__toast--user-added-to-group": {
     "messageformat": "{contact}-നെ {group}-ലേക്ക് ചേർത്തു",
     "description": "Shown in toast after a user is added to an existing group"
@@ -331,6 +335,42 @@
   "icu:LeftPane--corrupted-username-link--action-text": {
     "messageformat": "ഇപ്പോൾ പരിഹരിക്കുക",
     "description": "Text of the button in the corrupted username link banner in the left pane"
+  },
+  "icu:LeftPane__compose__findByUsername": {
+    "messageformat": "ഉപയോക്തൃനാമം ഉപയോഗിച്ച് കണ്ടെത്തുക",
+    "description": "Text of the button displayed when clicking compose button in left pane"
+  },
+  "icu:LeftPane__compose__findByPhoneNumber": {
+    "messageformat": "ഫോൺ നമ്പർ ഉപയോഗിച്ച് കണ്ടെത്തുക",
+    "description": "Text of the button displayed when clicking compose button in left pane"
+  },
+  "icu:LeftPaneFindByHelper__title--findByUsername": {
+    "messageformat": "ഉപയോക്തൃനാമം ഉപയോഗിച്ച് കണ്ടെത്തുക",
+    "description": "Title of the left pane when looking up someone by username"
+  },
+  "icu:LeftPaneFindByHelper__title--findByPhoneNumber": {
+    "messageformat": "ഫോൺ നമ്പർ ഉപയോഗിച്ച് കണ്ടെത്തുക",
+    "description": "Title of the left pane when looking up someone by phone number"
+  },
+  "icu:LeftPaneFindByHelper__placeholder--findByUsername": {
+    "messageformat": "ഉപയോക്തൃനാമം",
+    "description": "Placeholder of the search input in left pane when looking up someone by username"
+  },
+  "icu:LeftPaneFindByHelper__placeholder--findByPhoneNumber": {
+    "messageformat": "ഫോൺ നമ്പർ",
+    "description": "Placeholder of the search input in left pane when looking up someone by phone number"
+  },
+  "icu:LeftPaneFindByHelper__description--findByUsername": {
+    "messageformat": "ഡോട്ടും തുടർന്ന് വരുന്ന സംഖ്യകളും ഉൾപ്പെടെയുള്ള ഉപയോക്തൃനാമം നൽകുക.",
+    "description": "Description displayed under search input in left pane when looking up someone by username"
+  },
+  "icu:CountryCodeSelect__placeholder": {
+    "messageformat": "രാജ്യ കോഡ്",
+    "description": "Placeholder displayed as default value of country code select element"
+  },
+  "icu:CountryCodeSelect__Modal__title": {
+    "messageformat": "രാജ്യ കോഡ്",
+    "description": "Title of the country code modal"
   },
   "icu:NavTabsToggle__showTabs": {
     "messageformat": "ടാബുകൾ കാണിക്കുക",
@@ -1351,6 +1391,38 @@
   "icu:showSafetyNumber": {
     "messageformat": "സുരക്ഷാ നമ്പർ കാണുക"
   },
+  "icu:AboutContactModal__title": {
+    "messageformat": "ആമുഖം",
+    "description": "Title of About modal"
+  },
+  "icu:AboutContactModal__title--myself": {
+    "messageformat": "നിങ്ങൾ",
+    "description": "Title of About modal when viewing your own information"
+  },
+  "icu:AboutContactModal__verified": {
+    "messageformat": "പരിശോധിച്ചു",
+    "description": "Text of a button on About modal leading to a safety number modal"
+  },
+  "icu:AboutContactModal__blocked": {
+    "messageformat": "{name} എന്നയാളെ ബ്ലോക്ക് ചെയ്തിരിക്കുന്നു",
+    "description": "Text of a row on About modal when user is blocked"
+  },
+  "icu:AboutContactModal__message-request": {
+    "messageformat": "തീർച്ചപ്പെടുത്താത്ത സന്ദേശ അഭ്യർത്ഥന",
+    "description": "Text of a row on About modal when user is in message request state"
+  },
+  "icu:AboutContactModal__no-dms": {
+    "messageformat": "{name} എന്നയാൾക്ക് നേരിട്ട് സന്ദേശങ്ങളൊന്നും അയച്ചിട്ടില്ല",
+    "description": "Text of a row on About modal when there are no direct messages with a user"
+  },
+  "icu:AboutContactModal__signal-connection": {
+    "messageformat": "Signal കണക്ഷൻ",
+    "description": "Text of a button on About modal leading to an education modal"
+  },
+  "icu:AboutContactModal__system-contact": {
+    "messageformat": "{name} നിങ്ങളുടെ സിസ്റ്റം കോൺടാക്റ്റുകളിൽ ഉണ്ട്",
+    "description": "Text of a row in the About modal describing that the contact is in system contacts"
+  },
   "icu:ContactModal__showSafetyNumber": {
     "messageformat": "സുരക്ഷാ നമ്പർ കാണുക",
     "description": "Contact modal, label for button to show safety number modal"
@@ -1626,6 +1698,10 @@
     "messageformat": "എന്റെ കമ്പ്യൂട്ടർ",
     "description": "The placeholder for the 'choose device name' input"
   },
+  "icu:Preferences--phone-number": {
+    "messageformat": "ഫോൺ നമ്പർ",
+    "description": "The label in settings panel shown for the phone number associated with user's account"
+  },
   "icu:Preferences--device-name": {
     "messageformat": "ഉപകരണത്തിന്റെ പേര്",
     "description": "The label in settings panel shown for the user-provided name for this desktop instance"
@@ -1700,6 +1776,54 @@
   "icu:calling__call-is-full": {
     "messageformat": "കോൾ നിറഞ്ഞു",
     "description": "Text in the call lobby when you can't join because the call is full"
+  },
+  "icu:calling__cant-join": {
+    "messageformat": "Can't join call",
+    "description": "Modal dialog title when you can't join a call"
+  },
+  "icu:calling__dialog-already-in-call": {
+    "messageformat": "You are already in a call.",
+    "description": "Error message when clicking a call link to join a call, but you're in a call already."
+  },
+  "icu:calling__call-link-connection-issues": {
+    "messageformat": "Could not fetch call link information. Please check your network connection and try again.",
+    "description": "Error message when unable to fetch call link info from server."
+  },
+  "icu:calling__call-link-copied": {
+    "messageformat": "Call link copied.",
+    "description": "Toast shown when a call link is copied to the clipboard."
+  },
+  "icu:calling__call-link-no-longer-valid": {
+    "messageformat": "This call link is no longer valid.",
+    "description": "Error message when a call link has been revoked or expires."
+  },
+  "icu:calling__call-link-default-title": {
+    "messageformat": "Signal Call",
+    "description": "Default title for Signal call links."
+  },
+  "icu:calling__join-request-denied": {
+    "messageformat": "Your request to join this call has been denied.",
+    "description": "Error message when a request to join a call link call was rejected by a call admin."
+  },
+  "icu:calling__join-request-denied-title": {
+    "messageformat": "Join request denied",
+    "description": "Title of error when a request to join a call link call was rejected by a call admin."
+  },
+  "icu:calling__removed-from-call": {
+    "messageformat": "Someone has removed you from the call.",
+    "description": "Error message when in a call then a call admin removes you."
+  },
+  "icu:calling__removed-from-call-title": {
+    "messageformat": "Removed from call",
+    "description": "Title of error when in a call then a call admin removes you."
+  },
+  "icu:CallingLobby__CallLinkNotice": {
+    "messageformat": "Anyone who joins this call via the link will see your name and photo.",
+    "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared."
+  },
+  "icu:CallingLobby__CallLinkNotice--phone-sharing": {
+    "messageformat": "Anyone who joins this call via the link will see your name, photo, and phone number.",
+    "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared, when the phone number sharing account setting is enabled."
   },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "ചേരുക",
@@ -2244,11 +2368,11 @@
     "description": "Description for incoming calls setting"
   },
   "icu:contactChangedProfileName": {
-    "messageformat": "{sender} അവരുടെ പ്രൊഫൈൽ പേര് {oldProfile}-ൽ നിന്ന് {newProfile}-ആയി മാറ്റി.",
+    "messageformat": "{sender} അവരുടെ പ്രൊഫൈൽ നാമം {oldProfile}-ൽ നിന്ന് {newProfile}-ആയി മാറ്റി.",
     "description": "Description for incoming calls setting"
   },
   "icu:changedProfileName": {
-    "messageformat": "{oldProfile} അവരുടെ പ്രൊഫൈൽ പേര് {newProfile} എന്നാക്കി മാറ്റി.",
+    "messageformat": "{oldProfile} അവരുടെ പ്രൊഫൈൽ നാമം {newProfile} എന്നാക്കി മാറ്റി.",
     "description": "Shown when a contact not in your address book changes their profile name"
   },
   "icu:SafetyNumberModal__title": {
@@ -2328,7 +2452,7 @@
     "description": "Label for header to go to stories view"
   },
   "icu:contactSearchPlaceholder": {
-    "messageformat": "പേര് അല്ലെങ്കിൽ ഫോൺ നമ്പർ ഉപയോഗിച്ച് തിരയുക",
+    "messageformat": "പേര്, യൂസർ പേര്, അല്ലെങ്കിൽ നമ്പർ",
     "description": "Placeholder to use when searching for contacts in the composer"
   },
   "icu:noContactsFound": {
@@ -2368,7 +2492,7 @@
     "description": "Error message when you try to send an edit after message becomes too old"
   },
   "icu:startConversation--username-not-found": {
-    "messageformat": "ഉപയോക്താവിനെ കണ്ടെത്തിയില്ല. {atUsername}  ഒരു Signal ഉപയോക്താവല്ല; നിങ്ങൾ പൂർണ്ണമായ ഉപയോക്തൃനാമം ചേര്‍ത്തിട്ടുണ്ടെന്ന് ഉറപ്പാക്കുക.",
+    "messageformat": "{atUsername} ഒരു Signal ഉപയോക്താവ് അല്ല. നിങ്ങൾ ഉപയോക്തൃനാമം പൂർണ്ണമായും നൽകിയിട്ടുണ്ടെന്ന് ഉറപ്പാക്കുക.",
     "description": "Shown in dialog if username is not found. Note that 'username' will be the output of at-username"
   },
   "icu:startConversation--phone-number-not-found": {
@@ -2615,6 +2739,10 @@
   "icu:message--attachmentTooBig--multiple": {
     "messageformat": "പ്രദർശിപ്പിക്കാൻ കഴിയാത്ത അത്രയും വലുതാണ് ചില അറ്റാച്ച്മെന്റുകൾ.",
     "description": "Shown in a message bubble if any attachments are left on message when too-large attachments are dropped"
+  },
+  "icu:message--call-link-description": {
+    "messageformat": "Use this link to join a Signal call",
+    "description": "Shown in message previews for Signal call links."
   },
   "icu:donation--missing": {
     "messageformat": "സംഭാവനാ വിശദാംശങ്ങൾ ലഭ്യമാക്കാനായില്ല",
@@ -3588,6 +3716,14 @@
     "messageformat": "ഓഡിയോ കോൾ",
     "description": "Shown in the call lobby for a direct 1:1 call when the caller's video is disabled, to specify that an audio call will be placed when clicking the Start button."
   },
+  "icu:CallControls__InfoDisplay--adhoc-call": {
+    "messageformat": "Call link",
+    "description": "Shown in the call lobby for a call link."
+  },
+  "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
+    "messageformat": "Waiting to be let in",
+    "description": "Shown in the call lobby for call link calls when requesting to join a call which requires admin approval."
+  },
   "icu:CallControls__JoinLeaveButton--hangup-1-1": {
     "messageformat": "അവസാനം",
     "description": "Title for the hangup button for a direct 1:1 call with only 2 participants."
@@ -3727,6 +3863,10 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "ഒരു വിൻഡോ",
     "description": "Title for the select your screen sharing sources modal"
+  },
+  "icu:CallingAdhocCallInfo__CopyLink": {
+    "messageformat": "Copy link",
+    "description": "Menu item in the in-call info popup for call link calls. The action is to add the call link to the clipboard."
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "വീഡിയോ",
@@ -5189,7 +5329,7 @@
     "description": "Title for the contact name spoofing review dialog in groups"
   },
   "icu:ContactSpoofingReviewDialog__group__description": {
-    "messageformat": "{count, plural, one {ഒരു ഗ്രൂപ്പ് അംഗത്തിന് സമാനമായ പേരുകളുണ്ട്. താഴെയുള്ള അംഗങ്ങളെ അവലോകനം ചെയ്യുക അല്ലെങ്കിൽ നടപടിയെടുക്കാൻ തിരഞ്ഞെടുക്കുക.} other {{count,number} ഗ്രൂപ്പ് അംഗങ്ങൾക്ക് സമാനമായ പേരുകളുണ്ട്. താഴെയുള്ള അംഗങ്ങളെ അവലോകനം ചെയ്യുക അല്ലെങ്കിൽ നടപടിയെടുക്കാൻ തിരഞ്ഞെടുക്കുക.}}",
+    "messageformat": "{count, plural, one {1 group member has the same name, review the member below or choose to take action.} other {{count,number} group members have the same name, review the members below or choose to take action.}}",
     "description": "Description for the group contact spoofing review dialog"
   },
   "icu:ContactSpoofingReviewDialog__group__multiple-conflicts__description": {
@@ -5198,10 +5338,18 @@
   },
   "icu:ContactSpoofingReviewDialog__group__members-header": {
     "messageformat": "അംഗങ്ങൾ",
-    "description": "Header in the group contact spoofing review dialog. After this header, there will be a list of members"
+    "description": "(Deleted 01/31/2024) Header in the group contact spoofing review dialog. After this header, there will be a list of members"
+  },
+  "icu:ContactSpoofingReviewDialog__group__members__no-shared-groups": {
+    "messageformat": "പൊതുവായി മറ്റ് ഗ്രൂപ്പുകളൊന്നുമില്ല",
+    "description": "Informational text displayed next to a contact on ContactSpoofingReviewDialog"
+  },
+  "icu:ContactSpoofingReviewDialog__signal-connection": {
+    "messageformat": "Signal കണക്ഷൻ",
+    "description": "Text of a button on ContactSpoofingReviewDialog leading to an education modal"
   },
   "icu:ContactSpoofingReviewDialog__group__name-change-info": {
-    "messageformat": "അടുത്തിടെ അവരുടെ പ്രൊഫൈൽ പേര് {oldName} എന്നതിൽ നിന്ന് {newName} എന്നാക്കി മാറ്റി",
+    "messageformat": "അടുത്തിടെ അവരുടെ പ്രൊഫൈൽ നാമം {oldName} എന്നതിൽ നിന്ന് {newName} എന്നാക്കി മാറ്റി",
     "description": "In the group contact spoofing review dialog, this text is shown when someone has changed their name recently"
   },
   "icu:RemoveGroupMemberConfirmation__remove-button": {
@@ -5493,15 +5641,19 @@
     "description": "Default text for username field"
   },
   "icu:ProfileEditor--username--corrupted--body": {
-    "messageformat": "നിങ്ങളുടെ ഉപയോക്തൃനാമവുമായി ബന്ധപ്പെട്ട് എന്തോ പിശകുണ്ടായി, ഇത് നിലവിൽ നിങ്ങളുടെ അക്കൗണ്ടിലേക്ക് അസൈൻ ചെയ്തിട്ടില്ല.",
+    "messageformat": "നിങ്ങളുടെ ഉപയോക്തൃനാമവുമായി ബന്ധപ്പെട്ട് എന്തോ പിശകുണ്ടായി, ഇത് നിലവിൽ നിങ്ങളുടെ അക്കൗണ്ടിലേക്ക് അസൈൻ ചെയ്തിട്ടില്ല. നിങ്ങൾക്കത് വീണ്ടും സജ്ജമാക്കാൻ ശ്രമിക്കാം അല്ലെങ്കിൽ പുതിയൊരെണ്ണം തിരഞ്ഞെടുക്കാം.",
     "description": "Text of confirmation modal when the username gets corrupted"
   },
   "icu:ProfileEditor--username--corrupted--delete-button": {
     "messageformat": "ഉപയോക്തൃനാമം ഇല്ലാതാക്കുക",
-    "description": "Button text for deletion of the username in case of corruption"
+    "description": "(Deleted 02/01/2024) Button text for deletion of the username in case of corruption"
   },
   "icu:ProfileEditor--username--corrupted--create-button": {
-    "messageformat": "യൂസർ പേര് സൃഷ്ടിക്കുക",
+    "messageformat": "ഉപയോക്തൃനാമം സൃഷ്ടിക്കുക",
+    "description": "(Deleted 02/01/2024) Button text for creation of a new username in case of corruption"
+  },
+  "icu:ProfileEditor--username--corrupted--fix-button": {
+    "messageformat": "ഇപ്പോൾ പരിഹരിക്കുക",
     "description": "Button text for creation of a new username in case of corruption"
   },
   "icu:ProfileEditor__username-link": {
@@ -5533,7 +5685,7 @@
     "description": "Shown if user has attempted to use forbidden characters in username"
   },
   "icu:ProfileEditor--username--check-starting-character": {
-    "messageformat": "യൂസർ പേര് ഒരു അക്കത്തിൽ ആരംഭിച്ചേക്കില്ല.",
+    "messageformat": "ഉപയോക്തൃനാമം ഒരു അക്കത്തിൽ ആരംഭിച്ചേക്കില്ല.",
     "description": "Shown if user has attempted to begin their username with a number"
   },
   "icu:ProfileEditor--username--check-character-min": {
@@ -5553,8 +5705,12 @@
     "description": "Shown if user has attempted to enter a username with 00 as discriminator"
   },
   "icu:ProfileEditor--username--check-discriminator-leading-zero": {
-    "messageformat": "ഈ സംഖ്യ 00-ൽ ആരംഭിക്കാൻ കഴിയില്ല. 1-9 വരെയുള്ള ഒരു അക്കം നൽകുക",
+    "messageformat": "2 അക്കങ്ങളിൽ കൂടുതലുള്ള സംഖ്യകൾ 0-ൽ ആരംഭിക്കാനാകില്ല",
     "description": "Shown if user has attempted to enter a username with leading 0 in discriminator"
+  },
+  "icu:ProfileEditor--username--too-many-attempts": {
+    "messageformat": "വളരെയധികം ശ്രമങ്ങൾ നടത്തി, പിന്നീട് വീണ്ടും ശ്രമിക്കുക",
+    "description": "Shown if user has made too many attempts to pick a username and has to wait before retrying"
   },
   "icu:ProfileEditor--username--unavailable": {
     "messageformat": "ഈ ഉപയോക്തൃനാമം ലഭ്യമല്ല",
@@ -5600,6 +5756,10 @@
     "messageformat": "ഇല്ലാതാക്കൂ",
     "description": "Shown in dialog button if user has saved an empty string to delete their username"
   },
+  "icu:ProfileEditor--username--delete-unavailable-notice": {
+    "messageformat": "നിങ്ങളുടെ ഉപയോക്തൃനാമം ഇല്ലാതാക്കാൻ, ഫോണിൽ Signal ആപ്പ് തുറന്ന ശേഷം, ക്രമീകരണങ്ങൾ > പ്രൊഫൈൽ എന്നതിലേക്ക് പോകുക.",
+    "description": "Shown in dialog body if user is trying to delete username, but it is only supported on mobile"
+  },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "ഉപയോക്തൃനാമം പകർത്തുക അല്ലെങ്കിൽ ഇല്ലാതാക്കുക",
     "description": "Shown as aria label for context menu next to username"
@@ -5632,9 +5792,33 @@
     "messageformat": "ഈ മാറ്റങ്ങൾ നിങ്ങൾക്ക് നിരാകരിക്കണമെന്നുണ്ടോ?",
     "description": "ConfirmationDialog text for discarding changes"
   },
+  "icu:ConfirmationDialog__Title--in-call-close-requested": {
+    "messageformat": "Close Signal and end the call?",
+    "description": "ConfirmationDialog title when trying to close the app while in a call."
+  },
+  "icu:ConfirmationDialog__Title--close-requested-not-now": {
+    "messageformat": "Not Now",
+    "description": "Confirmation dialog button to cancel closing the app, while in a call and trying to close the app."
+  },
+  "icu:ProfileEditor--edit-photo": {
+    "messageformat": "ഫോട്ടോ എഡിറ്റ് ചെയ്യുക",
+    "description": "Text of a button on profile editor that leads to the avatar editor"
+  },
   "icu:ProfileEditor--info--link": {
     "messageformat": "നിങ്ങളുടെ പ്രൊഫൈൽ എൻക്രിപ്റ്റഡാണ്. നിങ്ങൾ പുതിയ ചാറ്റുകൾ തുടങ്ങുമ്പോഴും സ്വീകരിക്കുമ്പോഴും ഉൾപ്പെടെ നിങ്ങളുടെ പ്രൊഫൈലും അതിലെ മാറ്റങ്ങളും നിങ്ങളുടെ കോൺടാക്റ്റുകൾക്ക് കാണാനാകും. <learnMoreLink>കൂടുതലറിയുക</learnMoreLink>",
-    "description": "Information shown at the bottom of the profile editor section"
+    "description": "(Deleted 02/01/2024) Information shown at the bottom of the profile editor section"
+  },
+  "icu:ProfileEditor--info--general": {
+    "messageformat": "നിങ്ങളുടെ പ്രൊഫൈലും അതിലെ മാറ്റങ്ങളും നിങ്ങൾ സന്ദേശമയയ്ക്കുന്ന ആളുകൾക്കും കോൺടാക്റ്റുകൾക്കും ഗ്രൂപ്പുകൾക്കും ദൃശ്യമാകും.",
+    "description": "Information shown in profile editor below profile name and about fields"
+  },
+  "icu:ProfileEditor--info--pnp": {
+    "messageformat": "നിങ്ങളുടെ ഉപയോക്തൃനാമവും QR കോഡും ലിങ്കും നിങ്ങളുടെ പ്രൊഫൈലിൽ ദൃശ്യമല്ല. നിങ്ങൾ വിശ്വസിക്കുന്ന ആളുകളുമായി മാത്രം അത് പങ്കിടുക.",
+    "description": "Information shown in profile editor below pnp settings when username is set"
+  },
+  "icu:ProfileEditor--info--pnp--no-username": {
+    "messageformat": "നിങ്ങളുടെ ഓപ്‌ഷണൽ ഉപയോക്തൃനാമം ഉപയോഗിച്ച് ആളുകൾക്ക് ഇപ്പോൾ നിങ്ങൾക്ക് സന്ദേശമയയ്‌ക്കാൻ കഴിയും, അതിനാൽ നിങ്ങളുടെ ഫോൺ നമ്പർ നൽകേണ്ടതില്ല.",
+    "description": "Information shown in profile editor below pnp settings when no username is set"
   },
   "icu:Bio--speak-freely": {
     "messageformat": "സ്വതന്ത്രമായി സംസാരിക്കുക",
@@ -5792,6 +5976,10 @@
     "messageformat": "നിങ്ങളുടെ ഫോൺ നമ്പർ ആർക്കൊക്കെ കാണാനാകുമെന്നും ആർക്കൊക്കെ നിങ്ങളെ Signal-ൽ ബന്ധപ്പെടാനാകുമെന്നും തിരഞ്ഞെടുക്കൂ.",
     "description": "Body of Phone Number row in Privacy section of Preferences window"
   },
+  "icu:Preferences__pnp__row--button": {
+    "messageformat": "മാറ്റുക…",
+    "description": "Text of Phone Number row button in Privacy section of Preferences window"
+  },
   "icu:Preferences__pnp__sharing--title": {
     "messageformat": "എന്റെ നമ്പർ ആർക്കൊക്കെ കാണാനാകും",
     "description": "Title for the phone number sharing setting row"
@@ -5801,8 +5989,12 @@
     "description": "Description for the phone number sharing setting row when the value is Everyone"
   },
   "icu:Preferences__pnp__sharing--description--nobody": {
-    "messageformat": "സന്ദേശമയയ്‌ക്കുമ്പോൾ പോലും ആരും നിങ്ങളുടെ ഫോൺ നമ്പർ Signal-ൽ കാണില്ല.",
-    "description": "Description for the phone number sharing setting row when the value is Nobody"
+    "messageformat": "ആരുടെയെങ്കിലും ഫോൺ കോൺടാക്റ്റുകളിൽ നിങ്ങളുടെ ഫോൺ നമ്പർ സേവ് ചെയ്തിട്ടില്ലെങ്കിൽ അവർക്ക് അത് ദൃശ്യമാകില്ല.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody and phone number discoverability setting is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody--not-discoverable": {
+    "messageformat": "നിങ്ങളുടെ ഫോൺ നമ്പർ ആർക്കും ദൃശ്യമാകില്ല.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody and phone number discoverability setting is Nobody"
   },
   "icu:Preferences__pnp--page-title": {
     "messageformat": "ഫോൺ നമ്പർ",
@@ -6513,11 +6705,11 @@
     "description": "Alert body for groups that non-admins cannot send stories to"
   },
   "icu:SendStoryModal__my-stories-description-all": {
-    "messageformat": "{viewersCount, plural, one {All Signal Connections · 1 Viewer} other {All Signal Connections · {viewersCount,number} Viewers}}",
+    "messageformat": "{viewersCount, plural, one {എല്ലാ Signal കണക്ഷനുകളും · {viewersCount,number} കാണുന്നയാൾ} other {എല്ലാ Signal കണക്ഷനുകളും · {viewersCount,number} കാഴ്ച്ചക്കാർ}}",
     "description": "Shown as a subtitle under My Stories option in the send-story-to dialog when not exluding anyone"
   },
   "icu:SendStoryModal__my-stories-description-excluding": {
-    "messageformat": "{excludedCount, plural, one {All Signal Connections · 1 Excluded} other {All Signal Connections · {excludedCount,number} Excluded}}",
+    "messageformat": "{excludedCount, plural, one {എല്ലാ Signal കണക്ഷനുകളും · {excludedCount,number} ഒഴിവാക്കി} other {എല്ലാ Signal കണക്ഷനുകളും · {excludedCount,number} ഒഴിവാക്കി}}",
     "description": "Shown as a subtitle under My Stories option in the send-story-to dialog when excluding some"
   },
   "icu:SendStoryModal__private-story-description": {
@@ -6788,6 +6980,10 @@
     "messageformat": "{name} എന്നയാളുടെ സ്റ്റോറിയോട് പ്രതികരിച്ചു",
     "description": "Label for when a person reacts to a story"
   },
+  "icu:Quote__story-reaction--you": {
+    "messageformat": "Reacted to your story",
+    "description": "Label for when someone reacts to your story"
+  },
   "icu:Quote__story-reaction--single": {
     "messageformat": "ഒരു സ്റ്റോറിയോട് പ്രതികരിച്ചു",
     "description": "Used whenever we can't find a user's first name"
@@ -6817,7 +7013,7 @@
     "description": "Placeholder for the username field"
   },
   "icu:EditUsernameModalBody__username-helper": {
-    "messageformat": "ഫോൺ നമ്പറില്ലാതെ നിങ്ങൾക്ക് സന്ദേശം അയയ്‌ക്കാൻ ഉപയോക്തൃനാമങ്ങൾ മറ്റുള്ളവരെ അനുവദിക്കുന്നു. നിങ്ങളുടെ മേൽവിലാസം സ്വകാര്യമായി സൂക്ഷിക്കുന്നതിന്, അത് ഒരു കൂട്ടം അക്കങ്ങളുമായി ജോടിയാക്കിയിരിക്കുന്നു.",
+    "messageformat": "ഉപയോക്തൃനാമങ്ങൾക്കൊപ്പം ഒരു കൂട്ടം സംഖ്യകളും ഉണ്ടാകും.",
     "description": "Shown on the edit username screen"
   },
   "icu:EditUsernameModalBody__learn-more": {
@@ -6840,8 +7036,16 @@
     "messageformat": "തുടരുക",
     "description": "Text of the primary button on username change confirmation modal"
   },
+  "icu:EditUsernameModalBody__recover-confirmation": {
+    "messageformat": "നിങ്ങളുടെ ഉപയോക്തൃനാമം വീണ്ടെടുക്കുന്നതിലൂടെ നിങ്ങളുടെ നിലവിലുള്ള QR കോഡും ലിങ്കും പുനഃക്രമീകരിക്കും. ഉറപ്പാണോ?",
+    "description": "Body of the confirmation dialog displayed when user is about to recover their username"
+  },
+  "icu:EditUsernameModalBody__username-recovered__text": {
+    "messageformat": "നിങ്ങളുടെ QR കോഡും ലിങ്കും പുനഃക്രമീകരിച്ചു, നിങ്ങളുടെ ഉപയോക്തൃനാമം {username} ആണ്",
+    "description": "Text of toast displayed upon successful recovery of username"
+  },
   "icu:UsernameLinkModalBody__hint": {
-    "messageformat": "Scan this QR code with your phone to chat with me on Signal.",
+    "messageformat": "Signal-ൽ ഞാനുമായി ചാറ്റ് ചെയ്യാൻ ഈ QR കോഡ് സ്കാൻ ചെയ്യുക.",
     "descrption": "Text of the hint displayed below generated QR code on the printable image."
   },
   "icu:UsernameLinkModalBody__save": {
@@ -6873,7 +7077,7 @@
     "description": "ARIA label of button for selecting username link color"
   },
   "icu:UsernameLinkModalBody__reset__confirm": {
-    "messageformat": "നിങ്ങൾ QR കോഡ് പുനഃക്രമീകരിക്കുക ആണെങ്കിൽ, നിങ്ങളുടെ നിലവിലുള്ള QR കോഡും ലിങ്കും പിന്നീട് പ്രവർത്തിക്കില്ല.",
+    "messageformat": "നിങ്ങളുടെ QR കോഡും ലിങ്കും പുനഃക്രമീകരിക്കുകയാണെങ്കിൽ, നിങ്ങളുടെ നിലവിലുള്ള QR കോഡും ലിങ്കും ഇനി പ്രവർത്തിക്കില്ല.",
     "description": "Text of confirmation modal when resetting the username link"
   },
   "icu:UsernameLinkModalBody__resetting-link": {
@@ -6881,35 +7085,43 @@
     "description": "Text shown when resetting the username link"
   },
   "icu:UsernameLinkModalBody__error__text": {
-    "messageformat": "QR കോഡും ലിങ്കും സജ്ജീകരിച്ചിട്ടില്ല. നിങ്ങളുടെ നെറ്റ്‌വർക്ക് കണക്ഷൻ പരിശോധിച്ച ശേഷം വീണ്ടും ശ്രമിക്കുക.",
+    "messageformat": "നിങ്ങളുടെ QR കോഡുമായും ലിങ്കുമായും ബന്ധപ്പെട്ട് എന്തോ കുഴപ്പം സംഭവിച്ചു, ഇതിന് ഇനി സാധുതയില്ല. പുതിയ QR കോഡും ലിങ്കും സൃഷ്‌ടിക്കാൻ അത് പുനഃക്രമീകരിക്കാൻ ശ്രമിക്കുക.",
     "description": "Text of the confirmation dialog shown on username link error"
   },
+  "icu:UsernameLinkModalBody__error__fix-now": {
+    "messageformat": "ഇപ്പോൾ പരിഹരിക്കുക",
+    "description": "Text of the button in a confirmation dialog shown on username link error"
+  },
+  "icu:UsernameLinkModalBody__recovered__text": {
+    "messageformat": "നിങ്ങളുടെ QR കോഡും ലിങ്കും പുനഃക്രമീകരിച്ചു, പുതിയൊരു QR കോഡും ലിങ്കും സൃഷ്‌ടിച്ചു.",
+    "description": "Text of the confirmation dialog shown on successful username link recovery"
+  },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "New ways to connect",
+    "messageformat": "കണക്റ്റ് ചെയ്യാനുള്ള പുതിയ മാർഗങ്ങൾ",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number__title": {
-    "messageformat": "Phone number privacy",
+    "messageformat": "ഫോൺ നമ്പർ സ്വകാര്യത",
     "description": "Title of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number__body": {
-    "messageformat": "Your phone number is no longer visible in chats. If your number is saved to a friend’s contacts, they will still see it.",
+    "messageformat": "നിങ്ങളുടെ ഫോൺ നമ്പർ ഇനി ചാറ്റുകളിൽ ദൃശ്യമാകില്ല. നിങ്ങളുടെ നമ്പർ സുഹൃത്തിൻ്റെ കോൺടാക്‌റ്റുകളിൽ സേവ് ചെയ്‌തിട്ടുണ്ടെങ്കിൽ, അവർ അത് കാണും.",
     "description": "Body of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__username__title": {
-    "messageformat": "Usernames",
+    "messageformat": "ഉപയോക്തൃനാമങ്ങൾ",
     "description": "Title of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__username__body": {
-    "messageformat": "People can now message you using your optional username so you don’t have to give out your phone number. Usernames aren’t visible on your profile.",
+    "messageformat": "നിങ്ങളുടെ ഓപ്‌ഷണൽ ഉപയോക്തൃനാമം ഉപയോഗിച്ച് ആളുകൾക്ക് ഇപ്പോൾ നിങ്ങൾക്ക് സന്ദേശമയയ്‌ക്കാൻ കഴിയും, അതിനാൽ നിങ്ങളുടെ ഫോൺ നമ്പർ നൽകേണ്ടതില്ല. നിങ്ങളുടെ പ്രൊഫൈലിൽ ഉപയോക്തൃനാമങ്ങൾ ദൃശ്യമല്ല.",
     "description": "Body of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__qr__title": {
-    "messageformat": "QR codes and links",
+    "messageformat": "QR കോഡുകളും ലിങ്കുകളും",
     "description": "Title of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__qr__body": {
-    "messageformat": "Usernames have a unique QR code and link you can share with friends to quickly start a chat with you.",
+    "messageformat": "ഉപയോക്തൃനാമങ്ങൾക്ക് തനതായൊരു QR കോഡും ലിങ്കും ഉണ്ടാകും, നിങ്ങളുമായി എളുപ്പത്തിൽ ചാറ്റ് ചെയ്ത് തുടങ്ങാൻ ഇത് സുഹൃത്തുക്കളുമായി പങ്കിടാനാകും.",
     "description": "Body of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
@@ -6929,27 +7141,27 @@
     "description": "(Deleted 01/16/2023) Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Set up username",
+    "messageformat": "ഉപയോക്തൃനാമം സജ്ജീകരിക്കുക",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__skip": {
-    "messageformat": "Not now",
+    "messageformat": "ഇപ്പോൾ വേണ്ട",
     "description": "Text of the secondary button on username onboarding modal"
   },
   "icu:UsernameMegaphone__title": {
-    "messageformat": "New ways to connect",
+    "messageformat": "കണക്റ്റ് ചെയ്യാനുള്ള പുതിയ മാർഗങ്ങൾ",
     "description": "Title of username megaphone"
   },
   "icu:UsernameMegaphone__body": {
-    "messageformat": "Introducing phone number privacy, optional usernames and links.",
+    "messageformat": "ഫോൺ നമ്പർ സ്വകാര്യത, ഓപ്ഷണൽ ഉപയോക്തൃനാമങ്ങൾ, ലിങ്കുകൾ എന്നിവ അവതരിപ്പിക്കുന്നു.",
     "description": "Body of username megaphone"
   },
   "icu:UsernameMegaphone__learn-more": {
-    "messageformat": "Learn more",
+    "messageformat": "കൂടുതൽ അറിയുക",
     "description": "Text of the primary button on username megaphone"
   },
   "icu:UsernameMegaphone__dismiss": {
-    "messageformat": "Dismiss",
+    "messageformat": "ഒഴിവാക്കുക",
     "description": "Text of the secondary button on username megaphone"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -7124,13 +7336,7 @@
     "messageformat": "ചെറിയ മാറ്റങ്ങളും ബഗ് പരിഹരിക്കലുകളും പ്രകടന മെച്ചപ്പെടുത്തലുകളും. Signal ഉപയോഗിക്കുന്നതിന് നന്ദി!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.46--0": {
-    "messageformat": "ഉർദു ഭാഷ തിരഞ്ഞെടുക്കുമ്പോൾ (Signal ക്രമീകരണം > ദൃശ്യമാകുന്ന രീതി > ഭാഷ) മെച്ചപ്പെട്ട വായനാക്ഷമത ലഭിക്കുന്നതിനായി അതിന്റെ ഡിഫോൾട്ട് ഫോണ്ട് അപ്ഡേറ്റ് ചെയ്തിട്ടുണ്ട് . നന്ദി, {linkToGithub}!"
-  },
-  "icu:WhatsNew__v6.47--0": {
-    "messageformat": "If you spend a lot of time trying to pick out the perfect emoji reaction for every situation, you'll be <emojify>🎉</emojify> to know that we fixed a bug with typing indicators that sometimes caused the emoji selection box to disappear while you were in the middle of pondering your choices."
-  },
-  "icu:WhatsNew__v6.47--1": {
-    "messageformat": "Signal will now match your selected title bar color on Microsoft Windows. When all of your windows in Windows look the same, that's a common theme."
+  "icu:WhatsNew__v7.1--0": {
+    "messageformat": "This update enables support for all of the new emoji characters in Emoji version 15.1. People keep asking us what our favorite new emoji is, but answering that question is a “lime” we won't cross."
   }
 }

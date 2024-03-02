@@ -41,6 +41,7 @@ import {
 import { SHOW_TOAST } from './toast';
 import type { ShowToastActionType } from './toast';
 import { isDownloaded } from '../../types/Attachment';
+import type { ButtonVariant } from '../../components/Button';
 
 // State
 
@@ -80,11 +81,13 @@ type MigrateToGV2PropsType = ReadonlyDeep<{
 
 export type GlobalModalsStateType = ReadonlyDeep<{
   addUserToAnotherGroupModalContactId?: string;
+  aboutContactModalContactId?: string;
   authArtCreatorData?: AuthorizeArtCreatorDataType;
   contactModalState?: ContactModalStateType;
   deleteMessagesProps?: DeleteMessagesPropsType;
   editHistoryMessages?: EditHistoryMessagesType;
   errorModalProps?: {
+    buttonVariant?: ButtonVariant;
     description?: string;
     title?: string;
   };
@@ -130,6 +133,7 @@ export const TOGGLE_PROFILE_EDITOR_ERROR =
 const TOGGLE_SAFETY_NUMBER_MODAL = 'globalModals/TOGGLE_SAFETY_NUMBER_MODAL';
 const TOGGLE_ADD_USER_TO_ANOTHER_GROUP_MODAL =
   'globalModals/TOGGLE_ADD_USER_TO_ANOTHER_GROUP_MODAL';
+const TOGGLE_ABOUT_MODAL = 'globalModals/TOGGLE_ABOUT_MODAL';
 const TOGGLE_SIGNAL_CONNECTIONS_MODAL =
   'globalModals/TOGGLE_SIGNAL_CONNECTIONS_MODAL';
 export const SHOW_SEND_ANYWAY_DIALOG = 'globalModals/SHOW_SEND_ANYWAY_DIALOG';
@@ -230,6 +234,11 @@ type ToggleAddUserToAnotherGroupModalActionType = ReadonlyDeep<{
   payload: string | undefined;
 }>;
 
+type ToggleAboutContactModalActionType = ReadonlyDeep<{
+  type: typeof TOGGLE_ABOUT_MODAL;
+  payload: string | undefined;
+}>;
+
 type ToggleSignalConnectionsModalActionType = ReadonlyDeep<{
   type: typeof TOGGLE_SIGNAL_CONNECTIONS_MODAL;
 }>;
@@ -301,6 +310,7 @@ type CloseErrorModalActionType = ReadonlyDeep<{
 export type ShowErrorModalActionType = ReadonlyDeep<{
   type: typeof SHOW_ERROR_MODAL;
   payload: {
+    buttonVariant?: ButtonVariant;
     description?: string;
     title?: string;
   };
@@ -372,6 +382,7 @@ export type GlobalModalsActionType = ReadonlyDeep<
   | ShowUserNotFoundModalActionType
   | ShowWhatsNewModalActionType
   | StartMigrationToGV2ActionType
+  | ToggleAboutContactModalActionType
   | ToggleAddUserToAnotherGroupModalActionType
   | ToggleConfirmationModalActionType
   | ToggleDeleteMessagesModalActionType
@@ -411,6 +422,7 @@ export const actions = {
   showStoriesSettings,
   showUserNotFoundModal,
   showWhatsNewModal,
+  toggleAboutContactModal,
   toggleAddUserToAnotherGroupModal,
   toggleConfirmationModal,
   toggleDeleteMessagesModal,
@@ -627,6 +639,15 @@ function toggleAddUserToAnotherGroupModal(
   };
 }
 
+function toggleAboutContactModal(
+  contactId?: string
+): ToggleAboutContactModalActionType {
+  return {
+    type: TOGGLE_ABOUT_MODAL,
+    payload: contactId,
+  };
+}
+
 function toggleSignalConnectionsModal(): ToggleSignalConnectionsModalActionType {
   return {
     type: TOGGLE_SIGNAL_CONNECTIONS_MODAL,
@@ -711,15 +732,18 @@ function closeErrorModal(): CloseErrorModalActionType {
 }
 
 function showErrorModal({
+  buttonVariant,
   description,
   title,
 }: {
-  title?: string;
+  buttonVariant?: ButtonVariant;
   description?: string;
+  title?: string;
 }): ShowErrorModalActionType {
   return {
     type: SHOW_ERROR_MODAL,
     payload: {
+      buttonVariant,
       description,
       title,
     },
@@ -891,6 +915,13 @@ export function reducer(
   state: Readonly<GlobalModalsStateType> = getEmptyState(),
   action: Readonly<GlobalModalsActionType>
 ): GlobalModalsStateType {
+  if (action.type === TOGGLE_ABOUT_MODAL) {
+    return {
+      ...state,
+      aboutContactModalContactId: action.payload,
+    };
+  }
+
   if (action.type === TOGGLE_PROFILE_EDITOR) {
     return {
       ...state,
@@ -937,6 +968,14 @@ export function reducer(
   }
 
   if (action.type === SHOW_CONTACT_MODAL) {
+    const ourId = window.ConversationController.getOurConversationIdOrThrow();
+    if (action.payload.contactId === ourId) {
+      return {
+        ...state,
+        aboutContactModalContactId: ourId,
+      };
+    }
+
     return {
       ...state,
       contactModalState: action.payload,

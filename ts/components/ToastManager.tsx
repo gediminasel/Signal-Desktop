@@ -188,6 +188,14 @@ export function renderToast({
     );
   }
 
+  if (toastType === ToastType.CopiedCallLink) {
+    return (
+      <Toast onClose={hideToast} timeout={3 * SECOND}>
+        {i18n('icu:calling__call-link-copied')}
+      </Toast>
+    );
+  }
+
   if (toastType === ToastType.CopiedUsername) {
     return (
       <Toast onClose={hideToast} timeout={3 * SECOND}>
@@ -476,6 +484,16 @@ export function renderToast({
     return (
       <Toast onClose={hideToast}>
         {i18n('icu:UnsupportedOSErrorToast', { OS })}
+      </Toast>
+    );
+  }
+
+  if (toastType === ToastType.UsernameRecovered) {
+    return (
+      <Toast onClose={hideToast}>
+        {i18n('icu:EditUsernameModalBody__username-recovered__text', {
+          username: toast.parameters.username,
+        })}
       </Toast>
     );
   }

@@ -44,6 +44,10 @@
     "messageformat": "Dodaj „{contact}” do grupy „{group}”",
     "description": "Shown in the confirmation dialog body when adding a contact to a group"
   },
+  "icu:AddUserToAnotherGroupModal__search-placeholder": {
+    "messageformat": "Szukaj",
+    "description": "Placeholder to use when searching for groups in the AddUserToAnotherGroupModal"
+  },
   "icu:AddUserToAnotherGroupModal__toast--user-added-to-group": {
     "messageformat": "{contact} został(a) dodany(a) do grupy {group}",
     "description": "Shown in toast after a user is added to an existing group"
@@ -325,12 +329,48 @@
     "description": "Text of the button in the corrupted username banner in the left pane"
   },
   "icu:LeftPane--corrupted-username-link--text": {
-    "messageformat": "Coś poszło nie tak z kodem QR i linkiem z nazwą użytkownika – jest nieważny. Utwórz nowy link do udostępniania innym.",
+    "messageformat": "Coś poszło nie tak z kodem QR i linkiem z nazwą użytkownika – są nieważne. Utwórz nowy link do udostępniania innym.",
     "description": "Text of corrupted username link banner in the left pane"
   },
   "icu:LeftPane--corrupted-username-link--action-text": {
     "messageformat": "Napraw błąd teraz",
     "description": "Text of the button in the corrupted username link banner in the left pane"
+  },
+  "icu:LeftPane__compose__findByUsername": {
+    "messageformat": "Znajdź po nazwie użytkownika",
+    "description": "Text of the button displayed when clicking compose button in left pane"
+  },
+  "icu:LeftPane__compose__findByPhoneNumber": {
+    "messageformat": "Znajdź po numerze telefonu",
+    "description": "Text of the button displayed when clicking compose button in left pane"
+  },
+  "icu:LeftPaneFindByHelper__title--findByUsername": {
+    "messageformat": "Znajdź po nazwie użytkownika",
+    "description": "Title of the left pane when looking up someone by username"
+  },
+  "icu:LeftPaneFindByHelper__title--findByPhoneNumber": {
+    "messageformat": "Znajdź po numerze telefonu",
+    "description": "Title of the left pane when looking up someone by phone number"
+  },
+  "icu:LeftPaneFindByHelper__placeholder--findByUsername": {
+    "messageformat": "Nazwa użytkownika",
+    "description": "Placeholder of the search input in left pane when looking up someone by username"
+  },
+  "icu:LeftPaneFindByHelper__placeholder--findByPhoneNumber": {
+    "messageformat": "Numer telefonu",
+    "description": "Placeholder of the search input in left pane when looking up someone by phone number"
+  },
+  "icu:LeftPaneFindByHelper__description--findByUsername": {
+    "messageformat": "Wprowadź nazwę użytkownika, a następnie kropkę i zestaw cyfr.",
+    "description": "Description displayed under search input in left pane when looking up someone by username"
+  },
+  "icu:CountryCodeSelect__placeholder": {
+    "messageformat": "Kod kraju",
+    "description": "Placeholder displayed as default value of country code select element"
+  },
+  "icu:CountryCodeSelect__Modal__title": {
+    "messageformat": "Kod kraju",
+    "description": "Title of the country code modal"
   },
   "icu:NavTabsToggle__showTabs": {
     "messageformat": "Pokaż karty",
@@ -1351,6 +1391,38 @@
   "icu:showSafetyNumber": {
     "messageformat": "Zobacz numer bezpieczeństwa"
   },
+  "icu:AboutContactModal__title": {
+    "messageformat": "O mnie",
+    "description": "Title of About modal"
+  },
+  "icu:AboutContactModal__title--myself": {
+    "messageformat": "Ty",
+    "description": "Title of About modal when viewing your own information"
+  },
+  "icu:AboutContactModal__verified": {
+    "messageformat": "Zweryfikowany",
+    "description": "Text of a button on About modal leading to a safety number modal"
+  },
+  "icu:AboutContactModal__blocked": {
+    "messageformat": "{name} jest zablokowany(-a)",
+    "description": "Text of a row on About modal when user is blocked"
+  },
+  "icu:AboutContactModal__message-request": {
+    "messageformat": "Oczekująca prośba o przesłanie wiadomości",
+    "description": "Text of a row on About modal when user is in message request state"
+  },
+  "icu:AboutContactModal__no-dms": {
+    "messageformat": "Ty i {name} nie macie rozpoczętej rozmowy",
+    "description": "Text of a row on About modal when there are no direct messages with a user"
+  },
+  "icu:AboutContactModal__signal-connection": {
+    "messageformat": "Kontakt Signal",
+    "description": "Text of a button on About modal leading to an education modal"
+  },
+  "icu:AboutContactModal__system-contact": {
+    "messageformat": "{name} znajduje się w kontaktach systemowych",
+    "description": "Text of a row in the About modal describing that the contact is in system contacts"
+  },
   "icu:ContactModal__showSafetyNumber": {
     "messageformat": "Zobacz numer bezpieczeństwa",
     "description": "Contact modal, label for button to show safety number modal"
@@ -1626,6 +1698,10 @@
     "messageformat": "Mój komputer",
     "description": "The placeholder for the 'choose device name' input"
   },
+  "icu:Preferences--phone-number": {
+    "messageformat": "Numer telefonu",
+    "description": "The label in settings panel shown for the phone number associated with user's account"
+  },
   "icu:Preferences--device-name": {
     "messageformat": "Nazwa urządzenia",
     "description": "The label in settings panel shown for the user-provided name for this desktop instance"
@@ -1700,6 +1776,54 @@
   "icu:calling__call-is-full": {
     "messageformat": "Połączenie jest pełne",
     "description": "Text in the call lobby when you can't join because the call is full"
+  },
+  "icu:calling__cant-join": {
+    "messageformat": "Can't join call",
+    "description": "Modal dialog title when you can't join a call"
+  },
+  "icu:calling__dialog-already-in-call": {
+    "messageformat": "You are already in a call.",
+    "description": "Error message when clicking a call link to join a call, but you're in a call already."
+  },
+  "icu:calling__call-link-connection-issues": {
+    "messageformat": "Could not fetch call link information. Please check your network connection and try again.",
+    "description": "Error message when unable to fetch call link info from server."
+  },
+  "icu:calling__call-link-copied": {
+    "messageformat": "Call link copied.",
+    "description": "Toast shown when a call link is copied to the clipboard."
+  },
+  "icu:calling__call-link-no-longer-valid": {
+    "messageformat": "This call link is no longer valid.",
+    "description": "Error message when a call link has been revoked or expires."
+  },
+  "icu:calling__call-link-default-title": {
+    "messageformat": "Signal Call",
+    "description": "Default title for Signal call links."
+  },
+  "icu:calling__join-request-denied": {
+    "messageformat": "Your request to join this call has been denied.",
+    "description": "Error message when a request to join a call link call was rejected by a call admin."
+  },
+  "icu:calling__join-request-denied-title": {
+    "messageformat": "Join request denied",
+    "description": "Title of error when a request to join a call link call was rejected by a call admin."
+  },
+  "icu:calling__removed-from-call": {
+    "messageformat": "Someone has removed you from the call.",
+    "description": "Error message when in a call then a call admin removes you."
+  },
+  "icu:calling__removed-from-call-title": {
+    "messageformat": "Removed from call",
+    "description": "Title of error when in a call then a call admin removes you."
+  },
+  "icu:CallingLobby__CallLinkNotice": {
+    "messageformat": "Anyone who joins this call via the link will see your name and photo.",
+    "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared."
+  },
+  "icu:CallingLobby__CallLinkNotice--phone-sharing": {
+    "messageformat": "Anyone who joins this call via the link will see your name, photo, and phone number.",
+    "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared, when the phone number sharing account setting is enabled."
   },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "Dołącz",
@@ -2328,7 +2452,7 @@
     "description": "Label for header to go to stories view"
   },
   "icu:contactSearchPlaceholder": {
-    "messageformat": "Szukaj po nazwie lub numerze telefonu",
+    "messageformat": "Imię, nazwa użytkownika lub numer",
     "description": "Placeholder to use when searching for contacts in the composer"
   },
   "icu:noContactsFound": {
@@ -2368,7 +2492,7 @@
     "description": "Error message when you try to send an edit after message becomes too old"
   },
   "icu:startConversation--username-not-found": {
-    "messageformat": "Nie znaleziono użytkownika. {atUsername} nie jest użytkownikiem Signal. Upewnij się, że podałeś(aś) pełną nazwę użytkownika.",
+    "messageformat": "{atUsername} nie jest użytkownikiem Signal. Upewnij się, że została wpisana pełna nazwa użytkownika.",
     "description": "Shown in dialog if username is not found. Note that 'username' will be the output of at-username"
   },
   "icu:startConversation--phone-number-not-found": {
@@ -2615,6 +2739,10 @@
   "icu:message--attachmentTooBig--multiple": {
     "messageformat": "Niektóre załączniki są zbyt duże, żeby je wyświetlić.",
     "description": "Shown in a message bubble if any attachments are left on message when too-large attachments are dropped"
+  },
+  "icu:message--call-link-description": {
+    "messageformat": "Use this link to join a Signal call",
+    "description": "Shown in message previews for Signal call links."
   },
   "icu:donation--missing": {
     "messageformat": "Nie można pobrać szczegółów darowizny",
@@ -3588,6 +3716,14 @@
     "messageformat": "Połączenie audio",
     "description": "Shown in the call lobby for a direct 1:1 call when the caller's video is disabled, to specify that an audio call will be placed when clicking the Start button."
   },
+  "icu:CallControls__InfoDisplay--adhoc-call": {
+    "messageformat": "Call link",
+    "description": "Shown in the call lobby for a call link."
+  },
+  "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
+    "messageformat": "Waiting to be let in",
+    "description": "Shown in the call lobby for call link calls when requesting to join a call which requires admin approval."
+  },
   "icu:CallControls__JoinLeaveButton--hangup-1-1": {
     "messageformat": "Zakończ",
     "description": "Title for the hangup button for a direct 1:1 call with only 2 participants."
@@ -3727,6 +3863,10 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "Okno",
     "description": "Title for the select your screen sharing sources modal"
+  },
+  "icu:CallingAdhocCallInfo__CopyLink": {
+    "messageformat": "Copy link",
+    "description": "Menu item in the in-call info popup for call link calls. The action is to add the call link to the clipboard."
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Wideo",
@@ -5189,7 +5329,7 @@
     "description": "Title for the contact name spoofing review dialog in groups"
   },
   "icu:ContactSpoofingReviewDialog__group__description": {
-    "messageformat": "{count, plural, one {{count,number} członek grupy ma podobne imię. Przejrzyj poniższych członków i podejmij działania.} few {{count,number} członków grupy ma podobne imiona. Przejrzyj poniższych członków i podejmij działania.} many {{count,number} członków grupy ma podobne imiona. Przejrzyj poniższych członków i podejmij działania.} other {{count,number} członka grupy ma podobne imię. Przejrzyj poniższych członków i podejmij działania.}}",
+    "messageformat": "{count, plural, one {{count,number} członek grupy ma taką samą nazwę. Zobacz poniżej, o kim mowa, i podejmij działanie.} few {{count,number} członków grupy ma taką samą nazwę. Przejrzyj poniższych członków i podejmij działanie.} many {{count,number} członków grupy ma taką samą nazwę. Przejrzyj poniższych członków i podejmij działanie.} other {{count,number} członków grupy ma taką samą nazwę. Przejrzyj poniższych członków i podejmij działanie.}}",
     "description": "Description for the group contact spoofing review dialog"
   },
   "icu:ContactSpoofingReviewDialog__group__multiple-conflicts__description": {
@@ -5198,7 +5338,15 @@
   },
   "icu:ContactSpoofingReviewDialog__group__members-header": {
     "messageformat": "Członkowie",
-    "description": "Header in the group contact spoofing review dialog. After this header, there will be a list of members"
+    "description": "(Deleted 01/31/2024) Header in the group contact spoofing review dialog. After this header, there will be a list of members"
+  },
+  "icu:ContactSpoofingReviewDialog__group__members__no-shared-groups": {
+    "messageformat": "Brak innych wspólnych grup",
+    "description": "Informational text displayed next to a contact on ContactSpoofingReviewDialog"
+  },
+  "icu:ContactSpoofingReviewDialog__signal-connection": {
+    "messageformat": "Kontakt Signal",
+    "description": "Text of a button on ContactSpoofingReviewDialog leading to an education modal"
   },
   "icu:ContactSpoofingReviewDialog__group__name-change-info": {
     "messageformat": "Ostatnio zmienił(a) nazwę profilu z {oldName} na {newName}",
@@ -5493,15 +5641,19 @@
     "description": "Default text for username field"
   },
   "icu:ProfileEditor--username--corrupted--body": {
-    "messageformat": "Wystąpił błąd związany z Twoją nazwą użytkownika – nie jest już przypisana do Twojego konta.",
+    "messageformat": "Wystąpił błąd związany z Twoją nazwą użytkownika – nie jest już przypisana do Twojego konta. Możesz spróbować ustawić ją ponownie lub wybrać nową nazwę.",
     "description": "Text of confirmation modal when the username gets corrupted"
   },
   "icu:ProfileEditor--username--corrupted--delete-button": {
     "messageformat": "Usuń nazwę użytkownika",
-    "description": "Button text for deletion of the username in case of corruption"
+    "description": "(Deleted 02/01/2024) Button text for deletion of the username in case of corruption"
   },
   "icu:ProfileEditor--username--corrupted--create-button": {
     "messageformat": "Utwórz nazwę użytkownika",
+    "description": "(Deleted 02/01/2024) Button text for creation of a new username in case of corruption"
+  },
+  "icu:ProfileEditor--username--corrupted--fix-button": {
+    "messageformat": "Napraw błąd teraz",
     "description": "Button text for creation of a new username in case of corruption"
   },
   "icu:ProfileEditor__username-link": {
@@ -5553,8 +5705,12 @@
     "description": "Shown if user has attempted to enter a username with 00 as discriminator"
   },
   "icu:ProfileEditor--username--check-discriminator-leading-zero": {
-    "messageformat": "Ten numer nie może zaczynać się od 00. Wprowadź cyfrę od 1 do 9.",
+    "messageformat": "Liczby składające się z więcej niż dwóch cyfr nie mogą zaczynać się od 0.",
     "description": "Shown if user has attempted to enter a username with leading 0 in discriminator"
+  },
+  "icu:ProfileEditor--username--too-many-attempts": {
+    "messageformat": "Zbyt dużo nieudanych prób. Spróbuj ponownie później.",
+    "description": "Shown if user has made too many attempts to pick a username and has to wait before retrying"
   },
   "icu:ProfileEditor--username--unavailable": {
     "messageformat": "Ta nazwa użytkownika jest niedostępna",
@@ -5600,6 +5756,10 @@
     "messageformat": "Usuń",
     "description": "Shown in dialog button if user has saved an empty string to delete their username"
   },
+  "icu:ProfileEditor--username--delete-unavailable-notice": {
+    "messageformat": "Aby usunąć swoją nazwę użytkownika, otwórz Signal na telefonie i przejdź do Ustawienia > Profil.",
+    "description": "Shown in dialog body if user is trying to delete username, but it is only supported on mobile"
+  },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "Kopiuj lub usuń nazwę użytkownika",
     "description": "Shown as aria label for context menu next to username"
@@ -5632,9 +5792,33 @@
     "messageformat": "Odrzucić zmiany?",
     "description": "ConfirmationDialog text for discarding changes"
   },
+  "icu:ConfirmationDialog__Title--in-call-close-requested": {
+    "messageformat": "Close Signal and end the call?",
+    "description": "ConfirmationDialog title when trying to close the app while in a call."
+  },
+  "icu:ConfirmationDialog__Title--close-requested-not-now": {
+    "messageformat": "Not Now",
+    "description": "Confirmation dialog button to cancel closing the app, while in a call and trying to close the app."
+  },
+  "icu:ProfileEditor--edit-photo": {
+    "messageformat": "Edytuj zdjęcie",
+    "description": "Text of a button on profile editor that leads to the avatar editor"
+  },
   "icu:ProfileEditor--info--link": {
     "messageformat": "Twój profil jest zaszyfrowany. Twój profil i zmiany w nim będą widoczne dla Twoich kontaktów, gdy rozpoczniesz lub zaakceptujesz nowy czat. <learnMoreLink>Dowiedz się więcej</learnMoreLink>",
-    "description": "Information shown at the bottom of the profile editor section"
+    "description": "(Deleted 02/01/2024) Information shown at the bottom of the profile editor section"
+  },
+  "icu:ProfileEditor--info--general": {
+    "messageformat": "Twój profil i wprowadzane na nim zmiany widzą kontakty, grupy i osoby, z którymi rozmawiasz.",
+    "description": "Information shown in profile editor below profile name and about fields"
+  },
+  "icu:ProfileEditor--info--pnp": {
+    "messageformat": "Twoja nazwa użytkownika, kod QR i link nie są widoczne na Twoim profilu. Udostępniaj je tylko zaufanym osobom.",
+    "description": "Information shown in profile editor below pnp settings when username is set"
+  },
+  "icu:ProfileEditor--info--pnp--no-username": {
+    "messageformat": "Od teraz użytkownicy mogą wysyłać Ci wiadomości, używając Twojej opcjonalnej nazwy użytkownika. Nie musisz już podawać swojego numeru telefonu.",
+    "description": "Information shown in profile editor below pnp settings when no username is set"
   },
   "icu:Bio--speak-freely": {
     "messageformat": "Mówcie śmiało",
@@ -5792,6 +5976,10 @@
     "messageformat": "Zdecyduj, kto może zobaczyć Twój numer telefonu i kto może go użyć do skontaktowania się z Tobą w Signal.",
     "description": "Body of Phone Number row in Privacy section of Preferences window"
   },
+  "icu:Preferences__pnp__row--button": {
+    "messageformat": "Zmień…",
+    "description": "Text of Phone Number row button in Privacy section of Preferences window"
+  },
   "icu:Preferences__pnp__sharing--title": {
     "messageformat": "Kto może zobaczyć mój numer",
     "description": "Title for the phone number sharing setting row"
@@ -5801,8 +5989,12 @@
     "description": "Description for the phone number sharing setting row when the value is Everyone"
   },
   "icu:Preferences__pnp__sharing--description--nobody": {
-    "messageformat": "Nikt nie zobaczy Twojego numeru telefonu w Signal, nawet jeśli wysyłacie sobie wiadomości.",
-    "description": "Description for the phone number sharing setting row when the value is Nobody"
+    "messageformat": "Nikt nie zobaczy Twojego numeru, o ile nie ma go zapisanego w kontaktach swojego telefonu.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody and phone number discoverability setting is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody--not-discoverable": {
+    "messageformat": "Nikt nie zobaczy Twojego numeru telefonu.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody and phone number discoverability setting is Nobody"
   },
   "icu:Preferences__pnp--page-title": {
     "messageformat": "Numer telefonu",
@@ -6213,7 +6405,7 @@
     "description": "A way that signal connection is formed"
   },
   "icu:SignalConnectionsModal__bullet--3": {
-    "messageformat": "Posiadanie ich w systemowej książce kontaktów",
+    "messageformat": "Posiadanie ich w kontaktach systemowych",
     "description": "A way that signal connection is formed"
   },
   "icu:SignalConnectionsModal__footer": {
@@ -6788,6 +6980,10 @@
     "messageformat": "Zareagowano na relację od {name}",
     "description": "Label for when a person reacts to a story"
   },
+  "icu:Quote__story-reaction--you": {
+    "messageformat": "Reacted to your story",
+    "description": "Label for when someone reacts to your story"
+  },
   "icu:Quote__story-reaction--single": {
     "messageformat": "Zareagowano na relację",
     "description": "Used whenever we can't find a user's first name"
@@ -6817,7 +7013,7 @@
     "description": "Placeholder for the username field"
   },
   "icu:EditUsernameModalBody__username-helper": {
-    "messageformat": "Nazwy użytkowników pozwalają innym na wysyłanie do Ciebie wiadomości bez konieczności podawania numeru telefonu. Są one sparowane z zestawem cyfr, które pomagają zachować prywatność Twojego adresu.",
+    "messageformat": "Nazwy użytkowników są zawsze sparowane z zestawem liczb.",
     "description": "Shown on the edit username screen"
   },
   "icu:EditUsernameModalBody__learn-more": {
@@ -6840,8 +7036,16 @@
     "messageformat": "Kontynuuj",
     "description": "Text of the primary button on username change confirmation modal"
   },
+  "icu:EditUsernameModalBody__recover-confirmation": {
+    "messageformat": "Odzyskanie nazwy użytkownika spowoduje zresetowanie obecnego kodu QR i linku. Chcesz kontynuować?",
+    "description": "Body of the confirmation dialog displayed when user is about to recover their username"
+  },
+  "icu:EditUsernameModalBody__username-recovered__text": {
+    "messageformat": "Twój kod QR i link zostały zresetowane, a Twoja nazwa użytkownika to {username}",
+    "description": "Text of toast displayed upon successful recovery of username"
+  },
   "icu:UsernameLinkModalBody__hint": {
-    "messageformat": "Scan this QR code with your phone to chat with me on Signal.",
+    "messageformat": "Aby rozmawiać ze mną w Signal, zeskanuj kod QR za pomocą swojego telefonu.",
     "descrption": "Text of the hint displayed below generated QR code on the printable image."
   },
   "icu:UsernameLinkModalBody__save": {
@@ -6873,7 +7077,7 @@
     "description": "ARIA label of button for selecting username link color"
   },
   "icu:UsernameLinkModalBody__reset__confirm": {
-    "messageformat": "Jeśli zresetujesz kod QR, Twój obecny kod QR i link nie będą działały.",
+    "messageformat": "Jeśli zresetujesz kod QR i link, Twój obecny kod QR i link przestaną działać.",
     "description": "Text of confirmation modal when resetting the username link"
   },
   "icu:UsernameLinkModalBody__resetting-link": {
@@ -6881,35 +7085,43 @@
     "description": "Text shown when resetting the username link"
   },
   "icu:UsernameLinkModalBody__error__text": {
-    "messageformat": "Kod QR i link nie zostały ustawione. Sprawdź połączenie z internetem i spróbuj ponownie.",
+    "messageformat": "Coś poszło nie tak z kodem QR i linkiem — są nieważne. Spróbuj je zresetować i utworzyć nowe.",
     "description": "Text of the confirmation dialog shown on username link error"
   },
+  "icu:UsernameLinkModalBody__error__fix-now": {
+    "messageformat": "Napraw błąd teraz",
+    "description": "Text of the button in a confirmation dialog shown on username link error"
+  },
+  "icu:UsernameLinkModalBody__recovered__text": {
+    "messageformat": "Twój kod QR i link zostały zresetowane. Utworzono nowy kod QR i link.",
+    "description": "Text of the confirmation dialog shown on successful username link recovery"
+  },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "New ways to connect",
+    "messageformat": "Nowe sposoby na pozostawanie w kontakcie",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number__title": {
-    "messageformat": "Phone number privacy",
+    "messageformat": "Ukryty numer telefonu",
     "description": "Title of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number__body": {
-    "messageformat": "Your phone number is no longer visible in chats. If your number is saved to a friend’s contacts, they will still see it.",
+    "messageformat": "Twój numer telefonu nie jest już widoczny w oknie czatu. Wciąż będzie jednak widoczny dla tych znajomych, którzy zapiszą Twój numer w kontaktach.",
     "description": "Body of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__username__title": {
-    "messageformat": "Usernames",
+    "messageformat": "Nazwy użytkowników",
     "description": "Title of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__username__body": {
-    "messageformat": "People can now message you using your optional username so you don’t have to give out your phone number. Usernames aren’t visible on your profile.",
+    "messageformat": "Od teraz użytkownicy mogą wysyłać Ci wiadomości, używając Twojej opcjonalnej nazwy użytkownika. Nie musisz już podawać swojego numeru telefonu. Nazwy użytkowników nie wyświetlają się na profilu.",
     "description": "Body of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__qr__title": {
-    "messageformat": "QR codes and links",
+    "messageformat": "Kody QR i linki",
     "description": "Title of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__qr__body": {
-    "messageformat": "Usernames have a unique QR code and link you can share with friends to quickly start a chat with you.",
+    "messageformat": "Każda nazwa użytkownika jest powiązana z unikatowym kodem QR i linkiem do udostępniania znajomym, z którymi chcesz szybko rozpocząć czat.",
     "description": "Body of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
@@ -6929,27 +7141,27 @@
     "description": "(Deleted 01/16/2023) Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Set up username",
+    "messageformat": "Ustaw nazwę użytkownika",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__skip": {
-    "messageformat": "Not now",
+    "messageformat": "Nie teraz",
     "description": "Text of the secondary button on username onboarding modal"
   },
   "icu:UsernameMegaphone__title": {
-    "messageformat": "New ways to connect",
+    "messageformat": "Nowe sposoby na pozostawanie w kontakcie",
     "description": "Title of username megaphone"
   },
   "icu:UsernameMegaphone__body": {
-    "messageformat": "Introducing phone number privacy, optional usernames and links.",
+    "messageformat": "Wprowadzamy możliwość ukrycia numeru telefonu, opcjonalną nazwę użytkownika i linki do udostępniania nazw.",
     "description": "Body of username megaphone"
   },
   "icu:UsernameMegaphone__learn-more": {
-    "messageformat": "Learn more",
+    "messageformat": "Dowiedz się więcej",
     "description": "Text of the primary button on username megaphone"
   },
   "icu:UsernameMegaphone__dismiss": {
-    "messageformat": "Dismiss",
+    "messageformat": "Odrzuć",
     "description": "Text of the secondary button on username megaphone"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -7124,13 +7336,7 @@
     "messageformat": "Małe ulepszenia, poprawki błędów i zwiększona funkcjonalność. Dzięki za korzystanie z Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.46--0": {
-    "messageformat": "Zmieniliśmy domyślną czcionkę dla języka urdu, aby poprawić czytelność po wyborze tego języka (Ustawienia Signal > Wygląd > Język). Dzięki, {linkToGithub}!"
-  },
-  "icu:WhatsNew__v6.47--0": {
-    "messageformat": "If you spend a lot of time trying to pick out the perfect emoji reaction for every situation, you'll be <emojify>🎉</emojify> to know that we fixed a bug with typing indicators that sometimes caused the emoji selection box to disappear while you were in the middle of pondering your choices."
-  },
-  "icu:WhatsNew__v6.47--1": {
-    "messageformat": "Signal will now match your selected title bar color on Microsoft Windows. When all of your windows in Windows look the same, that's a common theme."
+  "icu:WhatsNew__v7.1--0": {
+    "messageformat": "This update enables support for all of the new emoji characters in Emoji version 15.1. People keep asking us what our favorite new emoji is, but answering that question is a “lime” we won't cross."
   }
 }

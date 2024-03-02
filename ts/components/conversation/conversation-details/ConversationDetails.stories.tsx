@@ -102,6 +102,7 @@ const createProps = (
   setMuteExpiration: action('setMuteExpiration'),
   userAvatarData: [],
   toggleSafetyNumberModal: action('toggleSafetyNumberModal'),
+  toggleAboutContactModal: action('toggleAboutContactModal'),
   toggleAddUserToAnotherGroupModal: action('toggleAddUserToAnotherGroup'),
   onOutgoingAudioCallInConversation: action(
     'onOutgoingAudioCallInConversation'
@@ -125,7 +126,7 @@ const createProps = (
         ourE164={undefined}
         ourUsername={undefined}
         showUserNotFoundModal={action('showUserNotFoundModal')}
-        isUsernamesEnabled
+        username={undefined}
       />
     );
   },

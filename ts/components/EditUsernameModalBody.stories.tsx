@@ -28,6 +28,9 @@ export default {
   component: EditUsernameModalBody,
   title: 'Components/EditUsernameModalBody',
   argTypes: {
+    usernameCorrupted: {
+      type: { name: 'boolean' },
+    },
     currentUsername: {
       type: { name: 'string', required: false },
     },
@@ -50,6 +53,7 @@ export default {
         CheckCharacters: UsernameReservationError.CheckCharacters,
         UsernameNotAvailable: UsernameReservationError.UsernameNotAvailable,
         General: UsernameReservationError.General,
+        TooManyAttempts: UsernameReservationError.TooManyAttempts,
       },
     },
     reservation: {
@@ -57,6 +61,8 @@ export default {
     },
   },
   args: {
+    isRootModal: false,
+    usernameCorrupted: false,
     currentUsername: undefined,
     state: State.Open,
     error: undefined,

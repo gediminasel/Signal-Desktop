@@ -40,8 +40,11 @@ export type PropsType = {
   editHistoryMessages: EditHistoryMessagesType | undefined;
   renderEditHistoryMessagesModal: () => JSX.Element;
   // ErrorModal
-  errorModalProps: { description?: string; title?: string } | undefined;
+  errorModalProps:
+    | { buttonVariant?: ButtonVariant; description?: string; title?: string }
+    | undefined;
   renderErrorModal: (opts: {
+    buttonVariant?: ButtonVariant;
     description?: string;
     title?: string;
   }) => JSX.Element;
@@ -73,6 +76,9 @@ export type PropsType = {
   // SignalConnectionsModal
   isSignalConnectionsVisible: boolean;
   toggleSignalConnectionsModal: () => unknown;
+  // AboutContactModal
+  isAboutContactModalVisible: boolean;
+  renderAboutContactModal: () => JSX.Element | null;
   // StickerPackPreviewModal
   stickerPackPreviewId: string | undefined;
   renderStickerPreviewModal: () => JSX.Element | null;
@@ -139,6 +145,9 @@ export function GlobalModalContainer({
   // SignalConnectionsModal
   isSignalConnectionsVisible,
   toggleSignalConnectionsModal,
+  // AboutContactModal
+  isAboutContactModalVisible,
+  renderAboutContactModal,
   // StickerPackPreviewModal
   stickerPackPreviewId,
   renderStickerPreviewModal,
@@ -183,10 +192,6 @@ export function GlobalModalContainer({
 
   if (addUserToAnotherGroupModalContactId) {
     return renderAddUserToAnotherGroup();
-  }
-
-  if (contactModalState) {
-    return renderContactModal();
   }
 
   if (editHistoryMessages) {
@@ -252,6 +257,18 @@ export function GlobalModalContainer({
     );
   }
 
+  if (safetyNumberModalContactId) {
+    return renderSafetyNumber();
+  }
+
+  if (isAboutContactModalVisible) {
+    return renderAboutContactModal();
+  }
+
+  if (contactModalState) {
+    return renderContactModal();
+  }
+
   if (isStoriesSettingsVisible) {
     return renderStoriesSettings();
   }
@@ -262,10 +279,6 @@ export function GlobalModalContainer({
 
   if (usernameOnboardingState === UsernameOnboardingState.Open) {
     return renderUsernameOnboarding();
-  }
-
-  if (safetyNumberModalContactId) {
-    return renderSafetyNumber();
   }
 
   if (stickerPackPreviewId) {

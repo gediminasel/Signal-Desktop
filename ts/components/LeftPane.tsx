@@ -15,11 +15,16 @@ import type { LeftPaneArchivePropsType } from './leftPane/LeftPaneArchiveHelper'
 import { LeftPaneArchiveHelper } from './leftPane/LeftPaneArchiveHelper';
 import type { LeftPaneComposePropsType } from './leftPane/LeftPaneComposeHelper';
 import { LeftPaneComposeHelper } from './leftPane/LeftPaneComposeHelper';
+import type { LeftPaneFindByUsernamePropsType } from './leftPane/LeftPaneFindByUsernameHelper';
+import { LeftPaneFindByUsernameHelper } from './leftPane/LeftPaneFindByUsernameHelper';
+import type { LeftPaneFindByPhoneNumberPropsType } from './leftPane/LeftPaneFindByPhoneNumberHelper';
+import { LeftPaneFindByPhoneNumberHelper } from './leftPane/LeftPaneFindByPhoneNumberHelper';
 import type { LeftPaneChooseGroupMembersPropsType } from './leftPane/LeftPaneChooseGroupMembersHelper';
 import { LeftPaneChooseGroupMembersHelper } from './leftPane/LeftPaneChooseGroupMembersHelper';
 import type { LeftPaneSetGroupMetadataPropsType } from './leftPane/LeftPaneSetGroupMetadataHelper';
 import { LeftPaneSetGroupMetadataHelper } from './leftPane/LeftPaneSetGroupMetadataHelper';
 
+import { LeftPaneMode } from '../types/leftPane';
 import type { LocalizerType, ThemeType } from '../types/Util';
 import { ScrollBehavior } from '../types/Util';
 import type { PreferredBadgeSelectorType } from '../state/selectors/badges';
@@ -49,16 +54,8 @@ import {
   NavSidebarSearchHeader,
 } from './NavSidebar';
 import { ContextMenu } from './ContextMenu';
+import { EditState as ProfileEditorEditState } from './ProfileEditor';
 import type { UnreadStats } from '../util/countUnreadStats';
-
-export enum LeftPaneMode {
-  Inbox,
-  Search,
-  Archive,
-  Compose,
-  ChooseGroupMembers,
-  SetGroupMetadata,
-}
 
 export type PropsType = {
   otherTabsUnreadStats: UnreadStats;
@@ -90,6 +87,12 @@ export type PropsType = {
         mode: LeftPaneMode.Compose;
       } & LeftPaneComposePropsType)
     | ({
+        mode: LeftPaneMode.FindByUsername;
+      } & LeftPaneFindByUsernamePropsType)
+    | ({
+        mode: LeftPaneMode.FindByPhoneNumber;
+      } & LeftPaneFindByPhoneNumberPropsType)
+    | ({
         mode: LeftPaneMode.ChooseGroupMembers;
       } & LeftPaneChooseGroupMembersPropsType)
     | ({
@@ -119,6 +122,7 @@ export type PropsType = {
   composeSaveAvatarToDisk: SaveAvatarToDiskActionType;
   createGroup: () => void;
   navTabsCollapsed: boolean;
+  openUsernameReservationModal: () => void;
   onOutgoingAudioCallInConversation: (conversationId: string) => void;
   onOutgoingVideoCallInConversation: (conversationId: string) => void;
   removeConversation: (conversationId: string) => void;
@@ -128,8 +132,11 @@ export type PropsType = {
   setComposeGroupExpireTimer: (_: DurationInSeconds) => void;
   setComposeGroupName: (_: string) => void;
   setComposeSearchTerm: (composeSearchTerm: string) => void;
+  setComposeSelectedRegion: (newRegion: string) => void;
   showArchivedConversations: () => void;
   showChooseGroupMembers: () => void;
+  showFindByUsername: () => void;
+  showFindByPhoneNumber: () => void;
   showConversation: ShowConversationType;
   showInbox: () => void;
   startComposing: () => void;
@@ -138,7 +145,7 @@ export type PropsType = {
   toggleComposeEditingAvatar: () => unknown;
   toggleConversationInChooseMembers: (conversationId: string) => void;
   toggleNavTabsCollapse: (navTabsCollapsed: boolean) => void;
-  toggleProfileEditor: () => void;
+  toggleProfileEditor: (initialEditState?: ProfileEditorEditState) => void;
   updateSearchTerm: (_: string) => void;
 
   // Render Props
@@ -193,6 +200,7 @@ export function LeftPane({
   onOutgoingAudioCallInConversation,
   onOutgoingVideoCallInConversation,
 
+  openUsernameReservationModal,
   preferredWidthFromStorage,
   removeConversation,
   renderCaptchaDialog,
@@ -215,9 +223,12 @@ export function LeftPane({
   setComposeGroupExpireTimer,
   setComposeGroupName,
   setComposeSearchTerm,
+  setComposeSelectedRegion,
   setIsFetchingUUID,
   showArchivedConversations,
   showChooseGroupMembers,
+  showFindByUsername,
+  showFindByPhoneNumber,
   showConversation,
   showInbox,
   showUserNotFoundModal,
@@ -292,6 +303,32 @@ export function LeftPane({
           ? composeHelper.shouldRecomputeRowHeights(previousModeSpecificProps)
           : true;
       helper = composeHelper;
+      break;
+    }
+    case LeftPaneMode.FindByUsername: {
+      const findByUsernameHelper = new LeftPaneFindByUsernameHelper(
+        modeSpecificProps
+      );
+      shouldRecomputeRowHeights =
+        previousModeSpecificProps.mode === modeSpecificProps.mode
+          ? findByUsernameHelper.shouldRecomputeRowHeights(
+              previousModeSpecificProps
+            )
+          : true;
+      helper = findByUsernameHelper;
+      break;
+    }
+    case LeftPaneMode.FindByPhoneNumber: {
+      const findByPhoneNumberHelper = new LeftPaneFindByPhoneNumberHelper(
+        modeSpecificProps
+      );
+      shouldRecomputeRowHeights =
+        previousModeSpecificProps.mode === modeSpecificProps.mode
+          ? findByPhoneNumberHelper.shouldRecomputeRowHeights(
+              previousModeSpecificProps
+            )
+          : true;
+      helper = findByPhoneNumberHelper;
       break;
     }
     case LeftPaneMode.ChooseGroupMembers: {
@@ -453,6 +490,11 @@ export function LeftPane({
     createGroup,
     i18n,
     startSettingGroupMetadata,
+    lookupConversationWithoutServiceId,
+    showUserNotFoundModal,
+    setIsFetchingUUID,
+    showInbox,
+    showConversation,
   });
 
   const getRow = useMemo(() => helper.getRow.bind(helper), [helper]);
@@ -560,7 +602,10 @@ export function LeftPane({
     maybeBanner = (
       <LeftPaneBanner
         actionText={i18n('icu:LeftPane--corrupted-username--action-text')}
-        onClick={toggleProfileEditor}
+        onClick={() => {
+          openUsernameReservationModal();
+          toggleProfileEditor(ProfileEditorEditState.Username);
+        }}
       >
         {i18n('icu:LeftPane--corrupted-username--text')}
       </LeftPaneBanner>
@@ -569,7 +614,7 @@ export function LeftPane({
     maybeBanner = (
       <LeftPaneBanner
         actionText={i18n('icu:LeftPane--corrupted-username-link--action-text')}
-        onClick={toggleProfileEditor}
+        onClick={() => toggleProfileEditor(ProfileEditorEditState.UsernameLink)}
       >
         {i18n('icu:LeftPane--corrupted-username-link--text')}
       </LeftPaneBanner>
@@ -580,15 +625,18 @@ export function LeftPane({
     dialogs.push({ key: 'banner', dialog: maybeBanner });
   }
 
+  const hideHeader =
+    modeSpecificProps.mode === LeftPaneMode.Archive ||
+    modeSpecificProps.mode === LeftPaneMode.Compose ||
+    modeSpecificProps.mode === LeftPaneMode.FindByUsername ||
+    modeSpecificProps.mode === LeftPaneMode.FindByPhoneNumber ||
+    modeSpecificProps.mode === LeftPaneMode.ChooseGroupMembers ||
+    modeSpecificProps.mode === LeftPaneMode.SetGroupMetadata;
+
   return (
     <NavSidebar
       title="Chats"
-      hideHeader={
-        modeSpecificProps.mode === LeftPaneMode.Archive ||
-        modeSpecificProps.mode === LeftPaneMode.Compose ||
-        modeSpecificProps.mode === LeftPaneMode.ChooseGroupMembers ||
-        modeSpecificProps.mode === LeftPaneMode.SetGroupMetadata
-      }
+      hideHeader={hideHeader}
       i18n={i18n}
       otherTabsUnreadStats={otherTabsUnreadStats}
       hasFailedStorySends={hasFailedStorySends}
@@ -596,10 +644,7 @@ export function LeftPane({
       navTabsCollapsed={navTabsCollapsed}
       onToggleNavTabsCollapse={toggleNavTabsCollapse}
       preferredLeftPaneWidth={preferredWidthFromStorage}
-      requiresFullWidth={
-        modeSpecificProps.mode !== LeftPaneMode.Inbox ||
-        modeSpecificProps.isAboutToSearch
-      }
+      requiresFullWidth={helper.requiresFullWidth()}
       savePreferredLeftPaneWidth={savePreferredLeftPaneWidth}
       renderToastManager={renderToastManager}
       actions={
@@ -665,14 +710,20 @@ export function LeftPane({
                 setComposeSearchTerm(event.target.value);
               },
               updateSearchTerm,
+              onChangeComposeSelectedRegion: setComposeSelectedRegion,
               showConversation,
+              lookupConversationWithoutServiceId,
+              showUserNotFoundModal,
+              setIsFetchingUUID,
+              showInbox,
             })}
           </NavSidebarSearchHeader>
         )}
         <div className="module-left-pane__dialogs">
-          {dialogs.map(({ key, dialog }) => (
-            <React.Fragment key={key}>{dialog}</React.Fragment>
-          ))}
+          {!hideHeader &&
+            dialogs.map(({ key, dialog }) => (
+              <React.Fragment key={key}>{dialog}</React.Fragment>
+            ))}
         </div>
         {preRowsNode && <React.Fragment key={0}>{preRowsNode}</React.Fragment>}
         <div className="module-left-pane__list--measure" ref={measureRef}>
@@ -729,6 +780,8 @@ export function LeftPane({
                 scrollable={isScrollable}
                 shouldRecomputeRowHeights={shouldRecomputeRowHeights}
                 showChooseGroupMembers={showChooseGroupMembers}
+                showFindByUsername={showFindByUsername}
+                showFindByPhoneNumber={showFindByPhoneNumber}
                 theme={theme}
               />
             </div>

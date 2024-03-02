@@ -44,6 +44,10 @@
     "messageformat": "Добавить «{contact}» в группу «{group}»",
     "description": "Shown in the confirmation dialog body when adding a contact to a group"
   },
+  "icu:AddUserToAnotherGroupModal__search-placeholder": {
+    "messageformat": "Поиск",
+    "description": "Placeholder to use when searching for groups in the AddUserToAnotherGroupModal"
+  },
   "icu:AddUserToAnotherGroupModal__toast--user-added-to-group": {
     "messageformat": "{contact} был(-а) добавлен(-а) в {group}",
     "description": "Shown in toast after a user is added to an existing group"
@@ -331,6 +335,42 @@
   "icu:LeftPane--corrupted-username-link--action-text": {
     "messageformat": "Исправить сейчас",
     "description": "Text of the button in the corrupted username link banner in the left pane"
+  },
+  "icu:LeftPane__compose__findByUsername": {
+    "messageformat": "Поиск по имени пользователя",
+    "description": "Text of the button displayed when clicking compose button in left pane"
+  },
+  "icu:LeftPane__compose__findByPhoneNumber": {
+    "messageformat": "Поиск по номеру телефона",
+    "description": "Text of the button displayed when clicking compose button in left pane"
+  },
+  "icu:LeftPaneFindByHelper__title--findByUsername": {
+    "messageformat": "Поиск по имени пользователя",
+    "description": "Title of the left pane when looking up someone by username"
+  },
+  "icu:LeftPaneFindByHelper__title--findByPhoneNumber": {
+    "messageformat": "Поиск по номеру телефона",
+    "description": "Title of the left pane when looking up someone by phone number"
+  },
+  "icu:LeftPaneFindByHelper__placeholder--findByUsername": {
+    "messageformat": "Имя пользователя",
+    "description": "Placeholder of the search input in left pane when looking up someone by username"
+  },
+  "icu:LeftPaneFindByHelper__placeholder--findByPhoneNumber": {
+    "messageformat": "Номер телефона",
+    "description": "Placeholder of the search input in left pane when looking up someone by phone number"
+  },
+  "icu:LeftPaneFindByHelper__description--findByUsername": {
+    "messageformat": "Введите имя пользователя, затем точку и набор принадлежащих ему цифр.",
+    "description": "Description displayed under search input in left pane when looking up someone by username"
+  },
+  "icu:CountryCodeSelect__placeholder": {
+    "messageformat": "Код страны",
+    "description": "Placeholder displayed as default value of country code select element"
+  },
+  "icu:CountryCodeSelect__Modal__title": {
+    "messageformat": "Код страны",
+    "description": "Title of the country code modal"
   },
   "icu:NavTabsToggle__showTabs": {
     "messageformat": "Показать вкладки",
@@ -1351,6 +1391,38 @@
   "icu:showSafetyNumber": {
     "messageformat": "Просмотреть код безопасности"
   },
+  "icu:AboutContactModal__title": {
+    "messageformat": "О контакте",
+    "description": "Title of About modal"
+  },
+  "icu:AboutContactModal__title--myself": {
+    "messageformat": "Вы",
+    "description": "Title of About modal when viewing your own information"
+  },
+  "icu:AboutContactModal__verified": {
+    "messageformat": "Подтверждён",
+    "description": "Text of a button on About modal leading to a safety number modal"
+  },
+  "icu:AboutContactModal__blocked": {
+    "messageformat": "{name} заблокирован(-а)",
+    "description": "Text of a row on About modal when user is blocked"
+  },
+  "icu:AboutContactModal__message-request": {
+    "messageformat": "Запрос на сообщение ожидает",
+    "description": "Text of a row on About modal when user is in message request state"
+  },
+  "icu:AboutContactModal__no-dms": {
+    "messageformat": "Обмена сообщениями с {name} не было",
+    "description": "Text of a row on About modal when there are no direct messages with a user"
+  },
+  "icu:AboutContactModal__signal-connection": {
+    "messageformat": "Контакт Signal",
+    "description": "Text of a button on About modal leading to an education modal"
+  },
+  "icu:AboutContactModal__system-contact": {
+    "messageformat": "{name} есть в ваших системных контактах",
+    "description": "Text of a row in the About modal describing that the contact is in system contacts"
+  },
   "icu:ContactModal__showSafetyNumber": {
     "messageformat": "Просмотреть код безопасности",
     "description": "Contact modal, label for button to show safety number modal"
@@ -1519,7 +1591,7 @@
     "description": "Shown on a button below a 'conversations were merged' timeline notification"
   },
   "icu:ConversationMerge--explainer-dialog--line-1": {
-    "messageformat": "После обмена сообщениями с {obsoleteConversationTitle} вам стало известно, что этот номер принадлежит {conversationTitle}. Это частный номер.",
+    "messageformat": "После обмена сообщениями с {obsoleteConversationTitle} вам стало известно, что этот номер телефона принадлежит {conversationTitle}. Это частный номер.",
     "description": "Contents of a dialog shown after clicking 'learn more' button on a conversation merge event."
   },
   "icu:ConversationMerge--explainer-dialog--line-2": {
@@ -1626,6 +1698,10 @@
     "messageformat": "Мой компьютер",
     "description": "The placeholder for the 'choose device name' input"
   },
+  "icu:Preferences--phone-number": {
+    "messageformat": "Номер телефона",
+    "description": "The label in settings panel shown for the phone number associated with user's account"
+  },
   "icu:Preferences--device-name": {
     "messageformat": "Имя устройства",
     "description": "The label in settings panel shown for the user-provided name for this desktop instance"
@@ -1700,6 +1776,54 @@
   "icu:calling__call-is-full": {
     "messageformat": "Звонок заполнен",
     "description": "Text in the call lobby when you can't join because the call is full"
+  },
+  "icu:calling__cant-join": {
+    "messageformat": "Can't join call",
+    "description": "Modal dialog title when you can't join a call"
+  },
+  "icu:calling__dialog-already-in-call": {
+    "messageformat": "You are already in a call.",
+    "description": "Error message when clicking a call link to join a call, but you're in a call already."
+  },
+  "icu:calling__call-link-connection-issues": {
+    "messageformat": "Could not fetch call link information. Please check your network connection and try again.",
+    "description": "Error message when unable to fetch call link info from server."
+  },
+  "icu:calling__call-link-copied": {
+    "messageformat": "Call link copied.",
+    "description": "Toast shown when a call link is copied to the clipboard."
+  },
+  "icu:calling__call-link-no-longer-valid": {
+    "messageformat": "This call link is no longer valid.",
+    "description": "Error message when a call link has been revoked or expires."
+  },
+  "icu:calling__call-link-default-title": {
+    "messageformat": "Signal Call",
+    "description": "Default title for Signal call links."
+  },
+  "icu:calling__join-request-denied": {
+    "messageformat": "Your request to join this call has been denied.",
+    "description": "Error message when a request to join a call link call was rejected by a call admin."
+  },
+  "icu:calling__join-request-denied-title": {
+    "messageformat": "Join request denied",
+    "description": "Title of error when a request to join a call link call was rejected by a call admin."
+  },
+  "icu:calling__removed-from-call": {
+    "messageformat": "Someone has removed you from the call.",
+    "description": "Error message when in a call then a call admin removes you."
+  },
+  "icu:calling__removed-from-call-title": {
+    "messageformat": "Removed from call",
+    "description": "Title of error when in a call then a call admin removes you."
+  },
+  "icu:CallingLobby__CallLinkNotice": {
+    "messageformat": "Anyone who joins this call via the link will see your name and photo.",
+    "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared."
+  },
+  "icu:CallingLobby__CallLinkNotice--phone-sharing": {
+    "messageformat": "Anyone who joins this call via the link will see your name, photo, and phone number.",
+    "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared, when the phone number sharing account setting is enabled."
   },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "Войти",
@@ -2328,7 +2452,7 @@
     "description": "Label for header to go to stories view"
   },
   "icu:contactSearchPlaceholder": {
-    "messageformat": "Поиск по имени или номеру телефона",
+    "messageformat": "Имя, имя пользователя или номер",
     "description": "Placeholder to use when searching for contacts in the composer"
   },
   "icu:noContactsFound": {
@@ -2368,7 +2492,7 @@
     "description": "Error message when you try to send an edit after message becomes too old"
   },
   "icu:startConversation--username-not-found": {
-    "messageformat": "Пользователь не найден. {atUsername} — не пользователь Signal; убедитесь, что вы ввели полное имя пользователя.",
+    "messageformat": "{atUsername} не является пользователем Signal. Убедитесь, что вы ввели полное имя пользователя.",
     "description": "Shown in dialog if username is not found. Note that 'username' will be the output of at-username"
   },
   "icu:startConversation--phone-number-not-found": {
@@ -2615,6 +2739,10 @@
   "icu:message--attachmentTooBig--multiple": {
     "messageformat": "Некоторые вложения слишком большие для отображения.",
     "description": "Shown in a message bubble if any attachments are left on message when too-large attachments are dropped"
+  },
+  "icu:message--call-link-description": {
+    "messageformat": "Use this link to join a Signal call",
+    "description": "Shown in message previews for Signal call links."
   },
   "icu:donation--missing": {
     "messageformat": "Невозможно получить данные о пожертвовании",
@@ -3588,6 +3716,14 @@
     "messageformat": "Аудиозвонок",
     "description": "Shown in the call lobby for a direct 1:1 call when the caller's video is disabled, to specify that an audio call will be placed when clicking the Start button."
   },
+  "icu:CallControls__InfoDisplay--adhoc-call": {
+    "messageformat": "Call link",
+    "description": "Shown in the call lobby for a call link."
+  },
+  "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
+    "messageformat": "Waiting to be let in",
+    "description": "Shown in the call lobby for call link calls when requesting to join a call which requires admin approval."
+  },
   "icu:CallControls__JoinLeaveButton--hangup-1-1": {
     "messageformat": "Окончание",
     "description": "Title for the hangup button for a direct 1:1 call with only 2 participants."
@@ -3727,6 +3863,10 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "Окно",
     "description": "Title for the select your screen sharing sources modal"
+  },
+  "icu:CallingAdhocCallInfo__CopyLink": {
+    "messageformat": "Copy link",
+    "description": "Menu item in the in-call info popup for call link calls. The action is to add the call link to the clipboard."
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Видео",
@@ -5185,11 +5325,11 @@
     "description": "Header in the contact spoofing review dialog, shown above the \"safe\" user"
   },
   "icu:ContactSpoofingReviewDialog__group__title": {
-    "messageformat": "Проверьте участников",
+    "messageformat": "Проверить участников",
     "description": "Title for the contact name spoofing review dialog in groups"
   },
   "icu:ContactSpoofingReviewDialog__group__description": {
-    "messageformat": "{count, plural, one {{count,number} участник группы имеет похожее имя. Просмотрите участников ниже и, если необходимо, примите меры.} few {{count,number} участника группы имеют похожие имена. Просмотрите участников ниже и, если необходимо, примите меры.} many {{count,number} участников группы имеют похожие имена. Просмотрите участников ниже и, если необходимо, примите меры.} other {{count,number} участника группы имеют похожие имена. Просмотрите участников ниже и, если необходимо, примите меры.}}",
+    "messageformat": "{count, plural, one {{count,number} участник группы имеет одинаковое имя. Просмотрите участников ниже и, если необходимо, примите меры.} few {{count,number} участника группы имеют одинаковое имя. Просмотрите участников ниже и, если необходимо, примите меры.} many {{count,number} участников группы имеют одинаковое имя. Просмотрите участников ниже и, если необходимо, примите меры.} other {{count,number} участника группы имеют одинаковое имя. Просмотрите участников ниже и, если необходимо, примите меры.}}",
     "description": "Description for the group contact spoofing review dialog"
   },
   "icu:ContactSpoofingReviewDialog__group__multiple-conflicts__description": {
@@ -5198,7 +5338,15 @@
   },
   "icu:ContactSpoofingReviewDialog__group__members-header": {
     "messageformat": "Участники",
-    "description": "Header in the group contact spoofing review dialog. After this header, there will be a list of members"
+    "description": "(Deleted 01/31/2024) Header in the group contact spoofing review dialog. After this header, there will be a list of members"
+  },
+  "icu:ContactSpoofingReviewDialog__group__members__no-shared-groups": {
+    "messageformat": "Нет других общих групп",
+    "description": "Informational text displayed next to a contact on ContactSpoofingReviewDialog"
+  },
+  "icu:ContactSpoofingReviewDialog__signal-connection": {
+    "messageformat": "Контакт Signal",
+    "description": "Text of a button on ContactSpoofingReviewDialog leading to an education modal"
   },
   "icu:ContactSpoofingReviewDialog__group__name-change-info": {
     "messageformat": "Недавно изменил(-а) своё имя профиля с {oldName} на {newName}",
@@ -5493,15 +5641,19 @@
     "description": "Default text for username field"
   },
   "icu:ProfileEditor--username--corrupted--body": {
-    "messageformat": "Что-то пошло не так с вашим именем пользователя, оно больше не закреплено за вашей учётной записью.",
+    "messageformat": "Что-то пошло не так с вашим именем пользователя, оно больше не закреплено за вашей учётной записью. Вы можете попробовать установить его снова или выбрать новое.",
     "description": "Text of confirmation modal when the username gets corrupted"
   },
   "icu:ProfileEditor--username--corrupted--delete-button": {
     "messageformat": "Удалить имя пользователя",
-    "description": "Button text for deletion of the username in case of corruption"
+    "description": "(Deleted 02/01/2024) Button text for deletion of the username in case of corruption"
   },
   "icu:ProfileEditor--username--corrupted--create-button": {
     "messageformat": "Создать имя пользователя",
+    "description": "(Deleted 02/01/2024) Button text for creation of a new username in case of corruption"
+  },
+  "icu:ProfileEditor--username--corrupted--fix-button": {
+    "messageformat": "Исправить сейчас",
     "description": "Button text for creation of a new username in case of corruption"
   },
   "icu:ProfileEditor__username-link": {
@@ -5553,8 +5705,12 @@
     "description": "Shown if user has attempted to enter a username with 00 as discriminator"
   },
   "icu:ProfileEditor--username--check-discriminator-leading-zero": {
-    "messageformat": "Этот номер не может начинаться с 00. Введите цифру от 1 до 9",
+    "messageformat": "Числа, состоящие более чем из 2 цифр, не могут начинаться с 0",
     "description": "Shown if user has attempted to enter a username with leading 0 in discriminator"
+  },
+  "icu:ProfileEditor--username--too-many-attempts": {
+    "messageformat": "Сделано слишком много попыток. Пожалуйста, попробуйте ещё раз позже",
+    "description": "Shown if user has made too many attempts to pick a username and has to wait before retrying"
   },
   "icu:ProfileEditor--username--unavailable": {
     "messageformat": "Это имя пользователя недоступно.",
@@ -5600,6 +5756,10 @@
     "messageformat": "Удалить",
     "description": "Shown in dialog button if user has saved an empty string to delete their username"
   },
+  "icu:ProfileEditor--username--delete-unavailable-notice": {
+    "messageformat": "Чтобы удалить имя пользователя, откройте Signal на телефоне и перейдите в Настройки > Профиль.",
+    "description": "Shown in dialog body if user is trying to delete username, but it is only supported on mobile"
+  },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "Копировать или удалить имя пользователя",
     "description": "Shown as aria label for context menu next to username"
@@ -5632,9 +5792,33 @@
     "messageformat": "Вы хотите сбросить эти изменения?",
     "description": "ConfirmationDialog text for discarding changes"
   },
+  "icu:ConfirmationDialog__Title--in-call-close-requested": {
+    "messageformat": "Close Signal and end the call?",
+    "description": "ConfirmationDialog title when trying to close the app while in a call."
+  },
+  "icu:ConfirmationDialog__Title--close-requested-not-now": {
+    "messageformat": "Not Now",
+    "description": "Confirmation dialog button to cancel closing the app, while in a call and trying to close the app."
+  },
+  "icu:ProfileEditor--edit-photo": {
+    "messageformat": "Редактировать фото",
+    "description": "Text of a button on profile editor that leads to the avatar editor"
+  },
   "icu:ProfileEditor--info--link": {
     "messageformat": "Ваш профиль зашифрован. Ваш профиль и его изменения будут видны вашим контактам, а также другим людям, когда вы начинаете или принимаете новые чаты. <learnMoreLink>Узнать больше</learnMoreLink>",
-    "description": "Information shown at the bottom of the profile editor section"
+    "description": "(Deleted 02/01/2024) Information shown at the bottom of the profile editor section"
+  },
+  "icu:ProfileEditor--info--general": {
+    "messageformat": "Ваш профиль и изменения в нём будут видны людям, которым вы отправляете сообщения, вашим контактам и группам.",
+    "description": "Information shown in profile editor below profile name and about fields"
+  },
+  "icu:ProfileEditor--info--pnp": {
+    "messageformat": "Ваше имя пользователя, QR-код и ссылка не видны в вашем профиле. Делитесь информацией только с теми, кому доверяете.",
+    "description": "Information shown in profile editor below pnp settings when username is set"
+  },
+  "icu:ProfileEditor--info--pnp--no-username": {
+    "messageformat": "Теперь люди могут писать вам сообщения, используя выбранное вами имя пользователя, поэтому вам не нужно делиться вашим номером телефона.",
+    "description": "Information shown in profile editor below pnp settings when no username is set"
   },
   "icu:Bio--speak-freely": {
     "messageformat": "Говорите свободно",
@@ -5792,6 +5976,10 @@
     "messageformat": "Выберите, кто может видеть ваш номер телефона и связываться с вами в Signal с его помощью.",
     "description": "Body of Phone Number row in Privacy section of Preferences window"
   },
+  "icu:Preferences__pnp__row--button": {
+    "messageformat": "Изменить…",
+    "description": "Text of Phone Number row button in Privacy section of Preferences window"
+  },
   "icu:Preferences__pnp__sharing--title": {
     "messageformat": "Кто может видеть мой номер",
     "description": "Title for the phone number sharing setting row"
@@ -5801,8 +5989,12 @@
     "description": "Description for the phone number sharing setting row when the value is Everyone"
   },
   "icu:Preferences__pnp__sharing--description--nobody": {
-    "messageformat": "Никто не будет видеть ваш номер телефона в Signal, даже если вы обмениваетесь с этим человеком сообщениями.",
-    "description": "Description for the phone number sharing setting row when the value is Nobody"
+    "messageformat": "Ваш номер телефона никому не будет виден, если только он не сохранен в контактах телефона пользователя.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody and phone number discoverability setting is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody--not-discoverable": {
+    "messageformat": "Ваш номер телефона никому не будет виден.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody and phone number discoverability setting is Nobody"
   },
   "icu:Preferences__pnp--page-title": {
     "messageformat": "Номер телефона",
@@ -6788,6 +6980,10 @@
     "messageformat": "Отреагировал(-а) на историю от {name}",
     "description": "Label for when a person reacts to a story"
   },
+  "icu:Quote__story-reaction--you": {
+    "messageformat": "Reacted to your story",
+    "description": "Label for when someone reacts to your story"
+  },
   "icu:Quote__story-reaction--single": {
     "messageformat": "Отреагировал(-а) на историю",
     "description": "Used whenever we can't find a user's first name"
@@ -6817,7 +7013,7 @@
     "description": "Placeholder for the username field"
   },
   "icu:EditUsernameModalBody__username-helper": {
-    "messageformat": "Имена пользователей позволяют другим пользователям отправлять вам сообщения без вашего номера телефона. Они соединены с набором цифр, чтобы сохранить ваш адрес в тайне.",
+    "messageformat": "Именам пользователей всегда придан набор цифр.",
     "description": "Shown on the edit username screen"
   },
   "icu:EditUsernameModalBody__learn-more": {
@@ -6840,8 +7036,16 @@
     "messageformat": "Продолжить",
     "description": "Text of the primary button on username change confirmation modal"
   },
+  "icu:EditUsernameModalBody__recover-confirmation": {
+    "messageformat": "При восстановлении имени пользователя ваши существующие QR-код и ссылка будут сброшены. Вы уверены?",
+    "description": "Body of the confirmation dialog displayed when user is about to recover their username"
+  },
+  "icu:EditUsernameModalBody__username-recovered__text": {
+    "messageformat": "Ваш QR-код и ссылка были сброшены, а ваше имя пользователя — {username}",
+    "description": "Text of toast displayed upon successful recovery of username"
+  },
   "icu:UsernameLinkModalBody__hint": {
-    "messageformat": "Scan this QR code with your phone to chat with me on Signal.",
+    "messageformat": "Просканируйте этот QR-код с помощью вашего телефона, чтобы начать чат со мной в Signal.",
     "descrption": "Text of the hint displayed below generated QR code on the printable image."
   },
   "icu:UsernameLinkModalBody__save": {
@@ -6873,7 +7077,7 @@
     "description": "ARIA label of button for selecting username link color"
   },
   "icu:UsernameLinkModalBody__reset__confirm": {
-    "messageformat": "При сбросе QR-кода ваш существующий QR-код и ссылка перестанут работать.",
+    "messageformat": "При сбросе QR-кода и ссылки ваш существующий QR-код и ссылка перестанут работать.",
     "description": "Text of confirmation modal when resetting the username link"
   },
   "icu:UsernameLinkModalBody__resetting-link": {
@@ -6881,39 +7085,47 @@
     "description": "Text shown when resetting the username link"
   },
   "icu:UsernameLinkModalBody__error__text": {
-    "messageformat": "QR-код и ссылка не установлены. Проверьте ваше подключение к интернету и попробуйте ещё раз.",
+    "messageformat": "Что-то пошло не так с QR-кодом и ссылкой, они больше не действительны. Попробуйте сбросить его и создать новый QR-код и ссылку.",
     "description": "Text of the confirmation dialog shown on username link error"
   },
+  "icu:UsernameLinkModalBody__error__fix-now": {
+    "messageformat": "Исправить сейчас",
+    "description": "Text of the button in a confirmation dialog shown on username link error"
+  },
+  "icu:UsernameLinkModalBody__recovered__text": {
+    "messageformat": "Ваш QR-код и ссылка были сброшены, и были созданы новый QR-код и ссылка.",
+    "description": "Text of the confirmation dialog shown on successful username link recovery"
+  },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "New ways to connect",
+    "messageformat": "Новые способы связи",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number__title": {
-    "messageformat": "Phone number privacy",
+    "messageformat": "Конфиденциальность номера телефона",
     "description": "Title of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number__body": {
-    "messageformat": "Your phone number is no longer visible in chats. If your number is saved to a friend’s contacts, they will still see it.",
+    "messageformat": "Ваш номер телефона больше не будет виден в чатах. Если ваш номер сохранён в контактах друга, он всё равно его увидит.",
     "description": "Body of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__username__title": {
-    "messageformat": "Usernames",
+    "messageformat": "Имена пользователей",
     "description": "Title of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__username__body": {
-    "messageformat": "People can now message you using your optional username so you don’t have to give out your phone number. Usernames aren’t visible on your profile.",
+    "messageformat": "Теперь люди могут писать вам сообщения, используя выбранное вами имя пользователя, поэтому вам не нужно делиться вашим номером телефона. Имена пользователей не видны в вашем профиле.",
     "description": "Body of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__qr__title": {
-    "messageformat": "QR codes and links",
+    "messageformat": "QR-коды и ссылки",
     "description": "Title of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__qr__body": {
-    "messageformat": "Usernames have a unique QR code and link you can share with friends to quickly start a chat with you.",
+    "messageformat": "Именам пользователей присваивается уникальная ссылка, которой вы можете поделиться с друзьями, чтобы они могли начать чат с вами.",
     "description": "Body of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "Имя пользователя состоит из набора цифр и не показывается в профиле",
+    "messageformat": "Имени пользователя придан набор цифр, и оно не показывается в профиле",
     "description": "(Deleted 01/16/2023) Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
@@ -6929,27 +7141,27 @@
     "description": "(Deleted 01/16/2023) Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Set up username",
+    "messageformat": "Настройте имя пользователя",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__skip": {
-    "messageformat": "Not now",
+    "messageformat": "Не сейчас",
     "description": "Text of the secondary button on username onboarding modal"
   },
   "icu:UsernameMegaphone__title": {
-    "messageformat": "New ways to connect",
+    "messageformat": "Новые способы связи",
     "description": "Title of username megaphone"
   },
   "icu:UsernameMegaphone__body": {
-    "messageformat": "Introducing phone number privacy, optional usernames and links.",
+    "messageformat": "Представляем конфиденциальность номеров телефона, дополнительные имена пользователя и ссылки.",
     "description": "Body of username megaphone"
   },
   "icu:UsernameMegaphone__learn-more": {
-    "messageformat": "Learn more",
+    "messageformat": "Узнать больше",
     "description": "Text of the primary button on username megaphone"
   },
   "icu:UsernameMegaphone__dismiss": {
-    "messageformat": "Dismiss",
+    "messageformat": "Закрыть",
     "description": "Text of the secondary button on username megaphone"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -7124,13 +7336,7 @@
     "messageformat": "Небольшие изменения, исправления ошибок и улучшения производительности. Спасибо за то, что пользуетесь Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.46--0": {
-    "messageformat": "Шрифты по умолчанию для языка урду были обновлены, чтобы улучшить читаемость при выборе этого языка (Настройки Signal > Настройки интерфейса > Язык). Спасибо, {linkToGithub}!"
-  },
-  "icu:WhatsNew__v6.47--0": {
-    "messageformat": "If you spend a lot of time trying to pick out the perfect emoji reaction for every situation, you'll be <emojify>🎉</emojify> to know that we fixed a bug with typing indicators that sometimes caused the emoji selection box to disappear while you were in the middle of pondering your choices."
-  },
-  "icu:WhatsNew__v6.47--1": {
-    "messageformat": "Signal will now match your selected title bar color on Microsoft Windows. When all of your windows in Windows look the same, that's a common theme."
+  "icu:WhatsNew__v7.1--0": {
+    "messageformat": "This update enables support for all of the new emoji characters in Emoji version 15.1. People keep asking us what our favorite new emoji is, but answering that question is a “lime” we won't cross."
   }
 }

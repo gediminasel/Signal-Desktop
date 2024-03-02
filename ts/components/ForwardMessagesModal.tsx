@@ -390,6 +390,8 @@ export function ForwardMessagesModal({
                       rowCount={rowCount}
                       shouldRecomputeRowHeights={false}
                       showChooseGroupMembers={shouldNeverBeCalled}
+                      showFindByUsername={shouldNeverBeCalled}
+                      showFindByPhoneNumber={shouldNeverBeCalled}
                       theme={theme}
                     />
                   </div>
@@ -450,6 +452,7 @@ function ForwardMessageEditor({
             onClose={removeLinkPreview}
             title={linkPreview.title}
             url={linkPreview.url}
+            isCallLink={linkPreview.isCallLink}
           />
         </div>
       ) : null}

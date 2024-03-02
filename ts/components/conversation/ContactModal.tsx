@@ -14,16 +14,15 @@ import type { LocalizerType, ThemeType } from '../../types/Util';
 import type { ViewUserStoriesActionCreatorType } from '../../state/ducks/stories';
 import { StoryViewModeType } from '../../types/Stories';
 import * as log from '../../logging/log';
-import { About } from './About';
 import { Avatar, AvatarSize } from '../Avatar';
 import { AvatarLightbox } from '../AvatarLightbox';
 import { BadgeDialog } from '../BadgeDialog';
 import { ConfirmationDialog } from '../ConfirmationDialog';
 import { Modal } from '../Modal';
 import { RemoveGroupMemberConfirmationDialog } from './RemoveGroupMemberConfirmationDialog';
-import { SharedGroupNames } from '../SharedGroupNames';
 import { missingCaseError } from '../../util/missingCaseError';
 import { UserText } from '../UserText';
+import { Button, ButtonIconType, ButtonVariant } from '../Button';
 
 export type PropsDataType = {
   areWeASubscriber: boolean;
@@ -36,13 +35,18 @@ export type PropsDataType = {
   isAdmin: boolean;
   isMember: boolean;
   theme: ThemeType;
+  hasActiveCall: boolean;
 };
 
 type PropsActionType = {
+  blockConversation: (id: string) => void;
   hideContactModal: () => void;
+  onOutgoingAudioCallInConversation: (conversationId: string) => unknown;
+  onOutgoingVideoCallInConversation: (conversationId: string) => unknown;
   removeMemberFromGroup: (conversationId: string, contactId: string) => void;
   showConversation: ShowConversationType;
   toggleAdmin: (conversationId: string, contactId: string) => void;
+  toggleAboutContactModal: (conversationId: string) => unknown;
   toggleSafetyNumberModal: (conversationId: string) => unknown;
   toggleAddUserToAnotherGroupModal: (conversationId: string) => void;
   updateConversationModelSharedGroups: (conversationId: string) => void;
@@ -61,22 +65,28 @@ enum SubModalState {
   None = 'None',
   ToggleAdmin = 'ToggleAdmin',
   MemberRemove = 'MemberRemove',
+  ConfirmingBlock = 'ConfirmingBlock',
 }
 
 export function ContactModal({
   areWeAdmin,
   areWeASubscriber,
   badges,
+  blockConversation,
   contact,
   conversation,
+  hasActiveCall,
   hasStories,
   hideContactModal,
   i18n,
   isAdmin,
   isMember,
+  onOutgoingAudioCallInConversation,
+  onOutgoingVideoCallInConversation,
   removeMemberFromGroup,
   showConversation,
   theme,
+  toggleAboutContactModal,
   toggleAddUserToAnotherGroupModal,
   toggleAdmin,
   toggleSafetyNumberModal,
@@ -158,6 +168,27 @@ export function ContactModal({
         />
       );
       break;
+    case SubModalState.ConfirmingBlock:
+      modalNode = (
+        <ConfirmationDialog
+          dialogName="ContactModal.confirmBlock"
+          actions={[
+            {
+              text: i18n('icu:MessageRequests--block'),
+              action: () => blockConversation(contact.id),
+              style: 'affirmative',
+            },
+          ]}
+          i18n={i18n}
+          onClose={() => setSubModalState(SubModalState.None)}
+          title={i18n('icu:MessageRequests--block-direct-confirm-title', {
+            title: contact.title,
+          })}
+        >
+          {i18n('icu:MessageRequests--block-direct-confirm-body')}
+        </ConfirmationDialog>
+      );
+      break;
     default: {
       const state: never = subModalState;
       log.warn(`ContactModal: unexpected ${state}!`);
@@ -208,37 +239,74 @@ export function ContactModal({
               title={contact.title}
               unblurredAvatarPath={contact.unblurredAvatarPath}
             />
-            <div className="ContactModal__name">
-              <UserText text={contact.title} />
-            </div>
-            <div className="module-about__container">
-              <About text={contact.about} />
-            </div>
-            {contact.phoneNumber && (
-              <div className="ContactModal__info">{contact.phoneNumber}</div>
-            )}
+            <button
+              type="button"
+              className="ContactModal__name"
+              onClick={ev => {
+                ev.preventDefault();
+                toggleAboutContactModal(contact.id);
+              }}
+            >
+              <div className="ContactModal__name__text">
+                <UserText text={contact.title} />
+              </div>
+              <i className="ContactModal__name__chevron" />
+            </button>
             {!contact.isMe && (
-              <div className="ContactModal__info">
-                <SharedGroupNames
-                  i18n={i18n}
-                  sharedGroupNames={contact.sharedGroupNames || []}
-                />
+              <div className="ContactModal__quick-actions">
+                <Button
+                  icon={ButtonIconType.message}
+                  variant={ButtonVariant.Details}
+                  onClick={() => {
+                    hideContactModal();
+                    showConversation({
+                      conversationId: contact?.id,
+                      switchToAssociatedView: true,
+                    });
+                  }}
+                >
+                  {i18n('icu:ConversationDetails__HeaderButton--Message')}
+                </Button>
+                <Button
+                  icon={ButtonIconType.video}
+                  variant={ButtonVariant.Details}
+                  disabled={hasActiveCall}
+                  onClick={() => {
+                    hideContactModal();
+                    onOutgoingVideoCallInConversation(contact.id);
+                  }}
+                >
+                  {i18n('icu:video')}
+                </Button>
+                <Button
+                  icon={ButtonIconType.audio}
+                  variant={ButtonVariant.Details}
+                  disabled={hasActiveCall}
+                  onClick={() => {
+                    hideContactModal();
+                    onOutgoingAudioCallInConversation(contact.id);
+                  }}
+                >
+                  {i18n('icu:audio')}
+                </Button>
               </div>
             )}
+            <div className="ContactModal__divider" />
             <div className="ContactModal__button-container">
-              <button
-                type="button"
-                className="ContactModal__button ContactModal__send-message"
-                onClick={() => {
-                  hideContactModal();
-                  showConversation({ conversationId: contact.id });
-                }}
-              >
-                <div className="ContactModal__bubble-icon">
-                  <div className="ContactModal__send-message__bubble-icon" />
-                </div>
-                <span>{i18n('icu:ContactModal--message')}</span>
-              </button>
+              {!contact.isMe && (
+                <button
+                  type="button"
+                  className="ContactModal__button ContactModal__block"
+                  onClick={() =>
+                    setSubModalState(SubModalState.ConfirmingBlock)
+                  }
+                >
+                  <div className="ContactModal__bubble-icon">
+                    <div className="ContactModal__block__bubble-icon" />
+                  </div>
+                  <span>{i18n('icu:MessageRequests--block')}</span>
+                </button>
+              )}
               {!contact.isMe && (
                 <button
                   type="button"

@@ -16,12 +16,12 @@ describe('LeftPaneChooseGroupMembersHelper', () => {
     candidateContacts: [],
     isShowingRecommendedGroupSizeModal: false,
     isShowingMaximumGroupSizeModal: false,
-    isUsernamesEnabled: true,
     ourE164: undefined,
     ourUsername: undefined,
     groupSizeRecommendedLimit: 22,
     groupSizeHardLimit: 33,
     searchTerm: '',
+    username: undefined,
     regionCode: 'US',
     selectedContacts: [],
   };
@@ -45,6 +45,7 @@ describe('LeftPaneChooseGroupMembersHelper', () => {
           ...defaults,
           candidateContacts: [],
           searchTerm: '',
+          username: undefined,
           selectedContacts: [getDefaultConversation()],
         }).getRowCount(),
         0
@@ -54,8 +55,8 @@ describe('LeftPaneChooseGroupMembersHelper', () => {
           ...defaults,
           candidateContacts: [],
           searchTerm: 'foo bar',
+          username: undefined,
           selectedContacts: [getDefaultConversation()],
-          isUsernamesEnabled: false,
         }).getRowCount(),
         0
       );
@@ -70,6 +71,7 @@ describe('LeftPaneChooseGroupMembersHelper', () => {
             getDefaultConversation(),
           ],
           searchTerm: '',
+          username: undefined,
           selectedContacts: [getDefaultConversation()],
         }).getRowCount(),
         4
@@ -84,6 +86,7 @@ describe('LeftPaneChooseGroupMembersHelper', () => {
           ...defaults,
           candidateContacts: [],
           searchTerm: '',
+          username: undefined,
           selectedContacts: [getDefaultConversation()],
         }).getRow(0)
       );
@@ -92,6 +95,7 @@ describe('LeftPaneChooseGroupMembersHelper', () => {
           ...defaults,
           candidateContacts: [],
           searchTerm: '',
+          username: undefined,
           selectedContacts: [getDefaultConversation()],
         }).getRow(99)
       );
@@ -100,8 +104,8 @@ describe('LeftPaneChooseGroupMembersHelper', () => {
           ...defaults,
           candidateContacts: [],
           searchTerm: 'foo bar',
+          username: undefined,
           selectedContacts: [getDefaultConversation()],
-          isUsernamesEnabled: false,
         }).getRow(0)
       );
     });
@@ -115,7 +119,7 @@ describe('LeftPaneChooseGroupMembersHelper', () => {
         ...defaults,
         candidateContacts,
         searchTerm: 'foo bar',
-        isUsernamesEnabled: false,
+        username: undefined,
         selectedContacts: [candidateContacts[1]],
       });
 
@@ -141,6 +145,7 @@ describe('LeftPaneChooseGroupMembersHelper', () => {
         ...defaults,
         candidateContacts,
         searchTerm: 'foo bar',
+        username: undefined,
         selectedContacts: candidateContacts.slice(1, 33),
       });
 
@@ -163,6 +168,7 @@ describe('LeftPaneChooseGroupMembersHelper', () => {
         ...defaults,
         candidateContacts: [],
         searchTerm: '212 555',
+        username: undefined,
         selectedContacts: [],
       });
 
@@ -188,6 +194,7 @@ describe('LeftPaneChooseGroupMembersHelper', () => {
         ...defaults,
         candidateContacts: [],
         searchTerm: 'signal.01',
+        username: 'signal.01',
         selectedContacts: [],
       });
 

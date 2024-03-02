@@ -300,16 +300,19 @@ type CreateTextMeasurerOptionsType = Readonly<{
   font: string;
   letterSpacing: number;
   maxWidth: number;
+  direction: 'ltr' | 'rtl';
 }>;
 
 function createTextMeasurer({
   font,
   letterSpacing,
   maxWidth,
+  direction,
 }: CreateTextMeasurerOptionsType): (text: string) => boolean {
   const [, context] = createCanvasAndContext({ width: 1, height: 1 });
 
   context.font = font;
+  context.direction = direction;
   // Experimental Chrome APIs
   (
     context as unknown as {
@@ -324,6 +327,7 @@ type GenerateImageURLOptionsType = Readonly<{
   link: string;
   username: string;
   hint: string;
+  hintDirection: 'ltr' | 'rtl';
   colorId: number;
 }>;
 
@@ -332,6 +336,7 @@ export async function _generateImageBlob({
   link,
   username,
   hint,
+  hintDirection,
   colorId,
 }: GenerateImageURLOptionsType): Promise<Blob> {
   const usernameLines = splitText(username, {
@@ -340,6 +345,7 @@ export async function _generateImageBlob({
       maxWidth: USERNAME_MAX_WIDTH,
       font: USERNAME_FONT,
       letterSpacing: USERNAME_LETTER_SPACING,
+      direction: 'ltr',
     }),
   });
 
@@ -349,6 +355,7 @@ export async function _generateImageBlob({
       maxWidth: HINT_MAX_WIDTH,
       font: HINT_FONT,
       letterSpacing: HINT_LETTER_SPACING,
+      direction: hintDirection,
     }),
   });
 
@@ -381,6 +388,7 @@ export async function _generateImageBlob({
 
   context.save();
   context.font = USERNAME_FONT;
+  context.direction = 'ltr';
   // Experimental Chrome APIs
   (
     context as unknown as {
@@ -397,6 +405,7 @@ export async function _generateImageBlob({
 
   context.save();
   context.font = HINT_FONT;
+  context.direction = hintDirection;
   // Experimental Chrome APIs
   (
     context as unknown as {
@@ -526,6 +535,12 @@ function UsernameLinkColors({
   );
 }
 
+enum ResetModalVisibility {
+  NotMounted = 'NotMounted',
+  Closed = 'Closed',
+  Open = 'Open',
+}
+
 export function UsernameLinkModalBody({
   i18n,
   link,
@@ -544,6 +559,9 @@ export function UsernameLinkModalBody({
   const [pngData, setPngData] = useState<Uint8Array | undefined>();
   const [showColors, setShowColors] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
+  const [resetModalVisibility, setResetModalVisibility] = useState(
+    ResetModalVisibility.NotMounted
+  );
   const [showError, setShowError] = useState(false);
   const [colorId, setColorId] = useState(initialColorId);
 
@@ -577,6 +595,7 @@ export function UsernameLinkModalBody({
         username,
         colorId,
         hint: i18n('icu:UsernameLinkModalBody__hint'),
+        hintDirection: i18n.getLocaleDirection(),
       });
       const arrayBuffer = await blob.arrayBuffer();
       if (isAborted) {
@@ -662,9 +681,16 @@ export function UsernameLinkModalBody({
   }, []);
 
   const onConfirmReset = useCallback(() => {
+    setShowError(false);
     setConfirmReset(false);
     resetUsernameLink();
   }, [resetUsernameLink]);
+
+  const onCloseError = useCallback(() => {
+    if (showError) {
+      onBack();
+    }
+  }, [showError, onBack]);
 
   useEffect(() => {
     if (!usernameLinkCorrupted) {
@@ -682,12 +708,23 @@ export function UsernameLinkModalBody({
     setShowError(true);
   }, [usernameLinkState]);
 
-  const onClearError = useCallback(() => {
-    setShowError(false);
+  const onResetModalClose = useCallback(() => {
+    setResetModalVisibility(ResetModalVisibility.Closed);
   }, []);
 
-  const isResettingLink =
-    usernameLinkCorrupted || usernameLinkState !== UsernameLinkState.Ready;
+  const isReady = usernameLinkState === UsernameLinkState.Ready;
+  const isResettingLink = usernameLinkCorrupted || !isReady;
+
+  useEffect(() => {
+    setResetModalVisibility(x => {
+      // Initial mount shouldn't show the modal
+      if (x === ResetModalVisibility.NotMounted || isResettingLink) {
+        return ResetModalVisibility.Closed;
+      }
+
+      return ResetModalVisibility.Open;
+    });
+  }, [isResettingLink]);
 
   const info = (
     <>
@@ -754,7 +791,7 @@ export function UsernameLinkModalBody({
   );
 
   let linkImage: JSX.Element | undefined;
-  if (usernameLinkState === UsernameLinkState.Ready && link) {
+  if (isReady && link) {
     linkImage = (
       <svg
         className={`${CLASS}__card__qr__blotches`}
@@ -787,15 +824,21 @@ export function UsernameLinkModalBody({
         >
           <div className={`${CLASS}__card__qr`}>{linkImage}</div>
           <div className={`${CLASS}__card__username`}>
-            {!showColors && (
+            {showColors ? (
+              <div className={`${CLASS}__card__username__text`}>{username}</div>
+            ) : (
               <button
-                className={classnames(`${CLASS}__card__username__copy`)}
+                className={`${CLASS}__card__username__copy__button`}
                 type="button"
                 onClick={onCopyUsername}
                 aria-label={i18n('icu:UsernameLinkModalBody__copy')}
-              />
+              >
+                <i />
+                <div className={`${CLASS}__card__username__text`}>
+                  {username}
+                </div>
+              </button>
             )}
-            <div className={`${CLASS}__card__username__text`}>{username}</div>
           </div>
         </div>
 
@@ -820,11 +863,30 @@ export function UsernameLinkModalBody({
           <ConfirmationDialog
             i18n={i18n}
             dialogName="UsernameLinkModal__error"
-            onClose={onClearError}
+            onClose={onCloseError}
+            cancelButtonVariant={ButtonVariant.Secondary}
+            cancelText={i18n('icu:cancel')}
+            actions={[
+              {
+                action: onConfirmReset,
+                style: 'affirmative',
+                text: i18n('icu:UsernameLinkModalBody__error__fix-now'),
+              },
+            ]}
+          >
+            {i18n('icu:UsernameLinkModalBody__error__text')}
+          </ConfirmationDialog>
+        )}
+
+        {resetModalVisibility === ResetModalVisibility.Open && (
+          <ConfirmationDialog
+            i18n={i18n}
+            dialogName="UsernameLinkModal__error"
+            onClose={onResetModalClose}
             cancelButtonVariant={ButtonVariant.Secondary}
             cancelText={i18n('icu:ok')}
           >
-            {i18n('icu:UsernameLinkModalBody__error__text')}
+            {i18n('icu:UsernameLinkModalBody__recovered__text')}
           </ConfirmationDialog>
         )}
 

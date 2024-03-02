@@ -30,7 +30,6 @@ installSetting('typingIndicatorSetting', {
 });
 
 installCallback('deleteAllMyStories');
-installCallback('isPhoneNumberSharingEnabled');
 installCallback('isPrimary');
 installCallback('syncRequest');
 
@@ -44,6 +43,7 @@ installSetting('callRingtoneNotification');
 installSetting('callSystemNotification');
 installSetting('countMutedConversations');
 installSetting('deviceName');
+installSetting('phoneNumber');
 installSetting('hasStoriesDisabled');
 installSetting('hideMenuBar');
 installSetting('incomingCallNotification');

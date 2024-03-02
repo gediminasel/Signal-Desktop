@@ -61,6 +61,8 @@ function getToast(toastType: ToastType): AnyToast {
       };
     case ToastType.ConversationUnarchived:
       return { toastType: ToastType.ConversationUnarchived };
+    case ToastType.CopiedCallLink:
+      return { toastType: ToastType.CopiedCallLink };
     case ToastType.CopiedUsername:
       return { toastType: ToastType.CopiedUsername };
     case ToastType.CopiedUsernameLink:
@@ -152,6 +154,13 @@ function getToast(toastType: ToastType): AnyToast {
       return { toastType: ToastType.UnsupportedOS };
     case ToastType.TextMessagesForbidden:
       return { toastType: ToastType.TextMessagesForbidden };
+    case ToastType.UsernameRecovered:
+      return {
+        toastType: ToastType.UsernameRecovered,
+        parameters: {
+          username: 'maya.45',
+        },
+      };
     case ToastType.UserAddedToGroup:
       return {
         toastType: ToastType.UserAddedToGroup,

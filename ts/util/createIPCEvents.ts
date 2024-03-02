@@ -22,6 +22,7 @@ import type { AuthorizeArtCreatorDataType } from '../state/ducks/globalModals';
 import { calling } from '../services/calling';
 import { resolveUsernameByLinkBase64 } from '../services/username';
 import { writeProfile } from '../services/writeProfile';
+import { isInCall as getIsInCall } from '../state/selectors/calling';
 import { getConversationsWithCustomColorSelector } from '../state/selectors/conversations';
 import { getCustomColors } from '../state/selectors/items';
 import { themeChanged } from '../shims/themeChanged';
@@ -33,7 +34,6 @@ import { PhoneNumberSharingMode } from './phoneNumberSharingMode';
 import { strictAssert, assertDev } from './assert';
 import * as durations from './durations';
 import type { DurationInSeconds } from './durations';
-import { isPhoneNumberSharingEnabled } from './isPhoneNumberSharingEnabled';
 import * as Registration from './registration';
 import { lookupConversationWithoutServiceId } from './lookupConversationWithoutServiceId';
 import * as log from '../logging/log';
@@ -43,6 +43,8 @@ import { StoryViewModeType, StoryViewTargetType } from '../types/Stories';
 import { isValidE164 } from './isValidE164';
 import { fromWebSafeBase64 } from './webSafeBase64';
 import { getConversation } from './getConversation';
+import { instance, PhoneNumberFormat } from './libphonenumberInstance';
+import { showConfirmationDialog } from './showConfirmationDialog';
 
 type SentMediaQualityType = 'standard' | 'high';
 type ThemeType = 'light' | 'dark' | 'system';
@@ -90,6 +92,7 @@ export type IPCEventsValuesType = {
   readReceiptSetting: boolean;
   typingIndicatorSetting: boolean;
   deviceName: string | undefined;
+  phoneNumber: string | undefined;
 };
 
 export type IPCEventsCallbacksType = {
@@ -112,13 +115,13 @@ export type IPCEventsCallbacksType = {
     mediaType: 'screen' | 'microphone' | 'camera'
   ) => Promise<string | unknown>;
   installStickerPack: (packId: string, key: string) => Promise<void>;
-  isPhoneNumberSharingEnabled: () => boolean;
   isPrimary: () => boolean;
   removeCustomColor: (x: string) => void;
   removeCustomColorOnConversations: (x: string) => void;
   removeDarkOverlay: () => void;
   resetAllChatColors: () => void;
   resetDefaultChatColor: () => void;
+  setMediaPlaybackDisabled: (playbackDisabled: boolean) => void;
   showConversationViaNotification: (data: NotificationClickData) => void;
   showConversationViaSignalDotMe: (
     kind: string,
@@ -128,6 +131,7 @@ export type IPCEventsCallbacksType = {
   showGroupViaLink: (value: string) => Promise<void>;
   showReleaseNotes: () => void;
   showStickerPack: (packId: string, key: string) => void;
+  maybeRequestCloseConfirmation: () => Promise<boolean>;
   shutdown: () => Promise<void>;
   unknownSignalLink: () => void;
   getCustomColors: () => Record<string, CustomColorType>;
@@ -157,6 +161,7 @@ type ValuesWithSetters = Omit<
   | 'readReceiptSetting'
   | 'typingIndicatorSetting'
   | 'deviceName'
+  | 'phoneNumber'
 
   // Optional
   | 'mediaPermissions'
@@ -221,6 +226,19 @@ export function createIPCEvents(
     },
 
     getDeviceName: () => window.textsecure.storage.user.getDeviceName(),
+    getPhoneNumber: () => {
+      try {
+        const e164 = window.textsecure.storage.user.getNumber();
+        const parsedNumber = instance.parse(e164);
+        return instance.format(parsedNumber, PhoneNumberFormat.INTERNATIONAL);
+      } catch (error) {
+        log.warn(
+          'IPC.getPhoneNumber: failed to parse our E164',
+          Errors.toLogFormat(error)
+        );
+        return '';
+      }
+    },
 
     getZoomFactor: () => {
       return ipcRenderer.invoke('getZoomFactor');
@@ -238,13 +256,6 @@ export function createIPCEvents(
     setPhoneNumberSharingSetting: async (newValue: PhoneNumberSharingMode) => {
       const account = window.ConversationController.getOurConversationOrThrow();
 
-      // writeProfile fetches the latest profile first so do it before updating
-      // local data to prevent triggering a conflict.
-      await writeProfile(getConversation(account), {
-        oldAvatar: undefined,
-        newAvatar: undefined,
-      });
-
       const promises = new Array<Promise<void>>();
       promises.push(window.storage.put('phoneNumberSharingMode', newValue));
       if (newValue === PhoneNumberSharingMode.Everybody) {
@@ -256,6 +267,12 @@ export function createIPCEvents(
       }
       account.captureChange('phoneNumberSharingMode');
       await Promise.all(promises);
+
+      // Write profile after updating storage so that the write has up-to-date
+      // information.
+      await writeProfile(getConversation(account), {
+        keepAvatar: true,
+      });
     },
 
     getHasStoriesDisabled: () =>
@@ -370,7 +387,7 @@ export function createIPCEvents(
       window.storage.get('auto-download-update', true),
     setAutoDownloadUpdate: value =>
       window.storage.put('auto-download-update', value),
-    getAutoConvertEmoji: () => window.storage.get('autoConvertEmoji', false),
+    getAutoConvertEmoji: () => window.storage.get('autoConvertEmoji', true),
     setAutoConvertEmoji: value => window.storage.put('autoConvertEmoji', value),
     getSentMediaQualitySetting: () =>
       window.storage.get('sent-media-quality', 'standard'),
@@ -453,7 +470,6 @@ export function createIPCEvents(
       return window.IPC.setAutoLaunch(value);
     },
 
-    isPhoneNumberSharingEnabled: () => isPhoneNumberSharingEnabled(),
     isPrimary: () => window.textsecure.storage.user.getDeviceId() === 1,
     syncRequest: () =>
       new Promise<void>((resolve, reject) => {
@@ -615,6 +631,43 @@ export function createIPCEvents(
       showUnknownSgnlLinkModal();
     },
 
+    maybeRequestCloseConfirmation: async (): Promise<boolean> => {
+      const isInCall = getIsInCall(window.reduxStore.getState());
+      if (!isInCall) {
+        return true;
+      }
+
+      try {
+        await new Promise<void>((resolve, reject) => {
+          showConfirmationDialog({
+            dialogName: 'closeConfirmation',
+            onTopOfEverything: true,
+            cancelText: window.i18n(
+              'icu:ConfirmationDialog__Title--close-requested-not-now'
+            ),
+            confirmStyle: 'negative',
+            title: window.i18n(
+              'icu:ConfirmationDialog__Title--in-call-close-requested'
+            ),
+            okText: window.i18n('icu:close'),
+            reject: () => reject(),
+            resolve: () => resolve(),
+          });
+        });
+        log.info('Close confirmed by user.');
+        if (isInCall) {
+          window.reduxActions.calling.hangUpActiveCall(
+            'User confirmed in-call close.'
+          );
+        }
+
+        return true;
+      } catch {
+        log.info('Close cancelled by user.');
+        return false;
+      }
+    },
+
     unknownSignalLink: () => {
       log.warn('unknownSignalLink: Showing error dialog');
       showUnknownSgnlLinkModal();
@@ -639,6 +692,13 @@ export function createIPCEvents(
     },
     getMediaPermissions: window.IPC.getMediaPermissions,
     getMediaCameraPermissions: window.IPC.getMediaCameraPermissions,
+
+    setMediaPlaybackDisabled: (playbackDisabled: boolean) => {
+      window.reduxActions?.lightbox.setPlaybackDisabled(playbackDisabled);
+      if (playbackDisabled) {
+        window.reduxActions?.audioPlayer.pauseVoiceNotePlayer();
+      }
+    },
 
     ...overrideEvents,
   };

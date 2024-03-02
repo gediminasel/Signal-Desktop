@@ -19,20 +19,13 @@ export enum ReserveUsernameError {
   NotEnoughDiscriminator = 'NotEnoughDiscriminator',
   AllZeroDiscriminator = 'AllZeroDiscriminator',
   LeadingZeroDiscriminator = 'LeadingZeroDiscriminator',
+  TooManyAttempts = 'TooManyAttempts',
 }
 
 export enum ConfirmUsernameResult {
   Ok = 'Ok',
+  OkRecovered = 'OkRecovered',
   ConflictOrGone = 'ConflictOrGone',
-}
-
-export function getUsernameFromSearch(searchTerm: string): string | undefined {
-  try {
-    window.SignalContext.usernames.hash(searchTerm);
-    return searchTerm;
-  } catch {
-    return undefined;
-  }
 }
 
 export function getNickname(username: string): string | undefined {

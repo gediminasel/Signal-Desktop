@@ -124,9 +124,6 @@ export type StorageAccessType = {
   pinnedConversationIds: ReadonlyArray<string>;
   preferContactAvatars: boolean;
   primarySendsSms: boolean;
-  // Unlike `number_id` (which also includes device id) this field is only
-  // updated whenever we receive a new storage manifest
-  accountE164: string;
   textFormatting: boolean;
   typingIndicators: boolean;
   sealedSenderIndicators: boolean;
@@ -144,6 +141,7 @@ export type StorageAccessType = {
   serverTimeSkew: number;
   unidentifiedDeliveryIndicators: boolean;
   groupCredentials: ReadonlyArray<GroupCredentialType>;
+  callLinkAuthCredentials: ReadonlyArray<GroupCredentialType>;
   lastReceivedAtCounter: number;
   preferredReactionEmoji: ReadonlyArray<string>;
   skinTone: number;

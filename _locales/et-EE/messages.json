@@ -44,6 +44,10 @@
     "messageformat": "Kas lisada {contact} gruppi {group}?",
     "description": "Shown in the confirmation dialog body when adding a contact to a group"
   },
+  "icu:AddUserToAnotherGroupModal__search-placeholder": {
+    "messageformat": "Otsi",
+    "description": "Placeholder to use when searching for groups in the AddUserToAnotherGroupModal"
+  },
   "icu:AddUserToAnotherGroupModal__toast--user-added-to-group": {
     "messageformat": "{contact} lisati gruppi {group}",
     "description": "Shown in toast after a user is added to an existing group"
@@ -331,6 +335,42 @@
   "icu:LeftPane--corrupted-username-link--action-text": {
     "messageformat": "Paranda",
     "description": "Text of the button in the corrupted username link banner in the left pane"
+  },
+  "icu:LeftPane__compose__findByUsername": {
+    "messageformat": "Otsi kasutajanime järgi",
+    "description": "Text of the button displayed when clicking compose button in left pane"
+  },
+  "icu:LeftPane__compose__findByPhoneNumber": {
+    "messageformat": "Otsi telefoninumbri järgi",
+    "description": "Text of the button displayed when clicking compose button in left pane"
+  },
+  "icu:LeftPaneFindByHelper__title--findByUsername": {
+    "messageformat": "Otsi kasutajanime järgi",
+    "description": "Title of the left pane when looking up someone by username"
+  },
+  "icu:LeftPaneFindByHelper__title--findByPhoneNumber": {
+    "messageformat": "Otsi telefoninumbri järgi",
+    "description": "Title of the left pane when looking up someone by phone number"
+  },
+  "icu:LeftPaneFindByHelper__placeholder--findByUsername": {
+    "messageformat": "Kasutajanimi",
+    "description": "Placeholder of the search input in left pane when looking up someone by username"
+  },
+  "icu:LeftPaneFindByHelper__placeholder--findByPhoneNumber": {
+    "messageformat": "Telefoninumber",
+    "description": "Placeholder of the search input in left pane when looking up someone by phone number"
+  },
+  "icu:LeftPaneFindByHelper__description--findByUsername": {
+    "messageformat": "Sisesta kasutajanimi koos punkti ja numbrikombinatsiooniga.",
+    "description": "Description displayed under search input in left pane when looking up someone by username"
+  },
+  "icu:CountryCodeSelect__placeholder": {
+    "messageformat": "Riigikood",
+    "description": "Placeholder displayed as default value of country code select element"
+  },
+  "icu:CountryCodeSelect__Modal__title": {
+    "messageformat": "Riigikood",
+    "description": "Title of the country code modal"
   },
   "icu:NavTabsToggle__showTabs": {
     "messageformat": "Kuva vahekaardid",
@@ -1351,6 +1391,38 @@
   "icu:showSafetyNumber": {
     "messageformat": "Näita turvanumbrit"
   },
+  "icu:AboutContactModal__title": {
+    "messageformat": "Teave",
+    "description": "Title of About modal"
+  },
+  "icu:AboutContactModal__title--myself": {
+    "messageformat": "Sina",
+    "description": "Title of About modal when viewing your own information"
+  },
+  "icu:AboutContactModal__verified": {
+    "messageformat": "Kontrollitud",
+    "description": "Text of a button on About modal leading to a safety number modal"
+  },
+  "icu:AboutContactModal__blocked": {
+    "messageformat": "{name} on blokeeritud",
+    "description": "Text of a row on About modal when user is blocked"
+  },
+  "icu:AboutContactModal__message-request": {
+    "messageformat": "Ootel sõnumitaotlus",
+    "description": "Text of a row on About modal when user is in message request state"
+  },
+  "icu:AboutContactModal__no-dms": {
+    "messageformat": "Sinul ja kasutajal {name} ei ole otsesõnumeid",
+    "description": "Text of a row on About modal when there are no direct messages with a user"
+  },
+  "icu:AboutContactModal__signal-connection": {
+    "messageformat": "Signali kontakt",
+    "description": "Text of a button on About modal leading to an education modal"
+  },
+  "icu:AboutContactModal__system-contact": {
+    "messageformat": "{name} on sinu süsteemi kontaktide hulgas",
+    "description": "Text of a row in the About modal describing that the contact is in system contacts"
+  },
   "icu:ContactModal__showSafetyNumber": {
     "messageformat": "Näita turvanumbrit",
     "description": "Contact modal, label for button to show safety number modal"
@@ -1519,7 +1591,7 @@
     "description": "Shown on a button below a 'conversations were merged' timeline notification"
   },
   "icu:ConversationMerge--explainer-dialog--line-1": {
-    "messageformat": "Pärast sõnumite saatmist vestluses {obsoleteConversationTitle} said sa teada, et see number kuulub vestlusesse {conversationTitle}. Tema telefonumber on privaatne.",
+    "messageformat": "Pärast sõnumite saatmist vestluses {obsoleteConversationTitle} said sa teada, et see number kuulub vestlusesse {conversationTitle}. Tema telefoninumber on privaatne.",
     "description": "Contents of a dialog shown after clicking 'learn more' button on a conversation merge event."
   },
   "icu:ConversationMerge--explainer-dialog--line-2": {
@@ -1626,6 +1698,10 @@
     "messageformat": "Minu arvuti",
     "description": "The placeholder for the 'choose device name' input"
   },
+  "icu:Preferences--phone-number": {
+    "messageformat": "Telefoninumber",
+    "description": "The label in settings panel shown for the phone number associated with user's account"
+  },
   "icu:Preferences--device-name": {
     "messageformat": "Seadme nimi",
     "description": "The label in settings panel shown for the user-provided name for this desktop instance"
@@ -1700,6 +1776,54 @@
   "icu:calling__call-is-full": {
     "messageformat": "Kõne on täis",
     "description": "Text in the call lobby when you can't join because the call is full"
+  },
+  "icu:calling__cant-join": {
+    "messageformat": "Can't join call",
+    "description": "Modal dialog title when you can't join a call"
+  },
+  "icu:calling__dialog-already-in-call": {
+    "messageformat": "You are already in a call.",
+    "description": "Error message when clicking a call link to join a call, but you're in a call already."
+  },
+  "icu:calling__call-link-connection-issues": {
+    "messageformat": "Could not fetch call link information. Please check your network connection and try again.",
+    "description": "Error message when unable to fetch call link info from server."
+  },
+  "icu:calling__call-link-copied": {
+    "messageformat": "Call link copied.",
+    "description": "Toast shown when a call link is copied to the clipboard."
+  },
+  "icu:calling__call-link-no-longer-valid": {
+    "messageformat": "This call link is no longer valid.",
+    "description": "Error message when a call link has been revoked or expires."
+  },
+  "icu:calling__call-link-default-title": {
+    "messageformat": "Signal Call",
+    "description": "Default title for Signal call links."
+  },
+  "icu:calling__join-request-denied": {
+    "messageformat": "Your request to join this call has been denied.",
+    "description": "Error message when a request to join a call link call was rejected by a call admin."
+  },
+  "icu:calling__join-request-denied-title": {
+    "messageformat": "Join request denied",
+    "description": "Title of error when a request to join a call link call was rejected by a call admin."
+  },
+  "icu:calling__removed-from-call": {
+    "messageformat": "Someone has removed you from the call.",
+    "description": "Error message when in a call then a call admin removes you."
+  },
+  "icu:calling__removed-from-call-title": {
+    "messageformat": "Removed from call",
+    "description": "Title of error when in a call then a call admin removes you."
+  },
+  "icu:CallingLobby__CallLinkNotice": {
+    "messageformat": "Anyone who joins this call via the link will see your name and photo.",
+    "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared."
+  },
+  "icu:CallingLobby__CallLinkNotice--phone-sharing": {
+    "messageformat": "Anyone who joins this call via the link will see your name, photo, and phone number.",
+    "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared, when the phone number sharing account setting is enabled."
   },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "Liitu",
@@ -2328,7 +2452,7 @@
     "description": "Label for header to go to stories view"
   },
   "icu:contactSearchPlaceholder": {
-    "messageformat": "Otsi nime või telefoninumbri järgi",
+    "messageformat": "Nimi, kasutajanimi või telefoninumber",
     "description": "Placeholder to use when searching for contacts in the composer"
   },
   "icu:noContactsFound": {
@@ -2368,7 +2492,7 @@
     "description": "Error message when you try to send an edit after message becomes too old"
   },
   "icu:startConversation--username-not-found": {
-    "messageformat": "Kasutajat ei leitud. {atUsername} ei ole Signali kasutaja. Palun kontrolli sisestatud kasutajanime.",
+    "messageformat": "{atUsername} ei ole Signali kasutaja. Veendu, et sisestasid kasutajanime täielikult.",
     "description": "Shown in dialog if username is not found. Note that 'username' will be the output of at-username"
   },
   "icu:startConversation--phone-number-not-found": {
@@ -2615,6 +2739,10 @@
   "icu:message--attachmentTooBig--multiple": {
     "messageformat": "Mõned manused on kuvamiseks liiga suured.",
     "description": "Shown in a message bubble if any attachments are left on message when too-large attachments are dropped"
+  },
+  "icu:message--call-link-description": {
+    "messageformat": "Use this link to join a Signal call",
+    "description": "Shown in message previews for Signal call links."
   },
   "icu:donation--missing": {
     "messageformat": "Annetuse andmeid ei õnnestunud saada",
@@ -3588,6 +3716,14 @@
     "messageformat": "Häälkõne",
     "description": "Shown in the call lobby for a direct 1:1 call when the caller's video is disabled, to specify that an audio call will be placed when clicking the Start button."
   },
+  "icu:CallControls__InfoDisplay--adhoc-call": {
+    "messageformat": "Call link",
+    "description": "Shown in the call lobby for a call link."
+  },
+  "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
+    "messageformat": "Waiting to be let in",
+    "description": "Shown in the call lobby for call link calls when requesting to join a call which requires admin approval."
+  },
   "icu:CallControls__JoinLeaveButton--hangup-1-1": {
     "messageformat": "Lõpeta",
     "description": "Title for the hangup button for a direct 1:1 call with only 2 participants."
@@ -3727,6 +3863,10 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "Aken",
     "description": "Title for the select your screen sharing sources modal"
+  },
+  "icu:CallingAdhocCallInfo__CopyLink": {
+    "messageformat": "Copy link",
+    "description": "Menu item in the in-call info popup for call link calls. The action is to add the call link to the clipboard."
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video",
@@ -5189,7 +5329,7 @@
     "description": "Title for the contact name spoofing review dialog in groups"
   },
   "icu:ContactSpoofingReviewDialog__group__description": {
-    "messageformat": "{count, plural, one {{count,number} grupiliikmel on sarnane nimi. Vaata allpool olevad liikmed üle või vali tegevus.} other {{count,number} grupiliikmel on sarnased nimed. Vaata allpool olevad liikmed üle või vali tegevus.}}",
+    "messageformat": "{count, plural, one {1 group member has the same name, review the member below or choose to take action.} other {{count,number} group members have the same name, review the members below or choose to take action.}}",
     "description": "Description for the group contact spoofing review dialog"
   },
   "icu:ContactSpoofingReviewDialog__group__multiple-conflicts__description": {
@@ -5198,10 +5338,18 @@
   },
   "icu:ContactSpoofingReviewDialog__group__members-header": {
     "messageformat": "Liikmed",
-    "description": "Header in the group contact spoofing review dialog. After this header, there will be a list of members"
+    "description": "(Deleted 01/31/2024) Header in the group contact spoofing review dialog. After this header, there will be a list of members"
+  },
+  "icu:ContactSpoofingReviewDialog__group__members__no-shared-groups": {
+    "messageformat": "Muid ühiseid gruppe pole",
+    "description": "Informational text displayed next to a contact on ContactSpoofingReviewDialog"
+  },
+  "icu:ContactSpoofingReviewDialog__signal-connection": {
+    "messageformat": "Signali kontakt",
+    "description": "Text of a button on ContactSpoofingReviewDialog leading to an education modal"
   },
   "icu:ContactSpoofingReviewDialog__group__name-change-info": {
-    "messageformat": "Muutsid hiljuti oma profiili nime {oldName} -> {newName}",
+    "messageformat": "Muutsid hiljuti oma profiilinime {oldName} -> {newName}",
     "description": "In the group contact spoofing review dialog, this text is shown when someone has changed their name recently"
   },
   "icu:RemoveGroupMemberConfirmation__remove-button": {
@@ -5493,15 +5641,19 @@
     "description": "Default text for username field"
   },
   "icu:ProfileEditor--username--corrupted--body": {
-    "messageformat": "Sinu kasutajanimega seoses läks midagi valesti ja see ei ole enam sinu kontoga seotud.",
+    "messageformat": "Sinu kasutajanimega seoses läks midagi valesti ja see ei ole enam sinu kontoga seotud. Saad proovida seda uuesti seadistada või valida uue.",
     "description": "Text of confirmation modal when the username gets corrupted"
   },
   "icu:ProfileEditor--username--corrupted--delete-button": {
     "messageformat": "Eemalda kasutajanimi",
-    "description": "Button text for deletion of the username in case of corruption"
+    "description": "(Deleted 02/01/2024) Button text for deletion of the username in case of corruption"
   },
   "icu:ProfileEditor--username--corrupted--create-button": {
     "messageformat": "Loo kasutajanimi",
+    "description": "(Deleted 02/01/2024) Button text for creation of a new username in case of corruption"
+  },
+  "icu:ProfileEditor--username--corrupted--fix-button": {
+    "messageformat": "Paranda",
     "description": "Button text for creation of a new username in case of corruption"
   },
   "icu:ProfileEditor__username-link": {
@@ -5529,7 +5681,7 @@
     "description": "Title text for username modal"
   },
   "icu:ProfileEditor--username--check-characters": {
-    "messageformat": "Kasutajanimed tohivad sisaldada a-z, 0-9 ja _",
+    "messageformat": "Kasutajanimed võivad sisaldada ainult a–Z, 0–9 ja alakriipse",
     "description": "Shown if user has attempted to use forbidden characters in username"
   },
   "icu:ProfileEditor--username--check-starting-character": {
@@ -5553,8 +5705,12 @@
     "description": "Shown if user has attempted to enter a username with 00 as discriminator"
   },
   "icu:ProfileEditor--username--check-discriminator-leading-zero": {
-    "messageformat": "Selle numbri algus ei saa olla 00. Sisesta number vahemikus 1–9",
+    "messageformat": "Rohkem kui kaht numbrit sisaldavad kombinatsioonid ei saa alata 0-ga",
     "description": "Shown if user has attempted to enter a username with leading 0 in discriminator"
+  },
+  "icu:ProfileEditor--username--too-many-attempts": {
+    "messageformat": "Liiga palju katseid, palun proovi hiljem uuesti",
+    "description": "Shown if user has made too many attempts to pick a username and has to wait before retrying"
   },
   "icu:ProfileEditor--username--unavailable": {
     "messageformat": "See kasutajanimi ei ole saadaval",
@@ -5600,6 +5756,10 @@
     "messageformat": "Kustuta",
     "description": "Shown in dialog button if user has saved an empty string to delete their username"
   },
+  "icu:ProfileEditor--username--delete-unavailable-notice": {
+    "messageformat": "Oma kasutajanime kustutamiseks ava Signal oma telefonis ja vali Sätted > Profiil.",
+    "description": "Shown in dialog body if user is trying to delete username, but it is only supported on mobile"
+  },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "Kopeeri või kustuta kasutajanimi",
     "description": "Shown as aria label for context menu next to username"
@@ -5632,9 +5792,33 @@
     "messageformat": "Kas sa soovid neid muudatusi tühistada?",
     "description": "ConfirmationDialog text for discarding changes"
   },
+  "icu:ConfirmationDialog__Title--in-call-close-requested": {
+    "messageformat": "Close Signal and end the call?",
+    "description": "ConfirmationDialog title when trying to close the app while in a call."
+  },
+  "icu:ConfirmationDialog__Title--close-requested-not-now": {
+    "messageformat": "Not Now",
+    "description": "Confirmation dialog button to cancel closing the app, while in a call and trying to close the app."
+  },
+  "icu:ProfileEditor--edit-photo": {
+    "messageformat": "Muuda fotot",
+    "description": "Text of a button on profile editor that leads to the avatar editor"
+  },
   "icu:ProfileEditor--info--link": {
     "messageformat": "Sinu profiil on krüptitud. Sinu profiil ja sellele tehtud muudatused on nähtavad ainult sinu kontaktidele ja siis kui alustad vestlust või liitud mõne vestlusega. <learnMoreLink>Uuri lähemalt</learnMoreLink>",
-    "description": "Information shown at the bottom of the profile editor section"
+    "description": "(Deleted 02/01/2024) Information shown at the bottom of the profile editor section"
+  },
+  "icu:ProfileEditor--info--general": {
+    "messageformat": "Sinu profiil ja selle muudatused on nähtavad nendele, kellega sõnumeid oled vahetanud, ning kontaktidele ja gruppidele.",
+    "description": "Information shown in profile editor below profile name and about fields"
+  },
+  "icu:ProfileEditor--info--pnp": {
+    "messageformat": "Sinu kasutajanimi, QR-kood ega link ei ole su profiilil nähtavad. Jaga neid ainult inimestega, keda usaldad.",
+    "description": "Information shown in profile editor below pnp settings when username is set"
+  },
+  "icu:ProfileEditor--info--pnp--no-username": {
+    "messageformat": "Nüüd saavad teised sulle sõnumeid saata, kasutades sinu valikulist kasutajanime, et sa ei peaks oma telefoninumbrit jagama.",
+    "description": "Information shown in profile editor below pnp settings when no username is set"
   },
   "icu:Bio--speak-freely": {
     "messageformat": "Räägi vabalt",
@@ -5792,6 +5976,10 @@
     "messageformat": "Vali, kes sinu telefoninumbrit näevad ja sinuga selle kaudu Signalis ühendust saavad võtta.",
     "description": "Body of Phone Number row in Privacy section of Preferences window"
   },
+  "icu:Preferences__pnp__row--button": {
+    "messageformat": "Muuda …",
+    "description": "Text of Phone Number row button in Privacy section of Preferences window"
+  },
   "icu:Preferences__pnp__sharing--title": {
     "messageformat": "Kes mu numbrit näevad",
     "description": "Title for the phone number sharing setting row"
@@ -5801,8 +5989,12 @@
     "description": "Description for the phone number sharing setting row when the value is Everyone"
   },
   "icu:Preferences__pnp__sharing--description--nobody": {
-    "messageformat": "Mitte keegi ei näe Signalis sinu telefoninumbrit, isegi kui neile sõnumi saadad.",
-    "description": "Description for the phone number sharing setting row when the value is Nobody"
+    "messageformat": "Sinu telefoninumber ei ole mitte kellelegi nähtav, kui see ei ole neil telefoni kontaktide hulka salvestatud.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody and phone number discoverability setting is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody--not-discoverable": {
+    "messageformat": "Sinu telefoninumber ei ole mitte kellelegi nähtav.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody and phone number discoverability setting is Nobody"
   },
   "icu:Preferences__pnp--page-title": {
     "messageformat": "Telefoninumber",
@@ -6213,7 +6405,7 @@
     "description": "A way that signal connection is formed"
   },
   "icu:SignalConnectionsModal__bullet--3": {
-    "messageformat": "olles salvestanud nende kontakti oma telefoni",
+    "messageformat": "Olles salvestanud ta oma süsteemi kontaktide hulka",
     "description": "A way that signal connection is formed"
   },
   "icu:SignalConnectionsModal__footer": {
@@ -6513,11 +6705,11 @@
     "description": "Alert body for groups that non-admins cannot send stories to"
   },
   "icu:SendStoryModal__my-stories-description-all": {
-    "messageformat": "{viewersCount, plural, one {All Signal Connections · 1 Viewer} other {All Signal Connections · {viewersCount,number} Viewers}}",
+    "messageformat": "{viewersCount, plural, one {Kõik Signali kontaktid · {viewersCount,number} vaataja} other {Kõik Signali kontaktid · {viewersCount,number} vaatajat}}",
     "description": "Shown as a subtitle under My Stories option in the send-story-to dialog when not exluding anyone"
   },
   "icu:SendStoryModal__my-stories-description-excluding": {
-    "messageformat": "{excludedCount, plural, one {All Signal Connections · 1 Excluded} other {All Signal Connections · {excludedCount,number} Excluded}}",
+    "messageformat": "{excludedCount, plural, one {Kõik Signali kontaktid · välja arvatud {excludedCount,number}} other {Kõik Signali kontaktid · välja arvatud {excludedCount,number}}}",
     "description": "Shown as a subtitle under My Stories option in the send-story-to dialog when excluding some"
   },
   "icu:SendStoryModal__private-story-description": {
@@ -6788,6 +6980,10 @@
     "messageformat": "Reageeris kasutaja {name} loole",
     "description": "Label for when a person reacts to a story"
   },
+  "icu:Quote__story-reaction--you": {
+    "messageformat": "Reacted to your story",
+    "description": "Label for when someone reacts to your story"
+  },
   "icu:Quote__story-reaction--single": {
     "messageformat": "Reageeris loole",
     "description": "Used whenever we can't find a user's first name"
@@ -6817,7 +7013,7 @@
     "description": "Placeholder for the username field"
   },
   "icu:EditUsernameModalBody__username-helper": {
-    "messageformat": "Kasutajanime abil saavad teised sulle sõnumeid saata ilma su telefoninumbrit teadmata. Kasutajanimi seotakse numbrilise koodiga, mis aitab sul oma aadressi privaatsena hoida.",
+    "messageformat": "Kasutajanimedel on alati juures numbrikombinatsioon.",
     "description": "Shown on the edit username screen"
   },
   "icu:EditUsernameModalBody__learn-more": {
@@ -6840,8 +7036,16 @@
     "messageformat": "Jätka",
     "description": "Text of the primary button on username change confirmation modal"
   },
+  "icu:EditUsernameModalBody__recover-confirmation": {
+    "messageformat": "Kasutajanime taastades lähtestad olemasoleva QR-koodi ja lingi. Kas oled kindel?",
+    "description": "Body of the confirmation dialog displayed when user is about to recover their username"
+  },
+  "icu:EditUsernameModalBody__username-recovered__text": {
+    "messageformat": "Sinu QR-kood ja link on lähtestatud ja sinu kasutajanimi on {username}",
+    "description": "Text of toast displayed upon successful recovery of username"
+  },
   "icu:UsernameLinkModalBody__hint": {
-    "messageformat": "Scan this QR code with your phone to chat with me on Signal.",
+    "messageformat": "Skanni oma telefoniga see QR-kood, et minuga Signalis vestelda.",
     "descrption": "Text of the hint displayed below generated QR code on the printable image."
   },
   "icu:UsernameLinkModalBody__save": {
@@ -6873,7 +7077,7 @@
     "description": "ARIA label of button for selecting username link color"
   },
   "icu:UsernameLinkModalBody__reset__confirm": {
-    "messageformat": "Kui oma QR-koodi lähtestad, lõpetavad olemasolev QR-kood ja link toimimise.",
+    "messageformat": "Kui oma QR-koodi ja lingi lähtestad, lõpetavad olemasolev QR-kood ja link toimimise.",
     "description": "Text of confirmation modal when resetting the username link"
   },
   "icu:UsernameLinkModalBody__resetting-link": {
@@ -6881,35 +7085,43 @@
     "description": "Text shown when resetting the username link"
   },
   "icu:UsernameLinkModalBody__error__text": {
-    "messageformat": "QR-kood ja link ei ole seadistatud. Kontrolli oma võrguühendust ja proovi uuesti.",
+    "messageformat": "Midagi läks sinu QR-koodi ja lingiga valesti ning need ei kehti enam. Proovi lähtestada ja uus QR-kood ja link luua.",
     "description": "Text of the confirmation dialog shown on username link error"
   },
+  "icu:UsernameLinkModalBody__error__fix-now": {
+    "messageformat": "Paranda",
+    "description": "Text of the button in a confirmation dialog shown on username link error"
+  },
+  "icu:UsernameLinkModalBody__recovered__text": {
+    "messageformat": "Sinu QR-kood ja link on lähtestatud ja uus QR-kood ja link on loodud.",
+    "description": "Text of the confirmation dialog shown on successful username link recovery"
+  },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "New ways to connect",
+    "messageformat": "Uued viisid ühenduse loomiseks",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number__title": {
-    "messageformat": "Phone number privacy",
+    "messageformat": "Telefoninumbri privaatsus",
     "description": "Title of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number__body": {
-    "messageformat": "Your phone number is no longer visible in chats. If your number is saved to a friend’s contacts, they will still see it.",
+    "messageformat": "Sinu telefoninumber ole enam vestlustes nähtav. Kui sõbral on su number kontaktide hulka salvestatud, näeb ta seda endiselt.",
     "description": "Body of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__username__title": {
-    "messageformat": "Usernames",
+    "messageformat": "Kasutajanimed",
     "description": "Title of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__username__body": {
-    "messageformat": "People can now message you using your optional username so you don’t have to give out your phone number. Usernames aren’t visible on your profile.",
+    "messageformat": "Nüüd saavad teised sulle sõnumeid saata, kasutades sinu valikulist kasutajanime, et sa ei peaks oma telefoninumbrit jagama. Kasutajanimesid ei kuvata sinu profiilil.",
     "description": "Body of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__qr__title": {
-    "messageformat": "QR codes and links",
+    "messageformat": "QR-koodid ja lingid",
     "description": "Title of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__qr__body": {
-    "messageformat": "Usernames have a unique QR code and link you can share with friends to quickly start a chat with you.",
+    "messageformat": "Kasutajanimedel on unikaalne QR-kood ja link, mida saad oma sõpradega jagada, et nad saaksid sinuga kiiresti vestlust alustada.",
     "description": "Body of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
@@ -6929,27 +7141,27 @@
     "description": "(Deleted 01/16/2023) Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Set up username",
+    "messageformat": "Seadista oma kasutajanimi",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__skip": {
-    "messageformat": "Not now",
+    "messageformat": "Mitte praegu",
     "description": "Text of the secondary button on username onboarding modal"
   },
   "icu:UsernameMegaphone__title": {
-    "messageformat": "New ways to connect",
+    "messageformat": "Uued viisid ühenduse loomiseks",
     "description": "Title of username megaphone"
   },
   "icu:UsernameMegaphone__body": {
-    "messageformat": "Introducing phone number privacy, optional usernames and links.",
+    "messageformat": "Tutvustame telefoninumbri privaatsust, valikulisi kasutajanimesid ja linke.",
     "description": "Body of username megaphone"
   },
   "icu:UsernameMegaphone__learn-more": {
-    "messageformat": "Learn more",
+    "messageformat": "Rohkem infot",
     "description": "Text of the primary button on username megaphone"
   },
   "icu:UsernameMegaphone__dismiss": {
-    "messageformat": "Dismiss",
+    "messageformat": "Tühista",
     "description": "Text of the secondary button on username megaphone"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -7124,13 +7336,7 @@
     "messageformat": "Väikesed muudatused, vigade parandused ja jõudluse täiustused. Aitäh, et kasutad Signalit!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.46--0": {
-    "messageformat": "Urdu keele vaikimisi fonte on uuendatud, et parandada loetavust, kui see keel on valitud (Signali sätted > Välimus > Keel). Aitäh, {linkToGithub}!"
-  },
-  "icu:WhatsNew__v6.47--0": {
-    "messageformat": "If you spend a lot of time trying to pick out the perfect emoji reaction for every situation, you'll be <emojify>🎉</emojify> to know that we fixed a bug with typing indicators that sometimes caused the emoji selection box to disappear while you were in the middle of pondering your choices."
-  },
-  "icu:WhatsNew__v6.47--1": {
-    "messageformat": "Signal will now match your selected title bar color on Microsoft Windows. When all of your windows in Windows look the same, that's a common theme."
+  "icu:WhatsNew__v7.1--0": {
+    "messageformat": "This update enables support for all of the new emoji characters in Emoji version 15.1. People keep asking us what our favorite new emoji is, but answering that question is a “lime” we won't cross."
   }
 }

@@ -36,7 +36,7 @@ export type PropsType = {
   i18n: LocalizerType;
   isViewOnce?: boolean;
   media: ReadonlyArray<ReadonlyDeep<MediaItemType>>;
-  onReply?: (messageId: string) => void;
+  playbackDisabled: boolean;
   saveAttachment: SaveAttachmentActionCreatorType;
   selectedIndex: number;
   toggleForwardMessagesModal: (messageIds: ReadonlyArray<string>) => unknown;
@@ -44,6 +44,7 @@ export type PropsType = {
   onNextAttachment: () => void;
   onPrevAttachment: () => void;
   onSelectAttachment: (index: number) => void;
+  onReply?: (messageId: string) => void;
   hasPrevMessage?: boolean;
   hasNextMessage?: boolean;
 };
@@ -84,6 +85,7 @@ export function Lightbox({
   saveAttachment,
   selectedIndex,
   toggleForwardMessagesModal,
+  playbackDisabled,
   onMediaPlaybackStart,
   onNextAttachment,
   onPrevAttachment,
@@ -262,6 +264,16 @@ export function Lightbox({
       videoElement.pause();
     }
   }, [videoElement, onMediaPlaybackStart]);
+
+  useEffect(() => {
+    if (!videoElement || videoElement.paused) {
+      return;
+    }
+
+    if (playbackDisabled) {
+      videoElement.pause();
+    }
+  }, [playbackDisabled, videoElement]);
 
   useEffect(() => {
     const div = document.createElement('div');

@@ -44,6 +44,10 @@
     "messageformat": "“{contact}” ಅವರನ್ನು ಗ್ರೂಪ್ “{group}” ಗೆ ಸೇರಿಸಿ",
     "description": "Shown in the confirmation dialog body when adding a contact to a group"
   },
+  "icu:AddUserToAnotherGroupModal__search-placeholder": {
+    "messageformat": "ಹುಡುಕಿ",
+    "description": "Placeholder to use when searching for groups in the AddUserToAnotherGroupModal"
+  },
   "icu:AddUserToAnotherGroupModal__toast--user-added-to-group": {
     "messageformat": "{contact} ಅವರನ್ನು {group} ಗೆ ಸೇರಿಸಲಾಗಿದೆ",
     "description": "Shown in toast after a user is added to an existing group"
@@ -89,7 +93,7 @@
     "description": "Shown in the about box for the link to software acknowledgments"
   },
   "icu:privacyPolicy": {
-    "messageformat": "ನಿಯಮಗಳು ಮತ್ತು ಖಾಸಗಿತನದ ನೀತಿ",
+    "messageformat": "ನಿಯಮಗಳು ಮತ್ತು ಗೌಪ್ಯತೆಯ ನೀತಿ",
     "description": "Shown in the about box for the link to https://signal.org/legal"
   },
   "icu:appleSilicon": {
@@ -97,7 +101,7 @@
     "description": "Shown in the about box for Apple silicon product name"
   },
   "icu:copyErrorAndQuit": {
-    "messageformat": "ದೋಷವನ್ನು ಪ್ರತಿ ಮಾಡಿ ತ್ಯಜಿಸು",
+    "messageformat": "ದೋಷವನ್ನು ಪ್ರತಿ ಮಾಡಿ ತ್ಯಜಿಸಿ",
     "description": "Shown in the top-level error popup, allowing user to copy the error text and close the app"
   },
   "icu:unknownContact": {
@@ -141,19 +145,19 @@
     "description": "The label that is used for the Create/upload sticker pack option in the File menu in the program main menu. The '&' indicates that the following letter will be used as the keyboard 'shortcut letter' for accessing the menu with the Alt-<letter> combination."
   },
   "icu:mainMenuEdit": {
-    "messageformat": "ತಿದ್ದಿ",
+    "messageformat": "&ತಿದ್ದಿ",
     "description": "The label that is used for the Edit menu in the program main menu. The '&' indicates that the following letter will be used as the keyboard 'shortcut letter' for accessing the menu with the Alt-<letter> combination."
   },
   "icu:mainMenuView": {
-    "messageformat": "ತೋರಿಸು",
+    "messageformat": "&ತೋರಿಸಿ",
     "description": "The label that is used for the View menu in the program main menu. The '&' indicates that the following letter will be used as the keyboard 'shortcut letter' for accessing the menu with the Alt-<letter> combination."
   },
   "icu:mainMenuWindow": {
-    "messageformat": "ಕಿಟಕಿ",
+    "messageformat": "&ಕಿಟಕಿ",
     "description": "The label that is used for the Window menu in the program main menu. The '&' indicates that the following letter will be used as the keyboard 'shortcut letter' for accessing the menu with the Alt-<letter> combination."
   },
   "icu:mainMenuHelp": {
-    "messageformat": "ಸಹಾಯ",
+    "messageformat": "&ಸಹಾಯ",
     "description": "The label that is used for the Help menu in the program main menu. The '&' indicates that the following letter will be used as the keyboard 'shortcut letter' for accessing the menu with the Alt-<letter> combination."
   },
   "icu:mainMenuSettings": {
@@ -165,43 +169,43 @@
     "description": "Application menu item for macOS 'Services'"
   },
   "icu:appMenuHide": {
-    "messageformat": "ಅಡಗಿಸು",
+    "messageformat": "ಅಡಗಿಸಿ",
     "description": "Application menu command to hide the window"
   },
   "icu:appMenuHideOthers": {
-    "messageformat": "ಇತರರನ್ನು ಅಡಗಿಸು",
+    "messageformat": "ಇತರರನ್ನು ಅಡಗಿಸಿ",
     "description": "Application menu command to hide all other windows"
   },
   "icu:appMenuUnhide": {
-    "messageformat": "ಎಲ್ಲಾದನ್ನು ತೋರಿಸು",
+    "messageformat": "ಎಲ್ಲವನ್ನು ತೋರಿಸಿ",
     "description": "Application menu command to show all application windows"
   },
   "icu:appMenuQuit": {
-    "messageformat": "Signalಅನ್ನು ತ್ಯಜಿಸು",
+    "messageformat": "Signalಅನ್ನು ತ್ಯಜಿಸಿ",
     "description": "Application menu command to close the application"
   },
   "icu:editMenuUndo": {
-    "messageformat": "ರದ್ದುಗೊಳಿಸು",
+    "messageformat": "ರದ್ದುಗೊಳಿಸಿ",
     "description": "Edit menu command to remove recently-typed text"
   },
   "icu:editMenuRedo": {
-    "messageformat": "ಮತ್ತೆ ಮಾಡು",
+    "messageformat": "ಮತ್ತೆ ಮಾಡಿ",
     "description": "Edit menu command to restore previously undone typed text"
   },
   "icu:editMenuCut": {
-    "messageformat": "ಕತ್ತರಿಸು",
+    "messageformat": "ಕತ್ತರಿಸಿ",
     "description": "Edit menu command to remove selected text and add it to clipboard"
   },
   "icu:editMenuCopy": {
-    "messageformat": "ನಕಲಿಸು",
+    "messageformat": "ನಕಲಿಸಿ",
     "description": "Edit menu command to add selected text to clipboard"
   },
   "icu:editMenuPaste": {
-    "messageformat": "ಅಂಟಿಸು",
+    "messageformat": "ಅಂಟಿಸಿ",
     "description": "Edit menu command to insert text from clipboard at cursor location"
   },
   "icu:editMenuPasteAndMatchStyle": {
-    "messageformat": "ಅಂಟಿಸು ಹಾಗೂ ಶೈಲಿಯನ್ನು ಹೊಂದಾಣಿಸು",
+    "messageformat": "ಅಂಟಿಸಿ ಹಾಗೂ ಶೈಲಿಯನ್ನು ಹೊಂದಿಸಿ",
     "description": "Edit menu command to insert text from clipboard at cursor location, taking only text and not style information"
   },
   "icu:editMenuDelete": {
@@ -213,15 +217,15 @@
     "description": "Edit menu command to select all of the text in selected text box"
   },
   "icu:editMenuStartSpeaking": {
-    "messageformat": "ಮಾತಾಡುವುದನ್ನು ಆರಂಭಿಸು",
+    "messageformat": "ಮಾತಾಡುವುದನ್ನು ಆರಂಭಿಸಿ",
     "description": "Edit menu item under 'speech' to start dictation"
   },
   "icu:editMenuStopSpeaking": {
-    "messageformat": "ಮಾತಾಡುವುದನ್ನು ನಿಲ್ಲಿಸು",
+    "messageformat": "ಮಾತಾಡುವುದನ್ನು ನಿಲ್ಲಿಸಿ",
     "description": "Edit menu item under 'speech' to stop dictation"
   },
   "icu:windowMenuClose": {
-    "messageformat": "ಕಿಟಕಿಯನ್ನು ಮುಚ್ಚು",
+    "messageformat": "ಕಿಟಕಿಯನ್ನು ಮುಚ್ಚಿ",
     "description": "Window menu command to close the current window"
   },
   "icu:windowMenuMinimize": {
@@ -241,11 +245,11 @@
     "description": "View menu command to go back to the default zoom"
   },
   "icu:viewMenuZoomIn": {
-    "messageformat": "ಇನ್ನು ಹತ್ತಿರವಾಗಿಸು",
+    "messageformat": "ಜೂಮ್ ಇನ್ ಮಾಡಿ",
     "description": "View menu command to make everything bigger"
   },
   "icu:viewMenuZoomOut": {
-    "messageformat": "ಇನ್ನು ದೂರವಾಗಿಸು",
+    "messageformat": "ಜೂಮ್ ಔಟ್ ಮಾಡಿ",
     "description": "View menu command to make everything smaller"
   },
   "icu:viewMenuToggleFullScreen": {
@@ -331,6 +335,42 @@
   "icu:LeftPane--corrupted-username-link--action-text": {
     "messageformat": "ಈಗಲೇ ಸರಿಪಡಿಸಿ",
     "description": "Text of the button in the corrupted username link banner in the left pane"
+  },
+  "icu:LeftPane__compose__findByUsername": {
+    "messageformat": "ಯೂಸರ್‌ನೇಮ್‌ನಿಂದ ಹುಡುಕಿ",
+    "description": "Text of the button displayed when clicking compose button in left pane"
+  },
+  "icu:LeftPane__compose__findByPhoneNumber": {
+    "messageformat": "ಫೋನ್ ಸಂಖ್ಯೆಯಿಂದ ಹುಡುಕಿ",
+    "description": "Text of the button displayed when clicking compose button in left pane"
+  },
+  "icu:LeftPaneFindByHelper__title--findByUsername": {
+    "messageformat": "ಯೂಸರ್‌ನೇಮ್‌ನಿಂದ ಹುಡುಕಿ",
+    "description": "Title of the left pane when looking up someone by username"
+  },
+  "icu:LeftPaneFindByHelper__title--findByPhoneNumber": {
+    "messageformat": "ಫೋನ್ ಸಂಖ್ಯೆಯಿಂದ ಹುಡುಕಿ",
+    "description": "Title of the left pane when looking up someone by phone number"
+  },
+  "icu:LeftPaneFindByHelper__placeholder--findByUsername": {
+    "messageformat": "ಯೂಸರ್‌ನೇಮ್",
+    "description": "Placeholder of the search input in left pane when looking up someone by username"
+  },
+  "icu:LeftPaneFindByHelper__placeholder--findByPhoneNumber": {
+    "messageformat": "ದೂರವಾಣಿ ಸಂಖ್ಯೆ",
+    "description": "Placeholder of the search input in left pane when looking up someone by phone number"
+  },
+  "icu:LeftPaneFindByHelper__description--findByUsername": {
+    "messageformat": "ಯೂಸರ್‌ನೇಮ್‌ ಬಳಿಕ ಒಂದು ಬಿಂದು ಮತ್ತು ಅದರ ಸಂಖ್ಯೆಗಳ ಸೆಟ್ ನಮೂದಿಸಿ.",
+    "description": "Description displayed under search input in left pane when looking up someone by username"
+  },
+  "icu:CountryCodeSelect__placeholder": {
+    "messageformat": "ದೇಶದ ಕೋಡ್",
+    "description": "Placeholder displayed as default value of country code select element"
+  },
+  "icu:CountryCodeSelect__Modal__title": {
+    "messageformat": "ದೇಶದ ಕೋಡ್",
+    "description": "Title of the country code modal"
   },
   "icu:NavTabsToggle__showTabs": {
     "messageformat": "ಟ್ಯಾಬ್‌ಗಳನ್ನು ತೋರಿಸಿ",
@@ -613,7 +653,7 @@
     "description": "Shown after reviewing large number of contacts"
   },
   "icu:safetyNumberChangeDialog__confirm-remove-all": {
-    "messageformat": "{count, plural, one {ಸ್ಟೋರಿ {story} ನಿಂದ 1 ಸ್ವೀಕೃತಿದಾರರನ್ನು ತೆಗೆದುಹಾಕಲು ನೀವು ಖಚಿತವಾಗಿ ಬಯಸುತ್ತೀರಾ?} other {ಸ್ಟೋರಿ {story} ನಿಂದ {count,number} ಸ್ವೀಕೃತಿದಾರರನ್ನು ತೆಗೆದುಹಾಕಲು ನೀವು ಖಚಿತವಾಗಿ ಬಯಸುತ್ತೀರಾ?}}",
+    "messageformat": "{count, plural, one {ಸ್ಟೋರಿ {story} ನಿಂದ {count,number} ಸ್ವೀಕೃತಿದಾರರನ್ನು ತೆಗೆದುಹಾಕಲು ನೀವು ಖಚಿತವಾಗಿ ಬಯಸುತ್ತೀರಾ?} other {ಸ್ಟೋರಿ {story} ನಿಂದ {count,number} ಸ್ವೀಕೃತಿದಾರರನ್ನು ತೆಗೆದುಹಾಕಲು ನೀವು ಖಚಿತವಾಗಿ ಬಯಸುತ್ತೀರಾ?}}",
     "description": "Shown if user selects 'remove all' option to remove all potentially untrusted contacts from a given story"
   },
   "icu:safetyNumberChangeDialog__remove-all": {
@@ -1351,6 +1391,38 @@
   "icu:showSafetyNumber": {
     "messageformat": "ವೀಕ್ಷಣಾ ಸುರಕ್ಷತಾ ಸಂಖ್ಯೆ"
   },
+  "icu:AboutContactModal__title": {
+    "messageformat": "ಬಗ್ಗೆ",
+    "description": "Title of About modal"
+  },
+  "icu:AboutContactModal__title--myself": {
+    "messageformat": "ನೀವು",
+    "description": "Title of About modal when viewing your own information"
+  },
+  "icu:AboutContactModal__verified": {
+    "messageformat": "ಪರಿಶೀಲಿಸಲಾಗಿದೆ",
+    "description": "Text of a button on About modal leading to a safety number modal"
+  },
+  "icu:AboutContactModal__blocked": {
+    "messageformat": "{name} ಅವರನ್ನು ಬ್ಲಾಕ್ ಮಾಡಲಾಗಿದೆ",
+    "description": "Text of a row on About modal when user is blocked"
+  },
+  "icu:AboutContactModal__message-request": {
+    "messageformat": "ಬಾಕಿ ಉಳಿದಿರುವ ಮೆಸೇಜ್ ವಿನಂತಿ",
+    "description": "Text of a row on About modal when user is in message request state"
+  },
+  "icu:AboutContactModal__no-dms": {
+    "messageformat": "{name} ನೊಂದಿಗೆ ಯಾವುದೇ ನೇರ ಮೆಸೇಜ್‌ಗಳಿಲ್ಲ",
+    "description": "Text of a row on About modal when there are no direct messages with a user"
+  },
+  "icu:AboutContactModal__signal-connection": {
+    "messageformat": "Signal ಸಂಪರ್ಕ",
+    "description": "Text of a button on About modal leading to an education modal"
+  },
+  "icu:AboutContactModal__system-contact": {
+    "messageformat": "{name} ಅವರು ನಿಮ್ಮ ಸಿಸ್ಟಂ ಸಂಪರ್ಕಗಳಲ್ಲಿದ್ದಾರೆ",
+    "description": "Text of a row in the About modal describing that the contact is in system contacts"
+  },
   "icu:ContactModal__showSafetyNumber": {
     "messageformat": "ವೀಕ್ಷಣಾ ಸುರಕ್ಷತಾ ಸಂಖ್ಯೆ",
     "description": "Contact modal, label for button to show safety number modal"
@@ -1626,6 +1698,10 @@
     "messageformat": "ಮೈ ಕಂಪ್ಯೂಟರ್",
     "description": "The placeholder for the 'choose device name' input"
   },
+  "icu:Preferences--phone-number": {
+    "messageformat": "ಫೋನ್ ಸಂಖ್ಯೆ",
+    "description": "The label in settings panel shown for the phone number associated with user's account"
+  },
   "icu:Preferences--device-name": {
     "messageformat": "ಸಾಧನದ ಹೆಸರು",
     "description": "The label in settings panel shown for the user-provided name for this desktop instance"
@@ -1700,6 +1776,54 @@
   "icu:calling__call-is-full": {
     "messageformat": "ಕರೆ ಭರ್ತಿಯಾಗಿದೆ",
     "description": "Text in the call lobby when you can't join because the call is full"
+  },
+  "icu:calling__cant-join": {
+    "messageformat": "Can't join call",
+    "description": "Modal dialog title when you can't join a call"
+  },
+  "icu:calling__dialog-already-in-call": {
+    "messageformat": "You are already in a call.",
+    "description": "Error message when clicking a call link to join a call, but you're in a call already."
+  },
+  "icu:calling__call-link-connection-issues": {
+    "messageformat": "Could not fetch call link information. Please check your network connection and try again.",
+    "description": "Error message when unable to fetch call link info from server."
+  },
+  "icu:calling__call-link-copied": {
+    "messageformat": "Call link copied.",
+    "description": "Toast shown when a call link is copied to the clipboard."
+  },
+  "icu:calling__call-link-no-longer-valid": {
+    "messageformat": "This call link is no longer valid.",
+    "description": "Error message when a call link has been revoked or expires."
+  },
+  "icu:calling__call-link-default-title": {
+    "messageformat": "Signal Call",
+    "description": "Default title for Signal call links."
+  },
+  "icu:calling__join-request-denied": {
+    "messageformat": "Your request to join this call has been denied.",
+    "description": "Error message when a request to join a call link call was rejected by a call admin."
+  },
+  "icu:calling__join-request-denied-title": {
+    "messageformat": "Join request denied",
+    "description": "Title of error when a request to join a call link call was rejected by a call admin."
+  },
+  "icu:calling__removed-from-call": {
+    "messageformat": "Someone has removed you from the call.",
+    "description": "Error message when in a call then a call admin removes you."
+  },
+  "icu:calling__removed-from-call-title": {
+    "messageformat": "Removed from call",
+    "description": "Title of error when in a call then a call admin removes you."
+  },
+  "icu:CallingLobby__CallLinkNotice": {
+    "messageformat": "Anyone who joins this call via the link will see your name and photo.",
+    "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared."
+  },
+  "icu:CallingLobby__CallLinkNotice--phone-sharing": {
+    "messageformat": "Anyone who joins this call via the link will see your name, photo, and phone number.",
+    "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared, when the phone number sharing account setting is enabled."
   },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "ಸೇರಿಕೊಳ್ಳಿ",
@@ -2328,7 +2452,7 @@
     "description": "Label for header to go to stories view"
   },
   "icu:contactSearchPlaceholder": {
-    "messageformat": "ಹೆಸರು ಅಥವಾ ಫೋನ್ ನಂಬರ್ ಮೂಲಕ ಹುಡುಕಿ",
+    "messageformat": "ಹೆಸರು, ಬಳಕೆದಾರ ಹೆಸರು ಅಥವಾ ಸಂಖ್ಯೆ",
     "description": "Placeholder to use when searching for contacts in the composer"
   },
   "icu:noContactsFound": {
@@ -2368,7 +2492,7 @@
     "description": "Error message when you try to send an edit after message becomes too old"
   },
   "icu:startConversation--username-not-found": {
-    "messageformat": "ಬಳಕೆದಾರರು ಕಂಡುಬಂದಿಲ್ಲ. {atUsername} ಅವರು Signal ಬಳಕೆದಾರರಲ್ಲ; ನೀವು ಸಂಪೂರ್ಣ ಯೂಸರ್‌ನೇಮ್ ನಮೂದಿಸಿರುವುದನ್ನು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ.",
+    "messageformat": "{atUsername} ಅವರು Signal ಬಳಕೆದಾರರಲ್ಲ. ನೀವು username ಅನ್ನು ಪೂರ್ತಿಯಾಗಿ enter ಮಾಡಿದ್ದೀರೋ ಇಲ್ಲವೋ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ.",
     "description": "Shown in dialog if username is not found. Note that 'username' will be the output of at-username"
   },
   "icu:startConversation--phone-number-not-found": {
@@ -2615,6 +2739,10 @@
   "icu:message--attachmentTooBig--multiple": {
     "messageformat": "ಪ್ರದರ್ಶಿಸಲು ಕೆಲವು ಲಗತ್ತುಗಳು ತೀರಾ ದೊಡ್ಡದಾಗಿವೆ.",
     "description": "Shown in a message bubble if any attachments are left on message when too-large attachments are dropped"
+  },
+  "icu:message--call-link-description": {
+    "messageformat": "Use this link to join a Signal call",
+    "description": "Shown in message previews for Signal call links."
   },
   "icu:donation--missing": {
     "messageformat": "ದೇಣಿಗೆ ವಿವರಗಳನ್ನು ಪಡೆಯಲು ಸಾಧ್ಯವಾಗುತ್ತಿಲ್ಲ",
@@ -3588,6 +3716,14 @@
     "messageformat": "ಆಡಿಯೊ ಕರೆ",
     "description": "Shown in the call lobby for a direct 1:1 call when the caller's video is disabled, to specify that an audio call will be placed when clicking the Start button."
   },
+  "icu:CallControls__InfoDisplay--adhoc-call": {
+    "messageformat": "Call link",
+    "description": "Shown in the call lobby for a call link."
+  },
+  "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
+    "messageformat": "Waiting to be let in",
+    "description": "Shown in the call lobby for call link calls when requesting to join a call which requires admin approval."
+  },
   "icu:CallControls__JoinLeaveButton--hangup-1-1": {
     "messageformat": "ಮುಕ್ತಾಯ",
     "description": "Title for the hangup button for a direct 1:1 call with only 2 participants."
@@ -3727,6 +3863,10 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "ವಿಂಡೋ",
     "description": "Title for the select your screen sharing sources modal"
+  },
+  "icu:CallingAdhocCallInfo__CopyLink": {
+    "messageformat": "Copy link",
+    "description": "Menu item in the in-call info popup for call link calls. The action is to add the call link to the clipboard."
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "ವೀಡಿಯೊ",
@@ -5189,7 +5329,7 @@
     "description": "Title for the contact name spoofing review dialog in groups"
   },
   "icu:ContactSpoofingReviewDialog__group__description": {
-    "messageformat": "{count, plural, one {{count,number} ಗ್ರೂಪ್ ಸದಸ್ಯ ಒಂದೇ ರೀತಿಯ ಹೆಸರುಗಳನ್ನು ಹೊಂದಿದ್ದಾರೆ. ಈ ಕೆಳಗಿನ ಸದಸ್ಯರನ್ನು ಪರಿಶೀಲಿಸಿ ಅಥವಾ ಕ್ರಮ ತೆಗೆದುಕೊಳ್ಳಲು ಆಯ್ಕೆ ಮಾಡಿ.} other {{count,number} ಗ್ರೂಪ್ ಸದಸ್ಯರು ಒಂದೇ ರೀತಿಯ ಹೆಸರುಗಳನ್ನು ಹೊಂದಿದ್ದಾರೆ. ಈ ಕೆಳಗಿನ ಸದಸ್ಯರನ್ನು ಪರಿಶೀಲಿಸಿ ಅಥವಾ ಕ್ರಮ ತೆಗೆದುಕೊಳ್ಳಲು ಆಯ್ಕೆ ಮಾಡಿ.}}",
+    "messageformat": "{count, plural, one {1 group member has the same name, review the member below or choose to take action.} other {{count,number} group members have the same name, review the members below or choose to take action.}}",
     "description": "Description for the group contact spoofing review dialog"
   },
   "icu:ContactSpoofingReviewDialog__group__multiple-conflicts__description": {
@@ -5198,7 +5338,15 @@
   },
   "icu:ContactSpoofingReviewDialog__group__members-header": {
     "messageformat": "ಸದಸ್ಯರು",
-    "description": "Header in the group contact spoofing review dialog. After this header, there will be a list of members"
+    "description": "(Deleted 01/31/2024) Header in the group contact spoofing review dialog. After this header, there will be a list of members"
+  },
+  "icu:ContactSpoofingReviewDialog__group__members__no-shared-groups": {
+    "messageformat": "ಬೇರೆ ಯಾವುದೇ ಸಾಮಾನ್ಯ ಗ್ರೂಪ್‌ಗಳಿಲ್ಲ",
+    "description": "Informational text displayed next to a contact on ContactSpoofingReviewDialog"
+  },
+  "icu:ContactSpoofingReviewDialog__signal-connection": {
+    "messageformat": "Signal ಸಂಪರ್ಕ",
+    "description": "Text of a button on ContactSpoofingReviewDialog leading to an education modal"
   },
   "icu:ContactSpoofingReviewDialog__group__name-change-info": {
     "messageformat": "ಇತ್ತೀಚೆಗೆ ಅವರ ಪ್ರೊಫೈಲ್ ಹೆಸರನ್ನು {oldName} ಇಂದ {newName} ಗೆ ಬದಲಿಸಿದ್ದಾರೆ",
@@ -5493,15 +5641,19 @@
     "description": "Default text for username field"
   },
   "icu:ProfileEditor--username--corrupted--body": {
-    "messageformat": "ನಿಮ್ಮ ಯೂಸರ್‌ನೇಮ್‌ನಲ್ಲಿ ಏನೋ ತಪ್ಪಾಗಿದೆ, ಅದನ್ನು ಇನ್ನು ಮುಂದೆ ನಿಮ್ಮ ಖಾತೆಗೆ ನಿಯೋಜಿಸಲಾಗುವುದಿಲ್ಲ.",
+    "messageformat": "ನಿಮ್ಮ ಯೂಸರ್‌ನೇಮ್‌ನಲ್ಲಿ ಏನೋ ತಪ್ಪಾಗಿದೆ, ಅದನ್ನು ಇನ್ನು ಮುಂದೆ ನಿಮ್ಮ ಖಾತೆಗೆ ನಿಯೋಜಿಸಲಾಗುವುದಿಲ್ಲ. ನೀವು ಮತ್ತೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ ಹೊಂದಿಸಬಹುದು ಅಥವಾ ಹೊಸತನ್ನು ಆಯ್ಕೆ ಮಾಡಬಹುದು.",
     "description": "Text of confirmation modal when the username gets corrupted"
   },
   "icu:ProfileEditor--username--corrupted--delete-button": {
     "messageformat": "ಯೂಸರ್‌ನೇಮ್ ಅಳಿಸಿ",
-    "description": "Button text for deletion of the username in case of corruption"
+    "description": "(Deleted 02/01/2024) Button text for deletion of the username in case of corruption"
   },
   "icu:ProfileEditor--username--corrupted--create-button": {
     "messageformat": "ಬಳಕೆದಾರ ಹೆಸರನ್ನು ರಚಿಸಿ",
+    "description": "(Deleted 02/01/2024) Button text for creation of a new username in case of corruption"
+  },
+  "icu:ProfileEditor--username--corrupted--fix-button": {
+    "messageformat": "ಈಗಲೇ ಸರಿಪಡಿಸಿ",
     "description": "Button text for creation of a new username in case of corruption"
   },
   "icu:ProfileEditor__username-link": {
@@ -5533,7 +5685,7 @@
     "description": "Shown if user has attempted to use forbidden characters in username"
   },
   "icu:ProfileEditor--username--check-starting-character": {
-    "messageformat": "ಬಳಕೆದಾರ ಹೆಸರುಗಳು ಸಂಖ್ಯೆಯಿಂದ ಪ್ರಾರಂಭವಾಗುವಂತಿಲ್ಲ.",
+    "messageformat": "ಯೂಸರ್‌ನೇಮ್‌ಗಳು ಸಂಖ್ಯೆಯಿಂದ ಪ್ರಾರಂಭವಾಗುವಂತಿಲ್ಲ.",
     "description": "Shown if user has attempted to begin their username with a number"
   },
   "icu:ProfileEditor--username--check-character-min": {
@@ -5553,15 +5705,19 @@
     "description": "Shown if user has attempted to enter a username with 00 as discriminator"
   },
   "icu:ProfileEditor--username--check-discriminator-leading-zero": {
-    "messageformat": "ಈ ಸಂಖ್ಯೆಯು 00 ರಿಂದ ಪ್ರಾರಂಭವಾಗುವಂತಿಲ್ಲ. 1-9 ನಡುವಿನ ಅಂಕಿಯನ್ನು ನಮೂದಿಸಿ",
+    "messageformat": "2 ಕ್ಕಿಂತ ಹೆಚ್ಚು ಅಂಕಿಗಳನ್ನು ಹೊಂದಿರುವ ಸಂಖ್ಯೆಗಳು 0 ರಿಂದ ಪ್ರಾರಂಭವಾಗಲು ಸಾಧ್ಯವಿಲ್ಲ",
     "description": "Shown if user has attempted to enter a username with leading 0 in discriminator"
+  },
+  "icu:ProfileEditor--username--too-many-attempts": {
+    "messageformat": "ತುಂಬಾ ಹೆಚ್ಚು ಪ್ರಯತ್ನಗಳನ್ನು ಮಾಡಿದ್ದೀರಿ, ದಯವಿಟ್ಟು ಮತ್ತೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ.",
+    "description": "Shown if user has made too many attempts to pick a username and has to wait before retrying"
   },
   "icu:ProfileEditor--username--unavailable": {
     "messageformat": "ಈ ಯೂಸರ್‌ನೇಮ್ ಲಭ್ಯವಿಲ್ಲ",
     "description": "Shown if the username is not available for registration"
   },
   "icu:ProfileEditor--username--check-username-taken": {
-    "messageformat": "ಈ ಬಳಕೆದಾರ ಹೆಸರು ತೆಗೆದುಕೊಳ್ಳಲಾಗಿದೆ.",
+    "messageformat": "ಈ ಯೂಸರ್‌ನೇಮ್ ಅನ್ನು ತೆಗೆದುಕೊಳ್ಳಲಾಗಿದೆ.",
     "description": "Shown if user has attempted to save a username which is not available"
   },
   "icu:ProfileEditor--username--general-error": {
@@ -5600,6 +5756,10 @@
     "messageformat": "ಅಳಿಸಿ",
     "description": "Shown in dialog button if user has saved an empty string to delete their username"
   },
+  "icu:ProfileEditor--username--delete-unavailable-notice": {
+    "messageformat": "ನಿಮ್ಮ ಯೂಸರ್ನೇಮ್ ಅನ್ನು ಅಳಿಸಲು, ನಿಮ್ಮ ಫೋನಿನಲ್ಲಿ Signal ತೆರೆಯಿರಿ ಮತ್ತು ಸೆಟ್ಟಿಂಗ್‌ಗಳು > ಪ್ರೊಫೈಲ್‌ಗೆ ನ್ಯಾವಿಗೇಟ್ ಮಾಡಿ.",
+    "description": "Shown in dialog body if user is trying to delete username, but it is only supported on mobile"
+  },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "ಯೂಸರ್‌ನೇಮ್ ನಕಲಿಸಿ ಅಥವಾ ಅಳಿಸಿ",
     "description": "Shown as aria label for context menu next to username"
@@ -5632,9 +5792,33 @@
     "messageformat": "ಈ ಬದಲಾವಣೆಗಳನ್ನು ತ್ಯಜಿಸಲು ನೀವು ಬಯಸುವಿರಾ?",
     "description": "ConfirmationDialog text for discarding changes"
   },
+  "icu:ConfirmationDialog__Title--in-call-close-requested": {
+    "messageformat": "Close Signal and end the call?",
+    "description": "ConfirmationDialog title when trying to close the app while in a call."
+  },
+  "icu:ConfirmationDialog__Title--close-requested-not-now": {
+    "messageformat": "Not Now",
+    "description": "Confirmation dialog button to cancel closing the app, while in a call and trying to close the app."
+  },
+  "icu:ProfileEditor--edit-photo": {
+    "messageformat": "ಫೋಟೋ ಎಡಿಟ್ ಮಾಡಿ",
+    "description": "Text of a button on profile editor that leads to the avatar editor"
+  },
   "icu:ProfileEditor--info--link": {
     "messageformat": "ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ಎನ್‌ಕ್ರಿಪ್ಟ್ ಆಗಿದೆ. ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ಮತ್ತು ಅದಕ್ಕೆ ಮಾಡುವ ಬದಲಾವಣೆಗಳು ನಿಮ್ಮ ಸಂಪರ್ಕಗಳಿಗೆ ಮತ್ತು ಹೊಸ ಚಾಟ್‌ಗಳನ್ನು ನೀವು ಆರಂಭಿಸಿದಾಗ ಅಥವಾ ಅಂಗೀಕರಿಸಿದಾಗ ಕಾಣಿಸುತ್ತವೆ. <learnMoreLink>ಇನ್ನಷ್ಟು ತಿಳಿಯಿರಿ</learnMoreLink>",
-    "description": "Information shown at the bottom of the profile editor section"
+    "description": "(Deleted 02/01/2024) Information shown at the bottom of the profile editor section"
+  },
+  "icu:ProfileEditor--info--general": {
+    "messageformat": "ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ಮತ್ತು ಅದರಲ್ಲಿ ಮಾಡಿದ ಬದಲಾವಣೆಗಳು ನೀವು ಮೆಸೇಜ್ ಮಾಡುವ ಜನರು, ಸಂಪರ್ಕಗಳು ಮತ್ತು ಗ್ರೂಪ್‌ಗಳಿಗೆ ಕಾಣಿಸಲಿವೆ.",
+    "description": "Information shown in profile editor below profile name and about fields"
+  },
+  "icu:ProfileEditor--info--pnp": {
+    "messageformat": "ನಿಮ್ಮ ಯೂಸರ್‌ನೇಮ್, QR ಕೋಡ್ ಮತ್ತು ಲಿಂಕ್ ನಿಮ್ಮ ಪ್ರೊಫೈಲ್‌ನಲ್ಲಿ ಗೋಚರಿಸುವುದಿಲ್ಲ. ನೀವು ನಂಬುವ ಜನರೊಂದಿಗೆ ಮಾತ್ರ ಅವುಗಳನ್ನು ಹಂಚಿಕೊಳ್ಳಿ.",
+    "description": "Information shown in profile editor below pnp settings when username is set"
+  },
+  "icu:ProfileEditor--info--pnp--no-username": {
+    "messageformat": "ನಿಮ್ಮ ಐಚ್ಛಿಕ ಯೂಸರ್‌ನೇಮ್ ಅನ್ನು ಬಳಸಿಕೊಂಡು ಜನರು ಈಗ ನಿಮಗೆ ಮೆಸೇಜ್ ಅನ್ನು ಕಳುಹಿಸಬಹುದು, ಆಗ ನೀವು ನಿಮ್ಮ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ನೀಡಬೇಕಾಗಿಲ್ಲ.",
+    "description": "Information shown in profile editor below pnp settings when no username is set"
   },
   "icu:Bio--speak-freely": {
     "messageformat": "ಮುಕ್ತವಾಗಿ ಮಾತನಾಡಿ",
@@ -5792,6 +5976,10 @@
     "messageformat": "ನಿಮ್ಮ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ಯಾರು ನೋಡಬಹುದು ಮತ್ತು ಅದರ ಮೂಲಕ Signal ನಲ್ಲಿ ನಿಮ್ಮನ್ನು ಯಾರು ಸಂಪರ್ಕಿಸಬಹುದು ಎಂಬುದನ್ನು ಆಯ್ಕೆಮಾಡಿ.",
     "description": "Body of Phone Number row in Privacy section of Preferences window"
   },
+  "icu:Preferences__pnp__row--button": {
+    "messageformat": "ಬದಲಿಸಿ...",
+    "description": "Text of Phone Number row button in Privacy section of Preferences window"
+  },
   "icu:Preferences__pnp__sharing--title": {
     "messageformat": "ನನ್ನ ಸಂಖ್ಯೆಯನ್ನು ಯಾರು ನೋಡಬಹುದು",
     "description": "Title for the phone number sharing setting row"
@@ -5801,8 +5989,12 @@
     "description": "Description for the phone number sharing setting row when the value is Everyone"
   },
   "icu:Preferences__pnp__sharing--description--nobody": {
-    "messageformat": "ಮೆಸೇಜ್ ಕಳುಹಿಸುವಾಗಲೂ Signal ‌ನಲ್ಲಿ ನಿಮ್ಮ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ಯಾರೂ ನೋಡುವುದಿಲ್ಲ.",
-    "description": "Description for the phone number sharing setting row when the value is Nobody"
+    "messageformat": "ನಿಮ್ಮ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ಅವರು ತಮ್ಮ ಫೋನ್‌ನ ಸಂಪರ್ಕಗಳಲ್ಲಿ ಉಳಿಸದ ಹೊರತು ಯಾರಿಗೂ ಕಾಣಿಸುವುದಿಲ್ಲ.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody and phone number discoverability setting is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody--not-discoverable": {
+    "messageformat": "ನಿಮ್ಮ ಫೋನ್ ಸಂಖ್ಯೆ ಯಾರಿಗೂ ಕಾಣಿಸುವುದಿಲ್ಲ.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody and phone number discoverability setting is Nobody"
   },
   "icu:Preferences__pnp--page-title": {
     "messageformat": "ಫೋನ್ ಸಂಖ್ಯೆ",
@@ -6788,6 +6980,10 @@
     "messageformat": "{name} ಅವರ ಸ್ಟೋರಿಗೆ ಪ್ರತಿಕ್ರಿಯಿಸಲಾಗಿದೆ",
     "description": "Label for when a person reacts to a story"
   },
+  "icu:Quote__story-reaction--you": {
+    "messageformat": "Reacted to your story",
+    "description": "Label for when someone reacts to your story"
+  },
   "icu:Quote__story-reaction--single": {
     "messageformat": "ಸ್ಟೋರಿಗೆ ಪ್ರತಿಕ್ರಿಯಿಸಲಾಗಿದೆ",
     "description": "Used whenever we can't find a user's first name"
@@ -6817,7 +7013,7 @@
     "description": "Placeholder for the username field"
   },
   "icu:EditUsernameModalBody__username-helper": {
-    "messageformat": "ಯೂಸರ್‌ನೇಮ್‌ಗಳು ಇತರರಿಗೆ ನಿಮ್ಮ ಫೋನ್ ಸಂಖ್ಯೆಯ ಅಗತ್ಯವಿಲ್ಲದೆ ಮೆಸೇಜ್ ಮಾಡಲು ಅನುಮತಿಸುತ್ತದೆ. ನಿಮ್ಮ ವಿಳಾಸವನ್ನು ಗೌಪ್ಯವಾಗಿರಿಸಲು ನೆರವಾಗಲು ಅಂಕಿಗಳ ಸೆಟ್‌ನೊಂದಿಗೆ ಅವುಗಳನ್ನು ಜೋಡಿಸಲಾಗುತ್ತದೆ.",
+    "messageformat": "ಯೂಸರ್‌ನೇಮ್‌ಗಳನ್ನು ಯಾವಾಗಲೂ ಸಂಖ್ಯೆಗಳ ಸೆಟ್‌ನೊಂದಿಗೆ ಜೋಡಿ ಮಾಡಲಾಗುತ್ತದೆ.",
     "description": "Shown on the edit username screen"
   },
   "icu:EditUsernameModalBody__learn-more": {
@@ -6840,8 +7036,16 @@
     "messageformat": "ಮುಂದುವರಿಸಿ",
     "description": "Text of the primary button on username change confirmation modal"
   },
+  "icu:EditUsernameModalBody__recover-confirmation": {
+    "messageformat": "ನಿಮ್ಮ ಯೂಸರ್‌ನೇಮ್ ಅನ್ನು ಮರುಪಡೆಯುವುದು, ನಿಮ್ಮ ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ QR ಕೋಡ್ ಮತ್ತು ಲಿಂಕ್ ಅನ್ನು ಮರುಹೊಂದಿಸುತ್ತದೆ. ನಿಮಗೆ ಖಾತ್ರಿಯಿದೆಯೇ?",
+    "description": "Body of the confirmation dialog displayed when user is about to recover their username"
+  },
+  "icu:EditUsernameModalBody__username-recovered__text": {
+    "messageformat": "ನಿಮ್ಮ QR ಕೋಡ್ ಮತ್ತು ಲಿಂಕ್ ಅನ್ನು ಮರುಹೊಂದಿಸಲಾಗಿದೆ ಮತ್ತು ನಿಮ್ಮ ಯೂಸರ್‌ನೇಮ್ {username}",
+    "description": "Text of toast displayed upon successful recovery of username"
+  },
   "icu:UsernameLinkModalBody__hint": {
-    "messageformat": "Scan this QR code with your phone to chat with me on Signal.",
+    "messageformat": "Signal ನಲ್ಲಿ ನನ್ನೊಂದಿಗೆ ಚಾಟ್ ಮಾಡಲು ನಿಮ್ಮ ಫೋನ್‌ ಮೂಲಕ ಈ QR ಕೋಡ್ ಅನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ.",
     "descrption": "Text of the hint displayed below generated QR code on the printable image."
   },
   "icu:UsernameLinkModalBody__save": {
@@ -6873,7 +7077,7 @@
     "description": "ARIA label of button for selecting username link color"
   },
   "icu:UsernameLinkModalBody__reset__confirm": {
-    "messageformat": "ನಿಮ್ಮ QR ಕೋಡ್ ಅನ್ನು ನೀವು ರೀಸೆಟ್ ಮಾಡಿದರೆ, ನಿಮ್ಮ ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ QR ಕೋಡ್ ಮತ್ತು ಲಿಂಕ್ ಕಾರ್ಯನಿರ್ವಹಿಸುವುದಿಲ್ಲ.",
+    "messageformat": "ನಿಮ್ಮ QR ಕೋಡ್ ಮತ್ತು ಲಿಂಕ್ ಅನ್ನು ನೀವು ಮರುಹೊಂದಿಸಿದರೆ, ನಿಮ್ಮ ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ QR ಕೋಡ್ ಮತ್ತು ಲಿಂಕ್ ಇನ್ನು ಮುಂದೆ ಕಾರ್ಯನಿರ್ವಹಿಸುವುದಿಲ್ಲ.",
     "description": "Text of confirmation modal when resetting the username link"
   },
   "icu:UsernameLinkModalBody__resetting-link": {
@@ -6881,35 +7085,43 @@
     "description": "Text shown when resetting the username link"
   },
   "icu:UsernameLinkModalBody__error__text": {
-    "messageformat": "QR ಕೋಡ್ ಮತ್ತು ಲಿಂಕ್ ಅನ್ನು ಹೊಂದಿಸಲಾಗಿಲ್ಲ. ನಿಮ್ಮ ನೆಟ್‌ವರ್ಕ್ ಸಂಪರ್ಕವನ್ನು ಪರಿಶೀಲಿಸಿ ಹಾಗೂ ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ.",
+    "messageformat": "ನಿಮ್ಮ QR ಕೋಡ್ ಮತ್ತು ಲಿಂಕ್‌ನಲ್ಲಿ ಏನೋ ತಪ್ಪಾಗಿದೆ, ಅದು ಇನ್ನು ಮುಂದೆ ಮಾನ್ಯವಾಗಿರುವುದಿಲ್ಲ. ಹೊಸ QR ಕೋಡ್ ಮತ್ತು ಲಿಂಕ್ ಅನ್ನು ರಚಿಸಲು ಅದನ್ನು ಮರುಹೊಂದಿಸಲು ಪ್ರಯತ್ನಿಸಿ.",
     "description": "Text of the confirmation dialog shown on username link error"
   },
+  "icu:UsernameLinkModalBody__error__fix-now": {
+    "messageformat": "ಈಗಲೇ ಸರಿಪಡಿಸಿ",
+    "description": "Text of the button in a confirmation dialog shown on username link error"
+  },
+  "icu:UsernameLinkModalBody__recovered__text": {
+    "messageformat": "ನಿಮ್ಮ QR ಕೋಡ್ ಮತ್ತು ಲಿಂಕ್ ಅನ್ನು ಮರುಹೊಂದಿಸಲಾಗಿದೆ ಮತ್ತು ಹೊಸ QR ಕೋಡ್ ಮತ್ತು ಲಿಂಕ್ ಅನ್ನು ರಚಿಸಲಾಗಿದೆ.",
+    "description": "Text of the confirmation dialog shown on successful username link recovery"
+  },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "New ways to connect",
+    "messageformat": "ಸಂಪರ್ಕಿಸಲು ಹೊಸ ಮಾರ್ಗಗಳು",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number__title": {
-    "messageformat": "Phone number privacy",
+    "messageformat": "ಫೋನ್ ಸಂಖ್ಯೆ ಗೌಪ್ಯತೆ",
     "description": "Title of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number__body": {
-    "messageformat": "Your phone number is no longer visible in chats. If your number is saved to a friend’s contacts, they will still see it.",
+    "messageformat": "ನಿಮ್ಮ ಫೋನ್ ಸಂಖ್ಯೆ ಇನ್ನು ಮುಂದೆ ಚಾಟ್‌ಗಳಲ್ಲಿ ಗೋಚರಿಸುವುದಿಲ್ಲ. ನಿಮ್ಮ ಸಂಖ್ಯೆಯನ್ನು ಸ್ನೇಹಿತರ ಸಂಪರ್ಕಗಳಲ್ಲಿ ಉಳಿಸಿದರೆ, ಅವರು ಅದನ್ನು ಇನ್ನೂ ನೋಡುತ್ತಾರೆ.",
     "description": "Body of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__username__title": {
-    "messageformat": "Usernames",
+    "messageformat": "ಯೂಸರ್‌ನೇಮ್‌ಗಳು",
     "description": "Title of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__username__body": {
-    "messageformat": "People can now message you using your optional username so you don’t have to give out your phone number. Usernames aren’t visible on your profile.",
+    "messageformat": "ನಿಮ್ಮ ಐಚ್ಛಿಕ ಯೂಸರ್‌ನೇಮ್ ಅನ್ನು ಬಳಸಿಕೊಂಡು ಜನರು ಈಗ ನಿಮಗೆ ಮೆಸೇಜ್ ಅನ್ನು ಕಳುಹಿಸಬಹುದು, ಆಗ ನೀವು ನಿಮ್ಮ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ನೀಡಬೇಕಾಗಿಲ್ಲ. ನಿಮ್ಮ ಪ್ರೊಫೈಲ್‌ನಲ್ಲಿ ಯೂಸರ್‌ನೇಮ್‌ಗಳು ಗೋಚರಿಸುವುದಿಲ್ಲ.",
     "description": "Body of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__qr__title": {
-    "messageformat": "QR codes and links",
+    "messageformat": "QR ಕೋಡ್‌ಗಳು ಮತ್ತು ಲಿಂಕ್‌ಗಳು",
     "description": "Title of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__qr__body": {
-    "messageformat": "Usernames have a unique QR code and link you can share with friends to quickly start a chat with you.",
+    "messageformat": "ಯೂಸರ್‌ನೇಮ್‌ಗಳು ಅನನ್ಯ QR ಕೋಡ್ ಮತ್ತು ಲಿಂಕ್ ಅನ್ನು ಹೊಂದಿದ್ದು, ತ್ವರಿತವಾಗಿ ಚಾಟ್ ಪ್ರಾರಂಭಿಸಲು ಅದನ್ನು ನೀವು ಸ್ನೇಹಿತರೊಂದಿಗೆ ಹಂಚಿಕೊಳ್ಳಬಹುದು.",
     "description": "Body of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
@@ -6929,27 +7141,27 @@
     "description": "(Deleted 01/16/2023) Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Set up username",
+    "messageformat": "ನಿಮ್ಮ ಯೂಸರ್‌ನೇಮ್ ಅನ್ನು ಸೆಟಪ್ ಮಾಡಿ",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__skip": {
-    "messageformat": "Not now",
+    "messageformat": "ಈಗಲ್ಲ",
     "description": "Text of the secondary button on username onboarding modal"
   },
   "icu:UsernameMegaphone__title": {
-    "messageformat": "New ways to connect",
+    "messageformat": "ಸಂಪರ್ಕಿಸಲು ಹೊಸ ಮಾರ್ಗಗಳು",
     "description": "Title of username megaphone"
   },
   "icu:UsernameMegaphone__body": {
-    "messageformat": "Introducing phone number privacy, optional usernames and links.",
+    "messageformat": "ಫೋನ್ ಸಂಖ್ಯೆ ಗೌಪ್ಯತೆ, ಐಚ್ಛಿಕ ಯೂಸರ್‌ನೇಮ್‌ಗಳು ಮತ್ತು ಲಿಂಕ್‌ಗಳನ್ನು ಪರಿಚಯಿಸಲಾಗುತ್ತಿದೆ.",
     "description": "Body of username megaphone"
   },
   "icu:UsernameMegaphone__learn-more": {
-    "messageformat": "Learn more",
+    "messageformat": "ಇನ್ನಷ್ಟು ತಿಳಿಯಿರಿ",
     "description": "Text of the primary button on username megaphone"
   },
   "icu:UsernameMegaphone__dismiss": {
-    "messageformat": "Dismiss",
+    "messageformat": "ವಜಾಗೊಳಿಸಿ",
     "description": "Text of the secondary button on username megaphone"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -7124,13 +7336,7 @@
     "messageformat": "ಸಣ್ಣ ಟ್ವೀಕ್‌ಗಳು, ಬಗ್ ಫಿಕ್ಸ್‌ಗಳು ಮತ್ತು ಕಾರ್ಯಕ್ಷಮತೆ ವರ್ಧನೆಗಳು. Signal ಬಳಸುತ್ತಿರುವುದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.46--0": {
-    "messageformat": "ಉರ್ದುವಿನ ಡೀಫಾಲ್ಟ್ ಫಾಂಟ್‌ಗಳನ್ನು ಆ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆ ಮಾಡಿದಾಗ ಸುಧಾರಿತ ಓದುವಿಕೆಗಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ (Signal ಸೆಟ್ಟಿಂಗ್‌ಗಳು > ರೂಪ > ಭಾಷೆ). ಧನ್ಯವಾದಗಳು, {linkToGithub}!"
-  },
-  "icu:WhatsNew__v6.47--0": {
-    "messageformat": "If you spend a lot of time trying to pick out the perfect emoji reaction for every situation, you'll be <emojify>🎉</emojify> to know that we fixed a bug with typing indicators that sometimes caused the emoji selection box to disappear while you were in the middle of pondering your choices."
-  },
-  "icu:WhatsNew__v6.47--1": {
-    "messageformat": "Signal will now match your selected title bar color on Microsoft Windows. When all of your windows in Windows look the same, that's a common theme."
+  "icu:WhatsNew__v7.1--0": {
+    "messageformat": "This update enables support for all of the new emoji characters in Emoji version 15.1. People keep asking us what our favorite new emoji is, but answering that question is a “lime” we won't cross."
   }
 }

@@ -28,6 +28,7 @@ SettingsWindowProps.onRender(
     customColors,
     defaultConversationColor,
     deviceName,
+    phoneNumber,
     doDeleteAllData,
     doneRendering,
     editCustomColor,
@@ -61,7 +62,6 @@ SettingsWindowProps.onRender(
     isHideMenuBarSupported,
     isMinimizeToAndStartInSystemTraySupported,
     isNotificationAttentionSupported,
-    isPhoneNumberSharingSupported,
     isSyncSupported,
     isSystemTraySupported,
     lastSyncTime,
@@ -129,6 +129,7 @@ SettingsWindowProps.onRender(
         customColors={customColors}
         defaultConversationColor={defaultConversationColor}
         deviceName={deviceName}
+        phoneNumber={phoneNumber}
         doDeleteAllData={doDeleteAllData}
         doneRendering={doneRendering}
         editCustomColor={editCustomColor}
@@ -165,7 +166,6 @@ SettingsWindowProps.onRender(
           isMinimizeToAndStartInSystemTraySupported
         }
         isNotificationAttentionSupported={isNotificationAttentionSupported}
-        isPhoneNumberSharingSupported={isPhoneNumberSharingSupported}
         isSyncSupported={isSyncSupported}
         isSystemTraySupported={isSystemTraySupported}
         lastSyncTime={lastSyncTime}

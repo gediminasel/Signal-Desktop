@@ -31,6 +31,7 @@ const settingCallRingtoneNotification = createSetting(
 const settingCallSystemNotification = createSetting('callSystemNotification');
 const settingCountMutedConversations = createSetting('countMutedConversations');
 const settingDeviceName = createSetting('deviceName', { setter: false });
+const settingPhoneNumber = createSetting('phoneNumber', { setter: false });
 const settingHideMenuBar = createSetting('hideMenuBar');
 const settingIncomingCallNotification = createSetting(
   'incomingCallNotification'
@@ -82,7 +83,6 @@ const ipcGetAvailableIODevices = createCallback('getAvailableIODevices');
 const ipcGetCustomColors = createCallback('getCustomColors');
 const ipcIsSyncNotSupported = createCallback('isPrimary');
 const ipcMakeSyncRequest = createCallback('syncRequest');
-const ipcPNP = createCallback('isPhoneNumberSharingEnabled');
 const ipcDeleteAllMyStories = createCallback('deleteAllMyStories');
 
 // ChatColorPicker redux hookups
@@ -160,9 +160,9 @@ async function renderPreferences() {
     hasStoriesDisabled,
     hasTextFormatting,
     hasTypingIndicators,
-    isPhoneNumberSharingSupported,
     lastSyncTime,
     notificationContent,
+    phoneNumber,
     selectedCamera,
     selectedMicrophone,
     selectedSpeaker,
@@ -202,9 +202,9 @@ async function renderPreferences() {
     hasStoriesDisabled: settingHasStoriesDisabled.getValue(),
     hasTextFormatting: settingTextFormatting.getValue(),
     hasTypingIndicators: settingTypingIndicators.getValue(),
-    isPhoneNumberSharingSupported: ipcPNP(),
     lastSyncTime: settingLastSyncTime.getValue(),
     notificationContent: settingNotificationSetting.getValue(),
+    phoneNumber: settingPhoneNumber.getValue(),
     selectedCamera: settingVideoInput.getValue(),
     selectedMicrophone: settingAudioInput.getValue(),
     selectedSpeaker: settingAudioOutput.getValue(),
@@ -275,6 +275,7 @@ async function renderPreferences() {
     lastSyncTime,
     localeOverride,
     notificationContent,
+    phoneNumber,
     preferredSystemLocales,
     resolvedLocale,
     selectedCamera,
@@ -308,7 +309,6 @@ async function renderPreferences() {
     isAutoLaunchSupported: Settings.isAutoLaunchSupported(OS),
     isHideMenuBarSupported: Settings.isHideMenuBarSupported(OS),
     isNotificationAttentionSupported: Settings.isDrawAttentionSupported(OS),
-    isPhoneNumberSharingSupported,
     isSyncSupported: !isSyncNotSupported,
     isSystemTraySupported: Settings.isSystemTraySupported(
       OS,

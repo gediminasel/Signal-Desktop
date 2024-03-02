@@ -44,6 +44,10 @@
     "messageformat": "เพิ่ม “{contact}” เข้ากลุ่ม “{group}” ใช่หรือไม่",
     "description": "Shown in the confirmation dialog body when adding a contact to a group"
   },
+  "icu:AddUserToAnotherGroupModal__search-placeholder": {
+    "messageformat": "ค้นหา",
+    "description": "Placeholder to use when searching for groups in the AddUserToAnotherGroupModal"
+  },
   "icu:AddUserToAnotherGroupModal__toast--user-added-to-group": {
     "messageformat": "{contact} ถูกเพิ่มเข้า {group}",
     "description": "Shown in toast after a user is added to an existing group"
@@ -331,6 +335,42 @@
   "icu:LeftPane--corrupted-username-link--action-text": {
     "messageformat": "แก้ไขตอนนี้",
     "description": "Text of the button in the corrupted username link banner in the left pane"
+  },
+  "icu:LeftPane__compose__findByUsername": {
+    "messageformat": "ค้นหาด้วยชื่อผู้ใช้",
+    "description": "Text of the button displayed when clicking compose button in left pane"
+  },
+  "icu:LeftPane__compose__findByPhoneNumber": {
+    "messageformat": "ค้นหาด้วยหมายเลขโทรศัพท์",
+    "description": "Text of the button displayed when clicking compose button in left pane"
+  },
+  "icu:LeftPaneFindByHelper__title--findByUsername": {
+    "messageformat": "ค้นหาด้วยชื่อผู้ใช้",
+    "description": "Title of the left pane when looking up someone by username"
+  },
+  "icu:LeftPaneFindByHelper__title--findByPhoneNumber": {
+    "messageformat": "ค้นหาด้วยหมายเลขโทรศัพท์",
+    "description": "Title of the left pane when looking up someone by phone number"
+  },
+  "icu:LeftPaneFindByHelper__placeholder--findByUsername": {
+    "messageformat": "ชื่อผู้ใช้",
+    "description": "Placeholder of the search input in left pane when looking up someone by username"
+  },
+  "icu:LeftPaneFindByHelper__placeholder--findByPhoneNumber": {
+    "messageformat": "หมายเลขโทรศัพท์",
+    "description": "Placeholder of the search input in left pane when looking up someone by phone number"
+  },
+  "icu:LeftPaneFindByHelper__description--findByUsername": {
+    "messageformat": "ป้อนชื่อผู้ใช้แล้วตามด้วยจุดและชุดตัวเลข",
+    "description": "Description displayed under search input in left pane when looking up someone by username"
+  },
+  "icu:CountryCodeSelect__placeholder": {
+    "messageformat": "รหัสประเทศ",
+    "description": "Placeholder displayed as default value of country code select element"
+  },
+  "icu:CountryCodeSelect__Modal__title": {
+    "messageformat": "รหัสประเทศ",
+    "description": "Title of the country code modal"
   },
   "icu:NavTabsToggle__showTabs": {
     "messageformat": "แสดงแท็บ",
@@ -1351,6 +1391,38 @@
   "icu:showSafetyNumber": {
     "messageformat": "ดูหมายเลขความปลอดภัย"
   },
+  "icu:AboutContactModal__title": {
+    "messageformat": "เกี่ยวกับ",
+    "description": "Title of About modal"
+  },
+  "icu:AboutContactModal__title--myself": {
+    "messageformat": "คุณ",
+    "description": "Title of About modal when viewing your own information"
+  },
+  "icu:AboutContactModal__verified": {
+    "messageformat": "ตรวจยืนยันแล้ว",
+    "description": "Text of a button on About modal leading to a safety number modal"
+  },
+  "icu:AboutContactModal__blocked": {
+    "messageformat": "{name} ถูกบล็อกอยู่",
+    "description": "Text of a row on About modal when user is blocked"
+  },
+  "icu:AboutContactModal__message-request": {
+    "messageformat": "มีคำขอส่งข้อความที่รอตอบกลับ",
+    "description": "Text of a row on About modal when user is in message request state"
+  },
+  "icu:AboutContactModal__no-dms": {
+    "messageformat": "ไม่มีข้อความส่วนตัวกับ {name}",
+    "description": "Text of a row on About modal when there are no direct messages with a user"
+  },
+  "icu:AboutContactModal__signal-connection": {
+    "messageformat": "เครือข่าย Signal",
+    "description": "Text of a button on About modal leading to an education modal"
+  },
+  "icu:AboutContactModal__system-contact": {
+    "messageformat": "{name} อยู่ในรายชื่อผู้ติดต่อของระบบคุณ",
+    "description": "Text of a row in the About modal describing that the contact is in system contacts"
+  },
   "icu:ContactModal__showSafetyNumber": {
     "messageformat": "ดูหมายเลขความปลอดภัย",
     "description": "Contact modal, label for button to show safety number modal"
@@ -1626,6 +1698,10 @@
     "messageformat": "คอมพิวเตอร์ของฉัน",
     "description": "The placeholder for the 'choose device name' input"
   },
+  "icu:Preferences--phone-number": {
+    "messageformat": "หมายเลขโทรศัพท์",
+    "description": "The label in settings panel shown for the phone number associated with user's account"
+  },
   "icu:Preferences--device-name": {
     "messageformat": "ชื่ออุปกรณ์",
     "description": "The label in settings panel shown for the user-provided name for this desktop instance"
@@ -1700,6 +1776,54 @@
   "icu:calling__call-is-full": {
     "messageformat": "ห้องเต็ม",
     "description": "Text in the call lobby when you can't join because the call is full"
+  },
+  "icu:calling__cant-join": {
+    "messageformat": "Can't join call",
+    "description": "Modal dialog title when you can't join a call"
+  },
+  "icu:calling__dialog-already-in-call": {
+    "messageformat": "You are already in a call.",
+    "description": "Error message when clicking a call link to join a call, but you're in a call already."
+  },
+  "icu:calling__call-link-connection-issues": {
+    "messageformat": "Could not fetch call link information. Please check your network connection and try again.",
+    "description": "Error message when unable to fetch call link info from server."
+  },
+  "icu:calling__call-link-copied": {
+    "messageformat": "Call link copied.",
+    "description": "Toast shown when a call link is copied to the clipboard."
+  },
+  "icu:calling__call-link-no-longer-valid": {
+    "messageformat": "This call link is no longer valid.",
+    "description": "Error message when a call link has been revoked or expires."
+  },
+  "icu:calling__call-link-default-title": {
+    "messageformat": "Signal Call",
+    "description": "Default title for Signal call links."
+  },
+  "icu:calling__join-request-denied": {
+    "messageformat": "Your request to join this call has been denied.",
+    "description": "Error message when a request to join a call link call was rejected by a call admin."
+  },
+  "icu:calling__join-request-denied-title": {
+    "messageformat": "Join request denied",
+    "description": "Title of error when a request to join a call link call was rejected by a call admin."
+  },
+  "icu:calling__removed-from-call": {
+    "messageformat": "Someone has removed you from the call.",
+    "description": "Error message when in a call then a call admin removes you."
+  },
+  "icu:calling__removed-from-call-title": {
+    "messageformat": "Removed from call",
+    "description": "Title of error when in a call then a call admin removes you."
+  },
+  "icu:CallingLobby__CallLinkNotice": {
+    "messageformat": "Anyone who joins this call via the link will see your name and photo.",
+    "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared."
+  },
+  "icu:CallingLobby__CallLinkNotice--phone-sharing": {
+    "messageformat": "Anyone who joins this call via the link will see your name, photo, and phone number.",
+    "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared, when the phone number sharing account setting is enabled."
   },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "เข้าร่วม",
@@ -2244,11 +2368,11 @@
     "description": "Description for incoming calls setting"
   },
   "icu:contactChangedProfileName": {
-    "messageformat": "{sender} ได้เปลี่ยนชื่อโปรไฟล์จาก {oldProfile} เป็น{newProfile}",
+    "messageformat": "{sender} เปลี่ยนชื่อโปรไฟล์จาก {oldProfile} เป็น {newProfile}",
     "description": "Description for incoming calls setting"
   },
   "icu:changedProfileName": {
-    "messageformat": "{oldProfile} เปลี่ยนชื่อโปรไฟล์เป็น{newProfile}",
+    "messageformat": "{oldProfile} เปลี่ยนชื่อโปรไฟล์เป็น {newProfile}",
     "description": "Shown when a contact not in your address book changes their profile name"
   },
   "icu:SafetyNumberModal__title": {
@@ -2328,7 +2452,7 @@
     "description": "Label for header to go to stories view"
   },
   "icu:contactSearchPlaceholder": {
-    "messageformat": "ค้นหาโดยชื่อหรือหมายเลขโทรศัพท์",
+    "messageformat": "ชื่อ ชื่อผู้ใช้ หรือหมายเลขโทรศัพท์",
     "description": "Placeholder to use when searching for contacts in the composer"
   },
   "icu:noContactsFound": {
@@ -2368,7 +2492,7 @@
     "description": "Error message when you try to send an edit after message becomes too old"
   },
   "icu:startConversation--username-not-found": {
-    "messageformat": "ไม่พบผู้ใช้งาน {atUsername} ไม่ใช่ผู้ใช้ Signal ลองตรวจสอบให้แน่ใจว่าคุณใส่ชื่อผู้ใช้ครบถ้วนแล้ว",
+    "messageformat": "{atUsername} ไม่ได้เป็นผู้ใช้ Signal โปรดตรวจสอบว่าคุณใส่ชื่อผู้ใช้ครบถ้วน",
     "description": "Shown in dialog if username is not found. Note that 'username' will be the output of at-username"
   },
   "icu:startConversation--phone-number-not-found": {
@@ -2615,6 +2739,10 @@
   "icu:message--attachmentTooBig--multiple": {
     "messageformat": "ไม่สามารถแสดงไฟล์แนบบางไฟล์ได้เนื่องจากขนาดใหญ่เกินไป",
     "description": "Shown in a message bubble if any attachments are left on message when too-large attachments are dropped"
+  },
+  "icu:message--call-link-description": {
+    "messageformat": "Use this link to join a Signal call",
+    "description": "Shown in message previews for Signal call links."
   },
   "icu:donation--missing": {
     "messageformat": "ไม่สามารถเรียกดูรายละเอียดการบริจาคได้",
@@ -3588,6 +3716,14 @@
     "messageformat": "โทรเสียง",
     "description": "Shown in the call lobby for a direct 1:1 call when the caller's video is disabled, to specify that an audio call will be placed when clicking the Start button."
   },
+  "icu:CallControls__InfoDisplay--adhoc-call": {
+    "messageformat": "Call link",
+    "description": "Shown in the call lobby for a call link."
+  },
+  "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
+    "messageformat": "Waiting to be let in",
+    "description": "Shown in the call lobby for call link calls when requesting to join a call which requires admin approval."
+  },
   "icu:CallControls__JoinLeaveButton--hangup-1-1": {
     "messageformat": "วางสาย",
     "description": "Title for the hangup button for a direct 1:1 call with only 2 participants."
@@ -3727,6 +3863,10 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "หน้าต่าง",
     "description": "Title for the select your screen sharing sources modal"
+  },
+  "icu:CallingAdhocCallInfo__CopyLink": {
+    "messageformat": "Copy link",
+    "description": "Menu item in the in-call info popup for call link calls. The action is to add the call link to the clipboard."
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "วิดีโอ",
@@ -5189,7 +5329,7 @@
     "description": "Title for the contact name spoofing review dialog in groups"
   },
   "icu:ContactSpoofingReviewDialog__group__description": {
-    "messageformat": "{count, plural, other {สมาชิกในกลุ่ม {count,number} คนใช้ชื่อคล้ายกัน ตรวจสอบรายชื่อสมาชิกด้านล่างหรือเลือกเพื่อดำเนินการ}}",
+    "messageformat": "{count, plural, other {สมาชิกในกลุ่ม {count,number} คนใช้ชื่อเหมือนกัน ตรวจสอบรายชื่อสมาชิกด้านล่างหรือเลือกเพื่อดำเนินการ}}",
     "description": "Description for the group contact spoofing review dialog"
   },
   "icu:ContactSpoofingReviewDialog__group__multiple-conflicts__description": {
@@ -5198,10 +5338,18 @@
   },
   "icu:ContactSpoofingReviewDialog__group__members-header": {
     "messageformat": "สมาชิก",
-    "description": "Header in the group contact spoofing review dialog. After this header, there will be a list of members"
+    "description": "(Deleted 01/31/2024) Header in the group contact spoofing review dialog. After this header, there will be a list of members"
+  },
+  "icu:ContactSpoofingReviewDialog__group__members__no-shared-groups": {
+    "messageformat": "ไม่มีกลุ่มอื่นร่วมกัน",
+    "description": "Informational text displayed next to a contact on ContactSpoofingReviewDialog"
+  },
+  "icu:ContactSpoofingReviewDialog__signal-connection": {
+    "messageformat": "เครือข่าย Signal",
+    "description": "Text of a button on ContactSpoofingReviewDialog leading to an education modal"
   },
   "icu:ContactSpoofingReviewDialog__group__name-change-info": {
-    "messageformat": "เพิ่งเปลี่ยนชื่อของเขาจาก {oldName} เป็น {newName}",
+    "messageformat": "เพิ่งเปลี่ยนชื่อโปรไฟล์จาก {oldName} เป็น {newName}",
     "description": "In the group contact spoofing review dialog, this text is shown when someone has changed their name recently"
   },
   "icu:RemoveGroupMemberConfirmation__remove-button": {
@@ -5493,15 +5641,19 @@
     "description": "Default text for username field"
   },
   "icu:ProfileEditor--username--corrupted--body": {
-    "messageformat": "เกิดข้อผิดพลาดเกี่ยวกับชื่อผู้ใช้ ไม่สามารถใช้ชื่อผู้ใช้นี้กับบัญชีของคุณได้อีกต่อไป",
+    "messageformat": "เกิดข้อผิดพลาดเกี่ยวกับชื่อผู้ใช้ ไม่สามารถใช้ชื่อผู้ใช้นี้กับบัญชีของคุณได้อีกต่อไป โปรดลองใหม่ด้วยการใส่ชื่อผู้ใช้อีกครั้งหรือตั้งชื่อผู้ใช้ใหม่",
     "description": "Text of confirmation modal when the username gets corrupted"
   },
   "icu:ProfileEditor--username--corrupted--delete-button": {
     "messageformat": "ลบชื่อผู้ใช้",
-    "description": "Button text for deletion of the username in case of corruption"
+    "description": "(Deleted 02/01/2024) Button text for deletion of the username in case of corruption"
   },
   "icu:ProfileEditor--username--corrupted--create-button": {
     "messageformat": "สร้างชื่อผู้ใช้",
+    "description": "(Deleted 02/01/2024) Button text for creation of a new username in case of corruption"
+  },
+  "icu:ProfileEditor--username--corrupted--fix-button": {
+    "messageformat": "แก้ไขตอนนี้",
     "description": "Button text for creation of a new username in case of corruption"
   },
   "icu:ProfileEditor__username-link": {
@@ -5537,11 +5689,11 @@
     "description": "Shown if user has attempted to begin their username with a number"
   },
   "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "ชื่อผู้ใช้ต้องมีอย่างน้อย {min,number} อักขระ",
+    "messageformat": "ชื่อผู้ใช้ต้องมีอักขระอย่างน้อย {min,number} ตัว",
     "description": "Shown if user has attempted to enter a username with too few characters - currently min is 3"
   },
   "icu:ProfileEditor--username--check-character-max": {
-    "messageformat": "ชื่อผู้ใช้มีได้มากที่สุด {max,number} อักขระ",
+    "messageformat": "ชื่อผู้ใช้มีอักขระได้มากสุด {max,number} ตัว",
     "description": "Shown if user has attempted to enter a username with too many characters - currently min is 25"
   },
   "icu:ProfileEditor--username--check-discriminator-min": {
@@ -5553,8 +5705,12 @@
     "description": "Shown if user has attempted to enter a username with 00 as discriminator"
   },
   "icu:ProfileEditor--username--check-discriminator-leading-zero": {
-    "messageformat": "ไม่สามารถขึ้นต้นด้วยตัวเลข 00 ได้ โปรดกรอกตัวเลข 1-9",
+    "messageformat": "ตัวเลขที่เกิน 2 หลักไม่สามารถขึ้นต้นด้วยเลข 0 ได้",
     "description": "Shown if user has attempted to enter a username with leading 0 in discriminator"
+  },
+  "icu:ProfileEditor--username--too-many-attempts": {
+    "messageformat": "คุณลองตั้งชื่อหลายครั้งเกินไป โปรดลองใหม่ในภายหลัง",
+    "description": "Shown if user has made too many attempts to pick a username and has to wait before retrying"
   },
   "icu:ProfileEditor--username--unavailable": {
     "messageformat": "ไม่สามารถใช้ชื่อผู้ใช้นี้ได้",
@@ -5600,6 +5756,10 @@
     "messageformat": "ลบ",
     "description": "Shown in dialog button if user has saved an empty string to delete their username"
   },
+  "icu:ProfileEditor--username--delete-unavailable-notice": {
+    "messageformat": "หากต้องการลบชื่อผู้ใช้ของคุณ ให้เปิด Signal บนมือถือ แล้วไปที่การตั้งค่า > โปรไฟล์",
+    "description": "Shown in dialog body if user is trying to delete username, but it is only supported on mobile"
+  },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "คัดลอกหรือลบชื่อผู้ใช้",
     "description": "Shown as aria label for context menu next to username"
@@ -5632,9 +5792,33 @@
     "messageformat": "คุณต้องการจะยกเลิกการเปลี่ยนแปลงเหล่านี้หรือไม่?",
     "description": "ConfirmationDialog text for discarding changes"
   },
+  "icu:ConfirmationDialog__Title--in-call-close-requested": {
+    "messageformat": "Close Signal and end the call?",
+    "description": "ConfirmationDialog title when trying to close the app while in a call."
+  },
+  "icu:ConfirmationDialog__Title--close-requested-not-now": {
+    "messageformat": "Not Now",
+    "description": "Confirmation dialog button to cancel closing the app, while in a call and trying to close the app."
+  },
+  "icu:ProfileEditor--edit-photo": {
+    "messageformat": "แก้ไขรูปภาพ",
+    "description": "Text of a button on profile editor that leads to the avatar editor"
+  },
   "icu:ProfileEditor--info--link": {
     "messageformat": "โปรไฟล์ของคุณถูกเข้ารหัส ผู้ติดต่อและผู้ใช้ที่คุณเริ่มต้นหรือตอบรับแชทใหม่จะเห็นโปรไฟล์และการเปลี่ยนแปลงในโปรไฟล์ของคุณ <learnMoreLink>เรียนรู้เพิ่มเติม</learnMoreLink>",
-    "description": "Information shown at the bottom of the profile editor section"
+    "description": "(Deleted 02/01/2024) Information shown at the bottom of the profile editor section"
+  },
+  "icu:ProfileEditor--info--general": {
+    "messageformat": "ผู้ติดต่อ กลุ่ม และคนที่คุณส่งข้อความหาจะเห็นโปรไฟล์และการเปลี่ยนแปลงในโปรไฟล์ของคุณ",
+    "description": "Information shown in profile editor below profile name and about fields"
+  },
+  "icu:ProfileEditor--info--pnp": {
+    "messageformat": "ชื่อผู้ใช้ คิวอาร์โค้ดและลิงก์จะไม่ปรากฏบนโปรไฟล์ของคุณ เราขอแนะนำให้แชร์ข้อมูลนี้กับคนที่คุณไว้วางใจเท่านั้น",
+    "description": "Information shown in profile editor below pnp settings when username is set"
+  },
+  "icu:ProfileEditor--info--pnp--no-username": {
+    "messageformat": "ผู้ติดต่อจะสามารถส่งข้อความหาคุณผ่านชื่อผู้ใช้ที่คุณกำหนด วิธีนี้ทำให้คุณไม่จำเป็นต้องบอกหมายเลขโทรศัพท์กับใคร",
+    "description": "Information shown in profile editor below pnp settings when no username is set"
   },
   "icu:Bio--speak-freely": {
     "messageformat": "พูดได้อย่างอิสระ",
@@ -5792,6 +5976,10 @@
     "messageformat": "เลือกว่าจะให้ใครเห็นหมายเลขโทรศัพท์ของคุณและใช้หมายเลขโทรศัพท์นั้นติดต่อคุณบน Signal ได้",
     "description": "Body of Phone Number row in Privacy section of Preferences window"
   },
+  "icu:Preferences__pnp__row--button": {
+    "messageformat": "เปลี่ยน…",
+    "description": "Text of Phone Number row button in Privacy section of Preferences window"
+  },
   "icu:Preferences__pnp__sharing--title": {
     "messageformat": "คนที่สามารถเห็นหมายเลขโทรศัพท์ของฉัน",
     "description": "Title for the phone number sharing setting row"
@@ -5801,8 +5989,12 @@
     "description": "Description for the phone number sharing setting row when the value is Everyone"
   },
   "icu:Preferences__pnp__sharing--description--nobody": {
-    "messageformat": "จะไม่มีใครเห็นหมายเลขโทรศัพท์ของคุณบน Signal แม้แต่ผู้ใช้ที่คุณส่งข้อความหา",
-    "description": "Description for the phone number sharing setting row when the value is Nobody"
+    "messageformat": "จะไม่มีใครเห็นหมายเลขโทรศัพท์ของคุณ เว้นแต่ว่าคนคนนั้นจะบันทึกเบอร์คุณไว้ในรายชื่อผู้ติดต่อบนโทรศัพท์",
+    "description": "Description for the phone number sharing setting row when the value is Nobody and phone number discoverability setting is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody--not-discoverable": {
+    "messageformat": "จะไม่มีใครเห็นหมายเลขโทรศัพท์ของคุณ",
+    "description": "Description for the phone number sharing setting row when the value is Nobody and phone number discoverability setting is Nobody"
   },
   "icu:Preferences__pnp--page-title": {
     "messageformat": "หมายเลขโทรศัพท์",
@@ -6213,7 +6405,7 @@
     "description": "A way that signal connection is formed"
   },
   "icu:SignalConnectionsModal__bullet--3": {
-    "messageformat": "กำลังใส่พวกเขาเข้าไปในรายชื่อผู้ติดต่อในระบบของคุณ",
+    "messageformat": "บันทึกไว้ในรายชื่อผู้ติดต่อของระบบคุณ",
     "description": "A way that signal connection is formed"
   },
   "icu:SignalConnectionsModal__footer": {
@@ -6788,6 +6980,10 @@
     "messageformat": "แสดงความรู้สึกต่อสตอรี่ของ {name}",
     "description": "Label for when a person reacts to a story"
   },
+  "icu:Quote__story-reaction--you": {
+    "messageformat": "Reacted to your story",
+    "description": "Label for when someone reacts to your story"
+  },
   "icu:Quote__story-reaction--single": {
     "messageformat": "แสดงความรู้สึกต่อสตอรี่",
     "description": "Used whenever we can't find a user's first name"
@@ -6817,7 +7013,7 @@
     "description": "Placeholder for the username field"
   },
   "icu:EditUsernameModalBody__username-helper": {
-    "messageformat": "ชื่อผู้ใช้จะช่วยให้ผู้ใช้รายอื่นส่งข้อความหาคุณได้โดยไม่จำเป็นต้องมีหมายเลขโทรศัพท์ของคุณ ชื่อผู้ใช้จะถูกผูกเข้ากับกลุ่มตัวเลขเพื่อช่วยรักษาความเป็นส่วนตัวของข้อมูลคุณ",
+    "messageformat": "ชื่อผู้ใช้จะต้องมีชุดตัวเลขร่วมด้วยเสมอ",
     "description": "Shown on the edit username screen"
   },
   "icu:EditUsernameModalBody__learn-more": {
@@ -6840,8 +7036,16 @@
     "messageformat": "ดำเนินการต่อ",
     "description": "Text of the primary button on username change confirmation modal"
   },
+  "icu:EditUsernameModalBody__recover-confirmation": {
+    "messageformat": "การกู้คืนชื่อผู้ใช้จะทำให้คิวอาร์โค้ดและลิงก์ที่มีอยู่เดิมของคุณถูกรีเซ็ต ต้องการดำเนินการต่อหรือไม่",
+    "description": "Body of the confirmation dialog displayed when user is about to recover their username"
+  },
+  "icu:EditUsernameModalBody__username-recovered__text": {
+    "messageformat": "รีเซ็ตคิวอาร์โค้ดและลิงก์ของคุณเรียบร้อยแล้ว โดยชื่อผู้ใช้ของคุณคือ {username}",
+    "description": "Text of toast displayed upon successful recovery of username"
+  },
   "icu:UsernameLinkModalBody__hint": {
-    "messageformat": "Scan this QR code with your phone to chat with me on Signal.",
+    "messageformat": "ใช้มือถือสแกนคิวอาร์โค้ดนี้เพื่อพูดคุยกับฉันบน Signal",
     "descrption": "Text of the hint displayed below generated QR code on the printable image."
   },
   "icu:UsernameLinkModalBody__save": {
@@ -6873,7 +7077,7 @@
     "description": "ARIA label of button for selecting username link color"
   },
   "icu:UsernameLinkModalBody__reset__confirm": {
-    "messageformat": "หากคุณรีเซ็ตคิวอาร์โค้ด คิวอาร์โค้ดและลิงก์ที่มีอยู่เดิมของคุณจะใช้งานไม่ได้อีกต่อไป",
+    "messageformat": "หากคุณรีเซ็ตคิวอาร์โค้ดและลิงก์ คิวอาร์โค้ดและลิงก์ที่มีอยู่เดิมของคุณจะใช้งานไม่ได้อีกต่อไป",
     "description": "Text of confirmation modal when resetting the username link"
   },
   "icu:UsernameLinkModalBody__resetting-link": {
@@ -6881,35 +7085,43 @@
     "description": "Text shown when resetting the username link"
   },
   "icu:UsernameLinkModalBody__error__text": {
-    "messageformat": "ยังไม่ได้ตั้งค่าคิวอาร์โค้ดและลิงก์ โปรดตรวจสอบการเชื่อมต่อเครือข่ายแล้วลองอีกครั้ง",
+    "messageformat": "เกิดข้อผิดพลาดเกี่ยวกับคิวอาร์โค้ดและลิงก์ของคุณ จึงไม่สามารถใช้ลิงก์นี้ได้อีกต่อไป โปรดลองรีเซ็ตเพื่อสร้างคิวอาร์โค้ดและลิงก์ใหม่",
     "description": "Text of the confirmation dialog shown on username link error"
   },
+  "icu:UsernameLinkModalBody__error__fix-now": {
+    "messageformat": "แก้ไขตอนนี้",
+    "description": "Text of the button in a confirmation dialog shown on username link error"
+  },
+  "icu:UsernameLinkModalBody__recovered__text": {
+    "messageformat": "รีเซ็ตคิวอาร์โค้ดและลิงก์ของคุณแล้ว และสร้างคิวอาร์โค้ดและลิงก์ใหม่เรียบร้อยแล้ว",
+    "description": "Text of the confirmation dialog shown on successful username link recovery"
+  },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "New ways to connect",
+    "messageformat": "วิธีใหม่ในการติดต่อสื่อสาร",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number__title": {
-    "messageformat": "Phone number privacy",
+    "messageformat": "การรักษาความเป็นส่วนตัวของหมายเลขโทรศัพท์",
     "description": "Title of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number__body": {
-    "messageformat": "Your phone number is no longer visible in chats. If your number is saved to a friend’s contacts, they will still see it.",
+    "messageformat": "ระบบจะไม่แสดงหมายเลขโทรศัพท์ของคุณในแชทอีกต่อไป ผู้ติดต่อจะยังคงเห็นหมายเลขโทรศัพท์ของคุณ หากบันทึกเบอร์คุณไว้ในรายชื่อติดต่อ",
     "description": "Body of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__username__title": {
-    "messageformat": "Usernames",
+    "messageformat": "ชื่อผู้ใช้",
     "description": "Title of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__username__body": {
-    "messageformat": "People can now message you using your optional username so you don’t have to give out your phone number. Usernames aren’t visible on your profile.",
+    "messageformat": "ผู้ติดต่อจะสามารถส่งข้อความหาคุณผ่านชื่อผู้ใช้ที่คุณกำหนด วิธีนี้ทำให้คุณไม่จำเป็นต้องบอกหมายเลขโทรศัพท์กับใคร โดยชื่อผู้ใช้จะไม่ปรากฏบนโปรไฟล์ของคุณ",
     "description": "Body of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__qr__title": {
-    "messageformat": "QR codes and links",
+    "messageformat": "คิวอาร์โค้ดและลิงก์",
     "description": "Title of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__qr__body": {
-    "messageformat": "Usernames have a unique QR code and link you can share with friends to quickly start a chat with you.",
+    "messageformat": "ชื่อผู้ใช้จะมีคิวอาร์โค้ดและลิงก์เฉพาะที่คุณสามารถแชร์เพื่อให้เพื่อนเริ่มแชทด้วยได้ทันที",
     "description": "Body of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
@@ -6929,27 +7141,27 @@
     "description": "(Deleted 01/16/2023) Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Set up username",
+    "messageformat": "กำหนดชื่อผู้ใช้",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__skip": {
-    "messageformat": "Not now",
+    "messageformat": "ไว้ทีหลัง",
     "description": "Text of the secondary button on username onboarding modal"
   },
   "icu:UsernameMegaphone__title": {
-    "messageformat": "New ways to connect",
+    "messageformat": "วิธีใหม่ในการติดต่อสื่อสาร",
     "description": "Title of username megaphone"
   },
   "icu:UsernameMegaphone__body": {
-    "messageformat": "Introducing phone number privacy, optional usernames and links.",
+    "messageformat": "ขอแนะนำการรักษาความเป็นส่วนตัวของหมายเลขโทรศัพท์ ตัวเลือกการกำหนดชื่อผู้ใช้และลิงก์เพิ่มเติม",
     "description": "Body of username megaphone"
   },
   "icu:UsernameMegaphone__learn-more": {
-    "messageformat": "Learn more",
+    "messageformat": "เรียนรู้เพิ่มเติม",
     "description": "Text of the primary button on username megaphone"
   },
   "icu:UsernameMegaphone__dismiss": {
-    "messageformat": "Dismiss",
+    "messageformat": "ปิด",
     "description": "Text of the secondary button on username megaphone"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -7124,13 +7336,7 @@
     "messageformat": "มีการปรับเปลี่ยนเล็กน้อย พร้อมแก้ไขบั๊ก และการพัฒนาประสิทธิภาพให้ดียิ่งขึ้น ขอขอบคุณที่เลือกใช้ Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.46--0": {
-    "messageformat": "อัปเดตค่าเริ่มต้นสำหรับแบบอักษรภาษาอูรดู เพื่อให้ผู้ใช้อ่านง่ายและสบายตายิ่งขึ้น (ไปที่การตั้งค่า Signal > ลักษณะ > ภาษา) ขอบคุณ {linkToGithub} สำหรับการปรับปรุงครั้งนี้!"
-  },
-  "icu:WhatsNew__v6.47--0": {
-    "messageformat": "If you spend a lot of time trying to pick out the perfect emoji reaction for every situation, you'll be <emojify>🎉</emojify> to know that we fixed a bug with typing indicators that sometimes caused the emoji selection box to disappear while you were in the middle of pondering your choices."
-  },
-  "icu:WhatsNew__v6.47--1": {
-    "messageformat": "Signal will now match your selected title bar color on Microsoft Windows. When all of your windows in Windows look the same, that's a common theme."
+  "icu:WhatsNew__v7.1--0": {
+    "messageformat": "This update enables support for all of the new emoji characters in Emoji version 15.1. People keep asking us what our favorite new emoji is, but answering that question is a “lime” we won't cross."
   }
 }

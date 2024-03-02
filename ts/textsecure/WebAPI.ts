@@ -636,12 +636,8 @@ export type WebAPIConnectType = {
   connect: (options: WebAPIConnectOptionsType) => WebAPIType;
 };
 
-export type CapabilitiesType = {
-  pni: boolean;
-};
-export type CapabilitiesUploadType = {
-  pni: true;
-};
+export type CapabilitiesType = Record<string, never>;
+export type CapabilitiesUploadType = Record<string, never>;
 
 type StickerPackManifestType = Uint8Array;
 
@@ -651,6 +647,10 @@ export type GroupCredentialType = {
 };
 export type GroupCredentialsType = {
   groupPublicParamsHex: string;
+  authCredentialPresentationHex: string;
+};
+export type CallLinkAuthCredentialsType = {
+  callLinkPublicParamsHex: string;
   authCredentialPresentationHex: string;
 };
 export type GetGroupLogOptionsType = Readonly<{
@@ -802,6 +802,7 @@ export type GetGroupCredentialsOptionsType = Readonly<{
 export type GetGroupCredentialsResultType = Readonly<{
   pni?: UntaggedPniString | null;
   credentials: ReadonlyArray<GroupCredentialType>;
+  callLinkAuthCredentials: ReadonlyArray<GroupCredentialType>;
 }>;
 
 const verifyServiceIdResponse = z.object({
@@ -1321,6 +1322,10 @@ export function initialize({
     });
 
     socketManager.on('authError', () => {
+      window.Whisper.events.trigger('unlinkAndDisconnect');
+    });
+
+    socketManager.on('deviceConflict', () => {
       window.Whisper.events.trigger('unlinkAndDisconnect');
     });
 
@@ -1979,7 +1984,7 @@ export function initialize({
         contentType: 'application/octet-stream',
         proxyUrl,
         responseType: 'bytes',
-        timeout: 0,
+        timeout: 90 * SECOND,
         type: 'GET',
         redactUrl: (href: string) => {
           const pattern = RegExp(escapeRegExp(path), 'g');
@@ -2262,9 +2267,7 @@ export function initialize({
           fetchesMessages: true,
           registrationId,
           pniRegistrationId,
-          capabilities: {
-            pni: true,
-          },
+          capabilities: {},
           unidentifiedAccessKey: Bytes.toBase64(accessKey),
         },
         requireAtomic: true,
@@ -2315,9 +2318,7 @@ export function initialize({
           name: encryptedDeviceName,
           registrationId,
           pniRegistrationId,
-          capabilities: {
-            pni: true,
-          },
+          capabilities: {},
         },
         aciSignedPreKey: serializeSignedPreKey(aciSignedPreKey),
         pniSignedPreKey: serializeSignedPreKey(pniSignedPreKey),
@@ -3118,10 +3119,6 @@ export function initialize({
       );
     }
 
-    type CredentialResponseType = {
-      credentials: Array<GroupCredentialType>;
-    };
-
     async function getGroupCredentials({
       startDayInMs,
       endDayInMs,
@@ -3136,7 +3133,7 @@ export function initialize({
           'pniAsServiceId=true',
         httpType: 'GET',
         responseType: 'json',
-      })) as CredentialResponseType;
+      })) as GetGroupCredentialsResultType;
 
       return response;
     }

@@ -44,6 +44,10 @@
     "messageformat": "Voeg “{contact}” by die groep \"{group}\"",
     "description": "Shown in the confirmation dialog body when adding a contact to a group"
   },
+  "icu:AddUserToAnotherGroupModal__search-placeholder": {
+    "messageformat": "Soek",
+    "description": "Placeholder to use when searching for groups in the AddUserToAnotherGroupModal"
+  },
   "icu:AddUserToAnotherGroupModal__toast--user-added-to-group": {
     "messageformat": "{contact} is by {group} gevoeg",
     "description": "Shown in toast after a user is added to an existing group"
@@ -317,7 +321,7 @@
     "description": "Shown as a header for non-pinned conversations in the left pane"
   },
   "icu:LeftPane--corrupted-username--text": {
-    "messageformat": "Iets het verkeerd geloop met jou gebruikernaam, dit is nie meer aan jou rekening toegewys nie. Jy kan probeer om dit weer op te stel of 'n nuwe een kies.",
+    "messageformat": "Iets het verkeerd geloop met jou gebruikersnaam, dit is nie meer aan jou rekening toegewys nie. Jy kan probeer om dit weer op te stel of 'n nuwe een kies.",
     "description": "Text of corrupted username banner in the left pane"
   },
   "icu:LeftPane--corrupted-username--action-text": {
@@ -325,12 +329,48 @@
     "description": "Text of the button in the corrupted username banner in the left pane"
   },
   "icu:LeftPane--corrupted-username-link--text": {
-    "messageformat": "Iets het verkeerd geloop met jou QR-kode en gebruikernaamskakel, dit is nie meer geldig nie. Skep 'n nuwe skakel om met ander te deel.",
+    "messageformat": "Iets het verkeerd geloop met jou QR-kode en gebruikersnaamskakel, dit is nie meer geldig nie. Skep 'n nuwe skakel om met ander te deel.",
     "description": "Text of corrupted username link banner in the left pane"
   },
   "icu:LeftPane--corrupted-username-link--action-text": {
     "messageformat": "Stel nou reg",
     "description": "Text of the button in the corrupted username link banner in the left pane"
+  },
+  "icu:LeftPane__compose__findByUsername": {
+    "messageformat": "Vind volgens gebruikersnaam",
+    "description": "Text of the button displayed when clicking compose button in left pane"
+  },
+  "icu:LeftPane__compose__findByPhoneNumber": {
+    "messageformat": "Vind volgens telefoonnommer",
+    "description": "Text of the button displayed when clicking compose button in left pane"
+  },
+  "icu:LeftPaneFindByHelper__title--findByUsername": {
+    "messageformat": "Vind volgens gebruikersnaam",
+    "description": "Title of the left pane when looking up someone by username"
+  },
+  "icu:LeftPaneFindByHelper__title--findByPhoneNumber": {
+    "messageformat": "Vind volgens telefoonnommer",
+    "description": "Title of the left pane when looking up someone by phone number"
+  },
+  "icu:LeftPaneFindByHelper__placeholder--findByUsername": {
+    "messageformat": "Gebruikersnaam",
+    "description": "Placeholder of the search input in left pane when looking up someone by username"
+  },
+  "icu:LeftPaneFindByHelper__placeholder--findByPhoneNumber": {
+    "messageformat": "Telefoonnommer",
+    "description": "Placeholder of the search input in left pane when looking up someone by phone number"
+  },
+  "icu:LeftPaneFindByHelper__description--findByUsername": {
+    "messageformat": "Voer 'n gebruikersnaam in gevolg deur 'n kolletjie en sy stel nommers.",
+    "description": "Description displayed under search input in left pane when looking up someone by username"
+  },
+  "icu:CountryCodeSelect__placeholder": {
+    "messageformat": "Landkode",
+    "description": "Placeholder displayed as default value of country code select element"
+  },
+  "icu:CountryCodeSelect__Modal__title": {
+    "messageformat": "Landkode",
+    "description": "Title of the country code modal"
   },
   "icu:NavTabsToggle__showTabs": {
     "messageformat": "Wys navigasie-ikone",
@@ -1351,6 +1391,38 @@
   "icu:showSafetyNumber": {
     "messageformat": "Bekyk veiligheidsnommer"
   },
+  "icu:AboutContactModal__title": {
+    "messageformat": "Oor",
+    "description": "Title of About modal"
+  },
+  "icu:AboutContactModal__title--myself": {
+    "messageformat": "Jy",
+    "description": "Title of About modal when viewing your own information"
+  },
+  "icu:AboutContactModal__verified": {
+    "messageformat": "Geverifieer",
+    "description": "Text of a button on About modal leading to a safety number modal"
+  },
+  "icu:AboutContactModal__blocked": {
+    "messageformat": "{name} is versper",
+    "description": "Text of a row on About modal when user is blocked"
+  },
+  "icu:AboutContactModal__message-request": {
+    "messageformat": "Hangende boodskapversoek",
+    "description": "Text of a row on About modal when user is in message request state"
+  },
+  "icu:AboutContactModal__no-dms": {
+    "messageformat": "Geen direkte boodskappe nie met {name}",
+    "description": "Text of a row on About modal when there are no direct messages with a user"
+  },
+  "icu:AboutContactModal__signal-connection": {
+    "messageformat": "Signal-kontak",
+    "description": "Text of a button on About modal leading to an education modal"
+  },
+  "icu:AboutContactModal__system-contact": {
+    "messageformat": "{name} is in jou stelselkontakte",
+    "description": "Text of a row in the About modal describing that the contact is in system contacts"
+  },
   "icu:ContactModal__showSafetyNumber": {
     "messageformat": "Bekyk veiligheidsnommer",
     "description": "Contact modal, label for button to show safety number modal"
@@ -1519,7 +1591,7 @@
     "description": "Shown on a button below a 'conversations were merged' timeline notification"
   },
   "icu:ConversationMerge--explainer-dialog--line-1": {
-    "messageformat": "Nadat jy boodskappe met {obsoleteConversationTitle} uitgeruil het, het jy agtergekom dat hierdie nommer aan {conversationTitle} behoort. Hulle foonnommer is privaat.",
+    "messageformat": "Nadat jy boodskappe met {obsoleteConversationTitle} uitgeruil het, het jy agtergekom dat hierdie nommer aan {conversationTitle} behoort. Hulle telefoonnommer is privaat.",
     "description": "Contents of a dialog shown after clicking 'learn more' button on a conversation merge event."
   },
   "icu:ConversationMerge--explainer-dialog--line-2": {
@@ -1626,6 +1698,10 @@
     "messageformat": "My rekenaar",
     "description": "The placeholder for the 'choose device name' input"
   },
+  "icu:Preferences--phone-number": {
+    "messageformat": "Telefoonnommer",
+    "description": "The label in settings panel shown for the phone number associated with user's account"
+  },
   "icu:Preferences--device-name": {
     "messageformat": "Toestelnaam",
     "description": "The label in settings panel shown for the user-provided name for this desktop instance"
@@ -1700,6 +1776,54 @@
   "icu:calling__call-is-full": {
     "messageformat": "Oproep is vol",
     "description": "Text in the call lobby when you can't join because the call is full"
+  },
+  "icu:calling__cant-join": {
+    "messageformat": "Can't join call",
+    "description": "Modal dialog title when you can't join a call"
+  },
+  "icu:calling__dialog-already-in-call": {
+    "messageformat": "You are already in a call.",
+    "description": "Error message when clicking a call link to join a call, but you're in a call already."
+  },
+  "icu:calling__call-link-connection-issues": {
+    "messageformat": "Could not fetch call link information. Please check your network connection and try again.",
+    "description": "Error message when unable to fetch call link info from server."
+  },
+  "icu:calling__call-link-copied": {
+    "messageformat": "Call link copied.",
+    "description": "Toast shown when a call link is copied to the clipboard."
+  },
+  "icu:calling__call-link-no-longer-valid": {
+    "messageformat": "This call link is no longer valid.",
+    "description": "Error message when a call link has been revoked or expires."
+  },
+  "icu:calling__call-link-default-title": {
+    "messageformat": "Signal Call",
+    "description": "Default title for Signal call links."
+  },
+  "icu:calling__join-request-denied": {
+    "messageformat": "Your request to join this call has been denied.",
+    "description": "Error message when a request to join a call link call was rejected by a call admin."
+  },
+  "icu:calling__join-request-denied-title": {
+    "messageformat": "Join request denied",
+    "description": "Title of error when a request to join a call link call was rejected by a call admin."
+  },
+  "icu:calling__removed-from-call": {
+    "messageformat": "Someone has removed you from the call.",
+    "description": "Error message when in a call then a call admin removes you."
+  },
+  "icu:calling__removed-from-call-title": {
+    "messageformat": "Removed from call",
+    "description": "Title of error when in a call then a call admin removes you."
+  },
+  "icu:CallingLobby__CallLinkNotice": {
+    "messageformat": "Anyone who joins this call via the link will see your name and photo.",
+    "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared."
+  },
+  "icu:CallingLobby__CallLinkNotice--phone-sharing": {
+    "messageformat": "Anyone who joins this call via the link will see your name, photo, and phone number.",
+    "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared, when the phone number sharing account setting is enabled."
   },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "Sluit aan",
@@ -2328,7 +2452,7 @@
     "description": "Label for header to go to stories view"
   },
   "icu:contactSearchPlaceholder": {
-    "messageformat": "Soek volgens naam of telefoonnommer",
+    "messageformat": "Naam, gebruikernaam of nommer",
     "description": "Placeholder to use when searching for contacts in the composer"
   },
   "icu:noContactsFound": {
@@ -2368,7 +2492,7 @@
     "description": "Error message when you try to send an edit after message becomes too old"
   },
   "icu:startConversation--username-not-found": {
-    "messageformat": "Gebruiker nie gevind nie. {atUsername} is nie ’n Signal-gebruiker nie; maak seker jy het die volledige gebruikersnaam ingevoer.",
+    "messageformat": "{atUsername} is nie 'n Signal-gebruiker nie. Maak seker dat jy die volledige gebruikersnaam ingevoer het.",
     "description": "Shown in dialog if username is not found. Note that 'username' will be the output of at-username"
   },
   "icu:startConversation--phone-number-not-found": {
@@ -2615,6 +2739,10 @@
   "icu:message--attachmentTooBig--multiple": {
     "messageformat": "Sommige aanhegsels is te groot om te vertoon.",
     "description": "Shown in a message bubble if any attachments are left on message when too-large attachments are dropped"
+  },
+  "icu:message--call-link-description": {
+    "messageformat": "Use this link to join a Signal call",
+    "description": "Shown in message previews for Signal call links."
   },
   "icu:donation--missing": {
     "messageformat": "Kan nie detail van skenking herroep nie",
@@ -3588,6 +3716,14 @@
     "messageformat": "Oudio-oproep",
     "description": "Shown in the call lobby for a direct 1:1 call when the caller's video is disabled, to specify that an audio call will be placed when clicking the Start button."
   },
+  "icu:CallControls__InfoDisplay--adhoc-call": {
+    "messageformat": "Call link",
+    "description": "Shown in the call lobby for a call link."
+  },
+  "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
+    "messageformat": "Waiting to be let in",
+    "description": "Shown in the call lobby for call link calls when requesting to join a call which requires admin approval."
+  },
   "icu:CallControls__JoinLeaveButton--hangup-1-1": {
     "messageformat": "Beëindig",
     "description": "Title for the hangup button for a direct 1:1 call with only 2 participants."
@@ -3727,6 +3863,10 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "'n Venster",
     "description": "Title for the select your screen sharing sources modal"
+  },
+  "icu:CallingAdhocCallInfo__CopyLink": {
+    "messageformat": "Copy link",
+    "description": "Menu item in the in-call info popup for call link calls. The action is to add the call link to the clipboard."
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video",
@@ -5189,7 +5329,7 @@
     "description": "Title for the contact name spoofing review dialog in groups"
   },
   "icu:ContactSpoofingReviewDialog__group__description": {
-    "messageformat": "{count, plural, one {{count,number} groeplid het soortgelyke name. Hersien die lede hier onder of kies om op te tree.} other {{count,number} groeplede het soortgelyke name. Hersien die lede hier onder of kies om op te tree.}}",
+    "messageformat": "{count, plural, one {1 group member has the same name, review the member below or choose to take action.} other {{count,number} group members have the same name, review the members below or choose to take action.}}",
     "description": "Description for the group contact spoofing review dialog"
   },
   "icu:ContactSpoofingReviewDialog__group__multiple-conflicts__description": {
@@ -5198,7 +5338,15 @@
   },
   "icu:ContactSpoofingReviewDialog__group__members-header": {
     "messageformat": "Lede",
-    "description": "Header in the group contact spoofing review dialog. After this header, there will be a list of members"
+    "description": "(Deleted 01/31/2024) Header in the group contact spoofing review dialog. After this header, there will be a list of members"
+  },
+  "icu:ContactSpoofingReviewDialog__group__members__no-shared-groups": {
+    "messageformat": "Geen ander groepe gemeen nie",
+    "description": "Informational text displayed next to a contact on ContactSpoofingReviewDialog"
+  },
+  "icu:ContactSpoofingReviewDialog__signal-connection": {
+    "messageformat": "Signal-kontak",
+    "description": "Text of a button on ContactSpoofingReviewDialog leading to an education modal"
   },
   "icu:ContactSpoofingReviewDialog__group__name-change-info": {
     "messageformat": "Het onlangs hul profielaam van {oldName} na {newName} verander.",
@@ -5493,15 +5641,19 @@
     "description": "Default text for username field"
   },
   "icu:ProfileEditor--username--corrupted--body": {
-    "messageformat": "Iets het verkeerd geloop met jou gebruikernaam, dit is nie meer aan jou rekening toegewys nie.",
+    "messageformat": "Iets het verkeerd geloop met jou gebruikersnaam, dit is nie meer aan jou rekening toegewys nie. Jy kan probeer om dit weer op te stel of 'n nuwe een kies.",
     "description": "Text of confirmation modal when the username gets corrupted"
   },
   "icu:ProfileEditor--username--corrupted--delete-button": {
-    "messageformat": "Skrap gebruikernaam",
-    "description": "Button text for deletion of the username in case of corruption"
+    "messageformat": "Skrap gebruikersnaam",
+    "description": "(Deleted 02/01/2024) Button text for deletion of the username in case of corruption"
   },
   "icu:ProfileEditor--username--corrupted--create-button": {
-    "messageformat": "Skep gebruikernaam",
+    "messageformat": "Skep gebruikersnaam",
+    "description": "(Deleted 02/01/2024) Button text for creation of a new username in case of corruption"
+  },
+  "icu:ProfileEditor--username--corrupted--fix-button": {
+    "messageformat": "Stel nou reg",
     "description": "Button text for creation of a new username in case of corruption"
   },
   "icu:ProfileEditor__username-link": {
@@ -5509,7 +5661,7 @@
     "description": "Label of a profile editor row that navigates to username link and qr code modal"
   },
   "icu:ProfileEditor__username__error-icon": {
-    "messageformat": "Gebruikernaam moet teruggestel word",
+    "messageformat": "Gebruikersnaam moet teruggestel word",
     "description": "Accessibility title of an icon in profile editor"
   },
   "icu:ProfileEditor__username-link__error-icon": {
@@ -5529,11 +5681,11 @@
     "description": "Title text for username modal"
   },
   "icu:ProfileEditor--username--check-characters": {
-    "messageformat": "Gebruikername mag slegs a-z, 0-9 en _ bevat",
+    "messageformat": "Gebruikersname mag slegs a-z, 0-9 en _ bevat",
     "description": "Shown if user has attempted to use forbidden characters in username"
   },
   "icu:ProfileEditor--username--check-starting-character": {
-    "messageformat": "Gebruikername mag nie met ’n syfer begin nie.",
+    "messageformat": "Gebruikersname mag nie met ’n syfer begin nie.",
     "description": "Shown if user has attempted to begin their username with a number"
   },
   "icu:ProfileEditor--username--check-character-min": {
@@ -5541,11 +5693,11 @@
     "description": "Shown if user has attempted to enter a username with too few characters - currently min is 3"
   },
   "icu:ProfileEditor--username--check-character-max": {
-    "messageformat": "Gebruikername moet hoogstens {max,number} karakters bevat.",
+    "messageformat": "Gebruikersname moet hoogstens {max,number} karakters bevat.",
     "description": "Shown if user has attempted to enter a username with too many characters - currently min is 25"
   },
   "icu:ProfileEditor--username--check-discriminator-min": {
-    "messageformat": "Ongeldige gebruikernaam, voer 'n minimum van 2 syfers in.",
+    "messageformat": "Ongeldige gebruikersnaam, voer 'n minimum van 2 syfers in.",
     "description": "Shown if user has attempted to enter a username with too few digits in discriminator - currently min is 2"
   },
   "icu:ProfileEditor--username--check-discriminator-all-zero": {
@@ -5553,19 +5705,23 @@
     "description": "Shown if user has attempted to enter a username with 00 as discriminator"
   },
   "icu:ProfileEditor--username--check-discriminator-leading-zero": {
-    "messageformat": "Hierdie nommer kan nie met 00 begin nie. Voer 'n syfer tussen 1 en 9 in",
+    "messageformat": "Getalle met meer as 2 syfers kan nie met 0 begin nie",
     "description": "Shown if user has attempted to enter a username with leading 0 in discriminator"
+  },
+  "icu:ProfileEditor--username--too-many-attempts": {
+    "messageformat": "Te veel pogings, probeer asseblief later weer",
+    "description": "Shown if user has made too many attempts to pick a username and has to wait before retrying"
   },
   "icu:ProfileEditor--username--unavailable": {
     "messageformat": "Hierdie gebruikersnaam is nie beskikbaar nie",
     "description": "Shown if the username is not available for registration"
   },
   "icu:ProfileEditor--username--check-username-taken": {
-    "messageformat": "Hierdie gebruikernaam is reeds in gebruik.",
+    "messageformat": "Hierdie gebruikersnaam is reeds in gebruik.",
     "description": "Shown if user has attempted to save a username which is not available"
   },
   "icu:ProfileEditor--username--general-error": {
-    "messageformat": "Jou gebruikernaam kon nie bewaar word nie. Gaan jou verbinding na en probeer weer.",
+    "messageformat": "Jou gebruikersnaam kon nie bewaar word nie. Gaan jou verbinding na en probeer weer.",
     "description": "Shown if something unknown has gone wrong with username save."
   },
   "icu:ProfileEditor--username--reservation-gone": {
@@ -5573,7 +5729,7 @@
     "description": "Shown if username reservation has expired and new one needs to be generated."
   },
   "icu:ProfileEditor--username--delete-general-error": {
-    "messageformat": "Jou gebruikernaam kon nie verwyder word nie. Gaan jou verbinding na en probeer weer.",
+    "messageformat": "Jou gebruikersnaam kon nie verwyder word nie. Gaan jou verbinding na en probeer weer.",
     "description": "Shown if something unknown has gone wrong with username delete."
   },
   "icu:ProfileEditor--username--copied-username": {
@@ -5589,7 +5745,7 @@
     "description": "Shown as aria label for spinner icon next to username"
   },
   "icu:ProfileEditor--username--delete-username": {
-    "messageformat": "Skrap gebruikernaam",
+    "messageformat": "Skrap gebruikersnaam",
     "description": "Shown as aria label for trash icon next to username"
   },
   "icu:ProfileEditor--username--confirm-delete-body-2": {
@@ -5599,6 +5755,10 @@
   "icu:ProfileEditor--username--confirm-delete-button": {
     "messageformat": "Skrap",
     "description": "Shown in dialog button if user has saved an empty string to delete their username"
+  },
+  "icu:ProfileEditor--username--delete-unavailable-notice": {
+    "messageformat": "Om jou gebruikersnaam te skrap, maak Signal op jou foon oop en gaan na Instellings > Profiel.",
+    "description": "Shown in dialog body if user is trying to delete username, but it is only supported on mobile"
   },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "Kopieer of skrap gebruikersnaam",
@@ -5632,9 +5792,33 @@
     "messageformat": "Wil jy hierdie veranderinge weggooi?",
     "description": "ConfirmationDialog text for discarding changes"
   },
+  "icu:ConfirmationDialog__Title--in-call-close-requested": {
+    "messageformat": "Close Signal and end the call?",
+    "description": "ConfirmationDialog title when trying to close the app while in a call."
+  },
+  "icu:ConfirmationDialog__Title--close-requested-not-now": {
+    "messageformat": "Not Now",
+    "description": "Confirmation dialog button to cancel closing the app, while in a call and trying to close the app."
+  },
+  "icu:ProfileEditor--edit-photo": {
+    "messageformat": "Wysig foto",
+    "description": "Text of a button on profile editor that leads to the avatar editor"
+  },
   "icu:ProfileEditor--info--link": {
     "messageformat": "Jou profiel is geënkripteer. Jou profiel en veranderinge daaraan sal vir jou kontakte sigbaar wees wanneer jy nuwe kletse begin of aanvaar. <learnMoreLink>Vind meer uit</learnMoreLink>",
-    "description": "Information shown at the bottom of the profile editor section"
+    "description": "(Deleted 02/01/2024) Information shown at the bottom of the profile editor section"
+  },
+  "icu:ProfileEditor--info--general": {
+    "messageformat": "Jou profiel en veranderinge daaraan sal sigbaar wees vir mense aan wie jy boodskappe stuur, vir jou kontakte en vir groepe.",
+    "description": "Information shown in profile editor below profile name and about fields"
+  },
+  "icu:ProfileEditor--info--pnp": {
+    "messageformat": "Jou gebruikersnaam, QR-kode en -skakel is nie op jou profiel sigbaar nie. Deel dit slegs met mense wie jy vertrou.",
+    "description": "Information shown in profile editor below pnp settings when username is set"
+  },
+  "icu:ProfileEditor--info--pnp--no-username": {
+    "messageformat": "Mense kan nou vir jou 'n boodskap stuur deur jou opsionele gebruikersnaam te gebruik sodat jy nie jou telefoonnommer vir mense hoef te gee nie.",
+    "description": "Information shown in profile editor below pnp settings when no username is set"
   },
   "icu:Bio--speak-freely": {
     "messageformat": "Sê jou sê",
@@ -5792,17 +5976,25 @@
     "messageformat": "Kies wie jou telefoonnommer kan sien en wie jou daarmee op Signal kan kontak.",
     "description": "Body of Phone Number row in Privacy section of Preferences window"
   },
+  "icu:Preferences__pnp__row--button": {
+    "messageformat": "Verander…",
+    "description": "Text of Phone Number row button in Privacy section of Preferences window"
+  },
   "icu:Preferences__pnp__sharing--title": {
     "messageformat": "Wie my nommer kan sien",
     "description": "Title for the phone number sharing setting row"
   },
   "icu:Preferences__pnp__sharing--description--everyone": {
-    "messageformat": "Jou foonnommer sal sigbaar wees vir mense en groepe aan wie jy boodskappe stuur.",
+    "messageformat": "Jou telefoonnommer sal sigbaar wees vir mense en groepe aan wie jy boodskappe stuur.",
     "description": "Description for the phone number sharing setting row when the value is Everyone"
   },
   "icu:Preferences__pnp__sharing--description--nobody": {
-    "messageformat": "Niemand sal jou foonnommer in Signal sien nie, selfs indien jy vir hulle boodskappe stuur.",
-    "description": "Description for the phone number sharing setting row when the value is Nobody"
+    "messageformat": "Jou telefoonnommer sal nie vir enigiemand sigbaar wees nie, tensy hulle dit in hul foon se kontakte gestoor het.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody and phone number discoverability setting is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody--not-discoverable": {
+    "messageformat": "Jou telefoonnommer sal nie vir enigiemand sigbaar wees nie.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody and phone number discoverability setting is Nobody"
   },
   "icu:Preferences__pnp--page-title": {
     "messageformat": "Telefoonnommer",
@@ -5821,7 +6013,7 @@
     "description": "Title for the phone number discoverability setting row"
   },
   "icu:Preferences__pnp__discoverability--description--everyone": {
-    "messageformat": "Enigiemand wat jou foonnommer het, sal sien jy is op Signal en kan met jou begin klets.",
+    "messageformat": "Enigiemand wat jou telefoonnommer het, sal sien jy is op Signal en kan met jou begin klets.",
     "description": "Description for the phone number discoverability setting row wth the value is everyone"
   },
   "icu:Preferences__pnp__discoverability--description--nobody": {
@@ -5841,11 +6033,11 @@
     "description": "Title for the messaging settings"
   },
   "icu:Preferences--see-me": {
-    "messageformat": "Sien my foonnommer",
+    "messageformat": "Sien my telefoonnommer",
     "description": "Label for the see my phone number setting"
   },
   "icu:Preferences--find-me": {
-    "messageformat": "Vind my op my foonnommer",
+    "messageformat": "Vind my op my telefoonnommer",
     "description": "Label for the find me by my phone number setting"
   },
   "icu:Preferences--read-receipts": {
@@ -6197,7 +6389,7 @@
     "description": "Payment event notification check device label"
   },
   "icu:SignalConnectionsModal__title": {
-    "messageformat": "Signal-verbindings",
+    "messageformat": "Signal-kontakte",
     "description": "The phrase/term: 'Signal Connections'"
   },
   "icu:SignalConnectionsModal__header": {
@@ -6377,7 +6569,7 @@
     "description": "Modal title when hiding people from my stories"
   },
   "icu:StoriesSettings__mine__all--label": {
-    "messageformat": "Alle Signal-verbindings",
+    "messageformat": "Alle Signal-kontakte",
     "description": "Input label to describe all signal connections"
   },
   "icu:StoriesSettings__mine__all--description": {
@@ -6497,7 +6689,7 @@
     "description": "Modal title for setting privacy for My Story"
   },
   "icu:SendStoryModal__privacy-disclaimer--link": {
-    "messageformat": "Kies watter Signal-verbindings jou storie kan sien. Jy kan dit altyd in privaatheidinstellings verander. <learnMoreLink>Vind meer uit.</learnMoreLink>",
+    "messageformat": "Kies watter Signal-kontakte jou storie kan sien. Jy kan dit altyd in privaatheidinstellings verander. <learnMoreLink>Vind meer uit.</learnMoreLink>",
     "description": "Disclaimer on how changes to story settings work"
   },
   "icu:SendStoryModal__delete-story": {
@@ -6513,11 +6705,11 @@
     "description": "Alert body for groups that non-admins cannot send stories to"
   },
   "icu:SendStoryModal__my-stories-description-all": {
-    "messageformat": "{viewersCount, plural, one {All Signal Connections · 1 Viewer} other {All Signal Connections · {viewersCount,number} Viewers}}",
+    "messageformat": "{viewersCount, plural, one {Alle Signal-kontakte · {viewersCount,number} kyker} other {Alle Signal-kontakte · {viewersCount,number} kykers}}",
     "description": "Shown as a subtitle under My Stories option in the send-story-to dialog when not exluding anyone"
   },
   "icu:SendStoryModal__my-stories-description-excluding": {
-    "messageformat": "{excludedCount, plural, one {All Signal Connections · 1 Excluded} other {All Signal Connections · {excludedCount,number} Excluded}}",
+    "messageformat": "{excludedCount, plural, one {Alle Signal-kontakte · {excludedCount,number} 1 uitgesluit} other {Alle Signal-kontakte · {excludedCount,number} uitgesluit}}",
     "description": "Shown as a subtitle under My Stories option in the send-story-to dialog when excluding some"
   },
   "icu:SendStoryModal__private-story-description": {
@@ -6788,6 +6980,10 @@
     "messageformat": "Het op storie van {name} af gereageer",
     "description": "Label for when a person reacts to a story"
   },
+  "icu:Quote__story-reaction--you": {
+    "messageformat": "Reacted to your story",
+    "description": "Label for when someone reacts to your story"
+  },
   "icu:Quote__story-reaction--single": {
     "messageformat": "Het op 'n storie gereageer",
     "description": "Used whenever we can't find a user's first name"
@@ -6817,7 +7013,7 @@
     "description": "Placeholder for the username field"
   },
   "icu:EditUsernameModalBody__username-helper": {
-    "messageformat": "Gebruikersname laat toe dat andere aan jou boodskappe kan stuur sonder dat hulle jou telefoonnommer nodig het. Hulle word gekoppel aan 'n stel syfers om jou adres privaat te help hou.",
+    "messageformat": "Gebruikersname gaan altyd met 'n stel syfers gepaard.",
     "description": "Shown on the edit username screen"
   },
   "icu:EditUsernameModalBody__learn-more": {
@@ -6840,8 +7036,16 @@
     "messageformat": "Gaan voort",
     "description": "Text of the primary button on username change confirmation modal"
   },
+  "icu:EditUsernameModalBody__recover-confirmation": {
+    "messageformat": "As jy jou gebruikersnaam herwin, sal dit jou bestaande QR-kode en skakel terugstel. Is jy seker?",
+    "description": "Body of the confirmation dialog displayed when user is about to recover their username"
+  },
+  "icu:EditUsernameModalBody__username-recovered__text": {
+    "messageformat": "Jou QR-kode en skakel is teruggestel en jou gebruikersnaam is {username}",
+    "description": "Text of toast displayed upon successful recovery of username"
+  },
   "icu:UsernameLinkModalBody__hint": {
-    "messageformat": "Scan this QR code with your phone to chat with me on Signal.",
+    "messageformat": "Skandeer hierdie QR-kode met jou foon om met my op Signal te klets.",
     "descrption": "Text of the hint displayed below generated QR code on the printable image."
   },
   "icu:UsernameLinkModalBody__save": {
@@ -6873,7 +7077,7 @@
     "description": "ARIA label of button for selecting username link color"
   },
   "icu:UsernameLinkModalBody__reset__confirm": {
-    "messageformat": "As jy jou QR-kode terugstel, sal jou bestaande QR-kode en skakel nie meer werk nie.",
+    "messageformat": "As jy jou QR-kode en -skakel terugstel, sal jou bestaande QR-kode en -skakel nie meer werk nie.",
     "description": "Text of confirmation modal when resetting the username link"
   },
   "icu:UsernameLinkModalBody__resetting-link": {
@@ -6881,35 +7085,43 @@
     "description": "Text shown when resetting the username link"
   },
   "icu:UsernameLinkModalBody__error__text": {
-    "messageformat": "QR-kode en skakel nie gestel nie. Gaan jou netwerkverbinding na en probeer weer.",
+    "messageformat": "Iets het verkeerd geloop met jou QR-kode en -skakel, dit is nie meer geldig nie. Probeer dit terugstel om 'n nuwe QR-kode en -skakel te skep.",
     "description": "Text of the confirmation dialog shown on username link error"
   },
+  "icu:UsernameLinkModalBody__error__fix-now": {
+    "messageformat": "Stel nou reg",
+    "description": "Text of the button in a confirmation dialog shown on username link error"
+  },
+  "icu:UsernameLinkModalBody__recovered__text": {
+    "messageformat": "Jou QR-kode en -skakel is teruggestel en 'n nuwe QR-kode en -skakel is geskep.",
+    "description": "Text of the confirmation dialog shown on successful username link recovery"
+  },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "New ways to connect",
+    "messageformat": "Nuwe maniere om kontak te maak",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number__title": {
-    "messageformat": "Phone number privacy",
+    "messageformat": "Telefoonnommerprivaatheid",
     "description": "Title of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number__body": {
-    "messageformat": "Your phone number is no longer visible in chats. If your number is saved to a friend’s contacts, they will still see it.",
+    "messageformat": "Jou telefoonnommer is nie meer in kletse sigbaar nie. Indien jou nommer in 'n vriend se kontakte gestoor is, sal hulle dit steeds sien.",
     "description": "Body of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__username__title": {
-    "messageformat": "Usernames",
+    "messageformat": "Gebruikersname",
     "description": "Title of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__username__body": {
-    "messageformat": "People can now message you using your optional username so you don’t have to give out your phone number. Usernames aren’t visible on your profile.",
+    "messageformat": "Mense kan nou vir jou 'n boodskap stuur deur jou opsionele gebruikersnaam te gebruik sodat jy nie jou telefoonnommer vir mense hoef te gee nie. Gebruikersname is nie op jou profiel sigbaar nie.",
     "description": "Body of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__qr__title": {
-    "messageformat": "QR codes and links",
+    "messageformat": "QR-kodes en skakels",
     "description": "Title of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__qr__body": {
-    "messageformat": "Usernames have a unique QR code and link you can share with friends to quickly start a chat with you.",
+    "messageformat": "Gebruikersname het 'n unieke QR-kode en skakel wat jy met vriende kan deel om vinnig 'n klets met jou te begin.",
     "description": "Body of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
@@ -6929,27 +7141,27 @@
     "description": "(Deleted 01/16/2023) Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Set up username",
+    "messageformat": "Stel gebruikersnaam op",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__skip": {
-    "messageformat": "Not now",
+    "messageformat": "Nie nou nie",
     "description": "Text of the secondary button on username onboarding modal"
   },
   "icu:UsernameMegaphone__title": {
-    "messageformat": "New ways to connect",
+    "messageformat": "Nuwe maniere om kontak te maak",
     "description": "Title of username megaphone"
   },
   "icu:UsernameMegaphone__body": {
-    "messageformat": "Introducing phone number privacy, optional usernames and links.",
+    "messageformat": "Ons stel bekend telefoonnommerprivaatheid, opsionele gebruikersname en skakels.",
     "description": "Body of username megaphone"
   },
   "icu:UsernameMegaphone__learn-more": {
-    "messageformat": "Learn more",
+    "messageformat": "Vind meer uit",
     "description": "Text of the primary button on username megaphone"
   },
   "icu:UsernameMegaphone__dismiss": {
-    "messageformat": "Dismiss",
+    "messageformat": "Wys weg",
     "description": "Text of the secondary button on username megaphone"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -7124,13 +7336,7 @@
     "messageformat": "Klein veranderings, foutregstellings en prestasieverbeterings. Dankie dat jy Signal gebruik!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.46--0": {
-    "messageformat": "Die verstek-lettertipes vir Urdu is bygewerk vir verbeterde leesbaarheid wanneer hierdie taal gekies word (Signal-instellings > Voorkoms > Taal). Dankie, {linkToGithub}!"
-  },
-  "icu:WhatsNew__v6.47--0": {
-    "messageformat": "If you spend a lot of time trying to pick out the perfect emoji reaction for every situation, you'll be <emojify>🎉</emojify> to know that we fixed a bug with typing indicators that sometimes caused the emoji selection box to disappear while you were in the middle of pondering your choices."
-  },
-  "icu:WhatsNew__v6.47--1": {
-    "messageformat": "Signal will now match your selected title bar color on Microsoft Windows. When all of your windows in Windows look the same, that's a common theme."
+  "icu:WhatsNew__v7.1--0": {
+    "messageformat": "This update enables support for all of the new emoji characters in Emoji version 15.1. People keep asking us what our favorite new emoji is, but answering that question is a “lime” we won't cross."
   }
 }

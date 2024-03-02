@@ -12,7 +12,6 @@ import { omit } from 'lodash';
 import type { ListRowProps } from 'react-virtualized';
 
 import type { LocalizerType, ThemeType } from '../../../../types/Util';
-import { getUsernameFromSearch } from '../../../../types/Username';
 import { strictAssert, assertDev } from '../../../../util/assert';
 import { refMerger } from '../../../../util/refMerger';
 import { useRestoreFocus } from '../../../../hooks/useRestoreFocus';
@@ -59,13 +58,13 @@ export type StatePropsType = {
   ourUsername: string | undefined;
   searchTerm: string;
   selectedContacts: ReadonlyArray<ConversationType>;
+  username: string | undefined;
 
   confirmAdds: () => void;
   onClose: () => void;
   removeSelectedContact: (_: string) => void;
   setSearchTerm: (_: string) => void;
   toggleSelectedContact: (conversationId: string) => void;
-  isUsernamesEnabled: boolean;
 } & Pick<
   LookupConversationWithoutServiceIdActionsType,
   'lookupConversationWithoutServiceId'
@@ -97,29 +96,21 @@ export function ChooseGroupMembersModal({
   toggleSelectedContact,
   lookupConversationWithoutServiceId,
   showUserNotFoundModal,
-  isUsernamesEnabled,
+  username,
 }: PropsType): JSX.Element {
   const [focusRef] = useRestoreFocus();
 
-  const parsedUsername = getUsernameFromSearch(searchTerm);
-  let username: string | undefined;
-  let isUsernameChecked = false;
-  let isUsernameVisible = false;
-  if (isUsernamesEnabled) {
-    username = parsedUsername;
+  const isUsernameChecked = selectedContacts.some(
+    contact => contact.username === username
+  );
 
-    isUsernameChecked = selectedContacts.some(
-      contact => contact.username === username
-    );
-
-    isUsernameVisible =
-      Boolean(username) &&
-      username !== ourUsername &&
-      candidateContacts.every(contact => contact.username !== username);
-  }
+  const isUsernameVisible =
+    Boolean(username) &&
+    username !== ourUsername &&
+    candidateContacts.every(contact => contact.username !== username);
 
   let phoneNumber: ParsedE164Type | undefined;
-  if (!parsedUsername) {
+  if (!username) {
     phoneNumber = parseAndFormatPhoneNumber(searchTerm, regionCode);
   }
 

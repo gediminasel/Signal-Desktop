@@ -75,6 +75,7 @@ export default {
     customColors: {},
     defaultConversationColor: DEFAULT_CONVERSATION_COLOR,
     deviceName: 'Work Windows ME',
+    phoneNumber: '+1 555 123-4567',
     hasAudioNotifications: true,
     hasAutoConvertEmoji: true,
     hasAutoDownloadUpdate: true,
@@ -103,7 +104,6 @@ export default {
     isAutoLaunchSupported: true,
     isHideMenuBarSupported: true,
     isNotificationAttentionSupported: true,
-    isPhoneNumberSharingSupported: true,
     isSyncSupported: true,
     isSystemTraySupported: true,
     isMinimizeToAndStartInSystemTraySupported: true,
@@ -205,12 +205,10 @@ export const PNPSharingDisabled = Template.bind({});
 PNPSharingDisabled.args = {
   whoCanSeeMe: PhoneNumberSharingMode.Nobody,
   whoCanFindMe: PhoneNumberDiscoverability.Discoverable,
-  isPhoneNumberSharingSupported: true,
 };
 
 export const PNPDiscoverabilityDisabled = Template.bind({});
 PNPDiscoverabilityDisabled.args = {
   whoCanSeeMe: PhoneNumberSharingMode.Nobody,
   whoCanFindMe: PhoneNumberDiscoverability.NotDiscoverable,
-  isPhoneNumberSharingSupported: true,
 };

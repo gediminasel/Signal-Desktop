@@ -7,12 +7,12 @@ import type { StateType } from '../reducer';
 import { mapDispatchToProps } from '../actions';
 import { strictAssert } from '../../util/assert';
 import { lookupConversationWithoutServiceId } from '../../util/lookupConversationWithoutServiceId';
+import { getUsernameFromSearch } from '../../util/Username';
 
 import type { StatePropsType } from '../../components/conversation/conversation-details/AddGroupMembersModal/ChooseGroupMembersModal';
 import { ChooseGroupMembersModal } from '../../components/conversation/conversation-details/AddGroupMembersModal/ChooseGroupMembersModal';
 
 import { getIntl, getTheme, getRegionCode } from '../selectors/user';
-import { getUsernamesEnabled } from '../selectors/items';
 import {
   getCandidateContactsForNewGroup,
   getConversationByIdSelector,
@@ -48,6 +48,8 @@ const mapStateToProps = (
     return convo;
   });
 
+  const { searchTerm } = props;
+
   return {
     ...props,
     regionCode: getRegionCode(state),
@@ -59,7 +61,7 @@ const mapStateToProps = (
     ourUsername: getMe(state).username,
     selectedContacts,
     lookupConversationWithoutServiceId,
-    isUsernamesEnabled: getUsernamesEnabled(state),
+    username: getUsernameFromSearch(searchTerm),
   };
 };
 

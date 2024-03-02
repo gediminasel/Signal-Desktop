@@ -20,6 +20,7 @@ export enum ToastType {
   ConversationMarkedUnread = 'ConversationMarkedUnread',
   ConversationRemoved = 'ConversationRemoved',
   ConversationUnarchived = 'ConversationUnarchived',
+  CopiedCallLink = 'CopiedCallLink',
   CopiedUsername = 'CopiedUsername',
   CopiedUsernameLink = 'CopiedUsernameLink',
   DangerousFileType = 'DangerousFileType',
@@ -59,6 +60,7 @@ export enum ToastType {
   UnsupportedMultiAttachment = 'UnsupportedMultiAttachment',
   UnsupportedOS = 'UnsupportedOS',
   UserAddedToGroup = 'UserAddedToGroup',
+  UsernameRecovered = 'UsernameRecovered',
   VoiceNoteLimit = 'VoiceNoteLimit',
   VoiceNoteMustBeTheOnlyAttachment = 'VoiceNoteMustBeTheOnlyAttachment',
   WhoCanFindMeReadOnly = 'WhoCanFindMeReadOnly',
@@ -86,6 +88,7 @@ export type AnyToast =
   | { toastType: ToastType.ConversationMarkedUnread }
   | { toastType: ToastType.ConversationRemoved; parameters: { title: string } }
   | { toastType: ToastType.ConversationUnarchived }
+  | { toastType: ToastType.CopiedCallLink }
   | { toastType: ToastType.CopiedUsername }
   | { toastType: ToastType.CopiedUsernameLink }
   | { toastType: ToastType.DangerousFileType }
@@ -139,6 +142,10 @@ export type AnyToast =
   | {
       toastType: ToastType.UserAddedToGroup;
       parameters: { contact: string; group: string };
+    }
+  | {
+      toastType: ToastType.UsernameRecovered;
+      parameters: { username: string };
     }
   | { toastType: ToastType.VoiceNoteLimit }
   | { toastType: ToastType.VoiceNoteMustBeTheOnlyAttachment }

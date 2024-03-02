@@ -26,6 +26,7 @@ import {
   map,
   mapValues,
   omit,
+  partition,
   pick,
 } from 'lodash';
 
@@ -157,6 +158,8 @@ import {
   CallHistoryFilterStatus,
   callHistoryDetailsSchema,
   CallDirection,
+  GroupCallStatus,
+  CallType,
 } from '../types/CallDisposition';
 
 type ConversationRow = Readonly<{
@@ -317,6 +320,8 @@ const dataInterface: ServerInterface = {
   getCallHistoryGroups,
   saveCallHistory,
   hasGroupCallHistoryMessage,
+  markCallHistoryMissed,
+  getRecentStaleRingsAndMarkOlderMissed,
   migrateConversationMessages,
   getMessagesBetween,
   getNearbyMessageFromDeletedSet,
@@ -638,25 +643,18 @@ async function initialize({
 }
 
 async function close(): Promise<void> {
+  globalReadonlyInstance?.close();
+  globalReadonlyInstance = undefined;
+
   // SQLLite documentation suggests that we run `PRAGMA optimize` right
   // before closing the database connection.
   globalWritableInstance?.pragma('optimize');
 
   globalWritableInstance?.close();
   globalWritableInstance = undefined;
-  globalReadonlyInstance?.close();
-  globalReadonlyInstance = undefined;
 }
 
 async function removeDB(): Promise<void> {
-  if (globalWritableInstance) {
-    try {
-      globalWritableInstance.close();
-    } catch (error) {
-      logger.error('removeDB: Failed to close database:', error.stack);
-    }
-    globalWritableInstance = undefined;
-  }
   if (globalReadonlyInstance) {
     try {
       globalReadonlyInstance.close();
@@ -664,6 +662,14 @@ async function removeDB(): Promise<void> {
       logger.error('removeDB: Failed to close readonly database:', error.stack);
     }
     globalReadonlyInstance = undefined;
+  }
+  if (globalWritableInstance) {
+    try {
+      globalWritableInstance.close();
+    } catch (error) {
+      logger.error('removeDB: Failed to close database:', error.stack);
+    }
+    globalWritableInstance = undefined;
   }
   if (!databaseFilePath) {
     throw new Error(
@@ -1756,6 +1762,11 @@ async function searchMessages({
     .signalTokenize(query)
     .map(token => `"${token.replace(/"/g, '""')}"*`)
     .join(' ');
+
+  // FTS5 is not happy about empty "MATCH" so short-circuit early.
+  if (!normalizedQuery) {
+    return [];
+  }
 
   // sqlite queries with a join on a virtual table (like FTS5) are de-optimized
   // and can't use indices for ordering results. Instead an in-memory index of
@@ -3801,6 +3812,65 @@ async function hasGroupCallHistoryMessage(
     });
 
   return exists !== 0;
+}
+
+function _markCallHistoryMissed(db: Database, callIds: ReadonlyArray<string>) {
+  batchMultiVarQuery(db, callIds, batch => {
+    const [updateQuery, updateParams] = sql`
+      UPDATE callsHistory
+      SET status = ${sqlConstant(GroupCallStatus.Missed)}
+      WHERE callId IN (${sqlJoin(batch)})
+    `;
+    return db.prepare(updateQuery).run(updateParams);
+  });
+}
+
+async function markCallHistoryMissed(
+  callIds: ReadonlyArray<string>
+): Promise<void> {
+  const db = await getWritableInstance();
+  return db.transaction(() => _markCallHistoryMissed(db, callIds))();
+}
+
+export type MaybeStaleCallHistory = Readonly<
+  Pick<CallHistoryDetails, 'callId' | 'peerId'>
+>;
+
+async function getRecentStaleRingsAndMarkOlderMissed(): Promise<
+  ReadonlyArray<MaybeStaleCallHistory>
+> {
+  const db = await getWritableInstance();
+  return db.transaction(() => {
+    const [selectQuery, selectParams] = sql`
+      SELECT callId, peerId FROM callsHistory
+      WHERE
+        type = ${sqlConstant(CallType.Group)} AND
+        status = ${sqlConstant(GroupCallStatus.Ringing)}
+      ORDER BY timestamp DESC
+    `;
+
+    const ringingCalls = db.prepare(selectQuery).all(selectParams);
+
+    const seen = new Set<string>();
+    const [latestCalls, pastCalls] = partition(ringingCalls, result => {
+      if (seen.size >= 10) {
+        return false;
+      }
+      if (seen.has(result.peerId)) {
+        return false;
+      }
+      seen.add(result.peerId);
+      return true;
+    });
+
+    _markCallHistoryMissed(
+      db,
+      pastCalls.map(result => result.callId)
+    );
+
+    // These are returned so we can peek them.
+    return latestCalls;
+  })();
 }
 
 async function migrateConversationMessages(

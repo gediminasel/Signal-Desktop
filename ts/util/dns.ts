@@ -8,10 +8,20 @@ import type {
   lookup as nodeLookup,
 } from 'dns';
 import { ipcRenderer, net } from 'electron';
-import type { ResolvedHost } from 'electron';
+import type { ResolvedHost, ResolvedEndpoint } from 'electron';
 
 import { strictAssert } from './assert';
 import { drop } from './drop';
+import type { DNSFallbackType } from '../types/DNSFallback';
+
+const fallbackAddrs = new Map<string, ReadonlyArray<ResolvedEndpoint>>();
+
+export function setFallback(dnsFallback: DNSFallbackType): void {
+  fallbackAddrs.clear();
+  for (const { domain, endpoints } of dnsFallback) {
+    fallbackAddrs.set(domain, endpoints);
+  }
+}
 
 function lookupAll(
   hostname: string,
@@ -27,16 +37,16 @@ function lookupAll(
   strictAssert(typeof callback === 'function', 'missing callback');
 
   async function run() {
-    let result: ResolvedHost;
+    let result: Pick<ResolvedHost, 'endpoints'>;
+
+    let queryType: 'A' | 'AAAA' | undefined;
+    if (opts.family === 4) {
+      queryType = 'A';
+    } else if (opts.family === 6) {
+      queryType = 'AAAA';
+    }
 
     try {
-      let queryType: 'A' | 'AAAA' | undefined;
-      if (opts.family === 4) {
-        queryType = 'A';
-      } else if (opts.family === 6) {
-        queryType = 'AAAA';
-      }
-
       if (net) {
         // Main process
         result = await net.resolveHost(hostname, {
@@ -50,39 +60,40 @@ function lookupAll(
           queryType
         );
       }
-      const addresses = result.endpoints.map(({ address, family }) => {
-        let numericFamily = -1;
-        if (family === 'ipv4') {
-          numericFamily = 4;
-        } else if (family === 'ipv6') {
-          numericFamily = 6;
-        }
-        return {
-          address,
-          family: numericFamily,
-        };
-      });
-
-      if (!opts.all) {
-        const random = addresses.at(
-          Math.floor(Math.random() * addresses.length)
-        );
-        if (random === undefined) {
-          callback(
-            new Error(`Hostname: ${hostname} cannot be resolved`),
-            '',
-            -1
-          );
-          return;
-        }
-        callback(null, random.address, random.family);
+    } catch (error) {
+      const fallback = fallbackAddrs.get(hostname);
+      if (fallback) {
+        result = { endpoints: fallback.slice() };
+      } else {
+        callback(error, []);
         return;
       }
-
-      callback(null, addresses);
-    } catch (error) {
-      callback(error, []);
     }
+
+    const addresses = result.endpoints.map(({ address, family }) => {
+      let numericFamily = -1;
+      if (family === 'ipv4') {
+        numericFamily = 4;
+      } else if (family === 'ipv6') {
+        numericFamily = 6;
+      }
+      return {
+        address,
+        family: numericFamily,
+      };
+    });
+
+    if (!opts.all) {
+      const random = addresses.at(Math.floor(Math.random() * addresses.length));
+      if (random === undefined) {
+        callback(new Error(`Hostname: ${hostname} cannot be resolved`), '', -1);
+        return;
+      }
+      callback(null, random.address, random.family);
+      return;
+    }
+
+    callback(null, addresses);
   }
 
   drop(run());

@@ -44,6 +44,10 @@
     "messageformat": "Vols afegir \"{contact}\" al grup \"{group}\"?",
     "description": "Shown in the confirmation dialog body when adding a contact to a group"
   },
+  "icu:AddUserToAnotherGroupModal__search-placeholder": {
+    "messageformat": "Cerca",
+    "description": "Placeholder to use when searching for groups in the AddUserToAnotherGroupModal"
+  },
   "icu:AddUserToAnotherGroupModal__toast--user-added-to-group": {
     "messageformat": "{contact} s'ha afegit a {group}",
     "description": "Shown in toast after a user is added to an existing group"
@@ -325,12 +329,48 @@
     "description": "Text of the button in the corrupted username banner in the left pane"
   },
   "icu:LeftPane--corrupted-username-link--text": {
-    "messageformat": "S'ha produït un error amb el codi QR i enllaç del teu nom d'usuari, ja no és vàlid. Crea un nou enllaç per compartir. Crea un nou enllaç per compartir.",
+    "messageformat": "S'ha produït un error amb el codi QR i enllaç del teu àlies, ja no és vàlid. Crea un nou enllaç per compartir. Crea un nou enllaç per compartir.",
     "description": "Text of corrupted username link banner in the left pane"
   },
   "icu:LeftPane--corrupted-username-link--action-text": {
     "messageformat": "Reparar-ho ara",
     "description": "Text of the button in the corrupted username link banner in the left pane"
+  },
+  "icu:LeftPane__compose__findByUsername": {
+    "messageformat": "Cerca per àlies",
+    "description": "Text of the button displayed when clicking compose button in left pane"
+  },
+  "icu:LeftPane__compose__findByPhoneNumber": {
+    "messageformat": "Cerca per número de telèfon",
+    "description": "Text of the button displayed when clicking compose button in left pane"
+  },
+  "icu:LeftPaneFindByHelper__title--findByUsername": {
+    "messageformat": "Cerca per àlies",
+    "description": "Title of the left pane when looking up someone by username"
+  },
+  "icu:LeftPaneFindByHelper__title--findByPhoneNumber": {
+    "messageformat": "Cerca per número de telèfon",
+    "description": "Title of the left pane when looking up someone by phone number"
+  },
+  "icu:LeftPaneFindByHelper__placeholder--findByUsername": {
+    "messageformat": "Àlies",
+    "description": "Placeholder of the search input in left pane when looking up someone by username"
+  },
+  "icu:LeftPaneFindByHelper__placeholder--findByPhoneNumber": {
+    "messageformat": "Número de telèfon",
+    "description": "Placeholder of the search input in left pane when looking up someone by phone number"
+  },
+  "icu:LeftPaneFindByHelper__description--findByUsername": {
+    "messageformat": "Introdueix un àlies seguit d'un punt i el seu conjunt de números.",
+    "description": "Description displayed under search input in left pane when looking up someone by username"
+  },
+  "icu:CountryCodeSelect__placeholder": {
+    "messageformat": "Codi de país",
+    "description": "Placeholder displayed as default value of country code select element"
+  },
+  "icu:CountryCodeSelect__Modal__title": {
+    "messageformat": "Codi de país",
+    "description": "Title of the country code modal"
   },
   "icu:NavTabsToggle__showTabs": {
     "messageformat": "Mostrar pestanyes",
@@ -1052,7 +1092,7 @@
     "description": "Shown to separate the types of search results"
   },
   "icu:findByUsernameHeader": {
-    "messageformat": "Cerca per nom d'usuari",
+    "messageformat": "Cerca per àlies",
     "description": "Shown when search could be a valid username, with one sub-item that will kick off the search"
   },
   "icu:findByPhoneNumberHeader": {
@@ -1351,6 +1391,38 @@
   "icu:showSafetyNumber": {
     "messageformat": "Mostra el número de seguretat"
   },
+  "icu:AboutContactModal__title": {
+    "messageformat": "Quant a",
+    "description": "Title of About modal"
+  },
+  "icu:AboutContactModal__title--myself": {
+    "messageformat": "Tu",
+    "description": "Title of About modal when viewing your own information"
+  },
+  "icu:AboutContactModal__verified": {
+    "messageformat": "Verificat",
+    "description": "Text of a button on About modal leading to a safety number modal"
+  },
+  "icu:AboutContactModal__blocked": {
+    "messageformat": "{name} està bloquejat.",
+    "description": "Text of a row on About modal when user is blocked"
+  },
+  "icu:AboutContactModal__message-request": {
+    "messageformat": "Sol·licitud de missatge pendent",
+    "description": "Text of a row on About modal when user is in message request state"
+  },
+  "icu:AboutContactModal__no-dms": {
+    "messageformat": "No hi ha missatges directes amb {name}",
+    "description": "Text of a row on About modal when there are no direct messages with a user"
+  },
+  "icu:AboutContactModal__signal-connection": {
+    "messageformat": "Connexió de Signal",
+    "description": "Text of a button on About modal leading to an education modal"
+  },
+  "icu:AboutContactModal__system-contact": {
+    "messageformat": "{name} és als contactes del teu sistema",
+    "description": "Text of a row in the About modal describing that the contact is in system contacts"
+  },
   "icu:ContactModal__showSafetyNumber": {
     "messageformat": "Mostra el número de seguretat",
     "description": "Contact modal, label for button to show safety number modal"
@@ -1626,6 +1698,10 @@
     "messageformat": "L'ordinador",
     "description": "The placeholder for the 'choose device name' input"
   },
+  "icu:Preferences--phone-number": {
+    "messageformat": "Número de telèfon",
+    "description": "The label in settings panel shown for the phone number associated with user's account"
+  },
   "icu:Preferences--device-name": {
     "messageformat": "Nom del dispositiu",
     "description": "The label in settings panel shown for the user-provided name for this desktop instance"
@@ -1700,6 +1776,54 @@
   "icu:calling__call-is-full": {
     "messageformat": "La trucada és plena",
     "description": "Text in the call lobby when you can't join because the call is full"
+  },
+  "icu:calling__cant-join": {
+    "messageformat": "Can't join call",
+    "description": "Modal dialog title when you can't join a call"
+  },
+  "icu:calling__dialog-already-in-call": {
+    "messageformat": "You are already in a call.",
+    "description": "Error message when clicking a call link to join a call, but you're in a call already."
+  },
+  "icu:calling__call-link-connection-issues": {
+    "messageformat": "Could not fetch call link information. Please check your network connection and try again.",
+    "description": "Error message when unable to fetch call link info from server."
+  },
+  "icu:calling__call-link-copied": {
+    "messageformat": "Call link copied.",
+    "description": "Toast shown when a call link is copied to the clipboard."
+  },
+  "icu:calling__call-link-no-longer-valid": {
+    "messageformat": "This call link is no longer valid.",
+    "description": "Error message when a call link has been revoked or expires."
+  },
+  "icu:calling__call-link-default-title": {
+    "messageformat": "Signal Call",
+    "description": "Default title for Signal call links."
+  },
+  "icu:calling__join-request-denied": {
+    "messageformat": "Your request to join this call has been denied.",
+    "description": "Error message when a request to join a call link call was rejected by a call admin."
+  },
+  "icu:calling__join-request-denied-title": {
+    "messageformat": "Join request denied",
+    "description": "Title of error when a request to join a call link call was rejected by a call admin."
+  },
+  "icu:calling__removed-from-call": {
+    "messageformat": "Someone has removed you from the call.",
+    "description": "Error message when in a call then a call admin removes you."
+  },
+  "icu:calling__removed-from-call-title": {
+    "messageformat": "Removed from call",
+    "description": "Title of error when in a call then a call admin removes you."
+  },
+  "icu:CallingLobby__CallLinkNotice": {
+    "messageformat": "Anyone who joins this call via the link will see your name and photo.",
+    "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared."
+  },
+  "icu:CallingLobby__CallLinkNotice--phone-sharing": {
+    "messageformat": "Anyone who joins this call via the link will see your name, photo, and phone number.",
+    "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared, when the phone number sharing account setting is enabled."
   },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "Afegeix-m'hi",
@@ -2328,7 +2452,7 @@
     "description": "Label for header to go to stories view"
   },
   "icu:contactSearchPlaceholder": {
-    "messageformat": "Cerca per nom o número de telèfon",
+    "messageformat": "Nom, àlies o número",
     "description": "Placeholder to use when searching for contacts in the composer"
   },
   "icu:noContactsFound": {
@@ -2356,7 +2480,7 @@
     "description": "Label for the error toast button"
   },
   "icu:Toast--failed-to-fetch-username": {
-    "messageformat": "No s'ha pogut obtenir el nom d'usuari. Comproveu la connexió i torneu-ho a provar.",
+    "messageformat": "No s'ha pogut obtenir l'àlies. Comproveu la connexió i torneu-ho a provar.",
     "description": "Shown if request to Signal servers to find username fails"
   },
   "icu:Toast--failed-to-fetch-phone-number": {
@@ -2368,7 +2492,7 @@
     "description": "Error message when you try to send an edit after message becomes too old"
   },
   "icu:startConversation--username-not-found": {
-    "messageformat": "Usuari no trobat. {atUsername} no és un usuari del Signal; assegureu-vos que heu introduït el nom d'usuari complet.",
+    "messageformat": "{atUsername} no és un usuari de Signal. Assegura't d'haver introduït el seu àlies complet.",
     "description": "Shown in dialog if username is not found. Note that 'username' will be the output of at-username"
   },
   "icu:startConversation--phone-number-not-found": {
@@ -2615,6 +2739,10 @@
   "icu:message--attachmentTooBig--multiple": {
     "messageformat": "Alguns fitxers adjunts son massa grans per mostrar-los.",
     "description": "Shown in a message bubble if any attachments are left on message when too-large attachments are dropped"
+  },
+  "icu:message--call-link-description": {
+    "messageformat": "Use this link to join a Signal call",
+    "description": "Shown in message previews for Signal call links."
   },
   "icu:donation--missing": {
     "messageformat": "No s'han pogut obtenir els detalls de la donació",
@@ -3588,6 +3716,14 @@
     "messageformat": "Trucada",
     "description": "Shown in the call lobby for a direct 1:1 call when the caller's video is disabled, to specify that an audio call will be placed when clicking the Start button."
   },
+  "icu:CallControls__InfoDisplay--adhoc-call": {
+    "messageformat": "Call link",
+    "description": "Shown in the call lobby for a call link."
+  },
+  "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
+    "messageformat": "Waiting to be let in",
+    "description": "Shown in the call lobby for call link calls when requesting to join a call which requires admin approval."
+  },
   "icu:CallControls__JoinLeaveButton--hangup-1-1": {
     "messageformat": "Finalitza",
     "description": "Title for the hangup button for a direct 1:1 call with only 2 participants."
@@ -3727,6 +3863,10 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "Una finestra",
     "description": "Title for the select your screen sharing sources modal"
+  },
+  "icu:CallingAdhocCallInfo__CopyLink": {
+    "messageformat": "Copy link",
+    "description": "Menu item in the in-call info popup for call link calls. The action is to add the call link to the clipboard."
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Vídeo",
@@ -5189,7 +5329,7 @@
     "description": "Title for the contact name spoofing review dialog in groups"
   },
   "icu:ContactSpoofingReviewDialog__group__description": {
-    "messageformat": "{count, plural, one {{count,number} membre del grup té un nom semblant. Revisa els membres següents i tria una acció.} other {{count,number} membres del grup tenen noms semblants. Revisa els membres següents i tria una acció.}}",
+    "messageformat": "{count, plural, one {{count,number} membre del grup té el mateix nom. Revisa els membres a continuació o pren les mesures que calguin.} other {{count,number} membres del grup tenen el mateix nom. Revisa els membres a continuació o pren les mesures que calguin.}}",
     "description": "Description for the group contact spoofing review dialog"
   },
   "icu:ContactSpoofingReviewDialog__group__multiple-conflicts__description": {
@@ -5198,7 +5338,15 @@
   },
   "icu:ContactSpoofingReviewDialog__group__members-header": {
     "messageformat": "Membres",
-    "description": "Header in the group contact spoofing review dialog. After this header, there will be a list of members"
+    "description": "(Deleted 01/31/2024) Header in the group contact spoofing review dialog. After this header, there will be a list of members"
+  },
+  "icu:ContactSpoofingReviewDialog__group__members__no-shared-groups": {
+    "messageformat": "Cap altre grup en comú",
+    "description": "Informational text displayed next to a contact on ContactSpoofingReviewDialog"
+  },
+  "icu:ContactSpoofingReviewDialog__signal-connection": {
+    "messageformat": "Connexió de Signal",
+    "description": "Text of a button on ContactSpoofingReviewDialog leading to an education modal"
   },
   "icu:ContactSpoofingReviewDialog__group__name-change-info": {
     "messageformat": "Recentment han canviat el nom del perfil de {oldName} a {newName}.",
@@ -5489,19 +5637,23 @@
     "description": "Default text for about field"
   },
   "icu:ProfileEditor--username": {
-    "messageformat": "Nom d'usuari",
+    "messageformat": "Àlies",
     "description": "Default text for username field"
   },
   "icu:ProfileEditor--username--corrupted--body": {
-    "messageformat": "S'ha produït un error amb el teu àlies, ja no està assignat al teu compte.",
+    "messageformat": "S'ha produït un error amb el teu àlies, ja no està assignat al teu compte. Pots provar de configurar-lo de nou o triar-ne un de diferent.",
     "description": "Text of confirmation modal when the username gets corrupted"
   },
   "icu:ProfileEditor--username--corrupted--delete-button": {
-    "messageformat": "Suprimeix el nom d'usuari",
-    "description": "Button text for deletion of the username in case of corruption"
+    "messageformat": "Suprimeix l'àlies",
+    "description": "(Deleted 02/01/2024) Button text for deletion of the username in case of corruption"
   },
   "icu:ProfileEditor--username--corrupted--create-button": {
-    "messageformat": "Crea un nom d'usuari",
+    "messageformat": "Crea un àlies",
+    "description": "(Deleted 02/01/2024) Button text for creation of a new username in case of corruption"
+  },
+  "icu:ProfileEditor--username--corrupted--fix-button": {
+    "messageformat": "Reparar-ho ara",
     "description": "Button text for creation of a new username in case of corruption"
   },
   "icu:ProfileEditor__username-link": {
@@ -5509,11 +5661,11 @@
     "description": "Label of a profile editor row that navigates to username link and qr code modal"
   },
   "icu:ProfileEditor__username__error-icon": {
-    "messageformat": "Cal restablir el nom d'usuari",
+    "messageformat": "Cal restablir l'àlies",
     "description": "Accessibility title of an icon in profile editor"
   },
   "icu:ProfileEditor__username-link__error-icon": {
-    "messageformat": "Cal restablir l'enllaç del nom d'usuari",
+    "messageformat": "Cal restablir l'enllaç de l'àlies",
     "description": "Accessibility title of an icon in profile editor"
   },
   "icu:ProfileEditor__username-link__tooltip__title": {
@@ -5525,23 +5677,23 @@
     "description": "Body of tooltip displayed under 'QR code or link' button for getting username link"
   },
   "icu:ProfileEditor--username--title": {
-    "messageformat": "Tria un nom d'usuari",
+    "messageformat": "Tria un àlies",
     "description": "Title text for username modal"
   },
   "icu:ProfileEditor--username--check-characters": {
-    "messageformat": "Els noms d'usuari només poden contenir a-z, 0-9 i _",
+    "messageformat": "Els àlies només poden contenir a-z, 0-9 i _",
     "description": "Shown if user has attempted to use forbidden characters in username"
   },
   "icu:ProfileEditor--username--check-starting-character": {
-    "messageformat": "Els noms d'usuari no poden començar amb un número.",
+    "messageformat": "Els àlies no poden començar amb un número.",
     "description": "Shown if user has attempted to begin their username with a number"
   },
   "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Els noms d'usuari han de tenir un mínim de {min,number} caràcters.",
+    "messageformat": "Els àlies han de tenir un mínim de {min,number} caràcters.",
     "description": "Shown if user has attempted to enter a username with too few characters - currently min is 3"
   },
   "icu:ProfileEditor--username--check-character-max": {
-    "messageformat": "Els noms d'usuari han de tenir un màxim de{max,number} caràcters.",
+    "messageformat": "Els àlies han de tenir un màxim de{max,number} caràcters.",
     "description": "Shown if user has attempted to enter a username with too many characters - currently min is 25"
   },
   "icu:ProfileEditor--username--check-discriminator-min": {
@@ -5553,19 +5705,23 @@
     "description": "Shown if user has attempted to enter a username with 00 as discriminator"
   },
   "icu:ProfileEditor--username--check-discriminator-leading-zero": {
-    "messageformat": "El número no pot començar amb 00. Introdueix un dígit entre 1 i 9",
+    "messageformat": "Els números amb més de 2 dígits no poden començar per 0",
     "description": "Shown if user has attempted to enter a username with leading 0 in discriminator"
   },
+  "icu:ProfileEditor--username--too-many-attempts": {
+    "messageformat": "S'han fet massa intents. Si us plau, torna-ho a provar més tard",
+    "description": "Shown if user has made too many attempts to pick a username and has to wait before retrying"
+  },
   "icu:ProfileEditor--username--unavailable": {
-    "messageformat": "Aquest nom d'usuari no està disponible",
+    "messageformat": "Aquest àlies no està disponible",
     "description": "Shown if the username is not available for registration"
   },
   "icu:ProfileEditor--username--check-username-taken": {
-    "messageformat": "Aquest nom d'usuari ja està agafat.",
+    "messageformat": "Aquest àlies ja està agafat.",
     "description": "Shown if user has attempted to save a username which is not available"
   },
   "icu:ProfileEditor--username--general-error": {
-    "messageformat": "No s'ha pogut desar el nom d'usuari. Comproveu la connexió i torneu-ho a provar.",
+    "messageformat": "No s'ha pogut desar l'àlies. Comproveu la connexió i torneu-ho a provar.",
     "description": "Shown if something unknown has gone wrong with username save."
   },
   "icu:ProfileEditor--username--reservation-gone": {
@@ -5573,11 +5729,11 @@
     "description": "Shown if username reservation has expired and new one needs to be generated."
   },
   "icu:ProfileEditor--username--delete-general-error": {
-    "messageformat": "No s'ha pogut suprimir el nom d'usuari. Comprova la connexió i torna-ho a provar.",
+    "messageformat": "No s'ha pogut suprimir l'àlies. Comprova la connexió i torna-ho a provar.",
     "description": "Shown if something unknown has gone wrong with username delete."
   },
   "icu:ProfileEditor--username--copied-username": {
-    "messageformat": "S'ha copiat el nom d'usuari",
+    "messageformat": "S'ha copiat l'àlies",
     "description": "Shown when username is copied to clipboard."
   },
   "icu:ProfileEditor--username--copied-username-link": {
@@ -5585,11 +5741,11 @@
     "description": "Shown when username link is copied to clipboard."
   },
   "icu:ProfileEditor--username--deleting-username": {
-    "messageformat": "Suprimint el nom d'usuari",
+    "messageformat": "Suprimint l'àlies",
     "description": "Shown as aria label for spinner icon next to username"
   },
   "icu:ProfileEditor--username--delete-username": {
-    "messageformat": "Suprimeix el nom d'usuari",
+    "messageformat": "Suprimeix l'àlies",
     "description": "Shown as aria label for trash icon next to username"
   },
   "icu:ProfileEditor--username--confirm-delete-body-2": {
@@ -5600,12 +5756,16 @@
     "messageformat": "Suprimeix",
     "description": "Shown in dialog button if user has saved an empty string to delete their username"
   },
+  "icu:ProfileEditor--username--delete-unavailable-notice": {
+    "messageformat": "Per eliminar el teu àlies, obre Signal al telèfon i ves a Ajustos > Perfil.",
+    "description": "Shown in dialog body if user is trying to delete username, but it is only supported on mobile"
+  },
   "icu:ProfileEditor--username--context-menu": {
-    "messageformat": "Copiar o suprimir el nom d'usuari",
+    "messageformat": "Copiar o suprimir l'àlies",
     "description": "Shown as aria label for context menu next to username"
   },
   "icu:ProfileEditor--username--copy": {
-    "messageformat": "Copiar el nom d'usuari",
+    "messageformat": "Copiar l'àlies",
     "description": "Shown as a button in context menu next to username. The action of the button is to put username into the clipboard."
   },
   "icu:ProfileEditor--username--copy-link": {
@@ -5632,9 +5792,33 @@
     "messageformat": "Voleu descartar aquests canvis?",
     "description": "ConfirmationDialog text for discarding changes"
   },
+  "icu:ConfirmationDialog__Title--in-call-close-requested": {
+    "messageformat": "Close Signal and end the call?",
+    "description": "ConfirmationDialog title when trying to close the app while in a call."
+  },
+  "icu:ConfirmationDialog__Title--close-requested-not-now": {
+    "messageformat": "Not Now",
+    "description": "Confirmation dialog button to cancel closing the app, while in a call and trying to close the app."
+  },
+  "icu:ProfileEditor--edit-photo": {
+    "messageformat": "Edita la fotografia",
+    "description": "Text of a button on profile editor that leads to the avatar editor"
+  },
   "icu:ProfileEditor--info--link": {
     "messageformat": "El teu perfil està encriptat. El teu perfil i els canvis que hi realitzis seran visibles per als teus contactes i per aquelles persones amb les quals iniciïs o acceptis un xat nou. <learnMoreLink>Més informació</learnMoreLink>",
-    "description": "Information shown at the bottom of the profile editor section"
+    "description": "(Deleted 02/01/2024) Information shown at the bottom of the profile editor section"
+  },
+  "icu:ProfileEditor--info--general": {
+    "messageformat": "Els canvis que hi facis i el teu perfil, seran visibles per la gent a la qual enviïs un missatge, els teus contactes i els teus grups.",
+    "description": "Information shown in profile editor below profile name and about fields"
+  },
+  "icu:ProfileEditor--info--pnp": {
+    "messageformat": "El teu àlies, codi QR i enllaç no són visibles al teu perfil. Comparteix-los només amb persones de confiança.",
+    "description": "Information shown in profile editor below pnp settings when username is set"
+  },
+  "icu:ProfileEditor--info--pnp--no-username": {
+    "messageformat": "Ara, la gent et pot enviar missatges fent servir el teu àlies opcional, i no caldrà que donis el teu número de telèfon.",
+    "description": "Information shown in profile editor below pnp settings when no username is set"
   },
   "icu:Bio--speak-freely": {
     "messageformat": "Parleu lliurement",
@@ -5673,7 +5857,7 @@
     "description": "Title for profile avatar editing"
   },
   "icu:ProfileEditorModal--username": {
-    "messageformat": "Nom d'usuari",
+    "messageformat": "Àlies",
     "description": "Title for username editing"
   },
   "icu:ProfileEditorModal--error": {
@@ -5792,6 +5976,10 @@
     "messageformat": "Tria qui pot veure el teu número de telèfon i qui pot contactar-te a Signal a través d'ell.",
     "description": "Body of Phone Number row in Privacy section of Preferences window"
   },
+  "icu:Preferences__pnp__row--button": {
+    "messageformat": "Canviar…",
+    "description": "Text of Phone Number row button in Privacy section of Preferences window"
+  },
   "icu:Preferences__pnp__sharing--title": {
     "messageformat": "Qui pot veure el meu número",
     "description": "Title for the phone number sharing setting row"
@@ -5801,8 +5989,12 @@
     "description": "Description for the phone number sharing setting row when the value is Everyone"
   },
   "icu:Preferences__pnp__sharing--description--nobody": {
-    "messageformat": "Ningú no veurà el teu número de telèfon a Signal, fins i tot encara que els hi enviïs un missatge.",
-    "description": "Description for the phone number sharing setting row when the value is Nobody"
+    "messageformat": "El teu número de telèfon no serà visible per a ningú tret que el tingui guardat als contactes del seu telèfon.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody and phone number discoverability setting is Everyone"
+  },
+  "icu:Preferences__pnp__sharing--description--nobody--not-discoverable": {
+    "messageformat": "El teu número de telèfon ja no és visible per a ningú.",
+    "description": "Description for the phone number sharing setting row when the value is Nobody and phone number discoverability setting is Nobody"
   },
   "icu:Preferences__pnp--page-title": {
     "messageformat": "Número de telèfon",
@@ -6197,7 +6389,7 @@
     "description": "Payment event notification check device label"
   },
   "icu:SignalConnectionsModal__title": {
-    "messageformat": "Contactes de Signal",
+    "messageformat": "Connexions de Signal",
     "description": "The phrase/term: 'Signal Connections'"
   },
   "icu:SignalConnectionsModal__header": {
@@ -6377,7 +6569,7 @@
     "description": "Modal title when hiding people from my stories"
   },
   "icu:StoriesSettings__mine__all--label": {
-    "messageformat": "Tots els contactes de Signal",
+    "messageformat": "Totes les connexions de Signal",
     "description": "Input label to describe all signal connections"
   },
   "icu:StoriesSettings__mine__all--description": {
@@ -6788,6 +6980,10 @@
     "messageformat": "Ha reaccionat a una història de {name}",
     "description": "Label for when a person reacts to a story"
   },
+  "icu:Quote__story-reaction--you": {
+    "messageformat": "Reacted to your story",
+    "description": "Label for when someone reacts to your story"
+  },
   "icu:Quote__story-reaction--single": {
     "messageformat": "Ha reaccionat a una història",
     "description": "Used whenever we can't find a user's first name"
@@ -6813,11 +7009,11 @@
     "description": "Default aria-label for the context menu buttons"
   },
   "icu:EditUsernameModalBody__username-placeholder": {
-    "messageformat": "Nom d'usuari",
+    "messageformat": "Àlies",
     "description": "Placeholder for the username field"
   },
   "icu:EditUsernameModalBody__username-helper": {
-    "messageformat": "Els noms d'usuari permeten a altres persones enviar-te un missatge sense necessitat del teu número de telèfon. Funcionen conjuntament amb una sèrie de dígits per ajudar-te a mantenir privada la teva adreça.",
+    "messageformat": "Els àlies sempre es combinen amb un conjunt de números.",
     "description": "Shown on the edit username screen"
   },
   "icu:EditUsernameModalBody__learn-more": {
@@ -6840,8 +7036,16 @@
     "messageformat": "Continua",
     "description": "Text of the primary button on username change confirmation modal"
   },
+  "icu:EditUsernameModalBody__recover-confirmation": {
+    "messageformat": "Recuperar el teu àlies restablirà el teu codi QR i enllaç actuals. ¿Segur que vols continuar?",
+    "description": "Body of the confirmation dialog displayed when user is about to recover their username"
+  },
+  "icu:EditUsernameModalBody__username-recovered__text": {
+    "messageformat": "El teu codi QR i l'enllaç s'han restablert i el teu àlies és {username}",
+    "description": "Text of toast displayed upon successful recovery of username"
+  },
   "icu:UsernameLinkModalBody__hint": {
-    "messageformat": "Scan this QR code with your phone to chat with me on Signal.",
+    "messageformat": "Escaneja aquest codi QR amb el teu telèfon per xatejar amb mi a Signal.",
     "descrption": "Text of the hint displayed below generated QR code on the printable image."
   },
   "icu:UsernameLinkModalBody__save": {
@@ -6873,7 +7077,7 @@
     "description": "ARIA label of button for selecting username link color"
   },
   "icu:UsernameLinkModalBody__reset__confirm": {
-    "messageformat": "Si restableixes el teu codi QR, el teu codi QR i enllaç actuals deixaran de funcionar.",
+    "messageformat": "Si restableixes el teu codi QR i l'enllaç, el teu codi QR actual i l'enllaç deixaran de funcionar.",
     "description": "Text of confirmation modal when resetting the username link"
   },
   "icu:UsernameLinkModalBody__resetting-link": {
@@ -6881,35 +7085,43 @@
     "description": "Text shown when resetting the username link"
   },
   "icu:UsernameLinkModalBody__error__text": {
-    "messageformat": "Codi QR i enllaç no establerts. Comprova la teva connexió i torna-ho a intentar.",
+    "messageformat": "S'ha produït un error amb el codi QR i enllaç, ja no és vàlid. Prova de restablir-lo per crear un nou codi QR i enllaç.",
     "description": "Text of the confirmation dialog shown on username link error"
   },
+  "icu:UsernameLinkModalBody__error__fix-now": {
+    "messageformat": "Reparar-ho ara",
+    "description": "Text of the button in a confirmation dialog shown on username link error"
+  },
+  "icu:UsernameLinkModalBody__recovered__text": {
+    "messageformat": "El teu codi QR i l'enllaç s'han restablert, i s'ha creat un nou codi QR i enllaç.",
+    "description": "Text of the confirmation dialog shown on successful username link recovery"
+  },
   "icu:UsernameOnboardingModalBody__title": {
-    "messageformat": "New ways to connect",
+    "messageformat": "Noves maneres de connectar-te",
     "description": "Title of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number__title": {
-    "messageformat": "Phone number privacy",
+    "messageformat": "Privacitat del número de telèfon",
     "description": "Title of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number__body": {
-    "messageformat": "Your phone number is no longer visible in chats. If your number is saved to a friend’s contacts, they will still see it.",
+    "messageformat": "El teu número de telèfon ja no és visible als xats. Fins i tot si un amic té el teu número guardat als seus contactes, no li apareixerà.",
     "description": "Body of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__username__title": {
-    "messageformat": "Usernames",
+    "messageformat": "Àlies",
     "description": "Title of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__username__body": {
-    "messageformat": "People can now message you using your optional username so you don’t have to give out your phone number. Usernames aren’t visible on your profile.",
+    "messageformat": "Ara, la gent et pot enviar missatges fent servir el teu àlies opcional, i no caldrà que donis el teu número de telèfon. Els àlies no són visibles al teu perfil.",
     "description": "Body of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__qr__title": {
-    "messageformat": "QR codes and links",
+    "messageformat": "Codis QR i enllaços",
     "description": "Title of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__qr__body": {
-    "messageformat": "Usernames have a unique QR code and link you can share with friends to quickly start a chat with you.",
+    "messageformat": "Els àlies tenen un codi QR únic que pots compartir amb els teus amics perquè iniciïn un xat amb tu",
     "description": "Body of the third row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__number": {
@@ -6917,7 +7129,7 @@
     "description": "(Deleted 01/16/2023) Content of the first row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Cada nom d'usuari té un codi QR únic que pots compartir amb els teus amics perquè iniciïn un xat amb tu",
+    "messageformat": "Cada àlies té un codi QR únic que pots compartir amb els teus amics perquè iniciïn un xat amb tu",
     "description": "(Deleted 01/16/2023) Content of the second row of username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__row__lock": {
@@ -6929,27 +7141,27 @@
     "description": "(Deleted 01/16/2023) Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
-    "messageformat": "Set up username",
+    "messageformat": "Configurar l'àlies",
     "description": "Text of the primary button on username onboarding modal"
   },
   "icu:UsernameOnboardingModalBody__skip": {
-    "messageformat": "Not now",
+    "messageformat": "Ara no",
     "description": "Text of the secondary button on username onboarding modal"
   },
   "icu:UsernameMegaphone__title": {
-    "messageformat": "New ways to connect",
+    "messageformat": "Noves maneres de connectar-te",
     "description": "Title of username megaphone"
   },
   "icu:UsernameMegaphone__body": {
-    "messageformat": "Introducing phone number privacy, optional usernames and links.",
+    "messageformat": "Presentem la privacitat del número de telèfon, els àlies opcionals i els enllaços.",
     "description": "Body of username megaphone"
   },
   "icu:UsernameMegaphone__learn-more": {
-    "messageformat": "Learn more",
+    "messageformat": "Més informació",
     "description": "Text of the primary button on username megaphone"
   },
   "icu:UsernameMegaphone__dismiss": {
-    "messageformat": "Dismiss",
+    "messageformat": "Descarta",
     "description": "Text of the secondary button on username megaphone"
   },
   "icu:UnsupportedOSWarningDialog__body": {
@@ -7124,13 +7336,7 @@
     "messageformat": "Petits ajustos, correccions d'errors i tasques de millora de rendiment. Gràcies per utilitzar Signal!",
     "description": "Release notes for releases that only include bug fixes"
   },
-  "icu:WhatsNew__v6.46--0": {
-    "messageformat": "La lletra predeterminada de l'urdú s'ha actualitzat per millorar la llegibilitat quan se selecciona aquest idioma (Ajustos de Signal > Aparença > Idioma). Et donem les gràcies, {linkToGithub}!"
-  },
-  "icu:WhatsNew__v6.47--0": {
-    "messageformat": "If you spend a lot of time trying to pick out the perfect emoji reaction for every situation, you'll be <emojify>🎉</emojify> to know that we fixed a bug with typing indicators that sometimes caused the emoji selection box to disappear while you were in the middle of pondering your choices."
-  },
-  "icu:WhatsNew__v6.47--1": {
-    "messageformat": "Signal will now match your selected title bar color on Microsoft Windows. When all of your windows in Windows look the same, that's a common theme."
+  "icu:WhatsNew__v7.1--0": {
+    "messageformat": "This update enables support for all of the new emoji characters in Emoji version 15.1. People keep asking us what our favorite new emoji is, but answering that question is a “lime” we won't cross."
   }
 }

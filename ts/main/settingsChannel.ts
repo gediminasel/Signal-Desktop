@@ -44,6 +44,7 @@ export class SettingsChannel extends EventEmitter {
 
   public install(): void {
     this.installSetting('deviceName', { setter: false });
+    this.installSetting('phoneNumber', { setter: false });
 
     // ChatColorPicker redux hookups
     this.installCallback('getCustomColors');
@@ -62,7 +63,6 @@ export class SettingsChannel extends EventEmitter {
     this.installCallback('getAvailableIODevices');
     this.installCallback('isPrimary');
     this.installCallback('syncRequest');
-    this.installCallback('isPhoneNumberSharingEnabled');
 
     // Getters only. These are set by the primary device
     this.installSetting('blockedCount', { setter: false });

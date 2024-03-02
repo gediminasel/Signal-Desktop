@@ -1,7 +1,7 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { groupBy, isEmpty, isNumber, isObject, map, omit } from 'lodash';
+import { groupBy, isEmpty, isNumber, isObject, map } from 'lodash';
 import { createSelector } from 'reselect';
 import filesize from 'filesize';
 import getDirection from 'direction';
@@ -42,7 +42,7 @@ import type {
 import type { PropsType as ProfileChangeNotificationPropsType } from '../../components/conversation/ProfileChangeNotification';
 import type { QuotedAttachmentType } from '../../components/conversation/Quote';
 
-import { getDomain, isStickerPack } from '../../types/LinkPreview';
+import { getDomain, isCallLink, isStickerPack } from '../../types/LinkPreview';
 import type {
   AciString,
   PniString,
@@ -59,7 +59,7 @@ import { getMentionsRegex } from '../../types/Message';
 import { SignalService as Proto } from '../../protobuf';
 import type { AttachmentType } from '../../types/Attachment';
 import { isVoiceMessage, canBeDownloaded } from '../../types/Attachment';
-import type { DefaultConversationColorType } from '../../types/Colors';
+import { type DefaultConversationColorType } from '../../types/Colors';
 import { ReadStatus } from '../../messages/MessageReadStatus';
 
 import type { CallingNotificationType } from '../../util/callingNotification';
@@ -74,12 +74,13 @@ import { canEditMessage } from '../../util/canEditMessage';
 import { getAccountSelector } from './accounts';
 import { getDefaultConversationColor } from './items';
 import {
-  getContactNameColorSelector,
   getConversationSelector,
   getSelectedMessageIds,
   getTargetedMessage,
   isMissingRequiredProfileSharing,
   getMessages,
+  getCachedConversationMemberColorsSelector,
+  getContactNameColor,
 } from './conversations';
 import {
   getIntl,
@@ -97,19 +98,17 @@ import type {
 
 import type { AccountSelectorType } from './accounts';
 import type { CallSelectorType, CallStateType } from './calling';
-import type {
-  GetConversationByIdType,
-  ContactNameColorSelectorType,
-} from './conversations';
+import type { GetConversationByIdType } from './conversations';
 import {
   SendStatus,
   isDelivered,
   isFailed,
-  isMessageJustForMe,
   isRead,
   isSent,
   isViewed,
-  maxStatus,
+  isMessageJustForMe,
+  someRecipientSendStatus,
+  getHighestSuccessfulRecipientStatus,
   someSendStatus,
 } from '../../messages/MessageSendState';
 import * as log from '../../logging/log';
@@ -179,7 +178,7 @@ export type GetPropsForBubbleOptions = Readonly<{
   callHistorySelector: CallHistorySelectorType;
   activeCall?: CallStateType;
   accountSelector: AccountSelectorType;
-  contactNameColorSelector: ContactNameColorSelectorType;
+  contactNameColors: Map<string, string>;
   defaultConversationColor: DefaultConversationColorType;
 }>;
 
@@ -383,6 +382,7 @@ const getPreviewsForMessage = ({
   return previews.map(preview => ({
     ...preview,
     isStickerPack: isStickerPack(preview.url),
+    isCallLink: isCallLink(preview.url),
     domain: getDomain(preview.url),
     image: preview.image ? getPropsForAttachment(preview.image) : undefined,
   }));
@@ -582,7 +582,7 @@ export type GetPropsForMessageOptions = Pick<
   | 'selectedMessageIds'
   | 'regionCode'
   | 'accountSelector'
-  | 'contactNameColorSelector'
+  | 'contactNameColors'
   | 'defaultConversationColor'
 >;
 
@@ -680,7 +680,7 @@ export const getPropsForMessage = (
     targetedMessageId,
     targetedMessageCounter,
     selectedMessageIds,
-    contactNameColorSelector,
+    contactNameColors,
     defaultConversationColor,
   } = options;
 
@@ -709,7 +709,7 @@ export const getPropsForMessage = (
     ourNumber,
     ourAci,
   });
-  const contactNameColor = contactNameColorSelector(conversationId, authorId);
+  const contactNameColor = getContactNameColor(contactNameColors, authorId);
 
   const { conversationColor, customColor } = getConversationColorAttributes(
     conversation,
@@ -797,7 +797,7 @@ export const getMessagePropsSelector = createSelector(
   getUserNumber,
   getRegionCode,
   getAccountSelector,
-  getContactNameColorSelector,
+  getCachedConversationMemberColorsSelector,
   getTargetedMessage,
   getSelectedMessageIds,
   getDefaultConversationColor,
@@ -809,15 +809,18 @@ export const getMessagePropsSelector = createSelector(
       ourNumber,
       regionCode,
       accountSelector,
-      contactNameColorSelector,
+      cachedConversationMemberColorsSelector,
       targetedMessage,
       selectedMessageIds,
       defaultConversationColor
     ) =>
     (message: MessageWithUIFieldsType) => {
+      const contactNameColors = cachedConversationMemberColorsSelector(
+        message.conversationId
+      );
       return getPropsForMessage(message, {
         accountSelector,
-        contactNameColorSelector,
+        contactNameColors,
         conversationSelector,
         ourConversationId,
         ourNumber,
@@ -1657,14 +1660,9 @@ export function getMessagePropStatus(
     return sent ? 'viewed' : 'sending';
   }
 
-  const sendStates = Object.values(
+  const highestSuccessfulStatus = getHighestSuccessfulRecipientStatus(
+    sendStateByConversationId,
     ourConversationId
-      ? omit(sendStateByConversationId, ourConversationId)
-      : sendStateByConversationId
-  );
-  const highestSuccessfulStatus = sendStates.reduce(
-    (result: SendStatus, { status }) => maxStatus(result, status),
-    SendStatus.Pending
   );
 
   if (
@@ -1769,8 +1767,8 @@ function canReplyOrReact(
     MessageWithUIFieldsType,
     | 'canReplyToStory'
     | 'deletedForEveryone'
-    | 'sendStateByConversationId'
     | 'payment'
+    | 'sendStateByConversationId'
     | 'type'
   >,
   ourConversationId: string | undefined,
@@ -1811,11 +1809,10 @@ function canReplyOrReact(
 
   if (isOutgoing(message)) {
     return (
-      isMessageJustForMe(sendStateByConversationId, ourConversationId) ||
-      someSendStatus(
-        ourConversationId
-          ? omit(sendStateByConversationId, ourConversationId)
-          : sendStateByConversationId,
+      isMessageJustForMe(sendStateByConversationId ?? {}, ourConversationId) ||
+      someRecipientSendStatus(
+        sendStateByConversationId ?? {},
+        ourConversationId,
         isSent
       )
     );
@@ -1918,7 +1915,7 @@ export function canDeleteForEveryone(
     // Is it too old to delete? (we relax that requirement in Note to Self)
     (isMoreRecentThan(message.sent_at, DAY) || isMe) &&
     // Is it sent to anyone?
-    someSendStatus(message.sendStateByConversationId, isSent)
+    someSendStatus(message.sendStateByConversationId ?? {}, isSent)
   );
 }
 
@@ -2005,7 +2002,7 @@ const OUTGOING_KEY_ERROR = 'OutgoingIdentityKeyError';
 
 export const getMessageDetails = createSelector(
   getAccountSelector,
-  getContactNameColorSelector,
+  getCachedConversationMemberColorsSelector,
   getConversationSelector,
   getIntl,
   getRegionCode,
@@ -2018,7 +2015,7 @@ export const getMessageDetails = createSelector(
   getDefaultConversationColor,
   (
     accountSelector,
-    contactNameColorSelector,
+    cachedConversationMemberColorsSelector,
     conversationSelector,
     i18n,
     regionCode,
@@ -2156,7 +2153,9 @@ export const getMessageDetails = createSelector(
       errors,
       message: getPropsForMessage(message, {
         accountSelector,
-        contactNameColorSelector,
+        contactNameColors: cachedConversationMemberColorsSelector(
+          message.conversationId
+        ),
         conversationSelector,
         ourAci,
         ourPni,
