@@ -31,6 +31,7 @@ import { initializeNetworkObserver } from './services/networkObserver';
 import { initializeUpdateListener } from './services/updateListener';
 import { calling } from './services/calling';
 import * as storage from './services/storage';
+import { backupsService } from './services/backups';
 
 import type { LoggerType } from './types/Logging';
 import type {
@@ -111,7 +112,7 @@ type MigrationsModuleType = {
   }>;
   upgradeMessageSchema: (
     attributes: MessageAttributesType,
-    options?: { maxVersion?: number; keepOnDisk?: boolean }
+    options?: { maxVersion?: number }
   ) => Promise<MessageAttributesType>;
   writeMessageAttachments: (
     message: MessageAttributesType
@@ -266,9 +267,9 @@ export function initializeMigrations({
       }),
     upgradeMessageSchema: (
       message: MessageAttributesType,
-      options: { maxVersion?: number; keepOnDisk?: boolean } = {}
+      options: { maxVersion?: number } = {}
     ) => {
-      const { maxVersion, keepOnDisk } = options;
+      const { maxVersion } = options;
 
       return MessageType.upgradeSchema(message, {
         deleteOnDisk,
@@ -283,7 +284,6 @@ export function initializeMigrations({
         writeNewAttachmentData,
         writeNewStickerData,
 
-        keepOnDisk,
         logger,
         maxVersion,
       });
@@ -371,6 +371,7 @@ export const setup = (options: {
   };
 
   const Services = {
+    backups: backupsService,
     calling,
     initializeGroupCredentialFetcher,
     initializeNetworkObserver,

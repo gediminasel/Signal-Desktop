@@ -27,7 +27,7 @@ import { MY_STORY_ID, getStoryDistributionListName } from '../types/Stories';
 import { PagedModal, ModalPage } from './Modal';
 import { SearchInput } from './SearchInput';
 import { StoryDistributionListName } from './StoryDistributionListName';
-import { filterAndSortConversationsByRecent } from '../util/filterAndSortConversations';
+import { filterAndSortConversations } from '../util/filterAndSortConversations';
 import { isNotNil } from '../util/isNotNil';
 import {
   shouldNeverBeCalled,
@@ -89,7 +89,7 @@ function filterConversations(
   conversations: ReadonlyArray<ConversationType>,
   searchTerm: string
 ) {
-  return filterAndSortConversationsByRecent(
+  return filterAndSortConversations(
     conversations,
     searchTerm,
     undefined
@@ -231,7 +231,7 @@ function GroupStoryItem({
             {i18n('icu:StoriesSettings__group-story-subtitle')}
             &nbsp;&middot;&nbsp;
             {i18n('icu:StoriesSettings__viewers', {
-              count: groupStory.membersCount,
+              count: groupStory.membersCount ?? 0,
             })}
           </span>
         </span>

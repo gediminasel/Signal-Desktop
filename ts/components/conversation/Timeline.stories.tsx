@@ -336,6 +336,10 @@ const actions = () => ({
   viewStory: action('viewStory'),
 
   onReplyToMessage: action('onReplyToMessage'),
+
+  onOpenMessageRequestActionsConfirmation: action(
+    'onOpenMessageRequestActionsConfirmation'
+  ),
 });
 
 const renderItem = ({
@@ -351,6 +355,7 @@ const renderItem = ({
     getPreferredBadge={() => undefined}
     id=""
     isTargeted={false}
+    isBlocked={false}
     i18n={i18n}
     interactionMode="keyboard"
     isNextItemCallingNotification={false}
@@ -361,7 +366,7 @@ const renderItem = ({
     conversationId=""
     item={items[messageId]}
     renderAudioAttachment={() => <div>*AudioAttachment*</div>}
-    renderContact={() => '*ContactName*'}
+    renderContact={() => <div>*ContactName*</div>}
     renderEmojiPicker={() => <div />}
     renderReactionPicker={() => <div />}
     renderUniversalTimerNotification={() => (
@@ -443,11 +448,14 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
   getTimestampForMessage: Date.now,
   haveNewest: overrideProps.haveNewest ?? false,
   haveOldest: overrideProps.haveOldest ?? false,
+  isBlocked: false,
   isConversationSelected: true,
   isIncomingMessageRequest: overrideProps.isIncomingMessageRequest ?? false,
   items: overrideProps.items ?? Object.keys(items),
   messageChangeCounter: 0,
-  scrollToIndex: overrideProps.scrollToIndex,
+  messageLoadingState: null,
+  isNearBottom: null,
+  scrollToIndex: overrideProps.scrollToIndex ?? null,
   scrollToIndexCounter: 0,
   shouldShowMiniPlayer: Boolean(overrideProps.shouldShowMiniPlayer),
   totalUnseen: overrideProps.totalUnseen ?? 0,
@@ -456,6 +464,7 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
     overrideProps.invitedContactsForNewlyCreatedGroup || [],
   warning: overrideProps.warning,
   hasContactSpoofingReview: false,
+  conversationType: 'direct',
 
   id: uuid(),
   renderItem,

@@ -16,18 +16,6 @@
       }
     ]
   },
-  "icu:AddCaptionModal__title": {
-    "messageformat": "メッセージを追加してください",
-    "description": "(Deleted 12/14/2023) Shown as the title of the dialog that allows you to add a caption to a story"
-  },
-  "icu:AddCaptionModal__placeholder": {
-    "messageformat": "メッセージ",
-    "description": "(Deleted 12/14/2023) Placeholder text for textarea when adding a caption/message (we don't know which yet so we default to message)"
-  },
-  "icu:AddCaptionModal__submit-button": {
-    "messageformat": "完了",
-    "description": "(Deleted 12/14/2023) Label on the button that submits changes to a story's caption in the add-caption dialog"
-  },
   "icu:AddUserToAnotherGroupModal__title": {
     "messageformat": "グループへ追加",
     "description": "Shown as the title of the dialog that allows you to add a contact to an group"
@@ -290,11 +278,11 @@
   },
   "icu:avatarMenuChatColors": {
     "messageformat": "チャットの色",
-    "description": "One of the menu options available in the Avatar popup menu"
+    "description": "(Deleted 2024/03/07) One of the menu options available in the Avatar popup menu"
   },
   "icu:avatarMenuUpdateAvailable": {
     "messageformat": "Signalをアップデートする",
-    "description": "One of the menu options available in the Avatar popup menu"
+    "description": "(Deleted 2024/03/07) One of the menu options available in the Avatar popup menu"
   },
   "icu:loading": {
     "messageformat": "読み込んでいます…",
@@ -440,6 +428,26 @@
     "messageformat": "メッセージの選択",
     "description": "Shown in menu for conversation, allows the user to start selecting multiple messages in the conversation"
   },
+  "icu:ConversationHeader__MenuItem--Accept": {
+    "messageformat": "承認する",
+    "description": "Shown in menu for conversation, allows the user to accept a message request"
+  },
+  "icu:ConversationHeader__MenuItem--Block": {
+    "messageformat": "ブロックする",
+    "description": "Shown in menu for conversation, allows the user to block the contact"
+  },
+  "icu:ConversationHeader__MenuItem--Unblock": {
+    "messageformat": "ブロックを解除",
+    "description": "Shown in menu for conversation, allows the user to unblock the contact"
+  },
+  "icu:ConversationHeader__MenuItem--ReportSpam": {
+    "messageformat": "スパムとして報告する",
+    "description": "Shown in menu for conversation, allows the user to report the conversation as spam"
+  },
+  "icu:ConversationHeader__MenuItem--DeleteChat": {
+    "messageformat": "チャットを消去する",
+    "description": "Shown in menu for conversation, allows the user to delete the conversation"
+  },
   "icu:ContactListItem__menu": {
     "messageformat": "連絡先の管理",
     "description": "Shown as aria label for context menu for a contact"
@@ -502,63 +510,63 @@
   },
   "icu:chooseDirectory": {
     "messageformat": "フォルダを選択",
-    "description": "Button to allow the user to find a folder on disk"
+    "description": "(Deleted 2024/03/07) Button to allow the user to find a folder on disk"
   },
   "icu:chooseFile": {
     "messageformat": "ファイルを選択",
-    "description": "Button to allow the user to find a file on disk"
+    "description": "(Deleted 2024/03/07) Button to allow the user to find a file on disk"
   },
   "icu:loadDataHeader": {
     "messageformat": "データを読み込む",
-    "description": "Header shown on the first screen in the data import process"
+    "description": "(Deleted 2024/03/07) Header shown on the first screen in the data import process"
   },
   "icu:loadDataDescription": {
     "messageformat": "Signalの保存データが含まれたフォルダーを選択してください。",
-    "description": "Introduction to the process of importing messages and contacts from disk"
+    "description": "(Deleted 2024/03/07) Introduction to the process of importing messages and contacts from disk"
   },
   "icu:importChooserTitle": {
     "messageformat": "エクスポートされたデータがあるフォルダを選んで下さい",
-    "description": "Title of the popup window used to select data previously exported"
+    "description": "(Deleted 2024/03/07) Title of the popup window used to select data previously exported"
   },
   "icu:importErrorHeader": {
     "messageformat": "エラーが発生しました！",
-    "description": "Header of the error screen after a failed import"
+    "description": "(Deleted 2024/03/07) Header of the error screen after a failed import"
   },
   "icu:importingHeader": {
     "messageformat": "連絡先とメッセージを読み込んでいます",
-    "description": "Header of screen shown as data is import"
+    "description": "(Deleted 2024/03/07) Header of screen shown as data is import"
   },
   "icu:importErrorFirst": {
     "messageformat": "正しいディレクトリを選択したか確認してください。ディレクトリ名はSignal Exportから始まります。なお、旧式のChromeアプリからもデータをコピーできます。",
-    "description": "Message shown if the import went wrong; first paragraph"
+    "description": "(Deleted 2024/03/07) Message shown if the import went wrong; first paragraph"
   },
   "icu:importErrorSecond": {
     "messageformat": "もしこれらの方法がうまく作用しない場合、デバッグログ(表示->デバッグログ)を提出していただけると将来的な解決につながります!",
-    "description": "Message shown if the import went wrong; second paragraph"
+    "description": "(Deleted 2024/03/07) Message shown if the import went wrong; second paragraph"
   },
   "icu:importAgain": {
     "messageformat": "フォルダーを選択して再度試す",
-    "description": "Button shown if the user runs into an error during import, allowing them to start over"
+    "description": "(Deleted 2024/03/07) Button shown if the user runs into an error during import, allowing them to start over"
   },
   "icu:importCompleteHeader": {
     "messageformat": "成功しました！",
-    "description": "Header shown on the screen at the end of a successful import process"
+    "description": "(Deleted 2024/03/07) Header shown on the screen at the end of a successful import process"
   },
   "icu:importCompleteStartButton": {
     "messageformat": "Signal Desktopを使用開始",
-    "description": "Button shown at end of successful import process, nothing left but a restart"
+    "description": "(Deleted 2024/03/07) Button shown at end of successful import process, nothing left but a restart"
   },
   "icu:importCompleteLinkButton": {
     "messageformat": "この端末を携帯電話とリンクする",
-    "description": "Button shown at end of successful 'light' import process, so the standard linking process still needs to happen"
+    "description": "(Deleted 2024/03/07) Button shown at end of successful 'light' import process, so the standard linking process still needs to happen"
   },
   "icu:selectedLocation": {
     "messageformat": "選択したフォルダ",
-    "description": "Message shown as the export location if we didn't capture the target directory"
+    "description": "(Deleted 2024/03/07) Message shown as the export location if we didn't capture the target directory"
   },
   "icu:upgradingDatabase": {
     "messageformat": "データベースを更新しています。しばらく掛かるかも知れません。",
-    "description": "Message shown on the loading screen when we're changing database structure on first run of a new version"
+    "description": "(Deleted 2024/03/07) Message shown on the loading screen when we're changing database structure on first run of a new version"
   },
   "icu:loadingMessages--other": {
     "messageformat": "{daysAgo, plural, other {{daysAgo,number} 日前のメッセージを読み込み中..}}",
@@ -598,11 +606,19 @@
   },
   "icu:unreadMessage": {
     "messageformat": "1件の未読メッセージ",
-    "description": "Text for unread message separator, just one message"
+    "description": "(Deleted 2024/03/07) Text for unread message separator, just one message"
   },
   "icu:unreadMessages": {
     "messageformat": "{count, plural, other {{count,number}件の未読メッセージ}}",
     "description": "Text for unread message separator, with count"
+  },
+  "icu:taskbarMarkedUnread": {
+    "messageformat": "未読にする",
+    "description": "On Windows, description for screen readers for the OS taskbar icon's overlay badge when the user has marked chat(s) as unread."
+  },
+  "icu:taskbarUnreadMessages": {
+    "messageformat": "{count, plural, other {{count,number}件の未読メッセージ}}",
+    "description": "On Windows, description for screen readers for the OS taskbar icon's overlay badge when there are unread messages."
   },
   "icu:messageHistoryUnsynced": {
     "messageformat": "セキュリティ保護のため、過去のチャットは新しくリンクされた端末には転送されません。",
@@ -626,7 +642,7 @@
   },
   "icu:membersNeedingVerification": {
     "messageformat": "これらグループのメンバーに対する安全番号が変更されました。グループメンバーをクリックして新しい安全番号を表示します。",
-    "description": "When there are multiple previously-verified group members with safety number changes, a banner will be shown. The list of contacts with safety number changes is shown, and this text introduces that list."
+    "description": "(Deleted 2024/03/07) When there are multiple previously-verified group members with safety number changes, a banner will be shown. The list of contacts with safety number changes is shown, and this text introduces that list."
   },
   "icu:changedRightAfterVerify": {
     "messageformat": "検証しようとしている安全番号が変更されました。{name1} に対する安全番号を確認してください。これはだれかが通信を傍受しようとしているかも知れませんし、{name2} がSignalを再インストールしただけかも知れません。",
@@ -678,7 +694,7 @@
   },
   "icu:identityKeyErrorOnSend": {
     "messageformat": "{name1} に対する安全番号が変更されました。だれかが通信を傍受しようとしているかも知れませんし、{name2} がSignalを再インストールしただけかも知れません。この連絡先に対する安全番号を検証することをお勧めします。",
-    "description": "Shown when user clicks on a failed recipient in the message detail view after an identity key change"
+    "description": "(Deleted 2024/03/07) Shown when user clicks on a failed recipient in the message detail view after an identity key change"
   },
   "icu:sendAnyway": {
     "messageformat": "とにかく送信する",
@@ -706,11 +722,11 @@
   },
   "icu:noLongerVerified": {
     "messageformat": "{name} に対する安全番号が変更され、未検証となりました。",
-    "description": "Shown in conversation banner when user's safety number has changed, but they were previously verified."
+    "description": "(Deleted 2024/03/07) Shown in conversation banner when user's safety number has changed, but they were previously verified."
   },
   "icu:multipleNoLongerVerified": {
     "messageformat": "このグループの複数メンバーに対する安全番号が変更され、未検証となりました。クリックして表示します。",
-    "description": "Shown in conversation banner when more than one group member's safety number has changed, but they were previously verified."
+    "description": "(Deleted 2024/03/07) Shown in conversation banner when more than one group member's safety number has changed, but they were previously verified."
   },
   "icu:debugLogExplanation": {
     "messageformat": "「送信する」をクリックすると、このログがユニークな未公開のURLで30日間見られるようになります。\n「保存」をクリックすると、送信する前にあなたの端末にログを保存しておくこともできます。",
@@ -750,34 +766,14 @@
   },
   "icu:gotIt": {
     "messageformat": "わかりました",
-    "description": "Label for a button that dismisses a dialog. The user clicks it to confirm that they understand the message in the dialog."
+    "description": "(Deleted 2024/03/07) Label for a button that dismisses a dialog. The user clicks it to confirm that they understand the message in the dialog."
   },
   "icu:submit": {
     "messageformat": "送信する"
   },
   "icu:acceptNewKey": {
     "messageformat": "承認する",
-    "description": "Label for a button to accept a new safety number"
-  },
-  "icu:SafetyNumberViewer__migration__text": {
-    "messageformat": "安全番号を更新中です。",
-    "description": "(Deleted 11/01/2023) An explanatory note in SafetyNumberViewer describing the safety number migration process."
-  },
-  "icu:SafetyNumberViewer__migration__learn_more": {
-    "messageformat": "さらに詳しく",
-    "description": "(Deleted 11/01/2023) A link text in SafetyNumberViewer describing the safety number migration process."
-  },
-  "icu:SafetyNumberViewer__card__prev": {
-    "messageformat": "前回の安全番号",
-    "description": "(Deleted 11/01/2023) An ARIA label for safety number navigation button."
-  },
-  "icu:SafetyNumberViewer__card__next": {
-    "messageformat": "次の安全番号",
-    "description": "(Deleted 11/01/2023) An ARIA label for safety number navigation button."
-  },
-  "icu:SafetyNumberViewer__carousel__dot": {
-    "messageformat": "安全番号のバージョンは、 {total,number}の{index,number}です",
-    "description": "(Deleted 11/01/2023) An ARIA label for safety number carousel button."
+    "description": "(Deleted 2024/03/07) Label for a button to accept a new safety number"
   },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "検証済みにする",
@@ -795,34 +791,6 @@
     "messageformat": "さらに詳しく",
     "description": "Text of 'Learn more' button of SafetyNumberViewerModal modal"
   },
-  "icu:SafetyNumberViewer__hint--migration": {
-    "messageformat": "{name}とのやりとりがエンドツーエンドで暗号化されているかを検証するには、お互いの端末で、上部のカラーカード（色がついた枠内）の数字が一致するかを確認してください。数字が一致しない場合は、別の安全番号を表示させてください。一致する数字は一つだけでかまいません。",
-    "description": "(Deleted 11/01/2023). Safety number viewer, text of the hint during migration period"
-  },
-  "icu:SafetyNumberViewer__hint--normal": {
-    "messageformat": "{name} とのやりとりがエンドツーエンドで暗号化されているかを検証するには、お互いの端末で、上記の番号が相手端末上の番号と同じか確認してください。相手の端末であなたのコードをスキャンしてもらう方法もあります。",
-    "description": "(Deleted 11/01/2023). Safety number viewer, text of the hint after migration period"
-  },
-  "icu:SafetyNumberOnboarding__title": {
-    "messageformat": "安全番号の変更",
-    "description": "(Deleted 11/01/2023) Title of Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__p1": {
-    "messageformat": "Signal のプライバシー機能を以後も有効にするために、安全番号は移行期間中に更新されます。",
-    "description": "(Deleted 11/01/2023) Paragraph 1 of Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__p2": {
-    "messageformat": "安全番号を検証するために、カラーカード（色がついた枠内）の数字が一致するか相手の端末を確認してください。数字が一致しない場合は、別の安全番号を表示させてください。一致する数字は一つだけでかまいません。",
-    "description": "(Deleted 11/01/2023) Paragraph 2 of Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__help": {
-    "messageformat": "お困りですか？",
-    "description": "(Deleted 11/01/2023) Text of a secondary button in Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__close": {
-    "messageformat": "わかりました",
-    "description": "(Deleted 11/01/2023) Text of a secondary button in Safety number onboarding modal"
-  },
   "icu:SafetyNumberNotReady__body": {
     "messageformat": "メッセージ交換をすると、相手との間に安全番号が作成されます。",
     "description": "Body of SafetyNumberNotReady modal"
@@ -833,11 +801,11 @@
   },
   "icu:isVerified": {
     "messageformat": "{name} に対する安全番号を検証しました。",
-    "description": "Summary state shown at top of the safety number screen if user has verified contact."
+    "description": "(Deleted 2024/03/07) Summary state shown at top of the safety number screen if user has verified contact."
   },
   "icu:isNotVerified": {
     "messageformat": "{name} に対する安全番号が未検証です。",
-    "description": "Summary state shown at top of the safety number screen if user has not verified contact."
+    "description": "(Deleted 2024/03/07) Summary state shown at top of the safety number screen if user has not verified contact."
   },
   "icu:verified": {
     "messageformat": "検証済み"
@@ -847,7 +815,8 @@
     "description": "Header for a key change dialog"
   },
   "icu:identityChanged": {
-    "messageformat": "この連絡先に対する安全番号が変更されました。だれかが通信を傍受しようとしているかも知れませんし、連絡先がSignalを再インストールしただけかも知れません。以下から新しい安全番号を検証することをお勧めします。"
+    "messageformat": "この連絡先に対する安全番号が変更されました。だれかが通信を傍受しようとしているかも知れませんし、連絡先がSignalを再インストールしただけかも知れません。以下から新しい安全番号を検証することをお勧めします。",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:incomingError": {
     "messageformat": "受信メッセージの処理エラー"
@@ -894,11 +863,11 @@
   },
   "icu:clickToSave": {
     "messageformat": "クリックして保存",
-    "description": "Hover text for attachment filenames"
+    "description": "(Deleted 2024/03/07) Hover text for attachment filenames"
   },
   "icu:unnamedFile": {
     "messageformat": "無名のファイル",
-    "description": "Hover text for attachment filenames"
+    "description": "(Deleted 2024/03/07) Hover text for attachment filenames"
   },
   "icu:voiceMessage": {
     "messageformat": "音声メッセージ",
@@ -923,10 +892,6 @@
   "icu:stagedImageAttachment": {
     "messageformat": "画像添付ファイルのドラフト: {path}",
     "description": "Alt text for staged attachments"
-  },
-  "icu:cdsMirroringErrorToast": {
-    "messageformat": "Desktopで、連絡先検出サービスの不整合がありました。",
-    "description": "(Deleted 2024/01/22) An error popup when we discovered an inconsistency between mirrored Contact Discovery Service requests."
   },
   "icu:decryptionErrorToast": {
     "messageformat": "デスクトップで {name} ({deviceId}) からの復号化でエラーが発生しました。",
@@ -1180,7 +1145,7 @@
   },
   "icu:messageFoundButNotLoaded": {
     "messageformat": "元のメッセージを見つけたが、ロードされていません。ロードするのにスクロールアップして下さい。",
-    "description": "Shown in toast if user clicks on quote references messages not loaded in view, but in database"
+    "description": "(Deleted 2024/03/07) Shown in toast if user clicks on quote references messages not loaded in view, but in database"
   },
   "icu:voiceRecording--start": {
     "messageformat": "音声メッセージの録音を開始",
@@ -1188,11 +1153,11 @@
   },
   "icu:voiceRecording--complete": {
     "messageformat": "音声メッセージを送信",
-    "description": "Tooltip for green complete voice message and send"
+    "description": "(Deleted 2024/03/07) Tooltip for green complete voice message and send"
   },
   "icu:voiceRecording--cancel": {
     "messageformat": "音声メッセージをキャンセル",
-    "description": "Tooltip for red button to cancel voice message"
+    "description": "(Deleted 2024/03/07) Tooltip for red button to cancel voice message"
   },
   "icu:voiceRecordingInterruptedMax": {
     "messageformat": "制限時間がきたので音声メッセージの録音は停止されました。",
@@ -1200,7 +1165,7 @@
   },
   "icu:voiceRecordingInterruptedBlur": {
     "messageformat": "別のアプリに切り替えられたのでボイスメッセージの録音は停止しました。",
-    "description": "Confirmation dialog message for when the voice recording is interrupted due to app losing focus"
+    "description": "(Deleted 2024/03/07) Confirmation dialog message for when the voice recording is interrupted due to app losing focus"
   },
   "icu:voiceNoteLimit": {
     "messageformat": "音声メッセージの長さは、1時間までです。他のアプリに切り替えると、録音を停止します。",
@@ -1228,7 +1193,7 @@
   },
   "icu:replyingTo": {
     "messageformat": "{name} への返信",
-    "description": "Shown in iOS theme when you or someone quotes to a message which is not from you"
+    "description": "(Deleted 2024/03/07) Shown in iOS theme when you or someone quotes to a message which is not from you"
   },
   "icu:audioPermissionNeeded": {
     "messageformat": "音声メッセージを送るには、Signalのマイクへのアクセスを許可してください。",
@@ -1248,7 +1213,7 @@
   },
   "icu:showSettings": {
     "messageformat": "設定を表示",
-    "description": "A button shown in dialog requesting the user to turn on audio permissions"
+    "description": "(Deleted 2024/03/07) A button shown in dialog requesting the user to turn on audio permissions"
   },
   "icu:audio": {
     "messageformat": "音声",
@@ -1272,7 +1237,7 @@
   },
   "icu:muted": {
     "messageformat": "ミュート中",
-    "description": "Shown in a button when a conversation is muted"
+    "description": "(Deleted 2024/03/07) Shown in a button when a conversation is muted"
   },
   "icu:mute": {
     "messageformat": "ミュート",
@@ -1300,13 +1265,15 @@
     "messageformat": "破棄"
   },
   "icu:failedToSend": {
-    "messageformat": "いくつかの宛先に送信できませんでした。ネットワーク接続を確認してください。"
+    "messageformat": "いくつかの宛先に送信できませんでした。ネットワーク接続を確認してください。",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:error": {
     "messageformat": "エラー"
   },
   "icu:messageDetail": {
-    "messageformat": "メッセージの詳細"
+    "messageformat": "メッセージの詳細",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:delete": {
     "messageformat": "消去"
@@ -1352,7 +1319,7 @@
   },
   "icu:to": {
     "messageformat": "宛先",
-    "description": "Label for the receiver of a message"
+    "description": "(Deleted 2024/03/07) Label for the receiver of a message"
   },
   "icu:searchResultHeader--sender-to-group": {
     "messageformat": "{sender} から {receiverGroup}",
@@ -1383,7 +1350,8 @@
     "description": "Placeholder text in the message entry field"
   },
   "icu:groupMembers": {
-    "messageformat": "グループメンバー"
+    "messageformat": "グループメンバー",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:showMembers": {
     "messageformat": "メンバーを表示する"
@@ -1425,14 +1393,15 @@
   },
   "icu:ContactModal__showSafetyNumber": {
     "messageformat": "安全番号を表示する",
-    "description": "Contact modal, label for button to show safety number modal"
+    "description": "(Deleted 2024/03/07) Contact modal, label for button to show safety number modal"
   },
   "icu:viewRecentMedia": {
     "messageformat": "最近使用したメディア",
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
   "icu:theirIdentityUnknown": {
-    "messageformat": "この連絡先とまだメッセージを交換していません。安全番号は最初のメッセージのあとに利用可能になります。"
+    "messageformat": "この連絡先とまだメッセージを交換していません。安全番号は最初のメッセージのあとに利用可能になります。",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:back": {
     "messageformat": "戻る",
@@ -1606,9 +1575,13 @@
     "messageformat": "{phoneNumber} は {conversationTitle}に所属しています",
     "description": "Shown when we've discovered a phone number for a contact you've been communicating with, but you have no shared groups."
   },
+  "icu:TitleTransition--notification": {
+    "messageformat": "これは{oldTitle}と始めたチャットです",
+    "description": "Shown when we've received profile information for a contact we have been messaging by username/phone number"
+  },
   "icu:quoteThumbnailAlt": {
     "messageformat": "引用したメッセージの画像のサムネイル",
-    "description": "Used in alt tag of thumbnail images inside of an embedded message quote"
+    "description": "(Deleted 2024/03/07) Used in alt tag of thumbnail images inside of an embedded message quote"
   },
   "icu:imageAttachmentAlt": {
     "messageformat": "メッセージにイメージを添付する",
@@ -1636,15 +1609,15 @@
   },
   "icu:fileIconAlt": {
     "messageformat": "ファイルのアイコン",
-    "description": "Used in the media gallery documents tab to visually represent a file"
+    "description": "(Deleted 2024/03/07) Used in the media gallery documents tab to visually represent a file"
   },
   "icu:installWelcome": {
     "messageformat": "Signal Desktopにようこそ",
-    "description": "Welcome title on the install page"
+    "description": "(Deleted 2024/03/07) Welcome title on the install page"
   },
   "icu:installTagline": {
     "messageformat": "Signalを使えば簡単にプライバシーを守れます。",
-    "description": "Tagline displayed under 'installWelcome' string on the install page"
+    "description": "(Deleted 2024/03/07) Tagline displayed under 'installWelcome' string on the install page"
   },
   "icu:linkedDevices": {
     "messageformat": "リンク済み端末",
@@ -1677,10 +1650,6 @@
   "icu:Install__instructions__3": {
     "messageformat": "Androidでは {plusButton} を、iPhoneでは {linkNewDevice} をタップしてください",
     "description": "Instructions on the device link screen"
-  },
-  "icu:Install__qr-failed": {
-    "messageformat": "(deleted 05/09/2023) The QR code couldn't load. Check your internet and try again. <learnMoreLink>Learn more</learnMoreLink>",
-    "description": "Shown on the install screen if the QR code fails to load"
   },
   "icu:Install__qr-failed-load": {
     "messageformat": "QR コードを読み込めませんでした。インターネット接続を確認して再度お試しください。<retry>再試行</retry>",
@@ -1778,51 +1747,51 @@
     "description": "Text in the call lobby when you can't join because the call is full"
   },
   "icu:calling__cant-join": {
-    "messageformat": "Can't join call",
+    "messageformat": "通話に参加できません",
     "description": "Modal dialog title when you can't join a call"
   },
   "icu:calling__dialog-already-in-call": {
-    "messageformat": "You are already in a call.",
+    "messageformat": "すでに通話中です。",
     "description": "Error message when clicking a call link to join a call, but you're in a call already."
   },
   "icu:calling__call-link-connection-issues": {
-    "messageformat": "Could not fetch call link information. Please check your network connection and try again.",
+    "messageformat": "通話リンク情報を取得できませんでした。ネットワーク接続を確認して再度試してください。",
     "description": "Error message when unable to fetch call link info from server."
   },
   "icu:calling__call-link-copied": {
-    "messageformat": "Call link copied.",
+    "messageformat": "通話リンクがコピーされました。",
     "description": "Toast shown when a call link is copied to the clipboard."
   },
   "icu:calling__call-link-no-longer-valid": {
-    "messageformat": "This call link is no longer valid.",
+    "messageformat": "この通話リンクは無効になっています。",
     "description": "Error message when a call link has been revoked or expires."
   },
   "icu:calling__call-link-default-title": {
-    "messageformat": "Signal Call",
+    "messageformat": "Signal通話",
     "description": "Default title for Signal call links."
   },
   "icu:calling__join-request-denied": {
-    "messageformat": "Your request to join this call has been denied.",
+    "messageformat": "この通話への参加リクエストは拒否されました。",
     "description": "Error message when a request to join a call link call was rejected by a call admin."
   },
   "icu:calling__join-request-denied-title": {
-    "messageformat": "Join request denied",
+    "messageformat": "参加リクエストが拒否されました",
     "description": "Title of error when a request to join a call link call was rejected by a call admin."
   },
   "icu:calling__removed-from-call": {
-    "messageformat": "Someone has removed you from the call.",
+    "messageformat": "メンバーがあなたを通話から退出させました。",
     "description": "Error message when in a call then a call admin removes you."
   },
   "icu:calling__removed-from-call-title": {
-    "messageformat": "Removed from call",
+    "messageformat": "通話から退出しました",
     "description": "Title of error when in a call then a call admin removes you."
   },
   "icu:CallingLobby__CallLinkNotice": {
-    "messageformat": "Anyone who joins this call via the link will see your name and photo.",
+    "messageformat": "リンク経由でこの通話に参加する人には、あなたの名前と写真が表示されます。",
     "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared."
   },
   "icu:CallingLobby__CallLinkNotice--phone-sharing": {
-    "messageformat": "Anyone who joins this call via the link will see your name, photo, and phone number.",
+    "messageformat": "リンク経由でこの通話に参加する人には、あなたの名前、写真、電話番号が表示されます。",
     "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared, when the phone number sharing account setting is enabled."
   },
   "icu:CallingLobbyJoinButton--join": {
@@ -1883,11 +1852,11 @@
   },
   "icu:calling__button--ring__off": {
     "messageformat": "通知して、鳴らさない",
-    "description": "Button tooltip label for turning ringing off"
+    "description": "(Deleted 2024/03/07) Button tooltip label for turning ringing off"
   },
   "icu:calling__button--ring__on": {
     "messageformat": "呼び出し音を鳴らす",
-    "description": "Button tooltip label for turning ringing on"
+    "description": "(Deleted 2024/03/07) Button tooltip label for turning ringing on"
   },
   "icu:CallingButton__ring-off": {
     "messageformat": "呼び出し音をオフにする",
@@ -1975,10 +1944,14 @@
   },
   "icu:calling__in-this-call--one": {
     "messageformat": "参加は1人だけです",
-    "description": "Shown in the participants list to describe how many people are in the call"
+    "description": "(Deleted 2024/02/29) Shown in the participants list to describe how many people are in the call"
   },
   "icu:calling__in-this-call--many": {
     "messageformat": "現在{people}人が参加中",
+    "description": "(Deleted 2024/02/29) Shown in the participants list to describe how many people are in the call"
+  },
+  "icu:calling__in-this-call": {
+    "messageformat": "{people, plural, other {参加者 · {people,number}人}}",
     "description": "Shown in the participants list to describe how many people are in the call"
   },
   "icu:calling__you-have-blocked": {
@@ -2083,7 +2056,7 @@
   },
   "icu:general": {
     "messageformat": "一般",
-    "description": "Header for general options on the settings screen"
+    "description": "(Deleted 2024/03/07) Header for general options on the settings screen"
   },
   "icu:spellCheckDescription": {
     "messageformat": "メッセージ作成ボックスでスペルチェックを行う",
@@ -2135,7 +2108,7 @@
   },
   "icu:deleteAllDataButton": {
     "messageformat": "すべてのデータを消去する",
-    "description": "Text of the button that deletes all data"
+    "description": "(Deleted 2024/03/07) Text of the button that deletes all data"
   },
   "icu:deleteAllDataProgress": {
     "messageformat": "接続を切って全データを削除しています",
@@ -2151,15 +2124,15 @@
   },
   "icu:notifications": {
     "messageformat": "通知",
-    "description": "Header for notification settings"
+    "description": "(Deleted 2024/03/07) Header for notification settings"
   },
   "icu:notificationSettingsDialog": {
     "messageformat": "新着メッセージの通知で表示する項目:",
-    "description": "Explain the purpose of the notification settings"
+    "description": "(Deleted 2024/03/07) Explain the purpose of the notification settings"
   },
   "icu:disableNotifications": {
     "messageformat": "通知をオフにする",
-    "description": "Label for disabling notifications"
+    "description": "(Deleted 2024/03/07) Label for disabling notifications"
   },
   "icu:nameAndMessage": {
     "messageformat": "名前、内容、アクション",
@@ -2213,15 +2186,15 @@
   },
   "icu:showMore": {
     "messageformat": "詳細",
-    "description": "Displays the details of a key change"
+    "description": "(Deleted 2024/03/07) Displays the details of a key change"
   },
   "icu:showLess": {
     "messageformat": "詳細を隠す",
-    "description": "Hides the details of a key change"
+    "description": "(Deleted 2024/03/07) Hides the details of a key change"
   },
   "icu:learnMore": {
     "messageformat": "安全番号の検証についての詳細",
-    "description": "Text that links to a support article on verifying safety numbers"
+    "description": "(Deleted 2024/03/07) Text that links to a support article on verifying safety numbers"
   },
   "icu:expiredWarning": {
     "messageformat": "アプリのバージョンが古すぎます。最新版にアップデートしてください。",
@@ -2237,7 +2210,7 @@
   },
   "icu:unregisteredUser": {
     "messageformat": "宛先の電話番号は登録されていません",
-    "description": "Error message displayed when sending to an unregistered user."
+    "description": "(Deleted 2024/03/07) Error message displayed when sending to an unregistered user."
   },
   "icu:sync": {
     "messageformat": "連絡先をインポート",
@@ -2249,7 +2222,7 @@
   },
   "icu:lastSynced": {
     "messageformat": "インポート日時",
-    "description": "Label for date and time of last sync operation"
+    "description": "(Deleted 2024/03/07) Label for date and time of last sync operation"
   },
   "icu:syncNow": {
     "messageformat": "インポートする",
@@ -2409,7 +2382,7 @@
   },
   "icu:yourSafetyNumberWith": {
     "messageformat": "{name1} に対する安全番号:",
-    "description": "Heading for safety number view"
+    "description": "(Deleted 2024/03/07) Heading for safety number view"
   },
   "icu:themeLight": {
     "messageformat": "ライト",
@@ -2441,7 +2414,7 @@
   },
   "icu:startConversation": {
     "messageformat": "新しいチャットを始める",
-    "description": "Label underneath number a user enters that is not an existing contact"
+    "description": "(Deleted 2024/03/07) Label underneath number a user enters that is not an existing contact"
   },
   "icu:newConversation": {
     "messageformat": "新しいチャット",
@@ -2573,15 +2546,15 @@
   },
   "icu:notSupportedSMS": {
     "messageformat": "SMS/MMSメッセージはサポートしていません。",
-    "description": "Label underneath number informing user that SMS is not supported on desktop"
+    "description": "(Deleted 2024/03/07) Label underneath number informing user that SMS is not supported on desktop"
   },
   "icu:newPhoneNumber": {
     "messageformat": "電話番号を入力して連絡先を追加する",
-    "description": "Placeholder for adding a new number to a contact"
+    "description": "(Deleted 2024/03/07) Placeholder for adding a new number to a contact"
   },
   "icu:invalidNumberError": {
     "messageformat": "不正な番号です",
-    "description": "When a person inputs a number that is invalid"
+    "description": "(Deleted 2024/03/07) When a person inputs a number that is invalid"
   },
   "icu:unlinkedWarning": {
     "messageformat": "クリックすると、Signal Desktopとスマートフォンが再リンクされ、メッセージのやり取りが継続されます。"
@@ -2590,7 +2563,8 @@
     "messageformat": "未リンク"
   },
   "icu:relink": {
-    "messageformat": "再リンク"
+    "messageformat": "再リンク",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:autoUpdateNewVersionTitle": {
     "messageformat": "アップデートがあります"
@@ -2615,7 +2589,8 @@
     "messageformat": "Signalを再起動する"
   },
   "icu:autoUpdateLaterButtonLabel": {
-    "messageformat": "あとで"
+    "messageformat": "あとで",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:autoUpdateIgnoreButtonLabel": {
     "messageformat": "アップデートを無視"
@@ -2741,7 +2716,7 @@
     "description": "Shown in a message bubble if any attachments are left on message when too-large attachments are dropped"
   },
   "icu:message--call-link-description": {
-    "messageformat": "Use this link to join a Signal call",
+    "messageformat": "リンクを使用して Signal 通話に参加する",
     "description": "Shown in message previews for Signal call links."
   },
   "icu:donation--missing": {
@@ -2806,7 +2781,7 @@
   },
   "icu:message--giftBadge--view": {
     "messageformat": "表示",
-    "description": "Shown when you've sent a gift badge to someone then opened it"
+    "description": "(Deleted 2024/03/07) Shown when you've sent a gift badge to someone then opened it"
   },
   "icu:message--donation--view": {
     "messageformat": "表示",
@@ -2838,7 +2813,7 @@
   },
   "icu:stickers--StickerManager--title": {
     "messageformat": "ステッカー",
-    "description": "Title for the sticker manager"
+    "description": "(Deleted 2024/03/07) Title for the sticker manager"
   },
   "icu:stickers--StickerManager--Available": {
     "messageformat": "利用できます",
@@ -3388,14 +3363,6 @@
     "messageformat": "チャットを未読にしました",
     "description": "A toast that shows up when user marks a conversation as unread"
   },
-  "icu:SendEdit--dialog--title": {
-    "messageformat": "Signalのベータ版にのみ反映されます",
-    "description": "(deleted 8/30) Title of the modal shown before sending your first edit message"
-  },
-  "icu:SendEdit--dialog--body": {
-    "messageformat": "メッセージの編集はSignalのベータ版ユーザーのみ利用可能です。メッセージを編集した場合、Signalのベータ版の最新バージョンを利用している人にのみ反映されます。",
-    "description": "(deleted 8/30) Body text of the modal shown before sending your first edit message"
-  },
   "icu:SendEdit--dialog--title2": {
     "messageformat": "メッセージの編集",
     "description": "Title of the modal shown before sending your first edit message"
@@ -3443,6 +3410,62 @@
   "icu:ReactionsViewer--all": {
     "messageformat": "すべて",
     "description": "Shown in reaction viewer as the title for the 'all' category"
+  },
+  "icu:SafetyTipsModal__Title": {
+    "messageformat": "安全な使い方のヒント",
+    "description": "Title of the safety tips modal"
+  },
+  "icu:SafetyTipsModal__Description": {
+    "messageformat": "知らない人からのメッセージリクエストにはご注意ください。次の点にご注意ください。",
+    "description": "Description of the safety tips modal"
+  },
+  "icu:SafetyTipsModal__TipTitle--Crypto": {
+    "messageformat": "暗号通貨または金銭詐欺",
+    "description": "Title of the crypto safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Crypto": {
+    "messageformat": "知らない人から暗号通貨（ビットコインなど）や金融に関する機会についてメッセージが送られてきた場合はご注意ください。おそらくスパムです。",
+    "description": "Description of the crypto safety tip"
+  },
+  "icu:SafetyTipsModal__TipTitle--Vague": {
+    "messageformat": "曖昧または関連性がないメッセージ",
+    "description": "Title of the vague safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Vague": {
+    "messageformat": "スパマーは、大抵の場合「こんにちは」などのシンプルなメッセージであなたの気を引きます。返信すると、彼らはさらにあなたの注意を引こうとするでしょう。",
+    "description": "Description of the vague safety tip"
+  },
+  "icu:SafetyTipsModal__TipTitle--Links": {
+    "messageformat": "リンクを含むメッセージ",
+    "description": "Title of the links safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Links": {
+    "messageformat": "知らない人からのメッセージで、ウェブサイトへのリンクが含まれている場合は注意が必要です。信頼していない人が送ってきたウェブサイトのリンクは開かないようにしましょう。",
+    "description": "Description of the links safety tip"
+  },
+  "icu:SafetyTipsModal__TipTitle--Business": {
+    "messageformat": "偽の企業や団体",
+    "description": "Title of the business safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Business": {
+    "messageformat": "企業や政府機関からの連絡にはご注意ください。税務署や宅配業者などのメッセージはスパムである可能性があります。",
+    "description": "Description of the business safety tip"
+  },
+  "icu:SafetyTipsModal__DotLabel": {
+    "messageformat": "{page,number}ページへ移動する",
+    "description": "Label for the dots in the safety tips modal that when clicked will take you to a specific tip"
+  },
+  "icu:SafetyTipsModal__Button--Previous": {
+    "messageformat": "前のヒント",
+    "description": "Button to go to the previous safety tip"
+  },
+  "icu:SafetyTipsModal__Button--Next": {
+    "messageformat": "次のヒント",
+    "description": "Button to go to the next safety tip"
+  },
+  "icu:SafetyTipsModal__Button--Done": {
+    "messageformat": "完了",
+    "description": "Button to close the safety tips modal when you've reached the last tip"
   },
   "icu:MessageRequests--message-direct": {
     "messageformat": "{name}があなたへメッセージを送信できるように、またあなたの名前とプロフィール画像が共有されるようにしますか? あなたが承認するまで、相手にはあなたがメッセージを見たことははわかりません。",
@@ -3507,6 +3530,42 @@
   "icu:MessageRequests--block-group-confirm-body": {
     "messageformat": "あなたはこのグループからメッセージやアップデートを受け取ることができなくなり、グループのメンバーはあなたをもう一度このグループに加えることができなくなります。",
     "description": "Shown as the body in the confirmation modal for blocking a group message request"
+  },
+  "icu:MessageRequests--reportAndMaybeBlock": {
+    "messageformat": "報告する",
+    "description": "Shown as a button to let the user report a message request and maybe block the user"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-title": {
+    "messageformat": "スパムとして報告しますか？",
+    "description": "Shown as the title in the modal for reporting and maybe blocking a message request"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-body--direct": {
+    "messageformat": "この人物がスパムを送信している可能性をSignalに通知します。Signalはチャットの内容を見ることはできません。",
+    "description": "Shown as the body in the modal for reporting and maybe blocking a message request in a direct conversation"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-body--group--unknown-contact": {
+    "messageformat": "このグループへあなたを招待している相手がスパムを送信している可能性をSignalに通知します。Signalはチャットの内容を見ることはできません。",
+    "description": "Shown as the body in the modal for reporting and maybe blocking a message request in a group conversation when the contact is unknown"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-body--group": {
+    "messageformat": "Signalは、このグループへあなたを招待している{name}がスパムを送信している可能性をお知らせします。Signalはチャットの内容を見ることはできません。",
+    "description": "Shown as the body in the modal for reporting and maybe blocking a message request in a group conversation"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-report": {
+    "messageformat": "スパムとして報告する",
+    "description": "Shown as a button to let the user report a message request"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-reportAndBlock": {
+    "messageformat": "報告してブロックする",
+    "description": "Shown as a button to let the user report a message request and block the user"
+  },
+  "icu:MessageRequests--AcceptedOptionsModal--body": {
+    "messageformat": "{name}からのメッセージ申請を承認しました。取り消したい場合は、以下のアクションを選択できます。",
+    "description": "Shown as the body in the modal for accepting a message request in a direct conversation"
+  },
+  "icu:MessageRequests--report-spam-success-toast": {
+    "messageformat": "スパムとして報告する。",
+    "description": "Shown in a toast when you successfully report a user as spam"
   },
   "icu:MessageRequests--delete": {
     "messageformat": "消去",
@@ -3578,7 +3637,7 @@
   },
   "icu:ConversationHero--membership-added": {
     "messageformat": "{name} があなたをグループに追加しました。",
-    "description": "Shown Indicates that you were added to a group by a given individual."
+    "description": "(Deleted 2024/03/07) Shown Indicates that you were added to a group by a given individual."
   },
   "icu:no-groups-in-common": {
     "messageformat": "共通のグループはありません",
@@ -3717,11 +3776,11 @@
     "description": "Shown in the call lobby for a direct 1:1 call when the caller's video is disabled, to specify that an audio call will be placed when clicking the Start button."
   },
   "icu:CallControls__InfoDisplay--adhoc-call": {
-    "messageformat": "Call link",
+    "messageformat": "通話リンク",
     "description": "Shown in the call lobby for a call link."
   },
   "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
-    "messageformat": "Waiting to be let in",
+    "messageformat": "承認待ちです",
     "description": "Shown in the call lobby for call link calls when requesting to join a call which requires admin approval."
   },
   "icu:CallControls__JoinLeaveButton--hangup-1-1": {
@@ -3786,6 +3845,10 @@
   },
   "icu:calling__participants": {
     "messageformat": "{people} が通話中",
+    "description": "(Deleted 2024/02/29) Title for participants list toggle"
+  },
+  "icu:calling__participants--pluralized": {
+    "messageformat": "{people, plural, other {{people,number} 通話中}}",
     "description": "Title for participants list toggle"
   },
   "icu:calling__call-notification__ended": {
@@ -3865,7 +3928,7 @@
     "description": "Title for the select your screen sharing sources modal"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "Copy link",
+    "messageformat": "リンクをコピーします",
     "description": "Menu item in the in-call info popup for call link calls. The action is to add the call link to the clipboard."
   },
   "icu:callingDeviceSelection__label--video": {
@@ -4778,7 +4841,7 @@
   },
   "icu:ContactModal--message": {
     "messageformat": "メッセージ",
-    "description": "Button text for send message button in Group Contact Details modal"
+    "description": "(Deleted 2024/03/07) Button text for send message button in Group Contact Details modal"
   },
   "icu:ContactModal--rm-admin": {
     "messageformat": "管理者から外す",
@@ -5022,7 +5085,7 @@
   },
   "icu:PendingInvites--invites": {
     "messageformat": "すべての招待",
-    "description": "This is the title list of all invites"
+    "description": "(Deleted 2024/03/07) This is the title list of all invites"
   },
   "icu:PendingInvites--invited-by-you": {
     "messageformat": "すべての招待",
@@ -5138,23 +5201,23 @@
   },
   "icu:AvatarInput--no-photo-label--group": {
     "messageformat": "グループアバターを追加",
-    "description": "The label for the avatar uploader when no group photo is selected"
+    "description": "(Deleted 2024/03/07) The label for the avatar uploader when no group photo is selected"
   },
   "icu:AvatarInput--no-photo-label--profile": {
     "messageformat": "画像を追加",
-    "description": "The label for the avatar uploader when no profile photo is selected"
+    "description": "(Deleted 2024/03/07) The label for the avatar uploader when no profile photo is selected"
   },
   "icu:AvatarInput--change-photo-label": {
     "messageformat": "アバターを変更",
-    "description": "The label for the avatar uploader when a photo is selected"
+    "description": "(Deleted 2024/03/07) The label for the avatar uploader when a photo is selected"
   },
   "icu:AvatarInput--upload-photo-choice": {
     "messageformat": "アバターをアップロード",
-    "description": "The button text when you click on an uploaded avatar and want to upload a new one"
+    "description": "(Deleted 2024/03/07) The button text when you click on an uploaded avatar and want to upload a new one"
   },
   "icu:AvatarInput--remove-photo-choice": {
     "messageformat": "アバターを削除",
-    "description": "The button text when you click on an uploaded avatar and want to remove it"
+    "description": "(Deleted 2024/03/07) The button text when you click on an uploaded avatar and want to remove it"
   },
   "icu:ContactPill--remove": {
     "messageformat": "連絡先を削除",
@@ -5162,7 +5225,7 @@
   },
   "icu:ComposeErrorDialog--close": {
     "messageformat": "OK",
-    "description": "The text on the button when there's an error in the composer"
+    "description": "(Deleted 2024/03/07) The text on the button when there's an error in the composer"
   },
   "icu:NewlyCreatedGroupInvitedContactsDialog--title": {
     "messageformat": "{count, plural, other {{count,number}件の招待を送信済み}}",
@@ -5288,6 +5351,10 @@
     "messageformat": "さらに詳しく",
     "description": "Shown on the message request warning. Clicking this button will open a dialog with more information"
   },
+  "icu:MessageRequestWarning__safety-tips": {
+    "messageformat": "安全な使い方のヒント",
+    "description": "Shown on the message request warning. Clicking this button will open a dialog with safety tips"
+  },
   "icu:MessageRequestWarning__dialog__details": {
     "messageformat": "この人と共通のグループがありません。望まないメッセージを避けるため、申請は慎重に確認してください。",
     "description": "Shown in the message request warning dialog. Gives more information about message requests"
@@ -5335,10 +5402,6 @@
   "icu:ContactSpoofingReviewDialog__group__multiple-conflicts__description": {
     "messageformat": "{count, plural, other {グループ内に、{count,number}件の名前の重複があります。以下のメンバーを確認するか、対処してください。}}",
     "description": "Description for the group contact spoofing review dialog when there are multiple shared names"
-  },
-  "icu:ContactSpoofingReviewDialog__group__members-header": {
-    "messageformat": "メンバー",
-    "description": "(Deleted 01/31/2024) Header in the group contact spoofing review dialog. After this header, there will be a list of members"
   },
   "icu:ContactSpoofingReviewDialog__group__members__no-shared-groups": {
     "messageformat": "他の共通のグループはありません",
@@ -5410,7 +5473,7 @@
   },
   "icu:ChatColorPicker__global-chat-color": {
     "messageformat": "すべてのチャットの色",
-    "description": "Modal title for the chat color picker and editor for all conversations"
+    "description": "(Deleted 2024/03/07) Modal title for the chat color picker and editor for all conversations"
   },
   "icu:ChatColorPicker__menu-title": {
     "messageformat": "チャットの色",
@@ -5644,14 +5707,6 @@
     "messageformat": "ユーザーネームに問題が発生したため、アカウントに割り当てられていません。もう一度設定し直すか、新しいものを選んでみてください。",
     "description": "Text of confirmation modal when the username gets corrupted"
   },
-  "icu:ProfileEditor--username--corrupted--delete-button": {
-    "messageformat": "ユーザーネームを消去",
-    "description": "(Deleted 02/01/2024) Button text for deletion of the username in case of corruption"
-  },
-  "icu:ProfileEditor--username--corrupted--create-button": {
-    "messageformat": "ユーザーネームの作成",
-    "description": "(Deleted 02/01/2024) Button text for creation of a new username in case of corruption"
-  },
   "icu:ProfileEditor--username--corrupted--fix-button": {
     "messageformat": "今すぐ修正する",
     "description": "Button text for creation of a new username in case of corruption"
@@ -5685,7 +5740,7 @@
     "description": "Shown if user has attempted to use forbidden characters in username"
   },
   "icu:ProfileEditor--username--check-starting-character": {
-    "messageformat": "ユーザーネームの先頭の文字は数字にできません。",
+    "messageformat": "ユーザーネームの先頭に数字は使用できません。",
     "description": "Shown if user has attempted to begin their username with a number"
   },
   "icu:ProfileEditor--username--check-character-min": {
@@ -5718,7 +5773,7 @@
   },
   "icu:ProfileEditor--username--check-username-taken": {
     "messageformat": "このユーザーネームはすでに使用されています。",
-    "description": "Shown if user has attempted to save a username which is not available"
+    "description": "(Deleted 2024/03/07) Shown if user has attempted to save a username which is not available"
   },
   "icu:ProfileEditor--username--general-error": {
     "messageformat": "ユーザーネームを保存できませんでした。インターネット接続を確認して再度試してください。",
@@ -5746,7 +5801,7 @@
   },
   "icu:ProfileEditor--username--delete-username": {
     "messageformat": "ユーザーネームを消去",
-    "description": "Shown as aria label for trash icon next to username"
+    "description": "(Deleted 2024/03/07) Shown as aria label for trash icon next to username"
   },
   "icu:ProfileEditor--username--confirm-delete-body-2": {
     "messageformat": "ユーザーネームを削除すると、QR コードとリンクが無効になります。「{username}」は他のユーザーに使用可能となります。本当に削除しますか？",
@@ -5770,7 +5825,7 @@
   },
   "icu:ProfileEditor--username--copy-link": {
     "messageformat": "リンクをコピーします",
-    "description": "Shown as a button in context menu next to username. The action of the button is to put a username link into the clipboard."
+    "description": "(Deleted 2024/03/07) Shown as a button in context menu next to username. The action of the button is to put a username link into the clipboard."
   },
   "icu:ProfileEditor--username--delete": {
     "messageformat": "消去",
@@ -5793,20 +5848,16 @@
     "description": "ConfirmationDialog text for discarding changes"
   },
   "icu:ConfirmationDialog__Title--in-call-close-requested": {
-    "messageformat": "Close Signal and end the call?",
+    "messageformat": "Signalを閉じて通話を終了しますか？",
     "description": "ConfirmationDialog title when trying to close the app while in a call."
   },
   "icu:ConfirmationDialog__Title--close-requested-not-now": {
-    "messageformat": "Not Now",
+    "messageformat": "今はしない",
     "description": "Confirmation dialog button to cancel closing the app, while in a call and trying to close the app."
   },
   "icu:ProfileEditor--edit-photo": {
     "messageformat": "画像を編集",
     "description": "Text of a button on profile editor that leads to the avatar editor"
-  },
-  "icu:ProfileEditor--info--link": {
-    "messageformat": "あなたのプロフィールは暗号化されています。プロフィールとその更新は、あなたの連絡先や、新しいチャットを開始したり受け入れた際に表示されます。<learnMoreLink>詳しく見る</learnMoreLink>",
-    "description": "(Deleted 02/01/2024) Information shown at the bottom of the profile editor section"
   },
   "icu:ProfileEditor--info--general": {
     "messageformat": "あなたのプロフィールとその更新情報は、メッセージの相手、連絡先、グループに表示されます。",
@@ -6034,11 +6085,11 @@
   },
   "icu:Preferences--see-me": {
     "messageformat": "私の電話番号を確認できる人",
-    "description": "Label for the see my phone number setting"
+    "description": "(Deleted 2024/03/07) Label for the see my phone number setting"
   },
   "icu:Preferences--find-me": {
     "messageformat": "電話番号で私を検索できる人",
-    "description": "Label for the find me by my phone number setting"
+    "description": "(Deleted 2024/03/07) Label for the find me by my phone number setting"
   },
   "icu:Preferences--read-receipts": {
     "messageformat": "既読通知",
@@ -6128,6 +6179,10 @@
     "messageformat": "アップデートがダウンロードされました",
     "description": "The title of update dialog when update download is completed."
   },
+  "icu:DialogNetworkStatus__outage": {
+    "messageformat": "Signalは技術的な問題を抱えています。私たちは、これをできるだけ早く解決するよう対応しています。",
+    "description": "The title of outage dialog during service outage."
+  },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "アップデートが必要です",
     "description": "The title of update dialog on install screen when user OS is unsupported"
@@ -6150,27 +6205,33 @@
   },
   "icu:NSIS__retry-dialog--first-line": {
     "messageformat": "Signalを終了できません。",
-    "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
+    "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation.",
+    "ignoreUnused": true
   },
   "icu:NSIS__retry-dialog--second-line": {
     "messageformat": "手動で閉じて、『再試行』をクリックしてください。",
-    "description": "Second line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
+    "description": "Second line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation.",
+    "ignoreUnused": true
   },
   "icu:NSIS__appRunning": {
     "messageformat": "{appName} が起動しています。\nOKをクリックして、閉じてください。\n閉じない場合は、手動で閉じてください。",
-    "description": "The contents of a dialog displayed when Windows installer detect that the application is running and asks user to close it. Note: please keep the line breaks so that the text occupies three separate lines"
+    "description": "The contents of a dialog displayed when Windows installer detect that the application is running and asks user to close it. Note: please keep the line breaks so that the text occupies three separate lines",
+    "ignoreUnused": true
   },
   "icu:NSIS__decompressionFailed": {
     "messageformat": "ファイルの解凍に失敗しました。もう一度インストーラーを実行してみてください。",
-    "description": "Displayed when Windows installer cannot decompress application files"
+    "description": "Displayed when Windows installer cannot decompress application files",
+    "ignoreUnused": true
   },
   "icu:NSIS__uninstallFailed": {
     "messageformat": "古いアプリケーションファイルのアンインストールに失敗しました。もう一度インストーラーを実行してみてください。",
-    "description": "Displayed when Windows installer cannot uninstall the old application"
+    "description": "Displayed when Windows installer cannot uninstall the old application",
+    "ignoreUnused": true
   },
   "icu:NSIS__semver-downgrade": {
     "messageformat": "Signal の新しいバージョンがすでにインストールされています。本当にインストールしますか？",
-    "description": "A text of the dialog displayed when user tries to overwrite Signal installation with an older version."
+    "description": "A text of the dialog displayed when user tries to overwrite Signal installation with an older version.",
+    "ignoreUnused": true
   },
   "icu:CrashReportDialog__title": {
     "messageformat": "Signalがクラッシュしました",
@@ -6218,7 +6279,7 @@
   },
   "icu:MediaEditor__control--sticker": {
     "messageformat": "ステッカー",
-    "description": "Label for the sticker button in the media editor"
+    "description": "(Deleted 2024/03/07) Label for the sticker button in the media editor"
   },
   "icu:MediaEditor__control--crop": {
     "messageformat": "切り抜きと回転",
@@ -6246,7 +6307,7 @@
   },
   "icu:MediaEditor__text--underline": {
     "messageformat": "下線",
-    "description": "Describes what attribute the color picker will change on the text"
+    "description": "(Deleted 2024/03/07) Describes what attribute the color picker will change on the text"
   },
   "icu:MediaEditor__draw--pen": {
     "messageformat": "ペン",
@@ -6290,11 +6351,11 @@
   },
   "icu:MediaEditor__crop--crop": {
     "messageformat": "切り取り",
-    "description": "Performs the crop"
+    "description": "(Deleted 2024/03/07) Performs the crop"
   },
   "icu:MediaEditor__caption-button": {
     "messageformat": "メッセージを追加してください",
-    "description": "Label of the button on the bottom of the media editor that trigger the add-caption dialog"
+    "description": "(Deleted 2024/03/07) Label of the button on the bottom of the media editor that trigger the add-caption dialog"
   },
   "icu:MediaEditor__crop-preset--freeform": {
     "messageformat": "フリーフォーム",
@@ -6387,6 +6448,26 @@
   "icu:payment-event-notification-check-primary-device": {
     "messageformat": "メイン端末で、この決済状況を確認します",
     "description": "Payment event notification check device label"
+  },
+  "icu:MessageRequestResponseNotification__Message--Accepted": {
+    "messageformat": "メッセージ申請を承認しました",
+    "description": "Message request response notification message when the user accepted the message request or unblocked another user"
+  },
+  "icu:MessageRequestResponseNotification__Message--Reported": {
+    "messageformat": "スパムとして報告する",
+    "description": "Message request response notification message when the user reported the message request as spam"
+  },
+  "icu:MessageRequestResponseNotification__Message--Blocked": {
+    "messageformat": "このユーザーをブロックしました",
+    "description": "Message request response notification message when the user blocked another user"
+  },
+  "icu:MessageRequestResponseNotification__Button--Options": {
+    "messageformat": "オプション",
+    "description": "Message request response notification button to show options"
+  },
+  "icu:MessageRequestResponseNotification__Button--LearnMore": {
+    "messageformat": "詳しく見る",
+    "description": "Message request response notification button to learn more"
   },
   "icu:SignalConnectionsModal__title": {
     "messageformat": "Signalコネクション",
@@ -6498,7 +6579,7 @@
   },
   "icu:StoriesSettings__new-list--visibility": {
     "messageformat": "ストーリー名は自分だけが見ることができます。",
-    "description": "Explanation about the visibility of custom distribution list names"
+    "description": "(Deleted 2024/03/07) Explanation about the visibility of custom distribution list names"
   },
   "icu:StoriesSettings__custom-story-subtitle": {
     "messageformat": "カスタムストーリー",
@@ -6574,7 +6655,7 @@
   },
   "icu:StoriesSettings__mine__all--description": {
     "messageformat": "すべてのコネクションと共有",
-    "description": "Description of button StoriesSettings__mine__all--label"
+    "description": "(Deleted 2024/03/07) Description of button StoriesSettings__mine__all--label"
   },
   "icu:StoriesSettings__mine__exclude--label": {
     "messageformat": "共有しない人を指定",
@@ -6582,7 +6663,7 @@
   },
   "icu:StoriesSettings__mine__exclude--description": {
     "messageformat": "{num, plural, other {{num,number}人の除外された人々}}",
-    "description": "Description of how many people are excluded in a list"
+    "description": "(Deleted 2024/03/07) Description of how many people are excluded in a list"
   },
   "icu:StoriesSettings__mine__only--label": {
     "messageformat": "共有する人を指定…",
@@ -6590,11 +6671,11 @@
   },
   "icu:StoriesSettings__mine__only--description": {
     "messageformat": "選択した人とのみ共有する",
-    "description": "Description of button StoriesSettings__mine__only--label"
+    "description": "(Deleted 2024/03/07) Description of button StoriesSettings__mine__only--label"
   },
   "icu:StoriesSettings__mine__only--description--people": {
     "messageformat": "{num,number}人",
-    "description": "Description of how many people are in the exclusive allow list"
+    "description": "(Deleted 2024/03/07) Description of how many people are in the exclusive allow list"
   },
   "icu:StoriesSettings__mine__disclaimer--link": {
     "messageformat": "ストーリーを閲覧できる人を選択してください。変更は、すでに送信したストーリーには影響しません。<learnMoreLink>さらに詳しく。</learnMoreLink>",
@@ -6706,19 +6787,19 @@
   },
   "icu:SendStoryModal__my-stories-description-all": {
     "messageformat": "{viewersCount, plural, other {すべてのSignalコネクション · {viewersCount,number} 人の閲覧者}}",
-    "description": "Shown as a subtitle under My Stories option in the send-story-to dialog when not exluding anyone"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle under My Stories option in the send-story-to dialog when not exluding anyone"
   },
   "icu:SendStoryModal__my-stories-description-excluding": {
     "messageformat": "{excludedCount, plural, other {すべてのSignalコネクション　{excludedCount,number} 人を除く}}",
-    "description": "Shown as a subtitle under My Stories option in the send-story-to dialog when excluding some"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle under My Stories option in the send-story-to dialog when excluding some"
   },
   "icu:SendStoryModal__private-story-description": {
     "messageformat": "{viewersCount, plural, other {プライベートストーリー · 閲覧 {viewersCount,number}人}}",
-    "description": "Shown as a subtitle of each private story in the send-story-to dialog"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle of each private story in the send-story-to dialog"
   },
   "icu:SendStoryModal__group-story-description": {
     "messageformat": "{membersCount, plural, other {グループストーリー {membersCount,number} 人のメンバー}}",
-    "description": "Shown as a subtitle of each group story in the send-story-to dialog"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle of each group story in the send-story-to dialog"
   },
   "icu:Stories__settings-toggle--title": {
     "messageformat": "ストーリーの共有と閲覧",
@@ -6918,7 +6999,7 @@
   },
   "icu:StoryCreator__input-placeholder": {
     "messageformat": "テキストを追加",
-    "description": "Placeholder to add text"
+    "description": "(Deleted 2024/03/07) Placeholder to add text"
   },
   "icu:StoryCreator__text--regular": {
     "messageformat": "標準",
@@ -6981,7 +7062,7 @@
     "description": "Label for when a person reacts to a story"
   },
   "icu:Quote__story-reaction--you": {
-    "messageformat": "Reacted to your story",
+    "messageformat": "あなたのストーリーにリアクションがありました",
     "description": "Label for when someone reacts to your story"
   },
   "icu:Quote__story-reaction--single": {
@@ -7123,22 +7204,6 @@
   "icu:UsernameOnboardingModalBody__row__qr__body": {
     "messageformat": "各ユーザーネームには固有のQRコードとリンクがあり、友達と共有することですぐにチャットを開始することができます。",
     "description": "Body of the third row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "ユーザーネームは数字と対になっており、プロフィールで共有されることはありません",
-    "description": "(Deleted 01/16/2023) Content of the first row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "各ユーザーネームには固有の QR コードとリンクがあり、友達と共有することでチャットを開始することができます",
-    "description": "(Deleted 01/16/2023) Content of the second row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "設定 > プライバシー > 電話番号 >「電話番号での検索を可能にする」で電話番号検索をオフにすると、他のユーザーからあなたへの基本の連絡方法はユーザーネームの使用となります。",
-    "description": "(Deleted 01/16/2023) Content of the third row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__learn-more": {
-    "messageformat": "詳しく見る",
-    "description": "(Deleted 01/16/2023) Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
     "messageformat": "ユーザーネームを設定する",
@@ -7300,6 +7365,10 @@
     "messageformat": "{count, plural, other {{count,number} 人が入力中です。}}",
     "description": "Group chat multiple person typing indicator when space isn't available to show every avatar, this is the count of avatars hidden."
   },
+  "icu:TransportError": {
+    "messageformat": "Experimental WebSocket Transport is seeing too many errors. Please submit a debug log",
+    "description": "A toast that is shown to alpha/beta version users when an experimental transport is seeing too many errors"
+  },
   "icu:WhoCanFindMeReadOnlyToast": {
     "messageformat": "この設定を変更するには、「自分の番号を閲覧できる人」を「誰も閲覧できない」に設定します。",
     "description": "A toast displayed when user clicks disabled option in settings window"
@@ -7310,33 +7379,46 @@
   },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "Signalをスムーズに動作させるための微調整とバグ修正を行いました。",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--1": {
     "messageformat": "追加の微調整、バグ修正、パフォーマンスの向上。 シグナルをご利用いただきありがとうございます。",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
     "messageformat": "アプリをスムーズに動作させるためのいくつかのバグ修正。さらにエキサイティングな変更をお楽しみに！ ",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
     "messageformat": "微調整、バグ修正、パフォーマンスの向上。メッセージ、電話、ビデオチャットはこれまで通りご利用いただけます。",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--4": {
     "messageformat": "アプリがスムーズに動作するよう、バグの修正とその他のパフォーマンスの向上に努めています。 ",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--5": {
     "messageformat": "追加の微調整、バグ修正、および今後のさまざまな予定について。",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "細かな微調整、バグ修正、パフォーマンスの向上。 Signalをご利用いただきありがとうございます。",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.1--0": {
-    "messageformat": "This update enables support for all of the new emoji characters in Emoji version 15.1. People keep asking us what our favorite new emoji is, but answering that question is a “lime” we won't cross."
+  "icu:WhatsNew__v7.3--0": {
+    "messageformat": "電話で不在着信を確認すると、Signal Desktopでも通話タブ上のアイコンの数字が更新されるようになりました。"
+  },
+  "icu:WhatsNew__v7.3--1": {
+    "messageformat": "Windowsでのアイコン上の通知数表示もデザインを変更しました。タスクバーの色とシステムトレイの色が一致するようになりました。"
+  },
+  "icu:WhatsNew__v7.4--0": {
+    "messageformat": "This update clears out a few bugs just in time for spring cleaning, including more consistent conversation sort logic and improved behavior if the app encounters DNS lookup timeouts due to poor network connectivity."
   }
 }

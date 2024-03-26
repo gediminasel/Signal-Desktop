@@ -18,7 +18,6 @@ import { clearTimeoutIfNecessary } from '../../util/clearTimeoutIfNecessary';
 import { WidthBreakpoint } from '../_util';
 
 import { ErrorBoundary } from './ErrorBoundary';
-import type { FullJSXType } from '../Intl';
 import { Intl } from '../Intl';
 import { TimelineWarning } from './TimelineWarning';
 import { TimelineWarnings } from './TimelineWarnings';
@@ -71,23 +70,25 @@ export type PropsDataType = {
   haveNewest: boolean;
   haveOldest: boolean;
   messageChangeCounter: number;
-  messageLoadingState?: TimelineMessageLoadingState;
-  isNearBottom?: boolean;
+  messageLoadingState: TimelineMessageLoadingState | null;
+  isNearBottom: boolean | null;
   items: ReadonlyArray<string>;
-  oldestUnseenIndex?: number;
-  scrollToIndex?: number;
+  oldestUnseenIndex: number | null;
+  scrollToIndex: number | null;
   scrollToIndexCounter: number;
   totalUnseen: number;
 };
 
 type PropsHousekeepingType = {
   id: string;
+  isBlocked: boolean;
   isConversationSelected: boolean;
   isGroupV1AndDisabled?: boolean;
   isIncomingMessageRequest: boolean;
   isSomeoneTyping: boolean;
   unreadCount?: number;
   unreadMentionsCount?: number;
+  conversationType: 'direct' | 'group';
 
   targetedMessageId?: string;
   invitedContactsForNewlyCreatedGroup: Array<ConversationType>;
@@ -122,6 +123,7 @@ type PropsHousekeepingType = {
     containerElementRef: RefObject<HTMLElement>;
     containerWidthBreakpoint: WidthBreakpoint;
     conversationId: string;
+    isBlocked: boolean;
     isOldestTimelineItem: boolean;
     messageId: string;
     nextMessageId: undefined | string;
@@ -496,21 +498,8 @@ export class Timeline extends React.Component<
     }
   }, 500);
 
-  public override componentDidMount(): void {
-    const containerEl = this.containerRef.current;
-    const messagesEl = this.messagesRef.current;
-    const { isConversationSelected } = this.props;
-    strictAssert(
-      // We don't render anything unless the conversation is selected
-      (containerEl && messagesEl) || !isConversationSelected,
-      '<Timeline> mounted without some refs'
-    );
-
-    this.updateIntersectionObserver();
-
-    window.SignalContext.activeWindowService.registerForActive(
-      this.markNewestBottomVisibleMessageRead
-    );
+  private setupGroupCallPeekTimeouts(): void {
+    this.cleanupGroupCallPeekTimeouts();
 
     this.delayedPeekTimeout = setTimeout(() => {
       const { id, peekGroupCallForTheFirstTime } = this.props;
@@ -524,19 +513,46 @@ export class Timeline extends React.Component<
     }, MINUTE);
   }
 
-  public override componentWillUnmount(): void {
+  private cleanupGroupCallPeekTimeouts(): void {
     const { delayedPeekTimeout, peekInterval } = this;
 
+    clearTimeoutIfNecessary(delayedPeekTimeout);
+    this.delayedPeekTimeout = undefined;
+
+    if (peekInterval) {
+      clearInterval(peekInterval);
+      this.peekInterval = undefined;
+    }
+  }
+
+  public override componentDidMount(): void {
+    const containerEl = this.containerRef.current;
+    const messagesEl = this.messagesRef.current;
+    const { conversationType, isConversationSelected } = this.props;
+    strictAssert(
+      // We don't render anything unless the conversation is selected
+      (containerEl && messagesEl) || !isConversationSelected,
+      '<Timeline> mounted without some refs'
+    );
+
+    this.updateIntersectionObserver();
+
+    window.SignalContext.activeWindowService.registerForActive(
+      this.markNewestBottomVisibleMessageRead
+    );
+
+    if (conversationType === 'group') {
+      this.setupGroupCallPeekTimeouts();
+    }
+  }
+
+  public override componentWillUnmount(): void {
     window.SignalContext.activeWindowService.unregisterForActive(
       this.markNewestBottomVisibleMessageRead
     );
 
     this.intersectionObserver?.disconnect();
-
-    clearTimeoutIfNecessary(delayedPeekTimeout);
-    if (peekInterval) {
-      clearInterval(peekInterval);
-    }
+    this.cleanupGroupCallPeekTimeouts();
   }
 
   public override getSnapshotBeforeUpdate(
@@ -562,7 +578,7 @@ export class Timeline extends React.Component<
       case ScrollAnchor.ScrollToBottom:
         return { scrollBottom: 0 };
       case ScrollAnchor.ScrollToIndex:
-        if (scrollToIndex === undefined) {
+        if (scrollToIndex == null) {
           assertDev(
             false,
             '<Timeline> got "scroll to index" scroll anchor, but no index'
@@ -587,11 +603,13 @@ export class Timeline extends React.Component<
     snapshot: Readonly<SnapshotType>
   ): void {
     const {
+      conversationType: previousConversationType,
       items: oldItems,
       messageChangeCounter: previousMessageChangeCounter,
       messageLoadingState: previousMessageLoadingState,
     } = prevProps;
     const {
+      conversationType,
       discardMessages,
       id,
       items: newItems,
@@ -664,6 +682,13 @@ export class Timeline extends React.Component<
     }
     if (previousMessageChangeCounter !== messageChangeCounter) {
       this.markNewestBottomVisibleMessageRead();
+    }
+
+    if (previousConversationType !== conversationType) {
+      this.cleanupGroupCallPeekTimeouts();
+      if (conversationType === 'group') {
+        this.setupGroupCallPeekTimeouts();
+      }
     }
   }
 
@@ -787,6 +812,7 @@ export class Timeline extends React.Component<
       i18n,
       id,
       invitedContactsForNewlyCreatedGroup,
+      isBlocked,
       isConversationSelected,
       isGroupV1AndDisabled,
       items,
@@ -929,6 +955,7 @@ export class Timeline extends React.Component<
               containerElementRef: this.containerRef,
               containerWidthBreakpoint: widthBreakpoint,
               conversationId: id,
+              isBlocked,
               isOldestTimelineItem: haveOldest && itemIndex === 0,
               messageId,
               nextMessageId,
@@ -980,7 +1007,9 @@ export class Timeline extends React.Component<
           case ContactSpoofingType.MultipleGroupMembersWithSameTitle: {
             const { groupNameCollisions } = warning;
             const numberOfSharedNames = Object.keys(groupNameCollisions).length;
-            const reviewRequestLink: FullJSXType = parts => (
+            const reviewRequestLink = (
+              parts: Array<string | JSX.Element>
+            ): JSX.Element => (
               <TimelineWarning.Link onClick={reviewConversationNameCollision}>
                 {parts}
               </TimelineWarning.Link>

@@ -31,6 +31,7 @@ import { toWebSafeBase64, fromWebSafeBase64 } from '../util/webSafeBase64';
 import { getBasicAuth } from '../util/getBasicAuth';
 import { createHTTPSAgent } from '../util/createHTTPSAgent';
 import { createProxyAgent } from '../util/createProxyAgent';
+import type { ProxyAgent } from '../util/createProxyAgent';
 import type { SocketStatus } from '../types/SocketStatus';
 import { VerificationTransport } from '../types/VerificationTransport';
 import { toLogFormat } from '../types/errors';
@@ -55,7 +56,6 @@ import { isBadgeImageFileUrlValid } from '../badges/isBadgeImageFileUrlValid';
 import { SocketManager } from './SocketManager';
 import type { CDSAuthType, CDSResponseType } from './cds/Types.d';
 import { CDSI } from './cds/CDSI';
-import type WebSocketResource from './WebsocketResources';
 import { SignalService as Proto } from '../protobuf';
 
 import { HTTPError } from './Errors';
@@ -70,6 +70,7 @@ import { handleStatusCode, translateError } from './Utils';
 import * as log from '../logging/log';
 import { maybeParseUrl, urlPathFromComponents } from '../util/url';
 import { SECOND } from '../util/durations';
+import type { IWebSocketResource } from './WebsocketResources';
 
 // Note: this will break some code that expects to be able to use err.response when a
 //   web request fails, because it will force it to text. But it is very useful for
@@ -120,7 +121,7 @@ const GET_ATTACHMENT_CHUNK_TIMEOUT = 10 * durations.SECOND;
 type AgentCacheType = {
   [name: string]: {
     timestamp: number;
-    agent: ReturnType<typeof createProxyAgent> | Agent;
+    agent: ProxyAgent | Agent;
   };
 };
 const agents: AgentCacheType = {};
@@ -259,7 +260,7 @@ async function _promiseAjax(
     }
     agents[cacheKey] = {
       agent: proxyUrl
-        ? createProxyAgent(proxyUrl)
+        ? await createProxyAgent(proxyUrl)
         : createHTTPSAgent({
             keepAlive: !options.disableSessionResumption,
             maxCachedSessions: options.disableSessionResumption ? 0 : undefined,
@@ -1034,7 +1035,7 @@ export type WebAPIType = {
   ) => Promise<unknown>;
   getProvisioningResource: (
     handler: IRequestHandler
-  ) => Promise<WebSocketResource>;
+  ) => Promise<IWebSocketResource>;
   getArtProvisioningSocket: (token: string) => Promise<WebSocket>;
   getSenderCertificate: (
     withUuid?: boolean
@@ -1154,8 +1155,10 @@ export type WebAPIType = {
   unregisterRequestHandler: (handler: IRequestHandler) => void;
   onHasStoriesDisabledChange: (newValue: boolean) => void;
   checkSockets: () => void;
-  onOnline: () => Promise<void>;
-  onOffline: () => void;
+  isOnline: () => boolean;
+  onNavigatorOnline: () => Promise<void>;
+  onNavigatorOffline: () => Promise<void>;
+  onRemoteExpiration: () => Promise<void>;
   reconnect: () => Promise<void>;
 };
 
@@ -1211,7 +1214,7 @@ export type ServerKeysType = {
 };
 
 export type ChallengeType = {
-  readonly type: 'recaptcha';
+  readonly type: 'captcha';
   readonly token: string;
   readonly captcha: string;
 };
@@ -1321,11 +1324,15 @@ export function initialize({
       window.Whisper.events.trigger('socketStatusChange');
     });
 
-    socketManager.on('authError', () => {
-      window.Whisper.events.trigger('unlinkAndDisconnect');
+    socketManager.on('online', () => {
+      window.Whisper.events.trigger('online');
     });
 
-    socketManager.on('deviceConflict', () => {
+    socketManager.on('offline', () => {
+      window.Whisper.events.trigger('offline');
+    });
+
+    socketManager.on('authError', () => {
       window.Whisper.events.trigger('unlinkAndDisconnect');
     });
 
@@ -1376,17 +1383,23 @@ export function initialize({
       log.warn(`${logId}: Done`);
     }
 
-    let fetchAgent: Agent;
-    if (proxyUrl) {
-      fetchAgent = createProxyAgent(proxyUrl);
-    } else {
-      fetchAgent = createHTTPSAgent({
-        keepAlive: false,
-        maxCachedSessions: 0,
-      });
-    }
-    const fetchForLinkPreviews: linkPreviewFetch.FetchFn = (href, init) =>
-      fetch(href, { ...init, agent: fetchAgent });
+    let fetchAgent: Agent | undefined;
+    const fetchForLinkPreviews: linkPreviewFetch.FetchFn = async (
+      href,
+      init
+    ) => {
+      if (!fetchAgent) {
+        if (proxyUrl) {
+          fetchAgent = await createProxyAgent(proxyUrl);
+        } else {
+          fetchAgent = createHTTPSAgent({
+            keepAlive: false,
+            maxCachedSessions: 0,
+          });
+        }
+      }
+      return fetch(href, { ...init, agent: fetchAgent });
+    };
 
     // Thanks, function hoisting!
     return {
@@ -1442,8 +1455,10 @@ export function initialize({
       modifyGroup,
       modifyStorageRecords,
       onHasStoriesDisabledChange,
-      onOffline,
-      onOnline,
+      isOnline,
+      onNavigatorOffline,
+      onNavigatorOnline,
+      onRemoteExpiration,
       postBatchIdentityCheck,
       putEncryptedAttachment,
       putProfile,
@@ -1620,12 +1635,20 @@ export function initialize({
       void socketManager.check();
     }
 
-    async function onOnline(): Promise<void> {
-      await socketManager.onOnline();
+    function isOnline(): boolean {
+      return socketManager.isOnline;
     }
 
-    function onOffline(): void {
-      socketManager.onOffline();
+    async function onNavigatorOnline(): Promise<void> {
+      await socketManager.onNavigatorOnline();
+    }
+
+    async function onNavigatorOffline(): Promise<void> {
+      await socketManager.onNavigatorOffline();
+    }
+
+    async function onRemoteExpiration(): Promise<void> {
+      await socketManager.onRemoteExpiration();
     }
 
     async function reconnect(): Promise<void> {
@@ -3469,7 +3492,7 @@ export function initialize({
 
     function getProvisioningResource(
       handler: IRequestHandler
-    ): Promise<WebSocketResource> {
+    ): Promise<IWebSocketResource> {
       return socketManager.getProvisioningResource(handler);
     }
 

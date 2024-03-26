@@ -16,18 +16,6 @@
       }
     ]
   },
-  "icu:AddCaptionModal__title": {
-    "messageformat": "கூட்டு ஒரு செய்தி",
-    "description": "(Deleted 12/14/2023) Shown as the title of the dialog that allows you to add a caption to a story"
-  },
-  "icu:AddCaptionModal__placeholder": {
-    "messageformat": "செய்தி",
-    "description": "(Deleted 12/14/2023) Placeholder text for textarea when adding a caption/message (we don't know which yet so we default to message)"
-  },
-  "icu:AddCaptionModal__submit-button": {
-    "messageformat": "முடிந்தது",
-    "description": "(Deleted 12/14/2023) Label on the button that submits changes to a story's caption in the add-caption dialog"
-  },
   "icu:AddUserToAnotherGroupModal__title": {
     "messageformat": "ஒரு குழுவில் சேர்க்கவும்",
     "description": "Shown as the title of the dialog that allows you to add a contact to an group"
@@ -290,11 +278,11 @@
   },
   "icu:avatarMenuChatColors": {
     "messageformat": "சாட் கலர்",
-    "description": "One of the menu options available in the Avatar popup menu"
+    "description": "(Deleted 2024/03/07) One of the menu options available in the Avatar popup menu"
   },
   "icu:avatarMenuUpdateAvailable": {
     "messageformat": "Signal லைப் புதுப்பிக்கவும்",
-    "description": "One of the menu options available in the Avatar popup menu"
+    "description": "(Deleted 2024/03/07) One of the menu options available in the Avatar popup menu"
   },
   "icu:loading": {
     "messageformat": "ஏற்றுகிறது…",
@@ -440,6 +428,26 @@
     "messageformat": "செய்திகளைத் தேர்ந்தெடுக்கவும்",
     "description": "Shown in menu for conversation, allows the user to start selecting multiple messages in the conversation"
   },
+  "icu:ConversationHeader__MenuItem--Accept": {
+    "messageformat": "ஒப்புக்கொள்",
+    "description": "Shown in menu for conversation, allows the user to accept a message request"
+  },
+  "icu:ConversationHeader__MenuItem--Block": {
+    "messageformat": "தடைசெய்",
+    "description": "Shown in menu for conversation, allows the user to block the contact"
+  },
+  "icu:ConversationHeader__MenuItem--Unblock": {
+    "messageformat": "தடைநீக்கு",
+    "description": "Shown in menu for conversation, allows the user to unblock the contact"
+  },
+  "icu:ConversationHeader__MenuItem--ReportSpam": {
+    "messageformat": "ஸ்பேம் எனப் புகாரளி",
+    "description": "Shown in menu for conversation, allows the user to report the conversation as spam"
+  },
+  "icu:ConversationHeader__MenuItem--DeleteChat": {
+    "messageformat": "சாட்டை அழி",
+    "description": "Shown in menu for conversation, allows the user to delete the conversation"
+  },
   "icu:ContactListItem__menu": {
     "messageformat": "தொடர்பை நிர்வகிக்கவும்",
     "description": "Shown as aria label for context menu for a contact"
@@ -502,63 +510,63 @@
   },
   "icu:chooseDirectory": {
     "messageformat": "கோப்புறையைத் தேர்வுசெய்க",
-    "description": "Button to allow the user to find a folder on disk"
+    "description": "(Deleted 2024/03/07) Button to allow the user to find a folder on disk"
   },
   "icu:chooseFile": {
     "messageformat": "கோப்பை தேர்ந்தெடுங்கள்",
-    "description": "Button to allow the user to find a file on disk"
+    "description": "(Deleted 2024/03/07) Button to allow the user to find a file on disk"
   },
   "icu:loadDataHeader": {
     "messageformat": "உங்கள் தரவை ஏற்றவும்",
-    "description": "Header shown on the first screen in the data import process"
+    "description": "(Deleted 2024/03/07) Header shown on the first screen in the data import process"
   },
   "icu:loadDataDescription": {
     "messageformat": "நீங்கள் ஏற்றுமதி செயல்முறையை கடந்துவிட்டீர்கள், உங்கள் தொடர்புகள் மற்றும் செய்திகள் உங்கள் கணினியில் பொறுமையாக காத்திருக்கின்றன. உங்கள் சேமித்த Signal தரவைக் கொண்ட கோப்புறையைத் தேர்ந்தெடுக்கவும்.",
-    "description": "Introduction to the process of importing messages and contacts from disk"
+    "description": "(Deleted 2024/03/07) Introduction to the process of importing messages and contacts from disk"
   },
   "icu:importChooserTitle": {
     "messageformat": "ஏற்றுமதி செய்யப்பட்ட தரவுடன் கோப்பகத்தைத் தேர்வுசெய்க",
-    "description": "Title of the popup window used to select data previously exported"
+    "description": "(Deleted 2024/03/07) Title of the popup window used to select data previously exported"
   },
   "icu:importErrorHeader": {
     "messageformat": "ஏதோ தவறு நடைபெற்றிருக்கிறது!",
-    "description": "Header of the error screen after a failed import"
+    "description": "(Deleted 2024/03/07) Header of the error screen after a failed import"
   },
   "icu:importingHeader": {
     "messageformat": "தொடர்புகள் மற்றும் செய்திகளை ஏற்றுகிறது",
-    "description": "Header of screen shown as data is import"
+    "description": "(Deleted 2024/03/07) Header of screen shown as data is import"
   },
   "icu:importErrorFirst": {
     "messageformat": "உங்கள் சேமித்த Signal தரவைக் கொண்ட சரியான கோப்பகத்தை நீங்கள் தேர்ந்தெடுத்துள்ளீர்கள் என்பதை உறுதிப்படுத்திக் கொள்ளுங்கள். அதன் பெயர் 'Signal Export' உடன் தொடங்க வேண்டும். உங்கள் தரவின் புதிய நகலை Chrome  பயன்பாடு சேமிக்கவும் முடியும்.",
-    "description": "Message shown if the import went wrong; first paragraph"
+    "description": "(Deleted 2024/03/07) Message shown if the import went wrong; first paragraph"
   },
   "icu:importErrorSecond": {
     "messageformat": "இந்த படிகள் உங்களுக்காக வேலை செய்யவில்லை எனில், தயவுசெய்து பிழைத்திருத்த பதிவைச் சமர்ப்பிக்கவும் (காண்க -> பிழைத்திருத்தப் பதிவு) இதன் மூலம் இடம்பெயர நாங்கள் உங்களுக்கு உதவ முடியும்!",
-    "description": "Message shown if the import went wrong; second paragraph"
+    "description": "(Deleted 2024/03/07) Message shown if the import went wrong; second paragraph"
   },
   "icu:importAgain": {
     "messageformat": "கோப்புறையைத் தேர்ந்தெடுத்து மீண்டும் முயற்சிக்கவும்",
-    "description": "Button shown if the user runs into an error during import, allowing them to start over"
+    "description": "(Deleted 2024/03/07) Button shown if the user runs into an error during import, allowing them to start over"
   },
   "icu:importCompleteHeader": {
     "messageformat": "வெற்றி!",
-    "description": "Header shown on the screen at the end of a successful import process"
+    "description": "(Deleted 2024/03/07) Header shown on the screen at the end of a successful import process"
   },
   "icu:importCompleteStartButton": {
     "messageformat": "Signal Desktop ப்பைப் பயன்படுத்தத் தொடங்குங்கள்",
-    "description": "Button shown at end of successful import process, nothing left but a restart"
+    "description": "(Deleted 2024/03/07) Button shown at end of successful import process, nothing left but a restart"
   },
   "icu:importCompleteLinkButton": {
     "messageformat": "இந்த சாதனத்தை உங்கள் தொலைபேசியுடன் இணைக்கவும்",
-    "description": "Button shown at end of successful 'light' import process, so the standard linking process still needs to happen"
+    "description": "(Deleted 2024/03/07) Button shown at end of successful 'light' import process, so the standard linking process still needs to happen"
   },
   "icu:selectedLocation": {
     "messageformat": "நீங்கள் தேர்ந்தெடுத்த இடம்",
-    "description": "Message shown as the export location if we didn't capture the target directory"
+    "description": "(Deleted 2024/03/07) Message shown as the export location if we didn't capture the target directory"
   },
   "icu:upgradingDatabase": {
     "messageformat": "தரவுத்தளத்தை மேம்படுத்துகிறது. இதற்கு சிறிது நேரம் ஆகலாம்…",
-    "description": "Message shown on the loading screen when we're changing database structure on first run of a new version"
+    "description": "(Deleted 2024/03/07) Message shown on the loading screen when we're changing database structure on first run of a new version"
   },
   "icu:loadingMessages--other": {
     "messageformat": "{daysAgo, plural, one {1 நாளுக்கு முந்தைய மெசேஜ்களை ஏற்றுகிறது...} other {{daysAgo,number} நாளுக்கு முந்தைய மெசேஜ்களை ஏற்றுகிறது...}}",
@@ -598,11 +606,19 @@
   },
   "icu:unreadMessage": {
     "messageformat": "1 படிக்காத செய்தி",
-    "description": "Text for unread message separator, just one message"
+    "description": "(Deleted 2024/03/07) Text for unread message separator, just one message"
   },
   "icu:unreadMessages": {
     "messageformat": "{count, plural, one {{count,number} படிக்காத செய்தி} other {{count,number} படிக்காத செய்திகள்}}",
     "description": "Text for unread message separator, with count"
+  },
+  "icu:taskbarMarkedUnread": {
+    "messageformat": "படிக்காததாகக் குறிக்கப்பட்டது",
+    "description": "On Windows, description for screen readers for the OS taskbar icon's overlay badge when the user has marked chat(s) as unread."
+  },
+  "icu:taskbarUnreadMessages": {
+    "messageformat": "{count, plural, one {{count,number} படிக்காத செய்தி} other {{count,number} படிக்காத செய்திகள்}}",
+    "description": "On Windows, description for screen readers for the OS taskbar icon's overlay badge when there are unread messages."
   },
   "icu:messageHistoryUnsynced": {
     "messageformat": "உங்கள் பாதுகாப்பிற்காக, சாட் வரலாறு புதிய இணைக்கப்பட்ட டிவைஸ்களுக்கு மாற்றப்படாது.",
@@ -626,7 +642,7 @@
   },
   "icu:membersNeedingVerification": {
     "messageformat": "நீங்கள் கடைசியாக சரிபார்க்கப்பட்டதிலிருந்து இந்த குழு உறுப்பினர்களுடனான உங்கள் பாதுகாப்பு எண்கள் மாறிவிட்டன. அவர்களுடன் உங்கள் புதிய பாதுகாப்பு எண்ணைக் காண குழு உறுப்பினரைக் கிளிக் செய்க.",
-    "description": "When there are multiple previously-verified group members with safety number changes, a banner will be shown. The list of contacts with safety number changes is shown, and this text introduces that list."
+    "description": "(Deleted 2024/03/07) When there are multiple previously-verified group members with safety number changes, a banner will be shown. The list of contacts with safety number changes is shown, and this text introduces that list."
   },
   "icu:changedRightAfterVerify": {
     "messageformat": "நீங்கள் சரிபார்க்க முயற்சிக்கும் பாதுகாப்பு எண் மாறிவிட்டது. உங்கள் புதிய பாதுகாப்பு எண்ணை {name1} உடன் மதிப்பாய்வு செய்யவும். நினைவில் கொள்ளுங்கள், இந்த மாற்றம் யாராவது உங்கள் தகவல்தொடர்புகளை இடைமறிக்க முயற்சிக்கிறார்கள் அல்லது {name2} வெறுமனே Signal சிக்னலை மீண்டும் நிறுவியிருக்கலாம்.",
@@ -678,7 +694,7 @@
   },
   "icu:identityKeyErrorOnSend": {
     "messageformat": "{name1} உடனான உங்கள் பாதுகாப்பு எண் மாற்றப்பட்டுள்ளது. உங்கள் தகவல்தொடர்புகளை யாராவது இடைமறிக்க முயற்சிக்கிறார்கள் அல்லது {name2} Signal சிக்னலை மீண்டும் நிறுவியிருக்கலாம்.  உங்கள் பாதுகாப்பு எண்ணை இவருடன் சரிபார்க்கவும்.",
-    "description": "Shown when user clicks on a failed recipient in the message detail view after an identity key change"
+    "description": "(Deleted 2024/03/07) Shown when user clicks on a failed recipient in the message detail view after an identity key change"
   },
   "icu:sendAnyway": {
     "messageformat": "இருந்தாலும் அனுப்பு",
@@ -706,11 +722,11 @@
   },
   "icu:noLongerVerified": {
     "messageformat": "1{name}  உடன் உங்கள் பாதுகாப்பு எண் மாறிவிட்டது, இனி சரிபார்க்கப்படாது. காண்பிக்க கிளிக் செய்க.",
-    "description": "Shown in conversation banner when user's safety number has changed, but they were previously verified."
+    "description": "(Deleted 2024/03/07) Shown in conversation banner when user's safety number has changed, but they were previously verified."
   },
   "icu:multipleNoLongerVerified": {
     "messageformat": "இந்த குழுவின் பல உறுப்பினர்களுடன் உங்கள் பாதுகாப்பு எண்கள் மாறிவிட்டன, அவை இனி சரிபார்க்கப்படாது. காண்பிக்க கிளிக் செய்க.",
-    "description": "Shown in conversation banner when more than one group member's safety number has changed, but they were previously verified."
+    "description": "(Deleted 2024/03/07) Shown in conversation banner when more than one group member's safety number has changed, but they were previously verified."
   },
   "icu:debugLogExplanation": {
     "messageformat": "நீங்கள் சமர்ப்பி என்பதைக் கிளிக் செய்யும் போது, ​​உங்கள் பதிவு 30 நாட்களுக்கு ஒரு தனித்துவமான, வெளியிடப்படாத இணைப்பு மூலம் ஆன்லைனில் வெளியிடப்படும். நீங்கள் முதலில் அதை உள்நிலையில் சேமிக்கலாம்.",
@@ -750,34 +766,14 @@
   },
   "icu:gotIt": {
     "messageformat": "அறிந்துகொண்டேன்!",
-    "description": "Label for a button that dismisses a dialog. The user clicks it to confirm that they understand the message in the dialog."
+    "description": "(Deleted 2024/03/07) Label for a button that dismisses a dialog. The user clicks it to confirm that they understand the message in the dialog."
   },
   "icu:submit": {
     "messageformat": "சமர்ப்பி"
   },
   "icu:acceptNewKey": {
     "messageformat": "ஒப்புக்கொள்",
-    "description": "Label for a button to accept a new safety number"
-  },
-  "icu:SafetyNumberViewer__migration__text": {
-    "messageformat": "பாதுகாப்பு எண்கள் புதுப்பிக்கப்படுகின்றன.",
-    "description": "(Deleted 11/01/2023) An explanatory note in SafetyNumberViewer describing the safety number migration process."
-  },
-  "icu:SafetyNumberViewer__migration__learn_more": {
-    "messageformat": "மேலும் அறிக",
-    "description": "(Deleted 11/01/2023) A link text in SafetyNumberViewer describing the safety number migration process."
-  },
-  "icu:SafetyNumberViewer__card__prev": {
-    "messageformat": "முந்தைய பாதுகாப்பு எண்",
-    "description": "(Deleted 11/01/2023) An ARIA label for safety number navigation button."
-  },
-  "icu:SafetyNumberViewer__card__next": {
-    "messageformat": "அடுத்த பாதுகாப்பு எண்",
-    "description": "(Deleted 11/01/2023) An ARIA label for safety number navigation button."
-  },
-  "icu:SafetyNumberViewer__carousel__dot": {
-    "messageformat": "பாதுகாப்பு எண் பதிப்பு, {index,number} / {total,number}",
-    "description": "(Deleted 11/01/2023) An ARIA label for safety number carousel button."
+    "description": "(Deleted 2024/03/07) Label for a button to accept a new safety number"
   },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "சரிபார்க்கப்பட்டதாகக் குறி",
@@ -795,34 +791,6 @@
     "messageformat": "மேலும் அறிக",
     "description": "Text of 'Learn more' button of SafetyNumberViewerModal modal"
   },
-  "icu:SafetyNumberViewer__hint--migration": {
-    "messageformat": "{name} இன் எண்ட்-டு-எண்ட் என்க்ரிப்ஷனைச் சரிபார்க்க, மேலே உள்ள வண்ண அட்டையை அவற்றின் டிவைஸ் உடன் பொருத்தி எண்களை ஒப்பிடவும். இவை பொருந்தவில்லை என்றால், மற்ற பாதுகாப்பு எண்கள் ஜோடியை முயற்சிக்கவும். ஒரு ஜோடி மட்டுமே பொருந்த வேண்டும்.",
-    "description": "(Deleted 11/01/2023). Safety number viewer, text of the hint during migration period"
-  },
-  "icu:SafetyNumberViewer__hint--normal": {
-    "messageformat": "{name} இன் எண்ட்-டு-எண்ட் என்க்ரிப்ஷனைச் சரிபார்க்க, மேலே உள்ள எண்களை அவற்றின் டிவைஸ் உடன் ஒப்பிடவும். அவர்கள் தங்கள் டிவைசில் இருக்கும் உங்கள் குறியீட்டை ஸ்கேன் செய்யலாம்.",
-    "description": "(Deleted 11/01/2023). Safety number viewer, text of the hint after migration period"
-  },
-  "icu:SafetyNumberOnboarding__title": {
-    "messageformat": "பாதுகாப்பு எண்களில் மாற்றங்கள்",
-    "description": "(Deleted 11/01/2023) Title of Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__p1": {
-    "messageformat": "Signal இல் வரவிருக்கும் தனியுரிமை அம்சங்களை இயக்க, பாதுகாப்பு எண்கள் குறிப்பிட்ட நிலை மாற்றப்படும் காலத்தில் புதுப்பிக்கப்படவுள்ளன.",
-    "description": "(Deleted 11/01/2023) Paragraph 1 of Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__p2": {
-    "messageformat": "பாதுகாப்பு எண்களைச் சரிபார்க்க, உங்கள் தொடர்பின் டிவைஸ் உடன் வண்ண அட்டையைப் பொருத்தவும். இவை பொருந்தவில்லை என்றால், மற்ற பாதுகாப்பு எண்கள் ஜோடியை முயற்சிக்கவும். ஒரு ஜோடி மட்டுமே பொருந்த வேண்டும்.",
-    "description": "(Deleted 11/01/2023) Paragraph 2 of Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__help": {
-    "messageformat": "உங்களுக்கு உதவி வேண்டுமா?",
-    "description": "(Deleted 11/01/2023) Text of a secondary button in Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__close": {
-    "messageformat": "அறிந்துகொண்டேன்",
-    "description": "(Deleted 11/01/2023) Text of a secondary button in Safety number onboarding modal"
-  },
   "icu:SafetyNumberNotReady__body": {
     "messageformat": "இவருடன் நீங்கள் செய்திகளைப் பரிமாறிய பிறகு அவருடன் ஒரு பாதுகாப்பு எண் உருவாக்கப்படும்.",
     "description": "Body of SafetyNumberNotReady modal"
@@ -833,11 +801,11 @@
   },
   "icu:isVerified": {
     "messageformat": "உங்கள் பாதுகாப்பு எண்ணை {name} with உடன் சரிபார்த்துள்ளீர்கள்.",
-    "description": "Summary state shown at top of the safety number screen if user has verified contact."
+    "description": "(Deleted 2024/03/07) Summary state shown at top of the safety number screen if user has verified contact."
   },
   "icu:isNotVerified": {
     "messageformat": "உங்கள் பாதுகாப்பு எண்ணை 1{name} உடன் சரிபார்க்கவில்லை.",
-    "description": "Summary state shown at top of the safety number screen if user has not verified contact."
+    "description": "(Deleted 2024/03/07) Summary state shown at top of the safety number screen if user has not verified contact."
   },
   "icu:verified": {
     "messageformat": "சரிபார்க்கப்பட்ட"
@@ -847,7 +815,8 @@
     "description": "Header for a key change dialog"
   },
   "icu:identityChanged": {
-    "messageformat": "இந்த தொடர்புடன் உங்கள் பாதுகாப்பு எண் மாற்றப்பட்டுள்ளது. உங்கள் தகவல்தொடர்புகளை யாராவது இடைமறிக்க முயற்சிக்கிறார்கள் அல்லது இந்த தொடர்பு Signal லை மீண்டும் நிறுவியது என்று இது குறிக்கலாம். கீழே உள்ள புதிய பாதுகாப்பு எண்ணை நீங்கள் சரிபார்க்க விரும்பலாம்."
+    "messageformat": "இந்த தொடர்புடன் உங்கள் பாதுகாப்பு எண் மாற்றப்பட்டுள்ளது. உங்கள் தகவல்தொடர்புகளை யாராவது இடைமறிக்க முயற்சிக்கிறார்கள் அல்லது இந்த தொடர்பு Signal லை மீண்டும் நிறுவியது என்று இது குறிக்கலாம். கீழே உள்ள புதிய பாதுகாப்பு எண்ணை நீங்கள் சரிபார்க்க விரும்பலாம்.",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:incomingError": {
     "messageformat": "உள்வரும் செய்தியைக் கையாளுவதில் பிழை"
@@ -894,11 +863,11 @@
   },
   "icu:clickToSave": {
     "messageformat": "Click to save",
-    "description": "Hover text for attachment filenames"
+    "description": "(Deleted 2024/03/07) Hover text for attachment filenames"
   },
   "icu:unnamedFile": {
     "messageformat": "பெயரிடப்படாத கோப்பு",
-    "description": "Hover text for attachment filenames"
+    "description": "(Deleted 2024/03/07) Hover text for attachment filenames"
   },
   "icu:voiceMessage": {
     "messageformat": "குரல் செய்தி",
@@ -923,10 +892,6 @@
   "icu:stagedImageAttachment": {
     "messageformat": "வரைவு பட இணைப்பு:  {path}",
     "description": "Alt text for staged attachments"
-  },
-  "icu:cdsMirroringErrorToast": {
-    "messageformat": "ஒரு தொடர்பு கண்டறிதல் சேவையின் சீரற்ற தன்மையில் டெஸ்க்டாப் இயங்கியது.",
-    "description": "(Deleted 2024/01/22) An error popup when we discovered an inconsistency between mirrored Contact Discovery Service requests."
   },
   "icu:decryptionErrorToast": {
     "messageformat": "டெஸ்க்டாப்பில் {name} , சாதனம் {deviceId}- இருந்து மறைகுறியாக்கப் பிழை ஏற்பட்டது",
@@ -1180,7 +1145,7 @@
   },
   "icu:messageFoundButNotLoaded": {
     "messageformat": "அசல் செய்தி கிடைத்தது, ஆனால் ஏற்றப்படவில்லை. அதை ஏற்றுவதற்கு மேலே உருட்டவும்.",
-    "description": "Shown in toast if user clicks on quote references messages not loaded in view, but in database"
+    "description": "(Deleted 2024/03/07) Shown in toast if user clicks on quote references messages not loaded in view, but in database"
   },
   "icu:voiceRecording--start": {
     "messageformat": "குரல் செய்தியைப் பதிவுசெய்யத் தொடங்குங்கள்",
@@ -1188,11 +1153,11 @@
   },
   "icu:voiceRecording--complete": {
     "messageformat": "குரல் செய்தியை பூர்த்தி செய்து அனுப்பவும்",
-    "description": "Tooltip for green complete voice message and send"
+    "description": "(Deleted 2024/03/07) Tooltip for green complete voice message and send"
   },
   "icu:voiceRecording--cancel": {
     "messageformat": "குரல் செய்தியை ரத்துசெய்யவும்",
-    "description": "Tooltip for red button to cancel voice message"
+    "description": "(Deleted 2024/03/07) Tooltip for red button to cancel voice message"
   },
   "icu:voiceRecordingInterruptedMax": {
     "messageformat": "அதிகபட்ச நேர வரம்பை எட்டியதால் குரல் செய்தி பதிவு நிறுத்தப்பட்டது.",
@@ -1200,7 +1165,7 @@
   },
   "icu:voiceRecordingInterruptedBlur": {
     "messageformat": "நீங்கள் மற்றொரு பயன்பாட்டிற்கு மாறியதால் குரல் செய்தி பதிவு நிறுத்தப்பட்டது.",
-    "description": "Confirmation dialog message for when the voice recording is interrupted due to app losing focus"
+    "description": "(Deleted 2024/03/07) Confirmation dialog message for when the voice recording is interrupted due to app losing focus"
   },
   "icu:voiceNoteLimit": {
     "messageformat": "குரல் செய்திகள் ஒரு மணிநேரம் மட்டுமே. வேறு ஆப்களுக்கு மாறினால் ரெக்கார்டிங் நிறுத்தப்படும்.",
@@ -1228,7 +1193,7 @@
   },
   "icu:replyingTo": {
     "messageformat": "{name} க்கு பதிலளிக்கிறது",
-    "description": "Shown in iOS theme when you or someone quotes to a message which is not from you"
+    "description": "(Deleted 2024/03/07) Shown in iOS theme when you or someone quotes to a message which is not from you"
   },
   "icu:audioPermissionNeeded": {
     "messageformat": "குரல் செய்திகளை அனுப்ப, Signal டெஸ்க்டாப் உங்கள் மைக்ரோஃபோனை அணுக அனுமதிக்கவும்.",
@@ -1248,7 +1213,7 @@
   },
   "icu:showSettings": {
     "messageformat": "அமைப்புகளைக் காட்டு",
-    "description": "A button shown in dialog requesting the user to turn on audio permissions"
+    "description": "(Deleted 2024/03/07) A button shown in dialog requesting the user to turn on audio permissions"
   },
   "icu:audio": {
     "messageformat": "ஒலி",
@@ -1272,7 +1237,7 @@
   },
   "icu:muted": {
     "messageformat": "ஒலியடக்கப்பட்டது",
-    "description": "Shown in a button when a conversation is muted"
+    "description": "(Deleted 2024/03/07) Shown in a button when a conversation is muted"
   },
   "icu:mute": {
     "messageformat": "ஒலியடக்கு",
@@ -1300,13 +1265,15 @@
     "messageformat": "புறந்தள்ளு"
   },
   "icu:failedToSend": {
-    "messageformat": "சில பெறுநர்களுக்கு அனுப்புவதில் தோல்வி. உங்கள் பிணைய இணைப்பைச் சரிபார்க்கவும்."
+    "messageformat": "சில பெறுநர்களுக்கு அனுப்புவதில் தோல்வி. உங்கள் பிணைய இணைப்பைச் சரிபார்க்கவும்.",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:error": {
     "messageformat": "பிழை"
   },
   "icu:messageDetail": {
-    "messageformat": "செய்தி விவரம்"
+    "messageformat": "செய்தி விவரம்",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:delete": {
     "messageformat": "நீக்கு"
@@ -1352,7 +1319,7 @@
   },
   "icu:to": {
     "messageformat": "செய்ய",
-    "description": "Label for the receiver of a message"
+    "description": "(Deleted 2024/03/07) Label for the receiver of a message"
   },
   "icu:searchResultHeader--sender-to-group": {
     "messageformat": "{sender} - {receiverGroup}",
@@ -1383,7 +1350,8 @@
     "description": "Placeholder text in the message entry field"
   },
   "icu:groupMembers": {
-    "messageformat": "குழு உறுப்பினர்கள்"
+    "messageformat": "குழு உறுப்பினர்கள்",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:showMembers": {
     "messageformat": "உறுப்பினர்களைக் காட்டு"
@@ -1425,14 +1393,15 @@
   },
   "icu:ContactModal__showSafetyNumber": {
     "messageformat": "பாதுகாப்பு எண்ணைக் காட்டு",
-    "description": "Contact modal, label for button to show safety number modal"
+    "description": "(Deleted 2024/03/07) Contact modal, label for button to show safety number modal"
   },
   "icu:viewRecentMedia": {
     "messageformat": "சமீபத்திய ஊடகங்களைக் காண்க",
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
   "icu:theirIdentityUnknown": {
-    "messageformat": "இந்த தொடர்புடன் நீங்கள் இதுவரை எந்த செய்திகளையும் பரிமாறவில்லை. அவர்களுடனான உங்கள் பாதுகாப்பு எண் முதல் செய்திக்குப் பிறகு கிடைக்கும்."
+    "messageformat": "இந்த தொடர்புடன் நீங்கள் இதுவரை எந்த செய்திகளையும் பரிமாறவில்லை. அவர்களுடனான உங்கள் பாதுகாப்பு எண் முதல் செய்திக்குப் பிறகு கிடைக்கும்.",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:back": {
     "messageformat": "மீண்டும்",
@@ -1606,9 +1575,13 @@
     "messageformat": "{phoneNumber} {conversationTitle} க்கு சொந்தமானது",
     "description": "Shown when we've discovered a phone number for a contact you've been communicating with, but you have no shared groups."
   },
+  "icu:TitleTransition--notification": {
+    "messageformat": "நீங்கள் இந்தச் சாட்டை {oldTitle} உடன் தொடங்கினீர்கள்",
+    "description": "Shown when we've received profile information for a contact we have been messaging by username/phone number"
+  },
   "icu:quoteThumbnailAlt": {
     "messageformat": "மேற்கோள் செய்தியிலிருந்து படத்தின் சிறு உருவம்",
-    "description": "Used in alt tag of thumbnail images inside of an embedded message quote"
+    "description": "(Deleted 2024/03/07) Used in alt tag of thumbnail images inside of an embedded message quote"
   },
   "icu:imageAttachmentAlt": {
     "messageformat": "செய்தியுடன் இணைக்கப்பட்ட படம்",
@@ -1636,15 +1609,15 @@
   },
   "icu:fileIconAlt": {
     "messageformat": "கோப்பு ஐகான்",
-    "description": "Used in the media gallery documents tab to visually represent a file"
+    "description": "(Deleted 2024/03/07) Used in the media gallery documents tab to visually represent a file"
   },
   "icu:installWelcome": {
     "messageformat": "Signal Desktop பிற்கு வருக",
-    "description": "Welcome title on the install page"
+    "description": "(Deleted 2024/03/07) Welcome title on the install page"
   },
   "icu:installTagline": {
     "messageformat": "தனியுரிமை சாத்தியம். Signal அதை எளிதாக்குகிறது.",
-    "description": "Tagline displayed under 'installWelcome' string on the install page"
+    "description": "(Deleted 2024/03/07) Tagline displayed under 'installWelcome' string on the install page"
   },
   "icu:linkedDevices": {
     "messageformat": "இணைக்கப்பட்ட சாதனங்கள்",
@@ -1677,10 +1650,6 @@
   "icu:Install__instructions__3": {
     "messageformat": "{plusButton} (ஆண்ட்ராய்டு) அல்லது {linkNewDevice} (ஐ ஃபோன்)-ஐத் தட்டவும்",
     "description": "Instructions on the device link screen"
-  },
-  "icu:Install__qr-failed": {
-    "messageformat": "(deleted 05/09/2023) The QR code couldn't load. Check your internet and try again. <learnMoreLink>Learn more</learnMoreLink>",
-    "description": "Shown on the install screen if the QR code fails to load"
   },
   "icu:Install__qr-failed-load": {
     "messageformat": "QR குறியீட்டை ஏற்ற முடியவில்லை. உங்கள் இணையத்தைச் சரிபார்த்து மீண்டும் முயலவும். <retry>மீண்டும் முயல்க</retry>",
@@ -1778,51 +1747,51 @@
     "description": "Text in the call lobby when you can't join because the call is full"
   },
   "icu:calling__cant-join": {
-    "messageformat": "Can't join call",
+    "messageformat": "அழைப்பில் சேர முடியவில்லை",
     "description": "Modal dialog title when you can't join a call"
   },
   "icu:calling__dialog-already-in-call": {
-    "messageformat": "You are already in a call.",
+    "messageformat": "நீங்கள் ஏற்கனவே ஒரு அழைப்பில் உள்ளீர்கள்.",
     "description": "Error message when clicking a call link to join a call, but you're in a call already."
   },
   "icu:calling__call-link-connection-issues": {
-    "messageformat": "Could not fetch call link information. Please check your network connection and try again.",
+    "messageformat": "அழைப்பு இணைப்புத் தகவலைப் பெற முடியவில்லை. உங்கள் நெட்வொர்க் இணைப்பைச் சரிபார்த்து, மீண்டும் முயற்சிக்கவும்.",
     "description": "Error message when unable to fetch call link info from server."
   },
   "icu:calling__call-link-copied": {
-    "messageformat": "Call link copied.",
+    "messageformat": "அழைப்பு இணைப்பு நகலெடுக்கப்பட்டது.",
     "description": "Toast shown when a call link is copied to the clipboard."
   },
   "icu:calling__call-link-no-longer-valid": {
-    "messageformat": "This call link is no longer valid.",
+    "messageformat": "இந்த அழைப்பு இணைப்பு இனி செல்லுபடியாகாது.",
     "description": "Error message when a call link has been revoked or expires."
   },
   "icu:calling__call-link-default-title": {
-    "messageformat": "Signal Call",
+    "messageformat": "Signal அழைப்பு",
     "description": "Default title for Signal call links."
   },
   "icu:calling__join-request-denied": {
-    "messageformat": "Your request to join this call has been denied.",
+    "messageformat": "இந்த அழைப்பில் சேருவதற்கான உங்கள் கோரிக்கை நிராகரிக்கப்பட்டது.",
     "description": "Error message when a request to join a call link call was rejected by a call admin."
   },
   "icu:calling__join-request-denied-title": {
-    "messageformat": "Join request denied",
+    "messageformat": "சேர்வதற்கான கோரிக்கை நிராகரிக்கப்பட்டது",
     "description": "Title of error when a request to join a call link call was rejected by a call admin."
   },
   "icu:calling__removed-from-call": {
-    "messageformat": "Someone has removed you from the call.",
+    "messageformat": "யாரோ உங்களை அழைப்பிலிருந்து அகற்றியுள்ளார்.",
     "description": "Error message when in a call then a call admin removes you."
   },
   "icu:calling__removed-from-call-title": {
-    "messageformat": "Removed from call",
+    "messageformat": "அழைப்பிலிருந்து அகற்றப்பட்டது",
     "description": "Title of error when in a call then a call admin removes you."
   },
   "icu:CallingLobby__CallLinkNotice": {
-    "messageformat": "Anyone who joins this call via the link will see your name and photo.",
+    "messageformat": "இணைப்பு மூலம் இந்த அழைப்பில் சேரும் எவரினாலும் உங்கள் பெயரையும் புகைப்படத்தையும் பார்க்க முடியும்.",
     "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared."
   },
   "icu:CallingLobby__CallLinkNotice--phone-sharing": {
-    "messageformat": "Anyone who joins this call via the link will see your name, photo, and phone number.",
+    "messageformat": "இணைப்பின் மூலம் இந்த அழைப்பில் சேரும் எவரும் உங்கள் பெயர், புகைப்படம் மற்றும் தொலைபேசி எண்ணைப் பார்ப்பார்கள்.",
     "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared, when the phone number sharing account setting is enabled."
   },
   "icu:CallingLobbyJoinButton--join": {
@@ -1883,11 +1852,11 @@
   },
   "icu:calling__button--ring__off": {
     "messageformat": "அறிவிக்கவும், அழைக்க வேண்டாம்",
-    "description": "Button tooltip label for turning ringing off"
+    "description": "(Deleted 2024/03/07) Button tooltip label for turning ringing off"
   },
   "icu:calling__button--ring__on": {
     "messageformat": "அழைப்பை இயக்கு",
-    "description": "Button tooltip label for turning ringing on"
+    "description": "(Deleted 2024/03/07) Button tooltip label for turning ringing on"
   },
   "icu:CallingButton__ring-off": {
     "messageformat": "ரிங்கிங்கை ஆஃப் செய்யும்",
@@ -1975,10 +1944,14 @@
   },
   "icu:calling__in-this-call--one": {
     "messageformat": "இந்த அழைப்பில் · 1 நபர்",
-    "description": "Shown in the participants list to describe how many people are in the call"
+    "description": "(Deleted 2024/02/29) Shown in the participants list to describe how many people are in the call"
   },
   "icu:calling__in-this-call--many": {
     "messageformat": "இந்த அழைப்பில் · {people} மக்கள்",
+    "description": "(Deleted 2024/02/29) Shown in the participants list to describe how many people are in the call"
+  },
+  "icu:calling__in-this-call": {
+    "messageformat": "{people, plural, one {இந்த அழைப்பில் {people,number} நபர் இருக்கிறார்} other {இந்த அழைப்பில் {people,number} பேர் உள்ளனர்}}",
     "description": "Shown in the participants list to describe how many people are in the call"
   },
   "icu:calling__you-have-blocked": {
@@ -2083,7 +2056,7 @@
   },
   "icu:general": {
     "messageformat": "பொது",
-    "description": "Header for general options on the settings screen"
+    "description": "(Deleted 2024/03/07) Header for general options on the settings screen"
   },
   "icu:spellCheckDescription": {
     "messageformat": "செய்தி தொகுப்பு பெட்டியில் உள்ளிடப்பட்டுள்ள எழுத்துப்பிழை சரிபார்ப்பு உரை",
@@ -2135,7 +2108,7 @@
   },
   "icu:deleteAllDataButton": {
     "messageformat": "எல்லா தரவையும் நீக்கு",
-    "description": "Text of the button that deletes all data"
+    "description": "(Deleted 2024/03/07) Text of the button that deletes all data"
   },
   "icu:deleteAllDataProgress": {
     "messageformat": "எல்லா தரவையும் துண்டித்து நீக்குகிறது",
@@ -2151,15 +2124,15 @@
   },
   "icu:notifications": {
     "messageformat": "அறிவிப்புகள்",
-    "description": "Header for notification settings"
+    "description": "(Deleted 2024/03/07) Header for notification settings"
   },
   "icu:notificationSettingsDialog": {
     "messageformat": "செய்திகள் வரும்போது, ​​வெளிப்படுத்தும் அறிவிப்புகளைக் காண்பி:",
-    "description": "Explain the purpose of the notification settings"
+    "description": "(Deleted 2024/03/07) Explain the purpose of the notification settings"
   },
   "icu:disableNotifications": {
     "messageformat": "அறிவிப்புகளை முடக்கு",
-    "description": "Label for disabling notifications"
+    "description": "(Deleted 2024/03/07) Label for disabling notifications"
   },
   "icu:nameAndMessage": {
     "messageformat": "பெயர், உள்ளடக்கம் மற்றும் செயல்கள்",
@@ -2213,15 +2186,15 @@
   },
   "icu:showMore": {
     "messageformat": "விவரங்கள்",
-    "description": "Displays the details of a key change"
+    "description": "(Deleted 2024/03/07) Displays the details of a key change"
   },
   "icu:showLess": {
     "messageformat": "விவரங்களை மறை",
-    "description": "Hides the details of a key change"
+    "description": "(Deleted 2024/03/07) Hides the details of a key change"
   },
   "icu:learnMore": {
     "messageformat": "பாதுகாப்பு எண்களைச் சரிபார்ப்பது பற்றி மேலும் அறிக",
-    "description": "Text that links to a support article on verifying safety numbers"
+    "description": "(Deleted 2024/03/07) Text that links to a support article on verifying safety numbers"
   },
   "icu:expiredWarning": {
     "messageformat": "Signal Desktop ப்பின் இந்த பதிப்பு காலாவதியானது. செய்தியைத் தொடர சமீபத்திய பதிப்பிற்கு மேம்படுத்தவும்.",
@@ -2237,7 +2210,7 @@
   },
   "icu:unregisteredUser": {
     "messageformat": "எண் பதிவு செய்யப்படவில்லை",
-    "description": "Error message displayed when sending to an unregistered user."
+    "description": "(Deleted 2024/03/07) Error message displayed when sending to an unregistered user."
   },
   "icu:sync": {
     "messageformat": "தொடர்புகளை இறக்குமதி செய்யவும்",
@@ -2249,7 +2222,7 @@
   },
   "icu:lastSynced": {
     "messageformat": "இல் கடைசி இறக்குமதி",
-    "description": "Label for date and time of last sync operation"
+    "description": "(Deleted 2024/03/07) Label for date and time of last sync operation"
   },
   "icu:syncNow": {
     "messageformat": "இப்போது இறக்குமதி செய்க",
@@ -2409,7 +2382,7 @@
   },
   "icu:yourSafetyNumberWith": {
     "messageformat": "{name1} உடன் உங்கள் பாதுகாப்பு எண்:",
-    "description": "Heading for safety number view"
+    "description": "(Deleted 2024/03/07) Heading for safety number view"
   },
   "icu:themeLight": {
     "messageformat": "ஒளி",
@@ -2441,7 +2414,7 @@
   },
   "icu:startConversation": {
     "messageformat": "புதிய சாட்டைத் தொடங்கவும்",
-    "description": "Label underneath number a user enters that is not an existing contact"
+    "description": "(Deleted 2024/03/07) Label underneath number a user enters that is not an existing contact"
   },
   "icu:newConversation": {
     "messageformat": "புதிய சாட்",
@@ -2573,15 +2546,15 @@
   },
   "icu:notSupportedSMS": {
     "messageformat": "எஸ்எம்எஸ் / எம்எம்எஸ் செய்திகள் ஆதரிக்கப்படவில்லை.",
-    "description": "Label underneath number informing user that SMS is not supported on desktop"
+    "description": "(Deleted 2024/03/07) Label underneath number informing user that SMS is not supported on desktop"
   },
   "icu:newPhoneNumber": {
     "messageformat": "தொடர்பைச் சேர்க்க தொலைபேசி எண்ணை உள்ளிடவும்.",
-    "description": "Placeholder for adding a new number to a contact"
+    "description": "(Deleted 2024/03/07) Placeholder for adding a new number to a contact"
   },
   "icu:invalidNumberError": {
     "messageformat": "தவறான எண்",
-    "description": "When a person inputs a number that is invalid"
+    "description": "(Deleted 2024/03/07) When a person inputs a number that is invalid"
   },
   "icu:unlinkedWarning": {
     "messageformat": "செய்தி அனுப்புவதைத் தொடர, உங்கள் மொபைல் சாதனத்துடன் சிக்னல் டெஸ்க்டாப்பை மீண்டும் இணைக்க கிளிக் செய்யவும்."
@@ -2590,7 +2563,8 @@
     "messageformat": "துண்டிக்கவில்லை"
   },
   "icu:relink": {
-    "messageformat": "இணைக்கவும்"
+    "messageformat": "இணைக்கவும்",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:autoUpdateNewVersionTitle": {
     "messageformat": "புதுப்பிப்பு கிடைக்கிறது"
@@ -2615,7 +2589,8 @@
     "messageformat": "சிக்னலை மறுதொடக்கம் செய்யுங்கள்"
   },
   "icu:autoUpdateLaterButtonLabel": {
-    "messageformat": "பின்னர்"
+    "messageformat": "பின்னர்",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:autoUpdateIgnoreButtonLabel": {
     "messageformat": "புதுப்பிப்பைப் புறக்கணிக்கவும்"
@@ -2741,7 +2716,7 @@
     "description": "Shown in a message bubble if any attachments are left on message when too-large attachments are dropped"
   },
   "icu:message--call-link-description": {
-    "messageformat": "Use this link to join a Signal call",
+    "messageformat": "Signal அழைப்பில் சேர இந்த இணைப்பைப் பயன்படுத்தவும்",
     "description": "Shown in message previews for Signal call links."
   },
   "icu:donation--missing": {
@@ -2806,7 +2781,7 @@
   },
   "icu:message--giftBadge--view": {
     "messageformat": "காண்க",
-    "description": "Shown when you've sent a gift badge to someone then opened it"
+    "description": "(Deleted 2024/03/07) Shown when you've sent a gift badge to someone then opened it"
   },
   "icu:message--donation--view": {
     "messageformat": "காண்க",
@@ -2838,7 +2813,7 @@
   },
   "icu:stickers--StickerManager--title": {
     "messageformat": "ஒட்டிப்படங்கள்",
-    "description": "Title for the sticker manager"
+    "description": "(Deleted 2024/03/07) Title for the sticker manager"
   },
   "icu:stickers--StickerManager--Available": {
     "messageformat": "கிடைப்பவை",
@@ -3388,14 +3363,6 @@
     "messageformat": "சாட் படிக்காததாகக் குறிக்கப்பட்டது",
     "description": "A toast that shows up when user marks a conversation as unread"
   },
-  "icu:SendEdit--dialog--title": {
-    "messageformat": "Signal பீட்டா மட்டும்",
-    "description": "(deleted 8/30) Title of the modal shown before sending your first edit message"
-  },
-  "icu:SendEdit--dialog--body": {
-    "messageformat": "மெசேஜ்களைத் திருத்துவது Signal பீட்டா பயனர்களுக்கு மட்டுமே கிடைக்கும். நீங்கள் ஒரு மெசேஜைத் திருத்தினால், அது Signal பீட்டாவின் சமீபத்திய பதிப்பில் உள்ளவர்களுக்கு மட்டுமே தெரியும்.",
-    "description": "(deleted 8/30) Body text of the modal shown before sending your first edit message"
-  },
   "icu:SendEdit--dialog--title2": {
     "messageformat": "மெசேஜைத் திருத்தவும்",
     "description": "Title of the modal shown before sending your first edit message"
@@ -3443,6 +3410,62 @@
   "icu:ReactionsViewer--all": {
     "messageformat": "அனைத்து",
     "description": "Shown in reaction viewer as the title for the 'all' category"
+  },
+  "icu:SafetyTipsModal__Title": {
+    "messageformat": "பாதுகாப்பு உதவிக்குறிப்புகள்",
+    "description": "Title of the safety tips modal"
+  },
+  "icu:SafetyTipsModal__Description": {
+    "messageformat": "உங்களுக்கு தெரியாத நபர்களிடமிருந்து பெறப்படும் மெசேஜ் கோரிக்கைகளை ஏற்கும்போது கவனமாக இருங்கள். கவனமாக இருங்கள்:",
+    "description": "Description of the safety tips modal"
+  },
+  "icu:SafetyTipsModal__TipTitle--Crypto": {
+    "messageformat": "கிரிப்டோ அல்லது பண மோசடிகள்",
+    "description": "Title of the crypto safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Crypto": {
+    "messageformat": "கிரிப்டோகரன்சி (பிட்காயின் போன்றவை) அல்லது நிதி வாய்ப்பு பற்றிய மெசேஜ்களை உங்களுக்குப் பரீட்சயமற்ற ஒருவர் அனுப்பியிருந்தால், எச்சரிக்கையுடன் இருங்கள்—அது ஸ்பேமாக இருக்கலாம்.",
+    "description": "Description of the crypto safety tip"
+  },
+  "icu:SafetyTipsModal__TipTitle--Vague": {
+    "messageformat": "தெளிவற்ற அல்லது பொருத்தமற்ற மெசேஜ்கள்",
+    "description": "Title of the vague safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Vague": {
+    "messageformat": "ஸ்பேமர்கள் உங்கள் கவனத்தை ஈர்க்க \"ஹாய்\" போன்ற வழக்கமான மெசேஜ் உடன் தொடங்குவார்கள். அதற்கு நீங்கள் பதிலளித்தால் அவர்கள் உங்களை மேற்கொண்டு உரையாடலைத் தொடரலாம்.",
+    "description": "Description of the vague safety tip"
+  },
+  "icu:SafetyTipsModal__TipTitle--Links": {
+    "messageformat": "இணைப்புகளுடன் கூடிய மெசேஜ்கள்",
+    "description": "Title of the links safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Links": {
+    "messageformat": "உங்களுக்கு தெரியாத நபர்களிடமிருந்து இணையதளங்களுக்கான இணைப்புகளுடன் கூடிய மெசேஜ்களைப் பெறும்போது கவனமாக இருங்கள். உங்களுக்கு நம்பிக்கையற்றவர்கள் அனுப்பும் இணைப்புகளை ஒருபோதும் பார்வையிடாதீர்கள்.",
+    "description": "Description of the links safety tip"
+  },
+  "icu:SafetyTipsModal__TipTitle--Business": {
+    "messageformat": "போலி நிறுவனங்கள் மற்றும் அமைப்புகள்",
+    "description": "Title of the business safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Business": {
+    "messageformat": "உங்களைத் தொடர்பு கொள்ளும் வணிகங்கள் அல்லது அரசு நிறுவனங்களிடமிருந்து கவனமாக இருங்கள். வரி ஏஜென்சிகள், கூரியர்கள் மற்றும் பலவற்றை உள்ளடக்கிய மெசேஜ்கள் ஸ்பேமாக இருக்கலாம்.",
+    "description": "Description of the business safety tip"
+  },
+  "icu:SafetyTipsModal__DotLabel": {
+    "messageformat": "{page,number} பக்கத்திற்குச் செல்",
+    "description": "Label for the dots in the safety tips modal that when clicked will take you to a specific tip"
+  },
+  "icu:SafetyTipsModal__Button--Previous": {
+    "messageformat": "முந்தைய உதவிக்குறிப்பு",
+    "description": "Button to go to the previous safety tip"
+  },
+  "icu:SafetyTipsModal__Button--Next": {
+    "messageformat": "அடுத்த உதவிக்குறிப்பு",
+    "description": "Button to go to the next safety tip"
+  },
+  "icu:SafetyTipsModal__Button--Done": {
+    "messageformat": "முடிந்தது",
+    "description": "Button to close the safety tips modal when you've reached the last tip"
   },
   "icu:MessageRequests--message-direct": {
     "messageformat": "{name} உங்களுக்கு செய்தி அனுப்பவும், உங்கள் பெயரையும் புகைப்படத்தையும் அவர்களுடன் பகிர்ந்து கொள்ளட்டும்? நீங்கள் ஏற்றுக்கொள்ளும் வரை அவர்களின் செய்திகளைப் பார்த்திருப்பதை அவர்கள் அறிய மாட்டார்கள்.",
@@ -3507,6 +3530,42 @@
   "icu:MessageRequests--block-group-confirm-body": {
     "messageformat": "இந்த குழுவிலிருந்து நீங்கள் இனி செய்திகளையோ புதுப்பிப்புகளையோ பெறமாட்டீர்கள், உறுப்பினர்கள் உங்களை மீண்டும் இந்தக் குழுவில் சேர்க்க முடியாது.",
     "description": "Shown as the body in the confirmation modal for blocking a group message request"
+  },
+  "icu:MessageRequests--reportAndMaybeBlock": {
+    "messageformat": "புகாரளி...",
+    "description": "Shown as a button to let the user report a message request and maybe block the user"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-title": {
+    "messageformat": "ஸ்பேம் எனப் புகாரளிப்பதா?",
+    "description": "Shown as the title in the modal for reporting and maybe blocking a message request"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-body--direct": {
+    "messageformat": "இந்த நபர் உங்களுக்கு ஸ்பேம் அனுப்புவதாக சிக்னலுக்குத் தெரிவிக்கப்படும். எந்தவொரு சாட்களின் உள்ளடக்கத்தையும் சிக்னலால் பார்க்க முடியாது.",
+    "description": "Shown as the body in the modal for reporting and maybe blocking a message request in a direct conversation"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-body--group--unknown-contact": {
+    "messageformat": "உங்களை இந்தக் குழுவிற்கு அழைத்த நபர், ஸ்பேமை அனுப்பியிருக்கலாம் என்பதை சிக்னலுக்குத் தெரிவிக்கப்படும். எந்தவொரு சாட்களின் உள்ளடக்கத்தையும் சிக்னலால் பார்க்க முடியாது.",
+    "description": "Shown as the body in the modal for reporting and maybe blocking a message request in a group conversation when the contact is unknown"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-body--group": {
+    "messageformat": "உங்களை இந்தக் குழுவிற்கு அழைத்த {name}, ஸ்பேமை அனுப்பியிருக்கலாம் என்பதை சிக்னலுக்குத் தெரிவிக்கப்படும். எந்தவொரு சாட்களின் உள்ளடக்கத்தையும் சிக்னலால் பார்க்க முடியாது.",
+    "description": "Shown as the body in the modal for reporting and maybe blocking a message request in a group conversation"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-report": {
+    "messageformat": "ஸ்பேம் எனப் புகாரளி",
+    "description": "Shown as a button to let the user report a message request"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-reportAndBlock": {
+    "messageformat": "புகாரளித்து தடு",
+    "description": "Shown as a button to let the user report a message request and block the user"
+  },
+  "icu:MessageRequests--AcceptedOptionsModal--body": {
+    "messageformat": "{name}இடமிருந்து பெற்ற மெசேஜ் கோரிக்கையை நீங்கள் ஏற்றுக்கொண்டீர்கள். இது தவறுதலாக நடைபெற்றிருந்தால், கீழே கொடுக்கப்பட்ட நடவடிக்கையிலிருந்து நீங்கள் ஒன்றைத் தேர்ந்தெடுக்கலாம்.",
+    "description": "Shown as the body in the modal for accepting a message request in a direct conversation"
+  },
+  "icu:MessageRequests--report-spam-success-toast": {
+    "messageformat": "ஸ்பேம் எனப் புகாரளிக்கப்பட்டது.",
+    "description": "Shown in a toast when you successfully report a user as spam"
   },
   "icu:MessageRequests--delete": {
     "messageformat": "நீக்கு",
@@ -3578,7 +3637,7 @@
   },
   "icu:ConversationHero--membership-added": {
     "messageformat": "{name} உங்களைச் சேர்த்தது குழு.",
-    "description": "Shown Indicates that you were added to a group by a given individual."
+    "description": "(Deleted 2024/03/07) Shown Indicates that you were added to a group by a given individual."
   },
   "icu:no-groups-in-common": {
     "messageformat": "பொதுவான குழுக்கள் எதுவும் இல்லை",
@@ -3717,11 +3776,11 @@
     "description": "Shown in the call lobby for a direct 1:1 call when the caller's video is disabled, to specify that an audio call will be placed when clicking the Start button."
   },
   "icu:CallControls__InfoDisplay--adhoc-call": {
-    "messageformat": "Call link",
+    "messageformat": "அழைப்பு இணைப்பு",
     "description": "Shown in the call lobby for a call link."
   },
   "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
-    "messageformat": "Waiting to be let in",
+    "messageformat": "அனுமதிக்கக் காத்திருக்கிறது",
     "description": "Shown in the call lobby for call link calls when requesting to join a call which requires admin approval."
   },
   "icu:CallControls__JoinLeaveButton--hangup-1-1": {
@@ -3786,6 +3845,10 @@
   },
   "icu:calling__participants": {
     "messageformat": "{people} அழைப்பில்",
+    "description": "(Deleted 2024/02/29) Title for participants list toggle"
+  },
+  "icu:calling__participants--pluralized": {
+    "messageformat": "{people, plural, one {{people,number} அழைப்பில்} other {{people,number} அழைப்பில்}}",
     "description": "Title for participants list toggle"
   },
   "icu:calling__call-notification__ended": {
@@ -3865,7 +3928,7 @@
     "description": "Title for the select your screen sharing sources modal"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "Copy link",
+    "messageformat": "இணைப்பை நகலெடுக்கவும்",
     "description": "Menu item in the in-call info popup for call link calls. The action is to add the call link to the clipboard."
   },
   "icu:callingDeviceSelection__label--video": {
@@ -4778,7 +4841,7 @@
   },
   "icu:ContactModal--message": {
     "messageformat": "செய்தி",
-    "description": "Button text for send message button in Group Contact Details modal"
+    "description": "(Deleted 2024/03/07) Button text for send message button in Group Contact Details modal"
   },
   "icu:ContactModal--rm-admin": {
     "messageformat": "நிர்வாகி நிலையிலிருந்து அகற்று",
@@ -5022,7 +5085,7 @@
   },
   "icu:PendingInvites--invites": {
     "messageformat": "நீங்கள் அழைத்தார்",
-    "description": "This is the title list of all invites"
+    "description": "(Deleted 2024/03/07) This is the title list of all invites"
   },
   "icu:PendingInvites--invited-by-you": {
     "messageformat": "நீங்கள் அழைத்தார்",
@@ -5138,23 +5201,23 @@
   },
   "icu:AvatarInput--no-photo-label--group": {
     "messageformat": "குழு புகைப்படத்தை சேர்",
-    "description": "The label for the avatar uploader when no group photo is selected"
+    "description": "(Deleted 2024/03/07) The label for the avatar uploader when no group photo is selected"
   },
   "icu:AvatarInput--no-photo-label--profile": {
     "messageformat": "கூட்டு a புகைப்படம்",
-    "description": "The label for the avatar uploader when no profile photo is selected"
+    "description": "(Deleted 2024/03/07) The label for the avatar uploader when no profile photo is selected"
   },
   "icu:AvatarInput--change-photo-label": {
     "messageformat": "புகைப்படத்தை மாற்று",
-    "description": "The label for the avatar uploader when a photo is selected"
+    "description": "(Deleted 2024/03/07) The label for the avatar uploader when a photo is selected"
   },
   "icu:AvatarInput--upload-photo-choice": {
     "messageformat": "புகைப்படத்தை பதிவேற்று",
-    "description": "The button text when you click on an uploaded avatar and want to upload a new one"
+    "description": "(Deleted 2024/03/07) The button text when you click on an uploaded avatar and want to upload a new one"
   },
   "icu:AvatarInput--remove-photo-choice": {
     "messageformat": "புகைப்படத்தை அகற்று",
-    "description": "The button text when you click on an uploaded avatar and want to remove it"
+    "description": "(Deleted 2024/03/07) The button text when you click on an uploaded avatar and want to remove it"
   },
   "icu:ContactPill--remove": {
     "messageformat": "தொடர்பை நீக்கு",
@@ -5162,7 +5225,7 @@
   },
   "icu:ComposeErrorDialog--close": {
     "messageformat": "சரி",
-    "description": "The text on the button when there's an error in the composer"
+    "description": "(Deleted 2024/03/07) The text on the button when there's an error in the composer"
   },
   "icu:NewlyCreatedGroupInvitedContactsDialog--title": {
     "messageformat": "{count, plural, one {அழைப்பிதழ் அனுப்பப்பட்டது} other {{count,number} அழைப்பிதழ்கள் அனுப்பப்பட்டன}}",
@@ -5288,6 +5351,10 @@
     "messageformat": "மேலும் அறிக",
     "description": "Shown on the message request warning. Clicking this button will open a dialog with more information"
   },
+  "icu:MessageRequestWarning__safety-tips": {
+    "messageformat": "பாதுகாப்பு உதவிக்குறிப்புகள்",
+    "description": "Shown on the message request warning. Clicking this button will open a dialog with safety tips"
+  },
   "icu:MessageRequestWarning__dialog__details": {
     "messageformat": "உங்களிடம் உள்ளது இல்லை குழுக்கள்இந்த நபருடன் பொதுவானது. தேவையற்ற செய்திகளைத் தவிர்ப்பதற்கு ஏற்றுக்கொள்வதற்கு முன் கோரிக்கைகளை கவனமாக மதிப்பாய்வு செய்யவும்.\n ",
     "description": "Shown in the message request warning dialog. Gives more information about message requests"
@@ -5335,10 +5402,6 @@
   "icu:ContactSpoofingReviewDialog__group__multiple-conflicts__description": {
     "messageformat": "{count, plural, one {இந்தக் குழுவில் {count,number} பெயர் முரண்பாடு காணப்பட்டது. கீழே உள்ள உறுப்பினர்களை மதிப்பாய்வு செய்யவும் அல்லது நடவடிக்கை எடுக்க தேர்வு செய்யவும்.} other {இந்தக் குழுவில் {count,number} பெயர் முரண்பாடுகள் காணப்பட்டது. கீழே உள்ள உறுப்பினர்களை மதிப்பாய்வு செய்யவும் அல்லது நடவடிக்கை எடுக்க தேர்வு செய்யவும்.}}",
     "description": "Description for the group contact spoofing review dialog when there are multiple shared names"
-  },
-  "icu:ContactSpoofingReviewDialog__group__members-header": {
-    "messageformat": "உறுப்பினர்கள்",
-    "description": "(Deleted 01/31/2024) Header in the group contact spoofing review dialog. After this header, there will be a list of members"
   },
   "icu:ContactSpoofingReviewDialog__group__members__no-shared-groups": {
     "messageformat": "பொதுவான குழுக்கள் ஏதும் இல்லை",
@@ -5410,7 +5473,7 @@
   },
   "icu:ChatColorPicker__global-chat-color": {
     "messageformat": "உலகளாவிய சாட் கலர்",
-    "description": "Modal title for the chat color picker and editor for all conversations"
+    "description": "(Deleted 2024/03/07) Modal title for the chat color picker and editor for all conversations"
   },
   "icu:ChatColorPicker__menu-title": {
     "messageformat": "சாட் கலர்",
@@ -5644,14 +5707,6 @@
     "messageformat": "உங்கள் பயனர் பெயரில் ஏதோ தவறு நடந்து விட்டது, இனி ஒருபோதும் உங்கள் கணக்கில் நியமிக்கப்படவில்லை. நீங்கள் முயன்று மீண்டும் அமைக்கலாம் அல்லது புதியதைத் தேர்ந்தெடுக்கலாம்.",
     "description": "Text of confirmation modal when the username gets corrupted"
   },
-  "icu:ProfileEditor--username--corrupted--delete-button": {
-    "messageformat": "பயனர் பெயரை நீக்கவும்",
-    "description": "(Deleted 02/01/2024) Button text for deletion of the username in case of corruption"
-  },
-  "icu:ProfileEditor--username--corrupted--create-button": {
-    "messageformat": "பயனர் பெயரை உருவாக்கவும்",
-    "description": "(Deleted 02/01/2024) Button text for creation of a new username in case of corruption"
-  },
   "icu:ProfileEditor--username--corrupted--fix-button": {
     "messageformat": "இப்பொழுதே சரிபார்",
     "description": "Button text for creation of a new username in case of corruption"
@@ -5685,7 +5740,7 @@
     "description": "Shown if user has attempted to use forbidden characters in username"
   },
   "icu:ProfileEditor--username--check-starting-character": {
-    "messageformat": "பயனர் பெயர்கள் எண்ணுடன் தொடங்கக்கூடாது.",
+    "messageformat": "பயனர் பெயர் எண்ணுடன் தொடங்க முடியாது.",
     "description": "Shown if user has attempted to begin their username with a number"
   },
   "icu:ProfileEditor--username--check-character-min": {
@@ -5718,7 +5773,7 @@
   },
   "icu:ProfileEditor--username--check-username-taken": {
     "messageformat": "இந்த பயனர் பெயர் எடுக்கப்பட்டது.",
-    "description": "Shown if user has attempted to save a username which is not available"
+    "description": "(Deleted 2024/03/07) Shown if user has attempted to save a username which is not available"
   },
   "icu:ProfileEditor--username--general-error": {
     "messageformat": "உங்கள் பயனர் பெயரை சேமிக்க முடியவில்லை. உங்கள் இணைப்பைச் சரிபார்த்து மீண்டும் முயலவும்.",
@@ -5746,7 +5801,7 @@
   },
   "icu:ProfileEditor--username--delete-username": {
     "messageformat": "பயனர் பெயரை நீக்கவும்",
-    "description": "Shown as aria label for trash icon next to username"
+    "description": "(Deleted 2024/03/07) Shown as aria label for trash icon next to username"
   },
   "icu:ProfileEditor--username--confirm-delete-body-2": {
     "messageformat": "இது உங்கள் பயனர் பெயரை அகற்றி, உங்கள் QR குறியீடு மற்றும் இணைப்பை முடக்கும். \"{username} \" மற்றவர்கள் உரிமை கோருவதற்குக் கிடைக்கப்பெறும். உறுதியாக உள்ளீர்களா?",
@@ -5770,7 +5825,7 @@
   },
   "icu:ProfileEditor--username--copy-link": {
     "messageformat": "இணைப்பை நகலெடுக்கவும்",
-    "description": "Shown as a button in context menu next to username. The action of the button is to put a username link into the clipboard."
+    "description": "(Deleted 2024/03/07) Shown as a button in context menu next to username. The action of the button is to put a username link into the clipboard."
   },
   "icu:ProfileEditor--username--delete": {
     "messageformat": "நீக்கு",
@@ -5793,20 +5848,16 @@
     "description": "ConfirmationDialog text for discarding changes"
   },
   "icu:ConfirmationDialog__Title--in-call-close-requested": {
-    "messageformat": "Close Signal and end the call?",
+    "messageformat": "சிக்னலை மூடிவிட்டு அழைப்பைத் துண்டிக்க வேண்டுமா?",
     "description": "ConfirmationDialog title when trying to close the app while in a call."
   },
   "icu:ConfirmationDialog__Title--close-requested-not-now": {
-    "messageformat": "Not Now",
+    "messageformat": "இப்போது வேண்டாம்",
     "description": "Confirmation dialog button to cancel closing the app, while in a call and trying to close the app."
   },
   "icu:ProfileEditor--edit-photo": {
     "messageformat": "படத்தை திருத்த",
     "description": "Text of a button on profile editor that leads to the avatar editor"
-  },
-  "icu:ProfileEditor--info--link": {
-    "messageformat": "உங்கள் சுயவிவரம் குறியாக்கம் செய்யப்பட்டுள்ளது. உங்கள் சுயவிவரமும் அதில் ஏற்படும் மாற்றங்களும் உங்கள் தொடர்புகளுக்குத் தெரியும் மற்றும் நீங்கள் புதிய சாட்களைத் தொடங்கும்போது அல்லது ஏற்கும்போது. <learnMoreLink>மேலும் அறிக</learnMoreLink>",
-    "description": "(Deleted 02/01/2024) Information shown at the bottom of the profile editor section"
   },
   "icu:ProfileEditor--info--general": {
     "messageformat": "உங்கள் புரொஃபைல் மற்றும் அதில் செய்த மாற்றங்கள் குறித்து நீங்கள் மெசேஜ் அனுப்புபவர்களுக்கு, தொடர்புகளுக்கு மற்றும் குழுக்களுக்கு காண்பிக்கப்படும்.",
@@ -6034,11 +6085,11 @@
   },
   "icu:Preferences--see-me": {
     "messageformat": "எனது தொலைபேசி எண்ணைக் காண்க",
-    "description": "Label for the see my phone number setting"
+    "description": "(Deleted 2024/03/07) Label for the see my phone number setting"
   },
   "icu:Preferences--find-me": {
     "messageformat": "எனது தொலைபேசி எண் மூலம் என்னைக் கண்டறியுங்கள்",
-    "description": "Label for the find me by my phone number setting"
+    "description": "(Deleted 2024/03/07) Label for the find me by my phone number setting"
   },
   "icu:Preferences--read-receipts": {
     "messageformat": "ரசீதுகளைப் படியுங்கள்",
@@ -6128,6 +6179,10 @@
     "messageformat": "புதுப்பிப்பு பதிவிறக்கப்பட்டது",
     "description": "The title of update dialog when update download is completed."
   },
+  "icu:DialogNetworkStatus__outage": {
+    "messageformat": "Signal தொழில்நுட்ப சிக்கல்களை எதிர்கொள்கிறது. சேவையை விரைவாக மீட்டெடுக்க நாங்கள் விரைவாக வேலை செய்து வருகிறோம்.",
+    "description": "The title of outage dialog during service outage."
+  },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "புதுப்பித்தல் தேவை",
     "description": "The title of update dialog on install screen when user OS is unsupported"
@@ -6150,27 +6205,33 @@
   },
   "icu:NSIS__retry-dialog--first-line": {
     "messageformat": "சிக்னலை மூட முடியாது.",
-    "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
+    "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation.",
+    "ignoreUnused": true
   },
   "icu:NSIS__retry-dialog--second-line": {
     "messageformat": "அதை கைமுறையாக மூடிவிட்டு, தொடர மீண்டும் முயற்சி என்பதைக் கிளிக் செய்யவும்.",
-    "description": "Second line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
+    "description": "Second line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation.",
+    "ignoreUnused": true
   },
   "icu:NSIS__appRunning": {
     "messageformat": "{appName} ஓடிக்கொண்டிருக்கிறது.\nஅதை மூட சரி என்பதைக் கிளிக் செய்யவும்.\nஅது மூடவில்லை என்றால், அதை கைமுறையாக மூட முயற்சிக்கவும்.",
-    "description": "The contents of a dialog displayed when Windows installer detect that the application is running and asks user to close it. Note: please keep the line breaks so that the text occupies three separate lines"
+    "description": "The contents of a dialog displayed when Windows installer detect that the application is running and asks user to close it. Note: please keep the line breaks so that the text occupies three separate lines",
+    "ignoreUnused": true
   },
   "icu:NSIS__decompressionFailed": {
     "messageformat": "கோப்புகளை குறைந்தளவாக்க முடியவில்லை. நிறுவியை மீண்டும் இயக்க முயற்சிக்கவும்.",
-    "description": "Displayed when Windows installer cannot decompress application files"
+    "description": "Displayed when Windows installer cannot decompress application files",
+    "ignoreUnused": true
   },
   "icu:NSIS__uninstallFailed": {
     "messageformat": "பழைய பயன்பாட்டுக் கோப்புகளை நீக்குவதில் தோல்வி. நிறுவியை மீண்டும் இயக்க முயற்சிக்கவும்.",
-    "description": "Displayed when Windows installer cannot uninstall the old application"
+    "description": "Displayed when Windows installer cannot uninstall the old application",
+    "ignoreUnused": true
   },
   "icu:NSIS__semver-downgrade": {
     "messageformat": "Signal இன் புதிய பதிப்பு ஏற்கனவே நிறுவப்பட்டுள்ளது. நீங்கள் நிச்சயமாக தொடர விரும்புகிறீர்களா?",
-    "description": "A text of the dialog displayed when user tries to overwrite Signal installation with an older version."
+    "description": "A text of the dialog displayed when user tries to overwrite Signal installation with an older version.",
+    "ignoreUnused": true
   },
   "icu:CrashReportDialog__title": {
     "messageformat": "செயல்பாடு செயலிழந்தது",
@@ -6218,7 +6279,7 @@
   },
   "icu:MediaEditor__control--sticker": {
     "messageformat": "ஒட்டிப்படங்கள்",
-    "description": "Label for the sticker button in the media editor"
+    "description": "(Deleted 2024/03/07) Label for the sticker button in the media editor"
   },
   "icu:MediaEditor__control--crop": {
     "messageformat": "வெட்டு மற்றும் திருப்பு",
@@ -6246,7 +6307,7 @@
   },
   "icu:MediaEditor__text--underline": {
     "messageformat": "அடிக்கோடு",
-    "description": "Describes what attribute the color picker will change on the text"
+    "description": "(Deleted 2024/03/07) Describes what attribute the color picker will change on the text"
   },
   "icu:MediaEditor__draw--pen": {
     "messageformat": "பேனா",
@@ -6290,11 +6351,11 @@
   },
   "icu:MediaEditor__crop--crop": {
     "messageformat": "வெட்டு",
-    "description": "Performs the crop"
+    "description": "(Deleted 2024/03/07) Performs the crop"
   },
   "icu:MediaEditor__caption-button": {
     "messageformat": "கூட்டு ஒரு செய்தி",
-    "description": "Label of the button on the bottom of the media editor that trigger the add-caption dialog"
+    "description": "(Deleted 2024/03/07) Label of the button on the bottom of the media editor that trigger the add-caption dialog"
   },
   "icu:MediaEditor__crop-preset--freeform": {
     "messageformat": "Freeform",
@@ -6387,6 +6448,26 @@
   "icu:payment-event-notification-check-primary-device": {
     "messageformat": "இந்தக் கட்டணத்தின் நிலையை அறிய உங்கள் முதன்மைச் சாதனத்தைச் சரிபார்க்கவும்",
     "description": "Payment event notification check device label"
+  },
+  "icu:MessageRequestResponseNotification__Message--Accepted": {
+    "messageformat": "நீங்கள் மெசேஜ் கோரிக்கையை ஏற்றுக்கொண்டீர்கள்",
+    "description": "Message request response notification message when the user accepted the message request or unblocked another user"
+  },
+  "icu:MessageRequestResponseNotification__Message--Reported": {
+    "messageformat": "ஸ்பேம் எனப் புகாரளிக்கப்பட்டது",
+    "description": "Message request response notification message when the user reported the message request as spam"
+  },
+  "icu:MessageRequestResponseNotification__Message--Blocked": {
+    "messageformat": "நீங்கள் இந்த நபரை ப்ளாக் செய்துள்ளீர்கள்",
+    "description": "Message request response notification message when the user blocked another user"
+  },
+  "icu:MessageRequestResponseNotification__Button--Options": {
+    "messageformat": "விருப்பங்கள்",
+    "description": "Message request response notification button to show options"
+  },
+  "icu:MessageRequestResponseNotification__Button--LearnMore": {
+    "messageformat": "மேலும் அறிக",
+    "description": "Message request response notification button to learn more"
   },
   "icu:SignalConnectionsModal__title": {
     "messageformat": "சிக்னல் இணைப்புகள்",
@@ -6498,7 +6579,7 @@
   },
   "icu:StoriesSettings__new-list--visibility": {
     "messageformat": "இந்த ஸ்டோரியின் பெயரை நீங்கள் மட்டுமே பார்க்க முடியும்.",
-    "description": "Explanation about the visibility of custom distribution list names"
+    "description": "(Deleted 2024/03/07) Explanation about the visibility of custom distribution list names"
   },
   "icu:StoriesSettings__custom-story-subtitle": {
     "messageformat": "தனிப்பயன் ஸ்டோரி",
@@ -6574,7 +6655,7 @@
   },
   "icu:StoriesSettings__mine__all--description": {
     "messageformat": "அனைத்து இணைப்புகளுடனும் பகிரவும்",
-    "description": "Description of button StoriesSettings__mine__all--label"
+    "description": "(Deleted 2024/03/07) Description of button StoriesSettings__mine__all--label"
   },
   "icu:StoriesSettings__mine__exclude--label": {
     "messageformat": "இவர்களைத் தவிர...",
@@ -6582,7 +6663,7 @@
   },
   "icu:StoriesSettings__mine__exclude--description": {
     "messageformat": "{num, plural, one {{num,number} நபர் விலக்கப்பட்டுள்ளனர்} other {{num,number} நபர்கள் விலக்கப்பட்டுள்ளனர்}}",
-    "description": "Description of how many people are excluded in a list"
+    "description": "(Deleted 2024/03/07) Description of how many people are excluded in a list"
   },
   "icu:StoriesSettings__mine__only--label": {
     "messageformat": "இவருடன் மட்டுமே பகிரவும்...",
@@ -6590,11 +6671,11 @@
   },
   "icu:StoriesSettings__mine__only--description": {
     "messageformat": "தேர்ந்தெடுக்கப்பட்டவர்களுடன் மட்டும் பகிரவும்",
-    "description": "Description of button StoriesSettings__mine__only--label"
+    "description": "(Deleted 2024/03/07) Description of button StoriesSettings__mine__only--label"
   },
   "icu:StoriesSettings__mine__only--description--people": {
     "messageformat": "{num,number} நபர்கள்",
-    "description": "Description of how many people are in the exclusive allow list"
+    "description": "(Deleted 2024/03/07) Description of how many people are in the exclusive allow list"
   },
   "icu:StoriesSettings__mine__disclaimer--link": {
     "messageformat": "உங்கள் ஸ்டோரியை யார் பார்க்கலாம் என்பதைத் தேர்வு செய்யவும். நீங்கள் ஏற்கனவே அனுப்பிய ஸ்டோரீஸ்களை மாற்றங்கள் பாதிக்காது. <learnMoreLink>மேலும் அறிக.</learnMoreLink>",
@@ -6706,19 +6787,19 @@
   },
   "icu:SendStoryModal__my-stories-description-all": {
     "messageformat": "{viewersCount, plural, one {அனைத்து சிக்னல் இணைப்புகள் · {viewersCount,number} பார்வையாளர்} other {அனைத்து சிக்னல் இணைப்புகள் · {viewersCount,number} பார்வையாளர்கள்}}",
-    "description": "Shown as a subtitle under My Stories option in the send-story-to dialog when not exluding anyone"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle under My Stories option in the send-story-to dialog when not exluding anyone"
   },
   "icu:SendStoryModal__my-stories-description-excluding": {
     "messageformat": "{excludedCount, plural, one {அனைத்து சிக்னல் இணைப்புகள் · {excludedCount,number} விடுபட்டுள்ளது} other {அனைத்து சிக்னல் இணைப்புகள் · {excludedCount,number} விடுபட்டுள்ளன}}",
-    "description": "Shown as a subtitle under My Stories option in the send-story-to dialog when excluding some"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle under My Stories option in the send-story-to dialog when excluding some"
   },
   "icu:SendStoryModal__private-story-description": {
     "messageformat": "{viewersCount, plural, one {தனிப்பட்ட ஸ்டோரி · {viewersCount,number} பார்வையாளர்} other {தனிப்பட்ட ஸ்டோரி · {viewersCount,number} பார்வையாளர்கள்}}",
-    "description": "Shown as a subtitle of each private story in the send-story-to dialog"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle of each private story in the send-story-to dialog"
   },
   "icu:SendStoryModal__group-story-description": {
     "messageformat": "{membersCount, plural, one {குழு ஸ்டோரி · 1 உறுப்பினர்} other {குழு ஸ்டோரி · {membersCount,number} உறுப்பினர்கள்}}",
-    "description": "Shown as a subtitle of each group story in the send-story-to dialog"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle of each group story in the send-story-to dialog"
   },
   "icu:Stories__settings-toggle--title": {
     "messageformat": "ஸ்டோரீஸ்-ஐப் பகிரவும் & பார்க்கவும்",
@@ -6918,7 +6999,7 @@
   },
   "icu:StoryCreator__input-placeholder": {
     "messageformat": "உரையைச் சேர்க்கவும்",
-    "description": "Placeholder to add text"
+    "description": "(Deleted 2024/03/07) Placeholder to add text"
   },
   "icu:StoryCreator__text--regular": {
     "messageformat": "ரெகுலர்",
@@ -6981,7 +7062,7 @@
     "description": "Label for when a person reacts to a story"
   },
   "icu:Quote__story-reaction--you": {
-    "messageformat": "Reacted to your story",
+    "messageformat": "உங்கள் ஸ்டோரிக்கு எதிர்வினையாற்றினார்",
     "description": "Label for when someone reacts to your story"
   },
   "icu:Quote__story-reaction--single": {
@@ -7123,22 +7204,6 @@
   "icu:UsernameOnboardingModalBody__row__qr__body": {
     "messageformat": "உங்களுடன் விரைவாக சாட் செய்யத் தொடங்க பயனர் பெயர்களில் நண்பர்களுடன் பகிர்ந்துகொள்ளும்படியான ஒரு தனித்துவமான QR குறியீடு மற்றும் ஒரு இணைப்பு உள்ளது.",
     "description": "Body of the third row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "பயனர் பெயர்கள் இலக்கங்களின் தொகுப்புடன் இணைக்கப்பட்டு உங்கள் சுயவிவரத்தில் பகிரப்படாது",
-    "description": "(Deleted 01/16/2023) Content of the first row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "ஒவ்வொரு பயனர் பெயருக்கும் தனிப்பட்ட QR குறியீடு மற்றும் இணைப்பு உள்ளது, உங்களுடன் சாட் செய்ய நண்பர்களுடன் பகிர்ந்து கொள்ளலாம்",
-    "description": "(Deleted 01/16/2023) Content of the second row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "மற்றவர்கள் உங்களைத் தொடர்புகொள்வதற்கு உங்கள் பயனர் பெயரை முதன்மையாகப் பயன்படுத்த, அமைப்புகள் > தனியுரிமை > தொலைபேசி எண் > எனது எண்ணை யார் கண்டறியலாம், என்பதன் கீழ் தொலைபேசி எண் கண்டுபிடிப்பை முடக்கவும்.",
-    "description": "(Deleted 01/16/2023) Content of the third row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__learn-more": {
-    "messageformat": "மேலும் அறிக",
-    "description": "(Deleted 01/16/2023) Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
     "messageformat": "பயனர் பெயரை அமைக்கவும்",
@@ -7300,6 +7365,10 @@
     "messageformat": "{count, plural, one {மேலும் {count,number} நபர் டைப் செய்கிறார்.} other {மேலும் {count,number} பேர் டைப் செய்கின்றனர்.}}",
     "description": "Group chat multiple person typing indicator when space isn't available to show every avatar, this is the count of avatars hidden."
   },
+  "icu:TransportError": {
+    "messageformat": "Experimental WebSocket Transport is seeing too many errors. Please submit a debug log",
+    "description": "A toast that is shown to alpha/beta version users when an experimental transport is seeing too many errors"
+  },
   "icu:WhoCanFindMeReadOnlyToast": {
     "messageformat": "இந்த அமைப்பை மாற்ற, \"எனது எண்ணை யார் பார்க்கலாம்\" என்னும் ஆப்ஷனில் \"யாரும் இல்லை\" என அமைக்கவும்.",
     "description": "A toast displayed when user clicks disabled option in settings window"
@@ -7310,33 +7379,46 @@
   },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "இந்த பதிப்பில் சிக்னலை சீராக இயங்க வைக்க பல சிறிய மாற்றங்கள் மற்றும் பிழை திருத்தங்கள் உள்ளன.",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--1": {
     "messageformat": "கூடுதல் சிறிய மாற்றங்கள், பிழை திருத்தங்கள் மற்றும் செயல்திறன் மேம்பாடுகள். சிக்னலைப் பயன்படுத்தியதற்கு நன்றி!",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
     "messageformat": "உங்கள் ஆப்பை சீராக இயங்க வைக்க சில பிழை திருத்தங்கள்.  மேலும் அற்புதமான மாற்றங்கள் விரைவில்! ",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
     "messageformat": "மாற்றங்கள், பிழை திருத்தங்கள் மற்றும் செயல்திறன் மேம்பாடுகள். வழக்கம் போல் குறுஞ்செய்தி, அழைப்பு மற்றும் வீடியோ சாட்டிங்கைத் தொடரவும்.",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--4": {
     "messageformat": "பிழை திருத்தம் செய்யவும் மற்றும் உங்களுக்காக ஆப்பை சீராக இயங்க வைப்பதற்கான செயல்திறன் மேம்பாடுகளைச் செய்யவும் கடினமாக உழைக்கிறோம். ",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--5": {
     "messageformat": "எதிர்காலத்திற்கான கூடுதல் சிறு மாற்றங்கள், பிழை திருத்தங்கள் மற்றும் வெவ்வேறு வகையான திட்டங்கள்.",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "சிறு மாற்றங்கள், பிழை திருத்தங்கள் மற்றும் செயல்திறன் மேம்பாடுகள். சிக்னலைப் பயன்படுத்தியதற்கு நன்றி!",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.1--0": {
-    "messageformat": "This update enables support for all of the new emoji characters in Emoji version 15.1. People keep asking us what our favorite new emoji is, but answering that question is a “lime” we won't cross."
+  "icu:WhatsNew__v7.3--0": {
+    "messageformat": "இப்போது நீங்கள் உங்கள் ஃபோனில் தவறவிட்ட அழைப்புகளை அழிக்கலாம் மற்றும் சிக்னல் டெஸ்க்டாப்பில் இருக்கும அழைப்புகள் டேபில் உள்ள பேட்ஜ் புதுப்பிக்கப்படும்."
+  },
+  "icu:WhatsNew__v7.3--1": {
+    "messageformat": "விண்டோஸில் பேட்ஜ் எண்ணிக்கை குறிகாட்டியையும் நாங்கள் மறுவடிவமைப்பு செய்துள்ளோம். இப்போது டாஸ்க்பாரில் உள்ள நிறம் சிஸ்டம் ட்ரேவில் உள்ள நிறத்துடன் பொருந்துகிறது."
+  },
+  "icu:WhatsNew__v7.4--0": {
+    "messageformat": "This update clears out a few bugs just in time for spring cleaning, including more consistent conversation sort logic and improved behavior if the app encounters DNS lookup timeouts due to poor network connectivity."
   }
 }

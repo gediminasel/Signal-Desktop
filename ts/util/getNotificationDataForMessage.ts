@@ -3,7 +3,7 @@
 
 import type { RawBodyRange } from '../types/BodyRange';
 import type { MessageAttributesType } from '../model-types.d';
-import type { ReplacementValuesType } from '../types/I18N';
+import type { ICUStringMessageParamsByKeyType } from '../types/Util';
 import * as Attachment from '../types/Attachment';
 import * as EmbeddedContact from '../types/EmbeddedContact';
 import * as GroupChange from '../groupChange';
@@ -45,12 +45,15 @@ import {
   isTapToView,
   isUnsupportedMessage,
   isConversationMerge,
+  isMessageRequestResponse,
 } from '../state/selectors/message';
 import {
   getContact,
   messageHasPaymentEvent,
   getPaymentEventNotificationText,
 } from '../messages/helpers';
+import { MessageRequestResponseEvent } from '../types/MessageRequestResponseEvent';
+import { missingCaseError } from './missingCaseError';
 
 function getNameForNumber(e164: string): string {
   const conversation = window.ConversationController.get(e164);
@@ -149,13 +152,13 @@ export function getNotificationDataForMessage(
           ? conversation.getTitle()
           : window.i18n('icu:unknownContact');
       },
-      renderString: (
-        key: string,
+      renderIntl: <Key extends keyof ICUStringMessageParamsByKeyType>(
+        key: Key,
         _i18n: unknown,
-        components: ReplacementValuesType<string | number> | undefined
+        components: ICUStringMessageParamsByKeyType[Key]
       ) => {
-        // eslint-disable-next-line local-rules/valid-i18n-keys
-        return window.i18n(key, components);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return window.i18n(key, components as any);
       },
     });
 
@@ -174,6 +177,34 @@ export function getNotificationDataForMessage(
         window.i18n
       ),
       emoji: '💳',
+    };
+  }
+
+  if (isMessageRequestResponse(attributes)) {
+    const { messageRequestResponseEvent: event } = attributes;
+    strictAssert(
+      event,
+      'getNotificationData: isMessageRequestResponse true, but no messageRequestResponseEvent!'
+    );
+    let text: string;
+    if (event === MessageRequestResponseEvent.ACCEPT) {
+      text = window.i18n(
+        'icu:MessageRequestResponseNotification__Message--Accepted'
+      );
+    } else if (event === MessageRequestResponseEvent.SPAM) {
+      text = window.i18n(
+        'icu:MessageRequestResponseNotification__Message--Reported'
+      );
+    } else if (event === MessageRequestResponseEvent.BLOCK) {
+      text = window.i18n(
+        'icu:MessageRequestResponseNotification__Message--Blocked'
+      );
+    } else {
+      throw missingCaseError(event);
+    }
+
+    return {
+      text,
     };
   }
 

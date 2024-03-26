@@ -59,6 +59,7 @@ export class App extends EventEmitter {
         args: this.options.args.slice(),
         env: {
           ...process.env,
+          MOCK_TEST: 'true',
           SIGNAL_CI_CONFIG: this.options.config,
         },
         locale: 'en',
@@ -164,6 +165,13 @@ export class App extends EventEmitter {
     const window = await this.getWindow();
     await window.evaluate(
       `window.SignalCI.openSignalRoute(${JSON.stringify(url.toString())})`
+    );
+  }
+
+  public async exportBackupToDisk(path: string): Promise<Uint8Array> {
+    const window = await this.getWindow();
+    return window.evaluate(
+      `window.SignalCI.exportBackupToDisk(${JSON.stringify(path)})`
     );
   }
 

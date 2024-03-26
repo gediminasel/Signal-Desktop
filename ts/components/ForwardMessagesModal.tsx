@@ -1,6 +1,7 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import type { ComponentType } from 'react';
 import React, {
   useCallback,
   useEffect,
@@ -22,7 +23,7 @@ import type { LocalizerType, ThemeType } from '../types/Util';
 import type { SmartCompositionTextAreaProps } from '../state/smart/CompositionTextArea';
 import { SearchInput } from './SearchInput';
 import { StagedLinkPreview } from './conversation/StagedLinkPreview';
-import { filterAndSortConversationsByRecent } from '../util/filterAndSortConversations';
+import { filterAndSortConversations } from '../util/filterAndSortConversations';
 import {
   shouldNeverBeCalled,
   asyncShouldNeverBeCalled,
@@ -61,9 +62,7 @@ export type DataPropsType = {
     caretLocation?: number
   ) => unknown;
   regionCode: string | undefined;
-  RenderCompositionTextArea: (
-    props: SmartCompositionTextAreaProps
-  ) => JSX.Element;
+  RenderCompositionTextArea: ComponentType<SmartCompositionTextAreaProps>;
   showToast: ShowToastAction;
   theme: ThemeType;
 };
@@ -97,7 +96,7 @@ export function ForwardMessagesModal({
   >([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredConversations, setFilteredConversations] = useState(
-    filterAndSortConversationsByRecent(candidateConversations, '', regionCode)
+    filterAndSortConversations(candidateConversations, '', regionCode)
   );
   const [isEditingMessage, setIsEditingMessage] = useState(false);
   const [cannotMessage, setCannotMessage] = useState(false);
@@ -170,7 +169,7 @@ export function ForwardMessagesModal({
   useEffect(() => {
     const timeout = setTimeout(() => {
       setFilteredConversations(
-        filterAndSortConversationsByRecent(
+        filterAndSortConversations(
           candidateConversations,
           normalizedSearchTerm,
           regionCode
@@ -413,9 +412,7 @@ type ForwardMessageEditorProps = Readonly<{
   draft: MessageForwardDraft;
   linkPreview: LinkPreviewType | null | void;
   removeLinkPreview(): void;
-  RenderCompositionTextArea: (
-    props: SmartCompositionTextAreaProps
-  ) => JSX.Element;
+  RenderCompositionTextArea: ComponentType<SmartCompositionTextAreaProps>;
   onChange: (
     messageText: string,
     bodyRanges: HydratedBodyRangesType,
@@ -470,7 +467,7 @@ function ForwardMessageEditor({
       ) : null}
 
       <RenderCompositionTextArea
-        bodyRanges={draft.bodyRanges}
+        bodyRanges={draft.bodyRanges ?? null}
         draftText={draft.messageBody ?? ''}
         onChange={onChange}
         onSubmit={onSubmit}

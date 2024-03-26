@@ -5,6 +5,7 @@ import { isNumber, throttle, groupBy } from 'lodash';
 import { render } from 'react-dom';
 import { batch as batchDispatch } from 'react-redux';
 import PQueue from 'p-queue';
+import pMap from 'p-map';
 import { v4 as generateUuid } from 'uuid';
 
 import * as Registration from './util/registration';
@@ -52,8 +53,9 @@ import { GROUP_CREDENTIALS_KEY } from './services/groupCredentialFetcher';
 import * as KeyboardLayout from './services/keyboardLayout';
 import * as StorageService from './services/storage';
 import { usernameIntegrity } from './services/usernameIntegrity';
+import { updateIdentityKey } from './services/profiles';
 import { RoutineProfileRefresher } from './routineProfileRefresh';
-import { isOlderThan, toDayMillis } from './util/timestamp';
+import { isOlderThan } from './util/timestamp';
 import { isValidReactionEmoji } from './reactions/isValidReactionEmoji';
 import type { ConversationModel } from './models/conversations';
 import { getContact, isIncoming } from './messages/helpers';
@@ -138,7 +140,11 @@ import {
 import { themeChanged } from './shims/themeChanged';
 import { createIPCEvents } from './util/createIPCEvents';
 import type { ServiceIdString } from './types/ServiceId';
-import { ServiceIdKind, isServiceIdString } from './types/ServiceId';
+import {
+  ServiceIdKind,
+  isPniString,
+  isServiceIdString,
+} from './types/ServiceId';
 import { isAciString } from './util/isAciString';
 import { normalizeAci } from './util/normalizeAci';
 import * as log from './logging/log';
@@ -178,6 +184,7 @@ import { createEventHandler } from './quill/signal-clipboard/util';
 import { onCallLogEventSync } from './util/onCallLogEventSync';
 import {
   getCallsHistoryForRedux,
+  getCallsHistoryUnreadCountForRedux,
   loadCallsHistory,
 } from './services/callHistoryLoader';
 import {
@@ -185,6 +192,7 @@ import {
   updateLocalGroupCallHistoryTimestamp,
 } from './util/callDisposition';
 import { deriveStorageServiceKey } from './Crypto';
+import { getThemeType } from './util/getThemeType';
 
 export function isOverHourIntoPast(timestamp: number): boolean {
   return isNumber(timestamp) && isOlderThan(timestamp, HOUR);
@@ -470,8 +478,7 @@ export async function startApp(): Promise<void> {
 
     senderCertificateService.initialize({
       server,
-      navigator,
-      onlineEventTarget: window,
+      events: window.Whisper.events,
       storage: window.storage,
     });
 
@@ -692,25 +699,6 @@ export async function startApp(): Promise<void> {
   log.info('Storage fetch');
   drop(window.storage.fetch());
 
-  function mapOldThemeToNew(
-    theme: Readonly<
-      'system' | 'light' | 'dark' | 'android' | 'ios' | 'android-dark'
-    >
-  ): 'system' | 'light' | 'dark' {
-    switch (theme) {
-      case 'dark':
-      case 'light':
-      case 'system':
-        return theme;
-      case 'android-dark':
-        return 'dark';
-      case 'android':
-      case 'ios':
-      default:
-        return 'light';
-    }
-  }
-
   // We need this 'first' check because we don't want to start the app up any other time
   //   than the first time. And window.storage.fetch() will cause onready() to fire.
   let first = true;
@@ -839,27 +827,6 @@ export async function startApp(): Promise<void> {
       window.document.body.classList.remove('window-focused')
     );
 
-    // How long since we were last running?
-    const lastHeartbeat = toDayMillis(window.storage.get('lastHeartbeat', 0));
-    const previousLastStartup = window.storage.get('lastStartup');
-    await window.storage.put('lastStartup', Date.now());
-
-    const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
-    if (lastHeartbeat > 0 && isOlderThan(lastHeartbeat, THIRTY_DAYS)) {
-      log.warn(
-        `This instance has not been used for 30 days. Last heartbeat: ${lastHeartbeat}. Last startup: ${previousLastStartup}.`
-      );
-      await unlinkAndDisconnect();
-    }
-
-    // Start heartbeat timer
-    await window.storage.put('lastHeartbeat', toDayMillis(Date.now()));
-    const TWELVE_HOURS = 12 * 60 * 60 * 1000;
-    setInterval(
-      () => window.storage.put('lastHeartbeat', toDayMillis(Date.now())),
-      TWELVE_HOURS
-    );
-
     const currentVersion = window.getVersion();
     lastVersion = window.storage.get('version');
     newVersion = !lastVersion || currentVersion !== lastVersion;
@@ -920,16 +887,6 @@ export async function startApp(): Promise<void> {
         );
       }
 
-      const themeSetting = window.Events.getThemeSetting();
-      const newThemeSetting = mapOldThemeToNew(themeSetting);
-      if (window.isBeforeVersion(lastVersion, 'v1.25.0')) {
-        if (newThemeSetting === window.systemTheme) {
-          void window.Events.setThemeSetting('system');
-        } else {
-          void window.Events.setThemeSetting(newThemeSetting);
-        }
-      }
-
       if (
         window.isBeforeVersion(lastVersion, 'v1.36.0-beta.1') &&
         window.isAfterVersion(lastVersion, 'v1.35.0-beta.1')
@@ -976,6 +933,11 @@ export async function startApp(): Promise<void> {
         await deleteAllLogs();
         window.SignalContext.restartApp();
         return;
+      }
+
+      if (window.isBeforeVersion(lastVersion, 'v7.3.0-beta.1')) {
+        await window.storage.remove('lastHeartbeat');
+        await window.storage.remove('lastStartup');
       }
     }
 
@@ -1128,6 +1090,8 @@ export async function startApp(): Promise<void> {
       platform: 'unknown',
     };
 
+    let theme: ThemeType = window.systemTheme;
+
     try {
       // This needs to load before we prime the data because we expect
       // ConversationController to be loaded and ready to use by then.
@@ -1148,6 +1112,9 @@ export async function startApp(): Promise<void> {
         (async () => {
           menuOptions = await window.SignalContext.getMenuOptions();
         })(),
+        (async () => {
+          theme = await getThemeType();
+        })(),
       ]);
       await window.ConversationController.checkForConflicts();
     } catch (error) {
@@ -1156,7 +1123,7 @@ export async function startApp(): Promise<void> {
         Errors.toLogFormat(error)
       );
     } finally {
-      setupAppState({ mainWindowStats, menuOptions });
+      setupAppState({ mainWindowStats, menuOptions, theme });
       drop(start());
       window.Signal.Services.initializeNetworkObserver(
         window.reduxActions.network
@@ -1181,17 +1148,21 @@ export async function startApp(): Promise<void> {
   function setupAppState({
     mainWindowStats,
     menuOptions,
+    theme,
   }: {
     mainWindowStats: MainWindowStatsType;
     menuOptions: MenuOptionsType;
+    theme: ThemeType;
   }) {
     initializeRedux({
       callsHistory: getCallsHistoryForRedux(),
+      callsHistoryUnreadCount: getCallsHistoryUnreadCountForRedux(),
       initialBadgesState,
       mainWindowStats,
       menuOptions,
       stories: getStoriesForRedux(),
       storyDistributionLists: getDistributionListsForRedux(),
+      theme,
     });
 
     // Here we set up a full redux store with initial state for our LeftPane Root
@@ -1353,7 +1324,7 @@ export async function startApp(): Promise<void> {
   });
 
   window.Whisper.events.on('unlinkAndDisconnect', () => {
-    void unlinkAndDisconnect();
+    drop(unlinkAndDisconnect());
   });
 
   window.Whisper.events.on('httpResponse499', () => {
@@ -1362,8 +1333,8 @@ export async function startApp(): Promise<void> {
     }
 
     log.warn('background: remote expiration detected, disabling reconnects');
+    drop(server?.onRemoteExpiration());
     remotelyExpired = true;
-    onOffline();
   });
 
   async function runStorageService() {
@@ -1445,12 +1416,18 @@ export async function startApp(): Promise<void> {
     log.info('Expiration start timestamp cleanup: complete');
 
     log.info('listening for registration events');
-    window.Whisper.events.on('registration_done', async () => {
+    window.Whisper.events.on('registration_done', () => {
       log.info('handling registration event');
 
       strictAssert(server !== undefined, 'WebAPI not ready');
-      await server.authenticate(
-        window.textsecure.storage.user.getWebAPICredentials()
+
+      // Once this resolves it will trigger `online` event and cause
+      // `connect()`, but with `firstRun` set to `false`. Thus it is important
+      // not to await it and let execution fall through.
+      drop(
+        server.authenticate(
+          window.textsecure.storage.user.getWebAPICredentials()
+        )
       );
 
       // Cancel throttled calls to refreshRemoteConfig since our auth changed.
@@ -1553,51 +1530,19 @@ export async function startApp(): Promise<void> {
     return syncRequest;
   };
 
-  let disconnectTimer: Timers.Timeout | undefined;
-  let reconnectTimer: Timers.Timeout | undefined;
-  function onOffline() {
-    log.info('offline');
+  function onNavigatorOffline() {
+    log.info('background: navigator offline');
 
-    window.removeEventListener('offline', onOffline);
-    window.addEventListener('online', onOnline);
-
-    // We've received logs from Linux where we get an 'offline' event, then 30ms later
-    //   we get an online event. This waits a bit after getting an 'offline' event
-    //   before disconnecting the socket manually.
-    disconnectTimer = Timers.setTimeout(disconnect, 1000);
-
-    if (challengeHandler) {
-      void challengeHandler.onOffline();
-    }
+    drop(server?.onNavigatorOffline());
   }
 
-  function onOnline() {
-    if (remotelyExpired) {
-      return;
-    }
-
-    log.info('online');
-
-    window.removeEventListener('online', onOnline);
-    window.addEventListener('offline', onOffline);
-
-    if (disconnectTimer && isSocketOnline()) {
-      log.warn('Already online. Had a blip in online/offline status.');
-      Timers.clearTimeout(disconnectTimer);
-      disconnectTimer = undefined;
-
-      if (challengeHandler) {
-        drop(challengeHandler.onOnline());
-      }
-      return;
-    }
-    if (disconnectTimer) {
-      Timers.clearTimeout(disconnectTimer);
-      disconnectTimer = undefined;
-    }
-
-    void connect();
+  function onNavigatorOnline() {
+    log.info('background: navigator online');
+    drop(server?.onNavigatorOnline());
   }
+
+  window.addEventListener('online', onNavigatorOnline);
+  window.addEventListener('offline', onNavigatorOffline);
 
   function isSocketOnline() {
     const socketStatus = window.getSocketStatus();
@@ -1607,34 +1552,47 @@ export async function startApp(): Promise<void> {
     );
   }
 
-  async function disconnect() {
-    log.info('disconnect');
-
-    // Clear timer, since we're only called when the timer is expired
-    disconnectTimer = undefined;
-
-    void AttachmentDownloads.stop();
-    if (server !== undefined) {
-      strictAssert(
-        messageReceiver !== undefined,
-        'WebAPI should be initialized together with MessageReceiver'
-      );
-      await server.onOffline();
-      await messageReceiver.drain();
+  window.Whisper.events.on('online', () => {
+    log.info('background: online');
+    if (!remotelyExpired) {
+      drop(connect());
     }
-  }
+  });
+
+  window.Whisper.events.on('offline', () => {
+    log.info('background: offline');
+
+    drop(challengeHandler?.onOffline());
+    drop(AttachmentDownloads.stop());
+    drop(messageReceiver?.drain());
+
+    if (connectCount === 0) {
+      log.info('background: offline, never connected, showing inbox');
+
+      drop(onEmpty()); // this ensures that the loading screen is dismissed
+
+      // Switch to inbox view even if contact sync is still running
+      if (window.reduxStore.getState().app.appView === AppViewType.Installer) {
+        log.info('background: offline, opening inbox');
+        window.reduxActions.app.openInbox();
+      }
+    }
+  });
 
   let connectCount = 0;
   let connecting = false;
   let remotelyExpired = false;
   async function connect(firstRun?: boolean) {
     if (connecting) {
-      log.warn('connect already running', { connectCount });
+      log.warn('background: connect already running', {
+        connectCount,
+        firstRun,
+      });
       return;
     }
 
     if (remotelyExpired) {
-      log.warn('remotely expired, not reconnecting');
+      log.warn('background: remotely expired, not reconnecting');
       return;
     }
 
@@ -1646,39 +1604,12 @@ export async function startApp(): Promise<void> {
       // Reset the flag and update it below if needed
       setIsInitialSync(false);
 
-      log.info('connect', { firstRun, connectCount });
-
-      if (reconnectTimer) {
-        Timers.clearTimeout(reconnectTimer);
-        reconnectTimer = undefined;
-      }
-
-      // Bootstrap our online/offline detection, only the first time we connect
-      if (connectCount === 0 && navigator.onLine) {
-        window.addEventListener('offline', onOffline);
-      }
-      if (connectCount === 0 && !navigator.onLine) {
-        log.warn(
-          'Starting up offline; will connect when we have network access'
-        );
-        window.addEventListener('online', onOnline);
-        void onEmpty(); // this ensures that the loading screen is dismissed
-
-        // Switch to inbox view even if contact sync is still running
-        if (
-          window.reduxStore.getState().app.appView === AppViewType.Installer
-        ) {
-          log.info('firstRun: offline, opening inbox');
-          window.reduxActions.app.openInbox();
-        } else {
-          log.info('firstRun: offline, not opening inbox');
-        }
-        return;
-      }
-
       if (!Registration.everDone()) {
+        log.info('background: registration not done, not connecting');
         return;
       }
+
+      log.info('background: connect', { firstRun, connectCount });
 
       // Update our profile key in the conversation if we just got linked.
       const profileKey = await ourProfileKeyService.get();
@@ -1738,14 +1669,11 @@ export async function startApp(): Promise<void> {
       messageReceiver.reset();
       server.registerRequestHandler(messageReceiver);
 
-      // If coming here after `offline` event - connect again.
-      if (!remotelyExpired) {
-        await server.onOnline();
-      }
-
-      void AttachmentDownloads.start({
-        logger: log,
-      });
+      drop(
+        AttachmentDownloads.start({
+          logger: log,
+        })
+      );
 
       if (connectCount === 1) {
         Stickers.downloadQueuedPacks();
@@ -1839,18 +1767,6 @@ export async function startApp(): Promise<void> {
                 'Not running'
             );
           }
-        }
-
-        const hasThemeSetting = Boolean(window.storage.get('theme-setting'));
-        if (
-          !hasThemeSetting &&
-          window.textsecure.storage.get('userAgent') === 'OWI'
-        ) {
-          await window.storage.put(
-            'theme-setting',
-            await window.Events.getThemeSetting()
-          );
-          themeChanged();
         }
 
         const waitForEvent = createTaskWithTimeout(
@@ -2093,7 +2009,8 @@ export async function startApp(): Promise<void> {
     }
 
     log.info('manualConnect: calling connect()');
-    void connect();
+    enqueueReconnectToWebSocket();
+    drop(connect());
   }
 
   async function onConfiguration(ev: ConfigurationEvent): Promise<void> {
@@ -2578,46 +2495,74 @@ export async function startApp(): Promise<void> {
     return confirm();
   }
 
-  function createSentMessage(
+  async function createSentMessage(
     data: SentEventData,
     descriptor: MessageDescriptor
   ) {
     const now = Date.now();
     const timestamp = data.timestamp || now;
+    const logId = `createSentMessage(${timestamp})`;
 
     const ourId = window.ConversationController.getOurConversationIdOrThrow();
 
     const { unidentifiedStatus = [] } = data;
 
-    const sendStateByConversationId: SendStateByConversationId =
-      unidentifiedStatus.reduce(
-        (
-          result: SendStateByConversationId,
-          { destinationServiceId, destination, isAllowedToReplyToStory }
-        ) => {
-          const conversation = window.ConversationController.get(
-            destinationServiceId || destination
-          );
-          if (!conversation || conversation.id === ourId) {
-            return result;
-          }
+    const sendStateByConversationId: SendStateByConversationId = {
+      [ourId]: {
+        status: SendStatus.Sent,
+        updatedAt: timestamp,
+      },
+    };
 
-          return {
-            ...result,
-            [conversation.id]: {
-              isAllowedToReplyToStory,
-              status: SendStatus.Sent,
-              updatedAt: timestamp,
-            },
-          };
-        },
-        {
-          [ourId]: {
-            status: SendStatus.Sent,
-            updatedAt: timestamp,
-          },
-        }
+    for (const {
+      destinationServiceId,
+      destination,
+      isAllowedToReplyToStory,
+    } of unidentifiedStatus) {
+      const conversation = window.ConversationController.get(
+        destinationServiceId || destination
       );
+      if (!conversation || conversation.id === ourId) {
+        continue;
+      }
+
+      sendStateByConversationId[conversation.id] = {
+        isAllowedToReplyToStory,
+        status: SendStatus.Sent,
+        updatedAt: timestamp,
+      };
+    }
+
+    await pMap(
+      unidentifiedStatus,
+      async ({ destinationServiceId, destinationPniIdentityKey }) => {
+        if (!Bytes.isNotEmpty(destinationPniIdentityKey)) {
+          return;
+        }
+
+        if (!isPniString(destinationServiceId)) {
+          log.warn(
+            `${logId}: received an destinationPniIdentityKey for ` +
+              `an invalid PNI: ${destinationServiceId}`
+          );
+          return;
+        }
+
+        const changed = await updateIdentityKey(
+          destinationPniIdentityKey,
+          destinationServiceId,
+          {
+            noOverwrite: true,
+          }
+        );
+        if (changed) {
+          log.info(
+            `${logId}: Updated identity key for ${destinationServiceId}`
+          );
+        }
+      },
+      { concurrency: 10 }
+    );
 
     let unidentifiedDeliveries: Array<string> = [];
     if (unidentifiedStatus.length) {
@@ -2725,6 +2670,28 @@ export async function startApp(): Promise<void> {
     const sourceServiceId = window.textsecure.storage.user.getAci();
     strictAssert(source && sourceServiceId, 'Missing user number and uuid');
 
+    // Make sure destination conversation is created before we hit getMessageDescriptor
+    if (
+      data.destinationServiceId &&
+      data.destinationServiceId !== sourceServiceId
+    ) {
+      const { mergePromises } =
+        window.ConversationController.maybeMergeContacts({
+          e164: data.destination,
+          aci: isAciString(data.destinationServiceId)
+            ? data.destinationServiceId
+            : undefined,
+          pni: isPniString(data.destinationServiceId)
+            ? data.destinationServiceId
+            : undefined,
+          reason: `onSentMessage(${data.timestamp})`,
+        });
+
+      if (mergePromises.length > 0) {
+        await Promise.all(mergePromises);
+      }
+    }
+
     const messageDescriptor = getMessageDescriptor({
       ...data,
     });
@@ -2740,7 +2707,7 @@ export async function startApp(): Promise<void> {
       });
     }
 
-    const message = createSentMessage(data, messageDescriptor);
+    const message = await createSentMessage(data, messageDescriptor);
 
     if (data.message.reaction) {
       strictAssert(
@@ -2960,6 +2927,14 @@ export async function startApp(): Promise<void> {
       window.getConversations().forEach(conversation => {
         conversation.unset('senderKeyInfo');
       });
+
+      // We use username for integrity check
+      const ourConversation =
+        window.ConversationController.getOurConversation();
+      if (ourConversation) {
+        ourConversation.unset('username');
+        window.Signal.Data.updateConversation(ourConversation.attributes);
+      }
 
       // Then make sure outstanding conversation saves are flushed
       await window.Signal.Data.flushUpdateConversationBatcher();

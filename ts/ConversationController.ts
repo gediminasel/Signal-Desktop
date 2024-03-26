@@ -4,6 +4,7 @@
 import { debounce, pick, uniq, without } from 'lodash';
 import PQueue from 'p-queue';
 import { v4 as generateUuid } from 'uuid';
+import { batch as batchDispatch } from 'react-redux';
 
 import type {
   ConversationModelCollectionType,
@@ -720,6 +721,7 @@ export class ConversationController {
       (targetOldServiceIds.pni !== pni ||
         (aci && targetOldServiceIds.aci !== aci))
     ) {
+      targetConversation.unset('needsTitleTransition');
       mergePromises.push(
         targetConversation.addPhoneNumberDiscoveryIfNeeded(
           targetOldServiceIds.pni
@@ -830,7 +832,7 @@ export class ConversationController {
   // Note: `doCombineConversations` is directly used within this function since both
   //   run on `_combineConversationsQueue` queue and we don't want deadlocks.
   private async doCheckForConflicts(): Promise<void> {
-    log.info('checkForConflicts: starting...');
+    log.info('ConversationController.checkForConflicts: starting...');
     const byServiceId = Object.create(null);
     const byE164 = Object.create(null);
     const byGroupV2Id = Object.create(null);
@@ -1056,6 +1058,8 @@ export class ConversationController {
     }
     current.set('active_at', activeAt);
 
+    const currentHadMessages = (current.get('messageCount') ?? 0) > 0;
+
     const dataToCopy: Partial<ConversationAttributesType> = pick(
       obsolete.attributes,
       [
@@ -1067,6 +1071,7 @@ export class ConversationController {
         'draftTimestamp',
         'messageCount',
         'messageRequestResponseType',
+        'needsTitleTransition',
         'profileSharing',
         'quotedMessageId',
         'sentMessageCount',
@@ -1196,7 +1201,15 @@ export class ConversationController {
     const titleIsUseful = Boolean(
       obsoleteTitleInfo && getTitleNoDefault(obsoleteTitleInfo)
     );
-    if (obsoleteTitleInfo && titleIsUseful && obsoleteHadMessages) {
+    // If both conversations had messages - add merge
+    if (
+      titleIsUseful &&
+      conversationType === 'private' &&
+      currentHadMessages &&
+      obsoleteHadMessages
+    ) {
+      assertDev(obsoleteTitleInfo, 'part of titleIsUseful boolean');
+
       drop(current.addConversationMerge(obsoleteTitleInfo));
     }
 
@@ -1408,12 +1421,16 @@ export class ConversationController {
       );
       await queue.onIdle();
 
-      // Hydrate the final set of conversations
-      this._conversations.add(
-        collection.filter(conversation => !conversation.isTemporary)
-      );
-
+      // It is alright to call it first because the 'add'/'update' events are
+      // triggered after updating the collection.
       this._initialFetchComplete = true;
+
+      // Hydrate the final set of conversations
+      batchDispatch(() => {
+        this._conversations.add(
+          collection.filter(conversation => !conversation.isTemporary)
+        );
+      });
 
       await Promise.all(
         this._conversations.map(async conversation => {
@@ -1454,7 +1471,10 @@ export class ConversationController {
           }
         })
       );
-      log.info('ConversationController: done with initial fetch');
+      log.info(
+        'ConversationController: done with initial fetch, ' +
+          `got ${this._conversations.length} conversations`
+      );
     } catch (error) {
       log.error(
         'ConversationController: initial fetch failed',

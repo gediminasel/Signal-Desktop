@@ -16,18 +16,6 @@
       }
     ]
   },
-  "icu:AddCaptionModal__title": {
-    "messageformat": "添加消息",
-    "description": "(Deleted 12/14/2023) Shown as the title of the dialog that allows you to add a caption to a story"
-  },
-  "icu:AddCaptionModal__placeholder": {
-    "messageformat": "消息",
-    "description": "(Deleted 12/14/2023) Placeholder text for textarea when adding a caption/message (we don't know which yet so we default to message)"
-  },
-  "icu:AddCaptionModal__submit-button": {
-    "messageformat": "完成",
-    "description": "(Deleted 12/14/2023) Label on the button that submits changes to a story's caption in the add-caption dialog"
-  },
   "icu:AddUserToAnotherGroupModal__title": {
     "messageformat": "添加至群组",
     "description": "Shown as the title of the dialog that allows you to add a contact to an group"
@@ -290,11 +278,11 @@
   },
   "icu:avatarMenuChatColors": {
     "messageformat": "聊天颜色",
-    "description": "One of the menu options available in the Avatar popup menu"
+    "description": "(Deleted 2024/03/07) One of the menu options available in the Avatar popup menu"
   },
   "icu:avatarMenuUpdateAvailable": {
     "messageformat": "升级 Signal",
-    "description": "One of the menu options available in the Avatar popup menu"
+    "description": "(Deleted 2024/03/07) One of the menu options available in the Avatar popup menu"
   },
   "icu:loading": {
     "messageformat": "加载中……",
@@ -440,6 +428,26 @@
     "messageformat": "选择消息",
     "description": "Shown in menu for conversation, allows the user to start selecting multiple messages in the conversation"
   },
+  "icu:ConversationHeader__MenuItem--Accept": {
+    "messageformat": "接受",
+    "description": "Shown in menu for conversation, allows the user to accept a message request"
+  },
+  "icu:ConversationHeader__MenuItem--Block": {
+    "messageformat": "屏蔽",
+    "description": "Shown in menu for conversation, allows the user to block the contact"
+  },
+  "icu:ConversationHeader__MenuItem--Unblock": {
+    "messageformat": "取消屏蔽",
+    "description": "Shown in menu for conversation, allows the user to unblock the contact"
+  },
+  "icu:ConversationHeader__MenuItem--ReportSpam": {
+    "messageformat": "举报垃圾消息",
+    "description": "Shown in menu for conversation, allows the user to report the conversation as spam"
+  },
+  "icu:ConversationHeader__MenuItem--DeleteChat": {
+    "messageformat": "删除聊天",
+    "description": "Shown in menu for conversation, allows the user to delete the conversation"
+  },
   "icu:ContactListItem__menu": {
     "messageformat": "管理联系人",
     "description": "Shown as aria label for context menu for a contact"
@@ -502,63 +510,63 @@
   },
   "icu:chooseDirectory": {
     "messageformat": "选择文件夹",
-    "description": "Button to allow the user to find a folder on disk"
+    "description": "(Deleted 2024/03/07) Button to allow the user to find a folder on disk"
   },
   "icu:chooseFile": {
     "messageformat": "选择文件",
-    "description": "Button to allow the user to find a file on disk"
+    "description": "(Deleted 2024/03/07) Button to allow the user to find a file on disk"
   },
   "icu:loadDataHeader": {
     "messageformat": "加载您的数据",
-    "description": "Header shown on the first screen in the data import process"
+    "description": "(Deleted 2024/03/07) Header shown on the first screen in the data import process"
   },
   "icu:loadDataDescription": {
     "messageformat": "您已完成了导出步骤，被导出的联系人和消息在等着您给它们一个新家。请选择包含您 Signal 数据的文件夹。",
-    "description": "Introduction to the process of importing messages and contacts from disk"
+    "description": "(Deleted 2024/03/07) Introduction to the process of importing messages and contacts from disk"
   },
   "icu:importChooserTitle": {
     "messageformat": "选择包含导出数据的文件夹",
-    "description": "Title of the popup window used to select data previously exported"
+    "description": "(Deleted 2024/03/07) Title of the popup window used to select data previously exported"
   },
   "icu:importErrorHeader": {
     "messageformat": "出错了！",
-    "description": "Header of the error screen after a failed import"
+    "description": "(Deleted 2024/03/07) Header of the error screen after a failed import"
   },
   "icu:importingHeader": {
     "messageformat": "正在加载联系人和消息",
-    "description": "Header of screen shown as data is import"
+    "description": "(Deleted 2024/03/07) Header of screen shown as data is import"
   },
   "icu:importErrorFirst": {
     "messageformat": "请确认您选对了包含已保存 Signal 数据 的文件夹，其名字一般以“Signal Export”开头。您还可以在 Chrome App 上保存一份新的数据。",
-    "description": "Message shown if the import went wrong; first paragraph"
+    "description": "(Deleted 2024/03/07) Message shown if the import went wrong; first paragraph"
   },
   "icu:importErrorSecond": {
     "messageformat": "如果以上步骤没有成功，您可以将调试日志（视图 -> 调试日志）发给我们，以便我们帮您完成迁移！",
-    "description": "Message shown if the import went wrong; second paragraph"
+    "description": "(Deleted 2024/03/07) Message shown if the import went wrong; second paragraph"
   },
   "icu:importAgain": {
     "messageformat": "请选择文件夹并重试",
-    "description": "Button shown if the user runs into an error during import, allowing them to start over"
+    "description": "(Deleted 2024/03/07) Button shown if the user runs into an error during import, allowing them to start over"
   },
   "icu:importCompleteHeader": {
     "messageformat": "成功！",
-    "description": "Header shown on the screen at the end of a successful import process"
+    "description": "(Deleted 2024/03/07) Header shown on the screen at the end of a successful import process"
   },
   "icu:importCompleteStartButton": {
     "messageformat": "开始使用 Signal Desktop",
-    "description": "Button shown at end of successful import process, nothing left but a restart"
+    "description": "(Deleted 2024/03/07) Button shown at end of successful import process, nothing left but a restart"
   },
   "icu:importCompleteLinkButton": {
     "messageformat": "将这个设备关联到您的手机",
-    "description": "Button shown at end of successful 'light' import process, so the standard linking process still needs to happen"
+    "description": "(Deleted 2024/03/07) Button shown at end of successful 'light' import process, so the standard linking process still needs to happen"
   },
   "icu:selectedLocation": {
     "messageformat": "您已选的位置",
-    "description": "Message shown as the export location if we didn't capture the target directory"
+    "description": "(Deleted 2024/03/07) Message shown as the export location if we didn't capture the target directory"
   },
   "icu:upgradingDatabase": {
     "messageformat": "正在更新数据库。这可能需要一点时间……",
-    "description": "Message shown on the loading screen when we're changing database structure on first run of a new version"
+    "description": "(Deleted 2024/03/07) Message shown on the loading screen when we're changing database structure on first run of a new version"
   },
   "icu:loadingMessages--other": {
     "messageformat": "{daysAgo, plural, other {正在加载 {daysAgo,number} 天前的消息……}}",
@@ -598,11 +606,19 @@
   },
   "icu:unreadMessage": {
     "messageformat": "1条未读消息",
-    "description": "Text for unread message separator, just one message"
+    "description": "(Deleted 2024/03/07) Text for unread message separator, just one message"
   },
   "icu:unreadMessages": {
     "messageformat": "{count, plural, other {{count,number} 条未读消息}}",
     "description": "Text for unread message separator, with count"
+  },
+  "icu:taskbarMarkedUnread": {
+    "messageformat": "已标为未读",
+    "description": "On Windows, description for screen readers for the OS taskbar icon's overlay badge when the user has marked chat(s) as unread."
+  },
+  "icu:taskbarUnreadMessages": {
+    "messageformat": "{count, plural, other {{count,number} 条未读消息}}",
+    "description": "On Windows, description for screen readers for the OS taskbar icon's overlay badge when there are unread messages."
   },
   "icu:messageHistoryUnsynced": {
     "messageformat": "为了您的安全，聊天记录将不会同步至新链接的设备。",
@@ -626,7 +642,7 @@
   },
   "icu:membersNeedingVerification": {
     "messageformat": "自上次验证以来，您与多位群组成员的安全码已发生改变。点击一个群组成员可查看您与他们的新安全码。",
-    "description": "When there are multiple previously-verified group members with safety number changes, a banner will be shown. The list of contacts with safety number changes is shown, and this text introduces that list."
+    "description": "(Deleted 2024/03/07) When there are multiple previously-verified group members with safety number changes, a banner will be shown. The list of contacts with safety number changes is shown, and this text introduces that list."
   },
   "icu:changedRightAfterVerify": {
     "messageformat": "您想验证的安全码已改变。请检查您与{name1}的新安全码。切记，验证码改变意味着可能有人试图截取您的通讯，也可能只是{name2}重新安装了 Signal。",
@@ -678,7 +694,7 @@
   },
   "icu:identityKeyErrorOnSend": {
     "messageformat": "您与{name1}的安全码已改变。这可能表明有人试图窃听您的对话，也可能只是{name2}重新安装了 Signal。您可以重新验证与联系人的安全码。",
-    "description": "Shown when user clicks on a failed recipient in the message detail view after an identity key change"
+    "description": "(Deleted 2024/03/07) Shown when user clicks on a failed recipient in the message detail view after an identity key change"
   },
   "icu:sendAnyway": {
     "messageformat": "仍要发送",
@@ -706,11 +722,11 @@
   },
   "icu:noLongerVerified": {
     "messageformat": "您与 {name} 的安全号码已发生改变，而且不再被确认。点击展示。",
-    "description": "Shown in conversation banner when user's safety number has changed, but they were previously verified."
+    "description": "(Deleted 2024/03/07) Shown in conversation banner when user's safety number has changed, but they were previously verified."
   },
   "icu:multipleNoLongerVerified": {
     "messageformat": "您与此群组内多位成员的安全码已经改变，而且不再被确认。点击展示。",
-    "description": "Shown in conversation banner when more than one group member's safety number has changed, but they were previously verified."
+    "description": "(Deleted 2024/03/07) Shown in conversation banner when more than one group member's safety number has changed, but they were previously verified."
   },
   "icu:debugLogExplanation": {
     "messageformat": "当您点击提交后，您的日志将会在一个唯一的未发布 URL 中在线发布 30 天。您可以先将其保存在本地。",
@@ -750,34 +766,14 @@
   },
   "icu:gotIt": {
     "messageformat": "了解",
-    "description": "Label for a button that dismisses a dialog. The user clicks it to confirm that they understand the message in the dialog."
+    "description": "(Deleted 2024/03/07) Label for a button that dismisses a dialog. The user clicks it to confirm that they understand the message in the dialog."
   },
   "icu:submit": {
     "messageformat": "提交"
   },
   "icu:acceptNewKey": {
     "messageformat": "接受",
-    "description": "Label for a button to accept a new safety number"
-  },
-  "icu:SafetyNumberViewer__migration__text": {
-    "messageformat": "安全码正在更新中。",
-    "description": "(Deleted 11/01/2023) An explanatory note in SafetyNumberViewer describing the safety number migration process."
-  },
-  "icu:SafetyNumberViewer__migration__learn_more": {
-    "messageformat": "了解更多",
-    "description": "(Deleted 11/01/2023) A link text in SafetyNumberViewer describing the safety number migration process."
-  },
-  "icu:SafetyNumberViewer__card__prev": {
-    "messageformat": "上一个安全码",
-    "description": "(Deleted 11/01/2023) An ARIA label for safety number navigation button."
-  },
-  "icu:SafetyNumberViewer__card__next": {
-    "messageformat": "下一个安全码",
-    "description": "(Deleted 11/01/2023) An ARIA label for safety number navigation button."
-  },
-  "icu:SafetyNumberViewer__carousel__dot": {
-    "messageformat": "安全码版本，{index,number}/{total,number}",
-    "description": "(Deleted 11/01/2023) An ARIA label for safety number carousel button."
+    "description": "(Deleted 2024/03/07) Label for a button to accept a new safety number"
   },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "标记为已验证",
@@ -795,34 +791,6 @@
     "messageformat": "了解更多",
     "description": "Text of 'Learn more' button of SafetyNumberViewerModal modal"
   },
-  "icu:SafetyNumberViewer__hint--migration": {
-    "messageformat": "如要验证您与{name}的端对端加密功能，请将上方的色卡与对方的设备匹配，并比对安全码。如果二者不匹配，请尝试另一对安全码。验证仅需匹配一对安全码。",
-    "description": "(Deleted 11/01/2023). Safety number viewer, text of the hint during migration period"
-  },
-  "icu:SafetyNumberViewer__hint--normal": {
-    "messageformat": "如要验证您与{name}的端对端加密功能，请将上方的数字与对方的设备进行比对。对方也可以使用自己的设备扫描您的二维码。",
-    "description": "(Deleted 11/01/2023). Safety number viewer, text of the hint after migration period"
-  },
-  "icu:SafetyNumberOnboarding__title": {
-    "messageformat": "关于安全码的变更",
-    "description": "(Deleted 11/01/2023) Title of Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__p1": {
-    "messageformat": "安全码将在过渡期内更新，以启用 Signal 即将推出的隐私功能。",
-    "description": "(Deleted 11/01/2023) Paragraph 1 of Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__p2": {
-    "messageformat": "如要验证安全码，请将色卡与联系人的设备匹配。如果二者不匹配，请尝试另一对安全码。验证仅需匹配一对安全码。",
-    "description": "(Deleted 11/01/2023) Paragraph 2 of Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__help": {
-    "messageformat": "需要协助？",
-    "description": "(Deleted 11/01/2023) Text of a secondary button in Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__close": {
-    "messageformat": "知道了",
-    "description": "(Deleted 11/01/2023) Text of a secondary button in Safety number onboarding modal"
-  },
   "icu:SafetyNumberNotReady__body": {
     "messageformat": "在您与对方互发消息后，系统将针对其生成一个安全码。",
     "description": "Body of SafetyNumberNotReady modal"
@@ -833,11 +801,11 @@
   },
   "icu:isVerified": {
     "messageformat": "您已验证与{name}的安全码。",
-    "description": "Summary state shown at top of the safety number screen if user has verified contact."
+    "description": "(Deleted 2024/03/07) Summary state shown at top of the safety number screen if user has verified contact."
   },
   "icu:isNotVerified": {
     "messageformat": "您还没验证与 {name} 的安全代码。",
-    "description": "Summary state shown at top of the safety number screen if user has not verified contact."
+    "description": "(Deleted 2024/03/07) Summary state shown at top of the safety number screen if user has not verified contact."
   },
   "icu:verified": {
     "messageformat": "已验证"
@@ -847,7 +815,8 @@
     "description": "Header for a key change dialog"
   },
   "icu:identityChanged": {
-    "messageformat": "您的此联系人的安全代码已更改。这可能意味着有人试图拦截你的通信，或者这个联系人重新安装了 Signal。您可能想验证以下新安全代码。"
+    "messageformat": "您的此联系人的安全代码已更改。这可能意味着有人试图拦截你的通信，或者这个联系人重新安装了 Signal。您可能想验证以下新安全代码。",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:incomingError": {
     "messageformat": "处理传入消息时出错"
@@ -894,11 +863,11 @@
   },
   "icu:clickToSave": {
     "messageformat": "单击保存",
-    "description": "Hover text for attachment filenames"
+    "description": "(Deleted 2024/03/07) Hover text for attachment filenames"
   },
   "icu:unnamedFile": {
     "messageformat": "未命名的文件",
-    "description": "Hover text for attachment filenames"
+    "description": "(Deleted 2024/03/07) Hover text for attachment filenames"
   },
   "icu:voiceMessage": {
     "messageformat": "语音消息",
@@ -923,10 +892,6 @@
   "icu:stagedImageAttachment": {
     "messageformat": "待发送的图片附件：{path}",
     "description": "Alt text for staged attachments"
-  },
-  "icu:cdsMirroringErrorToast": {
-    "messageformat": "桌面版 Signal 遇到 “发现联系人服务”不一致问题。",
-    "description": "(Deleted 2024/01/22) An error popup when we discovered an inconsistency between mirrored Contact Discovery Service requests."
   },
   "icu:decryptionErrorToast": {
     "messageformat": "桌面程序遇到来自{name}的解密错误，设备为{deviceId}",
@@ -1180,7 +1145,7 @@
   },
   "icu:messageFoundButNotLoaded": {
     "messageformat": "原始消息可用，但尚未加载。向上滑动可加载。",
-    "description": "Shown in toast if user clicks on quote references messages not loaded in view, but in database"
+    "description": "(Deleted 2024/03/07) Shown in toast if user clicks on quote references messages not loaded in view, but in database"
   },
   "icu:voiceRecording--start": {
     "messageformat": "开始记录语音信息",
@@ -1188,11 +1153,11 @@
   },
   "icu:voiceRecording--complete": {
     "messageformat": "完成语音信息并发送",
-    "description": "Tooltip for green complete voice message and send"
+    "description": "(Deleted 2024/03/07) Tooltip for green complete voice message and send"
   },
   "icu:voiceRecording--cancel": {
     "messageformat": "取消语音信息",
-    "description": "Tooltip for red button to cancel voice message"
+    "description": "(Deleted 2024/03/07) Tooltip for red button to cancel voice message"
   },
   "icu:voiceRecordingInterruptedMax": {
     "messageformat": "语音消息录制已停止，因为已达到最大时间限制。",
@@ -1200,7 +1165,7 @@
   },
   "icu:voiceRecordingInterruptedBlur": {
     "messageformat": "语音消息录制已停止，因为您已切换到另一个应用程序。",
-    "description": "Confirmation dialog message for when the voice recording is interrupted due to app losing focus"
+    "description": "(Deleted 2024/03/07) Confirmation dialog message for when the voice recording is interrupted due to app losing focus"
   },
   "icu:voiceNoteLimit": {
     "messageformat": "语音消息限制为 1 小时。如果您切换到另一个应用，录音将停止。",
@@ -1228,7 +1193,7 @@
   },
   "icu:replyingTo": {
     "messageformat": "回复 {name}",
-    "description": "Shown in iOS theme when you or someone quotes to a message which is not from you"
+    "description": "(Deleted 2024/03/07) Shown in iOS theme when you or someone quotes to a message which is not from you"
   },
   "icu:audioPermissionNeeded": {
     "messageformat": "发送语音消息前，请先允许 Signal Desktop 访问您的麦克风。",
@@ -1248,7 +1213,7 @@
   },
   "icu:showSettings": {
     "messageformat": "打开设置",
-    "description": "A button shown in dialog requesting the user to turn on audio permissions"
+    "description": "(Deleted 2024/03/07) A button shown in dialog requesting the user to turn on audio permissions"
   },
   "icu:audio": {
     "messageformat": "音频",
@@ -1272,7 +1237,7 @@
   },
   "icu:muted": {
     "messageformat": "已静音",
-    "description": "Shown in a button when a conversation is muted"
+    "description": "(Deleted 2024/03/07) Shown in a button when a conversation is muted"
   },
   "icu:mute": {
     "messageformat": "静音",
@@ -1300,13 +1265,15 @@
     "messageformat": "放弃"
   },
   "icu:failedToSend": {
-    "messageformat": "无法发送给某些收件人，请检查您的网络连接。"
+    "messageformat": "无法发送给某些收件人，请检查您的网络连接。",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:error": {
     "messageformat": "错误"
   },
   "icu:messageDetail": {
-    "messageformat": "信息属性"
+    "messageformat": "信息属性",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:delete": {
     "messageformat": "删除"
@@ -1352,7 +1319,7 @@
   },
   "icu:to": {
     "messageformat": "至",
-    "description": "Label for the receiver of a message"
+    "description": "(Deleted 2024/03/07) Label for the receiver of a message"
   },
   "icu:searchResultHeader--sender-to-group": {
     "messageformat": "{sender}发送给{receiverGroup}",
@@ -1383,7 +1350,8 @@
     "description": "Placeholder text in the message entry field"
   },
   "icu:groupMembers": {
-    "messageformat": "群组成员"
+    "messageformat": "群组成员",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:showMembers": {
     "messageformat": "显示成员"
@@ -1425,14 +1393,15 @@
   },
   "icu:ContactModal__showSafetyNumber": {
     "messageformat": "查看安全码",
-    "description": "Contact modal, label for button to show safety number modal"
+    "description": "(Deleted 2024/03/07) Contact modal, label for button to show safety number modal"
   },
   "icu:viewRecentMedia": {
     "messageformat": "查看最近媒体",
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
   "icu:theirIdentityUnknown": {
-    "messageformat": "您还未与该联系人有任何通讯，您的安全代码将会在您对其发送第一条消息后显示。"
+    "messageformat": "您还未与该联系人有任何通讯，您的安全代码将会在您对其发送第一条消息后显示。",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:back": {
     "messageformat": "返回",
@@ -1606,9 +1575,13 @@
     "messageformat": "{phoneNumber} 属于{conversationTitle}",
     "description": "Shown when we've discovered a phone number for a contact you've been communicating with, but you have no shared groups."
   },
+  "icu:TitleTransition--notification": {
+    "messageformat": "您向 {oldTitle} 发起了聊天",
+    "description": "Shown when we've received profile information for a contact we have been messaging by username/phone number"
+  },
   "icu:quoteThumbnailAlt": {
     "messageformat": "引用消息图片的缩略图",
-    "description": "Used in alt tag of thumbnail images inside of an embedded message quote"
+    "description": "(Deleted 2024/03/07) Used in alt tag of thumbnail images inside of an embedded message quote"
   },
   "icu:imageAttachmentAlt": {
     "messageformat": "消息图片",
@@ -1636,15 +1609,15 @@
   },
   "icu:fileIconAlt": {
     "messageformat": "文件图标",
-    "description": "Used in the media gallery documents tab to visually represent a file"
+    "description": "(Deleted 2024/03/07) Used in the media gallery documents tab to visually represent a file"
   },
   "icu:installWelcome": {
     "messageformat": "欢迎来到 Signal Desktop",
-    "description": "Welcome title on the install page"
+    "description": "(Deleted 2024/03/07) Welcome title on the install page"
   },
   "icu:installTagline": {
     "messageformat": "Signal 让隐私保护触手可及。",
-    "description": "Tagline displayed under 'installWelcome' string on the install page"
+    "description": "(Deleted 2024/03/07) Tagline displayed under 'installWelcome' string on the install page"
   },
   "icu:linkedDevices": {
     "messageformat": "已关联的设备",
@@ -1677,10 +1650,6 @@
   "icu:Install__instructions__3": {
     "messageformat": "点击{plusButton}（Android）或{linkNewDevice} （iPhone）",
     "description": "Instructions on the device link screen"
-  },
-  "icu:Install__qr-failed": {
-    "messageformat": "(deleted 05/09/2023) The QR code couldn't load. Check your internet and try again. <learnMoreLink>Learn more</learnMoreLink>",
-    "description": "Shown on the install screen if the QR code fails to load"
   },
   "icu:Install__qr-failed-load": {
     "messageformat": "无法加载此二维码。请检查您的网络并重试。<retry>重试</retry>",
@@ -1778,51 +1747,51 @@
     "description": "Text in the call lobby when you can't join because the call is full"
   },
   "icu:calling__cant-join": {
-    "messageformat": "Can't join call",
+    "messageformat": "无法加入通话",
     "description": "Modal dialog title when you can't join a call"
   },
   "icu:calling__dialog-already-in-call": {
-    "messageformat": "You are already in a call.",
+    "messageformat": "您已在通话中。",
     "description": "Error message when clicking a call link to join a call, but you're in a call already."
   },
   "icu:calling__call-link-connection-issues": {
-    "messageformat": "Could not fetch call link information. Please check your network connection and try again.",
+    "messageformat": "无法获取通话链接信息。请检查您的互联网连接并重试。",
     "description": "Error message when unable to fetch call link info from server."
   },
   "icu:calling__call-link-copied": {
-    "messageformat": "Call link copied.",
+    "messageformat": "通话链接已复制。",
     "description": "Toast shown when a call link is copied to the clipboard."
   },
   "icu:calling__call-link-no-longer-valid": {
-    "messageformat": "This call link is no longer valid.",
+    "messageformat": "此通话链接已失效。",
     "description": "Error message when a call link has been revoked or expires."
   },
   "icu:calling__call-link-default-title": {
-    "messageformat": "Signal Call",
+    "messageformat": "Signal 通话",
     "description": "Default title for Signal call links."
   },
   "icu:calling__join-request-denied": {
-    "messageformat": "Your request to join this call has been denied.",
+    "messageformat": "您加入通话的请求已被拒绝。",
     "description": "Error message when a request to join a call link call was rejected by a call admin."
   },
   "icu:calling__join-request-denied-title": {
-    "messageformat": "Join request denied",
+    "messageformat": "加入请求被拒绝",
     "description": "Title of error when a request to join a call link call was rejected by a call admin."
   },
   "icu:calling__removed-from-call": {
-    "messageformat": "Someone has removed you from the call.",
+    "messageformat": "有人已将您移除出通话。",
     "description": "Error message when in a call then a call admin removes you."
   },
   "icu:calling__removed-from-call-title": {
-    "messageformat": "Removed from call",
+    "messageformat": "被移除出通话",
     "description": "Title of error when in a call then a call admin removes you."
   },
   "icu:CallingLobby__CallLinkNotice": {
-    "messageformat": "Anyone who joins this call via the link will see your name and photo.",
+    "messageformat": "通过此链接加入通话的任何人都能看到您的名称和头像。",
     "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared."
   },
   "icu:CallingLobby__CallLinkNotice--phone-sharing": {
-    "messageformat": "Anyone who joins this call via the link will see your name, photo, and phone number.",
+    "messageformat": "通过此链接加入通话的任何人都能看到您的名称、头像和手机号码。",
     "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared, when the phone number sharing account setting is enabled."
   },
   "icu:CallingLobbyJoinButton--join": {
@@ -1883,11 +1852,11 @@
   },
   "icu:calling__button--ring__off": {
     "messageformat": "通知但不拨通",
-    "description": "Button tooltip label for turning ringing off"
+    "description": "(Deleted 2024/03/07) Button tooltip label for turning ringing off"
   },
   "icu:calling__button--ring__on": {
     "messageformat": "启用拨通",
-    "description": "Button tooltip label for turning ringing on"
+    "description": "(Deleted 2024/03/07) Button tooltip label for turning ringing on"
   },
   "icu:CallingButton__ring-off": {
     "messageformat": "关闭铃声",
@@ -1975,10 +1944,14 @@
   },
   "icu:calling__in-this-call--one": {
     "messageformat": "此通话中有 1 位用户",
-    "description": "Shown in the participants list to describe how many people are in the call"
+    "description": "(Deleted 2024/02/29) Shown in the participants list to describe how many people are in the call"
   },
   "icu:calling__in-this-call--many": {
     "messageformat": "该通话· {people} 人参与",
+    "description": "(Deleted 2024/02/29) Shown in the participants list to describe how many people are in the call"
+  },
+  "icu:calling__in-this-call": {
+    "messageformat": "{people, plural, other {此通话 · {people,number} 人}}",
     "description": "Shown in the participants list to describe how many people are in the call"
   },
   "icu:calling__you-have-blocked": {
@@ -2083,7 +2056,7 @@
   },
   "icu:general": {
     "messageformat": "通用",
-    "description": "Header for general options on the settings screen"
+    "description": "(Deleted 2024/03/07) Header for general options on the settings screen"
   },
   "icu:spellCheckDescription": {
     "messageformat": "检查消息输入框中的文字拼写",
@@ -2135,7 +2108,7 @@
   },
   "icu:deleteAllDataButton": {
     "messageformat": "删除所有数据",
-    "description": "Text of the button that deletes all data"
+    "description": "(Deleted 2024/03/07) Text of the button that deletes all data"
   },
   "icu:deleteAllDataProgress": {
     "messageformat": "断开连接并删除所有数据",
@@ -2151,15 +2124,15 @@
   },
   "icu:notifications": {
     "messageformat": "提醒",
-    "description": "Header for notification settings"
+    "description": "(Deleted 2024/03/07) Header for notification settings"
   },
   "icu:notificationSettingsDialog": {
     "messageformat": "收到消息时，显示通知：",
-    "description": "Explain the purpose of the notification settings"
+    "description": "(Deleted 2024/03/07) Explain the purpose of the notification settings"
   },
   "icu:disableNotifications": {
     "messageformat": "关闭提醒",
-    "description": "Label for disabling notifications"
+    "description": "(Deleted 2024/03/07) Label for disabling notifications"
   },
   "icu:nameAndMessage": {
     "messageformat": "名字、内容和操作",
@@ -2213,15 +2186,15 @@
   },
   "icu:showMore": {
     "messageformat": "更多",
-    "description": "Displays the details of a key change"
+    "description": "(Deleted 2024/03/07) Displays the details of a key change"
   },
   "icu:showLess": {
     "messageformat": "隐藏",
-    "description": "Hides the details of a key change"
+    "description": "(Deleted 2024/03/07) Hides the details of a key change"
   },
   "icu:learnMore": {
     "messageformat": "了解更多有关安全代码的信息",
-    "description": "Text that links to a support article on verifying safety numbers"
+    "description": "(Deleted 2024/03/07) Text that links to a support article on verifying safety numbers"
   },
   "icu:expiredWarning": {
     "messageformat": "此版本的 Signal Desktop 已过期，请升级到最新版本以继续发送消息。",
@@ -2237,7 +2210,7 @@
   },
   "icu:unregisteredUser": {
     "messageformat": "号码未注册",
-    "description": "Error message displayed when sending to an unregistered user."
+    "description": "(Deleted 2024/03/07) Error message displayed when sending to an unregistered user."
   },
   "icu:sync": {
     "messageformat": "导出联系人",
@@ -2249,7 +2222,7 @@
   },
   "icu:lastSynced": {
     "messageformat": "最后一次导入于",
-    "description": "Label for date and time of last sync operation"
+    "description": "(Deleted 2024/03/07) Label for date and time of last sync operation"
   },
   "icu:syncNow": {
     "messageformat": "现在导入",
@@ -2409,7 +2382,7 @@
   },
   "icu:yourSafetyNumberWith": {
     "messageformat": "{name1} 的安全码：",
-    "description": "Heading for safety number view"
+    "description": "(Deleted 2024/03/07) Heading for safety number view"
   },
   "icu:themeLight": {
     "messageformat": "浅色",
@@ -2441,7 +2414,7 @@
   },
   "icu:startConversation": {
     "messageformat": "发起新聊天",
-    "description": "Label underneath number a user enters that is not an existing contact"
+    "description": "(Deleted 2024/03/07) Label underneath number a user enters that is not an existing contact"
   },
   "icu:newConversation": {
     "messageformat": "新聊天",
@@ -2573,15 +2546,15 @@
   },
   "icu:notSupportedSMS": {
     "messageformat": "不支持短信/彩信。",
-    "description": "Label underneath number informing user that SMS is not supported on desktop"
+    "description": "(Deleted 2024/03/07) Label underneath number informing user that SMS is not supported on desktop"
   },
   "icu:newPhoneNumber": {
     "messageformat": "输入手机号码来添加联系人。",
-    "description": "Placeholder for adding a new number to a contact"
+    "description": "(Deleted 2024/03/07) Placeholder for adding a new number to a contact"
   },
   "icu:invalidNumberError": {
     "messageformat": "无效的号码",
-    "description": "When a person inputs a number that is invalid"
+    "description": "(Deleted 2024/03/07) When a person inputs a number that is invalid"
   },
   "icu:unlinkedWarning": {
     "messageformat": "点击将 Signal Desktop 与您的移动设备重新关联，以便继续收发消息。"
@@ -2590,7 +2563,8 @@
     "messageformat": "未连接"
   },
   "icu:relink": {
-    "messageformat": "重新连接"
+    "messageformat": "重新连接",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:autoUpdateNewVersionTitle": {
     "messageformat": "有可用更新"
@@ -2615,7 +2589,8 @@
     "messageformat": "重启 Signal"
   },
   "icu:autoUpdateLaterButtonLabel": {
-    "messageformat": "稍后"
+    "messageformat": "稍后",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:autoUpdateIgnoreButtonLabel": {
     "messageformat": "忽略更新"
@@ -2741,7 +2716,7 @@
     "description": "Shown in a message bubble if any attachments are left on message when too-large attachments are dropped"
   },
   "icu:message--call-link-description": {
-    "messageformat": "Use this link to join a Signal call",
+    "messageformat": "使用此链接加入 Signal 通话",
     "description": "Shown in message previews for Signal call links."
   },
   "icu:donation--missing": {
@@ -2806,7 +2781,7 @@
   },
   "icu:message--giftBadge--view": {
     "messageformat": "查看",
-    "description": "Shown when you've sent a gift badge to someone then opened it"
+    "description": "(Deleted 2024/03/07) Shown when you've sent a gift badge to someone then opened it"
   },
   "icu:message--donation--view": {
     "messageformat": "查看",
@@ -2838,7 +2813,7 @@
   },
   "icu:stickers--StickerManager--title": {
     "messageformat": "贴纸",
-    "description": "Title for the sticker manager"
+    "description": "(Deleted 2024/03/07) Title for the sticker manager"
   },
   "icu:stickers--StickerManager--Available": {
     "messageformat": "可用",
@@ -3388,14 +3363,6 @@
     "messageformat": "聊天已标记为未读",
     "description": "A toast that shows up when user marks a conversation as unread"
   },
-  "icu:SendEdit--dialog--title": {
-    "messageformat": "仅限 Signal 测试版",
-    "description": "(deleted 8/30) Title of the modal shown before sending your first edit message"
-  },
-  "icu:SendEdit--dialog--body": {
-    "messageformat": "编辑消息功能仅限 Signal 测试版用户使用。如果您编辑消息，其将仅对 Signal 最新测试版的用户可见。",
-    "description": "(deleted 8/30) Body text of the modal shown before sending your first edit message"
-  },
   "icu:SendEdit--dialog--title2": {
     "messageformat": "编辑消息",
     "description": "Title of the modal shown before sending your first edit message"
@@ -3443,6 +3410,62 @@
   "icu:ReactionsViewer--all": {
     "messageformat": "全部",
     "description": "Shown in reaction viewer as the title for the 'all' category"
+  },
+  "icu:SafetyTipsModal__Title": {
+    "messageformat": "安全提示",
+    "description": "Title of the safety tips modal"
+  },
+  "icu:SafetyTipsModal__Description": {
+    "messageformat": "接受陌生人发来的消息请求时须谨慎。需要当心的是：",
+    "description": "Description of the safety tips modal"
+  },
+  "icu:SafetyTipsModal__TipTitle--Crypto": {
+    "messageformat": "加密货币或金钱骗局",
+    "description": "Title of the crypto safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Crypto": {
+    "messageformat": "如有陌生人给您发送有关加密货币（如比特币）或金融投资机会的消息，请当心，这很可能是垃圾消息。",
+    "description": "Description of the crypto safety tip"
+  },
+  "icu:SafetyTipsModal__TipTitle--Vague": {
+    "messageformat": "模糊或无关消息",
+    "description": "Title of the vague safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Vague": {
+    "messageformat": "垃圾消息发送者通常会以“您好”这样的简单问候吸引您的注意。当您回应后，他们可能会进一步引诱您。",
+    "description": "Description of the vague safety tip"
+  },
+  "icu:SafetyTipsModal__TipTitle--Links": {
+    "messageformat": "含链接的消息",
+    "description": "Title of the links safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Links": {
+    "messageformat": "当心陌生人发来的含网站链接的消息。千万不要访问不信任的人发来的链接。",
+    "description": "Description of the links safety tip"
+  },
+  "icu:SafetyTipsModal__TipTitle--Business": {
+    "messageformat": "假冒企业和机构",
+    "description": "Title of the business safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Business": {
+    "messageformat": "请谨慎对待与您联系的企业或政府机构。涉及税务机构、快递公司等的消息有可能是垃圾消息。",
+    "description": "Description of the business safety tip"
+  },
+  "icu:SafetyTipsModal__DotLabel": {
+    "messageformat": "前往第 {page,number} 页",
+    "description": "Label for the dots in the safety tips modal that when clicked will take you to a specific tip"
+  },
+  "icu:SafetyTipsModal__Button--Previous": {
+    "messageformat": "上一个提示",
+    "description": "Button to go to the previous safety tip"
+  },
+  "icu:SafetyTipsModal__Button--Next": {
+    "messageformat": "下一个提示",
+    "description": "Button to go to the next safety tip"
+  },
+  "icu:SafetyTipsModal__Button--Done": {
+    "messageformat": "完成",
+    "description": "Button to close the safety tips modal when you've reached the last tip"
   },
   "icu:MessageRequests--message-direct": {
     "messageformat": "是否允许 {name} 给您发送消息并与其分享你的名字和图片？在您接受之前，他们将不知道您看过他们的消息。",
@@ -3507,6 +3530,42 @@
   "icu:MessageRequests--block-group-confirm-body": {
     "messageformat": "您将无法获取该群组的消息或更新，并且其成员也不能再次将您添加至该群组。",
     "description": "Shown as the body in the confirmation modal for blocking a group message request"
+  },
+  "icu:MessageRequests--reportAndMaybeBlock": {
+    "messageformat": "举报…",
+    "description": "Shown as a button to let the user report a message request and maybe block the user"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-title": {
+    "messageformat": "要举报为垃圾消息吗？",
+    "description": "Shown as the title in the modal for reporting and maybe blocking a message request"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-body--direct": {
+    "messageformat": "Signal 将会通知此用户，其可能发送了垃圾消息。Signal 无法看到任何聊天的内容。",
+    "description": "Shown as the body in the modal for reporting and maybe blocking a message request in a direct conversation"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-body--group--unknown-contact": {
+    "messageformat": "Signal 将会给邀请您加入群组的用户发送通知，告知其可能发送了垃圾消息。Signal 无法看到任何聊天的内容。",
+    "description": "Shown as the body in the modal for reporting and maybe blocking a message request in a group conversation when the contact is unknown"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-body--group": {
+    "messageformat": "Signal 将会给邀请您加入群组的{name}发送通知，告知其可能发送了垃圾消息。Signal 无法看到任何聊天的内容。",
+    "description": "Shown as the body in the modal for reporting and maybe blocking a message request in a group conversation"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-report": {
+    "messageformat": "举报垃圾消息",
+    "description": "Shown as a button to let the user report a message request"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-reportAndBlock": {
+    "messageformat": "举报和屏蔽",
+    "description": "Shown as a button to let the user report a message request and block the user"
+  },
+  "icu:MessageRequests--AcceptedOptionsModal--body": {
+    "messageformat": "您接受了来自{name}的消息请求。如果这是一个误操作，您可以选择以下任意操作。",
+    "description": "Shown as the body in the modal for accepting a message request in a direct conversation"
+  },
+  "icu:MessageRequests--report-spam-success-toast": {
+    "messageformat": "已举报为垃圾消息。",
+    "description": "Shown in a toast when you successfully report a user as spam"
   },
   "icu:MessageRequests--delete": {
     "messageformat": "删除",
@@ -3578,7 +3637,7 @@
   },
   "icu:ConversationHero--membership-added": {
     "messageformat": "{name} 已将您添加至群组。",
-    "description": "Shown Indicates that you were added to a group by a given individual."
+    "description": "(Deleted 2024/03/07) Shown Indicates that you were added to a group by a given individual."
   },
   "icu:no-groups-in-common": {
     "messageformat": "无共同群组",
@@ -3717,11 +3776,11 @@
     "description": "Shown in the call lobby for a direct 1:1 call when the caller's video is disabled, to specify that an audio call will be placed when clicking the Start button."
   },
   "icu:CallControls__InfoDisplay--adhoc-call": {
-    "messageformat": "Call link",
+    "messageformat": "通话链接",
     "description": "Shown in the call lobby for a call link."
   },
   "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
-    "messageformat": "Waiting to be let in",
+    "messageformat": "正在等待通过",
     "description": "Shown in the call lobby for call link calls when requesting to join a call which requires admin approval."
   },
   "icu:CallControls__JoinLeaveButton--hangup-1-1": {
@@ -3786,6 +3845,10 @@
   },
   "icu:calling__participants": {
     "messageformat": "{people} 人参与通话",
+    "description": "(Deleted 2024/02/29) Title for participants list toggle"
+  },
+  "icu:calling__participants--pluralized": {
+    "messageformat": "{people, plural, other {{people,number} 人参与通话}}",
     "description": "Title for participants list toggle"
   },
   "icu:calling__call-notification__ended": {
@@ -3865,7 +3928,7 @@
     "description": "Title for the select your screen sharing sources modal"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "Copy link",
+    "messageformat": "复制链接",
     "description": "Menu item in the in-call info popup for call link calls. The action is to add the call link to the clipboard."
   },
   "icu:callingDeviceSelection__label--video": {
@@ -4778,7 +4841,7 @@
   },
   "icu:ContactModal--message": {
     "messageformat": "消息",
-    "description": "Button text for send message button in Group Contact Details modal"
+    "description": "(Deleted 2024/03/07) Button text for send message button in Group Contact Details modal"
   },
   "icu:ContactModal--rm-admin": {
     "messageformat": "取消其管理员身份",
@@ -5022,7 +5085,7 @@
   },
   "icu:PendingInvites--invites": {
     "messageformat": "您邀请",
-    "description": "This is the title list of all invites"
+    "description": "(Deleted 2024/03/07) This is the title list of all invites"
   },
   "icu:PendingInvites--invited-by-you": {
     "messageformat": "您邀请",
@@ -5138,23 +5201,23 @@
   },
   "icu:AvatarInput--no-photo-label--group": {
     "messageformat": "添加群组头像",
-    "description": "The label for the avatar uploader when no group photo is selected"
+    "description": "(Deleted 2024/03/07) The label for the avatar uploader when no group photo is selected"
   },
   "icu:AvatarInput--no-photo-label--profile": {
     "messageformat": "添加照片",
-    "description": "The label for the avatar uploader when no profile photo is selected"
+    "description": "(Deleted 2024/03/07) The label for the avatar uploader when no profile photo is selected"
   },
   "icu:AvatarInput--change-photo-label": {
     "messageformat": "更改头像",
-    "description": "The label for the avatar uploader when a photo is selected"
+    "description": "(Deleted 2024/03/07) The label for the avatar uploader when a photo is selected"
   },
   "icu:AvatarInput--upload-photo-choice": {
     "messageformat": "上传头像",
-    "description": "The button text when you click on an uploaded avatar and want to upload a new one"
+    "description": "(Deleted 2024/03/07) The button text when you click on an uploaded avatar and want to upload a new one"
   },
   "icu:AvatarInput--remove-photo-choice": {
     "messageformat": "删除图片",
-    "description": "The button text when you click on an uploaded avatar and want to remove it"
+    "description": "(Deleted 2024/03/07) The button text when you click on an uploaded avatar and want to remove it"
   },
   "icu:ContactPill--remove": {
     "messageformat": "移除联系人",
@@ -5162,7 +5225,7 @@
   },
   "icu:ComposeErrorDialog--close": {
     "messageformat": "好的",
-    "description": "The text on the button when there's an error in the composer"
+    "description": "(Deleted 2024/03/07) The text on the button when there's an error in the composer"
   },
   "icu:NewlyCreatedGroupInvitedContactsDialog--title": {
     "messageformat": "{count, plural, other {已发送{count,number}个邀请}}",
@@ -5288,6 +5351,10 @@
     "messageformat": "了解更多",
     "description": "Shown on the message request warning. Clicking this button will open a dialog with more information"
   },
+  "icu:MessageRequestWarning__safety-tips": {
+    "messageformat": "安全提示",
+    "description": "Shown on the message request warning. Clicking this button will open a dialog with safety tips"
+  },
   "icu:MessageRequestWarning__dialog__details": {
     "messageformat": "与此人无共同群组。为了避免垃圾消息，请在接受之前仔细审查请求。",
     "description": "Shown in the message request warning dialog. Gives more information about message requests"
@@ -5335,10 +5402,6 @@
   "icu:ContactSpoofingReviewDialog__group__multiple-conflicts__description": {
     "messageformat": "{count, plural, other {此群组中存在 {count,number} 个名称冲突。请查看下方的成员或采取行动。}}",
     "description": "Description for the group contact spoofing review dialog when there are multiple shared names"
-  },
-  "icu:ContactSpoofingReviewDialog__group__members-header": {
-    "messageformat": "成员",
-    "description": "(Deleted 01/31/2024) Header in the group contact spoofing review dialog. After this header, there will be a list of members"
   },
   "icu:ContactSpoofingReviewDialog__group__members__no-shared-groups": {
     "messageformat": "没有其它共同群组",
@@ -5410,7 +5473,7 @@
   },
   "icu:ChatColorPicker__global-chat-color": {
     "messageformat": "全局聊天颜色",
-    "description": "Modal title for the chat color picker and editor for all conversations"
+    "description": "(Deleted 2024/03/07) Modal title for the chat color picker and editor for all conversations"
   },
   "icu:ChatColorPicker__menu-title": {
     "messageformat": "聊天颜色",
@@ -5644,14 +5707,6 @@
     "messageformat": "您的用户名出问题了，它已不再分配给您的账户。您可以尝试重新设置，或选择一个新用户名。",
     "description": "Text of confirmation modal when the username gets corrupted"
   },
-  "icu:ProfileEditor--username--corrupted--delete-button": {
-    "messageformat": "删除用户名",
-    "description": "(Deleted 02/01/2024) Button text for deletion of the username in case of corruption"
-  },
-  "icu:ProfileEditor--username--corrupted--create-button": {
-    "messageformat": "创建用户名",
-    "description": "(Deleted 02/01/2024) Button text for creation of a new username in case of corruption"
-  },
   "icu:ProfileEditor--username--corrupted--fix-button": {
     "messageformat": "立刻解决",
     "description": "Button text for creation of a new username in case of corruption"
@@ -5718,7 +5773,7 @@
   },
   "icu:ProfileEditor--username--check-username-taken": {
     "messageformat": "该用户名已有人使用。",
-    "description": "Shown if user has attempted to save a username which is not available"
+    "description": "(Deleted 2024/03/07) Shown if user has attempted to save a username which is not available"
   },
   "icu:ProfileEditor--username--general-error": {
     "messageformat": "无法保持您的用户名。请检查您的网络连接并重试。",
@@ -5746,7 +5801,7 @@
   },
   "icu:ProfileEditor--username--delete-username": {
     "messageformat": "删除用户名",
-    "description": "Shown as aria label for trash icon next to username"
+    "description": "(Deleted 2024/03/07) Shown as aria label for trash icon next to username"
   },
   "icu:ProfileEditor--username--confirm-delete-body-2": {
     "messageformat": "这样做将会删除您的用户名并使您的二维码和链接失效。其他用户将可以申请使用“{username}”这个用户名。确定要更改吗？",
@@ -5770,7 +5825,7 @@
   },
   "icu:ProfileEditor--username--copy-link": {
     "messageformat": "复制链接",
-    "description": "Shown as a button in context menu next to username. The action of the button is to put a username link into the clipboard."
+    "description": "(Deleted 2024/03/07) Shown as a button in context menu next to username. The action of the button is to put a username link into the clipboard."
   },
   "icu:ProfileEditor--username--delete": {
     "messageformat": "删除",
@@ -5793,20 +5848,16 @@
     "description": "ConfirmationDialog text for discarding changes"
   },
   "icu:ConfirmationDialog__Title--in-call-close-requested": {
-    "messageformat": "Close Signal and end the call?",
+    "messageformat": "要关闭 Signal 并结束通话吗?",
     "description": "ConfirmationDialog title when trying to close the app while in a call."
   },
   "icu:ConfirmationDialog__Title--close-requested-not-now": {
-    "messageformat": "Not Now",
+    "messageformat": "以后再说",
     "description": "Confirmation dialog button to cancel closing the app, while in a call and trying to close the app."
   },
   "icu:ProfileEditor--edit-photo": {
     "messageformat": "编辑照片",
     "description": "Text of a button on profile editor that leads to the avatar editor"
-  },
-  "icu:ProfileEditor--info--link": {
-    "messageformat": "您的个人资料已加密。您的联系人以及您发起或接受新聊天的聊天对象将能看到您的个人资料以及您对个人资料所做的更改。<learnMoreLink>了解更多</learnMoreLink>",
-    "description": "(Deleted 02/01/2024) Information shown at the bottom of the profile editor section"
   },
   "icu:ProfileEditor--info--general": {
     "messageformat": "您的个人资料以及您对其做的更改将会对您发送消息的对象、联系人及群组可见。",
@@ -6034,11 +6085,11 @@
   },
   "icu:Preferences--see-me": {
     "messageformat": "查看我的手机号码",
-    "description": "Label for the see my phone number setting"
+    "description": "(Deleted 2024/03/07) Label for the see my phone number setting"
   },
   "icu:Preferences--find-me": {
     "messageformat": "通过我的手机号码找到我",
-    "description": "Label for the find me by my phone number setting"
+    "description": "(Deleted 2024/03/07) Label for the find me by my phone number setting"
   },
   "icu:Preferences--read-receipts": {
     "messageformat": "已读回执",
@@ -6128,6 +6179,10 @@
     "messageformat": "更新已下载完毕",
     "description": "The title of update dialog when update download is completed."
   },
+  "icu:DialogNetworkStatus__outage": {
+    "messageformat": "Signal 遇到了一些技术故障。我们正努力使服务尽快恢复。",
+    "description": "The title of outage dialog during service outage."
+  },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "需要更新",
     "description": "The title of update dialog on install screen when user OS is unsupported"
@@ -6150,27 +6205,33 @@
   },
   "icu:NSIS__retry-dialog--first-line": {
     "messageformat": "Signal 无法关闭",
-    "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
+    "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation.",
+    "ignoreUnused": true
   },
   "icu:NSIS__retry-dialog--second-line": {
     "messageformat": "请手动关闭并点击“重试”继续操作。",
-    "description": "Second line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
+    "description": "Second line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation.",
+    "ignoreUnused": true
   },
   "icu:NSIS__appRunning": {
     "messageformat": "{appName} 正在运行。\n点击 OK 将其关闭。\n如果无法关闭，请尝试手动关闭。",
-    "description": "The contents of a dialog displayed when Windows installer detect that the application is running and asks user to close it. Note: please keep the line breaks so that the text occupies three separate lines"
+    "description": "The contents of a dialog displayed when Windows installer detect that the application is running and asks user to close it. Note: please keep the line breaks so that the text occupies three separate lines",
+    "ignoreUnused": true
   },
   "icu:NSIS__decompressionFailed": {
     "messageformat": "无法解压文件。请尝试重新运行安装程序。",
-    "description": "Displayed when Windows installer cannot decompress application files"
+    "description": "Displayed when Windows installer cannot decompress application files",
+    "ignoreUnused": true
   },
   "icu:NSIS__uninstallFailed": {
     "messageformat": "无法卸载旧应用文件。请尝试重新运行安装程序。",
-    "description": "Displayed when Windows installer cannot uninstall the old application"
+    "description": "Displayed when Windows installer cannot uninstall the old application",
+    "ignoreUnused": true
   },
   "icu:NSIS__semver-downgrade": {
     "messageformat": "更新版 Signal 已安装完毕。您确定要继续吗？",
-    "description": "A text of the dialog displayed when user tries to overwrite Signal installation with an older version."
+    "description": "A text of the dialog displayed when user tries to overwrite Signal installation with an older version.",
+    "ignoreUnused": true
   },
   "icu:CrashReportDialog__title": {
     "messageformat": "应用程序崩溃",
@@ -6218,7 +6279,7 @@
   },
   "icu:MediaEditor__control--sticker": {
     "messageformat": "贴纸",
-    "description": "Label for the sticker button in the media editor"
+    "description": "(Deleted 2024/03/07) Label for the sticker button in the media editor"
   },
   "icu:MediaEditor__control--crop": {
     "messageformat": "裁剪和旋转",
@@ -6246,7 +6307,7 @@
   },
   "icu:MediaEditor__text--underline": {
     "messageformat": "下划线",
-    "description": "Describes what attribute the color picker will change on the text"
+    "description": "(Deleted 2024/03/07) Describes what attribute the color picker will change on the text"
   },
   "icu:MediaEditor__draw--pen": {
     "messageformat": "画笔",
@@ -6290,11 +6351,11 @@
   },
   "icu:MediaEditor__crop--crop": {
     "messageformat": "剪裁",
-    "description": "Performs the crop"
+    "description": "(Deleted 2024/03/07) Performs the crop"
   },
   "icu:MediaEditor__caption-button": {
     "messageformat": "添加消息",
-    "description": "Label of the button on the bottom of the media editor that trigger the add-caption dialog"
+    "description": "(Deleted 2024/03/07) Label of the button on the bottom of the media editor that trigger the add-caption dialog"
   },
   "icu:MediaEditor__crop-preset--freeform": {
     "messageformat": "自由",
@@ -6387,6 +6448,26 @@
   "icu:payment-event-notification-check-primary-device": {
     "messageformat": "请检查您的主设备了解付款状态",
     "description": "Payment event notification check device label"
+  },
+  "icu:MessageRequestResponseNotification__Message--Accepted": {
+    "messageformat": "您接受了消息请求",
+    "description": "Message request response notification message when the user accepted the message request or unblocked another user"
+  },
+  "icu:MessageRequestResponseNotification__Message--Reported": {
+    "messageformat": "已举报为垃圾消息",
+    "description": "Message request response notification message when the user reported the message request as spam"
+  },
+  "icu:MessageRequestResponseNotification__Message--Blocked": {
+    "messageformat": "您已屏蔽此用户",
+    "description": "Message request response notification message when the user blocked another user"
+  },
+  "icu:MessageRequestResponseNotification__Button--Options": {
+    "messageformat": "选项",
+    "description": "Message request response notification button to show options"
+  },
+  "icu:MessageRequestResponseNotification__Button--LearnMore": {
+    "messageformat": "了解更多",
+    "description": "Message request response notification button to learn more"
   },
   "icu:SignalConnectionsModal__title": {
     "messageformat": "Signal 密友",
@@ -6498,7 +6579,7 @@
   },
   "icu:StoriesSettings__new-list--visibility": {
     "messageformat": "只有您能看到此动态的名称。",
-    "description": "Explanation about the visibility of custom distribution list names"
+    "description": "(Deleted 2024/03/07) Explanation about the visibility of custom distribution list names"
   },
   "icu:StoriesSettings__custom-story-subtitle": {
     "messageformat": "自定义动态",
@@ -6574,7 +6655,7 @@
   },
   "icu:StoriesSettings__mine__all--description": {
     "messageformat": "分享给所有联系人",
-    "description": "Description of button StoriesSettings__mine__all--label"
+    "description": "(Deleted 2024/03/07) Description of button StoriesSettings__mine__all--label"
   },
   "icu:StoriesSettings__mine__exclude--label": {
     "messageformat": "所有人，除了……",
@@ -6582,7 +6663,7 @@
   },
   "icu:StoriesSettings__mine__exclude--description": {
     "messageformat": "{num, plural, other {已排除 {num,number} 人}}",
-    "description": "Description of how many people are excluded in a list"
+    "description": "(Deleted 2024/03/07) Description of how many people are excluded in a list"
   },
   "icu:StoriesSettings__mine__only--label": {
     "messageformat": "只分享给……",
@@ -6590,11 +6671,11 @@
   },
   "icu:StoriesSettings__mine__only--description": {
     "messageformat": "只分享给选定的人",
-    "description": "Description of button StoriesSettings__mine__only--label"
+    "description": "(Deleted 2024/03/07) Description of button StoriesSettings__mine__only--label"
   },
   "icu:StoriesSettings__mine__only--description--people": {
     "messageformat": "{num,number} 人",
-    "description": "Description of how many people are in the exclusive allow list"
+    "description": "(Deleted 2024/03/07) Description of how many people are in the exclusive allow list"
   },
   "icu:StoriesSettings__mine__disclaimer--link": {
     "messageformat": "选择谁可以看您的动态。此更改不会影响您已发送的动态。<learnMoreLink>了解更多。</learnMoreLink>",
@@ -6706,19 +6787,19 @@
   },
   "icu:SendStoryModal__my-stories-description-all": {
     "messageformat": "{viewersCount, plural, other {所有 Signal 密友 · {viewersCount,number} 位访客}}",
-    "description": "Shown as a subtitle under My Stories option in the send-story-to dialog when not exluding anyone"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle under My Stories option in the send-story-to dialog when not exluding anyone"
   },
   "icu:SendStoryModal__my-stories-description-excluding": {
     "messageformat": "{excludedCount, plural, other {所有 Signal 密友 · 排除 {excludedCount,number}}}",
-    "description": "Shown as a subtitle under My Stories option in the send-story-to dialog when excluding some"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle under My Stories option in the send-story-to dialog when excluding some"
   },
   "icu:SendStoryModal__private-story-description": {
     "messageformat": "{viewersCount, plural, other {私密动态 · {viewersCount,number} 位访客}}",
-    "description": "Shown as a subtitle of each private story in the send-story-to dialog"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle of each private story in the send-story-to dialog"
   },
   "icu:SendStoryModal__group-story-description": {
     "messageformat": "{membersCount, plural, other {群组动态 · {membersCount,number} 位成员}}",
-    "description": "Shown as a subtitle of each group story in the send-story-to dialog"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle of each group story in the send-story-to dialog"
   },
   "icu:Stories__settings-toggle--title": {
     "messageformat": "分享和浏览动态",
@@ -6918,7 +6999,7 @@
   },
   "icu:StoryCreator__input-placeholder": {
     "messageformat": "添加文本",
-    "description": "Placeholder to add text"
+    "description": "(Deleted 2024/03/07) Placeholder to add text"
   },
   "icu:StoryCreator__text--regular": {
     "messageformat": "常规",
@@ -6981,7 +7062,7 @@
     "description": "Label for when a person reacts to a story"
   },
   "icu:Quote__story-reaction--you": {
-    "messageformat": "Reacted to your story",
+    "messageformat": "回应了您的动态",
     "description": "Label for when someone reacts to your story"
   },
   "icu:Quote__story-reaction--single": {
@@ -7123,22 +7204,6 @@
   "icu:UsernameOnboardingModalBody__row__qr__body": {
     "messageformat": "用户名有一个唯一的二维码和链接，您可以将其分享给您的朋友以快速开始聊天。",
     "description": "Body of the third row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "每个用户名会与一组数字匹配，并且不会显示在您的个人资料中",
-    "description": "(Deleted 01/16/2023) Content of the first row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "每个用户名均有一个唯一的二维码和链接，您可以将其分享给您的朋友以开始聊天",
-    "description": "(Deleted 01/16/2023) Content of the second row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "您可以在“设置 > 隐私 > 手机号码 >谁可以查找我的手机号码”中关闭手机号码搜索功能，将您的用户名用作其他人联系您的主要方式。",
-    "description": "(Deleted 01/16/2023) Content of the third row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__learn-more": {
-    "messageformat": "了解更多",
-    "description": "(Deleted 01/16/2023) Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
     "messageformat": "设置用户名",
@@ -7300,6 +7365,10 @@
     "messageformat": "{count, plural, other {其他 {count,number} 人正在输入。}}",
     "description": "Group chat multiple person typing indicator when space isn't available to show every avatar, this is the count of avatars hidden."
   },
+  "icu:TransportError": {
+    "messageformat": "Experimental WebSocket Transport is seeing too many errors. Please submit a debug log",
+    "description": "A toast that is shown to alpha/beta version users when an experimental transport is seeing too many errors"
+  },
   "icu:WhoCanFindMeReadOnlyToast": {
     "messageformat": "如要更改此设置，请将“谁可以看到我的电话号码”设置为“没有人”。",
     "description": "A toast displayed when user clicks disabled option in settings window"
@@ -7310,33 +7379,46 @@
   },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "此版本包含多个小调整和漏洞修复，以维持 Signal 的顺畅运行。",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--1": {
     "messageformat": "其他细微调整、漏洞修复和功能强化。感谢使用 Signal！",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
     "messageformat": "多个漏洞修复让您的应用可以顺畅运行。更多惊喜更新即将上线！ ",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
     "messageformat": "我们进行了功能微调、漏洞修复和性能增强。您可以继续正常发短信、通话和视频聊天。",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--4": {
     "messageformat": "我们努力修复了漏洞并增强了性能，让您的应用可以顺畅运行。 ",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--5": {
     "messageformat": "我们进行了额外的功能微调、漏洞修复并制定了日后的分类计划。",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "我们进行了功能微调、漏洞修复和性能强化。感谢使用 Signal！",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.1--0": {
-    "messageformat": "This update enables support for all of the new emoji characters in Emoji version 15.1. People keep asking us what our favorite new emoji is, but answering that question is a “lime” we won't cross."
+  "icu:WhatsNew__v7.3--0": {
+    "messageformat": "现在您可以清除手机上的未接来电，Signal Desktop 通话选项卡上的标记也将会更新。"
+  },
+  "icu:WhatsNew__v7.3--1": {
+    "messageformat": "我们还重新设计了 Windows 上的标记计数指示器。现在任务栏的颜色可以与系统盘的颜色保持一致。"
+  },
+  "icu:WhatsNew__v7.4--0": {
+    "messageformat": "This update clears out a few bugs just in time for spring cleaning, including more consistent conversation sort logic and improved behavior if the app encounters DNS lookup timeouts due to poor network connectivity."
   }
 }

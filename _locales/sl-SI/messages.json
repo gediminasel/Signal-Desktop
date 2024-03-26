@@ -16,18 +16,6 @@
       }
     ]
   },
-  "icu:AddCaptionModal__title": {
-    "messageformat": "Dodaj sporočilo",
-    "description": "(Deleted 12/14/2023) Shown as the title of the dialog that allows you to add a caption to a story"
-  },
-  "icu:AddCaptionModal__placeholder": {
-    "messageformat": "Sporočilo",
-    "description": "(Deleted 12/14/2023) Placeholder text for textarea when adding a caption/message (we don't know which yet so we default to message)"
-  },
-  "icu:AddCaptionModal__submit-button": {
-    "messageformat": "OK",
-    "description": "(Deleted 12/14/2023) Label on the button that submits changes to a story's caption in the add-caption dialog"
-  },
   "icu:AddUserToAnotherGroupModal__title": {
     "messageformat": "Dodaj v skupino",
     "description": "Shown as the title of the dialog that allows you to add a contact to an group"
@@ -290,11 +278,11 @@
   },
   "icu:avatarMenuChatColors": {
     "messageformat": "Barva klepeta",
-    "description": "One of the menu options available in the Avatar popup menu"
+    "description": "(Deleted 2024/03/07) One of the menu options available in the Avatar popup menu"
   },
   "icu:avatarMenuUpdateAvailable": {
     "messageformat": "Posodobite aplikacijo Signal",
-    "description": "One of the menu options available in the Avatar popup menu"
+    "description": "(Deleted 2024/03/07) One of the menu options available in the Avatar popup menu"
   },
   "icu:loading": {
     "messageformat": "Nalagam …",
@@ -440,6 +428,26 @@
     "messageformat": "Izberi sporočila",
     "description": "Shown in menu for conversation, allows the user to start selecting multiple messages in the conversation"
   },
+  "icu:ConversationHeader__MenuItem--Accept": {
+    "messageformat": "Sprejmi",
+    "description": "Shown in menu for conversation, allows the user to accept a message request"
+  },
+  "icu:ConversationHeader__MenuItem--Block": {
+    "messageformat": "Blokiraj",
+    "description": "Shown in menu for conversation, allows the user to block the contact"
+  },
+  "icu:ConversationHeader__MenuItem--Unblock": {
+    "messageformat": "Odblokiraj",
+    "description": "Shown in menu for conversation, allows the user to unblock the contact"
+  },
+  "icu:ConversationHeader__MenuItem--ReportSpam": {
+    "messageformat": "Prijaviti neželeno vsebino",
+    "description": "Shown in menu for conversation, allows the user to report the conversation as spam"
+  },
+  "icu:ConversationHeader__MenuItem--DeleteChat": {
+    "messageformat": "Izbriši klepet",
+    "description": "Shown in menu for conversation, allows the user to delete the conversation"
+  },
   "icu:ContactListItem__menu": {
     "messageformat": "Upravljaj stik",
     "description": "Shown as aria label for context menu for a contact"
@@ -502,63 +510,63 @@
   },
   "icu:chooseDirectory": {
     "messageformat": "Izberite mapo",
-    "description": "Button to allow the user to find a folder on disk"
+    "description": "(Deleted 2024/03/07) Button to allow the user to find a folder on disk"
   },
   "icu:chooseFile": {
     "messageformat": "Izberite datoteko",
-    "description": "Button to allow the user to find a file on disk"
+    "description": "(Deleted 2024/03/07) Button to allow the user to find a file on disk"
   },
   "icu:loadDataHeader": {
     "messageformat": "Naložite svoje podatke",
-    "description": "Header shown on the first screen in the data import process"
+    "description": "(Deleted 2024/03/07) Header shown on the first screen in the data import process"
   },
   "icu:loadDataDescription": {
     "messageformat": "Pravkar ste šli skozi fazo izvoza podatkov. Izvoženi stiki in sporočila čakajo na vašem računalniku. Izberite mapo, kamor ste shranili te podatke.",
-    "description": "Introduction to the process of importing messages and contacts from disk"
+    "description": "(Deleted 2024/03/07) Introduction to the process of importing messages and contacts from disk"
   },
   "icu:importChooserTitle": {
     "messageformat": "Izberite mapo z izvoženimi podatki",
-    "description": "Title of the popup window used to select data previously exported"
+    "description": "(Deleted 2024/03/07) Title of the popup window used to select data previously exported"
   },
   "icu:importErrorHeader": {
     "messageformat": "Nekaj je šlo narobe!",
-    "description": "Header of the error screen after a failed import"
+    "description": "(Deleted 2024/03/07) Header of the error screen after a failed import"
   },
   "icu:importingHeader": {
     "messageformat": "Nalagam stike in sporočila",
-    "description": "Header of screen shown as data is import"
+    "description": "(Deleted 2024/03/07) Header of screen shown as data is import"
   },
   "icu:importErrorFirst": {
     "messageformat": "Preverite, če ste izbrali pravo mapo s shranjenimi podatki. Ime mape bi moralo biti \"Signal Export\". Lahko tudi ponovno izvozite podatke iz aplikacije v brskalniku Chrome.",
-    "description": "Message shown if the import went wrong; first paragraph"
+    "description": "(Deleted 2024/03/07) Message shown if the import went wrong; first paragraph"
   },
   "icu:importErrorSecond": {
     "messageformat": "Če ti koraki ne bodo uspešni, nam prosim posredujte sistemsko zabeležbo (Pogled -> Sistemska zabeležba), da vam lahko pomagamo pri prehodu!",
-    "description": "Message shown if the import went wrong; second paragraph"
+    "description": "(Deleted 2024/03/07) Message shown if the import went wrong; second paragraph"
   },
   "icu:importAgain": {
     "messageformat": "Izberite mapo in poskusite znova",
-    "description": "Button shown if the user runs into an error during import, allowing them to start over"
+    "description": "(Deleted 2024/03/07) Button shown if the user runs into an error during import, allowing them to start over"
   },
   "icu:importCompleteHeader": {
     "messageformat": "Uspeh!",
-    "description": "Header shown on the screen at the end of a successful import process"
+    "description": "(Deleted 2024/03/07) Header shown on the screen at the end of a successful import process"
   },
   "icu:importCompleteStartButton": {
     "messageformat": "Začni z uporabo aplikacije Signal Desktop",
-    "description": "Button shown at end of successful import process, nothing left but a restart"
+    "description": "(Deleted 2024/03/07) Button shown at end of successful import process, nothing left but a restart"
   },
   "icu:importCompleteLinkButton": {
     "messageformat": "Povežite napravo s svojim telefonom",
-    "description": "Button shown at end of successful 'light' import process, so the standard linking process still needs to happen"
+    "description": "(Deleted 2024/03/07) Button shown at end of successful 'light' import process, so the standard linking process still needs to happen"
   },
   "icu:selectedLocation": {
     "messageformat": "izbrana lokacija",
-    "description": "Message shown as the export location if we didn't capture the target directory"
+    "description": "(Deleted 2024/03/07) Message shown as the export location if we didn't capture the target directory"
   },
   "icu:upgradingDatabase": {
     "messageformat": "Posodabljam zbirko podatkov. To lahko traja nekaj časa …",
-    "description": "Message shown on the loading screen when we're changing database structure on first run of a new version"
+    "description": "(Deleted 2024/03/07) Message shown on the loading screen when we're changing database structure on first run of a new version"
   },
   "icu:loadingMessages--other": {
     "messageformat": "{daysAgo, plural, one {Nalaganje sporočil izpred 1 dneva ...} two {Nalaganje sporočil izpred {daysAgo,number} dni ...} few {Nalaganje sporočil izpred {daysAgo,number} dni ...} other {Nalaganje sporočil izpred {daysAgo,number} dni ...}}",
@@ -598,11 +606,19 @@
   },
   "icu:unreadMessage": {
     "messageformat": "1 novo sporočilo",
-    "description": "Text for unread message separator, just one message"
+    "description": "(Deleted 2024/03/07) Text for unread message separator, just one message"
   },
   "icu:unreadMessages": {
     "messageformat": "{count, plural, one {{count,number} neprebrano sporočilo} two {{count,number} neprebrani sporočili} few {{count,number} neprebrana sporočila} other {{count,number} neprebranih sporočil}}",
     "description": "Text for unread message separator, with count"
+  },
+  "icu:taskbarMarkedUnread": {
+    "messageformat": "Označeno kot neprebrano",
+    "description": "On Windows, description for screen readers for the OS taskbar icon's overlay badge when the user has marked chat(s) as unread."
+  },
+  "icu:taskbarUnreadMessages": {
+    "messageformat": "{count, plural, one {{count,number} neprebrano sporočilo} two {{count,number} neprebrani sporočili} few {{count,number} neprebrana sporočila} other {{count,number} neprebranih sporočil}}",
+    "description": "On Windows, description for screen readers for the OS taskbar icon's overlay badge when there are unread messages."
   },
   "icu:messageHistoryUnsynced": {
     "messageformat": "Zaradi vaše varnosti zgodovina klepetov ni prenešena na na novo povezane naprave.",
@@ -626,7 +642,7 @@
   },
   "icu:membersNeedingVerification": {
     "messageformat": "Vaša varnostna števila s temi člani skupine so bila spremenjena, odkar ste nazadnje preverjali. Za ogled novega varnostnega števila z določenim članom skupine kliknite nanj.",
-    "description": "When there are multiple previously-verified group members with safety number changes, a banner will be shown. The list of contacts with safety number changes is shown, and this text introduces that list."
+    "description": "(Deleted 2024/03/07) When there are multiple previously-verified group members with safety number changes, a banner will be shown. The list of contacts with safety number changes is shown, and this text introduces that list."
   },
   "icu:changedRightAfterVerify": {
     "messageformat": "Varnostno število, ki ga potrjujete, je bilo spremenjeno. Prosimo, preverite svoje novo varnostno število z uporabnikom_co {name1}. Pozor, ta sprememba lahko pomeni, da skuša nekdo prestrezati vajino komunikacijo ali pa, da je uporabnik_ca{name2} zgolj ponovno namestil_a aplikacijo Signal.",
@@ -678,7 +694,7 @@
   },
   "icu:identityKeyErrorOnSend": {
     "messageformat": "Vaše varnostno število z uporabnikom_co {name1} je bilo spremenjeno. To lahko pomeni, da skuša nekdo prestrezati vajino komunikacijo ali pa, da je uporabnik_ca {name2} zgolj ponovno namestil_a aplikacijo Signal. Morda bi želeli ponovno preveriti vajino varnostno število.",
-    "description": "Shown when user clicks on a failed recipient in the message detail view after an identity key change"
+    "description": "(Deleted 2024/03/07) Shown when user clicks on a failed recipient in the message detail view after an identity key change"
   },
   "icu:sendAnyway": {
     "messageformat": "Vseeno pošlji",
@@ -706,11 +722,11 @@
   },
   "icu:noLongerVerified": {
     "messageformat": "Vaše varnostno število z uporabnikom {name} je bilo spremenjeno in ni več označeno kot potrjeno. Kliknite za prikaz.",
-    "description": "Shown in conversation banner when user's safety number has changed, but they were previously verified."
+    "description": "(Deleted 2024/03/07) Shown in conversation banner when user's safety number has changed, but they were previously verified."
   },
   "icu:multipleNoLongerVerified": {
     "messageformat": "Vaša varnostna števila z večimi člani skupine so bila spremenjena in niso več označena kot potrjena. Kliknite za prikaz.",
-    "description": "Shown in conversation banner when more than one group member's safety number has changed, but they were previously verified."
+    "description": "(Deleted 2024/03/07) Shown in conversation banner when more than one group member's safety number has changed, but they were previously verified."
   },
   "icu:debugLogExplanation": {
     "messageformat": "S klikom na Oddaj bo vaša zabeležba za 30 dni objavljena na edinstvenem URL naslovu. Lahko jo pred tem shranite lokalno.",
@@ -750,34 +766,14 @@
   },
   "icu:gotIt": {
     "messageformat": "Razumem!",
-    "description": "Label for a button that dismisses a dialog. The user clicks it to confirm that they understand the message in the dialog."
+    "description": "(Deleted 2024/03/07) Label for a button that dismisses a dialog. The user clicks it to confirm that they understand the message in the dialog."
   },
   "icu:submit": {
     "messageformat": "Objavi"
   },
   "icu:acceptNewKey": {
     "messageformat": "Sprejmi",
-    "description": "Label for a button to accept a new safety number"
-  },
-  "icu:SafetyNumberViewer__migration__text": {
-    "messageformat": "Varnostne številke se posodabljajo.",
-    "description": "(Deleted 11/01/2023) An explanatory note in SafetyNumberViewer describing the safety number migration process."
-  },
-  "icu:SafetyNumberViewer__migration__learn_more": {
-    "messageformat": "Preberite več",
-    "description": "(Deleted 11/01/2023) A link text in SafetyNumberViewer describing the safety number migration process."
-  },
-  "icu:SafetyNumberViewer__card__prev": {
-    "messageformat": "Prejšnja varnostna številka",
-    "description": "(Deleted 11/01/2023) An ARIA label for safety number navigation button."
-  },
-  "icu:SafetyNumberViewer__card__next": {
-    "messageformat": "Naslednja varnostna številka",
-    "description": "(Deleted 11/01/2023) An ARIA label for safety number navigation button."
-  },
-  "icu:SafetyNumberViewer__carousel__dot": {
-    "messageformat": "Različica varnostne številke, {index,number} od {total,number}",
-    "description": "(Deleted 11/01/2023) An ARIA label for safety number carousel button."
+    "description": "(Deleted 2024/03/07) Label for a button to accept a new safety number"
   },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "Označi kot potrjeno",
@@ -795,34 +791,6 @@
     "messageformat": "Preberite več",
     "description": "Text of 'Learn more' button of SafetyNumberViewerModal modal"
   },
-  "icu:SafetyNumberViewer__hint--migration": {
-    "messageformat": "Če želite preveriti šifriranje od-konca-do-konca z uporabnikom_co {name}, povežite zgornjo barvno kartico z njegovo/njeno napravo in primerjajte številki. Če se ne ujemata, podrsajte in poskusite z drugim parom varnostnih številk. Samo en par se mora ujemati.",
-    "description": "(Deleted 11/01/2023). Safety number viewer, text of the hint during migration period"
-  },
-  "icu:SafetyNumberViewer__hint--normal": {
-    "messageformat": "Če želite preveriti šifriranje od-konca-do-konca z uporabnikom_co {name}, primerjajte zgornje številke s tistimi na njegovi/njeni napravi. S svojo napravo lahko tudi skenira vašo kodo.",
-    "description": "(Deleted 11/01/2023). Safety number viewer, text of the hint after migration period"
-  },
-  "icu:SafetyNumberOnboarding__title": {
-    "messageformat": "Spremembe varnostnih številk",
-    "description": "(Deleted 11/01/2023) Title of Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__p1": {
-    "messageformat": "Varnostne številke se v prehodnem obdobju posodabljajo, da omogočijo prihajajoče funkcije zasebnosti v Signalu.\n\n",
-    "description": "(Deleted 11/01/2023) Paragraph 1 of Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__p2": {
-    "messageformat": "Če želite preveriti varnostne številke, uskladite barvno kartico z napravo vašega kontakta. Če se ne ujemata, podrsajte in poskusite z drugim parom varnostnih številk. Samo en par se mora ujemati.",
-    "description": "(Deleted 11/01/2023) Paragraph 2 of Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__help": {
-    "messageformat": "Potrebujete pomoč?",
-    "description": "(Deleted 11/01/2023) Text of a secondary button in Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__close": {
-    "messageformat": "Razumem",
-    "description": "(Deleted 11/01/2023) Text of a secondary button in Safety number onboarding modal"
-  },
   "icu:SafetyNumberNotReady__body": {
     "messageformat": "Varnostna številka s to osebo bo ustvarjena, potem ko bo z vami izmenjala sporočila.",
     "description": "Body of SafetyNumberNotReady modal"
@@ -833,11 +801,11 @@
   },
   "icu:isVerified": {
     "messageformat": "Potrdili ste varnostno število z uporabnikom {name}.",
-    "description": "Summary state shown at top of the safety number screen if user has verified contact."
+    "description": "(Deleted 2024/03/07) Summary state shown at top of the safety number screen if user has verified contact."
   },
   "icu:isNotVerified": {
     "messageformat": "Varnostnega števila z uporabnikom {name} niste potrdili.",
-    "description": "Summary state shown at top of the safety number screen if user has not verified contact."
+    "description": "(Deleted 2024/03/07) Summary state shown at top of the safety number screen if user has not verified contact."
   },
   "icu:verified": {
     "messageformat": "Potrjeno"
@@ -847,7 +815,8 @@
     "description": "Header for a key change dialog"
   },
   "icu:identityChanged": {
-    "messageformat": "Vaše varnostno število s to osebo je bilo spremenjeno. To lahko pomeni, da poskuša nekdo prestrezati vajino komunikacijo ali pa je vaš partner zgolj na novo namestil aplikacijo Signal. Novo varnostno število lahko preverite spodaj."
+    "messageformat": "Vaše varnostno število s to osebo je bilo spremenjeno. To lahko pomeni, da poskuša nekdo prestrezati vajino komunikacijo ali pa je vaš partner zgolj na novo namestil aplikacijo Signal. Novo varnostno število lahko preverite spodaj.",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:incomingError": {
     "messageformat": "Napaka pri obdelavi dohodnega sporočila"
@@ -894,11 +863,11 @@
   },
   "icu:clickToSave": {
     "messageformat": "Shrani",
-    "description": "Hover text for attachment filenames"
+    "description": "(Deleted 2024/03/07) Hover text for attachment filenames"
   },
   "icu:unnamedFile": {
     "messageformat": "Neimenovana datoteka",
-    "description": "Hover text for attachment filenames"
+    "description": "(Deleted 2024/03/07) Hover text for attachment filenames"
   },
   "icu:voiceMessage": {
     "messageformat": "Glasovno sporočilo",
@@ -923,10 +892,6 @@
   "icu:stagedImageAttachment": {
     "messageformat": "Osnutek slikovne priponke: {path}",
     "description": "Alt text for staged attachments"
-  },
-  "icu:cdsMirroringErrorToast": {
-    "messageformat": "Naleteli smo na nedoslednost storitve Odkrivanja stikov.",
-    "description": "(Deleted 2024/01/22) An error popup when we discovered an inconsistency between mirrored Contact Discovery Service requests."
   },
   "icu:decryptionErrorToast": {
     "messageformat": "Prišlo je do napake pri dekripciji z uporabnikom_co {name}, naprava {deviceId}",
@@ -1180,7 +1145,7 @@
   },
   "icu:messageFoundButNotLoaded": {
     "messageformat": "Izvorno sporočilo je bilo najdeno, vendar še ni naloženo. Če ga želite naložiti, se pomaknite navzgor.",
-    "description": "Shown in toast if user clicks on quote references messages not loaded in view, but in database"
+    "description": "(Deleted 2024/03/07) Shown in toast if user clicks on quote references messages not loaded in view, but in database"
   },
   "icu:voiceRecording--start": {
     "messageformat": "Začni s snemanjem glasovnega sporočila",
@@ -1188,11 +1153,11 @@
   },
   "icu:voiceRecording--complete": {
     "messageformat": "Zaključi s snemanjem in pošlji glasovno sporočilo",
-    "description": "Tooltip for green complete voice message and send"
+    "description": "(Deleted 2024/03/07) Tooltip for green complete voice message and send"
   },
   "icu:voiceRecording--cancel": {
     "messageformat": "Zavrzi glasovno sporočilo",
-    "description": "Tooltip for red button to cancel voice message"
+    "description": "(Deleted 2024/03/07) Tooltip for red button to cancel voice message"
   },
   "icu:voiceRecordingInterruptedMax": {
     "messageformat": "Snemanje zvočnega sporočila je bilo ustavljeno, ker je bila presežena časovna omejitev.",
@@ -1200,7 +1165,7 @@
   },
   "icu:voiceRecordingInterruptedBlur": {
     "messageformat": "Snemanje zvočnega sporočila je bilo ustavljeno, ker ste preklopili na drugo aplikacijo.",
-    "description": "Confirmation dialog message for when the voice recording is interrupted due to app losing focus"
+    "description": "(Deleted 2024/03/07) Confirmation dialog message for when the voice recording is interrupted due to app losing focus"
   },
   "icu:voiceNoteLimit": {
     "messageformat": "Glasovna sporočila so omejena na eno uro. Če boste preklopili na drugo aplikacijo, se bo snemanje ustavilo.",
@@ -1228,7 +1193,7 @@
   },
   "icu:replyingTo": {
     "messageformat": "Odgovor uporabniku {name}",
-    "description": "Shown in iOS theme when you or someone quotes to a message which is not from you"
+    "description": "(Deleted 2024/03/07) Shown in iOS theme when you or someone quotes to a message which is not from you"
   },
   "icu:audioPermissionNeeded": {
     "messageformat": "Za pošiljanje glasovnih sporočil potrebuje aplikacija Signal Desktop dostop do vašega mikrofona.",
@@ -1248,7 +1213,7 @@
   },
   "icu:showSettings": {
     "messageformat": "Prikaži nastavitve",
-    "description": "A button shown in dialog requesting the user to turn on audio permissions"
+    "description": "(Deleted 2024/03/07) A button shown in dialog requesting the user to turn on audio permissions"
   },
   "icu:audio": {
     "messageformat": "Zvok",
@@ -1272,7 +1237,7 @@
   },
   "icu:muted": {
     "messageformat": "Utišan",
-    "description": "Shown in a button when a conversation is muted"
+    "description": "(Deleted 2024/03/07) Shown in a button when a conversation is muted"
   },
   "icu:mute": {
     "messageformat": "Utišaj",
@@ -1300,13 +1265,15 @@
     "messageformat": "Zavrzi"
   },
   "icu:failedToSend": {
-    "messageformat": "Pošiljanje nekaterim prejemnikom_cam ni uspelo. Preverite povezavo z omrežjem."
+    "messageformat": "Pošiljanje nekaterim prejemnikom_cam ni uspelo. Preverite povezavo z omrežjem.",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:error": {
     "messageformat": "Napaka"
   },
   "icu:messageDetail": {
-    "messageformat": "Podrobnosti sporočila"
+    "messageformat": "Podrobnosti sporočila",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:delete": {
     "messageformat": "Izbriši"
@@ -1352,7 +1319,7 @@
   },
   "icu:to": {
     "messageformat": "Naslovnik",
-    "description": "Label for the receiver of a message"
+    "description": "(Deleted 2024/03/07) Label for the receiver of a message"
   },
   "icu:searchResultHeader--sender-to-group": {
     "messageformat": "{sender} za {receiverGroup}",
@@ -1383,7 +1350,8 @@
     "description": "Placeholder text in the message entry field"
   },
   "icu:groupMembers": {
-    "messageformat": "Člani skupine"
+    "messageformat": "Člani skupine",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:showMembers": {
     "messageformat": "Prikaži člane"
@@ -1425,14 +1393,15 @@
   },
   "icu:ContactModal__showSafetyNumber": {
     "messageformat": "Prikaz varnostne številke",
-    "description": "Contact modal, label for button to show safety number modal"
+    "description": "(Deleted 2024/03/07) Contact modal, label for button to show safety number modal"
   },
   "icu:viewRecentMedia": {
     "messageformat": "Nedavne medijske datoteke",
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
   "icu:theirIdentityUnknown": {
-    "messageformat": "S to osebo še niste izmenjali sporočil. Vajino varnostno število bo na voljo po prvem poslanem sporočilu."
+    "messageformat": "S to osebo še niste izmenjali sporočil. Vajino varnostno število bo na voljo po prvem poslanem sporočilu.",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:back": {
     "messageformat": "Nazaj",
@@ -1606,9 +1575,13 @@
     "messageformat": "{phoneNumber} pripada {conversationTitle}",
     "description": "Shown when we've discovered a phone number for a contact you've been communicating with, but you have no shared groups."
   },
+  "icu:TitleTransition--notification": {
+    "messageformat": "Začeli ste klepet s/z {oldTitle}",
+    "description": "Shown when we've received profile information for a contact we have been messaging by username/phone number"
+  },
   "icu:quoteThumbnailAlt": {
     "messageformat": "Predogled slike citiranega sporočila",
-    "description": "Used in alt tag of thumbnail images inside of an embedded message quote"
+    "description": "(Deleted 2024/03/07) Used in alt tag of thumbnail images inside of an embedded message quote"
   },
   "icu:imageAttachmentAlt": {
     "messageformat": "Slika je priložena sporočilu",
@@ -1636,15 +1609,15 @@
   },
   "icu:fileIconAlt": {
     "messageformat": "Ikona datoteke",
-    "description": "Used in the media gallery documents tab to visually represent a file"
+    "description": "(Deleted 2024/03/07) Used in the media gallery documents tab to visually represent a file"
   },
   "icu:installWelcome": {
     "messageformat": "Dobrodošli v aplikaciji Signal Desktop",
-    "description": "Welcome title on the install page"
+    "description": "(Deleted 2024/03/07) Welcome title on the install page"
   },
   "icu:installTagline": {
     "messageformat": "Zasebnost obstaja. Signal jo naredi preprosto.",
-    "description": "Tagline displayed under 'installWelcome' string on the install page"
+    "description": "(Deleted 2024/03/07) Tagline displayed under 'installWelcome' string on the install page"
   },
   "icu:linkedDevices": {
     "messageformat": "Povezane naprave",
@@ -1677,10 +1650,6 @@
   "icu:Install__instructions__3": {
     "messageformat": "Tapnite {plusButton} (Android) ali {linkNewDevice} (iPhone)",
     "description": "Instructions on the device link screen"
-  },
-  "icu:Install__qr-failed": {
-    "messageformat": "(deleted 05/09/2023) The QR code couldn't load. Check your internet and try again. <learnMoreLink>Learn more</learnMoreLink>",
-    "description": "Shown on the install screen if the QR code fails to load"
   },
   "icu:Install__qr-failed-load": {
     "messageformat": "Kode QR ni bilo mogoče naložiti. Preverite svojo internetno povezavo in poskusite znova. <retry>Poskusi znova</retry>",
@@ -1778,51 +1747,51 @@
     "description": "Text in the call lobby when you can't join because the call is full"
   },
   "icu:calling__cant-join": {
-    "messageformat": "Can't join call",
+    "messageformat": "Pridružitev klicu ni mogoča",
     "description": "Modal dialog title when you can't join a call"
   },
   "icu:calling__dialog-already-in-call": {
-    "messageformat": "You are already in a call.",
+    "messageformat": "Ste že v klicu.",
     "description": "Error message when clicking a call link to join a call, but you're in a call already."
   },
   "icu:calling__call-link-connection-issues": {
-    "messageformat": "Could not fetch call link information. Please check your network connection and try again.",
+    "messageformat": "Ni bilo mogoče pridobiti informacij o povezavi do klica. Preverite svojo omrežno povezavo in poskusite znova.",
     "description": "Error message when unable to fetch call link info from server."
   },
   "icu:calling__call-link-copied": {
-    "messageformat": "Call link copied.",
+    "messageformat": "Povezava do klica je kopirana.",
     "description": "Toast shown when a call link is copied to the clipboard."
   },
   "icu:calling__call-link-no-longer-valid": {
-    "messageformat": "This call link is no longer valid.",
+    "messageformat": "Ta klicna povezava ni več veljavna.",
     "description": "Error message when a call link has been revoked or expires."
   },
   "icu:calling__call-link-default-title": {
-    "messageformat": "Signal Call",
+    "messageformat": "Klic Signal",
     "description": "Default title for Signal call links."
   },
   "icu:calling__join-request-denied": {
-    "messageformat": "Your request to join this call has been denied.",
+    "messageformat": "Vaša prošnja za pridružitev temu klicu je bila zavrnjena.",
     "description": "Error message when a request to join a call link call was rejected by a call admin."
   },
   "icu:calling__join-request-denied-title": {
-    "messageformat": "Join request denied",
+    "messageformat": "Zahteva za pridružitev zavrnjena",
     "description": "Title of error when a request to join a call link call was rejected by a call admin."
   },
   "icu:calling__removed-from-call": {
-    "messageformat": "Someone has removed you from the call.",
+    "messageformat": "Nekdo vas je odstranil iz klica.",
     "description": "Error message when in a call then a call admin removes you."
   },
   "icu:calling__removed-from-call-title": {
-    "messageformat": "Removed from call",
+    "messageformat": "Odstranjen_a iz klica",
     "description": "Title of error when in a call then a call admin removes you."
   },
   "icu:CallingLobby__CallLinkNotice": {
-    "messageformat": "Anyone who joins this call via the link will see your name and photo.",
+    "messageformat": "Vsi, ki se bodo pridružili temu klicu prek povezave, bodo videli vaše ime in fotografijo.",
     "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared."
   },
   "icu:CallingLobby__CallLinkNotice--phone-sharing": {
-    "messageformat": "Anyone who joins this call via the link will see your name, photo, and phone number.",
+    "messageformat": "Vsakdo, ki se pridruži temu klicu prek povezave, bo videl vaše ime, fotografijo in telefonsko številko.",
     "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared, when the phone number sharing account setting is enabled."
   },
   "icu:CallingLobbyJoinButton--join": {
@@ -1883,11 +1852,11 @@
   },
   "icu:calling__button--ring__off": {
     "messageformat": "Samo obvestilo, brez zvonjenja",
-    "description": "Button tooltip label for turning ringing off"
+    "description": "(Deleted 2024/03/07) Button tooltip label for turning ringing off"
   },
   "icu:calling__button--ring__on": {
     "messageformat": "Zvonjenje",
-    "description": "Button tooltip label for turning ringing on"
+    "description": "(Deleted 2024/03/07) Button tooltip label for turning ringing on"
   },
   "icu:CallingButton__ring-off": {
     "messageformat": "Izklopi zvonjenje",
@@ -1975,10 +1944,14 @@
   },
   "icu:calling__in-this-call--one": {
     "messageformat": "Udeleženci klica - 1 uporabnik_ca",
-    "description": "Shown in the participants list to describe how many people are in the call"
+    "description": "(Deleted 2024/02/29) Shown in the participants list to describe how many people are in the call"
   },
   "icu:calling__in-this-call--many": {
     "messageformat": "Udeleženci klica · {people} uporabnikov",
+    "description": "(Deleted 2024/02/29) Shown in the participants list to describe how many people are in the call"
+  },
+  "icu:calling__in-this-call": {
+    "messageformat": "{people, plural, one {Na tem klicu · {people,number} oseba} two {Na tem klicu · {people,number} osebi} few {Na tem klicu · {people,number} osebe} other {Na tem klicu · {people,number} ljudi}}",
     "description": "Shown in the participants list to describe how many people are in the call"
   },
   "icu:calling__you-have-blocked": {
@@ -2083,7 +2056,7 @@
   },
   "icu:general": {
     "messageformat": "Splošno",
-    "description": "Header for general options on the settings screen"
+    "description": "(Deleted 2024/03/07) Header for general options on the settings screen"
   },
   "icu:spellCheckDescription": {
     "messageformat": "Uporaba črkovalnika v oknu za pisanje sporočil",
@@ -2135,7 +2108,7 @@
   },
   "icu:deleteAllDataButton": {
     "messageformat": "Izbris vseh podatkov",
-    "description": "Text of the button that deletes all data"
+    "description": "(Deleted 2024/03/07) Text of the button that deletes all data"
   },
   "icu:deleteAllDataProgress": {
     "messageformat": "Odjava in brisanje vseh podatkov",
@@ -2151,15 +2124,15 @@
   },
   "icu:notifications": {
     "messageformat": "Obvestila",
-    "description": "Header for notification settings"
+    "description": "(Deleted 2024/03/07) Header for notification settings"
   },
   "icu:notificationSettingsDialog": {
     "messageformat": "Vsebina obvestila o prejemu sporočila:",
-    "description": "Explain the purpose of the notification settings"
+    "description": "(Deleted 2024/03/07) Explain the purpose of the notification settings"
   },
   "icu:disableNotifications": {
     "messageformat": "obvestila so izklopljena",
-    "description": "Label for disabling notifications"
+    "description": "(Deleted 2024/03/07) Label for disabling notifications"
   },
   "icu:nameAndMessage": {
     "messageformat": "Ime, vsebina, dejanja",
@@ -2213,15 +2186,15 @@
   },
   "icu:showMore": {
     "messageformat": "Podrobnosti",
-    "description": "Displays the details of a key change"
+    "description": "(Deleted 2024/03/07) Displays the details of a key change"
   },
   "icu:showLess": {
     "messageformat": "Skrij podrobnosti",
-    "description": "Hides the details of a key change"
+    "description": "(Deleted 2024/03/07) Hides the details of a key change"
   },
   "icu:learnMore": {
     "messageformat": "Več o verifikaciji varnostnih števil",
-    "description": "Text that links to a support article on verifying safety numbers"
+    "description": "(Deleted 2024/03/07) Text that links to a support article on verifying safety numbers"
   },
   "icu:expiredWarning": {
     "messageformat": "Pričujoča različica programa Signal Desktop je potekla. Za ponovno delovanje morate program posodobiti na zadnjo različico.",
@@ -2237,7 +2210,7 @@
   },
   "icu:unregisteredUser": {
     "messageformat": "Številka ni registrirana",
-    "description": "Error message displayed when sending to an unregistered user."
+    "description": "(Deleted 2024/03/07) Error message displayed when sending to an unregistered user."
   },
   "icu:sync": {
     "messageformat": "Uvoz stikov",
@@ -2249,7 +2222,7 @@
   },
   "icu:lastSynced": {
     "messageformat": "Nazadnje uvoženo:",
-    "description": "Label for date and time of last sync operation"
+    "description": "(Deleted 2024/03/07) Label for date and time of last sync operation"
   },
   "icu:syncNow": {
     "messageformat": "Uvozi zdaj",
@@ -2409,7 +2382,7 @@
   },
   "icu:yourSafetyNumberWith": {
     "messageformat": "Vaše varnostno število z uporabnikom_co {name1}:",
-    "description": "Heading for safety number view"
+    "description": "(Deleted 2024/03/07) Heading for safety number view"
   },
   "icu:themeLight": {
     "messageformat": "Svetla",
@@ -2441,7 +2414,7 @@
   },
   "icu:startConversation": {
     "messageformat": "Začni nov klepet",
-    "description": "Label underneath number a user enters that is not an existing contact"
+    "description": "(Deleted 2024/03/07) Label underneath number a user enters that is not an existing contact"
   },
   "icu:newConversation": {
     "messageformat": "Nov klepet",
@@ -2573,15 +2546,15 @@
   },
   "icu:notSupportedSMS": {
     "messageformat": "Sporočila SMS/MMS niso podprta.",
-    "description": "Label underneath number informing user that SMS is not supported on desktop"
+    "description": "(Deleted 2024/03/07) Label underneath number informing user that SMS is not supported on desktop"
   },
   "icu:newPhoneNumber": {
     "messageformat": "Z vnosom telefonske številke boste ustvarili nov stik",
-    "description": "Placeholder for adding a new number to a contact"
+    "description": "(Deleted 2024/03/07) Placeholder for adding a new number to a contact"
   },
   "icu:invalidNumberError": {
     "messageformat": "Neveljavna številka",
-    "description": "When a person inputs a number that is invalid"
+    "description": "(Deleted 2024/03/07) When a person inputs a number that is invalid"
   },
   "icu:unlinkedWarning": {
     "messageformat": "Kliknite za ponovno vzpostavitev povezave z vašo mobilno napravo in nadaljnje pošiljanje sporočil."
@@ -2590,7 +2563,8 @@
     "messageformat": "Nepovezan"
   },
   "icu:relink": {
-    "messageformat": "Poveži"
+    "messageformat": "Poveži",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:autoUpdateNewVersionTitle": {
     "messageformat": "Na voljo je posodobitev"
@@ -2615,7 +2589,8 @@
     "messageformat": "Ponovno zaženi Signal"
   },
   "icu:autoUpdateLaterButtonLabel": {
-    "messageformat": "Kasneje"
+    "messageformat": "Kasneje",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:autoUpdateIgnoreButtonLabel": {
     "messageformat": "ignoriraj posodobitev"
@@ -2741,7 +2716,7 @@
     "description": "Shown in a message bubble if any attachments are left on message when too-large attachments are dropped"
   },
   "icu:message--call-link-description": {
-    "messageformat": "Use this link to join a Signal call",
+    "messageformat": "Uporabite to povezavo, da se pridružite Signalovemu klicu",
     "description": "Shown in message previews for Signal call links."
   },
   "icu:donation--missing": {
@@ -2806,7 +2781,7 @@
   },
   "icu:message--giftBadge--view": {
     "messageformat": "Prikaz",
-    "description": "Shown when you've sent a gift badge to someone then opened it"
+    "description": "(Deleted 2024/03/07) Shown when you've sent a gift badge to someone then opened it"
   },
   "icu:message--donation--view": {
     "messageformat": "Prikaz",
@@ -2838,7 +2813,7 @@
   },
   "icu:stickers--StickerManager--title": {
     "messageformat": "Nalepke",
-    "description": "Title for the sticker manager"
+    "description": "(Deleted 2024/03/07) Title for the sticker manager"
   },
   "icu:stickers--StickerManager--Available": {
     "messageformat": "Na voljo",
@@ -3388,14 +3363,6 @@
     "messageformat": "Klepet je označen kot neprebran",
     "description": "A toast that shows up when user marks a conversation as unread"
   },
-  "icu:SendEdit--dialog--title": {
-    "messageformat": "Samo Signal beta",
-    "description": "(deleted 8/30) Title of the modal shown before sending your first edit message"
-  },
-  "icu:SendEdit--dialog--body": {
-    "messageformat": "Urejanje sporočil je na voljo samo uporabnikom Signala beta. Če uredite sporočilo, bo vidno samo ljudem, ki uporabljajo najnovejšo različico Signala beta.",
-    "description": "(deleted 8/30) Body text of the modal shown before sending your first edit message"
-  },
   "icu:SendEdit--dialog--title2": {
     "messageformat": "Uredi sporočilo",
     "description": "Title of the modal shown before sending your first edit message"
@@ -3443,6 +3410,62 @@
   "icu:ReactionsViewer--all": {
     "messageformat": "Vse",
     "description": "Shown in reaction viewer as the title for the 'all' category"
+  },
+  "icu:SafetyTipsModal__Title": {
+    "messageformat": "Varnostni nasveti",
+    "description": "Title of the safety tips modal"
+  },
+  "icu:SafetyTipsModal__Description": {
+    "messageformat": "Bodite previdni pri sprejemanju prošenj za pošiljanje sporočila od ljudi, ki jih ne poznate. Bodite pozorni na:",
+    "description": "Description of the safety tips modal"
+  },
+  "icu:SafetyTipsModal__TipTitle--Crypto": {
+    "messageformat": "Kripto ali denarne prevare",
+    "description": "Title of the crypto safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Crypto": {
+    "messageformat": "Če vam neznana oseba pošlje sporočilo o kriptovaluti (kot je Bitcoin) ali finančni priložnosti, bodite previdni—verjetno gre za neželeno vsebino.",
+    "description": "Description of the crypto safety tip"
+  },
+  "icu:SafetyTipsModal__TipTitle--Vague": {
+    "messageformat": "Nejasna ali nepomembna sporočila",
+    "description": "Title of the vague safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Vague": {
+    "messageformat": "Pošiljatelji neželenih vsebin pogosto začnejo s preprostim sporočilom, kot je \"Zdravo\", da bi vas pritegnili. Če se odzovete, bodo morda želeli nadaljevati pogovor.",
+    "description": "Description of the vague safety tip"
+  },
+  "icu:SafetyTipsModal__TipTitle--Links": {
+    "messageformat": "Sporočila s povezavami",
+    "description": "Title of the links safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Links": {
+    "messageformat": "Bodite previdni pri sporočilih neznanih oseb s povezavami do spletnih mest. Nikoli ne obiščite povezav, ki jih pošljejo osebe, katerim ne zaupate.",
+    "description": "Description of the links safety tip"
+  },
+  "icu:SafetyTipsModal__TipTitle--Business": {
+    "messageformat": "Lažna podjetja in institucije",
+    "description": "Title of the business safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Business": {
+    "messageformat": "Bodite previdni, če vas kontaktirajo podjetja ali vladne agencije. Sporočila, ki vključujejo davčne agencije, kurirje in drugo, so lahko neželena sporočila.",
+    "description": "Description of the business safety tip"
+  },
+  "icu:SafetyTipsModal__DotLabel": {
+    "messageformat": "Pojdi na stran {page,number}",
+    "description": "Label for the dots in the safety tips modal that when clicked will take you to a specific tip"
+  },
+  "icu:SafetyTipsModal__Button--Previous": {
+    "messageformat": "Prejšnji nasvet",
+    "description": "Button to go to the previous safety tip"
+  },
+  "icu:SafetyTipsModal__Button--Next": {
+    "messageformat": "Naslednji nasvet",
+    "description": "Button to go to the next safety tip"
+  },
+  "icu:SafetyTipsModal__Button--Done": {
+    "messageformat": "OK",
+    "description": "Button to close the safety tips modal when you've reached the last tip"
   },
   "icu:MessageRequests--message-direct": {
     "messageformat": "Želite omogočiti uporabniku_ci {name}, da vam pošilja sporočila in z njim_njo deliti svoje ime in fotografijo? Dokler ne sprejmete vabila, pošiljatelj_ica ne bo vedel_a, da ste prebrali njegovo_njeno sporočilo.",
@@ -3507,6 +3530,42 @@
   "icu:MessageRequests--block-group-confirm-body": {
     "messageformat": "Od skupine ne boste več prejemali sporočil in posodobitev. Člani_ce skupine vas ne bodo več mogli_e dodati nazaj v skupino.",
     "description": "Shown as the body in the confirmation modal for blocking a group message request"
+  },
+  "icu:MessageRequests--reportAndMaybeBlock": {
+    "messageformat": "Prijavi ...",
+    "description": "Shown as a button to let the user report a message request and maybe block the user"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-title": {
+    "messageformat": "Želite prijaviti kot neželeno?",
+    "description": "Shown as the title in the modal for reporting and maybe blocking a message request"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-body--direct": {
+    "messageformat": "Signal bo obveščen, da ta oseba morda pošilja neželeno vsebino. Signal ne vidi vsebine klepetov.",
+    "description": "Shown as the body in the modal for reporting and maybe blocking a message request in a direct conversation"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-body--group--unknown-contact": {
+    "messageformat": "Signal bo obveščen, da oseba, ki vas je povabil_a v to skupino, morda pošilja neželeno vsebino. Signal ne vidi vsebine klepetov.",
+    "description": "Shown as the body in the modal for reporting and maybe blocking a message request in a group conversation when the contact is unknown"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-body--group": {
+    "messageformat": "Signal bo obveščen, da {name}, ki vas je povabil_a v to skupino, morda pošilja neželeno vsebino. Signal ne vidi vsebine klepetov.",
+    "description": "Shown as the body in the modal for reporting and maybe blocking a message request in a group conversation"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-report": {
+    "messageformat": "Prijaviti neželeno vsebino",
+    "description": "Shown as a button to let the user report a message request"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-reportAndBlock": {
+    "messageformat": "Prijavit in blokiraj",
+    "description": "Shown as a button to let the user report a message request and block the user"
+  },
+  "icu:MessageRequests--AcceptedOptionsModal--body": {
+    "messageformat": "Sprejeli ste prošnjo za pošiljanje sporočila od {name}. Če je šlo za napako, lahko spodaj izberete ukrep.",
+    "description": "Shown as the body in the modal for accepting a message request in a direct conversation"
+  },
+  "icu:MessageRequests--report-spam-success-toast": {
+    "messageformat": "Prijavljeno kot neželeno.",
+    "description": "Shown in a toast when you successfully report a user as spam"
   },
   "icu:MessageRequests--delete": {
     "messageformat": "Izbriši",
@@ -3578,7 +3637,7 @@
   },
   "icu:ConversationHero--membership-added": {
     "messageformat": "{name} vas je dodal_a v skupino.",
-    "description": "Shown Indicates that you were added to a group by a given individual."
+    "description": "(Deleted 2024/03/07) Shown Indicates that you were added to a group by a given individual."
   },
   "icu:no-groups-in-common": {
     "messageformat": "Nobene skupne skupine",
@@ -3717,11 +3776,11 @@
     "description": "Shown in the call lobby for a direct 1:1 call when the caller's video is disabled, to specify that an audio call will be placed when clicking the Start button."
   },
   "icu:CallControls__InfoDisplay--adhoc-call": {
-    "messageformat": "Call link",
+    "messageformat": "Povezava do klica",
     "description": "Shown in the call lobby for a call link."
   },
   "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
-    "messageformat": "Waiting to be let in",
+    "messageformat": "Čakanje na dostop",
     "description": "Shown in the call lobby for call link calls when requesting to join a call which requires admin approval."
   },
   "icu:CallControls__JoinLeaveButton--hangup-1-1": {
@@ -3786,6 +3845,10 @@
   },
   "icu:calling__participants": {
     "messageformat": "{people} ljudi je v klicu",
+    "description": "(Deleted 2024/02/29) Title for participants list toggle"
+  },
+  "icu:calling__participants--pluralized": {
+    "messageformat": "{people, plural, one {{people,number} v klicu} two {{people,number} v klicu} few {{people,number} v klicu} other {{people,number} v klicu}}",
     "description": "Title for participants list toggle"
   },
   "icu:calling__call-notification__ended": {
@@ -3865,7 +3928,7 @@
     "description": "Title for the select your screen sharing sources modal"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "Copy link",
+    "messageformat": "Kopiraj povezavo",
     "description": "Menu item in the in-call info popup for call link calls. The action is to add the call link to the clipboard."
   },
   "icu:callingDeviceSelection__label--video": {
@@ -4778,7 +4841,7 @@
   },
   "icu:ContactModal--message": {
     "messageformat": "Sporočilo",
-    "description": "Button text for send message button in Group Contact Details modal"
+    "description": "(Deleted 2024/03/07) Button text for send message button in Group Contact Details modal"
   },
   "icu:ContactModal--rm-admin": {
     "messageformat": "Odstrani kot skrbnika_co",
@@ -5022,7 +5085,7 @@
   },
   "icu:PendingInvites--invites": {
     "messageformat": "Povabljeni z vaše strani",
-    "description": "This is the title list of all invites"
+    "description": "(Deleted 2024/03/07) This is the title list of all invites"
   },
   "icu:PendingInvites--invited-by-you": {
     "messageformat": "Povabljeni z vaše strani",
@@ -5138,23 +5201,23 @@
   },
   "icu:AvatarInput--no-photo-label--group": {
     "messageformat": "Dodaj skupinsko fotografijo",
-    "description": "The label for the avatar uploader when no group photo is selected"
+    "description": "(Deleted 2024/03/07) The label for the avatar uploader when no group photo is selected"
   },
   "icu:AvatarInput--no-photo-label--profile": {
     "messageformat": "Dodajte fotografijo",
-    "description": "The label for the avatar uploader when no profile photo is selected"
+    "description": "(Deleted 2024/03/07) The label for the avatar uploader when no profile photo is selected"
   },
   "icu:AvatarInput--change-photo-label": {
     "messageformat": "Spremeni fotografijo",
-    "description": "The label for the avatar uploader when a photo is selected"
+    "description": "(Deleted 2024/03/07) The label for the avatar uploader when a photo is selected"
   },
   "icu:AvatarInput--upload-photo-choice": {
     "messageformat": "Naloži fotografijo",
-    "description": "The button text when you click on an uploaded avatar and want to upload a new one"
+    "description": "(Deleted 2024/03/07) The button text when you click on an uploaded avatar and want to upload a new one"
   },
   "icu:AvatarInput--remove-photo-choice": {
     "messageformat": "Odstrani fotografijo",
-    "description": "The button text when you click on an uploaded avatar and want to remove it"
+    "description": "(Deleted 2024/03/07) The button text when you click on an uploaded avatar and want to remove it"
   },
   "icu:ContactPill--remove": {
     "messageformat": "Odstrani člana_ico",
@@ -5162,7 +5225,7 @@
   },
   "icu:ComposeErrorDialog--close": {
     "messageformat": "Okej",
-    "description": "The text on the button when there's an error in the composer"
+    "description": "(Deleted 2024/03/07) The text on the button when there's an error in the composer"
   },
   "icu:NewlyCreatedGroupInvitedContactsDialog--title": {
     "messageformat": "{count, plural, one {Vabilo je poslano} two {{count,number} vabili poslani} few {{count,number} vabila so poslana} other {{count,number} vabil je poslanih}}",
@@ -5288,6 +5351,10 @@
     "messageformat": "Preberite več",
     "description": "Shown on the message request warning. Clicking this button will open a dialog with more information"
   },
+  "icu:MessageRequestWarning__safety-tips": {
+    "messageformat": "Varnostni nasveti",
+    "description": "Shown on the message request warning. Clicking this button will open a dialog with safety tips"
+  },
   "icu:MessageRequestWarning__dialog__details": {
     "messageformat": "S to osebo nimate nobene skupne skupine. Preverite zahtevke, da se izognete nezaželjenim spoločilom.",
     "description": "Shown in the message request warning dialog. Gives more information about message requests"
@@ -5335,10 +5402,6 @@
   "icu:ContactSpoofingReviewDialog__group__multiple-conflicts__description": {
     "messageformat": "{count, plural, one {V tej skupini je bil najden {count,number} konflikt imen. Preglejte spodnje člane_ice ali se odločite za ukrepanje.} two {V tej skupini sta bila najdena {count,number} konflikta imen. Preglejte spodnje člane_ice ali se odločite za ukrepanje.} few {V tej skupini so bili najdenii {count,number} konflikti imen. Preglejte spodnje člane_ice ali se odločite za ukrepanje.} other {V tej skupini je bilo najdenih {count,number} konfliktov imen. Preglejte spodnje člane_ice ali se odločite za ukrepanje.}}",
     "description": "Description for the group contact spoofing review dialog when there are multiple shared names"
-  },
-  "icu:ContactSpoofingReviewDialog__group__members-header": {
-    "messageformat": "Člani_ce",
-    "description": "(Deleted 01/31/2024) Header in the group contact spoofing review dialog. After this header, there will be a list of members"
   },
   "icu:ContactSpoofingReviewDialog__group__members__no-shared-groups": {
     "messageformat": "Ni drugih skupnih skupin",
@@ -5410,7 +5473,7 @@
   },
   "icu:ChatColorPicker__global-chat-color": {
     "messageformat": "Globalna barva klepeta",
-    "description": "Modal title for the chat color picker and editor for all conversations"
+    "description": "(Deleted 2024/03/07) Modal title for the chat color picker and editor for all conversations"
   },
   "icu:ChatColorPicker__menu-title": {
     "messageformat": "Barva klepeta",
@@ -5644,14 +5707,6 @@
     "messageformat": "Nekaj je šlo narobe z vašim uporabniškim imenom, ni več dodeljeno vašemu računu. Lahko ga poskusite znova nastaviti ali izberete novega.",
     "description": "Text of confirmation modal when the username gets corrupted"
   },
-  "icu:ProfileEditor--username--corrupted--delete-button": {
-    "messageformat": "Izbriši uporabniško ime",
-    "description": "(Deleted 02/01/2024) Button text for deletion of the username in case of corruption"
-  },
-  "icu:ProfileEditor--username--corrupted--create-button": {
-    "messageformat": "Ustvarite uporabniško ime",
-    "description": "(Deleted 02/01/2024) Button text for creation of a new username in case of corruption"
-  },
   "icu:ProfileEditor--username--corrupted--fix-button": {
     "messageformat": "Popravi",
     "description": "Button text for creation of a new username in case of corruption"
@@ -5685,7 +5740,7 @@
     "description": "Shown if user has attempted to use forbidden characters in username"
   },
   "icu:ProfileEditor--username--check-starting-character": {
-    "messageformat": "Uporabniško ime se ne more začeti s števko.",
+    "messageformat": "Uporabniška imena se ne smejo začeti s števikami.",
     "description": "Shown if user has attempted to begin their username with a number"
   },
   "icu:ProfileEditor--username--check-character-min": {
@@ -5718,7 +5773,7 @@
   },
   "icu:ProfileEditor--username--check-username-taken": {
     "messageformat": "Uporabniško ime je že zasedeno.",
-    "description": "Shown if user has attempted to save a username which is not available"
+    "description": "(Deleted 2024/03/07) Shown if user has attempted to save a username which is not available"
   },
   "icu:ProfileEditor--username--general-error": {
     "messageformat": "Vaše uporabniško ime ni moglo biti shranjeno. Preverite internetno povezavo in poskusite znova.",
@@ -5746,7 +5801,7 @@
   },
   "icu:ProfileEditor--username--delete-username": {
     "messageformat": "Izbriši uporabniško ime",
-    "description": "Shown as aria label for trash icon next to username"
+    "description": "(Deleted 2024/03/07) Shown as aria label for trash icon next to username"
   },
   "icu:ProfileEditor--username--confirm-delete-body-2": {
     "messageformat": "S tem boste odstranili svoje uporabniško ime ter onemogočili QR kodo in povezavo. “{username}” bo na voljo drugim. Ste prepričani?",
@@ -5770,7 +5825,7 @@
   },
   "icu:ProfileEditor--username--copy-link": {
     "messageformat": "Kopiraj povezavo",
-    "description": "Shown as a button in context menu next to username. The action of the button is to put a username link into the clipboard."
+    "description": "(Deleted 2024/03/07) Shown as a button in context menu next to username. The action of the button is to put a username link into the clipboard."
   },
   "icu:ProfileEditor--username--delete": {
     "messageformat": "Izbriši",
@@ -5793,20 +5848,16 @@
     "description": "ConfirmationDialog text for discarding changes"
   },
   "icu:ConfirmationDialog__Title--in-call-close-requested": {
-    "messageformat": "Close Signal and end the call?",
+    "messageformat": "Želite zapreti Signal in zaključiti klic?",
     "description": "ConfirmationDialog title when trying to close the app while in a call."
   },
   "icu:ConfirmationDialog__Title--close-requested-not-now": {
-    "messageformat": "Not Now",
+    "messageformat": "Ne zdaj",
     "description": "Confirmation dialog button to cancel closing the app, while in a call and trying to close the app."
   },
   "icu:ProfileEditor--edit-photo": {
     "messageformat": "Uredi fotografijo",
     "description": "Text of a button on profile editor that leads to the avatar editor"
-  },
-  "icu:ProfileEditor--info--link": {
-    "messageformat": "Vaš profil je šifriran. Skupaj s spremembami na njem bo viden vašim stikom, ko boste začeli ali sprejeli nov pogovor. <learnMoreLink>Več o tem</learnMoreLink>",
-    "description": "(Deleted 02/01/2024) Information shown at the bottom of the profile editor section"
   },
   "icu:ProfileEditor--info--general": {
     "messageformat": "Vaš profil in spremembe na njem bodo vidne osebam, ki jim pošiljate sporočila, stikom in skupinam.",
@@ -6034,11 +6085,11 @@
   },
   "icu:Preferences--see-me": {
     "messageformat": "vidijo mojo telefonsko številko",
-    "description": "Label for the see my phone number setting"
+    "description": "(Deleted 2024/03/07) Label for the see my phone number setting"
   },
   "icu:Preferences--find-me": {
     "messageformat": "Lahko se me najde po moji telefonski številki",
-    "description": "Label for the find me by my phone number setting"
+    "description": "(Deleted 2024/03/07) Label for the find me by my phone number setting"
   },
   "icu:Preferences--read-receipts": {
     "messageformat": "Potrdila o ogledu",
@@ -6128,6 +6179,10 @@
     "messageformat": "Posodobitev prenesena",
     "description": "The title of update dialog when update download is completed."
   },
+  "icu:DialogNetworkStatus__outage": {
+    "messageformat": "Prihaja do tehničnih težav v omrežju Signal. Ekipa vzdrževalcev se trudi, da bodo čimprej odpravljene.",
+    "description": "The title of outage dialog during service outage."
+  },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "Potrebna je posodobitev",
     "description": "The title of update dialog on install screen when user OS is unsupported"
@@ -6150,27 +6205,33 @@
   },
   "icu:NSIS__retry-dialog--first-line": {
     "messageformat": "Signal se ne more zapreti.",
-    "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
+    "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation.",
+    "ignoreUnused": true
   },
   "icu:NSIS__retry-dialog--second-line": {
     "messageformat": "Poskusite ga zapreti ročno in kliknite Ponovi za nadaljevanje.",
-    "description": "Second line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
+    "description": "Second line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation.",
+    "ignoreUnused": true
   },
   "icu:NSIS__appRunning": {
     "messageformat": "{appName} teče.\nKliknite OK za prekinitev.\nČe se ne zapre, ga poskusite zapreti ročno.",
-    "description": "The contents of a dialog displayed when Windows installer detect that the application is running and asks user to close it. Note: please keep the line breaks so that the text occupies three separate lines"
+    "description": "The contents of a dialog displayed when Windows installer detect that the application is running and asks user to close it. Note: please keep the line breaks so that the text occupies three separate lines",
+    "ignoreUnused": true
   },
   "icu:NSIS__decompressionFailed": {
     "messageformat": "Neuspešno razširjanje datotek. Poskusite ponovno zagnati inštalacijo.",
-    "description": "Displayed when Windows installer cannot decompress application files"
+    "description": "Displayed when Windows installer cannot decompress application files",
+    "ignoreUnused": true
   },
   "icu:NSIS__uninstallFailed": {
     "messageformat": "Neuspešno odnameščanje starih datotek. Poskusite ponovno zagnati inštalacijo.",
-    "description": "Displayed when Windows installer cannot uninstall the old application"
+    "description": "Displayed when Windows installer cannot uninstall the old application",
+    "ignoreUnused": true
   },
   "icu:NSIS__semver-downgrade": {
     "messageformat": "Novejša različica Signala je že nameščena. Ste prepričani, da želite nadaljevati?",
-    "description": "A text of the dialog displayed when user tries to overwrite Signal installation with an older version."
+    "description": "A text of the dialog displayed when user tries to overwrite Signal installation with an older version.",
+    "ignoreUnused": true
   },
   "icu:CrashReportDialog__title": {
     "messageformat": "Aplikacija se je zrušila",
@@ -6218,7 +6279,7 @@
   },
   "icu:MediaEditor__control--sticker": {
     "messageformat": "Nalepke",
-    "description": "Label for the sticker button in the media editor"
+    "description": "(Deleted 2024/03/07) Label for the sticker button in the media editor"
   },
   "icu:MediaEditor__control--crop": {
     "messageformat": "Obreži in zarotiraj",
@@ -6246,7 +6307,7 @@
   },
   "icu:MediaEditor__text--underline": {
     "messageformat": "Podčrtano",
-    "description": "Describes what attribute the color picker will change on the text"
+    "description": "(Deleted 2024/03/07) Describes what attribute the color picker will change on the text"
   },
   "icu:MediaEditor__draw--pen": {
     "messageformat": "Pero",
@@ -6290,11 +6351,11 @@
   },
   "icu:MediaEditor__crop--crop": {
     "messageformat": "Obreži",
-    "description": "Performs the crop"
+    "description": "(Deleted 2024/03/07) Performs the crop"
   },
   "icu:MediaEditor__caption-button": {
     "messageformat": "Dodaj sporočilo",
-    "description": "Label of the button on the bottom of the media editor that trigger the add-caption dialog"
+    "description": "(Deleted 2024/03/07) Label of the button on the bottom of the media editor that trigger the add-caption dialog"
   },
   "icu:MediaEditor__crop-preset--freeform": {
     "messageformat": "Prosta oblika",
@@ -6387,6 +6448,26 @@
   "icu:payment-event-notification-check-primary-device": {
     "messageformat": "Preverite stanje tega plačila v vaši primarni napravi",
     "description": "Payment event notification check device label"
+  },
+  "icu:MessageRequestResponseNotification__Message--Accepted": {
+    "messageformat": "Sprejeli ste prošnjo za pošiljanje sporočila",
+    "description": "Message request response notification message when the user accepted the message request or unblocked another user"
+  },
+  "icu:MessageRequestResponseNotification__Message--Reported": {
+    "messageformat": "Prijavljeno kot neželeno",
+    "description": "Message request response notification message when the user reported the message request as spam"
+  },
+  "icu:MessageRequestResponseNotification__Message--Blocked": {
+    "messageformat": "To osebo ste blokirali",
+    "description": "Message request response notification message when the user blocked another user"
+  },
+  "icu:MessageRequestResponseNotification__Button--Options": {
+    "messageformat": "Možnosti",
+    "description": "Message request response notification button to show options"
+  },
+  "icu:MessageRequestResponseNotification__Button--LearnMore": {
+    "messageformat": "Več o tem",
+    "description": "Message request response notification button to learn more"
   },
   "icu:SignalConnectionsModal__title": {
     "messageformat": "Signal povezave",
@@ -6498,7 +6579,7 @@
   },
   "icu:StoriesSettings__new-list--visibility": {
     "messageformat": "Samo vi lahko vidite ime te Zgodbe.",
-    "description": "Explanation about the visibility of custom distribution list names"
+    "description": "(Deleted 2024/03/07) Explanation about the visibility of custom distribution list names"
   },
   "icu:StoriesSettings__custom-story-subtitle": {
     "messageformat": "Zgodba po meri",
@@ -6574,7 +6655,7 @@
   },
   "icu:StoriesSettings__mine__all--description": {
     "messageformat": "Deli s vsemi povezavami",
-    "description": "Description of button StoriesSettings__mine__all--label"
+    "description": "(Deleted 2024/03/07) Description of button StoriesSettings__mine__all--label"
   },
   "icu:StoriesSettings__mine__exclude--label": {
     "messageformat": "Vsi razen ...",
@@ -6582,7 +6663,7 @@
   },
   "icu:StoriesSettings__mine__exclude--description": {
     "messageformat": "{num, plural, one {{num,number} oseba izključena} two {{num,number}osebi izključeni} few {{num,number} osebe izključene} other {{num,number} ljudi izključenih}}",
-    "description": "Description of how many people are excluded in a list"
+    "description": "(Deleted 2024/03/07) Description of how many people are excluded in a list"
   },
   "icu:StoriesSettings__mine__only--label": {
     "messageformat": "Deli le s/z ...",
@@ -6590,11 +6671,11 @@
   },
   "icu:StoriesSettings__mine__only--description": {
     "messageformat": "Deli le z izbranimi ljudmi",
-    "description": "Description of button StoriesSettings__mine__only--label"
+    "description": "(Deleted 2024/03/07) Description of button StoriesSettings__mine__only--label"
   },
   "icu:StoriesSettings__mine__only--description--people": {
     "messageformat": "{num,number} ljudi",
-    "description": "Description of how many people are in the exclusive allow list"
+    "description": "(Deleted 2024/03/07) Description of how many people are in the exclusive allow list"
   },
   "icu:StoriesSettings__mine__disclaimer--link": {
     "messageformat": "Izberite, kdo lahko vidi vašo Zgodbo. Spremembe ne bodo vplivale na že poslane Zgodbe. <learnMoreLink>Preberite več.</learnMoreLink>",
@@ -6706,19 +6787,19 @@
   },
   "icu:SendStoryModal__my-stories-description-all": {
     "messageformat": "{viewersCount, plural, one {Vse Signal povezave · 1 gledalec_ka} two {Vse Signal povezave · {viewersCount,number} gledalca_ki} few {Vse Signal povezave · {viewersCount,number} gledalci_ke} other {Vse Signal povezave · {viewersCount,number} gledalcev_k}}",
-    "description": "Shown as a subtitle under My Stories option in the send-story-to dialog when not exluding anyone"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle under My Stories option in the send-story-to dialog when not exluding anyone"
   },
   "icu:SendStoryModal__my-stories-description-excluding": {
     "messageformat": "{excludedCount, plural, one {Vse Signal povezave · 1 izključena} two {Vse Signal povezave · {excludedCount,number} izključeni} few {Vse Signal povezave · {excludedCount,number} izključene} other {Vse Signal povezave · {excludedCount,number} izključenih}}",
-    "description": "Shown as a subtitle under My Stories option in the send-story-to dialog when excluding some"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle under My Stories option in the send-story-to dialog when excluding some"
   },
   "icu:SendStoryModal__private-story-description": {
     "messageformat": "{viewersCount, plural, one {Zasebna zgodba · {viewersCount,number} gledalec_ka} two {Zasebna zgodba · {viewersCount,number} gledalca_ki} few {Zasebna zgodba · {viewersCount,number} gledalci_ke} other {Zasebna zgodba · {viewersCount,number} gledalcev_k}}",
-    "description": "Shown as a subtitle of each private story in the send-story-to dialog"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle of each private story in the send-story-to dialog"
   },
   "icu:SendStoryModal__group-story-description": {
     "messageformat": "{membersCount, plural, one {Skupinska zgodba · 1 član_ica} two {Skupinska zgodba · {membersCount,number} člana_ici} few {Skupinska zgodba · {membersCount,number} člani_ce} other {Skupinska zgodba · {membersCount,number} članov_ic}}",
-    "description": "Shown as a subtitle of each group story in the send-story-to dialog"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle of each group story in the send-story-to dialog"
   },
   "icu:Stories__settings-toggle--title": {
     "messageformat": "Deljenje & ogled zgodb",
@@ -6918,7 +6999,7 @@
   },
   "icu:StoryCreator__input-placeholder": {
     "messageformat": "Dodaj tekst",
-    "description": "Placeholder to add text"
+    "description": "(Deleted 2024/03/07) Placeholder to add text"
   },
   "icu:StoryCreator__text--regular": {
     "messageformat": "Običajno",
@@ -6981,7 +7062,7 @@
     "description": "Label for when a person reacts to a story"
   },
   "icu:Quote__story-reaction--you": {
-    "messageformat": "Reacted to your story",
+    "messageformat": "Odzivi na vašo zgodbo",
     "description": "Label for when someone reacts to your story"
   },
   "icu:Quote__story-reaction--single": {
@@ -7123,22 +7204,6 @@
   "icu:UsernameOnboardingModalBody__row__qr__body": {
     "messageformat": "Uporabniška imena imajo edinstveno QR kodo in povezavo, ki jo lahko delite s prijatelji, da lahko hitro začnejo klepet z vami.",
     "description": "Body of the third row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "Uporabniška imena so povezana z nizom številk in niso v skupni rabi v vašem profilu",
-    "description": "(Deleted 01/16/2023) Content of the first row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Vsako uporabniško ime ima edinstveno QR kodo in povezavo, ki jo lahko delite s prijatelji, da začnejo klepet z vami",
-    "description": "(Deleted 01/16/2023) Content of the second row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "Izklopite odkrivanje telefonske številke v razdelku Nastavitve > Zasebnost > Telefonska številka > Kdo lahko najde mojo številko, da uporabite svoje uporabniško ime kot glavni način stopanja v stik z vami.",
-    "description": "(Deleted 01/16/2023) Content of the third row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__learn-more": {
-    "messageformat": "Več o tem",
-    "description": "(Deleted 01/16/2023) Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
     "messageformat": "Nastavitev uporabniškega imena",
@@ -7300,6 +7365,10 @@
     "messageformat": "{count, plural, one {Še ena oseba tipka.} two {Še {count,number} osebi tipkata.} few {Še {count,number} osebe tipkajo.} other {Še {count,number} oseb tipka.}}",
     "description": "Group chat multiple person typing indicator when space isn't available to show every avatar, this is the count of avatars hidden."
   },
+  "icu:TransportError": {
+    "messageformat": "Experimental WebSocket Transport is seeing too many errors. Please submit a debug log",
+    "description": "A toast that is shown to alpha/beta version users when an experimental transport is seeing too many errors"
+  },
   "icu:WhoCanFindMeReadOnlyToast": {
     "messageformat": "Če želite spremeniti to nastavitev, nastavite »Kdo lahko vidi mojo številko« na »Nihče«.",
     "description": "A toast displayed when user clicks disabled option in settings window"
@@ -7310,33 +7379,46 @@
   },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "Ta različica vsebuje majhne spremembe in popravke, ki omogočajo, da Signal teče brez težav.",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--1": {
     "messageformat": "Dodatne majhne prilagoditve, popravki napak in izboljšave zmogljivosti. Hvala, da uporabljate Signal!",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
     "messageformat": "Nekaj popravkov napak za nemoteno delovanje vaše aplikacije. Več razburljivih sprememb na obzorju! ",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
     "messageformat": "Prilagoditve, popravki napak in izboljšave zmogljivosti. Nadaljujte s pošiljanjem sporočil, klicanjem in videoklepetom kot običajno.",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--4": {
     "messageformat": "Trdo delamo, da odpravimo napake in uvedemo druge izboljšave delovanja, da bo aplikacija za vas delovala nemoteno. ",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--5": {
     "messageformat": "Dodatne majhne prilagoditve, popravki napak in raznoliki načrti za prihodnost.",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Majhne prilagoditve, popravki napak in izboljšave zmogljivosti. Hvala, da uporabljate Signal!",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.1--0": {
-    "messageformat": "This update enables support for all of the new emoji characters in Emoji version 15.1. People keep asking us what our favorite new emoji is, but answering that question is a “lime” we won't cross."
+  "icu:WhatsNew__v7.3--0": {
+    "messageformat": "Sedaj lahko počistite neodgovorjene klice v telefonu, posodobljena pa bo tudi značka na zavihku klicev aplikacije Signal Desktop."
+  },
+  "icu:WhatsNew__v7.3--1": {
+    "messageformat": "Preoblikovali smo tudi kazalnik števila značk v operacijskem sistemu Windows. Zdaj se barva v opravilni vrstici ujema z barvo v sistemski plošči. V modi je pomembna usklajenost in dodatek rdeče barve ustvari popoln pomladni videz."
+  },
+  "icu:WhatsNew__v7.4--0": {
+    "messageformat": "This update clears out a few bugs just in time for spring cleaning, including more consistent conversation sort logic and improved behavior if the app encounters DNS lookup timeouts due to poor network connectivity."
   }
 }

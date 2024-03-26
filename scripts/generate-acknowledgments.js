@@ -7,15 +7,19 @@ const { join } = require('path');
 const pMap = require('p-map');
 const prettier = require('prettier');
 
+// During development, you might use local versions of dependencies which are missing
+// acknowledgment files. In this case we'll skip rebuilding the acknowledgment files.
+// Enable this flag to throw an error.
+const REQUIRE_SIGNAL_LIB_FILES = Boolean(process.env.REQUIRE_SIGNAL_LIB_FILES);
+
 const {
   dependencies = {},
   optionalDependencies = {},
 } = require('../package.json');
 
-const SKIPPED_DEPENDENCIES = new Set([
-  '@signalapp/libsignal-client',
-  '@signalapp/ringrtc',
-]);
+const SIGNAL_LIBS = ['@signalapp/libsignal-client', '@signalapp/ringrtc'];
+
+const SKIPPED_DEPENDENCIES = new Set(SIGNAL_LIBS);
 
 const rootDir = join(__dirname, '..');
 const nodeModulesPath = join(rootDir, 'node_modules');
@@ -70,6 +74,37 @@ async function getMarkdownForDependency(dependencyName) {
   ].join('\n');
 }
 
+async function getMarkdownForSignalLib(dependencyName) {
+  const dependencyRootPath = join(nodeModulesPath, dependencyName);
+  const licenseFilePath = join(
+    dependencyRootPath,
+    'dist',
+    'acknowledgments.md'
+  );
+
+  let licenseBody;
+  try {
+    licenseBody = await fs.promises.readFile(licenseFilePath, 'utf8');
+  } catch (err) {
+    if (err) {
+      if (err.code === 'ENOENT' && !REQUIRE_SIGNAL_LIB_FILES) {
+        console.warn(
+          `Missing acknowledgments file for ${dependencyName}. Skipping generation of acknowledgments.`
+        );
+        process.exit(0);
+      }
+
+      throw err;
+    }
+  }
+
+  return [
+    `# Acknowledgements for ${dependencyName}`,
+    '',
+    licenseBody.replace(/^# Acknowledgments/, '').trim(),
+  ].join('\n');
+}
+
 async function main() {
   assert.deepStrictEqual(
     Object.keys(optionalDependencies),
@@ -94,6 +129,16 @@ async function main() {
     }
   );
 
+  // For our libraries copy the respective acknowledgement lists
+  const markdownsFromSignalLibs = await pMap(
+    SIGNAL_LIBS,
+    getMarkdownForSignalLib,
+    {
+      concurrency: 100,
+      timeout: 1000 * 60 * 2,
+    }
+  );
+
   const unformattedOutput = [
     '<!-- Copyright 2020 Signal Messenger, LLC -->',
     '<!-- SPDX-License-Identifier: AGPL-3.0-only -->',
@@ -106,6 +151,8 @@ async function main() {
     '## Kyber Patent License',
     '',
     '<https://csrc.nist.gov/csrc/media/Projects/post-quantum-cryptography/documents/selected-algos-2022/nist-pqc-license-summary-and-excerpts.pdf>',
+    '',
+    markdownsFromSignalLibs.join('\n\n'),
   ].join('\n');
 
   const prettierConfig = await prettier.resolveConfig(destinationPath);

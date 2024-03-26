@@ -32,6 +32,7 @@ import type { AnyPaymentEvent } from './types/Payment';
 
 import AccessRequiredEnum = Proto.AccessControl.AccessRequired;
 import MemberRoleEnum = Proto.Member.Role;
+import type { MessageRequestResponseEvent } from './types/MessageRequestResponseEvent';
 
 export type LastMessageStatus =
   | 'paused'
@@ -157,6 +158,7 @@ export type MessageAttributesType = {
   logger?: unknown;
   message?: unknown;
   messageTimer?: unknown;
+  messageRequestResponseEvent?: MessageRequestResponseEvent;
   profileChange?: ProfileNameChangeType;
   payment?: AnyPaymentEvent;
   quote?: QuotedMessageType;
@@ -192,7 +194,9 @@ export type MessageAttributesType = {
     | 'timer-notification'
     | 'universal-timer-notification'
     | 'contact-removed-notification'
-    | 'verified-change';
+    | 'title-transition-notification'
+    | 'verified-change'
+    | 'message-request-response-event';
   body?: string;
   attachments?: Array<AttachmentType>;
   preview?: Array<LinkPreviewType>;
@@ -224,6 +228,9 @@ export type MessageAttributesType = {
     e164: string;
   };
   conversationMerge?: {
+    renderInfo: ConversationRenderInfoType;
+  };
+  titleTransition?: {
     renderInfo: ConversationRenderInfoType;
   };
 
@@ -340,6 +347,7 @@ export type ConversationAttributesType = {
   profileKeyCredential?: string | null;
   profileKeyCredentialExpiration?: number | null;
   lastProfile?: ConversationLastProfileType;
+  needsTitleTransition?: boolean;
   quotedMessageId?: string | null;
   sealedSender?: unknown;
   sentMessageCount?: number;
@@ -356,6 +364,7 @@ export type ConversationAttributesType = {
   draftEditMessage?: DraftEditMessageType;
   hasPostedStory?: boolean;
   isArchived?: boolean;
+  isReported?: boolean;
   name?: string;
   systemGivenName?: string;
   systemFamilyName?: string;

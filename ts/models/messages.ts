@@ -76,13 +76,11 @@ import {
   hasErrors,
   isCallHistory,
   isChatSessionRefreshed,
-  isContactRemovedNotification,
   isDeliveryIssue,
   isEndSession,
   isExpirationTimerUpdate,
   isGiftBadge,
   isGroupUpdate,
-  isGroupV1Migration,
   isGroupV2Change,
   isIncoming,
   isKeyChange,
@@ -95,6 +93,7 @@ import {
   isVerifiedChange,
   isConversationMerge,
   isPhoneNumberDiscovery,
+  isTitleTransitionNotification,
 } from '../state/selectors/message';
 import type { ReactionAttributesType } from '../messageModifiers/Reactions';
 import { isInCall } from '../state/selectors/calling';
@@ -271,28 +270,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     // the message was received. If this field doesn't exist on the message
     // then we can trust received_at.
     return Number(this.get('received_at_ms') || this.get('received_at'));
-  }
-
-  isNormalBubble(): boolean {
-    const { attributes } = this;
-
-    return (
-      !isCallHistory(attributes) &&
-      !isChatSessionRefreshed(attributes) &&
-      !isContactRemovedNotification(attributes) &&
-      !isConversationMerge(attributes) &&
-      !isEndSession(attributes) &&
-      !isExpirationTimerUpdate(attributes) &&
-      !isGroupUpdate(attributes) &&
-      !isGroupV1Migration(attributes) &&
-      !isGroupV2Change(attributes) &&
-      !isKeyChange(attributes) &&
-      !isPhoneNumberDiscovery(attributes) &&
-      !isProfileChange(attributes) &&
-      !isUniversalTimerNotification(attributes) &&
-      !isUnsupportedMessage(attributes) &&
-      !isVerifiedChange(attributes)
-    );
   }
 
   async hydrateStoryContext(
@@ -627,6 +604,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       isUniversalTimerNotification(attributes);
     const isConversationMergeValue = isConversationMerge(attributes);
     const isPhoneNumberDiscoveryValue = isPhoneNumberDiscovery(attributes);
+    const isTitleTransitionNotificationValue =
+      isTitleTransitionNotification(attributes);
 
     const isPayment = messageHasPaymentEvent(attributes);
 
@@ -659,7 +638,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       isProfileChangeValue ||
       isUniversalTimerNotificationValue ||
       isConversationMergeValue ||
-      isPhoneNumberDiscoveryValue;
+      isPhoneNumberDiscoveryValue ||
+      isTitleTransitionNotificationValue;
 
     return !hasSomethingToDisplay;
   }
@@ -2524,6 +2504,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
           'handleReaction: targetConversation not found'
         );
 
+        window.MessageCache.toMessageAttributes(generatedMessage.attributes);
         generatedMessage.set({
           expireTimer: isDirectConversation(targetConversation.attributes)
             ? targetConversation.get('expireTimer')

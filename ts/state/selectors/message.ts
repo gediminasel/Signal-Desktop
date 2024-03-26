@@ -29,6 +29,7 @@ import type { PropsData as TimerNotificationProps } from '../../components/conve
 import type { PropsData as ChangeNumberNotificationProps } from '../../components/conversation/ChangeNumberNotification';
 import type { PropsData as SafetyNumberNotificationProps } from '../../components/conversation/SafetyNumberNotification';
 import type { PropsData as VerificationNotificationProps } from '../../components/conversation/VerificationNotification';
+import type { PropsData as TitleTransitionNotificationProps } from '../../components/conversation/TitleTransitionNotification';
 import type { PropsDataType as GroupsV2Props } from '../../components/conversation/GroupV2Change';
 import type { PropsDataType as GroupV1MigrationPropsType } from '../../components/conversation/GroupV1Migration';
 import type { PropsDataType as DeliveryIssuePropsType } from '../../components/conversation/DeliveryIssueNotification';
@@ -129,6 +130,7 @@ import type { AnyPaymentEvent } from '../../types/Payment';
 import { isPaymentNotificationEvent } from '../../types/Payment';
 import {
   getTitleNoDefault,
+  getTitle,
   getNumber,
   renderNumber,
 } from '../../util/getTitle';
@@ -138,6 +140,7 @@ import { CallMode } from '../../types/Calling';
 import { CallDirection } from '../../types/CallDisposition';
 import { getCallIdFromEra } from '../../util/callDisposition';
 import { LONG_MESSAGE } from '../../types/MIME';
+import type { MessageRequestResponseNotificationData } from '../../components/conversation/MessageRequestResponseNotification';
 
 export { isIncoming, isOutgoing, isStory };
 
@@ -934,6 +937,13 @@ export function getPropsForBubble(
       timestamp,
     };
   }
+  if (isTitleTransitionNotification(message)) {
+    return {
+      type: 'titleTransitionNotification',
+      data: getPropsForTitleTransitionNotification(message),
+      timestamp,
+    };
+  }
   if (isChatSessionRefreshed(message)) {
     return {
       type: 'chatSessionRefreshed',
@@ -974,6 +984,14 @@ export function getPropsForBubble(
     };
   }
 
+  if (isMessageRequestResponse(message)) {
+    return {
+      type: 'messageRequestResponse',
+      data: getPropsForMessageRequestResponse(message),
+      timestamp,
+    };
+  }
+
   const data = getPropsForMessage(message, options);
 
   return {
@@ -981,6 +999,27 @@ export function getPropsForBubble(
     data,
     timestamp: data.timestamp,
   };
+}
+
+export function isNormalBubble(message: MessageWithUIFieldsType): boolean {
+  return (
+    !isCallHistory(message) &&
+    !isChatSessionRefreshed(message) &&
+    !isContactRemovedNotification(message) &&
+    !isConversationMerge(message) &&
+    !isEndSession(message) &&
+    !isExpirationTimerUpdate(message) &&
+    !isGroupUpdate(message) &&
+    !isGroupV1Migration(message) &&
+    !isGroupV2Change(message) &&
+    !isKeyChange(message) &&
+    !isPhoneNumberDiscovery(message) &&
+    !isTitleTransitionNotification(message) &&
+    !isProfileChange(message) &&
+    !isUniversalTimerNotification(message) &&
+    !isUnsupportedMessage(message) &&
+    !isVerifiedChange(message)
+  );
 }
 
 function getPropsForPaymentEvent(
@@ -1464,6 +1503,24 @@ function getPropsForProfileChange(
   } as ProfileChangeNotificationPropsType;
 }
 
+// Message Request Response Event
+
+export function isMessageRequestResponse(
+  message: MessageAttributesType
+): boolean {
+  return message.type === 'message-request-response-event';
+}
+
+function getPropsForMessageRequestResponse(
+  message: MessageAttributesType
+): MessageRequestResponseNotificationData {
+  const { messageRequestResponseEvent } = message;
+  if (!messageRequestResponseEvent) {
+    throw new Error('getPropsForMessageRequestResponse: event is missing!');
+  }
+  return { messageRequestResponseEvent };
+}
+
 // Universal Timer Notification
 
 // Note: smart, so props not generated here
@@ -1499,6 +1556,31 @@ function getPropsForChangeNumberNotification(
   return {
     sender: conversationSelector(message.sourceServiceId),
     timestamp: message.sent_at,
+  };
+}
+
+// Title Transition Notification
+
+export function isTitleTransitionNotification(
+  message: MessageWithUIFieldsType
+): boolean {
+  return (
+    message.type === 'title-transition-notification' &&
+    message.titleTransition != null
+  );
+}
+
+function getPropsForTitleTransitionNotification(
+  message: MessageWithUIFieldsType
+): TitleTransitionNotificationProps {
+  strictAssert(
+    message.titleTransition != null,
+    'Invalid attributes for title-transition-notification'
+  );
+  const { renderInfo } = message.titleTransition;
+  const oldTitle = getTitle(renderInfo);
+  return {
+    oldTitle,
   };
 }
 

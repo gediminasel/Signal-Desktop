@@ -27,7 +27,7 @@ import { isMe } from './whatTypeOfConversation';
 import * as log from '../logging/log';
 import * as Errors from '../types/errors';
 import { incrementMessageCounter } from './incrementMessageCounter';
-import { ReadStatus, maxReadStatus } from '../messages/MessageReadStatus';
+import { ReadStatus } from '../messages/MessageReadStatus';
 import { SeenStatus, maxSeenStatus } from '../MessageSeenStatus';
 import { canConversationBeUnarchived } from './canConversationBeUnarchived';
 import type {
@@ -855,26 +855,21 @@ async function saveCallHistory(
     return callHistory;
   }
 
-  let unread = false;
+  let unseen = false;
   if (callHistory.mode === CallMode.Direct) {
-    unread =
+    unseen =
       callHistory.direction === CallDirection.Incoming &&
       (callHistory.status === DirectCallStatus.Missed ||
         callHistory.status === DirectCallStatus.Pending);
   } else if (callHistory.mode === CallMode.Group) {
-    unread =
+    unseen =
       callHistory.direction === CallDirection.Incoming &&
       (callHistory.status === GroupCallStatus.Ringing ||
         callHistory.status === GroupCallStatus.GenericGroupCall ||
         callHistory.status === GroupCallStatus.Missed);
   }
 
-  let readStatus = unread ? ReadStatus.Unread : ReadStatus.Read;
-  let seenStatus = unread ? SeenStatus.Unseen : SeenStatus.NotApplicable;
-
-  if (prevMessage?.readStatus != null) {
-    readStatus = maxReadStatus(readStatus, prevMessage.readStatus);
-  }
+  let seenStatus = unseen ? SeenStatus.Unseen : SeenStatus.NotApplicable;
   if (prevMessage?.seenStatus != null) {
     seenStatus = maxSeenStatus(seenStatus, prevMessage.seenStatus);
   }
@@ -890,7 +885,7 @@ async function saveCallHistory(
       receivedAtCounter ??
       incrementMessageCounter(),
     received_at_ms: prevMessage?.received_at_ms ?? callHistory.timestamp,
-    readStatus,
+    readStatus: ReadStatus.Read,
     seenStatus,
     callId: callHistory.callId,
   };
@@ -927,13 +922,6 @@ async function saveCallHistory(
     );
   });
 
-  await conversation.updateUnread().catch(error => {
-    log.error(
-      'saveCallHistory: Failed to update unread',
-      Errors.toLogFormat(error)
-    );
-  });
-
   conversation.set(
     'active_at',
     Math.max(conversation.get('active_at') ?? 0, callHistory.timestamp)
@@ -944,6 +932,8 @@ async function saveCallHistory(
   } else {
     window.Signal.Data.updateConversation(conversation.attributes);
   }
+
+  window.reduxActions.callHistory.updateCallHistoryUnreadCount();
 
   return callHistory;
 }
@@ -1063,6 +1053,49 @@ export async function clearCallHistoryDataAndSync(): Promise<void> {
     });
   } catch (error) {
     log.error('clearCallHistory: Failed to clear call history', error);
+  }
+}
+
+export async function markAllCallHistoryReadAndSync(): Promise<void> {
+  try {
+    const timestamp = Date.now();
+
+    log.info(
+      `markAllCallHistoryReadAndSync: Marking call history read before ${timestamp}`
+    );
+    await window.Signal.Data.markAllCallHistoryRead(timestamp);
+
+    const ourAci = window.textsecure.storage.user.getCheckedAci();
+
+    const callLogEvent = new Proto.SyncMessage.CallLogEvent({
+      type: Proto.SyncMessage.CallLogEvent.Type.MARKED_AS_READ,
+      timestamp: Long.fromNumber(timestamp),
+    });
+
+    const syncMessage = MessageSender.createSyncMessage();
+    syncMessage.callLogEvent = callLogEvent;
+
+    const contentMessage = new Proto.Content();
+    contentMessage.syncMessage = syncMessage;
+
+    const { ContentHint } = Proto.UnidentifiedSenderMessage.Message;
+
+    log.info('markAllCallHistoryReadAndSync: Queueing sync message');
+    await singleProtoJobQueue.add({
+      contentHint: ContentHint.RESENDABLE,
+      serviceId: ourAci,
+      isSyncMessage: true,
+      protoBase64: Bytes.toBase64(
+        Proto.Content.encode(contentMessage).finish()
+      ),
+      type: 'callLogEventSync',
+      urgent: false,
+    });
+  } catch (error) {
+    log.error(
+      'markAllCallHistoryReadAndSync: Failed to mark call history read',
+      error
+    );
   }
 }
 

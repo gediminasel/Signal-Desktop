@@ -104,7 +104,6 @@ export type PropsType = {
   preferredWidthFromStorage: number;
   selectedConversationId: undefined | string;
   targetedMessageId: undefined | string;
-  regionCode: string | undefined;
   challengeStatus: 'idle' | 'required' | 'pending';
   setChallengeStatus: (status: 'idle') => void;
   crashReportCount: number;
@@ -635,7 +634,7 @@ export function LeftPane({
 
   return (
     <NavSidebar
-      title="Chats"
+      title={i18n('icu:LeftPane--chats')}
       hideHeader={hideHeader}
       i18n={i18n}
       otherTabsUnreadStats={otherTabsUnreadStats}

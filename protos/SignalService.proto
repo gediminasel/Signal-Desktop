@@ -450,9 +450,11 @@ message Verified {
 message SyncMessage {
   message Sent {
     message UnidentifiedDeliveryStatus {
-      optional string destination     = 1;
+      optional string destination = 1;
       optional string destinationServiceId = 3;
-      optional bool   unidentified    = 2;
+      optional bool unidentified = 2;
+      reserved /* destinationPni */ 4;
+      optional bytes destinationPniIdentityKey = 5; // Only set for PNI destinations
     }
 
     message StoryMessageRecipient {
@@ -548,6 +550,8 @@ message SyncMessage {
       DELETE           = 2;
       BLOCK            = 3;
       BLOCK_AND_DELETE = 4;
+      SPAM             = 5;
+      BLOCK_AND_SPAM   = 6;
     }
 
     optional string threadE164 = 1;
@@ -614,6 +618,7 @@ message SyncMessage {
   message CallLogEvent {
     enum Type {
       CLEAR = 0;
+      MARKED_AS_READ = 1;
     }
 
     optional Type   type      = 1;

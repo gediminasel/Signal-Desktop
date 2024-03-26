@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { createWriteStream } from 'fs';
-import { isNumber, omit } from 'lodash';
+import { isNumber } from 'lodash';
 import type { Readable } from 'stream';
 import { Transform } from 'stream';
 import { pipeline } from 'stream/promises';
@@ -28,7 +28,7 @@ import type { ProcessedAttachment } from './Types.d';
 import type { WebAPIType } from './WebAPI';
 import { createName, getRelativePath } from '../windows/attachments';
 
-function getCdn(attachment: ProcessedAttachment) {
+export function getCdn(attachment: ProcessedAttachment): string {
   const { cdnId, cdnKey } = attachment;
   const cdn = cdnId || cdnKey;
   strictAssert(cdn, 'Attachment was missing cdnId or cdnKey');
@@ -100,8 +100,11 @@ export async function downloadAttachmentV2(
     dropNull(cdnNumber),
     options
   );
+  log.info(`${logId} got download stream`);
 
   const cipherTextRelativePath = await downloadToDisk({ downloadStream, size });
+  log.info(`${logId} downloaded encrypted file to disk`);
+
   const cipherTextAbsolutePath =
     window.Signal.Migrations.getAbsoluteAttachmentPath(cipherTextRelativePath);
 
@@ -112,11 +115,12 @@ export async function downloadAttachmentV2(
     size,
     theirDigest: Bytes.fromBase64(digest),
   });
+  log.info(`${logId} successfully decrypted`);
 
   safeUnlinkSync(cipherTextAbsolutePath);
 
   return {
-    ...omit(attachment, 'key'),
+    ...attachment,
     path,
     size,
     contentType: contentType

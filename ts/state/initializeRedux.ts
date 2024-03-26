@@ -11,29 +11,36 @@ import type { StoryDistributionListDataType } from './ducks/storyDistributionLis
 import { actionCreators } from './actions';
 import { createStore } from './createStore';
 import { getInitialState } from './getInitialState';
+import type { ThemeType } from '../types/Util';
 
 export function initializeRedux({
   callsHistory,
+  callsHistoryUnreadCount,
   initialBadgesState,
   mainWindowStats,
   menuOptions,
   stories,
   storyDistributionLists,
+  theme,
 }: {
   callsHistory: ReadonlyArray<CallHistoryDetails>;
+  callsHistoryUnreadCount: number;
   initialBadgesState: BadgesStateType;
   mainWindowStats: MainWindowStatsType;
   menuOptions: MenuOptionsType;
   stories: Array<StoryDataType>;
   storyDistributionLists: Array<StoryDistributionListDataType>;
+  theme: ThemeType;
 }): void {
   const initialState = getInitialState({
     badges: initialBadgesState,
     callsHistory,
+    callsHistoryUnreadCount,
     mainWindowStats,
     menuOptions,
     stories,
     storyDistributionLists,
+    theme,
   });
 
   const store = createStore(initialState);

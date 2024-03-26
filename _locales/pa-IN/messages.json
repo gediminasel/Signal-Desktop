@@ -16,18 +16,6 @@
       }
     ]
   },
-  "icu:AddCaptionModal__title": {
-    "messageformat": "ਸੁਨੇਹਾ ਜੋੜੋ",
-    "description": "(Deleted 12/14/2023) Shown as the title of the dialog that allows you to add a caption to a story"
-  },
-  "icu:AddCaptionModal__placeholder": {
-    "messageformat": "ਸੁਨੇਹਾ",
-    "description": "(Deleted 12/14/2023) Placeholder text for textarea when adding a caption/message (we don't know which yet so we default to message)"
-  },
-  "icu:AddCaptionModal__submit-button": {
-    "messageformat": "ਮੁਕੰਮਲ",
-    "description": "(Deleted 12/14/2023) Label on the button that submits changes to a story's caption in the add-caption dialog"
-  },
   "icu:AddUserToAnotherGroupModal__title": {
     "messageformat": "ਕਿਸੇ ਗਰੁੱਪ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ",
     "description": "Shown as the title of the dialog that allows you to add a contact to an group"
@@ -290,11 +278,11 @@
   },
   "icu:avatarMenuChatColors": {
     "messageformat": "ਚੈਟ ਦਾ ਰੰਗ",
-    "description": "One of the menu options available in the Avatar popup menu"
+    "description": "(Deleted 2024/03/07) One of the menu options available in the Avatar popup menu"
   },
   "icu:avatarMenuUpdateAvailable": {
     "messageformat": "Signal ਨੂੰ ਅੱਪਡੇਟ ਕਰੋ",
-    "description": "One of the menu options available in the Avatar popup menu"
+    "description": "(Deleted 2024/03/07) One of the menu options available in the Avatar popup menu"
   },
   "icu:loading": {
     "messageformat": "ਲੋਡ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ…",
@@ -440,6 +428,26 @@
     "messageformat": "ਸੁਨੇਹੇ ਚੁਣੋ",
     "description": "Shown in menu for conversation, allows the user to start selecting multiple messages in the conversation"
   },
+  "icu:ConversationHeader__MenuItem--Accept": {
+    "messageformat": "ਮਨਜ਼ੂਰ ਕਰੋ",
+    "description": "Shown in menu for conversation, allows the user to accept a message request"
+  },
+  "icu:ConversationHeader__MenuItem--Block": {
+    "messageformat": "ਪਾਬੰਦੀ ਲਗਾਓ",
+    "description": "Shown in menu for conversation, allows the user to block the contact"
+  },
+  "icu:ConversationHeader__MenuItem--Unblock": {
+    "messageformat": "ਪਾਬੰਦੀ ਹਟਾਓ",
+    "description": "Shown in menu for conversation, allows the user to unblock the contact"
+  },
+  "icu:ConversationHeader__MenuItem--ReportSpam": {
+    "messageformat": "ਸਪੈਮ ਦੀ ਰਿਪੋਰਟ ਕਰੋ",
+    "description": "Shown in menu for conversation, allows the user to report the conversation as spam"
+  },
+  "icu:ConversationHeader__MenuItem--DeleteChat": {
+    "messageformat": "ਚੈਟ ਮਿਟਾਓ",
+    "description": "Shown in menu for conversation, allows the user to delete the conversation"
+  },
   "icu:ContactListItem__menu": {
     "messageformat": "ਸੰਪਰਕ ਨੂੰ ਪ੍ਰਬੰਧਿਤ ਕਰੋ",
     "description": "Shown as aria label for context menu for a contact"
@@ -502,63 +510,63 @@
   },
   "icu:chooseDirectory": {
     "messageformat": "ਫੋਲਡਰ ਚੁਣੋ",
-    "description": "Button to allow the user to find a folder on disk"
+    "description": "(Deleted 2024/03/07) Button to allow the user to find a folder on disk"
   },
   "icu:chooseFile": {
     "messageformat": "ਫਾਇਲ ਚੁਣੋ",
-    "description": "Button to allow the user to find a file on disk"
+    "description": "(Deleted 2024/03/07) Button to allow the user to find a file on disk"
   },
   "icu:loadDataHeader": {
     "messageformat": "ਆਪਣਾ ਡੇਟਾ ਲੋਡ ਕਰੋ",
-    "description": "Header shown on the first screen in the data import process"
+    "description": "(Deleted 2024/03/07) Header shown on the first screen in the data import process"
   },
   "icu:loadDataDescription": {
     "messageformat": "ਤੁਸੀਂ ਹੁਣੇ ਨਿਰਯਾਤ ਪ੍ਰਕਿਰਿਆ ਨੂੰ ਪਾਰ ਕੀਤਾ ਹੈ, ਅਤੇ ਤੁਹਾਡੇ ਸੰਪਰਕ ਅਤੇ ਸੁਨੇਹੇ ਤੁਹਾਡੇ ਕੰਪਿਊਟਰ 'ਤੇ ਬੇਸਬਰੀ ਨਾਲ ਉਡੀਕ ਕਰ ਰਹੇ ਹਨ। ਉਸ ਫੋਲਡਰ ਦੀ ਚੋਣ ਕਰੋ ਜਿਸ ਵਿੱਚ ਤੁਹਾਡਾ ਸੰਭਾਲਿਆ ਹੋਇਆ Signal ਡੇਟਾ ਦਿੱਤਾ ਹੈ।",
-    "description": "Introduction to the process of importing messages and contacts from disk"
+    "description": "(Deleted 2024/03/07) Introduction to the process of importing messages and contacts from disk"
   },
   "icu:importChooserTitle": {
     "messageformat": "ਐਕਸਪੋਰਟ ਕੀਤੇ ਡੇਟਾ ਵਾਲੀ ਡਾਇਰੈਕਟਰੀ ਚੁਣੋ",
-    "description": "Title of the popup window used to select data previously exported"
+    "description": "(Deleted 2024/03/07) Title of the popup window used to select data previously exported"
   },
   "icu:importErrorHeader": {
     "messageformat": "ਕੁਝ ਗਲਤ ਵਾਪਰਿਆ!",
-    "description": "Header of the error screen after a failed import"
+    "description": "(Deleted 2024/03/07) Header of the error screen after a failed import"
   },
   "icu:importingHeader": {
     "messageformat": "ਸੰਪਰਕ ਤੇ ਸੁਨੇਹੇ ਲੋਡ ਕੀਤੇ ਜਾ ਰਹੇ ਹਨ",
-    "description": "Header of screen shown as data is import"
+    "description": "(Deleted 2024/03/07) Header of screen shown as data is import"
   },
   "icu:importErrorFirst": {
     "messageformat": "ਯਕੀਨੀ ਬਣਾਓ ਕਿ ਤੁਸੀਂ ਸਹੀ ਡਾਇਰੈਕਟਰੀ ਚੁਣੀ ਹੈ ਜਿਸ ਵਿੱਚ ਤੁਹਾਡਾ ਸੁਰੱਖਿਅਤ ਕੀਤਾ ਹੋਇਆ Signal ਡੇਟਾ ਮੌਜੂਦ ਹੈ। ਇਸਦਾ ਨਾਂ 'Signal ਨਿਰਯਾਤ' ਤੋਂ ਸ਼ੁਰੂ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ। ਤੁਸੀਂ ਆਪਣੇ ਡੇਟਾ ਦੀ ਇੱਕ ਨਵੀਂ ਕਾਪੀ Chrome ਐਪ ਤੋਂ ਵੀ ਸੰਭਾਲ ਸਕਦੇ ਹੋ।",
-    "description": "Message shown if the import went wrong; first paragraph"
+    "description": "(Deleted 2024/03/07) Message shown if the import went wrong; first paragraph"
   },
   "icu:importErrorSecond": {
     "messageformat": "ਜੇ ਤੁਹਾਡੇ ਲਈ ਇਹ ਕਦਮ ਕੰਮ ਨਹੀਂ ਕਰਦੇ, ਤਾਂ ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਡੀਬੱਗ ਲੌਗ (ਵੇਖੋ -> ਡੀਬੱਗ ਲੌਗ) ਜਮ੍ਹਾਂ ਕਰੋ ਤਾਂ ਜੋ ਅਸੀਂ ਮਾਈਗ੍ਰੇਟ ਹੋਣ ਵਿੱਚ ਤੁਹਾਡੀ ਮਦਦ ਕਰ ਸਕੀਏ!",
-    "description": "Message shown if the import went wrong; second paragraph"
+    "description": "(Deleted 2024/03/07) Message shown if the import went wrong; second paragraph"
   },
   "icu:importAgain": {
     "messageformat": "ਫੋਲਡਰ ਚੁਣੋ ਅਤੇ ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ",
-    "description": "Button shown if the user runs into an error during import, allowing them to start over"
+    "description": "(Deleted 2024/03/07) Button shown if the user runs into an error during import, allowing them to start over"
   },
   "icu:importCompleteHeader": {
     "messageformat": "ਸਫ਼ਲਤਾ!",
-    "description": "Header shown on the screen at the end of a successful import process"
+    "description": "(Deleted 2024/03/07) Header shown on the screen at the end of a successful import process"
   },
   "icu:importCompleteStartButton": {
     "messageformat": "Signal Desktop ਵਰਤਣਾ ਸ਼ੁਰੂ ਕਰੋ",
-    "description": "Button shown at end of successful import process, nothing left but a restart"
+    "description": "(Deleted 2024/03/07) Button shown at end of successful import process, nothing left but a restart"
   },
   "icu:importCompleteLinkButton": {
     "messageformat": "ਇਸ ਡਿਵਾਈਸ ਨੂੰ ਆਪਣੇ ਫ਼ੋਨ ਨਾਲ ਲਿੰਕ ਕਰੋ",
-    "description": "Button shown at end of successful 'light' import process, so the standard linking process still needs to happen"
+    "description": "(Deleted 2024/03/07) Button shown at end of successful 'light' import process, so the standard linking process still needs to happen"
   },
   "icu:selectedLocation": {
     "messageformat": "ਤੁਹਾਡਾ ਚੁਣਿਆ ਟਿਕਾਣਾ",
-    "description": "Message shown as the export location if we didn't capture the target directory"
+    "description": "(Deleted 2024/03/07) Message shown as the export location if we didn't capture the target directory"
   },
   "icu:upgradingDatabase": {
     "messageformat": "ਡੇਟਾਬੇਸ ਅੱਪਗ੍ਰੇਡ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ। ਇਸ ਨੂੰ ਕੁਝ ਸਮਾਂ ਲੱਗ ਸਕਦਾ ਹੈ…",
-    "description": "Message shown on the loading screen when we're changing database structure on first run of a new version"
+    "description": "(Deleted 2024/03/07) Message shown on the loading screen when we're changing database structure on first run of a new version"
   },
   "icu:loadingMessages--other": {
     "messageformat": "{daysAgo, plural, one {1 ਦਿਨ ਪਹਿਲਾਂ ਦੇ ਸੁਨੇਹੇ ਲੋਡ ਕੀਤੇ ਜਾ ਰਹੇ ਹਨ...} other {{daysAgo,number} ਦਿਨ ਪਹਿਲਾਂ ਦੇ ਸੁਨੇਹੇ ਲੋਡ ਕੀਤੇ ਜਾ ਰਹੇ ਹਨ...}}",
@@ -598,11 +606,19 @@
   },
   "icu:unreadMessage": {
     "messageformat": "1 ਨਾ-ਪੜ੍ਹਿਆ ਸੁਨੇਹਾ",
-    "description": "Text for unread message separator, just one message"
+    "description": "(Deleted 2024/03/07) Text for unread message separator, just one message"
   },
   "icu:unreadMessages": {
     "messageformat": "{count, plural, one {{count,number} ਨਾ ਪੜੇ ਸੁਨੇਹੇ} other {{count,number} ਨਾ-ਪੜ੍ਹੇ ਸੁਨੇਹੇ}}",
     "description": "Text for unread message separator, with count"
+  },
+  "icu:taskbarMarkedUnread": {
+    "messageformat": "ਨਹੀਂ-ਪੜ੍ਹਿਆ ਗਿਆ ਵਜੋਂ ਚਿੰਨ੍ਹਿਤ ਕੀਤਾ ਗਿਆ",
+    "description": "On Windows, description for screen readers for the OS taskbar icon's overlay badge when the user has marked chat(s) as unread."
+  },
+  "icu:taskbarUnreadMessages": {
+    "messageformat": "{count, plural, one {{count,number} ਨਾ ਪੜੇ ਸੁਨੇਹੇ} other {{count,number} ਨਾ-ਪੜ੍ਹੇ ਸੁਨੇਹੇ}}",
+    "description": "On Windows, description for screen readers for the OS taskbar icon's overlay badge when there are unread messages."
   },
   "icu:messageHistoryUnsynced": {
     "messageformat": "ਤੁਹਾਡੀ ਸੁਰੱਖਿਆ ਲਈ, ਪੁਰਾਣੀਆਂ ਚੈਟਾਂ ਨੂੰ ਲਿੰਕ ਕੀਤੇ ਨਵੇਂ ਡਿਵਾਈਸਾਂ ਵਿੱਚ ਟ੍ਰਾਂਸਫਰ ਨਹੀਂ ਕੀਤਾ ਜਾਂਦਾ ਹੈ।",
@@ -626,7 +642,7 @@
   },
   "icu:membersNeedingVerification": {
     "messageformat": "ਤੁਹਾਡੇ ਦੁਆਰਾ ਆਖਰੀ ਵਾਰ ਪ੍ਰਮਾਣਿਤ ਕੀਤੇ ਜਾਣ ਤੋਂ ਬਾਅਦ ਇਹਨਾਂ ਗਰੁੱਪ ਮੈਂਬਰਾਂ ਨਾਲ ਤੁਹਾਡੇ ਸੁਰੱਖਿਆ ਨੰਬਰ ਬਦਲ ਚੁੱਕੇ ਹਨ। ਕਿਸੇ ਗਰੁੱਪ ਮੈਂਬਰ ਨਾਲ ਆਪਣੇ ਨਵੇਂ ਸੁਰੱਖਿਆ ਨੰਬਰ ਨੂੰ ਦੇਖਣ ਲਈ ਮੈਂਬਰ ਉੱਪਰ ਕਲਿੱਕ ਕਰੋ।",
-    "description": "When there are multiple previously-verified group members with safety number changes, a banner will be shown. The list of contacts with safety number changes is shown, and this text introduces that list."
+    "description": "(Deleted 2024/03/07) When there are multiple previously-verified group members with safety number changes, a banner will be shown. The list of contacts with safety number changes is shown, and this text introduces that list."
   },
   "icu:changedRightAfterVerify": {
     "messageformat": "ਤੁਸੀਂ ਜਿਸ ਸੁਰੱਖਿਆ ਨੰਬਰ ਨੂੰ ਪ੍ਰਮਾਣਿਤ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰ ਰਹੇ ਹੋ ਉਹ ਬਦਲ ਗਿਆ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ {name1} ਨਾਲ ਆਪਣੇ ਨਵੇਂ ਸੁਰੱਖਿਆ ਨੰਬਰ ਦੀ ਸਮੀਖਿਆ ਕਰੋ। ਯਾਦ ਰੱਖੋ, ਇਸ ਤਬਦੀਲੀ ਦਾ ਮਤਲਬ ਇਹ ਹੋ ਸਕਦਾ ਹੈ ਕਿ ਕੋਈ ਵਿਅਕਤੀ ਤੁਹਾਡੀ ਗੱਲਬਾਤ ਵਿੱਚ ਰੁਕਾਵਟ ਪਾਉਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰ ਰਿਹਾ ਹੈ ਜਾਂ ਇਹ ਕਿ {name2} ਨੇ Signal ਨੂੰ ਮਹਿਜ਼ ਦੁਬਾਰਾ ਸਥਾਪਤ ਕੀਤਾ ਹੈ।",
@@ -678,7 +694,7 @@
   },
   "icu:identityKeyErrorOnSend": {
     "messageformat": "{name1} ਨਾਲ ਤੁਹਾਡਾ ਸੁਰੱਖਿਆ ਨੰਬਰ ਬਦਲ ਚੁੱਕਾ ਹੈ। ਇਸਦਾ ਮਤਲਬ ਜਾਂ ਤਾਂ ਇਹ ਹੋ ਸਕਦਾ ਹੈ ਕਿ ਕੋਈ ਵਿਅਕਤੀ ਤੁਹਾਡੀ ਗੱਲਬਾਤ ਵਿੱਚ ਰੁਕਾਵਟ ਪਾਉਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰ ਰਿਹਾ ਹੈ ਜਾਂ ਇਹ ਕਿ {name2} ਨੇ Signal ਨੂੰ ਮਹਿਜ਼ ਦੁਬਾਰਾ ਸਥਾਪਤ ਕੀਤਾ ਹੈ। ਹੋ ਸਕਦਾ ਹੈ ਕਿ ਤੁਸੀਂ ਇਸ ਸੰਪਰਕ ਦੇ ਨਾਲ ਆਪਣੇ ਸੁਰੱਖਿਆ ਨੰਬਰ ਨੂੰ ਪ੍ਰਮਾਣਿਤ ਕਰਨਾ ਚਾਹੋ।",
-    "description": "Shown when user clicks on a failed recipient in the message detail view after an identity key change"
+    "description": "(Deleted 2024/03/07) Shown when user clicks on a failed recipient in the message detail view after an identity key change"
   },
   "icu:sendAnyway": {
     "messageformat": "ਫਿਰ ਵੀ ਭੇਜੋ",
@@ -706,11 +722,11 @@
   },
   "icu:noLongerVerified": {
     "messageformat": "{name} ਨਾਲ ਤੁਹਾਡਾ ਸੁਰੱਖਿਆ ਨੰਬਰ ਬਦਲ ਚੁੱਕਾ ਹੈ ਅਤੇ ਹੁਣ ਪ੍ਰਮਾਣਿਤ ਨਹੀਂ ਰਿਹਾ। ਦਿਖਾਉਣ ਲਈ ਕਲਿੱਕ ਕਰੋ।",
-    "description": "Shown in conversation banner when user's safety number has changed, but they were previously verified."
+    "description": "(Deleted 2024/03/07) Shown in conversation banner when user's safety number has changed, but they were previously verified."
   },
   "icu:multipleNoLongerVerified": {
     "messageformat": "ਇਸ ਗਰੁੱਪ ਦੇ ਬਹੁਤ ਸਾਰੇ ਮੈਂਬਰਾਂ ਨਾਲ ਤੁਹਾਡੇ ਸੁਰੱਖਿਆ ਨੰਬਰ ਬਦਲ ਚੁੱਕੇ ਹਨ ਅਤੇ ਹੁਣ ਪ੍ਰਮਾਣਿਤ ਨਹੀਂ ਰਹੇ। ਦਿਖਾਉਣ ਲਈ ਕਲਿੱਕ ਕਰੋ।",
-    "description": "Shown in conversation banner when more than one group member's safety number has changed, but they were previously verified."
+    "description": "(Deleted 2024/03/07) Shown in conversation banner when more than one group member's safety number has changed, but they were previously verified."
   },
   "icu:debugLogExplanation": {
     "messageformat": "ਜਦੋਂ ਤੁਸੀਂ ਦਰਜ ਕਰੋ 'ਤੇ ਕਲਿੱਕ ਕਰਦੇ ਹੋ, ਤਾਂ ਤੁਹਾਡਾ ਲੌਗ 30 ਦਿਨਾਂ ਲਈ ਇੱਕ ਵਿਲੱਖਣ, ਗੈਰ-ਪ੍ਰਕਾਸ਼ਿਤ URL 'ਤੇ ਆਨਲਾਈਨ ਪੋਸਟ ਕਰ ਦਿੱਤਾ ਜਾਵੇਗਾ। ਤੁਸੀਂ ਇਸਨੂੰ ਪਹਿਲਾਂ ਸਥਾਨਕ ਤੌਰ 'ਤੇ ਸੇਵ ਕਰ ਸਕਦੇ ਹੋ।",
@@ -750,34 +766,14 @@
   },
   "icu:gotIt": {
     "messageformat": "ਸਮਝ ਲਿਆ!",
-    "description": "Label for a button that dismisses a dialog. The user clicks it to confirm that they understand the message in the dialog."
+    "description": "(Deleted 2024/03/07) Label for a button that dismisses a dialog. The user clicks it to confirm that they understand the message in the dialog."
   },
   "icu:submit": {
     "messageformat": "ਜਮ੍ਹਾਂ ਕਰੋ"
   },
   "icu:acceptNewKey": {
     "messageformat": "ਮਨਜ਼ੂਰ ਕਰੋ",
-    "description": "Label for a button to accept a new safety number"
-  },
-  "icu:SafetyNumberViewer__migration__text": {
-    "messageformat": "ਸੁਰੱਖਿਆ ਨੰਬਰਾਂ ਨੂੰ ਅੱਪਡੇਟ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ।",
-    "description": "(Deleted 11/01/2023) An explanatory note in SafetyNumberViewer describing the safety number migration process."
-  },
-  "icu:SafetyNumberViewer__migration__learn_more": {
-    "messageformat": "ਹੋਰ ਜਾਣੋ",
-    "description": "(Deleted 11/01/2023) A link text in SafetyNumberViewer describing the safety number migration process."
-  },
-  "icu:SafetyNumberViewer__card__prev": {
-    "messageformat": "ਪਿਛਲਾ ਸੁਰੱਖਿਆ ਨੰਬਰ",
-    "description": "(Deleted 11/01/2023) An ARIA label for safety number navigation button."
-  },
-  "icu:SafetyNumberViewer__card__next": {
-    "messageformat": "ਅਗਲਾ ਸੁਰੱਖਿਆ ਨੰਬਰ",
-    "description": "(Deleted 11/01/2023) An ARIA label for safety number navigation button."
-  },
-  "icu:SafetyNumberViewer__carousel__dot": {
-    "messageformat": "ਸੁਰੱਖਿਆ ਨੰਬਰ ਦਾ ਵਰਜ਼ਨ, {total,number} ਵਿੱਚੋਂ {index,number}",
-    "description": "(Deleted 11/01/2023) An ARIA label for safety number carousel button."
+    "description": "(Deleted 2024/03/07) Label for a button to accept a new safety number"
   },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "ਤਸਦੀਕਸ਼ੁਦਾ ਵਜੋਂ ਚਿੰਨ੍ਹ ਲਗਾਓ",
@@ -795,34 +791,6 @@
     "messageformat": "ਹੋਰ ਜਾਣੋ",
     "description": "Text of 'Learn more' button of SafetyNumberViewerModal modal"
   },
-  "icu:SafetyNumberViewer__hint--migration": {
-    "messageformat": "{name} ਦੇ ਨਾਲ ਸਿਰੇ-ਤੋਂ-ਸਿਰੇ ਤੱਕ ਇਨਕ੍ਰਿਪਸ਼ਨ ਦੀ ਤਸਦੀਕ ਕਰਨ ਲਈ, ਉੱਪਰ ਦਿੱਤੇ ਰੰਗੀਨ ਕਾਰਡ ਨੂੰ ਉਹਨਾਂ ਦੇ ਡਿਵਾਈਸ ਨਾਲ ਮਿਲਾਓ ਅਤੇ ਨੰਬਰਾਂ ਦੀ ਤੁਲਨਾ ਕਰੋ। ਜੇਕਰ ਇਹ ਮੇਲ ਨਹੀਂ ਖਾਂਦੇ, ਤਾਂ ਸੁਰੱਖਿਆ ਨੰਬਰਾਂ ਦੀ ਦੂਜੀ ਜੋੜੀ ਨੂੰ ਮਿਲਾ ਕੇ ਦੇਖੋ। ਸਿਰਫ਼ ਇੱਕ ਜੋੜੀ ਦੇ ਮੇਲ ਖਾਣ ਦੀ ਲੋੜ ਹੈ।",
-    "description": "(Deleted 11/01/2023). Safety number viewer, text of the hint during migration period"
-  },
-  "icu:SafetyNumberViewer__hint--normal": {
-    "messageformat": "{name} ਦੇ ਨਾਲ ਸਿਰੇ-ਤੋਂ-ਸਿਰੇ ਤੱਕ ਇਨਕ੍ਰਿਪਸ਼ਨ ਦੀ ਤਸਦੀਕ ਕਰਨ ਲਈ, ਉੱਪਰ ਦਿੱਤੇ ਨੰਬਰਾਂ ਨੂੰ ਉਹਨਾਂ ਦੇ ਡਿਵਾਈਸ ਵਿੱਚ ਦਿਖਾਏ ਨੰਬਰਾਂ ਦੇ ਨਾਲ ਮਿਲਾਓ। ਉਹ ਆਪਣੇ ਡਿਵਾਈਸ ਨਾਲ ਤੁਹਾਡੇ ਕੋਡ ਨੂੰ ਵੀ ਸਕੈਨ ਕਰ ਸਕਦੇ ਹਨ।",
-    "description": "(Deleted 11/01/2023). Safety number viewer, text of the hint after migration period"
-  },
-  "icu:SafetyNumberOnboarding__title": {
-    "messageformat": "ਸੁਰੱਖਿਆ ਨੰਬਰਾਂ ਵਿੱਚ ਬਦਲਾਅ",
-    "description": "(Deleted 11/01/2023) Title of Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__p1": {
-    "messageformat": "Signal ਵਿੱਚ ਆਉਣ ਵਾਲੇ ਪਰਦੇਦਾਰੀ ਫੀਚਰਾਂ ਨੂੰ ਸਮਰੱਥ ਬਣਾਉਣ ਲਈ ਸੁਰੱਖਿਆ ਨੰਬਰਾਂ ਨੂੰ ਅੱਪਡੇਟ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ।\n\n",
-    "description": "(Deleted 11/01/2023) Paragraph 1 of Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__p2": {
-    "messageformat": "ਸੁਰੱਖਿਆ ਨੰਬਰਾਂ ਦੀ ਤਸਦੀਕ ਕਰਨ ਲਈ, ਰੰਗੀਨ ਕਾਰਡ ਨੂੰ ਆਪਣੇ ਸੰਪਰਕ ਦੇ ਡਿਵਾਈਸ ਨਾਲ ਮਿਲਾਓ। ਜੇਕਰ ਇਹ ਮੇਲ ਨਹੀਂ ਖਾਂਦੇ, ਤਾਂ ਸੁਰੱਖਿਆ ਨੰਬਰਾਂ ਦੀ ਦੂਜੀ ਜੋੜੀ ਨੂੰ ਮਿਲਾ ਕੇ ਦੇਖੋ। ਸਿਰਫ਼ ਇੱਕ ਜੋੜੀ ਦੇ ਮੇਲ ਖਾਣ ਦੀ ਲੋੜ ਹੈ।",
-    "description": "(Deleted 11/01/2023) Paragraph 2 of Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__help": {
-    "messageformat": "ਮਦਦ ਚਾਹੀਦੀ ਹੈ?",
-    "description": "(Deleted 11/01/2023) Text of a secondary button in Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__close": {
-    "messageformat": "ਸਮਝ ਗਏ",
-    "description": "(Deleted 11/01/2023) Text of a secondary button in Safety number onboarding modal"
-  },
   "icu:SafetyNumberNotReady__body": {
     "messageformat": "ਜਦੋਂ ਤੁਸੀਂ ਇਸ ਵਿਅਕਤੀ ਨੂੰ ਸੁਨੇਹੇ ਭੇਜੋਗੇ ਜਾਂ ਪ੍ਰਾਪਤ ਕਰੋਗੇ ਤਾਂ ਇਹਨਾਂ ਨਾਲ ਇੱਕ ਸੁਰੱਖਿਆ ਨੰਬਰ ਬਣਾਇਆ ਜਾਵੇਗਾ।",
     "description": "Body of SafetyNumberNotReady modal"
@@ -833,11 +801,11 @@
   },
   "icu:isVerified": {
     "messageformat": "ਤੁਸੀਂ {name} ਨਾਲ ਆਪਣੇ ਸੁਰੱਖਿਆ ਨੰਬਰ ਨੂੰ ਪ੍ਰਮਾਣਿਤ ਕੀਤਾ ਹੈ।",
-    "description": "Summary state shown at top of the safety number screen if user has verified contact."
+    "description": "(Deleted 2024/03/07) Summary state shown at top of the safety number screen if user has verified contact."
   },
   "icu:isNotVerified": {
     "messageformat": "ਤੁਸੀਂ {name} ਨਾਲ ਆਪਣੇ ਸੁਰੱਖਿਆ ਨੰਬਰ ਨੂੰ ਪ੍ਰਮਾਣਿਤ ਨਹੀਂ ਕੀਤਾ ਹੈ।",
-    "description": "Summary state shown at top of the safety number screen if user has not verified contact."
+    "description": "(Deleted 2024/03/07) Summary state shown at top of the safety number screen if user has not verified contact."
   },
   "icu:verified": {
     "messageformat": "ਪ੍ਰਮਾਣਿਤ"
@@ -847,7 +815,8 @@
     "description": "Header for a key change dialog"
   },
   "icu:identityChanged": {
-    "messageformat": "ਇਸ ਸੰਪਰਕ ਦੇ ਨਾਲ ਤੁਹਾਡਾ ਸੁਰੱਖਿਆ ਨੰਬਰ ਬਦਲ ਚੁੱਕਾ ਹੈ। ਇਸ ਦਾ ਮਤਲਬ ਜਾਂ ਤਾਂ ਇਹ ਹੋ ਸਕਦਾ ਹੈ ਕਿ ਕੋਈ ਵਿਅਕਤੀ ਤੁਹਾਡੀ ਗੱਲਬਾਤ ਵਿੱਚ ਰੁਕਾਵਟ ਪਾਉਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰ ਰਿਹਾ ਹੈ, ਜਾਂ ਇਸ ਸੰਪਰਕ ਨੇ Signal ਨੂੰ ਮਹਿਜ਼ ਦੁਬਾਰਾ ਸਥਾਪਤ ਕੀਤਾ ਹੈ। ਹੋ ਸਕਦਾ ਹੈ ਕਿ ਤੁਸੀਂ ਹੇਠਾਂ ਨਵੇਂ ਸੁਰੱਖਿਆ ਨੰਬਰ ਨੂੰ ਪ੍ਰਮਾਣਿਤ ਕਰਨਾ ਚਾਹੋ।"
+    "messageformat": "ਇਸ ਸੰਪਰਕ ਦੇ ਨਾਲ ਤੁਹਾਡਾ ਸੁਰੱਖਿਆ ਨੰਬਰ ਬਦਲ ਚੁੱਕਾ ਹੈ। ਇਸ ਦਾ ਮਤਲਬ ਜਾਂ ਤਾਂ ਇਹ ਹੋ ਸਕਦਾ ਹੈ ਕਿ ਕੋਈ ਵਿਅਕਤੀ ਤੁਹਾਡੀ ਗੱਲਬਾਤ ਵਿੱਚ ਰੁਕਾਵਟ ਪਾਉਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰ ਰਿਹਾ ਹੈ, ਜਾਂ ਇਸ ਸੰਪਰਕ ਨੇ Signal ਨੂੰ ਮਹਿਜ਼ ਦੁਬਾਰਾ ਸਥਾਪਤ ਕੀਤਾ ਹੈ। ਹੋ ਸਕਦਾ ਹੈ ਕਿ ਤੁਸੀਂ ਹੇਠਾਂ ਨਵੇਂ ਸੁਰੱਖਿਆ ਨੰਬਰ ਨੂੰ ਪ੍ਰਮਾਣਿਤ ਕਰਨਾ ਚਾਹੋ।",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:incomingError": {
     "messageformat": "ਆਉਣ ਵਾਲੇ ਸੁਨੇਹੇ ਨੂੰ ਸੰਭਾਲਣ ਵਿੱਚ ਗਲਤੀ"
@@ -894,11 +863,11 @@
   },
   "icu:clickToSave": {
     "messageformat": "ਸੰਭਾਲਣ ਲਈ ਕਲਿਕ ਕਰੋ",
-    "description": "Hover text for attachment filenames"
+    "description": "(Deleted 2024/03/07) Hover text for attachment filenames"
   },
   "icu:unnamedFile": {
     "messageformat": "ਬੇਨਾਮ ਫਾਈਲ",
-    "description": "Hover text for attachment filenames"
+    "description": "(Deleted 2024/03/07) Hover text for attachment filenames"
   },
   "icu:voiceMessage": {
     "messageformat": "ਆਵਾਜ਼ ਵਾਲਾ ਸੁਨੇਹਾ",
@@ -923,10 +892,6 @@
   "icu:stagedImageAttachment": {
     "messageformat": "ਡ੍ਰਾਫ਼ਟ ਨੱਥੀ ਚਿੱਤਰ: {path}",
     "description": "Alt text for staged attachments"
-  },
-  "icu:cdsMirroringErrorToast": {
-    "messageformat": "ਡੈਸਕਟੌਪ ਦੀ ਸੰਪਰਕ ਖੋਜ ਸੇਵਾ ਵਿੱਚ ਕੋਈ ਅਸੰਗਤਤਾ ਆ ਗਈ ਹੈ।",
-    "description": "(Deleted 2024/01/22) An error popup when we discovered an inconsistency between mirrored Contact Discovery Service requests."
   },
   "icu:decryptionErrorToast": {
     "messageformat": "{name}, ਡਿਵਾਈਸ {deviceId} ਤੋਂ ਡੈਸਕਟਾਪ ਵਿੱਚ ਡੀਕ੍ਰਿਪਸ਼ਨ ਸੰਬੰਧੀ ਕੋਈ ਗੜਬੜੀ ਆ ਗਈ ਹੈ",
@@ -1180,7 +1145,7 @@
   },
   "icu:messageFoundButNotLoaded": {
     "messageformat": "ਅਸਲ ਸੁਨੇਹਾ ਲੱਭਿਆ, ਪਰ ਲੋਡ ਨਹੀਂ ਹੋਇਆ। ਇਸਨੂੰ ਲੋਡ ਕਰਨ ਲਈ ਉੱਪਰ ਨੂੰ ਸਰਕਾਓ।",
-    "description": "Shown in toast if user clicks on quote references messages not loaded in view, but in database"
+    "description": "(Deleted 2024/03/07) Shown in toast if user clicks on quote references messages not loaded in view, but in database"
   },
   "icu:voiceRecording--start": {
     "messageformat": "ਵੌਇਸ ਸੁਨੇਹਾ ਰਿਕਾਰਡ ਕਰਨਾ ਸ਼ੁਰੂ ਕਰੋ",
@@ -1188,11 +1153,11 @@
   },
   "icu:voiceRecording--complete": {
     "messageformat": "ਵੌਇਸ ਸੁਨੇਹਾ ਪੂਰਾ ਕਰੋ ਅਤੇ ਭੇਜੋ",
-    "description": "Tooltip for green complete voice message and send"
+    "description": "(Deleted 2024/03/07) Tooltip for green complete voice message and send"
   },
   "icu:voiceRecording--cancel": {
     "messageformat": "ਵੌਇਸ ਸੁਨੇਹਾ ਰੱਦ ਕਰੋ",
-    "description": "Tooltip for red button to cancel voice message"
+    "description": "(Deleted 2024/03/07) Tooltip for red button to cancel voice message"
   },
   "icu:voiceRecordingInterruptedMax": {
     "messageformat": "ਅਵਾਜ਼ ਵਾਲੇ ਸੁਨੇਹੇ ਦੀ ਰਿਕਾਰਡਿੰਗ ਬੰਦ ਹੋ ਗਈ ਹੈ ਕਿਉਂਕਿ ਸਮੇਂ ਦੀ ਵੱਧ ਤੋਂ ਵੱਧ ਸੀਮਾ ਪੂਰੀ ਹੋ ਚੁੱਕੀ ਹੈ।",
@@ -1200,7 +1165,7 @@
   },
   "icu:voiceRecordingInterruptedBlur": {
     "messageformat": "ਅਵਾਜ਼ ਵਾਲੇ ਸੁਨੇਹੇ ਦੀ ਰਿਕਾਰਡਿੰਗ ਬੰਦ ਹੋ ਗਈ ਹੈ ਕਿਉਂਕਿ ਤੁਸੀਂ ਬਦਲ ਕੇ ਕਿਸੇ ਹੋਰ ਐਪ ਵਿੱਚ ਚਲੇ ਗਏ ਹੋ।",
-    "description": "Confirmation dialog message for when the voice recording is interrupted due to app losing focus"
+    "description": "(Deleted 2024/03/07) Confirmation dialog message for when the voice recording is interrupted due to app losing focus"
   },
   "icu:voiceNoteLimit": {
     "messageformat": "ਵੌਇਸ ਸੁਨੇਹਾ ਇੱਕ ਘੰਟੇ ਤੋਂ ਲੰਬਾ ਨਹੀਂ ਹੋ ਸਕਦਾ। ਜੇਕਰ ਤੁਸੀਂ ਕਿਸੇ ਹੋਰ ਐਪ 'ਤੇ ਜਾਂਦੇ ਹੋ ਤਾਂ ਰਿਕਾਰਡਿੰਗ ਬੰਦ ਹੋ ਜਾਵੇਗੀ।",
@@ -1228,7 +1193,7 @@
   },
   "icu:replyingTo": {
     "messageformat": "{name} ਨੂੰ ਜਵਾਬ ਦਿੱਤਾ ਜਾ ਰਿਹਾ ਹੈ",
-    "description": "Shown in iOS theme when you or someone quotes to a message which is not from you"
+    "description": "(Deleted 2024/03/07) Shown in iOS theme when you or someone quotes to a message which is not from you"
   },
   "icu:audioPermissionNeeded": {
     "messageformat": "ਵੌਇਸ ਸੁਨੇਹੇ ਭੇਜਣ ਲਈ, Signal Desktop ਨੂੰ ਆਪਣੇ ਮਾਈਕ੍ਰੋਫ਼ੋਨ ਤੱਕ ਪਹੁੰਚ ਕਰਨ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ।",
@@ -1248,7 +1213,7 @@
   },
   "icu:showSettings": {
     "messageformat": "ਸੈਟਿੰਗਾਂ ਵਿਖਾਓ",
-    "description": "A button shown in dialog requesting the user to turn on audio permissions"
+    "description": "(Deleted 2024/03/07) A button shown in dialog requesting the user to turn on audio permissions"
   },
   "icu:audio": {
     "messageformat": "ਆਡੀਓ",
@@ -1272,7 +1237,7 @@
   },
   "icu:muted": {
     "messageformat": "ਮਿਊਟ ਕੀਤਾ ਗਿਆ",
-    "description": "Shown in a button when a conversation is muted"
+    "description": "(Deleted 2024/03/07) Shown in a button when a conversation is muted"
   },
   "icu:mute": {
     "messageformat": "ਮਿਊਟ ਕਰੋ",
@@ -1300,13 +1265,15 @@
     "messageformat": "ਰੱਦ ਕਰੋ"
   },
   "icu:failedToSend": {
-    "messageformat": "ਕੁਝ ਪ੍ਰਾਪਤਕਰਤਾਵਾਂ ਨੂੰ ਭੇਜਣ ਵਿੱਚ ਅਸਫ਼ਲ। ਆਪਣਾ ਨੈਟਵਰਕ ਕਨੈਕਸ਼ਨ ਚੈੱਕ ਕਰੋ।"
+    "messageformat": "ਕੁਝ ਪ੍ਰਾਪਤਕਰਤਾਵਾਂ ਨੂੰ ਭੇਜਣ ਵਿੱਚ ਅਸਫ਼ਲ। ਆਪਣਾ ਨੈਟਵਰਕ ਕਨੈਕਸ਼ਨ ਚੈੱਕ ਕਰੋ।",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:error": {
     "messageformat": "ਤਰੁੱਟੀ"
   },
   "icu:messageDetail": {
-    "messageformat": "ਸੁਨੇਹਾ ਵੇਰਵਾ"
+    "messageformat": "ਸੁਨੇਹਾ ਵੇਰਵਾ",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:delete": {
     "messageformat": "ਮਿਟਾਓ"
@@ -1352,7 +1319,7 @@
   },
   "icu:to": {
     "messageformat": "ਪ੍ਰਤੀ",
-    "description": "Label for the receiver of a message"
+    "description": "(Deleted 2024/03/07) Label for the receiver of a message"
   },
   "icu:searchResultHeader--sender-to-group": {
     "messageformat": "{sender} ਵੱਲੋਂ {receiverGroup} ਵਿੱਚ",
@@ -1383,7 +1350,8 @@
     "description": "Placeholder text in the message entry field"
   },
   "icu:groupMembers": {
-    "messageformat": "ਗਰੁੱਪ ਦੇ ਮੈਂਬਰ"
+    "messageformat": "ਗਰੁੱਪ ਦੇ ਮੈਂਬਰ",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:showMembers": {
     "messageformat": "ਮੈਂਬਰ ਦਿਖਾਓ"
@@ -1425,14 +1393,15 @@
   },
   "icu:ContactModal__showSafetyNumber": {
     "messageformat": "ਸੁਰੱਖਿਆ ਨੰਬਰ ਦੇਖੋ",
-    "description": "Contact modal, label for button to show safety number modal"
+    "description": "(Deleted 2024/03/07) Contact modal, label for button to show safety number modal"
   },
   "icu:viewRecentMedia": {
     "messageformat": "ਹਾਲੀਆ ਮੀਡੀਆ ਨੂੰ ਵੇਖੋ",
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
   "icu:theirIdentityUnknown": {
-    "messageformat": "ਤੁਸੀਂ ਅਜੇ ਤਕ ਇਸ ਸੰਪਰਕ ਦੇ ਨਾਲ ਕਿਸੇ ਵੀ ਸੁਨੇਹੇ ਦਾ ਆਦਾਨ-ਪ੍ਰਦਾਨ ਨਹੀਂ ਕੀਤਾ ਹੈ। ਉਹਨਾਂ ਦੇ ਨਾਲ ਤੁਹਾਡਾ ਸੁਰੱਖਿਆ ਨੰਬਰ ਪਹਿਲੇ ਸੁਨੇਹੇ ਤੋਂ ਬਾਅਦ ਉਪਲਬਧ ਹੋਵੇਗਾ।"
+    "messageformat": "ਤੁਸੀਂ ਅਜੇ ਤਕ ਇਸ ਸੰਪਰਕ ਦੇ ਨਾਲ ਕਿਸੇ ਵੀ ਸੁਨੇਹੇ ਦਾ ਆਦਾਨ-ਪ੍ਰਦਾਨ ਨਹੀਂ ਕੀਤਾ ਹੈ। ਉਹਨਾਂ ਦੇ ਨਾਲ ਤੁਹਾਡਾ ਸੁਰੱਖਿਆ ਨੰਬਰ ਪਹਿਲੇ ਸੁਨੇਹੇ ਤੋਂ ਬਾਅਦ ਉਪਲਬਧ ਹੋਵੇਗਾ।",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:back": {
     "messageformat": "ਵਾਪਸ",
@@ -1606,9 +1575,13 @@
     "messageformat": "{phoneNumber} ਨੰਬਰ {conversationTitle} ਦਾ ਹੈ",
     "description": "Shown when we've discovered a phone number for a contact you've been communicating with, but you have no shared groups."
   },
+  "icu:TitleTransition--notification": {
+    "messageformat": "ਤੁਸੀਂ {oldTitle} ਨਾਲ ਇਹ ਚੈਟ ਸ਼ੁਰੂ ਕੀਤੀ ਹੈ",
+    "description": "Shown when we've received profile information for a contact we have been messaging by username/phone number"
+  },
   "icu:quoteThumbnailAlt": {
     "messageformat": "ਹਵਾਲਾ ਦਿੱਤੇ ਸੁਨੇੇਹੇ ਤੋਂ ਚਿੱਤਰ ਦਾ ਥੰਬਨੇਲ",
-    "description": "Used in alt tag of thumbnail images inside of an embedded message quote"
+    "description": "(Deleted 2024/03/07) Used in alt tag of thumbnail images inside of an embedded message quote"
   },
   "icu:imageAttachmentAlt": {
     "messageformat": "ਸੁਨੇਹੇ ਨਾਲ ਨੱਥੀ ਕੀਤਾ ਚਿੱਤਰ",
@@ -1636,15 +1609,15 @@
   },
   "icu:fileIconAlt": {
     "messageformat": "ਫਾਈਲ ਆਈਕਾਨ",
-    "description": "Used in the media gallery documents tab to visually represent a file"
+    "description": "(Deleted 2024/03/07) Used in the media gallery documents tab to visually represent a file"
   },
   "icu:installWelcome": {
     "messageformat": "Signal Desktop ਵਿੱਚ ਜੀ ਆਇਆਂ ਨੂੰ",
-    "description": "Welcome title on the install page"
+    "description": "(Deleted 2024/03/07) Welcome title on the install page"
   },
   "icu:installTagline": {
     "messageformat": "ਪਰਦੇਦਾਰੀ ਸੰਭਵ ਹੈ। Signal ਨੇ ਇਹ ਸੌਖੀ ਕਰ ਦਿੱਤੀ ਹੈ।",
-    "description": "Tagline displayed under 'installWelcome' string on the install page"
+    "description": "(Deleted 2024/03/07) Tagline displayed under 'installWelcome' string on the install page"
   },
   "icu:linkedDevices": {
     "messageformat": "ਲਿੰਕ ਕੀਤੀਆਂ ਡਿਵਾਈਸਾਂ",
@@ -1677,10 +1650,6 @@
   "icu:Install__instructions__3": {
     "messageformat": "{plusButton} (Android) ਜਾਂ {linkNewDevice} (iPhone) 'ਤੇ ਟੈਪ ਕਰੋ",
     "description": "Instructions on the device link screen"
-  },
-  "icu:Install__qr-failed": {
-    "messageformat": "(deleted 05/09/2023) The QR code couldn't load. Check your internet and try again. <learnMoreLink>Learn more</learnMoreLink>",
-    "description": "Shown on the install screen if the QR code fails to load"
   },
   "icu:Install__qr-failed-load": {
     "messageformat": "QR ਕੋਡ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕਿਆ। ਆਪਣੇ ਇੰਟਰਨੈੱਟ ਦੀ ਜਾਂਚ ਕਰੋ ਅਤੇ ਮੁੜ-ਕੋਸ਼ਿਸ਼ ਕਰੋ। ਮੁੜ-ਕੋਸ਼ਿਸ਼ ਕਰੋ",
@@ -1778,51 +1747,51 @@
     "description": "Text in the call lobby when you can't join because the call is full"
   },
   "icu:calling__cant-join": {
-    "messageformat": "Can't join call",
+    "messageformat": "ਕਾਲ ਵਿੱਚ ਸ਼ਾਮਲ ਨਹੀਂ ਹੋ ਸਕਦੇ",
     "description": "Modal dialog title when you can't join a call"
   },
   "icu:calling__dialog-already-in-call": {
-    "messageformat": "You are already in a call.",
+    "messageformat": "ਤੁਸੀਂ ਪਹਿਲਾਂ ਹੀ ਕਾਲ ਵਿੱਚ ਹੋ।",
     "description": "Error message when clicking a call link to join a call, but you're in a call already."
   },
   "icu:calling__call-link-connection-issues": {
-    "messageformat": "Could not fetch call link information. Please check your network connection and try again.",
+    "messageformat": "ਕਾਲ ਲਿੰਕ ਦੀ ਜਾਣਕਾਰੀ ਪ੍ਰਾਪਤ ਨਹੀਂ ਕਰ ਸਕੇ। ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਨੈੱਟਵਰਕ ਕਨੈਕਸ਼ਨ ਦੀ ਜਾਂਚ ਕਰੋ ਅਤੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
     "description": "Error message when unable to fetch call link info from server."
   },
   "icu:calling__call-link-copied": {
-    "messageformat": "Call link copied.",
+    "messageformat": "ਕਾਲ ਦਾ ਲਿੰਕ ਕਾਪੀ ਕੀਤਾ ਗਿਆ।",
     "description": "Toast shown when a call link is copied to the clipboard."
   },
   "icu:calling__call-link-no-longer-valid": {
-    "messageformat": "This call link is no longer valid.",
+    "messageformat": "ਇਹ ਕਾਲ ਲਿੰਕ ਹੁਣ ਵੈਧ ਨਹੀਂ ਹੈ।",
     "description": "Error message when a call link has been revoked or expires."
   },
   "icu:calling__call-link-default-title": {
-    "messageformat": "Signal Call",
+    "messageformat": "Signal ਕਾਲ",
     "description": "Default title for Signal call links."
   },
   "icu:calling__join-request-denied": {
-    "messageformat": "Your request to join this call has been denied.",
+    "messageformat": "ਇਸ ਕਾਲ ਵਿੱਚ ਸ਼ਾਮਲ ਹੋਣ ਦੀ ਤੁਹਾਡੀ ਬੇਨਤੀ ਨੂੰ ਨਾਮਨਜ਼ੂਰ ਕਰ ਦਿੱਤਾ ਗਿਆ ਹੈ।",
     "description": "Error message when a request to join a call link call was rejected by a call admin."
   },
   "icu:calling__join-request-denied-title": {
-    "messageformat": "Join request denied",
+    "messageformat": "ਸ਼ਾਮਲ ਹੋਣ ਦੀ ਬੇਨਤੀ ਨੂੰ ਨਾਮਨਜ਼ੂਰ ਕੀਤਾ ਗਿਆ",
     "description": "Title of error when a request to join a call link call was rejected by a call admin."
   },
   "icu:calling__removed-from-call": {
-    "messageformat": "Someone has removed you from the call.",
+    "messageformat": "ਕਿਸੇ ਨੇ ਤੁਹਾਨੂੰ ਕਾਲ ਵਿੱਚੋਂ ਹਟਾ ਦਿੱਤਾ ਹੈ।",
     "description": "Error message when in a call then a call admin removes you."
   },
   "icu:calling__removed-from-call-title": {
-    "messageformat": "Removed from call",
+    "messageformat": "ਕਾਲ ਵਿੱਚੋਂ ਹਟਾਇਆ ਗਿਆ",
     "description": "Title of error when in a call then a call admin removes you."
   },
   "icu:CallingLobby__CallLinkNotice": {
-    "messageformat": "Anyone who joins this call via the link will see your name and photo.",
+    "messageformat": "ਕੋਈ ਵੀ ਵਿਅਕਤੀ ਜੋ ਲਿੰਕ ਰਾਹੀਂ ਇਸ ਕਾਲ ਵਿੱਚ ਸ਼ਾਮਲ ਹੁੰਦਾ ਹੈ, ਉਹ ਤੁਹਾਡਾ ਨਾਮ ਅਤੇ ਫ਼ੋਟੋ ਦੇਖ ਸਕਦਾ ਹੈ।",
     "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared."
   },
   "icu:CallingLobby__CallLinkNotice--phone-sharing": {
-    "messageformat": "Anyone who joins this call via the link will see your name, photo, and phone number.",
+    "messageformat": "ਕੋਈ ਵੀ ਵਿਅਕਤੀ ਜੋ ਲਿੰਕ ਰਾਹੀਂ ਇਸ ਕਾਲ ਵਿੱਚ ਸ਼ਾਮਲ ਹੁੰਦਾ ਹੈ, ਉਹ ਤੁਹਾਡਾ ਨਾਮ, ਫ਼ੋਟੋ ਅਤੇ ਫ਼ੋਨ ਨੰਬਰ ਦੇਖ ਸਕਦਾ ਹੈ।",
     "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared, when the phone number sharing account setting is enabled."
   },
   "icu:CallingLobbyJoinButton--join": {
@@ -1883,11 +1852,11 @@
   },
   "icu:calling__button--ring__off": {
     "messageformat": "ਸੂਚਿਤ ਕਰੋ, ਰਿੰਗ ਨਾ ਕਰੋ",
-    "description": "Button tooltip label for turning ringing off"
+    "description": "(Deleted 2024/03/07) Button tooltip label for turning ringing off"
   },
   "icu:calling__button--ring__on": {
     "messageformat": "ਰਿੰਗ ਕਰਨੀ ਸਮਰੱਥ ਕਰੋ",
-    "description": "Button tooltip label for turning ringing on"
+    "description": "(Deleted 2024/03/07) Button tooltip label for turning ringing on"
   },
   "icu:CallingButton__ring-off": {
     "messageformat": "ਰਿੰਗ ਬੰਦ ਕਰੋ",
@@ -1975,10 +1944,14 @@
   },
   "icu:calling__in-this-call--one": {
     "messageformat": "ਇਸ ਕਾਲ ਵਿੱਚ · 1 ਵਿਅਕਤੀ ਹੈ",
-    "description": "Shown in the participants list to describe how many people are in the call"
+    "description": "(Deleted 2024/02/29) Shown in the participants list to describe how many people are in the call"
   },
   "icu:calling__in-this-call--many": {
     "messageformat": "ਇਸ ਕਾਲ ਵਿੱਚ · {people} ਵਿਅਕਤੀ ਹਨ",
+    "description": "(Deleted 2024/02/29) Shown in the participants list to describe how many people are in the call"
+  },
+  "icu:calling__in-this-call": {
+    "messageformat": "{people, plural, one {ਇਸ ਕਾਲ ਵਿੱਚ {people,number} ਵਿਅਕਤੀ} other {ਇਸ ਕਾਲ ਵਿੱਚ {people,number} ਲੋਕ}}",
     "description": "Shown in the participants list to describe how many people are in the call"
   },
   "icu:calling__you-have-blocked": {
@@ -2083,7 +2056,7 @@
   },
   "icu:general": {
     "messageformat": "ਆਮ",
-    "description": "Header for general options on the settings screen"
+    "description": "(Deleted 2024/03/07) Header for general options on the settings screen"
   },
   "icu:spellCheckDescription": {
     "messageformat": "ਸੁਨੇਹਾ ਲਿਖਣ ਵਾਲੇ ਬਾਕਸ ਵਿੱਚ ਲਿਖੇ ਸੁਨੇਹੇ ਦੇ ਸਪੈਲਿੰਗ ਚੈੱਕ ਕਰੋ",
@@ -2135,7 +2108,7 @@
   },
   "icu:deleteAllDataButton": {
     "messageformat": "ਸਾਰਾ ਡੇਟਾ ਮਿਟਾਓ",
-    "description": "Text of the button that deletes all data"
+    "description": "(Deleted 2024/03/07) Text of the button that deletes all data"
   },
   "icu:deleteAllDataProgress": {
     "messageformat": "ਡਿਸਕਨੈਕਟ ਕਰਨਾ ਅਤੇ ਸਾਰਾ ਡੇਟਾ ਮਿਟਾਉਣਾ",
@@ -2151,15 +2124,15 @@
   },
   "icu:notifications": {
     "messageformat": "ਸੂਚਨਾਵਾਂ",
-    "description": "Header for notification settings"
+    "description": "(Deleted 2024/03/07) Header for notification settings"
   },
   "icu:notificationSettingsDialog": {
     "messageformat": "ਜਦੋਂ ਸੁਨੇਹੇ ਆਉਂਦੇ ਹਨ, ਤਾਂ ਉਹ ਸੂਚਨਾਵਾਂ ਪ੍ਰਦਰਸ਼ਤ ਕਰੋ ਜੋ ਇਹ ਪ੍ਰਗਟ ਕਰਦੀਆਂ ਹਨ:",
-    "description": "Explain the purpose of the notification settings"
+    "description": "(Deleted 2024/03/07) Explain the purpose of the notification settings"
   },
   "icu:disableNotifications": {
     "messageformat": "ਸੂਚਨਾਵਾਂ ਅਸਮਰੱਥ ਕਰੋ",
-    "description": "Label for disabling notifications"
+    "description": "(Deleted 2024/03/07) Label for disabling notifications"
   },
   "icu:nameAndMessage": {
     "messageformat": "ਨਾਂ, ਸਮੱਗਰੀ ਅਤੇ ਕਾਰਵਾਈਆਂ",
@@ -2213,15 +2186,15 @@
   },
   "icu:showMore": {
     "messageformat": "ਵੇਰਵਾ",
-    "description": "Displays the details of a key change"
+    "description": "(Deleted 2024/03/07) Displays the details of a key change"
   },
   "icu:showLess": {
     "messageformat": "ਵੇਰਵੇ ਲੁਕਾਓ",
-    "description": "Hides the details of a key change"
+    "description": "(Deleted 2024/03/07) Hides the details of a key change"
   },
   "icu:learnMore": {
     "messageformat": "ਸੁਰੱਖਿਆ ਨੰਬਰਾਂ ਨੂੰ ਪ੍ਰਮਾਣਿਤ ਕਰਨ ਬਾਰੇ ਹੋਰ ਜਾਣੋ",
-    "description": "Text that links to a support article on verifying safety numbers"
+    "description": "(Deleted 2024/03/07) Text that links to a support article on verifying safety numbers"
   },
   "icu:expiredWarning": {
     "messageformat": "Signal Desktop ਦੇ ਇਸ ਸੰਸਕਰਣ ਦੀ ਮਿਆਦ ਪੁੱਗ ਚੁੱਕੀ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ ਮੈੇਸੇਜਿੰਗ ਨੂੰ ਜਾਰੀ ਰੱਖਣ ਲਈ ਤਾਜ਼ਾ ਸੰਸਕਰਣ ਲਈ ਅਪਗ੍ਰੇਡ ਕਰੋ।",
@@ -2237,7 +2210,7 @@
   },
   "icu:unregisteredUser": {
     "messageformat": "ਨੰਬਰ ਰਜਿਸਟਰਡ ਨਹੀਂ ਹੈ",
-    "description": "Error message displayed when sending to an unregistered user."
+    "description": "(Deleted 2024/03/07) Error message displayed when sending to an unregistered user."
   },
   "icu:sync": {
     "messageformat": "ਸੰਪਰਕਾਂ ਨੂੰ ਇੰਮਪੋਰਟ ਕਰੋ",
@@ -2249,7 +2222,7 @@
   },
   "icu:lastSynced": {
     "messageformat": "ਜਦੋਂ ਆਖਰੀ ਆਯਾਤ ਹੋਈ",
-    "description": "Label for date and time of last sync operation"
+    "description": "(Deleted 2024/03/07) Label for date and time of last sync operation"
   },
   "icu:syncNow": {
     "messageformat": "ਹੁਣੇ ਆਯਾਤ ਕਰੋ",
@@ -2409,7 +2382,7 @@
   },
   "icu:yourSafetyNumberWith": {
     "messageformat": "{name1} ਨਾਲ ਤੁਹਾਡਾ ਸੁਰੱਖਿਆ ਨੰਬਰ ਹੈ:",
-    "description": "Heading for safety number view"
+    "description": "(Deleted 2024/03/07) Heading for safety number view"
   },
   "icu:themeLight": {
     "messageformat": "ਫਿੱਕਾ",
@@ -2441,7 +2414,7 @@
   },
   "icu:startConversation": {
     "messageformat": "ਨਵੀਂ ਚੈਟ ਸ਼ੁਰੂ ਕਰੋ",
-    "description": "Label underneath number a user enters that is not an existing contact"
+    "description": "(Deleted 2024/03/07) Label underneath number a user enters that is not an existing contact"
   },
   "icu:newConversation": {
     "messageformat": "ਨਵੀਂ ਚੈਟ",
@@ -2573,15 +2546,15 @@
   },
   "icu:notSupportedSMS": {
     "messageformat": "SMS/MMS ਸੁਨੇਹੇ ਸਮਰਥਿਤ ਨਹੀਂ ਹਨ।",
-    "description": "Label underneath number informing user that SMS is not supported on desktop"
+    "description": "(Deleted 2024/03/07) Label underneath number informing user that SMS is not supported on desktop"
   },
   "icu:newPhoneNumber": {
     "messageformat": "ਕੋਈ ਸੰਪਰਕ ਜੋੜਨ ਲਈ ਫ਼ੋਨ ਨੰਬਰ ਦਰਜ ਕਰੋ।",
-    "description": "Placeholder for adding a new number to a contact"
+    "description": "(Deleted 2024/03/07) Placeholder for adding a new number to a contact"
   },
   "icu:invalidNumberError": {
     "messageformat": "ਅਵੈਧ ਨੰਬਰ",
-    "description": "When a person inputs a number that is invalid"
+    "description": "(Deleted 2024/03/07) When a person inputs a number that is invalid"
   },
   "icu:unlinkedWarning": {
     "messageformat": "ਮੈਸੇਜਿੰਗ ਜਾਰੀ ਰੱਖਣ ਲਈ Signal Desktop ਨੂੰ ਆਪਣੇ ਮੋਬਾਈਲ ਡਿਵਾਈਸ ਨਾਲ ਦੁਬਾਰਾ ਲਿੰਕ ਕਰਨ ਲਈ ਕਲਿੱਕ ਕਰੋ।"
@@ -2590,7 +2563,8 @@
     "messageformat": "ਲਿੰਕ ਨਹੀਂ ਕੀਤਾ ਹੋਇਆ"
   },
   "icu:relink": {
-    "messageformat": "ਮੁੜ-ਲਿੰਕ ਕਰੋ"
+    "messageformat": "ਮੁੜ-ਲਿੰਕ ਕਰੋ",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:autoUpdateNewVersionTitle": {
     "messageformat": "ਅੱਪਡੇਟ ਉਪਲਬਧ ਹੈ"
@@ -2615,7 +2589,8 @@
     "messageformat": "Signal ਮੁੜ ਚਾਲੂ ਕਰੋ"
   },
   "icu:autoUpdateLaterButtonLabel": {
-    "messageformat": "ਬਾਅਦ ਵਿੱਚ"
+    "messageformat": "ਬਾਅਦ ਵਿੱਚ",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:autoUpdateIgnoreButtonLabel": {
     "messageformat": "ਅੱਪਡੇਟ ਨੂੰ ਨਜ਼ਰਅੰਦਾਜ਼ ਕਰੋ"
@@ -2741,7 +2716,7 @@
     "description": "Shown in a message bubble if any attachments are left on message when too-large attachments are dropped"
   },
   "icu:message--call-link-description": {
-    "messageformat": "Use this link to join a Signal call",
+    "messageformat": "Signal ਕਾਲ ਵਿੱਚ ਸ਼ਾਮਲ ਹੋਣ ਲਈ ਇਸ ਲਿੰਕ ਦੀ ਵਰਤੋਂ ਕਰੋ",
     "description": "Shown in message previews for Signal call links."
   },
   "icu:donation--missing": {
@@ -2806,7 +2781,7 @@
   },
   "icu:message--giftBadge--view": {
     "messageformat": "ਦੇਖੋ",
-    "description": "Shown when you've sent a gift badge to someone then opened it"
+    "description": "(Deleted 2024/03/07) Shown when you've sent a gift badge to someone then opened it"
   },
   "icu:message--donation--view": {
     "messageformat": "ਦੇਖੋ",
@@ -2838,7 +2813,7 @@
   },
   "icu:stickers--StickerManager--title": {
     "messageformat": "ਸਟਿੱਕਰ",
-    "description": "Title for the sticker manager"
+    "description": "(Deleted 2024/03/07) Title for the sticker manager"
   },
   "icu:stickers--StickerManager--Available": {
     "messageformat": "ਉਪਲਬਧ",
@@ -3388,14 +3363,6 @@
     "messageformat": "ਚੈਟ ਨੂੰ ਪੜ੍ਹਿਆ ਗਿਆ ਵਜੋਂ ਚਿੰਨ੍ਹਿਤ ਕੀਤਾ ਗਿਆ",
     "description": "A toast that shows up when user marks a conversation as unread"
   },
-  "icu:SendEdit--dialog--title": {
-    "messageformat": "ਸਿਰਫ਼ Signal ਬੀਟਾ",
-    "description": "(deleted 8/30) Title of the modal shown before sending your first edit message"
-  },
-  "icu:SendEdit--dialog--body": {
-    "messageformat": "ਸੁਨੇਹਿਆਂ ਨੂੰ ਸੋਧਣ ਦੀ ਸਹੂਲਤ ਸਿਰਫ਼ Signal ਬੀਟਾ ਦੇ ਵਰਤੋਂਕਾਰਾਂ ਲਈ ਉਪਲਬਧ ਹੈ। ਜੇਕਰ ਤੁਸੀਂ ਕਿਸੇ ਸੁਨੇਹੇ ਨੂੰ ਸੋਧਦੇ ਹੋ, ਤਾਂ ਇਹ ਸਿਰਫ਼ ਉਹਨਾਂ ਲੋਕਾਂ ਨੂੰ ਦਿਖਾਈ ਦੇਵੇਗਾ ਜਿਹਨਾਂ ਕੋਲ Signal ਬੀਟਾ ਦਾ ਨਵਾਂ ਵਰਜ਼ਨ ਹੈ।",
-    "description": "(deleted 8/30) Body text of the modal shown before sending your first edit message"
-  },
   "icu:SendEdit--dialog--title2": {
     "messageformat": "ਸੁਨੇਹੇ ਨੂੰ ਸੋਧੋ",
     "description": "Title of the modal shown before sending your first edit message"
@@ -3443,6 +3410,62 @@
   "icu:ReactionsViewer--all": {
     "messageformat": "ਸਾਰੇ",
     "description": "Shown in reaction viewer as the title for the 'all' category"
+  },
+  "icu:SafetyTipsModal__Title": {
+    "messageformat": "ਸੁਰੱਖਿਆ ਸੰਬੰਧੀ ਸੁਝਾਅ",
+    "description": "Title of the safety tips modal"
+  },
+  "icu:SafetyTipsModal__Description": {
+    "messageformat": "ਅਣਜਾਣ ਲੋਕਾਂ ਦੀਆਂ ਸੁਨੇਹੇ ਦੀਆਂ ਬੇਨਤੀਆਂ ਸਵੀਕਾਰ ਕਰਦੇ ਸਮੇਂ ਸਾਵਧਾਨ ਰਹੋ। ਇਹਨਾਂ ਗੱਲਾਂ ਦਾ ਧਿਆਨ ਰੱਖੋ:",
+    "description": "Description of the safety tips modal"
+  },
+  "icu:SafetyTipsModal__TipTitle--Crypto": {
+    "messageformat": "ਕ੍ਰਿਪਟੋ ਜਾਂ ਪੈਸਿਆਂ ਦਾ ਘੁਟਾਲਾ",
+    "description": "Title of the crypto safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Crypto": {
+    "messageformat": "ਜੇਕਰ ਕੋਈ ਅਣਜਾਣ ਵਿਅਕਤੀ ਕ੍ਰਿਪਟੋਕੁਰੰਸੀ (ਜਿਵੇਂ ਕਿ ਬਿਟਕੋਇਨ) ਜਾਂ ਪੈਸੇ ਕਮਾਉਣ ਦੇ ਮੌਕੇ ਬਾਰੇ ਤੁਹਾਨੂੰ ਸੁਨੇਹੇ ਭੇਜਦਾ ਹੈ, ਤਾਂ ਸਾਵਧਾਨ ਰਹੋ—ਇਹ ਸਪੈਮ ਹੋ ਸਕਦਾ ਹੈ।",
+    "description": "Description of the crypto safety tip"
+  },
+  "icu:SafetyTipsModal__TipTitle--Vague": {
+    "messageformat": "ਅਜੀਬ ਜਾਂ ਅਢੁਕਵੇਂ ਸੁਨੇਹੇ",
+    "description": "Title of the vague safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Vague": {
+    "messageformat": "ਸਪੈਮਰ ਅਕਸਰ ਤੁਹਾਡਾ ਧਿਆਨ ਖਿੱਚਣ ਲਈ \"ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ\" ਵਰਗੇ ਸਧਾਰਨ ਸੁਨੇਹੇ ਨਾਲ ਚੈਟ ਸ਼ੁਰੂ ਕਰਦੇ ਹਨ। ਜੇਕਰ ਤੁਸੀਂ ਜਵਾਬ ਦਿੰਦੇ ਹੋ ਤਾਂ ਉਹ ਤੁਹਾਨੂੰ ਅੱਗੇ ਆਪਣੀਆਂ ਗੱਲਾਂ ਵਿੱਚ ਫਸਾ ਸਕਦੇ ਹਨ।",
+    "description": "Description of the vague safety tip"
+  },
+  "icu:SafetyTipsModal__TipTitle--Links": {
+    "messageformat": "ਲਿੰਕ ਵਾਲੇ ਸੁਨੇਹੇ",
+    "description": "Title of the links safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Links": {
+    "messageformat": "ਅਣਜਾਣ ਲੋਕਾਂ ਵੱਲੋਂ ਆਉਣ ਵਾਲੇ ਸੁਨੇਹਿਆਂ ਤੋਂ ਸਾਵਧਾਨ ਰਹੋ ਜਿਹਨਾਂ ਵਿੱਚ ਵੈੱਬਸਾਈਟਾਂ ਦੇ ਲਿੰਕ ਹੁੰਦੇ ਹਨ। ਅਜਿਹੇ ਲੋਕਾਂ ਵੱਲੋਂ ਭੇਜੇ ਲਿੰਕ ਕਦੇ ਨਾ ਖੋਲ੍ਹੋ ਜਿਹਨਾਂ ਉੱਤੇ ਤੁਸੀਂ ਭਰੋਸਾ ਨਹੀਂ ਕਰਦੇ ਹੋ।",
+    "description": "Description of the links safety tip"
+  },
+  "icu:SafetyTipsModal__TipTitle--Business": {
+    "messageformat": "ਜਾਅਲੀ ਕਾਰੋਬਾਰ ਅਤੇ ਸੰਸਥਾਵਾਂ",
+    "description": "Title of the business safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Business": {
+    "messageformat": "ਤੁਹਾਡੇ ਨਾਲ ਸੰਪਰਕ ਕਰਨ ਵਾਲੇ ਕਾਰੋਬਾਰਾਂ ਜਾਂ ਸਰਕਾਰੀ ਏਜੰਸੀਆਂ ਤੋਂ ਸਾਵਧਾਨ ਰਹੋ। ਟੈਕਸ ਏਜੰਸੀਆਂ, ਕੋਰੀਅਰ ਅਤੇ ਅਜਿਹੀਆਂ ਹੋਰ ਕੰਪਨੀਆਂ ਵੱਲੋਂ ਆਉਣ ਵਾਲੇ ਸੁਨੇਹੇ ਸਪੈਮ ਹੋ ਸਕਦੇ ਹਨ।",
+    "description": "Description of the business safety tip"
+  },
+  "icu:SafetyTipsModal__DotLabel": {
+    "messageformat": "{page,number} ਪੇਜ 'ਤੇ ਜਾਓ",
+    "description": "Label for the dots in the safety tips modal that when clicked will take you to a specific tip"
+  },
+  "icu:SafetyTipsModal__Button--Previous": {
+    "messageformat": "ਪਿਛਲਾ ਸੁਝਾਅ",
+    "description": "Button to go to the previous safety tip"
+  },
+  "icu:SafetyTipsModal__Button--Next": {
+    "messageformat": "ਅਗਲਾ ਸੁਝਾਅ",
+    "description": "Button to go to the next safety tip"
+  },
+  "icu:SafetyTipsModal__Button--Done": {
+    "messageformat": "ਮੁਕੰਮਲ",
+    "description": "Button to close the safety tips modal when you've reached the last tip"
   },
   "icu:MessageRequests--message-direct": {
     "messageformat": "{name} ਨੂੰ ਤੁਹਾਨੂੰ ਸੁਨੇਹਾ ਭੇਜਣ ਅਤੇ ਉਹਨਾਂ ਨਾਲ ਤੁਹਾਡਾ ਨਾਂ ਅਤੇ ਫ਼ੋਟੋ ਸਾਂਝੀ ਕਰਨ ਦੀ ਆਗਿਆ ਦੇਣੀ ਹੈ? ਜਦੋਂ ਤਕ ਤੁਸੀਂ ਮਨਜ਼ੂਰ ਨਹੀਂ ਕਰ ਲੈਂਦੇ ਉਦੋਂ ਤਕ ਉਹਨਾਂ ਨੂੰ ਇਹ ਪਤਾ ਨਹੀਂ ਲੱਗੇਗਾ ਕਿ ਤੁਸੀਂ ਉਹਨਾਂ ਦੇ ਸੁਨੇਹੇ ਦੇਖ ਲਏ ਹਨ।",
@@ -3507,6 +3530,42 @@
   "icu:MessageRequests--block-group-confirm-body": {
     "messageformat": "ਤੁਹਾਨੂੰ ਇਸ ਗਰੁੱਪ ਤੋਂ ਹੁਣ ਹੋਰ ਸੁਨੇਹੇ ਜਾਂ ਅੱਪਡੇਟ ਨਹੀਂ ਆਉਣਗੇ ਅਤੇ ਮੈਂਬਰ ਤੁਹਾਨੂੰ ਦੁਬਾਰਾ ਇਸ ਗਰੁੱਪ ਵਿੱਚ ਸ਼ਾਮਲ ਨਹੀਂ ਕਰ ਸਕਣਗੇ ।",
     "description": "Shown as the body in the confirmation modal for blocking a group message request"
+  },
+  "icu:MessageRequests--reportAndMaybeBlock": {
+    "messageformat": "ਰਿਪੋਰਟ ਕਰੋ...",
+    "description": "Shown as a button to let the user report a message request and maybe block the user"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-title": {
+    "messageformat": "ਕੀ ਸਪੈਮ ਵਜੋਂ ਰਿਪੋਰਟ ਕਰਨੀ ਹੈ?",
+    "description": "Shown as the title in the modal for reporting and maybe blocking a message request"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-body--direct": {
+    "messageformat": "Signal ਨੂੰ ਸੂਚਿਤ ਕੀਤਾ ਜਾਵੇਗਾ ਕਿ ਇਹ ਵਿਅਕਤੀ ਸ਼ਾਇਦ ਸਪੈਮ ਭੇਜ ਰਿਹਾ ਹੈ। Signal ਕਿਸੇ ਵੀ ਚੈਟ ਦੀ ਸਮੱਗਰੀ ਨੂੰ ਨਹੀਂ ਦੇਖ ਸਕਦਾ ਹੈ।",
+    "description": "Shown as the body in the modal for reporting and maybe blocking a message request in a direct conversation"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-body--group--unknown-contact": {
+    "messageformat": "Signal ਨੂੰ ਸੂਚਿਤ ਕੀਤਾ ਜਾਵੇਗਾ ਕਿ ਜਿਸ ਵਿਅਕਤੀ ਨੇ ਤੁਹਾਨੂੰ ਇਸ ਗਰੁੱਪ ਵਿੱਚ ਸ਼ਾਮਲ ਹੋਣ ਦਾ ਸੱਦਾ ਦਿੱਤਾ ਸੀ ਉਹ ਸ਼ਾਇਦ ਸਪੈਮ ਭੇਜ ਰਹੇ ਹਨ। Signal ਕਿਸੇ ਵੀ ਚੈਟ ਦੀ ਸਮੱਗਰੀ ਨੂੰ ਨਹੀਂ ਦੇਖ ਸਕਦਾ ਹੈ।",
+    "description": "Shown as the body in the modal for reporting and maybe blocking a message request in a group conversation when the contact is unknown"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-body--group": {
+    "messageformat": "Signal ਨੂੰ ਸੂਚਿਤ ਕੀਤਾ ਜਾਵੇਗਾ ਕਿ {name}, ਜਿਹਨਾਂ ਨੇ ਤੁਹਾਨੂੰ ਇਸ ਗਰੁੱਪ ਵਿੱਚ ਸ਼ਾਮਲ ਹੋਣ ਦਾ ਸੱਦਾ ਦਿੱਤਾ ਸੀ, ਹੋ ਸ਼ਾਇਦ ਸਪੈਮ ਭੇਜ ਰਹੇ ਹਨ। Signal ਕਿਸੇ ਵੀ ਚੈਟ ਦੀ ਸਮੱਗਰੀ ਨੂੰ ਨਹੀਂ ਦੇਖ ਸਕਦਾ ਹੈ।",
+    "description": "Shown as the body in the modal for reporting and maybe blocking a message request in a group conversation"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-report": {
+    "messageformat": "ਸਪੈਮ ਦੀ ਰਿਪੋਰਟ ਕਰੋ",
+    "description": "Shown as a button to let the user report a message request"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-reportAndBlock": {
+    "messageformat": "ਰਿਪੋਰਟ ਕਰੋ ਅਤੇ ਪਾਬੰਦੀ ਲਗਾਓ",
+    "description": "Shown as a button to let the user report a message request and block the user"
+  },
+  "icu:MessageRequests--AcceptedOptionsModal--body": {
+    "messageformat": "ਤੁਸੀਂ {name} ਦੀ ਸੁਨੇਹੇ ਦੀ ਬੇਨਤੀ ਨੂੰ ਮਨਜ਼ੂਰ ਕਰ ਲਿਆ ਹੈ। ਜੇਕਰ ਅਜਿਹਾ ਗਲਤੀ ਨਾਲ ਹੋ ਗਿਆ ਸੀ, ਤਾਂ ਤੁਸੀਂ ਹੇਠਾਂ ਦਿੱਤੇ ਵਿੱਚੋਂ ਕੋਈ ਕਾਰਵਾਈ ਕਰ ਸਕਦੇ ਹੋ।",
+    "description": "Shown as the body in the modal for accepting a message request in a direct conversation"
+  },
+  "icu:MessageRequests--report-spam-success-toast": {
+    "messageformat": "ਸਪੈਮ ਵਜੋਂ ਰਿਪੋਰਟ ਕੀਤੀ ਗਈ।",
+    "description": "Shown in a toast when you successfully report a user as spam"
   },
   "icu:MessageRequests--delete": {
     "messageformat": "ਮਿਟਾਓ",
@@ -3578,7 +3637,7 @@
   },
   "icu:ConversationHero--membership-added": {
     "messageformat": "{name} ਨੇ ਤੁਹਾਨੂੰ ਗਰੁੱਪ ਵਿੱਚ ਸ਼ਾਮਲ ਕੀਤਾ।",
-    "description": "Shown Indicates that you were added to a group by a given individual."
+    "description": "(Deleted 2024/03/07) Shown Indicates that you were added to a group by a given individual."
   },
   "icu:no-groups-in-common": {
     "messageformat": "ਕੋਈ ਗਰੁੱਪ ਸਾਂਝੇ ਨਹੀਂ",
@@ -3717,11 +3776,11 @@
     "description": "Shown in the call lobby for a direct 1:1 call when the caller's video is disabled, to specify that an audio call will be placed when clicking the Start button."
   },
   "icu:CallControls__InfoDisplay--adhoc-call": {
-    "messageformat": "Call link",
+    "messageformat": "ਕਾਲ ਦਾ ਲਿੰਕ",
     "description": "Shown in the call lobby for a call link."
   },
   "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
-    "messageformat": "Waiting to be let in",
+    "messageformat": "ਕਾਲ ਦੇ ਵਿੱਚ ਸ਼ਾਮਲ ਕੀਤੇ ਜਾਣ ਦੀ ਉਡੀਕ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ",
     "description": "Shown in the call lobby for call link calls when requesting to join a call which requires admin approval."
   },
   "icu:CallControls__JoinLeaveButton--hangup-1-1": {
@@ -3786,6 +3845,10 @@
   },
   "icu:calling__participants": {
     "messageformat": "ਕਾਲ ਵਿੱਚ {people}",
+    "description": "(Deleted 2024/02/29) Title for participants list toggle"
+  },
+  "icu:calling__participants--pluralized": {
+    "messageformat": "{people, plural, one {ਕਾਲ ਵਿੱਚ {people,number}} other {ਕਾਲ ਵਿੱਚ {people,number}}}",
     "description": "Title for participants list toggle"
   },
   "icu:calling__call-notification__ended": {
@@ -3865,7 +3928,7 @@
     "description": "Title for the select your screen sharing sources modal"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "Copy link",
+    "messageformat": "ਲਿੰਕ ਕਾਪੀ ਕਰੋ",
     "description": "Menu item in the in-call info popup for call link calls. The action is to add the call link to the clipboard."
   },
   "icu:callingDeviceSelection__label--video": {
@@ -4778,7 +4841,7 @@
   },
   "icu:ContactModal--message": {
     "messageformat": "ਸੁਨੇਹਾ",
-    "description": "Button text for send message button in Group Contact Details modal"
+    "description": "(Deleted 2024/03/07) Button text for send message button in Group Contact Details modal"
   },
   "icu:ContactModal--rm-admin": {
     "messageformat": "ਐਡਮਿਨ ਦੇ ਅਹੁਦੇ ਤੋਂ ਹਟਾਓ",
@@ -5022,7 +5085,7 @@
   },
   "icu:PendingInvites--invites": {
     "messageformat": "ਤੁਹਾਡੇ ਦੁਆਰਾ ਸੱਦੇ ਗਏ",
-    "description": "This is the title list of all invites"
+    "description": "(Deleted 2024/03/07) This is the title list of all invites"
   },
   "icu:PendingInvites--invited-by-you": {
     "messageformat": "ਤੁਹਾਡੇ ਦੁਆਰਾ ਸੱਦੇ ਗਏ",
@@ -5138,23 +5201,23 @@
   },
   "icu:AvatarInput--no-photo-label--group": {
     "messageformat": "ਗਰੁੱਪ ਫ਼ੋਟੋ ਜੋੜੋ",
-    "description": "The label for the avatar uploader when no group photo is selected"
+    "description": "(Deleted 2024/03/07) The label for the avatar uploader when no group photo is selected"
   },
   "icu:AvatarInput--no-photo-label--profile": {
     "messageformat": "ਫ਼ੋਟੋ ਜੋੜੋ",
-    "description": "The label for the avatar uploader when no profile photo is selected"
+    "description": "(Deleted 2024/03/07) The label for the avatar uploader when no profile photo is selected"
   },
   "icu:AvatarInput--change-photo-label": {
     "messageformat": "ਫ਼ੋਟੋ ਬਦਲੋ",
-    "description": "The label for the avatar uploader when a photo is selected"
+    "description": "(Deleted 2024/03/07) The label for the avatar uploader when a photo is selected"
   },
   "icu:AvatarInput--upload-photo-choice": {
     "messageformat": "ਫ਼ੋਟੋ ਅੱਪਲੋਡ ਕਰੋ",
-    "description": "The button text when you click on an uploaded avatar and want to upload a new one"
+    "description": "(Deleted 2024/03/07) The button text when you click on an uploaded avatar and want to upload a new one"
   },
   "icu:AvatarInput--remove-photo-choice": {
     "messageformat": "ਫ਼ੋਟੋ ਹਟਾਓ",
-    "description": "The button text when you click on an uploaded avatar and want to remove it"
+    "description": "(Deleted 2024/03/07) The button text when you click on an uploaded avatar and want to remove it"
   },
   "icu:ContactPill--remove": {
     "messageformat": "ਸੰਪਰਕ ਹਟਾਓ",
@@ -5162,7 +5225,7 @@
   },
   "icu:ComposeErrorDialog--close": {
     "messageformat": "ਠੀਕ ਹੈ",
-    "description": "The text on the button when there's an error in the composer"
+    "description": "(Deleted 2024/03/07) The text on the button when there's an error in the composer"
   },
   "icu:NewlyCreatedGroupInvitedContactsDialog--title": {
     "messageformat": "{count, plural, one {ਸੱਦਾ ਭੇਜਿਆ ਗਿਆ} other {{count,number} ਸੱਦੇ ਭੇਜੇ ਗਏ}}",
@@ -5288,6 +5351,10 @@
     "messageformat": "ਹੋਰ ਜਾਣੋ",
     "description": "Shown on the message request warning. Clicking this button will open a dialog with more information"
   },
+  "icu:MessageRequestWarning__safety-tips": {
+    "messageformat": "ਸੁਰੱਖਿਆ ਸੰਬੰਧੀ ਸੁਝਾਅ",
+    "description": "Shown on the message request warning. Clicking this button will open a dialog with safety tips"
+  },
   "icu:MessageRequestWarning__dialog__details": {
     "messageformat": "ਇਸ ਵਿਅਕਤੀ ਨਾਲ ਤੁਹਾਡੇ ਕੋਈ ਸਾਂਝੇ ਗਰੁੱਪ ਨਹੀਂ ਹਨ। ਅਣਚਾਹੇ ਸੁਨੇਹਿਆਂ ਤੋਂ ਬਚਣ ਲਈ ਬੇਨਤੀਆਂ ਨੂੰ ਮਨਜ਼ੂਰ ਕਰਨ ਤੋਂ ਪਹਿਲਾਂ ਧਿਆਨ ਨਾਲ ਇਹਨਾਂ ਦੀ ਸਮੀਖਿਆ ਕਰੋ।",
     "description": "Shown in the message request warning dialog. Gives more information about message requests"
@@ -5335,10 +5402,6 @@
   "icu:ContactSpoofingReviewDialog__group__multiple-conflicts__description": {
     "messageformat": "{count, plural, one {ਇਸ ਗਰੁੱਪ ਵਿੱਚ ਨਾਂ ਸੰਬੰਧੀ {count,number} ਵਿਵਾਦ ਲੱਭਿਆ ਹੈ। ਹੇਠਾਂ ਮੈਂਬਰਾਂ ਦੀ ਸਮੀਖਿਆ ਕਰੋ ਜਾਂ ਕਾਰਵਾਈ ਕਰਨ ਲਈ ਚੁਣੋ।} other {ਇਸ ਗਰੁੱਪ ਵਿੱਚ ਨਾਂ ਸੰਬੰਧੀ {count,number} ਵਿਵਾਦ ਲੱਭੇ ਹਨ। ਹੇਠਾਂ ਮੈਂਬਰਾਂ ਦੀ ਸਮੀਖਿਆ ਕਰੋ ਜਾਂ ਕਾਰਵਾਈ ਕਰਨ ਲਈ ਚੁਣੋ।}}",
     "description": "Description for the group contact spoofing review dialog when there are multiple shared names"
-  },
-  "icu:ContactSpoofingReviewDialog__group__members-header": {
-    "messageformat": "ਮੈਂਬਰ",
-    "description": "(Deleted 01/31/2024) Header in the group contact spoofing review dialog. After this header, there will be a list of members"
   },
   "icu:ContactSpoofingReviewDialog__group__members__no-shared-groups": {
     "messageformat": "ਕੋਈ ਹੋਰ ਸਾਂਝੇ ਗਰੁੱਪ ਨਹੀਂ ਹਨ",
@@ -5410,7 +5473,7 @@
   },
   "icu:ChatColorPicker__global-chat-color": {
     "messageformat": "ਚੈਟ ਦਾ ਗਲੋਬਲ ਰੰਗ",
-    "description": "Modal title for the chat color picker and editor for all conversations"
+    "description": "(Deleted 2024/03/07) Modal title for the chat color picker and editor for all conversations"
   },
   "icu:ChatColorPicker__menu-title": {
     "messageformat": "ਚੈਟ ਦਾ ਰੰਗ",
@@ -5644,14 +5707,6 @@
     "messageformat": "ਤੁਹਾਡੇ ਵਰਤੋਂਕਾਰ ਨਾਂ ਦੇ ਨਾਲ ਕੁਝ ਗਲਤ ਵਾਪਰ ਗਿਆ ਹੈ, ਇਹ ਹੁਣ ਤੁਹਾਡੇ ਖਾਤੇ ਨੂੰ ਅਸਾਈਨ ਨਹੀਂ ਕੀਤਾ ਗਿਆ ਹੈ। ਤੁਸੀਂ ਇਸਨੂੰ ਦੁਬਾਰਾ ਸੈੱਟ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰ ਸਕਦੇ ਹੋ ਜਾਂ ਇੱਕ ਨਵਾਂ ਵਰਤੋਂਕਾਰ ਨਾਂ ਚੁਣ ਸਕਦੇ ਹੋ।",
     "description": "Text of confirmation modal when the username gets corrupted"
   },
-  "icu:ProfileEditor--username--corrupted--delete-button": {
-    "messageformat": "ਵਰਤੋਂਕਾਰ ਨਾਂ ਹਟਾਓ",
-    "description": "(Deleted 02/01/2024) Button text for deletion of the username in case of corruption"
-  },
-  "icu:ProfileEditor--username--corrupted--create-button": {
-    "messageformat": "ਵਰਤੋਂਕਾਰ ਨਾਂ ਸਿਰਜੋ",
-    "description": "(Deleted 02/01/2024) Button text for creation of a new username in case of corruption"
-  },
   "icu:ProfileEditor--username--corrupted--fix-button": {
     "messageformat": "ਹੁਣੇ ਠੀਕ ਕਰੋ",
     "description": "Button text for creation of a new username in case of corruption"
@@ -5718,7 +5773,7 @@
   },
   "icu:ProfileEditor--username--check-username-taken": {
     "messageformat": "ਇਹ ਵਰਤੋਂਕਾਰ ਨਾਂ ਕੋਈ ਹੋਰ ਵਰਤ ਰਿਹਾ ਹੈ।",
-    "description": "Shown if user has attempted to save a username which is not available"
+    "description": "(Deleted 2024/03/07) Shown if user has attempted to save a username which is not available"
   },
   "icu:ProfileEditor--username--general-error": {
     "messageformat": "ਤੁਹਾਡਾ ਵਰਤੋਂਕਾਰ ਨਾਂ ਸੇਵ ਨਹੀਂ ਕਰ ਸਕੇ। ਆਪਣੇ ਕਨੈਕਸ਼ਨ ਦੀ ਜਾਂਚ ਕਰੋ ਅਤੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
@@ -5746,7 +5801,7 @@
   },
   "icu:ProfileEditor--username--delete-username": {
     "messageformat": "ਵਰਤੋਂਕਾਰ ਨਾਂ ਮਿਟਾਓ",
-    "description": "Shown as aria label for trash icon next to username"
+    "description": "(Deleted 2024/03/07) Shown as aria label for trash icon next to username"
   },
   "icu:ProfileEditor--username--confirm-delete-body-2": {
     "messageformat": "ਅਜਿਹਾ ਕਰਨ ਨਾਲ ਤੁਹਾਡੇ ਵਰਤੋਂਕਾਰ ਨਾਂ ਨੂੰ ਹਟਾ ਦਿੱਤਾ ਜਾਵੇਗਾ ਅਤੇ ਤੁਹਾਡੇ QR ਕੋਡ ਅਤੇ ਲਿੰਕ ਨੂੰ ਅਸਮਰੱਥ ਕਰ ਦਿੱਤਾ ਜਾਵੇਗਾ। “{username}” ਦੂਜੇ ਵਰਤੋਂਕਾਰ ਵਾਸਤੇ ਕਲੇਮ ਕਰਨ ਲਈ ਉਪਲਬਧ ਹੋ ਜਾਵੇਗਾ। ਕੀ ਤੁਸੀਂ ਪੱਕਾ ਅਜਿਹਾ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?",
@@ -5770,7 +5825,7 @@
   },
   "icu:ProfileEditor--username--copy-link": {
     "messageformat": "ਲਿੰਕ ਕਾਪੀ ਕਰੋ",
-    "description": "Shown as a button in context menu next to username. The action of the button is to put a username link into the clipboard."
+    "description": "(Deleted 2024/03/07) Shown as a button in context menu next to username. The action of the button is to put a username link into the clipboard."
   },
   "icu:ProfileEditor--username--delete": {
     "messageformat": "ਮਿਟਾਓ",
@@ -5793,20 +5848,16 @@
     "description": "ConfirmationDialog text for discarding changes"
   },
   "icu:ConfirmationDialog__Title--in-call-close-requested": {
-    "messageformat": "Close Signal and end the call?",
+    "messageformat": "ਕੀ Signal ਨੂੰ ਬੰਦ ਕਰਨਾ ਹੈ ਅਤੇ ਕਾਲ ਨੂੰ ਸਮਾਪਤ ਕਰਨਾ ਹੈ?",
     "description": "ConfirmationDialog title when trying to close the app while in a call."
   },
   "icu:ConfirmationDialog__Title--close-requested-not-now": {
-    "messageformat": "Not Now",
+    "messageformat": "ਹਾਲੇ ਨਹੀਂ",
     "description": "Confirmation dialog button to cancel closing the app, while in a call and trying to close the app."
   },
   "icu:ProfileEditor--edit-photo": {
     "messageformat": "ਫ਼ੋਟੋ ਨੂੰ ਸੋਧੋ",
     "description": "Text of a button on profile editor that leads to the avatar editor"
-  },
-  "icu:ProfileEditor--info--link": {
-    "messageformat": "ਤੁਹਾਡੀ ਪ੍ਰੋਫ਼ਾਈਲ ਇਨਕ੍ਰਿਪਟਡ ਹੈ। ਤੁਹਾਡੇ ਸੰਪਰਕ ਤੁਹਾਡੀ ਪ੍ਰੋਫ਼ਾਈਲ ਅਤੇ ਇਸ ਵਿੱਚ ਕੀਤੀਆਂ ਗਈਆਂ ਤਬਦੀਲੀਆਂ ਨੂੰ ਅਤੇ ਜਦੋਂ ਤੁਸੀਂ ਨਵੀਆਂ ਚੈਟਾਂ ਨੂੰ ਸ਼ੁਰੂ ਜਾਂ ਸਵੀਕਾਰ ਕਰਦੇ ਹੋ, ਇਹ ਦੇਖ ਸਕਦੇ ਹਨ। <learnMoreLink>ਹੋਰ ਜਾਣੋ</learnMoreLink>",
-    "description": "(Deleted 02/01/2024) Information shown at the bottom of the profile editor section"
   },
   "icu:ProfileEditor--info--general": {
     "messageformat": "ਤੁਹਾਡੀ ਪ੍ਰੋਫਾਈਲ ਅਤੇ ਇਸ ਵਿੱਚ ਕੀਤੀਆਂ ਤਬਦੀਲੀਆਂ ਨੂੰ ਤੁਹਾਡੇ ਸੰਪਰਕ, ਗਰੁੱਪ ਅਤੇ ਉਹ ਲੋਕ ਦੇਖ ਸਕਣਗੇ ਜਿਹਨਾਂ ਨੂੰ ਤੁਸੀਂ ਸੁਨੇਹੇ ਭੇਜਦੇ ਹੋ।",
@@ -6034,11 +6085,11 @@
   },
   "icu:Preferences--see-me": {
     "messageformat": "ਮੇਰਾ ਫ਼ੋਨ ਨੰਬਰ ਦੇਖੋ",
-    "description": "Label for the see my phone number setting"
+    "description": "(Deleted 2024/03/07) Label for the see my phone number setting"
   },
   "icu:Preferences--find-me": {
     "messageformat": "ਮੈਨੂੰ ਮੇਰੇ ਫ਼ੋਨ ਨੰਬਰ ਨਾਲ ਲੱਭੋ",
-    "description": "Label for the find me by my phone number setting"
+    "description": "(Deleted 2024/03/07) Label for the find me by my phone number setting"
   },
   "icu:Preferences--read-receipts": {
     "messageformat": "ਪੜ੍ਹੀਆਂ ਹੋਇਆਂ ਰਸੀਦਾਂ",
@@ -6128,6 +6179,10 @@
     "messageformat": "ਅੱਪਡੇਟ ਡਾਊਨਲੋਡ ਕੀਤੀ ਗਈ",
     "description": "The title of update dialog when update download is completed."
   },
+  "icu:DialogNetworkStatus__outage": {
+    "messageformat": "Signal ਤਕਨੀਕੀ ਮੁਸ਼ਕਲਾਂ ਦਾ ਸਾਹਮਣਾ ਕਰ ਰਿਹਾ ਹੈ ਅਸੀਂ ਜਿੰਨੀ ਛੇਤੀ ਸੰਭਵ ਹੋ ਸਕੇ ਸੇਵਾ ਨੂੰ ਬਹਾਲ ਕਰਨ ਲਈ ਸਖ਼ਤ ਮਿਹਨਤ ਕਰ ਰਹੇ ਹਾਂ",
+    "description": "The title of outage dialog during service outage."
+  },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "ਅੱਪਡੇਟ ਕਰਨ ਦੀ ਲੋੜ ਹੈ",
     "description": "The title of update dialog on install screen when user OS is unsupported"
@@ -6150,27 +6205,33 @@
   },
   "icu:NSIS__retry-dialog--first-line": {
     "messageformat": "Signal ਨੂੰ ਬੰਦ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਦਾ।",
-    "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
+    "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation.",
+    "ignoreUnused": true
   },
   "icu:NSIS__retry-dialog--second-line": {
     "messageformat": "ਕਿਰਪਾ ਕਰਕੇ ਇਸਨੂੰ ਖੁਦ ਬੰਦ ਕਰੋ ਅਤੇ ਅੱਗੇ ਜਾਰੀ ਰੱਖਣ ਲਈ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ 'ਤੇ ਕਲਿੱਕ ਕਰੋ।",
-    "description": "Second line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
+    "description": "Second line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation.",
+    "ignoreUnused": true
   },
   "icu:NSIS__appRunning": {
     "messageformat": "{appName} ਚੱਲ ਰਿਹਾ ਹੈ।\nਇਸਨੂੰ ਬੰਦ ਕਰਨ ਲਈ ਠੀਕ 'ਤੇ ਕਲਿੱਕ ਕਰੋ।\nਜੇਕਰ ਇਹ ਬੰਦ ਨਹੀਂ ਹੁੰਦਾ ਹੈ, ਤਾਂ ਇਸਨੂੰ ਖੁਦ ਬੰਦ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
-    "description": "The contents of a dialog displayed when Windows installer detect that the application is running and asks user to close it. Note: please keep the line breaks so that the text occupies three separate lines"
+    "description": "The contents of a dialog displayed when Windows installer detect that the application is running and asks user to close it. Note: please keep the line breaks so that the text occupies three separate lines",
+    "ignoreUnused": true
   },
   "icu:NSIS__decompressionFailed": {
     "messageformat": "ਫਾਇਲਾਂ ਨੂੰ ਡੀਕੰਪ੍ਰੈਸ ਕਰਨਾ ਅਸਫਲ ਰਿਹਾ। ਕਿਰਪਾ ਕਰਕੇ ਇੰਸਟਾਲਰ ਨੂੰ ਦੁਬਾਰਾ ਚਲਾਉਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
-    "description": "Displayed when Windows installer cannot decompress application files"
+    "description": "Displayed when Windows installer cannot decompress application files",
+    "ignoreUnused": true
   },
   "icu:NSIS__uninstallFailed": {
     "messageformat": "ਪੁਰਾਣੀਆਂ ਐਪਲੀਕੇਸ਼ਨ ਫਾਇਲਾਂ ਨੂੰ ਅਣ-ਇੰਸਟਾਲ ਕਰਨਾ ਅਸਫਲ ਰਿਹਾ। ਕਿਰਪਾ ਕਰਕੇ ਇੰਸਟਾਲਰ ਨੂੰ ਦੁਬਾਰਾ ਚਲਾਉਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
-    "description": "Displayed when Windows installer cannot uninstall the old application"
+    "description": "Displayed when Windows installer cannot uninstall the old application",
+    "ignoreUnused": true
   },
   "icu:NSIS__semver-downgrade": {
     "messageformat": "Signal ਦਾ ਇੱਕ ਨਵਾਂ ਵਰਜ਼ਨ ਪਹਿਲਾਂ ਹੀ ਇੰਸਟਾਲ ਕੀਤਾ ਹੋਇਆ ਹੈ। ਕੀ ਤੁਸੀਂ ਪੱਕਾ ਅੱਗੇ ਜਾਰੀ ਰੱਖਣਾ ਚਾਹੁੰਦੇ ਹੋ?",
-    "description": "A text of the dialog displayed when user tries to overwrite Signal installation with an older version."
+    "description": "A text of the dialog displayed when user tries to overwrite Signal installation with an older version.",
+    "ignoreUnused": true
   },
   "icu:CrashReportDialog__title": {
     "messageformat": "ਐਪਲੀਕੇਸ਼ਨ ਕਰੈਸ਼ ਹੋ ਗਈ ਹੈ",
@@ -6218,7 +6279,7 @@
   },
   "icu:MediaEditor__control--sticker": {
     "messageformat": "ਸਟਿੱਕਰ",
-    "description": "Label for the sticker button in the media editor"
+    "description": "(Deleted 2024/03/07) Label for the sticker button in the media editor"
   },
   "icu:MediaEditor__control--crop": {
     "messageformat": "ਕੱਟੋ ਅਤੇ ਘੁੰਮਾਓ",
@@ -6246,7 +6307,7 @@
   },
   "icu:MediaEditor__text--underline": {
     "messageformat": "ਹੇਠਾਂ ਲਕੀਰ",
-    "description": "Describes what attribute the color picker will change on the text"
+    "description": "(Deleted 2024/03/07) Describes what attribute the color picker will change on the text"
   },
   "icu:MediaEditor__draw--pen": {
     "messageformat": "ਪੈੱਨ",
@@ -6290,11 +6351,11 @@
   },
   "icu:MediaEditor__crop--crop": {
     "messageformat": "ਕੱਟੋ",
-    "description": "Performs the crop"
+    "description": "(Deleted 2024/03/07) Performs the crop"
   },
   "icu:MediaEditor__caption-button": {
     "messageformat": "ਸੁਨੇਹਾ ਜੋੜੋ",
-    "description": "Label of the button on the bottom of the media editor that trigger the add-caption dialog"
+    "description": "(Deleted 2024/03/07) Label of the button on the bottom of the media editor that trigger the add-caption dialog"
   },
   "icu:MediaEditor__crop-preset--freeform": {
     "messageformat": "Freeform",
@@ -6387,6 +6448,26 @@
   "icu:payment-event-notification-check-primary-device": {
     "messageformat": "ਇਸ ਭੁਗਤਾਨ ਦੀ ਸਥਿਤੀ ਆਪਣੇ ਮੁੱਖ ਡਿਵਾਈਸ ਵਿੱਚ ਚੈੱਕ ਕਰੋ",
     "description": "Payment event notification check device label"
+  },
+  "icu:MessageRequestResponseNotification__Message--Accepted": {
+    "messageformat": "ਤੁਸੀਂ ਸੁਨੇਹੇ ਦੀ ਬੇਨਤੀ ਨੂੰ ਮਨਜ਼ੂਰ ਕਰ ਲਿਆ ਹੈ",
+    "description": "Message request response notification message when the user accepted the message request or unblocked another user"
+  },
+  "icu:MessageRequestResponseNotification__Message--Reported": {
+    "messageformat": "ਸਪੈਮ ਵਜੋਂ ਰਿਪੋਰਟ ਕੀਤੀ ਗਈ",
+    "description": "Message request response notification message when the user reported the message request as spam"
+  },
+  "icu:MessageRequestResponseNotification__Message--Blocked": {
+    "messageformat": "ਤੁਸੀਂ ਇਸ ਵਿਅਕਤੀ ਨੂੰ ਬਲੌਕ ਕਰ ਦਿੱਤਾ ਹੈ",
+    "description": "Message request response notification message when the user blocked another user"
+  },
+  "icu:MessageRequestResponseNotification__Button--Options": {
+    "messageformat": "ਵਿਕਲਪ",
+    "description": "Message request response notification button to show options"
+  },
+  "icu:MessageRequestResponseNotification__Button--LearnMore": {
+    "messageformat": "ਹੋਰ ਜਾਣੋ",
+    "description": "Message request response notification button to learn more"
   },
   "icu:SignalConnectionsModal__title": {
     "messageformat": "Signal ਕਨੈਕਸ਼ਨ",
@@ -6498,7 +6579,7 @@
   },
   "icu:StoriesSettings__new-list--visibility": {
     "messageformat": "ਸਿਰਫ਼ ਤੁਸੀਂ ਇਸ ਸਟੋਰੀ ਦਾ ਨਾਂ ਦੇਖ ਸਕਦੇ ਹੋ।",
-    "description": "Explanation about the visibility of custom distribution list names"
+    "description": "(Deleted 2024/03/07) Explanation about the visibility of custom distribution list names"
   },
   "icu:StoriesSettings__custom-story-subtitle": {
     "messageformat": "ਕਸਟਮ ਸਟੋਰੀ",
@@ -6574,7 +6655,7 @@
   },
   "icu:StoriesSettings__mine__all--description": {
     "messageformat": "ਸਾਰੇ ਕਨੈਕਸ਼ਨਾਂ ਨਾਲ ਸਾਂਝਾ ਕਰੋ",
-    "description": "Description of button StoriesSettings__mine__all--label"
+    "description": "(Deleted 2024/03/07) Description of button StoriesSettings__mine__all--label"
   },
   "icu:StoriesSettings__mine__exclude--label": {
     "messageformat": "ਸਾਰੇ, ਇਹਨਾਂ ਤੋਂ ਇਲਾਵਾ…",
@@ -6582,7 +6663,7 @@
   },
   "icu:StoriesSettings__mine__exclude--description": {
     "messageformat": "{num, plural, one {{num,number} ਵਿਅਕਤੀ ਨੂੰ ਬਾਹਰ ਰੱਖਿਆ ਗਿਆ} other {{num,number} ਲੋਕਾਂ ਨੂੰ ਬਾਹਰ ਰੱਖਿਆ ਗਿਆ}}",
-    "description": "Description of how many people are excluded in a list"
+    "description": "(Deleted 2024/03/07) Description of how many people are excluded in a list"
   },
   "icu:StoriesSettings__mine__only--label": {
     "messageformat": "ਸਿਰਫ਼ ਇਹਨਾਂ ਨਾਲ ਸਾਂਝਾ ਕਰੋ…",
@@ -6590,11 +6671,11 @@
   },
   "icu:StoriesSettings__mine__only--description": {
     "messageformat": "ਸਿਰਫ਼ ਚੁਣੇ ਹੋਏ ਲੋਕਾਂ ਨਾਲ ਸਾਂਝਾ ਕਰੋ",
-    "description": "Description of button StoriesSettings__mine__only--label"
+    "description": "(Deleted 2024/03/07) Description of button StoriesSettings__mine__only--label"
   },
   "icu:StoriesSettings__mine__only--description--people": {
     "messageformat": "{num,number} ਲੋਕ",
-    "description": "Description of how many people are in the exclusive allow list"
+    "description": "(Deleted 2024/03/07) Description of how many people are in the exclusive allow list"
   },
   "icu:StoriesSettings__mine__disclaimer--link": {
     "messageformat": "ਚੁਣੋ ਕਿ ਤੁਹਾਡੀ ਸਟੋਰੀ ਕੌਣ ਦੇਖ ਸਕਦਾ ਹੈ। ਤਬਦੀਲੀਆਂ ਉਹਨਾਂ ਸਟੋਰੀਆਂ ਨੂੰ ਪ੍ਰਭਾਵਿਤ ਨਹੀਂ ਕਰਨਗੀਆਂ ਜੋ ਤੁਸੀਂ ਪਹਿਲਾਂ ਹੀ ਭੇਜ ਚੁੱਕੇ ਹੋ। <learnMoreLink>ਹੋਰ ਜਾਣੋ।</learnMoreLink>",
@@ -6706,19 +6787,19 @@
   },
   "icu:SendStoryModal__my-stories-description-all": {
     "messageformat": "{viewersCount, plural, one {All Signal Connections · 1 Viewer} other {All Signal Connections · {viewersCount,number} Viewers}}",
-    "description": "Shown as a subtitle under My Stories option in the send-story-to dialog when not exluding anyone"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle under My Stories option in the send-story-to dialog when not exluding anyone"
   },
   "icu:SendStoryModal__my-stories-description-excluding": {
     "messageformat": "{excludedCount, plural, one {All Signal Connections · 1 Excluded} other {All Signal Connections · {excludedCount,number} Excluded}}",
-    "description": "Shown as a subtitle under My Stories option in the send-story-to dialog when excluding some"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle under My Stories option in the send-story-to dialog when excluding some"
   },
   "icu:SendStoryModal__private-story-description": {
     "messageformat": "{viewersCount, plural, one {ਨਿੱਜੀ ਸਟੋਰੀ · {viewersCount,number} ਦਰਸ਼ਕ} other {ਨਿੱਜੀ ਸਟੋਰੀ · {viewersCount,number} ਦਰਸ਼ਕ}}",
-    "description": "Shown as a subtitle of each private story in the send-story-to dialog"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle of each private story in the send-story-to dialog"
   },
   "icu:SendStoryModal__group-story-description": {
     "messageformat": "{membersCount, plural, one {ਗਰੁੱਪ ਸਟੋਰੀ · ਮੈਂਬਰ} other {ਗਰੁੱਪ ਸਟੋਰੀ · {membersCount,number} ਮੈਂਬਰ}}",
-    "description": "Shown as a subtitle of each group story in the send-story-to dialog"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle of each group story in the send-story-to dialog"
   },
   "icu:Stories__settings-toggle--title": {
     "messageformat": "ਸਟੋਰੀਆਂ ਨੂੰ ਸਾਂਝਾ ਕਰੋ ਅਤੇ ਦੇਖੋ",
@@ -6918,7 +6999,7 @@
   },
   "icu:StoryCreator__input-placeholder": {
     "messageformat": "ਲਿਖਤ ਜੋੜੋ",
-    "description": "Placeholder to add text"
+    "description": "(Deleted 2024/03/07) Placeholder to add text"
   },
   "icu:StoryCreator__text--regular": {
     "messageformat": "ਸਧਾਰਨ",
@@ -6981,7 +7062,7 @@
     "description": "Label for when a person reacts to a story"
   },
   "icu:Quote__story-reaction--you": {
-    "messageformat": "Reacted to your story",
+    "messageformat": "ਤੁਹਾਡੀ ਸਟੋਰੀ ਉੱਤੇ ਰਿਐਕਸ਼ਨ ਦਿੱਤਾ",
     "description": "Label for when someone reacts to your story"
   },
   "icu:Quote__story-reaction--single": {
@@ -7123,22 +7204,6 @@
   "icu:UsernameOnboardingModalBody__row__qr__body": {
     "messageformat": "ਵਰਤੋਂਕਾਰ ਨਾਂ ਦਾ ਇੱਕ ਵਿਲੱਖਣ QR ਕੋਡ ਅਤੇ ਲਿੰਕ ਹੁੰਦਾ ਹੈ, ਜਿਸ ਨੂੰ ਤੁਸੀਂ ਦੋਸਤਾਂ ਨਾਲ ਸਾਂਝਾ ਕਰਕੇ ਫਟਾਫਟ ਚੈਟ ਸ਼ੁਰੂ ਕਰ ਸਕਦੇ ਹੋ।",
     "description": "Body of the third row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "ਵਰਤੋਂਕਾਰ ਨਾਂ ਨੂੰ ਅੰਕਾਂ ਦੇ ਸੈੱਟ ਨਾਲ ਪੇਅਰ ਕੀਤਾ ਜਾਂਦਾ ਹੈ ਅਤੇ ਤੁਹਾਡੀ ਪ੍ਰੋਫਾਈਲ 'ਤੇ ਸਾਂਝਾ ਨਹੀਂ ਕੀਤਾ ਜਾਂਦਾ",
-    "description": "(Deleted 01/16/2023) Content of the first row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "ਹਰੇਕ ਵਰਤੋਂਕਾਰ ਨਾਂ ਦਾ ਇੱਕ ਵਿਲੱਖਣ QR ਕੋਡ ਅਤੇ ਲਿੰਕ ਹੁੰਦਾ ਹੈ, ਜਿਸ ਨੂੰ ਤੁਸੀਂ ਦੋਸਤਾਂ ਨਾਲ ਸਾਂਝਾ ਕਰਕੇ ਚੈਟ ਸ਼ੁਰੂ ਕਰ ਸਕਦੇ ਹੋ",
-    "description": "(Deleted 01/16/2023) Content of the second row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "ਹੋਰ ਲੋਕ ਤੁਹਾਡੇ ਨਾਲ ਸੰਪਰਕ ਕਰ ਸਕਣ, ਇਸਦੇ ਲਈ ਵਰਤੋਂਕਾਰ ਨਾਂ ਦੀ ਵਰਤੋਂ ਮੁੱਖ ਤਰੀਕੇ ਵਜੋਂ ਕਰਨ ਲਈ, ਸੈਟਿੰਗਾਂ > ਪਰਦੇਦਾਰੀ > ਫ਼ੋਨ ਨੰਬਰ > ਮੇਰਾ ਨੰਬਰ ਕੌਣ ਲੱਭ ਸਕਦਾ ਹੈ, ਵਿੱਚ ਜਾ ਕੇ ਫ਼ੋਨ ਨੰਬਰ ਖੋਜ ਨੂੰ ਬੰਦ ਕਰੋ।",
-    "description": "(Deleted 01/16/2023) Content of the third row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__learn-more": {
-    "messageformat": "ਹੋਰ ਜਾਣੋ",
-    "description": "(Deleted 01/16/2023) Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
     "messageformat": "ਵਰਤੋਂਕਾਰ ਨਾਂ ਸੈੱਟ ਕਰੋ",
@@ -7300,6 +7365,10 @@
     "messageformat": "{count, plural, one {{count,number} ਹੋਰ ਵਰਤੋਂਕਾਰ ਲਿਖ ਰਿਹਾ ਹੈ।} other {{count,number} ਹੋਰ ਵਰਤੋਂਕਾਰ ਲਿਖ ਰਹੇ ਹਨ।}}",
     "description": "Group chat multiple person typing indicator when space isn't available to show every avatar, this is the count of avatars hidden."
   },
+  "icu:TransportError": {
+    "messageformat": "Experimental WebSocket Transport is seeing too many errors. Please submit a debug log",
+    "description": "A toast that is shown to alpha/beta version users when an experimental transport is seeing too many errors"
+  },
   "icu:WhoCanFindMeReadOnlyToast": {
     "messageformat": "ਇਸ ਸੈਟਿੰਗ ਨੂੰ ਬਦਲਣ ਲਈ, \"ਮੇਰਾ ਨੰਬਰ ਕੌਣ ਦੇਖ ਸਕਦਾ ਹੈ\" ਨੂੰ \"ਕੋਈ ਨਹੀਂ\" 'ਤੇ ਸੈੱਟ ਕਰੋ।",
     "description": "A toast displayed when user clicks disabled option in settings window"
@@ -7310,33 +7379,46 @@
   },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "Signal ਨੂੰ ਸੁਚਾਰੂ ਢੰਗ ਨਾਲ ਚੱਲਦਾ ਰੱਖਣ ਲਈ ਇਸ ਵਰਜ਼ਨ ਵਿੱਚ ਨਿੱਕੇ-ਮੋਟੇ ਸੁਧਾਰ ਅਤੇ ਬੱਗ ਠੀਕ ਕੀਤੇ ਗਏ ਹਨ।",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--1": {
     "messageformat": "ਛੋਟੇ-ਮੋਟੇ ਸੁਧਾਰ ਅਤੇ ਬੱਗ ਫਿਕਸ ਕੀਤੇ ਗਏ ਹਨ ਅਤੇ ਪ੍ਰਦਰਸ਼ਨ ਨੂੰ ਬਿਹਤਰ ਬਣਾਇਆ ਗਿਆ ਹੈ। Signal ਦੀ ਵਰਤੋਂ ਕਰਨ ਲਈ ਤੁਹਾਡਾ ਧੰਨਵਾਦ!",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
     "messageformat": "ਤੁਹਾਡੀ ਐਪ ਨੂੰ ਸੁਚਾਰੂ ਢੰਗ ਨਾਲ ਚੱਲਦਾ ਰੱਖਣ ਲਈ ਕੁਝ ਖ਼ਰਾਬੀਆਂ ਨੂੰ ਦਰੁਸਤ ਕੀਤਾ ਗਿਆ ਹੈ। ਛੇਤੀ ਹੀ ਕੁਝ ਸ਼ਾਨਦਾਰ ਬਦਲਾਅ ਵੀ ਕੀਤੇ ਜਾ ਰਹੇ ਹਨ। ",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
     "messageformat": "ਖ਼ਰਾਬੀਆਂ ਨੂੰ ਦਰੁਸਤ ਕੀਤਾ ਗਿਆ ਹੈ ਅਤੇ ਪ੍ਰਦਰਸ਼ਨ ਵਿੱਚ ਸੁਧਾਰ ਕਰਕੇ ਉਸਨੂੰ ਬਿਹਤਰ ਬਣਾਇਆ ਗਿਆ ਹੈ। ਤੁਸੀਂ ਪਹਿਲਾਂ ਵਾਂਗ ਮੈਸੇਜ, ਕਾਲ, ਅਤੇ ਵੀਡੀਓ ਚੈਟ ਕਰਨਾ ਜਾਰੀ ਰੱਖੋ।",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--4": {
     "messageformat": "ਤੁਹਾਡੇ ਲਈ ਐਪ ਨੂੰ ਸੁਚਾਰੂ ਢੰਗ ਨਾਲ ਚੱਲਦਾ ਰੱਖਣ ਲਈ ਖ਼ਰਾਬੀਆਂ ਨੂੰ ਠੀਕ ਕਰਨ ਅਤੇ ਪ੍ਰਦਰਸ਼ਨ ਵਿੱਚ ਸੁਧਾਰ ਕਰਨ ਲਈ ਨਿਰੰਤਰ ਮਿਹਨਤ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ। ",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--5": {
     "messageformat": "ਛੋਟੇ-ਮੋਟੇ ਹੋਰ ਸੁਧਾਰ ਅਤੇ ਖ਼ਰਾਬੀਆਂ ਨੂੰ ਦਰੁਸਤ ਅਤੇ ਭਵਿੱਖ ਲਈ ਯੋਜਨਾਵਾਂ ਤਿਆਰ ਕੀਤੀਆਂ ਗਈਆਂ ਹਨ।",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "ਛੋਟੇ-ਮੋਟੇ ਸੁਧਾਰ, ਖ਼ਰਾਬੀਆਂ ਨੂੰ ਦਰੁਸਤ ਅਤੇ ਪ੍ਰਦਰਸ਼ਨ ਨੂੰ ਬਿਹਤਰ ਬਣਾਇਆ ਗਿਆ ਹੈ। Signal ਦੀ ਵਰਤੋਂ ਕਰਨ ਲਈ ਤੁਹਾਡਾ ਧੰਨਵਾਦ!",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.1--0": {
-    "messageformat": "This update enables support for all of the new emoji characters in Emoji version 15.1. People keep asking us what our favorite new emoji is, but answering that question is a “lime” we won't cross."
+  "icu:WhatsNew__v7.3--0": {
+    "messageformat": "ਹੁਣ ਤੁਸੀਂ ਆਪਣੇ ਫ਼ੋਨ 'ਤੇ ਮਿਸ ਕਾਲਾਂ ਨੂੰ ਮਿਟਾ ਸਕਦੇ ਹੋ ਅਤੇ Signal Desktop ਵਿੱਚ ਕਾਲ ਟੈਬ ਉੱਤੇ ਦਿਖ ਰਹੇ ਬੈਜ ਨੂੰ ਵੀ ਅੱਪਡੇਟ ਕਰ ਦਿੱਤਾ ਜਾਵੇਗਾ।"
+  },
+  "icu:WhatsNew__v7.3--1": {
+    "messageformat": "ਅਸੀਂ Windows ਉੱਤੇ ਬੈਜ ਗਿਣਤੀ ਸੂਚਕ ਨੂੰ ਵੀ ਮੁੜ ਡਿਜ਼ਾਈਨ ਕੀਤਾ ਹੈ। ਹੁਣ ਟਾਸਕਬਾਰ ਦਾ ਰੰਗ ਸਿਸਟਮ ਟਰੇ ਦੇ ਰੰਗ ਨਾਲ ਮੇਲ ਖਾਂਦਾ ਹੈ।"
+  },
+  "icu:WhatsNew__v7.4--0": {
+    "messageformat": "This update clears out a few bugs just in time for spring cleaning, including more consistent conversation sort logic and improved behavior if the app encounters DNS lookup timeouts due to poor network connectivity."
   }
 }

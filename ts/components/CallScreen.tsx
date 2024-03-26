@@ -570,20 +570,20 @@ export function CallScreen({
             );
           } else {
             message = i18n('icu:CallControls__RaiseHandsToast--one', {
-              name: names[0],
+              name: names[0] ?? '',
             });
           }
           break;
         case 2:
           message = i18n('icu:CallControls__RaiseHandsToast--two', {
-            name: names[0],
-            otherName: names[1],
+            name: names[0] ?? '',
+            otherName: names[1] ?? '',
           });
           break;
         default:
           message = i18n('icu:CallControls__RaiseHandsToast--more', {
-            name: names[0],
-            otherName: names[1],
+            name: names[0] ?? '',
+            otherName: names[1] ?? '',
             overflowCount: names.length - 2,
           });
       }
@@ -884,14 +884,6 @@ export function CallScreen({
               onClick={toggleAudio}
               tooltipDirection={TooltipPlacement.Top}
             />
-            <CallingButton
-              buttonType={presentingButtonType}
-              i18n={i18n}
-              onMouseEnter={onControlsMouseEnter}
-              onMouseLeave={onControlsMouseLeave}
-              onClick={togglePresenting}
-              tooltipDirection={TooltipPlacement.Top}
-            />
             {isGroupCallRaiseHandEnabled && raiseHandButtonType && (
               <CallingButton
                 buttonType={raiseHandButtonType}
@@ -902,6 +894,14 @@ export function CallScreen({
                 tooltipDirection={TooltipPlacement.Top}
               />
             )}
+            <CallingButton
+              buttonType={presentingButtonType}
+              i18n={i18n}
+              onMouseEnter={onControlsMouseEnter}
+              onMouseLeave={onControlsMouseLeave}
+              onClick={togglePresenting}
+              tooltipDirection={TooltipPlacement.Top}
+            />
             {isGroupCallReactionsEnabled && reactButtonType && (
               <div
                 className={classNames('CallControls__ReactButtonContainer', {

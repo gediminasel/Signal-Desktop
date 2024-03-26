@@ -2875,20 +2875,6 @@
   {
     "rule": "React-useRef",
     "path": "ts/components/CallScreen.tsx",
-    "line": "  const reactButtonRef = React.useRef<null | HTMLDivElement>(null);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2024-01-16T22:59:06.336Z"
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/CallScreen.tsx",
-    "line": "  const reactionPickerContainerRef = React.useRef<null | HTMLDivElement>(null);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2024-01-16T22:59:06.336Z"
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/CallScreen.tsx",
     "line": "  const burstRegionRef = useRef<HTMLDivElement>(null);",
     "reasonCategory": "usageTrusted",
     "updated": "2023-12-21T11:13:56.623Z",
@@ -2901,6 +2887,20 @@
     "reasonCategory": "usageTrusted",
     "updated": "2024-01-06T00:59:20.678Z",
     "reasonDetail": "Recent reactions shown for reactions burst"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/CallScreen.tsx",
+    "line": "  const reactButtonRef = React.useRef<null | HTMLDivElement>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2024-01-16T22:59:06.336Z"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/CallScreen.tsx",
+    "line": "  const reactionPickerContainerRef = React.useRef<null | HTMLDivElement>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2024-01-16T22:59:06.336Z"
   },
   {
     "rule": "React-useRef",
@@ -3374,6 +3374,13 @@
   },
   {
     "rule": "React-useRef",
+    "path": "ts/components/SafetyTipsModal.tsx",
+    "line": "  const scrollEndTimer = useRef<NodeJS.Timeout | null>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2024-03-08T01:48:15.330Z"
+  },
+  {
+    "rule": "React-useRef",
     "path": "ts/components/Slider.tsx",
     "line": "  const diff = useRef<number>(0);",
     "reasonCategory": "usageTrusted",
@@ -3513,28 +3520,25 @@
     "updated": "2023-12-08T20:28:57.595Z"
   },
   {
-    "rule": "React-createRef",
+    "rule": "React-useRef",
     "path": "ts/components/conversation/ConversationHeader.tsx",
-    "line": "    this.menuTriggerRef = React.createRef();",
+    "line": "  const menuTriggerRef = useRef<any>(null);",
     "reasonCategory": "usageTrusted",
-    "updated": "2020-05-20T20:10:43.540Z",
-    "reasonDetail": "Used to reference popup menu"
+    "updated": "2024-03-15T18:29:48.327Z"
   },
   {
-    "rule": "React-createRef",
+    "rule": "React-useRef",
     "path": "ts/components/conversation/ConversationHeader.tsx",
-    "line": "    this.jumpToDateInputRef = React.createRef();",
+    "line": "  const headerRef = useRef<HTMLDivElement>(null);",
     "reasonCategory": "usageTrusted",
-    "updated": "2022-09-18T01:00:00.000Z",
-    "reasonDetail": "Used to reference jump to date input"
+    "updated": "2024-03-15T18:29:48.327Z"
   },
   {
-    "rule": "React-createRef",
+    "rule": "React-useRef",
     "path": "ts/components/conversation/ConversationHeader.tsx",
-    "line": "    this.headerRef = React.createRef();",
+    "line": "  const jumpToDateRef = useRef<HTMLInputElement>(null);",
     "reasonCategory": "usageTrusted",
-    "updated": "2021-01-18T22:24:05.937Z",
-    "reasonDetail": "Used to reference popup menu boundaries element"
+    "updated": "2024-03-27T00:05:16.586Z"
   },
   {
     "rule": "React-useRef",
@@ -3865,6 +3869,13 @@
     "line": "  const wasAnimatedRef = useRef(wasAnimated);",
     "reasonCategory": "usageTrusted",
     "updated": "2023-08-20T22:14:52.008Z"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/state/smart/InstallScreen.tsx",
+    "line": "  const chooseBackupFilePromiseWrapperRef = useRef(",
+    "reasonCategory": "testCode",
+    "updated": "2023-11-16T23:39:21.322Z"
   },
   {
     "rule": "React-useRef",

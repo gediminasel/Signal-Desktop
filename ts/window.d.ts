@@ -20,6 +20,7 @@ import type AccountManager from './textsecure/AccountManager';
 import type { WebAPIConnectType } from './textsecure/WebAPI';
 import type { CallingClass } from './services/calling';
 import type * as StorageService from './services/storage';
+import type { BackupsService } from './services/backups';
 import type * as Groups from './groups';
 import type * as Crypto from './Crypto';
 import type * as Curve from './Curve';
@@ -41,7 +42,6 @@ import type { SocketStatus } from './types/SocketStatus';
 import type SyncRequest from './textsecure/SyncRequest';
 import type { MessageCache } from './services/MessageCache';
 import type { StateType } from './state/reducer';
-import type { SystemTraySetting } from './types/SystemTraySetting';
 import type { Address } from './types/Address';
 import type { QualifiedAddress } from './types/QualifiedAddress';
 import type { CIType } from './CI';
@@ -88,7 +88,6 @@ export type IPCType = {
   showWindowsNotification: (data: WindowsNotificationData) => Promise<void>;
   shutdown: () => void;
   titleBarDoubleClick: () => void;
-  updateSystemTraySetting: (value: SystemTraySetting) => void;
   updateTrayIcon: (count: number) => void;
 };
 
@@ -143,6 +142,7 @@ export type SignalCoreType = {
   ScreenShareWindowProps?: ScreenShareWindowPropsType;
   Services: {
     calling: CallingClass;
+    backups: BackupsService;
     initializeGroupCredentialFetcher: () => Promise<void>;
     initializeNetworkObserver: (network: ReduxActions['network']) => void;
     initializeUpdateListener: (updates: ReduxActions['updates']) => void;

@@ -10,6 +10,7 @@ import { randomBytes } from 'crypto';
 import type { Database, Statement } from '@signalapp/better-sqlite3';
 import SQL from '@signalapp/better-sqlite3';
 import pProps from 'p-props';
+import pTimeout from 'p-timeout';
 import { v4 as generateUuid } from 'uuid';
 import { z } from 'zod';
 
@@ -48,6 +49,7 @@ import { isNormalNumber } from '../util/isNormalNumber';
 import { isNotNil } from '../util/isNotNil';
 import { parseIntOrThrow } from '../util/parseIntOrThrow';
 import * as durations from '../util/durations';
+import { explodePromise } from '../util/explodePromise';
 import { formatCountForLogging } from '../logging/formatCountForLogging';
 import type { ConversationColorType, CustomColorType } from '../types/Colors';
 import type { BadgeType, BadgeImageType } from '../badges/types';
@@ -106,9 +108,12 @@ import type {
   StoredItemType,
   ConversationMessageStatsType,
   MessageAttachmentsCursorType,
+  MessageCursorType,
   MessageMetricsType,
   MessageType,
   MessageTypeUnhydrated,
+  PageMessagesCursorType,
+  PageMessagesResultType,
   PreKeyIdType,
   ReactionResultType,
   StoredPreKeyType,
@@ -184,6 +189,8 @@ type StickerRow = Readonly<{
 // https://github.com/microsoft/TypeScript/issues/420
 const dataInterface: ServerInterface = {
   close,
+  pauseWriteAccess,
+  resumeWriteAccess,
   removeDB,
   removeIndexedDBFiles,
 
@@ -418,6 +425,8 @@ const dataInterface: ServerInterface = {
 
   getKnownMessageAttachments,
   finishGetKnownMessageAttachments,
+  pageMessages,
+  finishPageMessages,
   getKnownConversationAttachments,
   removeKnownStickers,
   removeKnownDraftAttachments,
@@ -572,6 +581,8 @@ function openAndSetUpSQLCipher(
   return db;
 }
 
+let pausedWriteQueue: Array<() => void> | undefined;
+
 let globalWritableInstance: Database | undefined;
 let globalReadonlyInstance: Database | undefined;
 let logger = consoleLogger;
@@ -654,6 +665,33 @@ async function close(): Promise<void> {
   globalWritableInstance = undefined;
 }
 
+async function pauseWriteAccess(): Promise<void> {
+  strictAssert(
+    pausedWriteQueue === undefined,
+    'Database writes are already paused'
+  );
+  pausedWriteQueue = [];
+
+  logger.warn('pauseWriteAccess: pausing write access');
+}
+
+async function resumeWriteAccess(): Promise<void> {
+  strictAssert(
+    pausedWriteQueue !== undefined,
+    'Database writes are not paused'
+  );
+  const queue = pausedWriteQueue;
+  pausedWriteQueue = undefined;
+
+  logger.warn(
+    `resumeWriteAccess: resuming write access, queue.length=${queue.length}`
+  );
+
+  for (const resumeOperation of queue) {
+    resumeOperation();
+  }
+}
+
 async function removeDB(): Promise<void> {
   if (globalReadonlyInstance) {
     try {
@@ -703,7 +741,15 @@ function getReadonlyInstance(): Database {
   return globalReadonlyInstance;
 }
 
+const WRITABLE_INSTANCE_MAX_WAIT = 5 * durations.MINUTE;
+
 async function getWritableInstance(): Promise<Database> {
+  if (pausedWriteQueue) {
+    const { promise, resolve } = explodePromise<void>();
+    pausedWriteQueue.push(resolve);
+    await pTimeout(promise, WRITABLE_INSTANCE_MAX_WAIT);
+  }
+
   if (!globalWritableInstance) {
     throw new Error('getWritableInstance: globalWritableInstance not set!');
   }
@@ -3449,8 +3495,8 @@ async function getCallHistory(
   return callHistoryDetailsSchema.parse(row);
 }
 
-const READ_STATUS_UNREAD = sqlConstant(ReadStatus.Unread);
-const READ_STATUS_READ = sqlConstant(ReadStatus.Read);
+const SEEN_STATUS_UNSEEN = sqlConstant(SeenStatus.Unseen);
+const SEEN_STATUS_SEEN = sqlConstant(SeenStatus.Seen);
 const CALL_STATUS_MISSED = sqlConstant(DirectCallStatus.Missed);
 const CALL_STATUS_DELETED = sqlConstant(DirectCallStatus.Deleted);
 const CALL_STATUS_INCOMING = sqlConstant(CallDirection.Incoming);
@@ -3462,7 +3508,7 @@ async function getCallHistoryUnreadCount(): Promise<number> {
     SELECT count(*) FROM messages
     LEFT JOIN callsHistory ON callsHistory.callId = messages.callId
     WHERE messages.type IS 'call-history'
-      AND messages.readStatus IS ${READ_STATUS_UNREAD}
+      AND messages.seenStatus IS ${SEEN_STATUS_UNSEEN}
       AND callsHistory.status IS ${CALL_STATUS_MISSED}
       AND callsHistory.direction IS ${CALL_STATUS_INCOMING}
   `;
@@ -3472,22 +3518,32 @@ async function getCallHistoryUnreadCount(): Promise<number> {
 
 async function markCallHistoryRead(callId: string): Promise<void> {
   const db = await getWritableInstance();
+
+  const jsonPatch = JSON.stringify({
+    seenStatus: SeenStatus.Seen,
+  });
+
   const [query, params] = sql`
     UPDATE messages
-    SET readStatus = ${READ_STATUS_READ}
+    SET
+      seenStatus = ${SEEN_STATUS_UNSEEN}
+      json = json_patch(json, ${jsonPatch})
     WHERE type IS 'call-history'
     AND callId IS ${callId}
   `;
   db.prepare(query).run(params);
 }
 
-async function markAllCallHistoryRead(): Promise<ReadonlyArray<string>> {
+async function markAllCallHistoryRead(
+  beforeTimestamp: number
+): Promise<ReadonlyArray<string>> {
   const db = await getWritableInstance();
 
   return db.transaction(() => {
     const where = sqlFragment`
       WHERE messages.type IS 'call-history'
-        AND messages.readStatus IS ${READ_STATUS_UNREAD}
+        AND messages.seenStatus IS ${SEEN_STATUS_UNSEEN}
+        AND messages.sent_at <= ${beforeTimestamp};
     `;
 
     const [selectQuery, selectParams] = sql`
@@ -3498,9 +3554,15 @@ async function markAllCallHistoryRead(): Promise<ReadonlyArray<string>> {
 
     const conversationIds = db.prepare(selectQuery).pluck().all(selectParams);
 
+    const jsonPatch = JSON.stringify({
+      seenStatus: SeenStatus.Seen,
+    });
+
     const [updateQuery, updateParams] = sql`
       UPDATE messages
-      SET readStatus = ${READ_STATUS_READ}
+      SET
+        seenStatus = ${SEEN_STATUS_SEEN},
+        json = json_patch(json, ${jsonPatch})
       ${where};
     `;
 
@@ -6098,17 +6160,42 @@ function getExternalDraftFilesForConversation(
 async function getKnownMessageAttachments(
   cursor?: MessageAttachmentsCursorType
 ): Promise<GetKnownMessageAttachmentsResultType> {
-  const db = await getWritableInstance();
+  const innerCursor = cursor as MessageCursorType | undefined as
+    | PageMessagesCursorType
+    | undefined;
   const result = new Set<string>();
+
+  const { messages, cursor: newCursor } = await pageMessages(innerCursor);
+
+  for (const message of messages) {
+    const externalFiles = getExternalFilesForMessage(message);
+    forEach(externalFiles, file => result.add(file));
+  }
+
+  return {
+    attachments: Array.from(result),
+    cursor: newCursor as MessageCursorType as MessageAttachmentsCursorType,
+  };
+}
+
+async function finishGetKnownMessageAttachments(
+  cursor: MessageAttachmentsCursorType
+): Promise<void> {
+  const innerCursor = cursor as MessageCursorType as PageMessagesCursorType;
+
+  await finishPageMessages(innerCursor);
+}
+
+async function pageMessages(
+  cursor?: PageMessagesCursorType
+): Promise<PageMessagesResultType> {
+  const db = getUnsafeWritableInstance('only temp table use');
   const chunkSize = 1000;
 
   return db.transaction(() => {
     let count = cursor?.count ?? 0;
 
-    strictAssert(
-      !cursor?.done,
-      'getKnownMessageAttachments: iteration cannot be restarted'
-    );
+    strictAssert(!cursor?.done, 'pageMessages: iteration cannot be restarted');
 
     let runId: string;
     if (cursor === undefined) {
@@ -6116,7 +6203,7 @@ async function getKnownMessageAttachments(
 
       const total = getMessageCountSync();
       logger.info(
-        `getKnownMessageAttachments(${runId}): ` +
+        `pageMessages(${runId}): ` +
           `Starting iteration through ${total} messages`
       );
 
@@ -6126,7 +6213,7 @@ async function getKnownMessageAttachments(
           (rowid INTEGER PRIMARY KEY ASC);
 
         INSERT INTO tmp_${runId}_updated_messages (rowid)
-        SELECT rowid FROM messages;
+        SELECT rowid FROM messages ORDER BY rowid ASC;
 
         CREATE TEMP TRIGGER tmp_${runId}_message_updates
         UPDATE OF json ON messages
@@ -6152,6 +6239,7 @@ async function getKnownMessageAttachments(
         `
       DELETE FROM tmp_${runId}_updated_messages
       RETURNING rowid
+      ORDER BY rowid ASC
       LIMIT $chunkSize;
       `
       )
@@ -6172,28 +6260,25 @@ async function getKnownMessageAttachments(
       }
     );
 
-    for (const message of messages) {
-      const externalFiles = getExternalFilesForMessage(message);
-      forEach(externalFiles, file => result.add(file));
-      count += 1;
-    }
-
+    count += messages.length;
     const done = rowids.length < chunkSize;
+    const newCursor: MessageCursorType = { runId, count, done };
+
     return {
-      attachments: Array.from(result),
-      cursor: { runId, count, done },
+      messages,
+      cursor: newCursor as PageMessagesCursorType,
     };
   })();
 }
 
-async function finishGetKnownMessageAttachments({
+async function finishPageMessages({
   runId,
   count,
   done,
-}: MessageAttachmentsCursorType): Promise<void> {
-  const db = await getWritableInstance();
+}: PageMessagesCursorType): Promise<void> {
+  const db = getUnsafeWritableInstance('only temp table use');
 
-  const logId = `finishGetKnownMessageAttachments(${runId})`;
+  const logId = `finishPageMessages(${runId})`;
   if (!done) {
     logger.warn(`${logId}: iteration not finished`);
   }

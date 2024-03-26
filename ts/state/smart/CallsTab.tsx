@@ -1,7 +1,6 @@
 // Copyright 2023 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
-
-import React, { useCallback, useEffect } from 'react';
+import React, { memo, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useItemsActions } from '../ducks/items';
 import {
@@ -15,7 +14,7 @@ import {
   getAllConversations,
   getConversationSelector,
 } from '../selectors/conversations';
-import { filterAndSortConversationsByRecent } from '../../util/filterAndSortConversations';
+import { filterAndSortConversations } from '../../util/filterAndSortConversations';
 import type {
   CallHistoryFilter,
   CallHistoryFilterOptions,
@@ -45,7 +44,7 @@ function getCallHistoryFilter(
       return conversation.removalStage == null;
     });
 
-    const filteredConversations = filterAndSortConversationsByRecent(
+    const filteredConversations = filterAndSortConversations(
       currentConversations,
       query,
       regionCode
@@ -88,7 +87,7 @@ function renderToastManager(props: {
   return <SmartToastManager disableMegaphone {...props} />;
 }
 
-export function SmartCallsTab(): JSX.Element {
+export const SmartCallsTab = memo(function SmartCallsTab() {
   const i18n = useSelector(getIntl);
   const navTabsCollapsed = useSelector(getNavTabsCollapsed);
   const preferredLeftPaneWidth = useSelector(getPreferredLeftPaneWidth);
@@ -185,4 +184,4 @@ export function SmartCallsTab(): JSX.Element {
       savePreferredLeftPaneWidth={savePreferredLeftPaneWidth}
     />
   );
-}
+});

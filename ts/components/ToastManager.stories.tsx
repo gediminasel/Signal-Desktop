@@ -121,6 +121,8 @@ function getToast(toastType: ToastType): AnyToast {
       return { toastType: ToastType.PinnedConversationsFull };
     case ToastType.ReactionFailed:
       return { toastType: ToastType.ReactionFailed };
+    case ToastType.ReportedSpam:
+      return { toastType: ToastType.ReportedSpam };
     case ToastType.ReportedSpamAndBlocked:
       return { toastType: ToastType.ReportedSpamAndBlocked };
     case ToastType.StickerPackInstallFailed:
@@ -139,6 +141,8 @@ function getToast(toastType: ToastType): AnyToast {
       return { toastType: ToastType.TapToViewExpiredIncoming };
     case ToastType.TapToViewExpiredOutgoing:
       return { toastType: ToastType.TapToViewExpiredOutgoing };
+    case ToastType.TransportError:
+      return { toastType: ToastType.TransportError };
     case ToastType.TooManyMessagesToDeleteForEveryone:
       return {
         toastType: ToastType.TooManyMessagesToDeleteForEveryone,

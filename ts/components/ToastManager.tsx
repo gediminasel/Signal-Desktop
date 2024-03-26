@@ -325,7 +325,7 @@ export function renderToast({
       >
         {i18n('icu:decryptionErrorToast', {
           name,
-          deviceId,
+          deviceId: String(deviceId),
         })}
       </Toast>
     );
@@ -369,6 +369,14 @@ export function renderToast({
 
   if (toastType === ToastType.ReactionFailed) {
     return <Toast onClose={hideToast}>{i18n('icu:Reactions--error')}</Toast>;
+  }
+
+  if (toastType === ToastType.ReportedSpam) {
+    return (
+      <Toast onClose={hideToast}>
+        {i18n('icu:MessageRequests--report-spam-success-toast')}
+      </Toast>
+    );
   }
 
   if (toastType === ToastType.ReportedSpamAndBlocked) {
@@ -460,6 +468,10 @@ export function renderToast({
         {i18n('icu:SelectModeActions__toast--TooManyMessagesToForward')}
       </Toast>
     );
+  }
+
+  if (toastType === ToastType.TransportError) {
+    return <Toast onClose={hideToast}>{i18n('icu:TransportError')}</Toast>;
   }
 
   if (toastType === ToastType.UnableToLoadAttachment) {

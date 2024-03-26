@@ -4,6 +4,10 @@
 import type { IntlShape } from 'react-intl';
 import type { AciString } from './ServiceId';
 import type { LocaleDirection } from '../../app/locale';
+import type {
+  ICUJSXMessageParamsByKeyType,
+  ICUStringMessageParamsByKeyType,
+} from '../../build/ICUMessageParams.d';
 
 import type { HourCyclePreference, LocaleMessagesType } from './I18N';
 
@@ -17,14 +21,16 @@ export type RenderTextCallbackType = (options: {
   key: number;
 }) => JSX.Element | string;
 
-export type ReplacementValuesType = {
-  [key: string]: string | number | undefined;
-};
+export { ICUJSXMessageParamsByKeyType, ICUStringMessageParamsByKeyType };
 
 export type LocalizerType = {
-  (key: string, values?: ReplacementValuesType): string;
+  <Key extends keyof ICUStringMessageParamsByKeyType>(
+    key: Key,
+    ...values: ICUStringMessageParamsByKeyType[Key] extends undefined
+      ? [undefined?]
+      : [ICUStringMessageParamsByKeyType[Key]]
+  ): string;
   getIntl(): IntlShape;
-  isLegacyFormat(key: string): boolean;
   getLocale(): string;
   getLocaleMessages(): LocaleMessagesType;
   getLocaleDirection(): LocaleDirection;

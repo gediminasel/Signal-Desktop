@@ -11,7 +11,6 @@ import type { PhoneNumberDiscoverability } from '../util/phoneNumberDiscoverabil
 import type { PhoneNumberSharingMode } from '../util/phoneNumberSharingMode';
 import type { RetryItemType } from '../util/retryPlaceholders';
 import type { ConfigMapType as RemoteConfigType } from '../RemoteConfig';
-import type { SystemTraySetting } from './SystemTraySetting';
 import type { ExtendedStorageID, UnknownRecord } from './StorageService.d';
 
 import type { GroupCredentialType } from '../textsecure/WebAPI';
@@ -19,7 +18,6 @@ import type {
   SessionResetsType,
   StorageServiceCredentials,
 } from '../textsecure/Types.d';
-import type { ThemeSettingType } from './StorageUIKeys';
 import type { ServiceIdString } from './ServiceId';
 
 import type { RegisteredChallengeType } from '../challenge';
@@ -57,14 +55,10 @@ export type StorageAccessType = {
   'call-system-notification': boolean;
   'hide-menu-bar': boolean;
   'incoming-call-notification': boolean;
-  localeOverride: string | null;
   'notification-draw-attention': boolean;
   'notification-setting': NotificationSettingType;
   'read-receipt-setting': boolean;
   'sent-media-quality': SentMediaQualitySettingType;
-  'spell-check': boolean;
-  'system-tray-setting': SystemTraySetting;
-  'theme-setting': ThemeSettingType;
   audioMessage: boolean;
   attachmentMigration_isComplete: boolean;
   attachmentMigration_lastProcessedIndex: number;
@@ -83,8 +77,6 @@ export type StorageAccessType = {
   hasStoriesDisabled: boolean;
   storyViewReceiptsEnabled: boolean;
   identityKeyMap: IdentityKeyMap;
-  lastHeartbeat: number;
-  lastStartup: number;
   lastAttemptedToRefreshProfilesAt: number;
   lastResortKeyUpdateTime: number;
   lastResortKeyUpdateTimePNI: number;
@@ -178,6 +170,8 @@ export type StorageAccessType = {
   senderCertificateWithUuid: never;
   signaling_key: never;
   signedKeyRotationRejected: number;
+  lastHeartbeat: never;
+  lastStartup: never;
 };
 
 export type StorageInterface = {

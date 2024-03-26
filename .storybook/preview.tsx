@@ -80,6 +80,7 @@ const noop = () => {};
 window.Whisper = window.Whisper || {};
 window.Whisper.events = {
   on: noop,
+  off: noop,
 };
 
 window.SignalContext = {
@@ -93,6 +94,7 @@ window.SignalContext = {
     unregisterForChange: noop,
   },
 
+  isTestOrMockEnvironment: () => false,
   nativeThemeListener: {
     getSystemTheme: () => 'light',
     subscribe: noop,
@@ -115,7 +117,6 @@ window.SignalContext = {
 
   getHourCyclePreference: () => HourCyclePreference.UnknownPreference,
   getPreferredSystemLocales: () => ['en'],
-  getResolvedMessagesLocaleDirection: () => 'ltr',
   getLocaleOverride: () => null,
   getLocaleDisplayNames: () => ({ en: { en: 'English' } }),
 };
@@ -131,6 +132,9 @@ const withGlobalTypesProvider = (Story, context) => {
     context.globals.theme === 'light' ? ThemeType.light : ThemeType.dark;
   const mode = context.globals.mode;
   const direction = context.globals.direction ?? 'auto';
+
+  window.SignalContext.getResolvedMessagesLocaleDirection = () =>
+    direction === 'auto' ? 'ltr' : direction;
 
   // Adding it to the body as well so that we can cover modals and other
   // components that are rendered outside of this decorator container

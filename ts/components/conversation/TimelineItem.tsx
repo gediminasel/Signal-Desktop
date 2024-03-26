@@ -20,6 +20,8 @@ import type { PropsDataType as DeliveryIssueProps } from './DeliveryIssueNotific
 import { DeliveryIssueNotification } from './DeliveryIssueNotification';
 import type { PropsData as ChangeNumberNotificationProps } from './ChangeNumberNotification';
 import { ChangeNumberNotification } from './ChangeNumberNotification';
+import type { PropsData as TitleTransitionNotificationProps } from './TitleTransitionNotification';
+import { TitleTransitionNotification } from './TitleTransitionNotification';
 import type { CallingNotificationType } from '../../util/callingNotification';
 import { InlineNotificationWrapper } from './InlineNotificationWrapper';
 import type { PropsData as UnsupportedMessageProps } from './UnsupportedMessage';
@@ -53,8 +55,12 @@ import { ConversationMergeNotification } from './ConversationMergeNotification';
 import type { PropsDataType as PhoneNumberDiscoveryNotificationPropsType } from './PhoneNumberDiscoveryNotification';
 import { PhoneNumberDiscoveryNotification } from './PhoneNumberDiscoveryNotification';
 import { SystemMessage } from './SystemMessage';
-import type { FullJSXType } from '../Intl';
 import { TimelineMessage } from './TimelineMessage';
+import {
+  MessageRequestResponseNotification,
+  type MessageRequestResponseNotificationData,
+} from './MessageRequestResponseNotification';
+import type { MessageRequestState } from './MessageRequestActionsConfirmation';
 
 type CallHistoryType = {
   type: 'callHistory';
@@ -91,6 +97,10 @@ type ContactRemovedNotificationType = {
 type ChangeNumberNotificationType = {
   type: 'changeNumberNotification';
   data: ChangeNumberNotificationProps;
+};
+type TitleTransitionNotificationType = {
+  type: 'titleTransitionNotification';
+  data: TitleTransitionNotificationProps;
 };
 type SafetyNumberNotificationType = {
   type: 'safetyNumberNotification';
@@ -132,6 +142,10 @@ type PaymentEventType = {
   type: 'paymentEvent';
   data: Omit<PaymentEventNotificationPropsType, 'i18n'>;
 };
+type MessageRequestResponseNotificationType = {
+  type: 'messageRequestResponse';
+  data: MessageRequestResponseNotificationData;
+};
 
 export type TimelineItemType = (
   | CallHistoryType
@@ -149,10 +163,12 @@ export type TimelineItemType = (
   | SafetyNumberNotificationType
   | TimerNotificationType
   | UniversalTimerNotificationType
+  | TitleTransitionNotificationType
   | ContactRemovedNotificationType
   | UnsupportedMessageType
   | VerificationNotificationType
   | PaymentEventType
+  | MessageRequestResponseNotificationType
 ) & { timestamp: number };
 
 type PropsLocalType = {
@@ -160,12 +176,14 @@ type PropsLocalType = {
   conversationId: string;
   item?: TimelineItemType;
   id: string;
+  isBlocked: boolean;
   isNextItemCallingNotification: boolean;
   isTargeted: boolean;
   targetMessage: (messageId: string, conversationId: string) => unknown;
   shouldRenderDateHeader: boolean;
+  onOpenMessageRequestActionsConfirmation(state: MessageRequestState): void;
   platform: string;
-  renderContact: SmartContactRendererType<FullJSXType>;
+  renderContact: SmartContactRendererType<JSX.Element>;
   renderUniversalTimerNotification: () => JSX.Element;
   i18n: LocalizerType;
   interactionMode: InteractionModeType;
@@ -197,9 +215,11 @@ export const TimelineItem = memo(function TimelineItem({
   getPreferredBadge,
   i18n,
   id,
+  isBlocked,
   isNextItemCallingNotification,
   isTargeted,
   item,
+  onOpenMessageRequestActionsConfirmation,
   onOutgoingAudioCallInConversation,
   onOutgoingVideoCallInConversation,
   platform,
@@ -297,6 +317,14 @@ export const TimelineItem = memo(function TimelineItem({
           i18n={i18n}
         />
       );
+    } else if (item.type === 'titleTransitionNotification') {
+      notification = (
+        <TitleTransitionNotification
+          {...reducedProps}
+          {...item.data}
+          i18n={i18n}
+        />
+      );
     } else if (item.type === 'safetyNumberNotification') {
       notification = (
         <SafetyNumberNotification
@@ -363,6 +391,17 @@ export const TimelineItem = memo(function TimelineItem({
           {...reducedProps}
           {...item.data}
           i18n={i18n}
+        />
+      );
+    } else if (item.type === 'messageRequestResponse') {
+      notification = (
+        <MessageRequestResponseNotification
+          {...item.data}
+          i18n={i18n}
+          isBlocked={isBlocked}
+          onOpenMessageRequestActionsConfirmation={
+            onOpenMessageRequestActionsConfirmation
+          }
         />
       );
     } else {

@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { noop, sortBy } from 'lodash';
 
 import { SearchInput } from './SearchInput';
-import { filterAndSortConversationsByRecent } from '../util/filterAndSortConversations';
+import { filterAndSortConversations } from '../util/filterAndSortConversations';
 
 import type { ConversationType } from '../state/ducks/conversations';
 import type { ConversationWithStoriesType } from '../state/selectors/conversations';
@@ -175,11 +175,7 @@ export function SendStoryModal({
   const [searchTerm, setSearchTerm] = useState('');
 
   const [filteredConversations, setFilteredConversations] = useState(
-    filterAndSortConversationsByRecent(
-      groupConversations,
-      searchTerm,
-      undefined
-    )
+    filterAndSortConversations(groupConversations, searchTerm, undefined)
   );
 
   const normalizedSearchTerm = searchTerm.trim();
@@ -187,7 +183,7 @@ export function SendStoryModal({
   useEffect(() => {
     const timeout = setTimeout(() => {
       setFilteredConversations(
-        filterAndSortConversationsByRecent(
+        filterAndSortConversations(
           groupConversations,
           normalizedSearchTerm,
           undefined
@@ -580,7 +576,7 @@ export function SendStoryModal({
 
                       <div className="SendStoryModal__distribution-list__description">
                         {i18n('icu:ConversationHero--members', {
-                          count: group.membersCount,
+                          count: group.membersCount ?? 0,
                         })}
                       </div>
                     </div>
@@ -853,7 +849,7 @@ export function SendStoryModal({
                     </span>
                     <span className="SendStoryModal__rtl-span">
                       {i18n('icu:ConversationHero--members', {
-                        count: group.membersCount,
+                        count: group.membersCount ?? 0,
                       })}
                     </span>
                   </div>

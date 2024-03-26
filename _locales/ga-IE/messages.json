@@ -16,18 +16,6 @@
       }
     ]
   },
-  "icu:AddCaptionModal__title": {
-    "messageformat": "Cuir teachtaireacht leis",
-    "description": "(Deleted 12/14/2023) Shown as the title of the dialog that allows you to add a caption to a story"
-  },
-  "icu:AddCaptionModal__placeholder": {
-    "messageformat": "Teachtaireacht",
-    "description": "(Deleted 12/14/2023) Placeholder text for textarea when adding a caption/message (we don't know which yet so we default to message)"
-  },
-  "icu:AddCaptionModal__submit-button": {
-    "messageformat": "Déanta",
-    "description": "(Deleted 12/14/2023) Label on the button that submits changes to a story's caption in the add-caption dialog"
-  },
   "icu:AddUserToAnotherGroupModal__title": {
     "messageformat": "Add to a Group",
     "description": "Shown as the title of the dialog that allows you to add a contact to an group"
@@ -149,7 +137,7 @@
     "description": "The label that is used for the Edit menu in the program main menu. The '&' indicates that the following letter will be used as the keyboard 'shortcut letter' for accessing the menu with the Alt-<letter> combination."
   },
   "icu:mainMenuView": {
-    "messageformat": "Féac&h",
+    "messageformat": "&Amharc",
     "description": "The label that is used for the View menu in the program main menu. The '&' indicates that the following letter will be used as the keyboard 'shortcut letter' for accessing the menu with the Alt-<letter> combination."
   },
   "icu:mainMenuWindow": {
@@ -285,16 +273,16 @@
     "description": "Shown in the context menu for a misspelled word to indicate that there are no suggestions to replace the misspelled word"
   },
   "icu:avatarMenuViewArchive": {
-    "messageformat": "Féach sa Chartlann",
+    "messageformat": "Amharc ar an gCartlann",
     "description": "One of the menu options available in the Avatar popup menu"
   },
   "icu:avatarMenuChatColors": {
     "messageformat": "Dath an Chomhrá",
-    "description": "One of the menu options available in the Avatar popup menu"
+    "description": "(Deleted 2024/03/07) One of the menu options available in the Avatar popup menu"
   },
   "icu:avatarMenuUpdateAvailable": {
     "messageformat": "Nuashonraigh Signal",
-    "description": "One of the menu options available in the Avatar popup menu"
+    "description": "(Deleted 2024/03/07) One of the menu options available in the Avatar popup menu"
   },
   "icu:loading": {
     "messageformat": "Lódáil…",
@@ -440,6 +428,26 @@
     "messageformat": "Roghnaigh teachtaireachtaí",
     "description": "Shown in menu for conversation, allows the user to start selecting multiple messages in the conversation"
   },
+  "icu:ConversationHeader__MenuItem--Accept": {
+    "messageformat": "Glac leis",
+    "description": "Shown in menu for conversation, allows the user to accept a message request"
+  },
+  "icu:ConversationHeader__MenuItem--Block": {
+    "messageformat": "Cuir bac",
+    "description": "Shown in menu for conversation, allows the user to block the contact"
+  },
+  "icu:ConversationHeader__MenuItem--Unblock": {
+    "messageformat": "Bain an bac",
+    "description": "Shown in menu for conversation, allows the user to unblock the contact"
+  },
+  "icu:ConversationHeader__MenuItem--ReportSpam": {
+    "messageformat": "Tuairiscigh turscar",
+    "description": "Shown in menu for conversation, allows the user to report the conversation as spam"
+  },
+  "icu:ConversationHeader__MenuItem--DeleteChat": {
+    "messageformat": "Scrios comhrá",
+    "description": "Shown in menu for conversation, allows the user to delete the conversation"
+  },
   "icu:ContactListItem__menu": {
     "messageformat": "Bainistigh an Teagmhálaí",
     "description": "Shown as aria label for context menu for a contact"
@@ -502,63 +510,63 @@
   },
   "icu:chooseDirectory": {
     "messageformat": "Roghnaigh fillteán",
-    "description": "Button to allow the user to find a folder on disk"
+    "description": "(Deleted 2024/03/07) Button to allow the user to find a folder on disk"
   },
   "icu:chooseFile": {
     "messageformat": "Roghnaigh comhad",
-    "description": "Button to allow the user to find a file on disk"
+    "description": "(Deleted 2024/03/07) Button to allow the user to find a file on disk"
   },
   "icu:loadDataHeader": {
     "messageformat": "Lódáil do shonraí",
-    "description": "Header shown on the first screen in the data import process"
+    "description": "(Deleted 2024/03/07) Header shown on the first screen in the data import process"
   },
   "icu:loadDataDescription": {
     "messageformat": "Tá an próiseas easpórtála díreach déanta agat, tá do theagmhálaithe agus teachtaireachtaí ag fanacht go foighneach ar do ríomhaire leat. Roghnaigh an comhad ina bhfuil do shonraí Signal sábháilte.",
-    "description": "Introduction to the process of importing messages and contacts from disk"
+    "description": "(Deleted 2024/03/07) Introduction to the process of importing messages and contacts from disk"
   },
   "icu:importChooserTitle": {
     "messageformat": "Roghnaigh an chomhadlann ina bhfuil sonraí easpórtáilte",
-    "description": "Title of the popup window used to select data previously exported"
+    "description": "(Deleted 2024/03/07) Title of the popup window used to select data previously exported"
   },
   "icu:importErrorHeader": {
     "messageformat": "Chuaigh rud éigin mícheart!",
-    "description": "Header of the error screen after a failed import"
+    "description": "(Deleted 2024/03/07) Header of the error screen after a failed import"
   },
   "icu:importingHeader": {
     "messageformat": "Teagmhálaithe agus teachtaireachtaí á lódáil",
-    "description": "Header of screen shown as data is import"
+    "description": "(Deleted 2024/03/07) Header of screen shown as data is import"
   },
   "icu:importErrorFirst": {
     "messageformat": "Cinntigh gur roghnaigh tú an chomhadlann cheart ina bhfuil do shonraí Signal sábháilte. Ba chóir go dtosódh a hainm le 'Easpórtáil Signal'. Is féidir leat cóip nua de na sonraí a shábháil ón aip Chrome freisin.",
-    "description": "Message shown if the import went wrong; first paragraph"
+    "description": "(Deleted 2024/03/07) Message shown if the import went wrong; first paragraph"
   },
   "icu:importErrorSecond": {
-    "messageformat": "Mura n-oibríonn na céimeanna seo duit, cuir isteach loga dífhabhtaithe (Féach -> Loga Dífhabhtaithe) le gur féidir linn cabhrú leat leis an aistriú!",
-    "description": "Message shown if the import went wrong; second paragraph"
+    "messageformat": "Mura n-oibríonn na céimeanna seo duit, cuir isteach loga dífhabhtaithe (Amharc -> Loga Dífhabhtaithe) le gur féidir linn cabhrú leat leis an aistriú!",
+    "description": "(Deleted 2024/03/07) Message shown if the import went wrong; second paragraph"
   },
   "icu:importAgain": {
     "messageformat": "Roghnaigh fillteán agus triail arís",
-    "description": "Button shown if the user runs into an error during import, allowing them to start over"
+    "description": "(Deleted 2024/03/07) Button shown if the user runs into an error during import, allowing them to start over"
   },
   "icu:importCompleteHeader": {
     "messageformat": "D'éirigh leis!",
-    "description": "Header shown on the screen at the end of a successful import process"
+    "description": "(Deleted 2024/03/07) Header shown on the screen at the end of a successful import process"
   },
   "icu:importCompleteStartButton": {
     "messageformat": "Tosaigh ar Dheasc Signal a úsáid",
-    "description": "Button shown at end of successful import process, nothing left but a restart"
+    "description": "(Deleted 2024/03/07) Button shown at end of successful import process, nothing left but a restart"
   },
   "icu:importCompleteLinkButton": {
     "messageformat": "Nasc an gléas seo le do ghuthán",
-    "description": "Button shown at end of successful 'light' import process, so the standard linking process still needs to happen"
+    "description": "(Deleted 2024/03/07) Button shown at end of successful 'light' import process, so the standard linking process still needs to happen"
   },
   "icu:selectedLocation": {
     "messageformat": "do shuíomh roghnaithe",
-    "description": "Message shown as the export location if we didn't capture the target directory"
+    "description": "(Deleted 2024/03/07) Message shown as the export location if we didn't capture the target directory"
   },
   "icu:upgradingDatabase": {
     "messageformat": "Bunachar sonraí á uasghrádú. Seans go dtógfaidh sé seo tamall…",
-    "description": "Message shown on the loading screen when we're changing database structure on first run of a new version"
+    "description": "(Deleted 2024/03/07) Message shown on the loading screen when we're changing database structure on first run of a new version"
   },
   "icu:loadingMessages--other": {
     "messageformat": "{daysAgo, plural, one {Teachtaireachtaí ó 1 lá ó shin á lódáil...} two {Teachtaireachtaí ó {daysAgo,number} lá ó shin á lódáil...} few {Teachtaireachtaí ó {daysAgo,number} lá ó shin á lódáil...} many {Teachtaireachtaí ó {daysAgo,number} lá ó shin á lódáil...} other {Teachtaireachtaí ó {daysAgo,number} lá ó shin á lódáil...}}",
@@ -598,11 +606,19 @@
   },
   "icu:unreadMessage": {
     "messageformat": "1 Teachtaireacht Neamhléite",
-    "description": "Text for unread message separator, just one message"
+    "description": "(Deleted 2024/03/07) Text for unread message separator, just one message"
   },
   "icu:unreadMessages": {
     "messageformat": "{count, plural, one {{count,number} teachtaireacht neamhléite} two {{count,number} theachtaireacht neamhléite} few {{count,number} theachtaireacht neamhléite} many {{count,number} dteachtaireacht neamhléite} other {{count,number} dteachtaireacht neamhléite}}",
     "description": "Text for unread message separator, with count"
+  },
+  "icu:taskbarMarkedUnread": {
+    "messageformat": "Sainithe mar neamhléite",
+    "description": "On Windows, description for screen readers for the OS taskbar icon's overlay badge when the user has marked chat(s) as unread."
+  },
+  "icu:taskbarUnreadMessages": {
+    "messageformat": "{count, plural, one {{count,number} teachtaireacht neamhléite} two {{count,number} theachtaireacht neamhléite} few {{count,number} theachtaireacht neamhléite} many {{count,number} dteachtaireacht neamhléite} other {{count,number} dteachtaireacht neamhléite}}",
+    "description": "On Windows, description for screen readers for the OS taskbar icon's overlay badge when there are unread messages."
   },
   "icu:messageHistoryUnsynced": {
     "messageformat": "Ar mhaithe le do shlándáil, ní aistrítear stair comhráite chuig gléasanna nua nasctha.",
@@ -626,7 +642,7 @@
   },
   "icu:membersNeedingVerification": {
     "messageformat": "Athraíodh d'uimhreacha sábháilteachta le baill den ghrúpa seo ón fhíorú deiridh agat. Cliceáil ball den ghrúpa leis an uimhir sábháilteachta nua leis an duine sin a fheiceáil.",
-    "description": "When there are multiple previously-verified group members with safety number changes, a banner will be shown. The list of contacts with safety number changes is shown, and this text introduces that list."
+    "description": "(Deleted 2024/03/07) When there are multiple previously-verified group members with safety number changes, a banner will be shown. The list of contacts with safety number changes is shown, and this text introduces that list."
   },
   "icu:changedRightAfterVerify": {
     "messageformat": "Tá an uimhir sábháilteachta atá tú ag iarraidh a fhíorú athraithe. Athbhreithnigh d'uimhir sábháilteachta nua le {name1}. Cuimhnigh, seans go bhfuil duine ag iarraidh bualadh isteach i do chomhrá leis an athrú sin nó díreach go ndearna {name2} Signal a athshuiteáil.",
@@ -678,7 +694,7 @@
   },
   "icu:identityKeyErrorOnSend": {
     "messageformat": "Athraíodh an uimhir shábháilteachta le {name1}. Seans go bhfuil duine ag iarraidh bualadh isteach i do chomhrá leis sin nó díreach go ndearna {name2} Signal a athshuiteáil. B'fhéidir gur mhaith leat d'uimhir sábháilteachta a fhíorú leis an teagmhálaí seo.",
-    "description": "Shown when user clicks on a failed recipient in the message detail view after an identity key change"
+    "description": "(Deleted 2024/03/07) Shown when user clicks on a failed recipient in the message detail view after an identity key change"
   },
   "icu:sendAnyway": {
     "messageformat": "Seol chuige/chuici mar sin féin",
@@ -706,11 +722,11 @@
   },
   "icu:noLongerVerified": {
     "messageformat": "Tá d'uimhir sábháilteachta le {name} athraithe agus níl sí fíoraithe a thuilleadh. Cliceáil lena taispeáint.",
-    "description": "Shown in conversation banner when user's safety number has changed, but they were previously verified."
+    "description": "(Deleted 2024/03/07) Shown in conversation banner when user's safety number has changed, but they were previously verified."
   },
   "icu:multipleNoLongerVerified": {
     "messageformat": "Tá d'uimhreacha sábháilteachta le baill den ghrúpa athraithe agus níl siad fíoraithe a thuilleadh. Cliceáil lena dtaispeáint.",
-    "description": "Shown in conversation banner when more than one group member's safety number has changed, but they were previously verified."
+    "description": "(Deleted 2024/03/07) Shown in conversation banner when more than one group member's safety number has changed, but they were previously verified."
   },
   "icu:debugLogExplanation": {
     "messageformat": "Nuair a chliceálann tú Cuir Isteach, postálfar do loga ar líne go ceann 30 lá ag URL uathúil neamhfhoilsithe. Is féidir leat é a shábháil go logánta ar dtús.",
@@ -750,34 +766,14 @@
   },
   "icu:gotIt": {
     "messageformat": "Tuigim!",
-    "description": "Label for a button that dismisses a dialog. The user clicks it to confirm that they understand the message in the dialog."
+    "description": "(Deleted 2024/03/07) Label for a button that dismisses a dialog. The user clicks it to confirm that they understand the message in the dialog."
   },
   "icu:submit": {
     "messageformat": "Seol isteach é"
   },
   "icu:acceptNewKey": {
     "messageformat": "Glac leis",
-    "description": "Label for a button to accept a new safety number"
-  },
-  "icu:SafetyNumberViewer__migration__text": {
-    "messageformat": "Tá uimhreacha sábháilteachta á nuashonrú.",
-    "description": "(Deleted 11/01/2023) An explanatory note in SafetyNumberViewer describing the safety number migration process."
-  },
-  "icu:SafetyNumberViewer__migration__learn_more": {
-    "messageformat": "Foghlaim tuilleadh",
-    "description": "(Deleted 11/01/2023) A link text in SafetyNumberViewer describing the safety number migration process."
-  },
-  "icu:SafetyNumberViewer__card__prev": {
-    "messageformat": "Uimhir sábháilteachta roimhe seo",
-    "description": "(Deleted 11/01/2023) An ARIA label for safety number navigation button."
-  },
-  "icu:SafetyNumberViewer__card__next": {
-    "messageformat": "An chéad uimhir sábháilteachta eile",
-    "description": "(Deleted 11/01/2023) An ARIA label for safety number navigation button."
-  },
-  "icu:SafetyNumberViewer__carousel__dot": {
-    "messageformat": "Leagan na huimhreach sábháilteachta, {index,number} as {total,number}",
-    "description": "(Deleted 11/01/2023) An ARIA label for safety number carousel button."
+    "description": "(Deleted 2024/03/07) Label for a button to accept a new safety number"
   },
   "icu:SafetyNumberViewer__markAsVerified": {
     "messageformat": "Marcáil 'Deimhnithe'",
@@ -795,34 +791,6 @@
     "messageformat": "Tuilleadh faisnéise",
     "description": "Text of 'Learn more' button of SafetyNumberViewerModal modal"
   },
-  "icu:SafetyNumberViewer__hint--migration": {
-    "messageformat": "Chun criptiú ó cheann ceann le {name} a fhíorú, meaitseáil an cárta datha thuas le gléas an duine sin agus cuir na huimhreacha i gcomparáid lena chéile. Mura meaitseálann siad, triail an péire eile uimhreacha sábháilteachta. Ní gá ach péire amháin a mheaitseáil.",
-    "description": "(Deleted 11/01/2023). Safety number viewer, text of the hint during migration period"
-  },
-  "icu:SafetyNumberViewer__hint--normal": {
-    "messageformat": "Chun criptiú ó cheann ceann le {name} a fhíorú, cuir na huimhreacha thuas i gcomparáid le gléas an duine sin. Is féidir leis an duine eile do chód a scanadh leis an ngléas aige/aici freisin.",
-    "description": "(Deleted 11/01/2023). Safety number viewer, text of the hint after migration period"
-  },
-  "icu:SafetyNumberOnboarding__title": {
-    "messageformat": "Athruithe ar Uimhreacha Sábháilteachta",
-    "description": "(Deleted 11/01/2023) Title of Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__p1": {
-    "messageformat": "Tá uimhreacha sábháilteachta á nuashonrú thar thréimhse aistrithe le gnéithe príobháideachais atá ar na bacáin a chumasú in Signal.",
-    "description": "(Deleted 11/01/2023) Paragraph 1 of Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__p2": {
-    "messageformat": "Chun uimhreacha sábháilteachta a fhíorú, meaitseáil an cárta datha le gléas do theagmhálaí. Mura meaitseálann siad, triail an péire eile uimhreacha sábháilteachta. Ní gá ach péire amháin a mheaitseáil.",
-    "description": "(Deleted 11/01/2023) Paragraph 2 of Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__help": {
-    "messageformat": "An bhfuil cúnamh uait?",
-    "description": "(Deleted 11/01/2023) Text of a secondary button in Safety number onboarding modal"
-  },
-  "icu:SafetyNumberOnboarding__close": {
-    "messageformat": "Tuigim",
-    "description": "(Deleted 11/01/2023) Text of a secondary button in Safety number onboarding modal"
-  },
   "icu:SafetyNumberNotReady__body": {
     "messageformat": "Cruthófar uimhir sábháilteachta leis an duine sin tar éis duit teachtaireachtaí a sheoladh idir a chéile.",
     "description": "Body of SafetyNumberNotReady modal"
@@ -833,11 +801,11 @@
   },
   "icu:isVerified": {
     "messageformat": "D'fhíoraigh tú d'uimhir sábháilteachta le {name}.",
-    "description": "Summary state shown at top of the safety number screen if user has verified contact."
+    "description": "(Deleted 2024/03/07) Summary state shown at top of the safety number screen if user has verified contact."
   },
   "icu:isNotVerified": {
     "messageformat": "Níor fhíoraigh tú d'uimhir sábháilteachta le {name}.",
-    "description": "Summary state shown at top of the safety number screen if user has not verified contact."
+    "description": "(Deleted 2024/03/07) Summary state shown at top of the safety number screen if user has not verified contact."
   },
   "icu:verified": {
     "messageformat": "Deimhnithe"
@@ -847,7 +815,8 @@
     "description": "Header for a key change dialog"
   },
   "icu:identityChanged": {
-    "messageformat": "Tá d'uimhir sábháilteachta leis an teagmhálaí seo athraithe. Seans go bhfuil duine ag iarraidh bualadh isteach i do chomhrá leis sin nó díreach go ndearna an teagmhálaí sin Signal a athshuiteáil. B’fhéidir gur mhaith leat an uimhir sábháilteachta nua thíos a fhíorú."
+    "messageformat": "Tá d'uimhir sábháilteachta leis an teagmhálaí seo athraithe. Seans go bhfuil duine ag iarraidh bualadh isteach i do chomhrá leis sin nó díreach go ndearna an teagmhálaí sin Signal a athshuiteáil. B’fhéidir gur mhaith leat an uimhir sábháilteachta nua thíos a fhíorú.",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:incomingError": {
     "messageformat": "Tharla earráid agus teachtaireacht isteach á próiseáil"
@@ -894,11 +863,11 @@
   },
   "icu:clickToSave": {
     "messageformat": "Cliceáil lena shábháil",
-    "description": "Hover text for attachment filenames"
+    "description": "(Deleted 2024/03/07) Hover text for attachment filenames"
   },
   "icu:unnamedFile": {
     "messageformat": "Comhad gan ainm",
-    "description": "Hover text for attachment filenames"
+    "description": "(Deleted 2024/03/07) Hover text for attachment filenames"
   },
   "icu:voiceMessage": {
     "messageformat": "Glórphost",
@@ -923,10 +892,6 @@
   "icu:stagedImageAttachment": {
     "messageformat": "Dréacht-cheangaltán íomhá: {path}",
     "description": "Alt text for staged attachments"
-  },
-  "icu:cdsMirroringErrorToast": {
-    "messageformat": "Fuair Deasc neamh-chomhsheasmhacht leis an tSeirbhís Aimsithe Teagmhálaithe.",
-    "description": "(Deleted 2024/01/22) An error popup when we discovered an inconsistency between mirrored Contact Discovery Service requests."
   },
   "icu:decryptionErrorToast": {
     "messageformat": "Fuair Deasc earráid díchriptithe ó {name}, gléas {deviceId}",
@@ -1180,7 +1145,7 @@
   },
   "icu:messageFoundButNotLoaded": {
     "messageformat": "Fuarthas an bhunteachtaireacht, ach níor lódáladh í. Scrollaigh suas lena lódáil.",
-    "description": "Shown in toast if user clicks on quote references messages not loaded in view, but in database"
+    "description": "(Deleted 2024/03/07) Shown in toast if user clicks on quote references messages not loaded in view, but in database"
   },
   "icu:voiceRecording--start": {
     "messageformat": "Tosaigh ar thaifeadadh glórphoist",
@@ -1188,11 +1153,11 @@
   },
   "icu:voiceRecording--complete": {
     "messageformat": "Críochnaigh an glórphost agus seol é",
-    "description": "Tooltip for green complete voice message and send"
+    "description": "(Deleted 2024/03/07) Tooltip for green complete voice message and send"
   },
   "icu:voiceRecording--cancel": {
     "messageformat": "Cuir an glórphost ar ceal",
-    "description": "Tooltip for red button to cancel voice message"
+    "description": "(Deleted 2024/03/07) Tooltip for red button to cancel voice message"
   },
   "icu:voiceRecordingInterruptedMax": {
     "messageformat": "Stopadh taifeadadh an ghlórphoist toisc gur baineadh amach an uasteorainn ama.",
@@ -1200,7 +1165,7 @@
   },
   "icu:voiceRecordingInterruptedBlur": {
     "messageformat": "Stopadh taifeadadh an ghlórphoist toisc gur athraigh tú chuig aip eile.",
-    "description": "Confirmation dialog message for when the voice recording is interrupted due to app losing focus"
+    "description": "(Deleted 2024/03/07) Confirmation dialog message for when the voice recording is interrupted due to app losing focus"
   },
   "icu:voiceNoteLimit": {
     "messageformat": "Tá teorainn uair an chloig le glórphoist. Stopfar an taifeadadh má athraíonn tú chuig aip eile.",
@@ -1228,7 +1193,7 @@
   },
   "icu:replyingTo": {
     "messageformat": "Ag tabhairt freagra do {name}",
-    "description": "Shown in iOS theme when you or someone quotes to a message which is not from you"
+    "description": "(Deleted 2024/03/07) Shown in iOS theme when you or someone quotes to a message which is not from you"
   },
   "icu:audioPermissionNeeded": {
     "messageformat": "Tabhair cead do Dheasc Signal do mhicreafón a rochtain chun glórphoist a sheoladh.",
@@ -1248,7 +1213,7 @@
   },
   "icu:showSettings": {
     "messageformat": "Taispeáin Socruithe",
-    "description": "A button shown in dialog requesting the user to turn on audio permissions"
+    "description": "(Deleted 2024/03/07) A button shown in dialog requesting the user to turn on audio permissions"
   },
   "icu:audio": {
     "messageformat": "Fuaim",
@@ -1272,7 +1237,7 @@
   },
   "icu:muted": {
     "messageformat": "Balbhaithe",
-    "description": "Shown in a button when a conversation is muted"
+    "description": "(Deleted 2024/03/07) Shown in a button when a conversation is muted"
   },
   "icu:mute": {
     "messageformat": "Balbhaigh",
@@ -1300,13 +1265,15 @@
     "messageformat": "Cuileáil"
   },
   "icu:failedToSend": {
-    "messageformat": "Theip ar sheoladh chuig roinnt faighteoirí. Seiceáil do nasc líonra."
+    "messageformat": "Theip ar sheoladh chuig roinnt faighteoirí. Seiceáil do nasc líonra.",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:error": {
     "messageformat": "Earráid"
   },
   "icu:messageDetail": {
-    "messageformat": "Sonraí na Teachtaireachta"
+    "messageformat": "Sonraí na Teachtaireachta",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:delete": {
     "messageformat": "Scrios"
@@ -1352,7 +1319,7 @@
   },
   "icu:to": {
     "messageformat": "Chuig",
-    "description": "Label for the receiver of a message"
+    "description": "(Deleted 2024/03/07) Label for the receiver of a message"
   },
   "icu:searchResultHeader--sender-to-group": {
     "messageformat": "{sender} chuig {receiverGroup}",
@@ -1383,13 +1350,14 @@
     "description": "Placeholder text in the message entry field"
   },
   "icu:groupMembers": {
-    "messageformat": "Comhaltaí na baicle"
+    "messageformat": "Comhaltaí na baicle",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:showMembers": {
     "messageformat": "Taispeáin baill"
   },
   "icu:showSafetyNumber": {
-    "messageformat": "Féach ar an uimhir shábháilteachta"
+    "messageformat": "Amharc ar an uimhir sábháilteachta"
   },
   "icu:AboutContactModal__title": {
     "messageformat": "Maidir leis an teagmhálaí",
@@ -1425,14 +1393,15 @@
   },
   "icu:ContactModal__showSafetyNumber": {
     "messageformat": "Féach ar an uimhir shábháilteachta",
-    "description": "Contact modal, label for button to show safety number modal"
+    "description": "(Deleted 2024/03/07) Contact modal, label for button to show safety number modal"
   },
   "icu:viewRecentMedia": {
-    "messageformat": "Féach ar na meáin le déanaí",
+    "messageformat": "Amharc ar na meáin le déanaí",
     "description": "This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
   },
   "icu:theirIdentityUnknown": {
-    "messageformat": "Níor sheol tú teachtaireachtaí chuig an duine seo ná ní bhfuair tú cinn uaidh/uaithi. Beidh d'uimhir sábháilteachta leis an duine sin ar fáil tar éis an chéad teachtaireacht."
+    "messageformat": "Níor sheol tú teachtaireachtaí chuig an duine seo ná ní bhfuair tú cinn uaidh/uaithi. Beidh d'uimhir sábháilteachta leis an duine sin ar fáil tar éis an chéad teachtaireacht.",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:back": {
     "messageformat": "Ar Ais",
@@ -1606,9 +1575,13 @@
     "messageformat": "Is le {conversationTitle} {phoneNumber}",
     "description": "Shown when we've discovered a phone number for a contact you've been communicating with, but you have no shared groups."
   },
+  "icu:TitleTransition--notification": {
+    "messageformat": "Chuir tú tús leis an gcomhrá seo le {oldTitle}",
+    "description": "Shown when we've received profile information for a contact we have been messaging by username/phone number"
+  },
   "icu:quoteThumbnailAlt": {
     "messageformat": "Mionsamhail íomhá ón teachtaireacht luaite",
-    "description": "Used in alt tag of thumbnail images inside of an embedded message quote"
+    "description": "(Deleted 2024/03/07) Used in alt tag of thumbnail images inside of an embedded message quote"
   },
   "icu:imageAttachmentAlt": {
     "messageformat": "Íomhá i gceangal leis an teachtaireacht",
@@ -1636,15 +1609,15 @@
   },
   "icu:fileIconAlt": {
     "messageformat": "Íocón comhaid",
-    "description": "Used in the media gallery documents tab to visually represent a file"
+    "description": "(Deleted 2024/03/07) Used in the media gallery documents tab to visually represent a file"
   },
   "icu:installWelcome": {
     "messageformat": "Fáilte go Deasc Signal",
-    "description": "Welcome title on the install page"
+    "description": "(Deleted 2024/03/07) Welcome title on the install page"
   },
   "icu:installTagline": {
     "messageformat": "Tá príobháideacht indéanta. Sodhéanta le Signal.",
-    "description": "Tagline displayed under 'installWelcome' string on the install page"
+    "description": "(Deleted 2024/03/07) Tagline displayed under 'installWelcome' string on the install page"
   },
   "icu:linkedDevices": {
     "messageformat": "Gléasanna Nasctha",
@@ -1677,10 +1650,6 @@
   "icu:Install__instructions__3": {
     "messageformat": "Tapáil {plusButton} (Android) nó {linkNewDevice} (iPhone)",
     "description": "Instructions on the device link screen"
-  },
-  "icu:Install__qr-failed": {
-    "messageformat": "(deleted 05/09/2023) The QR code couldn't load. Check your internet and try again. <learnMoreLink>Learn more</learnMoreLink>",
-    "description": "Shown on the install screen if the QR code fails to load"
   },
   "icu:Install__qr-failed-load": {
     "messageformat": "Níorbh fhéidir an cód QR a lódáil. Seiceáil d'Idirlíon agus triail arís. <retry>Triail arís</retry>",
@@ -1778,51 +1747,51 @@
     "description": "Text in the call lobby when you can't join because the call is full"
   },
   "icu:calling__cant-join": {
-    "messageformat": "Can't join call",
+    "messageformat": "Ní féidir dul isteach sa ghlao",
     "description": "Modal dialog title when you can't join a call"
   },
   "icu:calling__dialog-already-in-call": {
-    "messageformat": "You are already in a call.",
+    "messageformat": "Tá tú i mbun glao cheana féin.",
     "description": "Error message when clicking a call link to join a call, but you're in a call already."
   },
   "icu:calling__call-link-connection-issues": {
-    "messageformat": "Could not fetch call link information. Please check your network connection and try again.",
+    "messageformat": "Níorbh fhéidir faisnéis faoin nasc glao a fháil. Seiceáil do nasc líonra agus triail arís.",
     "description": "Error message when unable to fetch call link info from server."
   },
   "icu:calling__call-link-copied": {
-    "messageformat": "Call link copied.",
+    "messageformat": "Nasc glao cóipeáilte.",
     "description": "Toast shown when a call link is copied to the clipboard."
   },
   "icu:calling__call-link-no-longer-valid": {
-    "messageformat": "This call link is no longer valid.",
+    "messageformat": "Níl an nasc glao seo bailí a thuilleadh.",
     "description": "Error message when a call link has been revoked or expires."
   },
   "icu:calling__call-link-default-title": {
-    "messageformat": "Signal Call",
+    "messageformat": "Glao Signal",
     "description": "Default title for Signal call links."
   },
   "icu:calling__join-request-denied": {
-    "messageformat": "Your request to join this call has been denied.",
+    "messageformat": "Diúltaíodh do d'iarratas ar dhul isteach sa ghlao seo.",
     "description": "Error message when a request to join a call link call was rejected by a call admin."
   },
   "icu:calling__join-request-denied-title": {
-    "messageformat": "Join request denied",
+    "messageformat": "Diúltaíodh don iarratas ar dhul isteach ann",
     "description": "Title of error when a request to join a call link call was rejected by a call admin."
   },
   "icu:calling__removed-from-call": {
-    "messageformat": "Someone has removed you from the call.",
+    "messageformat": "Bhain duine éigin tusa den ghlao.",
     "description": "Error message when in a call then a call admin removes you."
   },
   "icu:calling__removed-from-call-title": {
-    "messageformat": "Removed from call",
+    "messageformat": "Bainte den ghlao",
     "description": "Title of error when in a call then a call admin removes you."
   },
   "icu:CallingLobby__CallLinkNotice": {
-    "messageformat": "Anyone who joins this call via the link will see your name and photo.",
+    "messageformat": "Aon duine a théann isteach sa ghlao seo tríd an nasc, feicfidh an duine sin d'ainm agus do ghrianghraf.",
     "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared."
   },
   "icu:CallingLobby__CallLinkNotice--phone-sharing": {
-    "messageformat": "Anyone who joins this call via the link will see your name, photo, and phone number.",
+    "messageformat": "Aon duine a théann isteach sa ghlao seo tríd an nasc, feicfidh an duine sin d'ainm, do ghrianghraf agus d'uimhir ghutháin.",
     "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared, when the phone number sharing account setting is enabled."
   },
   "icu:CallingLobbyJoinButton--join": {
@@ -1883,11 +1852,11 @@
   },
   "icu:calling__button--ring__off": {
     "messageformat": "Cuir in iúl, ná buail",
-    "description": "Button tooltip label for turning ringing off"
+    "description": "(Deleted 2024/03/07) Button tooltip label for turning ringing off"
   },
   "icu:calling__button--ring__on": {
     "messageformat": "Cumasaigh bualadh",
-    "description": "Button tooltip label for turning ringing on"
+    "description": "(Deleted 2024/03/07) Button tooltip label for turning ringing on"
   },
   "icu:CallingButton__ring-off": {
     "messageformat": "Cas as glaoch",
@@ -1975,10 +1944,14 @@
   },
   "icu:calling__in-this-call--one": {
     "messageformat": "Sa ghlao seo · 1 duine",
-    "description": "Shown in the participants list to describe how many people are in the call"
+    "description": "(Deleted 2024/02/29) Shown in the participants list to describe how many people are in the call"
   },
   "icu:calling__in-this-call--many": {
     "messageformat": "Sa ghlao seo · {people} duine",
+    "description": "(Deleted 2024/02/29) Shown in the participants list to describe how many people are in the call"
+  },
+  "icu:calling__in-this-call": {
+    "messageformat": "{people, plural, one {Sa ghlao seo · {people,number} duine} two {Sa ghlao seo · {people,number} dhuine} few {Sa ghlao seo · {people,number} dhuine} many {Sa ghlao seo · {people,number} nduine} other {Sa ghlao seo · {people,number} duine}}",
     "description": "Shown in the participants list to describe how many people are in the call"
   },
   "icu:calling__you-have-blocked": {
@@ -2083,7 +2056,7 @@
   },
   "icu:general": {
     "messageformat": "Coiteann",
-    "description": "Header for general options on the settings screen"
+    "description": "(Deleted 2024/03/07) Header for general options on the settings screen"
   },
   "icu:spellCheckDescription": {
     "messageformat": "Téacs seiceála litrithe curtha isteach i mbosca cumtha na teachtaireachta",
@@ -2135,7 +2108,7 @@
   },
   "icu:deleteAllDataButton": {
     "messageformat": "Scrios na sonraí go léir",
-    "description": "Text of the button that deletes all data"
+    "description": "(Deleted 2024/03/07) Text of the button that deletes all data"
   },
   "icu:deleteAllDataProgress": {
     "messageformat": "Dínascadh agus scriosadh na sonraí go léir",
@@ -2151,15 +2124,15 @@
   },
   "icu:notifications": {
     "messageformat": "Fógraí",
-    "description": "Header for notification settings"
+    "description": "(Deleted 2024/03/07) Header for notification settings"
   },
   "icu:notificationSettingsDialog": {
     "messageformat": "Nuair a thagann teachtaireachtaí isteach, taispeáin fógraí a léiríonn:",
-    "description": "Explain the purpose of the notification settings"
+    "description": "(Deleted 2024/03/07) Explain the purpose of the notification settings"
   },
   "icu:disableNotifications": {
     "messageformat": "Díchumasaigh fógraí",
-    "description": "Label for disabling notifications"
+    "description": "(Deleted 2024/03/07) Label for disabling notifications"
   },
   "icu:nameAndMessage": {
     "messageformat": "Ainm, Ábhar, ⁊ Gníomhartha",
@@ -2213,15 +2186,15 @@
   },
   "icu:showMore": {
     "messageformat": "Mionsonraí",
-    "description": "Displays the details of a key change"
+    "description": "(Deleted 2024/03/07) Displays the details of a key change"
   },
   "icu:showLess": {
     "messageformat": "Folaigh sonraí",
-    "description": "Hides the details of a key change"
+    "description": "(Deleted 2024/03/07) Hides the details of a key change"
   },
   "icu:learnMore": {
     "messageformat": "Faigh amach tuilleadh faoi uimhreacha sábháilteachta a fhíorú",
-    "description": "Text that links to a support article on verifying safety numbers"
+    "description": "(Deleted 2024/03/07) Text that links to a support article on verifying safety numbers"
   },
   "icu:expiredWarning": {
     "messageformat": "Tá an leagan Dheasc Signal seo imithe as feidhm. Uasghrádaigh chuig an leagan is déanaí le leanúint le cur teachtaireachtaí.",
@@ -2237,7 +2210,7 @@
   },
   "icu:unregisteredUser": {
     "messageformat": "Níl an uimhir cláraithe",
-    "description": "Error message displayed when sending to an unregistered user."
+    "description": "(Deleted 2024/03/07) Error message displayed when sending to an unregistered user."
   },
   "icu:sync": {
     "messageformat": "Iompórtáil teagmhálaithe",
@@ -2249,7 +2222,7 @@
   },
   "icu:lastSynced": {
     "messageformat": "Iompórtáil deiridh ag",
-    "description": "Label for date and time of last sync operation"
+    "description": "(Deleted 2024/03/07) Label for date and time of last sync operation"
   },
   "icu:syncNow": {
     "messageformat": "Iompórtáil anois",
@@ -2409,7 +2382,7 @@
   },
   "icu:yourSafetyNumberWith": {
     "messageformat": "D'uimhir sábháilteachta le {name1}:",
-    "description": "Heading for safety number view"
+    "description": "(Deleted 2024/03/07) Heading for safety number view"
   },
   "icu:themeLight": {
     "messageformat": "Sorcha",
@@ -2441,7 +2414,7 @@
   },
   "icu:startConversation": {
     "messageformat": "Tosaigh ar chomhrá nua",
-    "description": "Label underneath number a user enters that is not an existing contact"
+    "description": "(Deleted 2024/03/07) Label underneath number a user enters that is not an existing contact"
   },
   "icu:newConversation": {
     "messageformat": "Comhrá nua",
@@ -2573,15 +2546,15 @@
   },
   "icu:notSupportedSMS": {
     "messageformat": "Ní thacaítear le teachtaireachtaí SMS/MMS.",
-    "description": "Label underneath number informing user that SMS is not supported on desktop"
+    "description": "(Deleted 2024/03/07) Label underneath number informing user that SMS is not supported on desktop"
   },
   "icu:newPhoneNumber": {
     "messageformat": "Cuir isteach uimhir ghutháin chun teagmhálaí a chur leis.",
-    "description": "Placeholder for adding a new number to a contact"
+    "description": "(Deleted 2024/03/07) Placeholder for adding a new number to a contact"
   },
   "icu:invalidNumberError": {
     "messageformat": "Uimhir neamhbhailí",
-    "description": "When a person inputs a number that is invalid"
+    "description": "(Deleted 2024/03/07) When a person inputs a number that is invalid"
   },
   "icu:unlinkedWarning": {
     "messageformat": "Cliceáil chun Deasc Signal a athnascadh le do ghléas móibíleach le leanúint le cur teachtaireachtaí."
@@ -2590,7 +2563,8 @@
     "messageformat": "Dínasctha"
   },
   "icu:relink": {
-    "messageformat": "Athnasc"
+    "messageformat": "Athnasc",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:autoUpdateNewVersionTitle": {
     "messageformat": "Nuashonrú ar Fáil"
@@ -2615,7 +2589,8 @@
     "messageformat": "Atosaigh Signal"
   },
   "icu:autoUpdateLaterButtonLabel": {
-    "messageformat": "Níos déanaí"
+    "messageformat": "Níos déanaí",
+    "description": "(Deleted 2024/03/07) undefined"
   },
   "icu:autoUpdateIgnoreButtonLabel": {
     "messageformat": "Déan neamhaird den nuashonrú"
@@ -2717,15 +2692,15 @@
     "description": "Shown in notifications and in the left pane when a message has features too new for this signal install."
   },
   "icu:message--getDescription--disappearing-media": {
-    "messageformat": "Meáin aonuaire",
+    "messageformat": "Meáin amhairc aonuaire",
     "description": "Shown in notifications and in the left pane after view-once message is deleted. Also shown when quoting a view once media."
   },
   "icu:message--getDescription--disappearing-photo": {
-    "messageformat": "Grianghraf aonuaire",
+    "messageformat": "Grianghraf amhairc aonuaire",
     "description": "Shown in notifications and in the left pane when a message is a view once photo. Also shown when quoting a view once photo."
   },
   "icu:message--getDescription--disappearing-video": {
-    "messageformat": "Físeán aonuaire",
+    "messageformat": "Físeán amhairc aonuaire",
     "description": "Shown in notifications and in the left pane when a message is a view once video. Also shown when quoting a view once video."
   },
   "icu:message--deletedForEveryone": {
@@ -2741,7 +2716,7 @@
     "description": "Shown in a message bubble if any attachments are left on message when too-large attachments are dropped"
   },
   "icu:message--call-link-description": {
-    "messageformat": "Use this link to join a Signal call",
+    "messageformat": "Úsáid an nasc seo le dul isteach i nGlao Signal",
     "description": "Shown in message previews for Signal call links."
   },
   "icu:donation--missing": {
@@ -2806,7 +2781,7 @@
   },
   "icu:message--giftBadge--view": {
     "messageformat": "Amharc ar",
-    "description": "Shown when you've sent a gift badge to someone then opened it"
+    "description": "(Deleted 2024/03/07) Shown when you've sent a gift badge to someone then opened it"
   },
   "icu:message--donation--view": {
     "messageformat": "Amharc ar",
@@ -2838,7 +2813,7 @@
   },
   "icu:stickers--StickerManager--title": {
     "messageformat": "Greamáin",
-    "description": "Title for the sticker manager"
+    "description": "(Deleted 2024/03/07) Title for the sticker manager"
   },
   "icu:stickers--StickerManager--Available": {
     "messageformat": "Ar fáil",
@@ -3053,7 +3028,7 @@
     "description": "Text for a button which will take user to Signal download page"
   },
   "icu:Message--tap-to-view-expired": {
-    "messageformat": "Feicthe",
+    "messageformat": "Amharcadh air",
     "description": "Text shown on messages with with individual timers, after user has viewed it"
   },
   "icu:Message--tap-to-view--outgoing": {
@@ -3061,7 +3036,7 @@
     "description": "Text shown on outgoing messages with with individual timers (inaccessible)"
   },
   "icu:Message--tap-to-view--incoming--expired-toast": {
-    "messageformat": "Bhreathnaigh tú ar an teachtaireacht seo cheana.",
+    "messageformat": "D'amharc tú ar an teachtaireacht seo cheana.",
     "description": "Shown when user clicks on an expired incoming view-once bubble"
   },
   "icu:Message--tap-to-view--outgoing--expired-toast": {
@@ -3069,11 +3044,11 @@
     "description": "Shown when user clicks on an expired outgoing view-once bubble"
   },
   "icu:Message--tap-to-view--incoming": {
-    "messageformat": "Féach ar an nGrianghraf",
+    "messageformat": "Amharc ar an nGrianghraf",
     "description": "Text shown on photo messages with with individual timers, before user has viewed it"
   },
   "icu:Message--tap-to-view--incoming-video": {
-    "messageformat": "Féach ar an bhFíseán",
+    "messageformat": "Amharc ar an bhFíseán",
     "description": "Text shown on video messages with with individual timers, before user has viewed it"
   },
   "icu:Conversation--getDraftPreview--attachment": {
@@ -3165,7 +3140,7 @@
     "description": "Shown in the shortcuts guide"
   },
   "icu:Keyboard--view-details-for-selected-message": {
-    "messageformat": "Féach ar shonraí na teachtaireachta roghnaithe",
+    "messageformat": "Amharc ar shonraí na teachtaireachta roghnaithe",
     "description": "Shown in the shortcuts guide"
   },
   "icu:Keyboard--toggle-reply": {
@@ -3205,7 +3180,7 @@
     "description": "Shown in the shortcuts guide"
   },
   "icu:Keyboard--remove-draft-link-preview": {
-    "messageformat": "Bain réamhamharc ar dhréacht-nasc",
+    "messageformat": "Bain réamhamharc ar dhréachtnasc",
     "description": "Shown in the shortcuts guide"
   },
   "icu:Keyboard--remove-draft-attachments": {
@@ -3388,14 +3363,6 @@
     "messageformat": "Comhrá marcáilte mar neamhléite",
     "description": "A toast that shows up when user marks a conversation as unread"
   },
-  "icu:SendEdit--dialog--title": {
-    "messageformat": "Leagan béite Signal amháin",
-    "description": "(deleted 8/30) Title of the modal shown before sending your first edit message"
-  },
-  "icu:SendEdit--dialog--body": {
-    "messageformat": "Níl cur teachtaireachtaí in eagar ar fáil ach ag béite-úsáideoirí Signal. Má chuirfidh tú teachtaireacht in eagar, ní fheicfidh ach na daoine a bhfuil an leagan is déanaí de Signal acu é.",
-    "description": "(deleted 8/30) Body text of the modal shown before sending your first edit message"
-  },
   "icu:SendEdit--dialog--title2": {
     "messageformat": "Cuir Teachtaireacht in Eagar",
     "description": "Title of the modal shown before sending your first edit message"
@@ -3443,6 +3410,62 @@
   "icu:ReactionsViewer--all": {
     "messageformat": "Uile",
     "description": "Shown in reaction viewer as the title for the 'all' category"
+  },
+  "icu:SafetyTipsModal__Title": {
+    "messageformat": "Leideanna Sábháilteachta",
+    "description": "Title of the safety tips modal"
+  },
+  "icu:SafetyTipsModal__Description": {
+    "messageformat": "Bí cúramach agus tú ag glacadh le hiarratais teachtaireachta ó dhaoine nach bhfuil aithne agat orthu. Bí ag faire amach do na rudaí seo:",
+    "description": "Description of the safety tips modal"
+  },
+  "icu:SafetyTipsModal__TipTitle--Crypto": {
+    "messageformat": "Camscéimeanna criptea-airgeadra nó airgid",
+    "description": "Title of the crypto safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Crypto": {
+    "messageformat": "Má fhaigheann tú teachtaireacht faoi chriptea-airgeadra (amhail Bitcoin) nó faoi dheis airgeadais ó dhuine éigin nach bhfuil aithne agat air nó uirthi, bí cúramach — seans maith gur turscar atá ann.",
+    "description": "Description of the crypto safety tip"
+  },
+  "icu:SafetyTipsModal__TipTitle--Vague": {
+    "messageformat": "Teachtaireachtaí doiléire nó nach mbaineann le hábhar",
+    "description": "Title of the vague safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Vague": {
+    "messageformat": "Is minic a thosaíonn seoltóirí turscair le teachtaireacht shimplí cosúil le “Haigh” chun tú a mhealladh isteach. Má fhreagraíonn tú, féadfaidh siad dul i dteagmháil leat tuilleadh.",
+    "description": "Description of the vague safety tip"
+  },
+  "icu:SafetyTipsModal__TipTitle--Links": {
+    "messageformat": "Teachtaireachtaí le naisc",
+    "description": "Title of the links safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Links": {
+    "messageformat": "Bí san airdeall ar theachtaireachtaí ó dhaoine nach bhfuil aithne agat orthu a bhfuil naisc le suíomhanna gréasáin iontu. Ná tabhair cuairt choíche ar naisc ó dhaoine nach bhfuil muinín agat astu.",
+    "description": "Description of the links safety tip"
+  },
+  "icu:SafetyTipsModal__TipTitle--Business": {
+    "messageformat": "Gnólachtaí agus institiúidí bréagacha",
+    "description": "Title of the business safety tip"
+  },
+  "icu:SafetyTipsModal__TipDescription--Business": {
+    "messageformat": "Bí san airdeall ar ghnólachtaí nó ar ghníomhaireachtaí rialtais a dhéanann teagmháil leat. Is féidir turscar a bheith i dteachtaireachtaí a bhaineann le gníomhaireachtaí cánach, teachtairí agus eile.",
+    "description": "Description of the business safety tip"
+  },
+  "icu:SafetyTipsModal__DotLabel": {
+    "messageformat": "Téigh chuig leathanach {page,number}",
+    "description": "Label for the dots in the safety tips modal that when clicked will take you to a specific tip"
+  },
+  "icu:SafetyTipsModal__Button--Previous": {
+    "messageformat": "Leid roimhe seo",
+    "description": "Button to go to the previous safety tip"
+  },
+  "icu:SafetyTipsModal__Button--Next": {
+    "messageformat": "An chéad leid eile",
+    "description": "Button to go to the next safety tip"
+  },
+  "icu:SafetyTipsModal__Button--Done": {
+    "messageformat": "Déanta",
+    "description": "Button to close the safety tips modal when you've reached the last tip"
   },
   "icu:MessageRequests--message-direct": {
     "messageformat": "Lig do {name} teachtaireachtaí a sheoladh chugat agus comhroinn d'ainm agus grianghraf leis/léi? Ní bheidh a fhios ag an duine go bhfaca tú na teachtaireachtaí go dtí go nglacfaidh tú leis.",
@@ -3507,6 +3530,42 @@
   "icu:MessageRequests--block-group-confirm-body": {
     "messageformat": "Ní bhfaighidh tú teachtaireachtaí ná nuashonruithe ón ngrúpa seo a thuilleadh agus ní bheidh baill in ann thú a chur leis an ngrúpa seo arís.",
     "description": "Shown as the body in the confirmation modal for blocking a group message request"
+  },
+  "icu:MessageRequests--reportAndMaybeBlock": {
+    "messageformat": "Tuairiscigh...",
+    "description": "Shown as a button to let the user report a message request and maybe block the user"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-title": {
+    "messageformat": "Tuairiscigh mar thurscar?",
+    "description": "Shown as the title in the modal for reporting and maybe blocking a message request"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-body--direct": {
+    "messageformat": "Cuirfear in iúl do Signal go bhféadfadh go bhfuil an duine seo ag seoladh turscair. Ní féidir le Signal inneachar comhráite a fheiceáil.",
+    "description": "Shown as the body in the modal for reporting and maybe blocking a message request in a direct conversation"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-body--group--unknown-contact": {
+    "messageformat": "Cuirfear in iúl do Signal go bhféadfadh go bhfuil an duine a thug cuireadh duit chuig an ngrúpa seo ag seoladh turscair. Ní féidir le Signal inneachar comhráite a fheiceáil.",
+    "description": "Shown as the body in the modal for reporting and maybe blocking a message request in a group conversation when the contact is unknown"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-body--group": {
+    "messageformat": "Cuirfear in iúl do Signal go bhféadfadh go bhfuil {name}, a thug cuireadh duit chuig an ngrúpa seo, ag seoladh turscair. Ní féidir le Signal inneachar comhráite a fheiceáil.",
+    "description": "Shown as the body in the modal for reporting and maybe blocking a message request in a group conversation"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-report": {
+    "messageformat": "Tuairiscigh turscar",
+    "description": "Shown as a button to let the user report a message request"
+  },
+  "icu:MessageRequests--ReportAndMaybeBlockModal-reportAndBlock": {
+    "messageformat": "Tuairiscigh agus cuir bac ar air nó uirthi",
+    "description": "Shown as a button to let the user report a message request and block the user"
+  },
+  "icu:MessageRequests--AcceptedOptionsModal--body": {
+    "messageformat": "Ghlac tú le hiarratas teachtaireachta ó {name}. Más botún a bhí ann, is féidir leat gníomh a roghnú thíos.",
+    "description": "Shown as the body in the modal for accepting a message request in a direct conversation"
+  },
+  "icu:MessageRequests--report-spam-success-toast": {
+    "messageformat": "Tuairiscithe mar thurscar.",
+    "description": "Shown in a toast when you successfully report a user as spam"
   },
   "icu:MessageRequests--delete": {
     "messageformat": "Scrios",
@@ -3578,14 +3637,14 @@
   },
   "icu:ConversationHero--membership-added": {
     "messageformat": "Chuir {name} leis an ngrúpa thú.",
-    "description": "Shown Indicates that you were added to a group by a given individual."
+    "description": "(Deleted 2024/03/07) Shown Indicates that you were added to a group by a given individual."
   },
   "icu:no-groups-in-common": {
     "messageformat": "No groups in common",
     "description": "Shown to indicate this user is not a member of any groups"
   },
   "icu:no-groups-in-common-warning": {
-    "messageformat": "No groups in common. Review requests carefully.",
+    "messageformat": "Níl aon ghrúpaí i bpáirt ann. Athbhreithnigh iarratais go cúramach.",
     "description": "When a user has no common groups, show this warning"
   },
   "icu:acceptCall": {
@@ -3717,11 +3776,11 @@
     "description": "Shown in the call lobby for a direct 1:1 call when the caller's video is disabled, to specify that an audio call will be placed when clicking the Start button."
   },
   "icu:CallControls__InfoDisplay--adhoc-call": {
-    "messageformat": "Call link",
+    "messageformat": "Nasc glao",
     "description": "Shown in the call lobby for a call link."
   },
   "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
-    "messageformat": "Waiting to be let in",
+    "messageformat": "Ag fanacht le go ligfear isteach",
     "description": "Shown in the call lobby for call link calls when requesting to join a call which requires admin approval."
   },
   "icu:CallControls__JoinLeaveButton--hangup-1-1": {
@@ -3786,6 +3845,10 @@
   },
   "icu:calling__participants": {
     "messageformat": "{people} sa ghlao",
+    "description": "(Deleted 2024/02/29) Title for participants list toggle"
+  },
+  "icu:calling__participants--pluralized": {
+    "messageformat": "{people, plural, one {{people,number} sa ghlao} two {{people,number} sa ghlao} few {{people,number} sa ghlao} many {{people,number} sa ghlao} other {{people,number} sa ghlao}}",
     "description": "Title for participants list toggle"
   },
   "icu:calling__call-notification__ended": {
@@ -3865,7 +3928,7 @@
     "description": "Title for the select your screen sharing sources modal"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "Copy link",
+    "messageformat": "Cóipeáil an nasc",
     "description": "Menu item in the in-call info popup for call link calls. The action is to add the call link to the clipboard."
   },
   "icu:callingDeviceSelection__label--video": {
@@ -4778,7 +4841,7 @@
   },
   "icu:ContactModal--message": {
     "messageformat": "Teachtaireacht",
-    "description": "Button text for send message button in Group Contact Details modal"
+    "description": "(Deleted 2024/03/07) Button text for send message button in Group Contact Details modal"
   },
   "icu:ContactModal--rm-admin": {
     "messageformat": "Bain mar riarthóir",
@@ -5022,7 +5085,7 @@
   },
   "icu:PendingInvites--invites": {
     "messageformat": "Invited by You",
-    "description": "This is the title list of all invites"
+    "description": "(Deleted 2024/03/07) This is the title list of all invites"
   },
   "icu:PendingInvites--invited-by-you": {
     "messageformat": "Invited by You",
@@ -5138,23 +5201,23 @@
   },
   "icu:AvatarInput--no-photo-label--group": {
     "messageformat": "Cuir grianghraf grúpa leis",
-    "description": "The label for the avatar uploader when no group photo is selected"
+    "description": "(Deleted 2024/03/07) The label for the avatar uploader when no group photo is selected"
   },
   "icu:AvatarInput--no-photo-label--profile": {
     "messageformat": "Cuir grianghraf leis",
-    "description": "The label for the avatar uploader when no profile photo is selected"
+    "description": "(Deleted 2024/03/07) The label for the avatar uploader when no profile photo is selected"
   },
   "icu:AvatarInput--change-photo-label": {
     "messageformat": "Athraigh grianghraf",
-    "description": "The label for the avatar uploader when a photo is selected"
+    "description": "(Deleted 2024/03/07) The label for the avatar uploader when a photo is selected"
   },
   "icu:AvatarInput--upload-photo-choice": {
     "messageformat": "Uaslódáil grianghraf",
-    "description": "The button text when you click on an uploaded avatar and want to upload a new one"
+    "description": "(Deleted 2024/03/07) The button text when you click on an uploaded avatar and want to upload a new one"
   },
   "icu:AvatarInput--remove-photo-choice": {
     "messageformat": "Bain grianghraf",
-    "description": "The button text when you click on an uploaded avatar and want to remove it"
+    "description": "(Deleted 2024/03/07) The button text when you click on an uploaded avatar and want to remove it"
   },
   "icu:ContactPill--remove": {
     "messageformat": "Bain teagmhálaí",
@@ -5162,7 +5225,7 @@
   },
   "icu:ComposeErrorDialog--close": {
     "messageformat": "Tá go maith",
-    "description": "The text on the button when there's an error in the composer"
+    "description": "(Deleted 2024/03/07) The text on the button when there's an error in the composer"
   },
   "icu:NewlyCreatedGroupInvitedContactsDialog--title": {
     "messageformat": "{count, plural, one {Cuireadh seolta} two {{count,number} chuireadh seolta} few {{count,number} chuireadh seolta} many {{count,number} gcuireadh seolta} other {{count,number} cuireadh seolta}}",
@@ -5288,8 +5351,12 @@
     "messageformat": "Foghlaim tuilleadh",
     "description": "Shown on the message request warning. Clicking this button will open a dialog with more information"
   },
+  "icu:MessageRequestWarning__safety-tips": {
+    "messageformat": "Leideanna Sábháilteachta",
+    "description": "Shown on the message request warning. Clicking this button will open a dialog with safety tips"
+  },
   "icu:MessageRequestWarning__dialog__details": {
-    "messageformat": "You have no groups in common with this person. Review requests carefully before accepting to avoid unwanted messages.",
+    "messageformat": "Níl aon ghrúpaí i bpáirt agat leis an duine seo. Athbhreithnigh iarratais go cúramach roimh a nglacadh chun teachtaireachtaí nach bhfuil uait a sheachaint.",
     "description": "Shown in the message request warning dialog. Gives more information about message requests"
   },
   "icu:MessageRequestWarning__dialog__learn-even-more": {
@@ -5309,7 +5376,7 @@
     "description": "Shown in the timeline warning when multiple names are shared by members of a group."
   },
   "icu:ContactSpoofingReviewDialog__title": {
-    "messageformat": "Review Request",
+    "messageformat": "Athbhreithnigh iarratas",
     "description": "Title for the contact name spoofing review dialog"
   },
   "icu:ContactSpoofingReviewDialog__description": {
@@ -5325,7 +5392,7 @@
     "description": "Header in the contact spoofing review dialog, shown above the \"safe\" user"
   },
   "icu:ContactSpoofingReviewDialog__group__title": {
-    "messageformat": "Review Members",
+    "messageformat": "Athbhreithnigh baill",
     "description": "Title for the contact name spoofing review dialog in groups"
   },
   "icu:ContactSpoofingReviewDialog__group__description": {
@@ -5335,10 +5402,6 @@
   "icu:ContactSpoofingReviewDialog__group__multiple-conflicts__description": {
     "messageformat": "{count, plural, one {Fuarthas coinbhleacht le {count,number} ainm sa ghrúpa seo. Déan athbhreithniú ar na baill thíos nó roghnaigh beart a dhéanamh.} two {Fuarthas coinbhleacht le {count,number} ainm sa ghrúpa seo. Déan athbhreithniú ar na baill thíos nó roghnaigh beart a dhéanamh.} few {Fuarthas coinbhleacht le {count,number} ainm sa ghrúpa seo. Déan athbhreithniú ar na baill thíos nó roghnaigh beart a dhéanamh.} many {Fuarthas coinbhleacht le {count,number} n-ainm sa ghrúpa seo. Déan athbhreithniú ar na baill thíos nó roghnaigh beart a dhéanamh.} other {Fuarthas coinbhleacht le {count,number} ainm sa ghrúpa seo. Déan athbhreithniú ar na baill thíos nó roghnaigh beart a dhéanamh.}}",
     "description": "Description for the group contact spoofing review dialog when there are multiple shared names"
-  },
-  "icu:ContactSpoofingReviewDialog__group__members-header": {
-    "messageformat": "Baill",
-    "description": "(Deleted 01/31/2024) Header in the group contact spoofing review dialog. After this header, there will be a list of members"
   },
   "icu:ContactSpoofingReviewDialog__group__members__no-shared-groups": {
     "messageformat": "Níl aon ghrúpaí eile i bpáirt ann",
@@ -5410,7 +5473,7 @@
   },
   "icu:ChatColorPicker__global-chat-color": {
     "messageformat": "Dath Comhrá Domhanda",
-    "description": "Modal title for the chat color picker and editor for all conversations"
+    "description": "(Deleted 2024/03/07) Modal title for the chat color picker and editor for all conversations"
   },
   "icu:ChatColorPicker__menu-title": {
     "messageformat": "Dath an Chomhrá",
@@ -5621,7 +5684,7 @@
     "description": "In the message details screen, shown above contacts who have read this message"
   },
   "icu:MessageDetailsHeader--Viewed": {
-    "messageformat": "Viewed by",
+    "messageformat": "Amharctha ag",
     "description": "In the message details screen, shown above contacts who have viewed this message"
   },
   "icu:MessageDetail--disappears-in": {
@@ -5643,14 +5706,6 @@
   "icu:ProfileEditor--username--corrupted--body": {
     "messageformat": "Bhí fadhb le d'ainm úsáideora, níl sé sannta do do chuntas a thuilleadh. Is féidir leat athshocrú a thriail nó ceann nua a roghnú.",
     "description": "Text of confirmation modal when the username gets corrupted"
-  },
-  "icu:ProfileEditor--username--corrupted--delete-button": {
-    "messageformat": "Scrios ainm úsáideora",
-    "description": "(Deleted 02/01/2024) Button text for deletion of the username in case of corruption"
-  },
-  "icu:ProfileEditor--username--corrupted--create-button": {
-    "messageformat": "Cruthaigh ainm úsáideora",
-    "description": "(Deleted 02/01/2024) Button text for creation of a new username in case of corruption"
   },
   "icu:ProfileEditor--username--corrupted--fix-button": {
     "messageformat": "Deisigh anois",
@@ -5718,7 +5773,7 @@
   },
   "icu:ProfileEditor--username--check-username-taken": {
     "messageformat": "Tá an t-ainm úsáideora sin gafa cheana.",
-    "description": "Shown if user has attempted to save a username which is not available"
+    "description": "(Deleted 2024/03/07) Shown if user has attempted to save a username which is not available"
   },
   "icu:ProfileEditor--username--general-error": {
     "messageformat": "Níorbh fhéidir d'ainm úsáideora a shábháil. Seiceáil do nasc agus triail arís.",
@@ -5746,7 +5801,7 @@
   },
   "icu:ProfileEditor--username--delete-username": {
     "messageformat": "Scrios ainm úsáideora",
-    "description": "Shown as aria label for trash icon next to username"
+    "description": "(Deleted 2024/03/07) Shown as aria label for trash icon next to username"
   },
   "icu:ProfileEditor--username--confirm-delete-body-2": {
     "messageformat": "Bainfear d'ainm úsáideora agus díchumasófar do chód QR agus nasc leis sin. Beidh “{username}” ar fáil ag daoine eile le héileamh. An bhfuil tú cinnte?",
@@ -5770,7 +5825,7 @@
   },
   "icu:ProfileEditor--username--copy-link": {
     "messageformat": "Cóipeáil an nasc",
-    "description": "Shown as a button in context menu next to username. The action of the button is to put a username link into the clipboard."
+    "description": "(Deleted 2024/03/07) Shown as a button in context menu next to username. The action of the button is to put a username link into the clipboard."
   },
   "icu:ProfileEditor--username--delete": {
     "messageformat": "Scrios",
@@ -5793,20 +5848,16 @@
     "description": "ConfirmationDialog text for discarding changes"
   },
   "icu:ConfirmationDialog__Title--in-call-close-requested": {
-    "messageformat": "Close Signal and end the call?",
+    "messageformat": "Dún Signal agus cuir deireadh leis an nglao?",
     "description": "ConfirmationDialog title when trying to close the app while in a call."
   },
   "icu:ConfirmationDialog__Title--close-requested-not-now": {
-    "messageformat": "Not Now",
+    "messageformat": "Ná bac leis anois",
     "description": "Confirmation dialog button to cancel closing the app, while in a call and trying to close the app."
   },
   "icu:ProfileEditor--edit-photo": {
     "messageformat": "Edit Photo",
     "description": "Text of a button on profile editor that leads to the avatar editor"
-  },
-  "icu:ProfileEditor--info--link": {
-    "messageformat": "Tá do phróifíl criptithe. Beidh do phróifíl agus aon athrú uirthi infheicthe ag do theagmhálaithe agus nuair a thosaíonn tú comhráite nua nó nuair a ghlacann tú leo. <learnMoreLink>Tuilleadh Faisnéise</learnMoreLink>",
-    "description": "(Deleted 02/01/2024) Information shown at the bottom of the profile editor section"
   },
   "icu:ProfileEditor--info--general": {
     "messageformat": "Beidh do phróifíl agus athruithe ar do phróifíl infheicthe ag daoine a fhaigheann teachtaireachtaí uait, ag do theagmhálaithe agus ag do ghrúpaí.",
@@ -5933,7 +5984,7 @@
     "description": "Label for changing the zoom level"
   },
   "icu:Preferences__link-previews--title": {
-    "messageformat": "Generate Link Previews",
+    "messageformat": "Gin réamhamharcanna ar naisc",
     "description": "Title for the generate link previews setting"
   },
   "icu:Preferences__link-previews--description": {
@@ -6034,11 +6085,11 @@
   },
   "icu:Preferences--see-me": {
     "messageformat": "Infheictheacht m'ainm úsáideora",
-    "description": "Label for the see my phone number setting"
+    "description": "(Deleted 2024/03/07) Label for the see my phone number setting"
   },
   "icu:Preferences--find-me": {
     "messageformat": "Aimsigh trí m'uimhir ghutháin mé",
-    "description": "Label for the find me by my phone number setting"
+    "description": "(Deleted 2024/03/07) Label for the find me by my phone number setting"
   },
   "icu:Preferences--read-receipts": {
     "messageformat": "Adhmálacha léamh",
@@ -6077,7 +6128,7 @@
     "description": "Label in confirmation modal to disable stories"
   },
   "icu:Preferences__turn-stories-off--body": {
-    "messageformat": "Ní bheidh tú in ann féachaint ar scéalta ná iad a chomhroinnt a thuilleadh. Chomh maith leis sin, scriosfar na nuashonruithe scéil a chomhroinn tú le déanaí.",
+    "messageformat": "Ní bheidh tú in ann amharc ar scéalta ná iad a chomhroinnt a thuilleadh. Chomh maith leis sin, scriosfar na nuashonruithe scéil a chomhroinn tú le déanaí.",
     "description": "Confirmation modal body for disabling stories"
   },
   "icu:Preferences__Language__Label": {
@@ -6128,6 +6179,10 @@
     "messageformat": "Nuashonrú Íoslódáilte",
     "description": "The title of update dialog when update download is completed."
   },
+  "icu:DialogNetworkStatus__outage": {
+    "messageformat": "Tá Signal buailte le deacrachtaí teicniúla faoi láthair. Táimid ag déanamh ár ndíchill an fhadhb a réiteach chomh luath agus is féidir.",
+    "description": "The title of outage dialog during service outage."
+  },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "Nuashonrú De Dhíth",
     "description": "The title of update dialog on install screen when user OS is unsupported"
@@ -6150,27 +6205,33 @@
   },
   "icu:NSIS__retry-dialog--first-line": {
     "messageformat": "Ní féidir Signal a dhúnadh.",
-    "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
+    "description": "First line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation.",
+    "ignoreUnused": true
   },
   "icu:NSIS__retry-dialog--second-line": {
     "messageformat": "Dún de láimh é agus cliceáil ar Atriail chun leanúint ar aghaidh.",
-    "description": "Second line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation."
+    "description": "Second line of the dialog displayed when Windows installer can't close application automatically and needs user intervention to complete the installation.",
+    "ignoreUnused": true
   },
   "icu:NSIS__appRunning": {
     "messageformat": "Tá {appName} ag rith.\nCliceáil CGL lena dhúnadh.\nMura ndúnann sé, déan iarracht é a dhúnadh de láimh.",
-    "description": "The contents of a dialog displayed when Windows installer detect that the application is running and asks user to close it. Note: please keep the line breaks so that the text occupies three separate lines"
+    "description": "The contents of a dialog displayed when Windows installer detect that the application is running and asks user to close it. Note: please keep the line breaks so that the text occupies three separate lines",
+    "ignoreUnused": true
   },
   "icu:NSIS__decompressionFailed": {
     "messageformat": "Theip ar dhí-chomhbhrú na gcomhad. Triail an suiteálaí a rith arís.",
-    "description": "Displayed when Windows installer cannot decompress application files"
+    "description": "Displayed when Windows installer cannot decompress application files",
+    "ignoreUnused": true
   },
   "icu:NSIS__uninstallFailed": {
     "messageformat": "Theip ar dhíshuiteáil seanchomhad aipe. Triail an suiteálaí a rith arís.",
-    "description": "Displayed when Windows installer cannot uninstall the old application"
+    "description": "Displayed when Windows installer cannot uninstall the old application",
+    "ignoreUnused": true
   },
   "icu:NSIS__semver-downgrade": {
     "messageformat": "Tá leagan níos nuaí de Signal suiteáilte cheana féin. An bhfuil tú cinnte gur mian leat leanúint leis?",
-    "description": "A text of the dialog displayed when user tries to overwrite Signal installation with an older version."
+    "description": "A text of the dialog displayed when user tries to overwrite Signal installation with an older version.",
+    "ignoreUnused": true
   },
   "icu:CrashReportDialog__title": {
     "messageformat": "Chlis an aip",
@@ -6218,7 +6279,7 @@
   },
   "icu:MediaEditor__control--sticker": {
     "messageformat": "Greamáin",
-    "description": "Label for the sticker button in the media editor"
+    "description": "(Deleted 2024/03/07) Label for the sticker button in the media editor"
   },
   "icu:MediaEditor__control--crop": {
     "messageformat": "Bearr agus rothlaigh",
@@ -6246,7 +6307,7 @@
   },
   "icu:MediaEditor__text--underline": {
     "messageformat": "Folíne",
-    "description": "Describes what attribute the color picker will change on the text"
+    "description": "(Deleted 2024/03/07) Describes what attribute the color picker will change on the text"
   },
   "icu:MediaEditor__draw--pen": {
     "messageformat": "Peann",
@@ -6290,11 +6351,11 @@
   },
   "icu:MediaEditor__crop--crop": {
     "messageformat": "Bearr",
-    "description": "Performs the crop"
+    "description": "(Deleted 2024/03/07) Performs the crop"
   },
   "icu:MediaEditor__caption-button": {
     "messageformat": "Cuir teachtaireacht leis",
-    "description": "Label of the button on the bottom of the media editor that trigger the add-caption dialog"
+    "description": "(Deleted 2024/03/07) Label of the button on the bottom of the media editor that trigger the add-caption dialog"
   },
   "icu:MediaEditor__crop-preset--freeform": {
     "messageformat": "Saorfhoirm",
@@ -6388,6 +6449,26 @@
     "messageformat": "Seiceáil do phríomhghléas do stádas na híocaíochta seo",
     "description": "Payment event notification check device label"
   },
+  "icu:MessageRequestResponseNotification__Message--Accepted": {
+    "messageformat": "Ghlac tú leis an iarratas teachtaireachta",
+    "description": "Message request response notification message when the user accepted the message request or unblocked another user"
+  },
+  "icu:MessageRequestResponseNotification__Message--Reported": {
+    "messageformat": "Tuairiscithe mar thurscar",
+    "description": "Message request response notification message when the user reported the message request as spam"
+  },
+  "icu:MessageRequestResponseNotification__Message--Blocked": {
+    "messageformat": "Chuir tú bac ar an duine seo",
+    "description": "Message request response notification message when the user blocked another user"
+  },
+  "icu:MessageRequestResponseNotification__Button--Options": {
+    "messageformat": "Roghanna",
+    "description": "Message request response notification button to show options"
+  },
+  "icu:MessageRequestResponseNotification__Button--LearnMore": {
+    "messageformat": "Tuilleadh Faisnéise",
+    "description": "Message request response notification button to learn more"
+  },
   "icu:SignalConnectionsModal__title": {
     "messageformat": "Teagmhálaithe Signal",
     "description": "The phrase/term: 'Signal Connections'"
@@ -6457,7 +6538,7 @@
     "description": "Actionable link to retry a send"
   },
   "icu:Stories__placeholder--text": {
-    "messageformat": "Cliceáil chun féachaint ar scéal",
+    "messageformat": "Cliceáil chun amharc ar scéal",
     "description": "Placeholder label for the story view"
   },
   "icu:Stories__from-to-group": {
@@ -6498,7 +6579,7 @@
   },
   "icu:StoriesSettings__new-list--visibility": {
     "messageformat": "Tusa amháin a fheicfidh ainm an scéil seo.",
-    "description": "Explanation about the visibility of custom distribution list names"
+    "description": "(Deleted 2024/03/07) Explanation about the visibility of custom distribution list names"
   },
   "icu:StoriesSettings__custom-story-subtitle": {
     "messageformat": "Scéal saincheaptha",
@@ -6513,7 +6594,7 @@
     "description": "The number of viewers for a story distribution list"
   },
   "icu:StoriesSettings__who-can-see": {
-    "messageformat": "An lucht féachana ar an scéal seo",
+    "messageformat": "Na daoine ar féidir leo amharc ar an scéal seo",
     "description": "Title for the who can see this story section"
   },
   "icu:StoriesSettings__add-viewer": {
@@ -6541,7 +6622,7 @@
     "description": "Checkbox label to allow or disallow replies to your stories"
   },
   "icu:StoriesSettings__replies-reactions--description": {
-    "messageformat": "Lig dóibh siúd ar féidir leo féachaint ar do scéal freagra agus freagairt a thabhairt air.",
+    "messageformat": "Lig do dhaoine ar féidir leo amharc ar do scéal freagairt agus freagra a thabhairt air.",
     "description": "Description of checkbox to allow or disallow replies to your stories"
   },
   "icu:StoriesSettings__delete-list": {
@@ -6574,7 +6655,7 @@
   },
   "icu:StoriesSettings__mine__all--description": {
     "messageformat": "Comhroinn le gach teagmhálaí",
-    "description": "Description of button StoriesSettings__mine__all--label"
+    "description": "(Deleted 2024/03/07) Description of button StoriesSettings__mine__all--label"
   },
   "icu:StoriesSettings__mine__exclude--label": {
     "messageformat": "Gach duine ach amháin…",
@@ -6582,7 +6663,7 @@
   },
   "icu:StoriesSettings__mine__exclude--description": {
     "messageformat": "{num, plural, one {{num,number} duine as an áireamh} two {{num,number} dhuine as an áireamh} few {{num,number} dhuine as an áireamh} many {{num,number} nduine as an áireamh} other {{num,number} duine as an áireamh}}",
-    "description": "Description of how many people are excluded in a list"
+    "description": "(Deleted 2024/03/07) Description of how many people are excluded in a list"
   },
   "icu:StoriesSettings__mine__only--label": {
     "messageformat": "Ná comhroinn ach le…",
@@ -6590,14 +6671,14 @@
   },
   "icu:StoriesSettings__mine__only--description": {
     "messageformat": "Ná comhroinn ach le daoine roghnaithe",
-    "description": "Description of button StoriesSettings__mine__only--label"
+    "description": "(Deleted 2024/03/07) Description of button StoriesSettings__mine__only--label"
   },
   "icu:StoriesSettings__mine__only--description--people": {
     "messageformat": "Daoine: {num,number}",
-    "description": "Description of how many people are in the exclusive allow list"
+    "description": "(Deleted 2024/03/07) Description of how many people are in the exclusive allow list"
   },
   "icu:StoriesSettings__mine__disclaimer--link": {
-    "messageformat": "Roghnaigh na daoine ar féidir leo féachaint ar do scéal. Ní bheidh tionchar ag athruithe ar scéalta a sheol tú cheana. <learnMoreLink>Tuilleadh faisnéise.</learnMoreLink>",
+    "messageformat": "Roghnaigh na daoine ar féidir leo amharc ar do scéal. Ní bheidh tionchar ag athruithe ar scéalta a sheol tú cheana. <learnMoreLink>Tuilleadh faisnéise.</learnMoreLink>",
     "description": "Disclaimer on how changes to story settings work"
   },
   "icu:StoriesSettings__context-menu": {
@@ -6629,7 +6710,7 @@
     "description": "Stories settings > Group Story > confirm to remove group story"
   },
   "icu:SendStoryModal__choose-who-can-view": {
-    "messageformat": "Roghnaigh na daoine ar féidir leo féachaint ar do scéal",
+    "messageformat": "Roghnaigh na daoine ar féidir leo amharc ar do scéal",
     "description": "Shown during the first time posting a story"
   },
   "icu:SendStoryModal__title": {
@@ -6689,7 +6770,7 @@
     "description": "Modal title for setting privacy for My Story"
   },
   "icu:SendStoryModal__privacy-disclaimer--link": {
-    "messageformat": "Roghnaigh na teagmhálaithe Signal ar féidir leo féachaint ar do scéal. Is féidir leat é seo a athrú am ar bith i socruithe príobháideachais. <learnMoreLink>Tuilleadh faisnéise.</learnMoreLink>",
+    "messageformat": "Roghnaigh na teagmhálaithe Signal ar féidir leo amharc ar do scéal. Is féidir leat é seo a athrú am ar bith i socruithe príobháideachais. <learnMoreLink>Tuilleadh faisnéise.</learnMoreLink>",
     "description": "Disclaimer on how changes to story settings work"
   },
   "icu:SendStoryModal__delete-story": {
@@ -6697,7 +6778,7 @@
     "description": "Button label to delete a story"
   },
   "icu:SendStoryModal__confirm-remove-group": {
-    "messageformat": "Bain scéal? Bainfidh sé seo an scéal de do liosta ach beidh tú fós in ann féachaint ar scéalta ón ngrúpa seo.",
+    "messageformat": "Bain scéal? Bainfidh sé seo an scéal de do liosta ach beidh tú fós in ann amharc ar scéalta ón ngrúpa seo.",
     "description": "Confirmation body for removing a group story"
   },
   "icu:SendStoryModal__announcements-only": {
@@ -6706,26 +6787,26 @@
   },
   "icu:SendStoryModal__my-stories-description-all": {
     "messageformat": "{viewersCount, plural, one {Gach Teagmhálaí Signal · {viewersCount,number} Amharcóir} two {Gach Teagmhálaí Signal · {viewersCount,number} Amharcóir} few {Gach Teagmhálaí Signal · {viewersCount,number} Amharcóir} many {Gach Teagmhálaí Signal · {viewersCount,number} nAmharcóir} other {Gach Teagmhálaí Signal · {viewersCount,number} Amharcóir}}",
-    "description": "Shown as a subtitle under My Stories option in the send-story-to dialog when not exluding anyone"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle under My Stories option in the send-story-to dialog when not exluding anyone"
   },
   "icu:SendStoryModal__my-stories-description-excluding": {
     "messageformat": "{excludedCount, plural, one {Gach Teagmhálaí Signal · {excludedCount,number} as an áireamh} two {Gach Teagmhálaí Signal · {excludedCount,number} as an áireamh} few {Gach Teagmhálaí Signal · {excludedCount,number} as an áireamh} many {Gach Teagmhálaí Signal · {excludedCount,number} as an áireamh} other {Gach Teagmhálaí Signal · {excludedCount,number} as an áireamh}}",
-    "description": "Shown as a subtitle under My Stories option in the send-story-to dialog when excluding some"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle under My Stories option in the send-story-to dialog when excluding some"
   },
   "icu:SendStoryModal__private-story-description": {
     "messageformat": "{viewersCount, plural, one {Scéal príobháideach · {viewersCount,number} amharcóir} two {Scéal príobháideach · {viewersCount,number} amharcóir} few {Scéal príobháideach · {viewersCount,number} amharcóir} many {Scéal príobháideach · {viewersCount,number} n-amharcóir} other {Scéal príobháideach · {viewersCount,number} amharcóir}}",
-    "description": "Shown as a subtitle of each private story in the send-story-to dialog"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle of each private story in the send-story-to dialog"
   },
   "icu:SendStoryModal__group-story-description": {
     "messageformat": "{membersCount, plural, one {Grúpscéal: 1 bhall} two {Grúpscéal: {membersCount,number} bhall} few {Grúpscéal: {membersCount,number} bhall} many {Grúpscéal: {membersCount,number} mball} other {Grúpscéal: {membersCount,number} ball}}",
-    "description": "Shown as a subtitle of each group story in the send-story-to dialog"
+    "description": "(Deleted 2024/03/07) Shown as a subtitle of each group story in the send-story-to dialog"
   },
   "icu:Stories__settings-toggle--title": {
-    "messageformat": "Comhroinn agus Féach ar Scéalta",
+    "messageformat": "Comhroinn agus Amharc ar Scéalta",
     "description": "Select box title for the stories on/off toggle"
   },
   "icu:Stories__settings-toggle--description": {
-    "messageformat": "Má roghnaíonn tú gan scéalta a úsáid, ní bheidh tú in ann scéalta a chomhroinnt ná féachaint orthu a thuilleadh.",
+    "messageformat": "Má roghnaíonn tú gan scéalta a úsáid, ní bheidh tú in ann scéalta a chomhroinnt ná amharc orthu a thuilleadh.",
     "description": "Select box description for the stories on/off toggle"
   },
   "icu:Stories__settings-toggle--button": {
@@ -6797,7 +6878,7 @@
     "description": "Context menu item to help debugging"
   },
   "icu:StoryViewsNRepliesModal__read-receipts-off": {
-    "messageformat": "Cumasaigh admhálacha léite chun na daoine a d'fhéach ar do scéalta a fheiceáil. Oscail an aip Signal ar do ghléas móibíleach agus déan nascleanúint chuig Socruithe > Scéalta.",
+    "messageformat": "Cumasaigh admhálacha léite chun na daoine a d'amharc ar do scéalta a fheiceáil. Oscail an aip Signal ar do ghléas móibíleach agus déan nascleanúint chuig Socruithe > Scéalta.",
     "description": "Instructions on how to enable read receipts"
   },
   "icu:StoryViewsNRepliesModal__no-replies": {
@@ -6918,7 +6999,7 @@
   },
   "icu:StoryCreator__input-placeholder": {
     "messageformat": "Cuir téacs leis",
-    "description": "Placeholder to add text"
+    "description": "(Deleted 2024/03/07) Placeholder to add text"
   },
   "icu:StoryCreator__text--regular": {
     "messageformat": "Gnáthmhéid",
@@ -6953,7 +7034,7 @@
     "description": "Placeholder for the URL input for link previews"
   },
   "icu:StoryCreator__link-preview-empty": {
-    "messageformat": "Cuir nasc leis le haghaidh lucht féachana do scéil",
+    "messageformat": "Cuir nasc leis le haghaidh amharcóirí do scéil",
     "description": "Empty state for the link preview"
   },
   "icu:Stories__failed-send--full": {
@@ -6981,7 +7062,7 @@
     "description": "Label for when a person reacts to a story"
   },
   "icu:Quote__story-reaction--you": {
-    "messageformat": "Reacted to your story",
+    "messageformat": "Freagraíodh do do scéal",
     "description": "Label for when someone reacts to your story"
   },
   "icu:Quote__story-reaction--single": {
@@ -7123,22 +7204,6 @@
   "icu:UsernameOnboardingModalBody__row__qr__body": {
     "messageformat": "Tá cód QR agus nasc uathúil ag ainmneacha úsáideora ar féidir leat iad a chomhroinnt le cairde chun tosú ar chomhrá leat.",
     "description": "Body of the third row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__row__number": {
-    "messageformat": "Péireáiltear ainmneacha úsáideora le tacar digití agus ní chomhroinntear ar do phróifíl iad",
-    "description": "(Deleted 01/16/2023) Content of the first row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__row__link": {
-    "messageformat": "Tá cód QR agus nasc uathúil ag gach ainm úsáideora, ar féidir leat iad a chomhroinnt le cairde chun tosú ar chomhrá leat",
-    "description": "(Deleted 01/16/2023) Content of the second row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__row__lock": {
-    "messageformat": "Cas as aimsiú uimhreacha gutháin faoi Shocruithe > Príobháideachas > Uimhir Ghutháin > Na daoine ar féidir leo m'uimhir a aimsiú, chun d'ainm úsáideora a úsáid mar an príomhbhealach ag daoine chun teagmháil a dhéanamh leat.",
-    "description": "(Deleted 01/16/2023) Content of the third row of username onboarding modal"
-  },
-  "icu:UsernameOnboardingModalBody__learn-more": {
-    "messageformat": "Tuilleadh Faisnéise",
-    "description": "(Deleted 01/16/2023) Text that open a popup with information about username onboarding"
   },
   "icu:UsernameOnboardingModalBody__continue": {
     "messageformat": "Socraigh ainm úsáideora",
@@ -7300,6 +7365,10 @@
     "messageformat": "{count, plural, one {Tá {count,number} duine eile ag clóscríobh.} two {Tá {count,number} dhuine eile ag clóscríobh.} few {Tá {count,number} dhuine eile ag clóscríobh.} many {Tá {count,number} nduine eile ag clóscríobh.} other {Tá {count,number} duine eile ag clóscríobh.}}",
     "description": "Group chat multiple person typing indicator when space isn't available to show every avatar, this is the count of avatars hidden."
   },
+  "icu:TransportError": {
+    "messageformat": "Experimental WebSocket Transport is seeing too many errors. Please submit a debug log",
+    "description": "A toast that is shown to alpha/beta version users when an experimental transport is seeing too many errors"
+  },
   "icu:WhoCanFindMeReadOnlyToast": {
     "messageformat": "Leis an socrú sin a athrú, socraigh \"Daoine atá in ann m'uimhir a fheiceáil\" go \"Duine ar bith\".",
     "description": "A toast displayed when user clicks disabled option in settings window"
@@ -7310,33 +7379,46 @@
   },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "Tá roinnt mionathruithe agus paistí ar fhabhtanna sa leagan seo chun Signal a choinneáil ag rith go réidh.",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--1": {
     "messageformat": "Mionathruithe, paistí ar fhabhtanna agus feabhsuithe ar fheidhmíocht. Go raibh maith agat as Signal a úsáid!",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
     "messageformat": "Roinnt réiteach fabhtanna chun d'aip a choinneáil ar rith gan stró. Tá tuilleadh athruithe spreagúla ar na bacáin! ",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
     "messageformat": "Mionathruithe, paistí fabhtanna, agus feabhsuithe ar fheidhmíocht. Coinnigh ort le téacsáil, glaonna agus físchomhráite mar is gnáth.",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--4": {
     "messageformat": "Ag obair go crua ar fhabhtanna a réiteach agus ar fheabhsúcháin feidhmíochta eile chun an aip a choinneáil ar rith gan stró duit. ",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--5": {
     "messageformat": "Mionathruithe agus paistí fabhtanna sa bhreis, agus pleananna éagsúla don todhchaí.",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Mionathruithe, paistí fabhtanna agus feabhsuithe ar fheidhmíocht. Go raibh maith agat as Signal a úsáid!",
-    "description": "Release notes for releases that only include bug fixes"
+    "description": "Release notes for releases that only include bug fixes",
+    "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.1--0": {
-    "messageformat": "This update enables support for all of the new emoji characters in Emoji version 15.1. People keep asking us what our favorite new emoji is, but answering that question is a “lime” we won't cross."
+  "icu:WhatsNew__v7.3--0": {
+    "messageformat": "Anois is féidir leat glaonna caillte a ghlanadh ar do ghuthán agus déanfar an suaitheantas ar an táb Glaonna i leagan deisce Signal a nuashonrú freisin."
+  },
+  "icu:WhatsNew__v7.3--1": {
+    "messageformat": "Rinneamar athdhearadh ar tháscaire an chomhairimh suaitheantais ar Windows freisin. Tá an dath ar an tascbharra ag teacht leis an dath i dtráidire an chórais anois."
+  },
+  "icu:WhatsNew__v7.4--0": {
+    "messageformat": "This update clears out a few bugs just in time for spring cleaning, including more consistent conversation sort logic and improved behavior if the app encounters DNS lookup timeouts due to poor network connectivity."
   }
 }

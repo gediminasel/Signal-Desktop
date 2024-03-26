@@ -4,9 +4,9 @@
 import type { MutableRefObject } from 'react';
 import React, {
   forwardRef,
+  memo,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -32,7 +32,7 @@ import {
   getPanelInformation,
   getWasPanelAnimated,
 } from '../selectors/conversations';
-import { focusableSelectors } from '../../util/focusableSelectors';
+import { focusableSelector } from '../../util/focusableSelectors';
 import { missingCaseError } from '../../util/missingCaseError';
 import { useConversationsActions } from '../ducks/conversations';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
@@ -92,11 +92,11 @@ function doAnimate({
   };
 }
 
-export function ConversationPanel({
+export const ConversationPanel = memo(function ConversationPanel({
   conversationId,
 }: {
   conversationId: string;
-}): JSX.Element | null {
+}) {
   const panelInformation = useSelector(getPanelInformation);
   const { panelAnimationDone, panelAnimationStarted } =
     useConversationsActions();
@@ -251,7 +251,7 @@ export function ConversationPanel({
   }
 
   return null;
-}
+});
 
 type PanelPropsType = {
   conversationId: string;
@@ -269,7 +269,6 @@ const PanelContainer = forwardRef<
   const { popPanelForConversation } = useConversationsActions();
   const conversationTitle = getConversationTitleForPanelType(i18n, panel.type);
 
-  const selectors = useMemo(() => focusableSelectors.join(','), []);
   const focusRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (!isActive) {
@@ -281,12 +280,12 @@ const PanelContainer = forwardRef<
       return;
     }
 
-    const elements = focusNode.querySelectorAll<HTMLElement>(selectors);
+    const elements = focusNode.querySelectorAll<HTMLElement>(focusableSelector);
     if (!elements.length) {
       return;
     }
     elements[0]?.focus();
-  }, [isActive, panel, selectors]);
+  }, [isActive, panel]);
 
   return (
     <div className="ConversationPanel" ref={ref}>

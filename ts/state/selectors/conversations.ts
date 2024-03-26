@@ -30,10 +30,7 @@ import { deconstructLookup } from '../../util/deconstructLookup';
 import type { PropsDataType as TimelinePropsType } from '../../components/conversation/Timeline';
 import { assertDev } from '../../util/assert';
 import { isConversationUnregistered } from '../../util/isConversationUnregistered';
-import {
-  filterAndSortConversationsAlphabetically,
-  filterAndSortConversationsByRecent,
-} from '../../util/filterAndSortConversations';
+import { filterAndSortConversations } from '../../util/filterAndSortConversations';
 import type { ContactNameColorType } from '../../types/Colors';
 import { ContactNameColors } from '../../types/Colors';
 import type { AvatarDataType } from '../../types/Avatar';
@@ -206,6 +203,12 @@ export const getTargetedMessage = createSelector(
       id: state.targetedMessage,
       counter: state.targetedMessageCounter,
     };
+  }
+);
+export const getTargetedMessageSource = createSelector(
+  getConversations,
+  (state: ConversationsStateType): string | undefined => {
+    return state.targetedMessageSource;
   }
 );
 export const getSelectedMessageIds = createSelector(
@@ -513,6 +516,13 @@ export const getComposerUUIDFetchState = createSelector(
   }
 );
 
+export const getHasContactSpoofingReview = createSelector(
+  getConversations,
+  (state: ConversationsStateType): boolean => {
+    return state.hasContactSpoofingReview;
+  }
+);
+
 function isTrusted(conversation: ConversationType): boolean {
   if (conversation.type === 'group') {
     return true;
@@ -544,7 +554,8 @@ function canComposeConversation(conversation: ConversationType): boolean {
     !isSignalConversation(conversation) &&
       !conversation.isBlocked &&
       !conversation.removalStage &&
-      (isGroupV2(conversation) || !isConversationUnregistered(conversation)) &&
+      ((isGroupV2(conversation) && !conversation.left) ||
+        !isConversationUnregistered(conversation)) &&
       hasDisplayInfo(conversation) &&
       isTrusted(conversation)
   );
@@ -559,7 +570,7 @@ export const getAllComposableConversations = createSelector(
         !conversation.isBlocked &&
         !conversation.removalStage &&
         !conversation.isGroupV1AndDisabled &&
-        (isGroupV2(conversation) ||
+        ((isGroupV2(conversation) && !conversation.left) ||
           !isConversationUnregistered(conversation)) &&
         // All conversation should have a title except in weird cases where
         // they don't, in that case we don't want to show these for Forwarding.
@@ -646,8 +657,7 @@ export const getNonGroupStories = createSelector(
     conversationIdsWithStories: Set<string>
   ): Array<ConversationType> => {
     return groups.filter(
-      group =>
-        !isGroupInStoryMode(group, conversationIdsWithStories) && !group.left
+      group => !isGroupInStoryMode(group, conversationIdsWithStories)
     );
   }
 );
@@ -711,11 +721,7 @@ export const getFilteredComposeContacts = createSelector(
     contacts: ReadonlyArray<ConversationType>,
     regionCode: string | undefined
   ): Array<ConversationType> => {
-    return filterAndSortConversationsAlphabetically(
-      contacts,
-      searchTerm,
-      regionCode
-    );
+    return filterAndSortConversations(contacts, searchTerm, regionCode);
   }
 );
 
@@ -737,18 +743,16 @@ export const getFilteredComposeGroups = createSelector(
       }>;
     }
   > => {
-    return filterAndSortConversationsAlphabetically(
-      groups,
-      searchTerm,
-      regionCode
-    ).map(group => ({
-      ...group,
-      // we don't disable groups when composing, already filtered
-      disabledReason: undefined,
-      // should always be populated for a group
-      membersCount: group.membersCount ?? 0,
-      memberships: group.memberships ?? [],
-    }));
+    return filterAndSortConversations(groups, searchTerm, regionCode).map(
+      group => ({
+        ...group,
+        // we don't disable groups when composing, already filtered
+        disabledReason: undefined,
+        // should always be populated for a group
+        membersCount: group.membersCount ?? 0,
+        memberships: group.memberships ?? [],
+      })
+    );
   }
 );
 
@@ -756,7 +760,7 @@ export const getFilteredCandidateContactsForNewGroup = createSelector(
   getCandidateContactsForNewGroup,
   getNormalizedComposerConversationSearchTerm,
   getRegionCode,
-  filterAndSortConversationsByRecent
+  filterAndSortConversations
 );
 
 const getGroupCreationComposerState = createSelector(
@@ -986,10 +990,10 @@ export function _conversationMessagesSelector(
   conversation: ConversationMessageType
 ): TimelinePropsType {
   const {
-    isNearBottom,
+    isNearBottom = null,
     messageChangeCounter,
     messageIds,
-    messageLoadingState,
+    messageLoadingState = null,
     metrics,
     scrollToMessageCounter,
     scrollToMessageId,
@@ -1009,10 +1013,10 @@ export function _conversationMessagesSelector(
 
   const oldestUnseenIndex = oldestUnseen
     ? messageIds.findIndex(id => id === oldestUnseen.id)
-    : undefined;
+    : null;
   const scrollToIndex = scrollToMessageId
     ? messageIds.findIndex(id => id === scrollToMessageId)
-    : undefined;
+    : null;
   const { totalUnseen } = metrics;
 
   return {
@@ -1025,9 +1029,9 @@ export function _conversationMessagesSelector(
     oldestUnseenIndex:
       isNumber(oldestUnseenIndex) && oldestUnseenIndex >= 0
         ? oldestUnseenIndex
-        : undefined,
+        : null,
     scrollToIndex:
-      isNumber(scrollToIndex) && scrollToIndex >= 0 ? scrollToIndex : undefined,
+      isNumber(scrollToIndex) && scrollToIndex >= 0 ? scrollToIndex : null,
     scrollToIndexCounter: scrollToMessageCounter,
     totalUnseen,
   };
@@ -1065,6 +1069,9 @@ export const getConversationMessagesSelector = createSelector(
           scrollToIndexCounter: 0,
           totalUnseen: 0,
           items: [],
+          isNearBottom: null,
+          oldestUnseenIndex: null,
+          scrollToIndex: null,
         };
       }
 
