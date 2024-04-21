@@ -71,7 +71,6 @@ export type AttachmentType = {
   flags?: number;
   thumbnail?: ThumbnailType;
   isCorrupted?: boolean;
-  downloadJobId?: string;
   cdnNumber?: number;
   cdnId?: string;
   cdnKey?: string;
@@ -121,6 +120,8 @@ export type TextAttachmentType = {
     startColor?: number | null;
     endColor?: number | null;
     angle?: number | null;
+    colors?: ReadonlyArray<number> | null;
+    positions?: ReadonlyArray<number> | null;
   } | null;
   color?: number | null;
 };
@@ -414,19 +415,15 @@ export async function captureDimensionsAndScreenshot(
   if (!attachment.path) {
     return attachment;
   }
-  logger.info('captureDimensionsAndScreenshot: starting');
 
   const absolutePath = getAbsoluteAttachmentPath(attachment.path);
 
   if (GoogleChrome.isImageTypeSupported(contentType)) {
     try {
-      logger.info('captureDimensionsAndScreenshot: getting image dimensions');
       const { width, height } = await getImageDimensionsFromURL({
         objectUrl: absolutePath,
         logger,
       });
-
-      logger.info('captureDimensionsAndScreenshot: generating thumbnail');
       const thumbnailBuffer = await blobToArrayBuffer(
         await makeImageThumbnail({
           size: THUMBNAIL_SIZE,
@@ -435,7 +432,7 @@ export async function captureDimensionsAndScreenshot(
           logger,
         })
       );
-      logger.info('captureDimensionsAndScreenshot: writing thumbnail');
+
       const thumbnailPath = await writeNewAttachmentData(
         new Uint8Array(thumbnailBuffer)
       );
@@ -462,7 +459,6 @@ export async function captureDimensionsAndScreenshot(
 
   let screenshotObjectUrl: string | undefined;
   try {
-    logger.info('captureDimensionsAndScreenshot: making video screenshot');
     const screenshotBuffer = await blobToArrayBuffer(
       await makeVideoScreenshot({
         objectUrl: absolutePath,
@@ -474,17 +470,14 @@ export async function captureDimensionsAndScreenshot(
       screenshotBuffer,
       THUMBNAIL_CONTENT_TYPE
     );
-    logger.info('captureDimensionsAndScreenshot: getting image dimensions');
     const { width, height } = await getImageDimensionsFromURL({
       objectUrl: screenshotObjectUrl,
       logger,
     });
-    logger.info('captureDimensionsAndScreenshot: writing attachment data');
     const screenshotPath = await writeNewAttachmentData(
       new Uint8Array(screenshotBuffer)
     );
 
-    logger.info('captureDimensionsAndScreenshot: making thumbnail');
     const thumbnailBuffer = await blobToArrayBuffer(
       await makeImageThumbnail({
         size: THUMBNAIL_SIZE,
@@ -494,7 +487,6 @@ export async function captureDimensionsAndScreenshot(
       })
     );
 
-    logger.info('captureDimensionsAndScreenshot: writing thumbnail');
     const thumbnailPath = await writeNewAttachmentData(
       new Uint8Array(thumbnailBuffer)
     );
@@ -704,7 +696,7 @@ export function hasNotResolved(attachment?: AttachmentType): boolean {
 
 export function isDownloading(attachment?: AttachmentType): boolean {
   const resolved = resolveNestedAttachment(attachment);
-  return Boolean(resolved && resolved.downloadJobId && resolved.pending);
+  return Boolean(resolved && resolved.pending);
 }
 
 export function hasFailed(attachment?: AttachmentType): boolean {

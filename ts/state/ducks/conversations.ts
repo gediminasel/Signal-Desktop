@@ -183,6 +183,7 @@ import { getAddedByForOurPendingInvitation } from '../../util/getAddedByForOurPe
 import { getConversationIdForLogging } from '../../util/idForLogging';
 import { singleProtoJobQueue } from '../../jobs/singleProtoJobQueue';
 import MessageSender from '../../textsecure/SendMessage';
+import { AttachmentDownloadUrgency } from '../../jobs/AttachmentDownloadManager';
 
 // State
 
@@ -243,6 +244,9 @@ export type ConversationType = ReadonlyDeep<
     pni?: PniString;
     e164?: string;
     name?: string;
+    nicknameGivenName?: string;
+    nicknameFamilyName?: string;
+    note?: string;
     systemGivenName?: string;
     systemFamilyName?: string;
     systemNickname?: string;
@@ -282,6 +286,8 @@ export type ConversationType = ReadonlyDeep<
     isVerified?: boolean;
     activeAt?: number;
     timestamp?: number;
+    lastMessageReceivedAt?: number;
+    lastMessageReceivedAtMs?: number;
     inboxPosition?: number;
     left?: boolean;
     lastMessage?: LastMessageType;
@@ -316,6 +322,7 @@ export type ConversationType = ReadonlyDeep<
     sortedGroupMembers?: ReadonlyArray<ConversationType>;
     title: string;
     titleNoDefault?: string;
+    titleNoNickname?: string;
     searchableTitle?: string;
     unreadCount?: number;
     unreadMentionsCount?: number;
@@ -1158,6 +1165,7 @@ export const actions = {
   updateConversationModelSharedGroups,
   updateGroupAttributes,
   updateLastMessage,
+  updateNicknameAndNote,
   updateSharedGroups,
   verifyConversationsStoppingSend,
 };
@@ -2169,7 +2177,9 @@ function kickOffAttachmentDownload(
         `kickOffAttachmentDownload: Message ${options.messageId} missing!`
       );
     }
-    const didUpdateValues = await message.queueAttachmentDownloads();
+    const didUpdateValues = await message.queueAttachmentDownloads(
+      AttachmentDownloadUrgency.IMMEDIATE
+    );
 
     if (didUpdateValues) {
       drop(
@@ -2743,7 +2753,11 @@ function getProfilesForConversation(conversationId: string): NoopActionType {
     throw new Error('getProfilesForConversation: no conversation found');
   }
 
-  void conversation.getProfiles();
+  drop(
+    conversation.getProfiles().catch(() => {
+      /* nothing to do here; logging already happened */
+    })
+  );
 
   return {
     type: 'NOOP',
@@ -2767,7 +2781,11 @@ function conversationStoppedByMissingVerification(payload: {
     }
 
     // Intentionally not awaiting here
-    void conversation.getProfiles();
+    drop(
+      conversation.getProfiles().catch(() => {
+        /* nothing to do here; logging already happened */
+      })
+    );
   });
 
   return {
@@ -4276,7 +4294,9 @@ function onConversationOpened(
         conversation.throttledGetProfiles !== undefined,
         'Conversation model should be initialized'
       );
-      await conversation.throttledGetProfiles();
+      await conversation.throttledGetProfiles().catch(() => {
+        /* nothing to do here; logging already happened */
+      });
     }
 
     drop(conversation.updateVerified());
@@ -4313,6 +4333,7 @@ function onConversationClosed(
           draftChanged: false,
           draftTimestamp: now,
           timestamp: now,
+          lastMessageReceivedAtMs: now,
         });
       } else {
         log.info(`${logId}: clearing draft info`);
@@ -4675,6 +4696,44 @@ export function updateLastMessage(
       );
     }
     await conversationModel.updateLastMessage();
+  };
+}
+
+export type NicknameAndNote = ReadonlyDeep<{
+  nickname: {
+    givenName: string | null;
+    familyName: string | null;
+  } | null;
+  note: string | null;
+}>;
+
+function updateNicknameAndNote(
+  conversationId: string,
+  nicknameAndNote: NicknameAndNote
+): ThunkAction<void, RootStateType, unknown, NoopActionType> {
+  return async dispatch => {
+    const { nickname, note } = nicknameAndNote;
+    const conversationModel = window.ConversationController.get(conversationId);
+
+    strictAssert(
+      conversationModel != null,
+      'updateNicknameAndNote: Conversation not found'
+    );
+
+    strictAssert(
+      isDirectConversation(conversationModel.attributes),
+      'updateNicknameAndNote: Conversation is not a group'
+    );
+
+    conversationModel.set({
+      nicknameGivenName: nickname?.givenName,
+      nicknameFamilyName: nickname?.familyName,
+      note,
+    });
+    window.Signal.Data.updateConversation(conversationModel.attributes);
+    const conversation = conversationModel.format();
+    dispatch(conversationChanged(conversationId, conversation));
+    conversationModel.captureChange('nicknameAndNote');
   };
 }
 

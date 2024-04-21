@@ -315,7 +315,7 @@ const actions = () => ({
   toggleForwardMessagesModal: action('toggleForwardMessagesModal'),
 
   toggleSafetyNumberModal: action('toggleSafetyNumberModal'),
-
+  onOpenEditNicknameAndNoteModal: action('onOpenEditNicknameAndNoteModal'),
   onOutgoingAudioCallInConversation: action(
     'onOutgoingAudioCallInConversation'
   ),
@@ -356,6 +356,7 @@ const renderItem = ({
     id=""
     isTargeted={false}
     isBlocked={false}
+    isGroup={false}
     i18n={i18n}
     interactionMode="keyboard"
     isNextItemCallingNotification={false}

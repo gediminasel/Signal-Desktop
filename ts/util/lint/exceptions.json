@@ -2775,6 +2775,13 @@
   },
   {
     "rule": "React-useRef",
+    "path": "ts/components/AutoSizeTextArea.tsx",
+    "line": "  const ownRef = useRef<HTMLTextAreaElement | null>(null);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2024-03-26T17:14:14.370Z"
+  },
+  {
+    "rule": "React-useRef",
     "path": "ts/components/AvatarTextEditor.tsx",
     "line": "  const measureElRef = useRef<null | HTMLDivElement>(null);",
     "reasonCategory": "usageTrusted",
@@ -3697,6 +3704,14 @@
     "reasonCategory": "usageTrusted",
     "updated": "2022-06-14T22:04:43.988Z",
     "reasonDetail": "Handling outside click"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/hooks/useEmojiSearch.ts",
+    "line": "  const searchRef = useRef(defaultSearch);",
+    "reasonCategory": "usageTrusted",
+    "updated": "2024-03-16T18:34:38.165Z",
+    "reasonDetail": "Quill requires an immutable reference to the search function"
   },
   {
     "rule": "React-useRef",

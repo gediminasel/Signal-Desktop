@@ -117,7 +117,8 @@ export type MessageReactionType = {
 };
 
 // Note: when adding to the set of things that can change via edits, sendNormalMessage.ts
-//   needs more usage of get/setPropForTimestamp.
+//   needs more usage of get/setPropForTimestamp. Also, these fields must match the fields
+//   in MessageAttributesType.
 export type EditHistoryType = {
   attachments?: Array<AttachmentType>;
   body?: string;
@@ -127,6 +128,8 @@ export type EditHistoryType = {
   quote?: QuotedMessageType;
   sendStateByConversationId?: SendStateByConversationId;
   timestamp: number;
+  received_at: number;
+  received_at_ms?: number;
 };
 
 export type MessageAttributesType = {
@@ -153,6 +156,8 @@ export type MessageAttributesType = {
   isViewOnce?: boolean;
   editHistory?: Array<EditHistoryType>;
   editMessageTimestamp?: number;
+  editMessageReceivedAt?: number;
+  editMessageReceivedAtMs?: number;
   key_changed?: string;
   local?: boolean;
   logger?: unknown;
@@ -335,6 +340,8 @@ export type ConversationAttributesType = {
   lastMessagePrefix?: string;
   lastMessageAuthor?: string | null;
   lastMessageStatus?: LastMessageStatus | null;
+  lastMessageReceivedAt?: number;
+  lastMessageReceivedAtMs?: number;
   lastSeenMessageByUser?: Record<string, { receivedAt: number; id: string }>;
   markedUnread?: boolean;
   messageCount?: number;
@@ -369,6 +376,9 @@ export type ConversationAttributesType = {
   systemGivenName?: string;
   systemFamilyName?: string;
   systemNickname?: string;
+  nicknameGivenName?: string | null;
+  nicknameFamilyName?: string | null;
+  note?: string | null;
   needsStorageServiceSync?: boolean;
   needsVerification?: boolean;
   profileSharing?: boolean;
@@ -464,6 +474,8 @@ export type ConversationRenderInfoType = Pick<
   | 'systemGivenName'
   | 'systemFamilyName'
   | 'systemNickname'
+  | 'nicknameGivenName'
+  | 'nicknameFamilyName'
   | 'type'
   | 'username'
 >;

@@ -1,8 +1,6 @@
 // Copyright 2015 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 import { assert } from 'chai';
 import { readFileSync, unlinkSync, writeFileSync } from 'fs';
 import { join } from 'path';
@@ -17,7 +15,6 @@ import {
   decryptProfileName,
   encryptProfile,
   decryptProfile,
-  getAttachmentSizeBucket,
   getRandomBytes,
   constantTimeEqual,
   generateRegistrationId,
@@ -30,6 +27,7 @@ import {
   deriveMasterKeyFromGroupV1,
   encryptSymmetric,
   decryptSymmetric,
+  sha256,
   hmacSha256,
   verifyHmacSha256,
   randomInt,
@@ -45,36 +43,6 @@ import {
 } from '../AttachmentCrypto';
 import { createTempDir, deleteTempDir } from '../updater/common';
 import { uuidToBytes, bytesToUuid } from '../util/uuidToBytes';
-
-const BUCKET_SIZES = [
-  541, 568, 596, 626, 657, 690, 725, 761, 799, 839, 881, 925, 972, 1020, 1071,
-  1125, 1181, 1240, 1302, 1367, 1436, 1507, 1583, 1662, 1745, 1832, 1924, 2020,
-  2121, 2227, 2339, 2456, 2579, 2708, 2843, 2985, 3134, 3291, 3456, 3629, 3810,
-  4001, 4201, 4411, 4631, 4863, 5106, 5361, 5629, 5911, 6207, 6517, 6843, 7185,
-  7544, 7921, 8318, 8733, 9170, 9629, 10110, 10616, 11146, 11704, 12289, 12903,
-  13549, 14226, 14937, 15684, 16469, 17292, 18157, 19065, 20018, 21019, 22070,
-  23173, 24332, 25549, 26826, 28167, 29576, 31054, 32607, 34238, 35950, 37747,
-  39634, 41616, 43697, 45882, 48176, 50585, 53114, 55770, 58558, 61486, 64561,
-  67789, 71178, 74737, 78474, 82398, 86518, 90843, 95386, 100155, 105163,
-  110421, 115942, 121739, 127826, 134217, 140928, 147975, 155373, 163142,
-  171299, 179864, 188858, 198300, 208215, 218626, 229558, 241036, 253087,
-  265742, 279029, 292980, 307629, 323011, 339161, 356119, 373925, 392622,
-  412253, 432866, 454509, 477234, 501096, 526151, 552458, 580081, 609086,
-  639540, 671517, 705093, 740347, 777365, 816233, 857045, 899897, 944892,
-  992136, 1041743, 1093831, 1148522, 1205948, 1266246, 1329558, 1396036,
-  1465838, 1539130, 1616086, 1696890, 1781735, 1870822, 1964363, 2062581,
-  2165710, 2273996, 2387695, 2507080, 2632434, 2764056, 2902259, 3047372,
-  3199740, 3359727, 3527714, 3704100, 3889305, 4083770, 4287958, 4502356,
-  4727474, 4963848, 5212040, 5472642, 5746274, 6033588, 6335268, 6652031,
-  6984633, 7333864, 7700558, 8085585, 8489865, 8914358, 9360076, 9828080,
-  10319484, 10835458, 11377231, 11946092, 12543397, 13170567, 13829095,
-  14520550, 15246578, 16008907, 16809352, 17649820, 18532311, 19458926,
-  20431872, 21453466, 22526139, 23652446, 24835069, 26076822, 27380663,
-  28749697, 30187181, 31696540, 33281368, 34945436, 36692708, 38527343,
-  40453710, 42476396, 44600216, 46830227, 49171738, 51630325, 54211841,
-  56922433, 59768555, 62756983, 65894832, 69189573, 72649052, 76281505,
-  80095580, 84100359, 88305377, 92720646, 97356678, 102224512, 107335738,
-];
 
 const GHOST_KITTY_HASH =
   '7bc77f27d92d00b4a1d57c480ca86dacc43d57bc318339c92119d1fbf6b557a5';
@@ -557,59 +525,10 @@ describe('Crypto', () => {
     });
   });
 
-  describe('getAttachmentSizeBucket', () => {
-    it('properly calculates first bucket', () => {
-      for (let size = 0, max = BUCKET_SIZES[0]; size < max; size += 1) {
-        assert.strictEqual(BUCKET_SIZES[0], getAttachmentSizeBucket(size));
-      }
-    });
-
-    it('properly calculates entire table', () => {
-      let count = 0;
-
-      const failures = new Array<string>();
-      for (let i = 0, max = BUCKET_SIZES.length - 1; i < max; i += 1) {
-        // Exact
-        if (BUCKET_SIZES[i] !== getAttachmentSizeBucket(BUCKET_SIZES[i])) {
-          count += 1;
-          failures.push(
-            `${BUCKET_SIZES[i]} does not equal ${getAttachmentSizeBucket(
-              BUCKET_SIZES[i]
-            )}`
-          );
-        }
-
-        // Just under
-        if (BUCKET_SIZES[i] !== getAttachmentSizeBucket(BUCKET_SIZES[i] - 1)) {
-          count += 1;
-          failures.push(
-            `${BUCKET_SIZES[i]} does not equal ${getAttachmentSizeBucket(
-              BUCKET_SIZES[i] - 1
-            )}`
-          );
-        }
-
-        // Just over
-        if (
-          BUCKET_SIZES[i + 1] !== getAttachmentSizeBucket(BUCKET_SIZES[i] + 1)
-        ) {
-          count += 1;
-          failures.push(
-            `${BUCKET_SIZES[i + 1]} does not equal ${getAttachmentSizeBucket(
-              BUCKET_SIZES[i] + 1
-            )}`
-          );
-        }
-      }
-
-      assert.strictEqual(count, 0, failures.join('\n'));
-    });
-  });
-
   describe('attachments', () => {
     const FILE_PATH = join(__dirname, '../../fixtures/ghost-kitty.mp4');
     const FILE_CONTENTS = readFileSync(FILE_PATH);
-    let tempDir: string | undefined;
+    let tempDir: string;
 
     function generateAttachmentKeys(): Uint8Array {
       return randomBytes(KEY_SET_LENGTH);
@@ -643,7 +562,7 @@ describe('Crypto', () => {
 
     it('v1 -> v2 (memory -> disk)', async () => {
       const keys = generateAttachmentKeys();
-      const ciphertextPath = join(tempDir!, 'file');
+      const ciphertextPath = join(tempDir, 'file');
       let plaintextPath;
 
       try {
@@ -679,7 +598,7 @@ describe('Crypto', () => {
       }
     });
 
-    it('v2 roundtrips (all on disk)', async () => {
+    it('v2 roundtrips smaller file (all on disk)', async () => {
       const keys = generateAttachmentKeys();
       let plaintextPath;
       let ciphertextPath;
@@ -688,7 +607,6 @@ describe('Crypto', () => {
         const encryptedAttachment = await encryptAttachmentV2({
           keys,
           plaintextAbsolutePath: FILE_PATH,
-          size: FILE_CONTENTS.byteLength,
         });
         ciphertextPath = window.Signal.Migrations.getAbsoluteAttachmentPath(
           encryptedAttachment.path
@@ -720,6 +638,60 @@ describe('Crypto', () => {
       }
     });
 
+    it('v2 roundtrips random data (all on disk)', async () => {
+      const sourcePath = join(tempDir, 'random');
+      // Get sufficient large file to have more than 64kb of padding and
+      // trigger push back on the streams.
+      const data = getRandomBytes(5 * 1024 * 1024);
+      const digest = sha256(data);
+
+      writeFileSync(sourcePath, data);
+
+      const keys = generateAttachmentKeys();
+      let plaintextPath;
+      let ciphertextPath;
+
+      try {
+        const encryptedAttachment = await encryptAttachmentV2({
+          keys,
+          plaintextAbsolutePath: sourcePath,
+        });
+        ciphertextPath = window.Signal.Migrations.getAbsoluteAttachmentPath(
+          encryptedAttachment.path
+        );
+        const decryptedAttachment = await decryptAttachmentV2({
+          ciphertextPath,
+          id: 'test',
+          keys,
+          size: data.byteLength,
+          theirDigest: encryptedAttachment.digest,
+        });
+        plaintextPath = window.Signal.Migrations.getAbsoluteAttachmentPath(
+          decryptedAttachment.path
+        );
+        const plaintext = readFileSync(plaintextPath);
+        assert.isTrue(constantTimeEqual(data, plaintext));
+        assert.strictEqual(
+          encryptedAttachment.plaintextHash,
+          Bytes.toHex(digest)
+        );
+        assert.strictEqual(
+          decryptedAttachment.plaintextHash,
+          encryptedAttachment.plaintextHash
+        );
+      } finally {
+        if (sourcePath) {
+          unlinkSync(sourcePath);
+        }
+        if (plaintextPath) {
+          unlinkSync(plaintextPath);
+        }
+        if (ciphertextPath) {
+          unlinkSync(ciphertextPath);
+        }
+      }
+    });
+
     it('v2 -> v1 (disk -> memory)', async () => {
       const keys = generateAttachmentKeys();
       let ciphertextPath;
@@ -728,7 +700,6 @@ describe('Crypto', () => {
         const encryptedAttachment = await encryptAttachmentV2({
           keys,
           plaintextAbsolutePath: FILE_PATH,
-          size: FILE_CONTENTS.byteLength,
         });
         ciphertextPath = window.Signal.Migrations.getAbsoluteAttachmentPath(
           encryptedAttachment.path
@@ -782,7 +753,6 @@ describe('Crypto', () => {
         const encryptedAttachmentV2 = await encryptAttachmentV2({
           keys,
           plaintextAbsolutePath: FILE_PATH,
-          size: FILE_CONTENTS.byteLength,
           dangerousTestOnlyIv,
         });
         ciphertextPath = window.Signal.Migrations.getAbsoluteAttachmentPath(

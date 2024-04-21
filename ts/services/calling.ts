@@ -124,6 +124,9 @@ import {
   getCallIdFromRing,
   getLocalCallEventFromRingUpdate,
   convertJoinState,
+  updateLocalAdhocCallHistory,
+  getCallIdFromEra,
+  getCallDetailsForAdhocCall,
 } from '../util/callDisposition';
 import { isNormalNumber } from '../util/isNormalNumber';
 import { LocalCallEvent } from '../types/CallDisposition';
@@ -153,6 +156,8 @@ const RINGRTC_HTTP_METHOD_TO_OUR_HTTP_METHOD: Map<
 
 const CLEAN_EXPIRED_GROUP_CALL_RINGS_INTERVAL = 10 * durations.MINUTE;
 
+const ICE_SERVER_IS_IP_LIKE = /(turn|turns|stun):[.\d]+/;
+
 // We send group call update messages to tell other clients to peek, which triggers
 //   notifications, timeline messages, big green "Join" buttons, and so on. This enum
 //   represents the three possible states we can be in. This helps ensure that we don't
@@ -181,6 +186,7 @@ type CallingReduxInterface = Pick<
   | 'setPresenting'
   | 'startCallingLobby'
   | 'startCallLinkLobby'
+  | 'startCallLinkLobbyByRoomId'
   | 'peekNotConnectedGroupCall'
 > & {
   areAnyCallsActiveOrRinging(): boolean;
@@ -310,6 +316,8 @@ export class CallingClass {
   private reduxInterface?: CallingReduxInterface;
 
   public _sfuUrl?: string;
+
+  public _iceServerOverride?: string;
 
   private lastMediaDeviceSettings?: MediaDeviceSettings;
 
@@ -535,25 +543,25 @@ export class CallingClass {
     callLinkRootKey: CallLinkRootKey;
   }>): Promise<CallLinkState | undefined> {
     if (!this._sfuUrl) {
-      throw new Error('Missing SFU URL; not handling call link');
+      throw new Error('readCallLink() missing SFU URL; not handling call link');
     }
 
     const roomId = getRoomIdFromRootKey(callLinkRootKey);
+    const logId = `readCallLink(${roomId})`;
     const authCredentialPresentation =
       await getCallLinkAuthCredentialPresentation(callLinkRootKey);
 
-    log.info(`readCallLink: roomId ${roomId}`);
     const result = await RingRTC.readCallLink(
       this._sfuUrl,
       authCredentialPresentation.serialize(),
       callLinkRootKey
     );
     if (!result.success) {
-      log.warn(`readCallLink: failed ${roomId}`);
+      log.warn(`${logId}: failed`);
       return;
     }
 
-    log.info('readCallLink: success', result);
+    log.info(`${logId}: success`);
     return result.value;
   }
 
@@ -980,11 +988,20 @@ export class CallingClass {
     callMode: CallMode.Group | CallMode.Adhoc
   ): GroupCallObserver {
     let updateMessageState = GroupCallUpdateMessageState.SentNothing;
+    const updateCallHistoryOnLocalChanged =
+      callMode === CallMode.Group
+        ? this.updateCallHistoryForGroupCallOnLocalChanged
+        : this.updateCallHistoryForAdhocCall;
+    const updateCallHistoryOnPeek =
+      callMode === CallMode.Group
+        ? this.updateCallHistoryForGroupCallOnPeek
+        : this.updateCallHistoryForAdhocCall;
 
     return {
       onLocalDeviceStateChanged: groupCall => {
         const localDeviceState = groupCall.getLocalDeviceState();
         const peekInfo = groupCall.getPeekInfo() ?? null;
+        const { eraId } = peekInfo ?? {};
 
         log.info(
           'GroupCall#onLocalDeviceStateChanged',
@@ -992,43 +1009,14 @@ export class CallingClass {
           peekInfo != null ? formatPeekInfo(peekInfo) : '(No PeekInfo)'
         );
 
-        const groupCallMeta = getGroupCallMeta(peekInfo);
-
-        // TODO: Handle call history for adhoc calls
-        if (groupCallMeta != null && callMode === CallMode.Group) {
-          try {
-            const localCallEvent = getLocalCallEventFromJoinState(
-              convertJoinState(localDeviceState.joinState),
-              groupCallMeta
-            );
-
-            if (localCallEvent != null && peekInfo != null) {
-              const conversation =
-                window.ConversationController.get(conversationId);
-              strictAssert(
-                conversation != null,
-                'GroupCall#onLocalDeviceStateChanged: Missing conversation'
-              );
-              const peerId = getPeerIdFromConversation(conversation.attributes);
-
-              const callDetails = getCallDetailsFromGroupCallMeta(
-                peerId,
-                groupCallMeta
-              );
-              const callEvent = getCallEventDetails(
-                callDetails,
-                localCallEvent,
-                'RingRTC.onLocalDeviceStateChanged'
-              );
-              drop(updateCallHistoryFromLocalEvent(callEvent, null));
-            }
-          } catch (error) {
-            log.error(
-              'GroupCall#onLocalDeviceStateChanged: Error updating state',
-              Errors.toLogFormat(error)
-            );
-          }
-        }
+        // For adhoc calls, conversationId will be a roomId
+        drop(
+          updateCallHistoryOnLocalChanged(
+            conversationId,
+            convertJoinState(localDeviceState.joinState),
+            peekInfo
+          )
+        );
 
         if (localDeviceState.connectionState === ConnectionState.NotConnected) {
           // NOTE: This assumes that only one call is active at a time. For example, if
@@ -1040,14 +1028,11 @@ export class CallingClass {
 
           if (
             updateMessageState === GroupCallUpdateMessageState.SentJoin &&
-            peekInfo?.eraId != null
+            eraId
           ) {
             updateMessageState = GroupCallUpdateMessageState.SentLeft;
             if (callMode === CallMode.Group) {
-              void this.sendGroupCallUpdateMessage(
-                conversationId,
-                peekInfo?.eraId
-              );
+              drop(this.sendGroupCallUpdateMessage(conversationId, eraId));
             }
           }
         } else {
@@ -1060,17 +1045,16 @@ export class CallingClass {
             this.videoCapturer.enableCaptureAndSend(groupCall);
           }
 
+          // Call enters the Joined state, once per call.
+          // This can also happen in onPeekChanged.
           if (
             updateMessageState === GroupCallUpdateMessageState.SentNothing &&
             localDeviceState.joinState === JoinState.Joined &&
-            peekInfo?.eraId != null
+            eraId
           ) {
             updateMessageState = GroupCallUpdateMessageState.SentJoin;
             if (callMode === CallMode.Group) {
-              void this.sendGroupCallUpdateMessage(
-                conversationId,
-                peekInfo?.eraId
-              );
+              drop(this.sendGroupCallUpdateMessage(conversationId, eraId));
             }
           }
         }
@@ -1128,6 +1112,7 @@ export class CallingClass {
       onPeekChanged: groupCall => {
         const localDeviceState = groupCall.getLocalDeviceState();
         const peekInfo = groupCall.getPeekInfo() ?? null;
+        const { eraId } = peekInfo ?? {};
 
         log.info(
           'GroupCall#onPeekChanged',
@@ -1135,25 +1120,29 @@ export class CallingClass {
           peekInfo ? formatPeekInfo(peekInfo) : '(No PeekInfo)'
         );
 
-        if (callMode === CallMode.Group) {
-          const { eraId } = peekInfo ?? {};
-          if (
-            updateMessageState === GroupCallUpdateMessageState.SentNothing &&
-            localDeviceState.connectionState !== ConnectionState.NotConnected &&
-            localDeviceState.joinState === JoinState.Joined &&
-            eraId
-          ) {
-            updateMessageState = GroupCallUpdateMessageState.SentJoin;
-            void this.sendGroupCallUpdateMessage(conversationId, eraId);
-          }
+        // Call enters the Joined state, once per call.
+        // This can also happen in onLocalDeviceStateChanged.
+        if (
+          updateMessageState === GroupCallUpdateMessageState.SentNothing &&
+          localDeviceState.connectionState !== ConnectionState.NotConnected &&
+          localDeviceState.joinState === JoinState.Joined &&
+          eraId
+        ) {
+          updateMessageState = GroupCallUpdateMessageState.SentJoin;
 
-          void this.updateCallHistoryForGroupCall(
+          if (callMode === CallMode.Group) {
+            drop(this.sendGroupCallUpdateMessage(conversationId, eraId));
+          }
+        }
+
+        // For adhoc calls, conversationId will be a roomId
+        drop(
+          updateCallHistoryOnPeek(
             conversationId,
             convertJoinState(localDeviceState.joinState),
             peekInfo
-          );
-        }
-        // TODO: Call history for adhoc calls
+          )
+        );
 
         this.syncGroupCallToRedux(conversationId, groupCall, callMode);
       },
@@ -1381,11 +1370,12 @@ export class CallingClass {
   public formatCallLinkStateForRedux(
     callLinkState: CallLinkState
   ): CallLinkStateType {
-    const { name, restrictions, expiration } = callLinkState;
+    const { name, restrictions, expiration, revoked } = callLinkState;
     return {
       name,
       restrictions,
       expiration: expiration.getTime(),
+      revoked,
     };
   }
 
@@ -2612,15 +2602,36 @@ export class CallingClass {
     // If the peer is not in the user's system contacts, force IP hiding.
     const isContactUntrusted = !isInSystemContacts(conversation.attributes);
 
+    // only include hostname with urlsWithIps
+    const iceServers = this._iceServerOverride
+      ? [
+          {
+            hostname: ICE_SERVER_IS_IP_LIKE.test(this._iceServerOverride)
+              ? iceServer.hostname
+              : '',
+            username: iceServer.username,
+            password: iceServer.password,
+            urls: [this._iceServerOverride.toString()],
+          },
+        ]
+      : // proritize ice servers with IPs to avoid DNS
+        [
+          {
+            hostname: iceServer.hostname,
+            username: iceServer.username,
+            password: iceServer.password,
+            urls: (iceServer.urlsWithIps ?? []).slice(),
+          },
+          {
+            hostname: '',
+            username: iceServer.username,
+            password: iceServer.password,
+            urls: (iceServer.urls ?? []).slice(),
+          },
+        ];
+
     const callSettings = {
-      iceServers: [
-        {
-          hostname: '',
-          username: iceServer.username,
-          password: iceServer.password,
-          urls: iceServer.urls.slice(),
-        },
-      ],
+      iceServers,
       hideIp: shouldRelayCalls || isContactUntrusted,
       dataMode: DataMode.Normal,
       // TODO: DESKTOP-3101
@@ -2633,7 +2644,84 @@ export class CallingClass {
     return true;
   }
 
-  public async updateCallHistoryForGroupCall(
+  public async updateCallHistoryForAdhocCall(
+    roomId: string,
+    joinState: GroupCallJoinState | null,
+    peekInfo: PeekInfo | null
+  ): Promise<void> {
+    if (!peekInfo?.eraId) {
+      return;
+    }
+    const callId = getCallIdFromEra(peekInfo.eraId);
+
+    try {
+      // We only log events confirmed joined. If admin approval is required, then
+      // the call begins in the Pending state and we don't want history for that.
+      if (joinState !== GroupCallJoinState.Joined) {
+        return;
+      }
+
+      const callDetails = getCallDetailsForAdhocCall(roomId, callId);
+      const callEvent = getCallEventDetails(
+        callDetails,
+        LocalCallEvent.Accepted,
+        'CallingClass.updateCallHistoryForGroupCallOnLocalChanged'
+      );
+      await updateLocalAdhocCallHistory(callEvent);
+    } catch (error) {
+      log.error(
+        'CallingClass.updateCallHistoryForGroupCallOnLocalChanged: Error updating state',
+        Errors.toLogFormat(error)
+      );
+    }
+  }
+
+  public async updateCallHistoryForGroupCallOnLocalChanged(
+    conversationId: string,
+    joinState: GroupCallJoinState | null,
+    peekInfo: PeekInfo | null
+  ): Promise<void> {
+    const groupCallMeta = getGroupCallMeta(peekInfo);
+    if (!groupCallMeta) {
+      return;
+    }
+
+    try {
+      const localCallEvent = getLocalCallEventFromJoinState(
+        joinState,
+        groupCallMeta
+      );
+
+      if (!localCallEvent) {
+        return;
+      }
+
+      const conversation = window.ConversationController.get(conversationId);
+      strictAssert(
+        conversation != null,
+        'CallingClass.updateCallHistoryForGroupCallOnLocalChanged: Missing conversation'
+      );
+      const peerId = getPeerIdFromConversation(conversation.attributes);
+
+      const callDetails = getCallDetailsFromGroupCallMeta(
+        peerId,
+        groupCallMeta
+      );
+      const callEvent = getCallEventDetails(
+        callDetails,
+        localCallEvent,
+        'CallingClass.updateCallHistoryForGroupCallOnLocalChanged'
+      );
+      await updateCallHistoryFromLocalEvent(callEvent, null);
+    } catch (error) {
+      log.error(
+        'CallingClass.updateCallHistoryForGroupCallOnLocalChanged: Error updating state',
+        Errors.toLogFormat(error)
+      );
+    }
+  }
+
+  public async updateCallHistoryForGroupCallOnPeek(
     conversationId: string,
     joinState: GroupCallJoinState | null,
     peekInfo: PeekInfo | null
@@ -2650,7 +2738,9 @@ export class CallingClass {
 
     const conversation = window.ConversationController.get(conversationId);
     if (!conversation) {
-      log.error('maybeNotifyGroupCall(): could not find conversation');
+      log.error(
+        'updateCallHistoryForGroupCallOnPeek(): could not find conversation'
+      );
       return;
     }
 
@@ -2676,7 +2766,7 @@ export class CallingClass {
         const callEvent = getCallEventDetails(
           callDetails,
           localCallEvent,
-          'CallingClass.updateCallHistoryForGroupCall'
+          'CallingClass.updateCallHistoryForGroupCallOnPeek'
         );
         await updateCallHistoryFromLocalEvent(callEvent, null);
       }

@@ -177,10 +177,12 @@ type PropsLocalType = {
   item?: TimelineItemType;
   id: string;
   isBlocked: boolean;
+  isGroup: boolean;
   isNextItemCallingNotification: boolean;
   isTargeted: boolean;
   targetMessage: (messageId: string, conversationId: string) => unknown;
   shouldRenderDateHeader: boolean;
+  onOpenEditNicknameAndNoteModal: (contactId: string) => void;
   onOpenMessageRequestActionsConfirmation(state: MessageRequestState): void;
   platform: string;
   renderContact: SmartContactRendererType<JSX.Element>;
@@ -216,9 +218,11 @@ export const TimelineItem = memo(function TimelineItem({
   i18n,
   id,
   isBlocked,
+  isGroup,
   isNextItemCallingNotification,
   isTargeted,
   item,
+  onOpenEditNicknameAndNoteModal,
   onOpenMessageRequestActionsConfirmation,
   onOutgoingAudioCallInConversation,
   onOutgoingVideoCallInConversation,
@@ -383,6 +387,7 @@ export const TimelineItem = memo(function TimelineItem({
           {...reducedProps}
           {...item.data}
           i18n={i18n}
+          onOpenEditNicknameAndNoteModal={onOpenEditNicknameAndNoteModal}
         />
       );
     } else if (item.type === 'paymentEvent') {
@@ -398,6 +403,7 @@ export const TimelineItem = memo(function TimelineItem({
         <MessageRequestResponseNotification
           {...item.data}
           i18n={i18n}
+          isGroup={isGroup}
           isBlocked={isBlocked}
           onOpenMessageRequestActionsConfirmation={
             onOpenMessageRequestActionsConfirmation

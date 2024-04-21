@@ -2122,17 +2122,26 @@ export class ConversationModel extends window.Backbone
   async addMessageRequestResponseEventMessage(
     event: MessageRequestResponseEvent
   ): Promise<void> {
-    const now = Date.now();
+    const timestamp = Date.now();
+    const lastMessageTimestamp =
+      // Fallback to `timestamp` since `lastMessageReceivedAtMs` is new
+      this.get('lastMessageReceivedAtMs') ?? this.get('timestamp') ?? timestamp;
+
+    const maybeLastMessageTimestamp =
+      event === MessageRequestResponseEvent.ACCEPT
+        ? timestamp
+        : lastMessageTimestamp;
+
     const message: MessageAttributesType = {
       id: generateGuid(),
       conversationId: this.id,
       type: 'message-request-response-event',
-      sent_at: now,
+      sent_at: maybeLastMessageTimestamp,
       received_at: incrementMessageCounter(),
-      received_at_ms: now,
+      received_at_ms: maybeLastMessageTimestamp,
       readStatus: ReadStatus.Read,
       seenStatus: SeenStatus.NotApplicable,
-      timestamp: now,
+      timestamp,
       messageRequestResponseEvent: event,
     };
 
@@ -2161,6 +2170,9 @@ export class ConversationModel extends window.Backbone
       const didResponseChange = response !== currentMessageRequestState;
       const wasPreviouslyAccepted = this.getAccepted();
 
+      const didUnblock =
+        response === messageRequestEnum.ACCEPT && this.isBlocked();
+
       if (didResponseChange) {
         if (response === messageRequestEnum.ACCEPT) {
           // Only add a message when the user took an explicit action to accept
@@ -2168,7 +2180,9 @@ export class ConversationModel extends window.Backbone
           if (!viaStorageServiceSync) {
             drop(
               this.addMessageRequestResponseEventMessage(
-                MessageRequestResponseEvent.ACCEPT
+                didUnblock
+                  ? MessageRequestResponseEvent.UNBLOCK
+                  : MessageRequestResponseEvent.ACCEPT
               )
             );
           }
@@ -4173,16 +4187,23 @@ export class ConversationModel extends window.Backbone
       return;
     }
 
-    const currentTimestamp = this.get('timestamp') || null;
-
-    let timestamp = currentTimestamp;
+    let timestamp = this.get('timestamp') || null;
+    let lastMessageReceivedAt = this.get('lastMessageReceivedAt');
+    let lastMessageReceivedAtMs = this.get('lastMessageReceivedAtMs');
     if (activityMessage) {
-      const receivedAt = activityMessage.get('received_at_ms');
-      timestamp = receivedAt
-        ? Math.min(activityMessage.get('sent_at'), receivedAt)
-        : activityMessage.get('sent_at');
+      timestamp =
+        activityMessage.get('editMessageTimestamp') ||
+        activityMessage.get('sent_at') ||
+        timestamp;
+      lastMessageReceivedAt =
+        activityMessage.get('editMessageReceivedAt') ||
+        activityMessage.get('received_at') ||
+        lastMessageReceivedAt;
+      lastMessageReceivedAtMs =
+        activityMessage.get('editMessageReceivedAtMs') ||
+        activityMessage.get('received_at_ms') ||
+        lastMessageReceivedAtMs;
     }
-    timestamp = timestamp || currentTimestamp;
 
     const notificationData = previewMessage?.getNotificationData();
 
@@ -4196,6 +4217,8 @@ export class ConversationModel extends window.Backbone
         (previewMessage
           ? getMessagePropStatus(previewMessage.attributes, ourConversationId)
           : null) || null,
+      lastMessageReceivedAt,
+      lastMessageReceivedAtMs,
       timestamp,
       lastMessageDeletedForEveryone: previewMessage
         ? previewMessage.get('deletedForEveryone')
@@ -4545,6 +4568,7 @@ export class ConversationModel extends window.Backbone
 
     await window.Signal.Data.saveMessage(model.attributes, {
       ourAci: window.textsecure.storage.user.getCheckedAci(),
+      forceSave: true,
     });
 
     const message = window.MessageCache.__DEPRECATED$register(
@@ -4645,7 +4669,11 @@ export class ConversationModel extends window.Backbone
 
   onChangeProfileKey(): void {
     if (isDirectConversation(this.attributes)) {
-      void this.getProfiles();
+      drop(
+        this.getProfiles().catch(() => {
+          /* nothing to do here; logging already happened */
+        })
+      );
     }
   }
 
@@ -5019,6 +5047,7 @@ export class ConversationModel extends window.Backbone
   // [X] verified!
   // [-] profileName
   // [-] profileFamilyName
+  // [X] nicknameAndNote
   // [X] blocked
   // [X] whitelisted
   // [X] archived

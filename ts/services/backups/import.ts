@@ -28,6 +28,8 @@ import {
 import { incrementMessageCounter } from '../../util/incrementMessageCounter';
 import { isAciString } from '../../util/isAciString';
 import { createBatcher } from '../../util/batcher';
+import { PhoneNumberDiscoverability } from '../../util/phoneNumberDiscoverability';
+import { PhoneNumberSharingMode } from '../../util/phoneNumberSharingMode';
 import { ReadStatus } from '../../messages/MessageReadStatus';
 import { SendStatus } from '../../messages/MessageSendState';
 import type { SendStateByConversationId } from '../../messages/MessageSendState';
@@ -94,9 +96,11 @@ export class BackupImportStream extends Writable {
         forceSave: true,
         ourAci,
       });
+      // TODO (DESKTOP-6845): after we save messages, queue their attachment downloads
     },
   });
   private ourConversation?: ConversationAttributesType;
+  private pinnedConversations = new Array<[number, string]>();
 
   constructor() {
     super({ objectMode: true });
@@ -155,6 +159,15 @@ export class BackupImportStream extends Writable {
         }),
         convo => convo.updateLastMessage(),
         { concurrency: MAX_CONCURRENCY }
+      );
+
+      await window.storage.put(
+        'pinnedConversationIds',
+        this.pinnedConversations
+          .sort(([a], [b]) => {
+            return a - b;
+          })
+          .map(([, id]) => id)
       );
 
       done();
@@ -226,10 +239,145 @@ export class BackupImportStream extends Writable {
     this.saveMessageBatcher.add(attributes);
   }
 
-  private async fromAccount(_account: Backups.IAccountData): Promise<void> {
+  private async fromAccount({
+    profileKey,
+    username,
+    usernameLink,
+    givenName,
+    familyName,
+    avatarUrlPath,
+    subscriberId,
+    subscriberCurrencyCode,
+    accountSettings,
+  }: Backups.IAccountData): Promise<void> {
     strictAssert(this.ourConversation === undefined, 'Duplicate AccountData');
-    this.ourConversation =
+    const me =
       window.ConversationController.getOurConversationOrThrow().attributes;
+    this.ourConversation = me;
+
+    const { storage } = window;
+
+    strictAssert(Bytes.isNotEmpty(profileKey), 'Missing profile key');
+    await storage.put('profileKey', profileKey);
+
+    if (username != null) {
+      me.username = username;
+    }
+
+    if (usernameLink != null) {
+      const { entropy, serverId, color } = usernameLink;
+      if (Bytes.isNotEmpty(entropy) && Bytes.isNotEmpty(serverId)) {
+        await storage.put('usernameLink', {
+          entropy,
+          serverId,
+        });
+      }
+
+      // Same numeric value, no conversion needed
+      await storage.put('usernameLinkColor', color ?? 0);
+    }
+
+    if (givenName != null) {
+      me.profileName = givenName;
+    }
+    if (familyName != null) {
+      me.profileFamilyName = familyName;
+    }
+    if (avatarUrlPath != null) {
+      await storage.put('avatarUrl', avatarUrlPath);
+    }
+    if (subscriberId != null) {
+      await storage.put('subscriberId', subscriberId);
+    }
+    if (subscriberCurrencyCode != null) {
+      await storage.put('subscriberCurrencyCode', subscriberCurrencyCode);
+    }
+
+    await storage.put(
+      'read-receipt-setting',
+      accountSettings?.readReceipts === true
+    );
+    await storage.put(
+      'sealedSenderIndicators',
+      accountSettings?.sealedSenderIndicators === true
+    );
+    await storage.put(
+      'typingIndicators',
+      accountSettings?.typingIndicators === true
+    );
+    await storage.put('linkPreviews', accountSettings?.linkPreviews === true);
+    await storage.put(
+      'preferContactAvatars',
+      accountSettings?.preferContactAvatars === true
+    );
+    await storage.put(
+      'displayBadgesOnProfile',
+      accountSettings?.displayBadgesOnProfile === true
+    );
+    await storage.put(
+      'keepMutedChatsArchived',
+      accountSettings?.keepMutedChatsArchived === true
+    );
+    await storage.put(
+      'hasSetMyStoriesPrivacy',
+      accountSettings?.hasSetMyStoriesPrivacy === true
+    );
+    await storage.put(
+      'hasViewedOnboardingStory',
+      accountSettings?.hasViewedOnboardingStory === true
+    );
+    await storage.put(
+      'hasStoriesDisabled',
+      accountSettings?.storiesDisabled === true
+    );
+    await storage.put(
+      'storyViewReceiptsEnabled',
+      accountSettings?.storyViewReceiptsEnabled === true
+    );
+    await storage.put(
+      'hasCompletedUsernameOnboarding',
+      accountSettings?.hasCompletedUsernameOnboarding === true
+    );
+    await storage.put(
+      'preferredReactionEmoji',
+      accountSettings?.preferredReactionEmoji || []
+    );
+    await storage.put(
+      'preferredReactionEmoji',
+      accountSettings?.preferredReactionEmoji || []
+    );
+
+    const { PhoneNumberSharingMode: BackupMode } = Backups.AccountData;
+    switch (accountSettings?.phoneNumberSharingMode) {
+      case BackupMode.EVERYBODY:
+        await storage.put(
+          'phoneNumberSharingMode',
+          PhoneNumberSharingMode.Everybody
+        );
+        break;
+      case BackupMode.UNKNOWN:
+      case BackupMode.NOBODY:
+      default:
+        await storage.put(
+          'phoneNumberSharingMode',
+          PhoneNumberSharingMode.Nobody
+        );
+        break;
+    }
+
+    if (accountSettings?.notDiscoverableByPhoneNumber) {
+      await window.storage.put(
+        'phoneNumberDiscoverability',
+        PhoneNumberDiscoverability.NotDiscoverable
+      );
+    } else {
+      await window.storage.put(
+        'phoneNumberDiscoverability',
+        PhoneNumberDiscoverability.Discoverable
+      );
+    }
+
+    this.updateConversation(me);
   }
 
   private async fromContact(
@@ -342,15 +490,7 @@ export class BackupImportStream extends Writable {
     this.updateConversation(conversation);
 
     if (chat.pinnedOrder != null) {
-      const pinnedConversationIds = new Set(
-        window.storage.get('pinnedConversationIds', new Array<string>())
-      );
-
-      pinnedConversationIds.add(conversation.id);
-
-      await window.storage.put('pinnedConversationIds', [
-        ...pinnedConversationIds,
-      ]);
+      this.pinnedConversations.push([chat.pinnedOrder, conversation.id]);
     }
   }
 
@@ -487,6 +627,7 @@ export class BackupImportStream extends Writable {
   ): Partial<MessageAttributesType> {
     return {
       body: data.text?.body ?? '',
+      // TODO (DESKTOP-6845): add attachments
       reactions: data.reactions?.map(
         ({ emoji, authorId, sentTimestamp, receivedTimestamp }) => {
           strictAssert(emoji != null, 'reaction must have an emoji');

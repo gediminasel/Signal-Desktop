@@ -23,6 +23,9 @@ import { RemoveGroupMemberConfirmationDialog } from './RemoveGroupMemberConfirma
 import { missingCaseError } from '../../util/missingCaseError';
 import { UserText } from '../UserText';
 import { Button, ButtonIconType, ButtonVariant } from '../Button';
+import { isInSystemContacts } from '../../util/isInSystemContacts';
+import { InContactsIcon } from '../InContactsIcon';
+import { canHaveNicknameAndNote } from '../../util/nicknames';
 
 export type PropsDataType = {
   areWeASubscriber: boolean;
@@ -41,6 +44,7 @@ export type PropsDataType = {
 type PropsActionType = {
   blockConversation: (id: string) => void;
   hideContactModal: () => void;
+  onOpenEditNicknameAndNoteModal: () => void;
   onOutgoingAudioCallInConversation: (conversationId: string) => unknown;
   onOutgoingVideoCallInConversation: (conversationId: string) => unknown;
   removeMemberFromGroup: (conversationId: string, contactId: string) => void;
@@ -81,6 +85,7 @@ export function ContactModal({
   i18n,
   isAdmin,
   isMember,
+  onOpenEditNicknameAndNoteModal,
   onOutgoingAudioCallInConversation,
   onOutgoingVideoCallInConversation,
   removeMemberFromGroup,
@@ -200,7 +205,6 @@ export function ContactModal({
   switch (view) {
     case ContactModalView.Default: {
       const preferredBadge: undefined | BadgeType = badges[0];
-
       return (
         <Modal
           modalName="ContactModal"
@@ -249,6 +253,15 @@ export function ContactModal({
             >
               <div className="ContactModal__name__text">
                 <UserText text={contact.title} />
+                {isInSystemContacts(contact) && (
+                  <span>
+                    {' '}
+                    <InContactsIcon
+                      className="ContactModal__name__contact-icon"
+                      i18n={i18n}
+                    />
+                  </span>
+                )}
               </div>
               <i className="ContactModal__name__chevron" />
             </button>
@@ -293,6 +306,19 @@ export function ContactModal({
             )}
             <div className="ContactModal__divider" />
             <div className="ContactModal__button-container">
+              {canHaveNicknameAndNote(contact) && (
+                <button
+                  type="button"
+                  className="ContactModal__button ContactModal__block"
+                  onClick={onOpenEditNicknameAndNoteModal}
+                >
+                  <div className="ContactModal__bubble-icon">
+                    <div className="ContactModal__nickname__bubble-icon" />
+                  </div>
+                  <span>{i18n('icu:ContactModal--nickname')}</span>
+                </button>
+              )}
+
               {!contact.isMe && (
                 <button
                   type="button"

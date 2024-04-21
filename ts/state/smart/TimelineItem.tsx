@@ -42,6 +42,7 @@ export type SmartTimelineItemProps = {
   containerWidthBreakpoint: WidthBreakpoint;
   conversationId: string;
   isBlocked: boolean;
+  isGroup: boolean;
   isOldestTimelineItem: boolean;
   messageId: string;
   nextMessageId: undefined | string;
@@ -64,6 +65,7 @@ export const SmartTimelineItem = memo(function SmartTimelineItem(
     containerWidthBreakpoint,
     conversationId,
     isBlocked,
+    isGroup,
     isOldestTimelineItem,
     messageId,
     nextMessageId,
@@ -143,6 +145,7 @@ export const SmartTimelineItem = memo(function SmartTimelineItem(
     showEditHistoryModal,
     toggleMessageRequestActionsConfirmation,
     toggleDeleteMessagesModal,
+    toggleEditNicknameAndNoteModal,
     toggleForwardMessagesModal,
     toggleSafetyNumberModal,
   } = useGlobalModalActions();
@@ -154,6 +157,13 @@ export const SmartTimelineItem = memo(function SmartTimelineItem(
     onOutgoingVideoCallInConversation,
     returnToActiveCall,
   } = useCallingActions();
+
+  const onOpenEditNicknameAndNoteModal = useCallback(
+    (contactId: string) => {
+      toggleEditNicknameAndNoteModal({ conversationId: contactId });
+    },
+    [toggleEditNicknameAndNoteModal]
+  );
 
   const onOpenMessageRequestActionsConfirmation = useCallback(
     (state: MessageRequestState) => {
@@ -185,6 +195,7 @@ export const SmartTimelineItem = memo(function SmartTimelineItem(
       i18n={i18n}
       interactionMode={interactionMode}
       isBlocked={isBlocked}
+      isGroup={isGroup}
       theme={theme}
       platform={platform}
       blockGroupLinkRequests={blockGroupLinkRequests}
@@ -198,6 +209,7 @@ export const SmartTimelineItem = memo(function SmartTimelineItem(
       pushPanelForConversation={pushPanelForConversation}
       reactToMessage={reactToMessage}
       copyMessageText={copyMessageText}
+      onOpenEditNicknameAndNoteModal={onOpenEditNicknameAndNoteModal}
       onOpenMessageRequestActionsConfirmation={
         onOpenMessageRequestActionsConfirmation
       }

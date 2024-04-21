@@ -184,8 +184,16 @@ export class BackupExportStream extends Readable {
       stats.distributionLists += 1;
     }
 
+    const pinnedConversationIds =
+      window.storage.get('pinnedConversationIds') || [];
+
     for (const { attributes } of window.ConversationController.getAll()) {
       const recipientId = this.getRecipientId(attributes);
+
+      let pinnedOrder: number | null = null;
+      if (attributes.isPinned) {
+        pinnedOrder = Math.max(0, pinnedConversationIds.indexOf(attributes.id));
+      }
 
       this.pushFrame({
         chat: {
@@ -194,7 +202,7 @@ export class BackupExportStream extends Readable {
           recipientId,
 
           archived: attributes.isArchived === true,
-          pinnedOrder: attributes.isPinned === true ? 1 : null,
+          pinnedOrder,
           expirationTimerMs:
             attributes.expireTimer != null
               ? Long.fromNumber(
@@ -327,15 +335,19 @@ export class BackupExportStream extends Readable {
         throw missingCaseError(rawPhoneNumberSharingMode);
     }
 
+    const usernameLink = storage.get('usernameLink');
+
     return {
       profileKey: storage.get('profileKey'),
-      username: me.get('username'),
-      usernameLink: {
-        ...(storage.get('usernameLink') ?? {}),
+      username: me.get('username') || null,
+      usernameLink: usernameLink
+        ? {
+            ...usernameLink,
 
-        // Same numeric value, no conversion needed
-        color: storage.get('usernameLinkColor'),
-      },
+            // Same numeric value, no conversion needed
+            color: storage.get('usernameLinkColor'),
+          }
+        : null,
       givenName: me.get('profileName'),
       familyName: me.get('profileFamilyName'),
       avatarUrlPath: storage.get('avatarUrl'),
@@ -588,7 +600,10 @@ export class BackupExportStream extends Readable {
       const { sendStateByConversationId = {} } = message;
       for (const [id, entry] of Object.entries(sendStateByConversationId)) {
         const target = window.ConversationController.get(id);
-        strictAssert(target != null, 'Send target not found');
+        if (!target) {
+          log.warn(`backups: no send target for a message ${message.sent_at}`);
+          continue;
+        }
 
         let deliveryStatus: Backups.SendStatus.Status;
         switch (entry.status) {

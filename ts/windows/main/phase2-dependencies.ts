@@ -38,6 +38,7 @@ window.WebAPI = window.textsecure.WebAPI.initialize({
   contentProxyUrl: config.contentProxyUrl,
   proxyUrl: config.proxyUrl,
   version: config.version,
+  libsignalNetEnvironment: config.libsignalNetEnvironment,
 });
 
 window.libphonenumberInstance = PhoneNumberUtil.getInstance();
@@ -73,6 +74,9 @@ if (config.crashDumpsPath) {
   addSensitivePath(config.crashDumpsPath);
 }
 
+if (SignalContext.config.disableIPv6) {
+  dns.setIPv6Enabled(false);
+}
 dns.setFallback(SignalContext.config.dnsFallback);
 
 window.Signal = setup({

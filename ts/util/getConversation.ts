@@ -186,6 +186,8 @@ export function getConversation(model: ConversationModel): ConversationType {
     isVerified: model.isVerified(),
     isFetchingUUID: model.isFetchingUUID,
     lastMessage: getLastMessage(attributes),
+    lastMessageReceivedAt: attributes.lastMessageReceivedAt,
+    lastMessageReceivedAtMs: attributes.lastMessageReceivedAtMs,
     lastSeenMessageByUser: attributes.lastSeenMessageByUser,
     lastUpdated: dropNull(timestamp),
     left: Boolean(attributes.left),
@@ -205,6 +207,9 @@ export function getConversation(model: ConversationModel): ConversationType {
     expireTimer: attributes.expireTimer,
     muteExpiresAt: attributes.muteExpiresAt,
     dontNotifyForMentionsIfMuted: attributes.dontNotifyForMentionsIfMuted,
+    nicknameFamilyName: dropNull(attributes.nicknameFamilyName),
+    nicknameGivenName: dropNull(attributes.nicknameGivenName),
+    note: dropNull(attributes.note),
     name: attributes.name,
     systemGivenName: attributes.systemGivenName,
     systemFamilyName: attributes.systemFamilyName,
@@ -221,6 +226,7 @@ export function getConversation(model: ConversationModel): ConversationType {
     timestamp: dropNull(timestamp),
     title: getTitle(attributes),
     titleNoDefault: getTitleNoDefault(attributes),
+    titleNoNickname: getTitle(attributes, { ignoreNickname: true }),
     typingContactIdTimestamps,
     searchableTitle: isMe(attributes)
       ? window.i18n('icu:noteToSelf')

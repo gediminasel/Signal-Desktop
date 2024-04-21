@@ -202,6 +202,18 @@ export async function toContactRecord(
   if (profileFamilyName) {
     contactRecord.familyName = profileFamilyName;
   }
+  const nicknameGivenName = conversation.get('nicknameGivenName');
+  const nicknameFamilyName = conversation.get('nicknameFamilyName');
+  if (nicknameGivenName || nicknameFamilyName) {
+    contactRecord.nickname = {
+      given: nicknameGivenName,
+      family: nicknameFamilyName,
+    };
+  }
+  const note = conversation.get('note');
+  if (note) {
+    contactRecord.note = note;
+  }
   const systemGivenName = conversation.get('systemGivenName');
   if (systemGivenName) {
     contactRecord.systemGivenName = systemGivenName;
@@ -1064,7 +1076,11 @@ export async function mergeContactRecord(
   ) {
     // Local name doesn't match remote name, fetch profile
     if (localName) {
-      void conversation.getProfiles();
+      drop(
+        conversation.getProfiles().catch(() => {
+          /* nothing to do here; logging already happened */
+        })
+      );
       details.push('refreshing profile');
     } else {
       conversation.set({
@@ -1078,6 +1094,9 @@ export async function mergeContactRecord(
     systemGivenName: dropNull(contactRecord.systemGivenName),
     systemFamilyName: dropNull(contactRecord.systemFamilyName),
     systemNickname: dropNull(contactRecord.systemNickname),
+    nicknameGivenName: dropNull(contactRecord.nickname?.given),
+    nicknameFamilyName: dropNull(contactRecord.nickname?.family),
+    note: dropNull(contactRecord.note),
   });
 
   // https://github.com/signalapp/Signal-Android/blob/fc3db538bcaa38dc149712a483d3032c9c1f3998/app/src/main/java/org/thoughtcrime/securesms/database/RecipientDatabase.kt#L921-L936

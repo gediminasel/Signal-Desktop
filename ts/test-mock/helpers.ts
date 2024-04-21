@@ -3,6 +3,7 @@
 
 import { assert } from 'chai';
 import type { Locator, Page } from 'playwright';
+import { expect } from 'playwright/test';
 
 export function bufferToUuid(buffer: Buffer): string {
   const hex = buffer.toString('hex');
@@ -16,22 +17,32 @@ export function bufferToUuid(buffer: Buffer): string {
   ].join('-');
 }
 
-export async function type(input: Locator, text: string): Promise<void> {
+export async function typeIntoInput(
+  input: Locator,
+  text: string
+): Promise<void> {
   let currentValue = '';
+  let isInputElement = true;
 
   try {
     currentValue = await input.inputValue();
   } catch (e) {
+    isInputElement = false;
     // if input is actually not an input (e.g. contenteditable)
     currentValue = (await input.textContent()) ?? '';
   }
 
-  // Type with a reasonably human delay
-  await input.type(text, { delay: 100 });
+  const newValue = `${currentValue}${text}`;
+
+  await input.fill(newValue);
 
   // Wait to ensure that the input (and react state controlling it) has actually
   // updated with the right value
-  await input.locator(`:text("${currentValue}${text}")`).waitFor();
+  if (isInputElement) {
+    await expect(input).toHaveValue(newValue);
+  } else {
+    await input.locator(`:text("${newValue}")`).waitFor();
+  }
 }
 
 export async function expectItemsWithText(

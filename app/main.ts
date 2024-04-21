@@ -79,6 +79,7 @@ import { updateDefaultSession } from './updateDefaultSession';
 import { PreventDisplaySleepService } from './PreventDisplaySleepService';
 import { SystemTrayService, focusAndForceToTop } from './SystemTrayService';
 import { SystemTraySettingCache } from './SystemTraySettingCache';
+import { OptionalResourceService } from './OptionalResourceService';
 import {
   SystemTraySetting,
   shouldMinimizeToSystemTray,
@@ -206,13 +207,11 @@ const defaultWebPrefs = {
 const DISABLE_GPU =
   OS.isLinux() && !process.argv.some(arg => arg === '--enable-gpu');
 
-const FORCE_ENABLE_CRASH_REPORTS = process.argv.some(
-  arg => arg === '--enable-crash-reports'
-);
+const DISABLE_IPV6 = process.argv.some(arg => arg === '--disable-ipv6');
 
 const CLI_LANG = cliOptions.lang as string | undefined;
 
-setupCrashReports(getLogger, showDebugLogWindow, FORCE_ENABLE_CRASH_REPORTS);
+setupCrashReports(getLogger, showDebugLogWindow);
 
 let sendDummyKeystroke: undefined | (() => void);
 if (OS.isWindows()) {
@@ -1722,6 +1721,9 @@ if (DISABLE_GPU) {
 let ready = false;
 app.on('ready', async () => {
   dns.setFallback(await getDNSFallback());
+  if (DISABLE_IPV6) {
+    dns.setIPv6Enabled(false);
+  }
 
   const [userDataPath, crashDumpsPath, installPath] = await Promise.all([
     realpath(app.getPath('userData')),
@@ -1758,6 +1760,8 @@ app.on('ready', async () => {
 
   // Write buffered information into newly created logger.
   consoleLogger.writeBufferInto(logger);
+
+  OptionalResourceService.create(join(userDataPath, 'optionalResources'));
 
   sqlInitPromise = initializeSQL(userDataPath);
 
@@ -2427,6 +2431,9 @@ ipc.on('get-config', async event => {
     preferredSystemLocales: getPreferredSystemLocales(),
     localeOverride: getLocaleOverride(),
     version: app.getVersion(),
+    libsignalNetEnvironment: config.has('libsignalNetEnvironment')
+      ? config.get<string>('libsignalNetEnvironment')
+      : undefined,
     buildCreation: config.get<number>('buildCreation'),
     buildExpiration: config.get<number>('buildExpiration'),
     challengeUrl: config.get<string>('challengeUrl'),
@@ -2443,9 +2450,11 @@ ipc.on('get-config', async event => {
       !isTestEnvironment(getEnvironment()) && ciMode
         ? Environment.Production
         : getEnvironment(),
+    isMockTestEnvironment: Boolean(process.env.MOCK_TEST),
     ciMode,
     // Should be already computed and cached at this point
     dnsFallback: await getDNSFallback(),
+    disableIPv6: DISABLE_IPV6,
     ciBackupPath: config.get<string | null>('ciBackupPath') || undefined,
     nodeVersion: process.versions.node,
     hostname: os.hostname(),

@@ -41,9 +41,11 @@ export const rendererConfigSchema = z.object({
   contentProxyUrl: configRequiredStringSchema,
   crashDumpsPath: configRequiredStringSchema,
   ciMode: z.enum(['full', 'benchmark']).or(z.literal(false)),
+  disableIPv6: z.boolean(),
   dnsFallback: DNSFallbackSchema,
   ciBackupPath: configOptionalStringSchema,
   environment: environmentSchema,
+  isMockTestEnvironment: z.boolean(),
   homePath: configRequiredStringSchema,
   hostname: configRequiredStringSchema,
   installPath: configRequiredStringSchema,
@@ -71,6 +73,7 @@ export const rendererConfigSchema = z.object({
   resourcesUrl: configRequiredStringSchema,
   userDataPath: configRequiredStringSchema,
   version: configRequiredStringSchema,
+  libsignalNetEnvironment: configOptionalStringSchema,
   directoryConfig: directoryConfigSchema,
 
   // Only used by main window

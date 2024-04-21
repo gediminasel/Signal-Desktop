@@ -27,6 +27,7 @@ import {
 import type { ProcessedAttachment } from './Types.d';
 import type { WebAPIType } from './WebAPI';
 import { createName, getRelativePath } from '../windows/attachments';
+import { redactCdnKey } from '../util/privacy';
 
 export function getCdn(attachment: ProcessedAttachment): string {
   const { cdnId, cdnKey } = attachment;
@@ -89,22 +90,21 @@ export async function downloadAttachmentV2(
 ): Promise<AttachmentType> {
   const { cdnNumber, contentType, digest, key, size } = attachment;
   const cdn = getCdn(attachment);
-  const logId = `downloadAttachmentV2(${cdn}):`;
+  const logId = `downloadAttachmentV2(${redactCdnKey(cdn)}:`;
 
   strictAssert(digest, `${logId}: missing digest`);
   strictAssert(key, `${logId}: missing key`);
   strictAssert(isNumber(size), `${logId}: missing size`);
 
+  // TODO (DESKTOP-6845): download attachments differentially based on their
+  // media tier (i.e. transit tier or backup tier)
   const downloadStream = await server.getAttachmentV2(
     cdn,
     dropNull(cdnNumber),
     options
   );
-  log.info(`${logId} got download stream`);
 
   const cipherTextRelativePath = await downloadToDisk({ downloadStream, size });
-  log.info(`${logId} downloaded encrypted file to disk`);
-
   const cipherTextAbsolutePath =
     window.Signal.Migrations.getAbsoluteAttachmentPath(cipherTextRelativePath);
 
@@ -115,7 +115,6 @@ export async function downloadAttachmentV2(
     size,
     theirDigest: Bytes.fromBase64(digest),
   });
-  log.info(`${logId} successfully decrypted`);
 
   safeUnlinkSync(cipherTextAbsolutePath);
 

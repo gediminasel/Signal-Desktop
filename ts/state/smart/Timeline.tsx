@@ -42,6 +42,7 @@ import { SmartHeroRow } from './HeroRow';
 import { SmartMiniPlayer } from './MiniPlayer';
 import { SmartTimelineItem, type SmartTimelineItemProps } from './TimelineItem';
 import { SmartTypingBubble } from './TypingBubble';
+import { AttachmentDownloadManager } from '../../jobs/AttachmentDownloadManager';
 
 type ExternalProps = {
   id: string;
@@ -52,6 +53,7 @@ function renderItem({
   containerWidthBreakpoint,
   conversationId,
   isBlocked,
+  isGroup,
   isOldestTimelineItem,
   messageId,
   nextMessageId,
@@ -64,6 +66,7 @@ function renderItem({
       containerWidthBreakpoint={containerWidthBreakpoint}
       conversationId={conversationId}
       isBlocked={isBlocked}
+      isGroup={isGroup}
       isOldestTimelineItem={isOldestTimelineItem}
       messageId={messageId}
       previousMessageId={previousMessageId}
@@ -264,6 +267,9 @@ export const SmartTimeline = memo(function SmartTimeline({
       markMessageRead={markMessageRead}
       messageChangeCounter={messageChangeCounter}
       messageLoadingState={messageLoadingState}
+      updateVisibleMessages={
+        AttachmentDownloadManager.updateVisibleTimelineMessages
+      }
       oldestUnseenIndex={oldestUnseenIndex}
       peekGroupCallForTheFirstTime={peekGroupCallForTheFirstTime}
       peekGroupCallIfItHasMembers={peekGroupCallIfItHasMembers}
