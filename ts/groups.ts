@@ -149,6 +149,7 @@ type GroupV2MemberAddChangeType = {
 type GroupV2MemberAddFromInviteChangeType = {
   type: 'member-add-from-invite';
   aci: AciString;
+  pni?: PniString;
   inviter?: AciString;
 };
 type GroupV2MemberAddFromLinkChangeType = {
@@ -353,7 +354,7 @@ export async function getPreJoinGroupInfo(
     Bytes.fromBase64(masterKeyBase64)
   );
 
-  return makeRequestWithTemporalRetry({
+  return makeRequestWithCredentials({
     logId: `getPreJoinInfo/groupv2(${data.id})`,
     publicParams: Bytes.toBase64(data.publicParams),
     secretParams: Bytes.toBase64(data.secretParams),
@@ -462,7 +463,7 @@ async function uploadAvatar(
     }).finish();
     const ciphertext = encryptGroupBlob(clientZkGroupCipher, blobPlaintext);
 
-    const key = await makeRequestWithTemporalRetry({
+    const key = await makeRequestWithCredentials({
       logId: `uploadGroupAvatar/${logId}`,
       publicParams,
       secretParams,
@@ -1445,7 +1446,7 @@ async function uploadGroupChange({
   actions: Proto.GroupChange.IActions;
   group: ConversationAttributesType;
   inviteLinkPassword?: string;
-}): Promise<Proto.IGroupChange> {
+}): Promise<Proto.IGroupChangeResponse> {
   const logId = idForLogging(group.groupId);
 
   // Ensure we have the credentials we need before attempting GroupsV2 operations
@@ -1458,7 +1459,7 @@ async function uploadGroupChange({
     throw new Error('uploadGroupChange: group was missing publicParams!');
   }
 
-  return makeRequestWithTemporalRetry({
+  return makeRequestWithCredentials({
     logId: `uploadGroupChange/${logId}`,
     publicParams: group.publicParams,
     secretParams: group.secretParams,
@@ -1551,11 +1552,13 @@ export async function modifyGroupV2({
         }
 
         // Upload. If we don't have permission, the server will return an error here.
-        const groupChange = await uploadGroupChange({
+        const groupChangeResponse = await uploadGroupChange({
           actions,
           inviteLinkPassword,
           group: conversation.attributes,
         });
+        const { groupChange } = groupChangeResponse;
+        strictAssert(groupChange, 'missing groupChange');
 
         const groupChangeBuffer =
           Proto.GroupChange.encode(groupChange).finish();
@@ -1676,7 +1679,7 @@ export function deriveGroupFields(masterKey: Uint8Array): GroupFields {
   return fresh;
 }
 
-async function makeRequestWithTemporalRetry<T>({
+async function makeRequestWithCredentials<T>({
   logId,
   publicParams,
   secretParams,
@@ -1688,17 +1691,17 @@ async function makeRequestWithTemporalRetry<T>({
   request: (sender: MessageSender, options: GroupCredentialsType) => Promise<T>;
 }): Promise<T> {
   const groupCredentials = getCheckedGroupCredentialsForToday(
-    `makeRequestWithTemporalRetry/${logId}`
+    `makeRequestWithCredentials/${logId}`
   );
 
   const sender = window.textsecure.messaging;
   if (!sender) {
     throw new Error(
-      `makeRequestWithTemporalRetry/${logId}: textsecure.messaging is not available!`
+      `makeRequestWithCredentials/${logId}: textsecure.messaging is not available!`
     );
   }
 
-  log.info(`makeRequestWithTemporalRetry/${logId}: starting`);
+  log.info(`makeRequestWithCredentials/${logId}: starting`);
 
   const todayOptions = getGroupCredentials({
     authCredentialBase64: groupCredentials.today.credential,
@@ -1707,25 +1710,7 @@ async function makeRequestWithTemporalRetry<T>({
     serverPublicParamsBase64: window.getServerPublicParams(),
   });
 
-  try {
-    return await request(sender, todayOptions);
-  } catch (todayError) {
-    if (todayError.code === TEMPORAL_AUTH_REJECTED_CODE) {
-      log.warn(
-        `makeRequestWithTemporalRetry/${logId}: Trying again with tomorrow's credentials`
-      );
-      const tomorrowOptions = getGroupCredentials({
-        authCredentialBase64: groupCredentials.tomorrow.credential,
-        groupPublicParamsBase64: publicParams,
-        groupSecretParamsBase64: secretParams,
-        serverPublicParamsBase64: window.getServerPublicParams(),
-      });
-
-      return request(sender, tomorrowOptions);
-    }
-
-    throw todayError;
-  }
+  return request(sender, todayOptions);
 }
 
 export async function fetchMembershipProof({
@@ -1745,7 +1730,7 @@ export async function fetchMembershipProof({
     throw new Error('fetchMembershipProof: group was missing secretParams!');
   }
 
-  const response = await makeRequestWithTemporalRetry({
+  const response = await makeRequestWithCredentials({
     logId: 'fetchMembershipProof',
     publicParams,
     secretParams,
@@ -1897,7 +1882,7 @@ export async function createGroupV2(
   });
 
   try {
-    await makeRequestWithTemporalRetry({
+    await makeRequestWithCredentials({
       logId: `createGroupV2/${logId}`,
       publicParams,
       secretParams,
@@ -2053,7 +2038,7 @@ export async function hasV1GroupBeenMigrated(
   const fields = deriveGroupFields(masterKeyBuffer);
 
   try {
-    await makeRequestWithTemporalRetry({
+    await makeRequestWithCredentials({
       logId: `getGroup/${logId}`,
       publicParams: Bytes.toBase64(fields.publicParams),
       secretParams: Bytes.toBase64(fields.secretParams),
@@ -2410,7 +2395,7 @@ export async function initiateMigrationToGroupV2(
       });
 
       try {
-        await makeRequestWithTemporalRetry({
+        await makeRequestWithCredentials({
           logId: `createGroup/${logId}`,
           publicParams,
           secretParams,
@@ -2429,12 +2414,15 @@ export async function initiateMigrationToGroupV2(
       groupChangeMessages.push({
         ...generateBasicMessage(),
         type: 'group-v1-migration',
-        invitedGV2Members: pendingMembersV2.map(
-          ({ serviceId: uuid, ...rest }) => {
-            return { ...rest, uuid };
-          }
-        ),
-        droppedGV2MemberIds,
+        groupMigration: {
+          areWeInvited: false,
+          droppedMemberIds: droppedGV2MemberIds,
+          invitedMembers: pendingMembersV2.map(
+            ({ serviceId: uuid, ...rest }) => {
+              return { ...rest, uuid };
+            }
+          ),
+        },
         readStatus: ReadStatus.Read,
         seenStatus: SeenStatus.Seen,
       });
@@ -2728,7 +2716,7 @@ export async function respondToGroupV2Migration({
   let firstGroupState: Proto.IGroup | null | undefined;
 
   try {
-    const response: GroupLogResponseType = await makeRequestWithTemporalRetry({
+    const response: GroupLogResponseType = await makeRequestWithCredentials({
       logId: `getGroupLog/${logId}`,
       publicParams,
       secretParams,
@@ -2752,12 +2740,13 @@ export async function respondToGroupV2Migration({
         `respondToGroupV2Migration/${logId}: Failed to access log endpoint; fetching full group state`
       );
       try {
-        firstGroupState = await makeRequestWithTemporalRetry({
+        const groupResponse = await makeRequestWithCredentials({
           logId: `getGroup/${logId}`,
           publicParams,
           secretParams,
           request: (sender, options) => sender.getGroup(options),
         });
+        firstGroupState = groupResponse.group;
       } catch (secondError) {
         if (secondError.code === GROUP_ACCESS_DENIED_CODE) {
           log.info(
@@ -3598,7 +3587,7 @@ async function updateGroupViaPreJoinInfo({
 
   // No password, but if we're already pending approval, we can access this without it.
   const inviteLinkPassword = undefined;
-  const preJoinInfo = await makeRequestWithTemporalRetry({
+  const preJoinInfo = await makeRequestWithCredentials({
     logId: `getPreJoinInfo/${logId}`,
     publicParams,
     secretParams,
@@ -3666,12 +3655,15 @@ async function updateGroupViaState({
     throw new Error('updateGroupViaState: group was missing publicParams!');
   }
 
-  const groupState = await makeRequestWithTemporalRetry({
+  const groupResponse = await makeRequestWithCredentials({
     logId: `getGroup/${logId}`,
     publicParams,
     secretParams,
     request: (sender, requestOptions) => sender.getGroup(requestOptions),
   });
+
+  const groupState = groupResponse.group;
+  strictAssert(groupState, 'Group state must be present');
 
   const decryptedGroupState = decryptGroupState(
     groupState,
@@ -3806,11 +3798,11 @@ async function updateGroupViaLogs({
   // `integrateGroupChanges`.
   let revisionToFetch = isNumber(currentRevision) ? currentRevision : undefined;
 
-  let response;
+  let response: GroupLogResponseType;
   const changes: Array<Proto.IGroupChanges> = [];
   do {
     // eslint-disable-next-line no-await-in-loop
-    response = await makeRequestWithTemporalRetry({
+    response = await makeRequestWithCredentials({
       logId: `getGroupLog/${logId}`,
       publicParams,
       secretParams,
@@ -4445,6 +4437,7 @@ function extractDiffs({
         details.push({
           type: 'member-add-from-invite',
           aci,
+          pni,
           inviter: pendingMember.addedByUserId,
         });
       } else if (currentMember.joinedFromLink) {

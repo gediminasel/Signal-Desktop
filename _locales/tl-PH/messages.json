@@ -380,12 +380,6 @@
   "icu:invalidConversation": {
     "messageformat": "Ang group na ito'y invalid. Mag-create ng bagong group."
   },
-  "icu:taskbarMarkedUnread": {
-    "messageformat": "I-mark as unread"
-  },
-  "icu:taskbarUnreadMessages": {
-    "messageformat": "{count, plural, one {{count,number} hindi pa nabasang mensahe} other {{count,number} hindi pa nabasang mensahe}}"
-  },
   "icu:scrollDown": {
     "messageformat": "Mag-scroll papuntang dulo ng chat"
   },
@@ -1220,6 +1214,9 @@
   "icu:CallingLobby__CallLinkNotice--phone-sharing": {
     "messageformat": "Makikita ng sinumang sasali sa tawag na ito ang iyong pangalan, photo, at phone number."
   },
+  "icu:CallingLobby__CallLinkNotice--join-request-pending": {
+    "messageformat": "Naghihintay na papasukin…"
+  },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "Sumali"
   },
@@ -1228,6 +1225,9 @@
   },
   "icu:CallingLobbyJoinButton--call-full": {
     "messageformat": "Puno na ang call"
+  },
+  "icu:CallingLobbyJoinButton--ask-to-join": {
+    "messageformat": "Mag-request na sumali"
   },
   "icu:calling__button--video-disabled": {
     "messageformat": "Disabled ang camera"
@@ -1271,8 +1271,20 @@
   "icu:CallingButton--more-options": {
     "messageformat": "Karagdagang options"
   },
+  "icu:CallingPendingParticipants__ApproveUser": {
+    "messageformat": "I-approve ang request na sumali"
+  },
+  "icu:CallingPendingParticipants__DenyUser": {
+    "messageformat": "I-deny ang request na sumali"
+  },
+  "icu:CallingPendingParticipants__RequestsToJoin": {
+    "messageformat": "{count, plural, one {May {count,number} request na sumali sa call} other {May {count,number} requests na sumali sa call}}"
+  },
   "icu:CallingRaisedHandsList__Title": {
-    "messageformat": "{count, plural, one {Nakataas ang kamay · {count,number} tao} other {Nakataas ang kamay · {count,number} tao}}"
+    "messageformat": "{count, plural, one {{count,number} ang nagtaas ng kamay} other {{count,number} ang nagtaas ng kamay}}"
+  },
+  "icu:CallingRaisedHandsList__TitleHint": {
+    "messageformat": "(first to last)"
   },
   "icu:CallingReactions--me": {
     "messageformat": "Ikaw"
@@ -1352,8 +1364,17 @@
   "icu:calling__presenting--notification-body": {
     "messageformat": "I-click ito para bumalik sa call when you're ready to stop presenting."
   },
+  "icu:calling__presenting--reconnecting--notification-title": {
+    "messageformat": "Nagre-reconnect…"
+  },
+  "icu:calling__presenting--reconnecting--notification-body": {
+    "messageformat": "Nawala ang connection mo. Nagre-reconnect ang Signal."
+  },
   "icu:calling__presenting--info": {
     "messageformat": "Signal is sharing {window}."
+  },
+  "icu:calling__presenting--reconnecting": {
+    "messageformat": "Nagre-reconnect…"
   },
   "icu:calling__presenting--stop": {
     "messageformat": "Stop sharing"
@@ -2450,9 +2471,6 @@
   "icu:MessageRequests--unblock-group-confirm-body": {
     "messageformat": "Ang mga kasapi ng grupong ito ay maaaring isali kang muli sa grupong ito."
   },
-  "icu:MessageRequests--block-and-report-spam": {
-    "messageformat": "I-report Bilang Spam at I-block"
-  },
   "icu:MessageRequests--block-and-report-spam-success-toast": {
     "messageformat": "Ni-report bilang spam at na-block na."
   },
@@ -2760,7 +2778,10 @@
     "messageformat": "A window"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "Kopyahin ang link"
+    "messageformat": "Kopyahin ang call link"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClient": {
+    "messageformat": "Tanggalin ang taong ito sa call"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -3144,7 +3165,7 @@
     "messageformat": "{count, plural, one {Nag-invite si {memberName} ng 1 tao sa group.} other {Nag-invite si {memberName} ng {count,number} tao sa group.}}"
   },
   "icu:GroupV2--pending-add--many--you": {
-    "messageformat": "Nag-invite ka ng {count,number} user sa group."
+    "messageformat": "{count, plural, one {Nag-invite ka ng {count,number} user sa group.} other {Nag-invite ka ng {count,number} users sa group.}}"
   },
   "icu:GroupV2--pending-add--many--unknown": {
     "messageformat": "{count, plural, one {In-invite ang 1 tao sa group.} other {In-invite ang {count,number} tao sa group.}}"
@@ -3177,13 +3198,13 @@
     "messageformat": "Binawi ng isang admin ang invitatiton ng 1 user sa group."
   },
   "icu:GroupV2--pending-remove--revoke--many--other": {
-    "messageformat": "Binawi ni {memberName} ang group invitations ng {count,number} users."
+    "messageformat": "{count, plural, one {Binawi ni {memberName} ang invitation sa 1 tao na sumali sa group.} other {Binawi ni {memberName} ang invitations sa {count,number} tao na sumali sa group.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--you": {
-    "messageformat": "Binawi mo ang group invitations ng {count,number} users."
+    "messageformat": "{count, plural, one {Binawi mo ang invitation sa 1 tao na sumali sa group.} other {Binawi mo ang invitation sa {count,number} tao na sumali sa group.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--unknown": {
-    "messageformat": "Binawi ng isang admin ang group invitations ng {count,number} users."
+    "messageformat": "{count, plural, one {Binawi ng isang admin ang group invitation para sa 1 tao.} other {Binawi ng isang admin ang group invitation para sa {count,number} tao.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--one--other": {
     "messageformat": "Binawi ni {adminName} ang invitation ng 1 user sa group na inimbitahan ni {memberName}."
@@ -3207,19 +3228,19 @@
     "messageformat": "{count, plural, one {Binawi ni {adminName} ang group invitations ng {count,number} taong inimbita ni {memberName}.} other {Binawi ni {adminName} ang group invitations ng {count,number} taong inimbita ni {memberName}.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--you": {
-    "messageformat": "Binawi mo ang invitations ng {count,number} users sa group na inimbitahan ni {memberName}."
+    "messageformat": "{count, plural, one {Binawi mo ang invitation ni {memberName} sa{count,number} tao na sumali sa group.} other {Binawi mo ang invitations ni {memberName} sa{count,number} tao na sumali sa group.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--unknown": {
-    "messageformat": "Binawi ng isang admin ang invitations ng {count,number} users sa group na inimbitahan ni {memberName}."
+    "messageformat": "{count, plural, one {Binawi ng isang admin ang invitation ni {memberName} para sa {count,number} tao na sumali sa group.} other {Binawi ng isang admin ang invitations ni {memberName} para sa {count,number} tao na sumali sa group.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--other": {
-    "messageformat": "Binawi ni {adminName} ang na-send mong group invitations para sa {count,number} users."
+    "messageformat": "{count, plural, one {Binawi ni {adminName} ang invitation mo sa {count,number} tao na sumali sa group.} other {Binawi ni {adminName} ang invitations mo sa {count,number} tao na sumali sa group.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--you": {
-    "messageformat": "Nag-decide kang i-cancel ang iyong invitation sa {count,number} users."
+    "messageformat": "{count, plural, one {Inalis mo ang iyong invitation sa {count,number} tao.} other {Inalis mo ang iyong invitation sa {count,number} tao.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--unknown": {
-    "messageformat": "Binawi ng isang admin ang na-send mong group invitations sa {count,number} users."
+    "messageformat": "{count, plural, one {Binawi ng isang admin ang invitation mo sa {count,number} tao na sumali sa group.} other {Binawi ng isang admin ang invitations mo sa {count,number} tao na sumali sa group.}}"
   },
   "icu:GroupV2--admin-approval-add-one--you": {
     "messageformat": "Nag-send ka ng request para mag-join sa group."
@@ -3362,17 +3383,26 @@
   "icu:GroupV1--Migration--info--invited--one": {
     "messageformat": "Ang member na ito'y kinakailangang mag-accept ng invite para maka-join ulit sa group na ito at hindi sila makakatanggap ng group messages hanggang i-accept nila ito:"
   },
+  "icu:GroupV1--Migration--info--invited--count": {
+    "messageformat": "{count, plural, one {{count,number} member ang kailangang mag-accept ng invite para makasali ulit sa group na ito, at hindi makatatanggap ng group messages hanggang sa i-accept nila ito.} other {{count,number} members ang kailangang mag-accept ng invite para makasali ulit sa group na ito, at hindi makatatanggap ng group messages hanggang sa i-accept nila ito.}}"
+  },
   "icu:GroupV1--Migration--info--removed--before--many": {
     "messageformat": "Ang members na ito'y hindi kayang mag-join sa New Groups, at matatanggal mula sa group:"
   },
   "icu:GroupV1--Migration--info--removed--before--one": {
     "messageformat": "Ang member na ito'y hindi kayang mag-join sa New Groups, at matatanggal mula sa group:"
   },
+  "icu:GroupV1--Migration--info--removed--before--count": {
+    "messageformat": "{count, plural, one {{count,number} member ang hindi makasali sa New Groups, at matatanggal siya sa group.} other {{count,number} members ang hindi makasali sa New Groups, at matatanggal siya sa group.}}"
+  },
   "icu:GroupV1--Migration--info--removed--after--many": {
     "messageformat": "Ang members na ito'y hindi kayang mag-join sa New Groups, at matatanggal mula sa group:"
   },
   "icu:GroupV1--Migration--info--removed--after--one": {
     "messageformat": "Ang member na ito'y hindi kayang mag-join sa New Groups, at natanggal mula sa group:"
+  },
+  "icu:GroupV1--Migration--info--removed--after--count": {
+    "messageformat": "{count, plural, one {{count,number} member ang hindi makasali sa New Groups, at tinanggal siya sa group.} other {{count,number} members ang hindi makasali sa New Groups, at tinanggal sila sa group.}}"
   },
   "icu:GroupV1--Migration--invited--you": {
     "messageformat": "Hindi ka ma-add sa Bagong Group at inimbitahan kang sumali."
@@ -3381,7 +3411,7 @@
     "messageformat": "Hindi ma-add si {contact} sa New Group at na-invite na siya para maka-join."
   },
   "icu:GroupV1--Migration--invited--many": {
-    "messageformat": "{count,number} members ang hindi ma-add sa New Group at na-invite para mag-join."
+    "messageformat": "{count, plural, one {{count,number} member ang hindi maisali sa New Groups, at inimbitahan siyang sumali rito.} other {{count,number} members ang hindi maisali sa New Groups, at inimbitahan siyang sumali rito.}}"
   },
   "icu:GroupV1--Migration--removed--one": {
     "messageformat": "Natanggal si {contact} mula sa group."
@@ -4380,10 +4410,10 @@
     "messageformat": "Wala"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__title": {
-    "messageformat": "Are you sure?"
+    "messageformat": "Sigurado ka ba?"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__description": {
-    "messageformat": "If you change “{settingTitle}” to “{nobodyLabel}” it will make it harder for people to find you on Signal."
+    "messageformat": "Magiging mas mahirap para sa iba na hanapin ka sa Signal kapag ginawa mong \"{nobodyLabel}\" ang \"{settingTitle}\"."
   },
   "icu:Preferences--messaging": {
     "messageformat": "Messaging"
@@ -4656,13 +4686,13 @@
     "messageformat": "Binlock mo ang taong ito"
   },
   "icu:MessageRequestResponseNotification__Message--Blocked--Group": {
-    "messageformat": "You blocked the group"
+    "messageformat": "Binlock mo ang group"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked": {
-    "messageformat": "You unblocked this person"
+    "messageformat": "Inunblock mo ang taong ito"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked--Group": {
-    "messageformat": "You unblocked the group"
+    "messageformat": "Inunblock mo ang group"
   },
   "icu:MessageRequestResponseNotification__Button--Options": {
     "messageformat": "Options"
@@ -5313,6 +5343,9 @@
   "icu:CallHistory__Description--Declined": {
     "messageformat": "{type, select, Audio {Declined voice call} Video {Declined video call} Group {Declined group call} other {Declined  call}}"
   },
+  "icu:CallHistory__Description--Adhoc": {
+    "messageformat": "Call link"
+  },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} ang nagta-type.} other {{count,number} ang nagta-type.}}"
   },
@@ -5334,7 +5367,7 @@
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
-    "messageformat": "May ilang inalis na bugs para mapanatiling maganda ang takbo ng app. Abangan ang iba pang mas exciting na pagbabago! ",
+    "messageformat": "May ilang inalis na bugs para mapanatiling maganda ang takbo ng app. Abangan ang iba pang mas exciting na pagbabago!",
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
@@ -5352,14 +5385,5 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Dagdag na maliliit na pag-aayos, pag-alis ng bugs, at pagpapaganda ng takbo ng app. Maraming salamat sa paggamit ng Signal!",
     "ignoreUnused": true
-  },
-  "icu:WhatsNew__v7.5--0": {
-    "messageformat": "Nagdagdag kami ng suporta para sa custom nicknames at notes para sa mga ka-chat mo dito sa Signal, kahit na wala sila sa system contacts mo. Ang notes at nicknames ay nagbibigay ng convenient at secure na paraan para maglagay ng additional details tungkol sa Signal Connections mo — at ito'y end-to-end encrypted at protektado ng iyong Signal PIN para pwede mo itong ma-restore kung sakaling mawala ang phone mo."
-  },
-  "icu:WhatsNew__v7.5--1": {
-    "messageformat": "Pwede mo nang i-minimize ang Signal sa system tray mo sa Linux. "
-  },
-  "icu:WhatsNew__v7.5--2": {
-    "messageformat": "Para sa Windows users, ibinabalik ng update na ito ang suporta para sa detalyadong bilang ng unread messages sa Signal icon."
   }
 }

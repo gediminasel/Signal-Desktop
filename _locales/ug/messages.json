@@ -380,12 +380,6 @@
   "icu:invalidConversation": {
     "messageformat": "بۇ گۇرۇپپا ئىناۋەتسىز. يېڭى گۇرۇپپا قۇرۇڭ."
   },
-  "icu:taskbarMarkedUnread": {
-    "messageformat": "ئوقۇلمىغان دەپ بەلگە قويۇلغان"
-  },
-  "icu:taskbarUnreadMessages": {
-    "messageformat": "{count, plural, other {{count,number} ئوقۇلمىغان ئۇچۇر}}"
-  },
   "icu:scrollDown": {
     "messageformat": "پاراڭنىڭ ئاستىغا سىيرىش"
   },
@@ -1220,6 +1214,9 @@
   "icu:CallingLobby__CallLinkNotice--phone-sharing": {
     "messageformat": "بۇ ئۇلىنىش ئارقىلىق توپقا قېتىلغانلار سىزنىڭ ئىسمىڭىز، رەسىمىڭىز ۋە تېلېفون نومۇرىڭىزنى كۆرەلەيدۇ."
   },
+  "icu:CallingLobby__CallLinkNotice--join-request-pending": {
+    "messageformat": "قېتىلىشنى كۈتىۋاتىدۇ..."
+  },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "قوشۇلۇش"
   },
@@ -1228,6 +1225,9 @@
   },
   "icu:CallingLobbyJoinButton--call-full": {
     "messageformat": "چاقىرىق توشتى"
+  },
+  "icu:CallingLobbyJoinButton--ask-to-join": {
+    "messageformat": "قوشۇلۇشنى تەلەپ قىلىش"
   },
   "icu:calling__button--video-disabled": {
     "messageformat": "كامېرا چەكلەنگەن"
@@ -1271,8 +1271,20 @@
   "icu:CallingButton--more-options": {
     "messageformat": "تېخىمۇ كۆپ تاللاش"
   },
+  "icu:CallingPendingParticipants__ApproveUser": {
+    "messageformat": "قوشۇلۇش تەلىپىنى تەستىقلاش"
+  },
+  "icu:CallingPendingParticipants__DenyUser": {
+    "messageformat": "قوشۇلۇش تەلىپىنى رەت قىلىش"
+  },
+  "icu:CallingPendingParticipants__RequestsToJoin": {
+    "messageformat": "{count, plural, other {{count,number} چاقىرىققا قوشۇلۇش تەلىپى}}"
+  },
   "icu:CallingRaisedHandsList__Title": {
-    "messageformat": "{count, plural, other {قول كۆتۈرگەنلەر· {count,number} كىشى}}"
+    "messageformat": "{count, plural, other {{count,number} قول كۆتۈردى}}"
+  },
+  "icu:CallingRaisedHandsList__TitleHint": {
+    "messageformat": "(بىرىنچىدىن ئاخىرغىچە)"
   },
   "icu:CallingReactions--me": {
     "messageformat": "سىز"
@@ -1352,8 +1364,17 @@
   "icu:calling__presenting--notification-body": {
     "messageformat": "ئېكران ئورتاقلىشىشنى ئاخىرلاشتۇرماقچى بولغاندا، بۇ يەرنى چېكىپ چاقىرىققا قايتسىڭىز بولىدۇ."
   },
+  "icu:calling__presenting--reconnecting--notification-title": {
+    "messageformat": "قايتا ئۇلىنىۋاتىدۇ..."
+  },
+  "icu:calling__presenting--reconnecting--notification-body": {
+    "messageformat": "ئۇلىنىشىڭىز يوقاپ كەتتى. Signal قايتا ئۇلىنىۋاتىدۇ."
+  },
   "icu:calling__presenting--info": {
     "messageformat": "Signal {window} ئېكرانىنى ئورتاقلىشىۋاتىدۇ."
+  },
+  "icu:calling__presenting--reconnecting": {
+    "messageformat": "قايتا ئۇلىنىۋاتىدۇ..."
   },
   "icu:calling__presenting--stop": {
     "messageformat": "ئورتاقلىشىشنى توختىتىش"
@@ -2450,9 +2471,6 @@
   "icu:MessageRequests--unblock-group-confirm-body": {
     "messageformat": "گۇرۇپپا ئەزالىرى سىزنى بۇ گۇرۇپپىغا قايتا قوشالايدۇ."
   },
-  "icu:MessageRequests--block-and-report-spam": {
-    "messageformat": "ئەخلەت ئ‍ۇچۇرنى مەلۇم قىلىش ۋە چەكلەش"
-  },
   "icu:MessageRequests--block-and-report-spam-success-toast": {
     "messageformat": "ئەخلەت ئۇچۇر دەپ مەلۇم قىلىنىپ چەكلەندى."
   },
@@ -2760,7 +2778,10 @@
     "messageformat": "كۆزنەك"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "ئۇلانما كۆچۈر"
+    "messageformat": "چاقىرىق ئۇلانمىسىنى كۆچۈرۈش"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClient": {
+    "messageformat": "بۇ كىشىنى چاقىرىقتىن چىقىرىۋېتىش"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "سىن"
@@ -3144,7 +3165,7 @@
     "messageformat": "{count, plural, other {{memberName} بۇگۇرۇپپىغا {count,number} كىشىنى تەكلىپ قىلدى.}}"
   },
   "icu:GroupV2--pending-add--many--you": {
-    "messageformat": "سىز گۇرۇپپىغا {count,number} كىشى تەكلىپ قىلدىڭىز."
+    "messageformat": "{count, plural, other {بۇ گۇرۇپپىغا {count,number} كىشى تەكلىپ قىلدىڭىز.}}"
   },
   "icu:GroupV2--pending-add--many--unknown": {
     "messageformat": "{count, plural, other {بۇ گۇرۇپپىغا {count,number} كىشى تەكلىپ قىلىندى.}}"
@@ -3177,13 +3198,13 @@
     "messageformat": "بىر باشقۇرغۇچى 1 كىشىنىڭ گۇرۇپپىغا كىرىش تەكلىپىنى بىكار قىلدى."
   },
   "icu:GroupV2--pending-remove--revoke--many--other": {
-    "messageformat": "{memberName} {count,number} كىشىنىڭ گۇرۇپپىغا كىرىش تەكلىپىنى بىكار قىلدى."
+    "messageformat": "{count, plural, other {{memberName} {count,number} كىشىنىڭ گۇرۇپپىغا كىرىش تەكلىپىنى بىكار قىلدى.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--you": {
-    "messageformat": "{count,number} كىشىنىڭ گۇرۇپپىغا كىرىش تەكلىپىنى بىكار قىلدىڭىز."
+    "messageformat": "{count, plural, other {{count,number} كىشىنىڭ گۇرۇپپىغا كىرىش تەكلىپىنى بىكار قىلدىڭىز.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--unknown": {
-    "messageformat": "بىر باشقۇرغۇچى {count,number} كىشىنىڭ گۇرۇپپىغا كىرىش تەكلىپىنى بىكار قىلدى."
+    "messageformat": "{count, plural, other {بىر باشقۇرغۇچى {count,number} كىشىنىڭ گۇرۇپپىغا كىرىش تەكلىپىنى بىكار قىلدى.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--one--other": {
     "messageformat": "{adminName} {memberName} ئەۋەتكەن 1 كىشىنىڭ گۇرۇپپىغا قاتنىشىش تەكلىپىنى بىكار قىلدى."
@@ -3207,19 +3228,19 @@
     "messageformat": "{count, plural, other {{adminName} {memberName} تەكلىپ قىلغان {count,number} كىشىنىڭ گۇرۇپپىغا كىرىش تەكلىپنامىسىنى بىكار قىلدى.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--you": {
-    "messageformat": "سىز {memberName} گۇرۇپپىغا قاتنىشىشقا تەكلىپ قىلغان {count,number} كىشىنىڭ تەكلىپىنى بىكار قىلدى."
+    "messageformat": "{count, plural, other {{memberName} تەكلىپ قىلغان {count,number} كىشىنىڭ گۇرۇپپىغا كىرىش تەكلىپنامىسىنى بىكار قىلدىڭىز.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--unknown": {
-    "messageformat": "بىر باشقۇرغۇچى {memberName} گۇرۇپپىغا قاتنىشىشقا تەكلىپ قىلغان {count,number} كىشىنىڭ تەكلىپىنى بىكار قىلدى."
+    "messageformat": "{count, plural, other {بىر باشقۇرغۇچى {memberName} تەكلىپ قىلغان {count,number} كىشىنىڭ گۇرۇپپىغا كىرىش تەكلىپنامىسىنى بىكار قىلدى.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--other": {
-    "messageformat": "{adminName} سىز {count,number} كىشىگە ئەۋەتكەن گۇرۇپپىغا قاتنىشىش تەكلىپىنى بىكار قىلدى."
+    "messageformat": "{count, plural, other {{adminName} سىز {count,number} كىشىگە ئەۋەتكەن گۇرۇپپىغا كىرىش تەكلىپىنى بىكار قىلدى.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--you": {
-    "messageformat": "{count,number} كىشىگە ئەۋەتكەن تەكلىپىڭىزنى قايتۇرۇۋالدىڭىز."
+    "messageformat": "{count, plural, other {{count,number} كىشىگە ئەۋەتكەن تەكلىپىڭىزنى قايتۇرۇۋالدىڭىز.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--unknown": {
-    "messageformat": "بىر باشقۇرغۇچى سىز {count,number} كىشىگە يوللىغان گۇرۇپپىغا قاتنىشىش تەكلىپىنى بىكار قىلدى."
+    "messageformat": "{count, plural, other {بىر باشقۇرغۇچى سىز {count,number} كىشىگە يوللىغان گۇرۇپپىغا قاتنىشىش تەكلىپىنى بىكار قىلدى.}}"
   },
   "icu:GroupV2--admin-approval-add-one--you": {
     "messageformat": "گۇرۇپپىغا قوشۇلۇش ئىلتىماسى يوللىدىڭىز."
@@ -3362,17 +3383,26 @@
   "icu:GroupV1--Migration--info--invited--one": {
     "messageformat": "بۇ ئەزا بۇ گۇرۇپپىغا قايتا قوشۇلۇش تەكلىپنامىسىنى قوبۇل قىلىشى كېرەك، ئۇلار تەكلىپنامىنى قوبۇل قىلمىغۇچە گۇرۇپپا ئۇچۇرلىرىنى تاپشۇرۇۋالمايدۇ:"
   },
+  "icu:GroupV1--Migration--info--invited--count": {
+    "messageformat": "{count, plural, other {{count,number} ئەزا بۇ گۇرۇپپىغا قايتا قوشۇلۇش ئۈچۈن تەكلىپنامىنى قوبۇل قىلىشى كېرەك، ئۇلار تەكلىپنامىنى قوبۇل قىلمىغۇچە گۇرۇپپا ئۇچۇرلىرىنى تاپشۇرۇۋالالمايدۇ.}}"
+  },
   "icu:GroupV1--Migration--info--removed--before--many": {
     "messageformat": "بۇ ئەزالار «يېڭى گۇرۇپپا»غا كىرەلمەيدۇ، ھەمدە بۇ گۇرۇپپىدىن چىقىرىۋېتىلىدۇ:"
   },
   "icu:GroupV1--Migration--info--removed--before--one": {
     "messageformat": "بۇ ئەزا «يېڭى گۇرۇپپا»غا كىرەلمەيدۇ، ھەمدە بۇ گۇرۇپپىدىن چىقىرىۋېتىلىدۇ:"
   },
+  "icu:GroupV1--Migration--info--removed--before--count": {
+    "messageformat": "{count, plural, other {{count,number} ئەزا «يېڭى گۇرۇپپا»غا كىرەلمەيدۇ، ھەمدە بۇ گۇرۇپپىدىن چىقىرىۋېتىلىدۇ.}}"
+  },
   "icu:GroupV1--Migration--info--removed--after--many": {
     "messageformat": "بۇ ئەزالار «يېڭى گۇرۇپپا» غا كىرەلمەيدۇ، ھەمدە بۇ گۇرۇپپىدىن چىقىرىۋېتىلىدۇ:"
   },
   "icu:GroupV1--Migration--info--removed--after--one": {
     "messageformat": "بۇ ئەزا «يېڭى گۇرۇپپا» غا كىرەلمەيدۇ، ھەمدە بۇ گۇرۇپپىدىن چىقىرىۋېتىلىدۇ:"
+  },
+  "icu:GroupV1--Migration--info--removed--after--count": {
+    "messageformat": "{count, plural, other {{count,number} ئەزا «يېڭى گۇرۇپپا»غا كىرەلمەيدۇ، ھەمدە بۇ گۇرۇپپىدىن چىقىرىۋېتىلىدۇ.}}"
   },
   "icu:GroupV1--Migration--invited--you": {
     "messageformat": "تەكلىپ قىلىنمىغۇچە يېڭى گۇرۇپپىغا قوشۇلالمايسىز."
@@ -3381,7 +3411,7 @@
     "messageformat": "«{contact}» نى «يېڭى گۇرۇپپا» غا قوشقىلى بولمىدى ھەمدە ئۇنىڭغا گۇرۇپپىغا قوشۇلۇش تەكلىپى ئەۋەتىلدى."
   },
   "icu:GroupV1--Migration--invited--many": {
-    "messageformat": "{count,number} ئەزانى «يېڭى گۇرۇپپا» غا قوشقىلى بولمىدى ۋە ئۇلارغا گۇرۇپپىغا قوشۇلۇش تەكلىپى ئەۋەتىلدى."
+    "messageformat": "{count, plural, other {{count,number} ئەزانى «يېڭى گۇرۇپپا» غا قوشقىلى بولمىدى ۋە ئۇلارغا گۇرۇپپىغا قوشۇلۇش تەكلىپى ئەۋەتىلدى.}}"
   },
   "icu:GroupV1--Migration--removed--one": {
     "messageformat": "{contact} گۇرۇپپىدىن چىقىرىۋېتىلدى."
@@ -4380,10 +4410,10 @@
     "messageformat": "ھېچكىم"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__title": {
-    "messageformat": "Are you sure?"
+    "messageformat": "جەزملەشتۈرەمسىز؟"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__description": {
-    "messageformat": "If you change “{settingTitle}” to “{nobodyLabel}” it will make it harder for people to find you on Signal."
+    "messageformat": "ئەگەر «{settingTitle}» نى «{nobodyLabel}» گە ئۆزگەرتسىڭىز، كىشىلەرنىڭ سىزنى Signal دا تېپىشى تەسلىشىدۇ."
   },
   "icu:Preferences--messaging": {
     "messageformat": "ئۇچۇرلىشىش"
@@ -4656,13 +4686,13 @@
     "messageformat": "بۇ ئىشلەتكۈچىنى توسىۋەتتىڭىز"
   },
   "icu:MessageRequestResponseNotification__Message--Blocked--Group": {
-    "messageformat": "You blocked the group"
+    "messageformat": "بۇ گۇرۇپپىنى چەكلىدىڭىز"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked": {
-    "messageformat": "You unblocked this person"
+    "messageformat": "بۇ كىشىنى چەكلەشنى بىكار قىلدىڭىز"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked--Group": {
-    "messageformat": "You unblocked the group"
+    "messageformat": "بۇ گۇرۇپپىنى چەكلەشنى بىكار قىلدىڭىز"
   },
   "icu:MessageRequestResponseNotification__Button--Options": {
     "messageformat": "تاللاش"
@@ -5313,6 +5343,9 @@
   "icu:CallHistory__Description--Declined": {
     "messageformat": "{type, select, Audio {رەت قىلىنغان ئاۋازلىق چاقىرىق} Video {رەت قىلىنغان ۋىدېيولۇق چاقىرىق} Group {رەت قىلىنغان توپ چاقىرىقى} other {رەت قىلىنغان  چاقىرىق}}"
   },
+  "icu:CallHistory__Description--Adhoc": {
+    "messageformat": "چاقىرىق ئۇلانمىسى"
+  },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, other {{count,number} باشقىلار يېزىۋاتىدۇ.}}"
   },
@@ -5334,7 +5367,7 @@
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
-    "messageformat": "ئەپنىڭ راۋان ئىجرا بولۇشى ئۈچۈن كاشىلا ھەل قىلىندى. ھاياجانلىق ئۆزگىرىشلەر سىز بىلەن يۈز كۆرۈشكۈسى! ",
+    "messageformat": "ئەپنىڭ راۋان ئىجرا بولۇشى ئۈچۈن كاشىلا ھەل قىلىندى. ھاياجانلىق ئۆزگىرىشلەر سىز بىلەن يۈز كۆرۈشكۈسى!",
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
@@ -5352,14 +5385,5 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "كىچىك ئۆزگەرتىشلەر كىرگۈزۈلدى، كاشىلا ھەل قىلىندى ۋە ئىقتىدار ئەلالاشتۇرۇلدى. Signal نى ئىشلەتكەنلىكىڭىزگە رەھمەت!",
     "ignoreUnused": true
-  },
-  "icu:WhatsNew__v7.5--0": {
-    "messageformat": "• Signal دا پاراڭلىشىۋاتقان ھەر قانداق كىشىگە، ئۇلار ھەتتا سىستېما ئالاقىداشلار تىزىملىكىڭىزدە بولمىسىمۇ، خاس لەقەم ۋە خاتىرىلەرنى  قوشۇش ئىقتىدارىنى قوشتۇق. خاتىرە ۋە لەقەملەر سىزنىڭ سىگنال ئالاقىداشلىرىڭىزغا مۇناسىۋەتلىك تېخىمۇ كۆپ تەپسىلاتلارنى قوشۇشنى قولايلىق، بىخەتەر ئۇسۇل بىلەن تەمىنلەيدۇ، ئۇلار سىزنىڭ Signal PIN تەرىپىدىن نۇقتىدىن نۇقتىغىچە مەخپىيلەشتۈرۈلۈپ قوغدىلىدۇ، شۇڭا تېلېفونىڭىزنى يوقىتىپ قويسىڭىزمۇ ئۇلارنى بىخەتەر ئەسلىگە كەلتۈرەلەيسىز."
-  },
-  "icu:WhatsNew__v7.5--1": {
-    "messageformat": "Signal ئەمدى Linux دىكى سىستېما تەخسىسىگە كىچىكلىتىپ قويالايسىز."
-  },
-  "icu:WhatsNew__v7.5--2": {
-    "messageformat": "Windows ئىشلەتكۈچىلىرى ئۈچۈن، بۇ يېڭىلاش Signal سىنبەلگىسىدىكى ئوقۇلمىغان ئۇچۇر سانى تەپسىلات ئىقتىدارىنى قايتا ئىشلەتكىلى بولىدىغان قىلىدۇ."
   }
 }

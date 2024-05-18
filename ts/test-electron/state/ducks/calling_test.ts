@@ -10,12 +10,15 @@ import { reducer as rootReducer } from '../../../state/reducer';
 import { noopAction } from '../../../state/ducks/noop';
 import type {
   ActiveCallStateType,
+  CallingActionType,
   CallingStateType,
   DirectCallStateType,
   GroupCallReactionsReceivedActionType,
   GroupCallStateChangeActionType,
   GroupCallStateType,
+  HandleCallLinkUpdateType,
   SendGroupCallReactionActionType,
+  StartCallLinkLobbyType,
 } from '../../../state/ducks/calling';
 import {
   actions,
@@ -36,6 +39,11 @@ import {
 import { generateAci } from '../../../types/ServiceId';
 import { getDefaultConversation } from '../../../test-both/helpers/getDefaultConversation';
 import type { UnwrapPromise } from '../../../types/Util';
+import {
+  FAKE_CALL_LINK,
+  FAKE_CALL_LINK_WITH_ADMIN_KEY,
+  getCallLinkState,
+} from '../../../test-both/helpers/fakeCallLink';
 
 const ACI_1 = generateAci();
 const NOW = new Date('2020-01-23T04:56:00.000');
@@ -70,7 +78,6 @@ describe('calling duck', () => {
       localAudioLevel: 0,
       viewMode: CallViewMode.Paginated,
       showParticipantsList: false,
-      safetyNumberChangedAcis: [],
       outgoingRing: true,
       pip: false,
       settingsDialogOpen: false,
@@ -108,6 +115,7 @@ describe('calling duck', () => {
         localDemuxId: 1,
         peekInfo: {
           acis: [creatorAci],
+          pendingAcis: [],
           creatorAci,
           eraId: 'xyz',
           maxDevices: 16,
@@ -153,7 +161,6 @@ describe('calling duck', () => {
       localAudioLevel: 0,
       viewMode: CallViewMode.Paginated,
       showParticipantsList: false,
-      safetyNumberChangedAcis: [],
       outgoingRing: false,
       pip: false,
       settingsDialogOpen: false,
@@ -482,7 +489,6 @@ describe('calling duck', () => {
             localAudioLevel: 0,
             viewMode: CallViewMode.Paginated,
             showParticipantsList: false,
-            safetyNumberChangedAcis: [],
             outgoingRing: false,
             pip: false,
             settingsDialogOpen: false,
@@ -577,7 +583,6 @@ describe('calling duck', () => {
             localAudioLevel: 0,
             viewMode: CallViewMode.Paginated,
             showParticipantsList: false,
-            safetyNumberChangedAcis: [],
             outgoingRing: false,
             pip: false,
             settingsDialogOpen: false,
@@ -904,6 +909,7 @@ describe('calling duck', () => {
             hasLocalVideo: false,
             peekInfo: {
               acis: [creatorAci],
+              pendingAcis: [],
               creatorAci,
               eraId: 'xyz',
               maxDevices: 16,
@@ -934,6 +940,7 @@ describe('calling duck', () => {
             localDemuxId: 1,
             peekInfo: {
               acis: [creatorAci],
+              pendingAcis: [],
               creatorAci,
               eraId: 'xyz',
               maxDevices: 16,
@@ -969,6 +976,7 @@ describe('calling duck', () => {
             hasLocalVideo: false,
             peekInfo: {
               acis: [ACI_1],
+              pendingAcis: [],
               maxDevices: 16,
               deviceCount: 1,
             },
@@ -997,6 +1005,7 @@ describe('calling duck', () => {
             localDemuxId: 1,
             peekInfo: {
               acis: [ACI_1],
+              pendingAcis: [],
               maxDevices: 16,
               deviceCount: 1,
             },
@@ -1043,6 +1052,7 @@ describe('calling duck', () => {
             hasLocalVideo: false,
             peekInfo: {
               acis: [ACI_1],
+              pendingAcis: [],
               maxDevices: 16,
               deviceCount: 1,
             },
@@ -1097,6 +1107,7 @@ describe('calling duck', () => {
             hasLocalVideo: false,
             peekInfo: {
               acis: [ACI_1],
+              pendingAcis: [],
               maxDevices: 16,
               deviceCount: 1,
             },
@@ -1138,6 +1149,7 @@ describe('calling duck', () => {
             hasLocalVideo: false,
             peekInfo: {
               acis: [ACI_1],
+              pendingAcis: [],
               maxDevices: 16,
               deviceCount: 1,
             },
@@ -1172,6 +1184,7 @@ describe('calling duck', () => {
             hasLocalVideo: true,
             peekInfo: {
               acis: [ACI_1],
+              pendingAcis: [],
               maxDevices: 16,
               deviceCount: 1,
             },
@@ -1198,7 +1211,6 @@ describe('calling duck', () => {
           localAudioLevel: 0,
           viewMode: CallViewMode.Paginated,
           showParticipantsList: false,
-          safetyNumberChangedAcis: [],
           outgoingRing: false,
           pip: false,
           settingsDialogOpen: false,
@@ -1219,6 +1231,7 @@ describe('calling duck', () => {
             hasLocalVideo: true,
             peekInfo: {
               acis: [ACI_1],
+              pendingAcis: [],
               maxDevices: 16,
               deviceCount: 1,
             },
@@ -1265,6 +1278,7 @@ describe('calling duck', () => {
             hasLocalVideo: true,
             peekInfo: {
               acis: [],
+              pendingAcis: [],
               maxDevices: 16,
               deviceCount: 0,
             },
@@ -1295,6 +1309,7 @@ describe('calling duck', () => {
             hasLocalVideo: true,
             peekInfo: {
               acis: [ACI_1],
+              pendingAcis: [],
               maxDevices: 16,
               deviceCount: 1,
             },
@@ -1303,6 +1318,161 @@ describe('calling duck', () => {
         );
 
         assert.isFalse(result.activeCallState?.outgoingRing);
+      });
+    });
+
+    describe('handleCallLinkUpdate', () => {
+      const {
+        roomId,
+        name,
+        restrictions,
+        expiration,
+        revoked,
+        rootKey,
+        adminKey,
+      } = FAKE_CALL_LINK;
+
+      beforeEach(function (this: Mocha.Context) {
+        this.callingServiceReadCallLink = this.sandbox
+          .stub(callingService, 'readCallLink')
+          .resolves({
+            callLinkState: getCallLinkState(FAKE_CALL_LINK),
+            errorStatusCode: undefined,
+          });
+      });
+
+      const doAction = async (
+        payload: HandleCallLinkUpdateType
+      ): Promise<{ dispatch: sinon.SinonSpy }> => {
+        const { handleCallLinkUpdate } = actions;
+        const dispatch = sinon.spy();
+        await handleCallLinkUpdate(payload)(dispatch, getEmptyRootState, null);
+        return { dispatch };
+      };
+
+      it('reads the call link from calling service', async function (this: Mocha.Context) {
+        await doAction({ rootKey, adminKey: null });
+
+        sinon.assert.calledOnce(this.callingServiceReadCallLink);
+      });
+
+      it('dispatches HANDLE_CALL_LINK_UPDATE', async () => {
+        const { dispatch } = await doAction({ rootKey, adminKey: null });
+
+        sinon.assert.calledOnce(dispatch);
+        sinon.assert.calledWith(dispatch, {
+          type: 'calling/HANDLE_CALL_LINK_UPDATE',
+          payload: {
+            roomId,
+            callLinkDetails: {
+              name,
+              restrictions,
+              expiration,
+              revoked,
+              rootKey,
+              adminKey,
+            },
+          },
+        });
+      });
+
+      it('can save adminKey', async () => {
+        const { dispatch } = await doAction({ rootKey, adminKey: 'banana' });
+
+        sinon.assert.calledOnce(dispatch);
+        sinon.assert.calledWith(dispatch, {
+          type: 'calling/HANDLE_CALL_LINK_UPDATE',
+          payload: {
+            roomId,
+            callLinkDetails: {
+              name,
+              restrictions,
+              expiration,
+              revoked,
+              rootKey,
+              adminKey: 'banana',
+            },
+          },
+        });
+      });
+    });
+
+    describe('startCallLinkLobby', () => {
+      const callLobbyData = {
+        callMode: CallMode.Adhoc,
+        connectionState: GroupCallConnectionState.NotConnected,
+        hasLocalAudio: true,
+        hasLocalVideo: true,
+        joinState: GroupCallJoinState.NotJoined,
+        peekInfo: [],
+        remoteParticipants: [],
+      };
+      const callLinkState = getCallLinkState(FAKE_CALL_LINK);
+
+      const getStateWithAdminKey = (): RootStateType => ({
+        ...getEmptyRootState(),
+        calling: {
+          ...getEmptyState(),
+          callLinks: {
+            [FAKE_CALL_LINK_WITH_ADMIN_KEY.roomId]:
+              FAKE_CALL_LINK_WITH_ADMIN_KEY,
+          },
+        },
+      });
+
+      beforeEach(function (this: Mocha.Context) {
+        this.callingServiceReadCallLink = this.sandbox
+          .stub(callingService, 'readCallLink')
+          .resolves({
+            callLinkState,
+            errorStatusCode: undefined,
+          });
+        this.callingServiceStartCallLinkLobby = this.sandbox
+          .stub(callingService, 'startCallLinkLobby')
+          .resolves(callLobbyData);
+      });
+
+      const doAction = async (
+        payload: StartCallLinkLobbyType
+      ): Promise<{ dispatch: sinon.SinonSpy }> => {
+        const { startCallLinkLobby } = actions;
+        const dispatch = sinon.spy();
+        await startCallLinkLobby(payload)(dispatch, getEmptyRootState, null);
+        return { dispatch };
+      };
+
+      it('reads the link and dispatches START_CALL_LINK_LOBBY', async function (this: Mocha.Context) {
+        const { roomId, rootKey } = FAKE_CALL_LINK;
+        const { dispatch } = await doAction({ rootKey });
+
+        sinon.assert.calledOnce(dispatch);
+        sinon.assert.calledWith(dispatch, {
+          type: 'calling/START_CALL_LINK_LOBBY',
+          payload: {
+            ...callLobbyData,
+            callLinkState,
+            callLinkRootKey: rootKey,
+            conversationId: roomId,
+            isConversationTooBigToRing: false,
+          },
+        });
+      });
+
+      it('preserves adminKey', () => {
+        const { startCallLinkLobby } = actions;
+        const { roomId, rootKey, adminKey } = FAKE_CALL_LINK_WITH_ADMIN_KEY;
+        const dispatch = sinon.spy();
+        const result = reducer(
+          getStateWithAdminKey().calling,
+          startCallLinkLobby({
+            rootKey,
+          })(
+            dispatch,
+            getStateWithAdminKey,
+            null
+          ) as unknown as Readonly<CallingActionType>
+        );
+        assert.equal(result.callLinks[roomId]?.adminKey, adminKey);
       });
     });
 
@@ -1450,6 +1620,7 @@ describe('calling duck', () => {
             localDemuxId: undefined,
             peekInfo: {
               acis: [],
+              pendingAcis: [],
               maxDevices: Infinity,
               deviceCount: 0,
             },
@@ -1887,7 +2058,6 @@ describe('calling duck', () => {
             localAudioLevel: 0,
             viewMode: CallViewMode.Paginated,
             showParticipantsList: false,
-            safetyNumberChangedAcis: [],
             pip: false,
             settingsDialogOpen: false,
             outgoingRing: true,
@@ -1904,6 +2074,7 @@ describe('calling duck', () => {
             joinState: GroupCallJoinState.NotJoined,
             peekInfo: {
               acis: [creatorAci],
+              pendingAcis: [],
               creatorAci,
               eraId: 'xyz',
               maxDevices: 16,
@@ -1931,6 +2102,7 @@ describe('calling duck', () => {
             localDemuxId: undefined,
             peekInfo: {
               acis: [creatorAci],
+              pendingAcis: [],
               creatorAci,
               eraId: 'xyz',
               maxDevices: 16,
@@ -1970,6 +2142,7 @@ describe('calling duck', () => {
           const call = result.callsByConversation['fake-conversation-id'];
           assert.deepEqual(call?.callMode === CallMode.Group && call.peekInfo, {
             acis: [],
+            pendingAcis: [],
             maxDevices: Infinity,
             deviceCount: 0,
           });
@@ -2001,6 +2174,7 @@ describe('calling duck', () => {
             result.callsByConversation['fake-group-call-conversation-id'];
           assert.deepEqual(call?.callMode === CallMode.Group && call.peekInfo, {
             acis: [creatorAci],
+            pendingAcis: [],
             creatorAci,
             eraId: 'xyz',
             maxDevices: 16,
@@ -2029,6 +2203,7 @@ describe('calling duck', () => {
             joinState: GroupCallJoinState.NotJoined,
             peekInfo: {
               acis: [differentCreatorAci],
+              pendingAcis: [],
               creatorAci: differentCreatorAci,
               eraId: 'abc',
               maxDevices: 5,
@@ -2051,6 +2226,7 @@ describe('calling duck', () => {
           const call = result.callsByConversation['fake-conversation-id'];
           assert.deepEqual(call?.callMode === CallMode.Group && call.peekInfo, {
             acis: [differentCreatorAci],
+            pendingAcis: [],
             creatorAci: differentCreatorAci,
             eraId: 'abc',
             maxDevices: 5,
@@ -2195,7 +2371,6 @@ describe('calling duck', () => {
           localAudioLevel: 0,
           viewMode: CallViewMode.Paginated,
           showParticipantsList: false,
-          safetyNumberChangedAcis: [],
           pip: false,
           settingsDialogOpen: false,
           outgoingRing: true,

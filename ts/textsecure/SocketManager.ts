@@ -36,7 +36,7 @@ import WebSocketResource, {
   TransportOption,
   WebSocketResourceWithShadowing,
 } from './WebsocketResources';
-import { HTTPError } from './Errors';
+import { ConnectTimeoutError, HTTPError } from './Errors';
 import type { IRequestHandler, WebAPICredentials } from './Types.d';
 import { connect as connectWebSocket } from './WebSocket';
 import { isAlpha, isBeta, isStaging } from '../util/version';
@@ -86,7 +86,7 @@ export class SocketManager extends EventListener {
 
   private credentials?: WebAPICredentials;
 
-  private proxyAgent?: ProxyAgent;
+  private lazyProxyAgent?: Promise<ProxyAgent>;
 
   private status = SocketStatus.CLOSED;
 
@@ -115,6 +115,13 @@ export class SocketManager extends EventListener {
 
   public getStatus(): SocketStatus {
     return this.status;
+  }
+
+  private markOffline() {
+    if (this.privIsOnline !== false) {
+      this.privIsOnline = false;
+      this.emit('offline');
+    }
   }
 
   // Update WebAPICredentials and reconnect authenticated resource if
@@ -164,6 +171,7 @@ export class SocketManager extends EventListener {
       name: AUTHENTICATED_CHANNEL_NAME,
       path: '/v1/websocket/',
       query: { login: username, password },
+      proxyAgent: await this.getProxyAgent(),
       resourceOptions: {
         name: AUTHENTICATED_CHANNEL_NAME,
         keepalive: { path: '/v1/keepalive' },
@@ -256,10 +264,11 @@ export class SocketManager extends EventListener {
           return;
         }
 
-        if (code === -1 && this.privIsOnline !== false) {
-          this.privIsOnline = false;
-          this.emit('offline');
+        if (code === -1) {
+          this.markOffline();
         }
+      } else if (error instanceof ConnectTimeoutError) {
+        this.markOffline();
       }
 
       drop(reconnect());
@@ -321,6 +330,7 @@ export class SocketManager extends EventListener {
     return this.connectResource({
       name: 'provisioning',
       path: '/v1/websocket/provisioning/',
+      proxyAgent: await this.getProxyAgent(),
       resourceOptions: {
         name: 'provisioning',
         handleRequest: (req: IncomingWebSocketRequest): void => {
@@ -339,16 +349,13 @@ export class SocketManager extends EventListener {
     url: string;
     extraHeaders?: Record<string, string>;
   }): Promise<WebSocket> {
-    // Create proxy agent lazily
-    if (this.options.proxyUrl && !this.proxyAgent) {
-      this.proxyAgent = await createProxyAgent(this.options.proxyUrl);
-    }
+    const proxyAgent = await this.getProxyAgent();
 
     return connectWebSocket({
       name: 'art-creator-provisioning',
       url,
       version: this.options.version,
-      proxyAgent: this.proxyAgent,
+      proxyAgent,
       extraHeaders,
 
       createResource(socket: WebSocket): WebSocket {
@@ -525,15 +532,11 @@ export class SocketManager extends EventListener {
     }
   }
 
-  private transportOption(): TransportOption {
+  private transportOption(proxyAgent: ProxyAgent | undefined): TransportOption {
     const { hostname } = URL.parse(this.options.url);
 
     // transport experiment doesn't support proxy
-    if (
-      this.proxyAgent ||
-      hostname == null ||
-      !hostname.endsWith('signal.org')
-    ) {
+    if (proxyAgent || hostname == null || !hostname.endsWith('signal.org')) {
       return TransportOption.Original;
     }
 
@@ -564,8 +567,12 @@ export class SocketManager extends EventListener {
         : TransportOption.ShadowingLow;
     }
 
-    // in prod, using original
-    return TransportOption.ShadowingLow;
+    const configValue = window.Signal.RemoteConfig.isEnabled(
+      'desktop.experimentalTransportEnabled.prod'
+    );
+    return configValue
+      ? TransportOption.ShadowingLow
+      : TransportOption.Original;
   }
 
   private connectLibsignalUnauthenticated(): AbortableProcess<IWebSocketResource> {
@@ -590,25 +597,30 @@ export class SocketManager extends EventListener {
 
     log.info('SocketManager: connecting unauthenticated socket');
 
-    const transportOption = this.transportOption();
+    const proxyAgent = await this.getProxyAgent();
+
+    const transportOption = this.transportOption(proxyAgent);
     log.info(
       `SocketManager: connecting unauthenticated socket, transport option [${transportOption}]`
     );
 
+    let process: AbortableProcess<IWebSocketResource>;
+
     if (transportOption === TransportOption.Libsignal) {
-      this.unauthenticated = this.connectLibsignalUnauthenticated();
-      return this.unauthenticated.getResult();
+      process = this.connectLibsignalUnauthenticated();
+    } else {
+      process = this.connectResource({
+        name: UNAUTHENTICATED_CHANNEL_NAME,
+        path: '/v1/websocket/',
+        proxyAgent,
+        resourceOptions: {
+          name: UNAUTHENTICATED_CHANNEL_NAME,
+          keepalive: { path: '/v1/keepalive' },
+          transportOption,
+        },
+      });
     }
 
-    const process = this.connectResource({
-      name: UNAUTHENTICATED_CHANNEL_NAME,
-      path: '/v1/websocket/',
-      resourceOptions: {
-        name: UNAUTHENTICATED_CHANNEL_NAME,
-        keepalive: { path: '/v1/keepalive' },
-        transportOption,
-      },
-    });
     this.unauthenticated = process;
 
     let unauthenticated: IWebSocketResource;
@@ -646,12 +658,14 @@ export class SocketManager extends EventListener {
   private connectResource({
     name,
     path,
+    proxyAgent,
     resourceOptions,
     query = {},
     extraHeaders = {},
   }: {
     name: string;
     path: string;
+    proxyAgent: ProxyAgent | undefined;
     resourceOptions: WebSocketResourceOptions;
     query?: Record<string, string>;
     extraHeaders?: Record<string, string>;
@@ -671,7 +685,7 @@ export class SocketManager extends EventListener {
       url,
       version,
       certificateAuthority: this.options.certificateAuthority,
-      proxyAgent: this.proxyAgent,
+      proxyAgent,
 
       extraHeaders,
 
@@ -874,6 +888,14 @@ export class SocketManager extends EventListener {
       username === this.credentials.username &&
       password === this.credentials.password
     );
+  }
+
+  private async getProxyAgent(): Promise<ProxyAgent | undefined> {
+    if (this.options.proxyUrl && !this.lazyProxyAgent) {
+      // Cache the promise so that we don't import concurrently.
+      this.lazyProxyAgent = createProxyAgent(this.options.proxyUrl);
+    }
+    return this.lazyProxyAgent;
   }
 
   // EventEmitter types

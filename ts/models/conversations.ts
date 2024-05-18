@@ -51,7 +51,7 @@ import type {
   CustomColorType,
 } from '../types/Colors';
 import type { MessageModel } from './messages';
-import { getContact } from '../messages/helpers';
+import { getAuthor } from '../messages/helpers';
 import { strictAssert } from '../util/assert';
 import { isConversationMuted } from '../util/isConversationMuted';
 import { isConversationSMSOnly } from '../util/isConversationSMSOnly';
@@ -2727,11 +2727,17 @@ export class ConversationModel extends window.Backbone
       return this.get('verified') === this.verifiedEnum.VERIFIED;
     }
 
-    if (!this.contactCollection?.length) {
+    const contacts = this.contactCollection;
+
+    if (contacts == null || contacts.length === 0) {
       return false;
     }
 
-    return this.contactCollection?.every(contact => {
+    if (contacts.length === 1 && isMe(contacts.first()?.attributes)) {
+      return false;
+    }
+
+    return contacts.every(contact => {
       if (isMe(contact.attributes)) {
         return true;
       }
@@ -3008,15 +3014,9 @@ export class ConversationModel extends window.Backbone
         'addKeyChange'
       );
 
-      const isUntrusted = await this.isUntrusted();
-
       this.trigger('newmessage', model);
 
       const serviceId = this.getServiceId();
-      // Group calls are always with folks that have a serviceId
-      if (isUntrusted && isAciString(serviceId)) {
-        window.reduxActions.calling.keyChanged({ aci: serviceId });
-      }
 
       if (isDirectConversation(this.attributes)) {
         window.reduxActions?.safetyNumber.clearSafetyNumber(this.id);
@@ -4522,9 +4522,10 @@ export class ConversationModel extends window.Backbone
       }
     }
 
-    const ourConversationId =
-      window.ConversationController.getOurConversationId();
-    source = source || ourConversationId;
+    const ourConversation =
+      window.ConversationController.getOurConversationOrThrow();
+    source = source || ourConversation.id;
+    const sourceServiceId = ourConversation.get('serviceId');
 
     this.set({ expireTimer });
 
@@ -4541,7 +4542,7 @@ export class ConversationModel extends window.Backbone
     const isFromSyncOperation =
       reason === 'group sync' || reason === 'contact sync';
     const isFromMe =
-      window.ConversationController.get(source)?.id === ourConversationId;
+      window.ConversationController.get(source) === ourConversation;
     const isNoteToSelf = isMe(this.attributes);
     const shouldBeRead =
       (isInitialSync && isFromSyncOperation) || isFromMe || isNoteToSelf;
@@ -4553,6 +4554,7 @@ export class ConversationModel extends window.Backbone
       expirationTimerUpdate: {
         expireTimer,
         source,
+        sourceServiceId,
         fromSync,
         fromGroupUpdate,
       },
@@ -5159,7 +5161,7 @@ export class ConversationModel extends window.Backbone
 
     const sender = reaction
       ? window.ConversationController.get(reaction.fromId)
-      : getContact(message.attributes);
+      : getAuthor(message.attributes);
     const senderName = sender
       ? sender.getTitle()
       : window.i18n('icu:unknownContact');

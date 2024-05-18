@@ -263,11 +263,16 @@ export interface IWebSocketResource extends IResource {
   localPort(): number | undefined;
 }
 
-export class LibsignalWebSocketResource implements IWebSocketResource {
+export class LibsignalWebSocketResource
+  extends EventTarget
+  implements IWebSocketResource
+{
   constructor(
     private readonly chatService: Net.ChatService,
     private readonly socketIpVersion: IpVersion | undefined
-  ) {}
+  ) {
+    super();
+  }
 
   public static connect(
     libsignalNet: Net.Net,
@@ -311,11 +316,13 @@ export class LibsignalWebSocketResource implements IWebSocketResource {
     return this.socketIpVersion;
   }
 
-  public addEventListener(
-    _name: 'close',
-    _handler: (ev: CloseEvent) => void
-  ): void {
-    // noop
+  public override addEventListener(
+    name: 'close',
+    handler: (ev: CloseEvent) => void
+  ): void;
+
+  public override addEventListener(name: string, handler: EventHandler): void {
+    return super.addEventListener(name, handler);
   }
 
   public close(_code?: number, _reason?: string): void {
@@ -656,13 +663,10 @@ export default class WebSocketResource
     strictAssert(!this.shuttingDown, 'Cannot send request, shutting down');
     this.addActive(idString);
     const promise = new Promise<SendRequestResult>((resolve, reject) => {
-      const sentAt = Date.now();
-      let timedOut = false;
-
       let timer = options.timeout
         ? Timers.setTimeout(() => {
-            timedOut = true;
             this.removeActive(idString);
+            this.close(3001, 'Request timed out');
             reject(new Error(`Request timed out; id: [${idString}]`));
           }, options.timeout)
         : undefined;
@@ -672,16 +676,8 @@ export default class WebSocketResource
           Timers.clearTimeout(timer);
           timer = undefined;
         }
-        if (timedOut) {
-          log.warn(
-            `${this.logId}: Response received after timeout; ` +
-              `id: [${idString}], path: [${options.path}], ` +
-              `response time: ${Date.now() - sentAt}ms`
-          );
-        } else {
-          // Reset keepalive when an on-time response arrives
-          this.keepalive?.reset();
-        }
+
+        this.keepalive?.reset();
         this.removeActive(idString);
         resolve(result);
       });

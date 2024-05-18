@@ -380,12 +380,6 @@
   "icu:invalidConversation": {
     "messageformat": "Бұл топ жарамайды. Жаңа топ жасаңыз."
   },
-  "icu:taskbarMarkedUnread": {
-    "messageformat": "Оқылмаған деп белгіленді"
-  },
-  "icu:taskbarUnreadMessages": {
-    "messageformat": "{count, plural, one {{count,number} оқылмаған хат} other {{count,number} хат оқылмаған}}"
-  },
   "icu:scrollDown": {
     "messageformat": "Чаттың астына түсу"
   },
@@ -1220,6 +1214,9 @@
   "icu:CallingLobby__CallLinkNotice--phone-sharing": {
     "messageformat": "Осы қоңырауға сілтеме арқылы қосылған кез келген адам сіздің аты-жөніңізді, фотосуретіңізді және телефон нөміріңізді көретін болады."
   },
+  "icu:CallingLobby__CallLinkNotice--join-request-pending": {
+    "messageformat": "Рұқсат берілгені күтілуде…"
+  },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "Қосылу"
   },
@@ -1228,6 +1225,9 @@
   },
   "icu:CallingLobbyJoinButton--call-full": {
     "messageformat": "Қоңырауда орын жоқ"
+  },
+  "icu:CallingLobbyJoinButton--ask-to-join": {
+    "messageformat": "Қосылуды сұрау"
   },
   "icu:calling__button--video-disabled": {
     "messageformat": "Камера өшірілді"
@@ -1271,8 +1271,20 @@
   "icu:CallingButton--more-options": {
     "messageformat": "Қосымша опциялар"
   },
+  "icu:CallingPendingParticipants__ApproveUser": {
+    "messageformat": "Қосылуға өтінішті растау"
+  },
+  "icu:CallingPendingParticipants__DenyUser": {
+    "messageformat": "Қосылуға өтінішті қабылдамау"
+  },
+  "icu:CallingPendingParticipants__RequestsToJoin": {
+    "messageformat": "{count, plural, one {Қоңырауға қосылу туралы {count,number} өтініш} other {Қоңырауға қосылу туралы {count,number} өтініш}}"
+  },
   "icu:CallingRaisedHandsList__Title": {
-    "messageformat": "{count, plural, one {Көтерілген қолдар · {count,number} адам} other {Көтерілген қолдар · {count,number} адам}}"
+    "messageformat": "{count, plural, one {{count,number} адам қол көтерді} other {{count,number} адам қол көтерді}}"
+  },
+  "icu:CallingRaisedHandsList__TitleHint": {
+    "messageformat": "(біріншіден соңғыға дейін)"
   },
   "icu:CallingReactions--me": {
     "messageformat": "Сіз"
@@ -1352,8 +1364,17 @@
   "icu:calling__presenting--notification-body": {
     "messageformat": "Экран бөлісуді тоқтатуға дайын болғанда, қоңырауға қайту үшін осы жерді басыңыз."
   },
+  "icu:calling__presenting--reconnecting--notification-title": {
+    "messageformat": "Байланыс қайта орнатылуда..."
+  },
+  "icu:calling__presenting--reconnecting--notification-body": {
+    "messageformat": "Байланыс үзілді. Signal қайта қосылуда."
+  },
   "icu:calling__presenting--info": {
     "messageformat": "Signal {window} бөлісіп жатыр."
+  },
+  "icu:calling__presenting--reconnecting": {
+    "messageformat": "Байланыс қайта орнатылуда..."
   },
   "icu:calling__presenting--stop": {
     "messageformat": "Бөлісуді тоқтату"
@@ -2450,9 +2471,6 @@
   "icu:MessageRequests--unblock-group-confirm-body": {
     "messageformat": "Топ мүшелері сізді бұл топқа қайта қоса алады."
   },
-  "icu:MessageRequests--block-and-report-spam": {
-    "messageformat": "Спам деп хабарлап, блоктау"
-  },
   "icu:MessageRequests--block-and-report-spam-success-toast": {
     "messageformat": "Спам деп хабарланып, блокталды."
   },
@@ -2760,7 +2778,10 @@
     "messageformat": "Терезе"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "Сілтемені көшіру"
+    "messageformat": "Қоңырау сілтемесін көшіру"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClient": {
+    "messageformat": "Бұл адамды қоңыраудан өшіріп тастау"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Видео"
@@ -3144,7 +3165,7 @@
     "messageformat": "{count, plural, one {{memberName} 1 адамды топқа шақырды.} other {{memberName} {count,number} адамды топқа шақырды.}}"
   },
   "icu:GroupV2--pending-add--many--you": {
-    "messageformat": "Сіз {count,number} адамды топқа шақырдыңыз."
+    "messageformat": "{count, plural, one {Сіз {count,number} адамды топқа шақырдыңыз.} other {Сіз {count,number} адамды топқа шақырдыңыз.}}"
   },
   "icu:GroupV2--pending-add--many--unknown": {
     "messageformat": "{count, plural, one {1 адам топқа шақырылды.} other {{count,number} адам топқа шақырылды.}}"
@@ -3177,13 +3198,13 @@
     "messageformat": "Әкімші 1 адамды топқа шақырудан бас тартты."
   },
   "icu:GroupV2--pending-remove--revoke--many--other": {
-    "messageformat": "{memberName} {count,number} адамды топқа шақырудан бас тартты."
+    "messageformat": "{count, plural, one {{memberName} 1 адамды топқа шақырудан бас тартты.} other {{memberName} {count,number} адамды топқа шақырудан бас тартты.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--you": {
-    "messageformat": "Сіз {count,number} адамды топқа шақырудан бас тарттыңыз."
+    "messageformat": "{count, plural, one {Сіз 1 адамды топқа шақырудан бас тарттыңыз.} other {Сіз {count,number} адамды топқа шақырудан бас тарттыңыз.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--unknown": {
-    "messageformat": "Әкімші {count,number} адамды топқа шақырудан бас тартты."
+    "messageformat": "{count, plural, one {Әкімші 1 адамды топқа шақырудан бас тартты.} other {Әкімші {count,number} адамды топқа шақырудан бас тартты.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--one--other": {
     "messageformat": "{adminName} {memberName} шақырған 1 адамды топқа шақырудан бас тартты."
@@ -3207,19 +3228,19 @@
     "messageformat": "{count, plural, one {{adminName} {memberName} шақырған {count,number} адамды топқа қосудан бас тартты.} other {{adminName} {memberName} шақырған {count,number} адамды топқа қосудан бас тартты.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--you": {
-    "messageformat": "Сіз {memberName} шақырған {count,number} адамды топқа шақырудан бас тарттыңыз."
+    "messageformat": "{count, plural, one {Сіз {memberName} шақырған {count,number} адамды топқа шақырудан бас тарттыңыз.} other {Сіз {memberName} шақырған {count,number} адамды топқа шақырудан бас тарттыңыз.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--unknown": {
-    "messageformat": "Әкімші {memberName} шақырған {count,number} адамды топқа шақырудан бас тартты."
+    "messageformat": "{count, plural, one {{count,number} шақырған {memberName} адамды топқа қосудан бас тартты.} other {Әкімші {memberName} шақырған {count,number} адамды топқа шақырудан бас тартты.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--other": {
-    "messageformat": "{adminName} сіздің {count,number} адамға жіберген топқа шақыруыңыздан бас тартты."
+    "messageformat": "{count, plural, one {{adminName} сіздің {count,number} адамға жіберген топқа шақыруыңыздан бас тартты.} other {{adminName} сіздің {count,number} адамға жіберген топқа шақыруыңыздан бас тартты.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--you": {
-    "messageformat": "Сіз {count,number} адамға жіберген шақыруыңыздан бас тарттыңыз."
+    "messageformat": "{count, plural, one {Сіз {count,number} адамға жіберген шақыруыңыздан бас тарттыңыз.} other {Сіз {count,number} адамға жіберген шақыруыңыздан бас тарттыңыз.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--unknown": {
-    "messageformat": "Әкімші сіздің {count,number} адамға жіберген топқа шақыруыңыздан бас тартты."
+    "messageformat": "{count, plural, one {Әкімші сіздің {count,number} адамға жіберген топқа шақыруыңыздан бас тартты.} other {Әкімші сіздің {count,number} адамға жіберген топқа шақыруыңыздан бас тартты.}}"
   },
   "icu:GroupV2--admin-approval-add-one--you": {
     "messageformat": "Топқа қосылуға өтініш жібердіңіз."
@@ -3362,17 +3383,26 @@
   "icu:GroupV1--Migration--info--invited--one": {
     "messageformat": "Бұл топ мүшесі топқа қайта қосылу үшін шақыруды қабылдауы керек. Ол шақыруды қабылдамайынша, топ хаттарын ала алмайды."
   },
+  "icu:GroupV1--Migration--info--invited--count": {
+    "messageformat": "{count, plural, one {{count,number} мүше топқа қосылуға жіберілген шақыруды қайта қабылдауы керек. Оны қабылдамайынша, топтағы хаттарды ала алмайды.} other {{count,number} мүше топқа қосылуға жіберілген шақыруды қайта қабылдауы керек. Оны қабылдамайынша, топтағы хаттарды ала алмайды.}}"
+  },
   "icu:GroupV1--Migration--info--removed--before--many": {
     "messageformat": "Бұл топ мүшелері Жаңа топтарға қосыла алмайды және топтан жойылады:"
   },
   "icu:GroupV1--Migration--info--removed--before--one": {
     "messageformat": "Бұл топ мүшесі Жаңа топтарға қосыла алмайды және топтан өшіріледі:"
   },
+  "icu:GroupV1--Migration--info--removed--before--count": {
+    "messageformat": "{count, plural, one {{count,number} мүше Жаңа топтарға қосыла алмайды және топтан өшіріледі.} other {{count,number} мүше Жаңа топтарға қосыла алмайды және топтан өшіріледі.}}"
+  },
   "icu:GroupV1--Migration--info--removed--after--many": {
     "messageformat": "Бұл топ мүшелері Жаңа топтарға қосыла алмайды және мына топтан өшірілді:"
   },
   "icu:GroupV1--Migration--info--removed--after--one": {
     "messageformat": "Бұл топ мүшесі Жаңа топтарға қосыла алмайды және мына топтан өшірілді:"
+  },
+  "icu:GroupV1--Migration--info--removed--after--count": {
+    "messageformat": "{count, plural, one {{count,number} мүше Жаңа топтарға қосыла алмайды және топтан өшірілді.} other {{count,number} мүше Жаңа топтарға қосыла алмайды және мына топтан өшірілді.}}"
   },
   "icu:GroupV1--Migration--invited--you": {
     "messageformat": "Сізді Жаңа топқа тікелей қосу мүмкін болмады, сондықтан топқа өзіңіз қосылуыңыз үшін шақыру жіберілді."
@@ -3381,7 +3411,7 @@
     "messageformat": "{contact} деген контактіні Жаңа топқа қосу мүмкін болмады және оған топқа қосылуға шақыру жіберілді."
   },
   "icu:GroupV1--Migration--invited--many": {
-    "messageformat": "{count,number} мүшені Жаңа топқа қосу мүмкін болмады және оларға топқа қосылу туралы шақыру жіберілді."
+    "messageformat": "{count, plural, one {A member couldn’t be added to the New Group and has been invited to join.} other {{count,number} members couldn’t be added to the New Group and have been invited to join.}}"
   },
   "icu:GroupV1--Migration--removed--one": {
     "messageformat": "{contact} топтан шығарып жіберілді."
@@ -4380,10 +4410,10 @@
     "messageformat": "Ешкім"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__title": {
-    "messageformat": "Are you sure?"
+    "messageformat": "Сенімдісіз бе?"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__description": {
-    "messageformat": "If you change “{settingTitle}” to “{nobodyLabel}” it will make it harder for people to find you on Signal."
+    "messageformat": "\"{settingTitle}\" параметрін \"{nobodyLabel}\" деп өзгертсеңіз, адамдардың сізді Signal-да табуы қиынға соғады."
   },
   "icu:Preferences--messaging": {
     "messageformat": "Хат алмасу"
@@ -4656,13 +4686,13 @@
     "messageformat": "Бұл адамды блоктадыңыз"
   },
   "icu:MessageRequestResponseNotification__Message--Blocked--Group": {
-    "messageformat": "You blocked the group"
+    "messageformat": "Топты блоктадыңыз"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked": {
-    "messageformat": "You unblocked this person"
+    "messageformat": "Бұл адамды блоктан шығардыңыз"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked--Group": {
-    "messageformat": "You unblocked the group"
+    "messageformat": "Топты блоктан шығардыңыз"
   },
   "icu:MessageRequestResponseNotification__Button--Options": {
     "messageformat": "Опциялар"
@@ -5313,6 +5343,9 @@
   "icu:CallHistory__Description--Declined": {
     "messageformat": "{type, select, Audio {Қабылданбаған дауыстық қоңырау} Video {Қабылданбаған видеоқоңырау} Group {Қабылданбаған топтық қоңырау} other {Қабылданбаған қоңырау}}"
   },
+  "icu:CallHistory__Description--Adhoc": {
+    "messageformat": "Қоңырау сілтемесі"
+  },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {Тағы {count,number} адам жазып жатыр.} other {Тағы {count,number} адам жазып жатыр.}}"
   },
@@ -5334,7 +5367,7 @@
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
-    "messageformat": "Қолданбаңыздың еш қиындықсыз жұмыс істеуі үшін бірнеше ақау түзетілді. Алдағы уақытта қолданбада әлі де жақсартулар жасалады! ",
+    "messageformat": "Қолданбаңыздың еш қиындықсыз жұмыс істеуі үшін бірнеше ақау түзетілді. Алдағы уақытта қолданбада әлі де жақсартулар жасалады!",
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
@@ -5352,14 +5385,5 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Кішігірім түзетпелер жасалды, ақаулар жөнделді және жұмысы жақсартылды. Signal-ды қолданғаныңыз үшін рақмет!",
     "ignoreUnused": true
-  },
-  "icu:WhatsNew__v7.5--0": {
-    "messageformat": "Signal-да сөйлескен кез келген адам (жүйелік контактіңізде болса да, болмаса да) үшін реттелмелі лақап аттар және жазбалар қосу функциясын қостық. Ескертпелер мен лақап аттар – Signal контактілеріңіз туралы қосымша ақпарат берудің ең ыңғайлы және қауіпсіз жолы. Олар толық шифрланған және Signal PIN кодымен қорғалған, сондықтан телефоныңызды жоғалтып алсаңыз, оңай қалпына келтіре аласыз."
-  },
-  "icu:WhatsNew__v7.5--1": {
-    "messageformat": "Енді Signal қолданбасын Linux жүйесіндегі науаға қарай барынша кішірейте аласыз. Тапсырмалар панелі дұрыс сүр түсті болса, бұл сіздің хаттарыңыз күтіп тұрғанын білдіреді."
-  },
-  "icu:WhatsNew__v7.5--2": {
-    "messageformat": "Windows жүйесін пайдаланатындар үшін бұл жаңартудың арқасында оқылмаған хат туралы мәлімет Signal белгішесінде тұрады. “9+” деген белгішемен қош айтыса беріңіз, себебі енді белгішесі 11 (не одан да жоғары) болады."
   }
 }

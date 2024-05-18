@@ -380,12 +380,6 @@
   "icu:invalidConversation": {
     "messageformat": "Ši grupė yra neteisinga. Sukurkite naują grupę."
   },
-  "icu:taskbarMarkedUnread": {
-    "messageformat": "Pažymėta kaip neskaityta"
-  },
-  "icu:taskbarUnreadMessages": {
-    "messageformat": "{count, plural, one {{count,number} neskaityta žinutė} few {{count,number} neskaitytos žinutės} many {{count,number} neskaitytų žinučių} other {{count,number} neskaitytų žinučių}}"
-  },
   "icu:scrollDown": {
     "messageformat": "Nuslinkti į pokalbio apačią"
   },
@@ -1220,6 +1214,9 @@
   "icu:CallingLobby__CallLinkNotice--phone-sharing": {
     "messageformat": "Visi, kas prisijungs prie šio skambučio per nuorodą, matys tavo vardą, nuotrauką ir telefono numerį."
   },
+  "icu:CallingLobby__CallLinkNotice--join-request-pending": {
+    "messageformat": "Laukiama, kol įleis…"
+  },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "Prisijungti"
   },
@@ -1228,6 +1225,9 @@
   },
   "icu:CallingLobbyJoinButton--call-full": {
     "messageformat": "Skambutis pilnas"
+  },
+  "icu:CallingLobbyJoinButton--ask-to-join": {
+    "messageformat": "Prašyti prisijungti"
   },
   "icu:calling__button--video-disabled": {
     "messageformat": "Kamera išjungta"
@@ -1271,8 +1271,20 @@
   "icu:CallingButton--more-options": {
     "messageformat": "Daugiau parinkčių"
   },
+  "icu:CallingPendingParticipants__ApproveUser": {
+    "messageformat": "Patvirtinti prisijungimo prašymą"
+  },
+  "icu:CallingPendingParticipants__DenyUser": {
+    "messageformat": "Atmesti prisijungimo prašymą"
+  },
+  "icu:CallingPendingParticipants__RequestsToJoin": {
+    "messageformat": "{count, plural, one {{count,number} prašymas prisijungti prie skambučio} few {{count,number} prašymai prisijungti prie skambučio} many {{count,number} prašymo prisijungti prie skambučio} other {{count,number} prašymų prisijungti prie skambučio}}"
+  },
   "icu:CallingRaisedHandsList__Title": {
-    "messageformat": "{count, plural, one {Pakeltos rankos: · {count,number} asmuo} few {Pakeltos rankos: · {count,number} asmenys} many {Pakeltos rankos: · {count,number} asmens} other {Pakeltos rankos: · {count,number} asmenų}}"
+    "messageformat": "{count, plural, one {{count,number} pakėlė ranką} few {{count,number} pakėlė rankas} many {{count,number} pakėlė rankas} other {{count,number} pakėlė rankas}}"
+  },
+  "icu:CallingRaisedHandsList__TitleHint": {
+    "messageformat": "(nuo pirmo iki paskutinio)"
   },
   "icu:CallingReactions--me": {
     "messageformat": "Jūs"
@@ -1352,8 +1364,17 @@
   "icu:calling__presenting--notification-body": {
     "messageformat": "Kai būsite pasiruošę nustoti pristatinėti, spustelėkite čia, kad grįžtumėte į pokalbį."
   },
+  "icu:calling__presenting--reconnecting--notification-title": {
+    "messageformat": "Jungiamasi iš naujo…"
+  },
+  "icu:calling__presenting--reconnecting--notification-body": {
+    "messageformat": "Jūsų ryšys nutrūko. „Signal“ jungiasi iš naujo."
+  },
   "icu:calling__presenting--info": {
     "messageformat": "Signal bendrina {window}."
+  },
+  "icu:calling__presenting--reconnecting": {
+    "messageformat": "Jungiamasi iš naujo…"
   },
   "icu:calling__presenting--stop": {
     "messageformat": "Nustoti bendrinti"
@@ -2450,9 +2471,6 @@
   "icu:MessageRequests--unblock-group-confirm-body": {
     "messageformat": "Grupės nariai galės ir vėl jus pridėti į šią grupę."
   },
-  "icu:MessageRequests--block-and-report-spam": {
-    "messageformat": "Pranešti apie šlamštą ir užblokuoti"
-  },
   "icu:MessageRequests--block-and-report-spam-success-toast": {
     "messageformat": "Pranešta apie šlamštą ir užblokuota."
   },
@@ -2760,7 +2778,10 @@
     "messageformat": "Langą"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "Kopijuoti nuorodą"
+    "messageformat": "Kopijuoti skambučio nuorodą"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClient": {
+    "messageformat": "Pašalinti šį asmenį iš skambučio"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Vaizdo įrašas"
@@ -3144,7 +3165,7 @@
     "messageformat": "{count, plural, one {{memberName} pakvietė 1 žmogų į grupę.} few {{memberName} pakvietė {count,number} žmones į grupę.} many {{memberName} pakvietė {count,number} žmog. į grupę.} other {{memberName} pakvietė {count,number} žmonių į grupę.}}"
   },
   "icu:GroupV2--pending-add--many--you": {
-    "messageformat": "Jūs pakvietėte {count,number} žmones(-ių) į grupę."
+    "messageformat": "{count, plural, one {Pakvietėte {count,number} žmogų į grupę.} few {Pakvietėte {count,number} žmones į grupę.} many {Pakvietėte {count,number} žmonių į grupę.} other {Pakvietėte {count,number} žmonių į grupę.}}"
   },
   "icu:GroupV2--pending-add--many--unknown": {
     "messageformat": "{count, plural, one {Į grupę buvo pakviestas 1 žmogus.} few {Į grupę buvo pakviesti {count,number} žmonės.} many {Į grupę buvo pakviesta {count,number} žmog.} other {Į grupę buvo pakviesta {count,number} žmonių.}}"
@@ -3177,13 +3198,13 @@
     "messageformat": "Administratorius panaikino 1 žmogui pakvietimą prisijungti prie grupės."
   },
   "icu:GroupV2--pending-remove--revoke--many--other": {
-    "messageformat": "{memberName} panaikino {count,number} žmonėms(-ių) pakvietimus prisijungti prie grupės."
+    "messageformat": "{count, plural, one {{memberName} panaikino 1 žmogui pakvietimą prisijungti prie grupės.} few {{memberName} panaikino {count,number} žmonėms pakvietimus prisijungti prie grupės.} many {{memberName} panaikino {count,number} žmonių pakvietimus prisijungti prie grupės.} other {{memberName} panaikino {count,number} žmonių pakvietimus prisijungti prie grupės.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--you": {
-    "messageformat": "Jūs panaikinote {count,number} žmonėms(-ių) pakvietimus prisijungti prie grupės."
+    "messageformat": "{count, plural, one {Panaikinote 1 žmogui pakvietimą prisijungti prie grupės.} few {Panaikinote {count,number} žmonėms pakvietimus prisijungti prie grupės.} many {Panaikinote {count,number} žmonių pakvietimus prisijungti prie grupės.} other {Panaikinote {count,number} žmonių pakvietimus prisijungti prie grupės.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--unknown": {
-    "messageformat": "Administratorius panaikino {count,number} žmonėms(-ių) pakvietimus prisijungti prie grupės."
+    "messageformat": "{count, plural, one {Administratorius panaikino 1 žmogui pakvietimą prisijungti prie grupės.} few {Administratorius panaikino {count,number} žmonėms pakvietimus prisijungti prie grupės.} many {Administratorius panaikino {count,number} žmonių pakvietimus prisijungti prie grupės.} other {Administratorius panaikino {count,number} žmonių pakvietimus prisijungti prie grupės.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--one--other": {
     "messageformat": "{adminName} panaikino pakvietimą prisijungti prie grupės 1 žmogui, kurį pakvietė {memberName}."
@@ -3207,19 +3228,19 @@
     "messageformat": "{count, plural, one {{adminName} panaikino pakvietimą prisijungti prie grupės {count,number} žmogui, kurį pakvietė {memberName}.} few {{adminName} panaikino pakvietimus prisijungti prie grupės {count,number} žmonėms, kuriuos pakvietė {memberName}.} many {{adminName} panaikino pakvietimus prisijungti prie grupės {count,number} žmonėms, kuriuos pakvietė {memberName}.} other {{adminName} panaikino pakvietimus prisijungti prie grupės {count,number} žmonių, kuriuos pakvietė {memberName}.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--you": {
-    "messageformat": "Jūs panaikinote pakvietimus prisijungti prie grupės {count,number} žmonėms(-ių), kuriuos pakvietė {memberName}."
+    "messageformat": "{count, plural, one {Panaikinote pakvietimą prisijungti prie grupės {count,number} žmogui, kurį pakvietė {memberName}.} few {Panaikinote pakvietimus prisijungti prie grupės {count,number} žmonėms, kuriuos pakvietė {memberName}.} many {Panaikinote pakvietimus prisijungti prie grupės {count,number} žmonių, kuriuos pakvietė {memberName}.} other {Panaikinote pakvietimus prisijungti prie grupės {count,number} žmonių, kuriuos pakvietė {memberName}.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--unknown": {
-    "messageformat": "Administratorius panaikino pakvietimus prisijungti prie grupės {count,number} žmonėms(-ių), kuriuos pakvietė {memberName}."
+    "messageformat": "{count, plural, one {Administratorius panaikino pakvietimą prisijungti prie grupės {count,number} žmogui, kurį pakvietė {memberName}.} few {Administratorius panaikino pakvietimus prisijungti prie grupės {count,number} žmonėms, kuriuos pakvietė {memberName}.} many {Administratorius panaikino pakvietimus prisijungti prie grupės {count,number} žmonių, kuriuos pakvietė {memberName}.} other {Administratorius panaikino pakvietimus prisijungti prie grupės {count,number} žmonių, kuriuos pakvietė {memberName}.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--other": {
-    "messageformat": "{adminName} panaikino pakvietimus prisijungti prie grupės, kuriuos siuntėte {count,number} žmonėms(-ių)."
+    "messageformat": "{count, plural, one {{adminName} panaikino pakvietimą prisijungti prie grupės, kurį siuntėte {count,number} žmogui.} few {{adminName} panaikino pakvietimus prisijungti prie grupės, kuriuos siuntėte {count,number} žmonėms.} many {{adminName} panaikino pakvietimus prisijungti prie grupės, kuriuos siuntėte {count,number} žmonių.} other {{adminName} panaikino pakvietimus prisijungti prie grupės, kuriuos siuntėte {count,number} žmonių.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--you": {
-    "messageformat": "Jūs panaikinote savo pakvietimus {count,number} žmonėms(-ių)."
+    "messageformat": "{count, plural, one {Panaikinote savo pakvietimą {count,number} žmogui.} few {Panaikinote savo pakvietimus {count,number} žmonėms.} many {Panaikinote savo pakvietimus {count,number} žmonių.} other {Panaikinote savo pakvietimus {count,number} žmonių.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--unknown": {
-    "messageformat": "Administratorius panaikino pakvietimus prisijungti prie grupės, kuriuos siuntėte {count,number} žmonėms(-ių)."
+    "messageformat": "{count, plural, one {Administratorius panaikino pakvietimą prisijungti prie grupės, kurį siuntėte {count,number} žmogui.} few {Administratorius panaikino pakvietimus prisijungti prie grupės, kuriuos siuntėte {count,number} žmonėms.} many {Administratorius panaikino pakvietimus prisijungti prie grupės, kuriuos siuntėte {count,number} žmonių.} other {Administratorius panaikino pakvietimus prisijungti prie grupės, kuriuos siuntėte {count,number} žmonių.}}"
   },
   "icu:GroupV2--admin-approval-add-one--you": {
     "messageformat": "Jūs išsiuntėte prašymą prisijungti prie grupės."
@@ -3362,17 +3383,26 @@
   "icu:GroupV1--Migration--info--invited--one": {
     "messageformat": "Šis narys, norėdamas vėl prisijungti prie šios grupės, turės priimti pakvietimą ir negaus jokių grupės žinučių tol, kol jo nepriims:"
   },
+  "icu:GroupV1--Migration--info--invited--count": {
+    "messageformat": "{count, plural, one {{count,number} narys, norėdamas vėl prisijungti prie šios grupės, turės priimti pakvietimą ir negaus jokių grupės žinučių tol, kol jo nepriims.} few {{count,number} nariai, norėdami vėl prisijungti prie šios grupės, turės priimti pakvietimą ir negaus jokių grupės žinučių tol, kol jo nepriims.} many {{count,number} narių, norėdami vėl prisijungti prie šios grupės, turės priimti pakvietimą ir negaus jokių grupės žinučių tol, kol jo nepriims.} other {{count,number} narių, norėdami vėl prisijungti prie šios grupės, turės priimti pakvietimą ir negaus jokių grupės žinučių tol, kol jo nepriims.}}"
+  },
   "icu:GroupV1--Migration--info--removed--before--many": {
     "messageformat": "Šie nariai negali prisijungti prie naujosios grupės ir todėl bus iš jos pašalinti:"
   },
   "icu:GroupV1--Migration--info--removed--before--one": {
     "messageformat": "Šis narys negali prisijungti prie naujosios grupės ir todėl bus iš jos pašalintas:"
   },
+  "icu:GroupV1--Migration--info--removed--before--count": {
+    "messageformat": "{count, plural, one {{count,number} narys negali prisijungti prie naujosios grupės ir todėl bus iš jos pašalintas.} few {{count,number} nariai negali prisijungti prie naujosios grupės ir todėl bus iš jos pašalinti.} many {{count,number} narių negali prisijungti prie naujosios grupės ir todėl bus iš jos pašalinti.} other {{count,number} narių negali prisijungti prie naujosios grupės ir todėl bus iš jos pašalinti.}}"
+  },
   "icu:GroupV1--Migration--info--removed--after--many": {
     "messageformat": "Šie nariai negalėjo prisijungti prie naujosios grupės ir todėl buvo iš jos pašalinti:"
   },
   "icu:GroupV1--Migration--info--removed--after--one": {
     "messageformat": "Šis narys negalėjo prisijungti prie naujosios grupės ir todėl buvo iš jos pašalintas:"
+  },
+  "icu:GroupV1--Migration--info--removed--after--count": {
+    "messageformat": "{count, plural, one {{count,number} narys negalėjo prisijungti prie naujosios grupės ir todėl buvo iš jos pašalintas.} few {{count,number} nariai negalėjo prisijungti prie naujosios grupės ir todėl buvo iš jos pašalinti.} many {{count,number} narių negalėjo prisijungti prie naujosios grupės ir todėl buvo iš jos pašalinti.} other {{count,number} narių negalėjo prisijungti prie naujosios grupės ir todėl buvo iš jos pašalinti.}}"
   },
   "icu:GroupV1--Migration--invited--you": {
     "messageformat": "Jūsų nepavyko pridėti į naująją grupę ir todėl, buvote pakviesti prie jos prisijungti."
@@ -3381,7 +3411,7 @@
     "messageformat": "Naudotojo {contact} nepavyko pridėti į naująją grupę ir todėl, jis buvo pakviestas prie jos prisijungti."
   },
   "icu:GroupV1--Migration--invited--many": {
-    "messageformat": "{count,number} narių nepavyko pridėti į naująją grupę ir todėl, jie buvo pakviesti prie jos prisijungti."
+    "messageformat": "{count, plural, one {Nario nepavyko pridėti į naująją grupę ir todėl, jis buvo pakviestas prie jos prisijungti.} few {{count,number} narių nepavyko pridėti į naująją grupę ir todėl, jie buvo pakviesti prie jos prisijungti.} many {{count,number} narių nepavyko pridėti į naująją grupę ir todėl, jie buvo pakviesti prie jos prisijungti.} other {{count,number} nario nepavyko pridėti į naująją grupę ir todėl, jie buvo pakviesti prie jos prisijungti.}}"
   },
   "icu:GroupV1--Migration--removed--one": {
     "messageformat": "Naudotojas {contact} buvo pašalintas iš grupės."
@@ -4380,10 +4410,10 @@
     "messageformat": "Niekas"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__title": {
-    "messageformat": "Are you sure?"
+    "messageformat": "Ar tikrai to nori?"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__description": {
-    "messageformat": "If you change “{settingTitle}” to “{nobodyLabel}” it will make it harder for people to find you on Signal."
+    "messageformat": "Jei „{settingTitle}“ nustatysite į „{nobodyLabel}“, žmonėms bus sunkiau jus rasti per „Signal“."
   },
   "icu:Preferences--messaging": {
     "messageformat": "Susirašinėjimas"
@@ -4656,13 +4686,13 @@
     "messageformat": "Užblokavote šį asmenį"
   },
   "icu:MessageRequestResponseNotification__Message--Blocked--Group": {
-    "messageformat": "You blocked the group"
+    "messageformat": "Užblokavote grupę"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked": {
-    "messageformat": "You unblocked this person"
+    "messageformat": "Atblokavote šį asmenį"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked--Group": {
-    "messageformat": "You unblocked the group"
+    "messageformat": "Atblokavote grupę"
   },
   "icu:MessageRequestResponseNotification__Button--Options": {
     "messageformat": "Parinktys"
@@ -5313,6 +5343,9 @@
   "icu:CallHistory__Description--Declined": {
     "messageformat": "{type, select, Audio {Atmestas balso skambutis} Video {Atmestas vaizdo skambutis} Group {Atmestas grupės skambutis} other {Atmestas  skambutis}}"
   },
+  "icu:CallHistory__Description--Adhoc": {
+    "messageformat": "Skambučio nuoroda"
+  },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} žmogus rašo.} few {{count,number} žmonės rašo.} many {{count,number} žmonių rašo.} other {{count,number} žmonių rašo.}}"
   },
@@ -5334,7 +5367,7 @@
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
-    "messageformat": "Truputis klaidų pataisymų, kad programėlė toliau sklandžiai veiktų. Daugiau smagių pokyčių ne už kalnų! ",
+    "messageformat": "Truputis klaidų pataisymų, kad programėlė toliau sklandžiai veiktų. Daugiau smagių pokyčių ne už kalnų!",
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
@@ -5352,14 +5385,5 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Smulkūs patobulinimai, klaidų pataisymai ir veikimo pagerinimas. Ačiū, kad naudoji „Signal“!",
     "ignoreUnused": true
-  },
-  "icu:WhatsNew__v7.5--0": {
-    "messageformat": "Pridėjome tinkintų slapyvardžių ir pastabų palaikymą visiems asmenims, su kuriais kalbatės naudodami „Signal“, net jei jų nėra jūsų sistemos kontaktuose. Pastabos ir slapyvardžiai yra patogus ir saugus būdas pasižymėti papildomą informaciją apie „Signal“ kontaktus – be to, jie yra apsaugoti ištisiniu šifravimu ir jūsų „Signal“ PIN, kad pametę telefoną galėtumėte saugiai šią informaciją atkurti."
-  },
-  "icu:WhatsNew__v7.5--1": {
-    "messageformat": "Nuo šiol „Linux“ kompiuteriuose galite suskleisti „Signal“ į savo sistemos dėklą."
-  },
-  "icu:WhatsNew__v7.5--2": {
-    "messageformat": "„Windows“ naudotojams šiuo naujiniu iš naujo įgalinamas išsamus neskaitytų pranešimų skaičiaus rodymas „Signal“ piktogramoje."
   }
 }

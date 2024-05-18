@@ -113,6 +113,7 @@ import { load as loadLocale } from './locale';
 
 import type { LoggerType } from '../ts/types/Logging';
 import { HourCyclePreference } from '../ts/types/I18N';
+import { ScreenShareStatus } from '../ts/types/Calling';
 import { DBVersionFromFutureError } from '../ts/sql/migrations';
 import type { ParsedSignalRoute } from '../ts/util/signalRoutes';
 import { parseSignalRoute } from '../ts/util/signalRoutes';
@@ -208,10 +209,13 @@ const DISABLE_GPU =
   OS.isLinux() && !process.argv.some(arg => arg === '--enable-gpu');
 
 const DISABLE_IPV6 = process.argv.some(arg => arg === '--disable-ipv6');
+const FORCE_ENABLE_CRASH_REPORTS = process.argv.some(
+  arg => arg === '--enable-crash-reports'
+);
 
 const CLI_LANG = cliOptions.lang as string | undefined;
 
-setupCrashReports(getLogger, showDebugLogWindow);
+setupCrashReports(getLogger, showDebugLogWindow, FORCE_ENABLE_CRASH_REPORTS);
 
 let sendDummyKeystroke: undefined | (() => void);
 if (OS.isWindows()) {
@@ -2329,11 +2333,20 @@ ipc.on(
   }
 );
 
-ipc.on('close-screen-share-controller', () => {
-  if (screenShareWindow) {
-    screenShareWindow.close();
+ipc.on(
+  'screen-share:status-change',
+  (_event: Electron.Event, status: ScreenShareStatus) => {
+    if (!screenShareWindow) {
+      return;
+    }
+
+    if (status === ScreenShareStatus.Disconnected) {
+      screenShareWindow.close();
+    } else {
+      screenShareWindow.webContents.send('status-change', status);
+    }
   }
-});
+);
 
 ipc.on('stop-screen-share', () => {
   if (mainWindow) {
@@ -2469,6 +2482,7 @@ ipc.on('get-config', async event => {
     serverPublicParams: config.get<string>('serverPublicParams'),
     serverTrustRoot: config.get<string>('serverTrustRoot'),
     genericServerPublicParams: config.get<string>('genericServerPublicParams'),
+    backupServerPublicParams: config.get<string>('backupServerPublicParams'),
     theme,
     appStartInitialSpellcheckSetting,
 

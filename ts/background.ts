@@ -39,6 +39,7 @@ import { isWindowDragElement } from './util/isWindowDragElement';
 import { assertDev, strictAssert } from './util/assert';
 import { filter } from './util/iterables';
 import { isNotNil } from './util/isNotNil';
+import { isBackupEnabled } from './util/isBackupEnabled';
 import { setAppLoadingScreenMessage } from './setAppLoadingScreenMessage';
 import { IdleDetector } from './IdleDetector';
 import { expiringMessagesDeletionService } from './services/expiringMessagesDeletion';
@@ -58,7 +59,7 @@ import { RoutineProfileRefresher } from './routineProfileRefresh';
 import { isOlderThan } from './util/timestamp';
 import { isValidReactionEmoji } from './reactions/isValidReactionEmoji';
 import type { ConversationModel } from './models/conversations';
-import { getContact, isIncoming } from './messages/helpers';
+import { getAuthor, isIncoming } from './messages/helpers';
 import { migrateMessageData } from './messages/migrateMessageData';
 import { createBatcher } from './util/batcher';
 import {
@@ -190,6 +191,7 @@ import {
   getCallLinksForRedux,
   loadCallLinks,
 } from './services/callLinksLoader';
+import { backupsService } from './services/backups';
 import {
   getCallIdFromEra,
   updateLocalGroupCallHistoryTimestamp,
@@ -197,6 +199,7 @@ import {
 import { deriveStorageServiceKey } from './Crypto';
 import { getThemeType } from './util/getThemeType';
 import { AttachmentDownloadManager } from './jobs/AttachmentDownloadManager';
+import { onCallLinkUpdateSync } from './util/onCallLinkUpdateSync';
 
 export function isOverHourIntoPast(timestamp: number): boolean {
   return isNumber(timestamp) && isOlderThan(timestamp, HOUR);
@@ -680,6 +683,10 @@ export async function startApp(): Promise<void> {
       queuedEventListener(onCallEventSync, false)
     );
     messageReceiver.addEventListener(
+      'callLinkUpdateSync',
+      queuedEventListener(onCallLinkUpdateSync, false)
+    );
+    messageReceiver.addEventListener(
       'callLogEventSync',
       queuedEventListener(onCallLogEventSync, false)
     );
@@ -860,17 +867,6 @@ export async function startApp(): Promise<void> {
         });
       }
 
-      if (window.isBeforeVersion(lastVersion, '6.22.0-alpha')) {
-        const formattingWarningShown = window.storage.get(
-          'formattingWarningShown',
-          false
-        );
-        log.info(
-          `Clearing formattingWarningShown. Previous value was ${formattingWarningShown}`
-        );
-        await window.storage.put('formattingWarningShown', false);
-      }
-
       if (window.isBeforeVersion(lastVersion, 'v1.29.2-beta.1')) {
         // Stickers flags
         await Promise.all([
@@ -938,6 +934,11 @@ export async function startApp(): Promise<void> {
       if (window.isBeforeVersion(lastVersion, 'v7.3.0-beta.1')) {
         await window.storage.remove('lastHeartbeat');
         await window.storage.remove('lastStartup');
+      }
+
+      if (window.isBeforeVersion(lastVersion, 'v7.8.0-beta.1')) {
+        await window.storage.remove('sendEditWarningShown');
+        await window.storage.remove('formattingWarningShown');
       }
     }
 
@@ -1619,6 +1620,35 @@ export async function startApp(): Promise<void> {
   window.addEventListener('online', onNavigatorOnline);
   window.addEventListener('offline', onNavigatorOffline);
 
+  window.Whisper.events.on('socketStatusChange', () => {
+    if (window.getSocketStatus() === SocketStatus.OPEN) {
+      pauseQueuesAndNotificationsOnSocketConnect();
+    }
+  });
+
+  // 1. When the socket is connected, to avoid a flood of operations before we catch up,
+  //    we pause some queues.
+  function pauseQueuesAndNotificationsOnSocketConnect() {
+    log.info('pauseQueuesAndNotificationsOnSocketConnect: pausing');
+    profileKeyResponseQueue.pause();
+    lightSessionResetQueue.pause();
+    onDecryptionErrorQueue.pause();
+    onRetryRequestQueue.pause();
+    window.Whisper.deliveryReceiptQueue.pause();
+    notificationService.disable();
+  }
+
+  // 2. After the socket finishes processing any queued messages, restart these queues
+  function restartQueuesAndNotificationsOnEmpty() {
+    log.info('restartQueuesAndNotificationsOnEmpty: restarting');
+    profileKeyResponseQueue.start();
+    lightSessionResetQueue.start();
+    onDecryptionErrorQueue.start();
+    onRetryRequestQueue.start();
+    window.Whisper.deliveryReceiptQueue.start();
+    notificationService.enable();
+  }
+
   function isSocketOnline() {
     const socketStatus = window.getSocketStatus();
     return (
@@ -1667,6 +1697,10 @@ export async function startApp(): Promise<void> {
         await me.setProfileKey(Bytes.toBase64(profileKey));
       }
 
+      if (isBackupEnabled()) {
+        backupsService.start();
+      }
+
       if (connectCount === 0) {
         try {
           // Force a re-fetch before we process our queue. We may want to turn on
@@ -1698,14 +1732,6 @@ export async function startApp(): Promise<void> {
       }
 
       connectCount += 1;
-
-      // To avoid a flood of operations before we catch up, we pause some queues.
-      profileKeyResponseQueue.pause();
-      lightSessionResetQueue.pause();
-      onDecryptionErrorQueue.pause();
-      onRetryRequestQueue.pause();
-      window.Whisper.deliveryReceiptQueue.pause();
-      notificationService.disable();
 
       void window.Signal.Services.initializeGroupCredentialFetcher();
 
@@ -1978,12 +2004,7 @@ export async function startApp(): Promise<void> {
     // Start listeners here, after we get through our queue.
     UpdateKeysListener.init(window.Whisper.events, newVersion);
 
-    profileKeyResponseQueue.start();
-    lightSessionResetQueue.start();
-    onDecryptionErrorQueue.start();
-    onRetryRequestQueue.start();
-    window.Whisper.deliveryReceiptQueue.start();
-    notificationService.enable();
+    restartQueuesAndNotificationsOnEmpty();
 
     await onAppView;
 
@@ -2324,7 +2345,7 @@ export async function startApp(): Promise<void> {
     const message = initIncomingMessage(data, messageDescriptor);
 
     if (isIncoming(message.attributes)) {
-      const sender = getContact(message.attributes);
+      const sender = getAuthor(message.attributes);
       strictAssert(sender, 'MessageModel has no sender');
 
       const serviceIdKind = window.textsecure.storage.user.getOurServiceIdKind(
@@ -2390,7 +2411,7 @@ export async function startApp(): Promise<void> {
         fromId: fromConversation.id,
         remove: reaction.remove,
         source: ReactionSource.FromSomeoneElse,
-        storyReactionMessage: message,
+        generatedMessageForStoryReaction: message,
         targetAuthorAci,
         targetTimestamp: reaction.targetTimestamp,
         receivedAtDate: data.receivedAtDate,
@@ -2779,7 +2800,7 @@ export async function startApp(): Promise<void> {
         fromId: window.ConversationController.getOurConversationIdOrThrow(),
         remove: reaction.remove,
         source: ReactionSource.FromSync,
-        storyReactionMessage: message,
+        generatedMessageForStoryReaction: message,
         targetAuthorAci,
         targetTimestamp: reaction.targetTimestamp,
         receivedAtDate: data.receivedAtDate,

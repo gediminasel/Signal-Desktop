@@ -36,16 +36,16 @@
     "messageformat": "Запит на участь розглядається"
   },
   "icu:Preferences__sent-media-quality": {
-    "messageformat": "Якість відправлених медіа"
+    "messageformat": "Якість медіафайлів, які ви надсилаєте"
   },
   "icu:sentMediaQualityStandard": {
-    "messageformat": "Стандартне"
+    "messageformat": "Стандартна"
   },
   "icu:sentMediaQualityHigh": {
-    "messageformat": "Великий"
+    "messageformat": "Висока"
   },
   "icu:softwareAcknowledgments": {
-    "messageformat": "Подяки програмному забезпеченню"
+    "messageformat": "Програмне забезпечення"
   },
   "icu:privacyPolicy": {
     "messageformat": "Умови використання та політика конфіденційності"
@@ -264,7 +264,7 @@
     "messageformat": "Не прочитано {count,number}"
   },
   "icu:NavTabs__ItemIconLabel--MarkedUnread": {
-    "messageformat": "Позначено як непрочитане"
+    "messageformat": "Позначений як непрочитаний"
   },
   "icu:NavTabs__ItemLabel--Chats": {
     "messageformat": "Чати"
@@ -297,7 +297,7 @@
     "messageformat": "Архівувати"
   },
   "icu:markUnread": {
-    "messageformat": "Позначити непрочитаним"
+    "messageformat": "Позначити як непрочитаний"
   },
   "icu:ConversationHeader__menu__selectMessages": {
     "messageformat": "Вибрати повідомлення"
@@ -366,10 +366,10 @@
     "messageformat": "{daysAgo, plural, one {Завантажуємо повідомлення за {daysAgo,number} день…} few {Завантажуємо повідомлення за {daysAgo,number} дні…} many {Завантажуємо повідомлення за {daysAgo,number} днів…} other {Завантажуємо повідомлення за {daysAgo,number} дня…}}"
   },
   "icu:loadingMessages--yesterday": {
-    "messageformat": "Завантажуємо повідомлення від учора…"
+    "messageformat": "Завантажуємо вчорашні повідомлення…"
   },
   "icu:loadingMessages--today": {
-    "messageformat": "Завантажуємо повідомлення від сьогодні…"
+    "messageformat": "Завантажуємо сьогоднішні повідомлення…"
   },
   "icu:view": {
     "messageformat": "Переглянути"
@@ -379,12 +379,6 @@
   },
   "icu:invalidConversation": {
     "messageformat": "Ця група недійсна. Будь ласка, створіть нову групу."
-  },
-  "icu:taskbarMarkedUnread": {
-    "messageformat": "Позначено як непрочитане"
-  },
-  "icu:taskbarUnreadMessages": {
-    "messageformat": "{count, plural, one {{count,number} непрочитане повідомлення} few {{count,number} непрочитаних повідомлення} many {{count,number} непрочитаних повідомлень} other {{count,number} непрочитаного повідомлення}}"
   },
   "icu:scrollDown": {
     "messageformat": "Перейти в кінець чату"
@@ -396,7 +390,7 @@
     "messageformat": "Нові згадки нижче"
   },
   "icu:unreadMessages": {
-    "messageformat": "{count, plural, one {{count,number} непрочитане повідомлення} few {{count,number} непрочитаних повідомлень} many {{count,number} непрочитаних повідомлень} other {{count,number} непрочитаних повідомлень}}"
+    "messageformat": "{count, plural, one {{count,number} непрочитане повідомлення} few {{count,number} непрочитані повідомлення} many {{count,number} непрочитаних повідомлень} other {{count,number} непрочитаного повідомлення}}"
   },
   "icu:messageHistoryUnsynced": {
     "messageformat": "Для вашої безпеки історія чатів не переноситься на нові зв'язані пристрої."
@@ -417,7 +411,7 @@
     "messageformat": "Код безпеки, який ви намагаєтеся підтвердити, змінився. Перевірте новий код безпеки, який {name1} використовує для зв’язку з вами. Пам’ятайте: зміна коду означає, що хтось намагався перехопити ваші повідомлення або додаток чи програма Signal, яку використовує {name2}, просто була перевстановлена."
   },
   "icu:safetyNumberChangeDialog__message": {
-    "messageformat": "Ці люди могли заново встановити Signal або змінити пристрої. Натисніть на одержувача, щоб підтвердити новий код безпеки. Це необов'язково."
+    "messageformat": "Можливо, ці люди перевстановили Signal або замінили пристрій. Натисніть на користувача, щоб підтвердити новий код безпеки. Це необов'язково."
   },
   "icu:safetyNumberChangeDialog__pending-messages": {
     "messageformat": "Відправити повідомлення, що очікують"
@@ -468,7 +462,7 @@
     "messageformat": "Продовжити дзвінок"
   },
   "icu:debugLogExplanation": {
-    "messageformat": "Коли ви натиснете «Надіслати», журнал буде вивантажено в мережу на 30 днів за унікальною, не загальнодоступною, URL-адресою. Перед надсиланням його також можна зберегти на пристрої."
+    "messageformat": "Коли ви натиснете «Надіслати», журнал буде вивантажено в мережу на 30 днів за унікальною URL-адресою, до якої немає загального доступу. Перед надсиланням його також можна зберегти на пристрої."
   },
   "icu:debugLogError": {
     "messageformat": "Під час завантаження сталася помилка! Надішліть електронний лист support@signal.org та прикріпіть свій журнал у вигляді текстового файлу."
@@ -525,13 +519,13 @@
     "messageformat": "Помилка при обробці вхідного повідомлення"
   },
   "icu:media": {
-    "messageformat": "Медіа"
+    "messageformat": "Медіафайли"
   },
   "icu:mediaEmptyState": {
     "messageformat": "У цьому чаті немає медіафайлів"
   },
   "icu:allMedia": {
-    "messageformat": "Усі медіа"
+    "messageformat": "Усі медіафайли"
   },
   "icu:documents": {
     "messageformat": "Документи"
@@ -546,7 +540,7 @@
     "messageformat": "Учора"
   },
   "icu:thisWeek": {
-    "messageformat": "Цей тиждень"
+    "messageformat": "Цього тижня"
   },
   "icu:thisMonth": {
     "messageformat": "Цей місяць"
@@ -561,13 +555,13 @@
     "messageformat": "Тип додатку не дозволений з міркувань безпеки"
   },
   "icu:loadingPreview": {
-    "messageformat": "Завантаження попереднього перегляду…"
+    "messageformat": "Завантаження попереднього вигляду…"
   },
   "icu:stagedPreviewThumbnail": {
-    "messageformat": "Чернетка мініатюри попереднього перегляду посилання для {domain}"
+    "messageformat": "Чернетка мініатюри попереднього вигляду вебсторінки {domain}"
   },
   "icu:previewThumbnail": {
-    "messageformat": "Мініатюра попереднього перегляду посилання для {domain}"
+    "messageformat": "Мініатюра попереднього вигляду вебсторінки {domain}"
   },
   "icu:stagedImageAttachment": {
     "messageformat": "Чернетка вкладення зображення: {path}"
@@ -627,7 +621,7 @@
     "messageformat": "Зв’язатися з нами"
   },
   "icu:goToReleaseNotes": {
-    "messageformat": "Перейти до нотаток про оновлення"
+    "messageformat": "Показати нотатки про оновлення"
   },
   "icu:goToForums": {
     "messageformat": "Перейти на форум"
@@ -933,7 +927,7 @@
     "messageformat": "Примітка"
   },
   "icu:viewRecentMedia": {
-    "messageformat": "Дивитись нещодавні медіа"
+    "messageformat": "Недавні медіафайли"
   },
   "icu:back": {
     "messageformat": "Назад"
@@ -1032,10 +1026,10 @@
     "messageformat": "Проблема з Доставкою"
   },
   "icu:DeliveryIssue--summary": {
-    "messageformat": "Не вдалося доставити вам повідомлення, стікер, реакцію, медіафайл або сповіщення про прочитання від користувача {sender}. Користувач намагався надіслати це безпосередньо вам або в груповий чат."
+    "messageformat": "Не вдалося доставити вам повідомлення, стікер, реакцію, медіафайл або відмітку про читання від користувача {sender}. Користувач намагався надіслати це безпосередньо вам або в груповий чат."
   },
   "icu:DeliveryIssue--summary--group": {
-    "messageformat": "Не вдалося доставити вам повідомлення, стікер, реакцію, сповіщення про прочитання або медіафайл у цьому чаті від користувача {sender}."
+    "messageformat": "Не вдалося доставити вам повідомлення, стікер, реакцію, відмітку про читання або медіафайл у цьому чаті від користувача {sender}."
   },
   "icu:ChangeNumber--notification": {
     "messageformat": "У {sender} змінився номер телефону"
@@ -1089,25 +1083,25 @@
     "messageformat": "Під’єднані пристрої"
   },
   "icu:linkNewDevice": {
-    "messageformat": "Під’єднати новий пристрій"
+    "messageformat": "Зв'язати новий пристрій"
   },
   "icu:Install__learn-more": {
     "messageformat": "Дізнатися більше"
   },
   "icu:Install__scan-this-code": {
-    "messageformat": "Проскануйте цей код в застосунку Signal на своєму телефоні"
+    "messageformat": "Зіскануйте цей код у застосунку Signal на телефоні"
   },
   "icu:Install__instructions__1": {
-    "messageformat": "Відкрийте Signal на своєму телефоні"
+    "messageformat": "Відкрийте Signal на телефоні"
   },
   "icu:Install__instructions__2": {
-    "messageformat": "Клацніть на {settings}, потім на {linkedDevices}"
+    "messageformat": "Перейдіть у {settings}, потім — {linkedDevices}"
   },
   "icu:Install__instructions__2__settings": {
     "messageformat": "Налаштування"
   },
   "icu:Install__instructions__3": {
-    "messageformat": "Клацніть на {plusButton} (Android) чи {linkNewDevice}(iPhone)"
+    "messageformat": "Торкніться {plusButton} (Android) / {linkNewDevice} (iPhone)"
   },
   "icu:Install__qr-failed-load": {
     "messageformat": "Не вдалося завантажити QR-код. Перевірте з'єднання з інтернетом і спробуйте ще раз. <retry>Повторити</retry>"
@@ -1116,7 +1110,7 @@
     "messageformat": "Потрібна допомога?"
   },
   "icu:Install__choose-device-name__description": {
-    "messageformat": "Ви побачите це ім'я у розділі «Прив'язані пристрої» на своєму телефоні"
+    "messageformat": "Ви побачите цю назву в списку «Зв'язаних пристроїв» на телефоні"
   },
   "icu:Install__choose-device-name__placeholder": {
     "messageformat": "Мій комп'ютер"
@@ -1220,6 +1214,9 @@
   "icu:CallingLobby__CallLinkNotice--phone-sharing": {
     "messageformat": "Усі, хто приєднається до виклику за цим посиланням, зможуть бачити ваше ім'я, фото і номер телефону."
   },
+  "icu:CallingLobby__CallLinkNotice--join-request-pending": {
+    "messageformat": "Чекайте на дозвіл…"
+  },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "Приєднатись"
   },
@@ -1228,6 +1225,9 @@
   },
   "icu:CallingLobbyJoinButton--call-full": {
     "messageformat": "Немає вільних місць для дзвінка"
+  },
+  "icu:CallingLobbyJoinButton--ask-to-join": {
+    "messageformat": "Попросити приєднатися"
   },
   "icu:calling__button--video-disabled": {
     "messageformat": "Камера вимкнута"
@@ -1269,10 +1269,22 @@
     "messageformat": "Увімкнути дзвінок"
   },
   "icu:CallingButton--more-options": {
-    "messageformat": "Більше опцій"
+    "messageformat": "Інші дії"
+  },
+  "icu:CallingPendingParticipants__ApproveUser": {
+    "messageformat": "Дозволити приєднатися"
+  },
+  "icu:CallingPendingParticipants__DenyUser": {
+    "messageformat": "Не дозволити приєднатися"
+  },
+  "icu:CallingPendingParticipants__RequestsToJoin": {
+    "messageformat": "{count, plural, one {{count,number} запит на приєднання до виклику} few {{count,number} запити на приєднання до виклику} many {{count,number} запитів на приєднання до виклику} other {{count,number} запиту на приєднання до виклику}}"
   },
   "icu:CallingRaisedHandsList__Title": {
-    "messageformat": "{count, plural, one {Підняті руки · {count,number} людина} few {Підняті руки · {count,number} людини} many {Підняті руки · {count,number} людей} other {Підняті руки · {count,number} людини}}"
+    "messageformat": "{count, plural, one {{count,number} піднята рука} few {{count,number} підняті руки} many {{count,number} піднятих рук} other {{count,number} піднятої руки}}"
+  },
+  "icu:CallingRaisedHandsList__TitleHint": {
+    "messageformat": "(за черговістю підняття)"
   },
   "icu:CallingReactions--me": {
     "messageformat": "Ви"
@@ -1352,8 +1364,17 @@
   "icu:calling__presenting--notification-body": {
     "messageformat": "Натисніть тут, щоб повернутися до дзвінка, коли ви будете готові зупинити показ."
   },
+  "icu:calling__presenting--reconnecting--notification-title": {
+    "messageformat": "Повторне з'єднання…"
+  },
+  "icu:calling__presenting--reconnecting--notification-body": {
+    "messageformat": "З'єднання було втрачено. Триває відновлення."
+  },
   "icu:calling__presenting--info": {
     "messageformat": "Signal обмінюється {window}."
+  },
+  "icu:calling__presenting--reconnecting": {
+    "messageformat": "Повторне з'єднання…"
   },
   "icu:calling__presenting--stop": {
     "messageformat": "Припинити обмін"
@@ -1398,7 +1419,7 @@
     "messageformat": "Дозволи"
   },
   "icu:mediaPermissionsDescription": {
-    "messageformat": "Надати доступ до мікрофону"
+    "messageformat": "Надати доступ до мікрофона"
   },
   "icu:mediaCameraPermissionsDescription": {
     "messageformat": "Надати доступ до камери"
@@ -1416,7 +1437,7 @@
     "messageformat": "Перевірку правопису буде вимкнено під час наступного запуску Signal."
   },
   "icu:SystemTraySetting__minimize-to-system-tray": {
-    "messageformat": "Згорнути в системний трей"
+    "messageformat": "Згортати в панель сповіщень"
   },
   "icu:SystemTraySetting__minimize-to-and-start-in-system-tray": {
     "messageformat": "Запускати згорнутим в треї"
@@ -1452,7 +1473,7 @@
     "messageformat": "Ім'я, вміст, дії"
   },
   "icu:noNameOrMessage": {
-    "messageformat": "Імені чи вмісту немає"
+    "messageformat": "Без імені й вмісту"
   },
   "icu:nameOnly": {
     "messageformat": "Тільки ім'я"
@@ -1467,7 +1488,7 @@
     "messageformat": "{sender} реагує на ваше повідомлення: {emoji}"
   },
   "icu:notificationReactionMessage": {
-    "messageformat": "{sender} надсилає {emoji} до вашого повідомлення: {message}"
+    "messageformat": "Користувач {sender} поставив реакцію {emoji} на: {message}"
   },
   "icu:sendFailed": {
     "messageformat": "Не вдалося надіслати"
@@ -1545,37 +1566,37 @@
     "messageformat": "Розблокуйте цю групу, щоб надіслати повідомлення."
   },
   "icu:youChangedTheTimer": {
-    "messageformat": "Ви встановлюєте час зникнення повідомлення на {time}."
+    "messageformat": "Ви встановили таймер тимчасових повідомлень: {time}."
   },
   "icu:timerSetOnSync": {
-    "messageformat": "Оновлено час зникнення повідомлення на {time}."
+    "messageformat": "Таймер тимчасових повідомлень змінено на {time}."
   },
   "icu:timerSetByMember": {
-    "messageformat": "Один із учасників встановив час зникнення повідомлення на {time}."
+    "messageformat": "Один з учасників установив таймер тимчасових повідомлень: {time}."
   },
   "icu:theyChangedTheTimer": {
-    "messageformat": "{name} встановив (-ла) час зникнення повідомлення на {time}."
+    "messageformat": "Користувач {name} встановив таймер тимчасових повідомлень: {time}."
   },
   "icu:disappearingMessages__off": {
     "messageformat": "вимкн"
   },
   "icu:disappearingMessages": {
-    "messageformat": "Зникаючі повідомлення"
+    "messageformat": "Тимчасові повідомлення"
   },
   "icu:disappearingMessagesDisabled": {
-    "messageformat": "Зникаючі повідомлення заборонені"
+    "messageformat": "Тимчасові повідомлення вимкнено"
   },
   "icu:disappearingMessagesDisabledByMember": {
-    "messageformat": "Учасник групи вимкнув зникаючі повідомлення."
+    "messageformat": "Учасник групи вимкнув тимчасові повідомлення."
   },
   "icu:disabledDisappearingMessages": {
-    "messageformat": "{name} вимкнув зникаючі повідомлення."
+    "messageformat": "Користувач {name} вимкнув тимчасові повідомлення."
   },
   "icu:youDisabledDisappearingMessages": {
-    "messageformat": "Ви заборонили зникаючі повідомлення"
+    "messageformat": "Ви вимкнули тимчасові повідомлення"
   },
   "icu:timerSetTo": {
-    "messageformat": "Таймер встановлено на {time}"
+    "messageformat": "Установлено таймер: {time}"
   },
   "icu:audioNotificationDescription": {
     "messageformat": "Звуки push-сповіщень"
@@ -1599,13 +1620,13 @@
     "messageformat": "Перевірка коду безпеки"
   },
   "icu:safetyNumberChanged": {
-    "messageformat": "Код безпеки змінився"
+    "messageformat": "Змінився код безпеки"
   },
   "icu:safetyNumberChanges": {
-    "messageformat": "Історія змін коду безпеки"
+    "messageformat": "Зміна коду безпеки"
   },
   "icu:safetyNumberChangedGroup": {
-    "messageformat": "Код безпеки з {name} змінився"
+    "messageformat": "Змінився код безпеки для чатів з користувачем {name}"
   },
   "icu:ConversationDetails__viewSafetyNumber": {
     "messageformat": "Переглянути код безпеки"
@@ -1632,10 +1653,10 @@
     "messageformat": "Нотатник"
   },
   "icu:noteToSelfHero": {
-    "messageformat": "У цьому чаті ви можете додавати нотатки для себе. Якщо ваш акаунт має зв'язані пристрої, нові нотатки буде синхронізовано."
+    "messageformat": "У цьому чаті ви можете робити для себе нотатки. Якщо ваш акаунт має зв'язані пристрої, нові нотатки буде синхронізовано."
   },
   "icu:notificationDrawAttention": {
-    "messageformat": "Привернути увагу до цього вікна коли надійде сповіщення"
+    "messageformat": "Привертати увагу до вікна програми, коли надходять сповіщення"
   },
   "icu:hideMenuBar": {
     "messageformat": "Сховати стрічку меню"
@@ -1674,7 +1695,7 @@
     "messageformat": "Не вдалось знайти номер телефону. Перевірте з'єднання та спробуйте ще."
   },
   "icu:ToastManager__CannotEditMessage_24": {
-    "messageformat": "Вносити зміни можна протягом 24 годин із моменту надсилання повідомлення."
+    "messageformat": "Редагувати повідомлення можна лише протягом 24 годин з моменту надсилання."
   },
   "icu:startConversation--username-not-found": {
     "messageformat": "{atUsername} не користується Signal. Перевірте, чи ви ввели повне ім'я користувача."
@@ -1737,10 +1758,10 @@
     "messageformat": "Не вдалось оновити групу. Перевірте з'єднання з інтернетом та спробуйте ще раз."
   },
   "icu:unlinkedWarning": {
-    "messageformat": "Клацніть, щоб заново прив'язати Signal Desktop до мобільного пристрою для продовження обміну повідомленнями."
+    "messageformat": "Натисніть, щоб заново зв'язати Signal Desktop з мобільним пристроєм і продовжити спілкування."
   },
   "icu:unlinked": {
-    "messageformat": "Відв'язан"
+    "messageformat": "Не зв'язано"
   },
   "icu:autoUpdateNewVersionTitle": {
     "messageformat": "Є оновлення"
@@ -1842,7 +1863,7 @@
     "messageformat": "Повідомлення не підтримується"
   },
   "icu:message--getDescription--disappearing-media": {
-    "messageformat": "Одноразові Медіа"
+    "messageformat": "Одноразовий медіафайл"
   },
   "icu:message--getDescription--disappearing-photo": {
     "messageformat": "Одноразове Фото"
@@ -1896,13 +1917,13 @@
     "messageformat": "Донат"
   },
   "icu:message--donation--remaining--days": {
-    "messageformat": "{days, plural, one {Залишився {days,number} день} few {Залишилось {days,number} дні} many {Залишилось {days,number} днів} other {Залишилось {days,number} дн.}}"
+    "messageformat": "{days, plural, one {Залишився {days,number} день} few {Залишилося {days,number} дні} many {Залишилося {days,number} днів} other {Залишилося {days,number} дня}}"
   },
   "icu:message--donation--remaining--hours": {
-    "messageformat": "{hours, plural, one {Залишилась {hours,number} година} few {Залишилось {hours,number} години} many {Залишилось {hours,number} годин} other {Залишилось {hours,number} год}}"
+    "messageformat": "{hours, plural, one {Залишилася {hours,number} година} few {Залишилося {hours,number} години} many {Залишилося {hours,number} годин} other {Залишилося {hours,number} години}}"
   },
   "icu:message--donation--remaining--minutes": {
-    "messageformat": "{minutes, plural, one {Залишилась {minutes,number} хвилина} few {Залишилось {minutes,number} хвилини} many {Залишилось {minutes,number} хвилин} other {Залишилось {minutes,number} хвилини}}"
+    "messageformat": "{minutes, plural, one {Залишилася {minutes,number} хвилина} few {Залишилося {minutes,number} хвилини} many {Залишилося {minutes,number} хвилин} other {Залишилося {minutes,number} хвилини}}"
   },
   "icu:message--donation--expired": {
     "messageformat": "Термін дії минув"
@@ -2094,7 +2115,7 @@
     "messageformat": "Переглянуто"
   },
   "icu:Message--tap-to-view--outgoing": {
-    "messageformat": "Медіа"
+    "messageformat": "Медіафайли"
   },
   "icu:Message--tap-to-view--incoming--expired-toast": {
     "messageformat": "Ви вже переглянули це повідомлення."
@@ -2205,7 +2226,7 @@
     "messageformat": "Прикріпити файл"
   },
   "icu:Keyboard--remove-draft-link-preview": {
-    "messageformat": "Видалити чернетку попереднього перегляду посилання"
+    "messageformat": "Видалити попередній вигляд вебсторінки з чернетки повідомлення"
   },
   "icu:Keyboard--remove-draft-attachments": {
     "messageformat": "Видалити всі чернетки вкладень"
@@ -2298,7 +2319,7 @@
     "messageformat": "Увімкнути або вимкнути звук"
   },
   "icu:Keyboard--toggle-video": {
-    "messageformat": "Включити/відключити відео"
+    "messageformat": "Увімкнути/вимкнути відео"
   },
   "icu:Keyboard--accept-video-call": {
     "messageformat": "Відповісти на дзвінок із відео (тільки для відеодзвінків)"
@@ -2382,7 +2403,7 @@
     "messageformat": "Поради щодо безпеки"
   },
   "icu:SafetyTipsModal__Description": {
-    "messageformat": "Будьте обережні, приймаючи запити на обмін повідомленнями від незнайомих людей. Звертайте увагу на таке:"
+    "messageformat": "Будьте обережні, приймаючи запити на обмін повідомленнями від незнайомих людей. На що варто звернути увагу:"
   },
   "icu:SafetyTipsModal__TipTitle--Crypto": {
     "messageformat": "Шахрайство з криптовалютою або грошима"
@@ -2450,9 +2471,6 @@
   "icu:MessageRequests--unblock-group-confirm-body": {
     "messageformat": "Учасники групи зможуть знову додати вас до неї."
   },
-  "icu:MessageRequests--block-and-report-spam": {
-    "messageformat": "Повідомити про спам і заблокувати"
-  },
   "icu:MessageRequests--block-and-report-spam-success-toast": {
     "messageformat": "Позначено як спам і заблоковано."
   },
@@ -2490,7 +2508,7 @@
     "messageformat": "Повідомити й заблокувати"
   },
   "icu:MessageRequests--AcceptedOptionsModal--body": {
-    "messageformat": "Ви прийняли запит на повідомлення від користувача {name}. Якщо ви прийняли запит помилково, виберіть дію нижче."
+    "messageformat": "Ви прийняли запит на повідомлення від користувача {name}. Якщо ви прийняли запит помилково, то можете повідомити про спам або заблокувати користувача."
   },
   "icu:MessageRequests--report-spam-success-toast": {
     "messageformat": "Повідомлено про спам."
@@ -2760,7 +2778,10 @@
     "messageformat": "Вікно"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "Копіювати посилання"
+    "messageformat": "Копіювати посилання на виклик"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClient": {
+    "messageformat": "Вилучити з виклику"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Камера"
@@ -2781,19 +2802,19 @@
     "messageformat": "Вимкнути сповіщення"
   },
   "icu:notMuted": {
-    "messageformat": "Сповіщення увімкнені"
+    "messageformat": "Сповіщення ввімкнено"
   },
   "icu:muteHour": {
-    "messageformat": "Не сповіщати протягом години"
+    "messageformat": "Не сповіщати 1 годину"
   },
   "icu:muteEightHours": {
-    "messageformat": "Не сповіщати протягом 8 годин"
+    "messageformat": "Не сповіщати 8 годин"
   },
   "icu:muteDay": {
-    "messageformat": "Не сповіщати протягом дня"
+    "messageformat": "Не сповіщати 1 день"
   },
   "icu:muteWeek": {
-    "messageformat": "Не сповіщати протягом тижня"
+    "messageformat": "Не сповіщати 1 тиждень"
   },
   "icu:muteAlways": {
     "messageformat": "Ніколи не сповіщати"
@@ -3054,10 +3075,10 @@
     "messageformat": "Ви були додані в групу."
   },
   "icu:GroupV2--member-add-from-link--you--you": {
-    "messageformat": "Ви приєднались до групи за допомогою посилання."
+    "messageformat": "Ви приєдналися до групи за допомогою посилання."
   },
   "icu:GroupV2--member-add-from-link--other": {
-    "messageformat": "{memberName} приєднався (-лась) до групи за допомогою групового посилання."
+    "messageformat": "Користувач {memberName} приєднався до групи за допомогою посилання."
   },
   "icu:GroupV2--member-add-from-admin-approval--you--other": {
     "messageformat": "{adminName} схвалив (-а) ваш запит на приєднання до групи."
@@ -3144,7 +3165,7 @@
     "messageformat": "{count, plural, one {{memberName} запрошує до групи {count,number} людину.} few {{memberName} запрошує до групи {count,number} людей.} many {{memberName} запрошує до групи {count,number} людей.} other {{memberName} запрошує до групи {count,number} людини.}}"
   },
   "icu:GroupV2--pending-add--many--you": {
-    "messageformat": "Ви запросили {count,number}людей в групу."
+    "messageformat": "{count, plural, one {Ви запросили в групу {count,number} людину.} few {Ви запросили в групу {count,number} людини.} many {Ви запросили в групу {count,number} людей.} other {Ви запросили в групу {count,number} людини.}}"
   },
   "icu:GroupV2--pending-add--many--unknown": {
     "messageformat": "{count, plural, one {До групи запрошено {count,number} людину.} few {До групи запрошено {count,number} людей.} many {До групи запрошено {count,number} людей.} other {До групи запрошено {count,number} людини.}}"
@@ -3177,13 +3198,13 @@
     "messageformat": "Адміністратор відкликав (-ла) запрошення в групу для 1-ї людини."
   },
   "icu:GroupV2--pending-remove--revoke--many--other": {
-    "messageformat": "{memberName} відкликав (-ла) запрошення в групу для {count,number} людей."
+    "messageformat": "{count, plural, one {Користувач {memberName} скасував запрошення в групу для 1 людини.} few {Користувач {memberName} скасував запрошення в групу для {count,number} людей.} many {Користувач {memberName} скасував запрошення в групу для {count,number} людей.} other {Користувач {memberName} скасував запрошення в групу для {count,number} людини.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--you": {
-    "messageformat": "Ви відкликали запрошення в групу для {count,number} людини."
+    "messageformat": "{count, plural, one {Ви скасували запрошення в групу для 1 людини.} few {Ви скасували запрошення в групу для {count,number} людей.} many {Ви скасували запрошення в групу для {count,number} людей.} other {Ви скасували запрошення в групу для {count,number} людини.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--unknown": {
-    "messageformat": "Адміністратор відкликав (-ла) запрошення в групу для {count,number} людини."
+    "messageformat": "{count, plural, one {Адміністратор скасував запрошення в групу для 1 людини.} few {Адміністратор скасував запрошення в групу для {count,number} людей.} many {Адміністратор скасував запрошення в групу для {count,number} людей.} other {Адміністратор скасував запрошення в групу для {count,number} людини.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--one--other": {
     "messageformat": "{adminName} відкликав (-ла) запрошення в групу для 1-ї людини запрошену {memberName}."
@@ -3207,19 +3228,19 @@
     "messageformat": "{count, plural, one {{adminName} відкликає запрошення в групу для {count,number} людини, запрошеної користувачем {memberName}.} few {{adminName} відкликає запрошення в групу для {count,number} людей, запрошених користувачем {memberName}.} many {{adminName} відкликає запрошення в групу для {count,number} людей, запрошених користувачем {memberName}.} other {{adminName} відкликає запрошення в групу для {count,number} людини, запрошених користувачем {memberName}.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--you": {
-    "messageformat": "Ви відкликали запрошення в групу для {count,number} людини запрошену {memberName}."
+    "messageformat": "{count, plural, one {Ви скасували {count,number} запрошення в групу, надіслане користувачем {memberName}.} few {Ви скасували {count,number} запрошення в групу, надіслані користувачем {memberName}.} many {Ви скасували {count,number} запрошень у групу, надісланих користувачем {memberName}.} other {Ви скасували {count,number} запрошення в групу, надісланих користувачем {memberName}.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--unknown": {
-    "messageformat": "Адміністратор відкликав (-ла) запрошення в групу для {count,number} людини запрошену {memberName}."
+    "messageformat": "{count, plural, one {Адміністратор скасував {count,number} запрошення в групу, надіслане користувачем {memberName}.} few {Адміністратор скасував {count,number} запрошення в групу, надіслані користувачем {memberName}.} many {Адміністратор скасував {count,number} запрошень у групу, надісланих користувачем {memberName}.} other {Адміністратор скасував {count,number} запрошення в групу, надісланих користувачем {memberName}.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--other": {
-    "messageformat": "{adminName} відкликав (-ла) запрошення в групу яке ви відправили до {count,number} людей."
+    "messageformat": "{count, plural, one {Адміністратор {adminName} скасував запрошення в групу, яке ви надіслали {count,number} людині.} few {Адміністратор {adminName} скасував запрошення в групу, яке ви надіслали {count,number} людям.} many {Адміністратор {adminName} скасував запрошення в групу, яке ви надіслали {count,number} людям.} other {Адміністратор {adminName} скасував запрошення в групу, яке ви надіслали {count,number} людини.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--you": {
-    "messageformat": "Ви скасували своє запрошення для {count,number} людини."
+    "messageformat": "{count, plural, one {Ви скасували своє запрошення для {count,number} людини.} few {Ви скасували своє запрошення для {count,number} людей.} many {Ви скасували своє запрошення для {count,number} людей.} other {Ви скасували своє запрошення для {count,number} людини.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--unknown": {
-    "messageformat": "Адміністратор відкликав (-ла) запрошення в групу яке ви відправили до {count,number} людей."
+    "messageformat": "{count, plural, one {Адміністратор скасував запрошення в групу, яке ви надіслали {count,number} людині.} few {Адміністратор скасував запрошення в групу, яке ви надіслали {count,number} людям.} many {Адміністратор скасував запрошення в групу, яке ви надіслали {count,number} людям.} other {Адміністратор скасував запрошення в групу, яке ви надіслали {count,number} людини.}}"
   },
   "icu:GroupV2--admin-approval-add-one--you": {
     "messageformat": "Ви надіслали запит на приєднання до групи."
@@ -3362,17 +3383,26 @@
   "icu:GroupV1--Migration--info--invited--one": {
     "messageformat": "Цьому користувачу потрібно прийняти запит, щоб приєднатись до цієї групи знов. Він не отримуватиме повідомлень від групи поки не прийме запит:"
   },
+  "icu:GroupV1--Migration--info--invited--count": {
+    "messageformat": "{count, plural, one {{count,number} користувач повинен прийняти запрошення, щоб повернутися в групу й знов отримувати від неї повідомлення.} few {{count,number} користувачі повинні прийняти запрошення, щоб повернутися в групу й знов отримувати від неї повідомлення.} many {{count,number} користувачів повинні прийняти запрошення, щоб повернутися в групу й знов отримувати від неї повідомлення.} other {{count,number} користувача повинні прийняти запрошення, щоб повернутися в групу й знов отримувати від неї повідомлення.}}"
+  },
   "icu:GroupV1--Migration--info--removed--before--many": {
     "messageformat": "Ці учасники не можуть приєднуватись до Нових груп, та їх буде видалено з групи:"
   },
   "icu:GroupV1--Migration--info--removed--before--one": {
     "messageformat": "Цей учасник не може приєднуватись до Нових груп, та його буде видалено з групи:"
   },
+  "icu:GroupV1--Migration--info--removed--before--count": {
+    "messageformat": "{count, plural, one {{count,number} учасник не може приєднуватися до нових груп, тому його буде видалено з групи.} few {{count,number} учасники не можуть приєднуватися до нових груп, тому їх буде видалено з групи.} many {{count,number} учасників не можуть приєднуватися до нових груп, тому їх буде видалено з групи.} other {{count,number} учасника не можуть приєднуватися до нових груп, тому їх буде видалено з групи.}}"
+  },
   "icu:GroupV1--Migration--info--removed--after--many": {
     "messageformat": "Ці учасники не можуть приєднуватись до Нових Груп, та їх буде видалено з групи:"
   },
   "icu:GroupV1--Migration--info--removed--after--one": {
     "messageformat": "Цей учасник не зміг приєднатись до Нових Груп, та був видалений з групи:"
+  },
+  "icu:GroupV1--Migration--info--removed--after--count": {
+    "messageformat": "{count, plural, one {{count,number} учасник не зміг приєднатися до нових груп, тому його було видалено з групи.} few {{count,number} учасники не змогли приєднатися до нових груп, тому їх було видалено з групи.} many {{count,number} учасників не змогли приєднатися до нових груп, тому їх було видалено з групи.} other {{count,number} учасника не змогли приєднатися до нових груп, тому їх було видалено з групи.}}"
   },
   "icu:GroupV1--Migration--invited--you": {
     "messageformat": "Вас не вдалось додати до Нової групи, а тому було запрошено приєднатись."
@@ -3381,7 +3411,7 @@
     "messageformat": "{contact} не вдалось додати до Нової Групи, а тому було запрошено приєднатись."
   },
   "icu:GroupV1--Migration--invited--many": {
-    "messageformat": "{count,number} учасників не вдалося додати до нової групи. Їм було надіслано запрошення."
+    "messageformat": "{count, plural, one {До нової групи не вдалося додати {count,number} учасника, тому було надіслано запрошення.} few {До нової групи не вдалося додати {count,number} учасників, тому їм було надіслано запрошення.} many {До нової групи не вдалося додати {count,number} учасників, тому їм було надіслано запрошення.} other {До нової групи не вдалося додати {count,number} учасника, тому їм було надіслано запрошення.}}"
   },
   "icu:GroupV1--Migration--removed--one": {
     "messageformat": "{contact} був (-ла) видалений (-а) з групи."
@@ -3408,7 +3438,7 @@
     "messageformat": "Signal працює завдяки таким людям, як ви. Зробіть внесок та отримайте емблему."
   },
   "icu:BadgeSustainerInstructions__instructions__1": {
-    "messageformat": "Відкрийте Signal на своєму телефоні"
+    "messageformat": "Відкрийте Signal на телефоні"
   },
   "icu:BadgeSustainerInstructions__instructions__2": {
     "messageformat": "Натисніть фото свого профілю в лівому верхньому кутку, щоб відкрити Настройки"
@@ -3441,7 +3471,7 @@
     "messageformat": "Редагування повідомлення"
   },
   "icu:countMutedConversationsDescription": {
-    "messageformat": "Враховувати чати без сповіщень у числі на емблемі"
+    "messageformat": "Лічильник враховує повідомлення з чатів з вимкненими сповіщеннями"
   },
   "icu:ContactModal--nickname": {
     "messageformat": "Умовне ім'я"
@@ -3480,13 +3510,13 @@
     "messageformat": "Групове посилання"
   },
   "icu:ConversationDetails--disappearing-messages-label": {
-    "messageformat": "Зникаючі повідомлення"
+    "messageformat": "Тимчасові повідомлення"
   },
   "icu:ConversationDetails--disappearing-messages-info--group": {
-    "messageformat": "При включенні цієї настройки повідомлень, надіслані та отримані в цій групі повідомлення будуть зникати після того як будуть прочитаними."
+    "messageformat": "Якщо ввімкнути цю функцію, повідомлення, надіслані та отримані в цьому груповому чаті, зникатимуть після перегляду."
   },
   "icu:ConversationDetails--disappearing-messages-info--direct": {
-    "messageformat": "Якщо ввімкнути, повідомлення в цьому чаті зникатимуть після того, як їх переглянуть."
+    "messageformat": "Якщо ввімкнути цю функцію, повідомлення, надіслані та отримані в цьому особистому чаті, зникатимуть після перегляду."
   },
   "icu:ConversationDetails--nickname-label": {
     "messageformat": "Умовне ім'я"
@@ -3510,7 +3540,7 @@
     "messageformat": "Хто може редагувати інформацію групи"
   },
   "icu:ConversationDetails--group-info-info": {
-    "messageformat": "Виберіть, хто може редагувати ім'я, фото, опис і часу зникнення таймеру повідомлень."
+    "messageformat": "Оберіть, хто може змінювати назву, фото, опис групи і таймер тимчасових повідомлень."
   },
   "icu:ConversationDetails--add-members-label": {
     "messageformat": "Хто може додавати учасників"
@@ -3570,10 +3600,10 @@
     "messageformat": "{number, plural, one {{number,number} учасник} few {{number,number} учасники} many {{number,number} учасників} other {{number,number} учасника}}"
   },
   "icu:ConversationDetailsMediaList--shared-media": {
-    "messageformat": "Спільні медіа"
+    "messageformat": "Надіслані медіафайли"
   },
   "icu:ConversationDetailsMediaList--show-all": {
-    "messageformat": "Побачити все"
+    "messageformat": "Показати всі"
   },
   "icu:ConversationDetailsMembershipList--title": {
     "messageformat": "{number, plural, one {{number,number} учасник} few {{number,number} учасники} many {{number,number} учасників} other {{number,number} учасника}}"
@@ -3582,7 +3612,7 @@
     "messageformat": "Додати учасників"
   },
   "icu:ConversationDetailsMembershipList--show-all": {
-    "messageformat": "Побачити все"
+    "messageformat": "Показати всі"
   },
   "icu:ConversationDetailsGroups--title": {
     "messageformat": "{count, plural, one {{count,number} спільна група} few {{count,number} спільні групи} many {{count,number} спільних груп} other {{count,number} спільної групи}}"
@@ -3624,13 +3654,13 @@
     "messageformat": "Згадки"
   },
   "icu:ConversationNotificationsSettings__mentions__info": {
-    "messageformat": "Отримувати сповіщення, якщо вас згадали в чатах із вимкнутими сповіщеннями"
+    "messageformat": "Отримувати сповіщення, коли вас згадують, навіть якщо сповіщення від чату вимкнено"
   },
   "icu:ConversationNotificationsSettings__mentions__select__always-notify": {
-    "messageformat": "Завжди повідомляти"
+    "messageformat": "Завжди сповіщати"
   },
   "icu:ConversationNotificationsSettings__mentions__select__dont-notify-for-mentions-if-muted": {
-    "messageformat": "Не сповіщати, якщо сповіщення вимкнені"
+    "messageformat": "Не сповіщати, якщо сповіщення вимкнено"
   },
   "icu:GroupLinkManagement--clipboard": {
     "messageformat": "Посилання групи скопійовано."
@@ -3858,7 +3888,7 @@
     "messageformat": "Уважно переглядайте запити. Signal знайшов іншого користувача із цим ім'ям. <reviewRequestLink>Переглянути запит</reviewRequestLink>"
   },
   "icu:ContactSpoofing__same-name-in-group--link": {
-    "messageformat": "{count, plural, one {{count,number} учасник групи має таке саме ім'я. <reviewRequestLink>Переглянути учасника</reviewRequestLink>} few {{count,number} учасники групи мають однакові імена. <reviewRequestLink>Переглянути учасників</reviewRequestLink>} many {{count,number} учасників групи мають однакові імена. <reviewRequestLink>Переглянути учасників</reviewRequestLink>} other {{count,number} учасника групи мають однакові імена. <reviewRequestLink>Переглянути учасників</reviewRequestLink>}}"
+    "messageformat": "{count, plural, one {{count,number} учасник групи має однакові імена. <reviewRequestLink>Переглянути учасників</reviewRequestLink>} few {{count,number} учасники групи мають однакові імена. <reviewRequestLink>Переглянути учасників</reviewRequestLink>} many {{count,number} учасників групи мають однакові імена. <reviewRequestLink>Переглянути учасників</reviewRequestLink>} other {{count,number} учасника групи мають однакові імена. <reviewRequestLink>Переглянути учасників</reviewRequestLink>}}"
   },
   "icu:ContactSpoofing__same-names-in-group--link": {
     "messageformat": "{count, plural, one {У групі виявлено {count,number} конфлікт імен. <reviewRequestLink>Переглянути учасників</reviewRequestLink>} few {У групі виявлено {count,number} конфлікти імен. <reviewRequestLink>Переглянути учасників</reviewRequestLink>} many {У групі виявлено {count,number} конфліктів імен. <reviewRequestLink>Переглянути учасників</reviewRequestLink>} other {У групі виявлено {count,number} конфлікту імен. <reviewRequestLink>Переглянути учасників</reviewRequestLink>}}"
@@ -3879,7 +3909,7 @@
     "messageformat": "Перегляд учасників"
   },
   "icu:ContactSpoofingReviewDialog__group__description": {
-    "messageformat": "{count, plural, one {{count,number} учасник групи має таке саме ім'я. Перегляньте учасника або вчиніть з ним як пропонується.} few {{count,number} учасники групи мають однакові імена. Перегляньте учасників або вчиніть з ними як пропонується.} many {{count,number} учасників групи мають однакові імена. Перегляньте учасників або вчиніть з ними як пропонується.} other {{count,number} учасника групи мають однакові імена. Перегляньте учасників або вчиніть з ними як пропонується.}}"
+    "messageformat": "{count, plural, one {{count,number} учасник групи має однакові імена. Перегляньте учасників або вчиніть з ним як пропонується.} few {{count,number} учасники групи мають однакові імена. Перегляньте учасників або вчиніть з ними як пропонується.} many {{count,number} учасників групи мають однакові імена. Перегляньте учасників або вчиніть з ними як пропонується.} other {{count,number} учасника групи мають однакові імена. Перегляньте учасників або вчиніть з ними як пропонується.}}"
   },
   "icu:ContactSpoofingReviewDialog__group__multiple-conflicts__description": {
     "messageformat": "{count, plural, one {У групі виявлено {count,number} конфлікт імен. Перегляньте учасників або вчиніть з ними як пропонується..} few {У групі виявлено {count,number} конфлікти імен. Перегляньте учасників або вчиніть з ними як пропонується.} many {У групі виявлено {count,number} конфліктів імен. Перегляньте учасників або вчиніть з ними як пропонується.} other {У групі виявлено {count,number} конфлікту імен. Перегляньте учасників або вчиніть з ними як пропонується.}}"
@@ -3999,10 +4029,10 @@
     "messageformat": "Кінець градієнта"
   },
   "icu:customDisappearingTimeOption": {
-    "messageformat": "Настроюваний час…"
+    "messageformat": "Свій час…"
   },
   "icu:selectedCustomDisappearingTimeOption": {
-    "messageformat": "Власний час"
+    "messageformat": "Свій час"
   },
   "icu:DisappearingTimeDialog__label--value": {
     "messageformat": "Число"
@@ -4011,37 +4041,37 @@
     "messageformat": "Одиниця часу"
   },
   "icu:DisappearingTimeDialog__title": {
-    "messageformat": "Власний час"
+    "messageformat": "Свій час"
   },
   "icu:DisappearingTimeDialog__body": {
-    "messageformat": "Виберіть власні налаштування часу для зникаючих повідомлень."
+    "messageformat": "Створіть свій таймер для тимчасових повідомлень."
   },
   "icu:DisappearingTimeDialog__set": {
-    "messageformat": "Задати"
+    "messageformat": "Установити"
   },
   "icu:DisappearingTimeDialog__seconds": {
-    "messageformat": "Секунди"
+    "messageformat": "cекунди"
   },
   "icu:DisappearingTimeDialog__minutes": {
-    "messageformat": "Хвилини"
+    "messageformat": "хвилини"
   },
   "icu:DisappearingTimeDialog__hours": {
-    "messageformat": "Години"
+    "messageformat": "години"
   },
   "icu:DisappearingTimeDialog__days": {
-    "messageformat": "Дні"
+    "messageformat": "дні"
   },
   "icu:DisappearingTimeDialog__weeks": {
-    "messageformat": "Тижні"
+    "messageformat": "тижні"
   },
   "icu:settings__DisappearingMessages__footer": {
-    "messageformat": "Встановіть таймер зникнення повідомлень за замовчуванням для всіх нових чатів, які ви створите."
+    "messageformat": "Установіть стандартний таймер для тимчасових повідомлень у всіх нових чатах, які ви починаєте."
   },
   "icu:settings__DisappearingMessages__timer__label": {
-    "messageformat": "Таймер за замовчуванням для нових чатів"
+    "messageformat": "Стандартний таймер для нових чатів"
   },
   "icu:UniversalTimerNotification__text": {
-    "messageformat": "Час зникання повідомлення буде встановлено на {timeValue}, коли ви надіслете їм повідомлення."
+    "messageformat": "Таймер цього тимчасового повідомлення буде встановлено на {timeValue}, коли ви його відправите."
   },
   "icu:ContactRemovedNotification__text": {
     "messageformat": "Ви вилучили цей контакт. Якщо надіслати повідомлення, контакт буде знову додано до списку."
@@ -4059,19 +4089,19 @@
     "messageformat": "Додайте опис групи…"
   },
   "icu:MediaQualitySelector--button": {
-    "messageformat": "Виберіть якість медіа"
+    "messageformat": "Виберіть якість медіафайлу"
   },
   "icu:MediaQualitySelector--title": {
-    "messageformat": "Якість Медіа"
+    "messageformat": "Якість медіафайлу"
   },
   "icu:MediaQualitySelector--standard-quality-title": {
-    "messageformat": "Стандартне"
+    "messageformat": "Стандартна"
   },
   "icu:MediaQualitySelector--standard-quality-description": {
     "messageformat": "Швидше, менше даних"
   },
   "icu:MediaQualitySelector--high-quality-title": {
-    "messageformat": "Великий"
+    "messageformat": "Висока"
   },
   "icu:MediaQualitySelector--high-quality-description": {
     "messageformat": "Повільніше, більше даних"
@@ -4182,7 +4212,7 @@
     "messageformat": "Видалити"
   },
   "icu:ProfileEditor--username--delete-unavailable-notice": {
-    "messageformat": "Для того, щоб видалити ім'я користувача, відкрийте Signal на телефоні та перейдіть у «Налаштування» > «Профіль»."
+    "messageformat": "Щоб видалити ім'я користувача, відкрийте Signal на телефоні та перейдіть у налаштування > Профіль."
   },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "Копіювати або видалити ім'я користувача"
@@ -4194,7 +4224,7 @@
     "messageformat": "Видалити"
   },
   "icu:ProfileEditor--about-placeholder": {
-    "messageformat": "Напишіть щось про себе…"
+    "messageformat": "Кілька слів про себе…"
   },
   "icu:ProfileEditor--first-name": {
     "messageformat": "Ім'я (обов'язково)"
@@ -4203,7 +4233,7 @@
     "messageformat": "Прізвище (за бажанням)"
   },
   "icu:ConfirmDiscardDialog--discard": {
-    "messageformat": "Ви хочете відхилити ці зміни?"
+    "messageformat": "Відхилити ці зміни?"
   },
   "icu:ConfirmationDialog__Title--in-call-close-requested": {
     "messageformat": "Закрити Signal і завершити виклик?"
@@ -4260,7 +4290,7 @@
     "messageformat": "Написати адміністратору"
   },
   "icu:AnnouncementsOnlyGroupBanner--announcements-only": {
-    "messageformat": "Тільки {admins} можуть відправляти повідомлення"
+    "messageformat": "Надсилати повідомлення можуть тільки {admins}"
   },
   "icu:AnnouncementsOnlyGroupBanner--admins": {
     "messageformat": "адміністратори"
@@ -4278,7 +4308,7 @@
     "messageformat": "Звуки повідомлень у чаті"
   },
   "icu:Preferences__message-audio-description": {
-    "messageformat": "Відтворювати звук сповіщень для надісланих і отриманих повідомлень, якщо чат відкрито."
+    "messageformat": "Надсилати й отримувати повідомлення зі звуковим сповіщенням, якщо чат відкрито."
   },
   "icu:Preferences__button--general": {
     "messageformat": "Загальні відомості"
@@ -4308,10 +4338,10 @@
     "messageformat": "Рівень масштабування"
   },
   "icu:Preferences__link-previews--title": {
-    "messageformat": "Генерувати посилання попереднього перегляду"
+    "messageformat": "Генерувати попередній вигляд вебсторінок"
   },
   "icu:Preferences__link-previews--description": {
-    "messageformat": "Щоб змінити налаштування, відкрийте застосунок Signal на мобільному пристрої та перейдіть у Налаштування > Чати"
+    "messageformat": "Щоб змінити це налаштування, відкрийте застосунок Signal на мобільному пристрої та перейдіть у налаштування > Чати"
   },
   "icu:Preferences__auto-convert-emoji--title": {
     "messageformat": "Перетворювати емограми, введені символами, на емоджі"
@@ -4332,7 +4362,7 @@
     "messageformat": "{num, plural, one {{num,number} контакт} few {{num,number} контакти} many {{num,number} контактів} other {{num,number} контакту}}"
   },
   "icu:Preferences__privacy--description": {
-    "messageformat": "Щоб змінити ці налаштування, відкрийте застосунок Signal на своєму мобільному пристрої та перейдіть до Налаштування > Конфіденційність"
+    "messageformat": "Щоб змінити ці налаштування, відкрийте застосунок Signal на своєму мобільному пристрої та перейдіть у налаштування > Конфіденційність"
   },
   "icu:Preferences__pnp__row--title": {
     "messageformat": "Номер телефону"
@@ -4380,19 +4410,19 @@
     "messageformat": "Ніхто"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__title": {
-    "messageformat": "Are you sure?"
+    "messageformat": "Ви впевнені?"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__description": {
-    "messageformat": "If you change “{settingTitle}” to “{nobodyLabel}” it will make it harder for people to find you on Signal."
+    "messageformat": "Якщо обрати варіант «{nobodyLabel}» для параметра «{settingTitle}», людям буде складніше знайти вас у Signal."
   },
   "icu:Preferences--messaging": {
-    "messageformat": "Листування"
+    "messageformat": "Повідомлення"
   },
   "icu:Preferences--read-receipts": {
-    "messageformat": "Звіти про прочитання"
+    "messageformat": "Відмітки про читання"
   },
   "icu:Preferences--typing-indicators": {
-    "messageformat": "Індикатори введення"
+    "messageformat": "Індикатор набору тексту"
   },
   "icu:Preferences--updates": {
     "messageformat": "Оновлення"
@@ -4413,7 +4443,7 @@
     "messageformat": "Вимкнути історії"
   },
   "icu:Preferences__turn-stories-off--action": {
-    "messageformat": "Відключити"
+    "messageformat": "Вимкнути"
   },
   "icu:Preferences__turn-stories-off--body": {
     "messageformat": "Ви більше не зможете публікувати й переглядати історії. Нещодавно опубліковані оновлення ваших історій також буде видалено."
@@ -4599,7 +4629,7 @@
     "messageformat": "Завантажити історію"
   },
   "icu:MyStories__more": {
-    "messageformat": "Інші опції"
+    "messageformat": "Інші дії"
   },
   "icu:MyStories__views": {
     "messageformat": "{views, plural, one {{views,number} перегляд} few {{views,number} перегляди} many {{views,number} переглядів} other {{views,number} перегляда}}"
@@ -4656,16 +4686,16 @@
     "messageformat": "Ви заблокували цю людину"
   },
   "icu:MessageRequestResponseNotification__Message--Blocked--Group": {
-    "messageformat": "You blocked the group"
+    "messageformat": "Ви заблокували цю групу."
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked": {
-    "messageformat": "You unblocked this person"
+    "messageformat": "Ви розблокували цю людину."
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked--Group": {
-    "messageformat": "You unblocked the group"
+    "messageformat": "Ви розблокували цю групу."
   },
   "icu:MessageRequestResponseNotification__Button--Options": {
-    "messageformat": "Параметри"
+    "messageformat": "Доступні дії"
   },
   "icu:MessageRequestResponseNotification__Button--LearnMore": {
     "messageformat": "Дізнатися більше"
@@ -4674,19 +4704,19 @@
     "messageformat": "Контакти Signal"
   },
   "icu:SignalConnectionsModal__header": {
-    "messageformat": "{connections} — це люди, яким ви вирішили довіряти одним із наступних способів:"
+    "messageformat": "{connections} — це люди, яким ви довіряєте. Ця довіра виявляється в тому, що:"
   },
   "icu:SignalConnectionsModal__bullet--1": {
-    "messageformat": "Почали з ними чат"
+    "messageformat": "ви почали з ними чат; або"
   },
   "icu:SignalConnectionsModal__bullet--2": {
-    "messageformat": "Схвалили запит на листування"
+    "messageformat": "ви схвалили їхній запит на повідомлення; або"
   },
   "icu:SignalConnectionsModal__bullet--3": {
-    "messageformat": "Вони є в контактах вашого пристрою"
+    "messageformat": "вони є в контактах вашого пристрою."
   },
   "icu:SignalConnectionsModal__footer": {
-    "messageformat": "Ваші контакти можуть бачити ваше ім'я та фото, а також усе, що ви викладаєте в «Моїй історії», якщо ви її не приховали"
+    "messageformat": "Ваші контакти бачать ваше ім'я та фото, а також усе, що ви викладаєте в «Моїй історії», якщо ви її не приховали."
   },
   "icu:Stories__title": {
     "messageformat": "Історії"
@@ -4701,7 +4731,7 @@
     "messageformat": "Текстова історія"
   },
   "icu:Stories__add-story--media": {
-    "messageformat": "Фото чи відео"
+    "messageformat": "Фото або відео"
   },
   "icu:Stories__hidden-stories": {
     "messageformat": "Приховані історії"
@@ -4743,7 +4773,7 @@
     "messageformat": "Конфіденційність історій"
   },
   "icu:StoriesSettings__description": {
-    "messageformat": "Історії автоматично зникають через 24 години. Оберіть глядачів вашої історії або створіть нові історії для конкретних глядачів або груп."
+    "messageformat": "Історії автоматично зникають через 24 години. Оберіть глядачів своєї історії або створіть нові історії для конкретних глядачів і груп."
   },
   "icu:StoriesSettings__my_stories": {
     "messageformat": "Мої історії"
@@ -4758,7 +4788,7 @@
     "messageformat": "Групова історія"
   },
   "icu:StoriesSettings__viewers": {
-    "messageformat": "{count, plural, one {1 глядач} few {{count,number} глядачі} many {{count,number} глядачів} other {{count,number} глядача}}"
+    "messageformat": "{count, plural, one {{count,number} глядач} few {{count,number} глядачі} many {{count,number} глядачів} other {{count,number} глядача}}"
   },
   "icu:StoriesSettings__who-can-see": {
     "messageformat": "Хто може дивитися цю історію"
@@ -4791,7 +4821,7 @@
     "messageformat": "Ви точно хочете видалити «{name}»? Оновлення до цієї історії також буде видалено."
   },
   "icu:StoriesSettings__choose-viewers": {
-    "messageformat": "Виберіть глядачів"
+    "messageformat": "Вибрати глядачів"
   },
   "icu:StoriesSettings__name-story": {
     "messageformat": "Дайте історії назву"
@@ -4821,7 +4851,7 @@
     "messageformat": "Відмітки про перегляд"
   },
   "icu:StoriesSettings__view-receipts--description": {
-    "messageformat": "Щоб змінити це налаштування, відкрийте застосунок Signal на своєму мобільному пристрої та перейдіть у Налаштування -> Історії"
+    "messageformat": "Щоб змінити це налаштування, відкрийте застосунок Signal на своєму мобільному пристрої та перейдіть у налаштування -> Історії"
   },
   "icu:GroupStorySettingsModal__members_title": {
     "messageformat": "Хто може дивитися цю історію"
@@ -4866,13 +4896,13 @@
     "messageformat": "Назву цієї історії бачите лише ви."
   },
   "icu:SendStoryModal__new-custom--description": {
-    "messageformat": "Можуть побачити лише окремі особи"
+    "messageformat": "Можуть бачити лише конкретні користувачі"
   },
   "icu:SendStoryModal__new-group--title": {
     "messageformat": "Нова групова історія"
   },
   "icu:SendStoryModal__new-group--description": {
-    "messageformat": "Поділитись у групі"
+    "messageformat": "Для користувачів уже створеної групи"
   },
   "icu:SendStoryModal__choose-groups": {
     "messageformat": "Обрати групи"
@@ -4893,13 +4923,13 @@
     "messageformat": "Лише адміністратори можуть надсилати історії в цю групу."
   },
   "icu:Stories__settings-toggle--title": {
-    "messageformat": "Публікувати й переглядати історії"
+    "messageformat": "Публікування й перегляд історій"
   },
   "icu:Stories__settings-toggle--description": {
-    "messageformat": "Якщо вимкнути цю функцію, ви не зможете публікувати чи переглядати сторіз."
+    "messageformat": "Якщо історії вимкнути, ви не зможете їх ні публікувати, ні переглядати."
   },
   "icu:Stories__settings-toggle--button": {
-    "messageformat": "Вимкнути сторіз"
+    "messageformat": "Вимкнути історії"
   },
   "icu:StoryViewer__pause": {
     "messageformat": "Пауза"
@@ -5115,10 +5145,10 @@
     "messageformat": "Дізнатися більше"
   },
   "icu:EditUsernameModalBody__learn-more__title": {
-    "messageformat": "Що означають ці цифри?"
+    "messageformat": "Що це за цифри?"
   },
   "icu:EditUsernameModalBody__learn-more__body": {
-    "messageformat": "Завдяки цим цифрам ваше ім'я користувача конфіденційне, а ви не отримуєте небажаних повідомлень. Повідомляйте своє ім'я користувача тільки тим людям і групам, з якими хочете спілкуватися. Якщо змінити ім'я користувача, цифри також зміняться."
+    "messageformat": "Завдяки цифрам ваше ім'я користувача конфіденційне, а ви не отримуєте небажаних повідомлень. Повідомляйте своє ім'я користувача тільки тим людям і групам, з якими хочете спілкуватися. Якщо змінити ім'я користувача, цифри також зміняться."
   },
   "icu:EditUsernameModalBody__change-confirmation": {
     "messageformat": "Якщо змінити ім'я користувача, поточні QR-код і посилання буде скинуто. Змінити ім'я?"
@@ -5133,7 +5163,7 @@
     "messageformat": "Ваш QR-код і посилання було скинуто. Ваше ім’я користувача: {username}"
   },
   "icu:UsernameLinkModalBody__hint": {
-    "messageformat": "Проскануйте цей QR-код телефоном, щоб написати мені в Signal.",
+    "messageformat": "Зіскануйте цей QR-код телефоном, щоб написати мені в Signal.",
     "descrption": "Text of the hint displayed below generated QR code on the printable image."
   },
   "icu:UsernameLinkModalBody__save": {
@@ -5313,6 +5343,9 @@
   "icu:CallHistory__Description--Declined": {
     "messageformat": "{type, select, Audio {Відхилений голосовий виклик} Video {Відхилений відеовиклик} Group {Відхилений груповий виклик} other {Відхилений виклик}}"
   },
+  "icu:CallHistory__Description--Adhoc": {
+    "messageformat": "Посилання на виклик"
+  },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {Ще {count,number} пише.} few {Ще {count,number} пишуть.} many {Ще {count,number} пишуть.} other {Ще {count,number} пише.}}"
   },
@@ -5334,7 +5367,7 @@
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
-    "messageformat": "Трохи виправлень помилок для того, щоб застосунок працював належним чином. Попереду більше цікавих змін! ",
+    "messageformat": "Трохи виправлень помилок для того, щоб застосунок працював належним чином. Попереду більше цікавих змін!",
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
@@ -5352,14 +5385,5 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Дрібні поліпшення, виправлення помилок і покращення роботи застосунку. Дякуємо, що ви з Signal!",
     "ignoreUnused": true
-  },
-  "icu:WhatsNew__v7.5--0": {
-    "messageformat": "Тепер ви можете додавати умовні імена своїх співрозмовників у Signal і примітки про них, навіть якщо не маєте їх у контактах пристрою. Можливо, ви хочете виправити ім'я профілю, в якому неуважний друг пропустив кілька літер, або записати, звідки ви знаєте свого співрозмовника. Для цього є примітки й умовні імена — зручний і безпечний спосіб додавати інформацію про контакти Signal. Вони захищені наскрізним шифруванням і PIN-кодом Signal, тож ви точно зможете відновити їх, якщо загубите телефон."
-  },
-  "icu:WhatsNew__v7.5--1": {
-    "messageformat": "Користувачі Linux, не згортайте рук! Краще згортайте Signal у панель завдань, адже ця функція нарешті доступна."
-  },
-  "icu:WhatsNew__v7.5--2": {
-    "messageformat": "Користувачам Windows це оновлення повертає точний лічильник непрочитаних повідомлень на значку програми Signal. То дев'ять чи десять? Тепер у вас не буде сумнівів, бо ми прощаємося з «9+» і чітко казатимемо цифру."
   }
 }

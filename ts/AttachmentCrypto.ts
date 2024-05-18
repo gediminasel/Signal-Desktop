@@ -11,7 +11,7 @@ import {
   randomBytes,
 } from 'crypto';
 import type { Decipher, Hash, Hmac } from 'crypto';
-import { Transform } from 'stream';
+import { PassThrough, Transform, type Writable } from 'stream';
 import { pipeline } from 'stream/promises';
 import { ensureFile } from 'fs-extra';
 import * as log from './logging/log';
@@ -26,6 +26,7 @@ import type { AttachmentType } from './types/Attachment';
 import type { ContextType } from './types/Message2';
 import { strictAssert } from './util/assert';
 import * as Errors from './types/errors';
+import { isNotNil } from './util/isNotNil';
 
 // This file was split from ts/Crypto.ts because it pulls things in from node, and
 //   too many things pull in Crypto.ts, so it broke storybook.
@@ -44,7 +45,6 @@ export function _generateAttachmentIv(): Uint8Array {
 }
 
 export type EncryptedAttachmentV2 = {
-  path: string;
   digest: Uint8Array;
   plaintextHash: string;
 };
@@ -54,26 +54,67 @@ export type DecryptedAttachmentV2 = {
   plaintextHash: string;
 };
 
-export async function encryptAttachmentV2({
-  keys,
-  plaintextAbsolutePath,
-  dangerousTestOnlyIv,
-}: {
+type EncryptAttachmentV2PropsType = {
   keys: Readonly<Uint8Array>;
   plaintextAbsolutePath: string;
   dangerousTestOnlyIv?: Readonly<Uint8Array>;
-}): Promise<EncryptedAttachmentV2> {
-  const logId = 'encryptAttachmentV2';
+  dangerousTestOnlySkipPadding?: boolean;
+};
 
+export async function encryptAttachmentV2ToDisk(
+  args: EncryptAttachmentV2PropsType
+): Promise<EncryptedAttachmentV2 & { path: string }> {
   // Create random output file
   const relativeTargetPath = getRelativePath(createName());
   const absoluteTargetPath =
     window.Signal.Migrations.getAbsoluteAttachmentPath(relativeTargetPath);
 
+  let writeFd;
+  let encryptResult: EncryptedAttachmentV2;
+
+  try {
+    await ensureFile(absoluteTargetPath);
+    writeFd = await open(absoluteTargetPath, 'w');
+    encryptResult = await encryptAttachmentV2({
+      ...args,
+      sink: writeFd.createWriteStream(),
+    });
+  } catch (error) {
+    safeUnlinkSync(absoluteTargetPath);
+    throw error;
+  } finally {
+    await writeFd?.close();
+  }
+
+  return {
+    ...encryptResult,
+    path: relativeTargetPath,
+  };
+}
+
+export async function encryptAttachmentV2({
+  keys,
+  plaintextAbsolutePath,
+  dangerousTestOnlyIv,
+  dangerousTestOnlySkipPadding = false,
+  sink,
+}: EncryptAttachmentV2PropsType & {
+  sink?: Writable;
+}): Promise<EncryptedAttachmentV2> {
+  const logId = 'encryptAttachmentV2';
+
   const { aesKey, macKey } = splitKeys(keys);
 
   if (dangerousTestOnlyIv && window.getEnvironment() !== Environment.Test) {
     throw new Error(`${logId}: Used dangerousTestOnlyIv outside tests!`);
+  }
+  if (
+    dangerousTestOnlySkipPadding &&
+    window.getEnvironment() !== Environment.Test
+  ) {
+    throw new Error(
+      `${logId}: Used dangerousTestOnlySkipPadding outside tests!`
+    );
   }
   const iv = dangerousTestOnlyIv || _generateAttachmentIv();
 
@@ -81,39 +122,33 @@ export async function encryptAttachmentV2({
   const digest = createHash(HashType.size256);
 
   let readFd;
-  let writeFd;
   try {
     try {
       readFd = await open(plaintextAbsolutePath, 'r');
     } catch (cause) {
       throw new Error(`${logId}: Read path doesn't exist`, { cause });
     }
-    try {
-      await ensureFile(absoluteTargetPath);
-      writeFd = await open(absoluteTargetPath, 'w');
-    } catch (cause) {
-      throw new Error(`${logId}: Failed to create write path`, { cause });
-    }
 
     await pipeline(
-      readFd.createReadStream(),
-      peekAndUpdateHash(plaintextHash),
-      appendPaddingStream(),
-      createCipheriv(CipherType.AES256CBC, aesKey, iv),
-      prependIv(iv),
-      appendMacStream(macKey),
-      peekAndUpdateHash(digest),
-      writeFd.createWriteStream()
+      [
+        readFd.createReadStream(),
+        peekAndUpdateHash(plaintextHash),
+        dangerousTestOnlySkipPadding ? undefined : appendPaddingStream(),
+        createCipheriv(CipherType.AES256CBC, aesKey, iv),
+        prependIv(iv),
+        appendMacStream(macKey),
+        peekAndUpdateHash(digest),
+        sink ?? new PassThrough().resume(),
+      ].filter(isNotNil)
     );
   } catch (error) {
     log.error(
       `${logId}: Failed to encrypt attachment`,
       Errors.toLogFormat(error)
     );
-    safeUnlinkSync(absoluteTargetPath);
     throw error;
   } finally {
-    await Promise.all([readFd?.close(), writeFd?.close()]);
+    await readFd?.close();
   }
 
   const ourPlaintextHash = plaintextHash.digest('hex');
@@ -130,38 +165,64 @@ export async function encryptAttachmentV2({
   );
 
   return {
-    path: relativeTargetPath,
     digest: ourDigest,
     plaintextHash: ourPlaintextHash,
   };
 }
 
-export async function decryptAttachmentV2({
-  ciphertextPath,
-  id,
-  keys,
-  size,
-  theirDigest,
-}: {
+type DecryptAttachmentOptionsType = Readonly<{
   ciphertextPath: string;
-  id: string;
-  keys: Readonly<Uint8Array>;
+  idForLogging: string;
+  aesKey: Readonly<Uint8Array>;
+  macKey: Readonly<Uint8Array>;
   size: number;
   theirDigest: Readonly<Uint8Array>;
-}): Promise<DecryptedAttachmentV2> {
-  const logId = `decryptAttachmentV2(${id})`;
+  outerEncryption?: {
+    aesKey: Readonly<Uint8Array>;
+    macKey: Readonly<Uint8Array>;
+  };
+}>;
+
+export async function decryptAttachmentV2(
+  options: DecryptAttachmentOptionsType
+): Promise<DecryptedAttachmentV2> {
+  const {
+    idForLogging,
+    macKey,
+    aesKey,
+    ciphertextPath,
+    theirDigest,
+    outerEncryption,
+  } = options;
+
+  const logId = `decryptAttachmentV2(${idForLogging})`;
 
   // Create random output file
   const relativeTargetPath = getRelativePath(createName());
   const absoluteTargetPath =
     window.Signal.Migrations.getAbsoluteAttachmentPath(relativeTargetPath);
 
-  const { aesKey, macKey } = splitKeys(keys);
-
   const digest = createHash(HashType.size256);
   const hmac = createHmac(HashType.size256, macKey);
   const plaintextHash = createHash(HashType.size256);
-  let theirMac = null as Uint8Array | null; // TypeScript shenanigans
+  let theirMac: Uint8Array | undefined;
+
+  // When downloading from backup there is an outer encryption layer; in that case we
+  // need to decrypt the outer layer and check its MAC
+  let theirOuterMac: Uint8Array | undefined;
+  const outerHmac = outerEncryption
+    ? createHmac(HashType.size256, outerEncryption.macKey)
+    : undefined;
+
+  const maybeOuterEncryptionGetIvAndDecipher = outerEncryption
+    ? getIvAndDecipher(outerEncryption.aesKey)
+    : undefined;
+
+  const maybeOuterEncryptionGetMacAndUpdateMac = outerHmac
+    ? getMacAndUpdateHmac(outerHmac, theirOuterMacValue => {
+        theirOuterMac = theirOuterMacValue;
+      })
+    : undefined;
 
   let readFd;
   let writeFd;
@@ -179,15 +240,19 @@ export async function decryptAttachmentV2({
     }
 
     await pipeline(
-      readFd.createReadStream(),
-      peekAndUpdateHash(digest),
-      getMacAndUpdateHmac(hmac, theirMacValue => {
-        theirMac = theirMacValue;
-      }),
-      getIvAndDecipher(aesKey),
-      trimPadding(size),
-      peekAndUpdateHash(plaintextHash),
-      writeFd.createWriteStream()
+      [
+        readFd.createReadStream(),
+        maybeOuterEncryptionGetMacAndUpdateMac,
+        maybeOuterEncryptionGetIvAndDecipher,
+        peekAndUpdateHash(digest),
+        getMacAndUpdateHmac(hmac, theirMacValue => {
+          theirMac = theirMacValue;
+        }),
+        getIvAndDecipher(aesKey),
+        trimPadding(options.size),
+        peekAndUpdateHash(plaintextHash),
+        writeFd.createWriteStream(),
+      ].filter(isNotNil)
     );
   } catch (error) {
     log.error(
@@ -224,9 +289,27 @@ export async function decryptAttachmentV2({
   if (!constantTimeEqual(ourMac, theirMac)) {
     throw new Error(`${logId}: Bad MAC`);
   }
-
   if (!constantTimeEqual(ourDigest, theirDigest)) {
     throw new Error(`${logId}: Bad digest`);
+  }
+
+  if (outerEncryption) {
+    strictAssert(outerHmac, 'outerHmac must exist');
+
+    const ourOuterMac = outerHmac.digest();
+    strictAssert(
+      ourOuterMac.byteLength === ATTACHMENT_MAC_LENGTH,
+      `${logId}: Failed to generate ourOuterMac!`
+    );
+    strictAssert(
+      theirOuterMac != null &&
+        theirOuterMac.byteLength === ATTACHMENT_MAC_LENGTH,
+      `${logId}: Failed to find theirOuterMac!`
+    );
+
+    if (!constantTimeEqual(ourOuterMac, theirOuterMac)) {
+      throw new Error(`${logId}: Bad outer encryption MAC`);
+    }
   }
 
   return {
@@ -238,7 +321,12 @@ export async function decryptAttachmentV2({
 /**
  * Splits the keys into aes and mac keys.
  */
-function splitKeys(keys: Uint8Array) {
+
+type AttachmentEncryptionKeysType = {
+  aesKey: Uint8Array;
+  macKey: Uint8Array;
+};
+export function splitKeys(keys: Uint8Array): AttachmentEncryptionKeysType {
   strictAssert(
     keys.byteLength === KEY_SET_LENGTH,
     `attachment keys must be ${KEY_SET_LENGTH} bytes, got ${keys.byteLength}`
@@ -376,10 +464,20 @@ function trimPadding(size: number) {
   });
 }
 
-export function getAttachmentDownloadSize(size: number): number {
+export function getAttachmentCiphertextLength(plaintextLength: number): number {
+  const paddedPlaintextSize = logPadSize(plaintextLength);
+
   return (
-    // Multiply this by 1.05 to allow some variance
-    logPadSize(size) * 1.05 + IV_LENGTH + ATTACHMENT_MAC_LENGTH
+    IV_LENGTH +
+    getAesCbcCiphertextLength(paddedPlaintextSize) +
+    ATTACHMENT_MAC_LENGTH
+  );
+}
+
+export function getAesCbcCiphertextLength(plaintextLength: number): number {
+  const AES_CBC_BLOCK_SIZE = 16;
+  return (
+    (1 + Math.floor(plaintextLength / AES_CBC_BLOCK_SIZE)) * AES_CBC_BLOCK_SIZE
   );
 }
 

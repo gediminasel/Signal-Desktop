@@ -380,12 +380,6 @@
   "icu:invalidConversation": {
     "messageformat": "Denne gruppen er ugyldig. Vennligst lag en ny gruppe."
   },
-  "icu:taskbarMarkedUnread": {
-    "messageformat": "Merket som ulest"
-  },
-  "icu:taskbarUnreadMessages": {
-    "messageformat": "{count, plural, one {{count,number} ulest melding} other {{count,number} uleste meldinger}}"
-  },
   "icu:scrollDown": {
     "messageformat": "Gå til de nyeste meldingene i samtalen"
   },
@@ -1220,6 +1214,9 @@
   "icu:CallingLobby__CallLinkNotice--phone-sharing": {
     "messageformat": "Alle som blir med i samtalen via lenken, kan se navnet, profilbildet og telefonnummeret ditt."
   },
+  "icu:CallingLobby__CallLinkNotice--join-request-pending": {
+    "messageformat": "Venter på tilgang …"
+  },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "Bli med"
   },
@@ -1228,6 +1225,9 @@
   },
   "icu:CallingLobbyJoinButton--call-full": {
     "messageformat": "Samtalen er full"
+  },
+  "icu:CallingLobbyJoinButton--ask-to-join": {
+    "messageformat": "Be om å bli med"
   },
   "icu:calling__button--video-disabled": {
     "messageformat": "Kamera utilgjengelig"
@@ -1271,8 +1271,20 @@
   "icu:CallingButton--more-options": {
     "messageformat": "Flere muligheter"
   },
+  "icu:CallingPendingParticipants__ApproveUser": {
+    "messageformat": "La bli med"
+  },
+  "icu:CallingPendingParticipants__DenyUser": {
+    "messageformat": "Ikke la bli med"
+  },
+  "icu:CallingPendingParticipants__RequestsToJoin": {
+    "messageformat": "{count, plural, one {{count,number} person ber om å bli med i samtalen} other {{count,number} personer ber om å bli med i samtalen}}"
+  },
   "icu:CallingRaisedHandsList__Title": {
-    "messageformat": "{count, plural, one {Opprakte hender · {count,number} person} other {Opprakte hender · {count,number} personer}}"
+    "messageformat": "{count, plural, one {{count,number} har rukket opp hånden} other {{count,number} har rukket opp hånden}}"
+  },
+  "icu:CallingRaisedHandsList__TitleHint": {
+    "messageformat": "(første til siste)"
   },
   "icu:CallingReactions--me": {
     "messageformat": "Deg"
@@ -1352,8 +1364,17 @@
   "icu:calling__presenting--notification-body": {
     "messageformat": "Klikk her for å gå tilbake til samtalen når du er klar til å avslutte presentasjonen."
   },
+  "icu:calling__presenting--reconnecting--notification-title": {
+    "messageformat": "Kobler til på nytt …"
+  },
+  "icu:calling__presenting--reconnecting--notification-body": {
+    "messageformat": "Forbindelsen ble brutt. Signal kobler til på nytt."
+  },
   "icu:calling__presenting--info": {
     "messageformat": "Signal deler {window}."
+  },
+  "icu:calling__presenting--reconnecting": {
+    "messageformat": "Kobler til på nytt …"
   },
   "icu:calling__presenting--stop": {
     "messageformat": "Avslutt deling"
@@ -2450,9 +2471,6 @@
   "icu:MessageRequests--unblock-group-confirm-body": {
     "messageformat": "Gruppemedlemmer kan legge deg til denne gruppen igjen."
   },
-  "icu:MessageRequests--block-and-report-spam": {
-    "messageformat": "Rapporter søppelpost og blokkér"
-  },
   "icu:MessageRequests--block-and-report-spam-success-toast": {
     "messageformat": "Rapportert som søppelpost og blokkért."
   },
@@ -2760,7 +2778,10 @@
     "messageformat": "Et vindu"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "Kopier lenken"
+    "messageformat": "Kopier anropslenken"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClient": {
+    "messageformat": "Fjern personen fra samtalen"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -3144,7 +3165,7 @@
     "messageformat": "{count, plural, one {{memberName} inviterte {count,number} person til gruppen.} other {{memberName} inviterte {count,number} personer til gruppen.}}"
   },
   "icu:GroupV2--pending-add--many--you": {
-    "messageformat": "Du inviterte {count,number} personer til gruppen."
+    "messageformat": "{count, plural, one {Du inviterte {count,number} person til gruppen.} other {Du inviterte {count,number} personer til gruppen.}}"
   },
   "icu:GroupV2--pending-add--many--unknown": {
     "messageformat": "{count, plural, one {{count,number} person ble invitert til å bli med i gruppen.} other {{count,number} personer ble invitert til å bli med i gruppen.}}"
@@ -3177,13 +3198,13 @@
     "messageformat": "En administrator trakk tilbake invitasjon til gruppen for 1 person."
   },
   "icu:GroupV2--pending-remove--revoke--many--other": {
-    "messageformat": "{memberName} fjernet invitasjoner til gruppen for {count,number} personer."
+    "messageformat": "{count, plural, one {{memberName} trakk tilbake 1 gruppeinvitasjon.} other {{memberName} trakk tilbake {count,number} gruppeinvitasjoner.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--you": {
-    "messageformat": "Du fjernet invitasjoner til gruppen for {count,number} personer."
+    "messageformat": "{count, plural, one {Du trakk tilbake 1 gruppeinvitasjon.} other {Du trakk tilbake {count,number} gruppeinvitasjoner.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--unknown": {
-    "messageformat": "En administrator fjernet invitasjoner til gruppen for {count,number} personer."
+    "messageformat": "{count, plural, one {En administrator trakk tilbake 1 gruppeinvitasjon.} other {En administrator trakk tilbake {count,number} gruppeinvitasjoner.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--one--other": {
     "messageformat": "{adminName} fjernet en invitasjon til gruppen for 1 person invitert av {memberName}."
@@ -3207,19 +3228,19 @@
     "messageformat": "{count, plural, one {{adminName} fjernet invitasjonen til gruppen for {count,number} person som ble invitert av {memberName}.} other {{adminName} fjernet invitasjonene til gruppen for {count,number} personer som ble invitert av {memberName}.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--you": {
-    "messageformat": "Du trakk tilbake invitasjoner til gruppen for {count,number} personer invitert av {memberName}."
+    "messageformat": "{count, plural, one {Du trakk tilbake gruppeinvitasjonen for {count,number} person som ble invitert av {memberName}.} other {Du trakk tilbake gruppeinvitasjonene for {count,number} personer som ble invitert av {memberName}.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--unknown": {
-    "messageformat": "En administrator trakk tilbake invitasjoner til gruppen for {count,number} personer invitert av {memberName}."
+    "messageformat": "{count, plural, one {En administrator trakk tilbake gruppeinvitasjonen for {count,number} person som ble invitert av {memberName}.} other {En administrator trakk tilbake gruppeinvitasjonene for {count,number} personer som ble invitert av {memberName}.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--other": {
-    "messageformat": "{adminName} trakk tilbake invitasjoner til gruppen som du sendte til {count,number} personer."
+    "messageformat": "{count, plural, one {{adminName} trakk tilbake {count,number} gruppeinvitasjon som du hadde sendt.} other {{adminName} trakk tilbake {count,number} gruppeinvitasjoner som du hadde sendt.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--you": {
-    "messageformat": "Du trakk tilbake din invitasjon til {count,number} personer."
+    "messageformat": "{count, plural, one {Du trakk tilbake {count,number} gruppeinvitasjon.} other {Du trakk tilbake {count,number} gruppeinvitasjoner.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--unknown": {
-    "messageformat": "En administrator trakk tilbake invitasjoner til gruppen som du sendte til {count,number} personer."
+    "messageformat": "{count, plural, one {En administrator trakk tilbake {count,number} gruppeinvitasjon som du hadde sendt.} other {En administrator trakk tilbake {count,number} gruppeinvitasjoner som du hadde sendt.}}"
   },
   "icu:GroupV2--admin-approval-add-one--you": {
     "messageformat": "Du sendte en forespørsel om å bli med i gruppen."
@@ -3362,17 +3383,26 @@
   "icu:GroupV1--Migration--info--invited--one": {
     "messageformat": "Dette medlemmet må akseptere en invitasjon for å bli med i gruppen igjen, og vil ikke få gruppemeldinger før de har akseptert:"
   },
+  "icu:GroupV1--Migration--info--invited--count": {
+    "messageformat": "{count, plural, one {{count,number} medlem må takke ja til invitasjonen om å bli med i gruppen igjen og vil ikke motta gruppemeldinger før dette er gjort.} other {{count,number} medlemmer må takke ja til invitasjonene om å bli med i gruppen igjen og vil ikke motta gruppemeldinger før dette er gjort.}}"
+  },
   "icu:GroupV1--Migration--info--removed--before--many": {
     "messageformat": "Disse medlemmene kan ikke bli med i nye grupper og er fjernet fra gruppen:"
   },
   "icu:GroupV1--Migration--info--removed--before--one": {
     "messageformat": "Dette medlemmet kan ikke bli med i nye grupper og er fjernet fra gruppen:"
   },
+  "icu:GroupV1--Migration--info--removed--before--count": {
+    "messageformat": "{count, plural, one {{count,number} medlem kan ikke bli med i nye grupper og fjernes fra denne gruppen.} other {{count,number} medlemmer kan ikke bli med i nye grupper og fjernes fra denne gruppen.}}"
+  },
   "icu:GroupV1--Migration--info--removed--after--many": {
     "messageformat": "Disse medlemmene kunne ikke bli med i nye grupper og ble fjernet fra gruppen:"
   },
   "icu:GroupV1--Migration--info--removed--after--one": {
     "messageformat": "Dette medlemmet kunne ikke bli med i nye grupper og ble fjernet fra gruppen:"
+  },
+  "icu:GroupV1--Migration--info--removed--after--count": {
+    "messageformat": "{count, plural, one {{count,number} medlem kunne ikke bli med i nye grupper og ble fjernet fra denne gruppen.} other {{count,number} medlemmer kunne ikke bli med i nye grupper og ble fjernet fra denne gruppen.}}"
   },
   "icu:GroupV1--Migration--invited--you": {
     "messageformat": "Du kunne ikke bli lagt til den nye gruppen og har blitt invitert til å bli med."
@@ -3381,7 +3411,7 @@
     "messageformat": "{contact} kunne ikke legges til den nye gruppen, og har blitt invitert på nytt."
   },
   "icu:GroupV1--Migration--invited--many": {
-    "messageformat": "{count,number} medlemmer kunne ikke bli lagt til den nye gruppen, og har blitt invitert inn på nytt."
+    "messageformat": "{count, plural, one {{count,number} medlem kunne ikke legges til i den nye gruppen og har blitt invitert på nytt.} other {{count,number} medlemmer kunne ikke legges til i den nye gruppen og har blitt invitert på nytt.}}"
   },
   "icu:GroupV1--Migration--removed--one": {
     "messageformat": "{contact} ble fjernet fra gruppen."
@@ -4380,10 +4410,10 @@
     "messageformat": "Ingen"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__title": {
-    "messageformat": "Are you sure?"
+    "messageformat": "Er du sikker?"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__description": {
-    "messageformat": "If you change “{settingTitle}” to “{nobodyLabel}” it will make it harder for people to find you on Signal."
+    "messageformat": "Hvis du velger {nobodyLabel} under {settingTitle}, blir det vanskeligere for andre å finne deg på Signal."
   },
   "icu:Preferences--messaging": {
     "messageformat": "Meldinger"
@@ -4656,13 +4686,13 @@
     "messageformat": "Du har blokkert denne personen"
   },
   "icu:MessageRequestResponseNotification__Message--Blocked--Group": {
-    "messageformat": "You blocked the group"
+    "messageformat": "Du blokkerte gruppen"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked": {
-    "messageformat": "You unblocked this person"
+    "messageformat": "Blokkeringen av personen ble fjernet"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked--Group": {
-    "messageformat": "You unblocked the group"
+    "messageformat": "Blokkeringen av gruppen ble fjernet"
   },
   "icu:MessageRequestResponseNotification__Button--Options": {
     "messageformat": "Alternativer"
@@ -5313,6 +5343,9 @@
   "icu:CallHistory__Description--Declined": {
     "messageformat": "{type, select, Audio {Avvist taleanrop} Video {Avvist videoanrop} Group {Avvist gruppeanrop} other {Avvist anrop}}"
   },
+  "icu:CallHistory__Description--Adhoc": {
+    "messageformat": "Samtalelenke"
+  },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} annen person skriver.} other {{count,number} andre personer skriver.}}"
   },
@@ -5334,7 +5367,7 @@
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
-    "messageformat": "Et knippe feilrettinger som sørger for at appen fungerer optimalt. Flere spennende oppdateringer er i vente. ",
+    "messageformat": "Et knippe feilrettinger som sørger for at appen fungerer optimalt. Flere spennende oppdateringer er i vente.",
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
@@ -5352,14 +5385,5 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Noen små justeringer, feilrettinger og ytelsesforbedringer. Takk for at du bruker Signal!",
     "ignoreUnused": true
-  },
-  "icu:WhatsNew__v7.5--0": {
-    "messageformat": "Nå kan du legge til notater og gi kallenavn til alle du chatter med på Signal, selv de som ikke står i kontaktlisten på telefonen din. Dette gjør det trygt og enkelt å skrive ned informasjon om alle Signal-kontaktene dine. Notatene og kallenavnene er også ende-til-ende-krypterte og beskyttet av PIN-koden din, slik at det er lett å finne dem igjen dersom du mister mobilen."
-  },
-  "icu:WhatsNew__v7.5--1": {
-    "messageformat": "Nå blir det mulig å minimere Signal-vinduet i systemstatusfeltet på Linux."
-  },
-  "icu:WhatsNew__v7.5--2": {
-    "messageformat": "For Windows-brukere vil Signal-ikonet nå vise nøyaktig antall uleste meldinger, f.eks. «12» i stedet for «9+»."
   }
 }

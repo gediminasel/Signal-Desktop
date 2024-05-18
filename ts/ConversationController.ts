@@ -17,7 +17,7 @@ import type { ConversationModel } from './models/conversations';
 import dataInterface from './sql/Client';
 import * as log from './logging/log';
 import * as Errors from './types/errors';
-import { getContactId } from './messages/helpers';
+import { getAuthorId } from './messages/helpers';
 import { maybeDeriveGroupV2Id } from './groups';
 import { assertDev, strictAssert } from './util/assert';
 import { drop } from './util/drop';
@@ -262,7 +262,7 @@ export class ConversationController {
   getOrCreate(
     identifier: string | null,
     type: ConversationAttributesTypeType,
-    additionalInitialProps = {}
+    additionalInitialProps: Partial<ConversationAttributesType> = {}
   ): ConversationModel {
     if (typeof identifier !== 'string') {
       throw new TypeError("'id' must be a string");
@@ -358,7 +358,7 @@ export class ConversationController {
   async getOrCreateAndWait(
     id: string | null,
     type: ConversationAttributesTypeType,
-    additionalInitialProps = {}
+    additionalInitialProps: Partial<ConversationAttributesType> = {}
   ): Promise<ConversationModel> {
     await this.load();
     const conversation = this.getOrCreate(id, type, additionalInitialProps);
@@ -1236,7 +1236,7 @@ export class ConversationController {
     targetTimestamp: number
   ): Promise<ConversationModel | null | undefined> {
     const messages = await getMessagesBySentAt(targetTimestamp);
-    const targetMessage = messages.find(m => getContactId(m) === targetFromId);
+    const targetMessage = messages.find(m => getAuthorId(m) === targetFromId);
 
     if (targetMessage) {
       return this.get(targetMessage.conversationId);

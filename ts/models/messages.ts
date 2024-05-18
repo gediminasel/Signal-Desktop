@@ -47,7 +47,6 @@ import { isAciString } from '../util/isAciString';
 import * as reactionUtil from '../reactions/util';
 import * as Errors from '../types/errors';
 import type { AttachmentType } from '../types/Attachment';
-import { isImage, isVideo } from '../types/Attachment';
 import * as MIME from '../types/MIME';
 import { ReadStatus } from '../messages/MessageReadStatus';
 import type { SendStateByConversationId } from '../messages/MessageSendState';
@@ -96,7 +95,6 @@ import {
   isTitleTransitionNotification,
 } from '../state/selectors/message';
 import type { ReactionAttributesType } from '../messageModifiers/Reactions';
-import { isInCall } from '../state/selectors/calling';
 import { ReactionSource } from '../reactions/ReactionSource';
 import * as LinkPreview from '../types/LinkPreview';
 import { SignalService as Proto } from '../protobuf';
@@ -116,12 +114,12 @@ import * as log from '../logging/log';
 import { cleanupMessage, deleteMessageData } from '../util/cleanup';
 import {
   findMatchingQuote,
-  getContact,
   getSource,
   getSourceServiceId,
   isCustomError,
   messageHasPaymentEvent,
   isQuoteAMatch,
+  getAuthor,
 } from '../messages/helpers';
 import { viewOnceOpenJobQueue } from '../jobs/viewOnceOpenJobQueue';
 import { getMessageIdForLogging } from '../util/idForLogging';
@@ -1645,7 +1643,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     const type = message.get('type');
     const conversationId = message.get('conversationId');
 
-    const fromContact = getContact(this.attributes);
+    const fromContact = getAuthor(this.attributes);
     if (fromContact) {
       fromContact.setRegistered();
     }
@@ -1771,6 +1769,8 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
           return;
         }
         if (existingMessage) {
+          // TODO: (DESKTOP-7301): improve this check in case previous message is not yet
+          // registered in memory
           log.warn(
             `${idLog}: Received duplicate transcript for message ${message.idForLogging()}, but it was not an update transcript. Dropping.`
           );
@@ -2389,23 +2389,18 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
     // Only queue attachments for downloads if this is a story (with additional logic), or
     // if it's either an outgoing message or we've accepted the conversation
-    let shouldDownloadNow = false;
-    const attachments = this.get('attachments') || [];
-    const reduxState = window.reduxStore.getState();
-
+    let shouldQueueForDownload = false;
     if (isStory(this.attributes)) {
-      shouldDownloadNow = await shouldDownloadStory(conversation.attributes);
+      shouldQueueForDownload = await shouldDownloadStory(
+        conversation.attributes
+      );
     } else {
-      const isVisualMediaAndUserInCall =
-        isInCall(reduxState) && (isImage(attachments) || isVideo(attachments));
-
-      shouldDownloadNow =
+      shouldQueueForDownload =
         this.hasAttachmentDownloads() &&
-        (conversation.getAccepted() || isOutgoing(this.attributes)) &&
-        !isVisualMediaAndUserInCall;
+        (conversation.getAccepted() || isOutgoing(this.attributes));
     }
 
-    if (shouldDownloadNow) {
+    if (shouldQueueForDownload) {
       if (shouldUseAttachmentDownloadQueue()) {
         addToAttachmentDownloadQueue(idLog, this);
       } else {
@@ -2502,7 +2497,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
           );
         }
 
-        const generatedMessage = reaction.storyReactionMessage;
+        const generatedMessage = reaction.generatedMessageForStoryReaction;
         strictAssert(
           generatedMessage,
           'Story reactions must provide storyReactionMessage'
@@ -2693,7 +2688,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
           'New story reaction must have an emoji'
         );
 
-        const generatedMessage = reaction.storyReactionMessage;
+        const generatedMessage = reaction.generatedMessageForStoryReaction;
         strictAssert(
           generatedMessage,
           'Story reactions must provide storyReactionmessage'

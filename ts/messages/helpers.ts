@@ -130,7 +130,7 @@ export function isQuoteAMatch(
     message.editHistory?.some(({ timestamp }) => timestamp === id) ||
     false;
 
-  return isSameTimestamp && getContactId(message) === authorConversation?.id;
+  return isSameTimestamp && getAuthorId(message) === authorConversation?.id;
 }
 
 export function findMatchingQuote(
@@ -159,7 +159,7 @@ export function findMatchingQuote(
   );
 }
 
-export function getContactId(
+export function getAuthorId(
   message: Pick<MessageAttributesType, 'type' | 'source' | 'sourceServiceId'>
 ): string | undefined {
   const source = getSource(message);
@@ -172,15 +172,15 @@ export function getContactId(
   const conversation = window.ConversationController.lookupOrCreate({
     e164: source,
     serviceId: sourceServiceId,
-    reason: 'helpers.getContactId',
+    reason: 'helpers.getAuthorId',
   });
   return conversation?.id;
 }
 
-export function getContact(
+export function getAuthor(
   message: MessageAttributesType
 ): ConversationModel | undefined {
-  const id = getContactId(message);
+  const id = getAuthorId(message);
   return window.ConversationController.get(id);
 }
 

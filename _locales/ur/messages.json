@@ -380,12 +380,6 @@
   "icu:invalidConversation": {
     "messageformat": "یہ گروپ غلط ہے۔ براہ کرم نیا گروپ بنائیں۔"
   },
-  "icu:taskbarMarkedUnread": {
-    "messageformat": "نہ پڑھا نشان زد کردہ"
-  },
-  "icu:taskbarUnreadMessages": {
-    "messageformat": "{count, plural, one {{count,number}نہ پڑھے ہوئے پیغامات} other {{count,number}نہ پڑھے ہوئے پیغامات}}"
-  },
   "icu:scrollDown": {
     "messageformat": "چیٹ نیچے تک سکرول کریں"
   },
@@ -1220,6 +1214,9 @@
   "icu:CallingLobby__CallLinkNotice--phone-sharing": {
     "messageformat": "جو کوئی بھی لنک کے ذریعے اس کال میں شامل ہوتا ہے وہ آپ کا نام، تصویر، اور فون نمبر دیکھ سکے گا۔"
   },
+  "icu:CallingLobby__CallLinkNotice--join-request-pending": {
+    "messageformat": "شامل ہونے کے منتظر…"
+  },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "شامل ہوں"
   },
@@ -1228,6 +1225,9 @@
   },
   "icu:CallingLobbyJoinButton--call-full": {
     "messageformat": "کال فل ہے"
+  },
+  "icu:CallingLobbyJoinButton--ask-to-join": {
+    "messageformat": "شامل ہونے کا پوچھیں"
   },
   "icu:calling__button--video-disabled": {
     "messageformat": "کیمرا غیر فعال ہوگیا"
@@ -1271,8 +1271,20 @@
   "icu:CallingButton--more-options": {
     "messageformat": "مزید آپشنز"
   },
+  "icu:CallingPendingParticipants__ApproveUser": {
+    "messageformat": "شامل ہونے کی درخواست منظور کریں"
+  },
+  "icu:CallingPendingParticipants__DenyUser": {
+    "messageformat": "شامل ہونے کی درخواست رد کریں"
+  },
+  "icu:CallingPendingParticipants__RequestsToJoin": {
+    "messageformat": "{count, plural, one {کال میں شامل ہونے کی {count,number} درخواستیں} other {{count,number} کال میں شامل ہونے کی درخواست کرتا ہے}}"
+  },
   "icu:CallingRaisedHandsList__Title": {
-    "messageformat": "{count, plural, one {ہاتھوں کو کھڑا کیا ہے · {count,number} فرد} other {ہاتھوں کو کھڑا کیا ہے · {count,number} افراد}}"
+    "messageformat": "{count, plural, one {{count,number} نے ہاتھ اٹھایا} other {{count,number} نے ہاتھ اٹھائے}}"
+  },
+  "icu:CallingRaisedHandsList__TitleHint": {
+    "messageformat": "(اول تا آخر)"
   },
   "icu:CallingReactions--me": {
     "messageformat": "آپ"
@@ -1352,8 +1364,17 @@
   "icu:calling__presenting--notification-body": {
     "messageformat": "جب آپ پیش کرنا بند کردیں گے تو کال پر واپس آنے کے لئے یہاں کلک کریں۔"
   },
+  "icu:calling__presenting--reconnecting--notification-title": {
+    "messageformat": "دوبارہ منسلک ہو رہا ہے…"
+  },
+  "icu:calling__presenting--reconnecting--notification-body": {
+    "messageformat": "آپ کا کنکشن منقطع ہو گیا تھا۔ Signal دوبارہ مربوط ہو رہا ہے۔"
+  },
   "icu:calling__presenting--info": {
     "messageformat": "Signal {window} شیئر کر رہا ہے۔"
+  },
+  "icu:calling__presenting--reconnecting": {
+    "messageformat": "دوبارہ منسلک ہو رہا ہے…"
   },
   "icu:calling__presenting--stop": {
     "messageformat": "اشتراک بند کرو"
@@ -2450,9 +2471,6 @@
   "icu:MessageRequests--unblock-group-confirm-body": {
     "messageformat": "گروپ ممبران آپ کو دوبارہ اس گروپ میں شامل کرسکیں گے۔"
   },
-  "icu:MessageRequests--block-and-report-spam": {
-    "messageformat": "اسپام رپورٹ کریں اور بلاک کریں"
-  },
   "icu:MessageRequests--block-and-report-spam-success-toast": {
     "messageformat": "اسپام کے طور پر رپورٹ کیا گیا اور بلاک کر دیا گیا۔"
   },
@@ -2760,7 +2778,10 @@
     "messageformat": "ایک ونڈو"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "لنک کاپی کریں"
+    "messageformat": "کال لنک کاپی کریں"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClient": {
+    "messageformat": "کال سے اس فرد کو ہٹائیں"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "وڈیو"
@@ -3144,7 +3165,7 @@
     "messageformat": "{count, plural, one {{memberName} نے {count,number} فرد کو گروپ میں مدعو کیا۔} other {{memberName} نے {count,number} افراد کو گروپ میں مدعو کیا۔}}"
   },
   "icu:GroupV2--pending-add--many--you": {
-    "messageformat": "آپ نے {count,number} افراد کو گروپ میں مدعو کیا۔"
+    "messageformat": "{count, plural, one {آپ نے {count,number} فرد کو گروپ میں مدعو کیا۔} other {آپ نے {count,number} افراد کو گروپ میں مدعو کیا۔}}"
   },
   "icu:GroupV2--pending-add--many--unknown": {
     "messageformat": "{count, plural, one {گروپ میں {count,number} فرد کو مدعو کیا گیا تھا۔} other {گروپ میں {count,number} افراد کو مدعو کیا گیا تھا۔}}"
@@ -3177,13 +3198,13 @@
     "messageformat": "ایک منتظم نے 1 شخص کے لئے اس گروپ کو ایک دعوت نامہ منسوخ کردیا۔"
   },
   "icu:GroupV2--pending-remove--revoke--many--other": {
-    "messageformat": "{memberName} نے {count,number} افراد کے لئے گروپ کو دعوت نامے منسوخ کردیئے۔"
+    "messageformat": "{count, plural, one {{memberName} نے 1 فرد کے کے لیے گروپ کا دعوت نامہ منسوخ کیا۔} other {{memberName} نے {count,number} افراد کے لیے گروپ کے دعوت نامے منسوخ کر دیے۔}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--you": {
-    "messageformat": "آپ نے {count,number} افراد کے لئے گروپ کو دعوت نامے منسوخ کردیئے۔"
+    "messageformat": "{count, plural, one {آپ نے 1 فرد کے لیے گروپ کا دعوت نامہ منسوخ کر دیا۔} other {آپ نے {count,number} افراد کے لیے گروپ کے دعوت نامے منسوخ کر دیے۔}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--unknown": {
-    "messageformat": "ایک منتظم نے {count,number} افراد کے لئے گروپ کو دعوت نامے منسوخ کردیئے۔"
+    "messageformat": "{count, plural, one {ایڈمن نے 1 فرد کے لیے گروپ کا دعوت نامہ منسوخ کیا۔} other {ایڈمن نے {count,number} افراد کے لیے گروپ کے دعوت نامے منسوخ کر دیے۔}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--one--other": {
     "messageformat": "{adminName} نے {memberName} کے ذریعہ مدعو 1 فرد کے لئے گروپ کو ایک دعوت نامہ منسوخ کردیا۔"
@@ -3207,19 +3228,19 @@
     "messageformat": "{count, plural, one {{adminName} نے {memberName} کی جانب سے مدعو کیے جانے والے {count,number} فرد کے لیے گروپ کے دعوت نامے منسوخ کر دیے ہیں۔} other {{adminName} نے {memberName} کی جانب سے مدعو کیے جانے والے {count,number} افراد کے لیے گروپ کے دعوت نامے منسوخ کر دیے ہیں۔}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--you": {
-    "messageformat": "آپ {memberName} کے ذریعہ مدعو {count,number} لوگوں کے لئے گروپ کو دعوت نامے منسوخ کرتے ہیں۔"
+    "messageformat": "{count, plural, one {آپ نے {memberName} کی جانب سے مدعو کردہ {count,number} فرد کے لیے گروپ کا دعوت نامہ منسوخ کیا۔} other {آپ نے {memberName} کی جانب سے مدعو کردہ {count,number} افراد کے لیے گروپ کے دعوت نامے منسوخ کر دیے۔}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--unknown": {
-    "messageformat": "ایک منتظم نے {memberName} کے ذریعہ مدعو {count,number} افراد کے لئے گروپ کو دعوت نامے منسوخ کردیئے۔"
+    "messageformat": "{count, plural, one {ایڈمن نے {memberName} کی جانب سے مدعو کردہ {count,number} فرد کے لیے گروپ کا دعوت نامہ منسوخ کیا۔} other {ایڈمن نے {memberName} کی جانب سے مدعو کردہ {count,number} افراد کے لیے گروپ کے دعوت نامے منسوخ کر دیے۔}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--other": {
-    "messageformat": "{adminName} نے {count,number} افراد کو بھیجے ہوئے گروپ کو دعوت نامے منسوخ کردیئے۔"
+    "messageformat": "{count, plural, one {{adminName} نے آپ کی جانب سے مدعو کردہ {count,number} فرد کے لیے گروپ کا دعوت نامہ منسوخ کیا۔} other {{adminName} نے آپ کی جانب سے مدعو کردہ {count,number} افراد کے لیے گروپ کے دعوت نامے منسوخ کیے۔}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--you": {
-    "messageformat": "آپ نے {count,number} افراد کو اپنی دعوت منسوخ کردی۔"
+    "messageformat": "{count, plural, one {آپ نے {count,number} فرد کو بھیجا گیا اپنا دعوت نامہ منسوخ کیا۔} other {آپ نے {count,number} افراد کو بھیجا گیا اپنا دعوت نامہ ختم کر دیا۔}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--unknown": {
-    "messageformat": "کسی منتظم نے اس گروپ کو دعوت نامے منسوخ کردیئے جو آپ نے {count,number} لوگوں کو بھیجے تھے۔"
+    "messageformat": "{count, plural, one {ایڈمن نے آپ کی جانب سے مدعو کردہ {count,number} فرد کے لیے گروپ کا دعوت نامہ منسوخ کیا۔} other {ایڈمن نے آپ کی جانب سے مدعو کردہ {count,number} افراد کے لیے گروپ کے دعوت نامے منسوخ کیے۔}}"
   },
   "icu:GroupV2--admin-approval-add-one--you": {
     "messageformat": "آپ نے گروپ میں شامل ہونے کی درخواست بھیجی ہے۔"
@@ -3362,17 +3383,26 @@
   "icu:GroupV1--Migration--info--invited--one": {
     "messageformat": "اس ممبر کو دوبارہ اس گروپ میں شامل ہونے کے لئے دعوت نامہ قبول کرنے کی ضرورت ہوگی ، اور جب تک وہ قبول نہیں کریں گے گروپ پیغامات وصول نہیں کریں گے۔"
   },
+  "icu:GroupV1--Migration--info--invited--count": {
+    "messageformat": "{count, plural, one {{count,number} ممبر کو دوبارہ اس گروپ میں شامل ہونے کے لیے ایک دعوت نامہ قبول کرنا ہو گا، اور اسے قبول نہ کرنے تک اسے گروپ کے میسجز موصول نہیں ہوں گے۔} other {{count,number} ممبرز کو دوبارہ اس گروپ میں شامل ہونے کے لیے ایک دعوت نامہ قبول کرنے کی ضرورت ہو گی، اور اسے قبول نہ کرنے تک انہیں گروپ کے میسجز موصول نہیں ہوں گے۔}}"
+  },
   "icu:GroupV1--Migration--info--removed--before--many": {
     "messageformat": "یہ ممبر نئے گروپس میں شامل ہونے کے اہل نہیں ہیں ، اور انہیں گروپ سے نکال دیا جائے گا:"
   },
   "icu:GroupV1--Migration--info--removed--before--one": {
     "messageformat": "یہ ممبر نئے گروپس میں شامل ہونے کے اہل نہیں ہے ، اور اسے گروپ سے نکال دیا جائے گا:"
   },
+  "icu:GroupV1--Migration--info--removed--before--count": {
+    "messageformat": "{count, plural, one {{count,number} ممبر نئے گروپس میں شامل ہونے کا اہل نہیں ہے، اور اسے گروپ سے نکال دیا جائے گا۔} other {{count,number} ممبرز نئے گروپس میں شامل ہونے کے اہل نہیں ہیں، اور انہیں گروپ سے نکال دیا جائے گا۔}}"
+  },
   "icu:GroupV1--Migration--info--removed--after--many": {
     "messageformat": "یہ ممبران نئے گروپس میں شامل ہونے کے قابل نہیں تھے ، اور انہیں گروپ سے نکال دیا گیا تھا:"
   },
   "icu:GroupV1--Migration--info--removed--after--one": {
     "messageformat": "یہ ممبر نئے گروپس میں شامل ہونے کے قابل نہیں تھا ، اور اسے گروپ سے خارج کردیا گیا تھا:"
+  },
+  "icu:GroupV1--Migration--info--removed--after--count": {
+    "messageformat": "{count, plural, one {{count,number} ممبر نئے گروپس میں شامل ہونے کا اہل نہیں تھا، اور اسے گروپ سے نکال دیا گیا۔} other {{count,number} ممبرز نئے گروپس میں شامل ہونے کے اہل نہیں تھے، اور انہیں گروپ سے نکال دیا گیا تھا۔}}"
   },
   "icu:GroupV1--Migration--invited--you": {
     "messageformat": "آپ کو نئے گروپ میں شامل نہیں کیا جاسکا اور آپ کو اس میں شامل ہونے کی دعوت دی گئی ہے۔"
@@ -3381,7 +3411,7 @@
     "messageformat": "{contact} کو نئے گروپ میں شامل نہیں کیا جا سکا اور اس میں شمولیت کی دعوت دی گئی ہے۔"
   },
   "icu:GroupV1--Migration--invited--many": {
-    "messageformat": "نئے ممبران میں {count,number} ممبران کو شامل نہیں کیا جاسکا اور ان میں شرکت کی دعوت دی گئی ہے۔"
+    "messageformat": "{count, plural, one {ممبر کو نئے گروپ میں شامل نہیں کیا جا سکا اور شرکت کی دعوت دی گئی ہے۔} other {{count,number} ممبرز کو نئے گروپ میں شامل نہیں کیا جا سکا اور شرکت کی دعوت دی گئی ہے۔}}"
   },
   "icu:GroupV1--Migration--removed--one": {
     "messageformat": "{contact} کو گروپ سے ہٹا دیا گیا تھا۔"
@@ -4380,10 +4410,10 @@
     "messageformat": "کوئی نہیں"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__title": {
-    "messageformat": "Are you sure?"
+    "messageformat": "کیا آپ واقعی کرنا چاہتے ہیں؟"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__description": {
-    "messageformat": "If you change “{settingTitle}” to “{nobodyLabel}” it will make it harder for people to find you on Signal."
+    "messageformat": "اگر آپ \"{settingTitle}\" کو \"{nobodyLabel}\" میں تبدیل کرتے ہیں تو یہ لوگوں کے لیے آپ کو Signal پر تلاش کرنا مشکل بنا دے گا۔"
   },
   "icu:Preferences--messaging": {
     "messageformat": "پیغام رسانی"
@@ -4656,13 +4686,13 @@
     "messageformat": "آپ نے اس شخص کو بلاک کیا تھا"
   },
   "icu:MessageRequestResponseNotification__Message--Blocked--Group": {
-    "messageformat": "You blocked the group"
+    "messageformat": "آپ نے گروپ کو بلاک کر دیا"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked": {
-    "messageformat": "You unblocked this person"
+    "messageformat": "آپ نے اس شخص کو ان بلاک کر دیا"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked--Group": {
-    "messageformat": "You unblocked the group"
+    "messageformat": "آپ نے گروپ کو ان بلاک کر دیا"
   },
   "icu:MessageRequestResponseNotification__Button--Options": {
     "messageformat": "آپشنز"
@@ -5313,6 +5343,9 @@
   "icu:CallHistory__Description--Declined": {
     "messageformat": "{type, select, Audio {مسترد کردہ وائس کال} Video {مسترد کردہ ویڈیو کال} Group {مسترد کردہ گروپ کال} other {مسترد کردہ  کال}}"
   },
+  "icu:CallHistory__Description--Adhoc": {
+    "messageformat": "کال کا لنک"
+  },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} دوسرا ٹائپ کر رہا ہے۔} other {{count,number} دوسرے ٹائپ کر رہے ہیں۔}}"
   },
@@ -5334,7 +5367,7 @@
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
-    "messageformat": "آپ کی ایپ کے بلا خلل چلتے رہنے کے لیے بگ ٹھیک کیے گئے۔ مزید دلچسپ تبدیلیاں جلد سامنے آئیں گی! ",
+    "messageformat": "آپ کی ایپ کے بلا خلل چلتے رہنے کے لیے بگ ٹھیک کیے گئے۔ مزید دلچسپ تبدیلیاں جلد سامنے آئیں گی!",
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
@@ -5352,14 +5385,5 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "معمولی تبدیلیاں کی گئیں، بگ ٹھیک کیے گئے، اور کارکردگی اور بھی بہتر بنائی گئی ہے۔ Signal استعمال کرنے کے لیے شکریہ!",
     "ignoreUnused": true
-  },
-  "icu:WhatsNew__v7.5--0": {
-    "messageformat": "• ہم نے ہر اس شخص جس کے ساتھ آپ Signal پر چیٹ کرتے ہیں کے لیے حسب ضرورت عرفی ناموں اور نوٹس کی سپورٹ شامل کی ہے، چاہے وہ آپ کے سسٹم روابط میں نہ بھی ہوں۔ نوٹس اور عرفی نام آپ کے Signal کنیکشنز کی اضافی تفصیلات تحریر کرنے میں ایک آسان اور محفوظ راستہ فراہم کرتے ہیں — اور وہ کلی طور پر انکرپٹ شدہ اور آپ کی Signal کے PIN کے ذریعے محفوظ شدہ ہیں تاکہ اگر آپ اپنا فون کھو بھی دیں تو انہیں محفوظ طریقے سے بحال کیا جا سکے۔"
-  },
-  "icu:WhatsNew__v7.5--1": {
-    "messageformat": "اب آپ  Linux پر اپنی سسٹم ٹرے میں Signal کو مینیمائز کر سکتے ہیں۔"
-  },
-  "icu:WhatsNew__v7.5--2": {
-    "messageformat": "Windows پر موجود یوزر کے لیے، یہ اپ ڈیٹ Signal آئیکن پر نہ پڑھے گئے میسج کے تفصیلی شمار کے لیے سپورٹ کو دوبارہ فعال کرتی ہے۔"
   }
 }

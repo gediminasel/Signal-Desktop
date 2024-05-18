@@ -6,7 +6,7 @@ import { ipcRenderer } from 'electron';
 import type {
   AudioDevice,
   CallId,
-  CallLinkState,
+  CallLinkState as RingRTCCallLinkState,
   DeviceId,
   GroupCallObserver,
   PeekInfo,
@@ -39,14 +39,14 @@ import {
   RingCancelReason,
   RingRTC,
   RingUpdate,
+  GroupCallKind,
 } from '@signalapp/ringrtc';
-import { uniqBy, noop } from 'lodash';
+import { uniqBy, noop, compact } from 'lodash';
 
 import Long from 'long';
 import type { CallLinkAuthCredentialPresentation } from '@signalapp/libsignal-client/zkgroup';
 import type {
   ActionsType as CallingReduxActionsType,
-  CallLinkStateType,
   GroupCallParticipantInfoType,
   GroupCallPeekInfoType,
 } from '../state/ducks/calling';
@@ -64,6 +64,7 @@ import {
   CallMode,
   GroupCallConnectionState,
   GroupCallJoinState,
+  ScreenShareStatus,
 } from '../types/Calling';
 import {
   findBestMatchingAudioDeviceIndex,
@@ -81,10 +82,9 @@ import { dropNull } from '../util/dropNull';
 import { getOwn } from '../util/getOwn';
 import * as durations from '../util/durations';
 import { clearTimeoutIfNecessary } from '../util/clearTimeoutIfNecessary';
-import { handleMessageSend } from '../util/handleMessageSend';
 import { fetchMembershipProof, getMembershipList } from '../groups';
-import { wrapWithSyncMessageSend } from '../util/wrapWithSyncMessageSend';
 import type { ProcessedEnvelope } from '../textsecure/Types.d';
+import type { GetIceServersResultType } from '../textsecure/WebAPI';
 import { missingCaseError } from '../util/missingCaseError';
 import { normalizeGroupCallTimestamp } from '../util/ringrtc/normalizeGroupCallTimestamp';
 import {
@@ -94,7 +94,6 @@ import {
   REQUESTED_VIDEO_FRAMERATE,
 } from '../calling/constants';
 import { callingMessageToProto } from '../util/callingMessageToProto';
-import { getSendOptions } from '../util/getSendOptions';
 import { requestMicrophonePermissions } from '../util/requestMicrophonePermissions';
 import OS from '../util/os/osMain';
 import { SignalService as Proto } from '../protobuf';
@@ -107,7 +106,6 @@ import {
 } from './notifications';
 import * as log from '../logging/log';
 import { assertDev, strictAssert } from '../util/assert';
-import { sendContentMessageToGroup, sendToGroup } from '../util/sendToGroup';
 import {
   formatLocalDeviceState,
   formatPeekInfo,
@@ -124,19 +122,23 @@ import {
   getCallIdFromRing,
   getLocalCallEventFromRingUpdate,
   convertJoinState,
-  updateLocalAdhocCallHistory,
+  updateAdhocCallHistory,
   getCallIdFromEra,
   getCallDetailsForAdhocCall,
 } from '../util/callDisposition';
 import { isNormalNumber } from '../util/isNormalNumber';
 import { LocalCallEvent } from '../types/CallDisposition';
+import type { AciString, ServiceIdString } from '../types/ServiceId';
 import { isServiceIdString } from '../types/ServiceId';
 import { isInSystemContacts } from '../util/isInSystemContacts';
 import {
   getRoomIdFromRootKey,
   getCallLinkAuthCredentialPresentation,
+  toAdminKeyBytes,
 } from '../util/callLinks';
 import { isAdhocCallingEnabled } from '../util/isAdhocCallingEnabled';
+import { conversationJobQueue } from '../jobs/conversationJobQueue';
+import type { ReadCallLinkState } from '../types/CallLink';
 
 const {
   processGroupCallRingCancellation,
@@ -176,6 +178,7 @@ type CallingReduxInterface = Pick<
   | 'groupCallEnded'
   | 'groupCallRaisedHandsChange'
   | 'groupCallStateChange'
+  | 'joinedAdhocCall'
   | 'outgoingCall'
   | 'receiveGroupCallReactions'
   | 'receiveIncomingDirectCall'
@@ -308,6 +311,22 @@ function protoToCallingMessage({
   };
 }
 
+export type NotifyScreenShareStatusOptionsType = Readonly<
+  {
+    conversationId?: string;
+    isPresenting: boolean;
+  } & (
+    | {
+        callMode: CallMode.Direct;
+        callState: CallState;
+      }
+    | {
+        callMode: CallMode.Group | CallMode.Adhoc;
+        connectionState: GroupCallConnectionState;
+      }
+  )
+>;
+
 export class CallingClass {
   readonly videoCapturer: GumVideoCapturer;
 
@@ -317,7 +336,7 @@ export class CallingClass {
 
   public _sfuUrl?: string;
 
-  public _iceServerOverride?: string;
+  public _iceServerOverride?: GetIceServersResultType | string;
 
   private lastMediaDeviceSettings?: MediaDeviceSettings;
 
@@ -541,7 +560,16 @@ export class CallingClass {
     callLinkRootKey,
   }: Readonly<{
     callLinkRootKey: CallLinkRootKey;
-  }>): Promise<CallLinkState | undefined> {
+  }>): Promise<
+    | {
+        callLinkState: ReadCallLinkState;
+        errorStatusCode: undefined;
+      }
+    | {
+        callLinkState: undefined;
+        errorStatusCode: number;
+      }
+  > {
     if (!this._sfuUrl) {
       throw new Error('readCallLink() missing SFU URL; not handling call link');
     }
@@ -558,19 +586,27 @@ export class CallingClass {
     );
     if (!result.success) {
       log.warn(`${logId}: failed`);
-      return;
+      return {
+        callLinkState: undefined,
+        errorStatusCode: result.errorStatusCode,
+      };
     }
 
     log.info(`${logId}: success`);
-    return result.value;
+    return {
+      callLinkState: this.formatCallLinkStateForRedux(result.value),
+      errorStatusCode: undefined,
+    };
   }
 
   async startCallLinkLobby({
     callLinkRootKey,
+    adminPasskey,
     hasLocalAudio,
     hasLocalVideo = true,
   }: Readonly<{
     callLinkRootKey: CallLinkRootKey;
+    adminPasskey: Buffer | undefined;
     hasLocalAudio: boolean;
     hasLocalVideo?: boolean;
   }>): Promise<
@@ -597,7 +633,7 @@ export class CallingClass {
       roomId,
       authCredentialPresentation,
       callLinkRootKey,
-      adminPasskey: undefined,
+      adminPasskey,
     });
 
     groupCall.setOutgoingAudioMuted(!hasLocalAudio);
@@ -1053,9 +1089,13 @@ export class CallingClass {
             eraId
           ) {
             updateMessageState = GroupCallUpdateMessageState.SentJoin;
-            if (callMode === CallMode.Group) {
-              drop(this.sendGroupCallUpdateMessage(conversationId, eraId));
-            }
+            drop(
+              this.onGroupCallJoined({
+                peerId: conversationId,
+                eraId,
+                callMode,
+              })
+            );
           }
         }
 
@@ -1129,10 +1169,13 @@ export class CallingClass {
           eraId
         ) {
           updateMessageState = GroupCallUpdateMessageState.SentJoin;
-
-          if (callMode === CallMode.Group) {
-            drop(this.sendGroupCallUpdateMessage(conversationId, eraId));
-          }
+          drop(
+            this.onGroupCallJoined({
+              peerId: conversationId,
+              eraId,
+              callMode,
+            })
+          );
         }
 
         // For adhoc calls, conversationId will be a roomId
@@ -1171,14 +1214,32 @@ export class CallingClass {
     };
   }
 
+  private async onGroupCallJoined({
+    callMode,
+    peerId,
+    eraId,
+  }: {
+    callMode: CallMode.Group | CallMode.Adhoc;
+    peerId: string;
+    eraId: string;
+  }): Promise<void> {
+    if (callMode === CallMode.Group) {
+      drop(this.sendGroupCallUpdateMessage(peerId, eraId));
+    } else if (callMode === CallMode.Adhoc) {
+      this.reduxInterface?.joinedAdhocCall(peerId);
+    }
+  }
+
   public async joinCallLinkCall({
     roomId,
     rootKey,
+    adminKey,
     hasLocalAudio,
     hasLocalVideo,
   }: {
     roomId: string;
     rootKey: string;
+    adminKey: string | undefined;
     hasLocalAudio: boolean;
     hasLocalVideo: boolean;
   }): Promise<void> {
@@ -1192,13 +1253,16 @@ export class CallingClass {
     const callLinkRootKey = CallLinkRootKey.parse(rootKey);
     const authCredentialPresentation =
       await getCallLinkAuthCredentialPresentation(callLinkRootKey);
+    const adminPasskey = adminKey
+      ? Buffer.from(toAdminKeyBytes(adminKey))
+      : undefined;
 
     // RingRTC reuses the same type GroupCall between Adhoc and Group calls.
     const groupCall = this.connectCallLinkCall({
       roomId,
       authCredentialPresentation,
       callLinkRootKey,
-      adminPasskey: undefined,
+      adminPasskey,
     });
 
     groupCall.setOutgoingAudioMuted(!hasLocalAudio);
@@ -1229,6 +1293,33 @@ export class CallingClass {
     }
 
     groupCall.setGroupMembers(this.getGroupCallMembers(conversationId));
+  }
+
+  public approveUser(conversationId: string, aci: AciString): void {
+    const groupCall = this.getGroupCall(conversationId);
+    if (!groupCall) {
+      throw new Error('Could not find matching call');
+    }
+
+    groupCall.approveUser(Buffer.from(uuidToBytes(aci)));
+  }
+
+  public denyUser(conversationId: string, aci: AciString): void {
+    const groupCall = this.getGroupCall(conversationId);
+    if (!groupCall) {
+      throw new Error('Could not find matching call');
+    }
+
+    groupCall.denyUser(Buffer.from(uuidToBytes(aci)));
+  }
+
+  public removeClient(conversationId: string, demuxId: number): void {
+    const groupCall = this.getGroupCall(conversationId);
+    if (!groupCall) {
+      throw new Error('Could not find matching call');
+    }
+
+    groupCall.removeClient(demuxId);
   }
 
   // See the comment in types/Calling.ts to explain why we have to do this conversion.
@@ -1265,6 +1356,18 @@ export class CallingClass {
     }
   }
 
+  private formatUserId(userId: Buffer): AciString | null {
+    const uuid = bytesToUuid(userId);
+    if (uuid && isAciString(uuid)) {
+      return uuid;
+    }
+
+    log.error(
+      'Calling.formatUserId: could not convert participant UUID Uint8Array to string'
+    );
+    return null;
+  }
+
   public formatGroupCallPeekInfoForRedux(
     peekInfo: PeekInfo
   ): GroupCallPeekInfoType {
@@ -1272,17 +1375,10 @@ export class CallingClass {
     return {
       acis: peekInfo.devices.map(peekDeviceInfo => {
         if (peekDeviceInfo.userId) {
-          const uuid = bytesToUuid(peekDeviceInfo.userId);
+          const uuid = this.formatUserId(peekDeviceInfo.userId);
           if (uuid) {
-            assertDev(
-              isAciString(uuid),
-              'peeked participant uuid must be an ACI'
-            );
             return uuid;
           }
-          log.error(
-            'Calling.formatGroupCallPeekInfoForRedux: could not convert peek UUID Uint8Array to string; using fallback UUID'
-          );
         } else {
           log.error(
             'Calling.formatGroupCallPeekInfoForRedux: device had no user ID; using fallback UUID'
@@ -1293,6 +1389,9 @@ export class CallingClass {
           'formatGrouPCallPeekInfoForRedux'
         );
       }),
+      pendingAcis: compact(
+        peekInfo.pendingUsers.map(userId => this.formatUserId(userId))
+      ),
       creatorAci:
         creatorAci !== undefined
           ? normalizeAci(
@@ -1368,8 +1467,8 @@ export class CallingClass {
   }
 
   public formatCallLinkStateForRedux(
-    callLinkState: CallLinkState
-  ): CallLinkStateType {
+    callLinkState: RingRTCCallLinkState
+  ): ReadCallLinkState {
     const { name, restrictions, expiration, revoked } = callLinkState;
     return {
       name,
@@ -1430,53 +1529,36 @@ export class CallingClass {
   private async sendGroupCallUpdateMessage(
     conversationId: string,
     eraId: string
-  ): Promise<void> {
+  ): Promise<boolean> {
     const conversation = window.ConversationController.get(conversationId);
     if (!conversation) {
-      log.error(
-        'Unable to send group call update message for non-existent conversation'
-      );
-      return;
+      log.error('sendGroupCallUpdateMessage: Conversation not found!');
+      return false;
     }
+
+    const logId = `sendGroupCallUpdateMessage/${conversation.idForLogging()}`;
 
     const groupV2 = conversation.getGroupV2Info();
-    const sendOptions = await getSendOptions(conversation.attributes);
     if (!groupV2) {
-      log.error(
-        'Unable to send group call update message for conversation that lacks groupV2 info'
-      );
-      return;
+      log.error(`${logId}: Conversation lacks groupV2 info!`);
+      return false;
     }
 
-    const timestamp = Date.now();
-
-    // We "fire and forget" because sending this message is non-essential.
-    const { ContentHint } = Proto.UnidentifiedSenderMessage.Message;
-    wrapWithSyncMessageSend({
-      conversation,
-      logId: `sendToGroup/groupCallUpdate/${conversationId}-${eraId}`,
-      messageIds: [],
-      send: () =>
-        conversation.queueJob('sendGroupCallUpdateMessage', () =>
-          sendToGroup({
-            contentHint: ContentHint.DEFAULT,
-            groupSendOptions: {
-              groupCallUpdate: { eraId },
-              groupV2,
-              timestamp,
-            },
-            messageId: undefined,
-            sendOptions,
-            sendTarget: conversation.toSenderKeyTarget(),
-            sendType: 'callingMessage',
-            urgent: true,
-          })
-        ),
-      sendType: 'callingMessage',
-      timestamp,
-    }).catch(err => {
-      log.error('Failed to send group call update:', Errors.toLogFormat(err));
-    });
+    try {
+      await conversationJobQueue.add({
+        type: 'GroupCallUpdate',
+        conversationId: conversation.id,
+        eraId,
+        urgent: true,
+      });
+      return true;
+    } catch (err) {
+      log.error(
+        `${logId}: Failed to queue call update:`,
+        Errors.toLogFormat(err)
+      );
+      return false;
+    }
   }
 
   async acceptDirectCall(
@@ -1545,7 +1627,10 @@ export class CallingClass {
       );
     }
 
-    ipcRenderer.send('close-screen-share-controller');
+    ipcRenderer.send(
+      'screen-share:status-change',
+      ScreenShareStatus.Disconnected
+    );
 
     const entries = Object.entries(this.callsLookup);
     log.info(`hangup: ${entries.length} call(s) to hang up...`);
@@ -1694,12 +1779,21 @@ export class CallingClass {
     this.setOutgoingVideoIsScreenShare(call, isPresenting);
 
     if (source) {
+      ipcRenderer.send('show-screen-share', source.name);
+
+      // TODO: DESKTOP-7068
+      if (
+        call instanceof GroupCall &&
+        call.getKind() === GroupCallKind.CallLink
+      ) {
+        return;
+      }
+
       const conversation = window.ConversationController.get(conversationId);
       strictAssert(conversation, 'setPresenting: conversation not found');
 
       const { url, absolutePath } = await conversation.getAvatarOrIdenticon();
 
-      ipcRenderer.send('show-screen-share', source.name);
       notificationService.notify({
         conversationId,
         iconPath: absolutePath,
@@ -1711,8 +1805,82 @@ export class CallingClass {
         title: window.i18n('icu:calling__presenting--notification-title'),
       });
     } else {
-      ipcRenderer.send('close-screen-share-controller');
+      ipcRenderer.send(
+        'screen-share:status-change',
+        ScreenShareStatus.Disconnected
+      );
     }
+  }
+
+  async notifyScreenShareStatus(
+    options: NotifyScreenShareStatusOptionsType
+  ): Promise<void> {
+    let newStatus: ScreenShareStatus;
+    if (options.callMode === CallMode.Direct) {
+      switch (options.callState) {
+        case CallState.Prering:
+        case CallState.Ringing:
+        case CallState.Accepted:
+          newStatus = ScreenShareStatus.Connected;
+          break;
+        case CallState.Reconnecting:
+          newStatus = ScreenShareStatus.Reconnecting;
+          break;
+        case CallState.Ended:
+          newStatus = ScreenShareStatus.Disconnected;
+          break;
+        default:
+          throw missingCaseError(options.callState);
+      }
+    } else {
+      switch (options.connectionState) {
+        case GroupCallConnectionState.NotConnected:
+          newStatus = ScreenShareStatus.Disconnected;
+          break;
+        case GroupCallConnectionState.Connecting:
+        case GroupCallConnectionState.Connected:
+          newStatus = ScreenShareStatus.Connected;
+          break;
+        case GroupCallConnectionState.Reconnecting:
+          newStatus = ScreenShareStatus.Reconnecting;
+          break;
+        default:
+          throw missingCaseError(options.connectionState);
+      }
+    }
+
+    const { conversationId, isPresenting } = options;
+
+    if (
+      options.callMode !== CallMode.Adhoc &&
+      isPresenting &&
+      conversationId &&
+      newStatus === ScreenShareStatus.Reconnecting
+    ) {
+      const conversation = window.ConversationController.get(conversationId);
+      strictAssert(
+        conversation,
+        'showPresentingReconnectingNotification: conversation not found'
+      );
+
+      const { url, absolutePath } = await conversation.getAvatarOrIdenticon();
+
+      notificationService.notify({
+        conversationId,
+        iconPath: absolutePath,
+        iconUrl: url,
+        message: window.i18n(
+          'icu:calling__presenting--reconnecting--notification-body'
+        ),
+        type: NotificationType.IsPresenting,
+        sentAt: 0,
+        silent: true,
+        title: window.i18n(
+          'icu:calling__presenting--reconnecting--notification-title'
+        ),
+      });
+    }
+    ipcRenderer.send('screen-share:status-change', newStatus);
   }
 
   private async startDeviceReselectionTimer(): Promise<void> {
@@ -2109,50 +2277,71 @@ export class CallingClass {
   private async handleSendCallMessageToGroup(
     groupIdBytes: Buffer,
     data: Buffer,
-    urgency: CallMessageUrgency
-  ): Promise<void> {
+    urgency: CallMessageUrgency,
+    overrideRecipients: Array<Buffer> = []
+  ): Promise<boolean> {
     const groupId = groupIdBytes.toString('base64');
     const conversation = window.ConversationController.get(groupId);
     if (!conversation) {
       log.error('handleSendCallMessageToGroup(): could not find conversation');
-      return;
+      return false;
     }
-
-    const timestamp = Date.now();
-
-    const callingMessage = new CallingMessage();
-    callingMessage.opaque = new OpaqueMessage();
-    callingMessage.opaque.data = data;
-    const contentMessage = new Proto.Content();
-    contentMessage.callingMessage = callingMessageToProto(
-      callingMessage,
-      urgency
-    );
 
     // If this message isn't droppable, we'll wake up recipient devices. The important one
     //   is the first message to start the call.
     const urgent = urgency === CallMessageUrgency.HandleImmediately;
 
-    // We "fire and forget" because sending this message is non-essential.
-    // We also don't sync this message.
-    const { ContentHint } = Proto.UnidentifiedSenderMessage.Message;
-    await conversation.queueJob('handleSendCallMessageToGroup', async () =>
-      handleMessageSend(
-        sendContentMessageToGroup({
-          contentHint: ContentHint.DEFAULT,
-          contentMessage,
-          isPartialSend: false,
-          messageId: undefined,
-          recipients: conversation.getRecipients(),
-          sendOptions: await getSendOptions(conversation.attributes),
-          sendTarget: conversation.toSenderKeyTarget(),
-          sendType: 'callingMessage',
-          timestamp,
-          urgent,
-        }),
-        { messageIds: [], sendType: 'callingMessage' }
-      )
-    );
+    try {
+      let recipients: Array<ServiceIdString> = [];
+      let isPartialSend = false;
+      if (overrideRecipients.length > 0) {
+        // Send only to the overriding recipients.
+        overrideRecipients.forEach(recipient => {
+          const serviceId = bytesToUuid(recipient);
+          if (!serviceId) {
+            log.error(
+              'handleSendCallMessageToGroup(): missing recipient serviceId'
+            );
+          } else {
+            assertDev(
+              isServiceIdString(serviceId),
+              'remoteServiceId is not a serviceId'
+            );
+            recipients.push(serviceId);
+          }
+        });
+        isPartialSend = true;
+      } else {
+        // Send to all members in the group.
+        recipients = conversation.getRecipients();
+      }
+
+      const callingMessage = new CallingMessage();
+      callingMessage.opaque = new OpaqueMessage();
+      callingMessage.opaque.data = data;
+
+      const proto = callingMessageToProto(callingMessage, urgency);
+      const protoBytes = Proto.CallingMessage.encode(proto).finish();
+      const protoBase64 = Bytes.toBase64(protoBytes);
+
+      await conversationJobQueue.add({
+        type: 'CallingMessage',
+        conversationId: conversation.id,
+        protoBase64,
+        urgent,
+        isPartialSend,
+        recipients,
+      });
+
+      log.info('handleSendCallMessageToGroup() completed successfully');
+      return true;
+    } catch (err) {
+      const errorString = Errors.toLogFormat(err);
+      log.error(
+        `handleSendCallMessageToGroup() failed to queue job: ${errorString}`
+      );
+      return false;
+    }
   }
 
   private async handleGroupCallRingUpdate(
@@ -2275,15 +2464,14 @@ export class CallingClass {
     message: CallingMessage,
     urgency?: CallMessageUrgency
   ): Promise<boolean> {
-    const conversation = window.ConversationController.get(remoteUserId);
-    const sendOptions = conversation
-      ? await getSendOptions(conversation.attributes)
-      : undefined;
-
-    if (!window.textsecure.messaging) {
-      log.warn('handleOutgoingSignaling() returning false; offline');
-      return false;
-    }
+    assertDev(
+      isServiceIdString(remoteUserId),
+      'remoteUserId is not a service id'
+    );
+    const conversation = window.ConversationController.getOrCreate(
+      remoteUserId,
+      'private'
+    );
 
     // We want 1:1 call initiate messages to wake up recipient devices, but not others
     const urgent =
@@ -2291,32 +2479,23 @@ export class CallingClass {
       Boolean(message.offer);
 
     try {
-      assertDev(
-        isServiceIdString(remoteUserId),
-        'remoteUserId is not a service id'
-      );
-      const result = await handleMessageSend(
-        window.textsecure.messaging.sendCallingMessage(
-          remoteUserId,
-          callingMessageToProto(message, urgency),
-          urgent,
-          sendOptions
-        ),
-        { messageIds: [], sendType: 'callingMessage' }
-      );
+      const proto = callingMessageToProto(message, urgency);
+      const protoBytes = Proto.CallingMessage.encode(proto).finish();
+      const protoBase64 = Bytes.toBase64(protoBytes);
 
-      if (result && result.errors && result.errors.length) {
-        throw result.errors[0];
-      }
+      await conversationJobQueue.add({
+        type: 'CallingMessage',
+        conversationId: conversation.id,
+        protoBase64,
+        urgent,
+      });
 
-      log.info('handleOutgoingSignaling() completed successfully');
       return true;
     } catch (err) {
-      if (err && err.errors && err.errors.length > 0) {
-        log.error(`handleOutgoingSignaling() failed: ${err.errors[0].reason}`);
-      } else {
-        log.error('handleOutgoingSignaling() failed');
-      }
+      const errorString = Errors.toLogFormat(err);
+      log.error(
+        `handleOutgoingSignaling() failed to queue job: ${errorString}`
+      );
       return false;
     }
   }
@@ -2584,12 +2763,39 @@ export class CallingClass {
   }
 
   private async handleStartCall(call: Call): Promise<boolean> {
+    type IceServer = {
+      username?: string;
+      password?: string;
+      hostname?: string;
+      urls: Array<string>;
+    };
+
+    function iceServerConfigToList(
+      iceServerConfig: GetIceServersResultType
+    ): Array<IceServer> {
+      return [
+        {
+          hostname: iceServerConfig.hostname ?? '',
+          username: iceServerConfig.username,
+          password: iceServerConfig.password,
+          urls: (iceServerConfig.urlsWithIps ?? []).slice(),
+        },
+        {
+          hostname: '',
+          username: iceServerConfig.username,
+          password: iceServerConfig.password,
+          urls: (iceServerConfig.urls ?? []).slice(),
+        },
+      ];
+    }
+
     if (!window.textsecure.messaging) {
       log.error('handleStartCall: offline!');
       return false;
     }
 
-    const iceServer = await window.textsecure.messaging.server.getIceServers();
+    const iceServerConfig =
+      await window.textsecure.messaging.server.getIceServers();
 
     const shouldRelayCalls = window.Events.getAlwaysRelayCalls();
 
@@ -2602,33 +2808,23 @@ export class CallingClass {
     // If the peer is not in the user's system contacts, force IP hiding.
     const isContactUntrusted = !isInSystemContacts(conversation.attributes);
 
+    // proritize ice servers with IPs to avoid DNS
     // only include hostname with urlsWithIps
-    const iceServers = this._iceServerOverride
-      ? [
-          {
-            hostname: ICE_SERVER_IS_IP_LIKE.test(this._iceServerOverride)
-              ? iceServer.hostname
-              : '',
-            username: iceServer.username,
-            password: iceServer.password,
-            urls: [this._iceServerOverride.toString()],
-          },
-        ]
-      : // proritize ice servers with IPs to avoid DNS
-        [
-          {
-            hostname: iceServer.hostname,
-            username: iceServer.username,
-            password: iceServer.password,
-            urls: (iceServer.urlsWithIps ?? []).slice(),
-          },
-          {
-            hostname: '',
-            username: iceServer.username,
-            password: iceServer.password,
-            urls: (iceServer.urls ?? []).slice(),
-          },
-        ];
+    let iceServers = iceServerConfigToList(iceServerConfig);
+
+    if (this._iceServerOverride) {
+      if (typeof this._iceServerOverride === 'string') {
+        if (ICE_SERVER_IS_IP_LIKE.test(this._iceServerOverride)) {
+          iceServers[0].urls = [this._iceServerOverride];
+          iceServers = [iceServers[0]];
+        } else {
+          iceServers[1].urls = [this._iceServerOverride];
+          iceServers = [iceServers[1]];
+        }
+      } else {
+        iceServers = iceServerConfigToList(this._iceServerOverride);
+      }
+    }
 
     const callSettings = {
       iceServers,
@@ -2667,7 +2863,7 @@ export class CallingClass {
         LocalCallEvent.Accepted,
         'CallingClass.updateCallHistoryForGroupCallOnLocalChanged'
       );
-      await updateLocalAdhocCallHistory(callEvent);
+      await updateAdhocCallHistory(callEvent);
     } catch (error) {
       log.error(
         'CallingClass.updateCallHistoryForGroupCallOnLocalChanged: Error updating state',

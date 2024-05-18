@@ -86,7 +86,6 @@ export const SmartTimelineItem = memo(function SmartTimelineItem(
   const isTargeted = Boolean(
     targetedMessage && messageId === targetedMessage.id
   );
-
   const isNextItemCallingNotification = nextItem?.type === 'callHistory';
 
   const shouldCollapseAbove = areMessagesInSameGroup(

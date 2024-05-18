@@ -29,16 +29,16 @@ import { ConfirmationDialog } from '../ConfirmationDialog';
 
 export type PropsDataType = {
   areWeAdmin: boolean;
+  change: GroupV2ChangeType;
   conversationId: string;
+  groupBannedMemberships?: ReadonlyArray<ServiceIdString>;
   groupMemberships?: ReadonlyArray<{
     aci: AciString;
     isAdmin: boolean;
   }>;
-  groupBannedMemberships?: ReadonlyArray<ServiceIdString>;
   groupName?: string;
   ourAci: AciString | undefined;
   ourPni: PniString | undefined;
-  change: GroupV2ChangeType;
 };
 
 export type PropsActionsType = {

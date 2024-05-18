@@ -380,12 +380,6 @@
   "icu:invalidConversation": {
     "messageformat": "ഈ ഗ്രൂപ്പ് അസാധുവാണ്. ദയവായി ഒരു പുതിയ ഗ്രൂപ്പ് സൃഷ്ടിക്കുക."
   },
-  "icu:taskbarMarkedUnread": {
-    "messageformat": "വായിച്ചിട്ടില്ലാത്തതായി അടയാളപ്പെടുത്തി"
-  },
-  "icu:taskbarUnreadMessages": {
-    "messageformat": "{count, plural, one {{count,number} വായിക്കാത്ത സന്ദേശം} other {{count,number} വായിക്കാത്ത സന്ദേശങ്ങൾ}}"
-  },
   "icu:scrollDown": {
     "messageformat": "ചാറ്റിന്‍റെ താഴേക്ക് സ്ക്രോൾ ചെയ്യുക"
   },
@@ -1220,6 +1214,9 @@
   "icu:CallingLobby__CallLinkNotice--phone-sharing": {
     "messageformat": "ലിങ്കിലൂടെ ഈ കോളിൽ ചേരുന്ന ആർക്കും നിങ്ങളുടെ പേര്, ഫോട്ടോ, ഫോൺ നമ്പർ എന്നിവ കാണാനാകും."
   },
+  "icu:CallingLobby__CallLinkNotice--join-request-pending": {
+    "messageformat": "പ്രവേശനം അനുവദിക്കാൻ കാത്തിരിക്കുന്നു..."
+  },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "ചേരുക"
   },
@@ -1228,6 +1225,9 @@
   },
   "icu:CallingLobbyJoinButton--call-full": {
     "messageformat": "കോൾ നിറഞ്ഞു"
+  },
+  "icu:CallingLobbyJoinButton--ask-to-join": {
+    "messageformat": "ചേരാൻ ആവശ്യപ്പെടുക"
   },
   "icu:calling__button--video-disabled": {
     "messageformat": "കാമറ  പ്രവർത്തനരഹിതമാണ്"
@@ -1271,8 +1271,20 @@
   "icu:CallingButton--more-options": {
     "messageformat": "കൂടുതൽ ഓപ്‌ഷനുകൾ"
   },
+  "icu:CallingPendingParticipants__ApproveUser": {
+    "messageformat": "ചേരാനുള്ള അഭ്യർത്ഥന അംഗീകരിക്കുക"
+  },
+  "icu:CallingPendingParticipants__DenyUser": {
+    "messageformat": "ചേരാനുള്ള അഭ്യർത്ഥന നിരസിക്കുക"
+  },
+  "icu:CallingPendingParticipants__RequestsToJoin": {
+    "messageformat": "{count, plural, one {കോളിൽ ചേരാൻ {count,number} ആൾ അഭ്യർത്ഥിക്കുന്നു} other {കോളിൽ ചേരാൻ {count,number} പേർ അഭ്യർത്ഥിക്കുന്നു}}"
+  },
   "icu:CallingRaisedHandsList__Title": {
-    "messageformat": "{count, plural, one {ഉയർത്തിയ കൈകൾ · {count,number} ആൾ} other {ഉയർത്തിയ കൈകൾ · {count,number} പേർ}}"
+    "messageformat": "{count, plural, one {{count,number} ഉയർത്തിയ കൈ} other {{count,number} ഉയർത്തിയ കൈകൾ}}"
+  },
+  "icu:CallingRaisedHandsList__TitleHint": {
+    "messageformat": "(ആദ്യം മുതൽ അവസാനം വരെ)"
   },
   "icu:CallingReactions--me": {
     "messageformat": "നിങ്ങൾ"
@@ -1352,8 +1364,17 @@
   "icu:calling__presenting--notification-body": {
     "messageformat": "നിങ്ങൾ അവതരിപ്പിക്കുന്നത് നിർത്താൻ തയ്യാറാകുമ്പോൾ കോളിലേക്ക് മടങ്ങാൻ ഇവിടെ ക്ലിക്ക് ചെയ്യുക."
   },
+  "icu:calling__presenting--reconnecting--notification-title": {
+    "messageformat": "വീണ്ടും കണക്റ്റ് ചെയ്യുന്നു..."
+  },
+  "icu:calling__presenting--reconnecting--notification-body": {
+    "messageformat": "നിങ്ങളുടെ കണക്ഷൻ പോയി. Signal വീണ്ടും ബന്ധിപ്പിക്കുന്നു."
+  },
   "icu:calling__presenting--info": {
     "messageformat": "Signal {window} പങ്കിടുന്നു."
+  },
+  "icu:calling__presenting--reconnecting": {
+    "messageformat": "വീണ്ടും കണക്റ്റ് ചെയ്യുന്നു..."
   },
   "icu:calling__presenting--stop": {
     "messageformat": "പങ്കിടുന്നത് നിർത്തുക"
@@ -2450,9 +2471,6 @@
   "icu:MessageRequests--unblock-group-confirm-body": {
     "messageformat": "ഗ്രൂപ്പ് അംഗങ്ങൾക്ക് നിങ്ങളെ വീണ്ടും ഈ ഗ്രൂപ്പിലേക്ക് ചേർക്കാൻ കഴിയും."
   },
-  "icu:MessageRequests--block-and-report-spam": {
-    "messageformat": "സ്പാം റിപ്പോർട്ട് ചെയ്ത ശേഷം ബ്ലോക്ക് ചെയ്യുക"
-  },
   "icu:MessageRequests--block-and-report-spam-success-toast": {
     "messageformat": "സ്പാം റിപ്പോർട്ട് ചെയ്ത ശേഷം ബ്ലോക്ക് ചെയ്തു"
   },
@@ -2760,7 +2778,10 @@
     "messageformat": "ഒരു വിൻഡോ"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "ലിങ്ക് പകർത്തുക"
+    "messageformat": "കോൾ ലിങ്ക് പകർത്തുക"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClient": {
+    "messageformat": "കോളിൽ നിന്ന് ഈ വ്യക്തിയെ നീക്കം ചെയ്യുക"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "വീഡിയോ"
@@ -3144,7 +3165,7 @@
     "messageformat": "{count, plural, one {{memberName} 1 ആളെ ഗ്രൂപ്പിലേക്ക് ക്ഷണിച്ചു.} other {{memberName} {count,number} ആളുകളെ ഗ്രൂപ്പിലേക്ക് ക്ഷണിച്ചു.}}"
   },
   "icu:GroupV2--pending-add--many--you": {
-    "messageformat": "നിങ്ങൾ {count,number} വ്യക്തികളെ ഗ്രൂപ്പിലേക്ക് ക്ഷണിച്ചിരിക്കുന്നു"
+    "messageformat": "{count, plural, one {നിങ്ങൾ {count,number} ആളെ ഗ്രൂപ്പിലേക്ക് ക്ഷണിച്ചിരിക്കുന്നു.} other {നിങ്ങൾ {count,number} ആളുകളെ ഗ്രൂപ്പിലേക്ക് ക്ഷണിച്ചിരിക്കുന്നു.}}"
   },
   "icu:GroupV2--pending-add--many--unknown": {
     "messageformat": "{count, plural, one {1 ആളെ ഗ്രൂപ്പിലേക്ക് ക്ഷണിച്ചു.} other {{count,number} ആളുകളെ ഗ്രൂപ്പിലേക്ക് ക്ഷണിച്ചു.}}"
@@ -3177,13 +3198,13 @@
     "messageformat": "ഒരു അഡ്മിൻ 1 വ്യക്തിക്ക് ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണം പിൻവലിച്ചു."
   },
   "icu:GroupV2--pending-remove--revoke--many--other": {
-    "messageformat": "{memberName} {count,number} പേർക്കുള്ള ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണങ്ങൾ പിൻവലിച്ചു."
+    "messageformat": "{count, plural, one {{memberName}, 1 വ്യക്തിയുടെ ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണം റദ്ദാക്കി.} other {{memberName}, {count,number} വ്യക്തികളുടെ ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണം റദ്ദാക്കി.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--you": {
-    "messageformat": "{count,number} പേർക്കുള്ള ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണങ്ങൾ നിങ്ങൾ പിൻവലിച്ചു."
+    "messageformat": "{count, plural, one {നിങ്ങൾ 1 വ്യക്തിക്ക് ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണം റദ്ദാക്കി.} other {{count,number} പേർക്കുള്ള ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണങ്ങൾ നിങ്ങൾ റദ്ദാക്കി.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--unknown": {
-    "messageformat": "ഒരു അഡ്മിൻ {count,number} പേർക്കായി ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണങ്ങൾ പിൻവലിച്ചു."
+    "messageformat": "{count, plural, one {ഒരു അഡ്മിൻ 1 ആൾക്കുള്ള ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണം റദ്ദാക്കി.} other {ഒരു അഡ്മിൻ {count,number} പേർക്കുള്ള ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണങ്ങൾ റദ്ദാക്കി.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--one--other": {
     "messageformat": "{memberName} ക്ഷണിച്ച 1 വ്യക്തിക്കുള്ള ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണം {adminName} പിൻവലിച്ചു"
@@ -3207,19 +3228,19 @@
     "messageformat": "{count, plural, one {{memberName} ക്ഷണിച്ച {count,number} ആൾക്കുള്ള ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണങ്ങൾ {adminName} റദ്ദാക്കി.} other {{memberName} ക്ഷണിച്ച {count,number} പേർക്കുള്ള ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണങ്ങൾ {adminName} റദ്ദാക്കി.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--you": {
-    "messageformat": "{memberName} ക്ഷണിച്ച {count,number} പേർക്കുള്ള ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണങ്ങൾ നിങ്ങൾ പിൻവലിച്ചു."
+    "messageformat": "{count, plural, one {{memberName} ക്ഷണിച്ച {count,number} ആൾക്കുള്ള ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണങ്ങൾ നിങ്ങൾ റദ്ദാക്കി.} other {{memberName} ക്ഷണിച്ച {count,number} പേർക്കുള്ള ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണങ്ങൾ നിങ്ങൾ റദ്ദാക്കി.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--unknown": {
-    "messageformat": "{memberName} ക്ഷണിച്ച {count,number} പേർക്കുള്ള ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണങ്ങൾ ഒരു അഡ്മിൻ പിൻവലിച്ചു."
+    "messageformat": "{count, plural, one {{memberName} ക്ഷണിച്ച {count,number} ആൾക്കുള്ള ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണങ്ങൾ അഡ്‌മിൻ റദ്ദാക്കി.} other {{memberName} ക്ഷണിച്ച {count,number} പേർക്കുള്ള ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണങ്ങൾ ഒരു അഡ്മിൻ റദ്ദാക്കി.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--other": {
-    "messageformat": "നിങ്ങൾ {count,number} പേർക്ക് അയച്ച ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണങ്ങൾ {adminName} പിൻവലിച്ചു."
+    "messageformat": "{count, plural, one {നിങ്ങൾ {count,number} ആൾക്ക് അയച്ച ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണങ്ങൾ {adminName} റദ്ദാക്കി.} other {നിങ്ങൾ {count,number} പേർക്ക് അയച്ച ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണങ്ങൾ {adminName} റദ്ദാക്കി.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--you": {
-    "messageformat": "{count,number} പേർക്കുള്ള നിങ്ങളുടെ ക്ഷണം നിങ്ങൾ റദ്ദാക്കി."
+    "messageformat": "{count, plural, one {{count,number} ആൾക്കുള്ള നിങ്ങളുടെ ക്ഷണം നിങ്ങൾ റദ്ദാക്കി.} other {{count,number} പേർക്കുള്ള നിങ്ങളുടെ ക്ഷണം നിങ്ങൾ റദ്ദാക്കി.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--unknown": {
-    "messageformat": "നിങ്ങൾ {count,number} പേർക്ക് അയച്ച ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണങ്ങൾ ഒരു അഡ്മിൻ പിൻവലിച്ചു."
+    "messageformat": "{count, plural, one {നിങ്ങൾ {count,number} ആൾക്ക് അയച്ച, ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണങ്ങൾ ഒരു അഡ്മിൻ റദ്ദാക്കി.} other {നിങ്ങൾ {count,number} പേർക്ക് അയച്ച ഗ്രൂപ്പിലേക്കുള്ള ക്ഷണങ്ങൾ ഒരു അഡ്മിൻ റദ്ദാക്കി.}}"
   },
   "icu:GroupV2--admin-approval-add-one--you": {
     "messageformat": "ഗ്രൂപ്പിൽ ചേരാൻ നിങ്ങൾ ഒരു അഭ്യർത്ഥന അയച്ചു."
@@ -3362,17 +3383,26 @@
   "icu:GroupV1--Migration--info--invited--one": {
     "messageformat": "ഈ അംഗത്തിന് ഈ ഗ്രൂപ്പിൽ‌ വീണ്ടും ചേരുന്നതിനുള്ള ക്ഷണം സ്വീകരിക്കേണ്ടതുണ്ട്, മാത്രമല്ല അവർ‌ അംഗീകരിക്കുന്നതുവരെ ഗ്രൂപ്പ് സന്ദേശങ്ങൾ‌ സ്വീകരിക്കുകയുമില്ല:"
   },
+  "icu:GroupV1--Migration--info--invited--count": {
+    "messageformat": "{count, plural, one {{count,number} എന്ന അംഗത്തിന് ഈ ഗ്രൂപ്പിൽ വീണ്ടും ചേരുന്നതിനുള്ള ക്ഷണം സ്വീകരിക്കേണ്ടതുണ്ട്, അവർ അംഗീകരിക്കുന്നതുവരെ ഗ്രൂപ്പ് സന്ദേശങ്ങൾ ലഭിക്കില്ല.} other {{count,number} അംഗങ്ങൾക്ക് ഈ ഗ്രൂപ്പിൽ വീണ്ടും ചേരുന്നതിനുള്ള ക്ഷണം സ്വീകരിക്കേണ്ടതുണ്ട്, അവർ അംഗീകരിക്കുന്നതുവരെ ഗ്രൂപ്പ് സന്ദേശങ്ങൾ ലഭിക്കില്ല.}}"
+  },
   "icu:GroupV1--Migration--info--removed--before--many": {
     "messageformat": "ഈ അംഗങ്ങൾക്ക് പുതിയ ഗ്രൂപ്പുകളിൽ‌ ചേരാൻ‌ കഴിയില്ല, മാത്രമല്ല ഈ ഗ്രൂപ്പിൽ‌ നിന്നും നീക്കം ചെയ്യുകയും ചെയ്യും:"
   },
   "icu:GroupV1--Migration--info--removed--before--one": {
     "messageformat": "ഈ അംഗത്തിന് പുതിയ ഗ്രൂപ്പുകളിൽ‌ ചേരാൻ‌ കഴിയില്ല, മാത്രമല്ല ഗ്രൂപ്പിൽ‌ നിന്നും നീക്കം ചെയ്യുകയും ചെയ്യും:"
   },
+  "icu:GroupV1--Migration--info--removed--before--count": {
+    "messageformat": "{count, plural, one {{count,number} എന്ന അംഗത്തിന് പുതിയ ഗ്രൂപ്പുകളിൽ ചേരാൻ കഴിയില്ല, മാത്രമല്ല ഈ ഗ്രൂപ്പിൽ‌ നിന്നും നീക്കം ചെയ്യുകയും ചെയ്യും.} other {{count,number} അംഗങ്ങൾക്ക് പുതിയ ഗ്രൂപ്പുകളിൽ ചേരാൻ കഴിയില്ല, മാത്രമല്ല ഈ ഗ്രൂപ്പിൽ നിന്നും നീക്കംചെയ്യുകയും ചെയ്യും.}}"
+  },
   "icu:GroupV1--Migration--info--removed--after--many": {
     "messageformat": "ഈ അംഗങ്ങൾക്ക് പുതിയ ഗ്രൂപ്പുകളിൽ ചേരാൻ കഴിവില്ല, അവരെ ഗ്രൂപ്പിൽ നിന്ന് നീക്കം ചെയ്തു:"
   },
   "icu:GroupV1--Migration--info--removed--after--one": {
     "messageformat": "ഈ അംഗത്തിന് പുതിയ ഗ്രൂപ്പുകളിൽ ചേരാൻ കഴിവില്ല, ഗ്രൂപ്പിൽ നിന്ന് നീക്കം ചെയ്തു:"
+  },
+  "icu:GroupV1--Migration--info--removed--after--count": {
+    "messageformat": "{count, plural, one {{count,number} എന്ന അംഗത്തിന് പുതിയ ഗ്രൂപ്പുകളിൽ ചേരാൻ കഴിഞ്ഞില്ല, ഗ്രൂപ്പിൽ നിന്നും നീക്കം ചെയ്യുകയും ചെയ്തു.} other {{count,number} അംഗങ്ങൾക്ക് പുതിയ ഗ്രൂപ്പുകളിൽ ചേരാൻ കഴിഞ്ഞില്ല, അവരെ ഗ്രൂപ്പിൽ നിന്ന് നീക്കം ചെയ്തു.}}"
   },
   "icu:GroupV1--Migration--invited--you": {
     "messageformat": "നിങ്ങളെ പുതിയ ഗ്രൂപ്പിലേക്ക് ചേർക്കാൻ കഴിഞ്ഞില്ല ഒപ്പം ചേരാൻ ക്ഷണിക്കുകയും ചെയ്തിട്ടുണ്ട്."
@@ -3381,7 +3411,7 @@
     "messageformat": "{contact} പുതിയ ഗ്രൂപ്പിൽ ചേർക്കാൻ കഴിഞ്ഞില്ല കൂടാതെ ചേരാൻ ക്ഷണിച്ചിട്ടുണ്ട്."
   },
   "icu:GroupV1--Migration--invited--many": {
-    "messageformat": "{count,number} അംഗങ്ങളെ പുതിയ ഗ്രൂപ്പിൽ ചേർക്കാൻ കഴിഞ്ഞില്ല കൂടാതെ ചേരാൻ ക്ഷണിച്ചിട്ടുണ്ട്."
+    "messageformat": "{count, plural, one {A member couldn’t be added to the New Group and has been invited to join.} other {{count,number} members couldn’t be added to the New Group and have been invited to join.}}"
   },
   "icu:GroupV1--Migration--removed--one": {
     "messageformat": "{contact} എന്നയാളെ ഗ്രൂപ്പിൽ നിന്ന് നീക്കം ചെയ്തു."
@@ -4380,10 +4410,10 @@
     "messageformat": "ആർക്കുമാകില്ല"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__title": {
-    "messageformat": "Are you sure?"
+    "messageformat": "ഉറപ്പാണോ?"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__description": {
-    "messageformat": "If you change “{settingTitle}” to “{nobodyLabel}” it will make it harder for people to find you on Signal."
+    "messageformat": "നിങ്ങൾ “{settingTitle}” എന്നതിനെ “{nobodyLabel}” എന്നാക്കി മാറ്റുകയാണെങ്കിൽ, Signal-ൽ നിങ്ങളെ കണ്ടെത്താൻ ആളുകൾക്ക് അത് ബുദ്ധിമുട്ടാക്കും."
   },
   "icu:Preferences--messaging": {
     "messageformat": "സന്ദേശ വിനിമയം"
@@ -4656,13 +4686,13 @@
     "messageformat": "നിങ്ങൾ ഈ വ്യക്തിയെ തടഞ്ഞു"
   },
   "icu:MessageRequestResponseNotification__Message--Blocked--Group": {
-    "messageformat": "You blocked the group"
+    "messageformat": "നിങ്ങൾ ഗ്രൂപ്പിനെ ബ്ലോക്ക് ചെയ്തു"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked": {
-    "messageformat": "You unblocked this person"
+    "messageformat": "നിങ്ങൾ ഈ വ്യക്തിയെ അൺബ്ലോക്ക് ചെയ്തു"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked--Group": {
-    "messageformat": "You unblocked the group"
+    "messageformat": "നിങ്ങൾ ഗ്രൂപ്പിനെ അൺബ്ലോക്ക് ചെയ്തു"
   },
   "icu:MessageRequestResponseNotification__Button--Options": {
     "messageformat": "ഓപ്ഷനുകൾ"
@@ -5313,6 +5343,9 @@
   "icu:CallHistory__Description--Declined": {
     "messageformat": "{type, select, Audio {നിരസിച്ച വോയിസ് കോൾ} Video {നിരസിച്ച വീഡിയോ കോൾ} Group {നിരസിച്ച ഗ്രൂപ്പ് കോൾ} other {നിരസിച്ച  കോൾ}}"
   },
+  "icu:CallHistory__Description--Adhoc": {
+    "messageformat": "കോൾ ലിങ്ക്"
+  },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {മറ്റ് {count,number} ആൾ ടൈപ്പ് ചെയ്യുന്നു.} other {മറ്റ് {count,number} പേർ ടൈപ്പ് ചെയ്യുന്നു.}}"
   },
@@ -5334,7 +5367,7 @@
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
-    "messageformat": "നിങ്ങളുടെ ആപ്പ് സുഗമമായി പ്രവർത്തിപ്പിക്കുന്നതിന് ആവശ്യമായ ഒരുപറ്റം ബഗ് പരിഹരിക്കലുകൾ. കൂടുതൽ ആവേശകരമായ മാറ്റങ്ങൾ ഉടൻ! ",
+    "messageformat": "നിങ്ങളുടെ ആപ്പ് സുഗമമായി പ്രവർത്തിപ്പിക്കുന്നതിന് ആവശ്യമായ ഒരുപറ്റം ബഗ് പരിഹരിക്കലുകൾ. കൂടുതൽ ആവേശകരമായ മാറ്റങ്ങൾ ഉടൻ!",
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
@@ -5352,14 +5385,5 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "ചെറിയ മാറ്റങ്ങളും ബഗ് പരിഹരിക്കലുകളും പ്രകടന മെച്ചപ്പെടുത്തലുകളും. Signal ഉപയോഗിക്കുന്നതിന് നന്ദി!",
     "ignoreUnused": true
-  },
-  "icu:WhatsNew__v7.5--0": {
-    "messageformat": "നിങ്ങൾ Signal-ൽ ചാറ്റ് ചെയ്യുന്ന ആരുമായും അവർ നിങ്ങളുടെ സിസ്റ്റം കോൺടാക്റ്റുകളിൽ ഇല്ലെങ്കിൽപ്പോലും, ഇഷ്‌ടാനുസൃത വിളിപ്പേരുകൾക്കും കുറിപ്പുകൾക്കുമുള്ള പിന്തുണ ഞങ്ങൾ ചേർത്തു. ചങ്ങാതിയുടെ പ്രൊഫൈലിൽ വിട്ടുപോയ അക്ഷരം ചേർക്കലോ എന്തും ആകട്ടെ, കുറിപ്പുകളും വിളിപ്പേരുകളും Signal കണക്ഷനുകളെക്കുറിച്ചുള്ള വിശദാംശങ്ങൾ രേഖപ്പെടുത്താൻ നല്ല മാർഗ്ഗം നൽകുന്നു — അവ ആദ്യാവസാനം എൻക്രിപ്റ്റ് ചെയ്‌ത് Signal PIN വഴി പരിരക്ഷിച്ചിരിക്കുന്നതിനാൽ ഫോൺ നഷ്‌ടപ്പെട്ടാലും അവ സുരക്ഷിതമായി പുനഃസ്ഥാപിക്കാം."
-  },
-  "icu:WhatsNew__v7.5--1": {
-    "messageformat": "ഇപ്പോൾ Linux-ൽ നിങ്ങളുടെ സിസ്റ്റം ട്രേയിലേക്ക് Signal ലഘുവാക്കാം. നിങ്ങളുടെ ടാസ്‌ക്‌ബാർ ചാരനിറത്തിലുള്ള ഷേഡാണെങ്കിൽ, നിങ്ങളുടെ സന്ദേശങ്ങൾ ഒരു വെള്ളി പാത്രത്തിൽ നിങ്ങൾക്കായി കാത്തിരിക്കുന്നത് പോലെയാണ്."
-  },
-  "icu:WhatsNew__v7.5--2": {
-    "messageformat": "Windows-ലെ ഉപയോക്താക്കൾക്ക്, ഈ അപ്‌ഡേറ്റ്  Signal ഐക്കണിലെ വായിക്കാത്ത സന്ദേശങ്ങളുടെ വിശദമായ എണ്ണത്തിനുള്ള പിന്തുണ വീണ്ടും പ്രവർത്തനക്ഷമമാക്കുന്നു. \"9+\" എന്നതിനോട് വിട പറഞ്ഞേക്കൂ, കാരണം ഇപ്പോൾ ഐക്കൺ 11-ലേക്ക് (അല്ലെങ്കിൽ അതിനും മുകളിലേക്ക്) പോകുന്നു."
   }
 }

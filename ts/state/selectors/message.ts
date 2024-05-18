@@ -3,7 +3,6 @@
 
 import { groupBy, isEmpty, isNumber, isObject, map } from 'lodash';
 import { createSelector } from 'reselect';
-import filesize from 'filesize';
 import getDirection from 'direction';
 import emojiRegex from 'emoji-regex';
 import LinkifyIt from 'linkify-it';
@@ -141,6 +140,7 @@ import { CallDirection } from '../../types/CallDisposition';
 import { getCallIdFromEra } from '../../util/callDisposition';
 import { LONG_MESSAGE } from '../../types/MIME';
 import type { MessageRequestResponseNotificationData } from '../../components/conversation/MessageRequestResponseNotification';
+import { formatFileSize } from '../../util/formatFileSize';
 
 export { isIncoming, isOutgoing, isStory };
 
@@ -244,7 +244,7 @@ export type GetContactOptions = Pick<
   'conversationSelector' | 'ourConversationId' | 'ourNumber' | 'ourAci'
 >;
 
-export function getContactId(
+export function getAuthorId(
   message: MessageWithUIFieldsType,
   {
     conversationSelector,
@@ -706,7 +706,7 @@ export const getPropsForMessage = (
     (message.reactions || []).find(re => re.fromId === ourConversationId) || {}
   ).emoji;
 
-  const authorId = getContactId(message, {
+  const authorId = getAuthorId(message, {
     conversationSelector,
     ourConversationId,
     ourNumber,
@@ -1125,6 +1125,8 @@ function getPropsForGroupV1Migration(
       conversationId: message.conversationId,
       droppedMembers,
       invitedMembers,
+      droppedMemberCount: droppedMembers.length,
+      invitedMemberCount: invitedMembers.length,
     };
   }
 
@@ -1132,19 +1134,30 @@ function getPropsForGroupV1Migration(
     areWeInvited,
     droppedMemberIds,
     invitedMembers: rawInvitedMembers,
+    droppedMemberCount: rawDroppedMemberCount,
+    invitedMemberCount: rawInvitedMemberCount,
   } = migration;
-  const invitedMembers = rawInvitedMembers.map(item =>
-    conversationSelector(item.uuid)
-  );
-  const droppedMembers = droppedMemberIds.map(conversationId =>
-    conversationSelector(conversationId)
-  );
+  const droppedMembers = droppedMemberIds
+    ? droppedMemberIds.map(conversationId =>
+        conversationSelector(conversationId)
+      )
+    : undefined;
+  const invitedMembers = rawInvitedMembers
+    ? rawInvitedMembers.map(item => conversationSelector(item.uuid))
+    : undefined;
+
+  const droppedMemberCount =
+    rawDroppedMemberCount ?? droppedMemberIds?.length ?? 0;
+  const invitedMemberCount =
+    rawInvitedMemberCount ?? invitedMembers?.length ?? 0;
 
   return {
     areWeInvited,
     conversationId: message.conversationId,
     droppedMembers,
     invitedMembers,
+    droppedMemberCount,
+    invitedMemberCount,
   };
 }
 
@@ -1805,7 +1818,7 @@ export function getPropsForAttachment(
 
   return {
     ...attachment,
-    fileSize: size ? filesize(size) : undefined,
+    fileSize: size ? formatFileSize(size) : undefined,
     isVoiceMessage: isVoiceMessage(attachment),
     pending,
     url: path ? getAttachmentUrlForPath(path) : undefined,
@@ -2131,7 +2144,7 @@ export const getMessageDetails = createSelector(
     let conversationIds: Array<string>;
     if (isIncoming(message)) {
       conversationIds = [
-        getContactId(message, {
+        getAuthorId(message, {
           conversationSelector,
           ourConversationId,
           ourNumber,

@@ -380,12 +380,6 @@
   "icu:invalidConversation": {
     "messageformat": "Grup hatalı. Lütfen yeni bir grup oluşturun."
   },
-  "icu:taskbarMarkedUnread": {
-    "messageformat": "Okunmadı olarak işaretlendi"
-  },
-  "icu:taskbarUnreadMessages": {
-    "messageformat": "{count, plural, one {{count,number} okunmamış ileti} other {{count,number} okunmamış ileti}}"
-  },
   "icu:scrollDown": {
     "messageformat": "Sohbetin en altına in"
   },
@@ -1220,6 +1214,9 @@
   "icu:CallingLobby__CallLinkNotice--phone-sharing": {
     "messageformat": "Bu aramaya bağlantı aracılığıyla katılan herkes adını, fotoğrafını ve telefon numaranı görecektir."
   },
+  "icu:CallingLobby__CallLinkNotice--join-request-pending": {
+    "messageformat": "İçeri alınmayı bekliyor…"
+  },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "Katıl"
   },
@@ -1228,6 +1225,9 @@
   },
   "icu:CallingLobbyJoinButton--call-full": {
     "messageformat": "Arama dolu"
+  },
+  "icu:CallingLobbyJoinButton--ask-to-join": {
+    "messageformat": "Katılmayı iste"
   },
   "icu:calling__button--video-disabled": {
     "messageformat": "Kamera devre dışı"
@@ -1271,8 +1271,20 @@
   "icu:CallingButton--more-options": {
     "messageformat": "Daha fazla seçenek"
   },
+  "icu:CallingPendingParticipants__ApproveUser": {
+    "messageformat": "Katılım isteğini onayla"
+  },
+  "icu:CallingPendingParticipants__DenyUser": {
+    "messageformat": "Katılım isteğini reddet"
+  },
+  "icu:CallingPendingParticipants__RequestsToJoin": {
+    "messageformat": "{count, plural, one {{count,number} aramaya katılma isteği} other {{count,number} aramaya katılma isteği}}"
+  },
   "icu:CallingRaisedHandsList__Title": {
-    "messageformat": "{count, plural, one {El kaldıranlar · {count,number} kişi} other {El kaldıranlar · {count,number} kişi}}"
+    "messageformat": "{count, plural, one {{count,number} kişi el kaldırdı} other {{count,number} kişi el kaldırdı}}"
+  },
+  "icu:CallingRaisedHandsList__TitleHint": {
+    "messageformat": "(baştan sona)"
   },
   "icu:CallingReactions--me": {
     "messageformat": "Sen"
@@ -1352,8 +1364,17 @@
   "icu:calling__presenting--notification-body": {
     "messageformat": "Sunumu durdurmaya hazır olduğunuzda aramaya dönmek için buraya tıklayın."
   },
+  "icu:calling__presenting--reconnecting--notification-title": {
+    "messageformat": "Yeniden bağlanıyor…"
+  },
+  "icu:calling__presenting--reconnecting--notification-body": {
+    "messageformat": "Bağlantın kesildi. Signal yeniden bağlanıyor."
+  },
   "icu:calling__presenting--info": {
     "messageformat": "Signal {window} penceresini paylaşıyor."
+  },
+  "icu:calling__presenting--reconnecting": {
+    "messageformat": "Yeniden bağlanıyor…"
   },
   "icu:calling__presenting--stop": {
     "messageformat": "Paylaşmayı durdur"
@@ -2450,9 +2471,6 @@
   "icu:MessageRequests--unblock-group-confirm-body": {
     "messageformat": "Grup üyeleri sizi bu gruba tekrar ekleyebilecekler."
   },
-  "icu:MessageRequests--block-and-report-spam": {
-    "messageformat": "İstenmeyen İleti Olarak Bildir ve Engelle"
-  },
   "icu:MessageRequests--block-and-report-spam-success-toast": {
     "messageformat": "İstenmeyen ileti olarak bildirildi ve engellendi."
   },
@@ -2760,7 +2778,10 @@
     "messageformat": "Bir pencere"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "Bağlantıyı kopyala"
+    "messageformat": "Arama bağlantısını kopyala"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClient": {
+    "messageformat": "Bu kişiyi aramadan çıkar"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -3144,7 +3165,7 @@
     "messageformat": "{count, plural, one {{memberName}, gruba {count,number} kişi davet etti.} other {{memberName}, gruba {count,number} kişi davet etti.}}"
   },
   "icu:GroupV2--pending-add--many--you": {
-    "messageformat": "{count,number} kişiyi gruba davet ettiniz."
+    "messageformat": "{count, plural, one {{count,number} kişiyi gruba davet ettin.} other {{count,number} kişiyi gruba davet ettin.}}"
   },
   "icu:GroupV2--pending-add--many--unknown": {
     "messageformat": "{count, plural, one {{count,number} kişi gruba davet edildi.} other {{count,number} kişi gruba davet edildi.}}"
@@ -3177,13 +3198,13 @@
     "messageformat": "Bir yönetici 1 kişinin grup davetini iptal etti."
   },
   "icu:GroupV2--pending-remove--revoke--many--other": {
-    "messageformat": "{memberName} {count,number} kişinin grup davetini iptal etti."
+    "messageformat": "{count, plural, one {{memberName} 1 kişinin grup davetini iptal etti.} other {{memberName} {count,number} kişinin grup davetini iptal etti.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--you": {
-    "messageformat": "{count,number} kişinin grup davetini iptal ettiniz."
+    "messageformat": "{count, plural, one {1 kişinin grup davetini iptal ettin.} other {{count,number} kişinin grup davetini iptal ettin.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--unknown": {
-    "messageformat": "Bir yönetici {count,number} kişinin grup davetini iptal etti."
+    "messageformat": "{count, plural, one {Bir yönetici 1 kişinin grup davetini iptal etti.} other {Bir yönetici {count,number} kişinin grup davetini iptal etti.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--one--other": {
     "messageformat": "{adminName}, {memberName} tarafından davet edilen 1 kişinin davetini iptal etti."
@@ -3207,19 +3228,19 @@
     "messageformat": "{count, plural, one {{adminName}, {memberName} tarafından davet edilen {count,number} kişinin gruba davetini iptal etti.} other {{adminName}, {memberName} tarafından davet edilen {count,number} kişinin gruba davetini iptal etti.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--you": {
-    "messageformat": "{memberName} tarafından davet edilen {count,number} kişinin davetini iptal ettiniz."
+    "messageformat": "{count, plural, one {{memberName} tarafından davet edilen {count,number} kişinin grup davetini iptal ettin.} other {{memberName} tarafından davet edilen {count,number} kişinin grup davetini iptal ettin.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--unknown": {
-    "messageformat": "Bir yönetici {memberName} tarafından davet edilen {count,number} kişinin davetini iptal etti."
+    "messageformat": "{count, plural, one {Bir yönetici {memberName} tarafından davet edilen {count,number} kişinin grup davetini iptal etti.} other {Bir yönetici {memberName} tarafından davet edilen {count,number} kişinin grup davetini iptal etti.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--other": {
-    "messageformat": "{adminName}, {count,number} kişiye gönderdiğiniz daveti iptal etti."
+    "messageformat": "{count, plural, one {{adminName}, {count,number} kişiye gönderdiğin grup davetini iptal etti.} other {{adminName}, {count,number} kişiye gönderdiğin grup davetini iptal etti.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--you": {
-    "messageformat": "{count,number} kişiye gönderdiğiniz davetleri iptal ettiniz."
+    "messageformat": "{count, plural, one {{count,number} kişiye gönderdiğin daveti iptal ettin.} other {{count,number} kişiye gönderdiğin daveti iptal ettin.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--unknown": {
-    "messageformat": "Bir yönetici {count,number} kişiye gönderdiğiniz daveti iptal etti."
+    "messageformat": "{count, plural, one {Bir yönetici {count,number} kişiye gönderdiğin grup davetini iptal etti.} other {Bir yönetici {count,number} kişiye gönderdiğin grup davetini iptal etti.}}"
   },
   "icu:GroupV2--admin-approval-add-one--you": {
     "messageformat": "Gruba katılmak için bir istek gönderdiniz."
@@ -3362,17 +3383,26 @@
   "icu:GroupV1--Migration--info--invited--one": {
     "messageformat": "Bu üye gruba katılmak için daveti kabul etmelidir, bu daveti kabul edene kadar grup iletilerini almayacaktır:"
   },
+  "icu:GroupV1--Migration--info--invited--count": {
+    "messageformat": "{count, plural, one {{count,number} üye bu gruba tekrar katılmak için daveti kabul etmelidir ve bu daveti kabul edene kadar grup mesajlarını almayacaktır.} other {{count,number} üye bu gruba tekrar katılmak için daveti kabul etmelidir ve bu daveti kabul edene kadar grup mesajlarını almayacaktır.}}"
+  },
   "icu:GroupV1--Migration--info--removed--before--many": {
     "messageformat": "Bu üyeler Yeni Gruplara katılamazlar ve gruptan çıkarılacaklar:"
   },
   "icu:GroupV1--Migration--info--removed--before--one": {
     "messageformat": "Bu üye Yeni Gruplara katılamaz ve gruptan çıkarılacaktır:"
   },
+  "icu:GroupV1--Migration--info--removed--before--count": {
+    "messageformat": "{count, plural, one {{count,number} üye Yeni Gruplara katılma yeteneğine sahip değil ve gruptan çıkarılacak.} other {{count,number} üye Yeni Gruplara katılma yeteneğine sahip değil ve gruptan çıkarılacak.}}"
+  },
   "icu:GroupV1--Migration--info--removed--after--many": {
     "messageformat": "Bu üyeler Yeni Gruplara katılamıyorlardı ve gruptan çıkarıldılar:"
   },
   "icu:GroupV1--Migration--info--removed--after--one": {
     "messageformat": "Bu üye Yeni Gruplara katılamıyordu ve gruptan çıkarıldı:"
+  },
+  "icu:GroupV1--Migration--info--removed--after--count": {
+    "messageformat": "{count, plural, one {{count,number} üye Yeni Gruplara katılma yeteneğine sahip değildi ve gruptan çıkarıldı.} other {{count,number} üye Yeni Gruplara katılma yeteneğine sahip değildi ve gruptan çıkarıldı.}}"
   },
   "icu:GroupV1--Migration--invited--you": {
     "messageformat": "Yeni gruba eklenemediğiniz için davet edildiniz."
@@ -3381,7 +3411,7 @@
     "messageformat": "{contact}Yeni Gruba eklenemiyordu, ona katılma daveti gönderildi:"
   },
   "icu:GroupV1--Migration--invited--many": {
-    "messageformat": "{count,number}üye Yeni Gruba eklenemiyordu, onlara katılma daveti gönderildi."
+    "messageformat": "{count, plural, one {Bir üye Yeni Gruba eklenemedi ve katılma daveti gönderildi.} other {{count,number} üye Yeni Gruba eklenemedi ve onlara katılma daveti gönderildi.}}"
   },
   "icu:GroupV1--Migration--removed--one": {
     "messageformat": "{contact} gruptan çıkartıldı."
@@ -4380,10 +4410,10 @@
     "messageformat": "Hiç kimse"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__title": {
-    "messageformat": "Are you sure?"
+    "messageformat": "Emin misin?"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__description": {
-    "messageformat": "If you change “{settingTitle}” to “{nobodyLabel}” it will make it harder for people to find you on Signal."
+    "messageformat": "\"{settingTitle}\" seçeneğini \"{nobodyLabel}\" olarak değiştirirsen insanların seni Signal'de bulmasını zorlaşır."
   },
   "icu:Preferences--messaging": {
     "messageformat": "Yazışma"
@@ -4656,13 +4686,13 @@
     "messageformat": "Bu kişiyi engelledin"
   },
   "icu:MessageRequestResponseNotification__Message--Blocked--Group": {
-    "messageformat": "You blocked the group"
+    "messageformat": "Grubu engelledin"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked": {
-    "messageformat": "You unblocked this person"
+    "messageformat": "Bu kişinin engelini kaldırdın"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked--Group": {
-    "messageformat": "You unblocked the group"
+    "messageformat": "Grubun engelini kaldırdın"
   },
   "icu:MessageRequestResponseNotification__Button--Options": {
     "messageformat": "Seçenekler"
@@ -5313,6 +5343,9 @@
   "icu:CallHistory__Description--Declined": {
     "messageformat": "{type, select, Audio {Sesli arama reddedildi} Video {Görüntülü arama reddedildi} Group {Grup araması reddedildi} other {Arama reddedildi}}"
   },
+  "icu:CallHistory__Description--Adhoc": {
+    "messageformat": "Arama bağlantısı"
+  },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} kişi daha yazıyor.} other {{count,number} kişi daha yazıyor.}}"
   },
@@ -5334,7 +5367,7 @@
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
-    "messageformat": "Uygulamanın sorunsuz çalışmasını sağlamak için birkaç hata düzeltmesi yaptık. Daha heyecan verici gelişmeler çok yakında! ",
+    "messageformat": "Uygulamanın sorunsuz çalışmasını sağlamak için birkaç hata düzeltmesi yaptık. Daha heyecan verici gelişmeler çok yakında!",
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
@@ -5352,14 +5385,5 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Küçük ince ayarlar, hata düzeltmeleri ve performans geliştirmeleri yaptık. Signal'i kullandığın için teşekkürler!",
     "ignoreUnused": true
-  },
-  "icu:WhatsNew__v7.5--0": {
-    "messageformat": "Sistem kişilerinde olmasa bile Signal'de sohbet ettiğin herkes için özel takma adlar ve notlar için destek ekledik. Notlar ve takma adlar, Signal Bağlantıların hakkındaki ek detayları not almak için kullanışlı ve güvenli bir yol sağlar — ve uçtan uca şifrelenir ve Signal PIN'in tarafından korunurlar böylece telefonunu kaybetsen bile güvenli bir şekilde geri yüklenebilirler."
-  },
-  "icu:WhatsNew__v7.5--1": {
-    "messageformat": "Artık Signal'i Linux'ta sistem tepsisine küçültebilirsin. Görev çubuğun grinin doğru tonundaysa, mesajların gümüş bir tepside seni bekliyor gibidir."
-  },
-  "icu:WhatsNew__v7.5--2": {
-    "messageformat": "Windows kullanıcıları için bu güncelleme, Signal simgesindeki ayrıntılı okunmamış mesaj sayıları desteğini yeniden etkinleştirir. \"9+\" sürümle vedalaşabilirsin çünkü artık 11'e (veya daha yükseğe) çıkılıyor."
   }
 }

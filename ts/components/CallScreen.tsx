@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import type { VideoFrameSource } from '@signalapp/ringrtc';
 import type {
   ActiveCallStateType,
+  PendingUserActionPayloadType,
   SendGroupCallRaiseHandType,
   SendGroupCallReactionType,
   SetLocalAudioType,
@@ -87,16 +88,22 @@ import {
 } from './CallReactionBurst';
 import { isGroupOrAdhocActiveCall } from '../util/isGroupOrAdhocCall';
 import { assertDev } from '../util/assert';
+import { emojiToData } from './emoji/lib';
+import { CallingPendingParticipants } from './CallingPendingParticipants';
+import type { CallingImageDataCache } from './CallManager';
 
 export type PropsType = {
   activeCall: ActiveCallType;
+  approveUser: (payload: PendingUserActionPayloadType) => void;
+  denyUser: (payload: PendingUserActionPayloadType) => void;
   getGroupCallVideoFrameSource: (demuxId: number) => VideoFrameSource;
   getPresentingSources: () => void;
   groupMembers?: Array<Pick<ConversationType, 'id' | 'firstName' | 'title'>>;
   hangUpActiveCall: (reason: string) => void;
   i18n: LocalizerType;
+  imageDataCache: React.RefObject<CallingImageDataCache>;
+  isCallLinkAdmin: boolean;
   isGroupCallRaiseHandEnabled: boolean;
-  isGroupCallReactionsEnabled: boolean;
   me: ConversationType;
   openSystemPreferencesAction: () => unknown;
   renderReactionPicker: (
@@ -178,14 +185,17 @@ function CallDuration({
 
 export function CallScreen({
   activeCall,
+  approveUser,
   changeCallView,
+  denyUser,
   getGroupCallVideoFrameSource,
   getPresentingSources,
   groupMembers,
   hangUpActiveCall,
   i18n,
+  imageDataCache,
+  isCallLinkAdmin,
   isGroupCallRaiseHandEnabled,
-  isGroupCallReactionsEnabled,
   me,
   openSystemPreferencesAction,
   renderEmojiPicker,
@@ -396,6 +406,11 @@ export function CallScreen({
     default:
       throw missingCaseError(activeCall);
   }
+
+  const pendingParticipants =
+    activeCall.callMode === CallMode.Adhoc && isCallLinkAdmin
+      ? activeCall.pendingParticipants
+      : [];
 
   let lonelyInCallNode: ReactNode;
   let localPreviewNode: ReactNode;
@@ -676,6 +691,7 @@ export function CallScreen({
         <GroupCallRemoteParticipants
           callViewMode={activeCall.viewMode}
           getGroupCallVideoFrameSource={getGroupCallVideoFrameSource}
+          imageDataCache={imageDataCache}
           i18n={i18n}
           remoteParticipants={activeCall.remoteParticipants}
           setGroupCallVideoRequest={setGroupCallVideoRequest}
@@ -812,6 +828,15 @@ export function CallScreen({
         renderRaisedHandsToast={renderRaisedHandsToast}
         i18n={i18n}
       />
+      {pendingParticipants.length ? (
+        <CallingPendingParticipants
+          i18n={i18n}
+          ourServiceId={me.serviceId}
+          participants={pendingParticipants}
+          approveUser={approveUser}
+          denyUser={denyUser}
+        />
+      ) : null}
       {/* We render the local preview first and set the footer flex direction to row-reverse
       to ensure the preview is visible at low viewport widths. */}
       <div className="module-ongoing-call__footer">
@@ -850,20 +875,19 @@ export function CallScreen({
               className="CallControls__ReactionPickerContainer"
               ref={reactionPickerContainerRef}
             >
-              {isGroupCallReactionsEnabled &&
-                renderReactionPicker({
-                  ref: reactionPickerRef,
-                  onClose: () => setShowReactionPicker(false),
-                  onPick: emoji => {
-                    setShowReactionPicker(false);
-                    sendGroupCallReaction({
-                      callMode: activeCall.callMode,
-                      conversationId: conversation.id,
-                      value: emoji,
-                    });
-                  },
-                  renderEmojiPicker,
-                })}
+              {renderReactionPicker({
+                ref: reactionPickerRef,
+                onClose: () => setShowReactionPicker(false),
+                onPick: emoji => {
+                  setShowReactionPicker(false);
+                  sendGroupCallReaction({
+                    callMode: activeCall.callMode,
+                    conversationId: conversation.id,
+                    value: emoji,
+                  });
+                },
+                renderEmojiPicker,
+              })}
             </div>
           )}
 
@@ -902,7 +926,7 @@ export function CallScreen({
               onClick={togglePresenting}
               tooltipDirection={TooltipPlacement.Top}
             />
-            {isGroupCallReactionsEnabled && reactButtonType && (
+            {reactButtonType && (
               <div
                 className={classNames('CallControls__ReactButtonContainer', {
                   'CallControls__ReactButtonContainer--menu-shown':
@@ -1048,7 +1072,13 @@ function useReactionsToast(props: UseReactionsToastType): void {
   const reactionsShown = useRef<
     Map<
       string,
-      { value: string; isBursted: boolean; expireAt: number; demuxId: number }
+      {
+        value: string;
+        originalValue: string;
+        isBursted: boolean;
+        expireAt: number;
+        demuxId: number;
+      }
     >
   >(new Map());
   const burstsShown = useRef<Map<string, number>>(new Map());
@@ -1094,8 +1124,13 @@ function useReactionsToast(props: UseReactionsToastType): void {
         recentBurstTime &&
         recentBurstTime + REACTIONS_BURST_TRAILING_WINDOW > time
       );
+      // Normalize skin tone emoji to calculate burst threshold, but save original
+      // value to show in the burst animation
+      const emojiData = emojiToData(value);
+      const normalizedValue = emojiData?.unified ?? value;
       reactionsShown.current.set(key, {
-        value,
+        value: normalizedValue,
+        originalValue: value,
         isBursted,
         expireAt: timestamp + REACTIONS_BURST_WINDOW,
         demuxId,
@@ -1158,6 +1193,7 @@ function useReactionsToast(props: UseReactionsToastType): void {
       }
 
       burstsShown.current.set(value, time);
+      const values: Array<string> = [];
       reactionKeys.forEach(key => {
         const reactionShown = reactionsShown.current.get(key);
         if (!reactionShown) {
@@ -1165,8 +1201,9 @@ function useReactionsToast(props: UseReactionsToastType): void {
         }
 
         reactionShown.isBursted = true;
+        values.push(reactionShown.originalValue);
       });
-      showBurst({ value });
+      showBurst({ values });
 
       if (burstsShown.current.size >= REACTIONS_BURST_MAX_IN_SHORT_WINDOW) {
         break;

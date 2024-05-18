@@ -380,12 +380,6 @@
   "icu:invalidConversation": {
     "messageformat": "Ova grupa je nevažeća. Kreirajte novu grupu."
   },
-  "icu:taskbarMarkedUnread": {
-    "messageformat": "Označeno kao nepročitano"
-  },
-  "icu:taskbarUnreadMessages": {
-    "messageformat": "{count, plural, one {{count,number} nepročitana poruka} few {{count,number} nepročitane poruke} many {{count,number} nepročitanih poruka} other {{count,number} nepročitanih poruka}}"
-  },
   "icu:scrollDown": {
     "messageformat": "Klizni na dno chata"
   },
@@ -1220,6 +1214,9 @@
   "icu:CallingLobby__CallLinkNotice--phone-sharing": {
     "messageformat": "Svako ko se pridruži ovom pozivu putem poveznice vidjet će vaše ime, fotografiju i broj telefona."
   },
+  "icu:CallingLobby__CallLinkNotice--join-request-pending": {
+    "messageformat": "Čeka se ulazak…"
+  },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "Pristupi"
   },
@@ -1228,6 +1225,9 @@
   },
   "icu:CallingLobbyJoinButton--call-full": {
     "messageformat": "Poziv je pun"
+  },
+  "icu:CallingLobbyJoinButton--ask-to-join": {
+    "messageformat": "Zatražite da se pridružite"
   },
   "icu:calling__button--video-disabled": {
     "messageformat": "Kamera je onemogućena"
@@ -1271,8 +1271,20 @@
   "icu:CallingButton--more-options": {
     "messageformat": "Više opcija"
   },
+  "icu:CallingPendingParticipants__ApproveUser": {
+    "messageformat": "Odobrite zahtjev za pridruživanje"
+  },
+  "icu:CallingPendingParticipants__DenyUser": {
+    "messageformat": "Odbijte zahtjev za pridruživanje"
+  },
+  "icu:CallingPendingParticipants__RequestsToJoin": {
+    "messageformat": "{count, plural, one {{count,number} zahtjev za pridruživanje pozivu} few {{count,number} zahtjeva za pridruživanje pozivu} many {{count,number} zahtjeva za pridruživanje pozivu} other {{count,number} zahtjeva za pridruživanje pozivu}}"
+  },
   "icu:CallingRaisedHandsList__Title": {
-    "messageformat": "{count, plural, one {Podignute ruke · {count,number} osoba} few {Podignute ruke · {count,number} osobe} many {Podignute ruke · {count,number} osoba} other {Podignute ruke · {count,number} osoba}}"
+    "messageformat": "{count, plural, one {Ruku je podigla {count,number} osoba} few {Ruku su podigle {count,number} osobe} many {Ruku je podiglo {count,number} osoba} other {Ruku je podiglo {count,number} osoba}}"
+  },
+  "icu:CallingRaisedHandsList__TitleHint": {
+    "messageformat": "(od prvog do zadnjeg)"
   },
   "icu:CallingReactions--me": {
     "messageformat": "Vi"
@@ -1352,8 +1364,17 @@
   "icu:calling__presenting--notification-body": {
     "messageformat": "Kliknite ovdje da se vratite u poziv kada budete spremni da prestanete prezentirati."
   },
+  "icu:calling__presenting--reconnecting--notification-title": {
+    "messageformat": "Ponovno povezivanje…"
+  },
+  "icu:calling__presenting--reconnecting--notification-body": {
+    "messageformat": "Vaša veza je izgubljena. Signal se ponovo povezuje."
+  },
   "icu:calling__presenting--info": {
     "messageformat": "Signal dijeli {window}."
+  },
+  "icu:calling__presenting--reconnecting": {
+    "messageformat": "Ponovno povezivanje…"
   },
   "icu:calling__presenting--stop": {
     "messageformat": "Zaustavi dijeljenje"
@@ -2450,9 +2471,6 @@
   "icu:MessageRequests--unblock-group-confirm-body": {
     "messageformat": "Članovi grupe moći će Vas ponovo uvrstiti u grupu."
   },
-  "icu:MessageRequests--block-and-report-spam": {
-    "messageformat": "Prijavi neželjenu poruku i blokiraj"
-  },
   "icu:MessageRequests--block-and-report-spam-success-toast": {
     "messageformat": "Prijavljeno kao neželjena poruka i blokirano."
   },
@@ -2760,7 +2778,10 @@
     "messageformat": "Prozor"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "Kopiraj link"
+    "messageformat": "Kopiraj link za poziv"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClient": {
+    "messageformat": "Uklonite ovu osobu iz poziva"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -3144,7 +3165,7 @@
     "messageformat": "{count, plural, one {{memberName} je pozvao/la 1 osobu u grupu.} few {{memberName} je pozvao/la {count,number} osobe u grupu.} many {{memberName} je pozvao/la {count,number} osoba u grupu.} other {{memberName} je pozvao/la {count,number} osoba u grupu.}}"
   },
   "icu:GroupV2--pending-add--many--you": {
-    "messageformat": "Pozvali ste sljedeći broj osoba u grupu: {count,number}."
+    "messageformat": "{count, plural, one {Pozvali ste {count,number} osobu u grupu.} few {Pozvali ste {count,number} osobe u grupu.} many {Pozvali ste {count,number} osoba u grupu.} other {Pozvali ste {count,number} osoba u grupu.}}"
   },
   "icu:GroupV2--pending-add--many--unknown": {
     "messageformat": "{count, plural, one {1 osoba je pozvana u grupu.} few {{count,number} osobe su pozvane u grupu.} many {{count,number} osoba je pozvano u grupu.} other {{count,number} osoba je pozvano u grupu.}}"
@@ -3177,13 +3198,13 @@
     "messageformat": "Administrator je povukao pozivnicu u grupu za 1 osobu"
   },
   "icu:GroupV2--pending-remove--revoke--many--other": {
-    "messageformat": "{memberName} je povukao pozivnice u grupu za sljedeći broj osoba: {count,number}."
+    "messageformat": "{count, plural, one {{memberName} je povukao/la pozivnice u grupu za 1 osobu} few {{memberName} je povukao/la pozivnice u grupu za {count,number} osobe.} many {{memberName} je povukao/la pozivnice u grupu za {count,number} osoba.} other {{memberName} je povukao/la pozivnice u grupu za {count,number} osoba.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--you": {
-    "messageformat": "Povukli ste pozivnice u grupu za sljedeći broj osoba: {count,number}."
+    "messageformat": "{count, plural, one {Povukli ste pozivnice u grupu za 1 osobu.} few {Povukli ste pozivnice u grupu za {count,number} osobe.} many {Povukli ste pozivnice u grupu za {count,number} osoba.} other {Povukli ste pozivnice u grupu za {count,number} osoba.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--unknown": {
-    "messageformat": "Administrator je povukao pozivnice u grupu za sljedeći broj osoba: {count,number}."
+    "messageformat": "{count, plural, one {Administrator je povukao pozivnice u grupu za 1 osobu.} few {Administrator je povukao pozivnice u grupu za {count,number} osobe.} many {Administrator je povukao pozivnice u grupu za {count,number} osoba.} other {Administrator je povukao pozivnice u grupu za {count,number} osoba.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--one--other": {
     "messageformat": "{adminName} je povukao pozivnicu u grupu za 1 osobu koju je pozvao/la {memberName}."
@@ -3207,19 +3228,19 @@
     "messageformat": "{count, plural, one {{adminName} je povukao/la pozivnice u grupu za korisnike (njih {count,number}) koje je pozvao/la {memberName}.} few {{adminName} je povukao/la pozivnice u grupu za korisnike (njih {count,number}) koje je pozvao/la {memberName}.} many {{adminName} je povukao/la pozivnice u grupu za korisnike (njih {count,number}) koje je pozvao/la {memberName}.} other {{adminName} je povukao/la pozivnice u grupu za korisnike (njih {count,number}) koje je pozvao/la {memberName}.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--you": {
-    "messageformat": "Povukli ste pozivnice u grupu za korisnike (njih {count,number}) koje je pozvao/la {memberName}."
+    "messageformat": "{count, plural, one {Povukli ste pozivnice u grupu za {count,number} korisnika koje je pozvao/la {memberName}.} few {Povukli ste pozivnice u grupu za {count,number} korisnika koje je pozvao/la {memberName}.} many {Povukli ste pozivnice u grupu za {count,number} korisnika koje je pozvao/la {memberName}.} other {Povukli ste pozivnice u grupu za {count,number} korisnika koje je pozvao/la {memberName}.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--unknown": {
-    "messageformat": "Administrator je povukao pozivnice u grupe za korisnike (njih {count,number}) koje je pozvao/la{memberName}."
+    "messageformat": "{count, plural, one {{count,number} je povukao/la pozivnice u grupu za korisnike (njih {memberName}) koje je pozvao/la.} few {Administrator je povukao pozivnice u grupe za korisnike (njih {count,number}) koje je pozvao/la{memberName}.} many {Administrator je povukao pozivnice u grupe za {count,number} korisnika koje je pozvao/la {memberName}.} other {Administrator je povukao pozivnice u grupe za {count,number} korisnika koje je pozvao/la {memberName}.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--other": {
-    "messageformat": "{adminName} je povukao/la pozivnice u grupu koje ste poslali za sljedeći broj osoba: {count,number}."
+    "messageformat": "{count, plural, one {{adminName} je povukao/la pozivnice u grupu koje ste poslali za {count,number} osobu.} few {{adminName} je povukao/la pozivnice u grupu koje ste poslali za {count,number} osobe.} many {{adminName} je povukao/la pozivnice u grupu koje ste poslali za {count,number} osoba.} other {{adminName} je povukao/la pozivnice u grupu koje ste poslali za {count,number} osoba.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--you": {
-    "messageformat": "Otkazali ste pozivnicu za sljedeći broj osoba: {count,number}."
+    "messageformat": "{count, plural, one {Otkazali ste pozivnicu za {count,number} osobu.} few {Otkazali ste pozivnicu za {count,number} osobe.} many {Otkazali ste pozivnicu za {count,number} osoba.} other {Otkazali ste pozivnicu za {count,number} osoba.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--unknown": {
-    "messageformat": "Administrator je povukao pozivnice u grupu koje ste poslali sljedećem broju osoba: {count,number}."
+    "messageformat": "{count, plural, one {Administrator je povukao pozivnice u grupu za {count,number} osobu.} few {Administrator je povukao pozivnice u grupu za {count,number} osobe.} many {Administrator je povukao pozivnice u grupu za {count,number} osoba.} other {Administrator je povukao pozivnice u grupu za {count,number} osoba.}}"
   },
   "icu:GroupV2--admin-approval-add-one--you": {
     "messageformat": "Poslali ste zahtjev za pristupanje grupi."
@@ -3362,17 +3383,26 @@
   "icu:GroupV1--Migration--info--invited--one": {
     "messageformat": "Ovaj član će morati ponovo prihvatiti pozivnicu da se pridruži ovoj grupi i neće moći primati poruke grupe dok je ne prihvati:"
   },
+  "icu:GroupV1--Migration--info--invited--count": {
+    "messageformat": "{count, plural, one {{count,number} član će morati prihvatiti poziv da se ponovo pridruži ovoj grupi i neće primati grupne poruke dok ne prihvati.} few {{count,number} člana će morati prihvatiti poziv da se ponovo pridruže ovoj grupi i neće primati grupne poruke dok ne prihvate.} many {{count,number} članova će morati prihvatiti poziv da se ponovo pridruže ovoj grupi i neće primati grupne poruke dok ne prihvate.} other {{count,number} članova će morati prihvatiti poziv da se ponovo pridruže ovoj grupi i neće primati grupne poruke dok ne prihvate.}}"
+  },
   "icu:GroupV1--Migration--info--removed--before--many": {
     "messageformat": "Ovi članovi ne mogu pristupiti novim grupama i stoga će biti uklonjeni iz grupe:"
   },
   "icu:GroupV1--Migration--info--removed--before--one": {
     "messageformat": "Ovaj član nije u mogućnosti pridružiti se Novim grupama i bit će uklonjen iz grupe:"
   },
+  "icu:GroupV1--Migration--info--removed--before--count": {
+    "messageformat": "{count, plural, one {{count,number} član se ne može pridružiti novim grupama i bit će uklonjen iz grupe.} few {{count,number} člana se ne mogu pridružiti novim grupama i bit će uklonjeni iz grupe.} many {{count,number} članova se ne mogu pridružiti novim grupama i bit će uklonjeni iz grupe.} other {{count,number} člana se ne mogu pridružiti novim grupama i bit će uklonjeni iz grupe.}}"
+  },
   "icu:GroupV1--Migration--info--removed--after--many": {
     "messageformat": "Ovi članovi nisu u mogućnosti pridružiti se Novim grupama i uklonjeni su iz grupe:"
   },
   "icu:GroupV1--Migration--info--removed--after--one": {
     "messageformat": "Ovaj član nije u mogućnosti pridružiti se Novim grupama i uklonjen je iz grupe:"
+  },
+  "icu:GroupV1--Migration--info--removed--after--count": {
+    "messageformat": "{count, plural, one {{count,number} član se nije mogao pridružiti novim grupama i uklonjen je iz grupe.} few {{count,number} člana se nisu mogla pridružiti novim grupama i uklonjeni su iz grupe.} many {{count,number} članova se nije moglo pridružiti novim grupama i uklonjeni su iz grupe.} other {{count,number} članova se nije moglo pridružiti novim grupama i uklonjeni su iz grupe.}}"
   },
   "icu:GroupV1--Migration--invited--you": {
     "messageformat": "Nije bilo moguće dodati Vas u novu grupu i pozvani ste da se pridružite."
@@ -3381,7 +3411,7 @@
     "messageformat": "Dodavanje člana {contact} u Novu grupu nije moguće, a pozivnica mu/joj je poslana."
   },
   "icu:GroupV1--Migration--invited--many": {
-    "messageformat": "Dodavanje članova {count,number} u Novu grupu nije uspjelo, a pozivnica im je poslana."
+    "messageformat": "{count, plural, one {Nije moguće dodati {count,number} člana u novu grupu i pozvan je da se pridruži.} few {Nije moguće dodati {count,number} člana u novu grupu i pozvani su da se pridruže.} many {Nije moguće dodati {count,number} članova u novu grupu i pozvani su da se pridruže.} other {Nije moguće dodati {count,number} članova u novu grupu i pozvani su da se pridruže.}}"
   },
   "icu:GroupV1--Migration--removed--one": {
     "messageformat": "{contact} je uklonjen/a iz grupe."
@@ -4380,10 +4410,10 @@
     "messageformat": "Niko"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__title": {
-    "messageformat": "Are you sure?"
+    "messageformat": "Jeste li sigurni?"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__description": {
-    "messageformat": "If you change “{settingTitle}” to “{nobodyLabel}” it will make it harder for people to find you on Signal."
+    "messageformat": "Ako promijenite “{settingTitle}” u “{nobodyLabel}” to će otežati ljudima da vas pronađu na Signalu."
   },
   "icu:Preferences--messaging": {
     "messageformat": "Poruke"
@@ -4656,13 +4686,13 @@
     "messageformat": "Blokirali ste ovu osobu"
   },
   "icu:MessageRequestResponseNotification__Message--Blocked--Group": {
-    "messageformat": "You blocked the group"
+    "messageformat": "Blokirali ste grupu"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked": {
-    "messageformat": "You unblocked this person"
+    "messageformat": "Odblokirali ste ovu osobu"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked--Group": {
-    "messageformat": "You unblocked the group"
+    "messageformat": "Odblokirali ste grupu"
   },
   "icu:MessageRequestResponseNotification__Button--Options": {
     "messageformat": "Opcije"
@@ -5313,6 +5343,9 @@
   "icu:CallHistory__Description--Declined": {
     "messageformat": "{type, select, Audio {Odbijen poziv} Video {Odbijen video poziv} Group {Odbijen grupni poziv} other {Odbijen poziv}}"
   },
+  "icu:CallHistory__Description--Adhoc": {
+    "messageformat": "Link za poziv"
+  },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} druga osoba trenutno piše} few {{count,number} druge osobe trenutno pišu} many {{count,number} drugih osoba trenutno piše} other {{count,number} drugih osoba trenutno piše}}"
   },
@@ -5334,7 +5367,7 @@
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
-    "messageformat": "Mnoštvo otklonjenih grešaka kako bi vaša aplikacija nesmetano funkcionirala. VIše uzbudljivih izmjena čeka vas u budućnosti! ",
+    "messageformat": "Mnoštvo otklonjenih grešaka kako bi vaša aplikacija nesmetano funkcionirala. VIše uzbudljivih izmjena čeka vas u budućnosti!",
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
@@ -5352,14 +5385,5 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Mala podešavanja, otklanjanje grešaka i poboljšanja performansi. Hvala vam što koristite Signal!",
     "ignoreUnused": true
-  },
-  "icu:WhatsNew__v7.5--0": {
-    "messageformat": "Dodali smo podršku za prilagođene nadimke i bilješke za sve s kojima razgovarate na Signalu, čak i ako nisu u kontaktima vašeg sustava. Bilješke i nadimci pružaju prikladan i siguran način za bilježenje dodatnih pojedinosti o vašim Signal konekcijama — a šifrirane su od kraja do kraja i zaštićene vašim signalnim PIN-om tako da se mogu sigurno vratiti ako izgubite i svoj telefon."
-  },
-  "icu:WhatsNew__v7.5--1": {
-    "messageformat": "Sada možete minimizirati Signal u sistemskoj traci na Linuxu. Ako je vaša traka zadataka prave nijanse sive, to je kao da vas vaše poruke čekaju na srebrnom pladnju."
-  },
-  "icu:WhatsNew__v7.5--2": {
-    "messageformat": "Za korisnike na Windows uređajima ovo ažuriranje ponovno omogućuje podršku za detaljan broj nepročitanih poruka na ikoni Signala."
   }
 }

@@ -83,7 +83,7 @@ import {
 import { processSyncMessage } from './processSyncMessage';
 import type { EventHandler } from './EventTarget';
 import EventTarget from './EventTarget';
-import { downloadAttachmentV2 } from './downloadAttachment';
+import { downloadAttachment } from './downloadAttachment';
 import type { IncomingWebSocketRequest } from './WebsocketResources';
 import type { ContactDetailsWithAvatar } from './ContactsParser';
 import { parseContactsV2 } from './ContactsParser';
@@ -129,6 +129,7 @@ import {
   ContactSyncEvent,
   StoryRecipientUpdateEvent,
   CallLogEventSyncEvent,
+  CallLinkUpdateSyncEvent,
 } from './messageReceiverEvents';
 import * as log from '../logging/log';
 import * as durations from '../util/durations';
@@ -145,6 +146,7 @@ import { filterAndClean } from '../types/BodyRange';
 import { getCallEventForProto } from '../util/callDisposition';
 import { checkOurPniIdentityKey } from '../util/checkOurPniIdentityKey';
 import { CallLogEvent } from '../types/CallDisposition';
+import { CallLinkUpdateSyncType } from '../types/CallLink';
 
 const GROUPV2_ID_LENGTH = 32;
 const RETRY_TIMEOUT = 2 * 60 * 1000;
@@ -672,6 +674,11 @@ export default class MessageReceiver
   public override addEventListener(
     name: 'callEventSync',
     handler: (ev: CallEventSyncEvent) => void
+  ): void;
+
+  public override addEventListener(
+    name: 'callLinkUpdateSync',
+    handler: (ev: CallLinkUpdateSyncEvent) => void
   ): void;
 
   public override addEventListener(
@@ -2214,7 +2221,7 @@ export default class MessageReceiver
     const { sourceServiceId: sourceAci } = envelope;
     strictAssert(
       isAciString(sourceAci),
-      'MessageReceiver.handleEditMesage: received message from PNI'
+      'MessageReceiver.handleStoryMessage: received message from PNI'
     );
 
     const attachments: Array<ProcessedAttachment> = [];
@@ -3152,6 +3159,9 @@ export default class MessageReceiver
     if (syncMessage.callEvent) {
       return this.handleCallEvent(envelope, syncMessage.callEvent);
     }
+    if (syncMessage.callLinkUpdate) {
+      return this.handleCallLinkUpdate(envelope, syncMessage.callLinkUpdate);
+    }
     if (syncMessage.callLogEvent) {
       return this.handleCallLogEvent(envelope, syncMessage.callLogEvent);
     }
@@ -3510,6 +3520,53 @@ export default class MessageReceiver
     log.info('handleCallEvent: finished');
   }
 
+  private async handleCallLinkUpdate(
+    envelope: ProcessedEnvelope,
+    callLinkUpdate: Proto.SyncMessage.ICallLinkUpdate
+  ): Promise<void> {
+    const logId = getEnvelopeId(envelope);
+    log.info('MessageReceiver.handleCallLinkUpdate', logId);
+
+    logUnexpectedUrgentValue(envelope, 'callLinkUpdateSync');
+
+    let callLinkUpdateSyncType: CallLinkUpdateSyncType;
+    if (callLinkUpdate.type == null) {
+      throw new Error('MessageReceiver.handleCallLinkUpdate: type was null');
+    } else if (
+      callLinkUpdate.type === Proto.SyncMessage.CallLinkUpdate.Type.UPDATE
+    ) {
+      callLinkUpdateSyncType = CallLinkUpdateSyncType.Update;
+    } else if (
+      callLinkUpdate.type === Proto.SyncMessage.CallLinkUpdate.Type.DELETE
+    ) {
+      callLinkUpdateSyncType = CallLinkUpdateSyncType.Delete;
+    } else {
+      throw new Error(
+        `MessageReceiver.handleCallLinkUpdate: unknown type ${callLinkUpdate.type}`
+      );
+    }
+
+    const rootKey = Bytes.isNotEmpty(callLinkUpdate.rootKey)
+      ? callLinkUpdate.rootKey
+      : undefined;
+    const adminKey = Bytes.isNotEmpty(callLinkUpdate.adminPasskey)
+      ? callLinkUpdate.adminPasskey
+      : undefined;
+
+    const ev = new CallLinkUpdateSyncEvent(
+      {
+        type: callLinkUpdateSyncType,
+        rootKey,
+        adminKey,
+      },
+      this.removeFromCache.bind(this, envelope)
+    );
+
+    await this.dispatchAndWait(logId, ev);
+
+    log.info('handleCallLinkUpdate: finished');
+  }
+
   private async handleCallLogEvent(
     envelope: ProcessedEnvelope,
     callLogEvent: Proto.SyncMessage.ICallLogEvent
@@ -3707,7 +3764,7 @@ export default class MessageReceiver
     options?: { timeout?: number; disableRetries?: boolean }
   ): Promise<AttachmentType> {
     const cleaned = processAttachment(attachment);
-    return downloadAttachmentV2(this.server, cleaned, options);
+    return downloadAttachment(this.server, cleaned, options);
   }
 
   private async handleEndSession(

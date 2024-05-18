@@ -380,12 +380,6 @@
   "icu:invalidConversation": {
     "messageformat": "Acest grup este invalid. Te rugăm creează un grup nou."
   },
-  "icu:taskbarMarkedUnread": {
-    "messageformat": "Marchează necitit"
-  },
-  "icu:taskbarUnreadMessages": {
-    "messageformat": "{count, plural, one {{count,number} mesaj necitit} few {{count,number} mesaje necitite} other {{count,number} de mesaje necitite}}"
-  },
   "icu:scrollDown": {
     "messageformat": "Derulează până în partea de jos a conversației"
   },
@@ -1220,6 +1214,9 @@
   "icu:CallingLobby__CallLinkNotice--phone-sharing": {
     "messageformat": "Oricine se alătură acestui apel prin intermediul linkului îți va vedea numele, fotografia și numărul de telefon."
   },
+  "icu:CallingLobby__CallLinkNotice--join-request-pending": {
+    "messageformat": "Așteaptă să fie lăsat să intre…"
+  },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "Alătură-te"
   },
@@ -1228,6 +1225,9 @@
   },
   "icu:CallingLobbyJoinButton--call-full": {
     "messageformat": "Numărul maxim de participanți a fost atins"
+  },
+  "icu:CallingLobbyJoinButton--ask-to-join": {
+    "messageformat": "Solicită să te alături"
   },
   "icu:calling__button--video-disabled": {
     "messageformat": "Cameră dezactivată"
@@ -1271,8 +1271,20 @@
   "icu:CallingButton--more-options": {
     "messageformat": "Mai multe opțiuni"
   },
+  "icu:CallingPendingParticipants__ApproveUser": {
+    "messageformat": "Aprobă solicitarea de participare"
+  },
+  "icu:CallingPendingParticipants__DenyUser": {
+    "messageformat": "Refuză solicitarea de participare"
+  },
+  "icu:CallingPendingParticipants__RequestsToJoin": {
+    "messageformat": "{count, plural, one {{count,number} solicitare de participare la apel} few {{count,number} solicitări de participare la apel} other {{count,number} de solicitări de participare la apel}}"
+  },
   "icu:CallingRaisedHandsList__Title": {
-    "messageformat": "{count, plural, one {Mâini ridicate · {count,number} persoană} few {Mâini ridicate · {count,number} persoane} other {Mâini ridicate · {count,number} de persoane}}"
+    "messageformat": "{count, plural, one {{count,number} a ridicat mâna} few {{count,number} au ridicat mâinile} other {{count,number} au ridicat mâinile}}"
+  },
+  "icu:CallingRaisedHandsList__TitleHint": {
+    "messageformat": "(de la primul la ultimul)"
   },
   "icu:CallingReactions--me": {
     "messageformat": "Tu"
@@ -1352,8 +1364,17 @@
   "icu:calling__presenting--notification-body": {
     "messageformat": "Apasă aici pentru a te întoarce la apel când ești gata să oprești prezentarea."
   },
+  "icu:calling__presenting--reconnecting--notification-title": {
+    "messageformat": "Se reconectează…"
+  },
+  "icu:calling__presenting--reconnecting--notification-body": {
+    "messageformat": "Conexiunea ta s-a pierdut. Signal se reconectează."
+  },
   "icu:calling__presenting--info": {
     "messageformat": "Signal partajează {window}"
+  },
+  "icu:calling__presenting--reconnecting": {
+    "messageformat": "Se reconectează…"
   },
   "icu:calling__presenting--stop": {
     "messageformat": "Oprește partajarea"
@@ -2450,9 +2471,6 @@
   "icu:MessageRequests--unblock-group-confirm-body": {
     "messageformat": "Membrii grupului te vor putea adăuga din nou la acest grup."
   },
-  "icu:MessageRequests--block-and-report-spam": {
-    "messageformat": "Raportează spam și blochează"
-  },
   "icu:MessageRequests--block-and-report-spam-success-toast": {
     "messageformat": "Raportat ca spam și blocat."
   },
@@ -2760,7 +2778,10 @@
     "messageformat": "O fereastră"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "Copiază linkul"
+    "messageformat": "Copiază link-ul de apelare"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClient": {
+    "messageformat": "Scoate această persoană din apel"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -3144,7 +3165,7 @@
     "messageformat": "{count, plural, one {{memberName} a invitat {count,number} persoană la grup.} few {{memberName} a invitat {count,number} persoane la grup.} other {{memberName} a invitat {count,number} de persoane la grup.}}"
   },
   "icu:GroupV2--pending-add--many--you": {
-    "messageformat": "Ai invitat {count,number} persoane la grup."
+    "messageformat": "{count, plural, one {Ai invitat {count,number} persoană la grup.} few {Ai invitat {count,number} persoane la grup.} other {Ai invitat {count,number} de persoane la grup.}}"
   },
   "icu:GroupV2--pending-add--many--unknown": {
     "messageformat": "{count, plural, one {{count,number} persoană a fost invitată la grup.} few {{count,number} persoane au fost invitate la grup.} other {{count,number} de persoane au fost invitate la grup.}}"
@@ -3177,13 +3198,13 @@
     "messageformat": "Un administrator a revocat o invitație la grup pentru o persoană."
   },
   "icu:GroupV2--pending-remove--revoke--many--other": {
-    "messageformat": "{memberName} a revocat invitațiile la grup pentru {count,number} persoane."
+    "messageformat": "{count, plural, one {{memberName} a revocat o invitație la grup pentru 1 persoană.} few {{memberName} a revocat invitații la grup pentru {count,number} persoane.} other {{memberName} a revocat invitații la grup pentru {count,number} persoane.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--you": {
-    "messageformat": "Ai revocat invitațiile la grup pentru {count,number} persoane."
+    "messageformat": "{count, plural, one {Ai revocat o invitație la grup pentru o persoană.} few {Ai revocat invitațiile la grup pentru {count,number} persoane.} other {Ai revocat invitațiile la grup pentru {count,number} de persoane.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--unknown": {
-    "messageformat": "Un administrator a revocat invitațiile la grup pentru {count,number} persoane."
+    "messageformat": "{count, plural, one {Un administrator a revocat invitațiile la grup pentru o persoană.} few {Un administrator a revocat invitațiile la grup pentru {count,number} persoane.} other {Un administrator a revocat invitațiile la grup pentru {count,number} de persoane.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--one--other": {
     "messageformat": "{adminName} a revocat invitația la grup pentru o persoană invitată de {memberName}."
@@ -3207,19 +3228,19 @@
     "messageformat": "{count, plural, one {{adminName} a revocat invitațiile la grup pentru {count,number} persoană invitată de {memberName}.} few {{adminName} a revocat invitațiile la grup pentru {count,number} persoane invitate de {memberName}.} other {{adminName} a revocat invitațiile la grup pentru {count,number} de persoane invitate de {memberName}.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--you": {
-    "messageformat": "Ai revocat invitațiile la grup pentru {count,number} persoane invitate de {memberName}."
+    "messageformat": "{count, plural, one {Ai revocat invitațiile la grup pentru {count,number} persoană invitată de {memberName}.} few {Ai revocat invitațiile la grup pentru {count,number} persoane invitate de {memberName}.} other {Ai revocat invitațiile la grup pentru {count,number} de persoane invitate de {memberName}.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--unknown": {
-    "messageformat": "Un administrator a revocat invitațiile la grup pentru {count,number} persoane invitate de {memberName}."
+    "messageformat": "{count, plural, one {Un administrator a revocat invitațiile la grup pentru {count,number} persoană invitată de {memberName}.} few {Un administrator a revocat invitațiile la grup pentru {count,number} persoane invitate de {memberName}.} other {Un administrator a revocat invitațiile la grup pentru {count,number} de persoane invitate de {memberName}.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--other": {
-    "messageformat": "{adminName} a revocat invitațiile la grup trimise de tine către {count,number} persoane."
+    "messageformat": "{count, plural, one {{adminName} a revocat invitațiile la grup trimise de tine către {count,number} persoană.} few {{adminName} a revocat invitațiile la grup trimise de tine către {count,number} persoane.} other {{adminName} a revocat invitațiile la grup trimise de tine către {count,number} de persoane.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--you": {
-    "messageformat": "Ai retras invitațiile tale către {count,number} persoane."
+    "messageformat": "{count, plural, one {Ai retras invitațiile tale către {count,number} persoană.} few {Ai retras invitațiile tale către {count,number} persoane.} other {Ai retras invitațiile tale către {count,number} de persoane.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--unknown": {
-    "messageformat": "Un administrator a revocat invitațiile la grup trimise de tine către {count,number} persoane."
+    "messageformat": "{count, plural, one {Un administrator a revocat invitațiile la grup trimise de tine către {count,number} persoană.} few {Un administrator a revocat invitațiile la grup trimise de tine către {count,number} persoane.} other {Un administrator a revocat invitațiile la grup trimise de tine către {count,number} de persoane.}}"
   },
   "icu:GroupV2--admin-approval-add-one--you": {
     "messageformat": "Ai trimis o cerere de alăturare la grup."
@@ -3362,17 +3383,26 @@
   "icu:GroupV1--Migration--info--invited--one": {
     "messageformat": "Acest membru va trebui să accepte invitația de a se alătura acestui grup din nou, și nu va primi mesaje din grup până când nu va accepta:"
   },
+  "icu:GroupV1--Migration--info--invited--count": {
+    "messageformat": "{count, plural, one {{count,number} membru va trebui să accepte o invitație de a se alătura din nou acestui grup și nu va primi mesaje de grup până când nu acceptă.} few {{count,number} membri vor trebui să accepte din nou invitația de a se alătura acestui grup, și nu vor primi mesaje din grup până când nu vor accepta.} other {{count,number} de membri vor trebui să accepte din nou invitația de a se alătura acestui grup, și nu vor primi mesaje din grup până când nu vor accepta.}}"
+  },
   "icu:GroupV1--Migration--info--removed--before--many": {
     "messageformat": "Acest membru nu se poate alătura grupurilor noi și va fi eliminat din grup:"
   },
   "icu:GroupV1--Migration--info--removed--before--one": {
     "messageformat": "Acest membru nu se poate alătura Noilor Grupuri și va fi șters din grup:"
   },
+  "icu:GroupV1--Migration--info--removed--before--count": {
+    "messageformat": "{count, plural, one {{count,number} membru nu se poate alătura grupurilor noi și va fi eliminat din grup.} few {{count,number} membri nu se pot alătura grupurilor noi și vor fi eliminați din grup.} other {{count,number} de membri nu se pot alătura grupurilor noi și vor fi eliminați din grup.}}"
+  },
   "icu:GroupV1--Migration--info--removed--after--many": {
     "messageformat": "Acești membri nu s-au putut alătura Noilor Grupuri și au fost eliminați din grup:"
   },
   "icu:GroupV1--Migration--info--removed--after--one": {
     "messageformat": "Acest membru nu s-a putut alătura Noilor Grupuri și a fost eliminat din grup:"
+  },
+  "icu:GroupV1--Migration--info--removed--after--count": {
+    "messageformat": "{count, plural, one {{count,number} membru nu se poate alătura grupurilor noi și va fi eliminat din grup.} few {{count,number} membri nu s-au putut alătura Noilor Grupuri și au fost eliminați din grup.} other {{count,number} de membri nu s-au putut alătura Noilor Grupuri și au fost eliminați din grup.}}"
   },
   "icu:GroupV1--Migration--invited--you": {
     "messageformat": "Nu ai putut fi adăugat la noul grup și ai fost invitat să te înscrii."
@@ -3381,7 +3411,7 @@
     "messageformat": "{contact} nu a putut fi adăugat noului grup și a fost invitat să se alăture."
   },
   "icu:GroupV1--Migration--invited--many": {
-    "messageformat": "{count,number} membri nu au putut fi adăugați noului grup și au fost invitați să se alăture."
+    "messageformat": "{count, plural, one {Un membru nu a putut fi adăugat noului grup și a fost invitat să se alăture.} few {{count,number} membri nu au putut fi adăugați noului grup și au fost invitați să se alăture.} other {{count,number} de membri nu au putut fi adăugați noului grup și au fost invitați să se alăture.}}"
   },
   "icu:GroupV1--Migration--removed--one": {
     "messageformat": "{contact} a fost eliminat din grup."
@@ -4380,10 +4410,10 @@
     "messageformat": "Nimeni"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__title": {
-    "messageformat": "Are you sure?"
+    "messageformat": "Ești sigur?"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__description": {
-    "messageformat": "If you change “{settingTitle}” to “{nobodyLabel}” it will make it harder for people to find you on Signal."
+    "messageformat": "Dacă schimbi \"{settingTitle}\" în \"{nobodyLabel}\", va fi mai greu pentru ceilalți să te găsească pe Signal."
   },
   "icu:Preferences--messaging": {
     "messageformat": "Mesagerie"
@@ -4656,13 +4686,13 @@
     "messageformat": "Ai blocat această persoană"
   },
   "icu:MessageRequestResponseNotification__Message--Blocked--Group": {
-    "messageformat": "You blocked the group"
+    "messageformat": "Ai blocat grupul"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked": {
-    "messageformat": "You unblocked this person"
+    "messageformat": "Ai deblocat această persoană"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked--Group": {
-    "messageformat": "You unblocked the group"
+    "messageformat": "Ai deblocat grupul"
   },
   "icu:MessageRequestResponseNotification__Button--Options": {
     "messageformat": "Opțiuni"
@@ -5313,6 +5343,9 @@
   "icu:CallHistory__Description--Declined": {
     "messageformat": "{type, select, Audio {Apel video respins} Video {Apel video respins} Group {Apel de grup respins} other {Respinge apelul}}"
   },
+  "icu:CallHistory__Description--Adhoc": {
+    "messageformat": "Link de apel"
+  },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {încă {count,number} scrie.} few {încă {count,number} alții scriu.} other {încă {count,number} alții scriu.}}"
   },
@@ -5334,7 +5367,7 @@
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
-    "messageformat": "Mai multe soluționări ale bug-urilor pentru ca tu să ai o aplicație care funcționează perfect. Urmează și alte schimbări super utile în viitor! ",
+    "messageformat": "Mai multe soluționări ale bug-urilor pentru ca tu să ai o aplicație care funcționează perfect. Urmează și alte schimbări super utile în viitor!",
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
@@ -5352,14 +5385,5 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Mici ajustări, soluționări de bug-uri și îmbunătățiri ale performanței. Mersi că folosești Signal!",
     "ignoreUnused": true
-  },
-  "icu:WhatsNew__v7.5--0": {
-    "messageformat": "Am adăugat suport pentru pseudonime și note personalizate pentru orice persoană cu care discuți pe Signal, chiar dacă nu o ai la contactele din telefon. Notele și pseudonimele oferă un mod convenabil și sigur de a nota detalii suplimentare despre conexiunile Signal — și sunt criptate de la un capăt la altul și protejate de PIN-ul Signal, astfel încât pot fi restabilite în siguranță dacă îți pierzi și telefonul."
-  },
-  "icu:WhatsNew__v7.5--1": {
-    "messageformat": "Acum poți minimiza Signal în tava de sistem pe Linux. Dacă bara de activități are nuanța potrivită de gri, este ca și cum mesajele vă așteaptă pe o tavă de argint."
-  },
-  "icu:WhatsNew__v7.5--2": {
-    "messageformat": "Pentru utilizatorii de Windows, această actualizare reactivează suportul pentru numărul detaliat de mesaje necitite de pe pictograma Signal. Ia-ți adio de la \"9+\", pentru că acum pictograma ajunge la 11 (sau mai mult)."
   }
 }

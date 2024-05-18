@@ -380,12 +380,6 @@
   "icu:invalidConversation": {
     "messageformat": "呢個群組冇效。請建立一個新嘅群組。"
   },
-  "icu:taskbarMarkedUnread": {
-    "messageformat": "標記做未讀"
-  },
-  "icu:taskbarUnreadMessages": {
-    "messageformat": "{count, plural, other {{count,number} 個未讀訊息}}"
-  },
   "icu:scrollDown": {
     "messageformat": "向下碌到聊天底部"
   },
@@ -1220,6 +1214,9 @@
   "icu:CallingLobby__CallLinkNotice--phone-sharing": {
     "messageformat": "透過連結加入呢個通話嘅人都會睇到你個名、相同電話冧把。"
   },
+  "icu:CallingLobby__CallLinkNotice--join-request-pending": {
+    "messageformat": "等緊入去..."
+  },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "加入"
   },
@@ -1228,6 +1225,9 @@
   },
   "icu:CallingLobbyJoinButton--call-full": {
     "messageformat": "通話人數已滿"
+  },
+  "icu:CallingLobbyJoinButton--ask-to-join": {
+    "messageformat": "要求加入"
   },
   "icu:calling__button--video-disabled": {
     "messageformat": "相機已經停用"
@@ -1271,8 +1271,20 @@
   "icu:CallingButton--more-options": {
     "messageformat": "其他選項"
   },
+  "icu:CallingPendingParticipants__ApproveUser": {
+    "messageformat": "批准加入請求"
+  },
+  "icu:CallingPendingParticipants__DenyUser": {
+    "messageformat": "拒絕加入請求"
+  },
+  "icu:CallingPendingParticipants__RequestsToJoin": {
+    "messageformat": "{count, plural, other {{count,number} 要求加入呢個通話}}"
+  },
   "icu:CallingRaisedHandsList__Title": {
-    "messageformat": "{count, plural, other {舉咗手 · {count,number}人}}"
+    "messageformat": "{count, plural, other {{count,number} 舉咗手}}"
+  },
+  "icu:CallingRaisedHandsList__TitleHint": {
+    "messageformat": "(由第一個到最後一個)"
   },
   "icu:CallingReactions--me": {
     "messageformat": "你"
@@ -1352,8 +1364,17 @@
   "icu:calling__presenting--notification-body": {
     "messageformat": "當你準備好停止簡報嗰陣，可以㩒呢度返回通話。"
   },
+  "icu:calling__presenting--reconnecting--notification-title": {
+    "messageformat": "重新連緊線..."
+  },
+  "icu:calling__presenting--reconnecting--notification-body": {
+    "messageformat": "你斷咗線。Signal 而家重新連緊線。"
+  },
   "icu:calling__presenting--info": {
     "messageformat": "Signal 分享緊 {window}。"
+  },
+  "icu:calling__presenting--reconnecting": {
+    "messageformat": "重新連緊線..."
   },
   "icu:calling__presenting--stop": {
     "messageformat": "停止分享"
@@ -2450,9 +2471,6 @@
   "icu:MessageRequests--unblock-group-confirm-body": {
     "messageformat": "群組成員就可以再將你加入呢個群組。"
   },
-  "icu:MessageRequests--block-and-report-spam": {
-    "messageformat": "舉報垃圾訊息同封鎖"
-  },
   "icu:MessageRequests--block-and-report-spam-success-toast": {
     "messageformat": "已經舉報咗垃圾訊息同埋封鎖咗。"
   },
@@ -2760,7 +2778,10 @@
     "messageformat": "視窗"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "複製連結"
+    "messageformat": "複製通話連結"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClient": {
+    "messageformat": "喺通話度移除呢個人"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "影片"
@@ -3144,7 +3165,7 @@
     "messageformat": "{count, plural, other {{memberName} 邀請咗 {count,number} 個人加入群組。}}"
   },
   "icu:GroupV2--pending-add--many--you": {
-    "messageformat": "你邀請咗 {count,number} 個人加入群組。"
+    "messageformat": "{count, plural, other {你邀請咗 {count,number} 個人加入群組。}}"
   },
   "icu:GroupV2--pending-add--many--unknown": {
     "messageformat": "{count, plural, other {邀請咗 {count,number} 個人加入群組。}}"
@@ -3177,13 +3198,13 @@
     "messageformat": "有管理員撤銷咗 1 個人嘅群組邀請。"
   },
   "icu:GroupV2--pending-remove--revoke--many--other": {
-    "messageformat": "{memberName} 撤銷咗 {count,number} 個人嘅群組邀請。"
+    "messageformat": "{count, plural, other {{memberName} 撤銷咗 {count,number} 個人嘅群組邀請。}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--you": {
-    "messageformat": "你撤銷咗 {count,number} 個人嘅群組邀請。"
+    "messageformat": "{count, plural, other {你撤銷咗 {count,number} 個人嘅群組邀請。}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--unknown": {
-    "messageformat": "有管理員撤銷咗 {count,number} 個人嘅群組邀請。"
+    "messageformat": "{count, plural, other {有管理員撤銷咗 {count,number} 個人嘅群組邀請。}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--one--other": {
     "messageformat": "{adminName} 撤銷咗 {memberName} 對 1 個人嘅群組邀請。"
@@ -3207,19 +3228,19 @@
     "messageformat": "{count, plural, other {{adminName} 撤銷咗 {memberName} 對 {count,number} 個人嘅群組邀請。}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--you": {
-    "messageformat": "你撤銷咗 {memberName} 對 {count,number} 個人嘅群組邀請。"
+    "messageformat": "{count, plural, other {你撤銷咗{memberName}對 {count,number} 個人嘅群組邀請。}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--unknown": {
-    "messageformat": "有管理員撤銷咗 {memberName} 對 {count,number} 個人嘅群組邀請。"
+    "messageformat": "{count, plural, other {有管理員撤銷咗{memberName}對 {count,number} 個人嘅群組邀請。}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--other": {
-    "messageformat": "{adminName} 撤銷咗你對 {count,number} 個人嘅群組邀請。"
+    "messageformat": "{count, plural, other {{adminName}撤銷咗你對 {count,number} 個人嘅群組邀請。}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--you": {
-    "messageformat": "你取消咗對 {count,number} 個人嘅邀請。"
+    "messageformat": "{count, plural, other {你取消咗對 {count,number} 個人嘅邀請。}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--unknown": {
-    "messageformat": "有管理員撤銷咗你對 {count,number} 個人嘅群組邀請。"
+    "messageformat": "{count, plural, other {有管理員撤銷咗你對 {count,number} 個人嘅群組邀請。}}"
   },
   "icu:GroupV2--admin-approval-add-one--you": {
     "messageformat": "你送出咗加入群組嘅請求。"
@@ -3362,17 +3383,26 @@
   "icu:GroupV1--Migration--info--invited--one": {
     "messageformat": "呢位成員要接受咗邀請先可以再加入呢個群組。喺未接受邀請之前，佢唔會收到任何群組訊息："
   },
+  "icu:GroupV1--Migration--info--invited--count": {
+    "messageformat": "{count, plural, other {{count,number} 個成員需要接受邀請先可以重新加入群組。喺佢哋接受之前，唔會收到呢個群組嘅訊息。}}"
+  },
   "icu:GroupV1--Migration--info--removed--before--many": {
     "messageformat": "呢啲成員唔夠資格加入「新版群組」，所以佢哋將會被移除："
   },
   "icu:GroupV1--Migration--info--removed--before--one": {
     "messageformat": "呢位成員唔夠資格加入「新版群組」，所以佢將會被移除："
   },
+  "icu:GroupV1--Migration--info--removed--before--count": {
+    "messageformat": "{count, plural, other {{count,number} 個成員唔夠資格加入「新版群組」，佢哋將會被移除。}}"
+  },
   "icu:GroupV1--Migration--info--removed--after--many": {
     "messageformat": "呢啲成員唔夠資格加入「新版群組」，所以佢哋已經被移除咗："
   },
   "icu:GroupV1--Migration--info--removed--after--one": {
     "messageformat": "呢位成員唔夠資格加入「新版群組」，所以佢已經被移除咗："
+  },
+  "icu:GroupV1--Migration--info--removed--after--count": {
+    "messageformat": "{count, plural, other {{count,number} 個成員唔夠資格加入「新版群組」，佢哋將會被移除。}}"
   },
   "icu:GroupV1--Migration--invited--you": {
     "messageformat": "我哋加唔到你入「新版群組」，所以傳送咗邀請俾你自己加入。"
@@ -3381,7 +3411,7 @@
     "messageformat": "我哋加唔到 {contact} 入「新版群組」，所以傳送咗邀請俾佢自己加入。"
   },
   "icu:GroupV1--Migration--invited--many": {
-    "messageformat": "我哋加唔到 {count,number} 個成員入「新版群組」，所以傳送咗邀請俾佢哋自己加入。"
+    "messageformat": "{count, plural, other {有 {count,number} 個成員加入唔到新版群組，已經邀請咗佢地加入。}}"
   },
   "icu:GroupV1--Migration--removed--one": {
     "messageformat": "{contact} 喺群組度俾人移除咗。"
@@ -4380,10 +4410,10 @@
     "messageformat": "邊個都唔得"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__title": {
-    "messageformat": "Are you sure?"
+    "messageformat": "你係咪確定？"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__description": {
-    "messageformat": "If you change “{settingTitle}” to “{nobodyLabel}” it will make it harder for people to find you on Signal."
+    "messageformat": "如果你將「{settingTitle}」改做「{nobodyLabel}」，其他人就會冇咁易喺 Signal 搵到你。"
   },
   "icu:Preferences--messaging": {
     "messageformat": "通訊"
@@ -4656,13 +4686,13 @@
     "messageformat": "你封鎖咗呢個人"
   },
   "icu:MessageRequestResponseNotification__Message--Blocked--Group": {
-    "messageformat": "You blocked the group"
+    "messageformat": "你封鎖咗個群組"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked": {
-    "messageformat": "You unblocked this person"
+    "messageformat": "你解除封鎖咗呢個人"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked--Group": {
-    "messageformat": "You unblocked the group"
+    "messageformat": "你解除封鎖咗個群組"
   },
   "icu:MessageRequestResponseNotification__Button--Options": {
     "messageformat": "選項"
@@ -5313,6 +5343,9 @@
   "icu:CallHistory__Description--Declined": {
     "messageformat": "{type, select, Audio {拒接嘅語音通話} Video {拒接嘅視像通話} Group {拒接嘅群組通話} other {拒接嘅  通話}}"
   },
+  "icu:CallHistory__Description--Adhoc": {
+    "messageformat": "通話連結"
+  },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, other {另外有 {count,number} 個人打緊字。}}"
   },
@@ -5334,7 +5367,7 @@
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
-    "messageformat": "我哋修復咗一啲錯誤，確保應用程式可以順暢運作。仲有更多令人期待嘅更新，陸續有嚟！ ",
+    "messageformat": "我哋修復咗一啲錯誤，確保應用程式可以順暢運作。仲有更多令人期待嘅更新，陸續有嚟！",
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
@@ -5352,14 +5385,5 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "我哋做咗啲調整、修復咗一啲錯誤，同埋加強咗程式功能。多謝你使用 Signal！",
     "ignoreUnused": true
-  },
-  "icu:WhatsNew__v7.5--0": {
-    "messageformat": "我哋新增咗自訂綽號同備註支援，適用於任何喺 Signal 度同你傾計嘅用戶，就算對方唔喺你通訊錄都一樣冇問題。 無論你想喺 Signal 人脈嘅個人檔名度加返漏咗嘅英文字母，抑或想加個提示寫返低你哋喺邊度相遇，都可以利用備註同綽號功能，輕鬆安全咁記低有關資料 — 呢啲資料經端到端加密，並且受 Signal PIN 碼保護，就算唔見咗部電話都可以安全還原。"
-  },
-  "icu:WhatsNew__v7.5--1": {
-    "messageformat": "而家，你可以喺 Linux 度將 Signal 縮細放入系統匣。"
-  },
-  "icu:WhatsNew__v7.5--2": {
-    "messageformat": "至於 Windows 用戶，呢次更新恢復支援返 Signal 圖示上面未讀訊息嘅詳細數字。你以後唔會再見到「9+」，而係會變咗 11 喇 (甚至更高)。"
   }
 }

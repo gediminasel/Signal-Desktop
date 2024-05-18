@@ -380,12 +380,6 @@
   "icu:invalidConversation": {
     "messageformat": "Ky grup është i pavlefshëm. Ju lutemi, krijoni një grup të ri."
   },
-  "icu:taskbarMarkedUnread": {
-    "messageformat": "Të shënuara si të palexuara"
-  },
-  "icu:taskbarUnreadMessages": {
-    "messageformat": "{count, plural, one {{count,number} mesazh i palexuar} other {{count,number} mesazhe të palexuara}}"
-  },
   "icu:scrollDown": {
     "messageformat": "Shko në fund të bisedës"
   },
@@ -1220,6 +1214,9 @@
   "icu:CallingLobby__CallLinkNotice--phone-sharing": {
     "messageformat": "Kushdo që i bashkohet kësaj telefonate nëpërmjet lidhjes do të shohë emrin, fotografinë dhe numrin tënd të telefonit."
   },
+  "icu:CallingLobby__CallLinkNotice--join-request-pending": {
+    "messageformat": "Në pritje për të hyrë…"
+  },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "Bashkohu"
   },
@@ -1228,6 +1225,9 @@
   },
   "icu:CallingLobbyJoinButton--call-full": {
     "messageformat": "Thirrja plot"
+  },
+  "icu:CallingLobbyJoinButton--ask-to-join": {
+    "messageformat": "Kërko të bashkohesh"
   },
   "icu:calling__button--video-disabled": {
     "messageformat": "Kamera e çaktivizuar"
@@ -1271,8 +1271,20 @@
   "icu:CallingButton--more-options": {
     "messageformat": "Opsione të tjera"
   },
+  "icu:CallingPendingParticipants__ApproveUser": {
+    "messageformat": "Mirato kërkesën për t'ju bashkuar"
+  },
+  "icu:CallingPendingParticipants__DenyUser": {
+    "messageformat": "Refuzo kërkesën për t'ju bashkuar"
+  },
+  "icu:CallingPendingParticipants__RequestsToJoin": {
+    "messageformat": "{count, plural, one {{count,number} kërkesë për t'ju bashkuar telefonatës} other {{count,number} kërkesa për t'ju bashkuar telefonatës}}"
+  },
   "icu:CallingRaisedHandsList__Title": {
-    "messageformat": "{count, plural, one {Duar të ngritura · {count,number} person} other {Duar të ngritura · {count,number} persona}}"
+    "messageformat": "{count, plural, one {{count,number} ngriti dorën} other {{count,number} ngritën duart}}"
+  },
+  "icu:CallingRaisedHandsList__TitleHint": {
+    "messageformat": "(nga i pari tek i fundit)"
   },
   "icu:CallingReactions--me": {
     "messageformat": "Ti"
@@ -1352,8 +1364,17 @@
   "icu:calling__presenting--notification-body": {
     "messageformat": "Klikoni këtu që të ktheheni te thirrja, kur jeni gati të ndalet paraqitja."
   },
+  "icu:calling__presenting--reconnecting--notification-title": {
+    "messageformat": "Po rilidhet…"
+  },
+  "icu:calling__presenting--reconnecting--notification-body": {
+    "messageformat": "Lidhja u shkëput. Signal po rilidhet."
+  },
   "icu:calling__presenting--info": {
     "messageformat": "Signal-i po ndan me të tjerë {window}."
+  },
+  "icu:calling__presenting--reconnecting": {
+    "messageformat": "Po rilidhet…"
   },
   "icu:calling__presenting--stop": {
     "messageformat": "Ndale ndarjen me të tjerë"
@@ -2450,9 +2471,6 @@
   "icu:MessageRequests--unblock-group-confirm-body": {
     "messageformat": "Anëtarë të grupit do të jenë në gjendje t’ju rishtojnë te ky grup."
   },
-  "icu:MessageRequests--block-and-report-spam": {
-    "messageformat": "Raporto dhe blloko të padëshiruarit"
-  },
   "icu:MessageRequests--block-and-report-spam-success-toast": {
     "messageformat": "I raportuar si mesazh i padëshiruar dhe është bllokuar."
   },
@@ -2760,7 +2778,10 @@
     "messageformat": "Një dritare"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "Kopjo linkun"
+    "messageformat": "Kopjo lidhjen e thirrjes"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClient": {
+    "messageformat": "Hiqe këtë person nga telefonata"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -3144,7 +3165,7 @@
     "messageformat": "{count, plural, one {{memberName} ftoi te grupi 1 person.} other {{memberName} ftoi te grupi {count,number} persona.}}"
   },
   "icu:GroupV2--pending-add--many--you": {
-    "messageformat": "Ftuat te grupi {count,number} vetë."
+    "messageformat": "{count, plural, one {Ftuat te grupi {count,number} person.} other {Ftuat te grupi {count,number} persona.}}"
   },
   "icu:GroupV2--pending-add--many--unknown": {
     "messageformat": "{count, plural, one {1 person u ftua në grup.} other {{count,number} persona u ftuan në grup.}}"
@@ -3177,13 +3198,13 @@
     "messageformat": "Një përgjegjës shfuqizoi një ftesë për te grupi për 1 person."
   },
   "icu:GroupV2--pending-remove--revoke--many--other": {
-    "messageformat": "{memberName} shfuqizoi ftesa për te grupi për {count,number} vetë."
+    "messageformat": "{count, plural, one {{memberName} anuloi ftesën në grup për 1 person.} other {{memberName} anuloi ftesat në grup për {count,number} persona.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--you": {
-    "messageformat": "Shfuqizuat ftesa për te grupi për {count,number} vetë."
+    "messageformat": "{count, plural, one {Anulove ftesën në grup për 1 person.} other {Anulove ftesat në grup për {count,number} persona.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--unknown": {
-    "messageformat": "Një përgjegjës shfuqizoi ftesa për te grupi për {count,number} vetë."
+    "messageformat": "{count, plural, one {Administratori anuloi ftesën në grup për 1 person.} other {Administratori anuloi ftesat në grup për {count,number} persona.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--one--other": {
     "messageformat": "{adminName} shfuqizoi një ftesë për te grupi për 1 person të ftuar nga {memberName}."
@@ -3207,19 +3228,19 @@
     "messageformat": "{count, plural, one {{adminName} anuloi ftesat për në grup për {count,number} vetë të ftuar nga {memberName}.} other {{adminName} anuloi ftesat për në grup, për {count,number} vetë të ftuar nga {memberName}.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--you": {
-    "messageformat": "Shfuqizuat ftesat për te grupi për {count,number} vetë të ftuar nga {memberName}."
+    "messageformat": "{count, plural, one {Anulove ftesën në grup për {count,number} person të ftuar nga {memberName}.} other {Anulove ftesat në grup për {count,number} persona të ftuar nga {memberName}.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--unknown": {
-    "messageformat": "Një përgjegjës shfuqizoi ftesat për te grupi për {count,number} vetë të ftuar nga {memberName}."
+    "messageformat": "{count, plural, one {Administratori anuloi ftesën në grup për {count,number} person të ftuar nga {memberName}.} other {Administratori anuloi ftesat në grup për {count,number} persona të ftuar nga {memberName}.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--other": {
-    "messageformat": "{adminName} shfuqizoi ftesat për te grupi që dërguat për {count,number} vetë."
+    "messageformat": "{count, plural, one {{adminName} anuloi ftesën në grup që ti i dërgove {count,number} personi.} other {{adminName} anuloi ftesat në grup që ti u dërgove {count,number} personave.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--you": {
-    "messageformat": "Shfuqizuat ftesën tuaj për {count,number} vetë."
+    "messageformat": "{count, plural, one {Anulove ftesën për {count,number} person.} other {Anulove ftesën për {count,number} persona.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--unknown": {
-    "messageformat": "Një përgjegjës shfuqizoi ftesat për te grupi që dërguat për {count,number} vetë."
+    "messageformat": "{count, plural, one {Administratori anuloi ftesën në grup që ti i dërgove {count,number} personi.} other {Administratori anuloi ftesat në grup që ti u dërgove {count,number} personave.}}"
   },
   "icu:GroupV2--admin-approval-add-one--you": {
     "messageformat": "Dërguat një kërkesë të bëheni pjesë e grupit."
@@ -3362,17 +3383,26 @@
   "icu:GroupV1--Migration--info--invited--one": {
     "messageformat": "Këtij anëtari do t’i duhet të pranojë një ftesë për t’u bërë pjesë e grupit, dhe s’do të marrë mesazhe grupi, pa pranuar ftesën:"
   },
+  "icu:GroupV1--Migration--info--invited--count": {
+    "messageformat": "{count, plural, one {{count,number} anëtari do t'i duhet të pranojë ftesën për t'ju bashkuar sërish këtij grupi dhe nuk do të marrë mesazhe në grup derisa të pranojnë atë.} other {{count,number} anëtarëve do t'u duhet të pranojnë ftesën për t'ju bashkuar sërish këtij grupi dhe nuk do të marrë mesazhe në grup derisa të pranojnë atë.}}"
+  },
   "icu:GroupV1--Migration--info--removed--before--many": {
     "messageformat": "Këta anëtarë s’mund të bëhen pjesë e Grupeve të reja dhe do të hiqen prej grupit:"
   },
   "icu:GroupV1--Migration--info--removed--before--one": {
     "messageformat": "Ky anëtar s’mund të bëhet pjesë e Grupeve të reja, dhe do të hiqet prej grupit:"
   },
+  "icu:GroupV1--Migration--info--removed--before--count": {
+    "messageformat": "{count, plural, one {{count,number} anëtar nuk është në gjendje t'u bashkohet Grupeve të Reja dhe do të hiqet nga grupi.} other {{count,number} anëtarë nuk janë në gjendje t'u bashkohen Grupeve të Reja dhe do të hiqen nga grupi.}}"
+  },
   "icu:GroupV1--Migration--info--removed--after--many": {
     "messageformat": "Këta anëtarë s’mund të bëheshin pjesë e Grupeve të reja dhe u hoqën nga grupi:"
   },
   "icu:GroupV1--Migration--info--removed--after--one": {
     "messageformat": "Ky anëtar s’mund të bëhej pjesë e Grupeve të reja dhe u hoq nga grupi:"
+  },
+  "icu:GroupV1--Migration--info--removed--after--count": {
+    "messageformat": "{count, plural, one {{count,number} anëtar nuk ishte në gjendje t'u bashkohej Grupeve të Reja dhe u hoq nga grupi.} other {{count,number} anëtarë nuk ishin në gjendje t'u bashkoheshin Grupeve të Reja dhe u hoqën nga grupi.}}"
   },
   "icu:GroupV1--Migration--invited--you": {
     "messageformat": "S’u shtuat dot te Grupi i Ri dhe u ftuat të bëheni pjesë."
@@ -3381,7 +3411,7 @@
     "messageformat": "{contact} s’u shtua dot te Grupi i Ri dhe u ftua të bëhet pjesë e tij."
   },
   "icu:GroupV1--Migration--invited--many": {
-    "messageformat": "{count,number} anëtarë s’u shtuan dot te Grupi i Ri dhe u ftuan të bëhet pjesë."
+    "messageformat": "{count, plural, one {Një anëtar s’u shtua dot te Grupi i Ri dhe u ftua të marrë pjesë.} other {{count,number} anëtarë s’u shtuan dot te Grupi i Ri dhe u ftuan të marrin pjesë.}}"
   },
   "icu:GroupV1--Migration--removed--one": {
     "messageformat": "{contact} u hoq prej grupit."
@@ -4380,10 +4410,10 @@
     "messageformat": "Asnjë"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__title": {
-    "messageformat": "Are you sure?"
+    "messageformat": "Je i sigurt?"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__description": {
-    "messageformat": "If you change “{settingTitle}” to “{nobodyLabel}” it will make it harder for people to find you on Signal."
+    "messageformat": "Nëse ndryshon \"{settingTitle} \" në \"{nobodyLabel} \" do të jetë më të vështirë për njerëzit që të të gjejnë në Signal."
   },
   "icu:Preferences--messaging": {
     "messageformat": "Shkëmbim Mesazhesh"
@@ -4656,13 +4686,13 @@
     "messageformat": "E ke bllokuar këtë person"
   },
   "icu:MessageRequestResponseNotification__Message--Blocked--Group": {
-    "messageformat": "You blocked the group"
+    "messageformat": "Bllokove grupin"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked": {
-    "messageformat": "You unblocked this person"
+    "messageformat": "Ke zhbllokuar këtë person"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked--Group": {
-    "messageformat": "You unblocked the group"
+    "messageformat": "Zhbllokove grupin"
   },
   "icu:MessageRequestResponseNotification__Button--Options": {
     "messageformat": "Opsione"
@@ -5313,6 +5343,9 @@
   "icu:CallHistory__Description--Declined": {
     "messageformat": "{type, select, Audio {Thirrje zanore e refuzuar} Video {Thirrje me video e refuzuar} Group {Thirrje në grup e refuzuar} other {Thirrje  e refuzuar}}"
   },
+  "icu:CallHistory__Description--Adhoc": {
+    "messageformat": "Lidhja e thirrjes"
+  },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} tjetër po shkruan.} other {{count,number} tjerë po shkruajnë.}}"
   },
@@ -5334,7 +5367,7 @@
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
-    "messageformat": "Një sërë rregullimesh të problemeve që aplikacioni juaj të funksionojë pa probleme.  Do të ketë ndryshime edhe më emocionuese! ",
+    "messageformat": "Një sërë rregullimesh të problemeve që aplikacioni juaj të funksionojë pa probleme.  Do të ketë ndryshime edhe më emocionuese!",
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
@@ -5352,14 +5385,5 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Rregullme të vogla, riparime të gabimeve dhe përmirësime të mbarëvajtjes.  Faleminderit që përdorni Signal!",
     "ignoreUnused": true
-  },
-  "icu:WhatsNew__v7.5--0": {
-    "messageformat": "Shtuam mbështetje për pseudonimet dhe shënimet e personalizuara për këdo që po bisedon në Signal, edhe nëse nuk i ke në kontaktet e sistemit. Pavarësisht nëse shton germa që mungojnë në emrin e profilit të mikut dembel apo kujtesa për vendin e takimit, shënimet dhe pseudonimet ofrojnë mënyra të përshtatshme dhe të sigurta për të shënuar detaje shtesë rreth kontakteve në Signal — janë të koduara nga skaji në skaj e të mbrojtura me PIN, që të rikthehen me siguri edhe nëse humb telefoni."
-  },
-  "icu:WhatsNew__v7.5--1": {
-    "messageformat": "Tani mund ta minimizosh Signal në tabelën e sistemit në Linux. Nëse shiriti i detyrave ka nuancën e duhur gri, atëherë mesazhet të presin si në një pjatë argjendi."
-  },
-  "icu:WhatsNew__v7.5--2": {
-    "messageformat": "Për përdoruesit në Windows, përditësimi rimundëson mbështetjen për numrin e detajuar të mesazheve të palexuara në ikonën Signal. Thuaj lamtumirë \"9+\" pasi ikona tani shkon në 11 (ose më lart)."
   }
 }

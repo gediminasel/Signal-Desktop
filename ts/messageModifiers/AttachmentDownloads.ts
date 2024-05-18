@@ -4,20 +4,23 @@ import * as log from '../logging/log';
 import * as Bytes from '../Bytes';
 import type { AttachmentDownloadJobTypeType } from '../types/AttachmentDownload';
 
-import type { MessageModel } from '../models/messages';
 import type { AttachmentType } from '../types/Attachment';
 import { getAttachmentSignature, isDownloaded } from '../types/Attachment';
+import { __DEPRECATED$getMessageById } from '../messages/getMessageById';
 
 export async function addAttachmentToMessage(
-  message: MessageModel | null | undefined,
+  messageId: string,
   attachment: AttachmentType,
+  jobLogId: string,
   { type }: { type: AttachmentDownloadJobTypeType }
 ): Promise<void> {
+  const message = await __DEPRECATED$getMessageById(messageId);
+
   if (!message) {
     return;
   }
 
-  const logPrefix = `${message.idForLogging()} (type: ${type})`;
+  const logPrefix = `${jobLogId}/addAttachmentToMessage`;
   const attachmentSignature = getAttachmentSignature(attachment);
 
   if (type === 'long-message') {

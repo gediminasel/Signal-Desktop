@@ -523,14 +523,6 @@
     "messageformat": "This group is invalid. Please create a new group.",
     "description": "Displayed when a user can't send a message because something has gone wrong in the conversation."
   },
-  "icu:taskbarMarkedUnread": {
-    "messageformat": "Marked Unread",
-    "description": "(Deleted 2024/03/20) On Windows, description for screen readers for the OS taskbar icon's overlay badge when the user has marked chat(s) as unread."
-  },
-  "icu:taskbarUnreadMessages": {
-    "messageformat": "{count, plural, one {# Unread Message} other {# Unread Messages}}",
-    "description": "(Deleted 2024/03/20) On Windows, description for screen readers for the OS taskbar icon's overlay badge when there are unread messages."
-  },
   "icu:scrollDown": {
     "messageformat": "Scroll to bottom of chat",
     "description": "Alt text for button to take user down to bottom of conversation, shown when user scrolls up"
@@ -637,7 +629,7 @@
   },
   "icu:continueCall": {
     "messageformat": "Continue Call",
-    "description": "Used on a warning dialog to make it clear that it might be risky to continue the group call."
+    "description": "(Deleted 2024/04/25) Used on a warning dialog to make it clear that it might be risky to continue the group call."
   },
   "icu:debugLogExplanation": {
     "messageformat": "When you click Submit, your log will be posted online for 30 days at a unique, unpublished URL. You may Save it locally first.",
@@ -1621,6 +1613,10 @@
     "messageformat": "Anyone who joins this call via the link will see your name, photo, and phone number.",
     "description": "Toast shown in call lobby before joining a call link call to inform user that profile info will be shared, when the phone number sharing account setting is enabled."
   },
+  "icu:CallingLobby__CallLinkNotice--join-request-pending": {
+    "messageformat": "Waiting to be let in…",
+    "description": "Notice shown in call lobby after you requested to join a call link to indicate your request is pending approval."
+  },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "Join",
     "description": "Button label in the call lobby for joining a call"
@@ -1632,6 +1628,10 @@
   "icu:CallingLobbyJoinButton--call-full": {
     "messageformat": "Call full",
     "description": "Button in the call lobby when you can't join because the call is full"
+  },
+  "icu:CallingLobbyJoinButton--ask-to-join": {
+    "messageformat": "Ask to join",
+    "description": "Button label in the call lobby for joining a call link which requires admin approval"
   },
   "icu:calling__button--video-disabled": {
     "messageformat": "Camera disabled",
@@ -1689,9 +1689,25 @@
     "messageformat": "More options",
     "description": "Tooltip label for button in the calling screen that opens a menu with other call actions such as React or Raise Hand."
   },
+  "icu:CallingPendingParticipants__ApproveUser": {
+    "messageformat": "Approve join request",
+    "description": "Tooltip label for check mark button to approve a user's request to join a call."
+  },
+  "icu:CallingPendingParticipants__DenyUser": {
+    "messageformat": "Deny join request",
+    "description": "Tooltip label for check mark button to deny a user's request to join a call."
+  },
+  "icu:CallingPendingParticipants__RequestsToJoin": {
+    "messageformat": "{count, plural, one {# request} other {# requests}} to join the call",
+    "description": "Shown in the call pending join request list to describe how many people are requesting to join"
+  },
   "icu:CallingRaisedHandsList__Title": {
-    "messageformat": "Raised hands · {count, plural, one {# person} other {# people}}",
+    "messageformat": "{count, plural, one {# raised hand} other {# raised hands}}",
     "description": "Shown in the call raised hands list to describe how many people have active raised hands"
+  },
+  "icu:CallingRaisedHandsList__TitleHint": {
+    "messageformat": "(first to last)",
+    "description": "Shown in the call raised hands list next to the raised hands count to explain list ordering"
   },
   "icu:CallingReactions--me": {
     "messageformat": "You",
@@ -1797,9 +1813,21 @@
     "messageformat": "Click here to return to the call when you're ready to stop presenting.",
     "description": "Body text for the share screen notification"
   },
+  "icu:calling__presenting--reconnecting--notification-title": {
+    "messageformat": "Reconnecting...",
+    "description": "Title for the share screen reconnecting notification"
+  },
+  "icu:calling__presenting--reconnecting--notification-body": {
+    "messageformat": "Your connection was lost. Signal is reconnecting.",
+    "description": "Body text for the share screen reconnecting notification"
+  },
   "icu:calling__presenting--info": {
     "messageformat": "Signal is sharing {window}.",
     "description": "Text that appears in the screen sharing controller to inform person that they are presenting"
+  },
+  "icu:calling__presenting--reconnecting": {
+    "messageformat": "Reconnecting...",
+    "description": "Text that appears in the screen sharing controller to inform person that the call is in reconnecting state"
   },
   "icu:calling__presenting--stop": {
     "messageformat": "Stop sharing",
@@ -3104,19 +3132,19 @@
   },
   "icu:SendEdit--dialog--title2": {
     "messageformat": "Edit Message",
-    "description": "Title of the modal shown before sending your first edit message"
+    "description": "(Deleted 2024/04/29) Title of the modal shown before sending your first edit message"
   },
   "icu:SendEdit--dialog--body2": {
     "messageformat": "If you edit a message, it will only be visible to people who are on the latest versions of Signal. They will be able to see you edited a message.",
-    "description": "Body text of the modal shown before sending your first edit message"
+    "description": "(Deleted 2024/04/29) Body text of the modal shown before sending your first edit message"
   },
   "icu:SendFormatting--dialog--title": {
     "messageformat": "Sending formatted text",
-    "description": "Title of the modal shown before sending your first formatting message"
+    "description": "(Deleted 2024/04/29) Title of the modal shown before sending your first formatting message"
   },
   "icu:SendFormatting--dialog--body": {
     "messageformat": "Some people may be using a version of Signal that doesn’t support formatted text. They will not be able to see the formatting changes you’ve made to your message.",
-    "description": "Body text of the modal shown before sending your first formatting message"
+    "description": "(Deleted 2024/04/29) Body text of the modal shown before sending your first formatting message"
   },
   "icu:AuthArtCreator--dialog--message": {
     "messageformat": "Would you like to open Signal Sticker Pack Creator?",
@@ -3245,10 +3273,6 @@
   "icu:MessageRequests--unblock-group-confirm-body": {
     "messageformat": "Group members will be able to add you to this group again.",
     "description": "Shown as the body in the confirmation modal for unblocking a group message request"
-  },
-  "icu:MessageRequests--block-and-report-spam": {
-    "messageformat": "Report Spam and Block",
-    "description": "(Deleted 2024/03/20) Shown as a button to let the user block a message request and report spam"
   },
   "icu:MessageRequests--block-and-report-spam-success-toast": {
     "messageformat": "Reported as spam and blocked.",
@@ -3659,8 +3683,12 @@
     "description": "Title for the select your screen sharing sources modal"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "Copy link",
+    "messageformat": "Copy call link",
     "description": "Menu item in the in-call info popup for call link calls. The action is to add the call link to the clipboard."
+  },
+  "icu:CallingAdhocCallInfo__RemoveClient": {
+    "messageformat": "Remove this person from the call",
+    "description": "Button in the in-call info popup for call link calls showing all participants. The action is to remove the participant from the call."
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video",
@@ -4167,15 +4195,15 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-add--many--other": {
-    "messageformat": "{memberName} invited {count, plural, one {#} other {#}} people to the group.",
+    "messageformat": "{memberName} invited {count, plural, one {# person} other {# people}} to the group.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-add--many--you": {
-    "messageformat": "You invited {count, number} people to the group.",
+    "messageformat": "You invited {count, plural, one {# person} other {# people}} to the group.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-add--many--unknown": {
-    "messageformat": "{count, plural, one {#} other {#}} people were invited to the group.",
+    "messageformat": "{count, plural, one {# person was} other {# people were}} invited to the group.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-remove--decline--other": {
@@ -4215,15 +4243,15 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-remove--revoke--many--other": {
-    "messageformat": "{memberName} revoked invitations to the group for {count, number} people.",
+    "messageformat": "{memberName} revoked {count, plural, one {an invitation to the group for # person} other {invitations to the group for # people}}.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-remove--revoke--many--you": {
-    "messageformat": "You revoked invitations to the group for {count, number} people.",
+    "messageformat": "You revoked {count, plural, one {an invitation to the group for # person} other {invitations to the group for # people}}.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-remove--revoke--many--unknown": {
-    "messageformat": "An admin revoked invitations to the group for {count, number} people.",
+    "messageformat": "An admin revoked {count, plural, one {an invitation to the group for # person} other {invitations to the group for # people}}.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--one--other": {
@@ -4251,27 +4279,27 @@
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--other": {
-    "messageformat": "{adminName} revoked invitations to the group for {count, plural, one {# person} other {# people}} invited by {memberName}.",
+    "messageformat": "{adminName} revoked {count, plural, one {an invitation to the group for # person} other {invitations to the group for # people}} invited by {memberName}.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--you": {
-    "messageformat": "You revoked invitations to the group for {count, number} people invited by {memberName}.",
+    "messageformat": "You revoked {count, plural, one {an invitation to the group for # person} other {invitations to the group for # people}} invited by {memberName}.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--unknown": {
-    "messageformat": "An admin revoked invitations to the group for {count, number} people invited by {memberName}.",
+    "messageformat": "An admin revoked {count, plural, one {an invitation to the group for # person} other {invitations to the group for # people}} invited by {memberName}.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--other": {
-    "messageformat": "{adminName} revoked the invitations to the group you sent to {count, number} people.",
+    "messageformat": "{adminName} revoked the {count, plural, one {invitation to the group you sent to # person} other {invitations to the group you sent to # people}}.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--you": {
-    "messageformat": "You rescinded your invitation to {count, number} people.",
+    "messageformat": "You rescinded your invitation to {count, plural, one {# person} other {# people}}.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--unknown": {
-    "messageformat": "An admin revoked the invitations to the group you sent to {count, number} people.",
+    "messageformat": "An admin revoked the {count, plural, one {invitation to the group you sent to # person} other {invitations to the group you sent to # people}}.",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--admin-approval-add-one--you": {
@@ -4462,6 +4490,10 @@
     "messageformat": "This member will need to accept an invite to join this group again, and will not receive group messages until they accept:",
     "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
   },
+  "icu:GroupV1--Migration--info--invited--count": {
+    "messageformat": "{count, plural, one {# member} other {# members}} will need to accept an invite to join this group again, and will not receive group messages until they accept.",
+    "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
+  },
   "icu:GroupV1--Migration--info--removed--before--many": {
     "messageformat": "These members are not capable of joining New Groups, and will be removed from the group:",
     "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
@@ -4470,12 +4502,20 @@
     "messageformat": "This member is not capable of joining New Groups, and will be removed from the group:",
     "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
   },
+  "icu:GroupV1--Migration--info--removed--before--count": {
+    "messageformat": "{count, plural, one {# member is} other {# members are}} not capable of joining New Groups, and will be removed from the group.",
+    "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
+  },
   "icu:GroupV1--Migration--info--removed--after--many": {
     "messageformat": "These members were not capable of joining New Groups, and were removed from the group:",
     "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
   },
   "icu:GroupV1--Migration--info--removed--after--one": {
     "messageformat": "This member was not capable of joining New Groups, and was removed from the group:",
+    "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
+  },
+  "icu:GroupV1--Migration--info--removed--after--count": {
+    "messageformat": "{count, plural, one {# member was not capable of joining New Groups, and was} other {# members were not capable of joining New Groups, and were}} removed from the group.",
     "description": "Shown on Learn More popup after or Migration popup before GV1 migration"
   },
   "icu:GroupV1--Migration--invited--you": {
@@ -4487,7 +4527,7 @@
     "description": "Shown in timeline when a group is upgraded and one person was invited, instead of added"
   },
   "icu:GroupV1--Migration--invited--many": {
-    "messageformat": "{count, number} members couldn’t be added to the New Group and have been invited to join.",
+    "messageformat": "{count, plural, one {# member couldn’t be added to the New Group and has been invited to join} other {# members couldn’t be added to the New Group and have been invited to join}}.",
     "description": "Shown in timeline when a group is upgraded and some people were invited, instead of added"
   },
   "icu:GroupV1--Migration--removed--one": {
@@ -7060,6 +7100,10 @@
     "messageformat": "Declined {type, select, Audio {voice} Video {video} Group {group} other {}} call",
     "description": "Call History > Short description of call > When call was declined"
   },
+  "icu:CallHistory__Description--Adhoc": {
+    "messageformat": "Call link",
+    "description": "Call History > Short description of call > When you joined a call link call"
+  },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {# other is} other {# others are}} typing.",
     "description": "Group chat multiple person typing indicator when space isn't available to show every avatar, this is the count of avatars hidden."
@@ -7087,7 +7131,7 @@
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
-    "messageformat": "Handful of bug fixes to keep your app running smoothly. More exciting changes on the horizon! ",
+    "messageformat": "Handful of bug fixes to keep your app running smoothly. More exciting changes on the horizon!",
     "description": "Release notes for releases that only include bug fixes",
     "ignoreUnused": true
   },
@@ -7110,17 +7154,5 @@
     "messageformat": "Small tweaks, bug fixes, and performance enhancements. Thanks for using Signal!",
     "description": "Release notes for releases that only include bug fixes",
     "ignoreUnused": true
-  },
-  "icu:WhatsNew__v7.5--0": {
-    "messageformat": "We added support for custom nicknames and notes for anyone you're chatting with on Signal, even if they aren't in your system contacts. Whether you're adding the missing letters in a lazy friend's profile name, or a reminder about where you met, notes and nicknames provide a convenient and secure way to jot down additional details about your Signal Connections — and they're end-to-end encrypted and protected by your Signal PIN so they can be securely restored if you lose your phone too.",
-    "description": "(Deleted 2024/04/16)"
-  },
-  "icu:WhatsNew__v7.5--1": {
-    "messageformat": "Now you can minimize Signal to your system tray on Linux. If your taskbar is the right shade of gray, it’s like your messages are waiting for you on a silver platter.",
-    "description": "(Deleted 2024/04/16)"
-  },
-  "icu:WhatsNew__v7.5--2": {
-    "messageformat": "For users on Windows, this update re-enables support for detailed unread message counts on the Signal icon. Say goodbye to “9+” because now the icon goes to 11 (or higher).",
-    "description": "(Deleted 2024/04/16)"
   }
 }

@@ -380,12 +380,6 @@
   "icu:invalidConversation": {
     "messageformat": "Hierdie groep is ongeldig. Skep asb. 'n nuwe groep."
   },
-  "icu:taskbarMarkedUnread": {
-    "messageformat": "As ongelees gemerk"
-  },
-  "icu:taskbarUnreadMessages": {
-    "messageformat": "{count, plural, one {{count,number} ongeleesde boodskap} other {{count,number} ongeleesde boodskappe}}"
-  },
   "icu:scrollDown": {
     "messageformat": "Rol af na die onderkant van die klets"
   },
@@ -1220,6 +1214,9 @@
   "icu:CallingLobby__CallLinkNotice--phone-sharing": {
     "messageformat": "Enigiemand wat via die skakel by hierdie oproep aansluit, sal jou naam, foto en telefoonnommer sien."
   },
+  "icu:CallingLobby__CallLinkNotice--join-request-pending": {
+    "messageformat": "Wag om ingelaat te word…"
+  },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "Sluit aan"
   },
@@ -1228,6 +1225,9 @@
   },
   "icu:CallingLobbyJoinButton--call-full": {
     "messageformat": "Oproep vol"
+  },
+  "icu:CallingLobbyJoinButton--ask-to-join": {
+    "messageformat": "Vra om aan te sluit"
   },
   "icu:calling__button--video-disabled": {
     "messageformat": "Kamera gedeaktiveer"
@@ -1271,8 +1271,20 @@
   "icu:CallingButton--more-options": {
     "messageformat": "Meer opsies"
   },
+  "icu:CallingPendingParticipants__ApproveUser": {
+    "messageformat": "Keur aansluitingsversoek goed"
+  },
+  "icu:CallingPendingParticipants__DenyUser": {
+    "messageformat": "Weier aansluitingsversoek"
+  },
+  "icu:CallingPendingParticipants__RequestsToJoin": {
+    "messageformat": "{count, plural, one {{count,number} versoek om by hierdie oproep aan te sluit} other {{count,number} versoeke om by hierdie oproep aan te sluit}}"
+  },
   "icu:CallingRaisedHandsList__Title": {
-    "messageformat": "{count, plural, one {Hand opgesteek · {count,number} persoon} other {Hande opgesteek · {count,number} persone}}"
+    "messageformat": "{count, plural, one {{count,number} opgesteekte hand} other {{count,number} opgesteekte hande}}"
+  },
+  "icu:CallingRaisedHandsList__TitleHint": {
+    "messageformat": "(van eerste tot laaste)"
   },
   "icu:CallingReactions--me": {
     "messageformat": "Jy"
@@ -1352,8 +1364,17 @@
   "icu:calling__presenting--notification-body": {
     "messageformat": "Klik hier om na die oproep terug te keer wanneer jy klaar aangebied het."
   },
+  "icu:calling__presenting--reconnecting--notification-title": {
+    "messageformat": "Besig om te herkonnekteer…"
+  },
+  "icu:calling__presenting--reconnecting--notification-body": {
+    "messageformat": "Jou verbinding is onderbreek. Signal is besig om te herkonnekteer."
+  },
   "icu:calling__presenting--info": {
     "messageformat": "Signal is besig om {window} te deel."
+  },
+  "icu:calling__presenting--reconnecting": {
+    "messageformat": "Besig om te herkonnekteer…"
   },
   "icu:calling__presenting--stop": {
     "messageformat": "Hou op om te deel"
@@ -2450,9 +2471,6 @@
   "icu:MessageRequests--unblock-group-confirm-body": {
     "messageformat": "Groeplede sal jou weer by die groep kan voeg."
   },
-  "icu:MessageRequests--block-and-report-spam": {
-    "messageformat": "Rapporteer gemorspos en versper"
-  },
   "icu:MessageRequests--block-and-report-spam-success-toast": {
     "messageformat": "As gemorspos gerapporteer en versper."
   },
@@ -2760,7 +2778,10 @@
     "messageformat": "'n Venster"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "Kopieer skakel"
+    "messageformat": "Kopieer oproepskakel"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClient": {
+    "messageformat": "Verwyder hierdie persoon uit die oproep"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -3144,7 +3165,7 @@
     "messageformat": "{count, plural, one {{memberName} het 1 persoon na die groep genooi.} other {{memberName} het {count,number} persone na die groep genooi.}}"
   },
   "icu:GroupV2--pending-add--many--you": {
-    "messageformat": "Jy het {count,number} persone na die groep genooi."
+    "messageformat": "{count, plural, one {Jy het {count,number} persoon na die groep genooi.} other {Jy het {count,number} persone na die groep genooi.}}"
   },
   "icu:GroupV2--pending-add--many--unknown": {
     "messageformat": "{count, plural, one {1 persoon is na die groep genooi.} other {{count,number} persone is na die groep genooi.}}"
@@ -3177,13 +3198,13 @@
     "messageformat": "'n Admin het ’n uitnodiging na die groep vir 1 persoon herroep."
   },
   "icu:GroupV2--pending-remove--revoke--many--other": {
-    "messageformat": "{memberName} het uitnodigings na die groep vir {count,number} persone herroep."
+    "messageformat": "{count, plural, one {{memberName} het 'n uitnodiging na die groep vir 1 persoon herroep.} other {{memberName} het 'n uitnodiging na die groep vir {count,number} persone herroep.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--you": {
-    "messageformat": "Jy het ’n uitnodiging na die groep vir {count,number} persone herroep."
+    "messageformat": "{count, plural, one {Jy het ’n uitnodiging na die groep vir 1 persoon herroep.} other {Jy het uitnodigings na die groep vir {count,number} persone herroep.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--unknown": {
-    "messageformat": "'n Admin het ’n uitnodiging na die groep vir {count,number} persone herroep."
+    "messageformat": "{count, plural, one {'n Admin het ’n uitnodiging na die groep vir 1 persoon herroep.} other {'n Admin het ’n uitnodiging na die groep vir {count,number} persone herroep.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--one--other": {
     "messageformat": "{adminName} het ’n uitnodiging na die groep vir 1 persoon, gestuur deur {memberName}, herroep."
@@ -3207,19 +3228,19 @@
     "messageformat": "{count, plural, one {{adminName} het uitnodigings na die groep vir {count,number} persone, deur {memberName} genooi, herroep.} other {{adminName} het uitnodigings na die groep vir {count,number} persoon, deur {memberName} genooi, herroep.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--you": {
-    "messageformat": "Jy het uitnodigings na die groep vir {count,number} mense, deur {memberName} genooi, herroep."
+    "messageformat": "{count, plural, one {Jy het 'n uitnodiging na die groep vir {count,number} persoon, deur {memberName} genooi, herroep.} other {Jy het uitnodigings na die groep vir {count,number} persone, deur {memberName} genooi, herroep.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--unknown": {
-    "messageformat": "’n Admin het uitnodigings na die groep vir {count,number} mense, deur {memberName} genooi, herroep."
+    "messageformat": "{count, plural, one {'n Admin het 'n uitnodiging na die groep vir {count,number} persoon, deur {memberName} genooi, herroep.} other {’n Admin het uitnodigings na die groep vir {count,number} mense, deur {memberName} genooi, herroep.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--other": {
-    "messageformat": "{adminName} het ’n uitnodiging na die groep vir {count,number} mense herroep."
+    "messageformat": "{count, plural, one {{adminName} het die uitnodiging na die groep wat jy aan {count,number} persoon gestuur het, herroep.} other {{adminName} het die uitnodigings na die groep wat jy aan {count,number} persone gestuur het, herroep.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--you": {
-    "messageformat": "Jy het jou uitnodiging vir {count,number} mense herroep."
+    "messageformat": "{count, plural, one {Jy het jou uitnodiging aan {count,number} persoon herroep.} other {Jy het jou uitnodiging aan {count,number} persone herroep.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--unknown": {
-    "messageformat": "’n Admin het ’n uitnodiging na die groep vir {count,number} mense herroep."
+    "messageformat": "{count, plural, one {’n Admin het die uitnodiging na die groep wat jy aan {count,number} persoon gestuur het, herroep.} other {’n Admin het ’n uitnodigings na die groep wat jy aan {count,number} persone gestuur het, herroep.}}"
   },
   "icu:GroupV2--admin-approval-add-one--you": {
     "messageformat": "Jy het ’n versoek gestuur om by die groep aan te sluit."
@@ -3362,17 +3383,26 @@
   "icu:GroupV1--Migration--info--invited--one": {
     "messageformat": "Hierdie lid moet weer ’n uitnodiging om by die groep aan te sluit, aanvaar en sal tot dan geen groepboodskappe ontvang nie:"
   },
+  "icu:GroupV1--Migration--info--invited--count": {
+    "messageformat": "{count, plural, one {{count,number} lid sal ’n uitnodiging moet aanvaar om weer by hierdie groep aan te sluit en sal nie groepboodskappe ontvang totdat hulle aanvaar nie.} other {{count,number} lede sal ’n uitnodiging moet aanvaar om weer by hierdie groep aan te sluit en sal geen groepboodskappe ontvang totdat hulle aanvaar het nie.}}"
+  },
   "icu:GroupV1--Migration--info--removed--before--many": {
     "messageformat": "Hierdie lede kan nie by Nuwe Groepe aansluit nie en sal van die volgende groep verwyder word:"
   },
   "icu:GroupV1--Migration--info--removed--before--one": {
     "messageformat": "Hierdie lid kan nie by Nuwe Groepe aansluit nie en sal van die volgende groep verwyder word:"
   },
+  "icu:GroupV1--Migration--info--removed--before--count": {
+    "messageformat": "{count, plural, one {{count,number} lid kan nie by Nuwe Groepe aansluit nie en sal van die groep verwyder word.} other {{count,number} lede kan nie by Nuwe Groepe aansluit nie en sal van die groep verwyder word.}}"
+  },
   "icu:GroupV1--Migration--info--removed--after--many": {
     "messageformat": "Hierdie lede kon nie by Nuwe Groepe aansluit nie en is van die volgende groep verwyder:"
   },
   "icu:GroupV1--Migration--info--removed--after--one": {
     "messageformat": "Hierdie lid kon nie by Nuwe Groepe aansluit nie en is van die volgende groep verwyder:"
+  },
+  "icu:GroupV1--Migration--info--removed--after--count": {
+    "messageformat": "{count, plural, one {{count,number} lid kon nie by Nuwe Groepe aansluit nie en is van die groep verwyder.} other {{count,number} lede kon nie by Nuwe Groepe aansluit nie en is van die volgende groep verwyder.}}"
   },
   "icu:GroupV1--Migration--invited--you": {
     "messageformat": "Jy kon nie by die Nuwe Groep toegevoeg word nie en is genooi om aan te sluit."
@@ -3381,7 +3411,7 @@
     "messageformat": "{contact} kon nie by die Nuwe Groep toegevoeg word nie en is genooi om aan te sluit."
   },
   "icu:GroupV1--Migration--invited--many": {
-    "messageformat": "{count,number} lede kon nie by die Nuwe Groep toegevoeg word nie en is genooi om aan te sluit."
+    "messageformat": "{count, plural, one {A member couldn’t be added to the New Group and has been invited to join.} other {{count,number} members couldn’t be added to the New Group and have been invited to join.}}"
   },
   "icu:GroupV1--Migration--removed--one": {
     "messageformat": "{contact} is van die groep verwyder."
@@ -4380,10 +4410,10 @@
     "messageformat": "Niemand"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__title": {
-    "messageformat": "Are you sure?"
+    "messageformat": "Is jy seker?"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__description": {
-    "messageformat": "If you change “{settingTitle}” to “{nobodyLabel}” it will make it harder for people to find you on Signal."
+    "messageformat": "As jy “{settingTitle}” na “{nobodyLabel}” verander, sal dit moeiliker word vir mense om jou op Signal te vind."
   },
   "icu:Preferences--messaging": {
     "messageformat": "Boodskappe"
@@ -4656,13 +4686,13 @@
     "messageformat": "Jy het hierdie persoon geblokkeer"
   },
   "icu:MessageRequestResponseNotification__Message--Blocked--Group": {
-    "messageformat": "You blocked the group"
+    "messageformat": "Jy het die groep versper"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked": {
-    "messageformat": "You unblocked this person"
+    "messageformat": "Jy het hierdie persoon ontsper"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked--Group": {
-    "messageformat": "You unblocked the group"
+    "messageformat": "Jy het die groep ontsper"
   },
   "icu:MessageRequestResponseNotification__Button--Options": {
     "messageformat": "Opsies"
@@ -5313,6 +5343,9 @@
   "icu:CallHistory__Description--Declined": {
     "messageformat": "{type, select, Audio {Stemoproep geweier} Video {Video-oproep geweier} Group {Groepoproep geweier} other {Oproep geweier}}"
   },
+  "icu:CallHistory__Description--Adhoc": {
+    "messageformat": "Oproepskakel"
+  },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} ander persoon is besig om te tik.} other {{count,number} ander persone is besig om te tik.}}"
   },
@@ -5334,7 +5367,7 @@
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
-    "messageformat": "'n Handvol foutregstellings om jou toepassing glad te laat werk. Nog meer opwindende veranderings is op die horison! ",
+    "messageformat": "'n Handvol foutregstellings om jou toepassing glad te laat werk. Nog meer opwindende veranderings is op die horison!",
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
@@ -5352,14 +5385,5 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Klein veranderings, foutregstellings en prestasieverbeterings. Dankie dat jy Signal gebruik!",
     "ignoreUnused": true
-  },
-  "icu:WhatsNew__v7.5--0": {
-    "messageformat": "Ons het ondersteuning bygevoeg vir pasgemaakte noemname en notas vir enigiemand met wie jy op Signal gesels, selfs al is hulle nie in jou stelselkontakte nie. Notas en noemname bied 'n gerieflike en veilige manier om bykomende besonderhede oor jou Signal-kontakte neer te skryf — en dit is end-tot-end geënkripteer en beskerm deur jou Signal-PIN sodat dit veilig herwin kan word, ook as jy jou foon verloor."
-  },
-  "icu:WhatsNew__v7.5--1": {
-    "messageformat": "Nou kan jy Signal na jou stelsellaai op Linux minimaliseer."
-  },
-  "icu:WhatsNew__v7.5--2": {
-    "messageformat": "Vir gebruikers op Windows, heraktiveer hierdie opdatering ondersteuning vir gedetailleerde getalle ongeleesde boodskappe in die Signal-ikoon."
   }
 }

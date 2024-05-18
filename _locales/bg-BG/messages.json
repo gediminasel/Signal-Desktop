@@ -380,12 +380,6 @@
   "icu:invalidConversation": {
     "messageformat": "Групата не е валидна. Моля, създайте нова група."
   },
-  "icu:taskbarMarkedUnread": {
-    "messageformat": "Маркиране като непрочетени"
-  },
-  "icu:taskbarUnreadMessages": {
-    "messageformat": "{count, plural, one {{count,number} непрочетено съобщение} other {{count,number} непрочетени съобщения}}"
-  },
   "icu:scrollDown": {
     "messageformat": "Превъртане до края на чата"
   },
@@ -1220,6 +1214,9 @@
   "icu:CallingLobby__CallLinkNotice--phone-sharing": {
     "messageformat": "Всеки, който се присъедини към това повикване чрез линка, ще види вашето име, снимка и телефонен номер."
   },
+  "icu:CallingLobby__CallLinkNotice--join-request-pending": {
+    "messageformat": "В очакване да бъде пуснат…"
+  },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "Присъедини се"
   },
@@ -1228,6 +1225,9 @@
   },
   "icu:CallingLobbyJoinButton--call-full": {
     "messageformat": "Повикването е пълно"
+  },
+  "icu:CallingLobbyJoinButton--ask-to-join": {
+    "messageformat": "Заявка за присъединяване"
   },
   "icu:calling__button--video-disabled": {
     "messageformat": "Камерата е деактивирана"
@@ -1271,8 +1271,20 @@
   "icu:CallingButton--more-options": {
     "messageformat": "Още опции"
   },
+  "icu:CallingPendingParticipants__ApproveUser": {
+    "messageformat": "Одобряване на заявката за присъединяване"
+  },
+  "icu:CallingPendingParticipants__DenyUser": {
+    "messageformat": "Отказ на заявка за присъединяване"
+  },
+  "icu:CallingPendingParticipants__RequestsToJoin": {
+    "messageformat": "{count, plural, one {{count,number} заявка за присъединяване към разговора} other {{count,number} заявки за присъединяване към разговора}}"
+  },
   "icu:CallingRaisedHandsList__Title": {
-    "messageformat": "{count, plural, one {Вдигнати ръце · {count,number} човек} other {Вдигнати ръце · {count,number} души}}"
+    "messageformat": "{count, plural, one {{count,number} вдигната ръка} other {{count,number} вдигнати ръце}}"
+  },
+  "icu:CallingRaisedHandsList__TitleHint": {
+    "messageformat": "(от първа към последна)"
   },
   "icu:CallingReactions--me": {
     "messageformat": "Вие"
@@ -1352,8 +1364,17 @@
   "icu:calling__presenting--notification-body": {
     "messageformat": "Кликнете тук, за да се върнете към разговора, когато сте готови да прекратите презентирането."
   },
+  "icu:calling__presenting--reconnecting--notification-title": {
+    "messageformat": "Повторно свързване…"
+  },
+  "icu:calling__presenting--reconnecting--notification-body": {
+    "messageformat": "Връзката ви беше прекъсната. Signal се свързва отново."
+  },
   "icu:calling__presenting--info": {
     "messageformat": "Signal споделя {window}."
+  },
+  "icu:calling__presenting--reconnecting": {
+    "messageformat": "Повторно свързване…"
   },
   "icu:calling__presenting--stop": {
     "messageformat": "Спиране на споделянето"
@@ -2450,9 +2471,6 @@
   "icu:MessageRequests--unblock-group-confirm-body": {
     "messageformat": "Членове на групата ще могат да те добавят обратно в групата."
   },
-  "icu:MessageRequests--block-and-report-spam": {
-    "messageformat": "Докладване за спам и блокиране"
-  },
   "icu:MessageRequests--block-and-report-spam-success-toast": {
     "messageformat": "Потребителят е докладван за спам и блокиран."
   },
@@ -2760,7 +2778,10 @@
     "messageformat": "Прозорец"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "Копиране на линка"
+    "messageformat": "Копиране на линка за разговор"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClient": {
+    "messageformat": "Премахване на този човек от разговора"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Видео"
@@ -3144,7 +3165,7 @@
     "messageformat": "{count, plural, one {{memberName} покани 1 човек в групата.} other {{memberName} покани {count,number} души в групата.}}"
   },
   "icu:GroupV2--pending-add--many--you": {
-    "messageformat": "Поканихте {count,number} души в групата."
+    "messageformat": "{count, plural, one {Поканихте {count,number} човек в групата.} other {Поканихте {count,number} души в групата.}}"
   },
   "icu:GroupV2--pending-add--many--unknown": {
     "messageformat": "{count, plural, one {1 човек беше поканен в групата.} other {{count,number} души бяха поканени в групата.}}"
@@ -3177,13 +3198,13 @@
     "messageformat": "Администратор оттегли поканата за групата до 1 човек."
   },
   "icu:GroupV2--pending-remove--revoke--many--other": {
-    "messageformat": "{memberName} оттегли поканите за групата до {count,number} души."
+    "messageformat": "{count, plural, one {{memberName} оттегли покана за групата до 1 човек.} other {{memberName} оттегли покани за групата до {count,number} души.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--you": {
-    "messageformat": "Оттеглихте поканите за групата до {count,number} души."
+    "messageformat": "{count, plural, one {Оттеглихте покана за групата до 1 човек.} other {Оттеглихте поканите за групата до {count,number} души.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--unknown": {
-    "messageformat": "Администратор оттегли поканата за групата до {count,number} души."
+    "messageformat": "{count, plural, one {Администратор оттегли покана за групата до 1 човек.} other {Администратор оттегли покани за групата до {count,number} души.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--one--other": {
     "messageformat": "{adminName} оттегли поканата на {memberName} за групата до 1 човек ."
@@ -3207,19 +3228,19 @@
     "messageformat": "{count, plural, one {{adminName} оттегли поканата на {memberName} за групата до {count,number} човек.} other {{adminName} оттегли поканата на {memberName} за групата до {count,number} души.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--you": {
-    "messageformat": "Оттеглихте поканата на {memberName} за групата до {count,number} души."
+    "messageformat": "{count, plural, one {Оттеглихте поканата за групата до {count,number} човек, поканен от {memberName}.} other {Оттеглихте поканите за групата до {count,number} души, поканени от {memberName}.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--unknown": {
-    "messageformat": "Администратор оттегли поканите на {memberName} за групата до {count,number} души."
+    "messageformat": "{count, plural, one {Администратор оттегли покана за групата до {count,number} човек, поканен от {memberName}.} other {Администратор оттегли покани за групата до {count,number} души, поканени от {memberName}.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--other": {
-    "messageformat": "{adminName} оттегли Вашите покани за групата до {count,number} души."
+    "messageformat": "{count, plural, one {{adminName} оттегли поканата за групата, изпратена от вас до {count,number} човек.} other {{adminName} оттегли поканите за групата, изпратени от вас до {count,number} души.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--you": {
-    "messageformat": "Анулирахте поканата към {count,number} души."
+    "messageformat": "{count, plural, one {Анулирахте поканата си към {count,number} човек.} other {Анулирахте поканата си към {count,number} души.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--unknown": {
-    "messageformat": "Администратор оттегли Вашите покани за групата до {count,number} души."
+    "messageformat": "{count, plural, one {Администратор оттегли поканата за групата, изпратена от вас до {count,number} човек.} other {Администратор оттегли поканите за групата, изпратени от вас до {count,number} души.}}"
   },
   "icu:GroupV2--admin-approval-add-one--you": {
     "messageformat": "Изпратихте заявка за присъединяване към групата."
@@ -3362,17 +3383,26 @@
   "icu:GroupV1--Migration--info--invited--one": {
     "messageformat": "Този член трябва да приеме поканата за влизане в групата и няма да получава съобщения от групата докато не се съгласи."
   },
+  "icu:GroupV1--Migration--info--invited--count": {
+    "messageformat": "{count, plural, one {{count,number} член ще трябва отново да приеме покана за присъединяване към тази група и няма да получава съобщения от групата, докато не я приеме.} other {{count,number} членове ще трябва отново да приемат покана за присъединяване към тази група и няма да получават съобщения от групата, докато не приемат.}}"
+  },
   "icu:GroupV1--Migration--info--removed--before--many": {
     "messageformat": "Тези членове не могат да се присъединяват към нови групи и ще бъдат премахнати от групата:"
   },
   "icu:GroupV1--Migration--info--removed--before--one": {
     "messageformat": "Този член не може да се присъединява към нови групи и ще бъде премахнат от групата:"
   },
+  "icu:GroupV1--Migration--info--removed--before--count": {
+    "messageformat": "{count, plural, one {{count,number} член няма възможност за присъединяване към нови групи и ще бъде премахнат от групата.} other {{count,number} членове нямат възможност за присъединяване към нови групи и ще бъдат премахнати от групата.}}"
+  },
   "icu:GroupV1--Migration--info--removed--after--many": {
     "messageformat": "Тези членове не можеха да се присъединят към нови групи и бяха премахнати от групата:"
   },
   "icu:GroupV1--Migration--info--removed--after--one": {
     "messageformat": "Този член не можеше да се присъединява към нови групи и беше премахнат от групата:"
+  },
+  "icu:GroupV1--Migration--info--removed--after--count": {
+    "messageformat": "{count, plural, one {{count,number} член няма възможност за присъединяване към нови групи и беше премахнат от групата.} other {{count,number} членове нямат възможност за присъединяване към нови групи и бяха премахнати от групата.}}"
   },
   "icu:GroupV1--Migration--invited--you": {
     "messageformat": "Не можахте да бъдете добавени към новата група и бяхте поканени."
@@ -3381,7 +3411,7 @@
     "messageformat": "{contact} не можа да бъде добавен към новата група и беше поканен."
   },
   "icu:GroupV1--Migration--invited--many": {
-    "messageformat": "{count,number}члена не можаха да бъдат добавени към новата група и бяха поканени."
+    "messageformat": "{count, plural, one {A member couldn’t be added to the New Group and has been invited to join.} other {{count,number} members couldn’t be added to the New Group and have been invited to join.}}"
   },
   "icu:GroupV1--Migration--removed--one": {
     "messageformat": "{contact} беше премахнат от групата."
@@ -4380,10 +4410,10 @@
     "messageformat": "Никой"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__title": {
-    "messageformat": "Are you sure?"
+    "messageformat": "Сигурни ли сте?"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__description": {
-    "messageformat": "If you change “{settingTitle}” to “{nobodyLabel}” it will make it harder for people to find you on Signal."
+    "messageformat": "Ако промените „{settingTitle}“ на „{nobodyLabel}“, за хората ще бъде по-трудно да ви намерят в Signal."
   },
   "icu:Preferences--messaging": {
     "messageformat": "Съобщения"
@@ -4656,13 +4686,13 @@
     "messageformat": "Вие блокирахте това лице"
   },
   "icu:MessageRequestResponseNotification__Message--Blocked--Group": {
-    "messageformat": "You blocked the group"
+    "messageformat": "Вие блокирахте групата"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked": {
-    "messageformat": "You unblocked this person"
+    "messageformat": "Вие отблокирахте този човек"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked--Group": {
-    "messageformat": "You unblocked the group"
+    "messageformat": "Вие отблокирахте групата"
   },
   "icu:MessageRequestResponseNotification__Button--Options": {
     "messageformat": "Опции"
@@ -5313,6 +5343,9 @@
   "icu:CallHistory__Description--Declined": {
     "messageformat": "{type, select, Audio {Отказано гласово обаждане} Video {Отказано видео обаждане} Group {Отказано групово обаждане} other {Отказано обаждане}}"
   },
+  "icu:CallHistory__Description--Adhoc": {
+    "messageformat": "Линк за повикване"
+  },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} друг човек пише.} other {{count,number} други души пишат.}}"
   },
@@ -5334,7 +5367,7 @@
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
-    "messageformat": "Няколко поправки на бъгове, за да може приложението да върви гладко. Още вълнуващи промени на хоризонта! ",
+    "messageformat": "Няколко поправки на бъгове, за да може приложението да върви гладко. Още вълнуващи промени на хоризонта!",
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
@@ -5352,14 +5385,5 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Дребни корекции, поправки на бъгове и подобрения на работата. Благодарим ви, че използвате Signal!",
     "ignoreUnused": true
-  },
-  "icu:WhatsNew__v7.5--0": {
-    "messageformat": "Добавихме поддръжка за персонализирани прякори и бележки за всеки, с когото си чатите в Signal, дори ако не е в системните ви контакти. Бележките и прякорите са удобен и сигурен начин за записване на допълнителна информация за вашите Signal връзки – те са криптирани от край до край и защитени с вашия PIN код за Signal, така че могат да бъдат възстановени по безопасен начин, ако си изгубите телефона."
-  },
-  "icu:WhatsNew__v7.5--1": {
-    "messageformat": "Вече можете да минимизирате Signal в системната ниша в Linux."
-  },
-  "icu:WhatsNew__v7.5--2": {
-    "messageformat": "За потребители с Windows тази актуализация активира отново поддръжката за подробен брой непрочетени съобщения в иконата на Signal."
   }
 }

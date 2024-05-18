@@ -380,12 +380,6 @@
   "icu:invalidConversation": {
     "messageformat": "Há algo errado neste grupo. Por favor, crie um novo grupo."
   },
-  "icu:taskbarMarkedUnread": {
-    "messageformat": "Marcadas como não lidas"
-  },
-  "icu:taskbarUnreadMessages": {
-    "messageformat": "{count, plural, one {{count,number} mensagem não lida} other {{count,number} mensagens não lidas}}"
-  },
   "icu:scrollDown": {
     "messageformat": "Rolar a tela até o final do chat"
   },
@@ -1220,6 +1214,9 @@
   "icu:CallingLobby__CallLinkNotice--phone-sharing": {
     "messageformat": "Todas as pessoas que entrarem nesta chamada pelo link poderão ver seu nome, foto e número de telefone."
   },
+  "icu:CallingLobby__CallLinkNotice--join-request-pending": {
+    "messageformat": "Esperando pra entrar…"
+  },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "Entrar"
   },
@@ -1228,6 +1225,9 @@
   },
   "icu:CallingLobbyJoinButton--call-full": {
     "messageformat": "Chamada lotada"
+  },
+  "icu:CallingLobbyJoinButton--ask-to-join": {
+    "messageformat": "Pedir para participar"
   },
   "icu:calling__button--video-disabled": {
     "messageformat": "Câmera desativada"
@@ -1271,8 +1271,20 @@
   "icu:CallingButton--more-options": {
     "messageformat": "Mais opções"
   },
+  "icu:CallingPendingParticipants__ApproveUser": {
+    "messageformat": "Aprovar solicitação de participação"
+  },
+  "icu:CallingPendingParticipants__DenyUser": {
+    "messageformat": "Recusar solicitação de participação"
+  },
+  "icu:CallingPendingParticipants__RequestsToJoin": {
+    "messageformat": "{count, plural, one {{count,number} solicitação para entrar na chamada} other {{count,number} solicitações para entrar na chamada}}"
+  },
   "icu:CallingRaisedHandsList__Title": {
-    "messageformat": "{count, plural, one {Mãos levantadas · {count,number} pessoa} other {Mãos levantadas · {count,number} pessoas}}"
+    "messageformat": "{count, plural, one {{count,number} levantou a mão} other {{count,number} levantaram as mãos}}"
+  },
+  "icu:CallingRaisedHandsList__TitleHint": {
+    "messageformat": "(do primeiro ao último)"
   },
   "icu:CallingReactions--me": {
     "messageformat": "Você"
@@ -1352,8 +1364,17 @@
   "icu:calling__presenting--notification-body": {
     "messageformat": "Clique aqui para retornar à chamada quando você parar a apresentação."
   },
+  "icu:calling__presenting--reconnecting--notification-title": {
+    "messageformat": "Reconectando…"
+  },
+  "icu:calling__presenting--reconnecting--notification-body": {
+    "messageformat": "Sua conexão foi perdida. O Signal está se reconectando."
+  },
   "icu:calling__presenting--info": {
     "messageformat": "Signal está apresentando {window}."
+  },
+  "icu:calling__presenting--reconnecting": {
+    "messageformat": "Reconectando…"
   },
   "icu:calling__presenting--stop": {
     "messageformat": "Parar apresentação"
@@ -2450,9 +2471,6 @@
   "icu:MessageRequests--unblock-group-confirm-body": {
     "messageformat": "Membros do grupo poderão adicionar você ao grupo novamente."
   },
-  "icu:MessageRequests--block-and-report-spam": {
-    "messageformat": "Denunciar spam e bloquear"
-  },
   "icu:MessageRequests--block-and-report-spam-success-toast": {
     "messageformat": "Denunciado como spam e bloqueado."
   },
@@ -2760,7 +2778,10 @@
     "messageformat": "Uma janela"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "Copiar link"
+    "messageformat": "Copiar link da chamada"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClient": {
+    "messageformat": "Remover esta pessoa da chamada"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Vídeo"
@@ -3144,7 +3165,7 @@
     "messageformat": "{count, plural, one {{memberName} convidou {count,number} pessoa para o grupo.} other {{memberName} convidou {count,number} pessoas para o grupo.}}"
   },
   "icu:GroupV2--pending-add--many--you": {
-    "messageformat": "Você convidou {count,number} pessoas para o grupo."
+    "messageformat": "{count, plural, one {Você convidou {count,number} pessoa para o grupo.} other {Você convidou {count,number} pessoas para o grupo.}}"
   },
   "icu:GroupV2--pending-add--many--unknown": {
     "messageformat": "{count, plural, one {{count,number} pessoa foi convidada para o grupo.} other {{count,number} pessoas foram convidadas para o grupo.}}"
@@ -3177,13 +3198,13 @@
     "messageformat": "Um admin revogou um convite para 1 pessoa entrar no grupo."
   },
   "icu:GroupV2--pending-remove--revoke--many--other": {
-    "messageformat": "{memberName} revogou convites para {count,number} pessoas entrarem no grupo."
+    "messageformat": "{count, plural, one {{memberName}revogou o convite de entrada ao grupo para 1 pessoa.} other {{memberName} revogou os convites de entrada ao grupo para {count,number} pessoas.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--you": {
-    "messageformat": "Você revogou convites para {count,number} pessoas entrarem no grupo."
+    "messageformat": "{count, plural, one {Você revogou um convite de entrada ao grupo para 1 pessoa.} other {Você revogou convites de entrada ao grupo para {count,number} pessoas.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--unknown": {
-    "messageformat": "Um admin revogou convites para {count,number} pessoas entrarem no grupo."
+    "messageformat": "{count, plural, one {Um admin revogou um convite de entrada ao grupo para 1 pessoa.} other {Um admin revogou convites de entrada ao grupo para {count,number} pessoas.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--one--other": {
     "messageformat": "{adminName} revogou um convite para 1 pessoa convidada por {memberName} entrar no grupo."
@@ -3207,19 +3228,19 @@
     "messageformat": "{count, plural, one {{adminName} revogou os convites para {count,number} pessoa convidada por {memberName} para entrar no grupo.} other {{adminName} revogou os convites para {count,number} pessoas convidadas por {memberName} para entrarem no grupo.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--you": {
-    "messageformat": "Você revogou os convites para o grupo para {count,number} pessoas convidadas por {memberName}."
+    "messageformat": "{count, plural, one {Você revogou um convite de entrada ao grupo para {count,number} pessoa convidada por {memberName}.} other {Você revogou convites de entrada ao grupo para {count,number} pessoas convidadas por {memberName}.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--unknown": {
-    "messageformat": "Um administrador revogou os convites para o grupo para {count,number} pessoas convidadas por {memberName}."
+    "messageformat": "{count, plural, one {Um admin revogou um convite de entrada ao grupo para {count,number} pessoa convidada por {memberName}.} other {Um admin revogou convites de entrada ao grupo para {count,number} pessoas convidadas por {memberName}.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--other": {
-    "messageformat": "{adminName} revogou os convites para o grupo você enviou para {count,number} pessoas."
+    "messageformat": "{count, plural, one {{adminName} revogou um convite de entrada ao grupo que você enviou para {count,number} pessoa.} other {{adminName} revogou os convites de entrada ao grupo que você enviou para {count,number} pessoas.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--you": {
-    "messageformat": "Você anulou o seu convite para {count,number} pessoas."
+    "messageformat": "{count, plural, one {Você anulou seu convite para {count,number} pessoa.} other {Você anulou seu convite para {count,number} pessoas.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--unknown": {
-    "messageformat": "Um administrador revogou os convites para o grupo que você enviou a {count,number} pessoas."
+    "messageformat": "{count, plural, one {Um admin revogou um convite de entrada ao grupo que você enviou para {count,number} pessoa.} other {Um admin revogou os convites de entrada ao grupo que você enviou para {count,number} pessoas.}}"
   },
   "icu:GroupV2--admin-approval-add-one--you": {
     "messageformat": "Você enviou um pedido para entrar no grupo."
@@ -3362,17 +3383,26 @@
   "icu:GroupV1--Migration--info--invited--one": {
     "messageformat": "Este membro precisará aceitar um convite para entrar novamente neste grupo e não receberá as mensagens do grupo até que aceite:"
   },
+  "icu:GroupV1--Migration--info--invited--count": {
+    "messageformat": "{count, plural, one {{count,number} membro precisará aceitar um convite para entrar novamente neste grupo e não receberá as mensagens do grupo até que aceite.} other {{count,number} membros precisarão aceitar um convite para entrar novamente neste grupo e não receberão as mensagens do grupo até que aceitem.}}"
+  },
   "icu:GroupV1--Migration--info--removed--before--many": {
     "messageformat": "Estes membros não são capazes de participar de Novos Grupos, e serão excluídos do grupo:"
   },
   "icu:GroupV1--Migration--info--removed--before--one": {
     "messageformat": "Este membro não é capaz de participar de Novos Grupos, e será excluído do grupo:"
   },
+  "icu:GroupV1--Migration--info--removed--before--count": {
+    "messageformat": "{count, plural, one {{count,number} membro não consegue participar de novos grupos e, por isso, foi removido.} other {{count,number} membros não conseguem participar de novos grupos e, por isso, foram removidos.}}"
+  },
   "icu:GroupV1--Migration--info--removed--after--many": {
     "messageformat": "Estes membros não são capazes de participar de Novos Grupos, e foram excluídos do grupo:"
   },
   "icu:GroupV1--Migration--info--removed--after--one": {
     "messageformat": "Este membro não é capaz de participar de Novos Grupos, e foi excluído do grupo:"
+  },
+  "icu:GroupV1--Migration--info--removed--after--count": {
+    "messageformat": "{count, plural, one {{count,number} membro não conseguiu participar de novos grupos e, por isso, foi removido.} other {{count,number} membros não conseguiram participar de Novos Grupos e, por isso, foram removidos.}}"
   },
   "icu:GroupV1--Migration--invited--you": {
     "messageformat": "Não foi possível adicioná-la(o) ao novo grupo, e você recebeu um convite para entrar."
@@ -3381,7 +3411,7 @@
     "messageformat": "{contact} não pôde ser adicionado ao Novo Grupo e foi convidado a entrar."
   },
   "icu:GroupV1--Migration--invited--many": {
-    "messageformat": "{count,number} membros não puderam ser adicionados ao Novo Grupo e foram convidados a entrar."
+    "messageformat": "{count, plural, one {Não foi possível adicionar {count,number} membro ao novo grupo, por isso, um convite para participar foi enviado.} other {Não foi possível adicionar {count,number} membros ao novo grupo, por isso, convites para participar foram enviados.}}"
   },
   "icu:GroupV1--Migration--removed--one": {
     "messageformat": "{contact} foi excluído do grupo."
@@ -4380,10 +4410,10 @@
     "messageformat": "Ninguém"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__title": {
-    "messageformat": "Are you sure?"
+    "messageformat": "Tem certeza?"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__description": {
-    "messageformat": "If you change “{settingTitle}” to “{nobodyLabel}” it will make it harder for people to find you on Signal."
+    "messageformat": "Se você mudar “{settingTitle}” para “{nobodyLabel}”, vai ser mais difícil para as pessoas te acharem no Signal."
   },
   "icu:Preferences--messaging": {
     "messageformat": "Mensagens"
@@ -4656,13 +4686,13 @@
     "messageformat": "Você bloqueou esta pessoa"
   },
   "icu:MessageRequestResponseNotification__Message--Blocked--Group": {
-    "messageformat": "You blocked the group"
+    "messageformat": "Você bloqueou o grupo"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked": {
-    "messageformat": "You unblocked this person"
+    "messageformat": "Você desbloqueou essa pessoa"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked--Group": {
-    "messageformat": "You unblocked the group"
+    "messageformat": "Você desbloqueou o grupo"
   },
   "icu:MessageRequestResponseNotification__Button--Options": {
     "messageformat": "Opções"
@@ -5313,6 +5343,9 @@
   "icu:CallHistory__Description--Declined": {
     "messageformat": "{type, select, Audio {Chamada de voz recusada} Video {Chamada de vídeo recusada} Group {Chamada em grupo recusada} other {Chamada recusada}}"
   },
+  "icu:CallHistory__Description--Adhoc": {
+    "messageformat": "Link de chamada"
+  },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} outra pessoa está digitando.} other {{count,number} outras pessoas estão digitando.}}"
   },
@@ -5334,7 +5367,7 @@
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
-    "messageformat": "Várias correções de bugs para manter seu app funcionando perfeitamente. Mais mudanças empolgantes estão a caminho! ",
+    "messageformat": "Várias correções de bugs para manter seu app funcionando perfeitamente. Mais mudanças empolgantes estão a caminho!",
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
@@ -5352,14 +5385,5 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Pequenas alterações adicionais, correções de bugs e melhorias de desempenho. Agradecemos por usar o Signal!",
     "ignoreUnused": true
-  },
-  "icu:WhatsNew__v7.5--0": {
-    "messageformat": "Adicionamos suporte para notas e apelidos personalizados para todas as pessoas com quem você conversar no Signal, mesmo que elas não estejam nos seus contatos. Notas e apelidos são uma forma prática e segura de saber mais informações adicionais dos seus contatos do Signal rapidamente. Essas informações são criptografadas de ponta a ponta e protegidas pelo seu PIN do Signal, mesmo se não estiverem nos contatos do telefone."
-  },
-  "icu:WhatsNew__v7.5--1": {
-    "messageformat": "Agora você pode minimizar o Signal na bandeja do sistema no Linux."
-  },
-  "icu:WhatsNew__v7.5--2": {
-    "messageformat": "Para usuários do Windows, essa atualização reativa o suporte para contagens detalhadas de mensagens não lidas no ícone do Signal."
   }
 }

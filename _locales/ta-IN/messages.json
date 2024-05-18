@@ -380,12 +380,6 @@
   "icu:invalidConversation": {
     "messageformat": "இந்தக் குழு செல்லாது. தயவுசெய்து வேறு குழு ஆரம்பிக்கவும்."
   },
-  "icu:taskbarMarkedUnread": {
-    "messageformat": "படிக்காததாகக் குறிக்கப்பட்டது"
-  },
-  "icu:taskbarUnreadMessages": {
-    "messageformat": "{count, plural, one {{count,number} படிக்காத செய்தி} other {{count,number} படிக்காத செய்திகள்}}"
-  },
   "icu:scrollDown": {
     "messageformat": "சாட்டின் கீழே ஸ்குரோல் செய்யவும்"
   },
@@ -1220,6 +1214,9 @@
   "icu:CallingLobby__CallLinkNotice--phone-sharing": {
     "messageformat": "இணைப்பின் மூலம் இந்த அழைப்பில் சேரும் எவரும் உங்கள் பெயர், புகைப்படம் மற்றும் தொலைபேசி எண்ணைப் பார்ப்பார்கள்."
   },
+  "icu:CallingLobby__CallLinkNotice--join-request-pending": {
+    "messageformat": "அனுமதிக்கக் காத்திருக்கிறது…"
+  },
   "icu:CallingLobbyJoinButton--join": {
     "messageformat": "இணைக"
   },
@@ -1228,6 +1225,9 @@
   },
   "icu:CallingLobbyJoinButton--call-full": {
     "messageformat": "கால் ஃபுல்"
+  },
+  "icu:CallingLobbyJoinButton--ask-to-join": {
+    "messageformat": "சேர்வதற்கு கோருக"
   },
   "icu:calling__button--video-disabled": {
     "messageformat": "புகைப்பட கருவி முடக்கப்பட்டது"
@@ -1271,8 +1271,20 @@
   "icu:CallingButton--more-options": {
     "messageformat": "அதிக விருப்பத்தேர்வுகள்"
   },
+  "icu:CallingPendingParticipants__ApproveUser": {
+    "messageformat": "சேர்வதற்கான கோரிக்கையை அங்கீகரி"
+  },
+  "icu:CallingPendingParticipants__DenyUser": {
+    "messageformat": "சேர்வதற்கான கோரிக்கையை நிராகரி"
+  },
+  "icu:CallingPendingParticipants__RequestsToJoin": {
+    "messageformat": "{count, plural, one {{count,number} அழைப்பில் சேர கோரிக்கை விடுத்துள்ளார்} other {{count,number} அழைப்பில் சேர கோரிக்கை விடுத்துள்ளனர்}}"
+  },
   "icu:CallingRaisedHandsList__Title": {
-    "messageformat": "{count, plural, one {உயர்த்தப்பட்ட கைகள் · {count,number} நபர்} other {உயர்த்தப்பட்ட கைகள் · {count,number} நபர்கள்}}"
+    "messageformat": "{count, plural, one {{count,number} உயர்த்தப்பட்ட கை} other {{count,number} உயர்த்தப்பட்ட கைகள்}}"
+  },
+  "icu:CallingRaisedHandsList__TitleHint": {
+    "messageformat": "(முதலில் இருந்து கடைசி வரை)"
   },
   "icu:CallingReactions--me": {
     "messageformat": "நீங்கள்"
@@ -1352,8 +1364,17 @@
   "icu:calling__presenting--notification-body": {
     "messageformat": "வழங்குவதை நிறுத்த நீங்கள் தயாராக இருக்கும்போது அழைப்பிற்குத் திரும்ப இங்கே கிளிக் செய்க."
   },
+  "icu:calling__presenting--reconnecting--notification-title": {
+    "messageformat": "மீண்டும் இணைக்கிறது…"
+  },
+  "icu:calling__presenting--reconnecting--notification-body": {
+    "messageformat": "உங்கள் இணைப்பு துண்டிக்கப்பட்டது. சிக்னல் மீண்டும் இணைக்கப்படுகிறது."
+  },
   "icu:calling__presenting--info": {
     "messageformat": "Signal பகிர்கிறது {window}."
+  },
+  "icu:calling__presenting--reconnecting": {
+    "messageformat": "மீண்டும் இணைக்கிறது…"
   },
   "icu:calling__presenting--stop": {
     "messageformat": "பகிர்வதை நிறுத்துங்கள்"
@@ -2450,9 +2471,6 @@
   "icu:MessageRequests--unblock-group-confirm-body": {
     "messageformat": "குழு உறுப்பினர்கள் சேர்க்க முடியும் நீங்கள் இந்த குழுவிற்கு மீண்டும்."
   },
-  "icu:MessageRequests--block-and-report-spam": {
-    "messageformat": "ஸ்பேம் மற்றும் தடையைப் புகாரளிக்கவும்"
-  },
   "icu:MessageRequests--block-and-report-spam-success-toast": {
     "messageformat": "ஸ்பேம் எனப் புகாரளிக்கப்பட்டு தடுக்கப்பட்டது."
   },
@@ -2760,7 +2778,10 @@
     "messageformat": "ஒரு ஜன்னல்"
   },
   "icu:CallingAdhocCallInfo__CopyLink": {
-    "messageformat": "இணைப்பை நகலெடுக்கவும்"
+    "messageformat": "அழைப்பு இணைப்பை நகலெடு"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClient": {
+    "messageformat": "அழைப்பிலிருந்து இந்த நபரை அகற்று"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "காணொளி"
@@ -3144,7 +3165,7 @@
     "messageformat": "{count, plural, one {{memberName} 1 நபரை குழுவிற்கு அழைத்தார்.} other {{memberName} அவர்கள் {count,number} நபர்களை குழுவிற்கு அழைத்தார்.}}"
   },
   "icu:GroupV2--pending-add--many--you": {
-    "messageformat": "நீங்கள் அழைத்தீர்கள் {count,number} மக்கள் க்கு குழு."
+    "messageformat": "{count, plural, one {நீங்கள் குழுவுக்கு {count,number} நபரை அழைத்தீர்கள்.} other {நீங்கள் குழுவுக்கு {count,number} நபர்களை அழைத்தீர்கள்.}}"
   },
   "icu:GroupV2--pending-add--many--unknown": {
     "messageformat": "{count, plural, one {1 நபர் குழுவிற்கு அழைக்கப்பட்டார்.} other {{count,number} நபர்கள் குழுவிற்கு அழைக்கப்பட்டனர்.}}"
@@ -3177,13 +3198,13 @@
     "messageformat": "ஒரு நிர்வாகி ஒரு ரத்து செய்தார்அழைப்பு க்கு குழு 1 நபருக்கு."
   },
   "icu:GroupV2--pending-remove--revoke--many--other": {
-    "messageformat": "{memberName} ரத்து செய்யப்பட்டது அழைப்பிதழ்கள் க்கு குழு க்கு {count,number} மக்கள்."
+    "messageformat": "{count, plural, one {1 நபருக்கான குழு அழைப்பை {memberName} ரத்து செய்தார்.} other {{count,number} நபர்களுக்கான குழு அழைப்புகளை {memberName} ரத்து செய்தார்.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--you": {
-    "messageformat": "நீங்கள் திரும்பப் பெற்றீர்கள் அழைப்பிதழ்கள் க்கு குழு க்கு {count,number} மக்கள்."
+    "messageformat": "{count, plural, one {1 நபருக்கன குழு அழைப்பை நீங்கள் ரத்து செய்தீர்கள்.} other {{count,number} நபர்களுக்கான குழு அழைப்புகளை நீங்கள் ரத்து செய்தீர்கள்.}}"
   },
   "icu:GroupV2--pending-remove--revoke--many--unknown": {
-    "messageformat": "ஒரு நிர்வாகி ரத்து செய்யப்பட்டது அழைப்பிதழ்கள் க்கு குழு க்கு {count,number} மக்கள்."
+    "messageformat": "{count, plural, one {1 நபருக்கான குழு அழைப்பை ஒரு நிர்வாகி ரத்து செய்தார்.} other {{count,number} நபர்களுக்கான குழு அழைப்புகளை ஒரு நிர்வாகி ரத்து செய்தார்.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--one--other": {
     "messageformat": "{adminName} ஒரு ரத்து செய்யப்பட்டது அழைப்பு க்கு குழு 1 நபருக்கு அழைக்கப்பட்டது {memberName}."
@@ -3207,19 +3228,19 @@
     "messageformat": "{count, plural, one {{memberName} அழைத்த {count,number} நபரின் குழு அழைப்புகளை {adminName} ரத்து செய்தார்.} other {{memberName} அழைத்த {count,number} பேரின் குழு அழைப்புகளை {adminName} ரத்து செய்தார்.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--you": {
-    "messageformat": "குழுவிற்கான அழைப்புகளை நீங்கள் ரத்து செய்தீர்கள் {count,number} அழைத்த மக்கள் {memberName}."
+    "messageformat": "{count, plural, one {{memberName}-ஆல் அழைக்கப்பட்ட {count,number} நபருக்கான குழு அழைப்பை நீங்கள் ரத்து செய்தீர்கள்.} other {{memberName}-ஆல் அழைக்கப்பட்ட {count,number} நபர்களுக்கான குழு அழைப்புகளை நீங்கள் ரத்து செய்தீர்கள்.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--unknown": {
-    "messageformat": "ஒரு நிர்வாகி ரத்து செய்யப்பட்டது அழைப்பிதழ்கள் க்கு குழு க்கு {count,number} மக்கள்அழைத்தது {memberName}."
+    "messageformat": "{count, plural, one {{memberName}-ஆல் அழைக்கப்பட்ட {count,number} நபருக்கான குழு அழைப்பை ஒரு நிர்வாகி ரத்து செய்தார்.} other {{memberName}-ஆல் அழைக்கப்பட்ட {count,number} நபர்களுக்கான குழு அழைப்புகளை ஒரு நிர்வாகி ரத்து செய்தார்.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--other": {
-    "messageformat": "{adminName} ரத்து செய்யப்பட்டது அழைப்பிதழ்கள் க்கு குழு நீங்கள் அனுப்பியுள்ளீர்கள் {count,number} மக்கள்"
+    "messageformat": "{count, plural, one {{count,number} நபருக்கான உங்களது குழு அழைப்பை {adminName} ரத்து செய்தார்.} other {{count,number} நபர்களுக்கான உங்களது குழு அழைப்புகளை{adminName} ரத்து செய்தார்.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--you": {
-    "messageformat": "உன்னுடையதை நீக்கிவிட்டாய் அழைப்பு க்கு {count,number} மக்கள்."
+    "messageformat": "{count, plural, one {{count,number} நபருக்கான உங்களது அழைப்பை நீங்கள் ரத்து செய்தீர்கள்.} other {{count,number} நபர்களுக்கான உங்களது அழைப்பை நீங்கள் ரத்து செய்தீர்கள்.}}"
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--many--unknown": {
-    "messageformat": "நீங்கள் அனுப்பிய குழுவிற்கான அழைப்புகளை ஒரு நிர்வாகி ரத்து செய்தார் {count,number} மக்கள்."
+    "messageformat": "{count, plural, one {{count,number} நபருக்கான உங்களது குழு அழைப்பை ஒரு நிர்வாகி ரத்து செய்தார்.} other {{count,number} நபர்களுக்கான உங்களது குழு அழைப்பை ஒரு நிர்வாகி ரத்து செய்தார்.}}"
   },
   "icu:GroupV2--admin-approval-add-one--you": {
     "messageformat": "குழுவில் சேர கோரிக்கை அனுப்பியுள்ளீர்கள்."
@@ -3362,17 +3383,26 @@
   "icu:GroupV1--Migration--info--invited--one": {
     "messageformat": "இது உறுப்பினர் வேண்டும் ஏற்றுக்கொள் ஒரு அழைப்பு சேர இது குழு மீண்டும், பெறாது குழு அவை வரும் வரை செய்திகள் ஏற்றுக்கொள்:"
   },
+  "icu:GroupV1--Migration--info--invited--count": {
+    "messageformat": "{count, plural, one {{count,number} உறுப்பினர் மீண்டும் இந்தக் குழுவில் சேர அழைப்பை ஏற்க வேண்டும், மேலும் அவர் ஏற்றுக்கொள்ளும் வரை குழு மெசேஜ்களைப் பெற மாட்டார்.} other {{count,number} உறுப்பினர்கள் மீண்டும் இந்தக் குழுவில் சேர அழைப்பை ஏற்க வேண்டும், மேலும் அவர்கள் ஏற்றுக்கொள்ளும் வரை குழு மெசேஜ்களைப் பெற மாட்டார்கள்.}}"
+  },
   "icu:GroupV1--Migration--info--removed--before--many": {
     "messageformat": "இந்த உறுப்பினர்கள் புதிய குழுவில் சேர்க்கப்பட மாட்டார்கள். அவர்கள் குழுவிலிருந்து அகற்றப்படுவார்கள்:"
   },
   "icu:GroupV1--Migration--info--removed--before--one": {
     "messageformat": "இது உறுப்பினர் சேரும் திறன் இல்லை புதிய குழுக்கள், மற்றும் இருந்து அகற்றப்படும் குழு:"
   },
+  "icu:GroupV1--Migration--info--removed--before--count": {
+    "messageformat": "{count, plural, one {{count,number} உறுப்பினர் புதிய குழுக்களில் சேர்க்கப்படமாட்டார், மேலும் அவர் குழுவிலிருந்து அகற்றப்படுவார்.} other {{count,number} உறுப்பினர்கள் புதிய குழுக்களில் சேர்க்கப்பட மாட்டார்கள்,மேலும் அவர்கள் குழுவிலிருந்து அகற்றப்படுவார்கள்.}}"
+  },
   "icu:GroupV1--Migration--info--removed--after--many": {
     "messageformat": "இந்த உறுப்பினர்கள் சேரும் திறன் இல்லை புதிய குழுக்கள், மற்றும் நீக்கப்பட்டது குழு:"
   },
   "icu:GroupV1--Migration--info--removed--after--one": {
     "messageformat": "இது உறுப்பினர் இருந்தது சேரும் திறன் இல்லை புதிய குழுக்கள், மற்றும் இருந்தது இருந்து அகற்றப்பட்டது குழு:"
+  },
+  "icu:GroupV1--Migration--info--removed--after--count": {
+    "messageformat": "{count, plural, one {{count,number} உறுப்பினர் புதிய குழுக்களில் சேர்க்கப்படவில்லை, மேலும் அவர் குழுவிலிருந்து அகற்றப்பட்டார்.} other {{count,number} உறுப்பினர்கள் புதிய குழுக்களில் சேர்க்கப்படவில்லை, மேலும் அவர் குழுவிலிருந்து அகற்றப்பட்டனர்.}}"
   },
   "icu:GroupV1--Migration--invited--you": {
     "messageformat": "நீங்கள் புதிய குழுவில் சேர்க்கப்படவில்லை. நீங்கள் இந்தக் குழுவில் சேருவதற்கு அழைக்கப்பட்டுள்ளீர்கள்"
@@ -3381,7 +3411,7 @@
     "messageformat": "{contact} இல் சேர்க்க முடியவில்லை புதிய குழு மற்றும் அழைக்கப்பட்டுள்ளது சேர."
   },
   "icu:GroupV1--Migration--invited--many": {
-    "messageformat": "{count,number} உறுப்பினர்களை சேர்க்க முடியவில்லை புதிய குழு மற்றும் அழைக்கப்பட்டுள்ளனர் சேர."
+    "messageformat": "{count, plural, one {A member couldn’t be added to the New Group and has been invited to join.} other {{count,number} members couldn’t be added to the New Group and have been invited to join.}}"
   },
   "icu:GroupV1--Migration--removed--one": {
     "messageformat": "{contact} இருந்தது இருந்து அகற்றப்பட்டது குழு."
@@ -4380,10 +4410,10 @@
     "messageformat": "ஒருவருமில்லை"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__title": {
-    "messageformat": "Are you sure?"
+    "messageformat": "உறுதியாக உள்ளீர்களா?"
   },
   "icu:Preferences__pnp__discoverability__nobody__confirmModal__description": {
-    "messageformat": "If you change “{settingTitle}” to “{nobodyLabel}” it will make it harder for people to find you on Signal."
+    "messageformat": "நீங்கள் “{settingTitle}”-ஐ “{nobodyLabel}” ஆக மாற்றினால், சிக்னலில் பிறர் உங்களைக் அடையாளம் கான்பதைக் கடினமாக்கும்."
   },
   "icu:Preferences--messaging": {
     "messageformat": "செய்தி அனுப்புதல்"
@@ -4656,13 +4686,13 @@
     "messageformat": "நீங்கள் இந்த நபரை ப்ளாக் செய்துள்ளீர்கள்"
   },
   "icu:MessageRequestResponseNotification__Message--Blocked--Group": {
-    "messageformat": "You blocked the group"
+    "messageformat": "நீங்கள் குழுவை தடை செய்துள்ளீர்கள்"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked": {
-    "messageformat": "You unblocked this person"
+    "messageformat": "நீங்கள் இந்த நபரை தடைநீக்கம் செய்துள்ளீர்கள்"
   },
   "icu:MessageRequestResponseNotification__Message--Unblocked--Group": {
-    "messageformat": "You unblocked the group"
+    "messageformat": "நீங்கள் குழுவை தடைநீக்கம் செய்துள்ளீர்கள்"
   },
   "icu:MessageRequestResponseNotification__Button--Options": {
     "messageformat": "விருப்பங்கள்"
@@ -5313,6 +5343,9 @@
   "icu:CallHistory__Description--Declined": {
     "messageformat": "{type, select, Audio {நிராகரிக்கப்பட்ட குரல் அழைப்பு} Video {நிராகரிக்கப்பட்ட வீடியோ அழைப்பு} Group {நிராகரிக்கப்பட்ட குழு அழைப்பு} other {நிராகரிக்கப்பட்ட அழைப்பு}}"
   },
+  "icu:CallHistory__Description--Adhoc": {
+    "messageformat": "அழைப்பு இணைப்பு"
+  },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {மேலும் {count,number} நபர் டைப் செய்கிறார்.} other {மேலும் {count,number} பேர் டைப் செய்கின்றனர்.}}"
   },
@@ -5334,7 +5367,7 @@
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
-    "messageformat": "உங்கள் ஆப்பை சீராக இயங்க வைக்க சில பிழை திருத்தங்கள்.  மேலும் அற்புதமான மாற்றங்கள் விரைவில்! ",
+    "messageformat": "உங்கள் ஆப்பை சீராக இயங்க வைக்க சில பிழை திருத்தங்கள்.  மேலும் அற்புதமான மாற்றங்கள் விரைவில்!",
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
@@ -5352,14 +5385,5 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "சிறு மாற்றங்கள், பிழை திருத்தங்கள் மற்றும் செயல்திறன் மேம்பாடுகள். சிக்னலைப் பயன்படுத்தியதற்கு நன்றி!",
     "ignoreUnused": true
-  },
-  "icu:WhatsNew__v7.5--0": {
-    "messageformat": "★ சிக்னலில் நீங்கள் சாட் செய்யும் எவருக்கும், அவர்கள் உங்கள் சிஸ்டம் தொடர்புகளில் இல்லாவிட்டாலும், தனிப்பயனாக்கப்பட்ட புனைப்பெயர்கள் மற்றும் குறிப்புகளுக்கான ஆதரவைச் சேர்த்துள்ளோம். குறிப்புகள் மற்றும் புனைப்பெயர்கள் உங்கள் சிக்னல் இணைப்புகளைப் பற்றிய கூடுதல் விவரங்களைக் குறிப்பிடுவதற்கு வசதியான மற்றும் பாதுகாப்பான வழியை வழங்குகின்றன — மேலும் அவை உங்கள் சிக்னல் பின் மூலம் எண்ட்-டு-எண்ட் குறியாக்கம் செய்யப்பட்டு பாதுகாக்கப்படும், எனவே நீங்கள் உங்கள் ஃபோனை இழந்தால் அதைப் பாதுகாப்பாக மீட்டெடுக்க முடியும்."
-  },
-  "icu:WhatsNew__v7.5--1": {
-    "messageformat": "இப்போது லினக்ஸில் சிக்னலை உங்கள் சிஸ்டம் டிரேயில் மினிமைஸ் செய்யலாம்."
-  },
-  "icu:WhatsNew__v7.5--2": {
-    "messageformat": "விண்டோஸில் உள்ள பயனர்களுக்கு, இந்தப் புதுப்பிப்பு சிக்னல் ஐகானில் விரிவான படிக்காத செய்தி எண்ணிக்கைகளுக்கான ஆதரவை மீண்டும் இயக்குகிறது."
   }
 }

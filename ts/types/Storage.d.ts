@@ -6,7 +6,6 @@ import type {
   CustomColorsItemType,
   DefaultConversationColorType,
 } from './Colors';
-import type { AudioDeviceModule } from '../calling/audioDeviceModule';
 import type { PhoneNumberDiscoverability } from '../util/phoneNumberDiscoverability';
 import type { PhoneNumberSharingMode } from '../util/phoneNumberSharingMode';
 import type { RetryItemType } from '../util/retryPlaceholders';
@@ -18,6 +17,7 @@ import type {
   SessionResetsType,
   StorageServiceCredentials,
 } from '../textsecure/Types.d';
+import type { BackupCredentialType } from './backups';
 import type { ServiceIdString } from './ServiceId';
 
 import type { RegisteredChallengeType } from '../challenge';
@@ -67,7 +67,6 @@ export type StorageAccessType = {
   customColors: CustomColorsItemType;
   device_name: string;
   existingOnboardingStoryMessageIds: ReadonlyArray<string> | undefined;
-  formattingWarningShown: boolean;
   hasRegisterSupportForUnauthenticatedDelivery: boolean;
   hasSetMyStoriesPrivacy: boolean;
   hasCompletedUsernameOnboarding: boolean;
@@ -92,7 +91,6 @@ export type StorageAccessType = {
   regionCode: string;
   registrationIdMap: Record<ServiceIdString, number>;
   remoteBuildExpiration: number;
-  sendEditWarningShown: boolean;
   sessionResets: SessionResetsType;
   showStickerPickerHint: boolean;
   showStickersIntroduction: boolean;
@@ -134,6 +132,9 @@ export type StorageAccessType = {
   unidentifiedDeliveryIndicators: boolean;
   groupCredentials: ReadonlyArray<GroupCredentialType>;
   callLinkAuthCredentials: ReadonlyArray<GroupCredentialType>;
+  backupCredentials: ReadonlyArray<BackupCredentialType>;
+  backupCredentialsLastRequestTime: number;
+  setBackupSignatureKey: boolean;
   lastReceivedAtCounter: number;
   preferredReactionEmoji: ReadonlyArray<string>;
   skinTone: number;
@@ -166,12 +167,14 @@ export type StorageAccessType = {
   // Deprecated
   'challenge:retry-message-ids': never;
   nextSignedKeyRotationTime: number;
-  previousAudioDeviceModule: AudioDeviceModule;
+  previousAudioDeviceModule: never;
   senderCertificateWithUuid: never;
   signaling_key: never;
   signedKeyRotationRejected: number;
   lastHeartbeat: never;
   lastStartup: never;
+  sendEditWarningShown: never;
+  formattingWarningShown: never;
 };
 
 export type StorageInterface = {

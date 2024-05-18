@@ -6,7 +6,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import type { Response } from 'node-fetch';
+import type { RequestInit, Response } from 'node-fetch';
 import fetch from 'node-fetch';
 import type { Agent } from 'https';
 import { escapeRegExp, isNumber, isString, isObject } from 'lodash';
@@ -23,16 +23,14 @@ import * as durations from '../util/durations';
 import type { ExplodePromiseResultType } from '../util/explodePromise';
 import { explodePromise } from '../util/explodePromise';
 import { getUserAgent } from '../util/getUserAgent';
-import {
-  getTimeoutStream,
-  getStreamWithTimeout,
-} from '../util/getStreamWithTimeout';
+import { getTimeoutStream } from '../util/getStreamWithTimeout';
 import { formatAcceptLanguageHeader } from '../util/userLanguages';
 import { toWebSafeBase64, fromWebSafeBase64 } from '../util/webSafeBase64';
 import { getBasicAuth } from '../util/getBasicAuth';
 import { createHTTPSAgent } from '../util/createHTTPSAgent';
 import { createProxyAgent } from '../util/createProxyAgent';
 import type { ProxyAgent } from '../util/createProxyAgent';
+import type { FetchFunctionType } from '../util/uploads/tusProtocol';
 import type { SocketStatus } from '../types/SocketStatus';
 import { VerificationTransport } from '../types/VerificationTransport';
 import { toLogFormat } from '../types/errors';
@@ -49,6 +47,7 @@ import {
   untaggedPniSchema,
 } from '../types/ServiceId';
 import type { DirectoryConfigType } from '../types/RendererConfig';
+import type { BackupPresentationHeadersType } from '../types/backups';
 import * as Bytes from '../Bytes';
 import { randomInt } from '../Crypto';
 import * as linkPreviewFetch from '../linkPreviews/linkPreviewFetch';
@@ -173,7 +172,7 @@ type PromiseAjaxOptionsType = {
   basicAuth?: string;
   certificateAuthority?: string;
   contentType?: string;
-  data?: Uint8Array | string;
+  data?: Uint8Array | Readable | string;
   disableRetries?: boolean;
   disableSessionResumption?: boolean;
   headers?: HeaderListType;
@@ -261,19 +260,21 @@ function getHostname(url: string): string {
   return urlObject.hostname;
 }
 
-async function _promiseAjax(
-  providedUrl: string | null,
+type FetchOptionsType = {
+  method: string;
+  body?: Uint8Array | Readable | string;
+  headers: FetchHeaderListType;
+  redirect?: 'error' | 'follow' | 'manual';
+  agent?: Agent;
+  ca?: string;
+  timeout?: number;
+  abortSignal?: AbortSignal;
+};
+
+async function getFetchOptions(
   options: PromiseAjaxOptionsType
-): Promise<unknown> {
-  const { proxyUrl, socketManager } = options;
-
-  const url = providedUrl || `${options.host}/${options.path}`;
-  const logType = socketManager ? '(WS)' : '(REST)';
-  const redactedURL = options.redactUrl ? options.redactUrl(url) : url;
-
-  const unauthLabel = options.unauthenticated ? ' (unauth)' : '';
-  const logId = `${options.type} ${logType} ${redactedURL}${unauthLabel}`;
-  log.info(logId);
+): Promise<FetchOptionsType> {
+  const { proxyUrl } = options;
 
   const timeout =
     typeof options.timeout === 'number' ? options.timeout : DEFAULT_TIMEOUT;
@@ -314,6 +315,28 @@ async function _promiseAjax(
     abortSignal: options.abortSignal,
   };
 
+  if (options.contentType) {
+    fetchOptions.headers['Content-Type'] = options.contentType;
+  }
+
+  return fetchOptions;
+}
+
+async function _promiseAjax(
+  providedUrl: string | null,
+  options: PromiseAjaxOptionsType
+): Promise<unknown> {
+  const fetchOptions = await getFetchOptions(options);
+  const { socketManager } = options;
+
+  const url = providedUrl || `${options.host}/${options.path}`;
+  const logType = socketManager ? '(WS)' : '(REST)';
+  const redactedURL = options.redactUrl ? options.redactUrl(url) : url;
+
+  const unauthLabel = options.unauthenticated ? ' (unauth)' : '';
+  const logId = `${options.type} ${logType} ${redactedURL}${unauthLabel}`;
+  log.info(logId);
+
   if (fetchOptions.body instanceof Uint8Array) {
     // node-fetch doesn't support Uint8Array, only node Buffer
     const contentLength = fetchOptions.body.byteLength;
@@ -336,10 +359,6 @@ async function _promiseAjax(
       username: options.user,
       password: options.password,
     });
-  }
-
-  if (options.contentType) {
-    fetchOptions.headers['Content-Type'] = options.contentType;
   }
 
   let response: Response;
@@ -536,9 +555,13 @@ const URL_CALLS = {
     'dynamic/desktop/stories/onboarding/manifest.json',
   getStickerPackUpload: 'v1/sticker/pack/form',
   getArtAuth: 'v1/art/auth',
-  groupLog: 'v1/groups/logs',
+  getBackupCredentials: 'v1/archives/auth',
+  getBackupCDNCredentials: 'v1/archives/auth/read',
+  getBackupUploadForm: 'v1/archives/upload/form',
+  getBackupMediaUploadForm: 'v1/archives/media/upload/form',
+  groupLog: 'v2/groups/logs',
   groupJoinedAtVersion: 'v1/groups/joined_at_version',
-  groups: 'v1/groups',
+  groups: 'v2/groups',
   groupsViaLink: 'v1/groups/join/',
   groupToken: 'v1/groups/token',
   keys: 'v2/keys',
@@ -547,9 +570,15 @@ const URL_CALLS = {
   multiRecipient: 'v1/messages/multi_recipient',
   phoneNumberDiscoverability: 'v2/accounts/phone_number_discoverability',
   profile: 'v1/profile',
+  backup: 'v1/archives',
+  backupMedia: 'v1/archives/media',
+  backupMediaBatch: 'v1/archives/media/batch',
+  backupMediaDelete: 'v1/archives/media/delete',
   registration: 'v1/registration',
   registerCapabilities: 'v1/devices/capabilities',
   reportMessage: 'v1/messages/report',
+  setBackupId: 'v1/archives/backupid',
+  setBackupSignatureKey: 'v1/archives/keys',
   signed: 'v2/keys/signed',
   storageManifest: 'v1/storage/manifest',
   storageModify: 'v1/storage/',
@@ -599,6 +628,18 @@ const WEBSOCKET_CALLS = new Set<keyof typeof URL_CALLS>([
 
   // Account V2
   'phoneNumberDiscoverability',
+
+  // Backups
+  'getBackupCredentials',
+  'getBackupCDNCredentials',
+  'getBackupMediaUploadForm',
+  'getBackupUploadForm',
+  'backup',
+  'backupMedia',
+  'backupMediaBatch',
+  'backupMediaDelete',
+  'setBackupId',
+  'setBackupSignatureKey',
 ]);
 
 type InitializeOptionsType = {
@@ -617,6 +658,7 @@ type InitializeOptionsType = {
   version: string;
   directoryConfig: DirectoryConfigType;
   libsignalNetEnvironment: string | undefined;
+  disableIPv6: boolean;
 };
 
 export type MessageType = Readonly<{
@@ -694,6 +736,7 @@ export type GroupLogResponseType = {
   start?: number;
   end?: number;
   changes: Proto.GroupChanges;
+  groupSendEndorsementResponse: Uint8Array | null;
 };
 
 export type ProfileRequestDataType = {
@@ -763,9 +806,9 @@ export type GetAccountForUsernameResultType = z.infer<
 export type GetIceServersResultType = Readonly<{
   username: string;
   password: string;
-  urls: ReadonlyArray<string>;
-  urlsWithIps: ReadonlyArray<string>;
-  hostname: string;
+  urls?: ReadonlyArray<string>;
+  urlsWithIps?: ReadonlyArray<string>;
+  hostname?: string;
 }>;
 
 export type GetDevicesResultType = ReadonlyArray<
@@ -940,7 +983,7 @@ const artAuthZod = z.object({
 export type ArtAuthType = z.infer<typeof artAuthZod>;
 
 const attachmentV3Response = z.object({
-  cdn: z.literal(2),
+  cdn: z.literal(2).or(z.literal(3)),
   key: z.string(),
   headers: z.record(z.string()),
   signedUploadLocation: z.string(),
@@ -982,6 +1025,130 @@ export type RequestVerificationResultType = Readonly<{
   sessionId: string;
 }>;
 
+export type SetBackupIdOptionsType = Readonly<{
+  backupAuthCredentialRequest: Uint8Array;
+}>;
+
+export type SetBackupSignatureKeyOptionsType = Readonly<{
+  headers: BackupPresentationHeadersType;
+  backupIdPublicKey: Uint8Array;
+}>;
+
+export type UploadBackupOptionsType = Readonly<{
+  headers: BackupPresentationHeadersType;
+  stream: Readable;
+}>;
+
+export type BackupMediaItemType = Readonly<{
+  sourceAttachment: Readonly<{
+    cdn: number;
+    key: string;
+  }>;
+  objectLength: number;
+  mediaId: string;
+  hmacKey: Uint8Array;
+  encryptionKey: Uint8Array;
+  iv: Uint8Array;
+}>;
+
+export type BackupMediaBatchOptionsType = Readonly<{
+  headers: BackupPresentationHeadersType;
+  items: ReadonlyArray<BackupMediaItemType>;
+}>;
+
+export const backupMediaBatchResponseSchema = z.object({
+  responses: z
+    .object({
+      status: z.number(),
+      failureReason: z.string().or(z.null()).optional(),
+      cdn: z.number(),
+      mediaId: z.string(),
+    })
+    .array(),
+});
+
+export type BackupMediaBatchResponseType = z.infer<
+  typeof backupMediaBatchResponseSchema
+>;
+
+export type BackupListMediaOptionsType = Readonly<{
+  headers: BackupPresentationHeadersType;
+  cursor?: string;
+  limit: number;
+}>;
+
+export const backupListMediaResponseSchema = z.object({
+  storedMediaObjects: z
+    .object({
+      cdn: z.number(),
+      mediaId: z.string(),
+      objectLength: z.number(),
+    })
+    .array(),
+  backupDir: z.string(),
+  mediaDir: z.string(),
+  cursor: z.string().or(z.null()).optional(),
+});
+
+export type BackupListMediaResponseType = z.infer<
+  typeof backupListMediaResponseSchema
+>;
+
+export type BackupDeleteMediaItemType = Readonly<{
+  cdn: number;
+  mediaId: string;
+}>;
+
+export type BackupDeleteMediaOptionsType = Readonly<{
+  headers: BackupPresentationHeadersType;
+  mediaToDelete: ReadonlyArray<BackupDeleteMediaItemType>;
+}>;
+
+export type GetBackupCredentialsOptionsType = Readonly<{
+  startDayInMs: number;
+  endDayInMs: number;
+}>;
+
+export const getBackupCredentialsResponseSchema = z.object({
+  credentials: z
+    .object({
+      credential: z.string().transform(x => Bytes.fromBase64(x)),
+      redemptionTime: z
+        .number()
+        .transform(x => durations.DurationInSeconds.fromSeconds(x)),
+    })
+    .array(),
+});
+
+export type GetBackupCredentialsResponseType = z.infer<
+  typeof getBackupCredentialsResponseSchema
+>;
+
+export type GetBackupCDNCredentialsOptionsType = Readonly<{
+  headers: BackupPresentationHeadersType;
+  cdn: number;
+}>;
+
+export const getBackupCDNCredentialsResponseSchema = z.object({
+  headers: z.record(z.string(), z.string()),
+});
+
+export type GetBackupCDNCredentialsResponseType = z.infer<
+  typeof getBackupCDNCredentialsResponseSchema
+>;
+
+export const getBackupInfoResponseSchema = z.object({
+  cdn: z.number(),
+  backupDir: z.string(),
+  mediaDir: z.string(),
+  backupName: z.string(),
+  usedSpace: z.number().or(z.null()).optional(),
+});
+
+export type GetBackupInfoResponseType = z.infer<
+  typeof getBackupInfoResponseSchema
+>;
+
 export type WebAPIType = {
   startRegistration(): unknown;
   finishRegistration(baton: unknown): void;
@@ -993,32 +1160,35 @@ export type WebAPIType = {
   createGroup: (
     group: Proto.IGroup,
     options: GroupCredentialsType
-  ) => Promise<void>;
+  ) => Promise<Proto.IGroupResponse>;
   deleteUsername: (abortSignal?: AbortSignal) => Promise<void>;
   downloadOnboardingStories: (
     version: string,
     imageFiles: Array<string>
   ) => Promise<Array<Uint8Array>>;
   getArtAuth: () => Promise<ArtAuthType>;
-  getAttachment: (
-    cdnKey: string,
-    cdnNumber?: number,
+  getAttachmentFromBackupTier: (args: {
+    mediaId: string;
+    backupDir: string;
+    mediaDir: string;
+    cdnNumber: number;
+    headers: Record<string, string>;
     options?: {
       disableRetries?: boolean;
       timeout?: number;
-    }
-  ) => Promise<Uint8Array>;
-  getAttachmentV2: (
-    cdnKey: string,
-    cdnNumber?: number,
+    };
+  }) => Promise<Readable>;
+  getAttachment: (args: {
+    cdnKey: string;
+    cdnNumber?: number;
     options?: {
       disableRetries?: boolean;
       timeout?: number;
-    }
-  ) => Promise<Readable>;
+    };
+  }) => Promise<Readable>;
   getAvatar: (path: string) => Promise<Uint8Array>;
   getHasSubscription: (subscriberId: Uint8Array) => Promise<boolean>;
-  getGroup: (options: GroupCredentialsType) => Promise<Proto.Group>;
+  getGroup: (options: GroupCredentialsType) => Promise<Proto.IGroupResponse>;
   getGroupFromLink: (
     inviteLinkPassword: string | undefined,
     auth: GroupCredentialsType
@@ -1027,9 +1197,9 @@ export type WebAPIType = {
   getGroupCredentials: (
     options: GetGroupCredentialsOptionsType
   ) => Promise<GetGroupCredentialsResultType>;
-  getGroupExternalCredential: (
+  getExternalGroupCredential: (
     options: GroupCredentialsType
-  ) => Promise<Proto.GroupExternalCredential>;
+  ) => Promise<Proto.IExternalGroupCredential>;
   getGroupLog: (
     options: GetGroupLogOptionsType,
     credentials: GroupCredentialsType
@@ -1099,7 +1269,7 @@ export type WebAPIType = {
     changes: Proto.GroupChange.IActions,
     options: GroupCredentialsType,
     inviteLinkBase64?: string
-  ) => Promise<Proto.IGroupChange>;
+  ) => Promise<Proto.IGroupChangeResponse>;
   modifyStorageRecords: MessageSender['modifyStorageRecords'];
   postBatchIdentityCheck: (
     elements: VerifyServiceIdRequestType
@@ -1166,6 +1336,36 @@ export type WebAPIType = {
       urgent?: boolean;
     }
   ) => Promise<MultiRecipient200ResponseType>;
+  createFetchForAttachmentUpload(
+    attachment: AttachmentV3ResponseType
+  ): FetchFunctionType;
+  getBackupInfo: (
+    headers: BackupPresentationHeadersType
+  ) => Promise<GetBackupInfoResponseType>;
+  getBackupUploadForm: (
+    headers: BackupPresentationHeadersType
+  ) => Promise<AttachmentV3ResponseType>;
+  getBackupMediaUploadForm: (
+    headers: BackupPresentationHeadersType
+  ) => Promise<AttachmentV3ResponseType>;
+  refreshBackup: (headers: BackupPresentationHeadersType) => Promise<void>;
+  getBackupCredentials: (
+    options: GetBackupCredentialsOptionsType
+  ) => Promise<GetBackupCredentialsResponseType>;
+  getBackupCDNCredentials: (
+    options: GetBackupCDNCredentialsOptionsType
+  ) => Promise<GetBackupCDNCredentialsResponseType>;
+  setBackupId: (options: SetBackupIdOptionsType) => Promise<void>;
+  setBackupSignatureKey: (
+    options: SetBackupSignatureKeyOptionsType
+  ) => Promise<void>;
+  backupMediaBatch: (
+    options: BackupMediaBatchOptionsType
+  ) => Promise<BackupMediaBatchResponseType>;
+  backupListMedia: (
+    options: BackupListMediaOptionsType
+  ) => Promise<BackupListMediaResponseType>;
+  backupDeleteMedia: (options: BackupDeleteMediaOptionsType) => Promise<void>;
   setPhoneNumberDiscoverability: (newValue: boolean) => Promise<void>;
   updateDeviceName: (deviceName: string) => Promise<void>;
   uploadAvatar: (
@@ -1279,6 +1479,7 @@ export function initialize({
   proxyUrl,
   version,
   libsignalNetEnvironment,
+  disableIPv6,
 }: InitializeOptionsType): WebAPIConnectType {
   if (!isString(url)) {
     throw new Error('WebAPI.initialize: Invalid server url');
@@ -1330,6 +1531,7 @@ export function initialize({
   );
   log.info(`libsignal net environment resolved to [${Net.Environment[env]}]`);
   const libsignalNet = new Net.Net(env);
+  libsignalNet.setIpv6Enabled(!disableIPv6);
 
   // Thanks to function-hoisting, we can put this return statement before all of the
   //   below function definitions.
@@ -1447,11 +1649,15 @@ export function initialize({
     // Thanks, function hoisting!
     return {
       authenticate,
+      backupDeleteMedia,
+      backupListMedia,
+      backupMediaBatch,
       cancelInflightRequests,
       cdsLookup,
       checkAccountExistence,
       checkSockets,
       createAccount,
+      createFetchForAttachmentUpload,
       confirmUsername,
       createGroup,
       deleteUsername,
@@ -1464,14 +1670,19 @@ export function initialize({
       getArtAuth,
       getArtProvisioningSocket,
       getAttachment,
-      getAttachmentV2,
+      getAttachmentFromBackupTier,
       getAvatar,
+      getBackupCredentials,
+      getBackupCDNCredentials,
+      getBackupInfo,
+      getBackupMediaUploadForm,
+      getBackupUploadForm,
       getBadgeImageFile,
       getConfig,
       getGroup,
       getGroupAvatar,
       getGroupCredentials,
-      getGroupExternalCredential,
+      getExternalGroupCredential,
       getGroupFromLink,
       getGroupLog,
       getHasSubscription,
@@ -1507,6 +1718,7 @@ export function initialize({
       putProfile,
       putStickers,
       reconnect,
+      refreshBackup,
       registerCapabilities,
       registerKeys,
       registerRequestHandler,
@@ -1520,6 +1732,8 @@ export function initialize({
       sendMessages,
       sendMessagesUnauth,
       sendWithSenderKey,
+      setBackupId,
+      setBackupSignatureKey,
       setPhoneNumberDiscoverability,
       startRegistration,
       unregisterRequestHandler,
@@ -2497,6 +2711,246 @@ export function initialize({
       });
     }
 
+    async function getBackupInfo(headers: BackupPresentationHeadersType) {
+      const res = await _ajax({
+        call: 'backup',
+        httpType: 'GET',
+        unauthenticated: true,
+        accessKey: undefined,
+        headers,
+        responseType: 'json',
+      });
+
+      return getBackupInfoResponseSchema.parse(res);
+    }
+
+    async function getBackupMediaUploadForm(
+      headers: BackupPresentationHeadersType
+    ) {
+      const res = await _ajax({
+        call: 'getBackupMediaUploadForm',
+        httpType: 'GET',
+        unauthenticated: true,
+        accessKey: undefined,
+        headers,
+        responseType: 'json',
+      });
+
+      return attachmentV3Response.parse(res);
+    }
+
+    function createFetchForAttachmentUpload({
+      signedUploadLocation,
+      headers: uploadHeaders,
+      cdn,
+    }: AttachmentV3ResponseType): FetchFunctionType {
+      strictAssert(cdn === 3, 'Fetch can only be created for CDN 3');
+      const { origin: expectedOrigin } = new URL(signedUploadLocation);
+
+      return async (
+        endpoint: string | URL,
+        init: RequestInit
+      ): Promise<Response> => {
+        const { origin } = new URL(endpoint);
+        strictAssert(origin === expectedOrigin, `Unexpected origin: ${origin}`);
+
+        const fetchOptions = await getFetchOptions({
+          // Will be overriden
+          type: 'GET',
+
+          certificateAuthority,
+          proxyUrl,
+          timeout: 0,
+          version,
+
+          headers: uploadHeaders,
+        });
+
+        return fetch(endpoint, {
+          ...fetchOptions,
+          ...init,
+          headers: {
+            ...fetchOptions.headers,
+            ...init.headers,
+          },
+        });
+      };
+    }
+
+    async function getBackupUploadForm(headers: BackupPresentationHeadersType) {
+      const res = await _ajax({
+        call: 'getBackupUploadForm',
+        httpType: 'GET',
+        unauthenticated: true,
+        accessKey: undefined,
+        headers,
+        responseType: 'json',
+      });
+
+      return attachmentV3Response.parse(res);
+    }
+
+    async function refreshBackup(headers: BackupPresentationHeadersType) {
+      await _ajax({
+        call: 'backup',
+        httpType: 'POST',
+        unauthenticated: true,
+        accessKey: undefined,
+        headers,
+      });
+    }
+
+    async function getBackupCredentials({
+      startDayInMs,
+      endDayInMs,
+    }: GetBackupCredentialsOptionsType) {
+      const startDayInSeconds = startDayInMs / durations.SECOND;
+      const endDayInSeconds = endDayInMs / durations.SECOND;
+      const res = await _ajax({
+        call: 'getBackupCredentials',
+        httpType: 'GET',
+        urlParameters:
+          `?redemptionStartSeconds=${startDayInSeconds}&` +
+          `redemptionEndSeconds=${endDayInSeconds}`,
+        responseType: 'json',
+      });
+
+      return getBackupCredentialsResponseSchema.parse(res);
+    }
+
+    async function getBackupCDNCredentials({
+      headers,
+      cdn,
+    }: GetBackupCDNCredentialsOptionsType) {
+      const res = await _ajax({
+        call: 'getBackupCDNCredentials',
+        httpType: 'GET',
+        unauthenticated: true,
+        accessKey: undefined,
+        headers,
+        urlParameters: `?cdn=${cdn}`,
+        responseType: 'json',
+      });
+
+      return getBackupCDNCredentialsResponseSchema.parse(res);
+    }
+
+    async function setBackupId({
+      backupAuthCredentialRequest,
+    }: SetBackupIdOptionsType) {
+      await _ajax({
+        call: 'setBackupId',
+        httpType: 'PUT',
+        jsonData: {
+          backupAuthCredentialRequest: Bytes.toBase64(
+            backupAuthCredentialRequest
+          ),
+        },
+      });
+    }
+
+    async function setBackupSignatureKey({
+      headers,
+      backupIdPublicKey,
+    }: SetBackupSignatureKeyOptionsType) {
+      await _ajax({
+        call: 'setBackupSignatureKey',
+        httpType: 'PUT',
+        unauthenticated: true,
+        accessKey: undefined,
+        headers,
+        jsonData: {
+          backupIdPublicKey: Bytes.toBase64(backupIdPublicKey),
+        },
+      });
+    }
+
+    async function backupMediaBatch({
+      headers,
+      items,
+    }: BackupMediaBatchOptionsType) {
+      const res = await _ajax({
+        call: 'backupMediaBatch',
+        httpType: 'PUT',
+        unauthenticated: true,
+        accessKey: undefined,
+        headers,
+        responseType: 'json',
+        jsonData: {
+          items: items.map(item => {
+            const {
+              sourceAttachment,
+              objectLength,
+              mediaId,
+              hmacKey,
+              encryptionKey,
+              iv,
+            } = item;
+
+            return {
+              sourceAttachment: {
+                cdn: sourceAttachment.cdn,
+                key: sourceAttachment.key,
+              },
+              objectLength,
+              mediaId,
+              hmacKey: Bytes.toBase64(hmacKey),
+              encryptionKey: Bytes.toBase64(encryptionKey),
+              iv: Bytes.toBase64(iv),
+            };
+          }),
+        },
+      });
+
+      return backupMediaBatchResponseSchema.parse(res);
+    }
+
+    async function backupDeleteMedia({
+      headers,
+      mediaToDelete,
+    }: BackupDeleteMediaOptionsType) {
+      await _ajax({
+        call: 'backupMediaDelete',
+        httpType: 'POST',
+        unauthenticated: true,
+        accessKey: undefined,
+        headers,
+        jsonData: {
+          mediaToDelete: mediaToDelete.map(({ cdn, mediaId }) => {
+            return {
+              cdn,
+              mediaId,
+            };
+          }),
+        },
+      });
+    }
+
+    async function backupListMedia({
+      headers,
+      cursor,
+      limit,
+    }: BackupListMediaOptionsType) {
+      const params = new Array<string>();
+
+      if (cursor != null) {
+        params.push(`cursor=${encodeURIComponent(cursor)}`);
+      }
+      params.push(`limit=${limit}`);
+
+      const res = await _ajax({
+        call: 'backupMedia',
+        httpType: 'GET',
+        unauthenticated: true,
+        accessKey: undefined,
+        headers,
+        responseType: 'json',
+        urlParameters: `?${params.join('&')}`,
+      });
+
+      return backupListMediaResponseSchema.parse(res);
+    }
+
     async function setPhoneNumberDiscoverability(newValue: boolean) {
       await _ajax({
         call: 'phoneNumberDiscoverability',
@@ -2914,84 +3368,89 @@ export function initialize({
       return packId;
     }
 
-    async function getAttachment(
-      cdnKey: string,
-      cdnNumber?: number,
+    // Transit tier is the default place for normal (non-backup) attachments.
+    // Called "transit" because it is transitory
+    async function getAttachment({
+      cdnKey,
+      cdnNumber,
+      options,
+    }: {
+      cdnKey: string;
+      cdnNumber?: number;
       options?: {
         disableRetries?: boolean;
         timeout?: number;
-      }
-    ) {
-      const abortController = new AbortController();
+      };
+    }) {
+      return _getAttachment({
+        cdnPath: `/attachments/${cdnKey}`,
+        cdnNumber: cdnNumber ?? 0,
+        redactor: _createRedactor(cdnKey),
+        options,
+      });
+    }
 
-      const cdnUrl = isNumber(cdnNumber)
-        ? cdnUrlObject[cdnNumber] ?? cdnUrlObject['0']
-        : cdnUrlObject['0'];
+    async function getAttachmentFromBackupTier({
+      mediaId,
+      backupDir,
+      mediaDir,
+      cdnNumber,
+      headers,
+      options,
+    }: {
+      mediaId: string;
+      backupDir: string;
+      mediaDir: string;
+      cdnNumber: number;
+      headers: Record<string, string>;
+      options?: {
+        disableRetries?: boolean;
+        timeout?: number;
+      };
+    }) {
+      return _getAttachment({
+        cdnPath: `/backups/${backupDir}/${mediaDir}/${mediaId}`,
+        cdnNumber,
+        headers,
+        redactor: _createRedactor(backupDir, mediaDir, mediaId),
+        options,
+      });
+    }
+
+    async function _getAttachment({
+      cdnPath,
+      cdnNumber,
+      headers,
+      redactor,
+      options,
+    }: {
+      cdnPath: string;
+      cdnNumber: number;
+      headers?: Record<string, string>;
+      redactor: RedactUrl;
+      options?: {
+        disableRetries?: boolean;
+        timeout?: number;
+      };
+    }): Promise<Readable> {
+      const abortController = new AbortController();
+      const cdnUrl = cdnUrlObject[cdnNumber] ?? cdnUrlObject['0'];
       // This is going to the CDN, not the service, so we use _outerAjax
-      const stream = await _outerAjax(`${cdnUrl}/attachments/${cdnKey}`, {
+      const downloadStream = await _outerAjax(`${cdnUrl}${cdnPath}`, {
+        headers,
         certificateAuthority,
         disableRetries: options?.disableRetries,
         proxyUrl,
         responseType: 'stream',
         timeout: options?.timeout || 0,
         type: 'GET',
-        redactUrl: _createRedactor(cdnKey),
+        redactUrl: redactor,
         version,
         abortSignal: abortController.signal,
       });
 
-      const streamPromise = getStreamWithTimeout(stream, {
-        name: `getAttachment(${cdnKey})`,
-        timeout: GET_ATTACHMENT_CHUNK_TIMEOUT,
-        abortController,
-      });
-
-      // Add callback to central store that would reject a promise
-      const { promise: cancelPromise, reject } = explodePromise<Uint8Array>();
-      const inflightRequest = (error: Error) => {
-        reject(error);
-        abortController.abort();
-      };
-      registerInflightRequest(inflightRequest);
-
-      try {
-        return Promise.race([streamPromise, cancelPromise]);
-      } finally {
-        unregisterInFlightRequest(inflightRequest);
-      }
-    }
-
-    async function getAttachmentV2(
-      cdnKey: string,
-      cdnNumber?: number,
-      options?: {
-        disableRetries?: boolean;
-        timeout?: number;
-      }
-    ): Promise<Readable> {
-      const abortController = new AbortController();
-
-      const cdnUrl = isNumber(cdnNumber)
-        ? cdnUrlObject[cdnNumber] ?? cdnUrlObject['0']
-        : cdnUrlObject['0'];
-      // This is going to the CDN, not the service, so we use _outerAjax
-      const downloadStream = await _outerAjax(
-        `${cdnUrl}/attachments/${cdnKey}`,
-        {
-          certificateAuthority,
-          disableRetries: options?.disableRetries,
-          proxyUrl,
-          responseType: 'stream',
-          timeout: options?.timeout || 0,
-          type: 'GET',
-          redactUrl: _createRedactor(cdnKey),
-          version,
-          abortSignal: abortController.signal,
-        }
-      );
-
       const timeoutStream = getTimeoutStream({
-        name: `getAttachment(${cdnKey})`,
+        name: `getAttachment(${redactor(cdnPath)})`,
         timeout: GET_ATTACHMENT_CHUNK_TIMEOUT,
         abortController,
       });
@@ -3204,9 +3663,9 @@ export function initialize({
       return response;
     }
 
-    async function getGroupExternalCredential(
+    async function getExternalGroupCredential(
       options: GroupCredentialsType
-    ): Promise<Proto.GroupExternalCredential> {
+    ): Promise<Proto.IExternalGroupCredential> {
       const basicAuth = generateGroupAuth(
         options.groupPublicParamsHex,
         options.authCredentialPresentationHex
@@ -3222,7 +3681,7 @@ export function initialize({
         disableSessionResumption: true,
       });
 
-      return Proto.GroupExternalCredential.decode(response);
+      return Proto.ExternalGroupCredential.decode(response);
     }
 
     function verifyAttributes(attributes: Proto.IAvatarUploadAttributes) {
@@ -3326,14 +3785,14 @@ export function initialize({
     async function createGroup(
       group: Proto.IGroup,
       options: GroupCredentialsType
-    ): Promise<void> {
+    ): Promise<Proto.IGroupResponse> {
       const basicAuth = generateGroupAuth(
         options.groupPublicParamsHex,
         options.authCredentialPresentationHex
       );
       const data = Proto.Group.encode(group).finish();
 
-      await _ajax({
+      const response = await _ajax({
         basicAuth,
         call: 'groups',
         contentType: 'application/x-protobuf',
@@ -3341,12 +3800,15 @@ export function initialize({
         host: storageUrl,
         disableSessionResumption: true,
         httpType: 'PUT',
+        responseType: 'bytes',
       });
+
+      return Proto.GroupResponse.decode(response);
     }
 
     async function getGroup(
       options: GroupCredentialsType
-    ): Promise<Proto.Group> {
+    ): Promise<Proto.IGroupResponse> {
       const basicAuth = generateGroupAuth(
         options.groupPublicParamsHex,
         options.authCredentialPresentationHex
@@ -3362,7 +3824,7 @@ export function initialize({
         responseType: 'bytes',
       });
 
-      return Proto.Group.decode(response);
+      return Proto.GroupResponse.decode(response);
     }
 
     async function getGroupFromLink(
@@ -3398,7 +3860,7 @@ export function initialize({
       changes: Proto.GroupChange.IActions,
       options: GroupCredentialsType,
       inviteLinkBase64?: string
-    ): Promise<Proto.IGroupChange> {
+    ): Promise<Proto.IGroupChangeResponse> {
       const basicAuth = generateGroupAuth(
         options.groupPublicParamsHex,
         options.authCredentialPresentationHex
@@ -3425,7 +3887,7 @@ export function initialize({
           : undefined,
       });
 
-      return Proto.GroupChange.decode(response);
+      return Proto.GroupChangeResponse.decode(response);
     }
 
     async function getGroupLog(
@@ -3475,6 +3937,10 @@ export function initialize({
         disableSessionResumption: true,
         httpType: 'GET',
         responseType: 'byteswithdetails',
+        headers: {
+          // TODO(jamie): To be implmented in DESKTOP-699
+          'Cached-Send-Endorsements': '0',
+        },
         urlParameters:
           `/${startVersion}?` +
           `includeFirstState=${Boolean(includeFirstState)}&` +
@@ -3483,6 +3949,7 @@ export function initialize({
       });
       const { data, response } = withDetails;
       const changes = Proto.GroupChanges.decode(data);
+      const { groupSendEndorsementResponse } = changes;
 
       if (response && response.status === 206) {
         const range = response.headers.get('Content-Range');
@@ -3503,12 +3970,14 @@ export function initialize({
             start,
             end,
             currentRevision,
+            groupSendEndorsementResponse,
           };
         }
       }
 
       return {
         changes,
+        groupSendEndorsementResponse,
       };
     }
 

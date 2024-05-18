@@ -10,7 +10,7 @@ import type { MIMEType } from '../types/MIME';
 import type { LinkPreviewType } from '../types/message/LinkPreviews';
 import type { StickerType } from '../types/Stickers';
 import { IMAGE_JPEG, IMAGE_GIF } from '../types/MIME';
-import { getContact } from '../messages/helpers';
+import { getAuthor } from '../messages/helpers';
 import { getQuoteBodyText } from './getQuoteBodyText';
 import { isGIF } from '../types/Attachment';
 import { isGiftBadge, isTapToView } from '../state/selectors/message';
@@ -23,7 +23,7 @@ export async function makeQuote(
   quotedMessage: MessageAttributesType,
   fromGroupName: string | undefined
 ): Promise<QuotedMessageType> {
-  const contact = getContact(quotedMessage);
+  const contact = getAuthor(quotedMessage);
 
   strictAssert(contact, 'makeQuote: no contact');
 
