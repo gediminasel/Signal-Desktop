@@ -173,6 +173,9 @@
   "icu:viewMenuToggleDevTools": {
     "messageformat": "បិទបើកមុខងារអ្នកអភិវឌ្ឍន៍"
   },
+  "icu:viewMenuOpenCallingDevTools": {
+    "messageformat": "បើកឧបករណ៍អ្នកអភិវឌ្ឍន៍សម្រាប់ការហៅ"
+  },
   "icu:menuSetupAsNewDevice": {
     "messageformat": "ដំឡើង ជាឧបករណ៍ថ្មី"
   },
@@ -458,9 +461,6 @@
   "icu:joinAnyway": {
     "messageformat": "ចូលរួមតែម្តង"
   },
-  "icu:continueCall": {
-    "messageformat": "បន្តការហៅ"
-  },
   "icu:debugLogExplanation": {
     "messageformat": "នៅពេលអ្នកចុច ដាក់បញ្ជូន កំណត់ហេតុរបស់អ្នកនឹងត្រូវបានបង្ហោះលើអ៊ីនធឺណិតរយៈពេល 30 ថ្ងៃនៅ URL មួយដែលខុសប្លែកពីគេ និងមិនទាន់បានផ្សព្វផ្សាយ។ អ្នកអាចរក្សាទុកវានៅក្នុងឧបករណ៍សិន។"
   },
@@ -643,6 +643,12 @@
   },
   "icu:screenShareWindow": {
     "messageformat": "ការចែករំលែកអេក្រង់"
+  },
+  "icu:callingDeveloperTools": {
+    "messageformat": "ឧបករណ៍អ្នកអភិវឌ្ឍន៍សម្រាប់ការហៅ"
+  },
+  "icu:callingDeveloperToolsDescription": {
+    "messageformat": "វីនដូនេះត្រូវបានប្រើក្នុងអំឡុងពេលអភិវឌ្ឍន៍ ដើម្បីបង្ហាញការវិភាគពីការហៅទូរសព្ទដែលកំពុងដំណើរការ។"
   },
   "icu:speech": {
     "messageformat": "សម្តី"
@@ -1033,6 +1039,9 @@
   },
   "icu:ChangeNumber--notification": {
     "messageformat": "{sender} បានផ្លាស់ប្តូរលេខទូរសព្ទរបស់ពួកគេ"
+  },
+  "icu:JoinedSignal--notification": {
+    "messageformat": "ចូលរួមទំនាក់ទំនងតាមSignal"
   },
   "icu:ConversationMerge--notification": {
     "messageformat": "{obsoleteConversationTitle} និង {conversationTitle} គឺជាគណនីតែមួយ។ ប្រវត្តិសាររបស់អ្នកសម្រាប់ការជជែកទាំងពីរមាននៅទីនេះ។"
@@ -2363,18 +2372,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "ការជជែកត្រូវបានសម្គាល់ថាមិនទាន់បានអាន"
   },
-  "icu:SendEdit--dialog--title2": {
-    "messageformat": "កែសារ"
-  },
-  "icu:SendEdit--dialog--body2": {
-    "messageformat": "ប្រសិនបើអ្នកកែសារ មានតែអ្នកដែលមានកំណែចុងក្រោយបំផុតនៃ Signal ប៉ុណ្ណោះទើបអាចមើលវាឃើញ។ ពួកគេនឹងអាចមើលឃើញថាអ្នកបានកែសារ។"
-  },
-  "icu:SendFormatting--dialog--title": {
-    "messageformat": "កំពុងផ្ញើអត្ថបទដែលមានទម្រង់ជាក់លាក់"
-  },
-  "icu:SendFormatting--dialog--body": {
-    "messageformat": "មនុស្សមួយចំនួនប្រហែលជាកំពុងប្រើកំណែ Signal ដែលមិនស្គាល់អត្ថបទដែលមានទម្រង់ជាក់លាក់ទេ។ ពួកគេនឹងមិនអាចមើលឃើញការផ្លាស់ប្តូរទម្រង់ដែលអ្នកបានធ្វើឡើងចំពោះសាររបស់អ្នកទេ។"
-  },
   "icu:AuthArtCreator--dialog--message": {
     "messageformat": "តើអ្នកចង់បើកឧបករណ៍បង្កើតកញ្ចប់ស្ទីគ័រ Signal ឬទេ?"
   },
@@ -2691,7 +2688,13 @@
     "messageformat": "បានបិទសំឡេងរោទ៍"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "អ្នកបានលើកដៃ។"
+    "messageformat": "You raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-one": {
+    "messageformat": "You and {otherName} raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-more": {
+    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} បានលើកដៃ។"
@@ -2782,6 +2785,21 @@
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "ដកម្នាក់នេះចេញពីការហៅ"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel": {
+    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
+    "messageformat": "+{count,number} more"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
+    "messageformat": "More info about new contacts"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
+    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
+    "messageformat": "Got it"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "វីដេអូ"
@@ -3761,6 +3779,9 @@
   "icu:DeleteMessagesModal--description--noteToSelf": {
     "messageformat": "{count, plural, other {តើអ្នកចង់លុបសារទាំងនេះចេញពីឧបករណ៍ណាខ្លះ?}}"
   },
+  "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
+    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+  },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "លុបសម្រាប់ខ្ញុំ"
   },
@@ -3772,6 +3793,9 @@
   },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "លុបចេញពីឧបករណ៍ទាំងអស់"
+  },
+  "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
+    "messageformat": "Delete"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, other {អ្នកអាចជ្រើសរើសបានរហូតដល់ {count,number} សារប៉ុណ្ណោះដើម្បីលុបសម្រាប់អ្នករាល់គ្នា}}"
@@ -3866,11 +3890,17 @@
   "icu:ForwardMessageModal__title": {
     "messageformat": "បញ្ជូនបន្តទៅកាន់"
   },
+  "icu:ForwardMessageModal__ShareCallLink": {
+    "messageformat": "ចែករំលែកតំណហៅទូរសព្ទ"
+  },
   "icu:ForwardMessageModal--continue": {
     "messageformat": "បន្ត"
   },
   "icu:ForwardMessagesModal__toast--CannotForwardEmptyMessage": {
     "messageformat": "មិនអាចបញ្ជូនបន្តសារទទេ ឬសារដែលបានលុបទេ"
+  },
+  "icu:ShareCallLinkViaSignal__DraftMessageText": {
+    "messageformat": "ប្រើតំណនេះដើម្បីចូលរួមការហៅតាម Signal៖ {url}"
   },
   "icu:MessageRequestWarning__learn-more": {
     "messageformat": "សិក្សាបន្ថែម"
@@ -4167,7 +4197,7 @@
     "messageformat": "ឈ្មោះអ្នកប្រើមិនអាចចាប់ផ្តើមដោយលេខបានទេ។"
   },
   "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "ឈ្មោះអ្នកប្រើត្រូវតែមានយ៉ាងតិច {min,number} តួអក្សរ។"
+    "messageformat": "Usernames must have at least {min,number} characters."
   },
   "icu:ProfileEditor--username--check-character-max": {
     "messageformat": "ឈ្មោះអ្នកប្រើត្រូវតែមានយ៉ាងច្រើនបំផុត {max,number} តួអក្សរ។"
@@ -4347,7 +4377,7 @@
     "messageformat": "បំប្លែងសញ្ញាអារម្មណ៍ដែលបានវាយបញ្ចូលទៅជារូបអារម្មណ៍"
   },
   "icu:Preferences__auto-convert-emoji--description": {
-    "messageformat": "ឧទាហរណ៍ :-) នឹងត្រូវបានបំប្លែងទៅជា 🙂"
+    "messageformat": "ឧទាហរណ៍ :-) នឹងត្រូវបានបំប្លែងទៅជា <emojify>🙂</emojify>"
   },
   "icu:Preferences--advanced": {
     "messageformat": "កម្រិតខ្ពស់"
@@ -4717,6 +4747,15 @@
   },
   "icu:SignalConnectionsModal__footer": {
     "messageformat": "អ្នកភ្ជាប់ទំនាក់ទំនងរបស់អ្នកអាចមើលឃើញឈ្មោះ និងរូបថតរបស់អ្នក ហើយអាចឃើញសារបង្ហោះទៅ \"រឿងរ៉ាវរបស់ខ្ញុំ\" លើកលែងតែអ្នកលាក់វាពីពួកគេ"
+  },
+  "icu:LocalDeleteWarningModal__header": {
+    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+  },
+  "icu:LocalDeleteWarningModal__description": {
+    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+  },
+  "icu:LocalDeleteWarningModal__confirm": {
+    "messageformat": "Got it"
   },
   "icu:Stories__title": {
     "messageformat": "រឿងរ៉ាវ"
@@ -5310,6 +5349,9 @@
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "គ្មានលទ្ធផលសម្រាប់ “{query}”"
   },
+  "icu:CallsList__CreateCallLink": {
+    "messageformat": "Create a Call Link"
+  },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "ហៅចូល"
   },
@@ -5325,11 +5367,29 @@
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "តំណសម្រាប់ការហៅ"
   },
+  "icu:CallsList__ItemCallInfo--Active": {
+    "messageformat": "សកម្ម"
+  },
+  "icu:CallsList__LeaveCallDialogTitle": {
+    "messageformat": "ចាកចេញពីការហៅបច្ចុប្បន្នឬ?"
+  },
+  "icu:CallsList__LeaveCallDialogBody": {
+    "messageformat": "អ្នកត្រូវតែចាកចេញពីការហៅបច្ចុប្បន្ន មុនពេលចូលរួមការហៅថ្មី។"
+  },
+  "icu:CallsList__LeaveCallDialogButton--leave": {
+    "messageformat": "បិទការហៅ"
+  },
   "icu:CallsNewCall__EmptyState--noQuery": {
     "messageformat": "គ្មានការសន្ទនាថ្មីៗនេះទេ។"
   },
   "icu:CallsNewCall__EmptyState--hasQuery": {
     "messageformat": "គ្មានលទ្ធផលសម្រាប់ “{query}”"
+  },
+  "icu:CallsNewCallButton--return": {
+    "messageformat": "ត្រឡប់"
+  },
+  "icu:CallsNewCallButtonTooltip--in-another-call": {
+    "messageformat": "អ្នកត្រូវតែចាកចេញពីការហៅបច្ចុប្បន្ន មុនពេលចូលរួមការហៅថ្មី។"
   },
   "icu:CallHistory__Description--Default": {
     "messageformat": "{type, select, Audio {{direction, select, Outgoing {ការហៅចេញជាសំឡេង} other {ការហៅចូលជាសំឡេង}}} Video {{direction, select, Outgoing {ការហៅចេញជាវីដេអូ} other {ការហៅចូលជាវីដេអូ}}} Group {{direction, select, Outgoing {ការហៅចេញជាក្រុម} other {ការហៅចូលជាក្រុម}}} other {{direction, select, Outgoing {ហៅចេញក្រៅ} other {ការហៅចូល}}}}"
@@ -5345,6 +5405,33 @@
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "តំណសម្រាប់ការហៅ"
+  },
+  "icu:CallLinkDetails__Join": {
+    "messageformat": "ចូលរួម"
+  },
+  "icu:CallLinkDetails__CopyLink": {
+    "messageformat": "ចម្លងតំណ"
+  },
+  "icu:CallLinkDetails__ShareLinkViaSignal": {
+    "messageformat": "ចែករំលែកតំណតាមរយៈ Signal"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Call link details"
+  },
+  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
+    "messageformat": "Name"
+  },
+  "icu:CallLinkEditModal__JoinButtonLabel": {
+    "messageformat": "Join"
+  },
+  "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
+    "messageformat": "Approve all members"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
+    "messageformat": "Off"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
+    "messageformat": "On"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, other {{count,number} នាក់ផ្សេងទៀតកំពុងវាយអក្សរ។}}"
@@ -5385,5 +5472,20 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "ការកែប្រែបន្តិចបន្តួច ការដោះស្រាយបញ្ហា និងការបង្កើនប្រតិបត្តិការ។ សូមអរគុណចំពោះការប្រើប្រាស់ Signal!",
     "ignoreUnused": true
+  },
+  "icu:WhatsNew__v7.12--0": {
+    "messageformat": "លើកដៃឡើង ប្រសិនបើអ្នកកំពុងស្វែងរកវិធីផ្សេងទៀតដើម្បីប្រាស្រ័យទាក់ទងគ្នាក្នុងអំឡុងពេលហៅជាក្រុម។ មុខងារលើកដៃថ្មី គឺជាវិធីសាមញ្ញមួយ ដើម្បីទាក់ទាញការចាប់អារម្មណ៍ពីនរណាម្នាក់ សួរសំណួរ ឬបោះឆ្នោតជាឯកច្ឆ័ន្ទសម្រាប់សំណើជាក្រុម នៅពេលដែលមិត្តភក្តិរបស់អ្នកសួរថា \"តើអ្នកណាខ្លះយល់ស្រប?\""
+  },
+  "icu:WhatsNew__v7.12--1": {
+    "messageformat": "ការធ្វើបច្ចុប្បន្នភាពនេះក៏រួមបញ្ចូលផងដែរនូវឧបករណ៍ច្រឹបដែលត្រូវបានកែលម្អសម្រាប់ផ្លាស់ប្តូរទំហំរូបភាព។"
+  },
+  "icu:WhatsNew__v7.12--2": {
+    "messageformat": "យើងបានកែប្រែផ្លូវកាត់ក្តារចុចសម្រាប់ការផ្ញើកំណត់ចំណាំជាសំឡេងទៅជា Ctrl/Cmd+Shift+Y ដូច្នេះវាលែងជាន់គ្នាជាមួយផ្លូវកាត់ \"បិទភ្ជាប់ និងផ្គូផ្គងរចនាប័ទ្ម\" នៅលើ Windows និង Linux ទៀតហើយ។"
+  },
+  "icu:WhatsNew__v7.13--0": {
+    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  },
+  "icu:WhatsNew__v7.13--1": {
+    "messageformat": "This update also improves the display of quoted replies in RTL languages."
   }
 }

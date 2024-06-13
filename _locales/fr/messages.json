@@ -48,7 +48,7 @@
     "messageformat": "Reconnaissance de logiciels"
   },
   "icu:privacyPolicy": {
-    "messageformat": "Conditions générales d’utilisation et politique de confidentialité"
+    "messageformat": "Conditions générales d’utilisation et règles de confidentialité"
   },
   "icu:appleSilicon": {
     "messageformat": "Apple silicon"
@@ -75,7 +75,7 @@
     "messageformat": "Supprimer définitivement toutes les données ?"
   },
   "icu:databaseError__deleteDataConfirmation__detail": {
-    "messageformat": "Tout l’historique de vos messages et de vos fichiers sera définitivement supprimé de cet appareil. Vous pourrez utiliser Signal sur cet appareil après l’avoir relié. Cette action ne supprimera aucune donnée de votre téléphone."
+    "messageformat": "Tout l’historique de vos messages et tous les médias stockés sur Signal seront définitivement supprimés de cet appareil. Vous pourrez de nouveau utiliser Signal sur cet appareil après l’avoir réassocié. Cette action ne supprimera aucune donnée de votre téléphone."
   },
   "icu:databaseError__startOldVersion": {
     "messageformat": "La version de votre base de données ne peut pas supporter cette version de Signal. Assurez-vous d’ouvrir la dernière version de Signal sur votre ordinateur."
@@ -105,10 +105,10 @@
     "messageformat": "Services"
   },
   "icu:appMenuHide": {
-    "messageformat": "Cacher"
+    "messageformat": "Masquer"
   },
   "icu:appMenuHideOthers": {
-    "messageformat": "Cacher les autres"
+    "messageformat": "Masquer les autres fenêtres"
   },
   "icu:appMenuUnhide": {
     "messageformat": "Tout afficher"
@@ -171,7 +171,10 @@
     "messageformat": "Activer ou désactiver le plein écran"
   },
   "icu:viewMenuToggleDevTools": {
-    "messageformat": "Afficher ou cacher les outils pour développeurs"
+    "messageformat": "Afficher ou masquer les outils pour développeurs"
+  },
+  "icu:viewMenuOpenCallingDevTools": {
+    "messageformat": "Afficher les outils d’appel pour développeurs"
   },
   "icu:menuSetupAsNewDevice": {
     "messageformat": "Configurer comme nouvel appareil"
@@ -279,7 +282,7 @@
     "messageformat": "Paramètres"
   },
   "icu:NavTabs__ItemLabel--Update": {
-    "messageformat": "Mettre Signal à jour"
+    "messageformat": "Installer la dernière version de Signal"
   },
   "icu:NavTabs__ItemLabel--Profile": {
     "messageformat": "Profil"
@@ -426,7 +429,7 @@
     "messageformat": "Toutes les connexions ont été vérifiées, appuyez sur envoyer pour continuer."
   },
   "icu:safetyNumberChangeDialog__confirm-remove-all": {
-    "messageformat": "{count, plural, one {Êtes-vous sûr de vouloir retirer {count,number} destinataire de la Story {story} ?} other {Êtes-vous sûr de vouloir retirer {count,number} destinataires de la Story {story} ?}}"
+    "messageformat": "{count, plural, one {Êtes-vous sûr de vouloir retirer {count,number} contact de la story {story} ?} other {Êtes-vous sûr de vouloir retirer {count,number} contacts de la story {story} ?}}"
   },
   "icu:safetyNumberChangeDialog__remove-all": {
     "messageformat": "Retirer tous"
@@ -435,7 +438,7 @@
     "messageformat": "Confirmer le numéro de sécurité"
   },
   "icu:safetyNumberChangeDialog__remove": {
-    "messageformat": "Retirer de la Story"
+    "messageformat": "Retirer de la story"
   },
   "icu:safetyNumberChangeDialog__actions-contact": {
     "messageformat": "Menu pour les contacts {contact}"
@@ -457,9 +460,6 @@
   },
   "icu:joinAnyway": {
     "messageformat": "Participer quand même"
-  },
-  "icu:continueCall": {
-    "messageformat": "Poursuivre l’appel"
   },
   "icu:debugLogExplanation": {
     "messageformat": "Après avoir cliqué sur Envoyer, votre journal sera publié en ligne pendant 30 jours sur une URL unique et non publiée. Vous pouvez d’abord l’enregistrer localement."
@@ -582,7 +582,7 @@
     "messageformat": "Vous ne pouvez pas joindre d’autres fichiers à ce message."
   },
   "icu:fileSizeWarning": {
-    "messageformat": "Désolé, le fichier sélectionné dépasse la limite de taille des messages. {limit,number} {units}"
+    "messageformat": "La taille du fichier sélectionné dépasse la limite autorisée. "
   },
   "icu:unableToLoadAttachment": {
     "messageformat": "Impossible de charger le fichier joint sélectionné."
@@ -644,6 +644,12 @@
   "icu:screenShareWindow": {
     "messageformat": "Partage d’écran"
   },
+  "icu:callingDeveloperTools": {
+    "messageformat": "Outils d’appel pour développeurs"
+  },
+  "icu:callingDeveloperToolsDescription": {
+    "messageformat": "En phase de développement, cette fenêtre sert à afficher les diagnostics des appels en cours."
+  },
   "icu:speech": {
     "messageformat": "Parole"
   },
@@ -651,7 +657,7 @@
     "messageformat": "Afficher"
   },
   "icu:hide": {
-    "messageformat": "Cacher"
+    "messageformat": "Masquer"
   },
   "icu:quit": {
     "messageformat": "Fermer"
@@ -1034,6 +1040,9 @@
   "icu:ChangeNumber--notification": {
     "messageformat": "{sender} a changé de numéro de téléphone"
   },
+  "icu:JoinedSignal--notification": {
+    "messageformat": "Un contact a rejoint Signal"
+  },
   "icu:ConversationMerge--notification": {
     "messageformat": "{obsoleteConversationTitle} et {conversationTitle} appartiennent au même compte. L’historique de vos conversations est ici."
   },
@@ -1125,7 +1134,7 @@
     "messageformat": "Choisissez le nom de cet appareil"
   },
   "icu:finishLinkingPhone": {
-    "messageformat": "Terminer la liaison du téléphone"
+    "messageformat": "Finaliser l’association du téléphone"
   },
   "icu:initialSync": {
     "messageformat": "Synchronisation des contacts et groupes"
@@ -1137,10 +1146,10 @@
     "messageformat": "Échec de connexion au serveur."
   },
   "icu:installTooManyDevices": {
-    "messageformat": "Désolé, trop d’appareils sont déjà reliés. Essayez d’en supprimer."
+    "messageformat": "Vous avez déjà associé un trop grand nombre d’appareils. Veuillez en supprimer quelques-uns."
   },
   "icu:installTooOld": {
-    "messageformat": "Mettez Signal à jour sur cet appareil pour relier votre téléphone."
+    "messageformat": "Pour associer votre téléphone à cet appareil, installez la dernière version de Signal."
   },
   "icu:installErrorHeader": {
     "messageformat": "Une erreur s’est produite."
@@ -1260,7 +1269,7 @@
     "messageformat": "Réagir"
   },
   "icu:calling__button--ring__disabled-because-group-is-too-large": {
-    "messageformat": "Le groupe est trop grand pour appeler tous les participants."
+    "messageformat": "Appel impossible : le groupe compte un trop grand nombre de participants."
   },
   "icu:CallingButton__ring-off": {
     "messageformat": "Désactiver la sonnerie"
@@ -1344,7 +1353,7 @@
     "messageformat": "Vous avez bloqué {name}"
   },
   "icu:calling__block-info": {
-    "messageformat": "Vous ne recevrez ni leur message vocal ni leur vidéo et ils ne recevront pas les vôtres."
+    "messageformat": "Vous ne recevez ni l’audio, ni la vidéo de cet utilisateur et il ne reçoit pas les vôtres."
   },
   "icu:calling__missing-media-keys": {
     "messageformat": "Impossible de recevoir l’audio et la vidéo de {name}"
@@ -1584,7 +1593,7 @@
     "messageformat": "Messages éphémères"
   },
   "icu:disappearingMessagesDisabled": {
-    "messageformat": "Les messages éphémères sont désactivés"
+    "messageformat": "Messages éphémères désactivés"
   },
   "icu:disappearingMessagesDisabledByMember": {
     "messageformat": "Un membre a désactivé les messages éphémères."
@@ -1761,7 +1770,7 @@
     "messageformat": "Cliquez pour relier Signal Desktop pour ordinateur à votre appareil mobile et continuer à communiquer."
   },
   "icu:unlinked": {
-    "messageformat": "Non relié"
+    "messageformat": "Dissocié"
   },
   "icu:autoUpdateNewVersionTitle": {
     "messageformat": "Une mise à jour est disponible"
@@ -2109,7 +2118,7 @@
     "messageformat": "De tels messages futurs seront synchronisés, maintenant que vous utilisez une version à jour de Signal."
   },
   "icu:Message--update-signal": {
-    "messageformat": "Mettre Signal à jour"
+    "messageformat": "Installer la dernière version de Signal"
   },
   "icu:Message--tap-to-view-expired": {
     "messageformat": "Vu"
@@ -2328,7 +2337,7 @@
     "messageformat": "Répondre à un appel sans vidéo"
   },
   "icu:Keyboard--start-audio-call": {
-    "messageformat": "Démarrer un appel vocal"
+    "messageformat": "Passer un appel vocal"
   },
   "icu:Keyboard--start-video-call": {
     "messageformat": "Lancer un appel vidéo"
@@ -2340,7 +2349,7 @@
     "messageformat": "Raccrocher"
   },
   "icu:close-popup": {
-    "messageformat": "Fermer la fenêtre surgissante"
+    "messageformat": "Fermer la fenêtre contextuelle"
   },
   "icu:addImageOrVideoattachment": {
     "messageformat": "Joindre une image ou une vidéo"
@@ -2362,18 +2371,6 @@
   },
   "icu:conversationMarkedUnread": {
     "messageformat": "Conversation marquée comme non lue"
-  },
-  "icu:SendEdit--dialog--title2": {
-    "messageformat": "Modifier le message"
-  },
-  "icu:SendEdit--dialog--body2": {
-    "messageformat": "Les modifications apportées aux messages ne seront visibles que par les personnes utilisant les dernières versions de Signal. Elles pourront voir que vous avez modifié un message."
-  },
-  "icu:SendFormatting--dialog--title": {
-    "messageformat": "Envoi d'un message au texte formaté"
-  },
-  "icu:SendFormatting--dialog--body": {
-    "messageformat": "Certaines personnes utilisent peut-être une version de Signal qui ne prend pas en charge le texte formaté. Elles ne pourront pas voir les changements de formatage appliqués à un message."
   },
   "icu:AuthArtCreator--dialog--message": {
     "messageformat": "Ouvrir l’outil de création de packs de stickers ?"
@@ -2469,7 +2466,7 @@
     "messageformat": "Vous pourrez échanger des messages et des appels."
   },
   "icu:MessageRequests--unblock-group-confirm-body": {
-    "messageformat": "Les membres du groupe pourront vous rajouter à ce groupe."
+    "messageformat": "Les membres pourront de nouveau vous ajouter à ce groupe."
   },
   "icu:MessageRequests--block-and-report-spam-success-toast": {
     "messageformat": "Signalé comme indésirable et bloqué."
@@ -2484,7 +2481,7 @@
     "messageformat": "Bloquer et quitter {title} ?"
   },
   "icu:MessageRequests--block-group-confirm-body": {
-    "messageformat": "Vous ne recevrez plus ni message ni mise à jour de ce groupe et les membres ne pourront plus vous rajouter à ce groupe."
+    "messageformat": "Ce groupe ne pourra plus vous envoyer de messages, ni vous tenir informé des dernières actualités, et ses membres ne pourront plus vous y ajouter."
   },
   "icu:MessageRequests--reportAndMaybeBlock": {
     "messageformat": "Signaler..."
@@ -2691,7 +2688,13 @@
     "messageformat": "Sonnerie désactivée"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "Votre main est levée."
+    "messageformat": "You raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-one": {
+    "messageformat": "You and {otherName} raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-more": {
+    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} a levé la main."
@@ -2783,6 +2786,21 @@
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "Retirer cet utilisateur de l’appel"
   },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel": {
+    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
+    "messageformat": "+{count,number} more"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
+    "messageformat": "More info about new contacts"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
+    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
+    "messageformat": "Got it"
+  },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Vidéo"
   },
@@ -2847,7 +2865,7 @@
     "messageformat": "{max, plural, one {{max,number} modification peut-être appliquée à ce message.} other {{max,number} modifications seulement peuvent être appliquées à ce message.}}"
   },
   "icu:unknown-sgnl-link": {
-    "messageformat": "Désolé, ce lien sgnl:// était invalide"
+    "messageformat": "Le lien sgnl:// est incorrect."
   },
   "icu:GroupV2--cannot-send": {
     "messageformat": "Vous ne pouvez pas envoyer de message à ce groupe."
@@ -3761,6 +3779,9 @@
   "icu:DeleteMessagesModal--description--noteToSelf": {
     "messageformat": "{count, plural, one {De quels appareils voulez-vous supprimer ce message ?} other {De quels appareils voulez-vous supprimer ces messages ?}}"
   },
+  "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
+    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+  },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "Supprimer pour moi"
   },
@@ -3772,6 +3793,9 @@
   },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "Supprimer de tous les appareils"
+  },
+  "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
+    "messageformat": "Delete"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {Vous ne pouvez sélectionner qu’un maximum de {count,number} message à supprimer pour tous.} other {Vous ne pouvez sélectionner qu’un maximum de {count,number} messages à supprimer pour tous.}}"
@@ -3866,11 +3890,17 @@
   "icu:ForwardMessageModal__title": {
     "messageformat": "Transférer à"
   },
+  "icu:ForwardMessageModal__ShareCallLink": {
+    "messageformat": "Partager le lien de l’appel"
+  },
   "icu:ForwardMessageModal--continue": {
     "messageformat": "Poursuivre"
   },
   "icu:ForwardMessagesModal__toast--CannotForwardEmptyMessage": {
     "messageformat": "Impossible de transférer des messages vides ou supprimés"
+  },
+  "icu:ShareCallLinkViaSignal__DraftMessageText": {
+    "messageformat": "Je vous invite à un appel Signal. Suivez ce lien pour y participer : {url}"
   },
   "icu:MessageRequestWarning__learn-more": {
     "messageformat": "En savoir plus"
@@ -4167,7 +4197,7 @@
     "messageformat": "Un nom d’utilisateur ne peut pas commencer par un chiffre."
   },
   "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Le nom d’utilisateur doit comporter au moins {min,number} caractères."
+    "messageformat": "Usernames must have at least {min,number} characters."
   },
   "icu:ProfileEditor--username--check-character-max": {
     "messageformat": "Le nom d’utilisateur doit comporter au maximum {max,number} caractères."
@@ -4242,7 +4272,7 @@
     "messageformat": "Pas maintenant"
   },
   "icu:ProfileEditor--edit-photo": {
-    "messageformat": "Modifier la photo"
+    "messageformat": "Changer de photo"
   },
   "icu:ProfileEditor--info--general": {
     "messageformat": "Vos contacts, vos groupes et les personnes avec qui vous échangez des messages peuvent voir votre profil et les modifications que vous y apportez."
@@ -4347,7 +4377,7 @@
     "messageformat": "Convertir les émoticônes en émojis"
   },
   "icu:Preferences__auto-convert-emoji--description": {
-    "messageformat": "Par exemple, :-) deviendra 🙂"
+    "messageformat": "Par exemple, :-) deviendra <emojify>🙂</emojify>"
   },
   "icu:Preferences--advanced": {
     "messageformat": "Avancés"
@@ -4440,7 +4470,7 @@
     "messageformat": "Activer la fonction Stories"
   },
   "icu:Preferences__turn-stories-off": {
-    "messageformat": "Quitter la fonction Stories"
+    "messageformat": "Désactiver les stories"
   },
   "icu:Preferences__turn-stories-off--action": {
     "messageformat": "Désactiver"
@@ -4507,7 +4537,7 @@
     "ignoreUnused": true
   },
   "icu:NSIS__retry-dialog--second-line": {
-    "messageformat": "Veuillez la fermer manuellement et cliquez sur Réessayer pour continuer.",
+    "messageformat": "Fermez l’appli manuellement, puis cliquez sur <strong>Réessayer</strong> pour continuer.",
     "ignoreUnused": true
   },
   "icu:NSIS__appRunning": {
@@ -4623,10 +4653,10 @@
     "messageformat": "Mes stories"
   },
   "icu:MyStories__story": {
-    "messageformat": "Votre Story"
+    "messageformat": "Votre story"
   },
   "icu:MyStories__download": {
-    "messageformat": "Télécharger la Story"
+    "messageformat": "Télécharger la story"
   },
   "icu:MyStories__more": {
     "messageformat": "Plus d’options"
@@ -4644,7 +4674,7 @@
     "messageformat": "{replyCount, plural, one {<strong>{replyCount,number}</strong> réponse} other {<strong>{replyCount,number}</strong> réponses}}"
   },
   "icu:MyStories__delete": {
-    "messageformat": "Supprimer cette Story ? Elle sera aussi supprimée pour quiconque l’a reçue."
+    "messageformat": "Supprimer cette story ? Cela la supprime aussi pour tous ses destinataires."
   },
   "icu:payment-event-notification-message-you-label": {
     "messageformat": "Vous avez initié une procédure de paiement pour {receiver}"
@@ -4674,7 +4704,7 @@
     "messageformat": "Paiement"
   },
   "icu:payment-event-notification-check-primary-device": {
-    "messageformat": "Veuillez consulter votre appareil principal pour vérifier l'état de ce paiement."
+    "messageformat": "Pour vérifier l’état de ce paiement, utilisez votre appareil principal."
   },
   "icu:MessageRequestResponseNotification__Message--Accepted": {
     "messageformat": "Vous avez accepté l’invitation par message"
@@ -4718,6 +4748,15 @@
   "icu:SignalConnectionsModal__footer": {
     "messageformat": "Vos contacts peuvent voir votre nom et votre photo de profil. Ils peuvent aussi afficher vos stories, sauf si vous décidez de les masquer."
   },
+  "icu:LocalDeleteWarningModal__header": {
+    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+  },
+  "icu:LocalDeleteWarningModal__description": {
+    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+  },
+  "icu:LocalDeleteWarningModal__confirm": {
+    "messageformat": "Got it"
+  },
   "icu:Stories__title": {
     "messageformat": "Stories"
   },
@@ -4725,7 +4764,7 @@
     "messageformat": "Mes stories"
   },
   "icu:Stories__add": {
-    "messageformat": "Ajouter une Story"
+    "messageformat": "Ajouter une story"
   },
   "icu:Stories__add-story--text": {
     "messageformat": "Story texte"
@@ -4737,7 +4776,7 @@
     "messageformat": "Stories cachées"
   },
   "icu:Stories__list-empty": {
-    "messageformat": "Aucune Story récente à afficher pour l’instant"
+    "messageformat": "Aucune story récente à afficher pour le moment"
   },
   "icu:Stories__list--sending": {
     "messageformat": "Envoi…"
@@ -4752,7 +4791,7 @@
     "messageformat": "Cliquer pour réessayer"
   },
   "icu:Stories__placeholder--text": {
-    "messageformat": "Cliquez pour visualiser une Story"
+    "messageformat": "Cliquer sur une story pour l’afficher"
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} à {group}"
@@ -4764,16 +4803,16 @@
     "messageformat": "Réaction en cours…"
   },
   "icu:Stories__toast--hasNoSound": {
-    "messageformat": "Cette Story ne contient pas de sons"
+    "messageformat": "Story sans audio"
   },
   "icu:Stories__failed-send": {
-    "messageformat": "Cette Story n’a pas pu être envoyée à certaines personnes. Vérifiez votre connexion et réessayez."
+    "messageformat": "Impossible d’envoyer cette story à certains contacts. Vérifiez votre connexion et réessayez."
   },
   "icu:StoriesSettings__title": {
     "messageformat": "Confidentialité de la story"
   },
   "icu:StoriesSettings__description": {
-    "messageformat": "Les Stories sont automatiquement supprimées après 24 heures. Identifiez les spectateurs autorisés à voir votre Story ou créez de nouvelles Stories en identifiant des spectateurs ou des groupes spécifiques."
+    "messageformat": "Les stories sont automatiquement supprimées au bout de 24 heures. Vous pouvez sélectionner les spectateurs autorisés à voir votre story ou créer de nouvelles stories, puis définir les contacts ou les groupes autorisés à les afficher."
   },
   "icu:StoriesSettings__my_stories": {
     "messageformat": "Mes stories"
@@ -4803,7 +4842,7 @@
     "messageformat": "Retirer {title}"
   },
   "icu:StoriesSettings__remove--body": {
-    "messageformat": "Cette personne ne verra plus votre Story."
+    "messageformat": "Ce contact n’aura plus accès à votre story."
   },
   "icu:StoriesSettings__replies-reactions--title": {
     "messageformat": "Réponses et réactions"
@@ -4812,7 +4851,7 @@
     "messageformat": "Autorisez les réponses et les réactions"
   },
   "icu:StoriesSettings__replies-reactions--description": {
-    "messageformat": "Permettez aux personnes qui peuvent voir votre Story de réagir et de répondre."
+    "messageformat": "Les spectateurs de votre story peuvent y réagir et y répondre."
   },
   "icu:StoriesSettings__delete-list": {
     "messageformat": "Supprimer la Story personnalisée"
@@ -4824,19 +4863,19 @@
     "messageformat": "Choisir les spectateurs"
   },
   "icu:StoriesSettings__name-story": {
-    "messageformat": "Nommer la Story"
+    "messageformat": "Nommer la story"
   },
   "icu:StoriesSettings__name-placeholder": {
-    "messageformat": "Nom de la Story (requis)"
+    "messageformat": "Titre de la story (requis)"
   },
   "icu:StoriesSettings__hide-story": {
-    "messageformat": "Cacher la Story pour"
+    "messageformat": "Masquer la story pour"
   },
   "icu:StoriesSettings__mine__all--label": {
     "messageformat": "Tous mes contacts Signal"
   },
   "icu:StoriesSettings__mine__exclude--label": {
-    "messageformat": "Tout le monde sauf…"
+    "messageformat": "Tous mes contacts Signal, sauf…"
   },
   "icu:StoriesSettings__mine__only--label": {
     "messageformat": "Partager uniquement avec…"
@@ -4857,10 +4896,10 @@
     "messageformat": "Qui peut voir cette story ?"
   },
   "icu:GroupStorySettingsModal__members_help": {
-    "messageformat": "Les membres de la conversation de groupe « {groupTitle} » peuvent consulter et interagir avec cette Story. Vous pouvez paramétrer les spectateurs depuis la conversation de groupe."
+    "messageformat": "Les membres de la conversation de groupe « {groupTitle} » peuvent afficher cette story et y réagir. Vous pouvez ajouter ou retirer des spectateurs depuis les paramètres du groupe."
   },
   "icu:GroupStorySettingsModal__remove_group": {
-    "messageformat": "Supprimer la Story du groupe"
+    "messageformat": "Supprimer la story de groupe"
   },
   "icu:StoriesSettings__remove_group--confirm": {
     "messageformat": "Voulez-vous vraiment supprimer « {groupTitle} » ?"
@@ -4893,7 +4932,7 @@
     "messageformat": "Nouvelle Story personnalisée"
   },
   "icu:SendStoryModal__new-custom--name-visibility": {
-    "messageformat": "Vous seul.e pouvez voir le nom de cette Story."
+    "messageformat": "Vous seul pouvez voir le titre de cette story."
   },
   "icu:SendStoryModal__new-custom--description": {
     "messageformat": "Visible pour certaines personnes seulement"
@@ -4926,10 +4965,10 @@
     "messageformat": "Partager et voir les Stories"
   },
   "icu:Stories__settings-toggle--description": {
-    "messageformat": "Si vous décidez de quitter la fonction Stories, vous ne pourrez plus en partager ni en consulter."
+    "messageformat": "Si vous décidez de désactiver les stories, vous ne pourrez plus en partager ni en consulter."
   },
   "icu:Stories__settings-toggle--button": {
-    "messageformat": "Quitter la fonction Stories"
+    "messageformat": "Désactiver les stories"
   },
   "icu:StoryViewer__pause": {
     "messageformat": "Mettre en pause"
@@ -4995,10 +5034,10 @@
     "messageformat": "Réponses"
   },
   "icu:StoryViewsNRepliesModal__reacted": {
-    "messageformat": "A réagi à la Story"
+    "messageformat": "a réagi à la story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
-    "messageformat": "Vous ne pouvez pas interagir sur cette Story, car vous n'êtes plus membre de ce groupe."
+    "messageformat": "Vous ne pouvez pas interagir avec cette story, car vous n'êtes plus membre de ce groupe."
   },
   "icu:StoryViewsNRepliesModal__delete-reply": {
     "messageformat": "Supprimer pour moi"
@@ -5016,7 +5055,7 @@
     "messageformat": "Montrer les Stories"
   },
   "icu:StoryListItem__hide": {
-    "messageformat": "Cacher la Story"
+    "messageformat": "Masquer la story"
   },
   "icu:StoryListItem__go-to-chat": {
     "messageformat": "Accéder à la conversation"
@@ -5028,10 +5067,10 @@
     "messageformat": "Info"
   },
   "icu:StoryListItem__hide-modal--body": {
-    "messageformat": "Cacher la Story ? Les nouvelles mises à jour des Stories de {name} n’apparaîtront plus en haut de la liste des Stories."
+    "messageformat": "Masquer la story ? Les nouveaux contenus postés dans la story de {name} ne s’afficheront plus en haut de la liste des stories."
   },
   "icu:StoryListItem__hide-modal--confirm": {
-    "messageformat": "Cacher"
+    "messageformat": "Masquer"
   },
   "icu:StoryImage__error2": {
     "messageformat": "Impossible de télécharger la Story. {name} devra la partager à nouveau."
@@ -5043,10 +5082,10 @@
     "messageformat": "La vidéo ne peut pas être publiée dans la Story, car son format n’est pas pris en charge"
   },
   "icu:StoryCreator__error--video-too-long": {
-    "messageformat": "{maxDurationInSec, plural, one {Impossible de poster la vidéo dans la Story car elle dure plus de 1 seconde.} other {Impossible de poster la vidéo dans la Story car elle dure plus de {maxDurationInSec,number} secondes.}}"
+    "messageformat": "{maxDurationInSec, plural, one {Impossible de publier la vidéo dans la story, car elle dure plus de {maxDurationInSec,number} seconde.} other {Impossible de publier la vidéo dans la story, car elle dure plus de {maxDurationInSec,number} secondes.}}"
   },
   "icu:StoryCreator__error--video-too-big": {
-    "messageformat": "Impossible de poster la vidéo dans la Story car elle est plus lourde que {limit,number} {units}."
+    "messageformat": "La vidéo dépasse la limite de {limit,number} {units} : impossible de la publier dans la story."
   },
   "icu:StoryCreator__error--video-error": {
     "messageformat": "Impossible de charger la vidéo"
@@ -5097,10 +5136,10 @@
     "messageformat": "Ajouter un lien pour les spectateurs de votre Story"
   },
   "icu:Stories__failed-send--full": {
-    "messageformat": "Échec de l’envoi de la Story"
+    "messageformat": "Impossible d’envoyer la story"
   },
   "icu:Stories__failed-send--partial": {
-    "messageformat": "La Story n’a pas pu être envoyée à tous les destinataires"
+    "messageformat": "Impossible d’envoyer cette story à certains destinataires."
   },
   "icu:TextAttachment__placeholder": {
     "messageformat": "Ajouter du texte"
@@ -5112,22 +5151,22 @@
     "messageformat": "Story"
   },
   "icu:Quote__story-reaction": {
-    "messageformat": "A réagi à une Story de {name}"
+    "messageformat": "a réagi à une story de {name}"
   },
   "icu:Quote__story-reaction--you": {
-    "messageformat": "a réagi à votre Story"
+    "messageformat": "a réagi à votre story"
   },
   "icu:Quote__story-reaction--single": {
-    "messageformat": "A réagi à une Story"
+    "messageformat": "a réagi à une story"
   },
   "icu:Quote__story-reaction-notification--incoming": {
-    "messageformat": "A réagi par {emoji} à votre Story"
+    "messageformat": "a réagi par {emoji} à votre story"
   },
   "icu:Quote__story-reaction-notification--outgoing": {
-    "messageformat": "Vous avez réagi par {emoji} à une Story de {name}"
+    "messageformat": "Vous avez réagi par {emoji} à une story de {name}"
   },
   "icu:Quote__story-reaction-notification--outgoing--nameless": {
-    "messageformat": "Vous avez réagi par {emoji} à une Story"
+    "messageformat": "Vous avez réagi par {emoji} à une story"
   },
   "icu:Quote__story-unavailable": {
     "messageformat": "N’est plus proposée"
@@ -5293,7 +5332,7 @@
     "messageformat": "Journal d'appels vidé"
   },
   "icu:CallsTab__EmptyStateText": {
-    "messageformat": "Cliquer pour voir ou démarrer un onglet"
+    "messageformat": "Cliquer sur un appel pour l’afficher ou passer un nouvel appel"
   },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Rechercher"
@@ -5310,6 +5349,9 @@
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Aucun résultat pour « {query} »"
   },
+  "icu:CallsList__CreateCallLink": {
+    "messageformat": "Create a Call Link"
+  },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "Entrant"
   },
@@ -5325,11 +5367,29 @@
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Lien d’appel"
   },
+  "icu:CallsList__ItemCallInfo--Active": {
+    "messageformat": "Actif"
+  },
+  "icu:CallsList__LeaveCallDialogTitle": {
+    "messageformat": "Quitter l’appel en cours ?"
+  },
+  "icu:CallsList__LeaveCallDialogBody": {
+    "messageformat": "Pour rejoindre un nouvel appel, vous devez quitter l’appel en cours."
+  },
+  "icu:CallsList__LeaveCallDialogButton--leave": {
+    "messageformat": "Quitter l’appel"
+  },
   "icu:CallsNewCall__EmptyState--noQuery": {
     "messageformat": "Aucune conversation récente."
   },
   "icu:CallsNewCall__EmptyState--hasQuery": {
     "messageformat": "Aucun résultat pour « {query} »"
+  },
+  "icu:CallsNewCallButton--return": {
+    "messageformat": "Revenir"
+  },
+  "icu:CallsNewCallButtonTooltip--in-another-call": {
+    "messageformat": "Pour rejoindre un nouvel appel, quittez d’abord l’appel en cours."
   },
   "icu:CallHistory__Description--Default": {
     "messageformat": "{type, select, Audio {{direction, select, Outgoing {Appel vocal sortant} other {Appel vocal entrant}}} Video {{direction, select, Outgoing {Appel vidéo sortant} other {Appel vidéo entrant}}} Group {{direction, select, Outgoing {Appel de groupe sortant} other {Appel de groupe entrant}}} other {{direction, select, Outgoing {Appel sortant} other {Appel entrant}}}}"
@@ -5345,6 +5405,33 @@
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Lien d’appel"
+  },
+  "icu:CallLinkDetails__Join": {
+    "messageformat": "Rejoindre"
+  },
+  "icu:CallLinkDetails__CopyLink": {
+    "messageformat": "Copier le lien"
+  },
+  "icu:CallLinkDetails__ShareLinkViaSignal": {
+    "messageformat": "Partager le lien via Signal"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Call link details"
+  },
+  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
+    "messageformat": "Name"
+  },
+  "icu:CallLinkEditModal__JoinButtonLabel": {
+    "messageformat": "Join"
+  },
+  "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
+    "messageformat": "Approve all members"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
+    "messageformat": "Off"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
+    "messageformat": "On"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} autre personne est en train d’écrire.} other {{count,number} autres personnes sont en train d’écrire.}}"
@@ -5367,7 +5454,7 @@
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--2": {
-    "messageformat": "Plusieurs corrections de bugs ont été effectuées pour assurer le bon fonctionnement de votre application. D'autres changements passionnants sont à venir !",
+    "messageformat": "Nous avons corrigé différents bugs pour assurer le bon fonctionnement de votre application. D’autres changements passionnants se profilent à l’horizon.",
     "ignoreUnused": true
   },
   "icu:WhatsNew__bugfixes--3": {
@@ -5385,5 +5472,20 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Petits ajustements, corrections de bugs et améliorations des performances. Nous vous remercions d’utiliser Signal !",
     "ignoreUnused": true
+  },
+  "icu:WhatsNew__v7.12--0": {
+    "messageformat": "Vous rêviez d’un autre moyen de communiquer lors des appels de groupe ? La nouvelle fonctionnalité « Lever la main » est faite pour vous : elle vous permet d’attirer l’attention des participants, de poser des questions et même de voter pour prendre une décision en groupe."
+  },
+  "icu:WhatsNew__v7.12--1": {
+    "messageformat": "Adieu, le bug de l’outil de recadrage. Il devient bien plus simple de faire disparaître votre ex (ou votre belle-mère, ou l’ex de votre belle-mère…) de vos photos."
+  },
+  "icu:WhatsNew__v7.12--2": {
+    "messageformat": "Le raccourci clavier qui permet d’envoyer un message vocal devient Ctrl/Cmd+Maj+Y. Cela évite de le confondre avec le raccourci « Reproduire la mise en forme » sous Windows et Linux."
+  },
+  "icu:WhatsNew__v7.13--0": {
+    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  },
+  "icu:WhatsNew__v7.13--1": {
+    "messageformat": "This update also improves the display of quoted replies in RTL languages."
   }
 }

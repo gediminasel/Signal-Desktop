@@ -267,7 +267,11 @@ export class ChallengeHandler {
         data.options?.includes('recaptcha')
       )
     ) {
-      log.error(`${logId}: unexpected options ${JSON.stringify(data.options)}`);
+      const dataString = JSON.stringify(data.options);
+      log.error(
+        `${logId}: unexpected options ${dataString}. ${conversationId} is waiting.`
+      );
+      return;
     }
 
     if (!challenge.token) {
@@ -400,7 +404,11 @@ export class ChallengeHandler {
         `challenge(${reason}): challenge failure, error:`,
         Errors.toLogFormat(error)
       );
-      this.options.setChallengeStatus('required');
+      if (error.code === 413 || error.code === 429) {
+        this.options.setChallengeStatus('idle');
+      } else {
+        this.options.setChallengeStatus('required');
+      }
       this.solving -= 1;
       return;
     }

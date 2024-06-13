@@ -1,6 +1,6 @@
 {
   "icu:AddUserToAnotherGroupModal__title": {
-    "messageformat": "Legg til gruppen"
+    "messageformat": "Legg til i gruppen"
   },
   "icu:AddUserToAnotherGroupModal__confirm-title": {
     "messageformat": "Vil du legge til et nytt medlem?"
@@ -172,6 +172,9 @@
   },
   "icu:viewMenuToggleDevTools": {
     "messageformat": "Skru av/på Utviklerverktøy"
+  },
+  "icu:viewMenuOpenCallingDevTools": {
+    "messageformat": "Åpne utviklerverktøy for anrop"
   },
   "icu:menuSetupAsNewDevice": {
     "messageformat": "Sett Opp som Ny Enhet"
@@ -458,9 +461,6 @@
   "icu:joinAnyway": {
     "messageformat": "Bli med likevel"
   },
-  "icu:continueCall": {
-    "messageformat": "Fortsett samtale"
-  },
   "icu:debugLogExplanation": {
     "messageformat": "Når du klikker på Send inn, legges loggen din ut i 30 dager på en unik og upublisert nettadresse. Du kan også lagre den lokalt først."
   },
@@ -643,6 +643,12 @@
   },
   "icu:screenShareWindow": {
     "messageformat": "Skjermdeling"
+  },
+  "icu:callingDeveloperTools": {
+    "messageformat": "Utviklerverktøy for anrop"
+  },
+  "icu:callingDeveloperToolsDescription": {
+    "messageformat": "Dette vinduet viser utviklere diagnostikk fra pågående samtaler."
   },
   "icu:speech": {
     "messageformat": "Tale"
@@ -1033,6 +1039,9 @@
   },
   "icu:ChangeNumber--notification": {
     "messageformat": "{sender} har byttet telefonnummer."
+  },
+  "icu:JoinedSignal--notification": {
+    "messageformat": "Når kontakt installerer Signal"
   },
   "icu:ConversationMerge--notification": {
     "messageformat": "{obsoleteConversationTitle} og {conversationTitle} tilhører samme konto. Du finner meldingsloggene for begge samtalene her."
@@ -2363,18 +2372,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "Samtalen er merket som ulest"
   },
-  "icu:SendEdit--dialog--title2": {
-    "messageformat": "Rediger melding"
-  },
-  "icu:SendEdit--dialog--body2": {
-    "messageformat": "Hvis du redigerer en melding, vises endringen kun for personer som bruker den nyeste versjonen av Signal. De kan se at du redigerte en melding."
-  },
-  "icu:SendFormatting--dialog--title": {
-    "messageformat": "Sender formatert tekst"
-  },
-  "icu:SendFormatting--dialog--body": {
-    "messageformat": "Enkelte bruker en versjon av Signal som ikke støtter formatert tekst. De vil ikke kunne se den nye formateringen av meldingen."
-  },
   "icu:AuthArtCreator--dialog--message": {
     "messageformat": "Vil du åpne verktøyet for opprettelse av Signal-klistremerkepakker?"
   },
@@ -2691,7 +2688,13 @@
     "messageformat": "Ringing av"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "Du har rukket opp hånden."
+    "messageformat": "You raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-one": {
+    "messageformat": "You and {otherName} raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-more": {
+    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} rakk opp hånden."
@@ -2782,6 +2785,21 @@
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "Fjern personen fra samtalen"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel": {
+    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
+    "messageformat": "+{count,number} more"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
+    "messageformat": "More info about new contacts"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
+    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
+    "messageformat": "Got it"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -3761,6 +3779,9 @@
   "icu:DeleteMessagesModal--description--noteToSelf": {
     "messageformat": "{count, plural, one {Hvilke enheter vil du at meldingen skal slettes fra?} other {Hvilke enheter vil du at meldingene skal slettes fra?}}"
   },
+  "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
+    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+  },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "Slett for meg"
   },
@@ -3772,6 +3793,9 @@
   },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "Slett fra alle enhetene"
+  },
+  "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
+    "messageformat": "Delete"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {Du kan slette opptil {count,number} melding om gangen} other {Du kan slette opptil {count,number} meldinger om gangen}}"
@@ -3866,11 +3890,17 @@
   "icu:ForwardMessageModal__title": {
     "messageformat": "Videresend til"
   },
+  "icu:ForwardMessageModal__ShareCallLink": {
+    "messageformat": "Del anropslenke"
+  },
   "icu:ForwardMessageModal--continue": {
     "messageformat": "Fortsett"
   },
   "icu:ForwardMessagesModal__toast--CannotForwardEmptyMessage": {
     "messageformat": "Det er ikke mulig å videresende meldinger som er tomme eller slettet"
+  },
+  "icu:ShareCallLinkViaSignal__DraftMessageText": {
+    "messageformat": "Bruk denne lenken for å bli med i en Signal-samtale: {url}"
   },
   "icu:MessageRequestWarning__learn-more": {
     "messageformat": "Lær mer"
@@ -4167,7 +4197,7 @@
     "messageformat": "Brukernavn kan ikke begynne med et tall."
   },
   "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Brukernavn må ha minst {min,number} tegn."
+    "messageformat": "Usernames must have at least {min,number} characters."
   },
   "icu:ProfileEditor--username--check-character-max": {
     "messageformat": "Brukernavn kan ha maks. {max,number} tegn."
@@ -4347,7 +4377,7 @@
     "messageformat": "Gjør emoticons om til emojier"
   },
   "icu:Preferences__auto-convert-emoji--description": {
-    "messageformat": "Eks: :-) blir gjort om til 🙂"
+    "messageformat": "Eks: :-) blir gjort om til <emojify>🙂</emojify>"
   },
   "icu:Preferences--advanced": {
     "messageformat": "Avansert"
@@ -4717,6 +4747,15 @@
   },
   "icu:SignalConnectionsModal__footer": {
     "messageformat": "Kontaktene dine kan se navnet og profilbildet ditt, i tillegg til det du deler på Min story, med mindre du skjuler det for dem"
+  },
+  "icu:LocalDeleteWarningModal__header": {
+    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+  },
+  "icu:LocalDeleteWarningModal__description": {
+    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+  },
+  "icu:LocalDeleteWarningModal__confirm": {
+    "messageformat": "Got it"
   },
   "icu:Stories__title": {
     "messageformat": "Storyer"
@@ -5310,6 +5349,9 @@
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "«{query}» ga ingen resultater"
   },
+  "icu:CallsList__CreateCallLink": {
+    "messageformat": "Create a Call Link"
+  },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "Innkommende"
   },
@@ -5325,11 +5367,29 @@
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Samtalelenke"
   },
+  "icu:CallsList__ItemCallInfo--Active": {
+    "messageformat": "Aktiv"
+  },
+  "icu:CallsList__LeaveCallDialogTitle": {
+    "messageformat": "Vil du forlate samtalen?"
+  },
+  "icu:CallsList__LeaveCallDialogBody": {
+    "messageformat": "Du må forlate denne samtalen før du kan bli med i en annen."
+  },
+  "icu:CallsList__LeaveCallDialogButton--leave": {
+    "messageformat": "Forlat samtalen"
+  },
   "icu:CallsNewCall__EmptyState--noQuery": {
     "messageformat": "Ingen nylige samtaler."
   },
   "icu:CallsNewCall__EmptyState--hasQuery": {
     "messageformat": "«{query}» ga ingen resultater"
+  },
+  "icu:CallsNewCallButton--return": {
+    "messageformat": "Tilbake"
+  },
+  "icu:CallsNewCallButtonTooltip--in-another-call": {
+    "messageformat": "Du må forlate denne samtalen før du kan bli med i en annen"
   },
   "icu:CallHistory__Description--Default": {
     "messageformat": "{type, select, Audio {{direction, select, Outgoing {Utgående taleanrop} other {Innkommende taleanrop}}} Video {{direction, select, Outgoing {Utgående videosamtale} other {Innkommende videosamtale}}} Group {{direction, select, Outgoing {Utgående gruppeanrop} other {Innkommende gruppeanrop}}} other {{direction, select, Outgoing {Utgående anrop} other {Innkommende anrop}}}}"
@@ -5345,6 +5405,33 @@
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Samtalelenke"
+  },
+  "icu:CallLinkDetails__Join": {
+    "messageformat": "Bli med"
+  },
+  "icu:CallLinkDetails__CopyLink": {
+    "messageformat": "Kopier lenken"
+  },
+  "icu:CallLinkDetails__ShareLinkViaSignal": {
+    "messageformat": "Del lenken via Signal"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Call link details"
+  },
+  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
+    "messageformat": "Name"
+  },
+  "icu:CallLinkEditModal__JoinButtonLabel": {
+    "messageformat": "Join"
+  },
+  "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
+    "messageformat": "Approve all members"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
+    "messageformat": "Off"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
+    "messageformat": "On"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} annen person skriver.} other {{count,number} andre personer skriver.}}"
@@ -5385,5 +5472,20 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Noen små justeringer, feilrettinger og ytelsesforbedringer. Takk for at du bruker Signal!",
     "ignoreUnused": true
+  },
+  "icu:WhatsNew__v7.12--0": {
+    "messageformat": "Nå kan du rekke opp hånden for å stille spørsmål eller be om oppmerksomheten i gruppesamtaler."
+  },
+  "icu:WhatsNew__v7.12--1": {
+    "messageformat": "Vi har også gjort beskjæringsverktøyet for bilder litt bedre i denne oppdateringen."
+  },
+  "icu:WhatsNew__v7.12--2": {
+    "messageformat": "I tillegg har vi byttet ut hurtigtasten for å sende talenotater, slik at den ikke er den samme som snarveien for «lim inn og matche stil» i Windows og Linux. Den nye hurtigtasten er Ctrl/Cmd+Shift+Y."
+  },
+  "icu:WhatsNew__v7.13--0": {
+    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  },
+  "icu:WhatsNew__v7.13--1": {
+    "messageformat": "This update also improves the display of quoted replies in RTL languages."
   }
 }

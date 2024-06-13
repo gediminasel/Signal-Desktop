@@ -42,7 +42,6 @@ import { missingCaseError } from '../../util/missingCaseError';
 import { useAudioPlayerActions } from '../ducks/audioPlayer';
 import { getActiveCall, useCallingActions } from '../ducks/calling';
 import type { ConversationType } from '../ducks/conversations';
-import { useToastActions } from '../ducks/toast';
 import type { StateType } from '../reducer';
 import { getHasInitialLoadCompleted } from '../selectors/app';
 import {
@@ -55,6 +54,7 @@ import { getIntl } from '../selectors/user';
 import { SmartCallingDeviceSelection } from './CallingDeviceSelection';
 import { renderEmojiPicker } from './renderEmojiPicker';
 import { renderReactionPicker } from './renderReactionPicker';
+import { isSharingPhoneNumberWithEverybody as getIsSharingPhoneNumberWithEverybody } from '../../util/phoneNumberSharingMode';
 
 function renderDeviceSelection(): JSX.Element {
   return <SmartCallingDeviceSelection />;
@@ -453,7 +453,6 @@ export const SmartCallManager = memo(function SmartCallManager() {
     toggleScreenRecordingPermissionsDialog,
     toggleSettings,
   } = useCallingActions();
-  const { showToast } = useToastActions();
   const { pauseVoiceNotePlayer } = useAudioPlayerActions();
 
   return (
@@ -471,6 +470,9 @@ export const SmartCallManager = memo(function SmartCallManager() {
       declineCall={declineCall}
       denyUser={denyUser}
       getGroupCallVideoFrameSource={getGroupCallVideoFrameSource}
+      getIsSharingPhoneNumberWithEverybody={
+        getIsSharingPhoneNumberWithEverybody
+      }
       getPresentingSources={getPresentingSources}
       hangUpActiveCall={hangUpActiveCall}
       hasInitialLoadCompleted={hasInitialLoadCompleted}
@@ -497,7 +499,6 @@ export const SmartCallManager = memo(function SmartCallManager() {
       setOutgoingRing={setOutgoingRing}
       setPresenting={setPresenting}
       setRendererCanvas={setRendererCanvas}
-      showToast={showToast}
       startCall={startCall}
       stopRingtone={stopRingtone}
       switchFromPresentationView={switchFromPresentationView}

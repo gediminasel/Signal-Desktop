@@ -14,7 +14,6 @@ import PQueue from 'p-queue';
 import { v4 as getGuid } from 'uuid';
 import { z } from 'zod';
 import type { Readable } from 'stream';
-import type { connection as WebSocket } from 'websocket';
 
 import { Net } from '@signalapp/libsignal-client';
 import { assertDev, strictAssert } from '../util/assert';
@@ -83,7 +82,7 @@ const DEFAULT_TIMEOUT = 30 * SECOND;
 // (and other connectivity params) of the services.
 function resolveLibsignalNetEnvironment(
   appEnv: Environment,
-  libsignalNetEnv: string | undefined
+  url: string
 ): Net.Environment {
   switch (appEnv) {
     case Environment.Production:
@@ -92,12 +91,10 @@ function resolveLibsignalNetEnvironment(
       // In the case of the `Development` Desktop env,
       // we should be checking the provided string value
       // of `libsignalNetEnv`
-      switch (libsignalNetEnv) {
-        case 'production':
-          return Net.Environment.Production;
-        default:
-          return Net.Environment.Staging;
+      if (/staging/i.test(url)) {
+        return Net.Environment.Staging;
       }
+      return Net.Environment.Production;
     case Environment.Test:
     case Environment.Staging:
     default:
@@ -540,7 +537,7 @@ function makeHTTPError(
 
 const URL_CALLS = {
   accountExistence: 'v1/accounts/account',
-  attachmentId: 'v3/attachments/form/upload',
+  attachmentUploadForm: 'v3/attachments/form/upload',
   attestation: 'v1/attestation',
   batchIdentityCheck: 'v1/profile/identity_check/batch',
   challenge: 'v1/challenge',
@@ -554,7 +551,6 @@ const URL_CALLS = {
   getOnboardingStoryManifest:
     'dynamic/desktop/stories/onboarding/manifest.json',
   getStickerPackUpload: 'v1/sticker/pack/form',
-  getArtAuth: 'v1/art/auth',
   getBackupCredentials: 'v1/archives/auth',
   getBackupCDNCredentials: 'v1/archives/auth/read',
   getBackupUploadForm: 'v1/archives/upload/form',
@@ -574,6 +570,7 @@ const URL_CALLS = {
   backupMedia: 'v1/archives/media',
   backupMediaBatch: 'v1/archives/media/batch',
   backupMediaDelete: 'v1/archives/media/delete',
+  callLinkCreateAuth: 'v1/call-link/create-auth',
   registration: 'v1/registration',
   registerCapabilities: 'v1/devices/capabilities',
   reportMessage: 'v1/messages/report',
@@ -606,7 +603,7 @@ const WEBSOCKET_CALLS = new Set<keyof typeof URL_CALLS>([
   'profile',
 
   // AttachmentControllerV3
-  'attachmentId',
+  'attachmentUploadForm',
 
   // RemoteConfigController
   'config',
@@ -647,7 +644,6 @@ type InitializeOptionsType = {
   storageUrl: string;
   updatesUrl: string;
   resourcesUrl: string;
-  artCreatorUrl: string;
   cdnUrlObject: {
     readonly '0': string;
     readonly [propName: string]: string;
@@ -657,7 +653,6 @@ type InitializeOptionsType = {
   proxyUrl: string | undefined;
   version: string;
   directoryConfig: DirectoryConfigType;
-  libsignalNetEnvironment: string | undefined;
   disableIPv6: boolean;
 };
 
@@ -672,7 +667,7 @@ type AjaxOptionsType = {
   basicAuth?: string;
   call: keyof typeof URL_CALLS;
   contentType?: string;
-  data?: Uint8Array | Buffer | Uint8Array | string;
+  data?: Buffer | Uint8Array | string;
   disableSessionResumption?: boolean;
   headers?: HeaderListType;
   host?: string;
@@ -730,14 +725,22 @@ export type GetGroupLogOptionsType = Readonly<{
   includeFirstState: boolean;
   includeLastState: boolean;
   maxSupportedChangeEpoch: number;
+  cachedEndorsementsExpiration: number | null; // seconds
 }>;
 export type GroupLogResponseType = {
-  currentRevision?: number;
-  start?: number;
-  end?: number;
   changes: Proto.GroupChanges;
   groupSendEndorsementResponse: Uint8Array | null;
-};
+} & (
+  | {
+      paginated: false;
+    }
+  | {
+      paginated: true;
+      currentRevision: number;
+      start: number;
+      end: number;
+    }
+);
 
 export type ProfileRequestDataType = {
   about: string | null;
@@ -975,13 +978,6 @@ export type ReportMessageOptionsType = Readonly<{
   token?: string;
 }>;
 
-const artAuthZod = z.object({
-  username: z.string(),
-  password: z.string(),
-});
-
-export type ArtAuthType = z.infer<typeof artAuthZod>;
-
 const attachmentV3Response = z.object({
   cdn: z.literal(2).or(z.literal(3)),
   key: z.string(),
@@ -1064,6 +1060,10 @@ export const backupMediaBatchResponseSchema = z.object({
       cdn: z.number(),
       mediaId: z.string(),
     })
+    .transform(response => ({
+      ...response,
+      isSuccess: isSuccess(response.status),
+    }))
     .array(),
 });
 
@@ -1149,6 +1149,31 @@ export type GetBackupInfoResponseType = z.infer<
   typeof getBackupInfoResponseSchema
 >;
 
+export type CallLinkCreateAuthResponseType = Readonly<{
+  credential: string;
+}>;
+
+export const callLinkCreateAuthResponseSchema = z.object({
+  credential: z.string(),
+}) satisfies z.ZodSchema<CallLinkCreateAuthResponseType>;
+
+const StickerPackUploadAttributesSchema = z.object({
+  acl: z.string(),
+  algorithm: z.string(),
+  credential: z.string(),
+  date: z.string(),
+  id: z.number(),
+  key: z.string(),
+  policy: z.string(),
+  signature: z.string(),
+});
+
+const StickerPackUploadFormSchema = z.object({
+  packId: z.string(),
+  manifest: StickerPackUploadAttributesSchema,
+  stickers: z.array(StickerPackUploadAttributesSchema),
+});
+
 export type WebAPIType = {
   startRegistration(): unknown;
   finishRegistration(baton: unknown): void;
@@ -1166,7 +1191,6 @@ export type WebAPIType = {
     version: string,
     imageFiles: Array<string>
   ) => Promise<Array<Uint8Array>>;
-  getArtAuth: () => Promise<ArtAuthType>;
   getAttachmentFromBackupTier: (args: {
     mediaId: string;
     backupDir: string;
@@ -1186,6 +1210,7 @@ export type WebAPIType = {
       timeout?: number;
     };
   }) => Promise<Readable>;
+  getAttachmentUploadForm: () => Promise<AttachmentV3ResponseType>;
   getAvatar: (path: string) => Promise<Uint8Array>;
   getHasSubscription: (subscriberId: Uint8Array) => Promise<boolean>;
   getGroup: (options: GroupCredentialsType) => Promise<Proto.IGroupResponse>;
@@ -1237,7 +1262,6 @@ export type WebAPIType = {
   getProvisioningResource: (
     handler: IRequestHandler
   ) => Promise<IWebSocketResource>;
-  getArtProvisioningSocket: (token: string) => Promise<WebSocket>;
   getSenderCertificate: (
     withUuid?: boolean
   ) => Promise<GetSenderCertificateResultType>;
@@ -1274,13 +1298,16 @@ export type WebAPIType = {
   postBatchIdentityCheck: (
     elements: VerifyServiceIdRequestType
   ) => Promise<VerifyServiceIdResponseType>;
-  putEncryptedAttachment: (encryptedBin: Uint8Array) => Promise<string>;
+  putEncryptedAttachment: (
+    encryptedBin: Uint8Array | Readable,
+    uploadForm: AttachmentV3ResponseType
+  ) => Promise<void>;
   putProfile: (
     jsonData: ProfileRequestDataType
   ) => Promise<UploadAvatarHeadersType | undefined>;
   putStickers: (
     encryptedManifest: Uint8Array,
-    encryptedStickers: Array<Uint8Array>,
+    encryptedStickers: ReadonlyArray<Uint8Array>,
     onProgress?: () => void
   ) => Promise<string>;
   reserveUsername: (
@@ -1366,6 +1393,9 @@ export type WebAPIType = {
     options: BackupListMediaOptionsType
   ) => Promise<BackupListMediaResponseType>;
   backupDeleteMedia: (options: BackupDeleteMediaOptionsType) => Promise<void>;
+  callLinkCreateAuth: (
+    requestBase64: string
+  ) => Promise<CallLinkCreateAuthResponseType>;
   setPhoneNumberDiscoverability: (newValue: boolean) => Promise<void>;
   updateDeviceName: (deviceName: string) => Promise<void>;
   uploadAvatar: (
@@ -1471,14 +1501,12 @@ export function initialize({
   storageUrl,
   updatesUrl,
   resourcesUrl,
-  artCreatorUrl,
   directoryConfig,
   cdnUrlObject,
   certificateAuthority,
   contentProxyUrl,
   proxyUrl,
   version,
-  libsignalNetEnvironment,
   disableIPv6,
 }: InitializeOptionsType): WebAPIConnectType {
   if (!isString(url)) {
@@ -1492,9 +1520,6 @@ export function initialize({
   }
   if (!isString(resourcesUrl)) {
     throw new Error('WebAPI.initialize: Invalid updatesUrl (general)');
-  }
-  if (!isString(artCreatorUrl)) {
-    throw new Error('WebAPI.initialize: Invalid artCreatorUrl');
   }
   if (!isObject(cdnUrlObject)) {
     throw new Error('WebAPI.initialize: Invalid cdnUrlObject');
@@ -1525,12 +1550,9 @@ export function initialize({
   // for providing network layer API and related functionality.
   // It's important to have a single instance of this class as it holds
   // resources that are shared across all other use cases.
-  const env = resolveLibsignalNetEnvironment(
-    getEnvironment(),
-    libsignalNetEnvironment
-  );
+  const env = resolveLibsignalNetEnvironment(getEnvironment(), url);
   log.info(`libsignal net environment resolved to [${Net.Environment[env]}]`);
-  const libsignalNet = new Net.Net(env);
+  const libsignalNet = new Net.Net(env, getUserAgent(version));
   libsignalNet.setIpv6Enabled(!disableIPv6);
 
   // Thanks to function-hoisting, we can put this return statement before all of the
@@ -1558,7 +1580,6 @@ export function initialize({
 
     const socketManager = new SocketManager(libsignalNet, {
       url,
-      artCreatorUrl,
       certificateAuthority,
       version,
       proxyUrl,
@@ -1657,6 +1678,7 @@ export function initialize({
       checkAccountExistence,
       checkSockets,
       createAccount,
+      callLinkCreateAuth,
       createFetchForAttachmentUpload,
       confirmUsername,
       createGroup,
@@ -1667,10 +1689,9 @@ export function initialize({
       fetchLinkPreviewMetadata,
       finishRegistration,
       getAccountForUsername,
-      getArtAuth,
-      getArtProvisioningSocket,
       getAttachment,
       getAttachmentFromBackupTier,
+      getAttachmentUploadForm,
       getAvatar,
       getBackupCredentials,
       getBackupCDNCredentials,
@@ -2951,6 +2972,18 @@ export function initialize({
       return backupListMediaResponseSchema.parse(res);
     }
 
+    async function callLinkCreateAuth(
+      requestBase64: string
+    ): Promise<CallLinkCreateAuthResponseType> {
+      const response = await _ajax({
+        call: 'callLinkCreateAuth',
+        httpType: 'POST',
+        responseType: 'json',
+        jsonData: { createCallLinkCredentialRequest: requestBase64 },
+      });
+      return callLinkCreateAuthResponseSchema.parse(response);
+    }
+
     async function setPhoneNumberDiscoverability(newValue: boolean) {
       await _ajax({
         call: 'phoneNumberDiscoverability',
@@ -3309,20 +3342,19 @@ export function initialize({
 
     async function putStickers(
       encryptedManifest: Uint8Array,
-      encryptedStickers: Array<Uint8Array>,
+      encryptedStickers: ReadonlyArray<Uint8Array>,
       onProgress?: () => void
     ) {
       // Get manifest and sticker upload parameters
-      const { packId, manifest, stickers } = (await _ajax({
+      const formJson = await _ajax({
         call: 'getStickerPackUpload',
         responseType: 'json',
         httpType: 'GET',
         urlParameters: `/${encryptedStickers.length}`,
-      })) as {
-        packId: string;
-        manifest: ServerV2AttachmentType;
-        stickers: ReadonlyArray<ServerV2AttachmentType>;
-      };
+      });
+
+      const { packId, manifest, stickers } =
+        StickerPackUploadFormSchema.parse(formJson);
 
       // Upload manifest
       const manifestParams = makePutParams(manifest, encryptedManifest);
@@ -3475,16 +3507,21 @@ export function initialize({
       return combinedStream;
     }
 
-    async function putEncryptedAttachment(encryptedBin: Uint8Array) {
-      const response = attachmentV3Response.parse(
+    async function getAttachmentUploadForm() {
+      return attachmentV3Response.parse(
         await _ajax({
-          call: 'attachmentId',
+          call: 'attachmentUploadForm',
           httpType: 'GET',
           responseType: 'json',
         })
       );
+    }
 
-      const { signedUploadLocation, key: cdnKey, headers } = response;
+    async function putEncryptedAttachment(
+      encryptedBin: Uint8Array | Readable,
+      uploadForm: AttachmentV3ResponseType
+    ) {
+      const { signedUploadLocation, headers } = uploadForm;
 
       // This is going to the CDN, not the service, so we use _outerAjax
       const { response: uploadResponse } = await _outerAjax(
@@ -3527,8 +3564,6 @@ export function initialize({
           return `${tmp}[REDACTED]`;
         },
       });
-
-      return cdnKey;
     }
 
     function getHeaderPadding() {
@@ -3904,6 +3939,7 @@ export function initialize({
         includeFirstState,
         includeLastState,
         maxSupportedChangeEpoch,
+        cachedEndorsementsExpiration,
       } = options;
 
       // If we don't know starting revision - fetch it from the server
@@ -3938,8 +3974,7 @@ export function initialize({
         httpType: 'GET',
         responseType: 'byteswithdetails',
         headers: {
-          // TODO(jamie): To be implmented in DESKTOP-699
-          'Cached-Send-Endorsements': '0',
+          'Cached-Send-Endorsements': String(cachedEndorsementsExpiration ?? 0),
         },
         urlParameters:
           `/${startVersion}?` +
@@ -3966,6 +4001,7 @@ export function initialize({
           isNumber(currentRevision)
         ) {
           return {
+            paginated: true,
             changes,
             start,
             end,
@@ -3976,6 +4012,7 @@ export function initialize({
       }
 
       return {
+        paginated: false,
         changes,
         groupSendEndorsementResponse,
       };
@@ -4008,15 +4045,6 @@ export function initialize({
       return socketManager.getProvisioningResource(handler);
     }
 
-    function getArtProvisioningSocket(token: string): Promise<WebSocket> {
-      return socketManager.connectExternalSocket({
-        url: `${artCreatorUrl}/api/socket?token=${token}`,
-        extraHeaders: {
-          origin: artCreatorUrl,
-        },
-      });
-    }
-
     async function cdsLookup({
       e164s,
       acisAndAccessKeys = [],
@@ -4029,20 +4057,6 @@ export function initialize({
         returnAcisWithoutUaks,
         useLibsignal,
       });
-    }
-
-    //
-    // Art
-    //
-
-    async function getArtAuth(): Promise<ArtAuthType> {
-      const response = await _ajax({
-        call: 'getArtAuth',
-        httpType: 'GET',
-        responseType: 'json',
-      });
-
-      return artAuthZod.parse(response);
     }
   }
 }

@@ -31,6 +31,9 @@ import type {
 } from '../types/CallDisposition';
 import type { CallLinkStateType, CallLinkType } from '../types/CallLink';
 import type { AttachmentDownloadJobType } from '../types/AttachmentDownload';
+import type { GroupSendEndorsementsData } from '../types/GroupSendEndorsements';
+import type { SyncTaskType } from '../util/syncTasks';
+import type { AttachmentBackupJobType } from '../types/AttachmentBackup';
 
 export type AdjacentMessagesByConversationOptionsType = Readonly<{
   conversationId: string;
@@ -423,6 +426,12 @@ export type EditedMessageType = Readonly<{
   readStatus: MessageType['readStatus'];
 }>;
 
+export type BackupCdnMediaObjectType = {
+  mediaId: string;
+  cdnNumber: number;
+  sizeOnBackupCdn: number;
+};
+
 export type DataInterface = {
   close: () => Promise<void>;
   pauseWriteAccess(): Promise<void>;
@@ -526,6 +535,14 @@ export type DataInterface = {
     serviceId: ServiceIdString
   ) => Promise<Array<ConversationType>>;
 
+  replaceAllEndorsementsForGroup: (
+    data: GroupSendEndorsementsData
+  ) => Promise<void>;
+  deleteAllEndorsementsForGroup: (groupId: string) => Promise<void>;
+  getGroupSendCombinedEndorsementExpiration: (
+    groupId: string
+  ) => Promise<number | null>;
+
   getMessageCount: (conversationId?: string) => Promise<number>;
   getStoryCount: (conversationId: string) => Promise<number>;
   saveMessage: (
@@ -539,7 +556,7 @@ export type DataInterface = {
   saveMessages: (
     arrayOfMessages: ReadonlyArray<MessageType>,
     options: { forceSave?: boolean; ourAci: AciString }
-  ) => Promise<void>;
+  ) => Promise<Array<string>>;
   removeMessage: (id: string) => Promise<void>;
   removeMessages: (ids: ReadonlyArray<string>) => Promise<void>;
   pageMessages: (
@@ -694,7 +711,7 @@ export type DataInterface = {
   updateCallLinkState(
     roomId: string,
     callLinkState: CallLinkStateType
-  ): Promise<void>;
+  ): Promise<CallLinkType>;
   migrateConversationMessages: (
     obsoleteId: string,
     currentId: string
@@ -711,6 +728,20 @@ export type DataInterface = {
     ourAci: AciString,
     opts: EditedMessageType
   ) => Promise<void>;
+  saveEditedMessages: (
+    mainMessage: MessageType,
+    ourAci: AciString,
+    history: ReadonlyArray<EditedMessageType>
+  ) => Promise<void>;
+  getMostRecentAddressableMessages: (
+    conversationId: string,
+    limit?: number
+  ) => Promise<Array<MessageType>>;
+
+  removeSyncTaskById: (id: string) => Promise<void>;
+  saveSyncTasks: (tasks: Array<SyncTaskType>) => Promise<void>;
+  getAllSyncTasks: () => Promise<Array<SyncTaskType>>;
+
   getUnprocessedCount: () => Promise<number>;
   getUnprocessedByIdsAndIncrementAttempts: (
     ids: ReadonlyArray<string>
@@ -745,6 +776,22 @@ export type DataInterface = {
   removeAttachmentDownloadJob: (
     job: AttachmentDownloadJobType
   ) => Promise<void>;
+
+  getNextAttachmentBackupJobs: (options: {
+    limit: number;
+    timestamp?: number;
+  }) => Promise<Array<AttachmentBackupJobType>>;
+  saveAttachmentBackupJob: (job: AttachmentBackupJobType) => Promise<void>;
+  markAllAttachmentBackupJobsInactive: () => Promise<void>;
+  removeAttachmentBackupJob: (job: AttachmentBackupJobType) => Promise<void>;
+
+  clearAllBackupCdnObjectMetadata: () => Promise<void>;
+  saveBackupCdnObjectMetadata: (
+    mediaObjects: Array<BackupCdnMediaObjectType>
+  ) => Promise<void>;
+  getBackupCdnObjectMetadata: (
+    mediaId: string
+  ) => Promise<BackupCdnMediaObjectType | undefined>;
 
   createOrUpdateStickerPack: (pack: StickerPackType) => Promise<void>;
   updateStickerPackStatus: (
@@ -1038,10 +1085,11 @@ export type ClientExclusiveInterface = {
   // Client-side only
 
   shutdown: () => Promise<void>;
-  removeAllMessagesInConversation: (
+  removeMessagesInConversation: (
     conversationId: string,
     options: {
       logId: string;
+      receivedAt?: number;
     }
   ) => Promise<void>;
   removeOtherData: () => Promise<void>;

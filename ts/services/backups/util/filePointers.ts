@@ -7,22 +7,37 @@ import {
   APPLICATION_OCTET_STREAM,
   stringToMIMEType,
 } from '../../../types/MIME';
+import * as log from '../../../logging/log';
 import {
   type AttachmentType,
   isDownloadableFromTransitTier,
   isDownloadableFromBackupTier,
-  isDownloadedToLocalFile,
+  isAttachmentLocallySaved,
   type AttachmentDownloadableFromTransitTier,
   type AttachmentDownloadableFromBackupTier,
-  type DownloadedAttachment,
+  type LocallySavedAttachment,
   type AttachmentReadyForBackup,
+  isDecryptable,
+  isReencryptableToSameDigest,
 } from '../../../types/Attachment';
-import { Backups } from '../../../protobuf';
+import { Backups, SignalService } from '../../../protobuf';
 import * as Bytes from '../../../Bytes';
 import { getTimestampFromLong } from '../../../util/timestampLongUtils';
-import { getRandomBytes } from '../../../Crypto';
-import { encryptAttachmentV2 } from '../../../AttachmentCrypto';
+import {
+  encryptAttachmentV2,
+  generateAttachmentKeys,
+} from '../../../AttachmentCrypto';
 import { strictAssert } from '../../../util/assert';
+import type { CoreAttachmentBackupJobType } from '../../../types/AttachmentBackup';
+import {
+  type GetBackupCdnInfoType,
+  getMediaIdForAttachment,
+  getMediaIdFromMediaName,
+  getMediaNameForAttachment,
+} from './mediaId';
+import { redactGenericText } from '../../../util/privacy';
+import { missingCaseError } from '../../../util/missingCaseError';
+import { toLogFormat } from '../../../types/errors';
 
 export function convertFilePointerToAttachment(
   filePointer: Backups.FilePointer
@@ -110,58 +125,91 @@ export function convertFilePointerToAttachment(
   throw new Error('convertFilePointerToAttachment: mising locator');
 }
 
+export function convertBackupMessageAttachmentToAttachment(
+  messageAttachment: Backups.IMessageAttachment
+): AttachmentType | null {
+  if (!messageAttachment.pointer) {
+    return null;
+  }
+  const result = convertFilePointerToAttachment(messageAttachment.pointer);
+  switch (messageAttachment.flag) {
+    case Backups.MessageAttachment.Flag.VOICE_MESSAGE:
+      result.flags = SignalService.AttachmentPointer.Flags.VOICE_MESSAGE;
+      break;
+    case Backups.MessageAttachment.Flag.BORDERLESS:
+      result.flags = SignalService.AttachmentPointer.Flags.BORDERLESS;
+      break;
+    case Backups.MessageAttachment.Flag.GIF:
+      result.flags = SignalService.AttachmentPointer.Flags.GIF;
+      break;
+    case Backups.MessageAttachment.Flag.NONE:
+    case null:
+    case undefined:
+      result.flags = undefined;
+      break;
+    default:
+      throw missingCaseError(messageAttachment.flag);
+  }
+
+  return result;
+}
+
 /**
  * Some attachments saved on desktop do not include the key used to encrypt the file
  * originally. This means that we need to encrypt the file in-memory now (at
  * export-creation time) to calculate the digest which will be saved in the backup proto
  * along with the new keys.
  */
-async function fixupAttachmentForBackup(
-  attachment: DownloadedAttachment
+
+async function generateNewEncryptionInfoForAttachment(
+  attachment: Readonly<LocallySavedAttachment>
 ): Promise<AttachmentReadyForBackup> {
   const fixedUpAttachment = { ...attachment };
-  const keyToUse = attachment.key ?? Bytes.toBase64(getRandomBytes(64));
-  let digestToUse = attachment.key ? attachment.digest : undefined;
 
-  if (!digestToUse) {
-    // Delete current locators for the attachment; we can no longer use them and will need
-    // to fully re-encrypt and upload
-    delete fixedUpAttachment.cdnId;
-    delete fixedUpAttachment.cdnKey;
-    delete fixedUpAttachment.cdnNumber;
+  // Since we are changing the encryption, we need to delete all encryption & location
+  // related info
+  delete fixedUpAttachment.cdnId;
+  delete fixedUpAttachment.cdnKey;
+  delete fixedUpAttachment.cdnNumber;
+  delete fixedUpAttachment.backupLocator;
+  delete fixedUpAttachment.uploadTimestamp;
+  delete fixedUpAttachment.digest;
+  delete fixedUpAttachment.iv;
+  delete fixedUpAttachment.key;
 
-    // encrypt this file in memory in order to calculate the digest
-    const { digest } = await encryptAttachmentV2({
-      keys: Bytes.fromBase64(keyToUse),
-      plaintextAbsolutePath: window.Signal.Migrations.getAbsoluteAttachmentPath(
+  const keys = generateAttachmentKeys();
+
+  // encrypt this file without writing the ciphertext to disk in order to calculate the
+  // digest
+  const { digest, iv } = await encryptAttachmentV2({
+    keys,
+    plaintext: {
+      absolutePath: window.Signal.Migrations.getAbsoluteAttachmentPath(
         attachment.path
       ),
-    });
-
-    digestToUse = Bytes.toBase64(digest);
-
-    // TODO (DESKTOP-6688): ensure that we update the message/attachment in DB with the
-    // new keys so that we don't try to re-upload it again on the next export
-  }
+    },
+  });
 
   return {
     ...fixedUpAttachment,
-    key: keyToUse,
-    digest: digestToUse,
+    digest: Bytes.toBase64(digest),
+    iv: Bytes.toBase64(iv),
+    key: Bytes.toBase64(keys),
   };
 }
 
-export async function convertAttachmentToFilePointer({
+export async function getFilePointerForAttachment({
   attachment,
   backupLevel,
-  getBackupTierInfo,
+  getBackupCdnInfo,
 }: {
   attachment: AttachmentType;
   backupLevel: BackupLevel;
-  getBackupTierInfo: (
-    mediaName: string
-  ) => { isInBackupTier: true; cdnNumber: number } | { isInBackupTier: false };
-}): Promise<Backups.FilePointer> {
+  getBackupCdnInfo: GetBackupCdnInfoType;
+}): Promise<{
+  filePointer: Backups.FilePointer;
+  updatedAttachment?: AttachmentType;
+}> {
   const filePointerRootProps = new Backups.FilePointer({
     contentType: attachment.contentType,
     incrementalMac: attachment.incrementalMac
@@ -174,8 +222,21 @@ export async function convertAttachmentToFilePointer({
     caption: attachment.caption,
     blurHash: attachment.blurHash,
   });
+  const logId = `getFilePointerForAttachment(${redactGenericText(
+    attachment.digest ?? ''
+  )})`;
 
-  if (!isDownloadedToLocalFile(attachment)) {
+  if (attachment.size == null) {
+    log.warn(`${logId}: attachment had nullish size, dropping`);
+    return {
+      filePointer: new Backups.FilePointer({
+        ...filePointerRootProps,
+        invalidAttachmentLocator: getInvalidAttachmentLocator(),
+      }),
+    };
+  }
+
+  if (!isAttachmentLocallySaved(attachment)) {
     // 1. If the attachment is undownloaded, we cannot trust its digest / mediaName. Thus,
     // we only include a BackupLocator if this attachment already had one (e.g. we
     // restored it from a backup and it had a BackupLocator then, which means we have at
@@ -184,70 +245,130 @@ export async function convertAttachmentToFilePointer({
       isDownloadableFromBackupTier(attachment) &&
       backupLevel === BackupLevel.Media
     ) {
-      return new Backups.FilePointer({
-        ...filePointerRootProps,
-        backupLocator: getBackupLocator(attachment),
-      });
+      return {
+        filePointer: new Backups.FilePointer({
+          ...filePointerRootProps,
+          backupLocator: getBackupLocator(attachment),
+        }),
+      };
     }
 
     // 2. Otherwise, we only return the transit CDN info via AttachmentLocator
     if (isDownloadableFromTransitTier(attachment)) {
-      return new Backups.FilePointer({
-        ...filePointerRootProps,
-        attachmentLocator: getAttachmentLocator(attachment),
-      });
+      return {
+        filePointer: new Backups.FilePointer({
+          ...filePointerRootProps,
+          attachmentLocator: getAttachmentLocator(attachment),
+        }),
+      };
     }
+
+    // 3. Otherwise, we don't have the attachment, and we don't have info to download it
+    return {
+      filePointer: new Backups.FilePointer({
+        ...filePointerRootProps,
+        invalidAttachmentLocator: getInvalidAttachmentLocator(),
+      }),
+    };
   }
 
+  // The attachment is locally saved
   if (backupLevel !== BackupLevel.Media) {
+    // 1. If we have information to donwnload the file from the transit tier, great, let's
+    //    just create an attachmentLocator so the restorer can try to download from the
+    //    transit tier
     if (isDownloadableFromTransitTier(attachment)) {
-      return new Backups.FilePointer({
-        ...filePointerRootProps,
-        attachmentLocator: getAttachmentLocator(attachment),
-      });
+      return {
+        filePointer: new Backups.FilePointer({
+          ...filePointerRootProps,
+          attachmentLocator: getAttachmentLocator(attachment),
+        }),
+      };
     }
-    return new Backups.FilePointer({
+
+    // 2. Otherwise, we have the attachment locally, but we don't have information to put
+    //    in the backup proto to allow the restorer to download it. (This shouldn't
+    //    happen!)
+    log.warn(
+      `${logId}: Attachment is downloaded but we lack information to decrypt it`
+    );
+    return {
+      filePointer: new Backups.FilePointer({
+        ...filePointerRootProps,
+        invalidAttachmentLocator: getInvalidAttachmentLocator(),
+      }),
+    };
+  }
+
+  // Some attachments (e.g. those quoted ones copied from the original message) may not
+  // have any encryption info, including a digest.
+  if (attachment.digest) {
+    // From here on, this attachment is headed to (or already on) the backup tier!
+    const mediaNameForCurrentVersionOfAttachment =
+      getMediaNameForAttachment(attachment);
+
+    const backupCdnInfo = await getBackupCdnInfo(
+      getMediaIdFromMediaName(mediaNameForCurrentVersionOfAttachment).string
+    );
+
+    // We can generate a backupLocator for this mediaName iff
+    // 1. we have iv, key, and digest so we can re-encrypt to the existing digest when
+    //    uploading, or
+    // 2. the mediaId is already in the backup tier and we have the key & digest to
+    //    decrypt and verify it
+    if (
+      isReencryptableToSameDigest(attachment) ||
+      (backupCdnInfo.isInBackupTier && isDecryptable(attachment))
+    ) {
+      return {
+        filePointer: new Backups.FilePointer({
+          ...filePointerRootProps,
+          backupLocator: getBackupLocator({
+            ...attachment,
+            backupLocator: {
+              mediaName: mediaNameForCurrentVersionOfAttachment,
+              cdnNumber: backupCdnInfo.isInBackupTier
+                ? backupCdnInfo.cdnNumber
+                : undefined,
+            },
+          }),
+        }),
+      };
+    }
+  }
+
+  let attachmentWithNewEncryptionInfo: AttachmentReadyForBackup | undefined;
+  try {
+    log.info(`${logId}: Generating new encryption info for attachment`);
+    attachmentWithNewEncryptionInfo =
+      await generateNewEncryptionInfoForAttachment(attachment);
+  } catch (e) {
+    log.error(
+      `${logId}: Error when generating new encryption info for attachment`,
+      toLogFormat(e)
+    );
+
+    return {
+      filePointer: new Backups.FilePointer({
+        ...filePointerRootProps,
+        invalidAttachmentLocator: getInvalidAttachmentLocator(),
+      }),
+    };
+  }
+
+  return {
+    filePointer: new Backups.FilePointer({
       ...filePointerRootProps,
-      invalidAttachmentLocator: getInvalidAttachmentLocator(),
-    });
-  }
-
-  if (!isDownloadedToLocalFile(attachment)) {
-    return new Backups.FilePointer({
-      ...filePointerRootProps,
-      invalidAttachmentLocator: getInvalidAttachmentLocator(),
-    });
-  }
-
-  const attachmentForBackup = await fixupAttachmentForBackup(attachment);
-  const mediaName = getMediaNameForAttachment(attachmentForBackup);
-
-  const backupTierInfo = getBackupTierInfo(mediaName);
-  let cdnNumberInBackupTier: number | undefined;
-  if (backupTierInfo.isInBackupTier) {
-    cdnNumberInBackupTier = backupTierInfo.cdnNumber;
-  }
-
-  return new Backups.FilePointer({
-    ...filePointerRootProps,
-    backupLocator: getBackupLocator({
-      ...attachmentForBackup,
-      backupLocator: {
-        mediaName,
-        cdnNumber: cdnNumberInBackupTier,
-      },
+      backupLocator: getBackupLocator({
+        ...attachmentWithNewEncryptionInfo,
+        backupLocator: {
+          mediaName: getMediaNameForAttachment(attachmentWithNewEncryptionInfo),
+          cdnNumber: undefined,
+        },
+      }),
     }),
-  });
-}
-
-export function getMediaNameForAttachment(attachment: AttachmentType): string {
-  strictAssert(attachment.digest, 'Digest must be present');
-  return attachment.digest;
-}
-
-// mediaId is special in that it is encoded in base64url
-export function getBytesFromMediaId(mediaId: string): Uint8Array {
-  return Bytes.fromBase64url(mediaId);
+    updatedAttachment: attachmentWithNewEncryptionInfo,
+  };
 }
 
 function getAttachmentLocator(
@@ -279,4 +400,75 @@ function getBackupLocator(attachment: AttachmentDownloadableFromBackupTier) {
 
 function getInvalidAttachmentLocator() {
   return new Backups.FilePointer.InvalidAttachmentLocator();
+}
+
+export async function maybeGetBackupJobForAttachmentAndFilePointer({
+  attachment,
+  filePointer,
+  getBackupCdnInfo,
+  messageReceivedAt,
+}: {
+  attachment: AttachmentType;
+  filePointer: Backups.FilePointer;
+  getBackupCdnInfo: GetBackupCdnInfoType;
+  messageReceivedAt: number;
+}): Promise<CoreAttachmentBackupJobType | null> {
+  if (!filePointer.backupLocator) {
+    return null;
+  }
+
+  const mediaName = getMediaNameForAttachment(attachment);
+  strictAssert(mediaName, 'mediaName must exist');
+
+  const { isInBackupTier } = await getBackupCdnInfo(
+    getMediaIdForAttachment(attachment).string
+  );
+
+  if (isInBackupTier) {
+    return null;
+  }
+
+  strictAssert(
+    isReencryptableToSameDigest(attachment),
+    'Attachment must now have all required info for re-encryption'
+  );
+
+  strictAssert(
+    isAttachmentLocallySaved(attachment),
+    'Attachment must be saved locally for it to be backed up'
+  );
+
+  const {
+    path,
+    contentType,
+    key: keys,
+    digest,
+    iv,
+    size,
+    cdnKey,
+    cdnNumber,
+    uploadTimestamp,
+  } = attachment;
+
+  return {
+    mediaName,
+    receivedAt: messageReceivedAt,
+    type: 'standard',
+    data: {
+      path,
+      contentType,
+      keys,
+      digest,
+      iv,
+      size,
+      transitCdnInfo:
+        cdnKey && cdnNumber != null
+          ? {
+              cdnKey,
+              cdnNumber,
+              uploadTimestamp,
+            }
+          : undefined,
+    },
+  };
 }

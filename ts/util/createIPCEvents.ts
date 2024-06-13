@@ -16,11 +16,10 @@ import * as Errors from '../types/errors';
 import * as Stickers from '../types/Stickers';
 
 import type { ConversationType } from '../state/ducks/conversations';
-import type { AuthorizeArtCreatorDataType } from '../state/ducks/globalModals';
 import { calling } from '../services/calling';
 import { resolveUsernameByLinkBase64 } from '../services/username';
 import { writeProfile } from '../services/writeProfile';
-import { isInCall as getIsInCall } from '../state/selectors/calling';
+import { isInCall } from '../state/selectors/calling';
 import { getConversationsWithCustomColorSelector } from '../state/selectors/conversations';
 import { getCustomColors } from '../state/selectors/items';
 import { themeChanged } from '../shims/themeChanged';
@@ -96,7 +95,6 @@ export type IPCEventsValuesType = {
 };
 
 export type IPCEventsCallbacksType = {
-  openArtCreator(): Promise<void>;
   getAvailableIODevices(): Promise<{
     availableCameras: Array<
       Pick<MediaDeviceInfo, 'deviceId' | 'groupId' | 'kind' | 'label'>
@@ -106,7 +104,6 @@ export type IPCEventsCallbacksType = {
   }>;
   addCustomColor: (customColor: CustomColorType) => void;
   addDarkOverlay: () => void;
-  authorizeArtCreator: (data: AuthorizeArtCreatorDataType) => void;
   deleteAllData: () => Promise<void>;
   deleteAllMyStories: () => Promise<void>;
   editCustomColor: (colorId: string, customColor: CustomColorType) => void;
@@ -131,7 +128,8 @@ export type IPCEventsCallbacksType = {
   showGroupViaLink: (value: string) => Promise<void>;
   showReleaseNotes: () => void;
   showStickerPack: (packId: string, key: string) => void;
-  maybeRequestCloseConfirmation: () => Promise<boolean>;
+  requestCloseConfirmation: () => Promise<boolean>;
+  getIsInCall: () => boolean;
   shutdown: () => Promise<void>;
   unknownSignalLink: () => void;
   getCustomColors: () => Record<string, CustomColorType>;
@@ -141,6 +139,10 @@ export type IPCEventsCallbacksType = {
     customColor?: { id: string; value: CustomColorType }
   ) => void;
   getDefaultConversationColor: () => DefaultConversationColorType;
+  uploadStickerPack: (
+    manifest: Uint8Array,
+    stickers: ReadonlyArray<Uint8Array>
+  ) => Promise<string>;
 };
 
 type ValuesWithGetters = Omit<
@@ -239,15 +241,6 @@ export function createIPCEvents(
   };
 
   return {
-    openArtCreator: async () => {
-      const auth = await window.textsecure.server?.getArtAuth();
-      if (!auth) {
-        return;
-      }
-
-      window.openArtCreator(auth);
-    },
-
     getDeviceName: () => window.textsecure.storage.user.getDeviceName(),
     getPhoneNumber: () => {
       try {
@@ -530,14 +523,6 @@ export function createIPCEvents(
       });
       document.body.prepend(newOverlay);
     },
-    authorizeArtCreator: (data: AuthorizeArtCreatorDataType) => {
-      // We can get these events even if the user has never linked this instance.
-      if (!Registration.everDone()) {
-        log.warn('authorizeArtCreator: Not registered, returning early');
-        return;
-      }
-      window.reduxActions.globalModals.showAuthorizeArtCreator(data);
-    },
     removeDarkOverlay: () => {
       const elems = document.querySelectorAll('.dark-overlay');
 
@@ -648,12 +633,7 @@ export function createIPCEvents(
       showUnknownSgnlLinkModal();
     },
 
-    maybeRequestCloseConfirmation: async (): Promise<boolean> => {
-      const isInCall = getIsInCall(window.reduxStore.getState());
-      if (!isInCall) {
-        return true;
-      }
-
+    requestCloseConfirmation: async (): Promise<boolean> => {
       try {
         await new Promise<void>((resolve, reject) => {
           showConfirmationDialog({
@@ -671,18 +651,20 @@ export function createIPCEvents(
             resolve: () => resolve(),
           });
         });
-        log.info('Close confirmed by user.');
-        if (isInCall) {
-          window.reduxActions.calling.hangUpActiveCall(
-            'User confirmed in-call close.'
-          );
-        }
+        log.info('requestCloseConfirmation: Close confirmed by user.');
+        window.reduxActions.calling.hangUpActiveCall(
+          'User confirmed in-call close.'
+        );
 
         return true;
       } catch {
-        log.info('Close cancelled by user.');
+        log.info('requestCloseConfirmation: Close cancelled by user.');
         return false;
       }
+    },
+
+    getIsInCall: (): boolean => {
+      return isInCall(window.reduxStore.getState());
     },
 
     unknownSignalLink: () => {
@@ -715,6 +697,16 @@ export function createIPCEvents(
       if (playbackDisabled) {
         window.reduxActions?.audioPlayer.pauseVoiceNotePlayer();
       }
+    },
+
+    uploadStickerPack: (
+      manifest: Uint8Array,
+      stickers: ReadonlyArray<Uint8Array>
+    ): Promise<string> => {
+      strictAssert(window.textsecure.server, 'WebAPI must be available');
+      return window.textsecure.server.putStickers(manifest, stickers, () =>
+        ipcRenderer.send('art-creator:onUploadProgress')
+      );
     },
 
     ...overrideEvents,

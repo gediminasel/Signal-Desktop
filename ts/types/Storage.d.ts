@@ -79,6 +79,7 @@ export type StorageAccessType = {
   lastAttemptedToRefreshProfilesAt: number;
   lastResortKeyUpdateTime: number;
   lastResortKeyUpdateTimePNI: number;
+  localDeleteWarningShown: boolean;
   masterKey: string;
   masterKeyLastRequestTime: number;
   maxPreKeyId: number;
@@ -153,6 +154,8 @@ export type StorageAccessType = {
   areWeASubscriber: boolean;
   subscriberId: Uint8Array;
   subscriberCurrencyCode: string;
+  backupsSubscriberId: Uint8Array;
+  backupsSubscriberCurrencyCode: string;
   displayBadgesOnProfile: boolean;
   keepMutedChatsArchived: boolean;
   usernameLastIntegrityCheck: number;

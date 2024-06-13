@@ -33,7 +33,7 @@
     "messageformat": "Tayari ni mwanachama"
   },
   "icu:GroupListItem__message-pending": {
-    "messageformat": "Uanachama wake umesubirishwa"
+    "messageformat": "Uanachama wake unasubiri"
   },
   "icu:Preferences__sent-media-quality": {
     "messageformat": "Ubora wa media iliyotumwa"
@@ -172,6 +172,9 @@
   },
   "icu:viewMenuToggleDevTools": {
     "messageformat": "Zana za Kugura za Msanidi Programu"
+  },
+  "icu:viewMenuOpenCallingDevTools": {
+    "messageformat": "Fungua Zana za Usanidi Programu za Kupiga Simu"
   },
   "icu:menuSetupAsNewDevice": {
     "messageformat": "Weka kama Kifaa Kipya"
@@ -458,9 +461,6 @@
   "icu:joinAnyway": {
     "messageformat": "Jiunge hata hivyo"
   },
-  "icu:continueCall": {
-    "messageformat": "Endelea na Mazungumzo ya Simu"
-  },
   "icu:debugLogExplanation": {
     "messageformat": "Ukibonyeza Wasilisha, logi yako itachapishwa mtandaoni kwa siku 30 katika anuani ya URL ya kipekee ambayo haijachapishwa. Unaweza kuihifadhi kwenye simu kwanza."
   },
@@ -643,6 +643,12 @@
   },
   "icu:screenShareWindow": {
     "messageformat": "Kushiriki skrini"
+  },
+  "icu:callingDeveloperTools": {
+    "messageformat": "Zana za Wasanidi Programu za Kupiga Simu"
+  },
+  "icu:callingDeveloperToolsDescription": {
+    "messageformat": "Dirisha hili linatumika wakati wa usanidi ili kuonyesha matengenezo kutoka kwenye simu zinazoendelea."
   },
   "icu:speech": {
     "messageformat": "Hotuba"
@@ -1033,6 +1039,9 @@
   },
   "icu:ChangeNumber--notification": {
     "messageformat": "{sender} amebadili nambari yake ya simu"
+  },
+  "icu:JoinedSignal--notification": {
+    "messageformat": "Mwasiliani amejiunga na Signal"
   },
   "icu:ConversationMerge--notification": {
     "messageformat": "{obsoleteConversationTitle} na {conversationTitle} ni akaunti moja. Historia ya gumzo zote mbili zipo hapa."
@@ -2363,18 +2372,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "Gumzo limealamishwa haijasomwa"
   },
-  "icu:SendEdit--dialog--title2": {
-    "messageformat": "Hariri Ujumbe"
-  },
-  "icu:SendEdit--dialog--body2": {
-    "messageformat": "Ukihariri ujumbe, utaonekana kwa watu walio kwenye toleo jipya la Signal pekee. Wataweza kuona kuwa umehariri ujumbe."
-  },
-  "icu:SendFormatting--dialog--title": {
-    "messageformat": "Inatuma maandishi yaliyoumbizwa"
-  },
-  "icu:SendFormatting--dialog--body": {
-    "messageformat": "Huenda baadhi ya watu wanatumia toleo la Signal ambalo halitumii maandishi yaliyoumbizwa. Hawataweza kuona mabadiliko ya umbizo ambalo umefanya kwenye ujumbe wako."
-  },
   "icu:AuthArtCreator--dialog--message": {
     "messageformat": "Ungependa kufungua Signal Sticker Pack Creator?"
   },
@@ -2691,7 +2688,13 @@
     "messageformat": "Sauti ya kuitana imezimwa"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "Mkono wako umeinuliwa."
+    "messageformat": "You raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-one": {
+    "messageformat": "You and {otherName} raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-more": {
+    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} ameinua mkono."
@@ -2782,6 +2785,21 @@
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "Toa mtu huyu kwenye simu hii"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel": {
+    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
+    "messageformat": "+{count,number} more"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
+    "messageformat": "More info about new contacts"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
+    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
+    "messageformat": "Got it"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -3761,6 +3779,9 @@
   "icu:DeleteMessagesModal--description--noteToSelf": {
     "messageformat": "{count, plural, one {Ungependa kufuta ujumbe huu kutoka kwenye vifaa gani?} other {Ungependa kufuta jumbe hizi kutoka kwenye vifaa gani?}}"
   },
+  "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
+    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+  },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "Futa kwangu"
   },
@@ -3772,6 +3793,9 @@
   },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "Futa kwenye vifaa vyote"
+  },
+  "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
+    "messageformat": "Delete"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {Unaweza kuchagua hadi ujumbe {count,number} wa kufuta kwa kila mtu} other {Unaweza kuchagua hadi jumbe {count,number} za kufuta kwa kila mtu}}"
@@ -3866,11 +3890,17 @@
   "icu:ForwardMessageModal__title": {
     "messageformat": "Sambaza Kwa"
   },
+  "icu:ForwardMessageModal__ShareCallLink": {
+    "messageformat": "Shiriki kiungo cha Simu"
+  },
   "icu:ForwardMessageModal--continue": {
     "messageformat": "Endelea"
   },
   "icu:ForwardMessagesModal__toast--CannotForwardEmptyMessage": {
     "messageformat": "Huwezi kusambaza jumbe zisizopo au zilizofutwa"
+  },
+  "icu:ShareCallLinkViaSignal__DraftMessageText": {
+    "messageformat": "Tumia kiungo hiki ili kujiunga na simu ya Signal: {url}"
   },
   "icu:MessageRequestWarning__learn-more": {
     "messageformat": "Jifunze zaidi"
@@ -4167,7 +4197,7 @@
     "messageformat": "Majina ya watumiaji hayawezi kuanza kwa nambari."
   },
   "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Majina ya watumiaji yanatakiwa yawe na angalau herufi {min,number}."
+    "messageformat": "Usernames must have at least {min,number} characters."
   },
   "icu:ProfileEditor--username--check-character-max": {
     "messageformat": "Majina ya watumiaji yanatakiwa yasiwe na herufi zaidi ya {max,number}."
@@ -4347,7 +4377,7 @@
     "messageformat": "Badili emoticons zilizoandikwa kuwa emoji"
   },
   "icu:Preferences__auto-convert-emoji--description": {
-    "messageformat": "Kwa mfano, :-) itabadilika kuwa 🙂"
+    "messageformat": "Kwa mfano, :-) itabadilika kuwa <emojify>🙂</emojify>"
   },
   "icu:Preferences--advanced": {
     "messageformat": "ya juu"
@@ -4717,6 +4747,15 @@
   },
   "icu:SignalConnectionsModal__footer": {
     "messageformat": "Connections wako wanaweza kuona jina lako na picha, na wanaweza kuona \"Stori Yangu\" labda kama utawaficha"
+  },
+  "icu:LocalDeleteWarningModal__header": {
+    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+  },
+  "icu:LocalDeleteWarningModal__description": {
+    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+  },
+  "icu:LocalDeleteWarningModal__confirm": {
+    "messageformat": "Got it"
   },
   "icu:Stories__title": {
     "messageformat": "Stori"
@@ -5310,6 +5349,9 @@
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Hakuna matokeo ya \"{query}\""
   },
+  "icu:CallsList__CreateCallLink": {
+    "messageformat": "Create a Call Link"
+  },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "Simu Inayoingia"
   },
@@ -5325,11 +5367,29 @@
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Kiungo cha simu"
   },
+  "icu:CallsList__ItemCallInfo--Active": {
+    "messageformat": "Inaendelea"
+  },
+  "icu:CallsList__LeaveCallDialogTitle": {
+    "messageformat": "Sitisha simu hii?"
+  },
+  "icu:CallsList__LeaveCallDialogBody": {
+    "messageformat": "Ni lazima ukate simu hii kabla hujapiga simu mpya."
+  },
+  "icu:CallsList__LeaveCallDialogButton--leave": {
+    "messageformat": "Ondoka kwenye mazungumzo ya simu"
+  },
   "icu:CallsNewCall__EmptyState--noQuery": {
     "messageformat": "Hakuna mazungungumzo ya hivi karibuni."
   },
   "icu:CallsNewCall__EmptyState--hasQuery": {
     "messageformat": "Hakuna matokeo ya \"{query}\""
+  },
+  "icu:CallsNewCallButton--return": {
+    "messageformat": "Rudi"
+  },
+  "icu:CallsNewCallButtonTooltip--in-another-call": {
+    "messageformat": "Ni lazima ukate simu hii kabla hujapiga simu mpya"
   },
   "icu:CallHistory__Description--Default": {
     "messageformat": "{type, select, Audio {{direction, select, Outgoing {Simu ya kawaida uliyopiga} other {Simu ya kawaida inayopigwa}}} Video {{direction, select, Outgoing {Simu ya video uliyopiga} other {Simu ya video uliyopigiwa}}} Group {{direction, select, Outgoing {Kupiga simu ya kikundi} other {Simu ya kikundi inayopigwa}}} other {{direction, select, Outgoing {Simu inayotoka} other {Simu inaingia}}}}"
@@ -5345,6 +5405,33 @@
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Kiungo cha simu"
+  },
+  "icu:CallLinkDetails__Join": {
+    "messageformat": "Jiunge"
+  },
+  "icu:CallLinkDetails__CopyLink": {
+    "messageformat": "Nakili kiungo"
+  },
+  "icu:CallLinkDetails__ShareLinkViaSignal": {
+    "messageformat": "Shiriki kiungo kupitia Signal"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Call link details"
+  },
+  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
+    "messageformat": "Name"
+  },
+  "icu:CallLinkEditModal__JoinButtonLabel": {
+    "messageformat": "Join"
+  },
+  "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
+    "messageformat": "Approve all members"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
+    "messageformat": "Off"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
+    "messageformat": "On"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {Mwingine {count,number} anaandika.} other {Wengine {count,number} wanaandika.}}"
@@ -5385,5 +5472,20 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Mabadiliko madogo, marekebisho ya bugs na uboreshaji wa utendaji. Asante kwa kutumia Signal!",
     "ignoreUnused": true
+  },
+  "icu:WhatsNew__v7.12--0": {
+    "messageformat": "Inua mkono wako kama umekuwa ukitafuta njia nyingine ya kuwasiliana kwenye simu za vikundi. Kipengele kipya cha Inua Mkono ni njia rahisi ya kupata uzingativu wa mtu, kuuliza swali au kupiga kura kwa kauli moja kwa ajili ya pendekezo la kikundi pale rafiki yako anapouliza \"wote wanaounga mkono?\""
+  },
+  "icu:WhatsNew__v7.12--1": {
+    "messageformat": "Tumeondoa hitilafu kwenye zana ya kukata, sasa ni rahisi zaidi kumuondoa mpenzi wako wa zamani (au kitu kingine chochote) kwenye picha hii."
+  },
+  "icu:WhatsNew__v7.12--2": {
+    "messageformat": "Tumerekebisha njia za mkato za kibodi ya kutuma kidokezo kwa Ctrl/Cmd+Shift+Y ili isigongane tena na njia ya mkato ya \"Bandika na Ulinganishe\" kwenye Windows na Linux."
+  },
+  "icu:WhatsNew__v7.13--0": {
+    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  },
+  "icu:WhatsNew__v7.13--1": {
+    "messageformat": "This update also improves the display of quoted replies in RTL languages."
   }
 }

@@ -173,6 +173,9 @@
   "icu:viewMenuToggleDevTools": {
     "messageformat": "Ferramentas de desenvolvimento"
   },
+  "icu:viewMenuOpenCallingDevTools": {
+    "messageformat": "Abrir ferramentas de desenvolvimento de chamadas"
+  },
   "icu:menuSetupAsNewDevice": {
     "messageformat": "Configurar como Novo Aparelho"
   },
@@ -458,9 +461,6 @@
   "icu:joinAnyway": {
     "messageformat": "Entrar mesmo assim"
   },
-  "icu:continueCall": {
-    "messageformat": "Continuar a chamada"
-  },
   "icu:debugLogExplanation": {
     "messageformat": "Ao clicar no botão Enviar, seu registro será postado online por 30 dias via uma URL original e inédita. Você pode salvá-la localmente primeiro."
   },
@@ -643,6 +643,12 @@
   },
   "icu:screenShareWindow": {
     "messageformat": "Você está apresentando"
+  },
+  "icu:callingDeveloperTools": {
+    "messageformat": "Ferramentas de desenvolvimento de chamadas"
+  },
+  "icu:callingDeveloperToolsDescription": {
+    "messageformat": "Durante o desenvolvimento, esta janela mostra diagnósticos das chamadas em progresso."
   },
   "icu:speech": {
     "messageformat": "Fala"
@@ -1033,6 +1039,9 @@
   },
   "icu:ChangeNumber--notification": {
     "messageformat": "{sender} alterou o número de telefone"
+  },
+  "icu:JoinedSignal--notification": {
+    "messageformat": "O contato entrou no Signal"
   },
   "icu:ConversationMerge--notification": {
     "messageformat": "{obsoleteConversationTitle} e {conversationTitle} são a mesma conta. Seu histórico de mensagens dos dois chats está aqui."
@@ -2363,18 +2372,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "Chat marcado como não lido"
   },
-  "icu:SendEdit--dialog--title2": {
-    "messageformat": "Editar mensagem"
-  },
-  "icu:SendEdit--dialog--body2": {
-    "messageformat": "Se você editar uma mensagem, ela ficará visível para pessoas que estejam usando as versões mais recentes do Signal. Elas poderão ver que você editou a mensagem."
-  },
-  "icu:SendFormatting--dialog--title": {
-    "messageformat": "Enviando texto formatado"
-  },
-  "icu:SendFormatting--dialog--body": {
-    "messageformat": "É possível que algumas pessoas tenham uma versão do Signal não compatível com texto formatado. Essas pessoas não conseguirão ver as alterações de formatação que você fez na mensagem."
-  },
   "icu:AuthArtCreator--dialog--message": {
     "messageformat": "Gostaria de abrir o criador de pacotes de figurinhas do Signal?"
   },
@@ -2691,7 +2688,13 @@
     "messageformat": "Toque desligado"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "Sua mão está levantada."
+    "messageformat": "You raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-one": {
+    "messageformat": "You and {otherName} raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-more": {
+    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} levantou a mão."
@@ -2782,6 +2785,21 @@
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "Remover esta pessoa da chamada"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel": {
+    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
+    "messageformat": "+{count,number} more"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
+    "messageformat": "More info about new contacts"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
+    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
+    "messageformat": "Got it"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Vídeo"
@@ -3761,6 +3779,9 @@
   "icu:DeleteMessagesModal--description--noteToSelf": {
     "messageformat": "{count, plural, one {Em quais dispositivos você quer excluir essa mensagem?} other {Em quais dispositivos você quer excluir essas mensagens?}}"
   },
+  "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
+    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+  },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "Excluir para mim"
   },
@@ -3772,6 +3793,9 @@
   },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "Excluir de todos dispositivos"
+  },
+  "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
+    "messageformat": "Delete"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {Você só pode selecionar até {count,number} mensagem para excluir para todos} other {Você só pode selecionar até {count,number} mensagens para excluir para todos}}"
@@ -3866,11 +3890,17 @@
   "icu:ForwardMessageModal__title": {
     "messageformat": "Encaminhar para"
   },
+  "icu:ForwardMessageModal__ShareCallLink": {
+    "messageformat": "Compartilhar link da chamada"
+  },
   "icu:ForwardMessageModal--continue": {
     "messageformat": "Continuar"
   },
   "icu:ForwardMessagesModal__toast--CannotForwardEmptyMessage": {
     "messageformat": "Não é possível encaminhar mensagens vazias ou excluídas"
+  },
+  "icu:ShareCallLinkViaSignal__DraftMessageText": {
+    "messageformat": "Use este link para participar de uma chamada do Signal: {url}"
   },
   "icu:MessageRequestWarning__learn-more": {
     "messageformat": "Saiba mais"
@@ -4167,7 +4197,7 @@
     "messageformat": "Os nomes de usuários não podem começar com um número."
   },
   "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Os nomes de usuário devem ter pelo menos {min,number} caracteres."
+    "messageformat": "Usernames must have at least {min,number} characters."
   },
   "icu:ProfileEditor--username--check-character-max": {
     "messageformat": "Os nomes de usuário devem ter no máximo {max,number} caracteres."
@@ -4347,7 +4377,7 @@
     "messageformat": "Converter emoticons digitados em emoji"
   },
   "icu:Preferences__auto-convert-emoji--description": {
-    "messageformat": "Por exemplo, :-) será convertido para 🙂"
+    "messageformat": "Por exemplo, :-) será convertido para <emojify>🙂</emojify>"
   },
   "icu:Preferences--advanced": {
     "messageformat": "Avançadas"
@@ -4717,6 +4747,15 @@
   },
   "icu:SignalConnectionsModal__footer": {
     "messageformat": "Seus contatos conseguem ver seu nome, foto e publicações nos seus stories, a menos que você oculte esse conteúdo"
+  },
+  "icu:LocalDeleteWarningModal__header": {
+    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+  },
+  "icu:LocalDeleteWarningModal__description": {
+    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+  },
+  "icu:LocalDeleteWarningModal__confirm": {
+    "messageformat": "Got it"
   },
   "icu:Stories__title": {
     "messageformat": "Stories"
@@ -5310,6 +5349,9 @@
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Nenhum resultado encontrado para “{query}”"
   },
+  "icu:CallsList__CreateCallLink": {
+    "messageformat": "Create a Call Link"
+  },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "Recebida"
   },
@@ -5325,11 +5367,29 @@
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Link da chamada"
   },
+  "icu:CallsList__ItemCallInfo--Active": {
+    "messageformat": "Ativa"
+  },
+  "icu:CallsList__LeaveCallDialogTitle": {
+    "messageformat": "Sair da chamada atual?"
+  },
+  "icu:CallsList__LeaveCallDialogBody": {
+    "messageformat": "Você deve encerrar a chamada atual antes de entrar em uma nova chamada."
+  },
+  "icu:CallsList__LeaveCallDialogButton--leave": {
+    "messageformat": "Sair da chamada"
+  },
   "icu:CallsNewCall__EmptyState--noQuery": {
     "messageformat": "Nenhuma conversa recente."
   },
   "icu:CallsNewCall__EmptyState--hasQuery": {
     "messageformat": "Nenhum resultado encontrado para “{query}”"
+  },
+  "icu:CallsNewCallButton--return": {
+    "messageformat": "Retornar"
+  },
+  "icu:CallsNewCallButtonTooltip--in-another-call": {
+    "messageformat": "Você deve encerrar a chamada atual antes de entrar em uma nova chamada"
   },
   "icu:CallHistory__Description--Default": {
     "messageformat": "{type, select, Audio {{direction, select, Outgoing {Chamada de voz efetuada} other {Recebendo chamada de voz}}} Video {{direction, select, Outgoing {Chamada de vídeo efetuada} other {Chamada de vídeo recebida}}} Group {{direction, select, Outgoing {Chamada de grupo efetuada} other {Recebendo chamada de grupo}}} other {{direction, select, Outgoing {Fazendo chamada} other {Recebendo chamada}}}}"
@@ -5345,6 +5405,33 @@
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Link de chamada"
+  },
+  "icu:CallLinkDetails__Join": {
+    "messageformat": "Participar"
+  },
+  "icu:CallLinkDetails__CopyLink": {
+    "messageformat": "Copiar link"
+  },
+  "icu:CallLinkDetails__ShareLinkViaSignal": {
+    "messageformat": "Compartilhar link via Signal"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Call link details"
+  },
+  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
+    "messageformat": "Name"
+  },
+  "icu:CallLinkEditModal__JoinButtonLabel": {
+    "messageformat": "Join"
+  },
+  "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
+    "messageformat": "Approve all members"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
+    "messageformat": "Off"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
+    "messageformat": "On"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} outra pessoa está digitando.} other {{count,number} outras pessoas estão digitando.}}"
@@ -5385,5 +5472,20 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Pequenas alterações adicionais, correções de bugs e melhorias de desempenho. Agradecemos por usar o Signal!",
     "ignoreUnused": true
+  },
+  "icu:WhatsNew__v7.12--0": {
+    "messageformat": "Levante a mão se você estiver procurando outra maneira de se comunicar durante as chamadas em grupo. O recurso \"Levantar a Mão\" é perfeito para chamar a atenção de alguém, tirar dúvidas ou votar em grupo de forma unânime quando um amigo perguntar: 'Todos a favor?"
+  },
+  "icu:WhatsNew__v7.12--1": {
+    "messageformat": "Acabamos com um bug na ferramenta de recorte! Agora ficou mais fácil e intuitivo tirar seu ex (ou qualquer outra coisa) da foto."
+  },
+  "icu:WhatsNew__v7.12--2": {
+    "messageformat": "Modificamos o atalho de teclado de enviar mensagens de voz para Ctrl/Cmd+Shift+Y, evitando conflito com o atalho 'Colar e Manter Estilo' no Windows e Linux."
+  },
+  "icu:WhatsNew__v7.13--0": {
+    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  },
+  "icu:WhatsNew__v7.13--1": {
+    "messageformat": "This update also improves the display of quoted replies in RTL languages."
   }
 }

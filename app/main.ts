@@ -120,8 +120,6 @@ import { parseSignalRoute } from '../ts/util/signalRoutes';
 import * as dns from '../ts/util/dns';
 import { ZoomFactorService } from '../ts/services/ZoomFactorService';
 
-const STICKER_CREATOR_PARTITION = 'sticker-creator';
-
 const animationSettings = systemPreferences.getAnimationSettings();
 
 if (OS.isMacOS()) {
@@ -1000,21 +998,24 @@ ipc.handle('database-ready', async () => {
   getLogger().info('sending `database-ready`');
 });
 
-ipc.handle('get-art-creator-auth', () => {
-  const { promise, resolve } = explodePromise<unknown>();
-  strictAssert(mainWindow, 'Main window did not exist');
+ipc.handle(
+  'art-creator:uploadStickerPack',
+  (_event: Electron.Event, data: unknown) => {
+    const { promise, resolve } = explodePromise<unknown>();
+    strictAssert(mainWindow, 'Main window did not exist');
 
-  mainWindow.webContents.send('open-art-creator');
+    mainWindow.webContents.send('art-creator:uploadStickerPack', data);
 
-  ipc.handleOnce('open-art-creator', (_event, { username, password }) => {
-    resolve({
-      baseUrl: config.get<string>('artCreatorUrl'),
-      username,
-      password,
+    ipc.once('art-creator:uploadStickerPack:done', (_doneEvent, response) => {
+      resolve(response);
     });
-  });
 
-  return promise;
+    return promise;
+  }
+);
+
+ipc.on('art-creator:onUploadProgress', () => {
+  stickerCreatorWindow?.webContents.send('art-creator:onUploadProgress');
 });
 
 ipc.on('show-window', () => {
@@ -1234,6 +1235,67 @@ async function showScreenShareWindow(sourceName: string) {
     screenShareWindow,
     await prepareFileUrl([__dirname, '../screenShare.html'], { sourceName })
   );
+}
+
+let callingDevToolsWindow: BrowserWindow | undefined;
+async function showCallingDevToolsWindow() {
+  if (callingDevToolsWindow) {
+    callingDevToolsWindow.show();
+    return;
+  }
+
+  const options = {
+    height: 1200,
+    width: 1000,
+    alwaysOnTop: false,
+    autoHideMenuBar: true,
+    backgroundColor: '#ffffff',
+    darkTheme: false,
+    frame: true,
+    fullscreenable: true,
+    maximizable: true,
+    minimizable: true,
+    resizable: true,
+    show: false,
+    title: getResolvedMessagesLocale().i18n('icu:callingDeveloperTools'),
+    titleBarStyle: nonMainTitleBarStyle,
+    webPreferences: {
+      ...defaultWebPrefs,
+      nodeIntegration: false,
+      nodeIntegrationInWorker: false,
+      sandbox: true,
+      contextIsolation: true,
+      nativeWindowOpen: true,
+      preload: join(__dirname, '../bundles/calling-tools/preload.js'),
+    },
+  };
+
+  callingDevToolsWindow = new BrowserWindow(options);
+
+  await handleCommonWindowEvents(callingDevToolsWindow);
+
+  callingDevToolsWindow.once('closed', () => {
+    callingDevToolsWindow = undefined;
+
+    mainWindow?.webContents.send('calling:set-rtc-stats-interval', null);
+  });
+
+  ipc.on('calling:set-rtc-stats-interval', (_, intervalMillis: number) => {
+    mainWindow?.webContents.send(
+      'calling:set-rtc-stats-interval',
+      intervalMillis
+    );
+  });
+
+  ipc.on('calling:rtc-stats-report', (_, report) => {
+    callingDevToolsWindow?.webContents.send('calling:rtc-stats-report', report);
+  });
+
+  await safeLoadURL(
+    callingDevToolsWindow,
+    await prepareFileUrl([__dirname, '../calling_tools.html'])
+  );
+  callingDevToolsWindow.show();
 }
 
 let aboutWindow: BrowserWindow | undefined;
@@ -1735,29 +1797,20 @@ app.on('ready', async () => {
     realpath(app.getAppPath()),
   ]);
 
-  const webSession = session.fromPartition(STICKER_CREATOR_PARTITION);
+  updateDefaultSession(session.defaultSession);
 
-  for (const s of [session.defaultSession, webSession]) {
-    updateDefaultSession(s);
-
-    if (getEnvironment() !== Environment.Test) {
-      installFileHandler({
-        session: s,
-        userDataPath,
-        installPath,
-        isWindows: OS.isWindows(),
-      });
-    }
+  if (getEnvironment() !== Environment.Test) {
+    installFileHandler({
+      session: session.defaultSession,
+      userDataPath,
+      installPath,
+      isWindows: OS.isWindows(),
+    });
   }
 
   installWebHandler({
     enableHttp: Boolean(process.env.SIGNAL_ENABLE_HTTP),
     session: session.defaultSession,
-  });
-
-  installWebHandler({
-    enableHttp: true,
-    session: webSession,
   });
 
   logger = await logging.initialize(getMainWindow);
@@ -2062,6 +2115,7 @@ function setupMenu(options?: Partial<CreateTemplateOptionsType>) {
     setupAsStandalone,
     showAbout,
     showDebugLog: showDebugLogWindow,
+    showCallingDevTools: showCallingDevToolsWindow,
     showKeyboardShortcuts,
     showSettings: showSettingsWindow,
     showWindow,
@@ -2444,9 +2498,6 @@ ipc.on('get-config', async event => {
     preferredSystemLocales: getPreferredSystemLocales(),
     localeOverride: getLocaleOverride(),
     version: app.getVersion(),
-    libsignalNetEnvironment: config.has('libsignalNetEnvironment')
-      ? config.get<string>('libsignalNetEnvironment')
-      : undefined,
     buildCreation: config.get<number>('buildCreation'),
     buildExpiration: config.get<number>('buildExpiration'),
     challengeUrl: config.get<string>('challengeUrl'),
@@ -2454,7 +2505,6 @@ ipc.on('get-config', async event => {
     storageUrl: config.get<string>('storageUrl'),
     updatesUrl: config.get<string>('updatesUrl'),
     resourcesUrl: config.get<string>('resourcesUrl'),
-    artCreatorUrl: config.get<string>('artCreatorUrl'),
     cdnUrl0: config.get<string>('cdn.0'),
     cdnUrl2: config.get<string>('cdn.2'),
     cdnUrl3: config.get<string>('cdn.3'),
@@ -2604,11 +2654,6 @@ function handleSignalRoute(route: ParsedSignalRoute) {
     mainWindow.webContents.send('show-sticker-pack', {
       packId: route.args.packId,
       packKey: Buffer.from(route.args.packKey, 'hex').toString('base64'),
-    });
-  } else if (route.key === 'artAuth') {
-    mainWindow.webContents.send('authorize-art-creator', {
-      token: route.args.token,
-      pubKeyBase64: route.args.pubKey,
     });
   } else if (route.key === 'groupInvites') {
     mainWindow.webContents.send('show-group-via-link', {
@@ -2895,7 +2940,6 @@ async function showStickerCreatorWindow() {
     show: false,
     webPreferences: {
       ...defaultWebPrefs,
-      partition: STICKER_CREATOR_PARTITION,
       nodeIntegration: false,
       nodeIntegrationInWorker: false,
       sandbox: true,

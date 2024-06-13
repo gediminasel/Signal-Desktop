@@ -173,6 +173,9 @@
   "icu:viewMenuToggleDevTools": {
     "messageformat": "Nástroje pre vývojárov"
   },
+  "icu:viewMenuOpenCallingDevTools": {
+    "messageformat": "Otvoriť nástroje pre vývojárov na hovory"
+  },
   "icu:menuSetupAsNewDevice": {
     "messageformat": "Nastaviť ako Nové Zariadenie"
   },
@@ -458,9 +461,6 @@
   "icu:joinAnyway": {
     "messageformat": "Aj tak sa pripojiť"
   },
-  "icu:continueCall": {
-    "messageformat": "Pokračovať v hovore"
-  },
   "icu:debugLogExplanation": {
     "messageformat": "Keď kliknete na Odoslať, váš záznam bude zverejnený online na 30 dní na jedinečnej, nepublikovanej adrese URL. Najprv ho môžete uložiť lokálne."
   },
@@ -643,6 +643,12 @@
   },
   "icu:screenShareWindow": {
     "messageformat": "Zdieľaná obrazovka"
+  },
+  "icu:callingDeveloperTools": {
+    "messageformat": "Nástroje pre vývojárov na hovory"
+  },
+  "icu:callingDeveloperToolsDescription": {
+    "messageformat": "Toto okno sa používa počas vývoja na zobrazenie diagnostiky z prebiehajúcich hovorov."
   },
   "icu:speech": {
     "messageformat": "Reč"
@@ -1033,6 +1039,9 @@
   },
   "icu:ChangeNumber--notification": {
     "messageformat": "{sender} zmenil/a svoje telefónne číslo"
+  },
+  "icu:JoinedSignal--notification": {
+    "messageformat": "Váš kontakt začal používať Signal"
   },
   "icu:ConversationMerge--notification": {
     "messageformat": "{obsoleteConversationTitle} a {conversationTitle} patria tomu istému účtu. Históriu správ pre oba čety nájdete tu."
@@ -2363,18 +2372,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "Čet bol označený ako neprečítaný"
   },
-  "icu:SendEdit--dialog--title2": {
-    "messageformat": "Upraviť správu"
-  },
-  "icu:SendEdit--dialog--body2": {
-    "messageformat": "Ak upravíte správu, zobrazí sa iba ľuďom, ktorí používajú najnovšie verzie Signalu. Uvidia, že ste upravili správu."
-  },
-  "icu:SendFormatting--dialog--title": {
-    "messageformat": "Posielanie formátovaného textu"
-  },
-  "icu:SendFormatting--dialog--body": {
-    "messageformat": "Niektorí ľudia môžu používať verziu Signalu, ktorá nepodporuje formátovaný text. Neuvidia preto zmeny formátovania vo vašej správe."
-  },
   "icu:AuthArtCreator--dialog--message": {
     "messageformat": "Chcete otvoriť nástroj na vytváranie balíčkov nálepiek Signal?"
   },
@@ -2691,7 +2688,13 @@
     "messageformat": "Zvonenie vypnuté"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "Zdvihli ste ruku."
+    "messageformat": "You raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-one": {
+    "messageformat": "You and {otherName} raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-more": {
+    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "Používateľ {name} zdvihol ruku."
@@ -2782,6 +2785,21 @@
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "Odstrániť tohto používateľa z hovoru"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel": {
+    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
+    "messageformat": "+{count,number} more"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
+    "messageformat": "More info about new contacts"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
+    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
+    "messageformat": "Got it"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -3761,6 +3779,9 @@
   "icu:DeleteMessagesModal--description--noteToSelf": {
     "messageformat": "{count, plural, one {Z ktorých zariadení by ste chceli túto správu odstrániť?} few {Z ktorých zariadení by ste chceli tieto správy odstrániť?} many {Z ktorých zariadení by ste chceli tieto správy odstrániť?} other {Z ktorých zariadení by ste chceli tieto správy odstrániť?}}"
   },
+  "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
+    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+  },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "Vymazať pre mňa"
   },
@@ -3772,6 +3793,9 @@
   },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "Vymazať zo všetkých zariadení"
+  },
+  "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
+    "messageformat": "Delete"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {Môžete vybrať maximálne {count,number} správu, ktorá sa vymaže pre všetkých} few {Môžete vybrať maximálne {count,number} správy, ktoré sa vymažú pre všetkých} many {Môžete vybrať maximálne {count,number} správy, ktorá sa vymaže pre všetkých} other {Môžete vybrať maximálne {count,number} správ, ktoré sa vymažú pre všetkých}}"
@@ -3866,11 +3890,17 @@
   "icu:ForwardMessageModal__title": {
     "messageformat": "Preposlať používateľovi"
   },
+  "icu:ForwardMessageModal__ShareCallLink": {
+    "messageformat": "Zdieľať odkaz na hovor"
+  },
   "icu:ForwardMessageModal--continue": {
     "messageformat": "Pokračovať"
   },
   "icu:ForwardMessagesModal__toast--CannotForwardEmptyMessage": {
     "messageformat": "Prázdne alebo odstránené správy sa nedajú preposlať"
+  },
+  "icu:ShareCallLinkViaSignal__DraftMessageText": {
+    "messageformat": "Na pripojenie k Signal hovoru použite tento odkaz: {url}"
   },
   "icu:MessageRequestWarning__learn-more": {
     "messageformat": "Dozvedieť sa viac"
@@ -4167,7 +4197,7 @@
     "messageformat": "Používateľské mená nemôžu začínať číslicou."
   },
   "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Používateľské mená musia mať aspoň {min,number} znakov."
+    "messageformat": "Usernames must have at least {min,number} characters."
   },
   "icu:ProfileEditor--username--check-character-max": {
     "messageformat": "Používateľské mená môžu mať najviac {max,number} znakov."
@@ -4347,7 +4377,7 @@
     "messageformat": "Premeniť napísané emotikony na emoji"
   },
   "icu:Preferences__auto-convert-emoji--description": {
-    "messageformat": "Napríklad :-) sa zmení na 🙂"
+    "messageformat": "Napríklad :-) sa zmení na <emojify>🙂</emojify>"
   },
   "icu:Preferences--advanced": {
     "messageformat": "Pokročilé"
@@ -4717,6 +4747,15 @@
   },
   "icu:SignalConnectionsModal__footer": {
     "messageformat": "Vaše kontakty môžu vidieť vaše meno a fotografiu, ako aj príspevky v časti „Môj príbeh“, pokiaľ ich pred nimi neskryjete"
+  },
+  "icu:LocalDeleteWarningModal__header": {
+    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+  },
+  "icu:LocalDeleteWarningModal__description": {
+    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+  },
+  "icu:LocalDeleteWarningModal__confirm": {
+    "messageformat": "Got it"
   },
   "icu:Stories__title": {
     "messageformat": "Príbehy"
@@ -5310,6 +5349,9 @@
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Žiadne výsledky pre „{query}“"
   },
+  "icu:CallsList__CreateCallLink": {
+    "messageformat": "Create a Call Link"
+  },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "Prichádzajúci"
   },
@@ -5325,11 +5367,29 @@
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Odkaz na hovor"
   },
+  "icu:CallsList__ItemCallInfo--Active": {
+    "messageformat": "Aktívny"
+  },
+  "icu:CallsList__LeaveCallDialogTitle": {
+    "messageformat": "Chcete opustiť aktuálny hovor?"
+  },
+  "icu:CallsList__LeaveCallDialogBody": {
+    "messageformat": "Pred pripojením k novému hovoru musíte opustiť aktuálny hovor."
+  },
+  "icu:CallsList__LeaveCallDialogButton--leave": {
+    "messageformat": "Opustiť hovor"
+  },
   "icu:CallsNewCall__EmptyState--noQuery": {
     "messageformat": "Žiadne nedávne konverzácie."
   },
   "icu:CallsNewCall__EmptyState--hasQuery": {
     "messageformat": "Žiadne výsledky pre „{query}“"
+  },
+  "icu:CallsNewCallButton--return": {
+    "messageformat": "Naspäť"
+  },
+  "icu:CallsNewCallButtonTooltip--in-another-call": {
+    "messageformat": "Pred pripojením k novému hovoru musíte opustiť aktuálny hovor"
   },
   "icu:CallHistory__Description--Default": {
     "messageformat": "{type, select, Audio {{direction, select, Outgoing {Odchádzajúci hlasový hovor} other {Prichádzajúci hlasový hovor}}} Video {{direction, select, Outgoing {Odchádzajúci videohovor} other {Prichádzajúci videohovor}}} Group {{direction, select, Outgoing {Odchádzajúci skupinový hovor} other {Prichádzajúci skupinový hovor}}} other {{direction, select, Outgoing {Odchádzajúci hovor} other {Prichádzajúci hovor}}}}"
@@ -5345,6 +5405,33 @@
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Odkaz na hovor"
+  },
+  "icu:CallLinkDetails__Join": {
+    "messageformat": "Pridať sa"
+  },
+  "icu:CallLinkDetails__CopyLink": {
+    "messageformat": "Skopírovať odkaz"
+  },
+  "icu:CallLinkDetails__ShareLinkViaSignal": {
+    "messageformat": "Zdieľať odkaz cez Signal"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Call link details"
+  },
+  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
+    "messageformat": "Name"
+  },
+  "icu:CallLinkEditModal__JoinButtonLabel": {
+    "messageformat": "Join"
+  },
+  "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
+    "messageformat": "Approve all members"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
+    "messageformat": "Off"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
+    "messageformat": "On"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} ďalší píše.} few {{count,number} ďalší píšu.} many {{count,number} ďalšieho píše.} other {{count,number} ďalších píše.}}"
@@ -5385,5 +5472,20 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Malé úpravy, opravy chýb a vylepšenia výkonu. Ďakujeme, že používate Signal!",
     "ignoreUnused": true
+  },
+  "icu:WhatsNew__v7.12--0": {
+    "messageformat": "Zdvihnite ruku všetci tí, čo hľadáte iný spôsob komunikácie počas skupinových hovorov. Nová funkcia Zdvihnúť ruku je jednoduchý spôsob, ako upútať niekoho pozornosť, položiť otázku alebo jednomyseľne zahlasovať za skupinový návrh, keď sa niekto spýta „všetci za?“"
+  },
+  "icu:WhatsNew__v7.12--1": {
+    "messageformat": "Táto aktualizácia taktiež prináša vylepšený nástroj na orezávanie a zmenšovanie obrázkov."
+  },
+  "icu:WhatsNew__v7.12--2": {
+    "messageformat": "Upravili sme klávesovú skratku na odoslanie hlasovej poznámky na Ctrl/Cmd+Shift+Y, aby tak už nekolidovala so skratkou „Vložiť a prispôsobiť štýl“ v systémoch Windows a Linux."
+  },
+  "icu:WhatsNew__v7.13--0": {
+    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  },
+  "icu:WhatsNew__v7.13--1": {
+    "messageformat": "This update also improves the display of quoted replies in RTL languages."
   }
 }

@@ -173,6 +173,9 @@
   "icu:viewMenuToggleDevTools": {
     "messageformat": "Bật tắt Công cụ Nhà phát triển"
   },
+  "icu:viewMenuOpenCallingDevTools": {
+    "messageformat": "Mở Công cụ Nhà phát triển của Cuộc gọi"
+  },
   "icu:menuSetupAsNewDevice": {
     "messageformat": "Thiết lập như Thiết bị Mới"
   },
@@ -458,9 +461,6 @@
   "icu:joinAnyway": {
     "messageformat": "Tiếp tục tham gia"
   },
-  "icu:continueCall": {
-    "messageformat": "Tiếp tục Cuộc gọi"
-  },
   "icu:debugLogExplanation": {
     "messageformat": "Khi bạn bấm Gửi, nhật ký của bạn sẽ được đăng online trong 30 ngày tại một URL độc nhất, chưa được xuất bản. Bạn có thể Lưu trên thiết bị trước."
   },
@@ -643,6 +643,12 @@
   },
   "icu:screenShareWindow": {
     "messageformat": "Chia sẻ màn hình"
+  },
+  "icu:callingDeveloperTools": {
+    "messageformat": "Công cụ Nhà phát triển của Cuộc gọi"
+  },
+  "icu:callingDeveloperToolsDescription": {
+    "messageformat": "Cửa sổ này được sử dụng trong quá trình phát triển để hiển thị thông tin chẩn đoán từ những cuộc gọi đang diễn ra."
   },
   "icu:speech": {
     "messageformat": "Nói"
@@ -1033,6 +1039,9 @@
   },
   "icu:ChangeNumber--notification": {
     "messageformat": "{sender} đã đổi số điện thoại của họ"
+  },
+  "icu:JoinedSignal--notification": {
+    "messageformat": "Liên hệ bắt đầu dùng Signal"
   },
   "icu:ConversationMerge--notification": {
     "messageformat": "{obsoleteConversationTitle} và {conversationTitle} là cùng một tài khoản. Lịch sử tin nhắn của bạn của các cuộc trò chuyện ở hai bên đều ở đây."
@@ -2363,18 +2372,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "Cuộc trò chuyện đã được đánh dấu chưa đọc"
   },
-  "icu:SendEdit--dialog--title2": {
-    "messageformat": "Chỉnh sửa Tin nhắn"
-  },
-  "icu:SendEdit--dialog--body2": {
-    "messageformat": "Nếu bạn sửa một tin nhắn, thông tin về việc thay đổi sẽ chỉ hiển thị với người dùng các phiên bản mới nhất của Signal. Những người dùng này sẽ có thể thấy bạn đã chỉnh sửa một tin nhắn."
-  },
-  "icu:SendFormatting--dialog--title": {
-    "messageformat": "Đang gửi văn bản đã được định dạng"
-  },
-  "icu:SendFormatting--dialog--body": {
-    "messageformat": "Một số người có thể đang sử dụng phiên bản Signal không hỗ trợ văn bản đã được định dạng. Họ sẽ không thể thấy các thay đổi về định dạng bạn đã thực hiện trong tin nhắn."
-  },
   "icu:AuthArtCreator--dialog--message": {
     "messageformat": "Bạn có muốn mở Công Cụ Tạo Gói Nhãn Dán Signal?"
   },
@@ -2691,7 +2688,13 @@
     "messageformat": "Đổ chuông đang tắt"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "Bạn đã giơ tay."
+    "messageformat": "You raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-one": {
+    "messageformat": "You and {otherName} raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-more": {
+    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} giơ tay."
@@ -2782,6 +2785,21 @@
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "Gỡ người này khỏi cuộc gọi"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel": {
+    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
+    "messageformat": "+{count,number} more"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
+    "messageformat": "More info about new contacts"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
+    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
+    "messageformat": "Got it"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -3761,6 +3779,9 @@
   "icu:DeleteMessagesModal--description--noteToSelf": {
     "messageformat": "{count, plural, other {Bạn muốn xóa các tin nhắn này trên thiết bị nào?}}"
   },
+  "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
+    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+  },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "Xóa cho tôi"
   },
@@ -3772,6 +3793,9 @@
   },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "Xóa trên tất cả thiết bị"
+  },
+  "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
+    "messageformat": "Delete"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, other {Bạn chỉ có thể chọn tối đa {count,number} tin nhắn để xóa cho mọi người}}"
@@ -3866,11 +3890,17 @@
   "icu:ForwardMessageModal__title": {
     "messageformat": "Chuyển tiếp Đến"
   },
+  "icu:ForwardMessageModal__ShareCallLink": {
+    "messageformat": "Chia sẻ đường dẫn cuộc gọi"
+  },
   "icu:ForwardMessageModal--continue": {
     "messageformat": "Tiếp tục"
   },
   "icu:ForwardMessagesModal__toast--CannotForwardEmptyMessage": {
     "messageformat": "Không thể chuyển tiếp tin nhắn trống hoặc đã xóa"
+  },
+  "icu:ShareCallLinkViaSignal__DraftMessageText": {
+    "messageformat": "Sử dụng đường dẫn này để tham gia cuộc gọi Signal: {url}"
   },
   "icu:MessageRequestWarning__learn-more": {
     "messageformat": "Tìm hiểu thêm"
@@ -4167,7 +4197,7 @@
     "messageformat": "Tên người dùng không thể bắt đầu bằng một chữ số."
   },
   "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Tên người dùng phải có ít nhất {min,number} ký tự."
+    "messageformat": "Usernames must have at least {min,number} characters."
   },
   "icu:ProfileEditor--username--check-character-max": {
     "messageformat": "Tên người dùng phải có tối đa {max,number} ký tự."
@@ -4347,7 +4377,7 @@
     "messageformat": "Chuyển đổi biểu tượng cảm xúc khi bạn nhập thành emoji"
   },
   "icu:Preferences__auto-convert-emoji--description": {
-    "messageformat": "Ví dụ, :-) sẽ được chuyển đổi thành 🙂"
+    "messageformat": "Ví dụ, :-) sẽ được chuyển đổi thành <emojify>🙂</emojify>"
   },
   "icu:Preferences--advanced": {
     "messageformat": "Nâng cao"
@@ -4717,6 +4747,15 @@
   },
   "icu:SignalConnectionsModal__footer": {
     "messageformat": "Các liên hệ của bạn có thể thấy tên và ảnh của bạn, và có thể thấy các bài đăng lên \"Story của tôi\" trừ khi bạn ẩn story với các liên hệ"
+  },
+  "icu:LocalDeleteWarningModal__header": {
+    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+  },
+  "icu:LocalDeleteWarningModal__description": {
+    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+  },
+  "icu:LocalDeleteWarningModal__confirm": {
+    "messageformat": "Got it"
   },
   "icu:Stories__title": {
     "messageformat": "Các Story"
@@ -5310,6 +5349,9 @@
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Không có kết quả cho “{query}”"
   },
+  "icu:CallsList__CreateCallLink": {
+    "messageformat": "Create a Call Link"
+  },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "Cuộc gọi đến"
   },
@@ -5325,11 +5367,29 @@
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Đường dẫn cuộc gọi"
   },
+  "icu:CallsList__ItemCallInfo--Active": {
+    "messageformat": "Đang hoạt động"
+  },
+  "icu:CallsList__LeaveCallDialogTitle": {
+    "messageformat": "Rời khỏi cuộc gọi hiện tại?"
+  },
+  "icu:CallsList__LeaveCallDialogBody": {
+    "messageformat": "Bạn phải rời khỏi cuộc gọi hiện tại trước khi tham gia một cuộc gọi mới."
+  },
+  "icu:CallsList__LeaveCallDialogButton--leave": {
+    "messageformat": "Rời cuộc gọi"
+  },
   "icu:CallsNewCall__EmptyState--noQuery": {
     "messageformat": "Không có cuộc trò chuyện gần đây."
   },
   "icu:CallsNewCall__EmptyState--hasQuery": {
     "messageformat": "Không có kết quả cho “{query}”"
+  },
+  "icu:CallsNewCallButton--return": {
+    "messageformat": "Quay về"
+  },
+  "icu:CallsNewCallButtonTooltip--in-another-call": {
+    "messageformat": "Bạn phải rời khỏi cuộc gọi hiện tại trước khi tham gia một cuộc gọi mới"
   },
   "icu:CallHistory__Description--Default": {
     "messageformat": "{type, select, Audio {{direction, select, Outgoing {Cuộc gọi thoại đi} other {Cuộc gọi thoại đến}}} Video {{direction, select, Outgoing {Cuộc gọi video đang gọi đi} other {Cuộc gọi video đang đến}}} Group {{direction, select, Outgoing {Cuộc gọi nhóm đi} other {Cuộc gọi nhóm đến}}} other {{direction, select, Outgoing {Cuộc gọi đi} other {Cuộc gọi đến}}}}"
@@ -5345,6 +5405,33 @@
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Đường dẫn cuộc gọi"
+  },
+  "icu:CallLinkDetails__Join": {
+    "messageformat": "Tham gia"
+  },
+  "icu:CallLinkDetails__CopyLink": {
+    "messageformat": "Sao chép đường dẫn"
+  },
+  "icu:CallLinkDetails__ShareLinkViaSignal": {
+    "messageformat": "Chia sẻ đường dẫn qua Signal"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Call link details"
+  },
+  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
+    "messageformat": "Name"
+  },
+  "icu:CallLinkEditModal__JoinButtonLabel": {
+    "messageformat": "Join"
+  },
+  "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
+    "messageformat": "Approve all members"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
+    "messageformat": "Off"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
+    "messageformat": "On"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, other {{count,number} người khác đang nhập.}}"
@@ -5385,5 +5472,20 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Các tinh chỉnh, sửa lỗi, và cải thiện hiệu năng. Cảm ơn bạn đã sử dụng Signal!",
     "ignoreUnused": true
+  },
+  "icu:WhatsNew__v7.12--0": {
+    "messageformat": "Tính năng Giơ Tay mới là một phương thức đơn giản để thu hút sự chú ý của một người hoặc hỏi câu hỏi trong các cuộc gọi nhóm."
+  },
+  "icu:WhatsNew__v7.12--1": {
+    "messageformat": "Bản cập nhật này cũng mang đến công cụ cắt ảnh đã được nâng cấp cho tác vụ thay đổi kích cỡ ảnh."
+  },
+  "icu:WhatsNew__v7.12--2": {
+    "messageformat": "Chúng tôi đã sửa phím tắt cho thao tác gửi một ghi chú âm thanh thành Ctrl/Cmd+Shift+Y để không còn bị xung đột với phím tắt \"Dán và Khớp Phong cách\" trên Windows và Linux."
+  },
+  "icu:WhatsNew__v7.13--0": {
+    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  },
+  "icu:WhatsNew__v7.13--1": {
+    "messageformat": "This update also improves the display of quoted replies in RTL languages."
   }
 }

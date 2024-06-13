@@ -30,7 +30,6 @@ export type DirectoryConfigType = z.infer<typeof directoryConfigSchema>;
 export const rendererConfigSchema = z.object({
   appInstance: configOptionalStringSchema,
   appStartInitialSpellcheckSetting: z.boolean(),
-  artCreatorUrl: configRequiredStringSchema,
   buildCreation: z.number(),
   buildExpiration: z.number(),
   cdnUrl0: configRequiredStringSchema,
@@ -74,7 +73,6 @@ export const rendererConfigSchema = z.object({
   resourcesUrl: configRequiredStringSchema,
   userDataPath: configRequiredStringSchema,
   version: configRequiredStringSchema,
-  libsignalNetEnvironment: configOptionalStringSchema,
   directoryConfig: directoryConfigSchema,
 
   // Only used by main window

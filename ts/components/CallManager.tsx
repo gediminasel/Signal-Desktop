@@ -53,10 +53,8 @@ import * as log from '../logging/log';
 import { isGroupOrAdhocActiveCall } from '../util/isGroupOrAdhocCall';
 import { CallingAdhocCallInfo } from './CallingAdhocCallInfo';
 import { callLinkRootKeyToUrl } from '../util/callLinkRootKeyToUrl';
-import { ToastType } from '../types/Toast';
-import type { ShowToastAction } from '../state/ducks/toast';
-import { isSharingPhoneNumberWithEverybody } from '../util/phoneNumberSharingMode';
 import { usePrevious } from '../hooks/usePrevious';
+import { copyCallLink } from '../util/copyLinksWithToast';
 
 const GROUP_CALL_RING_DURATION = 60 * 1000;
 
@@ -91,6 +89,7 @@ export type PropsType = {
     conversationId: string,
     demuxId: number
   ) => VideoFrameSource;
+  getIsSharingPhoneNumberWithEverybody: () => boolean;
   getPresentingSources: () => void;
   incomingCall: DirectIncomingCall | GroupIncomingCall | null;
   renderDeviceSelection: () => JSX.Element;
@@ -127,7 +126,6 @@ export type PropsType = {
   setOutgoingRing: (_: boolean) => void;
   setPresenting: (_?: PresentedSource) => void;
   setRendererCanvas: (_: SetRendererCanvasType) => void;
-  showToast: ShowToastAction;
   stopRingtone: () => unknown;
   switchToPresentationView: () => void;
   switchFromPresentationView: () => void;
@@ -149,7 +147,6 @@ type ActiveCallManagerPropsType = {
   | 'declineCall'
   | 'hasInitialLoadCompleted'
   | 'incomingCall'
-  | 'isConversationTooBigToRin'
   | 'notifyForCall'
   | 'playRingtone'
   | 'setIsCallActive'
@@ -169,6 +166,7 @@ function ActiveCallManager({
   hangUpActiveCall,
   i18n,
   isGroupCallRaiseHandEnabled,
+  getIsSharingPhoneNumberWithEverybody,
   getGroupCallVideoFrameSource,
   getPresentingSources,
   me,
@@ -186,7 +184,6 @@ function ActiveCallManager({
   setPresenting,
   setRendererCanvas,
   setOutgoingRing,
-  showToast,
   startCall,
   switchToPresentationView,
   switchFromPresentationView,
@@ -266,10 +263,9 @@ function ActiveCallManager({
 
     const link = callLinkRootKeyToUrl(callLink.rootKey);
     if (link) {
-      await window.navigator.clipboard.writeText(link);
-      showToast({ toastType: ToastType.CopiedCallLink });
+      await copyCallLink(link);
     }
-  }, [callLink, showToast]);
+  }, [callLink]);
 
   let isCallFull: boolean;
   let showCallLobby: boolean;
@@ -355,7 +351,9 @@ function ActiveCallManager({
           isAdhocJoinRequestPending={isAdhocJoinRequestPending}
           isCallFull={isCallFull}
           isConversationTooBigToRing={isConvoTooBigToRing}
-          isSharingPhoneNumberWithEverybody={isSharingPhoneNumberWithEverybody()}
+          getIsSharingPhoneNumberWithEverybody={
+            getIsSharingPhoneNumberWithEverybody
+          }
           me={me}
           onCallCanceled={cancelActiveCall}
           onJoinCall={joinActiveCall}
@@ -509,6 +507,7 @@ export function CallManager({
   incomingCall,
   isConversationTooBigToRing,
   isGroupCallRaiseHandEnabled,
+  getIsSharingPhoneNumberWithEverybody,
   me,
   notifyForCall,
   openSystemPreferencesAction,
@@ -528,7 +527,6 @@ export function CallManager({
   setOutgoingRing,
   setPresenting,
   setRendererCanvas,
-  showToast,
   startCall,
   stopRingtone,
   switchFromPresentationView,
@@ -599,6 +597,9 @@ export function CallManager({
           hangUpActiveCall={hangUpActiveCall}
           i18n={i18n}
           isGroupCallRaiseHandEnabled={isGroupCallRaiseHandEnabled}
+          getIsSharingPhoneNumberWithEverybody={
+            getIsSharingPhoneNumberWithEverybody
+          }
           me={me}
           openSystemPreferencesAction={openSystemPreferencesAction}
           pauseVoiceNotePlayer={pauseVoiceNotePlayer}
@@ -615,7 +616,6 @@ export function CallManager({
           setOutgoingRing={setOutgoingRing}
           setPresenting={setPresenting}
           setRendererCanvas={setRendererCanvas}
-          showToast={showToast}
           startCall={startCall}
           switchFromPresentationView={switchFromPresentationView}
           switchToPresentationView={switchToPresentationView}

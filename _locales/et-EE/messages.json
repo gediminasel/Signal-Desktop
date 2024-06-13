@@ -173,6 +173,9 @@
   "icu:viewMenuToggleDevTools": {
     "messageformat": "Lülita arendusvahendid sisse/välja"
   },
+  "icu:viewMenuOpenCallingDevTools": {
+    "messageformat": "Ava kõne arendusvahendid"
+  },
   "icu:menuSetupAsNewDevice": {
     "messageformat": "Seadista uue seadmena"
   },
@@ -458,9 +461,6 @@
   "icu:joinAnyway": {
     "messageformat": "Liitu siiski"
   },
-  "icu:continueCall": {
-    "messageformat": "Kõnega jätkamine"
-  },
   "icu:debugLogExplanation": {
     "messageformat": "Kui klõpsad \"Saada\", postitatakse sinu logi 30 päevaks veebi unikaalsele avaldamata URL-aadressile. Soovi korral võid selle enne kohalikult salvestada."
   },
@@ -643,6 +643,12 @@
   },
   "icu:screenShareWindow": {
     "messageformat": "Ekraani jagamine"
+  },
+  "icu:callingDeveloperTools": {
+    "messageformat": "Kõne arendusvahendid"
+  },
+  "icu:callingDeveloperToolsDescription": {
+    "messageformat": "Seda akent kasutatakse arenduse ajal, et kuvada parasjagu käimasoleva kõne diagnostikat."
   },
   "icu:speech": {
     "messageformat": "Kõne"
@@ -1033,6 +1039,9 @@
   },
   "icu:ChangeNumber--notification": {
     "messageformat": "{sender} muutis enda telefoninumbrit"
+  },
+  "icu:JoinedSignal--notification": {
+    "messageformat": "Kontakt liitus Signaliga"
   },
   "icu:ConversationMerge--notification": {
     "messageformat": "{obsoleteConversationTitle} ja {conversationTitle} on sama konto. Sinu mõlema vestluse sõnumiajalugu on siin."
@@ -2363,18 +2372,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "Vestlus märgiti mitteloetuks"
   },
-  "icu:SendEdit--dialog--title2": {
-    "messageformat": "Muuda sõnumit"
-  },
-  "icu:SendEdit--dialog--body2": {
-    "messageformat": "Kui sõnumit muudad, on see nähtav ainult inimestele, kellel on Signali uusimad versioonid. Nad näevad, et oled sõnumit muutnud."
-  },
-  "icu:SendFormatting--dialog--title": {
-    "messageformat": "Vormindatud teksti saatmine"
-  },
-  "icu:SendFormatting--dialog--body": {
-    "messageformat": "Mõned kasutavad sellist Signali versiooni, mis vormindatud teksti ei toeta. Nemad ei näe vormingumuutusi, mille sõnumile lisasid."
-  },
   "icu:AuthArtCreator--dialog--message": {
     "messageformat": "Kas soovid avada Signali kleebiste komplekti loomiskeskkonna?"
   },
@@ -2691,7 +2688,13 @@
     "messageformat": "Helin väljas"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "Sinu käsi on tõstetud."
+    "messageformat": "You raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-one": {
+    "messageformat": "You and {otherName} raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-more": {
+    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} tõstis käe."
@@ -2782,6 +2785,21 @@
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "Eemalda see isik kõnest"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel": {
+    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
+    "messageformat": "+{count,number} more"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
+    "messageformat": "More info about new contacts"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
+    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
+    "messageformat": "Got it"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -3761,6 +3779,9 @@
   "icu:DeleteMessagesModal--description--noteToSelf": {
     "messageformat": "{count, plural, one {Millistest seadmetest soovid seda sõnumit kustutada?} other {Millistest seadmetest soovid neid sõnumeid kustutada?}}"
   },
+  "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
+    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+  },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "Kustuta minu jaoks"
   },
@@ -3772,6 +3793,9 @@
   },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "Kustuta kõigist seadmetest"
+  },
+  "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
+    "messageformat": "Delete"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {Saad valida kõigi jaoks kustutamiseks vaid kuni {count,number} sõnumi} other {Saad valida kõigi jaoks kustutamiseks vaid kuni {count,number} sõnumit}}"
@@ -3866,11 +3890,17 @@
   "icu:ForwardMessageModal__title": {
     "messageformat": "Edasta saajale"
   },
+  "icu:ForwardMessageModal__ShareCallLink": {
+    "messageformat": "Jaga kõnelinki"
+  },
   "icu:ForwardMessageModal--continue": {
     "messageformat": "Jätka"
   },
   "icu:ForwardMessagesModal__toast--CannotForwardEmptyMessage": {
     "messageformat": "Tühje või kustutatud sõnumeid ei saa edastada"
+  },
+  "icu:ShareCallLinkViaSignal__DraftMessageText": {
+    "messageformat": "Kasuta Signali kõnega liitumiseks seda linki: {url}"
   },
   "icu:MessageRequestWarning__learn-more": {
     "messageformat": "Rohkem infot"
@@ -4167,7 +4197,7 @@
     "messageformat": "Kasutajanimed ei tohi alata numbriga."
   },
   "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Kasutajanimed peavad sisaldama vähemalt {min,number} tähemärki."
+    "messageformat": "Usernames must have at least {min,number} characters."
   },
   "icu:ProfileEditor--username--check-character-max": {
     "messageformat": "Kasutajanimed peavad sisaldama maksimaalselt {max,number} tähemärki."
@@ -4347,7 +4377,7 @@
     "messageformat": "Muuda trükitud emotikonid emojideks"
   },
   "icu:Preferences__auto-convert-emoji--description": {
-    "messageformat": "Näiteks :-) asemel sisestatakse 🙂"
+    "messageformat": "Näiteks :-) asemel sisestatakse <emojify>🙂</emojify>"
   },
   "icu:Preferences--advanced": {
     "messageformat": "Täpsemad sätted"
@@ -4717,6 +4747,15 @@
   },
   "icu:SignalConnectionsModal__footer": {
     "messageformat": "Sinu kontaktid näevad sinu nime ja fotot ning postitusi „Minu loosse“, kui sa seda infot nende eest ei peida"
+  },
+  "icu:LocalDeleteWarningModal__header": {
+    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+  },
+  "icu:LocalDeleteWarningModal__description": {
+    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+  },
+  "icu:LocalDeleteWarningModal__confirm": {
+    "messageformat": "Got it"
   },
   "icu:Stories__title": {
     "messageformat": "Lood"
@@ -5310,6 +5349,9 @@
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "„{query}“ ei andnud otsingutulemusi"
   },
+  "icu:CallsList__CreateCallLink": {
+    "messageformat": "Create a Call Link"
+  },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "Sissetulev"
   },
@@ -5325,11 +5367,29 @@
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Kõne link"
   },
+  "icu:CallsList__ItemCallInfo--Active": {
+    "messageformat": "Aktiivne"
+  },
+  "icu:CallsList__LeaveCallDialogTitle": {
+    "messageformat": "Kas lahkuda pragusest kõnest?"
+  },
+  "icu:CallsList__LeaveCallDialogBody": {
+    "messageformat": "Enne uue kõnega liitumist pead praegusest kõnest väljuma."
+  },
+  "icu:CallsList__LeaveCallDialogButton--leave": {
+    "messageformat": "Lahku kõnest"
+  },
   "icu:CallsNewCall__EmptyState--noQuery": {
     "messageformat": "Hiljutisi vestlusi pole."
   },
   "icu:CallsNewCall__EmptyState--hasQuery": {
     "messageformat": "„{query}“ ei andnud otsingutulemusi"
+  },
+  "icu:CallsNewCallButton--return": {
+    "messageformat": "Tagasi"
+  },
+  "icu:CallsNewCallButtonTooltip--in-another-call": {
+    "messageformat": "Enne uue kõnega liitumist pead praegusest kõnest väljuma"
   },
   "icu:CallHistory__Description--Default": {
     "messageformat": "{type, select, Audio {{direction, select, Outgoing {Väljuv häälkõne} other {Sissetulev häälkõne}}} Video {{direction, select, Outgoing {Tehtud videokõne} other {Sissetulev videokõne}}} Group {{direction, select, Outgoing {Väljuv grupikõne} other {Sissetulev grupikõne}}} other {{direction, select, Outgoing {Väljaminev kõne} other {Sissetulev kõne}}}}"
@@ -5345,6 +5405,33 @@
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Kõne link"
+  },
+  "icu:CallLinkDetails__Join": {
+    "messageformat": "Liitu"
+  },
+  "icu:CallLinkDetails__CopyLink": {
+    "messageformat": "Kopeeri link"
+  },
+  "icu:CallLinkDetails__ShareLinkViaSignal": {
+    "messageformat": "Jaga linki Signali kaudu"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Call link details"
+  },
+  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
+    "messageformat": "Name"
+  },
+  "icu:CallLinkEditModal__JoinButtonLabel": {
+    "messageformat": "Join"
+  },
+  "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
+    "messageformat": "Approve all members"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
+    "messageformat": "Off"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
+    "messageformat": "On"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} veel kirjutab.} other {{count,number} veel kirjutavad.}}"
@@ -5385,5 +5472,20 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Väikesed muudatused, vigade parandused ja jõudluse täiustused. Aitäh, et kasutad Signalit!",
     "ignoreUnused": true
+  },
+  "icu:WhatsNew__v7.12--0": {
+    "messageformat": "Uus „Tõsta käsi“ funktsioon on lihtne viis saada grupikõnede ajal kellegi tähelepanu või küsida küsimus."
+  },
+  "icu:WhatsNew__v7.12--1": {
+    "messageformat": "Selle uuendusega parandasime kärpimisvahendit piltide suuruste muutmiseks."
+  },
+  "icu:WhatsNew__v7.12--2": {
+    "messageformat": "Muutsime klaviatuuri otseteed häälsõnumi saatmiseks. See on nüüd Ctrl/Cmd+Shift+Y ehk ei kattu enam Windowsi ja Linuxi otseteega „Kleebi ja sobita stiil“."
+  },
+  "icu:WhatsNew__v7.13--0": {
+    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  },
+  "icu:WhatsNew__v7.13--1": {
+    "messageformat": "This update also improves the display of quoted replies in RTL languages."
   }
 }

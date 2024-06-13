@@ -165,6 +165,13 @@ import OS from '../util/os/osMain';
 import { getMessageAuthorText } from '../util/getMessageAuthorText';
 import { downscaleOutgoingAttachment } from '../util/attachments';
 import { MessageRequestResponseEvent } from '../types/MessageRequestResponseEvent';
+import type { MessageToDelete } from '../textsecure/messageReceiverEvents';
+import {
+  getConversationToDelete,
+  getMessageToDelete,
+} from '../util/deleteForMe';
+import { isEnabled } from '../RemoteConfig';
+import { getCallHistorySelector } from '../state/selectors/callHistory';
 
 /* eslint-disable more/no-then */
 window.Whisper = window.Whisper || {};
@@ -185,6 +192,7 @@ const {
   getOlderMessagesByConversation,
   getMessageMetricsForConversation,
   getMessageById,
+  getMostRecentAddressableMessages,
   getNewerMessagesByConversation,
 } = window.Signal.Data;
 
@@ -2233,7 +2241,7 @@ export class ConversationModel extends window.Backbone
         }
 
         if (isDelete) {
-          await this.destroyMessages();
+          await this.destroyMessages({ source: 'message-request' });
           void this.updateLastMessage();
         }
 
@@ -3365,6 +3373,10 @@ export class ConversationModel extends window.Backbone
       return;
     }
 
+    if (this.attributes.removalStage !== 'justNotification') {
+      return;
+    }
+
     if (this.get('pendingRemovedContactNotification')) {
       return;
     }
@@ -3948,27 +3960,6 @@ export class ConversationModel extends window.Backbone
       model,
       'enqueueMessageForSend'
     );
-    message.cachedOutgoingContactData = contact;
-
-    // Attach path to preview images so that sendNormalMessage can use them to
-    // update digests on attachments.
-    if (preview) {
-      message.cachedOutgoingPreviewData = preview.map((item, index) => {
-        if (!item.image) {
-          return item;
-        }
-
-        return {
-          ...item,
-          image: {
-            ...item.image,
-            path: attributes.preview?.at(index)?.image?.path,
-          },
-        };
-      });
-    }
-    message.cachedOutgoingQuoteData = quote;
-    message.cachedOutgoingStickerData = sticker;
 
     const dbStart = Date.now();
 
@@ -4153,6 +4144,11 @@ export class ConversationModel extends window.Backbone
         this.maybeSetPendingUniversalTimer(stats.hasUserInitiatedMessages)
       )
     );
+    drop(
+      this.queueJob('maybeAddRemovedNotificaiton', async () =>
+        this.maybeSetContactRemoved()
+      )
+    );
 
     const { preview, activity } = stats;
     let previewMessage: MessageModel | undefined;
@@ -4191,7 +4187,13 @@ export class ConversationModel extends window.Backbone
     let lastMessageReceivedAt = this.get('lastMessageReceivedAt');
     let lastMessageReceivedAtMs = this.get('lastMessageReceivedAtMs');
     if (activityMessage) {
+      const callId = activityMessage.get('callId');
+      const callHistory = callId
+        ? getCallHistorySelector(window.reduxStore.getState())(callId)
+        : undefined;
+
       timestamp =
+        callHistory?.timestamp ||
         activityMessage.get('editMessageTimestamp') ||
         activityMessage.get('sent_at') ||
         timestamp;
@@ -4443,7 +4445,6 @@ export class ConversationModel extends window.Backbone
       source: providedSource,
       fromSync = false,
       isInitialSync = false,
-      fromGroupUpdate = false,
     }: {
       reason: string;
       receivedAt?: number;
@@ -4452,7 +4453,6 @@ export class ConversationModel extends window.Backbone
       source?: string;
       fromSync?: boolean;
       isInitialSync?: boolean;
-      fromGroupUpdate?: boolean;
     }
   ): Promise<boolean | null | MessageModel | void> {
     const isSetByOther = providedSource || providedSentAt !== undefined;
@@ -4548,7 +4548,7 @@ export class ConversationModel extends window.Backbone
       (isInitialSync && isFromSyncOperation) || isFromMe || isNoteToSelf;
 
     const id = generateGuid();
-    const model = new window.Whisper.Message({
+    const attributes = {
       id,
       conversationId: this.id,
       expirationTimerUpdate: {
@@ -4556,7 +4556,6 @@ export class ConversationModel extends window.Backbone
         source,
         sourceServiceId,
         fromSync,
-        fromGroupUpdate,
       },
       flags: Proto.DataMessage.Flags.EXPIRATION_TIMER_UPDATE,
       readStatus: shouldBeRead ? ReadStatus.Read : ReadStatus.Unread,
@@ -4564,18 +4563,18 @@ export class ConversationModel extends window.Backbone
       received_at: receivedAt ?? incrementMessageCounter(),
       seenStatus: shouldBeRead ? SeenStatus.Seen : SeenStatus.Unseen,
       sent_at: sentAt,
-      type: 'timer-notification',
-      // TODO: DESKTOP-722
-    } as unknown as MessageAttributesType);
+      timestamp: sentAt,
+      type: 'timer-notification' as const,
+    };
 
-    await window.Signal.Data.saveMessage(model.attributes, {
+    await window.Signal.Data.saveMessage(attributes, {
       ourAci: window.textsecure.storage.user.getCheckedAci(),
       forceSave: true,
     });
 
     const message = window.MessageCache.__DEPRECATED$register(
       id,
-      model,
+      new window.Whisper.Message(attributes),
       'updateExpirationTimer'
     );
 
@@ -4583,7 +4582,7 @@ export class ConversationModel extends window.Backbone
     void this.updateUnread();
 
     log.info(
-      `${logId}: added a notification received_at=${model.get('received_at')}`
+      `${logId}: added a notification received_at=${message.get('received_at')}`
     );
 
     return message;
@@ -4972,7 +4971,29 @@ export class ConversationModel extends window.Backbone
     this.contactCollection!.reset(members);
   }
 
-  async destroyMessages(): Promise<void> {
+  async destroyMessages({
+    source,
+  }: {
+    source: 'message-request' | 'local-delete-sync' | 'local-delete';
+  }): Promise<void> {
+    const logId = `destroyMessages(${this.idForLogging()})/${source}`;
+
+    log.info(`${logId}: Queuing job on conversation`);
+
+    await this.queueJob(logId, async () => {
+      log.info(`${logId}: Starting...`);
+
+      await this.destroyMessagesInner({ logId, source });
+    });
+  }
+
+  async destroyMessagesInner({
+    logId,
+    source,
+  }: {
+    logId: string;
+    source: 'message-request' | 'local-delete-sync' | 'local-delete';
+  }): Promise<void> {
     this.set({
       lastMessage: null,
       lastMessageAuthor: null,
@@ -4982,9 +5003,50 @@ export class ConversationModel extends window.Backbone
     });
     window.Signal.Data.updateConversation(this.attributes);
 
-    await window.Signal.Data.removeAllMessagesInConversation(this.id, {
+    if (source === 'local-delete' && isEnabled('desktop.deleteSync.send')) {
+      log.info(`${logId}: Preparing sync message`);
+      const timestamp = Date.now();
+
+      const addressableMessages = await getMostRecentAddressableMessages(
+        this.id
+      );
+      const mostRecentMessages: Array<MessageToDelete> = addressableMessages
+        .map(getMessageToDelete)
+        .filter(isNotNil)
+        .slice(0, 5);
+
+      if (mostRecentMessages.length > 0) {
+        await singleProtoJobQueue.add(
+          MessageSender.getDeleteForMeSyncMessage([
+            {
+              type: 'delete-conversation',
+              conversation: getConversationToDelete(this.attributes),
+              isFullDelete: true,
+              mostRecentMessages,
+              timestamp,
+            },
+          ])
+        );
+      } else {
+        await singleProtoJobQueue.add(
+          MessageSender.getDeleteForMeSyncMessage([
+            {
+              type: 'delete-local-conversation',
+              conversation: getConversationToDelete(this.attributes),
+              timestamp,
+            },
+          ])
+        );
+      }
+
+      log.info(`${logId}: Sync message queue complete`);
+    }
+
+    log.info(`${logId}: Starting delete`);
+    await window.Signal.Data.removeMessagesInConversation(this.id, {
       logId: this.idForLogging(),
     });
+    log.info(`${logId}: Delete complete`);
   }
 
   getTitle(options?: { isShort?: boolean }): string {

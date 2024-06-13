@@ -173,6 +173,9 @@
   "icu:viewMenuToggleDevTools": {
     "messageformat": "개발자 도구 전환"
   },
+  "icu:viewMenuOpenCallingDevTools": {
+    "messageformat": "통화 개발자 도구 열기"
+  },
   "icu:menuSetupAsNewDevice": {
     "messageformat": "새 기기로 설정"
   },
@@ -458,9 +461,6 @@
   "icu:joinAnyway": {
     "messageformat": "보내기"
   },
-  "icu:continueCall": {
-    "messageformat": "계속 전화"
-  },
   "icu:debugLogExplanation": {
     "messageformat": "제출을 클릭하면 게시되지 않은 고유 URL에서 로그가 30일 동안 온라인에 게시됩니다. 로컬로 먼저 저장할 수 있습니다."
   },
@@ -643,6 +643,12 @@
   },
   "icu:screenShareWindow": {
     "messageformat": "화면 공유하기"
+  },
+  "icu:callingDeveloperTools": {
+    "messageformat": "통화 개발자 도구"
+  },
+  "icu:callingDeveloperToolsDescription": {
+    "messageformat": "이 창은 개발 중 진행 중인 통화의 진단을 표시하는 데 사용됩니다."
   },
   "icu:speech": {
     "messageformat": "말하기"
@@ -1033,6 +1039,9 @@
   },
   "icu:ChangeNumber--notification": {
     "messageformat": "{sender} 님이 전화번호를 변경했습니다."
+  },
+  "icu:JoinedSignal--notification": {
+    "messageformat": "내 연락처가 Signal에 등록함"
   },
   "icu:ConversationMerge--notification": {
     "messageformat": "{obsoleteConversationTitle} 님과 {conversationTitle} 님은 같은 계정입니다. 두 대화의 메시지 기록을 여기서 확인하세요."
@@ -2363,18 +2372,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "대화를 읽지 않음으로 표시"
   },
-  "icu:SendEdit--dialog--title2": {
-    "messageformat": "메시지 수정"
-  },
-  "icu:SendEdit--dialog--body2": {
-    "messageformat": "메시지를 수정하면 Signal 최신 버전을 사용하는 사용자에게만 표시됩니다. 해당 사용자는 수정 메시지를 볼 수 있습니다."
-  },
-  "icu:SendFormatting--dialog--title": {
-    "messageformat": "서식 지정 텍스트 보내기"
-  },
-  "icu:SendFormatting--dialog--body": {
-    "messageformat": "일부 사용자가 서식 지정 텍스트를 지원하지 않는 Signal 버전을 사용 중일 수 있습니다. 이러한 사용자의 경우 메시지에 적용된 서식 변경 내용을 보지 못할 수 있습니다."
-  },
   "icu:AuthArtCreator--dialog--message": {
     "messageformat": "Signal 스티커 팩 생성기를 열까요?"
   },
@@ -2691,7 +2688,13 @@
     "messageformat": "통화 꺼짐"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "손을 들었습니다."
+    "messageformat": "You raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-one": {
+    "messageformat": "You and {otherName} raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-more": {
+    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} 님이 손을 들었습니다."
@@ -2782,6 +2785,21 @@
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "이 사용자를 통화에서 제거"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel": {
+    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
+    "messageformat": "+{count,number} more"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
+    "messageformat": "More info about new contacts"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
+    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
+    "messageformat": "Got it"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "동영상"
@@ -3761,6 +3779,9 @@
   "icu:DeleteMessagesModal--description--noteToSelf": {
     "messageformat": "{count, plural, other {이 메시지를 어떤 기기에서 삭제하시겠습니까?}}"
   },
+  "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
+    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+  },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "나에게서 삭제"
   },
@@ -3772,6 +3793,9 @@
   },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "모든 기기에서 삭제"
+  },
+  "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
+    "messageformat": "Delete"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, other {모든 사용자에 대해 삭제할 메시지를 최대 {count,number}개 까지만 선택할 수 있습니다}}"
@@ -3866,11 +3890,17 @@
   "icu:ForwardMessageModal__title": {
     "messageformat": "전달 대상"
   },
+  "icu:ForwardMessageModal__ShareCallLink": {
+    "messageformat": "통화 링크 공유"
+  },
   "icu:ForwardMessageModal--continue": {
     "messageformat": "계속"
   },
   "icu:ForwardMessagesModal__toast--CannotForwardEmptyMessage": {
     "messageformat": "빈 메시지나 삭제한 메시지는 전달할 수 없습니다."
+  },
+  "icu:ShareCallLinkViaSignal__DraftMessageText": {
+    "messageformat": "Signal 통화에 참여할 때 사용할 링크: {url}"
   },
   "icu:MessageRequestWarning__learn-more": {
     "messageformat": "더 알아보기"
@@ -4167,7 +4197,7 @@
     "messageformat": "사용자 이름은 숫자로 시작할 수 없습니다."
   },
   "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "사용자명은 {min,number}자 이상이어야 합니다."
+    "messageformat": "Usernames must have at least {min,number} characters."
   },
   "icu:ProfileEditor--username--check-character-max": {
     "messageformat": "사용자명은 {max,number}자 이하여야 합니다."
@@ -4347,7 +4377,7 @@
     "messageformat": "글로 입력한 이모티콘을 이모지로 변환"
   },
   "icu:Preferences__auto-convert-emoji--description": {
-    "messageformat": "예를 들어 :-) 기호를 입력하면 🙂 이모지로 변환됨"
+    "messageformat": "예를 들어 :-) 기호를 입력하면 <emojify>🙂</emojify> 이모지로 변환됨"
   },
   "icu:Preferences--advanced": {
     "messageformat": "고급"
@@ -4717,6 +4747,15 @@
   },
   "icu:SignalConnectionsModal__footer": {
     "messageformat": "커넥션은 내 이름과 사진을 볼 수 있고, 스토리를 따로 숨기지 않는 한 '내 스토리'의 게시물을 볼 수 있습니다."
+  },
+  "icu:LocalDeleteWarningModal__header": {
+    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+  },
+  "icu:LocalDeleteWarningModal__description": {
+    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+  },
+  "icu:LocalDeleteWarningModal__confirm": {
+    "messageformat": "Got it"
   },
   "icu:Stories__title": {
     "messageformat": "스토리"
@@ -5310,6 +5349,9 @@
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "“{query}” 검색 결과 없음"
   },
+  "icu:CallsList__CreateCallLink": {
+    "messageformat": "Create a Call Link"
+  },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "수신"
   },
@@ -5325,11 +5367,29 @@
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "통화 링크"
   },
+  "icu:CallsList__ItemCallInfo--Active": {
+    "messageformat": "활성"
+  },
+  "icu:CallsList__LeaveCallDialogTitle": {
+    "messageformat": "현재 통화를 종료하시겠어요?"
+  },
+  "icu:CallsList__LeaveCallDialogBody": {
+    "messageformat": "새 통화에 참여하려면 먼저 현재 통화를 끝내야 합니다."
+  },
+  "icu:CallsList__LeaveCallDialogButton--leave": {
+    "messageformat": "통화 종료"
+  },
   "icu:CallsNewCall__EmptyState--noQuery": {
     "messageformat": "최근 대화 없음."
   },
   "icu:CallsNewCall__EmptyState--hasQuery": {
     "messageformat": "“{query}” 검색 결과 없음"
+  },
+  "icu:CallsNewCallButton--return": {
+    "messageformat": "돌아가기"
+  },
+  "icu:CallsNewCallButtonTooltip--in-another-call": {
+    "messageformat": "새 통화에 참여하려면 먼저 현재 통화를 끝내야 합니다."
   },
   "icu:CallHistory__Description--Default": {
     "messageformat": "{type, select, Audio {{direction, select, Outgoing {발신 음성 통화} other {수신 음성 통화}}} Video {{direction, select, Outgoing {발신 영상 통화} other {수신 영상 통화}}} Group {{direction, select, Outgoing {발신 그룹 통화} other {수신 그룹 통화}}} other {{direction, select, Outgoing {발신 전화} other {수신 전화}}}}"
@@ -5345,6 +5405,33 @@
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "통화 링크"
+  },
+  "icu:CallLinkDetails__Join": {
+    "messageformat": "참가"
+  },
+  "icu:CallLinkDetails__CopyLink": {
+    "messageformat": "링크 복사"
+  },
+  "icu:CallLinkDetails__ShareLinkViaSignal": {
+    "messageformat": "Signal을 통해 링크 공유"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Call link details"
+  },
+  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
+    "messageformat": "Name"
+  },
+  "icu:CallLinkEditModal__JoinButtonLabel": {
+    "messageformat": "Join"
+  },
+  "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
+    "messageformat": "Approve all members"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
+    "messageformat": "Off"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
+    "messageformat": "On"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, other {{count,number}명이 입력하는 중입니다.}}"
@@ -5385,5 +5472,20 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "사소한 변경 사항과 버그 수정 및 성능 개선. Signal을 이용해 주셔서 감사합니다!",
     "ignoreUnused": true
+  },
+  "icu:WhatsNew__v7.12--0": {
+    "messageformat": "새로운 손 들기 기능으로 그룹 통화에서 쉽게 다른 사람의 주의를 끌거나 질문하세요."
+  },
+  "icu:WhatsNew__v7.12--1": {
+    "messageformat": "이 업데이트는 또한 이미지 크기를 조정하도록 향상된 자르기 도구를 포함합니다."
+  },
+  "icu:WhatsNew__v7.12--2": {
+    "messageformat": "Windows와 Linux의 '붙여 넣기 및 서식 일치' 단축키와 충돌하지 않도록 음성 메모 전송 키보드 단축키를 Ctrl/Cmd+Shift+Y로 수정했습니다."
+  },
+  "icu:WhatsNew__v7.13--0": {
+    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  },
+  "icu:WhatsNew__v7.13--1": {
+    "messageformat": "This update also improves the display of quoted replies in RTL languages."
   }
 }

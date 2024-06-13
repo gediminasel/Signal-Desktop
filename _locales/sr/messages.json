@@ -173,6 +173,9 @@
   "icu:viewMenuToggleDevTools": {
     "messageformat": "Укључи/искључи алатке за програмере"
   },
+  "icu:viewMenuOpenCallingDevTools": {
+    "messageformat": "Отвори напредне алатке за позиве"
+  },
   "icu:menuSetupAsNewDevice": {
     "messageformat": "Подесите као нови уређај"
   },
@@ -458,9 +461,6 @@
   "icu:joinAnyway": {
     "messageformat": "Свеједно се придружите"
   },
-  "icu:continueCall": {
-    "messageformat": "Настави са позивом"
-  },
   "icu:debugLogExplanation": {
     "messageformat": "Када кликнете на „Пошаљи“, ваш извештај ће бити постављен онлајн 30 дана на јединственој, необјављеној URL адреси. Можете га прво сачувати локално."
   },
@@ -643,6 +643,12 @@
   },
   "icu:screenShareWindow": {
     "messageformat": "Дељење екрана"
+  },
+  "icu:callingDeveloperTools": {
+    "messageformat": "Напредне алатке за позиве"
+  },
+  "icu:callingDeveloperToolsDescription": {
+    "messageformat": "Овај прозор се користи током развоја за приказ дијагностике за текуће позиве."
   },
   "icu:speech": {
     "messageformat": "Говор"
@@ -1033,6 +1039,9 @@
   },
   "icu:ChangeNumber--notification": {
     "messageformat": "{sender} је променио/ла број телефона"
+  },
+  "icu:JoinedSignal--notification": {
+    "messageformat": "Контакт се придружио Signal-у"
   },
   "icu:ConversationMerge--notification": {
     "messageformat": "{obsoleteConversationTitle} и {conversationTitle} су исти налог. Историја порука за оба ћаскања је овде."
@@ -2363,18 +2372,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "Ћаскање је означено као непрочитано"
   },
-  "icu:SendEdit--dialog--title2": {
-    "messageformat": "Измените поруку"
-  },
-  "icu:SendEdit--dialog--body2": {
-    "messageformat": "Ако измените поруку, она ће бити видљива само људима који су на најновијим верзијама Signal-а. Они ће моћи да виде да сте изменили поруку."
-  },
-  "icu:SendFormatting--dialog--title": {
-    "messageformat": "Слање форматираног текста"
-  },
-  "icu:SendFormatting--dialog--body": {
-    "messageformat": "Неки људи можда користе верзију Signal-а која не подржава форматирани текст. Они неће моћи да виде промене форматирања које сте направили у поруци."
-  },
   "icu:AuthArtCreator--dialog--message": {
     "messageformat": "Желите ли да отворите креатор пакета налепница у Signal-у?"
   },
@@ -2691,7 +2688,13 @@
     "messageformat": "Звоно је искључено"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "Подигли сте руку."
+    "messageformat": "You raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-one": {
+    "messageformat": "You and {otherName} raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-more": {
+    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} је подигао/ла руку."
@@ -2782,6 +2785,21 @@
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "Уклони ову особу из позива"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel": {
+    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
+    "messageformat": "+{count,number} more"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
+    "messageformat": "More info about new contacts"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
+    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
+    "messageformat": "Got it"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Видео"
@@ -3761,6 +3779,9 @@
   "icu:DeleteMessagesModal--description--noteToSelf": {
     "messageformat": "{count, plural, one {Са којих уређаја желите да избришете ову поруку?} other {Са којих уређаја желите да избришете ове поруке?}}"
   },
+  "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
+    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+  },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "Избриши мени"
   },
@@ -3772,6 +3793,9 @@
   },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "Избриши са свих уређаја"
+  },
+  "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
+    "messageformat": "Delete"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {Максималан број порука које можете да изаберете за брисање свима је {count,number}} other {Максималан број порука које можете да изаберете за брисање свима је {count,number}}}"
@@ -3866,11 +3890,17 @@
   "icu:ForwardMessageModal__title": {
     "messageformat": "Проследи на"
   },
+  "icu:ForwardMessageModal__ShareCallLink": {
+    "messageformat": "Поделите линк за позив"
+  },
   "icu:ForwardMessageModal--continue": {
     "messageformat": "Настави"
   },
   "icu:ForwardMessagesModal__toast--CannotForwardEmptyMessage": {
     "messageformat": "Није могуће проследити празне или избрисане поруке"
+  },
+  "icu:ShareCallLinkViaSignal__DraftMessageText": {
+    "messageformat": "Користите овај линк да се укључите у позив преко Signal-а: {url}"
   },
   "icu:MessageRequestWarning__learn-more": {
     "messageformat": "Сазнајте више"
@@ -4167,7 +4197,7 @@
     "messageformat": "Корисничко име не може да почиње бројем."
   },
   "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Минималан број знакова које корисничко име може садржати је {min,number}."
+    "messageformat": "Usernames must have at least {min,number} characters."
   },
   "icu:ProfileEditor--username--check-character-max": {
     "messageformat": "Максималан број знакова које корисничко име може садржати је {max,number}."
@@ -4347,7 +4377,7 @@
     "messageformat": "Претвори откуцане емотиконе у емоџије"
   },
   "icu:Preferences__auto-convert-emoji--description": {
-    "messageformat": "На пример, :-) биће претворено у 🙂"
+    "messageformat": "На пример, :-) ће бити претворено у <emojify>🙂</emojify>"
   },
   "icu:Preferences--advanced": {
     "messageformat": "Напредно"
@@ -4717,6 +4747,15 @@
   },
   "icu:SignalConnectionsModal__footer": {
     "messageformat": "Ваше везе могу да виде ваше име и слику, као и објаве у „Мојој причи“, осим ако је не сакријете од њих"
+  },
+  "icu:LocalDeleteWarningModal__header": {
+    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+  },
+  "icu:LocalDeleteWarningModal__description": {
+    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+  },
+  "icu:LocalDeleteWarningModal__confirm": {
+    "messageformat": "Got it"
   },
   "icu:Stories__title": {
     "messageformat": "Приче"
@@ -5310,6 +5349,9 @@
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Нема резултата за „{query}“"
   },
+  "icu:CallsList__CreateCallLink": {
+    "messageformat": "Create a Call Link"
+  },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "Долазни позив"
   },
@@ -5325,11 +5367,29 @@
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Линк за позив"
   },
+  "icu:CallsList__ItemCallInfo--Active": {
+    "messageformat": "Активно"
+  },
+  "icu:CallsList__LeaveCallDialogTitle": {
+    "messageformat": "Желите ли да напустите тренутни позив?"
+  },
+  "icu:CallsList__LeaveCallDialogBody": {
+    "messageformat": "Морате да напустите тренутни позив да бисте се прикључили новом позиву."
+  },
+  "icu:CallsList__LeaveCallDialogButton--leave": {
+    "messageformat": "Напусти позив"
+  },
   "icu:CallsNewCall__EmptyState--noQuery": {
     "messageformat": "Нема недавног ћаскања."
   },
   "icu:CallsNewCall__EmptyState--hasQuery": {
     "messageformat": "Нема резултата за „{query}“"
+  },
+  "icu:CallsNewCallButton--return": {
+    "messageformat": "Повратак"
+  },
+  "icu:CallsNewCallButtonTooltip--in-another-call": {
+    "messageformat": "Морате да напустите тренутни позив да бисте се прикључили новом позиву"
   },
   "icu:CallHistory__Description--Default": {
     "messageformat": "{type, select, Audio {{direction, select, Outgoing {Одлазни гласовни позив} other {Долазни гласовни позив}}} Video {{direction, select, Outgoing {Одлазни видео позив} other {Долазни видео позив}}} Group {{direction, select, Outgoing {Одлазни групни позив} other {Долазни групни позив}}} other {{direction, select, Outgoing {Одлазни позив} other {Долазни позив}}}}"
@@ -5345,6 +5405,33 @@
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Линк за позив"
+  },
+  "icu:CallLinkDetails__Join": {
+    "messageformat": "Придружите се"
+  },
+  "icu:CallLinkDetails__CopyLink": {
+    "messageformat": "Копирај линк"
+  },
+  "icu:CallLinkDetails__ShareLinkViaSignal": {
+    "messageformat": "Подели линк преко Signal-а"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Call link details"
+  },
+  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
+    "messageformat": "Name"
+  },
+  "icu:CallLinkEditModal__JoinButtonLabel": {
+    "messageformat": "Join"
+  },
+  "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
+    "messageformat": "Approve all members"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
+    "messageformat": "Off"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
+    "messageformat": "On"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {Још {count,number} особа куца.} other {Још њих {count,number} куцају.}}"
@@ -5385,5 +5472,20 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Обавили смо мања фина прилагођавања, исправке грешака и побољшања перформанси. Хвала што користите Signal!",
     "ignoreUnused": true
+  },
+  "icu:WhatsNew__v7.12--0": {
+    "messageformat": "Нова функционалност подизања руке је једноставан начин да привучете нечију пажњу или питате питање током групних позива."
+  },
+  "icu:WhatsNew__v7.12--1": {
+    "messageformat": "Ово ажурирање такође обухвата побољшану алатку за изрезивање слика."
+  },
+  "icu:WhatsNew__v7.12--2": {
+    "messageformat": "Променили смо пречицу на тастатури за слање гласовне белешке и сада је Ctrl/Cmd+Shift+Y, тако да више није у сукобу са пречицом „Налепи и уклопи стил“ на Windows-у и Linux-у."
+  },
+  "icu:WhatsNew__v7.13--0": {
+    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  },
+  "icu:WhatsNew__v7.13--1": {
+    "messageformat": "This update also improves the display of quoted replies in RTL languages."
   }
 }

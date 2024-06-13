@@ -3,7 +3,7 @@
 
 /* eslint-disable no-bitwise */
 
-import { isBoolean, isNumber, isString, omit } from 'lodash';
+import { isBoolean, isNumber, isString, noop, omit } from 'lodash';
 import PQueue from 'p-queue';
 import { v4 as getGuid } from 'uuid';
 import { existsSync } from 'fs';
@@ -130,6 +130,13 @@ import {
   StoryRecipientUpdateEvent,
   CallLogEventSyncEvent,
   CallLinkUpdateSyncEvent,
+  DeleteForMeSyncEvent,
+} from './messageReceiverEvents';
+import type {
+  MessageToDelete,
+  DeleteForMeSyncEventData,
+  DeleteForMeSyncTarget,
+  ConversationToDelete,
 } from './messageReceiverEvents';
 import * as log from '../logging/log';
 import * as durations from '../util/durations';
@@ -684,6 +691,11 @@ export default class MessageReceiver
   public override addEventListener(
     name: 'callLogEventSync',
     handler: (ev: CallLogEventSyncEvent) => void
+  ): void;
+
+  public override addEventListener(
+    name: 'deleteForMeSync',
+    handler: (ev: DeleteForMeSyncEvent) => void
   ): void;
 
   public override addEventListener(name: string, handler: EventHandler): void {
@@ -2511,23 +2523,32 @@ export default class MessageReceiver
       p = this.handleEndSession(envelope, sourceAci);
     }
 
-    if (msg.flags && msg.flags & Proto.DataMessage.Flags.PROFILE_KEY_UPDATE) {
-      strictAssert(
-        msg.profileKey != null && msg.profileKey.length > 0,
-        'PROFILE_KEY_UPDATE without profileKey'
-      );
+    const { profileKey } = msg;
+    const hasProfileKey = profileKey && profileKey.length > 0;
+    const isProfileKeyUpdate =
+      msg.flags && msg.flags & Proto.DataMessage.Flags.PROFILE_KEY_UPDATE;
 
+    if (isProfileKeyUpdate) {
+      strictAssert(hasProfileKey, 'PROFILE_KEY_UPDATE without profileKey');
       logUnexpectedUrgentValue(envelope, 'profileKeyUpdate');
+    }
 
+    if (hasProfileKey) {
       const ev = new ProfileKeyUpdateEvent(
         {
           source: envelope.source,
           sourceAci,
-          profileKey: Bytes.toBase64(msg.profileKey),
+          profileKey: Bytes.toBase64(profileKey),
         },
-        this.removeFromCache.bind(this, envelope)
+        isProfileKeyUpdate ? 'profileKeyUpdate' : 'profileKeyHarvest',
+        isProfileKeyUpdate ? this.removeFromCache.bind(this, envelope) : noop
       );
-      return this.dispatchAndWait(logId, ev);
+
+      if (isProfileKeyUpdate) {
+        return this.dispatchAndWait(logId, ev);
+      }
+
+      drop(this.dispatchAndWait(logId, ev));
     }
     await p;
 
@@ -3165,6 +3186,9 @@ export default class MessageReceiver
     if (syncMessage.callLogEvent) {
       return this.handleCallLogEvent(envelope, syncMessage.callLogEvent);
     }
+    if (syncMessage.deleteForMe) {
+      return this.handleDeleteForMeSync(envelope, syncMessage.deleteForMe);
+    }
 
     this.removeFromCache(envelope);
     const envelopeId = getEnvelopeId(envelope);
@@ -3501,7 +3525,7 @@ export default class MessageReceiver
 
     logUnexpectedUrgentValue(envelope, 'callEventSync');
 
-    const { receivedAtCounter } = envelope;
+    const { receivedAtCounter, receivedAtDate: receivedAtMS } = envelope;
 
     const callEventDetails = getCallEventForProto(
       callEvent,
@@ -3512,6 +3536,7 @@ export default class MessageReceiver
       {
         callEventDetails,
         receivedAtCounter,
+        receivedAtMS,
       },
       this.removeFromCache.bind(this, envelope)
     );
@@ -3612,6 +3637,118 @@ export default class MessageReceiver
     await this.dispatchAndWait(logId, callLogEventSync);
 
     log.info('handleCallLogEvent: finished');
+  }
+
+  private async handleDeleteForMeSync(
+    envelope: ProcessedEnvelope,
+    deleteSync: Proto.SyncMessage.IDeleteForMe
+  ): Promise<void> {
+    const logId = getEnvelopeId(envelope);
+    log.info('MessageReceiver.handleDeleteForMeSync', logId);
+
+    logUnexpectedUrgentValue(envelope, 'deleteForMeSync');
+
+    const { timestamp } = envelope;
+    let eventData: DeleteForMeSyncEventData = [];
+
+    try {
+      if (deleteSync.messageDeletes?.length) {
+        const messageDeletes: Array<DeleteForMeSyncTarget> =
+          deleteSync.messageDeletes
+            .flatMap((item): Array<DeleteForMeSyncTarget> | undefined => {
+              const messages = item.messages
+                ?.map(message => processMessageToDelete(message, logId))
+                .filter(isNotNil);
+              const conversation = item.conversation
+                ? processConversationToDelete(item.conversation, logId)
+                : undefined;
+
+              if (messages?.length && conversation) {
+                // We want each message in its own task
+                return messages.map(innerItem => {
+                  return {
+                    type: 'delete-message' as const,
+                    message: innerItem,
+                    conversation,
+                    timestamp,
+                  };
+                });
+              }
+
+              return undefined;
+            })
+            .filter(isNotNil);
+
+        eventData = eventData.concat(messageDeletes);
+      }
+      if (deleteSync.conversationDeletes?.length) {
+        const conversationDeletes: Array<DeleteForMeSyncTarget> =
+          deleteSync.conversationDeletes
+            .map(item => {
+              const mostRecentMessages = item.mostRecentMessages
+                ?.map(message => processMessageToDelete(message, logId))
+                .filter(isNotNil);
+              const conversation = item.conversation
+                ? processConversationToDelete(item.conversation, logId)
+                : undefined;
+
+              if (mostRecentMessages?.length && conversation) {
+                return {
+                  type: 'delete-conversation' as const,
+                  conversation,
+                  isFullDelete: Boolean(item.isFullDelete),
+                  mostRecentMessages,
+                  timestamp,
+                };
+              }
+
+              return undefined;
+            })
+            .filter(isNotNil);
+
+        eventData = eventData.concat(conversationDeletes);
+      }
+      if (deleteSync.localOnlyConversationDeletes?.length) {
+        const localOnlyConversationDeletes: Array<DeleteForMeSyncTarget> =
+          deleteSync.localOnlyConversationDeletes
+            .map(item => {
+              const conversation = item.conversation
+                ? processConversationToDelete(item.conversation, logId)
+                : undefined;
+
+              if (conversation) {
+                return {
+                  type: 'delete-local-conversation' as const,
+                  conversation,
+                  timestamp,
+                };
+              }
+
+              return undefined;
+            })
+            .filter(isNotNil);
+
+        eventData = eventData.concat(localOnlyConversationDeletes);
+      }
+      if (!eventData.length) {
+        throw new Error(`${logId}: Nothing found in sync message!`);
+      }
+    } catch (error: unknown) {
+      this.removeFromCache(envelope);
+
+      throw error;
+    }
+
+    const deleteSyncEventSync = new DeleteForMeSyncEvent(
+      eventData,
+      timestamp,
+      envelope.id,
+      this.removeFromCache.bind(this, envelope)
+    );
+
+    await this.dispatchAndWait(logId, deleteSyncEventSync);
+
+    log.info('handleDeleteForMeSync: finished');
   }
 
   private async handleContacts(
@@ -3818,4 +3955,71 @@ function envelopeTypeToCiphertextType(type: number | undefined): number {
   }
 
   throw new Error(`envelopeTypeToCiphertextType: Unknown type ${type}`);
+}
+
+function processMessageToDelete(
+  target: Proto.SyncMessage.DeleteForMe.IAddressableMessage,
+  logId: string
+): MessageToDelete | undefined {
+  const sentAt = target.sentTimestamp?.toNumber();
+  if (!isNumber(sentAt)) {
+    log.warn(
+      `${logId}/processMessageToDelete: No sentTimestamp found! Dropping AddressableMessage.`
+    );
+    return undefined;
+  }
+
+  if (target.authorAci) {
+    return {
+      type: 'aci' as const,
+      authorAci: normalizeAci(
+        target.authorAci,
+        `${logId}/processMessageToDelete`
+      ),
+      sentAt,
+    };
+  }
+  if (target.authorE164) {
+    return {
+      type: 'e164' as const,
+      authorE164: target.authorE164,
+      sentAt,
+    };
+  }
+
+  log.warn(
+    `${logId}/processMessageToDelete: No author field found! Dropping AddressableMessage.`
+  );
+  return undefined;
+}
+
+function processConversationToDelete(
+  target: Proto.SyncMessage.DeleteForMe.IConversationIdentifier,
+  logId: string
+): ConversationToDelete | undefined {
+  const { threadAci, threadGroupId, threadE164 } = target;
+
+  if (threadAci) {
+    return {
+      type: 'aci' as const,
+      aci: normalizeAci(threadAci, `${logId}/threadAci`),
+    };
+  }
+  if (threadGroupId) {
+    return {
+      type: 'group' as const,
+      groupId: Buffer.from(threadGroupId).toString('base64'),
+    };
+  }
+  if (threadE164) {
+    return {
+      type: 'e164' as const,
+      e164: threadE164,
+    };
+  }
+
+  log.warn(
+    `${logId}/processConversationToDelete: No identifier field found! Dropping ConversationIdentifier.`
+  );
+  return undefined;
 }

@@ -115,7 +115,7 @@ const exclusiveInterface: ClientExclusiveInterface = {
   flushUpdateConversationBatcher,
 
   shutdown,
-  removeAllMessagesInConversation,
+  removeMessagesInConversation,
 
   removeOtherData,
   cleanupOrphanedAttachments,
@@ -571,14 +571,16 @@ async function saveMessage(
 async function saveMessages(
   arrayOfMessages: ReadonlyArray<MessageType>,
   options: { forceSave?: boolean; ourAci: AciString }
-): Promise<void> {
-  await channels.saveMessages(
+): Promise<Array<string>> {
+  const result = await channels.saveMessages(
     arrayOfMessages.map(message => _cleanMessageData(message)),
     options
   );
 
   void expiringMessagesDeletionService.update();
   void tapToViewMessagesDeletionService.update();
+
+  return result;
 }
 
 async function removeMessage(id: string): Promise<void> {
@@ -590,6 +592,21 @@ async function removeMessage(id: string): Promise<void> {
     await channels.removeMessage(id);
     await cleanupMessage(message);
   }
+}
+
+export async function deleteAndCleanup(
+  messages: Array<MessageAttributesType>,
+  logId: string
+): Promise<void> {
+  const ids = messages.map(message => message.id);
+
+  log.info(`deleteAndCleanup/${logId}: Deleting ${ids.length} messages...`);
+  await channels.removeMessages(ids);
+
+  log.info(`deleteAndCleanup/${logId}: Cleanup for ${ids.length} messages...`);
+  await _cleanupMessages(messages);
+
+  log.info(`deleteAndCleanup/${logId}: Complete`);
 }
 
 async function _cleanupMessages(
@@ -664,12 +681,14 @@ async function getConversationRangeCenteredOnMessage(
   };
 }
 
-async function removeAllMessagesInConversation(
+async function removeMessagesInConversation(
   conversationId: string,
   {
     logId,
+    receivedAt,
   }: {
     logId: string;
+    receivedAt?: number;
   }
 ): Promise<void> {
   let messages;
@@ -685,6 +704,7 @@ async function removeAllMessagesInConversation(
       conversationId,
       limit: chunkSize,
       includeStoryReplies: true,
+      receivedAt,
       storyId: undefined,
     });
 
@@ -692,15 +712,8 @@ async function removeAllMessagesInConversation(
       return;
     }
 
-    const ids = messages.map(message => message.id);
-
-    log.info(`removeAllMessagesInConversation/${logId}: Cleanup...`);
     // eslint-disable-next-line no-await-in-loop
-    await _cleanupMessages(messages);
-
-    log.info(`removeAllMessagesInConversation/${logId}: Deleting...`);
-    // eslint-disable-next-line no-await-in-loop
-    await channels.removeMessages(ids);
+    await deleteAndCleanup(messages, logId);
   } while (messages.length > 0);
 }
 

@@ -144,6 +144,7 @@ import type {
   UnprocessedUpdateType,
   GetNearbyMessageFromDeletedSetOptionsType,
   StoredKyberPreKeyType,
+  BackupCdnMediaObjectType,
 } from './Interface';
 import { SeenStatus } from '../MessageSeenStatus';
 import {
@@ -174,11 +175,24 @@ import {
   updateCallLinkAdminKeyByRoomId,
   updateCallLinkState,
 } from './server/callLinks';
+import {
+  replaceAllEndorsementsForGroup,
+  deleteAllEndorsementsForGroup,
+  getGroupSendCombinedEndorsementExpiration,
+} from './server/groupEndorsements';
 import { CallMode } from '../types/Calling';
 import {
   attachmentDownloadJobSchema,
   type AttachmentDownloadJobType,
 } from '../types/AttachmentDownload';
+import { MAX_SYNC_TASK_ATTEMPTS } from '../util/syncTasks.types';
+import type { SyncTaskType } from '../util/syncTasks';
+import { isMoreRecentThan } from '../util/timestamp';
+import {
+  type AttachmentBackupJobType,
+  attachmentBackupJobSchema,
+} from '../types/AttachmentBackup';
+import { redactGenericText } from '../util/privacy';
 
 type ConversationRow = Readonly<{
   json: string;
@@ -286,6 +300,10 @@ const dataInterface: ServerInterface = {
   getAllConversationIds,
   getAllGroupsInvolvingServiceId,
 
+  replaceAllEndorsementsForGroup,
+  deleteAllEndorsementsForGroup,
+  getGroupSendCombinedEndorsementExpiration,
+
   searchMessages,
 
   getMessageCount,
@@ -352,6 +370,12 @@ const dataInterface: ServerInterface = {
   getMessagesBetween,
   getNearbyMessageFromDeletedSet,
   saveEditedMessage,
+  saveEditedMessages,
+  getMostRecentAddressableMessages,
+
+  removeSyncTaskById,
+  saveSyncTasks,
+  getAllSyncTasks,
 
   getUnprocessedCount,
   getUnprocessedByIdsAndIncrementAttempts,
@@ -367,6 +391,15 @@ const dataInterface: ServerInterface = {
   saveAttachmentDownloadJob,
   resetAttachmentDownloadActive,
   removeAttachmentDownloadJob,
+
+  getNextAttachmentBackupJobs,
+  saveAttachmentBackupJob,
+  markAllAttachmentBackupJobsInactive,
+  removeAttachmentBackupJob,
+
+  clearAllBackupCdnObjectMetadata,
+  saveBackupCdnObjectMetadata,
+  getBackupCdnObjectMetadata,
 
   createOrUpdateStickerPack,
   updateStickerPackStatus,
@@ -2058,6 +2091,131 @@ function hasUserInitiatedMessages(conversationId: string): boolean {
   return exists !== 0;
 }
 
+async function getMostRecentAddressableMessages(
+  conversationId: string,
+  limit = 5
+): Promise<Array<MessageType>> {
+  const db = getReadonlyInstance();
+  return getMostRecentAddressableMessagesSync(db, conversationId, limit);
+}
+
+export function getMostRecentAddressableMessagesSync(
+  db: Database,
+  conversationId: string,
+  limit = 5
+): Array<MessageType> {
+  const [query, parameters] = sql`
+    SELECT json FROM messages
+    INDEXED BY messages_by_date_addressable
+    WHERE
+      conversationId IS ${conversationId} AND
+      isAddressableMessage = 1
+    ORDER BY received_at DESC, sent_at DESC
+    LIMIT ${limit};
+  `;
+
+  const rows = db.prepare(query).all(parameters);
+
+  return rows.map(row => jsonToObject(row.json));
+}
+
+async function removeSyncTaskById(id: string): Promise<void> {
+  const db = await getWritableInstance();
+  removeSyncTaskByIdSync(db, id);
+}
+export function removeSyncTaskByIdSync(db: Database, id: string): void {
+  const [query, parameters] = sql`
+    DELETE FROM syncTasks
+    WHERE id IS ${id}
+  `;
+
+  db.prepare(query).run(parameters);
+}
+async function saveSyncTasks(tasks: Array<SyncTaskType>): Promise<void> {
+  const db = await getWritableInstance();
+  return saveSyncTasksSync(db, tasks);
+}
+export function saveSyncTasksSync(
+  db: Database,
+  tasks: Array<SyncTaskType>
+): void {
+  return db.transaction(() => {
+    tasks.forEach(task => assertSync(saveSyncTaskSync(db, task)));
+  })();
+}
+export function saveSyncTaskSync(db: Database, task: SyncTaskType): void {
+  const { id, attempts, createdAt, data, envelopeId, sentAt, type } = task;
+
+  const [query, parameters] = sql`
+    INSERT INTO syncTasks (
+      id,
+      attempts,
+      createdAt,
+      data,
+      envelopeId,
+      sentAt,
+      type
+    ) VALUES (
+      ${id},
+      ${attempts},
+      ${createdAt},
+      ${objectToJSON(data)},
+      ${envelopeId},
+      ${sentAt},
+      ${type}
+    )
+  `;
+
+  db.prepare(query).run(parameters);
+}
+async function getAllSyncTasks(): Promise<Array<SyncTaskType>> {
+  const db = await getWritableInstance();
+  return getAllSyncTasksSync(db);
+}
+export function getAllSyncTasksSync(db: Database): Array<SyncTaskType> {
+  return db.transaction(() => {
+    const [selectAllQuery] = sql`
+      SELECT * FROM syncTasks ORDER BY createdAt ASC, sentAt ASC, id ASC
+    `;
+
+    const rows = db.prepare(selectAllQuery).all();
+
+    const tasks: Array<SyncTaskType> = rows.map(row => ({
+      ...row,
+      data: jsonToObject(row.data),
+    }));
+
+    const [query] = sql`
+      UPDATE syncTasks
+      SET attempts = attempts + 1
+    `;
+    db.prepare(query).run();
+
+    const [toDelete, toReturn] = partition(tasks, task => {
+      if (
+        isNormalNumber(task.attempts) &&
+        task.attempts < MAX_SYNC_TASK_ATTEMPTS
+      ) {
+        return false;
+      }
+      if (isMoreRecentThan(task.createdAt, durations.WEEK)) {
+        return false;
+      }
+
+      return true;
+    });
+
+    if (toDelete.length > 0) {
+      log.warn(`getAllSyncTasks: Removing ${toDelete.length} expired tasks`);
+      toDelete.forEach(task => {
+        assertSync(removeSyncTaskByIdSync(db, task.id));
+      });
+    }
+
+    return toReturn;
+  })();
+}
+
 function saveMessageSync(
   db: Database,
   data: MessageType,
@@ -2294,15 +2452,17 @@ async function saveMessage(
 async function saveMessages(
   arrayOfMessages: ReadonlyArray<MessageType>,
   options: { forceSave?: boolean; ourAci: AciString }
-): Promise<void> {
+): Promise<Array<string>> {
   const db = await getWritableInstance();
 
-  db.transaction(() => {
+  return db.transaction(() => {
+    const result = new Array<string>();
     for (const message of arrayOfMessages) {
-      assertSync(
+      result.push(
         saveMessageSync(db, message, { ...options, alreadyInTransaction: true })
       );
     }
+    return result;
   })();
 }
 
@@ -3620,48 +3780,66 @@ function getCallHistoryGroupDataSync(
 ): unknown {
   return db.transaction(() => {
     const { limit, offset } = pagination;
-    const { status, conversationIds } = filter;
+    const { status, conversationIds, callLinkRoomIds } = filter;
 
-    // TODO: DESKTOP-6827 Search Calls Tab for adhoc calls
-    if (conversationIds != null) {
-      strictAssert(conversationIds.length > 0, "can't filter by empty array");
-
+    const isUsingTempTable = conversationIds != null || callLinkRoomIds != null;
+    if (isUsingTempTable) {
       const [createTempTable] = sql`
-        CREATE TEMP TABLE temp_callHistory_filtered_conversations (
-          id TEXT,
+        CREATE TEMP TABLE temp_callHistory_filtered_peers (
+          conversationId TEXT,
           serviceId TEXT,
-          groupId TEXT
+          groupId TEXT,
+          callLinkRoomId TEXT
         );
       `;
 
       db.exec(createTempTable);
+      if (conversationIds != null) {
+        strictAssert(conversationIds.length > 0, "can't filter by empty array");
 
-      batchMultiVarQuery(db, conversationIds, ids => {
-        const idList = sqlJoin(ids.map(id => sqlFragment`${id}`));
+        batchMultiVarQuery(db, conversationIds, ids => {
+          const idList = sqlJoin(ids.map(id => sqlFragment`${id}`));
 
-        const [insertQuery, insertParams] = sql`
-          INSERT INTO temp_callHistory_filtered_conversations
-            (id, serviceId, groupId)
-          SELECT id, serviceId, groupId
-          FROM conversations
-          WHERE conversations.id IN (${idList});
-        `;
+          const [insertQuery, insertParams] = sql`
+            INSERT INTO temp_callHistory_filtered_peers
+              (conversationId, serviceId, groupId)
+            SELECT id, serviceId, groupId
+            FROM conversations
+            WHERE conversations.id IN (${idList});
+          `;
 
-        db.prepare(insertQuery).run(insertParams);
-      });
+          db.prepare(insertQuery).run(insertParams);
+        });
+      }
+
+      if (callLinkRoomIds != null) {
+        strictAssert(callLinkRoomIds.length > 0, "can't filter by empty array");
+
+        batchMultiVarQuery(db, callLinkRoomIds, ids => {
+          const idList = sqlJoin(ids.map(id => sqlFragment`(${id})`));
+
+          const [insertQuery, insertParams] = sql`
+            INSERT INTO temp_callHistory_filtered_peers
+              (callLinkRoomId)
+            VALUES ${idList};
+          `;
+
+          db.prepare(insertQuery).run(insertParams);
+        });
+      }
     }
 
-    const innerJoin =
-      conversationIds != null
-        ? // peerId can be a conversation id (legacy), a serviceId, or a groupId
-          sqlFragment`
-            INNER JOIN temp_callHistory_filtered_conversations ON (
-              temp_callHistory_filtered_conversations.id IS c.peerId
-              OR temp_callHistory_filtered_conversations.serviceId IS c.peerId
-              OR temp_callHistory_filtered_conversations.groupId IS c.peerId
-            )
-          `
-        : sqlFragment``;
+    // peerId can be a conversation id (legacy), a serviceId, groupId, or call link roomId
+    const innerJoin = isUsingTempTable
+      ? sqlFragment`
+          INNER JOIN temp_callHistory_filtered_peers ON (
+            temp_callHistory_filtered_peers.conversationId IS c.peerId
+            OR temp_callHistory_filtered_peers.serviceId IS c.peerId
+            OR temp_callHistory_filtered_peers.groupId IS c.peerId
+            OR temp_callHistory_filtered_peers.callLinkRoomId IS c.peerId
+          )
+        `
+      : sqlFragment``;
 
     const filterClause =
       status === CallHistoryFilterStatus.All
@@ -3746,8 +3924,6 @@ function getCallHistoryGroupDataSync(
                 -- Desktop Constraints:
                 AND callsHistory.status IS c.status
                 AND ${filterClause}
-                -- Skip grouping logic for adhoc calls
-                AND callsHistory.mode IS NOT ${CALL_MODE_ADHOC}
               ORDER BY timestamp DESC
             ) as possibleChildren,
 
@@ -3796,9 +3972,9 @@ function getCallHistoryGroupDataSync(
       ? db.prepare(query).pluck(true).get(params)
       : db.prepare(query).all(params);
 
-    if (conversationIds != null) {
+    if (isUsingTempTable) {
       const [dropTempTableQuery] = sql`
-        DROP TABLE temp_callHistory_filtered_conversations;
+        DROP TABLE temp_callHistory_filtered_peers;
       `;
 
       db.exec(dropTempTableQuery);
@@ -3820,6 +3996,11 @@ async function getCallHistoryGroupsCount(
     limit: 0,
     offset: 0,
   });
+
+  if (result == null) {
+    return 0;
+  }
+
   return countSchema.parse(result);
 }
 
@@ -3862,17 +4043,21 @@ async function getCallHistoryGroups(
     })
     .reverse()
     .map(group => {
-      const { possibleChildren, inPeriod, ...rest } = group;
+      const { possibleChildren, inPeriod, type, ...rest } = group;
       const children = [];
 
       for (const child of possibleChildren) {
         if (!taken.has(child.callId) && inPeriod.has(child.callId)) {
           children.push(child);
           taken.add(child.callId);
+          if (type === CallType.Adhoc) {
+            // By spec, limit adhoc call history to the most recent call
+            break;
+          }
         }
       }
 
-      return callHistoryGroupSchema.parse({ ...rest, children });
+      return callHistoryGroupSchema.parse({ ...rest, type, children });
     })
     .reverse();
 }
@@ -4533,9 +4718,9 @@ function getAttachmentDownloadJob(
     SELECT * FROM attachment_downloads
     WHERE
       messageId = ${job.messageId}
-    AND 
+    AND
       attachmentType = ${job.attachmentType}
-    AND 
+    AND
       digest = ${job.digest};
   `;
 
@@ -4573,7 +4758,7 @@ async function getNextAttachmentDownloadJobs({
         })
       AND
         messageId IN (${sqlJoin(prioritizeMessageIds)})
-      -- for priority messages, let's load them oldest first; this helps, e.g. for stories where we 
+      -- for priority messages, let's load them oldest first; this helps, e.g. for stories where we
       -- want the oldest one first
       ORDER BY receivedAt ASC
       LIMIT ${limit}
@@ -4684,11 +4869,11 @@ function removeAttachmentDownloadJobSync(
 ): void {
   const [query, params] = sql`
     DELETE FROM attachment_downloads
-    WHERE 
+    WHERE
       messageId = ${job.messageId}
     AND
-      attachmentType = ${job.attachmentType} 
-    AND 
+      attachmentType = ${job.attachmentType}
+    AND
       digest = ${job.digest};
   `;
 
@@ -4700,6 +4885,157 @@ async function removeAttachmentDownloadJob(
 ): Promise<void> {
   const db = await getWritableInstance();
   return removeAttachmentDownloadJobSync(db, job);
+}
+
+// Backup Attachments
+
+async function markAllAttachmentBackupJobsInactive(): Promise<void> {
+  const db = await getWritableInstance();
+  db.prepare<EmptyQuery>(
+    `
+    UPDATE attachment_backup_jobs
+    SET active = 0;
+    `
+  ).run();
+}
+
+async function saveAttachmentBackupJob(
+  job: AttachmentBackupJobType
+): Promise<void> {
+  const db = await getWritableInstance();
+
+  const [query, params] = sql`
+    INSERT OR REPLACE INTO attachment_backup_jobs (
+      active,
+      attempts,
+      data,
+      lastAttemptTimestamp,
+      mediaName, 
+      receivedAt,
+      retryAfter,
+      type
+    ) VALUES (
+      ${job.active ? 1 : 0},
+      ${job.attempts},
+      ${objectToJSON(job.data)},
+      ${job.lastAttemptTimestamp},
+      ${job.mediaName},
+      ${job.receivedAt},
+      ${job.retryAfter},
+      ${job.type}
+    );
+  `;
+  db.prepare(query).run(params);
+}
+
+async function getNextAttachmentBackupJobs({
+  limit,
+  timestamp = Date.now(),
+}: {
+  limit: number;
+  timestamp?: number;
+}): Promise<Array<AttachmentBackupJobType>> {
+  const db = await getWritableInstance();
+
+  const [query, params] = sql`
+    SELECT * FROM attachment_backup_jobs
+    WHERE
+      active = 0
+    AND
+      (retryAfter is NULL OR retryAfter <= ${timestamp})
+    ORDER BY receivedAt DESC
+    LIMIT ${limit}
+  `;
+  const rows = db.prepare(query).all(params);
+  return rows
+    .map(row => {
+      const parseResult = attachmentBackupJobSchema.safeParse({
+        ...row,
+        active: Boolean(row.active),
+        data: jsonToObject(row.data),
+      });
+      if (!parseResult.success) {
+        const redactedMediaName = redactGenericText(row.mediaName);
+        logger.error(
+          `getNextAttachmentBackupJobs: invalid data, removing. mediaName: ${redactedMediaName}`,
+          Errors.toLogFormat(parseResult.error)
+        );
+        removeAttachmentBackupJobSync(db, { mediaName: row.mediaName });
+        return null;
+      }
+      return parseResult.data;
+    })
+    .filter(isNotNil);
+}
+
+async function removeAttachmentBackupJob(
+  job: Pick<AttachmentBackupJobType, 'mediaName'>
+): Promise<void> {
+  const db = await getWritableInstance();
+  return removeAttachmentBackupJobSync(db, job);
+}
+
+function removeAttachmentBackupJobSync(
+  db: Database,
+  job: Pick<AttachmentBackupJobType, 'mediaName'>
+): void {
+  const [query, params] = sql`
+  DELETE FROM attachment_backup_jobs
+  WHERE 
+    mediaName = ${job.mediaName};
+`;
+
+  db.prepare(query).run(params);
+}
+
+// Attachments on backup CDN
+async function clearAllBackupCdnObjectMetadata(): Promise<void> {
+  const db = await getWritableInstance();
+  db.prepare('DELETE FROM backup_cdn_object_metadata;').run();
+}
+
+function saveBackupCdnObjectMetadataSync(
+  db: Database,
+  storedMediaObject: BackupCdnMediaObjectType
+) {
+  const { mediaId, cdnNumber, sizeOnBackupCdn } = storedMediaObject;
+  const [query, params] = sql`
+    INSERT OR REPLACE INTO backup_cdn_object_metadata
+    (
+      mediaId,
+      cdnNumber,
+      sizeOnBackupCdn
+    ) VALUES (
+      ${mediaId},
+      ${cdnNumber},
+      ${sizeOnBackupCdn}
+    );
+  `;
+
+  db.prepare(query).run(params);
+}
+
+async function saveBackupCdnObjectMetadata(
+  storedMediaObjects: Array<BackupCdnMediaObjectType>
+): Promise<void> {
+  const db = await getWritableInstance();
+  db.transaction(() => {
+    for (const obj of storedMediaObjects) {
+      saveBackupCdnObjectMetadataSync(db, obj);
+    }
+  })();
+}
+
+async function getBackupCdnObjectMetadata(
+  mediaId: string
+): Promise<BackupCdnMediaObjectType | undefined> {
+  const db = getReadonlyInstance();
+  const [
+    query,
+    params,
+  ] = sql`SELECT * from backup_cdn_object_metadata WHERE mediaId = ${mediaId}`;
+
+  return db.prepare(query).get(params);
 }
 
 // Stickers
@@ -5999,12 +6335,17 @@ async function removeAll(): Promise<void> {
       DROP   TRIGGER messages_on_delete;
 
       DELETE FROM attachment_downloads;
+      DELETE FROM attachment_backup_jobs;
+      DELETE FROM backup_cdn_object_metadata;
       DELETE FROM badgeImageFiles;
       DELETE FROM badges;
+      DELETE FROM callLinks;
       DELETE FROM callsHistory;
       DELETE FROM conversations;
       DELETE FROM emojis;
       DELETE FROM groupCallRingCancellations;
+      DELETE FROM groupSendCombinedEndorsement;
+      DELETE FROM groupSendMemberEndorsement;
       DELETE FROM identityKeys;
       DELETE FROM items;
       DELETE FROM jobs;
@@ -6025,6 +6366,7 @@ async function removeAll(): Promise<void> {
       DELETE FROM storyDistributionMembers;
       DELETE FROM storyDistributions;
       DELETE FROM storyReads;
+      DELETE FROM syncTasks;
       DELETE FROM unprocessed;
       DELETE FROM uninstalled_sticker_packs;
 
@@ -6055,7 +6397,10 @@ async function removeAllConfiguration(): Promise<void> {
   db.transaction(() => {
     db.exec(
       `
-      DELETE FROM identityKeys;
+      DELETE FROM attachment_backup_jobs;
+      DELETE FROM backup_cdn_object_metadata;
+      DELETE FROM groupSendCombinedEndorsement;
+      DELETE FROM groupSendMemberEndorsement;
       DELETE FROM jobs;
       DELETE FROM kyberPreKeys;
       DELETE FROM preKeys;
@@ -6065,6 +6410,7 @@ async function removeAllConfiguration(): Promise<void> {
       DELETE FROM sendLogRecipients;
       DELETE FROM sessions;
       DELETE FROM signedPreKeys;
+      DELETE FROM syncTasks;
       DELETE FROM unprocessed;
       `
     );
@@ -6083,7 +6429,16 @@ async function removeAllConfiguration(): Promise<void> {
 
     db.exec(
       `
-      UPDATE conversations SET json = json_remove(json, '$.senderKeyInfo');
+      UPDATE conversations
+      SET
+        json = json_remove(
+          json,
+          '$.senderKeyInfo',
+          '$.storageID',
+          '$.needsStorageServiceSync',
+          '$.storageUnknownFields'
+        );
+
       UPDATE storyDistributions SET senderKeyInfoJson = NULL;
       `
     );
@@ -6841,10 +7196,10 @@ async function removeAllProfileKeyCredentials(): Promise<void> {
   );
 }
 
-async function saveEditedMessage(
+async function saveEditedMessagesSync(
   mainMessage: MessageType,
   ourAci: AciString,
-  { conversationId, messageId, readStatus, sentAt }: EditedMessageType
+  history: ReadonlyArray<EditedMessageType>
 ): Promise<void> {
   const db = await getWritableInstance();
 
@@ -6856,22 +7211,40 @@ async function saveEditedMessage(
       })
     );
 
-    const [query, params] = sql`
-      INSERT INTO edited_messages (
-        conversationId,
-        messageId,
-        sentAt,
-        readStatus
-      ) VALUES (
-        ${conversationId},
-        ${messageId},
-        ${sentAt},
-        ${readStatus}
-      );
-    `;
+    for (const { conversationId, messageId, readStatus, sentAt } of history) {
+      const [query, params] = sql`
+        INSERT INTO edited_messages (
+          conversationId,
+          messageId,
+          sentAt,
+          readStatus
+        ) VALUES (
+          ${conversationId},
+          ${messageId},
+          ${sentAt},
+          ${readStatus}
+        );
+      `;
 
-    db.prepare(query).run(params);
+      db.prepare(query).run(params);
+    }
   })();
+}
+
+async function saveEditedMessage(
+  mainMessage: MessageType,
+  ourAci: AciString,
+  editedMessage: EditedMessageType
+): Promise<void> {
+  return saveEditedMessagesSync(mainMessage, ourAci, [editedMessage]);
+}
+
+async function saveEditedMessages(
+  mainMessage: MessageType,
+  ourAci: AciString,
+  editedMessages: ReadonlyArray<EditedMessageType>
+): Promise<void> {
+  return saveEditedMessagesSync(mainMessage, ourAci, editedMessages);
 }
 
 async function _getAllEditedMessages(): Promise<

@@ -17,7 +17,6 @@ import type {
   CustomError,
   MessageAttributesType,
   MessageReactionType,
-  QuotedMessageType,
 } from '../model-types.d';
 import { filter, map, repeat, zipObject } from '../util/iterables';
 import * as GoogleChrome from '../util/GoogleChrome';
@@ -31,13 +30,11 @@ import { drop } from '../util/drop';
 import type { ConversationModel } from './conversations';
 import type {
   ProcessedDataMessage,
-  ProcessedQuote,
   ProcessedUnidentifiedDeliveryStatus,
   CallbackResultType,
 } from '../textsecure/Types.d';
 import { SendMessageProtoError } from '../textsecure/Errors';
 import { getUserLanguages } from '../util/userLanguages';
-import { copyCdnFields } from '../util/attachments';
 
 import type { ReactionType } from '../types/Reactions';
 import { ReactionReadStatus } from '../types/Reactions';
@@ -46,7 +43,7 @@ import { normalizeServiceId } from '../types/ServiceId';
 import { isAciString } from '../util/isAciString';
 import * as reactionUtil from '../reactions/util';
 import * as Errors from '../types/errors';
-import type { AttachmentType } from '../types/Attachment';
+import { type AttachmentType } from '../types/Attachment';
 import * as MIME from '../types/MIME';
 import { ReadStatus } from '../messages/MessageReadStatus';
 import type { SendStateByConversationId } from '../messages/MessageSendState';
@@ -69,7 +66,11 @@ import {
 } from '../util/whatTypeOfConversation';
 import { handleMessageSend } from '../util/handleMessageSend';
 import { getSendOptions } from '../util/getSendOptions';
-import { modifyTargetMessage } from '../util/modifyTargetMessage';
+import {
+  modifyTargetMessage,
+  ModifyTargetMessageResult,
+} from '../util/modifyTargetMessage';
+
 import {
   getMessagePropStatus,
   hasErrors,
@@ -106,10 +107,7 @@ import {
   NotificationType,
   notificationService,
 } from '../services/notifications';
-import type {
-  LinkPreviewType,
-  LinkPreviewWithHydratedData,
-} from '../types/message/LinkPreviews';
+import type { LinkPreviewType } from '../types/message/LinkPreviews';
 import * as log from '../logging/log';
 import { cleanupMessage, deleteMessageData } from '../util/cleanup';
 import {
@@ -120,6 +118,7 @@ import {
   messageHasPaymentEvent,
   isQuoteAMatch,
   getAuthor,
+  shouldTryToCopyFromQuotedMessage,
 } from '../messages/helpers';
 import { viewOnceOpenJobQueue } from '../jobs/viewOnceOpenJobQueue';
 import { getMessageIdForLogging } from '../util/idForLogging';
@@ -128,18 +127,15 @@ import { queueAttachmentDownloads } from '../util/queueAttachmentDownloads';
 import { findStoryMessages } from '../util/findStoryMessage';
 import type { ConversationQueueJobData } from '../jobs/conversationJobQueue';
 import { shouldDownloadStory } from '../util/shouldDownloadStory';
-import type { EmbeddedContactWithHydratedAvatar } from '../types/EmbeddedContact';
 import { SeenStatus } from '../MessageSeenStatus';
 import { isNewReactionReplacingPrevious } from '../reactions/util';
 import { parseBoostBadgeListFromServer } from '../badges/parseBadgesFromServer';
-import type { StickerWithHydratedData } from '../types/Stickers';
 
 import {
   addToAttachmentDownloadQueue,
   shouldUseAttachmentDownloadQueue,
 } from '../util/attachmentDownloadQueue';
 import dataInterface from '../sql/Client';
-import { getQuoteBodyText } from '../util/getQuoteBodyText';
 import { shouldReplyNotifyUser } from '../util/shouldReplyNotifyUser';
 import type { RawBodyRange } from '../types/BodyRange';
 import { BodyRange } from '../types/BodyRange';
@@ -157,6 +153,10 @@ import {
 } from '../util/editHelpers';
 import { getMessageSentTimestamp } from '../util/getMessageSentTimestamp';
 import type { AttachmentDownloadUrgency } from '../jobs/AttachmentDownloadManager';
+import {
+  copyFromQuotedMessage,
+  copyQuoteContentFromOriginal,
+} from '../messages/copyQuote';
 
 /* eslint-disable more/no-then */
 
@@ -185,14 +185,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
   private pendingMarkRead?: number;
 
   syncPromise?: Promise<CallbackResultType | void>;
-
-  cachedOutgoingContactData?: Array<EmbeddedContactWithHydratedAvatar>;
-
-  cachedOutgoingPreviewData?: Array<LinkPreviewWithHydratedData>;
-
-  cachedOutgoingQuoteData?: QuotedMessageType;
-
-  cachedOutgoingStickerData?: StickerWithHydratedData;
 
   public registerLocations: Set<string>;
 
@@ -459,10 +451,13 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
 
     // Is the quote really without a reference? Check with our in memory store
     // first to make sure it's not there.
-    if (referencedMessageNotFound && contact) {
-      log.info(
-        `doubleCheckMissingQuoteReference/${logId}: Verifying reference to ${sentAt}`
-      );
+    if (
+      contact &&
+      shouldTryToCopyFromQuotedMessage({
+        referencedMessageNotFound,
+        quoteAttachment: quote.attachments.at(0),
+      })
+    ) {
       const inMemoryMessages = window.MessageCache.__DEPRECATED$filterBySentAt(
         Number(sentAt)
       );
@@ -503,7 +498,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         `doubleCheckMissingQuoteReference/${logId}: Found match for ${sentAt}, updating.`
       );
 
-      await this.copyQuoteContentFromOriginal(matchingMessage, quote);
+      await copyQuoteContentFromOriginal(matchingMessage, quote);
       let { fromGroupName } = quote;
       if (
         matchingMessage.get('conversationId') !== this.get('conversationId')
@@ -857,12 +852,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       this.set(attributesToUpdate);
     }
 
-    // We aren't trying to send this message anymore, so we'll delete these caches
-    delete this.cachedOutgoingContactData;
-    delete this.cachedOutgoingPreviewData;
-    delete this.cachedOutgoingQuoteData;
-    delete this.cachedOutgoingStickerData;
-
     this.notifyStorySendFailed();
   }
 
@@ -1131,16 +1120,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     }
 
     await Promise.all(promises);
-
-    const isTotalSuccess: boolean =
-      result.success && !this.get('errors')?.length;
-
-    if (isTotalSuccess) {
-      delete this.cachedOutgoingContactData;
-      delete this.cachedOutgoingPreviewData;
-      delete this.cachedOutgoingQuoteData;
-      delete this.cachedOutgoingStickerData;
-    }
 
     updateLeftPane();
   }
@@ -1427,201 +1406,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     this.set({
       attachments: newAttachments,
     });
-  }
-
-  async copyFromQuotedMessage(
-    quote: ProcessedQuote | undefined,
-    conversationId: string
-  ): Promise<QuotedMessageType | undefined> {
-    if (!quote) {
-      return undefined;
-    }
-
-    const { id } = quote;
-    strictAssert(id, 'Quote must have an id');
-
-    const result: QuotedMessageType = {
-      ...quote,
-
-      id,
-
-      attachments: quote.attachments.slice(),
-      bodyRanges: quote.bodyRanges?.slice(),
-
-      // Just placeholder values for the fields
-      fromGroupName: undefined,
-      referencedMessageNotFound: false,
-      isGiftBadge: quote.type === Proto.DataMessage.Quote.Type.GIFT_BADGE,
-      isViewOnce: false,
-      messageId: '',
-    };
-
-    const inMemoryMessages =
-      window.MessageCache.__DEPRECATED$filterBySentAt(id);
-    const matchingMessage = findMatchingQuote(
-      inMemoryMessages,
-      result,
-      conversationId
-    );
-
-    let queryMessage: undefined | MessageModel;
-
-    if (matchingMessage) {
-      queryMessage = matchingMessage;
-    } else {
-      log.info('copyFromQuotedMessage: db lookup needed', id);
-      const messages = await window.Signal.Data.getMessagesBySentAt(id);
-      const found = messages.find(item => isQuoteAMatch(item, result));
-
-      if (!found) {
-        result.referencedMessageNotFound = true;
-        return result;
-      }
-      queryMessage = window.MessageCache.__DEPRECATED$register(
-        found.id,
-        found,
-        'copyFromQuotedMessage'
-      );
-    }
-
-    if (queryMessage && queryMessage.get('conversationId') !== conversationId) {
-      const conversation = window.ConversationController.get(
-        queryMessage.get('conversationId')
-      );
-      result.fromGroupName = conversation?.format()?.name;
-    }
-
-    if (queryMessage) {
-      await this.copyQuoteContentFromOriginal(queryMessage, result);
-    }
-
-    return result;
-  }
-
-  async copyQuoteContentFromOriginal(
-    originalMessage: MessageModel,
-    quote: QuotedMessageType
-  ): Promise<void> {
-    const { attachments } = quote;
-    const firstAttachment = attachments ? attachments[0] : undefined;
-    const firstThumbnailCdnFields = copyCdnFields(firstAttachment?.thumbnail);
-
-    if (messageHasPaymentEvent(originalMessage.attributes)) {
-      // eslint-disable-next-line no-param-reassign
-      quote.payment = originalMessage.get('payment');
-    }
-
-    if (isTapToView(originalMessage.attributes)) {
-      // eslint-disable-next-line no-param-reassign
-      quote.text = undefined;
-      // eslint-disable-next-line no-param-reassign
-      quote.attachments = [
-        {
-          contentType: MIME.IMAGE_JPEG,
-        },
-      ];
-      // eslint-disable-next-line no-param-reassign
-      quote.isViewOnce = true;
-
-      return;
-    }
-
-    const isMessageAGiftBadge = isGiftBadge(originalMessage.attributes);
-    if (isMessageAGiftBadge !== quote.isGiftBadge) {
-      log.warn(
-        `copyQuoteContentFromOriginal: Quote.isGiftBadge: ${quote.isGiftBadge}, isGiftBadge(message): ${isMessageAGiftBadge}`
-      );
-      // eslint-disable-next-line no-param-reassign
-      quote.isGiftBadge = isMessageAGiftBadge;
-    }
-    if (isMessageAGiftBadge) {
-      // eslint-disable-next-line no-param-reassign
-      quote.text = undefined;
-      // eslint-disable-next-line no-param-reassign
-      quote.attachments = [];
-
-      return;
-    }
-
-    // eslint-disable-next-line no-param-reassign
-    quote.isViewOnce = false;
-
-    // eslint-disable-next-line no-param-reassign
-    quote.text = getQuoteBodyText(originalMessage.attributes, quote.id);
-
-    // eslint-disable-next-line no-param-reassign
-    quote.bodyRanges = originalMessage.attributes.bodyRanges;
-
-    if (firstAttachment) {
-      firstAttachment.thumbnail = null;
-    }
-
-    if (!firstAttachment || !firstAttachment.contentType) {
-      return;
-    }
-
-    try {
-      const schemaVersion = originalMessage.get('schemaVersion');
-      if (
-        schemaVersion &&
-        schemaVersion < TypedMessage.VERSION_NEEDED_FOR_DISPLAY
-      ) {
-        const upgradedMessage = await upgradeMessageSchema(
-          originalMessage.attributes
-        );
-        originalMessage.set(upgradedMessage);
-        await window.Signal.Data.saveMessage(upgradedMessage, {
-          ourAci: window.textsecure.storage.user.getCheckedAci(),
-        });
-      }
-    } catch (error) {
-      log.error(
-        'Problem upgrading message quoted message from database',
-        Errors.toLogFormat(error)
-      );
-      return;
-    }
-
-    const queryAttachments = originalMessage.get('attachments') || [];
-    if (queryAttachments.length > 0) {
-      const queryFirst = queryAttachments[0];
-      const { thumbnail } = queryFirst;
-
-      if (thumbnail && thumbnail.path) {
-        firstAttachment.thumbnail = {
-          ...firstThumbnailCdnFields,
-          ...thumbnail,
-          copied: true,
-        };
-      } else {
-        firstAttachment.contentType = queryFirst.contentType;
-        firstAttachment.fileName = queryFirst.fileName;
-        firstAttachment.thumbnail = null;
-      }
-    }
-
-    const queryPreview = originalMessage.get('preview') || [];
-    if (queryPreview.length > 0) {
-      const queryFirst = queryPreview[0];
-      const { image } = queryFirst;
-
-      if (image && image.path) {
-        firstAttachment.thumbnail = {
-          ...firstThumbnailCdnFields,
-          ...image,
-          copied: true,
-        };
-      }
-    }
-
-    const sticker = originalMessage.get('sticker');
-    if (sticker && sticker.data && sticker.data.path) {
-      firstAttachment.thumbnail = {
-        ...firstThumbnailCdnFields,
-        ...sticker.data,
-        copied: true,
-      };
-    }
   }
 
   async handleDataMessage(
@@ -1959,7 +1743,9 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
       }
 
       const [quote, storyQuotes] = await Promise.all([
-        this.copyFromQuotedMessage(initialMessage.quote, conversation.id),
+        initialMessage.quote
+          ? copyFromQuotedMessage(initialMessage.quote, conversation.id)
+          : undefined,
         findStoryMessages(conversation.id, storyContext),
       ]);
 
@@ -1990,26 +1776,15 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         return sendState.isAllowedToReplyToStory !== false;
       });
 
-      if (storyContext && !storyQuote) {
-        if (!isDirectConversation(conversation.attributes)) {
-          log.warn(
-            `${idLog}: Received ${storyContextLogId} message in group but no matching story. Dropping.`
-          );
-
-          confirm();
-          return;
-        }
-
-        if (storyQuotes.length === 0) {
-          log.warn(
-            `${idLog}: Received ${storyContextLogId} message but no matching story. We'll try processing this message again later.`
-          );
-          return;
-        }
-
+      if (
+        storyContext &&
+        !storyQuote &&
+        !isDirectConversation(conversation.attributes)
+      ) {
         log.warn(
-          `${idLog}: Received ${storyContextLogId} message in 1:1 conversation but no matching story. Dropping.`
+          `${idLog}: Received ${storyContextLogId} message in group but no matching story. Dropping.`
         );
+
         confirm();
         return;
       }
@@ -2215,7 +1990,6 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
                 receivedAt: message.get('received_at'),
                 receivedAtMS: message.get('received_at_ms'),
                 sentAt: message.get('sent_at'),
-                fromGroupUpdate: isGroupUpdate(message.attributes),
                 reason: idLog,
               });
             } else if (
@@ -2335,7 +2109,11 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
         }
 
         const isFirstRun = true;
-        await this.modifyTargetMessage(conversation, isFirstRun);
+        const result = await this.modifyTargetMessage(conversation, isFirstRun);
+        if (result === ModifyTargetMessageResult.Deleted) {
+          confirm();
+          return;
+        }
 
         log.info(`${idLog}: Batching save`);
         void this.saveAndNotify(conversation, confirm);
@@ -2358,10 +2136,16 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
     // Once the message is saved to DB, we queue attachment downloads
     await this.handleAttachmentDownloadsForNewMessage(conversation);
 
-    conversation.trigger('newmessage', this);
-
+    // We'd like to check for deletions before scheduling downloads, but if an edit comes
+    //   in, we want to have kicked off attachment downloads for the original message.
     const isFirstRun = false;
-    await this.modifyTargetMessage(conversation, isFirstRun);
+    const result = await this.modifyTargetMessage(conversation, isFirstRun);
+    if (result === ModifyTargetMessageResult.Deleted) {
+      confirm();
+      return;
+    }
+
+    conversation.trigger('newmessage', this);
 
     if (await shouldReplyNotifyUser(this.attributes, conversation)) {
       await conversation.notify(this);
@@ -2415,7 +2199,7 @@ export class MessageModel extends window.Backbone.Model<MessageAttributesType> {
   async modifyTargetMessage(
     conversation: ConversationModel,
     isFirstRun: boolean
-  ): Promise<void> {
+  ): Promise<ModifyTargetMessageResult> {
     return modifyTargetMessage(this, conversation, {
       isFirstRun,
       skipEdits: false,

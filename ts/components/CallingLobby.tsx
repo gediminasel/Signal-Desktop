@@ -51,6 +51,7 @@ export type PropsType = {
     | 'type'
     | 'unblurredAvatarPath'
   >;
+  getIsSharingPhoneNumberWithEverybody: () => boolean;
   groupMembers?: Array<
     Pick<
       ConversationType,
@@ -64,7 +65,6 @@ export type PropsType = {
   isAdhocJoinRequestPending: boolean;
   isConversationTooBigToRing: boolean;
   isCallFull?: boolean;
-  isSharingPhoneNumberWithEverybody: boolean;
   me: Readonly<
     Pick<ConversationType, 'avatarPath' | 'color' | 'id' | 'serviceId'>
   >;
@@ -94,7 +94,7 @@ export function CallingLobby({
   isAdhocJoinRequestPending,
   isCallFull = false,
   isConversationTooBigToRing,
-  isSharingPhoneNumberWithEverybody,
+  getIsSharingPhoneNumberWithEverybody,
   me,
   onCallCanceled,
   onJoinCall,
@@ -265,7 +265,16 @@ export function CallingLobby({
   useWasInitiallyMutedToast(hasLocalAudio, i18n);
 
   return (
-    <FocusTrap>
+    <FocusTrap
+      focusTrapOptions={{
+        allowOutsideClick: ({ target }) => {
+          if (!target || !(target instanceof HTMLElement)) {
+            return false;
+          }
+          return target.matches('.Toast, .Toast *');
+        },
+      }}
+    >
       <div className="module-calling__container dark-theme">
         {shouldShowLocalVideo ? (
           <video
@@ -324,7 +333,7 @@ export function CallingLobby({
             </div>
           ) : (
             <div className="CallingLobby__CallLinkNotice">
-              {isSharingPhoneNumberWithEverybody
+              {getIsSharingPhoneNumberWithEverybody()
                 ? i18n('icu:CallingLobby__CallLinkNotice--phone-sharing')
                 : i18n('icu:CallingLobby__CallLinkNotice')}
             </div>

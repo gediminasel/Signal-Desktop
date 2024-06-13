@@ -75,6 +75,7 @@ export type AttachmentType = {
   cdnId?: string;
   cdnKey?: string;
   key?: string;
+  iv?: string;
   data?: Uint8Array;
   textAttachment?: TextAttachmentType;
   wasTooBig?: boolean;
@@ -98,6 +99,7 @@ export type UploadedAttachmentType = Proto.IAttachmentPointer &
   Readonly<{
     // Required fields
     cdnKey: string;
+    iv: Uint8Array;
     key: Uint8Array;
     size: number;
     digest: Uint8Array;
@@ -186,12 +188,11 @@ export type AttachmentDraftType =
       size: number;
     };
 
-export type ThumbnailType = Pick<
-  AttachmentType,
-  'height' | 'width' | 'url' | 'contentType' | 'path' | 'data'
-> & {
+export type ThumbnailType = AttachmentType & {
   // Only used when quote needed to make an in-memory thumbnail
   objectUrl?: string;
+  // Whether the thumbnail has been copied from the original (quoted) message
+  copied?: boolean;
 };
 
 // // Incoming message attachment fields
@@ -453,6 +454,7 @@ export async function captureDimensionsAndScreenshot(
           contentType: THUMBNAIL_CONTENT_TYPE,
           width: THUMBNAIL_SIZE,
           height: THUMBNAIL_SIZE,
+          size: thumbnailBuffer.byteLength,
         },
       };
     } catch (error) {
@@ -512,6 +514,7 @@ export async function captureDimensionsAndScreenshot(
         contentType: THUMBNAIL_CONTENT_TYPE,
         width: THUMBNAIL_SIZE,
         height: THUMBNAIL_SIZE,
+        size: thumbnailBuffer.byteLength,
       },
       width,
       height,
@@ -874,7 +877,9 @@ export const isFile = (attachment: AttachmentType): boolean => {
   return true;
 };
 
-export const isVoiceMessage = (attachment: AttachmentType): boolean => {
+export const isVoiceMessage = (
+  attachment: Pick<AttachmentType, 'contentType' | 'fileName' | 'flags'>
+): boolean => {
   const flag = SignalService.AttachmentPointer.Flags.VOICE_MESSAGE;
   const hasFlag =
     // eslint-disable-next-line no-bitwise
@@ -1002,10 +1007,16 @@ export function getAttachmentSignature(attachment: AttachmentType): string {
 }
 
 type RequiredPropertiesForDecryption = 'key' | 'digest';
+type RequiredPropertiesForReencryption = 'key' | 'digest' | 'iv';
 
 type DecryptableAttachment = WithRequiredProperties<
   AttachmentType,
   RequiredPropertiesForDecryption
+>;
+
+type ReencryptableAttachment = WithRequiredProperties<
+  AttachmentType,
+  RequiredPropertiesForReencryption
 >;
 
 export type AttachmentDownloadableFromTransitTier = WithRequiredProperties<
@@ -1018,20 +1029,30 @@ export type AttachmentDownloadableFromBackupTier = WithRequiredProperties<
   'backupLocator'
 >;
 
-export type DownloadedAttachment = WithRequiredProperties<
+export type LocallySavedAttachment = WithRequiredProperties<
   AttachmentType,
   'path'
 >;
 
 export type AttachmentReadyForBackup = WithRequiredProperties<
-  DownloadedAttachment,
-  RequiredPropertiesForDecryption
+  LocallySavedAttachment,
+  RequiredPropertiesForReencryption
 >;
 
-function isDecryptable(
+export function isDecryptable(
   attachment: AttachmentType
 ): attachment is DecryptableAttachment {
   return Boolean(attachment.key) && Boolean(attachment.digest);
+}
+
+export function isReencryptableToSameDigest(
+  attachment: AttachmentType
+): attachment is ReencryptableAttachment {
+  return (
+    Boolean(attachment.key) &&
+    Boolean(attachment.digest) &&
+    Boolean(attachment.iv)
+  );
 }
 
 export function isDownloadableFromTransitTier(
@@ -1058,8 +1079,15 @@ export function isDownloadableFromBackupTier(
   return false;
 }
 
-export function isDownloadedToLocalFile(
+export function isDownloadable(attachment: AttachmentType): boolean {
+  return (
+    isDownloadableFromTransitTier(attachment) ||
+    isDownloadableFromBackupTier(attachment)
+  );
+}
+
+export function isAttachmentLocallySaved(
   attachment: AttachmentType
-): attachment is DownloadedAttachment {
+): attachment is LocallySavedAttachment {
   return Boolean(attachment.path);
 }

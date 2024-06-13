@@ -173,6 +173,9 @@
   "icu:viewMenuToggleDevTools": {
     "messageformat": "ഡവലപ്പര്‍ ടൂളുകള്‍"
   },
+  "icu:viewMenuOpenCallingDevTools": {
+    "messageformat": "കോളിംഗ് ഡെവലപ്പർ ടൂളുകൾ തുറക്കുക"
+  },
   "icu:menuSetupAsNewDevice": {
     "messageformat": "പുതിയ ഉപകരണമായി സജ്ജമാക്കുക"
   },
@@ -458,9 +461,6 @@
   "icu:joinAnyway": {
     "messageformat": "എങ്ങനെയായാലും ചേരുക"
   },
-  "icu:continueCall": {
-    "messageformat": "കോൾ തുടരുക"
-  },
   "icu:debugLogExplanation": {
     "messageformat": "സമർപ്പിക്കുക എന്നതിൽ നിങ്ങൾ ക്ലിക്ക് ചെയ്യുമ്പോൾ, നിങ്ങളുടെ ലോഗ് 30 ദിവസത്തേക്ക് തനതും പ്രസിദ്ധീകരിക്കാത്തതുമായ ഒരു URL-ൽ ഓൺലൈനിൽ പോസ്റ്റ് ചെയ്യും. നിങ്ങൾ അത് ആദ്യം പ്രാദേശികമായി സംരക്ഷിക്കേണ്ടതാണ്."
   },
@@ -643,6 +643,12 @@
   },
   "icu:screenShareWindow": {
     "messageformat": "സ്ക്രീൻ പങ്കിടൽ"
+  },
+  "icu:callingDeveloperTools": {
+    "messageformat": "കോളിംഗ് ഡെവലപ്പർ ടൂളുകൾ"
+  },
+  "icu:callingDeveloperToolsDescription": {
+    "messageformat": "നിലവിലുള്ള കോളുകളിൽ നിന്നുള്ള ഡയഗ്നോസ്റ്റിക്സ് പ്രദർശിപ്പിക്കുന്നതിന് ഈ വിൻഡോ ഡെവലപ്‌മെൻ്റ് വേളയിൽ ഉപയോഗിക്കുന്നു."
   },
   "icu:speech": {
     "messageformat": "സംസാരം"
@@ -1033,6 +1039,9 @@
   },
   "icu:ChangeNumber--notification": {
     "messageformat": "{sender} അവരുടെ ഫോൺ നമ്പർ മാറ്റി"
+  },
+  "icu:JoinedSignal--notification": {
+    "messageformat": "കോൺ‌ടാക്റ്റ് Signal-ൽ ചേർന്നു"
   },
   "icu:ConversationMerge--notification": {
     "messageformat": "{obsoleteConversationTitle} , {conversationTitle} എന്നിവ ഒരേ അക്കൗണ്ടാണ്. രണ്ട് ചാറ്റുകൾക്കുമുള്ള നിങ്ങളുടെ സന്ദേശ ചരിത്രം ഇവിടെയുണ്ട്."
@@ -2363,18 +2372,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "ചാറ്റ് വായിച്ചിട്ടില്ലെന്ന് അടയാളപ്പെടുത്തി"
   },
-  "icu:SendEdit--dialog--title2": {
-    "messageformat": "സന്ദേശം എഡിറ്റ് ചെയ്യുക"
-  },
-  "icu:SendEdit--dialog--body2": {
-    "messageformat": "നിങ്ങളൊരു സന്ദേശം എഡിറ്റ് ചെയ്‌താൽ, Signal ബീറ്റയുടെ ഏറ്റവും പുതിയ പതിപ്പിലുള്ളവർക്ക് മാത്രമെ അത് കാണാനാകൂ. നിങ്ങളൊരു സന്ദേശം എഡിറ്റ് ചെയ്‌തുവെന്ന് അവർക്ക് കാണാനാകും."
-  },
-  "icu:SendFormatting--dialog--title": {
-    "messageformat": "ഫോർമാറ്റ് ചെയ്ത ടെക്സ്റ്റ് അയയ്ക്കുന്നു"
-  },
-  "icu:SendFormatting--dialog--body": {
-    "messageformat": "ഫോർമാറ്റ് ചെയ്ത ടെക്സ്റ്റ് പിന്തുണയ്ക്കാത്ത Signal പതിപ്പാണ് ചിലർ ഉപയോഗിക്കുന്നത്. നിങ്ങളുടെ സന്ദേശത്തിൽ വരുത്തിയ ഫോർമാറ്റ് മാറ്റങ്ങൾ കാണാൻ അവർക്കാകില്ല."
-  },
   "icu:AuthArtCreator--dialog--message": {
     "messageformat": "Signal സ്റ്റിക്കർ പായ്ക്ക് ക്രിയേറ്റർ തുറക്കണോ?"
   },
@@ -2691,7 +2688,13 @@
     "messageformat": "റിംഗിംഗ് ഓഫാണ്"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "നിങ്ങൾ കൈ ഉയർത്തിയിരിക്കുന്നു."
+    "messageformat": "You raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-one": {
+    "messageformat": "You and {otherName} raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-more": {
+    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} ഒരു കൈ ഉയർത്തി."
@@ -2782,6 +2785,21 @@
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "കോളിൽ നിന്ന് ഈ വ്യക്തിയെ നീക്കം ചെയ്യുക"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel": {
+    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
+    "messageformat": "+{count,number} more"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
+    "messageformat": "More info about new contacts"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
+    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
+    "messageformat": "Got it"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "വീഡിയോ"
@@ -3761,6 +3779,9 @@
   "icu:DeleteMessagesModal--description--noteToSelf": {
     "messageformat": "{count, plural, one {ഏതൊക്കെ ഡിവൈസുകളിൽ നിന്ന് ഈ സന്ദേശം ഇല്ലാതാക്കണം?} other {ഏതൊക്കെ ഡിവൈസുകളിൽ നിന്ന് ഈ സന്ദേശങ്ങൾ ഇല്ലാതാക്കണം?}}"
   },
+  "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
+    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+  },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "എനിക്കായി ഇല്ലാതാക്കൂ"
   },
@@ -3772,6 +3793,9 @@
   },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "എല്ലാ ഉപകരണങ്ങളിൽ നിന്നും ഇല്ലാതാക്കൂ"
+  },
+  "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
+    "messageformat": "Delete"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {എല്ലാവർക്കുമായി ഇല്ലാതാക്കാൻ {count,number} സന്ദേശം വരെയെ നിങ്ങൾക്ക് തിരഞ്ഞെടുക്കാനാകൂ} other {എല്ലാവർക്കുമായി ഇല്ലാതാക്കാൻ {count,number} സന്ദേശങ്ങൾ വരെയെ നിങ്ങൾക്ക് തിരഞ്ഞെടുക്കാനാകൂ}}"
@@ -3866,11 +3890,17 @@
   "icu:ForwardMessageModal__title": {
     "messageformat": "ഇനിപ്പറയുന്നയാൾക്ക് കൈമാറുക"
   },
+  "icu:ForwardMessageModal__ShareCallLink": {
+    "messageformat": "കോൾ ലിങ്ക് പങ്കിടുക"
+  },
   "icu:ForwardMessageModal--continue": {
     "messageformat": "തുടരുക"
   },
   "icu:ForwardMessagesModal__toast--CannotForwardEmptyMessage": {
     "messageformat": "ശൂന്യമായതോ ഇല്ലാതാക്കിയതോ ആയ സന്ദേശങ്ങൾ കൈമാറാനാകില്ല"
+  },
+  "icu:ShareCallLinkViaSignal__DraftMessageText": {
+    "messageformat": "Signal കോളിൽ ചേരാൻ ഈ ലിങ്ക് ഉപയോഗിക്കുക: {url}"
   },
   "icu:MessageRequestWarning__learn-more": {
     "messageformat": "കൂടുതൽ അറിയുക"
@@ -4167,7 +4197,7 @@
     "messageformat": "ഉപയോക്തൃനാമം ഒരു നമ്പറിൽ ആരംഭിക്കാൻ കഴിയില്ല."
   },
   "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "ഉപയോക്തൃനാമത്തിൽ കുറഞ്ഞത് {min,number} പ്രതീകങ്ങൾ ഉണ്ടായിരിക്കണം."
+    "messageformat": "Usernames must have at least {min,number} characters."
   },
   "icu:ProfileEditor--username--check-character-max": {
     "messageformat": "ഉപയോക്തൃനാമത്തിൽ പരമാവധി {max,number} പ്രതീകങ്ങൾ മാത്രമേ പാടുള്ളു."
@@ -4347,7 +4377,7 @@
     "messageformat": "ടൈപ്പ് ചെയ്ത ഇമോട്ടിക്കോണുകൾ ഇമോജിയിലേക്ക് പരിവർത്തനം ചെയ്യുക"
   },
   "icu:Preferences__auto-convert-emoji--description": {
-    "messageformat": "ഉദാഹരണത്തിന്, :-) എന്നത് 🙂 ആയി പരിവർത്തനം ചെയ്യപ്പെടും"
+    "messageformat": "ഉദാഹരണത്തിന്, :-) ൽ നിന്ന് <emojify>🙂</emojify> ആയി പരിവർത്തനം ചെയ്യപ്പെടും"
   },
   "icu:Preferences--advanced": {
     "messageformat": "വിപുലമായ"
@@ -4717,6 +4747,15 @@
   },
   "icu:SignalConnectionsModal__footer": {
     "messageformat": "നിങ്ങളുടെ കണക്ഷനുകൾക്ക് നിങ്ങളുടെ പേരും ഫോട്ടോയും കാണാനാകും, മാത്രമല്ല മറയ്ക്കാത്ത പക്ഷം \"എന്‍റെ സ്റ്റോറിയിൽ\" നിങ്ങൾ ചേർക്കുന്ന പോസ്റ്റുകളും അവർക്ക് കാണാനാകും."
+  },
+  "icu:LocalDeleteWarningModal__header": {
+    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+  },
+  "icu:LocalDeleteWarningModal__description": {
+    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+  },
+  "icu:LocalDeleteWarningModal__confirm": {
+    "messageformat": "Got it"
   },
   "icu:Stories__title": {
     "messageformat": "സ്റ്റോറികൾ"
@@ -5310,6 +5349,9 @@
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "\"{query}\" എന്നതിന് ഫലങ്ങളൊന്നുമില്ല"
   },
+  "icu:CallsList__CreateCallLink": {
+    "messageformat": "Create a Call Link"
+  },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "ഇൻകമിംഗ്"
   },
@@ -5325,11 +5367,29 @@
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "കോൾ ലിങ്ക്"
   },
+  "icu:CallsList__ItemCallInfo--Active": {
+    "messageformat": "സജീവമാണ്"
+  },
+  "icu:CallsList__LeaveCallDialogTitle": {
+    "messageformat": "നിലവിലെ കോൾ ഉപേക്ഷിക്കണോ?"
+  },
+  "icu:CallsList__LeaveCallDialogBody": {
+    "messageformat": "ഒരു പുതിയ കോളിൽ ചേരുന്നതിന് മുമ്പ് നിങ്ങൾ നിലവിലെ കോൾ ഉപേക്ഷിക്കണം."
+  },
+  "icu:CallsList__LeaveCallDialogButton--leave": {
+    "messageformat": "കോൾ ഉപേക്ഷിക്കുക"
+  },
   "icu:CallsNewCall__EmptyState--noQuery": {
     "messageformat": "സമീപകാല സംഭാഷണങ്ങളൊന്നുമില്ല."
   },
   "icu:CallsNewCall__EmptyState--hasQuery": {
     "messageformat": "\"{query}\" എന്നതിന് ഫലങ്ങളൊന്നുമില്ല"
+  },
+  "icu:CallsNewCallButton--return": {
+    "messageformat": "മടങ്ങുക"
+  },
+  "icu:CallsNewCallButtonTooltip--in-another-call": {
+    "messageformat": "ഒരു പുതിയ കോളിൽ ചേരുന്നതിന് മുമ്പ് നിങ്ങൾ നിലവിലെ കോൾ ഉപേക്ഷിക്കണം"
   },
   "icu:CallHistory__Description--Default": {
     "messageformat": "{type, select, Audio {{direction, select, Outgoing {ഔട്ട്ഗോയിംഗ് വോയ്‌സ് കോൾ} other {ഇൻകമിംഗ് വോയ്‌സ് കോൾ}}} Video {{direction, select, Outgoing {ഔട്ട്ഗോയിംഗ് വീഡിയോ കോൾ} other {ഇൻകമിംഗ് വീഡിയോ കോൾ}}} Group {{direction, select, Outgoing {ഔട്ട്‌ഗോയിംഗ് ഗ്രൂപ്പ് കോൾ} other {ഇൻകമിംഗ് ഗ്രൂപ്പ് കോൾ}}} other {{direction, select, Outgoing {ഔട്ട് ഗോയിംഗ് കോൾ} other {ഇൻകമിംഗ് കോൾ}}}}"
@@ -5345,6 +5405,33 @@
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "കോൾ ലിങ്ക്"
+  },
+  "icu:CallLinkDetails__Join": {
+    "messageformat": "ചേരുക"
+  },
+  "icu:CallLinkDetails__CopyLink": {
+    "messageformat": "ലിങ്ക് പകർത്തുക"
+  },
+  "icu:CallLinkDetails__ShareLinkViaSignal": {
+    "messageformat": "Signal-ലൂടെ ലിങ്ക് പങ്കിടൂ"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Call link details"
+  },
+  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
+    "messageformat": "Name"
+  },
+  "icu:CallLinkEditModal__JoinButtonLabel": {
+    "messageformat": "Join"
+  },
+  "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
+    "messageformat": "Approve all members"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
+    "messageformat": "Off"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
+    "messageformat": "On"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {മറ്റ് {count,number} ആൾ ടൈപ്പ് ചെയ്യുന്നു.} other {മറ്റ് {count,number} പേർ ടൈപ്പ് ചെയ്യുന്നു.}}"
@@ -5385,5 +5472,20 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "ചെറിയ മാറ്റങ്ങളും ബഗ് പരിഹരിക്കലുകളും പ്രകടന മെച്ചപ്പെടുത്തലുകളും. Signal ഉപയോഗിക്കുന്നതിന് നന്ദി!",
     "ignoreUnused": true
+  },
+  "icu:WhatsNew__v7.12--0": {
+    "messageformat": "ഗ്രൂപ്പ് കോളുകൾക്കിടയിൽ ആശയവിനിമയം നടത്താൻ നിങ്ങൾ മറ്റൊരു മാർഗം നോക്കുകയാണെങ്കിൽ കൈ ഉയർത്തുക. ആരുടെയെങ്കിലും ശ്രദ്ധ നേടുന്നതിനോ ഒരു ചോദ്യം ചോദിക്കുന്നതിനോ അല്ലെങ്കിൽ \"ആരൊക്കെ അനുകൂലിക്കുന്നു?\" എന്ന് സുഹൃത്ത് ചോദിക്കുമ്പോൾ ഒരു ഗ്രൂപ്പ് നിർദ്ദേശത്തിന് ഏകകണ്ഠമായി വോട്ട് ചെയ്യുന്നതിനോ ഉള്ള ലളിതമായ ഒരു മാർഗമാണ് പുതിയ സവിശേഷതയായ കൈ ഉയർത്തൽ."
+  },
+  "icu:WhatsNew__v7.12--1": {
+    "messageformat": "ക്രോപ്പ് ടൂളിലെ ഒരു ബഗ് ഞങ്ങൾ പരിഹരിച്ചു, അതിനാൽ ഇപ്പോൾ നിങ്ങളുടെ എക്സിനെ (അല്ലെങ്കിൽ മറ്റെന്തെങ്കിലും) ചിത്രത്തിൽ നിന്ന് പുറത്താക്കുന്നത് എളുപ്പവും കൂടുതൽ ലളിതവുമാണ്."
+  },
+  "icu:WhatsNew__v7.12--2": {
+    "messageformat": "Ctrl/Cmd+Shift+Y-ലേക്ക് ഒരു വോയ്‌സ് നോട്ട് അയയ്‌ക്കുന്നതിനുള്ള കീബോർഡ് കുറുക്കുവഴി ഞങ്ങൾ പരിഷ്‌ക്കരിച്ചതിനാൽ Windows-ലെയും Linux-ലെയും \"ഒട്ടിച്ച് പൊരുത്തപ്പെടുത്തൽ സ്റ്റൈൽ\" കുറുക്കുവഴിയുമായി ഇതിന് പൊരുത്തക്കേട് ഉണ്ടാകില്ല."
+  },
+  "icu:WhatsNew__v7.13--0": {
+    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  },
+  "icu:WhatsNew__v7.13--1": {
+    "messageformat": "This update also improves the display of quoted replies in RTL languages."
   }
 }

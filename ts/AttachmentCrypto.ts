@@ -1,7 +1,7 @@
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { unlinkSync } from 'fs';
+import { unlinkSync, createReadStream, createWriteStream } from 'fs';
 import { open } from 'fs/promises';
 import {
   createDecipheriv,
@@ -11,7 +11,7 @@ import {
   randomBytes,
 } from 'crypto';
 import type { Decipher, Hash, Hmac } from 'crypto';
-import { PassThrough, Transform, type Writable } from 'stream';
+import { PassThrough, Transform, type Writable, Readable } from 'stream';
 import { pipeline } from 'stream/promises';
 import { ensureFile } from 'fs-extra';
 import * as log from './logging/log';
@@ -27,6 +27,7 @@ import type { ContextType } from './types/Message2';
 import { strictAssert } from './util/assert';
 import * as Errors from './types/errors';
 import { isNotNil } from './util/isNotNil';
+import { missingCaseError } from './util/missingCaseError';
 
 // This file was split from ts/Crypto.ts because it pulls things in from node, and
 //   too many things pull in Crypto.ts, so it broke storybook.
@@ -37,6 +38,8 @@ const DIGEST_LENGTH = 32;
 const HEX_DIGEST_LENGTH = DIGEST_LENGTH * 2;
 const ATTACHMENT_MAC_LENGTH = 32;
 
+export class ReencyptedDigestMismatchError extends Error {}
+
 /** @private */
 export const KEY_SET_LENGTH = KEY_LENGTH + ATTACHMENT_MAC_LENGTH;
 
@@ -44,20 +47,42 @@ export function _generateAttachmentIv(): Uint8Array {
   return randomBytes(IV_LENGTH);
 }
 
+export function generateAttachmentKeys(): Uint8Array {
+  return randomBytes(KEY_SET_LENGTH);
+}
+
 export type EncryptedAttachmentV2 = {
   digest: Uint8Array;
+  iv: Uint8Array;
   plaintextHash: string;
+  ciphertextSize: number;
 };
 
 export type DecryptedAttachmentV2 = {
   path: string;
+  iv: Uint8Array;
   plaintextHash: string;
 };
 
+export type PlaintextSourceType =
+  | { data: Uint8Array }
+  | { absolutePath: string };
+
+export type HardcodedIVForEncryptionType =
+  | {
+      reason: 'test';
+      iv: Uint8Array;
+    }
+  | {
+      reason: 'reencrypting-for-backup';
+      iv: Uint8Array;
+      digestToMatch: Uint8Array;
+    };
+
 type EncryptAttachmentV2PropsType = {
+  plaintext: PlaintextSourceType;
   keys: Readonly<Uint8Array>;
-  plaintextAbsolutePath: string;
-  dangerousTestOnlyIv?: Readonly<Uint8Array>;
+  dangerousIv?: HardcodedIVForEncryptionType;
   dangerousTestOnlySkipPadding?: boolean;
 };
 
@@ -69,21 +94,18 @@ export async function encryptAttachmentV2ToDisk(
   const absoluteTargetPath =
     window.Signal.Migrations.getAbsoluteAttachmentPath(relativeTargetPath);
 
-  let writeFd;
+  await ensureFile(absoluteTargetPath);
+
   let encryptResult: EncryptedAttachmentV2;
 
   try {
-    await ensureFile(absoluteTargetPath);
-    writeFd = await open(absoluteTargetPath, 'w');
     encryptResult = await encryptAttachmentV2({
       ...args,
-      sink: writeFd.createWriteStream(),
+      sink: createWriteStream(absoluteTargetPath),
     });
   } catch (error) {
     safeUnlinkSync(absoluteTargetPath);
     throw error;
-  } finally {
-    await writeFd?.close();
   }
 
   return {
@@ -91,12 +113,11 @@ export async function encryptAttachmentV2ToDisk(
     path: relativeTargetPath,
   };
 }
-
 export async function encryptAttachmentV2({
   keys,
-  plaintextAbsolutePath,
-  dangerousTestOnlyIv,
-  dangerousTestOnlySkipPadding = false,
+  plaintext,
+  dangerousIv,
+  dangerousTestOnlySkipPadding,
   sink,
 }: EncryptAttachmentV2PropsType & {
   sink?: Writable;
@@ -105,9 +126,26 @@ export async function encryptAttachmentV2({
 
   const { aesKey, macKey } = splitKeys(keys);
 
-  if (dangerousTestOnlyIv && window.getEnvironment() !== Environment.Test) {
-    throw new Error(`${logId}: Used dangerousTestOnlyIv outside tests!`);
+  if (dangerousIv) {
+    if (dangerousIv.reason === 'test') {
+      if (window.getEnvironment() !== Environment.Test) {
+        throw new Error(
+          `${logId}: Used dangerousIv with reason test outside tests!`
+        );
+      }
+    } else if (dangerousIv.reason === 'reencrypting-for-backup') {
+      strictAssert(
+        dangerousIv.digestToMatch.byteLength === DIGEST_LENGTH,
+        `${logId}: Must provide valid digest to match if providing iv for re-encryption`
+      );
+      log.info(
+        `${logId}: using hardcoded iv because we are re-encrypting for backup`
+      );
+    } else {
+      throw missingCaseError(dangerousIv);
+    }
   }
+
   if (
     dangerousTestOnlySkipPadding &&
     window.getEnvironment() !== Environment.Test
@@ -116,28 +154,31 @@ export async function encryptAttachmentV2({
       `${logId}: Used dangerousTestOnlySkipPadding outside tests!`
     );
   }
-  const iv = dangerousTestOnlyIv || _generateAttachmentIv();
 
+  const iv = dangerousIv?.iv || _generateAttachmentIv();
   const plaintextHash = createHash(HashType.size256);
   const digest = createHash(HashType.size256);
 
-  let readFd;
+  let ciphertextSize: number | undefined;
+
   try {
-    try {
-      readFd = await open(plaintextAbsolutePath, 'r');
-    } catch (cause) {
-      throw new Error(`${logId}: Read path doesn't exist`, { cause });
-    }
+    const source =
+      'data' in plaintext
+        ? Readable.from([Buffer.from(plaintext.data)])
+        : createReadStream(plaintext.absolutePath);
 
     await pipeline(
       [
-        readFd.createReadStream(),
+        source,
         peekAndUpdateHash(plaintextHash),
         dangerousTestOnlySkipPadding ? undefined : appendPaddingStream(),
         createCipheriv(CipherType.AES256CBC, aesKey, iv),
         prependIv(iv),
         appendMacStream(macKey),
         peekAndUpdateHash(digest),
+        measureSize(size => {
+          ciphertextSize = size;
+        }),
         sink ?? new PassThrough().resume(),
       ].filter(isNotNil)
     );
@@ -147,8 +188,6 @@ export async function encryptAttachmentV2({
       Errors.toLogFormat(error)
     );
     throw error;
-  } finally {
-    await readFd?.close();
   }
 
   const ourPlaintextHash = plaintextHash.digest('hex');
@@ -164,9 +203,21 @@ export async function encryptAttachmentV2({
     `${logId}: Failed to generate ourDigest!`
   );
 
+  strictAssert(ciphertextSize != null, 'Failed to measure ciphertext size!');
+
+  if (dangerousIv?.reason === 'reencrypting-for-backup') {
+    if (!constantTimeEqual(ourDigest, dangerousIv.digestToMatch)) {
+      throw new ReencyptedDigestMismatchError(
+        `${logId}: iv was hardcoded for backup re-encryption, but digest does not match`
+      );
+    }
+  }
+
   return {
     digest: ourDigest,
+    iv,
     plaintextHash: ourPlaintextHash,
+    ciphertextSize,
   };
 }
 
@@ -226,6 +277,7 @@ export async function decryptAttachmentV2(
 
   let readFd;
   let writeFd;
+  let iv: Uint8Array | undefined;
   try {
     try {
       readFd = await open(ciphertextPath, 'r');
@@ -248,7 +300,9 @@ export async function decryptAttachmentV2(
         getMacAndUpdateHmac(hmac, theirMacValue => {
           theirMac = theirMacValue;
         }),
-        getIvAndDecipher(aesKey),
+        getIvAndDecipher(aesKey, theirIv => {
+          iv = theirIv;
+        }),
         trimPadding(options.size),
         peekAndUpdateHash(plaintextHash),
         writeFd.createWriteStream(),
@@ -293,6 +347,11 @@ export async function decryptAttachmentV2(
     throw new Error(`${logId}: Bad digest`);
   }
 
+  strictAssert(
+    iv != null && iv.byteLength === IV_LENGTH,
+    `${logId}: failed to find their iv`
+  );
+
   if (outerEncryption) {
     strictAssert(outerHmac, 'outerHmac must exist');
 
@@ -314,6 +373,7 @@ export async function decryptAttachmentV2(
 
   return {
     path: relativeTargetPath,
+    iv,
     plaintextHash: ourPlaintextHash,
   };
 }
@@ -400,7 +460,10 @@ export function getMacAndUpdateHmac(
  * Gets the IV from the start of the stream and creates a decipher.
  * Then deciphers the rest of the stream.
  */
-export function getIvAndDecipher(aesKey: Uint8Array): Transform {
+export function getIvAndDecipher(
+  aesKey: Uint8Array,
+  onFoundIv?: (iv: Buffer) => void
+): Transform {
   let maybeIvBytes: Buffer | null = Buffer.alloc(0);
   let decipher: Decipher | null = null;
   return new Transform({
@@ -424,6 +487,7 @@ export function getIvAndDecipher(aesKey: Uint8Array): Transform {
         // remainder of the bytes through.
         const iv = maybeIvBytes.subarray(0, IV_LENGTH);
         const remainder = maybeIvBytes.subarray(IV_LENGTH);
+        onFoundIv?.(iv);
         maybeIvBytes = null; // free memory
         decipher = createDecipheriv(CipherType.AES256CBC, aesKey, iv);
         callback(null, decipher.update(remainder));
@@ -462,6 +526,18 @@ function trimPadding(size: number) {
       }
     },
   });
+}
+
+export function measureSize(onComplete: (size: number) => void): Transform {
+  let totalBytes = 0;
+  const passthrough = new PassThrough();
+  passthrough.on('data', chunk => {
+    totalBytes += chunk.length;
+  });
+  passthrough.on('end', () => {
+    onComplete(totalBytes);
+  });
+  return passthrough;
 }
 
 export function getAttachmentCiphertextLength(plaintextLength: number): number {

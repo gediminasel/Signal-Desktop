@@ -86,6 +86,7 @@ import type {
   FetchLatestEvent,
   InvalidPlaintextEvent,
   KeysEvent,
+  DeleteForMeSyncEvent,
   MessageEvent,
   MessageEventData,
   MessageRequestResponseEvent,
@@ -111,21 +112,21 @@ import type { BadgesStateType } from './state/ducks/badges';
 import { areAnyCallsActiveOrRinging } from './state/selectors/calling';
 import { badgeImageFileDownloader } from './badges/badgeImageFileDownloader';
 import * as Deletes from './messageModifiers/Deletes';
-import type { EditAttributesType } from './messageModifiers/Edits';
 import * as Edits from './messageModifiers/Edits';
-import type { ReactionAttributesType } from './messageModifiers/Reactions';
 import * as MessageReceipts from './messageModifiers/MessageReceipts';
 import * as MessageRequests from './messageModifiers/MessageRequests';
 import * as Reactions from './messageModifiers/Reactions';
 import * as ReadSyncs from './messageModifiers/ReadSyncs';
-import * as ViewSyncs from './messageModifiers/ViewSyncs';
 import * as ViewOnceOpenSyncs from './messageModifiers/ViewOnceOpenSyncs';
+import * as ViewSyncs from './messageModifiers/ViewSyncs';
 import type { DeleteAttributesType } from './messageModifiers/Deletes';
+import type { EditAttributesType } from './messageModifiers/Edits';
 import type { MessageReceiptAttributesType } from './messageModifiers/MessageReceipts';
 import type { MessageRequestAttributesType } from './messageModifiers/MessageRequests';
+import type { ReactionAttributesType } from './messageModifiers/Reactions';
 import type { ReadSyncAttributesType } from './messageModifiers/ReadSyncs';
-import type { ViewSyncAttributesType } from './messageModifiers/ViewSyncs';
 import type { ViewOnceOpenSyncAttributesType } from './messageModifiers/ViewOnceOpenSyncs';
+import type { ViewSyncAttributesType } from './messageModifiers/ViewSyncs';
 import { ReadStatus } from './messages/MessageReadStatus';
 import type { SendStateByConversationId } from './messages/MessageSendState';
 import { SendStatus } from './messages/MessageSendState';
@@ -200,6 +201,11 @@ import { deriveStorageServiceKey } from './Crypto';
 import { getThemeType } from './util/getThemeType';
 import { AttachmentDownloadManager } from './jobs/AttachmentDownloadManager';
 import { onCallLinkUpdateSync } from './util/onCallLinkUpdateSync';
+import { CallMode } from './types/Calling';
+import { queueSyncTasks } from './util/syncTasks';
+import { isEnabled } from './RemoteConfig';
+import { AttachmentBackupManager } from './jobs/AttachmentBackupManager';
+import { getConversationIdForLogging } from './util/idForLogging';
 
 export function isOverHourIntoPast(timestamp: number): boolean {
   return isNumber(timestamp) && isOlderThan(timestamp, HOUR);
@@ -557,6 +563,24 @@ export async function startApp(): Promise<void> {
       storage: window.storage,
       serverTrustRoot: window.getServerTrustRoot(),
     });
+    const onFirstEmpty = async () => {
+      log.info('onFirstEmpty: Starting');
+
+      // We want to remove this handler on the next tick so we don't interfere with
+      //   the other handlers being notified of this instance of the 'empty' event.
+      setTimeout(() => {
+        messageReceiver?.removeEventListener('empty', onFirstEmpty);
+      }, 1);
+
+      log.info('onFirstEmpty: Fetching sync tasks');
+      const syncTasks = await window.Signal.Data.getAllSyncTasks();
+
+      log.info(`onFirstEmpty: Queuing ${syncTasks.length} sync tasks`);
+      await queueSyncTasks(syncTasks, window.Signal.Data.removeSyncTaskById);
+
+      log.info('onFirstEmpty: Done');
+    };
+    messageReceiver.addEventListener('empty', onFirstEmpty);
 
     function queuedEventListener<E extends Event>(
       handler: (event: E) => Promise<void> | void,
@@ -667,7 +691,7 @@ export async function startApp(): Promise<void> {
     );
     messageReceiver.addEventListener(
       'profileKeyUpdate',
-      queuedEventListener(onProfileKeyUpdate)
+      queuedEventListener(onProfileKey)
     );
     messageReceiver.addEventListener(
       'fetchLatest',
@@ -689,6 +713,10 @@ export async function startApp(): Promise<void> {
     messageReceiver.addEventListener(
       'callLogEventSync',
       queuedEventListener(onCallLogEventSync, false)
+    );
+    messageReceiver.addEventListener(
+      'deleteForMeSync',
+      queuedEventListener(onDeleteForMeSync, false)
     );
 
     if (!window.storage.get('defaultConversationColor')) {
@@ -805,9 +833,10 @@ export async function startApp(): Promise<void> {
           'background/shutdown: waiting for all attachment downloads to finish'
         );
 
-        // Since we canceled the inflight requests earlier in shutdown, this should
+        // Since we canceled the inflight requests earlier in shutdown, these should
         // resolve quickly
         await AttachmentDownloadManager.stop();
+        await AttachmentBackupManager.stop();
 
         log.info('background/shutdown: closing the database');
 
@@ -1143,6 +1172,12 @@ export async function startApp(): Promise<void> {
       );
       window.reduxActions.expiration.hydrateExpirationStatus(
         window.getBuildExpiration()
+      );
+
+      // Process crash reports if any. Note that the modal won't be visible
+      // until the app will finish loading.
+      window.reduxActions.crashReports.setCrashReportCount(
+        await window.IPC.crashReports.getCount()
       );
     }
   });
@@ -1562,6 +1597,7 @@ export async function startApp(): Promise<void> {
 
       drop(challengeHandler?.onOffline());
       drop(AttachmentDownloadManager.stop());
+      drop(AttachmentBackupManager.stop());
       drop(messageReceiver?.drain());
 
       if (hasAppEverBeenRegistered) {
@@ -1699,6 +1735,7 @@ export async function startApp(): Promise<void> {
 
       if (isBackupEnabled()) {
         backupsService.start();
+        drop(AttachmentBackupManager.start());
       }
 
       if (connectCount === 0) {
@@ -2021,11 +2058,6 @@ export async function startApp(): Promise<void> {
     setBatchingStrategy(false);
     StartupQueue.flush();
     await flushAttachmentDownloadQueue();
-
-    // Process crash reports if any
-    window.reduxActions.crashReports.setCrashReportCount(
-      await window.IPC.crashReports.getCount()
-    );
 
     // Kick off a profile refresh if necessary, but don't wait for it, as failure is
     //   tolerable.
@@ -2492,24 +2524,30 @@ export async function startApp(): Promise<void> {
     drop(message.handleDataMessage(data.message, event.confirm));
   }
 
-  async function onProfileKeyUpdate({
+  async function onProfileKey({
     data,
+    reason,
     confirm,
   }: ProfileKeyUpdateEvent): Promise<void> {
+    const logId = `onProfileKey/${reason}`;
     const { conversation } = window.ConversationController.maybeMergeContacts({
       aci: data.sourceAci,
       e164: data.source,
-      reason: 'onProfileKeyUpdate',
+      reason: logId,
     });
+    const idForLogging = getConversationIdForLogging(conversation.attributes);
 
     if (!data.profileKey) {
-      log.error('onProfileKeyUpdate: missing profileKey', data.profileKey);
+      log.error(
+        `${logId}: missing profileKey for ${idForLogging}`,
+        data.profileKey
+      );
       confirm();
       return;
     }
 
     log.info(
-      'onProfileKeyUpdate: updating profileKey for',
+      `${logId}: updating profileKey for ${idForLogging}`,
       data.sourceAci,
       data.source
     );
@@ -2923,6 +2961,7 @@ export async function startApp(): Promise<void> {
           conversationId
         );
         window.reduxActions.calling.peekNotConnectedGroupCall({
+          callMode: CallMode.Group,
           conversationId,
         });
         if (callId != null) {
@@ -2983,11 +3022,6 @@ export async function startApp(): Promise<void> {
 
     try {
       log.info('unlinkAndDisconnect: removing configuration');
-
-      // First, make changes to conversations in memory
-      window.getConversations().forEach(conversation => {
-        conversation.unset('senderKeyInfo');
-      });
 
       // We use username for integrity check
       const ourConversation =
@@ -3381,6 +3415,41 @@ export async function startApp(): Promise<void> {
     };
 
     drop(MessageReceipts.onReceipt(attributes));
+  }
+
+  async function onDeleteForMeSync(ev: DeleteForMeSyncEvent) {
+    const { confirm, timestamp, envelopeId, deleteForMeSync } = ev;
+    const logId = `onDeleteForMeSync(${timestamp})`;
+
+    if (!isEnabled('desktop.deleteSync.receive')) {
+      confirm();
+      return;
+    }
+
+    // The user clearly knows about this feature; they did it on another device!
+    drop(window.storage.put('localDeleteWarningShown', true));
+
+    log.info(`${logId}: Saving ${deleteForMeSync.length} sync tasks`);
+
+    const now = Date.now();
+    const syncTasks = deleteForMeSync.map(item => ({
+      id: generateUuid(),
+      attempts: 1,
+      createdAt: now,
+      data: item,
+      envelopeId,
+      sentAt: timestamp,
+      type: item.type,
+    }));
+    await window.Signal.Data.saveSyncTasks(syncTasks);
+
+    confirm();
+
+    log.info(`${logId}: Queuing ${syncTasks.length} sync tasks`);
+
+    await queueSyncTasks(syncTasks, window.Signal.Data.removeSyncTaskById);
+
+    log.info(`${logId}: Done`);
   }
 }
 

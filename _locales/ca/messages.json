@@ -173,6 +173,9 @@
   "icu:viewMenuToggleDevTools": {
     "messageformat": "Activa o desactiva les eines de desenvolupament"
   },
+  "icu:viewMenuOpenCallingDevTools": {
+    "messageformat": "Obrir Eines de desenvolupament de trucada"
+  },
   "icu:menuSetupAsNewDevice": {
     "messageformat": "Configura'l com a dispositiu nou"
   },
@@ -458,9 +461,6 @@
   "icu:joinAnyway": {
     "messageformat": "Unir-me de totes maneres"
   },
-  "icu:continueCall": {
-    "messageformat": "Continua la trucada"
-  },
   "icu:debugLogExplanation": {
     "messageformat": "Quan cliqueu a Envia, el registre es penjarà en línia durant 30 dies en un URL únic i no publicat. Primer podeu desar-lo localment."
   },
@@ -643,6 +643,12 @@
   },
   "icu:screenShareWindow": {
     "messageformat": "Compartició de pantalla"
+  },
+  "icu:callingDeveloperTools": {
+    "messageformat": "Eines de desenvolupament de trucada"
+  },
+  "icu:callingDeveloperToolsDescription": {
+    "messageformat": "Aquesta finestra s'utilitza durant el desenvolupament per mostrar els diagnòstics de les trucades en curs."
   },
   "icu:speech": {
     "messageformat": "Discurs"
@@ -1033,6 +1039,9 @@
   },
   "icu:ChangeNumber--notification": {
     "messageformat": "{sender} ha canviat el número de telèfon."
+  },
+  "icu:JoinedSignal--notification": {
+    "messageformat": "El contacte s'ha afegit al Signal."
   },
   "icu:ConversationMerge--notification": {
     "messageformat": "{obsoleteConversationTitle} i {conversationTitle} són el mateix compte. El teu historial de missatges per als dos xats és aquí."
@@ -2363,18 +2372,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "Xat marcat com a no llegit"
   },
-  "icu:SendEdit--dialog--title2": {
-    "messageformat": "Editar missatge"
-  },
-  "icu:SendEdit--dialog--body2": {
-    "messageformat": "Si edites un missatge, només serà visible per a aquelles persones que tinguin les darreres versions de Signal. Podran veure que has editat un missatge."
-  },
-  "icu:SendFormatting--dialog--title": {
-    "messageformat": "Enviant text amb format"
-  },
-  "icu:SendFormatting--dialog--body": {
-    "messageformat": "És possible que algunes persones estiguin utilitzant una versió de Signal que no admet text amb format. No podran veure els canvis de format que has fet al teu missatge."
-  },
   "icu:AuthArtCreator--dialog--message": {
     "messageformat": "Vols obrir el Creador de paquets de stickers?"
   },
@@ -2691,7 +2688,13 @@
     "messageformat": "So desactivat"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "Tens la mà aixecada."
+    "messageformat": "You raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-one": {
+    "messageformat": "You and {otherName} raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-more": {
+    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} ha aixecat la mà."
@@ -2782,6 +2785,21 @@
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "Expulsar a aquesta persona de la trucada"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel": {
+    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
+    "messageformat": "+{count,number} more"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
+    "messageformat": "More info about new contacts"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
+    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
+    "messageformat": "Got it"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Vídeo"
@@ -3761,6 +3779,9 @@
   "icu:DeleteMessagesModal--description--noteToSelf": {
     "messageformat": "{count, plural, one {De quins dispositius t'agradaria eliminar aquest missatge?} other {De quins dispositius t'agradaria eliminar aquests missatges?}}"
   },
+  "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
+    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+  },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "Eliminar per a mi"
   },
@@ -3772,6 +3793,9 @@
   },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "Eliminar de tots els dispositius"
+  },
+  "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
+    "messageformat": "Delete"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {Només pots seleccionar {count,number} missatge per eliminar per a tothom} other {Només pots seleccionar {count,number} missatges per eliminar per a tothom}}"
@@ -3866,11 +3890,17 @@
   "icu:ForwardMessageModal__title": {
     "messageformat": "Reenvia a"
   },
+  "icu:ForwardMessageModal__ShareCallLink": {
+    "messageformat": "Compatir enllaç de trucada"
+  },
   "icu:ForwardMessageModal--continue": {
     "messageformat": "Continua"
   },
   "icu:ForwardMessagesModal__toast--CannotForwardEmptyMessage": {
     "messageformat": "No es poden reenviar missatges buits o eliminats"
+  },
+  "icu:ShareCallLinkViaSignal__DraftMessageText": {
+    "messageformat": "Utilitza aquest enllaç per unir-te a la trucada de Signal: {url}"
   },
   "icu:MessageRequestWarning__learn-more": {
     "messageformat": "Més informació"
@@ -4167,7 +4197,7 @@
     "messageformat": "Els àlies no poden començar amb un número."
   },
   "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Els àlies han de tenir un mínim de {min,number} caràcters."
+    "messageformat": "Usernames must have at least {min,number} characters."
   },
   "icu:ProfileEditor--username--check-character-max": {
     "messageformat": "Els àlies han de tenir un màxim de{max,number} caràcters."
@@ -4347,7 +4377,7 @@
     "messageformat": "Converteix les emoticones escrites en emoji"
   },
   "icu:Preferences__auto-convert-emoji--description": {
-    "messageformat": "Per exemple, :-) es convertirà a 🙂"
+    "messageformat": "Per exemple, :-) es convertirà a <emojify>🙂</emojify>"
   },
   "icu:Preferences--advanced": {
     "messageformat": "Avançada"
@@ -4717,6 +4747,15 @@
   },
   "icu:SignalConnectionsModal__footer": {
     "messageformat": "Els teus contactes poden veure el teu nom i la teva foto, i poden veure el que pugis a \"La meva història\" tret que decideixis ocultar-los-hi."
+  },
+  "icu:LocalDeleteWarningModal__header": {
+    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+  },
+  "icu:LocalDeleteWarningModal__description": {
+    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+  },
+  "icu:LocalDeleteWarningModal__confirm": {
+    "messageformat": "Got it"
   },
   "icu:Stories__title": {
     "messageformat": "Històries"
@@ -5310,6 +5349,9 @@
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "No s'ha trobat cap resultat per a «{query}»"
   },
+  "icu:CallsList__CreateCallLink": {
+    "messageformat": "Create a Call Link"
+  },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "Entrant"
   },
@@ -5325,11 +5367,29 @@
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Enllaç de trucada"
   },
+  "icu:CallsList__ItemCallInfo--Active": {
+    "messageformat": "En actiu"
+  },
+  "icu:CallsList__LeaveCallDialogTitle": {
+    "messageformat": "Vols sortir de la trucada actual?"
+  },
+  "icu:CallsList__LeaveCallDialogBody": {
+    "messageformat": "Has de sortir de la trucada actual abans d'unir-te a una nova trucada."
+  },
+  "icu:CallsList__LeaveCallDialogButton--leave": {
+    "messageformat": "Surt de la trucada"
+  },
   "icu:CallsNewCall__EmptyState--noQuery": {
     "messageformat": "No hi ha converses recents."
   },
   "icu:CallsNewCall__EmptyState--hasQuery": {
     "messageformat": "No s'ha trobat cap resultat per a «{query}»"
+  },
+  "icu:CallsNewCallButton--return": {
+    "messageformat": "Torna"
+  },
+  "icu:CallsNewCallButtonTooltip--in-another-call": {
+    "messageformat": "Has de sortir de la trucada actual abans d'unir-te a una nova trucada"
   },
   "icu:CallHistory__Description--Default": {
     "messageformat": "{type, select, Audio {{direction, select, Outgoing {Trucada sortint} other {Trucada entrant}}} Video {{direction, select, Outgoing {Trucada de vídeo sortint} other {Trucada de vídeo entrant}}} Group {{direction, select, Outgoing {Trucada grupal sortint} other {Trucada grupal entrant}}} other {{direction, select, Outgoing {Telefonada feta} other {Telefonada rebuda}}}}"
@@ -5345,6 +5405,33 @@
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Enllaç de trucada"
+  },
+  "icu:CallLinkDetails__Join": {
+    "messageformat": "Afegeix-m'hi"
+  },
+  "icu:CallLinkDetails__CopyLink": {
+    "messageformat": "Copiar l'enllaç"
+  },
+  "icu:CallLinkDetails__ShareLinkViaSignal": {
+    "messageformat": "Compartir enllaç per Signal"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Call link details"
+  },
+  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
+    "messageformat": "Name"
+  },
+  "icu:CallLinkEditModal__JoinButtonLabel": {
+    "messageformat": "Join"
+  },
+  "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
+    "messageformat": "Approve all members"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
+    "messageformat": "Off"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
+    "messageformat": "On"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} persona més està escrivint.} other {{count,number} persones més estan escrivint.}}"
@@ -5385,5 +5472,20 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Petits ajustos, correccions d'errors i tasques de millora de rendiment. Gràcies per utilitzar Signal!",
     "ignoreUnused": true
+  },
+  "icu:WhatsNew__v7.12--0": {
+    "messageformat": "La nova funció Aixecar la mà és una manera senzilla de cridar l'atenció d'algú o fer una pregunta durant les trucades grupals."
+  },
+  "icu:WhatsNew__v7.12--1": {
+    "messageformat": "Aquesta actualització també inclou una eina de retallar millorada per canviar la mida d'una imatge."
+  },
+  "icu:WhatsNew__v7.12--2": {
+    "messageformat": "Hem modificat la drecera de teclat per enviar una nota de veu a Ctrl/Cmd+Maj+Y perquè ja no entri en conflicte amb la drecera \"Enganxar i copiar l'estil\" a Windows i Linux."
+  },
+  "icu:WhatsNew__v7.13--0": {
+    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  },
+  "icu:WhatsNew__v7.13--1": {
+    "messageformat": "This update also improves the display of quoted replies in RTL languages."
   }
 }

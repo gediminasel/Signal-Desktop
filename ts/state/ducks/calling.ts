@@ -13,6 +13,7 @@ import {
   GroupCallEndReason,
   type Reaction as CallReaction,
 } from '@signalapp/ringrtc';
+import { v4 as generateUuid } from 'uuid';
 import { getOwn } from '../../util/getOwn';
 import * as Errors from '../../types/errors';
 import { getIntl, getPlatform } from '../selectors/user';
@@ -31,7 +32,11 @@ import type {
   PresentedSource,
   PresentableSource,
 } from '../../types/Calling';
-import type { CallLinkStateType } from '../../types/CallLink';
+import type {
+  CallLinkRestrictions,
+  CallLinkStateType,
+  CallLinkType,
+} from '../../types/CallLink';
 import {
   CALLING_REACTIONS_LIFETIME,
   MAX_CALLING_REACTIONS,
@@ -48,6 +53,7 @@ import { requestCameraPermissions } from '../../util/callingPermissions';
 import {
   CALL_LINK_DEFAULT_STATE,
   getRoomIdFromRootKey,
+  isCallLinksCreateEnabled,
   toAdminKeyBytes,
 } from '../../util/callLinks';
 import { sendCallLinkUpdateSync } from '../../util/sendCallLinkUpdateSync';
@@ -82,6 +88,14 @@ import { ButtonVariant } from '../../components/Button';
 import { getConversationIdForLogging } from '../../util/idForLogging';
 import dataInterface from '../../sql/Client';
 import { isAciString } from '../../util/isAciString';
+import type { CallHistoryDetails } from '../../types/CallDisposition';
+import {
+  AdhocCallStatus,
+  CallDirection,
+  CallType,
+} from '../../types/CallDisposition';
+import type { CallHistoryAdd } from './callHistory';
+import { addCallHistory } from './callHistory';
 
 // State
 
@@ -174,15 +188,8 @@ export type AdhocCallsType = {
   [roomId: string]: GroupCallStateType;
 };
 
-export type CallLinksByRoomIdStateType = ReadonlyDeep<
-  CallLinkStateType & {
-    rootKey: string;
-    adminKey: string | null;
-  }
->;
-
 export type CallLinksByRoomIdType = ReadonlyDeep<{
-  [roomId: string]: CallLinksByRoomIdStateType;
+  [roomId: string]: CallLinkType;
 }>;
 
 // eslint-disable-next-line local-rules/type-alias-readonlydeep
@@ -244,8 +251,7 @@ type GroupCallStateChangeActionPayloadType =
   };
 
 type HandleCallLinkUpdateActionPayloadType = ReadonlyDeep<{
-  roomId: string;
-  callLinkDetails: CallLinksByRoomIdStateType;
+  callLink: CallLinkType;
 }>;
 
 type HangUpActionPayloadType = ReadonlyDeep<{
@@ -285,7 +291,8 @@ type SendGroupCallReactionLocalCopyType = ReadonlyDeep<{
   timestamp: number;
 }>;
 
-type PeekNotConnectedGroupCallType = ReadonlyDeep<{
+export type PeekNotConnectedGroupCallType = ReadonlyDeep<{
+  callMode: CallMode.Group | CallMode.Adhoc;
   conversationId: string;
 }>;
 
@@ -383,6 +390,7 @@ type StartCallLinkLobbyPayloadType = {
   peekInfo?: GroupCallPeekInfoType;
   remoteParticipants: Array<GroupCallParticipantInfoType>;
   callLinkState: CallLinkStateType;
+  callLinkRoomId: string;
   callLinkRootKey: string;
 };
 
@@ -1332,10 +1340,11 @@ function handleCallLinkUpdate(
       'revoked',
     ]);
 
-    const callLinkDetails: CallLinksByRoomIdStateType = {
+    const callLink: CallLinkType = {
       ...CALL_LINK_DEFAULT_STATE,
       ...existingCallLinkState,
       ...freshCallLinkState,
+      roomId,
       rootKey,
       adminKey,
     };
@@ -1351,21 +1360,57 @@ function handleCallLinkUpdate(
         log.info(`${logId}: Updated existing call link state`);
       }
     } else {
-      await dataInterface.insertCallLink({
-        roomId,
-        ...callLinkDetails,
-      });
+      await dataInterface.insertCallLink(callLink);
       log.info(`${logId}: Saved new call link`);
     }
 
     dispatch({
       type: HANDLE_CALL_LINK_UPDATE,
-      payload: {
-        roomId,
-        callLinkDetails,
-      },
+      payload: { callLink },
     });
   };
+}
+
+/**
+ * When starting a lobby and there's an active call, if we're already in call then
+ * focus it (toggle pip), otherwise show an error.
+ * @returns {boolean} `true` if there was an active call and we handled it.
+ */
+function handleActiveCallOnStartLobby({
+  conversationId,
+  state,
+  dispatch,
+}: {
+  conversationId: string;
+  state: RootStateType;
+  dispatch: ThunkDispatch<
+    RootStateType,
+    unknown,
+    ShowErrorModalActionType | TogglePipActionType
+  >;
+}): boolean {
+  const { activeCallState } = state.calling;
+  if (!activeCallState) {
+    return false;
+  }
+
+  if (activeCallState.conversationId === conversationId) {
+    dispatch({
+      type: TOGGLE_PIP,
+    });
+  } else {
+    const i18n = getIntl(state);
+    dispatch({
+      type: SHOW_ERROR_MODAL,
+      payload: {
+        title: i18n('icu:calling__cant-join'),
+        description: i18n('icu:calling__dialog-already-in-call'),
+        buttonVariant: ButtonVariant.Primary,
+      },
+    });
+  }
+
+  return true;
 }
 
 function hangUpActiveCall(
@@ -1553,10 +1598,10 @@ function peekNotConnectedGroupCall(
   payload: PeekNotConnectedGroupCallType
 ): ThunkAction<void, RootStateType, unknown, PeekGroupCallFulfilledActionType> {
   return (dispatch, getState) => {
-    const { conversationId } = payload;
+    const { callMode, conversationId } = payload;
     doGroupCallPeek({
       conversationId,
-      callMode: CallMode.Group,
+      callMode,
       dispatch,
       getState,
     });
@@ -1834,6 +1879,89 @@ function onOutgoingAudioCallInConversation(
   };
 }
 
+function createCallLink(
+  onCreated: (roomId: string) => void
+): ThunkAction<
+  void,
+  RootStateType,
+  unknown,
+  CallHistoryAdd | HandleCallLinkUpdateActionType
+> {
+  return async dispatch => {
+    strictAssert(isCallLinksCreateEnabled(), 'Call links creation is disabled');
+
+    const callLink = await calling.createCallLink();
+    const callHistory: CallHistoryDetails = {
+      callId: generateUuid(),
+      peerId: callLink.roomId,
+      ringerId: null,
+      mode: CallMode.Adhoc,
+      type: CallType.Adhoc,
+      direction: CallDirection.Incoming,
+      timestamp: Date.now(),
+      status: AdhocCallStatus.Pending,
+    };
+    await Promise.all([
+      dataInterface.insertCallLink(callLink),
+      dataInterface.saveCallHistory(callHistory),
+    ]);
+    dispatch({
+      type: HANDLE_CALL_LINK_UPDATE,
+      payload: { callLink },
+    });
+    dispatch(addCallHistory(callHistory));
+    // Call after dispatching the action to ensure the call link is in the store
+    onCreated(callLink.roomId);
+  };
+}
+
+function updateCallLinkName(
+  roomId: string,
+  name: string
+): ThunkAction<void, RootStateType, unknown, HandleCallLinkUpdateActionType> {
+  return async dispatch => {
+    const prevCallLink = await dataInterface.getCallLinkByRoomId(roomId);
+    strictAssert(
+      prevCallLink,
+      `updateCallLinkName(${roomId}): call link not found`
+    );
+    const callLinkState = await calling.updateCallLinkName(prevCallLink, name);
+    const callLink = await dataInterface.updateCallLinkState(
+      roomId,
+      callLinkState
+    );
+    dispatch({
+      type: HANDLE_CALL_LINK_UPDATE,
+      payload: { callLink },
+    });
+  };
+}
+
+function updateCallLinkRestrictions(
+  roomId: string,
+  restrictions: CallLinkRestrictions
+): ThunkAction<void, RootStateType, unknown, HandleCallLinkUpdateActionType> {
+  return async dispatch => {
+    const prevCallLink = await dataInterface.getCallLinkByRoomId(roomId);
+    strictAssert(
+      prevCallLink,
+      `updateCallLinkRestrictions(${roomId}): call link not found`
+    );
+    const callLinkState = await calling.updateCallLinkRestrictions(
+      prevCallLink,
+      restrictions
+    );
+    const callLink = await dataInterface.updateCallLinkState(
+      roomId,
+      callLinkState
+    );
+    dispatch({
+      type: HANDLE_CALL_LINK_UPDATE,
+      payload: { callLink },
+    });
+  };
+}
+
 function startCallLinkLobbyByRoomId(
   roomId: string
 ): StartCallLinkLobbyThunkActionType {
@@ -1868,26 +1996,21 @@ const _startCallLinkLobby = async ({
   dispatch: ThunkDispatch<
     RootStateType,
     unknown,
-    StartCallLinkLobbyActionType | ShowErrorModalActionType
+    | StartCallLinkLobbyActionType
+    | ShowErrorModalActionType
+    | TogglePipActionType
   >;
   getState: () => RootStateType;
 }) => {
+  const callLinkRootKey = CallLinkRootKey.parse(rootKey);
+  const roomId = getRoomIdFromRootKey(callLinkRootKey);
   const state = getState();
 
-  if (state.calling.activeCallState) {
-    const i18n = getIntl(getState());
-    dispatch({
-      type: SHOW_ERROR_MODAL,
-      payload: {
-        title: i18n('icu:calling__cant-join'),
-        description: i18n('icu:calling__dialog-already-in-call'),
-        buttonVariant: ButtonVariant.Primary,
-      },
-    });
+  if (
+    handleActiveCallOnStartLobby({ conversationId: roomId, state, dispatch })
+  ) {
     return;
   }
-
-  const callLinkRootKey = CallLinkRootKey.parse(rootKey);
 
   const readResult = await calling.readCallLink({ callLinkRootKey });
   const { callLinkState } = readResult;
@@ -1919,7 +2042,6 @@ const _startCallLinkLobby = async ({
     return;
   }
 
-  const roomId = getRoomIdFromRootKey(callLinkRootKey);
   try {
     const callLinkExists = await dataInterface.callLinkExists(roomId);
     if (callLinkExists) {
@@ -1952,9 +2074,7 @@ const _startCallLinkLobby = async ({
     0;
 
   const { adminKey } = getOwn(state.calling.callLinks, roomId) ?? {};
-  const adminPasskey = adminKey
-    ? Buffer.from(toAdminKeyBytes(adminKey))
-    : undefined;
+  const adminPasskey = adminKey ? toAdminKeyBytes(adminKey) : undefined;
   const callLobbyData = await calling.startCallLinkLobby({
     callLinkRootKey,
     adminPasskey,
@@ -1969,6 +2089,7 @@ const _startCallLinkLobby = async ({
     payload: {
       ...callLobbyData,
       callLinkState,
+      callLinkRoomId: roomId,
       callLinkRootKey: rootKey,
       conversationId: roomId,
       isConversationTooBigToRing: false,
@@ -1983,7 +2104,7 @@ function startCallingLobby({
   void,
   RootStateType,
   unknown,
-  StartCallingLobbyActionType
+  StartCallingLobbyActionType | TogglePipActionType
 > {
   return async (dispatch, getState) => {
     const state = getState();
@@ -2156,6 +2277,7 @@ export const actions = {
   changeCallView,
   changeIODevice,
   closeNeedPermissionScreen,
+  createCallLink,
   declineCall,
   denyUser,
   getPresentingSources,
@@ -2201,6 +2323,8 @@ export const actions = {
   togglePip,
   toggleScreenRecordingPermissionsDialog,
   toggleSettings,
+  updateCallLinkName,
+  updateCallLinkRestrictions,
 };
 
 export const useCallingActions = (): BoundActionCreatorsMapObject<
@@ -2378,6 +2502,9 @@ export function reducer(
               ...callLinks,
               [conversationId]: {
                 ...action.payload.callLinkState,
+                roomId:
+                  callLinks[conversationId]?.roomId ??
+                  action.payload.callLinkRoomId,
                 rootKey:
                   callLinks[conversationId]?.rootKey ??
                   action.payload.callLinkRootKey,
@@ -3318,13 +3445,14 @@ export function reducer(
 
   if (action.type === HANDLE_CALL_LINK_UPDATE) {
     const { callLinks } = state;
-    const { roomId, callLinkDetails } = action.payload;
+    const { callLink } = action.payload;
+    const { roomId } = callLink;
 
     return {
       ...state,
       callLinks: {
         ...callLinks,
-        [roomId]: callLinkDetails,
+        [roomId]: callLink,
       },
     };
   }

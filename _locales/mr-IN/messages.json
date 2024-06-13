@@ -173,6 +173,9 @@
   "icu:viewMenuToggleDevTools": {
     "messageformat": "डेव्हलपर साधने टॉगल करा"
   },
+  "icu:viewMenuOpenCallingDevTools": {
+    "messageformat": "कॉलिंग डेव्हलपर टूल उघडा"
+  },
   "icu:menuSetupAsNewDevice": {
     "messageformat": "नवीन डिव्हाईस म्हणून सेटअप करा"
   },
@@ -458,9 +461,6 @@
   "icu:joinAnyway": {
     "messageformat": "काहीही करून सामील व्हा"
   },
-  "icu:continueCall": {
-    "messageformat": "कॉल सुरू ठेवा"
-  },
   "icu:debugLogExplanation": {
     "messageformat": "आपण जेव्हा सबमिट वर क्लिक कराल, आपला लॉग हा 30 दिवसासाठी एका असामान्य, प्रकाशित न केलेल्या URL वर पोस्ट केले जाईल. आपण ते प्रथम स्थानिक रित्या जतन करू शकता."
   },
@@ -643,6 +643,12 @@
   },
   "icu:screenShareWindow": {
     "messageformat": "स्क्रीन सामायिक करत आहे"
+  },
+  "icu:callingDeveloperTools": {
+    "messageformat": "डेव्हलपर टूलला कॉल करत आहे"
+  },
+  "icu:callingDeveloperToolsDescription": {
+    "messageformat": "ह्या विंडोचा वापर विकासादरम्यान सुरू असलेल्या कॉलमधील निदान प्रदर्शित करण्यासाठी केला जातो."
   },
   "icu:speech": {
     "messageformat": "वाचा"
@@ -1033,6 +1039,9 @@
   },
   "icu:ChangeNumber--notification": {
     "messageformat": "{sender} नी त्यांचा फोन नंबर बदलला आहे"
+  },
+  "icu:JoinedSignal--notification": {
+    "messageformat": "संपर्क Signal मध्ये सामील झाला"
   },
   "icu:ConversationMerge--notification": {
     "messageformat": "{obsoleteConversationTitle} आणि {conversationTitle} ही एकच खाती आहेत. दोन्ही चॅटस् साठीचा आपला संदेश इतिहास येथे आहे."
@@ -2363,18 +2372,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "न वाचलेला म्हणून चिन्हांकित चॅट"
   },
-  "icu:SendEdit--dialog--title2": {
-    "messageformat": "संदेश संपादित करा"
-  },
-  "icu:SendEdit--dialog--body2": {
-    "messageformat": "आपण संदेश संपादित केल्यास, तो Signal च्या नवीनतम आवृत्तीवर असलेल्या लोकांनाच दृश्यमान असेल. ते आपला संपादित केलेला संदेश पाहू शकतील."
-  },
-  "icu:SendFormatting--dialog--title": {
-    "messageformat": "स्वरूपित मजकूर पाठवत आहे"
-  },
-  "icu:SendFormatting--dialog--body": {
-    "messageformat": "काही लोक स्वरुपित मजकूरला सपोर्ट करत नाही अशी Signal ची आवृत्ती वापरत असू शकतात. आपण आपल्या संदेशाच्या स्वरुपणामध्ये केलेले बदल ते पाहू शकणार नाहीत."
-  },
   "icu:AuthArtCreator--dialog--message": {
     "messageformat": "आपणाला Signal स्टिकर पॅक निर्माता उघडणे आवडेल का?"
   },
@@ -2691,7 +2688,13 @@
     "messageformat": "रिंग होणे बंद झाले"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "तुमचा हात वर आहे."
+    "messageformat": "You raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-one": {
+    "messageformat": "You and {otherName} raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-more": {
+    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} ने हात वर केला."
@@ -2782,6 +2785,21 @@
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "ह्या व्यक्तीला कॉलमधून हटवा"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel": {
+    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
+    "messageformat": "+{count,number} more"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
+    "messageformat": "More info about new contacts"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
+    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
+    "messageformat": "Got it"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "व्हिडिओ"
@@ -3761,6 +3779,9 @@
   "icu:DeleteMessagesModal--description--noteToSelf": {
     "messageformat": "{count, plural, one {हा संदेश आपणाला कोणत्या डिव्हाइसेस वरून हटवणे आवडेल?} other {हे संदेश आपणाला कोणत्या डिव्हाइसेस वरून हटवणे आवडेल?}}"
   },
+  "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
+    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+  },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "माझ्यासाठी हटवा"
   },
@@ -3772,6 +3793,9 @@
   },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "सर्व डिव्हाइसेस वरून हटवा"
+  },
+  "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
+    "messageformat": "Delete"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {आपण प्रत्येकासाठी फक्त {count,number} पर्यंत संदेश हटवण्याचे निडवू शकता} other {आपण प्रत्येकासाठी फक्त {count,number} पर्यंत संदेश हटवण्यासाठी निवडू शकता}}"
@@ -3866,11 +3890,17 @@
   "icu:ForwardMessageModal__title": {
     "messageformat": "ला अग्रेषित केला"
   },
+  "icu:ForwardMessageModal__ShareCallLink": {
+    "messageformat": "कॉल लिंक शेअर करा"
+  },
   "icu:ForwardMessageModal--continue": {
     "messageformat": "सुरू ठेवा"
   },
   "icu:ForwardMessagesModal__toast--CannotForwardEmptyMessage": {
     "messageformat": "रिक्त किंवा हटवलेले संदेश अग्रेषित करु शकत नाही"
+  },
+  "icu:ShareCallLinkViaSignal__DraftMessageText": {
+    "messageformat": "Signal कॉलमध्ये जॉईन होण्यासाठी या लिंकचा वापर करा: {url}"
   },
   "icu:MessageRequestWarning__learn-more": {
     "messageformat": "अधिक जाणा"
@@ -4167,7 +4197,7 @@
     "messageformat": "वापरकर्तानाव अंकांसोबत सोबत चालू होऊ शकत नाही."
   },
   "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "वापरकर्तानावात किमान {min,number} वर्ण असलेच पाहिजेत."
+    "messageformat": "Usernames must have at least {min,number} characters."
   },
   "icu:ProfileEditor--username--check-character-max": {
     "messageformat": "वापरकर्तानावात कमाल {max,number} वर्णच असलेच पाहिजेत."
@@ -4347,7 +4377,7 @@
     "messageformat": "टाइप केलेल्या इमोटिकॉनना इमोजीमध्ये रूपांतरीत करा"
   },
   "icu:Preferences__auto-convert-emoji--description": {
-    "messageformat": "उदाहरपणार्थ, :-) हे 🙂 मध्ये रूपांतरित केले जाईल"
+    "messageformat": "उदाहरपणार्थ, :-) हे <emojify>🙂</emojify> मध्ये रूपांतरित केले जाईल"
   },
   "icu:Preferences--advanced": {
     "messageformat": "प्रगत"
@@ -4717,6 +4747,15 @@
   },
   "icu:SignalConnectionsModal__footer": {
     "messageformat": "आपले कनेक्शन्स आपले नाव आणि फोटो पाहू शकतात, आपण त्यांच्यापासून लपवत नाही तोपर्यंत ते \"माझ्या स्टोरी\" वर पोस्ट्स पाहू शकतात"
+  },
+  "icu:LocalDeleteWarningModal__header": {
+    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+  },
+  "icu:LocalDeleteWarningModal__description": {
+    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+  },
+  "icu:LocalDeleteWarningModal__confirm": {
+    "messageformat": "Got it"
   },
   "icu:Stories__title": {
     "messageformat": "स्टोरीज"
@@ -5310,6 +5349,9 @@
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "“{query}” साठी कोणतेही परिणाम नाहीत"
   },
+  "icu:CallsList__CreateCallLink": {
+    "messageformat": "Create a Call Link"
+  },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "येणारे"
   },
@@ -5325,11 +5367,29 @@
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "कॉल लिंक"
   },
+  "icu:CallsList__ItemCallInfo--Active": {
+    "messageformat": "सक्रिय"
+  },
+  "icu:CallsList__LeaveCallDialogTitle": {
+    "messageformat": "वर्तमान कॉल सोडायचा का?"
+  },
+  "icu:CallsList__LeaveCallDialogBody": {
+    "messageformat": "नवीन कॉलमध्ये सामील होण्यापूर्वी आपण वर्तमान कॉल सोडणे आवश्यक आहे."
+  },
+  "icu:CallsList__LeaveCallDialogButton--leave": {
+    "messageformat": "कॉल सोडा"
+  },
   "icu:CallsNewCall__EmptyState--noQuery": {
     "messageformat": "कोणतेही अलिकडील संभाषण नाही."
   },
   "icu:CallsNewCall__EmptyState--hasQuery": {
     "messageformat": "“{query}” साठी कोणतेही परिणाम नाहीत"
+  },
+  "icu:CallsNewCallButton--return": {
+    "messageformat": "परत जा"
+  },
+  "icu:CallsNewCallButtonTooltip--in-another-call": {
+    "messageformat": "नवीन कॉलमध्ये सामील होण्यापूर्वी आपण वर्तमान कॉल सोडणे आवश्यक आहे"
   },
   "icu:CallHistory__Description--Default": {
     "messageformat": "{type, select, Audio {{direction, select, Outgoing {बाहेर जाणारा व्हाईस कॉल} other {येणारा व्हाईस कॉल}}} Video {{direction, select, Outgoing {जाणारा व्हिडिओ कॉल} other {येणारा व्हिडिओ कॉल}}} Group {{direction, select, Outgoing {बाहेर जाणारे ग्रुप कॉल} other {येणारे ग्रुप कॉल}}} other {{direction, select, Outgoing {जाणारा कॉल} other {येणारा कॉल}}}}"
@@ -5345,6 +5405,33 @@
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "कॉल लिंक"
+  },
+  "icu:CallLinkDetails__Join": {
+    "messageformat": "सामील व्हा"
+  },
+  "icu:CallLinkDetails__CopyLink": {
+    "messageformat": "लिंक कॉपी करा"
+  },
+  "icu:CallLinkDetails__ShareLinkViaSignal": {
+    "messageformat": "Signal मार्फत लिंक शेअर करा"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Call link details"
+  },
+  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
+    "messageformat": "Name"
+  },
+  "icu:CallLinkEditModal__JoinButtonLabel": {
+    "messageformat": "Join"
+  },
+  "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
+    "messageformat": "Approve all members"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
+    "messageformat": "Off"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
+    "messageformat": "On"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} इतर टाईप करत आहे.} other {{count,number} इतर टाईप करत आहेत.}}"
@@ -5385,5 +5472,20 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "लहान ट्विक्स, दोष निवारण, आणि कामगिरी सुधारणा. Signal वापरल्याबद्दल आभारी आहोत!",
     "ignoreUnused": true
+  },
+  "icu:WhatsNew__v7.12--0": {
+    "messageformat": "गट कॉलदरम्यान संभाषणात भाग घेण्याच्या दुसऱ्या मार्गाच्या शोधात आपण असाल तर आपला हात वर करा. नवीन हात वर करा वैशिष्ट्य एखाद्याचे लक्ष वेधण्याचा, प्रश्न विचारण्याचा, किंवा जेव्हा आपले मित्र गट प्रस्तावाच्या वेळी \"ज्या सर्वांना मान्य आहे ?\" अशांनी हात वर करावा असा प्रश्न विचातील किंवा निनावीपणे मत देण्यासाठीचा एक सोपा मार्ग आहे"
+  },
+  "icu:WhatsNew__v7.12--1": {
+    "messageformat": "आम्ही क्रॉप टूलममध्ये एका दोषाचे निवारण केले आहे, ज्यामुळे आता चित्रातून तुमच्या एक्सला (किंवा इतर कोणालाही) सहजपणे काढून टाकणे सोपे आणि अधिक अंतर्ज्ञानी आहे."
+  },
+  "icu:WhatsNew__v7.12--2": {
+    "messageformat": "आम्ही Ctrl/Cmd+Shift+Y वर व्हॉईस टीप पाठवण्यासाठी कीबोर्ड शॉर्टकट मध्ये सुधारणा केली आहे ज्यामुळे तो Windows आणि Linux वरील \"पेस्ट करा आणि शैली जुळवा\" शार्टकटला अडथळा करणार नाही."
+  },
+  "icu:WhatsNew__v7.13--0": {
+    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  },
+  "icu:WhatsNew__v7.13--1": {
+    "messageformat": "This update also improves the display of quoted replies in RTL languages."
   }
 }

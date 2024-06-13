@@ -27,7 +27,6 @@ window.WebAPI = window.textsecure.WebAPI.initialize({
   storageUrl: config.storageUrl,
   updatesUrl: config.updatesUrl,
   resourcesUrl: config.resourcesUrl,
-  artCreatorUrl: config.artCreatorUrl,
   directoryConfig: config.directoryConfig,
   cdnUrlObject: {
     0: config.cdnUrl0,
@@ -38,7 +37,6 @@ window.WebAPI = window.textsecure.WebAPI.initialize({
   contentProxyUrl: config.contentProxyUrl,
   proxyUrl: config.proxyUrl,
   version: config.version,
-  libsignalNetEnvironment: config.libsignalNetEnvironment,
   disableIPv6: config.disableIPv6,
 });
 

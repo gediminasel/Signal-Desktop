@@ -40,6 +40,11 @@ import {
 } from '../selectors/conversations';
 import { getHasStoriesSelector } from '../selectors/stories2';
 import { getIntl, getTheme, getUserACI } from '../selectors/user';
+import { useItemsActions } from '../ducks/items';
+import {
+  getDeleteSyncSendEnabled,
+  getLocalDeleteWarningShown,
+} from '../selectors/items';
 
 export type OwnProps = {
   id: string;
@@ -147,6 +152,7 @@ export const SmartConversationHeader = memo(function SmartConversationHeader({
   const conversationName = useContactNameData(conversation);
   strictAssert(conversationName, 'conversationName is required');
 
+  const isDeleteSyncSendEnabled = useSelector(getDeleteSyncSendEnabled);
   const isMissingMandatoryProfileSharing =
     getIsMissingRequiredProfileSharing(conversation);
 
@@ -256,6 +262,11 @@ export const SmartConversationHeader = memo(function SmartConversationHeader({
 
   const minimalConversation = useMinimalConversation(conversation);
 
+  const localDeleteWarningShown = useSelector(getLocalDeleteWarningShown);
+  const { putItem } = useItemsActions();
+  const setLocalDeleteWarningShown = () =>
+    putItem('localDeleteWarningShown', true);
+
   return (
     <ConversationHeader
       addedByName={addedByName}
@@ -266,6 +277,8 @@ export const SmartConversationHeader = memo(function SmartConversationHeader({
       hasPanelShowing={hasPanelShowing}
       hasStories={hasStories}
       i18n={i18n}
+      localDeleteWarningShown={localDeleteWarningShown}
+      isDeleteSyncSendEnabled={isDeleteSyncSendEnabled}
       isMissingMandatoryProfileSharing={isMissingMandatoryProfileSharing}
       isSelectMode={isSelectMode}
       isSignalConversation={isSignalConversation(conversation)}
@@ -296,6 +309,7 @@ export const SmartConversationHeader = memo(function SmartConversationHeader({
       onViewRecentMedia={onViewRecentMedia}
       onViewUserStories={onViewUserStories}
       outgoingCallButtonStyle={outgoingCallButtonStyle}
+      setLocalDeleteWarningShown={setLocalDeleteWarningShown}
       sharedGroupNames={conversation.sharedGroupNames}
       theme={theme}
     />

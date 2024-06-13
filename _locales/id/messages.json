@@ -173,6 +173,9 @@
   "icu:viewMenuToggleDevTools": {
     "messageformat": "Beralih Ke Peralatan Pengembang"
   },
+  "icu:viewMenuOpenCallingDevTools": {
+    "messageformat": "Buka Alat Pengembang Panggilan"
+  },
   "icu:menuSetupAsNewDevice": {
     "messageformat": "Siapkan sebagai Perangkat Baru"
   },
@@ -458,9 +461,6 @@
   "icu:joinAnyway": {
     "messageformat": "Lanjut bergabung"
   },
-  "icu:continueCall": {
-    "messageformat": "Lanjutkan Panggilan"
-  },
   "icu:debugLogExplanation": {
     "messageformat": "Saat Anda mengeklik Kirim, log Anda akan diposting online selama 30 hari pada URL unik yang tidak dipublikasikan. Anda dapat Simpan secara lokal terlebih dahulu."
   },
@@ -643,6 +643,12 @@
   },
   "icu:screenShareWindow": {
     "messageformat": "Berbagi layar"
+  },
+  "icu:callingDeveloperTools": {
+    "messageformat": "Alat Pengembang Panggilan"
+  },
+  "icu:callingDeveloperToolsDescription": {
+    "messageformat": "Jendela ini digunakan selama proses pengembangan untuk menampilkan diagnostik dari panggilan yang berlangsung."
   },
   "icu:speech": {
     "messageformat": "Bicara"
@@ -1033,6 +1039,9 @@
   },
   "icu:ChangeNumber--notification": {
     "messageformat": "{sender} mengubah nomornya"
+  },
+  "icu:JoinedSignal--notification": {
+    "messageformat": "Kontak bergabung ke Signal"
   },
   "icu:ConversationMerge--notification": {
     "messageformat": "{obsoleteConversationTitle} dan {conversationTitle} adalah milik akun yang sama. Riwayat pesan Anda untuk kedua obrolan ada di sini."
@@ -2363,18 +2372,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "Obrolan ditandai belum dibaca"
   },
-  "icu:SendEdit--dialog--title2": {
-    "messageformat": "Edit Pesan"
-  },
-  "icu:SendEdit--dialog--body2": {
-    "messageformat": "Jika Anda mengedit pesan, pengeditan hanya bisa terlihat oleh pengguna Signal versi terbaru. Mereka akan dapat melihat bahwa Anda telah mengedit pesan."
-  },
-  "icu:SendFormatting--dialog--title": {
-    "messageformat": "Mengirim teks berformat"
-  },
-  "icu:SendFormatting--dialog--body": {
-    "messageformat": "Beberapa pengguna mungkin menggunakan versi Signal yang tidak mendukung teks berformat. Mereka tidak akan dapat melihat perubahan format yang Anda buat pada pesan."
-  },
   "icu:AuthArtCreator--dialog--message": {
     "messageformat": "Ingin membuka Pembuat Paket Stiker Signal?"
   },
@@ -2691,7 +2688,13 @@
     "messageformat": "Dering nonaktif"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "Anda mengangkat tangan."
+    "messageformat": "You raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-one": {
+    "messageformat": "You and {otherName} raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-more": {
+    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} mengangkat tangan."
@@ -2782,6 +2785,21 @@
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "Keluarkan orang ini dari panggilan"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel": {
+    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
+    "messageformat": "+{count,number} more"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
+    "messageformat": "More info about new contacts"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
+    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
+    "messageformat": "Got it"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -3761,6 +3779,9 @@
   "icu:DeleteMessagesModal--description--noteToSelf": {
     "messageformat": "{count, plural, other {Anda ingin pesan ini dihapus dari perangkat mana?}}"
   },
+  "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
+    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+  },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "Hapus untuk saya"
   },
@@ -3772,6 +3793,9 @@
   },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "Hapus dari semua perangkat"
+  },
+  "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
+    "messageformat": "Delete"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, other {Anda hanya bisa memilih maksimal {count,number} pesan untuk dihapus bagi semua orang}}"
@@ -3866,11 +3890,17 @@
   "icu:ForwardMessageModal__title": {
     "messageformat": "Teruskan Ke"
   },
+  "icu:ForwardMessageModal__ShareCallLink": {
+    "messageformat": "Bagikan tautan panggilan"
+  },
   "icu:ForwardMessageModal--continue": {
     "messageformat": "Lanjutkan"
   },
   "icu:ForwardMessagesModal__toast--CannotForwardEmptyMessage": {
     "messageformat": "Tidak dapat meneruskan pesan kosong atau pesan yang telah dihapus"
+  },
+  "icu:ShareCallLinkViaSignal__DraftMessageText": {
+    "messageformat": "Gunakan tautan ini untuk gabung dalam panggilan Signal: {url}"
   },
   "icu:MessageRequestWarning__learn-more": {
     "messageformat": "Pelajari lebih lanjut"
@@ -4167,7 +4197,7 @@
     "messageformat": "Nama pengguna tidak boleh dimulai dengan angka."
   },
   "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Nama pengguna harus memiliki minimal {min,number} karakter."
+    "messageformat": "Usernames must have at least {min,number} characters."
   },
   "icu:ProfileEditor--username--check-character-max": {
     "messageformat": "Nama pengguna harus memiliki maksimal {max,number} karakter."
@@ -4347,7 +4377,7 @@
     "messageformat": "Ubah emotikon ketik jadi emoji"
   },
   "icu:Preferences__auto-convert-emoji--description": {
-    "messageformat": "Contoh, :-) akan diubah jadi 🙂"
+    "messageformat": "Contoh, :-) akan diubah jadi <emojify>🙂</emojify>"
   },
   "icu:Preferences--advanced": {
     "messageformat": "Lanjutan"
@@ -4717,6 +4747,15 @@
   },
   "icu:SignalConnectionsModal__footer": {
     "messageformat": "Koneksi Anda bisa melihat nama dan foto Anda, dan bisa melihat postingan di \"Cerita Saya\" kecuali Anda menyembunyikannya dari mereka"
+  },
+  "icu:LocalDeleteWarningModal__header": {
+    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+  },
+  "icu:LocalDeleteWarningModal__description": {
+    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+  },
+  "icu:LocalDeleteWarningModal__confirm": {
+    "messageformat": "Got it"
   },
   "icu:Stories__title": {
     "messageformat": "Cerita"
@@ -5310,6 +5349,9 @@
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Tidak ada hasil untuk “{query}”"
   },
+  "icu:CallsList__CreateCallLink": {
+    "messageformat": "Create a Call Link"
+  },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "Panggilan Masuk"
   },
@@ -5325,11 +5367,29 @@
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Tautan panggilan"
   },
+  "icu:CallsList__ItemCallInfo--Active": {
+    "messageformat": "Aktif"
+  },
+  "icu:CallsList__LeaveCallDialogTitle": {
+    "messageformat": "Tinggalkan panggilan saat ini?"
+  },
+  "icu:CallsList__LeaveCallDialogBody": {
+    "messageformat": "Anda harus tinggalkan panggilan saat ini sebelum gabung ke panggilan baru."
+  },
+  "icu:CallsList__LeaveCallDialogButton--leave": {
+    "messageformat": "Tinggalkan panggilan"
+  },
   "icu:CallsNewCall__EmptyState--noQuery": {
     "messageformat": "Tidak ada percakapan terkini."
   },
   "icu:CallsNewCall__EmptyState--hasQuery": {
     "messageformat": "Tidak ada hasil untuk “{query}”"
+  },
+  "icu:CallsNewCallButton--return": {
+    "messageformat": "Kembali"
+  },
+  "icu:CallsNewCallButtonTooltip--in-another-call": {
+    "messageformat": "Anda harus tinggalkan panggilan saat ini sebelum gabung ke panggilan baru"
   },
   "icu:CallHistory__Description--Default": {
     "messageformat": "{type, select, Audio {{direction, select, Outgoing {Panggilan suara keluar} other {Panggilan suara masuk}}} Video {{direction, select, Outgoing {Panggilan video keluar} other {Panggilan video masuk}}} Group {{direction, select, Outgoing {Panggilan grup keluar} other {Panggilan grup masuk}}} other {{direction, select, Outgoing {Panggilan keluar} other {Panggilan masuk}}}}"
@@ -5345,6 +5405,33 @@
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Tautan panggilan"
+  },
+  "icu:CallLinkDetails__Join": {
+    "messageformat": "Gabung"
+  },
+  "icu:CallLinkDetails__CopyLink": {
+    "messageformat": "Salin tautan"
+  },
+  "icu:CallLinkDetails__ShareLinkViaSignal": {
+    "messageformat": "Bagikan tautan via Signal"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Call link details"
+  },
+  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
+    "messageformat": "Name"
+  },
+  "icu:CallLinkEditModal__JoinButtonLabel": {
+    "messageformat": "Join"
+  },
+  "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
+    "messageformat": "Approve all members"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
+    "messageformat": "Off"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
+    "messageformat": "On"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, other {{count,number} orang lainnya sedang mengetik.}}"
@@ -5385,5 +5472,20 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Tambahan penyesuaian kecil, perbaikan bug, dan peningkatan performa. Terima kasih telah menggunakan Signal!",
     "ignoreUnused": true
+  },
+  "icu:WhatsNew__v7.12--0": {
+    "messageformat": "Fitur baru \"Angkat Tangan\" memudahkan pengguna saat ingin mendapatkan perhatian seseorang atau menyampaikan pertanyaan selama panggilan grup."
+  },
+  "icu:WhatsNew__v7.12--1": {
+    "messageformat": "Pembaruan kali ini juga mencakup penyempurnaan alat pangkas untuk menyesuaikan ukuran gambar."
+  },
+  "icu:WhatsNew__v7.12--2": {
+    "messageformat": "Pintasan papan ketik untuk mengirimkan catatan suara kini diubah jadi Ctrl/Cmd+Shift+Y agar tidak lagi bentrok dengan pintasan \"Paste and Match Style\" di Windows dan Linux."
+  },
+  "icu:WhatsNew__v7.13--0": {
+    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  },
+  "icu:WhatsNew__v7.13--1": {
+    "messageformat": "This update also improves the display of quoted replies in RTL languages."
   }
 }

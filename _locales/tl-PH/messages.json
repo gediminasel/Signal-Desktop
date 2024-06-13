@@ -21,7 +21,7 @@
     "messageformat": "Ina-add si {contact}…"
   },
   "icu:RecordingComposer__cancel": {
-    "messageformat": "Kanselahin"
+    "messageformat": "I-cancel"
   },
   "icu:RecordingComposer__send": {
     "messageformat": "I-send"
@@ -54,7 +54,7 @@
     "messageformat": "Apple silicon"
   },
   "icu:copyErrorAndQuit": {
-    "messageformat": "Copy error at mag-quit"
+    "messageformat": "Kopyahin ang error at mag-quit"
   },
   "icu:unknownContact": {
     "messageformat": "Unknown contact"
@@ -84,7 +84,7 @@
     "messageformat": "&File"
   },
   "icu:mainMenuCreateStickers": {
-    "messageformat": "Create/upload sticker pack"
+    "messageformat": "Gumawa/mag-upload sticker pack"
   },
   "icu:mainMenuEdit": {
     "messageformat": "&Edit"
@@ -105,13 +105,13 @@
     "messageformat": "Services"
   },
   "icu:appMenuHide": {
-    "messageformat": "I-hide"
+    "messageformat": "Itago"
   },
   "icu:appMenuHideOthers": {
-    "messageformat": "Hide Others"
+    "messageformat": "Itago ang Iba"
   },
   "icu:appMenuUnhide": {
-    "messageformat": "Show All"
+    "messageformat": "Ipakita Lahat"
   },
   "icu:appMenuQuit": {
     "messageformat": "I-close ang Signal App"
@@ -172,6 +172,9 @@
   },
   "icu:viewMenuToggleDevTools": {
     "messageformat": "Toggle Developer Tools"
+  },
+  "icu:viewMenuOpenCallingDevTools": {
+    "messageformat": "Buksan ang Calling Developer Tools"
   },
   "icu:menuSetupAsNewDevice": {
     "messageformat": "Set Up as New Device"
@@ -458,9 +461,6 @@
   "icu:joinAnyway": {
     "messageformat": "Mag-join pa rin"
   },
-  "icu:continueCall": {
-    "messageformat": "Continue call"
-  },
   "icu:debugLogExplanation": {
     "messageformat": "Kapag na-click mo na ang Submit, ang iyong log ay ipo-post sa isang unique, unpublished URL online sa loob ng 30 days. Maaari mo muna itong i-Save locally."
   },
@@ -643,6 +643,12 @@
   },
   "icu:screenShareWindow": {
     "messageformat": "Sharing screen"
+  },
+  "icu:callingDeveloperTools": {
+    "messageformat": "Calling Developer Tools"
+  },
+  "icu:callingDeveloperToolsDescription": {
+    "messageformat": "Ginagamit ang window na ito sa development para i-display ang diagnostics mula sa ongoing calls."
   },
   "icu:speech": {
     "messageformat": "Speech"
@@ -1033,6 +1039,9 @@
   },
   "icu:ChangeNumber--notification": {
     "messageformat": "Pinalitan ni {sender} ang kanyang phone number"
+  },
+  "icu:JoinedSignal--notification": {
+    "messageformat": "Sumali ang kontak sa Signal"
   },
   "icu:ConversationMerge--notification": {
     "messageformat": "Magkaparehong account ang {obsoleteConversationTitle} at {conversationTitle}. Nandito ang inyong message history para sa parehong chats."
@@ -2363,18 +2372,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "Na-mark as unread na ang chat"
   },
-  "icu:SendEdit--dialog--title2": {
-    "messageformat": "I-edit ang message"
-  },
-  "icu:SendEdit--dialog--body2": {
-    "messageformat": "Kung mag-edit ka ng message, ang mga taong may latest versions lang ng Signal ang makakakita nito. Makikita nilang nag-edit ka ng message."
-  },
-  "icu:SendFormatting--dialog--title": {
-    "messageformat": "Pag-send ng formatted text"
-  },
-  "icu:SendFormatting--dialog--body": {
-    "messageformat": "May ibang taong maaaring gumagamit ng version ng Signal na hindi sinusuportahan ang formatted text. Hindi nila makikita ang anumang formatting na ginawa mo sa iyong message."
-  },
   "icu:AuthArtCreator--dialog--message": {
     "messageformat": "Gusto mo bang buksan ang Signal Sticker Pack Creator?"
   },
@@ -2691,7 +2688,13 @@
     "messageformat": "Naka-off ang pag-ring"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "Nakataas ang iyong kamay."
+    "messageformat": "You raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-one": {
+    "messageformat": "You and {otherName} raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-more": {
+    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "Nagtaas ng kamay si {name}."
@@ -2782,6 +2785,21 @@
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "Tanggalin ang taong ito sa call"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel": {
+    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
+    "messageformat": "+{count,number} more"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
+    "messageformat": "More info about new contacts"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
+    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
+    "messageformat": "Got it"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -3761,6 +3779,9 @@
   "icu:DeleteMessagesModal--description--noteToSelf": {
     "messageformat": "{count, plural, one {Saang devices mo gustong burahin ang message na ito?} other {Saang devices mo gustong burahin ang messages na ito?}}"
   },
+  "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
+    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+  },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "Burahin sa 'kin"
   },
@@ -3772,6 +3793,9 @@
   },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "Burahin sa lahat ng devices"
+  },
+  "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
+    "messageformat": "Delete"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {Pwede kang pumili ng {count,number} message para burahin sa lahat} other {Pwede kang pumili ng {count,number} messages para burahin sa lahat}}"
@@ -3866,11 +3890,17 @@
   "icu:ForwardMessageModal__title": {
     "messageformat": "I-forward Kay"
   },
+  "icu:ForwardMessageModal__ShareCallLink": {
+    "messageformat": "I-share ang call link"
+  },
   "icu:ForwardMessageModal--continue": {
     "messageformat": "Magpatuloy"
   },
   "icu:ForwardMessagesModal__toast--CannotForwardEmptyMessage": {
     "messageformat": "Hindi ma-forward ang messages na walang laman o binura na"
+  },
+  "icu:ShareCallLinkViaSignal__DraftMessageText": {
+    "messageformat": "Gamitin ang link na ito para sumali sa Signal call: {url}"
   },
   "icu:MessageRequestWarning__learn-more": {
     "messageformat": "Matuto pa"
@@ -4167,7 +4197,7 @@
     "messageformat": "Ang mga username ay hindi puwedeng magsimula sa numero."
   },
   "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Ang mga username ay dapat may at least {min,number} na characters."
+    "messageformat": "Usernames must have at least {min,number} characters."
   },
   "icu:ProfileEditor--username--check-character-max": {
     "messageformat": "Ang maximum characters ng isang username ay {max,number}."
@@ -4347,7 +4377,7 @@
     "messageformat": "Gawing emoji ang typed emoticons"
   },
   "icu:Preferences__auto-convert-emoji--description": {
-    "messageformat": "Halimbawa, ang :-) ay magiging 🙂"
+    "messageformat": "Halimbawa, ang :-) ay magiging <emojify>🙂</emojify>"
   },
   "icu:Preferences--advanced": {
     "messageformat": "Advanced"
@@ -4717,6 +4747,15 @@
   },
   "icu:SignalConnectionsModal__footer": {
     "messageformat": "Makikita ng connections mo ang pangalan at photo mo, pati na rin ang posts sa \"My Story\" maliban na lang kung pinili mong i-hide ito mula sa kanila"
+  },
+  "icu:LocalDeleteWarningModal__header": {
+    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+  },
+  "icu:LocalDeleteWarningModal__description": {
+    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+  },
+  "icu:LocalDeleteWarningModal__confirm": {
+    "messageformat": "Got it"
   },
   "icu:Stories__title": {
     "messageformat": "Stories"
@@ -5310,6 +5349,9 @@
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Walang resulta para sa \"{query}\""
   },
+  "icu:CallsList__CreateCallLink": {
+    "messageformat": "Create a Call Link"
+  },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "Incoming"
   },
@@ -5325,11 +5367,29 @@
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Call link"
   },
+  "icu:CallsList__ItemCallInfo--Active": {
+    "messageformat": "Active"
+  },
+  "icu:CallsList__LeaveCallDialogTitle": {
+    "messageformat": "Gusto mo bang umalis sa current call?"
+  },
+  "icu:CallsList__LeaveCallDialogBody": {
+    "messageformat": "Kailangan mong umalis sa current call bago sumali sa bagong call"
+  },
+  "icu:CallsList__LeaveCallDialogButton--leave": {
+    "messageformat": "Umalis sa call"
+  },
   "icu:CallsNewCall__EmptyState--noQuery": {
     "messageformat": "Walang recent conversations."
   },
   "icu:CallsNewCall__EmptyState--hasQuery": {
     "messageformat": "Walang resulta para sa \"{query}\""
+  },
+  "icu:CallsNewCallButton--return": {
+    "messageformat": "Bumalik"
+  },
+  "icu:CallsNewCallButtonTooltip--in-another-call": {
+    "messageformat": "Kailangan mong umalis sa current call bago sumali sa bagong call"
   },
   "icu:CallHistory__Description--Default": {
     "messageformat": "{type, select, Audio {{direction, select, Outgoing {Outgoing voice call} other {Incoming voice call}}} Video {{direction, select, Outgoing {Outgoing video call} other {Incoming video call}}} Group {{direction, select, Outgoing {Outgoing group call} other {Incoming group call}}} other {{direction, select, Outgoing {Outgoing  call} other {Incoming  call}}}}"
@@ -5345,6 +5405,33 @@
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Call link"
+  },
+  "icu:CallLinkDetails__Join": {
+    "messageformat": "Sumali"
+  },
+  "icu:CallLinkDetails__CopyLink": {
+    "messageformat": "Kopyahin ang link"
+  },
+  "icu:CallLinkDetails__ShareLinkViaSignal": {
+    "messageformat": "I-share ang link via Signal"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Call link details"
+  },
+  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
+    "messageformat": "Name"
+  },
+  "icu:CallLinkEditModal__JoinButtonLabel": {
+    "messageformat": "Join"
+  },
+  "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
+    "messageformat": "Approve all members"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
+    "messageformat": "Off"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
+    "messageformat": "On"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} ang nagta-type.} other {{count,number} ang nagta-type.}}"
@@ -5385,5 +5472,20 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Dagdag na maliliit na pag-aayos, pag-alis ng bugs, at pagpapaganda ng takbo ng app. Maraming salamat sa paggamit ng Signal!",
     "ignoreUnused": true
+  },
+  "icu:WhatsNew__v7.12--0": {
+    "messageformat": "Ang bagong Raise Hand feature ay isang simpleng paraan para makuha ang atensyon ng isang tao o mag-tanong habang nasa group call."
+  },
+  "icu:WhatsNew__v7.12--1": {
+    "messageformat": "Kasama rin sa update na ito ang improved crop tool para sa pag-resize ng images."
+  },
+  "icu:WhatsNew__v7.12--2": {
+    "messageformat": "Binago namin ang keyboard shortcut para sa pag-send ng voice note at ginawa itong Ctrl/Cmd+Shift+Y para hindi na ito magdulot ng problema sa \"Paste and Match Style\" shortcut sa Windows at Linux."
+  },
+  "icu:WhatsNew__v7.13--0": {
+    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  },
+  "icu:WhatsNew__v7.13--1": {
+    "messageformat": "This update also improves the display of quoted replies in RTL languages."
   }
 }

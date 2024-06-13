@@ -173,6 +173,9 @@
   "icu:viewMenuToggleDevTools": {
     "messageformat": "نمایش ابزارهای توسعه"
   },
+  "icu:viewMenuOpenCallingDevTools": {
+    "messageformat": "باز کردن ابزارهای توسعه‌دهنده تماس"
+  },
   "icu:menuSetupAsNewDevice": {
     "messageformat": "تنظیم به عنوان دستگاه جدید"
   },
@@ -458,9 +461,6 @@
   "icu:joinAnyway": {
     "messageformat": "به هر حال می‌پیوندم"
   },
-  "icu:continueCall": {
-    "messageformat": "ادامه تماس"
-  },
   "icu:debugLogExplanation": {
     "messageformat": "وقتی روی ارسال کلیک می‌کنید، گزارش شما به مدت 30 روز به صورت آنلاین در یک URL منحصربه‌فرد و منتشرنشده پست می‌شود. می‌توانید ابتدا آن را در دستگاه خود ذخیره کنید."
   },
@@ -643,6 +643,12 @@
   },
   "icu:screenShareWindow": {
     "messageformat": "اشتراک صفحه"
+  },
+  "icu:callingDeveloperTools": {
+    "messageformat": "ابزارهای توسعه‌دهنده تماس"
+  },
+  "icu:callingDeveloperToolsDescription": {
+    "messageformat": "این پنجره حین توسعه برای نمایش عیب‌یابی تماس‌های جاری استفاده می‌شود."
   },
   "icu:speech": {
     "messageformat": "صحبت"
@@ -1033,6 +1039,9 @@
   },
   "icu:ChangeNumber--notification": {
     "messageformat": "{sender}شماره تلفن خود را تغییر داد"
+  },
+  "icu:JoinedSignal--notification": {
+    "messageformat": "مخاطب به سیگنال پیوست"
   },
   "icu:ConversationMerge--notification": {
     "messageformat": "{obsoleteConversationTitle} و {conversationTitle} یک حساب هستند. تاریخچه پیام هر دو گفتگوی شما اینجاست."
@@ -2363,18 +2372,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "گفتگو به‌عنوان خوانده‌نشده علامت‌گذاری شد"
   },
-  "icu:SendEdit--dialog--title2": {
-    "messageformat": "ویرایش پیام"
-  },
-  "icu:SendEdit--dialog--body2": {
-    "messageformat": "اگر پیامی را ویرایش کنید، فقط برای افرادی که از تازه‌ترین نسخه سیگنال استفاده می‌کنند قابل مشاهده خواهد بود. آن‌ها می‌توانند ببینند که پیامی را ویرایش کرده‌اید."
-  },
-  "icu:SendFormatting--dialog--title": {
-    "messageformat": "در حال ارسال متن قالب‌بندی‌شده"
-  },
-  "icu:SendFormatting--dialog--body": {
-    "messageformat": "برخی افراد ممکن است از نسخه‌ای از سیگنال استفاده می‌کنند که از متن قالب‌بندی‌شده پشتیبانی نمی‌کند. آن‌ها قادر به مشاهده تغییرات قالبی که در پیام‌تان اعمال کرده‌اید نخواهند بود."
-  },
   "icu:AuthArtCreator--dialog--message": {
     "messageformat": "می‌خواهید «سازنده بسته استیکر سیگنال» را باز کنید؟"
   },
@@ -2691,7 +2688,13 @@
     "messageformat": "زنگ خاموش است"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "شما دستتان را بالا برده‌اید."
+    "messageformat": "You raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-one": {
+    "messageformat": "You and {otherName} raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-more": {
+    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "‏{name} دستش را بالا برده است."
@@ -2782,6 +2785,21 @@
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "این شخص از تماس حذف شود"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel": {
+    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
+    "messageformat": "+{count,number} more"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
+    "messageformat": "More info about new contacts"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
+    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
+    "messageformat": "Got it"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "ویدئو"
@@ -3761,6 +3779,9 @@
   "icu:DeleteMessagesModal--description--noteToSelf": {
     "messageformat": "{count, plural, one {می‌خواهید این پیام را از چه دستگاه‌هایی پاک کنید؟} other {می‌خواهید این پیام‌ها را از چه دستگاه‌هایی پاک کنید؟}}"
   },
+  "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
+    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+  },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "پاک کردن برای من"
   },
@@ -3772,6 +3793,9 @@
   },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "پاک کردن از همه دستگاه‌ها"
+  },
+  "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
+    "messageformat": "Delete"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {فقط می‌توانید حداکثر {count,number} پیام را به‌منظور پاک کردن برای همه انتخاب کنید} other {فقط می‌توانید حداکثر {count,number} پیام را به‌منظور پاک کردن برای همه انتخاب کنید}}"
@@ -3866,11 +3890,17 @@
   "icu:ForwardMessageModal__title": {
     "messageformat": "بازارسال به"
   },
+  "icu:ForwardMessageModal__ShareCallLink": {
+    "messageformat": "هم‌رسانی پیوند تماس"
+  },
   "icu:ForwardMessageModal--continue": {
     "messageformat": "ادامه"
   },
   "icu:ForwardMessagesModal__toast--CannotForwardEmptyMessage": {
     "messageformat": "امکان بازارسال پیام‌های خالی یا پاک‌شده وجود ندارد"
+  },
+  "icu:ShareCallLinkViaSignal__DraftMessageText": {
+    "messageformat": "با استفاده از این پیوند به تماس سیگنال بپیوندید: {url}"
   },
   "icu:MessageRequestWarning__learn-more": {
     "messageformat": "بیشتر یاد بگیرید"
@@ -4167,7 +4197,7 @@
     "messageformat": "نام‌های کاربری نمی‌توانند با عدد آغاز شوند."
   },
   "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "نام کاربری حتما باید حداقل {min,number} نویسه داشته باشد."
+    "messageformat": "Usernames must have at least {min,number} characters."
   },
   "icu:ProfileEditor--username--check-character-max": {
     "messageformat": "نام کاربری حتما باید حداکثر {max,number} نویسه داشته باشد."
@@ -4347,7 +4377,7 @@
     "messageformat": "تبدیل شکلک‌های تایپی به ایموجی"
   },
   "icu:Preferences__auto-convert-emoji--description": {
-    "messageformat": "مثلاً :-) به 🙂 تبدیل خواهد شد"
+    "messageformat": "مثلاً :-) به <emojify>🙂</emojify> تبدیل خواهد شد"
   },
   "icu:Preferences--advanced": {
     "messageformat": "پیشرفته"
@@ -4717,6 +4747,15 @@
   },
   "icu:SignalConnectionsModal__footer": {
     "messageformat": "آشنایان شما می‌توانند نام و عکس شما و همچنین پست‌های «استوری من» را ببینند، مگر اینکه آن را از آن‌ها مخفی کنید"
+  },
+  "icu:LocalDeleteWarningModal__header": {
+    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+  },
+  "icu:LocalDeleteWarningModal__description": {
+    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+  },
+  "icu:LocalDeleteWarningModal__confirm": {
+    "messageformat": "Got it"
   },
   "icu:Stories__title": {
     "messageformat": "استوری‌ها"
@@ -5310,6 +5349,9 @@
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "نتیجه‌ای برای «{query}» پیدا نشد"
   },
+  "icu:CallsList__CreateCallLink": {
+    "messageformat": "Create a Call Link"
+  },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "ورودی"
   },
@@ -5325,11 +5367,29 @@
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "پیوند تماس"
   },
+  "icu:CallsList__ItemCallInfo--Active": {
+    "messageformat": "فعال"
+  },
+  "icu:CallsList__LeaveCallDialogTitle": {
+    "messageformat": "تماس فعلی را ترک می‌کنید؟"
+  },
+  "icu:CallsList__LeaveCallDialogBody": {
+    "messageformat": "قبل از پیوستن به تماس جدید باید تماس فعلی را ترک کنید."
+  },
+  "icu:CallsList__LeaveCallDialogButton--leave": {
+    "messageformat": "ترک کردن تماس"
+  },
   "icu:CallsNewCall__EmptyState--noQuery": {
     "messageformat": "مکالمه اخیری وجود ندارد."
   },
   "icu:CallsNewCall__EmptyState--hasQuery": {
     "messageformat": "نتیجه‌ای برای «{query}» پیدا نشد"
+  },
+  "icu:CallsNewCallButton--return": {
+    "messageformat": "بازگشت"
+  },
+  "icu:CallsNewCallButtonTooltip--in-another-call": {
+    "messageformat": "قبل از پیوستن به تماس جدید باید تماس فعلی را ترک کنید"
   },
   "icu:CallHistory__Description--Default": {
     "messageformat": "{type, select, Audio {{direction, select, Outgoing {تماس صوتی خروجی} other {تماس صوتی دریافتی}}} Video {{direction, select, Outgoing {تماس تصویری خروجی} other {تماس صوتی دریافتی}}} Group {{direction, select, Outgoing {تماس گروهی خروجی} other {تماس گروهی ورودی}}} other {{direction, select, Outgoing {تماس خروجی} other {تماس ورودی}}}}"
@@ -5345,6 +5405,33 @@
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "پیوند تماس"
+  },
+  "icu:CallLinkDetails__Join": {
+    "messageformat": "پیوستن"
+  },
+  "icu:CallLinkDetails__CopyLink": {
+    "messageformat": "کپی کردن پیوند"
+  },
+  "icu:CallLinkDetails__ShareLinkViaSignal": {
+    "messageformat": "اشتراک‌گذاری پیوند از طریق سیگنال"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Call link details"
+  },
+  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
+    "messageformat": "Name"
+  },
+  "icu:CallLinkEditModal__JoinButtonLabel": {
+    "messageformat": "Join"
+  },
+  "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
+    "messageformat": "Approve all members"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
+    "messageformat": "Off"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
+    "messageformat": "On"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} نفر دیگر در حال تایپ است.} other {{count,number} نفر دیگر در حال تایپ هستند.}}"
@@ -5385,5 +5472,20 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "تغییرات کوچک، رفع اشکالات و بهبود عملکرد. بابت استفاده از سیگنال سپاسگزاریم!",
     "ignoreUnused": true
+  },
+  "icu:WhatsNew__v7.12--0": {
+    "messageformat": "ویژگی جدید «دست بلند کردن» راه ساده‌ای برای جلب توجه افراد یا پرسیدن سوال هنگام تماس‌های گروهی است."
+  },
+  "icu:WhatsNew__v7.12--1": {
+    "messageformat": "این نسخه جدید همچنین ابزار بُرش بهتری برای تغییر اندازه تصاویر دارد."
+  },
+  "icu:WhatsNew__v7.12--2": {
+    "messageformat": "میانبر صفحه‌کلید برای ارسال یادداشت صوتی را به Ctrl/Cmd+Shift+Y تغییر دادیم تا دیگر با میانبر \"چسباندن و تطابق سبک\" در ویندوز و لینوکس تداخل نداشته باشد."
+  },
+  "icu:WhatsNew__v7.13--0": {
+    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  },
+  "icu:WhatsNew__v7.13--1": {
+    "messageformat": "This update also improves the display of quoted replies in RTL languages."
   }
 }

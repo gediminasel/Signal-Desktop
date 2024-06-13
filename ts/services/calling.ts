@@ -45,6 +45,13 @@ import { uniqBy, noop, compact } from 'lodash';
 
 import Long from 'long';
 import type { CallLinkAuthCredentialPresentation } from '@signalapp/libsignal-client/zkgroup';
+import {
+  CallLinkSecretParams,
+  CreateCallLinkCredentialRequestContext,
+  CreateCallLinkCredentialResponse,
+  GenericServerPublicParams,
+} from '@signalapp/libsignal-client/zkgroup';
+import { Aci } from '@signalapp/libsignal-client';
 import type {
   ActionsType as CallingReduxActionsType,
   GroupCallParticipantInfoType,
@@ -135,10 +142,20 @@ import {
   getRoomIdFromRootKey,
   getCallLinkAuthCredentialPresentation,
   toAdminKeyBytes,
+  callLinkRestrictionsToRingRTC,
+  callLinkStateFromRingRTC,
 } from '../util/callLinks';
 import { isAdhocCallingEnabled } from '../util/isAdhocCallingEnabled';
-import { conversationJobQueue } from '../jobs/conversationJobQueue';
-import type { ReadCallLinkState } from '../types/CallLink';
+import {
+  conversationJobQueue,
+  conversationQueueJobEnum,
+} from '../jobs/conversationJobQueue';
+import type {
+  CallLinkType,
+  CallLinkStateType,
+  ReadCallLinkState,
+} from '../types/CallLink';
+import { CallLinkRestrictions } from '../types/CallLink';
 
 const {
   processGroupCallRingCancellation,
@@ -159,6 +176,7 @@ const RINGRTC_HTTP_METHOD_TO_OUR_HTTP_METHOD: Map<
 const CLEAN_EXPIRED_GROUP_CALL_RINGS_INTERVAL = 10 * durations.MINUTE;
 
 const ICE_SERVER_IS_IP_LIKE = /(turn|turns|stun):[.\d]+/;
+const MAX_CALL_DEBUG_STATS_TABS = 5;
 
 // We send group call update messages to tell other clients to peek, which triggers
 //   notifications, timeline messages, big green "Join" buttons, and so on. This enum
@@ -346,6 +364,14 @@ export class CallingClass {
 
   private hadLocalVideoBeforePresenting?: boolean;
 
+  private currentRtcStatsInterval: number | null = null;
+
+  private callDebugNumber: number = 0;
+
+  // Send our profile key to other participants in call link calls to ensure they
+  // can see our profile info. Only send once per aci until the next app start.
+  private sendProfileKeysForAdhocCallCache: Set<AciString>;
+
   constructor() {
     this.videoCapturer = new GumVideoCapturer({
       maxWidth: REQUESTED_VIDEO_WIDTH,
@@ -355,6 +381,7 @@ export class CallingClass {
     this.videoRenderer = new CanvasVideoRenderer();
 
     this.callsLookup = {};
+    this.sendProfileKeysForAdhocCallCache = new Set();
   }
 
   initialize(reduxInterface: CallingReduxInterface, sfuUrl: string): void {
@@ -381,6 +408,7 @@ export class CallingClass {
       this.handleSendCallMessageToGroup.bind(this);
     RingRTC.handleGroupCallRingUpdate =
       this.handleGroupCallRingUpdate.bind(this);
+    RingRTC.handleRtcStatsReport = this.handleRtcStatsReport.bind(this);
 
     this.attemptToGiveOurServiceIdToRingRtc();
     window.Whisper.events.on('userChanged', () => {
@@ -390,6 +418,12 @@ export class CallingClass {
     ipcRenderer.on('stop-screen-share', () => {
       reduxInterface.setPresenting();
     });
+    ipcRenderer.on(
+      'calling:set-rtc-stats-interval',
+      (_, intervalMillis: number | null) => {
+        this.setAllRtcStatsInterval(intervalMillis);
+      }
+    );
 
     drop(this.cleanExpiredGroupCallRingsAndLoop());
     drop(this.cleanupStaleRingingCalls());
@@ -397,6 +431,16 @@ export class CallingClass {
     if (process.platform === 'darwin') {
       drop(this.enumerateMediaDevices());
     }
+  }
+
+  private maybeUpdateRtcLogging(groupCall: GroupCall): void {
+    if (!this.currentRtcStatsInterval) {
+      return;
+    }
+
+    groupCall.setRtcStatsInterval(this.currentRtcStatsInterval);
+    this.callDebugNumber =
+      (this.callDebugNumber + 1) % MAX_CALL_DEBUG_STATS_TABS;
   }
 
   private attemptToGiveOurServiceIdToRingRtc(): void {
@@ -554,6 +598,162 @@ export class CallingClass {
     if (conversationId) {
       this.getGroupCall(conversationId)?.disconnect();
     }
+  }
+
+  async createCallLink(): Promise<CallLinkType> {
+    strictAssert(
+      this._sfuUrl,
+      'createCallLink() missing SFU URL; not creating call link'
+    );
+
+    const sfuUrl = this._sfuUrl;
+    const userId = Aci.parseFromServiceIdString(
+      window.textsecure.storage.user.getCheckedAci()
+    );
+
+    const rootKey = CallLinkRootKey.generate();
+    const roomId = rootKey.deriveRoomId();
+    const roomIdHex = roomId.toString('hex');
+    const logId = `createCallLink(${roomIdHex})`;
+
+    log.info(`${logId}: Creating call link`);
+
+    const adminKey = CallLinkRootKey.generateAdminPassKey();
+
+    const context = CreateCallLinkCredentialRequestContext.forRoomId(roomId);
+    const requestBase64 = Bytes.toBase64(context.getRequest().serialize());
+
+    strictAssert(
+      window.textsecure.messaging,
+      'createCallLink(): We are offline'
+    );
+    const { credential: credentialBase64 } =
+      await window.textsecure.messaging.server.callLinkCreateAuth(
+        requestBase64
+      );
+
+    const response = new CreateCallLinkCredentialResponse(
+      Buffer.from(credentialBase64, 'base64')
+    );
+
+    const genericServerPublicParams = new GenericServerPublicParams(
+      Buffer.from(window.getGenericServerPublicParams(), 'base64')
+    );
+    const credential = context.receive(
+      response,
+      userId,
+      genericServerPublicParams
+    );
+
+    const secretParams = CallLinkSecretParams.deriveFromRootKey(rootKey.bytes);
+
+    const credentialPresentation = credential
+      .present(roomId, userId, genericServerPublicParams, secretParams)
+      .serialize();
+    const serializedPublicParams = secretParams.getPublicParams().serialize();
+
+    const result = await RingRTC.createCallLink(
+      sfuUrl,
+      credentialPresentation,
+      rootKey,
+      adminKey,
+      serializedPublicParams
+    );
+
+    if (!result.success) {
+      const message = `Failed to create call link: ${result.errorStatusCode}`;
+      log.error(`${logId}: ${message}`);
+      throw new Error(message);
+    }
+
+    log.info(`${logId}: success`);
+    const state = callLinkStateFromRingRTC(result.value);
+
+    return {
+      roomId: roomIdHex,
+      rootKey: rootKey.toString(),
+      adminKey: adminKey.toString('base64'),
+      ...state,
+    };
+  }
+
+  async updateCallLinkName(
+    callLink: CallLinkType,
+    name: string
+  ): Promise<CallLinkStateType> {
+    strictAssert(
+      this._sfuUrl,
+      'updateCallLinkName() missing SFU URL; not update call link name'
+    );
+    const sfuUrl = this._sfuUrl;
+    const logId = `updateCallLinkName(${callLink.roomId})`;
+
+    log.info(`${logId}: Updating call link name`);
+
+    const callLinkRootKey = CallLinkRootKey.parse(callLink.rootKey);
+    strictAssert(callLink.adminKey, 'Missing admin key');
+    const callLinkAdminKey = toAdminKeyBytes(callLink.adminKey);
+    const authCredentialPresentation =
+      await getCallLinkAuthCredentialPresentation(callLinkRootKey);
+    const result = await RingRTC.updateCallLinkName(
+      sfuUrl,
+      authCredentialPresentation.serialize(),
+      callLinkRootKey,
+      callLinkAdminKey,
+      name
+    );
+
+    if (!result.success) {
+      const message = `Failed to update call link name: ${result.errorStatusCode}`;
+      log.error(`${logId}: ${message}`);
+      throw new Error(message);
+    }
+
+    log.info(`${logId}: success`);
+    return callLinkStateFromRingRTC(result.value);
+  }
+
+  async updateCallLinkRestrictions(
+    callLink: CallLinkType,
+    restrictions: CallLinkRestrictions
+  ): Promise<CallLinkStateType> {
+    strictAssert(
+      this._sfuUrl,
+      'updateCallLinkRestrictions() missing SFU URL; not update call link restrictions'
+    );
+    const sfuUrl = this._sfuUrl;
+    const logId = `updateCallLinkRestrictions(${callLink.roomId})`;
+
+    log.info(`${logId}: Updating call link restrictions`);
+
+    const callLinkRootKey = CallLinkRootKey.parse(callLink.rootKey);
+    strictAssert(callLink.adminKey, 'Missing admin key');
+    const callLinkAdminKey = toAdminKeyBytes(callLink.adminKey);
+    const authCredentialPresentation =
+      await getCallLinkAuthCredentialPresentation(callLinkRootKey);
+
+    const newRestrictions = callLinkRestrictionsToRingRTC(restrictions);
+    strictAssert(
+      newRestrictions !== CallLinkRestrictions.Unknown,
+      'Invalid call link restrictions value'
+    );
+
+    const result = await RingRTC.updateCallLinkRestrictions(
+      sfuUrl,
+      authCredentialPresentation.serialize(),
+      callLinkRootKey,
+      callLinkAdminKey,
+      newRestrictions
+    );
+
+    if (!result.success) {
+      const message = `Failed to update call link restrictions: ${result.errorStatusCode}`;
+      log.error(`${logId}: ${message}`);
+      throw new Error(message);
+    }
+
+    log.info(`${logId}: success`);
+    return callLinkStateFromRingRTC(result.value);
   }
 
   async readCallLink({
@@ -911,6 +1111,7 @@ export class CallingClass {
 
     outerGroupCall.connect();
 
+    this.maybeUpdateRtcLogging(outerGroupCall);
     this.syncGroupCallToRedux(conversationId, outerGroupCall, CallMode.Group);
 
     return outerGroupCall;
@@ -966,6 +1167,7 @@ export class CallingClass {
 
     outerGroupCall.connect();
 
+    this.maybeUpdateRtcLogging(outerGroupCall);
     this.syncGroupCallToRedux(roomId, outerGroupCall, CallMode.Adhoc);
 
     return outerGroupCall;
@@ -1094,6 +1296,7 @@ export class CallingClass {
                 peerId: conversationId,
                 eraId,
                 callMode,
+                peekInfo,
               })
             );
           }
@@ -1112,6 +1315,14 @@ export class CallingClass {
         );
 
         this.syncGroupCallToRedux(conversationId, groupCall, callMode);
+        if (callMode === CallMode.Adhoc) {
+          drop(
+            this.sendProfileKeysForAdhocCall({
+              roomId: conversationId,
+              peekInfo,
+            })
+          );
+        }
       },
       onAudioLevels: groupCall => {
         const remoteDeviceStates = groupCall.getRemoteDeviceStates();
@@ -1174,6 +1385,7 @@ export class CallingClass {
               peerId: conversationId,
               eraId,
               callMode,
+              peekInfo,
             })
           );
         }
@@ -1218,16 +1430,69 @@ export class CallingClass {
     callMode,
     peerId,
     eraId,
+    peekInfo,
   }: {
     callMode: CallMode.Group | CallMode.Adhoc;
     peerId: string;
     eraId: string;
+    peekInfo: PeekInfo | null;
   }): Promise<void> {
     if (callMode === CallMode.Group) {
       drop(this.sendGroupCallUpdateMessage(peerId, eraId));
     } else if (callMode === CallMode.Adhoc) {
       this.reduxInterface?.joinedAdhocCall(peerId);
+      drop(this.sendProfileKeysForAdhocCall({ roomId: peerId, peekInfo }));
     }
+  }
+
+  private async sendProfileKeysForAdhocCall({
+    roomId,
+    peekInfo,
+  }: {
+    roomId: string;
+    peekInfo: PeekInfo | null | undefined;
+  }): Promise<void> {
+    if (!peekInfo) {
+      return;
+    }
+
+    const ourAci = window.textsecure.storage.user.getCheckedAci();
+    const reason = `sendProfileKeysForAdhocCall(${roomId})`;
+    peekInfo.devices.forEach(async device => {
+      const aci = device.userId ? this.formatUserId(device.userId) : null;
+      if (
+        !aci ||
+        aci === ourAci ||
+        this.sendProfileKeysForAdhocCallCache.has(aci)
+      ) {
+        return;
+      }
+
+      const logId = `sendProfileKeysForAdhocCall aci=${aci}`;
+      const conversation = window.ConversationController.lookupOrCreate({
+        serviceId: aci,
+        reason,
+      });
+      if (!conversation) {
+        log.warn(`${logId}: Could not lookup or create conversation for aci`);
+        return;
+      }
+
+      if (conversation.isBlocked()) {
+        log.info(`${logId}: Skipping blocked aci`);
+        return;
+      }
+
+      log.info(`${logId}: Sending profile key`);
+      drop(
+        conversationJobQueue.add({
+          type: conversationQueueJobEnum.enum.ProfileKey,
+          conversationId: conversation.id,
+          isOneTimeSend: true,
+        })
+      );
+      this.sendProfileKeysForAdhocCallCache.add(aci);
+    });
   }
 
   public async joinCallLinkCall({
@@ -1253,9 +1518,7 @@ export class CallingClass {
     const callLinkRootKey = CallLinkRootKey.parse(rootKey);
     const authCredentialPresentation =
       await getCallLinkAuthCredentialPresentation(callLinkRootKey);
-    const adminPasskey = adminKey
-      ? Buffer.from(toAdminKeyBytes(adminKey))
-      : undefined;
+    const adminPasskey = adminKey ? toAdminKeyBytes(adminKey) : undefined;
 
     // RingRTC reuses the same type GroupCall between Adhoc and Group calls.
     const groupCall = this.connectCallLinkCall({
@@ -1511,6 +1774,27 @@ export class CallingClass {
       throw new Error('Could not find matching call');
     }
     groupCall.react(value);
+  }
+
+  // configures how often call stats are computed
+  public setAllRtcStatsInterval(intervalMillis: number | null): void {
+    if (this.currentRtcStatsInterval === intervalMillis) {
+      return;
+    }
+    this.currentRtcStatsInterval = intervalMillis;
+
+    // GroupCall.setRtcStatsInterval resets to the default when interval == 0
+    // so set it to 0 when intervalMillis is undefined
+    const statsInterval = intervalMillis ?? 0;
+
+    for (const conversationId of Object.keys(this.callsLookup)) {
+      const groupCall = this.getGroupCall(conversationId);
+      if (!groupCall) {
+        continue;
+      }
+      log.info('Setting rtc stats interval:', conversationId, statsInterval);
+      groupCall.setRtcStatsInterval(statsInterval);
+    }
   }
 
   private syncGroupCallToRedux(
@@ -2171,7 +2455,8 @@ export class CallingClass {
       );
       await updateCallHistoryFromLocalEvent(
         callEvent,
-        envelope.receivedAtCounter
+        envelope.receivedAtCounter,
+        envelope.receivedAtDate
       );
 
       return;
@@ -2369,6 +2654,7 @@ export class CallingClass {
 
     if (update === RingUpdate.Requested) {
       this.reduxInterface?.peekNotConnectedGroupCall({
+        callMode: CallMode.Group,
         conversationId: conversation.id,
       });
     }
@@ -2454,7 +2740,7 @@ export class CallingClass {
         localEventForCall,
         'CallingClass.handleGroupCallRingUpdate'
       );
-      await updateCallHistoryFromLocalEvent(callEvent, null);
+      await updateCallHistoryFromLocalEvent(callEvent, null, null);
     }
   }
 
@@ -2542,7 +2828,7 @@ export class CallingClass {
           localCallEvent,
           'CallingClass.handleIncomingCall'
         );
-        await updateCallHistoryFromLocalEvent(callEvent, null);
+        await updateCallHistoryFromLocalEvent(callEvent, null, null);
 
         return false;
       }
@@ -2567,7 +2853,9 @@ export class CallingClass {
     callEndedReason: CallEndedReason,
     ageInSeconds: number,
     wasVideoCall: boolean,
-    receivedAtCounter: number | undefined
+    receivedAtCounter: number | undefined,
+    // TODO: DESKTOP-7145
+    receivedAtMS: number | undefined = undefined
   ) {
     const conversation = window.ConversationController.get(remoteUserId);
     if (!conversation) {
@@ -2599,7 +2887,11 @@ export class CallingClass {
       localCallEvent,
       'CallingClass.handleAutoEndedIncomingCallRequest'
     );
-    await updateCallHistoryFromLocalEvent(callEvent, receivedAtCounter ?? null);
+    await updateCallHistoryFromLocalEvent(
+      callEvent,
+      receivedAtCounter ?? null,
+      receivedAtMS ?? null
+    );
   }
 
   private attachToCall(conversation: ConversationModel, call: Call): void {
@@ -2633,7 +2925,7 @@ export class CallingClass {
           localCallEvent,
           'call.handleStateChanged'
         );
-        await updateCallHistoryFromLocalEvent(callEvent, null);
+        await updateCallHistoryFromLocalEvent(callEvent, null, null);
       }
 
       reduxInterface.callStateChange({
@@ -2685,6 +2977,18 @@ export class CallingClass {
       default:
         break;
     }
+  }
+
+  private async handleRtcStatsReport(reportJson: string) {
+    // assumes one active call
+    const conversationId = Object.keys(this.callsLookup)[0] ?? '';
+    const callId = this.callDebugNumber;
+
+    ipcRenderer.send('calling:rtc-stats-report', {
+      conversationId,
+      callId,
+      reportJson,
+    });
   }
 
   private async handleSendHttpRequest(
@@ -2908,7 +3212,7 @@ export class CallingClass {
         localCallEvent,
         'CallingClass.updateCallHistoryForGroupCallOnLocalChanged'
       );
-      await updateCallHistoryFromLocalEvent(callEvent, null);
+      await updateCallHistoryFromLocalEvent(callEvent, null, null);
     } catch (error) {
       log.error(
         'CallingClass.updateCallHistoryForGroupCallOnLocalChanged: Error updating state',
@@ -2964,7 +3268,7 @@ export class CallingClass {
           localCallEvent,
           'CallingClass.updateCallHistoryForGroupCallOnPeek'
         );
-        await updateCallHistoryFromLocalEvent(callEvent, null);
+        await updateCallHistoryFromLocalEvent(callEvent, null, null);
       }
     }
 

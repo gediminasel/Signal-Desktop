@@ -224,6 +224,7 @@ export default {
     toastType: ToastType.AddingUserToGroup,
     megaphoneType: MegaphoneType.UsernameOnboarding,
     OS: 'macOS',
+    isInFullScreenCall: false,
   },
 } satisfies Meta<Args>;
 

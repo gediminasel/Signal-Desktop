@@ -173,6 +173,9 @@
   "icu:viewMenuToggleDevTools": {
     "messageformat": "Shfaq/Fshih Mjete Zhvilluesi"
   },
+  "icu:viewMenuOpenCallingDevTools": {
+    "messageformat": "Hap mjetet e zhvillimit të thirrjeve"
+  },
   "icu:menuSetupAsNewDevice": {
     "messageformat": "Rregulloje si Pajisje të Re"
   },
@@ -458,9 +461,6 @@
   "icu:joinAnyway": {
     "messageformat": "Bashkohu, sidoqoftë"
   },
-  "icu:continueCall": {
-    "messageformat": "Vazhdoje Thirrjen"
-  },
   "icu:debugLogExplanation": {
     "messageformat": "Kur klikoni mbi Parashtroje, regjistri juaj do të postohet në internet për 30 ditë, te një URL unike, e pabotuar më parë. Mundeni ta Ruani lokalisht, së pari."
   },
@@ -643,6 +643,12 @@
   },
   "icu:screenShareWindow": {
     "messageformat": "Ndarje ekrani me të tjerë"
+  },
+  "icu:callingDeveloperTools": {
+    "messageformat": "Mjetet e zhvillimit të thirrjeve"
+  },
+  "icu:callingDeveloperToolsDescription": {
+    "messageformat": "Dritarja përdoret gjatë zhvillimit për të shfaqur diagnostifikimin nga kryerja e telefonatave."
   },
   "icu:speech": {
     "messageformat": "E folur"
@@ -1033,6 +1039,9 @@
   },
   "icu:ChangeNumber--notification": {
     "messageformat": "{sender} ndryshoi numrin e vet të telefonit"
+  },
+  "icu:JoinedSignal--notification": {
+    "messageformat": "Kontakti zuri të përdorë Signal-in"
   },
   "icu:ConversationMerge--notification": {
     "messageformat": "{obsoleteConversationTitle} dhe {conversationTitle} janë e njëjta llogari. Historiku yt i mesazheve për të dyja bisedat është këtu."
@@ -2363,18 +2372,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "Biseda u shënua si e palexuar"
   },
-  "icu:SendEdit--dialog--title2": {
-    "messageformat": "Përpuno mesazhin"
-  },
-  "icu:SendEdit--dialog--body2": {
-    "messageformat": "Nëse përpunon një mesazh, ai do të jetë i dukshëm vetëm për personat që kanë versionin më të fundit të Signal. Ata do shohin se ti ke redaktuar një mesazh."
-  },
-  "icu:SendFormatting--dialog--title": {
-    "messageformat": "Teksti i formatuar po dërgohet"
-  },
-  "icu:SendFormatting--dialog--body": {
-    "messageformat": "Disa njerëz mund të përdorin një version të Signal që nuk e mbështet tekstin e formatuar. Ata nuk do të mund të shohin ndryshimet e formatimit që i ke bërë mesazhit."
-  },
   "icu:AuthArtCreator--dialog--message": {
     "messageformat": "Dëshiron të hapësh Krijuesin e Pakove të Ngjitësve të Signal?"
   },
@@ -2691,7 +2688,13 @@
     "messageformat": "Zilja nuk po bie"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "Ti ke ngritur dorën."
+    "messageformat": "You raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-one": {
+    "messageformat": "You and {otherName} raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-more": {
+    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} ngriti dorën."
@@ -2782,6 +2785,21 @@
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "Hiqe këtë person nga telefonata"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel": {
+    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
+    "messageformat": "+{count,number} more"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
+    "messageformat": "More info about new contacts"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
+    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
+    "messageformat": "Got it"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -3761,6 +3779,9 @@
   "icu:DeleteMessagesModal--description--noteToSelf": {
     "messageformat": "{count, plural, one {Nga cilat pajisje do të donit ta fshini këtë mesazh?} other {Nga cilat pajisje do të donit t'i fshini këto mesazhe?}}"
   },
+  "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
+    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+  },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "Fshije për mua"
   },
@@ -3772,6 +3793,9 @@
   },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "Fshi nga të gjitha pajisjet"
+  },
+  "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
+    "messageformat": "Delete"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {Mund të zgjedhësh vetëm deri në {count,number} mesazh për të fshirë për të gjithë} other {Mund të zgjedhësh vetëm deri në {count,number} mesazhe për të fshirë për të gjithë}}"
@@ -3866,11 +3890,17 @@
   "icu:ForwardMessageModal__title": {
     "messageformat": "Përcille"
   },
+  "icu:ForwardMessageModal__ShareCallLink": {
+    "messageformat": "Ndaj lidhjen e thirrjes"
+  },
   "icu:ForwardMessageModal--continue": {
     "messageformat": "Vazhdo"
   },
   "icu:ForwardMessagesModal__toast--CannotForwardEmptyMessage": {
     "messageformat": "Mesazhet boshe ose të fshira nuk mund të përcillen"
+  },
+  "icu:ShareCallLinkViaSignal__DraftMessageText": {
+    "messageformat": "Përdor këtë lidhje për t'iu bashkuar një telefonate në Signal: {url}"
   },
   "icu:MessageRequestWarning__learn-more": {
     "messageformat": "Mësoni më tepër"
@@ -4167,7 +4197,7 @@
     "messageformat": "Emrat e përdoruesve nuk mund të fillojnë me numër."
   },
   "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Emrat e përdoruesve duhet të kenë të paktën {min,number} shenja."
+    "messageformat": "Usernames must have at least {min,number} characters."
   },
   "icu:ProfileEditor--username--check-character-max": {
     "messageformat": "Emrat e përdoruesve duhet të kenë e shumta {max,number} shenja."
@@ -4347,7 +4377,7 @@
     "messageformat": "Konverto emotikonat e shtypur në emoji"
   },
   "icu:Preferences__auto-convert-emoji--description": {
-    "messageformat": "Për shembull, :-) do të konvertohet në 🙂"
+    "messageformat": "Për shembull, :-) do të konvertohet në <emojify>🙂</emojify>"
   },
   "icu:Preferences--advanced": {
     "messageformat": "Të mëtejshme"
@@ -4717,6 +4747,15 @@
   },
   "icu:SignalConnectionsModal__footer": {
     "messageformat": "Kontaktet mund të shohin emrin e fotografinë tënde, si dhe postimet e përkohshme, nëse nuk ua fsheh"
+  },
+  "icu:LocalDeleteWarningModal__header": {
+    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+  },
+  "icu:LocalDeleteWarningModal__description": {
+    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+  },
+  "icu:LocalDeleteWarningModal__confirm": {
+    "messageformat": "Got it"
   },
   "icu:Stories__title": {
     "messageformat": "Postimet e përkohshme"
@@ -5310,6 +5349,9 @@
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Nuk ka rezultate për \"{query}\""
   },
+  "icu:CallsList__CreateCallLink": {
+    "messageformat": "Create a Call Link"
+  },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "Hyrëse"
   },
@@ -5325,11 +5367,29 @@
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Lidhja e thirrjes"
   },
+  "icu:CallsList__ItemCallInfo--Active": {
+    "messageformat": "Aktive"
+  },
+  "icu:CallsList__LeaveCallDialogTitle": {
+    "messageformat": "Do të largohesh nga thirrja aktuale?"
+  },
+  "icu:CallsList__LeaveCallDialogBody": {
+    "messageformat": "Duhet të largohesh nga thirrja aktuale përpara se t'i bashkohesh një thirrjeje të re."
+  },
+  "icu:CallsList__LeaveCallDialogButton--leave": {
+    "messageformat": "Dilni nga thirrja"
+  },
   "icu:CallsNewCall__EmptyState--noQuery": {
     "messageformat": "Nuk ka biseda të fundit."
   },
   "icu:CallsNewCall__EmptyState--hasQuery": {
     "messageformat": "Nuk ka rezultate për \"{query}\""
+  },
+  "icu:CallsNewCallButton--return": {
+    "messageformat": "Kthehu"
+  },
+  "icu:CallsNewCallButtonTooltip--in-another-call": {
+    "messageformat": "Duhet të largohesh nga thirrja aktuale përpara se t'i bashkohesh një thirrjeje të re"
   },
   "icu:CallHistory__Description--Default": {
     "messageformat": "{type, select, Audio {{direction, select, Outgoing {Thirrje zanore dalëse} other {Thirrje zanore hyrëse}}} Video {{direction, select, Outgoing {Thirrje video nga ju} other {Thirrje video ardhëse}}} Group {{direction, select, Outgoing {Thirrje dalëse në grup} other {Thirrje hyrëse në grup}}} other {{direction, select, Outgoing {Thirrje nga ju} other {Thirrje ardhëse}}}}"
@@ -5345,6 +5405,33 @@
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Lidhja e thirrjes"
+  },
+  "icu:CallLinkDetails__Join": {
+    "messageformat": "Bashkohu"
+  },
+  "icu:CallLinkDetails__CopyLink": {
+    "messageformat": "Kopjo linkun"
+  },
+  "icu:CallLinkDetails__ShareLinkViaSignal": {
+    "messageformat": "Ndaj lidhjen përmes Signal"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Call link details"
+  },
+  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
+    "messageformat": "Name"
+  },
+  "icu:CallLinkEditModal__JoinButtonLabel": {
+    "messageformat": "Join"
+  },
+  "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
+    "messageformat": "Approve all members"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
+    "messageformat": "Off"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
+    "messageformat": "On"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} tjetër po shkruan.} other {{count,number} tjerë po shkruajnë.}}"
@@ -5385,5 +5472,20 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Rregullme të vogla, riparime të gabimeve dhe përmirësime të mbarëvajtjes.  Faleminderit që përdorni Signal!",
     "ignoreUnused": true
+  },
+  "icu:WhatsNew__v7.12--0": {
+    "messageformat": "★ Ngri dorën nëse ke kërkuar një mënyrë tjetër komunikimi gjatë telefonatave në grup. Veçoria e re \"Ngri dorën\" është një mënyrë e thjeshtë për të tërhequr vëmendjen e dikujt, për të bërë pyetje ose për të votuar unanimisht për një propozim grupi kur kërkohet që \"të ngrenë dorën të gjithë personat që janë në favor?\""
+  },
+  "icu:WhatsNew__v7.12--1": {
+    "messageformat": "Ne u ndamë me një defekt në mjetin e prerjes, kështu që tani është më e lehtë dhe më intuitive ta heqësh ishin (ose çdo gjë tjetër) nga fotografia."
+  },
+  "icu:WhatsNew__v7.12--2": {
+    "messageformat": "Ne modifikuam shkurtoren e tastierës për dërgimin e një shënimi zanor në Ctrl/Cmd+Shift+Y në mënyrë që të mos bie në konflikt me shkurtoren \"Paste and Match Style\" në Windows dhe Linux."
+  },
+  "icu:WhatsNew__v7.13--0": {
+    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  },
+  "icu:WhatsNew__v7.13--1": {
+    "messageformat": "This update also improves the display of quoted replies in RTL languages."
   }
 }

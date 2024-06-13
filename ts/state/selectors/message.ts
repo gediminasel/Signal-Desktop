@@ -13,6 +13,7 @@ import type {
   LastMessageStatus,
   MessageAttributesType,
   MessageReactionType,
+  QuotedAttachmentType,
   ShallowChallengeError,
 } from '../../model-types.d';
 
@@ -26,6 +27,7 @@ import type { PropsData as TimelineMessagePropsData } from '../../components/con
 import { TextDirection } from '../../components/conversation/Message';
 import type { PropsData as TimerNotificationProps } from '../../components/conversation/TimerNotification';
 import type { PropsData as ChangeNumberNotificationProps } from '../../components/conversation/ChangeNumberNotification';
+import type { PropsData as JoinedSignalNotificationProps } from '../../components/conversation/JoinedSignalNotification';
 import type { PropsData as SafetyNumberNotificationProps } from '../../components/conversation/SafetyNumberNotification';
 import type { PropsData as VerificationNotificationProps } from '../../components/conversation/VerificationNotification';
 import type { PropsData as TitleTransitionNotificationProps } from '../../components/conversation/TitleTransitionNotification';
@@ -40,7 +42,6 @@ import type {
   ChangeType,
 } from '../../components/conversation/GroupNotification';
 import type { PropsType as ProfileChangeNotificationPropsType } from '../../components/conversation/ProfileChangeNotification';
-import type { QuotedAttachmentType } from '../../components/conversation/Quote';
 
 import { getDomain, isCallLink, isStickerPack } from '../../types/LinkPreview';
 import type {
@@ -58,7 +59,11 @@ import type { LinkPreviewType } from '../../types/message/LinkPreviews';
 import { getMentionsRegex } from '../../types/Message';
 import { SignalService as Proto } from '../../protobuf';
 import type { AttachmentType } from '../../types/Attachment';
-import { isVoiceMessage, canBeDownloaded } from '../../types/Attachment';
+import {
+  isVoiceMessage,
+  canBeDownloaded,
+  defaultBlurHash,
+} from '../../types/Attachment';
 import { type DefaultConversationColorType } from '../../types/Colors';
 import { ReadStatus } from '../../messages/MessageReadStatus';
 
@@ -300,16 +305,14 @@ export const getAttachmentsForMessage = ({
   if (sticker && sticker.data) {
     const { data } = sticker;
 
-    // We don't show anything if we don't have the sticker or the blurhash...
-    if (!data.blurHash && (data.pending || !data.path)) {
-      return [];
-    }
-
     return [
       {
         ...data,
         // We want to show the blurhash for stickers, not the spinner
         pending: false,
+        // Stickers are not guaranteed to have a blurhash (e.g. if imported but
+        // undownloaded from backup), so we want to make sure we have something to show
+        blurHash: data.blurHash ?? defaultBlurHash(),
         url: data.path
           ? window.Signal.Migrations.getAbsoluteAttachmentPath(data.path)
           : undefined,
@@ -937,6 +940,13 @@ export function getPropsForBubble(
       timestamp,
     };
   }
+  if (isJoinedSignalNotification(message)) {
+    return {
+      type: 'joinedSignalNotification',
+      data: getPropsForJoinedSignalNotification(message),
+      timestamp,
+    };
+  }
   if (isTitleTransitionNotification(message)) {
     return {
       type: 'titleTransitionNotification',
@@ -1018,7 +1028,10 @@ export function isNormalBubble(message: MessageWithUIFieldsType): boolean {
     !isProfileChange(message) &&
     !isUniversalTimerNotification(message) &&
     !isUnsupportedMessage(message) &&
-    !isVerifiedChange(message)
+    !isVerifiedChange(message) &&
+    !isChangeNumberNotification(message) &&
+    !isJoinedSignalNotification(message) &&
+    !isDeliveryIssue(message)
   );
 }
 
@@ -1572,6 +1585,22 @@ function getPropsForChangeNumberNotification(
   };
 }
 
+// Joined Signal Notification
+
+export function isJoinedSignalNotification(
+  message: MessageWithUIFieldsType
+): boolean {
+  return message.type === 'joined-signal-notification';
+}
+
+function getPropsForJoinedSignalNotification(
+  message: MessageWithUIFieldsType
+): JoinedSignalNotificationProps {
+  return {
+    timestamp: message.sent_at,
+  };
+}
+
 // Title Transition Notification
 
 export function isTitleTransitionNotification(
@@ -1837,9 +1866,7 @@ export function getPropsForAttachment(
   };
 }
 
-function processQuoteAttachment(
-  attachment: AttachmentType
-): QuotedAttachmentType {
+function processQuoteAttachment(attachment: QuotedAttachmentType) {
   const { thumbnail } = attachment;
   const path =
     thumbnail && thumbnail.path && getAttachmentUrlForPath(thumbnail.path);

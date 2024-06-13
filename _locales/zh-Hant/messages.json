@@ -173,6 +173,9 @@
   "icu:viewMenuToggleDevTools": {
     "messageformat": "切換開發者工具"
   },
+  "icu:viewMenuOpenCallingDevTools": {
+    "messageformat": "開啟通話中開發者工具"
+  },
   "icu:menuSetupAsNewDevice": {
     "messageformat": "設定新裝置"
   },
@@ -458,9 +461,6 @@
   "icu:joinAnyway": {
     "messageformat": "仍要加入"
   },
-  "icu:continueCall": {
-    "messageformat": "繼續通話"
-  },
   "icu:debugLogExplanation": {
     "messageformat": "當你點擊提交時，你的日誌將在一個唯一的、未發布的 URL 上在線發布 30 天。你可以先將其保存在本地。"
   },
@@ -643,6 +643,12 @@
   },
   "icu:screenShareWindow": {
     "messageformat": "分享畫面"
+  },
+  "icu:callingDeveloperTools": {
+    "messageformat": "通話中開發者工具"
+  },
+  "icu:callingDeveloperToolsDescription": {
+    "messageformat": "此視窗在開發過程中用於顯示正在進行之通話的診斷資訊。"
   },
   "icu:speech": {
     "messageformat": "語音"
@@ -1033,6 +1039,9 @@
   },
   "icu:ChangeNumber--notification": {
     "messageformat": "{sender} 變更了他們的電話號碼"
+  },
+  "icu:JoinedSignal--notification": {
+    "messageformat": "聯絡人上線 Signal 通知"
   },
   "icu:ConversationMerge--notification": {
     "messageformat": "{obsoleteConversationTitle} 及 {conversationTitle} 是相同的帳戶。兩個聊天的訊息紀錄均在此處。"
@@ -2363,18 +2372,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "聊天已標記為未讀"
   },
-  "icu:SendEdit--dialog--title2": {
-    "messageformat": "編輯訊息"
-  },
-  "icu:SendEdit--dialog--body2": {
-    "messageformat": "只有使用最新 Signal 版本的用戶才能看到你的編輯訊息。他們將能看到你編輯了訊息。"
-  },
-  "icu:SendFormatting--dialog--title": {
-    "messageformat": "傳送格式化文字"
-  },
-  "icu:SendFormatting--dialog--body": {
-    "messageformat": "有些人可能正在使用不支援格式化文字的 Signal 版本。他們將無法看到你對訊息作出的格式變更。"
-  },
   "icu:AuthArtCreator--dialog--message": {
     "messageformat": "你要開啟 Signal 貼圖包製作器嗎？"
   },
@@ -2691,7 +2688,13 @@
     "messageformat": "關閉響鈴"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "你舉了手。"
+    "messageformat": "You raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-one": {
+    "messageformat": "You and {otherName} raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-more": {
+    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} 舉了手。"
@@ -2782,6 +2785,21 @@
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "將此人從通話中移除"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel": {
+    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
+    "messageformat": "+{count,number} more"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
+    "messageformat": "More info about new contacts"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
+    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
+    "messageformat": "Got it"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "影片"
@@ -3761,6 +3779,9 @@
   "icu:DeleteMessagesModal--description--noteToSelf": {
     "messageformat": "{count, plural, other {你想從哪些裝置刪除這些訊息？}}"
   },
+  "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
+    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+  },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "為我刪除"
   },
@@ -3772,6 +3793,9 @@
   },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "從所有裝置中刪除"
+  },
+  "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
+    "messageformat": "Delete"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, other {你只能為所有人選取最多 {count,number} 則要刪除的訊息}}"
@@ -3866,11 +3890,17 @@
   "icu:ForwardMessageModal__title": {
     "messageformat": "轉寄給"
   },
+  "icu:ForwardMessageModal__ShareCallLink": {
+    "messageformat": "分享通話連結"
+  },
   "icu:ForwardMessageModal--continue": {
     "messageformat": "繼續"
   },
   "icu:ForwardMessagesModal__toast--CannotForwardEmptyMessage": {
     "messageformat": "無法轉寄空白或已刪除的訊息"
+  },
+  "icu:ShareCallLinkViaSignal__DraftMessageText": {
+    "messageformat": "使用此連結加入 Signal 通話：{url}"
   },
   "icu:MessageRequestWarning__learn-more": {
     "messageformat": "了解更多"
@@ -4167,7 +4197,7 @@
     "messageformat": "用戶名稱不得以數字開首。"
   },
   "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "使用者名稱必須至少包含{min,number} 個字符。"
+    "messageformat": "Usernames must have at least {min,number} characters."
   },
   "icu:ProfileEditor--username--check-character-max": {
     "messageformat": "使用者名稱最多只能包含{max,number}個字符。"
@@ -4347,7 +4377,7 @@
     "messageformat": "將打出的表情字符轉換為表情符號"
   },
   "icu:Preferences__auto-convert-emoji--description": {
-    "messageformat": "例如 :-) 將轉換為 🙂"
+    "messageformat": "例如 :-) 將轉換為 <emojify>🙂</emojify>"
   },
   "icu:Preferences--advanced": {
     "messageformat": "進階"
@@ -4717,6 +4747,15 @@
   },
   "icu:SignalConnectionsModal__footer": {
     "messageformat": "除非你選擇隱藏，否則你的聯絡人能看到你的名稱、照片和「我的限時動態」貼文"
+  },
+  "icu:LocalDeleteWarningModal__header": {
+    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+  },
+  "icu:LocalDeleteWarningModal__description": {
+    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+  },
+  "icu:LocalDeleteWarningModal__confirm": {
+    "messageformat": "Got it"
   },
   "icu:Stories__title": {
     "messageformat": "報導"
@@ -5310,6 +5349,9 @@
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "沒有符合「{query}」的結果"
   },
+  "icu:CallsList__CreateCallLink": {
+    "messageformat": "Create a Call Link"
+  },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "來電"
   },
@@ -5325,11 +5367,29 @@
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "通話連結"
   },
+  "icu:CallsList__ItemCallInfo--Active": {
+    "messageformat": "使用中"
+  },
+  "icu:CallsList__LeaveCallDialogTitle": {
+    "messageformat": "要退出目前通話？"
+  },
+  "icu:CallsList__LeaveCallDialogBody": {
+    "messageformat": "在加入新通話之前，你必須先退出目前通話。"
+  },
+  "icu:CallsList__LeaveCallDialogButton--leave": {
+    "messageformat": "離開通話"
+  },
   "icu:CallsNewCall__EmptyState--noQuery": {
     "messageformat": "沒有最近的對話。"
   },
   "icu:CallsNewCall__EmptyState--hasQuery": {
     "messageformat": "沒有符合「{query}」的結果"
+  },
+  "icu:CallsNewCallButton--return": {
+    "messageformat": "返回"
+  },
+  "icu:CallsNewCallButtonTooltip--in-another-call": {
+    "messageformat": "在加入新通話之前，你必須先退出目前通話"
   },
   "icu:CallHistory__Description--Default": {
     "messageformat": "{type, select, Audio {{direction, select, Outgoing {撥打語音通話} other {語音通話來電}}} Video {{direction, select, Outgoing {撥出視訊電話} other {視訊電話來電}}} Group {{direction, select, Outgoing {撥出群組通話} other {群組通話來電}}} other {{direction, select, Outgoing {撥出電話} other {來電}}}}"
@@ -5345,6 +5405,33 @@
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "通話連結"
+  },
+  "icu:CallLinkDetails__Join": {
+    "messageformat": "加入"
+  },
+  "icu:CallLinkDetails__CopyLink": {
+    "messageformat": "複製連結"
+  },
+  "icu:CallLinkDetails__ShareLinkViaSignal": {
+    "messageformat": "透過 Signal 分享連結"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Call link details"
+  },
+  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
+    "messageformat": "Name"
+  },
+  "icu:CallLinkEditModal__JoinButtonLabel": {
+    "messageformat": "Join"
+  },
+  "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
+    "messageformat": "Approve all members"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
+    "messageformat": "Off"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
+    "messageformat": "On"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, other {其他 {count,number} 個人正在打字。}}"
@@ -5385,5 +5472,20 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "細微的調整、問題修復和效能改善。感謝各位使用 Signal！",
     "ignoreUnused": true
+  },
+  "icu:WhatsNew__v7.12--0": {
+    "messageformat": "如果你一直尋找在群組通話期間的其他溝通方式，請「舉手」。新的「舉手」功能是一種簡單的方法，用來引起注意、提出問題或在小組提案時投一致贊成票。"
+  },
+  "icu:WhatsNew__v7.12--1": {
+    "messageformat": "我們修復了裁剪工具中的錯誤，現在可以更輕鬆、更直觀地將任何東西從照片中刪除。"
+  },
+  "icu:WhatsNew__v7.12--2": {
+    "messageformat": "我們將發送語音備註的鍵盤快捷鍵修改為 Ctrl/Cmd+Shift+Y，使其不再與 Windows 和 Linux 上「貼上並配合樣式」的快捷鍵產生衝突。"
+  },
+  "icu:WhatsNew__v7.13--0": {
+    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  },
+  "icu:WhatsNew__v7.13--1": {
+    "messageformat": "This update also improves the display of quoted replies in RTL languages."
   }
 }

@@ -173,6 +173,9 @@
   "icu:viewMenuToggleDevTools": {
     "messageformat": "ဆော့ဖ်ဝဲရေးသားသူဆိုင်ရာ တူးလ်များကို ပြောင်းရန်"
   },
+  "icu:viewMenuOpenCallingDevTools": {
+    "messageformat": "ဖုန်းခေါ်ဆိုမှုဆိုင်ရာ Developer Tools ကိုဖွင့်ရန်"
+  },
   "icu:menuSetupAsNewDevice": {
     "messageformat": "စက်အသစ်အဖြစ် သတ်မှတ်ရန်"
   },
@@ -458,9 +461,6 @@
   "icu:joinAnyway": {
     "messageformat": "မည်သို့ပင်ဖြစ်စေ ပါဝင်မည်"
   },
-  "icu:continueCall": {
-    "messageformat": "ခေါ်ဆိုမှုသို့ ဆက်မယ်"
-  },
   "icu:debugLogExplanation": {
     "messageformat": "ပေးပို့ရန်ကို နှိပ်သည့်အခါ သင့်မှတ်တမ်းကို သီးခြား အများနှင့်မဆိုင်သော URL တွင် ရက် ၃၀ ကြာ ပို့စ်တင်ထားပါမည်။ ဦးစွာ ၎င်းကို စက်တွင်း သိမ်းထားနိုင်ပါသည်။"
   },
@@ -643,6 +643,12 @@
   },
   "icu:screenShareWindow": {
     "messageformat": "စခရင် မျှဝေခြင်း"
+  },
+  "icu:callingDeveloperTools": {
+    "messageformat": "ဖုန်းခေါ်ဆိုမှုဆိုင်ရာ Developer Tools"
+  },
+  "icu:callingDeveloperToolsDescription": {
+    "messageformat": "လက်ရှိ ခေါ်ဆိုမှုများနှင့်ပတ်သက်သည့် ပြဿနာများကို ပြသရန် ဤဝင်းဒိုးကို ဖန်တီးလုပ်ဆောင်နေစဉ်အတွင်း အသုံးပြုပါသည်။"
   },
   "icu:speech": {
     "messageformat": "စကားပြော"
@@ -1033,6 +1039,9 @@
   },
   "icu:ChangeNumber--notification": {
     "messageformat": "{sender} က ၎င်း၏ ဖုန်းနံပါတ် ပြောင်းလိုက်ပါသည်"
+  },
+  "icu:JoinedSignal--notification": {
+    "messageformat": "အဆက်အသွယ်သည် Signal သို့ရောက်လာပြီ"
   },
   "icu:ConversationMerge--notification": {
     "messageformat": "{obsoleteConversationTitle} နှင့် {conversationTitle} သည် တူညီသော အကောင့် ဖြစ်ပါသည်။ ချက်(တ်)နှစ်ခုလုံးအတွက် မက်ဆေ့ချ်မှတ်တမ်းကို ဤနေရာတွင် တွေ့နိုင်ပါသည်။"
@@ -1500,7 +1509,7 @@
     "messageformat": "တည်းဖြတ်မှု မအောင်မြင်ပါ၊ အသေးစိတ်ကြည့်ရန် နှိပ်ပါ"
   },
   "icu:sendPaused": {
-    "messageformat": "áá±áá­á¯á·áá¾á¯áá­á¯ áááºááá·áºáá²á·áááº"
+    "messageformat": "ပေးပို့မှု ခေတ္တရပ်နေသည်"
   },
   "icu:partiallySent": {
     "messageformat": "တစ်စိတ်တစ်ပိုင်း ပို့ပြီး၊ အသေးစိတ်အတွက် နှိပ်ပါ"
@@ -2363,18 +2372,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "ချက်(တ်)ကို မဖတ်ရသေးဟု မှတ်သားပြီး"
   },
-  "icu:SendEdit--dialog--title2": {
-    "messageformat": "မက်ဆေ့ချ် တည်းဖြတ်ရန်"
-  },
-  "icu:SendEdit--dialog--body2": {
-    "messageformat": "မက်ဆေ့ချ်တစ်စောင်ကို တည်းဖြတ်ပါက ၎င်းကို Signal နောက်ဆုံးထွက်ဗားရှင်းများကို သုံးနေသူများသာ မြင်ရပါမည်။ ၎င်းတို့သည် မက်ဆေ့ချ်တစ်စောင်ကို သင် တည်းဖြတ်လိုက်ကြောင်း တွေ့မြင်ရပါမည်။"
-  },
-  "icu:SendFormatting--dialog--title": {
-    "messageformat": "ဖောမတ်လုပ်ထားသည့် စာသားကို ပေးပို့ခြင်း"
-  },
-  "icu:SendFormatting--dialog--body": {
-    "messageformat": "အချို့သောသူများသည် ဖောမတ်လုပ်ထားသည့်စာသားကို မပံ့ပိုးပေးသော Signal ဗားရှင်းကို အသုံးပြုနေနိုင်ပါသည်။ သင့်မက်ဆေ့ချ်တွင် ပြုလုပ်ထားသော ဖောမတ်ပုံစံပြောင်းလဲမှုများကို ၎င်းတို့ တွေ့မြင်နိုင်မည် မဟုတ်ပါ။"
-  },
   "icu:AuthArtCreator--dialog--message": {
     "messageformat": "Signal Sticker Pack Creator ကို သင် ဖွင့်လိုပါသလား။"
   },
@@ -2691,7 +2688,13 @@
     "messageformat": "ဖုန်းမြည်သံ ပိတ်ထားသည်"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "သင် လက်မြှောက်ထားပါသည်။"
+    "messageformat": "You raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-one": {
+    "messageformat": "You and {otherName} raised a hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-more": {
+    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} လက်မြှောက်ထားပါသည်။"
@@ -2782,6 +2785,21 @@
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "ဤလူကို ခေါ်ဆိုမှုမှ ဖယ်ရှားသည်"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel": {
+    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
+    "messageformat": "+{count,number} more"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
+    "messageformat": "More info about new contacts"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
+    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
+    "messageformat": "Got it"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "ရုပ်မြင်သံကြား"
@@ -3761,6 +3779,9 @@
   "icu:DeleteMessagesModal--description--noteToSelf": {
     "messageformat": "{count, plural, other {ထိုမက်ဆေ့ချ်များကို မည်သည့်စက်များမှ ဖျက်ချင်သနည်း။}}"
   },
+  "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
+    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+  },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "ကျွန်ုပ်အတွက် ဖျက်ရန်"
   },
@@ -3772,6 +3793,9 @@
   },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "စက်အားလုံးမှ ဖျက်ရန်"
+  },
+  "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
+    "messageformat": "Delete"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, other {လူတိုင်းအတွက် ဖျက်ရန် မက်ဆေ့ချ် {count,number} စောင်အထိသာ ရွေးချယ်နိုင်သည်}}"
@@ -3866,11 +3890,17 @@
   "icu:ForwardMessageModal__title": {
     "messageformat": "ဒီကို ထပ်ဆင့်ပို့မည်"
   },
+  "icu:ForwardMessageModal__ShareCallLink": {
+    "messageformat": "Signal ဖြင့်ဖုန်းခေါ်ဆိုရန်လင့်ကို မျှဝေရန်"
+  },
   "icu:ForwardMessageModal--continue": {
     "messageformat": "ဆက်လုပ်ရန်"
   },
   "icu:ForwardMessagesModal__toast--CannotForwardEmptyMessage": {
     "messageformat": "အလွတ် သို့မဟုတ် ဖျက်ထားသော မက်ဆေ့ချ်များကို ထပ်ဆင့်ပို့၍ မရပါ"
+  },
+  "icu:ShareCallLinkViaSignal__DraftMessageText": {
+    "messageformat": "Signal ကောလ်တွင် ပါဝင်ရန် ဤလင့်ခ်ကို သုံးပါ- {url}"
   },
   "icu:MessageRequestWarning__learn-more": {
     "messageformat": "ထပ်မံလေ့လာရန်"
@@ -4095,7 +4125,7 @@
     "messageformat": "မီဒီယာ အရည်အသွေး"
   },
   "icu:MediaQualitySelector--standard-quality-title": {
-    "messageformat": "áá¯á¶áá¾ááº á¡ááá·áºááá·áº"
+    "messageformat": "ပုံမှန်အရည်အသွေး"
   },
   "icu:MediaQualitySelector--standard-quality-description": {
     "messageformat": "ပိုမြန်ဆန်ပြီး ဒေတာ နည်းနည်းသာ လိုသည်"
@@ -4167,7 +4197,7 @@
     "messageformat": "သုံးစွဲသူအမည်များသည် နံပါတ်နှင့် စတင်၍ မရပါ။"
   },
   "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "သုံးစွဲသူအမည်များတွင် အက္ခရာ {min,number} လုံး အနည်းဆုံး ရှိရပါမည်။"
+    "messageformat": "Usernames must have at least {min,number} characters."
   },
   "icu:ProfileEditor--username--check-character-max": {
     "messageformat": "သုံးစွဲသူအမည်များတွင် အက္ခရာ {max,number} လုံး အများဆုံး ရှိရပါမည်။"
@@ -4347,7 +4377,7 @@
     "messageformat": "စာရိုက်ထားသော ရုပ်ပြောင်များကို အီမိုဂျီအဖြစ် ပြောင်းရန်"
   },
   "icu:Preferences__auto-convert-emoji--description": {
-    "messageformat": "ဥပမာ :-) ကို 🙂 ဟု ပြောင်းခြင်း"
+    "messageformat": "ဥပမာ :-) သည် <emojify>🙂</emojify>ဟု ပြောင်းသွားမည်"
   },
   "icu:Preferences--advanced": {
     "messageformat": "အဆင်မြင့်သော"
@@ -4717,6 +4747,15 @@
   },
   "icu:SignalConnectionsModal__footer": {
     "messageformat": "သင့်အဆက်အသွယ်များက သင့်အမည်နှင့် ဓာတ်ပုံကို မြင်နိုင်ပြီး ၎င်းတို့အတွက် မဝှက်ထားပါက \"ကျွန်ုပ်၏ စတိုရီ\" ရှိ ပို့စ်များကို မြင်နိုင်ပါသည်"
+  },
+  "icu:LocalDeleteWarningModal__header": {
+    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+  },
+  "icu:LocalDeleteWarningModal__description": {
+    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+  },
+  "icu:LocalDeleteWarningModal__confirm": {
+    "messageformat": "Got it"
   },
   "icu:Stories__title": {
     "messageformat": "စတိုရီများ"
@@ -5310,6 +5349,9 @@
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "“{query}” အတွက် ရလဒ်မရှိပါ"
   },
+  "icu:CallsList__CreateCallLink": {
+    "messageformat": "Create a Call Link"
+  },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "အဝင်"
   },
@@ -5325,11 +5367,29 @@
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "ကောလ်လင့်ခ်"
   },
+  "icu:CallsList__ItemCallInfo--Active": {
+    "messageformat": "လုပ်ဆောင်နေသည်"
+  },
+  "icu:CallsList__LeaveCallDialogTitle": {
+    "messageformat": "လက်ရှိခေါ်ဆိုမှုကို ရပ်နားမလား။"
+  },
+  "icu:CallsList__LeaveCallDialogBody": {
+    "messageformat": "ခေါ်ဆိုမှုအသစ်တစ်ခုတွင် မပါဝင်မီ လက်ရှိခေါ်ဆိုမှုကို ရပ်နားရပါမည်။"
+  },
+  "icu:CallsList__LeaveCallDialogButton--leave": {
+    "messageformat": "ခေါ်ဆိုမှုကို ရပ်နားမယ်"
+  },
   "icu:CallsNewCall__EmptyState--noQuery": {
     "messageformat": "လတ်တလော စကားပြောဆိုမှုများ မရှိပါ။"
   },
   "icu:CallsNewCall__EmptyState--hasQuery": {
     "messageformat": "“{query}” အတွက် ရလဒ်မရှိပါ"
+  },
+  "icu:CallsNewCallButton--return": {
+    "messageformat": "နောက်ပြန်သွားရန်"
+  },
+  "icu:CallsNewCallButtonTooltip--in-another-call": {
+    "messageformat": "ခေါ်ဆိုမှုအသစ်တစ်ခုတွင် မပါဝင်မီ လက်ရှိခေါ်ဆိုမှုကို ရပ်နားရပါမည်"
   },
   "icu:CallHistory__Description--Default": {
     "messageformat": "{type, select, Audio {{direction, select, Outgoing {အထွက် အော်ဒီယိုကောလ်} other {အဝင် အော်ဒီယိုကောလ်}}} Video {{direction, select, Outgoing {ဗီဒီယိုကောလ် အထွက်} other {ဗီဒီယိုကောလ် အဝင်}}} Group {{direction, select, Outgoing {အထွက် အဖွဲ့ကောလ်} other {အဝင် အဖွဲ့ကောလ်}}} other {{direction, select, Outgoing {ဖုန်းခေါ်ဆိုမှု} other {အဝင်ဖုန်းလာသည်}}}}"
@@ -5345,6 +5405,33 @@
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "ကောလ်လင့်ခ်"
+  },
+  "icu:CallLinkDetails__Join": {
+    "messageformat": "ပါဝင်မည်"
+  },
+  "icu:CallLinkDetails__CopyLink": {
+    "messageformat": "လင့်ခ် ကူးရန်"
+  },
+  "icu:CallLinkDetails__ShareLinkViaSignal": {
+    "messageformat": "Signal မှတစ်ဆင့် လင့်ခ်ဝေမျှရန်"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Call link details"
+  },
+  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
+    "messageformat": "Name"
+  },
+  "icu:CallLinkEditModal__JoinButtonLabel": {
+    "messageformat": "Join"
+  },
+  "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
+    "messageformat": "Approve all members"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
+    "messageformat": "Off"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
+    "messageformat": "On"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, other {အခြား {count,number} ဦး စာရိုက်နေသည်။}}"
@@ -5385,5 +5472,20 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "အနေအထား ပြုပြင်မှုလေးများ၊ ချို့ယွင်းချက် ပြင်ဆင်မှုများနှင့် စွမ်းဆောင်ရည် မြှင့်တင်မှုများ။ Signal ကို သုံးသည့်အတွက် ကျေးဇူးတင်ပါသည်။",
     "ignoreUnused": true
+  },
+  "icu:WhatsNew__v7.12--0": {
+    "messageformat": "★ လက်ထောင်သည့် အင်္ဂါရပ်အသစ်သည် အဖွဲ့ကောလ်အတွင်းတွင် တစ်စုံတစ်ဦး၏အာရုံစိုက်မှုကိုရရန် သို့မဟုတ် မေးခွန်းတစ်ခုမေးရန် လွယ်ကူရိုးရှင်းသည့်နည်းလမ်းတစ်ခု ဖြစ်သည်။"
+  },
+  "icu:WhatsNew__v7.12--1": {
+    "messageformat": "ဤအက်ပ်ဒိတ်တွင် ပုံများကို အရွယ်အစားပြောင်းလဲရန် ဖြတ်တောက်သည့်တူးကို ပိုကောင်းအောင် လုပ်ထားပါသည်။"
+  },
+  "icu:WhatsNew__v7.12--2": {
+    "messageformat": "Windows နှင့် Linux ပေါ်ရှိ \"Paste and Match Style\" ရှော့တ်ကတ်နှင့် လွဲမှားမှု မရှိစေရန် Ctrl/Cmd+Shift+Y သို့ အသံမှတ်ချက်ပေးပို့ခြင်းအတွက် ကီးဘုတ်ရှော့တ်ကတ်ကို ကျွန်ုပ်တို့ ပြင်ဆင်မွမ်းမံထားပါသည်။"
+  },
+  "icu:WhatsNew__v7.13--0": {
+    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  },
+  "icu:WhatsNew__v7.13--1": {
+    "messageformat": "This update also improves the display of quoted replies in RTL languages."
   }
 }

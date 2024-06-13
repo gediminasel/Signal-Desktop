@@ -247,6 +247,10 @@
     "messageformat": "Toggle Developer Tools",
     "description": "View menu command to show or hide the developer tools"
   },
+  "icu:viewMenuOpenCallingDevTools": {
+    "messageformat": "Open Calling Developer Tools",
+    "description": "View menu command to open calling developer tools window"
+  },
   "icu:menuSetupAsNewDevice": {
     "messageformat": "Set Up as New Device",
     "description": "When the application is not yet set up, menu option to start up the set up as fresh device"
@@ -627,10 +631,6 @@
     "messageformat": "Join anyway",
     "description": "Used on a warning dialog to make it clear that it might be risky to join the call."
   },
-  "icu:continueCall": {
-    "messageformat": "Continue Call",
-    "description": "(Deleted 2024/04/25) Used on a warning dialog to make it clear that it might be risky to continue the group call."
-  },
   "icu:debugLogExplanation": {
     "messageformat": "When you click Submit, your log will be posted online for 30 days at a unique, unpublished URL. You may Save it locally first.",
     "description": "Description of what will happen with your debug log"
@@ -870,6 +870,14 @@
   "icu:screenShareWindow": {
     "messageformat": "Sharing screen",
     "description": "Title for screen sharing window"
+  },
+  "icu:callingDeveloperTools": {
+    "messageformat": "Calling Developer Tools",
+    "description": "Title for calling developer tools window"
+  },
+  "icu:callingDeveloperToolsDescription": {
+    "messageformat": "This window is used during development to display diagnostics from ongoing calls.",
+    "description": "(Deleted 2024/05/30) Description displayed for calling developer tools window"
   },
   "icu:speech": {
     "messageformat": "Speech",
@@ -1377,6 +1385,10 @@
   "icu:ChangeNumber--notification": {
     "messageformat": "{sender} changed their phone number",
     "description": "Shown in timeline when a member of a conversation changes their phone number"
+  },
+  "icu:JoinedSignal--notification": {
+    "messageformat": "Contact joined Signal",
+    "description": "Shown in timeline when a contact joins Signal"
   },
   "icu:ConversationMerge--notification": {
     "messageformat": "{obsoleteConversationTitle} and {conversationTitle} are the same account. Your message history for both chats are here.",
@@ -3130,33 +3142,17 @@
     "messageformat": "Chat marked unread",
     "description": "A toast that shows up when user marks a conversation as unread"
   },
-  "icu:SendEdit--dialog--title2": {
-    "messageformat": "Edit Message",
-    "description": "(Deleted 2024/04/29) Title of the modal shown before sending your first edit message"
-  },
-  "icu:SendEdit--dialog--body2": {
-    "messageformat": "If you edit a message, it will only be visible to people who are on the latest versions of Signal. They will be able to see you edited a message.",
-    "description": "(Deleted 2024/04/29) Body text of the modal shown before sending your first edit message"
-  },
-  "icu:SendFormatting--dialog--title": {
-    "messageformat": "Sending formatted text",
-    "description": "(Deleted 2024/04/29) Title of the modal shown before sending your first formatting message"
-  },
-  "icu:SendFormatting--dialog--body": {
-    "messageformat": "Some people may be using a version of Signal that doesn’t support formatted text. They will not be able to see the formatting changes you’ve made to your message.",
-    "description": "(Deleted 2024/04/29) Body text of the modal shown before sending your first formatting message"
-  },
   "icu:AuthArtCreator--dialog--message": {
     "messageformat": "Would you like to open Signal Sticker Pack Creator?",
-    "description": "A body of the dialog that is presented when user tries to open Signal Sticker Pack Creator from a link"
+    "description": "(Deleted 2024/05/15) A body of the dialog that is presented when user tries to open Signal Sticker Pack Creator from a link"
   },
   "icu:AuthArtCreator--dialog--confirm": {
     "messageformat": "Confirm",
-    "description": "A buttle title for confirming Signal Sticker Pack Creator dialog"
+    "description": "(Deleted 2024/05/15) A buttle title for confirming Signal Sticker Pack Creator dialog"
   },
   "icu:AuthArtCreator--dialog--dismiss": {
     "messageformat": "Dismiss",
-    "description": "A buttle title for dismissing Signal Sticker Pack Creator dialog"
+    "description": "(Deleted 2024/05/15) A buttle title for dismissing Signal Sticker Pack Creator dialog"
   },
   "icu:ArtCreator--Authentication--error": {
     "messageformat": "Please set up Signal on your phone and desktop to use the Sticker Pack Creator",
@@ -3567,8 +3563,16 @@
     "description": "Shown in a group call lobby when call ringing is enabled, then the user disables ringing using the Ringing toggle button."
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "Your hand is raised.",
+    "messageformat": "You raised a hand.",
     "description": "Shown in a call when the user raises their hand."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-one": {
+    "messageformat": "You and {otherName} raised a hand.",
+    "description": "Shown in a call when the user and one other person raise their hands."
+  },
+  "icu:CallControls__RaiseHandsToast--you-and-more": {
+    "messageformat": "You, {otherName}, and {overflowCount, plural, one {#} other {#}} more raised a hand.",
+    "description": "Shown in a call when the user and 2 or more other persons raise their hands."
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} raised a hand.",
@@ -3689,6 +3693,26 @@
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "Remove this person from the call",
     "description": "Button in the in-call info popup for call link calls showing all participants. The action is to remove the participant from the call."
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel": {
+    "messageformat": "{count, plural, one {# person} other {# people}}",
+    "description": "Label showing number of unknown contacts in the in-call participant info popup for call links."
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
+    "messageformat": "+{count, number} more",
+    "description": "Label showing number of unknown contacts in the in-call participant info popup for call links, when known contacts are also present in the call."
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
+    "messageformat": "More info about new contacts",
+    "description": "Aria label for info button in the in-call participant info popup for call links when unknown contacts are in the call."
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
+    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call.",
+    "description": "Text for an info dialog which can be opened from the in-call participant list, which is available in call links when unknown contacts are in the call"
+  },
+  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
+    "messageformat": "Got it",
+    "description": "Button text for info dialog which can be opened from the in-call participant list, which is available in call links when unknown contacts are in the call."
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video",
@@ -4994,6 +5018,10 @@
     "messageformat": "What devices would you like to delete {count, plural, one {this message} other {these messages}} from?",
     "description": "within note to self conversation > delete selected messages > confirmation modal > description"
   },
+  "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
+    "messageformat": "{count, plural, one {This message} other {These messages}} will be deleted from all your devices.",
+    "description": "within note to self conversation > delete selected messages > confirmation modal > description"
+  },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "Delete for me",
     "description": "delete selected messages > confirmation modal > delete for me"
@@ -5009,6 +5037,10 @@
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "Delete from all devices",
     "description": "within note to self conversation > delete selected messages > confirmation modal > delete from all devices (same as delete for everyone)"
+  },
+  "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
+    "messageformat": "Delete",
+    "description": "When delete sync is enabled, there is only one Delete option in Note to Self"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "You can only select up to {count, plural, one {# message} other {# messages}} to delete for everyone",
@@ -5134,6 +5166,10 @@
     "messageformat": "Forward To",
     "description": "Title for the forward a message modal dialog"
   },
+  "icu:ForwardMessageModal__ShareCallLink": {
+    "messageformat": "Share call link",
+    "description": "Title for the forward a message modal dialog in share call link mode"
+  },
   "icu:ForwardMessageModal--continue": {
     "messageformat": "Continue",
     "description": "aria-label for the 'next' button in the forward a message modal dialog"
@@ -5141,6 +5177,10 @@
   "icu:ForwardMessagesModal__toast--CannotForwardEmptyMessage": {
     "messageformat": "Cannot forward empty or deleted messages",
     "description": "Toast message shown when trying to forward an empty or deleted message"
+  },
+  "icu:ShareCallLinkViaSignal__DraftMessageText": {
+    "messageformat": "Use this link to join a Signal call: {url}",
+    "description": "Draft message text for sharing a call link"
   },
   "icu:MessageRequestWarning__learn-more": {
     "messageformat": "Learn more",
@@ -5535,7 +5575,7 @@
     "description": "Shown if user has attempted to begin their username with a number"
   },
   "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Usernames must have a least {min, number} characters.",
+    "messageformat": "Usernames must have at least {min, number} characters.",
     "description": "Shown if user has attempted to enter a username with too few characters - currently min is 3"
   },
   "icu:ProfileEditor--username--check-character-max": {
@@ -5596,7 +5636,7 @@
   },
   "icu:ProfileEditor--username--delete-unavailable-notice": {
     "messageformat": "To delete your username, open Signal on your phone and navigate to Settings > Profile.",
-    "description": "Shown in dialog body if user is trying to delete username, but it is only supported on mobile"
+    "description": "(Deleted 2024/06/04) Shown in dialog body if user is trying to delete username, but it is only supported on mobile"
   },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "Copy or delete username",
@@ -5775,7 +5815,7 @@
     "description": "Title for the auto convert emoji setting"
   },
   "icu:Preferences__auto-convert-emoji--description": {
-    "messageformat": "For example, :-) will be converted to 🙂",
+    "messageformat": "For example, :-) will be converted to <emojify>🙂</emojify>",
     "description": "Description for the auto convert emoji setting"
   },
   "icu:Preferences--advanced": {
@@ -6267,6 +6307,18 @@
   "icu:SignalConnectionsModal__footer": {
     "messageformat": "Your connections can see your name and photo, and can see posts to \"My Story\" unless you hide it from them",
     "description": "Additional information about signal connections and the stories they can see"
+  },
+  "icu:LocalDeleteWarningModal__header": {
+    "messageformat": "\"Delete for Me\" now deletes from all of your devices",
+    "description": "Emphasized text at the top of the explainer dialog you get when you first delete a message or conversation"
+  },
+  "icu:LocalDeleteWarningModal__description": {
+    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices.",
+    "description": "More detailed description of new delete behavior shown in explainer dialog"
+  },
+  "icu:LocalDeleteWarningModal__confirm": {
+    "messageformat": "Got it",
+    "description": "Button to dismiss the dialog explaining that 'delete for me' now syncs between devices"
   },
   "icu:Stories__title": {
     "messageformat": "Stories",
@@ -7056,6 +7108,10 @@
     "messageformat": "No results for “{query}”",
     "description": "Calls Tab > Calls List > When no results found > With a search query"
   },
+  "icu:CallsList__CreateCallLink": {
+    "messageformat": "Create a Call Link",
+    "description": "Calls Tab > Calls List > Create Call Link Button"
+  },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "Incoming",
     "description": "Calls Tab > Calls List > Call Item > Call Status > When call was accepted and was incoming"
@@ -7076,6 +7132,22 @@
     "messageformat": "Call link",
     "description": "On the Calls Tab, the subtitle text for a Call Link entry."
   },
+  "icu:CallsList__ItemCallInfo--Active": {
+    "messageformat": "Active",
+    "description": "On the Calls Tab, the subtitle text for an active call."
+  },
+  "icu:CallsList__LeaveCallDialogTitle": {
+    "messageformat": "Leave the current call?",
+    "description": "On the Calls Tab, when trying to join a different call when you're already in another one, this is the title of the confirmation dialog to leave the other call."
+  },
+  "icu:CallsList__LeaveCallDialogBody": {
+    "messageformat": "You must leave the current call before joining a new call.",
+    "description": "On the Calls Tab, when trying to join a different call when you're already in another one, this is the body of the confirmation dialog to leave the other call."
+  },
+  "icu:CallsList__LeaveCallDialogButton--leave": {
+    "messageformat": "Leave call",
+    "description": "On the Calls Tab, when trying to join a different call when you're already in another one, this is the button to confirm leaving the other call."
+  },
   "icu:CallsNewCall__EmptyState--noQuery": {
     "messageformat": "No recent conversations.",
     "description": "Calls Tab > New Call > Conversations List > When no results found > With no search query"
@@ -7083,6 +7155,14 @@
   "icu:CallsNewCall__EmptyState--hasQuery": {
     "messageformat": "No results for “{query}”",
     "description": "Calls Tab > New Call > Conversations List > When no results found > With a search query"
+  },
+  "icu:CallsNewCallButton--return": {
+    "messageformat": "Return",
+    "description": "Calls Tab button label for returning to the call you're currently in"
+  },
+  "icu:CallsNewCallButtonTooltip--in-another-call": {
+    "messageformat": "You must leave the current call before joining a new call",
+    "description": "Calls Tab button tooltip for the join call button when you are already in a different call."
   },
   "icu:CallHistory__Description--Default": {
     "messageformat": "{direction, select, Outgoing {Outgoing} other {Incoming}} {type, select, Audio {voice} Video {video} Group {group} other {}} call",
@@ -7103,6 +7183,42 @@
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Call link",
     "description": "Call History > Short description of call > When you joined a call link call"
+  },
+  "icu:CallLinkDetails__Join": {
+    "messageformat": "Join",
+    "description": "Call History > Call Link Details > Join Button"
+  },
+  "icu:CallLinkDetails__CopyLink": {
+    "messageformat": "Copy link",
+    "description": "Call History > Call Link Details > Copy Link Button"
+  },
+  "icu:CallLinkDetails__ShareLinkViaSignal": {
+    "messageformat": "Share link via Signal",
+    "description": "Call History > Call Link Details > Share Link via Signal Button"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Call link details",
+    "description": "Call Link Edit Modal > Title"
+  },
+  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
+    "messageformat": "Name",
+    "description": "Call Link Edit Modal > Name Input > Label (for screenreaders)"
+  },
+  "icu:CallLinkEditModal__JoinButtonLabel": {
+    "messageformat": "Join",
+    "description": "Call Link Edit Modal > Join Button > Label"
+  },
+  "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
+    "messageformat": "Approve all members",
+    "description": "Call Link Edit Modal > Approve All Members Checkbox > Label"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
+    "messageformat": "Off",
+    "description": "Call Link Edit Modal > Approve All Members Checkbox > Option > Off"
+  },
+  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
+    "messageformat": "On",
+    "description": "Call Link Edit Modal > Approve All Members Checkbox > Option > On"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {# other is} other {# others are}} typing.",
@@ -7154,5 +7270,25 @@
     "messageformat": "Small tweaks, bug fixes, and performance enhancements. Thanks for using Signal!",
     "description": "Release notes for releases that only include bug fixes",
     "ignoreUnused": true
+  },
+  "icu:WhatsNew__v7.12--0": {
+    "messageformat": "Raise your hand if you've been looking for another way to communicate during group calls. The new Raise Hand feature is a simple way to get someone's attention, ask a question, or unanimously vote for a group proposal when your friend asks \"all those in favor?\"",
+    "description": "(Deleted 2024/06/12) Release notes for version 7.12"
+  },
+  "icu:WhatsNew__v7.12--1": {
+    "messageformat": "We broke up with a bug in the crop tool, so now it's easier and more intuitive to cut your ex (or anything else) out of the picture.",
+    "description": "(Deleted 2024/06/12) Release notes for version 7.12"
+  },
+  "icu:WhatsNew__v7.12--2": {
+    "messageformat": "We modified the keyboard shortcut for sending a voice note to Ctrl/Cmd+Shift+Y so that it no longer conflicts with the \"Paste and Match Style\" shortcut on Windows and Linux.",
+    "description": "(Deleted 2024/06/12) Release notes for version 7.12"
+  },
+  "icu:WhatsNew__v7.13--0": {
+    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug.",
+    "description": "Release notes for version 7.13"
+  },
+  "icu:WhatsNew__v7.13--1": {
+    "messageformat": "This update also improves the display of quoted replies in RTL languages.",
+    "description": "Release notes for version 7.13"
   }
 }

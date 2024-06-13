@@ -26,6 +26,11 @@ import { SmartMessageRequestActionsConfirmation } from './MessageRequestActionsC
 import { getGlobalModalsState } from '../selectors/globalModals';
 import { SmartEditNicknameAndNoteModal } from './EditNicknameAndNoteModal';
 import { SmartNotePreviewModal } from './NotePreviewModal';
+import { SmartCallLinkEditModal } from './CallLinkEditModal';
+
+function renderCallLinkEditModal(): JSX.Element {
+  return <SmartCallLinkEditModal />;
+}
 
 function renderEditHistoryMessagesModal(): JSX.Element {
   return <SmartEditHistoryMessagesModal />;
@@ -90,7 +95,7 @@ export const SmartGlobalModalContainer = memo(
     const {
       aboutContactModalContactId,
       addUserToAnotherGroupModalContactId,
-      authArtCreatorData,
+      callLinkEditModalRoomId,
       contactModalState,
       deleteMessagesProps,
       editHistoryMessages,
@@ -99,7 +104,6 @@ export const SmartGlobalModalContainer = memo(
       forwardMessagesProps,
       messageRequestActionsConfirmationProps,
       notePreviewModalProps,
-      isAuthorizingArtCreator,
       isProfileEditorVisible,
       isShortcutGuideModalVisible,
       isSignalConnectionsVisible,
@@ -113,9 +117,7 @@ export const SmartGlobalModalContainer = memo(
     } = useSelector(getGlobalModalsState);
 
     const {
-      cancelAuthorizeArtCreator,
       closeErrorModal,
-      confirmAuthorizeArtCreator,
       hideUserNotFoundModal,
       hideWhatsNewModal,
       toggleSignalConnectionsModal,
@@ -172,6 +174,7 @@ export const SmartGlobalModalContainer = memo(
         addUserToAnotherGroupModalContactId={
           addUserToAnotherGroupModalContactId
         }
+        callLinkEditModalRoomId={callLinkEditModalRoomId}
         contactModalState={contactModalState}
         editHistoryMessages={editHistoryMessages}
         editNicknameAndNoteModalProps={editNicknameAndNoteModalProps}
@@ -194,6 +197,7 @@ export const SmartGlobalModalContainer = memo(
         isWhatsNewVisible={isWhatsNewVisible}
         renderAboutContactModal={renderAboutContactModal}
         renderAddUserToAnotherGroup={renderAddUserToAnotherGroup}
+        renderCallLinkEditModal={renderCallLinkEditModal}
         renderContactModal={renderContactModal}
         renderEditHistoryMessagesModal={renderEditHistoryMessagesModal}
         renderEditNicknameAndNoteModal={renderEditNicknameAndNoteModal}
@@ -218,10 +222,6 @@ export const SmartGlobalModalContainer = memo(
         toggleSignalConnectionsModal={toggleSignalConnectionsModal}
         userNotFoundModalState={userNotFoundModalState}
         usernameOnboardingState={usernameOnboardingState}
-        isAuthorizingArtCreator={isAuthorizingArtCreator}
-        authArtCreatorData={authArtCreatorData}
-        cancelAuthorizeArtCreator={cancelAuthorizeArtCreator}
-        confirmAuthorizeArtCreator={confirmAuthorizeArtCreator}
       />
     );
   }

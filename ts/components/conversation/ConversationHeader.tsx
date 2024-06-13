@@ -38,6 +38,7 @@ import {
   MessageRequestState,
 } from './MessageRequestActionsConfirmation';
 import type { MinimalConversation } from '../../hooks/useMinimalConversation';
+import { LocalDeleteWarningModal } from '../LocalDeleteWarningModal';
 
 function HeaderInfoTitle({
   name,
@@ -92,6 +93,8 @@ export type PropsDataType = {
   conversationName: ContactNameData;
   hasPanelShowing?: boolean;
   hasStories?: HasStories;
+  localDeleteWarningShown: boolean;
+  isDeleteSyncSendEnabled: boolean;
   isMissingMandatoryProfileSharing?: boolean;
   isSelectMode: boolean;
   isSignalConversation?: boolean;
@@ -102,6 +105,8 @@ export type PropsDataType = {
 };
 
 export type PropsActionsType = {
+  setLocalDeleteWarningShown: () => void;
+
   onConversationJumpToDate: (timestamp: number) => void;
   onConversationAccept: () => void;
   onConversationArchive: () => void;
@@ -148,10 +153,12 @@ export const ConversationHeader = memo(function ConversationHeader({
   hasPanelShowing,
   hasStories,
   i18n,
+  isDeleteSyncSendEnabled,
   isMissingMandatoryProfileSharing,
   isSelectMode,
   isSignalConversation,
   isSMSOnly,
+  localDeleteWarningShown,
   onConversationJumpToDate,
   onConversationAccept,
   onConversationArchive,
@@ -176,6 +183,7 @@ export const ConversationHeader = memo(function ConversationHeader({
   onViewRecentMedia,
   onViewUserStories,
   outgoingCallButtonStyle,
+  setLocalDeleteWarningShown,
   sharedGroupNames,
   theme,
 }: PropsType): JSX.Element | null {
@@ -225,13 +233,16 @@ export const ConversationHeader = memo(function ConversationHeader({
       {hasDeleteMessagesConfirmation && (
         <DeleteMessagesConfirmationDialog
           i18n={i18n}
-          onDestoryMessages={() => {
+          isDeleteSyncSendEnabled={isDeleteSyncSendEnabled}
+          localDeleteWarningShown={localDeleteWarningShown}
+          onDestroyMessages={() => {
             setHasDeleteMessagesConfirmation(false);
             onConversationDeleteMessages();
           }}
           onClose={() => {
             setHasDeleteMessagesConfirmation(false);
           }}
+          setLocalDeleteWarningShown={setLocalDeleteWarningShown}
         />
       )}
       {hasLeaveGroupConfirmation && (
@@ -963,14 +974,29 @@ function CannotLeaveGroupBecauseYouAreLastAdminAlert({
 }
 
 function DeleteMessagesConfirmationDialog({
+  isDeleteSyncSendEnabled,
   i18n,
-  onDestoryMessages,
+  localDeleteWarningShown,
+  onDestroyMessages,
   onClose,
+  setLocalDeleteWarningShown,
 }: {
+  isDeleteSyncSendEnabled: boolean;
   i18n: LocalizerType;
-  onDestoryMessages: () => void;
+  localDeleteWarningShown: boolean;
+  onDestroyMessages: () => void;
   onClose: () => void;
+  setLocalDeleteWarningShown: () => void;
 }) {
+  if (!localDeleteWarningShown && isDeleteSyncSendEnabled) {
+    return (
+      <LocalDeleteWarningModal
+        i18n={i18n}
+        onClose={setLocalDeleteWarningShown}
+      />
+    );
+  }
+
   return (
     <ConfirmationDialog
       dialogName="ConversationHeader.destroyMessages"
@@ -979,7 +1005,7 @@ function DeleteMessagesConfirmationDialog({
       )}
       actions={[
         {
-          action: onDestoryMessages,
+          action: onDestroyMessages,
           style: 'negative',
           text: i18n('icu:delete'),
         },
