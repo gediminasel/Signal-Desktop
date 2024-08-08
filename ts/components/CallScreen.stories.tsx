@@ -12,12 +12,12 @@ import type {
   GroupCallRemoteParticipantType,
 } from '../types/Calling';
 import {
-  CallMode,
   CallViewMode,
   CallState,
   GroupCallConnectionState,
   GroupCallJoinState,
 } from '../types/Calling';
+import { CallMode } from '../types/CallDisposition';
 import { generateAci } from '../types/ServiceId';
 import type { ConversationType } from '../state/ducks/conversations';
 import { AvatarColors } from '../types/Colors';
@@ -42,7 +42,7 @@ const i18n = setupI18n('en', enMessages);
 
 const conversation = getDefaultConversation({
   id: '3051234567',
-  avatarPath: undefined,
+  avatarUrl: undefined,
   color: AvatarColors[0],
   title: 'Rick Sanchez',
   name: 'Rick Sanchez',
@@ -92,7 +92,7 @@ const createActiveDirectCallProp = (
       hasRemoteVideo: boolean;
       presenting: boolean;
       title: string;
-    }
+    },
   ],
 });
 
@@ -185,6 +185,7 @@ const createProps = (
 ): PropsType => ({
   activeCall: createActiveCallProp(overrideProps),
   approveUser: action('approve-user'),
+  batchUserAction: action('batch-user-action'),
   changeCallView: action('change-call-view'),
   denyUser: action('deny-user'),
   getGroupCallVideoFrameSource: fakeGetGroupCallVideoFrameSource,

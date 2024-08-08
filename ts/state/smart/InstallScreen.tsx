@@ -21,6 +21,7 @@ import {
   InstallScreenStep,
 } from '../../components/InstallScreen';
 import { InstallError } from '../../components/installScreen/InstallScreenErrorStep';
+import { LoadError } from '../../components/installScreen/InstallScreenQrCodeNotScannedStep';
 import { MAX_DEVICE_NAME_LENGTH } from '../../components/installScreen/InstallScreenChoosingDeviceNameStep';
 import { WidthBreakpoint } from '../../components/_util';
 import { HTTPError } from '../../textsecure/Errors';
@@ -44,7 +45,7 @@ type StateType =
     }
   | {
       step: InstallScreenStep.QrCodeNotScanned;
-      provisioningUrl: Loadable<string>;
+      provisioningUrl: Loadable<string, LoadError>;
     }
   | {
       step: InstallScreenStep.ChoosingDeviceName;
@@ -67,25 +68,33 @@ const qrCodeBackOff = new BackOff([
   60 * SECOND,
 ]);
 
-function getInstallError(err: unknown): InstallError {
+function classifyError(
+  err: unknown
+): { installError: InstallError } | { loadError: LoadError } {
   if (err instanceof HTTPError) {
     switch (err.code) {
       case -1:
-        return InstallError.ConnectionFailed;
+        if (
+          isRecord(err.cause) &&
+          err.cause.code === 'SELF_SIGNED_CERT_IN_CHAIN'
+        ) {
+          return { loadError: LoadError.NetworkIssue };
+        }
+        return { installError: InstallError.ConnectionFailed };
       case 409:
-        return InstallError.TooOld;
+        return { installError: InstallError.TooOld };
       case 411:
-        return InstallError.TooManyDevices;
+        return { installError: InstallError.TooManyDevices };
       default:
-        return InstallError.UnknownError;
+        return { loadError: LoadError.Unknown };
     }
   }
   // AccountManager.registerSecondDevice uses this specific "websocket closed" error
   //   message.
   if (isRecord(err) && err.message === 'websocket closed') {
-    return InstallError.ConnectionFailed;
+    return { installError: InstallError.ConnectionFailed };
   }
-  return InstallError.UnknownError;
+  return { loadError: LoadError.Unknown };
 }
 
 export const SmartInstallScreen = memo(function SmartInstallScreen() {
@@ -95,9 +104,8 @@ export const SmartInstallScreen = memo(function SmartInstallScreen() {
   const hasExpired = useSelector(hasExpiredSelector);
 
   const chooseDeviceNamePromiseWrapperRef = useRef(explodePromise<string>());
-  const chooseBackupFilePromiseWrapperRef = useRef(
-    explodePromise<File | undefined>()
-  );
+  const chooseBackupFilePromiseWrapperRef =
+    useRef(explodePromise<File | undefined>());
 
   const [state, setState] = useState<StateType>(INITIAL_STATE);
   const [retryCounter, setRetryCounter] = useState(0);
@@ -214,8 +222,8 @@ export const SmartInstallScreen = memo(function SmartInstallScreen() {
         ({ deviceName, backupData: backupFileData } = window.SignalCI);
       } else {
         deviceName = await chooseDeviceNamePromiseWrapperRef.current.promise;
-        const backupFile = await chooseBackupFilePromiseWrapperRef.current
-          .promise;
+        const backupFile =
+          await chooseBackupFilePromiseWrapperRef.current.promise;
 
         backupFileData = backupFile ? await fileToBytes(backupFile) : undefined;
       }
@@ -255,8 +263,13 @@ export const SmartInstallScreen = memo(function SmartInstallScreen() {
         );
         const sleepMs = qrCodeBackOff.getAndIncrement();
         log.info(`InstallScreen/getQRCode: race to ${sleepMs}ms`);
-        await pTimeout(qrCodeResolution.promise, sleepMs, sleepError);
-        await qrCodePromise;
+        await Promise.all([
+          pTimeout(qrCodeResolution.promise, sleepMs, sleepError),
+
+          // Note that `registerSecondDevice` resolves once the registration
+          // is fully complete and thus should not be subjected to a timeout.
+          qrCodePromise,
+        ]);
 
         window.IPC.removeSetupMenuItems();
       } catch (error) {
@@ -280,12 +293,26 @@ export const SmartInstallScreen = memo(function SmartInstallScreen() {
         if (error === sleepError) {
           setState({
             step: InstallScreenStep.QrCodeNotScanned,
-            provisioningUrl: { loadingState: LoadingState.LoadFailed, error },
+            provisioningUrl: {
+              loadingState: LoadingState.LoadFailed,
+              error: LoadError.Timeout,
+            },
+          });
+          return;
+        }
+        const classifiedError = classifyError(error);
+        if ('installError' in classifiedError) {
+          setState({
+            step: InstallScreenStep.Error,
+            error: classifiedError.installError,
           });
         } else {
           setState({
-            step: InstallScreenStep.Error,
-            error: getInstallError(error),
+            step: InstallScreenStep.QrCodeNotScanned,
+            provisioningUrl: {
+              loadingState: LoadingState.LoadFailed,
+              error: classifiedError.loadError,
+            },
           });
         }
       }

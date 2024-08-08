@@ -6,6 +6,7 @@ import { throttle } from 'lodash';
 import LRU from 'lru-cache';
 import type { MessageAttributesType } from '../model-types.d';
 import type { MessageModel } from '../models/messages';
+import { DataReader, DataWriter } from '../sql/Client';
 import * as Errors from '../types/errors';
 import * as log from '../logging/log';
 import { getEnvironment, Environment } from '../environment';
@@ -152,9 +153,8 @@ export class MessageCache {
 
     let messageAttributesFromDatabase: MessageAttributesType | undefined;
     try {
-      messageAttributesFromDatabase = await window.Signal.Data.getMessageById(
-        messageId
-      );
+      messageAttributesFromDatabase =
+        await DataReader.getMessageById(messageId);
     } catch (err: unknown) {
       log.error(
         `MessageCache.resolveAttributes(${messageId}): db error ${Errors.toLogFormat(
@@ -260,7 +260,7 @@ export class MessageCache {
       return;
     }
 
-    return window.Signal.Data.saveMessage(nextMessageAttributes, {
+    return DataWriter.saveMessage(nextMessageAttributes, {
       ourAci: window.textsecure.storage.user.getCheckedAci(),
     });
   }

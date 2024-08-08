@@ -4,10 +4,11 @@
 import { isNumber, pick } from 'lodash';
 
 import type { ConversationAttributesType } from '../model-types.d';
+import { DataWriter } from '../sql/Client';
 import { hasErrors } from '../state/selectors/message';
 import { readSyncJobQueue } from '../jobs/readSyncJobQueue';
 import { notificationService } from '../services/notifications';
-import { expiringMessagesDeletionService } from '../services/expiringMessagesDeletion';
+import { update as updateExpiringMessagesService } from '../services/expiringMessagesDeletion';
 import { tapToViewMessagesDeletionService } from '../services/tapToViewMessagesDeletionService';
 import { isGroup, isDirectConversation } from './whatTypeOfConversation';
 import * as log from '../logging/log';
@@ -40,17 +41,17 @@ export async function markConversationRead(
 
   const [unreadMessages, unreadEditedMessages, unreadReactions] =
     await Promise.all([
-      window.Signal.Data.getUnreadByConversationAndMarkRead({
+      DataWriter.getUnreadByConversationAndMarkRead({
         conversationId,
         newestUnreadAt,
         readAt: options.readAt,
         includeStoryReplies: !isGroup(conversationAttrs),
       }),
-      window.Signal.Data.getUnreadEditedMessagesAndMarkRead({
+      DataWriter.getUnreadEditedMessagesAndMarkRead({
         conversationId,
         newestUnreadAt,
       }),
-      window.Signal.Data.getUnreadReactionsAndMarkRead({
+      DataWriter.getUnreadReactionsAndMarkRead({
         conversationId,
         newestUnreadAt,
       }),
@@ -107,7 +108,14 @@ export async function markConversationRead(
       );
       // we update the in-memory MessageModel with fresh read/seen status
       if (message) {
-        message.set(pick(messageSyncData, 'readStatus', 'seenStatus'));
+        message.set(
+          pick(
+            messageSyncData,
+            'readStatus',
+            'seenStatus',
+            'expirationStartTimestamp'
+          )
+        );
       }
 
       const {
@@ -196,7 +204,7 @@ export async function markConversationRead(
     }
   }
 
-  void expiringMessagesDeletionService.update();
+  void updateExpiringMessagesService();
   void tapToViewMessagesDeletionService.update();
 
   return true;

@@ -20,14 +20,15 @@ import type {
 } from '../types/Calling';
 import {
   CallEndedReason,
-  CallMode,
   CallState,
   GroupCallConnectionState,
   GroupCallJoinState,
 } from '../types/Calling';
+import { CallMode } from '../types/CallDisposition';
 import type { ConversationType } from '../state/ducks/conversations';
 import type {
   AcceptCallType,
+  BatchUserActionPayloadType,
   CancelCallType,
   DeclineCallType,
   GroupCallParticipantInfoType,
@@ -96,10 +97,12 @@ export type PropsType = {
   renderReactionPicker: (
     props: React.ComponentProps<typeof SmartReactionPicker>
   ) => JSX.Element;
+  showContactModal: (contactId: string, conversationId?: string) => void;
   startCall: (payload: StartCallType) => void;
   toggleParticipants: () => void;
   acceptCall: (_: AcceptCallType) => void;
   approveUser: (payload: PendingUserActionPayloadType) => void;
+  batchUserAction: (payload: BatchUserActionPayloadType) => void;
   bounceAppIconStart: () => unknown;
   bounceAppIconStop: () => unknown;
   declineCall: (_: DeclineCallType) => void;
@@ -116,6 +119,7 @@ export type PropsType = {
   openSystemPreferencesAction: () => unknown;
   playRingtone: () => unknown;
   removeClient: (payload: RemoveClientType) => void;
+  blockClient: (payload: RemoveClientType) => void;
   sendGroupCallRaiseHand: (payload: SendGroupCallRaiseHandType) => void;
   sendGroupCallReaction: (payload: SendGroupCallReactionType) => void;
   setGroupCallVideoRequest: (_: SetGroupCallVideoRequestType) => void;
@@ -126,6 +130,10 @@ export type PropsType = {
   setOutgoingRing: (_: boolean) => void;
   setPresenting: (_?: PresentedSource) => void;
   setRendererCanvas: (_: SetRendererCanvasType) => void;
+  showShareCallLinkViaSignal: (
+    callLink: CallLinkType,
+    i18n: LocalizerType
+  ) => void;
   stopRingtone: () => unknown;
   switchToPresentationView: () => void;
   switchFromPresentationView: () => void;
@@ -158,6 +166,8 @@ function ActiveCallManager({
   activeCall,
   approveUser,
   availableCameras,
+  batchUserAction,
+  blockClient,
   callLink,
   cancelCall,
   changeCallView,
@@ -184,6 +194,8 @@ function ActiveCallManager({
   setPresenting,
   setRendererCanvas,
   setOutgoingRing,
+  showContactModal,
+  showShareCallLinkViaSignal,
   startCall,
   switchToPresentationView,
   switchFromPresentationView,
@@ -266,6 +278,15 @@ function ActiveCallManager({
       await copyCallLink(link);
     }
   }, [callLink]);
+
+  const handleShareCallLinkViaSignal = useCallback(() => {
+    if (!callLink) {
+      log.error('Missing call link');
+      return;
+    }
+
+    showShareCallLinkViaSignal(callLink, i18n);
+  }, [callLink, i18n, showShareCallLinkViaSignal]);
 
   let isCallFull: boolean;
   let showCallLobby: boolean;
@@ -375,18 +396,24 @@ function ActiveCallManager({
               callLink={callLink}
               i18n={i18n}
               isCallLinkAdmin={isCallLinkAdmin}
+              isUnknownContactDiscrete={false}
               ourServiceId={me.serviceId}
               participants={peekedParticipants}
               onClose={toggleParticipants}
               onCopyCallLink={onCopyCallLink}
+              onShareCallLinkViaSignal={handleShareCallLinkViaSignal}
               removeClient={removeClient}
+              blockClient={blockClient}
+              showContactModal={showContactModal}
             />
           ) : (
             <CallingParticipantsList
+              conversationId={conversation.id}
               i18n={i18n}
               onClose={toggleParticipants}
               ourServiceId={me.serviceId}
               participants={peekedParticipants}
+              showContactModal={showContactModal}
             />
           ))}
       </>
@@ -422,6 +449,7 @@ function ActiveCallManager({
       <CallScreen
         activeCall={activeCall}
         approveUser={approveUser}
+        batchUserAction={batchUserAction}
         changeCallView={changeCallView}
         denyUser={denyUser}
         getPresentingSources={getPresentingSources}
@@ -468,18 +496,24 @@ function ActiveCallManager({
             callLink={callLink}
             i18n={i18n}
             isCallLinkAdmin={isCallLinkAdmin}
+            isUnknownContactDiscrete
             ourServiceId={me.serviceId}
             participants={groupCallParticipantsForParticipantsList}
             onClose={toggleParticipants}
             onCopyCallLink={onCopyCallLink}
+            onShareCallLinkViaSignal={handleShareCallLinkViaSignal}
             removeClient={removeClient}
+            blockClient={blockClient}
+            showContactModal={showContactModal}
           />
         ) : (
           <CallingParticipantsList
+            conversationId={conversation.id}
             i18n={i18n}
             onClose={toggleParticipants}
             ourServiceId={me.serviceId}
             participants={groupCallParticipantsForParticipantsList}
+            showContactModal={showContactModal}
           />
         ))}
     </>
@@ -491,6 +525,8 @@ export function CallManager({
   activeCall,
   approveUser,
   availableCameras,
+  batchUserAction,
+  blockClient,
   bounceAppIconStart,
   bounceAppIconStop,
   callLink,
@@ -527,6 +563,8 @@ export function CallManager({
   setOutgoingRing,
   setPresenting,
   setRendererCanvas,
+  showContactModal,
+  showShareCallLinkViaSignal,
   startCall,
   stopRingtone,
   switchFromPresentationView,
@@ -587,6 +625,8 @@ export function CallManager({
           activeCall={activeCall}
           availableCameras={availableCameras}
           approveUser={approveUser}
+          batchUserAction={batchUserAction}
+          blockClient={blockClient}
           callLink={callLink}
           cancelCall={cancelCall}
           changeCallView={changeCallView}
@@ -616,6 +656,8 @@ export function CallManager({
           setOutgoingRing={setOutgoingRing}
           setPresenting={setPresenting}
           setRendererCanvas={setRendererCanvas}
+          showContactModal={showContactModal}
+          showShareCallLinkViaSignal={showShareCallLinkViaSignal}
           startCall={startCall}
           switchFromPresentationView={switchFromPresentationView}
           switchToPresentationView={switchToPresentationView}

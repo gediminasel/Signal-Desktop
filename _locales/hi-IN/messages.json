@@ -80,6 +80,18 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "आपके डेटाबेस का वर्ज़न सिग्नल के इस वर्ज़न से मेल नहीं खाता है। सुनिश्चित करें कि आप अपने कंप्यूटर पर सिग्नल का सबसे नया वर्ज़न खोल रहे हैं।"
   },
+  "icu:databaseError__recover__detail": {
+    "messageformat": "कोई डेटाबेस त्रुटि हुई है। आप त्रुटि को कॉपी कर सकते हैं और समस्या को ठीक करने में मदद के लिए Signal समर्थन्ट से संपर्क कर सकते हैं। यदि आपको बिल्कुल अभी सिग्नल का उपयोग करने की जरूरत है, तो आप अपना डेटा पुनर्प्राप्त करने का प्रयास कर सकते हैं।\n\nयहां जाकर सपोर्ट से संपर्क करें: {link}"
+  },
+  "icu:databaseError__recover__button": {
+    "messageformat": "डेटा पुनर्प्राप्त करें"
+  },
+  "icu:databaseError__safeStorageBackendChange": {
+    "messageformat": "डेटाबेस एनक्रिप्शन की ऐक्सेस नहीं कर पाए, क्योंकि OS एनक्रिप्शन कीरिंग बैंकएंड {previousBackend} से बदलकर {currentBackend} हो गया है। ऐसा तब हो सकता है, जब डेस्कटॉप एनवायरनमेंट बदलता है, जैसे कि GNOME और KDE के बीच।\n\nकृपया पिछले डेस्कटॉप एनवायरनमेंट पर स्विच करें।"
+  },
+  "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
+    "messageformat": "डेटाबेस एनक्रिप्शन की ऐक्सेस नहीं कर पाए, क्योंकि OS एनक्रिप्शन कीरिंग बैंकएंड {previousBackend} से बदलकर {currentBackend} हो गया है। ऐसा तब हो सकता है, जब डेस्कटॉप एनवायरनमेंट बदलता है, जैसे कि GNOME और KDE के बीच।\n\nकृपया पिछले डेस्कटॉप एनवायरनमेंट पर स्विच करें या फिर कमांड लाइन फ़्लैग के साथ Signal चलाने की कोशिश करें --password-store=\"{previousBackendFlag}\""
+  },
   "icu:mainMenuFile": {
     "messageformat": "&File"
   },
@@ -818,8 +830,14 @@
   "icu:cannotUpdateDetail": {
     "messageformat": "Signal अपडेट नहीं हो सका। {retry} या उसे मैनुअल तरीके से इंस्टॉल करने के लिए {url} पर विज़िट करें। फिर इस समस्या के बारे में {support}"
   },
+  "icu:cannotUpdateDetail-v2": {
+    "messageformat": "Signal अपेडट नहीं हो सका। <retryUpdateButton>फिर से अपडेट</retryUpdateButton> करने की कोशिश करें या इसे मैन्युअल तरीके से इंस्टॉल करने के लिए {url} पर जाएँ। फिर, इस समस्या के बारे में <contactSupportLink>सपोर्ट से संपर्क करें</contactSupportLink>"
+  },
   "icu:cannotUpdateRequireManualDetail": {
     "messageformat": "Signal अपडेट नहीं हो सका। उसे मैनुअल तरीके से इंस्टॉल करने के लिए {url} पर विज़िट करें। फिर इस समस्या के बारे में {support}"
+  },
+  "icu:cannotUpdateRequireManualDetail-v2": {
+    "messageformat": "Signal अपेडट नहीं हो सका। इसे मैन्युअल तरीके से इंस्टॉल करने के लिए {url} पर जाएँ। फिर, इस समस्या के बारे में <contactSupportLink>सपोर्ट से संपर्क करें</contactSupportLink>"
   },
   "icu:readOnlyVolume": {
     "messageformat": "Signal Desktop संभव रूप से macOS क्वारंटाइन में है, और ऑटो-अपडेट होने के योग्य नहीं है। कृपया फाइंडर के साथ  को {app}से {folder} में मूव करने का प्रयास करें।"
@@ -989,6 +1007,9 @@
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
     "messageformat": "इस चैट के सभी संदेश इस डिवाइस से डिलीट कर दिए जाएंगे। संदेश डिलीट करने के बाद भी आप इस चैट को खोज सकते हैं।"
   },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
+    "messageformat": "इस चैट के सभी संदेश आपके सभी डिवाइस से डिलीट कर दिए जाएंगे। संदेश डिलीट करने के बाद भी आप इस चैट को खोज सकते हैं।"
+  },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "समूह छोड़ दें"
   },
@@ -1110,10 +1131,22 @@
     "messageformat": "सेटिंग्स"
   },
   "icu:Install__instructions__3": {
-    "messageformat": "{plusButton} (ऐंड्रॉयड) या {linkNewDevice} (iPhone) पर टैप करें"
+    "messageformat": "{linkNewDevice} पर टैप करें"
   },
-  "icu:Install__qr-failed-load": {
-    "messageformat": "QR कोड लोड नहीं हो सका। अपना इंटरनेट जाँचें और फिर से कोशिश करें। दोबारा कोशिश करें"
+  "icu:Install__qr-failed-load__error--timeout": {
+    "messageformat": "QR कोड लोड नहीं हो सका। अपना कनेक्शन जाँचें और फिर से प्रयास करें।"
+  },
+  "icu:Install__qr-failed-load__error--unknown": {
+    "messageformat": "<paragraph>एक अनपेक्षित त्रुटि हुई।</paragraph><paragraph>कृपया फिर से प्रयास करें।</paragraph>"
+  },
+  "icu:Install__qr-failed-load__error--network": {
+    "messageformat": "Signal आपके वर्तमान नेटवर्क का उपयोग करके इस डिवाइस को लिंक नहीं कर सकता।"
+  },
+  "icu:Install__qr-failed-load__retry": {
+    "messageformat": "दोबारा कोशिश करें"
+  },
+  "icu:Install__qr-failed-load__get-help": {
+    "messageformat": "मदद पाएँ"
   },
   "icu:Install__support-link": {
     "messageformat": "मदद चाहिए?"
@@ -1286,8 +1319,35 @@
   "icu:CallingPendingParticipants__DenyUser": {
     "messageformat": "जुड़ने के अनुरोध को अस्वीकार करें"
   },
+  "icu:CallingPendingParticipants__ApproveAll": {
+    "messageformat": "सभी को स्वीकार करें"
+  },
+  "icu:CallingPendingParticipants__DenyAll": {
+    "messageformat": "सभी को अस्वीकार करें"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--ApproveAll": {
+    "messageformat": "{count, plural, one {{count,number} अनुरोध को स्वीकार करें ?} other {{count,number} अनुरोधों को स्वीकार करें ?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--DenyAll": {
+    "messageformat": "{count, plural, one {{count,number} अनुरोध को अस्वीकार करें?} other {{count,number} अनुरोधों को अस्वीकार करें?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--ApproveAll": {
+    "messageformat": "{count, plural, one {{count,number} व्यक्ति को कॉल में जोड़ा जाएगा।} other {{count,number} लोग को कॉल में जोड़ा जाएगा।}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--DenyAll": {
+    "messageformat": "{count, plural, one {{count,number} व्यक्ति को कॉल में नहीं जोड़ा जाएगा।} other {{count,number} व्यक्ति को कॉल में नहीं जोड़ा जाएगा।}}"
+  },
   "icu:CallingPendingParticipants__RequestsToJoin": {
     "messageformat": "{count, plural, one {{count,number} कॉल में जुड़नेे का अनुरोध} other {{count,number} कॉल में जुड़ने का अनुरोध}}"
+  },
+  "icu:CallingPendingParticipants__WouldLikeToJoin": {
+    "messageformat": "जुड़ना चाहेंगे..."
+  },
+  "icu:CallingPendingParticipants__AdditionalRequests": {
+    "messageformat": "{count, plural, one {+{count,number} अनुरोध} other {+{count,number} अनुरोध}}"
+  },
+  "icu:CallingPendingParticipants__Toast--added-users-to-call": {
+    "messageformat": "{count, plural, one {{count,number} व्यक्ति को कॉल में जोड़ा गया} other {{count,number} लोगों को कॉल में जोड़ा गया}}"
   },
   "icu:CallingRaisedHandsList__Title": {
     "messageformat": "{count, plural, one {{count,number} ने हाथ उठाया} other {{count,number} ने हाथ उठाए}}"
@@ -1352,8 +1412,14 @@
   "icu:calling__you-have-blocked": {
     "messageformat": "आपने {name} को ब्लॉक कर दिया है"
   },
+  "icu:calling__blocked-participant": {
+    "messageformat": "{name} ब्लॉक किया गया है"
+  },
+  "icu:calling__block-info-title": {
+    "messageformat": "{name} ब्लॉक किया गया है"
+  },
   "icu:calling__block-info": {
-    "messageformat": "न ही आपको उनकी वॉयस या वीडियो मिलेंगे, न ही उन्हें आपके।"
+    "messageformat": "आपको उनके ऑडियो या वीडियो प्राप्त नहीं होंगे और उन्हें आपके नहीं।"
   },
   "icu:calling__missing-media-keys": {
     "messageformat": "{name} से ऑडियो और वीडियो नहीं प्राप्त की जा सकती"
@@ -2372,15 +2438,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "चैट को अपठित के रूप में चिह्नित किया गया"
   },
-  "icu:AuthArtCreator--dialog--message": {
-    "messageformat": "क्या आप Signal स्टीकर पैक क्रिएटर खोलना चाहते हैं?"
-  },
-  "icu:AuthArtCreator--dialog--confirm": {
-    "messageformat": "पुष्टि करें"
-  },
-  "icu:AuthArtCreator--dialog--dismiss": {
-    "messageformat": "हटाएँ"
-  },
   "icu:ArtCreator--Authentication--error": {
     "messageformat": "स्टिकर पैक क्रिएटर का उपयोग करने के लिए कृपया अपने फोन और डेस्कटॉप पर Signal को सेट अप करें"
   },
@@ -2577,10 +2634,10 @@
     "messageformat": "रद्द करें"
   },
   "icu:declinedIncomingAudioCall": {
-    "messageformat": "आपने एक वॉयस कॉल काट दी"
+    "messageformat": "अस्वीकृत वॉयस कॉल"
   },
   "icu:declinedIncomingVideoCall": {
-    "messageformat": "आपने एक वीडियो कॉल काट दी"
+    "messageformat": "अस्वीकृत वीडियो कॉल"
   },
   "icu:acceptedIncomingAudioCall": {
     "messageformat": "इनकमिंग वॉयस कॉल"
@@ -2613,10 +2670,10 @@
     "messageformat": "नोटिफ़िकेशन क्षेत्र में Signal चलता रहेगा। आप इसे Signal की सेटिंग्स में बदल सकते हैं।"
   },
   "icu:incomingAudioCall": {
-    "messageformat": "वॉयस कॉल आ रही है…"
+    "messageformat": "इनकमिंग वॉयस कॉल"
   },
   "icu:incomingVideoCall": {
-    "messageformat": "वीडियो कॉल आ रही है..."
+    "messageformat": "वीडियो कॉल आ रही है"
   },
   "icu:outgoingAudioCall": {
     "messageformat": "आउटगोइंग वॉयस कॉल"
@@ -2661,7 +2718,7 @@
     "messageformat": "{count, plural, one {{count,number} व्यक्ति} other {{count,number} लोग}}"
   },
   "icu:CallControls__InfoDisplay--audio-call": {
-    "messageformat": "ऑडियो कॉल"
+    "messageformat": "वॉयस कॉल"
   },
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "कॉल लिंक"
@@ -2688,13 +2745,13 @@
     "messageformat": "रिंगिंग बंद"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "You raised a hand."
+    "messageformat": "आपने अपना हाथ उठाया है।"
   },
   "icu:CallControls__RaiseHandsToast--you-and-one": {
-    "messageformat": "You and {otherName} raised a hand."
+    "messageformat": "आपने और {otherName} ने हाथ उठाया।"
   },
   "icu:CallControls__RaiseHandsToast--you-and-more": {
-    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
+    "messageformat": "{overflowCount, plural, one {आपने, {otherName}, और {overflowCount,number} ने हाथ उठाया।} other {आपने, {otherName}, और {overflowCount,number} और ने हाथ उठाए।}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} ने हाथ उठाया।"
@@ -2724,16 +2781,16 @@
     "messageformat": "{people, plural, one {कॉल में {people,number}} other {कॉल में {people,number}}}"
   },
   "icu:calling__call-notification__ended": {
-    "messageformat": "ग्रुप कॉल समाप्त हो गई है"
+    "messageformat": "वीडियो कॉल समाप्त हो गई है"
   },
   "icu:calling__call-notification__started-by-someone": {
-    "messageformat": "एक ग्रुप कॉल शुरू की गई थी"
+    "messageformat": "एक वीडियो कॉल शुरू की गई"
   },
   "icu:calling__call-notification__started-by-you": {
-    "messageformat": "आपने एक ग्रुप कॉल शुरू की"
+    "messageformat": "आपने वीडियो कॉल शुरू की"
   },
   "icu:calling__call-notification__started": {
-    "messageformat": "{name} ने एक ग्रुप कॉल शुरू की"
+    "messageformat": "{name} ने वीडियो कॉल शुरू की"
   },
   "icu:calling__in-another-call-tooltip": {
     "messageformat": "आप पहले ही एक कॉल में हैं"
@@ -2780,26 +2837,41 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "एक विंडो"
   },
+  "icu:calling__ParticipantInfoButton": {
+    "messageformat": "इस संपर्क के बारे में और जानकारी"
+  },
   "icu:CallingAdhocCallInfo__CopyLink": {
     "messageformat": "कॉल लिंक कॉपी करें"
+  },
+  "icu:CallingAdhocCallInfo__ShareViaSignal": {
+    "messageformat": "Signal के माध्यम से कॉल लिंक शेयर करें"
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "इस व्यक्ति को कॉल से हटाएँ"
   },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogBody": {
+    "messageformat": "{name} को कॉल से हटाएँ?"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--remove": {
+    "messageformat": "हटा दें"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--block": {
+    "messageformat": "कॉल से ब्लॉक करें"
+  },
   "icu:CallingAdhocCallInfo__UnknownContactLabel": {
-    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+    "messageformat": "{count, plural, one {{count,number} व्यक्ति} other {{count,number} लोग}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
-    "messageformat": "+{count,number} more"
+    "messageformat": "{count, plural, one {+{count,number} और} other {+{count,number} और}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
-    "messageformat": "More info about new contacts"
+    "messageformat": "नए संपर्कों के बारे में और जानकारी"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
-    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+    "messageformat": "किसी कॉल में शामिल होने से पहले आप केवल फ़ोन संपर्कों के नाम, उन लोगों के नाम देख सकते हैं जिनके साथ आप किसी समूह में हैं, या उन लोगों के नाम देख सकते हैं जिनके साथ आपने 1:1 चैट की है। कॉल में शामिल होने के बाद आपको सभी नाम और फ़ोटो दिखाई देंगे।"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
-    "messageformat": "Got it"
+    "messageformat": "समझ गया"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "वीडियो"
@@ -3512,6 +3584,9 @@
   "icu:ContactModal--remove-from-group": {
     "messageformat": "ग्रूप से हटाएँ"
   },
+  "icu:ContactModal--already-in-call": {
+    "messageformat": "आप पहले ही एक कॉल में हैं"
+  },
   "icu:showChatColorEditor": {
     "messageformat": "चैट का रंग"
   },
@@ -3780,7 +3855,7 @@
     "messageformat": "{count, plural, one {आप यह संदेश को किन उपकरणों से डिलीट करना चाहेंगे?} other {आप ये संदेश को किन उपकरणों से डिलीट करना चाहेंगे?}}"
   },
   "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
-    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+    "messageformat": "{count, plural, one {यह संदेश आपके सभी डिवाइस से डिलीट कर दिया जाएगा।} other {ये संदेश आपके सभी डिवाइस से डिलीट कर दिए जाएंगे।}}"
   },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "मेरे लिये डिलीट करें"
@@ -3795,7 +3870,7 @@
     "messageformat": "सभी उपकरणों से डिलीट करें"
   },
   "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
-    "messageformat": "Delete"
+    "messageformat": "डिलीट करें"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {आप सभी के लिए डिलीट करें के लिए केवल {count,number} संदेश तक का चयन कर सकते हैं} other {आप सभी के लिए डिलीट करें के लिए केवल {count,number} संदेश तक का चयन कर सकते हैं}}"
@@ -4196,11 +4271,11 @@
   "icu:ProfileEditor--username--check-starting-character": {
     "messageformat": "यूज़रनेम एक संख्या से शुरू नहीं हो सकते हैं।"
   },
-  "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Usernames must have at least {min,number} characters."
+  "icu:ProfileEditor--username--check-character-min-plural": {
+    "messageformat": "{min, plural, one {यूज़रनेम कम से कम {min,number} वर्ण से शुरू होने चाहिए} other {यूज़रनेम कम से कम {min,number} वर्णों से शुरू होने चाहिए}}"
   },
-  "icu:ProfileEditor--username--check-character-max": {
-    "messageformat": "यूज़रनेम में अधिकतम {max,number} कैरेक्टर होने चाहिए."
+  "icu:ProfileEditor--username--check-character-max-plural": {
+    "messageformat": "{max, plural, one {यूज़रनेम में अधिकतम {max,number} कैरेक्टर होने चाहिए।} other {यूज़रनेम में अधिकतम {max,number} कैरेक्टर होने चाहिए।}}"
   },
   "icu:ProfileEditor--username--check-discriminator-min": {
     "messageformat": "अमान्य यूज़रनेम, न्यूनतम 2 अंक दर्ज करें।"
@@ -4240,9 +4315,6 @@
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
     "messageformat": "डिलीट करें"
-  },
-  "icu:ProfileEditor--username--delete-unavailable-notice": {
-    "messageformat": "अपना यूज़रनेम डिलीट करने के लिए, अपने फ़ोन पर Signal खोलें और सेटिंग्स > प्रोफ़ाइल पर जाएँ।"
   },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "यूज़रनेम कॉपी या डिलीट करें"
@@ -4749,13 +4821,13 @@
     "messageformat": "आपके कनेक्शन आपका नाम और फ़ोटो देख सकते हैं, और तब तक \"मेरी स्टोरी\" के पोस्ट देख सकते हैं जब तक कि आप उन पोस्ट को अपने कनेक्शंस से छिपा न दें"
   },
   "icu:LocalDeleteWarningModal__header": {
-    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+    "messageformat": "डिलीट करना आपके सभी डिवाइस पर सिंक किया जाता है"
   },
   "icu:LocalDeleteWarningModal__description": {
-    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+    "messageformat": "जब आप संदेश या चैट हटाते हैं, तो वे आपके सभी डिवाइस से डिलीट कर दिए जाएंगे।"
   },
   "icu:LocalDeleteWarningModal__confirm": {
-    "messageformat": "Got it"
+    "messageformat": "समझ गया"
   },
   "icu:Stories__title": {
     "messageformat": "स्टोरीज़"
@@ -5350,7 +5422,7 @@
     "messageformat": "“{query}” के लिए कोई परिणाम नहीं"
   },
   "icu:CallsList__CreateCallLink": {
-    "messageformat": "Create a Call Link"
+    "messageformat": "कॉल लिंक बनाएं"
   },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "इनकमिंग"
@@ -5360,6 +5432,9 @@
   },
   "icu:CallsList__ItemCallInfo--Missed": {
     "messageformat": "मिस्ड"
+  },
+  "icu:CallsList__ItemCallInfo--Declined": {
+    "messageformat": "अस्वीकार किया गया"
   },
   "icu:CallsList__ItemCallInfo--GroupCall": {
     "messageformat": "ग्रुप कॉल"
@@ -5374,7 +5449,7 @@
     "messageformat": "मौज़ूदा कॉल छोड़ें?"
   },
   "icu:CallsList__LeaveCallDialogBody": {
-    "messageformat": "नई कॉल में शामिल होने से पहले आपको चल रहे कॉल को छोड़ना पड़ेगा।"
+    "messageformat": "नए कॉल को शुरू करने या उसमें शामिल होने के लिए, आपको मौजूदा कॉल को छोड़ना होगा।"
   },
   "icu:CallsList__LeaveCallDialogButton--leave": {
     "messageformat": "कॉल छोड़ें"
@@ -5406,8 +5481,29 @@
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "कॉल लिंक"
   },
+  "icu:CallHistory__DescriptionVideoCall--Default": {
+    "messageformat": "{direction, select, Outgoing {वीडियो कॉल की जा रही है} other {वीडियो कॉल आ रही है}}"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Missed": {
+    "messageformat": "मिस हुई वीडियो कॉल"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Unanswered": {
+    "messageformat": "वीडियो कॉल जो उठाई नहीं गई"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Declined": {
+    "messageformat": "अस्वीकृत वीडियो कॉल"
+  },
   "icu:CallLinkDetails__Join": {
     "messageformat": "जुड़ें"
+  },
+  "icu:CallLinkDetails__AddCallNameLabel": {
+    "messageformat": "कॉल नाम जोड़ें"
+  },
+  "icu:CallLinkDetails__EditCallNameLabel": {
+    "messageformat": "कॉल नाम संपादित करें"
+  },
+  "icu:CallLinkDetails__ApproveAllMembersLabel": {
+    "messageformat": "सभी सदस्य स्वीकृत करें"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "लिंक कॉपी करें"
@@ -5415,23 +5511,50 @@
   "icu:CallLinkDetails__ShareLinkViaSignal": {
     "messageformat": "Signal के माध्यम से लिंक साझा करें"
   },
-  "icu:CallLinkEditModal__Title": {
-    "messageformat": "Call link details"
+  "icu:CallLinkDetails__DeleteLink": {
+    "messageformat": "Delete link"
   },
-  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
-    "messageformat": "Name"
+  "icu:CallLinkDetails__DeleteLinkModal__Title": {
+    "messageformat": "Delete call link?"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Body": {
+    "messageformat": "This link will no longer work for anyone who has it."
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
+    "messageformat": "Cancel"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Delete": {
+    "messageformat": "Delete"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "कॉल लिंक की जानकारी"
   },
   "icu:CallLinkEditModal__JoinButtonLabel": {
-    "messageformat": "Join"
+    "messageformat": "जुड़ें"
+  },
+  "icu:CallLinkEditModal__AddCallNameLabel": {
+    "messageformat": "कॉल नाम जोड़ें"
+  },
+  "icu:CallLinkEditModal__EditCallNameLabel": {
+    "messageformat": "कॉल नाम संपादित करें"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Approve all members"
+    "messageformat": "सभी सदस्य स्वीकृत करें"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
-    "messageformat": "Off"
+  "icu:CallLinkRestrictionsSelect__Option--Off": {
+    "messageformat": "बंद"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
-    "messageformat": "On"
+  "icu:CallLinkRestrictionsSelect__Option--On": {
+    "messageformat": "पर"
+  },
+  "icu:CallLinkAddNameModal__Title": {
+    "messageformat": "कॉल नाम जोड़ें"
+  },
+  "icu:CallLinkAddNameModal__Title--Edit": {
+    "messageformat": "कॉल नाम संपादित करें"
+  },
+  "icu:CallLinkAddNameModal__NameLabel": {
+    "messageformat": "कॉल नाम"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} अन्य टाइप कर रहा/रही है।} other {{count,number} अन्य टाइप कर रहे/रही हैं।}}"
@@ -5473,19 +5596,19 @@
     "messageformat": "छोटे-छोटे ट्वीक, बग फ़िक्स, और प्रदर्शन में सुधार। Signal इस्तेमाल करने के लिए धन्यवाद।",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.12--0": {
-    "messageformat": "यदि आप ग्रुप कॉल के दौरान संवाद करने का कोई दूसरा तरीका खोज रहे हैं, तो अपना हाथ उठाएं। नया रेज हैंड फ़ीचर किसी का ध्यान आकर्षित करने, कोई प्रश्न पूछने या किसी समूह प्रस्ताव के लिए उस स्थिति में सर्वसम्मति से वोट करने का एक सरल तरीका है, जब आपका दोस्त पूछता है \"क्या सभी इसके पक्ष में हैं?\""
+  "icu:WhatsNew__v7.18--0": {
+    "messageformat": "कभी-कभी जल्दी से अलविदा कह देना, धीमी विदाई की तुलना में आसान होता है, तो हमने बड़े संदेश थ्रेड को डिलीट करने की प्रोसेस तेज़ कर दी है।"
   },
-  "icu:WhatsNew__v7.12--1": {
-    "messageformat": "हमने क्रॉप टूल में एक बग को ठीक किया है, इसलिए अब अपने एक्स (या किसी और चीज़) को तस्वीर से हटाना आसान और अधिक सहज है।"
+  "icu:WhatsNew__v7.19--0": {
+    "messageformat": "अगर कोई और कॉल आपके नाम को कॉल करता है, तो हमने मौजूदा कॉल को छोड़कर नए कॉल में शामिल होने के लिए एक शॉर्टकट जोड़ा है। आपको अपने जाने की पुष्टि करने को कहा जाएगा, लेकिन यह आपकी मर्ज़ी है कि आप पहले अलविदा कहना चाहते हैं या नहीं।"
   },
-  "icu:WhatsNew__v7.12--2": {
-    "messageformat": "हमने वॉयस नोट भेजने के लिए कीबोर्ड शॉर्टकट को Ctrl/Cmd+Shift+Y कर दिया है, ताकि इसका Windows और Linux पर \"पेस्ट और मैच स्टाइल\" शॉर्टकट के साथ संघर्ष न हो।"
+  "icu:WhatsNew__v7.19--1": {
+    "messageformat": "इस अपडेट से, उन यूज़र्स के लिए Linux पर स्टार्टअप क्रैश भी ठीक हो जाता है जिनका लोकेल 'POSIX' पर सेट है।"
   },
-  "icu:WhatsNew__v7.13--0": {
-    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  "icu:WhatsNew__v7.20--0": {
+    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
   },
-  "icu:WhatsNew__v7.13--1": {
-    "messageformat": "This update also improves the display of quoted replies in RTL languages."
+  "icu:WhatsNew__v7.20--1": {
+    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
   }
 }

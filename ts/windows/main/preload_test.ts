@@ -3,14 +3,16 @@
 
 /* eslint-disable no-console */
 
+import { inspect, parseArgs } from 'node:util';
 import { ipcRenderer as ipc } from 'electron';
 import { sync } from 'fast-glob';
-import { inspect } from 'util';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { assert, config as chaiConfig } from 'chai';
+import chai, { assert, config as chaiConfig } from 'chai';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { reporters } from 'mocha';
+import chaiAsPromised from 'chai-as-promised';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { reporters, type MochaOptions } from 'mocha';
 
 import { getSignalProtocolStore } from '../../SignalProtocolStore';
 import { initMessageCleanup } from '../../services/messageStateCleanup';
@@ -18,6 +20,8 @@ import { initializeMessageCounter } from '../../util/incrementMessageCounter';
 import { initializeRedux } from '../../state/initializeRedux';
 import * as Stickers from '../../types/Stickers';
 import { ThemeType } from '../../types/Util';
+
+chai.use(chaiAsPromised);
 
 // Show actual objects instead of abbreviated errors
 chaiConfig.truncateThreshold = 0;
@@ -46,13 +50,47 @@ window.assert = assert;
 // This is a hack to let us run TypeScript tests in the renderer process. See the
 //   code in `test/test.js`.
 
+const setup: MochaOptions = {};
+let worker = 0;
+let workerCount = 1;
+
+{
+  const { values } = parseArgs({
+    args: ipc.sendSync('ci:test-electron:getArgv'),
+    options: {
+      grep: {
+        type: 'string',
+      },
+      worker: {
+        type: 'string',
+      },
+      'worker-count': {
+        type: 'string',
+      },
+    },
+    strict: false,
+  });
+
+  if (typeof values.grep === 'string') {
+    setup.grep = values.grep;
+  }
+  if (typeof values.worker === 'string') {
+    worker = parseInt(values.worker, 10);
+  }
+  if (typeof values['worker-count'] === 'string') {
+    workerCount = parseInt(values['worker-count'], 10);
+  }
+}
+
 window.testUtilities = {
-  debug(info) {
-    return ipc.invoke('ci:test-electron:debug', info);
+  setup,
+
+  onTestEvent(event: unknown) {
+    return ipc.invoke('ci:test-electron:event', event);
   },
 
-  onComplete(info) {
-    return ipc.invoke('ci:test-electron:done', info);
+  debug(info) {
+    return ipc.invoke('ci:test-electron:debug', info);
   },
 
   async initialize() {
@@ -84,10 +122,17 @@ window.testUtilities = {
 
   prepareTests() {
     console.log('Preparing tests...');
-    sync('../../test-{both,electron}/**/*_test.js', {
+    const files = sync('../../test-{both,electron}/**/*_test.js', {
       absolute: true,
       cwd: __dirname,
-    }).forEach(require);
+    });
+
+    for (let i = 0; i < files.length; i += 1) {
+      if (i % workerCount === worker) {
+        // eslint-disable-next-line import/no-dynamic-require, global-require
+        require(files[i]);
+      }
+    }
   },
 };
 

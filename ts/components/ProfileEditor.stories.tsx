@@ -28,11 +28,11 @@ export default {
   argTypes: {
     usernameEditState: {
       control: { type: 'radio' },
-      options: {
-        Editing: UsernameEditState.Editing,
-        ConfirmingDelete: UsernameEditState.ConfirmingDelete,
-        Deleting: UsernameEditState.Deleting,
-      },
+      options: [
+        UsernameEditState.Editing,
+        UsernameEditState.ConfirmingDelete,
+        UsernameEditState.Deleting,
+      ],
     },
     usernameCorrupted: {
       control: 'boolean',
@@ -48,7 +48,7 @@ export default {
   args: {
     aboutEmoji: '',
     aboutText: casual.sentence,
-    profileAvatarPath: undefined,
+    profileAvatarUrl: undefined,
     conversationId: generateUuid(),
     color: getRandomColor(),
     deleteAvatarFromDisk: action('deleteAvatarFromDisk'),
@@ -127,7 +127,7 @@ FullSet.args = {
   aboutText: 'Live. Laugh. Love',
   familyName: casual.last_name,
   firstName: casual.first_name,
-  profileAvatarPath: '/fixtures/kitten-3-64-64.jpg',
+  profileAvatarUrl: '/fixtures/kitten-3-64-64.jpg',
 };
 
 export const WithFullName = Template.bind({});

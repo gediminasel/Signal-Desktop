@@ -3,13 +3,19 @@
 
 import { z } from 'zod';
 import Long from 'long';
-import { CallMode } from './Calling';
 import type { AciString } from './ServiceId';
 import { aciSchema } from './ServiceId';
 import { bytesToUuid } from '../util/uuidToBytes';
 import { SignalService as Proto } from '../protobuf';
 import * as Bytes from '../Bytes';
 import { UUID_BYTE_SIZE } from './Crypto';
+
+// These are strings (1) for the database (2) for Storybook.
+export enum CallMode {
+  Direct = 'Direct',
+  Group = 'Group',
+  Adhoc = 'Adhoc',
+}
 
 export enum CallType {
   Audio = 'Audio',
@@ -26,6 +32,7 @@ export enum CallDirection {
 export enum CallLogEvent {
   Clear = 'Clear',
   MarkedAsRead = 'MarkedAsRead',
+  MarkedAsReadInConversation = 'MarkedAsReadInConversation',
 }
 
 export enum LocalCallEvent {
@@ -43,6 +50,7 @@ export enum RemoteCallEvent {
   Accepted = 'Accepted',
   NotAccepted = 'NotAccepted',
   Delete = 'Delete',
+  Observed = 'Observed',
 }
 
 export type CallEvent = LocalCallEvent | RemoteCallEvent;
@@ -54,6 +62,7 @@ export enum CallStatusValue {
   Declined = 'Declined',
   Deleted = 'Deleted',
   GenericGroupCall = 'GenericGroupCall',
+  GenericAdhocCall = 'GenericAdhocCall',
   OutgoingRing = 'OutgoingRing',
   Ringing = 'Ringing',
   Joined = 'Joined',
@@ -80,6 +89,7 @@ export enum GroupCallStatus {
 }
 
 export enum AdhocCallStatus {
+  Generic = CallStatusValue.GenericAdhocCall,
   Pending = CallStatusValue.Pending,
   Joined = CallStatusValue.JoinedAdhoc,
   Deleted = CallStatusValue.Deleted,
@@ -95,6 +105,19 @@ export type CallDetails = Readonly<{
   type: CallType;
   direction: CallDirection;
   timestamp: number;
+}>;
+
+export type CallLogEventTarget = Readonly<{
+  timestamp: number;
+  callId: string | null;
+  peerId: AciString | string | null;
+}>;
+
+export type CallLogEventDetails = Readonly<{
+  type: CallLogEvent;
+  timestamp: number;
+  peerId: AciString | string | null;
+  callId: string | null;
 }>;
 
 export type CallEventDetails = CallDetails &
@@ -219,6 +242,13 @@ export const callEventNormalizeSchema = z.object({
   type: z.nativeEnum(Proto.SyncMessage.CallEvent.Type),
   direction: z.nativeEnum(Proto.SyncMessage.CallEvent.Direction),
   event: z.nativeEnum(Proto.SyncMessage.CallEvent.Event),
+});
+
+export const callLogEventNormalizeSchema = z.object({
+  type: z.nativeEnum(Proto.SyncMessage.CallLogEvent.Type),
+  timestamp: longToNumberSchema,
+  peerId: peerIdInBytesSchema.optional(),
+  callId: longToStringSchema.optional(),
 });
 
 export function isSameCallHistoryGroup(

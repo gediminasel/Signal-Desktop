@@ -80,6 +80,18 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "Ваша версия базы данных не соответствует этой версии Signal. Убедитесь, что на вашем компьютере установлена самая последняя версия Signal."
   },
+  "icu:databaseError__recover__detail": {
+    "messageformat": "Произошла ошибка базы данных. Вы можете создать копию ошибки и обратиться в службу поддержки Signal для решения проблемы. Если вы хотите использовать Signal прямо сейчас, вы можете попытаться восстановить свои данные.\n\nСвязаться с поддержкой можно по адресу: {link}"
+  },
+  "icu:databaseError__recover__button": {
+    "messageformat": "Восстановить данные"
+  },
+  "icu:databaseError__safeStorageBackendChange": {
+    "messageformat": "Не удаётся получить доступ к ключу шифрования базы данных, так как серверная часть связки ключей шифрования ОС изменилась с {previousBackend} на {currentBackend}. Это может произойти при изменении интерфейса ПК, например с GNOME на KDE.\n\nПожалуйста, переключитесь на предыдущей интерфейс ПК."
+  },
+  "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
+    "messageformat": "Не удаётся получить доступ к ключу шифрования базы данных, так как серверная часть связки ключей шифрования ОС изменилась с {previousBackend} на {currentBackend}. Это может произойти при изменении интерфейса ПК, например с GNOME на KDE.\n\nПожалуйста, переключитесь на предыдущий интерфейс ПК или попробуйте запустить Signal с параметром командной строки --password-store=\"{previousBackendFlag}\""
+  },
   "icu:mainMenuFile": {
     "messageformat": "&Файл"
   },
@@ -818,8 +830,14 @@
   "icu:cannotUpdateDetail": {
     "messageformat": "Signal не удалось обновиться. {retry} или посетите {url}, чтобы установить обновление вручную. Затем {support} об этой проблеме"
   },
+  "icu:cannotUpdateDetail-v2": {
+    "messageformat": "Signal не удалось обновиться. <retryUpdateButton>Попробуйте ещё раз</retryUpdateButton> или посетите {url}, чтобы установить обновление вручную. Затем <contactSupportLink>сообщите в службу поддержки</contactSupportLink> об этой проблеме"
+  },
   "icu:cannotUpdateRequireManualDetail": {
     "messageformat": "Signal не удалось обновиться. Посетите {url}, чтобы установить обновление вручную. Затем {support} об этой проблеме"
+  },
+  "icu:cannotUpdateRequireManualDetail-v2": {
+    "messageformat": "Signal не удалось обновиться. Посетите {url}, чтобы установить обновление вручную. Затем <contactSupportLink>сообщите в службу поддержки</contactSupportLink> об этой проблеме"
   },
   "icu:readOnlyVolume": {
     "messageformat": "Скорее всего, Signal Desktop находится в карантине macOS и не сможет обновляться автоматически. Пожалуйста, попробуйте переместить {app} в {folder} при помощи Finder."
@@ -989,6 +1007,9 @@
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
     "messageformat": "Все сообщения в этом чате будут удалены с этого устройства. После удаления сообщений вы сможете продолжать поиск по этому чату."
   },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
+    "messageformat": "Все сообщения в этом чате будут удалены со всех ваших устройств. После удаления сообщений вы сможете продолжать поиск по этому чату."
+  },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Покинуть группу"
   },
@@ -1110,10 +1131,22 @@
     "messageformat": "Настройки"
   },
   "icu:Install__instructions__3": {
-    "messageformat": "Нажмите {plusButton} (Android) или {linkNewDevice} (iPhone)"
+    "messageformat": "Нажмите {linkNewDevice}"
   },
-  "icu:Install__qr-failed-load": {
-    "messageformat": "Не удалось загрузить QR-код. Проверьте подключение к интернету и попробуйте снова. <retry>Повторить попытку</retry>"
+  "icu:Install__qr-failed-load__error--timeout": {
+    "messageformat": "Не удалось загрузить QR-код. Проверьте ваше подключение к интернету и попробуйте ещё раз."
+  },
+  "icu:Install__qr-failed-load__error--unknown": {
+    "messageformat": "<paragraph>Произошла неожиданная ошибка.</paragraph><paragraph>Пожалуйста, попробуйте ещё раз.</paragraph>"
+  },
+  "icu:Install__qr-failed-load__error--network": {
+    "messageformat": "Signal не может привязать это устройство, используя вашу текущую сеть."
+  },
+  "icu:Install__qr-failed-load__retry": {
+    "messageformat": "Повторить попытку"
+  },
+  "icu:Install__qr-failed-load__get-help": {
+    "messageformat": "Получить помощь"
   },
   "icu:Install__support-link": {
     "messageformat": "Нужна помощь?"
@@ -1286,8 +1319,35 @@
   "icu:CallingPendingParticipants__DenyUser": {
     "messageformat": "Отклонить запрос на присоединение"
   },
+  "icu:CallingPendingParticipants__ApproveAll": {
+    "messageformat": "Одобрить все"
+  },
+  "icu:CallingPendingParticipants__DenyAll": {
+    "messageformat": "Отклонить все"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--ApproveAll": {
+    "messageformat": "{count, plural, one {Одобрить {count,number} запрос?} few {Одобрить {count,number} запроса?} many {Одобрить {count,number} запросов?} other {Одобрить {count,number} запроса?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--DenyAll": {
+    "messageformat": "{count, plural, one {Отклонить {count,number} запрос?} few {Отклонить {count,number} запроса?} many {Отклонить {count,number} запросов?} other {Отклонить {count,number} запроса?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--ApproveAll": {
+    "messageformat": "{count, plural, one {{count,number} человек будет добавлен к звонку.} few {{count,number} человека будут добавлены к звонку.} many {{count,number} человек будут добавлены к звонку.} other {{count,number} человека будут добавлены к звонку.}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--DenyAll": {
+    "messageformat": "{count, plural, one {{count,number} человек не будет добавлен к звонку.} few {{count,number} человека не будут добавлены к звонку.} many {{count,number} человек не будут добавлены к звонку.} other {{count,number} человека не будут добавлены к звонку.}}"
+  },
   "icu:CallingPendingParticipants__RequestsToJoin": {
     "messageformat": "{count, plural, one {{count,number} запрос на присоединение к звонку} few {{count,number} запроса на присоединение к звонку} many {{count,number} запросов на присоединение к звонку} other {{count,number} запроса на присоединение к звонку}}"
+  },
+  "icu:CallingPendingParticipants__WouldLikeToJoin": {
+    "messageformat": "Хотел(-а) бы присоединиться..."
+  },
+  "icu:CallingPendingParticipants__AdditionalRequests": {
+    "messageformat": "{count, plural, one {+{count,number} запрос} few {+{count,number} запроса} many {+{count,number} запросов} other {+{count,number} запроса}}"
+  },
+  "icu:CallingPendingParticipants__Toast--added-users-to-call": {
+    "messageformat": "{count, plural, one {{count,number} человек добавлен к звонку} few {{count,number} человека добавлены к звонку} many {{count,number} человек добавлены к звонку} other {{count,number} человека добавлены к звонку}}"
   },
   "icu:CallingRaisedHandsList__Title": {
     "messageformat": "{count, plural, one {{count,number} человек поднял руку} few {{count,number} человека подняли руку} many {{count,number} человек подняли руку} other {{count,number} человека поднял руку}}"
@@ -1352,8 +1412,14 @@
   "icu:calling__you-have-blocked": {
     "messageformat": "Вы заблокировали {name}"
   },
+  "icu:calling__blocked-participant": {
+    "messageformat": "{name} заблокирован(-а)"
+  },
+  "icu:calling__block-info-title": {
+    "messageformat": "{name} заблокирован(-а)"
+  },
   "icu:calling__block-info": {
-    "messageformat": "Вы не будете получать аудио и видео от этого участника, а он не будет получать ваши."
+    "messageformat": "Вы не будете получать аудио и видео этого участника, и он не будет получать ваши."
   },
   "icu:calling__missing-media-keys": {
     "messageformat": "Невозможно получать аудио и видео от {name}"
@@ -2372,15 +2438,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "Чат был отмечен непрочитанным"
   },
-  "icu:AuthArtCreator--dialog--message": {
-    "messageformat": "Хотите открыть редактор наборов стикеров Signal?"
-  },
-  "icu:AuthArtCreator--dialog--confirm": {
-    "messageformat": "Подтвердить"
-  },
-  "icu:AuthArtCreator--dialog--dismiss": {
-    "messageformat": "Закрыть"
-  },
   "icu:ArtCreator--Authentication--error": {
     "messageformat": "Пожалуйста, настройте Signal на вашем телефоне и ПК, чтобы использовать редактор наборов стикеров"
   },
@@ -2577,10 +2634,10 @@
     "messageformat": "Отклонить"
   },
   "icu:declinedIncomingAudioCall": {
-    "messageformat": "Вы отклонили голосовой звонок"
+    "messageformat": "Отклонённый аудиозвонок"
   },
   "icu:declinedIncomingVideoCall": {
-    "messageformat": "Вы отклонили видеозвонок"
+    "messageformat": "Отклонённый видеозвонок"
   },
   "icu:acceptedIncomingAudioCall": {
     "messageformat": "Входящий голосовой звонок"
@@ -2613,10 +2670,10 @@
     "messageformat": "Signal будет продолжать работать в области уведомлений. Вы можете изменить это в настройках Signal."
   },
   "icu:incomingAudioCall": {
-    "messageformat": "Входящий голосовой звонок…"
+    "messageformat": "Входящий голосовой звонок"
   },
   "icu:incomingVideoCall": {
-    "messageformat": "Входящий видеозвонок…"
+    "messageformat": "Входящий видеозвонок"
   },
   "icu:outgoingAudioCall": {
     "messageformat": "Исходящий голосовой звонок"
@@ -2688,13 +2745,13 @@
     "messageformat": "Звонки отключены"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "You raised a hand."
+    "messageformat": "Вы подняли руку."
   },
   "icu:CallControls__RaiseHandsToast--you-and-one": {
-    "messageformat": "You and {otherName} raised a hand."
+    "messageformat": "Вы и {otherName} подняли руку."
   },
   "icu:CallControls__RaiseHandsToast--you-and-more": {
-    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
+    "messageformat": "{overflowCount, plural, one {Вы, {otherName} и ещё {overflowCount,number} подняли руку.} few {Вы, {otherName} и ещё {overflowCount,number} подняли руку.} many {Вы, {otherName} и ещё {overflowCount,number} подняли руку.} other {Вы, {otherName} и ещё {overflowCount,number} подняли руку.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} поднял(-а) руку."
@@ -2724,16 +2781,16 @@
     "messageformat": "{people, plural, one {{people,number} в звонке} few {{people,number} в звонке} many {{people,number} в звонке} other {{people,number} в звонке}}"
   },
   "icu:calling__call-notification__ended": {
-    "messageformat": "Групповой звонок был завершён"
+    "messageformat": "Видеозвонок был завершён"
   },
   "icu:calling__call-notification__started-by-someone": {
-    "messageformat": "Кто-то начал групповой звонок"
+    "messageformat": "Видеозвонок начался"
   },
   "icu:calling__call-notification__started-by-you": {
-    "messageformat": "Вы начали групповой звонок"
+    "messageformat": "Вы начали видеозвонок"
   },
   "icu:calling__call-notification__started": {
-    "messageformat": "{name} начал(-а) групповой звонок"
+    "messageformat": "{name} начал(а) видеозвонок"
   },
   "icu:calling__in-another-call-tooltip": {
     "messageformat": "Вы уже участвуете в другом звонке"
@@ -2780,26 +2837,41 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "Окно"
   },
+  "icu:calling__ParticipantInfoButton": {
+    "messageformat": "Подробнее об этом контакте"
+  },
   "icu:CallingAdhocCallInfo__CopyLink": {
     "messageformat": "Копировать ссылку на звонок"
+  },
+  "icu:CallingAdhocCallInfo__ShareViaSignal": {
+    "messageformat": "Поделиться ссылкой на звонок через Signal"
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "Удалить этого человека из звонка"
   },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogBody": {
+    "messageformat": "Удалить {name} из звонка?"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--remove": {
+    "messageformat": "Удалить"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--block": {
+    "messageformat": "Заблокировать от звонка"
+  },
   "icu:CallingAdhocCallInfo__UnknownContactLabel": {
-    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+    "messageformat": "{count, plural, one {{count,number} человека} few {{count,number} человек} many {{count,number} людей} other {{count,number} людей}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
-    "messageformat": "+{count,number} more"
+    "messageformat": "{count, plural, one {+ ещё {count,number}} few {+ ещё {count,number}} many {+ ещё {count,number}} other {+ ещё {count,number}}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
-    "messageformat": "More info about new contacts"
+    "messageformat": "Подробнее о новых контактах"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
-    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+    "messageformat": "Перед тем как присоединиться к звонку, вы можете видеть только имена контактов телефона, людей, с которыми состоите в группе, или тех, с кем общались в чате 1:1. Вы увидите все имена и фото, как только присоединитесь к звонку."
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
-    "messageformat": "Got it"
+    "messageformat": "Понятно"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Видео"
@@ -3512,6 +3584,9 @@
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Удалить из группы"
   },
+  "icu:ContactModal--already-in-call": {
+    "messageformat": "Вы уже участвуете в другом звонке"
+  },
   "icu:showChatColorEditor": {
     "messageformat": "Цвет чата"
   },
@@ -3780,7 +3855,7 @@
     "messageformat": "{count, plural, one {С какого устройства вы хотели бы удалить это сообщение?} few {С каких устройств вы хотели бы удалить это сообщение?} many {С каких устройств вы хотели бы удалить это сообщение?} other {С каких устройств вы хотели бы удалить это сообщение?}}"
   },
   "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
-    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+    "messageformat": "{count, plural, one {Это сообщение будет удалено со всех ваших устройств.} few {Это сообщение будет удалено со всех ваших устройств.} many {Это сообщение будет удалено со всех ваших устройств.} other {Это сообщение будет удалено со всех ваших устройств.}}"
   },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "Удалить для меня"
@@ -3795,7 +3870,7 @@
     "messageformat": "Удалить со всех устройств"
   },
   "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
-    "messageformat": "Delete"
+    "messageformat": "Удалить"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {Вы можете выбрать не более {count,number} сообщения для удаления для всех} few {Вы можете выбрать не более {count,number} сообщений для удаления для всех} many {Вы можете выбрать не более {count,number} сообщений для удаления для всех} other {Вы можете выбрать не более {count,number} сообщения для удаления для всех}}"
@@ -4196,11 +4271,11 @@
   "icu:ProfileEditor--username--check-starting-character": {
     "messageformat": "Имена пользователей не могут начинаться с цифр."
   },
-  "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Usernames must have at least {min,number} characters."
+  "icu:ProfileEditor--username--check-character-min-plural": {
+    "messageformat": "{min, plural, one {Имя пользователя должно содержать как минимум {min,number} символ.} few {Имя пользователя должно содержать как минимум {min,number} символа.} many {Имя пользователя должно содержать как минимум {min,number} символов.} other {Имя пользователя должно содержать как минимум {min,number} символа.}}"
   },
-  "icu:ProfileEditor--username--check-character-max": {
-    "messageformat": "Имя пользователя не может содержать больше чем {max,number} символов."
+  "icu:ProfileEditor--username--check-character-max-plural": {
+    "messageformat": "{max, plural, one {Имя пользователя не может содержать больше чем {max,number} символ.} few {Имя пользователя не может содержать больше чем {max,number} символа.} many {Имя пользователя не может содержать больше чем {max,number} символов.} other {Имя пользователя не может содержать больше чем {max,number} символа.}}"
   },
   "icu:ProfileEditor--username--check-discriminator-min": {
     "messageformat": "Неверное имя пользователя, введите минимум 2 цифры."
@@ -4240,9 +4315,6 @@
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
     "messageformat": "Удалить"
-  },
-  "icu:ProfileEditor--username--delete-unavailable-notice": {
-    "messageformat": "Чтобы удалить имя пользователя, откройте Signal на телефоне и перейдите в Настройки > Профиль."
   },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "Копировать или удалить имя пользователя"
@@ -4749,13 +4821,13 @@
     "messageformat": "Ваши контакты могут видеть ваше имя и фото, а также обновления в «Моей истории», если вы не скроете её от них"
   },
   "icu:LocalDeleteWarningModal__header": {
-    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+    "messageformat": "Удаление происходит синхронно на ваших устройствах"
   },
   "icu:LocalDeleteWarningModal__description": {
-    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+    "messageformat": "При удалении сообщений или чатов они будут удаляться со всех ваших связанных устройств."
   },
   "icu:LocalDeleteWarningModal__confirm": {
-    "messageformat": "Got it"
+    "messageformat": "Понятно"
   },
   "icu:Stories__title": {
     "messageformat": "Истории"
@@ -5350,7 +5422,7 @@
     "messageformat": "Нет результатов для «{query}»"
   },
   "icu:CallsList__CreateCallLink": {
-    "messageformat": "Create a Call Link"
+    "messageformat": "Создать ссылку для звонка"
   },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "Входящие"
@@ -5360,6 +5432,9 @@
   },
   "icu:CallsList__ItemCallInfo--Missed": {
     "messageformat": "Пропущенные"
+  },
+  "icu:CallsList__ItemCallInfo--Declined": {
+    "messageformat": "Отклонено"
   },
   "icu:CallsList__ItemCallInfo--GroupCall": {
     "messageformat": "Групповой звонок"
@@ -5374,7 +5449,7 @@
     "messageformat": "Покинуть текущий звонок?"
   },
   "icu:CallsList__LeaveCallDialogBody": {
-    "messageformat": "Для присоединения к новому звонку нужно выйти из текущего звонка."
+    "messageformat": "Для начала или присоединения к новому звонку нужно выйти из текущего звонка."
   },
   "icu:CallsList__LeaveCallDialogButton--leave": {
     "messageformat": "Покинуть звонок"
@@ -5406,8 +5481,29 @@
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Ссылка на звонок"
   },
+  "icu:CallHistory__DescriptionVideoCall--Default": {
+    "messageformat": "{direction, select, Outgoing {Исходящий видеозвонок} other {Входящий видеозвонок}}"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Missed": {
+    "messageformat": "Пропущенный видеозвонок"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Unanswered": {
+    "messageformat": "Неотвеченный видеозвонок"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Declined": {
+    "messageformat": "Отклонённый видеозвонок"
+  },
   "icu:CallLinkDetails__Join": {
     "messageformat": "Войти"
+  },
+  "icu:CallLinkDetails__AddCallNameLabel": {
+    "messageformat": "Добавить имя звонка"
+  },
+  "icu:CallLinkDetails__EditCallNameLabel": {
+    "messageformat": "Изменить имя звонка"
+  },
+  "icu:CallLinkDetails__ApproveAllMembersLabel": {
+    "messageformat": "Одобрить всех участников"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "Копировать ссылку"
@@ -5415,23 +5511,50 @@
   "icu:CallLinkDetails__ShareLinkViaSignal": {
     "messageformat": "Поделиться ссылкой через Signal"
   },
-  "icu:CallLinkEditModal__Title": {
-    "messageformat": "Call link details"
+  "icu:CallLinkDetails__DeleteLink": {
+    "messageformat": "Delete link"
   },
-  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
-    "messageformat": "Name"
+  "icu:CallLinkDetails__DeleteLinkModal__Title": {
+    "messageformat": "Delete call link?"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Body": {
+    "messageformat": "This link will no longer work for anyone who has it."
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
+    "messageformat": "Cancel"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Delete": {
+    "messageformat": "Delete"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Подробности ссылки на звонок"
   },
   "icu:CallLinkEditModal__JoinButtonLabel": {
-    "messageformat": "Join"
+    "messageformat": "Войти"
+  },
+  "icu:CallLinkEditModal__AddCallNameLabel": {
+    "messageformat": "Добавить имя звонка"
+  },
+  "icu:CallLinkEditModal__EditCallNameLabel": {
+    "messageformat": "Изменить имя звонка"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Approve all members"
+    "messageformat": "Одобрить всех участников"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
-    "messageformat": "Off"
+  "icu:CallLinkRestrictionsSelect__Option--Off": {
+    "messageformat": "Откл."
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
-    "messageformat": "On"
+  "icu:CallLinkRestrictionsSelect__Option--On": {
+    "messageformat": "Вкл."
+  },
+  "icu:CallLinkAddNameModal__Title": {
+    "messageformat": "Добавить имя звонка"
+  },
+  "icu:CallLinkAddNameModal__Title--Edit": {
+    "messageformat": "Изменить имя звонка"
+  },
+  "icu:CallLinkAddNameModal__NameLabel": {
+    "messageformat": "Имя звонка"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {Ещё {count,number} печатает.} few {Ещё {count,number} печатают.} many {Ещё {count,number} печатают.} other {Ещё {count,number} печатают.}}"
@@ -5473,19 +5596,19 @@
     "messageformat": "Небольшие изменения, исправления ошибок и улучшения производительности. Спасибо за то, что пользуетесь Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.12--0": {
-    "messageformat": "Поднимите руку, если вам нужен другой способ общения во время групповых звонков. Новая функция «Поднять руку» — это отличный способ привлечь чьё-то внимание, задать вопрос или дружно проголосовать за предложение для всей группы, когда ваш друг спрашивает: «Все за?»."
+  "icu:WhatsNew__v7.18--0": {
+    "messageformat": "Долгие проводы — лишние слёзы, поэтому мы ускорили процесс удаления больших тредов сообщений."
   },
-  "icu:WhatsNew__v7.12--1": {
-    "messageformat": "Мы исправили ошибку в инструменте кадрирования, так что теперь стало проще вырезать своего бывшего, бывшую (или что-то ещё) из картины."
+  "icu:WhatsNew__v7.19--0": {
+    "messageformat": "Если вас вызывают по другому звонку, мы добавили ярлык, позволяющий выйти из текущего звонка и присоединиться к новому. Вам будет предложено подтвердить своё переключение, но вам решать, попрощаетесь ли вы первым."
   },
-  "icu:WhatsNew__v7.12--2": {
-    "messageformat": "Мы изменили сочетание клавиш для отправки голосовой заметки на Ctrl/Cmd+Shift+Y, чтобы оно больше не конфликтовало с сочетанием клавиш «Вставить и сохранить стиль» в Windows и Linux."
+  "icu:WhatsNew__v7.19--1": {
+    "messageformat": "В этом обновлении также исправлен сбой при запуске в Linux у пользователей с языковым стандартом \"POSIX\"."
   },
-  "icu:WhatsNew__v7.13--0": {
-    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  "icu:WhatsNew__v7.20--0": {
+    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
   },
-  "icu:WhatsNew__v7.13--1": {
-    "messageformat": "This update also improves the display of quoted replies in RTL languages."
+  "icu:WhatsNew__v7.20--1": {
+    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
   }
 }

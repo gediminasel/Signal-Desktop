@@ -19,7 +19,7 @@ import {
   CallingLobbyJoinButton,
   CallingLobbyJoinButtonVariant,
 } from './CallingLobbyJoinButton';
-import { CallMode } from '../types/Calling';
+import { CallMode } from '../types/CallDisposition';
 import type { CallingConversationType } from '../types/Calling';
 import type { LocalizerType } from '../types/Util';
 import { useIsOnline } from '../hooks/useIsOnline';
@@ -37,7 +37,7 @@ export type PropsType = {
   conversation: Pick<
     CallingConversationType,
     | 'acceptedMessageRequest'
-    | 'avatarPath'
+    | 'avatarUrl'
     | 'color'
     | 'isMe'
     | 'memberships'
@@ -49,7 +49,7 @@ export type PropsType = {
     | 'systemNickname'
     | 'title'
     | 'type'
-    | 'unblurredAvatarPath'
+    | 'unblurredAvatarUrl'
   >;
   getIsSharingPhoneNumberWithEverybody: () => boolean;
   groupMembers?: Array<
@@ -66,7 +66,7 @@ export type PropsType = {
   isConversationTooBigToRing: boolean;
   isCallFull?: boolean;
   me: Readonly<
-    Pick<ConversationType, 'avatarPath' | 'color' | 'id' | 'serviceId'>
+    Pick<ConversationType, 'avatarUrl' | 'color' | 'id' | 'serviceId'>
   >;
   onCallCanceled: () => void;
   onJoinCall: () => void;
@@ -174,8 +174,8 @@ export function CallingLobby({
   const videoButtonType = hasLocalVideo
     ? CallingButtonType.VIDEO_ON
     : availableCameras.length === 0
-    ? CallingButtonType.VIDEO_DISABLED
-    : CallingButtonType.VIDEO_OFF;
+      ? CallingButtonType.VIDEO_DISABLED
+      : CallingButtonType.VIDEO_OFF;
 
   const audioButtonType = hasLocalAudio
     ? CallingButtonType.AUDIO_ON
@@ -285,7 +285,7 @@ export function CallingLobby({
         ) : (
           <CallBackgroundBlur
             className="module-CallingLobby__local-preview module-CallingLobby__local-preview--camera-is-off"
-            avatarPath={me.avatarPath}
+            avatarUrl={me.avatarUrl}
           />
         )}
 

@@ -74,7 +74,7 @@ export type PropsType = {
   group?: Pick<
     ConversationType,
     | 'acceptedMessageRequest'
-    | 'avatarPath'
+    | 'avatarUrl'
     | 'color'
     | 'id'
     | 'name'
@@ -204,7 +204,7 @@ export function StoryViewer({
   } = story;
   const {
     acceptedMessageRequest,
-    avatarPath,
+    avatarUrl,
     color,
     isMe,
     firstName,
@@ -726,7 +726,19 @@ export function StoryViewer({
             )}
           </div>
 
-          <div className="StoryViewer__protection StoryViewer__protection--bottom" />
+          <div
+            className={classNames(
+              'StoryViewer__protection',
+              'StoryViewer__protection--bottom',
+              {
+                'StoryViewer__protection--has-caption': caption != null,
+              }
+            )}
+          />
+
+          {hasExpandedCaption && (
+            <div className="StoryViewer__protection StoryViewer__protection--whole" />
+          )}
 
           {canNavigateRight && (
             <button
@@ -783,7 +795,7 @@ export function StoryViewer({
               <div className="StoryViewer__meta__playback-bar__container">
                 <Avatar
                   acceptedMessageRequest={acceptedMessageRequest}
-                  avatarPath={avatarPath}
+                  avatarUrl={avatarUrl}
                   badge={undefined}
                   color={getAvatarColor(color)}
                   conversationType="direct"
@@ -797,7 +809,7 @@ export function StoryViewer({
                 {group && (
                   <Avatar
                     acceptedMessageRequest={group.acceptedMessageRequest}
-                    avatarPath={group.avatarPath}
+                    avatarUrl={group.avatarUrl}
                     badge={undefined}
                     className="StoryViewer__meta--group-avatar"
                     color={getAvatarColor(group.color)}

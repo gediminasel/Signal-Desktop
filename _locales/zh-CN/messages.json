@@ -80,6 +80,18 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "您的数据库版本与此版本的 Signal 不匹配。请确保您在电脑上打开的是最新版本的 Signal。"
   },
+  "icu:databaseError__recover__detail": {
+    "messageformat": "出现了一个数据库错误。您可以复制错误信息并联系 Signal 支持团队协助处理该问题。如果您需要立即使用 Signal，您可以尝试恢复数据。\n\n请访问此网址联系支持团队：{link}"
+  },
+  "icu:databaseError__recover__button": {
+    "messageformat": "恢复数据"
+  },
+  "icu:databaseError__safeStorageBackendChange": {
+    "messageformat": "无法访问数据库加密密钥，因为 OS 加密密钥环后端已从 {previousBackend} 更改为 {currentBackend}。当桌面环境发生变化时，如在 GNOME 和 KDE 之间切换，这种情况就会发生。\n\n请切换到之前的桌面环境。"
+  },
+  "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
+    "messageformat": "无法访问数据库加密密钥，因为 OS 加密密钥环后端已从 {previousBackend} 更改为 {currentBackend}。当桌面环境发生变化时，如在 GNOME 和 KDE 之间切换，这种情况就会发生。\n\n请切换到之前的桌面环境，或尝试使用命令行标志 --password-store=\"{previousBackendFlag}\" 运行 Signal"
+  },
   "icu:mainMenuFile": {
     "messageformat": "文件(&F)"
   },
@@ -818,8 +830,14 @@
   "icu:cannotUpdateDetail": {
     "messageformat": "Signal 无法更新。请{retry}或访问{url}手动安装应用，然后{support}此问题"
   },
+  "icu:cannotUpdateDetail-v2": {
+    "messageformat": "Signal 无法更新。请<retryUpdateButton>重试更新</retryUpdateButton>或访问 {url} 以进行手动安装，然后<contactSupportLink>联系支持团队</contactSupportLink>反映此问题"
+  },
   "icu:cannotUpdateRequireManualDetail": {
     "messageformat": "Signal 无法更新。请访问{url}手动安装应用，然后{support}此问题"
+  },
+  "icu:cannotUpdateRequireManualDetail-v2": {
+    "messageformat": "Signal 无法更新。请访问 {url} 以进行手动安装，然后<contactSupportLink>联系支持团队</contactSupportLink>反映此问题"
   },
   "icu:readOnlyVolume": {
     "messageformat": "Signal Desktop 可能在 macOS 隔离区，无法自动升级。请用 Finder 移动{app}应用至{folder}。"
@@ -989,6 +1007,9 @@
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
     "messageformat": "此聊天中的所有消息将会从此设备上删除。删除消息后，您仍然可以搜索此聊天。"
   },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
+    "messageformat": "此聊天中的所有消息将会从您的所有设备上删除。删除消息后，您仍然可以搜索此聊天。"
+  },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "离开群组"
   },
@@ -1092,7 +1113,7 @@
     "messageformat": "已关联的设备"
   },
   "icu:linkNewDevice": {
-    "messageformat": "关联新设备"
+    "messageformat": "链接新设备"
   },
   "icu:Install__learn-more": {
     "messageformat": "了解更多"
@@ -1110,10 +1131,22 @@
     "messageformat": "设置"
   },
   "icu:Install__instructions__3": {
-    "messageformat": "点击{plusButton}（Android）或{linkNewDevice} （iPhone）"
+    "messageformat": "点击 {linkNewDevice}"
   },
-  "icu:Install__qr-failed-load": {
-    "messageformat": "无法加载此二维码。请检查您的网络并重试。<retry>重试</retry>"
+  "icu:Install__qr-failed-load__error--timeout": {
+    "messageformat": "无法加载此二维码。请检查您的网络连接并重试。"
+  },
+  "icu:Install__qr-failed-load__error--unknown": {
+    "messageformat": "<paragraph>出现意外错误，</paragraph><paragraph>请重试。</paragraph>"
+  },
+  "icu:Install__qr-failed-load__error--network": {
+    "messageformat": "Signal 无法使用当前网络关联此设备。"
+  },
+  "icu:Install__qr-failed-load__retry": {
+    "messageformat": "重试"
+  },
+  "icu:Install__qr-failed-load__get-help": {
+    "messageformat": "获取帮助"
   },
   "icu:Install__support-link": {
     "messageformat": "需要协助？"
@@ -1176,7 +1209,7 @@
     "messageformat": "加入通话"
   },
   "icu:calling__return": {
-    "messageformat": "回拨"
+    "messageformat": "回到通话"
   },
   "icu:calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
     "messageformat": "由于通话人数众多，麦克风已静音"
@@ -1286,8 +1319,35 @@
   "icu:CallingPendingParticipants__DenyUser": {
     "messageformat": "拒绝加入请求"
   },
+  "icu:CallingPendingParticipants__ApproveAll": {
+    "messageformat": "全部批准"
+  },
+  "icu:CallingPendingParticipants__DenyAll": {
+    "messageformat": "全部拒绝"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--ApproveAll": {
+    "messageformat": "{count, plural, other {要批准 {count,number} 个请求吗？}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--DenyAll": {
+    "messageformat": "{count, plural, other {要拒绝 {count,number} 个请求吗？}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--ApproveAll": {
+    "messageformat": "{count, plural, other {{count,number} 个人将会被添加到通话中。}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--DenyAll": {
+    "messageformat": "{count, plural, other {{count,number} 个人将不会被添加到通话中。}}"
+  },
   "icu:CallingPendingParticipants__RequestsToJoin": {
     "messageformat": "{count, plural, other {{count,number} 个人请求加入通话}}"
+  },
+  "icu:CallingPendingParticipants__WouldLikeToJoin": {
+    "messageformat": "想要加入…"
+  },
+  "icu:CallingPendingParticipants__AdditionalRequests": {
+    "messageformat": "{count, plural, other {+{count,number} 个请求}}"
+  },
+  "icu:CallingPendingParticipants__Toast--added-users-to-call": {
+    "messageformat": "{count, plural, other {{count,number} 个人已添加到通话中}}"
   },
   "icu:CallingRaisedHandsList__Title": {
     "messageformat": "{count, plural, other {{count,number} 个人举手了}}"
@@ -1352,8 +1412,14 @@
   "icu:calling__you-have-blocked": {
     "messageformat": "您已屏蔽{name}"
   },
+  "icu:calling__blocked-participant": {
+    "messageformat": "{name}已被屏蔽"
+  },
+  "icu:calling__block-info-title": {
+    "messageformat": "{name}已被屏蔽"
+  },
   "icu:calling__block-info": {
-    "messageformat": "你们双方将不会接到彼此的语音或视频来电。"
+    "messageformat": "您与他们之间将无法收到对方的音频或视频。"
   },
   "icu:calling__missing-media-keys": {
     "messageformat": "无法接收来自 {name} 的音频和视频"
@@ -2372,15 +2438,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "聊天已标记为未读"
   },
-  "icu:AuthArtCreator--dialog--message": {
-    "messageformat": "要打开 Signal 贴纸包创建器吗？"
-  },
-  "icu:AuthArtCreator--dialog--confirm": {
-    "messageformat": "确认"
-  },
-  "icu:AuthArtCreator--dialog--dismiss": {
-    "messageformat": "不予考虑"
-  },
   "icu:ArtCreator--Authentication--error": {
     "messageformat": "如要使用贴纸包创建器，请设置您的手机版和电脑版 Signal"
   },
@@ -2577,10 +2634,10 @@
     "messageformat": "拒绝"
   },
   "icu:declinedIncomingAudioCall": {
-    "messageformat": "您拒接了语音通话"
+    "messageformat": "拒接的语音通话"
   },
   "icu:declinedIncomingVideoCall": {
-    "messageformat": "您拒接了视频通话"
+    "messageformat": "拒接的视频通话"
   },
   "icu:acceptedIncomingAudioCall": {
     "messageformat": "语音来电"
@@ -2613,10 +2670,10 @@
     "messageformat": "Signal 将会在通知区域继续运行。您可以在 Signal 设置中对此进行更改。"
   },
   "icu:incomingAudioCall": {
-    "messageformat": "语音来电…"
+    "messageformat": "语音来电"
   },
   "icu:incomingVideoCall": {
-    "messageformat": "视频来电…"
+    "messageformat": "视频来电"
   },
   "icu:outgoingAudioCall": {
     "messageformat": "拨出语音通话"
@@ -2661,7 +2718,7 @@
     "messageformat": "{count, plural, other {{count,number} 人}}"
   },
   "icu:CallControls__InfoDisplay--audio-call": {
-    "messageformat": "音频通话"
+    "messageformat": "语音通话"
   },
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "通话链接"
@@ -2688,13 +2745,13 @@
     "messageformat": "铃声关闭"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "You raised a hand."
+    "messageformat": "您举手了。"
   },
   "icu:CallControls__RaiseHandsToast--you-and-one": {
-    "messageformat": "You and {otherName} raised a hand."
+    "messageformat": "您和{otherName}举手了。"
   },
   "icu:CallControls__RaiseHandsToast--you-and-more": {
-    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
+    "messageformat": "{overflowCount, plural, other {您、{otherName}和其他 {overflowCount,number} 人举手了。}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name}举手了。"
@@ -2724,16 +2781,16 @@
     "messageformat": "{people, plural, other {{people,number} 人参与通话}}"
   },
   "icu:calling__call-notification__ended": {
-    "messageformat": "群组通话已结束"
+    "messageformat": "视频通话已结束"
   },
   "icu:calling__call-notification__started-by-someone": {
-    "messageformat": "群组通话已开启"
+    "messageformat": "已开始视频通话"
   },
   "icu:calling__call-notification__started-by-you": {
-    "messageformat": "您发起了一个群组通话"
+    "messageformat": "你发起了视频通话"
   },
   "icu:calling__call-notification__started": {
-    "messageformat": "{name} 开启了群组通话"
+    "messageformat": "{name}发起了视频通话"
   },
   "icu:calling__in-another-call-tooltip": {
     "messageformat": "您已在通话中"
@@ -2780,26 +2837,41 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "窗口"
   },
+  "icu:calling__ParticipantInfoButton": {
+    "messageformat": "联系人详情"
+  },
   "icu:CallingAdhocCallInfo__CopyLink": {
     "messageformat": "复制通话链接"
+  },
+  "icu:CallingAdhocCallInfo__ShareViaSignal": {
+    "messageformat": "通过 Signal 分享通话链接"
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "将此人移除出通话"
   },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogBody": {
+    "messageformat": "要将{name}移除出通话吗？"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--remove": {
+    "messageformat": "移除"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--block": {
+    "messageformat": "屏蔽通话"
+  },
   "icu:CallingAdhocCallInfo__UnknownContactLabel": {
-    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+    "messageformat": "{count, plural, other {{count,number} 人}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
-    "messageformat": "+{count,number} more"
+    "messageformat": "{count, plural, other {+其他 {count,number} 人}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
-    "messageformat": "More info about new contacts"
+    "messageformat": "新联系人详情"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
-    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+    "messageformat": "在加入通话前，您只能看到手机联系人、同群组成员或与您进行过一对一聊天的人的名称。加入通话后，您将会看到所有名称和头像。"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
-    "messageformat": "Got it"
+    "messageformat": "知道了"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "视频"
@@ -3512,6 +3584,9 @@
   "icu:ContactModal--remove-from-group": {
     "messageformat": "从群组移除"
   },
+  "icu:ContactModal--already-in-call": {
+    "messageformat": "您已在通话中"
+  },
   "icu:showChatColorEditor": {
     "messageformat": "聊天颜色"
   },
@@ -3780,7 +3855,7 @@
     "messageformat": "{count, plural, other {您想要从哪些设备上删除这些消息？}}"
   },
   "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
-    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+    "messageformat": "{count, plural, other {这些消息将会从您的所有设备上删除。}}"
   },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "为我删除"
@@ -3795,7 +3870,7 @@
     "messageformat": "从所有设备中删除"
   },
   "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
-    "messageformat": "Delete"
+    "messageformat": "删除"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, other {您至多只能选择对所有人删除 {count,number} 条消息}}"
@@ -4196,11 +4271,11 @@
   "icu:ProfileEditor--username--check-starting-character": {
     "messageformat": "用户名不能以数字开头。"
   },
-  "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Usernames must have at least {min,number} characters."
+  "icu:ProfileEditor--username--check-character-min-plural": {
+    "messageformat": "{min, plural, other {用户名必须至少包含 {min,number} 个字符。}}"
   },
-  "icu:ProfileEditor--username--check-character-max": {
-    "messageformat": "用户名至多只能包含 {max,number} 个字符。"
+  "icu:ProfileEditor--username--check-character-max-plural": {
+    "messageformat": "{max, plural, other {用户名至多只能包含 {max,number} 个字符。}}"
   },
   "icu:ProfileEditor--username--check-discriminator-min": {
     "messageformat": "用户名无效，请至少输入 2 位数。"
@@ -4240,9 +4315,6 @@
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
     "messageformat": "删除"
-  },
-  "icu:ProfileEditor--username--delete-unavailable-notice": {
-    "messageformat": "如要删除您的用户名，请打开您手机上的 Signal，然后前往“设置 > 个人资料”。"
   },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "复制或删除用户名"
@@ -4749,13 +4821,13 @@
     "messageformat": "您的密友能看到您的名称和照片，还能看到您在“我的动态”中发布的帖子，除非您向对方隐藏动态。"
   },
   "icu:LocalDeleteWarningModal__header": {
-    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+    "messageformat": "删除操作可在多个设备上同步进行"
   },
   "icu:LocalDeleteWarningModal__description": {
-    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+    "messageformat": "当您删除消息或聊天时，它们在您的所有设备上将会被同步删除。"
   },
   "icu:LocalDeleteWarningModal__confirm": {
-    "messageformat": "Got it"
+    "messageformat": "知道了"
   },
   "icu:Stories__title": {
     "messageformat": "动态"
@@ -5350,7 +5422,7 @@
     "messageformat": "没有找到“{query}”的相关结果"
   },
   "icu:CallsList__CreateCallLink": {
-    "messageformat": "Create a Call Link"
+    "messageformat": "创建通话链接"
   },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "来电"
@@ -5360,6 +5432,9 @@
   },
   "icu:CallsList__ItemCallInfo--Missed": {
     "messageformat": "未接"
+  },
+  "icu:CallsList__ItemCallInfo--Declined": {
+    "messageformat": "已拒接"
   },
   "icu:CallsList__ItemCallInfo--GroupCall": {
     "messageformat": "群组通话"
@@ -5374,7 +5449,7 @@
     "messageformat": "要退出当前通话？"
   },
   "icu:CallsList__LeaveCallDialogBody": {
-    "messageformat": "您必须退出当前通话才能加入到其他通话中。"
+    "messageformat": "您必须退出当前通话才能开始或加入其他通话。"
   },
   "icu:CallsList__LeaveCallDialogButton--leave": {
     "messageformat": "离开通话"
@@ -5406,8 +5481,29 @@
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "通话链接"
   },
+  "icu:CallHistory__DescriptionVideoCall--Default": {
+    "messageformat": "{direction, select, Outgoing {拨出视频通话} other {视频来电}}"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Missed": {
+    "messageformat": "未接视频来电"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Unanswered": {
+    "messageformat": "未接视频通话"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Declined": {
+    "messageformat": "拒接的视频通话"
+  },
   "icu:CallLinkDetails__Join": {
     "messageformat": "加入"
+  },
+  "icu:CallLinkDetails__AddCallNameLabel": {
+    "messageformat": "添加通话名称"
+  },
+  "icu:CallLinkDetails__EditCallNameLabel": {
+    "messageformat": "编辑通话名称"
+  },
+  "icu:CallLinkDetails__ApproveAllMembersLabel": {
+    "messageformat": "批准所有成员"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "复制链接"
@@ -5415,23 +5511,50 @@
   "icu:CallLinkDetails__ShareLinkViaSignal": {
     "messageformat": "通过 Signal 分享链接"
   },
-  "icu:CallLinkEditModal__Title": {
-    "messageformat": "Call link details"
+  "icu:CallLinkDetails__DeleteLink": {
+    "messageformat": "Delete link"
   },
-  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
-    "messageformat": "Name"
+  "icu:CallLinkDetails__DeleteLinkModal__Title": {
+    "messageformat": "Delete call link?"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Body": {
+    "messageformat": "This link will no longer work for anyone who has it."
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
+    "messageformat": "Cancel"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Delete": {
+    "messageformat": "Delete"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "通话链接详情"
   },
   "icu:CallLinkEditModal__JoinButtonLabel": {
-    "messageformat": "Join"
+    "messageformat": "加入"
+  },
+  "icu:CallLinkEditModal__AddCallNameLabel": {
+    "messageformat": "添加通话名称"
+  },
+  "icu:CallLinkEditModal__EditCallNameLabel": {
+    "messageformat": "编辑通话名称"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Approve all members"
+    "messageformat": "批准所有成员"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
-    "messageformat": "Off"
+  "icu:CallLinkRestrictionsSelect__Option--Off": {
+    "messageformat": "关"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
-    "messageformat": "On"
+  "icu:CallLinkRestrictionsSelect__Option--On": {
+    "messageformat": "开"
+  },
+  "icu:CallLinkAddNameModal__Title": {
+    "messageformat": "添加通话名称"
+  },
+  "icu:CallLinkAddNameModal__Title--Edit": {
+    "messageformat": "编辑通话名称"
+  },
+  "icu:CallLinkAddNameModal__NameLabel": {
+    "messageformat": "通话名称"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, other {其他 {count,number} 人正在输入。}}"
@@ -5473,19 +5596,19 @@
     "messageformat": "我们进行了功能微调、漏洞修复和性能强化。感谢使用 Signal！",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.12--0": {
-    "messageformat": "新推出的举手功能可方便用户在群组通话过程中引起注意或提出问题。"
+  "icu:WhatsNew__v7.18--0": {
+    "messageformat": "此版本加快了删除大消息线程的过程。"
   },
-  "icu:WhatsNew__v7.12--1": {
-    "messageformat": "此更新还包括经过改进的裁剪工具，便于用于调整图片尺寸。"
+  "icu:WhatsNew__v7.19--0": {
+    "messageformat": "我们添加了一个快捷方式，方便用户挂断当前通话并加入到新通话。"
   },
-  "icu:WhatsNew__v7.12--2": {
-    "messageformat": "我们已将发送语音备忘录的键盘快捷键修改为 Ctrl/Cmd+Shift+Y，避免其与 Windows 和 Linux 上的“粘贴并匹配目标样式”快捷键冲突。"
+  "icu:WhatsNew__v7.19--1": {
+    "messageformat": "对于语言环境设置为“POSIX”的用户，此次更新还修复了 Linux 上的启动崩溃问题。"
   },
-  "icu:WhatsNew__v7.13--0": {
-    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  "icu:WhatsNew__v7.20--0": {
+    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
   },
-  "icu:WhatsNew__v7.13--1": {
-    "messageformat": "This update also improves the display of quoted replies in RTL languages."
+  "icu:WhatsNew__v7.20--1": {
+    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
   }
 }

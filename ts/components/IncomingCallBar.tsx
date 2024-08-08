@@ -11,7 +11,7 @@ import { getParticipantName } from '../util/callingGetParticipantName';
 import { ContactName } from './conversation/ContactName';
 import type { LocalizerType } from '../types/Util';
 import { AvatarColors } from '../types/Colors';
-import { CallMode } from '../types/Calling';
+import { CallMode } from '../types/CallDisposition';
 import type { ConversationType } from '../state/ducks/conversations';
 import type { AcceptCallType, DeclineCallType } from '../state/ducks/calling';
 import { missingCaseError } from '../util/missingCaseError';
@@ -28,7 +28,7 @@ export type PropsType = {
   conversation: Pick<
     ConversationType,
     | 'acceptedMessageRequest'
-    | 'avatarPath'
+    | 'avatarUrl'
     | 'color'
     | 'id'
     | 'isMe'
@@ -194,7 +194,7 @@ export function IncomingCallBar(props: PropsType): JSX.Element | null {
   const {
     id: conversationId,
     acceptedMessageRequest,
-    avatarPath,
+    avatarUrl,
     color,
     isMe,
     phoneNumber,
@@ -275,7 +275,7 @@ export function IncomingCallBar(props: PropsType): JSX.Element | null {
           <div className="IncomingCallBar__conversation--avatar">
             <Avatar
               acceptedMessageRequest={acceptedMessageRequest}
-              avatarPath={avatarPath}
+              avatarUrl={avatarUrl}
               badge={undefined}
               color={color || AvatarColors[0]}
               noteToSelf={false}

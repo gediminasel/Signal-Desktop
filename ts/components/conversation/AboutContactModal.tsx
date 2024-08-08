@@ -12,10 +12,7 @@ import { UserText } from '../UserText';
 import { SharedGroupNames } from '../SharedGroupNames';
 import { About } from './About';
 import { I18n } from '../I18n';
-import {
-  areNicknamesEnabled,
-  canHaveNicknameAndNote,
-} from '../../util/nicknames';
+import { canHaveNicknameAndNote } from '../../util/nicknames';
 import { Tooltip, TooltipPlacement } from '../Tooltip';
 
 function muted(parts: Array<string | JSX.Element>) {
@@ -123,7 +120,7 @@ export function AboutContactModal({
       <div className="AboutContactModal__row AboutContactModal__row--centered">
         <Avatar
           acceptedMessageRequest={conversation.acceptedMessageRequest}
-          avatarPath={conversation.avatarPath}
+          avatarUrl={conversation.avatarUrl}
           blur={avatarBlur}
           onClick={avatarBlur === AvatarBlur.NoBlur ? undefined : onAvatarClick}
           badge={undefined}
@@ -135,7 +132,7 @@ export function AboutContactModal({
           sharedGroupNames={[]}
           size={AvatarSize.TWO_HUNDRED_SIXTEEN}
           title={conversation.title}
-          unblurredAvatarPath={conversation.unblurredAvatarPath}
+          unblurredAvatarUrl={conversation.unblurredAvatarUrl}
         />
       </div>
 
@@ -255,7 +252,7 @@ export function AboutContactModal({
         </div>
       )}
 
-      {areNicknamesEnabled() && conversation.note && (
+      {conversation.note && (
         <div className="AboutContactModal__row">
           <i className="AboutContactModal__row__icon AboutContactModal__row__icon--note" />
           <button

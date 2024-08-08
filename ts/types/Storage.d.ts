@@ -64,6 +64,12 @@ export type StorageAccessType = {
   attachmentMigration_lastProcessedIndex: number;
   blocked: ReadonlyArray<string>;
   defaultConversationColor: DefaultConversationColorType;
+
+  // Not used UI, stored as is when imported from backup.
+  defaultWallpaperPhotoPointer: Uint8Array;
+  defaultWallpaperPreset: number;
+  defaultDimWallpaperInDarkMode: boolean;
+
   customColors: CustomColorsItemType;
   device_name: string;
   existingOnboardingStoryMessageIds: ReadonlyArray<string> | undefined;
@@ -72,6 +78,7 @@ export type StorageAccessType = {
   hasCompletedUsernameOnboarding: boolean;
   hasCompletedUsernameLinkOnboarding: boolean;
   hasCompletedSafetyNumberOnboarding: boolean;
+  hasSeenGroupStoryEducationSheet: boolean;
   hasViewedOnboardingStory: boolean;
   hasStoriesDisabled: boolean;
   storyViewReceiptsEnabled: boolean;
@@ -154,8 +161,10 @@ export type StorageAccessType = {
   areWeASubscriber: boolean;
   subscriberId: Uint8Array;
   subscriberCurrencyCode: string;
+  donorSubscriptionManuallyCancelled: boolean;
   backupsSubscriberId: Uint8Array;
   backupsSubscriberCurrencyCode: string;
+  backupsSubscriptionManuallyCancelled: boolean;
   displayBadgesOnProfile: boolean;
   keepMutedChatsArchived: boolean;
   usernameLastIntegrityCheck: number;
@@ -166,6 +175,7 @@ export type StorageAccessType = {
     entropy: Uint8Array;
     serverId: Uint8Array;
   };
+  needOrphanedAttachmentCheck: boolean;
 
   // Deprecated
   'challenge:retry-message-ids': never;

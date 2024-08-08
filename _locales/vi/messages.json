@@ -80,6 +80,18 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "Phiên bản cơ sở dữ liệu của bạn không khớp với phiên bản Signal này. Đảm bảo bạn đang sử dụng phiên bản Signal mới nhất trên máy tính của mình."
   },
+  "icu:databaseError__recover__detail": {
+    "messageformat": "Đã xảy ra lỗi cơ sở dữ liệu. Bạn có thể sao chép lỗi và liên hệ bộ phận hỗ trợ của Signal để được hỗ trợ khắc phục vấn đề. Nếu cần sử dụng Signal ngay, bạn có thể thử khôi phục dữ liệu của mình.\n\nLiên hệ với bộ phận hỗ trợ bằng cách truy cập: {link}"
+  },
+  "icu:databaseError__recover__button": {
+    "messageformat": "Khôi phục dữ liệu"
+  },
+  "icu:databaseError__safeStorageBackendChange": {
+    "messageformat": "Không thể truy cập cơ sở dữ liệu khóa mã hóa vì phần backend của keyring của hệ điều hành đã được đổi từ {previousBackend} thành {currentBackend}. Điều này có thể xảy ra khi môi trường desktop thay đổi, ví dụ như giữa GNOME và KDE.\n\nVui lòng chuyển thành môi trường desktop trước đó."
+  },
+  "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
+    "messageformat": "Không thể truy cập cơ sở dữ liệu khóa mã hóa vì phần backend của keyring của hệ điều hành đã được đổi từ {previousBackend} thành {currentBackend}. Điều này có thể xảy ra khi môi trường desktop thay đổi, ví dụ như giữa GNOME và KDE.\n\nVui lòng chuyển thành môi trường desktop trước đó hoặc thử chạy Signal bằng dòng lệnh --password-store=\"{previousBackendFlag}\""
+  },
   "icu:mainMenuFile": {
     "messageformat": "&Tập tin"
   },
@@ -818,8 +830,14 @@
   "icu:cannotUpdateDetail": {
     "messageformat": "Signal không thể cập nhật. {retry} hoặc truy cập {url} để cài thủ công. Sau đó, {support} về vấn đề này"
   },
+  "icu:cannotUpdateDetail-v2": {
+    "messageformat": "Signal không thể cập nhật. <retryUpdateButton>Thử cập nhật lại</retryUpdateButton> hoặc truy cập {url} để cài thủ công. Sau đó, <contactSupportLink>liên hệ bộ phận hỗ trợ</contactSupportLink> về vấn đề này"
+  },
   "icu:cannotUpdateRequireManualDetail": {
     "messageformat": "Signal không thể cập nhật. Truy cập {url} để cài thủ công. Sau đó, {support} về vấn đề này"
+  },
+  "icu:cannotUpdateRequireManualDetail-v2": {
+    "messageformat": "Signal không thể cập nhật. Truy cập {url} để cài thủ công. Sau đó, <contactSupportLink>liên hệ bộ phận hỗ trợ</contactSupportLink> về vấn đề này"
   },
   "icu:readOnlyVolume": {
     "messageformat": "Signal Desktop đang trong tình trạng cách ly trên macOS, và sẽ không thể tự-cập nhật được. Xin hãy dời {app} đến {folder} với ứng dụng Finder."
@@ -989,6 +1007,9 @@
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
     "messageformat": "Tất cả tin nhắn trong cuộc trò chuyện này sẽ được xóa khỏi thiết bị này. Bạn vẫn có thể tìm cuộc trò chuyện này sau khi xóa tin nhắn."
   },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
+    "messageformat": "Tất cả tin nhắn trong cuộc trò chuyện này sẽ được xóa khỏi tất cả thiết bị của bạn. Bạn vẫn có thể tìm cuộc trò chuyện này sau khi xóa tin nhắn."
+  },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Rời nhóm"
   },
@@ -1092,7 +1113,7 @@
     "messageformat": "Các thiết bị Được liên kết"
   },
   "icu:linkNewDevice": {
-    "messageformat": "Liên kết Thiết bị Mới"
+    "messageformat": "Liên kết một thiết bị mới"
   },
   "icu:Install__learn-more": {
     "messageformat": "Tìm hiểu thêm"
@@ -1110,10 +1131,22 @@
     "messageformat": "Cài đặt"
   },
   "icu:Install__instructions__3": {
-    "messageformat": "Nhấn {plusButton}(Android) hoặc {linkNewDevice} (iPhone)"
+    "messageformat": "Nhấn {linkNewDevice}"
   },
-  "icu:Install__qr-failed-load": {
-    "messageformat": "Không thể tải mã QR. Kiểm tra đường truyền internet của bạn và thử lại. Thử lại"
+  "icu:Install__qr-failed-load__error--timeout": {
+    "messageformat": "Không thể tải mã QR. Kiểm tra kết nối của bạn và thử lại."
+  },
+  "icu:Install__qr-failed-load__error--unknown": {
+    "messageformat": "<paragraph>Có lỗi không mong muốn xảy ra.</paragraph><paragraph>Xin hãy thử lại.</paragraph>"
+  },
+  "icu:Install__qr-failed-load__error--network": {
+    "messageformat": "Signal không thể liên kết thiết bị này khi sử dụng mạng hiện tại của bạn."
+  },
+  "icu:Install__qr-failed-load__retry": {
+    "messageformat": "Thử lại"
+  },
+  "icu:Install__qr-failed-load__get-help": {
+    "messageformat": "Hỗ trợ"
   },
   "icu:Install__support-link": {
     "messageformat": "Cần hỗ trợ?"
@@ -1173,10 +1206,10 @@
     "messageformat": "Gọi Lại"
   },
   "icu:calling__join": {
-    "messageformat": "Tham gia Cuộc gọi"
+    "messageformat": "Tham gia cuộc gọi"
   },
   "icu:calling__return": {
-    "messageformat": "Quay về Cuộc gọi"
+    "messageformat": "Quay trở lại cuộc gọi"
   },
   "icu:calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
     "messageformat": "Microphone bị tắt tiếng do kích thước cuộc gọi quá lớn"
@@ -1286,8 +1319,35 @@
   "icu:CallingPendingParticipants__DenyUser": {
     "messageformat": "Từ chối yêu cầu tham gia"
   },
+  "icu:CallingPendingParticipants__ApproveAll": {
+    "messageformat": "Chấp nhận tất cả"
+  },
+  "icu:CallingPendingParticipants__DenyAll": {
+    "messageformat": "Từ chối tất cả"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--ApproveAll": {
+    "messageformat": "{count, plural, other {Chấp nhận {count,number} yêu cầu?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--DenyAll": {
+    "messageformat": "{count, plural, other {Từ chối {count,number} yêu cầu?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--ApproveAll": {
+    "messageformat": "{count, plural, other {{count,number} người sẽ được thêm vào cuộc gọi.}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--DenyAll": {
+    "messageformat": "{count, plural, other {{count,number} người sẽ không được thêm vào cuộc gọi.}}"
+  },
   "icu:CallingPendingParticipants__RequestsToJoin": {
     "messageformat": "{count, plural, other {{count,number} yêu cầu tham gia cuộc gọi}}"
+  },
+  "icu:CallingPendingParticipants__WouldLikeToJoin": {
+    "messageformat": "Muốn tham gia…"
+  },
+  "icu:CallingPendingParticipants__AdditionalRequests": {
+    "messageformat": "{count, plural, other {+{count,number} yêu cầu}}"
+  },
+  "icu:CallingPendingParticipants__Toast--added-users-to-call": {
+    "messageformat": "{count, plural, other {{count,number} người đã được thêm vào cuộc gọi}}"
   },
   "icu:CallingRaisedHandsList__Title": {
     "messageformat": "{count, plural, other {{count,number} người giơ tay}}"
@@ -1352,8 +1412,14 @@
   "icu:calling__you-have-blocked": {
     "messageformat": "Bạn đã chặn {name}"
   },
+  "icu:calling__blocked-participant": {
+    "messageformat": "{name} đã bị chặn"
+  },
+  "icu:calling__block-info-title": {
+    "messageformat": "{name} đã bị chặn"
+  },
   "icu:calling__block-info": {
-    "messageformat": "Bạn sẽ không nhận được âm thanh hoặc video từ họ và họ sẽ không nhận được các dữ liệu này của bạn."
+    "messageformat": "Bạn sẽ không nhận được âm thanh hoặc video của họ và họ sẽ không nhận được của bạn."
   },
   "icu:calling__missing-media-keys": {
     "messageformat": "Không thể nhận được âm thanh và video từ {name}"
@@ -2372,15 +2438,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "Cuộc trò chuyện đã được đánh dấu chưa đọc"
   },
-  "icu:AuthArtCreator--dialog--message": {
-    "messageformat": "Bạn có muốn mở Công Cụ Tạo Gói Nhãn Dán Signal?"
-  },
-  "icu:AuthArtCreator--dialog--confirm": {
-    "messageformat": "Xác nhận"
-  },
-  "icu:AuthArtCreator--dialog--dismiss": {
-    "messageformat": "Bỏ qua"
-  },
   "icu:ArtCreator--Authentication--error": {
     "messageformat": "Vui lòng cài Signal trên điện thoại và máy tính để sử dụng Công Cụ Tạo Nhãn Dán Signal"
   },
@@ -2577,10 +2634,10 @@
     "messageformat": "Từ chối"
   },
   "icu:declinedIncomingAudioCall": {
-    "messageformat": "Bạn đã từ chối cuộc gọi thoại"
+    "messageformat": "Cuộc gọi thoại đã từ chối"
   },
   "icu:declinedIncomingVideoCall": {
-    "messageformat": "Bạn đã từ chối cuộc gọi video"
+    "messageformat": "Cuộc gọi video đã từ chối"
   },
   "icu:acceptedIncomingAudioCall": {
     "messageformat": "Cuộc gọi thoại đến"
@@ -2613,10 +2670,10 @@
     "messageformat": "Signal sẽ tiếp tục chạy ở vùng thông báo. Bạn có thể thay đổi trong mục cài đặt của Signal."
   },
   "icu:incomingAudioCall": {
-    "messageformat": "Cuộc gọi thoại đến…"
+    "messageformat": "Cuộc gọi thoại đến"
   },
   "icu:incomingVideoCall": {
-    "messageformat": "Có cuộc gọi video đến…"
+    "messageformat": "Cuộc gọi video đang đến"
   },
   "icu:outgoingAudioCall": {
     "messageformat": "Cuộc gọi thoại đi"
@@ -2661,7 +2718,7 @@
     "messageformat": "{count, plural, other {{count,number} người}}"
   },
   "icu:CallControls__InfoDisplay--audio-call": {
-    "messageformat": "Cuộc gọi âm thanh"
+    "messageformat": "Cuộc gọi thoại"
   },
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "Đường dẫn cuộc gọi"
@@ -2688,13 +2745,13 @@
     "messageformat": "Đổ chuông đang tắt"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "You raised a hand."
+    "messageformat": "Bạn giơ tay."
   },
   "icu:CallControls__RaiseHandsToast--you-and-one": {
-    "messageformat": "You and {otherName} raised a hand."
+    "messageformat": "Bạn và {otherName} giơ tay."
   },
   "icu:CallControls__RaiseHandsToast--you-and-more": {
-    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
+    "messageformat": "{overflowCount, plural, other {Bạn, {otherName} và {overflowCount,number} giơ tay.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} giơ tay."
@@ -2724,16 +2781,16 @@
     "messageformat": "{people, plural, other {{people,number} trong cuộc gọi}}"
   },
   "icu:calling__call-notification__ended": {
-    "messageformat": "Cuộc gọi nhóm đã kết thúc"
+    "messageformat": "Cuộc gọi video đã kết thúc"
   },
   "icu:calling__call-notification__started-by-someone": {
-    "messageformat": "Một cuộc gọi nhóm đã được bắt đầu"
+    "messageformat": "Một cuộc gọi video đã được bắt đầu"
   },
   "icu:calling__call-notification__started-by-you": {
-    "messageformat": "Bạn đã bắt đầu cuộc gọi nhóm"
+    "messageformat": "Bạn đã bắt đầu cuộc gọi video"
   },
   "icu:calling__call-notification__started": {
-    "messageformat": "{name} đã bắt đầu cuộc gọi nhóm"
+    "messageformat": "{name} đã bắt đầu cuộc gọi video"
   },
   "icu:calling__in-another-call-tooltip": {
     "messageformat": "Bạn đã đang ở trong một cuộc gọi"
@@ -2780,26 +2837,41 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "Một cửa sổ"
   },
+  "icu:calling__ParticipantInfoButton": {
+    "messageformat": "Thông tin thêm về liên hệ mới này"
+  },
   "icu:CallingAdhocCallInfo__CopyLink": {
     "messageformat": "Sao chép đường dẫn cuộc gọi"
+  },
+  "icu:CallingAdhocCallInfo__ShareViaSignal": {
+    "messageformat": "Chia sẻ đường dẫn cuộc gọi"
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "Gỡ người này khỏi cuộc gọi"
   },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogBody": {
+    "messageformat": "Gỡ {name} khỏi cuộc gọi?"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--remove": {
+    "messageformat": "Xóa"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--block": {
+    "messageformat": "Chặn khỏi cuộc gọi"
+  },
   "icu:CallingAdhocCallInfo__UnknownContactLabel": {
-    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+    "messageformat": "{count, plural, other {{count,number} người}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
-    "messageformat": "+{count,number} more"
+    "messageformat": "{count, plural, other {+{count,number} người khác}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
-    "messageformat": "More info about new contacts"
+    "messageformat": "Thông tin thêm về những liên hệ mới"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
-    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+    "messageformat": "Trước khi tham gia một cuộc gọi, bạn chỉ có thể thấy tên của những liên hệ có trên điện thoại, những người ở trong cùng một nhóm với bạn, hoặc những người bạn đã trò chuyện trực tiếp. Bạn sẽ thấy tất cả tên và ảnh khi bạn đã tham gia cuộc gọi."
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
-    "messageformat": "Got it"
+    "messageformat": "Đã hiểu"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -3512,6 +3584,9 @@
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Xóa khỏi nhóm"
   },
+  "icu:ContactModal--already-in-call": {
+    "messageformat": "Bạn đã đang ở trong một cuộc gọi"
+  },
   "icu:showChatColorEditor": {
     "messageformat": "Màu cuộc trò chuyện"
   },
@@ -3780,7 +3855,7 @@
     "messageformat": "{count, plural, other {Bạn muốn xóa các tin nhắn này trên thiết bị nào?}}"
   },
   "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
-    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+    "messageformat": "{count, plural, other {Những tin nhắn này sẽ được xóa trên tất cả thiết bị của bạn.}}"
   },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "Xóa cho tôi"
@@ -3795,7 +3870,7 @@
     "messageformat": "Xóa trên tất cả thiết bị"
   },
   "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
-    "messageformat": "Delete"
+    "messageformat": "Xóa"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, other {Bạn chỉ có thể chọn tối đa {count,number} tin nhắn để xóa cho mọi người}}"
@@ -4196,11 +4271,11 @@
   "icu:ProfileEditor--username--check-starting-character": {
     "messageformat": "Tên người dùng không thể bắt đầu bằng một chữ số."
   },
-  "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Usernames must have at least {min,number} characters."
+  "icu:ProfileEditor--username--check-character-min-plural": {
+    "messageformat": "{min, plural, other {Tên người dùng phải có ít nhất {min,number} ký tự.}}"
   },
-  "icu:ProfileEditor--username--check-character-max": {
-    "messageformat": "Tên người dùng phải có tối đa {max,number} ký tự."
+  "icu:ProfileEditor--username--check-character-max-plural": {
+    "messageformat": "{max, plural, other {Tên người dùng phải có tối đa {max,number} ký tự.}}"
   },
   "icu:ProfileEditor--username--check-discriminator-min": {
     "messageformat": "Tên người dùng không hợp lệ, nhập tối thiểu 2 số."
@@ -4240,9 +4315,6 @@
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
     "messageformat": "Xóa"
-  },
-  "icu:ProfileEditor--username--delete-unavailable-notice": {
-    "messageformat": "Để xóa tên người dùng của mình, mở Signal trên điện thoại của bạn và đến mục Cài đặt > Tài khoản."
   },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "Sao chép hoặc xóa tên người dùng"
@@ -4749,13 +4821,13 @@
     "messageformat": "Các liên hệ của bạn có thể thấy tên và ảnh của bạn, và có thể thấy các bài đăng lên \"Story của tôi\" trừ khi bạn ẩn story với các liên hệ"
   },
   "icu:LocalDeleteWarningModal__header": {
-    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+    "messageformat": "Việc xóa được đồng bộ trên các thiết bị của bạn"
   },
   "icu:LocalDeleteWarningModal__description": {
-    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+    "messageformat": "Khi bạn xóa tin nhắn hoặc cuộc trò chuyện, chúng sẽ được xóa trên tất cả thiết bị của bạn."
   },
   "icu:LocalDeleteWarningModal__confirm": {
-    "messageformat": "Got it"
+    "messageformat": "Đã hiểu"
   },
   "icu:Stories__title": {
     "messageformat": "Các Story"
@@ -5350,7 +5422,7 @@
     "messageformat": "Không có kết quả cho “{query}”"
   },
   "icu:CallsList__CreateCallLink": {
-    "messageformat": "Create a Call Link"
+    "messageformat": "Tạo Đường dẫn Cuộc gọi"
   },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "Cuộc gọi đến"
@@ -5360,6 +5432,9 @@
   },
   "icu:CallsList__ItemCallInfo--Missed": {
     "messageformat": "Cuộc gọi nhỡ"
+  },
+  "icu:CallsList__ItemCallInfo--Declined": {
+    "messageformat": "Đã từ chối"
   },
   "icu:CallsList__ItemCallInfo--GroupCall": {
     "messageformat": "Cuộc gọi nhóm"
@@ -5374,7 +5449,7 @@
     "messageformat": "Rời khỏi cuộc gọi hiện tại?"
   },
   "icu:CallsList__LeaveCallDialogBody": {
-    "messageformat": "Bạn phải rời khỏi cuộc gọi hiện tại trước khi tham gia một cuộc gọi mới."
+    "messageformat": "Bạn phải rời khỏi cuộc gọi hiện tại trước khi bắt đầu hoặc tham gia một cuộc gọi mới."
   },
   "icu:CallsList__LeaveCallDialogButton--leave": {
     "messageformat": "Rời cuộc gọi"
@@ -5406,8 +5481,29 @@
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Đường dẫn cuộc gọi"
   },
+  "icu:CallHistory__DescriptionVideoCall--Default": {
+    "messageformat": "{direction, select, Outgoing {Cuộc gọi video đang gọi đi} other {Cuộc gọi video đang đến}}"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Missed": {
+    "messageformat": "Cuộc gọi video bị nhỡ"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Unanswered": {
+    "messageformat": "Cuộc gọi video không được trả lời"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Declined": {
+    "messageformat": "Cuộc gọi video đã từ chối"
+  },
   "icu:CallLinkDetails__Join": {
     "messageformat": "Tham gia"
+  },
+  "icu:CallLinkDetails__AddCallNameLabel": {
+    "messageformat": "Thêm tên cuộc gọi"
+  },
+  "icu:CallLinkDetails__EditCallNameLabel": {
+    "messageformat": "Sửa tên cuộc gọi"
+  },
+  "icu:CallLinkDetails__ApproveAllMembersLabel": {
+    "messageformat": "Chấp nhận tất cả thành viên"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "Sao chép đường dẫn"
@@ -5415,23 +5511,50 @@
   "icu:CallLinkDetails__ShareLinkViaSignal": {
     "messageformat": "Chia sẻ đường dẫn qua Signal"
   },
-  "icu:CallLinkEditModal__Title": {
-    "messageformat": "Call link details"
+  "icu:CallLinkDetails__DeleteLink": {
+    "messageformat": "Delete link"
   },
-  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
-    "messageformat": "Name"
+  "icu:CallLinkDetails__DeleteLinkModal__Title": {
+    "messageformat": "Delete call link?"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Body": {
+    "messageformat": "This link will no longer work for anyone who has it."
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
+    "messageformat": "Cancel"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Delete": {
+    "messageformat": "Delete"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Chi tiết đường dẫn cuộc gọi"
   },
   "icu:CallLinkEditModal__JoinButtonLabel": {
-    "messageformat": "Join"
+    "messageformat": "Tham gia"
+  },
+  "icu:CallLinkEditModal__AddCallNameLabel": {
+    "messageformat": "Thêm tên cuộc gọi"
+  },
+  "icu:CallLinkEditModal__EditCallNameLabel": {
+    "messageformat": "Sửa tên cuộc gọi"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Approve all members"
+    "messageformat": "Chấp nhận tất cả thành viên"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
-    "messageformat": "Off"
+  "icu:CallLinkRestrictionsSelect__Option--Off": {
+    "messageformat": "Tắt"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
-    "messageformat": "On"
+  "icu:CallLinkRestrictionsSelect__Option--On": {
+    "messageformat": "Bật"
+  },
+  "icu:CallLinkAddNameModal__Title": {
+    "messageformat": "Thêm tên cuộc gọi"
+  },
+  "icu:CallLinkAddNameModal__Title--Edit": {
+    "messageformat": "Sửa tên cuộc gọi"
+  },
+  "icu:CallLinkAddNameModal__NameLabel": {
+    "messageformat": "Tên cuộc gọi"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, other {{count,number} người khác đang nhập.}}"
@@ -5473,19 +5596,19 @@
     "messageformat": "Các tinh chỉnh, sửa lỗi, và cải thiện hiệu năng. Cảm ơn bạn đã sử dụng Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.12--0": {
-    "messageformat": "Tính năng Giơ Tay mới là một phương thức đơn giản để thu hút sự chú ý của một người hoặc hỏi câu hỏi trong các cuộc gọi nhóm."
+  "icu:WhatsNew__v7.18--0": {
+    "messageformat": "Quá trình xóa các chuỗi tin nhắn được tăng tốc qua bản cập nhật này."
   },
-  "icu:WhatsNew__v7.12--1": {
-    "messageformat": "Bản cập nhật này cũng mang đến công cụ cắt ảnh đã được nâng cấp cho tác vụ thay đổi kích cỡ ảnh."
+  "icu:WhatsNew__v7.19--0": {
+    "messageformat": "Chúng tôi đã thêm một shortcut để ngắt và tham gia cuộc gọi mới khi đang ở trong một cuộc gọi đang diễn ra."
   },
-  "icu:WhatsNew__v7.12--2": {
-    "messageformat": "Chúng tôi đã sửa phím tắt cho thao tác gửi một ghi chú âm thanh thành Ctrl/Cmd+Shift+Y để không còn bị xung đột với phím tắt \"Dán và Khớp Phong cách\" trên Windows và Linux."
+  "icu:WhatsNew__v7.19--1": {
+    "messageformat": "Bản cập nhật này cũng sửa lỗi ứng dụng đóng đột ngột ở nền tảng Linux đối với những người dùng có ngôn ngữ được thiết lập là `POSIX`."
   },
-  "icu:WhatsNew__v7.13--0": {
-    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  "icu:WhatsNew__v7.20--0": {
+    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
   },
-  "icu:WhatsNew__v7.13--1": {
-    "messageformat": "This update also improves the display of quoted replies in RTL languages."
+  "icu:WhatsNew__v7.20--1": {
+    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
   }
 }

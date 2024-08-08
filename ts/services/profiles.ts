@@ -11,6 +11,7 @@ import type {
   GetProfileUnauthOptionsType,
 } from '../textsecure/WebAPI';
 import type { ServiceIdString } from '../types/ServiceId';
+import { DataWriter } from '../sql/Client';
 import * as log from '../logging/log';
 import * as Errors from '../types/errors';
 import * as Bytes from '../Bytes';
@@ -328,6 +329,7 @@ async function doGetProfile(c: ConversationModel): Promise<void> {
         }
 
         if (error.code === 404) {
+          c.set('profileLastFetchedAt', Date.now());
           await c.removeLastProfile(lastProfile);
         }
 
@@ -343,6 +345,7 @@ async function doGetProfile(c: ConversationModel): Promise<void> {
         if (error instanceof HTTPError && error.code === 404) {
           log.info(`getProfile: failed to find a profile for ${idForLogging}`);
 
+          c.set('profileLastFetchedAt', Date.now());
           await c.removeLastProfile(lastProfile);
           if (!isVersioned) {
             log.info(`getProfile: marking ${idForLogging} as unregistered`);
@@ -594,7 +597,7 @@ async function doGetProfile(c: ConversationModel): Promise<void> {
     });
   }
 
-  window.Signal.Data.updateConversation(c.attributes);
+  await DataWriter.updateConversation(c.attributes);
 }
 
 export type UpdateIdentityKeyOptionsType = Readonly<{

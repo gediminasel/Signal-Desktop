@@ -4,25 +4,41 @@
 import { z } from 'zod';
 import type { ZodSchema } from 'zod';
 
+import { drop } from './drop';
 import * as log from '../logging/log';
 import * as DeletesForMe from '../messageModifiers/DeletesForMe';
 import {
   deleteMessageSchema,
   deleteConversationSchema,
   deleteLocalConversationSchema,
+  deleteAttachmentSchema,
 } from '../textsecure/messageReceiverEvents';
-
+import {
+  receiptSyncTaskSchema,
+  onReceipt,
+} from '../messageModifiers/MessageReceipts';
 import {
   deleteConversation,
   deleteLocalOnlyConversation,
   getConversationFromTarget,
 } from './deleteForMe';
-import { drop } from './drop';
+import {
+  onSync as onReadSync,
+  readSyncTaskSchema,
+} from '../messageModifiers/ReadSyncs';
+import {
+  onSync as onViewSync,
+  viewSyncTaskSchema,
+} from '../messageModifiers/ViewSyncs';
 
 const syncTaskDataSchema = z.union([
   deleteMessageSchema,
   deleteConversationSchema,
   deleteLocalConversationSchema,
+  deleteAttachmentSchema,
+  receiptSyncTaskSchema,
+  readSyncTaskSchema,
+  viewSyncTaskSchema,
 ]);
 export type SyncTaskData = z.infer<typeof syncTaskDataSchema>;
 
@@ -40,10 +56,16 @@ const SCHEMAS_BY_TYPE: Record<SyncTaskData['type'], ZodSchema> = {
   'delete-message': deleteMessageSchema,
   'delete-conversation': deleteConversationSchema,
   'delete-local-conversation': deleteLocalConversationSchema,
+  'delete-single-attachment': deleteAttachmentSchema,
+  Delivery: receiptSyncTaskSchema,
+  Read: receiptSyncTaskSchema,
+  View: receiptSyncTaskSchema,
+  ReadSync: readSyncTaskSchema,
+  ViewSync: viewSyncTaskSchema,
 };
 
 function toLogId(task: SyncTaskType) {
-  return `task=${task.id},timestamp:${task},type=${task.type},envelopeId=${task.envelopeId}`;
+  return `type=${task.type},envelopeId=${task.envelopeId}`;
 }
 
 export async function queueSyncTasks(
@@ -77,18 +99,20 @@ export async function queueSyncTasks(
     const { data: parsed } = parseResult;
 
     if (parsed.type === 'delete-message') {
-      // eslint-disable-next-line no-await-in-loop
-      await DeletesForMe.onDelete({
-        conversation: parsed.conversation,
-        envelopeId,
-        message: parsed.message,
-        syncTaskId: id,
-        timestamp: sentAt,
-      });
+      drop(
+        DeletesForMe.onDelete({
+          conversation: parsed.conversation,
+          envelopeId,
+          message: parsed.message,
+          syncTaskId: id,
+          timestamp: sentAt,
+        })
+      );
     } else if (parsed.type === 'delete-conversation') {
       const {
         conversation: targetConversation,
         mostRecentMessages,
+        mostRecentNonExpiringMessages,
         isFullDelete,
       } = parsed;
       const conversation = getConversationFromTarget(targetConversation);
@@ -98,17 +122,18 @@ export async function queueSyncTasks(
       }
       drop(
         conversation.queueJob(innerLogId, async () => {
-          log.info(`${logId}: Starting...`);
+          log.info(`${innerLogId}: Starting...`);
           const result = await deleteConversation(
             conversation,
             mostRecentMessages,
+            mostRecentNonExpiringMessages,
             isFullDelete,
             innerLogId
           );
           if (result) {
             await removeSyncTaskById(id);
           }
-          log.info(`${logId}: Done, result=${result}`);
+          log.info(`${innerLogId}: Done, result=${result}`);
         })
       );
     } else if (parsed.type === 'delete-local-conversation') {
@@ -120,7 +145,7 @@ export async function queueSyncTasks(
       }
       drop(
         conversation.queueJob(innerLogId, async () => {
-          log.info(`${logId}: Starting...`);
+          log.info(`${innerLogId}: Starting...`);
           const result = await deleteLocalOnlyConversation(
             conversation,
             innerLogId
@@ -130,9 +155,59 @@ export async function queueSyncTasks(
           //   get more messages in this conversation from here!
           await removeSyncTaskById(id);
 
-          log.info(`${logId}: Done; result=${result}`);
+          log.info(`${innerLogId}: Done; result=${result}`);
         })
       );
+    } else if (parsed.type === 'delete-single-attachment') {
+      drop(
+        DeletesForMe.onDelete({
+          conversation: parsed.conversation,
+          deleteAttachmentData: {
+            clientUuid: parsed.clientUuid,
+            fallbackDigest: parsed.fallbackDigest,
+            fallbackPlaintextHash: parsed.fallbackPlaintextHash,
+          },
+          envelopeId,
+          message: parsed.message,
+          syncTaskId: id,
+          timestamp: sentAt,
+        })
+      );
+    } else if (
+      parsed.type === 'Delivery' ||
+      parsed.type === 'Read' ||
+      parsed.type === 'View'
+    ) {
+      drop(
+        onReceipt({
+          envelopeId,
+          receiptSync: parsed,
+          syncTaskId: id,
+        })
+      );
+    } else if (parsed.type === 'ReadSync') {
+      drop(
+        onReadSync({
+          envelopeId,
+          readSync: parsed,
+          syncTaskId: id,
+        })
+      );
+    } else if (parsed.type === 'ViewSync') {
+      drop(
+        onViewSync({
+          envelopeId,
+          viewSync: parsed,
+          syncTaskId: id,
+        })
+      );
+    } else {
+      const parsedType: never = parsed.type;
+      log.error(
+        `${innerLogId}: Encountered job of type ${parsedType}, removing`
+      );
+      // eslint-disable-next-line no-await-in-loop
+      await removeSyncTaskById(id);
     }
   }
 }

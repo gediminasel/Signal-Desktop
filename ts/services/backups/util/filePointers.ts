@@ -38,6 +38,7 @@ import {
 import { redactGenericText } from '../../../util/privacy';
 import { missingCaseError } from '../../../util/missingCaseError';
 import { toLogFormat } from '../../../types/errors';
+import { bytesToUuid } from '../../../util/uuidToBytes';
 
 export function convertFilePointerToAttachment(
   filePointer: Backups.FilePointer
@@ -104,7 +105,7 @@ export function convertFilePointerToAttachment(
       cdnNumber: transitCdnNumber ?? undefined,
       key: key?.length ? Bytes.toBase64(key) : undefined,
       digest: digest?.length ? Bytes.toBase64(digest) : undefined,
-      size: size ?? 0,
+      size: size?.toNumber() ?? 0,
       backupLocator: mediaName
         ? {
             mediaName,
@@ -128,10 +129,16 @@ export function convertFilePointerToAttachment(
 export function convertBackupMessageAttachmentToAttachment(
   messageAttachment: Backups.IMessageAttachment
 ): AttachmentType | null {
+  const { clientUuid } = messageAttachment;
+
   if (!messageAttachment.pointer) {
     return null;
   }
-  const result = convertFilePointerToAttachment(messageAttachment.pointer);
+  const result = {
+    ...convertFilePointerToAttachment(messageAttachment.pointer),
+    clientUuid: clientUuid ? bytesToUuid(clientUuid) : undefined,
+  };
+
   switch (messageAttachment.flag) {
     case Backups.MessageAttachment.Flag.VOICE_MESSAGE:
       result.flags = SignalService.AttachmentPointer.Flags.VOICE_MESSAGE;
@@ -188,6 +195,8 @@ async function generateNewEncryptionInfoForAttachment(
         attachment.path
       ),
     },
+    getAbsoluteAttachmentPath:
+      window.Signal.Migrations.getAbsoluteAttachmentPath,
   });
 
   return {
@@ -392,7 +401,7 @@ function getBackupLocator(attachment: AttachmentDownloadableFromBackupTier) {
     cdnNumber: attachment.backupLocator.cdnNumber,
     digest: Bytes.fromBase64(attachment.digest),
     key: Bytes.fromBase64(attachment.key),
-    size: attachment.size,
+    size: Long.fromNumber(attachment.size),
     transitCdnKey: attachment.cdnKey,
     transitCdnNumber: attachment.cdnNumber,
   });
@@ -448,6 +457,8 @@ export async function maybeGetBackupJobForAttachmentAndFilePointer({
     cdnKey,
     cdnNumber,
     uploadTimestamp,
+    version,
+    localKey,
   } = attachment;
 
   return {
@@ -461,6 +472,8 @@ export async function maybeGetBackupJobForAttachmentAndFilePointer({
       digest,
       iv,
       size,
+      version,
+      localKey,
       transitCdnInfo:
         cdnKey && cdnNumber != null
           ? {

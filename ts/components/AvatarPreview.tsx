@@ -16,12 +16,13 @@ import { imagePathToBytes } from '../util/imagePathToBytes';
 
 export type PropsType = {
   avatarColor?: AvatarColorType;
-  avatarPath?: string;
+  avatarUrl?: string;
   avatarValue?: Uint8Array;
   conversationTitle?: string;
   i18n: LocalizerType;
   isEditable?: boolean;
   isGroup?: boolean;
+  noteToSelf?: boolean;
   onAvatarLoaded?: (avatarBuffer: Uint8Array) => unknown;
   onClear?: () => unknown;
   onClick?: () => unknown;
@@ -36,12 +37,13 @@ enum ImageStatus {
 
 export function AvatarPreview({
   avatarColor = AvatarColors[0],
-  avatarPath,
+  avatarUrl,
   avatarValue,
   conversationTitle,
   i18n,
   isEditable,
   isGroup,
+  noteToSelf,
   onAvatarLoaded,
   onClear,
   onClick,
@@ -49,15 +51,15 @@ export function AvatarPreview({
 }: PropsType): JSX.Element {
   const [avatarPreview, setAvatarPreview] = useState<Uint8Array | undefined>();
 
-  // Loads the initial avatarPath if one is provided, but only if we're in editable mode.
-  //   If we're not editable, we assume that we either have an avatarPath or we show a
+  // Loads the initial avatarUrl if one is provided, but only if we're in editable mode.
+  //   If we're not editable, we assume that we either have an avatarUrl or we show a
   //   default avatar.
   useEffect(() => {
     if (!isEditable) {
       return;
     }
 
-    if (!avatarPath) {
+    if (!avatarUrl) {
       return noop;
     }
 
@@ -65,7 +67,7 @@ export function AvatarPreview({
 
     void (async () => {
       try {
-        const buffer = await imagePathToBytes(avatarPath);
+        const buffer = await imagePathToBytes(avatarUrl);
         if (shouldCancel) {
           return;
         }
@@ -86,7 +88,7 @@ export function AvatarPreview({
     return () => {
       shouldCancel = true;
     };
-  }, [avatarPath, onAvatarLoaded, isEditable]);
+  }, [avatarUrl, onAvatarLoaded, isEditable]);
 
   // Ensures that when avatarValue changes we generate new URLs
   useEffect(() => {
@@ -118,12 +120,14 @@ export function AvatarPreview({
   let encodedPath: string | undefined;
   if (avatarValue && !objectUrl) {
     imageStatus = ImageStatus.Loading;
+  } else if (noteToSelf) {
+    imageStatus = ImageStatus.Nothing;
   } else if (objectUrl) {
     encodedPath = objectUrl;
     imageStatus = ImageStatus.HasImage;
-  } else if (avatarPath) {
+  } else if (avatarUrl) {
     encodedPath = encodeURI(
-      avatarPath
+      avatarUrl
         .replaceAll('/', sep)
         .replaceAll('\\', sep)
         .replaceAll('%5C', sep)
@@ -155,6 +159,23 @@ export function AvatarPreview({
   }
 
   if (imageStatus === ImageStatus.Nothing) {
+    let content: JSX.Element | string | undefined;
+    if (isGroup) {
+      content = (
+        <div
+          className={`BetterAvatarBubble--${avatarColor}--icon AvatarPreview__group`}
+        />
+      );
+    } else if (noteToSelf) {
+      content = (
+        <div
+          className={`BetterAvatarBubble--${avatarColor}--icon AvatarPreview__note_to_self`}
+        />
+      );
+    } else {
+      content = getInitials(conversationTitle);
+    }
+
     return (
       <div className="AvatarPreview">
         <div
@@ -162,13 +183,7 @@ export function AvatarPreview({
           {...clickProps}
           style={componentStyle}
         >
-          {isGroup ? (
-            <div
-              className={`BetterAvatarBubble--${avatarColor}--icon AvatarPreview__group`}
-            />
-          ) : (
-            getInitials(conversationTitle)
-          )}
+          {content}
           {isEditable && <div className="AvatarPreview__upload" />}
         </div>
       </div>

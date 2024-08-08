@@ -10,7 +10,13 @@ import { SystemMessage, SystemMessageKind } from './SystemMessage';
 import { Button, ButtonSize, ButtonVariant } from '../Button';
 import { MessageTimestamp } from './MessageTimestamp';
 import type { LocalizerType } from '../../types/Util';
-import { CallMode } from '../../types/Calling';
+import {
+  CallMode,
+  CallDirection,
+  CallType,
+  DirectCallStatus,
+  GroupCallStatus,
+} from '../../types/CallDisposition';
 import type { CallingNotificationType } from '../../util/callingNotification';
 import {
   getCallingIcon,
@@ -19,12 +25,6 @@ import {
 import { missingCaseError } from '../../util/missingCaseError';
 import { Tooltip, TooltipPlacement } from '../Tooltip';
 import * as log from '../../logging/log';
-import {
-  CallDirection,
-  CallType,
-  DirectCallStatus,
-  GroupCallStatus,
-} from '../../types/CallDisposition';
 import {
   type ContextMenuTriggerType,
   MessageContextMenu,
@@ -35,6 +35,8 @@ import {
   useKeyboardShortcutsConditionally,
   useOpenContextMenu,
 } from '../../hooks/useKeyboardShortcuts';
+import { MINUTE } from '../../util/durations';
+import { isMoreRecentThan } from '../../util/timestamp';
 
 export type PropsActionsType = {
   onOutgoingAudioCallInConversation: (conversationId: string) => void;
@@ -105,7 +107,9 @@ export const CallingNotification: React.FC<PropsType> = React.memo(
               icon={icon}
               kind={
                 status === DirectCallStatus.Missed ||
-                status === GroupCallStatus.Missed
+                status === GroupCallStatus.Missed ||
+                status === DirectCallStatus.Declined ||
+                status === GroupCallStatus.Declined
                   ? SystemMessageKind.Danger
                   : SystemMessageKind.Normal
               }
@@ -189,9 +193,21 @@ function renderCallingNotificationButton(
     }
     case CallMode.Group: {
       if (props.groupCallEnded) {
-        return null;
-      }
-      if (props.activeConversationId != null) {
+        const { direction, status, timestamp } = props.callHistory;
+        if (
+          (direction === CallDirection.Incoming &&
+            (status === GroupCallStatus.Declined ||
+              status === GroupCallStatus.Missed)) ||
+          isMoreRecentThan(timestamp, 5 * MINUTE)
+        ) {
+          buttonText = i18n('icu:calling__call-back');
+          onClick = () => {
+            onOutgoingVideoCallInConversation(conversationId);
+          };
+        } else {
+          return null;
+        }
+      } else if (props.activeConversationId != null) {
         if (props.activeConversationId === conversationId) {
           buttonText = i18n('icu:calling__return');
           onClick = returnToActiveCall;

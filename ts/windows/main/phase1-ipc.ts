@@ -17,6 +17,7 @@ import * as Errors from '../../types/errors';
 
 import { strictAssert } from '../../util/assert';
 import { drop } from '../../util/drop';
+import { DataReader } from '../../sql/Client';
 import type {
   NotificationClickData,
   WindowsNotificationData,
@@ -58,7 +59,6 @@ window.getServerPublicParams = () => config.serverPublicParams;
 window.getGenericServerPublicParams = () => config.genericServerPublicParams;
 window.getBackupServerPublicParams = () => config.backupServerPublicParams;
 window.getSfuUrl = () => config.sfuUrl;
-window.isBehindProxy = () => Boolean(config.proxyUrl);
 
 let title = config.name;
 if (getEnvironment() !== Environment.Production) {
@@ -194,7 +194,7 @@ ipc.on('additional-log-data-request', async event => {
 
   let statistics;
   try {
-    statistics = await window.Signal.Data.getStatisticsForLogging();
+    statistics = await DataReader.getStatisticsForLogging();
   } catch (error) {
     statistics = {};
   }

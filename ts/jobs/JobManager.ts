@@ -32,7 +32,7 @@ export const jobManagerJobSchema = z.object({
 
 export type JobManagerParamsType<
   CoreJobType,
-  JobType = CoreJobType & JobManagerJobType
+  JobType = CoreJobType & JobManagerJobType,
 > = {
   markAllJobsInactive: () => Promise<void>;
   getNextJobs: (options: {
@@ -44,7 +44,7 @@ export type JobManagerParamsType<
   runJob: (
     job: JobType,
     isLastAttempt: boolean
-  ) => Promise<JobManagerJobResultType>;
+  ) => Promise<JobManagerJobResultType<CoreJobType>>;
   shouldHoldOffOnStartingQueuedJobs?: () => boolean;
   getJobId: (job: CoreJobType) => string;
   getJobIdForLogging: (job: JobType) => string;
@@ -55,51 +55,71 @@ export type JobManagerParamsType<
   maxConcurrentJobs: number;
 };
 
-export type JobManagerJobResultType = { status: 'retry' | 'finished' };
-
-const TICK_INTERVAL = MINUTE;
+const DEFAULT_TICK_INTERVAL = MINUTE;
+export type JobManagerJobResultType<CoreJobType> =
+  | {
+      status: 'retry';
+    }
+  | { status: 'finished'; newJob?: CoreJobType }
+  | { status: 'rate-limited'; pauseDurationMs: number };
 
 export abstract class JobManager<CoreJobType> {
-  protected enabled: boolean = false;
-  protected activeJobs: Map<
+  private enabled: boolean = false;
+  private activeJobs: Map<
     string,
     {
       completionPromise: ExplodePromiseResultType<void>;
       job: CoreJobType & JobManagerJobType;
     }
   > = new Map();
-  protected jobStartPromises: Map<string, ExplodePromiseResultType<void>> =
+  private jobStartPromises: Map<string, ExplodePromiseResultType<void>> =
     new Map();
-  protected jobCompletePromises: Map<string, ExplodePromiseResultType<void>> =
+  private jobCompletePromises: Map<string, ExplodePromiseResultType<void>> =
     new Map();
+  private tickTimeout: NodeJS.Timeout | null = null;
 
-  protected tickTimeout: NodeJS.Timeout | null = null;
   protected logPrefix = 'JobManager';
-
+  public tickInterval = DEFAULT_TICK_INTERVAL;
   constructor(readonly params: JobManagerParamsType<CoreJobType>) {}
 
   async start(): Promise<void> {
+    log.info(`${this.logPrefix}: starting`);
+
     this.enabled = true;
     await this.params.markAllJobsInactive();
     this.tick();
   }
 
   async stop(): Promise<void> {
+    const activeJobs = [...this.activeJobs.values()];
+
+    log.info(
+      `${this.logPrefix}: stopping. There are ` +
+        `${activeJobs.length} active job(s)`
+    );
+
     this.enabled = false;
     clearTimeoutIfNecessary(this.tickTimeout);
     this.tickTimeout = null;
     await Promise.all(
-      [...this.activeJobs.values()].map(
-        ({ completionPromise }) => completionPromise.promise
-      )
+      activeJobs.map(({ completionPromise }) => completionPromise.promise)
     );
   }
 
-  tick(): void {
+  private tick(): void {
     clearTimeoutIfNecessary(this.tickTimeout);
     this.tickTimeout = null;
     drop(this.maybeStartJobs());
-    this.tickTimeout = setTimeout(() => this.tick(), TICK_INTERVAL);
+    this.tickTimeout = setTimeout(() => this.tick(), this.tickInterval);
+  }
+
+  private pauseForDuration(durationMs: number): void {
+    this.enabled = false;
+    clearTimeoutIfNecessary(this.tickTimeout);
+    this.tickTimeout = setTimeout(() => {
+      this.enabled = true;
+      this.tick();
+    }, durationMs);
   }
 
   // used in testing
@@ -196,7 +216,6 @@ export abstract class JobManager<CoreJobType> {
 
     try {
       this._inMaybeStartJobs = true;
-
       if (!this.enabled) {
         log.info(`${this.logPrefix}/_maybeStartJobs: not enabled, returning`);
         return;
@@ -247,13 +266,15 @@ export abstract class JobManager<CoreJobType> {
       job.attempts + 1 >=
       (this.params.getRetryConfig(job).maxAttempts ?? Infinity);
 
+    let jobRunResult: JobManagerJobResultType<CoreJobType> | undefined;
     try {
       log.info(`${logId}: starting job`);
       this.addRunningJob(job);
       await this.params.saveJob({ ...job, active: true });
+      const runJobPromise = this.params.runJob(job, isLastAttempt);
       this.handleJobStartPromises(job);
-
-      const { status } = await this.params.runJob(job, isLastAttempt);
+      jobRunResult = await runJobPromise;
+      const { status } = jobRunResult;
       log.info(`${logId}: job completed with status: ${status}`);
 
       switch (status) {
@@ -264,6 +285,13 @@ export abstract class JobManager<CoreJobType> {
           if (isLastAttempt) {
             throw new Error('Cannot retry on last attempt');
           }
+          await this.retryJobLater(job);
+          return;
+        case 'rate-limited':
+          log.info(
+            `${logId}: rate-limited; retrying in ${jobRunResult.pauseDurationMs}`
+          );
+          this.pauseForDuration(jobRunResult.pauseDurationMs);
           await this.retryJobLater(job);
           return;
         default:
@@ -278,13 +306,20 @@ export abstract class JobManager<CoreJobType> {
       }
     } finally {
       this.removeRunningJob(job);
+      if (jobRunResult?.status === 'finished') {
+        if (jobRunResult.newJob) {
+          log.info(
+            `${logId}: adding new job as a result of this one completing`
+          );
+          await this.addJob(jobRunResult.newJob);
+        }
+      }
       drop(this.maybeStartJobs());
     }
   }
 
   private async retryJobLater(job: CoreJobType & JobManagerJobType) {
     const now = Date.now();
-
     await this.params.saveJob({
       ...job,
       active: false,

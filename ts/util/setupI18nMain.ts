@@ -13,7 +13,7 @@ import { strictAssert } from './assert';
 import * as log from '../logging/log';
 import * as Errors from '../types/errors';
 import { Environment, getEnvironment } from '../environment';
-import { bidiIsolate } from './unicodeBidi';
+import { bidiIsolate, bidiStrip } from './unicodeBidi';
 
 export function isLocaleMessageType(
   value: unknown
@@ -64,8 +64,11 @@ export function createCachedIntl(
 }
 
 function normalizeSubstitutions<
-  Substitutions extends Record<string, string | number | Date> | undefined
->(substitutions?: Substitutions): Substitutions | undefined {
+  Substitutions extends Record<string, string | number | Date> | undefined,
+>(
+  substitutions?: Substitutions,
+  options?: LocalizerOptions
+): Substitutions | undefined {
   if (!substitutions) {
     return;
   }
@@ -76,7 +79,11 @@ function normalizeSubstitutions<
   }
   for (const [key, value] of entries) {
     if (typeof value === 'string') {
-      normalized[key] = bidiIsolate(value);
+      if (options?.bidi === 'strip') {
+        normalized[key] = bidiStrip(value);
+      } else {
+        normalized[key] = bidiIsolate(value);
+      }
     } else {
       normalized[key] = value;
     }
@@ -115,7 +122,7 @@ export function setupI18n(
   });
 
   const localizer: LocalizerType = (<
-    Key extends keyof ICUStringMessageParamsByKeyType
+    Key extends keyof ICUStringMessageParamsByKeyType,
   >(
     key: Key,
     substitutions: ICUStringMessageParamsByKeyType[Key],
@@ -123,9 +130,7 @@ export function setupI18n(
   ) => {
     const result = intl.formatMessage(
       { id: key },
-      options?.textIsBidiFreeSkipNormalization
-        ? substitutions
-        : normalizeSubstitutions(substitutions)
+      normalizeSubstitutions(substitutions, options)
     );
 
     strictAssert(result !== key, `i18n: missing translation for "${key}"`);

@@ -80,6 +80,18 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "Verzia vašej databázy sa nezhoduje s touto verziou Signalu. Uistite sa, že na počítači otvárate najnovšiu verziu aplikácie Signal."
   },
+  "icu:databaseError__recover__detail": {
+    "messageformat": "Vyskytla sa chyba databázy. Môžete skopírovať chybu a kontaktovať podporu Signal, aby vám pomohla problém vyriešiť. Ak potrebujete Signal použiť hneď teraz, môžete sa pokúsiť obnoviť svoje údaje.\n\nKontaktujte podporu na: {link}"
+  },
+  "icu:databaseError__recover__button": {
+    "messageformat": "Obnoviť údaje"
+  },
+  "icu:databaseError__safeStorageBackendChange": {
+    "messageformat": "Nie je možné získať prístup k šifrovaciemu kľúču databázy, pretože koncová časť šifrovacieho zväzku operačného systému sa zmenila z {previousBackend} na {currentBackend}. Môže k tomu dôjsť, ak sa zmení prostredie pracovnej plochy, napríklad medzi GNOME a KDE.\n\nPrepnite na predchádzajúce prostredie pracovnej plochy."
+  },
+  "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
+    "messageformat": "Nie je možné získať prístup k šifrovaciemu kľúču databázy, pretože koncová časť šifrovacieho zväzku operačného systému sa zmenila z {previousBackend} na {currentBackend}. Môže k tomu dôjsť, ak sa zmení prostredie pracovnej plochy, napríklad medzi GNOME a KDE.\n\nPrepnite na predchádzajúce prostredie pracovnej plochy alebo skúste spustiť Signal v príkazovom riadku s frázou --password-store=\"{previousBackendFlag}\""
+  },
   "icu:mainMenuFile": {
     "messageformat": "&Súbor"
   },
@@ -818,8 +830,14 @@
   "icu:cannotUpdateDetail": {
     "messageformat": "Signal sa nepodarilo aktualizovať. {retry} alebo navštívte {url} a nainštalujte ho manuálne. Potom {support} s týmto problémom"
   },
+  "icu:cannotUpdateDetail-v2": {
+    "messageformat": "Signal sa nepodarilo aktualizovať. <retryUpdateButton>Skúste aktualizáciu vykonať znova</retryUpdateButton> alebo navštívte stránku {url} a nainštalujte ho manuálne. Potom o tomto probléme <contactSupportLink>kontaktujte podporu</contactSupportLink>"
+  },
   "icu:cannotUpdateRequireManualDetail": {
     "messageformat": "Signal sa nepodarilo aktualizovať. Navštívte {url} a nainštalujte ho manuálne. Potom kontaktujte {support} o tomto probléme"
+  },
+  "icu:cannotUpdateRequireManualDetail-v2": {
+    "messageformat": "Signal sa nepodarilo aktualizovať. Navštívte stránku {url} a nainštalujte ho manuálne. Potom o tomto probléme <contactSupportLink>kontaktujte podporu</contactSupportLink>"
   },
   "icu:readOnlyVolume": {
     "messageformat": "Signal Desktop je pravdepodobne v karanténe macOS a preto sa nedokáže automaticky aktualizovať. Prosím skúste premiestniť {app} do {folder} pomocou programu Finder."
@@ -989,6 +1007,9 @@
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
     "messageformat": "Všetky správy v tomto čete budú vymazané z tohto zariadenia. Po vymazaní správ budete môcť tento čet stále vyhľadať."
   },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
+    "messageformat": "Všetky správy v tomto čete budú vymazané zo všetkých vašich zariadení. Po vymazaní správ budete môcť tento čet stále vyhľadať."
+  },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Opustiť skupinu"
   },
@@ -1092,7 +1113,7 @@
     "messageformat": "Pripojené zariadenia"
   },
   "icu:linkNewDevice": {
-    "messageformat": "Pripojiť Nové Zariadenie"
+    "messageformat": "Prepojiť nové zariadenie"
   },
   "icu:Install__learn-more": {
     "messageformat": "Dozvedieť sa viac"
@@ -1110,10 +1131,22 @@
     "messageformat": "Nastavenia"
   },
   "icu:Install__instructions__3": {
-    "messageformat": "Klepnite {plusButton} (Android) or {linkNewDevice} (iPhone)"
+    "messageformat": "Tuknite na {linkNewDevice}"
   },
-  "icu:Install__qr-failed-load": {
-    "messageformat": "QR kód sa nepodarilo načítať. Skontrolujte internetové pripojenie a skúste to znova. <retry>Skúsiť znova</retry>"
+  "icu:Install__qr-failed-load__error--timeout": {
+    "messageformat": "QR kód sa nepodarilo načítať. Skontrolujte pripojenie a skúste to znovu."
+  },
+  "icu:Install__qr-failed-load__error--unknown": {
+    "messageformat": "<paragraph>Vyskytla sa neočakávaná chyba.</paragraph><paragraph>Skúste to znova.</paragraph>"
+  },
+  "icu:Install__qr-failed-load__error--network": {
+    "messageformat": "Signál nedokáže prepojiť toto zariadenie pomocou vašej aktuálnej siete."
+  },
+  "icu:Install__qr-failed-load__retry": {
+    "messageformat": "Skúsiť znovu"
+  },
+  "icu:Install__qr-failed-load__get-help": {
+    "messageformat": "Pomoc"
   },
   "icu:Install__support-link": {
     "messageformat": "Potrebujete pomôcť?"
@@ -1286,8 +1319,35 @@
   "icu:CallingPendingParticipants__DenyUser": {
     "messageformat": "Odmietnuť žiadosť o pripojenie"
   },
+  "icu:CallingPendingParticipants__ApproveAll": {
+    "messageformat": "Schváliť všetky"
+  },
+  "icu:CallingPendingParticipants__DenyAll": {
+    "messageformat": "Odmietnuť všetky"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--ApproveAll": {
+    "messageformat": "{count, plural, one {Schváliť {count,number} žiadosť?} few {Schváliť {count,number} žiadosti?} many {Schváliť {count,number} žiadosti?} other {Schváliť {count,number} žiadostí?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--DenyAll": {
+    "messageformat": "{count, plural, one {Odmietnuť {count,number} žiadosť?} few {Odmietnuť {count,number} žiadosti?} many {Odmietnuť {count,number} žiadosti?} other {Odmietnuť {count,number} žiadostí?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--ApproveAll": {
+    "messageformat": "{count, plural, one {K hovoru sa pridá {count,number} osoba.} few {K hovoru sa pridajú {count,number} ľudia.} many {K hovoru sa pridá {count,number} osoby.} other {K hovoru sa pridá {count,number} ľudí.}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--DenyAll": {
+    "messageformat": "{count, plural, one {K hovoru sa nepridá {count,number} osoba.} few {K hovoru sa nepridajú {count,number} ľudia.} many {K hovoru sa nepridá {count,number} osoby.} other {K hovoru sa nepridá {count,number} ľudí.}}"
+  },
   "icu:CallingPendingParticipants__RequestsToJoin": {
     "messageformat": "{count, plural, one {{count,number} žiadosť o pripojenie k hovoru} few {{count,number} žiadosti o pripojenie k hovoru} many {{count,number} žiadosti o pripojenie k hovoru} other {{count,number} žiadostí o pripojenie k hovoru}}"
+  },
+  "icu:CallingPendingParticipants__WouldLikeToJoin": {
+    "messageformat": "Chce sa pridať..."
+  },
+  "icu:CallingPendingParticipants__AdditionalRequests": {
+    "messageformat": "{count, plural, one {+{count,number} žiadosť} few {+{count,number} žiadosti} many {+{count,number} žiadosti} other {+{count,number} žiadostí}}"
+  },
+  "icu:CallingPendingParticipants__Toast--added-users-to-call": {
+    "messageformat": "{count, plural, one {K hovoru bola pridaná {count,number} osoba} few {K hovoru boli pridaní {count,number} ľudia} many {K hovoru bolo pridanej {count,number} osoby} other {K hovoru bolo pridaných {count,number} ľudí}}"
   },
   "icu:CallingRaisedHandsList__Title": {
     "messageformat": "{count, plural, one {{count,number} používateľ zdvihol ruku} few {{count,number} používatelia zdvihli ruku} many {{count,number} používateľa zdvihlo ruku} other {{count,number} používateľov zdvihlo ruku}}"
@@ -1352,8 +1412,14 @@
   "icu:calling__you-have-blocked": {
     "messageformat": "Zablokovali ste používateľa {name}"
   },
+  "icu:calling__blocked-participant": {
+    "messageformat": "Používateľ {name} je blokovaný"
+  },
+  "icu:calling__block-info-title": {
+    "messageformat": "Používateľ {name} je blokovaný"
+  },
   "icu:calling__block-info": {
-    "messageformat": "Od tohto používateľa nebudete počas hovoru prijímať hlas ani video a ani on neprijme tie vaše."
+    "messageformat": "Od tohto používateľa neprijmete audio ani video a oni ich zas neprijmú od vás."
   },
   "icu:calling__missing-media-keys": {
     "messageformat": "Nie je možné prijať audio a video od používateľa {name}"
@@ -2372,15 +2438,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "Čet bol označený ako neprečítaný"
   },
-  "icu:AuthArtCreator--dialog--message": {
-    "messageformat": "Chcete otvoriť nástroj na vytváranie balíčkov nálepiek Signal?"
-  },
-  "icu:AuthArtCreator--dialog--confirm": {
-    "messageformat": "Potvrdiť"
-  },
-  "icu:AuthArtCreator--dialog--dismiss": {
-    "messageformat": "Zrušiť"
-  },
   "icu:ArtCreator--Authentication--error": {
     "messageformat": "Pre používanie nástroja na vytváranie nálepiek si musíte nastaviť Signal na telefóne a počítači"
   },
@@ -2577,10 +2634,10 @@
     "messageformat": "Odmietnuť"
   },
   "icu:declinedIncomingAudioCall": {
-    "messageformat": "Odmietli ste hlasový hovor"
+    "messageformat": "Odmietnutý hlasový hovor"
   },
   "icu:declinedIncomingVideoCall": {
-    "messageformat": "Odmietli ste videohovor"
+    "messageformat": "Odmietnutý videohovor"
   },
   "icu:acceptedIncomingAudioCall": {
     "messageformat": "Prichádzajúci hlasový hovor"
@@ -2613,10 +2670,10 @@
     "messageformat": "Signal bude naďalej aktívne bežať v sekcii s oznámeniami. Môžete to zmeniť v nastaveniach."
   },
   "icu:incomingAudioCall": {
-    "messageformat": "Prichádzajúci hlasový hovor…"
+    "messageformat": "Prichádzajúci hlasový hovor"
   },
   "icu:incomingVideoCall": {
-    "messageformat": "Prichádzajúci videohovor…"
+    "messageformat": "Prichádzajúci videohovor"
   },
   "icu:outgoingAudioCall": {
     "messageformat": "Odchádzajúci hlasový hovor"
@@ -2661,7 +2718,7 @@
     "messageformat": "{count, plural, one {{count,number} osoba} few {{count,number} ľudia} many {{count,number} ľudí} other {{count,number} ľudí}}"
   },
   "icu:CallControls__InfoDisplay--audio-call": {
-    "messageformat": "Audio hovor"
+    "messageformat": "Hlasový hovor"
   },
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "Odkaz na hovor"
@@ -2688,13 +2745,13 @@
     "messageformat": "Zvonenie vypnuté"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "You raised a hand."
+    "messageformat": "Zdvihli ste ruku."
   },
   "icu:CallControls__RaiseHandsToast--you-and-one": {
-    "messageformat": "You and {otherName} raised a hand."
+    "messageformat": "Vy a {otherName} ste zdvihli ruku."
   },
   "icu:CallControls__RaiseHandsToast--you-and-more": {
-    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
+    "messageformat": "{overflowCount, plural, one {Vy, {otherName} a {overflowCount,number} ďalší zdvihli ruku.} few {Vy, {otherName} a {overflowCount,number} ďalší zdvihli ruku.} many {Vy, {otherName} a {overflowCount,number} ďalšieho zdvihlo ruku.} other {Vy, {otherName} a {overflowCount,number} ďalších zdvihlo ruku.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "Používateľ {name} zdvihol ruku."
@@ -2724,16 +2781,16 @@
     "messageformat": "{people, plural, one {{people,number} v hovore} few {{people,number} v hovore} many {{people,number} v hovore} other {{people,number} v hovore}}"
   },
   "icu:calling__call-notification__ended": {
-    "messageformat": "Skupinový hovor bol ukončený"
+    "messageformat": "Videohovor sa skončil"
   },
   "icu:calling__call-notification__started-by-someone": {
-    "messageformat": "Skupinový hovor sa začal"
+    "messageformat": "Začal sa videohovor"
   },
   "icu:calling__call-notification__started-by-you": {
-    "messageformat": "Zahájili ste skupinový hovor"
+    "messageformat": "Začali ste videohovor"
   },
   "icu:calling__call-notification__started": {
-    "messageformat": "{name} začal skupinový hovor"
+    "messageformat": "Používateľ {name} začal videohovor"
   },
   "icu:calling__in-another-call-tooltip": {
     "messageformat": "Už ste v hovore"
@@ -2780,26 +2837,41 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "Okno"
   },
+  "icu:calling__ParticipantInfoButton": {
+    "messageformat": "Viac informácií o tomto kontakte"
+  },
   "icu:CallingAdhocCallInfo__CopyLink": {
     "messageformat": "Skopírovať odkaz na hovor"
+  },
+  "icu:CallingAdhocCallInfo__ShareViaSignal": {
+    "messageformat": "Zdieľať odkaz na hovor cez Signal"
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "Odstrániť tohto používateľa z hovoru"
   },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogBody": {
+    "messageformat": "Odstrániť používateľa {name} z hovoru?"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--remove": {
+    "messageformat": "Odstrániť"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--block": {
+    "messageformat": "Blokovať prístup k hovoru"
+  },
   "icu:CallingAdhocCallInfo__UnknownContactLabel": {
-    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+    "messageformat": "{count, plural, one {{count,number} osoba} few {{count,number} ľudia} many {{count,number} ľudí} other {{count,number} ľudí}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
-    "messageformat": "+{count,number} more"
+    "messageformat": "{count, plural, one {+{count,number} ďalší} few {+{count,number} ďalší} many {+{count,number} ďalšieho} other {+{count,number} ďalších}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
-    "messageformat": "More info about new contacts"
+    "messageformat": "Viac informácií o nových kontaktoch"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
-    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+    "messageformat": "Pred pripojením k hovoru môžete vidieť iba mená telefónnych kontaktov, ľudí, s ktorými ste v skupine, alebo ľudí, s ktorými ste četovali 1:1. Po pripojení k hovoru uvidíte všetky mená a fotografie."
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
-    "messageformat": "Got it"
+    "messageformat": "Rozumiem"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -3512,6 +3584,9 @@
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Odstrániť zo skupiny"
   },
+  "icu:ContactModal--already-in-call": {
+    "messageformat": "Už ste v hovore"
+  },
   "icu:showChatColorEditor": {
     "messageformat": "Farba četu"
   },
@@ -3780,7 +3855,7 @@
     "messageformat": "{count, plural, one {Z ktorých zariadení by ste chceli túto správu odstrániť?} few {Z ktorých zariadení by ste chceli tieto správy odstrániť?} many {Z ktorých zariadení by ste chceli tieto správy odstrániť?} other {Z ktorých zariadení by ste chceli tieto správy odstrániť?}}"
   },
   "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
-    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+    "messageformat": "{count, plural, one {Táto správa bude vymazaná zo všetkých vašich zariadení.} few {Tieto správy budú vymazané zo všetkých vašich zariadení.} many {Tieto správy budú vymazané zo všetkých vašich zariadení.} other {Tieto správy budú vymazané zo všetkých vašich zariadení.}}"
   },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "Vymazať pre mňa"
@@ -3795,7 +3870,7 @@
     "messageformat": "Vymazať zo všetkých zariadení"
   },
   "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
-    "messageformat": "Delete"
+    "messageformat": "Vymazať"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {Môžete vybrať maximálne {count,number} správu, ktorá sa vymaže pre všetkých} few {Môžete vybrať maximálne {count,number} správy, ktoré sa vymažú pre všetkých} many {Môžete vybrať maximálne {count,number} správy, ktorá sa vymaže pre všetkých} other {Môžete vybrať maximálne {count,number} správ, ktoré sa vymažú pre všetkých}}"
@@ -4196,11 +4271,11 @@
   "icu:ProfileEditor--username--check-starting-character": {
     "messageformat": "Používateľské mená nemôžu začínať číslicou."
   },
-  "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Usernames must have at least {min,number} characters."
+  "icu:ProfileEditor--username--check-character-min-plural": {
+    "messageformat": "{min, plural, one {Používateľské mená musia obsahovať minimálne {min,number} znak.} few {Používateľské mená musia obsahovať minimálne {min,number} znaky.} many {Používateľské mená musia obsahovať minimálne {min,number} znaku.} other {Používateľské mená musia obsahovať minimálne {min,number} znakov.}}"
   },
-  "icu:ProfileEditor--username--check-character-max": {
-    "messageformat": "Používateľské mená môžu mať najviac {max,number} znakov."
+  "icu:ProfileEditor--username--check-character-max-plural": {
+    "messageformat": "{max, plural, one {Používateľské mená môžu obsahovať maximálne {max,number} znak.} few {Používateľské mená môžu obsahovať maximálne {max,number} znaky.} many {Používateľské mená môžu obsahovať maximálne {max,number} znaku.} other {Používateľské mená môžu obsahovať maximálne {max,number} znakov.}}"
   },
   "icu:ProfileEditor--username--check-discriminator-min": {
     "messageformat": "Neplatné používateľské meno, zadajte minimálne 2 číslice."
@@ -4240,9 +4315,6 @@
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
     "messageformat": "Vymazať"
-  },
-  "icu:ProfileEditor--username--delete-unavailable-notice": {
-    "messageformat": "Ak chcete vymazať svoje používateľské meno, otvorte v telefóne Signal a prejdite do časti Nastavenia > Profil."
   },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "Skopírovať alebo odstrániť používateľské meno"
@@ -4749,13 +4821,13 @@
     "messageformat": "Vaše kontakty môžu vidieť vaše meno a fotografiu, ako aj príspevky v časti „Môj príbeh“, pokiaľ ich pred nimi neskryjete"
   },
   "icu:LocalDeleteWarningModal__header": {
-    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+    "messageformat": "Vymazávanie je synchronizované na vašich zariadeniach"
   },
   "icu:LocalDeleteWarningModal__description": {
-    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+    "messageformat": "Keď vymažete správy alebo čety, vymažú sa zo všetkých vašich zariadení."
   },
   "icu:LocalDeleteWarningModal__confirm": {
-    "messageformat": "Got it"
+    "messageformat": "Rozumiem"
   },
   "icu:Stories__title": {
     "messageformat": "Príbehy"
@@ -5350,7 +5422,7 @@
     "messageformat": "Žiadne výsledky pre „{query}“"
   },
   "icu:CallsList__CreateCallLink": {
-    "messageformat": "Create a Call Link"
+    "messageformat": "Vytvoriť odkaz na hovor"
   },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "Prichádzajúci"
@@ -5360,6 +5432,9 @@
   },
   "icu:CallsList__ItemCallInfo--Missed": {
     "messageformat": "Zmeškaný"
+  },
+  "icu:CallsList__ItemCallInfo--Declined": {
+    "messageformat": "Odmietnuté"
   },
   "icu:CallsList__ItemCallInfo--GroupCall": {
     "messageformat": "Skupinový hovor"
@@ -5374,7 +5449,7 @@
     "messageformat": "Chcete opustiť aktuálny hovor?"
   },
   "icu:CallsList__LeaveCallDialogBody": {
-    "messageformat": "Pred pripojením k novému hovoru musíte opustiť aktuálny hovor."
+    "messageformat": "Pred začatím alebo pripojením sa k novému hovoru musíte opustiť aktuálny hovor."
   },
   "icu:CallsList__LeaveCallDialogButton--leave": {
     "messageformat": "Opustiť hovor"
@@ -5406,8 +5481,29 @@
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Odkaz na hovor"
   },
+  "icu:CallHistory__DescriptionVideoCall--Default": {
+    "messageformat": "{direction, select, Outgoing {Odchádzajúci videohovor} other {Prichádzajúci videohovor}}"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Missed": {
+    "messageformat": "Zmeškaný videohovor"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Unanswered": {
+    "messageformat": "Neprijatý videohovor"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Declined": {
+    "messageformat": "Odmietnutý videohovor"
+  },
   "icu:CallLinkDetails__Join": {
     "messageformat": "Pridať sa"
+  },
+  "icu:CallLinkDetails__AddCallNameLabel": {
+    "messageformat": "Pridať názov hovoru"
+  },
+  "icu:CallLinkDetails__EditCallNameLabel": {
+    "messageformat": "Upraviť názov hovoru"
+  },
+  "icu:CallLinkDetails__ApproveAllMembersLabel": {
+    "messageformat": "Schváliť všetkých členov"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "Skopírovať odkaz"
@@ -5415,23 +5511,50 @@
   "icu:CallLinkDetails__ShareLinkViaSignal": {
     "messageformat": "Zdieľať odkaz cez Signal"
   },
-  "icu:CallLinkEditModal__Title": {
-    "messageformat": "Call link details"
+  "icu:CallLinkDetails__DeleteLink": {
+    "messageformat": "Delete link"
   },
-  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
-    "messageformat": "Name"
+  "icu:CallLinkDetails__DeleteLinkModal__Title": {
+    "messageformat": "Delete call link?"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Body": {
+    "messageformat": "This link will no longer work for anyone who has it."
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
+    "messageformat": "Cancel"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Delete": {
+    "messageformat": "Delete"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Podrobnosti odkazu na hovor"
   },
   "icu:CallLinkEditModal__JoinButtonLabel": {
-    "messageformat": "Join"
+    "messageformat": "Pridať sa"
+  },
+  "icu:CallLinkEditModal__AddCallNameLabel": {
+    "messageformat": "Pridať názov hovoru"
+  },
+  "icu:CallLinkEditModal__EditCallNameLabel": {
+    "messageformat": "Upraviť názov hovoru"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Approve all members"
+    "messageformat": "Schváliť všetkých členov"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
-    "messageformat": "Off"
+  "icu:CallLinkRestrictionsSelect__Option--Off": {
+    "messageformat": "Vyp."
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
-    "messageformat": "On"
+  "icu:CallLinkRestrictionsSelect__Option--On": {
+    "messageformat": "Zap."
+  },
+  "icu:CallLinkAddNameModal__Title": {
+    "messageformat": "Pridať názov hovoru"
+  },
+  "icu:CallLinkAddNameModal__Title--Edit": {
+    "messageformat": "Upraviť názov hovoru"
+  },
+  "icu:CallLinkAddNameModal__NameLabel": {
+    "messageformat": "Názov hovoru"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} ďalší píše.} few {{count,number} ďalší píšu.} many {{count,number} ďalšieho píše.} other {{count,number} ďalších píše.}}"
@@ -5473,19 +5596,19 @@
     "messageformat": "Malé úpravy, opravy chýb a vylepšenia výkonu. Ďakujeme, že používate Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.12--0": {
-    "messageformat": "Zdvihnite ruku všetci tí, čo hľadáte iný spôsob komunikácie počas skupinových hovorov. Nová funkcia Zdvihnúť ruku je jednoduchý spôsob, ako upútať niekoho pozornosť, položiť otázku alebo jednomyseľne zahlasovať za skupinový návrh, keď sa niekto spýta „všetci za?“"
+  "icu:WhatsNew__v7.18--0": {
+    "messageformat": "Toto vydanie urýchľuje proces odstraňovania veľkých vlákien správ."
   },
-  "icu:WhatsNew__v7.12--1": {
-    "messageformat": "Táto aktualizácia taktiež prináša vylepšený nástroj na orezávanie a zmenšovanie obrázkov."
+  "icu:WhatsNew__v7.19--0": {
+    "messageformat": "Pridali sme skratku, s ktorou môžete zrušiť práve prebiehajúci hovor a pripojiť sa k novému."
   },
-  "icu:WhatsNew__v7.12--2": {
-    "messageformat": "Upravili sme klávesovú skratku na odoslanie hlasovej poznámky na Ctrl/Cmd+Shift+Y, aby tak už nekolidovala so skratkou „Vložiť a prispôsobiť štýl“ v systémoch Windows a Linux."
+  "icu:WhatsNew__v7.19--1": {
+    "messageformat": "Táto aktualizácia tiež opravuje zlyhanie programu pri spustení v systéme Linux pre používateľov, ktorých lokalita je nastavená na „POSIX“."
   },
-  "icu:WhatsNew__v7.13--0": {
-    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  "icu:WhatsNew__v7.20--0": {
+    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
   },
-  "icu:WhatsNew__v7.13--1": {
-    "messageformat": "This update also improves the display of quoted replies in RTL languages."
+  "icu:WhatsNew__v7.20--1": {
+    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
   }
 }

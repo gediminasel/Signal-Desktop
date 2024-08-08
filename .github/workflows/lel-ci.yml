@@ -1,4 +1,4 @@
-# Copyright 2020-2022 Signal Messenger, LLC
+# Copyright 2020 Signal Messenger, LLC
 # SPDX-License-Identifier: AGPL-3.0-only
 
 name: lel-CI
@@ -14,29 +14,54 @@ jobs:
     steps:
     - run: lsb_release -a
     - run: uname -a
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - name: Setup node.js
+      uses: actions/setup-node@v4
       with:
-        node-version: '20.11.1'
-    - run: npm install -g yarn@1.22.10 npm@10.2.5
+        node-version-file: '.nvmrc'
+    - run: npm install -g npm@10.2.5
+
+    - name: Restore cached .eslintcache and tsconfig.tsbuildinfo
+      uses: actions/cache/restore@v4
+      id: cache-lint
+      with:
+        path: |
+          .eslintcache
+          tsconfig.tsbuildinfo
+        key: lint-${{ runner.os }}-${{ hashFiles('package.json', 'package-lock.json', 'patches/**', '.eslintrc.js', '.eslint/**', 'tsconfig.json') }}
 
     - name: Cache Desktop node_modules
       id: cache-desktop-modules
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: node_modules
-        key: ${{ runner.os }}-${{ hashFiles('package.json', 'yarn.lock', 'patches/**') }}
+        key: ${{ runner.os }}-${{ hashFiles('package.json', 'package-lock.json', 'patches/**') }}
+
     - name: Install Desktop node_modules
       if: steps.cache-desktop-modules.outputs.cache-hit != 'true'
-      run: yarn install --frozen-lockfile
+      run: npm ci
       env:
         NPM_CONFIG_LOGLEVEL: verbose
 
-    - run: yarn generate
-    - run: yarn lint
-    - run: yarn lint-deps
-    # - run: yarn lint-license-comments
+    - run: npm run generate
+    - run: npm run lint
+    - run: npm run lint-deps
+    # - run: npm run lint-license-comments
+
+    - name: Check acknowledgments file is up to date
+      run: npm run build:acknowledgments
+      env:
+        REQUIRE_SIGNAL_LIB_FILES: 1
+
     - run: git diff --exit-code
+
+    - name: Update cached .eslintcache and tsconfig.tsbuildinfo
+      uses: actions/cache/save@v4
+      with:
+        path: |
+          .eslintcache
+          tsconfig.tsbuildinfo
+        key: ${{ steps.cache-lint.outputs.cache-primary-key }}
 
   linux:
     needs: lint
@@ -46,40 +71,47 @@ jobs:
     steps:
     - run: lsb_release -a
     - run: uname -a
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - name: Setup node.js
+      uses: actions/setup-node@v4
       with:
-        node-version: '20.11.1'
+        node-version-file: '.nvmrc'
     - run: sudo apt-get install xvfb
 
-    - run: npm install -g yarn@1.22.10 npm@10.2.5
+    - run: npm install -g npm@10.2.5
 
     - name: Cache Desktop node_modules
       id: cache-desktop-modules
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: node_modules
-        key: ${{ runner.os }}-${{ hashFiles('package.json', 'yarn.lock', 'patches/**') }}
+        key: ${{ runner.os }}-${{ hashFiles('package.json', 'package-lock.json', 'patches/**') }}
+
     - name: Install Desktop node_modules
       if: steps.cache-desktop-modules.outputs.cache-hit != 'true'
-      run: yarn install --frozen-lockfile
+      run: npm ci
       env:
         NPM_CONFIG_LOGLEVEL: verbose
 
-    - run: yarn generate
-    - run: yarn prepare-beta-build
+    - run: npm run generate
+    - run: npm run prepare-beta-build
+
     - name: Create bundle
-      run: yarn build:esbuild:prod
-    - run: yarn build:release -- --publish=never
+      run: npm run build:esbuild:prod
+
+    - name: Build with packaging .deb file
+      run: npm run build:release -- --publish=never
       env:
         DISABLE_INSPECT_FUSE: on
-    - run: xvfb-run --auto-servernum yarn test-node
-    - run: xvfb-run --auto-servernum yarn test-electron
+
+    - run: xvfb-run --auto-servernum npm run test-node
+    - run: xvfb-run --auto-servernum npm run test-electron
       timeout-minutes: 5
       env:
+        ARTIFACTS_DIR: artifacts/linux
         LANG: en_US
         LANGUAGE: en_US
-    - run: xvfb-run --auto-servernum yarn test-release
+    - run: xvfb-run --auto-servernum npm run test-release
       env:
         NODE_ENV: production
 
@@ -103,12 +135,13 @@ jobs:
     - run: systeminfo
     - run: git config --global core.autocrlf false
     - run: git config --global core.eol lf
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - name: Setup node.js
+      uses: actions/setup-node@v4
       with:
-        node-version: '20.11.1'
-    - run: npm install -g yarn@1.22.10 npm@10.2.5 node-gyp@10.0.1
-    
+        node-version-file: '.nvmrc'
+    - run: npm install -g npm@10.2.5 node-gyp@10.0.1
+
     # Set things up so @nodert-win10-rs4 dependencies build properly
     - run: dir "$env:BUILD_LOCATION"
     - run: dir "$env:SDK_LOCATION"
@@ -117,29 +150,38 @@ jobs:
 
     - name: Cache Desktop node_modules
       id: cache-desktop-modules
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: node_modules
-        key: ${{ runner.os }}-${{ hashFiles('package.json', 'yarn.lock', 'patches/**') }}
+        key: ${{ runner.os }}-${{ hashFiles('package.json', 'package-lock.json', 'patches/**') }}
+
     - name: Install Desktop node_modules
       if: steps.cache-desktop-modules.outputs.cache-hit != 'true'
-      run: yarn install --frozen-lockfile
+      run: npm ci
       env:
-        CHILD_CONCURRENCY: 1 
+        CHILD_CONCURRENCY: 1
         NPM_CONFIG_LOGLEVEL: verbose
 
-    - run: yarn generate
-    - run: yarn test-node
+    - run: npm run generate
+    - run: npm run test-node
     - run: copy package.json temp.json
     - run: del package.json
     - run: type temp.json | findstr /v certificateSubjectName | findstr /v certificateSha1 > package.json
-    - run: yarn prepare-beta-build
-    - run: yarn build
+    - run: npm run prepare-beta-build
+
+    - name: Create bundle
+      run: npm run build:esbuild:prod
+
+    - name: Build with NSIS
+      run: npm run build:release
       env:
         DISABLE_INSPECT_FUSE: on
-    - run: yarn test-electron
+
+    - run: npm run test-electron
+      env:
+        ARTIFACTS_DIR: artifacts/windows
       timeout-minutes: 5
-    - run: yarn test-release
+    - run: npm run test-release
       env:
         SIGNAL_ENV: production
 

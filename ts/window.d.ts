@@ -8,6 +8,7 @@ import type * as Backbone from 'backbone';
 import type PQueue from 'p-queue/dist';
 import type { assert } from 'chai';
 import type { PhoneNumber, PhoneNumberFormat } from 'google-libphonenumber';
+import type { MochaOptions } from 'mocha';
 
 import type { ConversationModelCollectionType } from './model-types.d';
 import type { textsecure } from './textsecure';
@@ -32,7 +33,6 @@ import type { Receipt } from './types/Receipt';
 import type { ConversationController } from './ConversationController';
 import type { ReduxActions } from './state/types';
 import type { createApp } from './state/roots/createApp';
-import type Data from './sql/Client';
 import type { MessageModel } from './models/messages';
 import type { ConversationModel } from './models/conversations';
 import type { BatcherType } from './util/batcher';
@@ -137,7 +137,6 @@ export type SignalCoreType = {
   AboutWindowProps?: AboutWindowPropsType;
   Crypto: typeof Crypto;
   Curve: typeof Curve;
-  Data: typeof Data;
   DebugLogWindowProps?: DebugLogWindowPropsType;
   Groups: typeof Groups;
   PermissionsWindowProps?: PermissionsWindowPropsType;
@@ -182,7 +181,6 @@ declare global {
     // Used for sticker creator localization
     localeMessages: { [key: string]: { message: string } };
 
-    isBehindProxy: () => boolean;
     openArtCreator: (opts: { username: string; password: string }) => void;
 
     enterKeyboardMode: () => void;
@@ -280,9 +278,10 @@ declare global {
     RETRY_DELAY: boolean;
     assert: typeof assert;
     testUtilities: {
+      setup: MochaOptions;
       debug: (info: unknown) => void;
+      onTestEvent: (event: unknown) => void;
       initialize: () => Promise<void>;
-      onComplete: (info: unknown) => void;
       prepareTests: () => void;
     };
   }

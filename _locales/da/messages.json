@@ -80,6 +80,18 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "Din version af databasen stemmer ikke overens med denne version af Signal. Sørg for, at du åbner den nyeste version af Signal på din computer."
   },
+  "icu:databaseError__recover__detail": {
+    "messageformat": "Der opstod en databasefejl. Du kan kopiere fejlen og kontakte Signals support for at få hjælp til at løse problemet. Hvis du skal bruge Signal med det samme, kan du forsøge at gendanne dine data.\n\nKontakt support ved at gå til: {link}"
+  },
+  "icu:databaseError__recover__button": {
+    "messageformat": "Gendan data"
+  },
+  "icu:databaseError__safeStorageBackendChange": {
+    "messageformat": "Kan ikke tilgå databasekrypteringsnøglen, fordi OS-krypteringsnøgleringens backend er ændret fra {previousBackend} til {currentBackend}. Dette kan ske, hvis skrivebordsmiljøet ændres, for eksempel mellem GNOME og KDE.\n\nSkift til det forrige skrivebordsmiljø."
+  },
+  "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
+    "messageformat": "Kan ikke tilgå databasekrypteringsnøglen, fordi OS-krypteringsnøgleringens backend er ændret fra {previousBackend} til {currentBackend}. Dette kan ske, hvis skrivebordsmiljøet ændres, for eksempel mellem GNOME og KDE.\n\nSkift til det forrige skrivebordsmiljø, eller prøv at køre signal med kommandolinjeargumentet --password-store=\"{previousBackendFlag}\""
+  },
   "icu:mainMenuFile": {
     "messageformat": "&Fil"
   },
@@ -818,8 +830,14 @@
   "icu:cannotUpdateDetail": {
     "messageformat": "Signal kunne ikke opdatere. {retry} eller besøg {url} for at installere det manuelt. Dernæst, {support} om dette problem"
   },
+  "icu:cannotUpdateDetail-v2": {
+    "messageformat": "Signal kunne ikke opdateres. <retryUpdateButton>Prøv at opdatere igen</retryUpdateButton>, eller gå til {url} for at installere opdateringen manuelt. <contactSupportLink>Kontakt derefter support</contactSupportLink> vedrørende problemet"
+  },
   "icu:cannotUpdateRequireManualDetail": {
     "messageformat": "Signal kunne ikke opdatere. Besøg {url} for at installere den manuelt. Dernæst, {support} om dette problem"
+  },
+  "icu:cannotUpdateRequireManualDetail-v2": {
+    "messageformat": "Signal kunne ikke opdateres. Gå til {url} for at installere opdateringen manuelt. <contactSupportLink>Kontakt derefter support</contactSupportLink> vedrørende problemet"
   },
   "icu:readOnlyVolume": {
     "messageformat": "Signal Desktop findes sandsynligvis i en macOS-karantæne og vil ikke være i stand til automatisk at opdatere. Prøv at flytte {app} til {folder} med Finder."
@@ -989,6 +1007,9 @@
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
     "messageformat": "Alle beskeder i denne chat slettes fra denne enhed. Du kan stadig søge efter denne chat, når du har slettet beskeder."
   },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
+    "messageformat": "Alle beskeder i denne chat slettes fra alle dine enheder. Du kan stadig søge efter denne chat, når du har slettet beskeder."
+  },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Forlad gruppe"
   },
@@ -1092,7 +1113,7 @@
     "messageformat": "Forbundne enheder"
   },
   "icu:linkNewDevice": {
-    "messageformat": "Forbind ny enhed"
+    "messageformat": "Forbind en ny enhed"
   },
   "icu:Install__learn-more": {
     "messageformat": "Læs mere"
@@ -1110,10 +1131,22 @@
     "messageformat": "Indstillinger"
   },
   "icu:Install__instructions__3": {
-    "messageformat": "Tryk på {plusButton} (Android) eller {linkNewDevice} (iPhone)"
+    "messageformat": "Tryk på {linkNewDevice}"
   },
-  "icu:Install__qr-failed-load": {
-    "messageformat": "QR-koden kunne ikke indlæses. Tjek din internetforbindelse, og prøv igen. <retry>Prøv igen</retry>"
+  "icu:Install__qr-failed-load__error--timeout": {
+    "messageformat": "QR-koden kunne ikke indlæses. Tjek din forbindelse, og prøv igen."
+  },
+  "icu:Install__qr-failed-load__error--unknown": {
+    "messageformat": "<paragraph>Der opstod en uventet fejl.</paragraph><paragraph>Prøv igen.</paragraph>"
+  },
+  "icu:Install__qr-failed-load__error--network": {
+    "messageformat": "Signal kan ikke forbinde denne enhed ved hjælp af dit nuværende netværk."
+  },
+  "icu:Install__qr-failed-load__retry": {
+    "messageformat": "Prøv igen"
+  },
+  "icu:Install__qr-failed-load__get-help": {
+    "messageformat": "Få hjælp"
   },
   "icu:Install__support-link": {
     "messageformat": "Brug for hjælp?"
@@ -1286,8 +1319,35 @@
   "icu:CallingPendingParticipants__DenyUser": {
     "messageformat": "Afvis anmodning om at deltage"
   },
+  "icu:CallingPendingParticipants__ApproveAll": {
+    "messageformat": "Godkend alle"
+  },
+  "icu:CallingPendingParticipants__DenyAll": {
+    "messageformat": "Afvis alle"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--ApproveAll": {
+    "messageformat": "{count, plural, one {Godkend {count,number} anmodning?} other {Godkend {count,number} anmodninger?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--DenyAll": {
+    "messageformat": "{count, plural, one {Afvis {count,number} anmodning?} other {Afvis {count,number} anmodninger?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--ApproveAll": {
+    "messageformat": "{count, plural, one {{count,number} person vil blive føjet til opkaldet.} other {{count,number} personer vil blive føjet til opkaldet.}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--DenyAll": {
+    "messageformat": "{count, plural, one {{count,number} person vil ikke blive føjet til opkaldet.} other {{count,number} personer vil ikke blive føjet til opkaldet.}}"
+  },
   "icu:CallingPendingParticipants__RequestsToJoin": {
     "messageformat": "{count, plural, one {{count,number} anmodning om at deltage i opkaldet} other {{count,number} anmodninger om at deltage i opkaldet}}"
+  },
+  "icu:CallingPendingParticipants__WouldLikeToJoin": {
+    "messageformat": "Vil gerne deltage…"
+  },
+  "icu:CallingPendingParticipants__AdditionalRequests": {
+    "messageformat": "{count, plural, one {+{count,number} anmodning} other {+{count,number} anmodninger}}"
+  },
+  "icu:CallingPendingParticipants__Toast--added-users-to-call": {
+    "messageformat": "{count, plural, one {{count,number} person tilføjet til opkaldet} other {{count,number} personer tilføjet til opkaldet}}"
   },
   "icu:CallingRaisedHandsList__Title": {
     "messageformat": "{count, plural, one {{count,number} hånd oppe} other {{count,number} hænder oppe}}"
@@ -1352,8 +1412,14 @@
   "icu:calling__you-have-blocked": {
     "messageformat": "Du har blokeret {name}"
   },
+  "icu:calling__blocked-participant": {
+    "messageformat": "{name} er blokeret"
+  },
+  "icu:calling__block-info-title": {
+    "messageformat": "{name} er blokeret"
+  },
   "icu:calling__block-info": {
-    "messageformat": "Du vil ikke modtage deres stemme eller videoer, og de vil ikke modtage din."
+    "messageformat": "Du vil ikke modtage deres lyd og billede og de vil ikke modtage dine."
   },
   "icu:calling__missing-media-keys": {
     "messageformat": "Der modtages ikke lyd og video fra {name}"
@@ -2372,15 +2438,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "Chat markeret ulæst"
   },
-  "icu:AuthArtCreator--dialog--message": {
-    "messageformat": "Vil du gerne åbne Signal Sticker Pack Creator?"
-  },
-  "icu:AuthArtCreator--dialog--confirm": {
-    "messageformat": "Bekræft"
-  },
-  "icu:AuthArtCreator--dialog--dismiss": {
-    "messageformat": "Afvis"
-  },
   "icu:ArtCreator--Authentication--error": {
     "messageformat": "Opsæt Signal på din telefon og computer for at bruge Sticker Pack Creator"
   },
@@ -2577,10 +2634,10 @@
     "messageformat": "Afvis"
   },
   "icu:declinedIncomingAudioCall": {
-    "messageformat": "Du afviste et stemmeopkald"
+    "messageformat": "Afvist taleopkald"
   },
   "icu:declinedIncomingVideoCall": {
-    "messageformat": "Du afviste et videoopkald"
+    "messageformat": "Afvist videoopkald"
   },
   "icu:acceptedIncomingAudioCall": {
     "messageformat": "Indgående stemmeopkald"
@@ -2613,10 +2670,10 @@
     "messageformat": "Signal fortsætter med at sende notifikationer. Du kan ændre dette i Signals indstillinger."
   },
   "icu:incomingAudioCall": {
-    "messageformat": "Indgående stemmeopkald..."
+    "messageformat": "Indgående stemmeopkald"
   },
   "icu:incomingVideoCall": {
-    "messageformat": "Indgående videoopkald…"
+    "messageformat": "Indgående videoopkald"
   },
   "icu:outgoingAudioCall": {
     "messageformat": "Udgående stemmeopkald"
@@ -2661,7 +2718,7 @@
     "messageformat": "{count, plural, one {{count,number} person} other {{count,number} personer}}"
   },
   "icu:CallControls__InfoDisplay--audio-call": {
-    "messageformat": "Lydopkald"
+    "messageformat": "Taleopkald"
   },
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "Opkaldslink"
@@ -2688,13 +2745,13 @@
     "messageformat": "Opringning slået fra"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "You raised a hand."
+    "messageformat": "Du har rakt hånden op."
   },
   "icu:CallControls__RaiseHandsToast--you-and-one": {
-    "messageformat": "You and {otherName} raised a hand."
+    "messageformat": "Du og {otherName} har rakt hånden i vejret."
   },
   "icu:CallControls__RaiseHandsToast--you-and-more": {
-    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
+    "messageformat": "{overflowCount, plural, one {{otherName}, dig selv og {overflowCount,number} anden har rakt hånden op.} other {{otherName}, dig selv og {overflowCount,number} andre har rakt hånden op.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} har rakt hånden op."
@@ -2724,16 +2781,16 @@
     "messageformat": "{people, plural, one {{people,number} i opkald} other {{people,number} i opkald}}"
   },
   "icu:calling__call-notification__ended": {
-    "messageformat": "Gruppeopkaldet er afsluttet"
+    "messageformat": "Videoopkaldet er afsluttet"
   },
   "icu:calling__call-notification__started-by-someone": {
-    "messageformat": "Et gruppeopkald blev startet"
+    "messageformat": "Et videoopkald blev startet"
   },
   "icu:calling__call-notification__started-by-you": {
-    "messageformat": "Du startede et gruppeopkald"
+    "messageformat": "Du startede et videoopkald"
   },
   "icu:calling__call-notification__started": {
-    "messageformat": "{name} startede et gruppeopkald"
+    "messageformat": "{name} startede et videoopkald"
   },
   "icu:calling__in-another-call-tooltip": {
     "messageformat": "Du er allerede i et opkald"
@@ -2780,26 +2837,41 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "Et vindue"
   },
+  "icu:calling__ParticipantInfoButton": {
+    "messageformat": "Flere oplysninger om denne kontakt"
+  },
   "icu:CallingAdhocCallInfo__CopyLink": {
     "messageformat": "Kopiér opkaldslink"
+  },
+  "icu:CallingAdhocCallInfo__ShareViaSignal": {
+    "messageformat": "Del opkaldslink via Signal"
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "Fjern denne person fra opkaldet"
   },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogBody": {
+    "messageformat": "Fjern {name} fra dette opkald?"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--remove": {
+    "messageformat": "Fjern"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--block": {
+    "messageformat": "Bloker fra opkald"
+  },
   "icu:CallingAdhocCallInfo__UnknownContactLabel": {
-    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} personer}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
-    "messageformat": "+{count,number} more"
+    "messageformat": "{count, plural, one {+{count,number} anden} other {+{count,number} andre}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
-    "messageformat": "More info about new contacts"
+    "messageformat": "Flereoplysninger om nye kontakter"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
-    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+    "messageformat": "Før du deltager i et opkald, kan du kun se navnene på telefonkontakter, personer, du er i en gruppe med eller personer, du har skrevet med individuelt. Du kan se alle navne og billeder, når du deltager i opkaldet."
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
-    "messageformat": "Got it"
+    "messageformat": "Forstået"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -3512,6 +3584,9 @@
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Fjern fra gruppe"
   },
+  "icu:ContactModal--already-in-call": {
+    "messageformat": "Du er allerede i et opkald"
+  },
   "icu:showChatColorEditor": {
     "messageformat": "Chatfarve"
   },
@@ -3780,7 +3855,7 @@
     "messageformat": "{count, plural, one {Hvilke enheder vil du slette denne besked fra?} other {Hvilke enheder vil du slette disse beskeder fra?}}"
   },
   "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
-    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+    "messageformat": "{count, plural, one {Denne besked slettes fra alle dine enheder.} other {Disse beskeder slettes fra alle dine enheder.}}"
   },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "Slet for mig"
@@ -3795,7 +3870,7 @@
     "messageformat": "Slet fra alle enheder"
   },
   "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
-    "messageformat": "Delete"
+    "messageformat": "Slet"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {Du kan kun vælge op til {count,number} besked, der skal slettes for alle} other {Du kan kun vælge op til {count,number} beskeder, der skal slettes for alle}}"
@@ -4196,11 +4271,11 @@
   "icu:ProfileEditor--username--check-starting-character": {
     "messageformat": "Brugernavne kan ikke starte med et tal."
   },
-  "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Usernames must have at least {min,number} characters."
+  "icu:ProfileEditor--username--check-character-min-plural": {
+    "messageformat": "{min, plural, one {Brugernavne skal have mindst {min,number} tegn.} other {Brugernavne skal have mindst {min,number} tegn.}}"
   },
-  "icu:ProfileEditor--username--check-character-max": {
-    "messageformat": "Brugernavne må højst have {max,number} tegn."
+  "icu:ProfileEditor--username--check-character-max-plural": {
+    "messageformat": "{max, plural, one {Brugernavne må højst have {max,number} tegn.} other {Brugernavne må højst have {max,number} tegn.}}"
   },
   "icu:ProfileEditor--username--check-discriminator-min": {
     "messageformat": "Ugyldigt brugernavn, angiv min. 2 cifre."
@@ -4240,9 +4315,6 @@
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
     "messageformat": "Slet"
-  },
-  "icu:ProfileEditor--username--delete-unavailable-notice": {
-    "messageformat": "For at slette dit brugernavn, skal du åbne Signal på din telefon og gå ind i Indstillinger > Profil."
   },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "Kopiér eller slet brugernavn"
@@ -4749,13 +4821,13 @@
     "messageformat": "Dine kontakter kan se dit navn og billede, og de kan se det, du lægger op på \"Min historie\", medmindre du skjuler din historie fra dem"
   },
   "icu:LocalDeleteWarningModal__header": {
-    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+    "messageformat": "Sletning synkroniseret på alle dine enheder"
   },
   "icu:LocalDeleteWarningModal__description": {
-    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+    "messageformat": "Når du sletter beskeder eller chats, slettes de fra alle dine enheder."
   },
   "icu:LocalDeleteWarningModal__confirm": {
-    "messageformat": "Got it"
+    "messageformat": "Forstået"
   },
   "icu:Stories__title": {
     "messageformat": "Historier"
@@ -5350,7 +5422,7 @@
     "messageformat": "Ingen resultater for \"{query}\""
   },
   "icu:CallsList__CreateCallLink": {
-    "messageformat": "Create a Call Link"
+    "messageformat": "Opret et opkaldslink"
   },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "Indkommende"
@@ -5360,6 +5432,9 @@
   },
   "icu:CallsList__ItemCallInfo--Missed": {
     "messageformat": "Ubesvaret"
+  },
+  "icu:CallsList__ItemCallInfo--Declined": {
+    "messageformat": "Afvist"
   },
   "icu:CallsList__ItemCallInfo--GroupCall": {
     "messageformat": "Gruppeopkald"
@@ -5374,7 +5449,7 @@
     "messageformat": "Forlad det aktuelle opkald?"
   },
   "icu:CallsList__LeaveCallDialogBody": {
-    "messageformat": "Du skal forlade det aktuelle opkald, før du tilmelder dig et nyt opkald."
+    "messageformat": "Du skal forlade det aktuelle opkald, før du starter eller deltager i et nyt opkald."
   },
   "icu:CallsList__LeaveCallDialogButton--leave": {
     "messageformat": "Forlad opkald"
@@ -5406,8 +5481,29 @@
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Opkaldslink"
   },
+  "icu:CallHistory__DescriptionVideoCall--Default": {
+    "messageformat": "{direction, select, Outgoing {Udgående videoopkald} other {Indgående videoopkald}}"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Missed": {
+    "messageformat": "Ubesvaret videoopkald"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Unanswered": {
+    "messageformat": "Ubesvaret videoopkald"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Declined": {
+    "messageformat": "Afvist videoopkald"
+  },
   "icu:CallLinkDetails__Join": {
     "messageformat": "Deltag"
+  },
+  "icu:CallLinkDetails__AddCallNameLabel": {
+    "messageformat": "Tilføj opkaldsnavn"
+  },
+  "icu:CallLinkDetails__EditCallNameLabel": {
+    "messageformat": "Rediger opkaldsnavn"
+  },
+  "icu:CallLinkDetails__ApproveAllMembersLabel": {
+    "messageformat": "Godkend alle medlemmer"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "Kopiér link"
@@ -5415,23 +5511,50 @@
   "icu:CallLinkDetails__ShareLinkViaSignal": {
     "messageformat": "Del link via Signal"
   },
-  "icu:CallLinkEditModal__Title": {
-    "messageformat": "Call link details"
+  "icu:CallLinkDetails__DeleteLink": {
+    "messageformat": "Delete link"
   },
-  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
-    "messageformat": "Name"
+  "icu:CallLinkDetails__DeleteLinkModal__Title": {
+    "messageformat": "Delete call link?"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Body": {
+    "messageformat": "This link will no longer work for anyone who has it."
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
+    "messageformat": "Cancel"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Delete": {
+    "messageformat": "Delete"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Oplysninger om opkaldslink"
   },
   "icu:CallLinkEditModal__JoinButtonLabel": {
-    "messageformat": "Join"
+    "messageformat": "Deltag"
+  },
+  "icu:CallLinkEditModal__AddCallNameLabel": {
+    "messageformat": "Tilføj opkaldsnavn"
+  },
+  "icu:CallLinkEditModal__EditCallNameLabel": {
+    "messageformat": "Rediger opkaldsnavn"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Approve all members"
+    "messageformat": "Godkend alle medlemmer"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
-    "messageformat": "Off"
+  "icu:CallLinkRestrictionsSelect__Option--Off": {
+    "messageformat": "Fra"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
-    "messageformat": "On"
+  "icu:CallLinkRestrictionsSelect__Option--On": {
+    "messageformat": "Til"
+  },
+  "icu:CallLinkAddNameModal__Title": {
+    "messageformat": "Tilføj opkaldsnavn"
+  },
+  "icu:CallLinkAddNameModal__Title--Edit": {
+    "messageformat": "Rediger opkaldsnavn"
+  },
+  "icu:CallLinkAddNameModal__NameLabel": {
+    "messageformat": "Opkaldsnavn"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} anden skriver.} other {{count,number} andre skriver.}}"
@@ -5473,19 +5596,19 @@
     "messageformat": "Små tweaks, rettelser og forbedringer af appens præstation. Tak fordi du bruger Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.12--0": {
-    "messageformat": "Ræk hånden op, hvis du har ledt efter en anden måde at kommunikere på under gruppeopkald. Den nye Ræk hånden op-funktion er en enkel måde at få nogens opmærksomhed på, stille et spørgsmål eller enstemmigt stemme på et gruppeforslag, når din ven spørger \"hvem er for?\""
+  "icu:WhatsNew__v7.18--0": {
+    "messageformat": "Denne opdatering gør det hurtigere at slette store tråde med masser af beskeder."
   },
-  "icu:WhatsNew__v7.12--1": {
-    "messageformat": "Vi brød op med en fejl i beskæringsværktøjet, så nu er det nemmere og mere intuitivt at skære din eks (eller noget andet) ud af billedet."
+  "icu:WhatsNew__v7.19--0": {
+    "messageformat": "Hvis et andet opkald kalder dit navn, har vi tilføjet en genvej til at forlade det aktuelle opkald og deltage i et nyt. Du bliver bedt om at bekræfte, men det er op til dig, om du siger farvel først."
   },
-  "icu:WhatsNew__v7.12--2": {
-    "messageformat": "Vi har ændret tastaturgenvejen til at sende en stemmenote til Ctrl / Cmd + Shift + Y, så den ikke længere er i konflikt med genvejen \"Indsæt og match stil\" på Windows og Linux."
+  "icu:WhatsNew__v7.19--1": {
+    "messageformat": "Denne opdatering løser også et opstartsnedbrud på Linux for brugere, hvis lokalitet er indstillet til \"POSIX\"."
   },
-  "icu:WhatsNew__v7.13--0": {
-    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  "icu:WhatsNew__v7.20--0": {
+    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
   },
-  "icu:WhatsNew__v7.13--1": {
-    "messageformat": "This update also improves the display of quoted replies in RTL languages."
+  "icu:WhatsNew__v7.20--1": {
+    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
   }
 }

@@ -309,8 +309,6 @@ const getHtmlDocument = async (
   abortSignal: AbortSignal,
   logger: Pick<LoggerType, 'warn'> = log
 ): Promise<HTMLDocument> => {
-  let result: HTMLDocument = emptyHtmlDocument();
-
   const buffer = new Uint8Array(MAX_HTML_BYTES_TO_LOAD);
   let bytesLoadedSoFar = 0;
 
@@ -332,8 +330,6 @@ const getHtmlDocument = async (
       buffer.set(truncatedChunk, bytesLoadedSoFar);
       bytesLoadedSoFar += truncatedChunk.byteLength;
 
-      result = parseHtmlBytes(buffer.slice(0, bytesLoadedSoFar), httpCharset);
-
       const hasLoadedMaxBytes = bytesLoadedSoFar >= buffer.length;
       if (hasLoadedMaxBytes) {
         break;
@@ -345,6 +341,7 @@ const getHtmlDocument = async (
     );
   }
 
+  const result = parseHtmlBytes(buffer.slice(0, bytesLoadedSoFar), httpCharset);
   return result;
 };
 

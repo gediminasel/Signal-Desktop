@@ -17,6 +17,7 @@ import type { PhoneNumber } from 'google-libphonenumber';
 
 import { clipboard } from 'electron';
 import type { ReadonlyDeep } from 'type-fest';
+import { DataReader, DataWriter } from '../../sql/Client';
 import type { AttachmentType } from '../../types/Attachment';
 import type { StateType as RootStateType } from '../reducer';
 import * as groups from '../../groups';
@@ -29,6 +30,7 @@ import type { DurationInSeconds } from '../../util/durations';
 import * as universalExpireTimer from '../../util/universalExpireTimer';
 import * as Attachment from '../../types/Attachment';
 import { isFileDangerous } from '../../util/isFileDangerous';
+import { getLocalAttachmentUrl } from '../../util/getLocalAttachmentUrl';
 import { instance as libphonenumberInstance } from '../../util/libphonenumberInstance';
 import type {
   ShowSendAnywayDialogActionType,
@@ -62,12 +64,13 @@ import type {
   DraftEditMessageType,
   LastMessageStatus,
   MessageAttributesType,
+  ReadonlyMessageAttributesType,
 } from '../../model-types.d';
 import type {
   DraftBodyRanges,
   HydratedBodyRangesType,
 } from '../../types/BodyRange';
-import { CallMode } from '../../types/Calling';
+import { CallMode } from '../../types/CallDisposition';
 import type { MediaItemType } from '../../types/MediaItem';
 import type { StoryDistributionIdString } from '../../types/StoryDistributionId';
 import { normalizeStoryDistributionId } from '../../types/StoryDistributionId';
@@ -168,7 +171,7 @@ import {
   setComposerFocus,
   setQuoteByMessageId,
   resetComposer,
-  handleLeaveConversation,
+  saveDraftRecordingIfNeeded,
 } from './composer';
 import { ReceiptType } from '../../types/Receipt';
 import { Sound, SoundType } from '../../util/Sound';
@@ -194,7 +197,8 @@ import {
   getMessageToDelete,
 } from '../../util/deleteForMe';
 import { MAX_MESSAGE_COUNT } from '../../util/deleteForMe.types';
-import { isEnabled } from '../../RemoteConfig';
+import { markCallHistoryReadInConversation } from './callHistory';
+import type { CapabilitiesType } from '../../textsecure/WebAPI';
 
 // State
 
@@ -206,25 +210,29 @@ export type DBConversationType = ReadonlyDeep<{
 }>;
 
 export const InteractionModes = ['mouse', 'keyboard'] as const;
-export type InteractionModeType = ReadonlyDeep<typeof InteractionModes[number]>;
-
-export type MessageTimestamps = ReadonlyDeep<
-  Pick<MessageAttributesType, 'sent_at' | 'received_at'>
+export type InteractionModeType = ReadonlyDeep<
+  (typeof InteractionModes)[number]
 >;
 
-// eslint-disable-next-line local-rules/type-alias-readonlydeep
-export type MessageType = MessageAttributesType & {
-  interactionType?: InteractionModeType;
-};
-// eslint-disable-next-line local-rules/type-alias-readonlydeep
-export type MessageWithUIFieldsType = MessageAttributesType & {
-  displayLimit?: number;
-  isSpoilerExpanded?: Record<number, boolean>;
-};
+export type MessageTimestamps = ReadonlyDeep<
+  Pick<ReadonlyMessageAttributesType, 'sent_at' | 'received_at'>
+>;
+
+export type MessageType = ReadonlyDeep<
+  ReadonlyMessageAttributesType & {
+    interactionType?: InteractionModeType;
+  }
+>;
+export type MessageWithUIFieldsType = ReadonlyDeep<
+  ReadonlyMessageAttributesType & {
+    displayLimit?: number;
+    isSpoilerExpanded?: Record<number, boolean>;
+  }
+>;
 
 export const ConversationTypes = ['direct', 'group'] as const;
 export type ConversationTypeType = ReadonlyDeep<
-  typeof ConversationTypes[number]
+  (typeof ConversationTypes)[number]
 >;
 
 export type LastMessageType = ReadonlyDeep<
@@ -265,15 +273,17 @@ export type ConversationType = ReadonlyDeep<
     firstName?: string;
     profileName?: string;
     profileLastUpdatedAt?: number;
+    capabilities?: CapabilitiesType;
     username?: string;
     about?: string;
     aboutText?: string;
     aboutEmoji?: string;
     avatars?: ReadonlyArray<AvatarDataType>;
-    avatarPath?: string;
+    avatarUrl?: string;
+    rawAvatarPath?: string;
     avatarHash?: string;
-    profileAvatarPath?: string;
-    unblurredAvatarPath?: string;
+    profileAvatarUrl?: string;
+    unblurredAvatarUrl?: string;
     areWeAdmin?: boolean;
     areWePending?: boolean;
     areWePendingApproval?: boolean;
@@ -414,10 +424,9 @@ type MessageMetricsType = ReadonlyDeep<{
   totalUnseen: number;
 }>;
 
-// eslint-disable-next-line local-rules/type-alias-readonlydeep
-export type MessageLookupType = {
+export type MessageLookupType = ReadonlyDeep<{
   [key: string]: MessageWithUIFieldsType;
-};
+}>;
 export type ConversationMessageType = ReadonlyDeep<{
   isNearBottom?: boolean;
   messageChangeCounter: number;
@@ -504,8 +513,7 @@ type ComposerStateType = ReadonlyDeep<
       ))
 >;
 
-// eslint-disable-next-line local-rules/type-alias-readonlydeep -- FIXME
-export type ConversationsStateType = Readonly<{
+export type ConversationsStateType = ReadonlyDeep<{
   preJoinConversation?: PreJoinConversationType;
   invitedServiceIdsForNewlyCreatedGroup?: ReadonlyArray<ServiceIdString>;
   conversationLookup: ConversationLookupType;
@@ -524,7 +532,7 @@ export type ConversationsStateType = Readonly<{
     stack: ReadonlyArray<PanelRenderType>;
     watermark: number;
   };
-  targetedMessageForDetails?: MessageAttributesType;
+  targetedMessageForDetails?: ReadonlyMessageAttributesType;
 
   lastSelectedMessage: MessageTimestamps | undefined;
   selectedMessageIds: ReadonlyArray<string> | undefined;
@@ -765,15 +773,14 @@ type ConversationStoppedByMissingVerificationActionType = ReadonlyDeep<{
     untrustedServiceIds: ReadonlyArray<ServiceIdString>;
   };
 }>;
-// eslint-disable-next-line local-rules/type-alias-readonlydeep -- FIXME
-export type MessageChangedActionType = {
+export type MessageChangedActionType = ReadonlyDeep<{
   type: typeof MESSAGE_CHANGED;
   payload: {
     id: string;
     conversationId: string;
-    data: MessageAttributesType;
+    data: ReadonlyMessageAttributesType;
   };
-};
+}>;
 export type MessageDeletedActionType = ReadonlyDeep<{
   type: typeof MESSAGE_DELETED;
   payload: {
@@ -796,15 +803,14 @@ export type ShowSpoilerActionType = ReadonlyDeep<{
   };
 }>;
 
-// eslint-disable-next-line local-rules/type-alias-readonlydeep -- FIXME
-export type MessagesAddedActionType = Readonly<{
+export type MessagesAddedActionType = ReadonlyDeep<{
   type: 'MESSAGES_ADDED';
   payload: {
     conversationId: string;
     isActive: boolean;
     isJustSent: boolean;
     isNewMessage: boolean;
-    messages: ReadonlyArray<MessageAttributesType>;
+    messages: ReadonlyArray<ReadonlyMessageAttributesType>;
   };
 }>;
 
@@ -827,19 +833,18 @@ export type RepairOldestMessageActionType = ReadonlyDeep<{
     conversationId: string;
   };
 }>;
-// eslint-disable-next-line local-rules/type-alias-readonlydeep
-export type MessagesResetActionType = {
+export type MessagesResetActionType = ReadonlyDeep<{
   type: 'MESSAGES_RESET';
   payload: {
     conversationId: string;
-    messages: ReadonlyArray<MessageAttributesType>;
+    messages: ReadonlyArray<ReadonlyMessageAttributesType>;
     metrics: MessageMetricsType;
     scrollToMessageId?: string;
     // The set of provided messages should be trusted, even if it conflicts with metrics,
     //   because we weren't looking for a specific time window of messages with our query.
     unboundedFetch: boolean;
   };
-};
+}>;
 export type SetMessageLoadingStateActionType = ReadonlyDeep<{
   type: 'SET_MESSAGE_LOADING_STATE';
   payload: {
@@ -951,8 +956,7 @@ export type ToggleConversationInChooseMembersActionType = ReadonlyDeep<{
   };
 }>;
 
-// eslint-disable-next-line local-rules/type-alias-readonlydeep -- FIXME
-type PushPanelActionType = Readonly<{
+type PushPanelActionType = ReadonlyDeep<{
   type: typeof PUSH_PANEL;
   payload: PanelRenderType;
 }>;
@@ -977,7 +981,7 @@ type ReplaceAvatarsActionType = ReadonlyDeep<{
   };
 }>;
 
-// eslint-disable-next-line local-rules/type-alias-readonlydeep -- FIXME
+// eslint-disable-next-line local-rules/type-alias-readonlydeep
 export type ConversationActionType =
   | CancelVerificationDataByConversationActionType
   | ClearCancelledVerificationActionType
@@ -1358,7 +1362,7 @@ function markMessageRead(
   conversationId: string,
   messageId: string
 ): ThunkAction<void, RootStateType, unknown, NoopActionType> {
-  return async (_dispatch, getState) => {
+  return async (dispatch, getState) => {
     const conversation = window.ConversationController.get(conversationId);
     if (!conversation) {
       throw new Error('markMessageRead: Conversation not found!');
@@ -1382,6 +1386,12 @@ function markMessageRead(
       newestSentAt: message.get('sent_at'),
       sendReadReceipts: true,
     });
+
+    if (message.get('type') === 'call-history') {
+      const callId = message.get('callId');
+      strictAssert(callId, 'callId not found');
+      dispatch(markCallHistoryReadInConversation(callId));
+    }
   };
 }
 
@@ -1471,7 +1481,7 @@ async function getAvatarsAndUpdateConversation(
   conversation.attributes.avatars = nextAvatars.map(avatarData =>
     omit(avatarData, ['buffer'])
   );
-  window.Signal.Data.updateConversation(conversation.attributes);
+  await DataWriter.updateConversation(conversation.attributes);
 
   return nextAvatars;
 }
@@ -1485,7 +1495,7 @@ function deleteAvatarFromDisk(
       await window.Signal.Migrations.deleteAvatar(avatarData.imagePath);
     } else {
       log.info(
-        'No imagePath for avatarData. Removing from userAvatarData, but not disk'
+        'No path for avatarData. Removing from userAvatarData, but not disk'
       );
     }
 
@@ -1741,21 +1751,22 @@ function deleteMessages({
     let nearbyMessageId: string | null = null;
 
     if (nearbyMessageId == null && lastSelectedMessage != null) {
-      const foundMessageId =
-        await window.Signal.Data.getNearbyMessageFromDeletedSet({
-          conversationId,
-          lastSelectedMessage,
-          deletedMessageIds: messageIds,
-          includeStoryReplies: false,
-          storyId: undefined,
-        });
+      const foundMessageId = await DataReader.getNearbyMessageFromDeletedSet({
+        conversationId,
+        lastSelectedMessage,
+        deletedMessageIds: messageIds,
+        includeStoryReplies: false,
+        storyId: undefined,
+      });
 
       if (foundMessageId != null) {
         nearbyMessageId = foundMessageId;
       }
     }
 
-    await window.Signal.Data.removeMessages(messageIds);
+    await DataWriter.removeMessages(messageIds, {
+      singleProtoJobQueue,
+    });
 
     popPanelForConversation()(dispatch, getState, undefined);
 
@@ -1763,7 +1774,11 @@ function deleteMessages({
       dispatch(scrollToMessage(conversationId, nearbyMessageId));
     }
 
-    if (!isEnabled('desktop.deleteSync.send')) {
+    const ourConversation =
+      window.ConversationController.getOurConversationOrThrow();
+    const capable = Boolean(ourConversation.get('capabilities')?.deleteSync);
+
+    if (!capable) {
       return;
     }
     if (messages.length === 0) {
@@ -1892,24 +1907,26 @@ function setMessageToEdit(
 
     let attachmentThumbnail: string | undefined;
     if (message.attachments) {
-      const thumbnailPath = message.attachments[0]?.thumbnail?.path;
-      attachmentThumbnail = thumbnailPath
-        ? window.Signal.Migrations.getAbsoluteAttachmentPath(thumbnailPath)
+      const thumbnail = message.attachments[0]?.thumbnail;
+      attachmentThumbnail = thumbnail?.path
+        ? getLocalAttachmentUrl(thumbnail)
         : undefined;
     }
 
+    const draftBodyRanges = processBodyRanges(message, {
+      conversationSelector: getConversationSelector(getState()),
+    });
     conversation.set({
       draftEditMessage: {
         body: message.body,
+        bodyRanges: draftBodyRanges,
         editHistoryLength: message.editHistory?.length ?? 0,
         attachmentThumbnail,
         preview: message.preview ? message.preview[0] : undefined,
         targetMessageId: messageId,
         quote: message.quote,
       },
-      draftBodyRanges: processBodyRanges(message, {
-        conversationSelector: getConversationSelector(getState()),
-      }),
+      draftBodyRanges,
     });
 
     dispatch({
@@ -2092,9 +2109,8 @@ function saveAvatarToDisk(
 
     strictAssert(conversationId, 'conversationId not provided');
 
-    const imagePath = await window.Signal.Migrations.writeNewAvatarData(
-      avatarData.buffer
-    );
+    const { path: imagePath, ...localImage } =
+      await window.Signal.Migrations.writeNewAvatarData(avatarData.buffer);
 
     const avatars = await getAvatarsAndUpdateConversation(
       getState().conversations,
@@ -2102,6 +2118,7 @@ function saveAvatarToDisk(
       (prevAvatarsData, id) => {
         const newAvatarData = {
           ...avatarData,
+          ...localImage,
           imagePath,
           id,
         };
@@ -2172,7 +2189,7 @@ function removeCustomColorOnConversations(
     });
 
     if (conversationsToUpdate.length) {
-      await window.Signal.Data.updateConversations(conversationsToUpdate);
+      await DataWriter.updateConversations(conversationsToUpdate);
     }
 
     dispatch({
@@ -2192,7 +2209,7 @@ function resetAllChatColors(): ThunkAction<
 > {
   return async dispatch => {
     // Calling this with no args unsets all the colors in the db
-    await window.Signal.Data.updateAllConversationColors();
+    await DataWriter.updateAllConversationColors();
 
     window.getConversations().forEach(conversation => {
       conversation.set({
@@ -2228,7 +2245,7 @@ function kickOffAttachmentDownload(
 
     if (didUpdateValues) {
       drop(
-        window.Signal.Data.saveMessage(message.attributes, {
+        DataWriter.saveMessage(message.attributes, {
           ourAci: window.textsecure.storage.user.getCheckedAci(),
         })
       );
@@ -2385,7 +2402,7 @@ export function setVoiceNotePlaybackRate({
       conversationModel.set({
         voiceNotePlaybackRate: rate === 1 ? undefined : rate,
       });
-      window.Signal.Data.updateConversation(conversationModel.attributes);
+      await DataWriter.updateConversation(conversationModel.attributes);
     }
 
     const conversation = conversationModel?.format();
@@ -2439,7 +2456,7 @@ function colorSelected({
         });
       }
 
-      window.Signal.Data.updateConversation(conversation.attributes);
+      await DataWriter.updateConversation(conversation.attributes);
     }
 
     dispatch({
@@ -2562,14 +2579,14 @@ function composeSaveAvatarToDisk(
       throw new Error('No avatar Uint8Array provided');
     }
 
-    const imagePath = await window.Signal.Migrations.writeNewAvatarData(
-      avatarData.buffer
-    );
+    const { path: imagePath, ...localImage } =
+      await window.Signal.Migrations.writeNewAvatarData(avatarData.buffer);
 
     dispatch({
       type: COMPOSE_ADD_AVATAR,
       payload: {
         ...avatarData,
+        ...localImage,
         imagePath,
       },
     });
@@ -2584,7 +2601,7 @@ function composeDeleteAvatarFromDisk(
       await window.Signal.Migrations.deleteAvatar(avatarData.imagePath);
     } else {
       log.info(
-        'No imagePath for avatarData. Removing from userAvatarData, but not disk'
+        'No path for avatarData. Removing from userAvatarData, but not disk'
       );
     }
 
@@ -2762,20 +2779,17 @@ function toggleSelectMessage(
         message => message
       );
 
-      const betweenIds = await window.Signal.Data.getMessagesBetween(
-        conversationId,
-        {
-          after: {
-            sent_at: after.sent_at,
-            received_at: after.received_at,
-          },
-          before: {
-            sent_at: before.sent_at,
-            received_at: before.received_at,
-          },
-          includeStoryReplies: !isGroup(conversation.attributes),
-        }
-      );
+      const betweenIds = await DataReader.getMessagesBetween(conversationId, {
+        after: {
+          sent_at: after.sent_at,
+          received_at: after.received_at,
+        },
+        before: {
+          sent_at: before.sent_at,
+          received_at: before.received_at,
+        },
+        includeStoryReplies: !isGroup(conversation.attributes),
+      });
 
       toggledMessageIds = [messageId, ...betweenIds];
     } else {
@@ -2850,7 +2864,7 @@ function conversationStoppedByMissingVerification(payload: {
 export function messageChanged(
   id: string,
   conversationId: string,
-  data: MessageAttributesType
+  data: ReadonlyMessageAttributesType
 ): MessageChangedActionType {
   return {
     type: MESSAGE_CHANGED,
@@ -2920,7 +2934,7 @@ function messagesAdded({
   isActive: boolean;
   isJustSent: boolean;
   isNewMessage: boolean;
-  messages: ReadonlyArray<MessageAttributesType>;
+  messages: ReadonlyArray<ReadonlyMessageAttributesType>;
 }): ThunkAction<void, RootStateType, unknown, MessagesAddedActionType> {
   return (dispatch, getState) => {
     const state = getState();
@@ -2975,14 +2989,13 @@ function reviewConversationNameCollision(): ReviewConversationNameCollisionActio
   };
 }
 
-// eslint-disable-next-line local-rules/type-alias-readonlydeep
-export type MessageResetOptionsType = {
+export type MessageResetOptionsType = ReadonlyDeep<{
   conversationId: string;
-  messages: ReadonlyArray<MessageAttributesType>;
+  messages: ReadonlyArray<ReadonlyMessageAttributesType>;
   metrics: MessageMetricsType;
   scrollToMessageId?: string;
   unboundedFetch?: boolean;
-};
+}>;
 
 function messagesReset({
   conversationId,
@@ -3417,7 +3430,7 @@ function reportSpam(
             addReportSpamJob({
               conversation,
               getMessageServerGuidsForSpam:
-                window.Signal.Data.getMessageServerGuidsForSpam,
+                DataReader.getMessageServerGuidsForSpam,
               jobQueue: reportSpamJobQueue,
             }),
           ]);
@@ -3467,7 +3480,7 @@ function blockAndReportSpam(
               addReportSpamJob({
                 conversation: conversationForSpam,
                 getMessageServerGuidsForSpam:
-                  window.Signal.Data.getMessageServerGuidsForSpam,
+                  DataReader.getMessageServerGuidsForSpam,
                 jobQueue: reportSpamJobQueue,
               }),
           ]);
@@ -3636,15 +3649,10 @@ function loadRecentMediaItems(
   limit: number
 ): ThunkAction<void, RootStateType, unknown, SetRecentMediaItemsActionType> {
   return async dispatch => {
-    const { getAbsoluteAttachmentPath } = window.Signal.Migrations;
-
     const messages: Array<MessageAttributesType> =
-      await window.Signal.Data.getMessagesWithVisualMediaAttachments(
-        conversationId,
-        {
-          limit,
-        }
-      );
+      await DataReader.getMessagesWithVisualMediaAttachments(conversationId, {
+        limit,
+      });
 
     // Cache these messages in memory to ensure Lightbox can find them
     messages.forEach(message => {
@@ -3666,9 +3674,11 @@ function loadRecentMediaItems(
               const { thumbnail } = attachment;
 
               const result = {
-                objectURL: getAbsoluteAttachmentPath(attachment.path || ''),
+                objectURL: attachment.path
+                  ? getLocalAttachmentUrl(attachment)
+                  : '',
                 thumbnailObjectUrl: thumbnail?.path
-                  ? getAbsoluteAttachmentPath(thumbnail.path)
+                  ? getLocalAttachmentUrl(thumbnail)
                   : '',
                 contentType: attachment.contentType,
                 index,
@@ -3822,7 +3832,7 @@ export function scrollToOldestUnreadMention(
     }
 
     const oldestUnreadMention =
-      await window.Signal.Data.getOldestUnreadMentionOfMeForConversation(
+      await DataReader.getOldestUnreadMentionOfMeForConversation(
         conversationId,
         {
           includeStoryReplies: !isGroup(conversation),
@@ -4134,7 +4144,7 @@ function toggleGroupsForStorySend(
         conversation.set({
           storySendMode: newStorySendMode,
         });
-        window.Signal.Data.updateConversation(conversation.attributes);
+        await DataWriter.updateConversation(conversation.attributes);
         conversation.captureChange('storySendMode');
       })
     );
@@ -4248,7 +4258,7 @@ export function showConversation({
 
     // notify composer in case we need to stop recording a voice note
     if (conversations.selectedConversationId) {
-      dispatch(handleLeaveConversation(conversations.selectedConversationId));
+      saveDraftRecordingIfNeeded()(dispatch, getState, undefined);
       dispatch(
         onConversationClosed(
           conversations.selectedConversationId,
@@ -4396,7 +4406,7 @@ function onConversationClosed(
         });
       }
 
-      window.Signal.Data.updateConversation(conversation.attributes);
+      await DataWriter.updateConversation(conversation.attributes);
 
       drop(conversation.updateLastMessage());
     }
@@ -4436,7 +4446,7 @@ function jumpToDate(
   timestamp: number
 ): ThunkAction<void, RootStateType, unknown, NoopActionType> {
   return async dispatch => {
-    const found = await window.Signal.Data.getMessageAfterDate(
+    const found = await DataReader.getMessageAfterDate(
       timestamp,
       conversationId
     );
@@ -4720,7 +4730,7 @@ function maybeUpdateSelectedMessageForDetails(
     targetedMessageForDetails,
   }: {
     messageId: string;
-    targetedMessageForDetails: MessageAttributesType | undefined;
+    targetedMessageForDetails: ReadonlyMessageAttributesType | undefined;
   },
   state: ConversationsStateType
 ): ConversationsStateType {
@@ -4783,7 +4793,7 @@ function updateNicknameAndNote(
       nicknameFamilyName: nickname?.familyName,
       note,
     });
-    window.Signal.Data.updateConversation(conversationModel.attributes);
+    await DataWriter.updateConversation(conversationModel.attributes);
     const conversation = conversationModel.format();
     dispatch(conversationChanged(conversationId, conversation));
     conversationModel.captureChange('nicknameAndNote');

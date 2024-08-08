@@ -80,6 +80,18 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "เวอร์ชันฐานข้อมูลของคุณไม่ตรงกับ Signal เวอร์ชันนี้ ตรวจสอบให้แน่ใจว่า Signal ที่คุณเปิดอยู่บนคอมพิวเตอร์เป็นเวอร์ชันล่าสุด"
   },
+  "icu:databaseError__recover__detail": {
+    "messageformat": "เกิดข้อผิดพลาดด้านฐานข้อมูล คุณสามารถคัดลอกข้อมูลความผิดพลาดนี้แล้วติดต่อฝ่ายสนับสนุนของ Signal ให้ช่วยแก้ไขปัญหาดังกล่าว ในกรณีที่คุณต้องการใช้ Signal ทันที คุณสามารถพยายามกู้คืนข้อมูลของคุณได้\n\nติดต่อฝ่ายสนับสนุนโดยไปที่: {link}"
+  },
+  "icu:databaseError__recover__button": {
+    "messageformat": "กู้คืนข้อมูล"
+  },
+  "icu:databaseError__safeStorageBackendChange": {
+    "messageformat": "ไม่สามารถเข้าถึงกุญแจการเข้ารหัสของฐานข้อมูลได้ เนื่องจากระบบจัดการพวงกุญแจการเข้ารหัสของระบบปฏิบัติการมีการเปลี่ยนจาก {previousBackend} เป็น {currentBackend} กรณีเช่นนี้อาจเกิดขึ้นได้หากมีการเปลี่ยน Desktop Environment เช่น ระหว่าง GNOME และ KDE\n\nโปรดเปลี่ยนกลับไปใช้ Desktop Environment เดิม"
+  },
+  "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
+    "messageformat": "ไม่สามารถเข้าถึงกุญแจการเข้ารหัสของฐานข้อมูลได้ เนื่องจากระบบจัดการพวงกุญแจการเข้ารหัสของระบบปฏิบัติการมีการเปลี่ยนจาก {previousBackend} เป็น {currentBackend} กรณีเช่นนี้อาจเกิดขึ้นได้หากมีการเปลี่ยน Desktop Environment เช่น ระหว่าง GNOME และ KDE\n\nโปรดเปลี่ยนกลับไปใช้ Desktop Environment เดิม หรือพยายามเปิด Signal โดยใช้ Command Line Flag: --password-store=\"{previousBackendFlag}\""
+  },
   "icu:mainMenuFile": {
     "messageformat": "แ&ฟ้ม"
   },
@@ -818,8 +830,14 @@
   "icu:cannotUpdateDetail": {
     "messageformat": "ไม่สามารถปรับรุ่น Signal ได้ กรุณา {retry} หรือไปที่ {url} เพื่อติดตั้งด้วยตัวเอง จากนั้น {support} ปัญหานี้"
   },
+  "icu:cannotUpdateDetail-v2": {
+    "messageformat": "ไม่สามารถอัปเดต Signal ได้ โปรด<retryUpdateButton>ลองอัปเดตอีกครั้ง</retryUpdateButton> หรือไปที่ {url} เพื่อติดตั้งด้วยตัวเอง จากนั้น<contactSupportLink>ติดต่อฝ่ายสนับสนุน</contactSupportLink>เพื่อแจ้งเกี่ยวกับปัญหานี้"
+  },
   "icu:cannotUpdateRequireManualDetail": {
     "messageformat": "ไม่สามารถปรับรุ่น Signal ได้ ไปที่ {url} เพื่อติดตั้งด้วยตัวเอง จากนั้น {support} ปัญหานี้"
+  },
+  "icu:cannotUpdateRequireManualDetail-v2": {
+    "messageformat": "ไม่สามารถอัปเดต Signal ได้ โปรดไปที่ {url} เพื่อติดตั้งด้วยตัวเอง จากนั้น<contactSupportLink>ติดต่อฝ่ายสนับสนุน</contactSupportLink>เพื่อแจ้งเกี่ยวกับปัญหานี้"
   },
   "icu:readOnlyVolume": {
     "messageformat": "ดูเหมือนว่า Signal Desktop จะถูก macOS กักบริเวณและไม่สามารถปรับปรุงตัวเองได้อัตโนมัติ ลองย้าย  {app} ไปที่  {folder} ด้วย Finder"
@@ -989,6 +1007,9 @@
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
     "messageformat": "ระบบจะลบข้อความทั้งหมดในแชทออกจากอุปกรณ์เครื่องนี้ โดยคุณจะยังสามารถค้นหาแชทนี้ได้แม้จะลบข้อความไปแล้ว"
   },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
+    "messageformat": "ข้อความทั้งหมดในแชทนี้จะถูกลบออกจากอุปกรณ์ทุกเครื่องของคุณ โดยคุณจะยังสามารถค้นหาแชทนี้ได้แม้จะลบข้อความไปแล้ว"
+  },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "ออกจากกลุ่ม"
   },
@@ -1092,7 +1113,7 @@
     "messageformat": "อุปกรณ์ที่เชื่อมโยง"
   },
   "icu:linkNewDevice": {
-    "messageformat": "เชื่อมโยงอุปกรณ์ใหม่"
+    "messageformat": "เชื่อมโยงอุปกรณ์เครื่องใหม่"
   },
   "icu:Install__learn-more": {
     "messageformat": "เรียนรู้เพิ่มเติม"
@@ -1110,10 +1131,22 @@
     "messageformat": "การตั้งค่า"
   },
   "icu:Install__instructions__3": {
-    "messageformat": "แตะ {plusButton} (Android) หรือ {linkNewDevice} (iPhone)"
+    "messageformat": "แตะ{linkNewDevice}"
   },
-  "icu:Install__qr-failed-load": {
-    "messageformat": "ไม่สามารถโหลดคิวอาร์โค้ดได้ ตรวจสอบอินเทอร์เน็ตแล้วลองอีกครั้ง <retry>ลองอีกครั้ง</retry>"
+  "icu:Install__qr-failed-load__error--timeout": {
+    "messageformat": "ไม่สามารถโหลดคิวอาร์โค้ดได้ กรุณาตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง"
+  },
+  "icu:Install__qr-failed-load__error--unknown": {
+    "messageformat": "<paragraph>มีข้อผิดพลาดที่ไม่คาดคิดเกิดขึ้น</paragraph> <paragraph>โปรดลองอีกครั้ง</paragraph>"
+  },
+  "icu:Install__qr-failed-load__error--network": {
+    "messageformat": "Signal ไม่สามารถเชื่อมโยงอุปกรณ์เครื่องนี้โดยใช้เครือข่ายที่คุณใช้งานอยู่"
+  },
+  "icu:Install__qr-failed-load__retry": {
+    "messageformat": "ลองอีกครั้ง"
+  },
+  "icu:Install__qr-failed-load__get-help": {
+    "messageformat": "ขอความช่วยเหลือ"
   },
   "icu:Install__support-link": {
     "messageformat": "ต้องการความช่วยเหลือหรือไม่?"
@@ -1173,10 +1206,10 @@
     "messageformat": "โทรอีกครั้ง"
   },
   "icu:calling__join": {
-    "messageformat": "เข้าร่วมสาย"
+    "messageformat": "เข้าร่วมการโทร"
   },
   "icu:calling__return": {
-    "messageformat": "กลับไปที่สาย"
+    "messageformat": "กลับไปยังสายที่โทรอยู่"
   },
   "icu:calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
     "messageformat": "ไมโครโฟนถูกปิดเสียงเนื่องจากมีผู้ใช้สายจำนวนมาก"
@@ -1286,8 +1319,35 @@
   "icu:CallingPendingParticipants__DenyUser": {
     "messageformat": "ปฏิเสธคำขอเข้าร่วม"
   },
+  "icu:CallingPendingParticipants__ApproveAll": {
+    "messageformat": "อนุมัติทั้งหมด"
+  },
+  "icu:CallingPendingParticipants__DenyAll": {
+    "messageformat": "ปฏิเสธทั้งหมด"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--ApproveAll": {
+    "messageformat": "{count, plural, other {อนุมัติคำขอ {count,number} รายการใช่หรือไม่}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--DenyAll": {
+    "messageformat": "{count, plural, other {ปฏิเสธคำขอ {count,number} รายการใช่หรือไม่}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--ApproveAll": {
+    "messageformat": "{count, plural, other {ผู้ใช้ {count,number} คนจะถูกเพิ่มให้เข้าร่วมการโทรนี้}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--DenyAll": {
+    "messageformat": "{count, plural, other {ผู้ใช้ {count,number} คนจะไม่ถูกเพิ่มให้เข้าร่วมการโทรนี้}}"
+  },
   "icu:CallingPendingParticipants__RequestsToJoin": {
     "messageformat": "{count, plural, other {{count,number} คนขอเข้าร่วมการโทร}}"
+  },
+  "icu:CallingPendingParticipants__WouldLikeToJoin": {
+    "messageformat": "ต้องการเข้าร่วม..."
+  },
+  "icu:CallingPendingParticipants__AdditionalRequests": {
+    "messageformat": "{count, plural, other {+{count,number} คำขอ}}"
+  },
+  "icu:CallingPendingParticipants__Toast--added-users-to-call": {
+    "messageformat": "{count, plural, other {เพิ่มผู้เข้าร่วม {count,number} คนในการโทรนี้แล้ว}}"
   },
   "icu:CallingRaisedHandsList__Title": {
     "messageformat": "{count, plural, other {{count,number} คนกำลังยกมือ}}"
@@ -1352,8 +1412,14 @@
   "icu:calling__you-have-blocked": {
     "messageformat": "คุณบล็อก {name} แล้ว"
   },
+  "icu:calling__blocked-participant": {
+    "messageformat": "{name} ถูกบล็อกอยู่"
+  },
+  "icu:calling__block-info-title": {
+    "messageformat": "{name} ถูกบล็อกอยู่"
+  },
   "icu:calling__block-info": {
-    "messageformat": "คุณจะไม่ได้รับสายโทรเสียงหรือวิดีโอคอลจากผู้ติดต่อคนนี้ และเขาก็จะไม่ได้รับสายจากคุณเช่นกัน"
+    "messageformat": "คุณจะไม่ได้รับเสียงหรือวิดีโอของพวกเขา และพวกเขาจะไม่ได้รับเสียงและวิดีโอของคุณ"
   },
   "icu:calling__missing-media-keys": {
     "messageformat": "ไม่สามารถเสียงและวิดีโอจาก {name}"
@@ -2372,15 +2438,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "แชทถูกทำเครื่องหมายว่ายังไม่ได้อ่าน"
   },
-  "icu:AuthArtCreator--dialog--message": {
-    "messageformat": "คุณต้องการเปิดหน้าศูนย์สร้างสรรค์ชุดสติกเกอร์ Signal (Sticker Pack Creator) หรือไม่"
-  },
-  "icu:AuthArtCreator--dialog--confirm": {
-    "messageformat": "ยืนยัน"
-  },
-  "icu:AuthArtCreator--dialog--dismiss": {
-    "messageformat": "ปิด"
-  },
   "icu:ArtCreator--Authentication--error": {
     "messageformat": "กรุณาติดตั้ง Signal บนมือถือและเดสก์ท็อป เพื่อใช้งานศูนย์สร้างสรรค์ชุดสติกเกอร์ (Sticker Pack Creator)"
   },
@@ -2577,10 +2634,10 @@
     "messageformat": "ปฏิเสธ"
   },
   "icu:declinedIncomingAudioCall": {
-    "messageformat": "คุณปฏิเสธการโทรด้วยเสียง"
+    "messageformat": "การโทรด้วยเสียงที่ถูกปฏิเสธ"
   },
   "icu:declinedIncomingVideoCall": {
-    "messageformat": "คุณได้ปฏิเสธการโทรวิดีโอ"
+    "messageformat": "วิดีโอคอลที่ถูกปฏิเสธ"
   },
   "icu:acceptedIncomingAudioCall": {
     "messageformat": "การโทรด้วยเสียงขาเข้า"
@@ -2613,10 +2670,10 @@
     "messageformat": "Signal จะยังทำงานอยู่ในพื้นที่การแจ้งเตือน (Notification Area) คุณสามารถเปลี่ยนแปลงตัวเลือกนี้ได้ในการตั้งค่าของ Signal"
   },
   "icu:incomingAudioCall": {
-    "messageformat": "การโทรด้วยเสียงขาเข้า..."
+    "messageformat": "การโทรด้วยเสียงขาเข้า"
   },
   "icu:incomingVideoCall": {
-    "messageformat": "วิดีโอคอลเรียกเข้า…"
+    "messageformat": "สายวิดีโอเรียกเข้า"
   },
   "icu:outgoingAudioCall": {
     "messageformat": "การโทรด้วยเสียงขาออก"
@@ -2688,13 +2745,13 @@
     "messageformat": "การส่งเสียงเรียกสายปิดอยู่"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "You raised a hand."
+    "messageformat": "คุณยกมือ"
   },
   "icu:CallControls__RaiseHandsToast--you-and-one": {
-    "messageformat": "You and {otherName} raised a hand."
+    "messageformat": "คุณและ {otherName} ยกมือ"
   },
   "icu:CallControls__RaiseHandsToast--you-and-more": {
-    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
+    "messageformat": "{overflowCount, plural, other {คุณ, {otherName} และอีก {overflowCount,number} คนยกมือ}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} ยกมือ"
@@ -2724,16 +2781,16 @@
     "messageformat": "{people, plural, other {{people,number} คนอยู่ในสาย}}"
   },
   "icu:calling__call-notification__ended": {
-    "messageformat": "การโทรกลุ่มสิ้นสุดแล้ว"
+    "messageformat": "วิดีโอคอลสิ้นสุดแล้ว"
   },
   "icu:calling__call-notification__started-by-someone": {
-    "messageformat": "การโทรกลุ่มเริ่มแล้ว"
+    "messageformat": "สมาชิกกลุ่มเริ่มวิดีโอคอล"
   },
   "icu:calling__call-notification__started-by-you": {
-    "messageformat": "คุณได้เริ่มโทรแบบกลุ่ม"
+    "messageformat": "คุณเริ่มวิดีโอคอล"
   },
   "icu:calling__call-notification__started": {
-    "messageformat": "{name} ได้เริ่มการโทรกลุ่ม"
+    "messageformat": "{name} เริ่มวิดีโอคอล"
   },
   "icu:calling__in-another-call-tooltip": {
     "messageformat": "คุณอยู่ในสายแล้ว"
@@ -2780,26 +2837,41 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "หน้าต่าง"
   },
+  "icu:calling__ParticipantInfoButton": {
+    "messageformat": "ข้อมูลเพิ่มเติมเกี่ยวกับผู้ติดต่อคนนี้"
+  },
   "icu:CallingAdhocCallInfo__CopyLink": {
     "messageformat": "คัดลอกลิงก์การโทร"
+  },
+  "icu:CallingAdhocCallInfo__ShareViaSignal": {
+    "messageformat": "แชร์ลิงก์การโทรผ่าน Signal"
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "ลบผู้ใช้คนนี้ออกจากการโทร"
   },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogBody": {
+    "messageformat": "ลบ {name} ออกจากการโทรใช่หรือไม่"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--remove": {
+    "messageformat": "ลบ"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--block": {
+    "messageformat": "บล็อกจากการโทร"
+  },
   "icu:CallingAdhocCallInfo__UnknownContactLabel": {
-    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+    "messageformat": "{count, plural, other {{count,number} คน}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
-    "messageformat": "+{count,number} more"
+    "messageformat": "{count, plural, other {+{count,number} คน}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
-    "messageformat": "More info about new contacts"
+    "messageformat": "ข้อมูลเพิ่มเติมเกี่ยวกับผู้ติดต่อใหม่"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
-    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+    "messageformat": "ก่อนเข้าร่วมการโทร คุณจะเห็นเฉพาะชื่อของผู้ติดต่อที่บันทึกไว้ในโทรศัพท์ รวมถึงผู้ใช้ที่เป็นสมาชิกในกลุ่มเดียวกับคุณ และคนที่คุณเคยแชทส่วนตัวด้วย โดยคุณจะเห็นชื่อและรูปภาพของสมาชิกทุกคนเมื่อเข้าร่วมการโทรแล้ว"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
-    "messageformat": "Got it"
+    "messageformat": "เข้าใจแล้ว"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "วิดีโอ"
@@ -3512,6 +3584,9 @@
   "icu:ContactModal--remove-from-group": {
     "messageformat": "ลบจากกลุ่ม"
   },
+  "icu:ContactModal--already-in-call": {
+    "messageformat": "คุณอยู่ในสายแล้ว"
+  },
   "icu:showChatColorEditor": {
     "messageformat": "สีแชท"
   },
@@ -3780,7 +3855,7 @@
     "messageformat": "{count, plural, other {คุณต้องการลบข้อความนี้จากอุปกรณ์เครื่องใด}}"
   },
   "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
-    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+    "messageformat": "{count, plural, other {ข้อความนี้จะถูกลบออกจากอุปกรณ์ทุกเครื่องของคุณ}}"
   },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "ลบของฉัน"
@@ -3795,7 +3870,7 @@
     "messageformat": "ลบจากอุปกรณ์ทุกเครื่อง"
   },
   "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
-    "messageformat": "Delete"
+    "messageformat": "ลบ"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, other {คุณสามารถเลือกลบข้อความสำหรับทุกคนได้สูงสุด {count,number} ข้อความ}}"
@@ -4196,11 +4271,11 @@
   "icu:ProfileEditor--username--check-starting-character": {
     "messageformat": "ชื่อผู้ใช้ไม่สามารถเริ่มต้นด้วยตัวเลข"
   },
-  "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Usernames must have at least {min,number} characters."
+  "icu:ProfileEditor--username--check-character-min-plural": {
+    "messageformat": "{min, plural, other {ชื่อผู้ใช้ต้องมีอักขระอย่างน้อย {min,number} ตัว}}"
   },
-  "icu:ProfileEditor--username--check-character-max": {
-    "messageformat": "ชื่อผู้ใช้มีอักขระได้มากสุด {max,number} ตัว"
+  "icu:ProfileEditor--username--check-character-max-plural": {
+    "messageformat": "{max, plural, other {ชื่อผู้ใช้มีอักขระได้มากสุด {max,number} ตัว}}"
   },
   "icu:ProfileEditor--username--check-discriminator-min": {
     "messageformat": "ชื่อผู้ใช้ไม่ถูกต้อง ต้องกรอกตัวเลขอย่างน้อย 2 หลัก"
@@ -4240,9 +4315,6 @@
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
     "messageformat": "ลบ"
-  },
-  "icu:ProfileEditor--username--delete-unavailable-notice": {
-    "messageformat": "หากต้องการลบชื่อผู้ใช้ของคุณ ให้เปิด Signal บนมือถือ แล้วไปที่การตั้งค่า > โปรไฟล์"
   },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "คัดลอกหรือลบชื่อผู้ใช้"
@@ -4749,13 +4821,13 @@
     "messageformat": "เครือข่ายของคุณจะสามารถมองเห็นชื่อและรูปภาพของคุณ รวมถึงโพสต์ใน \"สตอรี่ของฉัน\" เว้นแต่ว่าคุณจะซ่อนสตอรี่นั้นจากพวกเขา"
   },
   "icu:LocalDeleteWarningModal__header": {
-    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+    "messageformat": "การลบซิงค์เข้ากับอุปกรณ์ทุกเครื่องของคุณแล้ว"
   },
   "icu:LocalDeleteWarningModal__description": {
-    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+    "messageformat": "เมื่อคุณลบข้อความหรือแชท ข้อมูลนั้นจะถูกลบออกจากอุปกรณ์ทุกเครื่องของคุณ"
   },
   "icu:LocalDeleteWarningModal__confirm": {
-    "messageformat": "Got it"
+    "messageformat": "เข้าใจแล้ว"
   },
   "icu:Stories__title": {
     "messageformat": "สตอรี่"
@@ -5350,7 +5422,7 @@
     "messageformat": "ไม่พบผลลัพธ์สำหรับ “{query}”"
   },
   "icu:CallsList__CreateCallLink": {
-    "messageformat": "Create a Call Link"
+    "messageformat": "สร้างลิงก์การโทร"
   },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "โทรเข้า"
@@ -5360,6 +5432,9 @@
   },
   "icu:CallsList__ItemCallInfo--Missed": {
     "messageformat": "ไม่ได้รับ"
+  },
+  "icu:CallsList__ItemCallInfo--Declined": {
+    "messageformat": "ปฏิเสธ"
   },
   "icu:CallsList__ItemCallInfo--GroupCall": {
     "messageformat": "โทรกลุ่ม"
@@ -5374,7 +5449,7 @@
     "messageformat": "ออกจากสายที่ใช้งานอยู่ใช่หรือไม่"
   },
   "icu:CallsList__LeaveCallDialogBody": {
-    "messageformat": "คุณต้องออกจากสายที่กำลังใช้งานอยู่ก่อนที่จะเข้าร่วมการโทรสายใหม่"
+    "messageformat": "คุณต้องออกจากสายที่กำลังใช้งานอยู่ก่อนที่จะเริ่มต้นหรือเข้าร่วมการโทรสายใหม่"
   },
   "icu:CallsList__LeaveCallDialogButton--leave": {
     "messageformat": "ออกจากสาย"
@@ -5406,8 +5481,29 @@
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "ลิงก์การโทร"
   },
+  "icu:CallHistory__DescriptionVideoCall--Default": {
+    "messageformat": "{direction, select, Outgoing {สายวิดีโอโทรออก} other {สายวิดีโอเรียกเข้า}}"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Missed": {
+    "messageformat": "โทรวิดีโอที่พลาด"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Unanswered": {
+    "messageformat": "โทรวิดีโอที่ไม่ได้รับ"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Declined": {
+    "messageformat": "วิดีโอคอลที่ถูกปฏิเสธ"
+  },
   "icu:CallLinkDetails__Join": {
     "messageformat": "เข้าร่วม"
+  },
+  "icu:CallLinkDetails__AddCallNameLabel": {
+    "messageformat": "เพิ่มชื่อการโทร"
+  },
+  "icu:CallLinkDetails__EditCallNameLabel": {
+    "messageformat": "แก้ไขชื่อการโทร"
+  },
+  "icu:CallLinkDetails__ApproveAllMembersLabel": {
+    "messageformat": "อนุมัติสำหรับสมาชิกทุกคน"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "คัดลอกลิงก์"
@@ -5415,23 +5511,50 @@
   "icu:CallLinkDetails__ShareLinkViaSignal": {
     "messageformat": "แชร์ลิงก์ผ่าน Signal"
   },
-  "icu:CallLinkEditModal__Title": {
-    "messageformat": "Call link details"
+  "icu:CallLinkDetails__DeleteLink": {
+    "messageformat": "Delete link"
   },
-  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
-    "messageformat": "Name"
+  "icu:CallLinkDetails__DeleteLinkModal__Title": {
+    "messageformat": "Delete call link?"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Body": {
+    "messageformat": "This link will no longer work for anyone who has it."
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
+    "messageformat": "Cancel"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Delete": {
+    "messageformat": "Delete"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "รายละเอียดลิงก์การโทร"
   },
   "icu:CallLinkEditModal__JoinButtonLabel": {
-    "messageformat": "Join"
+    "messageformat": "เข้าร่วม"
+  },
+  "icu:CallLinkEditModal__AddCallNameLabel": {
+    "messageformat": "เพิ่มชื่อการโทร"
+  },
+  "icu:CallLinkEditModal__EditCallNameLabel": {
+    "messageformat": "แก้ไขชื่อการโทร"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Approve all members"
+    "messageformat": "อนุมัติสำหรับสมาชิกทุกคน"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
-    "messageformat": "Off"
+  "icu:CallLinkRestrictionsSelect__Option--Off": {
+    "messageformat": "ปิด"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
-    "messageformat": "On"
+  "icu:CallLinkRestrictionsSelect__Option--On": {
+    "messageformat": "เปิด"
+  },
+  "icu:CallLinkAddNameModal__Title": {
+    "messageformat": "เพิ่มชื่อการโทร"
+  },
+  "icu:CallLinkAddNameModal__Title--Edit": {
+    "messageformat": "แก้ไขชื่อการโทร"
+  },
+  "icu:CallLinkAddNameModal__NameLabel": {
+    "messageformat": "ชื่อการโทร"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, other {อีก {count,number} คนกำลังพิมพ์}}"
@@ -5473,19 +5596,19 @@
     "messageformat": "มีการปรับเปลี่ยนเล็กน้อย พร้อมแก้ไขบั๊ก และการพัฒนาประสิทธิภาพให้ดียิ่งขึ้น ขอขอบคุณที่เลือกใช้ Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.12--0": {
-    "messageformat": "ขอแนะนำฟีเจอร์การยกมือ วิธีใหม่ที่จะช่วยให้คุณตั้งคำถามในระหว่างการโทรกลุ่มได้ง่ายดาย (หรือจะใช้เรียกความสนใจของเพื่อน ก่อนประกาศเรื่องสำคัญๆ ก็สะดวกไม่แพ้กัน)"
+  "icu:WhatsNew__v7.18--0": {
+    "messageformat": "การอัปเดตครั้งนี้ปรับความเร็วให้คุณลบข้อความไซส์ใหญ่ได้ทันใจยิ่งขึ้น"
   },
-  "icu:WhatsNew__v7.12--1": {
-    "messageformat": "การอัปเดตครั้งนี้ยังมาพร้อมการยกระดับเครื่องมือครอบตัดขึ้นอีกขั้น เพื่อตอบโจทย์ให้การปรับขนาดรูปภาพง่ายยิ่งขึ้นอีก"
+  "icu:WhatsNew__v7.19--0": {
+    "messageformat": "เราเพิ่มทางลัดที่ให้คุณวางสายที่ใช้งานอยู่ก่อนเพื่อเข้าร่วมการโทรใหม่ได้สะดวกยิ่งกว่าเดิม"
   },
-  "icu:WhatsNew__v7.12--2": {
-    "messageformat": "เราแก้ไขปุ่มลัดบนแป้นพิมพ์สำหรับการส่งข้อความเสียงให้เป็น Ctrl/Cmd Shift Y เพื่อไม่ให้ซ้ำกับปุ่มลัด \"วางและให้รูปแบบตรงกัน\" (Paste and Match Style) ของ Windows และ Linux"
+  "icu:WhatsNew__v7.19--1": {
+    "messageformat": "การอัปเดตครั้งนี้ยังมาพร้อมกับการแก้ไขปัญหาในการเปิดแอปสำหรับผู้ใช้ Linux ที่ตั้ง Locale เป็น POSIX"
   },
-  "icu:WhatsNew__v7.13--0": {
-    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  "icu:WhatsNew__v7.20--0": {
+    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
   },
-  "icu:WhatsNew__v7.13--1": {
-    "messageformat": "This update also improves the display of quoted replies in RTL languages."
+  "icu:WhatsNew__v7.20--1": {
+    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
   }
 }

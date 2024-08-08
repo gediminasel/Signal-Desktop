@@ -80,6 +80,18 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "आपल्या डेटाबेसची आवृत्ती या Signal च्या आवृत्ती बरोबर जुळत नाही. आपण आपल्या संगणकावर Signal ची नवीनतम आवृत्ती उघडत असल्याची खात्री करा."
   },
+  "icu:databaseError__recover__detail": {
+    "messageformat": "डेटाबेस त्रुटी उद्भवली. आपण त्रुटी कॉपी करू आणि समस्येचे निराकरण करण्यासाठी Signal सपोर्टशी मदतीसाठी संपर्क करू शकता. आपणाला जर लगेचच Signal वापरण्याची गरज असल्यास, आपण डेटा पुनर्प्राप्त करण्याचा प्रयत्न करू शकता.\n\n{link} :ला भेट देऊन सपोर्टशी संपर्क साधा"
+  },
+  "icu:databaseError__recover__button": {
+    "messageformat": "डेटा पुनर्प्राप्त करा"
+  },
+  "icu:databaseError__safeStorageBackendChange": {
+    "messageformat": "OS एन्क्रिप्शन कीरिंग बॅकएण्ड हे {previousBackend} पासून {currentBackend} मध्ये बदलल्याने डेटाबेस एन्क्रिप्शन की ॲक्सेस करण्यास अक्षम आहे. हे GNOME आणि KDE दरम्यान बदल होण्यासारख्या डेस्कटॉप एन्व्हायरनमेंटमध्ये बदल झाल्यास घडून येते.\n\nकृपया मागील डेस्कटॉप एन्व्हायरनमेंट मध्ये स्वीच व्हा."
+  },
+  "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
+    "messageformat": "OS एन्क्रिप्शन कीरिंग बॅकएण्ड हे {previousBackend} पासून {currentBackend} मध्ये बदलल्याने डेटाबेस एन्क्रिप्शन की ॲक्सेस करण्यास अक्षम आहे. हे GNOME आणि KDE दरम्यान बदल होण्यासारख्या डेस्कटॉप एन्व्हायरनमेंटमध्ये बदल झाल्यास घडून येते.\n\nकृपया मागील डेस्कटॉप एन्व्हायरनमेंट मध्ये स्वीच व्हा किंवा कमांड लाइन फ्लॅग--password-store=\"{previousBackendFlag}\" सह signal रन करण्याचा प्रयत्न करा"
+  },
   "icu:mainMenuFile": {
     "messageformat": "फाईल"
   },
@@ -818,8 +830,14 @@
   "icu:cannotUpdateDetail": {
     "messageformat": "Signal अद्यतनित होऊ शकत नाही. हस्तचलित पद्धतीने त्याला स्थापित करण्यासाठी {retry} किंवा t {url} ला भेट द्या. नंतर,  या समस्येबद्दल {support} भेट द्या"
   },
+  "icu:cannotUpdateDetail-v2": {
+    "messageformat": "Signal अद्यतनित होऊ शकत नाही. <retryUpdateButton>अद्यतनित करण्याचा पुन्हा प्रयत्न करा</retryUpdateButton> किंवा हस्तचलित पद्धतीने त्याला इन्स्टॉल करण्यासाठी {url} ला भेट द्या. नंतर, या समस्येसाठी <contactSupportLink>सपोर्टशी संपर्क</contactSupportLink> साधा"
+  },
   "icu:cannotUpdateRequireManualDetail": {
     "messageformat": "Signal अद्यतनित होऊ शकत नाही. त्याला हस्तचलित पद्धतीने स्थापित करण्यास  {url}ला भेट द्या. नंतर या समस्येबद्दल, {support} ला"
+  },
+  "icu:cannotUpdateRequireManualDetail-v2": {
+    "messageformat": "Signal अद्यतनित होऊ शकत नाही. हस्तचलित पद्धतीने इन्स्टॉल करण्यासाठी {url} ला भेट द्या. नंतर, या समस्येसाठी <contactSupportLink>सपोर्ट शी संपर्क</contactSupportLink> साधा"
   },
   "icu:readOnlyVolume": {
     "messageformat": "Signal Desktop हे कदाचित macOS क्वॉरंटाईन मध्ये आहे, आणि स्वयं-अद्यतन करू शकणार नाही. कृपया{folder}यासोबत फाईंडरने {app}वर हलविण्याचा प्रयत्न करा."
@@ -989,6 +1007,9 @@
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
     "messageformat": "या चॅट्समधील सर्व संदेश या डिव्हाइस वरून हटवले जातील. आपण संदेश हटवल्यानंतर देखील अद्याप हे चॅट्स शोधू शकता."
   },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
+    "messageformat": "या चॅट्स मधील सर्व संदेश आपल्या सर्व डिव्हाइसेस वरून हटवण्यात येतील. आपण संदेश हटवल्यानंतर देखील अद्याप आपण हे चॅट्स शोधू शकता."
+  },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "गट सोडा"
   },
@@ -1092,7 +1113,7 @@
     "messageformat": "लिंक केलेले डिव्हाईस"
   },
   "icu:linkNewDevice": {
-    "messageformat": "नवीन डिव्हाईस जोडा"
+    "messageformat": "नवीन डिव्हाइस लिंक करा"
   },
   "icu:Install__learn-more": {
     "messageformat": "अधिक जाणा"
@@ -1110,10 +1131,22 @@
     "messageformat": "सेटिंग"
   },
   "icu:Install__instructions__3": {
-    "messageformat": "{plusButton} (अॅऩ्ड्राई़ड ) किंवा {linkNewDevice} (iPhone) वर टॅप करा"
+    "messageformat": "{linkNewDevice} टॅप करा"
   },
-  "icu:Install__qr-failed-load": {
-    "messageformat": "QR कोड लोड केला जाऊ शकत नाही. आपले इंटरनेट कनेक्शन तपासा आणि पुन्हा प्रयत्न करा. <retry>पुन्हा प्रयत्न करा</retry>"
+  "icu:Install__qr-failed-load__error--timeout": {
+    "messageformat": "QR कोड लोड केला जाऊ शकत नाही. आपले कनेक्शन तपासा आणि पुन्हा प्रयत्न करा."
+  },
+  "icu:Install__qr-failed-load__error--unknown": {
+    "messageformat": "<paragraph>एक अनपेक्षित त्रुटी उद्भवली.</paragraph><paragraph>कृपया पुन्हा प्रयत्न करा.</paragraph>"
+  },
+  "icu:Install__qr-failed-load__error--network": {
+    "messageformat": "आपले सध्याचे नेटवर्क वापरून Signal हे डिव्हाइस लिंक करू शकत नाही."
+  },
+  "icu:Install__qr-failed-load__retry": {
+    "messageformat": "पुन्हा प्रयत्न करा"
+  },
+  "icu:Install__qr-failed-load__get-help": {
+    "messageformat": "मदत मिळवा"
   },
   "icu:Install__support-link": {
     "messageformat": "मदत हवी?"
@@ -1286,8 +1319,35 @@
   "icu:CallingPendingParticipants__DenyUser": {
     "messageformat": "सामील होण्याची विनंती नाकारली"
   },
+  "icu:CallingPendingParticipants__ApproveAll": {
+    "messageformat": "सर्व मंजूर करा"
+  },
+  "icu:CallingPendingParticipants__DenyAll": {
+    "messageformat": "सर्व नाकारा"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--ApproveAll": {
+    "messageformat": "{count, plural, one {विनंती {count,number} मंजूर करायची?} other {विनंती {count,number} मंजूर करावयाच्या?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--DenyAll": {
+    "messageformat": "{count, plural, one {विनंती {count,number} नाकारायची?} other {विनंती {count,number} नाकारायच्या?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--ApproveAll": {
+    "messageformat": "{count, plural, one {{count,number} व्यक्ती कॉलमध्ये जोडली जाईल.} other {{count,number} लोकांना कॉलमध्ये जोडले जाईल.}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--DenyAll": {
+    "messageformat": "{count, plural, one {{count,number} व्यक्ती कॉलमध्ये जोडले जाणार नाही.} other {{count,number} लोक कॉलमध्ये जोडले जाणार नाहीत.}}"
+  },
   "icu:CallingPendingParticipants__RequestsToJoin": {
     "messageformat": "{count, plural, one {{count,number} कॉलमध्ये सामील होण्याची विनंती} other {{count,number} कॉलमध्ये सामील होण्याच्या विनंत्या}}"
+  },
+  "icu:CallingPendingParticipants__WouldLikeToJoin": {
+    "messageformat": "कॉलमध्ये सामील होऊ इच्छितो..."
+  },
+  "icu:CallingPendingParticipants__AdditionalRequests": {
+    "messageformat": "{count, plural, one {+{count,number} विनंती} other {+{count,number} विनंती}}"
+  },
+  "icu:CallingPendingParticipants__Toast--added-users-to-call": {
+    "messageformat": "{count, plural, one {{count,number} व्यक्ती कॉलमध्ये जोडला} other {{count,number} लोक कॉलमध्ये जोडले}}"
   },
   "icu:CallingRaisedHandsList__Title": {
     "messageformat": "{count, plural, one {{count,number} ने हात वर केला} other {{count,number} नी हात वर केले}}"
@@ -1352,8 +1412,14 @@
   "icu:calling__you-have-blocked": {
     "messageformat": "आपण {name} ला ब्लॉक केले"
   },
+  "icu:calling__blocked-participant": {
+    "messageformat": "{name} अवरोधित केलेले आहे"
+  },
+  "icu:calling__block-info-title": {
+    "messageformat": "{name} अवरोधित केलेले आहे"
+  },
   "icu:calling__block-info": {
-    "messageformat": "आपणाला त्यांचा आवाज किंवा व्हिडीओ प्राप्त होणार नाही आणि त्यांना आपला प्राप्त होणार नाही."
+    "messageformat": "आपल्याला त्यांचे ऑडिओ किंवा व्हिडिओ प्राप्त होणार नाहीत आणि त्यांना तुमचे प्राप्त होणार नाहीत."
   },
   "icu:calling__missing-media-keys": {
     "messageformat": "{name} कडून ऑडिओ आणि व्हिडिओ प्राप्त करू शकत नाही"
@@ -2372,15 +2438,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "न वाचलेला म्हणून चिन्हांकित चॅट"
   },
-  "icu:AuthArtCreator--dialog--message": {
-    "messageformat": "आपणाला Signal स्टिकर पॅक निर्माता उघडणे आवडेल का?"
-  },
-  "icu:AuthArtCreator--dialog--confirm": {
-    "messageformat": "पुष्टी करा"
-  },
-  "icu:AuthArtCreator--dialog--dismiss": {
-    "messageformat": "रद्द करा"
-  },
   "icu:ArtCreator--Authentication--error": {
     "messageformat": "स्टिकर पॅक निर्माता वापरण्यासाठी कृपया आपल्या फोन आणि डेस्कटॉपवर Signal सेट अप करा"
   },
@@ -2577,10 +2634,10 @@
     "messageformat": "नकार द्या"
   },
   "icu:declinedIncomingAudioCall": {
-    "messageformat": "आपण व्हाईस कॉलला नकार दिला"
+    "messageformat": "व्हॉईस कॉल नाकारा"
   },
   "icu:declinedIncomingVideoCall": {
-    "messageformat": "आपण एक व्हिडिओ कॉलला नकार दिला"
+    "messageformat": "व्हिडिओ कॉल नाकारा"
   },
   "icu:acceptedIncomingAudioCall": {
     "messageformat": "येणारा व्हाईस कॉल"
@@ -2613,10 +2670,10 @@
     "messageformat": "Signal अधिसूचना क्षेत्रात सुरू राहील. आपण हे Signal सेटिंग्ज मध्ये बदलू शकता."
   },
   "icu:incomingAudioCall": {
-    "messageformat": "येणारा व्हाईस कॉल..."
+    "messageformat": "येणारा व्हाईस कॉल"
   },
   "icu:incomingVideoCall": {
-    "messageformat": "येणारा व्हिडिओ कॉल…"
+    "messageformat": "येणारा व्हिडिओ कॉल"
   },
   "icu:outgoingAudioCall": {
     "messageformat": "बाहेर जाणारा व्हाईस कॉल"
@@ -2661,7 +2718,7 @@
     "messageformat": "{count, plural, one {{count,number} व्यक्ति} other {{count,number} लोक}}"
   },
   "icu:CallControls__InfoDisplay--audio-call": {
-    "messageformat": "ऑडिओ कॉल"
+    "messageformat": "व्हॉईस कॉल"
   },
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "कॉल लिंक"
@@ -2688,13 +2745,13 @@
     "messageformat": "रिंग होणे बंद झाले"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "You raised a hand."
+    "messageformat": "आपण हात वर केला आहे."
   },
   "icu:CallControls__RaiseHandsToast--you-and-one": {
-    "messageformat": "You and {otherName} raised a hand."
+    "messageformat": "आपण आणि {otherName} नी हात वर केला आहे."
   },
   "icu:CallControls__RaiseHandsToast--you-and-more": {
-    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
+    "messageformat": "{overflowCount, plural, one {आपण, {otherName}, आणि {overflowCount,number} अधिकांनी हात वर केला आहे.} other {आपण, {otherName}, आणि {overflowCount,number} अनेकांनी हात वर केला आहे.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} ने हात वर केला."
@@ -2724,16 +2781,16 @@
     "messageformat": "{people, plural, one {कॉलमध्ये {people,number}} other {कॉलमध्ये {people,number}}}"
   },
   "icu:calling__call-notification__ended": {
-    "messageformat": "गट कॉल संपला आहे"
+    "messageformat": "व्हिडिओ कॉल समाप्त झाला आहे"
   },
   "icu:calling__call-notification__started-by-someone": {
-    "messageformat": "एक गट कॉल चालू केला गेला आहे"
+    "messageformat": "व्हिडिओ कॉल सुरू झाला"
   },
   "icu:calling__call-notification__started-by-you": {
-    "messageformat": "आपण गट कॉल चालू केला"
+    "messageformat": "आपण व्हिडिओ कॉल सुरु केला"
   },
   "icu:calling__call-notification__started": {
-    "messageformat": "{name}ने गट कॉल चालू केला"
+    "messageformat": "{name} ने व्हिडिओ कॉल सुरु केला"
   },
   "icu:calling__in-another-call-tooltip": {
     "messageformat": "आपण आधीच एक कॉलमध्ये आहात"
@@ -2780,26 +2837,41 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "पटल"
   },
+  "icu:calling__ParticipantInfoButton": {
+    "messageformat": "या संपर्काबद्दल अधिक माहिती"
+  },
   "icu:CallingAdhocCallInfo__CopyLink": {
     "messageformat": "कॉल लिंक कॉपी करा"
+  },
+  "icu:CallingAdhocCallInfo__ShareViaSignal": {
+    "messageformat": "Signal मार्फत कॉल लिंक शेअर करा"
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "ह्या व्यक्तीला कॉलमधून हटवा"
   },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogBody": {
+    "messageformat": "कॉल {name} मधून हटवायचे?"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--remove": {
+    "messageformat": "काढून टाका"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--block": {
+    "messageformat": "कॉलमधून अवरोधित"
+  },
   "icu:CallingAdhocCallInfo__UnknownContactLabel": {
-    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+    "messageformat": "{count, plural, one {{count,number} व्यक्ति} other {{count,number} लोक}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
-    "messageformat": "+{count,number} more"
+    "messageformat": "{count, plural, one {+{count,number} अधिक} other {+{count,number} अधिक}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
-    "messageformat": "More info about new contacts"
+    "messageformat": "नवीन संपर्काबद्दल अधिक माहिती"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
-    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+    "messageformat": "कॉलमध्ये सामील होण्यापूर्वी आपण फक्त फोन संपर्कांची नावे, आपण ज्यांच्या गटामध्ये आहात असलेल्या लोकांना, किंवा आपण ज्यांच्यासोबत 1:1 चॅट्समध्ये असता ते लोक पाहू शकाल. एकदा का आपण कॉलमध्ये सामील झालात की आपण सर्व नावे आणि फोटो पहाल."
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
-    "messageformat": "Got it"
+    "messageformat": "कळले"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "व्हिडिओ"
@@ -3512,6 +3584,9 @@
   "icu:ContactModal--remove-from-group": {
     "messageformat": "ग्रुपमधून काढून टाका"
   },
+  "icu:ContactModal--already-in-call": {
+    "messageformat": "आपण आधीच एक कॉलमध्ये आहात"
+  },
   "icu:showChatColorEditor": {
     "messageformat": "चॅट रंग"
   },
@@ -3780,7 +3855,7 @@
     "messageformat": "{count, plural, one {हा संदेश आपणाला कोणत्या डिव्हाइसेस वरून हटवणे आवडेल?} other {हे संदेश आपणाला कोणत्या डिव्हाइसेस वरून हटवणे आवडेल?}}"
   },
   "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
-    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+    "messageformat": "{count, plural, one {हा संदेश आपल्या सर्व डिव्हाइसेसवरून हटवला जाईल.} other {हे संदेश आपल्या सर्व डिव्हाइसेसवरून हटविले जातील.}}"
   },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "माझ्यासाठी हटवा"
@@ -3795,7 +3870,7 @@
     "messageformat": "सर्व डिव्हाइसेस वरून हटवा"
   },
   "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
-    "messageformat": "Delete"
+    "messageformat": "हटवा"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {आपण प्रत्येकासाठी फक्त {count,number} पर्यंत संदेश हटवण्याचे निडवू शकता} other {आपण प्रत्येकासाठी फक्त {count,number} पर्यंत संदेश हटवण्यासाठी निवडू शकता}}"
@@ -4196,11 +4271,11 @@
   "icu:ProfileEditor--username--check-starting-character": {
     "messageformat": "वापरकर्तानाव अंकांसोबत सोबत चालू होऊ शकत नाही."
   },
-  "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Usernames must have at least {min,number} characters."
+  "icu:ProfileEditor--username--check-character-min-plural": {
+    "messageformat": "{min, plural, one {वापरकर्ता नाव कमीत कमी {min,number} वर्णाचे असायला हवे.} other {वापरकर्ता नाव हे कमीत कमी {min,number} वर्णांचे असणे आवश्यक आहे.}}"
   },
-  "icu:ProfileEditor--username--check-character-max": {
-    "messageformat": "वापरकर्तानावात कमाल {max,number} वर्णच असलेच पाहिजेत."
+  "icu:ProfileEditor--username--check-character-max-plural": {
+    "messageformat": "{max, plural, one {वापरकर्ता नाव कमीत कमी {max,number} वर्णाचे असायला हवे.} other {वापरकर्ता नाव कमाल {max,number} वर्णांचे असायला हवे.}}"
   },
   "icu:ProfileEditor--username--check-discriminator-min": {
     "messageformat": "अवैध वापरकर्ता नाव, कमीत कमी 2 अंक प्रविष्ट करा."
@@ -4240,9 +4315,6 @@
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
     "messageformat": "हटवा"
-  },
-  "icu:ProfileEditor--username--delete-unavailable-notice": {
-    "messageformat": "आपले वापरकर्तानाव हटवण्यासाठी, आपल्या फोनवर Signal उघडा आणि सेटिंग्ज > प्रोफाइल कडे नेव्हिगेट करा."
   },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "वापरकर्तानाव कॉपी करा किंवा हटवा"
@@ -4749,13 +4821,13 @@
     "messageformat": "आपले कनेक्शन्स आपले नाव आणि फोटो पाहू शकतात, आपण त्यांच्यापासून लपवत नाही तोपर्यंत ते \"माझ्या स्टोरी\" वर पोस्ट्स पाहू शकतात"
   },
   "icu:LocalDeleteWarningModal__header": {
-    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+    "messageformat": "आपल्या डिव्हाइसेस वर हटवणे आता सिंक केले आहे"
   },
   "icu:LocalDeleteWarningModal__description": {
-    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+    "messageformat": "जेव्हा आपण संदेश किंवा चॅट हटवता, तेव्हा त्यांना आपल्या सर्व डिव्हाइसेसवरून हटवले जाईल."
   },
   "icu:LocalDeleteWarningModal__confirm": {
-    "messageformat": "Got it"
+    "messageformat": "कळले"
   },
   "icu:Stories__title": {
     "messageformat": "स्टोरीज"
@@ -5350,7 +5422,7 @@
     "messageformat": "“{query}” साठी कोणतेही परिणाम नाहीत"
   },
   "icu:CallsList__CreateCallLink": {
-    "messageformat": "Create a Call Link"
+    "messageformat": "कॉल लिंक तयार करा"
   },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "येणारे"
@@ -5360,6 +5432,9 @@
   },
   "icu:CallsList__ItemCallInfo--Missed": {
     "messageformat": "मिस्ड"
+  },
+  "icu:CallsList__ItemCallInfo--Declined": {
+    "messageformat": "नाकारलेले"
   },
   "icu:CallsList__ItemCallInfo--GroupCall": {
     "messageformat": "गट कॉल"
@@ -5374,7 +5449,7 @@
     "messageformat": "वर्तमान कॉल सोडायचा का?"
   },
   "icu:CallsList__LeaveCallDialogBody": {
-    "messageformat": "नवीन कॉलमध्ये सामील होण्यापूर्वी आपण वर्तमान कॉल सोडणे आवश्यक आहे."
+    "messageformat": "नवीन कॉलमये सामील होण्यापूर्वी आपण वर्तमान कॉल सोडणे आवश्यक आहे."
   },
   "icu:CallsList__LeaveCallDialogButton--leave": {
     "messageformat": "कॉल सोडा"
@@ -5406,8 +5481,29 @@
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "कॉल लिंक"
   },
+  "icu:CallHistory__DescriptionVideoCall--Default": {
+    "messageformat": "{direction, select, Outgoing {जाणारा व्हिडिओ कॉल} other {येणारा व्हिडिओ कॉल}}"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Missed": {
+    "messageformat": "सुटलेला व्हिडिओ कॉल"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Unanswered": {
+    "messageformat": "अनुत्तरित व्हिडिओ कॉल"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Declined": {
+    "messageformat": "व्हिडिओ कॉल नाकारा"
+  },
   "icu:CallLinkDetails__Join": {
     "messageformat": "सामील व्हा"
+  },
+  "icu:CallLinkDetails__AddCallNameLabel": {
+    "messageformat": "कॉलचे नाव जोडा"
+  },
+  "icu:CallLinkDetails__EditCallNameLabel": {
+    "messageformat": "कॉल नाव संपादित करा"
+  },
+  "icu:CallLinkDetails__ApproveAllMembersLabel": {
+    "messageformat": "सर्व सदस्यांना मंजूर करा"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "लिंक कॉपी करा"
@@ -5415,23 +5511,50 @@
   "icu:CallLinkDetails__ShareLinkViaSignal": {
     "messageformat": "Signal मार्फत लिंक शेअर करा"
   },
-  "icu:CallLinkEditModal__Title": {
-    "messageformat": "Call link details"
+  "icu:CallLinkDetails__DeleteLink": {
+    "messageformat": "Delete link"
   },
-  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
-    "messageformat": "Name"
+  "icu:CallLinkDetails__DeleteLinkModal__Title": {
+    "messageformat": "Delete call link?"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Body": {
+    "messageformat": "This link will no longer work for anyone who has it."
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
+    "messageformat": "Cancel"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Delete": {
+    "messageformat": "Delete"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "कॉल लिंक तपशील"
   },
   "icu:CallLinkEditModal__JoinButtonLabel": {
-    "messageformat": "Join"
+    "messageformat": "सामील व्हा"
+  },
+  "icu:CallLinkEditModal__AddCallNameLabel": {
+    "messageformat": "कॉलचे नाव जोडा"
+  },
+  "icu:CallLinkEditModal__EditCallNameLabel": {
+    "messageformat": "कॉल नाव संपादित करा"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Approve all members"
+    "messageformat": "सर्व सदस्यांना मंजूर करा"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
-    "messageformat": "Off"
+  "icu:CallLinkRestrictionsSelect__Option--Off": {
+    "messageformat": "बंद"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
-    "messageformat": "On"
+  "icu:CallLinkRestrictionsSelect__Option--On": {
+    "messageformat": "चालू"
+  },
+  "icu:CallLinkAddNameModal__Title": {
+    "messageformat": "कॉलचे नाव जोडा"
+  },
+  "icu:CallLinkAddNameModal__Title--Edit": {
+    "messageformat": "कॉल नाव संपादित करा"
+  },
+  "icu:CallLinkAddNameModal__NameLabel": {
+    "messageformat": "कॉलचे नाव"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} इतर टाईप करत आहे.} other {{count,number} इतर टाईप करत आहेत.}}"
@@ -5473,19 +5596,19 @@
     "messageformat": "लहान ट्विक्स, दोष निवारण, आणि कामगिरी सुधारणा. Signal वापरल्याबद्दल आभारी आहोत!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.12--0": {
-    "messageformat": "गट कॉलदरम्यान संभाषणात भाग घेण्याच्या दुसऱ्या मार्गाच्या शोधात आपण असाल तर आपला हात वर करा. नवीन हात वर करा वैशिष्ट्य एखाद्याचे लक्ष वेधण्याचा, प्रश्न विचारण्याचा, किंवा जेव्हा आपले मित्र गट प्रस्तावाच्या वेळी \"ज्या सर्वांना मान्य आहे ?\" अशांनी हात वर करावा असा प्रश्न विचातील किंवा निनावीपणे मत देण्यासाठीचा एक सोपा मार्ग आहे"
+  "icu:WhatsNew__v7.18--0": {
+    "messageformat": "जलद निरोप घेणे कधीकधी हळू हळू सोडून जाण्यापेक्षा सोपे असते. म्हणून आम्ही मोठे संदेश थ्रेड हटविण्याच्या प्रक्रियेला गती दिलेली आहे."
   },
-  "icu:WhatsNew__v7.12--1": {
-    "messageformat": "आम्ही क्रॉप टूलममध्ये एका दोषाचे निवारण केले आहे, ज्यामुळे आता चित्रातून तुमच्या एक्सला (किंवा इतर कोणालाही) सहजपणे काढून टाकणे सोपे आणि अधिक अंतर्ज्ञानी आहे."
+  "icu:WhatsNew__v7.19--0": {
+    "messageformat": "दुसरा कॉल आपल्या नावावर कॉल करत असल्यास, आम्ही सध्याचा कॉल सोडण्यासाठी आणि नवीन कॉलमध्ये सामील होण्यासाठी शॉर्टकट जोडला आहे. आपणाला आपल्या प्रस्थानाची पुष्टी करण्यासाठी सूचित केले जाईल, परंतु आपण आधी निरोप घ्यावा की नाही हे आपल्यावर अवलंबून आहे."
   },
-  "icu:WhatsNew__v7.12--2": {
-    "messageformat": "आम्ही Ctrl/Cmd+Shift+Y वर व्हॉईस टीप पाठवण्यासाठी कीबोर्ड शॉर्टकट मध्ये सुधारणा केली आहे ज्यामुळे तो Windows आणि Linux वरील \"पेस्ट करा आणि शैली जुळवा\" शार्टकटला अडथळा करणार नाही."
+  "icu:WhatsNew__v7.19--1": {
+    "messageformat": "हे अपडेट ज्या वापरकर्त्याचे 'POSIX' वर सेट केले आहे त्यांच्यासाठी Linux वर स्टार्टअप क्रॅशचे निराकरण देखील करते."
   },
-  "icu:WhatsNew__v7.13--0": {
-    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  "icu:WhatsNew__v7.20--0": {
+    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
   },
-  "icu:WhatsNew__v7.13--1": {
-    "messageformat": "This update also improves the display of quoted replies in RTL languages."
+  "icu:WhatsNew__v7.20--1": {
+    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
   }
 }

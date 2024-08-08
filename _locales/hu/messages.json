@@ -80,6 +80,18 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "Az adatbázisod verziója nem egyezik a Signal ezen verziójával. Győződj meg róla, hogy a Signal legújabb verzióját nyitod meg a számítógépeden."
   },
+  "icu:databaseError__recover__detail": {
+    "messageformat": "Adatbázishiba történt. Kimásolhatod a hibát, és kapcsolatba léphetsz a Signal ügyfélszolgálatával a probléma megoldásához. Ha azonnal használnod kell a Signalt, megpróbálhatod helyreállítani az adataid.\n\nLépj kapcsolatba az ügyfélszolgálattal a következő címen: {link}"
+  },
+  "icu:databaseError__recover__button": {
+    "messageformat": "Adatok helyreállítása"
+  },
+  "icu:databaseError__safeStorageBackendChange": {
+    "messageformat": "Nem lehet hozzáférni az adatbázis titkosítási kulcsához, mert az operációs rendszer titkosítási kulcstartó háttérrendszere {previousBackend} értékről {currentBackend} értékre változott. Ez akkor fordulhat elő, ha az asztali környezet megváltozik, például a GNOME és a KDE között.\n\nKérjük, válts az előző asztali környezetre."
+  },
+  "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
+    "messageformat": "Nem lehet hozzáférni az adatbázis titkosítási kulcsához, mert az operációs rendszer titkosítási kulcstartó háttérrendszere {previousBackend} értékről {currentBackend} értékre változott. Ez akkor fordulhat elő, ha az asztali környezet megváltozik, például a GNOME és a KDE között.\n\nKérjük, válts az előző asztali környezetre, vagy próbáld meg futtatni a Signalt a --password-store=\"{previousBackendFlag}\" parancssori jelzővel."
+  },
   "icu:mainMenuFile": {
     "messageformat": "&Fájl"
   },
@@ -818,8 +830,14 @@
   "icu:cannotUpdateDetail": {
     "messageformat": "A Signal Desktop frissítése nem sikerült. {retry} vagy látogass el a {url} címre és telepítsd az új verziót kézzel, majd lépj kapcsolatba velünk a tapasztalt problémával kapcsolatban: {support}."
   },
+  "icu:cannotUpdateDetail-v2": {
+    "messageformat": "A Signal frissítése nem sikerült. <retryUpdateButton>Próbáld újra a frissítést</retryUpdateButton> vagy látogass el a(z) {url} webhelyre a manuális telepítéshez. Ezután <contactSupportLink>vedd fel a kapcsolatot az ügyfélszolgálattal</contactSupportLink> a problémával kapcsolatban."
+  },
   "icu:cannotUpdateRequireManualDetail": {
     "messageformat": "A Signal frissítése nem sikerült. Telepítsd az új verziót manuálisan a {url} weboldalról, majd lépj kapcsolatba velünk, és oszd meg tapasztalataidat: {support}"
+  },
+  "icu:cannotUpdateRequireManualDetail-v2": {
+    "messageformat": "A Signal frissítése nem sikerült. Telepítsd az új verziót manuálisan a {url} weboldalról. Ezután <contactSupportLink>vedd fel a kapcsolatot az ügyfélszolgálattal</contactSupportLink> a problémával kapcsolatban."
   },
   "icu:readOnlyVolume": {
     "messageformat": "A Signal Desktop valószínűleg macOS karanténban fut, és emiatt nem fog tudni automatikusan frissíteni. Próbáld meg áthelyezni a  {app} fájlt a {folder} mappába a Finder segítségével!"
@@ -989,6 +1007,9 @@
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
     "messageformat": "Az ebben a csevegésben lévő összes üzenet törlődik erről az eszközről. Az üzenetek törlése után továbbra is rákereshetsz erre a csevegésre."
   },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
+    "messageformat": "A csevegésben lévő összes üzenet törlődik az összes eszközödről. Az üzenetek törlése után továbbra is rákereshetsz erre a csevegésre."
+  },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Kilépés a csoportból"
   },
@@ -1092,7 +1113,7 @@
     "messageformat": "Párosított eszközök"
   },
   "icu:linkNewDevice": {
-    "messageformat": "Új eszköz párosítása"
+    "messageformat": "Új eszköz összekapcsolása"
   },
   "icu:Install__learn-more": {
     "messageformat": "Tudj meg többet!"
@@ -1110,10 +1131,22 @@
     "messageformat": "Beállítások"
   },
   "icu:Install__instructions__3": {
-    "messageformat": "Kattints a {plusButton} (Android) vagy {linkNewDevice} (iPhone) gombra"
+    "messageformat": "Koppints az {linkNewDevice} lehetőségre"
   },
-  "icu:Install__qr-failed-load": {
-    "messageformat": "Nem sikerült betölteni a QR-kódot. Ellenőrizd a hálózati kapcsolatot, és próbáld újra. <retry>Újra</retry>"
+  "icu:Install__qr-failed-load__error--timeout": {
+    "messageformat": "Nem sikerült betölteni a QR-kódot. Ellenőrizd az internetkapcsolatod, és próbáld újra!"
+  },
+  "icu:Install__qr-failed-load__error--unknown": {
+    "messageformat": "<paragraph>Váratlan hiba történt.</paragraph><paragraph>Kérjük, próbáld újra.</paragraph>"
+  },
+  "icu:Install__qr-failed-load__error--network": {
+    "messageformat": "A Signal nem tudja összekapcsolni ezt az eszközt a jelenlegi hálózaton keresztül."
+  },
+  "icu:Install__qr-failed-load__retry": {
+    "messageformat": "Újra"
+  },
+  "icu:Install__qr-failed-load__get-help": {
+    "messageformat": "Kérj segítséget!"
   },
   "icu:Install__support-link": {
     "messageformat": "Segítségre van szükséged?"
@@ -1286,8 +1319,35 @@
   "icu:CallingPendingParticipants__DenyUser": {
     "messageformat": "Csatlakozási kérelem elutasítása"
   },
+  "icu:CallingPendingParticipants__ApproveAll": {
+    "messageformat": "Összes jóváhagyása"
+  },
+  "icu:CallingPendingParticipants__DenyAll": {
+    "messageformat": "Összes elutasítása"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--ApproveAll": {
+    "messageformat": "{count, plural, one {Jóváhagysz {count,number} kérést?} other {Jóváhagysz {count,number} kérést?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--DenyAll": {
+    "messageformat": "{count, plural, one {Elutasítasz {count,number} kérést?} other {Elutasítasz {count,number} kérést?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--ApproveAll": {
+    "messageformat": "{count, plural, one {{count,number} személy hozzáadásra kerül a híváshoz.} other {{count,number} személy hozzáadásra kerül a híváshoz.}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--DenyAll": {
+    "messageformat": "{count, plural, one {{count,number} személy nem kerül hozzáadásra a híváshoz.} other {{count,number} személy nem kerül hozzáadásra a híváshoz.}}"
+  },
   "icu:CallingPendingParticipants__RequestsToJoin": {
     "messageformat": "{count, plural, one {{count,number} csatlakozni szeretne a híváshoz} other {{count,number} csatlakozni szeretne a híváshoz}}"
+  },
+  "icu:CallingPendingParticipants__WouldLikeToJoin": {
+    "messageformat": "szeretne csatlakozni..."
+  },
+  "icu:CallingPendingParticipants__AdditionalRequests": {
+    "messageformat": "{count, plural, one {+{count,number} kérés} other {+{count,number} kérés}}"
+  },
+  "icu:CallingPendingParticipants__Toast--added-users-to-call": {
+    "messageformat": "{count, plural, one {{count,number} személy hozzáadva a híváshoz} other {{count,number} személy hozzáadva a híváshoz}}"
   },
   "icu:CallingRaisedHandsList__Title": {
     "messageformat": "{count, plural, one {{count,number} felemelte a kezét} other {{count,number} felemelte a kezét}}"
@@ -1352,8 +1412,14 @@
   "icu:calling__you-have-blocked": {
     "messageformat": "Letiltottad {name} nevű felhasználót"
   },
+  "icu:calling__blocked-participant": {
+    "messageformat": "{name} letiltva"
+  },
+  "icu:calling__block-info-title": {
+    "messageformat": "{name} letiltva"
+  },
   "icu:calling__block-info": {
-    "messageformat": "Nem fogod hallani és látni, illetve ő sem téged."
+    "messageformat": "Nem fogod hallani és látni őket, illetve ők sem téged."
   },
   "icu:calling__missing-media-keys": {
     "messageformat": "{name} hang és kép adása nem megjeleníthető"
@@ -2372,15 +2438,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "A csevegés olvasatlanként megjelölve"
   },
-  "icu:AuthArtCreator--dialog--message": {
-    "messageformat": "Szeretnéd megnyitni a Signal matricacsomag-készítő alkalmazást?"
-  },
-  "icu:AuthArtCreator--dialog--confirm": {
-    "messageformat": "Megerősítés"
-  },
-  "icu:AuthArtCreator--dialog--dismiss": {
-    "messageformat": "Elvetés"
-  },
   "icu:ArtCreator--Authentication--error": {
     "messageformat": "A matricacsomag létrehozásához állítsd be a Signalt a telefonodon, valamint az asztali alkalmazáson is"
   },
@@ -2577,10 +2634,10 @@
     "messageformat": "Elutasítás"
   },
   "icu:declinedIncomingAudioCall": {
-    "messageformat": "Elutasítottál egy hanghívást"
+    "messageformat": "Elutasított hanghívás"
   },
   "icu:declinedIncomingVideoCall": {
-    "messageformat": "Elutasítottál egy videóhívást"
+    "messageformat": "Elutasított videohívás"
   },
   "icu:acceptedIncomingAudioCall": {
     "messageformat": "Bejövő hanghívás"
@@ -2613,10 +2670,10 @@
     "messageformat": "A Signal továbbra is futni fog az értesítési területen. Ezt a Signal beállításaiban módosíthatod."
   },
   "icu:incomingAudioCall": {
-    "messageformat": "Bejövő hanghívás..."
+    "messageformat": "Bejövő hanghívás"
   },
   "icu:incomingVideoCall": {
-    "messageformat": "Bejövő videóhívás…"
+    "messageformat": "Bejövő videóhívás"
   },
   "icu:outgoingAudioCall": {
     "messageformat": "Kimenő hanghívás"
@@ -2688,13 +2745,13 @@
     "messageformat": "Csengés ki"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "You raised a hand."
+    "messageformat": "Felemelted a kezed."
   },
   "icu:CallControls__RaiseHandsToast--you-and-one": {
-    "messageformat": "You and {otherName} raised a hand."
+    "messageformat": "Te és {otherName} felemelte a kezét."
   },
   "icu:CallControls__RaiseHandsToast--you-and-more": {
-    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
+    "messageformat": "{overflowCount, plural, one {Te, {otherName} és további {overflowCount,number} személy felemelte a kezét.} other {Te, {otherName} és további {overflowCount,number} személy felemelte a kezét.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} felemelte a kezét."
@@ -2724,16 +2781,16 @@
     "messageformat": "{people, plural, one {{people,number} személy a hívásban} other {{people,number} személy a hívásban}}"
   },
   "icu:calling__call-notification__ended": {
-    "messageformat": "A csoporthívás véget ért"
+    "messageformat": "A videohívás véget ért"
   },
   "icu:calling__call-notification__started-by-someone": {
-    "messageformat": "A csoporthívás létrejött."
+    "messageformat": "Elindult egy videohívás"
   },
   "icu:calling__call-notification__started-by-you": {
-    "messageformat": "Elindítottad a csoporthívást"
+    "messageformat": "Videohívást indítottál"
   },
   "icu:calling__call-notification__started": {
-    "messageformat": "{name} elindította a csoporthívást"
+    "messageformat": "{name} videohívást indított"
   },
   "icu:calling__in-another-call-tooltip": {
     "messageformat": "Már beléptél a hívásba"
@@ -2780,26 +2837,41 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "Egy ablak"
   },
+  "icu:calling__ParticipantInfoButton": {
+    "messageformat": "További információ erről a névjegyről"
+  },
   "icu:CallingAdhocCallInfo__CopyLink": {
     "messageformat": "Híváslink másolása"
+  },
+  "icu:CallingAdhocCallInfo__ShareViaSignal": {
+    "messageformat": "Híváslink megosztása a Signalon keresztül"
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "E személy eltávolítása a hívásból"
   },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogBody": {
+    "messageformat": "{name} eltávolítása a hívásból?"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--remove": {
+    "messageformat": "Eltávolítás"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--block": {
+    "messageformat": "Letiltás a hívásból"
+  },
   "icu:CallingAdhocCallInfo__UnknownContactLabel": {
-    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+    "messageformat": "{count, plural, one {{count,number} személy} other {{count,number} személy}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
-    "messageformat": "+{count,number} more"
+    "messageformat": "{count, plural, one {+{count,number} további} other {+{count,number} további}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
-    "messageformat": "More info about new contacts"
+    "messageformat": "További információ az új névjegyekről"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
-    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+    "messageformat": "Mielőtt csatlakoznál egy híváshoz, csak azon telefonos névjegyek nevét láthatod, akikkel egy csoportban vagy, vagy akikkel 1:1 arányban csevegtél. Miután csatlakoztál a híváshoz, látni fogod az összes nevet és fényképet."
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
-    "messageformat": "Got it"
+    "messageformat": "Rendben"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Videó"
@@ -3512,6 +3584,9 @@
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Eltávolítás a csoportból"
   },
+  "icu:ContactModal--already-in-call": {
+    "messageformat": "Már beléptél a hívásba"
+  },
   "icu:showChatColorEditor": {
     "messageformat": "Csevegés színe"
   },
@@ -3780,7 +3855,7 @@
     "messageformat": "{count, plural, one {Milyen eszközökről szeretnéd törölni ezt az üzenetet?} other {Milyen eszközökről szeretnéd törölni ezeket az üzeneteket?}}"
   },
   "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
-    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+    "messageformat": "{count, plural, one {Ez az üzenet minden eszközödön törlésre kerül.} other {Ezek az üzenetek minden eszközödön törlésre kerülnek.}}"
   },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "Törlés számomra"
@@ -3795,7 +3870,7 @@
     "messageformat": "Törlés az összes eszközről"
   },
   "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
-    "messageformat": "Delete"
+    "messageformat": "Törlés"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {Maximum {count,number} üzenetet választhatsz ki, ha mindenki számára szeretnéd törölni} other {Maximum {count,number} üzenetet választhatsz ki, ha mindenki számára szeretnéd törölni}}"
@@ -4196,11 +4271,11 @@
   "icu:ProfileEditor--username--check-starting-character": {
     "messageformat": "A felhasználónevek nem kezdődhetnek számmal."
   },
-  "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Usernames must have at least {min,number} characters."
+  "icu:ProfileEditor--username--check-character-min-plural": {
+    "messageformat": "{min, plural, one {A felhasználóneveknek legalább {min,number} karaktert kell tartalmazniuk.} other {A felhasználóneveknek legalább {min,number} karaktert kell tartalmazniuk.}}"
   },
-  "icu:ProfileEditor--username--check-character-max": {
-    "messageformat": "A felhasználónevek hossza maximum {max,number} karakter"
+  "icu:ProfileEditor--username--check-character-max-plural": {
+    "messageformat": "{max, plural, one {A felhasználónevek hossza legfeljebb {max,number} karakter lehet.} other {A felhasználónevek hossza legfeljebb {max,number} karakter lehet.}}"
   },
   "icu:ProfileEditor--username--check-discriminator-min": {
     "messageformat": "Érvénytelen felhasználónév, adj meg legalább 2 számjegyet."
@@ -4240,9 +4315,6 @@
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
     "messageformat": "Törlés"
-  },
-  "icu:ProfileEditor--username--delete-unavailable-notice": {
-    "messageformat": "A felhasználónév törléséhez nyisd meg a telefonodon a Signalt, és navigálj a Beállítások > Profil menüpontra."
   },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "Felhasználónév másolása vagy törlése"
@@ -4749,13 +4821,13 @@
     "messageformat": "A névjegyeid láthatják a neved és a képed, valamint megtekinthetik a „Történeteim” részt, kivéve, ha elrejted előlük"
   },
   "icu:LocalDeleteWarningModal__header": {
-    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+    "messageformat": "A törlés szinkronizálva van az összes eszközön"
   },
   "icu:LocalDeleteWarningModal__description": {
-    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+    "messageformat": "Amikor üzeneteket vagy csevegéseket törölsz, azok az összes kapcsolt eszközről is törlésre kerülnek."
   },
   "icu:LocalDeleteWarningModal__confirm": {
-    "messageformat": "Got it"
+    "messageformat": "Rendben"
   },
   "icu:Stories__title": {
     "messageformat": "Történetek"
@@ -5350,7 +5422,7 @@
     "messageformat": "Nincs találat a következőre: „{query}”"
   },
   "icu:CallsList__CreateCallLink": {
-    "messageformat": "Create a Call Link"
+    "messageformat": "Híváshivatkozás létrehozása"
   },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "Bejövő"
@@ -5360,6 +5432,9 @@
   },
   "icu:CallsList__ItemCallInfo--Missed": {
     "messageformat": "Nem fogadott"
+  },
+  "icu:CallsList__ItemCallInfo--Declined": {
+    "messageformat": "Elutasítva"
   },
   "icu:CallsList__ItemCallInfo--GroupCall": {
     "messageformat": "Csoporthívás"
@@ -5374,7 +5449,7 @@
     "messageformat": "Kilépsz az aktuális hívásból?"
   },
   "icu:CallsList__LeaveCallDialogBody": {
-    "messageformat": "Egy új híváshoz való csatlakozáshoz előbb ki kell lépned az aktuális hívásból."
+    "messageformat": "Egy új hívás indítása előtt vagy egy új híváshoz való csatlakozáshoz előbb ki kell lépned az aktuális hívásból."
   },
   "icu:CallsList__LeaveCallDialogButton--leave": {
     "messageformat": "Kilépés a hívásból"
@@ -5406,8 +5481,29 @@
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Híváshivatkozás"
   },
+  "icu:CallHistory__DescriptionVideoCall--Default": {
+    "messageformat": "{direction, select, Outgoing {Kimenő videóhívás} other {Bejövő videóhívás}}"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Missed": {
+    "messageformat": "Nem fogadott videóhívás"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Unanswered": {
+    "messageformat": "Nem fogadott videóhívás"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Declined": {
+    "messageformat": "Elutasított videohívás"
+  },
   "icu:CallLinkDetails__Join": {
     "messageformat": "Csatlakozás"
+  },
+  "icu:CallLinkDetails__AddCallNameLabel": {
+    "messageformat": "Hívásnév megadása"
+  },
+  "icu:CallLinkDetails__EditCallNameLabel": {
+    "messageformat": "Hívás nevének szerkesztése"
+  },
+  "icu:CallLinkDetails__ApproveAllMembersLabel": {
+    "messageformat": "Összes tag jóváhagyása"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "Hivatkozás másolása"
@@ -5415,23 +5511,50 @@
   "icu:CallLinkDetails__ShareLinkViaSignal": {
     "messageformat": "Hivatkozás megosztása a Signalon keresztül"
   },
-  "icu:CallLinkEditModal__Title": {
-    "messageformat": "Call link details"
+  "icu:CallLinkDetails__DeleteLink": {
+    "messageformat": "Delete link"
   },
-  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
-    "messageformat": "Name"
+  "icu:CallLinkDetails__DeleteLinkModal__Title": {
+    "messageformat": "Delete call link?"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Body": {
+    "messageformat": "This link will no longer work for anyone who has it."
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
+    "messageformat": "Cancel"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Delete": {
+    "messageformat": "Delete"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Híváslink részletei"
   },
   "icu:CallLinkEditModal__JoinButtonLabel": {
-    "messageformat": "Join"
+    "messageformat": "Csatlakozás"
+  },
+  "icu:CallLinkEditModal__AddCallNameLabel": {
+    "messageformat": "Hívásnév megadása"
+  },
+  "icu:CallLinkEditModal__EditCallNameLabel": {
+    "messageformat": "Hívás nevének szerkesztése"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Approve all members"
+    "messageformat": "Összes tag jóváhagyása"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
-    "messageformat": "Off"
+  "icu:CallLinkRestrictionsSelect__Option--Off": {
+    "messageformat": "Ki"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
-    "messageformat": "On"
+  "icu:CallLinkRestrictionsSelect__Option--On": {
+    "messageformat": "Be"
+  },
+  "icu:CallLinkAddNameModal__Title": {
+    "messageformat": "Hívásnév megadása"
+  },
+  "icu:CallLinkAddNameModal__Title--Edit": {
+    "messageformat": "Hívás nevének szerkesztése"
+  },
+  "icu:CallLinkAddNameModal__NameLabel": {
+    "messageformat": "Hívás neve"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} másik személy ír.} other {{count,number} másik személy ír.}}"
@@ -5473,19 +5596,19 @@
     "messageformat": "Apró finomítások, hibajavítások és teljesítménynövelések. Köszönjük, hogy a Signalt használod!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.12--0": {
-    "messageformat": "Az új Felemelt kéz funkció egyszerű módja annak, hogy felhívd valaki figyelmét vagy kérdést tegyél fel csoportos hívások során."
+  "icu:WhatsNew__v7.18--0": {
+    "messageformat": "Ez a kiadás felgyorsítja a nagy üzenetszálak törlésének folyamatát."
   },
-  "icu:WhatsNew__v7.12--1": {
-    "messageformat": "Ez a frissítés egy továbbfejlesztett vágóeszközt is tartalmaz a képek átméretezéséhez."
+  "icu:WhatsNew__v7.19--0": {
+    "messageformat": "Hozzáadtunk egy parancsikont, amellyel leteheted a telefont, és csatlakozhatsz egy új híváshoz, ha már folyamatban van egy másik hívás."
   },
-  "icu:WhatsNew__v7.12--2": {
-    "messageformat": "Módosítottuk a hangjegyzet küldésére szolgáló billentyűparancsot a Ctrl/Cmd+Shift+Y billentyűkombinációra, hogy az többé ne ütközzön a „Beillesztés és stílusegyeztetés” billentyűparancsba Windows- és Linux-rendszeren."
+  "icu:WhatsNew__v7.19--1": {
+    "messageformat": "Ez a frissítés kijavítja a Linux rendszerindítási összeomlását is azon felhasználók számára, akiknek a nyelvi beállítása „POSIX”."
   },
-  "icu:WhatsNew__v7.13--0": {
-    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  "icu:WhatsNew__v7.20--0": {
+    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
   },
-  "icu:WhatsNew__v7.13--1": {
-    "messageformat": "This update also improves the display of quoted replies in RTL languages."
+  "icu:WhatsNew__v7.20--1": {
+    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
   }
 }

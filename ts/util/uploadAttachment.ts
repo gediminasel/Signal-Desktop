@@ -11,7 +11,7 @@ import { strictAssert } from './assert';
 import { backupsService } from '../services/backups';
 import { tusUpload } from './uploads/tusProtocol';
 import { defaultFileReader } from './uploads/uploads';
-import type { AttachmentV3ResponseType } from '../textsecure/WebAPI';
+import type { AttachmentUploadFormResponseType } from '../textsecure/WebAPI';
 import {
   type EncryptedAttachmentV2,
   encryptAttachmentV2ToDisk,
@@ -20,6 +20,7 @@ import {
   type HardcodedIVForEncryptionType,
 } from '../AttachmentCrypto';
 import { missingCaseError } from './missingCaseError';
+import { uuidToBytes } from './uuidToBytes';
 
 const CDNS_SUPPORTING_TUS = new Set([3]);
 
@@ -37,9 +38,13 @@ export async function uploadAttachment(
     uploadType: 'standard',
   });
 
+  const { blurHash, caption, clientUuid, fileName, flags, height, width } =
+    attachment;
+
   return {
     cdnKey,
     cdnNumber,
+    clientUuid: clientUuid ? uuidToBytes(clientUuid) : undefined,
     key: keys,
     iv: encrypted.iv,
     size: attachment.data.byteLength,
@@ -47,12 +52,12 @@ export async function uploadAttachment(
     plaintextHash: encrypted.plaintextHash,
 
     contentType: MIMETypeToString(attachment.contentType),
-    fileName: attachment.fileName,
-    flags: attachment.flags,
-    width: attachment.width,
-    height: attachment.height,
-    caption: attachment.caption,
-    blurHash: attachment.blurHash,
+    fileName,
+    flags,
+    width,
+    height,
+    caption,
+    blurHash,
   };
 }
 
@@ -74,7 +79,7 @@ export async function encryptAndUploadAttachment({
   const { server } = window.textsecure;
   strictAssert(server, 'WebAPI must be initialized');
 
-  let uploadForm: AttachmentV3ResponseType;
+  let uploadForm: AttachmentUploadFormResponseType;
   let absoluteCiphertextPath: string | undefined;
 
   try {
@@ -95,6 +100,8 @@ export async function encryptAndUploadAttachment({
       plaintext,
       keys,
       dangerousIv,
+      getAbsoluteAttachmentPath:
+        window.Signal.Migrations.getAbsoluteAttachmentPath,
     });
 
     absoluteCiphertextPath = window.Signal.Migrations.getAbsoluteAttachmentPath(
@@ -122,7 +129,7 @@ export async function uploadFile({
 }: {
   absoluteCiphertextPath: string;
   ciphertextFileSize: number;
-  uploadForm: AttachmentV3ResponseType;
+  uploadForm: AttachmentUploadFormResponseType;
 }): Promise<void> {
   const { server } = window.textsecure;
   strictAssert(server, 'WebAPI must be initialized');
@@ -141,7 +148,8 @@ export async function uploadFile({
     });
   } else {
     await server.putEncryptedAttachment(
-      createReadStream(absoluteCiphertextPath),
+      (start, end) => createReadStream(absoluteCiphertextPath, { start, end }),
+      ciphertextFileSize,
       uploadForm
     );
   }

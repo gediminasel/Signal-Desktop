@@ -21,6 +21,8 @@ function getToast(toastType: ToastType): AnyToast {
   switch (toastType) {
     case ToastType.AddingUserToGroup:
       return { toastType, parameters: { contact: 'Sam Mirete' } };
+    case ToastType.AddedUsersToCall:
+      return { toastType, parameters: { count: 6 } };
     case ToastType.AlreadyGroupMember:
       return { toastType: ToastType.AlreadyGroupMember };
     case ToastType.AlreadyRequestedToJoin:
@@ -207,11 +209,11 @@ export default {
   component: ToastManager,
   argTypes: {
     toastType: {
-      options: ToastType,
+      options: [...Object.values(ToastType)],
       control: { type: 'select' },
     },
     megaphoneType: {
-      options: MegaphoneType,
+      options: [...Object.values(MegaphoneType)],
       control: { type: 'select' },
     },
   },

@@ -169,7 +169,7 @@ type PromiseAjaxOptionsType = {
   basicAuth?: string;
   certificateAuthority?: string;
   contentType?: string;
-  data?: Uint8Array | Readable | string;
+  data?: Uint8Array | (() => Readable) | string;
   disableRetries?: boolean;
   disableSessionResumption?: boolean;
   headers?: HeaderListType;
@@ -257,15 +257,10 @@ function getHostname(url: string): string {
   return urlObject.hostname;
 }
 
-type FetchOptionsType = {
-  method: string;
-  body?: Uint8Array | Readable | string;
-  headers: FetchHeaderListType;
-  redirect?: 'error' | 'follow' | 'manual';
-  agent?: Agent;
+type FetchOptionsType = Omit<RequestInit, 'headers'> & {
+  headers: Record<string, string>;
+  // This is patch-packaged
   ca?: string;
-  timeout?: number;
-  abortSignal?: AbortSignal;
 };
 
 async function getFetchOptions(
@@ -297,9 +292,9 @@ async function getFetchOptions(
   const agentEntry = agents[cacheKey];
   const agent = agentEntry?.agent ?? null;
 
-  const fetchOptions = {
+  const fetchOptions: FetchOptionsType = {
     method: options.type,
-    body: options.data,
+    body: typeof options.data === 'function' ? options.data() : options.data,
     headers: {
       'User-Agent': getUserAgent(options.version),
       'X-Signal-Agent': 'OWD',
@@ -309,7 +304,7 @@ async function getFetchOptions(
     agent,
     ca: options.certificateAuthority,
     timeout,
-    abortSignal: options.abortSignal,
+    signal: options.abortSignal,
   };
 
   if (options.contentType) {
@@ -364,7 +359,6 @@ async function _promiseAjax(
     response = socketManager
       ? await socketManager.fetch(url, fetchOptions)
       : await fetch(url, fetchOptions);
-
     if (
       options.serverUrl &&
       getHostname(options.serverUrl) === getHostname(url)
@@ -414,7 +408,6 @@ async function _promiseAjax(
       options.stack
     );
   }
-
   if (
     options.responseType === 'json' ||
     options.responseType === 'jsonwithdetails'
@@ -431,6 +424,17 @@ async function _promiseAjax(
         );
       }
     }
+  }
+
+  if (options.responseType === 'stream') {
+    log.info(logId, response.status, 'Streaming');
+    response.body.on('error', e => {
+      log.info(logId, 'Errored while streaming:', e.message);
+    });
+    response.body.on('end', () => {
+      log.info(logId, response.status, 'Streaming ended');
+    });
+    return result;
   }
 
   log.info(logId, response.status, 'Success');
@@ -537,7 +541,7 @@ function makeHTTPError(
 
 const URL_CALLS = {
   accountExistence: 'v1/accounts/account',
-  attachmentUploadForm: 'v3/attachments/form/upload',
+  attachmentUploadForm: 'v4/attachments/form/upload',
   attestation: 'v1/attestation',
   batchIdentityCheck: 'v1/profile/identity_check/batch',
   challenge: 'v1/challenge',
@@ -703,8 +707,12 @@ export type WebAPIConnectType = {
   connect: (options: WebAPIConnectOptionsType) => WebAPIType;
 };
 
-export type CapabilitiesType = Record<string, never>;
-export type CapabilitiesUploadType = Record<string, never>;
+export type CapabilitiesType = {
+  deleteSync: boolean;
+};
+export type CapabilitiesUploadType = {
+  deleteSync: true;
+};
 
 type StickerPackManifestType = Uint8Array;
 
@@ -978,14 +986,16 @@ export type ReportMessageOptionsType = Readonly<{
   token?: string;
 }>;
 
-const attachmentV3Response = z.object({
+const attachmentUploadFormResponse = z.object({
   cdn: z.literal(2).or(z.literal(3)),
   key: z.string(),
   headers: z.record(z.string()),
   signedUploadLocation: z.string(),
 });
 
-export type AttachmentV3ResponseType = z.infer<typeof attachmentV3Response>;
+export type AttachmentUploadFormResponseType = z.infer<
+  typeof attachmentUploadFormResponse
+>;
 
 export type ServerKeyCountType = {
   count: number;
@@ -1210,7 +1220,7 @@ export type WebAPIType = {
       timeout?: number;
     };
   }) => Promise<Readable>;
-  getAttachmentUploadForm: () => Promise<AttachmentV3ResponseType>;
+  getAttachmentUploadForm: () => Promise<AttachmentUploadFormResponseType>;
   getAvatar: (path: string) => Promise<Uint8Array>;
   getHasSubscription: (subscriberId: Uint8Array) => Promise<boolean>;
   getGroup: (options: GroupCredentialsType) => Promise<Proto.IGroupResponse>;
@@ -1299,8 +1309,9 @@ export type WebAPIType = {
     elements: VerifyServiceIdRequestType
   ) => Promise<VerifyServiceIdResponseType>;
   putEncryptedAttachment: (
-    encryptedBin: Uint8Array | Readable,
-    uploadForm: AttachmentV3ResponseType
+    encryptedBin: (start: number, end?: number) => Readable,
+    encryptedSize: number,
+    uploadForm: AttachmentUploadFormResponseType
   ) => Promise<void>;
   putProfile: (
     jsonData: ProfileRequestDataType
@@ -1364,17 +1375,17 @@ export type WebAPIType = {
     }
   ) => Promise<MultiRecipient200ResponseType>;
   createFetchForAttachmentUpload(
-    attachment: AttachmentV3ResponseType
+    attachment: AttachmentUploadFormResponseType
   ): FetchFunctionType;
   getBackupInfo: (
     headers: BackupPresentationHeadersType
   ) => Promise<GetBackupInfoResponseType>;
   getBackupUploadForm: (
     headers: BackupPresentationHeadersType
-  ) => Promise<AttachmentV3ResponseType>;
+  ) => Promise<AttachmentUploadFormResponseType>;
   getBackupMediaUploadForm: (
     headers: BackupPresentationHeadersType
-  ) => Promise<AttachmentV3ResponseType>;
+  ) => Promise<AttachmentUploadFormResponseType>;
   refreshBackup: (headers: BackupPresentationHeadersType) => Promise<void>;
   getBackupCredentials: (
     options: GetBackupCredentialsOptionsType
@@ -2503,7 +2514,7 @@ export function initialize({
     }
 
     async function _withNewCredentials<
-      Result extends { uuid: AciString; deviceId?: number }
+      Result extends { uuid: AciString; deviceId?: number },
     >(
       { username: newUsername, password: newPassword }: WebAPICredentials,
       callback: () => Promise<Result>
@@ -2562,13 +2573,17 @@ export function initialize({
         throw new Error('createAccount: invalid code');
       }
 
+      const capabilities: CapabilitiesUploadType = {
+        deleteSync: true,
+      };
+
       const jsonData = {
         sessionId: session.id,
         accountAttributes: {
           fetchesMessages: true,
           registrationId,
           pniRegistrationId,
-          capabilities: {},
+          capabilities,
           unidentifiedAccessKey: Bytes.toBase64(accessKey),
         },
         requireAtomic: true,
@@ -2612,6 +2627,10 @@ export function initialize({
       aciPqLastResortPreKey,
       pniPqLastResortPreKey,
     }: LinkDeviceOptionsType) {
+      const capabilities: CapabilitiesUploadType = {
+        deleteSync: true,
+      };
+
       const jsonData = {
         verificationCode,
         accountAttributes: {
@@ -2619,7 +2638,7 @@ export function initialize({
           name: encryptedDeviceName,
           registrationId,
           pniRegistrationId,
-          capabilities: {},
+          capabilities,
         },
         aciSignedPreKey: serializeSignedPreKey(aciSignedPreKey),
         pniSignedPreKey: serializeSignedPreKey(pniSignedPreKey),
@@ -2757,14 +2776,14 @@ export function initialize({
         responseType: 'json',
       });
 
-      return attachmentV3Response.parse(res);
+      return attachmentUploadFormResponse.parse(res);
     }
 
     function createFetchForAttachmentUpload({
       signedUploadLocation,
       headers: uploadHeaders,
       cdn,
-    }: AttachmentV3ResponseType): FetchFunctionType {
+    }: AttachmentUploadFormResponseType): FetchFunctionType {
       strictAssert(cdn === 3, 'Fetch can only be created for CDN 3');
       const { origin: expectedOrigin } = new URL(signedUploadLocation);
 
@@ -2808,7 +2827,7 @@ export function initialize({
         responseType: 'json',
       });
 
-      return attachmentV3Response.parse(res);
+      return attachmentUploadFormResponse.parse(res);
     }
 
     async function refreshBackup(headers: BackupPresentationHeadersType) {
@@ -3467,19 +3486,38 @@ export function initialize({
     }): Promise<Readable> {
       const abortController = new AbortController();
       const cdnUrl = cdnUrlObject[cdnNumber] ?? cdnUrlObject['0'];
+
+      let downloadStream: Readable | undefined;
+
+      const cancelRequest = () => {
+        abortController.abort();
+      };
+
+      registerInflightRequest(cancelRequest);
+
       // This is going to the CDN, not the service, so we use _outerAjax
-      const downloadStream = await _outerAjax(`${cdnUrl}${cdnPath}`, {
-        headers,
-        certificateAuthority,
-        disableRetries: options?.disableRetries,
-        proxyUrl,
-        responseType: 'stream',
-        timeout: options?.timeout || 0,
-        type: 'GET',
-        redactUrl: redactor,
-        version,
-        abortSignal: abortController.signal,
-      });
+      try {
+        downloadStream = await _outerAjax(`${cdnUrl}${cdnPath}`, {
+          headers,
+          certificateAuthority,
+          disableRetries: options?.disableRetries,
+          proxyUrl,
+          responseType: 'stream',
+          timeout: options?.timeout || 0,
+          type: 'GET',
+          redactUrl: redactor,
+          version,
+          abortSignal: abortController.signal,
+        });
+      } finally {
+        if (!downloadStream) {
+          unregisterInFlightRequest(cancelRequest);
+        } else {
+          downloadStream.on('close', () => {
+            unregisterInFlightRequest(cancelRequest);
+          });
+        }
+      }
 
       const timeoutStream = getTimeoutStream({
         name: `getAttachment(${redactor(cdnPath)})`,
@@ -3494,21 +3532,11 @@ export function initialize({
         })
         .pipe(timeoutStream);
 
-      const cancelRequest = (error: Error) => {
-        combinedStream.emit('error', error);
-        abortController.abort();
-      };
-      registerInflightRequest(cancelRequest);
-
-      combinedStream.on('done', () => {
-        unregisterInFlightRequest(cancelRequest);
-      });
-
       return combinedStream;
     }
 
     async function getAttachmentUploadForm() {
-      return attachmentV3Response.parse(
+      return attachmentUploadFormResponse.parse(
         await _ajax({
           call: 'attachmentUploadForm',
           httpType: 'GET',
@@ -3518,8 +3546,9 @@ export function initialize({
     }
 
     async function putEncryptedAttachment(
-      encryptedBin: Uint8Array | Readable,
-      uploadForm: AttachmentV3ResponseType
+      encryptedBin: (start: number, end?: number) => Readable,
+      encryptedSize: number,
+      uploadForm: AttachmentUploadFormResponseType
     ) {
       const { signedUploadLocation, headers } = uploadForm;
 
@@ -3546,24 +3575,81 @@ export function initialize({
       const uploadLocation = uploadResponse.headers.get('location');
       strictAssert(
         uploadLocation,
-        'attachment v3 response header has no location'
+        'attachment upload form header has no location'
       );
 
-      // This is going to the CDN, not the service, so we use _outerAjax
-      await _outerAjax(uploadLocation, {
-        certificateAuthority,
-        proxyUrl,
-        timeout: 0,
-        type: 'PUT',
-        version,
-        data: encryptedBin,
-        redactUrl: () => {
-          const tmp = new URL(uploadLocation);
-          tmp.search = '';
-          tmp.pathname = '';
-          return `${tmp}[REDACTED]`;
-        },
-      });
+      const redactUrl = () => {
+        const tmp = new URL(uploadLocation);
+        tmp.search = '';
+        tmp.pathname = '';
+        return `${tmp}[REDACTED]`;
+      };
+
+      const MAX_RETRIES = 10;
+      for (
+        let start = 0, retries = 0;
+        start < encryptedSize && retries < MAX_RETRIES;
+        retries += 1
+      ) {
+        const logId = `putEncryptedAttachment(attempt=${retries})`;
+
+        if (retries !== 0) {
+          log.warn(`${logId}: resuming from ${start}`);
+        }
+
+        try {
+          // This is going to the CDN, not the service, so we use _outerAjax
+          // eslint-disable-next-line no-await-in-loop
+          await _outerAjax(uploadLocation, {
+            disableRetries: true,
+            certificateAuthority,
+            proxyUrl,
+            timeout: 0,
+            type: 'PUT',
+            version,
+            headers: {
+              'Content-Range': `bytes ${start}-*/${encryptedSize}`,
+            },
+            data: () => encryptedBin(start),
+            redactUrl,
+          });
+
+          if (retries !== 0) {
+            log.warn(`${logId}: Attachment upload succeeded`);
+          }
+          return;
+        } catch (error) {
+          log.warn(
+            `${logId}: Failed to upload attachment chunk: ${toLogFormat(error)}`
+          );
+        }
+
+        // eslint-disable-next-line no-await-in-loop
+        const result: BytesWithDetailsType = await _outerAjax(uploadLocation, {
+          certificateAuthority,
+          proxyUrl,
+          type: 'PUT',
+          version,
+          headers: {
+            'Content-Range': `bytes */${encryptedSize}`,
+          },
+          data: new Uint8Array(0),
+          redactUrl,
+          responseType: 'byteswithdetails',
+        });
+        const { response } = result;
+        strictAssert(response.status === 308, 'Invalid server response');
+        const range = response.headers.get('range');
+        if (range != null) {
+          const match = range.match(/^bytes=0-(\d+)$/);
+          strictAssert(match != null, `Invalid range header: ${range}`);
+          start = parseInt(match[1], 10);
+        } else {
+          log.warn(`${logId}: No range header`);
+        }
+      }
+
+      throw new Error('Upload failed');
     }
 
     function getHeaderPadding() {

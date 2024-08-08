@@ -3,7 +3,9 @@
 
 import { isNumber } from 'lodash';
 import PQueue from 'p-queue';
+import { v4 as generateUuid } from 'uuid';
 
+import { DataWriter } from '../../sql/Client';
 import * as Errors from '../../types/errors';
 import { strictAssert } from '../../util/assert';
 import type { MessageModel } from '../../models/messages';
@@ -34,10 +36,7 @@ import { copyCdnFields } from '../../util/attachments';
 import { LONG_MESSAGE } from '../../types/MIME';
 import { LONG_ATTACHMENT_LIMIT } from '../../types/Message';
 import type { RawBodyRange } from '../../types/BodyRange';
-import type {
-  EmbeddedContactWithHydratedAvatar,
-  EmbeddedContactWithUploadedAvatar,
-} from '../../types/EmbeddedContact';
+import type { EmbeddedContactWithUploadedAvatar } from '../../types/EmbeddedContact';
 import type { StoryContextType } from '../../types/Util';
 import type { LoggerType } from '../../types/Logging';
 import type {
@@ -589,6 +588,7 @@ async function getMessageSendData({
 
     maybeLongAttachment = {
       contentType: LONG_MESSAGE,
+      clientUuid: generateUuid(),
       fileName: `long-message-${targetTimestamp}.txt`,
       data,
       size: data.byteLength,
@@ -648,7 +648,7 @@ async function getMessageSendData({
   ]);
 
   // Save message after uploading attachments
-  await window.Signal.Data.saveMessage(message.attributes, {
+  await DataWriter.saveMessage(message.attributes, {
     ourAci: window.textsecure.storage.user.getCheckedAci(),
   });
 
@@ -1055,8 +1055,7 @@ async function uploadMessageContacts(
   strictAssert(oldContact, `${logId}: Contacts are gone after upload`);
 
   const newContact = oldContact.map((contact, index) => {
-    const loaded: EmbeddedContactWithHydratedAvatar | undefined =
-      contacts.at(index);
+    const loaded = contacts.at(index);
     if (!contact.avatar) {
       strictAssert(
         loaded?.avatar === undefined,
@@ -1104,7 +1103,7 @@ async function markMessageFailed({
 }): Promise<void> {
   message.markFailed(targetTimestamp);
   void message.saveErrors(errors, { skipSave: true });
-  await window.Signal.Data.saveMessage(message.attributes, {
+  await DataWriter.saveMessage(message.attributes, {
     ourAci: window.textsecure.storage.user.getCheckedAci(),
   });
 }

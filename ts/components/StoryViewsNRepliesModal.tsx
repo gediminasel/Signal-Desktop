@@ -51,6 +51,7 @@ const MESSAGE_DEFAULT_PROPS = {
   isMessageRequestAccepted: true,
   isSelected: false,
   isSelectMode: false,
+  isSMS: false,
   onToggleSelect: shouldNeverBeCalled,
   onReplyToMessage: shouldNeverBeCalled,
   kickOffAttachmentDownload: shouldNeverBeCalled,
@@ -236,6 +237,7 @@ export function StoryViewsNRepliesModal({
               getPreferredBadge={getPreferredBadge}
               i18n={i18n}
               inputApi={inputApiRef}
+              isActive
               isFormattingEnabled={isFormattingEnabled}
               moduleClassName="StoryViewsNRepliesModal__input"
               onCloseLinkPreview={noop}
@@ -366,7 +368,7 @@ export function StoryViewsNRepliesModal({
             <div>
               <Avatar
                 acceptedMessageRequest={view.recipient.acceptedMessageRequest}
-                avatarPath={view.recipient.avatarPath}
+                avatarUrl={view.recipient.avatarUrl}
                 badge={undefined}
                 color={getAvatarColor(view.recipient.color)}
                 conversationType="direct"
@@ -548,7 +550,7 @@ function ReplyOrReactionMessage({
           <div className="StoryViewsNRepliesModal__reaction--container">
             <Avatar
               acceptedMessageRequest={reply.author.acceptedMessageRequest}
-              avatarPath={reply.author.avatarPath}
+              avatarUrl={reply.author.avatarUrl}
               badge={getPreferredBadge(reply.author.badges)}
               color={getAvatarColor(reply.author.color)}
               conversationType="direct"
@@ -647,9 +649,9 @@ function ReplyOrReactionMessage({
 
   return reply.author.isMe && !reply.deletedForEveryone ? (
     <ContextMenu i18n={i18n} key={reply.id} menuOptions={menuOptions}>
-      {({ openMenu, menuNode }) => (
+      {({ onClick, menuNode }) => (
         <>
-          {renderContent(openMenu)}
+          {renderContent(onClick)}
           {menuNode}
         </>
       )}

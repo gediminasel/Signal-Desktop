@@ -10,7 +10,7 @@ import {
 } from '../../components/conversation/ConversationHeader';
 import { getCannotLeaveBecauseYouAreLastAdmin } from '../../components/conversation/conversation-details/ConversationDetails';
 import { useMinimalConversation } from '../../hooks/useMinimalConversation';
-import { CallMode } from '../../types/Calling';
+import { CallMode } from '../../types/CallDisposition';
 import { PanelType } from '../../types/Panels';
 import { StoryViewModeType } from '../../types/Stories';
 import { strictAssert } from '../../util/assert';
@@ -41,10 +41,8 @@ import {
 import { getHasStoriesSelector } from '../selectors/stories2';
 import { getIntl, getTheme, getUserACI } from '../selectors/user';
 import { useItemsActions } from '../ducks/items';
-import {
-  getDeleteSyncSendEnabled,
-  getLocalDeleteWarningShown,
-} from '../selectors/items';
+import { getLocalDeleteWarningShown } from '../selectors/items';
+import { getDeleteSyncSendEnabled } from '../selectors/items-extra';
 
 export type OwnProps = {
   id: string;

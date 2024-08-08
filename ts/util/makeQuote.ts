@@ -18,6 +18,7 @@ import * as log from '../logging/log';
 import { map, take, collect } from './iterables';
 import { strictAssert } from './assert';
 import { getMessageSentTimestamp } from './getMessageSentTimestamp';
+import { getLocalAttachmentUrl } from './getLocalAttachmentUrl';
 
 export async function makeQuote(
   quotedMessage: MessageAttributesType,
@@ -60,8 +61,7 @@ export async function getQuoteAttachment(
   preview?: Array<LinkPreviewType>,
   sticker?: StickerType
 ): Promise<Array<QuotedAttachmentType>> {
-  const { getAbsoluteAttachmentPath, loadAttachmentData } =
-    window.Signal.Migrations;
+  const { loadAttachmentData } = window.Signal.Migrations;
 
   if (attachments && attachments.length) {
     const attachmentsToUse = Array.from(take(attachments, 1));
@@ -86,7 +86,7 @@ export async function getQuoteAttachment(
             ? {
                 ...(await loadAttachmentData(thumbnail)),
                 objectUrl: thumbnail.path
-                  ? getAbsoluteAttachmentPath(thumbnail.path)
+                  ? getLocalAttachmentUrl(thumbnail)
                   : undefined,
               }
             : undefined,
@@ -109,7 +109,7 @@ export async function getQuoteAttachment(
             ? {
                 ...(await loadAttachmentData(image)),
                 objectUrl: image.path
-                  ? getAbsoluteAttachmentPath(image.path)
+                  ? getLocalAttachmentUrl(image)
                   : undefined,
               }
             : undefined,
@@ -126,7 +126,7 @@ export async function getQuoteAttachment(
         contentType,
         thumbnail: {
           ...(await loadAttachmentData(sticker.data)),
-          objectUrl: path ? getAbsoluteAttachmentPath(path) : undefined,
+          objectUrl: path ? getLocalAttachmentUrl(sticker.data) : undefined,
         },
       },
     ];

@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable max-classes-per-file */
 
-import { existsSync } from 'fs';
+import { existsSync } from 'node:fs';
+import { PassThrough } from 'node:stream';
 
 import * as durations from '../util/durations';
 import * as log from '../logging/log';
-import dataInterface from '../sql/Client';
+import { DataWriter } from '../sql/Client';
 
 import * as Errors from '../types/errors';
 import { redactGenericText } from '../util/privacy';
@@ -15,28 +16,52 @@ import {
   type JobManagerParamsType,
   type JobManagerJobResultType,
 } from './JobManager';
-import { deriveBackupMediaKeyMaterial } from '../Crypto';
+import {
+  deriveBackupMediaKeyMaterial,
+  deriveBackupMediaThumbnailInnerEncryptionKeyMaterial,
+} from '../Crypto';
 import { strictAssert } from '../util/assert';
 import { type BackupsService, backupsService } from '../services/backups';
 import {
   type EncryptedAttachmentV2,
   getAttachmentCiphertextLength,
   getAesCbcCiphertextLength,
-  ReencyptedDigestMismatchError,
+  decryptAttachmentV2ToSink,
+  ReencryptedDigestMismatchError,
 } from '../AttachmentCrypto';
 import { getBackupKey } from '../services/backups/crypto';
-import { isMoreRecentThan } from '../util/timestamp';
-import type {
-  AttachmentBackupJobType,
-  CoreAttachmentBackupJobType,
+import {
+  type AttachmentBackupJobType,
+  type CoreAttachmentBackupJobType,
+  type StandardAttachmentBackupJobType,
+  type ThumbnailAttachmentBackupJobType,
 } from '../types/AttachmentBackup';
 import { isInCall as isInCallSelector } from '../state/selectors/calling';
 import { encryptAndUploadAttachment } from '../util/uploadAttachment';
-import { getMediaIdFromMediaName } from '../services/backups/util/mediaId';
-import { fromBase64 } from '../Bytes';
+import {
+  getMediaIdFromMediaName,
+  getMediaNameForAttachmentThumbnail,
+} from '../services/backups/util/mediaId';
+import { fromBase64, toBase64 } from '../Bytes';
 import type { WebAPIType } from '../textsecure/WebAPI';
+import {
+  type AttachmentType,
+  mightStillBeOnTransitTier,
+} from '../types/Attachment';
+import {
+  type CreatedThumbnailType,
+  makeImageThumbnailForBackup,
+  makeVideoScreenshot,
+} from '../types/VisualAttachment';
+import { missingCaseError } from '../util/missingCaseError';
+import { canAttachmentHaveThumbnail } from './AttachmentDownloadManager';
+import {
+  isImageTypeSupported,
+  isVideoTypeSupported,
+} from '../util/GoogleChrome';
+import { getLocalAttachmentUrl } from '../util/getLocalAttachmentUrl';
+import { findRetryAfterTimeFromError } from './helpers/findRetryAfterTimeFromError';
 
-const TIME_ON_TRANSIT_TIER = 30 * durations.DAY;
 const MAX_CONCURRENT_JOBS = 3;
 const RETRY_CONFIG = {
   // As long as we have the file locally, we're always going to keep trying
@@ -48,14 +73,19 @@ const RETRY_CONFIG = {
     maxBackoffTime: durations.HOUR,
   },
 };
+const THUMBNAIL_RETRY_CONFIG = {
+  ...RETRY_CONFIG,
+  // Thumbnails are optional so we don't need to try indefinitely
+  maxAttempts: 3,
+};
 
 export class AttachmentBackupManager extends JobManager<CoreAttachmentBackupJobType> {
   private static _instance: AttachmentBackupManager | undefined;
   static defaultParams: JobManagerParamsType<CoreAttachmentBackupJobType> = {
-    markAllJobsInactive: dataInterface.markAllAttachmentBackupJobsInactive,
-    saveJob: dataInterface.saveAttachmentBackupJob,
-    removeJob: dataInterface.removeAttachmentBackupJob,
-    getNextJobs: dataInterface.getNextAttachmentBackupJobs,
+    markAllJobsInactive: DataWriter.markAllAttachmentBackupJobsInactive,
+    saveJob: DataWriter.saveAttachmentBackupJob,
+    removeJob: DataWriter.removeAttachmentBackupJob,
+    getNextJobs: DataWriter.getNextAttachmentBackupJobs,
     runJob: runAttachmentBackupJob,
     shouldHoldOffOnStartingQueuedJobs: () => {
       const reduxState = window.reduxStore?.getState();
@@ -66,11 +96,38 @@ export class AttachmentBackupManager extends JobManager<CoreAttachmentBackupJobT
     },
     getJobId,
     getJobIdForLogging,
-    getRetryConfig: () => RETRY_CONFIG,
+    getRetryConfig: job => {
+      if (job.type === 'standard') {
+        return RETRY_CONFIG;
+      }
+      return THUMBNAIL_RETRY_CONFIG;
+    },
     maxConcurrentJobs: MAX_CONCURRENT_JOBS,
   };
 
   override logPrefix = 'AttachmentBackupManager';
+
+  async addJobAndMaybeThumbnailJob(
+    job: CoreAttachmentBackupJobType
+  ): Promise<void> {
+    await this.addJob(job);
+    if (job.type === 'standard') {
+      if (canAttachmentHaveThumbnail(job.data.contentType)) {
+        await this.addJob({
+          type: 'thumbnail',
+          mediaName: getMediaNameForAttachmentThumbnail(job.mediaName),
+          receivedAt: job.receivedAt,
+          data: {
+            fullsizePath: job.data.path,
+            fullsizeSize: job.data.size,
+            contentType: job.data.contentType,
+            version: job.data.version,
+            localKey: job.data.localKey,
+          },
+        });
+      }
+    }
+  }
 
   static get instance(): AttachmentBackupManager {
     if (!AttachmentBackupManager._instance) {
@@ -79,6 +136,12 @@ export class AttachmentBackupManager extends JobManager<CoreAttachmentBackupJobT
       );
     }
     return AttachmentBackupManager._instance;
+  }
+
+  static addJobAndMaybeThumbnailJob(
+    job: CoreAttachmentBackupJobType
+  ): Promise<void> {
+    return AttachmentBackupManager.instance.addJobAndMaybeThumbnailJob(job);
   }
 
   static async start(): Promise<void> {
@@ -101,7 +164,7 @@ function getJobId(job: CoreAttachmentBackupJobType): string {
 }
 
 function getJobIdForLogging(job: CoreAttachmentBackupJobType): string {
-  return redactGenericText(job.mediaName);
+  return `${redactGenericText(job.mediaName)}.${job.type}`;
 }
 
 /**
@@ -115,6 +178,7 @@ type RunAttachmentBackupJobDependenciesType = {
   backupMediaBatch?: WebAPIType['backupMediaBatch'];
   backupsService: BackupsService;
   encryptAndUploadAttachment: typeof encryptAndUploadAttachment;
+  decryptAttachmentV2ToSink: typeof decryptAttachmentV2ToSink;
 };
 
 export async function runAttachmentBackupJob(
@@ -126,8 +190,9 @@ export async function runAttachmentBackupJob(
     backupsService,
     backupMediaBatch: window.textsecure.server?.backupMediaBatch,
     encryptAndUploadAttachment,
+    decryptAttachmentV2ToSink,
   }
-): Promise<JobManagerJobResultType> {
+): Promise<JobManagerJobResultType<CoreAttachmentBackupJobType>> {
   const jobIdForLogging = getJobIdForLogging(job);
   const logId = `AttachmentBackupManager/runAttachmentBackupJob/${jobIdForLogging}`;
   try {
@@ -144,11 +209,22 @@ export async function runAttachmentBackupJob(
       return { status: 'finished' };
     }
 
-    if (error instanceof ReencyptedDigestMismatchError) {
+    if (error instanceof ReencryptedDigestMismatchError) {
       log.error(
         `${logId}: Unable to reencrypt to match same digest; content must have changed`
       );
       return { status: 'finished' };
+    }
+
+    if (
+      error instanceof Error &&
+      'code' in error &&
+      (error.code === 413 || error.code === 429)
+    ) {
+      return {
+        status: 'rate-limited',
+        pauseDurationMs: findRetryAfterTimeFromError(error),
+      };
     }
 
     return { status: 'retry' };
@@ -160,25 +236,11 @@ async function runAttachmentBackupJobInner(
   dependencies: RunAttachmentBackupJobDependenciesType
 ): Promise<void> {
   const jobIdForLogging = getJobIdForLogging(job);
-  const logId = `AttachmentBackupManager.UploadOrCopyToBackupTier(mediaName:${jobIdForLogging})`;
+  const logId = `AttachmentBackupManager.UploadOrCopyToBackupTier(${jobIdForLogging})`;
 
   log.info(`${logId}: starting`);
 
-  const { mediaName, type } = job;
-
-  // TODO (DESKTOP-6913): generate & upload thumbnail
-  strictAssert(
-    type === 'standard',
-    'Only standard uploads are currently supported'
-  );
-
-  const { path, transitCdnInfo, iv, digest, keys, size } = job.data;
-
-  const mediaId = getMediaIdFromMediaName(mediaName);
-  const backupKeyMaterial = deriveBackupMediaKeyMaterial(
-    getBackupKey(),
-    mediaId.bytes
-  );
+  const mediaId = getMediaIdFromMediaName(job.mediaName);
 
   const { isInBackupTier } = await dependencies.backupsService.getBackupCdnInfo(
     mediaId.string
@@ -189,19 +251,40 @@ async function runAttachmentBackupJobInner(
     return;
   }
 
+  const jobType = job.type;
+
+  switch (jobType) {
+    case 'standard':
+      return backupStandardAttachment(job, dependencies);
+    case 'thumbnail':
+      return backupThumbnailAttachment(job, dependencies);
+    default:
+      throw missingCaseError(jobType);
+  }
+}
+
+async function backupStandardAttachment(
+  job: StandardAttachmentBackupJobType,
+  dependencies: RunAttachmentBackupJobDependenciesType
+) {
+  const jobIdForLogging = getJobIdForLogging(job);
+  const logId = `AttachmentBackupManager.backupStandardAttachment(${jobIdForLogging})`;
+  const { path, transitCdnInfo, iv, digest, keys, size, version, localKey } =
+    job.data;
+
+  const mediaId = getMediaIdFromMediaName(job.mediaName);
+  const backupKeyMaterial = deriveBackupMediaKeyMaterial(
+    getBackupKey(),
+    mediaId.bytes
+  );
+
   if (transitCdnInfo) {
     const {
       cdnKey: transitCdnKey,
       cdnNumber: transitCdnNumber,
       uploadTimestamp: transitCdnUploadTimestamp,
     } = transitCdnInfo;
-    if (
-      transitCdnKey &&
-      transitCdnNumber != null &&
-      (!transitCdnUploadTimestamp ||
-        isMoreRecentThan(transitCdnUploadTimestamp, TIME_ON_TRANSIT_TIER))
-    ) {
-      // If we have transit CDN info, optimistically try to copy to the backup tier
+    if (mightStillBeOnTransitTier(transitCdnInfo)) {
       try {
         await copyToBackupTier({
           cdnKey: transitCdnKey,
@@ -243,6 +326,9 @@ async function runAttachmentBackupJobInner(
   log.info(`${logId}: uploading to transit tier`);
   const uploadResult = await uploadToTransitTier({
     absolutePath,
+    version,
+    localKey,
+    size,
     keys,
     iv,
     digest,
@@ -261,31 +347,168 @@ async function runAttachmentBackupJobInner(
   });
 }
 
+async function backupThumbnailAttachment(
+  job: ThumbnailAttachmentBackupJobType,
+  dependencies: RunAttachmentBackupJobDependenciesType
+) {
+  const jobIdForLogging = getJobIdForLogging(job);
+  const logId = `AttachmentBackupManager.backupThumbnailAttachment(${jobIdForLogging})`;
+
+  const mediaId = getMediaIdFromMediaName(job.mediaName);
+  const backupKeyMaterial = deriveBackupMediaKeyMaterial(
+    getBackupKey(),
+    mediaId.bytes
+  );
+
+  const { fullsizePath, fullsizeSize, contentType, version, localKey } =
+    job.data;
+
+  if (!canAttachmentHaveThumbnail(contentType)) {
+    log.error(
+      `${logId}: cannot generate thumbnail for contentType: ${contentType}`
+    );
+    return;
+  }
+
+  if (!fullsizePath) {
+    throw new AttachmentPermanentlyMissingError('No fullsizePath property');
+  }
+
+  const fullsizeAbsolutePath =
+    dependencies.getAbsoluteAttachmentPath(fullsizePath);
+
+  if (!existsSync(fullsizeAbsolutePath)) {
+    throw new AttachmentPermanentlyMissingError(
+      'No fullsize file at provided path'
+    );
+  }
+
+  let thumbnail: CreatedThumbnailType;
+
+  const fullsizeUrl = getLocalAttachmentUrl({
+    path: fullsizePath,
+    size: fullsizeSize,
+    contentType,
+    version,
+    localKey,
+  });
+
+  if (isVideoTypeSupported(contentType)) {
+    // TODO (DESKTOP-7204): pull screenshot path from attachments table if it already
+    // exists
+    const screenshotBlob = await makeVideoScreenshot({
+      objectUrl: fullsizeUrl,
+    });
+    const screenshotObjectUrl = URL.createObjectURL(screenshotBlob);
+    thumbnail = await makeImageThumbnailForBackup({
+      objectUrl: screenshotObjectUrl,
+    });
+  } else if (isImageTypeSupported(contentType)) {
+    thumbnail = await makeImageThumbnailForBackup({
+      objectUrl: fullsizeUrl,
+    });
+  } else {
+    log.error(
+      `${logId}: cannot generate thumbnail for contentType: ${contentType}`
+    );
+    return;
+  }
+
+  const { aesKey, macKey } =
+    deriveBackupMediaThumbnailInnerEncryptionKeyMaterial(
+      getBackupKey(),
+      mediaId.bytes
+    );
+
+  log.info(`${logId}: uploading thumbnail to transit tier`);
+  const uploadResult = await uploadThumbnailToTransitTier({
+    data: thumbnail.data,
+    keys: toBase64(Buffer.concat([aesKey, macKey])),
+    logPrefix: logId,
+    dependencies,
+  });
+
+  log.info(`${logId}: copying thumbnail to backup tier`);
+  await copyToBackupTier({
+    cdnKey: uploadResult.cdnKey,
+    cdnNumber: uploadResult.cdnNumber,
+    size: thumbnail.data.byteLength,
+    mediaId: mediaId.string,
+    ...backupKeyMaterial,
+    dependencies,
+  });
+}
+
+type UploadToTransitTierArgsType = {
+  absolutePath: string;
+  iv: string;
+  digest: string;
+  keys: string;
+  version?: AttachmentType['version'];
+  localKey?: string;
+  size: number;
+  logPrefix: string;
+  dependencies: {
+    decryptAttachmentV2ToSink: typeof decryptAttachmentV2ToSink;
+    encryptAndUploadAttachment: typeof encryptAndUploadAttachment;
+  };
+};
+
 type UploadResponseType = {
   cdnKey: string;
   cdnNumber: number;
   encrypted: EncryptedAttachmentV2;
 };
-
 async function uploadToTransitTier({
   absolutePath,
   keys,
+  version,
+  localKey,
+  size,
   iv,
   digest,
   logPrefix,
   dependencies,
-}: {
-  absolutePath: string;
-  iv: string;
-  digest: string;
-  keys: string;
-  logPrefix: string;
-  dependencies: {
-    encryptAndUploadAttachment: typeof encryptAndUploadAttachment;
-  };
-}): Promise<UploadResponseType> {
+}: UploadToTransitTierArgsType): Promise<UploadResponseType> {
   try {
-    const uploadResult = await dependencies.encryptAndUploadAttachment({
+    if (version === 2) {
+      strictAssert(
+        localKey != null,
+        'Missing localKey for version 2 attachment'
+      );
+
+      const sink = new PassThrough();
+
+      // This `Promise.all` is chaining two separate pipelines via
+      // a pass-through `sink`.
+      const [, result] = await Promise.all([
+        dependencies.decryptAttachmentV2ToSink(
+          {
+            idForLogging: 'uploadToTransitTier',
+            ciphertextPath: absolutePath,
+            keysBase64: localKey,
+            size,
+            type: 'local',
+          },
+          sink
+        ),
+        dependencies.encryptAndUploadAttachment({
+          plaintext: { stream: sink },
+          keys: fromBase64(keys),
+          dangerousIv: {
+            reason: 'reencrypting-for-backup',
+            iv: fromBase64(iv),
+            digestToMatch: fromBase64(digest),
+          },
+          uploadType: 'backup',
+        }),
+      ]);
+
+      return result;
+    }
+
+    // Legacy attachments
+    return dependencies.encryptAndUploadAttachment({
       plaintext: { absolutePath },
       keys: fromBase64(keys),
       dangerousIv: {
@@ -295,10 +518,39 @@ async function uploadToTransitTier({
       },
       uploadType: 'backup',
     });
-    return uploadResult;
   } catch (error) {
     log.error(
       `${logPrefix}/uploadToTransitTier: Error while encrypting and uploading`,
+      Errors.toLogFormat(error)
+    );
+    throw error;
+  }
+}
+
+async function uploadThumbnailToTransitTier({
+  data,
+  keys,
+  logPrefix,
+  dependencies,
+}: {
+  data: Uint8Array;
+  keys: string;
+  logPrefix: string;
+  dependencies: {
+    decryptAttachmentV2ToSink: typeof decryptAttachmentV2ToSink;
+    encryptAndUploadAttachment: typeof encryptAndUploadAttachment;
+  };
+}): Promise<UploadResponseType> {
+  try {
+    const uploadResult = await dependencies.encryptAndUploadAttachment({
+      plaintext: { data },
+      keys: fromBase64(keys),
+      uploadType: 'backup',
+    });
+    return uploadResult;
+  } catch (error) {
+    log.error(
+      `${logPrefix}/uploadThumbnailToTransitTier: Error while encrypting and uploading`,
       Errors.toLogFormat(error)
     );
     throw error;
@@ -364,7 +616,7 @@ async function copyToBackupTier({
 
   // Update our local understanding of what's in the backup cdn
   const sizeOnBackupCdn = getAesCbcCiphertextLength(ciphertextLength);
-  await window.Signal.Data.saveBackupCdnObjectMetadata([
+  await DataWriter.saveBackupCdnObjectMetadata([
     { mediaId, cdnNumber: response.cdn, sizeOnBackupCdn },
   ]);
 

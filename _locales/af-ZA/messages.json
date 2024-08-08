@@ -80,6 +80,18 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "Die weergawe van jou databasis pas nie by hierdie weergawe van Signal nie. Maak seker dat jy die jongste weergawe van Signal op jou rekenaar oopmaak."
   },
+  "icu:databaseError__recover__detail": {
+    "messageformat": "'n Databasisfout het voorgekom. Jy kan die fout kopieer en Signal-steundiens kontak om die probleem te help oplos. As jy Signal dadelik moet gebruik, kan jy jou data probeer herwin.\n\nKontak die steundiens deur te gaan na: {link}"
+  },
+  "icu:databaseError__recover__button": {
+    "messageformat": "Herwin data"
+  },
+  "icu:databaseError__safeStorageBackendChange": {
+    "messageformat": "Kan nie toegang tot die databasis-enkripsiesleutel verkry nie, omdat die enkripteringsleutelring-implementering van die bedryfstelsel van {previousBackend} na {currentBackend} verander het. Dit kan gebeur as die rekenaaromgewing verander, byvoorbeeld van GNOME na KDE.\n\nSkakel asseblief terug na die vorige rekenaaromgewing."
+  },
+  "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
+    "messageformat": "Kan nie toegang tot die databasis-enkripteringsleutel verkry nie, omdat die enkripteringsleutelring-implementering van die bedryfstelsel van {previousBackend} na {currentBackend} verander het. Dit kan gebeur as die rekenaaromgewing verander, byvoorbeeld van GNOME na KDE.\n\nSkakel asseblief terug na die vorige rekenaaromgewing of probeer om Signal oop te maak met die opdragreël-vlag --password-store=\"{previousBackendFlag}\""
+  },
   "icu:mainMenuFile": {
     "messageformat": "&Lêer"
   },
@@ -818,8 +830,14 @@
   "icu:cannotUpdateDetail": {
     "messageformat": "Signal kon nie bywerking doen nie. {retry} of besoek {url} om dit met die hand te installeer. {support} dan oor hierdie probleem."
   },
+  "icu:cannotUpdateDetail-v2": {
+    "messageformat": "Signal kon nie opdateer nie. <retryUpdateButton>Probeer weer opdateer</retryUpdateButton> of besoek {url} om dit handmatig te installeer. <contactSupportLink>Kontak ons steundiens</contactSupportLink> daarna oor hierdie probleem"
+  },
   "icu:cannotUpdateRequireManualDetail": {
     "messageformat": "Signal kon nie bywerking doen nie. Besoek {url} om dit met die hand te installeer. {support} dan oor hierdie probleem."
+  },
+  "icu:cannotUpdateRequireManualDetail-v2": {
+    "messageformat": "Signal kon nie opdateer nie. Besoek {url} om dit handmatig te installeer. <contactSupportLink>Kontak ons steundiens</contactSupportLink> daarna oor hierdie probleem"
   },
   "icu:readOnlyVolume": {
     "messageformat": "Signal Desktop is waarskynlik in 'n macOS-kwarantyn en sal nie outomaties kan opdateer nie. Probeer {app} na {folder} te skuif met Vindfunksie."
@@ -989,6 +1007,9 @@
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
     "messageformat": "Al die boodskappe in hierdie klets sal van hierdie toestel af geskrap word. Jy kan steeds vir hierdie klets soek nadat jy boodskappe uitgevee het."
   },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
+    "messageformat": "Al die boodskappe in hierdie klets sal van al jou toestelle af geskrap word. Jy kan steeds vir hierdie klets soek nadat jy boodskappe geskrap het."
+  },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Verlaat groep"
   },
@@ -1092,7 +1113,7 @@
     "messageformat": "Gekoppelde toestelle"
   },
   "icu:linkNewDevice": {
-    "messageformat": "Koppel nuwe toestel"
+    "messageformat": "Koppel 'n nuwe toestel"
   },
   "icu:Install__learn-more": {
     "messageformat": "Vind meer uit"
@@ -1110,10 +1131,22 @@
     "messageformat": "Instellings"
   },
   "icu:Install__instructions__3": {
-    "messageformat": "Tik op {plusButton} (Android) of {linkNewDevice} (iPhone)"
+    "messageformat": "Tik op {linkNewDevice}"
   },
-  "icu:Install__qr-failed-load": {
-    "messageformat": "Die QR-kode kon nie gelaai word nie. Kontroleer jou internetverbinding en probeer weer. <retry>Probeer weer</retry>"
+  "icu:Install__qr-failed-load__error--timeout": {
+    "messageformat": "Die QR-kode kon nie gelaai word nie. Gaan jou verbinding na en probeer weer."
+  },
+  "icu:Install__qr-failed-load__error--unknown": {
+    "messageformat": "<paragraph>'n Onverwagse fout het voorgekom.</paragraph><paragraph>Probeer asb weer.</paragraph>"
+  },
+  "icu:Install__qr-failed-load__error--network": {
+    "messageformat": "Signal kan nie hierdie toestel met gebruik van jou huidige netwerk koppel nie."
+  },
+  "icu:Install__qr-failed-load__retry": {
+    "messageformat": "Probeer weer"
+  },
+  "icu:Install__qr-failed-load__get-help": {
+    "messageformat": "Kry hulp"
   },
   "icu:Install__support-link": {
     "messageformat": "Hulp nodig?"
@@ -1286,8 +1319,35 @@
   "icu:CallingPendingParticipants__DenyUser": {
     "messageformat": "Weier aansluitingsversoek"
   },
+  "icu:CallingPendingParticipants__ApproveAll": {
+    "messageformat": "Keur almal goed"
+  },
+  "icu:CallingPendingParticipants__DenyAll": {
+    "messageformat": "Weier almal"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--ApproveAll": {
+    "messageformat": "{count, plural, one {Keur {count,number} versoek goed?} other {Keur {count,number} versoeke goed?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--DenyAll": {
+    "messageformat": "{count, plural, one {Weier {count,number} versoek?} other {Weier {count,number} versoeke?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--ApproveAll": {
+    "messageformat": "{count, plural, one {{count,number} persoon sal by die oproep gevoeg word.} other {{count,number} persone sal by die oproep gevoeg word.}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--DenyAll": {
+    "messageformat": "{count, plural, one {{count,number} persoon sal nie by die oproep gevoeg word nie.} other {{count,number} persone sal nie by die oproep gevoeg word nie.}}"
+  },
   "icu:CallingPendingParticipants__RequestsToJoin": {
     "messageformat": "{count, plural, one {{count,number} versoek om by hierdie oproep aan te sluit} other {{count,number} versoeke om by hierdie oproep aan te sluit}}"
+  },
+  "icu:CallingPendingParticipants__WouldLikeToJoin": {
+    "messageformat": "Wil graag aansluit…"
+  },
+  "icu:CallingPendingParticipants__AdditionalRequests": {
+    "messageformat": "{count, plural, one {+{count,number} versoek} other {+{count,number} versoeke}}"
+  },
+  "icu:CallingPendingParticipants__Toast--added-users-to-call": {
+    "messageformat": "{count, plural, one {{count,number} persoon by die oproep gevoeg} other {{count,number} persone by die oproep gevoeg}}"
   },
   "icu:CallingRaisedHandsList__Title": {
     "messageformat": "{count, plural, one {{count,number} opgesteekte hand} other {{count,number} opgesteekte hande}}"
@@ -1352,8 +1412,14 @@
   "icu:calling__you-have-blocked": {
     "messageformat": "Jy het {name} versper"
   },
+  "icu:calling__blocked-participant": {
+    "messageformat": "{name} is versper"
+  },
+  "icu:calling__block-info-title": {
+    "messageformat": "{name} is versper"
+  },
   "icu:calling__block-info": {
-    "messageformat": "Julle sal nie mekaar se stem of video ontvang nie."
+    "messageformat": "Julle sal nie mekaar se oudio of video ontvang nie."
   },
   "icu:calling__missing-media-keys": {
     "messageformat": "Kan nie oudio en video van {name} ontvang nie"
@@ -2372,15 +2438,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "Klets as ongelees gemerk"
   },
-  "icu:AuthArtCreator--dialog--message": {
-    "messageformat": "Wil jy die Signal-plakkerpakket-skepper oopmaak?"
-  },
-  "icu:AuthArtCreator--dialog--confirm": {
-    "messageformat": "Bevestig"
-  },
-  "icu:AuthArtCreator--dialog--dismiss": {
-    "messageformat": "Wys weg"
-  },
   "icu:ArtCreator--Authentication--error": {
     "messageformat": "Stel Signal op jou foon en tafelblad in om die Plakkerpakket-skepper te gebruik"
   },
@@ -2577,10 +2634,10 @@
     "messageformat": "Weier"
   },
   "icu:declinedIncomingAudioCall": {
-    "messageformat": "Jy het ’n stemoproep geweier"
+    "messageformat": "Stemoproep geweier"
   },
   "icu:declinedIncomingVideoCall": {
-    "messageformat": "Jy het ’n video-oproep geweier"
+    "messageformat": "Video-oproep geweier"
   },
   "icu:acceptedIncomingAudioCall": {
     "messageformat": "Inkomende stemoproep"
@@ -2613,10 +2670,10 @@
     "messageformat": "Signal sal steeds in die kennisgewingafdeling oop wees. Jy kan dit in Signal-instellings verander."
   },
   "icu:incomingAudioCall": {
-    "messageformat": "Inkomende stem-oproep..."
+    "messageformat": "Inkomende stemoproep"
   },
   "icu:incomingVideoCall": {
-    "messageformat": "Inkomende video-oproep…"
+    "messageformat": "Inkomende video-oproep"
   },
   "icu:outgoingAudioCall": {
     "messageformat": "Uitgaande stemoproep"
@@ -2661,7 +2718,7 @@
     "messageformat": "{count, plural, one {{count,number} mens} other {{count,number} mense}}"
   },
   "icu:CallControls__InfoDisplay--audio-call": {
-    "messageformat": "Oudio-oproep"
+    "messageformat": "Stemoproep"
   },
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "Oproepskakel"
@@ -2688,13 +2745,13 @@
     "messageformat": "Lui afgeskakel"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "You raised a hand."
+    "messageformat": "Jy het 'n hand opgesteek."
   },
   "icu:CallControls__RaiseHandsToast--you-and-one": {
-    "messageformat": "You and {otherName} raised a hand."
+    "messageformat": "Jy en {otherName} het 'n hand opgesteek."
   },
   "icu:CallControls__RaiseHandsToast--you-and-more": {
-    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
+    "messageformat": "{overflowCount, plural, one {Jy, {otherName} en nog {overflowCount,number} het 'n hand opgesteek.} other {Jy, {otherName} en nog {overflowCount,number} het 'n hand opgesteek.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} het 'n hand opgesteek."
@@ -2724,16 +2781,16 @@
     "messageformat": "{people, plural, one {{people,number} in oproep} other {{people,number} in oproep}}"
   },
   "icu:calling__call-notification__ended": {
-    "messageformat": "Die groepoproep is beëindig"
+    "messageformat": "Die video-oproep is beëindig"
   },
   "icu:calling__call-notification__started-by-someone": {
-    "messageformat": "Die groepoproep is begin"
+    "messageformat": "'n Video-oproep is begin"
   },
   "icu:calling__call-notification__started-by-you": {
-    "messageformat": "Jy het ’n groepoproep begin"
+    "messageformat": "Jy het 'n video-oproep begin"
   },
   "icu:calling__call-notification__started": {
-    "messageformat": "{name} het 'n groepoproep begin"
+    "messageformat": "{name} het 'n video-oproep begin"
   },
   "icu:calling__in-another-call-tooltip": {
     "messageformat": "Jy is reeds in 'n oproep"
@@ -2780,26 +2837,41 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "'n Venster"
   },
+  "icu:calling__ParticipantInfoButton": {
+    "messageformat": "Meer inligting oor hierdie kontak"
+  },
   "icu:CallingAdhocCallInfo__CopyLink": {
     "messageformat": "Kopieer oproepskakel"
+  },
+  "icu:CallingAdhocCallInfo__ShareViaSignal": {
+    "messageformat": "Deel oproepskakel d.m.v. Signal"
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "Verwyder hierdie persoon uit die oproep"
   },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogBody": {
+    "messageformat": "Verwyder {name} uit die oproep?"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--remove": {
+    "messageformat": "Verwyder"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--block": {
+    "messageformat": "Blokkeer toegang tot oproep"
+  },
   "icu:CallingAdhocCallInfo__UnknownContactLabel": {
-    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+    "messageformat": "{count, plural, one {{count,number} mens} other {{count,number} mense}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
-    "messageformat": "+{count,number} more"
+    "messageformat": "{count, plural, one {+nog {count,number}} other {+nog {count,number}}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
-    "messageformat": "More info about new contacts"
+    "messageformat": "Meer inligting oor nuwe kontakte"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
-    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+    "messageformat": "Voordat jy by 'n oproep aansluit, kan jy slegs die name van telefoonkontakte sien, mense saam met wie jy in 'n groep is, of mense met wie jy 1:1 gesels het. Jy sal alle name en foto's sien sodra jy by die oproep aangesluit het."
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
-    "messageformat": "Got it"
+    "messageformat": "Ek verstaan"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -3512,6 +3584,9 @@
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Verwyder uit groep"
   },
+  "icu:ContactModal--already-in-call": {
+    "messageformat": "Jy is reeds in 'n oproep"
+  },
   "icu:showChatColorEditor": {
     "messageformat": "Kletskleur"
   },
@@ -3780,7 +3855,7 @@
     "messageformat": "{count, plural, one {Van watter toestelle wil jy hierdie boodskap skrap?} other {Van watter toestelle wil jy hierdie boodskappe skrap?}}"
   },
   "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
-    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+    "messageformat": "{count, plural, one {Hierdie boodskap sal van al jou toestelle geskrap word.} other {Hierdie boodskappe sal van al jou toestelle geskrap word.}}"
   },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "Skrap vir my"
@@ -3795,7 +3870,7 @@
     "messageformat": "Skrap van alle toestelle"
   },
   "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
-    "messageformat": "Delete"
+    "messageformat": "Skrap"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {Jy kan slegs tot {count,number} boodskap kies om vir almal uit te vee} other {Jy kan slegs tot {count,number} boodskappe kies om vir almal uit te vee}}"
@@ -4196,11 +4271,11 @@
   "icu:ProfileEditor--username--check-starting-character": {
     "messageformat": "Gebruikersname kan nie met 'n syfer begin nie."
   },
-  "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Usernames must have at least {min,number} characters."
+  "icu:ProfileEditor--username--check-character-min-plural": {
+    "messageformat": "{min, plural, one {Gebruikersname moet minstens {min,number} karakter bevat.} other {Gebruikersname moet minstens {min,number} karakters bevat.}}"
   },
-  "icu:ProfileEditor--username--check-character-max": {
-    "messageformat": "Gebruikersname moet hoogstens {max,number} karakters bevat."
+  "icu:ProfileEditor--username--check-character-max-plural": {
+    "messageformat": "{max, plural, one {Gebruikersname moet hoogstens {max,number} karakter bevat.} other {Gebruikersname moet hoogstens {max,number} karakters bevat.}}"
   },
   "icu:ProfileEditor--username--check-discriminator-min": {
     "messageformat": "Ongeldige gebruikersnaam, voer 'n minimum van 2 syfers in."
@@ -4240,9 +4315,6 @@
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
     "messageformat": "Skrap"
-  },
-  "icu:ProfileEditor--username--delete-unavailable-notice": {
-    "messageformat": "Om jou gebruikersnaam te skrap, maak Signal op jou foon oop en gaan na Instellings > Profiel."
   },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "Kopieer of skrap gebruikersnaam"
@@ -4749,13 +4821,13 @@
     "messageformat": "Jou verbindings kan jou naam en foto sien, en kan plasings in \"My Storie\" sien, tensy jy dit vir hulle versteek."
   },
   "icu:LocalDeleteWarningModal__header": {
-    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+    "messageformat": "Skrapping is oor jou toestelle heen gesinchroniseer"
   },
   "icu:LocalDeleteWarningModal__description": {
-    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+    "messageformat": "Wanneer jy boodskappe of kletse skrap, sal dit van al jou toestelle af geskrap word."
   },
   "icu:LocalDeleteWarningModal__confirm": {
-    "messageformat": "Got it"
+    "messageformat": "Ek verstaan"
   },
   "icu:Stories__title": {
     "messageformat": "Stories"
@@ -5350,7 +5422,7 @@
     "messageformat": "Geen resultate vir \"{query}\" nie"
   },
   "icu:CallsList__CreateCallLink": {
-    "messageformat": "Create a Call Link"
+    "messageformat": "Skep 'n Oproepskakel"
   },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "Inkomend"
@@ -5360,6 +5432,9 @@
   },
   "icu:CallsList__ItemCallInfo--Missed": {
     "messageformat": "Gemis"
+  },
+  "icu:CallsList__ItemCallInfo--Declined": {
+    "messageformat": "Geweier"
   },
   "icu:CallsList__ItemCallInfo--GroupCall": {
     "messageformat": "Groepoproep"
@@ -5374,7 +5449,7 @@
     "messageformat": "Verlaat die huidige oproep?"
   },
   "icu:CallsList__LeaveCallDialogBody": {
-    "messageformat": "Jy moet die huidige oproep verlaat voordat jy by 'n nuwe oproep aansluit."
+    "messageformat": "Jy moet die huidige oproep verlaat voordat jy 'n nuwe oproep begin of by 'n nuwe een aansluit."
   },
   "icu:CallsList__LeaveCallDialogButton--leave": {
     "messageformat": "Verlaat oproep"
@@ -5406,8 +5481,29 @@
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Oproepskakel"
   },
+  "icu:CallHistory__DescriptionVideoCall--Default": {
+    "messageformat": "{direction, select, Outgoing {Uitgaande video-oproep} other {Inkomende video-oproep}}"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Missed": {
+    "messageformat": "Gemiste video-oproep"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Unanswered": {
+    "messageformat": "Onbeantwoorde video-oproep"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Declined": {
+    "messageformat": "Video-oproep geweier"
+  },
   "icu:CallLinkDetails__Join": {
     "messageformat": "Sluit aan"
+  },
+  "icu:CallLinkDetails__AddCallNameLabel": {
+    "messageformat": "Voeg oproepnaam by"
+  },
+  "icu:CallLinkDetails__EditCallNameLabel": {
+    "messageformat": "Wysig oproepnaam"
+  },
+  "icu:CallLinkDetails__ApproveAllMembersLabel": {
+    "messageformat": "Keur alle lede goed"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "Kopieer skakel"
@@ -5415,23 +5511,50 @@
   "icu:CallLinkDetails__ShareLinkViaSignal": {
     "messageformat": "Deel skakel d.m.v. Signal"
   },
-  "icu:CallLinkEditModal__Title": {
-    "messageformat": "Call link details"
+  "icu:CallLinkDetails__DeleteLink": {
+    "messageformat": "Delete link"
   },
-  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
-    "messageformat": "Name"
+  "icu:CallLinkDetails__DeleteLinkModal__Title": {
+    "messageformat": "Delete call link?"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Body": {
+    "messageformat": "This link will no longer work for anyone who has it."
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
+    "messageformat": "Cancel"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Delete": {
+    "messageformat": "Delete"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Oproepskakelbesonderhede"
   },
   "icu:CallLinkEditModal__JoinButtonLabel": {
-    "messageformat": "Join"
+    "messageformat": "Sluit aan"
+  },
+  "icu:CallLinkEditModal__AddCallNameLabel": {
+    "messageformat": "Voeg oproepnaam by"
+  },
+  "icu:CallLinkEditModal__EditCallNameLabel": {
+    "messageformat": "Wysig oproepnaam"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Approve all members"
+    "messageformat": "Keur alle lede goed"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
-    "messageformat": "Off"
+  "icu:CallLinkRestrictionsSelect__Option--Off": {
+    "messageformat": "Af"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
-    "messageformat": "On"
+  "icu:CallLinkRestrictionsSelect__Option--On": {
+    "messageformat": "Aan"
+  },
+  "icu:CallLinkAddNameModal__Title": {
+    "messageformat": "Voeg oproepnaam by"
+  },
+  "icu:CallLinkAddNameModal__Title--Edit": {
+    "messageformat": "Wysig oproepnaam"
+  },
+  "icu:CallLinkAddNameModal__NameLabel": {
+    "messageformat": "Oproepnaam"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} ander persoon is besig om te tik.} other {{count,number} ander persone is besig om te tik.}}"
@@ -5473,19 +5596,19 @@
     "messageformat": "Klein veranderings, foutregstellings en prestasieverbeterings. Dankie dat jy Signal gebruik!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.12--0": {
-    "messageformat": "Steek jou hand op as jy na 'n ander manier gesoek het om tydens groepoproepe te kommunikeer. Die nuwe Handopsteek-kenmerk is 'n eenvoudige manier om iemand se aandag te trek, 'n vraag te vra of eenparig vir 'n groepvoorstel te stem wanneer jou vriend vra, \"Almal ten gunste daarvan?\""
+  "icu:WhatsNew__v7.18--0": {
+    "messageformat": "Hierdie vrystelling versnel die proses om lang boodskapstringe te skrap."
   },
-  "icu:WhatsNew__v7.12--1": {
-    "messageformat": "Hierdie opdatering sluit 'n verbeterde \"snoei\"-hulpmiddel in om foto's of prente kleiner te knip."
+  "icu:WhatsNew__v7.19--0": {
+    "messageformat": "Indien 'n ander oproep jou naam bel, het ons 'n kortpad bygevoeg om die huidige oproep te verlaat en by die nuwe een aan te sluit."
   },
-  "icu:WhatsNew__v7.12--2": {
-    "messageformat": "Ons het die sleutelbord-kortpad vir die stuur van 'n stemboodskap gewysig na Ctrl/Cmd+Shift+Y sodat dit nie meer met die \"Plak en Pas Styl Aan\"-kortpad op Windows en Linux bots nie."
+  "icu:WhatsNew__v7.19--1": {
+    "messageformat": "Hierdie opdatering stel ook 'n oopmaak-uitbom in Linux reg vir gebruikers wie se lokaliteit op 'POSIX' gestel is."
   },
-  "icu:WhatsNew__v7.13--0": {
-    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  "icu:WhatsNew__v7.20--0": {
+    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
   },
-  "icu:WhatsNew__v7.13--1": {
-    "messageformat": "This update also improves the display of quoted replies in RTL languages."
+  "icu:WhatsNew__v7.20--1": {
+    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
   }
 }

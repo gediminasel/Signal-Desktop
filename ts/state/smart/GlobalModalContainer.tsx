@@ -27,9 +27,19 @@ import { getGlobalModalsState } from '../selectors/globalModals';
 import { SmartEditNicknameAndNoteModal } from './EditNicknameAndNoteModal';
 import { SmartNotePreviewModal } from './NotePreviewModal';
 import { SmartCallLinkEditModal } from './CallLinkEditModal';
+import { SmartCallLinkAddNameModal } from './CallLinkAddNameModal';
+import { SmartConfirmLeaveCallModal } from './ConfirmLeaveCallModal';
+
+function renderCallLinkAddNameModal(): JSX.Element {
+  return <SmartCallLinkAddNameModal />;
+}
 
 function renderCallLinkEditModal(): JSX.Element {
   return <SmartCallLinkEditModal />;
+}
+
+function renderConfirmLeaveCallModal(): JSX.Element {
+  return <SmartConfirmLeaveCallModal />;
 }
 
 function renderEditHistoryMessagesModal(): JSX.Element {
@@ -95,7 +105,9 @@ export const SmartGlobalModalContainer = memo(
     const {
       aboutContactModalContactId,
       addUserToAnotherGroupModalContactId,
+      callLinkAddNameModalRoomId,
       callLinkEditModalRoomId,
+      confirmLeaveCallModalState,
       contactModalState,
       deleteMessagesProps,
       editHistoryMessages,
@@ -174,7 +186,9 @@ export const SmartGlobalModalContainer = memo(
         addUserToAnotherGroupModalContactId={
           addUserToAnotherGroupModalContactId
         }
+        callLinkAddNameModalRoomId={callLinkAddNameModalRoomId}
         callLinkEditModalRoomId={callLinkEditModalRoomId}
+        confirmLeaveCallModalState={confirmLeaveCallModalState}
         contactModalState={contactModalState}
         editHistoryMessages={editHistoryMessages}
         editNicknameAndNoteModalProps={editNicknameAndNoteModalProps}
@@ -197,7 +211,9 @@ export const SmartGlobalModalContainer = memo(
         isWhatsNewVisible={isWhatsNewVisible}
         renderAboutContactModal={renderAboutContactModal}
         renderAddUserToAnotherGroup={renderAddUserToAnotherGroup}
+        renderCallLinkAddNameModal={renderCallLinkAddNameModal}
         renderCallLinkEditModal={renderCallLinkEditModal}
+        renderConfirmLeaveCallModal={renderConfirmLeaveCallModal}
         renderContactModal={renderContactModal}
         renderEditHistoryMessagesModal={renderEditHistoryMessagesModal}
         renderEditNicknameAndNoteModal={renderEditNicknameAndNoteModal}

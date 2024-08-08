@@ -333,5 +333,300 @@
     "url": "https://updates2.signal.org/static/android/emoji/search/13/lt.json",
     "size": 417252,
     "digest": "IUKfMAIywuj6frUBYec1uqW6fjtmqpPYKahYNCzTC8fw15LgGN+rjhHIn7pBppsnOdiKPlGTpLmKboML0Ide0w=="
+  },
+  "emoji-sheet-Jumbo_0.proto": {
+    "digest": "/31/uYdohxy3OzazCzEsVjhdEvMhlzKVB2QfzxounNDmu6xCzqdDj15C09oI/4d+T6xItG5EBhC/0/eZPYqB/A==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_0.proto",
+    "size": 512766
+  },
+  "emoji-sheet-Jumbo_52.proto": {
+    "digest": "gpLZ75rT5eNQSLWFNjMQywhP7a9cQdzIWZ4w2tKAXZsS/btz9/IViNXrD1MoDA+V7edBvscIlz0nrwQXsfP20A==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_52.proto",
+    "size": 224636
+  },
+  "emoji-sheet-Jumbo_55.proto": {
+    "digest": "aMzIxEAnnwfIE6VIEPWcrmhrUqkZylL35Rvi66iz/9vu0L9SfNnIqNQhAb6R6YEUWxTdt525KvJwjYLisXIqYA==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_55.proto",
+    "size": 237498
+  },
+  "emoji-sheet-Jumbo_57.proto": {
+    "digest": "/hGH7SHGZFsfccOgzZXbeQG+FEbBpBX2lO8yoblSNEJrgSvM+Ki0OAdM08Qigh6/vs7dENms5qNaSa2vERYzjQ==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_57.proto",
+    "size": 240110
+  },
+  "emoji-sheet-Jumbo_58.proto": {
+    "digest": "n2MamA4zP87jCGYEYaBhdbdfUeVDm9/5X8snu2+IZXaTzHgbq8eT68Wc948uA4mzRGA3AhBoe4CtwZLTyKbmPg==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_58.proto",
+    "size": 254102
+  },
+  "emoji-sheet-Jumbo_54.proto": {
+    "digest": "V+3gReqsd8LIiQfyxXzEDE1g7QinR9uMqSo59/0yCzWI6mHgvC2ewIiweLkx8S91b5w9rzxOkJn5GR5Xvndyug==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_54.proto",
+    "size": 213838
+  },
+  "emoji-sheet-Jumbo_9.proto": {
+    "digest": "kBf+a58g/EGhEMJ0R6b8uI0V7fleqS9vAs91FORtYCmFAuviLD/JQI7tZJldBrPPTdkkMEq9LHZLH4oVtzhdJg==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_9.proto",
+    "size": 428842
+  },
+  "emoji-sheet-Jumbo_4.proto": {
+    "digest": "t4tQdCLEp1u9GXbdusULR9PcuLSMFS7BgCS8SOOjGPeUWOP14NQtmIUfVPsId9nD48s9iAB1ELax47HdUoYAJQ==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_4.proto",
+    "size": 306144
+  },
+  "emoji-sheet-Jumbo_37.proto": {
+    "digest": "vMIu9fZuB1RbKRHoCGg0QWfQ9ncwtdXBU+dMg+e9hNH3ROhsoSWX1BzSSZdYSIGSYJpGN/rnHwiZEj3wi6+Efg==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_37.proto",
+    "size": 370410
+  },
+  "emoji-sheet-Jumbo_16.proto": {
+    "digest": "9RQJds1cYTddNST1FiMMlO43+DQlQ4IFRU9s/AiypTkJbI73yjzPGXCXiywjP2i/bv7HwWW7kDxm60gKeN2D+Q==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_16.proto",
+    "size": 501358
+  },
+  "emoji-sheet-Jumbo_3.proto": {
+    "digest": "BYbMo1AfrC0DWrEwje+JaCYRXgTd9uXNhQt8iFU1VUeMwO9J660kWGUrAV/v0QtAd87mYsbCI45NUb20PZQoZA==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_3.proto",
+    "size": 346466
+  },
+  "emoji-sheet-Jumbo_53.proto": {
+    "digest": "iVxgBObxQ3ZsvTcvAqPC946QdktpVaMtd9H1Tkk6Iub/48a9XWAPF4Y85A9TlYnbZIdyX1td/r2z8YbtBkfn/w==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_53.proto",
+    "size": 259934
+  },
+  "emoji-sheet-Jumbo_18.proto": {
+    "digest": "XLTxsVMPyy1UzLB57+x9Ivl2K4zqqMk+6KsavkRM59PefaLeXtAoJC0vWZB2PkF8CgzbO2ChPjanoscpu9C7EQ==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_18.proto",
+    "size": 546222
+  },
+  "emoji-sheet-Jumbo_8.proto": {
+    "digest": "DZJOndYyyBcOqUw2FhwT83uYcBcvU9mMAkS/JcDBgxR3LFfEHuxWgg8gcjM0bUi2Q0Mrsh0kCIZSbPHTB9yk6w==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_8.proto",
+    "size": 414686
+  },
+  "emoji-sheet-Jumbo_49.proto": {
+    "digest": "bKljQS6nT+JFAF8RTgEPvCVl3VodKdV7ffqJ7DDSj1w6dYaeNw6apoZQ4QgTYMLr25TbxsAfrI5ybfmFZxKcvg==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_49.proto",
+    "size": 372430
+  },
+  "emoji-sheet-Jumbo_7.proto": {
+    "digest": "s1mnI9UNbT77zSTy5189BbKfO4nHzbwcfjHLjLQx4d9SYoI3ErI2W8ofShWZNAOR8JafOe45kO4+mjlrR4YTpQ==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_7.proto",
+    "size": 359540
+  },
+  "emoji-sheet-Jumbo_34.proto": {
+    "digest": "rNDFBHj0VpTJLWDUhyQk7bM+QaFzRwcBhK836XmdhdjLWtBzUyU0iwVnGN7MhO6PtCYF/50cnJU1XI5NBSJWag==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_34.proto",
+    "size": 476822
+  },
+  "emoji-sheet-Jumbo_24.proto": {
+    "digest": "g/vvJNeFtT0GFOwZzF5r6Tvfz+oavOXBHBtjAyluFA1LbMIBbyuIK++zc9kDXH3csPsPL1b5vOmSborV48cowA==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_24.proto",
+    "size": 391522
+  },
+  "emoji-sheet-Jumbo_10.proto": {
+    "digest": "fCqJFdlJS5jKXUWWeXOEEI2/e6y7NMgyXO7c6zKZEeGAOoDMHt+IyeJGNPRWbrCTJqi4zF/34mlKhm+fwy1bfA==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_10.proto",
+    "size": 411418
+  },
+  "emoji-sheet-Jumbo_56.proto": {
+    "digest": "8pvgWhW6NBb38b7c4teeN5kEDP/DmXHG8gHzISbO9Al4aqKbiuEcjoyN7NJTuv/QinVOxR3buVQakmj0DWmQ/A==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_56.proto",
+    "size": 249076
+  },
+  "emoji-sheet-Jumbo_20.proto": {
+    "digest": "s+ZNvOesdx9hCC6uZfVahLVHwNT6/+A20Wh0eln2yr21LAv0YE4RPMUL8RbrU5xMra1KYPCv4HUFV/0H2gUvdg==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_20.proto",
+    "size": 450106
+  },
+  "emoji-sheet-Jumbo_51.proto": {
+    "digest": "pil2QoBZuJn69+dkh9lu99gZTqNS1Cztw9ydhOQ/zx66rGBNu37zX8CL5xChHRoqZBYt0Hjhck+aNuNCwwbw/A==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_51.proto",
+    "size": 357904
+  },
+  "emoji-sheet-Jumbo_47.proto": {
+    "digest": "j6OPJx+BpQXyz9BgLexkfS1rOQK8NtECr3O73anhpKgAWoOh26WKT9B8BIUsHceQ7UHpP+J833NQRYP+tq8+gA==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_47.proto",
+    "size": 472422
+  },
+  "emoji-sheet-Jumbo_13.proto": {
+    "digest": "p1GtekAkP625oIKqvskIBysDXM9QdNAnfYiqOlX6JCACyo6bME+sMOEZDnUK2hNKq0tGoeWz/qQAdcnwz5Cc7A==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_13.proto",
+    "size": 463472
+  },
+  "emoji-sheet-Jumbo_46.proto": {
+    "digest": "EC9ImW4HvnNFvGlTZYSfoLO65rgxZ2GVZ+z5QBFOKDaRxdm9kgDw66MMRxyrpjq0vVu/XskKBe21FmXQvCPCJg==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_46.proto",
+    "size": 526972
+  },
+  "emoji-sheet-Jumbo_6.proto": {
+    "digest": "OZGNHYe5m+ZLtWcxVVlsJZXqH2vA7/LSIcblQRrc1T7pjK5BaoNoK46TGXWfXk4M48B0d0TYVYxtJArnfaCgvA==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_6.proto",
+    "size": 408524
+  },
+  "emoji-sheet-Jumbo_44.proto": {
+    "digest": "2BFPiXRX6Fd2pfv3FmAnVfzjgJhLJnsfaJqTRsvLxyWQ2y/Nk1kaSdIw+igjNjN4tNqrqVHTEtww0UyLv+s8/Q==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_44.proto",
+    "size": 499676
+  },
+  "emoji-sheet-Jumbo_17.proto": {
+    "digest": "QApG/XVkho8mRz/pWEFKAyRC7iUmh4BOonIrYtTFB1IULxY2yYfzDHcoacfZWO4/BmRkQNBfieRdSPOaupv6hw==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_17.proto",
+    "size": 544142
+  },
+  "emoji-sheet-Jumbo_15.proto": {
+    "digest": "RWBAelyKk9GIWm8g3sRmLt0qa7dajlD1MWYedzwMDI6dMoEkqhzEHUY3858jE5HlZIOHRBmlsRZyBM4h5JCJ/Q==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_15.proto",
+    "size": 488666
+  },
+  "emoji-sheet-Jumbo_38.proto": {
+    "digest": "obBcSQZ7EEYXtRaNNlqncGbXx8F97F3iQxNBJTB+U+HSwhgZoLdEFlXixt2MQXmV4HX/zrSwAQduP93mUmvZQg==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_38.proto",
+    "size": 539326
+  },
+  "emoji-sheet-Jumbo_41.proto": {
+    "digest": "PDHEwkRIdqb2PlO1PWeSCCHtRwN3lKgSLcsn5my9TWe1QOYskmBsQ9SlMRi0/QOXMzo6PuPNEcFBF+nyfHFu0g==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_41.proto",
+    "size": 494128
+  },
+  "emoji-sheet-Jumbo_35.proto": {
+    "digest": "DZQJj97rMpB4LuD7IP9e53bClVQDTjcCFLuI+2vByz5vBNl3zQc/YdLQNIIu63wBPPbTIO8J4C2McD+FSxzgDA==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_35.proto",
+    "size": 430998
+  },
+  "emoji-sheet-Jumbo_11.proto": {
+    "digest": "DjkdPaTwrwIFii5kWO9DaovrDeFhVr+zDuvmep38SOiQ5AJIssBO1oaeQCNw1+YxyTQ2xzt3GZiHeeeT7eFt5w==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_11.proto",
+    "size": 534694
+  },
+  "emoji-sheet-Jumbo_5.proto": {
+    "digest": "uRrMeXEK3/Ogf2ffQryjrmmtyEJc55jx1+j48fmo7hCw90gLqgXxX77vqNFDqARb/VC7GHkqEkH+/K9+Pc1tFg==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_5.proto",
+    "size": 376186
+  },
+  "emoji-sheet-Jumbo_1.proto": {
+    "digest": "p07DvH7OFWy9W9oh0xSeRSyNUjqIYqW0BtpIiqDcZ9G5Fy/Fb/HoxA0DDtEqJ7rZNaNrIs4S/QRcDCW2WHJZ1g==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_1.proto",
+    "size": 514152
+  },
+  "emoji-sheet-Jumbo_21.proto": {
+    "digest": "QTlRzNYKfCTBNL/UJ8fhsM05MYYdiqHFQlqvqL9x6mFG6GjNN4+azB3F40aolS/KRnb1LlekKrlyvBPqfScXpg==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_21.proto",
+    "size": 585992
+  },
+  "emoji-sheet-Jumbo_43.proto": {
+    "digest": "WXFVJhDnL2ssqpo5NtxASxxaxsBwaPsdV+U9068FrcDF40pv5ab4baDRtySBZHZgpMkllxN0bm6uctxmuWGsQw==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_43.proto",
+    "size": 480266
+  },
+  "emoji-sheet-Jumbo_25.proto": {
+    "digest": "HZISigZ+f6fenFiCmUKqdkl7a2QXd5yzMhYXZ6s6oz7et38ob+szyyxNOVSaTtD5yZ2M5NDXzMJ7RDeFg47wEw==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_25.proto",
+    "size": 536374
+  },
+  "emoji-sheet-Jumbo_19.proto": {
+    "digest": "r/KNu2ThNCJhi1DT0KyZXdgNV+i4JpkP6Wk1BMgmpMErU6T7JLoVD0zNrKYJa49S2wSLOc5PeBbV+uQOSulPEQ==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_19.proto",
+    "size": 432088
+  },
+  "emoji-sheet-Jumbo_27.proto": {
+    "digest": "DtolTluTtHyrHQs26e/oeJ9Oe9/sbM7uaAhIaHJFay4DANnPS03eTQsa6hjUumIR9RIeOzRRK0v63oCJrBm58g==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_27.proto",
+    "size": 625004
+  },
+  "emoji-sheet-Jumbo_42.proto": {
+    "digest": "mQAuUnKeKbsRufPVD7oChpgRst+snCzxhgAa9M1gAKAcZMlf4rXApD/+ErXhItcqVQPMq1St5e3Ts6ZdQ9qj4A==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_42.proto",
+    "size": 485068
+  },
+  "emoji-sheet-Jumbo_50.proto": {
+    "digest": "AuWqeLiV7O99zIpSZ9kRWOP0qZMRavRswP4XvIE5lHvyuwc/L+rF24EZIgIc55K6oS/eX97egpmfa3SoMOr9Jw==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_50.proto",
+    "size": 549000
+  },
+  "emoji-sheet-Jumbo_14.proto": {
+    "digest": "ozIoDXUkOF/q1n05j8YZ9G8okAS+yb1ce6dcHhvp8ka1eH2AmvCFyyumndaxQvDEOQi5OXsvzro8uz/Lqrqq0g==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_14.proto",
+    "size": 564098
+  },
+  "emoji-sheet-Jumbo_48.proto": {
+    "digest": "w9BOCmOs8dwJYE4FlphBX+fdsQYeFwssu3HXOY8szjdr4x6E1ydkTlNx9WWWXhWHfUvmX1+Fyv8dEboIQiLqvw==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_48.proto",
+    "size": 451100
+  },
+  "emoji-sheet-Jumbo_12.proto": {
+    "digest": "RksNgfn+n08qeXDd017iMKhZ0l7kjSdZB2FP3zFzhC//eNboRvkFs3H/Y/lw7X7GclBflUiigzrR87LkNQXXlQ==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_12.proto",
+    "size": 496036
+  },
+  "emoji-sheet-Jumbo_45.proto": {
+    "digest": "aWnE6zbditpt6Yw8kw0ZmgBnlgrnFbwzKHln3x9MespLcVIgyZIsL/X6pMSJWQrrZGYsWm3+WZ7pcByeb6aOmQ==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_45.proto",
+    "size": 542082
+  },
+  "emoji-sheet-Jumbo_40.proto": {
+    "digest": "1iI9dHcyWOUoyBa6/RIcMU1Y46fvsZYMeA8eGcqw73+ISosejzHV7OQFhLVPuiFkXjjZeLMNRAxu3b0TAVYzlg==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_40.proto",
+    "size": 527610
+  },
+  "emoji-sheet-Jumbo_22.proto": {
+    "digest": "iOvmMEpPvPD2xKqBJJ6B2p8jGTbTNmlHm9XESBlLxhf10vuPiko2kwxuVPy4nrSEny/97UigmvQueVigMGUxgg==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_22.proto",
+    "size": 676876
+  },
+  "emoji-sheet-Jumbo_32.proto": {
+    "digest": "yP4obD18ZoLFH72mNxYcuJDRo9Wh8svMtdNom+tqOgMZha432S6SoEgPqcWZVH59LsgCVA5JncWZi7/2E2HIWQ==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_32.proto",
+    "size": 667416
+  },
+  "emoji-sheet-Jumbo_39.proto": {
+    "digest": "BEYUc7WdLsW0eRDeiPBojtNd9473pesOXnvTCPATfgZe2YMQyTErIOyEv4S6tO27CB0uMjSzUix5ry78nmi7iA==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_39.proto",
+    "size": 679424
+  },
+  "emoji-sheet-Jumbo_29.proto": {
+    "digest": "yo6xDGXX7rYlqgqZzh/Q1icAnBsJMkpM9Zm0D/ZivTfXAC7WylYbdPXWftxACdn6++On+xpAprAZSCmuLkoxag==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_29.proto",
+    "size": 705398
+  },
+  "emoji-sheet-Jumbo_26.proto": {
+    "digest": "f3pTLwukjgOridJ0NYNVGmIGKgY3OICJ9tqw3rZlTdJefi90Mg33vhPjtRwjkk1yIyEhbXEZtJXTeC2EQzN++A==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_26.proto",
+    "size": 653014
+  },
+  "emoji-sheet-Jumbo_28.proto": {
+    "digest": "rO3aFeRllZbo4CHQbDwQQLm2RvExLH+cJwwQhSY+gF/AevgC97DvVuz3AtFEjodcOZSGq+UPagu8Rm6wndjR5w==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_28.proto",
+    "size": 703316
+  },
+  "emoji-sheet-Jumbo_30.proto": {
+    "digest": "mYjbCo6ac1/Gx+a8lErVf3L96PJKMgls0OMlR/oCQtiS2GDFvQ1DvCkN73Fn9pWbt1H2GSDr2lS7H3q+S+717w==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_30.proto",
+    "size": 889636
+  },
+  "emoji-sheet-Jumbo_33.proto": {
+    "digest": "GtBqTrWzUgiMbGgS72zwJbalbqnwFEQnzV6D8aEbrkeS9LoZYOEaNlBl/VOmi4z9R8Qedu1YOH4hAsOIjruGqg==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_33.proto",
+    "size": 867226
+  },
+  "emoji-sheet-Jumbo_2.proto": {
+    "digest": "xNEe8a2csibXchGpeVjyK/MTx8qL8e2DUCdn/VOYJ+N/l9rrMxAmKQkLnmUlzHGY1xMKXjL6/f0gbVPkKykEaQ==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_2.proto",
+    "size": 482528
+  },
+  "emoji-sheet-Jumbo_31.proto": {
+    "digest": "JmEPBG0jrmQmfRdEkNHkRNCvrsBG5OtyHyjVo812eYqKMknjOcaCAixI5HatNZ4+UhtNtzwGa49xnGB+VYXQTA==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_31.proto",
+    "size": 735996
+  },
+  "emoji-sheet-Jumbo_23.proto": {
+    "digest": "BD3pe/UiTYk4A0J/Tk/ACLa983/kNOfamrIH7rdo8j1LJdTx24wzx2QWypMjM4bAqGTbp4YCLIQeIWNH8p8Nbw==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_23.proto",
+    "size": 517114
+  },
+  "emoji-sheet-Jumbo_36.proto": {
+    "digest": "sBfYljQ4ll6VRexPtBTzal/hvF9Uym8tKCqkC6OoX2NUZI7lItGBEptNDovkaYylk8Bla1z6UTOZN+eYd+qgaQ==",
+    "url": "https://updates2.signal.org/static/android/emoji/10/xhdpi/jumbo/Jumbo_36.proto",
+    "size": 508102
   }
 }

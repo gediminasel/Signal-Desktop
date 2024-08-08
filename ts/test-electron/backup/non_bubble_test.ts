@@ -9,15 +9,21 @@ import type { ConversationModel } from '../../models/conversations';
 import { getRandomBytes } from '../../Crypto';
 import * as Bytes from '../../Bytes';
 import { SignalService as Proto, Backups } from '../../protobuf';
-import Data from '../../sql/Client';
+import { DataWriter } from '../../sql/Client';
 import { generateAci } from '../../types/ServiceId';
 import { PaymentEventKind } from '../../types/Payment';
 import { ContactFormType } from '../../types/EmbeddedContact';
+import { MessageRequestResponseEvent } from '../../types/MessageRequestResponseEvent';
 import { DurationInSeconds } from '../../util/durations';
 import { ReadStatus } from '../../messages/MessageReadStatus';
 import { SeenStatus } from '../../MessageSeenStatus';
 import { loadCallsHistory } from '../../services/callHistoryLoader';
-import { setupBasics, symmetricRoundtripHarness, OUR_ACI } from './helpers';
+import {
+  setupBasics,
+  asymmetricRoundtripHarness,
+  symmetricRoundtripHarness,
+  OUR_ACI,
+} from './helpers';
 
 const CONTACT_A = generateAci();
 const GROUP_ID = Bytes.toBase64(getRandomBytes(32));
@@ -27,8 +33,8 @@ describe('backup/non-bubble messages', () => {
   let group: ConversationModel;
 
   beforeEach(async () => {
-    await Data._removeAllMessages();
-    await Data._removeAllConversations();
+    await DataWriter._removeAllMessages();
+    await DataWriter._removeAllConversations();
     window.storage.reset();
 
     await setupBasics();
@@ -66,6 +72,7 @@ describe('backup/non-bubble messages', () => {
         sourceDevice: 1,
         readStatus: ReadStatus.Unread,
         seenStatus: SeenStatus.Unseen,
+        unidentifiedDeliveryReceived: true,
         flags: Proto.DataMessage.Flags.END_SESSION,
       },
     ]);
@@ -204,6 +211,7 @@ describe('backup/non-bubble messages', () => {
         timestamp: 1,
         readStatus: ReadStatus.Unread,
         seenStatus: SeenStatus.Unseen,
+        unidentifiedDeliveryReceived: true,
       },
     ]);
   });
@@ -224,12 +232,12 @@ describe('backup/non-bubble messages', () => {
         timestamp: 1,
         readStatus: ReadStatus.Unread,
         seenStatus: SeenStatus.Unseen,
+        unidentifiedDeliveryReceived: true,
       },
     ]);
   });
 
-  // TODO: DESKTOP-7122
-  it.skip('roundtrips bare payments notification', async () => {
+  it('roundtrips bare payments notification', async () => {
     await symmetricRoundtripHarness([
       {
         conversationId: contactA.id,
@@ -243,6 +251,7 @@ describe('backup/non-bubble messages', () => {
         sourceDevice: 1,
         readStatus: ReadStatus.Unread,
         seenStatus: SeenStatus.Unseen,
+        unidentifiedDeliveryReceived: true,
         payment: {
           kind: PaymentEventKind.Notification,
           note: 'note with text',
@@ -251,8 +260,7 @@ describe('backup/non-bubble messages', () => {
     ]);
   });
 
-  // TODO: DESKTOP-7122
-  it.skip('roundtrips full payments notification', async () => {
+  it('roundtrips full payments notification', async () => {
     await symmetricRoundtripHarness([
       {
         conversationId: contactA.id,
@@ -266,6 +274,7 @@ describe('backup/non-bubble messages', () => {
         sourceDevice: 1,
         readStatus: ReadStatus.Unread,
         seenStatus: SeenStatus.Unseen,
+        unidentifiedDeliveryReceived: true,
         payment: {
           kind: PaymentEventKind.Notification,
           note: 'note with text',
@@ -297,6 +306,7 @@ describe('backup/non-bubble messages', () => {
         sourceDevice: 1,
         readStatus: ReadStatus.Unread,
         seenStatus: SeenStatus.Unseen,
+        unidentifiedDeliveryReceived: true,
         contact: [
           {
             name: {
@@ -339,6 +349,7 @@ describe('backup/non-bubble messages', () => {
         sourceDevice: 1,
         readStatus: ReadStatus.Unread,
         seenStatus: SeenStatus.Unseen,
+        unidentifiedDeliveryReceived: true,
         // TODO (DESKTOP-6845): properly handle data FilePointer
         sticker: {
           emoji: '👍',
@@ -373,6 +384,7 @@ describe('backup/non-bubble messages', () => {
         sourceDevice: 1,
         readStatus: ReadStatus.Unread,
         seenStatus: SeenStatus.Unseen,
+        unidentifiedDeliveryReceived: true,
         isErased: true,
       },
     ]);
@@ -475,8 +487,7 @@ describe('backup/non-bubble messages', () => {
     ]);
   });
 
-  // TODO: DESKTOP-7122
-  it.skip('roundtrips unsupported message', async () => {
+  it('roundtrips unsupported message', async () => {
     await symmetricRoundtripHarness([
       {
         conversationId: contactA.id,
@@ -490,8 +501,61 @@ describe('backup/non-bubble messages', () => {
         timestamp: 1,
         readStatus: ReadStatus.Unread,
         seenStatus: SeenStatus.Unseen,
-        supportedVersionAtReceive: 1,
-        requiredProtocolVersion: 2,
+        unidentifiedDeliveryReceived: true,
+        supportedVersionAtReceive: 5,
+        requiredProtocolVersion: 6,
+      },
+    ]);
+  });
+
+  it('creates a tombstone for gv1 update in gv2 group', async () => {
+    await asymmetricRoundtripHarness(
+      [
+        {
+          conversationId: group.id,
+          id: generateGuid(),
+          type: 'incoming',
+          received_at: 1,
+          received_at_ms: 1,
+          sourceServiceId: CONTACT_A,
+          sourceDevice: 1,
+          sent_at: 1,
+          timestamp: 1,
+          readStatus: ReadStatus.Unread,
+          seenStatus: SeenStatus.Unseen,
+          group_update: {},
+        },
+      ],
+      [
+        {
+          conversationId: group.id,
+          id: 'does not matter',
+          type: 'group-v2-change',
+          groupV2Change: {
+            details: [{ type: 'summary' }],
+            from: CONTACT_A,
+          },
+          received_at: 1,
+          sent_at: 1,
+          sourceServiceId: CONTACT_A,
+          timestamp: 1,
+        },
+      ]
+    );
+  });
+
+  it('roundtrips spam report message', async () => {
+    await symmetricRoundtripHarness([
+      {
+        conversationId: contactA.id,
+        id: generateGuid(),
+        type: 'message-request-response-event',
+        received_at: 1,
+        sourceServiceId: CONTACT_A,
+        sourceDevice: 1,
+        sent_at: 1,
+        timestamp: 1,
+        messageRequestResponseEvent: MessageRequestResponseEvent.SPAM,
       },
     ]);
   });

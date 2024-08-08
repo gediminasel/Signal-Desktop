@@ -80,6 +80,18 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "Tietokantasi versio ei vastaa tätä Signal-versiota. Varmista, että avaat Signalin uusimman version tietokoneellasi."
   },
+  "icu:databaseError__recover__detail": {
+    "messageformat": "Tapahtui tietokantavirhe. Voit kopioida virheen tiedot ja ottaa yhteyttä Signal-tukeen ongelman korjaamiseksi. Jos sinun on käytettävä Signalia heti, voit yrittää tietojen palauttamista.\n\nOta yhteyttä tukeen osoitteessa: {link}"
+  },
+  "icu:databaseError__recover__button": {
+    "messageformat": "Palauta tiedot"
+  },
+  "icu:databaseError__safeStorageBackendChange": {
+    "messageformat": "Tietokannan salausavainta ei voida käyttää, koska käyttöjärjestelmän salausavainnippu on muuttunut arvosta {previousBackend} arvoon {currentBackend}. Tämä voi tapahtua, jos työpöytäympäristö muuttuu, esimerkiksi GNOME:n ja KDE:n välillä.\n\nVaihda edelliseen työpöytäympäristöön."
+  },
+  "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
+    "messageformat": "Tietokannan salausavainta ei voida käyttää, koska käyttöjärjestelmän salausavainnippu on muuttunut arvosta {previousBackend} arvoon {currentBackend}. Tämä voi tapahtua, jos työpöytäympäristö muuttuu, esimerkiksi GNOME:n ja KDE:n välillä.\n\nVaihda edelliseen työpöytäympäristöön tai yritä suorittaa Signal komentorivilipulla --password-store=\"{previousBackendFlag}\""
+  },
   "icu:mainMenuFile": {
     "messageformat": "&Tiedosto"
   },
@@ -818,8 +830,14 @@
   "icu:cannotUpdateDetail": {
     "messageformat": "Päivitys ei onnistunut. {retry} tai asenna päivitys käsin osoitteesta {url}. Sitten {support} ongelmasta."
   },
+  "icu:cannotUpdateDetail-v2": {
+    "messageformat": "Signalin päivitys ei onnistunut. <retryUpdateButton>Yritä päivittää uudelleen</retryUpdateButton> tai käy osoitteessa {url} ja suorita asennus manuaalisesti. <contactSupportLink>Ota sitten yhteyttä tukeen</contactSupportLink> ongelmaan liittyen"
+  },
   "icu:cannotUpdateRequireManualDetail": {
     "messageformat": "Päivitys ei onnistunut. Asenna päivitys käsin osoitteesta {url}. Sitten {support} ongelmasta."
+  },
+  "icu:cannotUpdateRequireManualDetail-v2": {
+    "messageformat": "Signalin päivitys ei onnistunut. Asenna päivitys käsin osoitteesta {url}. <contactSupportLink>Ota sitten yhteyttä tukeen</contactSupportLink> ongelmaan liittyen"
   },
   "icu:readOnlyVolume": {
     "messageformat": "Signal Desktop on todennäköisesti macOS-karanteenissa, eikä sitä voi päivittää automaattisesti. Yritä siirtää  {app} -sovellus  {folder} -kansioon Finderin avulla."
@@ -989,6 +1007,9 @@
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
     "messageformat": "Tämän keskustelun viestit poistetaan tästä laitteesta. Voit edelleen etsiä tätä keskustelua viestien poistamisen jälkeen."
   },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
+    "messageformat": "Kaikki tämän keskustelun viestit poistetaan kaikista laitteistasi. Voit edelleen etsiä tätä keskustelua viestien poistamisen jälkeen."
+  },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Poistu ryhmästä"
   },
@@ -1110,10 +1131,22 @@
     "messageformat": "Asetukset"
   },
   "icu:Install__instructions__3": {
-    "messageformat": "Napauta {plusButton} (Android) tai {linkNewDevice} (iPhone)"
+    "messageformat": "Napauta {linkNewDevice}"
   },
-  "icu:Install__qr-failed-load": {
-    "messageformat": "QR-koodin lataaminen epäonnistui. Tarkista internetyhteys ja yritä uudelleen. <retry>Yritä uudelleen</retry>"
+  "icu:Install__qr-failed-load__error--timeout": {
+    "messageformat": "QR-koodin lataaminen epäonnistui. Tarkista yhteytesi ja yritä uudelleen."
+  },
+  "icu:Install__qr-failed-load__error--unknown": {
+    "messageformat": "<paragraph>Tapahtui odottamaton virhe.</paragraph><paragraph>Yritä uudelleen.</paragraph>"
+  },
+  "icu:Install__qr-failed-load__error--network": {
+    "messageformat": "Signal ei voi yhdistää tätä laitetta nykyisessä verkossasi."
+  },
+  "icu:Install__qr-failed-load__retry": {
+    "messageformat": "Yritä uudelleen"
+  },
+  "icu:Install__qr-failed-load__get-help": {
+    "messageformat": "Pyydä apua"
   },
   "icu:Install__support-link": {
     "messageformat": "Tarvitsetko apua?"
@@ -1286,8 +1319,35 @@
   "icu:CallingPendingParticipants__DenyUser": {
     "messageformat": "Hylkää liittymispyyntö"
   },
+  "icu:CallingPendingParticipants__ApproveAll": {
+    "messageformat": "Hyväksy kaikki"
+  },
+  "icu:CallingPendingParticipants__DenyAll": {
+    "messageformat": "Hylkää kaikki"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--ApproveAll": {
+    "messageformat": "{count, plural, one {Hyväksytäänkö {count,number} pyyntö?} other {Hyväksytäänkö {count,number} pyyntöä?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--DenyAll": {
+    "messageformat": "{count, plural, one {Hylätäänkö {count,number} pyyntö?} other {Hylätäänkö {count,number} pyyntöä?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--ApproveAll": {
+    "messageformat": "{count, plural, one {{count,number} henkilö lisätään puheluun.} other {{count,number} henkilöä lisätään puheluun.}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--DenyAll": {
+    "messageformat": "{count, plural, one {{count,number} henkilöä ei lisätä puheluun.} other {{count,number} henkilöä ei lisätä puheluun.}}"
+  },
   "icu:CallingPendingParticipants__RequestsToJoin": {
     "messageformat": "{count, plural, one {{count,number} pyyntö liittyä puheluun} other {{count,number} pyyntöä liittyä puheluun}}"
+  },
+  "icu:CallingPendingParticipants__WouldLikeToJoin": {
+    "messageformat": "Haluaa liittyä..."
+  },
+  "icu:CallingPendingParticipants__AdditionalRequests": {
+    "messageformat": "{count, plural, one {+{count,number} pyyntö} other {+{count,number} pyyntöä}}"
+  },
+  "icu:CallingPendingParticipants__Toast--added-users-to-call": {
+    "messageformat": "{count, plural, one {{count,number} henkilö lisätty puheluun} other {{count,number} henkilöä lisätty puheluun}}"
   },
   "icu:CallingRaisedHandsList__Title": {
     "messageformat": "{count, plural, one {{count,number} kädennosto} other {{count,number} kädennostoa}}"
@@ -1352,8 +1412,14 @@
   "icu:calling__you-have-blocked": {
     "messageformat": "Olet estänyt käyttäjän {name}"
   },
+  "icu:calling__blocked-participant": {
+    "messageformat": "{name} on estetty"
+  },
+  "icu:calling__block-info-title": {
+    "messageformat": "{name} on estetty"
+  },
   "icu:calling__block-info": {
-    "messageformat": "Et voi enää käydä ääni- tai videoviestinvaihtoa estettyjen käyttäjien kanssa."
+    "messageformat": "Et voi enää käydä ääni- tai videoviestinvaihtoa tämän käyttäjän kanssa."
   },
   "icu:calling__missing-media-keys": {
     "messageformat": "Ääni- ja videoviestin vastaanottaminen käyttäjältä {name} epäonnistui"
@@ -2372,15 +2438,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "Keskustelu merkitty lukemattomaksi"
   },
-  "icu:AuthArtCreator--dialog--message": {
-    "messageformat": "Haluatko avata Signal-tarrapaketin luontityökalun?"
-  },
-  "icu:AuthArtCreator--dialog--confirm": {
-    "messageformat": "Vahvista"
-  },
-  "icu:AuthArtCreator--dialog--dismiss": {
-    "messageformat": "Hylkää"
-  },
   "icu:ArtCreator--Authentication--error": {
     "messageformat": "Asenna Signal puhelimeesi ja tietokoneelle, jotta voit käyttää tarrapakettityökalua"
   },
@@ -2577,10 +2634,10 @@
     "messageformat": "Hylkää"
   },
   "icu:declinedIncomingAudioCall": {
-    "messageformat": "Hylkäsit äänipuhelun"
+    "messageformat": "Hylätty äänipuhelu"
   },
   "icu:declinedIncomingVideoCall": {
-    "messageformat": "Hylkäsit videopuhelun"
+    "messageformat": "Hylätty videopuhelu"
   },
   "icu:acceptedIncomingAudioCall": {
     "messageformat": "Saapuva äänipuhelu"
@@ -2613,10 +2670,10 @@
     "messageformat": "Signal pysyy käynnissä ilmoitusalueella. Voit muuttaa tämän Signalin asetuksissa."
   },
   "icu:incomingAudioCall": {
-    "messageformat": "Saapuva äänipuhelu..."
+    "messageformat": "Saapuva äänipuhelu"
   },
   "icu:incomingVideoCall": {
-    "messageformat": "Saapuva videopuhelu…"
+    "messageformat": "Vastattu videopuhelu"
   },
   "icu:outgoingAudioCall": {
     "messageformat": "Lähtevä äänipuhelu"
@@ -2688,13 +2745,13 @@
     "messageformat": "Soittoääni pois päältä"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "You raised a hand."
+    "messageformat": "Nostit kätesi."
   },
   "icu:CallControls__RaiseHandsToast--you-and-one": {
-    "messageformat": "You and {otherName} raised a hand."
+    "messageformat": "Sinä ja {otherName} muu nostitte käden."
   },
   "icu:CallControls__RaiseHandsToast--you-and-more": {
-    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
+    "messageformat": "{overflowCount, plural, one {Sinä, {otherName} ja {overflowCount,number} muu nostivat kätensä.} other {Sinä, {otherName} ja {overflowCount,number} muuta nostivat kätensä.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} nosti kätensä."
@@ -2724,16 +2781,16 @@
     "messageformat": "{people, plural, one {puhelussa: {people,number}} other {puhelussa: {people,number}}}"
   },
   "icu:calling__call-notification__ended": {
-    "messageformat": "Ryhmäpuhelu on päättynyt"
+    "messageformat": "Videopuhelu on päättynyt"
   },
   "icu:calling__call-notification__started-by-someone": {
-    "messageformat": "Ryhmäpuhelu aloitettiin"
+    "messageformat": "Videopuhelu aloitettiin"
   },
   "icu:calling__call-notification__started-by-you": {
-    "messageformat": "Aloitit ryhmäpuhelun"
+    "messageformat": "Aloitit videopuhelun"
   },
   "icu:calling__call-notification__started": {
-    "messageformat": "{name} aloitti ryhmäpuhelun"
+    "messageformat": "{name} aloitti videopuhelun"
   },
   "icu:calling__in-another-call-tooltip": {
     "messageformat": "Olet jo puhelussa"
@@ -2780,26 +2837,41 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "Ikkuna"
   },
+  "icu:calling__ParticipantInfoButton": {
+    "messageformat": "Lisätietoja tästä yhteystiedosta"
+  },
   "icu:CallingAdhocCallInfo__CopyLink": {
     "messageformat": "Kopioi puhelulinkki"
+  },
+  "icu:CallingAdhocCallInfo__ShareViaSignal": {
+    "messageformat": "Jaa puhelulinkki Signalissa"
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "Poista tämä henkilö puhelusta"
   },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogBody": {
+    "messageformat": "Poistetaanko {name} puhelusta?"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--remove": {
+    "messageformat": "Poista"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--block": {
+    "messageformat": "Estä puhelusta"
+  },
   "icu:CallingAdhocCallInfo__UnknownContactLabel": {
-    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+    "messageformat": "{count, plural, one {{count,number} henkilöä} other {{count,number} henkilöä}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
-    "messageformat": "+{count,number} more"
+    "messageformat": "{count, plural, one {+{count,number} muu} other {+{count,number} muuta}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
-    "messageformat": "More info about new contacts"
+    "messageformat": "Lisätietoja uusista yhteystiedoista"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
-    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+    "messageformat": "Ennen puheluun liittymistä näet nimet vain ihmisistä, jotka ovat puhelimen yhteystiedoissa, kanssasi yhteisen ryhmän jäseniä, tai niistä, joiden kanssa olet keskustellut kahden. Näet kaikki nimet ja kuvat, kun olet liittynyt puheluun."
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
-    "messageformat": "Got it"
+    "messageformat": "Selvä"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -3512,6 +3584,9 @@
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Poista ryhmästä"
   },
+  "icu:ContactModal--already-in-call": {
+    "messageformat": "Olet jo puhelussa"
+  },
   "icu:showChatColorEditor": {
     "messageformat": "Keskustelun väri"
   },
@@ -3780,7 +3855,7 @@
     "messageformat": "{count, plural, one {Miltä laitteilta haluat poistaa tämän viestin?} other {Miltä laitteita haluat poistaa nämä viestit?}}"
   },
   "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
-    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+    "messageformat": "{count, plural, one {Tämä viesti poistetaan kaikista laitteistasi.} other {Nämä viestit poistetaan kaikista laitteistasi.}}"
   },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "Poista minulta"
@@ -3795,7 +3870,7 @@
     "messageformat": "Poista kaikilta laitteilta"
   },
   "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
-    "messageformat": "Delete"
+    "messageformat": "Poista"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {Voit valita enintään {count,number} viestin poistettavaksi kaikilta} other {Voit valita enintään {count,number} viestiä poistettavaksi kaikilta}}"
@@ -4196,11 +4271,11 @@
   "icu:ProfileEditor--username--check-starting-character": {
     "messageformat": "Käyttäjänimi ei voi alkaa numerolla."
   },
-  "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Usernames must have at least {min,number} characters."
+  "icu:ProfileEditor--username--check-character-min-plural": {
+    "messageformat": "{min, plural, one {Käyttäjänimessä on oltava vähintään {min,number} merkki.} other {Käyttäjänimessä on oltava vähintään {min,number} merkkiä.}}"
   },
-  "icu:ProfileEditor--username--check-character-max": {
-    "messageformat": "Käyttäjänimessä voi olla enintään {max,number} merkkiä."
+  "icu:ProfileEditor--username--check-character-max-plural": {
+    "messageformat": "{max, plural, one {Käyttäjänimessä voi olla enintään {max,number} merkki.} other {Käyttäjänimessä voi olla enintään {max,number} merkkiä.}}"
   },
   "icu:ProfileEditor--username--check-discriminator-min": {
     "messageformat": "Virheellinen käyttäjänimi, anna vähintään 2 numeroa."
@@ -4240,9 +4315,6 @@
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
     "messageformat": "Poista"
-  },
-  "icu:ProfileEditor--username--delete-unavailable-notice": {
-    "messageformat": "Poistaaksesi käyttäjätunnuksesi, avaa Signal puhelimessasi ja siirry kohtaan Asetukset > Profiili."
   },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "Kopioi tai poista käyttäjänimi"
@@ -4749,13 +4821,13 @@
     "messageformat": "Kontaktisi näkevät nimesi ja valokuvasi sekä Omaan tarinaan tekemäsi julkaisut, ellet piilota sitä heiltä"
   },
   "icu:LocalDeleteWarningModal__header": {
-    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+    "messageformat": "Poistaminen synkronoidaan kaikkien laitteidesi välillä"
   },
   "icu:LocalDeleteWarningModal__description": {
-    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+    "messageformat": "Kun poistat viestejä tai keskusteluja, ne poistetaan kaikista yhdistetyistä laitteistasi."
   },
   "icu:LocalDeleteWarningModal__confirm": {
-    "messageformat": "Got it"
+    "messageformat": "Selvä"
   },
   "icu:Stories__title": {
     "messageformat": "Tarinat"
@@ -5350,7 +5422,7 @@
     "messageformat": "Ei tuloksia haulle \"{query}\""
   },
   "icu:CallsList__CreateCallLink": {
-    "messageformat": "Create a Call Link"
+    "messageformat": "Luo puhelulinkki"
   },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "Saapuva"
@@ -5360,6 +5432,9 @@
   },
   "icu:CallsList__ItemCallInfo--Missed": {
     "messageformat": "Vastaamaton"
+  },
+  "icu:CallsList__ItemCallInfo--Declined": {
+    "messageformat": "Hylätty"
   },
   "icu:CallsList__ItemCallInfo--GroupCall": {
     "messageformat": "Ryhmäpuhelu"
@@ -5374,7 +5449,7 @@
     "messageformat": "Poistutaanko nykyisestä puhelusta?"
   },
   "icu:CallsList__LeaveCallDialogBody": {
-    "messageformat": "Sinun on poistuttava nykyisestä puhelusta ennen kuin voit liittyä uuteen puheluun."
+    "messageformat": "Sinun on poistuttava nykyisestä puhelusta ennen kuin voit aloittaa uuden puhelun tai liittyä uuteen puheluun."
   },
   "icu:CallsList__LeaveCallDialogButton--leave": {
     "messageformat": "Poistu puhelusta"
@@ -5406,8 +5481,29 @@
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Puhelulinkki"
   },
+  "icu:CallHistory__DescriptionVideoCall--Default": {
+    "messageformat": "{direction, select, Outgoing {Soitettu videopuhelu} other {Vastattu videopuhelu}}"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Missed": {
+    "messageformat": "Vastaamaton videopuhelu"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Unanswered": {
+    "messageformat": "Vastaamaton videopuhelu"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Declined": {
+    "messageformat": "Hylätty videopuhelu"
+  },
   "icu:CallLinkDetails__Join": {
     "messageformat": "Liity"
+  },
+  "icu:CallLinkDetails__AddCallNameLabel": {
+    "messageformat": "Lisää puhelun nimi"
+  },
+  "icu:CallLinkDetails__EditCallNameLabel": {
+    "messageformat": "Muokkaa puhelun nimeä"
+  },
+  "icu:CallLinkDetails__ApproveAllMembersLabel": {
+    "messageformat": "Kaikkien jäsenten hyväksyntä"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "Kopioi linkki"
@@ -5415,23 +5511,50 @@
   "icu:CallLinkDetails__ShareLinkViaSignal": {
     "messageformat": "Jaa linkki Signalissa"
   },
-  "icu:CallLinkEditModal__Title": {
-    "messageformat": "Call link details"
+  "icu:CallLinkDetails__DeleteLink": {
+    "messageformat": "Delete link"
   },
-  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
-    "messageformat": "Name"
+  "icu:CallLinkDetails__DeleteLinkModal__Title": {
+    "messageformat": "Delete call link?"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Body": {
+    "messageformat": "This link will no longer work for anyone who has it."
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
+    "messageformat": "Cancel"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Delete": {
+    "messageformat": "Delete"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Puhelulinkin tiedot"
   },
   "icu:CallLinkEditModal__JoinButtonLabel": {
-    "messageformat": "Join"
+    "messageformat": "Liity"
+  },
+  "icu:CallLinkEditModal__AddCallNameLabel": {
+    "messageformat": "Lisää puhelun nimi"
+  },
+  "icu:CallLinkEditModal__EditCallNameLabel": {
+    "messageformat": "Muokkaa puhelun nimeä"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Approve all members"
+    "messageformat": "Kaikkien jäsenten hyväksyntä"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
-    "messageformat": "Off"
+  "icu:CallLinkRestrictionsSelect__Option--Off": {
+    "messageformat": "Ei käytössä"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
-    "messageformat": "On"
+  "icu:CallLinkRestrictionsSelect__Option--On": {
+    "messageformat": "Käytössä"
+  },
+  "icu:CallLinkAddNameModal__Title": {
+    "messageformat": "Lisää puhelun nimi"
+  },
+  "icu:CallLinkAddNameModal__Title--Edit": {
+    "messageformat": "Muokkaa puhelun nimeä"
+  },
+  "icu:CallLinkAddNameModal__NameLabel": {
+    "messageformat": "Puhelun nimi"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} käyttäjä kirjoittaa.} other {{count,number} käyttäjää kirjoittaa.}}"
@@ -5473,19 +5596,19 @@
     "messageformat": "Pieniä säätöjä, virheenkorjauksia ja suorituskykyparannuksia. Kiitos, että käytät Signalia!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.12--0": {
-    "messageformat": "★ Uusi Nosta käsi -ominaisuus on helppo tapa kiinnittää jonkun huomio tai esittää kysymys ryhmäpuhelussa."
+  "icu:WhatsNew__v7.18--0": {
+    "messageformat": "Tämä päivitys nopeuttaa suurten viestiketjujen poistamista."
   },
-  "icu:WhatsNew__v7.12--1": {
-    "messageformat": "Päivitys sisältää myös parannetun rajaustyökalun kuvien koon muuttamiseen."
+  "icu:WhatsNew__v7.19--0": {
+    "messageformat": "Lisäsimme pikakuvakkeen, jolla voi poistua nykyisestä puhelusta ja liittyä uuteen puheluun."
   },
-  "icu:WhatsNew__v7.12--2": {
-    "messageformat": "Muokkasimme äänihuomautuksen lähettämisen pikanäppäimiksi Ctrl/Cmd+Shift+Y, jotta se ei enää ole ristiriidassa ”Liitä ja sovita tyyli” -pikanäppäimen kanssa Windowsissa ja Linuxissa."
+  "icu:WhatsNew__v7.19--1": {
+    "messageformat": "Tämä päivitys korjaa myös sovelluksen kaatumisen käynnistyksessä Linux-käyttäjillä, joiden maa-asetuksena on POSIX."
   },
-  "icu:WhatsNew__v7.13--0": {
-    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  "icu:WhatsNew__v7.20--0": {
+    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
   },
-  "icu:WhatsNew__v7.13--1": {
-    "messageformat": "This update also improves the display of quoted replies in RTL languages."
+  "icu:WhatsNew__v7.20--1": {
+    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
   }
 }

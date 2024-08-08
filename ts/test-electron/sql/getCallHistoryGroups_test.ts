@@ -4,22 +4,22 @@
 import { assert } from 'chai';
 import { v4 as generateUuid } from 'uuid';
 
-import dataInterface from '../../sql/Client';
+import { DataReader, DataWriter } from '../../sql/Client';
 
-import { CallMode } from '../../types/Calling';
+import {
+  CallMode,
+  AdhocCallStatus,
+  CallDirection,
+  CallHistoryFilterStatus,
+  CallType,
+  DirectCallStatus,
+} from '../../types/CallDisposition';
 import { generateAci } from '../../types/ServiceId';
 import type { ServiceIdString } from '../../types/ServiceId';
 import type {
   CallHistoryDetails,
   CallHistoryGroup,
   CallStatus,
-} from '../../types/CallDisposition';
-import {
-  AdhocCallStatus,
-  CallDirection,
-  CallHistoryFilterStatus,
-  CallType,
-  DirectCallStatus,
 } from '../../types/CallDisposition';
 import { strictAssert } from '../../util/assert';
 import type { ConversationAttributesType } from '../../model-types';
@@ -28,14 +28,9 @@ import {
   FAKE_CALL_LINK_WITH_ADMIN_KEY,
 } from '../../test-both/helpers/fakeCallLink';
 
-const {
-  removeAll,
-  getCallHistoryGroups,
-  getCallHistoryGroupsCount,
-  insertCallLink,
-  saveCallHistory,
-  saveConversation,
-} = dataInterface;
+const { getCallHistoryGroups, getCallHistoryGroupsCount } = DataReader;
+const { removeAll, insertCallLink, saveCallHistory, saveConversation } =
+  DataWriter;
 
 function toGroup(calls: Array<CallHistoryDetails>): CallHistoryGroup {
   const firstCall = calls.at(0);

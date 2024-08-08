@@ -558,7 +558,7 @@ export function SendStoryModal({
                   >
                     <Avatar
                       acceptedMessageRequest={group.acceptedMessageRequest}
-                      avatarPath={group.avatarPath}
+                      avatarUrl={group.avatarUrl}
                       badge={undefined}
                       color={group.color}
                       conversationType={group.type}
@@ -708,7 +708,7 @@ export function SendStoryModal({
                 {list.id === MY_STORY_ID ? (
                   <Avatar
                     acceptedMessageRequest={me.acceptedMessageRequest}
-                    avatarPath={me.avatarPath}
+                    avatarUrl={me.avatarUrl}
                     badge={undefined}
                     color={me.color}
                     conversationType={me.type}
@@ -823,7 +823,7 @@ export function SendStoryModal({
               >
                 <Avatar
                   acceptedMessageRequest={group.acceptedMessageRequest}
-                  avatarPath={group.avatarPath}
+                  avatarUrl={group.avatarUrl}
                   badge={undefined}
                   color={group.color}
                   conversationType={group.type}
@@ -919,14 +919,14 @@ export function SendStoryModal({
               }}
               theme={theme === ThemeType.dark ? Theme.Dark : Theme.Light}
             >
-              {({ openMenu, onKeyDown, ref, menuNode }) => (
+              {({ onClick, onKeyDown, ref, menuNode }) => (
                 <div>
                   <Button
                     ref={ref}
                     className="SendStoryModal__new-story__button"
                     variant={ButtonVariant.Secondary}
                     size={ButtonSize.Small}
-                    onClick={openMenu}
+                    onClick={onClick}
                     onKeyDown={onKeyDown}
                   >
                     {i18n('icu:SendStoryModal__new')}

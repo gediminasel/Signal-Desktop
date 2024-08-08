@@ -20,6 +20,7 @@ import { ButtonVariant } from './Button';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import { SignalConnectionsModal } from './SignalConnectionsModal';
 import { WhatsNewModal } from './WhatsNewModal';
+import type { StartCallData } from './ConfirmLeaveCallModal';
 
 // NOTE: All types should be required for this component so that the smart
 // component gives you type errors when adding/removing props.
@@ -29,9 +30,15 @@ export type PropsType = {
   // AddUserToAnotherGroupModal
   addUserToAnotherGroupModalContactId: string | undefined;
   renderAddUserToAnotherGroup: () => JSX.Element;
+  // CallLinkAddNameModal
+  callLinkAddNameModalRoomId: string | null;
+  renderCallLinkAddNameModal: () => JSX.Element;
   // CallLinkEditModal
   callLinkEditModalRoomId: string | null;
   renderCallLinkEditModal: () => JSX.Element;
+  // ConfirmLeaveCallModal
+  confirmLeaveCallModalState: StartCallData | null;
+  renderConfirmLeaveCallModal: () => JSX.Element;
   // ContactModal
   contactModalState: ContactModalStateType | undefined;
   renderContactModal: () => JSX.Element;
@@ -105,9 +112,15 @@ export function GlobalModalContainer({
   // AddUserToAnotherGroupModal
   addUserToAnotherGroupModalContactId,
   renderAddUserToAnotherGroup,
+  // CallLinkAddNameModal
+  callLinkAddNameModalRoomId,
+  renderCallLinkAddNameModal,
   // CallLinkEditModal
   callLinkEditModalRoomId,
   renderCallLinkEditModal,
+  // ConfirmLeaveCallModal
+  confirmLeaveCallModalState,
+  renderConfirmLeaveCallModal,
   // ContactModal
   contactModalState,
   renderContactModal,
@@ -190,8 +203,16 @@ export function GlobalModalContainer({
 
   // The Rest
 
+  if (confirmLeaveCallModalState) {
+    return renderConfirmLeaveCallModal();
+  }
+
   if (addUserToAnotherGroupModalContactId) {
     return renderAddUserToAnotherGroup();
+  }
+
+  if (callLinkAddNameModalRoomId) {
+    return renderCallLinkAddNameModal();
   }
 
   if (callLinkEditModalRoomId) {

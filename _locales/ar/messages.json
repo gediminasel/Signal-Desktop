@@ -80,6 +80,18 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "لا يتطابق إصدار قاعدة بياناتك مع إصدار سيجنال هذا. تأكد من فتح أحدث إصدار لِسيجنال على حاسوبك."
   },
+  "icu:databaseError__recover__detail": {
+    "messageformat": "حدث خطأ في قاعدة البيانات. يُمكنك نسخ الخطأ والاتصال بدعم سيجنال لمُساعدتك على حل المشكلة. إذا كنت في حاجة إلى استخدام سيجنال في الحين، يُمكنك محاولة استرداد بياناتك.\n\nاتصل بالدعم عبر زيارة: {link}"
+  },
+  "icu:databaseError__recover__button": {
+    "messageformat": "استرداد البيانات"
+  },
+  "icu:databaseError__safeStorageBackendChange": {
+    "messageformat": "تعذّر الوصول إلى مفتاح تشفير قاعدة البيانات لأن الواجهة الخلفية لحلقة مفاتيح تشفير نظام التشغيل تغيّرت من {previousBackend} إلى {currentBackend}. يُمكن أن يَحدث هذا إذا تغيّرت بيئة سطح المكتب، مثلا بين GNOME وKDE.\n\nيُرجى الرجوع إلى بيئة سطح المكتب السابقة."
+  },
+  "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
+    "messageformat": "تعذّر الوصول إلى مفتاح تشفير قاعدة البيانات لأن الواجهة الخلفية لِحلقة مفاتيح تشفير نظام التشغيل تغيّرت من {previousBackend} إلى {currentBackend}. يُمكن أن يَحدث هذا إذا تغيّرت بيئة سطح المكتب، مثلاً بين GNOME وKDE.\n\nيُرجى الرجوع إلى بيئة سطح المكتب أو حاول تشغيل سيجنال باستخدام علامة سطر الأوامر --password-store=\"{previousBackendFlag}\""
+  },
   "icu:mainMenuFile": {
     "messageformat": "&ملف"
   },
@@ -818,8 +830,14 @@
   "icu:cannotUpdateDetail": {
     "messageformat": "‫لقد تعذر تحديث سيجنال. {retry}‏ أو يكفي زيارة {url}‏ لتثبيته يدويا. بعدها، {support}‏ حول هذا المشكل"
   },
+  "icu:cannotUpdateDetail-v2": {
+    "messageformat": "تعذّر تحديث سيجنال. <retryUpdateButton>جرّب التحديث من جديد</retryUpdateButton> أو زُر {url} لتثبيته يدويًا. ثم <contactSupportLink>اتصل بالدعم</contactSupportLink> حول هذه المشكلة"
+  },
   "icu:cannotUpdateRequireManualDetail": {
     "messageformat": "لقد تعذر تحديث سيجنال. يُرجى زيارة {url} لتثبيته يدويا. ثم {support} حول هذه المشكلة"
+  },
+  "icu:cannotUpdateRequireManualDetail-v2": {
+    "messageformat": "تعذّر تحديث سيجنال. زُر {url} لتثبيته يدويًا. ثم <contactSupportLink>اتصل بالدعم</contactSupportLink> حول هذه المشكلة"
   },
   "icu:readOnlyVolume": {
     "messageformat": "من المحتمل أن يكون سيجنال Desktop في وحدة عزل نظام اشتغال ماك، لذا لن يكون قادرا على التحديث التلقائي. يُرجى محاولة نقل {app} إلى {folder} باستخدام برنامج « فايندر » (مدير الملفات)."
@@ -989,6 +1007,9 @@
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
     "messageformat": "ستُحذَف رسائل هذه المحادثة من هذا الجهاز. يُمكنك البحث عن هذه الدردشة حتى بعد حذف الرسائل."
   },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
+    "messageformat": "ستُحذَف جميع رسائل هذه المُحادثة من جميع أجهزتك. يُمكنك البحث عن هذه الدردشة حتى بعد حذف الرسائل."
+  },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "مغادرة المجموعة"
   },
@@ -1092,7 +1113,7 @@
     "messageformat": "الأجهزة المرتبطة"
   },
   "icu:linkNewDevice": {
-    "messageformat": "ربط جهاز جديد"
+    "messageformat": "يُرجى ربط جهاز جديد"
   },
   "icu:Install__learn-more": {
     "messageformat": "لمعرفة المزيد"
@@ -1110,10 +1131,22 @@
     "messageformat": "الإعدادات"
   },
   "icu:Install__instructions__3": {
-    "messageformat": "‫يُرجى لمس {plusButton} (أندرويد) أو {linkNewDevice} (آيفون)"
+    "messageformat": "انقر {linkNewDevice}"
   },
-  "icu:Install__qr-failed-load": {
-    "messageformat": "لقد تعذر تحميل رمز الاستجابة السريعة. يُرجى التحقق من اتصالك بالأنترنت ثم المحاولة مرة أخرى. <retry>إعادة المُحاولة</retry>"
+  "icu:Install__qr-failed-load__error--timeout": {
+    "messageformat": "لقد تعذر تحميل رمز الاستجابة السريعة. تحقّق من اتصالك بالشبكة ثم حاول مُجددًا."
+  },
+  "icu:Install__qr-failed-load__error--unknown": {
+    "messageformat": "<paragraph>‫لقد حدث خطأ غير متوقع.</paragraph><paragraph>يُرجى إعادة المحاولة لاحقا.</paragraph>"
+  },
+  "icu:Install__qr-failed-load__error--network": {
+    "messageformat": "لا يُمكن لسيجنال ربط هذا الحساب باستخدام شبكتك الحالية."
+  },
+  "icu:Install__qr-failed-load__retry": {
+    "messageformat": "إعادة المُحاولة"
+  },
+  "icu:Install__qr-failed-load__get-help": {
+    "messageformat": "احصل على المساعدة"
   },
   "icu:Install__support-link": {
     "messageformat": "بحاجة إلى مساعدة ؟"
@@ -1286,8 +1319,35 @@
   "icu:CallingPendingParticipants__DenyUser": {
     "messageformat": "رفض طلب الانضمام"
   },
+  "icu:CallingPendingParticipants__ApproveAll": {
+    "messageformat": "موافقة على الكل"
+  },
+  "icu:CallingPendingParticipants__DenyAll": {
+    "messageformat": "رفض الكل"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--ApproveAll": {
+    "messageformat": "{count, plural, zero {الموافقة على {count,number} طلب؟} one {الموافقة على {count,number} طلب؟} two {الموافقة على {count,number} طلبين؟} few {الموافقة على {count,number} طلبات؟} many {الموافقة على {count,number} طلبًا؟} other {الموافقة على {count,number} طلب؟}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--DenyAll": {
+    "messageformat": "{count, plural, zero {رفض {count,number} طلب؟} one {رفض {count,number} طلب؟} two {رفض {count,number} طلبين؟} few {رفض {count,number} طلبات؟} many {رفض {count,number} طلبًا؟} other {رفض {count,number} طلب؟}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--ApproveAll": {
+    "messageformat": "{count, plural, zero {سيُضاف {count,number} شخص إلى المكالمة.} one {سيُضاف {count,number} شخص إلى المكالمة.} two {سيُضاف {count,number} شخصين إلى المكالمة.} few {سيُضاف {count,number} أشخاص إلى المكالمة.} many {سيُضاف {count,number} شخصًا إلى المكالمة.} other {سيُضاف {count,number} شخص إلى المكالمة.}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--DenyAll": {
+    "messageformat": "{count, plural, zero {لن يتم إضافة {count,number} شخص إلى المكالمة.} one {لن يتم إضافة {count,number} شخص إلى المكالمة.} two {لن يتم إضافة {count,number} شخصين إلى المكالمة.} few {لن يتم إضافة {count,number} أشخاص إلى المكالمة.} many {لن يتم إضافة {count,number} شخصًا إلى المكالمة.} other {لن يتم إضافة {count,number} شخص إلى المكالمة.}}"
+  },
   "icu:CallingPendingParticipants__RequestsToJoin": {
     "messageformat": "{count, plural, zero {{count,number} يطلب الانضمام إلى المكالمة} one {{count,number} يطلب الانضمام إلى المكالمة} two {{count,number} يطلبان الانضمام إلى المكالمة} few {{count,number} يطلبون الانضمام إلى المكالمة} many {{count,number} يطلبون الانضمام إلى المكالمة} other {{count,number} يطلبون الانضمام إلى المكالمة}}"
+  },
+  "icu:CallingPendingParticipants__WouldLikeToJoin": {
+    "messageformat": "يرغب في الانضمام…"
+  },
+  "icu:CallingPendingParticipants__AdditionalRequests": {
+    "messageformat": "{count, plural, zero {+ {count,number} طلب} one {+{count,number} طلب} two {+{count,number} طلبين} few {+{count,number} طلبات} many {+{count,number} طلبًا} other {+{count,number} طلب}}"
+  },
+  "icu:CallingPendingParticipants__Toast--added-users-to-call": {
+    "messageformat": "{count, plural, zero {أُضيف {count,number} أشخاص إلى المكالمة} one {أُضيف {count,number} شخص إلى المكالمة} two {أُضيف {count,number} شخصين إلى المكالمة} few {أُضيف {count,number} أشخاص إلى المكالمة} many {أُضيف {count,number} شخصًا إلى المكالمة} other {أُضيف {count,number} شخص إلى المكالمة}}"
   },
   "icu:CallingRaisedHandsList__Title": {
     "messageformat": "{count, plural, zero {{count,number} رفعوا أيديهم} one {{count,number} رفع يده} two {{count,number} رفعا يديهما} few {{count,number} رفعوا أيديهم} many {{count,number} رفعوا أيديهم} other {{count,number} رفعوا أيديهم}}"
@@ -1352,8 +1412,14 @@
   "icu:calling__you-have-blocked": {
     "messageformat": "لقد حظرت {name}"
   },
+  "icu:calling__blocked-participant": {
+    "messageformat": "تم حَظر {name}"
+  },
+  "icu:calling__block-info-title": {
+    "messageformat": "تم حَظر {name}"
+  },
   "icu:calling__block-info": {
-    "messageformat": "كلاكما لن يتلقّى مكالمة صوتية أو فيديو من الآخر."
+    "messageformat": "أنت لن تتلقى الصوت أو الفيديو الخاص بهم ونفس الأمر ينطبق عليهم."
   },
   "icu:calling__missing-media-keys": {
     "messageformat": "لا يُمكن تلقي الصوت والصورة من {name}"
@@ -2372,15 +2438,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "تم تحديد الدردشة على أنها غير مقروءة"
   },
-  "icu:AuthArtCreator--dialog--message": {
-    "messageformat": "هل تود فتح مُنشيء حزمة الملصقات لسيجنال؟"
-  },
-  "icu:AuthArtCreator--dialog--confirm": {
-    "messageformat": "تأكيد"
-  },
-  "icu:AuthArtCreator--dialog--dismiss": {
-    "messageformat": "تجاهُل"
-  },
   "icu:ArtCreator--Authentication--error": {
     "messageformat": "يُرجى إعداد سيجنال في هاتفك وفي الحاسوب لاستخدام مُنشئ حزم الملصقات"
   },
@@ -2577,10 +2634,10 @@
     "messageformat": "رفض"
   },
   "icu:declinedIncomingAudioCall": {
-    "messageformat": "لقد رفضت مكالمة صوتية"
+    "messageformat": "مكالمة صوتية مرفوضة"
   },
   "icu:declinedIncomingVideoCall": {
-    "messageformat": "لقد رفضت مكالمة فيديو"
+    "messageformat": "مكالمة فيديو مرفوضة"
   },
   "icu:acceptedIncomingAudioCall": {
     "messageformat": "مكالمة صوتية واردة"
@@ -2613,10 +2670,10 @@
     "messageformat": "سيَستمر سيجنال في الاشتغال في الإشعارات. يُمكنك تغيير هذا في إعدادات سيجنال."
   },
   "icu:incomingAudioCall": {
-    "messageformat": "مكالمة صوتية واردة…"
+    "messageformat": "مكالمة صوتية واردة"
   },
   "icu:incomingVideoCall": {
-    "messageformat": "مكالمة بالصورة واردة…"
+    "messageformat": "مكالمة فيديو واردة"
   },
   "icu:outgoingAudioCall": {
     "messageformat": "مكالمة صوتية صادرة"
@@ -2688,13 +2745,13 @@
     "messageformat": "تم إيقاف الرنين"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "You raised a hand."
+    "messageformat": "رفعتَ يدكَ."
   },
   "icu:CallControls__RaiseHandsToast--you-and-one": {
-    "messageformat": "You and {otherName} raised a hand."
+    "messageformat": "أنت و{otherName} رفعتُما يديكما."
   },
   "icu:CallControls__RaiseHandsToast--you-and-more": {
-    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
+    "messageformat": "{overflowCount, plural, zero {أنت، و{otherName} و{overflowCount,number} آخرين رفعتم أيديكم.} one {أنت، و{otherName} و{overflowCount,number} آخرين رفعتم أيديكم.} two {أنت، و{otherName} و{overflowCount,number} آخرين رفعتم أيديكم.} few {أنت، و{otherName} و{overflowCount,number} آخرين رفعتم أيديكم.} many {أنت، و{otherName} و{overflowCount,number} آخرين رفعتم أيديكم.} other {أنت، و{otherName} و{overflowCount,number} آخرين رفعتم أيديكم.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} رفع يده."
@@ -2724,16 +2781,16 @@
     "messageformat": "{people, plural, zero {{people,number} في المكالمة} one {{people,number} في المكالمة} two {{people,number} في المكالمة} few {{people,number} في المكالمة} many {{people,number} في المكالمة} other {{people,number} في المكالمة}}"
   },
   "icu:calling__call-notification__ended": {
-    "messageformat": "انتهت المكالمة الجماعية"
+    "messageformat": "انتهت مكالمة الفيديو"
   },
   "icu:calling__call-notification__started-by-someone": {
-    "messageformat": "لقد بدأتْ مكالمة جماعية"
+    "messageformat": "تم بدء مكالمة فيديو"
   },
   "icu:calling__call-notification__started-by-you": {
-    "messageformat": "لقد قمت ببدء مكالمة جماعية"
+    "messageformat": "بدأت مكالمة فيديو"
   },
   "icu:calling__call-notification__started": {
-    "messageformat": "بدأ {name} مكالمة جماعية"
+    "messageformat": "{name} بدأ مكالمة فيديو"
   },
   "icu:calling__in-another-call-tooltip": {
     "messageformat": "إنك بالفعل في مكالمة"
@@ -2780,26 +2837,41 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "النافذة"
   },
+  "icu:calling__ParticipantInfoButton": {
+    "messageformat": "مزيد من المعلومات عن جهة الاتصال هذه"
+  },
   "icu:CallingAdhocCallInfo__CopyLink": {
     "messageformat": "نسخ رابط المكالمة"
+  },
+  "icu:CallingAdhocCallInfo__ShareViaSignal": {
+    "messageformat": "مشاركة رابط الاتصال عبر سيجنال"
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "إزالة هذا الشخص من المكالمة"
   },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogBody": {
+    "messageformat": "إزالة {name} من المكالمة؟"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--remove": {
+    "messageformat": "إزالة"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--block": {
+    "messageformat": "حظر من المكالمة"
+  },
   "icu:CallingAdhocCallInfo__UnknownContactLabel": {
-    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+    "messageformat": "{count, plural, zero {لا أحد ({count,number})} one {شخص واحد ({count,number})} two {شخصان ({count,number})} few {{count,number} أفراد} many {{count,number} فردا} other {{count,number} فرد}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
-    "messageformat": "+{count,number} more"
+    "messageformat": "{count, plural, zero {+{count,number} آخرين} one {+{count,number} آخر} two {+{count,number} آخرين} few {+{count,number} آخرين} many {+{count,number} آخرون} other {+{count,number} آخرون}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
-    "messageformat": "More info about new contacts"
+    "messageformat": "مزيد من المعلومات عن جهات الاتصال الجديدة"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
-    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+    "messageformat": "قبل الانضمام إلى مُكالمة، يمكنك فقط رؤية أسماء جهات الاتصال الموجودة على هاتفك، والأشخاص الموجودين في مجموعة معك، أو الأشخاص الذين تحدثت معهم فرديًا. سَتظهر لك كل الأسماء والصور عندما تنضمّ إلى المكالمة."
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
-    "messageformat": "Got it"
+    "messageformat": "عُلم"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "ڤيديو"
@@ -3512,6 +3584,9 @@
   "icu:ContactModal--remove-from-group": {
     "messageformat": "الإزالة من المجموعة"
   },
+  "icu:ContactModal--already-in-call": {
+    "messageformat": "إنك بالفعل في مكالمة"
+  },
   "icu:showChatColorEditor": {
     "messageformat": "لون الدردشة"
   },
@@ -3780,7 +3855,7 @@
     "messageformat": "{count, plural, zero {ما هي الأجهزة التي تريد حذف هذه الرسائل منها؟} one {ما هي الأجهزة التي تريد حذف هذه الرسالة منها؟} two {ما هي الأجهزة التي تريد حذف هاتين الرسالتين منها؟} few {ما هي الأجهزة التي تريد حذف هذه الرسائل منها؟} many {ما هي الأجهزة التي تريد حذف هذه الرسالة منها؟} other {ما هي الأجهزة التي تريد حذف هذه الرسالة منها؟}}"
   },
   "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
-    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+    "messageformat": "{count, plural, zero {سيتم حذف هذه الرسائل من كل أجهزتك.} one {سيتم حذف هذه الرسائل من جهازك.} two {سيتم حذف هذه الرسائل من كلا جهازيك.} few {سيتم حذف هذه الرسائل من كل أجهزتك.} many {سيتم حذف هذه الرسائل من كل أجهزتك.} other {سيتم حذف هذه الرسائل من كل أجهزتك.}}"
   },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "احذف بالنسبة لي"
@@ -3795,7 +3870,7 @@
     "messageformat": "احذف من كل الأجهزة"
   },
   "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
-    "messageformat": "Delete"
+    "messageformat": "حذف"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, zero {يمكنك اختيار فقط ما يصل إلى {count,number} رسائل لتحذفها بالنسبة للجميع} one {يمكنك اختيار فقط ما يصل إلى {count,number} رسالة لتحذفها بالنسبة للجميع} two {يمكنك اختيار فقط ما يصل إلى {count,number} رسالتين لتحذفهما بالنسبة للجميع} few {يمكنك اختيار فقط ما يصل إلى {count,number} رسائل لتحذفها بالنسبة للجميع} many {يمكنك اختيار فقط ما يصل إلى {count,number} رسالة لتحذفها بالنسبة للجميع} other {يمكنك اختيار فقط ما يصل إلى {count,number} رسالة لتحذفها بالنسبة للجميع}}"
@@ -4196,11 +4271,11 @@
   "icu:ProfileEditor--username--check-starting-character": {
     "messageformat": "اسم المُستخدم لا يمكن أن يبدأ برقم."
   },
-  "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Usernames must have at least {min,number} characters."
+  "icu:ProfileEditor--username--check-character-min-plural": {
+    "messageformat": "{min, plural, zero {يجب أن تحتوي أسماء المُستخدمين على {min,number} أحرف على الأقل.} one {يجب أن تحتوي أسماء المُستخدمين على {min,number} حرف على الأقل.} two {يجب أن تحتوي أسماء المُستخدمين على {min,number} حرفين على الأقل.} few {يجب أن تحتوي أسماء المُستخدمين على {min,number} أحرف على الأقل.} many {يجب أن تحتوي أسماء المُستخدمين على {min,number} حرفًا على الأقل.} other {يجب أن تحتوي أسماء المُستخدمين على {min,number} حرف على الأقل.}}"
   },
-  "icu:ProfileEditor--username--check-character-max": {
-    "messageformat": "يجب أن تحتوي أسماء المُستخدمين على {max,number} رموز كحد أقصى."
+  "icu:ProfileEditor--username--check-character-max-plural": {
+    "messageformat": "{max, plural, zero {يجب أن تحتوي أسماء المُستخدمين على {max,number} رموز كحد أقصى.} one {يجب أن تحتوي أسماء المُستخدمين على {max,number} رمز كحد أقصى.} two {يجب أن تحتوي أسماء المُستخدمين على {max,number} رمزين كحد أقصى.} few {يجب أن تحتوي أسماء المُستخدمين على {max,number} رموز كحد أقصى.} many {يجب أن تحتوي أسماء المُستخدمين على {max,number} رمزًا كحد أقصى.} other {يجب أن تحتوي أسماء المُستخدمين على {max,number} رمز كحد أقصى.}}"
   },
   "icu:ProfileEditor--username--check-discriminator-min": {
     "messageformat": "اسم مستخدم غير صحيح، أدخل رمزيْن على الأقل."
@@ -4240,9 +4315,6 @@
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
     "messageformat": "حذف"
-  },
-  "icu:ProfileEditor--username--delete-unavailable-notice": {
-    "messageformat": "لِحذف اسم المستخدم، افتح سيجنال على هاتفك وانتقل إلى الإعدادات > الحساب الشخصي."
   },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "نسخ أو حذف اِسمُ المُستخدِم"
@@ -4749,13 +4821,13 @@
     "messageformat": "يُمكن لِمعارفك رؤية اسمك وصورتك، كما يُمكنهم الاطلاع على منشوراتك في \"قِصتي\" إلاّ إذا أخفيتها عنهم."
   },
   "icu:LocalDeleteWarningModal__header": {
-    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+    "messageformat": "تُجرى عملية الحذف في تزامن عبر جميع أجهزتك"
   },
   "icu:LocalDeleteWarningModal__description": {
-    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+    "messageformat": "عند حذف رسالة أو ودردشة، فسَتُحذف من جميع أجهزتك."
   },
   "icu:LocalDeleteWarningModal__confirm": {
-    "messageformat": "Got it"
+    "messageformat": "عُلم"
   },
   "icu:Stories__title": {
     "messageformat": "القِصص"
@@ -5350,7 +5422,7 @@
     "messageformat": "لا توجد نتيجة لـ \"{query}\""
   },
   "icu:CallsList__CreateCallLink": {
-    "messageformat": "Create a Call Link"
+    "messageformat": "إنشاء رابط المكالمة"
   },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "واردة"
@@ -5360,6 +5432,9 @@
   },
   "icu:CallsList__ItemCallInfo--Missed": {
     "messageformat": "فائتة"
+  },
+  "icu:CallsList__ItemCallInfo--Declined": {
+    "messageformat": "مرفوضة"
   },
   "icu:CallsList__ItemCallInfo--GroupCall": {
     "messageformat": "المكالمة الجماعية"
@@ -5374,7 +5449,7 @@
     "messageformat": "مغادرة المكالمة الحالية؟"
   },
   "icu:CallsList__LeaveCallDialogBody": {
-    "messageformat": "يجب عليك مغادرة المكالمة الحالية قبل الانضمام إلى مكالمة جديدة."
+    "messageformat": "يَجب عليك مُغادرة المُكالمة الحالية قبل بدء مكالمة جديدة أو الانضمام إليها."
   },
   "icu:CallsList__LeaveCallDialogButton--leave": {
     "messageformat": "مغادرة المكالمة"
@@ -5406,8 +5481,29 @@
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "اتصال بالرابط"
   },
+  "icu:CallHistory__DescriptionVideoCall--Default": {
+    "messageformat": "{direction, select, Outgoing {مكالمة فيديو صادرة} other {مكالمة فيديو واردة}}"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Missed": {
+    "messageformat": "مكالمة فيديو فائتة"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Unanswered": {
+    "messageformat": "مكالمة فيديو لم يتم الرد عليها"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Declined": {
+    "messageformat": "مكالمة فيديو مرفوضة"
+  },
   "icu:CallLinkDetails__Join": {
     "messageformat": "انضمام"
+  },
+  "icu:CallLinkDetails__AddCallNameLabel": {
+    "messageformat": "إضافة اسم المكالمة"
+  },
+  "icu:CallLinkDetails__EditCallNameLabel": {
+    "messageformat": "تعديل اسم المكالمة"
+  },
+  "icu:CallLinkDetails__ApproveAllMembersLabel": {
+    "messageformat": "الموافقة على جميع الأعضاء"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "نسخ الرابط"
@@ -5415,23 +5511,50 @@
   "icu:CallLinkDetails__ShareLinkViaSignal": {
     "messageformat": "مشاركة الرابط عبر سيجنال"
   },
-  "icu:CallLinkEditModal__Title": {
-    "messageformat": "Call link details"
+  "icu:CallLinkDetails__DeleteLink": {
+    "messageformat": "Delete link"
   },
-  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
-    "messageformat": "Name"
+  "icu:CallLinkDetails__DeleteLinkModal__Title": {
+    "messageformat": "Delete call link?"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Body": {
+    "messageformat": "This link will no longer work for anyone who has it."
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
+    "messageformat": "Cancel"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Delete": {
+    "messageformat": "Delete"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "تفاصيل رابط المكالمة"
   },
   "icu:CallLinkEditModal__JoinButtonLabel": {
-    "messageformat": "Join"
+    "messageformat": "انضمام"
+  },
+  "icu:CallLinkEditModal__AddCallNameLabel": {
+    "messageformat": "إضافة اسم المكالمة"
+  },
+  "icu:CallLinkEditModal__EditCallNameLabel": {
+    "messageformat": "تعديل اسم المكالمة"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Approve all members"
+    "messageformat": "الموافقة على جميع الأعضاء"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
-    "messageformat": "Off"
+  "icu:CallLinkRestrictionsSelect__Option--Off": {
+    "messageformat": "مُعطَّل"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
-    "messageformat": "On"
+  "icu:CallLinkRestrictionsSelect__Option--On": {
+    "messageformat": "مُفعَّل"
+  },
+  "icu:CallLinkAddNameModal__Title": {
+    "messageformat": "إضافة اسم المكالمة"
+  },
+  "icu:CallLinkAddNameModal__Title--Edit": {
+    "messageformat": "تعديل اسم المكالمة"
+  },
+  "icu:CallLinkAddNameModal__NameLabel": {
+    "messageformat": "اسم المكالمة"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, zero {{count,number} آخرون يكتبون.} one {{count,number} آخر يكتب.} two {{count,number} آخران يكتبان.} few {{count,number} آخرون يكتبون.} many {{count,number} آخرين يكتبون.} other {{count,number} آخرون يكتبون.}}"
@@ -5473,19 +5596,19 @@
     "messageformat": "تعديلات صغيرة، تصليح الأعطال، وتحسينات للأداء. شكرًا على استخدامكم سيجنال!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.12--0": {
-    "messageformat": "ميزة رفع اليد الجديدة طريقة سهلة لِجذب انتباه شخص ما أو طرح سؤال خلال مكالمة جماعية."
+  "icu:WhatsNew__v7.18--0": {
+    "messageformat": "يسرّع هذا الإصدار عميلة حذف سلاسل الرسائل الكبيرة."
   },
-  "icu:WhatsNew__v7.12--1": {
-    "messageformat": "يَتضمن هذا التحديث أداة اقتصاص محسّنة أيضا لتغيير حجم الصور."
+  "icu:WhatsNew__v7.19--0": {
+    "messageformat": "أضفنا اختصارًا لقفل الخط والانضمام إلى مُكالمة جديدة عندما تكون مكالمة أخرى جارية."
   },
-  "icu:WhatsNew__v7.12--2": {
-    "messageformat": "لقد غيّرنا اختصار لوحة المفاتيح لإرسال ملاحظة صوتية إلى Ctrl/Cmd+Shift+Y لكي لا تتعارض مع اختصار \"لصق ومطابقة النمط\" على ويندوز ولينكس."
+  "icu:WhatsNew__v7.19--1": {
+    "messageformat": "يُصلح هذا التحديث أيضًا عطلاً على Linux للمُستخدمين الذين اختاروا تحديد إعداداتهم المحلية إلى \"POSIX\"."
   },
-  "icu:WhatsNew__v7.13--0": {
-    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  "icu:WhatsNew__v7.20--0": {
+    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
   },
-  "icu:WhatsNew__v7.13--1": {
-    "messageformat": "This update also improves the display of quoted replies in RTL languages."
+  "icu:WhatsNew__v7.20--1": {
+    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
   }
 }

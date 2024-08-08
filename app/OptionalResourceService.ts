@@ -25,7 +25,7 @@ const RESOURCES_DICT_PATH = join(
   'optional-resources.json'
 );
 
-const MAX_CACHE_SIZE = 10 * 1024 * 1024;
+const MAX_CACHE_SIZE = 50 * 1024 * 1024;
 
 export class OptionalResourceService {
   private maybeDeclaration: OptionalResourcesDictType | undefined;
@@ -38,7 +38,7 @@ export class OptionalResourceService {
 
   private readonly fileQueues = new Map<string, PQueue>();
 
-  constructor(private readonly resourcesDir: string) {
+  private constructor(private readonly resourcesDir: string) {
     ipcMain.handle('OptionalResourceService:getData', (_event, name) =>
       this.getData(name)
     );

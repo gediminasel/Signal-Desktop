@@ -577,11 +577,14 @@ describe('Crypto', () => {
         writeFileSync(ciphertextPath, encryptedAttachment.ciphertext);
 
         const decryptedAttachment = await decryptAttachmentV2({
+          type: 'standard',
           ciphertextPath,
           idForLogging: 'test',
           ...splitKeys(keys),
           size: FILE_CONTENTS.byteLength,
           theirDigest: encryptedAttachment.digest,
+          getAbsoluteAttachmentPath:
+            window.Signal.Migrations.getAbsoluteAttachmentPath,
         });
         plaintextPath = window.Signal.Migrations.getAbsoluteAttachmentPath(
           decryptedAttachment.path
@@ -623,6 +626,8 @@ describe('Crypto', () => {
             keys,
             plaintext: path ? { absolutePath: path } : { data },
             dangerousIv,
+            getAbsoluteAttachmentPath:
+              window.Signal.Migrations.getAbsoluteAttachmentPath,
           });
 
           ciphertextPath = window.Signal.Migrations.getAbsoluteAttachmentPath(
@@ -630,11 +635,14 @@ describe('Crypto', () => {
           );
 
           const decryptedAttachment = await decryptAttachmentV2({
+            type: 'standard',
             ciphertextPath,
             idForLogging: 'test',
             ...splitKeys(keys),
             size: data.byteLength,
             theirDigest: encryptedAttachment.digest,
+            getAbsoluteAttachmentPath:
+              window.Signal.Migrations.getAbsoluteAttachmentPath,
           });
           plaintextPath = window.Signal.Migrations.getAbsoluteAttachmentPath(
             decryptedAttachment.path
@@ -745,6 +753,8 @@ describe('Crypto', () => {
           const previouslyEncrypted = await encryptAttachmentV2ToDisk({
             keys,
             plaintext: { data: FILE_CONTENTS },
+            getAbsoluteAttachmentPath:
+              window.Signal.Migrations.getAbsoluteAttachmentPath,
           });
 
           await testV2RoundTripData({
@@ -784,6 +794,8 @@ describe('Crypto', () => {
         const encryptedAttachment = await encryptAttachmentV2ToDisk({
           keys,
           plaintext: { absolutePath: FILE_PATH },
+          getAbsoluteAttachmentPath:
+            window.Signal.Migrations.getAbsoluteAttachmentPath,
         });
         ciphertextPath = window.Signal.Migrations.getAbsoluteAttachmentPath(
           encryptedAttachment.path
@@ -838,6 +850,8 @@ describe('Crypto', () => {
           keys,
           plaintext: { absolutePath: FILE_PATH },
           dangerousIv: { iv: dangerousTestOnlyIv, reason: 'test' },
+          getAbsoluteAttachmentPath:
+            window.Signal.Migrations.getAbsoluteAttachmentPath,
         });
         ciphertextPath = window.Signal.Migrations.getAbsoluteAttachmentPath(
           encryptedAttachmentV2.path
@@ -872,6 +886,8 @@ describe('Crypto', () => {
           innerEncryptedAttachment = await encryptAttachmentV2ToDisk({
             keys: innerKeys,
             plaintext: { absolutePath: plaintextAbsolutePath },
+            getAbsoluteAttachmentPath:
+              window.Signal.Migrations.getAbsoluteAttachmentPath,
           });
           innerCiphertextPath =
             window.Signal.Migrations.getAbsoluteAttachmentPath(
@@ -883,6 +899,8 @@ describe('Crypto', () => {
             plaintext: { absolutePath: innerCiphertextPath },
             // We (and the server!) don't pad the second layer
             dangerousTestOnlySkipPadding: true,
+            getAbsoluteAttachmentPath:
+              window.Signal.Migrations.getAbsoluteAttachmentPath,
           });
 
           outerCiphertextPath =
@@ -915,12 +933,15 @@ describe('Crypto', () => {
           outerCiphertextPath = encryptResult.outerCiphertextPath;
 
           const decryptedAttachment = await decryptAttachmentV2({
+            type: 'standard',
             ciphertextPath: outerCiphertextPath,
             idForLogging: 'test',
             ...splitKeys(innerKeys),
             size: FILE_CONTENTS.byteLength,
             theirDigest: encryptResult.innerEncryptedAttachment.digest,
             outerEncryption: splitKeys(outerKeys),
+            getAbsoluteAttachmentPath:
+              window.Signal.Migrations.getAbsoluteAttachmentPath,
           });
 
           plaintextPath = window.Signal.Migrations.getAbsoluteAttachmentPath(
@@ -968,12 +989,15 @@ describe('Crypto', () => {
           outerCiphertextPath = encryptResult.outerCiphertextPath;
 
           const decryptedAttachment = await decryptAttachmentV2({
+            type: 'standard',
             ciphertextPath: outerCiphertextPath,
             idForLogging: 'test',
             ...splitKeys(innerKeys),
             size: data.byteLength,
             theirDigest: encryptResult.innerEncryptedAttachment.digest,
             outerEncryption: splitKeys(outerKeys),
+            getAbsoluteAttachmentPath:
+              window.Signal.Migrations.getAbsoluteAttachmentPath,
           });
           plaintextPath = window.Signal.Migrations.getAbsoluteAttachmentPath(
             decryptedAttachment.path
@@ -1015,6 +1039,7 @@ describe('Crypto', () => {
 
           await assert.isRejected(
             decryptAttachmentV2({
+              type: 'standard',
               ciphertextPath: outerCiphertextPath,
               idForLogging: 'test',
               ...splitKeys(innerKeys),
@@ -1024,6 +1049,8 @@ describe('Crypto', () => {
                 aesKey: splitKeys(outerKeys).aesKey,
                 macKey: splitKeys(innerKeys).macKey, // wrong mac!
               },
+              getAbsoluteAttachmentPath:
+                window.Signal.Migrations.getAbsoluteAttachmentPath,
             }),
             /Bad outer encryption MAC/
           );

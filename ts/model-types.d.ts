@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import * as Backbone from 'backbone';
+import type { ReadonlyDeep } from 'type-fest';
 
 import type { GroupV2ChangeType } from './groups';
 import type { DraftBodyRanges, RawBodyRange } from './types/BodyRange';
@@ -199,6 +200,7 @@ export type MessageAttributesType = {
   quote?: QuotedMessageType;
   reactions?: ReadonlyArray<MessageReactionType>;
   requiredProtocolVersion?: number;
+  sms?: boolean;
   sourceDevice?: number;
   storyDistributionListId?: StoryDistributionIdString;
   storyId?: string;
@@ -291,6 +293,8 @@ export type MessageAttributesType = {
   deletedForEveryoneFailed?: boolean;
 };
 
+export type ReadonlyMessageAttributesType = ReadonlyDeep<MessageAttributesType>;
+
 export type ConversationAttributesTypeType = 'private' | 'group';
 
 export type ConversationLastProfileType = Readonly<{
@@ -329,6 +333,12 @@ export type ConversationAttributesType = {
   conversationColor?: ConversationColorType;
   customColor?: CustomColorType;
   customColorId?: string;
+
+  // Set at backup import time, exported as is.
+  wallpaperPhotoPointerBase64?: string;
+  wallpaperPreset?: number;
+  dimWallpaperInDarkMode?: boolean;
+
   discoveredUnregisteredAt?: number;
   firstUnregisteredAt?: number;
   draftChanged?: boolean;
@@ -472,6 +482,9 @@ export type ConversationAttributesType = {
   // This value is useless once the message request has been approved. We don't clean it
   //   up but could. We don't persist it but could (though we'd probably want to clean it
   //   up in that case).
+  unblurredAvatarUrl?: string;
+
+  // Legacy field, mapped to above in getConversation()
   unblurredAvatarPath?: string;
 };
 
@@ -510,7 +523,7 @@ export type LegacyMigrationPendingMemberType = {
 };
 
 export type GroupV2PendingMemberType = {
-  addedByUserId?: AciString;
+  addedByUserId: AciString;
   serviceId: ServiceIdString;
   timestamp: number;
   role: MemberRoleEnum;

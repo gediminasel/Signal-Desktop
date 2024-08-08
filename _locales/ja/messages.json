@@ -80,6 +80,18 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "データベースのバージョンと、開いたSignalのバージョンが一致しません。 ご利用のコンピューターで、最新バージョンのSignalを開いているかをお確かめください。"
   },
+  "icu:databaseError__recover__detail": {
+    "messageformat": "データベースエラーが発生しました。エラーをコピーしてSignalサポートへ連絡すると、問題の解決に役立てることができます。すぐにSignalを使用する必要がある場合は、データの復旧を試みることができます。\n\nサポートへのお問い合わせは{link}までお願いします。"
+  },
+  "icu:databaseError__recover__button": {
+    "messageformat": "データを復旧する"
+  },
+  "icu:databaseError__safeStorageBackendChange": {
+    "messageformat": "OS暗号化キーリングバックエンドが{previousBackend}から{currentBackend}に変更されたため、データベース暗号化キーにアクセスできません。これは、デスクトップ環境がGNOMEとKDEの間で変更された場合などに発生することがあります。\n\n以前のデスクトップ環境に切り替えてください。"
+  },
+  "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
+    "messageformat": "OS暗号化キーリングバックエンドが{previousBackend}から{currentBackend}に変更されたため、データベース暗号化キーにアクセスできません。これは、デスクトップ環境がGNOMEとKDEの間で変更された場合などに発生することがあります。\n\n以前のデスクトップ環境に切り替えるか、コマンドラインフラグ -- password-store=\"{previousBackendFlag}\" を使ってSignalを起動してください。"
+  },
   "icu:mainMenuFile": {
     "messageformat": "ファイル (&F)"
   },
@@ -818,8 +830,14 @@
   "icu:cannotUpdateDetail": {
     "messageformat": "Signalをアップデートできませんでした。{retry} か {url} から手動でインストールしてください。{support}"
   },
+  "icu:cannotUpdateDetail-v2": {
+    "messageformat": "Signalをアップデートできませんでした。<retryUpdateButton>もう一度アップデートを試す</retryUpdateButton>か、{url}から手動でインストールしてください。その後、この問題を<contactSupportLink>サポートまでお知らせください</contactSupportLink>"
+  },
   "icu:cannotUpdateRequireManualDetail": {
     "messageformat": "Signalをアップデートできませんでした。{url}から手動でインストールしてください。またこの問題を、{support}までお知らせください。"
+  },
+  "icu:cannotUpdateRequireManualDetail-v2": {
+    "messageformat": "Signalをアップデートできませんでした。{url}から手動でインストールしてください。その後、この問題について<contactSupportLink>サポートに連絡してください</contactSupportLink>"
   },
   "icu:readOnlyVolume": {
     "messageformat": "Signal Desktop が macOS の検疫にかかっていて自動更新できないようです。{app}を Finder で{folder}へ移動してください。"
@@ -989,6 +1007,9 @@
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
     "messageformat": "このチャット内のすべてのメッセージはこの端末から消去されます。メッセージを消去した後も、このチャットを検索できます。"
   },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
+    "messageformat": "このチャット内のすべてのメッセージはこの端末から消去されます。メッセージを消去した後も、このチャットを検索できます。"
+  },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "グループを退出する"
   },
@@ -1092,7 +1113,7 @@
     "messageformat": "リンク済み端末"
   },
   "icu:linkNewDevice": {
-    "messageformat": "新しい端末をリンク"
+    "messageformat": "新しい端末をリンクする"
   },
   "icu:Install__learn-more": {
     "messageformat": "さらに詳しく"
@@ -1110,10 +1131,22 @@
     "messageformat": "設定"
   },
   "icu:Install__instructions__3": {
-    "messageformat": "Androidでは {plusButton} を、iPhoneでは {linkNewDevice} をタップしてください"
+    "messageformat": "{linkNewDevice}をタップする"
   },
-  "icu:Install__qr-failed-load": {
-    "messageformat": "QR コードを読み込めませんでした。インターネット接続を確認して再度お試しください。<retry>再試行</retry>"
+  "icu:Install__qr-failed-load__error--timeout": {
+    "messageformat": "QR コードを読み込めませんでした。インターネット接続を確認して再度試してください。"
+  },
+  "icu:Install__qr-failed-load__error--unknown": {
+    "messageformat": "<paragraph>不明なエラーが発生しました。</paragraph><paragraph>再度お試しください。</paragraph>"
+  },
+  "icu:Install__qr-failed-load__error--network": {
+    "messageformat": "今お使いのネットワークでは、Signalはこの端末をリンクできません。"
+  },
+  "icu:Install__qr-failed-load__retry": {
+    "messageformat": "再試行"
+  },
+  "icu:Install__qr-failed-load__get-help": {
+    "messageformat": "ヘルプを表示する"
   },
   "icu:Install__support-link": {
     "messageformat": "お困りですか？"
@@ -1173,7 +1206,7 @@
     "messageformat": "リダイヤルする"
   },
   "icu:calling__join": {
-    "messageformat": "通話に参加"
+    "messageformat": "通話に参加する"
   },
   "icu:calling__return": {
     "messageformat": "通話に戻る"
@@ -1286,8 +1319,35 @@
   "icu:CallingPendingParticipants__DenyUser": {
     "messageformat": "参加リクエストを拒否する"
   },
+  "icu:CallingPendingParticipants__ApproveAll": {
+    "messageformat": "全員承認する"
+  },
+  "icu:CallingPendingParticipants__DenyAll": {
+    "messageformat": "全員拒否する"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--ApproveAll": {
+    "messageformat": "{count, plural, other {{count,number} 人のリクエストを承認しますか？}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--DenyAll": {
+    "messageformat": "{count, plural, other {{count,number} 人のリクエストを拒否しますか？}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--ApproveAll": {
+    "messageformat": "{count, plural, other {{count,number} 人のユーザーが通話に追加されます。}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--DenyAll": {
+    "messageformat": "{count, plural, other {{count,number} 人のユーザーは通話に追加されません。}}"
+  },
   "icu:CallingPendingParticipants__RequestsToJoin": {
     "messageformat": "{count, plural, other {{count,number}人が通話への参加をリクエストしています}}"
+  },
+  "icu:CallingPendingParticipants__WouldLikeToJoin": {
+    "messageformat": "待機中..."
+  },
+  "icu:CallingPendingParticipants__AdditionalRequests": {
+    "messageformat": "{count, plural, other {{count,number} 人以上のリクエスト}}"
+  },
+  "icu:CallingPendingParticipants__Toast--added-users-to-call": {
+    "messageformat": "{count, plural, other {{count,number} 人のユーザーが通話に加わりました}}"
   },
   "icu:CallingRaisedHandsList__Title": {
     "messageformat": "{count, plural, other {{count,number}人が手を挙げています}}"
@@ -1352,8 +1412,14 @@
   "icu:calling__you-have-blocked": {
     "messageformat": "{name} はブロックしています"
   },
+  "icu:calling__blocked-participant": {
+    "messageformat": "{name} はブロックされました"
+  },
+  "icu:calling__block-info-title": {
+    "messageformat": "{name} はブロックされました"
+  },
   "icu:calling__block-info": {
-    "messageformat": "お互いに音声やビデオのやり取りがされることはありません。"
+    "messageformat": "音声や映像の送受信を行いません。"
   },
   "icu:calling__missing-media-keys": {
     "messageformat": "{name} からの音声と映像を受信できません"
@@ -2372,15 +2438,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "チャットを未読にしました"
   },
-  "icu:AuthArtCreator--dialog--message": {
-    "messageformat": "Signal Sticker Pack Creatorを開きますか?"
-  },
-  "icu:AuthArtCreator--dialog--confirm": {
-    "messageformat": "開く"
-  },
-  "icu:AuthArtCreator--dialog--dismiss": {
-    "messageformat": "キャンセル"
-  },
   "icu:ArtCreator--Authentication--error": {
     "messageformat": "Sticker Pack Creatorを使うには、Signalを携帯電話とデスクトップで設定してください。"
   },
@@ -2577,10 +2634,10 @@
     "messageformat": "拒否する"
   },
   "icu:declinedIncomingAudioCall": {
-    "messageformat": "音声通話を拒否しました"
+    "messageformat": "音声通話が拒否されました"
   },
   "icu:declinedIncomingVideoCall": {
-    "messageformat": "ビデオ通話を拒否しました"
+    "messageformat": "ビデオ通話が拒否されました"
   },
   "icu:acceptedIncomingAudioCall": {
     "messageformat": "音声通話着信"
@@ -2613,10 +2670,10 @@
     "messageformat": "Signalは通知エリアで動作し続けます。これはSignalの設定で変更できます。"
   },
   "icu:incomingAudioCall": {
-    "messageformat": "音声通話着信中…"
+    "messageformat": "音声通話着信"
   },
   "icu:incomingVideoCall": {
-    "messageformat": "ビデオ通話着信中…"
+    "messageformat": "ビデオ通話着信"
   },
   "icu:outgoingAudioCall": {
     "messageformat": "音声通話発信"
@@ -2688,13 +2745,13 @@
     "messageformat": "呼び出し音が鳴っていません"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "You raised a hand."
+    "messageformat": "あなたは手を挙げています。"
   },
   "icu:CallControls__RaiseHandsToast--you-and-one": {
-    "messageformat": "You and {otherName} raised a hand."
+    "messageformat": "あなたと{otherName}が手を挙げています。"
   },
   "icu:CallControls__RaiseHandsToast--you-and-more": {
-    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
+    "messageformat": "{overflowCount, plural, other {あなた、{otherName}、ほか{overflowCount,number}人が手を挙げています。}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name}が手を挙げています。"
@@ -2724,16 +2781,16 @@
     "messageformat": "{people, plural, other {{people,number} 通話中}}"
   },
   "icu:calling__call-notification__ended": {
-    "messageformat": "グループ通話が終了しました。"
+    "messageformat": "ビデオ通話が終了しました"
   },
   "icu:calling__call-notification__started-by-someone": {
-    "messageformat": "グループ通話が開始されました"
+    "messageformat": "ビデオ通話が開始されました"
   },
   "icu:calling__call-notification__started-by-you": {
-    "messageformat": "グループ通話を開始しました"
+    "messageformat": "ビデオ通話を開始しました"
   },
   "icu:calling__call-notification__started": {
-    "messageformat": "{name} がグループ通話を開始しました"
+    "messageformat": "{name}はビデオ通話を開始しました"
   },
   "icu:calling__in-another-call-tooltip": {
     "messageformat": "あなたはすでに通話中です"
@@ -2780,26 +2837,41 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "ウィンドウ"
   },
+  "icu:calling__ParticipantInfoButton": {
+    "messageformat": "この連絡先の詳細"
+  },
   "icu:CallingAdhocCallInfo__CopyLink": {
     "messageformat": "通話リンクをコピーする"
+  },
+  "icu:CallingAdhocCallInfo__ShareViaSignal": {
+    "messageformat": "Signal経由で通話リンクを共有する"
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "このユーザーを通話から退出させる"
   },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogBody": {
+    "messageformat": "{name} を通話から削除しますか？"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--remove": {
+    "messageformat": "削除"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--block": {
+    "messageformat": "通話をブロックする"
+  },
   "icu:CallingAdhocCallInfo__UnknownContactLabel": {
-    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+    "messageformat": "{count, plural, other {{count,number}人}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
-    "messageformat": "+{count,number} more"
+    "messageformat": "{count, plural, other {その他 {count,number}人}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
-    "messageformat": "More info about new contacts"
+    "messageformat": "不明な連絡先の詳細"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
-    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+    "messageformat": "通話に参加する前に表示されるのは、電話の連絡先、グループに参加しているユーザー、1対1でチャットしたユーザーの名前だけです。通話に参加すると、全員の名前と写真が表示されます。"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
-    "messageformat": "Got it"
+    "messageformat": "わかりました"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "動画"
@@ -3512,6 +3584,9 @@
   "icu:ContactModal--remove-from-group": {
     "messageformat": "グループから削除"
   },
+  "icu:ContactModal--already-in-call": {
+    "messageformat": "あなたはすでに通話中です"
+  },
   "icu:showChatColorEditor": {
     "messageformat": "チャットの色"
   },
@@ -3780,7 +3855,7 @@
     "messageformat": "{count, plural, other {これらのメッセージを消去する端末を選んでください}}"
   },
   "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
-    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+    "messageformat": "{count, plural, other {これらのメッセージはご利用のすべての端末から消去されます。}}"
   },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "自分の分だけ消去"
@@ -3795,7 +3870,7 @@
     "messageformat": "すべての端末から消去する"
   },
   "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
-    "messageformat": "Delete"
+    "messageformat": "消去"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, other {一度に消去できるメッセージは、全員分で最大{count,number}件までです}}"
@@ -4196,11 +4271,11 @@
   "icu:ProfileEditor--username--check-starting-character": {
     "messageformat": "ユーザーネームの先頭に数字は使用できません。"
   },
-  "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Usernames must have at least {min,number} characters."
+  "icu:ProfileEditor--username--check-character-min-plural": {
+    "messageformat": "{min, plural, other {ユーザーネームは{min,number}文字以上に設定してください。}}"
   },
-  "icu:ProfileEditor--username--check-character-max": {
-    "messageformat": "ユーザーネームは{max,number}文字以下にしてください。"
+  "icu:ProfileEditor--username--check-character-max-plural": {
+    "messageformat": "{max, plural, other {ユーザーネームは{max,number}文字以下にしてください。}}"
   },
   "icu:ProfileEditor--username--check-discriminator-min": {
     "messageformat": "ユーザーネームが無効です。数字は2桁以上入力してください"
@@ -4240,9 +4315,6 @@
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
     "messageformat": "消去"
-  },
-  "icu:ProfileEditor--username--delete-unavailable-notice": {
-    "messageformat": "ユーザー名を消去するには、お使いのスマートフォンでSignalを開き、設定 > プロフィール の順に移動します。"
   },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "ユーザーネームをコピーまたは消去します"
@@ -4749,13 +4821,13 @@
     "messageformat": "あなたのコネクションの人たちは、あなたの名前や写真を見ることができ、あなたが非表示にしない限り「マイストーリー」への投稿を見ることができます。"
   },
   "icu:LocalDeleteWarningModal__header": {
-    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+    "messageformat": "消去機能は端末間で同期されます"
   },
   "icu:LocalDeleteWarningModal__description": {
-    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+    "messageformat": "メッセージやチャットを消去すると、ご利用のすべての端末から消去されます。"
   },
   "icu:LocalDeleteWarningModal__confirm": {
-    "messageformat": "Got it"
+    "messageformat": "わかりました"
   },
   "icu:Stories__title": {
     "messageformat": "ストーリー"
@@ -5350,7 +5422,7 @@
     "messageformat": "“{query}” の検索結果はありません"
   },
   "icu:CallsList__CreateCallLink": {
-    "messageformat": "Create a Call Link"
+    "messageformat": "通話リンクを作成する"
   },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "着信"
@@ -5360,6 +5432,9 @@
   },
   "icu:CallsList__ItemCallInfo--Missed": {
     "messageformat": "不在着信"
+  },
+  "icu:CallsList__ItemCallInfo--Declined": {
+    "messageformat": "拒否"
   },
   "icu:CallsList__ItemCallInfo--GroupCall": {
     "messageformat": "グループ通話"
@@ -5374,7 +5449,7 @@
     "messageformat": "現在の通話を終了しますか？"
   },
   "icu:CallsList__LeaveCallDialogBody": {
-    "messageformat": "新しい通話に参加するには、現在の通話を終了する必要があります"
+    "messageformat": "新しい通話を開始または参加するには、現在の通話を終了する必要があります。"
   },
   "icu:CallsList__LeaveCallDialogButton--leave": {
     "messageformat": "通話終了"
@@ -5406,8 +5481,29 @@
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "通話リンク"
   },
+  "icu:CallHistory__DescriptionVideoCall--Default": {
+    "messageformat": "{direction, select, Outgoing {ビデオ通話発信} other {ビデオ通話着信}}"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Missed": {
+    "messageformat": "ビデオ通話着信あり"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Unanswered": {
+    "messageformat": "ビデオ通話応答なし"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Declined": {
+    "messageformat": "ビデオ通話が拒否されました"
+  },
   "icu:CallLinkDetails__Join": {
     "messageformat": "参加する"
+  },
+  "icu:CallLinkDetails__AddCallNameLabel": {
+    "messageformat": "通話名を追加する"
+  },
+  "icu:CallLinkDetails__EditCallNameLabel": {
+    "messageformat": "通話名を編集する"
+  },
+  "icu:CallLinkDetails__ApproveAllMembersLabel": {
+    "messageformat": "全メンバーを承認制にする"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "リンクをコピーします"
@@ -5415,23 +5511,50 @@
   "icu:CallLinkDetails__ShareLinkViaSignal": {
     "messageformat": "Signal 経由でリンクを共有する"
   },
-  "icu:CallLinkEditModal__Title": {
-    "messageformat": "Call link details"
+  "icu:CallLinkDetails__DeleteLink": {
+    "messageformat": "Delete link"
   },
-  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
-    "messageformat": "Name"
+  "icu:CallLinkDetails__DeleteLinkModal__Title": {
+    "messageformat": "Delete call link?"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Body": {
+    "messageformat": "This link will no longer work for anyone who has it."
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
+    "messageformat": "Cancel"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Delete": {
+    "messageformat": "Delete"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "通話リンク詳細"
   },
   "icu:CallLinkEditModal__JoinButtonLabel": {
-    "messageformat": "Join"
+    "messageformat": "参加する"
+  },
+  "icu:CallLinkEditModal__AddCallNameLabel": {
+    "messageformat": "通話名を追加する"
+  },
+  "icu:CallLinkEditModal__EditCallNameLabel": {
+    "messageformat": "通話名を編集する"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Approve all members"
+    "messageformat": "全メンバーを承認制にする"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
-    "messageformat": "Off"
+  "icu:CallLinkRestrictionsSelect__Option--Off": {
+    "messageformat": "オフ"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
-    "messageformat": "On"
+  "icu:CallLinkRestrictionsSelect__Option--On": {
+    "messageformat": "オン"
+  },
+  "icu:CallLinkAddNameModal__Title": {
+    "messageformat": "通話名を追加する"
+  },
+  "icu:CallLinkAddNameModal__Title--Edit": {
+    "messageformat": "通話名を編集する"
+  },
+  "icu:CallLinkAddNameModal__NameLabel": {
+    "messageformat": "通話名"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, other {{count,number} 人が入力中です。}}"
@@ -5473,19 +5596,19 @@
     "messageformat": "細かな微調整、バグ修正、パフォーマンスの向上。 Signalをご利用いただきありがとうございます。",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.12--0": {
-    "messageformat": "新しくなった「挙手」機能は、グループ通話中に他の参加者の注意を引いたり、質問をしたりするための簡単な方法です。"
+  "icu:WhatsNew__v7.18--0": {
+    "messageformat": "このリリースでは、サイズの大きいメッセージスレッドの消去プロセスが高速化されました。"
   },
-  "icu:WhatsNew__v7.12--1": {
-    "messageformat": "このアップデートには、画像のサイズを変更するために改良されたトリミングツールも含まれます。"
+  "icu:WhatsNew__v7.19--0": {
+    "messageformat": "別の通話が進行中の場合、現在の通話を終了して新しい通話に参加するためのショートカットを追加しました。"
   },
-  "icu:WhatsNew__v7.12--2": {
-    "messageformat": "音声メモを送信するキーボードのショートカットをCtrl/Cmd+Shift+Yに変更しました。これはWindowsと Linuxの「ペーストしてスタイルを合わせる」のショートカットと区別するためです。"
+  "icu:WhatsNew__v7.19--1": {
+    "messageformat": "このアップデートでは、ロケールが「POSIX」に設定されているユーザーのLinuxでの起動クラッシュも修正されています。"
   },
-  "icu:WhatsNew__v7.13--0": {
-    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  "icu:WhatsNew__v7.20--0": {
+    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
   },
-  "icu:WhatsNew__v7.13--1": {
-    "messageformat": "This update also improves the display of quoted replies in RTL languages."
+  "icu:WhatsNew__v7.20--1": {
+    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
   }
 }

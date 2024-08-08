@@ -80,6 +80,18 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "మీ డేటాబేస్ యొక్క వెర్షన్ Signal యొక్క ఈ వెర్షన్‌తో సరిపోలడం లేదు. మీరు మీ కంప్యూటరులో Signal యొక్క తాజా వెర్షన్‌ను తెరుస్తున్నారని నిర్ధారించుకోండి."
   },
+  "icu:databaseError__recover__detail": {
+    "messageformat": "డేటాబేస్ లోపం ఏర్పడింది. మీరు లోపం కాపీ చేసి, సమస్యను పరిష్కరించడంలో సహాయపడటానికి Signal మద్దతును సంప్రదించవచ్చు. ఒకవేళ మీరు Signal ను ఇప్పుడే ఉపయోగించాల్సిన అవసరం ఉంటే, మీరు మీ డేటాను రికవర్ చేయడానికి ప్రయత్నించవచ్చు.\n\nదీనిని సందర్శించడం ద్వారా మద్దతును సంప్రదించండి: {link}"
+  },
+  "icu:databaseError__recover__button": {
+    "messageformat": "డేటాను రికవర్ చేయండి"
+  },
+  "icu:databaseError__safeStorageBackendChange": {
+    "messageformat": "OS గుప్తీకరణ కీరింగ్ బ్యాకెండ్ {previousBackend} నుండి {currentBackend} కు మారినందున డేటాబేస్ గుప్తీకరణ కీని యాక్సెస్ చేయడం సాధ్యపడలేదు. ఒకవేళ డెస్క్‌టాప్ ఆవరణము మారితే ఇది సంభవించవచ్చు, ఉదాహరణకు GNOME నుండి KDE కు.\n\nదయచేసి మునుపటి డెస్క్‌టాప్ ఆవరణమునకు మారండి."
+  },
+  "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
+    "messageformat": "OS గుప్తీకరణ కీరింగ్ బ్యాకెండ్ {previousBackend} నుండి {currentBackend} కు మారినందున డేటాబేస్ గుప్తీకరణ కీని యాక్సెస్ చేయడం సాధ్యపడలేదు. ఒకవేళ డెస్క్‌టాప్ ఆవరణము మారితే ఇది సంభవించవచ్చు, ఉదాహరణకు GNOME మరియు KDE మధ్య.\n\nదయచేసి మునుపటి డెస్క్‌టాప్ ఆవరణమునకు మారండి లేదా కమాండ్ లైన్ ఫ్లాగ్ --password-store=\"{previousBackendFlag}\" తో Signal ను రన్ చేయడానికి ప్రయత్నించండి"
+  },
   "icu:mainMenuFile": {
     "messageformat": "&పంక్తి"
   },
@@ -818,8 +830,14 @@
   "icu:cannotUpdateDetail": {
     "messageformat": "Signalని అప్‌డేట్ చేయలేం. దీనిని మాన్యువల్‌గా ఇన్‌స్టాల్ చేయడానికి {retry} లేదా {url}ని సందర్శించండి. తరువాత, ఈ సమస్య గురించి {support}"
   },
+  "icu:cannotUpdateDetail-v2": {
+    "messageformat": "Signal ని అప్‌డేట్ చేయలేకపోయాము. <retryUpdateButton>అప్‌డేట్‌ను మళ్ళీ ప్రయత్నించండి</retryUpdateButton> లేదా దాన్ని మాన్యువల్‌గా ఇన్‌స్టాల్ చేయడానికి {url} సందర్శించండి. ఆ తర్వాత, ఈ సమస్య గురించి <contactSupportLink>మద్దతును సంప్రదించండి</contactSupportLink>"
+  },
   "icu:cannotUpdateRequireManualDetail": {
     "messageformat": "Signal ని అప్‌డేట్ చేయలేం. దీనిని మాన్యువల్‌గా ఇన్‌స్టాల్ చేయడానికి {url}ని సందర్శించండి. తరువాత, ఈ సమస్య గురించి {support}ని సంప్రదించండి."
+  },
+  "icu:cannotUpdateRequireManualDetail-v2": {
+    "messageformat": "Signal ని అప్‌డేట్ చేయలేకపోయాము. దాన్ని మాన్యువల్‌గా ఇన్‌స్టాల్ చేయడానికి {url} సందర్శించండి. ఆ తర్వాత, ఈ సమస్య గురించి <contactSupportLink>మద్దతును సంప్రదించండి</contactSupportLink>"
   },
   "icu:readOnlyVolume": {
     "messageformat": "Signal Desktop macOS నిర్బంధంలో ఉండవచ్చు మరియు స్వయంచాలకంగా నవీకరించబడదు. ఫైండర్‌తో {app} నుండి {folder} వరకు తరలించడానికి ప్రయత్నించండి."
@@ -989,6 +1007,9 @@
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
     "messageformat": "ఈ చాట్‌లోని సందేశాలన్నీ ఈ పరికరం నుండి తొలగించబడతాయి. మీరు సందేశాలను తొలగించిన తర్వాత కూడా మీరు ఇంకా ఈ చాట్ కోసం శోధించవచ్చు."
   },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
+    "messageformat": "ఈ చాట్‌లోని అన్ని సందేశాలు మీ పరికరాలు అన్నింటి నుండి తొలగించబడతాయి. మీరు సందేశాలను తొలగించిన తర్వాత కూడా ఈ చాట్ కోసం మీరు వెతకవచ్చు."
+  },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "గ్రూప్‌ను వదిలేయండి"
   },
@@ -1092,7 +1113,7 @@
     "messageformat": "పరికరాలు అనుసంధానించు"
   },
   "icu:linkNewDevice": {
-    "messageformat": "కొత్త పరికరాన్ని అనుసంధానించు"
+    "messageformat": "కొత్త పరికరాన్ని లింక్ చేయండి"
   },
   "icu:Install__learn-more": {
     "messageformat": "ఇంకా నేర్చుకో"
@@ -1110,10 +1131,22 @@
     "messageformat": "అమరికలు"
   },
   "icu:Install__instructions__3": {
-    "messageformat": "{plusButton} (Android) లేదా {linkNewDevice} (iPhone)ని తట్టండి"
+    "messageformat": "{linkNewDevice} తట్టండి"
   },
-  "icu:Install__qr-failed-load": {
-    "messageformat": "QR కోడ్ లోడ్ కాలేకపోయింది. మీ ఇంటర్నెట్‌ను తనిఖీ చేయండి మరియు మళ్ళీ ప్రయత్నించండి. <retry>మళ్ళీ ప్రయత్నించండి</retry>"
+  "icu:Install__qr-failed-load__error--timeout": {
+    "messageformat": "QR కోడ్ లోడ్ కాలేకపోయింది. మీ కనెక్షన్‌ను తనిఖీ చేయండి మరియు మళ్ళీ ప్రయత్నించండి."
+  },
+  "icu:Install__qr-failed-load__error--unknown": {
+    "messageformat": "<paragraph>ఊహించని పొరపాటు ఏర్పడింది.</paragraph><paragraph>దయచేసి మళ్లీ ప్రయత్నించండి.</paragraph>"
+  },
+  "icu:Install__qr-failed-load__error--network": {
+    "messageformat": "మీ ప్రస్తుత నెట్‌వర్క్‌ను ఉపయోగించి Signal ఈ పరికరాన్ని లింక్ చేయలేదు."
+  },
+  "icu:Install__qr-failed-load__retry": {
+    "messageformat": "మళ్ళీ ప్రయత్నించు"
+  },
+  "icu:Install__qr-failed-load__get-help": {
+    "messageformat": "సహాయం పొందండి"
   },
   "icu:Install__support-link": {
     "messageformat": "సాయం అవసరమా?"
@@ -1176,7 +1209,7 @@
     "messageformat": "కాల్‌లో చేరండి"
   },
   "icu:calling__return": {
-    "messageformat": "కాల్‌కు తిరిగి వెళ్ళు"
+    "messageformat": "కాల్‌కు తిరిగి వెళ్ళండి"
   },
   "icu:calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
     "messageformat": "కాల్ కాల వ్యవధి కారణంగా మైక్రోఫోన్ మ్యూట్ చేయబడింది"
@@ -1286,8 +1319,35 @@
   "icu:CallingPendingParticipants__DenyUser": {
     "messageformat": "చేరిక అభ్యర్థనను తిరస్కరించండి"
   },
+  "icu:CallingPendingParticipants__ApproveAll": {
+    "messageformat": "అన్నిటిని ఆమోదించండి"
+  },
+  "icu:CallingPendingParticipants__DenyAll": {
+    "messageformat": "అన్నిటిని తిరస్కరించండి"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--ApproveAll": {
+    "messageformat": "{count, plural, one {{count,number} అభ్యర్థనను ఆమోదించేదా?} other {{count,number} అభ్యర్థనలను ఆమోదించేదా?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--DenyAll": {
+    "messageformat": "{count, plural, one {{count,number} అభ్యర్థనను తిరస్కరించేదా?} other {{count,number} అభ్యర్థనలను తిరస్కరించేదా?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--ApproveAll": {
+    "messageformat": "{count, plural, one {{count,number} వ్యక్తి కాల్‌కు జోడించబడతారు.} other {{count,number} వ్యక్తులు కాల్‌కు జోడించబడతారు.}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--DenyAll": {
+    "messageformat": "{count, plural, one {{count,number} వ్యక్తి కాల్‌కు జోడించబడరు.} other {{count,number} వ్యక్తులు కాల్‌కు జోడించబడరు.}}"
+  },
   "icu:CallingPendingParticipants__RequestsToJoin": {
     "messageformat": "{count, plural, one {కాల్‌లో చేరడానికి {count,number} అభ్యర్థన} other {కాల్‌లో చేరడానికి {count,number} అభ్యర్థనలు}}"
+  },
+  "icu:CallingPendingParticipants__WouldLikeToJoin": {
+    "messageformat": "చేరాలనుకుంటున్నారు..."
+  },
+  "icu:CallingPendingParticipants__AdditionalRequests": {
+    "messageformat": "{count, plural, one {+{count,number} అభ్యర్థన} other {+{count,number} అభ్యర్థనలు}}"
+  },
+  "icu:CallingPendingParticipants__Toast--added-users-to-call": {
+    "messageformat": "{count, plural, one {కాల్‌కు {count,number} వ్యక్తి జోడించబడ్డారు} other {కాల్‌కు {count,number} వ్యక్తులు జోడించబడ్డారు}}"
   },
   "icu:CallingRaisedHandsList__Title": {
     "messageformat": "{count, plural, one {{count,number} చేయి ఎత్తారు} other {{count,number} చేతులు ఎత్తారు}}"
@@ -1352,8 +1412,14 @@
   "icu:calling__you-have-blocked": {
     "messageformat": "మీరు {name}ను బ్లాక్ చేశారు"
   },
+  "icu:calling__blocked-participant": {
+    "messageformat": "{name} బ్లాక్ చేయబడ్డారు"
+  },
+  "icu:calling__block-info-title": {
+    "messageformat": "{name} బ్లాక్ చేయబడ్డారు"
+  },
   "icu:calling__block-info": {
-    "messageformat": "మీరు వారి వాయిస్ లేదా వీడియోని పొందరు లేదా వారు మీకు చెందినది స్వీకరించరు."
+    "messageformat": "మీరు వారి ఆడియో లేదా వీడియోను స్వీకరించరు మరియు వారు మీది స్వీకరించరు."
   },
   "icu:calling__missing-media-keys": {
     "messageformat": "{name} నుండి ఆడియో మరియు వీడియోను స్వీకరించలేరు"
@@ -2372,15 +2438,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "చాట్ చదవనట్లుగా గుర్తు పెట్టబడింది"
   },
-  "icu:AuthArtCreator--dialog--message": {
-    "messageformat": "మీరు Signal స్టిక్కర్ ప్యాక్ క్రియేటర్‌ను తెరవాలని అనుకుంటున్నారా?"
-  },
-  "icu:AuthArtCreator--dialog--confirm": {
-    "messageformat": "నిర్ధారించండి"
-  },
-  "icu:AuthArtCreator--dialog--dismiss": {
-    "messageformat": "రద్దుచేసే"
-  },
   "icu:ArtCreator--Authentication--error": {
     "messageformat": "స్టిక్కర్ ప్యాక్ క్రియేటర్‌ను ఉపయోగించడానికి దయచేసి మీ ఫోన్ మరియు డెస్క్‌టాప్‌లో Signal ను సెటప్ చేయండి"
   },
@@ -2577,10 +2634,10 @@
     "messageformat": "నిరాకరించు"
   },
   "icu:declinedIncomingAudioCall": {
-    "messageformat": "మీరు ఒక వాయిస్ కాల్‌ను నిరాకరించారు"
+    "messageformat": "స్వర కాల్ తిరస్కరించబడింది"
   },
   "icu:declinedIncomingVideoCall": {
-    "messageformat": "మీరు వీడియో కాల్‌ను తిరస్కరించారు"
+    "messageformat": "వీడియో కాల్ తిరస్కరించబడింది"
   },
   "icu:acceptedIncomingAudioCall": {
     "messageformat": "ఇన్‌కమింగ్ వాయిస్ కాల్"
@@ -2613,10 +2670,10 @@
     "messageformat": "నోటిఫికేషన్ ప్రాంతంలో Signal నడుస్తూనే ఉంటుంది. మీరు దీనిని Signal సెట్టింగ్‌లలో మార్చవచ్చు."
   },
   "icu:incomingAudioCall": {
-    "messageformat": "ఇన్‌కమింగ్ వాయిస్ కాల్..."
+    "messageformat": "ఇన్‌కమింగ్ వాయిస్ కాల్"
   },
   "icu:incomingVideoCall": {
-    "messageformat": "ఇన్‌కమింగ్ వీడియో కాల్…"
+    "messageformat": "కొత్తగా వచ్చిన వీడియో కాల్"
   },
   "icu:outgoingAudioCall": {
     "messageformat": "అవుట్‌గోయింగ్ వాయిస్ కాల్"
@@ -2661,7 +2718,7 @@
     "messageformat": "{count, plural, one {{count,number} వ్యక్తి} other {{count,number}వ్యక్తులు}}"
   },
   "icu:CallControls__InfoDisplay--audio-call": {
-    "messageformat": "ఆడియో కాల్"
+    "messageformat": "స్వర కాల్"
   },
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "కాల్ లింక్"
@@ -2688,13 +2745,13 @@
     "messageformat": "రింగ్ ఆఫ్‌లో ఉంది"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "You raised a hand."
+    "messageformat": "మీరు చేయి పైకెతారు."
   },
   "icu:CallControls__RaiseHandsToast--you-and-one": {
-    "messageformat": "You and {otherName} raised a hand."
+    "messageformat": "మీరు మరియు {otherName} చేయి పైకెత్తారు."
   },
   "icu:CallControls__RaiseHandsToast--you-and-more": {
-    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
+    "messageformat": "{overflowCount, plural, one {మీరు, {otherName}, ఇంకా {overflowCount,number} చేయి పైకెతారు.} other {మీరు, {otherName}, ఇంకా {overflowCount,number} మంది చేయి పైకెతారు.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} చేయి పైకెత్తారు."
@@ -2724,16 +2781,16 @@
     "messageformat": "{people, plural, one {కాల్‌లో {people,number}} other {కాల్‌లో {people,number}}}"
   },
   "icu:calling__call-notification__ended": {
-    "messageformat": "సమూహ కాల్ ముగిసింది"
+    "messageformat": "వీడియో కాల్ ముగిసింది"
   },
   "icu:calling__call-notification__started-by-someone": {
-    "messageformat": "సమూహ కాల్ ప్రారంభించబడింది"
+    "messageformat": "ఒక వీడియో కాల్ ప్రారంభించబడింది"
   },
   "icu:calling__call-notification__started-by-you": {
-    "messageformat": "మీరు సమూహ కాల్ ప్రారంభించారు"
+    "messageformat": "మీరు వీడియో కాల్ ప్రారంభించారు"
   },
   "icu:calling__call-notification__started": {
-    "messageformat": "{name} మంది గ్రూప్ కాల్ ప్రారంభించారు"
+    "messageformat": "{name} వీడియో కాల్ ప్రారంభించారు"
   },
   "icu:calling__in-another-call-tooltip": {
     "messageformat": "మీరు ఇప్పటికే కాల్‌లో ఉన్నారు"
@@ -2780,26 +2837,41 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "ఒక విండో"
   },
+  "icu:calling__ParticipantInfoButton": {
+    "messageformat": "ఈ కాంటాక్ట్ గురించి మరింత సమాచారం"
+  },
   "icu:CallingAdhocCallInfo__CopyLink": {
     "messageformat": "కాల్ లింక్‌ను కాపీ చేయండి"
+  },
+  "icu:CallingAdhocCallInfo__ShareViaSignal": {
+    "messageformat": "కాల్ లింక్ Signal ద్వారా పంచుకోండి"
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "కాల్ నుండి ఈ వ్యక్తిని తొలగించండి"
   },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogBody": {
+    "messageformat": "కాల్ నుండి {name}‌ను తొలగించేదా?"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--remove": {
+    "messageformat": "తొలగించండి"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--block": {
+    "messageformat": "కాల్ నుండి బ్లాక్ చేయండి"
+  },
   "icu:CallingAdhocCallInfo__UnknownContactLabel": {
-    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+    "messageformat": "{count, plural, one {{count,number} వ్యక్తి} other {{count,number}వ్యక్తులు}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
-    "messageformat": "+{count,number} more"
+    "messageformat": "{count, plural, one {+మరో {count,number}} other {+మరిన్ని {count,number}}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
-    "messageformat": "More info about new contacts"
+    "messageformat": "కొత్త కాంటాక్ట్‌ల గురించి మరింత సమాచారం"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
-    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+    "messageformat": "కాల్‌లో చేరే ముందు, మీరు ఫోన్ కాంటాక్ట్‌ల పేర్లు, మీతో గ్రూప్‌లో ఉన్న వారు లేదా మీరు 1:1 చాట్ చేసినవారిని మాత్రమే చూడగలరు. ఒకసారి మీరు కాల్‌లో చేరిన తర్వాత అన్ని పేర్లు మరియు ఫోటోలను చూస్తారు."
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
-    "messageformat": "Got it"
+    "messageformat": "అర్థమైంది"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "వీడియో"
@@ -3512,6 +3584,9 @@
   "icu:ContactModal--remove-from-group": {
     "messageformat": "గ్రూప్ నుండి తొలగించండి"
   },
+  "icu:ContactModal--already-in-call": {
+    "messageformat": "మీరు ఇప్పటికే కాల్‌లో ఉన్నారు"
+  },
   "icu:showChatColorEditor": {
     "messageformat": "చాట్ రంగు"
   },
@@ -3780,7 +3855,7 @@
     "messageformat": "{count, plural, one {ఈ సందేశాన్ని మీరు ఏ పరికరాల నుంచి తొలగించాలని అనుకుంటున్నారు?} other {ఈ సందేశాలను మీరు ఏ పరికరాల నుంచి తొలగించాలని అనుకుంటున్నారు?}}"
   },
   "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
-    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+    "messageformat": "{count, plural, one {ఈ సందేశం మీ పరికరాలన్నింటి నుండి తొలగించబడుతుంది.} other {ఈ సందేశాలు మీ పరికరాలన్నింటి నుండి తొలగించబడతాయి.}}"
   },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "నా కోసం తొలగించండి"
@@ -3795,7 +3870,7 @@
     "messageformat": "అన్ని పరికరాాల నుంచి తొలగించండి"
   },
   "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
-    "messageformat": "Delete"
+    "messageformat": "తొలగించండి"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {ప్రతి ఒక్కరి కొరకు తొలగించడానికి మీరు కేవలం {count,number} సందేశం వరకు ఎంచుకోవచ్చు} other {ప్రతి ఒక్కరి కొరకు తొలగించడానికి మీరు కేవలం {count,number} సందేశాల వరకు ఎంచుకోవచ్చు}}"
@@ -4196,11 +4271,11 @@
   "icu:ProfileEditor--username--check-starting-character": {
     "messageformat": "వినియోగదారు పేర్లు సంఖ్యతో ప్రారంభం కావు."
   },
-  "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Usernames must have at least {min,number} characters."
+  "icu:ProfileEditor--username--check-character-min-plural": {
+    "messageformat": "{min, plural, one {యూజర్‌నేమ్‌లలో కనీసం {min,number} అక్షరం తప్పక ఉండాలి.} other {యూజర్‌నేమ్‌లలో కనీసం {min,number} అక్షరాలు తప్పక ఉండాలి.}}"
   },
-  "icu:ProfileEditor--username--check-character-max": {
-    "messageformat": "యూజర్‌నేమ్‌లో గరిష్టంగా {max,number} క్యారెక్టర్‌లు ఉండాలి."
+  "icu:ProfileEditor--username--check-character-max-plural": {
+    "messageformat": "{max, plural, one {యూజర్‌నేమ్‌లలో గరిష్టంగా {max,number} అక్షరం తప్పక ఉండాలి.} other {యూజర్‌నేమ్‌లలో గరిష్టంగా {max,number} అక్షరాలు తప్పక ఉండాలి.}}"
   },
   "icu:ProfileEditor--username--check-discriminator-min": {
     "messageformat": "యూజర్‌నేమ్ చెల్లుబాటు కాదు, కనీసం 2 అంకెలను ఎంటర్ చేయండి."
@@ -4240,9 +4315,6 @@
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
     "messageformat": "తొలగించండి"
-  },
-  "icu:ProfileEditor--username--delete-unavailable-notice": {
-    "messageformat": "మీ యూజర్‌నేమ్‌ను తొలగించడానికి, మీ ఫోన్‌లో Signal ను తెరిచి సెట్టింగ్లు > ప్రొఫైల్‌కు వెళ్లండి."
   },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "యూజర్‌నేమ్‌ను కాపీ చేయండి లేదా తొలగించండి"
@@ -4749,13 +4821,13 @@
     "messageformat": "మీ కనెక్షన్స్ మీ పేరు మరియు ఫోటోను చూడగలరు, మరియు దాన్ని వారి నుంచి మీరు దాచిపెడితే తప్ప, ‘‘నా కథ’’ కు పోస్ట్‌లను చూడగలరు"
   },
   "icu:LocalDeleteWarningModal__header": {
-    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+    "messageformat": "మీ పరికరాలు అన్నింటిలో తొలగించడం సింక్ చేయబడింది"
   },
   "icu:LocalDeleteWarningModal__description": {
-    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+    "messageformat": "మీరు సందేశాలు లేదా చాట్‌లు తొలగించినప్పుడు, అవి మీ అన్ని పరికరాలలో తొలగించబడతాయి."
   },
   "icu:LocalDeleteWarningModal__confirm": {
-    "messageformat": "Got it"
+    "messageformat": "అర్థమైంది"
   },
   "icu:Stories__title": {
     "messageformat": "కథలు"
@@ -5350,7 +5422,7 @@
     "messageformat": "“{query}” కోసం ఫలితాలు లేవు"
   },
   "icu:CallsList__CreateCallLink": {
-    "messageformat": "Create a Call Link"
+    "messageformat": "కాల్ లింక్‌ను సృష్టించండి"
   },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "ఇన్‌కమింగ్"
@@ -5360,6 +5432,9 @@
   },
   "icu:CallsList__ItemCallInfo--Missed": {
     "messageformat": "మిస్డ్"
+  },
+  "icu:CallsList__ItemCallInfo--Declined": {
+    "messageformat": "తిరస్కరించబడింది"
   },
   "icu:CallsList__ItemCallInfo--GroupCall": {
     "messageformat": "సమూహ కాల్"
@@ -5374,7 +5449,7 @@
     "messageformat": "ప్రస్తుత కాల్ నుండి నిష్క్రమించేదా?"
   },
   "icu:CallsList__LeaveCallDialogBody": {
-    "messageformat": "కొత్త కాల్‌లో చేరడానికి ముందు మీరు తప్పనిసరిగా ప్రస్తుత కాల్ నుండి నిష్క్రమించాలి."
+    "messageformat": "కొత్త కాల్‌లో చేరడానికి లేదా ప్రారంభించడానికి ముందు మీరు తప్పనిసరిగా ప్రస్తుత కాల్ నుండి నిష్క్రమించాలి."
   },
   "icu:CallsList__LeaveCallDialogButton--leave": {
     "messageformat": "కాల్ ని వదిలి"
@@ -5406,8 +5481,29 @@
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "కాల్ లింక్"
   },
+  "icu:CallHistory__DescriptionVideoCall--Default": {
+    "messageformat": "{direction, select, Outgoing {అవుట్గోయింగ్ వీడియో కాల్} other {కొత్తగా వచ్చిన వీడియో కాల్}}"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Missed": {
+    "messageformat": "తప్పిన వీడియో కాల్"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Unanswered": {
+    "messageformat": "సమాధానం లేని వీడియో కాల్"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Declined": {
+    "messageformat": "వీడియో కాల్ తిరస్కరించబడింది"
+  },
   "icu:CallLinkDetails__Join": {
     "messageformat": "చేరండి"
+  },
+  "icu:CallLinkDetails__AddCallNameLabel": {
+    "messageformat": "కాల్ పేరును జోడించండి"
+  },
+  "icu:CallLinkDetails__EditCallNameLabel": {
+    "messageformat": "కాల్ పేరును సవరించండి"
+  },
+  "icu:CallLinkDetails__ApproveAllMembersLabel": {
+    "messageformat": "సభ్యులందరినీ ఆమోదించండి"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "లింక్‌ను కాపీ చేయండి"
@@ -5415,23 +5511,50 @@
   "icu:CallLinkDetails__ShareLinkViaSignal": {
     "messageformat": "Signal ద్వారా లింక్‌ను పంచుకోండి"
   },
-  "icu:CallLinkEditModal__Title": {
-    "messageformat": "Call link details"
+  "icu:CallLinkDetails__DeleteLink": {
+    "messageformat": "Delete link"
   },
-  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
-    "messageformat": "Name"
+  "icu:CallLinkDetails__DeleteLinkModal__Title": {
+    "messageformat": "Delete call link?"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Body": {
+    "messageformat": "This link will no longer work for anyone who has it."
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
+    "messageformat": "Cancel"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Delete": {
+    "messageformat": "Delete"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "కాల్ లింక్ వివరాలు"
   },
   "icu:CallLinkEditModal__JoinButtonLabel": {
-    "messageformat": "Join"
+    "messageformat": "చేరండి"
+  },
+  "icu:CallLinkEditModal__AddCallNameLabel": {
+    "messageformat": "కాల్ పేరును జోడించండి"
+  },
+  "icu:CallLinkEditModal__EditCallNameLabel": {
+    "messageformat": "కాల్ పేరును సవరించండి"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Approve all members"
+    "messageformat": "సభ్యులందరినీ ఆమోదించండి"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
-    "messageformat": "Off"
+  "icu:CallLinkRestrictionsSelect__Option--Off": {
+    "messageformat": "ఆఫ్"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
-    "messageformat": "On"
+  "icu:CallLinkRestrictionsSelect__Option--On": {
+    "messageformat": "ఆన్"
+  },
+  "icu:CallLinkAddNameModal__Title": {
+    "messageformat": "కాల్ పేరును జోడించండి"
+  },
+  "icu:CallLinkAddNameModal__Title--Edit": {
+    "messageformat": "కాల్ పేరును సవరించండి"
+  },
+  "icu:CallLinkAddNameModal__NameLabel": {
+    "messageformat": "కాల్ పేరు"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} ఇతర వ్యక్తి టైప్ చేస్తున్నారు.} other {{count,number} మంది ఇతర వ్యక్తులు టైప్ చేస్తున్నారు.}}"
@@ -5473,19 +5596,19 @@
     "messageformat": "చిన్న ట్వీక్‌లు, బగ్ ఫిక్స్‌లు, మరియు పనితీరు మెరుగుదలలు. Signal ఉపయోగించినందుకు మీకు ధన్యవాదాలు!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.12--0": {
-    "messageformat": "★ గ్రూప్ కాల్స్ సమయంలో కమ్యూనికేట్ చేయడానికి ఒకవేళ మీరు మరొక మార్గం కోసం చూస్తున్నట్లయితే మీ చేతిని పైకెత్తండి. గ్రూప్ కాల్స్ సమయంలో ప్రశ్న అడగడానికి లేదా ఒకరి దృష్టిని ఆకర్షించడానికి కొత్త రైజ్ హ్యాండ్ ఫీచర్ అనేది సులభమైన మార్గం."
+  "icu:WhatsNew__v7.18--0": {
+    "messageformat": "ఈ విడుదల పెద్ద సందేశ థ్రెడ్‌లను తొలగించే ప్రక్రియను వేగవంతం చేస్తుంది."
   },
-  "icu:WhatsNew__v7.12--1": {
-    "messageformat": "చిత్రాల పరిమాణాన్ని మార్చడానికి మెరుగైన క్రాప్ టూల్‌ను కూడా ఈ అప్‌డేట్ కలిగి ఉంది."
+  "icu:WhatsNew__v7.19--0": {
+    "messageformat": "మరొక కాల్ ఇప్పటికే పురోగతిలో ఉన్నప్పుడు హ్యాంగ్ అప్ చేయడానికి మరియు కొత్త కాల్‌లో చేరడానికి మేము సత్వరమార్గాన్ని జోడించాము. మీ నిష్క్రమణను నిర్ధారించమని మీరు ప్రాంప్ట్ చేయబడతారు, అయితే మీరు ముందుగా వీడ్కోలు చెప్పాలా వద్దా అనేది మీ ఇష్టం."
   },
-  "icu:WhatsNew__v7.12--2": {
-    "messageformat": "Ctrl/Cmd+Shift+Y కు స్వర గమనికను పంపడం కోసం కీబోర్డ్ షార్ట్‌కట్‌ను మేము సవరించాము, తద్వారా Windows మరియు Linux లో \"అతికించండి మరియు శైలిని సరిపోల్చండి\" షార్ట్‌కట్‌తో ఇది ఇకపై విభేదించదు."
+  "icu:WhatsNew__v7.19--1": {
+    "messageformat": "ఈ అప్‌డేట్ స్థానికంను `POSIX`కి సెట్ చేయబడిన యూజర్‌ల కోసం Linux లో ప్రారంభ క్రాష్‌ను కూడా పరిష్కరిస్తుంది."
   },
-  "icu:WhatsNew__v7.13--0": {
-    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  "icu:WhatsNew__v7.20--0": {
+    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
   },
-  "icu:WhatsNew__v7.13--1": {
-    "messageformat": "This update also improves the display of quoted replies in RTL languages."
+  "icu:WhatsNew__v7.20--1": {
+    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
   }
 }

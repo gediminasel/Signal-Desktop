@@ -23,7 +23,7 @@ import type {
 import { backupsService } from '../../services/backups';
 import { isUnsupportedMessage } from '../../state/selectors/message';
 import { generateAci, generatePni } from '../../types/ServiceId';
-import Data from '../../sql/Client';
+import { DataReader, DataWriter } from '../../sql/Client';
 import { getRandomBytes } from '../../Crypto';
 import * as Bytes from '../../Bytes';
 
@@ -93,36 +93,39 @@ function sortAndNormalize(
       return result;
     }
 
-    return {
-      ...rest,
-      conversationId: mapConvoId(conversationId),
-      reactions: reactions?.map(({ fromId, ...restOfReaction }) => {
-        return {
-          from: mapConvoId(fromId),
-          ...restOfReaction,
-        };
-      }),
-      changedId: mapConvoId(changedId),
-      key_changed: mapConvoId(keyChanged),
-      verifiedChanged: mapConvoId(verifiedChanged),
-      sendStateByConverationId: mapSendState(sendStateByConversationId),
-      editHistory: editHistory?.map(history => {
-        const {
-          sendStateByConversationId: historySendState,
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          received_at: _receivedAtHistory,
-          ...restOfHistory
-        } = history;
+    // Get rid of unserializable `undefined` values.
+    return JSON.parse(
+      JSON.stringify({
+        ...rest,
+        conversationId: mapConvoId(conversationId),
+        reactions: reactions?.map(({ fromId, ...restOfReaction }) => {
+          return {
+            from: mapConvoId(fromId),
+            ...restOfReaction,
+          };
+        }),
+        changedId: mapConvoId(changedId),
+        key_changed: mapConvoId(keyChanged),
+        verifiedChanged: mapConvoId(verifiedChanged),
+        sendStateByConverationId: mapSendState(sendStateByConversationId),
+        editHistory: editHistory?.map(history => {
+          const {
+            sendStateByConversationId: historySendState,
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            received_at: _receivedAtHistory,
+            ...restOfHistory
+          } = history;
 
-        return {
-          ...restOfHistory,
-          sendStateByConversationId: mapSendState(historySendState),
-        };
-      }),
+          return {
+            ...restOfHistory,
+            sendStateByConversationId: mapSendState(historySendState),
+          };
+        }),
 
-      // Not an original property, but useful
-      isUnsupported: isUnsupportedMessage(message),
-    };
+        // Not an original property, but useful
+        isUnsupported: isUnsupportedMessage(message),
+      })
+    );
   });
 }
 
@@ -142,7 +145,7 @@ export async function symmetricRoundtripHarness(
 }
 
 async function updateConvoIdToTitle() {
-  const all = await Data.getAllConversations();
+  const all = await DataReader.getAllConversations();
   for (const convo of all) {
     CONVO_ID_TO_STABLE_ID.set(
       convo.id,
@@ -164,7 +167,7 @@ export async function asymmetricRoundtripHarness(
   try {
     const targetOutputFile = path.join(outDir, 'backup.bin');
 
-    await Data.saveMessages(before, { forceSave: true, ourAci: OUR_ACI });
+    await DataWriter.saveMessages(before, { forceSave: true, ourAci: OUR_ACI });
 
     await backupsService.exportToDisk(targetOutputFile, options.backupLevel);
 
@@ -174,7 +177,7 @@ export async function asymmetricRoundtripHarness(
 
     await backupsService.importBackup(() => createReadStream(targetOutputFile));
 
-    const messagesFromDatabase = await Data._getAllMessages();
+    const messagesFromDatabase = await DataReader._getAllMessages();
 
     await updateConvoIdToTitle();
 
@@ -196,9 +199,9 @@ export async function asymmetricRoundtripHarness(
 }
 
 async function clearData() {
-  await Data._removeAllMessages();
-  await Data._removeAllConversations();
-  await Data.removeAllItems();
+  await DataWriter._removeAllMessages();
+  await DataWriter._removeAllConversations();
+  await DataWriter.removeAllItems();
   window.storage.reset();
   window.ConversationController.reset();
 

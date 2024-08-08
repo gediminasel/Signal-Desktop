@@ -80,6 +80,18 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "Versi pangkalan data anda tidak sepadan dengan versi Signal ini. Pastikan anda membuka versi terbaru Signal pada komputer anda."
   },
+  "icu:databaseError__recover__detail": {
+    "messageformat": "Ralat pangkalan data telah berlaku. Anda boleh menyalin ralat dan menghubungi sokongan Signal untuk membantu menyelesaikan isu tersebut. Jika anda perlu menggunakan Signal dengan segera, anda boleh cuba memulihkan data anda.\n\nHubungi sokongan dengan melayari: {link}"
+  },
+  "icu:databaseError__recover__button": {
+    "messageformat": "Pulihkan data"
+  },
+  "icu:databaseError__safeStorageBackendChange": {
+    "messageformat": "Tidak dapat mengakses kunci penyulitan pangkalan data kerana hujung belakang cincin kekunci penyulitan OS telah berubah daripada {previousBackend} kepada {currentBackend}. Ini boleh berlaku jika persekitaran desktop berubah, contohnya antara GNOME dan KDE.\n\nSila tukar ke persekitaran desktop sebelumnya."
+  },
+  "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
+    "messageformat": "Tidak dapat mengakses kunci penyulitan pangkalan data kerana hujung belakang cincin kekunci penyulitan OS telah berubah daripada {previousBackend} kepada {currentBackend}. Ini boleh berlaku jika persekitaran desktop berubah, contohnya antara GNOME dan KDE.\n\nSila tukar ke persekitaran desktop sebelumnya atau cuba jalankan isyarat dengan bendera baris arahan --password-store=\"{previousBackendFlag}\""
+  },
   "icu:mainMenuFile": {
     "messageformat": "&Fail"
   },
@@ -818,8 +830,14 @@
   "icu:cannotUpdateDetail": {
     "messageformat": "Signal tidak dapat dikemas kini. {retry} atau layari {url} untuk memasangnya secara manual. Kemudian, {support} tentang masalah ini"
   },
+  "icu:cannotUpdateDetail-v2": {
+    "messageformat": "Signal tidak dapat dikemas kini. <retryUpdateButton>Cuba kemas kini semula</retryUpdateButton> atau layari {url} untuk memasangnya secara manual. Kemudian, <contactSupportLink>hubungi sokongan</contactSupportLink> tentang masalah ini"
+  },
   "icu:cannotUpdateRequireManualDetail": {
     "messageformat": "Signal tidak dapat dikemas kini. Layari {url} untuk memasangnya secara manual. Kemudian, {support} tentang masalah ini"
+  },
+  "icu:cannotUpdateRequireManualDetail-v2": {
+    "messageformat": "Signal tidak dapat dikemas kini. Layari {url} untuk memasangnya secara manual. Kemudian, <contactSupportLink>hubungi sokongan</contactSupportLink> tentang masalah ini"
   },
   "icu:readOnlyVolume": {
     "messageformat": "Signal Desktop kemungkinan berada dalam kuarantin macOS dan tidak dapat mengemas kini secara automatik. Sila cuba mengalihkan {app} ke {folder} dengan Finder."
@@ -989,6 +1007,9 @@
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
     "messageformat": "Semua mesej dalam sembang ini akan dipadamkan daripada peranti ini. Anda masih boleh mencari sembang ini selepas anda memadamkan mesej."
   },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
+    "messageformat": "Semua mesej dalam sembang ini akan dipadamkan daripada semua peranti anda. Anda masih boleh mencari sembang ini selepas memadamkan mesej."
+  },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Keluar kumpulan"
   },
@@ -1092,7 +1113,7 @@
     "messageformat": "Peranti Dipautkan"
   },
   "icu:linkNewDevice": {
-    "messageformat": "Pautkan Peranti Baru"
+    "messageformat": "Pautkan Peranti Baharu"
   },
   "icu:Install__learn-more": {
     "messageformat": "Ketahui lebih lanjut"
@@ -1110,10 +1131,22 @@
     "messageformat": "Tetapan"
   },
   "icu:Install__instructions__3": {
-    "messageformat": "Ketik {plusButton} (Android) atau {linkNewDevice} (iPhone)"
+    "messageformat": "Ketik {linkNewDevice}"
   },
-  "icu:Install__qr-failed-load": {
-    "messageformat": "Kod QR tidak boleh dimuatkan. Periksa internet anda dan cuba lagi. <retry>Cuba Semula</retry>"
+  "icu:Install__qr-failed-load__error--timeout": {
+    "messageformat": "Kod QR tidak boleh dimuatkan. Periksa sambungan anda dan cuba lagi."
+  },
+  "icu:Install__qr-failed-load__error--unknown": {
+    "messageformat": "<paragraph>Ralat yang tidak dijangka berlaku.</paragraph><paragraph>Sila cuba lagi.</paragraph>"
+  },
+  "icu:Install__qr-failed-load__error--network": {
+    "messageformat": "Signal tidak dapat memautkan peranti ini menggunakan rangkaian semasa anda."
+  },
+  "icu:Install__qr-failed-load__retry": {
+    "messageformat": "Cuba Semula"
+  },
+  "icu:Install__qr-failed-load__get-help": {
+    "messageformat": "Dapatkan bantuan"
   },
   "icu:Install__support-link": {
     "messageformat": "Perlukan bantuan?"
@@ -1173,10 +1206,10 @@
     "messageformat": "Panggil Semula"
   },
   "icu:calling__join": {
-    "messageformat": "Sertai Panggilan"
+    "messageformat": "Sertai panggilan"
   },
   "icu:calling__return": {
-    "messageformat": "Kembali kepada Panggilan"
+    "messageformat": "Kembali ke panggilan"
   },
   "icu:calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
     "messageformat": "Mikrofon diredam kerana saiz panggilan"
@@ -1286,8 +1319,35 @@
   "icu:CallingPendingParticipants__DenyUser": {
     "messageformat": "Tolak permintaan penyertaan"
   },
+  "icu:CallingPendingParticipants__ApproveAll": {
+    "messageformat": "Luluskan semua"
+  },
+  "icu:CallingPendingParticipants__DenyAll": {
+    "messageformat": "Tolak semua"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--ApproveAll": {
+    "messageformat": "{count, plural, other {Luluskan {count,number} permintaan?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--DenyAll": {
+    "messageformat": "{count, plural, other {Tolak {count,number} permintaan?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--ApproveAll": {
+    "messageformat": "{count, plural, other {{count,number} orang akan ditambahkan pada panggilan.}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--DenyAll": {
+    "messageformat": "{count, plural, other {{count,number} orang tidak akan ditambahkan pada panggilan.}}"
+  },
   "icu:CallingPendingParticipants__RequestsToJoin": {
     "messageformat": "{count, plural, other {{count,number} meminta untuk menyertai panggilan}}"
+  },
+  "icu:CallingPendingParticipants__WouldLikeToJoin": {
+    "messageformat": "Ingin menyertai..."
+  },
+  "icu:CallingPendingParticipants__AdditionalRequests": {
+    "messageformat": "{count, plural, other {+{count,number} permintaan}}"
+  },
+  "icu:CallingPendingParticipants__Toast--added-users-to-call": {
+    "messageformat": "{count, plural, other {{count,number} orang ditambahkan pada panggilan}}"
   },
   "icu:CallingRaisedHandsList__Title": {
     "messageformat": "{count, plural, other {{count,number} mengangkat tangan}}"
@@ -1352,8 +1412,14 @@
   "icu:calling__you-have-blocked": {
     "messageformat": "Anda telah menyekat {name}"
   },
+  "icu:calling__blocked-participant": {
+    "messageformat": "{name} telah disekat"
+  },
+  "icu:calling__block-info-title": {
+    "messageformat": "{name} telah disekat"
+  },
   "icu:calling__block-info": {
-    "messageformat": "Anda tidak akan menerima suara atau video mereka dan mereka tidak akan menerima milik anda."
+    "messageformat": "Anda tidak akan menerima audio atau video mereka dan mereka tidak akan menerima audio atau video anda."
   },
   "icu:calling__missing-media-keys": {
     "messageformat": "Tidak dapat menerima audio dan video daripada {name}"
@@ -2372,15 +2438,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "Sembang ditanda belum dibaca"
   },
-  "icu:AuthArtCreator--dialog--message": {
-    "messageformat": "Adakah anda mahu membuka Pencipta Pek Pelekat Signal?"
-  },
-  "icu:AuthArtCreator--dialog--confirm": {
-    "messageformat": "Sahkan"
-  },
-  "icu:AuthArtCreator--dialog--dismiss": {
-    "messageformat": "Tolak"
-  },
   "icu:ArtCreator--Authentication--error": {
     "messageformat": "Sila sediakan Signal pada telefon dan desktop anda untuk menggunakan Pencipta Pek Pelekat"
   },
@@ -2577,10 +2634,10 @@
     "messageformat": "Tolak"
   },
   "icu:declinedIncomingAudioCall": {
-    "messageformat": "Anda menolak panggilan suara"
+    "messageformat": "Panggilan suara ditolak"
   },
   "icu:declinedIncomingVideoCall": {
-    "messageformat": "Anda telah menolak panggilan video"
+    "messageformat": "Panggilan video ditolak"
   },
   "icu:acceptedIncomingAudioCall": {
     "messageformat": "Panggilan suara masuk"
@@ -2613,10 +2670,10 @@
     "messageformat": "Signal akan terus berjalan dalam kawasan pemberitahuan. Ini boleh diubah dalam tetapan Signal."
   },
   "icu:incomingAudioCall": {
-    "messageformat": "Panggilan suara masuk…"
+    "messageformat": "Panggilan suara masuk"
   },
   "icu:incomingVideoCall": {
-    "messageformat": "Panggilan video masuk..."
+    "messageformat": "Panggilan video masuk"
   },
   "icu:outgoingAudioCall": {
     "messageformat": "Panggilan suara keluar"
@@ -2661,7 +2718,7 @@
     "messageformat": "{count, plural, other {{count,number} orang}}"
   },
   "icu:CallControls__InfoDisplay--audio-call": {
-    "messageformat": "Panggilan audio"
+    "messageformat": "Panggilan suara"
   },
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "Pautan panggilan"
@@ -2688,13 +2745,13 @@
     "messageformat": "Deringan dimatikan"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "You raised a hand."
+    "messageformat": "Anda mengangkat tangan."
   },
   "icu:CallControls__RaiseHandsToast--you-and-one": {
-    "messageformat": "You and {otherName} raised a hand."
+    "messageformat": "Anda dan {otherName} mengangkat tangan."
   },
   "icu:CallControls__RaiseHandsToast--you-and-more": {
-    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
+    "messageformat": "{overflowCount, plural, other {Anda, {otherName} dan {overflowCount,number} lagi mengangkat tangan.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} mengangkat tangan."
@@ -2724,16 +2781,16 @@
     "messageformat": "{people, plural, other {{people,number} orang dalam panggilan}}"
   },
   "icu:calling__call-notification__ended": {
-    "messageformat": "Panggilan kumpulan telah berakhir"
+    "messageformat": "Panggilan video telah tamat"
   },
   "icu:calling__call-notification__started-by-someone": {
-    "messageformat": "Panggilan berkumpulan telah bermula"
+    "messageformat": "Panggilan video dimulakan"
   },
   "icu:calling__call-notification__started-by-you": {
-    "messageformat": "Anda telah memulakan panggilan kumpulan"
+    "messageformat": "Anda memulakan panggilan video"
   },
   "icu:calling__call-notification__started": {
-    "messageformat": "{name} telah memulakan panggilan kumpulan"
+    "messageformat": "{name} memulakan panggilan video"
   },
   "icu:calling__in-another-call-tooltip": {
     "messageformat": "Anda sudah berada dalam panggilan"
@@ -2780,26 +2837,41 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "Tetingkap"
   },
+  "icu:calling__ParticipantInfoButton": {
+    "messageformat": "Maklumat lanjut tentang kenalan ini"
+  },
   "icu:CallingAdhocCallInfo__CopyLink": {
     "messageformat": "Salin pautan panggilan"
+  },
+  "icu:CallingAdhocCallInfo__ShareViaSignal": {
+    "messageformat": "Kongsi pautan panggilan melalui Signal"
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "Alih keluar orang ini daripada panggilan"
   },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogBody": {
+    "messageformat": "Alih keluar {name} daripada panggilan?"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--remove": {
+    "messageformat": "Alih keluar"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--block": {
+    "messageformat": "Sekat daripada panggilan"
+  },
   "icu:CallingAdhocCallInfo__UnknownContactLabel": {
-    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+    "messageformat": "{count, plural, other {{count,number} orang}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
-    "messageformat": "+{count,number} more"
+    "messageformat": "{count, plural, other {+{count,number} lagi}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
-    "messageformat": "More info about new contacts"
+    "messageformat": "Maklumat lanjut tentang kenalan baharu"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
-    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+    "messageformat": "Sebelum menyertai panggilan, anda hanya boleh melihat nama kenalan telefon, orang yang bersama anda dalam kumpulan atau orang yang pernah anda sembang 1:1. Anda akan melihat semua nama dan foto setelah anda menyertai panggilan."
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
-    "messageformat": "Got it"
+    "messageformat": "Faham"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -3512,6 +3584,9 @@
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Alih keluar daripada kumpulan"
   },
+  "icu:ContactModal--already-in-call": {
+    "messageformat": "Anda sudah berada dalam panggilan"
+  },
   "icu:showChatColorEditor": {
     "messageformat": "Warna sembang"
   },
@@ -3780,7 +3855,7 @@
     "messageformat": "{count, plural, other {Peranti apakah yang ingin anda padamkan mesej ini?}}"
   },
   "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
-    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+    "messageformat": "{count, plural, other {Mesej ini akan dipadamkan daripada semua peranti anda.}}"
   },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "Padam untuk saya"
@@ -3795,7 +3870,7 @@
     "messageformat": "Padam daripada semua peranti"
   },
   "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
-    "messageformat": "Delete"
+    "messageformat": "Padam"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, other {Anda hanya boleh memilih sehingga {count,number} mesej untuk dipadamkan untuk semua orang}}"
@@ -4196,11 +4271,11 @@
   "icu:ProfileEditor--username--check-starting-character": {
     "messageformat": "Nama pengguna tidak boleh bermula dengan nombor."
   },
-  "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Usernames must have at least {min,number} characters."
+  "icu:ProfileEditor--username--check-character-min-plural": {
+    "messageformat": "{min, plural, other {Nama pengguna mestilah sekurang-kurangnya {min,number} aksara.}}"
   },
-  "icu:ProfileEditor--username--check-character-max": {
-    "messageformat": "Nama pengguna mesti mempunyai sekurang-kurangnya {max,number} aksara."
+  "icu:ProfileEditor--username--check-character-max-plural": {
+    "messageformat": "{max, plural, other {Nama pengguna mesti tidak melebihi {max,number} aksara.}}"
   },
   "icu:ProfileEditor--username--check-discriminator-min": {
     "messageformat": "Nama pengguna tidak sah, masukkan sekurang-kurangnya 2 digit."
@@ -4240,9 +4315,6 @@
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
     "messageformat": "Padam"
-  },
-  "icu:ProfileEditor--username--delete-unavailable-notice": {
-    "messageformat": "Untuk memadam nama pengguna anda, buka Signal pada telefon anda dan pergi ke Tetapan > Profil."
   },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "Salin atau padam nama pengguna"
@@ -4749,13 +4821,13 @@
     "messageformat": "Hubungan anda boleh melihat nama dan foto anda, dan boleh melihat hantaran anda ke \"Cerita Saya\" kecuali anda menyembunyikannya daripada mereka."
   },
   "icu:LocalDeleteWarningModal__header": {
-    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+    "messageformat": "Pemadaman disegerakkan merentas peranti anda"
   },
   "icu:LocalDeleteWarningModal__description": {
-    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+    "messageformat": "Apabila anda memadam mesej atau sembang, ia akan dipadamkan daripada semua peranti anda."
   },
   "icu:LocalDeleteWarningModal__confirm": {
-    "messageformat": "Got it"
+    "messageformat": "Faham"
   },
   "icu:Stories__title": {
     "messageformat": "Cerita"
@@ -5350,7 +5422,7 @@
     "messageformat": "Tiada hasil untuk “{query}”"
   },
   "icu:CallsList__CreateCallLink": {
-    "messageformat": "Create a Call Link"
+    "messageformat": "Cipta Pautan Panggilan"
   },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "Panggilan masuk"
@@ -5360,6 +5432,9 @@
   },
   "icu:CallsList__ItemCallInfo--Missed": {
     "messageformat": "Panggilan terlepas"
+  },
+  "icu:CallsList__ItemCallInfo--Declined": {
+    "messageformat": "Tolak"
   },
   "icu:CallsList__ItemCallInfo--GroupCall": {
     "messageformat": "Panggilan kumpulan"
@@ -5374,7 +5449,7 @@
     "messageformat": "Tinggalkan panggilan semasa?"
   },
   "icu:CallsList__LeaveCallDialogBody": {
-    "messageformat": "Anda mesti meninggalkan panggilan semasa sebelum menyertai panggilan baharu."
+    "messageformat": "Anda mesti meninggalkan panggilan semasa sebelum memulakan atau menyertai panggilan baharu."
   },
   "icu:CallsList__LeaveCallDialogButton--leave": {
     "messageformat": "Tinggalkan panggilan"
@@ -5406,8 +5481,29 @@
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Pautan panggilan"
   },
+  "icu:CallHistory__DescriptionVideoCall--Default": {
+    "messageformat": "{direction, select, Outgoing {Panggilan video keluar} other {Panggilan video masuk}}"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Missed": {
+    "messageformat": "Panggilan video tidak dijawab"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Unanswered": {
+    "messageformat": "Panggilan video tidak dijawab"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Declined": {
+    "messageformat": "Panggilan video ditolak"
+  },
   "icu:CallLinkDetails__Join": {
     "messageformat": "Sertai"
+  },
+  "icu:CallLinkDetails__AddCallNameLabel": {
+    "messageformat": "Tambah nama panggilan"
+  },
+  "icu:CallLinkDetails__EditCallNameLabel": {
+    "messageformat": "Edit nama panggilan"
+  },
+  "icu:CallLinkDetails__ApproveAllMembersLabel": {
+    "messageformat": "Luluskan semua ahli"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "Salin pautan"
@@ -5415,23 +5511,50 @@
   "icu:CallLinkDetails__ShareLinkViaSignal": {
     "messageformat": "Kongsi pautan melalui Signal"
   },
-  "icu:CallLinkEditModal__Title": {
-    "messageformat": "Call link details"
+  "icu:CallLinkDetails__DeleteLink": {
+    "messageformat": "Delete link"
   },
-  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
-    "messageformat": "Name"
+  "icu:CallLinkDetails__DeleteLinkModal__Title": {
+    "messageformat": "Delete call link?"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Body": {
+    "messageformat": "This link will no longer work for anyone who has it."
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
+    "messageformat": "Cancel"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Delete": {
+    "messageformat": "Delete"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Butiran pautan panggilan"
   },
   "icu:CallLinkEditModal__JoinButtonLabel": {
-    "messageformat": "Join"
+    "messageformat": "Sertai"
+  },
+  "icu:CallLinkEditModal__AddCallNameLabel": {
+    "messageformat": "Tambah nama panggilan"
+  },
+  "icu:CallLinkEditModal__EditCallNameLabel": {
+    "messageformat": "Edit nama panggilan"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Approve all members"
+    "messageformat": "Luluskan semua ahli"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
-    "messageformat": "Off"
+  "icu:CallLinkRestrictionsSelect__Option--Off": {
+    "messageformat": "Mati"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
-    "messageformat": "On"
+  "icu:CallLinkRestrictionsSelect__Option--On": {
+    "messageformat": "Hidup"
+  },
+  "icu:CallLinkAddNameModal__Title": {
+    "messageformat": "Tambah nama panggilan"
+  },
+  "icu:CallLinkAddNameModal__Title--Edit": {
+    "messageformat": "Edit nama panggilan"
+  },
+  "icu:CallLinkAddNameModal__NameLabel": {
+    "messageformat": "Nama panggilan"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, other {{count,number} yang lain sedang menaip.}}"
@@ -5473,19 +5596,19 @@
     "messageformat": "Sedikit pengubahsuaian, pembaikan pepijat dan peningkatan prestasi. Terima kasih kerana menggunakan Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.12--0": {
-    "messageformat": "Ciri Angkat Tangan ialah cara mudah untuk mendapatkan perhatian seseorang atau bertanya soalan semasa panggilan kumpulan."
+  "icu:WhatsNew__v7.18--0": {
+    "messageformat": "Keluaran ini mempercepatkan proses memadamkan urutan mesej yang besar."
   },
-  "icu:WhatsNew__v7.12--1": {
-    "messageformat": "Kemas kini juga termasuk alat pemotong yang ditingkatkan untuk mengubah saiz foto."
+  "icu:WhatsNew__v7.19--0": {
+    "messageformat": "Kami telah menambahkan pintasan untuk meletakkan panggilan atau menyertai panggilan baharu apabila panggilan lain sedang berjalan."
   },
-  "icu:WhatsNew__v7.12--2": {
-    "messageformat": "Kami mengubah suai pintasan papan kekunci untuk menghantar nota suara ke Ctrl/Cmd+Shift+Y supaya ia tidak lagi bercanggah dengan pintasan \"Tampal dan Padankan Gaya\" pada Windows dan Linux."
+  "icu:WhatsNew__v7.19--1": {
+    "messageformat": "Kemas kini ini juga membaiki ranap permulaan pada Linux untuk pengguna yang tempatnya ditetapkan kepada 'POSIX'."
   },
-  "icu:WhatsNew__v7.13--0": {
-    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  "icu:WhatsNew__v7.20--0": {
+    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
   },
-  "icu:WhatsNew__v7.13--1": {
-    "messageformat": "This update also improves the display of quoted replies in RTL languages."
+  "icu:WhatsNew__v7.20--1": {
+    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
   }
 }

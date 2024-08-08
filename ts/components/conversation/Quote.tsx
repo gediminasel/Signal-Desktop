@@ -619,9 +619,7 @@ function ThumbnailImage({
   return (
     <div
       className={className}
-      style={
-        loadedSrc ? { backgroundImage: `url('${encodeURI(loadedSrc)}')` } : {}
-      }
+      style={loadedSrc ? { backgroundImage: `url('${loadedSrc}')` } : {}}
     >
       {children}
     </div>

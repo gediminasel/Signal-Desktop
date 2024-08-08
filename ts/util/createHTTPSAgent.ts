@@ -145,16 +145,22 @@ export async function happyEyeballs({
         v6Attempts += 1;
       }
 
-      const socket = await pTimeout(
-        connect({
-          address: addr.address,
-          port,
-          tlsOptions,
-          abortSignal: abortController.signal,
-        }),
-        CONNECT_TIMEOUT_MS,
-        'createHTTPSAgent.connect: connection timed out'
-      );
+      let socket: net.Socket;
+      try {
+        socket = await pTimeout(
+          connect({
+            address: addr.address,
+            port,
+            tlsOptions,
+            abortSignal: abortController.signal,
+          }),
+          CONNECT_TIMEOUT_MS,
+          'createHTTPSAgent.connect: connection timed out'
+        );
+      } catch (error) {
+        abortController.abort();
+        throw error;
+      }
 
       if (abortController.signal.aborted) {
         throw new Error('Aborted');
@@ -213,8 +219,10 @@ async function defaultConnect({
 }: ConnectOptionsType): Promise<net.Socket> {
   const socket = tls.connect(port, address, {
     ...tlsOptions,
-    signal: abortSignal,
   });
+  abortSignal?.addEventListener('abort', () =>
+    socket.destroy(new Error('Aborted'))
+  );
 
   const { promise: onHandshake, resolve, reject } = explodePromise<void>();
 

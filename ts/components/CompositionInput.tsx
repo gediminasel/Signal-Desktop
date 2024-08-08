@@ -22,7 +22,12 @@ import type {
   HydratedBodyRangesType,
   RangeNode,
 } from '../types/BodyRange';
-import { BodyRange, collapseRangeTree, insertRange } from '../types/BodyRange';
+import {
+  BodyRange,
+  areBodyRangesEqual,
+  collapseRangeTree,
+  insertRange,
+} from '../types/BodyRange';
 import type { LocalizerType, ThemeType } from '../types/Util';
 import type { ConversationType } from '../state/ducks/conversations';
 import type { PreferredBadgeSelectorType } from '../state/selectors/badges';
@@ -105,6 +110,7 @@ export type Props = Readonly<{
   large: boolean | null;
   inputApi: React.MutableRefObject<InputApi | undefined> | null;
   isFormattingEnabled: boolean;
+  isActive: boolean;
   sendCounter: number;
   skinTone: NonNullable<EmojiPickDataType['skinTone']> | null;
   draftText: string | null;
@@ -158,6 +164,7 @@ export function CompositionInput(props: Props): React.ReactElement {
     i18n,
     inputApi,
     isFormattingEnabled,
+    isActive,
     large,
     linkPreviewLoading,
     linkPreviewResult,
@@ -357,7 +364,11 @@ export function CompositionInput(props: Props): React.ReactElement {
       `CompositionInput: Submitting message ${timestamp} with ${bodyRanges.length} ranges`
     );
     canSendRef.current = false;
-    onSubmit(text, bodyRanges, timestamp);
+    const didSend = onSubmit(text, bodyRanges, timestamp);
+
+    if (!didSend) {
+      canSendRef.current = true;
+    }
   };
 
   if (inputApi) {
@@ -409,8 +420,13 @@ export function CompositionInput(props: Props): React.ReactElement {
     isMouseDown,
     previousFormattingEnabled,
     previousIsMouseDown,
-    quillRef,
   ]);
+
+  React.useEffect(() => {
+    quillRef.current?.getModule('signalClipboard').updateOptions({
+      isDisabled: !isActive,
+    });
+  }, [isActive]);
 
   const onEnter = (): boolean => {
     const quill = quillRef.current;
@@ -572,7 +588,19 @@ export function CompositionInput(props: Props): React.ReactElement {
     }
 
     if (propsRef.current.onDirtyChange) {
-      propsRef.current.onDirtyChange(text.length > 0);
+      let isDirty: boolean = false;
+
+      if (!draftEditMessage) {
+        isDirty = text.length > 0;
+      } else if (text.trimEnd() !== draftEditMessage.body.trimEnd()) {
+        isDirty = true;
+      } else if (bodyRanges.length !== draftEditMessage.bodyRanges?.length) {
+        isDirty = true;
+      } else if (!areBodyRangesEqual(bodyRanges, draftEditMessage.bodyRanges)) {
+        isDirty = true;
+      }
+
+      propsRef.current.onDirtyChange(isDirty);
     }
   };
 
@@ -702,7 +730,9 @@ export function CompositionInput(props: Props): React.ReactElement {
           defaultValue={delta}
           modules={{
             toolbar: false,
-            signalClipboard: true,
+            signalClipboard: {
+              isDisabled: !isActive,
+            },
             clipboard: {
               matchers: [
                 ['IMG', matchEmojiImage],

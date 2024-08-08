@@ -32,7 +32,8 @@ import type {
   ConversationsByDemuxIdType,
   GroupCallRemoteParticipantType,
 } from '../../types/Calling';
-import { CallMode, CallState } from '../../types/Calling';
+import { CallState } from '../../types/Calling';
+import { CallMode } from '../../types/CallDisposition';
 import type { AciString } from '../../types/ServiceId';
 import { strictAssert } from '../../util/assert';
 import { callLinkToConversation } from '../../util/callLinks';
@@ -55,6 +56,7 @@ import { SmartCallingDeviceSelection } from './CallingDeviceSelection';
 import { renderEmojiPicker } from './renderEmojiPicker';
 import { renderReactionPicker } from './renderReactionPicker';
 import { isSharingPhoneNumberWithEverybody as getIsSharingPhoneNumberWithEverybody } from '../../util/phoneNumberSharingMode';
+import { useGlobalModalActions } from '../ducks/globalModals';
 
 function renderDeviceSelection(): JSX.Element {
   return <SmartCallingDeviceSelection />;
@@ -425,6 +427,7 @@ export const SmartCallManager = memo(function SmartCallManager() {
 
   const {
     approveUser,
+    batchUserAction,
     denyUser,
     changeCallView,
     closeNeedPermissionScreen,
@@ -436,6 +439,7 @@ export const SmartCallManager = memo(function SmartCallManager() {
     declineCall,
     openSystemPreferencesAction,
     removeClient,
+    blockClient,
     sendGroupCallRaiseHand,
     sendGroupCallReaction,
     setGroupCallVideoRequest,
@@ -454,6 +458,8 @@ export const SmartCallManager = memo(function SmartCallManager() {
     toggleSettings,
   } = useCallingActions();
   const { pauseVoiceNotePlayer } = useAudioPlayerActions();
+  const { showContactModal, showShareCallLinkViaSignal } =
+    useGlobalModalActions();
 
   return (
     <CallManager
@@ -461,6 +467,8 @@ export const SmartCallManager = memo(function SmartCallManager() {
       activeCall={activeCall}
       approveUser={approveUser}
       availableCameras={availableCameras}
+      batchUserAction={batchUserAction}
+      blockClient={blockClient}
       bounceAppIconStart={bounceAppIconStart}
       bounceAppIconStop={bounceAppIconStop}
       callLink={callLink}
@@ -499,6 +507,8 @@ export const SmartCallManager = memo(function SmartCallManager() {
       setOutgoingRing={setOutgoingRing}
       setPresenting={setPresenting}
       setRendererCanvas={setRendererCanvas}
+      showContactModal={showContactModal}
+      showShareCallLinkViaSignal={showShareCallLinkViaSignal}
       startCall={startCall}
       stopRingtone={stopRingtone}
       switchFromPresentationView={switchFromPresentationView}

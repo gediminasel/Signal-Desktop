@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import type { VideoFrameSource } from '@signalapp/ringrtc';
 import type {
   ActiveCallStateType,
+  BatchUserActionPayloadType,
   PendingUserActionPayloadType,
   SendGroupCallRaiseHandType,
   SendGroupCallReactionType,
@@ -32,12 +33,12 @@ import type {
 } from '../types/Calling';
 import {
   CALLING_REACTIONS_LIFETIME,
-  CallMode,
   CallViewMode,
   CallState,
   GroupCallConnectionState,
   GroupCallJoinState,
 } from '../types/Calling';
+import { CallMode } from '../types/CallDisposition';
 import type { ServiceIdString } from '../types/ServiceId';
 import { AvatarColors } from '../types/Colors';
 import type { ConversationType } from '../state/ducks/conversations';
@@ -95,6 +96,7 @@ import type { CallingImageDataCache } from './CallManager';
 export type PropsType = {
   activeCall: ActiveCallType;
   approveUser: (payload: PendingUserActionPayloadType) => void;
+  batchUserAction: (payload: BatchUserActionPayloadType) => void;
   denyUser: (payload: PendingUserActionPayloadType) => void;
   getGroupCallVideoFrameSource: (demuxId: number) => VideoFrameSource;
   getPresentingSources: () => void;
@@ -186,6 +188,7 @@ function CallDuration({
 export function CallScreen({
   activeCall,
   approveUser,
+  batchUserAction,
   changeCallView,
   denyUser,
   getGroupCallVideoFrameSource,
@@ -429,7 +432,7 @@ export function CallScreen({
         {isSendingVideo ? (
           <video ref={localVideoRef} autoPlay />
         ) : (
-          <CallBackgroundBlur avatarPath={me.avatarPath}>
+          <CallBackgroundBlur avatarUrl={me.avatarUrl}>
             <div className="module-calling__spacer module-calling__camera-is-off-spacer" />
             <div className="module-calling__camera-is-off">
               {i18n('icu:calling__your-video-is-off')}
@@ -450,10 +453,10 @@ export function CallScreen({
         autoPlay
       />
     ) : (
-      <CallBackgroundBlur avatarPath={me.avatarPath}>
+      <CallBackgroundBlur avatarUrl={me.avatarUrl}>
         <Avatar
           acceptedMessageRequest
-          avatarPath={me.avatarPath}
+          avatarUrl={me.avatarUrl}
           badge={undefined}
           color={me.color || AvatarColors[0]}
           noteToSelf={false}
@@ -488,6 +491,7 @@ export function CallScreen({
 
   const controlsFadedOut = !showControls && !isAudioOnly && isConnected;
   const controlsFadeClass = classNames({
+    'module-ongoing-call__controls': true,
     'module-ongoing-call__controls--fadeIn':
       (showControls || isAudioOnly) && !isConnected,
     'module-ongoing-call__controls--fadeOut': controlsFadedOut,
@@ -856,9 +860,9 @@ export function CallScreen({
       {pendingParticipants.length ? (
         <CallingPendingParticipants
           i18n={i18n}
-          ourServiceId={me.serviceId}
           participants={pendingParticipants}
           approveUser={approveUser}
+          batchUserAction={batchUserAction}
           denyUser={denyUser}
         />
       ) : null}

@@ -17,6 +17,7 @@ import getDirection from 'direction';
 import { drop, groupBy, noop, orderBy, take, unescape } from 'lodash';
 import { Manager, Popper, Reference } from 'react-popper';
 import type { PreventOverflowModifier } from '@popperjs/core/lib/modifiers/preventOverflow';
+import type { ReadonlyDeep } from 'type-fest';
 
 import type {
   ConversationType,
@@ -98,9 +99,14 @@ import { PanelType } from '../../types/Panels';
 import { openLinkInWebBrowser } from '../../util/openLinkInWebBrowser';
 import { RenderLocation } from './MessageTextRenderer';
 import { UserText } from '../UserText';
+import {
+  getColorForCallLink,
+  getKeyFromCallLink,
+} from '../../util/getColorForCallLink';
 
 const GUESS_METADATA_WIDTH_TIMESTAMP_SIZE = 16;
 const GUESS_METADATA_WIDTH_EXPIRE_TIMER_SIZE = 18;
+const GUESS_METADATA_WIDTH_SMS_SIZE = 18;
 const GUESS_METADATA_WIDTH_EDITED_SIZE = 40;
 const GUESS_METADATA_WIDTH_OUTGOING_SIZE: Record<MessageStatusType, number> = {
   delivered: 24,
@@ -159,10 +165,10 @@ export const MessageStatuses = [
   'sent',
   'viewed',
 ] as const;
-export type MessageStatusType = typeof MessageStatuses[number];
+export type MessageStatusType = (typeof MessageStatuses)[number];
 
 export const Directions = ['incoming', 'outgoing'] as const;
-export type DirectionType = typeof Directions[number];
+export type DirectionType = (typeof Directions)[number];
 
 export type AudioAttachmentProps = {
   renderingContext: string;
@@ -220,16 +226,17 @@ export type PropsData = {
   isTargetedCounter?: number;
   isSelected: boolean;
   isSelectMode: boolean;
+  isSMS: boolean;
   isSpoilerExpanded?: Record<number, boolean>;
   direction: DirectionType;
   timestamp: number;
   receivedAtMS?: number;
   status?: MessageStatusType;
-  contact?: EmbeddedContactType;
+  contact?: ReadonlyDeep<EmbeddedContactType>;
   author: Pick<
     ConversationType,
     | 'acceptedMessageRequest'
-    | 'avatarPath'
+    | 'avatarUrl'
     | 'badges'
     | 'color'
     | 'id'
@@ -238,7 +245,7 @@ export type PropsData = {
     | 'profileName'
     | 'sharedGroupNames'
     | 'title'
-    | 'unblurredAvatarPath'
+    | 'unblurredAvatarUrl'
   >;
   conversationType: ConversationTypeType;
   attachments?: ReadonlyArray<AttachmentType>;
@@ -621,6 +628,10 @@ export class Message extends React.PureComponent<Props, State> {
       return MetadataPlacement.Bottom;
     }
 
+    if (this.shouldShowJoinButton()) {
+      return MetadataPlacement.Bottom;
+    }
+
     return MetadataPlacement.InlineWithText;
   }
 
@@ -633,7 +644,8 @@ export class Message extends React.PureComponent<Props, State> {
    * because it can reduce layout jumpiness.
    */
   private guessMetadataWidth(): number {
-    const { direction, expirationLength, status, isEditedMessage } = this.props;
+    const { direction, expirationLength, isSMS, status, isEditedMessage } =
+      this.props;
 
     let result = GUESS_METADATA_WIDTH_TIMESTAMP_SIZE;
 
@@ -644,6 +656,10 @@ export class Message extends React.PureComponent<Props, State> {
     const hasExpireTimer = Boolean(expirationLength);
     if (hasExpireTimer) {
       result += GUESS_METADATA_WIDTH_EXPIRE_TIMER_SIZE;
+    }
+
+    if (isSMS) {
+      result += GUESS_METADATA_WIDTH_SMS_SIZE;
     }
 
     if (direction === 'outgoing' && status) {
@@ -823,6 +839,7 @@ export class Message extends React.PureComponent<Props, State> {
       i18n,
       id,
       isEditedMessage,
+      isSMS,
       isSticker,
       isTapToViewExpired,
       retryMessageSend,
@@ -846,6 +863,7 @@ export class Message extends React.PureComponent<Props, State> {
         i18n={i18n}
         id={id}
         isEditedMessage={isEditedMessage}
+        isSMS={isSMS}
         isInline={isInline}
         isOutlineOnlyBubble={
           deletedForEveryone || (attachmentDroppedDueToSize && !text)
@@ -876,7 +894,7 @@ export class Message extends React.PureComponent<Props, State> {
       <div key={c.id} title={c.title}>
         <AvatarPreview
           avatarColor={c.color}
-          avatarPath={c.avatarPath}
+          avatarUrl={c.avatarUrl}
           conversationTitle={c.title}
           i18n={i18n}
           isGroup={false}
@@ -1296,7 +1314,21 @@ export class Message extends React.PureComponent<Props, State> {
             </div>
           ) : null}
           {first.isCallLink && (
-            <div className="module-message__link-preview__call-link-icon" />
+            <div className="module-message__link-preview__call-link-icon">
+              <Avatar
+                acceptedMessageRequest
+                badge={undefined}
+                color={getColorForCallLink(getKeyFromCallLink(first.url))}
+                conversationType="callLink"
+                i18n={i18n}
+                isMe={false}
+                sharedGroupNames={[]}
+                size={64}
+                title={
+                  first.title ?? i18n('icu:calling__call-link-default-title')
+                }
+              />
+            </div>
           )}
           <div
             className={classNames(
@@ -1881,7 +1913,7 @@ export class Message extends React.PureComponent<Props, State> {
         ) : (
           <Avatar
             acceptedMessageRequest={author.acceptedMessageRequest}
-            avatarPath={author.avatarPath}
+            avatarUrl={author.avatarUrl}
             badge={getPreferredBadge(author.badges)}
             color={author.color}
             conversationType="direct"
@@ -1899,7 +1931,7 @@ export class Message extends React.PureComponent<Props, State> {
             size={GROUP_AVATAR_SIZE}
             theme={theme}
             title={author.title}
-            unblurredAvatarPath={author.unblurredAvatarPath}
+            unblurredAvatarUrl={author.unblurredAvatarUrl}
           />
         )}
       </div>
@@ -2012,14 +2044,23 @@ export class Message extends React.PureComponent<Props, State> {
     );
   }
 
-  private renderAction(): JSX.Element | null {
-    const { direction, i18n, previews } = this.props;
+  private shouldShowJoinButton(): boolean {
+    const { previews } = this.props;
+
     if (previews?.length !== 1) {
-      return null;
+      return false;
     }
 
     const onlyPreview = previews[0];
-    if (onlyPreview.isCallLink) {
+    return Boolean(onlyPreview.isCallLink);
+  }
+
+  private renderAction(): JSX.Element | null {
+    const { direction, i18n, previews } = this.props;
+
+    if (this.shouldShowJoinButton()) {
+      const firstPreview = previews[0];
+
       return (
         <button
           type="button"
@@ -2027,7 +2068,7 @@ export class Message extends React.PureComponent<Props, State> {
             'module-message__action--incoming': direction === 'incoming',
             'module-message__action--outgoing': direction === 'outgoing',
           })}
-          onClick={() => openLinkInWebBrowser(onlyPreview.url)}
+          onClick={() => openLinkInWebBrowser(firstPreview?.url)}
         >
           {i18n('icu:calling__join')}
         </button>
@@ -2095,6 +2136,10 @@ export class Message extends React.PureComponent<Props, State> {
       if (dimensions) {
         return dimensions.width;
       }
+    }
+
+    if (firstLinkPreview && firstLinkPreview.isCallLink) {
+      return 300;
     }
 
     return undefined;
@@ -2723,7 +2768,6 @@ export class Message extends React.PureComponent<Props, State> {
       customColor,
       deletedForEveryone,
       direction,
-      giftBadge,
       id,
       isSticker,
       isTapToView,
@@ -2737,10 +2781,7 @@ export class Message extends React.PureComponent<Props, State> {
     const { isTargeted } = this.state;
 
     const isAttachmentPending = this.isAttachmentPending();
-
     const width = this.getWidth();
-    const shouldUseWidth = Boolean(giftBadge || this.isShowingImage());
-
     const isEmojiOnly = this.canRenderStickerLikeEmoji();
     const isStickerLike = isSticker || isEmojiOnly;
 
@@ -2780,7 +2821,7 @@ export class Message extends React.PureComponent<Props, State> {
         : null
     );
     const containerStyles = {
-      width: shouldUseWidth ? width : undefined,
+      width,
     };
     if (
       !isStickerLike &&

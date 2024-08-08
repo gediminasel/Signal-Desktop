@@ -35,19 +35,19 @@ export default {
   title: 'Components/Conversation/Quote',
   argTypes: {
     isFromMe: {
-      control: { type: 'checkbox' },
+      control: { type: 'boolean' },
     },
     isGiftBadge: {
-      control: { type: 'checkbox' },
+      control: { type: 'boolean' },
     },
     isIncoming: {
-      control: { type: 'checkbox' },
+      control: { type: 'boolean' },
     },
     isViewOnce: {
-      control: { type: 'checkbox' },
+      control: { type: 'boolean' },
     },
     referencedMessageNotFound: {
-      control: { type: 'checkbox' },
+      control: { type: 'boolean' },
     },
   },
   args: {
@@ -106,6 +106,7 @@ const defaultMessageProps: TimelineMessagesProps = {
   isMessageRequestAccepted: true,
   isSelected: false,
   isSelectMode: false,
+  isSMS: false,
   isSpoilerExpanded: {},
   toggleSelectMessage: action('toggleSelectMessage'),
   kickOffAttachmentDownload: action('default--kickOffAttachmentDownload'),

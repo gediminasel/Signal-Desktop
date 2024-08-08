@@ -14,14 +14,28 @@ import {
 import { v4 as generateGuid } from 'uuid';
 import { isEqual } from 'lodash';
 import { strictAssert } from './assert';
+import { DataReader, DataWriter } from '../sql/Client';
 import { SignalService as Proto } from '../protobuf';
 import { bytesToUuid, uuidToBytes } from './uuidToBytes';
 import { missingCaseError } from './missingCaseError';
+import { CallEndedReason, GroupCallJoinState } from '../types/Calling';
 import {
-  CallEndedReason,
   CallMode,
-  GroupCallJoinState,
-} from '../types/Calling';
+  DirectCallStatus,
+  GroupCallStatus,
+  callEventNormalizeSchema,
+  CallType,
+  CallDirection,
+  callEventDetailsSchema,
+  LocalCallEvent,
+  RemoteCallEvent,
+  callHistoryDetailsSchema,
+  callDetailsSchema,
+  AdhocCallStatus,
+  CallStatusValue,
+  callLogEventNormalizeSchema,
+  CallLogEvent,
+} from '../types/CallDisposition';
 import type { AciString } from '../types/ServiceId';
 import { isAciString } from './isAciString';
 import { isMe } from './whatTypeOfConversation';
@@ -44,26 +58,15 @@ import type {
   CallEventDetails,
   CallHistoryDetails,
   CallHistoryGroup,
+  CallLogEventDetails,
   CallStatus,
   GroupCallMeta,
-} from '../types/CallDisposition';
-import {
-  DirectCallStatus,
-  GroupCallStatus,
-  callEventNormalizeSchema,
-  CallType,
-  CallDirection,
-  callEventDetailsSchema,
-  LocalCallEvent,
-  RemoteCallEvent,
-  callHistoryDetailsSchema,
-  callDetailsSchema,
-  AdhocCallStatus,
-  CallStatusValue,
 } from '../types/CallDisposition';
 import type { ConversationType } from '../state/ducks/conversations';
 import type { ConversationModel } from '../models/conversations';
 import { drop } from './drop';
+import { sendCallLinkUpdateSync } from './sendCallLinkUpdateSync';
+import { callLinksDeleteJobQueue } from '../jobs/callLinksDeleteJobQueue';
 
 // utils
 // -----
@@ -231,6 +234,8 @@ export function getCallEventForProto(
     event = RemoteCallEvent.NotAccepted;
   } else if (callEvent.event === Proto.SyncMessage.CallEvent.Event.DELETE) {
     event = RemoteCallEvent.Delete;
+  } else if (callEvent.event === Proto.SyncMessage.CallEvent.Event.OBSERVED) {
+    event = RemoteCallEvent.Observed;
   } else {
     throw new TypeError(`Unknown call event ${callEvent.event}`);
   }
@@ -246,6 +251,34 @@ export function getCallEventForProto(
     event,
     eventSource,
   });
+}
+
+const callLogEventFromProto: Partial<
+  Record<Proto.SyncMessage.CallLogEvent.Type, CallLogEvent>
+> = {
+  [Proto.SyncMessage.CallLogEvent.Type.CLEAR]: CallLogEvent.Clear,
+  [Proto.SyncMessage.CallLogEvent.Type.MARKED_AS_READ]:
+    CallLogEvent.MarkedAsRead,
+  [Proto.SyncMessage.CallLogEvent.Type.MARKED_AS_READ_IN_CONVERSATION]:
+    CallLogEvent.MarkedAsReadInConversation,
+};
+
+export function getCallLogEventForProto(
+  callLogEventProto: Proto.SyncMessage.ICallLogEvent
+): CallLogEventDetails {
+  const callLogEvent = callLogEventNormalizeSchema.parse(callLogEventProto);
+
+  const type = callLogEventFromProto[callLogEvent.type];
+  if (type == null) {
+    throw new TypeError(`Unknown call log event ${callLogEvent.type}`);
+  }
+
+  return {
+    type,
+    timestamp: callLogEvent.timestamp,
+    peerId: callLogEvent.peerId ?? null,
+    callId: callLogEvent.callId ?? null,
+  };
 }
 
 const directionToProto = {
@@ -270,6 +303,8 @@ const statusToProto: Record<
   [CallStatusValue.Missed]: null,
   [CallStatusValue.Pending]: null,
   [CallStatusValue.GenericGroupCall]: null,
+  [CallStatusValue.GenericAdhocCall]:
+    Proto.SyncMessage.CallEvent.Event.OBSERVED,
   [CallStatusValue.OutgoingRing]: null,
   [CallStatusValue.Ringing]: null,
   [CallStatusValue.Joined]: null,
@@ -280,7 +315,18 @@ function shouldSyncStatus(callStatus: CallStatus) {
   return statusToProto[callStatus] != null;
 }
 
-function getProtoForCallHistory(
+export function getBytesForPeerId(callHistory: CallHistoryDetails): Uint8Array {
+  let peerId =
+    callHistory.mode === CallMode.Adhoc
+      ? Bytes.fromBase64(callHistory.peerId)
+      : uuidToBytes(callHistory.peerId);
+  if (peerId.length === 0) {
+    peerId = Bytes.fromBase64(callHistory.peerId);
+  }
+  return peerId;
+}
+
+export function getProtoForCallHistory(
   callHistory: CallHistoryDetails
 ): Proto.SyncMessage.ICallEvent | null {
   const event = statusToProto[callHistory.status];
@@ -292,16 +338,8 @@ function getProtoForCallHistory(
     )}`
   );
 
-  let peerId =
-    callHistory.mode === CallMode.Adhoc
-      ? Bytes.fromBase64(callHistory.peerId)
-      : uuidToBytes(callHistory.peerId);
-  if (peerId.length === 0) {
-    peerId = Bytes.fromBase64(callHistory.peerId);
-  }
-
   return new Proto.SyncMessage.CallEvent({
-    peerId,
+    peerId: getBytesForPeerId(callHistory),
     callId: Long.fromString(callHistory.callId),
     type: typeToProto[callHistory.type],
     direction: directionToProto[callHistory.direction],
@@ -527,7 +565,9 @@ export function transitionCallHistory(
     strictAssert(callHistory.callId === callId, 'callId must be same');
     strictAssert(callHistory.peerId === peerId, 'peerId must be same');
     strictAssert(
-      ringerId == null || callHistory.ringerId === ringerId,
+      ringerId == null ||
+        callHistory.ringerId == null ||
+        callHistory.ringerId === ringerId,
       'ringerId must be same if it exists'
     );
     strictAssert(callHistory.direction === direction, 'direction must be same');
@@ -616,6 +656,15 @@ function transitionTimestamp(
     return callHistory.timestamp;
   }
 
+  // Observed call history should only be changed if we get a remote observed
+  // event with possibly a better timestamp.
+  if (callHistory.status === AdhocCallStatus.Generic) {
+    if (callEvent.event === RemoteCallEvent.Observed) {
+      return latestTimestamp;
+    }
+    return callHistory.timestamp;
+  }
+
   // Declined call history should only be changed if if we transition to an
   // accepted state or get a remote 'not accepted' event with possibly a better
   // timestamp.
@@ -679,6 +728,12 @@ function transitionDirectCallStatus(
     return DirectCallStatus.Missed;
   }
 
+  if (callEvent === RemoteCallEvent.Observed) {
+    throw new Error(
+      `callHistoryDetails: Direct calls shouldn't send ${callEvent}`
+    );
+  }
+
   if (callEvent === LocalCallEvent.Missed) {
     return DirectCallStatus.Missed;
   }
@@ -732,7 +787,10 @@ function transitionGroupCallStatus(
     return status;
   }
 
-  if (event === RemoteCallEvent.NotAccepted) {
+  if (
+    event === RemoteCallEvent.NotAccepted ||
+    event === RemoteCallEvent.Observed
+  ) {
     throw new Error(`callHistoryDetails: Group calls shouldn't send ${event}`);
   }
 
@@ -825,6 +883,13 @@ function transitionAdhocCallStatus(
     return status;
   }
 
+  if (
+    callEvent === RemoteCallEvent.Observed ||
+    callEvent === LocalCallEvent.Started
+  ) {
+    return AdhocCallStatus.Generic;
+  }
+
   // For Adhoc calls, ringing and corresponding events are not supported currently.
   // However we handle those events here to be exhaustive.
   if (
@@ -833,7 +898,6 @@ function transitionAdhocCallStatus(
     callEvent === LocalCallEvent.Declined ||
     callEvent === LocalCallEvent.Hangup ||
     callEvent === LocalCallEvent.RemoteHangup ||
-    callEvent === LocalCallEvent.Started ||
     // never actually happens, but need for exhaustive check
     callEvent === LocalCallEvent.Ringing
   ) {
@@ -867,10 +931,8 @@ async function updateLocalCallHistory(
       );
 
       const prevCallHistory =
-        (await window.Signal.Data.getCallHistory(
-          callEvent.callId,
-          callEvent.peerId
-        )) ?? null;
+        (await DataReader.getCallHistory(callEvent.callId, callEvent.peerId)) ??
+        null;
 
       if (prevCallHistory != null) {
         log.info(
@@ -924,10 +986,8 @@ export async function updateLocalAdhocCallHistory(
   );
 
   const prevCallHistory =
-    (await window.Signal.Data.getCallHistory(
-      callEvent.callId,
-      callEvent.peerId
-    )) ?? null;
+    (await DataReader.getCallHistory(callEvent.callId, callEvent.peerId)) ??
+    null;
 
   if (prevCallHistory != null) {
     log.info(
@@ -951,7 +1011,8 @@ export async function updateLocalAdhocCallHistory(
   }
 
   strictAssert(
-    callHistory.status === AdhocCallStatus.Pending ||
+    callHistory.status === AdhocCallStatus.Generic ||
+      callHistory.status === AdhocCallStatus.Pending ||
       callHistory.status === AdhocCallStatus.Joined ||
       callHistory.status === AdhocCallStatus.Deleted,
     `updateAdhocCallHistory: callHistory must have adhoc status (was ${callHistory.status})`
@@ -967,7 +1028,27 @@ export async function updateLocalAdhocCallHistory(
       'updateAdhocCallHistory: Saving call history:',
       formatCallHistory(callHistory)
     );
-    await window.Signal.Data.saveCallHistory(callHistory);
+    await DataWriter.saveCallHistory(callHistory);
+
+    /*
+      If we're not a call link admin and this is the first call history for this link,
+      then it means we clicked someone else's link and discovered it was active. We
+      sync this newly observed call link so the subsequent call event OBSERVED sync
+      message refers to a valid call link.
+    */
+    if (prevCallHistory == null) {
+      const callLink = await DataReader.getCallLinkByRoomId(callEvent.peerId);
+      if (callLink) {
+        log.info(
+          `updateAdhocCallHistory: Syncing new observed call link ${callEvent.peerId}`
+        );
+        drop(sendCallLinkUpdateSync(callLink));
+      } else {
+        log.error(
+          `updateAdhocCallHistory: New observed call link missing in DB: ${callEvent.peerId}`
+        );
+      }
+    }
   }
 
   if (isDeleted) {
@@ -999,7 +1080,7 @@ async function saveCallHistory({
     callHistory.status === DirectCallStatus.Deleted ||
     callHistory.status === GroupCallStatus.Deleted;
 
-  await window.Signal.Data.saveCallHistory(callHistory);
+  await DataWriter.saveCallHistory(callHistory);
 
   if (isDeleted) {
     window.reduxActions.callHistory.removeCallHistory(callHistory.callId);
@@ -1007,7 +1088,7 @@ async function saveCallHistory({
     window.reduxActions.callHistory.addCallHistory(callHistory);
   }
 
-  const prevMessage = await window.Signal.Data.getCallHistoryMessageByCallId({
+  const prevMessage = await DataReader.getCallHistoryMessageByCallId({
     conversationId: conversation.id,
     callId: callHistory.callId,
   });
@@ -1026,7 +1107,10 @@ async function saveCallHistory({
 
   if (isDeleted) {
     if (prevMessage != null) {
-      await window.Signal.Data.removeMessage(prevMessage.id);
+      await DataWriter.removeMessage(prevMessage.id, {
+        fromSync: true,
+        singleProtoJobQueue,
+      });
     }
     return callHistory;
   }
@@ -1067,19 +1151,16 @@ async function saveCallHistory({
     callId: callHistory.callId,
   };
 
-  const id = await window.Signal.Data.saveMessage(message, {
+  message.id = await DataWriter.saveMessage(message, {
     ourAci: window.textsecure.storage.user.getCheckedAci(),
     // We don't want to force save if we're updating an existing message
     forceSave: prevMessage == null,
   });
-  log.info('saveCallHistory: Saved call history message:', id);
+  log.info('saveCallHistory: Saved call history message:', message.id);
 
-  const model = window.MessageCache.__DEPRECATED$register(
-    id,
-    new window.Whisper.Message({
-      ...message,
-      id,
-    }),
+  window.MessageCache.__DEPRECATED$register(
+    message.id,
+    message,
     'callDisposition'
   );
 
@@ -1089,7 +1170,7 @@ async function saveCallHistory({
     } else {
       conversation.incrementMessageCount();
     }
-    conversation.trigger('newmessage', model);
+    conversation.trigger('newmessage', message);
   }
 
   await conversation.updateLastMessage().catch(error => {
@@ -1107,7 +1188,7 @@ async function saveCallHistory({
   if (canConversationBeUnarchived(conversation.attributes)) {
     conversation.setArchived(false);
   } else {
-    window.Signal.Data.updateConversation(conversation.attributes);
+    await DataWriter.updateConversation(conversation.attributes);
   }
 
   window.reduxActions.callHistory.updateCallHistoryUnreadCount();
@@ -1188,72 +1269,67 @@ export async function updateCallHistoryFromLocalEvent(
   await updateRemoteCallHistory(updatedCallHistory);
 }
 
-export async function clearCallHistoryDataAndSync(): Promise<void> {
+export function updateDeletedMessages(messageIds: ReadonlyArray<string>): void {
+  messageIds.forEach(messageId => {
+    const message = window.MessageCache.__DEPRECATED$getById(messageId);
+    const conversation = message?.getConversation();
+    if (message == null || conversation == null) {
+      return;
+    }
+    window.reduxActions.conversations.messageDeleted(
+      messageId,
+      message.get('conversationId')
+    );
+    conversation.debouncedUpdateLastMessage();
+    window.MessageCache.__DEPRECATED$unregister(messageId);
+  });
+}
+
+export async function clearCallHistoryDataAndSync(
+  latestCall: CallHistoryDetails
+): Promise<void> {
   try {
-    const timestamp = Date.now();
-
-    log.info(`clearCallHistory: Clearing call history before ${timestamp}`);
-    const messageIds = await window.Signal.Data.clearCallHistory(timestamp);
-
-    messageIds.forEach(messageId => {
-      const message = window.MessageCache.__DEPRECATED$getById(messageId);
-      const conversation = message?.getConversation();
-      if (message == null || conversation == null) {
-        return;
-      }
-      window.reduxActions.conversations.messageDeleted(
-        messageId,
-        message.get('conversationId')
-      );
-      conversation.debouncedUpdateLastMessage();
-      window.MessageCache.__DEPRECATED$unregister(messageId);
-    });
-
-    const ourAci = window.textsecure.storage.user.getCheckedAci();
-
-    const callLogEvent = new Proto.SyncMessage.CallLogEvent({
-      type: Proto.SyncMessage.CallLogEvent.Type.CLEAR,
-      timestamp: Long.fromNumber(timestamp),
-    });
-
-    const syncMessage = MessageSender.createSyncMessage();
-    syncMessage.callLogEvent = callLogEvent;
-
-    const contentMessage = new Proto.Content();
-    contentMessage.syncMessage = syncMessage;
-
-    const { ContentHint } = Proto.UnidentifiedSenderMessage.Message;
-
+    log.info(
+      `clearCallHistory: Clearing call history before (${latestCall.callId}, ${latestCall.timestamp})`
+    );
+    const messageIds = await DataWriter.clearCallHistory(latestCall);
+    await DataWriter.beginDeleteAllCallLinks();
+    updateDeletedMessages(messageIds);
     log.info('clearCallHistory: Queueing sync message');
-    await singleProtoJobQueue.add({
-      contentHint: ContentHint.RESENDABLE,
-      serviceId: ourAci,
-      isSyncMessage: true,
-      protoBase64: Bytes.toBase64(
-        Proto.Content.encode(contentMessage).finish()
-      ),
-      type: 'callLogEventSync',
-      urgent: false,
+    await singleProtoJobQueue.add(
+      MessageSender.getClearCallHistoryMessage(latestCall)
+    );
+    await callLinksDeleteJobQueue.add({
+      source: 'clearCallHistoryDataAndSync',
     });
   } catch (error) {
     log.error('clearCallHistory: Failed to clear call history', error);
   }
 }
 
-export async function markAllCallHistoryReadAndSync(): Promise<void> {
+export async function markAllCallHistoryReadAndSync(
+  latestCall: CallHistoryDetails,
+  inConversation: boolean
+): Promise<void> {
   try {
-    const timestamp = Date.now();
-
     log.info(
-      `markAllCallHistoryReadAndSync: Marking call history read before ${timestamp}`
+      `markAllCallHistoryReadAndSync: Marking call history read before (${latestCall.callId}, ${latestCall.timestamp})`
     );
-    await window.Signal.Data.markAllCallHistoryRead(timestamp);
+    if (inConversation) {
+      await DataWriter.markAllCallHistoryReadInConversation(latestCall);
+    } else {
+      await DataWriter.markAllCallHistoryRead(latestCall);
+    }
 
     const ourAci = window.textsecure.storage.user.getCheckedAci();
 
     const callLogEvent = new Proto.SyncMessage.CallLogEvent({
-      type: Proto.SyncMessage.CallLogEvent.Type.MARKED_AS_READ,
-      timestamp: Long.fromNumber(timestamp),
+      type: inConversation
+        ? Proto.SyncMessage.CallLogEvent.Type.MARKED_AS_READ_IN_CONVERSATION
+        : Proto.SyncMessage.CallLogEvent.Type.MARKED_AS_READ,
+      timestamp: Long.fromNumber(latestCall.timestamp),
+      peerId: getBytesForPeerId(latestCall),
+      callId: Long.fromString(latestCall.callId),
     });
 
     const syncMessage = MessageSender.createSyncMessage();
@@ -1295,7 +1371,7 @@ export async function updateLocalGroupCallHistoryTimestamp(
   const peerId = getPeerIdFromConversation(conversation.attributes);
 
   const prevCallHistory =
-    (await window.Signal.Data.getCallHistory(callId, peerId)) ?? null;
+    (await DataReader.getCallHistory(callId, peerId)) ?? null;
 
   // We don't have all the details to add new call history here
   if (prevCallHistory != null) {

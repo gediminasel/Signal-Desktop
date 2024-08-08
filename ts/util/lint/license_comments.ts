@@ -27,7 +27,6 @@ const EXTENSIONS_TO_CHECK = new Set([
   '.prettierignore',
   '.sh',
   '.snyk',
-  '.yarnclean',
   '.yml',
   '.js',
   '.scss',
@@ -275,7 +274,7 @@ async function main() {
       console.log();
     }
 
-    console.log(chalk.magenta.bold('`yarn lint-license-comments` failed'));
+    console.log(chalk.magenta.bold('`npm run lint-license-comments` failed'));
     console.log();
 
     process.exit(1);

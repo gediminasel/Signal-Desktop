@@ -19,7 +19,7 @@ import {
   getDefaultConversationWithServiceId,
 } from '../test-both/helpers/getDefaultConversation';
 import { CallingToastProvider } from './CallingToast';
-import { CallMode } from '../types/Calling';
+import { CallMode } from '../types/CallDisposition';
 import { getDefaultCallLinkConversation } from '../test-both/helpers/fakeCallLink';
 
 const i18n = setupI18n('en', enMessages);
@@ -129,7 +129,7 @@ export function NoCameraLocalAvatar(): JSX.Element {
   const props = createProps({
     availableCameras: [],
     me: getDefaultConversation({
-      avatarPath: '/fixtures/kitten-4-112-112.jpg',
+      avatarUrl: '/fixtures/kitten-4-112-112.jpg',
       color: AvatarColors[0],
       id: generateUuid(),
       serviceId: generateAci(),

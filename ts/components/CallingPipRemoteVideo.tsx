@@ -14,7 +14,8 @@ import type {
   GroupCallRemoteParticipantType,
   GroupCallVideoRequest,
 } from '../types/Calling';
-import { CallMode, GroupCallJoinState } from '../types/Calling';
+import { GroupCallJoinState } from '../types/Calling';
+import { CallMode } from '../types/CallDisposition';
 import { AvatarColors } from '../types/Colors';
 import type { SetRendererCanvasType } from '../state/ducks/calling';
 import { useGetCallingFrameBuffer } from '../calling/useGetCallingFrameBuffer';
@@ -41,7 +42,7 @@ function NoVideo({
 }): JSX.Element {
   const {
     acceptedMessageRequest,
-    avatarPath,
+    avatarUrl,
     color,
     type: conversationType,
     isMe,
@@ -56,11 +57,11 @@ function NoVideo({
       className="module-calling-pip__video--remote"
       style={{ height: `${height}px` }}
     >
-      <CallBackgroundBlur avatarPath={avatarPath}>
+      <CallBackgroundBlur avatarUrl={avatarUrl}>
         <div className="module-calling-pip__video--avatar">
           <Avatar
             acceptedMessageRequest={acceptedMessageRequest}
-            avatarPath={avatarPath}
+            avatarUrl={avatarUrl}
             badge={undefined}
             color={color || AvatarColors[0]}
             noteToSelf={false}

@@ -54,7 +54,7 @@ export enum AvatarSize {
 type BadgePlacementType = { bottom: number; right: number };
 
 export type Props = {
-  avatarPath?: string;
+  avatarUrl?: string;
   blur?: AvatarBlur;
   color?: AvatarColorType;
   loading?: boolean;
@@ -68,7 +68,7 @@ export type Props = {
   sharedGroupNames: ReadonlyArray<string>;
   size: AvatarSize;
   title: string;
-  unblurredAvatarPath?: string;
+  unblurredAvatarUrl?: string;
   searchResult?: boolean;
   storyRing?: HasStories;
 
@@ -108,7 +108,7 @@ const getDefaultBlur = (
 
 export function Avatar({
   acceptedMessageRequest,
-  avatarPath: dirtyAvatarPath,
+  avatarUrl: dirtyAvatarUrl,
   badge,
   className,
   color = 'A200',
@@ -124,22 +124,25 @@ export function Avatar({
   size,
   theme,
   title,
-  unblurredAvatarPath,
+  unblurredAvatarUrl,
   searchResult,
   storyRing,
   blur = getDefaultBlur({
     acceptedMessageRequest,
-    avatarPath: dirtyAvatarPath,
+    avatarUrl: dirtyAvatarUrl
+      ?.replaceAll('/', sep)
+      ?.replaceAll('\\', sep)
+      ?.replaceAll('%5C', sep),
     isMe,
     sharedGroupNames,
-    unblurredAvatarPath,
+    unblurredAvatarUrl,
   }),
   ...ariaProps
 }: Props): JSX.Element {
   const [imageBroken, setImageBroken] = useState(false);
 
-  const avatarPath = dirtyAvatarPath
-    ? dirtyAvatarPath
+  const avatarUrl = dirtyAvatarUrl
+    ? dirtyAvatarUrl
         .replaceAll('/', sep)
         .replaceAll('\\', sep)
         .replaceAll('%5C', sep)
@@ -147,15 +150,15 @@ export function Avatar({
 
   useEffect(() => {
     setImageBroken(false);
-  }, [avatarPath]);
+  }, [avatarUrl]);
 
   useEffect(() => {
-    if (!avatarPath) {
+    if (!avatarUrl) {
       return noop;
     }
 
     const image = new Image();
-    image.src = avatarPath;
+    image.src = avatarUrl;
     image.onerror = () => {
       log.warn('Avatar: Image failed to load; failing over to placeholder');
       setImageBroken(true);
@@ -164,10 +167,10 @@ export function Avatar({
     return () => {
       image.onerror = noop;
     };
-  }, [avatarPath]);
+  }, [avatarUrl]);
 
   const initials = getInitials(title);
-  const hasImage = !noteToSelf && avatarPath && !imageBroken;
+  const hasImage = !noteToSelf && avatarUrl && !imageBroken;
   const shouldUseInitials =
     !hasImage &&
     conversationType === 'direct' &&
@@ -187,7 +190,7 @@ export function Avatar({
       </div>
     );
   } else if (hasImage) {
-    assertDev(avatarPath, 'avatarPath should be defined here');
+    assertDev(avatarUrl, 'avatarUrl should be defined here');
 
     assertDev(
       blur !== AvatarBlur.BlurPictureWithClickToView ||
@@ -203,7 +206,7 @@ export function Avatar({
         <div
           className="module-Avatar__image"
           style={{
-            backgroundImage: `url('${encodeURI(avatarPath)}')`,
+            backgroundImage: `url('${avatarUrl}')`,
             ...(isBlurred ? { filter: `blur(${Math.ceil(size / 2)}px)` } : {}),
           }}
         />
@@ -324,7 +327,7 @@ export function Avatar({
         Boolean(storyRing) && 'module-Avatar--with-story',
         storyRing === HasStories.Unread && 'module-Avatar--with-story--unread',
         className,
-        avatarPath === SIGNAL_AVATAR_PATH
+        avatarUrl === SIGNAL_AVATAR_PATH
           ? 'module-Avatar--signal-official'
           : undefined
       )}

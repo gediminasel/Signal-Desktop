@@ -80,6 +80,18 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "Дерекқордың нұсқасы Signal-дың бұл нұсқасына сәйкес келмейді. Компьютеріңізде Signal-дың соңғы нұсқасын ашып отырғаныңзға көз жеткізіңіз."
   },
+  "icu:databaseError__recover__detail": {
+    "messageformat": "Дерекқорда қате шықты. Ақауды түзету үшін қатені көшіріп, Signal қолдау көрсету қызметіне хабарласа аласыз. Егер Signal-ды дереу қолдану керек болса, деректерді жойып, оны өшіріп, қайта қосыңыз. \n\nҚолдау көрсету орталығына хабарласыңыз: {link}"
+  },
+  "icu:databaseError__recover__button": {
+    "messageformat": "Деректерді қалпына келтіру"
+  },
+  "icu:databaseError__safeStorageBackendChange": {
+    "messageformat": "Дерекқорды шифрлау кілтіне кіру мүмкін болмады, себебі операциялық жүйені шифрлау кілті серверін ({previousBackend}) {currentBackend} деп өзгерту мүмкін болмады. GNOME және KDE арасында жұмыс үстелінің ортасы өзгерсе, осындай жағдай орын алады.\n\nАлдыңғы жұмыс үстелі ортасына ауысыңыз."
+  },
+  "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
+    "messageformat": "Дерекқорды шифрлау кілтіне кіру мүмкін болмады, себебі операциялық жүйені шифрлау кілті серверін ({previousBackend}) {currentBackend} деп өзгерту мүмкін болмады. GNOME және KDE арасында жұмыс үстелінің ортасы өзгерсе, осындай жағдай орын алады.\n\nАлдыңғы жұмыс орнының ортасына ауысыңыз немесе Signal-ды --password-store=\"{previousBackendFlag}\" пәрмен жолының жалаушасымен іске қосып көріңіз."
+  },
   "icu:mainMenuFile": {
     "messageformat": "&Файл"
   },
@@ -818,8 +830,14 @@
   "icu:cannotUpdateDetail": {
     "messageformat": "Signal жаңартылмады. {retry} немесе {url} бетіне кіріп, оны қолмен орнатыңыз. Содан кейін осы мәселе туралы {support}"
   },
+  "icu:cannotUpdateDetail-v2": {
+    "messageformat": "Signal-ды жаңарту мүмкін болмады. <retryUpdateButton>Қайта жаңартып көріңіз</retryUpdateButton> немесе {url} бетіне кіріп, оны қолмен орнатыңыз. Содан кейін бұл мәселе жайында <contactSupportLink>қолдау көрсету орталығына</contactSupportLink> хабарлаңыз."
+  },
   "icu:cannotUpdateRequireManualDetail": {
     "messageformat": "Signal-ды жаңарту мүмкін болмады. {url} бетіне кіріп, оны қолмен орнатыңыз. Содан кейін осы мәселе туралы {support}"
+  },
+  "icu:cannotUpdateRequireManualDetail-v2": {
+    "messageformat": "Signal-ды жаңарту мүмкін болмады. {url} бетіне кіріп, оны қолмен орнатыңыз. Содан кейін бұл мәселе жайында <contactSupportLink>қолдау көрсету орталығына</contactSupportLink> хабарлаңыз."
   },
   "icu:readOnlyVolume": {
     "messageformat": "Signal-дың компьютерлік нұсқасы macOS карантинінде сияқты, сондықтан автоматты түрде жаңартылмайды. Finder арқылы {app} қолданбасын {folder} қалтасына ауыстырып көріңіз."
@@ -989,6 +1007,9 @@
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
     "messageformat": "Осы чаттағы хаттардың барлығы бұл құрылғыдан жойылады. Хаттарды жойған соң да, бұл чатты іздеп табуыңызға болады."
   },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
+    "messageformat": "Осы чаттағы хаттардың барлығы барлық құрылғыларыңыздан жойылады. Хабарларды жойғаннан кейін бұл чатты әлі де іздей аласыз."
+  },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Топтан шығып кету"
   },
@@ -1110,10 +1131,22 @@
     "messageformat": "Параметрлер"
   },
   "icu:Install__instructions__3": {
-    "messageformat": "{plusButton} түймесін (Android) немесе {linkNewDevice} түймесін (iPhone) басыңыз"
+    "messageformat": "{linkNewDevice} сілтемесін басыңыз"
   },
-  "icu:Install__qr-failed-load": {
-    "messageformat": "QR коды жүктелмеді. Интернетті тексеріп, қайталап көріңіз. <retry>Қайталап көру</retry>"
+  "icu:Install__qr-failed-load__error--timeout": {
+    "messageformat": "QR коды жүктелмеді. Контактіні тексеріп, қайталап көріңіз."
+  },
+  "icu:Install__qr-failed-load__error--unknown": {
+    "messageformat": "<paragraph>Күтпеген қате шықты.</paragraph><paragraph>Қайталап көріңіз.</paragraph>"
+  },
+  "icu:Install__qr-failed-load__error--network": {
+    "messageformat": "Ағымдағы желінің көмегімен Signal бұл құрылғыға байланыса алмайды."
+  },
+  "icu:Install__qr-failed-load__retry": {
+    "messageformat": "Қайтадан байқап көру"
+  },
+  "icu:Install__qr-failed-load__get-help": {
+    "messageformat": "Анықтама алу"
   },
   "icu:Install__support-link": {
     "messageformat": "Көмек керек пе?"
@@ -1286,8 +1319,35 @@
   "icu:CallingPendingParticipants__DenyUser": {
     "messageformat": "Қосылуға өтінішті қабылдамау"
   },
+  "icu:CallingPendingParticipants__ApproveAll": {
+    "messageformat": "Барлығын мақұлдау"
+  },
+  "icu:CallingPendingParticipants__DenyAll": {
+    "messageformat": "Ешбірін қабылдамау"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--ApproveAll": {
+    "messageformat": "{count, plural, one {{count,number} өтінішті мақұлдау керек пе?} other {{count,number} өтінішті мақұлдау керек пе?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--DenyAll": {
+    "messageformat": "{count, plural, one {{count,number} өтінішті қабылдамау керек пе?} other {{count,number} өтінішті қабылдамау керек пе?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--ApproveAll": {
+    "messageformat": "{count, plural, one {Қоңырауға {count,number} адам қосылады.} other {Қоңырауға {count,number} адам қосылады.}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--DenyAll": {
+    "messageformat": "{count, plural, one {Қоңырауға {count,number} адам қосылмайды.} other {Қоңырауға {count,number} адам қосылмайды.}}"
+  },
   "icu:CallingPendingParticipants__RequestsToJoin": {
     "messageformat": "{count, plural, one {Қоңырауға қосылу туралы {count,number} өтініш} other {Қоңырауға қосылу туралы {count,number} өтініш}}"
+  },
+  "icu:CallingPendingParticipants__WouldLikeToJoin": {
+    "messageformat": "Қосылғысы келеді..."
+  },
+  "icu:CallingPendingParticipants__AdditionalRequests": {
+    "messageformat": "{count, plural, one {+{count,number} өтініш} other {+{count,number} өтініш}}"
+  },
+  "icu:CallingPendingParticipants__Toast--added-users-to-call": {
+    "messageformat": "{count, plural, one {Қоңырауға {count,number} адам қосылды} other {Қоңырауға {count,number} адам қосылды}}"
   },
   "icu:CallingRaisedHandsList__Title": {
     "messageformat": "{count, plural, one {{count,number} адам қол көтерді} other {{count,number} адам қол көтерді}}"
@@ -1352,8 +1412,14 @@
   "icu:calling__you-have-blocked": {
     "messageformat": "{name} деген кісіні блоктадыңыз"
   },
+  "icu:calling__blocked-participant": {
+    "messageformat": "{name} блокталды"
+  },
+  "icu:calling__block-info-title": {
+    "messageformat": "{name} блокталды"
+  },
   "icu:calling__block-info": {
-    "messageformat": "Сіз олардың, ал олар сіздің дауыстық хаттарыңызды немесе видеоларыңызды ала алмайды."
+    "messageformat": "You won’t receive their audio or video and they won’t receive yours."
   },
   "icu:calling__missing-media-keys": {
     "messageformat": "{name} жіберген аудио және видеоларды ала алмайсыз"
@@ -2372,15 +2438,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "Чат оқылмады деп белгіленді"
   },
-  "icu:AuthArtCreator--dialog--message": {
-    "messageformat": "Signal стикерлер жинағының авторын ашқыңыз келе ме?"
-  },
-  "icu:AuthArtCreator--dialog--confirm": {
-    "messageformat": "Растау"
-  },
-  "icu:AuthArtCreator--dialog--dismiss": {
-    "messageformat": "Жабу"
-  },
   "icu:ArtCreator--Authentication--error": {
     "messageformat": "Стикерлер жинағының генераторын пайдалану үшін телефоныңыз бен жұмыс үстеліңізге Signal қолданбасын орнатыңыз"
   },
@@ -2577,10 +2634,10 @@
     "messageformat": "Қабылдамау"
   },
   "icu:declinedIncomingAudioCall": {
-    "messageformat": "Дауыстық қоңырауды көтермедіңіз"
+    "messageformat": "Қабылданбаған дауыстық қоңырау"
   },
   "icu:declinedIncomingVideoCall": {
-    "messageformat": "Сіз видеоқоңырауды қабылдамадыңыз"
+    "messageformat": "Қабылданбаған видеоқоңырау"
   },
   "icu:acceptedIncomingAudioCall": {
     "messageformat": "Кіріс дауыстық қоңырау"
@@ -2613,10 +2670,10 @@
     "messageformat": "Signal хабарландырулар аймағында жұмыс істеп тұра береді. Signal параметрлеріне кіріп, оны өзгертуіңізге болады."
   },
   "icu:incomingAudioCall": {
-    "messageformat": "Кіріс дауыстық қоңырау..."
+    "messageformat": "Кіріс дауыстық қоңырау"
   },
   "icu:incomingVideoCall": {
-    "messageformat": "Кіріс видеоқоңырау..."
+    "messageformat": "Кіріс видеоқоңырау"
   },
   "icu:outgoingAudioCall": {
     "messageformat": "Шығыс дауыстық қоңырау"
@@ -2661,7 +2718,7 @@
     "messageformat": "{count, plural, one {{count,number} адам} other {{count,number} адам}}"
   },
   "icu:CallControls__InfoDisplay--audio-call": {
-    "messageformat": "Аудиоқоңырау"
+    "messageformat": "Дауыстық қоңырау"
   },
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "Қоңырау сілтемесі"
@@ -2688,13 +2745,13 @@
     "messageformat": "Қоңырау дыбысы өшірілді"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "You raised a hand."
+    "messageformat": "Сіз қолыңызды көтердіңіз."
   },
   "icu:CallControls__RaiseHandsToast--you-and-one": {
-    "messageformat": "You and {otherName} raised a hand."
+    "messageformat": "Сіз және {otherName} қол көтердіңіздер."
   },
   "icu:CallControls__RaiseHandsToast--you-and-more": {
-    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
+    "messageformat": "{overflowCount, plural, one {Сіз, {otherName} және тағы {overflowCount,number} адам қол көтерді.} other {Сіз, {otherName} және тағы {overflowCount,number} адам қол көтерді.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} қол көтерді."
@@ -2724,16 +2781,16 @@
     "messageformat": "{people, plural, one {Қоңырауда {people,number}} other {Қоңырауда {people,number}}}"
   },
   "icu:calling__call-notification__ended": {
-    "messageformat": "Топтық қоңырау аяқталды"
+    "messageformat": "Видеоқоңырау аяқталды"
   },
   "icu:calling__call-notification__started-by-someone": {
-    "messageformat": "Топтық қоңырау басталды"
+    "messageformat": "Видеоқоңырау басталды"
   },
   "icu:calling__call-notification__started-by-you": {
-    "messageformat": "Топтық қоңырау бастадыңыз"
+    "messageformat": "Видеоқоңырауды бастадыңыз"
   },
   "icu:calling__call-notification__started": {
-    "messageformat": "{name} топтық қоңырауды бастады"
+    "messageformat": "{name} видеоқоңырау бастады"
   },
   "icu:calling__in-another-call-tooltip": {
     "messageformat": "Сіздің қоңырауға қатысып жатырсыз"
@@ -2780,26 +2837,41 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "Терезе"
   },
+  "icu:calling__ParticipantInfoButton": {
+    "messageformat": "Бұл контакт туралы толық ақпарат"
+  },
   "icu:CallingAdhocCallInfo__CopyLink": {
     "messageformat": "Қоңырау сілтемесін көшіру"
+  },
+  "icu:CallingAdhocCallInfo__ShareViaSignal": {
+    "messageformat": "Signal арқылы қоңырау сілтемесін бөлісу"
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "Бұл адамды қоңыраудан өшіріп тастау"
   },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogBody": {
+    "messageformat": "{name} қоңыраудан шығарылсын ба?"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--remove": {
+    "messageformat": "Өшіру"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--block": {
+    "messageformat": "Қоңыраудан блоктау"
+  },
   "icu:CallingAdhocCallInfo__UnknownContactLabel": {
-    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+    "messageformat": "{count, plural, one {{count,number} адам} other {{count,number} адам}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
-    "messageformat": "+{count,number} more"
+    "messageformat": "{count, plural, one {Тағы {count,number} адам} other {Тағы {count,number} адам}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
-    "messageformat": "More info about new contacts"
+    "messageformat": "Жаңа контактілер туралы қосымша ақпарат"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
-    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+    "messageformat": "Қоңырауға қосылмай тұрып телефондағы контактілеріңіздің аттарын, сізбен бір топтағы адамдарды немесе 1:1 сөйлескен адамдарды ғана көре аласыз. Қоңырауға қосылған соң, барлық аттарды және фотосуреттерді көре аласыз."
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
-    "messageformat": "Got it"
+    "messageformat": "Түсінікті"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Видео"
@@ -3512,6 +3584,9 @@
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Топтан өшіру"
   },
+  "icu:ContactModal--already-in-call": {
+    "messageformat": "Сіздің қоңырауға қатысып жатырсыз"
+  },
   "icu:showChatColorEditor": {
     "messageformat": "Чат түсі"
   },
@@ -3780,7 +3855,7 @@
     "messageformat": "{count, plural, one {Бұл хатты қай құрылғылардан жойып тастағыңыз келеді?} other {Бұл хаттарды қай құрылғылардан жойып тастағыңыз келеді?}}"
   },
   "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
-    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+    "messageformat": "{count, plural, one {Бұл хат барлық құрылғыңыздан жойылады.} other {Бұл хаттар барлық құрылғыңыздан жойылады.}}"
   },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "Меннен ғана жою"
@@ -3795,7 +3870,7 @@
     "messageformat": "Барлық құрылғыдан жою"
   },
   "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
-    "messageformat": "Delete"
+    "messageformat": "Жою"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {Барлығында {count,number} хатқа дейін ғана жоюға болады} other {Барлығында {count,number} хатқа дейін ғана жоюға болады}}"
@@ -4196,11 +4271,11 @@
   "icu:ProfileEditor--username--check-starting-character": {
     "messageformat": "Пайдаланушы аттары саннан басталмауы керек."
   },
-  "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Usernames must have at least {min,number} characters."
+  "icu:ProfileEditor--username--check-character-min-plural": {
+    "messageformat": "{min, plural, one {PIN-код кемінде {min,number} таңбадан тұруы керек} other {Пайдаланушы атында кемінде {min,number} таңба болуы керек.}}"
   },
-  "icu:ProfileEditor--username--check-character-max": {
-    "messageformat": "Пайдаланушы аттарындағы таңбалар саны {max,number} таңбадан аспауы керек."
+  "icu:ProfileEditor--username--check-character-max-plural": {
+    "messageformat": "{max, plural, one {Пайдаланушы аттарындағы таңбалар саны {max,number} таңбадан аспауы керек.} other {Пайдаланушы аттарындағы таңбалар саны {max,number} таңбадан аспауы керек.}}"
   },
   "icu:ProfileEditor--username--check-discriminator-min": {
     "messageformat": "Пайдаланушы аты дұрыс емес, кемінде 2 сан енгізіңіз."
@@ -4240,9 +4315,6 @@
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
     "messageformat": "Жою"
-  },
-  "icu:ProfileEditor--username--delete-unavailable-notice": {
-    "messageformat": "Пайдаланушы атын жою үшін телефоныңыздан Signal қолданбасын ашып, \"Параметрлер > Профиль\" тармағына өтіңіз."
   },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "Пайдаланушы атын көшіру немесе жою"
@@ -4749,13 +4821,13 @@
     "messageformat": "Сіздің контактілеріңіз сіздің аты-жөніңізді және фотосуретіңізді көре алады, сондай-ақ олардан жасырып қоймаған болсаңыз, \"Стористерім\" бөліміне салған стористеріңізді көре алады"
   },
   "icu:LocalDeleteWarningModal__header": {
-    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+    "messageformat": "Жою процесі барлық құрылғыңызда орындалады"
   },
   "icu:LocalDeleteWarningModal__description": {
-    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+    "messageformat": "Хаттарды немесе чаттарды жойғанда, олар сіздің барлық құрылғыңыздан жойылады."
   },
   "icu:LocalDeleteWarningModal__confirm": {
-    "messageformat": "Got it"
+    "messageformat": "Түсінікті"
   },
   "icu:Stories__title": {
     "messageformat": "Стористер"
@@ -5350,7 +5422,7 @@
     "messageformat": "\"{query}\" бойынша нәтижелер жоқ"
   },
   "icu:CallsList__CreateCallLink": {
-    "messageformat": "Create a Call Link"
+    "messageformat": "Қоңырау сілтемесін жасау"
   },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "Кіріс"
@@ -5360,6 +5432,9 @@
   },
   "icu:CallsList__ItemCallInfo--Missed": {
     "messageformat": "Қабылданбаған"
+  },
+  "icu:CallsList__ItemCallInfo--Declined": {
+    "messageformat": "Қабылданбады"
   },
   "icu:CallsList__ItemCallInfo--GroupCall": {
     "messageformat": "Топтық қоңырау"
@@ -5374,7 +5449,7 @@
     "messageformat": "Қазіргі қоңыраудан шығу керек пе?"
   },
   "icu:CallsList__LeaveCallDialogBody": {
-    "messageformat": "Жаңа қоңырауға қосылмас бұрын, қазіргі қоңыраудан шығуыңыз керек."
+    "messageformat": "Жаңа қоңырауды бастамас немесе оған қосылмас бұрын қазіргі қоңыраудан шығуыңыз керек."
   },
   "icu:CallsList__LeaveCallDialogButton--leave": {
     "messageformat": "Қоңыраудан шығу"
@@ -5406,8 +5481,29 @@
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Қоңырау сілтемесі"
   },
+  "icu:CallHistory__DescriptionVideoCall--Default": {
+    "messageformat": "{direction, select, Outgoing {Шығыс видеоқоңырау} other {Кіріс видеоқоңырау}}"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Missed": {
+    "messageformat": "Видео қоңырауды өткізіп алдыңыз"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Unanswered": {
+    "messageformat": "Жауап берілмеген видеоқоңырау"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Declined": {
+    "messageformat": "Қабылданбаған видеоқоңырау"
+  },
   "icu:CallLinkDetails__Join": {
     "messageformat": "Қосылу"
+  },
+  "icu:CallLinkDetails__AddCallNameLabel": {
+    "messageformat": "Қоңырау атын қосу"
+  },
+  "icu:CallLinkDetails__EditCallNameLabel": {
+    "messageformat": "Қоңырау атын өңдеу"
+  },
+  "icu:CallLinkDetails__ApproveAllMembersLabel": {
+    "messageformat": "Барлық мүшені мақұлдау"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "Сілтемені көшіру"
@@ -5415,23 +5511,50 @@
   "icu:CallLinkDetails__ShareLinkViaSignal": {
     "messageformat": "Сілтемені Signal арқылы бөлісу"
   },
-  "icu:CallLinkEditModal__Title": {
-    "messageformat": "Call link details"
+  "icu:CallLinkDetails__DeleteLink": {
+    "messageformat": "Delete link"
   },
-  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
-    "messageformat": "Name"
+  "icu:CallLinkDetails__DeleteLinkModal__Title": {
+    "messageformat": "Delete call link?"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Body": {
+    "messageformat": "This link will no longer work for anyone who has it."
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
+    "messageformat": "Cancel"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Delete": {
+    "messageformat": "Delete"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Қоңырауға сілтеме мәліметтері"
   },
   "icu:CallLinkEditModal__JoinButtonLabel": {
-    "messageformat": "Join"
+    "messageformat": "Қосылу"
+  },
+  "icu:CallLinkEditModal__AddCallNameLabel": {
+    "messageformat": "Қоңырау атын қосу"
+  },
+  "icu:CallLinkEditModal__EditCallNameLabel": {
+    "messageformat": "Қоңырау атын өңдеу"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Approve all members"
+    "messageformat": "Барлық мүшені мақұлдау"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
-    "messageformat": "Off"
+  "icu:CallLinkRestrictionsSelect__Option--Off": {
+    "messageformat": "Өшіру"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
-    "messageformat": "On"
+  "icu:CallLinkRestrictionsSelect__Option--On": {
+    "messageformat": "Қосу"
+  },
+  "icu:CallLinkAddNameModal__Title": {
+    "messageformat": "Қоңырау атын қосу"
+  },
+  "icu:CallLinkAddNameModal__Title--Edit": {
+    "messageformat": "Қоңырау атын өңдеу"
+  },
+  "icu:CallLinkAddNameModal__NameLabel": {
+    "messageformat": "Қоңырау аты"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {Тағы {count,number} адам жазып жатыр.} other {Тағы {count,number} адам жазып жатыр.}}"
@@ -5473,19 +5596,19 @@
     "messageformat": "Кішігірім түзетпелер жасалды, ақаулар жөнделді және жұмысы жақсартылды. Signal-ды қолданғаныңыз үшін рақмет!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.12--0": {
-    "messageformat": "Топтық қоңырау кезінде хат-хабар алмасудың басқа жолын қарастырып жүрсеңіз, қолыңызды көтеріңіз. Жаңа «Қолды көтеру» функциясы – біреудің назарын аударудың, сұрақ қоюдың немесе досыңыз «Кім қосылады?» деп сұрағанда, бір ауыздан топтық ұсыныс үшін дауыс берудің ең қарапайым жолы."
+  "icu:WhatsNew__v7.18--0": {
+    "messageformat": "Бұл шығарылымда үлкен хаттар тізбегін жою процесінің жылдамдығы артты."
   },
-  "icu:WhatsNew__v7.12--1": {
-    "messageformat": "Қиып алу құралындағы ақауды түзеттік, енді суреттен бұрынғы жігітіңізді/қызыңызды (немесе басқа нысандарды) қиып тастау оңай бола түсті."
+  "icu:WhatsNew__v7.19--0": {
+    "messageformat": "Егер басқа біреу қоңырау шалып жатса, қазіргі қоңыраудан шығып, жаңа қоңырауға қосылуға мүмкіндік беретін түймелер тіркесімін қостық. Шықпас бұрын алдымен растау сұралады, бірақ қоңыраудан шығу-шықпау өз еркіңізде."
   },
-  "icu:WhatsNew__v7.12--2": {
-    "messageformat": "Дауыстық ескертпе жіберуге арналған пернелер тіркесімін Ctrl/Cmd+Shift+Y деп өзгерттік, енді Windows және Linux жүйелеріндегі «Стильді қою және сәйкестендіру» пернелер тіркесімімен шатаспайды."
+  "icu:WhatsNew__v7.19--1": {
+    "messageformat": "Бұл жаңа нұсқада тілі \"POSIX\" деп орнатылған пайдаланушылар үшін Linux жүйесі іске қосылғандағы қателер түзетілді."
   },
-  "icu:WhatsNew__v7.13--0": {
-    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  "icu:WhatsNew__v7.20--0": {
+    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
   },
-  "icu:WhatsNew__v7.13--1": {
-    "messageformat": "This update also improves the display of quoted replies in RTL languages."
+  "icu:WhatsNew__v7.20--1": {
+    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
   }
 }

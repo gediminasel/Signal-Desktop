@@ -12,6 +12,7 @@ import { createCipheriv, createHmac, randomBytes } from 'crypto';
 import { noop } from 'lodash';
 import { BackupLevel } from '@signalapp/libsignal-client/zkgroup';
 
+import { DataReader, DataWriter } from '../../sql/Client';
 import * as log from '../../logging/log';
 import * as Bytes from '../../Bytes';
 import { strictAssert } from '../../util/assert';
@@ -20,15 +21,13 @@ import { DelimitedStream } from '../../util/DelimitedStream';
 import { appendPaddingStream } from '../../util/logPadding';
 import { prependStream } from '../../util/prependStream';
 import { appendMacStream } from '../../util/appendMacStream';
+import { getIvAndDecipher } from '../../util/getIvAndDecipher';
+import { getMacAndUpdateHmac } from '../../util/getMacAndUpdateHmac';
 import { HOUR } from '../../util/durations';
 import { CipherType, HashType } from '../../types/Crypto';
 import * as Errors from '../../types/errors';
 import { constantTimeEqual } from '../../Crypto';
-import {
-  getIvAndDecipher,
-  getMacAndUpdateHmac,
-  measureSize,
-} from '../../AttachmentCrypto';
+import { measureSize } from '../../AttachmentCrypto';
 import { BackupExportStream } from './export';
 import { BackupImportStream } from './import';
 import { getKeyMaterial } from './crypto';
@@ -189,7 +188,7 @@ export class BackupsService {
 
   public async fetchAndSaveBackupCdnObjectMetadata(): Promise<void> {
     log.info('fetchAndSaveBackupCdnObjectMetadata: clearing existing metadata');
-    await window.Signal.Data.clearAllBackupCdnObjectMetadata();
+    await DataWriter.clearAllBackupCdnObjectMetadata();
 
     let cursor: string | undefined;
     const PAGE_SIZE = 1000;
@@ -200,7 +199,7 @@ export class BackupsService {
       const listResult = await this.api.listMedia({ cursor, limit: PAGE_SIZE });
 
       // eslint-disable-next-line no-await-in-loop
-      await window.Signal.Data.saveBackupCdnObjectMetadata(
+      await DataWriter.saveBackupCdnObjectMetadata(
         listResult.storedMediaObjects.map(object => ({
           mediaId: object.mediaId,
           cdnNumber: object.cdn,
@@ -222,9 +221,7 @@ export class BackupsService {
   ): Promise<
     { isInBackupTier: true; cdnNumber: number } | { isInBackupTier: false }
   > {
-    const storedInfo = await window.Signal.Data.getBackupCdnObjectMetadata(
-      mediaId
-    );
+    const storedInfo = await DataReader.getBackupCdnObjectMetadata(mediaId);
     if (!storedInfo) {
       return { isInBackupTier: false };
     }

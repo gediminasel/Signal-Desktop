@@ -296,6 +296,7 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   isSelectMode: isBoolean(overrideProps.isSelectMode)
     ? overrideProps.isSelectMode
     : false,
+  isSMS: isBoolean(overrideProps.isSMS) ? overrideProps.isSMS : false,
   isSpoilerExpanded: overrideProps.isSpoilerExpanded || {},
   isTapToView: overrideProps.isTapToView,
   isTapToViewError: overrideProps.isTapToViewError,
@@ -721,7 +722,7 @@ ReactionsShortMessage.args = {
 
 export const AvatarInGroup = Template.bind({});
 AvatarInGroup.args = {
-  author: getDefaultConversation({ avatarPath: pngUrl }),
+  author: getDefaultConversation({ avatarUrl: pngUrl }),
   conversationType: 'group',
   status: 'sent',
   text: 'Hello it is me, the saxophone.',
@@ -1120,6 +1121,25 @@ LinkPreviewWithCallLink.args = {
       isStickerPack: false,
     },
   ],
+  status: 'sent',
+  text: 'Use this link to join a Signal call: https://signal.link/call/#key=hzcn-pcff-ctsc-bdbf-stcr-tzpc-bhqx-kghh',
+};
+
+export const LinkPreviewWithCallLinkInGroup = Template.bind({});
+LinkPreviewWithCallLinkInGroup.args = {
+  previews: [
+    {
+      url: 'https://signal.link/call/#key=hzcn-pcff-ctsc-bdbf-stcr-tzpc-bhqx-kghh',
+      domain: 'signal.link',
+      title: 'Camping Prep',
+      description: 'Use this link to join a Signal call',
+      image: undefined,
+      date: undefined,
+      isCallLink: true,
+      isStickerPack: false,
+    },
+  ],
+  conversationType: 'group',
   status: 'sent',
   text: 'Use this link to join a Signal call: https://signal.link/call/#key=hzcn-pcff-ctsc-bdbf-stcr-tzpc-bhqx-kghh',
 };
@@ -2061,6 +2081,12 @@ PaymentNotification.args = {
     kind: PaymentEventKind.Notification,
     note: 'Hello there',
   },
+};
+
+export const SMS = Template.bind({});
+SMS.args = {
+  isSMS: true,
+  text: 'hello',
 };
 
 function MultiSelectMessage() {

@@ -26,7 +26,7 @@ const createAttachment = (
   contentType: stringToMIMEType(props.contentType ?? ''),
   fileName: props.fileName ?? '',
   screenshotPath: props.pending === false ? props.screenshotPath : undefined,
-  url: props.pending === false ? props.url ?? '' : '',
+  url: props.pending === false ? (props.url ?? '') : '',
   size: 3433,
 });
 
@@ -52,6 +52,7 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
   doForwardMessages: action('doForwardMessages'),
   getPreferredBadge: () => undefined,
   i18n,
+  isInFullScreenCall: false,
   linkPreviewForSource: () => undefined,
   onClose: action('onClose'),
   onChange: action('onChange'),
@@ -61,6 +62,7 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
       {...props}
       getPreferredBadge={() => undefined}
       i18n={i18n}
+      isActive
       isFormattingEnabled
       onPickEmoji={action('onPickEmoji')}
       onSetSkinTone={action('onSetSkinTone')}

@@ -1,22 +1,29 @@
 // Copyright 2023 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { Aci, Pni } from '@signalapp/libsignal-client';
+import { Aci, Pni, ServiceId } from '@signalapp/libsignal-client';
+import { ReceiptCredentialPresentation } from '@signalapp/libsignal-client/zkgroup';
 import { v4 as generateUuid } from 'uuid';
 import pMap from 'p-map';
 import { Writable } from 'stream';
 import { isNumber } from 'lodash';
 
 import { Backups, SignalService } from '../../protobuf';
-import Data from '../../sql/Client';
+import { DataWriter } from '../../sql/Client';
 import type { StoryDistributionWithMembersType } from '../../sql/Interface';
 import * as log from '../../logging/log';
+import { GiftBadgeStates } from '../../components/conversation/Message';
 import { StorySendMode } from '../../types/Stories';
 import type { ServiceIdString, AciString } from '../../types/ServiceId';
-import { fromAciObject, fromPniObject } from '../../types/ServiceId';
+import {
+  fromAciObject,
+  fromPniObject,
+  fromServiceIdObject,
+} from '../../types/ServiceId';
 import { isStoryDistributionId } from '../../types/StoryDistributionId';
 import * as Errors from '../../types/errors';
 import { PaymentEventKind } from '../../types/Payment';
+import { MessageRequestResponseEvent } from '../../types/MessageRequestResponseEvent';
 import {
   ContactFormType,
   AddressType as ContactAddressType,
@@ -24,9 +31,17 @@ import {
 import {
   STICKERPACK_ID_BYTE_LEN,
   STICKERPACK_KEY_BYTE_LEN,
+  downloadStickerPack,
 } from '../../types/Stickers';
 import type {
+  ConversationColorType,
+  CustomColorsItemType,
+  CustomColorType,
+  CustomColorDataType,
+} from '../../types/Colors';
+import type {
   ConversationAttributesType,
+  CustomError,
   MessageAttributesType,
   MessageReactionType,
   EditHistoryType,
@@ -34,7 +49,7 @@ import type {
 } from '../../model-types.d';
 import { assertDev, strictAssert } from '../../util/assert';
 import { getTimestampFromLong } from '../../util/timestampLongUtils';
-import { DurationInSeconds } from '../../util/durations';
+import { DurationInSeconds, SECOND } from '../../util/durations';
 import { dropNull } from '../../util/dropNull';
 import {
   deriveGroupID,
@@ -53,13 +68,14 @@ import { SendStatus } from '../../messages/MessageSendState';
 import type { SendStateByConversationId } from '../../messages/MessageSendState';
 import { SeenStatus } from '../../MessageSeenStatus';
 import * as Bytes from '../../Bytes';
-import { BACKUP_VERSION } from './constants';
-import type { AboutMe } from './types';
+import { BACKUP_VERSION, WALLPAPER_TO_BUBBLE_COLOR } from './constants';
+import type { AboutMe, LocalChatStyle } from './types';
 import type { GroupV2ChangeDetailType } from '../../groups';
 import { queueAttachmentDownloads } from '../../util/queueAttachmentDownloads';
 import { drop } from '../../util/drop';
 import { isNotNil } from '../../util/isNotNil';
-import { isGroup } from '../../util/whatTypeOfConversation';
+import { isGroup, isGroupV2 } from '../../util/whatTypeOfConversation';
+import { rgbToHSL } from '../../util/rgbToHSL';
 import {
   convertBackupMessageAttachmentToAttachment,
   convertFilePointerToAttachment,
@@ -67,6 +83,7 @@ import {
 import { filterAndClean } from '../../types/BodyRange';
 import { APPLICATION_OCTET_STREAM, stringToMIMEType } from '../../types/MIME';
 import { copyFromQuotedMessage } from '../../messages/copyQuote';
+import { groupAvatarJobQueue } from '../../jobs/groupAvatarJobQueue';
 
 const MAX_CONCURRENCY = 10;
 
@@ -96,14 +113,14 @@ async function processConversationOpBatch(
       `updates=${updates.length}`
   );
 
-  await Data.saveConversations(saves);
-  await Data.updateConversations(updates);
+  await DataWriter.saveConversations(saves);
+  await DataWriter.updateConversations(updates);
 }
 async function processMessagesBatch(
   ourAci: AciString,
   batch: ReadonlyArray<MessageAttributesType>
 ): Promise<void> {
-  const ids = await Data.saveMessages(batch, {
+  const ids = await DataWriter.saveMessages(batch, {
     forceSave: true,
     ourAci,
   });
@@ -122,7 +139,7 @@ async function processMessagesBatch(
 
     if (editHistory?.length) {
       drop(
-        Data.saveEditedMessages(
+        DataWriter.saveEditedMessages(
           attributes,
           ourAci,
           editHistory.slice(0, -1).map(({ timestamp }) => ({
@@ -240,6 +257,7 @@ export class BackupImportStream extends Writable {
   });
   private ourConversation?: ConversationAttributesType;
   private pinnedConversations = new Array<[number, string]>();
+  private customColorById = new Map<number, CustomColorDataType>();
 
   constructor() {
     super({ objectMode: true });
@@ -302,13 +320,25 @@ export class BackupImportStream extends Writable {
       window.storage.reset();
       await window.storage.fetch();
 
+      const allConversations = window.ConversationController.getAll();
+
       // Update last message in every active conversation now that we have
       // them loaded into memory.
       await pMap(
-        window.ConversationController.getAll().filter(convo => {
+        allConversations.filter(convo => {
           return convo.get('active_at') || convo.get('isPinned');
         }),
         convo => convo.updateLastMessage(),
+        { concurrency: MAX_CONCURRENCY }
+      );
+
+      // Schedule group avatar download.
+      await pMap(
+        allConversations.filter(({ attributes: convo }) => {
+          const { avatar } = convo;
+          return isGroupV2(convo) && avatar?.url && !avatar.path;
+        }),
+        convo => groupAvatarJobQueue.add({ conversationId: convo.id }),
         { concurrency: MAX_CONCURRENCY }
       );
 
@@ -383,6 +413,8 @@ export class BackupImportStream extends Writable {
         }
 
         await this.fromChatItem(frame.chatItem, { aboutMe });
+      } else if (frame.stickerPack) {
+        await this.fromStickerPack(frame.stickerPack);
       } else {
         log.warn(`${this.logId}: unsupported frame item ${frame.item}`);
       }
@@ -468,21 +500,35 @@ export class BackupImportStream extends Writable {
       await storage.put('avatarUrl', avatarUrlPath);
     }
     if (donationSubscriberData != null) {
-      const { subscriberId, currencyCode } = donationSubscriberData;
+      const { subscriberId, currencyCode, manuallyCancelled } =
+        donationSubscriberData;
       if (Bytes.isNotEmpty(subscriberId)) {
         await storage.put('subscriberId', subscriberId);
       }
       if (currencyCode != null) {
         await storage.put('subscriberCurrencyCode', currencyCode);
       }
+      if (manuallyCancelled != null) {
+        await storage.put(
+          'donorSubscriptionManuallyCancelled',
+          manuallyCancelled
+        );
+      }
     }
     if (backupsSubscriberData != null) {
-      const { subscriberId, currencyCode } = backupsSubscriberData;
+      const { subscriberId, currencyCode, manuallyCancelled } =
+        backupsSubscriberData;
       if (Bytes.isNotEmpty(subscriberId)) {
         await storage.put('backupsSubscriberId', subscriberId);
       }
       if (currencyCode != null) {
         await storage.put('backupsSubscriberCurrencyCode', currencyCode);
+      }
+      if (manuallyCancelled != null) {
+        await storage.put(
+          'backupsSubscriptionManuallyCancelled',
+          manuallyCancelled
+        );
       }
     }
 
@@ -503,6 +549,12 @@ export class BackupImportStream extends Writable {
       'preferContactAvatars',
       accountSettings?.preferContactAvatars === true
     );
+    if (accountSettings?.universalExpireTimerSeconds) {
+      await storage.put(
+        'universalExpireTimer',
+        accountSettings.universalExpireTimerSeconds
+      );
+    }
     await storage.put(
       'displayBadgesOnProfile',
       accountSettings?.displayBadgesOnProfile === true
@@ -532,8 +584,8 @@ export class BackupImportStream extends Writable {
       accountSettings?.hasCompletedUsernameOnboarding === true
     );
     await storage.put(
-      'preferredReactionEmoji',
-      accountSettings?.preferredReactionEmoji || []
+      'hasSeenGroupStoryEducationSheet',
+      accountSettings?.hasSeenGroupStoryEducationSheet === true
     );
     await storage.put(
       'preferredReactionEmoji',
@@ -567,6 +619,40 @@ export class BackupImportStream extends Writable {
       await window.storage.put(
         'phoneNumberDiscoverability',
         PhoneNumberDiscoverability.Discoverable
+      );
+    }
+
+    // It is important to import custom chat colors before default styles
+    // because we build the uuid => integer id map for the colors.
+    await this.fromCustomChatColors(accountSettings?.customChatColors);
+
+    const defaultChatStyle = this.fromChatStyle(
+      accountSettings?.defaultChatStyle
+    );
+
+    if (defaultChatStyle.color != null) {
+      await window.storage.put('defaultConversationColor', {
+        color: defaultChatStyle.color,
+        customColorData: defaultChatStyle.customColorData,
+      });
+    }
+
+    if (defaultChatStyle.wallpaperPhotoPointer != null) {
+      await window.storage.put(
+        'defaultWallpaperPhotoPointer',
+        defaultChatStyle.wallpaperPhotoPointer
+      );
+    }
+    if (defaultChatStyle.wallpaperPreset != null) {
+      await window.storage.put(
+        'defaultWallpaperPreset',
+        defaultChatStyle.wallpaperPreset
+      );
+    }
+    if (defaultChatStyle.dimWallpaperInDarkMode != null) {
+      await window.storage.put(
+        'defaultDimWallpaperInDarkMode',
+        defaultChatStyle.dimWallpaperInDarkMode
       );
     }
 
@@ -618,6 +704,7 @@ export class BackupImportStream extends Writable {
       profileName: dropNull(contact.profileGivenName),
       profileFamilyName: dropNull(contact.profileFamilyName),
       hideStory: contact.hideStory === true,
+      username: dropNull(contact.username),
     };
 
     if (contact.notRegistered) {
@@ -648,30 +735,153 @@ export class BackupImportStream extends Writable {
   private async fromGroup(
     group: Backups.IGroup
   ): Promise<ConversationAttributesType> {
-    strictAssert(group.masterKey != null, 'fromGroup: missing masterKey');
+    const { masterKey, snapshot } = group;
+    strictAssert(masterKey != null, 'fromGroup: missing masterKey');
+    strictAssert(snapshot != null, 'fromGroup: missing snapshot');
 
-    const secretParams = deriveGroupSecretParams(group.masterKey);
+    const secretParams = deriveGroupSecretParams(masterKey);
     const publicParams = deriveGroupPublicParams(secretParams);
     const groupId = Bytes.toBase64(deriveGroupID(secretParams));
 
+    const {
+      title,
+      description,
+      avatarUrl,
+      disappearingMessagesTimer,
+      accessControl,
+      version,
+      members,
+      membersPendingProfileKey,
+      membersPendingAdminApproval,
+      membersBanned,
+      inviteLinkPassword,
+      announcementsOnly,
+    } = snapshot;
+
+    const expirationTimerS =
+      disappearingMessagesTimer?.disappearingMessagesDuration;
+
+    let storySendMode: StorySendMode | undefined;
+    switch (group.storySendMode) {
+      case Backups.Group.StorySendMode.ENABLED:
+        storySendMode = StorySendMode.Always;
+        break;
+      case Backups.Group.StorySendMode.DISABLED:
+        storySendMode = StorySendMode.Never;
+        break;
+      default:
+        storySendMode = undefined;
+        break;
+    }
     const attrs: ConversationAttributesType = {
       id: generateUuid(),
       type: 'group',
       version: 2,
       groupVersion: 2,
-      masterKey: Bytes.toBase64(group.masterKey),
+      masterKey: Bytes.toBase64(masterKey),
       groupId,
       secretParams: Bytes.toBase64(secretParams),
       publicParams: Bytes.toBase64(publicParams),
       profileSharing: group.whitelisted === true,
       hideStory: group.hideStory === true,
-    };
+      storySendMode,
 
-    if (group.storySendMode === Backups.Group.StorySendMode.ENABLED) {
-      attrs.storySendMode = StorySendMode.Always;
-    } else if (group.storySendMode === Backups.Group.StorySendMode.DISABLED) {
-      attrs.storySendMode = StorySendMode.Never;
-    }
+      // Snapshot
+      name: dropNull(title?.title),
+      description: dropNull(description?.descriptionText),
+      avatar: avatarUrl
+        ? {
+            url: avatarUrl,
+            path: '',
+          }
+        : undefined,
+      expireTimer: expirationTimerS
+        ? DurationInSeconds.fromSeconds(expirationTimerS)
+        : undefined,
+      accessControl: accessControl
+        ? {
+            attributes:
+              dropNull(accessControl.attributes) ??
+              SignalService.AccessControl.AccessRequired.UNKNOWN,
+            members:
+              dropNull(accessControl.members) ??
+              SignalService.AccessControl.AccessRequired.UNKNOWN,
+            addFromInviteLink:
+              dropNull(accessControl.addFromInviteLink) ??
+              SignalService.AccessControl.AccessRequired.UNKNOWN,
+          }
+        : undefined,
+      membersV2: members?.map(({ userId, role, joinedAtVersion }) => {
+        strictAssert(Bytes.isNotEmpty(userId), 'Empty gv2 member userId');
+
+        // Note that we deliberately ignore profile key since it has to be
+        // in the Contact frame
+
+        return {
+          aci: fromAciObject(Aci.fromUuidBytes(userId)),
+          role: dropNull(role) ?? SignalService.Member.Role.UNKNOWN,
+          joinedAtVersion: dropNull(joinedAtVersion) ?? 0,
+        };
+      }),
+      pendingMembersV2: membersPendingProfileKey?.map(
+        ({ member, addedByUserId, timestamp }) => {
+          strictAssert(member != null, 'Missing gv2 pending member');
+          strictAssert(
+            Bytes.isNotEmpty(addedByUserId),
+            'Empty gv2 pending member addedByUserId'
+          );
+
+          // profileKey is not available for pending members.
+          const { userId, role } = member;
+
+          strictAssert(Bytes.isNotEmpty(userId), 'Empty gv2 member userId');
+
+          const serviceId = fromServiceIdObject(
+            ServiceId.parseFromServiceIdBinary(Buffer.from(userId))
+          );
+
+          return {
+            serviceId,
+            role: dropNull(role) ?? SignalService.Member.Role.UNKNOWN,
+            addedByUserId: fromAciObject(Aci.fromUuidBytes(addedByUserId)),
+            timestamp: timestamp != null ? getTimestampFromLong(timestamp) : 0,
+          };
+        }
+      ),
+      pendingAdminApprovalV2: membersPendingAdminApproval?.map(
+        ({ userId, timestamp }) => {
+          strictAssert(Bytes.isNotEmpty(userId), 'Empty gv2 member userId');
+
+          // Note that we deliberately ignore profile key since it has to be
+          // in the Contact frame
+
+          return {
+            aci: fromAciObject(Aci.fromUuidBytes(userId)),
+            timestamp: timestamp != null ? getTimestampFromLong(timestamp) : 0,
+          };
+        }
+      ),
+      bannedMembersV2: membersBanned?.map(({ userId, timestamp }) => {
+        strictAssert(Bytes.isNotEmpty(userId), 'Empty gv2 member userId');
+
+        // Note that we deliberately ignore profile key since it has to be
+        // in the Contact frame
+
+        const serviceId = fromServiceIdObject(
+          ServiceId.parseFromServiceIdBinary(Buffer.from(userId))
+        );
+
+        return {
+          serviceId,
+          timestamp: timestamp != null ? getTimestampFromLong(timestamp) : 0,
+        };
+      }),
+      revision: dropNull(version),
+      groupInviteLinkPassword: Bytes.isNotEmpty(inviteLinkPassword)
+        ? Bytes.toBase64(inviteLinkPassword)
+        : undefined,
+      announcementsOnly: dropNull(announcementsOnly),
+    };
 
     return attrs;
   }
@@ -763,7 +973,7 @@ export class BackupImportStream extends Writable {
       };
     }
 
-    await Data.createNewStoryDistribution(result);
+    await DataWriter.createNewStoryDistribution(result);
   }
 
   private async fromChat(chat: Backups.IChat): Promise<void> {
@@ -791,6 +1001,27 @@ export class BackupImportStream extends Writable {
     conversation.markedUnread = chat.markedUnread === true;
     conversation.dontNotifyForMentionsIfMuted =
       chat.dontNotifyForMentionsIfMuted === true;
+
+    const chatStyle = this.fromChatStyle(chat.style);
+
+    if (chatStyle.wallpaperPhotoPointer != null) {
+      conversation.wallpaperPhotoPointerBase64 = Bytes.toBase64(
+        chatStyle.wallpaperPhotoPointer
+      );
+    }
+    if (chatStyle.wallpaperPreset != null) {
+      conversation.wallpaperPreset = chatStyle.wallpaperPreset;
+    }
+    if (chatStyle.color != null) {
+      conversation.conversationColor = chatStyle.color;
+    }
+    if (chatStyle.customColorData != null) {
+      conversation.customColor = chatStyle.customColorData.value;
+      conversation.customColorId = chatStyle.customColorData.id;
+    }
+    if (chatStyle.dimWallpaperInDarkMode != null) {
+      conversation.dimWallpaperInDarkMode = chatStyle.dimWallpaperInDarkMode;
+    }
 
     this.updateConversation(conversation);
 
@@ -854,6 +1085,7 @@ export class BackupImportStream extends Writable {
         item.expiresInMs && !item.expiresInMs.isZero()
           ? DurationInSeconds.fromMillis(item.expiresInMs.toNumber())
           : undefined,
+      sms: item.sms === true ? true : undefined,
       ...directionDetails,
     };
     const additionalMessages: Array<MessageAttributesType> = [];
@@ -871,8 +1103,6 @@ export class BackupImportStream extends Writable {
     }
 
     if (item.standardMessage) {
-      // TODO (DESKTOP-6964): gift badge
-
       attributes = {
         ...attributes,
         ...(await this.fromStandardMessage(item.standardMessage, chatConvo.id)),
@@ -961,6 +1191,8 @@ export class BackupImportStream extends Writable {
 
       const BackupSendStatus = Backups.SendStatus.Status;
 
+      const unidentifiedDeliveries = new Array<ServiceIdString>();
+      const errors = new Array<CustomError>();
       for (const status of outgoing.sendStatus ?? []) {
         strictAssert(
           status.recipientId,
@@ -997,6 +1229,28 @@ export class BackupImportStream extends Writable {
             break;
         }
 
+        if (target.serviceId) {
+          if (status.sealedSender) {
+            unidentifiedDeliveries.push(target.serviceId);
+          }
+
+          if (status.identityKeyMismatch) {
+            errors.push({
+              serviceId: target.serviceId,
+              name: 'OutgoingIdentityKeyError',
+              // See: ts/textsecure/Errors
+              message: `The identity of ${target.serviceId} has changed.`,
+            });
+          } else if (status.networkFailure) {
+            errors.push({
+              serviceId: target.serviceId,
+              name: 'OutgoingMessageError',
+              // See: ts/textsecure/Errors
+              message: 'no http error',
+            });
+          }
+        }
+
         sendStateByConversationId[target.id] = {
           status: sendStatus,
           updatedAt:
@@ -1011,6 +1265,10 @@ export class BackupImportStream extends Writable {
         patch: {
           sendStateByConversationId,
           received_at_ms: timestamp,
+          unidentifiedDeliveries: unidentifiedDeliveries.length
+            ? unidentifiedDeliveries
+            : undefined,
+          errors: errors.length ? errors : undefined,
         },
         newActiveAt: timestamp,
       };
@@ -1018,12 +1276,15 @@ export class BackupImportStream extends Writable {
     if (incoming) {
       const receivedAtMs = incoming.dateReceived?.toNumber() ?? Date.now();
 
+      const unidentifiedDeliveryReceived = incoming.sealedSender === true;
+
       if (incoming.read) {
         return {
           patch: {
             readStatus: ReadStatus.Read,
             seenStatus: SeenStatus.Seen,
             received_at_ms: receivedAtMs,
+            unidentifiedDeliveryReceived,
           },
           newActiveAt: receivedAtMs,
         };
@@ -1034,6 +1295,7 @@ export class BackupImportStream extends Writable {
           readStatus: ReadStatus.Unread,
           seenStatus: SeenStatus.Unseen,
           received_at_ms: receivedAtMs,
+          unidentifiedDeliveryReceived,
         },
         newActiveAt: receivedAtMs,
         unread: true,
@@ -1203,8 +1465,15 @@ export class BackupImportStream extends Writable {
     if (!reactions?.length) {
       return undefined;
     }
-    return reactions.map(
-      ({ emoji, authorId, sentTimestamp, receivedTimestamp }) => {
+    return reactions
+      .slice()
+      .sort((a, b) => {
+        if (a.sortOrder && b.sortOrder) {
+          return a.sortOrder.comp(b.sortOrder);
+        }
+        return 0;
+      })
+      .map(({ emoji, authorId, sentTimestamp, receivedTimestamp }) => {
         strictAssert(emoji != null, 'reaction must have an emoji');
         strictAssert(authorId != null, 'reaction must have authorId');
         strictAssert(
@@ -1229,8 +1498,7 @@ export class BackupImportStream extends Writable {
           receivedAtDate: getTimestampFromLong(receivedTimestamp),
           timestamp: getTimestampFromLong(sentTimestamp),
         };
-      }
-    );
+      });
   }
 
   private async fromNonBubbleChatItem(
@@ -1401,6 +1669,52 @@ export class BackupImportStream extends Writable {
         additionalMessages: [],
       };
     }
+    if (chatItem.giftBadge) {
+      const { giftBadge } = chatItem;
+      strictAssert(
+        Bytes.isNotEmpty(giftBadge.receiptCredentialPresentation),
+        'Gift badge must have a presentation'
+      );
+
+      let state: GiftBadgeStates;
+      switch (giftBadge.state) {
+        case Backups.GiftBadge.State.OPENED:
+          state = GiftBadgeStates.Opened;
+          break;
+
+        case Backups.GiftBadge.State.FAILED:
+        case Backups.GiftBadge.State.REDEEMED:
+          state = GiftBadgeStates.Redeemed;
+          break;
+
+        case Backups.GiftBadge.State.UNOPENED:
+          state = GiftBadgeStates.Unopened;
+          break;
+
+        default:
+          state = GiftBadgeStates.Unopened;
+          break;
+      }
+
+      const receipt = new ReceiptCredentialPresentation(
+        Buffer.from(giftBadge.receiptCredentialPresentation)
+      );
+
+      return {
+        message: {
+          giftBadge: {
+            receiptCredentialPresentation: Bytes.toBase64(
+              giftBadge.receiptCredentialPresentation
+            ),
+            expiration: Number(receipt.getReceiptExpirationTime()) * SECOND,
+            id: undefined,
+            level: Number(receipt.getReceiptLevel()),
+            state,
+          },
+        },
+        additionalMessages: [],
+      };
+    }
     if (chatItem.updateMessage) {
       return this.fromChatItemUpdateMessage(chatItem.updateMessage, options);
     }
@@ -1427,10 +1741,9 @@ export class BackupImportStream extends Writable {
       const { expiresInMs } = updateMessage.expirationTimerChange;
 
       const sourceServiceId = author?.serviceId ?? aboutMe.aci;
-      const expireTimer =
-        isNumber(expiresInMs) && expiresInMs
-          ? DurationInSeconds.fromMillis(expiresInMs)
-          : DurationInSeconds.fromSeconds(0);
+      const expireTimer = DurationInSeconds.fromMillis(
+        expiresInMs?.toNumber() ?? 0
+      );
 
       return {
         message: {
@@ -2055,10 +2368,9 @@ export class BackupImportStream extends Writable {
           );
         }
         const sourceServiceId = fromAciObject(Aci.fromUuidBytes(updaterAci));
-        const expireTimer =
-          isNumber(expiresInMs) && expiresInMs
-            ? DurationInSeconds.fromMillis(expiresInMs)
-            : undefined;
+        const expireTimer = expiresInMs
+          ? DurationInSeconds.fromMillis(expiresInMs.toNumber())
+          : undefined;
         additionalMessages.push({
           type: 'timer-notification',
           sourceServiceId,
@@ -2139,6 +2451,7 @@ export class BackupImportStream extends Writable {
     }
   ): Promise<Partial<MessageAttributesType> | undefined> {
     const { Type } = Backups.SimpleChatUpdate;
+    strictAssert(simpleUpdate.type != null, 'Simple update missing type');
     switch (simpleUpdate.type) {
       case Type.END_SESSION:
         return {
@@ -2179,7 +2492,7 @@ export class BackupImportStream extends Writable {
         return {
           type: 'delivery-issue',
         };
-      case Type.BOOST_REQUEST:
+      case Type.RELEASE_CHANNEL_DONATION_REQUEST:
         log.warn('backups: dropping boost request from release notes');
         return undefined;
       case Type.PAYMENTS_ACTIVATED:
@@ -2201,8 +2514,229 @@ export class BackupImportStream extends Writable {
           requiredProtocolVersion:
             SignalService.DataMessage.ProtocolVersion.CURRENT - 1,
         };
+      case Type.REPORTED_SPAM:
+        return {
+          type: 'message-request-response-event',
+          messageRequestResponseEvent: MessageRequestResponseEvent.SPAM,
+        };
       default:
-        throw new Error('Not implemented');
+        throw new Error(`Unsupported update type: ${simpleUpdate.type}`);
     }
   }
+
+  private async fromStickerPack({
+    packId: id,
+    packKey: key,
+  }: Backups.IStickerPack): Promise<void> {
+    strictAssert(
+      id?.length === STICKERPACK_ID_BYTE_LEN,
+      'Sticker pack must have a valid pack id'
+    );
+
+    const logId = `fromStickerPack(${Bytes.toHex(id).slice(-2)})`;
+    strictAssert(
+      key?.length === STICKERPACK_KEY_BYTE_LEN,
+      `${logId}: must have a valid pack key`
+    );
+
+    drop(
+      downloadStickerPack(Bytes.toHex(id), Bytes.toBase64(key), {
+        fromBackup: true,
+      })
+    );
+  }
+
+  private async fromCustomChatColors(
+    customChatColors:
+      | ReadonlyArray<Backups.ChatStyle.ICustomChatColor>
+      | undefined
+      | null
+  ): Promise<void> {
+    if (!customChatColors?.length) {
+      return;
+    }
+
+    const customColors: CustomColorsItemType = {
+      version: 1,
+      colors: {},
+    };
+
+    for (const color of customChatColors) {
+      const uuid = generateUuid();
+      let value: CustomColorType;
+
+      if (color.solid) {
+        value = {
+          start: rgbIntToHSL(color.solid),
+        };
+      } else {
+        strictAssert(color.gradient != null, 'Either solid or gradient');
+        strictAssert(color.gradient.colors != null, 'Missing gradient colors');
+
+        const start = color.gradient.colors.at(0);
+        const end = color.gradient.colors.at(-1);
+        const deg = color.gradient.angle;
+
+        strictAssert(start != null, 'Missing start color');
+        strictAssert(end != null, 'Missing end color');
+        strictAssert(deg != null, 'Missing angle');
+
+        value = {
+          start: rgbIntToHSL(start),
+          end: rgbIntToHSL(end),
+          deg,
+        };
+      }
+
+      customColors.colors[uuid] = value;
+      this.customColorById.set(color.id?.toNumber() || 0, {
+        id: uuid,
+        value,
+      });
+    }
+
+    await window.storage.put('customColors', customColors);
+  }
+
+  private fromChatStyle(chatStyle: Backups.IChatStyle | null | undefined): Omit<
+    LocalChatStyle,
+    'customColorId'
+  > & {
+    customColorData: CustomColorDataType | undefined;
+  } {
+    if (!chatStyle) {
+      return {
+        wallpaperPhotoPointer: undefined,
+        wallpaperPreset: undefined,
+        color: 'ultramarine',
+        customColorData: undefined,
+        dimWallpaperInDarkMode: undefined,
+      };
+    }
+
+    let wallpaperPhotoPointer: Uint8Array | undefined;
+    let wallpaperPreset: number | undefined;
+    const dimWallpaperInDarkMode = dropNull(chatStyle.dimWallpaperInDarkMode);
+
+    if (chatStyle.wallpaperPhoto) {
+      wallpaperPhotoPointer = Backups.FilePointer.encode(
+        chatStyle.wallpaperPhoto
+      ).finish();
+    } else if (chatStyle.wallpaperPreset != null) {
+      wallpaperPreset = chatStyle.wallpaperPreset;
+    }
+
+    let color: ConversationColorType | undefined;
+    let customColorData: CustomColorDataType | undefined;
+    if (chatStyle.autoBubbleColor) {
+      if (wallpaperPreset != null) {
+        color = WALLPAPER_TO_BUBBLE_COLOR.get(wallpaperPreset) || 'ultramarine';
+      } else {
+        color = 'ultramarine';
+      }
+    } else if (chatStyle.bubbleColorPreset != null) {
+      const { BubbleColorPreset } = Backups.ChatStyle;
+
+      switch (chatStyle.bubbleColorPreset) {
+        case BubbleColorPreset.SOLID_CRIMSON:
+          color = 'crimson';
+          break;
+        case BubbleColorPreset.SOLID_VERMILION:
+          color = 'vermilion';
+          break;
+        case BubbleColorPreset.SOLID_BURLAP:
+          color = 'burlap';
+          break;
+        case BubbleColorPreset.SOLID_FOREST:
+          color = 'forest';
+          break;
+        case BubbleColorPreset.SOLID_WINTERGREEN:
+          color = 'wintergreen';
+          break;
+        case BubbleColorPreset.SOLID_TEAL:
+          color = 'teal';
+          break;
+        case BubbleColorPreset.SOLID_BLUE:
+          color = 'blue';
+          break;
+        case BubbleColorPreset.SOLID_INDIGO:
+          color = 'indigo';
+          break;
+        case BubbleColorPreset.SOLID_VIOLET:
+          color = 'violet';
+          break;
+        case BubbleColorPreset.SOLID_PLUM:
+          color = 'plum';
+          break;
+        case BubbleColorPreset.SOLID_TAUPE:
+          color = 'taupe';
+          break;
+        case BubbleColorPreset.SOLID_STEEL:
+          color = 'steel';
+          break;
+        case BubbleColorPreset.GRADIENT_EMBER:
+          color = 'ember';
+          break;
+        case BubbleColorPreset.GRADIENT_MIDNIGHT:
+          color = 'midnight';
+          break;
+        case BubbleColorPreset.GRADIENT_INFRARED:
+          color = 'infrared';
+          break;
+        case BubbleColorPreset.GRADIENT_LAGOON:
+          color = 'lagoon';
+          break;
+        case BubbleColorPreset.GRADIENT_FLUORESCENT:
+          color = 'fluorescent';
+          break;
+        case BubbleColorPreset.GRADIENT_BASIL:
+          color = 'basil';
+          break;
+        case BubbleColorPreset.GRADIENT_SUBLIME:
+          color = 'sublime';
+          break;
+        case BubbleColorPreset.GRADIENT_SEA:
+          color = 'sea';
+          break;
+        case BubbleColorPreset.GRADIENT_TANGERINE:
+          color = 'tangerine';
+          break;
+        case BubbleColorPreset.SOLID_ULTRAMARINE:
+        default:
+          color = 'ultramarine';
+          break;
+      }
+    } else {
+      strictAssert(chatStyle.customColorId != null, 'Missing custom color id');
+
+      const entry = this.customColorById.get(
+        chatStyle.customColorId.toNumber()
+      );
+      strictAssert(entry != null, 'Missing custom color');
+
+      color = 'custom';
+      customColorData = entry;
+    }
+
+    return {
+      wallpaperPhotoPointer,
+      wallpaperPreset,
+      color,
+      customColorData,
+      dimWallpaperInDarkMode,
+    };
+  }
+}
+
+function rgbIntToHSL(intValue: number): { hue: number; saturation: number } {
+  const { h: hue, s: saturation } = rgbToHSL(
+    // eslint-disable-next-line no-bitwise
+    (intValue >>> 16) & 0xff,
+    // eslint-disable-next-line no-bitwise
+    (intValue >>> 8) & 0xff,
+    // eslint-disable-next-line no-bitwise
+    intValue & 0xff
+  );
+
+  return { hue, saturation };
 }

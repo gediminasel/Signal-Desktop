@@ -68,6 +68,7 @@ function mockMessageTimelineItem(
       isMessageRequestAccepted: true,
       isSelected: false,
       isSelectMode: false,
+      isSMS: false,
       isSpoilerExpanded: {},
       previews: [],
       readStatus: ReadStatus.Read,
@@ -399,7 +400,7 @@ const renderHeroRow = () => {
       <ConversationHero
         about={getAbout()}
         acceptedMessageRequest
-        avatarPath={getAvatarPath()}
+        avatarUrl={getAvatarPath()}
         badge={undefined}
         conversationType="direct"
         id={getDefaultConversation().id}

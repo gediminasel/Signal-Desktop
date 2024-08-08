@@ -10,22 +10,38 @@ import { useGlobalModalActions } from '../ducks/globalModals';
 import { useCallingActions } from '../ducks/calling';
 import * as log from '../../logging/log';
 import { strictAssert } from '../../util/assert';
+import type { CallLinkRestrictions } from '../../types/CallLink';
 
 export type SmartCallLinkDetailsProps = Readonly<{
   roomId: string;
   callHistoryGroup: CallHistoryGroup;
+  onClose: () => void;
 }>;
 
 export const SmartCallLinkDetails = memo(function SmartCallLinkDetails({
   roomId,
   callHistoryGroup,
+  onClose,
 }: SmartCallLinkDetailsProps) {
   const i18n = useSelector(getIntl);
   const callLinkSelector = useSelector(getCallLinkSelector);
-  const { startCallLinkLobby } = useCallingActions();
-  const { showShareCallLinkViaSignal } = useGlobalModalActions();
+
+  const { deleteCallLink, startCallLinkLobby, updateCallLinkRestrictions } =
+    useCallingActions();
+  const { toggleCallLinkAddNameModal, showShareCallLinkViaSignal } =
+    useGlobalModalActions();
 
   const callLink = callLinkSelector(roomId);
+
+  const handleDeleteCallLink = useCallback(() => {
+    strictAssert(callLink != null, 'callLink not found');
+    deleteCallLink(callLink.roomId);
+    onClose();
+  }, [callLink, deleteCallLink, onClose]);
+
+  const handleOpenCallLinkAddNameModal = useCallback(() => {
+    toggleCallLinkAddNameModal(roomId);
+  }, [roomId, toggleCallLinkAddNameModal]);
 
   const handleShareCallLinkViaSignal = useCallback(() => {
     strictAssert(callLink != null, 'callLink not found');
@@ -37,6 +53,13 @@ export const SmartCallLinkDetails = memo(function SmartCallLinkDetails({
     startCallLinkLobby({ rootKey: callLink.rootKey });
   }, [callLink, startCallLinkLobby]);
 
+  const handleUpdateCallLinkRestrictions = useCallback(
+    (newRestrictions: CallLinkRestrictions) => {
+      updateCallLinkRestrictions(roomId, newRestrictions);
+    },
+    [roomId, updateCallLinkRestrictions]
+  );
+
   if (callLink == null) {
     log.error(`SmartCallLinkDetails: callLink not found for room ${roomId}`);
     return null;
@@ -47,8 +70,11 @@ export const SmartCallLinkDetails = memo(function SmartCallLinkDetails({
       callHistoryGroup={callHistoryGroup}
       callLink={callLink}
       i18n={i18n}
+      onDeleteCallLink={handleDeleteCallLink}
+      onOpenCallLinkAddNameModal={handleOpenCallLinkAddNameModal}
       onStartCallLinkLobby={handleStartCallLinkLobby}
       onShareCallLinkViaSignal={handleShareCallLinkViaSignal}
+      onUpdateCallLinkRestrictions={handleUpdateCallLinkRestrictions}
     />
   );
 });

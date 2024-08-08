@@ -119,7 +119,9 @@
   &:focus {
     outline: none;
     @include keyboard-mode {
-      box-shadow: 0 0 0 2px $color-white, 0 0 0 4px $color-ultramarine;
+      box-shadow:
+        0 0 0 2px $color-white,
+        0 0 0 4px $color-ultramarine;
     }
   }
 
@@ -233,7 +235,8 @@
 }
 
 // Override .ListTile__subtitle so ellipsis is correct color
-.CallsList__Item--missed .ListTile__subtitle {
+.CallsList__Item--missed .ListTile__subtitle,
+.CallsList__Item--declined .ListTile__subtitle {
   // Need to override the themed selector specificity of .ListTile__subtitle
   @include light-theme {
     color: $color-accent-red;
@@ -374,7 +377,6 @@
 }
 
 .CallsNewCall__ItemActionButton--join-call-disabled {
-  cursor: default;
   opacity: 0.5;
 }
 

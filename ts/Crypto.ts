@@ -6,6 +6,7 @@ import Long from 'long';
 import { HKDF } from '@signalapp/libsignal-client';
 
 import * as Bytes from './Bytes';
+import { Crypto } from './context/Crypto';
 import { calculateAgreement, generateKeyPair } from './Curve';
 import { HashType, CipherType, UUID_BYTE_SIZE } from './types/Crypto';
 import { ProfileDecryptError } from './types/errors';
@@ -220,7 +221,9 @@ const BACKUP_MATERIAL_INFO = '20231003_Signal_Backups_EncryptMessageBackup';
 
 const BACKUP_MEDIA_ID_INFO = '20231003_Signal_Backups_Media_ID';
 const BACKUP_MEDIA_ID_LEN = 15;
-const BACKUP_MEDIA_ENCRYPT_INFO = '20231003_Signal_Backups_Media_ID';
+const BACKUP_MEDIA_ENCRYPT_INFO = '20231003_Signal_Backups_EncryptMedia';
+const BACKUP_MEDIA_THUMBNAIL_ENCRYPT_INFO =
+  '20240513_Signal_Backups_EncryptThumbnail';
 const BACKUP_MEDIA_AES_KEY_LEN = 32;
 const BACKUP_MEDIA_MAC_KEY_LEN = 32;
 const BACKUP_MEDIA_IV_LEN = 16;
@@ -268,7 +271,7 @@ export function deriveMediaIdFromMediaName(
     BACKUP_MEDIA_ID_LEN,
     Buffer.from(backupKey),
     Buffer.from(BACKUP_MEDIA_ID_INFO),
-    Buffer.from(Bytes.fromBase64(mediaName))
+    Buffer.from(mediaName, 'utf8')
   );
 }
 
@@ -277,11 +280,11 @@ export function deriveBackupMediaKeyMaterial(
   mediaId: Uint8Array
 ): BackupMediaKeyMaterialType {
   if (backupKey.byteLength !== BACKUP_KEY_LEN) {
-    throw new Error('deriveMediaIdFromMediaName: invalid backup key length');
+    throw new Error('deriveBackupMediaKeyMaterial: invalid backup key length');
   }
 
   if (!mediaId.length) {
-    throw new Error('deriveMediaIdFromMediaName: mediaId missing');
+    throw new Error('deriveBackupMediaKeyMaterial: mediaId missing');
   }
 
   const hkdf = HKDF.new(3);
@@ -301,6 +304,39 @@ export function deriveBackupMediaKeyMaterial(
     iv: material.subarray(BACKUP_MEDIA_MAC_KEY_LEN + BACKUP_MEDIA_AES_KEY_LEN),
   };
 }
+
+export function deriveBackupMediaThumbnailInnerEncryptionKeyMaterial(
+  backupKey: Uint8Array,
+  mediaId: Uint8Array
+): BackupMediaKeyMaterialType {
+  if (backupKey.byteLength !== BACKUP_KEY_LEN) {
+    throw new Error(
+      'deriveBackupMediaThumbnailKeyMaterial: invalid backup key length'
+    );
+  }
+
+  if (!mediaId.length) {
+    throw new Error('deriveBackupMediaThumbnailKeyMaterial: mediaId missing');
+  }
+
+  const hkdf = HKDF.new(3);
+  const material = hkdf.deriveSecrets(
+    BACKUP_MEDIA_MAC_KEY_LEN + BACKUP_MEDIA_AES_KEY_LEN + BACKUP_MEDIA_IV_LEN,
+    Buffer.from(backupKey),
+    Buffer.from(BACKUP_MEDIA_THUMBNAIL_ENCRYPT_INFO),
+    Buffer.from(mediaId)
+  );
+
+  return {
+    aesKey: material.subarray(0, BACKUP_MEDIA_AES_KEY_LEN),
+    macKey: material.subarray(
+      BACKUP_MEDIA_AES_KEY_LEN,
+      BACKUP_MEDIA_AES_KEY_LEN + BACKUP_MEDIA_MAC_KEY_LEN
+    ),
+    iv: material.subarray(BACKUP_MEDIA_MAC_KEY_LEN + BACKUP_MEDIA_AES_KEY_LEN),
+  };
+}
+
 export function deriveStorageItemKey(
   storageServiceKey: Uint8Array,
   itemID: string
@@ -687,7 +723,7 @@ export function decryptProfile(data: Uint8Array, key: Uint8Array): Uint8Array {
 export function encryptProfileItemWithPadding(
   item: Uint8Array,
   profileKey: Uint8Array,
-  paddedLengths: typeof PaddedLengths[keyof typeof PaddedLengths]
+  paddedLengths: (typeof PaddedLengths)[keyof typeof PaddedLengths]
 ): Uint8Array {
   const paddedLength = paddedLengths.find(
     (length: number) => item.byteLength <= length
@@ -734,7 +770,7 @@ export function decryptProfileName(
 // SignalContext APIs
 //
 
-const { crypto } = globalThis.window?.SignalContext ?? {};
+const crypto = globalThis.window?.SignalContext.crypto || new Crypto();
 
 export function sign(key: Uint8Array, data: Uint8Array): Uint8Array {
   return crypto.sign(key, data);

@@ -80,6 +80,18 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "Veri tabanının sürümü Signal'in bu sürümüyle eşleşmiyor. Bilgisayarında Signal'in en son sürümünü açtığından emin ol."
   },
+  "icu:databaseError__recover__detail": {
+    "messageformat": "Bir veri tabanı hatası oluştu. Hatayı kopyalayıp sorunun giderilmesine yardımcı olmak için Signal destekle iletişime geçebilirsin. Signal'i hemen kullanman gerekiyorsa verilerini kurtarmaya çalışabilirsin.\n\nŞu adresi ziyaret ederek destekle iletişime geçebilirsin: {link}"
+  },
+  "icu:databaseError__recover__button": {
+    "messageformat": "Verileri kurtar"
+  },
+  "icu:databaseError__safeStorageBackendChange": {
+    "messageformat": "İşletim sistemi şifreleme anahtarı arka ucunu {previousBackend} değerinden {currentBackend} değerine değiştirdiği için veritabanı şifreleme anahtarına erişilemiyor. Bu durum, örneğin GNOME ve KDE arasında masaüstü ortamı değiştiğinde meydana gelebilir.\n\nLütfen önceki masaüstü ortamına geç."
+  },
+  "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
+    "messageformat": "İşletim sistemi şifreleme anahtarının arka ucu {previousBackend} değerinden {currentBackend} değerine değiştirildiği için veritabanı şifreleme anahtarına erişilemiyor. Bu durum, örneğin GNOME ve KDE arasında masaüstü ortamı değiştiğinde meydana gelebilir.\n\nLütfen önceki masaüstü ortamına geç ya da Signal'i --password-store=\"{previousBackendFlag}\" komut satırı işareti ile çalıştırmayı dene."
+  },
   "icu:mainMenuFile": {
     "messageformat": "&Dosya"
   },
@@ -818,8 +830,14 @@
   "icu:cannotUpdateDetail": {
     "messageformat": "Signal güncellenemedi. {retry} veya el ile kurmak için {url}. Sonra, bu sorun hakkında {support}"
   },
+  "icu:cannotUpdateDetail-v2": {
+    "messageformat": "Signal güncellenemedi. <retryUpdateButton>Güncellemeyi yeniden dene</retryUpdateButton> ya da el ile kurmak için {url} adresini ziyaret et. Ardından bu sorun hakkında <contactSupportLink>destek ile iletişime geç</contactSupportLink>"
+  },
   "icu:cannotUpdateRequireManualDetail": {
     "messageformat": "Signal güncellenemedi. El ile kurmak için {url} adresini ziyaret edin. Sonra, bu sorun hakkında {support}"
+  },
+  "icu:cannotUpdateRequireManualDetail-v2": {
+    "messageformat": "Signal güncellenemedi. El ile kurmak için {url} adresini ziyaret et. Ardından bu sorun hakkında <contactSupportLink>destek ile iletişime geç</contactSupportLink>"
   },
   "icu:readOnlyVolume": {
     "messageformat": "Signal Desktop muhtemelen macOS karantinasında ve otomatik güncellenemeyecek. Lütfen Bulucu ile  {app} uygulamasını  {folder} klasörüne taşıyın."
@@ -989,6 +1007,9 @@
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
     "messageformat": "Bu sohbetteki tüm mesajlar bu cihazdan silinecek. Mesajları sildikten sonra da bu sohbeti arayabilirsin."
   },
+  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
+    "messageformat": "Bu sohbetteki tüm mesajlar tüm cihazlardan silinecektir. Mesajları sildikten sonra da bu sohbeti arayabilirsin."
+  },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Gruptan ayrıl"
   },
@@ -1092,7 +1113,7 @@
     "messageformat": "Bağlı cihazlar"
   },
   "icu:linkNewDevice": {
-    "messageformat": "Yeni Cihaz Bağla"
+    "messageformat": "Yeni bir cihaz bağla"
   },
   "icu:Install__learn-more": {
     "messageformat": "Dahasını öğrenin"
@@ -1110,10 +1131,22 @@
     "messageformat": "Ayarlar"
   },
   "icu:Install__instructions__3": {
-    "messageformat": "{plusButton}'ya (Android) ya da {linkNewDevice}'a (iOS) tıklayın"
+    "messageformat": "{linkNewDevice} üzerine dokun"
   },
-  "icu:Install__qr-failed-load": {
-    "messageformat": "QR kod yüklenemedi. İnternet bağlantını kontrol et ve tekrar dene. <retry>Tekrar dene</retry>"
+  "icu:Install__qr-failed-load__error--timeout": {
+    "messageformat": "Kare kod yüklenemedi. Bağlantını kontrol edip tekrar dene."
+  },
+  "icu:Install__qr-failed-load__error--unknown": {
+    "messageformat": "<paragraph>Beklenmeyen bir hata oluştu.</paragraph> <paragraph>Lütfen tekrar dene.</paragraph>"
+  },
+  "icu:Install__qr-failed-load__error--network": {
+    "messageformat": "Signal, mevcut ağını kullanarak bu cihazı bağlayamıyor."
+  },
+  "icu:Install__qr-failed-load__retry": {
+    "messageformat": "Tekrar dene"
+  },
+  "icu:Install__qr-failed-load__get-help": {
+    "messageformat": "Yardım al"
   },
   "icu:Install__support-link": {
     "messageformat": "Yardıma mı ihtiyacınız var?"
@@ -1173,10 +1206,10 @@
     "messageformat": "Tekrar Ara"
   },
   "icu:calling__join": {
-    "messageformat": "Çağrıya Katıl"
+    "messageformat": "Aramaya katıl"
   },
   "icu:calling__return": {
-    "messageformat": "Aramaya Dön"
+    "messageformat": "Aramaya dön"
   },
   "icu:calling__lobby-automatically-muted-because-there-are-a-lot-of-people": {
     "messageformat": "Aramanın boyutundan dolayı mikrofon sessize alındı"
@@ -1286,8 +1319,35 @@
   "icu:CallingPendingParticipants__DenyUser": {
     "messageformat": "Katılım isteğini reddet"
   },
+  "icu:CallingPendingParticipants__ApproveAll": {
+    "messageformat": "Tümünü onayla"
+  },
+  "icu:CallingPendingParticipants__DenyAll": {
+    "messageformat": "Tümünü reddet"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--ApproveAll": {
+    "messageformat": "{count, plural, one {{count,number} istek onaylansın mı?} other {{count,number} istek onaylansın mı?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogTitle--DenyAll": {
+    "messageformat": "{count, plural, one {{count,number} istek reddedilsin mi?} other {{count,number} istek reddedilsin mi?}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--ApproveAll": {
+    "messageformat": "{count, plural, one {Aramaya {count,number} kişi eklenecek.} other {Aramaya {count,number} kişi eklenecek.}}"
+  },
+  "icu:CallingPendingParticipants__ConfirmDialogBody--DenyAll": {
+    "messageformat": "{count, plural, one {{count,number} kişi aramaya eklenmeyecek.} other {{count,number} kişi aramaya eklenmeyecek.}}"
+  },
   "icu:CallingPendingParticipants__RequestsToJoin": {
     "messageformat": "{count, plural, one {{count,number} aramaya katılma isteği} other {{count,number} aramaya katılma isteği}}"
+  },
+  "icu:CallingPendingParticipants__WouldLikeToJoin": {
+    "messageformat": "Katılmak istiyor..."
+  },
+  "icu:CallingPendingParticipants__AdditionalRequests": {
+    "messageformat": "{count, plural, one {+{count,number} istek} other {+{count,number} istek}}"
+  },
+  "icu:CallingPendingParticipants__Toast--added-users-to-call": {
+    "messageformat": "{count, plural, one {{count,number} kişi aramaya eklendi} other {{count,number} kişi aramaya eklendi}}"
   },
   "icu:CallingRaisedHandsList__Title": {
     "messageformat": "{count, plural, one {{count,number} kişi el kaldırdı} other {{count,number} kişi el kaldırdı}}"
@@ -1352,8 +1412,14 @@
   "icu:calling__you-have-blocked": {
     "messageformat": "{name} kişisini engelledin"
   },
+  "icu:calling__blocked-participant": {
+    "messageformat": "{name} engellendi"
+  },
+  "icu:calling__block-info-title": {
+    "messageformat": "{name} engellendi"
+  },
   "icu:calling__block-info": {
-    "messageformat": "Onlardan sesli veya görüntülü video almayacaksın ve onlar da senden alamayacaklar."
+    "messageformat": "Birbirinizin sesini veya görüntüsünü alamayacaksınız."
   },
   "icu:calling__missing-media-keys": {
     "messageformat": "{name} kişisinden ses ve görüntü alınamıyor"
@@ -2372,15 +2438,6 @@
   "icu:conversationMarkedUnread": {
     "messageformat": "Sohbet okunmadı olarak işaretlendi"
   },
-  "icu:AuthArtCreator--dialog--message": {
-    "messageformat": "Signal Çıkartma Paketi Oluşturucu'yu açmak ister misin?"
-  },
-  "icu:AuthArtCreator--dialog--confirm": {
-    "messageformat": "Onayla"
-  },
-  "icu:AuthArtCreator--dialog--dismiss": {
-    "messageformat": "Kapat"
-  },
   "icu:ArtCreator--Authentication--error": {
     "messageformat": "Çıkartma Paketi Oluşturucu'yu kullanmak için lütfen Signal'i telefonunda ve bilgisayarında kur"
   },
@@ -2577,10 +2634,10 @@
     "messageformat": "Reddet"
   },
   "icu:declinedIncomingAudioCall": {
-    "messageformat": "Sesli aramayı reddettin"
+    "messageformat": "Sesli arama reddedildi"
   },
   "icu:declinedIncomingVideoCall": {
-    "messageformat": "Görüntülü aramayı reddettiniz"
+    "messageformat": "Görüntülü arama reddedildi"
   },
   "icu:acceptedIncomingAudioCall": {
     "messageformat": "Gelen sesli arama"
@@ -2613,10 +2670,10 @@
     "messageformat": "Signal, bildirim alanında çalışmaya devam edecek. Bunu Signal ayarlarından değiştirebilirsin."
   },
   "icu:incomingAudioCall": {
-    "messageformat": "Gelen sesli arama..."
+    "messageformat": "Gelen sesli arama"
   },
   "icu:incomingVideoCall": {
-    "messageformat": "Gelen görüntülü arama…"
+    "messageformat": "Gelen görüntülü arama"
   },
   "icu:outgoingAudioCall": {
     "messageformat": "Giden sesli arama"
@@ -2688,13 +2745,13 @@
     "messageformat": "Zil kapalı"
   },
   "icu:CallControls__RaiseHandsToast--you": {
-    "messageformat": "You raised a hand."
+    "messageformat": "Elini kaldırdın."
   },
   "icu:CallControls__RaiseHandsToast--you-and-one": {
-    "messageformat": "You and {otherName} raised a hand."
+    "messageformat": "Sen ve {otherName} el kaldırdınız."
   },
   "icu:CallControls__RaiseHandsToast--you-and-more": {
-    "messageformat": "{overflowCount, plural, one {You, {otherName}, and {overflowCount,number} more raised a hand.} other {You, {otherName}, and {overflowCount,number} more raised a hand.}}"
+    "messageformat": "{overflowCount, plural, one {Sen, {otherName} ve {overflowCount,number} kişi daha el kaldırdı.} other {Sen, {otherName} ve {overflowCount,number} kişi daha el kaldırdı.}}"
   },
   "icu:CallControls__RaiseHandsToast--one": {
     "messageformat": "{name} el kaldırdı."
@@ -2724,16 +2781,16 @@
     "messageformat": "{people, plural, one {{people,number} aramada} other {{people,number} aramada}}"
   },
   "icu:calling__call-notification__ended": {
-    "messageformat": "Grup görüşmesi sona erdi"
+    "messageformat": "Görüntülü arama sona erdi"
   },
   "icu:calling__call-notification__started-by-someone": {
-    "messageformat": "Grup araması başladı."
+    "messageformat": "Bir görüntülü arama başlatıldı"
   },
   "icu:calling__call-notification__started-by-you": {
-    "messageformat": "Bir grup görüşmesi başlattınız"
+    "messageformat": "Bir görüntülü arama başlattın"
   },
   "icu:calling__call-notification__started": {
-    "messageformat": "{name} grup araması başlattı"
+    "messageformat": "{name} bir görüntülü arama başlattı"
   },
   "icu:calling__in-another-call-tooltip": {
     "messageformat": "Zaten bir aramadasınız"
@@ -2780,26 +2837,41 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "Bir pencere"
   },
+  "icu:calling__ParticipantInfoButton": {
+    "messageformat": "Bu kişi hakkında daha fazla bilgi"
+  },
   "icu:CallingAdhocCallInfo__CopyLink": {
     "messageformat": "Arama bağlantısını kopyala"
+  },
+  "icu:CallingAdhocCallInfo__ShareViaSignal": {
+    "messageformat": "Arama bağlantısını Signal ile paylaş"
   },
   "icu:CallingAdhocCallInfo__RemoveClient": {
     "messageformat": "Bu kişiyi aramadan çıkar"
   },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogBody": {
+    "messageformat": "{name} aramadan çıkarılsın mı?"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--remove": {
+    "messageformat": "Kaldır"
+  },
+  "icu:CallingAdhocCallInfo__RemoveClientDialogButton--block": {
+    "messageformat": "Aramasını engelle"
+  },
   "icu:CallingAdhocCallInfo__UnknownContactLabel": {
-    "messageformat": "{count, plural, one {{count,number} person} other {{count,number} people}}"
+    "messageformat": "{count, plural, one {{count,number} kişi} other {{count,number} kişi}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactLabel--in-addition": {
-    "messageformat": "+{count,number} more"
+    "messageformat": "{count, plural, one {+{count,number} kişi daha} other {+{count,number} kişi daha}}"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoButton": {
-    "messageformat": "More info about new contacts"
+    "messageformat": "Yeni kişiler hakkında daha fazla bilgi"
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
-    "messageformat": "Before joining a call you can only see the names of phone contacts, people you’re in a group with, or people you’ve chatted with 1:1. You’ll see all names and photos once you’ve joined the call."
+    "messageformat": "Bir aramaya katılmadan önce yalnızca telefon kişilerinin, grubunda olduğun kişilerin veya birebir sohbet ettiğin kişilerin adlarını görebilirsin. Aramaya katıldıktan sonra tüm adları ve fotoğrafları görürsün."
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
-    "messageformat": "Got it"
+    "messageformat": "Anladım"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -3512,6 +3584,9 @@
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Gruptan çıkar"
   },
+  "icu:ContactModal--already-in-call": {
+    "messageformat": "Zaten bir aramadasınız"
+  },
   "icu:showChatColorEditor": {
     "messageformat": "Sohbet rengi"
   },
@@ -3780,7 +3855,7 @@
     "messageformat": "{count, plural, one {Bu mesajı hangi cihazlardan silmek istiyorsun?} other {Bu mesajları hangi cihazlardan silmek istiyorsun?}}"
   },
   "icu:DeleteMessagesModal--description--noteToSelf--deleteSync": {
-    "messageformat": "{count, plural, one {This message will be deleted from all your devices.} other {These messages will be deleted from all your devices.}}"
+    "messageformat": "{count, plural, one {Bu mesaj tüm cihazlarından silinecektir.} other {Bu mesajlar tüm cihazlarından silinecektir.}}"
   },
   "icu:DeleteMessagesModal--deleteForMe": {
     "messageformat": "Benden sil"
@@ -3795,7 +3870,7 @@
     "messageformat": "Tüm cihazlardan sil"
   },
   "icu:DeleteMessagesModal--noteToSelf--deleteSync": {
-    "messageformat": "Delete"
+    "messageformat": "Sil"
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {Herkesten silmek için en fazla {count,number} mesaj seçebilirsin} other {Herkesten silmek için en fazla {count,number} mesaj seçebilirsin}}"
@@ -4196,11 +4271,11 @@
   "icu:ProfileEditor--username--check-starting-character": {
     "messageformat": "Kullanıcı adları rakam ile başlayamaz."
   },
-  "icu:ProfileEditor--username--check-character-min": {
-    "messageformat": "Usernames must have at least {min,number} characters."
+  "icu:ProfileEditor--username--check-character-min-plural": {
+    "messageformat": "{min, plural, one {Kullanıcı adları en az {min,number} karakter içermelidir.} other {Kullanıcı adları en az {min,number} karakter içermelidir.}}"
   },
-  "icu:ProfileEditor--username--check-character-max": {
-    "messageformat": "Kullanıcı adları en fazla {max,number} karakter içermelidir."
+  "icu:ProfileEditor--username--check-character-max-plural": {
+    "messageformat": "{max, plural, one {Kullanıcı adları en fazla {max,number} karakter içermelidir.} other {Kullanıcı adları en fazla {max,number} karakter içermelidir.}}"
   },
   "icu:ProfileEditor--username--check-discriminator-min": {
     "messageformat": "Geçersiz kullanıcı adı, en az 2 hane gir."
@@ -4240,9 +4315,6 @@
   },
   "icu:ProfileEditor--username--confirm-delete-button": {
     "messageformat": "Sil"
-  },
-  "icu:ProfileEditor--username--delete-unavailable-notice": {
-    "messageformat": "Kullanıcı adını silmek için telefonunda Signal'i aç ve Ayarlar > Profil bölümüne git."
   },
   "icu:ProfileEditor--username--context-menu": {
     "messageformat": "Kullanıcı adını kopyala veya sil"
@@ -4749,13 +4821,13 @@
     "messageformat": "Bağlantıların, adını ve fotoğrafını görebilir ve onlardan gizlemediğin sürece \"Hikayem\"deki gönderileri görüntüleyebilirler"
   },
   "icu:LocalDeleteWarningModal__header": {
-    "messageformat": "\"Delete for Me\" now deletes from all of your devices"
+    "messageformat": "Silme işlemi cihazlarında senkronize edilir"
   },
   "icu:LocalDeleteWarningModal__description": {
-    "messageformat": "When you delete a message in a chat, the message will be deleted from your phone and all linked devices."
+    "messageformat": "Mesajları veya sohbetleri sildiğinde, bunlar tüm cihazlarından silinecektir."
   },
   "icu:LocalDeleteWarningModal__confirm": {
-    "messageformat": "Got it"
+    "messageformat": "Anladım"
   },
   "icu:Stories__title": {
     "messageformat": "Hikayeler"
@@ -5350,7 +5422,7 @@
     "messageformat": "\"{query}\" için sonuç yok"
   },
   "icu:CallsList__CreateCallLink": {
-    "messageformat": "Create a Call Link"
+    "messageformat": "Bir Arama Bağlantısı oluştur"
   },
   "icu:CallsList__ItemCallInfo--Incoming": {
     "messageformat": "Gelen"
@@ -5360,6 +5432,9 @@
   },
   "icu:CallsList__ItemCallInfo--Missed": {
     "messageformat": "Cevapsız"
+  },
+  "icu:CallsList__ItemCallInfo--Declined": {
+    "messageformat": "Reddedildi"
   },
   "icu:CallsList__ItemCallInfo--GroupCall": {
     "messageformat": "Grup görüşmesi"
@@ -5374,7 +5449,7 @@
     "messageformat": "Mevcut aramadan çıkılsın mı?"
   },
   "icu:CallsList__LeaveCallDialogBody": {
-    "messageformat": "Yeni bir aramaya katılmadan önce mevcut aramadan ayrılmalısın."
+    "messageformat": "Yeni bir arama başlatmadan veya bir aramaya katılmadan önce mevcut aramadan ayrılmalısın."
   },
   "icu:CallsList__LeaveCallDialogButton--leave": {
     "messageformat": "Aramadan ayrıl"
@@ -5406,8 +5481,29 @@
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Arama bağlantısı"
   },
+  "icu:CallHistory__DescriptionVideoCall--Default": {
+    "messageformat": "{direction, select, Outgoing {Giden görüntülü arama} other {Gelen görüntülü arama}}"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Missed": {
+    "messageformat": "Cevapsız görüntülü arama"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Unanswered": {
+    "messageformat": "Cevaplanmamış görüntülü arama"
+  },
+  "icu:CallHistory__DescriptionVideoCall--Declined": {
+    "messageformat": "Görüntülü arama reddedildi"
+  },
   "icu:CallLinkDetails__Join": {
     "messageformat": "Katıl"
+  },
+  "icu:CallLinkDetails__AddCallNameLabel": {
+    "messageformat": "Arama adı ekle"
+  },
+  "icu:CallLinkDetails__EditCallNameLabel": {
+    "messageformat": "Arama adını düzenle"
+  },
+  "icu:CallLinkDetails__ApproveAllMembersLabel": {
+    "messageformat": "Tüm üyeleri onayla"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "Bağlantıyı kopyala"
@@ -5415,23 +5511,50 @@
   "icu:CallLinkDetails__ShareLinkViaSignal": {
     "messageformat": "Bağlantıyı Signal ile paylaş"
   },
-  "icu:CallLinkEditModal__Title": {
-    "messageformat": "Call link details"
+  "icu:CallLinkDetails__DeleteLink": {
+    "messageformat": "Delete link"
   },
-  "icu:CallLinkEditModal__InputLabel--Name--SrOnly": {
-    "messageformat": "Name"
+  "icu:CallLinkDetails__DeleteLinkModal__Title": {
+    "messageformat": "Delete call link?"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Body": {
+    "messageformat": "This link will no longer work for anyone who has it."
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
+    "messageformat": "Cancel"
+  },
+  "icu:CallLinkDetails__DeleteLinkModal__Delete": {
+    "messageformat": "Delete"
+  },
+  "icu:CallLinkEditModal__Title": {
+    "messageformat": "Arama bağlantısı detayları"
   },
   "icu:CallLinkEditModal__JoinButtonLabel": {
-    "messageformat": "Join"
+    "messageformat": "Katıl"
+  },
+  "icu:CallLinkEditModal__AddCallNameLabel": {
+    "messageformat": "Arama adı ekle"
+  },
+  "icu:CallLinkEditModal__EditCallNameLabel": {
+    "messageformat": "Arama adını düzenle"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Approve all members"
+    "messageformat": "Tüm üyeleri onayla"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--Off": {
-    "messageformat": "Off"
+  "icu:CallLinkRestrictionsSelect__Option--Off": {
+    "messageformat": "Kapalı"
   },
-  "icu:CallLinkEditModal__ApproveAllMembers__Option--On": {
-    "messageformat": "On"
+  "icu:CallLinkRestrictionsSelect__Option--On": {
+    "messageformat": "Açık"
+  },
+  "icu:CallLinkAddNameModal__Title": {
+    "messageformat": "Arama adı ekle"
+  },
+  "icu:CallLinkAddNameModal__Title--Edit": {
+    "messageformat": "Arama adını düzenle"
+  },
+  "icu:CallLinkAddNameModal__NameLabel": {
+    "messageformat": "Arama adı"
   },
   "icu:TypingBubble__avatar--overflow-count": {
     "messageformat": "{count, plural, one {{count,number} kişi daha yazıyor.} other {{count,number} kişi daha yazıyor.}}"
@@ -5473,19 +5596,19 @@
     "messageformat": "Küçük ince ayarlar, hata düzeltmeleri ve performans geliştirmeleri yaptık. Signal'i kullandığın için teşekkürler!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.12--0": {
-    "messageformat": "Grup aramaları sırasında iletişim kurmak için başka bir yol arıyorsan elini kaldır. Yeni El Kaldırma özelliği; birinin dikkatini çekmenin veya grup aramalarında soru sormanın basit bir yoludur."
+  "icu:WhatsNew__v7.18--0": {
+    "messageformat": "Bu sürüm büyük mesaj dizilerini silme sürecini hızlandırmaktadır."
   },
-  "icu:WhatsNew__v7.12--1": {
-    "messageformat": "Bu güncelleme, resimleri yeniden boyutlandırma için geliştirilmiş bir kırpma aracınını da içermektedir."
+  "icu:WhatsNew__v7.19--0": {
+    "messageformat": "Halen başka bir arama sürüyorsa mevcut aramadan ayrılıp yeni bir aramaya katılmak için bir kısayol ekledik. Bu işlem için senden ayrılmanı onaylaman istenecektir."
   },
-  "icu:WhatsNew__v7.12--2": {
-    "messageformat": "Sesli not göndermek için klavye kısayolunu Ctrl/Cmd+Shift+Y olarak değiştirdik; böylece artık Windows ve Linux'ta \"Yapıştır ve Eşleştir Stili\" kısayoluyla çakışmayacak."
+  "icu:WhatsNew__v7.19--1": {
+    "messageformat": "Bu güncelleme, yerel ayarı 'POSIX' olarak ayarlanmış kullanıcılar için Linux'teki bir başlangıç çökmesini de düzeltmektedir."
   },
-  "icu:WhatsNew__v7.13--0": {
-    "messageformat": "We fixed a bug that displayed images with the wrong aspect ratio if you resized the Signal Desktop window while viewing someone's profile picture. The people you love should only look squeezed if you are giving them a hug."
+  "icu:WhatsNew__v7.20--0": {
+    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
   },
-  "icu:WhatsNew__v7.13--1": {
-    "messageformat": "This update also improves the display of quoted replies in RTL languages."
+  "icu:WhatsNew__v7.20--1": {
+    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
   }
 }
