@@ -80,12 +80,6 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "သင်၏ ဒေတာဘေ့စ်ဗားရှင်းသည် ဤ Signal ဗားရှင်းနှင့် မကိုက်ညီပါ။ သင့်ကွန်ပျူတာတွင် Signal နောက်ဆုံးထွက်ဗားရှင်းကို ဖွင့်ထားခြင်းဖြစ်ကြောင်း သေချာအောင်လုပ်ပါ။"
   },
-  "icu:databaseError__recover__detail": {
-    "messageformat": "ဒေတာဘေ့စ် ချို့ယွင်းချက်တစ်ခု ဖြစ်နေပါသည်။ ချို့ယွင်းချက်ကို ကူးယူပြီးနောက် ဤပြဿနာကို ဖြေရှင်းရန်အတွက် အကူအညီရယူရန် Signal ပံ့ပိုးရေးသို့ ဆက်သွယ်နိုင်ပါသည်။ Signal ကိုချက်ချင်းအသုံးပြုရန်လိုအပ်ပါက၊ သင်သည်သင်၏ဒေတာကိုပြန်လည်ရယူရန်ကြိုးစားနိုင်သည်။\n\nဤလင့်ခ်ကို ဝင်ရောက်ခြင်းဖြင့် ပံ့ပိုးရေးသို့ ဆက်သွယ်ပါ- {link}"
-  },
-  "icu:databaseError__recover__button": {
-    "messageformat": "ဒေတာပြန်ယူပါ"
-  },
   "icu:databaseError__safeStorageBackendChange": {
     "messageformat": "OS ကုဒ်ပြောင်းဝှက်ခြင်း Keyring backend သည် {previousBackend} မှ {currentBackend} သို့ ပြောင်းသွားသောကြောင့် ဒေတာဘေ့စ် ကုဒ်ဝှက်ခြင်းကီးကို ဝင်သုံး၍မရပါ။ ဥပမာအားဖြင့် GNOME နှင့် KDE အကြား Desktop အခြေအနေ ပြောင်းလဲပါက ၎င်းသည် ဖြစ်ပေါ်နိုင်သည်။\n\nကျေးဇူးပြု၍ ယခင် Desktop အခြေအနေသို့ ပြောင်းပါ။"
   },
@@ -827,14 +821,8 @@
   "icu:mute": {
     "messageformat": "အသံပိတ်ရန်"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal အပ်ဒိတ်လုပ်၍ မရပါ။ {retry} သို့မဟုတ် ကိုယ်တိုင် ထည့်သွင်းရန် {url} သို့ သွားပါ။ ထို့နောက် ဤပြဿနာနှင့်ပတ်သက်၍ {support}"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal အပ်ဒိတ်လုပ်၍ မရပါ။ <retryUpdateButton>အပ်ဒိတ် ထပ်လုပ်ကြည့်ပါ</retryUpdateButton> သို့မဟုတ် ၎င်းကို ကိုယ်တိုင်ထည့်သွင်းရန် {url} သို့ သွားပါ။ ထို့နောက် ဤပြဿနာနှင့်ပတ်သက်၍ <contactSupportLink>ပံ့ပိုးမှုသို့ ဆက်သွယ်ပါ။</contactSupportLink>"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal အပ်ဒိတ်လုပ်၍ မရပါ။ ကိုယ်တိုင် ထည့်သွင်းရန်{url} သို့ သွားပါ။ ထို့နောက် ဤပြဿနာနှင့်ပတ်သက်၍ {support}"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal အပ်ဒိတ်လုပ်၍ မရပါ။ ကိုယ်တိုင် ထည့်သွင်းရန် {url} သို့ သွားပါ။ ထို့နောက် ဤပြဿနာနှင့်ပတ်သက်၍ <contactSupportLink>ပံ့ပိုးမှုသို့ ဆက်သွယ်ပါ။</contactSupportLink>"
@@ -1223,9 +1211,6 @@
   "icu:calling__cant-join": {
     "messageformat": "ကောလ်တွင် ပါဝင်၍ မရနိုင်ပါ"
   },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "သင်သည် ကောလ်ထဲတွင် ရှိပြီးဖြစ်သည်။"
-  },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "ကောလ်လင့်ခ် အချက်အလက်ကို ရယူနိုင်ခြင်းမရှိပါ။ သင့်ကွန်ရက် ချိတ်ဆက်မှုကို စစ်ဆေးပြီး ထပ်ကြိုးစားပါ။"
   },
@@ -1408,9 +1393,6 @@
   },
   "icu:calling__in-this-call": {
     "messageformat": "{people, plural, other {၎င်းခေါ်ဆိုမှုထဲတွင် · {people,number} ယောက်}}"
-  },
-  "icu:calling__you-have-blocked": {
-    "messageformat": "သင်သည် {name} ကို ဘလော့ခ်ထားပါသည်"
   },
   "icu:calling__blocked-participant": {
     "messageformat": "{name} ကို ဘလော့ခ်ထားသည်"
@@ -1843,9 +1825,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "အပ်ဒိတ်လုပ်ဆောင်မှု ပြန်ကြိုးစားရန်"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "အကူအညီ ရယူရန် ဆက်သွယ်ပါ"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Signal ကို ပြန်စတင်ရန် နှိပ်ပါ"
@@ -3362,6 +3341,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} သည် အဖွဲ့လင့်ခ်မှတစ်ဆင့် ပါဝင်ရန် တောင်းဆိုချက် {numberOfRequests,number} ခုကို တောင်းဆိုပြီးနောက် ပယ်ဖျက်ခဲ့ပါသည်။"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, other {{joinerName} သည် အဖွဲ့လင့်ခ်မှတစ်ဆင့် ပါဝင်ရန် တောင်းဆိုချက် {numberOfRequests,number} ခုကို တောင်းဆိုပြီးနောက် ဖျက်သိမ်းခဲ့ပါသည်}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "သင်သည် ပိတ်ထားသော အက်ဒ်မင် အတည်ပြုမှုဖြင့် အဖွဲ့လင့်ခ်ကို ဖွင့်ခဲ့ပါသည်။"
   },
@@ -3535,6 +3517,21 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "\"Signal အတွက် လှူရန်\" ကို နှိပ်ပြီး ပုံမှန်လှူဒါန်းပါ"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "မက်ဆေ့ချ်များကို တူအောင်ညှိနေသည်"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "{totalSize} ({fractionComplete,number,percent}) မှ {currentSize} ကို ဒေါင်းလုဒ်လုပ်နေသည်..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "သင့် ဘက်ခ်အပ်အရွယ်အစားပေါ်မူတည်၍ မိနစ်အနည်းငယ် ကြာနိုင်ပါသည်"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Restoring media"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize} of {totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "ဖြန့်ရန်"
@@ -3956,11 +3953,11 @@
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": ".5"
   },
-  "icu:emptyInboxMessage": {
-    "messageformat": "အထက်ပါ {composeIcon} ကို နှိပ်ပြီး မက်ဆေ့ချ်ပို့ရန် သင့်အဆက်အသွယ်များ သို့မဟုတ် အဖွဲ့များကို ရှာပါ။"
+  "icu:emptyInbox__title": {
+    "messageformat": "ချက်(တ်)များမရှိပါ"
   },
-  "icu:composeIcon": {
-    "messageformat": "ရေးသားရန် ခလုတ်"
+  "icu:emptyInbox__subtitle": {
+    "messageformat": "လတ်တလောချက်(တ်)များ ဤနေရာတွင် ပေါ်လာပါမည်။"
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "ဒီကို ထပ်ဆင့်ပို့မည်"
@@ -4850,6 +4847,12 @@
   "icu:Stories__list-empty": {
     "messageformat": "ယခု ပြသရန် မကြာသေးမီက စတိုရီများ မရှိသေးပါ"
   },
+  "icu:Stories__list__empty--title": {
+    "messageformat": "စတိုရီများမရှိပါ"
+  },
+  "icu:Stories__list__empty--subtitle": {
+    "messageformat": "အပ်ဒိတ်အသစ်များ ဤနေရာတွင် ပေါ်လာပါမည်။"
+  },
   "icu:Stories__list--sending": {
     "messageformat": "ပို့နေဆဲ..."
   },
@@ -4864,6 +4867,12 @@
   },
   "icu:Stories__placeholder--text": {
     "messageformat": "စတိုရီကို ကြည့်ရန် နှိပ်ပါ"
+  },
+  "icu:Stories__placeholder-with-icon--text": {
+    "messageformat": "အပ်ဒိတ်တစ်ခုထည့်ရန် <newStoryIcon>စတိုရီတစ်ခု ပေါင်းထည့်ရန်</newStoryIcon>ကို နှိပ်ပါ။"
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "အပ်ဒိတ်တစ်ခုထည့်ရန် <newStoryButtonIcon></newStoryButtonIcon> ကို နှိပ်ပါ။"
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} မှ {group}"
@@ -5106,6 +5115,12 @@
     "messageformat": "ပြန်စာများ"
   },
   "icu:StoryViewsNRepliesModal__reacted": {
+    "messageformat": "စတိုရီကို တုံ့ပြန်မှု ပေးခဲ့ပါသည်"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "စတိုရီကို တုံ့ပြန်မှု ပေးခဲ့ပါသည်"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
     "messageformat": "စတိုရီကို တုံ့ပြန်မှု ပေးခဲ့ပါသည်"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
@@ -5406,6 +5421,12 @@
   "icu:CallsTab__EmptyStateText": {
     "messageformat": "ကောလ်တစ်ခုကို ကြည့်ရှုရန် သို့မဟုတ် စတင်ရန် နှိပ်ပါ"
   },
+  "icu:CallsTab__EmptyStateText--with-icon": {
+    "messageformat": "အသံ သို့မဟုတ် ဗီဒီယိုကောလ် အသစ်တစ်ခုစတင်ရန် <newCallIcon>ကောလ်အသစ်</newCallIcon> ကိုနှိပ်ပါ။"
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "အသံ သို့မဟုတ် ဗီဒီယိုကောလ်ခေါ်ဆိုမှုအသစ်တစ်ခု စတင်ရန် <newCallButtonIcon></newCallButtonIcon> ကို နှိပ်ပါ။"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "ရှာရန်"
   },
@@ -5417,6 +5438,18 @@
   },
   "icu:CallsList__EmptyState--noQuery": {
     "messageformat": "လတ်တလော ခေါ်ဆိုမှုများမရှိ။ သူငယ်ချင်းတစ်ယောက်ကို ခေါ်ဆိုခြင်းဖြင့် စတင်လိုက်ပါ။"
+  },
+  "icu:CallsList__EmptyState--noQuery__title": {
+    "messageformat": "ကောလ်များ မရှိပါ"
+  },
+  "icu:CallsList__EmptyState--noQuery__subtitle": {
+    "messageformat": "လတ်တလောကောလ်များ ဤနေရာတွင် ပေါ်လာပါမည်။"
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__title": {
+    "messageformat": "လွတ်သွားသော ကောလ်များမရှိပါ"
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
+    "messageformat": "လွတ်သွားသော ကောလ်များ ဤနေရာတွင် ပေါ်လာပါမည်။"
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "“{query}” အတွက် ရလဒ်မရှိပါ"
@@ -5435,9 +5468,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "ငြင်းပယ်သည်"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "အဖွဲ့လိုက် ခေါ်ဆိုမှု"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "ကောလ်လင့်ခ်"
@@ -5462,21 +5492,6 @@
   },
   "icu:CallsNewCallButton--return": {
     "messageformat": "နောက်ပြန်သွားရန်"
-  },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "ခေါ်ဆိုမှုအသစ်တစ်ခုတွင် မပါဝင်မီ လက်ရှိခေါ်ဆိုမှုကို ရပ်နားရပါမည်"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {အထွက် အော်ဒီယိုကောလ်} other {အဝင် အော်ဒီယိုကောလ်}}} Video {{direction, select, Outgoing {ဗီဒီယိုကောလ် အထွက်} other {ဗီဒီယိုကောလ် အဝင်}}} Group {{direction, select, Outgoing {အထွက် အဖွဲ့ကောလ်} other {အဝင် အဖွဲ့ကောလ်}}} other {{direction, select, Outgoing {ဖုန်းခေါ်ဆိုမှု} other {အဝင်ဖုန်းလာသည်}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {လွတ်သွားသော အော်ဒီယိုကောလ်} Video {ဗီဒီယိုခေါ်ဆိုမှုလွဲချော်} Group {လွတ်သွားသော အဖွဲ့ကောလ်} other {လွတ်သွားသော ဖုန်းခေါ်ဆိုမှု}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {မဖြေဆိုသော အော်ဒီယိုကောလ်} Video {မဖြေဆိုသော ဗီဒီယိုကောလ်} Group {မဖြေဆိုခဲ့သော အဖွဲ့ကောလ်} other {မဖြေဆိုခဲ့သော  ကောလ်}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {ငြင်းပယ်ခဲ့သော အော်ဒီယိုကောလ်} Video {ငြင်းပယ်ခဲ့သော ဗီဒီယိုကောလ်} Group {ငြင်းပယ်ခဲ့သော အဖွဲ့ကောလ်} other {ငြင်းပယ်ခဲ့သော  ကောလ်}}"
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "ကောလ်လင့်ခ်"
@@ -5512,19 +5527,19 @@
     "messageformat": "Signal မှတစ်ဆင့် လင့်ခ်ဝေမျှရန်"
   },
   "icu:CallLinkDetails__DeleteLink": {
-    "messageformat": "Delete link"
+    "messageformat": "လင့်ခ်ကို ဖျက်မည်"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Title": {
-    "messageformat": "Delete call link?"
+    "messageformat": "ကောလ်လင့်ခ် ဖျက်မည်လား။"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Body": {
-    "messageformat": "This link will no longer work for anyone who has it."
+    "messageformat": "ဤလင့်ခ်ကို ရရှိထားသူများအတွက် အလုပ်လုပ်တော့မည်မဟုတ်ပါ။"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
-    "messageformat": "Cancel"
+    "messageformat": "မလုပ်တော့ပါ"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
-    "messageformat": "Delete"
+    "messageformat": "ဖျက်ရန်"
   },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "Signal ဖြင့်ဖုန်းခေါ်ဆိုရန် လင့်ခ်အသေးစိတ်"
@@ -5596,19 +5611,13 @@
     "messageformat": "အနေအထား ပြုပြင်မှုလေးများ၊ ချို့ယွင်းချက် ပြင်ဆင်မှုများနှင့် စွမ်းဆောင်ရည် မြှင့်တင်မှုများ။ Signal ကို သုံးသည့်အတွက် ကျေးဇူးတင်ပါသည်။",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "ယခုထုတ်ဝေမှုတွင် မက်ဆေ့ချ်တွဲ အရှည်ကြီးများကို ဖျက်ခြင်းလုပ်ငန်းစဉ်ကို အရှိန်မြှင့်တင် ပေးထားပါသည်။"
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "နောက်ထပ် စွမ်းဆောင်ရည် မြှင့်တင်မှုများကြောင့် ယခုအခါ ချက်(တ်)များကို ယခင်ကထက် ပိုမိုမြန်ဆန်စွာ ဖွင့်နိုင်ပါပြီ။"
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "အခြားခေါ်ဆိုမှုတစ်ခုသည် သင့်အမည်ကိုခေါ်ဆိုပါက လက်ရှိခေါ်ဆိုမှုမှထွက်ပြီး အသစ်တစ်ခုဖြင့် ချိတ်ဆက်နိုင်ရန် ရှော့တ်ကတ်တစ်ခုကို ထည့်သွင်းထားသည်။ သင်ထွက်ခွာသွားခြင်းကို အတည်ပြုရန် သင့်အား အသိပေးသွားမည်ဖြစ်သော်လည်း မထွက်ခွာမီ နှုတ်ဆက်ခြင်း မနှုတ်ဆက်ခြင်းသည် သင့်သဘောဖြစ်သည်။"
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "တစ်ခါတစ်ရံ သင်ခေါ်ဆိုမှုစတင်ပြီးနောက် ချက်(တ်)စာရင်းအကျဉ်းချုပ်တွင် \"အမည်မသိအဆက်အသွယ်မှ ဗီဒီယိုကောလ်ခေါ်ဆိုမှုတစ်ခု စတင်ခဲ့သည်\" ဟုပေါ်လာစေသည့် အရာအပါအဝင် ချွတ်ယွင်းချက်အချို့ကိုလည်း ကျွန်ုပ်တို့ ပြင်ဆင်ထားပါသည်။"
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "ဤအပ်ဒိတ်သည် စက်တွင်း `POSIX` သုံးစွဲသူများအတွက် Linux တွင် စတင်ချိန် ပျက်ယွင်းမှုကိုလည်း ပြင်ဆင်ပေးပါသည်။"
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "This update fixes a bug where viewing a missed call on one device wouldn't automatically clear the indicator for that missed call on your other devices, which was a missed opportunity for your missed call list to better coexist."
   }
 }

@@ -6,14 +6,12 @@ import { action } from '@storybook/addon-actions';
 import type { Meta, StoryFn } from '@storybook/react';
 import { setupI18n } from '../../util/setupI18n';
 import { DialogType } from '../../types/Dialogs';
+import { InstallScreenQRCodeError } from '../../types/InstallScreen';
 import enMessages from '../../../_locales/en/messages.json';
 import type { Loadable } from '../../util/loadable';
 import { LoadingState } from '../../util/loadable';
 import type { PropsType } from './InstallScreenQrCodeNotScannedStep';
-import {
-  InstallScreenQrCodeNotScannedStep,
-  LoadError,
-} from './InstallScreenQrCodeNotScannedStep';
+import { InstallScreenQrCodeNotScannedStep } from './InstallScreenQrCodeNotScannedStep';
 
 const i18n = setupI18n('en', enMessages);
 
@@ -40,10 +38,10 @@ export default {
 function Simulation({
   finalResult,
 }: {
-  finalResult: Loadable<string, LoadError>;
+  finalResult: Loadable<string, InstallScreenQRCodeError>;
 }) {
   const [provisioningUrl, setProvisioningUrl] = useState<
-    Loadable<string, LoadError>
+    Loadable<string, InstallScreenQRCodeError>
   >({
     loadingState: LoadingState.Loading,
   });
@@ -60,6 +58,7 @@ function Simulation({
   return (
     <InstallScreenQrCodeNotScannedStep
       i18n={i18n}
+      isStaging={false}
       provisioningUrl={provisioningUrl}
       updates={DEFAULT_UPDATES}
       OS="macOS"
@@ -74,6 +73,7 @@ export function QrCodeLoading(): JSX.Element {
   return (
     <InstallScreenQrCodeNotScannedStep
       i18n={i18n}
+      isStaging={false}
       provisioningUrl={{
         loadingState: LoadingState.Loading,
       }}
@@ -90,9 +90,10 @@ export function QrCodeFailedToLoad(): JSX.Element {
   return (
     <InstallScreenQrCodeNotScannedStep
       i18n={i18n}
+      isStaging={false}
       provisioningUrl={{
         loadingState: LoadingState.LoadFailed,
-        error: LoadError.Unknown,
+        error: InstallScreenQRCodeError.Unknown,
       }}
       updates={DEFAULT_UPDATES}
       OS="macOS"
@@ -107,6 +108,7 @@ export function QrCodeLoaded(): JSX.Element {
   return (
     <InstallScreenQrCodeNotScannedStep
       i18n={i18n}
+      isStaging={false}
       provisioningUrl={LOADED_URL}
       updates={DEFAULT_UPDATES}
       OS="macOS"
@@ -126,7 +128,7 @@ export function SimulatedUnknownError(): JSX.Element {
     <Simulation
       finalResult={{
         loadingState: LoadingState.LoadFailed,
-        error: LoadError.Unknown,
+        error: InstallScreenQRCodeError.Unknown,
       }}
     />
   );
@@ -137,7 +139,7 @@ export function SimulatedNetworkIssue(): JSX.Element {
     <Simulation
       finalResult={{
         loadingState: LoadingState.LoadFailed,
-        error: LoadError.NetworkIssue,
+        error: InstallScreenQRCodeError.NetworkIssue,
       }}
     />
   );
@@ -148,7 +150,7 @@ export function SimulatedTimeout(): JSX.Element {
     <Simulation
       finalResult={{
         loadingState: LoadingState.LoadFailed,
-        error: LoadError.Timeout,
+        error: InstallScreenQRCodeError.Timeout,
       }}
     />
   );
@@ -166,6 +168,7 @@ export const WithUpdateKnobs: StoryFn<PropsType & { dialogType: DialogType }> =
     return (
       <InstallScreenQrCodeNotScannedStep
         i18n={i18n}
+        isStaging={false}
         provisioningUrl={LOADED_URL}
         hasExpired
         updates={{

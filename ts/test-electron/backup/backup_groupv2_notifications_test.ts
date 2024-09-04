@@ -12,7 +12,6 @@ import type { MessageAttributesType } from '../../model-types';
 import type { GroupV2ChangeType } from '../../groups';
 import { getRandomBytes } from '../../Crypto';
 import * as Bytes from '../../Bytes';
-import { loadCallsHistory } from '../../services/callHistoryLoader';
 import { strictAssert } from '../../util/assert';
 import { DurationInSeconds } from '../../util/durations';
 import {
@@ -22,6 +21,9 @@ import {
   asymmetricRoundtripHarness,
   symmetricRoundtripHarness,
 } from './helpers';
+import { ReadStatus } from '../../messages/MessageReadStatus';
+import { SeenStatus } from '../../MessageSeenStatus';
+import { loadAll } from '../../services/allLoaders';
 
 // Note: this should be kept up to date with GroupV2Change.stories.tsx, to
 //   maintain the comprehensive set of GroupV2 notifications we need to handle
@@ -66,6 +68,8 @@ function createMessage(
     received_at: counter,
     sent_at: counter,
     timestamp: counter,
+    readStatus: ReadStatus.Read,
+    seenStatus: SeenStatus.Seen,
     type: 'group-v2-change',
     sourceServiceId,
   };
@@ -73,8 +77,8 @@ function createMessage(
 
 describe('backup/groupv2/notifications', () => {
   beforeEach(async () => {
-    await DataWriter._removeAllMessages();
-    await DataWriter._removeAllConversations();
+    await DataWriter.removeAll();
+    window.ConversationController.reset();
     window.storage.reset();
 
     await setupBasics();
@@ -110,7 +114,10 @@ describe('backup/groupv2/notifications', () => {
       name: 'Rock Enthusiasts',
     });
 
-    await loadCallsHistory();
+    await loadAll();
+  });
+  afterEach(async () => {
+    await DataWriter.removeAll();
   });
 
   describe('roundtrips given groupv2 notifications with', () => {
@@ -2031,6 +2038,8 @@ describe('backup/groupv2/notifications', () => {
         received_at: counter,
         sent_at: counter,
         timestamp: counter,
+        readStatus: ReadStatus.Read,
+        seenStatus: SeenStatus.Seen,
         sourceServiceId: CONTACT_A,
       };
 
@@ -2047,6 +2056,8 @@ describe('backup/groupv2/notifications', () => {
         received_at: counter,
         sent_at: counter,
         timestamp: counter,
+        readStatus: ReadStatus.Read,
+        seenStatus: SeenStatus.Seen,
         sourceServiceId: CONTACT_A,
       };
 
@@ -2076,6 +2087,8 @@ describe('backup/groupv2/notifications', () => {
         received_at: counter,
         sent_at: counter,
         timestamp: counter,
+        readStatus: ReadStatus.Read,
+        seenStatus: SeenStatus.Seen,
       };
 
       counter += 1;
@@ -2092,6 +2105,8 @@ describe('backup/groupv2/notifications', () => {
         received_at: counter,
         sent_at: counter,
         timestamp: counter,
+        readStatus: ReadStatus.Read,
+        seenStatus: SeenStatus.Seen,
       };
 
       const messages: Array<MessageAttributesType> = [
@@ -2124,6 +2139,8 @@ describe('backup/groupv2/notifications', () => {
         received_at: counter,
         sent_at: counter,
         timestamp: counter,
+        readStatus: ReadStatus.Read,
+        seenStatus: SeenStatus.Seen,
         sourceServiceId: OUR_ACI,
       };
 
@@ -2140,6 +2157,8 @@ describe('backup/groupv2/notifications', () => {
         received_at: counter,
         sent_at: counter,
         timestamp: counter,
+        readStatus: ReadStatus.Read,
+        seenStatus: SeenStatus.Seen,
         sourceServiceId: OUR_ACI,
       };
 
@@ -2156,6 +2175,8 @@ describe('backup/groupv2/notifications', () => {
         received_at: counter,
         sent_at: counter,
         timestamp: counter,
+        readStatus: ReadStatus.Read,
+        seenStatus: SeenStatus.Seen,
         sourceServiceId: OUR_ACI,
       };
 
@@ -2188,6 +2209,8 @@ describe('backup/groupv2/notifications', () => {
         received_at: counter,
         sent_at: counter,
         timestamp: counter,
+        readStatus: ReadStatus.Read,
+        seenStatus: SeenStatus.Seen,
         sourceServiceId: OUR_ACI,
       };
       const legacyAfter = {
@@ -2202,6 +2225,8 @@ describe('backup/groupv2/notifications', () => {
         received_at: counter,
         sent_at: counter,
         timestamp: counter,
+        readStatus: ReadStatus.Read,
+        seenStatus: SeenStatus.Seen,
         sourceServiceId: OUR_ACI,
       };
 
@@ -2221,6 +2246,8 @@ describe('backup/groupv2/notifications', () => {
         received_at: counter,
         sent_at: counter,
         timestamp: counter,
+        readStatus: ReadStatus.Read,
+        seenStatus: SeenStatus.Seen,
         sourceServiceId: OUR_ACI,
       };
       const allDataAfter = {
@@ -2235,6 +2262,8 @@ describe('backup/groupv2/notifications', () => {
         received_at: counter,
         sent_at: counter,
         timestamp: counter,
+        readStatus: ReadStatus.Read,
+        seenStatus: SeenStatus.Seen,
         sourceServiceId: OUR_ACI,
       };
 

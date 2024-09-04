@@ -20,6 +20,7 @@ import { getCountryDataForLocale } from '../../util/getCountryData';
 import { lookupConversationWithoutServiceId } from '../../util/lookupConversationWithoutServiceId';
 import { missingCaseError } from '../../util/missingCaseError';
 import { isDone as isRegistrationDone } from '../../util/registration';
+import { drop } from '../../util/drop';
 import { useCallingActions } from '../ducks/calling';
 import { useConversationsActions } from '../ducks/conversations';
 import { ComposerStep, OneTimeModalState } from '../ducks/conversationsEnums';
@@ -57,6 +58,7 @@ import {
 import { getCrashReportCount } from '../selectors/crashReports';
 import { hasExpired } from '../selectors/expiration';
 import {
+  getBackupMediaDownloadProgress,
   getNavTabsCollapsed,
   getPreferredLeftPaneWidth,
   getUsernameCorrupted,
@@ -114,6 +116,7 @@ function renderUpdateDialog(
 ): JSX.Element {
   return <SmartUpdateDialog {...props} />;
 }
+
 function renderCaptchaDialog({ onSkip }: { onSkip(): void }): JSX.Element {
   return <SmartCaptchaDialog onSkip={onSkip} />;
 }
@@ -256,6 +259,12 @@ const getModeSpecificProps = (
   }
 };
 
+function preloadConversation(conversationId: string): void {
+  drop(
+    window.ConversationController.get(conversationId)?.preloadNewestMessages()
+  );
+}
+
 export const SmartLeftPane = memo(function SmartLeftPane({
   hasFailedStorySends,
   hasPendingUpdate,
@@ -282,7 +291,9 @@ export const SmartLeftPane = memo(function SmartLeftPane({
   const theme = useSelector(getTheme);
   const usernameCorrupted = useSelector(getUsernameCorrupted);
   const usernameLinkCorrupted = useSelector(getUsernameLinkCorrupted);
-
+  const backupMediaDownloadProgress = useSelector(
+    getBackupMediaDownloadProgress
+  );
   const {
     blockConversation,
     clearGroupCreationError,
@@ -353,6 +364,7 @@ export const SmartLeftPane = memo(function SmartLeftPane({
 
   return (
     <LeftPane
+      backupMediaDownloadProgress={backupMediaDownloadProgress}
       blockConversation={blockConversation}
       challengeStatus={challengeStatus}
       clearConversationSearch={clearConversationSearch}
@@ -385,6 +397,7 @@ export const SmartLeftPane = memo(function SmartLeftPane({
       openUsernameReservationModal={openUsernameReservationModal}
       otherTabsUnreadStats={otherTabsUnreadStats}
       preferredWidthFromStorage={preferredWidthFromStorage}
+      preloadConversation={preloadConversation}
       removeConversation={removeConversation}
       renderCaptchaDialog={renderCaptchaDialog}
       renderCrashReportDialog={renderCrashReportDialog}

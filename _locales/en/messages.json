@@ -123,14 +123,6 @@
     "messageformat": "The version of your database does not match this version of Signal. Make sure you are opening the newest version of Signal on your computer.",
     "description": "Text in a popup shown if the app cannot start because the user started an older version of Signal"
   },
-  "icu:databaseError__recover__detail": {
-    "messageformat": "A database error occurred. You can copy the error and contact Signal support to help fix the issue. If you need to use Signal right away, you can attempt to recover your data.\n\nContact support by visiting: {link}",
-    "description": "(Deleted 2024/07/11) Description shown in a popup if the database key cannot be read, but can be recovered"
-  },
-  "icu:databaseError__recover__button": {
-    "messageformat": "Recover data",
-    "description": "(Deleted 2024/07/11) Text of a button shown in a popup if the database cannot start up properly; allows user to attempt data recovery of their database"
-  },
   "icu:databaseError__safeStorageBackendChange": {
     "messageformat": "Unable to access the database encryption key because the OS encryption keyring backend has changed from {previousBackend} to {currentBackend}. This can occur if the desktop environment changes, for example between GNOME and KDE.\n\nPlease switch to the previous desktop environment.",
     "description": "On Linux, text in a popup shown if the app cannot start because the system's keyring encryption backend has changed. Example values: previousBackend=gnome_libsecret, currentBackend=kwallet5"
@@ -1114,17 +1106,9 @@
     "messageformat": "Mute",
     "description": "Shown in a button when a conversation is unmuted and can be muted"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal couldn't update. {retry} or visit {url} to install it manually. Then, {support} about this problem",
-    "description": "(Deleted 2024/07/23) Shown if a general error happened while trying to install update package"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal couldn't update. <retryUpdateButton>Retry update</retryUpdateButton> or visit {url} to install it manually. Then, <contactSupportLink>contact support</contactSupportLink> about this problem",
     "description": "Shown if a general error happened while trying to install update package"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal couldn't update. Visit {url} to install it manually. Then, {support} about this problem",
-    "description": "(Deleted 2024/07/23) Shown if a general error happened while trying to install update package and manual update is required"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal couldn't update. Visit {url} to install it manually. Then, <contactSupportLink>contact support</contactSupportLink> about this problem",
@@ -1625,10 +1609,6 @@
     "messageformat": "Can't join call",
     "description": "Modal dialog title when you can't join a call"
   },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "You are already in a call.",
-    "description": "(Deleted 2024/07/31) Error message when clicking a call link to join a call, but you're in a call already."
-  },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "Could not fetch call link information. Please check your network connection and try again.",
     "description": "Error message when unable to fetch call link info from server."
@@ -1872,10 +1852,6 @@
   "icu:calling__in-this-call": {
     "messageformat": "In this call · {people, plural, one {# person} other {# people}}",
     "description": "Shown in the participants list to describe how many people are in the call"
-  },
-  "icu:calling__you-have-blocked": {
-    "messageformat": "You have blocked {name}",
-    "description": "(Deleted 2024/07/15) when you block someone and cannot view their video"
   },
   "icu:calling__blocked-participant": {
     "messageformat": "{name} is blocked",
@@ -2446,10 +2422,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Retry update"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "contact support",
-    "description": "(Deleted 2024/07/23)"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Click to restart Signal"
@@ -4457,10 +4429,14 @@
   },
   "icu:GroupV2--admin-approval-bounce--one": {
     "messageformat": "{joinerName} requested and cancelled their request to join via the group link",
-    "description": "Shown in timeline or conversation preview when v2 group changes"
+    "description": "(Deleted 2024/08/20) Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} requested and cancelled {numberOfRequests, number} requests to join via the group link",
+    "description": "(Deleted 2024/08/20) Shown in timeline or conversation preview when v2 group changes"
+  },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{joinerName} requested and cancelled {numberOfRequests, plural, one {their request} other {# requests}} to join via the group link",
     "description": "Shown in timeline or conversation preview when v2 group changes"
   },
   "icu:GroupV2--group-link-add--disabled--you": {
@@ -4695,6 +4671,26 @@
     "messageformat": "Tap on \"Donate to Signal\" and subscribe",
     "description": "In the instructions for becoming a sustainer. Third instruction."
   },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Syncing messages",
+    "description": "Title of backup import screen"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete, number, percent})...",
+    "description": "Hint under the progressbar in the backup import screen"
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "This may take a few minutes depending on the size of your backup",
+    "description": "Description at the bottom of backup import screen"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Restoring media",
+    "description": "Label above a progress bar showing media (attachment) download progress after restoring from backup"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize} of {totalSize} ({fractionComplete, number, percent})",
+    "description": "Hint under the progressbar showing media (attachment) download progress after restoring from backup"
+  },
   "icu:CompositionArea--expand": {
     "messageformat": "Expand",
     "description": "Aria label for expanding composition area"
@@ -4761,7 +4757,7 @@
   },
   "icu:ContactModal--already-in-call": {
     "messageformat": "You are already in a call",
-    "description": "Tooltip text for video or voice call button in Contact Details modal"
+    "description": "(Deleted 2024/08/28) Tooltip text for video or voice call button in Contact Details modal"
   },
   "icu:showChatColorEditor": {
     "messageformat": "Chat color",
@@ -5255,13 +5251,13 @@
     "messageformat": ".5",
     "description": "Button in the voice note message widget that shows the current playback rate of .5x (half speed) and allows the user to toggle to the next rate. Don't include the 'x'."
   },
-  "icu:emptyInboxMessage": {
-    "messageformat": "Click the {composeIcon} above and search for your contacts or groups to message.",
-    "description": "Shown in the left-pane when the inbox is empty"
+  "icu:emptyInbox__title": {
+    "messageformat": "No chats",
+    "description": "Shown as a title in the left-pane when the inbox is empty"
   },
-  "icu:composeIcon": {
-    "messageformat": "compose button",
-    "description": "Shown in the left-pane when the inbox is empty. Describes the button that composes a new message."
+  "icu:emptyInbox__subtitle": {
+    "messageformat": "Recent chats will appear here.",
+    "description": "Shown as a subtitle in the left-pane when the inbox is empty"
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Forward To",
@@ -6445,6 +6441,14 @@
     "messageformat": "No recent stories to show right now",
     "description": "Description for when there are no stories to show"
   },
+  "icu:Stories__list__empty--title": {
+    "messageformat": "No stories",
+    "description": "Message title for when there are no stories to show"
+  },
+  "icu:Stories__list__empty--subtitle": {
+    "messageformat": "New updates will appear here.",
+    "description": "Message subtitle for when there are no stories to show"
+  },
   "icu:Stories__list--sending": {
     "messageformat": "Sending...",
     "description": "Pending text for story being sent in list view"
@@ -6463,6 +6467,14 @@
   },
   "icu:Stories__placeholder--text": {
     "messageformat": "Click to view a story",
+    "description": "Placeholder label for the story view"
+  },
+  "icu:Stories__placeholder-with-icon--text": {
+    "messageformat": "Click <newStoryIcon>Add a story</newStoryIcon> to add an update.",
+    "description": "(Deleted 2024/08/22) Placeholder label for the story view"
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Click <newStoryButtonIcon></newStoryButtonIcon> to add an update.",
     "description": "Placeholder label for the story view"
   },
   "icu:Stories__from-to-group": {
@@ -6787,7 +6799,15 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "Reacted to the story",
-    "description": "Description of someone reacting to a story"
+    "description": "(Deleted 2024/08/23) Description of someone reacting to a story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reacted to the story",
+    "description": "Description of you reacting to a story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "Reacted to the story",
+    "description": "Description of someone else reacting to a story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "You can’t reply to this story because you’re no longer a member of this group.",
@@ -7183,6 +7203,14 @@
   },
   "icu:CallsTab__EmptyStateText": {
     "messageformat": "Click to view or start a call",
+    "description": "(Deleted 2024/08/12) Calls Tab > When no call is selected > Empty state > Call to action text"
+  },
+  "icu:CallsTab__EmptyStateText--with-icon": {
+    "messageformat": "Click <newCallIcon>New Call</newCallIcon> to start a new voice or video call.",
+    "description": "(Deleted 2024/08/22) Calls Tab > When no call is selected > Empty state > Call to action text"
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call.",
     "description": "Calls Tab > When no call is selected > Empty state > Call to action text"
   },
   "icu:CallsList__SearchInputPlaceholder": {
@@ -7199,7 +7227,23 @@
   },
   "icu:CallsList__EmptyState--noQuery": {
     "messageformat": "No recent calls. Get started by calling a friend.",
-    "description": "Calls Tab > Calls List > When no results found > With no search query"
+    "description": "(Deleted 2024/08/12) Calls Tab > Calls List > When no results found > With no search query"
+  },
+  "icu:CallsList__EmptyState--noQuery__title": {
+    "messageformat": "No calls",
+    "description": "Calls Tab > Calls List > When no results found > With no search query. Message title"
+  },
+  "icu:CallsList__EmptyState--noQuery__subtitle": {
+    "messageformat": "Recent calls will appear here.",
+    "description": "Calls Tab > Calls List > When no results found > With no search query. Message subtitle"
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__title": {
+    "messageformat": "No missed calls",
+    "description": "Calls Tab > Calls List > When no missed calls found > With no search query. Message title"
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
+    "messageformat": "Missed calls will appear here.",
+    "description": "Calls Tab > Calls List > When no missed calls found > With no search query. Message subtitle"
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "No results for “{query}”",
@@ -7224,10 +7268,6 @@
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Declined",
     "description": "Calls Tab > Calls List > Call Item > Call Status > When an incoming call was declined"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Group call",
-    "description": "(Deleted 2024/07/26) Calls Tab > Calls List > Call Item > Call Status > When group call is in its default state"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Call link",
@@ -7260,26 +7300,6 @@
   "icu:CallsNewCallButton--return": {
     "messageformat": "Return",
     "description": "Calls Tab button label for returning to the call you're currently in"
-  },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "You must leave the current call before joining a new call",
-    "description": "(Deleted 2024/07/31) Calls Tab button tooltip for the join call button when you are already in a different call."
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{direction, select, Outgoing {Outgoing} other {Incoming}} {type, select, Audio {voice} Video {video} Group {group} other {}} call",
-    "description": "(Deleted 2024/07/30) Call History > Short description of call > When call was not missed or declined (generally accepted)"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "Missed {type, select, Audio {voice} Video {video} Group {group} other {}} call",
-    "description": "(Deleted 2024/07/30) Call History > Short description of call > When incoming call was missed"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "Unanswered {type, select, Audio {voice} Video {video} Group {group} other {}} call",
-    "description": "(Deleted 2024/07/30) Call History > Short description of call > When outgoing call was unanswered"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "Declined {type, select, Audio {voice} Video {video} Group {group} other {}} call",
-    "description": "(Deleted 2024/07/30) Call History > Short description of call > When call was declined"
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Call link",
@@ -7436,24 +7456,16 @@
     "description": "Release notes for releases that only include bug fixes",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "A quick goodbye is sometimes easier than a slow farewell, so we sped up the process of deleting large message threads.",
-    "description": "(Deleted 2024/07/31) Release notes for version 7.18"
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Chats now open faster than ever thanks to another round of performance improvements, so you can click on your cliques and see what they're saying real quick.",
+    "description": "(Deleted 2024/09/04) Release notes for version 7.23"
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "If another call is calling your name, we added a shortcut to leave the current call and join a new one. You'll be prompted to confirm your departure, but it's up to you whether or not you say goodbye first.",
-    "description": "(Deleted 2024/08/07) Release notes for version 7.19"
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "We also fixed a handful of bugs, including one that sometimes caused \"Unknown contact started a video call\" to appear in the chat list summary after you started the call. Even if you're still on a journey of self-discovery, you are never completely unknown to yourself.",
+    "description": "(Deleted 2024/09/04) Release notes for version 7.23"
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "This update also fixes a startup crash on Linux for users whose locale is set to `POSIX`.",
-    "description": "(Deleted 2024/08/07) Release notes for version 7.19, part 2"
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\"",
-    "description": "Release notes for version 7.20, part 1"
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away).",
-    "description": "Release notes for version 7.20, part 2"
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "This update fixes a bug where viewing a missed call on one device wouldn't automatically clear the indicator for that missed call on your other devices, which was a missed opportunity for your missed call list to better coexist.",
+    "description": "Release notes for version 7.24"
   }
 }

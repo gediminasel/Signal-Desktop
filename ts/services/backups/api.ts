@@ -1,6 +1,7 @@
 // Copyright 2024 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { type Readable } from 'node:stream';
 import { strictAssert } from '../../util/assert';
 import type {
   WebAPIType,
@@ -12,6 +13,11 @@ import type {
 } from '../../textsecure/WebAPI';
 import type { BackupCredentials } from './credentials';
 import { uploadFile } from '../../util/uploadAttachment';
+
+export type DownloadOptionsType = Readonly<{
+  downloadOffset: number;
+  onProgress: (currentBytes: number, totalBytes: number) => void;
+}>;
 
 export class BackupAPI {
   private cachedBackupInfo: GetBackupInfoResponseType | undefined;
@@ -63,6 +69,23 @@ export class BackupAPI {
       absoluteCiphertextPath: filePath,
       ciphertextFileSize: fileSize,
       uploadForm: form,
+    });
+  }
+
+  public async download({
+    downloadOffset,
+    onProgress,
+  }: DownloadOptionsType): Promise<Readable> {
+    const { cdn, backupDir, backupName } = await this.getInfo();
+    const { headers } = await this.credentials.getCDNReadCredentials(cdn);
+
+    return this.server.getBackupStream({
+      cdn,
+      backupDir,
+      backupName,
+      headers,
+      downloadOffset,
+      onProgress,
     });
   }
 

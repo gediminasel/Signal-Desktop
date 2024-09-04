@@ -4,14 +4,13 @@
 import { parentPort } from 'worker_threads';
 
 import type { LoggerType } from '../types/Logging';
-import * as Errors from '../types/errors';
 import type {
   WrappedWorkerRequest,
   WrappedWorkerResponse,
   WrappedWorkerLogEntry,
 } from './main';
 import type { WritableDB } from './Interface';
-import { initialize, DataReader, DataWriter } from './Server';
+import { initialize, DataReader, DataWriter, removeDB } from './Server';
 import { SqliteErrorKind, parseSqliteError } from './errors';
 
 if (!parentPort) {
@@ -23,10 +22,8 @@ const port = parentPort;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function respond(seq: number, error: Error | undefined, response?: any) {
   let errorKind: SqliteErrorKind | undefined;
-  let errorString: string | undefined;
   if (error !== undefined) {
     errorKind = parseSqliteError(error);
-    errorString = Errors.toLogFormat(error);
 
     if (errorKind === SqliteErrorKind.Corrupted && db != null) {
       DataWriter.runCorruptionChecks(db);
@@ -36,7 +33,14 @@ function respond(seq: number, error: Error | undefined, response?: any) {
   const wrappedResponse: WrappedWorkerResponse = {
     type: 'response',
     seq,
-    error: errorString,
+    error:
+      error == null
+        ? undefined
+        : {
+            name: error.name,
+            message: error.message,
+            stack: error.stack,
+          },
     errorKind,
     response,
   };
@@ -102,6 +106,31 @@ port.on('message', ({ seq, request }: WrappedWorkerRequest) => {
       return;
     }
 
+    // Removing database does not require active connection.
+    if (request.type === 'removeDB') {
+      try {
+        if (db) {
+          if (isPrimary) {
+            DataWriter.close(db);
+          } else {
+            DataReader.close(db);
+          }
+          db = undefined;
+        }
+      } catch (error) {
+        logger.error('Failed to close database before removal');
+      }
+
+      if (isPrimary) {
+        removeDB();
+      }
+
+      isRemoved = true;
+
+      respond(seq, undefined, undefined);
+      return;
+    }
+
     if (!db) {
       throw new Error('Not initialized');
     }
@@ -116,20 +145,6 @@ port.on('message', ({ seq, request }: WrappedWorkerRequest) => {
 
       respond(seq, undefined, undefined);
       process.exit(0);
-      return;
-    }
-
-    if (request.type === 'removeDB') {
-      if (isPrimary) {
-        DataWriter.removeDB(db);
-      } else {
-        DataReader.close(db);
-      }
-
-      isRemoved = true;
-      db = undefined;
-
-      respond(seq, undefined, undefined);
       return;
     }
 

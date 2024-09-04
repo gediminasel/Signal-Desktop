@@ -28,7 +28,11 @@ import {
 } from './zkgroup';
 import { getCheckedCallLinkAuthCredentialsForToday } from '../services/groupCredentialFetcher';
 import * as durations from './durations';
-import { fromAdminKeyBytes, toAdminKeyBytes } from './callLinks';
+import {
+  fromAdminKeyBytes,
+  getKeyFromCallLink,
+  toAdminKeyBytes,
+} from './callLinks';
 
 /**
  * RingRTC conversions
@@ -62,6 +66,12 @@ export function getRoomIdFromRootKey(rootKey: CallLinkRootKey): string {
 export function getCallLinkRootKeyFromUrlKey(key: string): Uint8Array {
   // Returns `Buffer` which inherits from `Uint8Array`
   return CallLinkRootKey.parse(key).bytes;
+}
+
+export function getRoomIdFromCallLink(url: string): string {
+  const keyString = getKeyFromCallLink(url);
+  const key = CallLinkRootKey.parse(keyString);
+  return getRoomIdFromRootKey(key);
 }
 
 export async function getCallLinkAuthCredentialPresentation(
@@ -126,6 +136,10 @@ export function callLinkFromRecord(record: CallLinkRecord): CallLinkType {
     restrictions: toCallLinkRestrictions(record.restrictions),
     revoked: record.revoked === 1,
     expiration: record.expiration,
+    storageID: record.storageID || undefined,
+    storageVersion: record.storageVersion || undefined,
+    storageUnknownFields: record.storageUnknownFields || undefined,
+    storageNeedsSync: record.storageNeedsSync === 1,
   };
 }
 
@@ -146,5 +160,9 @@ export function callLinkToRecord(callLink: CallLinkType): CallLinkRecord {
     restrictions: callLink.restrictions,
     revoked: callLink.revoked ? 1 : 0,
     expiration: callLink.expiration,
+    storageID: callLink.storageID || null,
+    storageVersion: callLink.storageVersion || null,
+    storageUnknownFields: callLink.storageUnknownFields || null,
+    storageNeedsSync: callLink.storageNeedsSync ? 1 : 0,
   });
 }

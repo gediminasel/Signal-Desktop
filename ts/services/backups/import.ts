@@ -7,13 +7,17 @@ import { v4 as generateUuid } from 'uuid';
 import pMap from 'p-map';
 import { Writable } from 'stream';
 import { isNumber } from 'lodash';
+import { CallLinkRootKey } from '@signalapp/ringrtc';
 
 import { Backups, SignalService } from '../../protobuf';
-import { DataWriter } from '../../sql/Client';
-import type { StoryDistributionWithMembersType } from '../../sql/Interface';
+import { DataReader, DataWriter } from '../../sql/Client';
+import {
+  AttachmentDownloadSource,
+  type StoryDistributionWithMembersType,
+} from '../../sql/Interface';
 import * as log from '../../logging/log';
 import { GiftBadgeStates } from '../../components/conversation/Message';
-import { StorySendMode } from '../../types/Stories';
+import { StorySendMode, MY_STORY_ID } from '../../types/Stories';
 import type { ServiceIdString, AciString } from '../../types/ServiceId';
 import {
   fromAciObject,
@@ -74,7 +78,7 @@ import type { GroupV2ChangeDetailType } from '../../groups';
 import { queueAttachmentDownloads } from '../../util/queueAttachmentDownloads';
 import { drop } from '../../util/drop';
 import { isNotNil } from '../../util/isNotNil';
-import { isGroup, isGroupV2 } from '../../util/whatTypeOfConversation';
+import { isGroup } from '../../util/whatTypeOfConversation';
 import { rgbToHSL } from '../../util/rgbToHSL';
 import {
   convertBackupMessageAttachmentToAttachment,
@@ -84,6 +88,22 @@ import { filterAndClean } from '../../types/BodyRange';
 import { APPLICATION_OCTET_STREAM, stringToMIMEType } from '../../types/MIME';
 import { copyFromQuotedMessage } from '../../messages/copyQuote';
 import { groupAvatarJobQueue } from '../../jobs/groupAvatarJobQueue';
+import { AttachmentDownloadManager } from '../../jobs/AttachmentDownloadManager';
+import {
+  AdhocCallStatus,
+  CallDirection,
+  CallMode,
+  CallType,
+  DirectCallStatus,
+  GroupCallStatus,
+} from '../../types/CallDisposition';
+import type { CallHistoryDetails } from '../../types/CallDisposition';
+import { CallLinkRestrictions } from '../../types/CallLink';
+import type { CallLinkType } from '../../types/CallLink';
+import { fromAdminKeyBytes } from '../../util/callLinks';
+import { getRoomIdFromRootKey } from '../../util/callLinksRingrtc';
+import { reinitializeRedux } from '../../state/reinitializeRedux';
+import { getParametersForRedux, loadAll } from '../allLoaders';
 
 const MAX_CONCURRENCY = 10;
 
@@ -154,7 +174,11 @@ async function processMessagesBatch(
       );
     }
 
-    drop(queueAttachmentDownloads(attributes));
+    drop(
+      queueAttachmentDownloads(attributes, {
+        source: AttachmentDownloadSource.BACKUP_IMPORT,
+      })
+    );
   }
 }
 
@@ -231,6 +255,7 @@ export class BackupImportStream extends Writable {
     number,
     ConversationAttributesType
   >();
+  private readonly recipientIdToCallLink = new Map<number, CallLinkType>();
   private readonly chatIdToConvo = new Map<
     number,
     ConversationAttributesType
@@ -258,9 +283,21 @@ export class BackupImportStream extends Writable {
   private ourConversation?: ConversationAttributesType;
   private pinnedConversations = new Array<[number, string]>();
   private customColorById = new Map<number, CustomColorDataType>();
+  private releaseNotesRecipientId: Long | undefined;
+  private releaseNotesChatId: Long | undefined;
+  private pendingGroupAvatars = new Map<string, string>();
 
-  constructor() {
+  private constructor() {
     super({ objectMode: true });
+  }
+
+  public static async create(): Promise<BackupImportStream> {
+    await AttachmentDownloadManager.stop();
+    await DataWriter.removeAllBackupAttachmentDownloadJobs();
+    await window.storage.put('backupAttachmentsSuccessfullyDownloadedSize', 0);
+    await window.storage.put('backupAttachmentsTotalSizeToDownload', 0);
+
+    return new BackupImportStream();
   }
 
   override async _write(
@@ -334,11 +371,10 @@ export class BackupImportStream extends Writable {
 
       // Schedule group avatar download.
       await pMap(
-        allConversations.filter(({ attributes: convo }) => {
-          const { avatar } = convo;
-          return isGroupV2(convo) && avatar?.url && !avatar.path;
-        }),
-        convo => groupAvatarJobQueue.add({ conversationId: convo.id }),
+        [...this.pendingGroupAvatars.entries()],
+        ([conversationId, newAvatarUrl]) => {
+          return groupAvatarJobQueue.add({ conversationId, newAvatarUrl });
+        },
         { concurrency: MAX_CONCURRENCY }
       );
 
@@ -350,6 +386,16 @@ export class BackupImportStream extends Writable {
           })
           .map(([, id]) => id)
       );
+
+      await loadAll();
+      reinitializeRedux(getParametersForRedux());
+
+      await window.storage.put(
+        'backupAttachmentsTotalSizeToDownload',
+        await DataReader.getSizeOfPendingBackupAttachmentDownloadJobs()
+      );
+
+      await AttachmentDownloadManager.start();
 
       done();
     } catch (error) {
@@ -380,9 +426,20 @@ export class BackupImportStream extends Writable {
       if (frame.recipient) {
         const { recipient } = frame;
         strictAssert(recipient.id != null, 'Recipient must have an id');
+        const recipientId = recipient.id.toNumber();
+
         let convo: ConversationAttributesType;
         if (recipient.contact) {
           convo = await this.fromContact(recipient.contact);
+        } else if (recipient.releaseNotes) {
+          strictAssert(
+            this.releaseNotesRecipientId == null,
+            'Duplicate release notes recipient'
+          );
+          this.releaseNotesRecipientId = recipient.id;
+
+          // Not yet supported
+          return;
         } else if (recipient.self) {
           strictAssert(this.ourConversation != null, 'Missing account data');
           convo = this.ourConversation;
@@ -390,6 +447,11 @@ export class BackupImportStream extends Writable {
           convo = await this.fromGroup(recipient.group);
         } else if (recipient.distributionList) {
           await this.fromDistributionList(recipient.distributionList);
+
+          // Not a conversation
+          return;
+        } else if (recipient.callLink) {
+          await this.fromCallLink(recipientId, recipient.callLink);
 
           // Not a conversation
           return;
@@ -402,7 +464,7 @@ export class BackupImportStream extends Writable {
           this.saveConversation(convo);
         }
 
-        this.recipientIdToConvo.set(recipient.id.toNumber(), convo);
+        this.recipientIdToConvo.set(recipientId, convo);
       } else if (frame.chat) {
         await this.fromChat(frame.chat);
       } else if (frame.chatItem) {
@@ -415,6 +477,8 @@ export class BackupImportStream extends Writable {
         await this.fromChatItem(frame.chatItem, { aboutMe });
       } else if (frame.stickerPack) {
         await this.fromStickerPack(frame.stickerPack);
+      } else if (frame.adHocCall) {
+        await this.fromAdHocCall(frame.adHocCall);
       } else {
         log.warn(`${this.logId}: unsupported frame item ${frame.item}`);
       }
@@ -450,6 +514,12 @@ export class BackupImportStream extends Writable {
       'import.saveMessage'
     );
     this.saveMessageBatcher.add(attributes);
+  }
+
+  private async saveCallHistory(
+    callHistory: CallHistoryDetails
+  ): Promise<void> {
+    await DataWriter.saveCallHistory(callHistory);
   }
 
   private async fromAccount({
@@ -575,10 +645,14 @@ export class BackupImportStream extends Writable {
       'hasStoriesDisabled',
       accountSettings?.storiesDisabled === true
     );
+
+    // an undefined value for storyViewReceiptsEnabled is semantically different from
+    // false: it causes us to fallback to `read-receipt-setting`
     await storage.put(
       'storyViewReceiptsEnabled',
-      accountSettings?.storyViewReceiptsEnabled === true
+      accountSettings?.storyViewReceiptsEnabled ?? undefined
     );
+
     await storage.put(
       'hasCompletedUsernameOnboarding',
       accountSettings?.hasCompletedUsernameOnboarding === true
@@ -705,6 +779,7 @@ export class BackupImportStream extends Writable {
       profileFamilyName: dropNull(contact.profileFamilyName),
       hideStory: contact.hideStory === true,
       username: dropNull(contact.username),
+      expireTimerVersion: 1,
     };
 
     if (contact.notRegistered) {
@@ -789,15 +864,10 @@ export class BackupImportStream extends Writable {
       // Snapshot
       name: dropNull(title?.title),
       description: dropNull(description?.descriptionText),
-      avatar: avatarUrl
-        ? {
-            url: avatarUrl,
-            path: '',
-          }
-        : undefined,
       expireTimer: expirationTimerS
         ? DurationInSeconds.fromSeconds(expirationTimerS)
         : undefined,
+      expireTimerVersion: 1,
       accessControl: accessControl
         ? {
             attributes:
@@ -882,6 +952,9 @@ export class BackupImportStream extends Writable {
         : undefined,
       announcementsOnly: dropNull(announcementsOnly),
     };
+    if (avatarUrl) {
+      this.pendingGroupAvatars.set(attrs.id, avatarUrl);
+    }
 
     return attrs;
   }
@@ -894,7 +967,7 @@ export class BackupImportStream extends Writable {
       'Missing distribution list id'
     );
 
-    const id = bytesToUuid(listItem.distributionId);
+    const id = bytesToUuid(listItem.distributionId) || MY_STORY_ID;
     strictAssert(isStoryDistributionId(id), 'Invalid distribution list id');
 
     const commonFields = {
@@ -976,9 +1049,52 @@ export class BackupImportStream extends Writable {
     await DataWriter.createNewStoryDistribution(result);
   }
 
+  private async fromCallLink(
+    recipientId: number,
+    callLinkProto: Backups.ICallLink
+  ): Promise<void> {
+    const {
+      rootKey: rootKeyBytes,
+      adminKey,
+      name,
+      restrictions,
+      expirationMs,
+    } = callLinkProto;
+
+    strictAssert(rootKeyBytes?.length, 'fromCallLink: rootKey is required');
+    strictAssert(name, 'fromCallLink: name is required');
+
+    const rootKey = CallLinkRootKey.fromBytes(Buffer.from(rootKeyBytes));
+
+    const callLink: CallLinkType = {
+      roomId: getRoomIdFromRootKey(rootKey),
+      rootKey: rootKey.toString(),
+      adminKey: adminKey?.length ? fromAdminKeyBytes(adminKey) : null,
+      name,
+      restrictions: fromCallLinkRestrictionsProto(restrictions),
+      revoked: false,
+      expiration: expirationMs?.toNumber() || null,
+      storageNeedsSync: false,
+    };
+
+    this.recipientIdToCallLink.set(recipientId, callLink);
+
+    await DataWriter.insertCallLink(callLink);
+  }
+
   private async fromChat(chat: Backups.IChat): Promise<void> {
     strictAssert(chat.id != null, 'chat must have an id');
     strictAssert(chat.recipientId != null, 'chat must have a recipientId');
+
+    // Drop release notes chat
+    if (this.releaseNotesRecipientId?.eq(chat.recipientId)) {
+      strictAssert(
+        this.releaseNotesChatId == null,
+        'Duplicate release notes chat'
+      );
+      this.releaseNotesChatId = chat.id;
+      return;
+    }
 
     const conversation = this.recipientIdToConvo.get(
       chat.recipientId.toNumber()
@@ -1044,6 +1160,11 @@ export class BackupImportStream extends Writable {
     strictAssert(item.chatId != null, `${logId}: must have a chatId`);
     strictAssert(item.dateSent != null, `${logId}: must have a dateSent`);
     strictAssert(timestamp, `${logId}: must have a timestamp`);
+
+    if (this.releaseNotesChatId?.eq(item.chatId)) {
+      // Drop release notes messages
+      return;
+    }
 
     const chatConvo = this.chatIdToConvo.get(item.chatId.toNumber());
     strictAssert(
@@ -1189,8 +1310,6 @@ export class BackupImportStream extends Writable {
     if (outgoing) {
       const sendStateByConversationId: SendStateByConversationId = {};
 
-      const BackupSendStatus = Backups.SendStatus.Status;
-
       const unidentifiedDeliveries = new Array<ServiceIdString>();
       const errors = new Array<CustomError>();
       for (const status of outgoing.sendStatus ?? []) {
@@ -1206,57 +1325,71 @@ export class BackupImportStream extends Writable {
           'status target conversation not found'
         );
 
-        let sendStatus: SendStatus;
-        switch (status.deliveryStatus) {
-          case BackupSendStatus.PENDING:
-            sendStatus = SendStatus.Pending;
-            break;
-          case BackupSendStatus.SENT:
-            sendStatus = SendStatus.Sent;
-            break;
-          case BackupSendStatus.DELIVERED:
-            sendStatus = SendStatus.Delivered;
-            break;
-          case BackupSendStatus.READ:
-            sendStatus = SendStatus.Read;
-            break;
-          case BackupSendStatus.VIEWED:
-            sendStatus = SendStatus.Viewed;
-            break;
-          case BackupSendStatus.FAILED:
-          default:
-            sendStatus = SendStatus.Failed;
-            break;
+        // Desktop does not keep track of users we did not attempt to send to
+        if (status.skipped) {
+          continue;
         }
+        const { serviceId } = target;
 
-        if (target.serviceId) {
-          if (status.sealedSender) {
-            unidentifiedDeliveries.push(target.serviceId);
+        let sendStatus: SendStatus;
+        if (status.pending) {
+          sendStatus = SendStatus.Pending;
+        } else if (status.sent) {
+          sendStatus = SendStatus.Sent;
+          if (serviceId && status.sent.sealedSender) {
+            unidentifiedDeliveries.push(serviceId);
           }
-
-          if (status.identityKeyMismatch) {
-            errors.push({
-              serviceId: target.serviceId,
-              name: 'OutgoingIdentityKeyError',
-              // See: ts/textsecure/Errors
-              message: `The identity of ${target.serviceId} has changed.`,
-            });
-          } else if (status.networkFailure) {
-            errors.push({
-              serviceId: target.serviceId,
-              name: 'OutgoingMessageError',
-              // See: ts/textsecure/Errors
-              message: 'no http error',
-            });
+        } else if (status.delivered) {
+          sendStatus = SendStatus.Delivered;
+          if (serviceId && status.delivered.sealedSender) {
+            unidentifiedDeliveries.push(serviceId);
           }
+        } else if (status.read) {
+          sendStatus = SendStatus.Read;
+          if (serviceId && status.read.sealedSender) {
+            unidentifiedDeliveries.push(serviceId);
+          }
+        } else if (status.viewed) {
+          sendStatus = SendStatus.Viewed;
+          if (serviceId && status.viewed.sealedSender) {
+            unidentifiedDeliveries.push(serviceId);
+          }
+        } else if (status.failed) {
+          sendStatus = SendStatus.Failed;
+          strictAssert(
+            status.failed.reason != null,
+            'Failure reason must exist'
+          );
+          switch (status.failed.reason) {
+            case Backups.SendStatus.Failed.FailureReason.IDENTITY_KEY_MISMATCH:
+              errors.push({
+                serviceId,
+                name: 'OutgoingIdentityKeyError',
+                // See: ts/textsecure/Errors
+                message: `The identity of ${serviceId} has changed.`,
+              });
+              break;
+            case Backups.SendStatus.Failed.FailureReason.NETWORK:
+            case Backups.SendStatus.Failed.FailureReason.UNKNOWN:
+              errors.push({
+                serviceId,
+                name: 'OutgoingMessageError',
+                // See: ts/textsecure/Errors
+                message: 'no http error',
+              });
+              break;
+            default:
+              throw missingCaseError(status.failed.reason);
+          }
+        } else {
+          throw new Error(`Unknown sendStatus received: ${status}`);
         }
 
         sendStateByConversationId[target.id] = {
           status: sendStatus,
           updatedAt:
-            status.lastStatusUpdateTimestamp != null &&
-            !status.lastStatusUpdateTimestamp.isZero()
-              ? getTimestampFromLong(status.lastStatusUpdateTimestamp)
+            status.timestamp != null && !status.timestamp.isZero()
+              ? getTimestampFromLong(status.timestamp)
               : undefined,
         };
       }
@@ -1303,7 +1436,12 @@ export class BackupImportStream extends Writable {
     }
 
     strictAssert(directionless, 'Absent direction state');
-    return { patch: {} };
+    return {
+      patch: {
+        readStatus: ReadStatus.Read,
+        seenStatus: SeenStatus.Seen,
+      },
+    };
   }
 
   private async fromStandardMessage(
@@ -1731,7 +1869,7 @@ export class BackupImportStream extends Writable {
       timestamp: number;
     }
   ): Promise<ChatItemParseResult | undefined> {
-    const { aboutMe, author } = options;
+    const { aboutMe, author, conversation } = options;
 
     if (updateMessage.groupChange) {
       return this.fromGroupUpdateMessage(updateMessage.groupChange, options);
@@ -1844,8 +1982,117 @@ export class BackupImportStream extends Writable {
       };
     }
 
-    // TODO (DESKTOP-6964): check these fields
-    //   updateMessage.callingMessage
+    if (updateMessage.groupCall) {
+      const { groupId } = conversation;
+
+      if (!isGroup(conversation)) {
+        throw new Error('groupCall: Conversation is not a group!');
+      }
+      if (!groupId) {
+        throw new Error('groupCall: No groupId available on conversation');
+      }
+
+      const {
+        callId: callIdLong,
+        state,
+        ringerRecipientId,
+        startedCallRecipientId,
+        startedCallTimestamp,
+        read,
+      } = updateMessage.groupCall;
+
+      const initiator =
+        ringerRecipientId?.toNumber() || startedCallRecipientId?.toNumber();
+      const ringer = isNumber(initiator)
+        ? this.recipientIdToConvo.get(initiator)
+        : undefined;
+
+      if (!callIdLong) {
+        throw new Error('groupCall: callId is required!');
+      }
+      if (!startedCallTimestamp) {
+        throw new Error('groupCall: startedCallTimestamp is required!');
+      }
+      const isRingerMe = ringer?.serviceId === aboutMe.aci;
+
+      const callId = callIdLong.toString();
+      const callHistory: CallHistoryDetails = {
+        callId,
+        status: fromGroupCallStateProto(state),
+        mode: CallMode.Group,
+        type: CallType.Group,
+        ringerId: ringer?.serviceId ?? null,
+        peerId: groupId,
+        direction: isRingerMe ? CallDirection.Outgoing : CallDirection.Incoming,
+        timestamp: startedCallTimestamp.toNumber(),
+      };
+
+      await this.saveCallHistory(callHistory);
+
+      return {
+        message: {
+          type: 'call-history',
+          callId,
+          sourceServiceId: undefined,
+          readStatus: ReadStatus.Read,
+          seenStatus: read ? SeenStatus.Seen : SeenStatus.Unseen,
+        },
+        additionalMessages: [],
+      };
+    }
+
+    if (updateMessage.individualCall) {
+      const {
+        callId: callIdLong,
+        type,
+        direction: protoDirection,
+        state,
+        startedCallTimestamp,
+        read,
+      } = updateMessage.individualCall;
+
+      if (!callIdLong) {
+        throw new Error('individualCall: callId is required!');
+      }
+      if (!startedCallTimestamp) {
+        throw new Error('individualCall: startedCallTimestamp is required!');
+      }
+
+      const peerId = conversation.serviceId || conversation.e164;
+      strictAssert(peerId, 'individualCall: no peerId found for call');
+
+      const callId = callIdLong.toString();
+      const direction = fromIndividualCallDirectionProto(protoDirection);
+      const ringerId =
+        direction === CallDirection.Outgoing
+          ? aboutMe.aci
+          : conversation.serviceId;
+      strictAssert(ringerId, 'individualCall: no ringerId found');
+
+      const callHistory: CallHistoryDetails = {
+        callId,
+        status: fromIndividualCallStateProto(state),
+        mode: CallMode.Direct,
+        type: fromIndividualCallTypeProto(type),
+        ringerId,
+        peerId,
+        direction,
+        timestamp: startedCallTimestamp.toNumber(),
+      };
+
+      await this.saveCallHistory(callHistory);
+
+      return {
+        message: {
+          type: 'call-history',
+          callId,
+          sourceServiceId: undefined,
+          readStatus: ReadStatus.Read,
+          seenStatus: read ? SeenStatus.Seen : SeenStatus.Unseen,
+        },
+        additionalMessages: [],
+      };
+    }
 
     return undefined;
   }
@@ -2546,6 +2793,44 @@ export class BackupImportStream extends Writable {
     );
   }
 
+  private async fromAdHocCall({
+    callId: callIdLong,
+    recipientId: recipientIdLong,
+    state,
+    callTimestamp,
+  }: Backups.IAdHocCall): Promise<void> {
+    strictAssert(callIdLong, 'AdHocCall must have a callId');
+
+    const callId = callIdLong.toString();
+    const logId = `fromAdhocCall(${callId.slice(-2)})`;
+
+    strictAssert(callTimestamp, `${logId}: must have a valid timestamp`);
+    strictAssert(recipientIdLong, 'AdHocCall must have a recipientIdLong');
+
+    const recipientId = recipientIdLong.toNumber();
+    const callLink = this.recipientIdToCallLink.get(recipientId);
+
+    if (!callLink) {
+      log.warn(
+        `${logId}: Dropping ad-hoc call, Call Link for recipientId ${recipientId} not found`
+      );
+      return;
+    }
+
+    const callHistory: CallHistoryDetails = {
+      callId,
+      peerId: callLink.roomId,
+      ringerId: null,
+      mode: CallMode.Adhoc,
+      type: CallType.Adhoc,
+      direction: CallDirection.Unknown,
+      timestamp: callTimestamp.toNumber(),
+      status: fromAdHocCallStateProto(state),
+    };
+
+    await this.saveCallHistory(callHistory);
+  }
+
   private async fromCustomChatColors(
     customChatColors:
       | ReadonlyArray<Backups.ChatStyle.ICustomChatColor>
@@ -2728,15 +3013,148 @@ export class BackupImportStream extends Writable {
   }
 }
 
-function rgbIntToHSL(intValue: number): { hue: number; saturation: number } {
-  const { h: hue, s: saturation } = rgbToHSL(
-    // eslint-disable-next-line no-bitwise
-    (intValue >>> 16) & 0xff,
-    // eslint-disable-next-line no-bitwise
-    (intValue >>> 8) & 0xff,
-    // eslint-disable-next-line no-bitwise
-    intValue & 0xff
-  );
+function rgbIntToHSL(intValue: number): {
+  hue: number;
+  saturation: number;
+  luminance: number;
+} {
+  // eslint-disable-next-line no-bitwise
+  const r = (intValue >>> 16) & 0xff;
+  // eslint-disable-next-line no-bitwise
+  const g = (intValue >>> 8) & 0xff;
+  // eslint-disable-next-line no-bitwise
+  const b = intValue & 0xff;
+  const { h: hue, s: saturation, l: luminance } = rgbToHSL(r, g, b);
 
-  return { hue, saturation };
+  return { hue, saturation, luminance };
+}
+
+function fromGroupCallStateProto(
+  state: Backups.GroupCall.State | undefined | null
+): GroupCallStatus {
+  const values = Backups.GroupCall.State;
+
+  if (state == null) {
+    return GroupCallStatus.GenericGroupCall;
+  }
+
+  if (state === values.GENERIC) {
+    return GroupCallStatus.GenericGroupCall;
+  }
+  if (state === values.OUTGOING_RING) {
+    return GroupCallStatus.OutgoingRing;
+  }
+  if (state === values.RINGING) {
+    return GroupCallStatus.Ringing;
+  }
+  if (state === values.JOINED) {
+    return GroupCallStatus.Joined;
+  }
+  if (state === values.ACCEPTED) {
+    return GroupCallStatus.Accepted;
+  }
+  if (state === values.MISSED) {
+    return GroupCallStatus.Missed;
+  }
+  if (state === values.MISSED_NOTIFICATION_PROFILE) {
+    return GroupCallStatus.MissedNotificationProfile;
+  }
+  if (state === values.DECLINED) {
+    return GroupCallStatus.Declined;
+  }
+
+  return GroupCallStatus.GenericGroupCall;
+}
+
+function fromIndividualCallDirectionProto(
+  direction: Backups.IndividualCall.Direction | undefined | null
+): CallDirection {
+  const values = Backups.IndividualCall.Direction;
+
+  if (direction == null) {
+    return CallDirection.Unknown;
+  }
+  if (direction === values.INCOMING) {
+    return CallDirection.Incoming;
+  }
+  if (direction === values.OUTGOING) {
+    return CallDirection.Outgoing;
+  }
+
+  return CallDirection.Unknown;
+}
+
+function fromIndividualCallTypeProto(
+  type: Backups.IndividualCall.Type | undefined | null
+): CallType {
+  const values = Backups.IndividualCall.Type;
+
+  if (type == null) {
+    return CallType.Unknown;
+  }
+  if (type === values.AUDIO_CALL) {
+    return CallType.Audio;
+  }
+  if (type === values.VIDEO_CALL) {
+    return CallType.Video;
+  }
+
+  return CallType.Unknown;
+}
+
+function fromIndividualCallStateProto(
+  status: Backups.IndividualCall.State | undefined | null
+): DirectCallStatus {
+  const values = Backups.IndividualCall.State;
+
+  if (status == null) {
+    return DirectCallStatus.Unknown;
+  }
+  if (status === values.ACCEPTED) {
+    return DirectCallStatus.Accepted;
+  }
+  if (status === values.NOT_ACCEPTED) {
+    return DirectCallStatus.Declined;
+  }
+  if (status === values.MISSED) {
+    return DirectCallStatus.Missed;
+  }
+  if (status === values.MISSED_NOTIFICATION_PROFILE) {
+    return DirectCallStatus.MissedNotificationProfile;
+  }
+
+  return DirectCallStatus.Unknown;
+}
+
+function fromAdHocCallStateProto(
+  status: Backups.AdHocCall.State | undefined | null
+): AdhocCallStatus {
+  const values = Backups.AdHocCall.State;
+
+  if (status == null) {
+    return AdhocCallStatus.Unknown;
+  }
+  if (status === values.GENERIC) {
+    return AdhocCallStatus.Generic;
+  }
+
+  return AdhocCallStatus.Unknown;
+}
+
+function fromCallLinkRestrictionsProto(
+  restrictions: Backups.CallLink.Restrictions | undefined | null
+): CallLinkRestrictions {
+  const values = Backups.CallLink.Restrictions;
+
+  if (restrictions == null) {
+    return CallLinkRestrictions.Unknown;
+  }
+  if (restrictions === values.NONE) {
+    return CallLinkRestrictions.None;
+  }
+  if (restrictions === values.ADMIN_APPROVAL) {
+    return CallLinkRestrictions.AdminApproval;
+  }
+
+  return CallLinkRestrictions.Unknown;
 }

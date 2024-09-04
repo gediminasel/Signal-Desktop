@@ -80,12 +80,6 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "Версія вашої бази даних не відповідає цій версії Signal. Переконайтеся, що відкриваєте на комп'ютері останню версію Signal."
   },
-  "icu:databaseError__recover__detail": {
-    "messageformat": "Сталася помилка бази даних. Ви можете скопіювати помилку та зв'язатися зі службою підтримки Signal, щоб допомогти нам вирішити цю проблему. Якщо вам потрібно використати Signal просто зараз, спробуйте відновити дані.\n\nЗвернутися до служби підтримки можна тут: {link}"
-  },
-  "icu:databaseError__recover__button": {
-    "messageformat": "Відновити дані"
-  },
   "icu:databaseError__safeStorageBackendChange": {
     "messageformat": "Не вдається отримати доступ до ключа шифрування бази даних, тому що сервер ключів шифрування ОС змінився з {previousBackend} на {currentBackend}. Таке може трапитися в разі зміни середовища робочого столу, наприклад з GNOME на KDE.\n\nПоверніться до попереднього середовища робочого столу."
   },
@@ -827,14 +821,8 @@
   "icu:mute": {
     "messageformat": "Вимкнути звук"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Не вдалось оновити Signal. {retry} чи перейдіть на {url} для встановлення оновлення вручну. А потім {support} про цю проблему"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Не вдалось оновити Signal. <retryUpdateButton>Запустіть оновлення ще раз</retryUpdateButton> або перейдіть на сторінку {url} для ручного встановлення. Потім <contactSupportLink>повідомте службу підтримки</contactSupportLink> про цю проблему"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Не вдалось оновити Signal. Перейдіть до {url} для встановлення вручну. А потім {support} про цю проблему"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Не вдалось оновити Signal. Перейдіть на сторінку {url} для ручного встановлення. Потім <contactSupportLink>повідомте службу підтримки</contactSupportLink> про цю проблему"
@@ -1223,9 +1211,6 @@
   "icu:calling__cant-join": {
     "messageformat": "Не вдається приєднатися до виклику"
   },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "Ви вже берете участь у виклику."
-  },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "Не вдалось отримати інформацію щодо посилання на виклик. Перевірте з'єднання з мережею і спробуйте знову."
   },
@@ -1239,7 +1224,7 @@
     "messageformat": "Виклик у Signal"
   },
   "icu:calling__join-request-denied": {
-    "messageformat": "Ваш запит на приєднання до виклику відхилено."
+    "messageformat": "Вам не дозволено приєднатися до виклику."
   },
   "icu:calling__join-request-denied-title": {
     "messageformat": "Запит на приєднання відхилено"
@@ -1266,7 +1251,7 @@
     "messageformat": "Почати"
   },
   "icu:CallingLobbyJoinButton--call-full": {
-    "messageformat": "Немає вільних місць для дзвінка"
+    "messageformat": "Немає місць"
   },
   "icu:CallingLobbyJoinButton--ask-to-join": {
     "messageformat": "Попросити приєднатися"
@@ -1302,7 +1287,7 @@
     "messageformat": "Реагувати"
   },
   "icu:calling__button--ring__disabled-because-group-is-too-large": {
-    "messageformat": "Група завелика для дзвінків її учасникам."
+    "messageformat": "Група завелика, тому в учасників не лунатиме дзвінок."
   },
   "icu:CallingButton__ring-off": {
     "messageformat": "Вимкнути дзвінок"
@@ -1365,16 +1350,16 @@
     "messageformat": "Тут більше нікого немає"
   },
   "icu:calling__pre-call-info--1-person-in-call": {
-    "messageformat": "{first} у цьому дзвінку"
+    "messageformat": "{first} бере участь у цьому виклику"
   },
   "icu:calling__pre-call-info--another-device-in-call": {
-    "messageformat": "Один з ваших пристроїв у цьому дзвінку"
+    "messageformat": "У цьому виклику бере участь один з ваших інших пристроїв"
   },
   "icu:calling__pre-call-info--2-people-in-call": {
-    "messageformat": "{first} і {second} у цьому дзвінку"
+    "messageformat": "{first} і {second} беруть участь у цьому виклику"
   },
   "icu:calling__pre-call-info--3-people-in-call": {
-    "messageformat": "{first}, {second}, і {third} у цьому дзвінку"
+    "messageformat": "{first}, {second} і {third} беруть участь у цьому виклику"
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, one {{first}, {second} і ще {others,number} у цьому виклику} few {{first}, {second} і ще {others,number} у цьому виклику} many {{first}, {second} і ще {others,number} у цьому виклику} other {{first}, {second} і ще {others,number} у цьому виклику}}"
@@ -1408,9 +1393,6 @@
   },
   "icu:calling__in-this-call": {
     "messageformat": "{people, plural, one {У цьому виклику · {people,number} учасник} few {У цьому виклику · {people,number} учасники} many {У цьому виклику · {people,number} учасників} other {У цьому виклику · {people,number} учасника}}"
-  },
-  "icu:calling__you-have-blocked": {
-    "messageformat": "Ви заблокували користувача {name}"
   },
   "icu:calling__blocked-participant": {
     "messageformat": "Користувача {name} заблоковано"
@@ -1680,7 +1662,7 @@
     "messageformat": "Програвати звук виклику"
   },
   "icu:callSystemNotificationDescription": {
-    "messageformat": "Показувати сповіщення для дзвінків"
+    "messageformat": "Показувати сповіщення про виклики"
   },
   "icu:incomingCallNotificationDescription": {
     "messageformat": "Дозволити вхідні виклики"
@@ -1843,9 +1825,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Спробувати ще раз"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "звернутися в службу підтримки"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Натисніть для перезапуску Signal"
@@ -2793,7 +2772,7 @@
     "messageformat": "Користувач {name} почав відеовиклик"
   },
   "icu:calling__in-another-call-tooltip": {
-    "messageformat": "Ви вже у дзвінку"
+    "messageformat": "Ви вже берете участь у виклику"
   },
   "icu:calling__call-notification__button__call-full-tooltip": {
     "messageformat": "У цьому виклику вже бере участь максимальна кількість учасників: {max,number}"
@@ -2955,10 +2934,10 @@
     "messageformat": "Ви бажаєте приєднатися до цієї групи і поширити ваше ім'я і фото серед її учасників?"
   },
   "icu:GroupV2--join--already-in-group": {
-    "messageformat": "Ви вже у групі."
+    "messageformat": "Ви вже учасник цієї групи."
   },
   "icu:GroupV2--join--already-awaiting-approval": {
-    "messageformat": "Ви вже дали запит для приєднання до цієї групи."
+    "messageformat": "Ви вже надіслали запит для приєднання до цієї групи."
   },
   "icu:GroupV2--join--unknown-link-version--title": {
     "messageformat": "Невідома версія посилання."
@@ -2985,7 +2964,7 @@
     "messageformat": "Приєднатись"
   },
   "icu:GroupV2--join--request-to-join-button": {
-    "messageformat": "Запит на Приєднання"
+    "messageformat": "Запит на приєднання"
   },
   "icu:GroupV2--join--cancel-request-to-join": {
     "messageformat": "Відкликати запит"
@@ -3003,7 +2982,7 @@
     "messageformat": "{memberCount, plural, one {Група · {memberCount,number} учасник} few {Група · {memberCount,number} учасники} many {Група · {memberCount,number} учасників} other {Група · {memberCount,number} учасника}}"
   },
   "icu:GroupV2--join--requested": {
-    "messageformat": "Ваш запит на приєднання надіслано до адміністраторів групи. Ви отримаєте повідомлення, коли вони відреагують."
+    "messageformat": "Ваш запит на приєднання надіслано адміністраторам групи. Ви отримаєте сповіщення, коли його розглянуть."
   },
   "icu:GroupV2--join--general-join-failure--title": {
     "messageformat": "Помилка посилання"
@@ -3015,7 +2994,7 @@
     "messageformat": "Адміністратор"
   },
   "icu:GroupV2--only-admins": {
-    "messageformat": "Тільки Адміністратори"
+    "messageformat": "Тільки адміністратори"
   },
   "icu:GroupV2--all-members": {
     "messageformat": "Усі учасники"
@@ -3171,19 +3150,19 @@
     "messageformat": "Користувач {memberName} приєднався до групи за допомогою посилання."
   },
   "icu:GroupV2--member-add-from-admin-approval--you--other": {
-    "messageformat": "{adminName} схвалив (-а) ваш запит на приєднання до групи."
+    "messageformat": "Користувач {adminName} дозволив вам приєднатися до групи."
   },
   "icu:GroupV2--member-add-from-admin-approval--you--unknown": {
-    "messageformat": "Ваш запит на приєднання до групи було прийнято."
+    "messageformat": "Вам дозволено приєднатися до групи."
   },
   "icu:GroupV2--member-add-from-admin-approval--other--you": {
-    "messageformat": "Ви схвалили запит на приєднання до групи від {joinerName}."
+    "messageformat": "Ви дозволили користувачеві {joinerName} приєднатися до групи."
   },
   "icu:GroupV2--member-add-from-admin-approval--other--other": {
-    "messageformat": "Користувач {adminName} схвалив запит користувача {joinerName} на приєднання до групи."
+    "messageformat": "Користувач {adminName} дозволив користувачеві {joinerName} приєднатися до групи."
   },
   "icu:GroupV2--member-add-from-admin-approval--other--unknown": {
-    "messageformat": "Запит на приєднання до групи від {joinerName} було прийнято."
+    "messageformat": "Користувачеві {joinerName} дозволено приєднатися до групи."
   },
   "icu:GroupV2--member-remove--other--other": {
     "messageformat": "Користувач {adminName} видалив користувача {memberName}."
@@ -3216,7 +3195,7 @@
     "messageformat": "Адміністратор зробив {memberName} адміністратором."
   },
   "icu:GroupV2--member-privilege--promote--you--other": {
-    "messageformat": "{adminName} зробив вас адміністратором."
+    "messageformat": "Користувач {adminName} зробив вас адміністратором."
   },
   "icu:GroupV2--member-privilege--promote--you--unknown": {
     "messageformat": "Адміністратор зробив адміністратором."
@@ -3336,31 +3315,34 @@
     "messageformat": "Ви надіслали запит на приєднання до групи."
   },
   "icu:GroupV2--admin-approval-add-one--other": {
-    "messageformat": "{joinerName} запит на приєднання за допомогою групового посилання."
+    "messageformat": "{joinerName} хоче приєднатися до групи за допомогою посилання."
   },
   "icu:GroupV2--admin-approval-remove-one--you--you": {
-    "messageformat": "Ви скасували надіслання запиту на приєднання до групи."
+    "messageformat": "Ви скасували запит на приєднання до групи."
   },
   "icu:GroupV2--admin-approval-remove-one--you--unknown": {
-    "messageformat": "Ваш запит на приєднання до групи було відхилений адміністратором."
+    "messageformat": "Адміністратор не дозволив вам приєднатися до групи."
   },
   "icu:GroupV2--admin-approval-remove-one--other--you": {
-    "messageformat": "Ви відхилили запит на приєднання до групи від {joinerName}."
+    "messageformat": "Ви не дозволили користувачеві {joinerName} приєднатися до групи."
   },
   "icu:GroupV2--admin-approval-remove-one--other--own": {
-    "messageformat": "{joinerName} скасував їхній запит на приєднання до групи."
+    "messageformat": "Користувач {joinerName} скасував запит на приєднання до групи."
   },
   "icu:GroupV2--admin-approval-remove-one--other--other": {
-    "messageformat": "Користувач {adminName} відхилив запит користувача {joinerName} на приєднання до групи."
+    "messageformat": "Користувач {adminName} не дозволив користувачеві {joinerName} приєднатися до групи."
   },
   "icu:GroupV2--admin-approval-remove-one--other--unknown": {
-    "messageformat": "Запит на приєднання до групи від {joinerName} було відхилено."
+    "messageformat": "Користувачеві {joinerName} не дозволено приєднатися до групи."
   },
   "icu:GroupV2--admin-approval-bounce--one": {
-    "messageformat": "{joinerName} надіслав та скасував запит на приєднання до групи за посиланням"
+    "messageformat": "{joinerName} надіслав і скасував запит на приєднання до групи за посиланням"
   },
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} надіслав та скасував запити: {numberOfRequests,number} на приєднання до групи за посиланням"
+  },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {Користувач {joinerName} надіслав і скасував запит на приєднання до групи за посиланням} few {Користувач {joinerName} надіслав і скасував {numberOfRequests,number} запити на приєднання до групи за посиланням} many {Користувач {joinerName} надіслав і скасував {numberOfRequests,number} запитів на приєднання до групи за посиланням} other {Користувач {joinerName} надіслав і скасував {numberOfRequests,number} запиту на приєднання до групи за посиланням}}"
   },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Ви активували посилання на групу без адміністраторського затвердження."
@@ -3536,6 +3518,21 @@
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "Натисніть на «Підтримати Signal» і оформте підписку"
   },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Синхронізація повідомлень"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Завантаження: {currentSize} з {totalSize} ({fractionComplete,number,percent})…"
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "Воно може зайняти кілька хвилин — швидкість залежить від розміру резервної копії"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Restoring media"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize} of {totalSize} ({fractionComplete,number,percent})"
+  },
   "icu:CompositionArea--expand": {
     "messageformat": "Розкрити"
   },
@@ -3630,22 +3627,22 @@
     "messageformat": "Сповіщення"
   },
   "icu:ConversationDetails--group-info-label": {
-    "messageformat": "Хто може редагувати інформацію групи"
+    "messageformat": "Хто може редагувати інформацію про групу"
   },
   "icu:ConversationDetails--group-info-info": {
-    "messageformat": "Оберіть, хто може змінювати назву, фото, опис групи і таймер тимчасових повідомлень."
+    "messageformat": "Оберіть, хто може змінювати назву, фото, опис групи й таймер тимчасових повідомлень."
   },
   "icu:ConversationDetails--add-members-label": {
     "messageformat": "Хто може додавати учасників"
   },
   "icu:ConversationDetails--add-members-info": {
-    "messageformat": "Виберіть, хто може додавати учасників до цієї групи."
+    "messageformat": "Оберіть, хто може додавати учасників до цієї групи."
   },
   "icu:ConversationDetails--announcement-label": {
     "messageformat": "Хто може надсилати повідомлення"
   },
   "icu:ConversationDetails--announcement-info": {
-    "messageformat": "Виберіть, хто може надсилати повідомлення до цієї групи."
+    "messageformat": "Оберіть, хто може надсилати повідомлення в цій групі."
   },
   "icu:ConversationDetails--requests-and-invites": {
     "messageformat": "Запити і запрошення"
@@ -3786,7 +3783,7 @@
     "messageformat": "Відхилити запит від «{name}»?"
   },
   "icu:PendingRequests--deny-for--with-link": {
-    "messageformat": "Відхилити запит від «{name}»? Користувач більше не зможе надіслати запит на приєднання до групи за посиланням."
+    "messageformat": "Відхилити запит від користувача {name}? Цей користувач не зможе надіслати ще один запит на приєднання за посиланням групи."
   },
   "icu:PendingInvites--invited-by-you": {
     "messageformat": "Запрошені вами"
@@ -3956,11 +3953,11 @@
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": "0,5"
   },
-  "icu:emptyInboxMessage": {
-    "messageformat": "Натисніть на {composeIcon} вище і пошукайте ваші контакти або групи для спілкування."
+  "icu:emptyInbox__title": {
+    "messageformat": "Чатів немає"
   },
-  "icu:composeIcon": {
-    "messageformat": "Kнопка “Нова розмова”"
+  "icu:emptyInbox__subtitle": {
+    "messageformat": "Тут будуть недавні чати."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Переслати до"
@@ -4850,6 +4847,12 @@
   "icu:Stories__list-empty": {
     "messageformat": "Нових історій немає"
   },
+  "icu:Stories__list__empty--title": {
+    "messageformat": "Історій немає"
+  },
+  "icu:Stories__list__empty--subtitle": {
+    "messageformat": "Тут будуть нові історії."
+  },
   "icu:Stories__list--sending": {
     "messageformat": "Надсилаємо…"
   },
@@ -4864,6 +4867,12 @@
   },
   "icu:Stories__placeholder--text": {
     "messageformat": "Натисніть, щоб переглянути історію"
+  },
+  "icu:Stories__placeholder-with-icon--text": {
+    "messageformat": "Натисніть <newStoryIcon>Додати історію</newStoryIcon>, щоб опублікувати щось нове."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Натисніть <newStoryButtonIcon></newStoryButtonIcon>, щоб опублікувати щось нове."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} до {group}"
@@ -5106,6 +5115,12 @@
     "messageformat": "Відповіді"
   },
   "icu:StoryViewsNRepliesModal__reacted": {
+    "messageformat": "Реакція на історію"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Ваша реакція на історію"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
     "messageformat": "Реакція на історію"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
@@ -5406,6 +5421,12 @@
   "icu:CallsTab__EmptyStateText": {
     "messageformat": "Натисніть, щоб переглянути або розпочати виклик"
   },
+  "icu:CallsTab__EmptyStateText--with-icon": {
+    "messageformat": "Натисніть <newCallIcon>Новий виклик</newCallIcon>, щоб почати новий аудіо- чи відеовиклик."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Натисніть <newCallButtonIcon></newCallButtonIcon>, щоб почати новий аудіо- чи відеовиклик."
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Пошук"
   },
@@ -5417,6 +5438,18 @@
   },
   "icu:CallsList__EmptyState--noQuery": {
     "messageformat": "Викликів не було. Подзвоніть комусь із друзів."
+  },
+  "icu:CallsList__EmptyState--noQuery__title": {
+    "messageformat": "Викликів немає"
+  },
+  "icu:CallsList__EmptyState--noQuery__subtitle": {
+    "messageformat": "Тут будуть недавні виклики."
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__title": {
+    "messageformat": "Пропущених викликів немає"
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
+    "messageformat": "Тут будуть пропущені виклики."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Немає результатів за запитом «{query}»"
@@ -5435,9 +5468,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Відхилено"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Груповий виклик"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Посилання на виклик"
@@ -5462,21 +5492,6 @@
   },
   "icu:CallsNewCallButton--return": {
     "messageformat": "Назад"
-  },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "Щоб приєднатися до іншого виклику, потрібно спочатку покинути поточний"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {Вихідний аудіовиклик} other {Вхідний аудіовиклик}}} Video {{direction, select, Outgoing {Вихідний відеовиклик} other {Вхідний відеовиклик}}} Group {{direction, select, Outgoing {Вихідний груповий виклик} other {Вхідний груповий виклик}}} other {{direction, select, Outgoing {Вихідний виклик} other {Вхідний виклик}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {Пропущений аудіовиклик} Video {Пропущений відеовиклик} Group {Пропущений груповий виклик} other {Пропущений виклик}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {Аудіовиклик без відповіді} Video {Відеовиклик без відповіді} Group {Груповий виклик без відповіді} other {Виклик без відповіді}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {Відхилений аудіовиклик} Video {Відхилений відеовиклик} Group {Відхилений груповий виклик} other {Відхилений виклик}}"
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Посилання на виклик"
@@ -5512,19 +5527,19 @@
     "messageformat": "Поділитися посиланням у Signal"
   },
   "icu:CallLinkDetails__DeleteLink": {
-    "messageformat": "Delete link"
+    "messageformat": "Видалити посилання"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Title": {
-    "messageformat": "Delete call link?"
+    "messageformat": "Видалити посилання на виклик?"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Body": {
-    "messageformat": "This link will no longer work for anyone who has it."
+    "messageformat": "Це посилання більше не працюватиме."
   },
   "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
-    "messageformat": "Cancel"
+    "messageformat": "Закрити"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
-    "messageformat": "Delete"
+    "messageformat": "Видалити"
   },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "Додатково про посилання на виклик"
@@ -5596,19 +5611,13 @@
     "messageformat": "Дрібні поліпшення, виправлення помилок і покращення роботи застосунку. Дякуємо, що ви з Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "Іноді прощання краще не затягувати, тому ми прискорили видалення довгих розмов."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Більше ніякого чатування на відкриття чатів, адже тепер вони відкриваються ще швидше завдяки черговому покращенню продуктивності."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "Ми додали можливість легко вийти з поточного дзвінка й приєднатися до нового, коли під час виклику вам телефонує хтось іще. Вихід потрібно буде підтвердити, а прощатися чи ні — вирішувати вам."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "Ми також виправили кілька помилок. Наприклад, почавши виклик, тепер ви не побачите оповістки «Користувач Невідомий контакт почав відеовиклик» на панелі зі списком чатів. Ми згодні, що пошук себе може тривати все життя, та все ж для самої себе людина не буває геть невідома."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "У цьому оновленні ми також виправили збій під час запуску застосунку на Linux, що траплявся в користувачів з регіональним стандартом POSIX."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "This update fixes a bug where viewing a missed call on one device wouldn't automatically clear the indicator for that missed call on your other devices, which was a missed opportunity for your missed call list to better coexist."
   }
 }

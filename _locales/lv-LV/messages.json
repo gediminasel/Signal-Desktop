@@ -80,12 +80,6 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "Jūsu datubāzes versija neatbilst šai Signal versijai. Pārliecinieties, vai datorā atvērta jaunākā Signal versija."
   },
-  "icu:databaseError__recover__detail": {
-    "messageformat": "Radusies datubāzes kļūda. Varat nokopēt kļūdas aprakstu un sazināties ar Signal atbalsta dienestu, lai novērstu problēmu. Ja jums nepieciešams izmantot Signal nekavējoties, varat mēģināt atgūt savus datus.\n\nSazinieties ar atbalsta dienestu, apmeklējot vietni: {link}"
-  },
-  "icu:databaseError__recover__button": {
-    "messageformat": "Atgūt datus"
-  },
   "icu:databaseError__safeStorageBackendChange": {
     "messageformat": "Nevar piekļūt datu bāzes šifrēšanas atslēgai, jo OS šifrēšanas atslēgu turētāja aizmugursistēma ir mainīta no {previousBackend} uz {currentBackend}. Tas var notikt, ja mainās darbvirsmas vide, piemēram, no GNOME uz KDE.\n\nLūdzu, pārslēdzieties uz iepriekšējo darbvirsmas vidi."
   },
@@ -827,14 +821,8 @@
   "icu:mute": {
     "messageformat": "Izslēgt"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal nevarēja atjaunināt. {retry} vai apmeklējiet{url}, lai instalētu atjauninājumu manuāli. Pēc tam {support} par šo problēmu"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal nevarēja atjaunināt. <retryUpdateButton>Mēģiniet atjaunināt vēlreiz</retryUpdateButton> vai apmeklējiet {url}, lai instalētu atjauninājumu manuāli. Pēc tam informējiet <contactSupportLink>atbalsta dienestu</contactSupportLink> par problēmu, sazinoties ar to"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal nevarēja atjaunināt. Apmeklējiet {url}, lai instalētu atjauninājumu manuāli. Pēc tam {support} informējiet par šo problēmu"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal nevarēja atjaunināt. Apmeklējiet {url}, lai instalētu atjauninājumu manuāli. Pēc tam informējiet <contactSupportLink>atbalsta dienestu</contactSupportLink> par problēmu, sazinoties ar to."
@@ -1223,9 +1211,6 @@
   "icu:calling__cant-join": {
     "messageformat": "Nevar pievienoties grupai"
   },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "Jums jau ir aktīvs zvans."
-  },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "Neizdevās iegūt zvana saites informāciju. Lūdzu, pārbaudiet tīkla savienojumu un mēģiniet vēlreiz."
   },
@@ -1408,9 +1393,6 @@
   },
   "icu:calling__in-this-call": {
     "messageformat": "{people, plural, zero {Šajā zvanā · {people,number} cilvēks} one {Šajā zvanā · {people,number} cilvēks} other {Šajā zvanā · {people,number} cilvēki}}"
-  },
-  "icu:calling__you-have-blocked": {
-    "messageformat": "Jūs bloķējāt {name}"
   },
   "icu:calling__blocked-participant": {
     "messageformat": "{name} ir bloķēts"
@@ -1843,9 +1825,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Vēlreiz mēģināt atjaunināt"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "sazināties ar atbalsta dienestu"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Noklikšķiniet, lai restartētu Signal"
@@ -3362,6 +3341,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} pieprasīja un atcēla {numberOfRequests,number} pieprasījumus pievienoties grupai ar saiti"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, zero {{joinerName} pieprasīja un atcēla {numberOfRequests,number} pieprasījumus pievienoties, izmantojot grupas saiti} one {{joinerName} pieprasīja un atcēla pieprasījumu pievienoties, izmantojot grupas saiti} other {{joinerName} nosūtīja un atcēla {numberOfRequests,number} pieprasījumus pievienoties, izmantojot grupas saiti}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Jūs ieslēdzāt grupas saiti ar atspējotu administratora apstiprinājumu."
   },
@@ -3535,6 +3517,21 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "Pieskarieties \"Ziedot Signal\" un abonējiet"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Notiek ziņu sinhronizēšana"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Lejupielādē {currentSize} no {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "Process var aizņemt dažas minūtes atkarībā no rezerves kopijas izmēra"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Restoring media"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize} of {totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Izvērst"
@@ -3956,11 +3953,11 @@
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": "0,5"
   },
-  "icu:emptyInboxMessage": {
-    "messageformat": "Noklikšķiniet uz augstāk norādītās {composeIcon} un meklējiet kontaktpersonas vai grupas, kurām sūtīt ziņas."
+  "icu:emptyInbox__title": {
+    "messageformat": "Nav sarunu"
   },
-  "icu:composeIcon": {
-    "messageformat": "izveidošanas poga"
+  "icu:emptyInbox__subtitle": {
+    "messageformat": "Šeit būs redzamas nesenākās sarunas."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Pārsūtīt"
@@ -4850,6 +4847,12 @@
   "icu:Stories__list-empty": {
     "messageformat": "Nav nesenu stāstu"
   },
+  "icu:Stories__list__empty--title": {
+    "messageformat": "Nav stāstu"
+  },
+  "icu:Stories__list__empty--subtitle": {
+    "messageformat": "Šeit būs redzami jaunumi."
+  },
   "icu:Stories__list--sending": {
     "messageformat": "Sūta…"
   },
@@ -4864,6 +4867,12 @@
   },
   "icu:Stories__placeholder--text": {
     "messageformat": "Noklikšķiniet, lai skatītu stāstu"
+  },
+  "icu:Stories__placeholder-with-icon--text": {
+    "messageformat": "Piespiediet <newStoryIcon>Pievienot stāstu</newStoryIcon>, lai dalītos ar jaunumiem."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Noklikšķiniet uz <newStoryButtonIcon></newStoryButtonIcon>, lai stāstam pievienotu jaunumus."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} grupā {group}"
@@ -5106,6 +5115,12 @@
     "messageformat": "Atbildes"
   },
   "icu:StoryViewsNRepliesModal__reacted": {
+    "messageformat": "Reaģēja uz stāstu"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reaģēja uz stāstu"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
     "messageformat": "Reaģēja uz stāstu"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
@@ -5406,6 +5421,12 @@
   "icu:CallsTab__EmptyStateText": {
     "messageformat": "Noklikšķiniet, lai skatītu vai sāktu zvanu"
   },
+  "icu:CallsTab__EmptyStateText--with-icon": {
+    "messageformat": "Piespiediet <newCallIcon>Jauns zvans</newCallIcon>, lai sāktu jaunu balss vai video zvanu."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Noklikšķiniet uz <newCallButtonIcon></newCallButtonIcon>, lai sāktu jaunu balss vai video zvanu."
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Meklēt"
   },
@@ -5417,6 +5438,18 @@
   },
   "icu:CallsList__EmptyState--noQuery": {
     "messageformat": "Nav neseno zvanu. Sāciet ar zvanu draugam."
+  },
+  "icu:CallsList__EmptyState--noQuery__title": {
+    "messageformat": "Nav zvanu"
+  },
+  "icu:CallsList__EmptyState--noQuery__subtitle": {
+    "messageformat": "Šeit būs redzami nesenākie zvani."
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__title": {
+    "messageformat": "Nav neatbildētu zvanu"
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
+    "messageformat": "Šeit būs redzami neatbildētie zvani."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Vaicājumam “{query}” nav rezultātu"
@@ -5435,9 +5468,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Noraidīts"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Grupas zvans"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Zvana saite"
@@ -5462,21 +5492,6 @@
   },
   "icu:CallsNewCallButton--return": {
     "messageformat": "Atgriezties"
-  },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "Lai pievienotos citam zvanam, jums jāpamet pašreizējais zvans"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {Izejošs balss zvans} other {Ienākošs balss zvans}}} Video {{direction, select, Outgoing {Izejošs videozvans} other {Ienākošs videozvans}}} Group {{direction, select, Outgoing {Izejošais grupas zvans} other {Ienākošais grupas zvans}}} other {{direction, select, Outgoing {Izejošais zvans} other {Ienākošs zvans}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {Neatbildēts balss zvans} Video {Neatbildēts videozvans} Group {Neatbildēts grupas zvans} other {Neatbildēts zvans}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {Neatbildēts balss zvans} Video {Neatbildēts videozvans} Group {Neatbildēts grupas zvans} other {Neatbildēts zvans}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {Noraidīts balss zvans} Video {Noraidīts video zvans} Group {Noraidīts grupas zvans} other {Noraidīts zvans}}"
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Zvana saite"
@@ -5512,19 +5527,19 @@
     "messageformat": "Kopīgot saiti caur Signal"
   },
   "icu:CallLinkDetails__DeleteLink": {
-    "messageformat": "Delete link"
+    "messageformat": "Dzēst saiti"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Title": {
-    "messageformat": "Delete call link?"
+    "messageformat": "Vai dzēst zvana saiti?"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Body": {
-    "messageformat": "This link will no longer work for anyone who has it."
+    "messageformat": "Šī saite turpmāk nebūs izmantojama."
   },
   "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
-    "messageformat": "Cancel"
+    "messageformat": "Atcelt"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
-    "messageformat": "Delete"
+    "messageformat": "Dzēst"
   },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "Zvana saites informācija"
@@ -5596,19 +5611,13 @@
     "messageformat": "Nelielas izmaiņas, kļūdu labojumi un darbības uzlabojumi. Paldies, ka lietojat Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "Reizēm ātri pateikt \"atā\" ir vieglāk nekā ilgi atvadīties, tāpēc paātrinājām dzēšanas procesu apjomīgām sarakstēm."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Tagad sarunas var atvērt ātrāk nekā jebkad agrāk, pateicoties jauniem veiktspējas uzlabojumiem, — viens klikšķis, un jūs pavisam ātri varēsiet iesaistīties sarunā."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "Mēs pievienojām saīsni, kas ļauj pārtraukt notiekošu zvanu, lai pievienotos jaunam zvanam. Jums būs jāapstiprina tas, ka pametat zvanu."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "Tāpat novērsām saujiņu kļūdu, tostarp vienu, kuras dēļ pēc zvana uzsākšanas sarunas saraksta kopsavilkumā reizēm parādījās paziņojums \"Nezināma kontaktpersona uzsāka video zvanu\". Pat tad ja joprojām esat sevis iepazīšanas procesā, vismaz video zvanu ietvaros jums šādu jautājumu vairs nebūs."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "Tāpat šajā atjauninājumā novērsām avarēšanu palaišanas brīdī Linux lietotājiem, kuru iestatītā valoda ir \"POSIX\"."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "This update fixes a bug where viewing a missed call on one device wouldn't automatically clear the indicator for that missed call on your other devices, which was a missed opportunity for your missed call list to better coexist."
   }
 }

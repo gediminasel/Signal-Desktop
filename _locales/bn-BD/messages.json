@@ -80,12 +80,6 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "আপনার ডাটাবেজের সংস্করণ Signal-এর এই সংস্করণের সাথে মিলে না। নিশ্চিত করুন যে আপনি আপনার কম্পিউটারে Signal-এর নতুন সংস্করণ খুলছেন।"
   },
-  "icu:databaseError__recover__detail": {
-    "messageformat": "ডাটাবেজ সংক্রান্ত একটি ত্রুটি দেখা দিয়েছে। আপনি ত্রুটিটি কপি করতে পারেন এবং সমস্যাটি সমাধানে সাহায্য করতে Signal সাপোর্টের সাথে যোগাযোগ করতে পারেন। আপনার যদি সাথে সাথেই Signal ব্যবহার করার প্রয়োজন হয় তাহলে আপনার ডেটা পুনরুদ্ধারের চেষ্টা করে দেখতে পারেন।\n\nএখানে ভিজিট করার মাধ্যমে সাপোর্টের সাথে যোগাযোগ করুন: {link}"
-  },
-  "icu:databaseError__recover__button": {
-    "messageformat": "ডেটা পুনরুদ্ধার করুন"
-  },
   "icu:databaseError__safeStorageBackendChange": {
     "messageformat": "ডেটাবেজ এনক্রিপশন কী অ্যাক্সেস করতে সক্ষম নয় কারণ OS এনক্রিপশন কী-রিং ব্যাকএন্ড {previousBackend} থেকে {currentBackend}-এ পরিবর্তিত হয়েছে। যদি ডেস্কটপের পরিবেশ পরিবর্তন হয় তবে এটি ঘটতে পারে, যেমন GNOME এবং KDE-এর মধ্যে পরিবর্তন।\n\nপূর্ববর্তী ডেস্কটপ পরিবেশে স্যুইচ করুন।"
   },
@@ -827,14 +821,8 @@
   "icu:mute": {
     "messageformat": "মিউট"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal আপডেট করা যায়নি। {retry} অথবা ম্যানুয়ালি ইন্সটল করতে ভিজিট করুন {url}। তারপর, এই সমস্যা সম্পর্কে {support}"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal আপডেট করা যায়নি। <retryUpdateButton>পুনরায় আপডেট করার চেষ্টা করুন</retryUpdateButton> অথবা ম্যানুয়ালি ইনস্টল করতে {url} ভিজিট করুন। তারপর, এই সমস্যার ব্যাপারে <contactSupportLink>সাপোর্টের সাথে যোগাযোগ করুন</contactSupportLink>"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal আপডেট করা যায়নি। ম্যানুয়ালি ইন্সটল করতে ভিজিট করুন {url}। তারপর, এই সমস্যা সম্পর্কে {support}"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal আপডেট করা যায়নি। ম্যানুয়ালি ইন্সটল করতে ভিজিট করুন {url}। তারপর, এই সমস্যা সম্পর্কে <contactSupportLink>সাপোর্টের সাথে যোগাযোগ করুন</contactSupportLink>"
@@ -1223,9 +1211,6 @@
   "icu:calling__cant-join": {
     "messageformat": "কলে যোগ দেওয়া যাচ্ছে না"
   },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "আপনি ইতোমধ্যেই একটি কলে আছেন।"
-  },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "কল লিংকের তথ্য আনা যায়নি। অনুগ্রহ করে আপনার নেটওয়ার্ক সংযোগ ঠিক আছে কি না দেখুন এবং আবার চেষ্টা করুন।"
   },
@@ -1408,9 +1393,6 @@
   },
   "icu:calling__in-this-call": {
     "messageformat": "{people, plural, one {এই কলটিতে আছেন · {people,number} জন} other {এই কলটিতে আছেন · {people,number} জন}}"
-  },
-  "icu:calling__you-have-blocked": {
-    "messageformat": "আপনি {name}-কে ব্লক করেছেন"
   },
   "icu:calling__blocked-participant": {
     "messageformat": "{name}-কে ব্লক করা হয়েছে"
@@ -1843,9 +1825,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "পুনরায় আপডেট করার চেষ্টা করুন"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "সাপোর্ট-এর সাথে যোগাযোগ করুন"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Signal পুনরায় চালু করতে ক্লিক করুন"
@@ -3362,6 +3341,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "গ্রুপ লিঙ্কের মাধ্যমে যোগ দেয়ার জন্য {joinerName} অনুরোধ করেছেন এবং {numberOfRequests,number}-গুলো অনুরোধ বাতিল করেছেন৷"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} গ্রুপ লিংকের মাধ্যমে যোগ দেওয়ার অনুরোধ পাঠিয়েছেন এবং বাতিল করেছেন} other {{joinerName} গ্রুপ লিংকের মাধ্যমে যোগ দেওয়ার {numberOfRequests,number}-টি অনুরোধ পাঠিয়েছেন এবং বাতিল করেছেন}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "অ্যাডমিনের অনুমোদন নিষ্ক্রিয় থাকা অবস্থায় আপনি গ্রুপ লিংকটি চালু করেছেন।"
   },
@@ -3535,6 +3517,21 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "\"Signal-এ অনুদান দিন\" ট্যাপ করুন এবং সাবস্ক্রাইব করুন"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "মেসেজ সিঙ্ক করা হচ্ছে"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "{totalSize}-এর মধ্যে {currentSize} ({fractionComplete,number,percent}) ডাউনলোড হচ্ছে..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "আপনার ব্যাকআপের আকারের উপর নির্ভর করে এতে কয়েক মিনিট সময় নিতে পারে"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Restoring media"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize} of {totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "প্রসারিত করুন"
@@ -3956,11 +3953,11 @@
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": ".5"
   },
-  "icu:emptyInboxMessage": {
-    "messageformat": "উপরের {composeIcon}-এ ক্লিক করুন এবং মেসেজ পাঠানোর জন্য আপনার কন্ট্যাক্ট বা গ্রুপ খুঁজুন।"
+  "icu:emptyInbox__title": {
+    "messageformat": "কোন চ্যাট নেই"
   },
-  "icu:composeIcon": {
-    "messageformat": "লিখুন বোতাম"
+  "icu:emptyInbox__subtitle": {
+    "messageformat": "সাম্প্রতিক চ্যাট এখানে দেখানো হবে।"
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "ফরওয়ার্ড করুন"
@@ -4850,6 +4847,12 @@
   "icu:Stories__list-empty": {
     "messageformat": "এই মুহূর্তে দেখানোর মতো কোনো সাম্প্রতিক স্টোরি নেই"
   },
+  "icu:Stories__list__empty--title": {
+    "messageformat": "কোনো স্টোরি নেই"
+  },
+  "icu:Stories__list__empty--subtitle": {
+    "messageformat": "নতুন আপডেট এখানে দেখানো হবে।"
+  },
   "icu:Stories__list--sending": {
     "messageformat": "পাঠানো হচ্ছে…"
   },
@@ -4864,6 +4867,12 @@
   },
   "icu:Stories__placeholder--text": {
     "messageformat": "একটি স্টোরি দেখতে ভিউ-তে ক্লিক করুন"
+  },
+  "icu:Stories__placeholder-with-icon--text": {
+    "messageformat": "কোনও আপডেট যোগ করতে <newStoryIcon>স্টোরি যোগ করুন</newStoryIcon>-এ ক্লিক করুন।"
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "একটি আপডেট যোগ করতে <newStoryButtonIcon></newStoryButtonIcon>-এ ক্লিক করুন।"
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} থেকে {group}"
@@ -5106,6 +5115,12 @@
     "messageformat": "রিপ্লাই"
   },
   "icu:StoryViewsNRepliesModal__reacted": {
+    "messageformat": "স্টোরিতে রিঅ্যাক্ট করেছেন"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "স্টোরিতে রিঅ্যাক্ট করেছেন"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
     "messageformat": "স্টোরিতে রিঅ্যাক্ট করেছেন"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
@@ -5406,6 +5421,12 @@
   "icu:CallsTab__EmptyStateText": {
     "messageformat": "দেখতে বা কল শুরু করতে ক্লিক করুন"
   },
+  "icu:CallsTab__EmptyStateText--with-icon": {
+    "messageformat": "নতুন ভয়েস বা ভিডিও কল শুরু করতে <newCallIcon>নতুন কল</newCallIcon>-এ ক্লিক করুন।"
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "একটি নতুন ভয়েস বা ভিডিও কল শুরু করতে <newCallButtonIcon></newCallButtonIcon>এ ক্লিক করুন।"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "অনুসন্ধান"
   },
@@ -5417,6 +5438,18 @@
   },
   "icu:CallsList__EmptyState--noQuery": {
     "messageformat": "কোনো সাম্প্রতিক কল নেই। একজন বন্ধুকে কল দিয়ে শুরু করুন।"
+  },
+  "icu:CallsList__EmptyState--noQuery__title": {
+    "messageformat": "কোন কল নেই"
+  },
+  "icu:CallsList__EmptyState--noQuery__subtitle": {
+    "messageformat": "সাম্প্রতিক কল এখানে দেখানো হবে।"
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__title": {
+    "messageformat": "কোনো মিসড কল নেই"
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
+    "messageformat": "মিসড কল এখানে দেখানো হবে।"
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "“{query}”-এর জন্য কোনো ফলাফল পাওয়া যায়নি"
@@ -5435,9 +5468,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "প্রত্যাখ্যান করা হয়েছে"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "গ্রুপ কল"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "কলের লিংক"
@@ -5462,21 +5492,6 @@
   },
   "icu:CallsNewCallButton--return": {
     "messageformat": "ফিরে যান"
-  },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "কোনো নতুন কলে যোগ দেওয়ার আগে আপনাকে অবশ্যই বর্তমান কলটি কেটে দিতে হবে"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {ভয়েস কল যাচ্ছে} other {ভয়েস কল আসছে}}} Video {{direction, select, Outgoing {ভিডিও কল যাচ্ছে} other {ভিডিও কল আসছে}}} Group {{direction, select, Outgoing {আউটগোয়িং গ্রুপ কল} other {ইনকামিং গ্রুপ কল}}} other {{direction, select, Outgoing {আউটগোয়িং কল} other {আগত কল}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {মিসড ভয়েস কল} Video {ভিডিও কল মিস হয়েছে} Group {মিসড গ্রুপ কল} other {ব্যর্থ কল}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {উত্তর না দেওয়া ভয়েস কল} Video {উত্তর না দেওয়া ভিডিও কল} Group {উত্তর দেওয়া হয়নি এমন গ্ৰুপ কল} other {উত্তর দেওয়া হয়নি এমন কল}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {প্রত্যাখ্যান করা হয়েছে এমন ভয়েস কল} Video {প্রত্যাখ্যান করা হয়েছে এমন ভিডিও কল} Group {প্রত্যাখ্যান করা হয়েছে এমন গ্ৰুপ কল} other {প্রত্যাখ্যান করা হয়েছে এমন কল}}"
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "কলের লিংক"
@@ -5512,19 +5527,19 @@
     "messageformat": "Signal-এর মাধ্যমে লিংক শেয়ার করুন"
   },
   "icu:CallLinkDetails__DeleteLink": {
-    "messageformat": "Delete link"
+    "messageformat": "লিংক মুছে ফেলুন"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Title": {
-    "messageformat": "Delete call link?"
+    "messageformat": "কলের লিংক মুছে ফেলতে চান?"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Body": {
-    "messageformat": "This link will no longer work for anyone who has it."
+    "messageformat": "কারো কাছে এই লিংকটি থাকলে তা আর কাজ করবে না।"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
-    "messageformat": "Cancel"
+    "messageformat": "বাতিল করুন"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
-    "messageformat": "Delete"
+    "messageformat": "মুছে ফেলুন"
   },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "কল লিংকের বিস্তারিত"
@@ -5596,19 +5611,13 @@
     "messageformat": "ছোট ছোট কিছু পরিবর্তন, বাগ সংশোধন এবং পারফর্মেন্স সমৃদ্ধ করা হয়েছে। Signal ব্যবহার করার জন্য ধন্যবাদ!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "কখনও কখনও দ্রুত অনানুষ্ঠানিক বিদায় দীর্ঘ আনুষ্ঠানিক বিদায়ের চেয়ে সহজ হয়, তাই আমরা বড় মেসেজ থ্রেডগুলি মুছে ফেলার প্রক্রিয়াটিকে ত্বরান্বিত করেছি৷"
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "আরেক রাউন্ড পারফরম্যান্সের উন্নতির সুবাদে চ্যাট এখন আগের চেয়ে দ্রুত খোলে।"
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "একটি কলের মধ্যে আরেকটি কল চলে আসলে বর্তমান কলটি কেটে নতুন কলে যোগ দেয়ার জন্য আমরা একটি শর্টকাট যোগ করেছি৷ আপনি আগের কলটি কেটে দিতে চান কিনা তা জানতে চাওয়া হবে এবং কলটি কাটা বা না কাটা সম্পূর্ণ আপনার ব্যাপার।"
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "আমরা আরো কিছু বাগও সংশোধন করেছি, যার মধ্যে একটি হলো - কখনো কখনো \"অচেনা কন্টাক্ট একটি ভিডিও কল শুরু করেছে\" নোটিফিকেশনটি আপনি কল শুরু করার পরে চ্যাট তালিকার সারাংশে দেখা যেতো।"
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "এই আপডেটের ফলে যেইসব ব্যবহারকারীর লোক্যাল হিসেবে `POSIX` সেট করা আছে তাদের Linux-এর স্টার্টআপ ক্র্যাশের সমস্যাটিও ঠিক হয়ে যাবে।"
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "This update fixes a bug where viewing a missed call on one device wouldn't automatically clear the indicator for that missed call on your other devices, which was a missed opportunity for your missed call list to better coexist."
   }
 }

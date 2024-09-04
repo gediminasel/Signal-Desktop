@@ -35,6 +35,7 @@ import { ChallengeHandler } from './challenge';
 import * as durations from './util/durations';
 import { drop } from './util/drop';
 import { explodePromise } from './util/explodePromise';
+import type { ExplodePromiseResultType } from './util/explodePromise';
 import { isWindowDragElement } from './util/isWindowDragElement';
 import { assertDev, strictAssert } from './util/assert';
 import { filter } from './util/iterables';
@@ -47,11 +48,6 @@ import {
   update as updateExpiringMessagesService,
 } from './services/expiringMessagesDeletion';
 import { tapToViewMessagesDeletionService } from './services/tapToViewMessagesDeletionService';
-import { getStoriesForRedux, loadStories } from './services/storyLoader';
-import {
-  getDistributionListsForRedux,
-  loadDistributionLists,
-} from './services/distributionListLoader';
 import { senderCertificateService } from './services/senderCertificate';
 import { GROUP_CREDENTIALS_KEY } from './services/groupCredentialFetcher';
 import * as KeyboardLayout from './services/keyboardLayout';
@@ -111,7 +107,6 @@ import { UpdateKeysListener } from './textsecure/UpdateKeysListener';
 import { isDirectConversation } from './util/whatTypeOfConversation';
 import { BackOff, FIBONACCI_TIMEOUTS } from './util/BackOff';
 import { AppViewType } from './state/ducks/app';
-import type { BadgesStateType } from './state/ducks/badges';
 import { areAnyCallsActiveOrRinging } from './state/selectors/calling';
 import { badgeImageFileDownloader } from './badges/badgeImageFileDownloader';
 import * as Deletes from './messageModifiers/Deletes';
@@ -130,6 +125,8 @@ import type { SendStateByConversationId } from './messages/MessageSendState';
 import { SendStatus } from './messages/MessageSendState';
 import * as Stickers from './types/Stickers';
 import * as Errors from './types/errors';
+import { InstallScreenStep } from './types/InstallScreen';
+import { getEnvironment } from './environment';
 import { SignalService as Proto } from './protobuf';
 import {
   onRetryRequest,
@@ -147,10 +144,8 @@ import {
 import { isAciString } from './util/isAciString';
 import { normalizeAci } from './util/normalizeAci';
 import * as log from './logging/log';
-import { loadRecentEmojis } from './util/loadRecentEmojis';
 import { deleteAllLogs } from './util/deleteAllLogs';
 import { startInteractionMode } from './services/InteractionMode';
-import type { MainWindowStatsType } from './windows/context';
 import { ReactionSource } from './reactions/ReactionSource';
 import { singleProtoJobQueue } from './jobs/singleProtoJobQueue';
 import {
@@ -177,26 +172,15 @@ import {
 import { RetryPlaceholders } from './util/retryPlaceholders';
 import { setBatchingStrategy } from './util/messageBatcher';
 import { parseRemoteClientExpiration } from './util/parseRemoteClientExpiration';
-import { makeLookup } from './util/makeLookup';
 import { addGlobalKeyboardShortcuts } from './services/addGlobalKeyboardShortcuts';
 import { createEventHandler } from './quill/signal-clipboard/util';
 import { onCallLogEventSync } from './util/onCallLogEventSync';
-import {
-  getCallsHistoryForRedux,
-  getCallsHistoryUnreadCountForRedux,
-  loadCallsHistory,
-} from './services/callHistoryLoader';
-import {
-  getCallLinksForRedux,
-  loadCallLinks,
-} from './services/callLinksLoader';
 import { backupsService } from './services/backups';
 import {
   getCallIdFromEra,
   updateLocalGroupCallHistoryTimestamp,
 } from './util/callDisposition';
 import { deriveStorageServiceKey } from './Crypto';
-import { getThemeType } from './util/getThemeType';
 import { AttachmentDownloadManager } from './jobs/AttachmentDownloadManager';
 import { onCallLinkUpdateSync } from './util/onCallLinkUpdateSync';
 import { CallMode } from './types/CallDisposition';
@@ -209,6 +193,8 @@ import { AttachmentBackupManager } from './jobs/AttachmentBackupManager';
 import { getConversationIdForLogging } from './util/idForLogging';
 import { encryptConversationAttachments } from './util/encryptConversationAttachments';
 import { DataReader, DataWriter } from './sql/Client';
+import { restoreRemoteConfigFromStorage } from './RemoteConfig';
+import { getParametersForRedux, loadAll } from './services/allLoaders';
 
 export function isOverHourIntoPast(timestamp: number): boolean {
   return isNumber(timestamp) && isOlderThan(timestamp, HOUR);
@@ -252,13 +238,6 @@ export async function startApp(): Promise<void> {
   });
 
   await initializeMessageCounter();
-
-  let initialBadgesState: BadgesStateType = { byId: {} };
-  async function loadInitialBadgesState(): Promise<void> {
-    initialBadgesState = {
-      byId: makeLookup(await DataReader.getAllBadges(), 'id'),
-    };
-  }
 
   // Initialize WebAPI as early as possible
   let server: WebAPIType | undefined;
@@ -370,7 +349,7 @@ export async function startApp(): Promise<void> {
   const { upgradeMessageSchema } = window.Signal.Migrations;
 
   log.info('background page reloaded');
-  log.info('environment:', window.getEnvironment());
+  log.info('environment:', getEnvironment());
 
   let newVersion = false;
   let lastVersion: string | undefined;
@@ -501,6 +480,7 @@ export async function startApp(): Promise<void> {
     }
     first = false;
 
+    restoreRemoteConfigFromStorage();
     server = window.WebAPI.connect({
       ...window.textsecure.storage.user.getWebAPICredentials(),
       hasStoriesDisabled: window.storage.get('hasStoriesDisabled', false),
@@ -891,14 +871,6 @@ export async function startApp(): Promise<void> {
         ]);
       }
 
-      if (window.isBeforeVersion(lastVersion, 'v1.26.0')) {
-        // Ensure that we re-register our support for sealed sender
-        await window.storage.put(
-          'hasRegisterSupportForUnauthenticatedDelivery',
-          false
-        );
-      }
-
       if (window.isBeforeVersion(lastVersion, 'v1.32.0-beta.4')) {
         drop(DataWriter.ensureFilePermissions());
       }
@@ -960,6 +932,12 @@ export async function startApp(): Promise<void> {
         await window.storage.remove('sendEditWarningShown');
         await window.storage.remove('formattingWarningShown');
       }
+
+      if (window.isBeforeVersion(lastVersion, 'v7.21.0-beta.1')) {
+        await window.storage.remove(
+          'hasRegisterSupportForUnauthenticatedDelivery'
+        );
+      }
     }
 
     setAppLoadingScreenMessage(
@@ -1010,6 +988,8 @@ export async function startApp(): Promise<void> {
             upgradeMessageSchema,
             getMessagesNeedingUpgrade: DataReader.getMessagesNeedingUpgrade,
             saveMessages: DataWriter.saveMessages,
+            incrementMessagesMigrationAttempts:
+              DataWriter.incrementMessagesMigrationAttempts,
           });
           log.info('idleDetector/idle: Upgraded messages:', batchWithIndex);
           isMigrationWithIndexComplete = batchWithIndex.done;
@@ -1103,20 +1083,9 @@ export async function startApp(): Promise<void> {
       reportLongRunningTasks();
     }, FIVE_MINUTES);
 
-    let mainWindowStats = {
-      isMaximized: false,
-      isFullScreen: false,
-    };
-
-    let menuOptions = {
-      development: false,
-      devTools: false,
-      includeSetup: false,
-      isProduction: true,
-      platform: 'unknown',
-    };
-
-    let theme: ThemeType = window.systemTheme;
+    setInterval(() => {
+      drop(window.Events.cleanupDownloads());
+    }, DAY);
 
     try {
       // This needs to load before we prime the data because we expect
@@ -1125,23 +1094,8 @@ export async function startApp(): Promise<void> {
 
       await Promise.all([
         window.ConversationController.getOrCreateSignalConversation(),
-        Stickers.load(),
-        loadRecentEmojis(),
-        loadInitialBadgesState(),
-        loadStories(),
-        loadDistributionLists(),
-        loadCallsHistory(),
-        loadCallLinks(),
         window.textsecure.storage.protocol.hydrateCaches(),
-        (async () => {
-          mainWindowStats = await window.SignalContext.getMainWindowStats();
-        })(),
-        (async () => {
-          menuOptions = await window.SignalContext.getMenuOptions();
-        })(),
-        (async () => {
-          theme = await getThemeType();
-        })(),
+        loadAll(),
       ]);
       await window.ConversationController.checkForConflicts();
     } catch (error) {
@@ -1150,7 +1104,7 @@ export async function startApp(): Promise<void> {
         Errors.toLogFormat(error)
       );
     } finally {
-      setupAppState({ mainWindowStats, menuOptions, theme });
+      setupAppState();
       drop(start());
       window.Signal.Services.initializeNetworkObserver(
         window.reduxActions.network
@@ -1182,26 +1136,8 @@ export async function startApp(): Promise<void> {
   log.info('Storage fetch');
   drop(window.storage.fetch());
 
-  function setupAppState({
-    mainWindowStats,
-    menuOptions,
-    theme,
-  }: {
-    mainWindowStats: MainWindowStatsType;
-    menuOptions: MenuOptionsType;
-    theme: ThemeType;
-  }) {
-    initializeRedux({
-      callLinks: getCallLinksForRedux(),
-      callsHistory: getCallsHistoryForRedux(),
-      callsHistoryUnreadCount: getCallsHistoryUnreadCountForRedux(),
-      initialBadgesState,
-      mainWindowStats,
-      menuOptions,
-      stories: getStoriesForRedux(),
-      storyDistributionLists: getDistributionListsForRedux(),
-      theme,
-    });
+  function setupAppState() {
+    initializeRedux(getParametersForRedux());
 
     // Here we set up a full redux store with initial state for our LeftPane Root
     const convoCollection = window.getConversations();
@@ -1308,7 +1244,7 @@ export async function startApp(): Promise<void> {
 
   window.Whisper.events.on('setupAsNewDevice', () => {
     window.IPC.readyForUpdates();
-    window.reduxActions.app.openInstaller();
+    window.reduxActions.installer.startInstaller();
   });
 
   window.Whisper.events.on('setupAsStandalone', () => {
@@ -1376,6 +1312,12 @@ export async function startApp(): Promise<void> {
   });
 
   async function runStorageService() {
+    if (window.storage.get('backupDownloadPath')) {
+      log.info(
+        'background: not running storage service while downloading backup'
+      );
+      return;
+    }
     StorageService.enableStorageService();
     StorageService.runStorageServiceSyncJob();
   }
@@ -1462,7 +1404,7 @@ export async function startApp(): Promise<void> {
       log.info(`Startup/syncTasks: Queueing ${syncTasks.length} sync tasks`);
       await queueSyncTasks(syncTasks, DataWriter.removeSyncTaskById);
 
-      log.info('`Startup/syncTasks: Done');
+      log.info('Startup/syncTasks: Done');
     }
 
     log.info('listening for registration events');
@@ -1520,10 +1462,14 @@ export async function startApp(): Promise<void> {
 
     if (isCoreDataValid && Registration.everDone()) {
       drop(connect());
-      window.reduxActions.app.openInbox();
+      if (window.storage.get('backupDownloadPath')) {
+        window.reduxActions.installer.showBackupImport();
+      } else {
+        window.reduxActions.app.openInbox();
+      }
     } else {
       window.IPC.readyForUpdates();
-      window.reduxActions.app.openInstaller();
+      window.reduxActions.installer.startInstaller();
     }
 
     const { activeWindowService } = window.SignalContext;
@@ -1574,6 +1520,8 @@ export async function startApp(): Promise<void> {
     afterStart();
   }
 
+  const backupReady = explodePromise<void>();
+
   function afterStart() {
     strictAssert(messageReceiver, 'messageReceiver must be initialized');
     strictAssert(server, 'server must be initialized');
@@ -1609,13 +1557,17 @@ export async function startApp(): Promise<void> {
       drop(messageReceiver?.drain());
 
       if (hasAppEverBeenRegistered) {
-        if (
-          window.reduxStore.getState().app.appView === AppViewType.Installer
-        ) {
-          log.info(
-            'background: offline, but app has been registered before; opening inbox'
-          );
-          window.reduxActions.app.openInbox();
+        const state = window.reduxStore.getState();
+        if (state.app.appView === AppViewType.Installer) {
+          if (state.installer.step === InstallScreenStep.LinkInProgress) {
+            log.info(
+              'background: offline, but app has been registered before; opening inbox'
+            );
+            window.reduxActions.app.openInbox();
+          } else if (state.installer.step === InstallScreenStep.BackupImport) {
+            log.warn('background: offline, but app has needs to import backup');
+            // TODO: DESKTOP-7584
+          }
         }
 
         if (!hasInitialLoadCompleted) {
@@ -1636,7 +1588,45 @@ export async function startApp(): Promise<void> {
       onOffline();
     }
 
+    drop(downloadBackup());
+  }
+
+  async function downloadBackup() {
+    strictAssert(server != null, 'server must be initialized');
+    strictAssert(
+      messageReceiver != null,
+      'MessageReceiver must be initialized'
+    );
+
+    const backupDownloadPath = window.storage.get('backupDownloadPath');
+    if (!backupDownloadPath) {
+      log.warn('downloadBackup: no backup download path, skipping');
+      backupReady.resolve();
+      server.registerRequestHandler(messageReceiver);
+      drop(runStorageService());
+      return;
+    }
+
+    const absoluteDownloadPath =
+      window.Signal.Migrations.getAbsoluteDownloadsPath(backupDownloadPath);
+    log.info('downloadBackup: downloading...');
+    const hasBackup = await backupsService.download(absoluteDownloadPath, {
+      onProgress: (currentBytes, totalBytes) => {
+        window.reduxActions.installer.updateBackupImportProgress({
+          currentBytes,
+          totalBytes,
+        });
+      },
+    });
+    await window.storage.remove('backupDownloadPath');
+
+    log.info(`downloadBackup: done, had backup=${hasBackup}`);
+
+    // Start storage service sync, etc
+    log.info('downloadBackup: processing websocket messages, storage service');
+    backupReady.resolve();
     server.registerRequestHandler(messageReceiver);
+    drop(runStorageService());
   }
 
   window.getSyncRequest = (timeoutMillis?: number) => {
@@ -1702,14 +1692,29 @@ export async function startApp(): Promise<void> {
   }
 
   let connectCount = 0;
-  let connecting = false;
+  let connectPromise: ExplodePromiseResultType<void> | undefined;
   let remotelyExpired = false;
   async function connect(firstRun?: boolean) {
-    if (connecting) {
+    if (connectPromise && !firstRun) {
       log.warn('background: connect already running', {
         connectCount,
         firstRun,
       });
+      return;
+    }
+    if (connectPromise && firstRun) {
+      while (connectPromise) {
+        log.warn(
+          'background: connect already running; waiting for previous run',
+          {
+            connectCount,
+            firstRun,
+          }
+        );
+        // eslint-disable-next-line no-await-in-loop
+        await connectPromise.promise;
+      }
+      await connect(firstRun);
       return;
     }
 
@@ -1720,9 +1725,10 @@ export async function startApp(): Promise<void> {
 
     strictAssert(server !== undefined, 'WebAPI not connected');
 
-    try {
-      connecting = true;
+    await backupReady.promise;
 
+    try {
+      connectPromise = explodePromise();
       // Reset the flag and update it below if needed
       setIsInitialSync(false);
 
@@ -1798,12 +1804,13 @@ export async function startApp(): Promise<void> {
         window.textsecure.storage.user.getDeviceId() !== 1
       ) {
         log.info('Boot after upgrading. Requesting contact sync');
-        window.getSyncRequest();
-
-        void StorageService.reprocessUnknownFields();
-        void runStorageService();
 
         try {
+          window.getSyncRequest();
+
+          void StorageService.reprocessUnknownFields();
+          void runStorageService();
+
           const manager = window.getAccountManager();
           await Promise.all([
             manager.maybeUpdateDeviceName(),
@@ -1811,21 +1818,8 @@ export async function startApp(): Promise<void> {
           ]);
         } catch (e) {
           log.error(
-            'Problem with account manager updates after starting new version: ',
+            "Problem with 'boot after upgrade' tasks: ",
             Errors.toLogFormat(e)
-          );
-        }
-      }
-
-      const udSupportKey = 'hasRegisterSupportForUnauthenticatedDelivery';
-      if (!window.storage.get(udSupportKey)) {
-        try {
-          await server.registerSupportForUnauthenticatedDelivery();
-          await window.storage.put(udSupportKey, true);
-        } catch (error) {
-          log.error(
-            'Error: Unable to register for unauthenticated delivery support.',
-            Errors.toLogFormat(error)
           );
         }
       }
@@ -1843,6 +1837,7 @@ export async function startApp(): Promise<void> {
           //   after connect on every startup
           await server.registerCapabilities({
             deleteSync: true,
+            versionedExpirationTimer: true,
           });
         } catch (error) {
           log.error(
@@ -1937,9 +1932,8 @@ export async function startApp(): Promise<void> {
         setIsInitialSync(false);
 
         // Switch to inbox view even if contact sync is still running
-        if (
-          window.reduxStore.getState().app.appView === AppViewType.Installer
-        ) {
+        const state = window.reduxStore.getState();
+        if (state.app.appView === AppViewType.Installer) {
           log.info('firstRun: opening inbox');
           window.reduxActions.app.openInbox();
         } else {
@@ -1975,6 +1969,17 @@ export async function startApp(): Promise<void> {
         }
 
         log.info('firstRun: done');
+      } else {
+        const state = window.reduxStore.getState();
+        if (
+          state.app.appView === AppViewType.Installer &&
+          state.installer.step === InstallScreenStep.BackupImport
+        ) {
+          log.info('notFirstRun: opening inbox after backup import');
+          window.reduxActions.app.openInbox();
+        } else {
+          log.info('notFirstRun: not opening inbox');
+        }
       }
 
       window.storage.onready(async () => {
@@ -1989,7 +1994,15 @@ export async function startApp(): Promise<void> {
 
       reconnectBackOff.reset();
     } finally {
-      connecting = false;
+      if (connectPromise) {
+        connectPromise.resolve();
+        connectPromise = undefined;
+      } else {
+        log.warn('background connect: in finally, no connectPromise!', {
+          connectCount,
+          firstRun,
+        });
+      }
     }
   }
 
@@ -2367,10 +2380,13 @@ export async function startApp(): Promise<void> {
     const { data, confirm } = event;
 
     const messageDescriptor = getMessageDescriptor({
-      message: data.message,
       // 'message' event: for 1:1 converations, the conversation is same as sender
       destination: data.source,
       destinationServiceId: data.sourceAci,
+      envelopeId: data.envelopeId,
+      message: data.message,
+      source: data.sourceAci ?? data.source,
+      sourceDevice: data.sourceDevice,
     });
 
     const { PROFILE_KEY_UPDATE } = Proto.DataMessage.Flags;
@@ -2712,18 +2728,26 @@ export async function startApp(): Promise<void> {
 
   // Works with 'sent' and 'message' data sent from MessageReceiver
   const getMessageDescriptor = ({
-    message,
     destination,
     destinationServiceId,
+    envelopeId,
+    message,
+    source,
+    sourceDevice,
   }: {
-    message: ProcessedDataMessage;
     destination?: string;
     destinationServiceId?: ServiceIdString;
+    envelopeId: string;
+    message: ProcessedDataMessage;
+    source: string | undefined;
+    sourceDevice: number | undefined;
   }): MessageDescriptor => {
+    const logId = `getMessageDescriptor/${source}.${sourceDevice}-${envelopeId}`;
+
     if (message.groupV2) {
       const { id } = message.groupV2;
       if (!id) {
-        throw new Error('getMessageDescriptor: GroupV2 data was missing an id');
+        throw new Error(`${logId}: GroupV2 data was missing an id`);
       }
 
       // First we check for an existing GroupV2 group
@@ -2758,10 +2782,15 @@ export async function startApp(): Promise<void> {
       };
     }
 
-    const conversation = window.ConversationController.get(
-      destinationServiceId || destination
+    const id = destinationServiceId || destination;
+    strictAssert(
+      id,
+      `${logId}: We need some sort of destination for the conversation`
     );
-    strictAssert(conversation, 'Destination conversation cannot be created');
+    const conversation = window.ConversationController.getOrCreate(
+      id,
+      'private'
+    );
 
     return {
       type: Message.PRIVATE,
@@ -2803,6 +2832,8 @@ export async function startApp(): Promise<void> {
 
     const messageDescriptor = getMessageDescriptor({
       ...data,
+      source: sourceServiceId,
+      sourceDevice: data.device,
     });
 
     const { PROFILE_KEY_UPDATE } = Proto.DataMessage.Flags;
@@ -3089,6 +3120,10 @@ export async function startApp(): Promise<void> {
       );
     } finally {
       await Registration.markEverDone();
+
+      if (window.SignalCI) {
+        window.SignalCI.handleEvent('unlinkCleanupComplete', null);
+      }
     }
   }
 

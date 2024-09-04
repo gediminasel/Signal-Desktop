@@ -436,6 +436,12 @@ export type ConversationMessageType = ReadonlyDeep<{
   scrollToMessageId?: string;
   scrollToMessageCounter: number;
 }>;
+export type ConversationPreloadDataType = ReadonlyDeep<{
+  conversationId: string;
+  messages: ReadonlyArray<ReadonlyMessageAttributesType>;
+  metrics: MessageMetricsType;
+  unboundedFetch: boolean;
+}>;
 
 export type MessagesByConversationType = ReadonlyDeep<{
   [key: string]: ConversationMessageType | undefined;
@@ -551,6 +557,8 @@ export type ConversationsStateType = ReadonlyDeep<{
   // Note: it's very important that both of these locations are always kept up to date
   messagesLookup: MessageLookupType;
   messagesByConversation: MessagesByConversationType;
+
+  preloadData?: ConversationPreloadDataType;
 }>;
 
 // Helpers
@@ -604,6 +612,7 @@ const PUSH_PANEL = 'conversations/PUSH_PANEL';
 const POP_PANEL = 'conversations/POP_PANEL';
 const PANEL_ANIMATION_DONE = 'conversations/PANEL_ANIMATION_DONE';
 const PANEL_ANIMATION_STARTED = 'conversations/PANEL_ANIMATION_STARTED';
+export const MARK_READ = 'conversations/MARK_READ';
 export const MESSAGE_CHANGED = 'MESSAGE_CHANGED';
 export const MESSAGE_DELETED = 'MESSAGE_DELETED';
 export const MESSAGE_EXPIRED = 'conversations/MESSAGE_EXPIRED';
@@ -771,6 +780,12 @@ type ConversationStoppedByMissingVerificationActionType = ReadonlyDeep<{
     conversationId: string;
     distributionId?: StoryDistributionIdString;
     untrustedServiceIds: ReadonlyArray<ServiceIdString>;
+  };
+}>;
+export type MarkReadActionType = ReadonlyDeep<{
+  type: typeof MARK_READ;
+  payload: {
+    conversationId: string;
   };
 }>;
 export type MessageChangedActionType = ReadonlyDeep<{
@@ -980,9 +995,20 @@ type ReplaceAvatarsActionType = ReadonlyDeep<{
     avatars: ReadonlyArray<AvatarDataType>;
   };
 }>;
+export type AddPreloadDataActionType = ReadonlyDeep<{
+  type: 'ADD_PRELOAD_DATA';
+  payload: ConversationPreloadDataType;
+}>;
+export type ConsumePreloadDataActionType = ReadonlyDeep<{
+  type: 'CONSUME_PRELOAD_DATA';
+  payload: {
+    conversationId: string;
+  };
+}>;
 
 // eslint-disable-next-line local-rules/type-alias-readonlydeep
 export type ConversationActionType =
+  | AddPreloadDataActionType
   | CancelVerificationDataByConversationActionType
   | ClearCancelledVerificationActionType
   | ClearGroupCreationErrorActionType
@@ -998,6 +1024,7 @@ export type ConversationActionType =
   | ComposeDeleteAvatarActionType
   | ComposeReplaceAvatarsActionType
   | ComposeSaveAvatarActionType
+  | ConsumePreloadDataActionType
   | ConversationAddedActionType
   | ConversationChangedActionType
   | ConversationRemovedActionType
@@ -1008,6 +1035,7 @@ export type ConversationActionType =
   | CreateGroupRejectedActionType
   | CustomColorRemovedActionType
   | DiscardMessagesActionType
+  | MarkReadActionType
   | MessageChangedActionType
   | MessageDeletedActionType
   | MessageExpandedActionType
@@ -1058,6 +1086,7 @@ export const actions = {
   acceptConversation,
   acknowledgeGroupMemberNameCollisions,
   addMembersToGroup,
+  addPreloadData,
   approvePendingMembershipFromGroupV2,
   reportSpam,
   blockAndReportSpam,
@@ -1077,6 +1106,7 @@ export const actions = {
   composeDeleteAvatarFromDisk,
   composeReplaceAvatar,
   composeSaveAvatarToDisk,
+  consumePreloadData,
   conversationAdded,
   conversationChanged,
   conversationRemoved,
@@ -1102,6 +1132,7 @@ export const actions = {
   loadRecentMediaItems,
   markAttachmentAsCorrupted,
   markMessageRead,
+  markOpenConversationRead,
   messageChanged,
   messageDeleted,
   messageExpanded,
@@ -1203,6 +1234,7 @@ function onArchive(
       throw new Error('onArchive: Conversation not found!');
     }
 
+    const wasPinned = conversation.attributes.isPinned ?? false;
     conversation.setArchived(true);
 
     onConversationClosed(conversationId, 'archive')(
@@ -1217,13 +1249,15 @@ function onArchive(
         toastType: ToastType.ConversationArchived,
         parameters: {
           conversationId,
+          wasPinned,
         },
       },
     });
   };
 }
 function onUndoArchive(
-  conversationId: string
+  conversationId: string,
+  options: { wasPinned?: boolean } = {}
 ): ThunkAction<
   void,
   RootStateType,
@@ -1237,6 +1271,9 @@ function onUndoArchive(
     }
 
     conversation.setArchived(false);
+    if (options.wasPinned) {
+      conversation.pin();
+    }
     showConversation({
       conversationId,
     })(dispatch, getState, null);
@@ -1625,6 +1662,7 @@ function setDisappearingMessages(
       task: async () =>
         conversation.updateExpirationTimer(valueToSet, {
           reason: 'setDisappearingMessages',
+          version: undefined,
         }),
     });
     dispatch({
@@ -2861,6 +2899,26 @@ function conversationStoppedByMissingVerification(payload: {
   };
 }
 
+export function markOpenConversationRead(
+  conversationId: string
+): ThunkAction<void, RootStateType, unknown, MarkReadActionType> {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const { nav } = state;
+
+    if (nav.selectedNavTab !== NavTab.Chats) {
+      return;
+    }
+
+    dispatch({
+      type: MARK_READ,
+      payload: {
+        conversationId,
+      },
+    });
+  };
+}
+
 export function messageChanged(
   id: string,
   conversationId: string,
@@ -3020,6 +3078,33 @@ function messagesReset({
       messages,
       metrics,
       scrollToMessageId,
+    },
+  };
+}
+function addPreloadData(
+  preloadData: ConversationPreloadDataType
+): AddPreloadDataActionType {
+  const { messages, conversationId } = preloadData;
+  for (const message of messages) {
+    strictAssert(
+      message.conversationId === conversationId,
+      `addPreloadData(${conversationId}): invalid message conversationId ` +
+        `${message.conversationId}`
+    );
+  }
+
+  return {
+    type: 'ADD_PRELOAD_DATA',
+    payload: preloadData,
+  };
+}
+function consumePreloadData(
+  conversationId: string
+): ConsumePreloadDataActionType {
+  return {
+    type: 'CONSUME_PRELOAD_DATA',
+    payload: {
+      conversationId,
     },
   };
 }
@@ -4292,6 +4377,7 @@ function onConversationOpened(
   | SetQuotedMessageActionType
 > {
   return async (dispatch, getState) => {
+    const promises: Array<Promise<void>> = [];
     const conversation = window.ConversationController.get(conversationId);
     if (!conversation) {
       throw new Error('onConversationOpened: Conversation not found');
@@ -4323,7 +4409,7 @@ function onConversationOpened(
       );
     };
 
-    drop(loadAndUpdate());
+    promises.push(loadAndUpdate());
 
     dispatch(setComposerFocus(conversation.id));
 
@@ -4336,17 +4422,17 @@ function onConversationOpened(
       );
     }
 
-    drop(conversation.fetchLatestGroupV2Data());
+    promises.push(conversation.fetchLatestGroupV2Data());
     strictAssert(
       conversation.throttledMaybeMigrateV1Group !== undefined,
       'Conversation model should be initialized'
     );
-    drop(conversation.throttledMaybeMigrateV1Group());
+    promises.push(conversation.throttledMaybeMigrateV1Group());
     strictAssert(
       conversation.throttledFetchSMSOnlyUUID !== undefined,
       'Conversation model should be initialized'
     );
-    drop(conversation.throttledFetchSMSOnlyUUID());
+    promises.push(conversation.throttledFetchSMSOnlyUUID());
 
     const ourAci = window.textsecure.storage.user.getAci();
     if (
@@ -4362,13 +4448,18 @@ function onConversationOpened(
       });
     }
 
-    drop(conversation.updateVerified());
+    promises.push(conversation.updateVerified());
 
     replaceAttachments(
       conversation.get('id'),
       conversation.get('draftAttachments') || []
     )(dispatch, getState, undefined);
     dispatch(resetComposer(conversationId));
+
+    await Promise.all(promises);
+    if (window.SignalCI) {
+      window.SignalCI.handleEvent('conversationOpenComplete', null);
+    }
   };
 }
 
@@ -4798,6 +4889,94 @@ function updateNicknameAndNote(
     dispatch(conversationChanged(conversationId, conversation));
     conversationModel.captureChange('nicknameAndNote');
   };
+}
+
+function updateMessageLookup(
+  state: ConversationsStateType,
+  {
+    conversationId,
+    messages,
+    metrics,
+    scrollToMessageId,
+    unboundedFetch,
+  }: {
+    conversationId: string;
+    messages: ReadonlyArray<ReadonlyMessageAttributesType>;
+    metrics: MessageMetricsType;
+    scrollToMessageId?: string | undefined;
+    unboundedFetch: boolean;
+  }
+): ConversationsStateType {
+  const { messagesByConversation, messagesLookup } = state;
+  const existingConversation = messagesByConversation[conversationId];
+
+  const lookup = fromPairs(messages.map(message => [message.id, message]));
+  const sorted = orderBy(
+    values(lookup),
+    ['received_at', 'sent_at'],
+    ['ASC', 'ASC']
+  );
+
+  let { newest, oldest } = metrics;
+
+  // If our metrics are a little out of date, we'll fix them up
+  if (sorted.length > 0) {
+    const first = sorted[0];
+    if (first && (!oldest || first.received_at <= oldest.received_at)) {
+      oldest = pick(first, ['id', 'received_at', 'sent_at']);
+    }
+
+    const last = sorted[sorted.length - 1];
+    if (
+      last &&
+      (!newest || unboundedFetch || last.received_at >= newest.received_at)
+    ) {
+      newest = pick(last, ['id', 'received_at', 'sent_at']);
+    }
+  }
+
+  const messageIds = sorted.map(message => message.id);
+
+  return {
+    ...state,
+    preloadData: undefined,
+    ...(state.selectedConversationId === conversationId
+      ? {
+          targetedMessage: scrollToMessageId,
+          targetedMessageCounter: state.targetedMessageCounter + 1,
+          targetedMessageSource: TargetedMessageSource.Reset,
+        }
+      : {}),
+    messagesLookup: {
+      ...messagesLookup,
+      ...lookup,
+    },
+    messagesByConversation: {
+      ...messagesByConversation,
+      [conversationId]: {
+        messageChangeCounter: 0,
+        scrollToMessageId,
+        scrollToMessageCounter: existingConversation
+          ? existingConversation.scrollToMessageCounter + 1
+          : 0,
+        messageIds,
+        metrics: {
+          ...metrics,
+          newest,
+          oldest,
+        },
+      },
+    },
+  };
+}
+
+function dropPreloadData(
+  state: ConversationsStateType
+): ConversationsStateType {
+  if (state.preloadData == null) {
+    return state;
+  }
+  return { ...state, preloadData: undefined };
 }
 
 export function reducer(
@@ -5392,6 +5571,28 @@ export function reducer(
     };
   }
 
+  if (action.type === MARK_READ) {
+    const { conversationId } = action.payload;
+    const existingConversation = state.messagesByConversation[conversationId];
+
+    // We don't keep track of messages unless their conversation is loaded...
+    if (!existingConversation) {
+      return state;
+    }
+
+    return {
+      ...state,
+      messagesByConversation: {
+        ...state.messagesByConversation,
+        [conversationId]: {
+          ...existingConversation,
+          messageChangeCounter:
+            (existingConversation.messageChangeCounter || 0) + 1,
+        },
+      },
+    };
+  }
+
   if (action.type === MESSAGE_CHANGED) {
     const { id, conversationId, data } = action.payload;
     const existingConversation = state.messagesByConversation[conversationId];
@@ -5400,7 +5601,7 @@ export function reducer(
     if (!existingConversation) {
       return maybeUpdateSelectedMessageForDetails(
         { messageId: id, targetedMessageForDetails: data },
-        state
+        dropPreloadData(state)
       );
     }
 
@@ -5409,20 +5610,18 @@ export function reducer(
     if (!existingMessage) {
       return maybeUpdateSelectedMessageForDetails(
         { messageId: id, targetedMessageForDetails: data },
-        state
+        dropPreloadData(state)
       );
     }
 
     const conversationAttrs = state.conversationLookup[conversationId];
     const isGroupStoryReply = isGroup(conversationAttrs) && data.storyId;
     if (isGroupStoryReply) {
-      return state;
+      return dropPreloadData(state);
     }
 
     const hasNewEdit =
       existingMessage.editHistory?.length !== data.editHistory?.length ? 1 : 0;
-    const toIncrement = data.reactions?.length || hasNewEdit;
-
     const updatedMessage = {
       ...data,
       displayLimit: existingMessage.displayLimit,
@@ -5439,14 +5638,7 @@ export function reducer(
         },
         state
       ),
-      messagesByConversation: {
-        ...state.messagesByConversation,
-        [conversationId]: {
-          ...existingConversation,
-          messageChangeCounter:
-            (existingConversation.messageChangeCounter || 0) + toIncrement,
-        },
-      },
+      preloadData: undefined,
       messagesLookup: {
         ...state.messagesLookup,
         [id]: updatedMessage,
@@ -5519,74 +5711,28 @@ export function reducer(
   }
 
   if (action.type === 'MESSAGES_RESET') {
-    const {
-      conversationId,
-      messages,
-      metrics,
-      scrollToMessageId,
-      unboundedFetch,
-    } = action.payload;
-    const { messagesByConversation, messagesLookup } = state;
-
-    const existingConversation = messagesByConversation[conversationId];
-
-    const lookup = fromPairs(messages.map(message => [message.id, message]));
-    const sorted = orderBy(
-      values(lookup),
-      ['received_at', 'sent_at'],
-      ['ASC', 'ASC']
-    );
-
-    let { newest, oldest } = metrics;
-
-    // If our metrics are a little out of date, we'll fix them up
-    if (sorted.length > 0) {
-      const first = sorted[0];
-      if (first && (!oldest || first.received_at <= oldest.received_at)) {
-        oldest = pick(first, ['id', 'received_at', 'sent_at']);
-      }
-
-      const last = sorted[sorted.length - 1];
-      if (
-        last &&
-        (!newest || unboundedFetch || last.received_at >= newest.received_at)
-      ) {
-        newest = pick(last, ['id', 'received_at', 'sent_at']);
-      }
-    }
-
-    const messageIds = sorted.map(message => message.id);
-
+    return updateMessageLookup(state, action.payload);
+  }
+  if (action.type === 'ADD_PRELOAD_DATA') {
     return {
       ...state,
-      ...(state.selectedConversationId === conversationId
-        ? {
-            targetedMessage: scrollToMessageId,
-            targetedMessageCounter: state.targetedMessageCounter + 1,
-            targetedMessageSource: TargetedMessageSource.Reset,
-          }
-        : {}),
-      messagesLookup: {
-        ...messagesLookup,
-        ...lookup,
-      },
-      messagesByConversation: {
-        ...messagesByConversation,
-        [conversationId]: {
-          messageChangeCounter: 0,
-          scrollToMessageId,
-          scrollToMessageCounter: existingConversation
-            ? existingConversation.scrollToMessageCounter + 1
-            : 0,
-          messageIds,
-          metrics: {
-            ...metrics,
-            newest,
-            oldest,
-          },
-        },
-      },
+      preloadData: action.payload,
     };
+  }
+  if (action.type === 'CONSUME_PRELOAD_DATA') {
+    const { preloadData, selectedConversationId } = state;
+    const { conversationId } = action.payload;
+    if (!preloadData) {
+      return state;
+    }
+    if (
+      preloadData.conversationId !== conversationId ||
+      selectedConversationId !== conversationId
+    ) {
+      return dropPreloadData(state);
+    }
+
+    return updateMessageLookup(state, preloadData);
   }
   if (action.type === 'SET_MESSAGE_LOADING_STATE') {
     const { payload } = action;
@@ -5681,7 +5827,7 @@ export function reducer(
     if (!existingConversation) {
       return maybeUpdateSelectedMessageForDetails(
         { messageId: id, targetedMessageForDetails: undefined },
-        state
+        dropPreloadData(state)
       );
     }
 
@@ -5730,6 +5876,7 @@ export function reducer(
         { messageId: id, targetedMessageForDetails: undefined },
         state
       ),
+      preloadData: undefined,
       messagesLookup: omit(messagesLookup, id),
       messagesByConversation: {
         [conversationId]: {
@@ -5868,7 +6015,7 @@ export function reducer(
           );
         }
 
-        return state;
+        return dropPreloadData(state);
       }
     }
 
@@ -5913,6 +6060,7 @@ export function reducer(
 
     return {
       ...state,
+      preloadData: undefined,
       messagesLookup: {
         ...messagesLookup,
         ...lookup,
@@ -5983,6 +6131,10 @@ export function reducer(
 
     const nextState = {
       ...state,
+      preloadData:
+        state.preloadData?.conversationId === conversationId
+          ? state.preloadData
+          : undefined,
       hasContactSpoofingReview: false,
       selectedConversationId: conversationId,
       targetedMessage: messageId,

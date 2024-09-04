@@ -2,20 +2,19 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import React, { useEffect } from 'react';
-import { Globals } from '@react-spring/web';
 import classNames from 'classnames';
 
 import type { ViewStoryActionCreatorType } from '../state/ducks/stories';
 import type { VerificationTransport } from '../types/VerificationTransport';
 import { ThemeType } from '../types/Util';
-import { AppViewType } from '../state/ducks/app';
+import { missingCaseError } from '../util/missingCaseError';
+import { type AppStateType, AppViewType } from '../state/ducks/app';
 import { SmartInstallScreen } from '../state/smart/InstallScreen';
 import { StandaloneRegistration } from './StandaloneRegistration';
 import { usePageVisibility } from '../hooks/usePageVisibility';
-import { useReducedMotion } from '../hooks/useReducedMotion';
 
 type PropsType = {
-  appView: AppViewType;
+  state: AppStateType;
   openInbox: () => void;
   getCaptchaToken: () => Promise<string>;
   registerSingleDevice: (
@@ -49,7 +48,7 @@ type PropsType = {
 };
 
 export function App({
-  appView,
+  state,
   getCaptchaToken,
   hasSelectedStoryData,
   isFullScreen,
@@ -70,9 +69,9 @@ export function App({
 }: PropsType): JSX.Element {
   let contents;
 
-  if (appView === AppViewType.Installer) {
+  if (state.appView === AppViewType.Installer) {
     contents = <SmartInstallScreen />;
-  } else if (appView === AppViewType.Standalone) {
+  } else if (state.appView === AppViewType.Standalone) {
     const onComplete = () => {
       window.IPC.removeSetupMenuItems();
       openInbox();
@@ -87,8 +86,12 @@ export function App({
         uploadProfile={uploadProfile}
       />
     );
-  } else if (appView === AppViewType.Inbox) {
+  } else if (state.appView === AppViewType.Inbox) {
     contents = renderInbox();
+  } else if (state.appView === AppViewType.Blank) {
+    contents = undefined;
+  } else {
+    throw missingCaseError(state.appView);
   }
 
   // This are here so that themes are properly applied to anything that is
@@ -118,14 +121,6 @@ export function App({
   useEffect(() => {
     document.body.classList.toggle('page-is-visible', isPageVisible);
   }, [isPageVisible]);
-
-  // A11y settings for react-spring
-  const prefersReducedMotion = useReducedMotion();
-  useEffect(() => {
-    Globals.assign({
-      skipAnimation: prefersReducedMotion,
-    });
-  }, [prefersReducedMotion]);
 
   return (
     <div

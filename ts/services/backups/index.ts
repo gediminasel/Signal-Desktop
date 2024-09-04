@@ -5,7 +5,8 @@ import { pipeline } from 'stream/promises';
 import { PassThrough } from 'stream';
 import type { Readable, Writable } from 'stream';
 import { createReadStream, createWriteStream } from 'fs';
-import { unlink } from 'fs/promises';
+import { unlink, stat } from 'fs/promises';
+import { ensureFile } from 'fs-extra';
 import { join } from 'path';
 import { createGzip, createGunzip } from 'zlib';
 import { createCipheriv, createHmac, randomBytes } from 'crypto';
@@ -23,21 +24,29 @@ import { prependStream } from '../../util/prependStream';
 import { appendMacStream } from '../../util/appendMacStream';
 import { getIvAndDecipher } from '../../util/getIvAndDecipher';
 import { getMacAndUpdateHmac } from '../../util/getMacAndUpdateHmac';
+import { missingCaseError } from '../../util/missingCaseError';
 import { HOUR } from '../../util/durations';
 import { CipherType, HashType } from '../../types/Crypto';
 import * as Errors from '../../types/errors';
+import { HTTPError } from '../../textsecure/Errors';
 import { constantTimeEqual } from '../../Crypto';
 import { measureSize } from '../../AttachmentCrypto';
+import { isTestOrMockEnvironment } from '../../environment';
 import { BackupExportStream } from './export';
 import { BackupImportStream } from './import';
 import { getKeyMaterial } from './crypto';
 import { BackupCredentials } from './credentials';
-import { BackupAPI } from './api';
+import { BackupAPI, type DownloadOptionsType } from './api';
 import { validateBackup } from './validator';
 
 const IV_LENGTH = 16;
 
 const BACKUP_REFRESH_INTERVAL = 24 * HOUR;
+
+export enum BackupType {
+  Ciphertext = 'Ciphertext',
+  TestOnlyPlaintext = 'TestOnlyPlaintext',
+}
 
 export class BackupsService {
   private isStarted = false;
@@ -104,11 +113,18 @@ export class BackupsService {
   // Test harness
   public async exportToDisk(
     path: string,
-    backupLevel: BackupLevel = BackupLevel.Messages
+    backupLevel: BackupLevel = BackupLevel.Messages,
+    backupType = BackupType.Ciphertext
   ): Promise<number> {
-    const size = await this.exportBackup(createWriteStream(path), backupLevel);
+    const size = await this.exportBackup(
+      createWriteStream(path),
+      backupLevel,
+      backupType
+    );
 
-    await validateBackup(path, size);
+    if (backupType === BackupType.Ciphertext) {
+      await validateBackup(path, size);
+    }
 
     return size;
   }
@@ -129,53 +145,124 @@ export class BackupsService {
     return backupsService.importBackup(() => createReadStream(backupFile));
   }
 
-  public async importBackup(createBackupStream: () => Readable): Promise<void> {
+  public async download(
+    downloadPath: string,
+    { onProgress }: Omit<DownloadOptionsType, 'downloadOffset'>
+  ): Promise<boolean> {
+    let downloadOffset = 0;
+    try {
+      ({ size: downloadOffset } = await stat(downloadPath));
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        throw error;
+      }
+
+      // File is missing - start from the beginning
+    }
+
+    try {
+      await ensureFile(downloadPath);
+
+      const stream = await this.api.download({
+        downloadOffset,
+        onProgress,
+      });
+
+      await pipeline(
+        stream,
+        createWriteStream(downloadPath, {
+          flags: 'a',
+          start: downloadOffset,
+        })
+      );
+
+      try {
+        await this.importFromDisk(downloadPath);
+      } finally {
+        await unlink(downloadPath);
+      }
+    } catch (error) {
+      // No backup on the server
+      if (error instanceof HTTPError && error.code === 404) {
+        return false;
+      }
+
+      try {
+        await unlink(downloadPath);
+      } catch {
+        // Best-effort
+      }
+      throw error;
+    }
+
+    return true;
+  }
+
+  public async importBackup(
+    createBackupStream: () => Readable,
+    backupType = BackupType.Ciphertext
+  ): Promise<void> {
     strictAssert(!this.isRunning, 'BackupService is already running');
 
-    log.info('importBackup: starting...');
+    log.info(`importBackup: starting ${backupType}...`);
     this.isRunning = true;
 
     try {
-      const { aesKey, macKey } = getKeyMaterial();
+      const importStream = await BackupImportStream.create();
+      if (backupType === BackupType.Ciphertext) {
+        const { aesKey, macKey } = getKeyMaterial();
 
-      // First pass - don't decrypt, only verify mac
-      let hmac = createHmac(HashType.size256, macKey);
-      let theirMac: Uint8Array | undefined;
+        // First pass - don't decrypt, only verify mac
+        let hmac = createHmac(HashType.size256, macKey);
+        let theirMac: Uint8Array | undefined;
 
-      const sink = new PassThrough();
-      // Discard the data in the first pass
-      sink.resume();
+        const sink = new PassThrough();
+        // Discard the data in the first pass
+        sink.resume();
 
-      await pipeline(
-        createBackupStream(),
-        getMacAndUpdateHmac(hmac, theirMacValue => {
-          theirMac = theirMacValue;
-        }),
-        sink
-      );
+        await pipeline(
+          createBackupStream(),
+          getMacAndUpdateHmac(hmac, theirMacValue => {
+            theirMac = theirMacValue;
+          }),
+          sink
+        );
 
-      strictAssert(theirMac != null, 'importBackup: Missing MAC');
-      strictAssert(
-        constantTimeEqual(hmac.digest(), theirMac),
-        'importBackup: Bad MAC'
-      );
+        strictAssert(theirMac != null, 'importBackup: Missing MAC');
+        strictAssert(
+          constantTimeEqual(hmac.digest(), theirMac),
+          'importBackup: Bad MAC'
+        );
 
-      // Second pass - decrypt (but still check the mac at the end)
-      hmac = createHmac(HashType.size256, macKey);
+        // Second pass - decrypt (but still check the mac at the end)
+        hmac = createHmac(HashType.size256, macKey);
 
-      await pipeline(
-        createBackupStream(),
-        getMacAndUpdateHmac(hmac, noop),
-        getIvAndDecipher(aesKey),
-        createGunzip(),
-        new DelimitedStream(),
-        new BackupImportStream()
-      );
+        await pipeline(
+          createBackupStream(),
+          getMacAndUpdateHmac(hmac, noop),
+          getIvAndDecipher(aesKey),
+          createGunzip(),
+          new DelimitedStream(),
+          importStream
+        );
 
-      strictAssert(
-        constantTimeEqual(hmac.digest(), theirMac),
-        'importBackup: Bad MAC, second pass'
-      );
+        strictAssert(
+          constantTimeEqual(hmac.digest(), theirMac),
+          'importBackup: Bad MAC, second pass'
+        );
+      } else if (backupType === BackupType.TestOnlyPlaintext) {
+        strictAssert(
+          isTestOrMockEnvironment(),
+          'Plaintext backups can be imported only in test harness'
+        );
+        await pipeline(
+          createBackupStream(),
+          new DelimitedStream(),
+          importStream
+        );
+      } else {
+        throw missingCaseError(backupType);
+      }
 
       log.info('importBackup: finished...');
     } catch (error) {
@@ -183,6 +270,10 @@ export class BackupsService {
       throw error;
     } finally {
       this.isRunning = false;
+
+      if (window.SignalCI) {
+        window.SignalCI.handleEvent('backupImportComplete', null);
+      }
     }
   }
 
@@ -231,7 +322,8 @@ export class BackupsService {
 
   private async exportBackup(
     sink: Writable,
-    backupLevel: BackupLevel = BackupLevel.Messages
+    backupLevel: BackupLevel = BackupLevel.Messages,
+    backupType = BackupType.Ciphertext
   ): Promise<number> {
     strictAssert(!this.isRunning, 'BackupService is already running');
 
@@ -256,18 +348,28 @@ export class BackupsService {
 
       let totalBytes = 0;
 
-      await pipeline(
-        recordStream,
-        createGzip(),
-        appendPaddingStream(),
-        createCipheriv(CipherType.AES256CBC, aesKey, iv),
-        prependStream(iv),
-        appendMacStream(macKey),
-        measureSize(size => {
-          totalBytes = size;
-        }),
-        sink
-      );
+      if (backupType === BackupType.Ciphertext) {
+        await pipeline(
+          recordStream,
+          createGzip(),
+          appendPaddingStream(),
+          createCipheriv(CipherType.AES256CBC, aesKey, iv),
+          prependStream(iv),
+          appendMacStream(macKey),
+          measureSize(size => {
+            totalBytes = size;
+          }),
+          sink
+        );
+      } else if (backupType === BackupType.TestOnlyPlaintext) {
+        strictAssert(
+          isTestOrMockEnvironment(),
+          'Plaintext backups can be exported only in test harness'
+        );
+        await pipeline(recordStream, sink);
+      } else {
+        throw missingCaseError(backupType);
+      }
 
       return totalBytes;
     } finally {
@@ -281,7 +383,7 @@ export class BackupsService {
       await this.api.refresh();
       log.info('Backup: refreshed');
     } catch (error) {
-      log.error('Backup: periodic refresh kufailed', Errors.toLogFormat(error));
+      log.error('Backup: periodic refresh failed', Errors.toLogFormat(error));
     }
   }
 }

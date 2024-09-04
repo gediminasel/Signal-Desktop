@@ -80,12 +80,6 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "Versi pangkalan data anda tidak sepadan dengan versi Signal ini. Pastikan anda membuka versi terbaru Signal pada komputer anda."
   },
-  "icu:databaseError__recover__detail": {
-    "messageformat": "Ralat pangkalan data telah berlaku. Anda boleh menyalin ralat dan menghubungi sokongan Signal untuk membantu menyelesaikan isu tersebut. Jika anda perlu menggunakan Signal dengan segera, anda boleh cuba memulihkan data anda.\n\nHubungi sokongan dengan melayari: {link}"
-  },
-  "icu:databaseError__recover__button": {
-    "messageformat": "Pulihkan data"
-  },
   "icu:databaseError__safeStorageBackendChange": {
     "messageformat": "Tidak dapat mengakses kunci penyulitan pangkalan data kerana hujung belakang cincin kekunci penyulitan OS telah berubah daripada {previousBackend} kepada {currentBackend}. Ini boleh berlaku jika persekitaran desktop berubah, contohnya antara GNOME dan KDE.\n\nSila tukar ke persekitaran desktop sebelumnya."
   },
@@ -827,14 +821,8 @@
   "icu:mute": {
     "messageformat": "Redamkan"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal tidak dapat dikemas kini. {retry} atau layari {url} untuk memasangnya secara manual. Kemudian, {support} tentang masalah ini"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal tidak dapat dikemas kini. <retryUpdateButton>Cuba kemas kini semula</retryUpdateButton> atau layari {url} untuk memasangnya secara manual. Kemudian, <contactSupportLink>hubungi sokongan</contactSupportLink> tentang masalah ini"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal tidak dapat dikemas kini. Layari {url} untuk memasangnya secara manual. Kemudian, {support} tentang masalah ini"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal tidak dapat dikemas kini. Layari {url} untuk memasangnya secara manual. Kemudian, <contactSupportLink>hubungi sokongan</contactSupportLink> tentang masalah ini"
@@ -1223,9 +1211,6 @@
   "icu:calling__cant-join": {
     "messageformat": "Tidak dapat menyertai panggilan"
   },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "Anda sudah berada dalam panggilan."
-  },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "Tidak dapat mengambil maklumat pautan panggilan. Sila periksa sambungan rangkaian anda dan cuba lagi."
   },
@@ -1408,9 +1393,6 @@
   },
   "icu:calling__in-this-call": {
     "messageformat": "{people, plural, other {Dalam panggilan ini · {people,number} orang}}"
-  },
-  "icu:calling__you-have-blocked": {
-    "messageformat": "Anda telah menyekat {name}"
   },
   "icu:calling__blocked-participant": {
     "messageformat": "{name} telah disekat"
@@ -1843,9 +1825,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Cuba semula kemas kini"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "hubungi sokongan"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Klik untuk membuka semula Signal"
@@ -3362,6 +3341,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} meminta dan membatalkan {numberOfRequests,number} permintaan untuk menyertai melalui pautan kumpulan"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, other {{joinerName} meminta dan telah membatalkan {numberOfRequests,number} permintaan untuk menyertai melalui pautan kumpulan}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Anda telah menghidupkan pautan kumpulan dengan kelulusan pentadbir dinyahdayakan."
   },
@@ -3535,6 +3517,21 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "Ketik \"Derma kepada Signal\" dan langgan"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Menyegerakkan mesej"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Memuat turun {currentSize} daripada {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "Ini mungkin mengambil masa beberapa minit bergantung pada saiz sandaran anda"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Restoring media"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize} of {totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Kembangkan"
@@ -3956,11 +3953,11 @@
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": ".5"
   },
-  "icu:emptyInboxMessage": {
-    "messageformat": "Klik {composeIcon} di atas dan cari kenalan atau kumpulan anda untuk menghantar mesej."
+  "icu:emptyInbox__title": {
+    "messageformat": "Tiada sembang"
   },
-  "icu:composeIcon": {
-    "messageformat": "butang mengarang"
+  "icu:emptyInbox__subtitle": {
+    "messageformat": "Sembang terbaharu akan dipaparkan di sini."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Majukan Kepada"
@@ -4850,6 +4847,12 @@
   "icu:Stories__list-empty": {
     "messageformat": "Tiada cerita terkini untuk ditunjukkan sekarang"
   },
+  "icu:Stories__list__empty--title": {
+    "messageformat": "Tiada cerita"
+  },
+  "icu:Stories__list__empty--subtitle": {
+    "messageformat": "Kemas kini baharu akan dipaparkan di sini."
+  },
   "icu:Stories__list--sending": {
     "messageformat": "Menghantar..."
   },
@@ -4864,6 +4867,12 @@
   },
   "icu:Stories__placeholder--text": {
     "messageformat": "Klik untuk menonton cerita"
+  },
+  "icu:Stories__placeholder-with-icon--text": {
+    "messageformat": "Klik <newStoryIcon>Tambah cerita</newStoryIcon> untuk menambah kemas kini."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Klik <newStoryButtonIcon></newStoryButtonIcon> untuk menambah kemas kini."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} kepada {group}"
@@ -5106,6 +5115,12 @@
     "messageformat": "Balasan"
   },
   "icu:StoryViewsNRepliesModal__reacted": {
+    "messageformat": "Telah beri reaksi kepada cerita"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Telah beri reaksi kepada cerita"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
     "messageformat": "Telah beri reaksi kepada cerita"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
@@ -5406,6 +5421,12 @@
   "icu:CallsTab__EmptyStateText": {
     "messageformat": "Klik untuk melihat atau memulakan panggilan"
   },
+  "icu:CallsTab__EmptyStateText--with-icon": {
+    "messageformat": "Klik <newCallIcon>Panggilan Baharu</newCallIcon> untuk memulakan panggilan suara atau video baharu."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Klik <newCallButtonIcon></newCallButtonIcon> untuk memulakan panggilan suara atau video baharu."
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Cari"
   },
@@ -5417,6 +5438,18 @@
   },
   "icu:CallsList__EmptyState--noQuery": {
     "messageformat": "Tiada panggilan terbaru. Mulakan dengan menghubungi rakan."
+  },
+  "icu:CallsList__EmptyState--noQuery__title": {
+    "messageformat": "Tiada panggilan"
+  },
+  "icu:CallsList__EmptyState--noQuery__subtitle": {
+    "messageformat": "Panggilan terbaharu akan dipaparkan di sini."
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__title": {
+    "messageformat": "Tiada panggilan terlepas"
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
+    "messageformat": "Panggilan terlepas akan dipaparkan di sini."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Tiada hasil untuk “{query}”"
@@ -5435,9 +5468,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Tolak"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Panggilan kumpulan"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Pautan panggilan"
@@ -5462,21 +5492,6 @@
   },
   "icu:CallsNewCallButton--return": {
     "messageformat": "Kembali"
-  },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "Anda mesti meninggalkan panggilan semasa sebelum menyertai panggilan baharu"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {Panggilan suara keluar} other {Panggilan suara masuk}}} Video {{direction, select, Outgoing {Panggilan video keluar} other {Panggilan video masuk}}} Group {{direction, select, Outgoing {Panggilan kumpulan keluar} other {Panggilan kumpulan masuk}}} other {{direction, select, Outgoing {Panggilan keluar} other {Panggilan masuk}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {Panggilan suara terlepas} Video {Panggilan video tidak dijawab} Group {Panggilan kumpulan terlepas} other {Panggilan tidak dijawab}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {Panggilan suara tidak dijawab} Video {Panggilan video tidak dijawab} Group {Panggilan kumpulan tidak dijawab} other {Panggilan tidak dijawab}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {Panggilan suara ditolak} Video {Panggilan video ditolak} Group {Panggilan kumpulan ditolak} other {Panggilan ditolak}}"
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Pautan panggilan"
@@ -5512,19 +5527,19 @@
     "messageformat": "Kongsi pautan melalui Signal"
   },
   "icu:CallLinkDetails__DeleteLink": {
-    "messageformat": "Delete link"
+    "messageformat": "Padam pautan"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Title": {
-    "messageformat": "Delete call link?"
+    "messageformat": "Padam pautan panggilan?"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Body": {
-    "messageformat": "This link will no longer work for anyone who has it."
+    "messageformat": "Pautan ini tidak akan berfungsi lagi untuk sesiapa yang mempunyainya."
   },
   "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
-    "messageformat": "Cancel"
+    "messageformat": "Batal"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
-    "messageformat": "Delete"
+    "messageformat": "Padam"
   },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "Butiran pautan panggilan"
@@ -5596,19 +5611,13 @@
     "messageformat": "Sedikit pengubahsuaian, pembaikan pepijat dan peningkatan prestasi. Terima kasih kerana menggunakan Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "Keluaran ini mempercepatkan proses memadamkan urutan mesej yang besar."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Sembang kini boleh dibuka lebih pantas berbanding sebelum ini, disebabkan peningkatan prestasi yang dibuat."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "Kami telah menambahkan pintasan untuk meletakkan panggilan atau menyertai panggilan baharu apabila panggilan lain sedang berjalan."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "Kami juga membaiki beberapa pepijat, termasuk yang kadangkala menyebabkan \"Kenalan tidak diketahui memulakan panggilan video\" untuk muncul dalam ringkasan senarai sembang selepas memulakan panggilan."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "Kemas kini ini juga membaiki ranap permulaan pada Linux untuk pengguna yang tempatnya ditetapkan kepada 'POSIX'."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "This update fixes a bug where viewing a missed call on one device wouldn't automatically clear the indicator for that missed call on your other devices, which was a missed opportunity for your missed call list to better coexist."
   }
 }

@@ -80,12 +80,6 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "سىزنىڭ ساندانىڭىزنىڭ نەشرى Signalنىڭ بۇ نەشرىگە ماس كەلمەيدۇ. كومپيۇتېرىڭىزدا Signalنىڭ ئەڭ يېڭى نەشىرىنى ئېچىۋاتقانلىقىڭىزنى جەزملەشتۈرۈڭ."
   },
-  "icu:databaseError__recover__detail": {
-    "messageformat": "ئۇچۇر ئامبىرىدا بىرتال خاتالىق كۆرۈلدى. خاتالىقنى كۆچۈرىۋېلىپ ئۇنى ئوڭشاش ئۈچۈن سىگنال ياردەم مەركىزى بىلەن ئالاقىلىشىڭ. سىگنالنى دەرھال ئىشلەتمەكچى بولسىڭىز، سانلىق مەلۇماتلىرىڭىزنى ئەسلىگە كەلتۈرۈشنى سىناپ بېقىڭ.\n\nياردەم تەلەپ قىلىش ئۇلانمىسى: {link}"
-  },
-  "icu:databaseError__recover__button": {
-    "messageformat": "سانلىق مەلۇماتنى ئەسلىگە كەلتۈرۈش"
-  },
   "icu:databaseError__safeStorageBackendChange": {
     "messageformat": "ئۇچۇر ئامبىرىنى شىفىرلاشتۇرۇش ئاچقۇچىنى زىيارەت قىلالمىدى ، چۈنكى OS شىفىرلاشتۇرۇش ئاچقۇچ ھالقىسىنىڭ ئاخىرقى ئۇچى {previousBackend} دىن {currentBackend} گە ئۆزگەردى. بۇ ئەھۋال ئۈستەل يۈزى مۇھىتى ئۆزگەرگەندە يۈز بېرىدۇ ، مەسىلەن GNOME بىلەن KDE ئارىلىقىدا.\n\nئالدىنقى ئۈستەل مۇھىتىغا ئالماشتۇرۇڭ."
   },
@@ -827,14 +821,8 @@
   "icu:mute": {
     "messageformat": "ئۈنسىز"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal يېڭىلانمىدى. {retry} ياكى «{url}» نى زىيارەت قىلىپ ئۇنى قولدا قاچىلاڭ. ئاندىن {support} بىلەن بۇ مەسىلە ھەققىدە ئالاقىلىشىڭ"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "سىگنال يېڭىلىنالمىدى. <retryUpdateButton>يېڭىلاشنى قايتا سىناڭ</retryUpdateButton> ياكى {url} نى زىيارەت قىلىپ قولدا قاچىلاڭ. ئاندىن ، بۇ مەسىلە ھەققىدە <contactSupportLink>ياردەم ئۈچۈن ئالاقىلىشىڭ</contactSupportLink>"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal يېڭىلانمىدى. «{url}» نى زىيارەت قىلىپ ئۇنى قولدا قاچىلاڭ. ئاندىن {support} بىلەن بۇ مەسىلە ھەققىدە ئالاقىلىشىڭ"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "سىگنال يېڭىلىنالمىدى. قولدا قاچىلاش ئۈچۈن {url} نى زىيارەت قىلىڭ. ئاندىن ، بۇ مەسىلە ھەققىدە <contactSupportLink>ياردەم ئۈچۈن ئالاقىلىشىڭ</contactSupportLink>"
@@ -1223,9 +1211,6 @@
   "icu:calling__cant-join": {
     "messageformat": "چاقىرىققا قوشۇلالمىدى"
   },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "سىز ئاللىبۇرۇن چاقىرىقتا."
-  },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "چاقىرىق ئۇلانما ئۇچۇرىغا ئېرىشەلمىدى. تور ئۇلىنىشىنى تەكشۈرۈپ قايتا سىناڭ."
   },
@@ -1408,9 +1393,6 @@
   },
   "icu:calling__in-this-call": {
     "messageformat": "{people, plural, other {بۇ چاقىرىشتا · {people,number} كىشى}}"
-  },
-  "icu:calling__you-have-blocked": {
-    "messageformat": "{name} نى چەكلىدىڭىز"
   },
   "icu:calling__blocked-participant": {
     "messageformat": "{name} چەكلەندى"
@@ -1843,9 +1825,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "يېڭىلاشنى قايتا سىناش"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "قوللىغۇچىلار  بىلەن ئالاقىلىشىڭ"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "چېكىپ Signal نى قايتا قوزغىتىڭ"
@@ -3362,6 +3341,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} گۇرۇپپا ئۇلانمىسى ئارقىلىق گۇرۇپپىغا قوشۇلۇشنى تەلەپ قىلدى ۋە {numberOfRequests,number} تەلەپنى بىكار قىلدى"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, other {{joinerName} گۇرۇپپا ئۇلانمىسى ئارقىلىق گۇرۇپپىغا قوشۇلۇشنى تەلەپ قىلدى ۋە {numberOfRequests,number} تەلەپنى بىكار قىلدى}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "باشقۇرغۇچى تەستىقىنى چەكلەپ گۇرۇپپا ئۇلانمىسىنى ئاچتىڭىز."
   },
@@ -3535,6 +3517,21 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "«Signal غا ئىئانە قىلىش» نى چېكىپ مۇشتەرى بولۇڭ"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "ئۇچۇرلارنى ماسقەدەملەش"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "{totalSize} نىڭ {currentSize} تى چۈشۈۋاتىدۇ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "بۇنىڭغا زاپاسلاشنىڭ چوڭ-كىچىكلىكىگە ئاساسەن بىر قانچە مىنۇت ۋاقىت كېتىشى مۇمكىن"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Restoring media"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize} of {totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "كېڭەيتىش"
@@ -3956,11 +3953,11 @@
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": ".5"
   },
-  "icu:emptyInboxMessage": {
-    "messageformat": "ئۈستىدىكى «{composeIcon}» نى چېكىپ ئۇچۇر يوللايدىغان ئالاقىداش ۋە گۇرۇپپىلارنى ئىزدەڭ."
+  "icu:emptyInbox__title": {
+    "messageformat": "پاراڭلار يوق"
   },
-  "icu:composeIcon": {
-    "messageformat": "تۈزۈش كۇنۇپكىسى"
+  "icu:emptyInbox__subtitle": {
+    "messageformat": "يېقىنقى پاراڭلار بۇ يەردە كۆرۈنىدۇ."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "ئۇلاپ يوللاش"
@@ -4850,6 +4847,12 @@
   "icu:Stories__list-empty": {
     "messageformat": "ھازىر كۆرسىتىدىغان يېقىنقى ھېكايىلەر يوق"
   },
+  "icu:Stories__list__empty--title": {
+    "messageformat": "ھېكايىلەر يوق"
+  },
+  "icu:Stories__list__empty--subtitle": {
+    "messageformat": "يېڭىلانمىلار بۇ يەردە كۆرۈنىدۇ."
+  },
   "icu:Stories__list--sending": {
     "messageformat": "يوللاۋاتىدۇ..."
   },
@@ -4864,6 +4867,12 @@
   },
   "icu:Stories__placeholder--text": {
     "messageformat": "بۇ يەرنى چېكىپ ھېكايە كۆرۈڭ"
+  },
+  "icu:Stories__placeholder-with-icon--text": {
+    "messageformat": "<newStoryIcon> بىرھېكايە قۇشۇڭ</newStoryIcon>نى چېكىپ بىر يېڭىلانما قوشۇڭ."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "<newStoryButtonIcon></newStoryButtonIcon> نى چېكىپ بىر يېڭىلانما قوشۇڭ."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} دىن{group} غىچە"
@@ -5106,6 +5115,12 @@
     "messageformat": "جاۋاب"
   },
   "icu:StoryViewsNRepliesModal__reacted": {
+    "messageformat": "ھېكايىگە ئىنكاس قايتۇردى"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "ھېكايىگە ئىنكاس قايتۇردىڭىز"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
     "messageformat": "ھېكايىگە ئىنكاس قايتۇردى"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
@@ -5406,6 +5421,12 @@
   "icu:CallsTab__EmptyStateText": {
     "messageformat": "كۆرۈش ياكى چاقىرىق باشلىتىش ئۈچۈن بۇ يەرنى چېكىڭ"
   },
+  "icu:CallsTab__EmptyStateText--with-icon": {
+    "messageformat": "<newCallIcon>يېڭى چاقىرىق</newCallIcon>نى چېكىپ يېڭىدىن بىر ئاۋازلىق ياكى سىنلىق چاقىرىقنى باشلاڭ."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "<newCallButtonIcon></newCallButtonIcon>نى چېكىپ يېڭى ئاۋازلىق ياكى سىنلىق چاقىرىقنى باشلاڭ."
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "ئىزدە"
   },
@@ -5417,6 +5438,18 @@
   },
   "icu:CallsList__EmptyState--noQuery": {
     "messageformat": "يېڭى بىر چاقىرىق يوق. دوستىڭىزغا چاقىرىق قىلىپ باشلاڭ."
+  },
+  "icu:CallsList__EmptyState--noQuery__title": {
+    "messageformat": "چاقىرىقلار يوق"
+  },
+  "icu:CallsList__EmptyState--noQuery__subtitle": {
+    "messageformat": "يېقىنقى چاقىرىقلار بۇ يەردە كۆرۈنىدۇ."
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__title": {
+    "messageformat": "ئېلىنمىغان چاقىرىق يوق"
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
+    "messageformat": "ئېلىنمىغان چاقىرىقلار بۇ يەردە كۆرۈنىدۇ."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "{query} ئۈچۈن نەتىجە يوق"
@@ -5435,9 +5468,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "رەت قىلىندى"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "گۇرۇپپا چاقىرىقى"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "چاقىرىق ئۇلانمىسى"
@@ -5462,21 +5492,6 @@
   },
   "icu:CallsNewCallButton--return": {
     "messageformat": "قايت"
-  },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "يېڭى چاقىرىققا قوشۇلۇش ئۈچۈن نۆۋەتتىكى چاقىرىقتىن چېكىنىشىڭىز كېرەك"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {ئۇرۇلغان ئاۋازلىق چاقىرىق} other {كەلگەن ئاۋازلىق چاقىرىق}}} Video {{direction, select, Outgoing {ئۇرۇلغان ۋىدېيولۇق چاقىرىق} other {كەلگەن ۋىدېيولۇق چاقىرىق}}} Group {{direction, select, Outgoing {ئۇرۇلغان گۇرۇپپا چاقىرىقى} other {كەلگەن گۇرۇپپا چاقىرىقى}}} other {{direction, select, Outgoing {قىلىنغان  چاقىرىق} other {كەلگەن  چاقىرىق}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {ئېلىنمىغان ئاۋازلىق چاقىرىق} Video {سۆزلەشمىگەن سىن چاقىرىش} Group {ئېلىنمىغان گۇرۇپپا چاقىرىقى} other {سۆزلەشمىگەن چاقىرىش}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {جاۋابسىز ئاۋازلىق چاقىرىق} Video {جاۋابسىز ۋىدېيولۇق چاقىرىق} Group {جاۋاپسىز توپ چاقىرىقى} other {جاۋاپسىز  چاقىرىق}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {رەت قىلىنغان ئاۋازلىق چاقىرىق} Video {رەت قىلىنغان ۋىدېيولۇق چاقىرىق} Group {رەت قىلىنغان توپ چاقىرىقى} other {رەت قىلىنغان  چاقىرىق}}"
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "چاقىرىق ئۇلانمىسى"
@@ -5512,19 +5527,19 @@
     "messageformat": "ئۇلانمىنى Signal ئارقىلىق ئورتاقلىشىش"
   },
   "icu:CallLinkDetails__DeleteLink": {
-    "messageformat": "Delete link"
+    "messageformat": "ئۇلانمىنى ئۆچۈرۈڭ"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Title": {
-    "messageformat": "Delete call link?"
+    "messageformat": "چاقىرىق ئۇلانمىسىنى ئۆچۈرەمسىز؟"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Body": {
-    "messageformat": "This link will no longer work for anyone who has it."
+    "messageformat": "بۇ ئۇلانمىنى ھېچكىم ئىشلىتەلمەيدۇ."
   },
   "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
-    "messageformat": "Cancel"
+    "messageformat": "بىكار قىلىش"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
-    "messageformat": "Delete"
+    "messageformat": "ئۆچۈر"
   },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "چاقىرىق ئۇلانمىسى تەپسىلاتى"
@@ -5596,19 +5611,13 @@
     "messageformat": "كىچىك ئۆزگەرتىشلەر كىرگۈزۈلدى، كاشىلا ھەل قىلىندى ۋە ئىقتىدار ئەلالاشتۇرۇلدى. Signal نى ئىشلەتكەنلىكىڭىزگە رەھمەت!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "تېز خوشلىشىش ئاستا ۋىدالىشىشتىن ئەۋزەل ، شۇڭىلاشقا بىز چوڭ ھەجىملىك ئۇچۇر تېمىلىرىنىڭ ئۆچۈرلىش سۈرئىتىنى تېزلەتتۇق."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "باشقا بىر يۈرۈش ئىقتىدارلارنىڭ ياخشىلىنىشىغا ئەگىشىپ ، پاراڭلار ئىلگىرىكىگە قارىغاندا تېز ئېچىلىدۇ ، شۇڭا دوستلارنى چېكىپ ، ئۇلارنىڭ نېمە دەۋاتقانلىقىنى تېزلا كۆرەلەيسىز."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "ئەگەر باشقا بىرى سىزگە چاقىرىق قىلىۋاتقان بولسا ، نۆۋەتتىكى ئالاقىنى تاشلاپ يېڭى چاقىرىققا قاتنىشىش ئۈچۈن تېزلەتمە ئۈنۈمى قوشتۇق. ئايرىلىشىڭىزنى جەزملەشتۈرۈشىڭىز تەلەپ قىلىنىدۇ ، ئەمما ئالدىنئالا خوشلىشىشڭىز ئۆزىڭىزگە باغلىق."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "بىز يەنە بىر قانچە كەمتۈكلۈكنى ئوڭشىدۇق ، بۇلارنىڭ ئىچىدە بەزىدە تېلېفوننى باشلىغاندىن كېيىن پاراڭلىشىش تىزىملىكى خۇلاسىسىدە كۆرۈنىدىغان «نامەلۇم ئالاقىلاشقۇچى بىر سىنلىق چاقىرىقنى باشلىدى» نى كەلتۈرۈپ چىقىرىدىغان كەمتۈكلۈكمۇ بار. سىز ھازىرغىچە ئۆزىڭىزنى بايقاش سەپىرىدە بولسىڭىزمۇ ، ئەمما سىزئۆز- ئۆزىڭىزگە پۈتۈنلەي نامەلۇم ئەمەس."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "بۇ يېڭىلانما «POSIX» نى مەنبە قىلغان Linux ئىشلەتكۈچىلەر مەشغۇلات قىلغاندا يۈز بېرىدىغان قوزغىلىش ھادىسىسىنى ئوڭشايدۇ."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "This update fixes a bug where viewing a missed call on one device wouldn't automatically clear the indicator for that missed call on your other devices, which was a missed opportunity for your missed call list to better coexist."
   }
 }

@@ -80,17 +80,11 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "Različica vaše zbirke podatkov se ne ujema s to različico Signala. Prepričajte se, da v računalniku odpirate najnovejšo različico Signala."
   },
-  "icu:databaseError__recover__detail": {
-    "messageformat": "Prišlo je do napake v zbirki podatkov. Napako lahko kopirate in se obrnete na podporo za Signal, da vam pomaga odpraviti težavo. Če morate Signal uporabiti takoj, lahko poskusite obnoviti podatke.\n\nObrnite se na podporo tako, da obiščete: {link}"
-  },
-  "icu:databaseError__recover__button": {
-    "messageformat": "Obnovitev podatkov"
-  },
   "icu:databaseError__safeStorageBackendChange": {
     "messageformat": "Ni mogoče dostopati do šifrirnega ključa podatkovne zbirke, ker se je zaledje šifrirnega ključa operacijskega sistema spremenilo iz {previousBackend} v {currentBackend}. To se lahko zgodi, če se namizno okolje spremeni, na primer med GNOME in KDE.\n\nPreklopite na prejšnje namizno okolje."
   },
   "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
-    "messageformat": "Ni mogoče dostopati do šifrirnega ključa podatkovne zbirke, ker se je zaledje šifrirnega ključa operacijskega sistema spremenilo iz {previousBackend} v {currentBackend}. To se lahko zgodi, če se namizno okolje spremeni, na primer med GNOME in KDE.\n\nPreklopite na prejšnje namizno okolje ali poskusite zagnati Signal iz ukazne vrstice flag --password-store=\"{previousBackendFlag}\""
+    "messageformat": "Ni mogoče dostopati do šifrirnega ključa podatkovne zbirke, ker se je zaledje šifrirnega ključa operacijskega sistema spremenilo iz {previousBackend} v {currentBackend}. To se lahko zgodi, če se namizno okolje spremeni, na primer med GNOME in KDE.\n\nPreklopite na prejšnje namizno okolje ali poskusite zagnati Signal z navodilom ukazne vrstice --password-store=\"{previousBackendFlag}\""
   },
   "icu:mainMenuFile": {
     "messageformat": "&Datoteka"
@@ -827,14 +821,8 @@
   "icu:mute": {
     "messageformat": "Utišaj"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal se ni mogel posodobiti. {retry} ali obiščite {url} za ročno namestitev. Nato, {support} o tem problemu"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal se ni uspel posodobiti. <retryUpdateButton>Ponovno poskusite posodobiti</retryUpdateButton> ali obiščite {url} in jo namestite ročno. Nato <contactSupportLink>obvestite podporo</contactSupportLink> o tem problemu"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal se ni uspel posodobiti. Za ročno namestitev obiščite {url}. Nato {support} o tem problemu."
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal se ni uspel posodobiti. Za ročno namestitev obiščite {url}. Nato <contactSupportLink>obvestite podporo</contactSupportLink> o tem problemu"
@@ -1223,9 +1211,6 @@
   "icu:calling__cant-join": {
     "messageformat": "Pridružitev klicu ni mogoča"
   },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "Ste že v klicu."
-  },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "Ni bilo mogoče pridobiti informacij o povezavi do klica. Preverite svojo omrežno povezavo in poskusite znova."
   },
@@ -1408,9 +1393,6 @@
   },
   "icu:calling__in-this-call": {
     "messageformat": "{people, plural, one {Na tem klicu · {people,number} oseba} two {Na tem klicu · {people,number} osebi} few {Na tem klicu · {people,number} osebe} other {Na tem klicu · {people,number} ljudi}}"
-  },
-  "icu:calling__you-have-blocked": {
-    "messageformat": "Blokirali ste uporabnika_co {name}"
   },
   "icu:calling__blocked-participant": {
     "messageformat": "{name} je blokiran_a"
@@ -1843,9 +1825,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Ponovno poskusite s posodobitvijo"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "obvestite podporni center"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Kliknite za ponoven zagon Signala"
@@ -3362,6 +3341,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} je zaprosil_a in nato prekinil_a {numberOfRequests,number} svojih prošenj za pridružitev skupini preko povezave"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} je zaprosil_a in nato preklical_a svojo prošnjo za pridružitev preko povezave skupine} two {{joinerName} je zaprosil_a in nato preklical_a {numberOfRequests,number} prošnji za pridružitev preko povezave skupine} few {{joinerName} je zaprosil_a in nato preklical_a {numberOfRequests,number} prošnje za pridružitev preko povezave skupine} other {{joinerName} je zaprosil_a in nato preklical_a {numberOfRequests,number} prošenj za pridružitev preko povezave skupine}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Vklopili ste povezavo do skupine z izklopljenim obveznim skrbniškim potrjevanjem novih članov_ic."
   },
@@ -3535,6 +3517,21 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "Tapnite na \"Doniraj Signalu\" in se naročite"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Sinhronizacija sporočil"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Prenos {currentSize} od {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "To lahko traja nekaj minut, odvisno od velikosti varnostne kopije"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Restoring media"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize} of {totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Razširi"
@@ -3956,11 +3953,11 @@
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": "0,5"
   },
-  "icu:emptyInboxMessage": {
-    "messageformat": "Kliknite {composeIcon} zgoraj in poiščite stik ali skupino, ki ji želite pisati."
+  "icu:emptyInbox__title": {
+    "messageformat": "Ni klepetov"
   },
-  "icu:composeIcon": {
-    "messageformat": "gumb za pisanje"
+  "icu:emptyInbox__subtitle": {
+    "messageformat": "Tu bodo prikazani nedavni klepeti."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Posreduj uporabniku_ci"
@@ -4850,6 +4847,12 @@
   "icu:Stories__list-empty": {
     "messageformat": "Trenutno ni nobenih zgodb za prikaz"
   },
+  "icu:Stories__list__empty--title": {
+    "messageformat": "Ni zgodb"
+  },
+  "icu:Stories__list__empty--subtitle": {
+    "messageformat": "Nove posodobitve bodo prikazane tukaj."
+  },
   "icu:Stories__list--sending": {
     "messageformat": "Pošiljam ..."
   },
@@ -4864,6 +4867,12 @@
   },
   "icu:Stories__placeholder--text": {
     "messageformat": "Klikni za ogled zgodbe"
+  },
+  "icu:Stories__placeholder-with-icon--text": {
+    "messageformat": "Če želite dodati posodobitev, kliknite <newStoryIcon>Dodaj zgodbo</newStoryIcon>."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Če želite dodati posodobitev, kliknite <newStoryButtonIcon></newStoryButtonIcon>."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} za {group}"
@@ -5107,6 +5116,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "Odziv na zgodbo"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "si se odzval/-a na zgodbo"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "se je odzval/-a na zgodbo"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "You can’t reply to this story because you’re no longer a member of this group."
@@ -5406,6 +5421,12 @@
   "icu:CallsTab__EmptyStateText": {
     "messageformat": "Klikni za ogled ali začetek klica"
   },
+  "icu:CallsTab__EmptyStateText--with-icon": {
+    "messageformat": "Kliknite <newCallIcon>Nov klic</newCallIcon>, če želite začeti nov zvočni ali video klic."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Kliknite <newCallButtonIcon></newCallButtonIcon>, če želite začeti nov zvočni ali video klic."
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Iskanje"
   },
@@ -5417,6 +5438,18 @@
   },
   "icu:CallsList__EmptyState--noQuery": {
     "messageformat": "Ni zadnjih klicev. Začnite tako, da pokličete prijatelja_ico."
+  },
+  "icu:CallsList__EmptyState--noQuery__title": {
+    "messageformat": "Brez klicev"
+  },
+  "icu:CallsList__EmptyState--noQuery__subtitle": {
+    "messageformat": "Tu bodo prikazani nedavni klici."
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__title": {
+    "messageformat": "Ni neodgovorjenih klicev"
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
+    "messageformat": "Tu bodo prikazani neodgovorjeni klici."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Ni rezultatov za “{query}”"
@@ -5435,9 +5468,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Zavrnjeno"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Skupinski klic"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Povezava do klica"
@@ -5462,21 +5492,6 @@
   },
   "icu:CallsNewCallButton--return": {
     "messageformat": "Nazaj"
-  },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "Preden se pridružite novemu klicu, morate zapustiti trenutni klic"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {Odhodni glasovni klic} other {Dohodni glasovni klic}}} Video {{direction, select, Outgoing {Odhodni video klic} other {Dohodni video klic}}} Group {{direction, select, Outgoing {Odhodni skupinski klic} other {Dohodni skupinski klic}}} other {{direction, select, Outgoing {Odhodni klic} other {Dohodni klic}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {Zgrešen glasovni klic} Video {Zgrešen video klic} Group {Neodgovorjen skupinski klic} other {Neodgovorjen klic}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {Neodgovorjen glasovni klic} Video {Neodgovorjen video klic} Group {Neodgovorjen skupinski klic} other {Neodgovorjen klic}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {Zavrnjen zvočni klic} Video {Zavrnjen video klic} Group {Zavrnjen skupinski klic} other {Zavrnjen klic}}"
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Povezava do klica"
@@ -5512,19 +5527,19 @@
     "messageformat": "Deli povezavo prek Signala"
   },
   "icu:CallLinkDetails__DeleteLink": {
-    "messageformat": "Delete link"
+    "messageformat": "Izbriši povezavo"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Title": {
-    "messageformat": "Delete call link?"
+    "messageformat": "Želite izbrisati povezavo klica?"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Body": {
-    "messageformat": "This link will no longer work for anyone who has it."
+    "messageformat": "Ta povezava ne bo več delovala za nikogar."
   },
   "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
-    "messageformat": "Cancel"
+    "messageformat": "Prekliči"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
-    "messageformat": "Delete"
+    "messageformat": "Izbriši"
   },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "Podrobnosti o klicni povezavi"
@@ -5596,19 +5611,13 @@
     "messageformat": "Majhne prilagoditve, popravki napak in izboljšave zmogljivosti. Hvala, da uporabljate Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "Ta posodobitev pospeši postopek brisanja velikih niti sporočil."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Klepeti se zdaj odpirajo hitreje kot kdajkoli prej, saj je bil izveden še en krog izboljšav zmogljivosti."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "Dodali smo bližnjico za prekinitev in pridružitev novemu klicu, ko drug klic že poteka. Pozvani boste k potrditvi odhoda, vendar je odvisno od vas, ali se boste najprej poslovili ali ne."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "Odpravili smo tudi nekaj hroščev, med drugim tistega, ki je včasih povzročil, da se je napis \"Neznani stik je začel video klic\" pojavil v povzetku seznama klepeta po tem, ko ste začeli klic. Čeprav ste še vedno na poti samospoznavanja, si nikoli niste povsem neznani."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "Ta posodobitev odpravlja tudi okvaro ob zagonu v operacijskem sistemu Linux za uporabnike, katerih krajevna lestvica je nastavljena na `POSIX`."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "This update fixes a bug where viewing a missed call on one device wouldn't automatically clear the indicator for that missed call on your other devices, which was a missed opportunity for your missed call list to better coexist."
   }
 }

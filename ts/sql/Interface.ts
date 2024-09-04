@@ -31,12 +31,17 @@ import type {
   CallHistoryPagination,
   CallLogEventTarget,
 } from '../types/CallDisposition';
-import type { CallLinkStateType, CallLinkType } from '../types/CallLink';
+import type {
+  CallLinkRecord,
+  CallLinkStateType,
+  CallLinkType,
+} from '../types/CallLink';
 import type { AttachmentDownloadJobType } from '../types/AttachmentDownload';
 import type { GroupSendEndorsementsData } from '../types/GroupSendEndorsements';
 import type { SyncTaskType } from '../util/syncTasks';
 import type { AttachmentBackupJobType } from '../types/AttachmentBackup';
 import type { SingleProtoJobQueue } from '../jobs/singleProtoJobQueue';
+import type { DeleteCallLinkOptions } from './server/callLinks';
 
 export type ReadableDB = Database & { __readable_db: never };
 export type WritableDB = ReadableDB & { __writable_db: never };
@@ -406,6 +411,7 @@ export type MessageAttachmentsCursorType = MessageCursorType &
 export type GetKnownMessageAttachmentsResultType = Readonly<{
   cursor: MessageAttachmentsCursorType;
   attachments: ReadonlyArray<string>;
+  downloads: ReadonlyArray<string>;
 }>;
 
 export type PageMessagesCursorType = MessageCursorType &
@@ -444,6 +450,11 @@ export type GetRecentStoryRepliesOptionsType = {
   receivedAt?: number;
   sentAt?: number;
 };
+
+export enum AttachmentDownloadSource {
+  BACKUP_IMPORT = 'backup_import',
+  STANDARD = 'standard',
+}
 
 type ReadableInterface = {
   close: () => void;
@@ -566,6 +577,8 @@ type ReadableInterface = {
   callLinkExists(roomId: string): boolean;
   getAllCallLinks: () => ReadonlyArray<CallLinkType>;
   getCallLinkByRoomId: (roomId: string) => CallLinkType | undefined;
+  getCallLinkRecordByRoomId: (roomId: string) => CallLinkRecord | undefined;
+  getAllCallLinkRecordsWithAdminKey(): ReadonlyArray<CallLinkRecord>;
   getAllMarkedDeletedCallLinks(): ReadonlyArray<CallLinkType>;
   getMessagesBetween: (
     conversationId: string,
@@ -645,12 +658,11 @@ type ReadableInterface = {
   getMaxMessageCounter(): number | undefined;
 
   getStatisticsForLogging(): Record<string, string>;
+  getSizeOfPendingBackupAttachmentDownloadJobs(): number;
 };
 
 type WritableInterface = {
   close: () => void;
-
-  removeDB: () => void;
 
   removeIndexedDBFiles: () => void;
 
@@ -783,25 +795,31 @@ type WritableInterface = {
   ) => void;
   _removeAllReactions: () => void;
   _removeAllMessages: () => void;
+  incrementMessagesMigrationAttempts: (
+    messageIds: ReadonlyArray<string>
+  ) => void;
 
   clearCallHistory: (target: CallLogEventTarget) => ReadonlyArray<string>;
+  _removeAllCallHistory: () => void;
   markCallHistoryDeleted: (callId: string) => void;
   cleanupCallHistoryMessages: () => void;
   markCallHistoryRead(callId: string): void;
-  markAllCallHistoryRead(target: CallLogEventTarget): void;
-  markAllCallHistoryReadInConversation(target: CallLogEventTarget): void;
+  markAllCallHistoryRead(target: CallLogEventTarget): number;
+  markAllCallHistoryReadInConversation(target: CallLogEventTarget): number;
   saveCallHistory(callHistory: CallHistoryDetails): void;
   markCallHistoryMissed(callIds: ReadonlyArray<string>): void;
   getRecentStaleRingsAndMarkOlderMissed(): ReadonlyArray<MaybeStaleCallHistory>;
   insertCallLink(callLink: CallLinkType): void;
+  updateCallLink(callLink: CallLinkType): void;
   updateCallLinkAdminKeyByRoomId(roomId: string, adminKey: string): void;
   updateCallLinkState(
     roomId: string,
     callLinkState: CallLinkStateType
   ): CallLinkType;
   beginDeleteAllCallLinks(): void;
-  beginDeleteCallLink(roomId: string): void;
+  beginDeleteCallLink(roomId: string, options: DeleteCallLinkOptions): void;
   finalizeDeleteCallLink(roomId: string): void;
+  _removeAllCallLinks(): void;
   deleteCallLinkFromSync(roomId: string): void;
   migrateConversationMessages: (obsoleteId: string, currentId: string) => void;
   saveEditedMessage: (
@@ -840,6 +858,7 @@ type WritableInterface = {
   saveAttachmentDownloadJob: (job: AttachmentDownloadJobType) => void;
   resetAttachmentDownloadActive: () => void;
   removeAttachmentDownloadJob: (job: AttachmentDownloadJobType) => void;
+  removeAllBackupAttachmentDownloadJobs: () => void;
 
   getNextAttachmentBackupJobs: (options: {
     limit: number;
@@ -983,6 +1002,7 @@ export type ServerReadableDirectInterface = ReadableInterface & {
   finishGetKnownMessageAttachments: (
     cursor: MessageAttachmentsCursorType
   ) => void;
+  getKnownDownloads: () => Array<string>;
   getKnownConversationAttachments: () => Array<string>;
 
   getAllBadgeImageFileLocalPaths: () => Set<string>;
@@ -1122,6 +1142,7 @@ export type ClientOnlyWritableInterface = ClientInterfaceWrap<{
   // Client-side only
 
   shutdown: () => void;
+  removeDB: () => void;
   removeMessagesInConversation: (
     conversationId: string,
     options: {

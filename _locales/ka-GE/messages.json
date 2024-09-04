@@ -80,12 +80,6 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "შენი მონაცემთა ბაზის ვერსია Signal-ის ამ ვერსიას არ ემთხვევა. დარწმუნდი, რომ შენს კომპიუტერში Signal-ის უახლეს ვერსიას ხსნი."
   },
-  "icu:databaseError__recover__detail": {
-    "messageformat": "მონაცემთა ბაზის ხარვეზს გადავაწყდით. შეგიძლია შეცდომა დააკოპირო და Signal-ის მხარდაჭერის გუნდს დაუკავშირდე, რათა პრობლემის მოგვარებაში დაგეხმაროთ. თუ Signal-ის გამოყენება ახლავე გჭირდება, შეგიძლია შენი მონაცემების აღდგენა სცადო.\n\nდაუკავშირდი მხარდაჭერის გუნდს აქ: {link}"
-  },
-  "icu:databaseError__recover__button": {
-    "messageformat": "მონაცემების აღდგენა"
-  },
   "icu:databaseError__safeStorageBackendChange": {
     "messageformat": "მონაცემთა ბაზის დაშიფვრის გასაღებზე წვდომა შეუძლებელია, რადგან OS-ის დაშიფვრის გასაღების მონაცემები {previousBackend} {currentBackend}-ით შეიცვალა. ეს შეიძლება მოხდეს, თუ დესკტოპის გარემო იცვლება, მაგალითად GNOME-სა და KDE-ს შორის.\n\nგთხოვთ, დესკტოპის წინა გარემოზე გადახვიდე."
   },
@@ -827,14 +821,8 @@
   "icu:mute": {
     "messageformat": "დადუმება"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal-ი ვერ განახლდა. {retry} ან ხელით დასაყენებლად გადადი {url}. შემდეგ კი {support}-ს ამ პრობლემის თაობაზე"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal-ი ვერ განახლდა. <retryUpdateButton>თავიდან სცადე განახლება</retryUpdateButton> ან ხელით გადმოსაწერად {url}-ს ეწვიე. შემდეგ, <contactSupportLink>მხარდაჭერის გუნდს დაუკავშირდი</contactSupportLink> ამ პრობლემის თაობაზე"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal-ი ვერ განახლდა. ხელით დასაყენებლად გადადი {url}. შემდეგ კი {support}-ს ამ პრობლემის თაობაზე"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal-ი ვერ განახლდა. ხელით გადმოსაწერად ეწვიე {url}-ს. შემდეგ, <contactSupportLink>მხარდაჭერის გუნდს დაუკავშირდი</contactSupportLink> ამ პრობლემის თაობაზე"
@@ -1223,9 +1211,6 @@
   "icu:calling__cant-join": {
     "messageformat": "ზარზე შესვლა ვერ მოხერხდა"
   },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "შენ უკვე ამ ზარზე იმყოფები."
-  },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "ზარის ბმულის ინფორმაციის მიღება ვერ მოხერხდა. გთხოვთ, შეამოწმო შენი ქსელის კავშირი და თავიდან სცადო."
   },
@@ -1408,9 +1393,6 @@
   },
   "icu:calling__in-this-call": {
     "messageformat": "{people, plural, one {ამ ზარში · {people,number} ადამიანი} other {ამ ზარზე · {people,number} ადამიანი}}"
-  },
-  "icu:calling__you-have-blocked": {
-    "messageformat": "შენ დაბლოკე {name}"
   },
   "icu:calling__blocked-participant": {
     "messageformat": "{name} დაბლოკილია"
@@ -1843,9 +1825,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "განახლების ხელახლა ცდა"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "მხარდაჭერის გუნდთან დაკავშირება"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "დააჭირე Signal-ის გადასატვირტად"
@@ -3362,6 +3341,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} -მა მოითხოვა ჯგუფის ბმულით გაწევრიანება და გააუქმა თავისი {numberOfRequests,number} მოთხოვნა"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName}-მა ჯგუფში ბმულით გაწევრიანება მოითხოვა და მოთხოვნა გააუქმა.} other {{joinerName}-მა ჯგუფში ბმულით გაწევრიანება მოითხოვა და {numberOfRequests,number} მოთხოვნა გააუქმა.}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "შენ ჩართე ჯგუფის ბმული ადმინის დასტურის გათიშული ფუნქციით."
   },
@@ -3535,6 +3517,21 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "დააჭირე \"Signal-ისთვის დონაციის გაკეთება“ და გამოიწერე"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "მიმდინარეობს წერილების სინქრონიზება"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "იწერება {currentSize} {totalSize}-დან ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "ამას შეიძლება რამდენიმე წუთი დასჭირდეს იმის მიხედვით, თუ რა ზომაა შენი სათადარიგო ასლი"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Restoring media"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize} of {totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "გაფართოება"
@@ -3956,11 +3953,11 @@
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": ".5"
   },
-  "icu:emptyInboxMessage": {
-    "messageformat": "დააჭირე {composeIcon} -ზე ზემოთ და მოძებნე შენი კონტაქტები ან ჯგუფები შეტყობინების გასაგზავნად."
+  "icu:emptyInbox__title": {
+    "messageformat": "ჩატები ვერ მოიძებნა"
   },
-  "icu:composeIcon": {
-    "messageformat": "შეტყობინების შედგენის ღილაკი"
+  "icu:emptyInbox__subtitle": {
+    "messageformat": "ბოლო ჩატები აქ გამოჩნდება."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "გაეგზავნოთ ჩამოთვლილებს"
@@ -4850,6 +4847,12 @@
   "icu:Stories__list-empty": {
     "messageformat": "უახლესი Stories-ები ვერ მოიძებნა"
   },
+  "icu:Stories__list__empty--title": {
+    "messageformat": "Stories-ები ვერ მოიძებნა"
+  },
+  "icu:Stories__list__empty--subtitle": {
+    "messageformat": "ბოლო განახლებები აქ გამოჩნდება."
+  },
   "icu:Stories__list--sending": {
     "messageformat": "იგზავნება…"
   },
@@ -4864,6 +4867,12 @@
   },
   "icu:Stories__placeholder--text": {
     "messageformat": "დააწკაპუნე Story-ის სანახავად"
+  },
+  "icu:Stories__placeholder-with-icon--text": {
+    "messageformat": "განახლების დასამატებლად დააჭირე <newStoryIcon>Story-ის დამატება</newStoryIcon>."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "დააწკაპუნე <newStoryButtonIcon></newStoryButtonIcon> განახლების დასამატებლად."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} {group}-ს"
@@ -5106,6 +5115,12 @@
     "messageformat": "პასუხები"
   },
   "icu:StoryViewsNRepliesModal__reacted": {
+    "messageformat": "Story-ის გამოეხმაურა"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Story-ის გამოეხმაურა"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
     "messageformat": "Story-ის გამოეხმაურა"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
@@ -5406,6 +5421,12 @@
   "icu:CallsTab__EmptyStateText": {
     "messageformat": "დააწკაპუნე ზარის სანახავად ან დასაწყებად"
   },
+  "icu:CallsTab__EmptyStateText--with-icon": {
+    "messageformat": "ახალი ხმოვანი ან ვიდეო ზარის დასაწყებად დააჭირე <newCallIcon>ახალი ზარი</newCallIcon>."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "დააწკაპუნე <newCallButtonIcon></newCallButtonIcon> ახალი ხმოვანი ან ვიდეო ზარის წამოსაწყებად."
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "ძიება"
   },
@@ -5417,6 +5438,18 @@
   },
   "icu:CallsList__EmptyState--noQuery": {
     "messageformat": "ბოლოდროინდელი ზარები ვერ მოიძებნა. დაიწყე მეგობართან დარეკვით."
+  },
+  "icu:CallsList__EmptyState--noQuery__title": {
+    "messageformat": "ზარები ვერ მოიძებნა"
+  },
+  "icu:CallsList__EmptyState--noQuery__subtitle": {
+    "messageformat": "ბოლო ზარები აქ გამოჩნდება."
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__title": {
+    "messageformat": "გამოტოვებული ზარები ვერ მოიძებნა"
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
+    "messageformat": "გამოტოვებული ზარები აქ გამოჩნდება."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "„{query}“-ზე ვერაფერი მოიძებნა"
@@ -5435,9 +5468,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "უარყოფილი"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "ჯგუფური ზარი"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "ზარის ბმული"
@@ -5462,21 +5492,6 @@
   },
   "icu:CallsNewCallButton--return": {
     "messageformat": "დაბრუნება"
-  },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "ახალ ზარზე შესასვლელად მიმდინარე ზარიდან უნდა გახვიდე"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {გამავალი ხმოვანი ზარი} other {შემომავალი ხმოვანი ზარი}}} Video {{direction, select, Outgoing {გამავალი ვიდეო ზარი} other {შემომავალი ვიდეო ზარი}}} Group {{direction, select, Outgoing {ჯგუფის გამავალი ზარი} other {ჯგუფის შემომავალი ზარი}}} other {{direction, select, Outgoing {გამავალი  ზარი} other {შემომავალი ზარი}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {გამოტოვებული ხმოვანი ზარი} Video {გამოტოვებული ვიდეო ზარი} Group {ჯგუფის გამოტოვებული ზარი} other {გამოტოვებული  ზარი}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {უპასუხო ხმოვანი ზარი} Video {უპასუხო ვიდეო ზარი} Group {უპასუხო ჯგუფური ზარი} other {უპასუხო  ზარი}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {უარყოფილი ხმოვანი ზარი} Video {უარყოფილი ვიდეო ზარი} Group {უარყოფილი ჯგუფური ზარი} other {უარყოფილი  ზარი}}"
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "ზარის ბმული"
@@ -5512,19 +5527,19 @@
     "messageformat": "ბმულის Signal-ით გაზიარება"
   },
   "icu:CallLinkDetails__DeleteLink": {
-    "messageformat": "Delete link"
+    "messageformat": "ბმულის წაშლა"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Title": {
-    "messageformat": "Delete call link?"
+    "messageformat": "გსურს ზარის ბმული წაშალო?"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Body": {
-    "messageformat": "This link will no longer work for anyone who has it."
+    "messageformat": "მათთვის, ვისაც ეს ბმული აქვს, ის აღარ იმუშავებს."
   },
   "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
-    "messageformat": "Cancel"
+    "messageformat": "გაუქმება"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
-    "messageformat": "Delete"
+    "messageformat": "წაშლა"
   },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "ზარის ბმულის დეტალები"
@@ -5596,19 +5611,13 @@
     "messageformat": "მცირე შესწორებები, ბაგების გამოსწორება და წარმადობის გაუმჯობესება. მადლობას გიხდით სიგნალის გამოყენებისთვის!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "ეს გამოშვება დიდი მიმოწერის წაშლის პროცესს აჩქარებს."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "პერფორმანსის გაუმჯობესების კიდევ ერთი რაუნდის წყალობით, ჩატები ახლა უფრო სწრაფად იხსნება."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "ჩვენ დავამატეთ მალსახმობი, რომ გათიშო მიმდინარე ზარი და ახალს შეუერთდე, როდესაც სხვა ზარი უკვე მიმდინარეობს."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "ასევე გამოვასწორეთ რამდენიმე ხარვეზი, მათ შორის ის, ზოგჯერ ზარის დაწყების შემდეგ ჩატის სიის შეჯამებაში რომ გიწერდა, „უცნობმა კონტაქტმა ვიდეო ზარი წამოიწყოო“. მაშინაც კი, თუ შენი თავის აღმოჩენის გზაზე ხარ, საკუთარი თავისთვის უცნობი არასდროს იქნები."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "ეს განახლება ასევე აგვარებს Linux-ზე ავარიული გაშვების პრობლემას იმ მომხმარებლებისთვის, რომელთა ადგილმდებარეობა `POSIX`-ზეა დაყენებული."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "This update fixes a bug where viewing a missed call on one device wouldn't automatically clear the indicator for that missed call on your other devices, which was a missed opportunity for your missed call list to better coexist."
   }
 }

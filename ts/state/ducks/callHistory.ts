@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { ReadonlyDeep } from 'type-fest';
-import type { ThunkAction } from 'redux-thunk';
-import { omit } from 'lodash';
+import type { ThunkAction, ThunkDispatch } from 'redux-thunk';
+import { debounce, omit } from 'lodash';
 import type { StateType as RootStateType } from '../reducer';
 import {
   clearCallHistoryDataAndSync,
@@ -26,7 +26,7 @@ import {
 import {
   getCallsHistoryForRedux,
   getCallsHistoryUnreadCountForRedux,
-  loadCallsHistory,
+  loadCallHistory,
 } from '../../services/callHistoryLoader';
 import { makeLookup } from '../../util/makeLookup';
 
@@ -86,13 +86,10 @@ export function getEmptyState(): CallHistoryState {
   };
 }
 
-function updateCallHistoryUnreadCount(): ThunkAction<
-  void,
-  RootStateType,
-  unknown,
-  CallHistoryUpdateUnread
-> {
-  return async dispatch => {
+const updateCallHistoryUnreadCountDebounced = debounce(
+  async (
+    dispatch: ThunkDispatch<RootStateType, unknown, CallHistoryUpdateUnread>
+  ) => {
     try {
       const unreadCount = await DataReader.getCallHistoryUnreadCount();
       dispatch({ type: CALL_HISTORY_UPDATE_UNREAD, payload: unreadCount });
@@ -102,6 +99,18 @@ function updateCallHistoryUnreadCount(): ThunkAction<
         Errors.toLogFormat(error)
       );
     }
+  },
+  300
+);
+
+function updateCallHistoryUnreadCount(): ThunkAction<
+  void,
+  RootStateType,
+  unknown,
+  CallHistoryUpdateUnread
+> {
+  return async dispatch => {
+    await updateCallHistoryUnreadCountDebounced(dispatch);
   };
 }
 
@@ -208,7 +217,7 @@ export function reloadCallHistory(): ThunkAction<
 > {
   return async dispatch => {
     try {
-      await loadCallsHistory();
+      await loadCallHistory();
       const callsHistory = getCallsHistoryForRedux();
       const callsHistoryUnreadCount = getCallsHistoryUnreadCountForRedux();
       dispatch({
@@ -225,6 +234,7 @@ export const actions = {
   addCallHistory,
   removeCallHistory,
   resetCallHistory,
+  reloadCallHistory,
   clearAllCallHistory,
   updateCallHistoryUnreadCount,
   markCallHistoryRead,

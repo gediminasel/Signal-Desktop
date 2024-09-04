@@ -80,12 +80,6 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "نسخه پایگاه داده شما با این نسخه سیگنال مطابقت ندارد. مطمئن شوید که جدیدترین نسخه سیگنال را در رایانه‌تان باز می‌کنید."
   },
-  "icu:databaseError__recover__detail": {
-    "messageformat": "خطای پایگاه داده رخ داد. می‌توانید خطا را کپی کنید و برای کمک به رفع مشکل با پشتیبانی سیگنال تماس بگیرید. اگر بلافاصله نیاز به استفاده از سیگنال دارید، می‌توانید سعی کنید داده‌هایتان را بازیابی کنید.\n\nتماس با پشتیبانی با مراجعه به: {link}"
-  },
-  "icu:databaseError__recover__button": {
-    "messageformat": "بازیابی داده‌ها"
-  },
   "icu:databaseError__safeStorageBackendChange": {
     "messageformat": "دسترسی به کلید رمزگذاری پایگاه داده امکان‌پذیر نیست زیرا پشتیبان کلید رمزگذاری سیستم عامل از {previousBackend} به {currentBackend} تغییر کرده است. اگر محیط دسک‌تاپ مثلاً از GNOME به KDE تغییر کند، ممکن است این اتفاق بیفتد.\n\nلطفاً به محیط دسک‌تاپ قبلی بروید."
   },
@@ -827,14 +821,8 @@
   "icu:mute": {
     "messageformat": "بی‌صدا"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "سیگنال به‌روزرسانی نمی‌تواند بشود. {retry} یا برای نصب دستی به {url} مراحعه کنید. سپس، {support} در مورد این مشکل"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "سیگنال به‌روزرسانی نشد. برای نصب دستی، <retryUpdateButton>به‌روزرسانی را دوباره امتحان کنید</retryUpdateButton> یا به {url} مراجعه کنید. سپس برای رفع این مشکل، با <contactSupportLink>پشتیبانی تماس بگیرید</contactSupportLink>"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "سیگنال به‌روزرسانی نشد. برای نصب دستی به {url} مراجعه کنید. سپس در مورد این مشکل{support}"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "سیگنال به‌روزرسانی نشد. برای نصب دستی به {url} مراجعه کنید. سپس برای رفع این مشکل، با <contactSupportLink>پشتیبانی تماس بگیرید</contactSupportLink>"
@@ -1223,9 +1211,6 @@
   "icu:calling__cant-join": {
     "messageformat": "امکان پیوستن به تماس وجود ندارد"
   },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "شما در حال حاضر در یک تماس هستید."
-  },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "اطلاعات لینک تماس دریافت نشد. لطفاً اتصال شبکه خود را بررسی کنید و دوباره امتحان کنید."
   },
@@ -1408,9 +1393,6 @@
   },
   "icu:calling__in-this-call": {
     "messageformat": "{people, plural, one {در این تماس · {people,number} نفر} other {در این تماس · {people,number} نفر}}"
-  },
-  "icu:calling__you-have-blocked": {
-    "messageformat": "شما {name} را مسدود کرده‌اید"
   },
   "icu:calling__blocked-participant": {
     "messageformat": "{name} مسدود شده است"
@@ -1843,9 +1825,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "دوباره به‌روزرسانی کنید"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "تماس با پشتیبانی"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "برای راه‌اندازی دوبارهٔ سیگنال کلیک کنید"
@@ -3362,6 +3341,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName}برای پیوستن از طریق پیوند گروه {numberOfRequests,number} بار درخواست کرد و درخواست خود را لغو کرد"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} برای پیوستن از طریق پیوند گروه درخواست کرد و درخواست خود را لغو کرد} other {{joinerName} برای پیوستن از طریق پیوند گروه درخواست کرد و {numberOfRequests,number} درخواست خود را لغو کرد}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "شما پیوند گروه را با موافقت مدیر غیرفعال روشن کردید."
   },
@@ -3535,6 +3517,21 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "روی «کمک مالی به سیگنال» ضربه بزنید و مشترک شوید"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "در حال همگام‌سازی پیام‌ها"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "در حال دانلود {currentSize} از {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "بسته به حجم نسخۀ پشتیبان شما، این پردازش ممکن است چند دقیقه طول بکشد"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Restoring media"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize} of {totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "گسترش"
@@ -3956,11 +3953,11 @@
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": ".۵"
   },
-  "icu:emptyInboxMessage": {
-    "messageformat": "روی {composeIcon} در بالا کلیک کنید و برای مخاطبین یا گروه‌های خود برای ارسال پیام جستجو کنید."
+  "icu:emptyInbox__title": {
+    "messageformat": "گفتگویی وجود ندارد"
   },
-  "icu:composeIcon": {
-    "messageformat": "دکمهٔ نگارش"
+  "icu:emptyInbox__subtitle": {
+    "messageformat": "گفتگوهای اخیر در اینجا ظاهر می‌شود."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "بازارسال به"
@@ -4850,6 +4847,12 @@
   "icu:Stories__list-empty": {
     "messageformat": "اکنون استوری جدیدی برای نمایش وجود ندارد"
   },
+  "icu:Stories__list__empty--title": {
+    "messageformat": "استوری وجود ندارد"
+  },
+  "icu:Stories__list__empty--subtitle": {
+    "messageformat": "به‌روزرسانی‌های جدید در اینجا ظاهر می‌شود."
+  },
   "icu:Stories__list--sending": {
     "messageformat": "در حال ارسال..."
   },
@@ -4864,6 +4867,12 @@
   },
   "icu:Stories__placeholder--text": {
     "messageformat": "برای مشاهده استوری کلیک کنید"
+  },
+  "icu:Stories__placeholder-with-icon--text": {
+    "messageformat": "برای به‌روزرسانی، روی <newStoryIcon>افزودن استوری</newStoryIcon> کلیک کنید."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "برای به‌روزرسانی، روی <newStoryButtonIcon></newStoryButtonIcon> کلیک کنید."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} به {group}"
@@ -5106,6 +5115,12 @@
     "messageformat": "پاسخ‌ها"
   },
   "icu:StoryViewsNRepliesModal__reacted": {
+    "messageformat": "به استوری واکنش نشان داد"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "به استوری واکنش نشان داد"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
     "messageformat": "به استوری واکنش نشان داد"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
@@ -5406,6 +5421,12 @@
   "icu:CallsTab__EmptyStateText": {
     "messageformat": "برای مشاهده یا شروع تماس کلیک کنید"
   },
+  "icu:CallsTab__EmptyStateText--with-icon": {
+    "messageformat": "برای شروع تماس صوتی یا تصویری جدید، روی <newCallIcon>تماس جدید</newCallIcon> کلیک کنید."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "برای شروع تماس صوتی یا تصویری جدید، روی <newCallButtonIcon></newCallButtonIcon> کلیک کنید."
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "جستجو"
   },
@@ -5417,6 +5438,18 @@
   },
   "icu:CallsList__EmptyState--noQuery": {
     "messageformat": "بدون تماس های جدید. با تماس با یک دوست شروع کنید."
+  },
+  "icu:CallsList__EmptyState--noQuery__title": {
+    "messageformat": "هیچ تماسی وجود ندارد."
+  },
+  "icu:CallsList__EmptyState--noQuery__subtitle": {
+    "messageformat": "تماس‌های اخیر در اینجا ظاهر می‌شود."
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__title": {
+    "messageformat": "تماس ازدست‌رفته‌ای وجود ندارد"
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
+    "messageformat": "تماس‌های بی پاسخ در اینجا ظاهر می‌شود."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "نتیجه‌ای برای «{query}» پیدا نشد"
@@ -5435,9 +5468,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "رد شد"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "تماس گروهی"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "پیوند تماس"
@@ -5462,21 +5492,6 @@
   },
   "icu:CallsNewCallButton--return": {
     "messageformat": "بازگشت"
-  },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "قبل از پیوستن به تماس جدید باید تماس فعلی را ترک کنید"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {تماس صوتی خروجی} other {تماس صوتی دریافتی}}} Video {{direction, select, Outgoing {تماس تصویری خروجی} other {تماس صوتی دریافتی}}} Group {{direction, select, Outgoing {تماس گروهی خروجی} other {تماس گروهی ورودی}}} other {{direction, select, Outgoing {تماس خروجی} other {تماس ورودی}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {تماس صوتی ازدست‌رفته} Video {تماس تصویری از دست رفته} Group {تماس گروهی ازدست‌رفته} other {تماس بی‌پاسخ}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {تماس صوتی بی‌پاسخ} Video {تماس تصویری بی‌پاسخ} Group {تماس گروهی بی‌پاسخ} other {تماس بی‌پاسخ}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {تماس صوتی رد شده} Video {تماس تصویری رد شده} Group {تماس گروهی رد شده} other {تماس رد شده}}"
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "پیوند تماس"
@@ -5512,19 +5527,19 @@
     "messageformat": "اشتراک‌گذاری پیوند از طریق سیگنال"
   },
   "icu:CallLinkDetails__DeleteLink": {
-    "messageformat": "Delete link"
+    "messageformat": "حذف پیوند"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Title": {
-    "messageformat": "Delete call link?"
+    "messageformat": "پیوند تماس حذف شود؟"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Body": {
-    "messageformat": "This link will no longer work for anyone who has it."
+    "messageformat": "این پیوند دیگر برای کسانی که آن را دارند کار نمی‌کند."
   },
   "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
-    "messageformat": "Cancel"
+    "messageformat": "لغو"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
-    "messageformat": "Delete"
+    "messageformat": "پاک کردن"
   },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "جزئیات پیوند تماس"
@@ -5596,19 +5611,13 @@
     "messageformat": "تغییرات کوچک، رفع اشکالات و بهبود عملکرد. بابت استفاده از سیگنال سپاسگزاریم!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "این نسخه روند حذف رشته‌پیام‌های بزرگ را سرعت می‌بخشد."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "به لطف سری جدید بهبود عملکرد، اکنون گفتگوها سریع‌تر از همیشه باز می‌شوند."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "ما میان‌بری اضافه کردیم تا بتوانید تماس جاری را قطع کنید و به یک تماس جدید بپیوندید."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "همچنین تعدادی از اشکالات را برطرف کردیم، از جمله اشکالی که گاهی باعث می‌شد پیام «مخاطب ناشناس یک تماس تصویری شروع کرد» پس از شروع تماس در خلاصه فهرست گفتگوها ظاهر شود."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "اختلال راه‌اندازی در لینوکس برای کاربرانی که زبانشان روی `POSIX` تنظیم شده است، در این نسخه جدید برطرف شده است."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "This update fixes a bug where viewing a missed call on one device wouldn't automatically clear the indicator for that missed call on your other devices, which was a missed opportunity for your missed call list to better coexist."
   }
 }

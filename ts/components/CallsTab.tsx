@@ -11,7 +11,7 @@ import type {
   CallHistoryGroup,
   CallHistoryPagination,
 } from '../types/CallDisposition';
-import { CallsNewCall } from './CallsNewCall';
+import { CallsNewCall } from './CallsNewCallButton';
 import { useEscapeHandling } from '../hooks/useEscapeHandling';
 import type {
   ActiveCallStateType,
@@ -24,6 +24,7 @@ import type { WidthBreakpoint } from './_util';
 import type { CallLinkType } from '../types/CallLink';
 import type { CallStateType } from '../state/selectors/calling';
 import type { StartCallData } from './ConfirmLeaveCallModal';
+import { I18n } from './I18n';
 
 enum CallsTabSidebarView {
   CallsListView,
@@ -316,7 +317,21 @@ export function CallsTab({
           <div className="CallsTab__EmptyState">
             <div className="CallsTab__EmptyStateIcon" />
             <p className="CallsTab__EmptyStateLabel">
-              {i18n('icu:CallsTab__EmptyStateText')}
+              <I18n
+                i18n={i18n}
+                id="icu:CallsTab__EmptyStateText--with-icon-2"
+                components={{
+                  // eslint-disable-next-line react/no-unstable-nested-components
+                  newCallButtonIcon: () => {
+                    return (
+                      <span
+                        className="CallsTab__EmptyState__ActionIcon"
+                        aria-label={i18n('icu:CallsTab__NewCallActionLabel')}
+                      />
+                    );
+                  },
+                }}
+              />
             </p>
           </div>
         ) : (

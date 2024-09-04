@@ -80,12 +80,6 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "Die weergawe van jou databasis pas nie by hierdie weergawe van Signal nie. Maak seker dat jy die jongste weergawe van Signal op jou rekenaar oopmaak."
   },
-  "icu:databaseError__recover__detail": {
-    "messageformat": "'n Databasisfout het voorgekom. Jy kan die fout kopieer en Signal-steundiens kontak om die probleem te help oplos. As jy Signal dadelik moet gebruik, kan jy jou data probeer herwin.\n\nKontak die steundiens deur te gaan na: {link}"
-  },
-  "icu:databaseError__recover__button": {
-    "messageformat": "Herwin data"
-  },
   "icu:databaseError__safeStorageBackendChange": {
     "messageformat": "Kan nie toegang tot die databasis-enkripsiesleutel verkry nie, omdat die enkripteringsleutelring-implementering van die bedryfstelsel van {previousBackend} na {currentBackend} verander het. Dit kan gebeur as die rekenaaromgewing verander, byvoorbeeld van GNOME na KDE.\n\nSkakel asseblief terug na die vorige rekenaaromgewing."
   },
@@ -827,14 +821,8 @@
   "icu:mute": {
     "messageformat": "Demp"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal kon nie bywerking doen nie. {retry} of besoek {url} om dit met die hand te installeer. {support} dan oor hierdie probleem."
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal kon nie opdateer nie. <retryUpdateButton>Probeer weer opdateer</retryUpdateButton> of besoek {url} om dit handmatig te installeer. <contactSupportLink>Kontak ons steundiens</contactSupportLink> daarna oor hierdie probleem"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal kon nie bywerking doen nie. Besoek {url} om dit met die hand te installeer. {support} dan oor hierdie probleem."
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal kon nie opdateer nie. Besoek {url} om dit handmatig te installeer. <contactSupportLink>Kontak ons steundiens</contactSupportLink> daarna oor hierdie probleem"
@@ -1223,9 +1211,6 @@
   "icu:calling__cant-join": {
     "messageformat": "Kan nie by oproep aansluit nie"
   },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "Jy is reeds in 'n oproep."
-  },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "Kon nie oproepskakelinligting herroep nie. Gaan asseblief jou netwerkverbinding na en probeer weer."
   },
@@ -1408,9 +1393,6 @@
   },
   "icu:calling__in-this-call": {
     "messageformat": "{people, plural, one {In hierdie oproep · {people,number} persoon} other {In hierdie oproep · {people,number} mense}}"
-  },
-  "icu:calling__you-have-blocked": {
-    "messageformat": "Jy het {name} versper"
   },
   "icu:calling__blocked-participant": {
     "messageformat": "{name} is versper"
@@ -1843,9 +1825,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Probeer weer bywerking"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "kontak steundiens"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Klik om Signal te herlaai"
@@ -3362,6 +3341,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} het d.m.v. die groepskakel {numberOfRequests,number} versoeke gerig om aan te sluit en dit gekanselleer."
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} het d.m.v. die groepskakel versoek om aan te sluit en het dit gekanselleer} other {{joinerName} het d.m.v. die groepskakel {numberOfRequests,number} versoeke gerig om aan te sluit en het dit gekanselleer}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Jy het die groepskakel geaktiveer met admingoedkeuring gedeaktiveer."
   },
@@ -3535,6 +3517,21 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "Tik op \"Dra by tot Signal\" en teken in"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Besig om boodskappe te sinchroniseer"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Besig om {currentSize} van {totalSize} ({fractionComplete,number,percent}) af te laai…"
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "Dit kan 'n paar minute neem, na gelang van die grootte van jou rugsteun"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Restoring media"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize} of {totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Vou uit"
@@ -3956,11 +3953,11 @@
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": "0,5"
   },
-  "icu:emptyInboxMessage": {
-    "messageformat": "Klik die {composeIcon} hier bo en soek na kontakte of groepe om ’n boodskap te stuur."
+  "icu:emptyInbox__title": {
+    "messageformat": "Geen kletse nie"
   },
-  "icu:composeIcon": {
-    "messageformat": "saamstelknop"
+  "icu:emptyInbox__subtitle": {
+    "messageformat": "Onlangse kletse sal hier verskyn."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Stuur aan na"
@@ -4850,6 +4847,12 @@
   "icu:Stories__list-empty": {
     "messageformat": "Tans geen onlangse stories om te wys nie."
   },
+  "icu:Stories__list__empty--title": {
+    "messageformat": "Geen stories nie"
+  },
+  "icu:Stories__list__empty--subtitle": {
+    "messageformat": "Nuwe opdaterings sal hier verskyn."
+  },
   "icu:Stories__list--sending": {
     "messageformat": "Besig om te stuur…"
   },
@@ -4864,6 +4867,12 @@
   },
   "icu:Stories__placeholder--text": {
     "messageformat": "Klik om 'n storie te kyk."
+  },
+  "icu:Stories__placeholder-with-icon--text": {
+    "messageformat": "Klik op <newStoryIcon>Voeg 'n storie by</newStoryIcon> om 'n opdatering by te voeg."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Klik <newStoryButtonIcon></newStoryButtonIcon> om 'n opdatering by te voeg."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} aan {group}"
@@ -5106,6 +5115,12 @@
     "messageformat": "Antwoorde"
   },
   "icu:StoryViewsNRepliesModal__reacted": {
+    "messageformat": "Het op die storie gereageer"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Het op die storie gereageer"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
     "messageformat": "Het op die storie gereageer"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
@@ -5406,6 +5421,12 @@
   "icu:CallsTab__EmptyStateText": {
     "messageformat": "Klik om 'n oproep te sien of te begin"
   },
+  "icu:CallsTab__EmptyStateText--with-icon": {
+    "messageformat": "Klik op <newCallIcon>Nuwe oproep</newCallIcon> om 'n nuwe stem- of video-oproep te begin."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Klik <newCallButtonIcon></newCallButtonIcon> om 'n nuwe stem- of video-oproep te begin."
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Soek"
   },
@@ -5417,6 +5438,18 @@
   },
   "icu:CallsList__EmptyState--noQuery": {
     "messageformat": "Geen onlangse oproepe nie. Begin deur 'n vriend te bel."
+  },
+  "icu:CallsList__EmptyState--noQuery__title": {
+    "messageformat": "Geen oproepe nie"
+  },
+  "icu:CallsList__EmptyState--noQuery__subtitle": {
+    "messageformat": "Onlangse oproepe sal hier verskyn."
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__title": {
+    "messageformat": "Geen gemiste oproepe nie"
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
+    "messageformat": "Gemiste oproepe sal hier verskyn."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Geen resultate vir \"{query}\" nie"
@@ -5435,9 +5468,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Geweier"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Groepoproep"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Oproepskakel"
@@ -5462,21 +5492,6 @@
   },
   "icu:CallsNewCallButton--return": {
     "messageformat": "Keer terug"
-  },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "Jy moet die huidige oproep verlaat voordat jy by 'n nuwe oproep aansluit"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {Uitgaande stemoproep} other {Inkomende stemoproep}}} Video {{direction, select, Outgoing {Uitgaande video-oproep} other {Inkomende video-oproep}}} Group {{direction, select, Outgoing {Uitgaande groepoproep} other {Inkomende groepoproep}}} other {{direction, select, Outgoing {Uitgaande oproep} other {Inkomende oproep}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {Gemiste stemoproep} Video {Gemiste video-oproep} Group {Gemiste groepoproep} other {Gemiste oproep}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {Onbeantwoorde stemoproep} Video {Onbeantwoorde video-oproep} Group {Onbeantwoorde groepoproep} other {Onbeantwoorde oproep}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {Stemoproep geweier} Video {Video-oproep geweier} Group {Groepoproep geweier} other {Oproep geweier}}"
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Oproepskakel"
@@ -5512,19 +5527,19 @@
     "messageformat": "Deel skakel d.m.v. Signal"
   },
   "icu:CallLinkDetails__DeleteLink": {
-    "messageformat": "Delete link"
+    "messageformat": "Skrap skakel"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Title": {
-    "messageformat": "Delete call link?"
+    "messageformat": "Skrap oproepskakel?"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Body": {
-    "messageformat": "This link will no longer work for anyone who has it."
+    "messageformat": "Hierdie skakel sal nie meer werk vir enigiemand wat dit het nie."
   },
   "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
-    "messageformat": "Cancel"
+    "messageformat": "Kanselleer"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
-    "messageformat": "Delete"
+    "messageformat": "Skrap"
   },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "Oproepskakelbesonderhede"
@@ -5596,19 +5611,13 @@
     "messageformat": "Klein veranderings, foutregstellings en prestasieverbeterings. Dankie dat jy Signal gebruik!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "Hierdie vrystelling versnel die proses om lang boodskapstringe te skrap."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Kletse maak nou vinniger oop as ooit tevore danksy nog 'n rondte prestasieverbeterings."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "Indien 'n ander oproep jou naam bel, het ons 'n kortpad bygevoeg om die huidige oproep te verlaat en by die nuwe een aan te sluit."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "Ons het ook 'n handvol foute reggemaak, met inbegrip van een wat soms veroorsaak het dat \"Onbekende kontak het 'n video-oproep begin\" in die kletslys-opsomming verskyn nadat jy die oproep begin het."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "Hierdie opdatering stel ook 'n oopmaak-uitbom in Linux reg vir gebruikers wie se lokaliteit op 'POSIX' gestel is."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "This update fixes a bug where viewing a missed call on one device wouldn't automatically clear the indicator for that missed call on your other devices, which was a missed opportunity for your missed call list to better coexist."
   }
 }

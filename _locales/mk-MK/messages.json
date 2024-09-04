@@ -80,12 +80,6 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "Верзијата од вашата база на податоци не се совпаѓа со оваа верзија на Signal. Проверете дали ја отворате најновата верзија на Signal на вашиот компјутер."
   },
-  "icu:databaseError__recover__detail": {
-    "messageformat": "Настана грешка со базата на податоци. Можете да ја копирате грешката и да го контактирате тимот за поддршка на Signal за да ви помогне во решавање на проблемот. Ако веднаш имате потреба од Signal, можете да се обидете да ги вратите вашите податоци .\n\nКонтактирајте го тимот за поддршка преку: {link}"
-  },
-  "icu:databaseError__recover__button": {
-    "messageformat": "Враќање на податоците"
-  },
   "icu:databaseError__safeStorageBackendChange": {
     "messageformat": "Не може да се пристапи до клучот на шифрираната датабаза бидејќи заднинскиот код на шифрирачот на лозинки на оперативниот систем се има сменето од {previousBackend} во {currentBackend}. Ова може да се случи доколку се смени видот на десктоп, на пример од GNOME во KDE.\n\nВе молиме сменете во претходниот вид на десктоп."
   },
@@ -827,14 +821,8 @@
   "icu:mute": {
     "messageformat": "Исклучи известувања"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal не можеше да се ажурира. {retry}или посетете ја {url}за рачна инсталација. Потоа, {support} за проблемот"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal не можеше да се ажурира. <retryUpdateButton>Обидете се повторно да ажурирате</retryUpdateButton> или посетете ја {url} за рачна инсталација. Потоа, <contactSupportLink>контактирајте со тимот за корисничка поддршка</contactSupportLink> за проблемот"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal не можеше да се ажурира. Посетете ја {url} за рачна инсталација. Потоа, {support}за проблемот"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal не можеше да се ажурира. Посетете ја {url} за рачна инсталација. Потоа, <contactSupportLink>контактирајте со тимот за корисничка поддршка</contactSupportLink> за проблемот"
@@ -1223,9 +1211,6 @@
   "icu:calling__cant-join": {
     "messageformat": "Не може да се приклучите на повикот"
   },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "Веќе сте на повик."
-  },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "Не можат да се преземат податоци за линкот за повикот. Ве молиме проверете ја вашата интернет конекција и обидете се повторно."
   },
@@ -1408,9 +1393,6 @@
   },
   "icu:calling__in-this-call": {
     "messageformat": "{people, plural, one {На овој повик · {people,number} личност} other {На овој повик · {people,number} луѓе}}"
-  },
-  "icu:calling__you-have-blocked": {
-    "messageformat": "Го блокиравте корисникот {name}"
   },
   "icu:calling__blocked-participant": {
     "messageformat": "Контактот {name} е блокиран"
@@ -1843,9 +1825,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Обидете се повторно да ажурирате"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "контактирајте го тимот за корисничка поддршка"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Кликнете за да го рестартирате Signal"
@@ -3362,6 +3341,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName}поднесе и откажа {numberOfRequests,number} барања за придружување преку линкот на групата"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} побара и откажа барање за да се придружи преку линкот на групата} other {{joinerName} побара и откажа {numberOfRequests,number} барања за да се придружи преку линкот на групата}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Го вклучивте линкот на групата со оневозможено одобрување од администратор."
   },
@@ -3535,6 +3517,21 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "Допри на „Донирај на Signal“ и претплати се"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Пораките се синхронизираат"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Се преземаат {currentSize} од {totalSize} ({fractionComplete,number,percent})…"
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "Ова може да потрае неколку минути, во зависност од големината на вашата резервна копија"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Restoring media"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize} of {totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Прошири"
@@ -3956,11 +3953,11 @@
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": ".5"
   },
-  "icu:emptyInboxMessage": {
-    "messageformat": "Кликнете на {composeIcon} погоре и пребарајте контакти или групи на кои сакате да им пишете"
+  "icu:emptyInbox__title": {
+    "messageformat": "Нема разговори"
   },
-  "icu:composeIcon": {
-    "messageformat": "копче за составување нова порака"
+  "icu:emptyInbox__subtitle": {
+    "messageformat": "Неодамнешните разговори ќе се појават овде."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Препрати до"
@@ -4850,6 +4847,12 @@
   "icu:Stories__list-empty": {
     "messageformat": "Нема неодамнешни приказни за прикажување моментално"
   },
+  "icu:Stories__list__empty--title": {
+    "messageformat": "Нема приказни"
+  },
+  "icu:Stories__list__empty--subtitle": {
+    "messageformat": "Новостите ќе се прикажат тука."
+  },
   "icu:Stories__list--sending": {
     "messageformat": "Се испраќа…"
   },
@@ -4864,6 +4867,12 @@
   },
   "icu:Stories__placeholder--text": {
     "messageformat": "Кликнете за да погледнете приказна"
+  },
+  "icu:Stories__placeholder-with-icon--text": {
+    "messageformat": "Кликнете на <newStoryIcon>Додај приказна</newStoryIcon> за да додадете новост."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Кликнете на <newStoryButtonIcon></newStoryButtonIcon> за да додадете новост."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} до {group}"
@@ -5106,6 +5115,12 @@
     "messageformat": "Одговори"
   },
   "icu:StoryViewsNRepliesModal__reacted": {
+    "messageformat": "Реагираше на приказната"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Реагиравте на приказната"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
     "messageformat": "Реагираше на приказната"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
@@ -5406,6 +5421,12 @@
   "icu:CallsTab__EmptyStateText": {
     "messageformat": "Кликнете за да ги прегледате повиците или за да започнете нов повик"
   },
+  "icu:CallsTab__EmptyStateText--with-icon": {
+    "messageformat": "Кликнете на <newCallIcon>Нов повик</newCallIcon> за да започнете нов гласовен или видео повик."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Кликнете на <newCallButtonIcon></newCallButtonIcon> за да започнете нов гласовен или видео повик."
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Барај"
   },
@@ -5417,6 +5438,18 @@
   },
   "icu:CallsList__EmptyState--noQuery": {
     "messageformat": "Нема скорешни повици. Започнете со јавување на пријател."
+  },
+  "icu:CallsList__EmptyState--noQuery__title": {
+    "messageformat": "Нема повици"
+  },
+  "icu:CallsList__EmptyState--noQuery__subtitle": {
+    "messageformat": "Неодамнешните повици ќе се појават овде."
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__title": {
+    "messageformat": "Нема пропуштени повици"
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
+    "messageformat": "Пропуштените повици ќе се појават овде."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Не се пронајдени резултати за „{query}“"
@@ -5435,9 +5468,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Одбиено"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Групен повик"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Линк за повик"
@@ -5462,21 +5492,6 @@
   },
   "icu:CallsNewCallButton--return": {
     "messageformat": "Вратете се"
-  },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "Мора да го напуштите тековниот повик пред да се приклучите на нов"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {Појдовен гласовен повик} other {Дојдовен гласовен повик}}} Video {{direction, select, Outgoing {Појдовен видео повик} other {Дојдовен видео повик}}} Group {{direction, select, Outgoing {Појдовен групен повик} other {Дојдовен групен повик}}} other {{direction, select, Outgoing {Појдовен повик} other {Дојдовен повик}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {Пропуштен гласовен повик} Video {Испуштен видео повик} Group {Пропуштен групен повик} other {Пропуштен повик}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {Неодговорен гласовен повик} Video {Неодоговорен видео повик} Group {Неодговорен групен повик} other {Неодговорен  повик}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {Одбиен гласовен повик} Video {Одбиен видео повик} Group {Одбиен групен повик} other {Одбиен  повик}}"
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Линк за повик"
@@ -5512,19 +5527,19 @@
     "messageformat": "Споделете го линкот преку Signal"
   },
   "icu:CallLinkDetails__DeleteLink": {
-    "messageformat": "Delete link"
+    "messageformat": "Избриши го линкот"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Title": {
-    "messageformat": "Delete call link?"
+    "messageformat": "Да се избрише линкот за повикот?"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Body": {
-    "messageformat": "This link will no longer work for anyone who has it."
+    "messageformat": "Овој линк повеќе нема да функционира за тие кои го имаат."
   },
   "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
-    "messageformat": "Cancel"
+    "messageformat": "Откажи"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
-    "messageformat": "Delete"
+    "messageformat": "Избриши"
   },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "Детали за линкот за повикот"
@@ -5596,19 +5611,13 @@
     "messageformat": "Mали подобрувања, решени багови и подобрувања на перформансот. Ви благодариме што користите Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "Во оваа верзија процесот на бришење големи разговори е забрзан."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Разговорите сега се отвораат побрзо од кога било, благодарение на уште една рунда подобрувања на перформансот."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "Додадовме кратенка за да можете да го прекинете тековниот повик и да се приклучите на нов."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "Исто така решивме и грст багови, вклучувајќи и еден што понекогаш предизвикуваше да се појави „Непознат контакт започна видео повик“ во прегледот на разговори откако сте започнале повик."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "Во оваа верзија е поправен пад при отворање на апликацијата за корисници на Linux со „POSIX“ стандарди."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "This update fixes a bug where viewing a missed call on one device wouldn't automatically clear the indicator for that missed call on your other devices, which was a missed opportunity for your missed call list to better coexist."
   }
 }

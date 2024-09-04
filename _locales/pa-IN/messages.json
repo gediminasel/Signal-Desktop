@@ -80,12 +80,6 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "ਤੁਹਾਡੇ ਡਾਟਾਬੇਸ ਦਾ ਵਰਜ਼ਨ Signal ਦੇ ਇਸ ਵਰਜ਼ਨ ਨਾਲ ਮੇਲ ਨਹੀਂ ਖਾ ਰਿਹਾ ਹੈ। ਯਕੀਨੀ ਬਣਾਓ ਕਿ ਤੁਸੀਂ ਆਪਣੇ ਕੰਪਿਊਟਰ 'ਤੇ Signal ਦਾ ਸਭ ਤੋਂ ਨਵਾਂ ਵਰਜ਼ਨ ਖੋਲ੍ਹ ਰਹੇ ਹੋ।"
   },
-  "icu:databaseError__recover__detail": {
-    "messageformat": "ਡਾਟਾਬੇਸ ਵਿੱਚ ਕੋਈ ਗੜਬੜ ਆ ਗਈ ਹੈ। ਤੁਸੀਂ ਗੜਬੜ ਬਾਰੇ ਜਾਣਕਾਰੀ ਕਾਪੀ ਕਰ ਸਕਦੇ ਹੋ ਅਤੇ ਸਮੱਸਿਆ ਨੂੰ ਹੱਲ ਕਰਨ ਲਈ Signal ਸਹਾਇਤਾ ਟੀਮ ਨਾਲ ਸੰਪਰਕ ਕਰ ਸਕਦੇ ਹੋ। ਜੇਕਰ ਤੁਸੀਂ ਤੁਰੰਤ Signal ਦੀ ਵਰਤੋਂ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ, ਤਾਂ ਤੁਸੀਂ ਆਪਣਾ ਡਾਟਾ ਰਿਕਵਰ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰ ਸਕਦੇ ਹੋ।\n\nਇੱਥੇੇ ਜਾ ਕੇ ਸਹਾਇਤਾ ਟੀਮ ਨਾਲ ਸੰਪਰਕ ਕਰੋ: {link}"
-  },
-  "icu:databaseError__recover__button": {
-    "messageformat": "ਡਾਟਾ ਰਿਕਵਰ ਕਰੋ"
-  },
   "icu:databaseError__safeStorageBackendChange": {
     "messageformat": "ਡਾਟਾਬੇਸ ਇਨਕ੍ਰਿਪਸ਼ਨ ਕੀ ਤੱਕ ਪਹੁੰਚ ਕਰਨ ਵਿੱਚ ਅਸਮਰੱਥ ਰਹੇ ਕਿਉਂਕਿ OS ਇਨਕ੍ਰਿਪਸ਼ਨ ਕੀਰਿੰਗ ਬੈਕਐਂਡ {previousBackend} ਤੋਂ {currentBackend} ਵਿੱਚ ਬਦਲ ਗਿਆ ਹੈ। ਅਜਿਹਾ ਉਦੋਂ ਹੋ ਸਕਦਾ ਹੈ ਜਦੋਂ ਡੈਸਕਟੌਪ ਦਾ ਵਾਤਾਵਰਨ ਬਦਲਦਾ ਹੈ, ਉਦਾਹਰਨ ਦੇ ਲਈ GNOME ਅਤੇ KDE ਵਿਚਕਾਰ।\n\nਕਿਰਪਾ ਕਰਕੇ ਪਿਛਲੇ ਡੈਸਕਟੌਪ ਵਾਤਾਵਰਨ 'ਤੇ ਬਦਲੋ।"
   },
@@ -827,14 +821,8 @@
   "icu:mute": {
     "messageformat": "ਮਿਊਟ ਕਰੋ"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal ਨੂੰ ਅੱਪਡੇਟ ਨਹੀਂ ਕਰ ਸਕੇ। {retry} ਜਾਂ ਇਸ ਨੂੰ ਖੁਦ ਇੰਸਟਾਲ ਕਰਨ ਲਈ {url} 'ਤੇ ਜਾਓ। ਫਿਰ, ਇਸ ਸਮੱਸਿਆ ਦੇ ਲਈ {support}"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal ਨੂੰ ਅੱਪਡੇਟ ਨਹੀਂ ਕਰ ਸਕੇ। <retryUpdateButton>ਦੁਬਾਰਾ ਅੱਪਡੇਟ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ</retryUpdateButton> ਜਾਂ ਇਸਨੂੰ ਖੁਦ ਇੰਸਟਾਲ ਕਰਨ ਲਈ {url} 'ਤੇ ਜਾਓ। ਫਿਰ, ਇਸ ਸਮੱਸਿਆ ਬਾਰੇ <contactSupportLink>ਸਹਾਇਤਾ ਟੀਮ ਦੇ ਨਾਲ ਸੰਪਰਕ ਕਰੋ</contactSupportLink>"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal ਨੂੰ ਅੱਪਡੇਟ ਨਹੀਂ ਕਰ ਸਕੇ। ਇਸ ਨੂੰ ਖੁਦ ਇੰਸਟਾਲ ਕਰਨ ਲਈ {url} 'ਤੇ ਜਾਓ। ਫਿਰ, ਇਸ ਸਮੱਸਿਆ ਦੇ ਲਈ {support}"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal ਨੂੰ ਅੱਪਡੇਟ ਨਹੀਂ ਕਰ ਸਕੇ। ਇਸ ਨੂੰ ਖੁਦ ਇੰਸਟਾਲ ਕਰਨ ਲਈ {url} 'ਤੇ ਜਾਓ। ਫਿਰ, ਇਸ ਸਮੱਸਿਆ ਬਾਰੇ <contactSupportLink>ਸਹਾਇਤਾ ਟੀਮ ਨਾਲ ਸੰਪਰਕ ਕਰੋ</contactSupportLink>"
@@ -1223,9 +1211,6 @@
   "icu:calling__cant-join": {
     "messageformat": "ਕਾਲ ਵਿੱਚ ਸ਼ਾਮਲ ਨਹੀਂ ਹੋ ਸਕਦੇ"
   },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "ਤੁਸੀਂ ਪਹਿਲਾਂ ਹੀ ਕਾਲ ਵਿੱਚ ਹੋ।"
-  },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "ਕਾਲ ਲਿੰਕ ਦੀ ਜਾਣਕਾਰੀ ਪ੍ਰਾਪਤ ਨਹੀਂ ਕਰ ਸਕੇ। ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਨੈੱਟਵਰਕ ਕਨੈਕਸ਼ਨ ਦੀ ਜਾਂਚ ਕਰੋ ਅਤੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।"
   },
@@ -1408,9 +1393,6 @@
   },
   "icu:calling__in-this-call": {
     "messageformat": "{people, plural, one {ਇਸ ਕਾਲ ਵਿੱਚ {people,number} ਵਿਅਕਤੀ} other {ਇਸ ਕਾਲ ਵਿੱਚ {people,number} ਲੋਕ}}"
-  },
-  "icu:calling__you-have-blocked": {
-    "messageformat": "ਤੁਸੀਂ {name} ਉੱਤੇ ਪਾਬੰਦੀ ਲਗਾ ਦਿੱਤੀ ਹੈ"
   },
   "icu:calling__blocked-participant": {
     "messageformat": "{name} ਉੱਤੇ ਪਾਬੰਦੀ ਲਗਾਈ ਗਈ ਹੈ"
@@ -1843,9 +1825,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "ਦੁਬਾਰਾ ਅੱਪਡੇਟ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "ਸਹਾਇਤਾ ਟੀਮ ਨਾਲ ਸੰਪਰਕ ਕਰੋ"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Signal ਮੁੜ-ਚਾਲੂ ਕਰਨ ਲਈ ਕਲਿੱਕ ਕਰੋ"
@@ -3362,6 +3341,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} ਨੇ ਗਰੁੱਪ ਲਿੰਕ ਰਾਹੀਂ ਸ਼ਾਮਲ ਹੋਣ ਦੀਆਂ {numberOfRequests,number} ਬੇਨਤੀਆਂ ਕੀਤੀਆਂ ਅਤੇ ਬੇਨਤੀਆਂ ਰੱਦ ਕੀਤੀਆਂ"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} ਨੇ ਗਰੁੱਪ ਲਿੰਕ ਰਾਹੀਂ ਸ਼ਾਮਲ ਹੋਣ ਦੀ ਬੇਨਤੀ ਕੀਤੀ ਅਤੇ ਆਪਣੀ ਬੇਨਤੀ ਰੱਦ ਕੀਤੀ} other {{joinerName} ਨੇ ਗਰੁੱਪ ਲਿੰਕ ਰਾਹੀਂ ਸ਼ਾਮਲ ਹੋਣ ਦੀ ਬੇਨਤੀ ਕੀਤੀ ਅਤੇ ਆਪਣੀ {numberOfRequests,number} ਬੇਨਤੀਆਂ ਨੂੰ ਰੱਦ ਕੀਤਾ}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "ਤੁਸੀਂ ਐਡਮਿਨ ਮਨਜ਼ੂਰੀ ਨੂੰ ਅਸਮਰੱਥ ਬਣਾ ਕੇ ਗਰੁੱਪ ਲਿੰਕ ਨੂੰ ਚਾਲੂ ਕੀਤਾ।"
   },
@@ -3535,6 +3517,21 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "\"Signal ਨੂੰ ਦਾਨ ਦਿਓ\" 'ਤੇ ਟੈਪ ਕਰੋ ਅਤੇ ਸਬਸਕ੍ਰਾਈਬ ਕਰੋ"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "ਸੁਨੇਹਿਆਂ ਨੂੰ ਸਿੰਕ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "{totalSize} ਵਿੱਚੋਂ {currentSize} ({fractionComplete,number,percent}) ਨੂੰ ਡਾਊਨਲੋਡ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "ਤੁਹਾਡੇ ਬੈਕਅੱਪ ਦੇ ਆਕਾਰ 'ਤੇ ਨਿਰਭਰ ਕਰਦੇ ਹੋਏ ਇਸ ਵਿੱਚ ਕੁਝ ਮਿੰਟ ਲੱਗ ਸਕਦੇ ਹਨ"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Restoring media"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize} of {totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "ਫੈਲਾਓ"
@@ -3956,11 +3953,11 @@
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": ".5"
   },
-  "icu:emptyInboxMessage": {
-    "messageformat": "ਉੱਪਰ {composeIcon} ’ਤੇ ਕਲਿਕ ਕਰੋ ਅਤੇ ਸੁਨੇਹਾ ਭੇਜਣ ਲਈ ਆਪਣੇ ਸੰਪਰਕ ਜਾਂ ਗਰੁੱਪ ਲੱਭੋ।"
+  "icu:emptyInbox__title": {
+    "messageformat": "ਕੋਈ ਚੈਟ ਮੌਜੂਦ ਨਹੀਂ ਹੈ"
   },
-  "icu:composeIcon": {
-    "messageformat": "ਕੰਪੋਜ਼ ਬਟਨ"
+  "icu:emptyInbox__subtitle": {
+    "messageformat": "ਹਾਲ ਹੀ ਦੀਆਂ ਚੈਟਾਂ ਇੱਥੇ ਦਿਖਾਈ ਦੇਣਗੀਆਂ।"
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "ਇਹਨਾਂ ਨੂੰ ਅੱਗੇ ਭੇਜੋ"
@@ -4850,6 +4847,12 @@
   "icu:Stories__list-empty": {
     "messageformat": "ਇਸ ਵੇਲੇ ਦਿਖਾਉਣ ਲਈ ਕੋਈ ਵੀ ਨਵੀਂ ਸਟੋਰੀ ਉਪਲਬਧ ਨਹੀਂ ਹੈ"
   },
+  "icu:Stories__list__empty--title": {
+    "messageformat": "ਕੋਈ ਸਟੋਰੀ ਮੌਜੂਦ ਨਹੀਂ ਹੈ"
+  },
+  "icu:Stories__list__empty--subtitle": {
+    "messageformat": "ਨਵੀਆਂ ਅੱਪਡੇਟਾਂ ਇੱਥੇ ਦਿਖਾਈ ਦੇਣਗੀਆਂ।"
+  },
   "icu:Stories__list--sending": {
     "messageformat": "ਭੇਜ ਰਿਹਾ ਹੈ .. "
   },
@@ -4864,6 +4867,12 @@
   },
   "icu:Stories__placeholder--text": {
     "messageformat": "ਸਟੋਰੀ ਦੇਖਣ ਲਈ ਕਲਿੱਕ ਕਰੋ"
+  },
+  "icu:Stories__placeholder-with-icon--text": {
+    "messageformat": "ਇੱਕ ਅੱਪਡੇਟ ਸ਼ਾਮਲ ਕਰਨ ਲਈ <newStoryIcon>ਸਟੋਰੀ ਸ਼ਾਮਲ ਕਰੋ</newStoryIcon> ਉੱਤੇ ਕਲਿੱਕ ਕਰੋ।"
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "ਅੱਪਡੇਟ ਸ਼ਾਮਲ ਕਰਨ ਲਈ <newStoryButtonIcon></newStoryButtonIcon> ਉੱਤੇ ਕਲਿੱਕ ਕਰੋ।"
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} ਵੱਲੋਂ {group} ਵਿੱਚ"
@@ -5107,6 +5116,12 @@
   },
   "icu:StoryViewsNRepliesModal__reacted": {
     "messageformat": "ਸਟੋਰੀ ਉੱਤੇ ਰਿਐਕਸ਼ਨ ਦਿੱਤਾ"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "ਨੇ ਸਟੋਰੀ ਉੱਤੇ ਰਿਐਕਸ਼ਨ ਦਿੱਤਾ"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
+    "messageformat": "ਨੇ ਸਟੋਰੀ ਉੱਤੇ ਰਿਐਕਸ਼ਨ ਦਿੱਤਾ"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
     "messageformat": "You can’t reply to this story because you’re no longer a member of this group."
@@ -5406,6 +5421,12 @@
   "icu:CallsTab__EmptyStateText": {
     "messageformat": "ਕਾਲ ਦੇਖਣ ਜਾਂ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਕਲਿੱਕ ਕਰੋ"
   },
+  "icu:CallsTab__EmptyStateText--with-icon": {
+    "messageformat": "ਇੱਕ ਨਵੀਂ ਵੌਇਸ ਜਾਂ ਵੀਡੀਓ ਕਾਲ ਸ਼ੁਰੂ ਕਰਨ ਲਈ <newCallIcon>ਨਵੀਂ ਕਾਲ</newCallIcon> ਉੱਤੇ ਕਲਿੱਕ ਕਰੋ।"
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "ਨਵੀਂ ਵੌਇਸ ਜਾਂ ਵੀਡੀਓ ਕਾਲ ਸ਼ੁਰੂ ਕਰਨ ਲਈ <newCallButtonIcon></newCallButtonIcon> ਉੱਤੇ ਕਲਿੱਕ ਕਰੋ।"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "ਖੋਜੋ"
   },
@@ -5417,6 +5438,18 @@
   },
   "icu:CallsList__EmptyState--noQuery": {
     "messageformat": "ਕੋਈ ਹਾਲੀਆ ਕਾਲਾਂ ਮੌਜੂਦ ਨਹੀਂ ਹਨ। ਕਿਸੇ ਦੋਸਤ ਨੂੰ ਕਾਲ ਕਰਕੇ ਸ਼ੁਰੂਆਤ ਕਰੋ।"
+  },
+  "icu:CallsList__EmptyState--noQuery__title": {
+    "messageformat": "ਕੋਈ ਕਾਲ ਮੌਜੂਦ ਨਹੀਂ ਹੈ"
+  },
+  "icu:CallsList__EmptyState--noQuery__subtitle": {
+    "messageformat": "ਹਾਲ ਹੀ ਦੀਆਂ ਕਾਲਾਂ ਇੱਥੇ ਦਿਖਾਈ ਦੇਣਗੀਆਂ।"
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__title": {
+    "messageformat": "ਕੋਈ ਮਿਸ ਕਾਲ ਨਹੀਂ ਆਈ"
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
+    "messageformat": "ਮਿਸ ਕਾਲਾਂ ਇੱਥੇ ਦਿਖਾਈ ਦੇਣਗੀਆਂ।"
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "“{query}” ਲਈ ਕੋਈ ਨਤੀਜੇ ਨਹੀਂ ਮਿਲੇ"
@@ -5435,9 +5468,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "ਅਸਵੀਕਾਰ ਕੀਤੀ ਗਈ"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "ਗਰੁੱਪ ਕਾਲ"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "ਕਾਲ ਦਾ ਲਿੰਕ"
@@ -5462,21 +5492,6 @@
   },
   "icu:CallsNewCallButton--return": {
     "messageformat": "ਵਾਪਸ ਜਾਓ"
-  },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "ਨਵੀਂ ਕਾਲ ਵਿੱਚ ਸ਼ਾਮਲ ਹੋਣ ਤੋਂ ਪਹਿਲਾਂ ਤੁਹਾਨੂੰ ਮੌਜੂਦਾ ਕਾਲ ਛੱਡਣੀ ਪਵੇਗੀ"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {ਆਊਟਗੋਇੰਗ ਵੌਇਸ ਕਾਲ} other {ਇਨਕਮਿੰਗ ਵੌਇਸ ਕਾਲ}}} Video {{direction, select, Outgoing {ਜਾਰੀ ਵੀਡੀਓ ਕਾਲ} other {ਆ ਰਹੀ ਵੀਡੀਓ ਕਾਲ}}} Group {{direction, select, Outgoing {ਆਊਟਗੋਇੰਗ ਗਰੁੱਪ ਕਾਲ} other {ਇਨਕਮਿੰਗ ਗਰੁੱਪ ਕਾਲ}}} other {{direction, select, Outgoing {ਬਾਹਰ ਜਾਣ ਵਾਲੀ ਕਾਲ} other {ਆਉਣ ਵਾਲੀ ਕਾਲ }}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {ਵੌਇਸ ਕਾਲ ਮਿਸ ਹੋਈ} Video {ਖੁੰਝੀ ਵੀਡੀਓ ਕਾਲ} Group {ਮਿਸ ਹੋਈਆਂ ਗਰੁੱਪ ਕਾਲ} other {ਮਿਸਡ ਕਾਲ}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {ਵੌਇਸ ਕਾਲ ਨਹੀਂ ਚੁੱਕੀ ਗਈ} Video {ਜਵਾਬ ਨਾ ਦਿੱਤੀ ਵੀਡੀਓ ਕਾਲ} Group {ਗਰੁੱਪ ਕਾਲ ਨਹੀਂ ਚੁੱਕੀ ਗਈ} other {ਕਾਲ ਨਹੀਂ ਚੁੱਕੀ ਗਈ}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {ਵੌਇਸ ਕਾਲ ਨੂੰ ਅਸਵੀਕਾਰ ਕੀਤਾ ਗਿਆ} Video {ਵੀਡੀਓ ਕਾਲ ਨੂੰ ਅਸਵੀਕਾਰ ਕੀਤਾ ਗਿਆ} Group {ਗਰੁੱਪ ਕਾਲ ਨੂੰ ਅਸਵੀਕਾਰ ਕੀਤਾ ਗਿਆ} other {ਕਾਲ ਨੂੰ ਅਸਵੀਕਾਰ ਕੀਤਾ ਗਿਆ}}"
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "ਕਾਲ ਦਾ ਲਿੰਕ"
@@ -5512,19 +5527,19 @@
     "messageformat": "Signal ਰਾਹੀਂ ਲਿੰਕ ਸਾਂਝਾ ਕਰੋ"
   },
   "icu:CallLinkDetails__DeleteLink": {
-    "messageformat": "Delete link"
+    "messageformat": "ਲਿੰਕ ਮਿਟਾਓ"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Title": {
-    "messageformat": "Delete call link?"
+    "messageformat": "ਕੀ ਕਾਲ ਦਾ ਲਿੰਕ ਮਿਟਾਉਣਾ ਹੈ?"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Body": {
-    "messageformat": "This link will no longer work for anyone who has it."
+    "messageformat": "ਇਹ ਲਿੰਕ ਜਿਹਨਾਂ ਕੋਲ ਵੀ ਹੈ ਉਹਨਾਂ ਲਈ ਕੰਮ ਨਹੀਂ ਕਰੇਗਾ।"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
-    "messageformat": "Cancel"
+    "messageformat": "ਰੱਦ ਕਰੋ"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
-    "messageformat": "Delete"
+    "messageformat": "ਮਿਟਾਓ"
   },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "ਕਾਲ ਲਿੰਕ ਵੇਰਵੇ"
@@ -5596,19 +5611,13 @@
     "messageformat": "ਛੋਟੇ-ਮੋਟੇ ਸੁਧਾਰ, ਖ਼ਰਾਬੀਆਂ ਨੂੰ ਦਰੁਸਤ ਅਤੇ ਪ੍ਰਦਰਸ਼ਨ ਨੂੰ ਬਿਹਤਰ ਬਣਾਇਆ ਗਿਆ ਹੈ। Signal ਦੀ ਵਰਤੋਂ ਕਰਨ ਲਈ ਤੁਹਾਡਾ ਧੰਨਵਾਦ!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "ਇਹ ਰੀਲੀਜ਼ ਸੁਨੇਹਿਆਂ ਦੇ ਵੱਡੇ ਥਰਿੱਡਾਂ ਨੂੰ ਮਿਟਾਉਣ ਦੀ ਪ੍ਰਕਿਰਿਆ ਨੂੰ ਤੇਜ਼ ਕਰਦਾ ਹੈ।"
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "ਪ੍ਰਦਰਸ਼ਨ ਵਿੱਚ ਕੀਤੇ ਸੁਧਾਰਾਂ ਦੀ ਬਦੌਲਤ ਚੈਟਾਂ ਹੁਣ ਪਹਿਲਾਂ ਨਾਲੋਂ ਹੋਰ ਤੇਜ਼ੀ ਨਾਲ ਖੁੱਲ੍ਹਦੀਆਂ ਹਨ।"
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "ਜਦੋਂ ਕੋਈ ਹੋਰ ਕਾਲ ਪਹਿਲਾਂ ਹੀ ਚੱਲ ਰਹੀ ਹੁੰਦੀ ਹੈ ਤਾਂ ਅਸੀਂ ਉਸ ਕਾਲ ਨੂੰ ਛੱਡਣ ਅਤੇ ਇੱਕ ਨਵੀਂ ਕਾਲ ਵਿੱਚ ਸ਼ਾਮਲ ਹੋਣ ਲਈ ਇੱਕ ਸ਼ਾਰਟਕੱਟ ਜੋੜਿਆ ਹੈ।"
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "ਅਸੀਂ ਕੁਝ ਖ਼ਰਾਬੀਆਂ ਨੂੰ ਦਰੁਸਤ ਕੀਤਾ ਹੈ, ਜਿਸ ਵਿੱਚ ਕਈ ਵਾਰ ਤੁਹਾਡੇ ਦੁਆਰਾ ਕਾਲ ਸ਼ੁਰੂ ਕਰਨ ਤੋਂ ਬਾਅਦ ਚੈਟ ਸੂਚੀ ਦੇ ਸੰਖੇਪ ਵਿੱਚ \"ਅਣਜਾਣ ਸੰਪਰਕ ਨੇ ਇੱਕ ਵੀਡੀਓ ਕਾਲ ਸ਼ੁਰੂ ਕੀਤੀ\" ਦਿਖਾਈ ਦਿੰਦਾ ਸੀ।"
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "ਇਹ ਅੱਪਡੇਟ ਉਹਨਾਂ ਵਰਤੋਂਕਾਰਾਂ ਲਈ Linux 'ਤੇ ਇੱਕ ਸਟਾਰਟਅੱਪ ਕਰੈਸ਼ ਨੂੰ ਵੀ ਠੀਕ ਕਰਦਾ ਹੈ ਜਿਹਨਾਂ ਦਾ ਲੋਕੇਲ `POSIX` 'ਤੇ ਸੈੱਟ ਹੈ।"
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "This update fixes a bug where viewing a missed call on one device wouldn't automatically clear the indicator for that missed call on your other devices, which was a missed opportunity for your missed call list to better coexist."
   }
 }

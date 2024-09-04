@@ -117,7 +117,6 @@ import { load as loadLocale } from './locale';
 import type { LoggerType } from '../ts/types/Logging';
 import { HourCyclePreference } from '../ts/types/I18N';
 import { ScreenShareStatus } from '../ts/types/Calling';
-import { DBVersionFromFutureError } from '../ts/sql/migrations';
 import type { ParsedSignalRoute } from '../ts/util/signalRoutes';
 import { parseSignalRoute } from '../ts/util/signalRoutes';
 import * as dns from '../ts/util/dns';
@@ -200,7 +199,7 @@ const cliOptions = cliParser.parse(process.argv);
 const defaultWebPrefs = {
   devTools:
     process.argv.some(arg => arg === '--enable-dev-tools') ||
-    getEnvironment() !== Environment.Production ||
+    getEnvironment() !== Environment.PackagedApp ||
     !isProduction(app.getVersion()),
   spellcheck: false,
   // https://chromium.googlesource.com/chromium/src/+/main/third_party/blink/renderer/platform/runtime_enabled_features.json5
@@ -1800,7 +1799,9 @@ const onDatabaseError = async (error: Error) => {
   const copyErrorAndQuitButtonIndex = 0;
   const SIGNAL_SUPPORT_LINK = 'https://support.signal.org/error';
 
-  if (error instanceof DBVersionFromFutureError) {
+  // Note that this error is thrown by the worker process and thus instanceof
+  // check won't work.
+  if (error.name === 'DBVersionFromFutureError') {
     // If the DB version is too new, the user likely opened an older version of Signal,
     // and they would almost never want to delete their data as a result, so we don't show
     // that option
@@ -1846,7 +1847,9 @@ const onDatabaseError = async (error: Error) => {
 
   if (buttonIndex === copyErrorAndQuitButtonIndex) {
     clipboard.writeText(
-      `Database startup error:\n\n${redactAll(Errors.toLogFormat(error))}`
+      `Database startup error:\n\n${redactAll(Errors.toLogFormat(error))}\n\n` +
+        `App Version: ${app.getVersion()}\n` +
+        `OS: ${os.platform()}`
     );
   } else if (
     typeof deleteAllDataButtonIndex === 'number' &&
@@ -2203,6 +2206,15 @@ app.on('ready', async () => {
   } catch (err) {
     logger.error(
       'main/ready: Error deleting temp dir:',
+      Errors.toLogFormat(err)
+    );
+  }
+
+  try {
+    await attachments.deleteStaleDownloads(userDataPath);
+  } catch (err) {
+    logger.error(
+      'main/ready: Error deleting stale downloads:',
       Errors.toLogFormat(err)
     );
   }
@@ -2615,6 +2627,7 @@ ipc.on(
   async (_event: Electron.Event, logText: string) => {
     const { filePath } = await dialog.showSaveDialog({
       defaultPath: 'debuglog.txt',
+      showsTagField: false,
     });
     if (filePath) {
       await writeFile(filePath, logText);
@@ -2700,7 +2713,7 @@ ipc.on('get-config', async event => {
     certificateAuthority: config.get<string>('certificateAuthority'),
     environment:
       !isTestEnvironment(getEnvironment()) && ciMode
-        ? Environment.Production
+        ? Environment.PackagedApp
         : getEnvironment(),
     isMockTestEnvironment: Boolean(process.env.MOCK_TEST),
     ciMode,
@@ -2708,6 +2721,7 @@ ipc.on('get-config', async event => {
     dnsFallback: await getDNSFallback(),
     disableIPv6: DISABLE_IPV6,
     ciBackupPath: config.get<string | null>('ciBackupPath') || undefined,
+    ciIsPlaintextBackup: config.get<boolean>('ciIsPlaintextBackup'),
     nodeVersion: process.versions.node,
     hostname: os.hostname(),
     osRelease: os.release(),
@@ -2978,9 +2992,11 @@ ipc.handle('show-save-dialog', async (_event, { defaultPath }) => {
 
   const { canceled, filePath: selectedFilePath } = await dialog.showSaveDialog(
     mainWindow,
-    { defaultPath }
+    {
+      defaultPath,
+      showsTagField: false,
+    }
   );
-
   if (canceled || selectedFilePath == null) {
     return { canceled: true };
   }

@@ -80,12 +80,6 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "Sinu andmebaasi versioon ei klapi selle Signali versiooniga. Veendu, et avasid oma arvutis uusima Signali versiooni."
   },
-  "icu:databaseError__recover__detail": {
-    "messageformat": "Tekkis andmebaasi viga. Saad vea kopeerida ja Signali toega ühendust võtta, et probleem lahendada. Kui sul on vaja kohe Signalit kasutada, saad proovida andmeid taastada.\n\nToega saad ühendust võtta aadressil {link}"
-  },
-  "icu:databaseError__recover__button": {
-    "messageformat": "Taasta andmed"
-  },
   "icu:databaseError__safeStorageBackendChange": {
     "messageformat": "Andmebaasi krüptimisvõtmele ei pääsenud ligi, sest operatsioonisüsteemi krüptimise võtmerõngas {previousBackend} asendus uuega {currentBackend}. See võib juhtuda, kui töölauakeskkond muutub, näiteks GNOME'i ja KDE vahel.\n\nPalun pöördu tagasi endise töölauakeskkonna juurde."
   },
@@ -827,14 +821,8 @@
   "icu:mute": {
     "messageformat": "Vaigista"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signali uuendamine nurjus. {retry} või külasta lehte {url}, et see käsitsi paigaldada. Seejärel {support} seoses selle probleemiga"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signalit ei saanud uuendada. <retryUpdateButton>Proovi uuesti uuendada</retryUpdateButton> või külasta lehte {url}, et see käsitsi paigaldada. Seejärel <contactSupportLink>palun võta ühendust kasutajatoega</contactSupportLink> ning kirjelda probleemi"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signali uuendamine nurjus. Külasta lehte {url}, et see käsitsi paigaldada. Seejärel {support} seoses selle probleemiga"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signalit ei saanud uuendada. Külasta lehte {url}, et see käsitsi paigaldada. Seejärel <contactSupportLink>palun võta ühendust kasutajatoega</contactSupportLink> ning kirjelda probleemi"
@@ -1223,9 +1211,6 @@
   "icu:calling__cant-join": {
     "messageformat": "Kõnega ei saa liituda"
   },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "Sa oled juba kõnes."
-  },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "Kõne lingi infot ei õnnestunud saada. Palun kontrolli oma võrguühendust ja proovi uuesti."
   },
@@ -1408,9 +1393,6 @@
   },
   "icu:calling__in-this-call": {
     "messageformat": "{people, plural, one {Selles kõnes · {people,number} inimene} other {Selles kõnes · {people,number} inimest}}"
-  },
-  "icu:calling__you-have-blocked": {
-    "messageformat": "Sa blokeerisid kasutaja {name}"
   },
   "icu:calling__blocked-participant": {
     "messageformat": "{name} on blokeeritud"
@@ -1843,9 +1825,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Proovi uuesti uuendada"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "võta ühendust kasutajatoega"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Klõpsa Signali taaskäivitamiseks"
@@ -3362,6 +3341,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName}taotles grupilingi kaudu ligipääsu ja loobus {numberOfRequests,number} liitumissoovist"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} taotles grupilingi kaudu ligipääsu ja loobus oma liitumissoovist.} other {{joinerName} taotles grupilingi kaudu ligipääsu ja loobus oma {numberOfRequests,number} liitumissoovist}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Sa lülitasid administraatori kinnituseta grupilingi sisse."
   },
@@ -3535,6 +3517,21 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "Toksa \"Anneta Signalile\" ja liitu"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Sõnumite sünkroniseerimine"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Allalaadimine: {currentSize} kogumahust {totalSize} ({fractionComplete,number,percent}) …"
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "Olenevalt sinu varukoopia suurusest võib see mõne minuti aega võtta"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Restoring media"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize} of {totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Laienda"
@@ -3956,11 +3953,11 @@
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": "0,5"
   },
-  "icu:emptyInboxMessage": {
-    "messageformat": "Klõpsa üleval {composeIcon} ja otsi sõnumi saatmiseks kontakte või gruppe.."
+  "icu:emptyInbox__title": {
+    "messageformat": "Vestlusi ei ole"
   },
-  "icu:composeIcon": {
-    "messageformat": "koostamisnupp"
+  "icu:emptyInbox__subtitle": {
+    "messageformat": "Hiljutised vestlused kuvatakse siin."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Edasta saajale"
@@ -4850,6 +4847,12 @@
   "icu:Stories__list-empty": {
     "messageformat": "Hetkel puuduvad kuvamiseks hiljutised lood"
   },
+  "icu:Stories__list__empty--title": {
+    "messageformat": "Lugusid ei ole"
+  },
+  "icu:Stories__list__empty--subtitle": {
+    "messageformat": "Uuendused kuvatakse siin."
+  },
   "icu:Stories__list--sending": {
     "messageformat": "Saatmine…"
   },
@@ -4864,6 +4867,12 @@
   },
   "icu:Stories__placeholder--text": {
     "messageformat": "Klõpsa loo vaatamiseks"
+  },
+  "icu:Stories__placeholder-with-icon--text": {
+    "messageformat": "Uuenduse lisamiseks klõpsa <newStoryIcon>Lisa lugu</newStoryIcon>."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Loo lisamiseks klõpsa <newStoryButtonIcon></newStoryButtonIcon>."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "Kasutajalt {name} grupile {group}"
@@ -5106,6 +5115,12 @@
     "messageformat": "Vastused"
   },
   "icu:StoryViewsNRepliesModal__reacted": {
+    "messageformat": "Reageeris loole"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reageerisid loole"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
     "messageformat": "Reageeris loole"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
@@ -5406,6 +5421,12 @@
   "icu:CallsTab__EmptyStateText": {
     "messageformat": "Klõpsa, et kõnet näha või alustada"
   },
+  "icu:CallsTab__EmptyStateText--with-icon": {
+    "messageformat": "Uue hääl- või videokõne alustamiseks klõpsa <newCallIcon>Uus kõne</newCallIcon>."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Uue hääl- või videokõne alustamiseks klõpsa <newCallButtonIcon></newCallButtonIcon>."
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Otsi"
   },
@@ -5417,6 +5438,18 @@
   },
   "icu:CallsList__EmptyState--noQuery": {
     "messageformat": "Hiljutised kõned puuduvad. Tee ots lahti ja helista sõbrale."
+  },
+  "icu:CallsList__EmptyState--noQuery__title": {
+    "messageformat": "Kõned puuduvad"
+  },
+  "icu:CallsList__EmptyState--noQuery__subtitle": {
+    "messageformat": "Hiljutised kõned ilmuvad siin."
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__title": {
+    "messageformat": "Vastamata kõnesid ei ole"
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
+    "messageformat": "Vastamata kõned kuvatakse siin."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "„{query}“ ei andnud otsingutulemusi"
@@ -5435,9 +5468,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Keeldutud"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Grupikõne"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Kõne link"
@@ -5462,21 +5492,6 @@
   },
   "icu:CallsNewCallButton--return": {
     "messageformat": "Tagasi"
-  },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "Enne uue kõnega liitumist pead praegusest kõnest väljuma"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {Väljuv häälkõne} other {Sissetulev häälkõne}}} Video {{direction, select, Outgoing {Tehtud videokõne} other {Sissetulev videokõne}}} Group {{direction, select, Outgoing {Väljuv grupikõne} other {Sissetulev grupikõne}}} other {{direction, select, Outgoing {Väljaminev kõne} other {Sissetulev kõne}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {Vastamata häälkõne} Video {Vastamata videokõne} Group {Vastamata grupikõne} other {Vastamata kõne}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {Vastamata häälkõne} Video {Vastamata videokõne} Group {Vastamata grupikõne} other {Vastamata kõne}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {Sa keeldusid häälkõnest} Video {Sa keeldusid videokõnest} Group {Sa keeldusid grupikõnest} other {Sa keeldusid kõnest}}"
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Kõne link"
@@ -5512,19 +5527,19 @@
     "messageformat": "Jaga linki Signali kaudu"
   },
   "icu:CallLinkDetails__DeleteLink": {
-    "messageformat": "Delete link"
+    "messageformat": "Kustuta link"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Title": {
-    "messageformat": "Delete call link?"
+    "messageformat": "Kas kustutada kõnelink?"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Body": {
-    "messageformat": "This link will no longer work for anyone who has it."
+    "messageformat": "See link ei toimi enam mitte kellegi jaoks, kellel see on."
   },
   "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
-    "messageformat": "Cancel"
+    "messageformat": "Loobu"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
-    "messageformat": "Delete"
+    "messageformat": "Kustuta"
   },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "Kõnelingi andmed"
@@ -5596,19 +5611,13 @@
     "messageformat": "Väikesed muudatused, vigade parandused ja jõudluse täiustused. Aitäh, et kasutad Signalit!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "See väljalase kiirendab suurte sõnumilõimede kustutamist."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Tänu järjekordsetele täiustustele avanevad vestlused nüüd kiiremini kui kunagi varem."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "Lisasime otsetee, mille kaudu saad ühe kõne lõpetada ja kohe teisega liituda, kui uus kõne tuleb sisse eelmise ajal."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "Parandasime ka mõned vead, sh selle, mis andis mõnikord pärast kõne alustamist vestluste loendi kokkuvõttes teate „Tundmatu kontakt alustas videokõnet“"
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "Selle uuendusega parandatakse ka käivitumisel kokkujooksmise probleem Linuxi kasutajate puhul, kelle asukohaks on määratud POSIX."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "This update fixes a bug where viewing a missed call on one device wouldn't automatically clear the indicator for that missed call on your other devices, which was a missed opportunity for your missed call list to better coexist."
   }
 }

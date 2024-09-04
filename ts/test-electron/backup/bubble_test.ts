@@ -13,7 +13,6 @@ import * as Bytes from '../../Bytes';
 import { generateAci } from '../../types/ServiceId';
 import { ReadStatus } from '../../messages/MessageReadStatus';
 import { SeenStatus } from '../../MessageSeenStatus';
-import { loadCallsHistory } from '../../services/callHistoryLoader';
 import { ID_V1_LENGTH } from '../../groups';
 import { DurationInSeconds, WEEK } from '../../util/durations';
 import {
@@ -22,8 +21,10 @@ import {
   symmetricRoundtripHarness,
   OUR_ACI,
 } from './helpers';
+import { loadAll } from '../../services/allLoaders';
 
 const CONTACT_A = generateAci();
+const CONTACT_B = generateAci();
 const GV1_ID = Bytes.toBinary(getRandomBytes(ID_V1_LENGTH));
 
 const BADGE_RECEIPT =
@@ -37,6 +38,7 @@ const BADGE_RECEIPT =
 
 describe('backup/bubble messages', () => {
   let contactA: ConversationModel;
+  let contactB: ConversationModel;
   let gv1: ConversationModel;
 
   beforeEach(async () => {
@@ -51,6 +53,11 @@ describe('backup/bubble messages', () => {
       'private',
       { systemGivenName: 'CONTACT_A' }
     );
+    contactB = await window.ConversationController.getOrCreateAndWait(
+      CONTACT_B,
+      'private',
+      { systemGivenName: 'CONTACT_B' }
+    );
 
     gv1 = await window.ConversationController.getOrCreateAndWait(
       GV1_ID,
@@ -60,7 +67,7 @@ describe('backup/bubble messages', () => {
       }
     );
 
-    await loadCallsHistory();
+    await loadAll();
   });
 
   it('roundtrips incoming edited message', async () => {
@@ -346,12 +353,15 @@ describe('backup/bubble messages', () => {
           [contactA.id]: {
             status: SendStatus.Delivered,
           },
+          [contactB.id]: {
+            status: SendStatus.Failed,
+          },
         },
         errors: [
           {
-            serviceId: CONTACT_A,
+            serviceId: CONTACT_B,
             name: 'OutgoingIdentityKeyError',
-            message: `The identity of ${CONTACT_A} has changed.`,
+            message: `The identity of ${CONTACT_B} has changed.`,
           },
         ],
         timestamp: 3,
@@ -367,6 +377,9 @@ describe('backup/bubble messages', () => {
         sourceServiceId: OUR_ACI,
         sendStateByConversationId: {
           [contactA.id]: {
+            status: SendStatus.Failed,
+          },
+          [contactB.id]: {
             status: SendStatus.Delivered,
           },
         },

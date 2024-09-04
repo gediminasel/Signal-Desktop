@@ -70,6 +70,9 @@ describe('sql/getCallHistoryGroups', () => {
   beforeEach(async () => {
     await removeAll();
   });
+  after(async () => {
+    await removeAll();
+  });
 
   it('should merge related items in order', async () => {
     const now = Date.now();
@@ -195,6 +198,7 @@ describe('sql/getCallHistoryGroups', () => {
       version: 0,
       id: 'id:1',
       serviceId: conversation1Uuid,
+      expireTimerVersion: 1,
     };
 
     const conversation2: ConversationAttributesType = {
@@ -202,6 +206,7 @@ describe('sql/getCallHistoryGroups', () => {
       version: 2,
       id: 'id:2',
       groupId: conversation2GroupId,
+      expireTimerVersion: 1,
     };
 
     await saveConversation(conversation1);
@@ -267,6 +272,7 @@ describe('sql/getCallHistoryGroups', () => {
       type: 'private',
       version: 0,
       id: conversationId,
+      expireTimerVersion: 1,
     };
 
     await saveConversation(conversation);
@@ -393,6 +399,7 @@ describe('sql/getCallHistoryGroups', () => {
       version: 0,
       id: 'id:1',
       serviceId: conversation1Uuid,
+      expireTimerVersion: 1,
     };
 
     const conversation2: ConversationAttributesType = {
@@ -400,6 +407,7 @@ describe('sql/getCallHistoryGroups', () => {
       version: 2,
       id: 'id:2',
       groupId: conversation2GroupId,
+      expireTimerVersion: 1,
     };
 
     await saveConversation(conversation1);

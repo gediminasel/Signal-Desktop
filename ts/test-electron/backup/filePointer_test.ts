@@ -40,7 +40,8 @@ describe('convertFilePointerToAttachment', () => {
           digest: Bytes.fromString('digest'),
           uploadTimestamp: Long.fromNumber(1970),
         }),
-      })
+      }),
+      { _createName: () => 'downloadPath' }
     );
 
     assert.deepStrictEqual(result, {
@@ -58,6 +59,7 @@ describe('convertFilePointerToAttachment', () => {
       uploadTimestamp: 1970,
       incrementalMac: Bytes.toBase64(Bytes.fromString('incrementalMac')),
       incrementalMacChunkSize: 1000,
+      downloadPath: 'downloadPath',
     });
   });
 
@@ -75,13 +77,14 @@ describe('convertFilePointerToAttachment', () => {
         backupLocator: new Backups.FilePointer.BackupLocator({
           mediaName: 'mediaName',
           cdnNumber: 3,
-          size: Long.fromNumber(128),
+          size: 128,
           key: Bytes.fromString('key'),
           digest: Bytes.fromString('digest'),
           transitCdnKey: 'transitCdnKey',
           transitCdnNumber: 2,
         }),
-      })
+      }),
+      { _createName: () => 'downloadPath' }
     );
 
     assert.deepStrictEqual(result, {
@@ -102,6 +105,7 @@ describe('convertFilePointerToAttachment', () => {
         mediaName: 'mediaName',
         cdnNumber: 3,
       },
+      downloadPath: 'downloadPath',
     });
   });
 
@@ -139,12 +143,14 @@ describe('convertFilePointerToAttachment', () => {
     const result = convertFilePointerToAttachment(
       new Backups.FilePointer({
         backupLocator: new Backups.FilePointer.BackupLocator(),
-      })
+      }),
+      { _createName: () => 'downloadPath' }
     );
 
     assert.deepStrictEqual(result, {
       contentType: APPLICATION_OCTET_STREAM,
       size: 0,
+      downloadPath: 'downloadPath',
       width: undefined,
       height: undefined,
       blurHash: undefined,
@@ -215,7 +221,7 @@ const defaultBackupLocator = new Backups.FilePointer.BackupLocator({
   cdnNumber: null,
   key: Bytes.fromBase64('key'),
   digest: defaultDigest,
-  size: Long.fromNumber(100),
+  size: 100,
   transitCdnKey: 'cdnKey',
   transitCdnNumber: 2,
 });

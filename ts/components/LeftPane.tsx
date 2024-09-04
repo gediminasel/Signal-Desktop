@@ -1,7 +1,13 @@
 // Copyright 2019 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, { useEffect, useCallback, useMemo, useRef } from 'react';
+import React, {
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import classNames from 'classnames';
 import { isNumber } from 'lodash';
 
@@ -56,8 +62,10 @@ import {
 import { ContextMenu } from './ContextMenu';
 import { EditState as ProfileEditorEditState } from './ProfileEditor';
 import type { UnreadStats } from '../util/countUnreadStats';
+import { BackupMediaDownloadProgressBanner } from './BackupMediaDownloadProgress';
 
 export type PropsType = {
+  backupMediaDownloadProgress: { totalBytes: number; downloadedBytes: number };
   otherTabsUnreadStats: UnreadStats;
   hasExpiredDialog: boolean;
   hasFailedStorySends: boolean;
@@ -139,6 +147,7 @@ export type PropsType = {
   showFindByUsername: () => void;
   showFindByPhoneNumber: () => void;
   showConversation: ShowConversationType;
+  preloadConversation: (conversationId: string) => void;
   showInbox: () => void;
   startComposing: () => void;
   startSearch: () => unknown;
@@ -172,6 +181,7 @@ export type PropsType = {
 } & LookupConversationWithoutServiceIdActionsType;
 
 export function LeftPane({
+  backupMediaDownloadProgress,
   otherTabsUnreadStats,
   blockConversation,
   challengeStatus,
@@ -205,6 +215,7 @@ export function LeftPane({
 
   openUsernameReservationModal,
   preferredWidthFromStorage,
+  preloadConversation,
   removeConversation,
   renderCaptchaDialog,
   renderCrashReportDialog,
@@ -472,6 +483,10 @@ export function LeftPane({
     startSearch,
   ]);
 
+  const backgroundNode = helper.getBackgroundNode({
+    i18n,
+  });
+
   const preRowsNode = helper.getPreRowsNode({
     clearConversationSearch,
     clearGroupCreationError,
@@ -628,6 +643,34 @@ export function LeftPane({
     dialogs.push({ key: 'banner', dialog: maybeBanner });
   }
 
+  // We'll show the backup media download progress banner if the download is currently or
+  // was ongoing at some point during the lifecycle of this component
+  const [
+    hasMediaBackupDownloadBeenOngoing,
+    setHasMediaBackupDownloadBeenOngoing,
+  ] = useState(false);
+
+  const isMediaBackupDownloadOngoing =
+    backupMediaDownloadProgress?.totalBytes > 0 &&
+    backupMediaDownloadProgress.downloadedBytes <
+      backupMediaDownloadProgress.totalBytes;
+
+  if (isMediaBackupDownloadOngoing && !hasMediaBackupDownloadBeenOngoing) {
+    setHasMediaBackupDownloadBeenOngoing(true);
+  }
+
+  if (hasMediaBackupDownloadBeenOngoing) {
+    dialogs.push({
+      key: 'backupMediaDownload',
+      dialog: (
+        <BackupMediaDownloadProgressBanner
+          i18n={i18n}
+          {...backupMediaDownloadProgress}
+        />
+      ),
+    });
+  }
+
   const hideHeader =
     modeSpecificProps.mode === LeftPaneMode.Archive ||
     modeSpecificProps.mode === LeftPaneMode.Compose ||
@@ -686,6 +729,7 @@ export function LeftPane({
         </>
       }
     >
+      {backgroundNode}
       <nav
         className={classNames(
           'module-left-pane',
@@ -771,6 +815,7 @@ export function LeftPane({
                 }
                 showConversation={showConversation}
                 blockConversation={blockConversation}
+                onPreloadConversation={preloadConversation}
                 onSelectConversation={onSelectConversation}
                 onOutgoingAudioCallInConversation={
                   onOutgoingAudioCallInConversation

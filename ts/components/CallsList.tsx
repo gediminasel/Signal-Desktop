@@ -38,13 +38,13 @@ import { drop } from '../util/drop';
 import { strictAssert } from '../util/assert';
 import { UserText } from './UserText';
 import { I18n } from './I18n';
-import { NavSidebarSearchHeader } from './NavSidebar';
+import { NavSidebarSearchHeader, NavSidebarEmpty } from './NavSidebar';
 import { SizeObserver } from '../hooks/useSizeObserver';
 import {
   formatCallHistoryGroup,
   getCallIdFromEra,
 } from '../util/callDisposition';
-import { CallsNewCallButton } from './CallsNewCall';
+import { CallsNewCallButton } from './CallsNewCallButton';
 import { Tooltip, TooltipPlacement } from './Tooltip';
 import { Theme } from '../util/theme';
 import type { CallingConversationType } from '../types/Calling';
@@ -205,21 +205,27 @@ export function CallsList({
   const searchStateQuery = searchState.options?.query ?? '';
   const searchStateStatus =
     searchState.options?.status ?? CallHistoryFilterStatus.All;
+  const hasSearchStateQuery = searchStateQuery !== '';
   const searchFiltering =
-    searchStateQuery !== '' ||
-    searchStateStatus !== CallHistoryFilterStatus.All;
+    hasSearchStateQuery || searchStateStatus !== CallHistoryFilterStatus.All;
   const searchPending = searchState.state === 'pending';
+  const isEmpty = !searchState.results?.items?.length;
 
   const rows = useMemo(() => {
     let results: ReadonlyArray<Row> = searchState.results?.items ?? [];
-    if (results.length === 0) {
+    if (results.length === 0 && hasSearchStateQuery) {
       results = ['EmptyState'];
     }
     if (!searchFiltering && canCreateCallLinks) {
       results = ['CreateCallLink', ...results];
     }
     return results;
-  }, [searchState.results?.items, searchFiltering, canCreateCallLinks]);
+  }, [
+    searchState.results?.items,
+    hasSearchStateQuery,
+    searchFiltering,
+    canCreateCallLinks,
+  ]);
 
   const rowCount = rows.length;
 
@@ -677,17 +683,7 @@ export function CallsList({
                 </span>
               }
               leading={
-                <Avatar
-                  acceptedMessageRequest
-                  conversationType="callLink"
-                  i18n={i18n}
-                  isMe={false}
-                  title=""
-                  sharedGroupNames={[]}
-                  size={AvatarSize.THIRTY_SIX}
-                  badge={undefined}
-                  className="CallsList__ItemAvatar"
-                />
+                <i className="ComposeStepButton__icon ComposeStepButton__icon--call-link" />
               }
               onClick={onCreateCallLink}
             />
@@ -698,17 +694,13 @@ export function CallsList({
       if (item === 'EmptyState') {
         return (
           <div key={key} className="CallsList__EmptyState" style={style}>
-            {searchStateQuery === '' ? (
-              i18n('icu:CallsList__EmptyState--noQuery')
-            ) : (
-              <I18n
-                i18n={i18n}
-                id="icu:CallsList__EmptyState--hasQuery"
-                components={{
-                  query: <UserText text={searchStateQuery} />,
-                }}
-              />
-            )}
+            <I18n
+              i18n={i18n}
+              id="icu:CallsList__EmptyState--hasQuery"
+              components={{
+                query: <UserText text={searchStateQuery} />,
+              }}
+            />
           </div>
         );
       }
@@ -930,6 +922,22 @@ export function CallsList({
 
   return (
     <>
+      {isEmpty && !searchFiltering && (
+        <NavSidebarEmpty
+          title={i18n('icu:CallsList__EmptyState--noQuery__title')}
+          subtitle={i18n('icu:CallsList__EmptyState--noQuery__subtitle')}
+        />
+      )}
+      {isEmpty &&
+        statusInput === CallHistoryFilterStatus.Missed &&
+        !hasSearchStateQuery && (
+          <NavSidebarEmpty
+            title={i18n('icu:CallsList__EmptyState--noQuery--missed__title')}
+            subtitle={i18n(
+              'icu:CallsList__EmptyState--noQuery--missed__subtitle'
+            )}
+          />
+        )}
       <NavSidebarSearchHeader>
         <SearchInput
           i18n={i18n}

@@ -73,7 +73,6 @@ export type StorageAccessType = {
   customColors: CustomColorsItemType;
   device_name: string;
   existingOnboardingStoryMessageIds: ReadonlyArray<string> | undefined;
-  hasRegisterSupportForUnauthenticatedDelivery: boolean;
   hasSetMyStoriesPrivacy: boolean;
   hasCompletedUsernameOnboarding: boolean;
   hasCompletedUsernameLinkOnboarding: boolean;
@@ -81,7 +80,7 @@ export type StorageAccessType = {
   hasSeenGroupStoryEducationSheet: boolean;
   hasViewedOnboardingStory: boolean;
   hasStoriesDisabled: boolean;
-  storyViewReceiptsEnabled: boolean;
+  storyViewReceiptsEnabled: boolean | undefined;
   identityKeyMap: IdentityKeyMap;
   lastAttemptedToRefreshProfilesAt: number;
   lastResortKeyUpdateTime: number;
@@ -142,6 +141,8 @@ export type StorageAccessType = {
   callLinkAuthCredentials: ReadonlyArray<GroupCredentialType>;
   backupCredentials: ReadonlyArray<BackupCredentialType>;
   backupCredentialsLastRequestTime: number;
+  backupAttachmentsSuccessfullyDownloadedSize: number;
+  backupAttachmentsTotalSizeToDownload: number;
   setBackupSignatureKey: boolean;
   lastReceivedAtCounter: number;
   preferredReactionEmoji: ReadonlyArray<string>;
@@ -176,6 +177,16 @@ export type StorageAccessType = {
     serverId: Uint8Array;
   };
   needOrphanedAttachmentCheck: boolean;
+  observedCapabilities: {
+    deleteSync?: true;
+    versionedExpirationTimer?: true;
+
+    // Note: Upon capability deprecation - change the value type to `never` and
+    // remove it in `ts/background.ts`
+  };
+
+  // If present - we are downloading backup
+  backupDownloadPath: string;
 
   // Deprecated
   'challenge:retry-message-ids': never;
@@ -188,6 +199,7 @@ export type StorageAccessType = {
   lastStartup: never;
   sendEditWarningShown: never;
   formattingWarningShown: never;
+  hasRegisterSupportForUnauthenticatedDelivery: never;
 };
 
 export type StorageInterface = {

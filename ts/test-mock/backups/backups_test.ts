@@ -4,6 +4,7 @@
 import createDebug from 'debug';
 import Long from 'long';
 import { Proto, StorageState } from '@signalapp/mock-server';
+import { expect } from 'playwright/test';
 
 import { generateStoryDistributionId } from '../../types/StoryDistributionId';
 import { MY_STORY_ID } from '../../types/Stories';
@@ -210,13 +211,22 @@ describe('backups', function (this: Mocha.Suite) {
 
         await snapshot('styled bubbles');
 
+        debug('Waiting for unread count');
+        const unreadCount = await leftPane
+          .locator(
+            '.module-conversation-list__item--contact-or-conversation__unread-indicator.module-conversation-list__item--contact-or-conversation__unread-indicator--unread-messages'
+          )
+          .last();
+        await unreadCount.waitFor();
+
         debug('Going into the conversation');
         await contactElem.click();
         await window
           .locator('.ConversationView .module-message >> "respond 4"')
           .waitFor();
 
-        await snapshot('conversation');
+        debug('Waiting for conversation to be marked read');
+        await unreadCount.waitFor({ state: 'hidden' });
 
         debug('Switching to stories nav tab');
         await window.getByTestId('NavTabsItem--Stories').click();
@@ -224,6 +234,9 @@ describe('backups', function (this: Mocha.Suite) {
         debug('Opening story privacy');
         await window.locator('.StoriesTab__MoreActionsIcon').click();
         await window.getByRole('button', { name: 'Story Privacy' }).click();
+        await expect(
+          window.locator('.StoriesSettingsModal__overlay')
+        ).toHaveCSS('opacity', '1');
 
         await snapshot('story privacy');
       },

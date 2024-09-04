@@ -9,6 +9,7 @@ import { app } from 'electron';
 import { strictAssert } from '../util/assert';
 import { explodePromise } from '../util/explodePromise';
 import type { LoggerType } from '../types/Logging';
+import * as Errors from '../types/errors';
 import { SqliteErrorKind } from './errors';
 import type {
   ServerReadableDirectInterface,
@@ -69,7 +70,13 @@ export type WrappedWorkerResponse =
   | Readonly<{
       type: 'response';
       seq: number;
-      error: string | undefined;
+      error:
+        | Readonly<{
+            name: string;
+            message: string;
+            stack: string | undefined;
+          }>
+        | undefined;
       errorKind: SqliteErrorKind | undefined;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       response: any;
@@ -200,6 +207,16 @@ export class MainSQL {
   }
 
   public async close(): Promise<void> {
+    if (this.onReady) {
+      try {
+        await this.onReady;
+      } catch (err) {
+        this.logger?.error(`MainSQL close, failed: ${Errors.toLogFormat(err)}`);
+        // Init failed
+        return;
+      }
+    }
+
     if (!this.isReady) {
       throw new Error('Not initialized');
     }
@@ -254,11 +271,6 @@ export class MainSQL {
       this.pauseWaiters.push(resolve);
       // eslint-disable-next-line no-await-in-loop
       await promise;
-    }
-
-    // Special case since we need to broadcast this to every pool entry.
-    if (method === 'removeDB') {
-      return (await this.removeDB()) as Result;
     }
 
     const primary = this.pool[0];
@@ -376,7 +388,9 @@ export class MainSQL {
       }
 
       if (error) {
-        const errorObj = new Error(error);
+        const errorObj = new Error(error.message);
+        errorObj.stack = error.stack;
+        errorObj.name = error.name;
         this.onError(errorKind ?? SqliteErrorKind.Unknown, errorObj);
 
         pair.reject(errorObj);

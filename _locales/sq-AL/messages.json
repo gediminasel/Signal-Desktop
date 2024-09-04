@@ -80,12 +80,6 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "Versioni i bazës së të dhënave nuk përputhet me këtë version të Signal. Sigurohu që po hap versionin më të ri të Signal në kompjuterin tënd."
   },
-  "icu:databaseError__recover__detail": {
-    "messageformat": "Gabim në bazën e të dhënave. Mund ta kopjosh gabimin dhe të kontaktosh ndihmën nga Signal që të të ndihmojë ta rregullosh problemin. Nëse të duhet ta përdorësh Signal menjëherë, mund të provosh të rikthesh të dhënat e tua.\n\nKontakto ekipin e ndihmës në: {link}"
-  },
-  "icu:databaseError__recover__button": {
-    "messageformat": "Rikthe të dhënat"
-  },
   "icu:databaseError__safeStorageBackendChange": {
     "messageformat": "Nuk mund të futesh te çelësi i kodimit të bazës së të dhënave sepse pjesa mbështetëse e çelësave të kodimit të OS ka ndryshuar nga {previousBackend} në {currentBackend}. Kjo mund të ndodhë nëse mjedisi i desktopit ndryshon, për shembull midis GNOME dhe KDE.\n\nTë lutem kalo në mjedisin e mëparshëm të desktopit."
   },
@@ -827,14 +821,8 @@
   "icu:mute": {
     "messageformat": "Hiqi zërin"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal-i s’u përditësua dot. {retry}, ose vizitoni {url} që ta instaloni dorazi. Mandej, {support} rreth këtij problemi"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal nuk mund të përditësohej. <retryUpdateButton>Riprovo përditësimin</retryUpdateButton> ose vizito {url} për ta instaluar manualisht. Pastaj, <contactSupportLink>kontakto ndihmën</contactSupportLink> në lidhje me këtë problem"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal-i s’u përditësua dot. Vizitoni {url}, që ta instaloni dorazi. Mandej, {support} rreth këtij problemi"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal nuk mund të përditësohej. Vizito {url} për ta instaluar manualisht. Pastaj, <contactSupportLink>kontakto ndihmën</contactSupportLink> në lidhje me këtë problem"
@@ -1223,9 +1211,6 @@
   "icu:calling__cant-join": {
     "messageformat": "Nuk mund t'i bashkohesh thirrjes"
   },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "Je tashmë në telefonatë."
-  },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "Nuk gjendet informacioni i lidhjes së telefonatës. Kontrollo lidhjen e rrjetit dhe riprovo."
   },
@@ -1408,9 +1393,6 @@
   },
   "icu:calling__in-this-call": {
     "messageformat": "{people, plural, one {Në këtë thirrje · {people,number} person} other {Në këtë thirrje · {people,number} vetë}}"
-  },
-  "icu:calling__you-have-blocked": {
-    "messageformat": "Ke bllokuar {name}"
   },
   "icu:calling__blocked-participant": {
     "messageformat": "{name} është bllokuar"
@@ -1843,9 +1825,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Riprovoni përditësim"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "lidhuni me asistencën"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Klikoni që të riniset Signal-i"
@@ -3362,6 +3341,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} kërkoi dhe anuloi {numberOfRequests,number} kërkesën për të marrë pjesë përmes një lidhje grupi"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} kërkoi dhe anuloi kërkesën e vet për t'u bashkuar përmes lidhjes së grupit} other {{joinerName} kërkuan dhe anuluan{numberOfRequests,number} kërkesat për t'u bashkuar përmes lidhjes së grupit}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Aktivizuat lidhjen e grupit me miratim nga përgjegjësi të çaktivizuar."
   },
@@ -3535,6 +3517,21 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "Prek “Dhuro për Signal” dhe pajtohu"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Po sinkronizohen mesazhet"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Po shkarkohen {currentSize} nga {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "Kjo mund të zgjasë disa minuta në varësi të madhësisë së kopjeruajtjes"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Restoring media"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize} of {totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Zgjeroje"
@@ -3956,11 +3953,11 @@
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": ",5"
   },
-  "icu:emptyInboxMessage": {
-    "messageformat": "Klikoni {composeIcon} më sipër dhe kërkoni për kontaktet ose grupet tuaja për t’u dërguar mesazh."
+  "icu:emptyInbox__title": {
+    "messageformat": "Asnjë bisedë"
   },
-  "icu:composeIcon": {
-    "messageformat": "buton hartimi"
+  "icu:emptyInbox__subtitle": {
+    "messageformat": "Bisedat e fundit do të shfaqen këtu."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Përcille"
@@ -4850,6 +4847,12 @@
   "icu:Stories__list-empty": {
     "messageformat": "S’ka postime të përkohshme të freskëta për t’u shfaqur"
   },
+  "icu:Stories__list__empty--title": {
+    "messageformat": "Asnjë postim i përkohshëm"
+  },
+  "icu:Stories__list__empty--subtitle": {
+    "messageformat": "Përditësimet e reja do të shfaqen këtu."
+  },
   "icu:Stories__list--sending": {
     "messageformat": "Po dërgohet…"
   },
@@ -4864,6 +4867,12 @@
   },
   "icu:Stories__placeholder--text": {
     "messageformat": "Kliko që të shohësh një postim të përkohshëm"
+  },
+  "icu:Stories__placeholder-with-icon--text": {
+    "messageformat": "Kliko <newStoryIcon>Shto një postim të përkohshëm</newStoryIcon> për të shtuar një përditësim."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Kliko <newStoryButtonIcon></newStoryButtonIcon> për të shtuar një përditësim."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} për {group}"
@@ -5106,6 +5115,12 @@
     "messageformat": "Përgjigje"
   },
   "icu:StoryViewsNRepliesModal__reacted": {
+    "messageformat": "Reagoi ndaj postimit të përkohshëm"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Reagove ndaj postimit të përkohshëm"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
     "messageformat": "Reagoi ndaj postimit të përkohshëm"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
@@ -5406,6 +5421,12 @@
   "icu:CallsTab__EmptyStateText": {
     "messageformat": "Kliko për të parë ose nisur një telefonatë"
   },
+  "icu:CallsTab__EmptyStateText--with-icon": {
+    "messageformat": "Kliko <newCallIcon>Thirrje e re</newCallIcon> për të nisur një thirrje të re zanore ose me video."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Kliko <newCallButtonIcon></newCallButtonIcon> për të nisur një thirrje të re zanore ose me video."
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Kërko"
   },
@@ -5417,6 +5438,18 @@
   },
   "icu:CallsList__EmptyState--noQuery": {
     "messageformat": "Nuk ka thirrje së voni. Fillo duke telefonuar një mik."
+  },
+  "icu:CallsList__EmptyState--noQuery__title": {
+    "messageformat": "Nuk ka thirrje"
+  },
+  "icu:CallsList__EmptyState--noQuery__subtitle": {
+    "messageformat": "Thirrjet e fundit do të shfaqen këtu."
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__title": {
+    "messageformat": "Asnjë thirrje e humbur"
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
+    "messageformat": "Thirrjet e humbura do të shfaqen këtu."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Nuk ka rezultate për \"{query}\""
@@ -5435,9 +5468,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Refuzuar"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Thirrje grupi"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Lidhja e thirrjes"
@@ -5462,21 +5492,6 @@
   },
   "icu:CallsNewCallButton--return": {
     "messageformat": "Kthehu"
-  },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "Duhet të largohesh nga thirrja aktuale përpara se t'i bashkohesh një thirrjeje të re"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {Thirrje zanore dalëse} other {Thirrje zanore hyrëse}}} Video {{direction, select, Outgoing {Thirrje video nga ju} other {Thirrje video ardhëse}}} Group {{direction, select, Outgoing {Thirrje dalëse në grup} other {Thirrje hyrëse në grup}}} other {{direction, select, Outgoing {Thirrje nga ju} other {Thirrje ardhëse}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {Thirrje zanore e humbur} Video {Humbët thirrje video} Group {Thirrje e humbur në grup} other {Thirrje e humbur}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {Thirrje zanore pa përgjigje} Video {Thirrje video pa përgjigje} Group {Thirrje në grup pa përgjigje} other {Thirrje  pa përgjigje}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {Thirrje zanore e refuzuar} Video {Thirrje me video e refuzuar} Group {Thirrje në grup e refuzuar} other {Thirrje  e refuzuar}}"
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Lidhja e thirrjes"
@@ -5512,19 +5527,19 @@
     "messageformat": "Ndaj lidhjen përmes Signal"
   },
   "icu:CallLinkDetails__DeleteLink": {
-    "messageformat": "Delete link"
+    "messageformat": "Fshi lidhjen"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Title": {
-    "messageformat": "Delete call link?"
+    "messageformat": "Të fshihet lidhja e thirrjes?"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Body": {
-    "messageformat": "This link will no longer work for anyone who has it."
+    "messageformat": "Lidhja nuk do të funksionojë më për këdo."
   },
   "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
-    "messageformat": "Cancel"
+    "messageformat": "Anulo"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
-    "messageformat": "Delete"
+    "messageformat": "Fshije"
   },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "Të dhënat e lidhjes së thirrjes"
@@ -5596,19 +5611,13 @@
     "messageformat": "Rregullme të vogla, riparime të gabimeve dhe përmirësime të mbarëvajtjes.  Faleminderit që përdorni Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "Një lamtumirë e shpejtë ndonjëherë është më e lehtë se një lamtumirë e ngadaltë, kështu që ne përshpejtuam procesin e fshirjes së temave të mëdha të mesazheve."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Bisedat hapen tani më shpejt se kurrë falë një raundi tjetër përmirësimesh të performancës, kështu që mund të klikosh klikat e tua dhe të shohësh se çfarë po thonë shumë shpejt."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "Kemi shtuar shkurtoren që të mundëson të largohesh nga thirrja aktuale dhe t'i bashkohesh një të reje, kur emri yt po thërritet nga një thirrje tjetër. Do të të kërkohet të konfirmosh largimin, por varet nga ti nëse do të thuash lamtumirë fillimisht."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "Rregulluam edhe disa defekte, duke përfshirë atë, i cili ndonjëherë shkaktonte shfaqjen e mesazhit \"Kontakti i panjohur filloi një telefonatë video\" në përmbledhjen e listës së bisedave pasi të kesh filluar thirrjen. Edhe nëse je ende në udhëtim vetë-zbulues, nuk je kurrë plotësisht i panjohur për veten."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "Përditësimi rregullon edhe gabimin e nisjes në Linux për përdoruesit, lokaliteti i të cilëve është vendosur në \"POSIX\"."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "This update fixes a bug where viewing a missed call on one device wouldn't automatically clear the indicator for that missed call on your other devices, which was a missed opportunity for your missed call list to better coexist."
   }
 }

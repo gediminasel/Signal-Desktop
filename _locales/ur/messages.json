@@ -80,12 +80,6 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "آپ کے ڈیٹا بیس کا ورژن Signal کے اس ورژن سے ملتا نہیں ہے۔ اس بات کو یقینی بنائیں کہ آپ اپنے کمپیوٹر پر Signal کا تازہ ترین ورژن کھول رہے ہیں۔"
   },
-  "icu:databaseError__recover__detail": {
-    "messageformat": "ڈیٹا بیس میں خرابی واقع ہوئی ہے۔ آپ خرابی کو کاپی کر سکتے ہیں اور Signal سپورٹ سے اس مسئلے کو حل کرنے میں مدد کے لیے رابطہ کر سکتے ہیں۔ اگر آپ کو Signal کو فوراً استعمال کرنے کی ضرورت ہے، تو آپ اپنے ڈیٹا کو بحال کرنے کی کوشش کر سکتے ہیں۔\n\nاسے ملاحظہ کر کے سپورٹ سے رابطہ کریں:{link}"
-  },
-  "icu:databaseError__recover__button": {
-    "messageformat": "ڈیٹا بحال کریں"
-  },
   "icu:databaseError__safeStorageBackendChange": {
     "messageformat": "ڈیٹا بیس انکرپشن کیی تک رسائی حاصل کرنے سے قاصر ہیں کیونکہ OS انکرپشن کیی رنگ بیک اینڈ {previousBackend} سے{currentBackend} میں تبدیل ہو چکا ہے۔ ایسا اس صورت میں واقع ہو سکتا ہے اگر مثال کے طور پر GNOME اور KDE کے درمیان ڈیسک ٹاپ انوائرنمنٹ تبدیل ہوتی ہے۔\n\nبراہ کرم پچھلے ڈیسک ٹاپ انوائرنمنٹ میں تبدیل کریں۔"
   },
@@ -827,14 +821,8 @@
   "icu:mute": {
     "messageformat": "خاموش کریں"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal اپ ڈیٹ نہیں ہو سکی۔ دستی طور پر اسے دوبارہ انسٹال کرنے کے لیے {retry} یا {url} ملاحظہ کریں۔ پھر، اس مسئلے کے متعلق {support}"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal اپ ڈیٹ نہیں ہو سکا۔ <retryUpdateButton>دوبارہ اپ ڈیٹ کرنے کی کوشش کریں</retryUpdateButton> یا اسے دستی طور پر انسٹال کرنے کے لیے {url} ملاحظہ کریں۔ اس کے بعد، اس مسئلہ کے بارے میں <contactSupportLink>سپورٹ سے رابطہ</contactSupportLink> کریں"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal اپ ڈیٹ نہیں ہو سکی۔ دستی طور پر اسے انسٹال کرنے کے لیے {url} پر جائیں۔ پھر، اس مسئلے کے متعلق {support}"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal اپ ڈیٹ نہیں ہو سکا۔ اسے دستی طور پر انسٹال کرنے کے لیے {url} ملاحظہ کریں۔ اس کے بعد، اس مسئلہ کے بارے میں <contactSupportLink>سپورٹ سے رابطہ</contactSupportLink> کریں"
@@ -1223,9 +1211,6 @@
   "icu:calling__cant-join": {
     "messageformat": "کال میں شامل ہونے سے قاصر"
   },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "آپ پہلے ہی سے کسی کال میں ہیں۔"
-  },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "کال لنک کی معلومات ڈھونڈ نہیں پائے۔ براہ کرم اپنا نیٹ ورک کنکشن چیک کریں اور دوبارہ کوشش کریں۔"
   },
@@ -1408,9 +1393,6 @@
   },
   "icu:calling__in-this-call": {
     "messageformat": "{people, plural, one {اس کال میں · {people,number} شخص} other {اس کال میں · {people,number} افراد}}"
-  },
-  "icu:calling__you-have-blocked": {
-    "messageformat": "آپ نے {name} کو بلاک کر دیا ہے"
   },
   "icu:calling__blocked-participant": {
     "messageformat": "{name} بلاک ہے"
@@ -1843,9 +1825,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "اپ ڈیٹ کی دوبارہ کوشش کریں"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "معاونت سے رابطہ کریں"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Signal دوبارہ شروع کرنے کے لیے کلک کریں"
@@ -3362,6 +3341,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} نے درخواست کی اور گروپ لنک کے ذریعے {numberOfRequests,number} کی شامل ہونے کی درخواستیں منسوخ کر دیں"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} نے درخواست کی اور گروپ لنک کے ذریعے  شامل ہونے کی ان کی درخواست منسوخ کر دی} other {{joinerName} نے درخواست کی اور گروپ لنک کے ذریعے شامل ہونے کے لیے{numberOfRequests,number} کی درخواستوں کو منسوخ کر دیا}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "آپ نے منتظم کی منظوری کو غیر فعال کرتے ہوئے گروپ لنک آن کردیا۔"
   },
@@ -3535,6 +3517,21 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "\"Signal کو عطیہ کریں\" پر ٹیپ اور سبسکرائب کریں"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "میسجز سنک ہو رہے ہیں"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "{totalSize} ({fractionComplete,number,percent}) کا {currentSize} ڈاؤن لوڈ ہو رہا ہے..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "اس پر چند منٹ لگ سکتے ہیں جس کا انحصار آپ کے کنکشن پر ہے"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Restoring media"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize} of {totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "پھیلائیں"
@@ -3956,11 +3953,11 @@
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": ".5"
   },
-  "icu:emptyInboxMessage": {
-    "messageformat": "مذکورہ {composeIcon} پر کلک کریں اور پیغام دینے کیلئے اپنے رابطوں یا گروپس کو تلاش کریں۔"
+  "icu:emptyInbox__title": {
+    "messageformat": "کوئی چیٹس نہیں ہیں"
   },
-  "icu:composeIcon": {
-    "messageformat": "compose بٹن"
+  "icu:emptyInbox__subtitle": {
+    "messageformat": "حالیہ چیٹس یہاں ظاہر ہوں گی۔"
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "فارورڈ بطرف"
@@ -4850,6 +4847,12 @@
   "icu:Stories__list-empty": {
     "messageformat": "ابھی دکھانے کے لیے کوئی حالیہ سٹوریز نہیں ہیں"
   },
+  "icu:Stories__list__empty--title": {
+    "messageformat": "کوئی سٹوریز نہیں ہیں"
+  },
+  "icu:Stories__list__empty--subtitle": {
+    "messageformat": "نئی اپ ڈیٹس یہاں ظاہر ہوں گی۔"
+  },
   "icu:Stories__list--sending": {
     "messageformat": "بھیج رہا ہے ..."
   },
@@ -4864,6 +4867,12 @@
   },
   "icu:Stories__placeholder--text": {
     "messageformat": "سٹوری دیکھنے کے لیے کلک کریں"
+  },
+  "icu:Stories__placeholder-with-icon--text": {
+    "messageformat": "اپ ڈیٹ شامل کرنے کے لیے <newStoryIcon>سٹوری شامل کریں</newStoryIcon> پر کلک کریں۔"
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "اپ ڈیٹ شامل کرنے کے لیے <newStoryButtonIcon></newStoryButtonIcon> پر کلک کریں۔"
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} تا {group}"
@@ -5106,6 +5115,12 @@
     "messageformat": "جوابات"
   },
   "icu:StoryViewsNRepliesModal__reacted": {
+    "messageformat": "سٹوری پر ری ایکٹ کیا"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "سٹوری پر ری ایکٹ کیا"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
     "messageformat": "سٹوری پر ری ایکٹ کیا"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
@@ -5406,6 +5421,12 @@
   "icu:CallsTab__EmptyStateText": {
     "messageformat": "دیکھنے کے لیے کلک کریں یا کال شروع کریں"
   },
+  "icu:CallsTab__EmptyStateText--with-icon": {
+    "messageformat": "کسی نئی وائس یا ویڈیو کال شروع کرنے کے لیے <newCallIcon>نئی کال</newCallIcon> پر کلک کریں۔"
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "نئی وائس یا ویڈیو کال شروع کرنے کے لیے <newCallButtonIcon></newCallButtonIcon> پر کلک کریں۔"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "تلا ‎ش کر یں"
   },
@@ -5417,6 +5438,18 @@
   },
   "icu:CallsList__EmptyState--noQuery": {
     "messageformat": "کوئی حالیہ کالز نہیں۔ دوست کو کال کرنے کے ذریعے آغاز کریں۔"
+  },
+  "icu:CallsList__EmptyState--noQuery__title": {
+    "messageformat": "کوئی کالز نہیں ہیں"
+  },
+  "icu:CallsList__EmptyState--noQuery__subtitle": {
+    "messageformat": "حالیہ کالز یہاں ظاہر ہوں گی۔"
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__title": {
+    "messageformat": "کوئی مسڈ کالز نہیں"
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
+    "messageformat": "مسڈ کالز یہاں ظاہر ہوں گی۔"
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "\"{query}\" کے لیے کوئی نتائج نہیں ہیں"
@@ -5435,9 +5468,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "مسترد کر دی گئی"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "گروپ کال"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "کال کا لنک"
@@ -5462,21 +5492,6 @@
   },
   "icu:CallsNewCallButton--return": {
     "messageformat": "واپس"
-  },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "نئی کال میں شامل ہونے سے پہلے آپ کو موجودہ کال سے نکلنا ہو گا"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {آؤٹ گوئنگ وائس کال} other {ان کمنگ وائس کال}}} Video {{direction, select, Outgoing {آؤٹ گوئنگ ویڈیو کال} other {آنے والی ویڈیو کال}}} Group {{direction, select, Outgoing {جانے والی گروپ کال} other {آنے والی گروپ کال}}} other {{direction, select, Outgoing {کی گئی کال} other {موصول ہونے والی کال}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {مسڈ وائس کال} Video {مس ویڈیو کال} Group {مس کردہ گروپ کال} other {کال مس ہو گئی}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {غیر جواب شدہ وائس کال} Video {غیر جواب شدہ ویڈیو کال} Group {غیر جواب شدہ گروپ کال} other {غیر جواب شدہ  کال}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {مسترد کردہ وائس کال} Video {مسترد کردہ ویڈیو کال} Group {مسترد کردہ گروپ کال} other {مسترد کردہ  کال}}"
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "کال کا لنک"
@@ -5512,19 +5527,19 @@
     "messageformat": "بذریعہ Signal لنک شیئر کریں"
   },
   "icu:CallLinkDetails__DeleteLink": {
-    "messageformat": "Delete link"
+    "messageformat": "لنک حذف کریں"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Title": {
-    "messageformat": "Delete call link?"
+    "messageformat": "کال لنک حذف کریں؟"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Body": {
-    "messageformat": "This link will no longer work for anyone who has it."
+    "messageformat": "یہ لنک جس کے پاس ہے اب مزید اس کے لیے کام نہیں کرے گا۔"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
-    "messageformat": "Cancel"
+    "messageformat": "منسوخ کریں"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
-    "messageformat": "Delete"
+    "messageformat": "حذف کریں"
   },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "کال لنک کی تفصیلات"
@@ -5596,19 +5611,13 @@
     "messageformat": "معمولی تبدیلیاں کی گئیں، بگ ٹھیک کیے گئے، اور کارکردگی اور بھی بہتر بنائی گئی ہے۔ Signal استعمال کرنے کے لیے شکریہ!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "یہ ریلیزبڑے میسج تھریڈز کو حذف کرنے کے عمل کو تیز کرتا ہے۔"
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "کارکردگی کی بہتریوں کے ایک اور راؤنڈ کی وجہ سے چیٹس اب پہلے سے کہیں زیادہ تیزی سے کھلتی ہیں۔"
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "جب دوسری کال پہلے سے جاری ہو تو ہم نے اسے ختم کرنے اور نئی کال میں شامل ہونے کے لیے ایک شارٹ کٹ شامل کی ہے۔"
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "ہم نے آپ کی جانب سے کال شروع کرنے کے بعد چیٹ لسٹ کے خلاصے میں ظاہر ہونے والے چند ایک نقائص کو بھی صحیح کیا ہے، بشمول اس کی جو بعض اوقات \"نامعلوم رابطہ کی جانب سے ویڈیو کال شروع کی گئی\" کا سبب ہوتا تھا۔"
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "یہ اپ ڈیٹ Linux پر ان یوزر کے لیے اسٹارٹ اپ کریش کو بھی درست کرتی ہے جن کا مقام 'POSIX' پر سیٹ کیا گیا ہے۔"
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "This update fixes a bug where viewing a missed call on one device wouldn't automatically clear the indicator for that missed call on your other devices, which was a missed opportunity for your missed call list to better coexist."
   }
 }

@@ -137,6 +137,7 @@ const useProps = (overrideProps: OverridePropsType = {}): PropsType => {
       unreadMentionsCount: 0,
       markedUnread: false,
     },
+    backupMediaDownloadProgress: { totalBytes: 0, downloadedBytes: 0 },
     clearConversationSearch: action('clearConversationSearch'),
     clearGroupCreationError: action('clearGroupCreationError'),
     clearSearch: action('clearSearch'),
@@ -172,6 +173,7 @@ const useProps = (overrideProps: OverridePropsType = {}): PropsType => {
       makeFakeLookupConversationWithoutServiceId(),
     showUserNotFoundModal: action('showUserNotFoundModal'),
     setIsFetchingUUID,
+    preloadConversation: action('preloadConversation'),
     showConversation: action('showConversation'),
     blockConversation: action('blockConversation'),
     onOutgoingAudioCallInConversation: action(

@@ -80,12 +80,6 @@
   "icu:databaseError__startOldVersion": {
     "messageformat": "Phiên bản cơ sở dữ liệu của bạn không khớp với phiên bản Signal này. Đảm bảo bạn đang sử dụng phiên bản Signal mới nhất trên máy tính của mình."
   },
-  "icu:databaseError__recover__detail": {
-    "messageformat": "Đã xảy ra lỗi cơ sở dữ liệu. Bạn có thể sao chép lỗi và liên hệ bộ phận hỗ trợ của Signal để được hỗ trợ khắc phục vấn đề. Nếu cần sử dụng Signal ngay, bạn có thể thử khôi phục dữ liệu của mình.\n\nLiên hệ với bộ phận hỗ trợ bằng cách truy cập: {link}"
-  },
-  "icu:databaseError__recover__button": {
-    "messageformat": "Khôi phục dữ liệu"
-  },
   "icu:databaseError__safeStorageBackendChange": {
     "messageformat": "Không thể truy cập cơ sở dữ liệu khóa mã hóa vì phần backend của keyring của hệ điều hành đã được đổi từ {previousBackend} thành {currentBackend}. Điều này có thể xảy ra khi môi trường desktop thay đổi, ví dụ như giữa GNOME và KDE.\n\nVui lòng chuyển thành môi trường desktop trước đó."
   },
@@ -827,14 +821,8 @@
   "icu:mute": {
     "messageformat": "Tắt tiếng"
   },
-  "icu:cannotUpdateDetail": {
-    "messageformat": "Signal không thể cập nhật. {retry} hoặc truy cập {url} để cài thủ công. Sau đó, {support} về vấn đề này"
-  },
   "icu:cannotUpdateDetail-v2": {
     "messageformat": "Signal không thể cập nhật. <retryUpdateButton>Thử cập nhật lại</retryUpdateButton> hoặc truy cập {url} để cài thủ công. Sau đó, <contactSupportLink>liên hệ bộ phận hỗ trợ</contactSupportLink> về vấn đề này"
-  },
-  "icu:cannotUpdateRequireManualDetail": {
-    "messageformat": "Signal không thể cập nhật. Truy cập {url} để cài thủ công. Sau đó, {support} về vấn đề này"
   },
   "icu:cannotUpdateRequireManualDetail-v2": {
     "messageformat": "Signal không thể cập nhật. Truy cập {url} để cài thủ công. Sau đó, <contactSupportLink>liên hệ bộ phận hỗ trợ</contactSupportLink> về vấn đề này"
@@ -1223,9 +1211,6 @@
   "icu:calling__cant-join": {
     "messageformat": "Không thể tham gia cuộc gọi"
   },
-  "icu:calling__dialog-already-in-call": {
-    "messageformat": "Bạn hiện đang ở trong một cuộc gọi."
-  },
   "icu:calling__call-link-connection-issues": {
     "messageformat": "Không thể lấy thông tin đường dẫn cuộc gọi. Vui lòng kiểm tra kết nối mạng của bạn và thử lại."
   },
@@ -1408,9 +1393,6 @@
   },
   "icu:calling__in-this-call": {
     "messageformat": "{people, plural, other {Trong cuộc gọi này · {people,number} người}}"
-  },
-  "icu:calling__you-have-blocked": {
-    "messageformat": "Bạn đã chặn {name}"
   },
   "icu:calling__blocked-participant": {
     "messageformat": "{name} đã bị chặn"
@@ -1843,9 +1825,6 @@
   },
   "icu:autoUpdateRetry": {
     "messageformat": "Thử cập nhật lại"
-  },
-  "icu:autoUpdateContactSupport": {
-    "messageformat": "liên hệ bộ phận hỗ trợ"
   },
   "icu:autoUpdateNewVersionMessage": {
     "messageformat": "Nhấp để khởi động lại Signal"
@@ -3362,6 +3341,9 @@
   "icu:GroupV2--admin-approval-bounce": {
     "messageformat": "{joinerName} đã yêu cầu và hủy {numberOfRequests,number} yêu cầu tham gia qua đường dẫn nhóm"
   },
+  "icu:GroupV2--admin-approval-bounce--pluralized": {
+    "messageformat": "{numberOfRequests, plural, other {{joinerName} đã yêu cầu và hủy {numberOfRequests,number} yêu cầu tham gia qua đường dẫn nhóm}}"
+  },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Bạn đã bật đường dẫn nhóm mà không cần chấp duyệt của người quản lý."
   },
@@ -3535,6 +3517,21 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "Nhấn nút \"Ủng hộ Signal\" và đăng ký ủng hộ"
+  },
+  "icu:BackupImportScreen__title": {
+    "messageformat": "Đang đồng bộ tin nhắn"
+  },
+  "icu:BackupImportScreen__progressbar-hint": {
+    "messageformat": "Hiện tải được {currentSize} của tổng {totalSize} ({fractionComplete,number,percent})..."
+  },
+  "icu:BackupImportScreen__description": {
+    "messageformat": "Quá trình này có thể mất vài phút tùy vào dung lượng của bản sao lưu"
+  },
+  "icu:BackupMediaDownloadProgress__title": {
+    "messageformat": "Restoring media"
+  },
+  "icu:BackupMediaDownloadProgress__progressbar-hint": {
+    "messageformat": "{currentSize} of {totalSize} ({fractionComplete,number,percent})"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Mở rộng"
@@ -3956,11 +3953,11 @@
   "icu:MessageAudio--playbackRatep5": {
     "messageformat": ".5"
   },
-  "icu:emptyInboxMessage": {
-    "messageformat": "Nhấn {composeIcon} ở trên và tìm các liên hệ hoặc nhóm của bạn để nhắn tin."
+  "icu:emptyInbox__title": {
+    "messageformat": "Không có cuộc trò chuyện"
   },
-  "icu:composeIcon": {
-    "messageformat": "nút soạn thảo"
+  "icu:emptyInbox__subtitle": {
+    "messageformat": "Các cuộc trò chuyện gần nhất sẽ hiển thị ở đây."
   },
   "icu:ForwardMessageModal__title": {
     "messageformat": "Chuyển tiếp Đến"
@@ -4850,6 +4847,12 @@
   "icu:Stories__list-empty": {
     "messageformat": "Không có story gần đây để hiển thị vào lúc này"
   },
+  "icu:Stories__list__empty--title": {
+    "messageformat": "Không có story"
+  },
+  "icu:Stories__list__empty--subtitle": {
+    "messageformat": "Các cập nhật mới sẽ hiển thị ở đây."
+  },
   "icu:Stories__list--sending": {
     "messageformat": "Đang gửi…"
   },
@@ -4864,6 +4867,12 @@
   },
   "icu:Stories__placeholder--text": {
     "messageformat": "Bấm để xem một story"
+  },
+  "icu:Stories__placeholder-with-icon--text": {
+    "messageformat": "Bấm <newStoryIcon>Thêm một story</newStoryIcon> để thêm một cập nhật."
+  },
+  "icu:Stories__placeholder-with-icon--text-2": {
+    "messageformat": "Bấm <newStoryButtonIcon></newStoryButtonIcon> để cập nhật."
   },
   "icu:Stories__from-to-group": {
     "messageformat": "{name} đến {group}"
@@ -5106,6 +5115,12 @@
     "messageformat": "Câu trả lời"
   },
   "icu:StoryViewsNRepliesModal__reacted": {
+    "messageformat": "Đã bày tỏ cảm xúc với story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--you": {
+    "messageformat": "Đã bày tỏ cảm xúc với story"
+  },
+  "icu:StoryViewsNRepliesModal__reacted--someone-else": {
     "messageformat": "Đã bày tỏ cảm xúc với story"
   },
   "icu:StoryViewsNRepliesModal__not-a-member": {
@@ -5406,6 +5421,12 @@
   "icu:CallsTab__EmptyStateText": {
     "messageformat": "Bấm để xem hoặc bắt đầu cuộc gọi"
   },
+  "icu:CallsTab__EmptyStateText--with-icon": {
+    "messageformat": "Bấm <newCallIcon>Cuộc gọi mới</newCallIcon> để bắt đầu một cuộc gọi thoại hoặc cuộc gọi video."
+  },
+  "icu:CallsTab__EmptyStateText--with-icon-2": {
+    "messageformat": "Bấm <newCallButtonIcon></newCallButtonIcon> để bắt đầu một cuộc gọi thoại hoặc cuộc gọi video mới."
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Tìm kiếm"
   },
@@ -5417,6 +5438,18 @@
   },
   "icu:CallsList__EmptyState--noQuery": {
     "messageformat": "Không cú gọi gần đây Bắt đầu với việc gọi cho một người bạn."
+  },
+  "icu:CallsList__EmptyState--noQuery__title": {
+    "messageformat": "Không có cuộc gọi"
+  },
+  "icu:CallsList__EmptyState--noQuery__subtitle": {
+    "messageformat": "Các cuộc gọi gần nhất sẽ hiển thị ở đây."
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__title": {
+    "messageformat": "Không có cuộc gọi nhỡ"
+  },
+  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
+    "messageformat": "Các cuộc gọi nhỡ sẽ hiển thị ở đây."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Không có kết quả cho “{query}”"
@@ -5435,9 +5468,6 @@
   },
   "icu:CallsList__ItemCallInfo--Declined": {
     "messageformat": "Đã từ chối"
-  },
-  "icu:CallsList__ItemCallInfo--GroupCall": {
-    "messageformat": "Cuộc gọi nhóm"
   },
   "icu:CallsList__ItemCallInfo--CallLink": {
     "messageformat": "Đường dẫn cuộc gọi"
@@ -5462,21 +5492,6 @@
   },
   "icu:CallsNewCallButton--return": {
     "messageformat": "Quay về"
-  },
-  "icu:CallsNewCallButtonTooltip--in-another-call": {
-    "messageformat": "Bạn phải rời khỏi cuộc gọi hiện tại trước khi tham gia một cuộc gọi mới"
-  },
-  "icu:CallHistory__Description--Default": {
-    "messageformat": "{type, select, Audio {{direction, select, Outgoing {Cuộc gọi thoại đi} other {Cuộc gọi thoại đến}}} Video {{direction, select, Outgoing {Cuộc gọi video đang gọi đi} other {Cuộc gọi video đang đến}}} Group {{direction, select, Outgoing {Cuộc gọi nhóm đi} other {Cuộc gọi nhóm đến}}} other {{direction, select, Outgoing {Cuộc gọi đi} other {Cuộc gọi đến}}}}"
-  },
-  "icu:CallHistory__Description--Missed": {
-    "messageformat": "{type, select, Audio {Cuộc gọi thoại bị nhỡ} Video {Cuộc gọi video bị nhỡ} Group {Cuộc gọi nhóm bị nhỡ} other {Cuộc gọi nhỡ}}"
-  },
-  "icu:CallHistory__Description--Unanswered": {
-    "messageformat": "{type, select, Audio {Cuộc gọi thoại không được trả lời} Video {Cuộc gọi video không được trả lời} Group {Cuộc gọi nhóm không được trả lời} other {Cuộc gọi không được trả lời}}"
-  },
-  "icu:CallHistory__Description--Declined": {
-    "messageformat": "{type, select, Audio {Cuộc gọi thoại đã từ chối} Video {Cuộc gọi video đã từ chối} Group {Cuộc gọi nhóm đã từ chối} other {Cuộc gọi đã từ chối}}"
   },
   "icu:CallHistory__Description--Adhoc": {
     "messageformat": "Đường dẫn cuộc gọi"
@@ -5512,19 +5527,19 @@
     "messageformat": "Chia sẻ đường dẫn qua Signal"
   },
   "icu:CallLinkDetails__DeleteLink": {
-    "messageformat": "Delete link"
+    "messageformat": "Xóa liên kết"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Title": {
-    "messageformat": "Delete call link?"
+    "messageformat": "Xóa đường dẫn cuộc gọi?"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Body": {
-    "messageformat": "This link will no longer work for anyone who has it."
+    "messageformat": "Đường dẫn này sẽ không còn hoạt động với bất kỳ ai."
   },
   "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
-    "messageformat": "Cancel"
+    "messageformat": "Hủy"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
-    "messageformat": "Delete"
+    "messageformat": "Xóa"
   },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "Chi tiết đường dẫn cuộc gọi"
@@ -5596,19 +5611,13 @@
     "messageformat": "Các tinh chỉnh, sửa lỗi, và cải thiện hiệu năng. Cảm ơn bạn đã sử dụng Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.18--0": {
-    "messageformat": "Quá trình xóa các chuỗi tin nhắn được tăng tốc qua bản cập nhật này."
+  "icu:WhatsNew__v7.23--0": {
+    "messageformat": "Các cuộc trò chuyện giờ đây mở ra nhanh hơn sau khi ứng dụng được cải thiện hiệu suất."
   },
-  "icu:WhatsNew__v7.19--0": {
-    "messageformat": "Chúng tôi đã thêm một shortcut để ngắt và tham gia cuộc gọi mới khi đang ở trong một cuộc gọi đang diễn ra."
+  "icu:WhatsNew__v7.23--1": {
+    "messageformat": "Chúng tôi cũng đã sửa xong nhiều lỗi, trong đó có lỗi xuất hiện \"Liên hệ không rõ đã bắt đầu một cuộc gọi video\" trong danh sách cuộc trò chuyện sau khi bạn bắt đầu cuộc gọi."
   },
-  "icu:WhatsNew__v7.19--1": {
-    "messageformat": "Bản cập nhật này cũng sửa lỗi ứng dụng đóng đột ngột ở nền tảng Linux đối với những người dùng có ngôn ngữ được thiết lập là `POSIX`."
-  },
-  "icu:WhatsNew__v7.20--0": {
-    "messageformat": "Stories with long captions are displayed on a subtle gradient background that improves contrast and makes the text easier to read. Now that people can see what you're saying, feel free to write a couple paragraphs about why something really made you laugh instead of just saying \"lol.\""
-  },
-  "icu:WhatsNew__v7.20--1": {
-    "messageformat": "This release also improves the performance of link preview generation and fixes a bug that caused the Settings window to briefly flash a lovely shade of ultramarine whenever it was closed (instead of just closing right away)."
+  "icu:WhatsNew__v7.24--0": {
+    "messageformat": "This update fixes a bug where viewing a missed call on one device wouldn't automatically clear the indicator for that missed call on your other devices, which was a missed opportunity for your missed call list to better coexist."
   }
 }

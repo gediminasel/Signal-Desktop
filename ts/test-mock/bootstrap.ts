@@ -305,6 +305,8 @@ export class Bootstrap {
     const app = await this.startApp(extraConfig);
 
     const window = await app.getWindow();
+
+    debug('looking for QR code or relink button');
     const qrCode = window.locator(
       '.module-InstallScreenQrCodeNotScannedStep__qr-code__code'
     );
@@ -316,10 +318,13 @@ export class Bootstrap {
       await qrCode.waitFor();
     }
 
+    debug('waiting for provision');
     const provision = await this.server.waitForProvision();
 
+    debug('waiting for provision URL');
     const provisionURL = await app.waitForProvisionURL();
 
+    debug('completing provision');
     this.privDesktop = await provision.complete({
       provisionURL,
       primaryDevice: this.phone,
@@ -337,6 +342,11 @@ export class Bootstrap {
         // eslint-disable-next-line no-await-in-loop
         await contact.addSingleUseKey(this.desktop, contactKey, serviceIdKind);
       }
+    }
+
+    if (extraConfig?.ciBackupPath) {
+      debug('waiting for backup import to complete');
+      await app.waitForBackupImportComplete();
     }
 
     await this.phone.waitForSync(this.desktop);
@@ -471,7 +481,10 @@ export class Bootstrap {
     const window = await app.getWindow();
     await callback(window, async (name: string) => {
       debug('creating screenshot');
-      snapshots.push({ name, data: await window.screenshot() });
+      snapshots.push({
+        name,
+        data: await window.screenshot(),
+      });
     });
 
     let index = 0;
@@ -502,12 +515,14 @@ export class Bootstrap {
           {}
         );
 
-        if (numPixels === 0) {
+        if (numPixels === 0 && !process.env.FORCE_ARTIFACT_SAVE) {
           debug('no screenshot difference');
           return;
         }
 
-        debug('screenshot difference', numPixels);
+        debug(
+          `screenshot difference for ${name}: ${numPixels}/${width * height}`
+        );
 
         const outDir = await this.getArtifactsDir(test?.fullTitle());
         if (outDir != null) {
