@@ -454,7 +454,10 @@ async function withPreSendChecks(
       return;
     }
 
-    const toast = shouldShowInvalidMessageToast(conversation.attributes);
+    const toast = shouldShowInvalidMessageToast(
+      conversation.attributes,
+      message
+    );
     if (toast != null) {
       dispatch({
         type: SHOW_TOAST,

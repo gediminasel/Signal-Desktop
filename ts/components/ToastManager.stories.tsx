@@ -96,6 +96,8 @@ function getToast(toastType: ToastType): AnyToast {
       return { toastType: ToastType.FailedToFetchPhoneNumber };
     case ToastType.FailedToFetchUsername:
       return { toastType: ToastType.FailedToFetchUsername };
+    case ToastType.FailedToSendWithEndorsements:
+      return { toastType: ToastType.FailedToSendWithEndorsements };
     case ToastType.FileSaved:
       return {
         toastType: ToastType.FileSaved,
@@ -120,6 +122,8 @@ function getToast(toastType: ToastType): AnyToast {
       return { toastType: ToastType.MaxAttachments };
     case ToastType.MessageBodyTooLong:
       return { toastType: ToastType.MessageBodyTooLong };
+    case ToastType.MessageLoop:
+      return { toastType: ToastType.MessageLoop };
     case ToastType.OriginalMessageNotFound:
       return { toastType: ToastType.OriginalMessageNotFound };
     case ToastType.PinnedConversationsFull:

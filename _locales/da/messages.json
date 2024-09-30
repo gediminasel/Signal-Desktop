@@ -578,6 +578,12 @@
   "icu:decryptionErrorToastAction": {
     "messageformat": "Indsend log"
   },
+  "icu:Toast__ActionLabel--SubmitLog": {
+    "messageformat": "Indsend log"
+  },
+  "icu:Toast--FailedToSendWithEndorsements": {
+    "messageformat": "Failed to send message with endorsements"
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Du kan ikke vælge billeder og videoer sammen med filer."
   },
@@ -940,6 +946,9 @@
   },
   "icu:viewRecentMedia": {
     "messageformat": "Vis seneste medier"
+  },
+  "icu:allMediaMenuItem": {
+    "messageformat": "Alle medier"
   },
   "icu:back": {
     "messageformat": "Tilbage"
@@ -1406,6 +1415,9 @@
   "icu:calling__missing-media-keys": {
     "messageformat": "Der modtages ikke lyd og video fra {name}"
   },
+  "icu:calling__missing-media-keys--unknown-contact": {
+    "messageformat": "Can't receive audio and video"
+  },
   "icu:calling__missing-media-keys-info": {
     "messageformat": "Dette kan skyldes at personen ikke har bekræftet ændringen i dit sikkerhedsnummer, at der er et problem med deres enhed eller at de har blokeret dig."
   },
@@ -1612,6 +1624,9 @@
   },
   "icu:timestampFormat__long--yesterday": {
     "messageformat": "I går {time}"
+  },
+  "icu:messageLoop": {
+    "messageformat": "Signal may be failing to process an incoming message."
   },
   "icu:messageBodyTooLong": {
     "messageformat": "Beskeden er for langt."
@@ -2702,6 +2717,9 @@
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "Opkaldslink"
   },
+  "icu:CallControls__InfoDisplay--group-call": {
+    "messageformat": "Gruppeopkald"
+  },
   "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
     "messageformat": "Venter på at blive lukket ind"
   },
@@ -3335,12 +3353,6 @@
   "icu:GroupV2--admin-approval-remove-one--other--unknown": {
     "messageformat": "En anmodning fra {joinerName} om at deltage i gruppen blev afvist"
   },
-  "icu:GroupV2--admin-approval-bounce--one": {
-    "messageformat": "{joinerName} anmodede om og annullerede deres anmodning om at blive medlem via gruppelinket"
-  },
-  "icu:GroupV2--admin-approval-bounce": {
-    "messageformat": "{joinerName} anmodede og annullerede {numberOfRequests,number} anmodninger om at blive medlem via gruppelinket"
-  },
   "icu:GroupV2--admin-approval-bounce--pluralized": {
     "messageformat": "{numberOfRequests, plural, one {{joinerName} anmodede og annullerede deres sin om at blive medlem via gruppelinket} other {{joinerName} anmodede og annullerede {numberOfRequests,number} anmodninger om at blive medlem via gruppelinket}}"
   },
@@ -3524,14 +3536,62 @@
   "icu:BackupImportScreen__progressbar-hint": {
     "messageformat": "Downloader {currentSize} af {totalSize} ({fractionComplete,number,percent})..."
   },
+  "icu:BackupImportScreen__progressbar-hint--preparing": {
+    "messageformat": "Forbereder download..."
+  },
   "icu:BackupImportScreen__description": {
     "messageformat": "Det kan tage et par minutter afhængigt af sikkerhedskopiens størrelse"
   },
-  "icu:BackupMediaDownloadProgress__title": {
-    "messageformat": "Restoring media"
+  "icu:BackupImportScreen__cancel": {
+    "messageformat": "Annuller overførsel"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__title": {
+    "messageformat": "Vil du annullere overførslen?"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__body": {
+    "messageformat": "Dine beskeder og medier er ikke gendannet endnu. Hvis du vælger at annullere, kan du overføre igen fra Indstillinger."
+  },
+  "icu:BackupImportScreen__cancel-confirmation__cancel": {
+    "messageformat": "Fortsæt overførsel"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__confirm": {
+    "messageformat": "Annuller overførsel"
+  },
+  "icu:BackupMediaDownloadProgress__title-in-progress": {
+    "messageformat": "Gendanner medier"
+  },
+  "icu:BackupMediaDownloadProgress__title-paused": {
+    "messageformat": "Gendannelse sat på pause"
+  },
+  "icu:BackupMediaDownloadProgress__button-pause": {
+    "messageformat": "Sæt overførsel på pause"
+  },
+  "icu:BackupMediaDownloadProgress__button-resume": {
+    "messageformat": "Genoptag overførsel"
+  },
+  "icu:BackupMediaDownloadProgress__button-cancel": {
+    "messageformat": "Annuller overførsel"
+  },
+  "icu:BackupMediaDownloadProgress__button-more": {
+    "messageformat": "Flere muligheder"
+  },
+  "icu:BackupMediaDownloadProgress__title-complete": {
+    "messageformat": "Gendannelse afsluttet"
   },
   "icu:BackupMediaDownloadProgress__progressbar-hint": {
-    "messageformat": "{currentSize} of {totalSize} ({fractionComplete,number,percent})"
+    "messageformat": "{currentSize} af {totalSize}"
+  },
+  "icu:BackupMediaDownloadCancelConfirmation__title": {
+    "messageformat": "Vil du annullere medieoverførslen?"
+  },
+  "icu:BackupMediaDownloadCancelConfirmation__description": {
+    "messageformat": "Dine beskeder og medier er ikke gendannet endnu. Hvis du vælger at annullere, kan du overføre igen fra Indstillinger."
+  },
+  "icu:BackupMediaDownloadCancelConfirmation__button-continue": {
+    "messageformat": "Fortsæt overførsel"
+  },
+  "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
+    "messageformat": "Annuller overførsel"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Udvid"
@@ -3583,6 +3643,9 @@
   },
   "icu:ContactModal--already-in-call": {
     "messageformat": "Du er allerede i et opkald"
+  },
+  "icu:ContactModal--voice": {
+    "messageformat": "Stemme"
   },
   "icu:showChatColorEditor": {
     "messageformat": "Chatfarve"
@@ -3765,7 +3828,7 @@
     "messageformat": "Nulstil link"
   },
   "icu:GroupLinkManagement--approve-label": {
-    "messageformat": "Godkend nye medlemmer"
+    "messageformat": "Kræv godkendelse af administrator"
   },
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "Det kræves at en administrator godkender nye medlemmer via gruppelinket"
@@ -4385,6 +4448,12 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "Din profil kunne ikke opdateres. Prøv venligst igen."
   },
+  "icu:ProfileEditor__invalid-about__title": {
+    "messageformat": "Invalid characters"
+  },
+  "icu:ProfileEditor__invalid-about__body": {
+    "messageformat": "One or more characters you’ve entered can’t be used. Try again."
+  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Send en besked til en administrator"
   },
@@ -4868,9 +4937,6 @@
   "icu:Stories__placeholder--text": {
     "messageformat": "Klik for at se en historie"
   },
-  "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Klik på <newStoryIcon>Tilføj en historie</newStoryIcon> for at tilføje en opdatering."
-  },
   "icu:Stories__placeholder-with-icon--text-2": {
     "messageformat": "Klik <newStoryButtonIcon></newStoryButtonIcon> for at tilføje en opdatering."
   },
@@ -5113,9 +5179,6 @@
   },
   "icu:StoryViewsNRepliesModal__tab--replies": {
     "messageformat": "Svar"
-  },
-  "icu:StoryViewsNRepliesModal__reacted": {
-    "messageformat": "Reagerede på historien"
   },
   "icu:StoryViewsNRepliesModal__reacted--you": {
     "messageformat": "Reagerede på historien"
@@ -5418,12 +5481,6 @@
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "Opkaldshistorik slettet"
   },
-  "icu:CallsTab__EmptyStateText": {
-    "messageformat": "Klik for at se eller starte et opkald"
-  },
-  "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Klik <newCallIcon>Nyt opkald</newCallIcon> for at starte et nyt tale- eller videoopkald."
-  },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Klik <newCallButtonIcon></newCallButtonIcon> for at starte et nyt tale- eller videoopkald."
   },
@@ -5435,9 +5492,6 @@
   },
   "icu:CallsList__ToggleFilterByMissed__RoleDescription": {
     "messageformat": "Skift"
-  },
-  "icu:CallsList__EmptyState--noQuery": {
-    "messageformat": "Ingen nye opkald. Kom i gang ved at ringe til en ven."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
     "messageformat": "Ingen opkald"
@@ -5518,7 +5572,10 @@
     "messageformat": "Rediger opkaldsnavn"
   },
   "icu:CallLinkDetails__ApproveAllMembersLabel": {
-    "messageformat": "Godkend alle medlemmer"
+    "messageformat": "Kræv godkendelse af administrator"
+  },
+  "icu:CallLinkDetails__SettingTooltip--disabled-for-active-call": {
+    "messageformat": "Denne indstilling kan ikke ændres, mens opkaldet er aktivt"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "Kopiér link"
@@ -5541,6 +5598,9 @@
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
     "messageformat": "Slet"
   },
+  "icu:CallLinkDetails__DeleteLinkTooltip--disabled-for-active-call": {
+    "messageformat": "Dette link kan ikke slettes, mens opkaldet er aktivt"
+  },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "Oplysninger om opkaldslink"
   },
@@ -5554,7 +5614,13 @@
     "messageformat": "Rediger opkaldsnavn"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Godkend alle medlemmer"
+    "messageformat": "Kræv godkendelse af administrator"
+  },
+  "icu:CallLinkPendingParticipantModal__ApproveButtonLabel": {
+    "messageformat": "Godkend adgang"
+  },
+  "icu:CallLinkPendingParticipantModal__DenyButtonLabel": {
+    "messageformat": "Afvis adgang"
   },
   "icu:CallLinkRestrictionsSelect__Option--Off": {
     "messageformat": "Fra"
@@ -5611,13 +5677,10 @@
     "messageformat": "Små tweaks, rettelser og forbedringer af appens præstation. Tak fordi du bruger Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.23--0": {
-    "messageformat": "Chats åbner nu hurtigere end nogensinde, takket være endnu en runde af præstationsforbedringer, så du kan klikke på dine grupper og se, hvad de siger – rigtig hurtigt."
+  "icu:WhatsNew__v7.26--0": {
+    "messageformat": "Nogle gange er det at efterlade noget den bedste måde at opdage, at du gerne vil finde det igen, så vi har rettet en fejl, der gjorde det svært at søge efter grupper, som du ikke længere er en del af længere, men som stadig forbliver på din samtaleliste (og muligvis i dit hjerte)."
   },
-  "icu:WhatsNew__v7.23--1": {
-    "messageformat": "Vi har også rettet en håndfuld fejl, herunder en, der nogle gange forårsagede, at \"Ukendt kontakt startede et videoopkald\" til at blive vist i chatlisteoversigten, efter du startede opkaldet. Selvom du stadig er på en selvopdagelsesrejse, er du aldrig helt ukendt for dig selv."
-  },
-  "icu:WhatsNew__v7.24--0": {
-    "messageformat": "This update fixes a bug where viewing a missed call on one device wouldn't automatically clear the indicator for that missed call on your other devices, which was a missed opportunity for your missed call list to better coexist."
+  "icu:WhatsNew__v7.27--0": {
+    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\""
   }
 }

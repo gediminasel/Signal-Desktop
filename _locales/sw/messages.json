@@ -578,6 +578,12 @@
   "icu:decryptionErrorToastAction": {
     "messageformat": "Wasilisha logi"
   },
+  "icu:Toast__ActionLabel--SubmitLog": {
+    "messageformat": "Wasilisha logi"
+  },
+  "icu:Toast--FailedToSendWithEndorsements": {
+    "messageformat": "Failed to send message with endorsements"
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Huwezi kuchagua picha na video pamoja na faili."
   },
@@ -940,6 +946,9 @@
   },
   "icu:viewRecentMedia": {
     "messageformat": "Tazama media za hivi majuzi"
+  },
+  "icu:allMediaMenuItem": {
+    "messageformat": "Picha na video zote"
   },
   "icu:back": {
     "messageformat": "Rudi nyuma"
@@ -1406,6 +1415,9 @@
   "icu:calling__missing-media-keys": {
     "messageformat": "Huwezi kupokea sauti na video kutoka kwa {name}"
   },
+  "icu:calling__missing-media-keys--unknown-contact": {
+    "messageformat": "Can't receive audio and video"
+  },
   "icu:calling__missing-media-keys-info": {
     "messageformat": "Huenda hii ni kwa sababu hawajathibitisha mabadiliko ya nambari yako ya usalama, vifaa vyao vina hitilafu au amekuzuia."
   },
@@ -1612,6 +1624,9 @@
   },
   "icu:timestampFormat__long--yesterday": {
     "messageformat": "Jana {time}"
+  },
+  "icu:messageLoop": {
+    "messageformat": "Signal may be failing to process an incoming message."
   },
   "icu:messageBodyTooLong": {
     "messageformat": "Mwili wa ujumbe ni mrefu sana."
@@ -2702,6 +2717,9 @@
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "Kiungo cha simu"
   },
+  "icu:CallControls__InfoDisplay--group-call": {
+    "messageformat": "Mazungumzo ya simu ya kikundi"
+  },
   "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
     "messageformat": "Unasubiri kuruhusiwa kuingia"
   },
@@ -3335,12 +3353,6 @@
   "icu:GroupV2--admin-approval-remove-one--other--unknown": {
     "messageformat": "Ombi la kujiunga na kikundi kutoka kwa {joinerName} limekataliwa."
   },
-  "icu:GroupV2--admin-approval-bounce--one": {
-    "messageformat": "{joinerName} aliomba na kughairisha ombi lake la kujiunga kupitia kiungo cha kikundi"
-  },
-  "icu:GroupV2--admin-approval-bounce": {
-    "messageformat": "{joinerName} aliomba na kughairisha maombi {numberOfRequests,number} ya kujiunga kupitia kiungo cha kikundi"
-  },
   "icu:GroupV2--admin-approval-bounce--pluralized": {
     "messageformat": "{numberOfRequests, plural, one {{joinerName} aliomba na kughairisha ombi la kujiunga kupitia kiungo cha kikundi} other {{joinerName} aliomba na kughairisha maombi {numberOfRequests,number} ya kujiunga kupitia kiungo cha kikundi}}"
   },
@@ -3524,14 +3536,62 @@
   "icu:BackupImportScreen__progressbar-hint": {
     "messageformat": "Inapakua {currentSize} ya {totalSize} ({fractionComplete,number,percent})..."
   },
+  "icu:BackupImportScreen__progressbar-hint--preparing": {
+    "messageformat": "Inajiandaa kupakua..."
+  },
   "icu:BackupImportScreen__description": {
     "messageformat": "Hii inaweza kuchukua sekunde kadhaa kulingana na ukubwa wa mchakato wako wa uhifadhi nakala"
   },
-  "icu:BackupMediaDownloadProgress__title": {
-    "messageformat": "Restoring media"
+  "icu:BackupImportScreen__cancel": {
+    "messageformat": "Ghairi uhamishaji"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__title": {
+    "messageformat": "Je, ghairi uhamishaji?"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__body": {
+    "messageformat": "Jumbe na picha na video zako hazijakamilika kurejeshwa. Ukichagua kughairi, unaweza kuhamisha tena kutoka kwenye Mipangilio."
+  },
+  "icu:BackupImportScreen__cancel-confirmation__cancel": {
+    "messageformat": "Endelea na uhamishaji"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__confirm": {
+    "messageformat": "Ghairi uhamishaji"
+  },
+  "icu:BackupMediaDownloadProgress__title-in-progress": {
+    "messageformat": "Inarejesha video na picha"
+  },
+  "icu:BackupMediaDownloadProgress__title-paused": {
+    "messageformat": "Urejeshaji umesitishwa"
+  },
+  "icu:BackupMediaDownloadProgress__button-pause": {
+    "messageformat": "Sitisha kuhamisha"
+  },
+  "icu:BackupMediaDownloadProgress__button-resume": {
+    "messageformat": "Endelea kuhamisha"
+  },
+  "icu:BackupMediaDownloadProgress__button-cancel": {
+    "messageformat": "Ghairi uhamishaji"
+  },
+  "icu:BackupMediaDownloadProgress__button-more": {
+    "messageformat": "Chaguzi zaidi"
+  },
+  "icu:BackupMediaDownloadProgress__title-complete": {
+    "messageformat": "Hatua ya kurejesha imekamilika"
   },
   "icu:BackupMediaDownloadProgress__progressbar-hint": {
-    "messageformat": "{currentSize} of {totalSize} ({fractionComplete,number,percent})"
+    "messageformat": "{currentSize} kwa {totalSize}"
+  },
+  "icu:BackupMediaDownloadCancelConfirmation__title": {
+    "messageformat": "Ghairi uhamishaji wa picha na video?"
+  },
+  "icu:BackupMediaDownloadCancelConfirmation__description": {
+    "messageformat": "Jumbe na picha na video zako hazijakamilika kurejeshwa. Ukichagua kughairi, unaweza kuhamisha tena kutoka kwenye Mipangilio."
+  },
+  "icu:BackupMediaDownloadCancelConfirmation__button-continue": {
+    "messageformat": "Endelea na uhamishaji"
+  },
+  "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
+    "messageformat": "Ghairi uhamishaji"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Panua"
@@ -3583,6 +3643,9 @@
   },
   "icu:ContactModal--already-in-call": {
     "messageformat": "Tayari uko kwenye mazungumzo ya simu"
+  },
+  "icu:ContactModal--voice": {
+    "messageformat": "Sauti"
   },
   "icu:showChatColorEditor": {
     "messageformat": "Rangi ya gumzo"
@@ -3765,7 +3828,7 @@
     "messageformat": "Weka upya kiungo"
   },
   "icu:GroupLinkManagement--approve-label": {
-    "messageformat": "Idhinisha wanachama wapya"
+    "messageformat": "Inahitaji idhini ya admin"
   },
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "Itisha ruhusa ya msimamizi kuidhinisha wanachama wapya wanaojiunga kupitia kiungo cha kikundi"
@@ -4385,6 +4448,12 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "Wasifu wako haujasasishwa. Tafadhali jaribu tena."
   },
+  "icu:ProfileEditor__invalid-about__title": {
+    "messageformat": "Invalid characters"
+  },
+  "icu:ProfileEditor__invalid-about__body": {
+    "messageformat": "One or more characters you’ve entered can’t be used. Try again."
+  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Mtumie msimamizi ujumbe"
   },
@@ -4868,9 +4937,6 @@
   "icu:Stories__placeholder--text": {
     "messageformat": "Bonyeza kuangalia stori"
   },
-  "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "Bonyeza <newStoryIcon>Weka stori</newStoryIcon> ili kuweka sasisho."
-  },
   "icu:Stories__placeholder-with-icon--text-2": {
     "messageformat": "Bonyeza <newStoryButtonIcon></newStoryButtonIcon> ili kupata sasisho mpya."
   },
@@ -5113,9 +5179,6 @@
   },
   "icu:StoryViewsNRepliesModal__tab--replies": {
     "messageformat": "Majibu"
-  },
-  "icu:StoryViewsNRepliesModal__reacted": {
-    "messageformat": "Ame-react kwa stori"
   },
   "icu:StoryViewsNRepliesModal__reacted--you": {
     "messageformat": "Ame-react kwa stori"
@@ -5418,12 +5481,6 @@
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "Historia ya simu imefutwa"
   },
-  "icu:CallsTab__EmptyStateText": {
-    "messageformat": "Bofya ili kutazama au kuanzisha simu"
-  },
-  "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "Bofya <newCallIcon>Simu Mpya</newCallIcon> ili kuanzisha simu ya kawaida au ya video."
-  },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Bonyeza <newCallButtonIcon></newCallButtonIcon> ili kupiga simu ya kawaida au ya video."
   },
@@ -5435,9 +5492,6 @@
   },
   "icu:CallsList__ToggleFilterByMissed__RoleDescription": {
     "messageformat": "Geuza"
-  },
-  "icu:CallsList__EmptyState--noQuery": {
-    "messageformat": "Hakuna simu za hivi karibuni. Anza kwa kumpigia rafiki."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
     "messageformat": "Hakuna simu"
@@ -5518,7 +5572,10 @@
     "messageformat": "Hariri jina la simu"
   },
   "icu:CallLinkDetails__ApproveAllMembersLabel": {
-    "messageformat": "Ruhusu wanakikundi wote"
+    "messageformat": "Inahitaji idhini ya admin"
+  },
+  "icu:CallLinkDetails__SettingTooltip--disabled-for-active-call": {
+    "messageformat": "Mipangilio hii haiwezi kubadilishwa wakati simu inatumika"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "Nakili kiungo"
@@ -5541,6 +5598,9 @@
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
     "messageformat": "Futa"
   },
+  "icu:CallLinkDetails__DeleteLinkTooltip--disabled-for-active-call": {
+    "messageformat": "Kiungo hiki hakiwezi kufutwa wakati simu inatumika"
+  },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "Maelezo ya kiungo cha simu"
   },
@@ -5554,7 +5614,13 @@
     "messageformat": "Hariri jina la simu"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "Ruhusu wanakikundi wote"
+    "messageformat": "Inahitaji idhini ya admin"
+  },
+  "icu:CallLinkPendingParticipantModal__ApproveButtonLabel": {
+    "messageformat": "Idhinisha kuingia"
+  },
+  "icu:CallLinkPendingParticipantModal__DenyButtonLabel": {
+    "messageformat": "Kataa kuingia"
   },
   "icu:CallLinkRestrictionsSelect__Option--Off": {
     "messageformat": "Zima"
@@ -5611,13 +5677,10 @@
     "messageformat": "Mabadiliko madogo, marekebisho ya bugs na uboreshaji wa utendaji. Asante kwa kutumia Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.23--0": {
-    "messageformat": "Sasa magumzo yanafunguka haraka zaidi kutokana na awamu nyingine ya marekebisho, ili uweze kubonyeza kwenye makundi yako na uone kwa haraka kile wanachosema."
+  "icu:WhatsNew__v7.26--0": {
+    "messageformat": "Wakati mwingine kukiacha kitu huwa ni njia bora ya kugundua kwamba ungependa kukipata tena, hivyo tumerekebisha hitilafu iliyokuwa inafanya ugumu kutafuta vikundi ambavyo si mwanachama wake tena lakini bado vimebaki katika orodha ya mazungumzo yako (na inawezekana hadi moyoni mwako)."
   },
-  "icu:WhatsNew__v7.23--1": {
-    "messageformat": "Pia tumerekebisha hitilafu kadhaa, ikiwemo moja ambayo wakati mwingine husababisha \"Mwasiliani asiyejulikana amepiga simu ya video\" kuonekana kwenye mhtasari wa orodha ya gumzo baada ya simu kupigwa. Hata kama bado upo kwenye safari ya kujitambua, ila sio kwamba haujitambui kabisa."
-  },
-  "icu:WhatsNew__v7.24--0": {
-    "messageformat": "This update fixes a bug where viewing a missed call on one device wouldn't automatically clear the indicator for that missed call on your other devices, which was a missed opportunity for your missed call list to better coexist."
+  "icu:WhatsNew__v7.27--0": {
+    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\""
   }
 }

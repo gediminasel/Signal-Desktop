@@ -38,6 +38,7 @@ import { getTitleNoDefault } from './util/getTitle';
 import * as StorageService from './services/storage';
 import type { ConversationPropsForUnreadStats } from './util/countUnreadStats';
 import { countAllConversationsUnreadStats } from './util/countUnreadStats';
+import { isTestOrMockEnvironment } from './environment';
 
 type ConvoMatchType =
   | {
@@ -182,6 +183,10 @@ export class ConversationController {
     // we can reset the mute state on the model. If the mute has already expired
     // then we reset the state right away.
     this._conversations.on('add', (model: ConversationModel): void => {
+      // Don't modify conversations in backup integration testing
+      if (isTestOrMockEnvironment()) {
+        return;
+      }
       model.startMuteTimer();
     });
   }
@@ -1142,7 +1147,9 @@ export class ConversationController {
         const profileKey = obsolete.get('profileKey');
 
         if (profileKey) {
-          await current.setProfileKey(profileKey);
+          await current.setProfileKey(profileKey, {
+            reason: 'doCombineConversations ',
+          });
         }
       }
 

@@ -17,7 +17,10 @@ import {
 } from '../types/CallDisposition';
 import { DAY } from './durations';
 
-export const CALL_LINK_DEFAULT_STATE: Partial<CallLinkType> = {
+export const CALL_LINK_DEFAULT_STATE: Pick<
+  CallLinkType,
+  'name' | 'restrictions' | 'revoked' | 'expiration' | 'storageNeedsSync'
+> = {
   name: '',
   restrictions: CallLinkRestrictions.Unknown,
   revoked: false,
@@ -93,10 +96,12 @@ export function toCallHistoryFromUnusedCallLink(
     callId: generateUuid(),
     peerId: callLink.roomId,
     ringerId: null,
+    startedById: null,
     mode: CallMode.Adhoc,
     type: CallType.Adhoc,
     direction: CallDirection.Incoming,
     timestamp: Date.now(),
+    endedTimestamp: null,
     status: AdhocCallStatus.Pending,
   };
 }

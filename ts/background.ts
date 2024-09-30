@@ -59,7 +59,7 @@ import { isOlderThan } from './util/timestamp';
 import { isValidReactionEmoji } from './reactions/isValidReactionEmoji';
 import type { ConversationModel } from './models/conversations';
 import { getAuthor, isIncoming } from './messages/helpers';
-import { migrateMessageData } from './messages/migrateMessageData';
+import { migrateBatchOfMessages } from './messages/migrateMessageData';
 import { createBatcher } from './util/batcher';
 import {
   initializeAllJobQueues,
@@ -195,6 +195,7 @@ import { encryptConversationAttachments } from './util/encryptConversationAttach
 import { DataReader, DataWriter } from './sql/Client';
 import { restoreRemoteConfigFromStorage } from './RemoteConfig';
 import { getParametersForRedux, loadAll } from './services/allLoaders';
+import { checkFirstEnvelope } from './util/checkFirstEnvelope';
 
 export function isOverHourIntoPast(timestamp: number): boolean {
   return isNumber(timestamp) && isOlderThan(timestamp, HOUR);
@@ -346,7 +347,6 @@ export async function startApp(): Promise<void> {
   window.setImmediate = window.nodeSetImmediate;
 
   const { Message } = window.Signal.Types;
-  const { upgradeMessageSchema } = window.Signal.Migrations;
 
   log.info('background page reloaded');
   log.info('environment:', getEnvironment());
@@ -481,10 +481,13 @@ export async function startApp(): Promise<void> {
     first = false;
 
     restoreRemoteConfigFromStorage();
+
+    window.Whisper.events.on('firstEnvelope', checkFirstEnvelope);
     server = window.WebAPI.connect({
       ...window.textsecure.storage.user.getWebAPICredentials(),
       hasStoriesDisabled: window.storage.get('hasStoriesDisabled', false),
     });
+
     window.textsecure.server = server;
     window.textsecure.messaging = new window.textsecure.MessageSender(server);
 
@@ -542,7 +545,6 @@ export async function startApp(): Promise<void> {
 
     log.info('Initializing MessageReceiver');
     messageReceiver = new MessageReceiver({
-      server,
       storage: window.storage,
       serverTrustRoot: window.getServerTrustRoot(),
     });
@@ -983,13 +985,8 @@ export async function startApp(): Promise<void> {
           log.warn(
             `idleDetector/idle: fetching at most ${NUM_MESSAGES_PER_BATCH} for migration`
           );
-          const batchWithIndex = await migrateMessageData({
+          const batchWithIndex = await migrateBatchOfMessages({
             numMessagesPerBatch: NUM_MESSAGES_PER_BATCH,
-            upgradeMessageSchema,
-            getMessagesNeedingUpgrade: DataReader.getMessagesNeedingUpgrade,
-            saveMessages: DataWriter.saveMessages,
-            incrementMessagesMigrationAttempts:
-              DataWriter.incrementMessagesMigrationAttempts,
           });
           log.info('idleDetector/idle: Upgraded messages:', batchWithIndex);
           isMigrationWithIndexComplete = batchWithIndex.done;
@@ -1744,7 +1741,9 @@ export async function startApp(): Promise<void> {
       if (firstRun && profileKey) {
         const me = window.ConversationController.getOurConversation();
         strictAssert(me !== undefined, "Didn't find newly created ourselves");
-        await me.setProfileKey(Bytes.toBase64(profileKey));
+        await me.setProfileKey(Bytes.toBase64(profileKey), {
+          reason: 'connect/firstRun',
+        });
       }
 
       if (isBackupEnabled()) {
@@ -2290,7 +2289,9 @@ export async function startApp(): Promise<void> {
 
     if (sender) {
       // Will do the save for us
-      await sender.setProfileKey(profileKey);
+      await sender.setProfileKey(profileKey, {
+        reason: 'handleMessageReceivedProfileUpdate',
+      });
     }
 
     return confirm();
@@ -2572,13 +2573,9 @@ export async function startApp(): Promise<void> {
       return;
     }
 
-    log.info(
-      `${logId}: updating profileKey for ${idForLogging}`,
-      data.sourceAci,
-      data.source
-    );
-
-    const hasChanged = await conversation.setProfileKey(data.profileKey);
+    const hasChanged = await conversation.setProfileKey(data.profileKey, {
+      reason: `onProfileKey/${reason}`,
+    });
 
     if (hasChanged) {
       drop(conversation.getProfiles());
@@ -2615,7 +2612,9 @@ export async function startApp(): Promise<void> {
     );
 
     // Will do the save for us if needed
-    await me.setProfileKey(profileKey);
+    await me.setProfileKey(profileKey, {
+      reason: 'handleMessageSentProfileUpdate',
+    });
 
     return confirm();
   }

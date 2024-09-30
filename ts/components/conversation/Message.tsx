@@ -198,14 +198,22 @@ export enum GiftBadgeStates {
   Unopened = 'Unopened',
   Opened = 'Opened',
   Redeemed = 'Redeemed',
+  Failed = 'Failed',
 }
 
-export type GiftBadgeType = {
-  expiration: number;
-  id: string | undefined;
-  level: number;
-  state: GiftBadgeStates;
-};
+export type GiftBadgeType =
+  | {
+      state:
+        | GiftBadgeStates.Unopened
+        | GiftBadgeStates.Opened
+        | GiftBadgeStates.Redeemed;
+      expiration: number;
+      id: string | undefined;
+      level: number;
+    }
+  | {
+      state: GiftBadgeStates.Failed;
+    };
 
 export type PropsData = {
   id: string;
@@ -1239,6 +1247,16 @@ export class Message extends React.PureComponent<Props, State> {
       isScreenshot || shouldUseFullSizeLinkPreviewImage(first);
 
     const linkPreviewDate = first.date || null;
+    const title =
+      first.title ||
+      (first.isCallLink
+        ? i18n('icu:calling__call-link-default-title')
+        : undefined);
+    const description =
+      first.description ||
+      (first.isCallLink
+        ? i18n('icu:message--call-link-description')
+        : undefined);
 
     const isClickable = this.areLinksEnabled();
 
@@ -1324,9 +1342,7 @@ export class Message extends React.PureComponent<Props, State> {
                 isMe={false}
                 sharedGroupNames={[]}
                 size={64}
-                title={
-                  first.title ?? i18n('icu:calling__call-link-default-title')
-                }
+                title={title ?? i18n('icu:calling__call-link-default-title')}
               />
             </div>
           )}
@@ -1338,12 +1354,10 @@ export class Message extends React.PureComponent<Props, State> {
                 : null
             )}
           >
-            <div className="module-message__link-preview__title">
-              {first.title}
-            </div>
-            {first.description && (
+            <div className="module-message__link-preview__title">{title}</div>
+            {description && (
               <div className="module-message__link-preview__description">
-                {unescape(first.description)}
+                {unescape(description)}
               </div>
             )}
             <div className="module-message__link-preview__footer">
@@ -1458,7 +1472,10 @@ export class Message extends React.PureComponent<Props, State> {
       return null;
     }
 
-    if (giftBadge.state === GiftBadgeStates.Unopened) {
+    if (
+      giftBadge.state === GiftBadgeStates.Unopened ||
+      giftBadge.state === GiftBadgeStates.Failed
+    ) {
       const description =
         direction === 'incoming'
           ? i18n('icu:message--donation--unopened--incoming')
@@ -2023,6 +2040,9 @@ export class Message extends React.PureComponent<Props, State> {
           isSpoilerExpanded={isSpoilerExpanded || {}}
           kickOffBodyDownload={() => {
             if (!textAttachment) {
+              return;
+            }
+            if (isDownloaded(textAttachment)) {
               return;
             }
             kickOffAttachmentDownload({

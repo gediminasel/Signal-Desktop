@@ -18,6 +18,9 @@ const createProps = (storyProps: Partial<PropsType> = {}): PropsType => ({
   approveUser: action('approve-user'),
   batchUserAction: action('batch-user-action'),
   denyUser: action('deny-user'),
+  toggleCallLinkPendingParticipantModal: action(
+    'toggle-call-link-pending-participant-modal'
+  ),
   ...storyProps,
 });
 
@@ -52,6 +55,26 @@ export function Many(): JSX.Element {
     <CallingPendingParticipants
       {...createProps({
         participants: allRemoteParticipants.slice(0, 10),
+      })}
+    />
+  );
+}
+
+export function Changing(): JSX.Element {
+  const counts = [0, 1, 2, 3, 2, 1];
+  const [countIndex, setCountIndex] = React.useState<number>(0);
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setCountIndex((countIndex + 1) % counts.length);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [countIndex, counts.length]);
+
+  return (
+    <CallingPendingParticipants
+      {...createProps({
+        participants: allRemoteParticipants.slice(0, counts[countIndex]),
       })}
     />
   );

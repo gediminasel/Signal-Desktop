@@ -2374,6 +2374,7 @@ button.ConversationDetails__action-button {
 // Module: Media Gallery
 
 .module-media-gallery {
+  position: relative;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -2387,6 +2388,19 @@ button.ConversationDetails__action-button {
   flex-grow: 1;
   overflow-y: auto;
   padding: 20px;
+}
+
+.module-media-gallery__scroll-observer {
+  position: absolute;
+  bottom: 0;
+  height: 30px;
+  width: 100%;
+
+  &::after {
+    content: '';
+    height: 1px; // Always show the element to not mess with the height of the scroll area
+    display: block;
+  }
 }
 
 .module-media-gallery__sections {
@@ -3667,14 +3681,13 @@ button.module-image__border-overlay:focus {
   }
 
   &__camera-is-off {
+    @include font-body-2;
     @include calling-text-shadow;
     align-items: center;
     color: $color-white;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    font-size: 15px;
-    line-height: 20px;
     margin-block-start: 15px;
     margin-block-end: 15px;
     justify-content: center;
@@ -3859,10 +3872,6 @@ button.module-image__border-overlay:focus {
           .module-ongoing-call__group-call-remote-participant__footer {
             padding-block: 0 14px;
             padding-inline: 16px;
-          }
-
-          .module-ongoing-call__group-call-remote-participant__error-icon {
-            margin-block-end: 16px;
           }
 
           .module-ongoing-call__group-call-remote-participant__error {
@@ -4087,7 +4096,7 @@ button.module-image__border-overlay:focus {
       // when @container size is big enough
       display: none;
 
-      margin-block-end: 12px;
+      margin-block-end: 16px;
       margin-inline: 8px;
       font-size: 12px;
       line-height: 16px;
@@ -4101,7 +4110,7 @@ button.module-image__border-overlay:focus {
       padding-block: 3px;
       padding-inline: 10px;
       border-radius: 16px;
-      background-color: $color-gray-75;
+      background-color: $color-black-alpha-30;
       color: $color-white;
       font-size: 12px;
       line-height: 16px;
@@ -4116,12 +4125,29 @@ button.module-image__border-overlay:focus {
         overflow: hidden;
         text-overflow: ellipsis;
       }
+
+      // Shown in the mini version / overflow sidebar
+      &--icon {
+        width: 20px;
+        height: 20px;
+      }
+
+      &--icon-blocked {
+        @include color-svg('../images/icons/v3/block/block.svg', $color-white);
+      }
+
+      &--icon-missing-media-keys {
+        @include color-svg(
+          '../images/icons/v3/error/error-circle.svg',
+          $color-white
+        );
+      }
     }
 
     &__error-icon {
-      width: 24px;
-      height: 24px;
-      margin-block-end: 8px;
+      width: 20px;
+      height: 20px;
+      margin-block-end: 12px;
 
       &--blocked {
         @include color-svg('../images/icons/v3/block/block.svg', $color-white);
@@ -4129,7 +4155,7 @@ button.module-image__border-overlay:focus {
 
       &--missing-media-keys {
         @include color-svg(
-          '../images/icons/v3/error/error-circle-solid.svg',
+          '../images/icons/v3/error/error-circle.svg',
           $color-white
         );
       }

@@ -29,7 +29,6 @@ import type {
   ActiveCallReactionsType,
   ConversationsByDemuxIdType,
   GroupCallVideoRequest,
-  PresentedSource,
 } from '../types/Calling';
 import {
   CALLING_REACTIONS_LIFETIME,
@@ -97,6 +96,7 @@ export type PropsType = {
   activeCall: ActiveCallType;
   approveUser: (payload: PendingUserActionPayloadType) => void;
   batchUserAction: (payload: BatchUserActionPayloadType) => void;
+  cancelPresenting: () => void;
   denyUser: (payload: PendingUserActionPayloadType) => void;
   getGroupCallVideoFrameSource: (demuxId: number) => VideoFrameSource;
   getPresentingSources: () => void;
@@ -120,11 +120,11 @@ export type PropsType = {
   setLocalAudio: (_: SetLocalAudioType) => void;
   setLocalVideo: (_: SetLocalVideoType) => void;
   setLocalPreview: (_: SetLocalPreviewType) => void;
-  setPresenting: (_?: PresentedSource) => void;
   setRendererCanvas: (_: SetRendererCanvasType) => void;
   stickyControls: boolean;
   switchToPresentationView: () => void;
   switchFromPresentationView: () => void;
+  toggleCallLinkPendingParticipantModal: (contactId: string) => void;
   toggleParticipants: () => void;
   togglePip: () => void;
   toggleScreenRecordingPermissionsDialog: () => unknown;
@@ -189,6 +189,7 @@ export function CallScreen({
   activeCall,
   approveUser,
   batchUserAction,
+  cancelPresenting,
   changeCallView,
   denyUser,
   getGroupCallVideoFrameSource,
@@ -209,11 +210,11 @@ export function CallScreen({
   setLocalAudio,
   setLocalVideo,
   setLocalPreview,
-  setPresenting,
   setRendererCanvas,
   stickyControls,
   switchToPresentationView,
   switchFromPresentationView,
+  toggleCallLinkPendingParticipantModal,
   toggleParticipants,
   togglePip,
   toggleScreenRecordingPermissionsDialog,
@@ -258,11 +259,11 @@ export function CallScreen({
 
   const togglePresenting = useCallback(() => {
     if (presentingSource) {
-      setPresenting();
+      cancelPresenting();
     } else {
       getPresentingSources();
     }
-  }, [getPresentingSources, presentingSource, setPresenting]);
+  }, [getPresentingSources, presentingSource, cancelPresenting]);
 
   const hangUp = useCallback(() => {
     hangUpActiveCall('button click');
@@ -857,13 +858,16 @@ export function CallScreen({
         renderRaisedHandsToast={renderRaisedHandsToast}
         i18n={i18n}
       />
-      {pendingParticipants.length ? (
+      {isCallLinkAdmin ? (
         <CallingPendingParticipants
           i18n={i18n}
           participants={pendingParticipants}
           approveUser={approveUser}
           batchUserAction={batchUserAction}
           denyUser={denyUser}
+          toggleCallLinkPendingParticipantModal={
+            toggleCallLinkPendingParticipantModal
+          }
         />
       ) : null}
       {/* We render the local preview first and set the footer flex direction to row-reverse

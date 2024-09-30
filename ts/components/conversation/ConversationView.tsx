@@ -37,7 +37,7 @@ export function ConversationView({
   renderPanel,
   shouldHideConversationView,
 }: PropsType): JSX.Element {
-  const url = encodeURIComponent(
+  const url = encodeURI(
     join(SignalContext.config.userDataPath, 'bgs', `${conversationId}.png`)
   );
   const onDrop = React.useCallback(

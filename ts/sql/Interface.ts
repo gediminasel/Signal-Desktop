@@ -37,7 +37,10 @@ import type {
   CallLinkType,
 } from '../types/CallLink';
 import type { AttachmentDownloadJobType } from '../types/AttachmentDownload';
-import type { GroupSendEndorsementsData } from '../types/GroupSendEndorsements';
+import type {
+  GroupSendEndorsementsData,
+  GroupSendMemberEndorsementRecord,
+} from '../types/GroupSendEndorsements';
 import type { SyncTaskType } from '../util/syncTasks';
 import type { AttachmentBackupJobType } from '../types/AttachmentBackup';
 import type { SingleProtoJobQueue } from '../jobs/singleProtoJobQueue';
@@ -55,6 +58,7 @@ export type AdjacentMessagesByConversationOptionsType = Readonly<{
   sentAt?: number;
   storyId: string | undefined;
   requireVisualMediaAttachments?: boolean;
+  requireFileAttachments?: boolean;
 }>;
 
 export type GetNearbyMessageFromDeletedSetOptionsType = Readonly<{
@@ -480,6 +484,13 @@ type ReadableInterface = {
   ) => Array<ConversationType>;
 
   getGroupSendCombinedEndorsementExpiration: (groupId: string) => number | null;
+  getGroupSendEndorsementsData: (
+    groupId: string
+  ) => GroupSendEndorsementsData | null;
+  getGroupSendMemberEndorsement: (
+    groupId: string,
+    memberAci: AciString
+  ) => GroupSendMemberEndorsementRecord | null;
 
   getMessageCount: (conversationId?: string) => number;
   getStoryCount: (conversationId: string) => number;
@@ -579,7 +590,7 @@ type ReadableInterface = {
   getCallLinkByRoomId: (roomId: string) => CallLinkType | undefined;
   getCallLinkRecordByRoomId: (roomId: string) => CallLinkRecord | undefined;
   getAllCallLinkRecordsWithAdminKey(): ReadonlyArray<CallLinkRecord>;
-  getAllMarkedDeletedCallLinks(): ReadonlyArray<CallLinkType>;
+  getAllMarkedDeletedCallLinkRoomIds(): ReadonlyArray<string>;
   getMessagesBetween: (
     conversationId: string,
     options: GetMessagesBetweenOptions
@@ -640,14 +651,6 @@ type ReadableInterface = {
   getMessagesNeedingUpgrade: (
     limit: number,
     options: { maxVersion: number }
-  ) => Array<MessageType>;
-  getMessagesWithVisualMediaAttachments: (
-    conversationId: string,
-    options: { limit: number; offset?: number }
-  ) => Array<MessageType>;
-  getMessagesWithFileAttachments: (
-    conversationId: string,
-    options: { limit: number; offset?: number }
   ) => Array<MessageType>;
   getMessageServerGuidsForSpam: (conversationId: string) => Array<string>;
 
@@ -853,6 +856,7 @@ type WritableInterface = {
   getNextAttachmentDownloadJobs: (options: {
     limit: number;
     prioritizeMessageIds?: Array<string>;
+    sources?: Array<AttachmentDownloadSource>;
     timestamp?: number;
   }) => Array<AttachmentDownloadJobType>;
   saveAttachmentDownloadJob: (job: AttachmentDownloadJobType) => void;
@@ -875,6 +879,7 @@ type WritableInterface = {
   ) => void;
 
   createOrUpdateStickerPack: (pack: StickerPackType) => void;
+  createOrUpdateStickerPacks: (packs: ReadonlyArray<StickerPackType>) => void;
   updateStickerPackStatus: (
     id: string,
     status: StickerPackStatusType,
@@ -895,6 +900,9 @@ type WritableInterface = {
   ) => ReadonlyArray<string> | undefined;
   deleteStickerPack: (packId: string) => Array<string>;
   addUninstalledStickerPack: (pack: UninstalledStickerPackType) => void;
+  addUninstalledStickerPacks: (
+    pack: ReadonlyArray<UninstalledStickerPackType>
+  ) => void;
   removeUninstalledStickerPack: (packId: string) => void;
   installStickerPack: (packId: string, timestamp: number) => void;
   uninstallStickerPack: (packId: string, timestamp: number) => void;

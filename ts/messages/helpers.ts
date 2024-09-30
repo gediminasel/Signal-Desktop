@@ -16,8 +16,6 @@ import { PaymentEventKind } from '../types/Payment';
 import type { AnyPaymentEvent } from '../types/Payment';
 import type { LocalizerType } from '../types/Util';
 import { missingCaseError } from '../util/missingCaseError';
-import { find } from '../util/iterables';
-import type { MessageModel } from '../models/messages';
 
 export function isIncoming(
   message: Pick<ReadonlyMessageAttributesType, 'type'>
@@ -125,44 +123,13 @@ export function isQuoteAMatch(
   }
 
   const { authorAci, id } = quote;
-  const authorConversation = window.ConversationController.lookupOrCreate({
-    e164: 'author' in quote ? quote.author : undefined,
-    serviceId: authorAci,
-    reason: 'helpers.isQuoteAMatch',
-  });
 
   const isSameTimestamp =
     message.sent_at === id ||
     message.editHistory?.some(({ timestamp }) => timestamp === id) ||
     false;
 
-  return isSameTimestamp && getAuthorId(message) === authorConversation?.id;
-}
-
-export function findMatchingQuote(
-  messages: Iterable<MessageModel>,
-  quote: QuotedMessageType,
-  conversationId: string
-): MessageModel | undefined {
-  if (!messages) {
-    return undefined;
-  }
-
-  return (
-    find(
-      messages,
-      item =>
-        isQuoteAMatch(item.attributes, quote) &&
-        item.attributes.conversationId === conversationId
-    ) ||
-    find(
-      messages,
-      item =>
-        isQuoteAMatch(item.attributes, quote) &&
-        quote.text !== undefined &&
-        item.attributes.body?.localeCompare(quote.text) === 0
-    )
-  );
+  return isSameTimestamp && getSourceServiceId(message) === authorAci;
 }
 
 export const shouldTryToCopyFromQuotedMessage = ({

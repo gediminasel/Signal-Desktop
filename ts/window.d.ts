@@ -121,7 +121,7 @@ type PermissionsWindowPropsType = {
 
 type ScreenShareWindowPropsType = {
   onStopSharing: () => void;
-  presentedSourceName: string;
+  presentedSourceName: string | undefined;
   getStatus: () => ScreenShareStatus;
   setRenderCallback: (cb: () => void) => void;
 };
@@ -305,6 +305,11 @@ declare global {
 
   interface SharedArrayBuffer {
     __arrayBuffer: never;
+  }
+
+  interface Set<T> {
+    // Needed until TS upgrade
+    difference<U>(other: ReadonlySet<U>): Set<T>;
   }
 }
 

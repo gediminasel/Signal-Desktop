@@ -25,6 +25,5 @@ if (config.ciMode) {
     backupData: config.ciBackupPath
       ? fs.readFileSync(config.ciBackupPath)
       : undefined,
-    isPlaintextBackup: config.ciIsPlaintextBackup === true,
   });
 }

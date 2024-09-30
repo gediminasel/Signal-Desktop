@@ -5,6 +5,8 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { noop } from 'lodash';
+import classNames from 'classnames';
+import { animated, useSpring } from '@react-spring/web';
 import { Avatar, AvatarSize } from './Avatar';
 import { ContactName } from './conversation/ContactName';
 import { InContactsIcon } from './InContactsIcon';
@@ -20,6 +22,9 @@ import type { ServiceIdString } from '../types/ServiceId';
 import { handleOutsideClick } from '../util/handleOutsideClick';
 import { Theme } from '../util/theme';
 import { ConfirmationDialog } from './ConfirmationDialog';
+import { usePrevious } from '../hooks/usePrevious';
+import { useReducedMotion } from '../hooks/useReducedMotion';
+import { drop } from '../util/drop';
 
 enum ConfirmDialogState {
   None = 'None',
@@ -35,6 +40,9 @@ export type PropsType = {
   readonly approveUser: (payload: PendingUserActionPayloadType) => void;
   readonly batchUserAction: (payload: BatchUserActionPayloadType) => void;
   readonly denyUser: (payload: PendingUserActionPayloadType) => void;
+  readonly toggleCallLinkPendingParticipantModal: (
+    conversationId: string
+  ) => void;
 };
 
 export function CallingPendingParticipants({
@@ -44,12 +52,35 @@ export function CallingPendingParticipants({
   approveUser,
   batchUserAction,
   denyUser,
+  toggleCallLinkPendingParticipantModal,
 }: PropsType): JSX.Element | null {
+  const reducedMotion = useReducedMotion();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const [opacitySpringProps, opacitySpringApi] = useSpring(
+    {
+      from: { opacity: 0 },
+      to: { opacity: 1 },
+      config: { clamp: true, friction: 22, tension: 360 },
+      immediate: reducedMotion,
+    },
+    []
+  );
+
+  // We show the first pending participant. Save this participant, so if all requests
+  // are resolved then we can keep showing the participant while fading out.
+  const lastParticipantRef = React.useRef<ConversationType | undefined>();
+  lastParticipantRef.current = participants[0] ?? lastParticipantRef.current;
+  const participantCount = participants.length;
+  const prevParticipantCount = usePrevious(participantCount, participantCount);
+
+  const [isVisible, setIsVisible] = useState(participantCount > 0);
   const [isExpanded, setIsExpanded] = useState(defaultIsExpanded ?? false);
   const [confirmDialogState, setConfirmDialogState] =
-    React.useState<ConfirmDialogState>(ConfirmDialogState.None);
-  const [serviceIdsStagedForAction, setServiceIdsStagedForAction] =
-    React.useState<Array<ServiceIdString>>([]);
+    useState<ConfirmDialogState>(ConfirmDialogState.None);
+  const [serviceIdsStagedForAction, setServiceIdsStagedForAction] = useState<
+    Array<ServiceIdString>
+  >([]);
 
   const expandedListRef = useRef<HTMLDivElement>(null);
 
@@ -116,7 +147,7 @@ export function CallingPendingParticipants({
   }, [serviceIdsStagedForAction, batchUserAction, hideConfirmDialog]);
 
   const renderApprovalButtons = useCallback(
-    (participant: ConversationType) => {
+    (participant: ConversationType, isEnabled: boolean = true) => {
       if (participant.serviceId == null) {
         return null;
       }
@@ -126,7 +157,7 @@ export function CallingPendingParticipants({
           <Button
             aria-label={i18n('icu:CallingPendingParticipants__DenyUser')}
             className="CallingPendingParticipants__PendingActionButton CallingButton__icon"
-            onClick={() => handleDeny(participant)}
+            onClick={isEnabled ? () => handleDeny(participant) : noop}
             variant={ButtonVariant.Destructive}
           >
             <span className="CallingPendingParticipants__PendingActionButtonIcon CallingPendingParticipants__PendingActionButtonIcon--Deny" />
@@ -134,7 +165,7 @@ export function CallingPendingParticipants({
           <Button
             aria-label={i18n('icu:CallingPendingParticipants__ApproveUser')}
             className="CallingPendingParticipants__PendingActionButton CallingButton__icon"
-            onClick={() => handleApprove(participant)}
+            onClick={isEnabled ? () => handleApprove(participant) : noop}
             variant={ButtonVariant.Calling}
           >
             <span className="CallingPendingParticipants__PendingActionButtonIcon CallingPendingParticipants__PendingActionButtonIcon--Approve" />
@@ -160,6 +191,32 @@ export function CallingPendingParticipants({
       }
     );
   }, [isExpanded, handleHideAllRequests]);
+
+  useEffect(() => {
+    if (participantCount > prevParticipantCount) {
+      setIsVisible(true);
+      opacitySpringApi.stop();
+      drop(Promise.all(opacitySpringApi.start({ opacity: 1 })));
+    } else if (participantCount === 0) {
+      opacitySpringApi.stop();
+      drop(
+        Promise.all(
+          opacitySpringApi.start({
+            to: { opacity: 0 },
+            onRest: () => {
+              if (!participantCount) {
+                setIsVisible(false);
+              }
+            },
+          })
+        )
+      );
+    }
+  }, [opacitySpringApi, participantCount, prevParticipantCount, setIsVisible]);
+
+  if (!isVisible) {
+    return null;
+  }
 
   if (confirmDialogState === ConfirmDialogState.ApproveAll) {
     return (
@@ -224,7 +281,7 @@ export function CallingPendingParticipants({
         <div className="module-calling-participants-list__header">
           <div className="module-calling-participants-list__title">
             {i18n('icu:CallingPendingParticipants__RequestsToJoin', {
-              count: participants.length,
+              count: participantCount,
             })}
           </div>
           <button
@@ -241,7 +298,15 @@ export function CallingPendingParticipants({
               className="module-calling-participants-list__contact"
               key={index}
             >
-              <div className="module-calling-participants-list__avatar-and-name">
+              <button
+                type="button"
+                onClick={ev => {
+                  ev.preventDefault();
+                  ev.stopPropagation();
+                  toggleCallLinkPendingParticipantModal(participant.id);
+                }}
+                className="module-calling-participants-list__avatar-and-name CallingPendingParticipants__ParticipantButton"
+              >
                 <Avatar
                   acceptedMessageRequest={participant.acceptedMessageRequest}
                   avatarUrl={participant.avatarUrl}
@@ -268,7 +333,7 @@ export function CallingPendingParticipants({
                     />
                   </span>
                 ) : null}
-              </div>
+              </button>
               {renderApprovalButtons(participant)}
             </li>
           ))}
@@ -299,11 +364,37 @@ export function CallingPendingParticipants({
     );
   }
 
-  const participant = participants[0];
+  const participant = lastParticipantRef.current;
+  if (!participant) {
+    return null;
+  }
+
+  const isExpandable = participantCount > 1;
   return (
-    <div className="CallingPendingParticipants CallingPendingParticipants--Compact module-calling-participants-list">
+    <animated.div
+      className={classNames(
+        'CallingPendingParticipants',
+        'CallingPendingParticipants--Compact',
+        'module-calling-participants-list',
+        isExpandable && 'CallingPendingParticipants--Expandable'
+      )}
+      style={opacitySpringProps}
+      aria-hidden={participantCount === 0}
+    >
       <div className="CallingPendingParticipants__CompactParticipant">
-        <div className="module-calling-participants-list__avatar-and-name">
+        <button
+          type="button"
+          onClick={ev => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            if (participantCount === 0) {
+              return;
+            }
+
+            toggleCallLinkPendingParticipantModal(participant.id);
+          }}
+          className="module-calling-participants-list__avatar-and-name CallingPendingParticipants__ParticipantButton"
+        >
           <Avatar
             acceptedMessageRequest={participant.acceptedMessageRequest}
             avatarUrl={participant.avatarUrl}
@@ -326,15 +417,16 @@ export function CallingPendingParticipants({
                   i18n={i18n}
                 />
               ) : null}
+              <span className="CallingPendingParticipants__ParticipantAboutIcon" />
             </div>
             <div className="CallingPendingParticipants__WouldLikeToJoin">
               {i18n('icu:CallingPendingParticipants__WouldLikeToJoin')}
             </div>
           </div>
-        </div>
-        {renderApprovalButtons(participant)}
+        </button>
+        {renderApprovalButtons(participant, participantCount > 0)}
       </div>
-      {participants.length > 1 && (
+      {isExpandable && (
         <div className="CallingPendingParticipants__ShowAllRequestsButtonContainer">
           <button
             className="CallingPendingParticipants__ShowAllRequestsButton"
@@ -342,11 +434,11 @@ export function CallingPendingParticipants({
             type="button"
           >
             {i18n('icu:CallingPendingParticipants__AdditionalRequests', {
-              count: participants.length - 1,
+              count: participantCount - 1,
             })}
           </button>
         </div>
       )}
-    </div>
+    </animated.div>
   );
 }

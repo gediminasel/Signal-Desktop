@@ -126,12 +126,10 @@ export function AvatarPreview({
     encodedPath = objectUrl;
     imageStatus = ImageStatus.HasImage;
   } else if (avatarUrl) {
-    encodedPath = encodeURI(
-      avatarUrl
-        .replaceAll('/', sep)
-        .replaceAll('\\', sep)
-        .replaceAll('%5C', sep)
-    );
+    encodedPath = avatarUrl
+      .replaceAll('/', sep)
+      .replaceAll('\\', sep)
+      .replaceAll('%5C', sep);
     imageStatus = ImageStatus.HasImage;
   } else {
     imageStatus = ImageStatus.Nothing;

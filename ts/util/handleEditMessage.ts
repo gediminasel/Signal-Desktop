@@ -124,6 +124,9 @@ export async function handleEditMessage(
       timestamp: mainMessage.timestamp,
       received_at: mainMessage.received_at,
       received_at_ms: mainMessage.received_at_ms,
+      serverTimestamp: mainMessage.serverTimestamp,
+      readStatus: mainMessage.readStatus,
+      unidentifiedDeliveryReceived: mainMessage.unidentifiedDeliveryReceived,
     },
   ];
 
@@ -251,6 +254,7 @@ export async function handleEditMessage(
   const editedMessage: EditHistoryType = {
     attachments: nextEditedMessageAttachments,
     body: upgradedEditedMessageData.body,
+    bodyAttachment: upgradedEditedMessageData.bodyAttachment,
     bodyRanges: upgradedEditedMessageData.bodyRanges,
     preview: nextEditedMessagePreview,
     sendStateByConversationId:
@@ -258,6 +262,10 @@ export async function handleEditMessage(
     timestamp: upgradedEditedMessageData.timestamp,
     received_at: upgradedEditedMessageData.received_at,
     received_at_ms: upgradedEditedMessageData.received_at_ms,
+    serverTimestamp: upgradedEditedMessageData.serverTimestamp,
+    readStatus: upgradedEditedMessageData.readStatus,
+    unidentifiedDeliveryReceived:
+      upgradedEditedMessageData.unidentifiedDeliveryReceived,
     quote: nextEditedMessageQuote,
   };
 
@@ -270,6 +278,7 @@ export async function handleEditMessage(
   mainMessageModel.set({
     attachments: editedMessage.attachments,
     body: editedMessage.body,
+    bodyAttachment: editedMessage.bodyAttachment,
     bodyRanges: editedMessage.bodyRanges,
     editHistory,
     editMessageTimestamp: upgradedEditedMessageData.timestamp,

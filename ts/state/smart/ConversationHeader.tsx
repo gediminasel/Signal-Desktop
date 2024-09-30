@@ -249,7 +249,7 @@ export const SmartConversationHeader = memo(function SmartConversationHeader({
     pushPanelForConversation({ type: PanelType.ConversationDetails });
   }, [pushPanelForConversation]);
 
-  const onViewRecentMedia = useCallback(() => {
+  const onViewAllMedia = useCallback(() => {
     pushPanelForConversation({ type: PanelType.AllMedia });
   }, [pushPanelForConversation]);
 
@@ -307,7 +307,7 @@ export const SmartConversationHeader = memo(function SmartConversationHeader({
       onSelectModeEnter={onSelectModeEnter}
       onShowMembers={onShowMembers}
       onViewConversationDetails={onViewConversationDetails}
-      onViewRecentMedia={onViewRecentMedia}
+      onViewAllMedia={onViewAllMedia}
       onViewUserStories={onViewUserStories}
       outgoingCallButtonStyle={outgoingCallButtonStyle}
       setLocalDeleteWarningShown={setLocalDeleteWarningShown}

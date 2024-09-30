@@ -578,6 +578,12 @@
   "icu:decryptionErrorToastAction": {
     "messageformat": "ലോഗ് സമർപ്പിക്കുക"
   },
+  "icu:Toast__ActionLabel--SubmitLog": {
+    "messageformat": "ലോഗ് സമർപ്പിക്കുക"
+  },
+  "icu:Toast--FailedToSendWithEndorsements": {
+    "messageformat": "Failed to send message with endorsements"
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "നിങ്ങൾക്ക് ഫയലുകൾക്കൊപ്പം ഫോട്ടോകളും വീഡിയോകളും തിരഞ്ഞെടുക്കാനാകില്ല."
   },
@@ -940,6 +946,9 @@
   },
   "icu:viewRecentMedia": {
     "messageformat": "സമീപകാല മീഡിയ കാണുക"
+  },
+  "icu:allMediaMenuItem": {
+    "messageformat": "എല്ലാ മീഡിയയും"
   },
   "icu:back": {
     "messageformat": "തിരികെ പോകുക"
@@ -1406,6 +1415,9 @@
   "icu:calling__missing-media-keys": {
     "messageformat": "{name} നിന്ന് ഓഡിയോയും വീഡിയോയും സ്വീകരിക്കാൻ കഴിയുന്നില്ല "
   },
+  "icu:calling__missing-media-keys--unknown-contact": {
+    "messageformat": "Can't receive audio and video"
+  },
   "icu:calling__missing-media-keys-info": {
     "messageformat": "നിങ്ങളുടെ സുരക്ഷാ നമ്പർ മാറ്റം അവർ സ്ഥിരീകരിക്കാത്തതിനാലോ അവരുടെ ഉപകരണത്തിൽ ഒരു പ്രശ്നമുണ്ടായതിനാലോ അവർ നിങ്ങളെ തടഞ്ഞതിനാലോ ആയിരിക്കാം ഇത്."
   },
@@ -1612,6 +1624,9 @@
   },
   "icu:timestampFormat__long--yesterday": {
     "messageformat": "ഇന്നലെ {time} മണിക്ക്"
+  },
+  "icu:messageLoop": {
+    "messageformat": "Signal may be failing to process an incoming message."
   },
   "icu:messageBodyTooLong": {
     "messageformat": "സന്ദേശം ഉള്ളടക്കം വളരെ ദൈർഘ്യമേറിയതാണ്."
@@ -2702,6 +2717,9 @@
   "icu:CallControls__InfoDisplay--adhoc-call": {
     "messageformat": "കോൾ ലിങ്ക്"
   },
+  "icu:CallControls__InfoDisplay--group-call": {
+    "messageformat": "ഗ്രൂപ്പ് കോൾ"
+  },
   "icu:CallControls__InfoDisplay--adhoc-join-request-pending": {
     "messageformat": "പ്രവേശനം അനുവദിക്കാൻ കാത്തിരിക്കുന്നു"
   },
@@ -3335,12 +3353,6 @@
   "icu:GroupV2--admin-approval-remove-one--other--unknown": {
     "messageformat": "ഗ്രൂപ്പിൽ ചേരാനുള്ള {joinerName}-യുടെ അഭ്യർത്ഥന നിരസിച്ചു."
   },
-  "icu:GroupV2--admin-approval-bounce--one": {
-    "messageformat": "{joinerName} ഗ്രൂപ്പ് ലിങ്ക് ഉപയോഗിച്ച് ചേരാന്‍ അഭ്യർത്ഥിക്കുകയും അഭ്യർത്ഥന റദ്ദാക്കുകയും ചെയ്‌തു"
-  },
-  "icu:GroupV2--admin-approval-bounce": {
-    "messageformat": "{joinerName} ഗ്രൂപ്പ് ലിങ്ക് ഉപയോഗിച്ച് ചേരാന്‍ {numberOfRequests,number} അഭ്യർത്ഥനകൾ  നല്‍കുകയും അവ റദ്ദാക്കുകയും ചെയ്‌തു"
-  },
   "icu:GroupV2--admin-approval-bounce--pluralized": {
     "messageformat": "{numberOfRequests, plural, one {ഗ്രൂപ്പ് ലിങ്ക് ഉപയോഗിച്ച് ചേരാൻ {joinerName} അഭ്യർത്ഥിക്കുകയും ആ ആഭ്യർത്ഥന സ്വയം റദ്ദാക്കുകയും ചെയ്‌തു} other {ഗ്രൂപ്പ് ലിങ്ക് ഉപയോഗിച്ച് ചേരാന്‍ {joinerName} {numberOfRequests,number} അഭ്യർത്ഥിക്കുകയും ആ അഭ്യർത്ഥനകൾ സ്വയം റദ്ദാക്കുകയും ചെയ്‌തു}}"
   },
@@ -3524,14 +3536,62 @@
   "icu:BackupImportScreen__progressbar-hint": {
     "messageformat": "{currentSize} / {totalSize} ({fractionComplete,number,percent}) ഡൗൺലോഡ് ചെയ്യുന്നു..."
   },
+  "icu:BackupImportScreen__progressbar-hint--preparing": {
+    "messageformat": "ഡൗൺലോഡ് ചെയ്യാൻ തയ്യാറെടുക്കുന്നു..."
+  },
   "icu:BackupImportScreen__description": {
     "messageformat": "നിങ്ങളുടെ ബാക്കപ്പിൻ്റെ വലുപ്പം അനുസരിച്ച് ഇതിന് കുറച്ച് മിനിറ്റുകൾ എടുത്തേക്കാം"
   },
-  "icu:BackupMediaDownloadProgress__title": {
-    "messageformat": "Restoring media"
+  "icu:BackupImportScreen__cancel": {
+    "messageformat": "കൈമാറ്റം റദ്ദാക്കുക"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__title": {
+    "messageformat": "കൈമാറ്റം റദ്ദാക്കണോ?"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__body": {
+    "messageformat": "നിങ്ങളുടെ സന്ദേശങ്ങളും മീഡിയയും പുനഃസ്ഥാപിക്കൽ പൂർത്തിയാക്കിയിട്ടില്ല. നിങ്ങൾ റദ്ദാക്കാൻ തിരഞ്ഞെടുക്കുകയാണെങ്കിൽ, ക്രമീകരണങ്ങളിൽ നിന്ന് നിങ്ങൾക്ക് വീണ്ടും കൈമാറാനാകും."
+  },
+  "icu:BackupImportScreen__cancel-confirmation__cancel": {
+    "messageformat": "കൈമാറ്റം തുടരുക"
+  },
+  "icu:BackupImportScreen__cancel-confirmation__confirm": {
+    "messageformat": "കൈമാറ്റം റദ്ദാക്കുക"
+  },
+  "icu:BackupMediaDownloadProgress__title-in-progress": {
+    "messageformat": "മീഡിയ പുനഃസ്ഥാപിക്കുന്നു"
+  },
+  "icu:BackupMediaDownloadProgress__title-paused": {
+    "messageformat": "പുനഃസ്ഥാപിക്കൽ താൽക്കാലികമായി നിർത്തി"
+  },
+  "icu:BackupMediaDownloadProgress__button-pause": {
+    "messageformat": "കൈമാറ്റം താൽക്കാലികമായി നിർത്തുക"
+  },
+  "icu:BackupMediaDownloadProgress__button-resume": {
+    "messageformat": "കൈമാറ്റം പുനരാരംഭിക്കുക"
+  },
+  "icu:BackupMediaDownloadProgress__button-cancel": {
+    "messageformat": "കൈമാറ്റം റദ്ദാക്കുക"
+  },
+  "icu:BackupMediaDownloadProgress__button-more": {
+    "messageformat": "കൂടുതൽ ഓപ്‌ഷനുകൾ"
+  },
+  "icu:BackupMediaDownloadProgress__title-complete": {
+    "messageformat": "വീണ്ടെടുക്കൽ പൂർത്തിയായി"
   },
   "icu:BackupMediaDownloadProgress__progressbar-hint": {
-    "messageformat": "{currentSize} of {totalSize} ({fractionComplete,number,percent})"
+    "messageformat": "{totalSize} ൽ {currentSize}"
+  },
+  "icu:BackupMediaDownloadCancelConfirmation__title": {
+    "messageformat": "മീഡിയ കൈമാറ്റം റദ്ദാക്കണോ?"
+  },
+  "icu:BackupMediaDownloadCancelConfirmation__description": {
+    "messageformat": "നിങ്ങളുടെ സന്ദേശങ്ങളും മീഡിയയും പുനഃസ്ഥാപിക്കൽ പൂർത്തിയാക്കിയിട്ടില്ല. നിങ്ങൾ റദ്ദാക്കാൻ തിരഞ്ഞെടുക്കുകയാണെങ്കിൽ, ക്രമീകരണങ്ങളിൽ നിന്ന് നിങ്ങൾക്ക് വീണ്ടും കൈമാറാനാകും."
+  },
+  "icu:BackupMediaDownloadCancelConfirmation__button-continue": {
+    "messageformat": "കൈമാറ്റം തുടരുക"
+  },
+  "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
+    "messageformat": "കൈമാറ്റം റദ്ദാക്കുക"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "വികസിപ്പിക്കുക"
@@ -3583,6 +3643,9 @@
   },
   "icu:ContactModal--already-in-call": {
     "messageformat": "നിങ്ങൾ ഇതിനകം ഒരു കോളിൽ ഉണ്ട്"
+  },
+  "icu:ContactModal--voice": {
+    "messageformat": "ശബ്ദം"
   },
   "icu:showChatColorEditor": {
     "messageformat": "ചാറ്റ് നിറം"
@@ -3765,7 +3828,7 @@
     "messageformat": "ലിങ്ക് പുനഃസജ്ജമാക്കുക്ക"
   },
   "icu:GroupLinkManagement--approve-label": {
-    "messageformat": "പുതിയ അംഗങ്ങളെ അംഗീകരിക്കുക"
+    "messageformat": "അഡ്മിൻ അംഗീകാരം ആവശ്യമാണ്"
   },
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "ഗ്രൂപ്പ് ലിങ്ക് വഴി പുതിയ അംഗങ്ങൾ ചേരുന്നത് അംഗീകരിക്കാൻ ഒരു അഡ്മിൻ ആവശ്യമാണ്"
@@ -4385,6 +4448,12 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "നിങ്ങളുടെ പ്രൊഫൈൽ അപ്ഡേറ്റ് ചെയ്യാനായില്ല. ദയവായി വീണ്ടും ശ്രമിക്കുക."
   },
+  "icu:ProfileEditor__invalid-about__title": {
+    "messageformat": "Invalid characters"
+  },
+  "icu:ProfileEditor__invalid-about__body": {
+    "messageformat": "One or more characters you’ve entered can’t be used. Try again."
+  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "ഒരു അഡ്മിനു സന്ദേശം അയക്കുക"
   },
@@ -4868,9 +4937,6 @@
   "icu:Stories__placeholder--text": {
     "messageformat": "ഒരു സ്റ്റോറി കാണാൻ ക്ലിക്ക് ചെയ്യുക"
   },
-  "icu:Stories__placeholder-with-icon--text": {
-    "messageformat": "ഒരു അപ്ഡേറ്റ് ചേർക്കാൻ <newStoryIcon>ഒരു സ്റ്റോറി ചേർക്കുക</newStoryIcon> ക്ലിക്ക് ചെയ്യുക."
-  },
   "icu:Stories__placeholder-with-icon--text-2": {
     "messageformat": "ഒരു അപ്ഡേറ്റ് ചേർക്കാൻ <newStoryButtonIcon></newStoryButtonIcon> ക്ലിക്ക് ചെയ്യുക."
   },
@@ -5113,9 +5179,6 @@
   },
   "icu:StoryViewsNRepliesModal__tab--replies": {
     "messageformat": "മറുപടികൾ"
-  },
-  "icu:StoryViewsNRepliesModal__reacted": {
-    "messageformat": "സ്റ്റോറിയോട് പ്രതികരിച്ചു"
   },
   "icu:StoryViewsNRepliesModal__reacted--you": {
     "messageformat": "സ്റ്റോറിയോട് പ്രതികരിച്ചു"
@@ -5418,12 +5481,6 @@
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "കോൾ ചരിത്രം ക്ലിയർ ചെയ്തു"
   },
-  "icu:CallsTab__EmptyStateText": {
-    "messageformat": "കാണാനോ കോൾ തുടങ്ങാനോ ക്ലിക്ക് ചെയ്യുക"
-  },
-  "icu:CallsTab__EmptyStateText--with-icon": {
-    "messageformat": "ഒരു പുതിയ വോയ്‌സ് അല്ലെങ്കിൽ വീഡിയോ കോൾ ആരംഭിക്കാൻ <newCallIcon>പുതിയ കോൾ</newCallIcon> ക്ലിക്ക് ചെയ്യുക."
-  },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "ഒരു പുതിയ വോയ്‌സ് അല്ലെങ്കിൽ വീഡിയോ കോൾ ആരംഭിക്കാൻ <newCallButtonIcon></newCallButtonIcon> ക്ലിക്ക് ചെയ്യുക."
   },
@@ -5435,9 +5492,6 @@
   },
   "icu:CallsList__ToggleFilterByMissed__RoleDescription": {
     "messageformat": "ടോഗിൾ ചെയ്യുക"
-  },
-  "icu:CallsList__EmptyState--noQuery": {
-    "messageformat": "സമീപകാല കോളുകളൊന്നുമില്ല. ഒരു സുഹൃത്തിനെ വിളിച്ച് തുടങ്ങൂ."
   },
   "icu:CallsList__EmptyState--noQuery__title": {
     "messageformat": "കോളുകളൊന്നുമില്ല"
@@ -5518,7 +5572,10 @@
     "messageformat": "കോളിന്റെ പേര് എഡിറ്റ് ചെയ്യുക"
   },
   "icu:CallLinkDetails__ApproveAllMembersLabel": {
-    "messageformat": "എല്ലാ അംഗങ്ങളെയും അംഗീകരിക്കൂ"
+    "messageformat": "അഡ്മിൻ അംഗീകാരം ആവശ്യമാണ്"
+  },
+  "icu:CallLinkDetails__SettingTooltip--disabled-for-active-call": {
+    "messageformat": "കോൾ സജീവമായിരിക്കുമ്പോൾ ഈ ക്രമീകരണം മാറ്റാനാകില്ല"
   },
   "icu:CallLinkDetails__CopyLink": {
     "messageformat": "ലിങ്ക് പകർത്തുക"
@@ -5541,6 +5598,9 @@
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
     "messageformat": "ഇല്ലാതാക്കൂ"
   },
+  "icu:CallLinkDetails__DeleteLinkTooltip--disabled-for-active-call": {
+    "messageformat": "കോൾ സജീവമായിരിക്കുമ്പോൾ ഈ ലിങ്ക് ഇല്ലാതാക്കാൻ കഴിയില്ല"
+  },
   "icu:CallLinkEditModal__Title": {
     "messageformat": "കോൾ ലിങ്ക് വിശദാംശങ്ങൾ"
   },
@@ -5554,7 +5614,13 @@
     "messageformat": "കോളിന്റെ പേര് എഡിറ്റ് ചെയ്യുക"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "എല്ലാ അംഗങ്ങളെയും അംഗീകരിക്കൂ"
+    "messageformat": "അഡ്മിൻ അംഗീകാരം ആവശ്യമാണ്"
+  },
+  "icu:CallLinkPendingParticipantModal__ApproveButtonLabel": {
+    "messageformat": "പ്രവേശനം അനുവദിക്കുക"
+  },
+  "icu:CallLinkPendingParticipantModal__DenyButtonLabel": {
+    "messageformat": "പ്രവേശനം നിഷേധിക്കുക"
   },
   "icu:CallLinkRestrictionsSelect__Option--Off": {
     "messageformat": "ഓഫ്"
@@ -5611,13 +5677,10 @@
     "messageformat": "ചെറിയ മാറ്റങ്ങളും ബഗ് പരിഹരിക്കലുകളും പ്രകടന മെച്ചപ്പെടുത്തലുകളും. Signal ഉപയോഗിക്കുന്നതിന് നന്ദി!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.23--0": {
-    "messageformat": "മറ്റൊരു റൗണ്ട് പ്രകടന മെച്ചപ്പെടുത്തലുകൾ വഴി, ചാറ്റുകൾ ഇപ്പോൾ എന്നത്തേക്കാളും വേഗത്തിൽ തുറക്കുന്നു, അതിനാൽ നിങ്ങൾക്ക് നിങ്ങളുടെ ഗ്രൂപ്പുകളിൽ ക്ലിക്കുചെയ്ത് അവർ എന്താണ് പറയുന്നതെന്ന് ഉടനടി കാണാൻ കഴിയും."
+  "icu:WhatsNew__v7.26--0": {
+    "messageformat": "ചിലപ്പോഴൊക്കെ എന്തെങ്കിലും ഉപേക്ഷിക്കുന്നതാണ് അത് വീണ്ടും കണ്ടെത്തണമെന്ന് ആഗ്രഹിക്കാനുള്ള ഏറ്റവും നല്ല മാർഗം, അതിനാലാണ് നിങ്ങൾ ഇപ്പോൾ ഭാഗമല്ലാത്തതും എന്നാൽ ഇപ്പോഴും നിങ്ങളുടെ സംഭാഷണ ലിസ്റ്റിൽ നിലനിൽക്കുന്നതുമായ ( ഒരുപക്ഷേ നിങ്ങളുടെ ഹൃദയത്തിൽ) ഗ്രൂപ്പുകൾക്കായി തിരയുന്നത് കഠിനമാക്കിയിരുന്ന ഒരു ബഗ് ഞങ്ങൾ പരിഹരിച്ചത്."
   },
-  "icu:WhatsNew__v7.23--1": {
-    "messageformat": "നിങ്ങൾ കോൾ ആരംഭിച്ചതിന് ശേഷം ചാറ്റ് ലിസ്റ്റ് സംഗ്രഹത്തിൽ ചിലപ്പോൾ \"അജ്ഞാത കോൺടാക്റ്റ് ഒരു വീഡിയോ കോൾ ആരംഭിച്ചു\" എന്നതിന് കാരണമായത് ഉൾപ്പെടെയുള്ള ഒരുപിടി ബഗുകളും ഞങ്ങൾ പരിഹരിച്ചു. നിങ്ങൾ ഇപ്പോഴും സ്വയം കണ്ടെത്താനുള്ള ഒരു യാത്രയിലാണെങ്കിലും, നിങ്ങൾ ഒരിക്കലും നിങ്ങൾക്ക് പൂർണ്ണമായും അജ്ഞാതനല്ല."
-  },
-  "icu:WhatsNew__v7.24--0": {
-    "messageformat": "This update fixes a bug where viewing a missed call on one device wouldn't automatically clear the indicator for that missed call on your other devices, which was a missed opportunity for your missed call list to better coexist."
+  "icu:WhatsNew__v7.27--0": {
+    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\""
   }
 }

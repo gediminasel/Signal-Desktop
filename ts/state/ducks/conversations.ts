@@ -3735,8 +3735,12 @@ function loadRecentMediaItems(
 ): ThunkAction<void, RootStateType, unknown, SetRecentMediaItemsActionType> {
   return async dispatch => {
     const messages: Array<MessageAttributesType> =
-      await DataReader.getMessagesWithVisualMediaAttachments(conversationId, {
+      await DataReader.getOlderMessagesByConversation({
+        conversationId,
         limit,
+        requireVisualMediaAttachments: true,
+        storyId: undefined,
+        includeStoryReplies: false,
       });
 
     // Cache these messages in memory to ensure Lightbox can find them
@@ -3774,9 +3778,9 @@ function loadRecentMediaItems(
                     window.ConversationController.get(message.sourceServiceId)
                       ?.id || message.conversationId,
                   id: message.id,
-                  received_at: message.received_at,
-                  received_at_ms: Number(message.received_at_ms),
-                  sent_at: message.sent_at,
+                  receivedAt: message.received_at,
+                  receivedAtMs: Number(message.received_at_ms),
+                  sentAt: message.sent_at,
                 },
               };
 
@@ -5649,7 +5653,7 @@ export function reducer(
   if (action.type === MESSAGE_EXPIRED) {
     return maybeUpdateSelectedMessageForDetails(
       { messageId: action.payload.id, targetedMessageForDetails: undefined },
-      state
+      dropPreloadData(state)
     );
   }
 
@@ -5963,19 +5967,20 @@ export function reducer(
   if (action.type === 'MESSAGES_ADDED') {
     const { conversationId, isActive, isJustSent, isNewMessage, messages } =
       action.payload;
-    const { messagesByConversation, messagesLookup } = state;
-
-    const existingConversation = messagesByConversation[conversationId];
-    if (!existingConversation) {
-      return state;
-    }
-
-    let { newest, oldest, oldestUnseen, totalUnseen } =
-      existingConversation.metrics;
 
     if (messages.length < 1) {
       return state;
     }
+
+    const { messagesByConversation, messagesLookup } = state;
+
+    const existingConversation = messagesByConversation[conversationId];
+    if (!existingConversation) {
+      return dropPreloadData(state);
+    }
+
+    let { newest, oldest, oldestUnseen, totalUnseen } =
+      existingConversation.metrics;
 
     const lookup = fromPairs(
       existingConversation.messageIds.map(id => [id, messagesLookup[id]])

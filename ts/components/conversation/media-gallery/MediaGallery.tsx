@@ -1,7 +1,7 @@
 // Copyright 2018 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import moment from 'moment';
 
@@ -12,9 +12,10 @@ import type { SaveAttachmentActionCreatorType } from '../../../state/ducks/conve
 import { AttachmentSection } from './AttachmentSection';
 import { EmptyState } from './EmptyState';
 import { Tabs } from '../../Tabs';
-import { getMessageTimestamp } from '../../../util/getMessageTimestamp';
 import { groupMediaItemsByDate } from './groupMediaItemsByDate';
 import { missingCaseError } from '../../../util/missingCaseError';
+import { usePrevious } from '../../../hooks/usePrevious';
+import type { AttachmentType } from '../../../types/Attachment';
 
 enum TabViews {
   Media = 'Media',
@@ -23,39 +24,43 @@ enum TabViews {
 
 export type Props = {
   conversationId: string;
-  documents: Array<MediaItemType>;
+  documents: ReadonlyArray<MediaItemType>;
   i18n: LocalizerType;
-  loadMediaItems: (id: string, page: number) => unknown;
-  media: Array<MediaItemType>;
+  haveOldestMedia: boolean;
+  haveOldestDocument: boolean;
+  loading: boolean;
+  initialLoad: (id: string) => unknown;
+  loadMoreMedia: (id: string) => unknown;
+  loadMoreDocuments: (id: string) => unknown;
+  media: ReadonlyArray<MediaItemType>;
   saveAttachment: SaveAttachmentActionCreatorType;
-  showLightboxWithMedia: (
-    selectedIndex: number,
-    media: Array<MediaItemType>
-  ) => void;
+  showLightbox: (options: {
+    attachment: AttachmentType;
+    messageId: string;
+  }) => void;
 };
 
 const MONTH_FORMAT = 'MMMM YYYY';
 
 function MediaSection({
-  type,
-  i18n,
-  media,
   documents,
+  i18n,
+  loading,
+  media,
   saveAttachment,
-  showLightboxWithMedia,
-  prevPage,
-  nextPage,
+  showLightbox,
+  type,
 }: Pick<
   Props,
-  'i18n' | 'media' | 'documents' | 'showLightboxWithMedia' | 'saveAttachment'
-> & {
-  type: 'media' | 'documents';
-  prevPage?: () => void;
-  nextPage?: () => void;
-}): JSX.Element {
+  'documents' | 'i18n' | 'loading' | 'media' | 'saveAttachment' | 'showLightbox'
+> & { type: 'media' | 'documents' }): JSX.Element {
   const mediaItems = type === 'media' ? media : documents;
 
   if (!mediaItems || mediaItems.length === 0) {
+    if (loading) {
+      return <div />;
+    }
+
     const label = (() => {
       switch (type) {
         case 'media':
@@ -69,25 +74,14 @@ function MediaSection({
       }
     })();
 
-    return (
-      <EmptyState data-test="EmptyState" label={label}>
-        {prevPage ? (
-          <div>
-            &nbsp;
-            <button type="button" onClick={prevPage}>
-              back
-            </button>
-          </div>
-        ) : null}
-      </EmptyState>
-    );
+    return <EmptyState data-test="EmptyState" label={label} />;
   }
 
   const now = Date.now();
   const sections = groupMediaItemsByDate(now, mediaItems).map(section => {
     const first = section.mediaItems[0];
     const { message } = first;
-    const date = moment(getMessageTimestamp(message));
+    const date = moment(message.receivedAtMs || message.receivedAt);
 
     function getHeader(): string {
       switch (section.type) {
@@ -110,7 +104,7 @@ function MediaSection({
 
     return (
       <AttachmentSection
-        key={message.id}
+        key={header}
         header={header}
         i18n={i18n}
         type={type}
@@ -118,12 +112,15 @@ function MediaSection({
         onItemClick={(event: ItemClickEvent) => {
           switch (event.type) {
             case 'documents': {
-              saveAttachment(event.attachment, event.message.sent_at);
+              saveAttachment(event.attachment, event.message.sentAt);
               break;
             }
 
             case 'media': {
-              showLightboxWithMedia(event.index, media);
+              showLightbox({
+                attachment: event.attachment,
+                messageId: event.message.id,
+              });
               break;
             }
 
@@ -135,47 +132,106 @@ function MediaSection({
     );
   });
 
-  return (
-    <div className="module-media-gallery__sections">
-      {sections}
-      <div style={{ display: 'flex' }}>
-        {prevPage ? (
-          <button style={{ flex: 1 }} type="button" onClick={prevPage}>
-            prev
-          </button>
-        ) : null}
-        {nextPage ? (
-          <button style={{ flex: 1 }} type="button" onClick={nextPage}>
-            next
-          </button>
-        ) : null}
-      </div>
-    </div>
-  );
+  return <div className="module-media-gallery__sections">{sections}</div>;
 }
 
 export function MediaGallery({
   conversationId,
   documents,
+  haveOldestDocument,
+  haveOldestMedia,
   i18n,
-  loadMediaItems,
+  initialLoad,
+  loading,
+  loadMoreDocuments,
+  loadMoreMedia,
   media,
   saveAttachment,
-  showLightboxWithMedia,
+  showLightbox,
 }: Props): JSX.Element {
   const focusRef = useRef<HTMLDivElement | null>(null);
-  const [page, setPage] = useState(0);
+  const scrollObserverRef = useRef<HTMLDivElement | null>(null);
+  const intersectionObserver = useRef<IntersectionObserver | null>(null);
+  const loadingRef = useRef<boolean>(false);
+  const tabViewRef = useRef<TabViews>(TabViews.Media);
 
   useEffect(() => {
     focusRef.current?.focus();
   }, []);
 
   useEffect(() => {
-    loadMediaItems(conversationId, page);
-  }, [conversationId, loadMediaItems, page]);
+    if (
+      media.length > 0 ||
+      documents.length > 0 ||
+      haveOldestDocument ||
+      haveOldestMedia
+    ) {
+      return;
+    }
+    initialLoad(conversationId);
+    loadingRef.current = true;
+  }, [
+    conversationId,
+    haveOldestDocument,
+    haveOldestMedia,
+    initialLoad,
+    media,
+    documents,
+  ]);
 
-  const prevPage = useCallback(() => setPage(Math.max(0, page - 1)), [page]);
-  const nextPage = useCallback(() => setPage(page + 1), [page]);
+  const previousLoading = usePrevious(loading, loading);
+  if (previousLoading && !loading) {
+    loadingRef.current = false;
+  }
+
+  useEffect(() => {
+    if (loading || !scrollObserverRef.current) {
+      return;
+    }
+
+    intersectionObserver.current?.disconnect();
+    intersectionObserver.current = null;
+
+    intersectionObserver.current = new IntersectionObserver(
+      (entries: ReadonlyArray<IntersectionObserverEntry>) => {
+        if (loadingRef.current) {
+          return;
+        }
+
+        const entry = entries.find(
+          item => item.target === scrollObserverRef.current
+        );
+
+        if (entry && entry.intersectionRatio > 0) {
+          if (tabViewRef.current === TabViews.Media) {
+            if (!haveOldestMedia) {
+              loadMoreMedia(conversationId);
+              loadingRef.current = true;
+            }
+          } else {
+            // eslint-disable-next-line no-lonely-if
+            if (!haveOldestDocument) {
+              loadMoreDocuments(conversationId);
+              loadingRef.current = true;
+            }
+          }
+        }
+      }
+    );
+    intersectionObserver.current.observe(scrollObserverRef.current);
+
+    return () => {
+      intersectionObserver.current?.disconnect();
+      intersectionObserver.current = null;
+    };
+  }, [
+    conversationId,
+    haveOldestDocument,
+    haveOldestMedia,
+    loading,
+    loadMoreDocuments,
+    loadMoreMedia,
+  ]);
 
   return (
     <div className="module-media-gallery" tabIndex={-1} ref={focusRef}>
@@ -191,37 +247,45 @@ export function MediaGallery({
             label: i18n('icu:documents'),
           },
         ]}
-        onTabChange={() => setPage(0)}
       >
-        {({ selectedTab }) => (
-          <div className="module-media-gallery__content">
-            {selectedTab === TabViews.Media && (
-              <MediaSection
-                documents={documents}
-                i18n={i18n}
-                media={media}
-                saveAttachment={saveAttachment}
-                showLightboxWithMedia={showLightboxWithMedia}
-                prevPage={page > 0 ? prevPage : undefined}
-                nextPage={media.length > 0 ? nextPage : undefined}
-                type="media"
-              />
-            )}
-            {selectedTab === TabViews.Documents && (
-              <MediaSection
-                documents={documents}
-                i18n={i18n}
-                media={media}
-                saveAttachment={saveAttachment}
-                showLightboxWithMedia={showLightboxWithMedia}
-                prevPage={page > 0 ? prevPage : undefined}
-                nextPage={documents.length > 0 ? nextPage : undefined}
-                type="documents"
-              />
-            )}
-          </div>
-        )}
+        {({ selectedTab }) => {
+          tabViewRef.current =
+            selectedTab === TabViews.Media
+              ? TabViews.Media
+              : TabViews.Documents;
+
+          return (
+            <div className="module-media-gallery__content">
+              {selectedTab === TabViews.Media && (
+                <MediaSection
+                  documents={documents}
+                  i18n={i18n}
+                  loading={loading}
+                  media={media}
+                  saveAttachment={saveAttachment}
+                  showLightbox={showLightbox}
+                  type="media"
+                />
+              )}
+              {selectedTab === TabViews.Documents && (
+                <MediaSection
+                  documents={documents}
+                  i18n={i18n}
+                  loading={loading}
+                  media={media}
+                  saveAttachment={saveAttachment}
+                  showLightbox={showLightbox}
+                  type="documents"
+                />
+              )}
+            </div>
+          );
+        }}
       </Tabs>
+      <div
+        ref={scrollObserverRef}
+        className="module-media-gallery__scroll-observer"
+      />
     </div>
   );
 }

@@ -75,8 +75,8 @@ const commonProps: PropsType = {
   onConversationJumpToDate: action('onConversationJumpToDate'),
   onSelectModeEnter: action('onSelectModeEnter'),
   onShowMembers: action('onShowMembers'),
+  onViewAllMedia: action('onViewAllMedia'),
   onViewConversationDetails: action('onViewConversationDetails'),
-  onViewRecentMedia: action('onViewRecentMedia'),
   onViewUserStories: action('onViewUserStories'),
 };
 
