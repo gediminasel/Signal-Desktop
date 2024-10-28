@@ -30,7 +30,8 @@ export const SmartInstallScreen = memo(function SmartInstallScreen() {
   const installerState = useSelector(getInstallerState);
   const updates = useSelector(getUpdatesState);
   const { openInbox } = useAppActions();
-  const { startInstaller, finishInstall } = useInstallerActions();
+  const { startInstaller, finishInstall, retryBackupImport } =
+    useInstallerActions();
   const { startUpdate } = useUpdatesActions();
   const hasExpired = useSelector(hasExpiredSelector);
 
@@ -108,9 +109,12 @@ export const SmartInstallScreen = memo(function SmartInstallScreen() {
         step: InstallScreenStep.BackupImport,
         screenSpecificProps: {
           i18n,
+          backupStep: installerState.backupStep,
           currentBytes: installerState.currentBytes,
           totalBytes: installerState.totalBytes,
+          hasError: installerState.hasError,
           onCancel: onCancelBackupImport,
+          onRetry: retryBackupImport,
         },
       };
       break;

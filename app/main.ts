@@ -123,6 +123,7 @@ import { ZoomFactorService } from '../ts/services/ZoomFactorService';
 import { SafeStorageBackendChangeError } from '../ts/types/SafeStorageBackendChangeError';
 import { LINUX_PASSWORD_STORE_FLAGS } from '../ts/util/linuxPasswordStoreFlags';
 import { getOwn } from '../ts/util/getOwn';
+import { safeParseLoose, safeParseUnknown } from '../ts/util/schemas';
 
 const animationSettings = systemPreferences.getAnimationSettings();
 
@@ -436,7 +437,8 @@ export const windowConfigSchema = z.object({
 type WindowConfigType = z.infer<typeof windowConfigSchema>;
 
 let windowConfig: WindowConfigType | undefined;
-const windowConfigParsed = windowConfigSchema.safeParse(
+const windowConfigParsed = safeParseUnknown(
+  windowConfigSchema,
   windowFromEphemeral || windowFromUserConfig
 );
 if (windowConfigParsed.success) {
@@ -1782,6 +1784,8 @@ async function initializeSQL(
     sqlInitTimeEnd = Date.now();
   }
 
+  sql.startTrackingQueryStats();
+
   // Only if we've initialized things successfully do we set up the corruption handler
   drop(runSQLCorruptionHandler());
   drop(runSQLReadonlyHandler());
@@ -2104,6 +2108,8 @@ app.on('ready', async () => {
     innerLogger.info('WebSocket connect - time:', connectTime);
     innerLogger.info('Processed count:', processedCount);
     innerLogger.info('Messages per second:', messagesPerSec);
+
+    sql.stopTrackingQueryStats();
 
     event.sender.send('ci:event', 'app-loaded', {
       loadTime,
@@ -2692,7 +2698,7 @@ ipc.on('delete-all-data', () => {
 ipc.on('get-config', async event => {
   const theme = await getResolvedThemeSetting();
 
-  const directoryConfig = directoryConfigSchema.safeParse({
+  const directoryConfig = safeParseLoose(directoryConfigSchema, {
     directoryUrl: config.get<string | null>('directoryUrl') || undefined,
     directoryMRENCLAVE:
       config.get<string | null>('directoryMRENCLAVE') || undefined,
@@ -2705,7 +2711,7 @@ ipc.on('get-config', async event => {
     );
   }
 
-  const parsed = rendererConfigSchema.safeParse({
+  const parsed = safeParseLoose(rendererConfigSchema, {
     name: packageJson.productName,
     availableLocales: getResolvedMessagesLocale().availableLocales,
     resolvedTranslationsLocale: getResolvedMessagesLocale().name,
@@ -3024,6 +3030,32 @@ ipc.handle('show-save-dialog', async (_event, { defaultPath }) => {
   const finalFilePath = join(finalDirname, `${finalBasename}${defaultExt}`);
 
   return { canceled: false, filePath: finalFilePath };
+});
+
+ipc.handle('show-save-multi-dialog', async _event => {
+  if (!mainWindow) {
+    getLogger().warn('show-save-multi-dialog: no main window');
+
+    return { canceled: true };
+  }
+  const { canceled, filePaths: selectedDirPaths } = await dialog.showOpenDialog(
+    mainWindow,
+    {
+      defaultPath: app.getPath('downloads'),
+      properties: ['openDirectory', 'createDirectory'],
+    }
+  );
+  if (canceled || selectedDirPaths.length === 0) {
+    return { canceled: true };
+  }
+
+  if (selectedDirPaths.length > 1) {
+    getLogger().warn('show-save-multi-dialog: multiple directories selected');
+
+    return { canceled: true };
+  }
+
+  return { canceled: false, dirPath: selectedDirPaths[0] };
 });
 
 ipc.handle('executeMenuRole', async ({ sender }, untypedRole) => {

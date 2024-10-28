@@ -575,9 +575,6 @@
   "icu:decryptionErrorToast": {
     "messageformat": "Desktop-ი გაშიფვრის შეცდომას  წააწყდა {name}-ის მოწყობილობადან {deviceId}"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "რეესტრის გაგზავნა"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "რეესტრის გაგზავნა"
   },
@@ -791,8 +788,14 @@
   "icu:attachmentSaved": {
     "messageformat": "დანართი შენახულია."
   },
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+  },
   "icu:attachmentSavedShow": {
     "messageformat": "შენახვის ადგილას ჩვენება"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
   },
   "icu:you": {
     "messageformat": "შენ"
@@ -944,9 +947,6 @@
   "icu:NotePreviewModal__Title": {
     "messageformat": "ჩანიშვნა"
   },
-  "icu:viewRecentMedia": {
-    "messageformat": "ბოლო მედია-ფაილების ნახვა"
-  },
   "icu:allMediaMenuItem": {
     "messageformat": "ყველა მედია ფაილი"
   },
@@ -1006,6 +1006,18 @@
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
     "messageformat": "ამ ჩატის ყველა შეტყობინება შენი ყველა მოწყობილობიდან წაიშლება. შეტყობინებების წაშლის შემდეგ ამ ჩატის მოძებნას მაინც შეძლებ."
+  },
+  "icu:deleteConversation": {
+    "messageformat": "წაშლა"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "წავშალოთ ჩატი?"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "ამ ჩატში არსებული მიმოწერა ამ მოწყობილობიდან წაიშლება."
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "ამ ჩატის ყველა შეტყობინება შენი ყველა მოწყობილობიდან წაიშლება."
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "ჯგუფის დატოვება"
@@ -1232,6 +1244,9 @@
   "icu:calling__call-link-default-title": {
     "messageformat": "Signal-ის ზარი"
   },
+  "icu:calling__call-link-delete-failed": {
+    "messageformat": "ბმულის წაშლა ვერ მოხერხდა. შეამოწმე შენი კავშირი და თავიდან სცადე."
+  },
   "icu:calling__join-request-denied": {
     "messageformat": "შენი ამ ზარზე დამატების მოთხოვნა უარყოფილია."
   },
@@ -1416,7 +1431,7 @@
     "messageformat": "აუდიოსა და ვიდეოს მიღება {name}-სგან შეუძლებელია"
   },
   "icu:calling__missing-media-keys--unknown-contact": {
-    "messageformat": "Can't receive audio and video"
+    "messageformat": "აუდიოს და ვიდეოს მიღება შეუძლებელია"
   },
   "icu:calling__missing-media-keys-info": {
     "messageformat": "ეს შეიძლება იმით იყოს გამოწვეული, რომ მან არ დაავერიფიცირა შენი უსაფრთხოების ნომრის ცვლილება, მის მოწყობილობას პრობლემა აქვს ან დაგბლოკა."
@@ -1441,6 +1456,9 @@
   },
   "icu:calling__presenting--info": {
     "messageformat": "Signal-ი აზიარებს {window}-ს."
+  },
+  "icu:calling__presenting--info--unknown": {
+    "messageformat": "მიმდინარეობს Signal-ზე ეკრანის გაზიარება"
   },
   "icu:calling__presenting--reconnecting": {
     "messageformat": "მიმდინარეობს ხელახლა დაკავშირება…"
@@ -1626,7 +1644,7 @@
     "messageformat": "გუშინ {time}"
   },
   "icu:messageLoop": {
-    "messageformat": "Signal may be failing to process an incoming message."
+    "messageformat": "შესაძლოა, Signal-მა შემომავალი შეტყობინება ვერ დაამუშავა."
   },
   "icu:messageBodyTooLong": {
     "messageformat": "შეტყობინების ზომა ზედმეტად დიდია."
@@ -2976,7 +2994,7 @@
     "messageformat": "ამ ჯგუფის ბმულით ჯგუფს ვერ შეუერთდები, რადგან ადმინმა წაგშალა."
   },
   "icu:GroupV2--join--prompt-with-approval": {
-    "messageformat": "ამ ჯგუფის ადმინმა უნდა დაადასტუროს შენი მოთხოვნა, სანამ ამ ჯგუფს შეუერთდები. დადასტურების შემთხვევაში, შენი სახელი და ფოტო მის წევრებთან გაზიარდება."
+    "messageformat": "სანამ ამ ჯგუფს შეუერთდები, მისმა ადმინებმა უნდა დაადასტურონ შენი მოთხოვნა. როცა გაწევრიანებას ითხოვ, შენი სახელი და ფოტო ჯგუფის წევრებთან გაზიარდება."
   },
   "icu:GroupV2--join--join-button": {
     "messageformat": "შეუერთდი"
@@ -3536,6 +3554,9 @@
   "icu:BackupImportScreen__progressbar-hint": {
     "messageformat": "იწერება {currentSize} {totalSize}-დან ({fractionComplete,number,percent})..."
   },
+  "icu:BackupImportScreen__progressbar-hint--processing": {
+    "messageformat": "სრულდება წერილების გადატანა..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "მზადება ჩამოსატვირთად..."
   },
@@ -3556,6 +3577,27 @@
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
     "messageformat": "გადატანის გაუქმება"
+  },
+  "icu:BackupImportScreen__error__title": {
+    "messageformat": "შენი შეტყობინებების გადატანისას ხარვეზი დაფიქსირდა"
+  },
+  "icu:BackupImportScreen__error__body": {
+    "messageformat": "შენი შეტყობინებების გადატანა ვერ მოხერხდა. შეამოწმე შენი ინტერნეტ კავშირი და თავიდან სცადე."
+  },
+  "icu:BackupImportScreen__error__confirm": {
+    "messageformat": "თავიდან ცდა"
+  },
+  "icu:BackupImportScreen__skip": {
+    "messageformat": "გამოტოვება"
+  },
+  "icu:BackupImportScreen__skip-confirmation__title": {
+    "messageformat": "გსურს გამოტოვო შეტყობინების გადატანა?"
+  },
+  "icu:BackupImportScreen__skip-confirmation__body": {
+    "messageformat": "თუ გამოტოვებ, ამ მოწყობილობაზე წვდომა არ გექნება არც ერთ შეტყობინებასა ან მედია ფაილზე. შეგიძლია, გამოტოვების შემდეგ ახალი გადატანა დაიწყო. აირჩიე: პარამეტრები > ჩატები > გადატანა."
+  },
+  "icu:BackupImportScreen__skip-confirmation__cancel": {
+    "messageformat": "გაუქმება"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "მედია ფაილების აღდგენა"
@@ -3640,9 +3682,6 @@
   },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "ჯგუფიდან წაშლა"
-  },
-  "icu:ContactModal--already-in-call": {
-    "messageformat": "შენ უკვე ამ ზარზე იმყოფები"
   },
   "icu:ContactModal--voice": {
     "messageformat": "ხმოვანი ზარი"
@@ -4449,10 +4488,10 @@
     "messageformat": "შენი პროფილის განახლება ვერ მოხერხდა. გთხოვთ კიდევ სცადო."
   },
   "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Invalid characters"
+    "messageformat": "არასწორი სიმბოლოები"
   },
   "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "One or more characters you’ve entered can’t be used. Try again."
+    "messageformat": "შენ მიერ შეყვანილი ერთი ან მეტი სიმბოლოს გამოყენება შეუძლებელია. ახლიდან სცადე."
   },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "ადმინისთვის მიწერა"
@@ -5202,7 +5241,7 @@
     "messageformat": "Story-ი"
   },
   "icu:StoryListItem__unhide": {
-    "messageformat": "Stories-ების ჩვენება"
+    "messageformat": "Story-ის გამოჩენა"
   },
   "icu:StoryListItem__hide": {
     "messageformat": "Story-ის დამალვა"
@@ -5473,13 +5512,22 @@
     "messageformat": "წავშალოთ ზარების ისტორია?"
   },
   "icu:CallsTab__ConfirmClearCallHistory__Body": {
-    "messageformat": "ეს სამუდამოდ წაშლის ზარების მთელ ისტორიას"
+    "messageformat": "ეს საბოლოოდ წაშლის ზარების მთელ ისტორიას."
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Body--call-links": {
+    "messageformat": "ეს საბოლოოდ წაშლის ზარების მთელ ისტორიას. შენ მიერ შექმნილი ზარის ბმულები აღარ იმუშავებს მათთვის, ვისაც ეს ბმულები გაუზიარე. "
   },
   "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
     "messageformat": "გასუფთავება"
   },
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "ზარის ისტორია წაიშალა"
+  },
+  "icu:CallsTab__ClearCallHistoryError--call-links": {
+    "messageformat": "ყველა ზარის ბმულის წაშლა ვერ მოხერხდა. შეამოწმე შენი კავშირი და თავიდან სცადე."
+  },
+  "icu:CallsTab__ClearCallHistoryError": {
+    "messageformat": "ყველა ზარის ისტორიის წაშლა ვერ მოხერხდა. შეამოწმე შენი კავშირი და თავიდან სცადე."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "დააწკაპუნე <newCallButtonIcon></newCallButtonIcon> ახალი ხმოვანი ან ვიდეო ზარის წამოსაწყებად."
@@ -5677,10 +5725,22 @@
     "messageformat": "მცირე შესწორებები, ბაგების გამოსწორება და წარმადობის გაუმჯობესება. მადლობას გიხდით სიგნალის გამოყენებისთვის!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.26--0": {
-    "messageformat": "ზოგჯერ უკან რასაც მოიტოვებ, იმის თავიდან აღმოჩენა გინდება, ამიტომ გამოვასწორეთ ხარვეზი, რომელიც დატოვებული, მაგრამ შენს საუბრების სიაში (და სავარაუდოდ გულში) დარჩენილი ჯგუფების მოძებნას ართულებდა."
+  "icu:WhatsNew__v7.29--0": {
+    "messageformat": "ახალი ვერსია გაშვების სიჩქარეს დაახლოებით 5%-ით აუმჯობესებს, ასე რომ, შენ შეგიძლია მოეშვა."
   },
-  "icu:WhatsNew__v7.27--0": {
-    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\""
+  "icu:WhatsNew__v7.30--header": {
+    "messageformat": "წარმოგიდგენთ ზარის ბმულებს: საჭირო ბმული კალენდრის მოწვევებისა და ექსპრომტი შეკრებებისთვის."
+  },
+  "icu:WhatsNew__v7.30--0": {
+    "messageformat": "ახლა უკვე შეგიძლია, სწრაფად შექმნა მარტივი ბმული, რომლის გამოყენებაც Signal-ზე ჯგუფის ჩატში გაწევრიანების გარეშე ნებისმიერს შეუძლია ზარში მონაწილეობა."
+  },
+  "icu:WhatsNew__v7.30--1": {
+    "messageformat": "ზარის ბმულები მრავალჯერადი გამოყენებისაა და იდეალურია განმეორებადი სატელეფონო ზარებისთვის საუკეთესო მეგობრებთან ან თანამშრომლებთან ყოველკვირეული შეხვედრებისთვის."
+  },
+  "icu:WhatsNew__v7.30--2": {
+    "messageformat": "შეგიძლია, შენი ზარის ბმულები მართო, აკონტროლო დადასტურების პარამეტრები და სწრაფი გაზიარებისთვის ბმულები ზარების ჩანართიდან დააკოპირო."
+  },
+  "icu:WhatsNew__v7.31--0": {
+    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
   }
 }

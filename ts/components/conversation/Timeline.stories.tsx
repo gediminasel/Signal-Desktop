@@ -292,6 +292,7 @@ const actions = () => ({
   retryDeleteForEveryone: action('retryDeleteForEveryone'),
   retryMessageSend: action('retryMessageSend'),
   saveAttachment: action('saveAttachment'),
+  saveAttachments: action('saveAttachments'),
   pushPanelForConversation: action('pushPanelForConversation'),
   showContactDetail: action('showContactDetail'),
   showContactModal: action('showContactModal'),
@@ -306,6 +307,9 @@ const actions = () => ({
 
   openGiftBadge: action('openGiftBadge'),
   scrollToQuotedMessage: action('scrollToQuotedMessage'),
+  showAttachmentDownloadStillInProgressToast: action(
+    'showAttachmentDownloadStillInProgressToast'
+  ),
   showExpiredIncomingTapToViewToast: action(
     'showExpiredIncomingTapToViewToast'
   ),
@@ -406,6 +410,7 @@ const renderHeroRow = () => {
         id={getDefaultConversation().id}
         i18n={i18n}
         isMe={false}
+        isRestoredFromBackup={false}
         phoneNumber={getPhoneNumber()}
         profileName={getProfileName()}
         sharedGroupNames={['NYC Rock Climbers', 'Dinner Party']}

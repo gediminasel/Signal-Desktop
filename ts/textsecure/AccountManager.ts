@@ -59,6 +59,7 @@ import * as log from '../logging/log';
 import type { StorageAccessType } from '../types/Storage';
 import { getRelativePath, createName } from '../util/attachmentPath';
 import { isBackupEnabled } from '../util/isBackupEnabled';
+import { getMessageQueueTime } from '../util/getMessageQueueTime';
 
 type StorageKeyByServiceIdKind = {
   [kind in ServiceIdKind]: keyof StorageAccessType;
@@ -77,7 +78,6 @@ export const KYBER_KEY_ID_KEY: StorageKeyByServiceIdKind = {
   [ServiceIdKind.PNI]: 'maxKyberPreKeyIdPNI',
 };
 
-const LAST_RESORT_KEY_ARCHIVE_AGE = 30 * DAY;
 const LAST_RESORT_KEY_ROTATION_AGE = DAY * 1.5;
 const LAST_RESORT_KEY_MINIMUM = 5;
 const LAST_RESORT_KEY_UPDATE_TIME_KEY: StorageKeyByServiceIdKind = {
@@ -96,7 +96,6 @@ const PRE_KEY_ID_KEY: StorageKeyByServiceIdKind = {
 };
 const PRE_KEY_MINIMUM = 10;
 
-const SIGNED_PRE_KEY_ARCHIVE_AGE = 30 * DAY;
 export const SIGNED_PRE_KEY_ID_KEY: StorageKeyByServiceIdKind = {
   [ServiceIdKind.ACI]: 'signedKeyId',
   [ServiceIdKind.Unknown]: 'signedKeyId',
@@ -135,6 +134,7 @@ type CreatePrimaryDeviceOptionsType = Readonly<{
   ourAci?: undefined;
   ourPni?: undefined;
   userAgent?: undefined;
+  ephemeralBackupKey?: undefined;
 
   readReceipts: true;
 
@@ -150,6 +150,7 @@ export type CreateLinkedDeviceOptionsType = Readonly<{
   ourAci: AciString;
   ourPni: PniString;
   userAgent?: string;
+  ephemeralBackupKey: Uint8Array | undefined;
 
   readReceipts: boolean;
 
@@ -334,6 +335,7 @@ export default class AccountManager extends EventTarget {
         profileKey,
         accessKey,
         masterKey,
+        ephemeralBackupKey: undefined,
         readReceipts: true,
       });
     });
@@ -756,7 +758,7 @@ export default class AccountManager extends EventTarget {
       'confirmed'
     );
 
-    // Keep SIGNED_PRE_KEY_MINIMUM keys, drop if older than SIGNED_PRE_KEY_ARCHIVE_AGE
+    // Keep SIGNED_PRE_KEY_MINIMUM keys, drop if older than message queue time
 
     const toDelete: Array<number> = [];
     sortedKeys.forEach((key, index) => {
@@ -765,7 +767,7 @@ export default class AccountManager extends EventTarget {
       }
       const createdAt = key.created_at || 0;
 
-      if (isOlderThan(createdAt, SIGNED_PRE_KEY_ARCHIVE_AGE)) {
+      if (isOlderThan(createdAt, getMessageQueueTime())) {
         const timestamp = new Date(createdAt).toJSON();
         const confirmedText = key.confirmed ? ' (confirmed)' : '';
         log.info(
@@ -813,7 +815,7 @@ export default class AccountManager extends EventTarget {
       'confirmed'
     );
 
-    // Keep LAST_RESORT_KEY_MINIMUM keys, drop if older than LAST_RESORT_KEY_ARCHIVE_AGE
+    // Keep LAST_RESORT_KEY_MINIMUM keys, drop if older than message queue time
 
     const toDelete: Array<number> = [];
     sortedKeys.forEach((key, index) => {
@@ -822,7 +824,7 @@ export default class AccountManager extends EventTarget {
       }
       const createdAt = key.createdAt || 0;
 
-      if (isOlderThan(createdAt, LAST_RESORT_KEY_ARCHIVE_AGE)) {
+      if (isOlderThan(createdAt, getMessageQueueTime())) {
         const timestamp = new Date(createdAt).toJSON();
         const confirmedText = key.isConfirmed ? ' (confirmed)' : '';
         log.info(
@@ -899,6 +901,7 @@ export default class AccountManager extends EventTarget {
   private async createAccount(
     options: CreateAccountOptionsType
   ): Promise<void> {
+    this.dispatchEvent(new Event('startRegistration'));
     const registrationBaton = this.server.startRegistration();
     try {
       await this.doCreateAccount(options);
@@ -952,6 +955,7 @@ export default class AccountManager extends EventTarget {
     const numberChanged =
       !previousACI && previousNumber && previousNumber !== number;
 
+    let cleanStart = !previousACI && !previousPNI && !previousNumber;
     if (uuidChanged || numberChanged || backupFile !== undefined) {
       if (uuidChanged) {
         log.warn(
@@ -973,6 +977,8 @@ export default class AccountManager extends EventTarget {
       try {
         await storage.protocol.removeAllData();
         log.info('createAccount: Successfully deleted previous data');
+
+        cleanStart = true;
       } catch (error) {
         log.error(
           'Something went wrong deleting data from previous number',
@@ -1091,6 +1097,16 @@ export default class AccountManager extends EventTarget {
       throw missingCaseError(options);
     }
 
+    // Set backup download path before storing credentials to ensure that
+    // storage service and message receiver are not operating
+    // until the backup is downloaded and imported.
+    if (isBackupEnabled() && cleanStart) {
+      if (options.type === AccountType.Linked && options.ephemeralBackupKey) {
+        await storage.put('backupEphemeralKey', options.ephemeralBackupKey);
+      }
+      await storage.put('backupDownloadPath', getRelativePath(createName()));
+    }
+
     // `setCredentials` needs to be called
     // before `saveIdentifyWithAttributes` since `saveIdentityWithAttributes`
     // indirectly calls `ConversationController.getConversationId()` which
@@ -1163,9 +1179,6 @@ export default class AccountManager extends EventTarget {
 
     const regionCode = getRegionCodeForNumber(number);
     await storage.put('regionCode', regionCode);
-    if (isBackupEnabled()) {
-      await storage.put('backupDownloadPath', getRelativePath(createName()));
-    }
     await storage.protocol.hydrateCaches();
 
     const store = storage.protocol;

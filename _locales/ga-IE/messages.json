@@ -575,9 +575,6 @@
   "icu:decryptionErrorToast": {
     "messageformat": "Fuair Deasc earráid díchriptithe ó {name}, gléas {deviceId}"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "Cuir isteach loga"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "Cuir isteach loga"
   },
@@ -791,8 +788,14 @@
   "icu:attachmentSaved": {
     "messageformat": "Ceangaltán sábháilte."
   },
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+  },
   "icu:attachmentSavedShow": {
     "messageformat": "Taispeáin i bhfillteán"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
   },
   "icu:you": {
     "messageformat": "Tusa"
@@ -944,9 +947,6 @@
   "icu:NotePreviewModal__Title": {
     "messageformat": "Nóta"
   },
-  "icu:viewRecentMedia": {
-    "messageformat": "Amharc ar na meáin le déanaí"
-  },
   "icu:allMediaMenuItem": {
     "messageformat": "Na meáin go léir"
   },
@@ -1006,6 +1006,18 @@
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
     "messageformat": "Scriosfar gach teachtaireacht sa chomhrá seo ó gach gléas agat. Beidh tú in ann an comhrá seo a chuardach i gcónaí tar éis duit teachtaireachtaí a scriosadh."
+  },
+  "icu:deleteConversation": {
+    "messageformat": "Scrios"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "Scrios comhrá?"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "Scriosfar gach teachtaireacht sa chomhrá seo ón ngléas seo."
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "Scriosfar gach teachtaireacht sa chomhrá seo ó gach gléas agat."
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Imigh as an ngrúpa"
@@ -1232,6 +1244,9 @@
   "icu:calling__call-link-default-title": {
     "messageformat": "Glao Signal"
   },
+  "icu:calling__call-link-delete-failed": {
+    "messageformat": "Níorbh fhéidir an nasc a scriosadh. Seiceáil do nasc agus triail arís é."
+  },
   "icu:calling__join-request-denied": {
     "messageformat": "Diúltaíodh do d'iarratas ar dhul isteach sa ghlao seo."
   },
@@ -1416,7 +1431,7 @@
     "messageformat": "Can't receive audio and video from {name}"
   },
   "icu:calling__missing-media-keys--unknown-contact": {
-    "messageformat": "Can't receive audio and video"
+    "messageformat": "Ní féidir fuaim agus físeáin a fháil"
   },
   "icu:calling__missing-media-keys-info": {
     "messageformat": "Seans nár fhíoraigh an duine sin athrú ar d'uimhir sábháilteachta, go bhfuil fadhb leis an ngléas aige/aici, nó gur chuir sé/sí bac ort."
@@ -1441,6 +1456,9 @@
   },
   "icu:calling__presenting--info": {
     "messageformat": "Tá {window} á chomhroinnt ag Signal."
+  },
+  "icu:calling__presenting--info--unknown": {
+    "messageformat": "Tá comhroinnt scáileáin Signal gníomhach"
   },
   "icu:calling__presenting--reconnecting": {
     "messageformat": "Athnascadh…"
@@ -1626,7 +1644,7 @@
     "messageformat": "Inné {time}"
   },
   "icu:messageLoop": {
-    "messageformat": "Signal may be failing to process an incoming message."
+    "messageformat": "Is féidir nach mbeidh Signal in ann an teachtaireacht isteach a phróiseas."
   },
   "icu:messageBodyTooLong": {
     "messageformat": "Tá corp na teachtaireachta rófhada."
@@ -2976,7 +2994,7 @@
     "messageformat": "Ní féidir leat dul isteach sa ghrúpa seo trí nasc an ghrúpa toisc gur bhain riarthóir thú."
   },
   "icu:GroupV2--join--prompt-with-approval": {
-    "messageformat": "Ní mór do riarthóir an ghrúpa seo d'iarratas a fhaomhadh sular féidir leat dul isteach sa ghrúpa seo. Agus é faofa, comhroinnfear d'ainm agus grianghraf lena bhaill."
+    "messageformat": "Ní mór do riarthóir an ghrúpa seo d'iarratas a fhaomhadh sular féidir leat dul isteach sa ghrúpa seo. Nuair a iarrann tú dul isteach ann, comhroinnfear d’ainm agus do ghrianghraf lena bhaill."
   },
   "icu:GroupV2--join--join-button": {
     "messageformat": "Téigh le"
@@ -3536,6 +3554,9 @@
   "icu:BackupImportScreen__progressbar-hint": {
     "messageformat": "{currentSize} as {totalSize} ({fractionComplete,number,percent}) á n-íoslódáil…"
   },
+  "icu:BackupImportScreen__progressbar-hint--processing": {
+    "messageformat": "Aistriú na dteachtaireachtaí á chur i gcrích..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Íoslódáil á hullmhú..."
   },
@@ -3556,6 +3577,27 @@
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
     "messageformat": "Cuir an t-aistriú ar ceal"
+  },
+  "icu:BackupImportScreen__error__title": {
+    "messageformat": "Tharla earráid agus do theachtaireachtaí á n-aistriú"
+  },
+  "icu:BackupImportScreen__error__body": {
+    "messageformat": "Níorbh fhéidir do theachtaireachtaí a aistriú. Seiceáil do nasc Idirlín agus triail arís é."
+  },
+  "icu:BackupImportScreen__error__confirm": {
+    "messageformat": "Bain triail eile as"
+  },
+  "icu:BackupImportScreen__skip": {
+    "messageformat": "Léim thairis seo"
+  },
+  "icu:BackupImportScreen__skip-confirmation__title": {
+    "messageformat": "Léim thar aistriú teachtaireachtaí?"
+  },
+  "icu:BackupImportScreen__skip-confirmation__body": {
+    "messageformat": "Má roghnaíonn tú scipeáil, ní bheidh rochtain agat ar aon cheann de do theachtaireachtaí nó meáin ar an ngléas seo. Is féidir leat tosú ar aistriú nua tar éis scipeáil ó Shocruithe >Comhráite > Aistrigh."
+  },
+  "icu:BackupImportScreen__skip-confirmation__cancel": {
+    "messageformat": "Cuir ar ceal"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "Meáin á n-aischur"
@@ -3640,9 +3682,6 @@
   },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Bain den ghrúpa"
-  },
-  "icu:ContactModal--already-in-call": {
-    "messageformat": "Tá tú i mbun glao cheana féin"
   },
   "icu:ContactModal--voice": {
     "messageformat": "Guthghlao"
@@ -4449,10 +4488,10 @@
     "messageformat": "Níorbh fhéidir do phróifíl a nuashonrú. Triail arís."
   },
   "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Invalid characters"
+    "messageformat": "Carachtair neamhbhailí"
   },
   "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "One or more characters you’ve entered can’t be used. Try again."
+    "messageformat": "Ní féidir carachtar amháin nó níos mó a d'iontráil tú a úsáid. Triail arís."
   },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Message an Admin"
@@ -5202,7 +5241,7 @@
     "messageformat": "Scéal"
   },
   "icu:StoryListItem__unhide": {
-    "messageformat": "Taispeáin scéalta"
+    "messageformat": "Dífholaigh scéal"
   },
   "icu:StoryListItem__hide": {
     "messageformat": "Folaigh an scéal"
@@ -5473,13 +5512,22 @@
     "messageformat": "Glan stair na nglaonna?"
   },
   "icu:CallsTab__ConfirmClearCallHistory__Body": {
-    "messageformat": "Scriosfar stair na nglaonna uile leis sin"
+    "messageformat": "Scriosfar stair na nglaonna uile leis sin."
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Body--call-links": {
+    "messageformat": "Scriosfar stair na nglaonna uile leis sin. Na naisc glaonna a chruthaigh tú, ní oibreoidh siad a thuilleadh do na daoine a bhfuil siad acu. "
   },
   "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
     "messageformat": "Glan"
   },
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "Stair na nglaonna glanta"
+  },
+  "icu:CallsTab__ClearCallHistoryError--call-links": {
+    "messageformat": "Níorbh fhéidir gach nasc glao a scriosadh. Seiceáil do nasc agus triail arís é."
+  },
+  "icu:CallsTab__ClearCallHistoryError": {
+    "messageformat": "Níorbh fhéidir an stair glaonna uile a ghlanadh. Seiceáil do nasc agus triail arís é."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Cliceáil <newCallButtonIcon></newCallButtonIcon> le tosú ar ghuthghlao nó ar fhísghlao nua."
@@ -5677,10 +5725,22 @@
     "messageformat": "Mionathruithe, paistí fabhtanna agus feabhsuithe ar fheidhmíocht. Go raibh maith agat as Signal a úsáid!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.26--0": {
-    "messageformat": "Réitíonn an nuashonrú seo fabht a rinne cuardach grúpa deacair, tar éis duit imeacht as an ngrúpa sin."
+  "icu:WhatsNew__v7.29--0": {
+    "messageformat": "Feabhsaíonn an nuashonrú seo luas tosaithe faoi thimpeall 5%, mar sin tá an tsaoirse agat moilliú beagán i réimsí eile de do shaol."
   },
-  "icu:WhatsNew__v7.27--0": {
-    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\""
+  "icu:WhatsNew__v7.30--header": {
+    "messageformat": "Tús eolais ar Naisc Glaonna: An nasc atá ar iarraidh le haghaidh cuirí féilire agus cruinnithe gan ullmhú."
+  },
+  "icu:WhatsNew__v7.30--0": {
+    "messageformat": "Anois is féidir leat nasc éasca a chruthú go tapa ar féidir le duine ar bith ar Signal é a úsáid le dul isteach i ngrúpghlao gan bheith orthu dul isteach i ngrúpchomhrá Signal ar dtús."
+  },
+  "icu:WhatsNew__v7.30--1": {
+    "messageformat": "Tá naisc glaonna in-athúsáidte agus foirfe le haghaidh coinní gutháin athfhillteacha le do dhlúthchairde nó le seiceáil isteach gach seachtain le do chomhoibrithe."
+  },
+  "icu:WhatsNew__v7.30--2": {
+    "messageformat": "Is féidir leat do naisc glaonna a bhainistiú, socruithe faofa a rialú, agus naisc ón táb glaonna a chóipeáil lena gcomhroinnt go tapa."
+  },
+  "icu:WhatsNew__v7.31--0": {
+    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
   }
 }

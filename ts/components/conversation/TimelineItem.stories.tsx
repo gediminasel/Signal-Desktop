@@ -83,6 +83,7 @@ const getDefaultProps = () => ({
   showConversation: action('showConversation'),
   openGiftBadge: action('openGiftBadge'),
   saveAttachment: action('saveAttachment'),
+  saveAttachments: action('saveAttachments'),
   onOpenEditNicknameAndNoteModal: action('onOpenEditNicknameAndNoteModal'),
   onOutgoingAudioCallInConversation: action(
     'onOutgoingAudioCallInConversation'
@@ -97,6 +98,9 @@ const getDefaultProps = () => ({
   toggleForwardMessagesModal: action('toggleForwardMessagesModal'),
   showLightboxForViewOnceMedia: action('showLightboxForViewOnceMedia'),
   doubleCheckMissingQuoteReference: action('doubleCheckMissingQuoteReference'),
+  showAttachmentDownloadStillInProgressToast: action(
+    'showAttachmentDownloadStillInProgressToast'
+  ),
   showExpiredIncomingTapToViewToast: action(
     'showExpiredIncomingTapToViewToast'
   ),

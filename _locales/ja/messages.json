@@ -575,9 +575,6 @@
   "icu:decryptionErrorToast": {
     "messageformat": "デスクトップで {name} ({deviceId}) からの復号化でエラーが発生しました。"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "ログを送信"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "ログを送信"
   },
@@ -791,8 +788,14 @@
   "icu:attachmentSaved": {
     "messageformat": "添付ファイルを保存しました。"
   },
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+  },
   "icu:attachmentSavedShow": {
     "messageformat": "フォルダで表示"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
   },
   "icu:you": {
     "messageformat": "あなた"
@@ -944,9 +947,6 @@
   "icu:NotePreviewModal__Title": {
     "messageformat": "メモ"
   },
-  "icu:viewRecentMedia": {
-    "messageformat": "最近使用したメディア"
-  },
   "icu:allMediaMenuItem": {
     "messageformat": "すべてのメディア"
   },
@@ -1006,6 +1006,18 @@
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
     "messageformat": "このチャット内のすべてのメッセージはこの端末から消去されます。メッセージを消去した後も、このチャットを検索できます。"
+  },
+  "icu:deleteConversation": {
+    "messageformat": "消去"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "チャットを消去しますか？"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "このチャット内のすべてのメッセージはこの端末から消去されます。"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "このチャット内のすべてのメッセージはこの端末から消去されます。"
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "グループを退出する"
@@ -1232,6 +1244,9 @@
   "icu:calling__call-link-default-title": {
     "messageformat": "Signal通話"
   },
+  "icu:calling__call-link-delete-failed": {
+    "messageformat": "リンクを消去できません。インターネット接続を確認して再度試してください。"
+  },
   "icu:calling__join-request-denied": {
     "messageformat": "この通話への参加リクエストは拒否されました。"
   },
@@ -1416,7 +1431,7 @@
     "messageformat": "{name} からの音声と映像を受信できません"
   },
   "icu:calling__missing-media-keys--unknown-contact": {
-    "messageformat": "Can't receive audio and video"
+    "messageformat": "音声と動画を受信できません"
   },
   "icu:calling__missing-media-keys-info": {
     "messageformat": "相手があなたの安全番号の変更を検証していないか、相手の端末に問題があるか、あなたがブロックされている可能性があります。"
@@ -1441,6 +1456,9 @@
   },
   "icu:calling__presenting--info": {
     "messageformat": "Signalが {window} を共有しています。"
+  },
+  "icu:calling__presenting--info--unknown": {
+    "messageformat": "Signalの画面共有がアクティブです"
   },
   "icu:calling__presenting--reconnecting": {
     "messageformat": "再接続しています…"
@@ -1626,7 +1644,7 @@
     "messageformat": "昨日 {time}"
   },
   "icu:messageLoop": {
-    "messageformat": "Signal may be failing to process an incoming message."
+    "messageformat": "Signalが受信メッセージの処理に失敗している可能性があります。"
   },
   "icu:messageBodyTooLong": {
     "messageformat": "メッセージが長すぎます。"
@@ -2976,7 +2994,7 @@
     "messageformat": "管理者があなたを削除したため、グループリンクからはこのグループに参加できません。"
   },
   "icu:GroupV2--join--prompt-with-approval": {
-    "messageformat": "このグループに参加するには、グループ管理者の承認が必要です。承認されると、あなたの名前と画像がそのメンバーと共有されます。"
+    "messageformat": "このグループに参加するには、管理者の承認が必要です。参加を申請すると、あなたの名前と画像がそのメンバーと共有されます。"
   },
   "icu:GroupV2--join--join-button": {
     "messageformat": "参加する"
@@ -3536,6 +3554,9 @@
   "icu:BackupImportScreen__progressbar-hint": {
     "messageformat": "{totalSize} のうち {currentSize}（{fractionComplete,number,percent}）"
   },
+  "icu:BackupImportScreen__progressbar-hint--processing": {
+    "messageformat": "メッセージの移行が間もなく完了します…"
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "ダウンロード中..."
   },
@@ -3556,6 +3577,27 @@
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
     "messageformat": "転送をキャンセルする"
+  },
+  "icu:BackupImportScreen__error__title": {
+    "messageformat": "メッセージの移行中にエラーが発生しました"
+  },
+  "icu:BackupImportScreen__error__body": {
+    "messageformat": "メッセージを移行できませんでした。インターネット接続を確認して再度試してください。"
+  },
+  "icu:BackupImportScreen__error__confirm": {
+    "messageformat": "再試行"
+  },
+  "icu:BackupImportScreen__skip": {
+    "messageformat": "スキップ"
+  },
+  "icu:BackupImportScreen__skip-confirmation__title": {
+    "messageformat": "メッセージの移行をスキップしますか？"
+  },
+  "icu:BackupImportScreen__skip-confirmation__body": {
+    "messageformat": "スキップを選択すると、この端末上のメッセージやメディアにアクセスできなくなります。スキップした後は、設定 > チャット > 移行 から改めて移行の手続きができます。"
+  },
+  "icu:BackupImportScreen__skip-confirmation__cancel": {
+    "messageformat": "キャンセル"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "メディアを復元中"
@@ -3640,9 +3682,6 @@
   },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "グループから削除"
-  },
-  "icu:ContactModal--already-in-call": {
-    "messageformat": "あなたはすでに通話中です"
   },
   "icu:ContactModal--voice": {
     "messageformat": "音声通話"
@@ -4449,10 +4488,10 @@
     "messageformat": "プロフィールを更新できませんでした。再度試してください。"
   },
   "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Invalid characters"
+    "messageformat": "無効な文字です"
   },
   "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "One or more characters you’ve entered can’t be used. Try again."
+    "messageformat": "入力した文字のうち、または1文字以上が使用できません。もう一度入力してください。"
   },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "管理者に連絡"
@@ -5202,7 +5241,7 @@
     "messageformat": "ストーリー"
   },
   "icu:StoryListItem__unhide": {
-    "messageformat": "ストーリーを表示"
+    "messageformat": "ストーリーを再表示"
   },
   "icu:StoryListItem__hide": {
     "messageformat": "ストーリーを非表示にする"
@@ -5473,13 +5512,22 @@
     "messageformat": "通話履歴を消去しますか？"
   },
   "icu:CallsTab__ConfirmClearCallHistory__Body": {
-    "messageformat": "すべての通話履歴を完全に消去します"
+    "messageformat": "すべての通話履歴を完全に消去します。"
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Body--call-links": {
+    "messageformat": "すべての通話履歴を完全に消去します。作成した通話リンクを消去すると、共有している他のメンバーもこのリンクを使えなくなります。 "
   },
   "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
     "messageformat": "消去する"
   },
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "通話履歴がクリアされました"
+  },
+  "icu:CallsTab__ClearCallHistoryError--call-links": {
+    "messageformat": "一部の通話リンクを消去できませんでした。インターネット接続を確認して再度試してください。"
+  },
+  "icu:CallsTab__ClearCallHistoryError": {
+    "messageformat": "一部の通話履歴を消去できませんでした。インターネット接続を確認して再度試してください。"
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "<newCallButtonIcon></newCallButtonIcon>をクリックして新しい音声通話またはビデオ通話を開始する。"
@@ -5677,10 +5725,22 @@
     "messageformat": "細かな微調整、バグ修正、パフォーマンスの向上。 Signalをご利用いただきありがとうございます。",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.26--0": {
-    "messageformat": "このアップデートでは、抜けた後も会話リストに残っているグループを検索することが困難になっていたバグが修正されました。"
+  "icu:WhatsNew__v7.29--0": {
+    "messageformat": "このアップデートにより、起動速度が約5％向上しました。"
   },
-  "icu:WhatsNew__v7.27--0": {
-    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\""
+  "icu:WhatsNew__v7.30--header": {
+    "messageformat": "スケジュール調整や突然の集まりの時に便利な通話リンクのご紹介です。"
+  },
+  "icu:WhatsNew__v7.30--0": {
+    "messageformat": "Signalのグループチャットに参加していなくても、Signalユーザーなら誰でもグループ通話に参加できる便利なリンクをすばやく作成できるようになりました。"
+  },
+  "icu:WhatsNew__v7.30--1": {
+    "messageformat": "通話リンクは何度でも使えるので、親友との恒例の電話でのおしゃべりや、同僚との毎週の打ち合わせに最適です。"
+  },
+  "icu:WhatsNew__v7.30--2": {
+    "messageformat": "通話リンクの管理や、承認・不承認の設定、通話タブからのリンクのコピーによる素早い共有などができます。"
+  },
+  "icu:WhatsNew__v7.31--0": {
+    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
   }
 }

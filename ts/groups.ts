@@ -7,11 +7,11 @@ import {
   flatten,
   fromPairs,
   isNumber,
+  omit,
   values,
 } from 'lodash';
 import Long from 'long';
 import type { ClientZkGroupCipher } from '@signalapp/libsignal-client/zkgroup';
-import { v4 as getGuid } from 'uuid';
 import LRU from 'lru-cache';
 import * as log from './logging/log';
 import {
@@ -100,6 +100,8 @@ import {
   decodeGroupSendEndorsementResponse,
   isValidGroupSendEndorsementsExpiration,
 } from './util/groupSendEndorsements';
+import { getProfile } from './util/getProfile';
+import { generateMessageId } from './util/generateMessageId';
 
 type AccessRequiredEnum = Proto.AccessControl.AccessRequired;
 
@@ -292,7 +294,7 @@ type UploadedAvatarType = {
 
 type BasicMessageType = Pick<
   MessageAttributesType,
-  'id' | 'schemaVersion' | 'readStatus' | 'seenStatus'
+  'readStatus' | 'seenStatus'
 >;
 
 type GroupV2ChangeMessageType = {
@@ -333,14 +335,6 @@ const GROUP_NONEXISTENT_CODE = 404;
 const SUPPORTED_CHANGE_EPOCH = 5;
 export const LINK_VERSION_ERROR = 'LINK_VERSION_ERROR';
 const GROUP_INVITE_LINK_PASSWORD_LENGTH = 16;
-
-function generateBasicMessage(): BasicMessageType {
-  return {
-    id: getGuid(),
-    schemaVersion: MAX_MESSAGE_SCHEMA,
-    // this is missing most properties to fulfill this type
-  };
-}
 
 // Group Links
 
@@ -2006,7 +2000,7 @@ export async function createGroupV2(
   );
 
   await conversation.queueJob('storageServiceUploadJob', async () => {
-    await storageServiceUploadJob();
+    await storageServiceUploadJob({ reason: 'createGroupV2' });
   });
 
   const timestamp = Date.now();
@@ -2023,12 +2017,13 @@ export async function createGroupV2(
   });
 
   const createdTheGroupMessage: MessageAttributesType = {
-    ...generateBasicMessage(),
+    ...generateMessageId(incrementMessageCounter()),
+
+    schemaVersion: MAX_MESSAGE_SCHEMA,
     type: 'group-v2-change',
     sourceServiceId: ourAci,
     conversationId: conversation.id,
     readStatus: ReadStatus.Read,
-    received_at: incrementMessageCounter(),
     received_at_ms: timestamp,
     timestamp,
     seenStatus: SeenStatus.Seen,
@@ -2467,7 +2462,6 @@ export async function initiateMigrationToGroupV2(
 
       const groupChangeMessages: Array<GroupChangeMessageType> = [];
       groupChangeMessages.push({
-        ...generateBasicMessage(),
         type: 'group-v1-migration',
         groupMigration: {
           areWeInvited: false,
@@ -2608,7 +2602,6 @@ export function buildMigrationBubble(
   );
 
   return {
-    ...generateBasicMessage(),
     type: 'group-v1-migration',
     groupMigration: {
       areWeInvited,
@@ -2622,7 +2615,6 @@ export function buildMigrationBubble(
 
 export function getBasicMigrationBubble(): GroupChangeMessageType {
   return {
-    ...generateBasicMessage(),
     type: 'group-v1-migration',
     groupMigration: {
       areWeInvited: false,
@@ -2696,7 +2688,6 @@ export async function joinGroupV2ViaLinkAndMigrate({
   };
   const groupChangeMessages: Array<GroupChangeMessageType> = [
     {
-      ...generateBasicMessage(),
       type: 'group-v1-migration',
       groupMigration: {
         areWeInvited: false,
@@ -2864,7 +2855,6 @@ export async function respondToGroupV2Migration({
                     seenStatus: SeenStatus.Seen,
                   },
                   {
-                    ...generateBasicMessage(),
                     type: 'group-v2-change',
                     groupV2Change: {
                       details: [
@@ -2945,7 +2935,6 @@ export async function respondToGroupV2Migration({
   if (!areWeInvited && !areWeMember) {
     // Add a message to the timeline saying the user was removed. This shouldn't happen.
     groupChangeMessages.push({
-      ...generateBasicMessage(),
       type: 'group-v2-change',
       groupV2Change: {
         details: [
@@ -3032,11 +3021,10 @@ export async function waitThenMaybeUpdateGroup(
   { viaFirstStorageSync = false } = {}
 ): Promise<void> {
   const { conversation } = options;
+  const logId = `waitThenMaybeUpdateGroup(${conversation.idForLogging()})`;
 
   if (conversation.isBlocked()) {
-    log.info(
-      `waitThenMaybeUpdateGroup: Group ${conversation.idForLogging()} is blocked, returning early`
-    );
+    log.info(`${logId}: Conversation is blocked, returning early`);
     return;
   }
 
@@ -3051,11 +3039,12 @@ export async function waitThenMaybeUpdateGroup(
   ) {
     const waitTime = lastSuccessfulGroupFetch + FIVE_MINUTES - Date.now();
     log.info(
-      `waitThenMaybeUpdateGroup/${conversation.idForLogging()}: group update ` +
-        `was fetched recently, skipping for ${waitTime}ms`
+      `${logId}: group update was fetched recently, skipping for ${waitTime}ms`
     );
     return;
   }
+
+  log.info(`${logId}: group update was not fetched recently, queuing update`);
 
   // Then wait to process all outstanding messages for this conversation
   await conversation.queueJob('waitThenMaybeUpdateGroup', async () => {
@@ -3066,7 +3055,7 @@ export async function waitThenMaybeUpdateGroup(
       conversation.lastSuccessfulGroupFetch = Date.now();
     } catch (error) {
       log.error(
-        `waitThenMaybeUpdateGroup/${conversation.idForLogging()}: maybeUpdateGroup failure:`,
+        `${logId}: maybeUpdateGroup failure:`,
         Errors.toLogFormat(error)
       );
     }
@@ -3084,7 +3073,7 @@ export async function maybeUpdateGroup(
   }: MaybeUpdatePropsType,
   { viaFirstStorageSync = false } = {}
 ): Promise<void> {
-  const logId = conversation.idForLogging();
+  const logId = `maybeUpdateGroup/${conversation.idForLogging()}`;
 
   try {
     // Ensure we have the credentials we need before attempting GroupsV2 operations
@@ -3103,13 +3092,23 @@ export async function maybeUpdateGroup(
       { viaFirstStorageSync }
     );
   } catch (error) {
-    log.error(
-      `maybeUpdateGroup/${logId}: Failed to update group:`,
-      Errors.toLogFormat(error)
-    );
+    log.error(`${logId}: Failed to update group:`, Errors.toLogFormat(error));
     throw error;
   }
 }
+
+/**
+ * UpdateGroup runs on the conversation's queue, and it overwrites all of conversation
+ * attributes. This would be fine, except we have some time-sensitive conversation-related
+ * tasks that happen off-queue, notably: updateUnread(). This is a non-exhaustive list of
+ * attributes that should never be stomped by updateGroup. Attributes should be added here
+ * if:
+ * 1) [most importantly!] they will never be updated by updateGroup, and
+ * 2) they are updated off-queue and therefore at risk of being stomped on.
+ *
+ * TODO (DESKTOP-7729): consider better separating conversation data to avoid this
+ */
+const FIELDS_UNRELATED_TO_GROUP_STATE = ['unreadCount', 'unreadMentionsOfMe'];
 
 async function updateGroup(
   {
@@ -3170,8 +3169,9 @@ async function updateGroup(
 
     return {
       ...changeMessage,
+      ...generateMessageId(finalReceivedAt),
+      schemaVersion: MAX_MESSAGE_SCHEMA,
       conversationId: conversation.id,
-      received_at: finalReceivedAt,
       received_at_ms: syntheticSentAt,
       sent_at: syntheticSentAt,
       timestamp,
@@ -3203,7 +3203,13 @@ async function updateGroup(
     );
 
     profileFetches = Promise.all(
-      contactsWithoutProfileKey.map(contact => contact.getProfiles())
+      contactsWithoutProfileKey.map(contact => {
+        return getProfile({
+          serviceId: contact.getServiceId() ?? null,
+          e164: contact.get('e164') ?? null,
+          groupId: newAttributes.groupId ?? null,
+        });
+      })
     );
   }
 
@@ -3262,7 +3268,7 @@ async function updateGroup(
   }
 
   conversation.set({
-    ...newAttributes,
+    ...omit(newAttributes, FIELDS_UNRELATED_TO_GROUP_STATE),
     active_at: activeAt,
   });
 
@@ -3881,7 +3887,6 @@ async function updateGroupViaSingleChange({
       catchupMessages.length > 0
     ) {
       groupChangeMessages.push({
-        ...generateBasicMessage(),
         type: 'group-v2-change',
         groupV2Change: {
           details: [
@@ -3984,13 +3989,15 @@ async function updateGroupViaLogs({
   let cachedEndorsementsExpiration =
     await DataReader.getGroupSendCombinedEndorsementExpiration(groupId);
 
-  if (
-    cachedEndorsementsExpiration != null &&
-    !isValidGroupSendEndorsementsExpiration(cachedEndorsementsExpiration * 1000)
-  ) {
-    log.info(
-      `updateGroupViaLogs/${logId}: Group had invalid endorsements expiration (${cachedEndorsementsExpiration}), fetching new endorsements`
+  if (cachedEndorsementsExpiration != null) {
+    const result = isValidGroupSendEndorsementsExpiration(
+      cachedEndorsementsExpiration * 1000
     );
+    if (!result.valid) {
+      log.info(
+        `updateGroupViaLogs/${logId}: Endorsements are expired (${result.reason}), fetching new endorsements`
+      );
+    }
     cachedEndorsementsExpiration = null;
   }
 
@@ -4887,7 +4894,6 @@ function extractDiffs({
   if (firstUpdate && serviceIdKindInvitedToGroup !== undefined) {
     // Note, we will add 'you were invited' to group even if dropInitialJoinMessage = true
     message = {
-      ...generateBasicMessage(),
       type: 'group-v2-change',
       groupV2Change: {
         from: whoInvitedUsUserId || from,
@@ -4905,7 +4911,6 @@ function extractDiffs({
     };
   } else if (firstUpdate && areWePendingApproval) {
     message = {
-      ...generateBasicMessage(),
       type: 'group-v2-change',
       groupV2Change: {
         from: ourAci,
@@ -4926,7 +4931,6 @@ function extractDiffs({
     sourceServiceId === ourAci
   ) {
     message = {
-      ...generateBasicMessage(),
       type: 'group-v2-change',
       groupV2Change: {
         from,
@@ -4948,7 +4952,6 @@ function extractDiffs({
     );
 
     message = {
-      ...generateBasicMessage(),
       type: 'group-v2-change',
       groupV2Change: {
         from,
@@ -4959,7 +4962,6 @@ function extractDiffs({
     };
   } else if (firstUpdate && current.revision === 0) {
     message = {
-      ...generateBasicMessage(),
       type: 'group-v2-change',
       groupV2Change: {
         from,
@@ -4988,7 +4990,6 @@ function extractDiffs({
     }
 
     message = {
-      ...generateBasicMessage(),
       type: 'group-v2-change',
       sourceServiceId,
       groupV2Change: {
@@ -5000,7 +5001,6 @@ function extractDiffs({
     };
   } else if (details.length > 0) {
     message = {
-      ...generateBasicMessage(),
       type: 'group-v2-change',
       sourceServiceId,
       groupV2Change: {
@@ -5027,7 +5027,6 @@ function extractDiffs({
       `extractDiffs/${logId}: generating change notification for new ${expireTimer} timer`
     );
     timerNotification = {
-      ...generateBasicMessage(),
       type: 'timer-notification',
       sourceServiceId: isReJoin ? undefined : sourceServiceId,
       flags: Proto.DataMessage.Flags.EXPIRATION_TIMER_UPDATE,

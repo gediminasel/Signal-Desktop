@@ -13,6 +13,7 @@ import type {
 import type { ReceiptType } from '../types/Receipt';
 import { SECOND } from '../util/durations';
 import { drop } from '../util/drop';
+import type { MessageAttributesType } from '../model-types';
 
 export type AppLoadedInfoType = Readonly<{
   loadTime: number;
@@ -104,6 +105,10 @@ export class App extends EventEmitter {
     return this.waitForEvent('app-loaded');
   }
 
+  public async waitForContactSync(): Promise<void> {
+    return this.waitForEvent('contactSync');
+  }
+
   public async waitForBackupImportComplete(): Promise<void> {
     return this.waitForEvent('backupImportComplete');
   }
@@ -178,18 +183,16 @@ export class App extends EventEmitter {
     );
   }
 
-  public async exportBackupToDisk(path: string): Promise<Uint8Array> {
+  public async getMessagesBySentAt(
+    timestamp: number
+  ): Promise<Array<MessageAttributesType>> {
     const window = await this.getWindow();
-    return window.evaluate(
-      `window.SignalCI.exportBackupToDisk(${JSON.stringify(path)})`
-    );
+    return window.evaluate(`window.SignalCI.getMessagesBySentAt(${timestamp})`);
   }
 
-  public async exportPlaintextBackupToDisk(path: string): Promise<Uint8Array> {
+  public async uploadBackup(): Promise<void> {
     const window = await this.getWindow();
-    return window.evaluate(
-      `window.SignalCI.exportPlaintextBackupToDisk(${JSON.stringify(path)})`
-    );
+    await window.evaluate('window.SignalCI.uploadBackup()');
   }
 
   public async unlink(): Promise<void> {

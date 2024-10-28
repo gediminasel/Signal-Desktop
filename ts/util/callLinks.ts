@@ -15,7 +15,7 @@ import {
   type CallHistoryDetails,
   CallMode,
 } from '../types/CallDisposition';
-import { DAY } from './durations';
+import { isBeta, isProduction } from './version';
 
 export const CALL_LINK_DEFAULT_STATE: Pick<
   CallLinkType,
@@ -27,8 +27,6 @@ export const CALL_LINK_DEFAULT_STATE: Pick<
   expiration: null,
   storageNeedsSync: false,
 };
-
-export const CALL_LINK_DELETED_STORAGE_RECORD_TTL = 30 * DAY;
 
 export function getKeyFromCallLink(callLink: string): string {
   const url = new URL(callLink);
@@ -46,7 +44,20 @@ export function isCallLinksCreateEnabled(): boolean {
   if (isTestOrMockEnvironment()) {
     return true;
   }
-  return RemoteConfig.getValue('desktop.calling.adhoc.create') === 'TRUE';
+
+  const version = window.getVersion();
+
+  if (isProduction(version)) {
+    return RemoteConfig.getValue('desktop.calling.adhoc.create') === 'TRUE';
+  }
+
+  if (isBeta(version)) {
+    return (
+      RemoteConfig.getValue('desktop.calling.adhoc.create.beta') === 'TRUE'
+    );
+  }
+
+  return true;
 }
 
 export function callLinkToConversation(

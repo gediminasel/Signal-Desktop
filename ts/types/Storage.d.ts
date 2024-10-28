@@ -110,6 +110,7 @@ export type StorageAccessType = {
   synced_at: number;
   userAgent: string;
   uuid_id: string;
+  useRingrtcAdm: boolean;
   pni: string;
   version: string;
   linkPreviews: boolean;
@@ -190,6 +191,13 @@ export type StorageAccessType = {
 
   // If present - we are downloading backup
   backupDownloadPath: string;
+
+  // If present together with backupDownloadPath - we are downloading
+  // link-and-sync backup
+  backupEphemeralKey: Uint8Array;
+
+  // If true Desktop message history was restored from backup
+  isRestoredFromBackup: boolean;
 
   // Deprecated
   'challenge:retry-message-ids': never;

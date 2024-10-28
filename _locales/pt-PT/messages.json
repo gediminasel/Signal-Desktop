@@ -575,9 +575,6 @@
   "icu:decryptionErrorToast": {
     "messageformat": "O Signal encontrou um erro ao desencriptar uma mensagem de {name}, dispositivo {deviceId}."
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "Submeter relatório"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "Submeter relatório"
   },
@@ -791,8 +788,14 @@
   "icu:attachmentSaved": {
     "messageformat": "Anexo guardado."
   },
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+  },
   "icu:attachmentSavedShow": {
     "messageformat": "Mostrar na pasta"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
   },
   "icu:you": {
     "messageformat": "Você"
@@ -944,9 +947,6 @@
   "icu:NotePreviewModal__Title": {
     "messageformat": "Nota"
   },
-  "icu:viewRecentMedia": {
-    "messageformat": "Ver multimédia recente"
-  },
   "icu:allMediaMenuItem": {
     "messageformat": "Toda a multimédia"
   },
@@ -1006,6 +1006,18 @@
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
     "messageformat": "Todas as mensagens neste chat serão eliminadas de todos os seus dispositivos. Ainda pode procurar este chat após eliminar as mensagens."
+  },
+  "icu:deleteConversation": {
+    "messageformat": "Eliminar"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "Eliminar chat?"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "As mensagens neste chat serão eliminadas deste dispositivo."
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "Todas as mensagens neste chat serão eliminadas de todos os seus dispositivos."
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Abandonar grupo"
@@ -1232,6 +1244,9 @@
   "icu:calling__call-link-default-title": {
     "messageformat": "Chamada do Signal"
   },
+  "icu:calling__call-link-delete-failed": {
+    "messageformat": "Não é possível eliminar link. Verifique a sua ligação e tente novamente."
+  },
   "icu:calling__join-request-denied": {
     "messageformat": "O seu pedido para entrar nesta chamada foi recusado."
   },
@@ -1416,7 +1431,7 @@
     "messageformat": "Não pode receber áudio e vídeo de {name}"
   },
   "icu:calling__missing-media-keys--unknown-contact": {
-    "messageformat": "Can't receive audio and video"
+    "messageformat": "Não é possível receber áudio e vídeo"
   },
   "icu:calling__missing-media-keys-info": {
     "messageformat": "Isto pode dever-se a este utilizador não ter verificado a sua alteração do seu número de segurança, haver um problema com o seu dispositivo, ou este ter bloqueado o seu perfil."
@@ -1441,6 +1456,9 @@
   },
   "icu:calling__presenting--info": {
     "messageformat": "O Signal está a partilhar {window}."
+  },
+  "icu:calling__presenting--info--unknown": {
+    "messageformat": "A partilha de ecrã do Signal está ativada"
   },
   "icu:calling__presenting--reconnecting": {
     "messageformat": "A ligar novamente…"
@@ -1626,7 +1644,7 @@
     "messageformat": "Ontem {time}"
   },
   "icu:messageLoop": {
-    "messageformat": "Signal may be failing to process an incoming message."
+    "messageformat": "O Signal pode não estar a conseguir processar uma mensagem recebida."
   },
   "icu:messageBodyTooLong": {
     "messageformat": "O corpo da mensagem é demasiado longo."
@@ -2976,7 +2994,7 @@
     "messageformat": "Não se pode juntar a este grupo através do link porque você foi removido por um administrador."
   },
   "icu:GroupV2--join--prompt-with-approval": {
-    "messageformat": "Um administrador deste grupo deverá aprovar o seu pedido antes de você poder entrar para o grupo. Caso seja aprovado, o seu nome e fotografia serão partilhados com os membros desse grupo."
+    "messageformat": "Um administrador deste grupo deverá aprovar o seu pedido antes de você poder entrar para o grupo. Quando pede para entrar o seu nome e fotografia são partilhados com os membros desse grupo."
   },
   "icu:GroupV2--join--join-button": {
     "messageformat": "Entrar"
@@ -3536,6 +3554,9 @@
   "icu:BackupImportScreen__progressbar-hint": {
     "messageformat": "A descarregar {currentSize} de {totalSize} ({fractionComplete,number,percent})..."
   },
+  "icu:BackupImportScreen__progressbar-hint--processing": {
+    "messageformat": "A finalizar transferência de mensagens…"
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "A preparar para descarregar…"
   },
@@ -3556,6 +3577,27 @@
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
     "messageformat": "Cancelar transferência"
+  },
+  "icu:BackupImportScreen__error__title": {
+    "messageformat": "Erro ao transferir as suas mensagens"
+  },
+  "icu:BackupImportScreen__error__body": {
+    "messageformat": "As suas mensagens não puderam ser transferidas. Verifique a sua ligação à internet e tente novamente."
+  },
+  "icu:BackupImportScreen__error__confirm": {
+    "messageformat": "Tentar novamente"
+  },
+  "icu:BackupImportScreen__skip": {
+    "messageformat": "Saltar"
+  },
+  "icu:BackupImportScreen__skip-confirmation__title": {
+    "messageformat": "Saltar transferência de mensagens?"
+  },
+  "icu:BackupImportScreen__skip-confirmation__body": {
+    "messageformat": "Se escolher saltar, não terá acesso a nenhuma das suas mensagens ou ficheiros multimédia neste dispositivo. Pode iniciar uma nova transferência a partir das Definições > Chats > Transferir."
+  },
+  "icu:BackupImportScreen__skip-confirmation__cancel": {
+    "messageformat": "Cancelar"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "A restaurar os ficheiros"
@@ -3640,9 +3682,6 @@
   },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Remover do grupo"
-  },
-  "icu:ContactModal--already-in-call": {
-    "messageformat": "Já se encontra numa chamada"
   },
   "icu:ContactModal--voice": {
     "messageformat": "Voz"
@@ -4449,10 +4488,10 @@
     "messageformat": "Não foi possível atualizar o seu perfil. Por favor, tente novamente."
   },
   "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Invalid characters"
+    "messageformat": "Caracteres inválidos"
   },
   "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "One or more characters you’ve entered can’t be used. Try again."
+    "messageformat": "Um ou mais caracteres que introduziu não podem ser utilizados. Tente novamente."
   },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Envie uma mensagem para um administrador"
@@ -5202,7 +5241,7 @@
     "messageformat": "História"
   },
   "icu:StoryListItem__unhide": {
-    "messageformat": "Exibir histórias"
+    "messageformat": "Reexibir história"
   },
   "icu:StoryListItem__hide": {
     "messageformat": "Ocultar história"
@@ -5473,13 +5512,22 @@
     "messageformat": "Limpar histórico de chamadas?"
   },
   "icu:CallsTab__ConfirmClearCallHistory__Body": {
-    "messageformat": "Isto irá eliminar permanentemente todo o histórico de chamadas"
+    "messageformat": "Isto irá eliminar permanentemente todo o histórico de chamadas."
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Body--call-links": {
+    "messageformat": "Isto irá eliminar permanentemente todo o histórico de chamadas. Os links de chamada que criou já não funcionarão para as pessoas que os têm. "
   },
   "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
     "messageformat": "Limpar"
   },
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "Histórico de Chamadas Apagado"
+  },
+  "icu:CallsTab__ClearCallHistoryError--call-links": {
+    "messageformat": "Nem todos os links de chamada puderam ser eliminados. Verifique a sua ligação e tente novamente."
+  },
+  "icu:CallsTab__ClearCallHistoryError": {
+    "messageformat": "Nem todo o histórico de chamadas pôde ser eliminado. Verifique a sua ligação e tente novamente."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Clique em <newCallButtonIcon></newCallButtonIcon> para iniciar uma nova chamada de voz ou videochamada."
@@ -5677,10 +5725,22 @@
     "messageformat": "Pequenos ajustes adicionais, correções de bugs e melhorias de desempenho. Obrigado por usar o Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.26--0": {
-    "messageformat": "Esta atualização corrige um erro que tornada difícil pesquisar por um grupo após sair dele."
+  "icu:WhatsNew__v7.29--0": {
+    "messageformat": "Esta atualização melhora a velocidade de arranque em cerca de 5%."
   },
-  "icu:WhatsNew__v7.27--0": {
-    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\""
+  "icu:WhatsNew__v7.30--header": {
+    "messageformat": "Apresentamos os links de chamadas: a ligação perdida para convites de calendário e encontros à última hora."
+  },
+  "icu:WhatsNew__v7.30--0": {
+    "messageformat": "Agora pode criar rapidamente um link fácil que qualquer pessoa no Signal pode usar para se juntar a uma chamada de grupo, sem ter de se juntar a um chat de grupo do Signal primeiro."
+  },
+  "icu:WhatsNew__v7.30--1": {
+    "messageformat": "Os links de chamada são reutilizáveis e ideais para chamadas regulares com amigos ou para reuniões com colegas de trabalho."
+  },
+  "icu:WhatsNew__v7.30--2": {
+    "messageformat": "Pode gerir os seus links de chamadas, controlar definições de aprovação e criar links a partir do separador de chamadas para uma partilha rápida."
+  },
+  "icu:WhatsNew__v7.31--0": {
+    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
   }
 }

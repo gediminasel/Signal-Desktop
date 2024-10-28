@@ -575,9 +575,6 @@
   "icu:decryptionErrorToast": {
     "messageformat": "Desktop imepata hitilafu ya msimbo kutoka kwa {name}, kifaa {deviceId}"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "Wasilisha logi"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "Wasilisha logi"
   },
@@ -791,8 +788,14 @@
   "icu:attachmentSaved": {
     "messageformat": "Kiambatisho kimehifadhiwa."
   },
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+  },
   "icu:attachmentSavedShow": {
     "messageformat": "Onyesha kwenye folda"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
   },
   "icu:you": {
     "messageformat": "Wewe"
@@ -944,9 +947,6 @@
   "icu:NotePreviewModal__Title": {
     "messageformat": "Kidokezo"
   },
-  "icu:viewRecentMedia": {
-    "messageformat": "Tazama media za hivi majuzi"
-  },
   "icu:allMediaMenuItem": {
     "messageformat": "Picha na video zote"
   },
@@ -1006,6 +1006,18 @@
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
     "messageformat": "Jumbe zote kwenye gumzo hili zitafutwa kwenye vifaa vyako vyote. Bado unaweza kutafuta gumzo hili baada ya kufuta jumbe."
+  },
+  "icu:deleteConversation": {
+    "messageformat": "Futa"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "Ungependa kufuta gumzo?"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "Jumbe zote kwenye gumzo hili zitafutwa kutoka kwenye kifaa hiki."
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "Jumbe zote kwenye gumzo hili zitafutwa kwenye vifaa vyako vyote."
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Ondoka kwenye kikundi"
@@ -1232,6 +1244,9 @@
   "icu:calling__call-link-default-title": {
     "messageformat": "Simu ya Signal"
   },
+  "icu:calling__call-link-delete-failed": {
+    "messageformat": "Imeshindwa kufuta kiungo. Angalia muunganisho wako wa mtandao kisha ujaribu tena."
+  },
   "icu:calling__join-request-denied": {
     "messageformat": "Ombi lako la kujiunga na simu hii limekataliwa."
   },
@@ -1416,7 +1431,7 @@
     "messageformat": "Huwezi kupokea sauti na video kutoka kwa {name}"
   },
   "icu:calling__missing-media-keys--unknown-contact": {
-    "messageformat": "Can't receive audio and video"
+    "messageformat": "Haiwezi kupokea simu ya sauti na video"
   },
   "icu:calling__missing-media-keys-info": {
     "messageformat": "Huenda hii ni kwa sababu hawajathibitisha mabadiliko ya nambari yako ya usalama, vifaa vyao vina hitilafu au amekuzuia."
@@ -1441,6 +1456,9 @@
   },
   "icu:calling__presenting--info": {
     "messageformat": "Signal inashiriki {window}."
+  },
+  "icu:calling__presenting--info--unknown": {
+    "messageformat": "Kipengele cha kushiriki skrini cha Signal kimewashwa"
   },
   "icu:calling__presenting--reconnecting": {
     "messageformat": "Inaunganisha tena..."
@@ -1626,7 +1644,7 @@
     "messageformat": "Jana {time}"
   },
   "icu:messageLoop": {
-    "messageformat": "Signal may be failing to process an incoming message."
+    "messageformat": "Signal huenda ikawa inashindwa kuchakata ujumbe unaoingia."
   },
   "icu:messageBodyTooLong": {
     "messageformat": "Mwili wa ujumbe ni mrefu sana."
@@ -2976,7 +2994,7 @@
     "messageformat": "Huwezi kujiunga na kikundi hiki kupitia kiungo cha kikundi kwa sababu admin amekuondoa."
   },
   "icu:GroupV2--join--prompt-with-approval": {
-    "messageformat": "Msimamizi wa kikundi hiki sharti aidhinishe ombi lako kabla ya kujiunga na kikundi hiki. Ukiidhinishwa, jina na picha yako zitashirikiwa na washiriki wake."
+    "messageformat": "Msimamizi wa kikundi hiki sharti aidhinishe ombi lako kabla ya kujiunga na kikundi hiki. Ukiomba kujiunga, jina na picha yako zitashirikiwa na washiriki wake."
   },
   "icu:GroupV2--join--join-button": {
     "messageformat": "Jiunge"
@@ -3536,6 +3554,9 @@
   "icu:BackupImportScreen__progressbar-hint": {
     "messageformat": "Inapakua {currentSize} ya {totalSize} ({fractionComplete,number,percent})..."
   },
+  "icu:BackupImportScreen__progressbar-hint--processing": {
+    "messageformat": "Inakamilisha uhamishaji wa ujumbe..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Inajiandaa kupakua..."
   },
@@ -3556,6 +3577,27 @@
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
     "messageformat": "Ghairi uhamishaji"
+  },
+  "icu:BackupImportScreen__error__title": {
+    "messageformat": "Hitilafu katika uhamishaji wa jumbe zako"
+  },
+  "icu:BackupImportScreen__error__body": {
+    "messageformat": "Jumbe zako zimeshindwa kuhama. Angalia muunganisho wako wa mtandao kisha ujaribu tena."
+  },
+  "icu:BackupImportScreen__error__confirm": {
+    "messageformat": "Jaribu Upya"
+  },
+  "icu:BackupImportScreen__skip": {
+    "messageformat": "Ruka"
+  },
+  "icu:BackupImportScreen__skip-confirmation__title": {
+    "messageformat": "Ungependa kuruka uhamishaji wa ujumbe?"
+  },
+  "icu:BackupImportScreen__skip-confirmation__body": {
+    "messageformat": "Ikiwa utachagua kuruka, hutaweza kufikia jumbe au picha na video zako zozote kwenye kifaa hiki. Unaweza kuanza uhamishaji mpya baada ya kuruka kutoka kwenye Mipangilio > Gumzo > Uhamishaji."
+  },
+  "icu:BackupImportScreen__skip-confirmation__cancel": {
+    "messageformat": "Ghairi"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "Inarejesha video na picha"
@@ -3640,9 +3682,6 @@
   },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Ondoa kwenye kikundi"
-  },
-  "icu:ContactModal--already-in-call": {
-    "messageformat": "Tayari uko kwenye mazungumzo ya simu"
   },
   "icu:ContactModal--voice": {
     "messageformat": "Sauti"
@@ -4449,10 +4488,10 @@
     "messageformat": "Wasifu wako haujasasishwa. Tafadhali jaribu tena."
   },
   "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Invalid characters"
+    "messageformat": "Herufi batili"
   },
   "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "One or more characters you’ve entered can’t be used. Try again."
+    "messageformat": "Herufi moja au zaidi ulizoingiza haziwezi kutumika. Jaribu tena."
   },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Mtumie msimamizi ujumbe"
@@ -5202,7 +5241,7 @@
     "messageformat": "Stori"
   },
   "icu:StoryListItem__unhide": {
-    "messageformat": "Onyesha Stori"
+    "messageformat": "Fichua stori"
   },
   "icu:StoryListItem__hide": {
     "messageformat": "Ficha stori"
@@ -5473,13 +5512,22 @@
     "messageformat": "Je, ungetaka kufuta historia ya simu?"
   },
   "icu:CallsTab__ConfirmClearCallHistory__Body": {
-    "messageformat": "Hii itafuta kabisa historia ya simu zote"
+    "messageformat": "Hii itafuta kabisa historia ya simu zote."
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Body--call-links": {
+    "messageformat": "Hii itafuta kabisa historia ya simu zote. Viungo vya simu ulivyounda havitafanya kazi tena kwa watu walionavyo. "
   },
   "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
     "messageformat": "Futa"
   },
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "Historia ya simu imefutwa"
+  },
+  "icu:CallsTab__ClearCallHistoryError--call-links": {
+    "messageformat": "Baadhi ya viungo vya simu havijafutika. Angalia muunganisho wako wa mtandao kisha ujaribu tena."
+  },
+  "icu:CallsTab__ClearCallHistoryError": {
+    "messageformat": "Baadhi ya historia ya simu haijafutika. Angalia muunganisho wako wa mtandao kisha ujaribu tena."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Bonyeza <newCallButtonIcon></newCallButtonIcon> ili kupiga simu ya kawaida au ya video."
@@ -5677,10 +5725,22 @@
     "messageformat": "Mabadiliko madogo, marekebisho ya bugs na uboreshaji wa utendaji. Asante kwa kutumia Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.26--0": {
-    "messageformat": "Wakati mwingine kukiacha kitu huwa ni njia bora ya kugundua kwamba ungependa kukipata tena, hivyo tumerekebisha hitilafu iliyokuwa inafanya ugumu kutafuta vikundi ambavyo si mwanachama wake tena lakini bado vimebaki katika orodha ya mazungumzo yako (na inawezekana hadi moyoni mwako)."
+  "icu:WhatsNew__v7.29--0": {
+    "messageformat": "Sasisho hili huboresha kasi ya kifaa kuwaka kwa karibu 5%, kwa hiyo jisikie huru kupunguza kasi kidogo katika maeneo mengine ya maisha yako."
   },
-  "icu:WhatsNew__v7.27--0": {
-    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\""
+  "icu:WhatsNew__v7.30--header": {
+    "messageformat": "Inatambulisha Viungo vya Simu: Kiungo kilichokosekana kwa mialiko kupitia kalenda na mikusanyiko isiyotarajiwa."
+  },
+  "icu:WhatsNew__v7.30--0": {
+    "messageformat": "Sasa unaweza kubuni kwa haraka kiungo ambacho yeyote mwenye Signal anaweza kutumia kujiunga kwenye simu ya kikundi bila kujiunga na kikundi cha gumzo cha Signal kwanza."
+  },
+  "icu:WhatsNew__v7.30--1": {
+    "messageformat": "Viungo vya simu vinaweza kutumika tena na vinafaa kwa miadi ya simu inayojirudia pamoja na marafiki zako vipenzi au kujuliana hali kila wiki na wafanyakazi wenzako."
+  },
+  "icu:WhatsNew__v7.30--2": {
+    "messageformat": "Dhibiti viungo vya simu, mipangilio ya idhini, na nakili viungo kutoka kwa kichupo cha simu ili kushiriki kasi."
+  },
+  "icu:WhatsNew__v7.31--0": {
+    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
   }
 }

@@ -575,9 +575,6 @@
   "icu:decryptionErrorToast": {
     "messageformat": "Masaüstü, {name}, {deviceId} cihazından bir şifrə açma xətası ilə qarşılaşdı"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "Jurnalı göndər"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "Jurnalı göndər"
   },
@@ -791,8 +788,14 @@
   "icu:attachmentSaved": {
     "messageformat": "Qoşma yaddaşda saxlanıldı."
   },
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+  },
   "icu:attachmentSavedShow": {
     "messageformat": "Qovluqda göstər"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
   },
   "icu:you": {
     "messageformat": "Siz"
@@ -944,9 +947,6 @@
   "icu:NotePreviewModal__Title": {
     "messageformat": "Qeyd"
   },
-  "icu:viewRecentMedia": {
-    "messageformat": "Son mediaya bax"
-  },
   "icu:allMediaMenuItem": {
     "messageformat": "Bütün media faylları"
   },
@@ -1006,6 +1006,18 @@
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
     "messageformat": "Bu çatdakı bütün mesajlar bütün cihazlarınızdan silinəcək. Mesajları sildikdən sonra da bu çata daxil ola bilərsiniz."
+  },
+  "icu:deleteConversation": {
+    "messageformat": "Sil"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "Çat silinsin?"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "Bu çatda olan bütün mesajlar bu cihazdan silinəcək."
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "Bu çatdakı bütün mesajlar bütün cihazlarınızdan silinəcək."
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Qrupu tərk et"
@@ -1232,6 +1244,9 @@
   "icu:calling__call-link-default-title": {
     "messageformat": "Signal Zəngi"
   },
+  "icu:calling__call-link-delete-failed": {
+    "messageformat": "Keçidi silmək mümkün deyil. Bağlantınızı yoxlayıb yenidən cəhd edin."
+  },
   "icu:calling__join-request-denied": {
     "messageformat": "Bu zəngə qoşulma sorğunuzdan imtina edildi."
   },
@@ -1416,7 +1431,7 @@
     "messageformat": "{name} əlaqəsindən səs və ya görüntü alına bilmir"
   },
   "icu:calling__missing-media-keys--unknown-contact": {
-    "messageformat": "Can't receive audio and video"
+    "messageformat": "Audio və video fayl qəbul etmək mümkün deyil"
   },
   "icu:calling__missing-media-keys-info": {
     "messageformat": "Bu, qarşı tərəf güvənlik nömrəsi dəyişikliyinizi təsdiqləmədiyi, cihazında bir problem olduğu və ya sizi blokladığı üçün baş verə bilər."
@@ -1441,6 +1456,9 @@
   },
   "icu:calling__presenting--info": {
     "messageformat": "Signal, {window} pəncərəsini paylaşır."
+  },
+  "icu:calling__presenting--info--unknown": {
+    "messageformat": "Signal ekran paylaşımı aktivdir"
   },
   "icu:calling__presenting--reconnecting": {
     "messageformat": "Yenidən bağlantı qurulur..."
@@ -1626,7 +1644,7 @@
     "messageformat": "Dünən {time} radələrində"
   },
   "icu:messageLoop": {
-    "messageformat": "Signal may be failing to process an incoming message."
+    "messageformat": "Signal gələn mesajı emal edə bilmir."
   },
   "icu:messageBodyTooLong": {
     "messageformat": "Mesaj gövdəsi çox uzundur."
@@ -2976,7 +2994,7 @@
     "messageformat": "Bir admin sizi çıxartdığı üçün bu qrupa qrup bağlantısı vasitəsilə qoşula bilməzsiniz."
   },
   "icu:GroupV2--join--prompt-with-approval": {
-    "messageformat": "Bu qrupa qoşula bilməyiniz üçün qrupdan bir admin tələbinizi təsdiqləməlidir. Əgər təsdiqləsə, adınız və fotonuz üzvlərlə paylaşılacaq."
+    "messageformat": "Bu qrupa qoşula bilməyiniz üçün qrupdan bir admin tələbinizi təsdiqləməlidir. Siz qoşulma tələbi göndərəndə, adınız və fotonuz üzvlərlə paylaşılacaq."
   },
   "icu:GroupV2--join--join-button": {
     "messageformat": "Qoşul"
@@ -3536,6 +3554,9 @@
   "icu:BackupImportScreen__progressbar-hint": {
     "messageformat": "{currentSize} / {totalSize} endirilir ({fractionComplete,number,percent})..."
   },
+  "icu:BackupImportScreen__progressbar-hint--processing": {
+    "messageformat": "Mesaj köçürmə yekunlaşdırılır..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Endirməyə hazırlaşır..."
   },
@@ -3556,6 +3577,27 @@
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
     "messageformat": "Köçürməni ləğv et"
+  },
+  "icu:BackupImportScreen__error__title": {
+    "messageformat": "Mesajlarınız köçürülərkən xəta baş verdi"
+  },
+  "icu:BackupImportScreen__error__body": {
+    "messageformat": "Mesajlarınızı köçürmək mümkün olmadı. İnternet bağlantınızı yoxlayıb yenidən cəhd edin."
+  },
+  "icu:BackupImportScreen__error__confirm": {
+    "messageformat": "Yenidən sına"
+  },
+  "icu:BackupImportScreen__skip": {
+    "messageformat": "Ötür"
+  },
+  "icu:BackupImportScreen__skip-confirmation__title": {
+    "messageformat": "Mesaj köçürmə ötürülsün?"
+  },
+  "icu:BackupImportScreen__skip-confirmation__body": {
+    "messageformat": "Ötürməni seçsəniz bu cihazda heç bir mesaj və ya media faylınıza daxil ola bilməyəcəksiniz. Parametrlər > Çatlar > Köçür bölməsindən addımlarıkeçdikdən sonra yeni köçürməyə başlaya bilərsiniz."
+  },
+  "icu:BackupImportScreen__skip-confirmation__cancel": {
+    "messageformat": "Ləğv et"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "Media faylı bərpa olunur"
@@ -3640,9 +3682,6 @@
   },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Qrupdan çıxart"
-  },
-  "icu:ContactModal--already-in-call": {
-    "messageformat": "Artıq zəngdəsiniz"
   },
   "icu:ContactModal--voice": {
     "messageformat": "Səsli"
@@ -4449,10 +4488,10 @@
     "messageformat": "Profiliniz yenilənə bilmir. Zəhmət olmasa yenidən sınayın."
   },
   "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Invalid characters"
+    "messageformat": "Səhv simvollar"
   },
   "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "One or more characters you’ve entered can’t be used. Try again."
+    "messageformat": "Daxil etdiyiniz bir və ya daha çox simvol istifadə oluna bilmir. Yenidən cəhd edin."
   },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Bir adminə mesaj yazın"
@@ -5202,7 +5241,7 @@
     "messageformat": "Hekayə"
   },
   "icu:StoryListItem__unhide": {
-    "messageformat": "Hekayələri göstər"
+    "messageformat": "Hekayəni göstər"
   },
   "icu:StoryListItem__hide": {
     "messageformat": "Hekayəni gizlət"
@@ -5473,13 +5512,22 @@
     "messageformat": "Zəng tarixçəsi təmizlənsin?"
   },
   "icu:CallsTab__ConfirmClearCallHistory__Body": {
-    "messageformat": "Bu əmr bütün zəng tarixçəsini daimi olaraq təmizləyəcək"
+    "messageformat": "Bu əmr bütün zəng tarixçəsini daimi olaraq siləcək."
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Body--call-links": {
+    "messageformat": "Bu əmr bütün zəng tarixçəsini daimi olaraq siləcək. Yaratdığınız zəng keçidlərini paylaşdığınız insanlar artıq bu keçidləri görə bilməyəcək. "
   },
   "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
     "messageformat": "Təmizlə"
   },
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "Zəng tarixçəsi təmizləndi"
+  },
+  "icu:CallsTab__ClearCallHistoryError--call-links": {
+    "messageformat": "Bütün zəng keçidlərini silmək mümkün olmadı. Bağlantınızı yoxlayıb yenidən cəhd edin."
+  },
+  "icu:CallsTab__ClearCallHistoryError": {
+    "messageformat": "Bütün zəng tarixçəsini təmizləmək mümkün olmadı. Bağlantınızı yoxlayıb yenidən cəhd edin."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Yeni bir audio və ya video zəng başlamaq üçün <newCallButtonIcon></newCallButtonIcon> üzərinə klikləyin."
@@ -5677,10 +5725,22 @@
     "messageformat": "Kiçik spesifik tənzimləmələr, xəta düzəlişləri və məhsuldarlığın artırılması. Signal istifadə etdiyiniz üçün təşəkkürlər!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.26--0": {
-    "messageformat": "Bəzən nəyisə geridə qoymaq onu yenidən tapmaq istəyini aşkarlamağın ən yaxşı üsuludur, buna görə də artıq üzvü olmadığınız, lakin hələ də söhbət siyahınızda (və çox güman ki, ürəyinizdə) qalan qrupları axtarmağı çətinləşdirən xətanı aradan qaldırdıq."
+  "icu:WhatsNew__v7.29--0": {
+    "messageformat": "Bu yeniləmə başlanğıc sürətini təxminən 5% artırır, buna görə də digər işləriniz üçün rahat vaxtınız qalır."
   },
-  "icu:WhatsNew__v7.27--0": {
-    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\""
+  "icu:WhatsNew__v7.30--header": {
+    "messageformat": "Zəng keçidlərinin təqdimatı: Təqvim dəvətləri və bədahətən görüşlər üçün əskik keçid."
+  },
+  "icu:WhatsNew__v7.30--0": {
+    "messageformat": "Signal-da hər kəsin əvvəlcə Signal qrup çatına qoşulmadan birbaşa qrup zənginə qoşulmaq üçün istifadə edə biləcəyi sadə bir keçidi artıq asanlıqla yarada bilərsiniz."
+  },
+  "icu:WhatsNew__v7.30--1": {
+    "messageformat": "Zəng keçidləri təkrar istifadə oluna bilər və ən yaxın dostlarla təkrarlanan zənglər, yaxud da həmkarlarla həftəlik görüşlər üçün idealdır."
+  },
+  "icu:WhatsNew__v7.30--2": {
+    "messageformat": "Asan paylaşma üçün zəng keçidlərini idarə edə, təsdiq parametrlərinə nəzarət edə və zənglər tabulyasiyasından keçidləri kopyalaya bilərsiniz."
+  },
+  "icu:WhatsNew__v7.31--0": {
+    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
   }
 }

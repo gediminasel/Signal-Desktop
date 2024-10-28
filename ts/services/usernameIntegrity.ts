@@ -127,7 +127,11 @@ class UsernameIntegrityService {
   private async checkPhoneNumberSharing(): Promise<void> {
     const me = window.ConversationController.getOurConversationOrThrow();
 
-    await getProfile(me.getServiceId(), me.get('e164'));
+    await getProfile({
+      serviceId: me.getServiceId() ?? null,
+      e164: me.get('e164') ?? null,
+      groupId: null,
+    });
 
     {
       const localValue = isSharingPhoneNumberWithEverybody();
@@ -141,7 +145,7 @@ class UsernameIntegrityService {
           `storage service sync (local: ${localValue}, remote: ${remoteValue})`
       );
 
-      runStorageServiceSyncJob();
+      runStorageServiceSyncJob({ reason: 'checkPhoneNumberSharing' });
     }
 
     // Since we already run on storage service job queue - don't await the

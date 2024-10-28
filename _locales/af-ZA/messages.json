@@ -516,7 +516,7 @@
     "messageformat": "Vind meer uit"
   },
   "icu:verified": {
-    "messageformat": "Geverifiëer"
+    "messageformat": "Geverifieer"
   },
   "icu:newIdentity": {
     "messageformat": "Nuwe veiligheidsnommer"
@@ -574,9 +574,6 @@
   },
   "icu:decryptionErrorToast": {
     "messageformat": "Desktop het 'n dekripteringsfout ondervind vanaf {name}, toestel {deviceId}"
-  },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "Dien log in"
   },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "Dien log in"
@@ -791,8 +788,14 @@
   "icu:attachmentSaved": {
     "messageformat": "Aanhegsel gestoor."
   },
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+  },
   "icu:attachmentSavedShow": {
     "messageformat": "Wys in vouer"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
   },
   "icu:you": {
     "messageformat": "Jy"
@@ -944,9 +947,6 @@
   "icu:NotePreviewModal__Title": {
     "messageformat": "Nota"
   },
-  "icu:viewRecentMedia": {
-    "messageformat": "Kyk na onlangse media"
-  },
   "icu:allMediaMenuItem": {
     "messageformat": "Alle media"
   },
@@ -1006,6 +1006,18 @@
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
     "messageformat": "Al die boodskappe in hierdie klets sal van al jou toestelle af geskrap word. Jy kan steeds vir hierdie klets soek nadat jy boodskappe geskrap het."
+  },
+  "icu:deleteConversation": {
+    "messageformat": "Skrap"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "Skrap klets?"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "Al die boodskappe in hierdie klets sal van hierdie toestel af geskrap word."
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "Al die boodskappe in hierdie klets sal van al jou toestelle af geskrap word."
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Verlaat groep"
@@ -1232,6 +1244,9 @@
   "icu:calling__call-link-default-title": {
     "messageformat": "Signal-oproep"
   },
+  "icu:calling__call-link-delete-failed": {
+    "messageformat": "Kan nie skakel skrap nie. Gaan jou verbinding na en probeer weer."
+  },
   "icu:calling__join-request-denied": {
     "messageformat": "Jou versoek om by hierdie oproep aan te sluit is geweier."
   },
@@ -1416,7 +1431,7 @@
     "messageformat": "Kan nie oudio en video van {name} ontvang nie"
   },
   "icu:calling__missing-media-keys--unknown-contact": {
-    "messageformat": "Can't receive audio and video"
+    "messageformat": "Kan nie oudio en video ontvang nie"
   },
   "icu:calling__missing-media-keys-info": {
     "messageformat": "Dit kan wees omdat hulle die verandering in jou veiligheidsnommer nog nie geverifieer het nie, of hulle toestel gee probleme, of hulle het jou versper."
@@ -1441,6 +1456,9 @@
   },
   "icu:calling__presenting--info": {
     "messageformat": "Signal is besig om {window} te deel."
+  },
+  "icu:calling__presenting--info--unknown": {
+    "messageformat": "Signal-skermdeling is aktief"
   },
   "icu:calling__presenting--reconnecting": {
     "messageformat": "Besig om te herkonnekteer…"
@@ -1626,7 +1644,7 @@
     "messageformat": "Gister {time}"
   },
   "icu:messageLoop": {
-    "messageformat": "Signal may be failing to process an incoming message."
+    "messageformat": "Sein kan moontlik nie 'n inkomende boodskap verwerk nie."
   },
   "icu:messageBodyTooLong": {
     "messageformat": "Die boodskapteks is te lank."
@@ -2976,7 +2994,7 @@
     "messageformat": "Jy kan nie d.m.v. die groepskakel by hierdie groep aansluit nie, want 'n admin het jou verwyder."
   },
   "icu:GroupV2--join--prompt-with-approval": {
-    "messageformat": "'n Admin van hierdie groep moet jou versoek goedkeur voordat jy by die groep kan aansluit. Indien goedgekeur, sal jou naam en foto met die groeplede gedeel word."
+    "messageformat": "'n Admin van hierdie groep moet jou versoek goedkeur voordat jy by die groep kan aansluit. Wanneer jy versoek om aan te sluit, sal jou naam en foto met die groeplede gedeel word."
   },
   "icu:GroupV2--join--join-button": {
     "messageformat": "Sluit aan"
@@ -3536,6 +3554,9 @@
   "icu:BackupImportScreen__progressbar-hint": {
     "messageformat": "Besig om {currentSize} van {totalSize} ({fractionComplete,number,percent}) af te laai…"
   },
+  "icu:BackupImportScreen__progressbar-hint--processing": {
+    "messageformat": "Finaliseer tans boodskapoordrag…"
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Berei tans voor om af te laai…"
   },
@@ -3556,6 +3577,27 @@
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
     "messageformat": "Kanselleer oordrag"
+  },
+  "icu:BackupImportScreen__error__title": {
+    "messageformat": "Kon nie jou boodskappe oordra nie"
+  },
+  "icu:BackupImportScreen__error__body": {
+    "messageformat": "Jou boodskappe kon nie oorgedra word nie. Gaan jou internetverbinding na en probeer weer."
+  },
+  "icu:BackupImportScreen__error__confirm": {
+    "messageformat": "Probeer weer"
+  },
+  "icu:BackupImportScreen__skip": {
+    "messageformat": "Slaan oor"
+  },
+  "icu:BackupImportScreen__skip-confirmation__title": {
+    "messageformat": "Slaan boodskapoordrag oor?"
+  },
+  "icu:BackupImportScreen__skip-confirmation__body": {
+    "messageformat": "As jy kies om oor te slaan, sal jy nie toegang tot enige van jou boodskappe of media op hierdie toestel hê nie. Jy kan 'n nuwe oordrag begin nadat jy Instellings > Kletse > Oordrag oorgeslaan het."
+  },
+  "icu:BackupImportScreen__skip-confirmation__cancel": {
+    "messageformat": "Kanselleer"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "Besig om media te herstel"
@@ -3640,9 +3682,6 @@
   },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Verwyder uit groep"
-  },
-  "icu:ContactModal--already-in-call": {
-    "messageformat": "Jy is reeds in 'n oproep"
   },
   "icu:ContactModal--voice": {
     "messageformat": "Stem"
@@ -4449,10 +4488,10 @@
     "messageformat": "U profiel kan nie bygewerk word nie. Probeer asb. weer."
   },
   "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Invalid characters"
+    "messageformat": "Ongeldige karakters"
   },
   "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "One or more characters you’ve entered can’t be used. Try again."
+    "messageformat": "Een of meer karakters wat jy ingevoer het, kan nie gebruik word nie. Probeer weer."
   },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Stuur ’n boodskap aan admin"
@@ -5202,7 +5241,7 @@
     "messageformat": "Storie"
   },
   "icu:StoryListItem__unhide": {
-    "messageformat": "Wys stories"
+    "messageformat": "Maak storie sigbaar"
   },
   "icu:StoryListItem__hide": {
     "messageformat": "Versteek storie"
@@ -5473,13 +5512,22 @@
     "messageformat": "Vee oproepgeskiedenis uit?"
   },
   "icu:CallsTab__ConfirmClearCallHistory__Body": {
-    "messageformat": "Dit sal die hele oproepgeskiedenis permanent uitvee"
+    "messageformat": "Dit sal die hele oproepgeskiedenis permanent skrap."
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Body--call-links": {
+    "messageformat": "Dit sal die hele oproepgeskiedenis permanent skrap. Oproepskakels wat jy geskep het, sal nie meer werk vir mense wat dit het nie. "
   },
   "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
     "messageformat": "Vee uit"
   },
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "Oproepgeskiedenis uitgevee"
+  },
+  "icu:CallsTab__ClearCallHistoryError--call-links": {
+    "messageformat": "Kon nie alle oproepskakels skrap nie. Gaan jou verbinding na en probeer weer."
+  },
+  "icu:CallsTab__ClearCallHistoryError": {
+    "messageformat": "Kon nie die hele oproepgeskiedenis skrap nie. Gaan jou verbinding na en probeer weer."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Klik <newCallButtonIcon></newCallButtonIcon> om 'n nuwe stem- of video-oproep te begin."
@@ -5677,10 +5725,22 @@
     "messageformat": "Klein veranderings, foutregstellings en prestasieverbeterings. Dankie dat jy Signal gebruik!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.26--0": {
-    "messageformat": "Hierdie opdatering stel 'n fout reg wat dit moeilik gemaak het om vir 'n groep te soek nadat jy daardie groep verlaat het."
+  "icu:WhatsNew__v7.29--0": {
+    "messageformat": "Hierdie opdatering verbeter oopmaakspoed met ongeveer 5%."
   },
-  "icu:WhatsNew__v7.27--0": {
-    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\""
+  "icu:WhatsNew__v7.30--header": {
+    "messageformat": "Ons stel Oproepskakels bekend: Die ontbrekende skakel vir kalenderuitnodigings en spontane byeenkomste."
+  },
+  "icu:WhatsNew__v7.30--0": {
+    "messageformat": "Nou kan jy vinnig 'n maklike skakel skep vir enige Signal-gebruiker om direk by 'n groepoproep aan te sluit sonder om eers by 'n Signal-groepklets aan te sluit."
+  },
+  "icu:WhatsNew__v7.30--1": {
+    "messageformat": "Oproepskakels is herbruikbaar en ideaal vir herhalende telefoonafsprake met beste vriende of vir weeklikse inhaal met kollegas."
+  },
+  "icu:WhatsNew__v7.30--2": {
+    "messageformat": "Jy kan jou oproepskakels bestuur, goedkeuringsinstellings beheer en skakels van die oproep-ikoon af kopieer om vinnig te deel."
+  },
+  "icu:WhatsNew__v7.31--0": {
+    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
   }
 }

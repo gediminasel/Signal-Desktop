@@ -25,7 +25,6 @@ export class BackupAPI {
   constructor(private credentials: BackupCredentials) {}
 
   public async refresh(): Promise<void> {
-    // TODO: DESKTOP-6979
     await this.server.refreshBackup(
       await this.credentials.getHeadersForToday()
     );
@@ -86,6 +85,24 @@ export class BackupAPI {
       backupDir,
       backupName,
       headers,
+      downloadOffset,
+      onProgress,
+      abortSignal,
+    });
+  }
+
+  public async downloadEphemeral({
+    downloadOffset,
+    onProgress,
+    abortSignal,
+  }: DownloadOptionsType): Promise<Readable> {
+    const { cdn, key } = await this.server.getTransferArchive({
+      abortSignal,
+    });
+
+    return this.server.getEphemeralBackupStream({
+      cdn,
+      key,
       downloadOffset,
       onProgress,
       abortSignal,

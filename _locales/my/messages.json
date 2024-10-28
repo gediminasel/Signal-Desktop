@@ -575,9 +575,6 @@
   "icu:decryptionErrorToast": {
     "messageformat": "Desktop သည် {name} ၊ စက် {deviceId} မှ ကုဒ်ဖြေရာတွင် ချို့ယွင်းချက် ဖြစ်ပေါ်ခဲ့ပါသည်"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "မှတ်တမ်းကို ပေးပို့ရန်"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "မှတ်တမ်းကို ပေးပို့ရန်"
   },
@@ -791,8 +788,14 @@
   "icu:attachmentSaved": {
     "messageformat": "ပူးတွဲဖိုင်ကို သိမ်းပြီး။"
   },
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+  },
   "icu:attachmentSavedShow": {
     "messageformat": "ဖိုင်တွဲတွင် ပြရန်"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
   },
   "icu:you": {
     "messageformat": "သင်"
@@ -944,9 +947,6 @@
   "icu:NotePreviewModal__Title": {
     "messageformat": "မှတ်ချက်"
   },
-  "icu:viewRecentMedia": {
-    "messageformat": "မကြာမီက မီဒီယာကို ကြည့်ရန်"
-  },
   "icu:allMediaMenuItem": {
     "messageformat": "မီဒီယာအားလုံး"
   },
@@ -1006,6 +1006,18 @@
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
     "messageformat": "ဤချက်(တ်)ရှိ မက်ဆေ့ချ်များအားလုံးကို သင်၏စက်များအားလုံးမှ ဖျက်လိုက်ပါမည်။ မက်ဆေ့ချ်များကို ဖျက်ပြီးနောက် ဤချက်(တ်)ကို သင် ရှာ၍ရပါသေးသည်။"
+  },
+  "icu:deleteConversation": {
+    "messageformat": "ဖျက်ရန်"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "ချက်(တ်)ကို ဖျက်မည်လား။"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "ဤချက်(တ်)မှ မက်ဆေ့ချ်များအားလုံးကို ယခုစက်မှ ဖျက်လိုက်ပါမည်။"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "ဤချက်(တ်)ရှိ မက်ဆေ့ချ်များအားလုံးကို သင်၏စက်များအားလုံးမှ ဖျက်လိုက်ပါမည်။"
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "အဖွဲ့မှ ထွက်မည်"
@@ -1232,6 +1244,9 @@
   "icu:calling__call-link-default-title": {
     "messageformat": "Signal ခေါ်ဆိုမှု"
   },
+  "icu:calling__call-link-delete-failed": {
+    "messageformat": "လင့်ခ်ကို ဖျက်၍မရပါ။ ချိတ်ဆက်မှုကို စစ်ဆေးပြီး ထပ်ကြိုးစားကြည့်ပါ။"
+  },
   "icu:calling__join-request-denied": {
     "messageformat": "ဤကောလ်တွင် ပါဝင်ရန် သင့်တောင်းဆိုမှုကို ပယ်ချလိုက်ပါသည်။"
   },
@@ -1416,7 +1431,7 @@
     "messageformat": "{name} မှ အသံနှင့် ဗီဒီယို မရရှိနိုင်ပါ"
   },
   "icu:calling__missing-media-keys--unknown-contact": {
-    "messageformat": "Can't receive audio and video"
+    "messageformat": "အော်ဒီယိုနှင့် ဗီဒီယိုကို လက်ခံ၍မရပါ"
   },
   "icu:calling__missing-media-keys-info": {
     "messageformat": "သင့်လုံခြုံရေးနံပါတ် ပြောင်းလဲမှုကို ၎င်းတို့ အတည်မပြုရသေးသောကြောင့် သော်လည်းကောင်း၊ ၎င်းတို့ စက်တွင် ပြဿနာရှိနေသောကြောင့် သော်လည်းကောင်း၊ ၎င်းတို့က သင့်ကို ဘလော့ခ်ထားသောကြောင့် သော်လည်းကောင်း ဖြစ်နိုင်ပါသည်။"
@@ -1441,6 +1456,9 @@
   },
   "icu:calling__presenting--info": {
     "messageformat": "Signal သည် {window} ကို ဝေမျှနေသည်။"
+  },
+  "icu:calling__presenting--info--unknown": {
+    "messageformat": "Signal မျက်နှာပြင်မျှဝေခြင်း လုပ်ဆောင်နေသည်"
   },
   "icu:calling__presenting--reconnecting": {
     "messageformat": "ပြန်ချိတ်ဆက်နေဆဲ..."
@@ -1626,7 +1644,7 @@
     "messageformat": "ယမန်နေ့ {time}"
   },
   "icu:messageLoop": {
-    "messageformat": "Signal may be failing to process an incoming message."
+    "messageformat": "Signal သည် အဝင်မက်ဆေ့ချ်ကို ဆောင်ရွက်ရန် ပျက်ကွက်နေနိုင်သည်။"
   },
   "icu:messageBodyTooLong": {
     "messageformat": "မက်ဆေ့ချ် စာကိုယ် ရှည်လွန်းနေပါသည်။"
@@ -2976,7 +2994,7 @@
     "messageformat": "အက်ဒ်မင်သည် သင့်အား ဖယ်ရှားခဲ့သောကြောင့် အဖွဲ့လင့်ခ်မှတစ်ဆင့် ဤအဖွဲ့တွင် ပါဝင်၍ မရနိုင်ပါ။"
   },
   "icu:GroupV2--join--prompt-with-approval": {
-    "messageformat": "ဤအဖွဲ့တွင် သင်မပါဝင်မီ ဤအဖွဲ့ အက်ဒ်မင်က သင့်တောင်းဆိုချက်ကို အတည်ပြုရပါမည်။ အတည်ပြုပြီးပါက သင့်အမည်နှင့် ဓာတ်ပုံကို ၎င်းမန်ဘာများနှင့် ဝေမျှပါမည်။"
+    "messageformat": "သင်သည် အဖွဲ့ထဲသို့မဝင်နိုင်ခင် သင်၏ တောင်းဆိုမှုကို အဖွဲ့၏ စီမံသူတစ်ဦးမှ လက်ခံရပါမည်။ သင်မှ​ဝင်ရောက်ရန် တောင်းဆိုလျှင် သင်၏ အမည် နှင့် ရုပ်ပုံကို အဖွဲ့ဝင်များနှင့် မျှဝေပါမည်။"
   },
   "icu:GroupV2--join--join-button": {
     "messageformat": "ဝင်ပါမယ်"
@@ -3536,6 +3554,9 @@
   "icu:BackupImportScreen__progressbar-hint": {
     "messageformat": "{totalSize} ({fractionComplete,number,percent}) မှ {currentSize} ကို ဒေါင်းလုဒ်လုပ်နေသည်..."
   },
+  "icu:BackupImportScreen__progressbar-hint--processing": {
+    "messageformat": "မက်ဆေ့ချ်လွှဲပြောင်းခြင်းကို အပြီးသတ်နေသည်..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "ဒေါင်းလုဒ်လုပ်ရန် ပြင်ဆင်နေသည်..."
   },
@@ -3556,6 +3577,27 @@
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
     "messageformat": "လွှဲပြောင်းမှုကို ပယ်ဖျက်မည်"
+  },
+  "icu:BackupImportScreen__error__title": {
+    "messageformat": "သင့်မက်ဆေ့ချ် လွှဲပြောင်းရာတွင် ချွတ်ယွင်းချက်ရှိနေသည်"
+  },
+  "icu:BackupImportScreen__error__body": {
+    "messageformat": "မက်ဆေ့ချ်ကို လွှဲပြောင်း၍မရနိုင်ပါ။ သင့်အင်တာနက်ချိတ်ဆက်မှုကို ပြန်စစ်ဆေးပြီး ထပ်ကြိုးစားကြည့်ပါ။"
+  },
+  "icu:BackupImportScreen__error__confirm": {
+    "messageformat": "ထပ်ကြိုးစားပါ"
+  },
+  "icu:BackupImportScreen__skip": {
+    "messageformat": "ကျော်ပါ"
+  },
+  "icu:BackupImportScreen__skip-confirmation__title": {
+    "messageformat": "မက်ဆေ့ချ်လွှဲပြောင်းမှုကို ကျော်လိုပါသလား။"
+  },
+  "icu:BackupImportScreen__skip-confirmation__body": {
+    "messageformat": "ကျော်ရန်ရွေးချယ်ပါက ဤစက်ပေါ်ရှိ သင့်မက်ဆေ့ချ်များ သို့မဟုတ် မီဒီယာများကို သင် ဝင်ရောက်ခွင့်ရှိမည်မဟုတ်တော့ပါ။ ဆက်တင် > ချက်(တ်) > လွှဲပြောင်းမှုကို ကျော်သွားပြီးနောက် လွှဲပြောင်းမှုအသစ်တစ်ခု စတင်နိုင်သည်။"
+  },
+  "icu:BackupImportScreen__skip-confirmation__cancel": {
+    "messageformat": "မလုပ်တော့ပါ"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "မီဒီယာကို ပြန်လည်ရယူနေသည်"
@@ -3640,9 +3682,6 @@
   },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "အဖွဲ့မှ ဖယ်ရှားရန်"
-  },
-  "icu:ContactModal--already-in-call": {
-    "messageformat": "သင်သည် ကောလ်ထဲတွင် ရှိပြီးဖြစ်သည်"
   },
   "icu:ContactModal--voice": {
     "messageformat": "အသံ"
@@ -4449,10 +4488,10 @@
     "messageformat": "သင်၏ ပရိုဖိုင်ကို အပ်ဒိတ်လုပ်၍ မရနိုင်ပါ။ ထပ်ကြိုးစားကြည့်ပါ။"
   },
   "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Invalid characters"
+    "messageformat": "စာလုံးများ အကျုံးမဝင်ပါ"
   },
   "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "One or more characters you’ve entered can’t be used. Try again."
+    "messageformat": "သင်ထည့်သွင်းထားသည့် တစ်ခု သို့မဟုတ် တစ်ခုထက်ပိုသောစာလုံးများအား အသုံးပြု၍မရပါ။ ထပ်မံကြိုးစားပါ။"
   },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "အက်ဒ်မင်ထံ မက်ဆေ့ချ် ပို့ရန်"
@@ -5202,7 +5241,7 @@
     "messageformat": "စတိုရီ"
   },
   "icu:StoryListItem__unhide": {
-    "messageformat": "စတိုရီများ ပြသရန်"
+    "messageformat": "စတိုရီကို ဝှက်ထားမှုမှ ဖျက်ရန်"
   },
   "icu:StoryListItem__hide": {
     "messageformat": "စတိုရီကို ဝှက်ရန်"
@@ -5473,13 +5512,22 @@
     "messageformat": "ကောလ်မှတ်တမ်းကို ရှင်းမည်လား။"
   },
   "icu:CallsTab__ConfirmClearCallHistory__Body": {
-    "messageformat": "ဤသို့လုပ်ဆောင်ခြင်းဖြင့် ကောလ်မှတ်တမ်း အားလုံးကို အပြီးတိုင် ဖျက်ပစ်လိုက်ပါမည်။"
+    "messageformat": "ဤသို့လုပ်ဆောင်ခြင်းဖြင့် ကောလ်မှတ်တမ်းအားလုံးကို အပြီးတိုင်ဖျက်ပစ်လိုက်ပါမည်။"
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Body--call-links": {
+    "messageformat": "ဤသို့လုပ်ဆောင်ခြင်းဖြင့် ကောလ်မှတ်တမ်း အားလုံးကို အပြီးတိုင် ဖျက်ပစ်လိုက်ပါမည်။ သင်ဖန်တီးထားသော ကောလ်လင့်ခ်များသည် ၎င်းတို့ကို ရရှိထားသူများအတွက် အလုပ်လုပ်တော့မည်မဟုတ်ပါ။ "
   },
   "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
     "messageformat": "ဖယ်ရှားမည်"
   },
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "ကောလ်မှတ်တမ်း ရှင်းလင်းပြီး"
+  },
+  "icu:CallsTab__ClearCallHistoryError--call-links": {
+    "messageformat": "ကောလ်လင့်ခ်အားလုံးကို ဖျက်၍ မရနိုင်ခဲ့ပါ။ သင့်အင်တာနက်ချိတ်ဆက်မှုကို ပြန်စစ်ဆေးပြီး ထပ်ကြိုးစားကြည့်ပါ။"
+  },
+  "icu:CallsTab__ClearCallHistoryError": {
+    "messageformat": "ကောလ်မှတ်တမ်းအားလုံးကို ရှင်း၍မရနိုင်ခဲ့ပါ။ သင့်အင်တာနက်ချိတ်ဆက်မှုကို ပြန်စစ်ဆေးပြီး ထပ်ကြိုးစားကြည့်ပါ။"
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "အသံ သို့မဟုတ် ဗီဒီယိုကောလ်ခေါ်ဆိုမှုအသစ်တစ်ခု စတင်ရန် <newCallButtonIcon></newCallButtonIcon> ကို နှိပ်ပါ။"
@@ -5677,10 +5725,22 @@
     "messageformat": "အနေအထား ပြုပြင်မှုလေးများ၊ ချို့ယွင်းချက် ပြင်ဆင်မှုများနှင့် စွမ်းဆောင်ရည် မြှင့်တင်မှုများ။ Signal ကို သုံးသည့်အတွက် ကျေးဇူးတင်ပါသည်။",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.26--0": {
-    "messageformat": "အဖွဲ့မှထွက်ခွာပြီးနောက် ထိုအဖွဲ့ကိုရှာရန် ခက်ခဲသည့် ပြစ်ချက်ကို ဤအပ်ဒိတ်တွင် ပြုပြင်ထားသည်။"
+  "icu:WhatsNew__v7.29--0": {
+    "messageformat": "ဤအပ်ဒိတ်သည် စတင်မှုအမြန်နှုန်းကို 5% ဝန်းကျင် တိုးတက်စေသည်။"
   },
-  "icu:WhatsNew__v7.27--0": {
-    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\""
+  "icu:WhatsNew__v7.30--header": {
+    "messageformat": "ကောလ်လင့်ခ်ကို မိတ်ဆက်ခြင်း- ကြိုတင်စီစဉ်မှုနှင့် ချက်ချင်းတွေ့ဆုံမှုအတွက် လိုနေသောလင့်ခ်။"
+  },
+  "icu:WhatsNew__v7.30--0": {
+    "messageformat": "အဖွဲ့လိုက်ချက်(တ်)တွင် ဦးစွာပါဝင်ရန်မလိုဘဲ Signal ရှိ မည်သူမဆိုသုံးနိုင်သည့် လွယ်ကူသောလင့်ခ်ကို ယခု သင်အမြန်ဖန်တီးနိုင်ပါပြီ။"
+  },
+  "icu:WhatsNew__v7.30--1": {
+    "messageformat": "ကောလ်လင့်ခ်သည် ပြန်၍အသုံးပြုနိုင်ပြီး သူငယ်ချင်းများနှင့်ဖုန်းပြောခြင်းသို့မဟုတ် လုပ်ဖော်ကိုင်ဖက်များနှင့် အပတ်စဉ်ဆက်သွယ်ခြင်းအတွက် အကောင်းဆုံးဖြစ်သည်။"
+  },
+  "icu:WhatsNew__v7.30--2": {
+    "messageformat": "ကောလ်လင့်ခ်ကိုစီမံခြင်း၊ အတည်ပြုချက်ဆက်တင်ကို ထိန်းချုပ်ခြင်းပြုနိုင်ပြီး အမြန်မျှဝေရန် ကောလ်တက်ဘ်မှ လင့်ခ်ကိုကူးယူနိုင်သည်။"
+  },
+  "icu:WhatsNew__v7.31--0": {
+    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
   }
 }

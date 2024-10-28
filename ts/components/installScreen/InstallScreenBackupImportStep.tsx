@@ -4,30 +4,39 @@
 import React, { useState, useCallback } from 'react';
 
 import type { LocalizerType } from '../../types/Util';
+import { InstallScreenBackupStep } from '../../types/InstallScreen';
 import { formatFileSize } from '../../util/formatFileSize';
 import { TitlebarDragArea } from '../TitlebarDragArea';
 import { ProgressBar } from '../ProgressBar';
 import { ConfirmationDialog } from '../ConfirmationDialog';
 import { InstallScreenSignalLogo } from './InstallScreenSignalLogo';
 import { roundFractionForProgressBar } from '../../util/numbers';
+import { missingCaseError } from '../../util/missingCaseError';
 
 // We can't always use destructuring assignment because of the complexity of this props
 //   type.
 
 export type PropsType = Readonly<{
   i18n: LocalizerType;
+  backupStep: InstallScreenBackupStep;
   currentBytes?: number;
   totalBytes?: number;
+  hasError?: boolean;
   onCancel: () => void;
+  onRetry: () => void;
 }>;
 
 export function InstallScreenBackupImportStep({
   i18n,
+  backupStep,
   currentBytes,
   totalBytes,
+  hasError,
   onCancel,
+  onRetry,
 }: PropsType): JSX.Element {
   const [isConfirmingCancel, setIsConfirmingCancel] = useState(false);
+  const [isConfirmingSkip, setIsConfirmingSkip] = useState(false);
 
   const confirmCancel = useCallback(() => {
     setIsConfirmingCancel(true);
@@ -42,27 +51,52 @@ export function InstallScreenBackupImportStep({
     setIsConfirmingCancel(false);
   }, [onCancel]);
 
-  let progress: JSX.Element;
-  let isCancelPossible = true;
-  if (currentBytes != null && totalBytes != null) {
-    isCancelPossible = currentBytes !== totalBytes;
+  const confirmSkip = useCallback(() => {
+    setIsConfirmingSkip(true);
+  }, []);
 
+  const abortSkip = useCallback(() => {
+    setIsConfirmingSkip(false);
+  }, []);
+
+  const onSkipWrap = useCallback(() => {
+    onCancel();
+    setIsConfirmingSkip(false);
+  }, [onCancel]);
+
+  const onRetryWrap = useCallback(() => {
+    onRetry();
+    setIsConfirmingSkip(false);
+  }, [onRetry]);
+
+  let progress: JSX.Element;
+  if (currentBytes != null && totalBytes != null) {
     const fractionComplete = roundFractionForProgressBar(
       currentBytes / totalBytes
     );
 
+    let hint: string;
+    if (backupStep === InstallScreenBackupStep.Download) {
+      hint = i18n('icu:BackupImportScreen__progressbar-hint', {
+        currentSize: formatFileSize(currentBytes),
+        totalSize: formatFileSize(totalBytes),
+        fractionComplete,
+      });
+    } else if (backupStep === InstallScreenBackupStep.Process) {
+      hint = i18n('icu:BackupImportScreen__progressbar-hint--processing');
+    } else {
+      throw missingCaseError(backupStep);
+    }
+
     progress = (
       <>
         <ProgressBar
+          key={backupStep}
           fractionComplete={fractionComplete}
           isRTL={i18n.getLocaleDirection() === 'rtl'}
         />
         <div className="InstallScreenBackupImportStep__progressbar-hint">
-          {i18n('icu:BackupImportScreen__progressbar-hint', {
-            currentSize: formatFileSize(currentBytes),
-            totalSize: formatFileSize(totalBytes),
-            fractionComplete,
-          })}
+          {hint}
         </div>
       </>
     );
@@ -70,6 +104,7 @@ export function InstallScreenBackupImportStep({
     progress = (
       <>
         <ProgressBar
+          key={backupStep}
           fractionComplete={0}
           isRTL={i18n.getLocaleDirection() === 'rtl'}
         />
@@ -79,6 +114,7 @@ export function InstallScreenBackupImportStep({
       </>
     );
   }
+
   return (
     <div className="InstallScreenBackupImportStep">
       <TitlebarDragArea />
@@ -95,7 +131,7 @@ export function InstallScreenBackupImportStep({
         </div>
       </div>
 
-      {isCancelPossible && (
+      {backupStep === InstallScreenBackupStep.Download && (
         <button
           className="InstallScreenBackupImportStep__cancel"
           type="button"
@@ -125,6 +161,44 @@ export function InstallScreenBackupImportStep({
           onClose={abortCancel}
         >
           {i18n('icu:BackupImportScreen__cancel-confirmation__body')}
+        </ConfirmationDialog>
+      )}
+
+      {isConfirmingSkip && (
+        <ConfirmationDialog
+          dialogName="InstallScreenBackupImportStep.confirmSkip"
+          title={i18n('icu:BackupImportScreen__skip-confirmation__title')}
+          cancelText={i18n('icu:BackupImportScreen__skip-confirmation__cancel')}
+          actions={[
+            {
+              action: onSkipWrap,
+              style: 'affirmative',
+              text: i18n('icu:BackupImportScreen__skip'),
+            },
+          ]}
+          i18n={i18n}
+          onClose={abortSkip}
+        >
+          {i18n('icu:BackupImportScreen__skip-confirmation__body')}
+        </ConfirmationDialog>
+      )}
+
+      {hasError && !isConfirmingSkip && (
+        <ConfirmationDialog
+          dialogName="InstallScreenBackupImportStep.error"
+          title={i18n('icu:BackupImportScreen__error__title')}
+          cancelText={i18n('icu:BackupImportScreen__skip')}
+          actions={[
+            {
+              action: onRetryWrap,
+              style: 'affirmative',
+              text: i18n('icu:BackupImportScreen__error__confirm'),
+            },
+          ]}
+          i18n={i18n}
+          onClose={confirmSkip}
+        >
+          {i18n('icu:BackupImportScreen__error__body')}
         </ConfirmationDialog>
       )}
     </div>

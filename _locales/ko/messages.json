@@ -575,9 +575,6 @@
   "icu:decryptionErrorToast": {
     "messageformat": "{deviceId} 기기, {name}에서 데스크톱에 암호 해독 문제가 발생했습니다."
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "로그 제출"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "로그 제출"
   },
@@ -791,8 +788,14 @@
   "icu:attachmentSaved": {
     "messageformat": "첨부 파일을 저장했습니다."
   },
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+  },
   "icu:attachmentSavedShow": {
     "messageformat": "폴더에서 표시"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
   },
   "icu:you": {
     "messageformat": "나"
@@ -944,9 +947,6 @@
   "icu:NotePreviewModal__Title": {
     "messageformat": "메모"
   },
-  "icu:viewRecentMedia": {
-    "messageformat": "최근 미디어 보기"
-  },
   "icu:allMediaMenuItem": {
     "messageformat": "모든 미디어"
   },
@@ -1006,6 +1006,18 @@
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
     "messageformat": "이 대화의 모든 메시지가 모든 기기에서 삭제됩니다. 메시지를 삭제한 후에도 이 대화를 계속 검색할 수 있습니다."
+  },
+  "icu:deleteConversation": {
+    "messageformat": "삭제"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "대화를 삭제하시겠습니까?"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "이 대화의 모든 메시지가 기기에서 삭제됩니다."
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "이 대화의 모든 메시지가 모든 기기에서 삭제됩니다."
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "그룹 나가기"
@@ -1232,6 +1244,9 @@
   "icu:calling__call-link-default-title": {
     "messageformat": "Signal 통화"
   },
+  "icu:calling__call-link-delete-failed": {
+    "messageformat": "링크를 삭제할 수 없습니다. 연결을 확인하고 다시 시도하세요."
+  },
   "icu:calling__join-request-denied": {
     "messageformat": "통화 참여 요청이 거부되었습니다."
   },
@@ -1416,7 +1431,7 @@
     "messageformat": "{name} 님의 음성 및 영상 통화를 수신할 수 없습니다."
   },
   "icu:calling__missing-media-keys--unknown-contact": {
-    "messageformat": "Can't receive audio and video"
+    "messageformat": "오디오와 비디오를 수신할 수 없음"
   },
   "icu:calling__missing-media-keys-info": {
     "messageformat": "이는 해당 사용자가 안전 번호 변경을 확인하지 않았거나, 기기에 문제가 있거나 나를 차단했기 때문일 수 있습니다."
@@ -1441,6 +1456,9 @@
   },
   "icu:calling__presenting--info": {
     "messageformat": "Signal이 {window} 창을 공유하고 있습니다."
+  },
+  "icu:calling__presenting--info--unknown": {
+    "messageformat": "Signal 화면 공유를 사용 중입니다."
   },
   "icu:calling__presenting--reconnecting": {
     "messageformat": "다시 연결 중…"
@@ -1626,7 +1644,7 @@
     "messageformat": "어제 {time}"
   },
   "icu:messageLoop": {
-    "messageformat": "Signal may be failing to process an incoming message."
+    "messageformat": "Signal에서 수신 메시지를 처리하는 데 문제가 있을 수 있습니다."
   },
   "icu:messageBodyTooLong": {
     "messageformat": "메시지 본문이 너무 깁니다."
@@ -2976,7 +2994,7 @@
     "messageformat": "관리자가 당신을 제거했기 때문에 그룹 링크를 통해 그룹에 참가할 수 없습니다."
   },
   "icu:GroupV2--join--prompt-with-approval": {
-    "messageformat": "이 그룹에 참가하기 위해서는 먼저 그룹 관리자가 귀하의 참가 요청을 승인해야 합니다. 참여 요청이 승인될 경우, 귀하의 이름과 사진이 그룹 멤버와 공유됩니다."
+    "messageformat": "이 그룹에 가입하려면 그룹의 관리자가 요청을 승인해야 합니다. 가입을 요청하면 내 이름과 사진이 공유됩니다."
   },
   "icu:GroupV2--join--join-button": {
     "messageformat": "참가"
@@ -3536,6 +3554,9 @@
   "icu:BackupImportScreen__progressbar-hint": {
     "messageformat": "{currentSize}/{totalSize}을(를) 다운로드하는 중({fractionComplete,number,percent})..."
   },
+  "icu:BackupImportScreen__progressbar-hint--processing": {
+    "messageformat": "메시지 전송을 마무리하는 중..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "다운로드를 준비하는 중..."
   },
@@ -3556,6 +3577,27 @@
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
     "messageformat": "전송 취소"
+  },
+  "icu:BackupImportScreen__error__title": {
+    "messageformat": "메시지 전송 오류"
+  },
+  "icu:BackupImportScreen__error__body": {
+    "messageformat": "메시지를 전송하지 못했습니다. 인터넷 연결을 확인하고 다시 시도하세요."
+  },
+  "icu:BackupImportScreen__error__confirm": {
+    "messageformat": "재시도"
+  },
+  "icu:BackupImportScreen__skip": {
+    "messageformat": "건너뛰기"
+  },
+  "icu:BackupImportScreen__skip-confirmation__title": {
+    "messageformat": "메시지 전송을 건너뛸까요?"
+  },
+  "icu:BackupImportScreen__skip-confirmation__body": {
+    "messageformat": "건너뛰도록 선택할 경우 이 기기의 모든 메시지와 미디어에 액세스할 수 없습니다. 건너뛴 다음 설정 > 대화 > 전송에서 새로운 전송을 시작할 수 있습니다."
+  },
+  "icu:BackupImportScreen__skip-confirmation__cancel": {
+    "messageformat": "취소"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "미디어 복원 중"
@@ -3640,9 +3682,6 @@
   },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "그룹에서 제거"
-  },
-  "icu:ContactModal--already-in-call": {
-    "messageformat": "이미 통화에 참여 중입니다."
   },
   "icu:ContactModal--voice": {
     "messageformat": "음성"
@@ -4449,10 +4488,10 @@
     "messageformat": "프로필을 업데이트할 수 없습니다. 다시 시도하세요."
   },
   "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Invalid characters"
+    "messageformat": "잘못된 문자"
   },
   "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "One or more characters you’ve entered can’t be used. Try again."
+    "messageformat": "입력한 문자 중 하나 이상을 사용할 수 없습니다. 다시 시도하세요."
   },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "관리자에게 메시지 전송"
@@ -5202,7 +5241,7 @@
     "messageformat": "스토리"
   },
   "icu:StoryListItem__unhide": {
-    "messageformat": "스토리 표시"
+    "messageformat": "스토리 숨기기 취소"
   },
   "icu:StoryListItem__hide": {
     "messageformat": "스토리 숨기기"
@@ -5475,11 +5514,20 @@
   "icu:CallsTab__ConfirmClearCallHistory__Body": {
     "messageformat": "모든 통화 기록을 영구 삭제합니다."
   },
+  "icu:CallsTab__ConfirmClearCallHistory__Body--call-links": {
+    "messageformat": "모든 통화 기록을 영구 삭제합니다. 내가 만든 통화 링크를 가진 사용자가 해당 링크를 더 이상 사용할 수 없게 됩니다. "
+  },
   "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
     "messageformat": "제거"
   },
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "통화 기록을 정리함"
+  },
+  "icu:CallsTab__ClearCallHistoryError--call-links": {
+    "messageformat": "모든 통화 링크를 삭제하지 못했습니다. 연결을 확인하고 다시 시도하세요."
+  },
+  "icu:CallsTab__ClearCallHistoryError": {
+    "messageformat": "모든 통화 기록을 지우지 못했습니다. 연결을 확인하고 다시 시도하세요."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "새로운 음성 또는 영상 통화를 시작하려면 <newCallButtonIcon></newCallButtonIcon> 아이콘을 클릭하세요."
@@ -5677,10 +5725,22 @@
     "messageformat": "사소한 변경 사항과 버그 수정 및 성능 개선. Signal을 이용해 주셔서 감사합니다!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.26--0": {
-    "messageformat": "본 업데이트는 그룹을 나간 뒤 해당 그룹을 검색하기 어렵게 만드는 버그를 수정합니다."
+  "icu:WhatsNew__v7.29--0": {
+    "messageformat": "본 업데이트는 시작 속도를 대략 5% 향상합니다."
   },
-  "icu:WhatsNew__v7.27--0": {
-    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\""
+  "icu:WhatsNew__v7.30--header": {
+    "messageformat": "일정 초대와 즉석 모임을 위한 링크 '통화 링크'를 소개합니다."
+  },
+  "icu:WhatsNew__v7.30--0": {
+    "messageformat": "이제 Signal 그룹 대화에 먼저 참여하지 않고서도 Signal 사용자라면 누구나 그룹 통화에 참여할 수 있는 간편한 링크를 빠르게 만들 수 있습니다."
+  },
+  "icu:WhatsNew__v7.30--1": {
+    "messageformat": "통화 링크는 다시 사용할 수 있으며, 친구와의 통화나 직장 동료와의 주간 미팅 등 반복되는 통화 일정에 사용하기 좋습니다."
+  },
+  "icu:WhatsNew__v7.30--2": {
+    "messageformat": "통화 탭에서 통화 링크를 관리하고, 승인 설정을 제어하고, 링크를 복사하여 빠르게 공유할 수 있습니다."
+  },
+  "icu:WhatsNew__v7.31--0": {
+    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
   }
 }

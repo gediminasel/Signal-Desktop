@@ -575,9 +575,6 @@
   "icu:decryptionErrorToast": {
     "messageformat": "เดสก์ท็อปพบข้อผิดพลาดในการถอดรหัสจาก {name}, อุปกรณ์ {deviceId}"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "ส่งปูม"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "ส่งบันทึก"
   },
@@ -791,8 +788,14 @@
   "icu:attachmentSaved": {
     "messageformat": "บันทึกแฟ้มแนบแล้ว"
   },
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+  },
   "icu:attachmentSavedShow": {
     "messageformat": "แสดงในโฟลเดอร์"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
   },
   "icu:you": {
     "messageformat": "คุณ"
@@ -944,9 +947,6 @@
   "icu:NotePreviewModal__Title": {
     "messageformat": "โน้ต"
   },
-  "icu:viewRecentMedia": {
-    "messageformat": "ดูสื่อครั้งล่าสุด"
-  },
   "icu:allMediaMenuItem": {
     "messageformat": "สื่อทั้งหมด"
   },
@@ -1006,6 +1006,18 @@
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
     "messageformat": "ข้อความทั้งหมดในแชทนี้จะถูกลบออกจากอุปกรณ์ทุกเครื่องของคุณ โดยคุณจะยังสามารถค้นหาแชทนี้ได้แม้จะลบข้อความไปแล้ว"
+  },
+  "icu:deleteConversation": {
+    "messageformat": "ลบ"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "ลบแชทใช่หรือไม่"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "ระบบจะลบข้อความทั้งหมดในแชทออกจากอุปกรณ์เครื่องนี้"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "ข้อความทั้งหมดในแชทนี้จะถูกลบออกจากอุปกรณ์ทุกเครื่องของคุณ"
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "ออกจากกลุ่ม"
@@ -1232,6 +1244,9 @@
   "icu:calling__call-link-default-title": {
     "messageformat": "โทร Signal"
   },
+  "icu:calling__call-link-delete-failed": {
+    "messageformat": "ไม่สามารถลบลิงก์ได้ ตรวจสอบการเชื่อมต่อของคุณแล้วลองอีกครั้ง"
+  },
   "icu:calling__join-request-denied": {
     "messageformat": "คำขอเข้าร่วมการโทรของคุณถูกปฏิเสธ"
   },
@@ -1416,7 +1431,7 @@
     "messageformat": "ไม่สามารถเสียงและวิดีโอจาก {name}"
   },
   "icu:calling__missing-media-keys--unknown-contact": {
-    "messageformat": "Can't receive audio and video"
+    "messageformat": "ไม่สามารถรับเสียงและวิดีโอได้"
   },
   "icu:calling__missing-media-keys-info": {
     "messageformat": "เหตุนี้อาจเกิดขึ้นเนื่องจากผู้ใช้คนนี้ยังไม่ได้ยืนยันหมายเลขความปลอดภัยที่เปลี่ยนไปของคุณ อุปกรณ์ของผู้ใช้มีปัญหา หรือผู้ใช้บล็อกคุณไว้"
@@ -1441,6 +1456,9 @@
   },
   "icu:calling__presenting--info": {
     "messageformat": "Signal กำลังแบ่งปัน {window}"
+  },
+  "icu:calling__presenting--info--unknown": {
+    "messageformat": "กำลังใช้งานการแชร์หน้าจอของ Signal"
   },
   "icu:calling__presenting--reconnecting": {
     "messageformat": "กำลังเชื่อมต่อใหม่…"
@@ -1626,7 +1644,7 @@
     "messageformat": "เมื่อวาน {time}"
   },
   "icu:messageLoop": {
-    "messageformat": "Signal may be failing to process an incoming message."
+    "messageformat": "Signal อาจประสบปัญหาในการประมวลผลข้อความขาเข้า"
   },
   "icu:messageBodyTooLong": {
     "messageformat": "ตัวข้อความยาวเกินไป"
@@ -2976,7 +2994,7 @@
     "messageformat": "คุณเข้าร่วมกลุ่มนี้ด้วยลิงก์กลุ่มไม่ได้เพราะผู้ดูแลลบคุณออกไปแล้ว"
   },
   "icu:GroupV2--join--prompt-with-approval": {
-    "messageformat": "ผู้ดูแลระบบของกลุ่มนี้ต้องอนุมัติคำขอเข้าร่วมของคุณก่อนจึงจะสามารถเข้าร่วมกลุ่มนี้ได้ หากได้รับการอนุมัติชื่อและรูปถ่ายของคุณจะถูกเปิดเผยกับสมาชิกในกลุ่ม"
+    "messageformat": "ผู้ดูแลของกลุ่มนี้จะต้องอนุมัติคำขอเข้าร่วมของคุณก่อนที่คุณจะสามารถเข้าร่วมกลุ่มนี้ได้ เมื่อคุณส่งคำร้องขอเข้าร่วม สมาชิกคนอื่นๆ จะเห็นชื่อและรูปของคุณ"
   },
   "icu:GroupV2--join--join-button": {
     "messageformat": "เข้าร่วม"
@@ -3536,6 +3554,9 @@
   "icu:BackupImportScreen__progressbar-hint": {
     "messageformat": "กำลังดาวน์โหลด {currentSize} จาก {totalSize} ({fractionComplete,number,percent})..."
   },
+  "icu:BackupImportScreen__progressbar-hint--processing": {
+    "messageformat": "กำลังดำเนินการถ่ายโอนข้อความให้เสร็จสิ้น..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "กำลังเตรียมการดาวน์โหลด..."
   },
@@ -3556,6 +3577,27 @@
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
     "messageformat": "ยกเลิกการถ่ายโอน"
+  },
+  "icu:BackupImportScreen__error__title": {
+    "messageformat": "เกิดข้อผิดพลาดในการถ่ายโอนข้อความ"
+  },
+  "icu:BackupImportScreen__error__body": {
+    "messageformat": "ไม่สามารถถ่ายโอนข้อความของคุณได้ ตรวจสอบการเชื่อมต่ออินเทอร์เน็ตแล้วลองอีกครั้ง"
+  },
+  "icu:BackupImportScreen__error__confirm": {
+    "messageformat": "ลองอีกครั้ง"
+  },
+  "icu:BackupImportScreen__skip": {
+    "messageformat": "ข้าม"
+  },
+  "icu:BackupImportScreen__skip-confirmation__title": {
+    "messageformat": "ข้ามการถ่ายโอนข้อความใช่หรือไม่"
+  },
+  "icu:BackupImportScreen__skip-confirmation__body": {
+    "messageformat": "หากข้ามการถ่ายโอน คุณจะไม่สามารถเข้าถึงข้อความหรือไฟล์สื่อบนอุปกรณ์เครื่องนี้ โดยคุณสามารถเริ่มถ่ายโอนได้ใหม่ โดยไปที่การตั้งค่า > แชท > การถ่ายโอน"
+  },
+  "icu:BackupImportScreen__skip-confirmation__cancel": {
+    "messageformat": "ยกเลิก"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "กำลังกู้คืนไฟล์สื่อ"
@@ -3640,9 +3682,6 @@
   },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "ลบจากกลุ่ม"
-  },
-  "icu:ContactModal--already-in-call": {
-    "messageformat": "คุณอยู่ในสายแล้ว"
   },
   "icu:ContactModal--voice": {
     "messageformat": "เสียง"
@@ -4449,10 +4488,10 @@
     "messageformat": "โปรไฟล์ของคุณไม่สามารถปรับปรุงได้ โปรดลองอีกครั้ง"
   },
   "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Invalid characters"
+    "messageformat": "อักขระไม่ถูกต้อง"
   },
   "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "One or more characters you’ve entered can’t be used. Try again."
+    "messageformat": "อักขระอย่างน้อยหนึ่งตัวที่คุณกรอกไม่สามารถใช้ได้ โปรดลองอีกครั้ง"
   },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "ส่งข้อความถึงผู้ดูแล"
@@ -5202,7 +5241,7 @@
     "messageformat": "สตอรี่"
   },
   "icu:StoryListItem__unhide": {
-    "messageformat": "แสดงสตอรี่"
+    "messageformat": "ยกเลิกการซ่อนสตอรี่"
   },
   "icu:StoryListItem__hide": {
     "messageformat": "ซ่อนสตอรี่"
@@ -5475,11 +5514,20 @@
   "icu:CallsTab__ConfirmClearCallHistory__Body": {
     "messageformat": "การดำเนินการนี้จะลบประวัติการโทรทั้งหมดอย่างถาวร"
   },
+  "icu:CallsTab__ConfirmClearCallHistory__Body--call-links": {
+    "messageformat": "การดำเนินการนี้จะลบประวัติการโทรทั้งหมดอย่างถาวร ผู้ติดต่อที่มีลิงก์การโทรที่คุณสร้างจะไม่สามารถใช้ลิงก์ดังกล่าวได้อีกต่อไป "
+  },
   "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
     "messageformat": "ล้าง"
   },
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "ล้างประวัติการโทรแล้ว"
+  },
+  "icu:CallsTab__ClearCallHistoryError--call-links": {
+    "messageformat": "ไม่สามารถลบลิงก์การโทรทั้งหมดได้ ตรวจสอบการเชื่อมต่อของคุณแล้วลองอีกครั้ง"
+  },
+  "icu:CallsTab__ClearCallHistoryError": {
+    "messageformat": "ไม่สามารถล้างประวัติการโทรทั้งหมดได้ ตรวจสอบการเชื่อมต่อของคุณแล้วลองอีกครั้ง"
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "คลิก <newCallButtonIcon></newCallButtonIcon> เพื่อเริ่มต้นการโทรด้วยเสียงหรือวิดีโอคอล"
@@ -5677,10 +5725,22 @@
     "messageformat": "มีการปรับเปลี่ยนเล็กน้อย พร้อมแก้ไขบั๊ก และการพัฒนาประสิทธิภาพให้ดียิ่งขึ้น ขอขอบคุณที่เลือกใช้ Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.26--0": {
-    "messageformat": "การอัปเดตครั้งนี้มาพร้อมการแก้ไขบั๊กที่เคยทำให้การกลับไปค้นหากลุ่มที่คุณออกมาแล้วซับซ้อนยุ่งยากกว่าที่ควรจะเป็น"
+  "icu:WhatsNew__v7.29--0": {
+    "messageformat": "การอัปเดตครั้งนี้มาพร้อมการเพิ่มความเร็วในการเปิดแอปให้ยิ่งทันใจ ไวขึ้นอีก 5%"
   },
-  "icu:WhatsNew__v7.27--0": {
-    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\""
+  "icu:WhatsNew__v7.30--header": {
+    "messageformat": "ขอแนะนำฟีเจอร์ลิงก์การโทร: ไม่ว่าเรื่องงานหรือเรื่องเล่น ก็พร้อมเติมเต็มการพูดคุยของคุณให้สะดวกยิ่งกว่า บอกลาข้อจำกัดเดิมๆ ไปได้เลย"
+  },
+  "icu:WhatsNew__v7.30--0": {
+    "messageformat": "สร้างลิงก์ได้ง่ายๆ แล้วให้ผู้ใช้ Signal คนอื่นๆ เข้าร่วมการโทรกลุ่มได้ทันทีโดยที่ไม่ต้องเป็นสมาชิกของแชทกลุ่ม Signal ก็ได้"
+  },
+  "icu:WhatsNew__v7.30--1": {
+    "messageformat": "สามารถใช้ลิงก์การโทรเดิมได้เรื่อยๆ จึงตอบโจทย์การโทรที่คุณต้องใช้เป็นประจำ ไม่ว่าจะเป็นการนัดเมาท์กับแก๊งเพื่อนหรือคุยอัปเดตงานประจำสัปดาห์กับที่บริษัท"
+  },
+  "icu:WhatsNew__v7.30--2": {
+    "messageformat": "จัดการลิงก์การโทรที่คุณสร้างได้อย่างเต็มที่ นอกจากนี้ยังสามารถเลือกตั้งค่าเพื่ออนุมัติผู้เข้าร่วม รวมถึงคัดลอกลิงก์จากแท็บการโทรแล้วแชร์ได้แบบทันใจ"
+  },
+  "icu:WhatsNew__v7.31--0": {
+    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
   }
 }

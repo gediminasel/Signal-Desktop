@@ -30,7 +30,9 @@ import { strictAssert } from '../util/assert';
 import type { SignalService as Proto } from '../protobuf';
 import { isMoreRecentThan } from '../util/timestamp';
 import { DAY } from '../util/durations';
+import { getMessageQueueTime } from '../util/getMessageQueueTime';
 import { getLocalAttachmentUrl } from '../util/getLocalAttachmentUrl';
+import type { ReencryptionInfo } from '../AttachmentCrypto';
 
 const MAX_WIDTH = 300;
 const MAX_HEIGHT = MAX_WIDTH * 1.5;
@@ -106,7 +108,15 @@ export type AttachmentType = {
 
   /** Legacy field, used long ago for migrating attachments to disk. */
   schemaVersion?: number;
-};
+} & (
+  | {
+      isReencryptableToSameDigest?: true;
+    }
+  | {
+      isReencryptableToSameDigest: false;
+      reencryptionInfo?: ReencryptionInfo;
+    }
+);
 
 export type LocalAttachmentV2Type = Readonly<{
   version: 2;
@@ -121,6 +131,7 @@ export type AddressableAttachmentType = Readonly<{
   path: string;
   localKey?: string;
   size?: number;
+  contentType: MIME.MIMEType;
 
   // In-memory data, for outgoing attachments that are not saved to disk.
   data?: Uint8Array;
@@ -142,6 +153,7 @@ export type UploadedAttachmentType = Proto.IAttachmentPointer &
     digest: Uint8Array;
     contentType: string;
     plaintextHash: string;
+    isReencryptableToSameDigest: true;
   }>;
 
 export type AttachmentWithHydratedData = AttachmentType & {
@@ -971,6 +983,7 @@ export const save = async ({
   readAttachmentData,
   saveAttachmentToDisk,
   timestamp,
+  baseDir,
 }: {
   attachment: AttachmentType;
   index?: number;
@@ -980,8 +993,14 @@ export const save = async ({
   saveAttachmentToDisk: (options: {
     data: Uint8Array;
     name: string;
+    baseDir?: string;
   }) => Promise<{ name: string; fullPath: string } | null>;
   timestamp?: number;
+  /**
+   * Base directory for saving the attachment.
+   * If omitted, a dialog will be opened to let the user choose a directory
+   */
+  baseDir?: string;
 }): Promise<string | null> => {
   let data: Uint8Array;
   if (attachment.path) {
@@ -997,6 +1016,7 @@ export const save = async ({
   const result = await saveAttachmentToDisk({
     data,
     name,
+    baseDir,
   });
 
   if (!result) {
@@ -1070,17 +1090,28 @@ export function getAttachmentSignature(attachment: AttachmentType): string {
 }
 
 type RequiredPropertiesForDecryption = 'key' | 'digest';
-type RequiredPropertiesForReencryption = 'key' | 'digest' | 'iv';
+type RequiredPropertiesForReencryption = 'path' | 'key' | 'digest' | 'iv';
 
 type DecryptableAttachment = WithRequiredProperties<
   AttachmentType,
   RequiredPropertiesForDecryption
 >;
 
-type ReencryptableAttachment = WithRequiredProperties<
+export type AttachmentWithNewReencryptionInfoType = Omit<
   AttachmentType,
-  RequiredPropertiesForReencryption
->;
+  'isReencryptableToSameDigest'
+> & {
+  isReencryptableToSameDigest: false;
+  reencryptionInfo: ReencryptionInfo;
+};
+type AttachmentReencryptableToExistingDigestType = Omit<
+  WithRequiredProperties<AttachmentType, RequiredPropertiesForReencryption>,
+  'isReencryptableToSameDigest'
+> & { isReencryptableToSameDigest: true };
+
+export type ReencryptableAttachment =
+  | AttachmentWithNewReencryptionInfoType
+  | AttachmentReencryptableToExistingDigestType;
 
 export type AttachmentDownloadableFromTransitTier = WithRequiredProperties<
   DecryptableAttachment,
@@ -1097,31 +1128,46 @@ export type LocallySavedAttachment = WithRequiredProperties<
   'path'
 >;
 
-export type AttachmentReadyForBackup = WithRequiredProperties<
-  LocallySavedAttachment,
-  RequiredPropertiesForReencryption
->;
-
 export function isDecryptable(
   attachment: AttachmentType
 ): attachment is DecryptableAttachment {
   return Boolean(attachment.key) && Boolean(attachment.digest);
 }
 
-export function isReencryptableToSameDigest(
+export function hasAllOriginalEncryptionInfo(
   attachment: AttachmentType
-): attachment is ReencryptableAttachment {
+): attachment is WithRequiredProperties<
+  AttachmentType,
+  'iv' | 'key' | 'digest'
+> {
   return (
+    Boolean(attachment.iv) &&
     Boolean(attachment.key) &&
-    Boolean(attachment.digest) &&
-    Boolean(attachment.iv)
+    Boolean(attachment.digest)
   );
 }
 
-const TIME_ON_TRANSIT_TIER = 30 * DAY;
+export function isReencryptableToSameDigest(
+  attachment: AttachmentType
+): attachment is AttachmentReencryptableToExistingDigestType {
+  return (
+    hasAllOriginalEncryptionInfo(attachment) &&
+    Boolean(attachment.isReencryptableToSameDigest)
+  );
+}
+
+export function isReencryptableWithNewEncryptionInfo(
+  attachment: AttachmentType
+): attachment is AttachmentWithNewReencryptionInfoType {
+  return (
+    attachment.isReencryptableToSameDigest === false &&
+    Boolean(attachment.reencryptionInfo)
+  );
+}
+
 // Extend range in case the attachment is actually still there (this function is meant to
 // be optimistic)
-const BUFFERED_TIME_ON_TRANSIT_TIER = TIME_ON_TRANSIT_TIER + 5 * DAY;
+const BUFFER_TIME_ON_TRANSIT_TIER = 5 * DAY;
 
 export function mightStillBeOnTransitTier(
   attachment: Pick<AttachmentType, 'cdnKey' | 'cdnNumber' | 'uploadTimestamp'>
@@ -1139,7 +1185,10 @@ export function mightStillBeOnTransitTier(
   }
 
   if (
-    isMoreRecentThan(attachment.uploadTimestamp, BUFFERED_TIME_ON_TRANSIT_TIER)
+    isMoreRecentThan(
+      attachment.uploadTimestamp,
+      getMessageQueueTime() + BUFFER_TIME_ON_TRANSIT_TIER
+    )
   ) {
     return true;
   }

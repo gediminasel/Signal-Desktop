@@ -575,9 +575,6 @@
   "icu:decryptionErrorToast": {
     "messageformat": "Desktop je naišao na pogrešku dešifriranja od {name}, uređaj {deviceId}"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "Pošalji zapisnik"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "Pošalji zapisnik"
   },
@@ -791,8 +788,14 @@
   "icu:attachmentSaved": {
     "messageformat": "Privitak je spremljen."
   },
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+  },
   "icu:attachmentSavedShow": {
     "messageformat": "Prikaži u mapi"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
   },
   "icu:you": {
     "messageformat": "Vi"
@@ -944,9 +947,6 @@
   "icu:NotePreviewModal__Title": {
     "messageformat": "Bilješka"
   },
-  "icu:viewRecentMedia": {
-    "messageformat": "Prikaži nedavne medijske zapise"
-  },
   "icu:allMediaMenuItem": {
     "messageformat": "Svi medijski zapisi"
   },
@@ -1006,6 +1006,18 @@
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
     "messageformat": "Sve poruke iz ovog razgovora bit će izbrisane sa svih vaših uređaja. I dalje možete pretražiti ovaj razgovor nakon što izbrišete poruke."
+  },
+  "icu:deleteConversation": {
+    "messageformat": "Izbriši"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "Izbriši razgovor?"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "Sve poruke iz ovog razgovora bit će izbrisane s ovog uređaja."
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "Sve poruke iz ovog razgovora bit će izbrisane sa svih vaših uređaja."
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Napusti grupu"
@@ -1232,6 +1244,9 @@
   "icu:calling__call-link-default-title": {
     "messageformat": "Signal poziv"
   },
+  "icu:calling__call-link-delete-failed": {
+    "messageformat": "Brisanje poveznice nije uspjelo. Provjerite internetsku vezu i pokušajte ponovno."
+  },
   "icu:calling__join-request-denied": {
     "messageformat": "Vaš zahtjev za pridruživanje pozivu je odbijen."
   },
@@ -1416,7 +1431,7 @@
     "messageformat": "Ne možete primiti audio i video od {name}"
   },
   "icu:calling__missing-media-keys--unknown-contact": {
-    "messageformat": "Can't receive audio and video"
+    "messageformat": "Nije moguće primati zvuk i sliku"
   },
   "icu:calling__missing-media-keys-info": {
     "messageformat": "Mogući razlog tome jest to što korisnik nije potvrdio vaš ažurirani sigurnosni broj, ima problem s uređajem ili vas je blokirao."
@@ -1441,6 +1456,9 @@
   },
   "icu:calling__presenting--info": {
     "messageformat": "Signal dijeli {window}."
+  },
+  "icu:calling__presenting--info--unknown": {
+    "messageformat": "Omogućeno emitiranje zaslona za Signal"
   },
   "icu:calling__presenting--reconnecting": {
     "messageformat": "Ponovno povezivanje…"
@@ -1626,7 +1644,7 @@
     "messageformat": "Jučer u {time}"
   },
   "icu:messageLoop": {
-    "messageformat": "Signal may be failing to process an incoming message."
+    "messageformat": "Signal možda nije u mogućnosti obraditi dolaznu poruku."
   },
   "icu:messageBodyTooLong": {
     "messageformat": "Tijelo poruke je predugo."
@@ -2976,7 +2994,7 @@
     "messageformat": "Ne možete se pridružiti ovoj grupi putem poveznice grupe jer vas je administrator uklonio."
   },
   "icu:GroupV2--join--prompt-with-approval": {
-    "messageformat": "Administrator ove grupe mora odobriti vaš zahtjev prije nego što se možete pridružiti ovoj grupi. Kada se odobri, vaše će ime i fotografija biti podijeljena sa članovima grupe."
+    "messageformat": "Administrator ove grupe mora odobriti vaš zahtjev prije nego što se možete pridružiti ovoj grupi. Kada zatražite pridruživanje, vaše će ime i vaša fotografija biti podijeljeni sa članovima grupe."
   },
   "icu:GroupV2--join--join-button": {
     "messageformat": "Pridruži se"
@@ -3536,6 +3554,9 @@
   "icu:BackupImportScreen__progressbar-hint": {
     "messageformat": "Preuzimanje: {currentSize} od {totalSize} ({fractionComplete,number,percent})…"
   },
+  "icu:BackupImportScreen__progressbar-hint--processing": {
+    "messageformat": "Prijenos poruka je pri kraju…"
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Pripremamo datoteke za preuzimanje…"
   },
@@ -3556,6 +3577,27 @@
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
     "messageformat": "Prekini prijenos"
+  },
+  "icu:BackupImportScreen__error__title": {
+    "messageformat": "Pogreška u prijenosu poruka"
+  },
+  "icu:BackupImportScreen__error__body": {
+    "messageformat": "Prijenos vaših poruka nije uspio. Provjerite internetsku vezu i pokušajte ponovno."
+  },
+  "icu:BackupImportScreen__error__confirm": {
+    "messageformat": "Pokušajte ponovno"
+  },
+  "icu:BackupImportScreen__skip": {
+    "messageformat": "Preskoči"
+  },
+  "icu:BackupImportScreen__skip-confirmation__title": {
+    "messageformat": "Preskočiti prijenos poruka?"
+  },
+  "icu:BackupImportScreen__skip-confirmation__body": {
+    "messageformat": "Ukoliko odlučite preskočiti ovaj korak, nećete imati pristup nijednoj poruci ili medijskom zapisu s ovog uređaja. Ako preskočite prijenos poruka sada, možete ga naknadno pokrenuti u Postavkama > Razgovori > Prijenos."
+  },
+  "icu:BackupImportScreen__skip-confirmation__cancel": {
+    "messageformat": "Odustani"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "Vraćanje medijskih zapisa"
@@ -3640,9 +3682,6 @@
   },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Ukloni iz grupe"
-  },
-  "icu:ContactModal--already-in-call": {
-    "messageformat": "Već ste na pozivu"
   },
   "icu:ContactModal--voice": {
     "messageformat": "Glasovni poziv"
@@ -4449,10 +4488,10 @@
     "messageformat": "Vaš profil nije moguće ažurirati. Molim vas pokušajte ponovno."
   },
   "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Invalid characters"
+    "messageformat": "Nevažeći znakovi"
   },
   "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "One or more characters you’ve entered can’t be used. Try again."
+    "messageformat": "Jedan ili više znakova koje ste unijeli nije moguće koristiti. Pokušajte ponovno."
   },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Pošaljite poruku administratoru"
@@ -5202,7 +5241,7 @@
     "messageformat": "Priča"
   },
   "icu:StoryListItem__unhide": {
-    "messageformat": "Prikaži priče"
+    "messageformat": "Ponovno prikaži priču"
   },
   "icu:StoryListItem__hide": {
     "messageformat": "Sakrij priču"
@@ -5473,13 +5512,22 @@
     "messageformat": "Izbrisati povijest poziva?"
   },
   "icu:CallsTab__ConfirmClearCallHistory__Body": {
-    "messageformat": "Ovime ćete trajno izbrisati povijest poziva"
+    "messageformat": "Ovime ćete trajno izbrisati povijest vaših poziva."
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Body--call-links": {
+    "messageformat": "Ovime ćete trajno izbrisati povijest svih vaših poziva. Poveznice na poziv koje ste stvorili i poslali drugim korisnicima neće više biti funkcionalne. "
   },
   "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
     "messageformat": "Ukloni"
   },
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "Povijest poziva je izbrisana"
+  },
+  "icu:CallsTab__ClearCallHistoryError--call-links": {
+    "messageformat": "Brisanje svih poveznica na poziv nije uspjelo. Provjerite internetsku vezu i pokušajte ponovno."
+  },
+  "icu:CallsTab__ClearCallHistoryError": {
+    "messageformat": "Brisanje povijesti poziva nije uspjelo. Provjerite internetsku vezu i pokušajte ponovno."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Kliknite na <newCallButtonIcon></newCallButtonIcon> za početak novog glasovnog poziva ili videopoziva."
@@ -5677,10 +5725,22 @@
     "messageformat": "Manja podešavanja, ispravci grešaka i poboljšanje rada aplikacije. Hvala vam što koristite Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.26--0": {
-    "messageformat": "Ovo ažuriranje ispravlja programsku pogrešku koja je otežavala pretraživanje grupa nakon njihovog napuštanja."
+  "icu:WhatsNew__v7.29--0": {
+    "messageformat": "Ovo ažuriranje donosi poboljšanje brzine pokretanja od oko 5 %."
   },
-  "icu:WhatsNew__v7.27--0": {
-    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\""
+  "icu:WhatsNew__v7.30--header": {
+    "messageformat": "Predstavljamo Poveznice na poziv: idealne za sve vrste poziva, od onih koji ste već uvrstili u kalendar do onih planiranih u zadnji čas."
+  },
+  "icu:WhatsNew__v7.30--0": {
+    "messageformat": "Sada možete brzo stvoriti poveznicu koju svi korisnici Signala mogu koristiti za pridruživanje grupnom pozivu bez potrebe da se prethodno pridruže grupnom razgovoru."
+  },
+  "icu:WhatsNew__v7.30--1": {
+    "messageformat": "Poveznice na poziv mogu se koristiti više puta, a idealne su za redovite telefonske pozive s prijateljima ili tjedne sastanke s kolegama."
+  },
+  "icu:WhatsNew__v7.30--2": {
+    "messageformat": "Možete upravljati svojim poveznicama na poziv, njihovim postavkama pridruživanja te kopirati poveznice s kartice poziva kako biste ih jednostavno podijelili s drugima."
+  },
+  "icu:WhatsNew__v7.31--0": {
+    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
   }
 }

@@ -575,9 +575,6 @@
   "icu:decryptionErrorToast": {
     "messageformat": "В Signal Desktop произошла ошибка расшифровки сообщения от {name}, устройство {deviceId}"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "Отправить журнал"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "Отправить журнал"
   },
@@ -791,8 +788,14 @@
   "icu:attachmentSaved": {
     "messageformat": "Вложение сохранено."
   },
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+  },
   "icu:attachmentSavedShow": {
     "messageformat": "Показать в папке"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
   },
   "icu:you": {
     "messageformat": "Вы"
@@ -944,9 +947,6 @@
   "icu:NotePreviewModal__Title": {
     "messageformat": "Заметка"
   },
-  "icu:viewRecentMedia": {
-    "messageformat": "Просмотреть недавние медиа"
-  },
   "icu:allMediaMenuItem": {
     "messageformat": "Все медиафайлы"
   },
@@ -1006,6 +1006,18 @@
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
     "messageformat": "Все сообщения в этом чате будут удалены со всех ваших устройств. После удаления сообщений вы сможете продолжать поиск по этому чату."
+  },
+  "icu:deleteConversation": {
+    "messageformat": "Удалить"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "Удалить чат?"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "Все сообщения в этом чате будут удалены с этого устройства."
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "Все сообщения в этом чате будут удалены со всех ваших устройств."
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Покинуть группу"
@@ -1232,6 +1244,9 @@
   "icu:calling__call-link-default-title": {
     "messageformat": "Звонок Signal"
   },
+  "icu:calling__call-link-delete-failed": {
+    "messageformat": "Не удалось удалить ссылку. Проверьте ваше подключение к интернету и попробуйте ещё раз."
+  },
   "icu:calling__join-request-denied": {
     "messageformat": "Ваш запрос на присоединение к этому звонку был отклонён."
   },
@@ -1416,7 +1431,7 @@
     "messageformat": "Невозможно получать аудио и видео от {name}"
   },
   "icu:calling__missing-media-keys--unknown-contact": {
-    "messageformat": "Can't receive audio and video"
+    "messageformat": "Невозможно получать аудио и видео"
   },
   "icu:calling__missing-media-keys-info": {
     "messageformat": "Возможно, это из-за того, что этот участник не подтвердил изменение вашего кода безопасности, или есть какая-то проблема с его устройством, или он вас заблокировал."
@@ -1441,6 +1456,9 @@
   },
   "icu:calling__presenting--info": {
     "messageformat": "Signal показывает {window}."
+  },
+  "icu:calling__presenting--info--unknown": {
+    "messageformat": "Идёт демонстрация экрана Signal"
   },
   "icu:calling__presenting--reconnecting": {
     "messageformat": "Переподключаемся…"
@@ -1626,7 +1644,7 @@
     "messageformat": "Вчера в {time}"
   },
   "icu:messageLoop": {
-    "messageformat": "Signal may be failing to process an incoming message."
+    "messageformat": "Возможно, Signal не может обработать входящее сообщение."
   },
   "icu:messageBodyTooLong": {
     "messageformat": "Текст сообщения слишком длинный."
@@ -3536,6 +3554,9 @@
   "icu:BackupImportScreen__progressbar-hint": {
     "messageformat": "Загрузка {currentSize} из {totalSize} ({fractionComplete,number,percent})..."
   },
+  "icu:BackupImportScreen__progressbar-hint--processing": {
+    "messageformat": "Завершение переноса сообщений..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Готовимся к загрузке..."
   },
@@ -3556,6 +3577,27 @@
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
     "messageformat": "Отменить трансфер"
+  },
+  "icu:BackupImportScreen__error__title": {
+    "messageformat": "Ошибка при переносе сообщений"
+  },
+  "icu:BackupImportScreen__error__body": {
+    "messageformat": "Не удалось перенести ваши сообщения. Проверьте ваше подключение к интернету и попробуйте ещё раз."
+  },
+  "icu:BackupImportScreen__error__confirm": {
+    "messageformat": "Повторить попытку"
+  },
+  "icu:BackupImportScreen__skip": {
+    "messageformat": "Пропустить"
+  },
+  "icu:BackupImportScreen__skip-confirmation__title": {
+    "messageformat": "Пропустить перенос сообщений?"
+  },
+  "icu:BackupImportScreen__skip-confirmation__body": {
+    "messageformat": "Если вы решите пропустить, у вас не будет доступа к сообщениям или медиафайлам на этом устройстве. Вы можете начать новый перенос после пропуска из Настроек > Чаты > Перенос."
+  },
+  "icu:BackupImportScreen__skip-confirmation__cancel": {
+    "messageformat": "Отменить"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "Восстановление медиафайлов"
@@ -3640,9 +3682,6 @@
   },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Удалить из группы"
-  },
-  "icu:ContactModal--already-in-call": {
-    "messageformat": "Вы уже участвуете в другом звонке"
   },
   "icu:ContactModal--voice": {
     "messageformat": "Аудио"
@@ -4449,10 +4488,10 @@
     "messageformat": "Не удалось обновить ваш профиль. Пожалуйста, попробуйте еще раз."
   },
   "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Invalid characters"
+    "messageformat": "Недопустимые символы"
   },
   "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "One or more characters you’ve entered can’t be used. Try again."
+    "messageformat": "Один или несколько введённых символов не могут быть использованы. Попробуйте ещё раз."
   },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Написать сообщение администратору"
@@ -5202,7 +5241,7 @@
     "messageformat": "История"
   },
   "icu:StoryListItem__unhide": {
-    "messageformat": "Показывать истории"
+    "messageformat": "Показать историю"
   },
   "icu:StoryListItem__hide": {
     "messageformat": "Скрыть историю"
@@ -5473,13 +5512,22 @@
     "messageformat": "Очистить историю звонков?"
   },
   "icu:CallsTab__ConfirmClearCallHistory__Body": {
-    "messageformat": "Вся история звонков будет безвозвратно удалена"
+    "messageformat": "Вся история звонков будет безвозвратно удалена."
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Body--call-links": {
+    "messageformat": "Вся история звонков будет безвозвратно удалена. Созданные вами ссылки на звонки больше не будут действовать для тех, у кого они есть. "
   },
   "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
     "messageformat": "Удалить"
   },
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "История звонков стёрта"
+  },
+  "icu:CallsTab__ClearCallHistoryError--call-links": {
+    "messageformat": "Не удаётся удалить все ссылки на звонки. Проверьте ваше подключение к интернету и попробуйте ещё раз."
+  },
+  "icu:CallsTab__ClearCallHistoryError": {
+    "messageformat": "Не вся история звонков может быть очищена. Проверьте ваше подключение к интернету и попробуйте ещё раз."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Нажмите <newCallButtonIcon></newCallButtonIcon>, чтобы начать новый аудио- или видеозвонок."
@@ -5677,10 +5725,22 @@
     "messageformat": "Небольшие изменения, исправления ошибок и улучшения производительности. Спасибо за то, что пользуетесь Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.26--0": {
-    "messageformat": "Иногда лишь покинув что-то, мы понимаем, что хотим туда вернуться. Поэтому мы исправили ошибку, затруднявшую поиск групп, в которых вы больше не участвуете, но которые всё ещё остаются в вашем списке разговоров (и, вполне возможно, в вашем сердце)."
+  "icu:WhatsNew__v7.29--0": {
+    "messageformat": "Это обновление повышает скорость запуска примерно на 5%, поэтому вы можете спокойно замедлиться в чём-то другом."
   },
-  "icu:WhatsNew__v7.27--0": {
-    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\""
+  "icu:WhatsNew__v7.30--header": {
+    "messageformat": "Ссылки на звонки: недостающее звено для приглашений в календаре и импровизированных встреч."
+  },
+  "icu:WhatsNew__v7.30--0": {
+    "messageformat": "Быстро создавайте ссылку, по которой любой пользователь Signal сможет присоединиться к групповому звонку без подключения к групповому чату Signal."
+  },
+  "icu:WhatsNew__v7.30--1": {
+    "messageformat": "Ссылки на звонки можно использовать многократно, они идеальны для регулярных телефонных разговоров с друзьями или еженедельных звонков с коллегами."
+  },
+  "icu:WhatsNew__v7.30--2": {
+    "messageformat": "Вы можете управлять ссылками на звонки, настройками одобрения и копировать ссылки на вкладке звонков для быстрого обмена."
+  },
+  "icu:WhatsNew__v7.31--0": {
+    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
   }
 }

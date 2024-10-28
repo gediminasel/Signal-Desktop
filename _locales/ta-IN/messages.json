@@ -575,9 +575,6 @@
   "icu:decryptionErrorToast": {
     "messageformat": "டெஸ்க்டாப்பில் {name} , சாதனம் {deviceId}- இருந்து மறைகுறியாக்கப் பிழை ஏற்பட்டது"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "பதிவைச் சமர்ப்பிக்கவும்"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "பதிவைச் சமர்ப்பிக்கவும்"
   },
@@ -791,8 +788,14 @@
   "icu:attachmentSaved": {
     "messageformat": "இணைப்பு சேமிக்கப்பட்டது."
   },
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+  },
   "icu:attachmentSavedShow": {
     "messageformat": "கோப்புறையில் காட்டு"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
   },
   "icu:you": {
     "messageformat": "நீங்கள்"
@@ -944,9 +947,6 @@
   "icu:NotePreviewModal__Title": {
     "messageformat": "குறிப்பு"
   },
-  "icu:viewRecentMedia": {
-    "messageformat": "சமீபத்திய ஊடகங்களைக் காண்க"
-  },
   "icu:allMediaMenuItem": {
     "messageformat": "அனைத்து மீடியா"
   },
@@ -1006,6 +1006,18 @@
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
     "messageformat": "இந்தச் சாட்டில் உள்ள அனைத்து மெசேஜ்களும் உங்கள் எல்லா சாதனங்களிலிருந்தும் அழிக்கப்படும். மெசேஜ்களை அழித்த பிறகும் நீங்கள் இந்தச் சாட்டில் தேடலாம்."
+  },
+  "icu:deleteConversation": {
+    "messageformat": "நீக்கு"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "சாட்டை நீக்க வேண்டுமா?"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "இந்த சாட்டில் உள்ள அனைத்து மெசேஜ்களும் இந்த டிவைஸிலிருந்து நீக்கப்படும்."
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "இந்தச் சாட்டில் உள்ள அனைத்து மெசேஜ்களும் உங்கள் எல்லா சாதனங்களிலிருந்தும் அழிக்கப்படும்."
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "குழுவிலுருந்து விலகு"
@@ -1232,6 +1244,9 @@
   "icu:calling__call-link-default-title": {
     "messageformat": "Signal அழைப்பு"
   },
+  "icu:calling__call-link-delete-failed": {
+    "messageformat": "இணைப்பை அழிக்க முடியவில்லை. உங்கள் இணைப்பைச் சரிபார்த்து மீண்டும் முயலவும்."
+  },
   "icu:calling__join-request-denied": {
     "messageformat": "இந்த அழைப்பில் சேருவதற்கான உங்கள் கோரிக்கை நிராகரிக்கப்பட்டது."
   },
@@ -1416,7 +1431,7 @@
     "messageformat": "{name}இலிருந்து ஆடியோ மற்றும் வீடியோவைப் பெற முடியவில்லை"
   },
   "icu:calling__missing-media-keys--unknown-contact": {
-    "messageformat": "Can't receive audio and video"
+    "messageformat": "ஆடியோ மற்றும் வீடியோவைப் பெற முடியவில்லை"
   },
   "icu:calling__missing-media-keys-info": {
     "messageformat": "இது உங்கள் பாதுகாப்பு எண் மாற்றத்தை அவர்கள் சரிபார்க்கவில்லை அல்லது அவர்களின் சாதனத்தில் சிக்கல் இருப்பதால் அல்லது அவர்கள் உங்களைத் தடுத்ததால் இருக்கலாம்."
@@ -1441,6 +1456,9 @@
   },
   "icu:calling__presenting--info": {
     "messageformat": "Signal பகிர்கிறது {window}."
+  },
+  "icu:calling__presenting--info--unknown": {
+    "messageformat": "சிக்னல் திரைப் பகிர்வு செயலில் உள்ளது"
   },
   "icu:calling__presenting--reconnecting": {
     "messageformat": "மீண்டும் இணைக்கிறது…"
@@ -1626,7 +1644,7 @@
     "messageformat": "நேற்று {time}"
   },
   "icu:messageLoop": {
-    "messageformat": "Signal may be failing to process an incoming message."
+    "messageformat": "சிக்னல் உள்வரும் மெசேஜைச் செயலாக்கத் தவறியிருக்கலாம்."
   },
   "icu:messageBodyTooLong": {
     "messageformat": "செய்தி உடல் மிக நீளமானது."
@@ -2976,7 +2994,7 @@
     "messageformat": "ஒரு நிர்வாகி உங்களை நீக்கியதால், குழு இணைப்பு வாயிலாக இந்தக் குழுவில் உங்களால் சேர முடியாது."
   },
   "icu:GroupV2--join--prompt-with-approval": {
-    "messageformat": "இதன் நிர்வாகி குழு உங்களால் முடியும் முன் உங்கள் கோரிக்கையை அங்கீகரிக்க வேண்டும் சேர இது குழு. என்றால் அங்கீகரிக்கப்பட்டது, உங்கள் பெயர் மற்றும் புகைப்படம் அதன் உறுப்பினர்களுடன் பகிரப்படும்."
+    "messageformat": "இந்த குழுவில் சேருவதற்கு முன்பு இந்த குழுவின் நிர்வாகி உங்கள் கோரிக்கையை அங்கீகரிக்க வேண்டும். நீங்கள் சேரக் கோரும்போது, உங்கள் பெயர் மற்றும் புகைப்படம் அதன் உறுப்பினர்களுடன் பகிரப்படும்."
   },
   "icu:GroupV2--join--join-button": {
     "messageformat": "சேரவும்"
@@ -3536,6 +3554,9 @@
   "icu:BackupImportScreen__progressbar-hint": {
     "messageformat": "{totalSize} இல் {currentSize} ஐப் பதிவிறக்குகிறது({fractionComplete,number,percent})..."
   },
+  "icu:BackupImportScreen__progressbar-hint--processing": {
+    "messageformat": "மெசேஜ் இடமாற்றத்தை உறுதிசெய்கிறது..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "பதிவிறக்கத் தயாராகிறது..."
   },
@@ -3556,6 +3577,27 @@
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
     "messageformat": "பரிமாற்றத்தை ரத்துசெய்க"
+  },
+  "icu:BackupImportScreen__error__title": {
+    "messageformat": "உங்கள் மெசேஜ்களை இடமாற்றுவதில் பிழை"
+  },
+  "icu:BackupImportScreen__error__body": {
+    "messageformat": "உங்கள் மெசேஜ்களை இடமாற்ற முடியவில்லை. உங்கள் இணைய இணைப்பைச் சரிபார்த்து மீண்டும் முயலவும்."
+  },
+  "icu:BackupImportScreen__error__confirm": {
+    "messageformat": "மீண்டும் முயற்சி செய்"
+  },
+  "icu:BackupImportScreen__skip": {
+    "messageformat": "தவிர்"
+  },
+  "icu:BackupImportScreen__skip-confirmation__title": {
+    "messageformat": "மெசேஜ் இடமாற்றத்தைத் தவிர்ப்பதா?"
+  },
+  "icu:BackupImportScreen__skip-confirmation__body": {
+    "messageformat": "நீங்கள் தவிர் என்ற விருப்பத்தைத் தேர்ந்தெடுத்தால், இந்த சாதனத்தில் உள்ள உங்கள் மெசேஜ்கள் அல்லது மீடியாவை அணுக முடியாது. அமைப்புகள் > சாட்ஸ் > இடமாற்றம் என்பதற்குச் சென்ற பிறகு புதிய இடமாற்றத்தைத் தொடங்கலாம்."
+  },
+  "icu:BackupImportScreen__skip-confirmation__cancel": {
+    "messageformat": "ரத்துசெய்"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "மீடியாவை மீட்டமைக்கிறது"
@@ -3640,9 +3682,6 @@
   },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "குழுவிலிருந்து அகற்று"
-  },
-  "icu:ContactModal--already-in-call": {
-    "messageformat": "நீங்கள் ஏற்கனவே அழைப்பில் உள்ளீர்கள்"
   },
   "icu:ContactModal--voice": {
     "messageformat": "குரல்"
@@ -4449,10 +4488,10 @@
     "messageformat": "உங்கள் சுயவிவரத்தை புதுப்பிக்க முடியவில்லை. தயவு செய்து மீண்டும் முயற்சி செய்."
   },
   "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Invalid characters"
+    "messageformat": "தவறான எழுத்துக்கள்"
   },
   "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "One or more characters you’ve entered can’t be used. Try again."
+    "messageformat": "நீங்கள் உள்ளிட்ட ஒன்று அல்லது அதற்கு மேற்பட்ட எழுத்துக்களைப் பயன்படுத்த முடியாது. மீண்டும் முயற்சிக்கவும்."
   },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "ஒரு நிர்வாகிக்கு செய்தி அனுப்புங்கள்"
@@ -5202,7 +5241,7 @@
     "messageformat": "ஸ்டோரி"
   },
   "icu:StoryListItem__unhide": {
-    "messageformat": "ஸ்டோரீஸ்-ஐக் காட்டவும்"
+    "messageformat": "ஸ்டோரியின் மறைநிலையை மாற்றவும்"
   },
   "icu:StoryListItem__hide": {
     "messageformat": "ஸ்டோரியை மறைக்கவும்"
@@ -5473,13 +5512,22 @@
     "messageformat": "அழைப்பு வரலாற்றை அழிக்க வேண்டுமா?"
   },
   "icu:CallsTab__ConfirmClearCallHistory__Body": {
-    "messageformat": "இது அனைத்து அழைப்பு வரலாற்றையும் நிரந்தரமாக நீக்கும்"
+    "messageformat": "இது அனைத்து அழைப்பு வரலாற்றையும் நிரந்தரமாக அழிக்கும்."
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Body--call-links": {
+    "messageformat": "இது அனைத்து அழைப்பு வரலாற்றையும் நிரந்தரமாக நீக்கும். நீங்கள் உருவாக்கிய அழைப்பு இணைப்புகளை வைத்திருப்பவர்களுக்கு அவை இனி வேலை செய்யாது. "
   },
   "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
     "messageformat": "அழி"
   },
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "அழைப்பு வரலாறு அழிக்கப்பட்டது"
+  },
+  "icu:CallsTab__ClearCallHistoryError--call-links": {
+    "messageformat": "அனைத்து கால் இணைப்புகளையும் அழிக்க முடியாது. உங்கள் இணைப்பைச் சரிபார்த்து மீண்டும் முயலவும்."
+  },
+  "icu:CallsTab__ClearCallHistoryError": {
+    "messageformat": "அனைத்து அழைப்பு வரலாற்றையும் அழிக்க முடியாது. உங்கள் இணைப்பைச் சரிபார்த்து மீண்டும் முயலவும்."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "புதிய குரல் அல்லது வீடியோ அழைப்பை மேற்கொள்ள <newCallButtonIcon></newCallButtonIcon> ஐக் க்ளிக் செய்யவும்."
@@ -5677,10 +5725,22 @@
     "messageformat": "சிறு மாற்றங்கள், பிழை திருத்தங்கள் மற்றும் செயல்திறன் மேம்பாடுகள். சிக்னலைப் பயன்படுத்தியதற்கு நன்றி!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.26--0": {
-    "messageformat": "இந்தக் குழுவில் இருந்து வெளியேறிய பிறகு ஒரு குழுவைத் தேடுவதில் சிக்கலை ஏற்படுத்தும் பிழையை இந்த மேம்படுத்தல் சரிசெய்கிறது."
+  "icu:WhatsNew__v7.29--0": {
+    "messageformat": "இந்தப் புதுப்பிப்பு தொடக்க வேகத்தை சுமார் 5% அதிகரிக்கிறது."
   },
-  "icu:WhatsNew__v7.27--0": {
-    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\""
+  "icu:WhatsNew__v7.30--header": {
+    "messageformat": "கால் இணைப்புகளை வழங்குகிறோம்: கேலெண்டர் அழைப்புகள் & உடனடி சந்திப்புகளுக்காக விடுபட்ட இணைப்பு."
+  },
+  "icu:WhatsNew__v7.30--0": {
+    "messageformat": "★ முதலில் சிக்னல் குழு சாட்டில் சேராமல், சிக்னல் குழு காலில் சேர உபயோகிக்கும் எளிய இணைப்பை எவரும் உருவாக்கலாம்."
+  },
+  "icu:WhatsNew__v7.30--1": {
+    "messageformat": "★ கால் இணைப்புகளை மீண்டும் உபயோகிக்கலாம் & நண்பர்களுடன் தொடர்ச்சியான போன் கால் தேதிகள்/சக ஊழியர்களுடன் வாராந்திர செக்-இன்களுக்கு ஏற்றவை."
+  },
+  "icu:WhatsNew__v7.30--2": {
+    "messageformat": "★ கால் இணைப்புகளை நிர்வகிக்கலாம், ஒப்புதல் அமைப்புகளை கட்டுப்படுத்தலாம் & துரித பகிர்வுக்கு கால்களின் தாவலில் இருந்து இணைப்புகளை நகலெடுக்கலாம்."
+  },
+  "icu:WhatsNew__v7.31--0": {
+    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
   }
 }

@@ -9,16 +9,16 @@
     "messageformat": "Додати"
   },
   "icu:AddUserToAnotherGroupModal__confirm-message": {
-    "messageformat": "Додати «{contact}» до групи «{group}»"
+    "messageformat": "Додати користувача {contact} до групи «{group}»"
   },
   "icu:AddUserToAnotherGroupModal__search-placeholder": {
     "messageformat": "Пошук"
   },
   "icu:AddUserToAnotherGroupModal__toast--user-added-to-group": {
-    "messageformat": "{contact} додано до {group}"
+    "messageformat": "Користувача {contact} додано до «{group}»"
   },
   "icu:AddUserToAnotherGroupModal__toast--adding-user-to-group": {
-    "messageformat": "Додаємо {contact}…"
+    "messageformat": "Додаємо користувача {contact}…"
   },
   "icu:RecordingComposer__cancel": {
     "messageformat": "Скасувати"
@@ -30,10 +30,10 @@
     "messageformat": "{count, plural, one {{count,number} учасник} few {{count,number} учасники} many {{count,number} учасників} other {{count,number} учасника}}"
   },
   "icu:GroupListItem__message-already-member": {
-    "messageformat": "Вже учасник"
+    "messageformat": "Уже в цій групі"
   },
   "icu:GroupListItem__message-pending": {
-    "messageformat": "Запит на участь розглядається"
+    "messageformat": "Чекає на дозвіл приєднатися до групи"
   },
   "icu:Preferences__sent-media-quality": {
     "messageformat": "Якість медіафайлів, які ви надсилаєте"
@@ -54,7 +54,7 @@
     "messageformat": "Apple silicon"
   },
   "icu:copyErrorAndQuit": {
-    "messageformat": "Скопіювати текст помилки та вийти"
+    "messageformat": "Скопіювати текст помилки й вийти"
   },
   "icu:unknownContact": {
     "messageformat": "Невідомий контакт"
@@ -93,13 +93,13 @@
     "messageformat": "Створити / Завантажити набір стікерів"
   },
   "icu:mainMenuEdit": {
-    "messageformat": "&Редагування"
+    "messageformat": "&Редагувати"
   },
   "icu:mainMenuView": {
     "messageformat": "&Вигляд"
   },
   "icu:mainMenuWindow": {
-    "messageformat": "В&ікно"
+    "messageformat": "&Вікно"
   },
   "icu:mainMenuHelp": {
     "messageformat": "&Допомога"
@@ -114,7 +114,7 @@
     "messageformat": "Сховати"
   },
   "icu:appMenuHideOthers": {
-    "messageformat": "Сховати інші"
+    "messageformat": "Сховати інші вікна"
   },
   "icu:appMenuUnhide": {
     "messageformat": "Показати всі"
@@ -126,7 +126,7 @@
     "messageformat": "Видалити"
   },
   "icu:editMenuRedo": {
-    "messageformat": "Повторити"
+    "messageformat": "Повторити введення"
   },
   "icu:editMenuCut": {
     "messageformat": "Вирізати"
@@ -150,7 +150,7 @@
     "messageformat": "Почати говорити"
   },
   "icu:editMenuStopSpeaking": {
-    "messageformat": "Припинити говорити"
+    "messageformat": "Перестати говорити"
   },
   "icu:windowMenuClose": {
     "messageformat": "Закрити вікно"
@@ -162,10 +162,10 @@
     "messageformat": "Збільшити"
   },
   "icu:windowMenuBringAllToFront": {
-    "messageformat": "Перемістити Все на Передній План"
+    "messageformat": "Перемістити все на передній план"
   },
   "icu:viewMenuResetZoom": {
-    "messageformat": "Поточний розмір"
+    "messageformat": "Стандартний розмір"
   },
   "icu:viewMenuZoomIn": {
     "messageformat": "Збільшити"
@@ -177,7 +177,7 @@
     "messageformat": "На весь екран / У вікні"
   },
   "icu:viewMenuToggleDevTools": {
-    "messageformat": "Переключити Інструменти Розробника"
+    "messageformat": "Інструменти розробника"
   },
   "icu:viewMenuOpenCallingDevTools": {
     "messageformat": "Відкрити інструменти розробника для викликів"
@@ -186,7 +186,7 @@
     "messageformat": "Налаштувати як новий пристрій"
   },
   "icu:menuSetupAsStandalone": {
-    "messageformat": "Налаштувати як Самостійний Пристрій"
+    "messageformat": "Налаштувати як самостійний пристрій"
   },
   "icu:messageContextMenuButton": {
     "messageformat": "Інші дії"
@@ -575,9 +575,6 @@
   "icu:decryptionErrorToast": {
     "messageformat": "У застосунку виникла помилка шифрування з {name}, пристрій {deviceId}"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "Передати журнал"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "Надіслати журнал"
   },
@@ -714,7 +711,7 @@
     "messageformat": "Пошук за номером телефону"
   },
   "icu:welcomeToSignal": {
-    "messageformat": "Ласкаво просимо до Signal"
+    "messageformat": "Ласкаво просимо в Signal"
   },
   "icu:whatsNew": {
     "messageformat": "Дізнайтеся, {whatsNew} в цьому оновленні"
@@ -791,8 +788,14 @@
   "icu:attachmentSaved": {
     "messageformat": "Вкладення збережено."
   },
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+  },
   "icu:attachmentSavedShow": {
     "messageformat": "Показати в папці"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
   },
   "icu:you": {
     "messageformat": "Ви"
@@ -944,9 +947,6 @@
   "icu:NotePreviewModal__Title": {
     "messageformat": "Примітка"
   },
-  "icu:viewRecentMedia": {
-    "messageformat": "Недавні медіафайли"
-  },
   "icu:allMediaMenuItem": {
     "messageformat": "Усі медіафайли"
   },
@@ -1006,6 +1006,18 @@
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
     "messageformat": "Усі повідомлення в цьому чаті буде видалено з усіх ваших пристроїв. Після видалення повідомлень ви все одно зможете знайти цей чат."
+  },
+  "icu:deleteConversation": {
+    "messageformat": "Видалити"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "Видалити чат?"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "Усі повідомлення в цьому чаті буде видалено з цього пристрою."
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "Усі повідомлення в цьому чаті буде видалено з усіх ваших пристроїв."
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Покинути групу"
@@ -1232,6 +1244,9 @@
   "icu:calling__call-link-default-title": {
     "messageformat": "Виклик у Signal"
   },
+  "icu:calling__call-link-delete-failed": {
+    "messageformat": "Не вдається видалити посилання. Перевірте з'єднання і спробуйте ще раз."
+  },
   "icu:calling__join-request-denied": {
     "messageformat": "Вам не дозволено приєднатися до виклику."
   },
@@ -1416,7 +1431,7 @@
     "messageformat": "Неможливо отримати аудіо та відео від {name}"
   },
   "icu:calling__missing-media-keys--unknown-contact": {
-    "messageformat": "Can't receive audio and video"
+    "messageformat": "Ви не можете чути й бачити цього користувача"
   },
   "icu:calling__missing-media-keys-info": {
     "messageformat": "Це могло статися через те, що користувач не позначив ваш змінений код безпеки як перевірений, має проблему з пристроєм або заблокував вас."
@@ -1441,6 +1456,9 @@
   },
   "icu:calling__presenting--info": {
     "messageformat": "Signal обмінюється {window}."
+  },
+  "icu:calling__presenting--info--unknown": {
+    "messageformat": "Увімкнено демонстрацію екрана в Signal"
   },
   "icu:calling__presenting--reconnecting": {
     "messageformat": "Триває відновлення з'єднання…"
@@ -1581,7 +1599,7 @@
     "messageformat": "Ця версія застаріла. Оновіться до останньої версії щоб продовжити спілкування."
   },
   "icu:upgrade": {
-    "messageformat": "Клацнути, щоб перейти до signal.org/download"
+    "messageformat": "Клацнути, щоб перейти на signal.org/download"
   },
   "icu:mediaMessage": {
     "messageformat": "Медіаповідомлення"
@@ -1626,7 +1644,7 @@
     "messageformat": "Учора, {time}"
   },
   "icu:messageLoop": {
-    "messageformat": "Signal may be failing to process an incoming message."
+    "messageformat": "Можливо, Signal не вдається опрацювати вхідне повідомлення."
   },
   "icu:messageBodyTooLong": {
     "messageformat": "Тіло повідомлення завелике."
@@ -2976,7 +2994,7 @@
     "messageformat": "Ви не можете приєднатись до групи за посиланням, оскільки адміністратор групи вилучив вас."
   },
   "icu:GroupV2--join--prompt-with-approval": {
-    "messageformat": "Адміністратор цієї групи повинен прийняти ваш запит, перш ніж ви зможете приєднатися до цієї групи. Якщо ваш запит буде схвалено, ваше ім'я та фото стануть доступні учасникам цієї групи. "
+    "messageformat": "Адміністратор цієї групи повинен прийняти ваш запит на приєднання, щоб ви стали її учасником. Коли ви відправите запит, інші учасники зможуть бачити ваше ім'я й фото."
   },
   "icu:GroupV2--join--join-button": {
     "messageformat": "Приєднатись"
@@ -3536,6 +3554,9 @@
   "icu:BackupImportScreen__progressbar-hint": {
     "messageformat": "Завантаження: {currentSize} з {totalSize} ({fractionComplete,number,percent})…"
   },
+  "icu:BackupImportScreen__progressbar-hint--processing": {
+    "messageformat": "Перенесення повідомлень майже завершено…"
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Підготовка до завантаження…"
   },
@@ -3556,6 +3577,27 @@
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
     "messageformat": "Скасувати передачу"
+  },
+  "icu:BackupImportScreen__error__title": {
+    "messageformat": "Помилка під час перенесення повідомлень"
+  },
+  "icu:BackupImportScreen__error__body": {
+    "messageformat": "Не вдалося перенести повідомлення. Перевірте з'єднання з інтернетом і здійсніть перенесення ще раз."
+  },
+  "icu:BackupImportScreen__error__confirm": {
+    "messageformat": "Перенести ще раз"
+  },
+  "icu:BackupImportScreen__skip": {
+    "messageformat": "Пропустити"
+  },
+  "icu:BackupImportScreen__skip-confirmation__title": {
+    "messageformat": "Не переносити повідомлення?"
+  },
+  "icu:BackupImportScreen__skip-confirmation__body": {
+    "messageformat": "Якщо пропустити перенесення, у вас не буде доступу до повідомлень і медіафайлів на цьому пристрої. Перенести повідомлення можна й пізніше: Налаштування > Чати > Перенести повідомлення."
+  },
+  "icu:BackupImportScreen__skip-confirmation__cancel": {
+    "messageformat": "Закрити"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "Відновлення медіафайлів"
@@ -3640,9 +3682,6 @@
   },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Видалити з групи"
-  },
-  "icu:ContactModal--already-in-call": {
-    "messageformat": "Ви вже берете участь у виклику"
   },
   "icu:ContactModal--voice": {
     "messageformat": "Аудіо"
@@ -4308,7 +4347,7 @@
     "messageformat": "Виправити"
   },
   "icu:ProfileEditor__username-link": {
-    "messageformat": "QR-код чи посилання"
+    "messageformat": "QR-код або посилання"
   },
   "icu:ProfileEditor__username__error-icon": {
     "messageformat": "Ім'я користувача потрібно скинути"
@@ -4317,10 +4356,10 @@
     "messageformat": "Посилання імені користувача потрібно скинути"
   },
   "icu:ProfileEditor__username-link__tooltip__title": {
-    "messageformat": "Поділіться своїм іменем користувача"
+    "messageformat": "Повідомте своє ім'я користувача"
   },
   "icu:ProfileEditor__username-link__tooltip__body": {
-    "messageformat": "Поділіться своїм унікальним QR-кодом чи посиланням з людиною, із якою хочете створити чат."
+    "messageformat": "Інші користувачі зможуть з вами зв'язатися, якщо ви надішлете їм свій унікальний QR-код або посилання."
   },
   "icu:ProfileEditor--username--title": {
     "messageformat": "Створіть ім'я користувача"
@@ -4449,10 +4488,10 @@
     "messageformat": "Ваш профіль не вдалось оновити. Будь ласка, спробуйте ще раз."
   },
   "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Invalid characters"
+    "messageformat": "Недозволені символи"
   },
   "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "One or more characters you’ve entered can’t be used. Try again."
+    "messageformat": "Ви використали принаймні один недозволений символ. Відредагуйте текст."
   },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Написати адміністратору"
@@ -4827,10 +4866,10 @@
     "messageformat": "{sender} хоче, щоб ви активували Платежі. Надсилайте платежі лише тим людям, яким ви довіряєте. Платежі можна активувати на мобільному пристрої, перейшовши в Налаштування -> Платежі."
   },
   "icu:payment-event-activation-request-you-label": {
-    "messageformat": "Ви надіслали користувачу {receiver} запит на активацію Платежів."
+    "messageformat": "Ви надіслали користувачеві {receiver} запит на активацію платежів."
   },
   "icu:payment-event-activation-request-you-label-without-receiver": {
-    "messageformat": "Ви надіслали запит на активацію Платежів."
+    "messageformat": "Ви надіслали запит на активацію платежів."
   },
   "icu:payment-event-activated-label": {
     "messageformat": "{sender} тепер може приймати Платежі."
@@ -5202,7 +5241,7 @@
     "messageformat": "Історія"
   },
   "icu:StoryListItem__unhide": {
-    "messageformat": "Показати історії"
+    "messageformat": "Не приховувати історію"
   },
   "icu:StoryListItem__hide": {
     "messageformat": "Приховати історію"
@@ -5365,7 +5404,7 @@
     "messageformat": "Копіювати до буферу обміну"
   },
   "icu:UsernameLinkModalBody__help": {
-    "messageformat": "Діліться QR-кодом і посиланням лише з людьми, яким ви довіряєте. Якщо ви поділитесь, користувач зможе побачити ваше ім'я користувача і розпочати з вами чат."
+    "messageformat": "Діліться QR-кодом і посиланням лише з тими, кому довіряєте. Перейшовши за посиланням чи зісканувавши код, інші користувачі побачать ваше ім'я користувача й зможуть почати з вами чат."
   },
   "icu:UsernameLinkModalBody__reset": {
     "messageformat": "Скинути"
@@ -5473,13 +5512,22 @@
     "messageformat": "Очистити історію викликів?"
   },
   "icu:CallsTab__ConfirmClearCallHistory__Body": {
-    "messageformat": "Історію всіх викликів буде видалено остаточно"
+    "messageformat": "Історію всіх викликів буде видалено остаточно."
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Body--call-links": {
+    "messageformat": "Історію всіх викликів буде видалено остаточно. Якщо ви надсилали комусь свої посилання на виклики, вони більше не працюватимуть. "
   },
   "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
     "messageformat": "Видалити"
   },
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "Історію викликів очищено"
+  },
+  "icu:CallsTab__ClearCallHistoryError--call-links": {
+    "messageformat": "Частину посилань на виклики не вдалося видалити. Перевірте з'єднання і повторіть видалення."
+  },
+  "icu:CallsTab__ClearCallHistoryError": {
+    "messageformat": "Не вдалося повністю очистити історію викликів. Перевірте з'єднання і спробуйте ще раз."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Натисніть <newCallButtonIcon></newCallButtonIcon>, щоб почати новий аудіо- чи відеовиклик."
@@ -5677,10 +5725,22 @@
     "messageformat": "Дрібні поліпшення, виправлення помилок і покращення роботи застосунку. Дякуємо, що ви з Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.26--0": {
-    "messageformat": "Іноді треба покинути, щоб усвідомити справжню цінність. Тому ми виправили помилку, яка заважала шукати групи, які ви покинули, але й досі маєте в списку чатів (і, можливо, в серці)."
+  "icu:WhatsNew__v7.29--0": {
+    "messageformat": "У цьому оновленні ми пришвидшили запуск десь на 5%, тож ви можете трошки сповільнитися в інших сферах життя."
   },
-  "icu:WhatsNew__v7.27--0": {
-    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\""
+  "icu:WhatsNew__v7.30--header": {
+    "messageformat": "Киньте друзям новий виклик, а точніше — посилання на виклик!"
+  },
+  "icu:WhatsNew__v7.30--0": {
+    "messageformat": "Тепер можна просто створити посилання на груповий виклик, щоб інший користувач Signal зміг узяти в ньому участь, навіть якщо його немає в груповому чаті."
+  },
+  "icu:WhatsNew__v7.30--1": {
+    "messageformat": "Посилання на виклики багаторазові, тож вони ідеально підійдуть для регулярних розмов з друзями чи щотижневих робочих дзвінків."
+  },
+  "icu:WhatsNew__v7.30--2": {
+    "messageformat": "Тепер на вкладці викликів можна керувати посиланнями, змінювати налаштування затвердження учасників і копіювати й швидко надсилати посилання на виклики."
+  },
+  "icu:WhatsNew__v7.31--0": {
+    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
   }
 }

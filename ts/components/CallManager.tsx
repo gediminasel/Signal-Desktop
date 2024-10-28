@@ -37,7 +37,6 @@ import type {
   SendGroupCallReactionType,
   SetGroupCallVideoRequestType,
   SetLocalAudioType,
-  SetLocalPreviewType,
   SetLocalVideoType,
   SetRendererCanvasType,
   StartCallType,
@@ -109,7 +108,6 @@ export type PropsType = {
   denyUser: (payload: PendingUserActionPayloadType) => void;
   hasInitialLoadCompleted: boolean;
   i18n: LocalizerType;
-  isGroupCallRaiseHandEnabled: boolean;
   me: ConversationType;
   notifyForCall: (
     conversationId: string,
@@ -127,7 +125,7 @@ export type PropsType = {
   setIsCallActive: (_: boolean) => void;
   setLocalAudio: (_: SetLocalAudioType) => void;
   setLocalVideo: (_: SetLocalVideoType) => void;
-  setLocalPreview: (_: SetLocalPreviewType) => void;
+  setLocalPreviewContainer: (container: HTMLDivElement | null) => void;
   setOutgoingRing: (_: boolean) => void;
   setRendererCanvas: (_: SetRendererCanvasType) => void;
   showShareCallLinkViaSignal: (
@@ -177,7 +175,6 @@ function ActiveCallManager({
   denyUser,
   hangUpActiveCall,
   i18n,
-  isGroupCallRaiseHandEnabled,
   getIsSharingPhoneNumberWithEverybody,
   getGroupCallVideoFrameSource,
   getPresentingSources,
@@ -192,7 +189,7 @@ function ActiveCallManager({
   sendGroupCallReaction,
   setGroupCallVideoRequest,
   setLocalAudio,
-  setLocalPreview,
+  setLocalPreviewContainer,
   setLocalVideo,
   setRendererCanvas,
   setOutgoingRing,
@@ -351,7 +348,7 @@ function ActiveCallManager({
         hasLocalVideo={hasLocalVideo}
         i18n={i18n}
         setGroupCallVideoRequest={setGroupCallVideoRequestForConversation}
-        setLocalPreview={setLocalPreview}
+        setLocalPreviewContainer={setLocalPreviewContainer}
         setRendererCanvas={setRendererCanvas}
         switchToPresentationView={switchToPresentationView}
         switchFromPresentationView={switchFromPresentationView}
@@ -383,7 +380,7 @@ function ActiveCallManager({
           onJoinCall={joinActiveCall}
           outgoingRing={outgoingRing}
           peekedParticipants={peekedParticipants}
-          setLocalPreview={setLocalPreview}
+          setLocalPreviewContainer={setLocalPreviewContainer}
           setLocalAudio={setLocalAudio}
           setLocalVideo={setLocalVideo}
           setOutgoingRing={setOutgoingRing}
@@ -463,7 +460,6 @@ function ActiveCallManager({
         i18n={i18n}
         imageDataCache={imageDataCache}
         isCallLinkAdmin={isCallLinkAdmin}
-        isGroupCallRaiseHandEnabled={isGroupCallRaiseHandEnabled}
         me={me}
         openSystemPreferencesAction={openSystemPreferencesAction}
         renderEmojiPicker={renderEmojiPicker}
@@ -471,7 +467,7 @@ function ActiveCallManager({
         sendGroupCallRaiseHand={sendGroupCallRaiseHand}
         sendGroupCallReaction={sendGroupCallReaction}
         setGroupCallVideoRequest={setGroupCallVideoRequestForConversation}
-        setLocalPreview={setLocalPreview}
+        setLocalPreviewContainer={setLocalPreviewContainer}
         setRendererCanvas={setRendererCanvas}
         setLocalAudio={setLocalAudio}
         setLocalVideo={setLocalVideo}
@@ -550,7 +546,6 @@ export function CallManager({
   i18n,
   incomingCall,
   isConversationTooBigToRing,
-  isGroupCallRaiseHandEnabled,
   getIsSharingPhoneNumberWithEverybody,
   me,
   notifyForCall,
@@ -567,7 +562,7 @@ export function CallManager({
   setGroupCallVideoRequest,
   setIsCallActive,
   setLocalAudio,
-  setLocalPreview,
+  setLocalPreviewContainer,
   setLocalVideo,
   setOutgoingRing,
   setRendererCanvas,
@@ -646,7 +641,6 @@ export function CallManager({
           getPresentingSources={getPresentingSources}
           hangUpActiveCall={hangUpActiveCall}
           i18n={i18n}
-          isGroupCallRaiseHandEnabled={isGroupCallRaiseHandEnabled}
           getIsSharingPhoneNumberWithEverybody={
             getIsSharingPhoneNumberWithEverybody
           }
@@ -662,7 +656,7 @@ export function CallManager({
           sendGroupCallReaction={sendGroupCallReaction}
           setGroupCallVideoRequest={setGroupCallVideoRequest}
           setLocalAudio={setLocalAudio}
-          setLocalPreview={setLocalPreview}
+          setLocalPreviewContainer={setLocalPreviewContainer}
           setLocalVideo={setLocalVideo}
           setOutgoingRing={setOutgoingRing}
           setRendererCanvas={setRendererCanvas}

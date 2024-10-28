@@ -35,6 +35,7 @@ import type {
   CallLinkRecord,
   CallLinkStateType,
   CallLinkType,
+  DefunctCallLinkType,
 } from '../types/CallLink';
 import type { AttachmentDownloadJobType } from '../types/AttachmentDownload';
 import type {
@@ -44,7 +45,6 @@ import type {
 import type { SyncTaskType } from '../util/syncTasks';
 import type { AttachmentBackupJobType } from '../types/AttachmentBackup';
 import type { SingleProtoJobQueue } from '../jobs/singleProtoJobQueue';
-import type { DeleteCallLinkOptions } from './server/callLinks';
 
 export type ReadableDB = Database & { __readable_db: never };
 export type WritableDB = ReadableDB & { __writable_db: never };
@@ -206,8 +206,7 @@ export type SessionType = {
   serviceId: ServiceIdString;
   conversationId: string;
   deviceId: number;
-  record: string;
-  version?: number;
+  record: Uint8Array;
 };
 export type SessionIdType = SessionType['id'];
 export type SignedPreKeyType = {
@@ -546,7 +545,9 @@ type ReadableInterface = {
   getMessagesUnexpectedlyMissingExpirationStartTimestamp: () => Array<MessageType>;
   getSoonestMessageExpiry: () => undefined | number;
   getNextTapToViewMessageTimestampToAgeOut: () => undefined | number;
-  getTapToViewMessagesNeedingErase: () => Array<MessageType>;
+  getTapToViewMessagesNeedingErase: (
+    maxTimestamp: number
+  ) => Array<MessageType>;
   // getOlderMessagesByConversation is JSON on server, full message on Client
   getAllStories: (options: {
     conversationId?: string;
@@ -586,10 +587,13 @@ type ReadableInterface = {
     eraId: string
   ) => boolean;
   callLinkExists(roomId: string): boolean;
+  defunctCallLinkExists(roomId: string): boolean;
   getAllCallLinks: () => ReadonlyArray<CallLinkType>;
   getCallLinkByRoomId: (roomId: string) => CallLinkType | undefined;
   getCallLinkRecordByRoomId: (roomId: string) => CallLinkRecord | undefined;
+  getAllAdminCallLinks(): ReadonlyArray<CallLinkType>;
   getAllCallLinkRecordsWithAdminKey(): ReadonlyArray<CallLinkRecord>;
+  getAllDefunctCallLinksWithAdminKey(): ReadonlyArray<DefunctCallLinkType>;
   getAllMarkedDeletedCallLinkRoomIds(): ReadonlyArray<string>;
   getMessagesBetween: (
     conversationId: string,
@@ -726,7 +730,6 @@ type WritableInterface = {
     sessions: Array<SessionType>;
     unprocessed: Array<UnprocessedType>;
   }): void;
-  bulkAddSessions: (array: Array<SessionType>) => void;
   removeSessionById: (id: SessionIdType) => number;
   removeSessionsByConversation: (conversationId: string) => void;
   removeSessionsByServiceId: (serviceId: ServiceIdString) => void;
@@ -819,10 +822,14 @@ type WritableInterface = {
     roomId: string,
     callLinkState: CallLinkStateType
   ): CallLinkType;
-  beginDeleteAllCallLinks(): void;
-  beginDeleteCallLink(roomId: string, options: DeleteCallLinkOptions): void;
+  beginDeleteAllCallLinks(): boolean;
+  beginDeleteCallLink(roomId: string): boolean;
+  deleteCallHistoryByRoomId(roomid: string): void;
+  deleteCallLinkAndHistory(roomId: string): void;
   finalizeDeleteCallLink(roomId: string): void;
   _removeAllCallLinks(): void;
+  insertDefunctCallLink(defunctCallLink: DefunctCallLinkType): void;
+  updateDefunctCallLink(defunctCallLink: DefunctCallLinkType): void;
   deleteCallLinkFromSync(roomId: string): void;
   migrateConversationMessages: (obsoleteId: string, currentId: string) => void;
   saveEditedMessage: (

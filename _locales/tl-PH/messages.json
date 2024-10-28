@@ -575,9 +575,6 @@
   "icu:decryptionErrorToast": {
     "messageformat": "Desktop ran into a decryption error from {name}, device {deviceId}"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "Submit log"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "Submit log"
   },
@@ -791,8 +788,14 @@
   "icu:attachmentSaved": {
     "messageformat": "Attachment saved."
   },
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+  },
   "icu:attachmentSavedShow": {
     "messageformat": "Show in folder"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
   },
   "icu:you": {
     "messageformat": "Ikaw"
@@ -944,9 +947,6 @@
   "icu:NotePreviewModal__Title": {
     "messageformat": "Note"
   },
-  "icu:viewRecentMedia": {
-    "messageformat": "I-view ang recent media"
-  },
   "icu:allMediaMenuItem": {
     "messageformat": "Lahat ng media"
   },
@@ -1006,6 +1006,18 @@
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
     "messageformat": "Buburahin mula sa lahat ng devices mo ang lahat ng messages sa chat na ito. Pwede mo pa ring hanapin ang chat na ito pagkatapos mong magbura ng messages."
+  },
+  "icu:deleteConversation": {
+    "messageformat": "Burahin"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "Gusto mo bang burahin ang chat?"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "Buburahin mula sa device na ito ang lahat ng messages sa chat na ito."
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "Buburahin mula sa lahat ng devices mo ang lahat ng messages sa chat na ito."
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Umalis sa group"
@@ -1232,6 +1244,9 @@
   "icu:calling__call-link-default-title": {
     "messageformat": "Tawag sa Signal"
   },
+  "icu:calling__call-link-delete-failed": {
+    "messageformat": "Hindi mabura ang link. I-check ang iyong connection at subukan ulit."
+  },
   "icu:calling__join-request-denied": {
     "messageformat": "Tinanggihan ang iyong request na sumali sa tawag na ito."
   },
@@ -1416,7 +1431,7 @@
     "messageformat": "Hindi ma-receive ang audio at video galing kay {name}"
   },
   "icu:calling__missing-media-keys--unknown-contact": {
-    "messageformat": "Can't receive audio and video"
+    "messageformat": "Hindi makatanggap ng audio at video"
   },
   "icu:calling__missing-media-keys-info": {
     "messageformat": "Maaaring ito ay dahil hindi niya na-verify ang iyong safety number change, may problema sa kanyang device, o binlock ka n'ya."
@@ -1441,6 +1456,9 @@
   },
   "icu:calling__presenting--info": {
     "messageformat": "Signal is sharing {window}."
+  },
+  "icu:calling__presenting--info--unknown": {
+    "messageformat": "Active ang Signal screen sharing"
   },
   "icu:calling__presenting--reconnecting": {
     "messageformat": "Nagre-reconnect…"
@@ -1626,7 +1644,7 @@
     "messageformat": "Kahapon {time}"
   },
   "icu:messageLoop": {
-    "messageformat": "Signal may be failing to process an incoming message."
+    "messageformat": "Maaaring may paparating na message na hindi ma-process ng Signal."
   },
   "icu:messageBodyTooLong": {
     "messageformat": "Masyadong mahaba ang message body."
@@ -3536,6 +3554,9 @@
   "icu:BackupImportScreen__progressbar-hint": {
     "messageformat": "Dina-download ang {currentSize} ng {totalSize} ({fractionComplete,number,percent})..."
   },
+  "icu:BackupImportScreen__progressbar-hint--processing": {
+    "messageformat": "Tinatapos ang paglilipat ng message..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Naghahandang mag-download..."
   },
@@ -3556,6 +3577,27 @@
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
     "messageformat": "I-cancel ang transfer"
+  },
+  "icu:BackupImportScreen__error__title": {
+    "messageformat": "May error sa pag-transfer ng messages mo"
+  },
+  "icu:BackupImportScreen__error__body": {
+    "messageformat": "Hindi ma-transfer ang messages mo. I-check ang iyong connection at subukan ulit."
+  },
+  "icu:BackupImportScreen__error__confirm": {
+    "messageformat": "Subukang muli"
+  },
+  "icu:BackupImportScreen__skip": {
+    "messageformat": "Laktawan"
+  },
+  "icu:BackupImportScreen__skip-confirmation__title": {
+    "messageformat": "Gusto mo bang i-skip ang message transfer?"
+  },
+  "icu:BackupImportScreen__skip-confirmation__body": {
+    "messageformat": "Kapag nilaktawan mo ito, hindi mo na ma-a-access ang anumang messages o media sa device na ito. Maaari kang magsimula ng bagong transfer pagkatapos mong mag-skip mula sa Settings > Chats > Transfer"
+  },
+  "icu:BackupImportScreen__skip-confirmation__cancel": {
+    "messageformat": "I-cancel"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "Nire-restore ang media"
@@ -3640,9 +3682,6 @@
   },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Tanggalin mula sa group"
-  },
-  "icu:ContactModal--already-in-call": {
-    "messageformat": "Nasa call ka na"
   },
   "icu:ContactModal--voice": {
     "messageformat": "Voice"
@@ -4452,7 +4491,7 @@
     "messageformat": "Invalid characters"
   },
   "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "One or more characters you’ve entered can’t be used. Try again."
+    "messageformat": "Hindi magamit ang isa o mahigit pang characters na nilagay mo. Subukan ulit."
   },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "I-message ang admin"
@@ -5202,7 +5241,7 @@
     "messageformat": "Story"
   },
   "icu:StoryListItem__unhide": {
-    "messageformat": "Ipakita ang stories"
+    "messageformat": "I-unhide story"
   },
   "icu:StoryListItem__hide": {
     "messageformat": "I-hide ang story"
@@ -5473,13 +5512,22 @@
     "messageformat": "Gusto mo bang i-clear ang call history?"
   },
   "icu:CallsTab__ConfirmClearCallHistory__Body": {
-    "messageformat": "Permanenteng mabubura ang lahat ng call history dito"
+    "messageformat": "Permanente nitong buburahin ang lahat ng call history."
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Body--call-links": {
+    "messageformat": "Permanente nitong buburahin ang lahat ng call history. Hindi na gagana ang call links na ginawa mo para sa mga taong meron na nito. "
   },
   "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
     "messageformat": "Clear"
   },
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "Call history cleared"
+  },
+  "icu:CallsTab__ClearCallHistoryError--call-links": {
+    "messageformat": "Hindi lahat ng call links ay pwedeng mabura. I-check ang iyong connection at subukan ulit."
+  },
+  "icu:CallsTab__ClearCallHistoryError": {
+    "messageformat": "Hindi lahat ng call history ay pwedeng mabura. I-check ang iyong connection at subukan ulit."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "I-click ang <newCallButtonIcon></newCallButtonIcon> para magsimula ng bagong voice o video call."
@@ -5677,10 +5725,22 @@
     "messageformat": "Dagdag na maliliit na pag-aayos, pag-alis ng bugs, at pagpapaganda ng takbo ng app. Maraming salamat sa paggamit ng Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.26--0": {
-    "messageformat": "Inaayos ng update na ito ang bug na nagpahirap sa paghanap ng isang group pagkatapos mong umalis dito."
+  "icu:WhatsNew__v7.29--0": {
+    "messageformat": "Pinabuti ng update na ito ang startup speed nang mga 5%."
   },
-  "icu:WhatsNew__v7.27--0": {
-    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\""
+  "icu:WhatsNew__v7.30--header": {
+    "messageformat": "Ipinakikilala ang Call Links: Ang missing link para sa calendar invites at impromptu gatherings."
+  },
+  "icu:WhatsNew__v7.30--0": {
+    "messageformat": "Makagagawa ka na ng link na pwedeng gamitin ng sinuman sa Signal para sumali sa group call nang hindi sumasali sa Signal group chat."
+  },
+  "icu:WhatsNew__v7.30--1": {
+    "messageformat": "Reusable ang call links at ideal para sa recurring phone dates niyo ng best friends mo o sa weekly check-ins niyo ng mga katrabaho mo."
+  },
+  "icu:WhatsNew__v7.30--2": {
+    "messageformat": "Pwede mong i-manage ang call links, kontrolin ang approval, at kopyahin ang links mula sa calls tab para mabilis ang pag-share."
+  },
+  "icu:WhatsNew__v7.31--0": {
+    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
   }
 }

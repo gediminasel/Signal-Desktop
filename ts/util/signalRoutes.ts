@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { strictAssert } from './assert';
 import * as log from '../logging/log';
 import * as Errors from '../types/errors';
+import { parsePartial, parseUnknown, safeParseUnknown } from './schemas';
 
 function toUrl(input: URL | string): URL | null {
   if (input instanceof URL) {
@@ -164,7 +165,10 @@ function _route<Key extends string, Args extends object>(
             );
             return null;
           }
-          const parseResult = config.schema.safeParse(rawArgs);
+          const parseResult = safeParseUnknown(
+            config.schema,
+            rawArgs as unknown
+          );
           if (parseResult.success) {
             const args = parseResult.data;
             return {
@@ -183,13 +187,13 @@ function _route<Key extends string, Args extends object>(
     },
     toWebUrl(args) {
       if (config.toWebUrl) {
-        return config.toWebUrl(config.schema.parse(args));
+        return config.toWebUrl(parseUnknown(config.schema, args as unknown));
       }
       throw new Error('Route does not support web URLs');
     },
     toAppUrl(args) {
       if (config.toAppUrl) {
-        return config.toAppUrl(config.schema.parse(args));
+        return config.toAppUrl(parseUnknown(config.schema, args as unknown));
       }
       throw new Error('Route does not support app URLs');
     },
@@ -219,7 +223,7 @@ export const contactByPhoneNumberRoute = _route('contactByPhoneNumber', {
   }),
   parse(result) {
     return {
-      phoneNumber: paramSchema.parse(result.hash.groups.phoneNumber),
+      phoneNumber: parsePartial(paramSchema, result.hash.groups.phoneNumber),
     };
   },
   toWebUrl(args) {
@@ -309,8 +313,9 @@ export const groupInvitesRoute = _route('groupInvites', {
  * linkDeviceRoute.toAppUrl({
  *   uuid: "123",
  *   pubKey: "abc",
+ *   capabilities: "backuo"
  * })
- * // URL { "sgnl://linkdevice?uuid=123&pub_key=abc" }
+ * // URL { "sgnl://linkdevice?uuid=123&pub_key=abc&capabilities=backup" }
  * ```
  */
 export const linkDeviceRoute = _route('linkDevice', {
@@ -318,18 +323,21 @@ export const linkDeviceRoute = _route('linkDevice', {
   schema: z.object({
     uuid: paramSchema, // base64url?
     pubKey: paramSchema, // percent-encoded base64 (with padding) of PublicKey with type byte included
+    capabilities: paramSchema.array(), // comma-separated list of capabilities
   }),
   parse(result) {
     const params = new URLSearchParams(result.search.groups.params);
     return {
       uuid: params.get('uuid'),
       pubKey: params.get('pub_key'),
+      capabilities: params.get('capabilities')?.split(',') ?? [],
     };
   },
   toAppUrl(args) {
     const params = new URLSearchParams({
       uuid: args.uuid,
       pub_key: args.pubKey,
+      capabilities: args.capabilities.join(','),
     });
     return new URL(`sgnl://linkdevice?${params.toString()}`);
   },

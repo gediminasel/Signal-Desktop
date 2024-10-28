@@ -575,9 +575,6 @@
   "icu:decryptionErrorToast": {
     "messageformat": "برنامه دسکتاپ در رمزگشایی از سمت {name}، دستگاه {deviceId} دچار خطا شد."
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "ارسال گزارش"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "ارسال گزارش"
   },
@@ -791,8 +788,14 @@
   "icu:attachmentSaved": {
     "messageformat": "پیوست ذخیره شد"
   },
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+  },
   "icu:attachmentSavedShow": {
     "messageformat": "نمایش در پوشه"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
   },
   "icu:you": {
     "messageformat": "شما"
@@ -944,9 +947,6 @@
   "icu:NotePreviewModal__Title": {
     "messageformat": "یادداشت"
   },
-  "icu:viewRecentMedia": {
-    "messageformat": "مشاهدهٔ رسانه‌های اخیر"
-  },
   "icu:allMediaMenuItem": {
     "messageformat": "همه رسانه‌ها"
   },
@@ -1006,6 +1006,18 @@
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
     "messageformat": "همه پیام‌های این گفتگو از همه دستگاه‌های شما حذف خواهد شد. بعد از حذف پیام‌ها همچنان می‌توانید این گفتگو را جستجو کنید."
+  },
+  "icu:deleteConversation": {
+    "messageformat": "پاک کردن"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "گفتگو پاک شود؟"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "همۀ پیام‌های این گفتگو از این دستگاه حذف خواهد شد."
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "همه پیام‌های این گفتگو از همه دستگاه‌های شما حذف خواهد شد."
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "ترک گروه"
@@ -1232,6 +1244,9 @@
   "icu:calling__call-link-default-title": {
     "messageformat": "تماس با سیگنال"
   },
+  "icu:calling__call-link-delete-failed": {
+    "messageformat": "پیوند قابل حذف نیست. اتصال خود را بررسی و دوباره تلاش کنید."
+  },
   "icu:calling__join-request-denied": {
     "messageformat": "درخواست شما برای پیوستن به این تماس رد شده است."
   },
@@ -1416,7 +1431,7 @@
     "messageformat": "دریافت صدا و تصویر از {name} ممکن نیست"
   },
   "icu:calling__missing-media-keys--unknown-contact": {
-    "messageformat": "Can't receive audio and video"
+    "messageformat": "دریافت صدا و تصویر ممکن نیست"
   },
   "icu:calling__missing-media-keys-info": {
     "messageformat": "این می‌تواند به این دلیل باشد که او تغییر شماره امنیتی شما را تأیید نکرده، مشکلی برای دستگاهش پیش آمده یا شما را مسدود کرده است."
@@ -1441,6 +1456,9 @@
   },
   "icu:calling__presenting--info": {
     "messageformat": "سیگنال در حال اشتراک {window} است."
+  },
+  "icu:calling__presenting--info--unknown": {
+    "messageformat": "اشتراک‌گذاری صفحه در سیگنال فعال است"
   },
   "icu:calling__presenting--reconnecting": {
     "messageformat": "در حال اتصال دوباره..."
@@ -1626,7 +1644,7 @@
     "messageformat": "دیروز {time}"
   },
   "icu:messageLoop": {
-    "messageformat": "Signal may be failing to process an incoming message."
+    "messageformat": "سیگنال ممکن است پیام دریافتی را پردازش نکند."
   },
   "icu:messageBodyTooLong": {
     "messageformat": "متن پیام بیش از حد طولانی می باشد."
@@ -1722,7 +1740,7 @@
     "messageformat": "سیستم"
   },
   "icu:noteToSelf": {
-    "messageformat": "یادداشت به خود"
+    "messageformat": "یادداشت برای خود"
   },
   "icu:noteToSelfHero": {
     "messageformat": "می‌توانید برای خودتان در این گفتگو یادداشت اضافه کنید. اگر حساب شما هرگونه دستگاه پیوندداده‌شده داشته باشد، یادداشت‌های جدید همگام‌سازی خواهند شد."
@@ -2976,7 +2994,7 @@
     "messageformat": "شما نمی‌توانید از طریق پیوند گروه به این گروه بپیوندید، چون یک مدیر شما را حذف کرده است."
   },
   "icu:GroupV2--join--prompt-with-approval": {
-    "messageformat": "یک مدیر از این گروه باید با درخواست شما قبل از پیوستن به گروه، موافقت کند. در صورت موافقت، نام و عکس شما با اعضای گروه به اشتراک گذاشته خواهد شد."
+    "messageformat": "یک مدیر از این گروه باید با درخواست شما قبل از پیوستن به گروه، موافقت کند. هنگامی که درخواست عضویت می‌دهید، نام و عکس شما با اعضای گروه به اشتراک گذاشته خواهد شد."
   },
   "icu:GroupV2--join--join-button": {
     "messageformat": "پیوستن"
@@ -3536,6 +3554,9 @@
   "icu:BackupImportScreen__progressbar-hint": {
     "messageformat": "در حال دانلود {currentSize} از {totalSize} ({fractionComplete,number,percent})..."
   },
+  "icu:BackupImportScreen__progressbar-hint--processing": {
+    "messageformat": "در حال تکمیل انتقال پیام..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "در حال آماده‌سازی برای دانلود..."
   },
@@ -3556,6 +3577,27 @@
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
     "messageformat": "لغو انتقال"
+  },
+  "icu:BackupImportScreen__error__title": {
+    "messageformat": "خطا در انتقال پیام‌های شما"
+  },
+  "icu:BackupImportScreen__error__body": {
+    "messageformat": "پیام‌های شما قابل انتقال نیست. اتصال اینترنت خود را بررسی و دوباره امتحان کنید."
+  },
+  "icu:BackupImportScreen__error__confirm": {
+    "messageformat": "تلاش مجدد"
+  },
+  "icu:BackupImportScreen__skip": {
+    "messageformat": "رد کردن"
+  },
+  "icu:BackupImportScreen__skip-confirmation__title": {
+    "messageformat": "انتقال پیام رد شود؟"
+  },
+  "icu:BackupImportScreen__skip-confirmation__body": {
+    "messageformat": "اگر رد شوید، به هیچ یک از پیام‌ها یا رسانه‌های خود در این دستگاه دسترسی نخواهید داشت. پس از رد کردن، می‌توانید از قسمت «تنظیمات» > «گفتگوها» > «انتقال»، انتقال جدیدی را شروع کنید."
+  },
+  "icu:BackupImportScreen__skip-confirmation__cancel": {
+    "messageformat": "لغو"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "در حال بازیابی رسانه"
@@ -3640,9 +3682,6 @@
   },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "حذف از گروه"
-  },
-  "icu:ContactModal--already-in-call": {
-    "messageformat": "شما در حال حاضر در یک تماس هستید"
   },
   "icu:ContactModal--voice": {
     "messageformat": "صوتی"
@@ -3828,7 +3867,7 @@
     "messageformat": "بازنشانی پیوند"
   },
   "icu:GroupLinkManagement--approve-label": {
-    "messageformat": "الزام تأیید مدیر"
+    "messageformat": "نیازمند تأیید مدیر"
   },
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "نیاز به یک مدیر برای تأیید اعضای جدیدی که از طریق پیوند گروه می‌پیوندند"
@@ -4449,10 +4488,10 @@
     "messageformat": "امکان به‌روزرسانی پروفایل شما وجود نداشت. لطفاً دوباره امتحان کنید."
   },
   "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Invalid characters"
+    "messageformat": "نویسه‌های نامعتبر"
   },
   "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "One or more characters you’ve entered can’t be used. Try again."
+    "messageformat": "یک یا چند نویسه که وارد کرده‌اید قابل استفاده نیست. دوباره امتحان کنید."
   },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "به یک مدیر پیام دهید"
@@ -5202,7 +5241,7 @@
     "messageformat": "استوری"
   },
   "icu:StoryListItem__unhide": {
-    "messageformat": "نمایش استوری‌ها"
+    "messageformat": "نمایان کردن استوری"
   },
   "icu:StoryListItem__hide": {
     "messageformat": "پنهان کردن استوری"
@@ -5473,13 +5512,22 @@
     "messageformat": "تاریخچه تماس پاک شود؟"
   },
   "icu:CallsTab__ConfirmClearCallHistory__Body": {
-    "messageformat": "این کار همه تاریخچه تماس را به‌طور دائمی پاک خواهد کرد"
+    "messageformat": "این کار همۀ تاریخچۀ تماس را به‌طور دائم پاک خواهد کرد."
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Body--call-links": {
+    "messageformat": "با این کار، تاریخچه همه تماس‌ها برای همیشه حذف می‌شود. پیوندهای تماسی که ایجاد کرده‌اید دیگر برای کسانی که این پیوندها را دارند کار نخواهد کرد. "
   },
   "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
     "messageformat": "پاک کردن"
   },
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "سوابق تماس‌ها پاک شد."
+  },
+  "icu:CallsTab__ClearCallHistoryError--call-links": {
+    "messageformat": "امکان حذف همه پیوندهای تماس وجود ندارد. اتصال خود را بررسی و دوباره تلاش کنید."
+  },
+  "icu:CallsTab__ClearCallHistoryError": {
+    "messageformat": "امکان پاک کردن تاریخچه همه تماس‌ها وجود ندارد. اتصال خود را بررسی و دوباره تلاش کنید."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "برای شروع تماس صوتی یا تصویری جدید، روی <newCallButtonIcon></newCallButtonIcon> کلیک کنید."
@@ -5572,7 +5620,7 @@
     "messageformat": "ویرایش نام تماس"
   },
   "icu:CallLinkDetails__ApproveAllMembersLabel": {
-    "messageformat": "الزام تأیید مدیر"
+    "messageformat": "نیازمند تأیید مدیر"
   },
   "icu:CallLinkDetails__SettingTooltip--disabled-for-active-call": {
     "messageformat": "وقتی تماس فعال است، این تنظیم قابل تغییر نیست"
@@ -5614,7 +5662,7 @@
     "messageformat": "ویرایش نام تماس"
   },
   "icu:CallLinkEditModal__InputLabel--ApproveAllMembers": {
-    "messageformat": "الزام تأیید مدیر"
+    "messageformat": "نیازمند تأیید مدیر"
   },
   "icu:CallLinkPendingParticipantModal__ApproveButtonLabel": {
     "messageformat": "تأیید ورود"
@@ -5677,10 +5725,22 @@
     "messageformat": "تغییرات کوچک، رفع اشکالات و بهبود عملکرد. بابت استفاده از سیگنال سپاسگزاریم!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.26--0": {
-    "messageformat": "در این به‌روزرسانی، اشکالی را برطرف کردیم که جستجوی گروه را پس از ترک آن گروه دشوار می‌کرد."
+  "icu:WhatsNew__v7.29--0": {
+    "messageformat": "این نسخۀ جدید، سرعت راه‌اندازی را تا حدود ۵٪ بهبود می‌بخشد."
   },
-  "icu:WhatsNew__v7.27--0": {
-    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\""
+  "icu:WhatsNew__v7.30--header": {
+    "messageformat": "معرفی پیوندهای تماس: پیوند ازقلم‌افتاده برای دعوت‌های تقویمی و گردهمایی‌های برنامه‌ریزی نشده."
+  },
+  "icu:WhatsNew__v7.30--0": {
+    "messageformat": "اکنون می‌توانید به‌سرعت و به‌راحتی یک پیوند ایجاد کنید که هر کسی در سیگنال بتواند بدون نیاز به پیوستن به گفتگوی گروهی سیگنال، با استفاده از آن مستقیماً به تماس گروهی بپیوندد."
+  },
+  "icu:WhatsNew__v7.30--1": {
+    "messageformat": "پیوندهای تماس قابلیت استفاده چندباره دارند و بهترین گزینه برای قرارهای تلفنی مکرر با دوستان صمیمی یا احوال‌پرسی هفتگی با همکاران هستند."
+  },
+  "icu:WhatsNew__v7.30--2": {
+    "messageformat": "برای اشتراک‌گذاری سریع، می‌توانید پیوندهای تماس خود را مدیریت کنید، تنظیمات تأیید را کنترل کنید، و پیوندها را از زبانه تماس‌ها کپی کنید."
+  },
+  "icu:WhatsNew__v7.31--0": {
+    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
   }
 }

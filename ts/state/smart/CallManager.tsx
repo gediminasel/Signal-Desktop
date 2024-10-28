@@ -38,7 +38,6 @@ import type { AciString } from '../../types/ServiceId';
 import { strictAssert } from '../../util/assert';
 import { callLinkToConversation } from '../../util/callLinks';
 import { callingTones } from '../../util/callingTones';
-import { isGroupCallRaiseHandEnabled } from '../../util/isGroupCallRaiseHandEnabled';
 import { missingCaseError } from '../../util/missingCaseError';
 import { useAudioPlayerActions } from '../ducks/audioPlayer';
 import { getActiveCall, useCallingActions } from '../ducks/calling';
@@ -114,6 +113,10 @@ async function notifyForCall(
     silent: true,
     type: NotificationType.IncomingCall,
   });
+}
+
+function setLocalPreviewContainer(container: HTMLDivElement | null): void {
+  callingService.setLocalPreviewContainer(container);
 }
 
 const playRingtone = callingTones.playRingtone.bind(callingTones);
@@ -449,7 +452,6 @@ export const SmartCallManager = memo(function SmartCallManager() {
     setIsCallActive,
     setLocalAudio,
     setLocalVideo,
-    setLocalPreview,
     setOutgoingRing,
     setRendererCanvas,
     switchToPresentationView,
@@ -493,7 +495,6 @@ export const SmartCallManager = memo(function SmartCallManager() {
       i18n={i18n}
       incomingCall={incomingCall}
       isConversationTooBigToRing={isConversationTooBigToRing}
-      isGroupCallRaiseHandEnabled={isGroupCallRaiseHandEnabled()}
       me={me}
       notifyForCall={notifyForCall}
       openSystemPreferencesAction={openSystemPreferencesAction}
@@ -509,7 +510,7 @@ export const SmartCallManager = memo(function SmartCallManager() {
       setGroupCallVideoRequest={setGroupCallVideoRequest}
       setIsCallActive={setIsCallActive}
       setLocalAudio={setLocalAudio}
-      setLocalPreview={setLocalPreview}
+      setLocalPreviewContainer={setLocalPreviewContainer}
       setLocalVideo={setLocalVideo}
       setOutgoingRing={setOutgoingRing}
       setRendererCanvas={setRendererCanvas}

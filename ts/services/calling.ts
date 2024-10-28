@@ -88,7 +88,10 @@ import * as durations from '../util/durations';
 import { clearTimeoutIfNecessary } from '../util/clearTimeoutIfNecessary';
 import { fetchMembershipProof, getMembershipList } from '../groups';
 import type { ProcessedEnvelope } from '../textsecure/Types.d';
-import type { GetIceServersResultType } from '../textsecure/WebAPI';
+import type {
+  GetIceServersResultType,
+  IceServerGroupType,
+} from '../textsecure/WebAPI';
 import { missingCaseError } from '../util/missingCaseError';
 import { normalizeGroupCallTimestamp } from '../util/ringrtc/normalizeGroupCallTimestamp';
 import {
@@ -96,6 +99,9 @@ import {
   REQUESTED_VIDEO_WIDTH,
   REQUESTED_VIDEO_HEIGHT,
   REQUESTED_VIDEO_FRAMERATE,
+  REQUESTED_SCREEN_SHARE_WIDTH,
+  REQUESTED_SCREEN_SHARE_HEIGHT,
+  REQUESTED_SCREEN_SHARE_FRAMERATE,
 } from '../calling/constants';
 import { callingMessageToProto } from '../util/callingMessageToProto';
 import { requestMicrophonePermissions } from '../util/requestMicrophonePermissions';
@@ -152,6 +158,8 @@ import { getConversationIdForLogging } from '../util/idForLogging';
 import { sendCallLinkUpdateSync } from '../util/sendCallLinkUpdateSync';
 import { createIdenticon } from '../util/createIdenticon';
 import { getColorForCallLink } from '../util/getColorForCallLink';
+import { getUseRingrtcAdm } from '../util/ringrtc/ringrtcAdm';
+import OS from '../util/os/osMain';
 
 const { wasGroupCallRingPreviouslyCanceled } = DataReader;
 const {
@@ -323,9 +331,13 @@ export type NotifyScreenShareStatusOptionsType = Readonly<
 >;
 
 export class CallingClass {
-  readonly videoCapturer: GumVideoCapturer;
+  private readonly videoCapturer: GumVideoCapturer;
 
   readonly videoRenderer: CanvasVideoRenderer;
+
+  private localPreviewContainer: HTMLDivElement | null = null;
+
+  private localPreview: HTMLVideoElement | undefined;
 
   private reduxInterface?: CallingReduxInterface;
 
@@ -371,6 +383,7 @@ export class CallingClass {
 
     RingRTC.setConfig({
       field_trials: undefined,
+      use_ringrtc_adm: getUseRingrtcAdm(),
     });
 
     RingRTC.handleOutgoingSignaling = this.handleOutgoingSignaling.bind(this);
@@ -913,7 +926,7 @@ export class CallingClass {
     log.info(`${logId}: Sending profile key`);
     await conversationJobQueue.add({
       conversationId: conversation.id,
-      type: 'ProfileKey',
+      type: 'ProfileKeyForCall',
     });
 
     RingRTC.setOutgoingAudio(call.callId, hasLocalAudio);
@@ -948,6 +961,21 @@ export class CallingClass {
           Buffer.from(member.uuidCiphertext)
         )
     );
+  }
+
+  public setLocalPreviewContainer(container: HTMLDivElement | null): void {
+    // Reuse HTMLVideoElement between different containers so that the preview
+    // of the last frame stays valid even if there are no new frames on the
+    // underlying MediaStream.
+    if (this.localPreview == null) {
+      this.localPreview = document.createElement('video');
+      this.localPreview.autoplay = true;
+      this.videoCapturer.setLocalPreview({ current: this.localPreview });
+    }
+
+    this.localPreviewContainer?.removeChild(this.localPreview);
+    this.localPreviewContainer = container;
+    this.localPreviewContainer?.appendChild(this.localPreview);
   }
 
   public async cleanupStaleRingingCalls(): Promise<void> {
@@ -1516,7 +1544,7 @@ export class CallingClass {
       log.info(`${logId}: Sending profile key`);
       drop(
         conversationJobQueue.add({
-          type: conversationQueueJobEnum.enum.ProfileKey,
+          type: conversationQueueJobEnum.enum.ProfileKeyForCall,
           conversationId: conversation.id,
           isOneTimeSend: true,
         })
@@ -2042,11 +2070,13 @@ export class CallingClass {
       this.hadLocalVideoBeforePresenting = hasLocalVideo;
       drop(
         this.enableCaptureAndSend(call, {
-          // 15fps is much nicer but takes up a lot more CPU.
-          maxFramerate: 5,
-          maxHeight: 1800,
-          maxWidth: 2880,
+          maxFramerate: REQUESTED_SCREEN_SHARE_FRAMERATE,
+          maxHeight: REQUESTED_SCREEN_SHARE_HEIGHT,
+          maxWidth: REQUESTED_SCREEN_SHARE_WIDTH,
           mediaStream,
+          onEnded: () => {
+            this.reduxInterface?.cancelPresenting();
+          },
         })
       );
       this.setOutgoingVideo(conversationId, true);
@@ -2307,20 +2337,26 @@ export class CallingClass {
       await this.getAvailableIODevices();
 
     const preferredMicrophone = window.Events.getPreferredAudioInputDevice();
-    const selectedMicIndex = findBestMatchingAudioDeviceIndex({
-      available: availableMicrophones,
-      preferred: preferredMicrophone,
-    });
+    const selectedMicIndex = findBestMatchingAudioDeviceIndex(
+      {
+        available: availableMicrophones,
+        preferred: preferredMicrophone,
+      },
+      OS.isWindows()
+    );
     const selectedMicrophone =
       selectedMicIndex !== undefined
         ? availableMicrophones[selectedMicIndex]
         : undefined;
 
     const preferredSpeaker = window.Events.getPreferredAudioOutputDevice();
-    const selectedSpeakerIndex = findBestMatchingAudioDeviceIndex({
-      available: availableSpeakers,
-      preferred: preferredSpeaker,
-    });
+    const selectedSpeakerIndex = findBestMatchingAudioDeviceIndex(
+      {
+        available: availableSpeakers,
+        preferred: preferredSpeaker,
+      },
+      OS.isWindows()
+    );
     const selectedSpeaker =
       selectedSpeakerIndex !== undefined
         ? availableSpeakers[selectedSpeakerIndex]
@@ -2646,6 +2682,7 @@ export class CallingClass {
         urgent,
         isPartialSend,
         recipients,
+        groupId,
       });
 
       log.info('handleSendCallMessageToGroup() completed successfully');
@@ -3111,20 +3148,32 @@ export class CallingClass {
     function iceServerConfigToList(
       iceServerConfig: GetIceServersResultType
     ): Array<IceServer> {
-      return [
-        {
-          hostname: iceServerConfig.hostname ?? '',
-          username: iceServerConfig.username,
-          password: iceServerConfig.password,
-          urls: (iceServerConfig.urlsWithIps ?? []).slice(),
-        },
-        {
-          hostname: '',
-          username: iceServerConfig.username,
-          password: iceServerConfig.password,
-          urls: (iceServerConfig.urls ?? []).slice(),
-        },
-      ];
+      function mapConfig(
+        iceServerGroup: GetIceServersResultType | IceServerGroupType
+      ): Array<IceServer> {
+        if (!iceServerGroup.username || !iceServerGroup.password) {
+          return [];
+        }
+
+        return [
+          {
+            hostname: iceServerGroup.hostname ?? '',
+            username: iceServerGroup.username,
+            password: iceServerGroup.password,
+            urls: (iceServerGroup.urlsWithIps ?? []).slice(),
+          },
+          {
+            hostname: '',
+            username: iceServerGroup.username,
+            password: iceServerGroup.password,
+            urls: (iceServerGroup.urls ?? []).slice(),
+          },
+        ];
+      }
+
+      return [iceServerConfig]
+        .concat(iceServerConfig.iceServers ?? [])
+        .flatMap(mapConfig);
     }
 
     if (!window.textsecure.messaging) {

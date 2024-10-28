@@ -575,9 +575,6 @@
   "icu:decryptionErrorToast": {
     "messageformat": "Desktopi ndeshi nëj gabim shfshehtëzimi prej {name}, pajisja {deviceId}"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "Parashtroni regjistër"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "Parashtroni regjistër"
   },
@@ -791,8 +788,14 @@
   "icu:attachmentSaved": {
     "messageformat": "Bashkëngjitja u ruajt."
   },
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+  },
   "icu:attachmentSavedShow": {
     "messageformat": "Shfaqe në dosje"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
   },
   "icu:you": {
     "messageformat": "Ju"
@@ -944,9 +947,6 @@
   "icu:NotePreviewModal__Title": {
     "messageformat": "Shënim"
   },
-  "icu:viewRecentMedia": {
-    "messageformat": "Shihni media së fundi"
-  },
   "icu:allMediaMenuItem": {
     "messageformat": "E gjithë media"
   },
@@ -1006,6 +1006,18 @@
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
     "messageformat": "Të gjitha mesazhet në këtë bisedë do të fshihen nga të gjitha pajisjet. Mund ta kërkosh ende këtë bisedë pasi të fshish mesazhet."
+  },
+  "icu:deleteConversation": {
+    "messageformat": "Fshije"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "Të fshihet biseda?"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "Të gjitha mesazhet në këtë bisedë do të fshihen nga kjo pajisje."
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "Të gjitha mesazhet në këtë bisedë do të fshihen nga të gjitha pajisjet."
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Largohu nga grupi"
@@ -1232,6 +1244,9 @@
   "icu:calling__call-link-default-title": {
     "messageformat": "Thirrje përmes Signal-i"
   },
+  "icu:calling__call-link-delete-failed": {
+    "messageformat": "Lidhja nuk mund të fshihet. Kontrollo lidhjen e internetit dhe riprovo."
+  },
   "icu:calling__join-request-denied": {
     "messageformat": "Kërkesa jote për t'iu bashkuar kësaj telefonatë është refuzuar."
   },
@@ -1416,7 +1431,7 @@
     "messageformat": "S\\’mund të merret audio dhe video prej {name}"
   },
   "icu:calling__missing-media-keys--unknown-contact": {
-    "messageformat": "Can't receive audio and video"
+    "messageformat": "Nuk mund të marrësh audio dhe video"
   },
   "icu:calling__missing-media-keys-info": {
     "messageformat": "Kjo mund të ndodhë sepse ata nuk e kanë verifikuar ndryshimin e numrit tënd të sigurisë, ka një problem me pajisjen e tyre ose të kanë bllokuar."
@@ -1441,6 +1456,9 @@
   },
   "icu:calling__presenting--info": {
     "messageformat": "Signal-i po ndan me të tjerë {window}."
+  },
+  "icu:calling__presenting--info--unknown": {
+    "messageformat": "Shpërndarja e ekranit të Signal është aktive"
   },
   "icu:calling__presenting--reconnecting": {
     "messageformat": "Po rilidhet…"
@@ -1626,7 +1644,7 @@
     "messageformat": "Dje {time}"
   },
   "icu:messageLoop": {
-    "messageformat": "Signal may be failing to process an incoming message."
+    "messageformat": "Signal mund të mos e përpunojë mesazhin në hyrje."
   },
   "icu:messageBodyTooLong": {
     "messageformat": "Lënda e mesazhit është shumë e gjatë."
@@ -2976,7 +2994,7 @@
     "messageformat": "S’mund të bëhesh pjesë e këtij grupi përmes lidhjes së grupit, ngaqë ju ka hequr një përgjegjës."
   },
   "icu:GroupV2--join--prompt-with-approval": {
-    "messageformat": "Përpara se të mund të bëheni pjesë e këtij grupi, kërkesën tuaj duhet ta miratojë një përgjegjës i tij. Në u miratoftë. emri dhe fotoja juaj do t’u jepet anëtarëve të ti."
+    "messageformat": "Përpara se të bëheni pjesë e këtij grupi, kërkesën tuaj duhet ta miratojë një përgjegjës i grupit. Kur kërkoni të bëheni pjesë, emri dhe fotoja juaj do të ndahet me anëtarët e tij."
   },
   "icu:GroupV2--join--join-button": {
     "messageformat": "Merrni pjesë"
@@ -3536,6 +3554,9 @@
   "icu:BackupImportScreen__progressbar-hint": {
     "messageformat": "Po shkarkohen {currentSize} nga {totalSize} ({fractionComplete,number,percent})..."
   },
+  "icu:BackupImportScreen__progressbar-hint--processing": {
+    "messageformat": "Duke përfunduar transferimin e mesazhit..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Po përgatitet për t'u shkarkuar..."
   },
@@ -3556,6 +3577,27 @@
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
     "messageformat": "Anulo transferimin"
+  },
+  "icu:BackupImportScreen__error__title": {
+    "messageformat": "Gabim në transferimin e mesazheve"
+  },
+  "icu:BackupImportScreen__error__body": {
+    "messageformat": "Mesazhet nuk mund të transferoheshin. Kontrollo lidhjen e internetit dhe riprovo."
+  },
+  "icu:BackupImportScreen__error__confirm": {
+    "messageformat": "Riprovo"
+  },
+  "icu:BackupImportScreen__skip": {
+    "messageformat": "Anashkaloje"
+  },
+  "icu:BackupImportScreen__skip-confirmation__title": {
+    "messageformat": "Të kapërcehet transferimi i mesazhit?"
+  },
+  "icu:BackupImportScreen__skip-confirmation__body": {
+    "messageformat": "Nuk do të kesh lejehyrje në asnjë nga mesazhet apo mediat e tua në këtë pajisje nëse zgjedh të kapërcesh. Mund të fillosh një transferim të ri pasi të kapërcesh te Parametrat > Bisedat > Transferimi."
+  },
+  "icu:BackupImportScreen__skip-confirmation__cancel": {
+    "messageformat": "Anulo"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "Duke rikthyer median"
@@ -3640,9 +3682,6 @@
   },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Hiqe nga grup"
-  },
-  "icu:ContactModal--already-in-call": {
-    "messageformat": "Jeni tashmë në një thirrje"
   },
   "icu:ContactModal--voice": {
     "messageformat": "Zëri"
@@ -4449,10 +4488,10 @@
     "messageformat": "Profili juaj s’u përditësua dot. Ju lutemi, riprovoni."
   },
   "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Invalid characters"
+    "messageformat": "Karaktere të pavlefshme"
   },
   "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "One or more characters you’ve entered can’t be used. Try again."
+    "messageformat": "Një ose më shumë karaktere që ke vendosur nuk mund të përdoren. Provo sërish."
   },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Dërgojini mesazh një përgjegjësi"
@@ -5473,13 +5512,22 @@
     "messageformat": "Të pastrohet historiku i thirrjeve?"
   },
   "icu:CallsTab__ConfirmClearCallHistory__Body": {
-    "messageformat": "Kjo do të fshijë përgjithmonë të gjithë historikun e thirrjeve"
+    "messageformat": "Kjo do të fshijë përgjithmonë të gjithë historikun e thirrjeve."
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Body--call-links": {
+    "messageformat": "Kjo do të fshijë përgjithmonë të gjithë historikun e thirrjeve. Lidhjet e thirrjeve që ke krijuar nuk do të funksionojnë më për njerëzit që i zotërojnë. "
   },
   "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
     "messageformat": "Spastroje"
   },
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "Historia e thirrjeve u fshi"
+  },
+  "icu:CallsTab__ClearCallHistoryError--call-links": {
+    "messageformat": "Jo të gjitha lidhjet e thirrjeve mund të fshiheshin. Kontrollo lidhjen e internetit dhe riprovo."
+  },
+  "icu:CallsTab__ClearCallHistoryError": {
+    "messageformat": "Jo i gjithë historiku i thirrjeve mund të fshihej. Kontrollo lidhjen e internetit dhe riprovo."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Kliko <newCallButtonIcon></newCallButtonIcon> për të nisur një thirrje të re zanore ose me video."
@@ -5677,10 +5725,22 @@
     "messageformat": "Rregullme të vogla, riparime të gabimeve dhe përmirësime të mbarëvajtjes.  Faleminderit që përdorni Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.26--0": {
-    "messageformat": "Ndonjëherë, lënia e diçkaje pas është mënyra më e mirë për të zbuluar dëshirën për ta gjetur sërish atë, ndaj kemi rregulluar defektin që vështirësonte kërkimin e grupeve ku nuk je më pjesë, por që mbeten ende në listën e bisedave (dhe me shumë mundësi, edhe në zemrën tënde)."
+  "icu:WhatsNew__v7.29--0": {
+    "messageformat": "Përditësimi përmirëson shpejtësinë e nisjes me rreth 5%, ndaj mos ngurro të ngadalësosh pak në fusha të tjera të jetës."
   },
-  "icu:WhatsNew__v7.27--0": {
-    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\""
+  "icu:WhatsNew__v7.30--header": {
+    "messageformat": "Ju prezantojmë lidhjet e thirrjeve: Lidhja që mungon për ftesat dhe mbledhjet e improvizuara në kalendar."
+  },
+  "icu:WhatsNew__v7.30--0": {
+    "messageformat": "Tani mund të krijosh më shpejt një lidhje të lehtë që çdokush në Signal mund ta përdorë për t'iu bashkuar një telefonate në grup pa pasur nevojë t'i bashkohet fillimisht një bisede në grup në Signal."
+  },
+  "icu:WhatsNew__v7.30--1": {
+    "messageformat": "Lidhjet e thirrjeve janë të ripërdorshme dhe ideale për takime telefonike të herpashershme me miqtë e tu më të mirë apo kontrolle javore me kolegët e tu."
+  },
+  "icu:WhatsNew__v7.30--2": {
+    "messageformat": "Mund të menaxhosh lidhjet e thirrjeve, të kontrollosh parametrat e miratimit dhe të kopjosh lidhjet nga skeda e thirrjeve për shpërndarje të shpejtë."
+  },
+  "icu:WhatsNew__v7.31--0": {
+    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
   }
 }

@@ -575,9 +575,6 @@
   "icu:decryptionErrorToast": {
     "messageformat": "‫لقد وقع البرنامج في خطأ يتعلق بفك التعمية انطلاقا من {name}، الجهاز {deviceId}"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "إرسال السجل"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "إرسال السجل"
   },
@@ -791,8 +788,14 @@
   "icu:attachmentSaved": {
     "messageformat": "تم حفظ المرفق."
   },
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+  },
   "icu:attachmentSavedShow": {
     "messageformat": "أظهر ذلك في الملف"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
   },
   "icu:you": {
     "messageformat": "أنت"
@@ -944,9 +947,6 @@
   "icu:NotePreviewModal__Title": {
     "messageformat": "مُلاحظة"
   },
-  "icu:viewRecentMedia": {
-    "messageformat": "رؤية الوسائط الحديثة"
-  },
   "icu:allMediaMenuItem": {
     "messageformat": "جميع الوسائط"
   },
@@ -1006,6 +1006,18 @@
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
     "messageformat": "ستُحذَف جميع رسائل هذه المُحادثة من جميع أجهزتك. يُمكنك البحث عن هذه الدردشة حتى بعد حذف الرسائل."
+  },
+  "icu:deleteConversation": {
+    "messageformat": "حذف"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "حذف الدردشة؟"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "ستُحذَف رسائل هذه المحادثة من هذا الجهاز."
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "ستُحذَف جميع رسائل هذه المُحادثة من جميع أجهزتك."
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "مغادرة المجموعة"
@@ -1232,6 +1244,9 @@
   "icu:calling__call-link-default-title": {
     "messageformat": "مكالمة سيجنال"
   },
+  "icu:calling__call-link-delete-failed": {
+    "messageformat": "تعذَّر حذف الرابط. تحقّق من اتصالك بالشبكة ثم حاوِل مُجدَّدًا."
+  },
   "icu:calling__join-request-denied": {
     "messageformat": "لقد رُفضَ طلب انضمامك إلى هذه المكالمة."
   },
@@ -1416,7 +1431,7 @@
     "messageformat": "لا يُمكن تلقي الصوت والصورة من {name}"
   },
   "icu:calling__missing-media-keys--unknown-contact": {
-    "messageformat": "Can't receive audio and video"
+    "messageformat": "يتعذَّر تلقّي الصوت والصورة."
   },
   "icu:calling__missing-media-keys-info": {
     "messageformat": "رُبما يكون هذا بسبب عدم تحقُّقه مِن تغيُّر رقم الأمان الخاص بك أو بسبب وجود مُشكلة في جِهازه أو أنهُ قد حَظرك."
@@ -1441,6 +1456,9 @@
   },
   "icu:calling__presenting--info": {
     "messageformat": "يشارك سيجنال {window}."
+  },
+  "icu:calling__presenting--info--unknown": {
+    "messageformat": "ميزة مشاركة الشاشة على سيجنال مُفعَّلة"
   },
   "icu:calling__presenting--reconnecting": {
     "messageformat": "جارٍ إعادة الاتصال…"
@@ -1626,7 +1644,7 @@
     "messageformat": "البارحة {time}"
   },
   "icu:messageLoop": {
-    "messageformat": "Signal may be failing to process an incoming message."
+    "messageformat": "قد يكون سيجنال غير قادر على معالجة رسالة واردة."
   },
   "icu:messageBodyTooLong": {
     "messageformat": "إن الرسالة طويلة جداً."
@@ -2976,7 +2994,7 @@
     "messageformat": "لا يمكنك الانضمام لهذه المجموعة من خلال الرابط لأن أحد المشرفين أزالك."
   },
   "icu:GroupV2--join--prompt-with-approval": {
-    "messageformat": "ليصبح بإمكانك الانضمام إلى هذه المجموعة، يجب أن يوافق مشرف من هذه المجموعة على طلب انضمامك. إذا تم ذلك، سيتم مشاركة اسمك وصورتك مع أعضاء المجموعة."
+    "messageformat": "لتستطيع الانضمام إلى هذه المجموعة، يجب أن يوافق مُشرِف من هذه المجموعة على طلب انضمامك. عندما ترسل طلب انضمام، سيتم مشاركة اسمك وصورتك مع أعضاء المجموعة."
   },
   "icu:GroupV2--join--join-button": {
     "messageformat": "الانضمام"
@@ -3536,6 +3554,9 @@
   "icu:BackupImportScreen__progressbar-hint": {
     "messageformat": "يتم تنزيل {currentSize} من أصل {totalSize} ({fractionComplete,number,percent})..."
   },
+  "icu:BackupImportScreen__progressbar-hint--processing": {
+    "messageformat": "جارٍ وضع اللمسات الأخيرة على نقل الرسائل…"
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "جارٍ الإعداد للتنزيل..."
   },
@@ -3556,6 +3577,27 @@
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
     "messageformat": "إلغاء التحويل"
+  },
+  "icu:BackupImportScreen__error__title": {
+    "messageformat": "حدث خطأ أثناء نقل رسائلك."
+  },
+  "icu:BackupImportScreen__error__body": {
+    "messageformat": "تعذَّر نقل رسائلك. تحقَّق من اتصالك بالإنترنت وحاول مُجدَّدًا."
+  },
+  "icu:BackupImportScreen__error__confirm": {
+    "messageformat": "إعادة المُحاولة"
+  },
+  "icu:BackupImportScreen__skip": {
+    "messageformat": "تخطّي"
+  },
+  "icu:BackupImportScreen__skip-confirmation__title": {
+    "messageformat": "أترغبُ بتخطّي نقل الرسائل؟"
+  },
+  "icu:BackupImportScreen__skip-confirmation__body": {
+    "messageformat": "إذا اخترتَ التخطّي، فلن تتمكّن من الوصول إلى رسائلك أو وسائطك على هذا الجهاز. يُمكنك بدء عملية نقل جديدة بعد التخطّي من خلال الإعدادات > الدردشات > النقل."
+  },
+  "icu:BackupImportScreen__skip-confirmation__cancel": {
+    "messageformat": "إلغاء"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "جارٍ استرجاع الوسائط"
@@ -3640,9 +3682,6 @@
   },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "الإزالة من المجموعة"
-  },
-  "icu:ContactModal--already-in-call": {
-    "messageformat": "إنك بالفعل في مكالمة"
   },
   "icu:ContactModal--voice": {
     "messageformat": "الصوت"
@@ -4449,10 +4488,10 @@
     "messageformat": "لقد تعذر تحديث حسابك الشخصي. يُرجى المحاولة مرة أخرى."
   },
   "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Invalid characters"
+    "messageformat": "رموز غير صالحة"
   },
   "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "One or more characters you’ve entered can’t be used. Try again."
+    "messageformat": "رمز واحد أو أكثر من الرموز التي أدخلتها غير صالح. حاوِل مرّة أخرى."
   },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "مراسلة مشرف على المجموعة"
@@ -5202,7 +5241,7 @@
     "messageformat": "القصص"
   },
   "icu:StoryListItem__unhide": {
-    "messageformat": "إظهار القصص"
+    "messageformat": "إظهار قصة"
   },
   "icu:StoryListItem__hide": {
     "messageformat": "إخفاء قصة"
@@ -5473,13 +5512,22 @@
     "messageformat": "مسح سِّجِلّ الاتصالات؟"
   },
   "icu:CallsTab__ConfirmClearCallHistory__Body": {
-    "messageformat": "سيؤدي هذا إلى حذف جميع سِّجِلّ الاتصالات"
+    "messageformat": "سَيؤدِّي هذا إلى حذف جميع سِجِلَّات المكالمات."
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Body--call-links": {
+    "messageformat": "سَيؤدي هذا إلى حذف جميع سِجِلَّات المكالمات. روابط المكالمات التي أنشأتها لن تعمل بعد الآن عند الأشخاص الذين أُرسِلَت إليهم من قبل. "
   },
   "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
     "messageformat": "محو"
   },
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "تم مسح سِّجِلّ الاتصالات"
+  },
+  "icu:CallsTab__ClearCallHistoryError--call-links": {
+    "messageformat": "لا يمكن حذف جميع روابط المكالمات. تحقّق من اتصالك بالشبكة ثم حاوِل مُجدَّدًا."
+  },
+  "icu:CallsTab__ClearCallHistoryError": {
+    "messageformat": "لا يمكن مسح جميع سجلّات المكالمات. تحقّق من اتصالك بالشبكة ثم حاوِل مُجدَّدًا."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "انقر على <newCallButtonIcon></newCallButtonIcon> لبدء مُكالمة صوتية أو فيديو جديدة."
@@ -5677,10 +5725,22 @@
     "messageformat": "تعديلات صغيرة، تصليح الأعطال، وتحسينات للأداء. شكرًا على استخدامكم سيجنال!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.26--0": {
-    "messageformat": "يُصلح هذا التحديث خطأ كان يُصعّب عملية البحث عن مجموعة بعد مغادرتها."
+  "icu:WhatsNew__v7.29--0": {
+    "messageformat": "يُحسِّن هذا التحديث سرعة بدء التشغيل بنسبة تقارب 5%."
   },
-  "icu:WhatsNew__v7.27--0": {
-    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\""
+  "icu:WhatsNew__v7.30--header": {
+    "messageformat": "تعرَّفوا على روابط المكالمات: الحلقة المفقودة لدعوات التقويم والاجتماعات الطارئة."
+  },
+  "icu:WhatsNew__v7.30--0": {
+    "messageformat": "• يُمكنك الآن إنشاء رابط بسيط بسرعة يُمكن لأي أحد في سيجنال استعماله للانضمام إلى مكالمة جماعية دون الحاجة إلى الانضمام إلى دردشة جماعية في سيجنال أولًا."
+  },
+  "icu:WhatsNew__v7.30--1": {
+    "messageformat": "• يمكن إعادة استخدام روابط المكالمات وهي مناسبة للقاءات الهاتفية المُتكرِّرة مع أعز أصدقائك أو المكالمات الأسبوعية مع زملائك."
+  },
+  "icu:WhatsNew__v7.30--2": {
+    "messageformat": "• يمكنك إدارة روابط المكالمات والتحكُّم في إعدادات القبول ونسخ روابط من علامة تبويب \"المكالمات\" لمشاركتها بسرعة."
+  },
+  "icu:WhatsNew__v7.31--0": {
+    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
   }
 }

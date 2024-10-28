@@ -575,9 +575,6 @@
   "icu:decryptionErrorToast": {
     "messageformat": "डेस्कटॉप {name}, उपकरण {deviceId} कडून कूटबद्धीकरण त्रुटी मध्ये गेला"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "लॉग सादर करा"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "लॉग सादर करा"
   },
@@ -791,8 +788,14 @@
   "icu:attachmentSaved": {
     "messageformat": "संलग्नक/अटॅचमेंट सेव्ह झाली"
   },
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+  },
   "icu:attachmentSavedShow": {
     "messageformat": "फोल्डर मध्ये दाखवा"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
   },
   "icu:you": {
     "messageformat": "आपण"
@@ -944,9 +947,6 @@
   "icu:NotePreviewModal__Title": {
     "messageformat": "टीप"
   },
-  "icu:viewRecentMedia": {
-    "messageformat": "अलीकडील मिडिया बघा"
-  },
   "icu:allMediaMenuItem": {
     "messageformat": "सर्व मिडिया"
   },
@@ -1006,6 +1006,18 @@
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
     "messageformat": "या चॅट्स मधील सर्व संदेश आपल्या सर्व डिव्हाइसेस वरून हटवण्यात येतील. आपण संदेश हटवल्यानंतर देखील अद्याप आपण हे चॅट्स शोधू शकता."
+  },
+  "icu:deleteConversation": {
+    "messageformat": "हटवा"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "चॅट हटवायचे?"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "या चॅट्समधील सर्व संदेश या डिव्हाइस वरून हटवले जातील."
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "या चॅट्स मधील सर्व संदेश आपल्या सर्व डिव्हाइसेस वरून हटवण्यात येतील."
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "गट सोडा"
@@ -1232,6 +1244,9 @@
   "icu:calling__call-link-default-title": {
     "messageformat": "Signal कॉल"
   },
+  "icu:calling__call-link-delete-failed": {
+    "messageformat": "लिंक हटवू शकत नाही. आपले कनेक्शन तपासा आणि पुन्हा प्रयत्न करा."
+  },
   "icu:calling__join-request-denied": {
     "messageformat": "या कॉलमध्ये जोडले जाण्याची आपली विनंती नाकारण्यात आली."
   },
@@ -1416,7 +1431,7 @@
     "messageformat": "{name} कडून ऑडिओ आणि व्हिडिओ प्राप्त करू शकत नाही"
   },
   "icu:calling__missing-media-keys--unknown-contact": {
-    "messageformat": "Can't receive audio and video"
+    "messageformat": "ऑडिओ आणि व्हिडीओ प्राप्त करू शकत नाही"
   },
   "icu:calling__missing-media-keys-info": {
     "messageformat": "त्यांनी आपला सुरक्षितता नंबर बदल सत्यापित न केल्यामुळे, त्यांच्या डिव्हाईसमध्ये काहीतरी समस्या असल्यामुळे, किंवा त्यांनी आपल्याला अवरोधित केल्यामुळे असे असू शकते."
@@ -1441,6 +1456,9 @@
   },
   "icu:calling__presenting--info": {
     "messageformat": "Signal {window} सामायिक करत आहे."
+  },
+  "icu:calling__presenting--info--unknown": {
+    "messageformat": "Signal स्क्रीन शेअर करणे सक्रिय आहे"
   },
   "icu:calling__presenting--reconnecting": {
     "messageformat": "पुन्हा कनेक्ट करत आहे(...)"
@@ -1626,7 +1644,7 @@
     "messageformat": "काल {time}"
   },
   "icu:messageLoop": {
-    "messageformat": "Signal may be failing to process an incoming message."
+    "messageformat": "Signal येणाऱ्या संदेशांवर प्रक्रिया करू शकण्यात अयशस्वी होऊ शकते."
   },
   "icu:messageBodyTooLong": {
     "messageformat": "संदेश अंग खूप मोठे आहे."
@@ -2976,7 +2994,7 @@
     "messageformat": "ॲडमिनने आपल्याला काढून टाकले असल्यामुळे आपण ग्रुप लिंकद्वारे या ग्रुपमध्ये सामील होऊ शकत नाही."
   },
   "icu:GroupV2--join--prompt-with-approval": {
-    "messageformat": "आपण या गटामध्ये सामील होण्यापूर्वी या गटाच्या प्रशासकाने आपली विनंती मंजूर करणे आवश्यक आहे. मंजूर केल्यास आपले नाव आणि फोटो याच्या सदस्यांसह सामायिक केला जाईल."
+    "messageformat": "आपण या गटामध्ये सामील होण्यापूर्वी या गटाच्या प्रशासकाने आपली विनंती मंजूर करणे आवश्यक आहे. आपण सामील होण्याची विनंती करता तेव्हा आपले नाव आणि फोटो सदस्यांसह सामायिक केला जाईल."
   },
   "icu:GroupV2--join--join-button": {
     "messageformat": "सामील व्हा"
@@ -3536,6 +3554,9 @@
   "icu:BackupImportScreen__progressbar-hint": {
     "messageformat": "{totalSize} ({fractionComplete,number,percent}) पैकी {currentSize} डाउनलोड करत आहे..."
   },
+  "icu:BackupImportScreen__progressbar-hint--processing": {
+    "messageformat": "संदेश हस्तांतरण पूर्ण करत आहे..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "डाउनलोड करण्याची तयारी करत आहे..."
   },
@@ -3556,6 +3577,27 @@
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
     "messageformat": "हस्तांतरण रद्द करा"
+  },
+  "icu:BackupImportScreen__error__title": {
+    "messageformat": "आपले संदेश स्थलांतरित करण्यामध्ये त्रुटी"
+  },
+  "icu:BackupImportScreen__error__body": {
+    "messageformat": "आपले संदेश स्थलांतरित केले जाऊ शकत नाहीत. आपले इंटरनेट कनेक्शन तपासा आणि पुन्हा तपासा."
+  },
+  "icu:BackupImportScreen__error__confirm": {
+    "messageformat": "पुन्हा प्रयत्न करा"
+  },
+  "icu:BackupImportScreen__skip": {
+    "messageformat": "वगळा"
+  },
+  "icu:BackupImportScreen__skip-confirmation__title": {
+    "messageformat": "संदेश हस्तांतरण वगळायचे?"
+  },
+  "icu:BackupImportScreen__skip-confirmation__body": {
+    "messageformat": "आपण जर वगळण्याचे निवडल्यास, आपणांकडे या डिव्हाइस वरील आपल्या संदेश किंवा मिडीया यांच्यापैकी कोणत्याहीचा अ‍ॅक्सेस असणार नाही. आपण सेटिंग्ज > चॅट्स > हस्तांतरण मधून वगळल्यानंतर नवीन हस्तांतरण सुरू करू शकता."
+  },
+  "icu:BackupImportScreen__skip-confirmation__cancel": {
+    "messageformat": "रद्द करा"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "मिडीया पुर्नस्थापित करत आहे"
@@ -3640,9 +3682,6 @@
   },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "ग्रुपमधून काढून टाका"
-  },
-  "icu:ContactModal--already-in-call": {
-    "messageformat": "आपण आधीच एक कॉलमध्ये आहात"
   },
   "icu:ContactModal--voice": {
     "messageformat": "व्हॉईस"
@@ -4449,10 +4488,10 @@
     "messageformat": "आपली प्रोफाईल अद्यतनित केली जाऊ शकली नाही. कृपया पुन्हा प्रयत्न करा."
   },
   "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Invalid characters"
+    "messageformat": "अवैध वर्ण"
   },
   "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "One or more characters you’ve entered can’t be used. Try again."
+    "messageformat": "आपण प्रविष्ट केलेल्या एक किंवा अधिक वर्णांना वापरले जाऊ शकत नाही. पुन्हा प्रयत्न करा."
   },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "प्रशासकाला संदेश पाठवा"
@@ -5202,7 +5241,7 @@
     "messageformat": "स्टोरी"
   },
   "icu:StoryListItem__unhide": {
-    "messageformat": "स्टोरीज दाखवा"
+    "messageformat": "स्टोरी उघड करा"
   },
   "icu:StoryListItem__hide": {
     "messageformat": "स्टोरी लपवा"
@@ -5473,13 +5512,22 @@
     "messageformat": "कॉल इतिहास साफ करायचा?"
   },
   "icu:CallsTab__ConfirmClearCallHistory__Body": {
-    "messageformat": "हे कायमस्वरूपी सर्व कॉल इतिहास हटवेल"
+    "messageformat": "हे कायमस्वरूपी सर्व कॉल इतिहास हटवेल."
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Body--call-links": {
+    "messageformat": "हे कायमस्वरूपी सर्व कॉल इतिहास हटवेल. आपण तयार केलेल्या कॉल लिंक्स ज्या लोकांकडे आहेत त्यांच्यासाठी त्या यापुढे चालणार नाहीत. "
   },
   "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
     "messageformat": "साफ करा"
   },
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "कॉल इतिहास साफ केला"
+  },
+  "icu:CallsTab__ClearCallHistoryError--call-links": {
+    "messageformat": "सर्व कॉल लिंक्स हटवल्या जाणार नाहीत. आपले कनेक्शन तपासा आणि पुन्हा प्रयत्न करा."
+  },
+  "icu:CallsTab__ClearCallHistoryError": {
+    "messageformat": "सर्व कॉल इतिहास साफ केला जाणार नाही. आपले कनेक्शन तपासा आणि पुन्हा प्रयत्न करा."
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "नवीन व्हॉईस किंवा व्हिडिओ कॉल सुरू करण्यासाठी <newCallButtonIcon></newCallButtonIcon> क्लिक करा."
@@ -5677,10 +5725,22 @@
     "messageformat": "लहान ट्विक्स, दोष निवारण, आणि कामगिरी सुधारणा. Signal वापरल्याबद्दल आभारी आहोत!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.26--0": {
-    "messageformat": "काहीवेळा काहीतरी मागे सोडणे हा तुम्हाला ते पुन्हा शोधायचे आहे हे शोधण्याचा सर्वोत्तम मार्ग आहे, म्हणून आम्ही ज्यामुळे आपण यापुढे ज्या गटांचा भाग नाही, परंतु तरीही तो आपल्या संभाषण सूचीमध्ये राहत होता (आणि कदाचित आपल्या ह्रदयात देखील), असा गट शोधणे कठीण करत असलेला बग दुरूस्त केला आहे."
+  "icu:WhatsNew__v7.29--0": {
+    "messageformat": "हे अद्यतन सुरूवातीच्या वेगामध्ये सुमारे 5% सुधारणा करते, त्यामुळे आपल्या आयुष्याच्या इतर क्षेत्रात थोडाफार वेग कमी करण्यास मोकळे रहा."
   },
-  "icu:WhatsNew__v7.27--0": {
-    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\""
+  "icu:WhatsNew__v7.30--header": {
+    "messageformat": "सादर करत आहोत कॉल लिंक्स : पूर्वनियोजित निमंत्रणे आणि उत्स्फूर्त भेटींना जोडणारा दुवा."
+  },
+  "icu:WhatsNew__v7.30--0": {
+    "messageformat": "आता आपण चटकन एक सोपी लिंक तयार करू शकता जी वापरून Signal वर असणारा कोणीही समूह कॉलमध्ये सामील होऊ शकतो, त्यासाठी त्याला आधी Signal समूह चॅटमध्ये सामील व्हावे लागणार नाही."
+  },
+  "icu:WhatsNew__v7.30--1": {
+    "messageformat": "कॉल लिंक्स पुन्हा वापरता येतात व आपल्या जीवलग मित्रांना सारखे फोन लावण्यासाठी किंवा सहकाऱ्यांशी दर आठवड्याला संपर्क साधण्यासाठी त्या उपयोगी ठरतात."
+  },
+  "icu:WhatsNew__v7.30--2": {
+    "messageformat": "आपण कॉल लिंक्स व्यवस्थापित करू शकता, मान्यता सेटिंग्ज नियंत्रित करू शकता, व त्वरित शेअरिंगसाठी कॉल्स टॅबमधून लिंक कॉपी करू शकता."
+  },
+  "icu:WhatsNew__v7.31--0": {
+    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
   }
 }

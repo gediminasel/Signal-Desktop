@@ -575,9 +575,6 @@
   "icu:decryptionErrorToast": {
     "messageformat": "{name}, ডিভাইস {deviceId} থেকে ডেস্কটপ একটি ডিক্রিপশন ত্রুটির সম্মুখীন হয়েছে"
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "লগ জমা দিন"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "লগ জমা দিন"
   },
@@ -791,8 +788,14 @@
   "icu:attachmentSaved": {
     "messageformat": "সংযুক্তি সংরক্ষিত হয়েছে।"
   },
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+  },
   "icu:attachmentSavedShow": {
     "messageformat": "ফোল্ডারে দেখান"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
   },
   "icu:you": {
     "messageformat": "আপনি"
@@ -944,9 +947,6 @@
   "icu:NotePreviewModal__Title": {
     "messageformat": "নোট"
   },
-  "icu:viewRecentMedia": {
-    "messageformat": "সাম্প্রতিক মিডিয়া দেখুন"
-  },
   "icu:allMediaMenuItem": {
     "messageformat": "সকল মিডিয়া"
   },
@@ -1006,6 +1006,18 @@
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
     "messageformat": "এই চ্যাটের সকল মেসেজ আপনার সকল ডিভাইস থেকে মুছে ফেলা হবে। মেসেজগুলো মুছে ফেলার পরেও আপনি এই চ্যাটটি অনুসন্ধান করতে পারবেন।"
+  },
+  "icu:deleteConversation": {
+    "messageformat": "মুছে ফেলুন"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "চ্যাট মুছে ফেলবেন?"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "এই চ্যাটের সকল মেসেজ এই ডিভাইস থেকে মুছে ফেলা হবে।"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "এই চ্যাটের সকল মেসেজ আপনার সকল ডিভাইস থেকে মুছে ফেলা হবে।"
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "গ্রুপ ত্যাগ করুন"
@@ -1232,6 +1244,9 @@
   "icu:calling__call-link-default-title": {
     "messageformat": "Signal কল"
   },
+  "icu:calling__call-link-delete-failed": {
+    "messageformat": "লিংক মুছে ফেলা করা যায়নি। আপনার নেটওয়ার্ক সংযোগ ঠিক আছে কিনা দেখুন এবং আবার চেষ্টা করুন।"
+  },
   "icu:calling__join-request-denied": {
     "messageformat": "এই কলে যোগ দেওয়ার জন্য আপনার অনুরোধ প্রত্যাখ্যান করা হয়েছে।"
   },
@@ -1416,7 +1431,7 @@
     "messageformat": "{name}-এর কাছ থেকে অডিও ও ভিডিও গ্রহণ করা যাবে না"
   },
   "icu:calling__missing-media-keys--unknown-contact": {
-    "messageformat": "Can't receive audio and video"
+    "messageformat": "অডিও ও ভিডিও গ্রহণ করা যাচ্ছে না"
   },
   "icu:calling__missing-media-keys-info": {
     "messageformat": "এর কারণ হতে পারে যে- হয়তো তারা আপনার পরিবর্তিত নিরাপত্তা নাম্বার যাচাই করেননি, তাদের ডিভাইসে কোনো সমস্যা হয়েছে বা তারা আপনাকে ব্লক করেছেন।"
@@ -1441,6 +1456,9 @@
   },
   "icu:calling__presenting--info": {
     "messageformat": "Signal {window} শেয়ার করছে।"
+  },
+  "icu:calling__presenting--info--unknown": {
+    "messageformat": "Signal স্ক্রিন শেয়ারিং সক্রিয় আছে"
   },
   "icu:calling__presenting--reconnecting": {
     "messageformat": "আবারো সংযুক্ত করা হচ্ছে…"
@@ -1626,7 +1644,7 @@
     "messageformat": "গতকাল {time}"
   },
   "icu:messageLoop": {
-    "messageformat": "Signal may be failing to process an incoming message."
+    "messageformat": "Signal একটি আগত মেসেজ প্রক্রিয়া করতে ব্যর্থ হতে পারে।"
   },
   "icu:messageBodyTooLong": {
     "messageformat": "বার্তার মূল অংশটি অনেক দীর্ঘ।"
@@ -2976,7 +2994,7 @@
     "messageformat": "আপনি এই লিংকের মাধ্যমে গ্ৰুপে যোগ দিতে পারবেন না, কারণ একজন অ্যাডমিন আপনাকে সরিয়ে দিয়েছেন।"
   },
   "icu:GroupV2--join--prompt-with-approval": {
-    "messageformat": "আপনি এই গ্রুপে যোগ দেওয়ার আগে গ্রুপের অ্যাডমিনকে অবশ্যই আপনার যোগ দেওয়ার অনুরোধ অনুমোদন করতে হবে। অনুমোদিত হলে, আপনার নাম ও ফটো গ্রুপের সদস্যদের সাথে শেয়ার করা হবে।"
+    "messageformat": "আপনি এই গ্রুপে যোগদানের আগে এই গ্রুপের একজন এডমিন অবশ্যই আপনার অনুরোধটি অনুমোদন করতে হবে। আপনি যখন যোগদানের জন্য অনুরোধ করবেন তখন আপনার নাম এবং ফটো এর সদস্যদের সাথে শেয়ার করা হবে।"
   },
   "icu:GroupV2--join--join-button": {
     "messageformat": "যোগদান করুন"
@@ -3536,6 +3554,9 @@
   "icu:BackupImportScreen__progressbar-hint": {
     "messageformat": "{totalSize}-এর মধ্যে {currentSize} ({fractionComplete,number,percent}) ডাউনলোড হচ্ছে..."
   },
+  "icu:BackupImportScreen__progressbar-hint--processing": {
+    "messageformat": "মেসেজ ট্রান্সফার চূড়ান্ত করা হচ্ছে..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "ডাউনলোড করার জন্য প্রস্তুতি নিচ্ছে..."
   },
@@ -3556,6 +3577,27 @@
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
     "messageformat": "স্থানান্তর বাতিল করুন"
+  },
+  "icu:BackupImportScreen__error__title": {
+    "messageformat": "আপনার মেসেজ ট্রান্সফারে ত্রুটি দেখা দিয়েছে"
+  },
+  "icu:BackupImportScreen__error__body": {
+    "messageformat": "আপনার মেসেজ ট্রান্সফার করা যায়নি। আপনার ইন্টারনেট সংযোগ ঠিক আছে কি না দেখুন এবং আবার চেষ্টা করুন।"
+  },
+  "icu:BackupImportScreen__error__confirm": {
+    "messageformat": "পুনরায় চেষ্টা করুন"
+  },
+  "icu:BackupImportScreen__skip": {
+    "messageformat": "এড়িয়ে যান"
+  },
+  "icu:BackupImportScreen__skip-confirmation__title": {
+    "messageformat": "মেসেজ ট্রান্সফার এড়িয়ে যাবেন?"
+  },
+  "icu:BackupImportScreen__skip-confirmation__body": {
+    "messageformat": "আপনি যদি এড়িয়ে যেতে চান, তাহলে এই ডিভাইসে কোনো মেসেজ বা মিডিয়াতে আপনার অ্যাক্সেস থাকবে না। আপনি 'সেটিংস > চ্যাট > ট্রান্সফার' থেকে এড়িয়ে যাওয়ার পরে একটি নতুন ট্রান্সফার শুরু করতে পারবেন।"
+  },
+  "icu:BackupImportScreen__skip-confirmation__cancel": {
+    "messageformat": "বাতিল করুন"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "মিডিয়া পুনরুদ্ধার করা হচ্ছে"
@@ -3640,9 +3682,6 @@
   },
   "icu:ContactModal--remove-from-group": {
     "messageformat": "গ্রুপ থেকে সরিয়ে ফেলুন"
-  },
-  "icu:ContactModal--already-in-call": {
-    "messageformat": "আপনি ইতিমধ্যেই একটি কলে আছেন"
   },
   "icu:ContactModal--voice": {
     "messageformat": "ভয়েস"
@@ -4449,10 +4488,10 @@
     "messageformat": "আপনার প্রোফাইলটি আপডেট করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।"
   },
   "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Invalid characters"
+    "messageformat": "অকার্যকর ক্যারেক্টার"
   },
   "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "One or more characters you’ve entered can’t be used. Try again."
+    "messageformat": "আপনার প্রদত্ত এক বা একাধিক ক্যারেক্টার ব্যবহার করা যাচ্ছে না। আবার চেষ্টা করুন।"
   },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "একজন অ্যাডমিনকে মেসেজ পাঠান"
@@ -5202,7 +5241,7 @@
     "messageformat": "স্টোরি"
   },
   "icu:StoryListItem__unhide": {
-    "messageformat": "স্টোরি দেখান"
+    "messageformat": "স্টোরি দৃশ্যমান করুন"
   },
   "icu:StoryListItem__hide": {
     "messageformat": "স্টোরি লুকান"
@@ -5473,13 +5512,22 @@
     "messageformat": "কলের ইতিহাস মুছে ফেলবেন?"
   },
   "icu:CallsTab__ConfirmClearCallHistory__Body": {
-    "messageformat": "এটি কলের সকল ইতিহাস স্থায়ীভাবে মুছে ফেলবে"
+    "messageformat": "এর ফলে কলের সকল ইতিহাস স্থায়ীভাবে মুছে যাবে।"
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Body--call-links": {
+    "messageformat": "এর ফলে কলের সকল ইতিহাস স্থায়ীভাবে মুছে যাবে। আপনার তৈরি করা কলের লিংকগুলো যাদের কাছে আছে তাদের জন্য আর কাজ করবে না। "
   },
   "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
     "messageformat": "সাফ করুন"
   },
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "কলের ইতিহাস মুছে ফেলা হয়েছে"
+  },
+  "icu:CallsTab__ClearCallHistoryError--call-links": {
+    "messageformat": "সব কল লিংক মুছে ফেলা যাবে না। আপনার নেটওয়ার্ক সংযোগ ঠিক আছে কিনা দেখুন এবং আবার চেষ্টা করুন।"
+  },
+  "icu:CallsTab__ClearCallHistoryError": {
+    "messageformat": "সব কল ইতিহাস মুছে ফেলা যাবে না। আপনার নেটওয়ার্ক সংযোগ ঠিক আছে কিনা দেখুন এবং আবার চেষ্টা করুন।"
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "একটি নতুন ভয়েস বা ভিডিও কল শুরু করতে <newCallButtonIcon></newCallButtonIcon>এ ক্লিক করুন।"
@@ -5677,10 +5725,22 @@
     "messageformat": "ছোট ছোট কিছু পরিবর্তন, বাগ সংশোধন এবং পারফর্মেন্স সমৃদ্ধ করা হয়েছে। Signal ব্যবহার করার জন্য ধন্যবাদ!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.26--0": {
-    "messageformat": "এই আপডেটটি একটি বাগ সংশোধন করে যা একটি গ্ৰুপ ছেড়ে যাওয়ার পর সেই গ্ৰুপটিকে খুঁজে বের করা কঠিন করে তুলেছিল।"
+  "icu:WhatsNew__v7.29--0": {
+    "messageformat": "এই আপডেটটি স্টার্টআপের গতিকে প্রায় 5% বৃদ্ধি করে।"
   },
-  "icu:WhatsNew__v7.27--0": {
-    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\""
+  "icu:WhatsNew__v7.30--header": {
+    "messageformat": "কল লিংকের পরিচিতি: ক্যালেন্ডারের আমন্ত্রণ এবং অবিলম্বে জড়ো হওয়ার জন্য হারানো লিংক।"
+  },
+  "icu:WhatsNew__v7.30--0": {
+    "messageformat": "এখন আপনি দ্রুত একটি সহজ লিংক তৈরি করতে পারেন যা Signal-এ থাকা যে কেউ প্রথমে একটি Signal গ্রুপ চ্যাটে যোগ না দিয়েই সেই গ্রুপ কলে যোগ দিতে ব্যবহার করতে পারবেন।"
+  },
+  "icu:WhatsNew__v7.30--1": {
+    "messageformat": "কল লিংক পুনরায় ব্যবহারযোগ্য এবং আপনার প্রিয় বন্ধুদের সাথে বারবার ফোনে যোগাযোগের জন্য বা আপনার সহকর্মীদের সাথে সাপ্তাহিক চেক-ইন করার জন্য আদর্শ।"
+  },
+  "icu:WhatsNew__v7.30--2": {
+    "messageformat": "আপনি আপনার কল লিংক নিয়ন্ত্রণ করতে পারবেন, অনুমোদনের সেটিংস নিয়ন্ত্রণ করতে পারবেন এবং দ্রুত শেয়ার করার জন্য কল ট্যাব থেকে লিংক কপি করতে পারবেন।"
+  },
+  "icu:WhatsNew__v7.31--0": {
+    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
   }
 }

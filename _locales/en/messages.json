@@ -780,10 +780,6 @@
     "messageformat": "Desktop ran into a decryption error from {name}, device {deviceId}",
     "description": "An error popup when we haven't added an in-timeline error for decryption error, only for beta/internal users."
   },
-  "icu:decryptionErrorToastAction": {
-    "messageformat": "Submit log",
-    "description": "(Deleted 2024/09/19) Label for the decryption error toast button"
-  },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "Submit log",
     "description": "Label for the submit log button in decryption errors or other important error types"
@@ -1064,11 +1060,19 @@
   },
   "icu:attachmentSaved": {
     "messageformat": "Attachment saved.",
+    "description": "(Deleted 2024/10/23) Shown after user selects to save to downloads"
+  },
+  "icu:attachmentSavedPlural": {
+    "messageformat": "{count, plural, one {Attachment} other {# attachments}} saved",
     "description": "Shown after user selects to save to downloads"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "Show in folder",
     "description": "Button label for showing the attachment in your file system"
+  },
+  "icu:attachmentStillDownloading": {
+    "messageformat": "Can't save {count, plural, one {attachment, since it hasn't} other {attachments, since # haven't}} finished downloading yet",
+    "description": "Shown when the user tries to save an attachment to the filesystem, but it's impossible since the download from servers hasn't finished yet"
   },
   "icu:you": {
     "messageformat": "You",
@@ -1258,10 +1262,6 @@
     "messageformat": "Note",
     "description": "Title of Note Preview modal"
   },
-  "icu:viewRecentMedia": {
-    "messageformat": "View recent media",
-    "description": "(Deleted 2024/09/03) This is a menu item for viewing all media (images + video) in a conversation, using the imperative case, as in a command."
-  },
   "icu:allMediaMenuItem": {
     "messageformat": "All media",
     "description": "This is a menu item for viewing all media (images + video) in a conversation"
@@ -1328,19 +1328,35 @@
   },
   "icu:deleteMessagesInConversation": {
     "messageformat": "Delete messages",
-    "description": "Menu item for deleting all messages in a conversation from your device"
+    "description": "(Deleted 2024/10/23) Menu item for deleting all messages in a conversation from your device"
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
     "messageformat": "Delete messages?",
-    "description": "Title for confirmation modal to delete all messages in a conversation"
+    "description": "(Deleted 2024/10/23) Title for confirmation modal to delete all messages in a conversation"
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
     "messageformat": "All messages in this chat will be deleted from this device. You can still search for this chat after you delete messages.",
-    "description": "Description for confirmation modal to delete all messages in a conversation"
+    "description": "(Deleted 2024/10/23) Description for confirmation modal to delete all messages in a conversation"
   },
   "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
     "messageformat": "All messages in this chat will be deleted from all your devices. You can still search for this chat after you delete messages.",
-    "description": "Description for confirmation modal to delete all messages in a conversation"
+    "description": "(Deleted 2024/10/23) Description for confirmation modal to delete all messages in a conversation"
+  },
+  "icu:deleteConversation": {
+    "messageformat": "Delete",
+    "description": "Menu item for deleting a conversation (including messages), title case."
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__title": {
+    "messageformat": "Delete chat?",
+    "description": "Conversation Header > Delete Action > Delete Messages Confirmation Modal > Title. Previously known as icu:ConversationHeader__DeleteMessagesConfirmation__title"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
+    "messageformat": "All messages in this chat will be deleted from this device.",
+    "description": "Description for confirmation modal to delete a conversation"
+  },
+  "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
+    "messageformat": "All messages in this chat will be deleted from all your devices.",
+    "description": "Description for confirmation modal to delete a conversation"
   },
   "icu:ConversationHeader__ContextMenu__LeaveGroupAction__title": {
     "messageformat": "Leave group",
@@ -1635,6 +1651,10 @@
   },
   "icu:calling__call-link-default-title": {
     "messageformat": "Signal Call",
+    "description": "Default title for Signal call links."
+  },
+  "icu:calling__call-link-delete-failed": {
+    "messageformat": "Can't delete link. Check your connection and try again.",
     "description": "Default title for Signal call links."
   },
   "icu:calling__join-request-denied": {
@@ -3952,7 +3972,7 @@
     "description": "Shown if you click a group link and you have been forbidden from joining via the link"
   },
   "icu:GroupV2--join--prompt-with-approval": {
-    "messageformat": "An admin of this group must approve your request before you can join this group. If approved, your name and photo will be shared with its members.",
+    "messageformat": "An admin of this group must approve your request before you can join this group. When you request to join, your name and photo will be shared with its members.",
     "description": "Shown when you click on a group link to confirm, if it requires admin approval"
   },
   "icu:GroupV2--join--join-button": {
@@ -4699,6 +4719,10 @@
     "messageformat": "Downloading {currentSize} of {totalSize} ({fractionComplete, number, percent})...",
     "description": "Hint under the progressbar in the backup import screen"
   },
+  "icu:BackupImportScreen__progressbar-hint--processing": {
+    "messageformat": "Finalizing message transfer...",
+    "description": "Hint under the progressbar in the backup import screen shown after the backup file is downloaded and while backup data is being processed"
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Preparing to download...",
     "description": "Hint under the progressbar in the backup import screen when download size is not yet known"
@@ -4726,6 +4750,34 @@
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
     "messageformat": "Cancel transfer",
     "description": "Text of the confirmation button of the cancel confirmation modal in the backup import screen"
+  },
+  "icu:BackupImportScreen__error__title": {
+    "messageformat": "Error transferring your messages",
+    "description": "Title of the error modal in the backup import screen"
+  },
+  "icu:BackupImportScreen__error__body": {
+    "messageformat": "Your messages could not be transferred. Check your internet connection and try again.",
+    "description": "Body of the error modal in the backup import screen"
+  },
+  "icu:BackupImportScreen__error__confirm": {
+    "messageformat": "Retry",
+    "description": "Text of the retry button of the error modal in the backup import screen"
+  },
+  "icu:BackupImportScreen__skip": {
+    "messageformat": "Skip",
+    "description": "Text of the Skip button in the error and skip confirmation modals in the backup import screen"
+  },
+  "icu:BackupImportScreen__skip-confirmation__title": {
+    "messageformat": "Skip message transfer?",
+    "description": "Title of the cancel confirmation modal in the backup import screen"
+  },
+  "icu:BackupImportScreen__skip-confirmation__body": {
+    "messageformat": "If you choose to skip, you won’t have access to any of your messages or media on this device. You can start a new transfer after skipping from Settings > Chats > Transfer.",
+    "description": "Body of the cancel confirmation modal in the backup import screen"
+  },
+  "icu:BackupImportScreen__skip-confirmation__cancel": {
+    "messageformat": "Cancel",
+    "description": "Text of the cancel button of the skip confirmation modal in the backup import screen"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "Restoring media",
@@ -4838,10 +4890,6 @@
   "icu:ContactModal--remove-from-group": {
     "messageformat": "Remove from group",
     "description": "Button text for remove from group button in Group Contact Details modal"
-  },
-  "icu:ContactModal--already-in-call": {
-    "messageformat": "You are already in a call",
-    "description": "(Deleted 2024/08/28) Tooltip text for video or voice call button in Contact Details modal"
   },
   "icu:ContactModal--voice": {
     "messageformat": "Voice",
@@ -5917,11 +5965,11 @@
   },
   "icu:ProfileEditor__invalid-about__title": {
     "messageformat": "Invalid characters",
-    "description": "Title of the confirmation model for profile editor when about text contains invalid characters"
+    "description": "(Deleted 2024/10/10) Title of the confirmation model for profile editor when about text contains invalid characters"
   },
   "icu:ProfileEditor__invalid-about__body": {
     "messageformat": "One or more characters you’ve entered can’t be used. Try again.",
-    "description": "Body of the confirmation model for profile editor when about text contains invalid characters"
+    "description": "(Deleted 2024/10/10) Body of the confirmation model for profile editor when about text contains invalid characters"
   },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Message an admin",
@@ -6918,7 +6966,7 @@
     "description": "aria-label for the story list button"
   },
   "icu:StoryListItem__unhide": {
-    "messageformat": "Show stories",
+    "messageformat": "Unhide story",
     "description": "Label for menu item to un-hide the story"
   },
   "icu:StoryListItem__hide": {
@@ -7278,7 +7326,11 @@
     "description": "Calls Tab > Confirm Clear Call History Dialog > Title"
   },
   "icu:CallsTab__ConfirmClearCallHistory__Body": {
-    "messageformat": "This will permanently delete all call history",
+    "messageformat": "This will permanently delete all call history.",
+    "description": "Calls Tab > Confirm Clear Call History Dialog > Body Text"
+  },
+  "icu:CallsTab__ConfirmClearCallHistory__Body--call-links": {
+    "messageformat": "This will permanently delete all call history. Call links you’ve created will no longer work for people who have them. ",
     "description": "Calls Tab > Confirm Clear Call History Dialog > Body Text"
   },
   "icu:CallsTab__ConfirmClearCallHistory__ConfirmButton": {
@@ -7288,6 +7340,14 @@
   "icu:CallsTab__ToastCallHistoryCleared": {
     "messageformat": "Call history cleared",
     "description": "Calls Tab > Clear Call History > Toast"
+  },
+  "icu:CallsTab__ClearCallHistoryError--call-links": {
+    "messageformat": "Not all call links could be deleted. Check your connection and try again.",
+    "description": "Calls Tab > Clear Call History > Error modal when we failed to delete call links."
+  },
+  "icu:CallsTab__ClearCallHistoryError": {
+    "messageformat": "Not all call history could be cleared. Check your connection and try again.",
+    "description": "Calls Tab > Clear Call History > Generic error modal"
   },
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call.",
@@ -7548,12 +7608,28 @@
     "description": "Release notes for releases that only include bug fixes",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.26--0": {
-    "messageformat": "Sometimes leaving something behind is the best way to discover that you want to find it again, so we fixed a bug that made it difficult to search for groups that you're no longer a part of anymore but that still remain in your conversation list (and quite possibly in your heart).",
-    "description": "(Deleted 2024/09/25) Release notes for version 7.26"
+  "icu:WhatsNew__v7.29--0": {
+    "messageformat": "This update improves startup speed by around 5%, so feel free to slow down a little bit in other areas of your life.",
+    "description": "(Deleted 2024/10/16) Release notes for version 7.29"
   },
-  "icu:WhatsNew__v7.27--0": {
-    "messageformat": "Now you can remove quoted replies from edited messages. It's perfect for those moments when you realize that your response was so good that it doesn't actually need to stand on another message's shoulders, or when you accidentally reply to the wrong message with \"I love you too.\"",
-    "description": "Release notes for version 7.27"
+  "icu:WhatsNew__v7.30--header": {
+    "messageformat": "Introducing Call Links: The missing link for calendar invites and impromptu gatherings.",
+    "description": "(Deleted 2024/10/23) Release notes for version 7.30"
+  },
+  "icu:WhatsNew__v7.30--0": {
+    "messageformat": "Now you can quickly create an easy link that anyone on Signal can use to join a group call without having to join a Signal group chat first.",
+    "description": "(Deleted 2024/10/23) Release notes for version 7.30"
+  },
+  "icu:WhatsNew__v7.30--1": {
+    "messageformat": "Call links are reusable and ideal for recurring phone dates with your best friends or weekly check-ins with your coworkers.",
+    "description": "(Deleted 2024/10/23) Release notes for version 7.30"
+  },
+  "icu:WhatsNew__v7.30--2": {
+    "messageformat": "You can manage your call links, control approval settings, and copy links from the calls tab for quick sharing.",
+    "description": "(Deleted 2024/10/23) Release notes for version 7.30"
+  },
+  "icu:WhatsNew__v7.31--0": {
+    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!",
+    "description": "Release notes for version 7.30"
   }
 }

@@ -202,7 +202,6 @@ const createProps = (
   i18n,
   imageDataCache: React.createRef<CallingImageDataCache>(),
   isCallLinkAdmin: true,
-  isGroupCallRaiseHandEnabled: true,
   me: getDefaultConversation({
     color: AvatarColors[1],
     id: '6146087e-f7ef-457e-9a8d-47df1fdd6b25',
@@ -219,7 +218,7 @@ const createProps = (
   sendGroupCallReaction: action('send-group-call-reaction'),
   setGroupCallVideoRequest: action('set-group-call-video-request'),
   setLocalAudio: action('set-local-audio'),
-  setLocalPreview: action('set-local-preview'),
+  setLocalPreviewContainer: action('set-local-preview-container'),
   setLocalVideo: action('set-local-video'),
   setRendererCanvas: action('set-renderer-canvas'),
   stickyControls: false,
