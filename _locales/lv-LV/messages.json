@@ -53,6 +53,15 @@
   "icu:appleSilicon": {
     "messageformat": "Apple silicon"
   },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)"
+  },
   "icu:copyErrorAndQuit": {
     "messageformat": "Kopēt kļūdu un aizvērt"
   },
@@ -581,6 +590,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Jūs nevarat kopā ar failiem atlasīt attēlus un video."
   },
@@ -677,6 +689,9 @@
   "icu:search": {
     "messageformat": "Meklēt"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "Meklēt nelasītās sarunās"
+  },
   "icu:clearSearch": {
     "messageformat": "Notīrīt meklēšanu"
   },
@@ -686,11 +701,26 @@
   "icu:noSearchResults": {
     "messageformat": "Vaicājumam \"{searchTerm}\" nav rezultātu"
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "\"{searchTerm}\" nelasīto ziņu sarakstā nav rezultātu"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "Nav nelasītu sarunu"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "SMS/MMS kontaktpersonas nav pieejamas Desktop versijā."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "Vaicājumam \"{searchTerm}\" nav rezultātu sadaļā {conversationName}"
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "Filtrētas pēc nelasītajām ziņām"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "Filtrēt pēc nelasītajām"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "Noņemt filtru"
   },
   "icu:conversationsHeader": {
     "messageformat": "Sarunas"
@@ -789,13 +819,13 @@
     "messageformat": "Pielikums saglabāts."
   },
   "icu:attachmentSavedPlural": {
-    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+    "messageformat": "{count, plural, zero {Saglabāti {count,number} pielikumi} one {Pielikums saglabāts} other {Saglabāti {count,number} pielikumi}}"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "Parādīt mapē"
   },
   "icu:attachmentStillDownloading": {
-    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
+    "messageformat": "{count, plural, zero {Pielikumus nevar saglabāt, jo {count,number} vēl nav lejupielādēti} one {Pielikumu nevar saglabāt, jo tas vēl nav lejupielādēts} other {Pielikumus nevar saglabāt, jo {count,number} vēl nav lejupielādēti}}"
   },
   "icu:you": {
     "messageformat": "Jūs"
@@ -1387,6 +1417,9 @@
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, zero {{first}, {second} un {others,number} citi piedalās šajā zvanā} one {{first}, {second} un {others,number} cits piedalās šajā zvanā} other {{first}, {second} un {others,number} citi piedalās šajā zvanā}}"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, zero {Šajā zvanā ir {count,number} cilvēku} one {Šajā zvanā ir {count,number} cilvēks} other {Šajā zvanā ir {count,number} cilvēki}}"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "Signal atskaņos zvana signālu{person}"
@@ -3566,6 +3599,9 @@
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Atcelt pārsūtīšanu"
   },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "Ziņas un sarunu informāciju aizsargā pilnīga šifrēšana, tostarp sinhronizēšanas process. <learnMoreLink>Uzzināt vairāk</learnMoreLink>"
+  },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "Vai atcelt pārsūtīšanu?"
   },
@@ -3604,6 +3640,12 @@
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "Atjaunošana apturēta"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "Atjaunots: {currentSize} no {totalSize}"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "Multivides lejupielāde turpināsies fonā"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "Apturēt pārsūtīšanu"
@@ -4487,12 +4529,6 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "Jūsu profilu nevarēja atjaunināt. Lūdzu, mēģiniet vēlreiz."
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Nederīgas rakstzīmes"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "Vienu vai vairākas ievadītās rakstzīmes nevar izmantot. Mēģiniet vēlreiz."
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Ziņot adminam"
   },
@@ -4693,6 +4729,15 @@
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signal ir tehniskas grūtības. Tiek cītīgi strādāts, lai pēc iespējas ātrāk atjaunotu pakalpojumu."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "Nepieciešams atjauninājums"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "Lai pabeigtu ziņu sinhronizēšanu, atjauniniet Signal Desktop."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "Atjaunināt"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "Nepieciešams atjauninājums"
@@ -5532,8 +5577,14 @@
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Noklikšķiniet uz <newCallButtonIcon></newCallButtonIcon>, lai sāktu jaunu balss vai video zvanu."
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "Meklēt neatbildētos zvanus"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Meklēt"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "Filtrēts pēc neatbildētajiem"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "Filtrēt pēc neatbildētajiem"
@@ -5547,14 +5598,14 @@
   "icu:CallsList__EmptyState--noQuery__subtitle": {
     "messageformat": "Šeit būs redzami nesenākie zvani."
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "Nav neatbildētu zvanu"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Šeit būs redzami neatbildētie zvani."
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Vaicājumam “{query}” nav rezultātu"
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "\"{query}\" neatbildēto zvanu sarakstā nav rezultātu"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "Nav neatbildētu zvanu"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "Izveidot audiozvana saiti"
@@ -5725,22 +5776,16 @@
     "messageformat": "Nelielas izmaiņas, kļūdu labojumi un darbības uzlabojumi. Paldies, ka lietojat Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "Šis atjauninājums uzlabo palaišanas ātrumu par aptuveni 5%. Droši izmantojiet iegūto laiku citās dzīves jomās."
+  "icu:WhatsNew__v7.34--0": {
+    "messageformat": "Jaunā filtru ikona blakus meklēšanas lodziņam ļauj ātri un ērti atrast nelasītās sarunas. Kad atbildēt uz šīm ziņām, vēl aizvien paliek jūsu ziņā."
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "Iepazīstinām ar zvanu saitēm — trūkstošo posmu starp kalendāra uzaicinājumiem un improvizētām sapulcēm."
+  "icu:WhatsNew__v7.34--1": {
+    "messageformat": "Šajā atjauninājumā ir ieviests atbalsts jauniem Windows procesoriem, piemēram, Snapdragon X Elite."
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "Tagad varat ātri izveidot ērtu saiti, ar ko ikviens Signal lietotājs var pievienoties grupas zvanam. Tagad pirms zvana vairs nav jāpievienojas grupas sarunai."
+  "icu:WhatsNew__v7.34--2": {
+    "messageformat": "Tāpat izlabojām kļūdu, kas pārtrauc Signal tumšā dizaina izmantošanu, ja operētājsistēmas iestatījumos ir uzstādīts gaišais dizains. Signal Desktop tagad spēj pienācīgi tikt galā ar jūsu personības dalīšanos."
   },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "Zvanu saites var izmantot atkārtoti, lai regulāri sazvanītos ar labākajiem draugiem un kolēģiem."
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "Varat pārvaldīt zvanu saites un apstiprināšanas iestatījumus, kā arī kopēt saites no zvanu cilnes, lai tās ātri nosūtītu citiem."
-  },
-  "icu:WhatsNew__v7.31--0": {
-    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
   }
 }

@@ -53,6 +53,15 @@
   "icu:appleSilicon": {
     "messageformat": "Apple silicon"
   },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)"
+  },
   "icu:copyErrorAndQuit": {
     "messageformat": "Қатені көшіру және шығу"
   },
@@ -581,6 +590,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Бұл файлдармен бірге фотосуреттерді және видеоларды таңдай алмайсыз."
   },
@@ -677,6 +689,9 @@
   "icu:search": {
     "messageformat": "Іздеу"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "Оқылмаған чаттарды іздеу"
+  },
   "icu:clearSearch": {
     "messageformat": "Ізделген сөзді өшіру"
   },
@@ -686,11 +701,26 @@
   "icu:noSearchResults": {
     "messageformat": "\"{searchTerm}\" үшін нәтиже жоқ"
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "Оқылмаған чаттарда \"{searchTerm}\" бойынша нәтиже жоқ"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "Оқылмаған чаттар жоқ"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "Компьютерлік нұсқада SMS/MMS контактілері жоқ."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "{conversationName} сұхбатында \"{searchTerm}\" бойынша нәтиже жоқ"
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "Оқылмағандар бойынша фильтр қойылды"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "Оқылмаған хабарлар бойынша іріктеу"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "Сүзгіні тазалау"
   },
   "icu:conversationsHeader": {
     "messageformat": "Чаттар"
@@ -789,13 +819,13 @@
     "messageformat": "Тіркеме сақталды."
   },
   "icu:attachmentSavedPlural": {
-    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+    "messageformat": "{count, plural, one {Тіркеме сақталды} other {{count,number} тіркеме сақталды}}"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "Қалтада көрсету"
   },
   "icu:attachmentStillDownloading": {
-    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
+    "messageformat": "{count, plural, one {Тіркеме сақталмады, себебі ол әлі жүктеп алынып жатыр} other {Тіркемелер сақталмады, себебі {count,number} тіркеме әлі жүктеп алынып жатыр}}"
   },
   "icu:you": {
     "messageformat": "Сіз"
@@ -1387,6 +1417,9 @@
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, one {{first}, {second} және тағы {others,number} адам осы қоңырауға қатысып жатыр} other {{first}, {second} және тағы {others,number} адам осы қоңырауға қатысып жатыр}}"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, one {Бұл қоңырауға {count,number} адам қатысып жатыр} other {Бұл қоңырауға {count,number} адам қатысып жатыр}}"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "Signal {person} деген кісіге қоңырау шалады"
@@ -3566,6 +3599,9 @@
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Тасымалдаудан бас тарту"
   },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "Хабарлар мен чат туралы ақпарат тура шифрлау әдісімен, соның ішінде синхрондау процесімен қорғалған. <learnMoreLink>Толық ақпарат</learnMoreLink>"
+  },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "Тасымалдаудан бас тарту керек пе?"
   },
@@ -3604,6 +3640,12 @@
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "Қалпына келтіру кідіртілді"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "{currentSize}/{totalSize} қалпына келтірілді"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "Мультимедиа фондық режимде жүктеп алына береді."
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "Тасымалдауды кідірту"
@@ -4487,12 +4529,6 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "Профиліңізді жаңарту мүмкін емес. Қайталап көріңіз."
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Таңбалар дұрыс емес"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "Сіз енгізген бір немесе бірнеше таңбаны пайдалануға болмайды. Қайта енгізіп көріңіз."
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Әкімшіге хат жазу"
   },
@@ -4693,6 +4729,15 @@
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signal қолданбасында техникалық қиындықтар туындады. Қызметті мүмкіндігінше тезірек қалпына келтіру үшін аянбай жұмыс істеп жатырмыз."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "Жаңарту керек"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "Хабарларды синхрондау процесін аяқтау үшін Signal Desktop қолданбасын қазір жаңартыңыз."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "Жаңарту"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "Жаңарту керек"
@@ -5532,8 +5577,14 @@
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Жаңа дауыстық немесе видеоқоңырау шалу үшін <newCallButtonIcon></newCallButtonIcon> түймесін басыңыз."
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "Өткізіп алған қоңырауларды іздеу"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Іздеу"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "Қабылданбаған қоңыраулар ғана көрсетілді"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "Қабылданбаған қоңырауларды ғана көрсету"
@@ -5547,14 +5598,14 @@
   "icu:CallsList__EmptyState--noQuery__subtitle": {
     "messageformat": "Соңғы қоңыраулар осында көрінеді."
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "Өткізіп алған қоңыраулар жоқ"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Өткізіп алған қоңыраулар осында көрінеді."
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "\"{query}\" бойынша нәтижелер жоқ"
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "Өткізіп алған қоңырауларда \"{query}\" бойынша нәтиже жоқ"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "Өткізіп алған қоңыраулар жоқ"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "Қоңырау сілтемесін жасау"
@@ -5725,22 +5776,16 @@
     "messageformat": "Кішігірім түзетпелер жасалды, ақаулар жөнделді және жұмысы жақсартылды. Signal-ды қолданғаныңыз үшін рақмет!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "Бұл жаңарту іске қосу жылдамдығын шамамен 5%-ға арттырады, сондықтан өміріңіздің басқа бөліктерінде емін-еркін баяулай тұрыңыз."
+  "icu:WhatsNew__v7.34--0": {
+    "messageformat": "Іздеу өрісінің жанындағы жаңа сүзгі белгішесі оқылмаған чаттарды жылдам табуға көмектеседі. Дегенмен чаттағы жаңа хабарларды оқып алған соң, чатты оқылған немесе оқылмаған деп белгілеу өз еркіңізде екенін ұмытпаңыз."
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "Қоңырау сілтемелері: күнтізбедегі шақырулар мен тосын кездесулерге арналған сілтеме."
+  "icu:WhatsNew__v7.34--1": {
+    "messageformat": "Бұл жаңа нұсқа Snapdragon X Elite сияқты Windows жүйесіндегі жаңа процессорларға қолдау көрсетеді."
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "Енді Signal-дағы кез келген адам топтық чатқа қосылмай-ақ, топтық қоңырауға қосылу үшін қолдана алатын сілтемені жылдам жасай аласыз."
+  "icu:WhatsNew__v7.34--2": {
+    "messageformat": "Сонымен қатар операциялық жүйе параметрлері жарық режимді пайдалануға конфигурацияланғанда, Signal-дағы қараңғы режим жұмыс істемей қалатын ақау түзетілді. Signal Desktop енді қалаған режиміңізді дұрыс анықтай алады."
   },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "Қоңырау сілтемелерін бірнеше рет қолдануға болады. Жан достарыңызбен жиі-жиі немесе әріптестеріңізбен апта сайын сөйлесіп тұруға өте қолайлы."
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "Қоңырау сілтемелерін, мақұлдау параметрлерін басқаруға және сілтемелерді бөлісу үшін қоңыраулар қойындысынан көшіруге болады."
-  },
-  "icu:WhatsNew__v7.31--0": {
-    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
   }
 }

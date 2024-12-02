@@ -3363,16 +3363,13 @@ export default class MessageReceiver
 
     logUnexpectedUrgentValue(envelope, 'keySync');
 
-    if (!sync.storageService && !sync.master) {
-      return undefined;
-    }
-
     const ev = new KeysEvent(
       {
-        storageServiceKey: Bytes.isNotEmpty(sync.storageService)
-          ? sync.storageService
-          : undefined,
         masterKey: Bytes.isNotEmpty(sync.master) ? sync.master : undefined,
+        accountEntropyPool: sync.accountEntropyPool || undefined,
+        mediaRootBackupKey: Bytes.isNotEmpty(sync.mediaRootBackupKey)
+          ? sync.mediaRootBackupKey
+          : undefined,
       },
       this.removeFromCache.bind(this, envelope)
     );
@@ -3881,9 +3878,19 @@ export default class MessageReceiver
     }
     if (blocked.acis) {
       const previous = this.storage.get('blocked-uuids', []);
-      const acis = blocked.acis.map((aci, index) => {
-        return normalizeAci(aci, `handleBlocked.acis.${index}`);
-      });
+      const acis = blocked.acis
+        .map((aci, index) => {
+          try {
+            return normalizeAci(aci, `handleBlocked.acis.${index}`);
+          } catch (error) {
+            log.warn(
+              `${logId}: ACI ${aci} was malformed`,
+              Errors.toLogFormat(error)
+            );
+            return undefined;
+          }
+        })
+        .filter(isNotNil);
 
       const { added, removed } = diffArraysAsSets(previous, acis);
       if (added.length) {

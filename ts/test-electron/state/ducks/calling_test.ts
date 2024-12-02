@@ -1265,6 +1265,42 @@ describe('calling duck', () => {
         );
         assert.isTrue(result.activeCallState?.hasLocalAudio);
         assert.isTrue(result.activeCallState?.hasLocalVideo);
+        assert.isNumber(result.activeCallState?.joinedAt);
+      });
+
+      it('keeps existing activeCallState.joinedAt', () => {
+        const joinedAt = new Date().getTime() - 1000;
+        const result = reducer(
+          {
+            ...stateWithActiveGroupCall,
+            activeCallState: {
+              ...stateWithActiveDirectCall.activeCallState,
+              joinedAt,
+            },
+          },
+          getAction({
+            callMode: CallMode.Group,
+            conversationId: 'fake-group-call-conversation-id',
+            connectionState: GroupCallConnectionState.Connected,
+            joinState: GroupCallJoinState.Joined,
+            localDemuxId: 1,
+            hasLocalAudio: true,
+            hasLocalVideo: true,
+            peekInfo: {
+              acis: [],
+              pendingAcis: [],
+              maxDevices: 16,
+              deviceCount: 0,
+            },
+            remoteParticipants: [],
+          })
+        );
+
+        strictAssert(
+          result.activeCallState?.state === 'Active',
+          'state is active'
+        );
+        assert.equal(result.activeCallState?.joinedAt, joinedAt);
       });
 
       it("doesn't stop ringing if nobody is in the call", () => {
@@ -1837,6 +1873,7 @@ describe('calling duck', () => {
         ]);
 
         const secondDate = new Date(NOW.getTime() + 1234);
+        this.clock.restore();
         this.sandbox.useFakeTimers({ now: secondDate });
         const secondAction = getAction({
           callMode: CallMode.Group,
@@ -2752,7 +2789,7 @@ describe('calling duck', () => {
       it('switches to previously selected view after presentation', () => {
         const stateOverflow = reducer(
           stateWithActiveGroupCall,
-          changeCallView(CallViewMode.Overflow)
+          changeCallView(CallViewMode.Sidebar)
         );
         const statePresentation = reducer(
           stateOverflow,
@@ -2769,7 +2806,7 @@ describe('calling duck', () => {
         );
         assert.strictEqual(
           stateAfterPresentation.activeCallState?.viewMode,
-          CallViewMode.Overflow
+          CallViewMode.Sidebar
         );
       });
     });

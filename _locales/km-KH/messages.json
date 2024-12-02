@@ -53,6 +53,15 @@
   "icu:appleSilicon": {
     "messageformat": "Apple silicon"
   },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)"
+  },
   "icu:copyErrorAndQuit": {
     "messageformat": "ចម្លងបញ្ហា និងចាកចេញ"
   },
@@ -581,6 +590,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "អ្នកមិនអាចជ្រើសរើសរូបថត និងវីដេអូរួមជាមួយឯកសារបានទេ។"
   },
@@ -677,6 +689,9 @@
   "icu:search": {
     "messageformat": "ស្វែងរក"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "ស្វែងរកការជជែកដែលមិនទាន់អាន"
+  },
   "icu:clearSearch": {
     "messageformat": "លុបការស្វែងរក"
   },
@@ -686,11 +701,26 @@
   "icu:noSearchResults": {
     "messageformat": "គ្មានលទ្ធផលសម្រាប់ \"{searchTerm}\""
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "គ្មានលទ្ធផលសម្រាប់ \"{searchTerm}\" នៅក្នុងការជជែកមិនទាន់អានទេ"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "គ្មានការជជែកដែលមិនទាន់អានទេ"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "ឈ្មោះទំនាក់ទំនងសម្រាប់សារជាអក្សរ និងសារពហុមេឌៀមិនមាននៅលើកំព្យូទ័រលើតុទេ។"
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "គ្មានលទ្ធផលសម្រាប់ \"{searchTerm}\" ក្នុង {conversationName}"
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "បានច្រោះរកសារមិនទាន់អាន"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "ច្រោះរកសារមិនទាន់អាន"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "សម្អាតតម្រង"
   },
   "icu:conversationsHeader": {
     "messageformat": "ការជជែក"
@@ -789,13 +819,13 @@
     "messageformat": "បាន​រក្សា​ទុក​ឯកសារ​ភ្ជាប់។"
   },
   "icu:attachmentSavedPlural": {
-    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+    "messageformat": "{count, plural, other {ឯកសារភ្ជាប់ {count,number} ត្រូវបានរក្សាទុក}}"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "បង្ហាញក្នុងថតឯកសារ"
   },
   "icu:attachmentStillDownloading": {
-    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
+    "messageformat": "{count, plural, other {មិនអាចរក្សាទុកឯកសារភ្ជាប់បានទេ ដោយសារ {count,number} មិនទាន់បញ្ចប់ការទាញយកនៅឡើយ}}"
   },
   "icu:you": {
     "messageformat": "អ្នក"
@@ -1387,6 +1417,9 @@
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, other {{first}, {second}, និង {others,number} នៅក្នុងការហៅ}}"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, other {មនុស្ស {count,number} នាក់នៅក្នុងការហៅនេះ}}"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "Signal នឹងរោទ៍ទៅ {person}"
@@ -3566,6 +3599,9 @@
   "icu:BackupImportScreen__cancel": {
     "messageformat": "បោះបង់ការផ្ទេរ"
   },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "សារ និងព័ត៌មានជជែកត្រូវបានការពារដោយការអ៊ីនគ្រីបទាំងសងខាង រាប់បញ្ចូលទាំងដំណើរការធ្វើសមកាលកម្មផងដែរ។ <learnMoreLink>ស្វែងយល់បន្ថែម</learnMoreLink>"
+  },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "បោះបង់ការផ្ទេរឬ?"
   },
@@ -3604,6 +3640,12 @@
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "ការស្តារឡើងវិញត្រូវបានផ្អាក"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "បានស្ដារ {currentSize} លើ {totalSize}"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "មេឌៀនឹងបន្តទាញយកនៅផ្ទៃខាងក្រោយ"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "ផ្អាកការផ្ទេរ"
@@ -4487,12 +4529,6 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "ប្រូហ្វាល់របស់អ្នកមិនអាចធ្វើបច្ចុប្បន្នភាពបានទេ។ សូម​ព្យាយាម​ម្តង​ទៀត។"
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "តួអក្សរមិនត្រឹមត្រូវ"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "តួអក្សរមួយ ឬច្រើនដែលអ្នកបានបញ្ចូលមិនអាចប្រើបានទេ។ ព្យាយាមម្តងទៀត។"
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "ផ្ញើសារទៅអ្នកគ្រប់គ្រង"
   },
@@ -4693,6 +4729,15 @@
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signal កំពុងជួបប្រទះបញ្ហាបច្ចេកទេស។ យើងកំពុងធ្វើការស្តារសេវាកម្មយ៉ាងរហ័សតាមដែលអាចធ្វើទៅបាន។"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "តម្រូវឱ្យដំឡើងកំណែ"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "ដើម្បីបញ្ចប់ការធ្វើសមកាលកម្មសាររបស់អ្នក សូមដំឡើងកំណែ Signal Desktop ឥឡូវនេះ។"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "ដំឡើងកំណែ"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "តម្រូវឲ្យដំឡើងកំណែ"
@@ -5532,8 +5577,14 @@
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "ចុច <newCallButtonIcon></newCallButtonIcon> ដើម្បីចាប់ផ្តើមការហៅជាសំឡេង ឬវីដេអូថ្មី។"
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "ស្វែងរកការហៅដែលខកមិនបានទទួល"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "ស្វែងរក"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "បានច្រោះរកការហៅដែលខកមិនបានទទួល"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "ច្រោះតាមការខកមិនបានទទួល"
@@ -5547,14 +5598,14 @@
   "icu:CallsList__EmptyState--noQuery__subtitle": {
     "messageformat": "ការហៅថ្មីៗនឹងបង្ហាញនៅទីនេះ។"
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "មិនមានការហៅដែលខកខានទេ"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "ការហៅដែលខកខាននឹងបង្ហាញនៅទីនេះ។"
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "គ្មានលទ្ធផលសម្រាប់ “{query}”"
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "គ្មានលទ្ធផលសម្រាប់ “{query}” នៅក្នុងការហៅដែលខកមិនបានទទួល"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "គ្មានការហៅដែលខកមិនបានទទួលទេ"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "បង្កើតតំណហៅទូរសព្ទ"
@@ -5725,22 +5776,16 @@
     "messageformat": "ការកែប្រែបន្តិចបន្តួច ការដោះស្រាយបញ្ហា និងការបង្កើនប្រតិបត្តិការ។ សូមអរគុណចំពោះការប្រើប្រាស់ Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "កំណែថ្មីនេះបង្កើនល្បឿននៃការចាប់ផ្តើមប្រហែល 5% ដូច្នេះទោះជាមានអ្វីយឺតយ៉ាវបន្តិចបន្តួចនៅក្នុងសកម្មភាពរស់នៅប្រចាំថ្ងៃរបស់អ្នកក៏មិនថ្វីដែរ។"
+  "icu:WhatsNew__v7.34--0": {
+    "messageformat": "រូបតម្រងថ្មីនៅជាប់ប្រអប់ស្វែងរកធ្វើឱ្យងាយស្រួលរកការជជែកដែលមិនទាន់អាន បានយ៉ាងឆាប់រហ័ស ប៉ុន្តែគិតតាមសម្រួលចុះថាតើគួរឆ្លើយតបឬអត់ បន្ទាប់ពីឃើញអ្វីដែលពួកគេនិយាយហើយ។"
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "សូមណែនាំតំណហៅទូរសព្ទ៖ តំណដែលខ្វះសម្រាប់ការអញ្ជើញតាមប្រតិទិន និងការជួបជុំភ្លាមៗ។"
+  "icu:WhatsNew__v7.34--1": {
+    "messageformat": "កំណែថ្មីនេះជួយឱ្យប្រើប្រាស់បានជាមួយអង្គដំណើរការថ្មីៗនៅលើ Windows ដូចជា Snapdragon X Elite ដូច្នេះអ្នកមិនចាំបាច់ធ្វើឱ្យ ARM របស់អ្នកឱ្យដូចជា x86 ទៀតទេ។"
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "ឥឡូវនេះ អ្នកអាចបង្កើតតំណមួយបានដោយងាយ និងឆាប់រហ័ស ដែលនរណាៗនៅលើ Signal ក៏អាចប្រើវាបានដែរ ដើម្បីចូលរួមការហៅជាក្រុមដោយមិនចាំបាច់ចូលរួមការជជែកជាក្រុមនៅលើ Signal ជាមុនទេ។"
+  "icu:WhatsNew__v7.34--2": {
+    "messageformat": "យើងក៏បានកែបញ្ហាមួយផងដែរដែលបានប៉ះពាល់ដល់ផ្ទៃពណ៌ងងឹតនៅក្នុង Signal នៅពេលដែលប្រព័ន្ធប្រតិបត្តិការរបស់អ្នកត្រូវបានកំណត់រចនាសម្ព័ន្ធឱ្យប្រើផ្ទៃពណ៌ភ្លឺ។ ឥឡូវនេះ Signal Desktop អាចដោះស្រាយបានល្អនូវលក្ខណៈបែកផ្ទៃពណ៌ផ្សេងគ្នាបានហើយ។"
   },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "តំណហៅទូរសព្ទគឺអាចប្រើឡើងវិញបាន និងល្អឥតខ្ចោះសម្រាប់ការណាត់ជួបតាមទូរសព្ទម្តងហើយម្តងទៀតជាមួយមិត្តភក្តិរបស់អ្នក ឬសម្រាប់ការនិយាយគ្នាលេងជារៀងរាល់សប្តាហ៍ជាមួយមិត្តរួមការងារ។"
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "អ្នកអាចគ្រប់គ្រងតំណហៅទូរសព្ទរបស់អ្នក គ្រប់គ្រងការកំណត់លើការយល់ព្រម និងចម្លងតំណពីផ្ទាំងហៅទូរសព្ទសម្រាប់ការចែករំលែករហ័ស។"
-  },
-  "icu:WhatsNew__v7.31--0": {
-    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
   }
 }

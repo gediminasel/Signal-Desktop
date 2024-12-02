@@ -33,16 +33,6 @@ export function ExternalLink(props: {
   );
 }
 
-function linkMajorMayer(
-  children: ReadonlyArray<string | JSX.Element>
-): JSX.Element {
-  return (
-    <ExternalLink href="https://github.com/major-mayer">
-      {children}
-    </ExternalLink>
-  );
-}
-
 export function WhatsNewModal({
   i18n,
   hideWhatsNewModal,
@@ -52,15 +42,7 @@ export function WhatsNewModal({
   const releaseNotes: ReleaseNotesType = {
     date: new Date(window.getBuildCreation?.() || Date.now()),
     version: window.getVersion?.(),
-    features: [
-      <I18n
-        i18n={i18n}
-        id="icu:WhatsNew__v7.31--0"
-        components={{
-          linkMajorMayer,
-        }}
-      />,
-    ],
+    features: [<I18n i18n={i18n} id="icu:WhatsNew__v7.35--0" />],
   };
 
   if (releaseNotes.features.length === 1 && !releaseNotes.header) {

@@ -67,7 +67,7 @@ import { sleep } from '../../util/sleep';
 import { LatestQueue } from '../../util/LatestQueue';
 import type { AciString, ServiceIdString } from '../../types/ServiceId';
 import type {
-  ConversationChangedActionType,
+  ConversationsUpdatedActionType,
   ConversationRemovedActionType,
 } from './conversations';
 import { getConversationCallMode, updateLastMessage } from './conversations';
@@ -959,7 +959,7 @@ export type CallingActionType =
   | CallStateChangeFulfilledActionType
   | ChangeIODeviceFulfilledActionType
   | CloseNeedPermissionScreenActionType
-  | ConversationChangedActionType
+  | ConversationsUpdatedActionType
   | ConversationRemovedActionType
   | DeclineCallActionType
   | GroupCallAudioLevelsChangeActionType
@@ -3071,16 +3071,28 @@ export function reducer(
     };
   }
 
-  if (action.type === 'CONVERSATION_CHANGED') {
+  if (action.type === 'CONVERSATIONS_UPDATED') {
     const activeCall = getActiveCall(state);
     const { activeCallState } = state;
+
     if (
       activeCallState?.state === 'Waiting' ||
       !activeCallState?.outgoingRing ||
-      activeCallState.conversationId !== action.payload.id ||
       !isGroupOrAdhocCallState(activeCall) ||
-      activeCall.joinState !== GroupCallJoinState.NotJoined ||
-      !isConversationTooBigToRing(action.payload.data)
+      activeCall.joinState !== GroupCallJoinState.NotJoined
+    ) {
+      return state;
+    }
+
+    const conversationForActiveCall = action.payload.data
+      .slice()
+      // reverse list since last update takes precedence
+      .reverse()
+      .find(conversation => conversation.id === activeCall?.conversationId);
+
+    if (
+      !conversationForActiveCall ||
+      !isConversationTooBigToRing(conversationForActiveCall)
     ) {
       return state;
     }
@@ -3408,14 +3420,22 @@ export function reducer(
       state.activeCallState?.state === 'Active' &&
       state.activeCallState?.conversationId === conversationId
     ) {
-      newActiveCallState =
-        connectionState === GroupCallConnectionState.NotConnected
-          ? undefined
-          : {
-              ...state.activeCallState,
-              hasLocalAudio,
-              hasLocalVideo,
-            };
+      if (connectionState === GroupCallConnectionState.NotConnected) {
+        newActiveCallState = undefined;
+      } else {
+        const joinedAt =
+          state.activeCallState.joinedAt ??
+          (connectionState === GroupCallConnectionState.Connected
+            ? new Date().getTime()
+            : null);
+
+        newActiveCallState = {
+          ...state.activeCallState,
+          hasLocalAudio,
+          hasLocalVideo,
+          joinedAt,
+        };
+      }
 
       // The first time we detect call participants in the lobby, check participant count
       // and mute ourselves if over the threshold.

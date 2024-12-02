@@ -206,11 +206,6 @@ export function getSourceDevice(
   if (isIncoming(message) || isStory(message)) {
     return sourceDevice;
   }
-  if (!isOutgoing(message)) {
-    log.warn(
-      'Message.getSourceDevice: Called for non-incoming/non-outgoing message'
-    );
-  }
 
   return sourceDevice || window.textsecure.storage.user.getDeviceId();
 }
@@ -220,11 +215,6 @@ export function getSourceServiceId(
 ): ServiceIdString | undefined {
   if (isIncoming(message) || isStory(message)) {
     return message.sourceServiceId;
-  }
-  if (!isOutgoing(message)) {
-    log.warn(
-      'Message.getSourceServiceId: Called for non-incoming/non-outgoing message'
-    );
   }
 
   return window.textsecure.storage.user.getAci();

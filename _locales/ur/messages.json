@@ -53,6 +53,15 @@
   "icu:appleSilicon": {
     "messageformat": "Apple سیلیکون"
   },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)"
+  },
   "icu:copyErrorAndQuit": {
     "messageformat": "کاپی میں غلطی اور چھوڑ دیں"
   },
@@ -581,6 +590,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "آپ فائلز کے ساتھ تصاویر اور ویڈیوز منتخب نہیں کر سکتے۔"
   },
@@ -677,6 +689,9 @@
   "icu:search": {
     "messageformat": "تلا ‎ش کر یں"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "غیر پڑھی ہوئی چیٹس تلاش کریں"
+  },
   "icu:clearSearch": {
     "messageformat": "تلاش صاف کریں"
   },
@@ -686,11 +701,26 @@
   "icu:noSearchResults": {
     "messageformat": "\"{searchTerm}\" کے لئے کوئی نتیجہ نہیں"
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "غیر پڑھی ہوئی چیٹس میں \"{searchTerm}\" کے لیے کوئی نتائج نہیں ملے"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "کوئی بغیر پڑھی ہوئی چیٹس نہیں"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "Desktop پر SMS / MMS رابطے دستیاب نہیں ہیں۔"
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "{conversationName} میں \"{searchTerm}\" کے لئے کوئی نتیجہ نہیں"
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "بالحاظ غیر پڑھی ہوئی فلٹر کردہ"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "بغیر پڑھے ہوئے سے فلٹر کریں"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "فلٹر کو صاف کریں"
   },
   "icu:conversationsHeader": {
     "messageformat": "چیٹس"
@@ -789,13 +819,13 @@
     "messageformat": "منسلکہ محفوظ ہو گیا۔"
   },
   "icu:attachmentSavedPlural": {
-    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+    "messageformat": "{count, plural, one {منسلکہ محفوظ ہو گیا} other {{count,number} منسلکات محفوظ ہو گئیں}}"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "فولڈر میں دکھائیں"
   },
   "icu:attachmentStillDownloading": {
-    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
+    "messageformat": "{count, plural, one {منسلکہ کو محفوظ نہیں کیا جا سکتا، کیونکہ یہ ابھی تک ڈاؤن لوڈ نہیں ہوئی ہے} other {منسلکات کو محفوظ نہیں کیا جا سکتا، کیونکہ {count,number} ابھی تک ڈاؤن لوڈ نہیں ہوئی ہیں}}"
   },
   "icu:you": {
     "messageformat": "آپ"
@@ -1387,6 +1417,9 @@
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, one {اس کال میں {first}، {second}، اور {others,number} دیگر موجود ہیں} other {اس کال میں {first}، {second}، اور{others,number} دیگر افراد موجود ہیں}}"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, one {{count,number} فرد اس کال میں ہے} other {{count,number} افراد اس کال میں ہیں}}"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "Signal {person} کو کال ملائے گی"
@@ -3566,6 +3599,9 @@
   "icu:BackupImportScreen__cancel": {
     "messageformat": "منتقل کرنے کو منسوخ کریں"
   },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "میسجز اور چیٹس کی معلومات اینڈ ٹو اینڈ انکرپشن کے ذریعے محفوظ شدہ ہیں، بشمول سنک کا عمل۔ <learnMoreLink>مزید جانیں</learnMoreLink>"
+  },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "منتقل کرنے کو منسوخ کریں؟"
   },
@@ -3604,6 +3640,12 @@
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "موقوف عمل کو بحال کریں"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "{totalSize} میں {currentSize} بحال ہو گیا"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "پس منظر میں میڈیا ڈاؤن لوڈ ہونا جاری رہے گا"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "ٹرانسفر روکیں"
@@ -4487,12 +4529,6 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "آپ کے پروفائل کو اپ ڈیٹ نہیں کیا جاسکا۔ دوبارہ کوشش کریں."
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "غلط حروف"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "آپ نے جو ایک یا زیادہ حروف درج کیے ہیں انہیں استعمال نہیں کیا جا سکتا۔ دوبارہ کوشش کریں۔"
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "کسی ایڈمن کو پیغام دیں"
   },
@@ -4693,6 +4729,15 @@
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "signal تکنیکی مشکلات کا تجربہ کر رہا ہے۔جتنا جلدی ممکن ہو ہم سروس بحال کرنے کیلئے سخت محنت کر رہے ہیں۔"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "اپ ڈیٹ درکار ہے"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "اپنے میسجز کی سنک کا عمل مکمل کرنے کے لیے، Signal ڈیسک ٹاپ کو ابھی اپ ڈیٹ کریں۔"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "اَپ ڈیٹ"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "اپ ڈیٹ درکار ہے"
@@ -5532,8 +5577,14 @@
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "نئی وائس یا ویڈیو کال شروع کرنے کے لیے <newCallButtonIcon></newCallButtonIcon> پر کلک کریں۔"
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "مسڈ کالز تلاش کریں"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "تلا ‎ش کر یں"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "مسڈ کے ذریعے فلٹر کیا گیا"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "بلحاظ مسڈ فلٹر کریں"
@@ -5547,14 +5598,14 @@
   "icu:CallsList__EmptyState--noQuery__subtitle": {
     "messageformat": "حالیہ کالز یہاں ظاہر ہوں گی۔"
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "کوئی مسڈ کالز نہیں"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "مسڈ کالز یہاں ظاہر ہوں گی۔"
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "\"{query}\" کے لیے کوئی نتائج نہیں ہیں"
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "مسڈ کالز میں “{query}” کے لیے کوئی نتائج نہیں ملے"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "کوئی مسڈ کالز نہیں"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "کال لنک تخلیق کریں"
@@ -5725,22 +5776,16 @@
     "messageformat": "معمولی تبدیلیاں کی گئیں، بگ ٹھیک کیے گئے، اور کارکردگی اور بھی بہتر بنائی گئی ہے۔ Signal استعمال کرنے کے لیے شکریہ!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "یہ اپ ڈیٹ سٹارٹ اپ کی رفتار کو تقریباً 5% تک بہتر بناتی ہے۔"
+  "icu:WhatsNew__v7.34--0": {
+    "messageformat": "تلاش کے باکس کے ساتھ موجود نئے فلٹر آئیکن کی مدد سے غیر پڑھی ہوئی چیٹس کو جلدی سے تلاش کرنا آسان ہو جاتا ہے۔"
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "کال لنکس متعارف کروا رہے ہیں: کیلنڈر دعوتوں اور فوری اجتماعات کے لیے گمشدہ لنک۔"
+  "icu:WhatsNew__v7.34--1": {
+    "messageformat": "یہ اپ ڈیٹ Windows پر Snapdragon X Elite جیسے نئے پروسیسرز کے لیے سپورٹ کو متعارف کرواتی ہے۔"
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "اب آپ فوری طور پر ایک آسان لنک تخلیق کر سکتے ہیں جو Signal پر موجود کوئی بھی شخص پہلے Signal کی گروپ چیٹ میں شامل ہوئے بغیر گروپ کال میں شامل ہونے کے لیے استعمال کر سکتا ہے۔"
+  "icu:WhatsNew__v7.34--2": {
+    "messageformat": "ہم نے ایک ایسے نقص کو بھی ٹھیک کیا جو آپ کے آپریٹنگ سسٹم کی سیٹنگز کو لائٹ تھیم پر سیٹ کرنے کے بعد Signal کی ڈارک تھیم کو خراب کر رہا تھا۔ Signal Desktop اب آپ کی تھیم پر مبنی سپلٹ شخصیت کو اچھی طرح ہینڈل کر سکتا ہے۔"
   },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "کال لنکس دوبارہ قابل استعمال ہیں اور اپنے بہترین دوستوں کے ساتھ بار بار فون پر بات چیت کرنے یا ساتھی کارکنان کے ساتھ ہفتہ وارانہ چیک انز کے لیے مثالی ہیں۔"
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "آپ اپنے کال لنکس کا نظم کر سکتے ہیں، منظوری کی سیٹنگز کو کنٹرول کر سکتے ہیں، اور فوری طور پر شیئرنگ کے لیے کالز ٹیب سے لنکس کاپی کر سکتے ہیں۔"
-  },
-  "icu:WhatsNew__v7.31--0": {
-    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
   }
 }

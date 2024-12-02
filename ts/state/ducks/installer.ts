@@ -7,6 +7,7 @@ import pTimeout, { TimeoutError } from 'p-timeout';
 
 import type { StateType as RootStateType } from '../reducer';
 import {
+  type InstallScreenBackupError,
   InstallScreenBackupStep,
   InstallScreenStep,
   InstallScreenError,
@@ -19,7 +20,7 @@ import { strictAssert } from '../../util/assert';
 import { SECOND } from '../../util/durations';
 import * as Registration from '../../util/registration';
 import { isBackupEnabled } from '../../util/isBackupEnabled';
-import { HTTPError } from '../../textsecure/Errors';
+import { HTTPError, InactiveTimeoutError } from '../../textsecure/Errors';
 import {
   Provisioner,
   type PrepareLinkDataOptionsType,
@@ -28,6 +29,7 @@ import type { BoundActionCreatorsMapObject } from '../../hooks/useBoundActions';
 import { useBoundActions } from '../../hooks/useBoundActions';
 import * as log from '../../logging/log';
 import { backupsService } from '../../services/backups';
+import OS from '../../util/os/osMain';
 
 const SLEEP_ERROR = new TimeoutError();
 
@@ -66,7 +68,7 @@ export type InstallerStateType = ReadonlyDeep<
       backupStep: InstallScreenBackupStep;
       currentBytes?: number;
       totalBytes?: number;
-      hasError?: boolean;
+      error?: InstallScreenBackupError;
     }
 >;
 
@@ -131,7 +133,7 @@ type UpdateBackupImportProgressActionType = ReadonlyDeep<{
         totalBytes: number;
       }
     | {
-        hasError: boolean;
+        error: InstallScreenBackupError;
       };
 }>;
 
@@ -196,7 +198,10 @@ function startInstaller(): ThunkAction<
     const { server } = window.textsecure;
     strictAssert(server, 'Expected a server');
 
-    const provisioner = new Provisioner(server, window.getVersion());
+    const provisioner = new Provisioner({
+      server,
+      appVersion: window.getVersion(),
+    });
 
     const abortController = new AbortController();
     const { signal } = abortController;
@@ -295,6 +300,14 @@ function startInstaller(): ThunkAction<
         Errors.toLogFormat(error)
       );
 
+      if (error instanceof InactiveTimeoutError) {
+        dispatch({
+          type: SET_ERROR,
+          payload: InstallScreenError.InactiveTimeout,
+        });
+        return;
+      }
+
       dispatch({
         type: SET_ERROR,
         payload: InstallScreenError.ConnectionFailed,
@@ -307,26 +320,30 @@ function startInstaller(): ThunkAction<
     }
     provisionerByBaton.set(baton, provisioner);
 
-    // Switch to next UI phase
-    dispatch({
-      type: QR_CODE_SCANNED,
-      payload: {
-        deviceName:
-          window.textsecure.storage.user.getDeviceName() ||
-          window.getHostName() ||
-          '',
-        baton,
-      },
-    });
+    if (provisioner.isLinkAndSync()) {
+      dispatch(finishInstall({ deviceName: OS.getName() || 'Signal Desktop' }));
+    } else {
+      // Show screen to choose device name
+      dispatch({
+        type: QR_CODE_SCANNED,
+        payload: {
+          deviceName:
+            window.textsecure.storage.user.getDeviceName() ||
+            window.getHostName() ||
+            '',
+          baton,
+        },
+      });
 
-    // And feed it the CI data if present
-    const { SignalCI } = window;
-    if (SignalCI != null) {
-      dispatch(
-        finishInstall({
-          deviceName: SignalCI.deviceName,
-        })
-      );
+      // And feed it the CI data if present
+      const { SignalCI } = window;
+      if (SignalCI != null) {
+        dispatch(
+          finishInstall({
+            deviceName: SignalCI.deviceName,
+          })
+        );
+      }
     }
   };
 }
@@ -345,8 +362,9 @@ function finishInstall(
   return async (dispatch, getState) => {
     const state = getState();
     strictAssert(
-      state.installer.step === InstallScreenStep.ChoosingDeviceName,
-      'Not choosing device name'
+      state.installer.step === InstallScreenStep.ChoosingDeviceName ||
+        state.installer.step === InstallScreenStep.QrCodeNotScanned,
+      'Wrong step'
     );
 
     const { baton } = state.installer;
@@ -356,6 +374,13 @@ function finishInstall(
       'Provisioner is not waiting for device info'
     );
 
+    if (state.installer.step === InstallScreenStep.QrCodeNotScanned) {
+      strictAssert(
+        provisioner.isLinkAndSync(),
+        'Can only skip device naming if link & sync'
+      );
+    }
+
     // Cleanup
     controllerByBaton.delete(baton);
     provisionerByBaton.delete(baton);
@@ -363,7 +388,7 @@ function finishInstall(
     const accountManager = window.getAccountManager();
     strictAssert(accountManager, 'Expected an account manager');
 
-    if (isBackupEnabled()) {
+    if (isBackupEnabled() || provisioner.isLinkAndSync()) {
       dispatch({ type: SHOW_BACKUP_IMPORT });
     } else {
       dispatch({ type: SHOW_LINK_IN_PROGRESS });
@@ -553,7 +578,7 @@ export function reducer(
   if (action.type === SHOW_BACKUP_IMPORT) {
     if (
       // Downloading backup after linking
-      state.step !== InstallScreenStep.ChoosingDeviceName &&
+      state.step !== InstallScreenStep.QrCodeNotScanned &&
       // Restarting backup download on startup
       state.step !== InstallScreenStep.NotStarted
     ) {
@@ -576,10 +601,10 @@ export function reducer(
       return state;
     }
 
-    if ('hasError' in action.payload) {
+    if ('error' in action.payload) {
       return {
         ...state,
-        hasError: action.payload.hasError,
+        error: action.payload.error,
       };
     }
 
@@ -602,7 +627,7 @@ export function reducer(
 
     return {
       ...state,
-      hasError: false,
+      error: undefined,
     };
   }
 

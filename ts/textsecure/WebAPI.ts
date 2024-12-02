@@ -68,7 +68,7 @@ import type {
 import { handleStatusCode, translateError } from './Utils';
 import * as log from '../logging/log';
 import { maybeParseUrl, urlPathFromComponents } from '../util/url';
-import { SECOND } from '../util/durations';
+import { HOUR, MINUTE, SECOND } from '../util/durations';
 import { safeParseNumber } from '../util/numbers';
 import { isStagingServer } from '../util/isStagingServer';
 import type { IWebSocketResource } from './WebsocketResources';
@@ -165,8 +165,8 @@ function _validateResponse(response: any, schema: any) {
   return true;
 }
 
-const FIVE_MINUTES = 5 * durations.MINUTE;
-const GET_ATTACHMENT_CHUNK_TIMEOUT = 10 * durations.SECOND;
+const FIVE_MINUTES = 5 * MINUTE;
+const GET_ATTACHMENT_CHUNK_TIMEOUT = 10 * SECOND;
 
 type AgentCacheType = {
   [name: string]: {
@@ -545,7 +545,12 @@ async function _retryAjax(
   try {
     return await _promiseAjax(url, options);
   } catch (e) {
-    if (e instanceof HTTPError && e.code === -1 && count < limit) {
+    if (
+      e instanceof HTTPError &&
+      e.code === -1 &&
+      count < limit &&
+      !options.abortSignal?.aborted
+    ) {
       return new Promise(resolve => {
         setTimeout(() => {
           resolve(_retryAjax(url, options, limit, count));
@@ -626,7 +631,7 @@ const URL_CALLS = {
   discovery: 'v1/discovery',
   getGroupAvatarUpload: 'v1/groups/avatar/form',
   getGroupCredentials: 'v1/certificate/auth/group',
-  getIceServers: 'v1/calling/relays',
+  getIceServers: 'v2/calling/relays',
   getOnboardingStoryManifest:
     'dynamic/desktop/stories/onboarding/manifest.json',
   getStickerPackUpload: 'v1/sticker/pack/form',
@@ -672,55 +677,8 @@ const URL_CALLS = {
   whoami: 'v1/accounts/whoami',
 };
 
-const WEBSOCKET_CALLS = new Set<keyof typeof URL_CALLS>([
-  // MessageController
-  'messages',
-  'multiRecipient',
-  'reportMessage',
-
-  // ProfileController
-  'profile',
-
-  // AttachmentControllerV3
-  'attachmentUploadForm',
-
-  // RemoteConfigController
-  'config',
-
-  // Certificate
-  'deliveryCert',
-  'getGroupCredentials',
-
-  // Devices
-  'devices',
-  'linkDevice',
-  'registerCapabilities',
-  'transferArchive',
-
-  // Directory
-  'directoryAuthV2',
-
-  // Storage
-  'storageToken',
-
-  // Account V2
-  'phoneNumberDiscoverability',
-
-  // Backups
-  'getBackupCredentials',
-  'getBackupCDNCredentials',
-  'getBackupMediaUploadForm',
-  'getBackupUploadForm',
-  'backup',
-  'backupMedia',
-  'backupMediaBatch',
-  'backupMediaDelete',
-  'setBackupId',
-  'setBackupSignatureKey',
-]);
-
 type InitializeOptionsType = {
-  url: string;
+  chatServiceUrl: string;
   storageUrl: string;
   updatesUrl: string;
   resourcesUrl: string;
@@ -795,10 +753,12 @@ export type WebAPIConnectType = {
 export type CapabilitiesType = {
   deleteSync: boolean;
   versionedExpirationTimer: boolean;
+  ssre2: boolean;
 };
 export type CapabilitiesUploadType = {
   deleteSync: true;
   versionedExpirationTimer: true;
+  ssre2: true;
 };
 
 type StickerPackManifestType = Uint8Array;
@@ -902,12 +862,7 @@ export type GetAccountForUsernameResultType = z.infer<
 >;
 
 export type GetIceServersResultType = Readonly<{
-  username?: string;
-  password?: string;
-  urls?: ReadonlyArray<string>;
-  urlsWithIps?: ReadonlyArray<string>;
-  hostname?: string;
-  iceServers?: ReadonlyArray<IceServerGroupType>;
+  relays?: ReadonlyArray<IceServerGroupType>;
 }>;
 
 export type IceServerGroupType = Readonly<{
@@ -1104,7 +1059,8 @@ export type RequestVerificationResultType = Readonly<{
 }>;
 
 export type SetBackupIdOptionsType = Readonly<{
-  backupAuthCredentialRequest: Uint8Array;
+  messagesBackupAuthCredentialRequest: Uint8Array;
+  mediaBackupAuthCredentialRequest: Uint8Array;
 }>;
 
 export type SetBackupSignatureKeyOptionsType = Readonly<{
@@ -1126,7 +1082,6 @@ export type BackupMediaItemType = Readonly<{
   mediaId: string;
   hmacKey: Uint8Array;
   encryptionKey: Uint8Array;
-  iv: Uint8Array;
 }>;
 
 export type BackupMediaBatchOptionsType = Readonly<{
@@ -1191,15 +1146,20 @@ export type GetBackupCredentialsOptionsType = Readonly<{
   endDayInMs: number;
 }>;
 
+export const backupCredentialListSchema = z
+  .object({
+    credential: z.string().transform(x => Bytes.fromBase64(x)),
+    redemptionTime: z
+      .number()
+      .transform(x => durations.DurationInSeconds.fromSeconds(x)),
+  })
+  .array();
+
 export const getBackupCredentialsResponseSchema = z.object({
-  credentials: z
-    .object({
-      credential: z.string().transform(x => Bytes.fromBase64(x)),
-      redemptionTime: z
-        .number()
-        .transform(x => durations.DurationInSeconds.fromSeconds(x)),
-    })
-    .array(),
+  credentials: z.object({
+    messages: backupCredentialListSchema,
+    media: backupCredentialListSchema,
+  }),
 });
 
 export type GetBackupCredentialsResponseType = z.infer<
@@ -1275,7 +1235,7 @@ const StickerPackUploadFormSchema = z.object({
 });
 
 const TransferArchiveSchema = z.object({
-  cdn: z.literal(3),
+  cdn: z.number(),
   key: z.string(),
 });
 
@@ -1621,7 +1581,7 @@ type InflightCallback = (error: Error) => unknown;
 
 // We first set up the data that won't change during this session of the app
 export function initialize({
-  url,
+  chatServiceUrl,
   storageUrl,
   updatesUrl,
   resourcesUrl,
@@ -1633,8 +1593,8 @@ export function initialize({
   version,
   disableIPv6,
 }: InitializeOptionsType): WebAPIConnectType {
-  if (!isString(url)) {
-    throw new Error('WebAPI.initialize: Invalid server url');
+  if (!isString(chatServiceUrl)) {
+    throw new Error('WebAPI.initialize: Invalid chatServiceUrl');
   }
   if (!isString(storageUrl)) {
     throw new Error('WebAPI.initialize: Invalid storageUrl');
@@ -1674,7 +1634,11 @@ export function initialize({
   // for providing network layer API and related functionality.
   // It's important to have a single instance of this class as it holds
   // resources that are shared across all other use cases.
-  const libsignalNet = resolveLibsignalNet(url, version, certificateAuthority);
+  const libsignalNet = resolveLibsignalNet(
+    chatServiceUrl,
+    version,
+    certificateAuthority
+  );
   libsignalNet.setIpv6Enabled(!disableIPv6);
 
   // Thanks to function-hoisting, we can put this return statement before all of the
@@ -1701,7 +1665,7 @@ export function initialize({
     let activeRegistration: ExplodePromiseResultType<void> | undefined;
 
     const socketManager = new SocketManager(libsignalNet, {
-      url,
+      url: chatServiceUrl,
       certificateAuthority,
       version,
       proxyUrl,
@@ -1929,8 +1893,11 @@ export function initialize({
         param.urlParameters = '';
       }
 
+      // When host is not provided, assume chat service
+      const host = param.host || chatServiceUrl;
       const useWebSocketForEndpoint =
-        useWebSocket && WEBSOCKET_CALLS.has(param.call);
+        useWebSocket &&
+        (!param.host || (host === chatServiceUrl && !isMockServer(host)));
 
       const outerParams = {
         socketManager: useWebSocketForEndpoint ? socketManager : undefined,
@@ -1941,7 +1908,7 @@ export function initialize({
           param.data ||
           (param.jsonData ? JSON.stringify(param.jsonData) : undefined),
         headers: param.headers,
-        host: param.host || url,
+        host,
         password: param.password ?? password,
         path: URL_CALLS[param.call] + param.urlParameters,
         proxyUrl,
@@ -1950,7 +1917,7 @@ export function initialize({
         type: param.httpType,
         user: param.username ?? username,
         redactUrl: param.redactUrl,
-        serverUrl: url,
+        serverUrl: chatServiceUrl,
         validateResponse: param.validateResponse,
         version,
         unauthenticated: param.unauthenticated,
@@ -2280,18 +2247,22 @@ export function initialize({
     }
 
     async function getTransferArchive({
-      timeout = durations.HOUR,
+      timeout = HOUR,
       abortSignal,
     }: GetTransferArchiveOptionsType): Promise<TransferArchiveType> {
       const timeoutTime = Date.now() + timeout;
 
-      const urlParameters = timeout
-        ? `?timeout=${encodeURIComponent(Math.round(timeout / SECOND))}`
-        : undefined;
-
       let remainingTime: number;
       do {
         remainingTime = Math.max(timeoutTime - Date.now(), 0);
+
+        const requestTimeoutInSecs = Math.round(
+          Math.min(remainingTime, 5 * MINUTE) / SECOND
+        );
+
+        const urlParameters = timeout
+          ? `?timeout=${encodeURIComponent(requestTimeoutInSecs)}`
+          : undefined;
 
         // eslint-disable-next-line no-await-in-loop
         const { data, response }: JSONWithDetailsType = await _ajax({
@@ -2299,7 +2270,8 @@ export function initialize({
           httpType: 'GET',
           responseType: 'jsonwithdetails',
           urlParameters,
-          timeout: remainingTime,
+          // Add a bit of leeway to let server respond properly
+          timeout: requestTimeoutInSecs + 15 * SECOND,
           abortSignal,
         });
 
@@ -2311,6 +2283,10 @@ export function initialize({
           response.status === 204,
           'Invalid transfer archive status code'
         );
+
+        if (abortSignal?.aborted) {
+          break;
+        }
 
         // Timed out, see if we can retry
       } while (!timeout || remainingTime != null);
@@ -2757,6 +2733,7 @@ export function initialize({
       const capabilities: CapabilitiesUploadType = {
         deleteSync: true,
         versionedExpirationTimer: true,
+        ssre2: true,
       };
 
       const jsonData = {
@@ -2812,6 +2789,7 @@ export function initialize({
       const capabilities: CapabilitiesUploadType = {
         deleteSync: true,
         versionedExpirationTimer: true,
+        ssre2: true,
       };
 
       const jsonData = {
@@ -3085,8 +3063,8 @@ export function initialize({
       startDayInMs,
       endDayInMs,
     }: GetBackupCredentialsOptionsType) {
-      const startDayInSeconds = startDayInMs / durations.SECOND;
-      const endDayInSeconds = endDayInMs / durations.SECOND;
+      const startDayInSeconds = startDayInMs / SECOND;
+      const endDayInSeconds = endDayInMs / SECOND;
       const res = await _ajax({
         call: 'getBackupCredentials',
         httpType: 'GET',
@@ -3118,14 +3096,18 @@ export function initialize({
     }
 
     async function setBackupId({
-      backupAuthCredentialRequest,
+      messagesBackupAuthCredentialRequest,
+      mediaBackupAuthCredentialRequest,
     }: SetBackupIdOptionsType) {
       await _ajax({
         call: 'setBackupId',
         httpType: 'PUT',
         jsonData: {
-          backupAuthCredentialRequest: Bytes.toBase64(
-            backupAuthCredentialRequest
+          messagesBackupAuthCredentialRequest: Bytes.toBase64(
+            messagesBackupAuthCredentialRequest
+          ),
+          mediaBackupAuthCredentialRequest: Bytes.toBase64(
+            mediaBackupAuthCredentialRequest
           ),
         },
       });
@@ -3168,7 +3150,6 @@ export function initialize({
               mediaId,
               hmacKey,
               encryptionKey,
-              iv,
             } = item;
 
             return {
@@ -3180,7 +3161,6 @@ export function initialize({
               mediaId,
               hmacKey: Bytes.toBase64(hmacKey),
               encryptionKey: Bytes.toBase64(encryptionKey),
-              iv: Bytes.toBase64(iv),
             };
           }),
         },
@@ -3650,7 +3630,7 @@ export function initialize({
       // Upload stickers
       const queue = new PQueue({
         concurrency: 3,
-        timeout: durations.MINUTE * 30,
+        timeout: MINUTE * 30,
         throwOnTimeout: true,
       });
       await Promise.all(
@@ -4094,8 +4074,8 @@ export function initialize({
       startDayInMs,
       endDayInMs,
     }: GetGroupCredentialsOptionsType): Promise<GetGroupCredentialsResultType> {
-      const startDayInSeconds = startDayInMs / durations.SECOND;
-      const endDayInSeconds = endDayInMs / durations.SECOND;
+      const startDayInSeconds = startDayInMs / SECOND;
+      const endDayInSeconds = endDayInMs / SECOND;
       const response = (await _ajax({
         call: 'getGroupCredentials',
         urlParameters:

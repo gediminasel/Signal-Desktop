@@ -6,6 +6,7 @@ import { PhoneNumberUtil, PhoneNumberFormat } from 'google-libphonenumber';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as moment from 'moment';
+// @ts-expect-error -- no types
 import 'moment/min/locales.min';
 
 import { textsecure } from '../../textsecure';
@@ -23,7 +24,7 @@ window.textsecure = textsecure;
 const { config } = window.SignalContext;
 
 window.WebAPI = window.textsecure.WebAPI.initialize({
-  url: config.serverUrl,
+  chatServiceUrl: config.serverUrl,
   storageUrl: config.storageUrl,
   updatesUrl: config.updatesUrl,
   resourcesUrl: config.resourcesUrl,

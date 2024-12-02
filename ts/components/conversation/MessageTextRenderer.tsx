@@ -239,22 +239,23 @@ function renderNode({
       </span>
     );
   }
-
-  let nodeText = node.text;
-
+  let updatedNode = node;
   if (
-    node.url &&
-    SUPPORTED_PROTOCOLS.test(node.url) &&
-    !isLinkSneaky(node.url)
+    updatedNode.url &&
+    SUPPORTED_PROTOCOLS.test(updatedNode.url) &&
+    !isLinkSneaky(updatedNode.url)
   ) {
     const goLinkAddress =
       window.localStorage &&
       !disableLinks &&
       localStorage.getItem('realGoLinkAddress');
     if (goLinkAddress && goLinkAddress.startsWith(goLinkAddress)) {
-      nodeText = nodeText
-        .replace(goLinkAddress, 'go/')
-        .replace(/^http:\/\/go\//, 'go/');
+      updatedNode = {
+        ...updatedNode,
+        text: updatedNode.text
+          .replace(goLinkAddress, 'go/')
+          .replace(/^http:\/\/go\//, 'go/'),
+      };
     }
   }
 
@@ -263,9 +264,9 @@ function renderNode({
     disableLinks,
     emojiSizeClass,
     isInvisible,
-    mentions: node.mentions,
+    mentions: updatedNode.mentions,
     onMentionTrigger,
-    text: nodeText,
+    node: updatedNode,
   });
 
   // We use separate elements for these because we want screenreaders to understand them
@@ -312,18 +313,19 @@ function renderMentions({
   emojiSizeClass,
   isInvisible,
   mentions,
+  node,
   onMentionTrigger,
-  text,
 }: {
+  direction: 'incoming' | 'outgoing' | undefined;
+  disableLinks: boolean;
   emojiSizeClass: SizeClassType | undefined;
   isInvisible: boolean;
   mentions: ReadonlyArray<HydratedBodyRangeMention>;
-  text: string;
-  disableLinks: boolean;
-  direction: 'incoming' | 'outgoing' | undefined;
+  node: DisplayNode;
   onMentionTrigger: ((conversationId: string) => void) | undefined;
 }): ReactElement {
   const result: Array<ReactElement> = [];
+  const { text } = node;
 
   let offset = 0;
 
@@ -348,6 +350,7 @@ function renderMentions({
         disableLinks,
         direction,
         name: mention.replacementText,
+        node,
         onMentionTrigger,
       })
     );
@@ -370,19 +373,21 @@ function renderMentions({
 
 function renderMention({
   conversationId,
-  name,
+  direction,
+  disableLinks,
   isInvisible,
   key,
-  disableLinks,
-  direction,
+  name,
+  node,
   onMentionTrigger,
 }: {
   conversationId: string;
-  name: string;
+  direction: 'incoming' | 'outgoing' | undefined;
+  disableLinks: boolean;
   isInvisible: boolean;
   key: string;
-  disableLinks: boolean;
-  direction: 'incoming' | 'outgoing' | undefined;
+  name: string;
+  node: DisplayNode;
   onMentionTrigger: ((conversationId: string) => void) | undefined;
 }): ReactElement {
   if (disableLinks) {
@@ -399,6 +404,7 @@ function renderMention({
       key={key}
       id={conversationId}
       isInvisible={isInvisible}
+      isStrikethrough={node.isStrikethrough}
       name={name}
       direction={direction}
       onClick={() => {
@@ -474,6 +480,7 @@ export function extractLinks(
   }
 
   if (goLinkAddress) {
+    // @ts-expect-error TS1501
     for (const match of messageText.matchAll(/(\s|^)go\/(?<val>\S+)/dgmu)) {
       const { indices } = match as unknown as {
         indices: Array<[number, number]>;

@@ -53,6 +53,15 @@
   "icu:appleSilicon": {
     "messageformat": "Apple silicon"
   },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)"
+  },
   "icu:copyErrorAndQuit": {
     "messageformat": "Αντιγραφή σφάλματος και έξοδος"
   },
@@ -581,6 +590,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Δεν μπορείς να επιλέξεις φωτογραφίες και βίντεο μαζί με αρχεία."
   },
@@ -677,6 +689,9 @@
   "icu:search": {
     "messageformat": "Αναζήτηση"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "Αναζήτηση μη αναγνωσμένων συνομιλιών"
+  },
   "icu:clearSearch": {
     "messageformat": "Εκκαθάριση αναζήτησης"
   },
@@ -686,11 +701,26 @@
   "icu:noSearchResults": {
     "messageformat": "Δεν υπάρχουν αποτελέσματα για \"{searchTerm}\""
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "Δεν υπάρχουν αποτελέσματα για \"{searchTerm}\" σε μη αναγνωσμένες συνομιλίες"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "Καμία μη αναγνωσμένη συνομιλία"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "Οι επαφές SMS/MMS δεν είναι διαθέσιμες στο Desktop."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "Δε βρέθηκαν αποτελέσματα για \"{searchTerm}\" στο {conversationName}"
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "Φιλτράρισμα με μη αναγνωσμένα"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "Φιλτράρισμα με μη αναγνωσμένα"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "Διαγραφή φίλτρου"
   },
   "icu:conversationsHeader": {
     "messageformat": "Συνομιλίες"
@@ -789,13 +819,13 @@
     "messageformat": "Το συνημμένο αποθηκεύτηκε."
   },
   "icu:attachmentSavedPlural": {
-    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+    "messageformat": "{count, plural, one {Το συνημμένο αποθηκεύτηκε} other {{count,number} συνημμένα αποθηκεύτηκαν}}"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "Εμφάνιση στο φάκελο"
   },
   "icu:attachmentStillDownloading": {
-    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
+    "messageformat": "{count, plural, one {Δεν είναι δυνατή η αποθήκευση του συνημμένου, καθώς δεν έχει ολοκληρωθεί ακόμα η λήψη του} other {Δεν είναι δυνατή η αποθήκευση των συνημμένων, καθώς δεν έχει ολοκληρωθεί ακόμα η λήψη {count,number}}}"
   },
   "icu:you": {
     "messageformat": "Εσύ"
@@ -1387,6 +1417,9 @@
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, one {Οι {first}, {second} και {others,number} ακόμα είναι στην κλήση} other {Οι {first}, {second} και {others,number} ακόμα είναι στην κλήση}}"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, one {{count,number} άτομο είναι στην κλήση} other {{count,number} άτομα είναι στην κλήση}}"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "Το Signal θα καλέσει με κουδόυνισμα τον/την {person}"
@@ -3566,6 +3599,9 @@
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Ακύρωση μεταφοράς"
   },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "Τα μηνύματα και οι πληροφορίες συνομιλίας προστατεύονται με κρυπτογράφηση από άκρο σε άκρο, συμπεριλαμβανομένης της διαδικασίας συγχρονισμού. <learnMoreLink>Μάθε περισσότερα</learnMoreLink>"
+  },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "Ακύρωση μεταφοράς;"
   },
@@ -3604,6 +3640,12 @@
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "Επαναφορά σε παύση"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "Έγινε επαναφορά {currentSize} από {totalSize}"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "Η λήψη πολυμέσων θα συνεχιστεί στο παρασκήνιο"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "Παύση μεταφοράς"
@@ -4487,12 +4529,6 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "Το προφίλ σου δεν μπόρεσε να ανανεωθεί. Παρακαλώ προσπάθησε ξανά."
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Μη έγκυροι χαρακτήρες"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "Ένας ή περισσότεροι χαρακτήρες που έχεις εισαγάγει δεν μπορούν να χρησιμοποιηθούν. Ξαναπροσπάθησε."
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Μήνυμα σε διαχειριστή"
   },
@@ -4693,6 +4729,15 @@
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Το Signal αντιμετωπίζει τεχνικές δυσκολίες. Εργαζόμαστε σκληρά για να αποκαταστήσουμε την υπηρεσία το συντομότερο δυνατό."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "Απαιτείται αναβάθμιση"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "Για να ολοκληρώσεις τον συγχρονισμό των μηνυμάτων σου, ενημέρωσε το Signal Desktop τώρα."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "Ενημέρωση"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "Απαιτείται αναβάθμιση"
@@ -5532,8 +5577,14 @@
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Πάτα <newCallButtonIcon></newCallButtonIcon> για να ξεκινήσεις μια νέα φωνητική κλήση ή μια βιντεοκλήση."
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "Αναζήτηση αναπάντητων κλήσεων"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Αναζήτηση"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "Φιλτράρισμα ανά αναπάντητες"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "Φίλτρο ανά αναπάντητες"
@@ -5547,14 +5598,14 @@
   "icu:CallsList__EmptyState--noQuery__subtitle": {
     "messageformat": "Οι νέες κλήσεις θα εμφανίζονται εδώ."
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "Δεν υπάρχουν αναπάντητες κλήσεις"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Οι χαμένες κλήσεις θα εμφανίζονται εδώ."
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Δεν βρέθηκαν αποτελέσματα για “{query}”"
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "Δεν υπάρχουν αποτελέσματα για το \"{query}\" στις αναπάντητες κλήσεις"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "Δεν υπάρχουν αναπάντητες κλήσεις"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "Δημιουργήστε σύνδεσμο κλήσης"
@@ -5725,22 +5776,16 @@
     "messageformat": "Μικρές τροποποιήσεις, επιδιορθώσεις σφαλμάτων και βελτιώσεις απόδοσης. Ευχαριστούμε που χρησιμοποιείς το Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "Αυτή η ενημέρωση βελτιώνει την ταχύτητα εκκίνησης κατά περίπου 5%."
+  "icu:WhatsNew__v7.34--0": {
+    "messageformat": "Το νέο εικονίδιο φίλτρου δίπλα στο πλαίσιο αναζήτησης διευκολύνει τη γρήγορη εύρεση μη αναγνωσμένων συνομιλιών."
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "Παρουσίαση των συνδέσμων κλήσεων: Ο σύνδεσμος που λείπει για προσκλήσεις ημερολογίου και αυθόρμητες συναντήσεις."
+  "icu:WhatsNew__v7.34--1": {
+    "messageformat": "Αυτή η ενημέρωση εισάγει υποστήριξη για νέους επεξεργαστές στα Windows, όπως ο Snapdragon X Elite."
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "Τώρα μπορείς να δημιουργείς γρήγορα έναν εύκολο σύνδεσμο που μπορεί να χρησιμοποιήσει οποιοσδήποτε στο Signal για να συμμετάσχει σε μια ομαδική κλήση χωρίς να χρειάζεται να συμμετάσχει πρώτα σε μια ομαδική συνομιλία Signal."
+  "icu:WhatsNew__v7.34--2": {
+    "messageformat": "Διορθώσαμε επίσης ένα σφάλμα που κατέστρεφε το σκούρο θέμα στο Signal όταν οι ρυθμίσεις του λειτουργικού σου συστήματος ήταν ρυθμισμένες σε ανοιχτό θέμα."
   },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "Οι σύνδεσμοι κλήσεων μπορούν να χρησιμοποιηθούν ξανά και είναι ιδανικοί για επαναλαμβανόμενα τηλεφωνικά ραντεβού με τους καλύτερους φίλους σου ή για εβδομαδιαία check-in με τους συναδέλφους σου."
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "Μπορείς να διαχειριστείς τους συνδέσμους κλήσεων, να ελέγξεις τις ρυθμίσεις έγκρισης και να αντιγράψεις συνδέσμους από την καρτέλα κλήσεων για γρήγορη κοινή χρήση."
-  },
-  "icu:WhatsNew__v7.31--0": {
-    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
   }
 }

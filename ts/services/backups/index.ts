@@ -12,6 +12,7 @@ import { createGzip, createGunzip } from 'zlib';
 import { createCipheriv, createHmac, randomBytes } from 'crypto';
 import { noop } from 'lodash';
 import { BackupLevel } from '@signalapp/libsignal-client/zkgroup';
+import { BackupKey } from '@signalapp/libsignal-client/dist/AccountKeys';
 
 import { DataReader, DataWriter } from '../../sql/Client';
 import * as log from '../../logging/log';
@@ -26,13 +27,21 @@ import { getIvAndDecipher } from '../../util/getIvAndDecipher';
 import { getMacAndUpdateHmac } from '../../util/getMacAndUpdateHmac';
 import { missingCaseError } from '../../util/missingCaseError';
 import { HOUR } from '../../util/durations';
+import type { ExplodePromiseResultType } from '../../util/explodePromise';
+import { explodePromise } from '../../util/explodePromise';
+import type { RetryBackupImportValue } from '../../state/ducks/installer';
 import { CipherType, HashType } from '../../types/Crypto';
-import { InstallScreenBackupStep } from '../../types/InstallScreen';
+import {
+  InstallScreenBackupStep,
+  InstallScreenBackupError,
+} from '../../types/InstallScreen';
 import * as Errors from '../../types/errors';
+import { BackupCredentialType } from '../../types/backups';
 import { HTTPError } from '../../textsecure/Errors';
 import { constantTimeEqual } from '../../Crypto';
 import { measureSize } from '../../AttachmentCrypto';
 import { isTestOrMockEnvironment } from '../../environment';
+import { runStorageServiceSyncJob } from '../storage';
 import { BackupExportStream } from './export';
 import { BackupImportStream } from './import';
 import { getKeyMaterial } from './crypto';
@@ -40,9 +49,9 @@ import { BackupCredentials } from './credentials';
 import { BackupAPI } from './api';
 import { validateBackup } from './validator';
 import { BackupType } from './types';
-import type { ExplodePromiseResultType } from '../../util/explodePromise';
-import { explodePromise } from '../../util/explodePromise';
-import type { RetryBackupImportValue } from '../../state/ducks/installer';
+import { UnsupportedBackupVersion } from './errors';
+import { ToastType } from '../../types/Toast';
+import { isAlpha } from '../../util/version';
 
 export { BackupType };
 
@@ -77,7 +86,7 @@ export type ImportOptionsType = Readonly<{
 
 export class BackupsService {
   private isStarted = false;
-  private isRunning = false;
+  private isRunning: 'import' | 'export' | false = false;
   private downloadController: AbortController | undefined;
   private downloadRetryPromise:
     | ExplodePromiseResultType<RetryBackupImportValue>
@@ -139,7 +148,10 @@ export class BackupsService {
         );
         this.downloadRetryPromise = explodePromise<RetryBackupImportValue>();
         window.reduxActions.installer.updateBackupImportProgress({
-          hasError: true,
+          error:
+            error instanceof UnsupportedBackupVersion
+              ? InstallScreenBackupError.UnsupportedVersion
+              : InstallScreenBackupError.Unknown,
         });
 
         // eslint-disable-next-line no-await-in-loop
@@ -174,10 +186,30 @@ export class BackupsService {
   }
 
   public async upload(): Promise<void> {
+    // Make sure we are up-to-date on storage service
+    {
+      const { promise: storageService, resolve } = explodePromise<void>();
+      window.Whisper.events.once('storageService:syncComplete', resolve);
+
+      runStorageServiceSyncJob({ reason: 'backups.upload' });
+      await storageService;
+    }
+
+    // Clear message queue
+    await window.waitForEmptyEventQueue();
+
+    // Make sure all batches are flushed
+    await Promise.all([
+      window.waitForAllBatchers(),
+      window.flushAllWaitBatchers(),
+    ]);
+
     const fileName = `backup-${randomBytes(32).toString('hex')}`;
     const filePath = join(window.BasePaths.temp, fileName);
 
-    const backupLevel = await this.credentials.getBackupLevel();
+    const backupLevel = await this.credentials.getBackupLevel(
+      BackupCredentialType.Media
+    );
     log.info(`exportBackup: starting, backup level: ${backupLevel}...`);
 
     try {
@@ -195,7 +227,7 @@ export class BackupsService {
 
   // Test harness
   public async exportBackupData(
-    backupLevel: BackupLevel = BackupLevel.Messages,
+    backupLevel: BackupLevel = BackupLevel.Free,
     backupType = BackupType.Ciphertext
   ): Promise<Uint8Array> {
     const sink = new PassThrough();
@@ -210,7 +242,7 @@ export class BackupsService {
   // Test harness
   public async exportToDisk(
     path: string,
-    backupLevel: BackupLevel = BackupLevel.Messages,
+    backupLevel: BackupLevel = BackupLevel.Free,
     backupType = BackupType.Ciphertext
   ): Promise<number> {
     const size = await this.exportBackup(
@@ -268,13 +300,17 @@ export class BackupsService {
   ): Promise<void> {
     strictAssert(!this.isRunning, 'BackupService is already running');
 
-    log.info(`importBackup: starting ${backupType}...`);
-    this.isRunning = true;
+    window.IPC.startTrackingQueryStats();
 
+    log.info(`importBackup: starting ${backupType}...`);
+    this.isRunning = 'import';
+    const importStart = Date.now();
     try {
       const importStream = await BackupImportStream.create(backupType);
       if (backupType === BackupType.Ciphertext) {
-        const { aesKey, macKey } = getKeyMaterial(ephemeralKey);
+        const { aesKey, macKey } = getKeyMaterial(
+          ephemeralKey ? new BackupKey(Buffer.from(ephemeralKey)) : undefined
+        );
 
         // First pass - don't decrypt, only verify mac
         let hmac = createHmac(HashType.size256, macKey);
@@ -351,12 +387,21 @@ export class BackupsService {
       log.info('importBackup: finished...');
     } catch (error) {
       log.info(`importBackup: failed, error: ${Errors.toLogFormat(error)}`);
+
+      if (isAlpha(window.getVersion())) {
+        window.reduxActions.toast.showToast({
+          toastType: ToastType.FailedToImportBackup,
+        });
+      }
+
       throw error;
     } finally {
       this.isRunning = false;
-
+      window.IPC.stopTrackingQueryStats({ epochName: 'Backup Import' });
       if (window.SignalCI) {
-        window.SignalCI.handleEvent('backupImportComplete', null);
+        window.SignalCI.handleEvent('backupImportComplete', {
+          duration: Date.now() - importStart,
+        });
       }
     }
   }
@@ -441,18 +486,25 @@ export class BackupsService {
       }
 
       let stream: Readable;
-      if (ephemeralKey == null) {
-        stream = await this.api.download({
-          downloadOffset,
-          onProgress: onDownloadProgress,
-          abortSignal: controller.signal,
-        });
-      } else {
-        stream = await this.api.downloadEphemeral({
-          downloadOffset,
-          onProgress: onDownloadProgress,
-          abortSignal: controller.signal,
-        });
+      try {
+        if (ephemeralKey == null) {
+          stream = await this.api.download({
+            downloadOffset,
+            onProgress: onDownloadProgress,
+            abortSignal: controller.signal,
+          });
+        } else {
+          stream = await this.api.downloadEphemeral({
+            downloadOffset,
+            onProgress: onDownloadProgress,
+            abortSignal: controller.signal,
+          });
+        }
+      } catch (error) {
+        if (controller.signal.aborted) {
+          return false;
+        }
+        throw error;
       }
 
       if (controller.signal.aborted) {
@@ -473,8 +525,14 @@ export class BackupsService {
 
       this.downloadController = undefined;
 
-      // Too late to cancel now
       try {
+        // Too late to cancel now, make sure we are unlinked if the process
+        // is aborted due to error or restart.
+        const password = window.storage.get('password');
+        strictAssert(password != null, 'Must be registered to import backup');
+
+        await window.storage.remove('password');
+
         await this.importFromDisk(downloadPath, {
           ephemeralKey,
           onProgress: (currentBytes, totalBytes) => {
@@ -485,6 +543,9 @@ export class BackupsService {
             );
           },
         });
+
+        // Restore password on success
+        await window.storage.put('password', password);
       } finally {
         await unlink(downloadPath);
       }
@@ -508,13 +569,13 @@ export class BackupsService {
 
   private async exportBackup(
     sink: Writable,
-    backupLevel: BackupLevel = BackupLevel.Messages,
+    backupLevel: BackupLevel = BackupLevel.Free,
     backupType = BackupType.Ciphertext
   ): Promise<number> {
     strictAssert(!this.isRunning, 'BackupService is already running');
 
     log.info('exportBackup: starting...');
-    this.isRunning = true;
+    this.isRunning = 'export';
 
     try {
       // TODO (DESKTOP-7168): Update mock-server to support this endpoint
@@ -576,6 +637,13 @@ export class BackupsService {
     } catch (error) {
       log.error('Backup: periodic refresh failed', Errors.toLogFormat(error));
     }
+  }
+
+  public isImportRunning(): boolean {
+    return this.isRunning === 'import';
+  }
+  public isExportRunning(): boolean {
+    return this.isRunning === 'export';
   }
 }
 

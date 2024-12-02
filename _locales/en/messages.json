@@ -85,7 +85,19 @@
   },
   "icu:appleSilicon": {
     "messageformat": "Apple silicon",
-    "description": "Shown in the about box for Apple silicon product name"
+    "description": "(Deleted 2024/11/07) Shown in the about box for Apple silicon product name"
+  },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}",
+    "description": "AboutWindow > App Environment Info > On non-apple devices"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)",
+    "description": "AboutWindow > App Environment Info > On Apple Silicon Devices"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)",
+    "description": "AboutWindow > App Environment Info > On Apple Intel Devices"
   },
   "icu:copyErrorAndQuit": {
     "messageformat": "Copy error and quit",
@@ -788,6 +800,10 @@
     "messageformat": "Failed to send message with endorsements",
     "description": "An error popup when we attempted and failed to send a message using endorsements, only for internal users."
   },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs.",
+    "description": "[Only shown to internal users] An error popup when we failed to process some parts of a backup import."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "You can't select photos and videos along with files.",
     "description": "An error popup when the user has attempted to add an attachment"
@@ -915,6 +931,10 @@
     "messageformat": "Search",
     "description": "Placeholder text in the search input"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "Search unread chats",
+    "description": "Placeholder text in the search input when unread filter is enabled"
+  },
   "icu:clearSearch": {
     "messageformat": "Clear Search",
     "description": "Aria label for clear search button"
@@ -927,6 +947,14 @@
     "messageformat": "No results for \"{searchTerm}\"",
     "description": "Shown in the search left pane when no results were found"
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "No results for \"{searchTerm}\" in unread chats",
+    "description": "Shown in the search left pane when no results were found with a search query and filter by unread enabled"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "No unread chats",
+    "description": "Shown in the search left pane when no results were found with only filter by unread enabled"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "SMS/MMS contacts are not available on Desktop.",
     "description": "Shown in the search left pane when no results were found and primary device has SMS/MMS handling enabled"
@@ -934,6 +962,18 @@
   "icu:noSearchResultsInConversation": {
     "messageformat": "No results for \"{searchTerm}\" in {conversationName}",
     "description": "Shown in the search left pane when no results were found"
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "Filtered by unread",
+    "description": "Shown to inform the user that the results are based off of filter by unread"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "Filter by unread",
+    "description": "Shown when you hover over the filter by unread button"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "Clear filter",
+    "description": "Action button for clearing a filter"
   },
   "icu:conversationsHeader": {
     "messageformat": "Chats",
@@ -1844,6 +1884,10 @@
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{first}, {second}, and {others, plural, one {#} other {#}} others are in this call",
     "description": "Shown in the calling lobby to describe who is in the call"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, one {# person is in this call} other {# people are in this call}}",
+    "description": "Shown in the calling lobby to describe people in the call when all are unknown contacts"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "Signal will ring {person}",
@@ -4735,6 +4779,10 @@
     "messageformat": "Cancel transfer",
     "description": "Text of the cancel button at the bottom of backup import screen"
   },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "Messages and chat info are protected by end-to-end encryption, including the sync process. <learnMoreLink>Learn more</learnMoreLink>",
+    "description": "Text shown while importing messages & chats from the user's primary device."
+  },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "Cancel transfer?",
     "description": "Title of the cancel confirmation modal in the backup import screen"
@@ -4786,6 +4834,14 @@
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "Restore paused",
     "description": "Label indicating media (attachment) download progress has been paused (due to user interaction)"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "{currentSize} of {totalSize} restored",
+    "description": "Label indicating media (attachment) download progress"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "Media will continue to download in the background",
+    "description": "Description text when attachment download is idle, and will continue in the background"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "Pause transfer",
@@ -5963,14 +6019,6 @@
     "messageformat": "Your profile could not be updated. Please try again.",
     "description": "Error message when something goes wrong updating your profile."
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Invalid characters",
-    "description": "(Deleted 2024/10/10) Title of the confirmation model for profile editor when about text contains invalid characters"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "One or more characters you’ve entered can’t be used. Try again.",
-    "description": "(Deleted 2024/10/10) Body of the confirmation model for profile editor when about text contains invalid characters"
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Message an admin",
     "description": "Modal title for the list of admins in a group"
@@ -6238,6 +6286,18 @@
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signal is experiencing technical difficulties. We are working hard to restore service as quickly as possible.",
     "description": "The title of outage dialog during service outage."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "Update Required",
+    "description": "The title of update dialog on install screen when app update is required before proceeding with backup import"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "To complete syncing your messages, update Signal desktop now.",
+    "description": "The body of update dialog on install screen when app update is required before proceeding with backup import"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "Update",
+    "description": "The update action of update dialog on install screen when app update is required before proceeding with backup import"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "Update Required",
@@ -7353,9 +7413,17 @@
     "messageformat": "Click <newCallButtonIcon></newCallButtonIcon> to start a new voice or video call.",
     "description": "Calls Tab > When no call is selected > Empty state > Call to action text"
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "Search missed calls",
+    "description": "Calls Tab > Calls List > Search Input > Enable missed calls filter > Placeholder"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Search",
     "description": "Calls Tab > Calls List > Search Input > Placeholder"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "Filtered by missed",
+    "description": "Calls Tab > Calls List > Toggle search filter by missed > Header"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "Filter by missed",
@@ -7373,17 +7441,17 @@
     "messageformat": "Recent calls will appear here.",
     "description": "Calls Tab > Calls List > When no results found > With no search query. Message subtitle"
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No missed calls",
-    "description": "Calls Tab > Calls List > When no missed calls found > With no search query. Message title"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missed calls will appear here.",
-    "description": "Calls Tab > Calls List > When no missed calls found > With no search query. Message subtitle"
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "No results for “{query}”",
-    "description": "Calls Tab > Calls List > When no results found > With a search query"
+    "description": "Calls Tab > Calls List > When no results found > With just a search query"
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "No results for “{query}” in missed calls",
+    "description": "Calls Tab > Calls List > When no results found > With a search query and missed call filter enabled"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "No missed calls",
+    "description": "Calls Tab > Calls List > When no results found > With only missed call filter enabled"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "Create a Call Link",
@@ -7608,28 +7676,20 @@
     "description": "Release notes for releases that only include bug fixes",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "This update improves startup speed by around 5%, so feel free to slow down a little bit in other areas of your life.",
-    "description": "(Deleted 2024/10/16) Release notes for version 7.29"
+  "icu:WhatsNew__v7.34--0": {
+    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say.",
+    "description": "(Deleted 2024/11/20) Release notes for version 7.34"
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "Introducing Call Links: The missing link for calendar invites and impromptu gatherings.",
-    "description": "(Deleted 2024/10/23) Release notes for version 7.30"
+  "icu:WhatsNew__v7.34--1": {
+    "messageformat": "This update introduces support for new processors on Windows like the Snapdragon X Elite, so you don't need to twist your ARM into emulating x86 anymore.",
+    "description": "(Deleted 2024/11/20) Release notes for version 7.34"
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "Now you can quickly create an easy link that anyone on Signal can use to join a group call without having to join a Signal group chat first.",
-    "description": "(Deleted 2024/10/23) Release notes for version 7.30"
+  "icu:WhatsNew__v7.34--2": {
+    "messageformat": "We also fixed a bug that broke the dark theme in Signal when your operating system settings were configured to use a light theme. Signal Desktop can now properly handle your thematically split personality.",
+    "description": "(Deleted 2024/11/20) Release notes for version 7.34"
   },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "Call links are reusable and ideal for recurring phone dates with your best friends or weekly check-ins with your coworkers.",
-    "description": "(Deleted 2024/10/23) Release notes for version 7.30"
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "You can manage your call links, control approval settings, and copy links from the calls tab for quick sharing.",
-    "description": "(Deleted 2024/10/23) Release notes for version 7.30"
-  },
-  "icu:WhatsNew__v7.31--0": {
-    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!",
-    "description": "Release notes for version 7.30"
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say.",
+    "description": "Release notes for version 7.35"
   }
 }

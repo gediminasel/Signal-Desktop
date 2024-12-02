@@ -34,6 +34,7 @@ import { fakeGetGroupCallVideoFrameSource } from '../test-both/helpers/fakeGetGr
 import enMessages from '../../_locales/en/messages.json';
 import { CallingToastProvider, useCallingToasts } from './CallingToast';
 import type { CallingImageDataCache } from './CallManager';
+import { MINUTE } from '../util/durations';
 
 const MAX_PARTICIPANTS = 75;
 const LOCAL_DEMUX_ID = 1;
@@ -158,12 +159,12 @@ const createActiveCallProp = (
   overrideProps: DirectCallOverrideProps | GroupCallOverrideProps
 ) => {
   const baseResult = {
-    joinedAt: Date.now(),
+    joinedAt: Date.now() - MINUTE,
     conversation,
     hasLocalAudio: overrideProps.hasLocalAudio ?? false,
     hasLocalVideo: overrideProps.hasLocalVideo ?? false,
     localAudioLevel: overrideProps.localAudioLevel ?? 0,
-    viewMode: overrideProps.viewMode ?? CallViewMode.Overflow,
+    viewMode: overrideProps.viewMode ?? CallViewMode.Sidebar,
     outgoingRing: true,
     pip: false,
     settingsDialogOpen: false,
@@ -449,7 +450,7 @@ export function GroupCallManyOverflow(): JSX.Element {
       {...createProps({
         callMode: CallMode.Group,
         remoteParticipants: allRemoteParticipants,
-        viewMode: CallViewMode.Overflow,
+        viewMode: CallViewMode.Sidebar,
       })}
     />
   );
@@ -460,7 +461,7 @@ export function GroupCallManyOverflowEveryoneTalking(): JSX.Element {
     createProps({
       callMode: CallMode.Group,
       remoteParticipants: allRemoteParticipants,
-      viewMode: CallViewMode.Overflow,
+      viewMode: CallViewMode.Sidebar,
     })
   );
 
@@ -667,7 +668,7 @@ export function GroupCallReactions(): JSX.Element {
     createProps({
       callMode: CallMode.Group,
       remoteParticipants,
-      viewMode: CallViewMode.Overflow,
+      viewMode: CallViewMode.Sidebar,
     })
   );
 
@@ -684,7 +685,7 @@ export function GroupCallReactionsSpam(): JSX.Element {
     createProps({
       callMode: CallMode.Group,
       remoteParticipants,
-      viewMode: CallViewMode.Overflow,
+      viewMode: CallViewMode.Sidebar,
     })
   );
 
@@ -702,7 +703,7 @@ export function GroupCallReactionsSkinTones(): JSX.Element {
     createProps({
       callMode: CallMode.Group,
       remoteParticipants,
-      viewMode: CallViewMode.Overflow,
+      viewMode: CallViewMode.Sidebar,
     })
   );
 
@@ -730,7 +731,7 @@ export function GroupCallReactionsManyInOrder(): JSX.Element {
     createProps({
       callMode: CallMode.Group,
       remoteParticipants,
-      viewMode: CallViewMode.Overflow,
+      viewMode: CallViewMode.Sidebar,
       reactions,
     })
   );
@@ -789,7 +790,7 @@ export function GroupCallHandRaising(): JSX.Element {
     createProps({
       callMode: CallMode.Group,
       remoteParticipants,
-      viewMode: CallViewMode.Overflow,
+      viewMode: CallViewMode.Sidebar,
     })
   );
 

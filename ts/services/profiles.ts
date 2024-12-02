@@ -70,6 +70,7 @@ type JobType = {
 const OBSERVED_CAPABILITY_KEYS = Object.keys({
   deleteSync: true,
   versionedExpirationTimer: true,
+  ssre2: true,
 } satisfies CapabilitiesType) as ReadonlyArray<keyof CapabilitiesType>;
 
 export class ProfileService {
@@ -506,10 +507,6 @@ async function doGetProfile(
     if (request.accessKey != null || request.groupSendToken != null) {
       profile = await messaging.server.getProfileUnauth(serviceId, request);
     } else {
-      strictAssert(
-        !isMe(c.attributes),
-        `${logId}: Should never fetch own profile on auth connection`
-      );
       profile = await messaging.server.getProfile(serviceId, request);
     }
   } catch (error) {

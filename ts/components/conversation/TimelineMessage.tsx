@@ -111,7 +111,6 @@ export function TimelineMessage(props: Props): JSX.Element {
     i18n,
     id,
     isTargeted,
-    isSticker,
     isTapToView,
     kickOffAttachmentDownload,
     payment,
@@ -261,15 +260,7 @@ export function TimelineMessage(props: Props): JSX.Element {
   const shouldShowAdditional =
     doesMessageBodyOverflow(text || '') || !isWindowWidthNotNarrow;
 
-  const hasPendingAttachments =
-    attachments?.length && attachments.some(attachment => attachment.pending);
-
-  // If any of the conditions is not given -> undefined is returned
-  // --> download menu icon is not rendered
-  const handleDownload =
-    canDownload && !isSticker && !isTapToView && !hasPendingAttachments
-      ? openGenericAttachment
-      : undefined;
+  const handleDownload = canDownload ? openGenericAttachment : undefined;
 
   const handleReplyToMessage = useCallback(() => {
     if (!canReply) {

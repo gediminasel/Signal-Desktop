@@ -53,6 +53,15 @@
   "icu:appleSilicon": {
     "messageformat": "Apple silicon"
   },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)"
+  },
   "icu:copyErrorAndQuit": {
     "messageformat": "Скопіювати текст помилки й вийти"
   },
@@ -581,6 +590,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Неможливо вибрати фото і відео разом із файлами."
   },
@@ -677,6 +689,9 @@
   "icu:search": {
     "messageformat": "Пошук"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "Пошук у непрочитаних чатах"
+  },
   "icu:clearSearch": {
     "messageformat": "Очистити пошук"
   },
@@ -686,11 +701,26 @@
   "icu:noSearchResults": {
     "messageformat": "Немає результатів для «{searchTerm}»"
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "«{searchTerm}» не знайдено в непрочитаних чатах"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "Непрочитаних чатів немає"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "Контакти SMS/MMS недоступні в Signal Desktop."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "Немає результатів для «{searchTerm}» у {conversationName}"
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "Показано непрочитані"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "Показати непрочитані"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "Скасувати фільтр"
   },
   "icu:conversationsHeader": {
     "messageformat": "Чати"
@@ -789,13 +819,13 @@
     "messageformat": "Вкладення збережено."
   },
   "icu:attachmentSavedPlural": {
-    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+    "messageformat": "{count, plural, one {Вкладення збережено} few {{count,number} вкладення збережено} many {{count,number} вкладень збережено} other {{count,number} вкладення збережено}}"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "Показати в папці"
   },
   "icu:attachmentStillDownloading": {
-    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
+    "messageformat": "{count, plural, one {Не вдається зберегти вкладення, завантаження ще не завершено} few {Не вдається зберегти вкладення, завантаження {count,number} файлів ще не завершено} many {Не вдається зберегти вкладення, завантаження {count,number} файлів ще не завершено} other {Не вдається зберегти вкладення, завантаження {count,number} файлу ще не завершено}}"
   },
   "icu:you": {
     "messageformat": "Ви"
@@ -1233,7 +1263,7 @@
     "messageformat": "Не вдається приєднатися до виклику"
   },
   "icu:calling__call-link-connection-issues": {
-    "messageformat": "Не вдалось отримати інформацію щодо посилання на виклик. Перевірте з'єднання з мережею і спробуйте знову."
+    "messageformat": "Не вдалось отримати інформацію про посилання на виклик. Перевірте з'єднання з мережею і спробуйте знову."
   },
   "icu:calling__call-link-copied": {
     "messageformat": "Посилання на виклик скопійовано."
@@ -1387,6 +1417,9 @@
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, one {{first}, {second} і ще {others,number} у цьому виклику} few {{first}, {second} і ще {others,number} у цьому виклику} many {{first}, {second} і ще {others,number} у цьому виклику} other {{first}, {second} і ще {others,number} у цьому виклику}}"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, one {У виклику бере участь {count,number} людина} few {У виклику беруть участь {count,number} людини} many {У виклику беруть участь {count,number} людей} other {У виклику беруть участь {count,number} людини}}"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "Буде здійснено виклик користувача {person} у Signal"
@@ -2952,7 +2985,7 @@
     "messageformat": "{max, plural, one {Це повідомлення можна змінити тільки {max,number} раз.} few {Це повідомлення можна змінити тільки {max,number} рази.} many {Це повідомлення можна змінити тільки {max,number} разів.} other {Це повідомлення можна змінити тільки {max,number} разу.}}"
   },
   "icu:unknown-sgnl-link": {
-    "messageformat": "Вибачте, це посилання sgnl:// не має сенсу!"
+    "messageformat": "На жаль, не зрозуміло, що робити з цим посиланням sgnl://"
   },
   "icu:GroupV2--cannot-send": {
     "messageformat": "Ви не можете відправляти повідомлення в цю групу."
@@ -2964,7 +2997,7 @@
     "messageformat": "Хибне посилання"
   },
   "icu:GroupV2--join--invalid-link": {
-    "messageformat": "Це посилання на групу — недійсне. Впевніться у правильності посилання та відредагуйте за потреби перед новою спробою приєднатись."
+    "messageformat": "Це посилання на групу недійсне. Запевніться в його правильності й за потреби відредагуйте посилання перед новою спробою приєднатися."
   },
   "icu:GroupV2--join--prompt": {
     "messageformat": "Ви бажаєте приєднатися до цієї групи і поширити ваше ім'я і фото серед її учасників?"
@@ -3566,6 +3599,9 @@
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Скасувати передачу даних"
   },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "Повідомлення й інформацію про чати, а також сам процес синхронізації захищено наскрізним шифруванням. <learnMoreLink>Докладніше</learnMoreLink>"
+  },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "Скасувати передачу даних?"
   },
@@ -3604,6 +3640,12 @@
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "Відновлення припинено"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "Відновлено {currentSize} з {totalSize}"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "Завантаження медіафайлів продовжиться у фоновому режимі"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "Припинити передачу даних"
@@ -3990,7 +4032,7 @@
     "messageformat": "Ці користувачі не можуть автоматично додатись вами в цю групу."
   },
   "icu:NewlyCreatedGroupInvitedContactsDialog--body--info-paragraph": {
-    "messageformat": "Їм було відправлено запрошення приєднатися, і вони не побачать повідомлень в групі, поки не приймуть запрошення."
+    "messageformat": "Їм було надіслано запрошення, вони зможуть бачити повідомлення в групі лише після їх прийняття."
   },
   "icu:NewlyCreatedGroupInvitedContactsDialog--body--learn-more": {
     "messageformat": "Дізнатися більше"
@@ -4487,12 +4529,6 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "Ваш профіль не вдалось оновити. Будь ласка, спробуйте ще раз."
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Недозволені символи"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "Ви використали принаймні один недозволений символ. Відредагуйте текст."
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Написати адміністратору"
   },
@@ -4692,7 +4728,16 @@
     "messageformat": "Оновлення завантажено"
   },
   "icu:DialogNetworkStatus__outage": {
-    "messageformat": "У Signal виникли технічні проблеми. Ми робимо все можливе, щоб якнайшвидше відновити роботу послуг."
+    "messageformat": "У Signal виникли технічні проблеми. Ми робимо все можливе, щоб якнайшвидше відновити роботу."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "Необхідне оновлення"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "Щоб завершити синхронізацію повідомлень, оновіть Signal Desktop."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "Оновити"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "Необхідне оновлення"
@@ -5532,8 +5577,14 @@
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Натисніть <newCallButtonIcon></newCallButtonIcon>, щоб почати новий аудіо- чи відеовиклик."
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "Пошук у пропущених викликах"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Пошук"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "Показати пропущені"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "Фільтр за пропущеними"
@@ -5547,14 +5598,14 @@
   "icu:CallsList__EmptyState--noQuery__subtitle": {
     "messageformat": "Тут будуть недавні виклики."
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "Пропущених викликів немає"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Тут будуть пропущені виклики."
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Немає результатів за запитом «{query}»"
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "«{query}» не знайдено в пропущених викликах"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "Пропущених викликів немає"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "Створити посилання на виклик"
@@ -5725,22 +5776,16 @@
     "messageformat": "Дрібні поліпшення, виправлення помилок і покращення роботи застосунку. Дякуємо, що ви з Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "У цьому оновленні ми пришвидшили запуск десь на 5%, тож ви можете трошки сповільнитися в інших сферах життя."
+  "icu:WhatsNew__v7.34--0": {
+    "messageformat": "З новим значком фільтра біля поля пошуку можна швидко й легко знаходити непрочитані чати. А от відповісти одразу чи потягнути час ще трошки — вирішувати тільки вам."
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "Киньте друзям новий виклик, а точніше — посилання на виклик!"
+  "icu:WhatsNew__v7.34--1": {
+    "messageformat": "У цьому оновленні ми додали підтримку нових процесорів для Windows, як-от Snapdragon X Elite. Тож тепер не треба мучитися з емуляцією процесора x86 на ARM."
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "Тепер можна просто створити посилання на груповий виклик, щоб інший користувач Signal зміг узяти в ньому участь, навіть якщо його немає в груповому чаті."
+  "icu:WhatsNew__v7.34--2": {
+    "messageformat": "Ми також виправили помилку, через яку не працювала темна тема в Signal, якщо ваша операційна система використовувала світлу. Тепер Signal Desktop не виринатиме з темряви, навіть якщо деінде ви надаєте перевагу світлу."
   },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "Посилання на виклики багаторазові, тож вони ідеально підійдуть для регулярних розмов з друзями чи щотижневих робочих дзвінків."
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "Тепер на вкладці викликів можна керувати посиланнями, змінювати налаштування затвердження учасників і копіювати й швидко надсилати посилання на виклики."
-  },
-  "icu:WhatsNew__v7.31--0": {
-    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
   }
 }

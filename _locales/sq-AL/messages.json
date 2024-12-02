@@ -53,6 +53,15 @@
   "icu:appleSilicon": {
     "messageformat": "Apple silicon"
   },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)"
+  },
   "icu:copyErrorAndQuit": {
     "messageformat": "Kopjo gabimin dhe dil"
   },
@@ -581,6 +590,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Nuk mund të zgjedhësh foto dhe video bashkë me skedarë."
   },
@@ -677,6 +689,9 @@
   "icu:search": {
     "messageformat": "Kërko"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "Kërko bisedat e palexuara"
+  },
   "icu:clearSearch": {
     "messageformat": "Spastro Kërkimin"
   },
@@ -686,11 +701,26 @@
   "icu:noSearchResults": {
     "messageformat": "S’ka përfundime për \"{searchTerm}\""
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "Nuk ka rezultate për \"{searchTerm}\" te bisedat e palexuara"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "Nuk ka biseda të palexuara"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "Kontaktet SMS/MMS s’janë të passhëm në Desktop."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "S’ka përfundime për \"{searchTerm}\" te {conversationName}"
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "Filtro nga të palexuarat"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "Filtro sipas të palexuarat"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "Pastro filtrin"
   },
   "icu:conversationsHeader": {
     "messageformat": "Bisedat"
@@ -789,13 +819,13 @@
     "messageformat": "Bashkëngjitja u ruajt."
   },
   "icu:attachmentSavedPlural": {
-    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+    "messageformat": "{count, plural, one {Bashkëngjitja u ruajt} other {{count,number} bashkëngjitje u ruajtën}}"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "Shfaqe në dosje"
   },
   "icu:attachmentStillDownloading": {
-    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
+    "messageformat": "{count, plural, one {Nuk mund të ruhet bashkëngjitja, pasi nuk ka përfunduar ende shkarkimi} other {Nuk mund të ruhen bashkëngjitjet, pasi {count,number} nuk ka përfunduar ende shkarkimi}}"
   },
   "icu:you": {
     "messageformat": "Ju"
@@ -1387,6 +1417,9 @@
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, one {{first}, {second}, dhe {others,number} tjetër janë në në këtë thirrje} other {{first}, {second}, dhe {others,number} të tjerë janë në këtë thirrje}}"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, one {{count,number} person është në këtë thirrje} other {{count,number} persona janë në këtë thirrje}}"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "Signal-i do t’i bjerë ziles së {person}"
@@ -3566,6 +3599,9 @@
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Anulo transferimin"
   },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "Mesazhet dhe informacionet e bisedës mbrohen nga kodimi skaji në skaj, duke përfshirë procesin e sinkronizimit. <learnMoreLink>Mëso më shumë</learnMoreLink>"
+  },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "Të anulohet transferimi?"
   },
@@ -3604,6 +3640,12 @@
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "Rikthimi u ndërpre"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "{currentSize} nga {totalSize} u rikthyen"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "Media do të vazhdojë të shkarkohet në sfond"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "Ndërprit transferimin"
@@ -4487,12 +4529,6 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "Profili juaj s’u përditësua dot. Ju lutemi, riprovoni."
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Karaktere të pavlefshme"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "Një ose më shumë karaktere që ke vendosur nuk mund të përdoren. Provo sërish."
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Dërgojini mesazh një përgjegjësi"
   },
@@ -4693,6 +4729,15 @@
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signal-i po kalon vështirësi teknike. Po punojmë fort të rikthejmë shërbimin sa më shpejt që të mundet."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "Kërkohet përditësim"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "Për të përfunduar sinkronizimin e mesazheve, përditëso tani Signal Desktop."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "Përditësoje"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "Kërkohet përditësim"
@@ -5532,8 +5577,14 @@
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Kliko <newCallButtonIcon></newCallButtonIcon> për të nisur një thirrje të re zanore ose me video."
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "Kërko thirrjet e humbura"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Kërko"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "Filtruar sipas të humburave"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "Filtro sipas \"të humburat\""
@@ -5547,14 +5598,14 @@
   "icu:CallsList__EmptyState--noQuery__subtitle": {
     "messageformat": "Thirrjet e fundit do të shfaqen këtu."
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "Asnjë thirrje e humbur"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Thirrjet e humbura do të shfaqen këtu."
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Nuk ka rezultate për \"{query}\""
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "Nuk ka rezultate për \"{query} \" tek thirrjet e humbura"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "Asnjë thirrje e humbur"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "Krijo një lidhje thirrjeje"
@@ -5725,22 +5776,16 @@
     "messageformat": "Rregullme të vogla, riparime të gabimeve dhe përmirësime të mbarëvajtjes.  Faleminderit që përdorni Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "Përditësimi përmirëson shpejtësinë e nisjes me rreth 5%, ndaj mos ngurro të ngadalësosh pak në fusha të tjera të jetës."
+  "icu:WhatsNew__v7.34--0": {
+    "messageformat": "Ikona e re e filtrit pranë kutisë së kërkimit e bën të lehtë gjetjen e shpejtë të bisedave të palexuara, por mos ngurro të marrësh kohën tënde për të vendosur nëse do t'i lësh ose jo të lexuara pasi të shohëh se çfarë kishin për të thënë."
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "Ju prezantojmë lidhjet e thirrjeve: Lidhja që mungon për ftesat dhe mbledhjet e improvizuara në kalendar."
+  "icu:WhatsNew__v7.34--1": {
+    "messageformat": "Ky përditësim prezanton ndihmë për procesorë të rinj në Windows si Snapdragon X Elite, kështu që nuk ke më nevojë ta kthesh ARM-in për të imituar x86."
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "Tani mund të krijosh më shpejt një lidhje të lehtë që çdokush në Signal mund ta përdorë për t'iu bashkuar një telefonate në grup pa pasur nevojë t'i bashkohet fillimisht një bisede në grup në Signal."
+  "icu:WhatsNew__v7.34--2": {
+    "messageformat": "Kemi rregulluar edhe defektin që prishi temën e errët në \"Signal\" kur cilësimet e sistemit operativ u konfiguruan për të përdorur një temë të hapur. Signal Desktop tani mund ta trajtojë siç duhet personalitetin tënd të ndarë tematikisht."
   },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "Lidhjet e thirrjeve janë të ripërdorshme dhe ideale për takime telefonike të herpashershme me miqtë e tu më të mirë apo kontrolle javore me kolegët e tu."
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "Mund të menaxhosh lidhjet e thirrjeve, të kontrollosh parametrat e miratimit dhe të kopjosh lidhjet nga skeda e thirrjeve për shpërndarje të shpejtë."
-  },
-  "icu:WhatsNew__v7.31--0": {
-    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
   }
 }

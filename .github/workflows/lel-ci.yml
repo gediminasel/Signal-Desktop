@@ -76,7 +76,7 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version-file: '.nvmrc'
-    - run: sudo apt-get install xvfb
+    - run: sudo apt-get install xvfb libpulse0
 
     - run: npm install -g npm@10.2.5
 

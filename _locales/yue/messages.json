@@ -53,6 +53,15 @@
   "icu:appleSilicon": {
     "messageformat": "Apple silicon"
   },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)"
+  },
   "icu:copyErrorAndQuit": {
     "messageformat": "複製錯誤然後離開"
   },
@@ -581,6 +590,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "你唔可以同時揀選檔案同埋相片或者影片。"
   },
@@ -677,6 +689,9 @@
   "icu:search": {
     "messageformat": "搜尋"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "搜尋未讀嘅聊天訊息"
+  },
   "icu:clearSearch": {
     "messageformat": "清除搜尋"
   },
@@ -686,11 +701,26 @@
   "icu:noSearchResults": {
     "messageformat": "搵唔到「{searchTerm}」"
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "喺未讀聊天度搵唔到「{searchTerm}」"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "你冇未讀嘅聊天訊息"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "桌面版搵唔到短訊/多媒體短訊聯絡人。"
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "喺 {conversationName} 搵唔到「{searchTerm}」"
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "按照未讀訊息篩選"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "用未讀訊息篩選"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "清除篩選條件"
   },
   "icu:conversationsHeader": {
     "messageformat": "聊天"
@@ -789,13 +819,13 @@
     "messageformat": "附件已儲存。"
   },
   "icu:attachmentSavedPlural": {
-    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+    "messageformat": "{count, plural, other {儲存咗 {count,number} 個附件}}"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "喺文件夾度顯示"
   },
   "icu:attachmentStillDownloading": {
-    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
+    "messageformat": "{count, plural, other {儲存唔到附件，因為仲有 {count,number} 個未完成下載}}"
   },
   "icu:you": {
     "messageformat": "你"
@@ -1387,6 +1417,9 @@
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, other {{first}、{second} 同埋另外 {others,number} 個人喺呢個通話入面}}"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, other {有 {count,number} 個人喺通話入面}}"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "Signal 會打俾 {person}"
@@ -3566,6 +3599,9 @@
   "icu:BackupImportScreen__cancel": {
     "messageformat": "取消轉移"
   },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "訊息同聊天資料都受到端對端加密保護，包括同步過程。<learnMoreLink>了解詳情</learnMoreLink>"
+  },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "係咪要取消轉移？"
   },
@@ -3604,6 +3640,12 @@
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "還原已暫停"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "還原咗 {currentSize} / {totalSize}"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "媒體會繼續喺背景下載"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "暫停轉移"
@@ -4487,12 +4529,6 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "更新唔到你嘅個人檔案。請你再試過啦。"
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "字元無效"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "一個或者多個你輸入嘅字元用唔到。再試多次。"
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "傳個訊息俾管理員"
   },
@@ -4693,6 +4729,15 @@
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signal 發生技術問題。我哋現正搶修，務求儘快回復服務。"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "需要更新"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "如果想完成同步訊息，請立即更新 Signal 桌面版。"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "更新"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "需要更新"
@@ -5532,8 +5577,14 @@
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "㩒一吓 <newCallButtonIcon></newCallButtonIcon> 開始新嘅語音或者視像通話。"
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "搜尋未接來電"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "搜尋"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "根據未接來電篩選"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "根據未接來電篩選"
@@ -5547,14 +5598,14 @@
   "icu:CallsList__EmptyState--noQuery__subtitle": {
     "messageformat": "最近嘅通話會喺度顯示。"
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "冇未接來電"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "未接來電會喺度顯示。"
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "冇同「{query}」相關嘅搜尋結果"
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "喺未接來電度搵唔到「{query}」"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "冇未接來電"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "建立通話連結"
@@ -5725,22 +5776,16 @@
     "messageformat": "我哋做咗啲調整、修復咗一啲錯誤，同埋加強咗程式功能。多謝你使用 Signal！",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "今次更新將啟動速度加快咗大約 5% ，咁你就有多啲時間用喺其他地方啦。"
+  "icu:WhatsNew__v7.34--0": {
+    "messageformat": "搜尋方格隔離嘅新篩選圖示可以幫你極速搵到未讀嘅聊天。"
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "新推嘅「通話連結」：呢個係行事曆邀請同埋即興聚會嘅必要一環。"
+  "icu:WhatsNew__v7.34--1": {
+    "messageformat": "呢次更新將會支援 Windows 嘅新處理器 (例如 Snapdragon X Elite)，咁你就唔使再將 ARM 轉做模擬 x86 啦。"
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "而家你可以好快咁建立一個簡單嘅連結，邀請 Signal 上面任何一個人加入群組通話，唔駛再預先將對方加入 Signal 群組。"
+  "icu:WhatsNew__v7.34--2": {
+    "messageformat": "我哋仲修正咗一個錯誤，以後當你嘅作業系統設定咗用淺色主題嗰陣，Signal 嘅深色主題都唔會受到影響。"
   },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "通話連結係可重複使用嘅，非常適合用佢同你嘅死黨閨蜜定期煲電話粥，或者每星期同你嘅同事做吓匯報。"
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "你可以喺「通話」嗰一版度，直接管理你嘅通話連結、更改批准設定同複製條拎，方便快速分享。"
-  },
-  "icu:WhatsNew__v7.31--0": {
-    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
   }
 }

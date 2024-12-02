@@ -53,6 +53,15 @@
   "icu:appleSilicon": {
     "messageformat": "اپل سیلیکون"
   },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)"
+  },
   "icu:copyErrorAndQuit": {
     "messageformat": "کپی از خطا و خروج"
   },
@@ -581,6 +590,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "نمی‌توانید همراه با فایل‌ها، عکس و ویدئو انتخاب کنید."
   },
@@ -677,6 +689,9 @@
   "icu:search": {
     "messageformat": "جستجو"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "جستجوی گفتگوهای خوانده‌نشده"
+  },
   "icu:clearSearch": {
     "messageformat": "پاک کردن جستجو"
   },
@@ -686,11 +701,26 @@
   "icu:noSearchResults": {
     "messageformat": "هیچ نتیجه ای برای \"{searchTerm}\" یافت نشد"
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "هیچ نتیجه‌ای برای \"{searchTerm}\" در گفتگوهای خوانده‌نشده یافت نشد"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "گفتگوی خوانده‌نشده وجود ندارد"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "مخاطبین پیامک/پیام چندرسانه‌ای در دسکتاپ در دسترس نیستند."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "هیچ نتیجه ای برای{searchTerm}در {conversationName}"
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "فیلترشده بر اساس خوانده‌نشده‌ها"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "فیلتر بر اساس خوانده‌نشده‌ها"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "برداشتن فیلتر"
   },
   "icu:conversationsHeader": {
     "messageformat": "گفتگوها"
@@ -789,13 +819,13 @@
     "messageformat": "پیوست ذخیره شد"
   },
   "icu:attachmentSavedPlural": {
-    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+    "messageformat": "{count, plural, one {پیوست ذخیره شد} other {{count,number} پیوست ذخیره شد}}"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "نمایش در پوشه"
   },
   "icu:attachmentStillDownloading": {
-    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
+    "messageformat": "{count, plural, one {پیوست ذخیره نشد، زیرا هنوز دانلود آن تمام نشده است} other {پیوست‌ها ذخیره نشد، زیرا هنوز دانلود {count,number} پیوست تمام نشده است}}"
   },
   "icu:you": {
     "messageformat": "شما"
@@ -1387,6 +1417,9 @@
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, one {{first}، {second} و {others,number} نفر دیگر در این تماس حضور دارند} other {{first}، {second} و {others,number} نفر دیگر در این تماس حضور دارند}}"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, one {{count,number} نفر در این تماس حضور دارد} other {{count,number} نفر در این تماس حضور دارند}}"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "سیگنال به {person} زنگ خواهد زد"
@@ -3566,6 +3599,9 @@
   "icu:BackupImportScreen__cancel": {
     "messageformat": "لغو انتقال"
   },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "پیام‌ها و اطلاعات گفتگو با رمزگذاری سرتاسری، از‌جمله فرایند همگام‌سازی، محافظت می‌شوند. <learnMoreLink>اطلاعات بیشتر</learnMoreLink>"
+  },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "انتقال لغو شود؟"
   },
@@ -3604,6 +3640,12 @@
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "بازیابی موقتاً متوقف شد"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "{currentSize} از {totalSize} بازیابی شد"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "دانلود رسانه در پس‌زمینه ادامه خواهد یافت"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "توقف موقت انتقال"
@@ -4487,12 +4529,6 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "امکان به‌روزرسانی پروفایل شما وجود نداشت. لطفاً دوباره امتحان کنید."
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "نویسه‌های نامعتبر"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "یک یا چند نویسه که وارد کرده‌اید قابل استفاده نیست. دوباره امتحان کنید."
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "به یک مدیر پیام دهید"
   },
@@ -4693,6 +4729,15 @@
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "سیگنال با مشکلات فنی روبروست. به سختی تلاش میکنیم تا سرویس را تا حد ممکن سریعا برگردانیم."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "به‌روزرسانی لازم است"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "برای تکمیل همگام‌سازی پیام‌های خود، اکنون سیگنال دسک‌تاپ را به‌روزرسانی کنید."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "به‌روزرسانی"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "به‌روزرسانی لازم است"
@@ -5532,8 +5577,14 @@
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "برای شروع تماس صوتی یا تصویری جدید، روی <newCallButtonIcon></newCallButtonIcon> کلیک کنید."
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "جستجوی تماس‌های ازدست‌رفته"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "جستجو"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "فیلترشده بر اساس ازدست‌رفته"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "فیلتر کردن بر اساس «از دست رفته»"
@@ -5547,14 +5598,14 @@
   "icu:CallsList__EmptyState--noQuery__subtitle": {
     "messageformat": "تماس‌های اخیر در اینجا ظاهر می‌شود."
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "تماس ازدست‌رفته‌ای وجود ندارد"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "تماس‌های بی پاسخ در اینجا ظاهر می‌شود."
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "نتیجه‌ای برای «{query}» پیدا نشد"
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "هیچ نتیجه‌ای برای \"{query} \" در تماس‌های ازدست‌رفته یافت نشد"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "تماس ازدست‌رفته‌ای وجود ندارد"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "ایجاد یک پیوند تماس"
@@ -5725,22 +5776,16 @@
     "messageformat": "تغییرات کوچک، رفع اشکالات و بهبود عملکرد. بابت استفاده از سیگنال سپاسگزاریم!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "این نسخۀ جدید، سرعت راه‌اندازی را تا حدود ۵٪ بهبود می‌بخشد."
+  "icu:WhatsNew__v7.34--0": {
+    "messageformat": "نماد فیلتر جدید در کنار کادر جستجو، یافتن سریع گفتگوهای خوانده‌نشده را آسان می‌کند."
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "معرفی پیوندهای تماس: پیوند ازقلم‌افتاده برای دعوت‌های تقویمی و گردهمایی‌های برنامه‌ریزی نشده."
+  "icu:WhatsNew__v7.34--1": {
+    "messageformat": "این به‌روزرسانی از پردازنده‌های جدید ویندوز مانند Snapdragon X Elite پشتیبانی می‌کند."
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "اکنون می‌توانید به‌سرعت و به‌راحتی یک پیوند ایجاد کنید که هر کسی در سیگنال بتواند بدون نیاز به پیوستن به گفتگوی گروهی سیگنال، با استفاده از آن مستقیماً به تماس گروهی بپیوندد."
+  "icu:WhatsNew__v7.34--2": {
+    "messageformat": "همچنین باگی را برطرف کردیم که وقتی تنظیمات سیستم‌عامل شما برای استفاده از طرح زمینه روشن پیکربندی شده بود، مانع عملکرد صحیح طرح زمینه‌ی تیره سیگنال می‌شد."
   },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "پیوندهای تماس قابلیت استفاده چندباره دارند و بهترین گزینه برای قرارهای تلفنی مکرر با دوستان صمیمی یا احوال‌پرسی هفتگی با همکاران هستند."
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "برای اشتراک‌گذاری سریع، می‌توانید پیوندهای تماس خود را مدیریت کنید، تنظیمات تأیید را کنترل کنید، و پیوندها را از زبانه تماس‌ها کپی کنید."
-  },
-  "icu:WhatsNew__v7.31--0": {
-    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
   }
 }

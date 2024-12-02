@@ -156,7 +156,7 @@ import { formatFileSize } from '../../util/formatFileSize';
 
 export { isIncoming, isOutgoing, isStory };
 
-const linkify = LinkifyIt();
+const linkify = new LinkifyIt();
 
 type FormattedContact = Partial<ConversationType> &
   Pick<
@@ -2103,15 +2103,19 @@ export function canDownload(
   message: MessageWithUIFieldsType,
   conversationSelector: GetConversationByIdType
 ): boolean {
-  if (isOutgoing(message)) {
-    return true;
-  }
-
   const conversation = getConversation(message, conversationSelector);
   const isAccepted = Boolean(
     conversation && conversation.acceptedMessageRequest
   );
-  if (!isAccepted) {
+  if (isIncoming(message) && !isAccepted) {
+    return false;
+  }
+
+  if (message.sticker) {
+    return false;
+  }
+
+  if (isTapToView(message)) {
     return false;
   }
 
@@ -2121,7 +2125,7 @@ export function canDownload(
     return attachments.every(attachment => Boolean(attachment.path));
   }
 
-  return true;
+  return false;
 }
 
 export function getLastChallengeError(

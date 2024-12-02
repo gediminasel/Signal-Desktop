@@ -53,6 +53,15 @@
   "icu:appleSilicon": {
     "messageformat": "Apple silicon"
   },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)"
+  },
   "icu:copyErrorAndQuit": {
     "messageformat": "Kopioi virheilmoitus ja lopeta"
   },
@@ -581,6 +590,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Valokuvia ja videoita ei voi valita yhdessä tiedostojen kanssa."
   },
@@ -677,6 +689,9 @@
   "icu:search": {
     "messageformat": "Hae"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "Hae lukemattomia keskusteluja"
+  },
   "icu:clearSearch": {
     "messageformat": "Tyhjennä haku"
   },
@@ -686,11 +701,26 @@
   "icu:noSearchResults": {
     "messageformat": "Ei tuloksia haulle {searchTerm}"
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "Ei tuloksia haulle {searchTerm} lukemattomissa keskusteluissa"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "Ei lukemattomia keskusteluja"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "Tekstiviesti- tai MMS-yhteystiedot eivät ole saatavilla työpöytäsovelluksessa."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "Ei tuloksia haulle {searchTerm} keskustelussa {conversationName}"
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "Suodatusperuste: Lukematta"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "Suodata lukemattomat keskustelut"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "Tyhjennä suodatin"
   },
   "icu:conversationsHeader": {
     "messageformat": "Keskustelut"
@@ -789,13 +819,13 @@
     "messageformat": "Liite tallennettu."
   },
   "icu:attachmentSavedPlural": {
-    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+    "messageformat": "{count, plural, one {Liite tallennettu} other {{count,number} liitettä tallennettu}}"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "Näytä kansiossa"
   },
   "icu:attachmentStillDownloading": {
-    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
+    "messageformat": "{count, plural, one {Liitettä ei voi tallentaa, koska sen lataus on kesken} other {Liitteitä ei voi tallentaa, koska {count,number} liitteen lataus on kesken}}"
   },
   "icu:you": {
     "messageformat": "Sinä"
@@ -1387,6 +1417,9 @@
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, one {{first}, {second} ja {others,number} muu ovat tässä puhelussa} other {{first}, {second} ja {others,number} muuta ovat tässä puhelussa}}"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, one {{count,number} henkilö on tässä puhelussa} other {{count,number} henkilöä on tässä puhelussa}}"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "Signal soittaa käyttäjälle {person}"
@@ -3566,6 +3599,9 @@
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Peruuta siirto"
   },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "Viestit ja keskustelujen tiedot on suojattu päästä päähän -salauksella, myös synkronoinnin aikana. <learnMoreLink>Lue lisää</learnMoreLink>"
+  },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "Perutaanko siirto?"
   },
@@ -3604,6 +3640,12 @@
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "Palauttaminen keskeytetty"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "{currentSize} / {totalSize} palautettu"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "Median lataaminen jatkuu taustalla"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "Keskeytä siirto"
@@ -4487,12 +4529,6 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "Profiiliasi ei voitu päivittää. Ole hyvä ja yritä uudelleen."
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Virheellisiä merkkejä"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "Yhtä tai useampaa syöttämääsi merkkiä ei voi käyttää. Yritä uudelleen."
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Lähetä viesti ylläpitäjälle"
   },
@@ -4693,6 +4729,15 @@
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signalissa ilmenee tällä hetkellä teknisiä ongelmia. Työskentelemme parhaillaan palvelun palauttamiseksi."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "Päivitys vaaditaan"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "Viimeistele viestien synkronointi päivittämällä Signal Desktop nyt."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "Päivitä"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "Päivitys vaaditaan"
@@ -5532,8 +5577,14 @@
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Napsauta <newCallButtonIcon></newCallButtonIcon> aloittaaksesi uuden ääni- tai videopuhelun."
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "Hae vastaamattomia puheluita"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Hae"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "Suodatusperuste: Vastaamattomat"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "Suodata vastaamattomat puhelut"
@@ -5547,14 +5598,14 @@
   "icu:CallsList__EmptyState--noQuery__subtitle": {
     "messageformat": "Viimeisimmät puhelut näytetään tässä."
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "Ei vastaamattomia puheluita"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Vastaamattomat puhelut näytetään tässä."
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Ei tuloksia haulle \"{query}\""
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "Ei tuloksia haulle {query} vastaamattomien puhelujen joukossa"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "Ei vastaamattomia puheluita"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "Luo puhelulinkki"
@@ -5725,22 +5776,16 @@
     "messageformat": "Pieniä säätöjä, virheenkorjauksia ja suorituskykyparannuksia. Kiitos, että käytät Signalia!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "Päivitys parantaa käynnistysnopeutta noin 5 %."
+  "icu:WhatsNew__v7.34--0": {
+    "messageformat": "Hakukentän vieressä oleva uusi suodatinkuvake helpottaa lukemattomien keskustelujen löytämistä."
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "Esittelyssä puhelulinkit: kalenterikutsujen ja improvisoitujen tapaamisten puuttuva yhteys."
+  "icu:WhatsNew__v7.34--1": {
+    "messageformat": "Päivitys tuo tuen uusille Windows-prosessoreille, kuten Snapdragon X Elitelle."
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "Nyt voit luoda nopeasti linkin, jonka avulla kuka tahansa Signalissa voi liittyä ryhmäpuheluun liittymättä ensin Signal-ryhmäkeskusteluun."
+  "icu:WhatsNew__v7.34--2": {
+    "messageformat": "Korjasimme myös virheen, joka rikkoi Signalin tumman teeman, kun käyttöjärjestelmän asetukset määritettiin käyttämään vaaleaa teemaa."
   },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "Puhelulinkkejä voi käyttää uudelleen, joten ne sopivat toistuviin puhelintreffeihin ystävien kanssa tai viikoittaisiin työkeskusteluihin."
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "Voit hallita puhelulinkkejä, hyväksymisasetuksia sekä kopioida nopeasti jaettavia linkkejä puhelut-välilehdeltä."
-  },
-  "icu:WhatsNew__v7.31--0": {
-    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
   }
 }

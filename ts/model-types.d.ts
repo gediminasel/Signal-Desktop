@@ -38,6 +38,7 @@ import type { AnyPaymentEvent } from './types/Payment';
 import AccessRequiredEnum = Proto.AccessControl.AccessRequired;
 import MemberRoleEnum = Proto.Member.Role;
 import type { MessageRequestResponseEvent } from './types/MessageRequestResponseEvent';
+import type { QuotedMessageForComposerType } from './state/ducks/composer';
 
 export type LastMessageStatus =
   | 'paused'
@@ -85,7 +86,6 @@ export type QuotedAttachmentType = {
 };
 
 export type QuotedMessageType = {
-  // TODO DESKTOP-3826
   attachments: ReadonlyArray<QuotedAttachmentType>;
   payment?: AnyPaymentEvent;
   // `author` is an old attribute that holds the author's E164. We shouldn't use it for
@@ -93,13 +93,17 @@ export type QuotedMessageType = {
   author?: string;
   authorAci?: AciString;
   bodyRanges?: ReadonlyArray<RawBodyRange>;
-  id: number;
+  // id can be null if the referenced message was not found and we imported this quote
+  // from backup
+  id: number | null;
   isGiftBadge?: boolean;
   isViewOnce: boolean;
-  messageId: string;
   fromGroupName?: string;
   referencedMessageNotFound: boolean;
   text?: string;
+  /** @deprecated `messageId` is used only in composer state, but still may exist in DB
+   * records, particularly for messages sent from this device */
+  messageId?: string;
 };
 
 type StoryReplyContextType = {
@@ -323,7 +327,7 @@ export type DraftEditMessageType = {
   body: string;
   preview?: LinkPreviewType;
   targetMessageId: string;
-  quote?: QuotedMessageType;
+  quote?: QuotedMessageForComposerType['quote'];
 };
 
 export type ConversationAttributesType = {

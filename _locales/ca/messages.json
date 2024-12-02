@@ -53,6 +53,15 @@
   "icu:appleSilicon": {
     "messageformat": "Apple silicon"
   },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)"
+  },
   "icu:copyErrorAndQuit": {
     "messageformat": "Copia l'error i surt"
   },
@@ -581,6 +590,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "No pots seleccionar fotos i vídeos juntament amb arxius."
   },
@@ -677,6 +689,9 @@
   "icu:search": {
     "messageformat": "Cerca"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "Buscar xats sense llegir"
+  },
   "icu:clearSearch": {
     "messageformat": "Neteja la cerca"
   },
@@ -686,11 +701,26 @@
   "icu:noSearchResults": {
     "messageformat": "No hi ha cap resultat per a \"{searchTerm}\"."
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "No hi ha resultats per a \"{searchTerm}\" a xats no llegits"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "No hi ha xats sense llegir"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "Els contactes d'SMS / MMS no estan disponibles a la versió d'escriptori."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "No hi ha resultats per a \"{searchTerm}\" a {conversationName}"
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "Filtrar per no llegit(s)"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "Filtrar per No llegit(s)"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "Restablir filtres"
   },
   "icu:conversationsHeader": {
     "messageformat": "Xats"
@@ -789,13 +819,13 @@
     "messageformat": "Adjunt desat"
   },
   "icu:attachmentSavedPlural": {
-    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+    "messageformat": "{count, plural, one {Adjunt desat} other {{count,number} adjunts desats}}"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "Mostra'l a la carpeta"
   },
   "icu:attachmentStillDownloading": {
-    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
+    "messageformat": "{count, plural, one {No es pot desar el fitxer adjunt, ja que encara no s'ha acabat de descarregar} other {No es poden desar els {count,number} fitxers adjunts, ja que encara no s'han acabat de descarregar}}"
   },
   "icu:you": {
     "messageformat": "Vós"
@@ -1387,6 +1417,9 @@
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, one {{first}, {second} i {others,number} més són en aquesta trucada.} other {{first}, {second} i {others,number} més són en aquesta trucada.}}"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, one {{count,number} persona està en aquesta trucada} other {{count,number} persones estan en aquesta trucada}}"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "El Signal trucarà a {person}"
@@ -3566,6 +3599,9 @@
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Cancel·lar la transferència"
   },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "Els missatges i la informació del xat estan protegits mitjançant una codificació d'extrem a extrem, inclòs el procés de sincronització. <learnMoreLink>Més informació</learnMoreLink>"
+  },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "Cancel·lar la transferència?"
   },
@@ -3604,6 +3640,12 @@
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "Restauració interrompuda"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "{currentSize} de {totalSize} restaurat"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "Els arxius es continuaran descarregant en segon pla"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "Pausar la transferència"
@@ -4487,12 +4529,6 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "No s'ha pogut actualitzar el perfil. Torneu-ho a provar més tard."
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Caràcters no vàlids"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "Un o més caràcters que has introduït no es poden utilitzar. Torna a provar-ho."
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Envia un missatge a un administrador"
   },
@@ -4693,6 +4729,15 @@
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "El Signal té problemes tècnics. Estem treballant per recuperar el servei tan ràpidament com sigui possible."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "Actualització necessària"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "Per completar la sincronització dels missatges, actualitza ara Signal Desktop."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "Actualitza-la"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "Actualització necessària"
@@ -5532,8 +5577,14 @@
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Fes clic a <newCallButtonIcon></newCallButtonIcon> per iniciar una nova trucada de veu o vídeo."
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "Buscar trucades perdudes"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Cerca"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "Filtrat per perdudes"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "Filtrar per perdudes"
@@ -5547,14 +5598,14 @@
   "icu:CallsList__EmptyState--noQuery__subtitle": {
     "messageformat": "Les trucades recents apareixeran aquí."
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "No hi ha trucades perdudes"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Les trucades perdudes apareixeran aquí."
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "No s'ha trobat cap resultat per a «{query}»"
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "No hi ha resultats per a \"{query}\" a trucades perdudes"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "No hi ha trucades perdudes"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "Crear un enllaç de trucada"
@@ -5725,22 +5776,16 @@
     "messageformat": "Petits ajustos, correccions d'errors i tasques de millora de rendiment. Gràcies per utilitzar Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "Aquesta actualització millora la velocitat d'inici en aproximadament un 5 %."
+  "icu:WhatsNew__v7.34--0": {
+    "messageformat": "Amb la nova icona de filtre al costat del quadre de cerca, podràs trobar més ràpidament els xats no llegits."
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "Presentem els enllaços de trucada: la peça que faltava a les invitacions de calendari i reunions improvisades."
+  "icu:WhatsNew__v7.34--1": {
+    "messageformat": "Aquesta actualització és compatible amb els nous processadors de Windows, com ara el Snapdragon X Elite."
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "Ara pots crear ràpidament un enllaç perquè qualsevol persona a Signal pugui unir-se a una trucada grupal, sense necessitat d'unir-se prèviament a un xat grupal de Signal."
+  "icu:WhatsNew__v7.34--2": {
+    "messageformat": "També hem corregit un error que feia que no funcionés el mode fosc a Signal quan els ajustos del teu sistema operatiu estaven configurats per utilitzar el mode clar."
   },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "Els enllaços de trucada son reutilitzables i ideals tant per a quedades telefòniques recurrents amb la teva colla com per a les reunions setmanals amb els teus companys de feina."
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "Pots administrar els teus enllaços de trucada, controlar els ajustos per aprovar sol·licituds i copiar enllaços des de la pestanya de trucades per compartir-los ràpidament."
-  },
-  "icu:WhatsNew__v7.31--0": {
-    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
   }
 }

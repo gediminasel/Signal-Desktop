@@ -3,14 +3,13 @@
 
 /* eslint-disable camelcase */
 
-import { mkdirSync } from 'fs';
-import { join } from 'path';
-import rimraf from 'rimraf';
-import { randomBytes } from 'crypto';
 import type { Database, Statement } from '@signalapp/better-sqlite3';
 import SQL from '@signalapp/better-sqlite3';
-import { z } from 'zod';
+import { randomBytes } from 'crypto';
+import { mkdirSync, rmSync } from 'node:fs';
+import { join } from 'path';
 import type { ReadonlyDeep } from 'type-fest';
+import { z } from 'zod';
 
 import type { Dictionary } from 'lodash';
 import {
@@ -30,64 +29,101 @@ import {
   pick,
 } from 'lodash';
 
-import * as Errors from '../types/errors';
+import { parseBadgeCategory } from '../badges/BadgeCategory';
+import { parseBadgeImageTheme } from '../badges/BadgeImageTheme';
+import type { BadgeImageType, BadgeType } from '../badges/types';
+import type { StoredJob } from '../jobs/types';
+import { formatCountForLogging } from '../logging/formatCountForLogging';
 import { ReadStatus } from '../messages/MessageReadStatus';
 import type { GroupV2MemberType } from '../model-types.d';
+import type { ConversationColorType, CustomColorType } from '../types/Colors';
+import type { LoggerType } from '../types/Logging';
 import type { ReactionType } from '../types/Reactions';
 import { ReactionReadStatus } from '../types/Reactions';
+import type { AciString, ServiceIdString } from '../types/ServiceId';
+import { isServiceIdString } from '../types/ServiceId';
 import { STORAGE_UI_KEYS } from '../types/StorageUIKeys';
 import type { StoryDistributionIdString } from '../types/StoryDistributionId';
-import type { ServiceIdString, AciString } from '../types/ServiceId';
-import { isServiceIdString } from '../types/ServiceId';
-import type { StoredJob } from '../jobs/types';
+import * as Errors from '../types/errors';
 import { assertDev, strictAssert } from '../util/assert';
 import { combineNames } from '../util/combineNames';
 import { consoleLogger } from '../util/consoleLogger';
 import { dropNull } from '../util/dropNull';
+import * as durations from '../util/durations';
+import { generateMessageId } from '../util/generateMessageId';
 import { isNormalNumber } from '../util/isNormalNumber';
 import { isNotNil } from '../util/isNotNil';
 import { parseIntOrThrow } from '../util/parseIntOrThrow';
-import * as durations from '../util/durations';
-import { generateMessageId } from '../util/generateMessageId';
-import { formatCountForLogging } from '../logging/formatCountForLogging';
-import type { ConversationColorType, CustomColorType } from '../types/Colors';
-import type { BadgeType, BadgeImageType } from '../badges/types';
-import { parseBadgeCategory } from '../badges/BadgeCategory';
-import { parseBadgeImageTheme } from '../badges/BadgeImageTheme';
-import type { LoggerType } from '../types/Logging';
+import { updateSchema } from './migrations';
 import type {
-  EmptyQuery,
   ArrayQuery,
-  Query,
+  EmptyQuery,
   JSONRows,
+  Query,
   QueryFragment,
 } from './util';
 import {
-  sqlConstant,
-  sqlJoin,
-  sqlFragment,
-  sql,
-  jsonToObject,
-  objectToJSON,
   batchMultiVarQuery,
-  getCountFromTable,
-  removeById,
-  removeAllFromTable,
-  getAllFromTable,
-  getById,
   bulkAdd,
   createOrUpdate,
-  setUserVersion,
-  getUserVersion,
+  getAllFromTable,
+  getById,
+  getCountFromTable,
   getSchemaVersion,
+  getUserVersion,
+  jsonToObject,
+  objectToJSON,
+  removeAllFromTable,
+  removeById,
+  setUserVersion,
+  sql,
+  sqlConstant,
+  sqlFragment,
+  sqlJoin,
 } from './util';
-import { updateSchema } from './migrations';
 
+import { getAttachmentCiphertextLength } from '../AttachmentCrypto';
+import { SeenStatus } from '../MessageSeenStatus';
+import {
+  attachmentBackupJobSchema,
+  type AttachmentBackupJobType,
+} from '../types/AttachmentBackup';
+import {
+  attachmentDownloadJobSchema,
+  type AttachmentDownloadJobType,
+} from '../types/AttachmentDownload';
 import type {
-  ReadableDB,
-  WritableDB,
+  CallHistoryDetails,
+  CallHistoryFilter,
+  CallHistoryGroup,
+  CallHistoryPagination,
+  CallLogEventTarget,
+} from '../types/CallDisposition';
+import {
+  CallDirection,
+  CallHistoryFilterStatus,
+  CallMode,
+  CallStatusValue,
+  CallType,
+  DirectCallStatus,
+  GroupCallStatus,
+  callHistoryDetailsSchema,
+  callHistoryGroupSchema,
+} from '../types/CallDisposition';
+import { redactGenericText } from '../util/privacy';
+import { parseStrict, parseUnknown, safeParseUnknown } from '../util/schemas';
+import {
+  SNIPPET_LEFT_PLACEHOLDER,
+  SNIPPET_RIGHT_PLACEHOLDER,
+  SNIPPET_TRUNCATION_PLACEHOLDER,
+} from '../util/search';
+import type { SyncTaskType } from '../util/syncTasks';
+import { MAX_SYNC_TASK_ATTEMPTS } from '../util/syncTasks.types';
+import { isMoreRecentThan } from '../util/timestamp';
+import type {
   AdjacentMessagesByConversationOptionsType,
-  StoredAllItemsType,
+  BackupCdnMediaObjectType,
+  ConversationMessageStatsType,
   ConversationMetricsType,
   ConversationType,
   DeleteSentProtoRecipientOptionsType,
@@ -97,14 +133,12 @@ import type {
   GetAllStoriesResultType,
   GetConversationRangeCenteredOnMessageResultType,
   GetKnownMessageAttachmentsResultType,
+  GetNearbyMessageFromDeletedSetOptionsType,
   GetRecentStoryRepliesOptionsType,
   GetUnreadByConversationAndMarkReadResultType,
   IdentityKeyIdType,
-  StoredIdentityKeyType,
   InstalledStickerPackType,
   ItemKeyType,
-  StoredItemType,
-  ConversationMessageStatsType,
   MessageAttachmentsCursorType,
   MessageCursorType,
   MessageMetricsType,
@@ -114,8 +148,7 @@ import type {
   PageMessagesResultType,
   PreKeyIdType,
   ReactionResultType,
-  StoredPreKeyType,
-  ServerSearchResultMessageType,
+  ReadableDB,
   SenderKeyIdType,
   SenderKeyType,
   SentMessageDBType,
@@ -125,15 +158,21 @@ import type {
   SentRecipientsDBType,
   SentRecipientsType,
   ServerReadableInterface,
+  ServerSearchResultMessageType,
   ServerWritableInterface,
   SessionIdType,
   SessionType,
   SignedPreKeyIdType,
-  StoredSignedPreKeyType,
   StickerPackInfoType,
   StickerPackStatusType,
   StickerPackType,
   StickerType,
+  StoredAllItemsType,
+  StoredIdentityKeyType,
+  StoredItemType,
+  StoredKyberPreKeyType,
+  StoredPreKeyType,
+  StoredSignedPreKeyType,
   StoryDistributionMemberType,
   StoryDistributionType,
   StoryDistributionWithMembersType,
@@ -141,80 +180,40 @@ import type {
   UninstalledStickerPackType,
   UnprocessedType,
   UnprocessedUpdateType,
-  GetNearbyMessageFromDeletedSetOptionsType,
-  StoredKyberPreKeyType,
-  BackupCdnMediaObjectType,
+  WritableDB,
 } from './Interface';
 import { AttachmentDownloadSource } from './Interface';
-import { SeenStatus } from '../MessageSeenStatus';
 import {
-  SNIPPET_LEFT_PLACEHOLDER,
-  SNIPPET_RIGHT_PLACEHOLDER,
-  SNIPPET_TRUNCATION_PLACEHOLDER,
-} from '../util/search';
-import type {
-  CallHistoryDetails,
-  CallHistoryFilter,
-  CallHistoryGroup,
-  CallHistoryPagination,
-  CallLogEventTarget,
-} from '../types/CallDisposition';
-import {
-  DirectCallStatus,
-  callHistoryGroupSchema,
-  CallHistoryFilterStatus,
-  callHistoryDetailsSchema,
-  CallDirection,
-  GroupCallStatus,
-  CallType,
-  CallStatusValue,
-  CallMode,
-} from '../types/CallDisposition';
-import {
+  _removeAllCallLinks,
+  beginDeleteAllCallLinks,
+  beginDeleteCallLink,
   callLinkExists,
   defunctCallLinkExists,
+  deleteCallHistoryByRoomId,
+  deleteCallLinkAndHistory,
+  deleteCallLinkFromSync,
+  finalizeDeleteCallLink,
+  getAllAdminCallLinks,
+  getAllCallLinkRecordsWithAdminKey,
   getAllCallLinks,
+  getAllDefunctCallLinksWithAdminKey,
+  getAllMarkedDeletedCallLinkRoomIds,
   getCallLinkByRoomId,
   getCallLinkRecordByRoomId,
   insertCallLink,
+  insertDefunctCallLink,
   updateCallLink,
   updateCallLinkAdminKeyByRoomId,
   updateCallLinkState,
-  beginDeleteAllCallLinks,
-  deleteCallHistoryByRoomId,
-  deleteCallLinkAndHistory,
-  getAllAdminCallLinks,
-  getAllCallLinkRecordsWithAdminKey,
-  getAllDefunctCallLinksWithAdminKey,
-  getAllMarkedDeletedCallLinkRoomIds,
-  finalizeDeleteCallLink,
-  beginDeleteCallLink,
-  deleteCallLinkFromSync,
-  _removeAllCallLinks,
-  insertDefunctCallLink,
   updateDefunctCallLink,
 } from './server/callLinks';
 import {
-  replaceAllEndorsementsForGroup,
   deleteAllEndorsementsForGroup,
   getGroupSendCombinedEndorsementExpiration,
   getGroupSendEndorsementsData,
   getGroupSendMemberEndorsement,
+  replaceAllEndorsementsForGroup,
 } from './server/groupSendEndorsements';
-import {
-  attachmentDownloadJobSchema,
-  type AttachmentDownloadJobType,
-} from '../types/AttachmentDownload';
-import { MAX_SYNC_TASK_ATTEMPTS } from '../util/syncTasks.types';
-import type { SyncTaskType } from '../util/syncTasks';
-import { isMoreRecentThan } from '../util/timestamp';
-import {
-  type AttachmentBackupJobType,
-  attachmentBackupJobSchema,
-} from '../types/AttachmentBackup';
-import { redactGenericText } from '../util/privacy';
-import { getAttachmentCiphertextLength } from '../AttachmentCrypto';
-import { parseStrict, parseUnknown, safeParseUnknown } from '../util/schemas';
 
 type ConversationRow = Readonly<{
   json: string;
@@ -439,6 +438,7 @@ export const DataWriter: ServerWritableInterface = {
 
   saveMessage,
   saveMessages,
+  saveMessagesIndividually,
   removeMessage,
   removeMessages,
   markReactionAsRead,
@@ -487,6 +487,7 @@ export const DataWriter: ServerWritableInterface = {
 
   getNextAttachmentDownloadJobs,
   saveAttachmentDownloadJob,
+  saveAttachmentDownloadJobs,
   resetAttachmentDownloadActive,
   removeAttachmentDownloadJob,
   removeAllBackupAttachmentDownloadJobs,
@@ -824,9 +825,9 @@ export function removeDB(): void {
   }
 
   logger.warn('removeDB: Removing all database files');
-  rimraf.sync(databaseFilePath);
-  rimraf.sync(`${databaseFilePath}-shm`);
-  rimraf.sync(`${databaseFilePath}-wal`);
+  rmSync(databaseFilePath, { recursive: true, force: true });
+  rmSync(`${databaseFilePath}-shm`, { recursive: true, force: true });
+  rmSync(`${databaseFilePath}-wal`, { recursive: true, force: true });
 }
 
 function removeIndexedDBFiles(_db: WritableDB): void {
@@ -837,7 +838,7 @@ function removeIndexedDBFiles(_db: WritableDB): void {
   }
 
   const pattern = join(indexedDBPath, '*.leveldb');
-  rimraf.sync(pattern);
+  rmSync(pattern, { recursive: true, force: true });
   indexedDBPath = undefined;
 }
 
@@ -2208,6 +2209,7 @@ export function saveMessage(
     ourAci: AciString;
   }
 ): string {
+  // NB: `saveMessagesIndividually` relies on `saveMessage` being atomic
   const { alreadyInTransaction, forceSave, jobToInsert, ourAci } = options;
 
   if (!alreadyInTransaction) {
@@ -2272,9 +2274,8 @@ export function saveMessage(
     seenStatus = SeenStatus.Unseen;
   }
 
-  const payload = {
+  const payloadWithoutJson = {
     id,
-    json: objectToJSON(data),
 
     body: body || null,
     conversationId,
@@ -2332,7 +2333,7 @@ export function saveMessage(
         seenStatus = $seenStatus
       WHERE id = $id;
       `
-    ).run(payload);
+    ).run({ ...payloadWithoutJson, json: objectToJSON(data) });
 
     if (jobToInsert) {
       insertJob(db, jobToInsert);
@@ -2404,7 +2405,7 @@ export function saveMessage(
     );
     `
   ).run({
-    ...payload,
+    ...payloadWithoutJson,
     id: toCreate.id,
     json: objectToJSON(toCreate),
   });
@@ -2432,6 +2433,31 @@ function saveMessages(
       );
     }
     return result;
+  })();
+}
+
+function saveMessagesIndividually(
+  db: WritableDB,
+  arrayOfMessages: ReadonlyArray<ReadonlyDeep<MessageType>>,
+  options: { forceSave?: boolean; ourAci: AciString }
+): { failedIndices: Array<number> } {
+  return db.transaction(() => {
+    const failedIndices: Array<number> = [];
+    arrayOfMessages.forEach((message, index) => {
+      try {
+        saveMessage(db, message, {
+          ...options,
+          alreadyInTransaction: true,
+        });
+      } catch (e) {
+        logger.error(
+          'saveMessagesIndividually: failed to save message',
+          Errors.toLogFormat(e)
+        );
+        failedIndices.push(index);
+      }
+    });
+    return { failedIndices };
   })();
 }
 
@@ -5017,6 +5043,17 @@ function getNextAttachmentDownloadJobs(
     }
     throw error;
   }
+}
+
+function saveAttachmentDownloadJobs(
+  db: WritableDB,
+  jobs: Array<AttachmentDownloadJobType>
+): void {
+  db.transaction(() => {
+    for (const job of jobs) {
+      saveAttachmentDownloadJob(db, job);
+    }
+  })();
 }
 
 function saveAttachmentDownloadJob(

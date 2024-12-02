@@ -53,6 +53,15 @@
   "icu:appleSilicon": {
     "messageformat": "Apple Silicon"
   },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)"
+  },
   "icu:copyErrorAndQuit": {
     "messageformat": "Kopeeri tõrke tekst ja välju"
   },
@@ -581,6 +590,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Sa ei saa fotosid ja videoid koos failidega valida."
   },
@@ -677,6 +689,9 @@
   "icu:search": {
     "messageformat": "Otsi"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "Otsi lugemata vestluste hulgast"
+  },
   "icu:clearSearch": {
     "messageformat": "Tühjenda otsing"
   },
@@ -686,11 +701,26 @@
   "icu:noSearchResults": {
     "messageformat": "Tulemusi pole: \"{searchTerm}\""
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "Lugemata vestluste hulgast ei leitud vasteid otsingule „{searchTerm}“"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "Lugemata vestlusi ei ole"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "SMS/MMS kontaktid pole Signal Desktopis saadaval."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "Vestlusest {conversationName} ei leitud \"{searchTerm}\""
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "Filtreeritud lugemata sõnumite alusel"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "Filtreeri lugemata sõnumite alusel"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "Eemalda filter"
   },
   "icu:conversationsHeader": {
     "messageformat": "Vestlused"
@@ -789,13 +819,13 @@
     "messageformat": "Manus salvestatud."
   },
   "icu:attachmentSavedPlural": {
-    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+    "messageformat": "{count, plural, one {Manus salvestatud} other {{count,number} manust salvestatud}}"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "Näita kaustas"
   },
   "icu:attachmentStillDownloading": {
-    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
+    "messageformat": "{count, plural, one {Manust ei saa salvestada, sest see ei ole veel lõpuni alla laetud} other {Manuseid ei saa salvestada, sest {count,number} ei ole veel lõpuni alla laetud}}"
   },
   "icu:you": {
     "messageformat": "Sina"
@@ -1387,6 +1417,9 @@
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, one {{first}, {second} ja {others,number} teine on selles kõnes} other {{first}, {second} ja {others,number} teist on selles kõnes}}"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, one {Selles kõnes on {count,number} inimene} other {Selles kõnes on {count,number} inimest}}"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "Signal helistab isikule {person}"
@@ -3566,6 +3599,9 @@
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Tühista edastus"
   },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "Sõnumid ja vestluste info on kaitstud kõigis seadmetes otspunktkrüpteeringuga, sh sünkroniseerimisprotsess. <learnMoreLink>Rohkem teavet</learnMoreLink>"
+  },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "Kas tühistada edastus?"
   },
@@ -3604,6 +3640,12 @@
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "Taastamine peatatud"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "Taastatud {currentSize} kogumahust {totalSize}"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "Meedia allalaadimine jätkub taustal"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "Peata edastus"
@@ -4487,12 +4529,6 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "Sinu profiili uuendamine ei õnnestunud. Palun proovi uuesti."
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Kehtetud tähemärgid"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "Üks või rohkem tähemärke, mille sisestasid, ei ole kasutatavad. Proovi uuesti."
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Sõnum administraatorile"
   },
@@ -4693,6 +4729,15 @@
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signalil on tehnilisi raskusi. Pingutame selle nimel, et teenus võimalikult kiiresti taastada."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "Vajalik uuendus"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "Selleks, et sõnumite sünkroniseerimine lõpule viia, uuenda kohe Signali töölauaversiooni."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "Uuenda"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "Vajalik uuendus"
@@ -5532,8 +5577,14 @@
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Uue hääl- või videokõne alustamiseks klõpsa <newCallButtonIcon></newCallButtonIcon>."
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "Otsi vastamata kõnesid"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Otsi"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "Filtreeritud vastamata kõnede alusel"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "Filtreeri vastamata kõnede alusel"
@@ -5547,14 +5598,14 @@
   "icu:CallsList__EmptyState--noQuery__subtitle": {
     "messageformat": "Hiljutised kõned ilmuvad siin."
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "Vastamata kõnesid ei ole"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Vastamata kõned kuvatakse siin."
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "„{query}“ ei andnud otsingutulemusi"
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "Vastamata kõnede hulgast ei leitud vasteid otsingule „{query}“"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "Vastamata kõnesid ei ole"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "Loo kõnelink"
@@ -5725,22 +5776,16 @@
     "messageformat": "Väikesed muudatused, vigade parandused ja jõudluse täiustused. Aitäh, et kasutad Signalit!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "See uuendus muudab käivitumise umbes 5% kiiremaks."
+  "icu:WhatsNew__v7.34--0": {
+    "messageformat": "Otsingukasti kõrval olev uus filtri ikoon muudab lugemata vestluste leidmise kiireks ja lihtsaks."
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "Tutvustame kõnelinke – kalendrikutsete ja spontaansete kohtumiste puuduvat lüli."
+  "icu:WhatsNew__v7.34--1": {
+    "messageformat": "See uuendus sisaldab tuge uutele Windowsi protsessoritele, nagu Snapdragon X Elite."
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "Nüüd saad luua kiiresti lihtsa lingi, mida kõik Signali kasutajad saavad grupivestlusega liitumiseks kasutada, pidamata enne Signali grupivestlusega liituma."
+  "icu:WhatsNew__v7.34--2": {
+    "messageformat": "Samuti parandasime vea, mille tõttu Signali tume režiim ei töötanud, kui sinu operatsioonisüsteemis oli valitud hele režiim."
   },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "Korduskasutatavad kõnelingid sobivad nii regulaarsete kõnede jaoks parimate sõpradega kui iganädalasteks koosolekuteks kolleegidega."
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "Saad oma kõnelinke hallata, kontrollida kinnitussätteid, ja kopeerida linke kõnede vahekaardilt kiireks jagamiseks."
-  },
-  "icu:WhatsNew__v7.31--0": {
-    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
   }
 }

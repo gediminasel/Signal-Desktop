@@ -4,7 +4,12 @@
 import React, { useState, useCallback } from 'react';
 
 import type { LocalizerType } from '../../types/Util';
-import { InstallScreenBackupStep } from '../../types/InstallScreen';
+import type { UpdatesStateType } from '../../state/ducks/updates';
+import {
+  InstallScreenStep,
+  InstallScreenBackupStep,
+  InstallScreenBackupError,
+} from '../../types/InstallScreen';
 import { formatFileSize } from '../../util/formatFileSize';
 import { TitlebarDragArea } from '../TitlebarDragArea';
 import { ProgressBar } from '../ProgressBar';
@@ -12,6 +17,9 @@ import { ConfirmationDialog } from '../ConfirmationDialog';
 import { InstallScreenSignalLogo } from './InstallScreenSignalLogo';
 import { roundFractionForProgressBar } from '../../util/numbers';
 import { missingCaseError } from '../../util/missingCaseError';
+import { SYNCING_MESSAGES_SECURITY_URL } from '../../types/support';
+import { I18n } from '../I18n';
+import { InstallScreenUpdateDialog } from './InstallScreenUpdateDialog';
 
 // We can't always use destructuring assignment because of the complexity of this props
 //   type.
@@ -21,9 +29,16 @@ export type PropsType = Readonly<{
   backupStep: InstallScreenBackupStep;
   currentBytes?: number;
   totalBytes?: number;
-  hasError?: boolean;
+  error?: InstallScreenBackupError;
   onCancel: () => void;
   onRetry: () => void;
+
+  // Updater UI
+  updates: UpdatesStateType;
+  currentVersion: string;
+  OS: string;
+  startUpdate: () => void;
+  forceUpdate: () => void;
 }>;
 
 export function InstallScreenBackupImportStep({
@@ -31,9 +46,15 @@ export function InstallScreenBackupImportStep({
   backupStep,
   currentBytes,
   totalBytes,
-  hasError,
+  error,
   onCancel,
   onRetry,
+
+  updates,
+  currentVersion,
+  OS,
+  startUpdate,
+  forceUpdate,
 }: PropsType): JSX.Element {
   const [isConfirmingCancel, setIsConfirmingCancel] = useState(false);
   const [isConfirmingSkip, setIsConfirmingSkip] = useState(false);
@@ -115,12 +136,58 @@ export function InstallScreenBackupImportStep({
     );
   }
 
+  const learnMoreLink = (parts: Array<string | JSX.Element>) => (
+    <a href={SYNCING_MESSAGES_SECURITY_URL} rel="noreferrer" target="_blank">
+      {parts}
+    </a>
+  );
+
+  let errorElem: JSX.Element | undefined;
+  if (error == null) {
+    // no-op
+  } else if (error === InstallScreenBackupError.UnsupportedVersion) {
+    errorElem = (
+      <InstallScreenUpdateDialog
+        i18n={i18n}
+        {...updates}
+        step={InstallScreenStep.BackupImport}
+        startUpdate={startUpdate}
+        forceUpdate={forceUpdate}
+        currentVersion={currentVersion}
+        onClose={confirmSkip}
+        OS={OS}
+      />
+    );
+  } else if (error === InstallScreenBackupError.Unknown) {
+    if (!isConfirmingSkip) {
+      errorElem = (
+        <ConfirmationDialog
+          dialogName="InstallScreenBackupImportStep.error"
+          title={i18n('icu:BackupImportScreen__error__title')}
+          cancelText={i18n('icu:BackupImportScreen__skip')}
+          actions={[
+            {
+              action: onRetryWrap,
+              style: 'affirmative',
+              text: i18n('icu:BackupImportScreen__error__confirm'),
+            },
+          ]}
+          i18n={i18n}
+          onClose={confirmSkip}
+        >
+          {i18n('icu:BackupImportScreen__error__body')}
+        </ConfirmationDialog>
+      );
+    }
+  } else {
+    throw missingCaseError(error);
+  }
+
   return (
     <div className="InstallScreenBackupImportStep">
       <TitlebarDragArea />
 
       <InstallScreenSignalLogo />
-
       <div className="InstallScreenBackupImportStep__content">
         <h3 className="InstallScreenBackupImportStep__title">
           {i18n('icu:BackupImportScreen__title')}
@@ -130,16 +197,28 @@ export function InstallScreenBackupImportStep({
           {i18n('icu:BackupImportScreen__description')}
         </div>
       </div>
+      <div className="InstallScreenBackupImportStep__footer">
+        <div className="InstallScreenBackupImportStep__security">
+          <div className="InstallScreenBackupImportStep__security--icon" />
+          <div className="InstallScreenBackupImportStep__security--description">
+            <I18n
+              i18n={i18n}
+              id="icu:BackupImportScreen__security-description"
+              components={{ learnMoreLink }}
+            />
+          </div>
+        </div>
 
-      {backupStep === InstallScreenBackupStep.Download && (
-        <button
-          className="InstallScreenBackupImportStep__cancel"
-          type="button"
-          onClick={confirmCancel}
-        >
-          {i18n('icu:BackupImportScreen__cancel')}
-        </button>
-      )}
+        {backupStep === InstallScreenBackupStep.Download && (
+          <button
+            className="InstallScreenBackupImportStep__cancel"
+            type="button"
+            onClick={confirmCancel}
+          >
+            {i18n('icu:BackupImportScreen__cancel')}
+          </button>
+        )}
+      </div>
 
       {isConfirmingCancel && (
         <ConfirmationDialog
@@ -183,24 +262,7 @@ export function InstallScreenBackupImportStep({
         </ConfirmationDialog>
       )}
 
-      {hasError && !isConfirmingSkip && (
-        <ConfirmationDialog
-          dialogName="InstallScreenBackupImportStep.error"
-          title={i18n('icu:BackupImportScreen__error__title')}
-          cancelText={i18n('icu:BackupImportScreen__skip')}
-          actions={[
-            {
-              action: onRetryWrap,
-              style: 'affirmative',
-              text: i18n('icu:BackupImportScreen__error__confirm'),
-            },
-          ]}
-          i18n={i18n}
-          onClose={confirmSkip}
-        >
-          {i18n('icu:BackupImportScreen__error__body')}
-        </ConfirmationDialog>
-      )}
+      {errorElem}
     </div>
   );
 }

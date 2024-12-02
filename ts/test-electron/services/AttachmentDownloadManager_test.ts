@@ -83,6 +83,7 @@ describe('AttachmentDownloadManager/JobManager', () => {
 
     downloadManager = new AttachmentDownloadManager({
       ...AttachmentDownloadManager.defaultParams,
+      saveJob: DataWriter.saveAttachmentDownloadJob,
       shouldHoldOffOnStartingQueuedJobs: isInCall,
       runDownloadAttachmentJob: runJob,
       getRetryConfig: () => ({
@@ -409,6 +410,15 @@ describe('AttachmentDownloadManager/JobManager', () => {
         idx % 2 === 0
           ? AttachmentDownloadSource.BACKUP_IMPORT
           : AttachmentDownloadSource.STANDARD,
+      digest: `digestFor${idx}`,
+      attachment: {
+        contentType: MIME.IMAGE_JPEG,
+        size: 128,
+        digest: `digestFor${idx}`,
+        backupLocator: {
+          mediaName: 'medianame',
+        },
+      },
     }));
     // make one of the backup job messages visible to test that code path as well
     downloadManager?.updateVisibleTimelineMessages(['message-0', 'message-1']);

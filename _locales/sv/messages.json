@@ -53,6 +53,15 @@
   "icu:appleSilicon": {
     "messageformat": "Apple-chip"
   },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)"
+  },
   "icu:copyErrorAndQuit": {
     "messageformat": "Kopiera felmeddelande och avsluta"
   },
@@ -581,6 +590,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Du kan inte välja foton och videor tillsammans med filer."
   },
@@ -677,6 +689,9 @@
   "icu:search": {
     "messageformat": "Sök"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "Sök efter olästa chattar"
+  },
   "icu:clearSearch": {
     "messageformat": "Rensa sökning"
   },
@@ -686,11 +701,26 @@
   "icu:noSearchResults": {
     "messageformat": "Inga resultat för \"{searchTerm}\""
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "Inga resultat för \"{searchTerm}\" i olästa chattar"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "Inga olästa chattar"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "SMS/MMS-kontakter är inte tillgängliga på Desktop."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "Inga resultat för \"{searchTerm}\" i {conversationName}"
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "Filtrerad efter oläst"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "Filtrera efter oläst"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "Rensa filter"
   },
   "icu:conversationsHeader": {
     "messageformat": "Chattar"
@@ -789,13 +819,13 @@
     "messageformat": "Bilaga sparad."
   },
   "icu:attachmentSavedPlural": {
-    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+    "messageformat": "{count, plural, one {Bilaga sparad} other {{count,number} bilagor sparade}}"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "Visa i mapp"
   },
   "icu:attachmentStillDownloading": {
-    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
+    "messageformat": "{count, plural, one {Det går inte att spara bilagan eftersom den inte har laddats ner ännu} other {Det går inte att spara bilagor eftersom {count,number} inte har laddats ner ännu}}"
   },
   "icu:you": {
     "messageformat": "Du"
@@ -1387,6 +1417,9 @@
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, one {{first}, {second} och {others,number} annan är i detta samtal} other {{first}, {second} och {others,number} andra är i detta samtal}}"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, one {{count,number} person är med i det här samtalet} other {{count,number} personer är med i det här samtalet}}"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "Signal ringer {person}"
@@ -3566,6 +3599,9 @@
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Avbryt överföringen"
   },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "Meddelanden och chattinformation skyddas av totalstreckskryptering, inklusive synkroniseringsprocessen. <learnMoreLink>Läs mer</learnMoreLink>"
+  },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "Vill du avbryta överföringen?"
   },
@@ -3604,6 +3640,12 @@
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "Återställning pausad"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "{currentSize} av {totalSize} har återställts"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "Media fortsätter att laddas ner i bakgrunden"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "Pausa överföringen"
@@ -4487,12 +4529,6 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "Din profil kunde inte uppdateras. Försök igen."
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Ogiltiga tecken"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "Ett eller flera tecken som du har angett kan inte användas. Försök igen."
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Skicka ett meddelande till en administratör"
   },
@@ -4693,6 +4729,15 @@
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signal har tekniska problem. Vi arbetar för fullt med att få igång tjänsten så snabbt vi kan."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "Uppdatering krävs"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "Uppdatera Signal Desktop nu för att slutföra synkroniseringen av dina meddelanden."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "Uppdatera"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "Uppdatering krävs"
@@ -5532,8 +5577,14 @@
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Klicka <newCallButtonIcon></newCallButtonIcon> för att starta ett nytt röst- eller videosamtal."
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "Sök i missade samtal"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Sök"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "Filtrerad efter missade"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "Filtrera efter missade"
@@ -5547,14 +5598,14 @@
   "icu:CallsList__EmptyState--noQuery__subtitle": {
     "messageformat": "De senaste samtalen kommer att visas här."
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "Inga missade samtal"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Missade samtal kommer att visas här."
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Inga resultat för ”{query}”"
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "Inga resultat för \"{query}\" i missade samtal"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "Inga missade samtal"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "Skapa en samtalslänk"
@@ -5725,22 +5776,16 @@
     "messageformat": "Små justeringer, buggfixar och prestandaförbättringar. Tack för att du använder Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "Den här uppdateringen förbättrar uppstartshastigheten med cirka 5 %."
+  "icu:WhatsNew__v7.34--0": {
+    "messageformat": "Den nya filterikonen bredvid sökrutan gör det enkelt att snabbt hitta olästa chattar."
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "Vi introducerar samtalslänkar: Den saknade länken för kalenderinbjudningar och spontana sammankomster."
+  "icu:WhatsNew__v7.34--1": {
+    "messageformat": "Denna uppdatering introducerar stöd för nya processorer i Windows, t.ex. Snapdragon X Elite"
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "Nu kan du snabbt skapa en enkel länk som alla på Signal kan använda för att gå med i ett gruppsamtal utan att först behöva gå med i en Signal-gruppchatt."
+  "icu:WhatsNew__v7.34--2": {
+    "messageformat": "Vi har också åtgärdat en bugg som gjorde att det mörka temat i Signal inte fungerade när operativsystemet var inställt på att använda ett ljust tema."
   },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "Samtalslänkar är återanvändbara och idealiska för återkommande telefondejter med dina bästa vänner eller veckovisa avstämningar med dina kollegor."
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "Du kan hantera dina samtalslänkar, kontrollera godkännandeinställningar och kopiera länkar från samtalsfliken för snabb delning."
-  },
-  "icu:WhatsNew__v7.31--0": {
-    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
   }
 }

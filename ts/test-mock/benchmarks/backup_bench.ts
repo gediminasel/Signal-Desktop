@@ -11,26 +11,25 @@ Bootstrap.benchmark(async (bootstrap: Bootstrap): Promise<void> => {
   const { backupId, stream: backupStream } = generateBackup({
     aci: phone.device.aci,
     profileKey: phone.profileKey.serialize(),
-    masterKey: phone.masterKey,
+    accountEntropyPool: phone.accountEntropyPool,
+    mediaRootBackupKey: phone.mediaRootBackupKey,
     conversations: 1000,
     messages: 60 * 1000,
   });
 
   await server.storeBackupOnCdn(backupId, backupStream);
 
-  const importStart = Date.now();
-
   const app = await bootstrap.link();
-  await app.waitForBackupImportComplete();
+  const { duration: importDuration } = await app.waitForBackupImportComplete();
 
-  const importEnd = Date.now();
+  await app.migrateAllMessages();
 
   const exportStart = Date.now();
   await app.uploadBackup();
   const exportEnd = Date.now();
 
   console.log('run=%d info=%j', 0, {
-    importDuration: importEnd - importStart,
+    importDuration,
     exportDuration: exportEnd - exportStart,
   });
 });

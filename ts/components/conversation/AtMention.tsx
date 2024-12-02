@@ -10,6 +10,7 @@ export function AtMention({
   direction,
   id,
   isInvisible,
+  isStrikethrough,
   name,
   onClick,
   onKeyUp,
@@ -17,10 +18,28 @@ export function AtMention({
   direction: 'incoming' | 'outgoing' | undefined;
   id: string;
   isInvisible: boolean;
+  isStrikethrough?: boolean;
   name: string;
   onClick: () => void;
   onKeyUp: KeyboardEventHandler;
 }): JSX.Element {
+  const firstNameMentions =
+    window.localStorage && localStorage.getItem('firstNameMentions') === 'true';
+
+  const displayName = firstNameMentions ? name.split(' ')[0] : name;
+
+  const textElement = (
+    <>
+      @
+      <Emojify isInvisible={isInvisible} text={displayName} />
+    </>
+  );
+  const formattedTextElement = isStrikethrough ? (
+    <s>{textElement}</s>
+  ) : (
+    textElement
+  );
+
   if (isInvisible) {
     return (
       <span
@@ -30,19 +49,12 @@ export function AtMention({
         )}
         data-id={id}
         data-title={name}
+        title={firstNameMentions ? name : undefined}
       >
-        <bdi>
-          @
-          <Emojify isInvisible={isInvisible} text={name} />
-        </bdi>
+        <bdi>{formattedTextElement}</bdi>
       </span>
     );
   }
-
-  const firstNameMentions =
-    window.localStorage && localStorage.getItem('firstNameMentions') === 'true';
-
-  const displayName = firstNameMentions ? name.split(' ')[0] : name;
 
   return (
     <span
@@ -58,10 +70,7 @@ export function AtMention({
       data-title={name}
       title={firstNameMentions ? name : undefined}
     >
-      <bdi>
-        @
-        <Emojify isInvisible={isInvisible} text={displayName} />
-      </bdi>
+      <bdi>{formattedTextElement}</bdi>
     </span>
   );
 }

@@ -17,11 +17,17 @@ export enum InstallScreenBackupStep {
   Process = 'Process',
 }
 
+export enum InstallScreenBackupError {
+  Unknown = 'Unknown',
+  UnsupportedVersion = 'UnsupportedVersion',
+}
+
 export enum InstallScreenError {
   TooManyDevices = 'TooManyDevices',
   TooOld = 'TooOld',
   ConnectionFailed = 'ConnectionFailed',
   QRCodeFailed = 'QRCodeFailed',
+  InactiveTimeout = 'InactiveTimeout',
 }
 
 export enum InstallScreenQRCodeError {

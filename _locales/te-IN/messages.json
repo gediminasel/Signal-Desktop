@@ -53,6 +53,15 @@
   "icu:appleSilicon": {
     "messageformat": "Apple silicon"
   },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)"
+  },
   "icu:copyErrorAndQuit": {
     "messageformat": "లోపం కాపీ చేసి నిష్క్రమించండి"
   },
@@ -581,6 +590,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "మీరు ఫైళ్ళతో పాటుగా ఫోటోలు మరియు వీడియోలను ఎంపిక చేసుకోలేరు."
   },
@@ -677,6 +689,9 @@
   "icu:search": {
     "messageformat": "వెతకండి"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "చదవని చాట్‌లను శోధించండి"
+  },
   "icu:clearSearch": {
     "messageformat": "శోధనను క్లియర్ చేయండి"
   },
@@ -686,11 +701,26 @@
   "icu:noSearchResults": {
     "messageformat": "\"{searchTerm}\" కోసం ఫలితాలు లేవు"
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "చదవని చాట్లలో \"{searchTerm}\" కోసం ఎటువంటి ఫలితాలు లేవు"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "చదవని చాట్‌‌లు లేవు"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "SMS / MMS పరిచయాలు డెస్క్‌టాప్‌లో అందుబాటులో లేవు."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "{conversationName} లో {searchTerm} కోసం ఫలితాలు లేవు"
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "చదవనివాటి ద్వారా ఫిల్టర్ చేయబడింది"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "చదవని వాటి ద్వారా ఫిల్టర్ చేయండి"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "ఫిల్టర్‌ను క్లియర్‌ చేయండి"
   },
   "icu:conversationsHeader": {
     "messageformat": "చాట్స్"
@@ -789,13 +819,13 @@
     "messageformat": "అటాచ్‌మెంట్ సేవ్ చేయబడింది."
   },
   "icu:attachmentSavedPlural": {
-    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+    "messageformat": "{count, plural, one {అటాచ్మెంట్ సేవ్ చేయబడింది} other {{count,number} అటాచ్మెంట్లు సేవ్ చేయబడ్డాయి}}"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "ఫోల్డర్‌లో చూపించండి."
   },
   "icu:attachmentStillDownloading": {
-    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
+    "messageformat": "{count, plural, one {డౌన్‌లోడ్ చేయడం ఇంకా పూర్తికానందున, అటాచ్మెంట్ సేవ్ చేయబడలేదు} other {{count,number} డౌన్‌లోడ్ చేయడం ఇంకా పూర్తికానందున అటాచ్మెంట్లు సేవ్ చేయడం సాధ్యం కాదు}}"
   },
   "icu:you": {
     "messageformat": "మీరు"
@@ -1387,6 +1417,9 @@
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, one {{first}, {second} మరియు {others,number} ఇతర ఈ కాల్‌లో ఉన్నాయి} other {{first}, {second}, మరియు {others,number} ఇతరులు ఈ కాల్‌లో ఉన్నారు}}"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, one {{count,number} వ్యక్తి ఈ కాల్‌లో ఉన్నారు} other {{count,number} వ్యక్తులు ఈ కాల్‌లో ఉన్నారు}}"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "{person}కు Signal రింగ్ చేస్తుంది."
@@ -3566,6 +3599,9 @@
   "icu:BackupImportScreen__cancel": {
     "messageformat": "బదిలీని రద్దు చేయండి"
   },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "సమకాలీకరణ ప్రక్రియతో సహా ఎండ్-టు-ఎండ్ గుప్తీకరణ ద్వారా సందేశాలు మరియు చాట్ సమాచారం సంరక్షించబడతాయి. <learnMoreLink>మరింత తెలుసుకోండి</learnMoreLink>"
+  },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "బదిలీని రద్దు చేసేదా?"
   },
@@ -3604,6 +3640,12 @@
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "పాజ్ చేసిన దానిని పునరుద్ధరించండి"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "{totalSize} లో {currentSize} పునరుద్ధరించబడింది"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "నేపథ్యంలో మీడియా డౌన్ లోడ్ చేయడం కొనసాగిస్తుంది"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "బదిలీని పాజ్ చేయండి"
@@ -4487,12 +4529,6 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "మీ ప్రొఫైల్‌ని అప్‌డేట్ చేయలేం. దయచేసి మళ్లీ ప్రయత్నించండి."
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "చెల్లని అక్షరాలు"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "మీరు ఎంటర్ చేసిన ఒకటి లేదా అంతకంటే ఎక్కువ అక్షరాలు ఉపయోగించబడవు. మళ్ళీ ప్రయత్నించండి."
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "నిర్వాహకుడికి సందేశం పంపండి"
   },
@@ -4693,6 +4729,15 @@
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signal సాంకేతిక సమస్యలను ఎదుర్కొంటోంది. వీలైనంత త్వరగా సేవని పునరుద్ధరించడానికి మేము కృషి చేస్తున్నాము."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "అప్‌డేట్ అవసరం"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "మీ సందేశాలను సమకాలీకరించడాన్ని పూర్తి చేయడానికి, ఇప్పుడు Signal డెస్క్‌టాప్‌ను అప్‌డేట్ చేయండి."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "నవీకరణ"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "అప్‌డేట్ అవసరం"
@@ -5532,8 +5577,14 @@
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "కొత్త స్వర లేదా వీడియో కాల్ ప్రారంభించడానికి <newCallButtonIcon></newCallButtonIcon> క్లిక్ చేయండి."
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "మిస్డ్ కాల్‌లను శోధించండి"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "వెతకండి"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "మిస్ అయినవి ఫిల్టర్ చేయబడ్డాయి"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "మిస్ అయిన వాటి ఆధారంగా ఫిల్టర్ చేయండి"
@@ -5547,14 +5598,14 @@
   "icu:CallsList__EmptyState--noQuery__subtitle": {
     "messageformat": "ఇటీవలి కాల్‌లు ఇక్కడ కనిపిస్తాయి."
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "మిస్డ్ కాల్స్ లేవు"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "మిస్డ్ కాల్స్ ఇక్కడ కనిపిస్తాయి."
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "“{query}” కోసం ఫలితాలు లేవు"
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "మిస్డ్ కాల్‌లలో “{query}” కోసం ఎటువంటి ఫలితాలు లేవు"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "మిస్డ్ కాల్స్ లేవు"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "కాల్ లింక్‌ను సృష్టించండి"
@@ -5725,22 +5776,16 @@
     "messageformat": "చిన్న ట్వీక్‌లు, బగ్ ఫిక్స్‌లు, మరియు పనితీరు మెరుగుదలలు. Signal ఉపయోగించినందుకు మీకు ధన్యవాదాలు!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "ఈ అప్‌డేట్ స్టార్టప్ వేగాన్ని దాదాపు 5% మెరుగుపరుస్తుంది."
+  "icu:WhatsNew__v7.34--0": {
+    "messageformat": "శోధన పెట్టె పక్కన ఉన్న కొత్త ఫిల్టర్ ఐకాన్ చదవని చాట్లను త్వరగా కనుగొనడాన్ని సులభతరం చేస్తుంది."
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "కాల్ లింక్‌లను ప్రవేశ పెడుతున్నాము: క్యాలెండర్ ఆహ్వానాలు మరియు ఆకస్మిక సమావేశాల కోసం తప్పిపోయిన లింక్."
+  "icu:WhatsNew__v7.34--1": {
+    "messageformat": "ఈ అప్‌డేట్ స్నాప్‌డ్రాగన్ X ఎలైట్ లాగా Windows లో కొత్త ప్రాసెసర్‌లకు మద్దతును పరిచయం చేస్తుంది."
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "ముందుగా Signal గ్రూప్ చాట్‌లో చేరాల్సిన అవసరం లేకుండా గ్రూప్ కాల్‌లో చేరడానికి Signal లోని ఎవరైనా ఉపయోగించగలిగే సులభమైన లింక్‌ను ఇప్పుడు మీరు త్వరగా సృష్టించవచ్చు."
+  "icu:WhatsNew__v7.34--2": {
+    "messageformat": "మీ ఆపరేటింగ్ సిస్టమ్ సెట్టింగ్‌లు లైట్ థీమ్‌ను ఉపయోగించడానికి కాన్ఫిగర్ చేయబడినప్పుడు Signal లో డార్క్ థీమ్‌ను విచ్ఛిన్నం చేసిన బగ్‌ను కూడా మేము పరిష్కరించాము. Signal డెస్క్‌టాప్ ఇప్పుడు మీ ఇతివృత్తంగా విభజించబడిన వ్యక్తిత్వాన్ని సరిగ్గా నిర్వహించగలదు."
   },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "మీ ఉత్తమ స్నేహితులతో పునరావృతమయ్యే ఫోన్ తేదీలకు లేదా మీ సహోద్యోగులతో వారపు చెక్-ఇన్ లకు కాల్ లింక్‌లు పునర్వినియోగపరచదగినవి మరియు అనువైనవి."
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "మీరు మీ కాల్ లింక్‌లను నిర్వహించవచ్చు, ఆమోద సెట్టింగులను నియంత్రించవచ్చు, త్వరగా పంచుకునేందుకు కాల్స్ ట్యాబ్ నుండి లింక్‌లను కాపీ చేయవచ్చు."
-  },
-  "icu:WhatsNew__v7.31--0": {
-    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
   }
 }

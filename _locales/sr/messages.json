@@ -53,6 +53,15 @@
   "icu:appleSilicon": {
     "messageformat": "Apple silicon"
   },
+  "icu:About__AppEnvironment": {
+    "messageformat": "{appEnv}"
+  },
+  "icu:About__AppEnvironment--AppleSilicon": {
+    "messageformat": "{appEnv} (Apple silicon)"
+  },
+  "icu:About__AppEnvironment--AppleIntel": {
+    "messageformat": "{appEnv} (Intel)"
+  },
   "icu:copyErrorAndQuit": {
     "messageformat": "Копирај грешку и затвори"
   },
@@ -581,6 +590,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--FailedToImportBackup": {
+    "messageformat": "Failed to process some frames during backup import. Please share your logs."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Није могуће изабрати слике и видео записе заједно са фајловима."
   },
@@ -677,6 +689,9 @@
   "icu:search": {
     "messageformat": "Претрага"
   },
+  "icu:searchUnreadChats": {
+    "messageformat": "Претражите непрочитана ћаскања"
+  },
   "icu:clearSearch": {
     "messageformat": "Поништи претрагу"
   },
@@ -686,11 +701,26 @@
   "icu:noSearchResults": {
     "messageformat": "Нема резултата за „{searchTerm}“"
   },
+  "icu:noSearchResultsWithUnreadFilter": {
+    "messageformat": "Нема резултата за „{searchTerm}“ у непрочитаним ћаскањима"
+  },
+  "icu:noSearchResultsOnlyUnreadFilter": {
+    "messageformat": "Нема непрочитаних ћаскања"
+  },
   "icu:noSearchResults--sms-only": {
     "messageformat": "SMS/MMS контакти нису доступни на Desktop-у."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "Нема резултата за „{searchTerm}“ у ћаскању {conversationName}"
+  },
+  "icu:conversationsUnreadHeader": {
+    "messageformat": "Филтрирано по непрочитаним"
+  },
+  "icu:filterByUnreadButtonLabel": {
+    "messageformat": "Филтрирај по непрочитаним"
+  },
+  "icu:clearFilterButton": {
+    "messageformat": "Уклони филтер"
   },
   "icu:conversationsHeader": {
     "messageformat": "Ћаскања"
@@ -789,13 +819,13 @@
     "messageformat": "Прилог је сачуван."
   },
   "icu:attachmentSavedPlural": {
-    "messageformat": "{count, plural, one {Attachment saved} other {{count,number} attachments saved}}"
+    "messageformat": "{count, plural, one {Прилог је сачуван} other {Прилози су сачувани ({count,number})}}"
   },
   "icu:attachmentSavedShow": {
     "messageformat": "Прикажи у фолдеру"
   },
   "icu:attachmentStillDownloading": {
-    "messageformat": "{count, plural, one {Can't save attachment, since it hasn't finished downloading yet} other {Can't save attachments, since {count,number} haven't finished downloading yet}}"
+    "messageformat": "{count, plural, one {Прилог није сачуван јер још увек није завршено његово преузимање} other {Прилози нису сачувани јер још увек није завршено његово преузимање {count,number} прилога}}"
   },
   "icu:you": {
     "messageformat": "Ви"
@@ -1387,6 +1417,9 @@
   },
   "icu:calling__pre-call-info--many-people-in-call": {
     "messageformat": "{others, plural, one {У овом позиву су {first}, {second} и још {others,number} особа} other {У овом позиву су {first}, {second} и још њих {others,number}}}"
+  },
+  "icu:calling__pre-call-info--only-unknown-contacts-in-call": {
+    "messageformat": "{count, plural, one {Укупан број особа у овом позиву: {count,number}} other {Укупан број особа у овом позиву: {count,number}}}"
   },
   "icu:calling__pre-call-info--will-ring-1": {
     "messageformat": "Signal ће позвати корисника {person}"
@@ -3566,6 +3599,9 @@
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Откажи пренос"
   },
+  "icu:BackupImportScreen__security-description": {
+    "messageformat": "Поруке и информације о ћаскањима заштићене су потпуним шифровањем, укључујући процес синхронизације. <learnMoreLink>Сазнајте више</learnMoreLink>"
+  },
   "icu:BackupImportScreen__cancel-confirmation__title": {
     "messageformat": "Желите ли да откажете пренос?"
   },
@@ -3604,6 +3640,12 @@
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
     "messageformat": "Враћање је паузирано"
+  },
+  "icu:BackupMediaDownloadProgress__title-idle": {
+    "messageformat": "{currentSize} од {totalSize} је враћено"
+  },
+  "icu:BackupMediaDownloadProgress__description-idle": {
+    "messageformat": "Медији ће наставити да се преузимају у позадини"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "Паузирај пренос"
@@ -4487,12 +4529,6 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "Ажурирање профила није успело. Пробајте поново."
   },
-  "icu:ProfileEditor__invalid-about__title": {
-    "messageformat": "Неважећи знакови"
-  },
-  "icu:ProfileEditor__invalid-about__body": {
-    "messageformat": "Један или више знакова које сте унели се не могу користити. Пробајте поново."
-  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Пошаљите поруку администратору"
   },
@@ -4693,6 +4729,15 @@
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signal тренутно има техничких проблема. Трудимо се да што пре поново покренемо услугу."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__title": {
+    "messageformat": "Неопходно је ажурирање апликације"
+  },
+  "icu:InstallScreenUpdateDialog--update-required__body": {
+    "messageformat": "Да бисте обавили синхронизацију порука, ажурирајте Signal Desktop сада."
+  },
+  "icu:InstallScreenUpdateDialog--update-required__action-update": {
+    "messageformat": "Сачувај"
   },
   "icu:InstallScreenUpdateDialog--unsupported-os__title": {
     "messageformat": "Неопходно је ажурирање апликације"
@@ -5532,8 +5577,14 @@
   "icu:CallsTab__EmptyStateText--with-icon-2": {
     "messageformat": "Кликните на <newCallButtonIcon></newCallButtonIcon> да започнете нови гласовни или видео-позив."
   },
+  "icu:CallsList__SearchInputPlaceholder--missed-calls": {
+    "messageformat": "Претражите пропуштене позиве"
+  },
   "icu:CallsList__SearchInputPlaceholder": {
     "messageformat": "Тражи"
+  },
+  "icu:CallsList__FilteredByMissedHeader": {
+    "messageformat": "Филтрирано према пропуштеним позивима"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
     "messageformat": "Филтрирај према пропуштеним позивима"
@@ -5547,14 +5598,14 @@
   "icu:CallsList__EmptyState--noQuery__subtitle": {
     "messageformat": "Овде ће се појавити недавни позиви."
   },
-  "icu:CallsList__EmptyState--noQuery--missed__title": {
-    "messageformat": "Нема пропуштених позива"
-  },
-  "icu:CallsList__EmptyState--noQuery--missed__subtitle": {
-    "messageformat": "Овде ће се појавити пропуштени позиви."
-  },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "Нема резултата за „{query}“"
+  },
+  "icu:CallsList__EmptyState--hasQueryAndMissedCalls": {
+    "messageformat": "Нема резултата за „{query}“ у пропуштеним позивима"
+  },
+  "icu:CallsList__EmptyState--missedCalls": {
+    "messageformat": "Нема пропуштених позива"
   },
   "icu:CallsList__CreateCallLink": {
     "messageformat": "Креирајте линк за позив"
@@ -5725,22 +5776,16 @@
     "messageformat": "Обавили смо мања фина прилагођавања, исправке грешака и побољшања перформанси. Хвала што користите Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.29--0": {
-    "messageformat": "У овом ажурирању је побољшана брзина покретања за око 5%."
+  "icu:WhatsNew__v7.34--0": {
+    "messageformat": "Нова икона филтера поред поља за претрагу олакшава брзо проналажење непрочитаних ћаскања."
   },
-  "icu:WhatsNew__v7.30--header": {
-    "messageformat": "Представљамо линкове за позиве – оно што нам је недостајало у календарским позивима и спонтаним окупљањима."
+  "icu:WhatsNew__v7.34--1": {
+    "messageformat": "У овом ажурирању уведена је подршка за нове процесоре у Windows-у, као што је Snapdragon X Elite."
   },
-  "icu:WhatsNew__v7.30--0": {
-    "messageformat": "Сада можете брзо да креирате једноставан линк који свако на Signal-у може да користи да се прикључи групном позиву без потребе да се прво прикључи групном ћаскању на Signal-у."
+  "icu:WhatsNew__v7.34--2": {
+    "messageformat": "Такође смо исправили грешку у тамној теми у Signal-у када су подешавања оперативног система конфигурисана да користе светлу тему."
   },
-  "icu:WhatsNew__v7.30--1": {
-    "messageformat": "Линкови за позив се могу користити више пута и идеални су за редовне телефонске позиве са најбољим пријатељима или недељне састанке са сарадницима."
-  },
-  "icu:WhatsNew__v7.30--2": {
-    "messageformat": "Можете управљати својим линковима за позив, подесити одобрења и копирати линкове на картици за позиве да бисте их лако поделили."
-  },
-  "icu:WhatsNew__v7.31--0": {
-    "messageformat": "Now you can quickly download every photo in an album when you receive a message with multiple attachments. But if you were a gallery curator with impeccable taste in another life, you can still save them individually too. Thanks, <linkMajorMayer>@major-mayer</linkMajorMayer>!"
+  "icu:WhatsNew__v7.35--0": {
+    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
   }
 }
