@@ -6,6 +6,7 @@ import { contextBridge } from 'electron';
 
 import * as log from '../../logging/log';
 
+import './phase0-devtools';
 import './phase1-ipc';
 import '../preload';
 import './phase2-dependencies';
@@ -65,8 +66,7 @@ if (
       )?.attributes;
     },
     getConversation: (id: string) => window.ConversationController.get(id),
-    getMessageById: (id: string) =>
-      window.MessageCache.__DEPRECATED$getById(id),
+    getMessageById: (id: string) => window.MessageCache.getById(id),
     getMessageBySentAt: (timestamp: number) =>
       window.MessageCache.findBySentAt(timestamp, () => true),
     getReduxState: () => window.reduxStore.getState(),

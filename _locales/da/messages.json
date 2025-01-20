@@ -50,9 +50,6 @@
   "icu:privacyPolicy": {
     "messageformat": "Vilkår og privatlivspolitik"
   },
-  "icu:appleSilicon": {
-    "messageformat": "Apple Silicon"
-  },
   "icu:About__AppEnvironment": {
     "messageformat": "{appEnv}"
   },
@@ -411,7 +408,7 @@
     "messageformat": "{count, plural, one {{count,number} ulæst besked} other {{count,number} ulæste beskeder}}"
   },
   "icu:messageHistoryUnsynced": {
-    "messageformat": "For din sikkerheds skyld, overføres chathistorik ikke til nye forbundne enheder."
+    "messageformat": "For din sikkerheds skyld overføres chathistorik ikke til nye forbundne enheder."
   },
   "icu:youMarkedAsVerified": {
     "messageformat": "Du markerede dit sikkerhedsnummer med {name} som bekræftet"
@@ -815,9 +812,6 @@
   "icu:voiceNoteError": {
     "messageformat": "Der opstod en fejl med stemmeoptageren."
   },
-  "icu:attachmentSaved": {
-    "messageformat": "Vedhæftning gemt."
-  },
   "icu:attachmentSavedPlural": {
     "messageformat": "{count, plural, one {Vedhæftet fil gemt} other {{count,number} vedhæftede filer gemt}}"
   },
@@ -1025,18 +1019,6 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "Information"
   },
-  "icu:deleteMessagesInConversation": {
-    "messageformat": "Slet beskeder"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
-    "messageformat": "Slet beskeder?"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
-    "messageformat": "Alle beskeder i denne chat slettes fra denne enhed. Du kan stadig søge efter denne chat, når du har slettet beskeder."
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
-    "messageformat": "Alle beskeder i denne chat slettes fra alle dine enheder. Du kan stadig søge efter denne chat, når du har slettet beskeder."
-  },
   "icu:deleteConversation": {
     "messageformat": "Slet"
   },
@@ -1142,6 +1124,24 @@
   "icu:imageCaptionIconAlt": {
     "messageformat": "Ikon, der viser, at dette billede har en billedtekst"
   },
+  "icu:imageOpenAlt": {
+    "messageformat": "Åbn den vedhæftede fil i en større visning"
+  },
+  "icu:startDownload": {
+    "messageformat": "Start download"
+  },
+  "icu:cancelDownload": {
+    "messageformat": "Annuller download"
+  },
+  "icu:downloadNItems": {
+    "messageformat": "{count, plural, one {{count,number} Enheder} other {{count,number} emner}}"
+  },
+  "icu:mediaNoLongerAvailable": {
+    "messageformat": "This media is no longer available."
+  },
+  "icu:attachmentNoLongerAvailable__learnMore": {
+    "messageformat": "Learn more"
+  },
   "icu:save": {
     "messageformat": "Gem"
   },
@@ -1183,6 +1183,9 @@
   },
   "icu:Install__qr-failed-load__retry": {
     "messageformat": "Prøv igen"
+  },
+  "icu:Install__qr-max-rotations__retry": {
+    "messageformat": "Refresh code"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Få hjælp"
@@ -1581,7 +1584,7 @@
     "messageformat": "Slette alle data og beskeder fra denne version af Signal Desktop? Du kan altid genoprette forbindelsen til denne desktop, men dine beskeder vil ikke blive gendannet. Din Signal-konto og data på din telefon eller andre forbundne enheder vil ikke blive slettet."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Afbryder og sletter alle data"
+    "messageformat": "Disconnecting and deleting all data…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Du har forældede data fra en forudgående installation af Signal Desktop. Hvis du vælger at fortsætte vil den blive slettet, og du vil starte fra forfra"
@@ -2741,6 +2744,9 @@
   "icu:incomingGroupCall__ringing-many": {
     "messageformat": "{remaining, plural, one {{ringer} ringer til dig, {first}, {second} og {remaining,number} anden} other {{ringer} ringer til dig, {first}, {second} og {remaining,number} andre}}"
   },
+  "icu:outgoingCallConnecting": {
+    "messageformat": "Forbinder…"
+  },
   "icu:outgoingCallRinging": {
     "messageformat": "Ringer…"
   },
@@ -2785,6 +2791,12 @@
   },
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Mikrofon slået til"
+  },
+  "icu:CallControls__LowerHandSuggestionToast": {
+    "messageformat": "Tag hånden ned?"
+  },
+  "icu:CallControls__LowerHandSuggestionToast--button": {
+    "messageformat": "Tag ned"
   },
   "icu:CallControls__RingingToast--ringing-on": {
     "messageformat": "Opringning slået til"
@@ -3563,6 +3575,9 @@
   "icu:next": {
     "messageformat": "næste"
   },
+  "icu:ClearingData__description": {
+    "messageformat": "This may take a few minutes depending on the size of your message history"
+  },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Donér til Signal"
   },
@@ -3594,10 +3609,10 @@
     "messageformat": "Forbereder download..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "Det kan tage et par minutter afhængigt af sikkerhedskopiens størrelse"
+    "messageformat": "Det kan tage et par minutter afhængigt af størrelsen på din beskedhistorik"
   },
   "icu:BackupImportScreen__cancel": {
-    "messageformat": "Annuller overførsel"
+    "messageformat": "Annullér"
   },
   "icu:BackupImportScreen__security-description": {
     "messageformat": "Beskeder og chatoplysninger er beskyttet af end-to-end-kryptering, herunder også under synkroniseringen. <learnMoreLink>Få mere at vide</learnMoreLink>"
@@ -3606,7 +3621,7 @@
     "messageformat": "Vil du annullere overførslen?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Dine beskeder og medier er ikke gendannet endnu. Hvis du vælger at annullere, kan du overføre igen fra Indstillinger."
+    "messageformat": "Dine beskeder og medier er ikke gendannet endnu. Hvis du vælger at annullere, bliver din enhed tilknyttet uden din beskedhistorik."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
     "messageformat": "Fortsæt overførsel"
@@ -3619,6 +3634,9 @@
   },
   "icu:BackupImportScreen__error__body": {
     "messageformat": "Dine beskeder kunne ikke overføres. Tjek din internetforbindelse, og prøv igen."
+  },
+  "icu:BackupImportScreen__error-fatal__body": {
+    "messageformat": "Dine beskeder kunne ikke overføres på grund af en fejl. Prøv igen ved at genoprette forbindelse til denne computer."
   },
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "Prøv igen"
@@ -5776,16 +5794,10 @@
     "messageformat": "Små tweaks, rettelser og forbedringer af appens præstation. Tak fordi du bruger Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.34--0": {
-    "messageformat": "Det nye filterikon ved siden af søgefeltet gør det nemt hurtigt at finde ulæste chats, men du er velkommen til at tage dig tid til at beslutte, om du vil lade dem være læst, efter at have set, hvad personen havde at sige."
+  "icu:WhatsNew__v7.38--0": {
+    "messageformat": "Vi har rettet en fejl med @-omtaler, der nogle gange forkert inkluderede din egen konto på forslagslisten i autofyld. Som en narcissistisk løsning kan du stadig bruge tredjepersonsfortælling til at tale om dig selv i dine gruppechat, hvis du nogensinde savner denne fejl."
   },
-  "icu:WhatsNew__v7.34--1": {
-    "messageformat": "Denne opdatering introducerer understøttelse af nye processorer på Windows som Snapdragon X Elite, så du ikke længere behøver at vride din ARM for at emulere x86."
-  },
-  "icu:WhatsNew__v7.34--2": {
-    "messageformat": "Vi har også rettet en fejl, der ødelagde det mørke tema i Signal, når operativsystemindstillingerne blev konfigureret til at bruge et lyst tema. Signal Desktop kan nu korrekt håndtere din tematisk opdelte personlighed."
-  },
-  "icu:WhatsNew__v7.35--0": {
-    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
+  "icu:WhatsNew__v7.39--0": {
+    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
   }
 }

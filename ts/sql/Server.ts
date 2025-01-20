@@ -119,7 +119,6 @@ import {
 } from '../util/search';
 import type { SyncTaskType } from '../util/syncTasks';
 import { MAX_SYNC_TASK_ATTEMPTS } from '../util/syncTasks.types';
-import { isMoreRecentThan } from '../util/timestamp';
 import type {
   AdjacentMessagesByConversationOptionsType,
   BackupCdnMediaObjectType,
@@ -476,7 +475,7 @@ export const DataWriter: ServerWritableInterface = {
 
   removeSyncTaskById,
   saveSyncTasks,
-  getAllSyncTasks,
+  dequeueOldestSyncTasks,
 
   getUnprocessedByIdsAndIncrementAttempts,
   getAllUnprocessedIds,
@@ -490,6 +489,7 @@ export const DataWriter: ServerWritableInterface = {
   saveAttachmentDownloadJobs,
   resetAttachmentDownloadActive,
   removeAttachmentDownloadJob,
+  removeAttachmentDownloadJobsForMessage,
   removeAllBackupAttachmentDownloadJobs,
 
   getNextAttachmentBackupJobs,
@@ -543,6 +543,10 @@ export const DataWriter: ServerWritableInterface = {
 
   processGroupCallRingCancellation,
   cleanExpiredGroupCallRingCancellations,
+
+  disableMessageInsertTriggers,
+  enableMessageInsertTriggersAndBackfill,
+  ensureMessageInsertTriggersAreEnabled,
 
   // Server-only
 
@@ -2155,47 +2159,68 @@ function saveSyncTask(db: WritableDB, task: SyncTaskType): void {
 
   db.prepare(query).run(parameters);
 }
-export function getAllSyncTasks(db: WritableDB): Array<SyncTaskType> {
+
+export function dequeueOldestSyncTasks(
+  db: WritableDB,
+  previousRowId: number | null
+): { tasks: Array<SyncTaskType>; lastRowId: number | null } {
   return db.transaction(() => {
-    const [selectAllQuery] = sql`
-      SELECT * FROM syncTasks ORDER BY createdAt ASC, sentAt ASC, id ASC
+    const orderBy = sqlFragment`ORDER BY rowid ASC`;
+    const limit = sqlFragment`LIMIT 10000`;
+    const predicate = sqlFragment`rowid > ${previousRowId ?? 0}`;
+
+    const [deleteOldQuery, deleteOldParams] = sql`
+      DELETE FROM syncTasks
+      WHERE
+        attempts >= ${MAX_SYNC_TASK_ATTEMPTS} AND
+        createdAt < ${Date.now() - durations.WEEK}
     `;
 
-    const rows = db.prepare(selectAllQuery).all();
+    const result = db.prepare(deleteOldQuery).run(deleteOldParams);
 
-    const tasks: Array<SyncTaskType> = rows.map(row => ({
-      ...row,
-      data: jsonToObject(row.data),
-    }));
-
-    const [query] = sql`
-      UPDATE syncTasks
-      SET attempts = attempts + 1
-    `;
-    db.prepare(query).run();
-
-    const [toDelete, toReturn] = partition(tasks, task => {
-      if (
-        isNormalNumber(task.attempts) &&
-        task.attempts < MAX_SYNC_TASK_ATTEMPTS
-      ) {
-        return false;
-      }
-      if (isMoreRecentThan(task.createdAt, durations.WEEK)) {
-        return false;
-      }
-
-      return true;
-    });
-
-    if (toDelete.length > 0) {
-      logger.warn(`getAllSyncTasks: Removing ${toDelete.length} expired tasks`);
-      toDelete.forEach(task => {
-        removeSyncTaskById(db, task.id);
-      });
+    if (result.changes > 0) {
+      logger.info(
+        `dequeueOldestSyncTasks: Deleted ${result.changes} expired sync tasks`
+      );
     }
 
-    return toReturn;
+    const [selectAllQuery, selectAllParams] = sql`
+      SELECT rowid, * FROM syncTasks
+      WHERE ${predicate}
+      ${orderBy}
+      ${limit}
+    `;
+
+    const rows = db.prepare(selectAllQuery).all(selectAllParams);
+    if (!rows.length) {
+      return { tasks: [], lastRowId: null };
+    }
+
+    const firstRowId = rows.at(0)?.rowid;
+    const lastRowId = rows.at(-1)?.rowid;
+
+    strictAssert(firstRowId, 'dequeueOldestSyncTasks: firstRowId is null');
+    strictAssert(lastRowId, 'dequeueOldestSyncTasks: lastRowId is null');
+
+    const tasks: Array<SyncTaskType> = rows.map(row => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { rowid: _rowid, ...rest } = row;
+      return {
+        ...rest,
+        data: jsonToObject(row.data),
+      };
+    });
+
+    const [updateQuery, updateParams] = sql`
+      UPDATE syncTasks
+      SET attempts = attempts + 1
+      WHERE rowid >= ${firstRowId}
+      AND rowid <= ${lastRowId}
+    `;
+
+    db.prepare(updateQuery).run(updateParams);
+
+    return { tasks, lastRowId };
   })();
 }
 
@@ -4603,7 +4628,8 @@ function getNextTapToViewMessageTimestampToAgeOut(
       `
       SELECT json FROM messages
       WHERE
-        isViewOnce = 1
+        -- we want this query to use the messages_view_once index rather than received_at
+        likelihood(isViewOnce = 1, 0.01)
         AND (isErased IS NULL OR isErased != 1)
       ORDER BY received_at ASC, sent_at ASC
       LIMIT 1;
@@ -4614,9 +4640,8 @@ function getNextTapToViewMessageTimestampToAgeOut(
   if (!row) {
     return undefined;
   }
-
   const data = jsonToObject<MessageType>(row.json);
-  const result = data.received_at_ms || data.received_at;
+  const result = data.received_at_ms;
   return isNormalNumber(result) ? result : undefined;
 }
 
@@ -4632,8 +4657,9 @@ function getTapToViewMessagesNeedingErase(
       WHERE
         isViewOnce = 1
         AND (isErased IS NULL OR isErased != 1)
-        AND received_at <= $maxTimestamp
-      ORDER BY received_at ASC, sent_at ASC;
+        AND (
+          IFNULL(json ->> '$.received_at_ms', 0) <= $maxTimestamp
+        )
       `
     )
     .all({
@@ -5118,6 +5144,18 @@ function removeAttachmentDownloadJob(
       attachmentType = ${job.attachmentType}
     AND
       digest = ${job.digest};
+  `;
+
+  db.prepare(query).run(params);
+}
+
+function removeAttachmentDownloadJobsForMessage(
+  db: WritableDB,
+  messageId: string
+): void {
+  const [query, params] = sql`
+    DELETE FROM attachment_downloads
+    WHERE messageId = ${messageId}
   `;
 
   db.prepare(query).run(params);
@@ -7478,5 +7516,95 @@ function getUnreadEditedMessagesAndMarkRead(
         sent_at: row.sentAt,
       };
     });
+  })();
+}
+
+function disableMessageInsertTriggers(db: WritableDB): void {
+  db.transaction(() => {
+    createOrUpdateItem(db, {
+      id: 'messageInsertTriggersDisabled',
+      value: true,
+    });
+    db.exec('DROP TRIGGER IF EXISTS messages_on_insert;');
+    db.exec('DROP TRIGGER IF EXISTS messages_on_insert_insert_mentions;');
+  })();
+
+  db.pragma('checkpoint_fullfsync = false');
+  db.pragma('synchronous = OFF');
+}
+
+const selectMentionsFromMessages = `
+  SELECT messages.id, bodyRanges.value ->> 'mentionAci' as mentionAci,
+    bodyRanges.value ->> 'start' as start,
+    bodyRanges.value ->> 'length' as length
+  FROM messages, json_each(messages.json ->> 'bodyRanges') as bodyRanges
+  WHERE bodyRanges.value ->> 'mentionAci' IS NOT NULL
+`;
+
+function enableMessageInsertTriggersAndBackfill(db: WritableDB): void {
+  const createTriggersQuery = `
+      DROP TRIGGER IF EXISTS messages_on_insert;
+      CREATE TRIGGER messages_on_insert AFTER INSERT ON messages
+        WHEN new.isViewOnce IS NOT 1 AND new.storyId IS NULL
+        BEGIN
+          INSERT INTO messages_fts
+            (rowid, body)
+          VALUES
+            (new.rowid, new.body);
+      END;
+
+      DROP TRIGGER IF EXISTS messages_on_insert_insert_mentions;
+      CREATE TRIGGER messages_on_insert_insert_mentions AFTER INSERT ON messages
+      BEGIN
+        INSERT INTO mentions (messageId, mentionAci, start, length)
+        ${selectMentionsFromMessages}
+        AND messages.id = new.id;
+      END;
+  `;
+  db.transaction(() => {
+    backfillMentionsTable(db);
+    backfillMessagesFtsTable(db);
+    db.exec(createTriggersQuery);
+    createOrUpdateItem(db, {
+      id: 'messageInsertTriggersDisabled',
+      value: false,
+    });
+  })();
+
+  db.pragma('checkpoint_fullfsync = true');
+  db.pragma('synchronous = FULL');
+
+  // Finally fully commit WAL into the database
+  db.pragma('wal_checkpoint(FULL)');
+}
+
+function backfillMessagesFtsTable(db: WritableDB): void {
+  db.exec(`
+    DELETE FROM messages_fts;
+    INSERT OR REPLACE INTO messages_fts (rowid, body)
+      SELECT rowid, body
+      FROM messages
+      WHERE isViewOnce IS NOT 1 AND storyId IS NULL;
+  `);
+}
+
+function backfillMentionsTable(db: WritableDB): void {
+  db.exec(`
+    DELETE FROM mentions;
+    INSERT INTO mentions (messageId, mentionAci, start, length)
+    ${selectMentionsFromMessages};
+  `);
+}
+
+function ensureMessageInsertTriggersAreEnabled(db: WritableDB): void {
+  db.transaction(() => {
+    const storedItem = getItemById(db, 'messageInsertTriggersDisabled');
+    const triggersDisabled = storedItem?.value;
+    if (triggersDisabled) {
+      logger.warn(
+        'Message insert triggers were disabled; reenabling and backfilling data'
+      );
+      enableMessageInsertTriggersAndBackfill(db);
+    }
   })();
 }

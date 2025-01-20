@@ -50,9 +50,6 @@
   "icu:privacyPolicy": {
     "messageformat": "Pogoji uporabe in Pravilnik o zasebnosti"
   },
-  "icu:appleSilicon": {
-    "messageformat": "Apple silicon"
-  },
   "icu:About__AppEnvironment": {
     "messageformat": "{appEnv}"
   },
@@ -815,9 +812,6 @@
   "icu:voiceNoteError": {
     "messageformat": "Prišlo je do težav s snemalcem zvoka."
   },
-  "icu:attachmentSaved": {
-    "messageformat": "Priponka je bila shranjena."
-  },
   "icu:attachmentSavedPlural": {
     "messageformat": "{count, plural, one {Priponka je shranjena} two {{count,number} priponki sta shranjeni} few {{count,number} priponke so shranjene} other {{count,number} priponk je shranjenih}}"
   },
@@ -1025,18 +1019,6 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "Info"
   },
-  "icu:deleteMessagesInConversation": {
-    "messageformat": "Izbriši sporočila"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
-    "messageformat": "Izbrišem sporočila?"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
-    "messageformat": "Vsa sporočila v tem klepetu bodo izbrisana iz te naprave. Ko izbrišete sporočila, lahko še vedno poiščete ta klepet."
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
-    "messageformat": "Vsa sporočila v tem klepetu bodo izbrisana iz vseh vaših naprav. Ko izbrišete sporočila, lahko še vedno poiščete ta klepet."
-  },
   "icu:deleteConversation": {
     "messageformat": "Izbriši"
   },
@@ -1142,6 +1124,24 @@
   "icu:imageCaptionIconAlt": {
     "messageformat": "Ikona, ki označuje, da ima ta slika besedilo"
   },
+  "icu:imageOpenAlt": {
+    "messageformat": "Odprite to priponko v večjem pogledu"
+  },
+  "icu:startDownload": {
+    "messageformat": "Začetek prenosa"
+  },
+  "icu:cancelDownload": {
+    "messageformat": "Prekliči prenos"
+  },
+  "icu:downloadNItems": {
+    "messageformat": "{count, plural, one {{count,number} predmet} two {{count,number} predmeta} few {{count,number} predmeti} other {{count,number} predmetov}}"
+  },
+  "icu:mediaNoLongerAvailable": {
+    "messageformat": "This media is no longer available."
+  },
+  "icu:attachmentNoLongerAvailable__learnMore": {
+    "messageformat": "Learn more"
+  },
   "icu:save": {
     "messageformat": "Shrani"
   },
@@ -1183,6 +1183,9 @@
   },
   "icu:Install__qr-failed-load__retry": {
     "messageformat": "Ponovno"
+  },
+  "icu:Install__qr-max-rotations__retry": {
+    "messageformat": "Refresh code"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Pomoč"
@@ -1581,7 +1584,7 @@
     "messageformat": "Želite izbrisati vse podatke in sporočila iz te različice Signal Desktop? To namizje lahko vedno znova povežete, vendar vaša sporočila ne bodo obnovljena. Vaš račun Signal in podatki v vašem telefonu ali drugih povezanih napravah ne bodo izbrisani."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Odjava in brisanje vseh podatkov"
+    "messageformat": "Disconnecting and deleting all data…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Na napravi imate zastarele podatke iz starejše različice aplikacije Signal Desktop. Če boste nadaljevali, bodo ti izbrisani in boste začeli znova iz nič."
@@ -2741,6 +2744,9 @@
   "icu:incomingGroupCall__ringing-many": {
     "messageformat": "{remaining, plural, one {{ringer} kliče vas, uporabnika_ci {first}, {second} in še {remaining,number} drugega_go} two {{ringer} kliče vas, uporabnika_ci {first}, {second} in še {remaining,number} druga_gi} few {{ringer} kliče vas, uporabnika_ci {first}, {second} in še {remaining,number} druge} other {{ringer} kliče vas, uporabnika_ci {first}, {second} in še {remaining,number} drugih}}"
   },
+  "icu:outgoingCallConnecting": {
+    "messageformat": "Povezujem ..."
+  },
   "icu:outgoingCallRinging": {
     "messageformat": "Zvonjenje ..."
   },
@@ -2785,6 +2791,12 @@
   },
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Mikrofon je vključen"
+  },
+  "icu:CallControls__LowerHandSuggestionToast": {
+    "messageformat": "Želite spustiti roko?"
+  },
+  "icu:CallControls__LowerHandSuggestionToast--button": {
+    "messageformat": "Nižje"
   },
   "icu:CallControls__RingingToast--ringing-on": {
     "messageformat": "Zvonjenje je vključeno"
@@ -3563,6 +3575,9 @@
   "icu:next": {
     "messageformat": "naslednje"
   },
+  "icu:ClearingData__description": {
+    "messageformat": "This may take a few minutes depending on the size of your message history"
+  },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Podprite Signal"
   },
@@ -3594,10 +3609,10 @@
     "messageformat": "Priprava na prenos ..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "To lahko traja nekaj minut, odvisno od velikosti varnostne kopije"
+    "messageformat": "To lahko traja nekaj minut, odvisno od velikosti vaše zgodovine sporočil"
   },
   "icu:BackupImportScreen__cancel": {
-    "messageformat": "Prekliči prenos"
+    "messageformat": "Prekliči"
   },
   "icu:BackupImportScreen__security-description": {
     "messageformat": "Sporočila in informacije o klepetu so zaščitene s šifriranjem od konca do konca, vključno s postopkom sinhronizacije. <learnMoreLink>Več o tem</learnMoreLink>"
@@ -3606,7 +3621,7 @@
     "messageformat": "Želite preklicati prenos?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Vaša sporočila in mediji se še niso obnovili. Če se odločite za preklic, lahko prenos ponovno izvedete v nastavitvah."
+    "messageformat": "Vaša sporočila in mediji se še niso obnovili. Če se odločite za preklic, bo vaša naprava povezana brez zgodovine sporočil."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
     "messageformat": "Nadaljuj prenos"
@@ -3619,6 +3634,9 @@
   },
   "icu:BackupImportScreen__error__body": {
     "messageformat": "Vaših sporočil ni bilo mogoče prenesti. Preverite internetno povezavo in poskusite znova."
+  },
+  "icu:BackupImportScreen__error-fatal__body": {
+    "messageformat": "Vaših sporočil ni bilo mogoče prenesti zaradi napake. Poskusite znova s ponovno povezavo tega namizja."
   },
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "Ponovno"
@@ -5776,16 +5794,10 @@
     "messageformat": "Majhne prilagoditve, popravki napak in izboljšave zmogljivosti. Hvala, da uporabljate Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.34--0": {
-    "messageformat": "Z novo ikono filtra poleg polja za iskanje lahko hitro poiščete neprebrane klepete."
+  "icu:WhatsNew__v7.38--0": {
+    "messageformat": "Odpravili smo napako pri @ omembah, ki je včasih napačno vključevala vaš račun na seznamu predlogov za samodejno dokončanje. Če kdaj spregledate to napako, lahko v skupinskih klepetalnicah še vedno uporabljate tretjeosebno pripovedovanje, da govorite o sebi."
   },
-  "icu:WhatsNew__v7.34--1": {
-    "messageformat": "Ta posodobitev uvaja podporo za nove procesorje v sistemu Windows, kot je Snapdragon X Elite."
-  },
-  "icu:WhatsNew__v7.34--2": {
-    "messageformat": "Odpravili smo tudi napako, ki je onemogočala temno temo v Signalu, če so bile nastavitve operacijskega sistema konfigurirane za uporabo svetle teme. Signal Desktop lahko zdaj ustrezno obravnava vašo tematsko razdeljeno osebnost."
-  },
-  "icu:WhatsNew__v7.35--0": {
-    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
+  "icu:WhatsNew__v7.39--0": {
+    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
   }
 }

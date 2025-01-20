@@ -118,7 +118,7 @@ export type OwnProps = Readonly<{
   recordingState: RecordingState;
   messageCompositionId: string;
   shouldHidePopovers: boolean | null;
-  isSMSOnly: boolean | null;
+  isSmsOnlyOrUnregistered: boolean | null;
   left: boolean | null;
   linkPreviewLoading: boolean;
   linkPreviewResult: LinkPreviewType | null;
@@ -198,6 +198,7 @@ export type Props = Pick<
   | 'getPreferredBadge'
   | 'onEditorStateChange'
   | 'onTextTooLong'
+  | 'ourConversationId'
   | 'quotedMessageId'
   | 'sendCounter'
   | 'sortedGroupMembers'
@@ -280,6 +281,7 @@ export const CompositionArea = memo(function CompositionArea({
   isFormattingEnabled,
   onEditorStateChange,
   onTextTooLong,
+  ourConversationId,
   sendCounter,
   sortedGroupMembers,
   // EmojiButton
@@ -329,7 +331,7 @@ export const CompositionArea = memo(function CompositionArea({
   cancelJoinRequest,
   showConversation,
   // SMS-only contacts
-  isSMSOnly,
+  isSmsOnlyOrUnregistered,
   isFetchingUUID,
   renderSmartCompositionRecording,
   renderSmartCompositionRecordingDraft,
@@ -798,7 +800,7 @@ export const CompositionArea = memo(function CompositionArea({
     );
   }
 
-  if (conversationType === 'direct' && isSMSOnly) {
+  if (conversationType === 'direct' && isSmsOnlyOrUnregistered) {
     return (
       <div
         className={classNames([
@@ -947,6 +949,7 @@ export const CompositionArea = memo(function CompositionArea({
             }}
             onPickEmoji={onPickEmoji}
             onTextTooLong={onTextTooLong}
+            ourConversationId={ourConversationId}
             platform={platform}
             recentStickers={recentStickers}
             skinTone={skinTone}
@@ -1042,6 +1045,7 @@ export const CompositionArea = memo(function CompositionArea({
             onPickEmoji={onPickEmoji}
             onSubmit={handleSubmit}
             onTextTooLong={onTextTooLong}
+            ourConversationId={ourConversationId}
             platform={platform}
             quotedMessageId={quotedMessageId}
             sendCounter={sendCounter}

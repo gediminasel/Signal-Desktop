@@ -22,6 +22,8 @@ import {
   OUR_ACI,
 } from './helpers';
 import { loadAllAndReinitializeRedux } from '../../services/allLoaders';
+import { strictAssert } from '../../util/assert';
+import type { MessageAttributesType } from '../../model-types';
 
 const CONTACT_A = generateAci();
 const CONTACT_B = generateAci();
@@ -264,6 +266,7 @@ describe('backup/bubble messages', () => {
           seenStatus: SeenStatus.Unseen,
           unidentifiedDeliveryReceived: true,
           timestamp: 4,
+          body: '123',
           quote: {
             authorAci: CONTACT_A,
             attachments: [],
@@ -289,6 +292,7 @@ describe('backup/bubble messages', () => {
           seenStatus: SeenStatus.Unseen,
           unidentifiedDeliveryReceived: true,
           timestamp: 3,
+          body: '123',
           quote: {
             authorAci: CONTACT_A,
             attachments: [],
@@ -314,6 +318,7 @@ describe('backup/bubble messages', () => {
         seenStatus: SeenStatus.Unseen,
         unidentifiedDeliveryReceived: true,
         timestamp: 3,
+        body: '123',
         quote: {
           authorAci: CONTACT_A,
           attachments: [],
@@ -339,7 +344,46 @@ describe('backup/bubble messages', () => {
         ]
       );
     });
-    // TODO (DESKTOP-7899): Roundtrip view-once quotes
+
+    it('roundtrips view-once-quotes', async () => {
+      const message = {
+        conversationId: contactA.id,
+        id: generateGuid(),
+        type: 'incoming',
+        received_at: 3,
+        received_at_ms: 3,
+        sent_at: 3,
+        sourceServiceId: CONTACT_A,
+        readStatus: ReadStatus.Unread,
+        seenStatus: SeenStatus.Unseen,
+        unidentifiedDeliveryReceived: true,
+        timestamp: 3,
+        body: '123',
+        quote: {
+          authorAci: CONTACT_A,
+          attachments: [],
+          id: 42,
+          text: 'quote text',
+          isViewOnce: true,
+          isGiftBadge: false,
+          referencedMessageNotFound: true,
+        },
+      } as const;
+
+      await asymmetricRoundtripHarness(
+        [message],
+        [
+          {
+            ...message,
+            quote: {
+              ...message.quote,
+              // id is removed during roundtrip
+              id: null,
+            },
+          },
+        ]
+      );
+    });
   });
 
   it('roundtrips sealed/unsealed incoming message', async () => {
@@ -560,5 +604,156 @@ describe('backup/bubble messages', () => {
         expireTimer: DurationInSeconds.fromMillis(WEEK),
       },
     ]);
+  });
+  describe('lonely-in-group messages', async () => {
+    const GROUP_ID = Bytes.toBase64(getRandomBytes(32));
+    let group: ConversationModel | undefined;
+    let ourConversation: ConversationModel | undefined;
+
+    beforeEach(async () => {
+      group = await window.ConversationController.getOrCreateAndWait(
+        GROUP_ID,
+        'group',
+        {
+          groupVersion: 2,
+          masterKey: Bytes.toBase64(getRandomBytes(32)),
+          name: 'Rock Enthusiasts',
+          active_at: 1,
+        }
+      );
+      ourConversation = window.ConversationController.get(OUR_ACI);
+    });
+
+    it('roundtrips messages that have our id in sendStateByConversationId', async () => {
+      strictAssert(group, 'conversations exist');
+      strictAssert(ourConversation, 'conversations exist');
+      await symmetricRoundtripHarness([
+        {
+          conversationId: group.id,
+          id: generateGuid(),
+          type: 'outgoing',
+          received_at: 3,
+          received_at_ms: 3,
+          sent_at: 3,
+          timestamp: 3,
+          sourceServiceId: OUR_ACI,
+          body: 'd',
+          readStatus: ReadStatus.Read,
+          seenStatus: SeenStatus.Seen,
+          sendStateByConversationId: {
+            [ourConversation.id]: { status: SendStatus.Read, updatedAt: 3 },
+          },
+          expirationStartTimestamp: Date.now(),
+          expireTimer: DurationInSeconds.fromMillis(WEEK),
+        },
+      ]);
+    });
+    it(
+      'if a message did not have sendStateByConversationId (e.g. to mimic post-import from primary), ' +
+        'would add it with our conversationId when importing',
+      async () => {
+        strictAssert(group, 'conversations exist');
+        strictAssert(ourConversation, 'conversations exist');
+        const message: MessageAttributesType = {
+          conversationId: group.id,
+          id: generateGuid(),
+          type: 'outgoing',
+          received_at: 3,
+          received_at_ms: 3,
+          sent_at: 3,
+          timestamp: 3,
+          sourceServiceId: OUR_ACI,
+          body: 'd',
+          readStatus: ReadStatus.Read,
+          seenStatus: SeenStatus.Seen,
+          expirationStartTimestamp: Date.now(),
+          expireTimer: DurationInSeconds.fromMillis(WEEK),
+        };
+
+        await asymmetricRoundtripHarness(
+          [
+            {
+              ...message,
+              sendStateByConversationId: {},
+            },
+          ],
+          [
+            {
+              ...message,
+              sendStateByConversationId: {
+                [ourConversation.id]: { status: SendStatus.Read, updatedAt: 3 },
+              },
+            },
+          ]
+        );
+      }
+    );
+    it('filters out our conversation id from sendStateByConversationId in non-note-to-self convos', async () => {
+      strictAssert(group, 'conversations exist');
+      strictAssert(ourConversation, 'conversations exist');
+      const message: MessageAttributesType = {
+        conversationId: group.id,
+        id: generateGuid(),
+        type: 'outgoing',
+        received_at: 3,
+        received_at_ms: 3,
+        sent_at: 3,
+        timestamp: 3,
+        sourceServiceId: OUR_ACI,
+        body: 'd',
+        readStatus: ReadStatus.Read,
+        seenStatus: SeenStatus.Seen,
+        expirationStartTimestamp: Date.now(),
+        expireTimer: DurationInSeconds.fromMillis(WEEK),
+      };
+
+      await asymmetricRoundtripHarness(
+        [
+          {
+            ...message,
+            sendStateByConversationId: {
+              [ourConversation.id]: { status: SendStatus.Read, updatedAt: 3 },
+              [contactA.id]: { status: SendStatus.Delivered, updatedAt: 4 },
+            },
+          },
+        ],
+        [
+          {
+            ...message,
+            sendStateByConversationId: {
+              [contactA.id]: { status: SendStatus.Delivered, updatedAt: 4 },
+            },
+          },
+        ]
+      );
+    });
+    it('does not filter out our conversation id from sendStateByConversationId in Note-to-Self', async () => {
+      strictAssert(ourConversation, 'conversations exist');
+      const message: MessageAttributesType = {
+        conversationId: ourConversation.id,
+        id: generateGuid(),
+        type: 'outgoing',
+        received_at: 3,
+        received_at_ms: 3,
+        sent_at: 3,
+        timestamp: 3,
+        sourceServiceId: OUR_ACI,
+        body: 'd',
+        readStatus: ReadStatus.Read,
+        seenStatus: SeenStatus.Seen,
+        expirationStartTimestamp: Date.now(),
+        expireTimer: DurationInSeconds.fromMillis(WEEK),
+      };
+      ourConversation.set({ active_at: 3 });
+
+      await symmetricRoundtripHarness([
+        {
+          ...message,
+          sendStateByConversationId: {
+            [ourConversation.id]: { status: SendStatus.Read, updatedAt: 3 },
+          },
+        },
+      ]);
+    });
   });
 });

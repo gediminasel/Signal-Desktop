@@ -50,9 +50,6 @@
   "icu:privacyPolicy": {
     "messageformat": "Smluvní podmínky a zásady ochrany osobních údajů"
   },
-  "icu:appleSilicon": {
-    "messageformat": "Apple Silicon"
-  },
   "icu:About__AppEnvironment": {
     "messageformat": "{appEnv}"
   },
@@ -815,9 +812,6 @@
   "icu:voiceNoteError": {
     "messageformat": "V hlasovém záznamníku došlo k chybě."
   },
-  "icu:attachmentSaved": {
-    "messageformat": "Příloha uložena"
-  },
   "icu:attachmentSavedPlural": {
     "messageformat": "{count, plural, one {Příloha uložena} few {{count,number} přílohy uloženy} many {{count,number} příloh uloženo} other {{count,number} příloh uloženo}}"
   },
@@ -1025,18 +1019,6 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "Info"
   },
-  "icu:deleteMessagesInConversation": {
-    "messageformat": "Odstranit zprávy"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
-    "messageformat": "Odstranit zprávy?"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
-    "messageformat": "Všechny zprávy v tomto chatu budou z tohoto zařízení odstraněny. Po odstranění zpráv můžete tento chat nadále používat."
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
-    "messageformat": "Všechny zprávy v tomto chatu budou odstraněny ze všech vašich zařízení. Po odstranění zpráv můžete tento chat nadále používat."
-  },
   "icu:deleteConversation": {
     "messageformat": "Odstranit"
   },
@@ -1142,6 +1124,24 @@
   "icu:imageCaptionIconAlt": {
     "messageformat": "Ikona znázorňující, že tento obrázek má popisek"
   },
+  "icu:imageOpenAlt": {
+    "messageformat": "Otevřít tuto přílohu ve větším zobrazení"
+  },
+  "icu:startDownload": {
+    "messageformat": "Spustit stahování"
+  },
+  "icu:cancelDownload": {
+    "messageformat": "Zrušit stahování"
+  },
+  "icu:downloadNItems": {
+    "messageformat": "{count, plural, one {{count,number} položka} few {{count,number} položky} many {{count,number} položek} other {{count,number} položek}}"
+  },
+  "icu:mediaNoLongerAvailable": {
+    "messageformat": "This media is no longer available."
+  },
+  "icu:attachmentNoLongerAvailable__learnMore": {
+    "messageformat": "Learn more"
+  },
   "icu:save": {
     "messageformat": "Uložit"
   },
@@ -1183,6 +1183,9 @@
   },
   "icu:Install__qr-failed-load__retry": {
     "messageformat": "Zkusit znovu"
+  },
+  "icu:Install__qr-max-rotations__retry": {
+    "messageformat": "Refresh code"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Nápověda"
@@ -1581,7 +1584,7 @@
     "messageformat": "Odstranit všechna data a zprávy z této verze aplikace Signal Desktop? Tuto verzi aplikace Signal Desktop můžete kdykoli znovu propojit, ale zprávy se již neobnoví. Váš účet Signal a data v telefonu nebo jiných propojených zařízení se nesmažou."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Odpojuji a mažu všechna data"
+    "messageformat": "Disconnecting and deleting all data…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Máte zastaralá data z předchozí instalace aplikace Signal Desktop. Pokud se rozhodnete pokračovat, budou odstraněna a budete muset začít od začátku."
@@ -2741,6 +2744,9 @@
   "icu:incomingGroupCall__ringing-many": {
     "messageformat": "{remaining, plural, one {{ringer} volá vám, {first}, {second} a {remaining,number} dalšímu} few {{ringer} volá vám, {first}, {second} a {remaining,number} dalším} many {{ringer} volá vám, {first}, {second} a {remaining,number} dalším} other {{ringer} volá vám, {first}, {second} a {remaining,number} další}}"
   },
+  "icu:outgoingCallConnecting": {
+    "messageformat": "Připojování…"
+  },
   "icu:outgoingCallRinging": {
     "messageformat": "Vyzvání…"
   },
@@ -2785,6 +2791,12 @@
   },
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Mikrofon zapnutý"
+  },
+  "icu:CallControls__LowerHandSuggestionToast": {
+    "messageformat": "Dát ruku dolů?"
+  },
+  "icu:CallControls__LowerHandSuggestionToast--button": {
+    "messageformat": "Dát ruku dolů"
   },
   "icu:CallControls__RingingToast--ringing-on": {
     "messageformat": "Vyzvánění zapnuto"
@@ -3563,6 +3575,9 @@
   "icu:next": {
     "messageformat": "další"
   },
+  "icu:ClearingData__description": {
+    "messageformat": "This may take a few minutes depending on the size of your message history"
+  },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Podpořte Signal finančně"
   },
@@ -3594,10 +3609,10 @@
     "messageformat": "Příprava ke stažení…"
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "Může trvat několik minut v závislosti na velikosti vaší zálohy"
+    "messageformat": "To může trvat několik minut v závislosti na velikosti historie zpráv"
   },
   "icu:BackupImportScreen__cancel": {
-    "messageformat": "Zrušit přenos"
+    "messageformat": "Zrušit"
   },
   "icu:BackupImportScreen__security-description": {
     "messageformat": "Zprávy a informace o chatech jsou chráněny koncovým šifrováním, včetně procesu synchronizace. <learnMoreLink>Zjistit více</learnMoreLink>"
@@ -3606,7 +3621,7 @@
     "messageformat": "Zrušit přenos?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Obnova vašich zpráv a médií nebyla dokončena. Pokud jste se rozhodli přenos zrušit, můžete jej znovu spustit v Nastavení."
+    "messageformat": "Obnovení vašich zpráv a médií nebylo dokončeno. Pokud jste se jej rozhodli zrušit, bude vaše zařízení propojeno bez historie zpráv."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
     "messageformat": "Pokračovat v přenosu"
@@ -3619,6 +3634,9 @@
   },
   "icu:BackupImportScreen__error__body": {
     "messageformat": "Vaše zprávy se nepodařilo přenést. Zkontrolujte připojení k internetu a zkuste to znovu."
+  },
+  "icu:BackupImportScreen__error-fatal__body": {
+    "messageformat": "Vaše zprávy se kvůli chybě nepodařilo přenést. Zkuste to znovu po opětovném připojení této plochy."
   },
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "Zkusit znovu"
@@ -5776,16 +5794,10 @@
     "messageformat": "Drobná vylepšení, opravy chyb a zvýšení výkonu. Děkujeme, že používáte Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.34--0": {
-    "messageformat": "Nová ikona filtru vedle vyhledávacího pole usnadňuje rychlé vyhledání nepřečtených chatů."
+  "icu:WhatsNew__v7.38--0": {
+    "messageformat": "Opravili jsme chybu s @ zmínkami, která občas přidávala váš vlastní účet do seznamu automaticky dokončovaných návrhů."
   },
-  "icu:WhatsNew__v7.34--1": {
-    "messageformat": "Tato aktualizace zavádí podporu nových procesorů ve Windows, jako je Snapdragon X Elite."
-  },
-  "icu:WhatsNew__v7.34--2": {
-    "messageformat": "Také jsme opravili chybu, která způsobovala nefunkčnost tmavého motivu v aplikaci Signal, pokud byl operační systém v nastavení nakonfigurován na použití světlého motivu."
-  },
-  "icu:WhatsNew__v7.35--0": {
-    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
+  "icu:WhatsNew__v7.39--0": {
+    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
   }
 }

@@ -50,9 +50,6 @@
   "icu:privacyPolicy": {
     "messageformat": "Условия и политика за поверителност"
   },
-  "icu:appleSilicon": {
-    "messageformat": "Apple silicon"
-  },
   "icu:About__AppEnvironment": {
     "messageformat": "{appEnv}"
   },
@@ -815,9 +812,6 @@
   "icu:voiceNoteError": {
     "messageformat": "Възникна грешка с диктофона."
   },
-  "icu:attachmentSaved": {
-    "messageformat": "Прикаченият файл е запазен."
-  },
   "icu:attachmentSavedPlural": {
     "messageformat": "{count, plural, one {Прикаченият файл е запазен} other {{count,number} прикачени файла са запазени}}"
   },
@@ -1025,18 +1019,6 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "Информация"
   },
-  "icu:deleteMessagesInConversation": {
-    "messageformat": "Изтриване на съобщенията"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
-    "messageformat": "Изтриване на съобщенията?"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
-    "messageformat": "Всички съобщения в този чат ще бъдат изтрити от това устройство. Пак ще можете да търсите този чат, след като изтриете съобщенията."
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
-    "messageformat": "Всички съобщения в този чат ще бъдат изтрити от всички ваши устройства. Пак ще можете да търсите този чат, след като изтриете съобщенията."
-  },
   "icu:deleteConversation": {
     "messageformat": "Изтриване"
   },
@@ -1142,6 +1124,24 @@
   "icu:imageCaptionIconAlt": {
     "messageformat": "Иконка, показваща, че изображението има заглавие"
   },
+  "icu:imageOpenAlt": {
+    "messageformat": "Отворете този прикачен файл в по-голям изглед"
+  },
+  "icu:startDownload": {
+    "messageformat": "Започване на изтегляне"
+  },
+  "icu:cancelDownload": {
+    "messageformat": "Отмяна на изтеглянето"
+  },
+  "icu:downloadNItems": {
+    "messageformat": "{count, plural, one {{count,number} файл} other {{count,number} файла}}"
+  },
+  "icu:mediaNoLongerAvailable": {
+    "messageformat": "This media is no longer available."
+  },
+  "icu:attachmentNoLongerAvailable__learnMore": {
+    "messageformat": "Learn more"
+  },
   "icu:save": {
     "messageformat": "Запази"
   },
@@ -1183,6 +1183,9 @@
   },
   "icu:Install__qr-failed-load__retry": {
     "messageformat": "Опитайте отново"
+  },
+  "icu:Install__qr-max-rotations__retry": {
+    "messageformat": "Refresh code"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Поискайте помощ"
@@ -1581,7 +1584,7 @@
     "messageformat": "Изтриване на всички данни и съобщения от тази версия на Signal Desktop? Винаги можете да свържете този десктоп отново, но съобщенията ви няма да бъдат възстановени. Вашият акаунт в Signal и данните на телефона ви или други свързани устройства няма да бъдат изтрити."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Прекъсване и изтриване на всички данни"
+    "messageformat": "Disconnecting and deleting all data…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Имате стари данни от предишна инсталация на Signal Desktop. Ако продължите, тези данни ще бъдат изтрити и ще започнете на чисто."
@@ -2741,6 +2744,9 @@
   "icu:incomingGroupCall__ringing-many": {
     "messageformat": "{remaining, plural, one {{ringer} звъни на вас, на {first}, на {second} и на още {remaining,number}} other {{ringer} звъни на вас, на {first}, на {second} и на още {remaining,number}}}"
   },
+  "icu:outgoingCallConnecting": {
+    "messageformat": "Свързване…"
+  },
   "icu:outgoingCallRinging": {
     "messageformat": "Звънене…"
   },
@@ -2785,6 +2791,12 @@
   },
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Микрофонът е включен"
+  },
+  "icu:CallControls__LowerHandSuggestionToast": {
+    "messageformat": "Свалете ръка?"
+  },
+  "icu:CallControls__LowerHandSuggestionToast--button": {
+    "messageformat": "Сваляне"
   },
   "icu:CallControls__RingingToast--ringing-on": {
     "messageformat": "Звъненето е включено"
@@ -3563,6 +3575,9 @@
   "icu:next": {
     "messageformat": "следващ"
   },
+  "icu:ClearingData__description": {
+    "messageformat": "This may take a few minutes depending on the size of your message history"
+  },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Дари на Signal"
   },
@@ -3594,10 +3609,10 @@
     "messageformat": "Подготвяне за изтегляне…"
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "Това може да отнеме няколко минути в зависимост от размера на резервното копие"
+    "messageformat": "Това може да отнеме няколко минути в зависимост от размера на вашата история на съобщенията"
   },
   "icu:BackupImportScreen__cancel": {
-    "messageformat": "Отмяна на трансфера"
+    "messageformat": "Отказ"
   },
   "icu:BackupImportScreen__security-description": {
     "messageformat": "Съобщенията и информацията за чатовете са защитени чрез криптиране от край до край, включително процеса за синхронизиране. <learnMoreLink>Научете повече</learnMoreLink>"
@@ -3606,7 +3621,7 @@
     "messageformat": "Отмяна на трансфера?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Възстановяването на съобщенията и мултимедията ви не е приключило. Ако решите да отмените, можете да извършите прехвърлянето отново от „Настройки“."
+    "messageformat": "Възстановяването на съобщенията и мултимедията ви не е приключило. Ако решите да отмените, устройството ви ще бъде свързано без вашата история на съобщенията."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
     "messageformat": "Продължаване на трансфера"
@@ -3619,6 +3634,9 @@
   },
   "icu:BackupImportScreen__error__body": {
     "messageformat": "Съобщенията ви не можаха да бъдат прехвърлени. Проверете интернет връзката си и опитайте отново."
+  },
+  "icu:BackupImportScreen__error-fatal__body": {
+    "messageformat": "Съобщенията ви не можаха да бъдат прехвърлени поради грешка. Опитайте пак, като свържете този работен плот отново."
   },
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "Опитайте отново"
@@ -5776,16 +5794,10 @@
     "messageformat": "Дребни корекции, поправки на бъгове и подобрения на работата. Благодарим ви, че използвате Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.34--0": {
-    "messageformat": "Новата икона за филтриране до полето за търсене улеснява бързото намиране на непрочетени чатове."
+  "icu:WhatsNew__v7.38--0": {
+    "messageformat": "Отстранихме грешка със споменаванията чрез @, при която в списъка с автоматични предложения понякога неправилно беше включен собствения ви акаунт."
   },
-  "icu:WhatsNew__v7.34--1": {
-    "messageformat": "Тази актуализация въвежда поддръжка за новите процесори на Windows като Snapdragon X Elite."
-  },
-  "icu:WhatsNew__v7.34--2": {
-    "messageformat": "Поправихме и грешка, която нарушаваше тъмната тема в Signal, когато настройките на операционната ви система са конфигурирани да използват светла тема."
-  },
-  "icu:WhatsNew__v7.35--0": {
-    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
+  "icu:WhatsNew__v7.39--0": {
+    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
   }
 }

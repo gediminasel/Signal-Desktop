@@ -50,9 +50,6 @@
   "icu:privacyPolicy": {
     "messageformat": "شراٰئط اور پرائیویسی پالیسی"
   },
-  "icu:appleSilicon": {
-    "messageformat": "Apple سیلیکون"
-  },
   "icu:About__AppEnvironment": {
     "messageformat": "{appEnv}"
   },
@@ -815,9 +812,6 @@
   "icu:voiceNoteError": {
     "messageformat": "وائس ریکارڈر کے ساتھ کوئی نقص پیش آیا تھا۔"
   },
-  "icu:attachmentSaved": {
-    "messageformat": "منسلکہ محفوظ ہو گیا۔"
-  },
   "icu:attachmentSavedPlural": {
     "messageformat": "{count, plural, one {منسلکہ محفوظ ہو گیا} other {{count,number} منسلکات محفوظ ہو گئیں}}"
   },
@@ -1025,18 +1019,6 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "معلومات"
   },
-  "icu:deleteMessagesInConversation": {
-    "messageformat": "میسجز حذف کریں"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
-    "messageformat": "میسجز حذف کریں؟"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
-    "messageformat": "اس چیٹ میں موجود تمام میسجز اس ڈیوائس سے حذف کر دیے جائیں گے۔ آپ میسجز حذف کرنے کے بعد بھی اس چیٹ کو تلاش کر سکتے ہیں۔"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
-    "messageformat": "اس چیٹ میں موجود تمام میسجز کو آپ کی تمام ڈیوائسز سے حذف کر دیا جائے گا۔ آپ میسجز کو حذف کرنے کے بعد بھی اس چیٹ کو تلاش کر سکتے ہیں۔"
-  },
   "icu:deleteConversation": {
     "messageformat": "حذف کریں"
   },
@@ -1142,6 +1124,24 @@
   "icu:imageCaptionIconAlt": {
     "messageformat": "آئیکن ظاہر کررہی ہے کہ اس تصویر میں ایک عنوان ہے"
   },
+  "icu:imageOpenAlt": {
+    "messageformat": "اس اٹیچمنٹ کو بڑی تصویر میں دیکھیں"
+  },
+  "icu:startDownload": {
+    "messageformat": "ڈاؤن لوڈ شروع کریں"
+  },
+  "icu:cancelDownload": {
+    "messageformat": "ڈاؤن لوڈ منسوخ کریں"
+  },
+  "icu:downloadNItems": {
+    "messageformat": "{count, plural, one {{count,number}} other {{count,number} آئٹمز}}"
+  },
+  "icu:mediaNoLongerAvailable": {
+    "messageformat": "This media is no longer available."
+  },
+  "icu:attachmentNoLongerAvailable__learnMore": {
+    "messageformat": "Learn more"
+  },
   "icu:save": {
     "messageformat": "محفوظ کریں"
   },
@@ -1183,6 +1183,9 @@
   },
   "icu:Install__qr-failed-load__retry": {
     "messageformat": "دوبارہ کوشش کریں"
+  },
+  "icu:Install__qr-max-rotations__retry": {
+    "messageformat": "Refresh code"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "مدد حاصل کریں"
@@ -1581,7 +1584,7 @@
     "messageformat": "Signal ڈیسک ٹاپ کے اس ورژن سے تمام ڈیٹا اور میسجز کو حذف کریں؟ آپ کسی بھی وقت اس ڈیسک سے دوبارہ مربوط ہو سکتے ہیں، لیکن آپ کے میسجز بحال نہیں ہوں گے۔ آپ کا Signal اکاؤنٹ اور آپ کے فون یا دیگر مربوشط کردہ ڈیوائسز پر موجود ڈیٹا حذف نہیں کیا جائے گا۔"
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "منطقع ہو رہا ہے اور تمام ڈیٹا حذف ہو رہا ہے"
+    "messageformat": "Disconnecting and deleting all data…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "آپ کے پاس Signal Desktop کی پہلے والی تنصیب سے متروک ڈیٹا ہے۔ اگر آپ جاری رکھنے کا انتخاب کرتے ہیں تو ، اسے حذف کردیا جائے گا اور آپ شروع سے ہی شروع ہوجائیں گے۔"
@@ -2741,6 +2744,9 @@
   "icu:incomingGroupCall__ringing-many": {
     "messageformat": "{remaining, plural, one {{ringer} آپ کو، {first} کو، {second} کو، اور {remaining,number} دیگر کو کال کر رہا ہے} other {{ringer} آپ کو، {first} کو، {second} کو، اور {remaining,number} دیگر کو کال کر رہا ہے}}"
   },
+  "icu:outgoingCallConnecting": {
+    "messageformat": "منسلک ہو رہا ہے۔۔۔"
+  },
   "icu:outgoingCallRinging": {
     "messageformat": "گھنٹی بج رہی ہے"
   },
@@ -2785,6 +2791,12 @@
   },
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "مائیک آن"
+  },
+  "icu:CallControls__LowerHandSuggestionToast": {
+    "messageformat": "اپنا ہاتھ نیچے کریں؟"
+  },
+  "icu:CallControls__LowerHandSuggestionToast--button": {
+    "messageformat": "نیچے کریں"
   },
   "icu:CallControls__RingingToast--ringing-on": {
     "messageformat": "رنگنگ آن"
@@ -3563,6 +3575,9 @@
   "icu:next": {
     "messageformat": "اگلے"
   },
+  "icu:ClearingData__description": {
+    "messageformat": "This may take a few minutes depending on the size of your message history"
+  },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Signal کے لئے عطیہ کریں"
   },
@@ -3594,10 +3609,10 @@
     "messageformat": "ڈاؤن لوڈ کرنے کے لیے تیار کیا جا رہا ہے..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "اس پر چند منٹ لگ سکتے ہیں جس کا انحصار آپ کے کنکشن پر ہے"
+    "messageformat": "یہ آپ کی میسج ہسٹری کے سائز پر منحصر ہے اور اس میں چند منٹ لگ سکتے ہیں"
   },
   "icu:BackupImportScreen__cancel": {
-    "messageformat": "منتقل کرنے کو منسوخ کریں"
+    "messageformat": "منسوخ کریں"
   },
   "icu:BackupImportScreen__security-description": {
     "messageformat": "میسجز اور چیٹس کی معلومات اینڈ ٹو اینڈ انکرپشن کے ذریعے محفوظ شدہ ہیں، بشمول سنک کا عمل۔ <learnMoreLink>مزید جانیں</learnMoreLink>"
@@ -3606,7 +3621,7 @@
     "messageformat": "منتقل کرنے کو منسوخ کریں؟"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "آپ کے میسجز اور میڈیا کی بحالی مکمل نہیں ہوئی۔ اگر آپ منسوخ کرنے کا انتخاب کرتے ہیں، تو آپ سیٹنگز سے دوبارہ منتقل کر سکتے ہیں۔"
+    "messageformat": "آپ کے میسجز اور میڈیا کی بحالی مکمل نہیں ہوئی۔ اگر آپ منسوخ کرنے کو منتخب کرتے ہیں، تو آپ کی ڈیوائس کو میسج ہسٹری کے بغیر منسلک کر دیا جائے گا۔"
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
     "messageformat": "منتقل کرنا جاری رکھیں"
@@ -3619,6 +3634,9 @@
   },
   "icu:BackupImportScreen__error__body": {
     "messageformat": "آپ کے میسجز ٹرانسفر نہیں ہو سکے۔ اپنا انٹرنیٹ کنکشن چیک کریں اور دوبارہ کوشش کریں۔"
+  },
+  "icu:BackupImportScreen__error-fatal__body": {
+    "messageformat": "کسی خرابی کے باعث آپ کے میسجز ٹرانسفر نہیں ہو سکے۔ اس ڈیسک ٹاپ کو دوبارہ لنک کر کے دوبارہ کوشش کریں۔"
   },
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "دوبارہ کوشش کریں"
@@ -5776,16 +5794,10 @@
     "messageformat": "معمولی تبدیلیاں کی گئیں، بگ ٹھیک کیے گئے، اور کارکردگی اور بھی بہتر بنائی گئی ہے۔ Signal استعمال کرنے کے لیے شکریہ!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.34--0": {
-    "messageformat": "تلاش کے باکس کے ساتھ موجود نئے فلٹر آئیکن کی مدد سے غیر پڑھی ہوئی چیٹس کو جلدی سے تلاش کرنا آسان ہو جاتا ہے۔"
+  "icu:WhatsNew__v7.38--0": {
+    "messageformat": "ہم نے @ کے ساتھ ایک نقص کی درستگی کی ہے جو بعض اوقات آپ کے اپنے اکاؤنٹ کو خود کار طور پر تکمیل کی تجویز کی فہرست میں شامل کرتا تھا۔"
   },
-  "icu:WhatsNew__v7.34--1": {
-    "messageformat": "یہ اپ ڈیٹ Windows پر Snapdragon X Elite جیسے نئے پروسیسرز کے لیے سپورٹ کو متعارف کرواتی ہے۔"
-  },
-  "icu:WhatsNew__v7.34--2": {
-    "messageformat": "ہم نے ایک ایسے نقص کو بھی ٹھیک کیا جو آپ کے آپریٹنگ سسٹم کی سیٹنگز کو لائٹ تھیم پر سیٹ کرنے کے بعد Signal کی ڈارک تھیم کو خراب کر رہا تھا۔ Signal Desktop اب آپ کی تھیم پر مبنی سپلٹ شخصیت کو اچھی طرح ہینڈل کر سکتا ہے۔"
-  },
-  "icu:WhatsNew__v7.35--0": {
-    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
+  "icu:WhatsNew__v7.39--0": {
+    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
   }
 }

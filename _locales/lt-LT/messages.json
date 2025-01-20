@@ -50,9 +50,6 @@
   "icu:privacyPolicy": {
     "messageformat": "Sąlygos ir Privatumo politika"
   },
-  "icu:appleSilicon": {
-    "messageformat": "„Apple Silicon“"
-  },
   "icu:About__AppEnvironment": {
     "messageformat": "{appEnv}"
   },
@@ -815,9 +812,6 @@
   "icu:voiceNoteError": {
     "messageformat": "Įvyko klaida su balso rašytuvu."
   },
-  "icu:attachmentSaved": {
-    "messageformat": "Priedas įrašytas."
-  },
   "icu:attachmentSavedPlural": {
     "messageformat": "{count, plural, one {Priedas įrašytas} few {{count,number} priedai įrašyti} many {{count,number} priedo įrašyta} other {{count,number} priedų įrašyti}}"
   },
@@ -1025,18 +1019,6 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "Informacija"
   },
-  "icu:deleteMessagesInConversation": {
-    "messageformat": "Ištrinti žinutes"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
-    "messageformat": "Ištrinti žinutes?"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
-    "messageformat": "Visos šio pokalbio žinutės bus ištrintos iš šio įrenginio. Net kai ištrinsite žinutes, vis tiek galėsite ieškoti šio pokalbio."
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
-    "messageformat": "Visos šio pokalbio žinutės bus ištrintos iš visų jūsų įrenginių. Net kai ištrinsite žinutes, vis tiek galėsite ieškoti šio pokalbio."
-  },
   "icu:deleteConversation": {
     "messageformat": "Ištrinti"
   },
@@ -1142,6 +1124,24 @@
   "icu:imageCaptionIconAlt": {
     "messageformat": "Piktograma, rodanti, kad šis paveikslas turi paaiškinimą"
   },
+  "icu:imageOpenAlt": {
+    "messageformat": "Atidaryti šį priedą didesniu rodiniu"
+  },
+  "icu:startDownload": {
+    "messageformat": "Pradėti atsisiuntimą"
+  },
+  "icu:cancelDownload": {
+    "messageformat": "Atšaukti atsisiuntimą"
+  },
+  "icu:downloadNItems": {
+    "messageformat": "{count, plural, one {{count,number} elementas} few {{count,number} elementai} many {{count,number} elementų} other {{count,number} elementas}}"
+  },
+  "icu:mediaNoLongerAvailable": {
+    "messageformat": "This media is no longer available."
+  },
+  "icu:attachmentNoLongerAvailable__learnMore": {
+    "messageformat": "Learn more"
+  },
   "icu:save": {
     "messageformat": "Įrašyti"
   },
@@ -1183,6 +1183,9 @@
   },
   "icu:Install__qr-failed-load__retry": {
     "messageformat": "Bandyti dar kartą"
+  },
+  "icu:Install__qr-max-rotations__retry": {
+    "messageformat": "Refresh code"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Gauti pagalbos"
@@ -1581,7 +1584,7 @@
     "messageformat": "Ištrinti visus duomenis ir žinutes iš šios „Signal Desktop“ versijos? Šį stalinį įrenginį visada galite vėl susieti, tačiau žinutės atkurtos nebus. Jūsų „Signal“ paskyra ir duomenys telefone ar kituose susietuose įrenginiuose nebus ištrinti."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Atsijungiama ir ištrinami visi duomenys"
+    "messageformat": "Disconnecting and deleting all data…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Turi nebenaudojamų duomenų, likusių iš ankstesnio „Signal Desktop“ diegimo. Jei pasirinksi tęsti, jie bus ištrinti ir pradėsi viską nuo nulio."
@@ -2741,6 +2744,9 @@
   "icu:incomingGroupCall__ringing-many": {
     "messageformat": "{remaining, plural, one {{ringer} skambina jums ir naudotojams {first}, {second} bei dar {remaining,number} žmogui} few {{ringer} skambina jums ir naudotojams {first}, {second} bei dar {remaining,number} žmonėms} many {{ringer} skambina jums ir naudotojams {first}, {second} bei dar {remaining,number} žmonių} other {{ringer} skambina jums ir naudotojams {first}, {second} bei dar {remaining,number} žmogui}}"
   },
+  "icu:outgoingCallConnecting": {
+    "messageformat": "Jungiamasi…"
+  },
   "icu:outgoingCallRinging": {
     "messageformat": "Skambinama…"
   },
@@ -2785,6 +2791,12 @@
   },
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Mikrofonas įjungtas"
+  },
+  "icu:CallControls__LowerHandSuggestionToast": {
+    "messageformat": "Nuleisti ranką?"
+  },
+  "icu:CallControls__LowerHandSuggestionToast--button": {
+    "messageformat": "Nuleisti"
   },
   "icu:CallControls__RingingToast--ringing-on": {
     "messageformat": "Skambėjimas įjungtas"
@@ -3563,6 +3575,9 @@
   "icu:next": {
     "messageformat": "kitas"
   },
+  "icu:ClearingData__description": {
+    "messageformat": "This may take a few minutes depending on the size of your message history"
+  },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Paaukokite Signal programėlei"
   },
@@ -3594,10 +3609,10 @@
     "messageformat": "Ruošiamasi atsisiųsti..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "Tai gali užtrukti kelias minutes, priklausomai nuo atsarginės kopijos dydžio"
+    "messageformat": "Tai gali užtrukti kelias minutes, priklausomai nuo žinučių istorijos dydžio"
   },
   "icu:BackupImportScreen__cancel": {
-    "messageformat": "Atšaukti perkėlimą"
+    "messageformat": "Atšaukti"
   },
   "icu:BackupImportScreen__security-description": {
     "messageformat": "Žinutės ir pokalbių informacija yra visiškai užšifruoti, įskaitant ir sinchronizavimo procesą. <learnMoreLink>Sužinoti daugiau</learnMoreLink>"
@@ -3606,7 +3621,7 @@
     "messageformat": "Atšaukti perkėlimą?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Jūsų žinučių ir įrašų atkūrimas nebaigtas. Jei nuspręsite atšaukti, vėl galėsite perkelti iš nustatymų."
+    "messageformat": "Jūsų žinučių ir įrašų atkūrimas nebaigtas. Jei nuspręsite atšaukti, jūsų įrenginys bus susietas be žinučių istorijos."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
     "messageformat": "Tęsti perkėlimą"
@@ -3619,6 +3634,9 @@
   },
   "icu:BackupImportScreen__error__body": {
     "messageformat": "Nepavyko perkelti žinučių. Patikrinkite interneto ryšį ir bandykite dar kartą."
+  },
+  "icu:BackupImportScreen__error-fatal__body": {
+    "messageformat": "Nepavyko perkelti jūsų žinučių, nes įvyko klaida. Bandykite dar kartą iš naujo susiedami šį darbalaukį."
   },
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "Bandyti dar kartą"
@@ -5776,16 +5794,10 @@
     "messageformat": "Smulkūs patobulinimai, klaidų pataisymai ir veikimo pagerinimas. Ačiū, kad naudoji „Signal“!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.34--0": {
-    "messageformat": "Dėl naujos filtro piktogramos šalia paieškos laukelio lengvai ir greitai rasite neskaitytus pokalbius."
+  "icu:WhatsNew__v7.38--0": {
+    "messageformat": "Ištaisėme klaidą su @ paminėjimais, kurie kartais neteisingai įtraukdavo jūsų pačių paskyrą į automatinio užbaigimo pasiūlymų sąrašą."
   },
-  "icu:WhatsNew__v7.34--1": {
-    "messageformat": "Šiuo naujinimu pristatomas naujų „Windows“ procesorių, pvz., „Snapdragon X Elite“, palaikymas."
-  },
-  "icu:WhatsNew__v7.34--2": {
-    "messageformat": "Taip pat ištaisėme klaidą, nutraukusią „Signal“ tamsųjį apipavidalinimą, kai operacinės sistemos nustatymai buvo sukonfigūruoti naudoti šviesųjį apipavidalinimą."
-  },
-  "icu:WhatsNew__v7.35--0": {
-    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
+  "icu:WhatsNew__v7.39--0": {
+    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
   }
 }

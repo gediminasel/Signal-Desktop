@@ -50,9 +50,6 @@
   "icu:privacyPolicy": {
     "messageformat": "წესების & კონფიდენციალურობის პოლიტიკა"
   },
-  "icu:appleSilicon": {
-    "messageformat": "Apple silicon-ი"
-  },
   "icu:About__AppEnvironment": {
     "messageformat": "{appEnv}"
   },
@@ -815,9 +812,6 @@
   "icu:voiceNoteError": {
     "messageformat": "ხმის ჩამწერს ხარვეზი ჰქონდა."
   },
-  "icu:attachmentSaved": {
-    "messageformat": "დანართი შენახულია."
-  },
   "icu:attachmentSavedPlural": {
     "messageformat": "{count, plural, one {მიმაგრებული ფაილი შენახულია} other {შენახულია {count,number} მიმაგრებული ფაილი}}"
   },
@@ -1025,18 +1019,6 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "ინფორმაცია"
   },
-  "icu:deleteMessagesInConversation": {
-    "messageformat": "შეტყობინებების წაშლა"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
-    "messageformat": "წავშალოთ შეტყობინებები?"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
-    "messageformat": "ამ ჩატში არსებული მიმოწერა ამ მოწყობილობიდან წაიშლება. შეტყობინებების წაშლის შემდეგ ამ ჩატის მოძებნას მაინც შეძლებ."
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
-    "messageformat": "ამ ჩატის ყველა შეტყობინება შენი ყველა მოწყობილობიდან წაიშლება. შეტყობინებების წაშლის შემდეგ ამ ჩატის მოძებნას მაინც შეძლებ."
-  },
   "icu:deleteConversation": {
     "messageformat": "წაშლა"
   },
@@ -1142,6 +1124,24 @@
   "icu:imageCaptionIconAlt": {
     "messageformat": "ხატულა, რომელიც აჩვენებს, რომ ამ სურათს აქვს წარწერა"
   },
+  "icu:imageOpenAlt": {
+    "messageformat": "გახსენი ეს დანართი უფრო დიდად"
+  },
+  "icu:startDownload": {
+    "messageformat": "გადმოწერის დაწყება"
+  },
+  "icu:cancelDownload": {
+    "messageformat": "გადმოწერის გაუქმება"
+  },
+  "icu:downloadNItems": {
+    "messageformat": "{count, plural, one {{count,number} ელემენტი} other {{count,number} ელემენტი}}"
+  },
+  "icu:mediaNoLongerAvailable": {
+    "messageformat": "This media is no longer available."
+  },
+  "icu:attachmentNoLongerAvailable__learnMore": {
+    "messageformat": "Learn more"
+  },
   "icu:save": {
     "messageformat": "შენახვა"
   },
@@ -1183,6 +1183,9 @@
   },
   "icu:Install__qr-failed-load__retry": {
     "messageformat": "თავიდან ცდა"
+  },
+  "icu:Install__qr-max-rotations__retry": {
+    "messageformat": "Refresh code"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "დახმარების მიღება"
@@ -1581,7 +1584,7 @@
     "messageformat": "გსურს, Signal Desktop-ის ამ ვერსიიდან ყველა მონაცემი და მიმოწერა წაშალო? ამ კომპიუტერის თავიდან მიბმას ყოველთვის შეძლებ, მაგრამ შენი მიმოწერები არ აღდგება. შენი Signal-ის პროფილი და მონაცემები შენს ტელეფონზე ან სხვა დაკავშირებულ მოწყობილობებზე არ წაიშლება."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "გათიშვა და ყველა მონაცემის წაშლა"
+    "messageformat": "Disconnecting and deleting all data…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "შენ გაქვს მოძველებული მონაცემები Signal Desktop-ის წინა ინსტალაციისდან. თუ გაგრძელებას აირჩევ, ის წაიშლება და ნულიდან დაიწყებ."
@@ -2741,6 +2744,9 @@
   "icu:incomingGroupCall__ringing-many": {
     "messageformat": "{remaining, plural, one {{ringer} შენ, {first}-ს, {second}-სა და {remaining,number} სხვას გირეკავთ} other {{ringer} შენ, {first}-ს, {second}-ს და {remaining,number} სხვას გირეკავთ}}"
   },
+  "icu:outgoingCallConnecting": {
+    "messageformat": "მიმდინარეობს დაკავშირება..."
+  },
   "icu:outgoingCallRinging": {
     "messageformat": "ირეკება…"
   },
@@ -2785,6 +2791,12 @@
   },
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "მიკროფონი ჩართულია"
+  },
+  "icu:CallControls__LowerHandSuggestionToast": {
+    "messageformat": "გსურს, ხელი ჩამოწიო?"
+  },
+  "icu:CallControls__LowerHandSuggestionToast--button": {
+    "messageformat": "ჩაწევა"
   },
   "icu:CallControls__RingingToast--ringing-on": {
     "messageformat": "ზარის ხმა ჩართულია"
@@ -3563,6 +3575,9 @@
   "icu:next": {
     "messageformat": "მომდევნო"
   },
+  "icu:ClearingData__description": {
+    "messageformat": "This may take a few minutes depending on the size of your message history"
+  },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Signal-ისთვის დონაციის გაკეთება"
   },
@@ -3594,10 +3609,10 @@
     "messageformat": "მზადება ჩამოსატვირთად..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "ამას შეიძლება რამდენიმე წუთი დასჭირდეს იმის მიხედვით, თუ რა ზომაა შენი სათადარიგო ასლი"
+    "messageformat": "შეიძლება, ამას შენი მიმოწერის ისტორიის ზომიდან გამომდინარე რამდენიმე წუთი დასჭირდეს"
   },
   "icu:BackupImportScreen__cancel": {
-    "messageformat": "გადატანის გაუქმება"
+    "messageformat": "გაუქმება"
   },
   "icu:BackupImportScreen__security-description": {
     "messageformat": "შეტყობინებები და ჩატის ინფორმაცია, სინქრონიზაციის პროცესის ჩათვლით, ბოლომდეა დაშიფრული. <learnMoreLink>გაიგე მეტი</learnMoreLink>"
@@ -3606,7 +3621,7 @@
     "messageformat": "გსურს გადატანის გაუქმება?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "შენი შეტყობინებების და მედია ფაილების აღდგენა არ დასრულებულა. თუ გაუქმებას გადაწყვეტ, პარამეტრებიდან გადატანას ისევ შეძლებ."
+    "messageformat": "შენი შეტყობინებების და მედია ფაილების აღდგენა არ დასრულებულა. თუ გაუქმებას აირჩევ, მოწყობილობა შენი მიმოწერის ისტორიის გარეშე მიებმება."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
     "messageformat": "გადატანის გაგრძელება"
@@ -3619,6 +3634,9 @@
   },
   "icu:BackupImportScreen__error__body": {
     "messageformat": "შენი შეტყობინებების გადატანა ვერ მოხერხდა. შეამოწმე შენი ინტერნეტ კავშირი და თავიდან სცადე."
+  },
+  "icu:BackupImportScreen__error-fatal__body": {
+    "messageformat": "შენი შეტყობინებების გადატანა ხარვეზის გამო ვერ მოხერხდა. თავიდან სცადე ამ დესკტოპის ხელახლა მიბმით."
   },
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "თავიდან ცდა"
@@ -5776,16 +5794,10 @@
     "messageformat": "მცირე შესწორებები, ბაგების გამოსწორება და წარმადობის გაუმჯობესება. მადლობას გიხდით სიგნალის გამოყენებისთვის!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.34--0": {
-    "messageformat": "საძიებო ველის გვერდით ახალი ფილტრის ნიშანი წაუკითხავი ჩატების სწრაფად პოვნას აადვილებს. ნახე რას გწერენ და შემდეგ გადაწვიტე უპასუხოდ დატოვებ თუ არა."
+  "icu:WhatsNew__v7.38--0": {
+    "messageformat": "ჩვენ გამოვასწორეთ @ მონიშვნების შეცდომა, რომელიც ზოგჯერ შენს ანგარიშს ავტომატური შევსების შეთავაზებების სიაში არასწორად ათავსებდა. თუ ეს ბაგი მოგენატრება, მაინც შეძლებ, ჯგუფის ჩატებში შენს თავზე მესამე პირში ილაპარაკო."
   },
-  "icu:WhatsNew__v7.34--1": {
-    "messageformat": "ახალი ვერსია Windows-ზე ისეთი ახალი პროცესორების მხარდაჭერას გთავაზობს, როგორიცაა Snapdragon X Elite."
-  },
-  "icu:WhatsNew__v7.34--2": {
-    "messageformat": "ჩვენ ასევე გამოვასწორეთ ბაგი, რომელიც Signal-ზე მუქი აპის ფონს არღვევდა, როცა შენი ოპერაციული სისტემის პარამეტრები ღია აპის ფონზე იყო დაყენებული. ახლა Signal Desktop უკეთ გაუმკლავდება შენს თემატურად გაორებულ პიროვნებას."
-  },
-  "icu:WhatsNew__v7.35--0": {
-    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
+  "icu:WhatsNew__v7.39--0": {
+    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
   }
 }

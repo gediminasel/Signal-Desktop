@@ -44,7 +44,6 @@ import type {
 } from '../types/GroupSendEndorsements';
 import type { SyncTaskType } from '../util/syncTasks';
 import type { AttachmentBackupJobType } from '../types/AttachmentBackup';
-import type { SingleProtoJobQueue } from '../jobs/singleProtoJobQueue';
 
 export type ReadableDB = Database & { __readable_db: never };
 export type WritableDB = ReadableDB & { __writable_db: never };
@@ -753,23 +752,6 @@ type WritableInterface = {
   replaceAllEndorsementsForGroup: (data: GroupSendEndorsementsData) => void;
   deleteAllEndorsementsForGroup: (groupId: string) => void;
 
-  saveMessage: (
-    data: ReadonlyDeep<MessageType>,
-    options: {
-      jobToInsert?: StoredJob;
-      forceSave?: boolean;
-      ourAci: AciString;
-    }
-  ) => string;
-  saveMessages: (
-    arrayOfMessages: ReadonlyArray<ReadonlyDeep<MessageType>>,
-    options: { forceSave?: boolean; ourAci: AciString }
-  ) => Array<string>;
-  saveMessagesIndividually: (
-    arrayOfMessages: ReadonlyArray<ReadonlyDeep<MessageType>>,
-    options: { forceSave?: boolean; ourAci: AciString }
-  ) => { failedIndices: Array<number> };
-
   getUnreadByConversationAndMarkRead: (options: {
     conversationId: string;
     includeStoryReplies: boolean;
@@ -849,7 +831,10 @@ type WritableInterface = {
 
   removeSyncTaskById: (id: string) => void;
   saveSyncTasks: (tasks: Array<SyncTaskType>) => void;
-  getAllSyncTasks: () => Array<SyncTaskType>;
+  dequeueOldestSyncTasks: (previousRowId: number | null) => {
+    tasks: Array<SyncTaskType>;
+    lastRowId: number | null;
+  };
 
   getAllUnprocessedIds: () => Array<string>;
   getUnprocessedByIdsAndIncrementAttempts: (
@@ -874,6 +859,7 @@ type WritableInterface = {
   saveAttachmentDownloadJobs: (jobs: Array<AttachmentDownloadJobType>) => void;
   resetAttachmentDownloadActive: () => void;
   removeAttachmentDownloadJob: (job: AttachmentDownloadJobType) => void;
+  removeAttachmentDownloadJobsForMessage: (messageId: string) => void;
   removeAllBackupAttachmentDownloadJobs: () => void;
 
   getNextAttachmentBackupJobs: (options: {
@@ -955,6 +941,10 @@ type WritableInterface = {
 
   insertJob(job: Readonly<StoredJob>): void;
   deleteJob(id: string): void;
+
+  disableMessageInsertTriggers(): void;
+  enableMessageInsertTriggersAndBackfill(): void;
+  ensureMessageInsertTriggersAreEnabled(): void;
 
   processGroupCallRingCancellation(ringId: bigint): void;
   cleanExpiredGroupCallRingCancellations(): void;
@@ -1043,6 +1033,22 @@ export type ServerWritableDirectInterface = WritableInterface & {
   updateConversation: (data: ConversationType) => void;
   removeConversation: (id: Array<string> | string) => void;
 
+  saveMessage: (
+    data: ReadonlyDeep<MessageType>,
+    options: {
+      jobToInsert?: StoredJob;
+      forceSave?: boolean;
+      ourAci: AciString;
+    }
+  ) => string;
+  saveMessages: (
+    arrayOfMessages: ReadonlyArray<ReadonlyDeep<MessageType>>,
+    options: { forceSave?: boolean; ourAci: AciString }
+  ) => Array<string>;
+  saveMessagesIndividually: (
+    arrayOfMessages: ReadonlyArray<ReadonlyDeep<MessageType>>,
+    options: { forceSave?: boolean; ourAci: AciString }
+  ) => { failedIndices: Array<number> };
   removeMessage: (id: string) => void;
   removeMessages: (ids: ReadonlyArray<string>) => void;
 
@@ -1130,18 +1136,49 @@ export type ClientOnlyWritableInterface = ClientInterfaceWrap<{
   removeConversation: (id: string) => void;
   flushUpdateConversationBatcher: () => void;
 
+  saveMessage: (
+    data: ReadonlyDeep<MessageType>,
+    options: {
+      jobToInsert?: StoredJob;
+      forceSave?: boolean;
+      ourAci: AciString;
+      postSaveUpdates: () => Promise<void>;
+    }
+  ) => string;
+  saveMessages: (
+    arrayOfMessages: ReadonlyArray<ReadonlyDeep<MessageType>>,
+    options: {
+      forceSave?: boolean;
+      ourAci: AciString;
+      postSaveUpdates: () => Promise<void>;
+    }
+  ) => Array<string>;
+  saveMessagesIndividually: (
+    arrayOfMessages: ReadonlyArray<ReadonlyDeep<MessageType>>,
+    options: {
+      forceSave?: boolean;
+      ourAci: AciString;
+      postSaveUpdates: () => Promise<void>;
+    }
+  ) => { failedIndices: Array<number> };
   removeMessage: (
     id: string,
     options: {
       fromSync?: boolean;
-      singleProtoJobQueue: SingleProtoJobQueue;
+      cleanupMessages: (
+        messages: ReadonlyArray<MessageAttributesType>,
+        options: { fromSync?: boolean | undefined }
+      ) => Promise<void>;
     }
   ) => void;
   removeMessages: (
     ids: ReadonlyArray<string>,
     options: {
       fromSync?: boolean;
-      singleProtoJobQueue: SingleProtoJobQueue;
+      cleanupMessages: (
+        messages: ReadonlyArray<MessageAttributesType>,
+        options: { fromSync?: boolean | undefined }
+      ) => Promise<void>;
     }
   ) => void;
 
@@ -1166,10 +1203,13 @@ export type ClientOnlyWritableInterface = ClientInterfaceWrap<{
   removeMessagesInConversation: (
     conversationId: string,
     options: {
+      cleanupMessages: (
+        messages: ReadonlyArray<MessageAttributesType>,
+        options: { fromSync?: boolean | undefined }
+      ) => Promise<void>;
       fromSync?: boolean;
       logId: string;
       receivedAt?: number;
-      singleProtoJobQueue: SingleProtoJobQueue;
     }
   ) => void;
   removeOtherData: () => void;

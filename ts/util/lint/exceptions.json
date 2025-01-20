@@ -470,16 +470,16 @@
   },
   {
     "rule": "DOM-innerHTML",
-    "path": "node_modules/intl-tel-input/build/js/intlTelInput.min.js",
-    "reasonCategory": "usageTrusted",
-    "updated": "2021-12-01T01:31:12.757Z"
-  },
-  {
-    "rule": "DOM-innerHTML",
     "path": "node_modules/intl-tel-input/build/js/intlTelInput.js",
     "line": "      this.countryList.innerHTML = \"\";",
     "reasonCategory": "usageTrusted",
     "updated": "2024-11-16T00:33:41.092Z"
+  },
+  {
+    "rule": "DOM-innerHTML",
+    "path": "node_modules/intl-tel-input/build/js/intlTelInput.min.js",
+    "reasonCategory": "usageTrusted",
+    "updated": "2021-12-01T01:31:12.757Z"
   },
   {
     "rule": "DOM-innerHTML",
@@ -554,13 +554,6 @@
     "rule": "React-useRef",
     "path": "node_modules/intl-tel-input/react/build/IntlTelInputWithUtils.js",
     "line": "  const itiRef = useRef(null);",
-    "reasonCategory": "usageTrusted",
-    "updated": "2024-11-16T00:33:41.092Z"
-  },
-  {
-    "rule": "React-useRef",
-    "path": "ts/components/StandaloneRegistration.tsx",
-    "line": "  const pluginRef = useRef<Iti | undefined>();",
     "reasonCategory": "usageTrusted",
     "updated": "2024-11-16T00:33:41.092Z"
   },
@@ -2209,6 +2202,14 @@
   },
   {
     "rule": "React-useRef",
+    "path": "ts/components/Lightbox.tsx",
+    "line": "  const downloadToastTimeout = useRef<NodeJS.Timeout | number | undefined>();",
+    "reasonCategory": "usageTrusted",
+    "updated": "2025-01-06T03:53:58.093Z",
+    "reasonDetail": "usageTrusted"
+  },
+  {
+    "rule": "React-useRef",
     "path": "ts/components/ListView.tsx",
     "line": "  const listRef = useRef<null | List>(null);",
     "reasonCategory": "usageTrusted",
@@ -2321,6 +2322,13 @@
     "line": "  const elemRef = useRef<HTMLInputElement | null>(null);",
     "reasonCategory": "usageTrusted",
     "updated": "2021-11-30T10:15:33.662Z"
+  },
+  {
+    "rule": "React-useRef",
+    "path": "ts/components/StandaloneRegistration.tsx",
+    "line": "  const pluginRef = useRef<Iti | undefined>();",
+    "reasonCategory": "usageTrusted",
+    "updated": "2024-11-16T00:33:41.092Z"
   },
   {
     "rule": "React-useRef",
@@ -2482,7 +2490,7 @@
   {
     "rule": "React-createRef",
     "path": "ts/components/conversation/Message.tsx",
-    "line": "  private metadataRef: React.RefObject<HTMLDivElement> = React.createRef();",
+    "line": "  #metadataRef: React.RefObject<HTMLDivElement> = React.createRef();",
     "reasonCategory": "usageTrusted",
     "updated": "2023-06-30T22:12:49.259Z",
     "reasonDetail": "Used for excluding the message metadata from triple-click selections."
@@ -2810,5 +2818,48 @@
     "line": "  message.innerHTML = window.i18n('icu:optimizingApplication');",
     "reasonCategory": "usageTrusted",
     "updated": "2021-09-17T21:02:59.414Z"
+  },
+  {
+    "rule": "thenify-multiArgs",
+    "path": "node_modules/p-event/index.js",
+    "line": "\t\t\tmultiArgs: false,",
+    "reasonCategory": "falseMatch",
+    "updated": "2024-12-20T19:43:51.589Z"
+  },
+  {
+    "rule": "thenify-multiArgs",
+    "path": "node_modules/p-event/index.js",
+    "line": "\t\t\tconst value = options.multiArgs ? args : args[0];",
+    "reasonCategory": "falseMatch|testCode|exampleCode|otherUtilityCode|regexMatchedSafeCode|notExercisedByOurApp|ruleNeeded|usageTrusted",
+    "updated": "2024-12-20T19:43:51.589Z",
+    "reasonDetail": "<optional>"
+  },
+  {
+    "rule": "thenify-multiArgs",
+    "path": "node_modules/p-event/index.js",
+    "line": "\t\tmultiArgs: false,",
+    "reasonCategory": "falseMatch",
+    "updated": "2024-12-20T19:43:51.589Z"
+  },
+  {
+    "rule": "thenify-multiArgs",
+    "path": "node_modules/p-event/index.js",
+    "line": "\t\tconst value = options.multiArgs ? args : args[0];",
+    "reasonCategory": "otherUtilityCode",
+    "updated": "2024-12-20T19:43:51.589Z"
+  },
+  {
+    "rule": "thenify-multiArgs",
+    "path": "node_modules/p-event/index.js",
+    "line": "\t\terror = options.multiArgs ? args : args[0];",
+    "reasonCategory": "otherUtilityCode",
+    "updated": "2024-12-20T19:46:49.191Z"
+  },
+  {
+    "rule": "thenify-multiArgs",
+    "path": "node_modules/p-event/index.js",
+    "line": "\t\tconst value = options.multiArgs ? args : args[0];",
+    "reasonCategory": "otherUtilityCode",
+    "updated": "2024-12-20T19:46:49.191Z"
   }
 ]

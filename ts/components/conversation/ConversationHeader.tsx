@@ -100,7 +100,7 @@ export type PropsDataType = {
   isMissingMandatoryProfileSharing?: boolean;
   isSelectMode: boolean;
   isSignalConversation?: boolean;
-  isSMSOnly?: boolean;
+  isSmsOnlyOrUnregistered?: boolean;
   outgoingCallButtonStyle: OutgoingCallButtonStyle;
   sharedGroupNames: ReadonlyArray<string>;
   theme: ThemeType;
@@ -160,7 +160,7 @@ export const ConversationHeader = memo(function ConversationHeader({
   isMissingMandatoryProfileSharing,
   isSelectMode,
   isSignalConversation,
-  isSMSOnly,
+  isSmsOnlyOrUnregistered,
   localDeleteWarningShown,
   onConversationJumpToDate,
   onConversationAccept,
@@ -297,7 +297,7 @@ export const ConversationHeader = memo(function ConversationHeader({
               onViewUserStories={onViewUserStories}
               onViewConversationDetails={onViewConversationDetails}
             />
-            {!isSMSOnly && !isSignalConversation && (
+            {!isSmsOnlyOrUnregistered && !isSignalConversation && (
               <OutgoingCallButtons
                 conversation={conversation}
                 hasActiveCall={hasActiveCall}
@@ -637,6 +637,19 @@ function HeaderMenu({
             </MenuItem>
           )}
         </SubMenu>
+        {conversation.isArchived ? (
+          <MenuItem onClick={onConversationUnarchive}>
+            {i18n('icu:moveConversationToInbox')}
+          </MenuItem>
+        ) : (
+          <MenuItem onClick={onConversationArchive}>
+            {i18n('icu:archiveConversation')}
+          </MenuItem>
+        )}
+
+        <MenuItem onClick={onConversationDeleteMessages}>
+          {i18n('icu:deleteConversation')}
+        </MenuItem>
       </ContextMenu>
     );
   }

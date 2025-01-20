@@ -44,6 +44,12 @@ if [ "${BUILD_TYPE}" = "public" ]; then
 elif [ "${BUILD_TYPE}" = "alpha" ]; then
   npm run prepare-alpha-version
   npm run prepare-alpha-build
+elif [ "${BUILD_TYPE}" = "axolotl" ]; then
+  npm run prepare-axolotl-version
+  npm run prepare-axolotl-build
+elif [ "${BUILD_TYPE}" = "adhoc" ]; then
+  npm run prepare-adhoc-version
+  npm run prepare-adhoc-build
 elif [ "${BUILD_TYPE}" = "staging" ]; then
   npm run prepare-alpha-version
   npm run prepare-staging-build

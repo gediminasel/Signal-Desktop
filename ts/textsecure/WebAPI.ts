@@ -657,6 +657,8 @@ const URL_CALLS = {
   callLinkCreateAuth: 'v1/call-link/create-auth',
   registration: 'v1/registration',
   registerCapabilities: 'v1/devices/capabilities',
+  releaseNotesManifest: 'dynamic/release-notes/release-notes-v2.json',
+  releaseNotes: 'static/release-notes',
   reportMessage: 'v1/messages/report',
   setBackupId: 'v1/archives/backupid',
   setBackupSignatureKey: 'v1/archives/keys',
@@ -752,7 +754,6 @@ export type WebAPIConnectType = {
 // ts/types/Storage.d.ts
 export type CapabilitiesType = {
   deleteSync: boolean;
-  versionedExpirationTimer: boolean;
   ssre2: boolean;
 };
 export type CapabilitiesUploadType = {
@@ -861,6 +862,19 @@ export type GetAccountForUsernameResultType = z.infer<
   typeof getAccountForUsernameResultZod
 >;
 
+const getDevicesResultZod = z.object({
+  devices: z.array(
+    z.object({
+      id: z.number(),
+      name: z.string().nullish(), // primary devices may not have a name
+      lastSeen: z.number().nullish(),
+      created: z.number().nullish(),
+    })
+  ),
+});
+
+export type GetDevicesResultType = z.infer<typeof getDevicesResultZod>;
+
 export type GetIceServersResultType = Readonly<{
   relays?: ReadonlyArray<IceServerGroupType>;
 }>;
@@ -872,15 +886,6 @@ export type IceServerGroupType = Readonly<{
   urlsWithIps?: ReadonlyArray<string>;
   hostname?: string;
 }>;
-
-export type GetDevicesResultType = ReadonlyArray<
-  Readonly<{
-    id: number;
-    name: string;
-    lastSeen: number;
-    created: number;
-  }>
->;
 
 export type GetSenderCertificateResultType = Readonly<{ certificate: string }>;
 
@@ -1209,6 +1214,57 @@ export type GetBackupInfoResponseType = z.infer<
   typeof getBackupInfoResponseSchema
 >;
 
+export type GetReleaseNoteOptionsType = Readonly<{
+  uuid: string;
+  locale: string;
+}>;
+
+export const releaseNoteSchema = z.object({
+  uuid: z.string(),
+  title: z.string(),
+  body: z.string(),
+  linkText: z.string().optional(),
+  callToActionText: z.string().optional(),
+  includeBoostMessage: z.boolean().optional().default(true),
+  bodyRanges: z
+    .array(
+      z.object({
+        style: z.string(),
+        start: z.number(),
+        length: z.number(),
+      })
+    )
+    .optional(),
+  media: z.string().optional(),
+  mediaHeight: z.coerce
+    .number()
+    .optional()
+    .transform(x => x || undefined),
+  mediaWidth: z.coerce
+    .number()
+    .optional()
+    .transform(x => x || undefined),
+  mediaContentType: z.string().optional(),
+});
+
+export type ReleaseNoteResponseType = z.infer<typeof releaseNoteSchema>;
+
+export const releaseNotesManifestSchema = z.object({
+  announcements: z
+    .object({
+      uuid: z.string(),
+      countries: z.string().optional(),
+      desktopMinVersion: z.string().optional(),
+      link: z.string().optional(),
+      ctaId: z.string().optional(),
+    })
+    .array(),
+});
+
+export type ReleaseNotesManifestResponseType = z.infer<
+  typeof releaseNotesManifestSchema
+>;
+
 export type CallLinkCreateAuthResponseType = Readonly<{
   credential: string;
 }>;
@@ -1234,10 +1290,18 @@ const StickerPackUploadFormSchema = z.object({
   stickers: z.array(StickerPackUploadAttributesSchema),
 });
 
-const TransferArchiveSchema = z.object({
-  cdn: z.number(),
-  key: z.string(),
-});
+const TransferArchiveSchema = z.union([
+  z.object({
+    cdn: z.number(),
+    key: z.string(),
+  }),
+  z.object({
+    error: z.union([
+      z.literal('RELINK_REQUESTED'),
+      z.literal('CONTINUE_WITHOUT_UPLOAD'),
+    ]),
+  }),
+]);
 
 export type TransferArchiveType = z.infer<typeof TransferArchiveSchema>;
 
@@ -1273,6 +1337,7 @@ export type WebAPIType = {
       disableRetries?: boolean;
       timeout?: number;
       downloadOffset?: number;
+      abortSignal: AbortSignal;
     };
   }) => Promise<Readable>;
   getAttachment: (args: {
@@ -1282,6 +1347,7 @@ export type WebAPIType = {
       disableRetries?: boolean;
       timeout?: number;
       downloadOffset?: number;
+      abortSignal?: AbortSignal;
     };
   }) => Promise<Readable>;
   getAttachmentUploadForm: () => Promise<AttachmentUploadFormResponseType>;
@@ -1325,6 +1391,7 @@ export type WebAPIType = {
   getAccountForUsername: (
     options: GetAccountForUsernameOptionsType
   ) => Promise<GetAccountForUsernameResultType>;
+  getDevices: () => Promise<GetDevicesResultType>;
   getProfileUnauth: (
     serviceId: ServiceIdString,
     options: ProfileFetchUnauthRequestOptions
@@ -1334,11 +1401,20 @@ export type WebAPIType = {
     userLanguages: ReadonlyArray<string>
   ) => Promise<unknown>;
   getProvisioningResource: (
-    handler: IRequestHandler
+    handler: IRequestHandler,
+    timeout?: number
   ) => Promise<IWebSocketResource>;
   getSenderCertificate: (
     withUuid?: boolean
   ) => Promise<GetSenderCertificateResultType>;
+  getReleaseNote: (
+    options: GetReleaseNoteOptionsType
+  ) => Promise<ReleaseNoteResponseType>;
+  getReleaseNoteHash: (
+    options: GetReleaseNoteOptionsType
+  ) => Promise<string | undefined>;
+  getReleaseNotesManifest: () => Promise<ReleaseNotesManifestResponseType>;
+  getReleaseNotesManifestHash: () => Promise<string | undefined>;
   getSticker: (packId: string, stickerId: number) => Promise<Uint8Array>;
   getStickerPackManifest: (packId: string) => Promise<StickerPackManifestType>;
   getStorageCredentials: MessageSender['getStorageCredentials'];
@@ -1791,6 +1867,7 @@ export function initialize({
       getBackupUploadForm,
       getBadgeImageFile,
       getConfig,
+      getDevices,
       getGroup,
       getGroupAvatar,
       getGroupCredentials,
@@ -1807,6 +1884,10 @@ export function initialize({
       getProfile,
       getProfileUnauth,
       getProvisioningResource,
+      getReleaseNote,
+      getReleaseNoteHash,
+      getReleaseNotesManifest,
+      getReleaseNotesManifestHash,
       getTransferArchive,
       getSenderCertificate,
       getSocketStatus,
@@ -2100,6 +2181,72 @@ export function initialize({
       };
     }
 
+    async function getReleaseNoteHash({
+      uuid,
+      locale,
+    }: {
+      uuid: string;
+      locale: string;
+    }): Promise<string | undefined> {
+      const { response } = await _ajax({
+        call: 'releaseNotes',
+        host: resourcesUrl,
+        httpType: 'HEAD',
+        urlParameters: `/${uuid}/${locale}.json`,
+        responseType: 'byteswithdetails',
+      });
+
+      const etag = response.headers.get('etag');
+
+      if (etag == null) {
+        return undefined;
+      }
+
+      return etag;
+    }
+    async function getReleaseNote({
+      uuid,
+      locale,
+    }: {
+      uuid: string;
+      locale: string;
+    }): Promise<ReleaseNoteResponseType> {
+      const rawRes = await _ajax({
+        call: 'releaseNotes',
+        host: resourcesUrl,
+        httpType: 'GET',
+        responseType: 'json',
+        urlParameters: `/${uuid}/${locale}.json`,
+      });
+      return parseUnknown(releaseNoteSchema, rawRes);
+    }
+
+    async function getReleaseNotesManifest(): Promise<ReleaseNotesManifestResponseType> {
+      const rawRes = await _ajax({
+        call: 'releaseNotesManifest',
+        host: resourcesUrl,
+        httpType: 'GET',
+        responseType: 'json',
+      });
+      return parseUnknown(releaseNotesManifestSchema, rawRes);
+    }
+
+    async function getReleaseNotesManifestHash(): Promise<string | undefined> {
+      const { response } = await _ajax({
+        call: 'releaseNotesManifest',
+        host: resourcesUrl,
+        httpType: 'HEAD',
+        responseType: 'byteswithdetails',
+      });
+
+      const etag = response.headers.get('etag');
+      if (etag == null) {
+        return undefined;
+      }
+
+      return etag;
+    }
+
     async function getStorageManifest(
       options: StorageServiceCallOptionsType = {}
     ): Promise<Uint8Array> {
@@ -2271,12 +2418,12 @@ export function initialize({
           responseType: 'jsonwithdetails',
           urlParameters,
           // Add a bit of leeway to let server respond properly
-          timeout: requestTimeoutInSecs + 15 * SECOND,
+          timeout: (requestTimeoutInSecs + 15) * SECOND,
           abortSignal,
         });
 
         if (response.status === 200) {
-          return TransferArchiveSchema.parse(data);
+          return parseUnknown(TransferArchiveSchema, data);
         }
 
         strictAssert(
@@ -2836,6 +2983,15 @@ export function initialize({
         httpType: 'DELETE',
         urlParameters: `/${deviceId}`,
       });
+    }
+
+    async function getDevices() {
+      const result = await _ajax({
+        call: 'devices',
+        httpType: 'GET',
+        responseType: 'json',
+      });
+      return parseUnknown(getDevicesResultZod, result);
     }
 
     async function updateDeviceName(deviceName: string) {
@@ -3672,6 +3828,7 @@ export function initialize({
         disableRetries?: boolean;
         timeout?: number;
         downloadOffset?: number;
+        abortSignal?: AbortSignal;
       };
     }) {
       return _getAttachment({
@@ -4432,9 +4589,10 @@ export function initialize({
     }
 
     function getProvisioningResource(
-      handler: IRequestHandler
+      handler: IRequestHandler,
+      timeout?: number
     ): Promise<IWebSocketResource> {
-      return socketManager.getProvisioningResource(handler);
+      return socketManager.getProvisioningResource(handler, timeout);
     }
 
     async function cdsLookup({

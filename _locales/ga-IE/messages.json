@@ -50,9 +50,6 @@
   "icu:privacyPolicy": {
     "messageformat": "Téarmaí Úsáide ⁊ Polasaí Príobháideachais"
   },
-  "icu:appleSilicon": {
-    "messageformat": "Apple silicon"
-  },
   "icu:About__AppEnvironment": {
     "messageformat": "{appEnv}"
   },
@@ -815,9 +812,6 @@
   "icu:voiceNoteError": {
     "messageformat": "Tharla earráid leis an taifeadán gutha."
   },
-  "icu:attachmentSaved": {
-    "messageformat": "Ceangaltán sábháilte."
-  },
   "icu:attachmentSavedPlural": {
     "messageformat": "{count, plural, one {Ceangaltán sábháilte} two {{count,number} cheangaltán sábháilte} few {{count,number} cheangaltán sábháilte} many {{count,number} gceangaltán sábháilte} other {{count,number} ceangaltán sábháilte}}"
   },
@@ -1025,18 +1019,6 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "Eolas"
   },
-  "icu:deleteMessagesInConversation": {
-    "messageformat": "Scrios teachtaireachtaí"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
-    "messageformat": "Scrios teachtaireachtaí?"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
-    "messageformat": "Scriosfar gach teachtaireacht sa chomhrá seo ón ngléas seo. Beidh tú in ann cuardach le haghaidh an chomhrá seo fós tar éis duit teachtaireachtaí a scriosadh."
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
-    "messageformat": "Scriosfar gach teachtaireacht sa chomhrá seo ó gach gléas agat. Beidh tú in ann an comhrá seo a chuardach i gcónaí tar éis duit teachtaireachtaí a scriosadh."
-  },
   "icu:deleteConversation": {
     "messageformat": "Scrios"
   },
@@ -1142,6 +1124,24 @@
   "icu:imageCaptionIconAlt": {
     "messageformat": "Íocón a léiríonn go bhfuil fotheideal leis an íomhá seo"
   },
+  "icu:imageOpenAlt": {
+    "messageformat": "Oscail an ceangaltán seo in amharc níos mó"
+  },
+  "icu:startDownload": {
+    "messageformat": "Tosaigh an íoslódáil"
+  },
+  "icu:cancelDownload": {
+    "messageformat": "Cuir íoslódáil ar ceal"
+  },
+  "icu:downloadNItems": {
+    "messageformat": "{count, plural, one {1 cheann} two {{count,number} cheann} few {{count,number} cinn} many {{count,number} gcinn} other {{count,number} ceann}}"
+  },
+  "icu:mediaNoLongerAvailable": {
+    "messageformat": "This media is no longer available."
+  },
+  "icu:attachmentNoLongerAvailable__learnMore": {
+    "messageformat": "Learn more"
+  },
   "icu:save": {
     "messageformat": "Cuir i dtaisce é"
   },
@@ -1183,6 +1183,9 @@
   },
   "icu:Install__qr-failed-load__retry": {
     "messageformat": "Bain triail eile as"
+  },
+  "icu:Install__qr-max-rotations__retry": {
+    "messageformat": "Refresh code"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Faigh cabhair"
@@ -1581,7 +1584,7 @@
     "messageformat": "Scrios na sonraí agus na teachtaireachtaí uile ón leagan seo de Dheasc Signal? Beidh tú in ann an deasc sin a athnascadh am ar bith, ach ní aisghabhfar do theachtaireachtaí. Ní scriosfar do chuntas Signal ná sonraí ar do ghuthán nó ar aon ghléas eile atá nasctha."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Dínascadh agus scriosadh na sonraí go léir"
+    "messageformat": "Disconnecting and deleting all data…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Tá sonraí agat ó sheansuiteáil Dheasc Signal atá imithe i léig. Má roghnaíonn tú leanúint leis, scriosfar iad agus tosóidh tú ón tús."
@@ -2741,6 +2744,9 @@
   "icu:incomingGroupCall__ringing-many": {
     "messageformat": "{remaining, plural, one {Tá {ringer} ag glaoch ort, ar {first}, ar {second} agus ar {remaining,number} eile} two {Tá {ringer} ag glaoch ort, ar {first}, ar {second} agus ar {remaining,number} eile} few {Tá {ringer} ag glaoch ort, ar {first}, ar {second} agus ar {remaining,number} eile} many {Tá {ringer} ag glaoch ort, ar {first}, ar {second} agus ar {remaining,number} eile} other {Tá {ringer} ag glaoch ort, ar {first}, ar {second} agus ar {remaining,number} eile}}"
   },
+  "icu:outgoingCallConnecting": {
+    "messageformat": "Nascadh…"
+  },
   "icu:outgoingCallRinging": {
     "messageformat": "Glaoch…"
   },
@@ -2785,6 +2791,12 @@
   },
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Micreafón air"
+  },
+  "icu:CallControls__LowerHandSuggestionToast": {
+    "messageformat": "Ísligh do lámh?"
+  },
+  "icu:CallControls__LowerHandSuggestionToast--button": {
+    "messageformat": "Ísligh"
   },
   "icu:CallControls__RingingToast--ringing-on": {
     "messageformat": "Glaoch air"
@@ -3563,6 +3575,9 @@
   "icu:next": {
     "messageformat": "Ar Aghaidh"
   },
+  "icu:ClearingData__description": {
+    "messageformat": "This may take a few minutes depending on the size of your message history"
+  },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Bronn airgead ar Signal"
   },
@@ -3594,10 +3609,10 @@
     "messageformat": "Íoslódáil á hullmhú..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "Seans go dtógfaidh sé seo cúpla nóiméad ag brath ar mhéid do chúltaca"
+    "messageformat": "Seans go dtógfaidh sé seo cúpla nóiméad ag brath ar mhéid do staire teachtaireachtaí"
   },
   "icu:BackupImportScreen__cancel": {
-    "messageformat": "Cuir an t-aistriú ar ceal"
+    "messageformat": "Cuir ar ceal"
   },
   "icu:BackupImportScreen__security-description": {
     "messageformat": "Déantar teachtaireachtaí agus faisnéis comhráite a chosaint le criptiú ó cheann ceann, an próiseas sioncronaithe san áireamh. <learnMoreLink>Tuilleadh faisnéise</learnMoreLink>"
@@ -3606,7 +3621,7 @@
     "messageformat": "Cuir an t-aistriú ar ceal?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Níl aischur na dteachtaireachtaí agus na meán agat críochnaithe. Má roghnaíonn tú é a chur ar ceal, is féidir leat an t-aistriú a dhéanamh arís ó Shocruithe."
+    "messageformat": "Ní dhearnadh aischur do chuid teachtaireachtaí agus meán a chur i gcrích go hiomlán. Má roghnaíonn tú é a chur ar ceal, nascfar do ghléas gan stair do theachtaireachtaí."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
     "messageformat": "Lean leis an aistriú"
@@ -3619,6 +3634,9 @@
   },
   "icu:BackupImportScreen__error__body": {
     "messageformat": "Níorbh fhéidir do theachtaireachtaí a aistriú. Seiceáil do nasc Idirlín agus triail arís é."
+  },
+  "icu:BackupImportScreen__error-fatal__body": {
+    "messageformat": "Níorbh fhéidir do theachtaireachtaí a aistriú de dheasca earráide. Triail arís tríd an deasc seo a athnascadh."
   },
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "Bain triail eile as"
@@ -5776,16 +5794,10 @@
     "messageformat": "Mionathruithe, paistí fabhtanna agus feabhsuithe ar fheidhmíocht. Go raibh maith agat as Signal a úsáid!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.34--0": {
-    "messageformat": "Is éasca é comhráite neamhléite a fháil go tapa a bhuí leis an deilbhín scagaire nua atá in aice leis an mbosca cuardaigh."
+  "icu:WhatsNew__v7.38--0": {
+    "messageformat": "Réitíomar fabht le tráchtanna @, rud a chuir do chuntas féin sa liosta moltaí uathlíonta."
   },
-  "icu:WhatsNew__v7.34--1": {
-    "messageformat": "Tugann an nuashonrú seo tacaíocht isteach do phróiseálaithe nua ar Windows amhail Snapdragon X Elite."
-  },
-  "icu:WhatsNew__v7.34--2": {
-    "messageformat": "Réitíomar fabht freisin a bhris an téama dorcha in Signal nuair a bhí socruithe do chórais oibriúcháin cumraithe chun téama geal a úsáid."
-  },
-  "icu:WhatsNew__v7.35--0": {
-    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
+  "icu:WhatsNew__v7.39--0": {
+    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
   }
 }

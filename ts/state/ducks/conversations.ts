@@ -126,11 +126,12 @@ import {
   isDirectConversation,
   isGroup,
   isGroupV2,
+  isMe,
 } from '../../util/whatTypeOfConversation';
 import { missingCaseError } from '../../util/missingCaseError';
 import { viewSyncJobQueue } from '../../jobs/viewSyncJobQueue';
 import { ReadStatus } from '../../messages/MessageReadStatus';
-import { isIncoming, processBodyRanges } from '../selectors/message';
+import { isIncoming, isStory, processBodyRanges } from '../selectors/message';
 import { getActiveCall, getActiveCallState } from '../selectors/calling';
 import { sendDeleteForEveryoneMessage } from '../../util/sendDeleteForEveryoneMessage';
 import type { ShowToastActionType } from './toast';
@@ -149,7 +150,7 @@ import {
   buildUpdateAttributesChange,
   initiateMigrationToGroupV2 as doInitiateMigrationToGroupV2,
 } from '../../groups';
-import { __DEPRECATED$getMessageById } from '../../messages/getMessageById';
+import { getMessageById } from '../../messages/getMessageById';
 import type { PanelRenderType, PanelRequestType } from '../../types/Panels';
 import type { ConversationQueueJobData } from '../../jobs/conversationJobQueue';
 import { isOlderThan } from '../../util/timestamp';
@@ -184,10 +185,16 @@ import type { ChangeNavTabActionType } from './nav';
 import { CHANGE_NAV_TAB, NavTab, actions as navActions } from './nav';
 import { sortByMessageOrder } from '../../types/ForwardDraft';
 import { getAddedByForOurPendingInvitation } from '../../util/getAddedByForOurPendingInvitation';
-import { getConversationIdForLogging } from '../../util/idForLogging';
+import {
+  getConversationIdForLogging,
+  getMessageIdForLogging,
+} from '../../util/idForLogging';
 import { singleProtoJobQueue } from '../../jobs/singleProtoJobQueue';
 import MessageSender from '../../textsecure/SendMessage';
-import { AttachmentDownloadUrgency } from '../../jobs/AttachmentDownloadManager';
+import {
+  AttachmentDownloadManager,
+  AttachmentDownloadUrgency,
+} from '../../jobs/AttachmentDownloadManager';
 import type {
   DeleteForMeSyncEventData,
   MessageToDelete,
@@ -201,7 +208,18 @@ import { markCallHistoryReadInConversation } from './callHistory';
 import type { CapabilitiesType } from '../../textsecure/WebAPI';
 import { actions as searchActions } from './search';
 import type { SearchActionType } from './search';
-
+import { getNotificationTextForMessage } from '../../util/getNotificationTextForMessage';
+import { doubleCheckMissingQuoteReference as doDoubleCheckMissingQuoteReference } from '../../util/doubleCheckMissingQuoteReference';
+import { queueAttachmentDownloadsForMessage } from '../../util/queueAttachmentDownloads';
+import { markAttachmentAsCorrupted as doMarkAttachmentAsCorrupted } from '../../messageModifiers/AttachmentDownloads';
+import {
+  isSent,
+  SendActionType,
+  sendStateReducer,
+} from '../../messages/MessageSendState';
+import { markFailed } from '../../test-node/util/messageFailures';
+import { cleanupMessages, postSaveUpdates } from '../../util/cleanup';
+import { MessageModel } from '../../models/messages';
 // State
 
 export type DBConversationType = ReadonlyDeep<{
@@ -319,6 +337,7 @@ export type ConversationType = ReadonlyDeep<
     phoneNumber?: string;
     membersCount?: number;
     hasMessages?: boolean;
+    messagesDeleted?: boolean;
     accessControlAddFromInviteLink?: number;
     accessControlAttributes?: number;
     accessControlMembers?: number;
@@ -1085,6 +1104,7 @@ export const actions = {
   blockAndReportSpam,
   blockConversation,
   blockGroupLinkRequests,
+  cancelAttachmentDownload,
   cancelConversationVerification,
   changeHasGroupLink,
   clearCancelledConversationVerification,
@@ -1191,6 +1211,7 @@ export const actions = {
   showFindByUsername,
   showFindByPhoneNumber,
   showInbox,
+  showMediaNoLongerAvailableToast,
   startComposing,
   startConversation,
   startSettingGroupMetadata,
@@ -1408,7 +1429,7 @@ function markMessageRead(
       return;
     }
 
-    const message = await __DEPRECATED$getMessageById(messageId);
+    const message = await getMessageById(messageId);
     if (!message) {
       throw new Error(`markMessageRead: failed to load message ${messageId}`);
     }
@@ -1762,7 +1783,7 @@ function deleteMessages({
       await Promise.all(
         messageIds.map(
           async (messageId): Promise<MessageToDelete | undefined> => {
-            const message = await __DEPRECATED$getMessageById(messageId);
+            const message = await getMessageById(messageId);
             if (!message) {
               throw new Error(`deleteMessages: Message ${messageId} missing!`);
             }
@@ -1797,7 +1818,7 @@ function deleteMessages({
     }
 
     await DataWriter.removeMessages(messageIds, {
-      singleProtoJobQueue,
+      cleanupMessages,
     });
 
     popPanelForConversation()(dispatch, getState, undefined);
@@ -1922,7 +1943,7 @@ function setMessageToEdit(
       return;
     }
 
-    const message = (await __DEPRECATED$getMessageById(messageId))?.attributes;
+    const message = (await getMessageById(messageId))?.attributes;
     if (!message) {
       return;
     }
@@ -2015,7 +2036,7 @@ function generateNewGroupLink(
  * replace it with an actual action that fits in with the redux approach.
  */
 export const markViewed = (messageId: string): void => {
-  const message = window.MessageCache.__DEPRECATED$getById(messageId);
+  const message = window.MessageCache.getById(messageId);
   if (!message) {
     throw new Error(`markViewed: Message ${messageId} missing!`);
   }
@@ -2038,7 +2059,9 @@ export const markViewed = (messageId: string): void => {
     );
     senderAci = sourceServiceId;
 
-    const convoAttributes = message.getConversation()?.attributes;
+    const convo = window.ConversationController.get(
+      message.get('conversationId')
+    );
     const conversationId = message.get('conversationId');
     drop(
       conversationJobQueue.add({
@@ -2052,8 +2075,8 @@ export const markViewed = (messageId: string): void => {
             senderE164,
             senderAci,
             timestamp,
-            isDirectConversation: convoAttributes
-              ? isDirectConversation(convoAttributes)
+            isDirectConversation: convo
+              ? isDirectConversation(convo.attributes)
               : true,
           },
         ],
@@ -2279,13 +2302,14 @@ function kickOffAttachmentDownload(
   options: Readonly<{ messageId: string }>
 ): ThunkAction<void, RootStateType, unknown, NoopActionType> {
   return async dispatch => {
-    const message = await __DEPRECATED$getMessageById(options.messageId);
+    const message = await getMessageById(options.messageId);
     if (!message) {
       throw new Error(
         `kickOffAttachmentDownload: Message ${options.messageId} missing!`
       );
     }
-    const didUpdateValues = await message.queueAttachmentDownloads(
+    const didUpdateValues = await queueAttachmentDownloadsForMessage(
+      message,
       AttachmentDownloadUrgency.IMMEDIATE
     );
 
@@ -2293,9 +2317,51 @@ function kickOffAttachmentDownload(
       drop(
         DataWriter.saveMessage(message.attributes, {
           ourAci: window.textsecure.storage.user.getCheckedAci(),
+          postSaveUpdates,
         })
       );
     }
+
+    dispatch({
+      type: 'NOOP',
+      payload: null,
+    });
+  };
+}
+
+function cancelAttachmentDownload({
+  messageId,
+}: Readonly<{ messageId: string }>): ThunkAction<
+  void,
+  RootStateType,
+  unknown,
+  NoopActionType
+> {
+  return async dispatch => {
+    const message = await getMessageById(messageId);
+    if (!message) {
+      log.warn(`cancelAttachmentDownload: Message ${messageId} missing!`);
+    } else {
+      message.set({
+        attachments: (message.get('attachments') || []).map(attachment => ({
+          ...attachment,
+          pending: false,
+        })),
+      });
+
+      const ourAci = window.textsecure.storage.user.getCheckedAci();
+      await DataWriter.saveMessage(message.attributes, {
+        ourAci,
+        postSaveUpdates,
+      });
+    }
+
+    // A click kicks off downloads for every attachment in a message, so cancel does too
+    await AttachmentDownloadManager.cancelJobs(job => {
+      return job.messageId === messageId;
+    });
+
+    await DataWriter.removeAttachmentDownloadJobsForMessage(messageId);
 
     dispatch({
       type: 'NOOP',
@@ -2313,13 +2379,7 @@ function markAttachmentAsCorrupted(
   options: AttachmentOptions
 ): ThunkAction<void, RootStateType, unknown, NoopActionType> {
   return async dispatch => {
-    const message = await __DEPRECATED$getMessageById(options.messageId);
-    if (!message) {
-      throw new Error(
-        `markAttachmentAsCorrupted: Message ${options.messageId} missing!`
-      );
-    }
-    message.markAttachmentAsCorrupted(options.attachment);
+    await doMarkAttachmentAsCorrupted(options.messageId, options.attachment);
 
     dispatch({
       type: 'NOOP',
@@ -2332,7 +2392,7 @@ function openGiftBadge(
   messageId: string
 ): ThunkAction<void, RootStateType, unknown, ShowToastActionType> {
   return async dispatch => {
-    const message = await __DEPRECATED$getMessageById(messageId);
+    const message = await getMessageById(messageId);
     if (!message) {
       throw new Error(`openGiftBadge: Message ${messageId} missing!`);
     }
@@ -2352,11 +2412,106 @@ function retryMessageSend(
   messageId: string
 ): ThunkAction<void, RootStateType, unknown, NoopActionType> {
   return async dispatch => {
-    const message = await __DEPRECATED$getMessageById(messageId);
+    const message = await getMessageById(messageId);
     if (!message) {
       throw new Error(`retryMessageSend: Message ${messageId} missing!`);
     }
-    await message.retrySend();
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const conversation = window.ConversationController.get(
+      message.attributes.conversationId
+    )!;
+
+    let currentConversationRecipients: Set<string> | undefined;
+
+    const { storyDistributionListId } = message.attributes;
+
+    if (storyDistributionListId) {
+      const storyDistribution =
+        await DataReader.getStoryDistributionWithMembers(
+          storyDistributionListId
+        );
+
+      if (!storyDistribution) {
+        markFailed(message);
+        return;
+      }
+
+      currentConversationRecipients = new Set(
+        storyDistribution.members
+          .map(serviceId => window.ConversationController.get(serviceId)?.id)
+          .filter(isNotNil)
+      );
+    } else {
+      currentConversationRecipients = conversation.getMemberConversationIds();
+    }
+
+    // Determine retry recipients and get their most up-to-date addressing information
+    const oldSendStateByConversationId =
+      message.get('sendStateByConversationId') || {};
+
+    const newSendStateByConversationId = { ...oldSendStateByConversationId };
+    for (const [conversationId, sendState] of Object.entries(
+      oldSendStateByConversationId
+    )) {
+      if (isSent(sendState.status)) {
+        continue;
+      }
+
+      const recipient = window.ConversationController.get(conversationId);
+      if (
+        !recipient ||
+        (!currentConversationRecipients.has(conversationId) &&
+          !isMe(recipient.attributes))
+      ) {
+        continue;
+      }
+
+      newSendStateByConversationId[conversationId] = sendStateReducer(
+        sendState,
+        {
+          type: SendActionType.ManuallyRetried,
+          updatedAt: Date.now(),
+        }
+      );
+    }
+
+    message.set({ sendStateByConversationId: newSendStateByConversationId });
+
+    if (isStory(message.attributes)) {
+      await conversationJobQueue.add(
+        {
+          type: conversationQueueJobEnum.enum.Story,
+          conversationId: conversation.id,
+          messageIds: [message.id],
+          // using the group timestamp, which will differ from the 1:1 timestamp
+          timestamp: message.attributes.timestamp,
+        },
+        async jobToInsert => {
+          await DataWriter.saveMessage(message.attributes, {
+            jobToInsert,
+            ourAci: window.textsecure.storage.user.getCheckedAci(),
+            postSaveUpdates,
+          });
+        }
+      );
+    } else {
+      await conversationJobQueue.add(
+        {
+          type: conversationQueueJobEnum.enum.NormalMessage,
+          conversationId: conversation.id,
+          messageId: message.id,
+          revision: conversation.get('revision'),
+        },
+        async jobToInsert => {
+          await DataWriter.saveMessage(message.attributes, {
+            jobToInsert,
+            ourAci: window.textsecure.storage.user.getCheckedAci(),
+            postSaveUpdates,
+          });
+        }
+      );
+    }
 
     dispatch({
       type: 'NOOP',
@@ -2369,12 +2524,12 @@ export function copyMessageText(
   messageId: string
 ): ThunkAction<void, RootStateType, unknown, NoopActionType> {
   return async dispatch => {
-    const message = await __DEPRECATED$getMessageById(messageId);
+    const message = await getMessageById(messageId);
     if (!message) {
       throw new Error(`copy: Message ${messageId} missing!`);
     }
 
-    const body = message.getNotificationText();
+    const body = getNotificationTextForMessage(message.attributes);
     clipboard.writeText(body);
 
     dispatch({
@@ -2388,7 +2543,7 @@ export function retryDeleteForEveryone(
   messageId: string
 ): ThunkAction<void, RootStateType, unknown, NoopActionType> {
   return async dispatch => {
-    const message = await __DEPRECATED$getMessageById(messageId);
+    const message = await getMessageById(messageId);
     if (!message) {
       throw new Error(`retryDeleteForEveryone: Message ${messageId} missing!`);
     }
@@ -2400,7 +2555,9 @@ export function retryDeleteForEveryone(
     }
 
     try {
-      const conversation = message.getConversation();
+      const conversation = window.ConversationController.get(
+        message.get('conversationId')
+      );
       if (!conversation) {
         throw new Error(
           `retryDeleteForEveryone: Conversation for ${messageId} missing!`
@@ -2417,7 +2574,7 @@ export function retryDeleteForEveryone(
       };
 
       log.info(
-        `retryDeleteForEveryone: Adding job for message ${message.idForLogging()}!`
+        `retryDeleteForEveryone: Adding job for message ${getMessageIdForLogging(message.attributes)}!`
       );
       await conversationJobQueue.add(jobData);
 
@@ -2691,14 +2848,8 @@ function conversationsUpdated(
       calling.groupMembersChanged(conversation.id);
     }
 
-    const { conversationLookup } = getState().conversations;
-
-    const someConversationsHaveNewMessages = data.some(conversation => {
-      return (
-        conversationLookup[conversation.id]?.lastMessageReceivedAt !==
-        conversation.lastMessageReceivedAt
-      );
-    });
+    const { conversationLookup: oldConversationLookup } =
+      getState().conversations;
 
     dispatch({
       type: 'CONVERSATIONS_UPDATED',
@@ -2707,9 +2858,12 @@ function conversationsUpdated(
       },
     });
 
-    if (someConversationsHaveNewMessages) {
-      dispatch(searchActions.refreshSearch());
-    }
+    dispatch(
+      searchActions.updateSearchResultsOnConversationUpdate(
+        oldConversationLookup,
+        data
+      )
+    );
   };
 }
 
@@ -3178,7 +3332,7 @@ function pushPanelForConversation(
 
       const message =
         conversations.messagesLookup[messageId] ||
-        (await __DEPRECATED$getMessageById(messageId))?.attributes;
+        (await getMessageById(messageId))?.attributes;
       if (!message) {
         throw new Error(
           'pushPanelForConversation: could not find message for MessageDetails'
@@ -3254,14 +3408,16 @@ function deleteMessagesForEveryone(
     await Promise.all(
       messageIds.map(async messageId => {
         try {
-          const message = window.MessageCache.__DEPRECATED$getById(messageId);
+          const message = window.MessageCache.getById(messageId);
           if (!message) {
             throw new Error(
               `deleteMessageForEveryone: Message ${messageId} missing!`
             );
           }
 
-          const conversation = message.getConversation();
+          const conversation = window.ConversationController.get(
+            message.get('conversationId')
+          );
           if (!conversation) {
             throw new Error('deleteMessageForEveryone: no conversation');
           }
@@ -3757,11 +3913,7 @@ function loadRecentMediaItems(
 
     // Cache these messages in memory to ensure Lightbox can find them
     messages.forEach(message => {
-      window.MessageCache.__DEPRECATED$register(
-        message.id,
-        message,
-        'loadRecentMediaItems'
-      );
+      window.MessageCache.register(new MessageModel(message));
     });
 
     let index = 0;
@@ -3965,7 +4117,7 @@ export function saveAttachmentFromMessage(
   providedAttachment?: AttachmentType
 ): ThunkAction<void, RootStateType, unknown, ShowToastActionType> {
   return async (dispatch, getState) => {
-    const message = await __DEPRECATED$getMessageById(messageId);
+    const message = await getMessageById(messageId);
     if (!message) {
       throw new Error(
         `saveAttachmentFromMessage: Message ${messageId} missing!`
@@ -4058,7 +4210,7 @@ export function scrollToMessage(
       throw new Error('scrollToMessage: No conversation found');
     }
 
-    const message = await __DEPRECATED$getMessageById(messageId);
+    const message = await getMessageById(messageId);
     if (!message) {
       throw new Error(`scrollToMessage: failed to load message ${messageId}`);
     }
@@ -4072,7 +4224,7 @@ export function scrollToMessage(
 
     let isInMemory = true;
 
-    if (!window.MessageCache.__DEPRECATED$getById(messageId)) {
+    if (!window.MessageCache.getById(messageId)) {
       isInMemory = false;
     }
 
@@ -4414,6 +4566,14 @@ function showInbox(): ShowInboxActionType {
     payload: null,
   };
 }
+function showMediaNoLongerAvailableToast(): ShowToastActionType {
+  return {
+    type: SHOW_TOAST,
+    payload: {
+      toastType: ToastType.MediaNoLongerAvailable,
+    },
+  };
+}
 
 type ShowConversationArgsType = ReadonlyDeep<{
   conversationId?: string;
@@ -4503,7 +4663,7 @@ function onConversationOpened(
     log.info(`${logId}: Updating newly opened conversation state`);
 
     if (messageId) {
-      const message = await __DEPRECATED$getMessageById(messageId);
+      const message = await getMessageById(messageId);
 
       if (message) {
         drop(conversation.loadAndScroll(messageId));
@@ -4629,6 +4789,8 @@ function onConversationClosed(
         conversationId,
       },
     });
+
+    dispatch(searchActions.maybeRemoveReadConversations([conversationId]));
   };
 }
 
@@ -4640,9 +4802,9 @@ function showArchivedConversations(): ShowArchivedConversationsActionType {
 }
 
 function doubleCheckMissingQuoteReference(messageId: string): NoopActionType {
-  const message = window.MessageCache.__DEPRECATED$getById(messageId);
+  const message = window.MessageCache.getById(messageId);
   if (message) {
-    void message.doubleCheckMissingQuoteReference();
+    drop(doDoubleCheckMissingQuoteReference(message));
   }
 
   return {

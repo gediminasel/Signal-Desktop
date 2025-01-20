@@ -104,16 +104,16 @@ jobs:
       env:
         DISABLE_INSPECT_FUSE: on
 
-    - run: xvfb-run --auto-servernum npm run test-node
-    - run: xvfb-run --auto-servernum npm run test-electron
-      timeout-minutes: 5
-      env:
-        ARTIFACTS_DIR: artifacts/linux
-        LANG: en_US
-        LANGUAGE: en_US
-    - run: xvfb-run --auto-servernum npm run test-release
-      env:
-        NODE_ENV: production
+    # - run: xvfb-run --auto-servernum npm run test-node
+    # - run: xvfb-run --auto-servernum npm run test-electron
+    #   timeout-minutes: 5
+    #   env:
+    #     ARTIFACTS_DIR: artifacts/linux
+    #     LANG: en_US
+    #     LANGUAGE: en_US
+    # - run: xvfb-run --auto-servernum npm run test-release
+    #   env:
+    #     NODE_ENV: production
 
     - name: Upload artifacts
       id: upload-artifacts

@@ -50,9 +50,6 @@
   "icu:privacyPolicy": {
     "messageformat": "Termos e Política de Privacidade"
   },
-  "icu:appleSilicon": {
-    "messageformat": "Apple silicon"
-  },
   "icu:About__AppEnvironment": {
     "messageformat": "{appEnv}"
   },
@@ -815,9 +812,6 @@
   "icu:voiceNoteError": {
     "messageformat": "Ocorreu um erro no gravador de voz."
   },
-  "icu:attachmentSaved": {
-    "messageformat": "Anexo salvo."
-  },
   "icu:attachmentSavedPlural": {
     "messageformat": "{count, plural, one {Anexo salvo} other {{count,number} anexos salvos}}"
   },
@@ -1025,18 +1019,6 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "Info"
   },
-  "icu:deleteMessagesInConversation": {
-    "messageformat": "Excluir mensagens"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
-    "messageformat": "Apagar mensagens?"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
-    "messageformat": "Todas as mensagens neste chat serão excluídas deste dispositivo. Você ainda poderá pesquisar neste chat após excluir mensagens."
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
-    "messageformat": "Todas as mensagens nesta conversa serão excluídas em todos os seus dispositivos. Você ainda poderá pesquisar nesta conversa após excluir as mensagens."
-  },
   "icu:deleteConversation": {
     "messageformat": "Excluir"
   },
@@ -1142,6 +1124,24 @@
   "icu:imageCaptionIconAlt": {
     "messageformat": "Ícone mostrando que esta imagem possui uma legenda"
   },
+  "icu:imageOpenAlt": {
+    "messageformat": "Abrir este anexo em uma visualização ampliada"
+  },
+  "icu:startDownload": {
+    "messageformat": "Iniciar download"
+  },
+  "icu:cancelDownload": {
+    "messageformat": "Cancelar download"
+  },
+  "icu:downloadNItems": {
+    "messageformat": "{count, plural, one {1 item} other {{count,number} itens}}"
+  },
+  "icu:mediaNoLongerAvailable": {
+    "messageformat": "This media is no longer available."
+  },
+  "icu:attachmentNoLongerAvailable__learnMore": {
+    "messageformat": "Learn more"
+  },
   "icu:save": {
     "messageformat": "Salvar"
   },
@@ -1183,6 +1183,9 @@
   },
   "icu:Install__qr-failed-load__retry": {
     "messageformat": "Tente novamente"
+  },
+  "icu:Install__qr-max-rotations__retry": {
+    "messageformat": "Refresh code"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Obter ajuda"
@@ -1581,7 +1584,7 @@
     "messageformat": "Excluir todos os dados e mensagens desta versão do Signal Desktop? Você pode vincular novamente este desktop, mas suas mensagens não serão restauradas. Sua conta do Signal e dados do seu telefone ou outros dispositivos vinculados não serão excluídos."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Desconectando e apagando todos os dados"
+    "messageformat": "Disconnecting and deleting all data…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Você tem dados antigos de uma instalação anterior do Signal Desktop. Se você optar por continuar, eles serão excluídos e você começará do zero."
@@ -2741,6 +2744,9 @@
   "icu:incomingGroupCall__ringing-many": {
     "messageformat": "{remaining, plural, one {{ringer} está ligando para você, {first}, {second} e {remaining,number} outra pessoa} other {{ringer} está ligando para você, {first}, {second} e {remaining,number} outras pessoas}}"
   },
+  "icu:outgoingCallConnecting": {
+    "messageformat": "Conectando…"
+  },
   "icu:outgoingCallRinging": {
     "messageformat": "Tocando…"
   },
@@ -2785,6 +2791,12 @@
   },
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Microfone ligado"
+  },
+  "icu:CallControls__LowerHandSuggestionToast": {
+    "messageformat": "Quer abaixar a mão?"
+  },
+  "icu:CallControls__LowerHandSuggestionToast--button": {
+    "messageformat": "Abaixar"
   },
   "icu:CallControls__RingingToast--ringing-on": {
     "messageformat": "Toque ligado"
@@ -3563,6 +3575,9 @@
   "icu:next": {
     "messageformat": "próximo"
   },
+  "icu:ClearingData__description": {
+    "messageformat": "This may take a few minutes depending on the size of your message history"
+  },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Doar para o Signal"
   },
@@ -3594,10 +3609,10 @@
     "messageformat": "Preparando para download…"
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "Isso pode demorar alguns minutos, dependendo do tamanho do seu backup"
+    "messageformat": "Isso pode demorar alguns minutos, dependendo do tamanho do seu histórico de mensagens"
   },
   "icu:BackupImportScreen__cancel": {
-    "messageformat": "Cancelar transferência"
+    "messageformat": "Cancelar"
   },
   "icu:BackupImportScreen__security-description": {
     "messageformat": "As mensagens e informações das conversas são protegidas por criptografia de ponta a ponta, incluindo o processo de sincronização. <learnMoreLink>Saiba mais</learnMoreLink>"
@@ -3606,7 +3621,7 @@
     "messageformat": "Cancelar transferência?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Suas mensagens e arquivos de mídia não foram totalmente restauradas. Se cancelar, você pode transferir novamente em Configurações."
+    "messageformat": "Suas mensagens e arquivos de mídia não foram totalmente restaurados. Se você cancelar, seu dispositivo será vinculado sem o histórico de mensagens."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
     "messageformat": "Continuar transferência"
@@ -3619,6 +3634,9 @@
   },
   "icu:BackupImportScreen__error__body": {
     "messageformat": "Não foi possível transferir suas mensagens. Verifique sua conexão à Internet e tente novamente."
+  },
+  "icu:BackupImportScreen__error-fatal__body": {
+    "messageformat": "Suas mensagens não puderam ser transferidas devido a um erro. Tente novamente vinculando este desktop."
   },
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "Tente novamente"
@@ -5776,16 +5794,10 @@
     "messageformat": "Pequenas alterações adicionais, correções de bugs e melhorias de desempenho. Agradecemos por usar o Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.34--0": {
-    "messageformat": "O novo ícone de filtro ao lado da caixa de pesquisa facilita a localização rápida de conversas não lidas, mas fique à vontade para decidir se quer ou não marcar as conversas como lidas ou não."
+  "icu:WhatsNew__v7.38--0": {
+    "messageformat": "Corrigimos um erro nas @menções que, em alguns casos, incluíam indevidamente sua própria conta na lista de sugestões de preenchimento automático."
   },
-  "icu:WhatsNew__v7.34--1": {
-    "messageformat": "Esta atualização inclui suporte para novos processadores no Windows, como o Snapdragon X Elite."
-  },
-  "icu:WhatsNew__v7.34--2": {
-    "messageformat": "Corrigimos um erro que impedia o tema escuro do Signal de funcionar quando o sistema operacional estava configurado para o tema claro."
-  },
-  "icu:WhatsNew__v7.35--0": {
-    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
+  "icu:WhatsNew__v7.39--0": {
+    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
   }
 }

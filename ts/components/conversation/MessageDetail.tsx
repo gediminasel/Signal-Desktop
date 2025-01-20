@@ -85,6 +85,7 @@ export type PropsSmartActions = Pick<MessagePropsType, 'renderAudioAttachment'>;
 
 export type PropsReduxActions = Pick<
   MessagePropsType,
+  | 'cancelAttachmentDownload'
   | 'checkForAccount'
   | 'clearTargetedMessage'
   | 'doubleCheckMissingQuoteReference'
@@ -104,6 +105,7 @@ export type PropsReduxActions = Pick<
   | 'showExpiredOutgoingTapToViewToast'
   | 'showLightbox'
   | 'showLightboxForViewOnceMedia'
+  | 'showMediaNoLongerAvailableToast'
   | 'showSpoiler'
   | 'startConversation'
   | 'viewStory'
@@ -125,6 +127,7 @@ export function MessageDetail({
   message,
   receivedAt,
   sentAt,
+  cancelAttachmentDownload,
   checkForAccount,
   clearTargetedMessage,
   contactNameColor,
@@ -150,6 +153,7 @@ export function MessageDetail({
   showExpiredOutgoingTapToViewToast,
   showLightbox,
   showLightboxForViewOnceMedia,
+  showMediaNoLongerAvailableToast,
   showSpoiler,
   startConversation,
   theme,
@@ -330,6 +334,7 @@ export function MessageDetail({
           <Message
             {...message}
             renderingContext="conversation/MessageDetail"
+            cancelAttachmentDownload={cancelAttachmentDownload}
             checkForAccount={checkForAccount}
             clearTargetedMessage={clearTargetedMessage}
             contactNameColor={contactNameColor}
@@ -372,6 +377,7 @@ export function MessageDetail({
               showExpiredOutgoingTapToViewToast
             }
             showLightbox={showLightbox}
+            showMediaNoLongerAvailableToast={showMediaNoLongerAvailableToast}
             startConversation={startConversation}
             theme={theme}
             viewStory={viewStory}

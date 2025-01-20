@@ -50,9 +50,6 @@
   "icu:privacyPolicy": {
     "messageformat": "Condicions de servei i política de privadesa"
   },
-  "icu:appleSilicon": {
-    "messageformat": "Apple silicon"
-  },
   "icu:About__AppEnvironment": {
     "messageformat": "{appEnv}"
   },
@@ -815,9 +812,6 @@
   "icu:voiceNoteError": {
     "messageformat": "Hi ha hagut un error amb la gravadora de veu."
   },
-  "icu:attachmentSaved": {
-    "messageformat": "Adjunt desat"
-  },
   "icu:attachmentSavedPlural": {
     "messageformat": "{count, plural, one {Adjunt desat} other {{count,number} adjunts desats}}"
   },
@@ -1025,18 +1019,6 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "Informació"
   },
-  "icu:deleteMessagesInConversation": {
-    "messageformat": "Eliminar missatges"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
-    "messageformat": "Eliminar els missatges?"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
-    "messageformat": "Tots els missatges d'aquest xat s'eliminaran del dispositiu. Encara podràs cercar aquest xat després d'haver eliminat els missatges."
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
-    "messageformat": "Tots els missatges d'aquest xat s'eliminaran dels teus dispositius. Encara podràs cercar aquest xat després d'haver eliminat els missatges."
-  },
   "icu:deleteConversation": {
     "messageformat": "Suprimeix"
   },
@@ -1142,6 +1124,24 @@
   "icu:imageCaptionIconAlt": {
     "messageformat": "Icona que mostra que aquesta imatge té un títol"
   },
+  "icu:imageOpenAlt": {
+    "messageformat": "Obrir aquest fitxer adjunt en una vista més gran"
+  },
+  "icu:startDownload": {
+    "messageformat": "Iniciar la descàrrega"
+  },
+  "icu:cancelDownload": {
+    "messageformat": "Cancel·la la descàrrega"
+  },
+  "icu:downloadNItems": {
+    "messageformat": "{count, plural, one {{count,number} element} other {{count,number} elements}}"
+  },
+  "icu:mediaNoLongerAvailable": {
+    "messageformat": "This media is no longer available."
+  },
+  "icu:attachmentNoLongerAvailable__learnMore": {
+    "messageformat": "Learn more"
+  },
   "icu:save": {
     "messageformat": "Desa"
   },
@@ -1183,6 +1183,9 @@
   },
   "icu:Install__qr-failed-load__retry": {
     "messageformat": "Torna a provar-ho"
+  },
+  "icu:Install__qr-max-rotations__retry": {
+    "messageformat": "Refresh code"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Necessito ajuda"
@@ -1581,7 +1584,7 @@
     "messageformat": "Vols eliminar totes les dades i missatges d'aquesta versió de Signal per a Escriptori? Sempre pots tornar a enllaçar aquest escriptori, però els teus missatges no es restauraran. El teu compte de Signal i les dades del teu telèfon o altres dispositius enllaçats no s'eliminaran."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Desconnexió i supressió de dades"
+    "messageformat": "Disconnecting and deleting all data…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Tens dades obsoletes d'una instal·lació anterior del Signal Desktop. Si tries continuar, se suprimiran i començareu de zero."
@@ -2741,6 +2744,9 @@
   "icu:incomingGroupCall__ringing-many": {
     "messageformat": "{remaining, plural, one {{ringer} us truca a vós, a {first}, a {second} i a {remaining,number} més} other {{ringer} us truca a vós, a {first}, a {second} i a {remaining,number} més}}"
   },
+  "icu:outgoingCallConnecting": {
+    "messageformat": "Connectant…"
+  },
   "icu:outgoingCallRinging": {
     "messageformat": "Sonant…"
   },
@@ -2785,6 +2791,12 @@
   },
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Micròfon encès"
+  },
+  "icu:CallControls__LowerHandSuggestionToast": {
+    "messageformat": "Baixar la mà?"
+  },
+  "icu:CallControls__LowerHandSuggestionToast--button": {
+    "messageformat": "Baixar"
   },
   "icu:CallControls__RingingToast--ringing-on": {
     "messageformat": "So activat"
@@ -3563,6 +3575,9 @@
   "icu:next": {
     "messageformat": "següent"
   },
+  "icu:ClearingData__description": {
+    "messageformat": "This may take a few minutes depending on the size of your message history"
+  },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Feu una donació a Signal"
   },
@@ -3594,10 +3609,10 @@
     "messageformat": "Preparant per descarregar…"
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "En funció de la mida de la teva còpia de seguretat, això pot trigar uns quants minuts."
+    "messageformat": "En funció de la mida del teu historial dels missatges, això pot trigar uns quants minuts."
   },
   "icu:BackupImportScreen__cancel": {
-    "messageformat": "Cancel·lar la transferència"
+    "messageformat": "Cancel·la"
   },
   "icu:BackupImportScreen__security-description": {
     "messageformat": "Els missatges i la informació del xat estan protegits mitjançant una codificació d'extrem a extrem, inclòs el procés de sincronització. <learnMoreLink>Més informació</learnMoreLink>"
@@ -3606,7 +3621,7 @@
     "messageformat": "Cancel·lar la transferència?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "No s'ha completat la restauració dels teus missatges i arxius multimèdia. Si decideixes cancel·lar, podràs tornar-los a transferir des d'Ajustos."
+    "messageformat": "No s'ha completat la restauració dels teus missatges i arxius multimèdia. Si decideixes cancel·lar-la, s'enllaçarà el teu dispositiu sense el teu historial dels missatges."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
     "messageformat": "Continuar la transferència"
@@ -3619,6 +3634,9 @@
   },
   "icu:BackupImportScreen__error__body": {
     "messageformat": "No s'han pogut transferir els teus missatges. Comprova la connexió a Internet i torna-ho a provar."
+  },
+  "icu:BackupImportScreen__error-fatal__body": {
+    "messageformat": "S'ha produït un error i no s'han pogut transferir els teus missatges. Torna-ho a provar enllaçant de nou aquest dispositiu."
   },
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "Torna a provar-ho"
@@ -5776,16 +5794,10 @@
     "messageformat": "Petits ajustos, correccions d'errors i tasques de millora de rendiment. Gràcies per utilitzar Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.34--0": {
-    "messageformat": "Amb la nova icona de filtre al costat del quadre de cerca, podràs trobar més ràpidament els xats no llegits."
+  "icu:WhatsNew__v7.38--0": {
+    "messageformat": "Hem corregit un error amb les mencions amb @ que feia que de vegades aparegués el teu propi compte a la llista de suggeriments per autocompletar."
   },
-  "icu:WhatsNew__v7.34--1": {
-    "messageformat": "Aquesta actualització és compatible amb els nous processadors de Windows, com ara el Snapdragon X Elite."
-  },
-  "icu:WhatsNew__v7.34--2": {
-    "messageformat": "També hem corregit un error que feia que no funcionés el mode fosc a Signal quan els ajustos del teu sistema operatiu estaven configurats per utilitzar el mode clar."
-  },
-  "icu:WhatsNew__v7.35--0": {
-    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
+  "icu:WhatsNew__v7.39--0": {
+    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
   }
 }

@@ -152,6 +152,8 @@
   width: 8px;
   background: transparent;
   cursor: col-resize;
+  // Disable browser handling of gestures so element can be dragged with touch events
+  touch-action: none;
 
   &:focus {
     outline: none;
@@ -176,7 +178,7 @@
 
 .NavSidebar__HeaderActions {
   display: flex;
-  gap: 20px;
+  gap: 8px;
   margin-block: -4px;
   align-items: center;
   justify-content: center;

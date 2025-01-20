@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { partition } from 'lodash';
-import * as log from '../logging/log';
+import * as logger from '../logging/log';
 import { isLongMessage } from '../types/MIME';
 import { getMessageIdForLogging } from './idForLogging';
 import {
@@ -21,7 +21,7 @@ import type {
 } from '../model-types.d';
 import * as Errors from '../types/errors';
 import {
-  getAttachmentSignature,
+  getAttachmentSignatureSafe,
   isDownloading,
   isDownloaded,
 } from '../types/Attachment';
@@ -33,29 +33,74 @@ import {
   AttachmentDownloadUrgency,
 } from '../jobs/AttachmentDownloadManager';
 import { AttachmentDownloadSource } from '../sql/Interface';
+import type { MessageModel } from '../models/messages';
+import type { ConversationModel } from '../models/conversations';
+import { isOutgoing, isStory } from '../messages/helpers';
+import { shouldDownloadStory } from './shouldDownloadStory';
+import { hasAttachmentDownloads } from './hasAttachmentDownloads';
+import {
+  addToAttachmentDownloadQueue,
+  shouldUseAttachmentDownloadQueue,
+} from './attachmentDownloadQueue';
+import { queueUpdateMessage } from './messageBatcher';
 
 export type MessageAttachmentsDownloadedType = {
   bodyAttachment?: AttachmentType;
-  attachments: Array<AttachmentType>;
-  editHistory?: Array<EditHistoryType>;
-  preview: Array<LinkPreviewType>;
-  contact: Array<EmbeddedContactType>;
+  attachments: ReadonlyArray<AttachmentType>;
+  editHistory?: ReadonlyArray<EditHistoryType>;
+  preview: ReadonlyArray<LinkPreviewType>;
+  contact: ReadonlyArray<EmbeddedContactType>;
   quote?: QuotedMessageType;
   sticker?: StickerType;
 };
 
-function getAttachmentSignatureSafe(
-  attachment: AttachmentType
-): string | undefined {
-  try {
-    return getAttachmentSignature(attachment);
-  } catch {
-    log.warn(
-      'queueAttachmentDownloads: attachment was missing digest',
-      attachment.blurHash
-    );
-    return undefined;
+function getLogger(source: AttachmentDownloadSource) {
+  const verbose = source !== AttachmentDownloadSource.BACKUP_IMPORT;
+  const log = verbose ? logger : { ...logger, info: () => null };
+  return log;
+}
+
+export async function handleAttachmentDownloadsForNewMessage(
+  message: MessageModel,
+  conversation: ConversationModel
+): Promise<void> {
+  const idLog = `handleAttachmentDownloadsForNewMessage/${conversation.idForLogging()} ${getMessageIdForLogging(message.attributes)}`;
+
+  // Only queue attachments for downloads if this is a story (with additional logic), or
+  // if it's either an outgoing message or we've accepted the conversation
+  let shouldQueueForDownload = false;
+  if (isStory(message.attributes)) {
+    shouldQueueForDownload = await shouldDownloadStory(conversation.attributes);
+  } else {
+    shouldQueueForDownload =
+      hasAttachmentDownloads(message.attributes) &&
+      (conversation.getAccepted() || isOutgoing(message.attributes));
   }
+
+  if (shouldQueueForDownload) {
+    if (shouldUseAttachmentDownloadQueue()) {
+      addToAttachmentDownloadQueue(idLog, message);
+    } else {
+      await queueAttachmentDownloadsForMessage(message);
+    }
+  }
+}
+
+export async function queueAttachmentDownloadsForMessage(
+  message: MessageModel,
+  urgency?: AttachmentDownloadUrgency
+): Promise<boolean> {
+  const updates = await queueAttachmentDownloads(message.attributes, {
+    urgency,
+  });
+  if (!updates) {
+    return false;
+  }
+
+  message.set(updates);
+  queueUpdateMessage(message.attributes);
+
+  return true;
 }
 
 // Receive logic
@@ -66,9 +111,11 @@ export async function queueAttachmentDownloads(
   {
     urgency = AttachmentDownloadUrgency.STANDARD,
     source = AttachmentDownloadSource.STANDARD,
+    attachmentDigestForImmediate,
   }: {
     urgency?: AttachmentDownloadUrgency;
     source?: AttachmentDownloadSource;
+    attachmentDigestForImmediate?: string;
   } = {}
 ): Promise<MessageAttachmentsDownloadedType | undefined> {
   const attachmentsToQueue = message.attachments || [];
@@ -79,10 +126,7 @@ export async function queueAttachmentDownloads(
   let bodyAttachment;
 
   const idLog = `queueAttachmentDownloads(${idForLogging}})`;
-
-  log.info(
-    `${idLog}: Queueing ${attachmentsToQueue.length} attachment downloads`
-  );
+  const log = getLogger(source);
 
   const [longMessageAttachments, normalAttachments] = partition(
     attachmentsToQueue,
@@ -145,6 +189,7 @@ export async function queueAttachmentDownloads(
       sentAt: message.sent_at,
       urgency,
       source,
+      attachmentDigestForImmediate,
     }
   );
   count += attachmentsCount;
@@ -328,11 +373,11 @@ export async function queueAttachmentDownloads(
     );
   }
 
-  log.info(`${idLog}: Queued ${count} total attachment downloads`);
-
   if (count <= 0) {
     return;
   }
+
+  log.info(`${idLog}: Queued ${count} total attachment downloads`);
 
   return {
     attachments,
@@ -345,7 +390,7 @@ export async function queueAttachmentDownloads(
   };
 }
 
-async function queueNormalAttachments({
+export async function queueNormalAttachments({
   idLog,
   messageId,
   attachments = [],
@@ -354,6 +399,7 @@ async function queueNormalAttachments({
   sentAt,
   urgency,
   source,
+  attachmentDigestForImmediate,
 }: {
   idLog: string;
   messageId: string;
@@ -363,10 +409,12 @@ async function queueNormalAttachments({
   sentAt: number;
   urgency: AttachmentDownloadUrgency;
   source: AttachmentDownloadSource;
+  attachmentDigestForImmediate?: string;
 }): Promise<{
   attachments: Array<AttachmentType>;
   count: number;
 }> {
+  const log = getLogger(source);
   // Look through "otherAttachments" which can either be attachments in the
   // edit history or the message's attachments and see if any of the attachments
   // are the same. If they are let's replace it so that we don't download more
@@ -413,13 +461,18 @@ async function queueNormalAttachments({
 
       count += 1;
 
+      const urgencyForAttachment =
+        attachmentDigestForImmediate &&
+        attachmentDigestForImmediate === attachment.digest
+          ? AttachmentDownloadUrgency.IMMEDIATE
+          : urgency;
       return AttachmentDownloadManager.addJob({
         attachment,
         messageId,
         attachmentType: 'attachment',
         receivedAt,
         sentAt,
-        urgency,
+        urgency: urgencyForAttachment,
         source,
       });
     })
@@ -465,6 +518,7 @@ async function queuePreviews({
   urgency: AttachmentDownloadUrgency;
   source: AttachmentDownloadSource;
 }): Promise<{ preview: Array<LinkPreviewType>; count: number }> {
+  const log = getLogger(source);
   // Similar to queueNormalAttachments' logic for detecting same attachments
   // except here we also pick by link preview URL.
   const previewSignatures: Map<string, LinkPreviewType> = new Map();
@@ -560,6 +614,7 @@ async function queueQuoteAttachments({
   urgency: AttachmentDownloadUrgency;
   source: AttachmentDownloadSource;
 }): Promise<{ quote?: QuotedMessageType; count: number }> {
+  const log = getLogger(source);
   let count = 0;
   if (!quote) {
     return { quote, count };

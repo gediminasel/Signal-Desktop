@@ -13,13 +13,15 @@ export enum InstallScreenStep {
 }
 
 export enum InstallScreenBackupStep {
+  WaitForBackup = 'WaitForBackup',
   Download = 'Download',
   Process = 'Process',
 }
 
 export enum InstallScreenBackupError {
-  Unknown = 'Unknown',
   UnsupportedVersion = 'UnsupportedVersion',
+  Retriable = 'Retriable',
+  Fatal = 'Fatal',
 }
 
 export enum InstallScreenError {
@@ -31,6 +33,7 @@ export enum InstallScreenError {
 }
 
 export enum InstallScreenQRCodeError {
+  MaxRotations = 'MaxRotations',
   Timeout = 'Timeout',
   Unknown = 'Unknown',
   NetworkIssue = 'NetworkIssue',

@@ -45,6 +45,7 @@ export enum ToastType {
   LinkCopied = 'LinkCopied',
   LoadingFullLogs = 'LoadingFullLogs',
   MaxAttachments = 'MaxAttachments',
+  MediaNoLongerAvailable = 'MediaNoLongerAvailable',
   MessageBodyTooLong = 'MessageBodyTooLong',
   MessageLoop = 'MessageLoop',
   OriginalMessageNotFound = 'OriginalMessageNotFound',
@@ -137,6 +138,7 @@ export type AnyToast =
   | { toastType: ToastType.LinkCopied }
   | { toastType: ToastType.LoadingFullLogs }
   | { toastType: ToastType.MaxAttachments }
+  | { toastType: ToastType.MediaNoLongerAvailable }
   | { toastType: ToastType.MessageBodyTooLong }
   | { toastType: ToastType.MessageLoop }
   | { toastType: ToastType.OriginalMessageNotFound }

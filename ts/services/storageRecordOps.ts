@@ -80,6 +80,10 @@ import { fromAdminKeyBytes, toAdminKeyBytes } from '../util/callLinks';
 import { isOlderThan } from '../util/timestamp';
 import { getMessageQueueTime } from '../util/getMessageQueueTime';
 import { callLinkRefreshJobQueue } from '../jobs/callLinkRefreshJobQueue';
+import {
+  generateBackupsSubscriberData,
+  saveBackupsSubscriberData,
+} from '../util/backupSubscriptionData';
 
 const MY_STORY_BYTES = uuidToBytes(MY_STORY_ID);
 
@@ -247,7 +251,8 @@ export async function toContactRecord(
   contactRecord.archived = Boolean(conversation.get('isArchived'));
   contactRecord.markedUnread = Boolean(conversation.get('markedUnread'));
   contactRecord.mutedUntilTimestamp = getSafeLongFromTimestamp(
-    conversation.get('muteExpiresAt')
+    conversation.get('muteExpiresAt'),
+    Long.MAX_VALUE
   );
   if (conversation.get('hideStory') !== undefined) {
     contactRecord.hideStory = Boolean(conversation.get('hideStory'));
@@ -406,9 +411,7 @@ export function toAccountRecord(
   if (Bytes.isNotEmpty(subscriberId)) {
     accountRecord.subscriberId = subscriberId;
   }
-  const subscriberCurrencyCode = window.storage.get(
-    'backupsSubscriberCurrencyCode'
-  );
+  const subscriberCurrencyCode = window.storage.get('subscriberCurrencyCode');
   if (typeof subscriberCurrencyCode === 'string') {
     accountRecord.subscriberCurrencyCode = subscriberCurrencyCode;
   }
@@ -419,23 +422,9 @@ export function toAccountRecord(
     accountRecord.donorSubscriptionManuallyCancelled =
       donorSubscriptionManuallyCancelled;
   }
-  const backupsSubscriberId = window.storage.get('backupsSubscriberId');
-  if (Bytes.isNotEmpty(backupsSubscriberId)) {
-    accountRecord.backupsSubscriberId = backupsSubscriberId;
-  }
-  const backupsSubscriberCurrencyCode = window.storage.get(
-    'backupsSubscriberCurrencyCode'
-  );
-  if (typeof backupsSubscriberCurrencyCode === 'string') {
-    accountRecord.backupsSubscriberCurrencyCode = backupsSubscriberCurrencyCode;
-  }
-  const backupsSubscriptionManuallyCancelled = window.storage.get(
-    'backupsSubscriptionManuallyCancelled'
-  );
-  if (typeof backupsSubscriptionManuallyCancelled === 'boolean') {
-    accountRecord.backupsSubscriptionManuallyCancelled =
-      backupsSubscriptionManuallyCancelled;
-  }
+
+  accountRecord.backupSubscriberData = generateBackupsSubscriberData();
+
   const displayBadgesOnProfile = window.storage.get('displayBadgesOnProfile');
   if (displayBadgesOnProfile !== undefined) {
     accountRecord.displayBadgesOnProfile = displayBadgesOnProfile;
@@ -517,7 +506,8 @@ export function toGroupV1Record(
   groupV1Record.archived = Boolean(conversation.get('isArchived'));
   groupV1Record.markedUnread = Boolean(conversation.get('markedUnread'));
   groupV1Record.mutedUntilTimestamp = getSafeLongFromTimestamp(
-    conversation.get('muteExpiresAt')
+    conversation.get('muteExpiresAt'),
+    Long.MAX_VALUE
   );
 
   applyUnknownFields(groupV1Record, conversation);
@@ -539,7 +529,8 @@ export function toGroupV2Record(
   groupV2Record.archived = Boolean(conversation.get('isArchived'));
   groupV2Record.markedUnread = Boolean(conversation.get('markedUnread'));
   groupV2Record.mutedUntilTimestamp = getSafeLongFromTimestamp(
-    conversation.get('muteExpiresAt')
+    conversation.get('muteExpiresAt'),
+    Long.MAX_VALUE
   );
   groupV2Record.dontNotifyForMentionsIfMuted = Boolean(
     conversation.get('dontNotifyForMentionsIfMuted')
@@ -757,20 +748,28 @@ function doRecordsConflict(
       continue;
     }
 
+    const isRemoteNullish =
+      !remoteValue || (Long.isLong(remoteValue) && remoteValue.isZero());
+    const isLocalNullish =
+      !localValue || (Long.isLong(localValue) && localValue.isZero());
+
     // Sometimes we get `null` values from Protobuf and they should default to
     // false, empty string, or 0 for these records we do not count them as
     // conflicting.
-    if (
-      (!remoteValue || (Long.isLong(remoteValue) && remoteValue.isZero())) &&
-      (!localValue || (Long.isLong(localValue) && localValue.isZero()))
-    ) {
+    if (isRemoteNullish && isLocalNullish) {
       continue;
     }
 
     const areEqual = isEqual(localValue, remoteValue);
 
     if (!areEqual) {
-      details.push(`key=${key}: different values`);
+      if (isRemoteNullish) {
+        details.push(`key=${key}: removed`);
+      } else if (isLocalNullish) {
+        details.push(`key=${key}: added`);
+      } else {
+        details.push(`key=${key}: different values`);
+      }
     }
   }
 
@@ -1327,9 +1326,7 @@ export async function mergeAccountRecord(
     subscriberId,
     subscriberCurrencyCode,
     donorSubscriptionManuallyCancelled,
-    backupsSubscriberId,
-    backupsSubscriberCurrencyCode,
-    backupsSubscriptionManuallyCancelled,
+    backupSubscriberData,
     displayBadgesOnProfile,
     keepMutedChatsArchived,
     hasCompletedUsernameOnboarding,
@@ -1548,21 +1545,9 @@ export async function mergeAccountRecord(
       donorSubscriptionManuallyCancelled
     );
   }
-  if (Bytes.isNotEmpty(backupsSubscriberId)) {
-    await window.storage.put('backupsSubscriberId', backupsSubscriberId);
-  }
-  if (typeof backupsSubscriberCurrencyCode === 'string') {
-    await window.storage.put(
-      'backupsSubscriberCurrencyCode',
-      backupsSubscriberCurrencyCode
-    );
-  }
-  if (backupsSubscriptionManuallyCancelled != null) {
-    await window.storage.put(
-      'backupsSubscriptionManuallyCancelled',
-      backupsSubscriptionManuallyCancelled
-    );
-  }
+
+  await saveBackupsSubscriberData(backupSubscriberData);
+
   await window.storage.put(
     'displayBadgesOnProfile',
     Boolean(displayBadgesOnProfile)

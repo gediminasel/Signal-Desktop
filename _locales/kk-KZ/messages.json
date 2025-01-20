@@ -50,9 +50,6 @@
   "icu:privacyPolicy": {
     "messageformat": "Шарттар және құпиялық саясаты"
   },
-  "icu:appleSilicon": {
-    "messageformat": "Apple silicon"
-  },
   "icu:About__AppEnvironment": {
     "messageformat": "{appEnv}"
   },
@@ -815,9 +812,6 @@
   "icu:voiceNoteError": {
     "messageformat": "Дауыстық хат жазу құралында қате шықты."
   },
-  "icu:attachmentSaved": {
-    "messageformat": "Тіркеме сақталды."
-  },
   "icu:attachmentSavedPlural": {
     "messageformat": "{count, plural, one {Тіркеме сақталды} other {{count,number} тіркеме сақталды}}"
   },
@@ -1025,18 +1019,6 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "Ақпарат"
   },
-  "icu:deleteMessagesInConversation": {
-    "messageformat": "Хаттарды жою"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
-    "messageformat": "Хаттарды жою керек пе?"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
-    "messageformat": "Осы чаттағы хаттардың барлығы бұл құрылғыдан жойылады. Хаттарды жойған соң да, бұл чатты іздеп табуыңызға болады."
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
-    "messageformat": "Осы чаттағы хаттардың барлығы барлық құрылғыларыңыздан жойылады. Хабарларды жойғаннан кейін бұл чатты әлі де іздей аласыз."
-  },
   "icu:deleteConversation": {
     "messageformat": "Жою"
   },
@@ -1142,6 +1124,24 @@
   "icu:imageCaptionIconAlt": {
     "messageformat": "Бұл суреттің атауы бар екенін білдіретін белгіше"
   },
+  "icu:imageOpenAlt": {
+    "messageformat": "Бұл тіркемені үлкенірек көріністе ашыңыз"
+  },
+  "icu:startDownload": {
+    "messageformat": "Жүктеп алуды бастау"
+  },
+  "icu:cancelDownload": {
+    "messageformat": "Жүктеп алудан бас тарту"
+  },
+  "icu:downloadNItems": {
+    "messageformat": "{count, plural, one {{count,number} элемент} other {{count,number} элемент}}"
+  },
+  "icu:mediaNoLongerAvailable": {
+    "messageformat": "This media is no longer available."
+  },
+  "icu:attachmentNoLongerAvailable__learnMore": {
+    "messageformat": "Learn more"
+  },
   "icu:save": {
     "messageformat": "Сақтау"
   },
@@ -1183,6 +1183,9 @@
   },
   "icu:Install__qr-failed-load__retry": {
     "messageformat": "Қайтадан байқап көру"
+  },
+  "icu:Install__qr-max-rotations__retry": {
+    "messageformat": "Refresh code"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Анықтама алу"
@@ -1581,7 +1584,7 @@
     "messageformat": "Signal Desktop-тың осы нұсқасынан барлық деректі және хатты жою керек пе? Осы жұмыс үстелін кез келген уақытта қайта байланыстыра аласыз, бірақ хаттарыңыз қалпына келмейді. Signal аккаунтыңыз және телефоныңыздағы деректер немесе басқа да байланыстырылған құрылғылар жойылмайды."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Құрылғыны ажырату және барлық деректі жою"
+    "messageformat": "Disconnecting and deleting all data…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Signal-дың компьютерлік нұсқасын бұған дейін орнатқаннан ескі деректер қалып қойған. Жалғастыратын болсаңыз, ол жойылады және бәрін басынан бастайсыз."
@@ -2741,6 +2744,9 @@
   "icu:incomingGroupCall__ringing-many": {
     "messageformat": "{remaining, plural, one {{ringer} сізге, {first}, {second} және тағы {remaining,number} адамға қоңырау шалып жатыр} other {{ringer} сізге, сондай-ақ {first}, {second} және тағы {remaining,number} адамға қоңырау шалып жатыр}}"
   },
+  "icu:outgoingCallConnecting": {
+    "messageformat": "Қосылуда..."
+  },
   "icu:outgoingCallRinging": {
     "messageformat": "Қоңырау соғылуда..."
   },
@@ -2785,6 +2791,12 @@
   },
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Микрофон қосулы"
+  },
+  "icu:CallControls__LowerHandSuggestionToast": {
+    "messageformat": "Қолыңызды түсіресіз бе?"
+  },
+  "icu:CallControls__LowerHandSuggestionToast--button": {
+    "messageformat": "Түсіру"
   },
   "icu:CallControls__RingingToast--ringing-on": {
     "messageformat": "Қоңырау дауысы қосылды"
@@ -3563,6 +3575,9 @@
   "icu:next": {
     "messageformat": "келесі"
   },
+  "icu:ClearingData__description": {
+    "messageformat": "This may take a few minutes depending on the size of your message history"
+  },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Signal-ды демеу"
   },
@@ -3594,10 +3609,10 @@
     "messageformat": "Жүктеп алуға дайындалып жатыр..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "Сақтық көшірменің көлеміне қарай ол бірнеше минутқа созылуы мүмкін."
+    "messageformat": "Хабарлар тарихының көлеміне қарай ол бірнеше минутқа созылуы мүмкін."
   },
   "icu:BackupImportScreen__cancel": {
-    "messageformat": "Тасымалдаудан бас тарту"
+    "messageformat": "Бас тарту"
   },
   "icu:BackupImportScreen__security-description": {
     "messageformat": "Хабарлар мен чат туралы ақпарат тура шифрлау әдісімен, соның ішінде синхрондау процесімен қорғалған. <learnMoreLink>Толық ақпарат</learnMoreLink>"
@@ -3606,7 +3621,7 @@
     "messageformat": "Тасымалдаудан бас тарту керек пе?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Хабарларыңыз бен мультимедиаңызды қалпына келтіру процесі аяқталған жоқ. Оларды тасымалдаудан бас тартсаңыз, \"Параметрлер\" бөлімінен қайта тасымалдай аласыз."
+    "messageformat": "Хабарларыңыз бен мультимедиаңызды қалпына келтіру процесі аяқталған жоқ. Бас тарту опциясын таңдасаңыз, құрылғыңыз хабарлар тарихынсыз байланыстырылады."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
     "messageformat": "Тасымалдауды жалғастыру"
@@ -3619,6 +3634,9 @@
   },
   "icu:BackupImportScreen__error__body": {
     "messageformat": "Хабарларыңыз тасымалданбады. Интернет байланысын тексеріп, қайталап көріңіз."
+  },
+  "icu:BackupImportScreen__error-fatal__body": {
+    "messageformat": "Қате шыққандықтан, хабарларыңыз тасымалданбады. Осы компьютерді қайта байланыстырып көріңіз."
   },
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "Қайтадан байқап көру"
@@ -5776,16 +5794,10 @@
     "messageformat": "Кішігірім түзетпелер жасалды, ақаулар жөнделді және жұмысы жақсартылды. Signal-ды қолданғаныңыз үшін рақмет!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.34--0": {
-    "messageformat": "Іздеу өрісінің жанындағы жаңа сүзгі белгішесі оқылмаған чаттарды жылдам табуға көмектеседі. Дегенмен чаттағы жаңа хабарларды оқып алған соң, чатты оқылған немесе оқылмаған деп белгілеу өз еркіңізде екенін ұмытпаңыз."
+  "icu:WhatsNew__v7.38--0": {
+    "messageformat": "Біреуді @ белгісі арқылы атап өтетін кезде автоматты түрде толтырылатын ұсыныстар тізімінде өз аккаунтыңыз қате қосылып кететін ақау түзетілді. Енді топтық чаттарда өзіңіз туралы сөз қозғағанда, өз аккаунтыңызды атап өтпейтін боласыз."
   },
-  "icu:WhatsNew__v7.34--1": {
-    "messageformat": "Бұл жаңа нұсқа Snapdragon X Elite сияқты Windows жүйесіндегі жаңа процессорларға қолдау көрсетеді."
-  },
-  "icu:WhatsNew__v7.34--2": {
-    "messageformat": "Сонымен қатар операциялық жүйе параметрлері жарық режимді пайдалануға конфигурацияланғанда, Signal-дағы қараңғы режим жұмыс істемей қалатын ақау түзетілді. Signal Desktop енді қалаған режиміңізді дұрыс анықтай алады."
-  },
-  "icu:WhatsNew__v7.35--0": {
-    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
+  "icu:WhatsNew__v7.39--0": {
+    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
   }
 }

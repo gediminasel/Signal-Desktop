@@ -1,12 +1,12 @@
 {
   "icu:AddUserToAnotherGroupModal__title": {
-    "messageformat": "បន្ថែមទៅក្រុមមួយ"
+    "messageformat": "ដាក់បញ្ចូលទៅក្រុមមួយ"
   },
   "icu:AddUserToAnotherGroupModal__confirm-title": {
     "messageformat": "បញ្ចូលសមាជិកថ្មីឬ?"
   },
   "icu:AddUserToAnotherGroupModal__confirm-add": {
-    "messageformat": "បន្ថែម"
+    "messageformat": "បញ្ចូល"
   },
   "icu:AddUserToAnotherGroupModal__confirm-message": {
     "messageformat": "បញ្ចូល “{contact}” ទៅក្នុងក្រុម “{group}”"
@@ -15,7 +15,7 @@
     "messageformat": "ស្វែងរក"
   },
   "icu:AddUserToAnotherGroupModal__toast--user-added-to-group": {
-    "messageformat": "{contact} បានបន្ថែមទៅ {group}"
+    "messageformat": "{contact} ត្រូវបានបញ្ចូលទៅ {group}"
   },
   "icu:AddUserToAnotherGroupModal__toast--adding-user-to-group": {
     "messageformat": "កំពុងបញ្ចូល {contact}…"
@@ -30,7 +30,7 @@
     "messageformat": "{count, plural, other {សមាជិក {count,number} នាក់}}"
   },
   "icu:GroupListItem__message-already-member": {
-    "messageformat": "សមាជិករួចហើយ"
+    "messageformat": "ជាសមាជិករួចហើយ"
   },
   "icu:GroupListItem__message-pending": {
     "messageformat": "សមាជិកភាពកំពុងរង់ចាំ"
@@ -49,9 +49,6 @@
   },
   "icu:privacyPolicy": {
     "messageformat": "លក្ខខណ្ឌ និងគោលនយោបាយឯកជនភាព"
-  },
-  "icu:appleSilicon": {
-    "messageformat": "Apple silicon"
   },
   "icu:About__AppEnvironment": {
     "messageformat": "{appEnv}"
@@ -75,10 +72,10 @@
     "messageformat": "បញ្ហាទិន្នន័យ"
   },
   "icu:databaseError__detail": {
-    "messageformat": "មានបញ្ហាមូលដ្ឋានទិន្នន័យបានកើតឡើង។ អ្នកអាចចម្លងបញ្ហានេះ ហើយទាក់ទងផ្នែកជំនួយរបស់ Signal ឲ្យជួយដោះស្រាយបញ្ហា។ ប្រសិនបើអ្នកត្រូវការប្រើ Signal ភ្លាមៗ អ្នកអាចលុបទិន្នន័យរបស់អ្នក ហើយចាប់ផ្តើមឡើងវិញ។\n\nទាក់ទងផ្នែកជំនួយដោយចូលទៅកាន់៖ {link}"
+    "messageformat": "មានបញ្ហាមូលដ្ឋានទិន្នន័យបានកើតឡើង។ អ្នកអាចចម្លងបញ្ហានេះ ហើយទាក់ទងផ្នែកជំនួយរបស់ Signal ឱ្យជួយដោះស្រាយបញ្ហា។ ប្រសិនបើអ្នកត្រូវការប្រើ Signal ភ្លាមៗ អ្នកអាចលុបទិន្នន័យរបស់អ្នក ហើយចាប់ផ្តើមឡើងវិញ។\n\nទាក់ទងផ្នែកជំនួយដោយចូលទៅកាន់៖ {link}"
   },
   "icu:deleteAndRestart": {
-    "messageformat": "លុបទិន្នន័យ និងចាប់ផ្តើមឡើងវិញ"
+    "messageformat": "លុបទិន្នន័យ រួចចាប់ផ្តើមឡើងវិញ"
   },
   "icu:databaseError__deleteDataConfirmation": {
     "messageformat": "លុបទិន្នន័យទាំងអស់ជារៀងរហូតឬ?"
@@ -815,9 +812,6 @@
   "icu:voiceNoteError": {
     "messageformat": "មាន​បញ្ហា​ជាមួយ​នឹង​ឧបករណ៍​ថត​សំឡេង។"
   },
-  "icu:attachmentSaved": {
-    "messageformat": "បាន​រក្សា​ទុក​ឯកសារ​ភ្ជាប់។"
-  },
   "icu:attachmentSavedPlural": {
     "messageformat": "{count, plural, other {ឯកសារភ្ជាប់ {count,number} ត្រូវបានរក្សាទុក}}"
   },
@@ -1025,18 +1019,6 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "ព័ត៌មាន"
   },
-  "icu:deleteMessagesInConversation": {
-    "messageformat": "លុបសារ"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
-    "messageformat": "លុបសារឬ?"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
-    "messageformat": "សារទាំងអស់នៅក្នុងការជជែកនេះនឹងត្រូវបានលុបចេញពីឧបករណ៍នេះ។ អ្នកនៅតែអាចស្វែងរកការជជែកនេះបាន បន្ទាប់ពីអ្នកលុបសារហើយ។"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
-    "messageformat": "សារទាំងអស់នៅក្នុងការជជែកនេះនឹងត្រូវបានលុបចេញពីឧបករណ៍ទាំងអស់របស់អ្នក។ អ្នកនៅតែអាចស្វែងរកការជជែកនេះបាន បន្ទាប់ពីអ្នកលុបសារហើយ។"
-  },
   "icu:deleteConversation": {
     "messageformat": "លុប"
   },
@@ -1142,6 +1124,24 @@
   "icu:imageCaptionIconAlt": {
     "messageformat": "រូបតំណាងបង្ហាញថារូបភាពនេះមានចំណងជើង"
   },
+  "icu:imageOpenAlt": {
+    "messageformat": "បើកឯកសារភ្ជាប់នេះក្នុងទិដ្ឋភាពធំជាងនេះ"
+  },
+  "icu:startDownload": {
+    "messageformat": "ចាប់ផ្តើមទាញយក"
+  },
+  "icu:cancelDownload": {
+    "messageformat": "បោះបង់ការទាញយក"
+  },
+  "icu:downloadNItems": {
+    "messageformat": "{count, plural, other {{count,number} ធាតុ}}"
+  },
+  "icu:mediaNoLongerAvailable": {
+    "messageformat": "This media is no longer available."
+  },
+  "icu:attachmentNoLongerAvailable__learnMore": {
+    "messageformat": "Learn more"
+  },
   "icu:save": {
     "messageformat": "រក្សាទុក"
   },
@@ -1183,6 +1183,9 @@
   },
   "icu:Install__qr-failed-load__retry": {
     "messageformat": "ព្យាយាមម្តងទៀត"
+  },
+  "icu:Install__qr-max-rotations__retry": {
+    "messageformat": "Refresh code"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "រកជំនួយ"
@@ -1581,7 +1584,7 @@
     "messageformat": "លុបទិន្នន័យ និងសារទាំងអស់ចេញពីកំណែ Signal Desktop នេះឬ? អ្នកអាចភ្ជាប់ឡើងវិញជាមួយកំណែ Desktop នេះបានជានិច្ច ប៉ុន្តែសាររបស់អ្នកនឹងមិនអាចស្តារមកវិញបានទេ។ គណនី Signal និងទិន្នន័យរបស់អ្នកនៅលើទូរសព្ទរបស់អ្នក ឬឧបករណ៍ដែលបានភ្ជាប់ផ្សេងទៀតនឹងមិនត្រូវបានលុបឡើយ។"
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "កំពុងផ្តាច់ និងលុបចោលទិន្នន័យទាំងអស់"
+    "messageformat": "Disconnecting and deleting all data…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "អ្នកមានទិន្នន័យដែលលែងប្រើ ពីការដំឡើង Signal Desktop ពីមុន។ ប្រសិនបើអ្នកជ្រើសរើសបន្ត វានឹងត្រូវលុបចោល ហើយអ្នកនឹងចាប់ផ្តើមសាឡើងវិញទាំងអស់។"
@@ -2741,6 +2744,9 @@
   "icu:incomingGroupCall__ringing-many": {
     "messageformat": "{remaining, plural, other {{ringer} កំពុងហៅអ្នក {first}, {second}, និង{remaining,number} ដទៃទៀត}}"
   },
+  "icu:outgoingCallConnecting": {
+    "messageformat": "កំពុងភ្ជាប់…"
+  },
   "icu:outgoingCallRinging": {
     "messageformat": "កំពុងរោទ៍…"
   },
@@ -2785,6 +2791,12 @@
   },
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "បានបើកមីក្រូហ្វូន"
+  },
+  "icu:CallControls__LowerHandSuggestionToast": {
+    "messageformat": "ដាក់ដៃរបស់អ្នកចុះឬ?"
+  },
+  "icu:CallControls__LowerHandSuggestionToast--button": {
+    "messageformat": "ដាក់ដៃចុះ"
   },
   "icu:CallControls__RingingToast--ringing-on": {
     "messageformat": "បានបើកសំឡេងរោទ៍"
@@ -3563,6 +3575,9 @@
   "icu:next": {
     "messageformat": "បន្ទាប់"
   },
+  "icu:ClearingData__description": {
+    "messageformat": "This may take a few minutes depending on the size of your message history"
+  },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "ឧបត្ថម្ភទៅ Signal"
   },
@@ -3594,10 +3609,10 @@
     "messageformat": "កំពុងរៀបចំទាញយក…"
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "វាអាចចំណាយពេលពីរបីនាទី អាស្រ័យលើទំហំនៃការបម្រុងទុករបស់អ្នក"
+    "messageformat": "វាអាចនឹងចំណាយពេលពីរបីនាទី អាស្រ័យលើទំហំនៃប្រវត្តិសាររបស់អ្នក"
   },
   "icu:BackupImportScreen__cancel": {
-    "messageformat": "បោះបង់ការផ្ទេរ"
+    "messageformat": "បោះបង់"
   },
   "icu:BackupImportScreen__security-description": {
     "messageformat": "សារ និងព័ត៌មានជជែកត្រូវបានការពារដោយការអ៊ីនគ្រីបទាំងសងខាង រាប់បញ្ចូលទាំងដំណើរការធ្វើសមកាលកម្មផងដែរ។ <learnMoreLink>ស្វែងយល់បន្ថែម</learnMoreLink>"
@@ -3606,7 +3621,7 @@
     "messageformat": "បោះបង់ការផ្ទេរឬ?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "សារ និងមេឌៀរបស់អ្នកមិនទាន់បញ្ចប់ការស្ដារឡើងវិញទេ។ ប្រសិនបើអ្នកជ្រើសរើសបោះបង់ អ្នកអាចផ្ទេរម្តងទៀតពីការកំណត់។"
+    "messageformat": "សារ និងមេឌៀរបស់អ្នកមិនទាន់បញ្ចប់ការស្ដារទេ។ ប្រសិនបើអ្នកជ្រើសរើសបោះបង់ ឧបករណ៍របស់អ្នកនឹងត្រូវបានភ្ជាប់ដោយគ្មានប្រវត្តិសាររបស់អ្នក។"
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
     "messageformat": "បន្តផ្ទេរ"
@@ -3619,6 +3634,9 @@
   },
   "icu:BackupImportScreen__error__body": {
     "messageformat": "សាររបស់អ្នកមិនអាចផ្ទេរបានទេ។ សូមពិនិត្យមើលសេវាអ៊ីនធឺណិតរបស់អ្នក រួចព្យាយាមម្តងទៀត។"
+  },
+  "icu:BackupImportScreen__error-fatal__body": {
+    "messageformat": "សាររបស់អ្នកមិនអាចផ្ទេរបានទេ ដោយសារតែមានបញ្ហា។ ព្យាយាមម្តងទៀតដោយភ្ជាប់កុំព្យូទ័រលើតុនេះឡើងវិញ។"
   },
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "ព្យាយាមម្តងទៀត"
@@ -5776,16 +5794,10 @@
     "messageformat": "ការកែប្រែបន្តិចបន្តួច ការដោះស្រាយបញ្ហា និងការបង្កើនប្រតិបត្តិការ។ សូមអរគុណចំពោះការប្រើប្រាស់ Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.34--0": {
-    "messageformat": "រូបតម្រងថ្មីនៅជាប់ប្រអប់ស្វែងរកធ្វើឱ្យងាយស្រួលរកការជជែកដែលមិនទាន់អាន បានយ៉ាងឆាប់រហ័ស ប៉ុន្តែគិតតាមសម្រួលចុះថាតើគួរឆ្លើយតបឬអត់ បន្ទាប់ពីឃើញអ្វីដែលពួកគេនិយាយហើយ។"
+  "icu:WhatsNew__v7.38--0": {
+    "messageformat": "យើងបានដោះស្រាយបញ្ហាមួយជាមួយ @ mentions ដែលពេលខ្លះវាបានរាប់បញ្ចូលទាំងគណនីផ្ទាល់ខ្លួនរបស់អ្នកដោយមិនត្រឹមត្រូវនៅក្នុងបញ្ជីណែនាំដែលបំពេញដោយស្វ័យប្រវត្តិ។ អ្នកនៅតែអាចប្រើការរៀបរាប់ពីមនុស្សទីបី ដើម្បីនិយាយអំពីខ្លួនអ្នកនៅក្នុងការជជែកជាក្រុម ប្រសិនបើអ្នកមិនបានជួបបញ្ហានេះទេ។"
   },
-  "icu:WhatsNew__v7.34--1": {
-    "messageformat": "កំណែថ្មីនេះជួយឱ្យប្រើប្រាស់បានជាមួយអង្គដំណើរការថ្មីៗនៅលើ Windows ដូចជា Snapdragon X Elite ដូច្នេះអ្នកមិនចាំបាច់ធ្វើឱ្យ ARM របស់អ្នកឱ្យដូចជា x86 ទៀតទេ។"
-  },
-  "icu:WhatsNew__v7.34--2": {
-    "messageformat": "យើងក៏បានកែបញ្ហាមួយផងដែរដែលបានប៉ះពាល់ដល់ផ្ទៃពណ៌ងងឹតនៅក្នុង Signal នៅពេលដែលប្រព័ន្ធប្រតិបត្តិការរបស់អ្នកត្រូវបានកំណត់រចនាសម្ព័ន្ធឱ្យប្រើផ្ទៃពណ៌ភ្លឺ។ ឥឡូវនេះ Signal Desktop អាចដោះស្រាយបានល្អនូវលក្ខណៈបែកផ្ទៃពណ៌ផ្សេងគ្នាបានហើយ។"
-  },
-  "icu:WhatsNew__v7.35--0": {
-    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
+  "icu:WhatsNew__v7.39--0": {
+    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
   }
 }

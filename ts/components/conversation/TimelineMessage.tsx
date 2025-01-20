@@ -223,10 +223,7 @@ export function TimelineMessage(props: Props): JSX.Element {
       // check if any attachment needs to be downloaded from servers
       for (const attachment of attachments) {
         if (!isDownloaded(attachment)) {
-          kickOffAttachmentDownload({
-            attachment,
-            messageId: id,
-          });
+          kickOffAttachmentDownload({ messageId: id });
 
           attachmentsInProgress += 1;
         }
@@ -272,7 +269,7 @@ export function TimelineMessage(props: Props): JSX.Element {
     if (!canReplyPrivately) {
       return;
     }
-    const message = window.MessageCache.__DEPRECATED$getById(id);
+    const message = window.MessageCache.getById(id);
     if (message && message.get('sourceServiceId')) {
       const conversation = window.ConversationController.lookupOrCreate({
         e164: null,
@@ -280,12 +277,12 @@ export function TimelineMessage(props: Props): JSX.Element {
         reason: 'private reply',
       });
       if (conversation) {
-        if (conversationId !== conversation.id) {
+        if (conversationId !== conversation.get('id')) {
           window.reduxActions.conversations.showConversation({
-            conversationId: conversation.id,
+            conversationId: conversation.get('id'),
           });
         }
-        setQuoteByMessageId(conversation.id, id);
+        setQuoteByMessageId(conversation.get('id'), id);
       }
     }
   }, [canReplyPrivately, conversationId, id, setQuoteByMessageId]);

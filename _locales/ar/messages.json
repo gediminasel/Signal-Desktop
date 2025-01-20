@@ -50,9 +50,6 @@
   "icu:privacyPolicy": {
     "messageformat": "الشروط وسياسة الخصوصية"
   },
-  "icu:appleSilicon": {
-    "messageformat": "شريحة Apple silicon"
-  },
   "icu:About__AppEnvironment": {
     "messageformat": "{appEnv}"
   },
@@ -815,9 +812,6 @@
   "icu:voiceNoteError": {
     "messageformat": "حدث خطأ في مسجل الصوت."
   },
-  "icu:attachmentSaved": {
-    "messageformat": "تم حفظ المرفق."
-  },
   "icu:attachmentSavedPlural": {
     "messageformat": "{count, plural, zero {تمَّ حفظ {count,number} ملف مُرفَق} one {تمَّ حفظ ملف مُرفَق واحد} two {تمَّ حفظ {count,number} ملفين مُرفَقين} few {تمَّ حفظ {count,number} ملفات مُرفَقة} many {تمَّ حفظ {count,number} ملفًا مُرفقًا} other {تمَّ حفظ {count,number} ملف مُرفَق}}"
   },
@@ -1025,18 +1019,6 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "معلومات"
   },
-  "icu:deleteMessagesInConversation": {
-    "messageformat": "حذف الرسائل"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
-    "messageformat": "حذف الرسائل؟"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
-    "messageformat": "ستُحذَف رسائل هذه المحادثة من هذا الجهاز. يُمكنك البحث عن هذه الدردشة حتى بعد حذف الرسائل."
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
-    "messageformat": "ستُحذَف جميع رسائل هذه المُحادثة من جميع أجهزتك. يُمكنك البحث عن هذه الدردشة حتى بعد حذف الرسائل."
-  },
   "icu:deleteConversation": {
     "messageformat": "حذف"
   },
@@ -1142,6 +1124,24 @@
   "icu:imageCaptionIconAlt": {
     "messageformat": "أيقونة تظهر أنّ هذه الصورة تحوي تسمية توضيحية"
   },
+  "icu:imageOpenAlt": {
+    "messageformat": "افتح هذا الملف المُرفَق في نافذة أكبر."
+  },
+  "icu:startDownload": {
+    "messageformat": "بدء التنزيل"
+  },
+  "icu:cancelDownload": {
+    "messageformat": "إلغاء التنزيل"
+  },
+  "icu:downloadNItems": {
+    "messageformat": "{count, plural, zero {{count,number} عناصر} one {{count,number} عنصر} two {{count,number} عنصرين} few {{count,number} عناصر} many {{count,number} عناصر} other {{count,number} عناصر}}"
+  },
+  "icu:mediaNoLongerAvailable": {
+    "messageformat": "This media is no longer available."
+  },
+  "icu:attachmentNoLongerAvailable__learnMore": {
+    "messageformat": "Learn more"
+  },
   "icu:save": {
     "messageformat": "حفظ"
   },
@@ -1183,6 +1183,9 @@
   },
   "icu:Install__qr-failed-load__retry": {
     "messageformat": "إعادة المُحاولة"
+  },
+  "icu:Install__qr-max-rotations__retry": {
+    "messageformat": "Refresh code"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "احصل على المساعدة"
@@ -1581,7 +1584,7 @@
     "messageformat": "حذف جميع البيانات والرسائل من هذا الإصدار من سيجنال للحاسوب؟ يُمكنك دائمًا إعادة ربط هذا الحاسوب، لكن لن تستعيد رسائلك. لن يُحذف حساب سيجنال الخاص بك وبياناتك على هاتفك أو أي أجهزة أخرى مرتبطة."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "يجري فصل وحذف جميع البيانات"
+    "messageformat": "Disconnecting and deleting all data…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "لديك بيانات قديمة لم تعد تنفع من تثبيت سابق لسيجنال Desktop. إذا اخترت الاستمرار، فستُحذَف ويجب البداية بعدها من الصفر."
@@ -2741,6 +2744,9 @@
   "icu:incomingGroupCall__ringing-many": {
     "messageformat": "{remaining, plural, zero {إن {ringer} يتصل بك وبـ{first} وبـ {second}. ({remaining,number})} one {إن {ringer} يتصل بك وبـ{first} وبـ {second} ويـ {remaining,number} آخر} two {إن {ringer} يتصل بك وبـ{first} وبـ {second} و بـ {remaining,number} آخريْن} few {إن {ringer} يتصل بك وبـ{first} وبـ {second} وبـ {remaining,number} آخرين} many {إن {ringer} يتصل بك وبـ{first} وبـ {second} وبـ {remaining,number} آخرين} other {{ringer} يتصل بك وبـ{first} وبـ {second} وبـ {remaining,number} آخرين}}"
   },
+  "icu:outgoingCallConnecting": {
+    "messageformat": "جارٍ الاتصال…"
+  },
   "icu:outgoingCallRinging": {
     "messageformat": "يرن…"
   },
@@ -2785,6 +2791,12 @@
   },
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "الميكروفون مفعل"
+  },
+  "icu:CallControls__LowerHandSuggestionToast": {
+    "messageformat": "هل تريد خفض يدك؟"
+  },
+  "icu:CallControls__LowerHandSuggestionToast--button": {
+    "messageformat": "خفض اليد"
   },
   "icu:CallControls__RingingToast--ringing-on": {
     "messageformat": "تم تفعيل الرنين"
@@ -3563,6 +3575,9 @@
   "icu:next": {
     "messageformat": "التالي"
   },
+  "icu:ClearingData__description": {
+    "messageformat": "This may take a few minutes depending on the size of your message history"
+  },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "تبرَّع لسيجنال"
   },
@@ -3594,10 +3609,10 @@
     "messageformat": "جارٍ الإعداد للتنزيل..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "قد يستغرق هذا بضع دقائق حسب حجم نسختك الاحتياطية"
+    "messageformat": "قد يستغرق الأمر بضع دقائق حسب حجم سِجل رسائلك"
   },
   "icu:BackupImportScreen__cancel": {
-    "messageformat": "إلغاء التحويل"
+    "messageformat": "إلغاء"
   },
   "icu:BackupImportScreen__security-description": {
     "messageformat": "معلومات الرسائل والدردشات محمية من خلال التشفير من طرف لِطرف، بما في ذلك عملية المزامنة. <learnMoreLink>اعرف المزيد</learnMoreLink>"
@@ -3606,7 +3621,7 @@
     "messageformat": "أترغبُ بإلغاء التحويل؟"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "لم تكتمل استعادة رسائلك ووسائطك. إذا اخترتَ الإلغاء، يمكنك تحويلها مجددًا من خلال \"الإعدادات\"."
+    "messageformat": "لم تكتمل استعادة رسائلك ووسائطك. إذا اخترت الإلغاء، سَيتمُّ ربط جهازك دون سِجل رسائلك."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
     "messageformat": "مواصلة التحويل"
@@ -3619,6 +3634,9 @@
   },
   "icu:BackupImportScreen__error__body": {
     "messageformat": "تعذَّر نقل رسائلك. تحقَّق من اتصالك بالإنترنت وحاول مُجدَّدًا."
+  },
+  "icu:BackupImportScreen__error-fatal__body": {
+    "messageformat": "تعذَّر نقل رسائلك بسبب حدوث خطأ. حاوِل من جديد من خلال إعادة ربط هذا الحاسوب."
   },
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "إعادة المُحاولة"
@@ -5776,16 +5794,10 @@
     "messageformat": "تعديلات صغيرة، تصليح الأعطال، وتحسينات للأداء. شكرًا على استخدامكم سيجنال!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.34--0": {
-    "messageformat": "تُسهّل أيقونة الفلتر الجديدة الموجودة قرب مربع البحث العثور بسرعة على الدردشات غير المقروءة."
+  "icu:WhatsNew__v7.38--0": {
+    "messageformat": "أصلحنا خطأ يتعلق بالإشارات إلى الأفراد @ التي كانت في بعض الأحيان تُضيف حسابك الخاص في قائمة اقتراحات الإكمال التلقائي."
   },
-  "icu:WhatsNew__v7.34--1": {
-    "messageformat": "يُقدم هذا التحديث دعمًا للمعالجات الجديدة على نظام التشغيل Windows مثل Snapdragon X Elite."
-  },
-  "icu:WhatsNew__v7.34--2": {
-    "messageformat": "أصلحنا أيضًا خطًأ كان يُعطِّل النّمط الدّاكن في سيجنال عندما تكون إعدادات نظام التشغيل على جهازك مهيأة لاستخدام النمط الفاتح."
-  },
-  "icu:WhatsNew__v7.35--0": {
-    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
+  "icu:WhatsNew__v7.39--0": {
+    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
   }
 }

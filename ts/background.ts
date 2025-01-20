@@ -186,7 +186,7 @@ import { AttachmentDownloadManager } from './jobs/AttachmentDownloadManager';
 import { onCallLinkUpdateSync } from './util/onCallLinkUpdateSync';
 import { CallMode } from './types/CallDisposition';
 import type { SyncTaskType } from './util/syncTasks';
-import { queueSyncTasks } from './util/syncTasks';
+import { queueSyncTasks, runAllSyncTasks } from './util/syncTasks';
 import type { ViewSyncTaskType } from './messageModifiers/ViewSyncs';
 import type { ReceiptSyncTaskType } from './messageModifiers/MessageReceipts';
 import type { ReadSyncTaskType } from './messageModifiers/ReadSyncs';
@@ -198,6 +198,14 @@ import { restoreRemoteConfigFromStorage } from './RemoteConfig';
 import { getParametersForRedux, loadAll } from './services/allLoaders';
 import { checkFirstEnvelope } from './util/checkFirstEnvelope';
 import { BLOCKED_UUIDS_ID } from './textsecure/storage/Blocked';
+import { ReleaseNotesFetcher } from './services/releaseNotesFetcher';
+import {
+  maybeQueueDeviceNameFetch,
+  onDeviceNameChangeSync,
+} from './util/onDeviceNameChangeSync';
+import { postSaveUpdates } from './util/cleanup';
+import { handleDataMessage } from './messages/handleDataMessage';
+import { MessageModel } from './models/messages';
 
 export function isOverHourIntoPast(timestamp: number): boolean {
   return isNumber(timestamp) && isOlderThan(timestamp, HOUR);
@@ -695,6 +703,10 @@ export async function startApp(): Promise<void> {
     messageReceiver.addEventListener(
       'deleteForMeSync',
       queuedEventListener(onDeleteForMeSync, false)
+    );
+    messageReceiver.addEventListener(
+      'deviceNameChangeSync',
+      queuedEventListener(onDeviceNameChangeSync, false)
     );
 
     if (!window.storage.get('defaultConversationColor')) {
@@ -1412,7 +1424,7 @@ export async function startApp(): Promise<void> {
 
     void badgeImageFileDownloader.checkForFilesToDownload();
 
-    initializeExpiringMessageService(singleProtoJobQueue);
+    initializeExpiringMessageService();
 
     log.info('Blocked uuids cleanup: starting...');
     const blockedUuids = window.storage.get(BLOCKED_UUIDS_ID, []);
@@ -1464,19 +1476,12 @@ export async function startApp(): Promise<void> {
 
       await DataWriter.saveMessages(newMessageAttributes, {
         ourAci: window.textsecure.storage.user.getCheckedAci(),
+        postSaveUpdates,
       });
     }
     log.info('Expiration start timestamp cleanup: complete');
 
-    {
-      log.info('Startup/syncTasks: Fetching tasks');
-      const syncTasks = await DataWriter.getAllSyncTasks();
-
-      log.info(`Startup/syncTasks: Queueing ${syncTasks.length} sync tasks`);
-      await queueSyncTasks(syncTasks, DataWriter.removeSyncTaskById);
-
-      log.info('Startup/syncTasks: Done');
-    }
+    await runAllSyncTasks();
 
     log.info('listening for registration events');
     window.Whisper.events.on('registration_done', () => {
@@ -1645,24 +1650,29 @@ export async function startApp(): Promise<void> {
       onOffline();
     }
 
-    // Download backup before enabling request handler and storage service
-    try {
-      await backupsService.download({
-        onProgress: (backupStep, currentBytes, totalBytes) => {
-          window.reduxActions.installer.updateBackupImportProgress({
-            backupStep,
-            currentBytes,
-            totalBytes,
-          });
-        },
-      });
+    const backupDownloadPath = window.storage.get('backupDownloadPath');
+    if (backupDownloadPath) {
+      // Download backup before enabling request handler and storage service
+      try {
+        await backupsService.downloadAndImport({
+          onProgress: (backupStep, currentBytes, totalBytes) => {
+            window.reduxActions.installer.updateBackupImportProgress({
+              backupStep,
+              currentBytes,
+              totalBytes,
+            });
+          },
+        });
 
-      log.info('afterStart: backup downloaded, resolving');
+        log.info('afterStart: backup download attempt completed, resolving');
+        backupReady.resolve();
+      } catch (error) {
+        log.error('afterStart: backup download failed, rejecting');
+        backupReady.reject(error);
+        throw error;
+      }
+    } else {
       backupReady.resolve();
-    } catch (error) {
-      log.error('afterStart: backup download failed, rejecting');
-      backupReady.reject(error);
-      throw error;
     }
 
     server.registerRequestHandler(messageReceiver);
@@ -1931,6 +1941,12 @@ export async function startApp(): Promise<void> {
             Errors.toLogFormat(error)
           );
         }
+
+        // Ensure we have the correct device name locally (allowing us to get eventually
+        // consistent with primary, in case we failed to process a deviceNameChangeSync
+        // for some reason). We do this after calling `maybeUpdateDeviceName` to ensure
+        // that the device name on server is encrypted.
+        drop(maybeQueueDeviceNameFetch());
       }
 
       if (firstRun === true && !areWePrimaryDevice) {
@@ -2160,6 +2176,8 @@ export async function startApp(): Promise<void> {
     }
 
     drop(usernameIntegrity.start());
+
+    drop(ReleaseNotesFetcher.init(window.Whisper.events, newVersion));
   }
 
   let initialStartupCount = 0;
@@ -2613,7 +2631,7 @@ export async function startApp(): Promise<void> {
     }
 
     // Don't wait for handleDataMessage, as it has its own per-conversation queueing
-    drop(message.handleDataMessage(data.message, event.confirm));
+    drop(handleDataMessage(message, data.message, event.confirm));
   }
 
   async function onProfileKey({
@@ -2789,7 +2807,7 @@ export async function startApp(): Promise<void> {
       unidentifiedDeliveries,
     };
 
-    return new window.Whisper.Message(partialMessage);
+    return new MessageModel(partialMessage);
   }
 
   // Works with 'sent' and 'message' data sent from MessageReceiver
@@ -3007,7 +3025,7 @@ export async function startApp(): Promise<void> {
 
     // Don't wait for handleDataMessage, as it has its own per-conversation queueing
     drop(
-      message.handleDataMessage(data.message, event.confirm, {
+      handleDataMessage(message, data.message, event.confirm, {
         data,
       })
     );
@@ -3046,7 +3064,7 @@ export async function startApp(): Promise<void> {
       type: data.message.isStory ? 'story' : 'incoming',
       unidentifiedDeliveryReceived: data.unidentifiedDeliveryReceived,
     };
-    return new window.Whisper.Message(partialMessage);
+    return new MessageModel(partialMessage);
   }
 
   // Returns `false` if this message isn't a group call message.

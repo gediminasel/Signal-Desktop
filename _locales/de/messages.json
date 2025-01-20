@@ -50,9 +50,6 @@
   "icu:privacyPolicy": {
     "messageformat": "Bedingungen & Datenschutzerklärung"
   },
-  "icu:appleSilicon": {
-    "messageformat": "Apple Silicon"
-  },
   "icu:About__AppEnvironment": {
     "messageformat": "{appEnv}"
   },
@@ -714,7 +711,7 @@
     "messageformat": "Keine Ergebnisse für »{searchTerm}« in {conversationName}"
   },
   "icu:conversationsUnreadHeader": {
-    "messageformat": "Gefiltert nach Ungelesen"
+    "messageformat": "Gefiltert nach: Ungelesen"
   },
   "icu:filterByUnreadButtonLabel": {
     "messageformat": "Nach Ungelesen filtern"
@@ -814,9 +811,6 @@
   },
   "icu:voiceNoteError": {
     "messageformat": "Es gab einen Fehler bei der Sprachaufzeichnung."
-  },
-  "icu:attachmentSaved": {
-    "messageformat": "Anhang gespeichert."
   },
   "icu:attachmentSavedPlural": {
     "messageformat": "{count, plural, one {Anhang gesichert.} other {{count,number} Anhänge gesichert.}}"
@@ -1025,18 +1019,6 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "Info"
   },
-  "icu:deleteMessagesInConversation": {
-    "messageformat": "Nachrichten löschen"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__title": {
-    "messageformat": "Nachrichten löschen?"
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description": {
-    "messageformat": "Alle Nachrichten in diesem Chat werden von diesem Gerät gelöscht. Du kannst nach dem Löschen von Nachrichten weiterhin nach diesem Chat suchen."
-  },
-  "icu:ConversationHeader__DeleteMessagesInConversationConfirmation__description-with-sync": {
-    "messageformat": "Alle Nachrichten in diesem Chat werden von all deinen Geräten gelöscht. Du kannst nach dem Löschen von Nachrichten weiterhin nach diesem Chat suchen."
-  },
   "icu:deleteConversation": {
     "messageformat": "Löschen"
   },
@@ -1142,6 +1124,24 @@
   "icu:imageCaptionIconAlt": {
     "messageformat": "Symbol, das auf eine Beschriftung des Bildes hinweist"
   },
+  "icu:imageOpenAlt": {
+    "messageformat": "Öffne diesen Anhang in einer größeren Ansicht"
+  },
+  "icu:startDownload": {
+    "messageformat": "Download starten"
+  },
+  "icu:cancelDownload": {
+    "messageformat": "Download abbrechen"
+  },
+  "icu:downloadNItems": {
+    "messageformat": "{count, plural, one {{count,number} Element} other {{count,number} Elemente}}"
+  },
+  "icu:mediaNoLongerAvailable": {
+    "messageformat": "This media is no longer available."
+  },
+  "icu:attachmentNoLongerAvailable__learnMore": {
+    "messageformat": "Learn more"
+  },
   "icu:save": {
     "messageformat": "Speichern"
   },
@@ -1183,6 +1183,9 @@
   },
   "icu:Install__qr-failed-load__retry": {
     "messageformat": "Erneut versuchen"
+  },
+  "icu:Install__qr-max-rotations__retry": {
+    "messageformat": "Refresh code"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Hol dir Hilfe"
@@ -1581,7 +1584,7 @@
     "messageformat": "Alle Daten und Nachrichten von dieser Signal-Desktop-Version löschen? Du kannst diese Desktop-Version jederzeit neu verbinden, aber deine Nachrichten werden dann nicht wiederhergestellt. Dein Signal-Konto und die Daten auf deinem Telefon oder auf sonstigen verbundenen Geräten werden nicht gelöscht."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Verbindung wird getrennt und alle Daten werden gelöscht"
+    "messageformat": "Disconnecting and deleting all data…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Du hast veraltete Daten aus einer früheren Installation von Signal Desktop. Falls du fortfährst, werden sämtliche Daten gelöscht und du beginnst komplett neu."
@@ -2741,6 +2744,9 @@
   "icu:incomingGroupCall__ringing-many": {
     "messageformat": "{remaining, plural, one {{ringer} ruft dich, {first}, {second} und {remaining,number} weitere Person an} other {{ringer} ruft dich, {first}, {second} und {remaining,number} weitere Personen an}}"
   },
+  "icu:outgoingCallConnecting": {
+    "messageformat": "Verbindung wird hergestellt …"
+  },
   "icu:outgoingCallRinging": {
     "messageformat": "Klingelt …"
   },
@@ -2785,6 +2791,12 @@
   },
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Mikrofon an"
+  },
+  "icu:CallControls__LowerHandSuggestionToast": {
+    "messageformat": "Deine Hand senken?"
+  },
+  "icu:CallControls__LowerHandSuggestionToast--button": {
+    "messageformat": "Hand senken"
   },
   "icu:CallControls__RingingToast--ringing-on": {
     "messageformat": "Klingelton an"
@@ -3563,6 +3575,9 @@
   "icu:next": {
     "messageformat": "vor"
   },
+  "icu:ClearingData__description": {
+    "messageformat": "This may take a few minutes depending on the size of your message history"
+  },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "An Signal spenden"
   },
@@ -3594,10 +3609,10 @@
     "messageformat": "Herunterladen wird vorbereitet..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "Das kann, abhängig von der Größe deiner Datensicherung, ein paar Minuten dauern."
+    "messageformat": "Das kann, abhängig von der Größe deines Nachrichtenverlaufs, ein paar Minuten dauern."
   },
   "icu:BackupImportScreen__cancel": {
-    "messageformat": "Übertragung abbrechen"
+    "messageformat": "Abbrechen"
   },
   "icu:BackupImportScreen__security-description": {
     "messageformat": "Nachrichten und Chat-Infos sowie der Synchronisierungsvorgang sind durch eine Ende-zu-Ende-Verschlüsselung geschützt. <learnMoreLink>Mehr erfahren</learnMoreLink>"
@@ -3606,7 +3621,7 @@
     "messageformat": "Übertragung abbrechen?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Die Wiederherstellung deiner Nachrichten und Medien ist noch nicht abgeschlossen. Wenn du jetzt abbrichst, kannst du unter »Einstellungen« erneut eine Übertragung vornehmen."
+    "messageformat": "Die Wiederherstellung deiner Nachrichten und Medien ist noch nicht abgeschlossen. Wenn du den Vorgang abbrichst, wird dein Gerät ohne deinen Nachrichtenverlauf gekoppelt."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
     "messageformat": "Übertragung fortsetzen"
@@ -3619,6 +3634,9 @@
   },
   "icu:BackupImportScreen__error__body": {
     "messageformat": "Deine Nachrichten konnten nicht übertragen werden. Überprüfe deine Internetverbindung und versuche es erneut."
+  },
+  "icu:BackupImportScreen__error-fatal__body": {
+    "messageformat": "Deine Nachrichten konnten aufgrund eines Fehlers nicht übertragen werden. Versuche es noch einmal, indem du diesen Computer erneut koppelst."
   },
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "Erneut versuchen"
@@ -5776,16 +5794,10 @@
     "messageformat": "Kleine Optimierungen, Fehlerbehebungen und Leistungsverbesserungen. Danke, dass du Signal nutzt!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.34--0": {
-    "messageformat": "Mit dem neuen Filtersymbol neben dem Suchfeld kannst du ungelesene Chats jetzt viel schneller finden. Aber lass dir ruhig Zeit bei der Entscheidung, ob du etwas Ungelesen lassen möchtest oder nicht."
+  "icu:WhatsNew__v7.38--0": {
+    "messageformat": "Wir haben einen Bug behoben, durch den manchmal dein eigenes Konto in der Liste der automatischen Vorschläge auftauchte, wenn du eine @-Erwähnung einfügst. Dir fehlt dieser Bug? Dann haben wir eine narzisstische Lösung für dich: Du kannst in deinen Gruppenchats immer noch in der dritten Person von dir sprechen, wenn dir danach ist."
   },
-  "icu:WhatsNew__v7.34--1": {
-    "messageformat": "Mit diesem Update werden neue Prozessoren unter Windows, wie Snapdragon X Elite, vorgestellt – jetzt musst du dir keinen ARM mehr abhacken, um es mit x86 aufnehmen zu können."
-  },
-  "icu:WhatsNew__v7.34--2": {
-    "messageformat": "Wir haben auch einen Fehler behoben, der den Dunkelmodus geschrottet hat, sobald deine Systemeinstellungen für Hellmodus konfiguriert waren. Signal Desktop kann deine gespaltene Modus-Persönlichkeit jetzt problemlos bewältigen."
-  },
-  "icu:WhatsNew__v7.35--0": {
-    "messageformat": "The new filter icon next to the search box makes it easy to quickly find unread chats, but feel free to take your time deciding whether or not to leave them on read after seeing what they had to say."
+  "icu:WhatsNew__v7.39--0": {
+    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
   }
 }
