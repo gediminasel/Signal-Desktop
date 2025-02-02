@@ -11,7 +11,6 @@ import type {
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { noop } from 'lodash';
-import { sep } from 'path';
 
 import { filterDOMProps } from '@react-aria/utils';
 import type { AvatarColorType } from '../types/Colors';
@@ -108,7 +107,7 @@ const getDefaultBlur = (
 
 export function Avatar({
   acceptedMessageRequest,
-  avatarUrl: dirtyAvatarUrl,
+  avatarUrl,
   badge,
   className,
   color = 'A200',
@@ -129,10 +128,7 @@ export function Avatar({
   storyRing,
   blur = getDefaultBlur({
     acceptedMessageRequest,
-    avatarUrl: dirtyAvatarUrl
-      ?.replaceAll('/', sep)
-      ?.replaceAll('\\', sep)
-      ?.replaceAll('%5C', sep),
+    avatarUrl,
     isMe,
     sharedGroupNames,
     unblurredAvatarUrl,
@@ -140,13 +136,6 @@ export function Avatar({
   ...ariaProps
 }: Props): JSX.Element {
   const [imageBroken, setImageBroken] = useState(false);
-
-  const avatarUrl = dirtyAvatarUrl
-    ? dirtyAvatarUrl
-        .replaceAll('/', sep)
-        .replaceAll('\\', sep)
-        .replaceAll('%5C', sep)
-    : '';
 
   useEffect(() => {
     setImageBroken(false);
